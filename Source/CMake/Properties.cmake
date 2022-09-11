@@ -4,6 +4,21 @@ if ("${PROJECT_SOURCE_DIR}" STREQUAL "${CMAKE_SOURCE_DIR}")
 	set(BS_TOP_LEVEL True)
 endif()
 
+# Options
+set(BSF_BUILD_EXAMPLES ON CACHE BOOL "If true, framework example projects will be built by default.")
+
+# Grab examples projects
+if(BSF_BUILD_EXAMPLES)
+	find_path(EXAMPLE_SUBMODULE_SOURCES "CMakeLists.txt" "Examples")
+	if(NOT EXAMPLE_SUBMODULE_SOURCES)
+		execute_process(COMMAND git submodule update 
+							--init 
+							-- Examples
+						WORKING_DIRECTORY ${BSF_DIRECTORY})
+	endif()
+	mark_as_advanced(EXAMPLE_SUBMODULE_SOURCES)
+endif()
+
 # Configuration types
 if(NOT CMAKE_CONFIGURATION_TYPES) # Multiconfig generator?
 	if(NOT CMAKE_BUILD_TYPE)

@@ -1,7 +1,8 @@
 cmake_minimum_required (VERSION 3.12.0)
 project (bsf)
 
-set (BSF_SOURCE_DIR ${PROJECT_SOURCE_DIR}/Source)
+set (BSF_DIRECTORY ${PROJECT_SOURCE_DIR})
+set (BSF_SOURCE_DIR ${BSF_DIRECTORY}/Source)
 set (APP_ROOT_DIR ${PROJECT_SOURCE_DIR})
 set (BS_IS_BANSHEE3D 0)
 
@@ -17,6 +18,10 @@ include(Source/CMake/FindPackageOrBuild.cmake)
 include(Source/CMake/HelperMethods.cmake)
 
 add_subdirectory(Source)
+
+if(BSF_BUILD_EXAMPLES)
+	add_subdirectory(../Examples)
+endif()
 
 # Options
 set(SCRIPT_API "None" CACHE STRING "Which scripting API/language to use, if any. If no scripting API is chosen only native C++ bsf core will be built. If a scripting API is chosen, then a separate scripting layer on top of the core will be included in the build as well.")
