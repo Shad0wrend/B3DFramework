@@ -18,10 +18,10 @@ namespace bs
 	{
 	public:
 		/**	Returns a generic handle to the internal wrapped resource. */
-		virtual HResource getGenericHandle() const = 0;
+		virtual HResource GetGenericHandle() const = 0;
 
 		/**	Sets the internal resource this object wraps. */
-		virtual void setResource(const HResource& resource) = 0;
+		virtual void SetResource(const HResource& resource) = 0;
 
 		/** Returns the managed version of this resource. */
 		MonoObject* getManagedInstance() const;
@@ -58,21 +58,21 @@ namespace bs
 		 * creates a strong reference to the managed instance, and you need to make sure to release it with
 		 * freeManagedInstance() when no longer required.
 		 */
-		void setManagedInstance(MonoObject* instance);
+		void SetManagedInstance(MonoObject* instance);
 
 		/**
 		 * Frees a managed instace assigned with setManagedInstance(). Should be called before the object is destroyed or
 		 * when you changing the managed instance it points to (in order to release the previous instance).
 		 */
-		void freeManagedInstance();
+		void FreeManagedInstance();
 
 		/**	
 		 * Triggered by the script resource managed when the native resource handle this object point to has been destroyed.
 		 */
-		virtual void notifyResourceDestroyed() { }
+		virtual void NotifyResourceDestroyed() { }
 
 		/** Destroys the interop object, unless refresh is in progress in which case it is just prepared for re-creation. */
-		void destroy();
+		void Destroy();
 
 		UINT32 mGCHandle = 0;
 	};
@@ -83,13 +83,13 @@ namespace bs
 	{
 	public:
 		/**	Returns a generic handle to the internal wrapped resource. */
-		HResource getGenericHandle() const override { return mResource; }
+		HResource GetGenericHandle() const override { return mResource; }
 
 		/**	Sets the internal resource this object wraps. */
-		void setResource(const HResource& resource) override { mResource = static_resource_cast<ResType>(resource); }
+		void SetResource(const HResource& resource) override { mResource = static_resource_cast<ResType>(resource); }
 
 		/**	Returns a handle to the internal wrapped resource. */
-		const ResourceHandle<ResType>& getHandle() const { return mResource; }
+		const ResourceHandle<ResType>& GetHandle() const { return mResource; }
 
 		/** Returns a reference wrapper for this resource. */
 		MonoObject* getRRef() const
@@ -126,7 +126,7 @@ namespace bs
 		/**	
 		 * Triggered by the script resource managed when the native resource handle this object point to has been destroyed.
 		 */
-		void notifyResourceDestroyed() override
+		void NotifyResourceDestroyed() override
 		{
 			this->freeManagedInstance();
 		}
@@ -167,7 +167,7 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "UUID")
 
 		/**	Unboxes a boxed managed UUID struct and returns the native version of the structure. */
-		static UUID unbox(MonoObject* obj);
+		static UUID Unbox(MonoObject* obj);
 
 		/**	Boxes a native UUID struct and returns a managed object containing it. */
 		static MonoObject* box(const UUID& value);

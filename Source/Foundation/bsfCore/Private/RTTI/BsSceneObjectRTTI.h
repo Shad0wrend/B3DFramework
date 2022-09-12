@@ -22,17 +22,17 @@ namespace bs
 	class BS_CORE_EXPORT SceneObjectRTTI : public RTTIType<SceneObject, GameObject, SceneObjectRTTI>
 	{
 	private:
-		Transform& getTransform(SceneObject* obj) { return obj->mWorldTfrm; }
-		void setTransform(SceneObject* obj, Transform& value) { obj->mWorldTfrm = value; }
+		Transform& GetTransform(SceneObject* obj) { return obj->mWorldTfrm; }
+		void SetTransform(SceneObject* obj, Transform& value) { obj->mWorldTfrm = value; }
 
-		Transform& getLocalTransform(SceneObject* obj) { return obj->mLocalTfrm; }
-		void setLocalTransform(SceneObject* obj, Transform& value) { obj->mLocalTfrm = value; }
+		Transform& GetLocalTransform(SceneObject* obj) { return obj->mLocalTfrm; }
+		void SetLocalTransform(SceneObject* obj, Transform& value) { obj->mLocalTfrm = value; }
 
-		bool& getActive(SceneObject* obj) { return obj->mActiveSelf; }
-		void setActive(SceneObject* obj, bool& value) { obj->mActiveSelf = value; }
+		bool& GetActive(SceneObject* obj) { return obj->mActiveSelf; }
+		void SetActive(SceneObject* obj, bool& value) { obj->mActiveSelf = value; }
 
-		SPtr<SceneObject> getChild(SceneObject* obj, UINT32 idx) { return obj->mChildren[idx].getInternalPtr(); }
-		void setChild(SceneObject* obj, UINT32 idx, SPtr<SceneObject> param)
+		SPtr<SceneObject> GetChild(SceneObject* obj, UINT32 idx) { return obj->mChildren[idx].getInternalPtr(); }
+		void SetChild(SceneObject* obj, UINT32 idx, SPtr<SceneObject> param)
 		{
 			// It's important that child indices remain the same after deserialization, as some systems (like SO
 			// record/restore) depend on it
@@ -42,12 +42,12 @@ namespace bs
 			mChildren[idx] = param;
 		}
 
-		UINT32 getNumChildren(SceneObject* obj) { return (UINT32)obj->mChildren.size(); }
-		void setNumChildren(SceneObject* obj, UINT32 size) { /* DO NOTHING */ }
+		UINT32 GetNumChildren(SceneObject* obj) { return (UINT32)obj->mChildren.size(); }
+		void SetNumChildren(SceneObject* obj, UINT32 size) { /* DO NOTHING */ }
 
 		// NOTE - These can only be set sequentially, specific array index is ignored
-		SPtr<Component> getComponent(SceneObject* obj, UINT32 idx) { return obj->mComponents[idx].getInternalPtr(); }
-		void setComponent(SceneObject* obj, UINT32 idx, SPtr<Component> param)
+		SPtr<Component> GetComponent(SceneObject* obj, UINT32 idx) { return obj->mComponents[idx].getInternalPtr(); }
+		void SetComponent(SceneObject* obj, UINT32 idx, SPtr<Component> param)
 		{
 			// It's important that child indices remain the same after deserialization, as some systems (like SO
 			// record/restore) depend on it
@@ -56,23 +56,23 @@ namespace bs
 
 			mComponents[idx] = param;
 		}
-		UINT32 getNumComponents(SceneObject* obj) { return (UINT32)obj->mComponents.size(); }
-		void setNumComponents(SceneObject* obj, UINT32 size) { /* DO NOTHING */ }
+		UINT32 GetNumComponents(SceneObject* obj) { return (UINT32)obj->mComponents.size(); }
+		void SetNumComponents(SceneObject* obj, UINT32 size) { /* DO NOTHING */ }
 
-		UUID& getPrefabLink(SceneObject* obj) { return obj->mPrefabLinkUUID; }
-		void setPrefabLink(SceneObject* obj, UUID& value) { obj->mPrefabLinkUUID = value; }
+		UUID& GetPrefabLink(SceneObject* obj) { return obj->mPrefabLinkUUID; }
+		void SetPrefabLink(SceneObject* obj, UUID& value) { obj->mPrefabLinkUUID = value; }
 
-		SPtr<PrefabDiff> getPrefabDiff(SceneObject* obj) { return obj->mPrefabDiff; }
-		void setPrefabDiff(SceneObject* obj, SPtr<PrefabDiff> value) { obj->mPrefabDiff = value; }
+		SPtr<PrefabDiff> GetPrefabDiff(SceneObject* obj) { return obj->mPrefabDiff; }
+		void SetPrefabDiff(SceneObject* obj, SPtr<PrefabDiff> value) { obj->mPrefabDiff = value; }
 
-		UINT32& getFlags(SceneObject* obj) { return obj->mFlags; }
-		void setFlags(SceneObject* obj, UINT32& value) { obj->mFlags = value; }
+		UINT32& GetFlags(SceneObject* obj) { return obj->mFlags; }
+		void SetFlags(SceneObject* obj, UINT32& value) { obj->mFlags = value; }
 
-		UINT32& getPrefabHash(SceneObject* obj) { return obj->mPrefabHash; }
-		void setPrefabHash(SceneObject* obj, UINT32& value) { obj->mPrefabHash = value; }
+		UINT32& GetPrefabHash(SceneObject* obj) { return obj->mPrefabHash; }
+		void SetPrefabHash(SceneObject* obj, UINT32& value) { obj->mPrefabHash = value; }
 
-		ObjectMobility& getMobility(SceneObject* obj) { return obj->mMobility; }
-		void setMobility(SceneObject* obj, ObjectMobility& value) { obj->mMobility = value; }
+		ObjectMobility& GetMobility(SceneObject* obj) { return obj->mMobility; }
+		void SetMobility(SceneObject* obj, ObjectMobility& value) { obj->mMobility = value; }
 	public:
 		SceneObjectRTTI()
 		{
@@ -91,7 +91,7 @@ namespace bs
 			addReflectableField("mLocalTfrm", 12, &SceneObjectRTTI::getLocalTransform, &SceneObjectRTTI::setLocalTransform);
 		}
 
-		void onDeserializationStarted(IReflectable* obj, SerializationContext* context) override
+		void OnDeserializationStarted(IReflectable* obj, SerializationContext* context) override
 		{
 			// If this is the root scene object we're deserializing, activate game object deserialization so the system
 			// can resolve deserialized handles to the newly created objects
@@ -116,7 +116,7 @@ namespace bs
 			}
 		}
 
-		void onDeserializationEnded(IReflectable* obj, SerializationContext* context) override
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override
 		{
 			SceneObject* so = static_cast<SceneObject*>(obj);
 
@@ -171,18 +171,18 @@ namespace bs
 			so->mRTTIData = nullptr;
 		}
 
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "SceneObject";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_SceneObject;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			SPtr<SceneObject> sceneObject = SPtr<SceneObject>(new (bs_alloc<SceneObject>()) SceneObject("", SOF_DontInstantiate),
 				&bs_delete<SceneObject>, StdAlloc<SceneObject>());

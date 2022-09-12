@@ -16,7 +16,7 @@ namespace bs
 	{
 	public:
 		/**	Name of the style used for tooltip's background frame. */
-		static String getFrameStyleName();
+		static String GetFrameStyleName();
 
 		/**
 		 * Creates a new tooltip widget.

@@ -107,8 +107,8 @@ namespace bs
 		};
 
 		// Calculate key values
-		Quaternion lastQuat(BsZero);
-		Vector3 lastAngles(BsZero);
+		Quaternion LastQuat(BsZero);
+		Vector3 LastAngles(BsZero);
 		float lastTime = 0.0f;
 		for (INT32 i = 0; i < numKeys; i++)
 		{
@@ -210,7 +210,7 @@ namespace bs
 		};
 
 		INT32 numKeys = (INT32)quatCurve->getNumKeyFrames();
-		Vector<TKeyframe<Vector3>> eulerKeyframes(numKeys);
+		Vector<TKeyframe<Vector3>> EulerKeyframes(numKeys);
 
 		// Calculate key values
 		for (INT32 i = 0; i < numKeys; i++)
@@ -355,7 +355,7 @@ namespace bs
 		if(compoundCurve)
 			bs::splitCurve(*compoundCurve, keyFrames);
 
-		Vector<SPtr<TAnimationCurve<float>>> output(3);
+		Vector<SPtr<TAnimationCurve<float>>> Output(3);
 		for (UINT32 i = 0; i < 3; i++)
 			output[i] = bs_shared_ptr_new<TAnimationCurve<float>>(keyFrames[i]);
 
@@ -383,7 +383,7 @@ namespace bs
 		if(compoundCurve)
 			bs::splitCurve(*compoundCurve, keyFrames);
 
-		Vector<SPtr<TAnimationCurve<float>>> output(2);
+		Vector<SPtr<TAnimationCurve<float>>> Output(2);
 		for (UINT32 i = 0; i < 2; i++)
 			output[i] = bs_shared_ptr_new<TAnimationCurve<float>>(keyFrames[i]);
 
@@ -503,7 +503,7 @@ namespace bs
 	{
 		INT32 numKeys = (INT32)curve.getNumKeyFrames();
 
-		Vector<TKeyframe<T>> newKeyframes(numKeys);
+		Vector<TKeyframe<T>> NewKeyframes(numKeys);
 		for (INT32 i = 0; i < numKeys; i++)
 		{
 			const TKeyframe<T>& key = curve.getKeyFrame(i);
@@ -521,7 +521,7 @@ namespace bs
 	{
 		INT32 numKeys = (INT32)curve.getNumKeyFrames();
 
-		Vector<TKeyframe<T>> newKeyframes(numKeys);
+		Vector<TKeyframe<T>> NewKeyframes(numKeys);
 		for (INT32 i = 0; i < numKeys; i++)
 		{
 			const TKeyframe<T>& key = curve.getKeyFrame(i);

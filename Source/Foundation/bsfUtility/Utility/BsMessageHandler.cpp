@@ -77,7 +77,7 @@ namespace bs
 		mHandlerIdToMessageMap.erase(handleId);
 	}
 
-	void sendMessage(MessageId message)
+	void SendMessage(MessageId message)
 	{
 		MessageHandler::instance().send(message);
 	}

@@ -46,12 +46,12 @@ namespace bs
 	{
 		GUIOptions options;
 
-		ScriptArray scriptArray(guiOptions);
+		ScriptArray ScriptArray(guiOptions);
 		UINT32 arrayLen = scriptArray.size();
 		for (UINT32 i = 0; i < arrayLen; i++)
 			options.addOption(scriptArray.get<GUIOption>(i));
 
-		ScriptArray elemsArray(elements);
+		ScriptArray ElemsArray(elements);
 		UINT32 elementsArrayLen = elemsArray.size();
 		Vector<HString> nativeElements;
 		for(UINT32 i = 0; i < elementsArrayLen; i++)
@@ -76,7 +76,7 @@ namespace bs
 
 	void ScriptGUIListBox::internal_setElements(ScriptGUIListBox* nativeInstance, MonoArray* elements)
 	{
-		ScriptArray elemsArray(elements);
+		ScriptArray ElemsArray(elements);
 		UINT32 elementsArrayLen = elemsArray.size();
 		Vector<HString> nativeElements;
 		for(UINT32 i = 0; i < elementsArrayLen; i++)
@@ -133,10 +133,10 @@ namespace bs
 		if (monoStates == nullptr)
 			return;
 
-		ScriptArray inStates(monoStates);
+		ScriptArray InStates(monoStates);
 		UINT32 numElements = inStates.size();
 
-		Vector<bool> states(numElements);
+		Vector<bool> States(numElements);
 		for (UINT32 i = 0; i < numElements; i++)
 			states[i] = inStates.get<bool>(i);
 

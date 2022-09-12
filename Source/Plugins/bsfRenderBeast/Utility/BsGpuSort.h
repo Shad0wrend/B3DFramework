@@ -44,7 +44,7 @@ namespace bs { namespace ct
 		 *
 		 * @param[in]	outputCounts	Pre-allocated buffer to zero out.
 		 */
-		void execute(const SPtr<GpuBuffer>& outputCounts);
+		void Execute(const SPtr<GpuBuffer>& outputCounts);
 
 		GpuParamBuffer mOutputParam;
 	};
@@ -167,7 +167,7 @@ namespace bs { namespace ct
 		 *							mask).
 		 * @return					Index of the buffer in @p buffers that will contain the final sorted keys and/or values.
 		 */
-		UINT32 sort(const GpuSortBuffers& buffers, UINT32 numKeys, UINT32 keyMask = 0xFFFFFFFF);
+		UINT32 Sort(const GpuSortBuffers& buffers, UINT32 numKeys, UINT32 keyMask = 0xFFFFFFFF);
 
 		/**
 		 * Creates a set of buffers buffer that can be used when calling the sort() method.
@@ -178,7 +178,7 @@ namespace bs { namespace ct
 		 * @return						A set of buffers to store unsorted keys (and optionally values), as well as space
 		 *								for the resulting sorted keys (and optionally values).
 		 */
-		static GpuSortBuffers createSortBuffers(UINT32 numElements, bool values = false);
+		static GpuSortBuffers CreateSortBuffers(UINT32 numElements, bool values = false);
 
 	private:
 		SPtr<GpuBuffer> mHelperBuffers[2];

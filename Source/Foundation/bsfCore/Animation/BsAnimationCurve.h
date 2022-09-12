@@ -91,7 +91,7 @@ namespace bs
 		 *								curve value will be clamped.
 		 * @return						Interpolated value from the curve at provided time.
 		 */
-		T evaluate(float time, const TCurveCache<T>& cache, bool loop = true) const;
+		T Evaluate(float time, const TCurveCache<T>& cache, bool loop = true) const;
 
 		/**
 		 * Evaluate the animation curve at the specified time. If evaluating multiple values in a sequential order consider
@@ -103,7 +103,7 @@ namespace bs
 		 * @return				Interpolated value from the curve at provided time.
 		 */
 		BS_SCRIPT_EXPORT()
-		T evaluate(float time, bool loop = true) const;
+		T Evaluate(float time, bool loop = true) const;
 
 		/**
 		 * Evaluates the integrated animation curve. (e.g. evaluating a curve containing velocity values will return
@@ -116,7 +116,7 @@ namespace bs
 		 *									need to be used for single and double integration evaluation.
 		 * @return							Interpolated value from the curve at provided time.
 		 */
-		T evaluateIntegrated(float time, const TCurveIntegrationCache<T>& integrationCache) const;
+		T EvaluateIntegrated(float time, const TCurveIntegrationCache<T>& integrationCache) const;
 
 		/**
 		 * Evaluates the double integrated animation curve. (e.g. evaluating a curve containing acceleration values will
@@ -129,7 +129,7 @@ namespace bs
 		 *									need to be used for single and double integration evaluation.
 		 * @return							Interpolated value from the curve at provided time.
 		 */
-		T evaluateIntegratedDouble(float time, const TCurveIntegrationCache<T>& integrationCache) const;
+		T EvaluateIntegratedDouble(float time, const TCurveIntegrationCache<T>& integrationCache) const;
 
 		/**
 		 * Evaluate the animation curve at the specified time and returns a new keyframe containing the evaluated value
@@ -140,7 +140,7 @@ namespace bs
 		 *						value will be clamped.
 		 * @return				Keyframe containing the interpolated value and tangents at provided time.
 		 */
-		KeyFrame evaluateKey(float time, bool loop = true) const;
+		KeyFrame EvaluateKey(float time, bool loop = true) const;
 
 		/**
 		 * Splits a piece of the animation curve into a separate animation curve.
@@ -149,39 +149,39 @@ namespace bs
 		 * @param[in]	end		End time of the split curve.
 		 * @return				New curve with data corresponding to the provided split times.
 		 */
-		TAnimationCurve<T> split(float start, float end);
+		TAnimationCurve<T> Split(float start, float end);
 
 		/**
 		 * Converts a normal curve into an additive curve. It is assumed the first keyframe in the curve is the reference
 		 * key from which to generate the additive curve. Such curves can then be added on top of a curve containing
 		 * reference keys.
 		 */
-		void makeAdditive();
+		void MakeAdditive();
 
 		/** Returns the time of the first and last keyframe in the curve. */
-		std::pair<float, float> getTimeRange() const;
+		std::pair<float, float> GetTimeRange() const;
 
 		/** Calculates the minimal and maximal value of the curve. */
-		std::pair<T, T> calculateRange() const;
+		std::pair<T, T> CalculateRange() const;
 
 		/** Calculates the minimal and maximal value of the integrated curve. */
-		std::pair<T, T> calculateRangeIntegrated(const TCurveIntegrationCache<T>& cache) const;
+		std::pair<T, T> CalculateRangeIntegrated(const TCurveIntegrationCache<T>& cache) const;
 
 		/** Calculates the minimal and maximal value of the doubly integrated curve. */
-		std::pair<T, T> calculateRangeIntegratedDouble(const TCurveIntegrationCache<T>& cache) const;
+		std::pair<T, T> CalculateRangeIntegratedDouble(const TCurveIntegrationCache<T>& cache) const;
 
 		/** Returns the length of the animation curve, from time zero to last keyframe. */
-		float getLength() const { return mEnd; }
+		float GetLength() const { return mEnd; }
 
 		/** Returns the total number of key-frames in the curve. */
-		UINT32 getNumKeyFrames() const { return (UINT32)mKeyframes.size(); }
+		UINT32 GetNumKeyFrames() const { return (UINT32)mKeyframes.size(); }
 
 		/** Returns a keyframe at the specified index. */
-		const TKeyframe<T>& getKeyFrame(UINT32 idx) const { return mKeyframes[idx]; }
+		const TKeyframe<T>& GetKeyFrame(UINT32 idx) const { return mKeyframes[idx]; }
 
 		/** Returns a list of all keyframes in the curve. */
 		BS_SCRIPT_EXPORT(n:KeyFrames,pr:getter)
-		const Vector<TKeyframe<T>>& getKeyFrames() const { return mKeyframes; }
+		const Vector<TKeyframe<T>>& GetKeyFrames() const { return mKeyframes; }
 
 		bool operator== (const TAnimationCurve<T>& rhs) const;
 		bool operator!= (const TAnimationCurve<T>& rhs) const { return !operator==(rhs); }
@@ -200,7 +200,7 @@ namespace bs
 		 * @param[out]	leftKey			Index of the key to interpolate from.
 		 * @param[out]	rightKey		Index of the key to interpolate to.
 		 */
-		void findKeys(float time, const TCurveCache<T>& cache, UINT32& leftKey, UINT32& rightKey) const;
+		void FindKeys(float time, const TCurveCache<T>& cache, UINT32& leftKey, UINT32& rightKey) const;
 
 		/**
 		 * Returns a pair of keys that can be used for interpolating to field the value at the provided time.
@@ -210,10 +210,10 @@ namespace bs
 		 * @param[out]	leftKey			Index of the key to interpolate from.
 		 * @param[out]	rightKey		Index of the key to interpolate to.
 		 */
-		void findKeys(float time, UINT32& leftKey, UINT32& rightKey) const;
+		void FindKeys(float time, UINT32& leftKey, UINT32& rightKey) const;
 
 		/** Returns a keyframe index nearest to the provided time. */
-		UINT32 findKey(float time);
+		UINT32 FindKey(float time);
 
 		/**
 		 * Calculates a key in-between the provided two keys.
@@ -223,13 +223,13 @@ namespace bs
 		 * @param[in]	time	Curve time to interpolate the keys at.
 		 * @return				Interpolated key value.
 		 */
-		KeyFrame evaluateKey(const KeyFrame& lhs, const KeyFrame& rhs, float time) const;
+		KeyFrame EvaluateKey(const KeyFrame& lhs, const KeyFrame& rhs, float time) const;
 
 		/** Creates a cache used for quick evaluation of single integrated curves. */
-		void buildIntegrationCache(const TCurveIntegrationCache<T>& cache) const;
+		void BuildIntegrationCache(const TCurveIntegrationCache<T>& cache) const;
 
 		/** Creates a cache used for quick evaluation of double integrated curves. */
-		void buildDoubleIntegrationCache(const TCurveIntegrationCache<T>& cache) const;
+		void BuildDoubleIntegrationCache(const TCurveIntegrationCache<T>& cache) const;
 
 		static const UINT32 CACHE_LOOKAHEAD;
 

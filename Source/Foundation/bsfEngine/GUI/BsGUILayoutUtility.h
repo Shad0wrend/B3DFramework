@@ -20,7 +20,7 @@ namespace bs
 		 * Calculates optimal size of a GUI element. This is the size that allows the GUI element to properly display all of
 		 * its content.
 		 */
-		static Vector2I calcOptimalSize(const GUIElementBase* elem);
+		static Vector2I CalcOptimalSize(const GUIElementBase* elem);
 
 		/**
 		 * Calculates the size of elements in a layout of the specified size.
@@ -33,7 +33,7 @@ namespace bs
 		 *									are up to date to avoid recalculating them. (Normally that is true if this is
 		 *									being called during GUI layout update)
 		 */
-		static Vector2I calcActualSize(UINT32 width, UINT32 height, GUILayout* layout, bool updateOptimalSizes = true);
+		static Vector2I CalcActualSize(UINT32 width, UINT32 height, GUILayout* layout, bool updateOptimalSizes = true);
 
 	private:
 		/**
@@ -44,7 +44,7 @@ namespace bs
 		 * @param[in]	height				Height of the layout.
 		 * @param[in]	layout				Parent layout of the children to calculate the area for.
 		 */
-		static Vector2I calcActualSizeInternal(UINT32 width, UINT32 height, GUILayout* layout);
+		static Vector2I CalcActualSizeInternal(UINT32 width, UINT32 height, GUILayout* layout);
 	};
 
 	/** @} */

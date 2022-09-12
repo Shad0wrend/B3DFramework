@@ -25,7 +25,7 @@ namespace bs
 		GroupAlloc() = default;
 
 		GroupAlloc(GroupAlloc&& other) noexcept
-			: mData(std::exchange(other.mData, nullptr)), mDataPtr(std::exchange(other.mDataPtr, nullptr)),
+			: MData(std::exchange(other.mData, nullptr)), mDataPtr(std::exchange(other.mDataPtr, nullptr)),
 				 mNumBytes(std::exchange(other.mNumBytes, 0))
 		{
 		}
@@ -55,7 +55,7 @@ namespace bs
 		 * Allocates internal memory as reserved by previous calls to reserve(). Must be called before any calls to
 		 * construct or alloc.
 		 */
-		void init()
+		void Init()
 		{
 			assert(mData == nullptr);
 
@@ -69,7 +69,7 @@ namespace bs
 		 * Reserves the specified amount of bytes to allocate. Multiple calls to reserve() are cumulative. After all needed
 		 * memory is reserved, call init(), followed by actual allocation via construct() or alloc() methods.
 		 */
-		GroupAlloc& reserve(UINT32 amount)
+		GroupAlloc& Reserve(UINT32 amount)
 		{
 			assert(mData == nullptr);
 
@@ -84,7 +84,7 @@ namespace bs
 		 * reserve(), init() and alloc() again.
 		 */
 		template<class T>
-		GroupAlloc& reserve(UINT32 count = 1)
+		GroupAlloc& Reserve(UINT32 count = 1)
 		{
 			assert(mData == nullptr);
 
@@ -119,13 +119,13 @@ namespace bs
 		}
 
 		/** Deallocates a previously allocated piece of memory. */
-		void free(void* data)
+		void Free(void* data)
 		{
 			// Do nothing
 		}
 
 		/** Frees any internally allocated buffers. All elements must be previously freed by calling free(). */
-		void clear()
+		void Clear()
 		{
 			// Note: A debug check if user actually freed the memory could be helpful
 			if (mData)
@@ -166,7 +166,7 @@ namespace bs
 
 		/** Destructs and deallocates an object allocated with the static allocator. */
 		template<class T>
-		void destruct(T* data)
+		void Destruct(T* data)
 		{
 			data->~T();
 
@@ -175,7 +175,7 @@ namespace bs
 
 		/** Destructs and deallocates an array of objects allocated with the static frame allocator. */
 		template<class T>
-		void destruct(T* data, UINT32 count)
+		void Destruct(T* data, UINT32 count)
 		{
 			for(unsigned int i = 0; i < count; i++)
 				data[i].~T();

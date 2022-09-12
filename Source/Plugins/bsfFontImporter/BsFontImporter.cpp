@@ -29,7 +29,7 @@ namespace bs
 		String lowerCaseExt = ext;
 		StringUtil::toLowerCase(lowerCaseExt);
 
-		return find(mExtensions.begin(), mExtensions.end(), lowerCaseExt) != mExtensions.end();
+		return Find(mExtensions.begin(), mExtensions.end(), lowerCaseExt) != mExtensions.end();
 	}
 
 	bool FontImporter::isMagicNumberSupported(const UINT8* magicNumPtr, UINT32 numBytes) const
@@ -243,7 +243,7 @@ namespace bs
 							sourceBuffer += slot->bitmap.pitch;
 						}
 					}
-					else if(slot->bitmap.pixel_mode == ft_pixel_mode_mono)
+					else If(slot->bitmap.pixel_mode == ft_pixel_mode_mono)
 					{
 						// 8 pixels are packed into a byte, so do some unpacking
 						for(INT32 bitmapRow = 0; bitmapRow < slot->bitmap.rows; bitmapRow++)

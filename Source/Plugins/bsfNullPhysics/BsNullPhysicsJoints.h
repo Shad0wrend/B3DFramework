@@ -30,34 +30,34 @@ namespace bs
 
 
 		/** @copydoc FJoint::setBody */
-		void setBody(JointBody body, Rigidbody* value) override { mDesc.bodies[(int)body].body = value; }
+		void SetBody(JointBody body, Rigidbody* value) override { mDesc.bodies[(int)body].body = value; }
 
 		/** @copydoc FJoint::getPosition */
-		Vector3 getPosition(JointBody body) const override { return mDesc.bodies[(int)body].position; }
+		Vector3 GetPosition(JointBody body) const override { return mDesc.bodies[(int)body].position; }
 
 		/** @copydoc FJoint::getRotation */
-		Quaternion getRotation(JointBody body) const override { return mDesc.bodies[(int)body].rotation; }
+		Quaternion GetRotation(JointBody body) const override { return mDesc.bodies[(int)body].rotation; }
 
 		/** @copydoc FJoint::setTransform */
-		void setTransform(JointBody body, const Vector3& position, const Quaternion& rotation) override;
+		void SetTransform(JointBody body, const Vector3& position, const Quaternion& rotation) override;
 
 		/** @copydoc FJoint::getBreakForce */
-		float getBreakForce() const override { return mDesc.breakForce; }
+		float GetBreakForce() const override { return mDesc.breakForce; }
 
 		/** @copydoc FJoint::setBreakForce */
-		void setBreakForce(float force) override { mDesc.breakForce = force; }
+		void SetBreakForce(float force) override { mDesc.breakForce = force; }
 
 		/** @copydoc FJoint::getBreakTorque */
-		float getBreakTorque() const override { return mDesc.breakTorque; }
+		float GetBreakTorque() const override { return mDesc.breakTorque; }
 
 		/** @copydoc FJoint::setBreakTorque */
-		void setBreakTorque(float torque) override { mDesc.breakTorque = torque; }
+		void SetBreakTorque(float torque) override { mDesc.breakTorque = torque; }
 
 		/** @copydoc FJoint::getEnableCollision */
-		bool getEnableCollision() const override { return mDesc.enableCollision; }
+		bool GetEnableCollision() const override { return mDesc.enableCollision; }
 
 		/** @copydoc FJoint::setEnableCollision */
-		void setEnableCollision(bool value) override { mDesc.enableCollision = value; }
+		void SetEnableCollision(bool value) override { mDesc.enableCollision = value; }
 
 	private:
 		JOINT_DESC mDesc;
@@ -71,61 +71,61 @@ namespace bs
 		~NullPhysicsD6Joint();
 
 		/** @copydoc D6Joint::getMotion */
-		D6JointMotion getMotion(D6JointAxis axis) const override { return mDesc.motion[(int)axis]; }
+		D6JointMotion GetMotion(D6JointAxis axis) const override { return mDesc.motion[(int)axis]; }
 
 		/** @copydoc D6Joint::setMotion */
-		void setMotion(D6JointAxis axis, D6JointMotion motion) override { mDesc.motion[(int)axis] = motion; }
+		void SetMotion(D6JointAxis axis, D6JointMotion motion) override { mDesc.motion[(int)axis] = motion; }
 
 		/** @copydoc D6Joint::getTwist */
-		Radian getTwist() const override { return Radian(0.0f); }
+		Radian GetTwist() const override { return Radian(0.0f); }
 
 		/** @copydoc D6Joint::getSwingY */
-		Radian getSwingY() const override { return Radian(0.0f); }
+		Radian GetSwingY() const override { return Radian(0.0f); }
 
 		/** @copydoc D6Joint::getSwingZ */
-		Radian getSwingZ() const override { return Radian(0.0f); }
+		Radian GetSwingZ() const override { return Radian(0.0f); }
 
 		/** @copydoc D6Joint::getLimitLinear */
-		LimitLinear getLimitLinear() const override { return mDesc.limitLinear; }
+		LimitLinear GetLimitLinear() const override { return mDesc.limitLinear; }
 
 		/** @copydoc D6Joint::setLimitLinear */
-		void setLimitLinear(const LimitLinear& limit) override { mDesc.limitLinear = limit; }
+		void SetLimitLinear(const LimitLinear& limit) override { mDesc.limitLinear = limit; }
 
 		/** @copydoc D6Joint::getLimitTwist */
-		LimitAngularRange getLimitTwist() const override { return mDesc.limitTwist; }
+		LimitAngularRange GetLimitTwist() const override { return mDesc.limitTwist; }
 
 		/** @copydoc D6Joint::setLimitTwist */
-		void setLimitTwist(const LimitAngularRange& limit) override { mDesc.limitTwist = limit; }
+		void SetLimitTwist(const LimitAngularRange& limit) override { mDesc.limitTwist = limit; }
 
 		/** @copydoc D6Joint::getLimitSwing */
-		LimitConeRange getLimitSwing() const override { return mDesc.limitSwing; }
+		LimitConeRange GetLimitSwing() const override { return mDesc.limitSwing; }
 
 		/** @copydoc D6Joint::setLimitSwing */
-		void setLimitSwing(const LimitConeRange& limit) override { mDesc.limitSwing = limit; }
+		void SetLimitSwing(const LimitConeRange& limit) override { mDesc.limitSwing = limit; }
 
 		/** @copydoc D6Joint::getDrive */
-		D6JointDrive getDrive(D6JointDriveType type) const override { return mDesc.drive[(int)type]; }
+		D6JointDrive GetDrive(D6JointDriveType type) const override { return mDesc.drive[(int)type]; }
 
 		/** @copydoc D6Joint::setDrive */
-		void setDrive(D6JointDriveType type, const D6JointDrive& drive) override { mDesc.drive[(int)type] = drive; }
+		void SetDrive(D6JointDriveType type, const D6JointDrive& drive) override { mDesc.drive[(int)type] = drive; }
 
 		/** @copydoc D6Joint::getDrivePosition */
-		Vector3 getDrivePosition() const override { return mDesc.drivePosition; }
+		Vector3 GetDrivePosition() const override { return mDesc.drivePosition; }
 
 		/** @copydoc D6Joint::getDriveRotation */
-		Quaternion getDriveRotation() const override { return mDesc.driveRotation; }
+		Quaternion GetDriveRotation() const override { return mDesc.driveRotation; }
 
 		/** @copydoc D6Joint::setDriveTransform */
-		void setDriveTransform(const Vector3& position, const Quaternion& rotation) override;
+		void SetDriveTransform(const Vector3& position, const Quaternion& rotation) override;
 
 		/** @copydoc D6Joint::getDriveLinearVelocity */
-		Vector3 getDriveLinearVelocity() const override { return mDesc.driveLinearVelocity; }
+		Vector3 GetDriveLinearVelocity() const override { return mDesc.driveLinearVelocity; }
 
 		/** @copydoc D6Joint::getDriveAngularVelocity */
-		Vector3 getDriveAngularVelocity() const override { return mDesc.driveAngularVelocity; }
+		Vector3 GetDriveAngularVelocity() const override { return mDesc.driveAngularVelocity; }
 
 		/** @copydoc D6Joint::setDriveVelocity */
-		void setDriveVelocity(const Vector3& linear, const Vector3& angular) override;
+		void SetDriveVelocity(const Vector3& linear, const Vector3& angular) override;
 
 	private:
 		D6_JOINT_DESC mDesc;
@@ -139,37 +139,37 @@ namespace bs
 		~NullPhysicsDistanceJoint();
 
 		/** @copydoc DistanceJoint::getDistance */
-		float getDistance() const override { return 0.0f; }
+		float GetDistance() const override { return 0.0f; }
 
 		/** @copydoc DistanceJoint::getMinDistance */
-		float getMinDistance() const override { return mDesc.minDistance; }
+		float GetMinDistance() const override { return mDesc.minDistance; }
 
 		/** @copydoc DistanceJoint::setMinDistance */
-		void setMinDistance(float value) override { mDesc.minDistance = value; }
+		void SetMinDistance(float value) override { mDesc.minDistance = value; }
 
 		/** @copydoc DistanceJoint::getMaxDistance */
-		float getMaxDistance() const override { return mDesc.maxDistance; }
+		float GetMaxDistance() const override { return mDesc.maxDistance; }
 
 		/** @copydoc DistanceJoint::setMaxDistance */
-		void setMaxDistance(float value) override { mDesc.maxDistance = value; }
+		void SetMaxDistance(float value) override { mDesc.maxDistance = value; }
 
 		/** @copydoc DistanceJoint::getTolerance */
-		float getTolerance() const override { return mDesc.tolerance; }
+		float GetTolerance() const override { return mDesc.tolerance; }
 
 		/** @copydoc DistanceJoint::setTolerance */
-		void setTolerance(float value) override { mDesc.tolerance = value; }
+		void SetTolerance(float value) override { mDesc.tolerance = value; }
 
 		/** @copydoc DistanceJoint::getSpring */
-		Spring getSpring() const override { return mDesc.spring; }
+		Spring GetSpring() const override { return mDesc.spring; }
 
 		/** @copydoc DistanceJoint::setSpring */
-		void setSpring(const Spring& value) override { mDesc.spring = value; }
+		void SetSpring(const Spring& value) override { mDesc.spring = value; }
 
 		/** @copydoc DistanceJoint::setFlag */
-		void setFlag(DistanceJointFlag flag, bool enabled) override;
+		void SetFlag(DistanceJointFlag flag, bool enabled) override;
 
 		/** @copydoc DistanceJoint::hasFlag */
-		bool hasFlag(DistanceJointFlag flag) const override;
+		bool HasFlag(DistanceJointFlag flag) const override;
 
 	private:
 		DISTANCE_JOINT_DESC mDesc;
@@ -191,28 +191,28 @@ namespace bs
 		~NullPhysicsHingeJoint();
 
 		/** @copydoc HingeJoint::getAngle */
-		Radian getAngle() const override { return Radian(0.0f); }
+		Radian GetAngle() const override { return Radian(0.0f); }
 
 		/** @copydoc HingeJoint::getSpeed */
-		float getSpeed() const override { return 0.0f; }
+		float GetSpeed() const override { return 0.0f; }
 
 		/** @copydoc HingeJoint::getLimit */
-		LimitAngularRange getLimit() const override { return mDesc.limit; }
+		LimitAngularRange GetLimit() const override { return mDesc.limit; }
 
 		/** @copydoc HingeJoint::setLimit */
-		void setLimit(const LimitAngularRange& limit) override { mDesc.limit = limit; }
+		void SetLimit(const LimitAngularRange& limit) override { mDesc.limit = limit; }
 
 		/** @copydoc HingeJoint::getDrive */
-		HingeJointDrive getDrive() const override { return mDesc.drive; }
+		HingeJointDrive GetDrive() const override { return mDesc.drive; }
 
 		/** @copydoc HingeJoint::setDrive */
-		void setDrive(const HingeJointDrive& drive) override { mDesc.drive = drive; }
+		void SetDrive(const HingeJointDrive& drive) override { mDesc.drive = drive; }
 
 		/** @copydoc HingeJoint::setFlag */
-		void setFlag(HingeJointFlag flag, bool enabled) override;
+		void SetFlag(HingeJointFlag flag, bool enabled) override;
 
 		/** @copydoc HingeJoint::hasFlag */
-		bool hasFlag(HingeJointFlag flag) const override;
+		bool HasFlag(HingeJointFlag flag) const override;
 
 	private:
 		HINGE_JOINT_DESC mDesc;
@@ -226,22 +226,22 @@ namespace bs
 		~NullPhysicsSliderJoint();
 
 		/** @copydoc SliderJoint::getPosition */
-		float getPosition() const override { return 0.0f; }
+		float GetPosition() const override { return 0.0f; }
 
 		/** @copydoc SliderJoint::getSpeed */
-		float getSpeed() const override { return 0.0f; }
+		float GetSpeed() const override { return 0.0f; }
 
 		/** @copydoc SliderJoint::getLimit */
-		LimitLinearRange getLimit() const override { return mDesc.limit; }
+		LimitLinearRange GetLimit() const override { return mDesc.limit; }
 
 		/** @copydoc SliderJoint::setLimit */
-		void setLimit(const LimitLinearRange& limit) override { mDesc.limit = limit; }
+		void SetLimit(const LimitLinearRange& limit) override { mDesc.limit = limit; }
 
 		/** @copydoc SliderJoint::setFlag */
-		void setFlag(SliderJointFlag flag, bool enabled) override;
+		void SetFlag(SliderJointFlag flag, bool enabled) override;
 
 		/** @copydoc SliderJoint::hasFlag */
-		bool hasFlag(SliderJointFlag flag) const override;
+		bool HasFlag(SliderJointFlag flag) const override;
 
 	private:
 		SLIDER_JOINT_DESC mDesc;
@@ -255,16 +255,16 @@ namespace bs
 		~NullPhysicsSphericalJoint();
 
 		/** @copydoc SphericalJoint::getLimit */
-		LimitConeRange getLimit() const override { return mDesc.limit; }
+		LimitConeRange GetLimit() const override { return mDesc.limit; }
 
 		/** @copydoc SphericalJoint::setLimit */
-		void setLimit(const LimitConeRange& limit) override { mDesc.limit = limit; }
+		void SetLimit(const LimitConeRange& limit) override { mDesc.limit = limit; }
 
 		/** @copydoc SphericalJoint::setFlag */
-		void setFlag(SphericalJointFlag flag, bool enabled) override;
+		void SetFlag(SphericalJointFlag flag, bool enabled) override;
 
 		/** @copydoc SphericalJoint::hasFlag */
-		bool hasFlag(SphericalJointFlag flag) const override;
+		bool HasFlag(SphericalJointFlag flag) const override;
 
 	private:
 		SPHERICAL_JOINT_DESC mDesc;

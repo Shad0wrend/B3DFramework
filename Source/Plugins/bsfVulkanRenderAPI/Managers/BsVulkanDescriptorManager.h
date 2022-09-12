@@ -30,7 +30,7 @@ namespace bs { namespace ct
 		bool operator==(const VulkanPipelineLayoutKey& rhs) const;
 
 		/** Calculates a has value for the provided descriptor layouts. */
-		size_t calculateHash() const;
+		size_t CalculateHash() const;
 
 		UINT32 numLayouts;
 		VulkanDescriptorLayout** layouts;
@@ -48,7 +48,7 @@ namespace std
 	template<>
 	struct hash<bs::ct::VulkanLayoutKey>
 	{
-		size_t operator()(const bs::ct::VulkanLayoutKey& value) const
+		size_t Operator()(const bs::ct::VulkanLayoutKey& value) const
 		{
 			if (value.layout != nullptr)
 				return value.layout->getHash();
@@ -61,7 +61,7 @@ namespace std
 	template<>
 	struct hash<bs::ct::VulkanPipelineLayoutKey>
 	{
-		size_t operator()(const bs::ct::VulkanPipelineLayoutKey& value) const
+		size_t Operator()(const bs::ct::VulkanPipelineLayoutKey& value) const
 		{
 			return value.calculateHash();
 		}
@@ -91,7 +91,7 @@ namespace bs { namespace ct
 		VulkanDescriptorSet* createSet(VulkanDescriptorLayout* layout);
 
 		/** Attempts to find an existing one, or allocates a new pipeline layout based on the provided descriptor layouts. */
-		VkPipelineLayout getPipelineLayout(VulkanDescriptorLayout** layouts, UINT32 numLayouts);
+		VkPipelineLayout GetPipelineLayout(VulkanDescriptorLayout** layouts, UINT32 numLayouts);
 
 	protected:
 		VulkanDevice& mDevice;

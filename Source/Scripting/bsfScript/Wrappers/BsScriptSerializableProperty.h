@@ -29,7 +29,7 @@ namespace bs
 		static MonoObject* create(const SPtr<ManagedSerializableTypeInfo>& typeInfo);
 
 		/**	Returns the data about the type the property is referencing. */
-		SPtr<ManagedSerializableTypeInfo> getTypeInfo() const { return mTypeInfo; }
+		SPtr<ManagedSerializableTypeInfo> GetTypeInfo() const { return mTypeInfo; }
 
 		~ScriptSerializableProperty() = default;
 

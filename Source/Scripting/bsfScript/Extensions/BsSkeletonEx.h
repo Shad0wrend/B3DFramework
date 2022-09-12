@@ -36,7 +36,7 @@ namespace bs
 		 * @return				Information about the bone at the specified index.
 		 */
 		BS_SCRIPT_EXPORT(e:Skeleton,n:GetBoneInfo)
-		static SkeletonBoneInfoEx getBoneInfo(const SPtr<Skeleton>& thisPtr, int boneIdx);
+		static SkeletonBoneInfoEx GetBoneInfo(const SPtr<Skeleton>& thisPtr, int boneIdx);
 	};
 
 	/** @endcond */

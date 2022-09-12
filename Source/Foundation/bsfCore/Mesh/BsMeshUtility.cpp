@@ -54,7 +54,7 @@ namespace bs
 		VertexFaces* vertexFaces;
 
 	private:
-		void resizeFaceArray(UINT32 numFaces)
+		void ResizeFaceArray(UINT32 numFaces)
 		{
 			UINT32* newFaces = (UINT32*)bs_alloc(numFaces * mNumVertices * sizeof(UINT32));
 
@@ -129,37 +129,37 @@ namespace bs
 		 * Register all edges and faces, using the mesh vertices as a basis. Assumes vertices are not indexed and that
 		 * every three vertices form a face
 		 */
-		void addEdgesAndFaces();
+		void AddEdgesAndFaces();
 
 		/** Clips the current mesh with the provided plane. */
-		INT32 clipByPlane(const Plane& plane);
+		INT32 ClipByPlane(const Plane& plane);
 
 		/** Clips vertices of the current mesh by the provided plane. */
-		INT32 processVertices(const Plane& plane);
+		INT32 ProcessVertices(const Plane& plane);
 
 		/** Clips edges of the current mesh. processVertices() must be called beforehand. */
-		void processEdges();
+		void ProcessEdges();
 
 		/** Clips the faces (polygons) of the current mesh. processEdges() must be called beforehand. */
-		void processFaces();
+		void ProcessFaces();
 
 		/**
 		 * Returns a set of non-culled vertex indices for every visible face in the mesh. This should be called after
 		 * clipping operation is complete to retrieve valid vertices.		
 		 */
-		void getOrderedFaces(FrameVector<FrameVector<UINT32>>& sortedFaces);
+		void GetOrderedFaces(FrameVector<FrameVector<UINT32>>& sortedFaces);
 
 		/** Returns a set of ordered and non-culled vertices for the provided face of the mesh */
-		void getOrderedVertices(const ClipFace& face, UINT32* vertices);
+		void GetOrderedVertices(const ClipFace& face, UINT32* vertices);
 
 		/** Calculates the normal for vertices related to the provided vertex indices. */
-		Vector3 getNormal(UINT32* sortedVertices, UINT32 numVertices);
+		Vector3 GetNormal(UINT32* sortedVertices, UINT32 numVertices);
 
 		/**
 		 * Checks is the polygon shape of the provided face open or closed. If open, returns true and outputs endpoints of
 		 * the polyline.
 		 */
-		bool getOpenPolyline(ClipFace& face, UINT32& start, UINT32& end);
+		bool GetOpenPolyline(ClipFace& face, UINT32& start, UINT32& end);
 
 		ClipMesh mesh;
 	};
@@ -517,7 +517,7 @@ namespace bs
 
 	Vector3 TriangleClipperBase::getNormal(UINT32* sortedVertices, UINT32 numVertices)
 	{
-		Vector3 normal(BsZero);
+		Vector3 Normal(BsZero);
 		for (UINT32 i = 0; i <= numVertices - 2; i++)
 			normal += Vector3::cross(mesh.verts[sortedVertices[i]].point, mesh.verts[sortedVertices[i + 1]].point);
 
@@ -535,7 +535,7 @@ namespace bs
 
 	private:
 		/** Converts clipped vertices back into triangles and outputs them via the provided callback. */
-		void convertToMesh(const std::function<void(Vector2*, Vector2*, UINT32)>& writeCallback);
+		void ConvertToMesh(const std::function<void(Vector2*, Vector2*, UINT32)>& writeCallback);
 
 		static const int BUFFER_SIZE = 64 * 3; // Must be a multiple of three
 		Vector2 vertexBuffer[BUFFER_SIZE];
@@ -637,7 +637,7 @@ namespace bs
 
 	private:
 		/** Converts clipped vertices back into triangles and outputs them via the provided callback. */
-		void convertToMesh(const std::function<void(Vector3*, Vector2*, UINT32)>& writeCallback);
+		void ConvertToMesh(const std::function<void(Vector3*, Vector2*, UINT32)>& writeCallback);
 
 		static const int BUFFER_SIZE = 64 * 3; // Must be a multiple of three
 		Vector3 vertexBuffer[BUFFER_SIZE];
@@ -745,7 +745,7 @@ namespace bs
 			// by triangle size
 		}
 
-		VertexConnectivity connectivity(indices, numVertices, numFaces, indexSize);
+		VertexConnectivity Connectivity(indices, numVertices, numFaces, indexSize);
 		for (UINT32 i = 0; i < numVertices; i++)
 		{
 			VertexFaces& faces = connectivity.vertexFaces[i];
@@ -812,7 +812,7 @@ namespace bs
 			// Note: Potentially don't normalize here in order to weight the normals by triangle size
 		}
 
-		VertexConnectivity connectivity(indices, numVertices, numFaces, indexSize);
+		VertexConnectivity Connectivity(indices, numVertices, numFaces, indexSize);
 		for (UINT32 i = 0; i < numVertices; i++)
 		{
 			VertexFaces& faces = connectivity.vertexFaces[i];

@@ -20,16 +20,16 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "SceneObject")
 
 		/** @copydoc ScriptGameObjectBase::getNativeHandle */
-		HGameObject getNativeHandle() const override { return static_object_cast<GameObject>(mSceneObject); }
+		HGameObject GetNativeHandle() const override { return static_object_cast<GameObject>(mSceneObject); }
 
 		/** @copydoc ScriptGameObjectBase::setNativeHandle */
-		void setNativeHandle(const HGameObject& gameObject) override;
+		void SetNativeHandle(const HGameObject& gameObject) override;
 
 		/**	Returns the native internal scene object. */
-		HSceneObject getHandle() const { return mSceneObject; }
+		HSceneObject GetHandle() const { return mSceneObject; }
 
 		/**	Checks is the scene object wrapped by the provided interop object destroyed. */
-		static bool checkIfDestroyed(ScriptSceneObject* nativeInstance);
+		static bool CheckIfDestroyed(ScriptSceneObject* nativeInstance);
 
 	private:
 		friend class ScriptGameObjectManager;

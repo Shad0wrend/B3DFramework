@@ -46,38 +46,38 @@ namespace bs
 		virtual ~ReflectionProbeBase() = default;
 
 		/**	Returns the type of the probe. */
-		ReflectionProbeType getType() const { return mType; }
+		ReflectionProbeType GetType() const { return mType; }
 
 		/**	Changes the type of the probe. */
-		void setType(ReflectionProbeType type) { mType = type; _markCoreDirty(); updateBounds(); }
+		void SetType(ReflectionProbeType type) { mType = type; _markCoreDirty(); updateBounds(); }
 
 		/** Returns the radius of a sphere reflection probe. Determines range of influence. */
-		float getRadius() const;
+		float GetRadius() const;
 
 		/** Sets the radius of a sphere reflection probe. */
-		void setRadius(float radius) { mRadius = radius; _markCoreDirty(); updateBounds(); }
+		void SetRadius(float radius) { mRadius = radius; _markCoreDirty(); updateBounds(); }
 
 		/** Returns the extents of a box reflection probe. */
-		Vector3 getExtents() const { return mExtents * mTransform.getScale(); }
+		Vector3 GetExtents() const { return mExtents * mTransform.getScale(); }
 
 		/** Sets the extents of a box reflection probe. Determines range of influence. */
-		void setExtents(const Vector3& extents) { mExtents = extents; _markCoreDirty(); updateBounds(); }
+		void SetExtents(const Vector3& extents) { mExtents = extents; _markCoreDirty(); updateBounds(); }
 
 		/**	Returns world space bounds that completely encompass the probe's area of influence. */
-		Sphere getBounds() const { return mBounds; }
+		Sphere GetBounds() const { return mBounds; }
 		
 		/**
 		 * Sets a distance that will be used for fading out the box reflection probe with distance. By default it
 		 * is equal to one, and can never be less than one. Only relevant for box probes.
 		 */
-		void setTransitionDistance(float distance) { mTransitionDistance = std::max(1.0f, distance); }
+		void SetTransitionDistance(float distance) { mTransitionDistance = std::max(1.0f, distance); }
 
 		/** Retrieves transition distance set by setTransitionDistance(). */
-		float getTransitionDistance() const { return mTransitionDistance; }
+		float GetTransitionDistance() const { return mTransitionDistance; }
 
 	protected:
 		/** Updates the internal bounds for the probe. Call this whenever a property affecting the bounds changes. */
-		void updateBounds();
+		void UpdateBounds();
 
 		ReflectionProbeType mType = ReflectionProbeType::Box; /**< Type of probe that determines how are the rest of the parameters interpreted. */
 		float mRadius = 1.0f; /**< Radius used for sphere reflection probes. */
@@ -103,11 +103,11 @@ namespace bs
 		/**
 		 * Returns a pre-filtered texture that is generated either from the provided custom texture, or from scene capture.
 		 */
-		SPtr<TextureType> getFilteredTexture() const { return mFilteredTexture; }
+		SPtr<TextureType> GetFilteredTexture() const { return mFilteredTexture; }
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P p);
+		void RttiEnumFields(P p);
 
 	protected:
 		SPtr<TextureType> mFilteredTexture;
@@ -137,25 +137,25 @@ namespace bs
 		 * Allows you assign a custom texture to use as a reflection map. This will disable automatic generation of
 		 * reflections. To re-enable auto-generation call this with a null parameter.
 		 */
-		void setCustomTexture(const HTexture& texture) { mCustomTexture = texture; filter(); }
+		void SetCustomTexture(const HTexture& texture) { mCustomTexture = texture; filter(); }
 
 		/** Gets the custom texture assigned through setCustomTexture(). */
-		HTexture getCustomTexture() const { return mCustomTexture; }
+		HTexture GetCustomTexture() const { return mCustomTexture; }
 
 		/**
 		 * Captures the scene at the current location and generates a filtered reflection cubemap. No action is taken
 		 * if a custom texture is set.
 		 */
-		void capture();
+		void Capture();
 
 		/**
 		 * Filters the custom texture, making it usable for rendering. Called automatically when custom texture changes. If
 		 * no custom texture is set, no action is taken.
 		 */
-		void filter();
+		void Filter();
 
 		/**	Retrieves an implementation of the reflection probe usable only from the core thread. */
-		SPtr<ct::ReflectionProbe> getCore() const;
+		SPtr<ct::ReflectionProbe> GetCore() const;
 
 		/**
 		 * Creates a new sphere reflection probe.
@@ -163,7 +163,7 @@ namespace bs
 		 * @param[in]	radius	Radius in which the reflection probe will be rendered within.
 		 * @returns				New reflection probe.
 		 */
-		static SPtr<ReflectionProbe> createSphere(float radius);
+		static SPtr<ReflectionProbe> CreateSphere(float radius);
 
 		/**
 		 * Creates a new box reflection probe.
@@ -171,28 +171,28 @@ namespace bs
 		 * @param[in]	extents	Extents of the box in which the reflection probe will be rendered within.
 		 * @returns				New reflection probe.
 		 */
-		static SPtr<ReflectionProbe> createBox(const Vector3& extents);
+		static SPtr<ReflectionProbe> CreateBox(const Vector3& extents);
 
 	protected:
 		ReflectionProbe(ReflectionProbeType type, float radius, const Vector3& extents);
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> createCore() const override;
+		SPtr<ct::CoreObject> CreateCore() const override;
 
 		/** @copydoc ReflectionProbeBase::_markCoreDirty */
 		void _markCoreDirty(ActorDirtyFlag flags = ActorDirtyFlag::Everything) override;
 
 		/** @copydoc CoreObject::syncToCore */
-		CoreSyncData syncToCore(FrameAlloc* allocator) override;
+		CoreSyncData SyncToCore(FrameAlloc* allocator) override;
 
 		/**
 		 * Captures the scene color at current probe location and generates a filtered map. If a custom texture is set then
 		 * it will be filtered, instead of capturing scene color.
 		 */
-		void captureAndFilter();
+		void CaptureAndFilter();
 
 		/**	Creates a probe with without initializing it. Used for serialization. */
-		static SPtr<ReflectionProbe> createEmpty();
+		static SPtr<ReflectionProbe> CreateEmpty();
 
 		HTexture mCustomTexture;
 		SPtr<ct::RendererTask> mRendererTask;
@@ -218,10 +218,10 @@ namespace bs
 		~ReflectionProbe();
 
 		/**	Sets an ID that can be used for uniquely identifying this object by the renderer. */
-		void setRendererId(UINT32 id) { mRendererId = id; }
+		void SetRendererId(UINT32 id) { mRendererId = id; }
 
 		/**	Retrieves an ID that can be used for uniquely identifying this object by the renderer. */
-		UINT32 getRendererId() const { return mRendererId; }
+		UINT32 GetRendererId() const { return mRendererId; }
 
 	protected:
 		friend class bs::ReflectionProbe;
@@ -230,10 +230,10 @@ namespace bs
 			const SPtr<Texture>& filteredTexture);
 
 		/** @copydoc CoreObject::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 		/** @copydoc CoreObject::syncToCore */
-		void syncToCore(const CoreSyncData& data) override;
+		void SyncToCore(const CoreSyncData& data) override;
 
 		UINT32 mRendererId;
 	};

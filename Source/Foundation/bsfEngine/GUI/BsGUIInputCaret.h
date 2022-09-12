@@ -30,7 +30,7 @@ namespace bs
 		ImageSprite* getSprite() const { return mCaretSprite; }
 
 		/** Returns offset relative to parent widget that determines placement of the caret sprite. */
-		Vector2I getSpriteOffset() const;
+		Vector2I GetSpriteOffset() const;
 
 		/**
 		 * Returns clip rectangle relative to parent GUI element that determines how is caret sprite clipped.
@@ -38,31 +38,31 @@ namespace bs
 		 * @param[in]	parentClipRect	Clip rectangle of the parent GUI element. Caret clip rectangle will additionally be
 		 *								clipped by this area. Relative to parent element.
 		 */
-		Rect2I getSpriteClipRect(const Rect2I& parentClipRect) const;
+		Rect2I GetSpriteClipRect(const Rect2I& parentClipRect) const;
 
 		/**	Rebuilts internal caret sprite using current properties. */
-		void updateSprite();
+		void UpdateSprite();
 
 		/**	Moves caret to the start of text. */
-		void moveCaretToStart();
+		void MoveCaretToStart();
 
 		/**	Moves caret to the end of text. */
-		void moveCaretToEnd();
+		void MoveCaretToEnd();
 
 		/**	Moves caret one character to the left, if not at start already. */
-		void moveCaretLeft();
+		void MoveCaretLeft();
 
 		/**	Moves caret one character to the right, if not at end already. */
-		void moveCaretRight();
+		void MoveCaretRight();
 
 		/**	Moves caret one line up if possible. */
-		void moveCaretUp();
+		void MoveCaretUp();
 
 		/**	Moves caret one line down if possible. */
-		void moveCaretDown();
+		void MoveCaretDown();
 
 		/** Moves caret to the character nearest to the specified position. Position is relative to parent widget. */
-		void moveCaretToPos(const Vector2I& pos);
+		void MoveCaretToPos(const Vector2I& pos);
 
 		/**
 		 * Moves the caret to a specific character index.
@@ -70,28 +70,28 @@ namespace bs
 		 * @param[in]	charIdx		Index of the character to move the caret to.
 		 * @param[in]	caretPos	Whether to place the caret before or after the character.
 		 */
-		void moveCaretToChar(UINT32 charIdx, CaretPos caretPos);
+		void MoveCaretToChar(UINT32 charIdx, CaretPos caretPos);
 
 		/**	Returns character index after the current caret position. */
-		UINT32 getCharIdxAtCaretPos() const;
+		UINT32 GetCharIdxAtCaretPos() const;
 
 		/**
 		 * Returns current caret position, relative to parent widget. Requires you to provide offset to text the caret is
 		 * used for (also relative to parent widget).
 		 */
-		Vector2I getCaretPosition(const Vector2I& offset) const;
+		Vector2I GetCaretPosition(const Vector2I& offset) const;
 
 		/**	Returns height of the caret, in pixels. */
-		UINT32 getCaretHeight() const;
+		UINT32 GetCaretHeight() const;
 
 		/**	Returns true if the character after the caret is newline. */
-		bool isCaretAtNewline() const;
+		bool IsCaretAtNewline() const;
 
 		/**	Returns maximum valid caret index. */
-		UINT32 getMaxCaretPos() const;
+		UINT32 GetMaxCaretPos() const;
 
 		/**	Returns current caret index (not equal to character index). */
-		UINT32 getCaretPos() const { return mCaretPos; }
+		UINT32 GetCaretPos() const { return mCaretPos; }
 	private:
 		UINT32 mCaretPos = 0;
 		ImageSprite* mCaretSprite;

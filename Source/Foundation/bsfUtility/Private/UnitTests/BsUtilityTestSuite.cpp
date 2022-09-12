@@ -31,13 +31,13 @@ namespace bs
 		enum { MaxElementsPerNode = 16 };
 		enum { MaxDepth = 12};
 
-		static simd::AABox getBounds(UINT32 elem, void* context)
+		static simd::AABox GetBounds(UINT32 elem, void* context)
 		{
 			DebugOctreeData* octreeData = (DebugOctreeData*)context;
 			return simd::AABox(octreeData->elements[elem].box);
 		}
 
-		static void setElementId(UINT32 elem, const OctreeElementId& id, void* context)
+		static void SetElementId(UINT32 elem, const OctreeElementId& id, void* context)
 		{
 			DebugOctreeData* octreeData = (DebugOctreeData*)context;
 			octreeData->elements[elem].octreeId = id;
@@ -64,13 +64,13 @@ namespace bs
 		enum { MaxElementsPerNode = 8 };
 		enum { MaxDepth = 6 };
 
-		static simd::Rect2 getBounds(UINT32 elem, void* context)
+		static simd::Rect2 GetBounds(UINT32 elem, void* context)
 		{
 			DebugQuadtreeData* quadtreeData = (DebugQuadtreeData*)context;
 			return simd::Rect2(quadtreeData->elements[elem].box);
 		}
 
-		static void setElementId(UINT32 elem, const QuadtreeElementId& id, void* context)
+		static void SetElementId(UINT32 elem, const QuadtreeElementId& id, void* context)
 		{
 			DebugQuadtreeData* quadtreeData = (DebugQuadtreeData*)context;
 			quadtreeData->elements[elem].quadtreeId = id;
@@ -106,7 +106,7 @@ namespace bs
 		static constexpr UINT32 COUNT = 100;
 		static constexpr UINT32 EXTRA_COUNT = 32;
 
-		Bitfield bitfield(true, COUNT);
+		Bitfield Bitfield(true, COUNT);
 
 		// Basic iteration
 		UINT32 i = 0;
@@ -179,7 +179,7 @@ namespace bs
 	void UtilityTestSuite::testOctree()
 	{
 		DebugOctreeData octreeData;
-		DebugOctree octree(Vector3::ZERO, 800.0f, &octreeData);
+		DebugOctree Octree(Vector3::ZERO, 800.0f, &octreeData);
 
 		struct SizeAndCount
 		{
@@ -237,7 +237,7 @@ namespace bs
 		}
 
 		AABox queryBounds = manualElems[0].box;
-		DebugOctree::BoxIntersectIterator interIter(octree, queryBounds);
+		DebugOctree::BoxIntersectIterator InterIter(octree, queryBounds);
 
 		Vector<UINT32> overlapElements;
 		while(interIter.moveNext())
@@ -276,7 +276,7 @@ namespace bs
 		};
 
 		// Make sure initial construction works
-		SmallVector<SomeElem, 4> v(4);
+		SmallVector<SomeElem, 4> V(4);
 		BS_TEST_ASSERT(v.size() == 4);
 		BS_TEST_ASSERT(v.capacity() == 4);
 		BS_TEST_ASSERT(v[0].a == 10);
@@ -362,7 +362,7 @@ namespace bs
 		};
 
 		// Make sure initial construction works
-		DynArray<SomeElem> v(4);
+		DynArray<SomeElem> V(4);
 		BS_TEST_ASSERT(v.size() == 4);
 		BS_TEST_ASSERT(v.capacity() == 4);
 		BS_TEST_ASSERT(v[0].a == 10);
@@ -469,11 +469,11 @@ namespace bs
 	
 	void UtilityTestSuite::testComplex()
 	{
-		Complex<float> c(10.0, 4.0);
+		Complex<float> C(10.0, 4.0);
 		BS_TEST_ASSERT(c.real() == 10.0);
 		BS_TEST_ASSERT(c.imag() == 4.0);
 
-		Complex<float> c2(15.0, 5.0);
+		Complex<float> C2(15.0, 5.0);
 		BS_TEST_ASSERT(c2.real() == 15.0);
 		BS_TEST_ASSERT(c2.imag() == 5.0);
 
@@ -592,7 +592,7 @@ namespace bs
 	void UtilityTestSuite::testQuadtree()
 	{
 		DebugQuadtreeData quadtreeData;
-		DebugQuadtree quadtree(Vector2(0, 0), 800.0f, &quadtreeData);
+		DebugQuadtree Quadtree(Vector2(0, 0), 800.0f, &quadtreeData);
 
 		struct SizeAndCount
 		{
@@ -648,7 +648,7 @@ namespace bs
 		}
 
 		Rect2 queryBounds = manualElems[0].box;
-		DebugQuadtree::BoxIntersectIterator interIter(quadtree, queryBounds);
+		DebugQuadtree::BoxIntersectIterator InterIter(quadtree, queryBounds);
 
 		Vector<UINT32> overlapElements;
 		while (interIter.moveNext())

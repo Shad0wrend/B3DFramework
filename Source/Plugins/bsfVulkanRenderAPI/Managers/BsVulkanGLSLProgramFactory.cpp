@@ -14,7 +14,7 @@
 namespace bs { namespace ct
 {
 	template<class T, class CB>
-	void iterateSorted(const Map<String, T>& entries, CB callback)
+	void IterateSorted(const Map<String, T>& entries, CB callback)
 	{
 		auto count = (UINT32)entries.size();
 		auto sortedEntries = bs_managed_stack_alloc<const T*>(count);
@@ -26,7 +26,7 @@ namespace bs { namespace ct
 		std::sort(sortedEntries + 0, sortedEntries + count,
 		  [](const T* a, const T* b)
 		  {
-			  if(a->set == b->set)
+			  If(a->set == b->set)
 				  return a->slot < b->slot;
 
 			  return a->set < b->set;
@@ -87,7 +87,7 @@ namespace bs { namespace ct
 		assert((spirv->instructions.size % sizeof(UINT32)) == 0);
 
 		// Compile to MSL
-		spirv_cross::CompilerMSL compiler((UINT32*)spirv->instructions.data, spirv->instructions.size / sizeof(UINT32));
+		spirv_cross::CompilerMSL Compiler((UINT32*)spirv->instructions.data, spirv->instructions.size / sizeof(UINT32));
 
 		// Remap resource bindings
 		if(msl->paramDesc)

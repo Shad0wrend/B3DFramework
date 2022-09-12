@@ -28,7 +28,7 @@ namespace bs { namespace ct
 		 * Sets the parameter in the provided parameter block buffer. Caller is responsible for ensuring the param block
 		 * buffer contains this parameter.
 		 */
-		void set(const SPtr<GpuParamBlockBuffer>& paramBlock, const T& value, UINT32 arrayIdx = 0) const
+		void Set(const SPtr<GpuParamBlockBuffer>& paramBlock, const T& value, UINT32 arrayIdx = 0) const
 		{
 #if BS_DEBUG_MODE
 			if (arrayIdx >= mParamDesc.arraySize)
@@ -65,7 +65,7 @@ namespace bs { namespace ct
 		 * Gets the parameter in the provided parameter block buffer. Caller is responsible for ensuring the param block
 		 * buffer contains this parameter.
 		 */
-		T get(const SPtr<GpuParamBlockBuffer>& paramBlock, UINT32 arrayIdx = 0) const
+		T Get(const SPtr<GpuParamBlockBuffer>& paramBlock, UINT32 arrayIdx = 0) const
 		{
 #if BS_DEBUG_MODE
 			if (arrayIdx >= mParamDesc.arraySize)
@@ -94,7 +94,7 @@ namespace bs { namespace ct
 	struct BS_CORE_EXPORT ParamBlock
 	{
 		virtual ~ParamBlock();
-		virtual void initialize() = 0;
+		virtual void Initialize() = 0;
 	};
 
 	/**
@@ -107,10 +107,10 @@ namespace bs { namespace ct
 		ParamBlockManager();
 
 		/** Registers a new param block, and initializes it when ready. */
-		static void registerBlock(ParamBlock* paramBlock);
+		static void RegisterBlock(ParamBlock* paramBlock);
 
 		/** Removes the param block from the initialization list. */
-		static void unregisterBlock(ParamBlock* paramBlock);
+		static void UnregisterBlock(ParamBlock* paramBlock);
 
 	private:
 		static Vector<ParamBlock*> sToInitialize;
@@ -129,12 +129,12 @@ namespace bs { namespace ct
 			ParamBlockManager::registerBlock(this);																			\
 		}																													\
 																															\
-		SPtr<GpuParamBlockBuffer> createBuffer() const { return GpuParamBlockBuffer::create(mBlockSize); }					\
+		SPtr<GpuParamBlockBuffer> CreateBuffer() const { return GpuParamBlockBuffer::create(mBlockSize); }					\
 																															\
 	private:																												\
 		friend class ParamBlockManager;																						\
 																															\
-		void initialize() override																							\
+		void Initialize() override																							\
 		{																													\
 			mParams = getEntries();																							\
 			RenderAPI& rapi = RenderAPI::instance();																		\
@@ -191,14 +191,14 @@ namespace bs { namespace ct
 #define BS_PARAM_BLOCK_END																									\
 		META_LastEntry;																										\
 																															\
-		static Vector<GpuParamDataDesc> getEntries()																		\
+		static Vector<GpuParamDataDesc> GetEntries()																		\
 		{																													\
 			Vector<GpuParamDataDesc> entries;																				\
 			META_GetPrevEntries(entries, META_LastEntry());																	\
 			return entries;																									\
 		}																													\
 																															\
-		void initEntries()																									\
+		void InitEntries()																									\
 		{																													\
 			META_InitPrevEntry(mParams, (UINT32)mParams.size() - 1, META_LastEntry());										\
 		}																													\

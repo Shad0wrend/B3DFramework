@@ -35,7 +35,7 @@ namespace bs
 	{
 		THROW_IF_CORE_THREAD;
 
-		return getPropertiesInternal();
+		return GetPropertiesInternal();
 	}
 
 	void RenderTarget::getCustomAttribute(const String& name, void* pData) const
@@ -73,7 +73,7 @@ namespace bs
 
 		const RenderTargetProperties& RenderTarget::getProperties() const
 		{
-			return getPropertiesInternal();
+			return GetPropertiesInternal();
 		}
 
 		void RenderTarget::getCustomAttribute(const String& name, void* pData) const

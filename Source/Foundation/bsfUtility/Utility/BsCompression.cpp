@@ -175,7 +175,7 @@ namespace bs
 
 	SPtr<MemoryDataStream> Compression::compress(const SPtr<DataStream>& input, std::function<void(float)> reportProgress)
 	{
-		DataStreamSource src(input, std::move(reportProgress));
+		DataStreamSource Src(input, std::move(reportProgress));
 		DataStreamSink dst;
 
 		size_t bytesWritten = snappy::Compress(&src, &dst);
@@ -187,7 +187,7 @@ namespace bs
 
 	SPtr<MemoryDataStream> Compression::decompress(const SPtr<DataStream>& input, std::function<void(float)> reportProgress)
 	{
-		DataStreamSource src(input, std::move(reportProgress));
+		DataStreamSource Src(input, std::move(reportProgress));
 		DataStreamSink dst;
 
 		if (!snappy::Uncompress(&src, &dst))

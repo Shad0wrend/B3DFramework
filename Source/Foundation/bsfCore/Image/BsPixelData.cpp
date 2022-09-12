@@ -18,7 +18,7 @@ namespace bs
 	}
 
 	PixelData::PixelData(UINT32 width, UINT32 height, UINT32 depth, PixelFormat pixelFormat)
-		: mExtents(0, 0, 0, width, height, depth), mFormat(pixelFormat)
+		: MExtents(0, 0, 0, width, height, depth), mFormat(pixelFormat)
 	{
 		PixelUtil::getPitch(width, height, depth, pixelFormat, mRowPitch, mSlicePitch);
 	}
@@ -92,7 +92,7 @@ namespace bs
 		}
 
 		const size_t elemSize = PixelUtil::getNumElemBytes(mFormat);
-		PixelData rval(volume.getWidth(), volume.getHeight(), volume.getDepth(), mFormat);
+		PixelData Rval(volume.getWidth(), volume.getHeight(), volume.getDepth(), mFormat);
 
 		rval.setExternalBuffer(((UINT8*)getData()) + ((volume.left - getLeft())*elemSize)
 			+ ((volume.top - getTop())*mRowPitch)
@@ -141,7 +141,7 @@ namespace bs
 			UINT32 x = (UINT32)Math::clamp(Math::floorToInt(pixelCoords.x), 0, maxExtentX);
 			UINT32 y = (UINT32)Math::clamp(Math::floorToInt(pixelCoords.y), 0, maxExtentY);
 
-			return getColorAt(x, y);
+			return GetColorAt(x, y);
 		}
 	}
 
@@ -172,7 +172,7 @@ namespace bs
 		UINT32 pixelSize = PixelUtil::getNumElemBytes(mFormat);
 		UINT8* data = getData();
 
-		Vector<Color> colors(width * height * depth);
+		Vector<Color> Colors(width * height * depth);
 		for (UINT32 z = 0; z < depth; z++)
 		{
 			UINT32 zArrayIdx = z * width * height;
@@ -297,7 +297,7 @@ namespace bs
 		UINT32 pixelSize = PixelUtil::getNumElemBytes(mFormat);
 		UINT8* data = getData();
 
-		Vector<float> depths(width * height * depth);
+		Vector<float> Depths(width * height * depth);
 		for (UINT32 z = 0; z < depth; z++)
 		{
 			UINT32 zArrayIdx = z * width * height;
@@ -340,7 +340,7 @@ namespace bs
 
 	UINT32 PixelData::getInternalBufferSize() const
 	{
-		return getSize();
+		return GetSize();
 	}
 
 	/************************************************************************/

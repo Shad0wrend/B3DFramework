@@ -53,7 +53,7 @@ namespace bs
 		Vector<String> vecimporters;
 		if(value.importers != nullptr)
 		{
-			ScriptArray arrayimporters(value.importers);
+			ScriptArray Arrayimporters(value.importers);
 			vecimporters.resize(arrayimporters.size());
 			for(int i = 0; i < (int)arrayimporters.size(); i++)
 			{

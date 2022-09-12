@@ -20,34 +20,34 @@ namespace bs
 		virtual ~CGUIWidget() = default;
 
 		/** @copydoc GUIWidget::setSkin */
-		void setSkin(const HGUISkin& skin);
+		void SetSkin(const HGUISkin& skin);
 
 		/** @copydoc GUIWidget::getSkin */
-		const GUISkin& getSkin() const;
+		const GUISkin& GetSkin() const;
 
 		/** @copydoc GUIWidget::getSkinResource */
-		const HGUISkin& getSkinResource() const;
+		const HGUISkin& GetSkinResource() const;
 
 		/** @copydoc GUIWidget::getPanel */
 		GUIPanel* getPanel() const;
 
 		/** @copydoc GUIWidget::getDepth */
-		UINT8 getDepth() const;
+		UINT8 GetDepth() const;
 
 		/** @copydoc GUIWidget::setDepth */
-		void setDepth(UINT8 depth);
+		void SetDepth(UINT8 depth);
 
 		/** @copydoc GUIWidget::inBounds */
-		bool inBounds(const Vector2I& position) const;
+		bool InBounds(const Vector2I& position) const;
 
 		/** @copydoc GUIWidget::getBounds */
-		const Rect2I& getBounds() const;
+		const Rect2I& GetBounds() const;
 
 		/** @copydoc GUIWidget::getTarget */
 		Viewport* getTarget() const;
 
 		/** @copydoc GUIWidget::getCamera */
-		SPtr<Camera> getCamera() const;
+		SPtr<Camera> GetCamera() const;
 
 		/** @copydoc GUIWidget::getElements */
 		const Vector<GUIElement*>& getElements() const;
@@ -80,16 +80,16 @@ namespace bs
 		CGUIWidget(const HSceneObject& parent, const HCamera& camera);
 
 		/** @copydoc Component::update */
-		void update() override;
+		void Update() override;
 
 		/** @copydoc Component::onDestroyed */
-		void onDestroyed() override;
+		void OnDestroyed() override;
 
 		/**	Called when the viewport size changes and widget elements need to be updated. */
-		virtual void ownerTargetResized() { }
+		virtual void OwnerTargetResized() { }
 
 		/**	Called when the parent window gained or lost focus. */
-		virtual void ownerWindowFocusChanged() { }
+		virtual void OwnerWindowFocusChanged() { }
 
 	private:
 		CGUIWidget(CGUIWidget&&) = delete;

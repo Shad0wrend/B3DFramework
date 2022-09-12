@@ -19,8 +19,8 @@ namespace bs
 	GUIScrollArea::GUIScrollArea(ScrollBarType vertBarType, ScrollBarType horzBarType,
 		const String& scrollBarStyle, const String& scrollAreaStyle, const GUIDimensions& dimensions)
 		: GUIElementContainer(dimensions), mVertBarType(vertBarType), mHorzBarType(horzBarType)
-		, mScrollBarStyle(scrollBarStyle), mVertScroll(nullptr), mHorzScroll(nullptr), mVertOffset(0), mHorzOffset(0)
-		, mRecalculateVertOffset(false), mRecalculateHorzOffset(false)
+		, MScrollBarStyle(scrollBarStyle), mVertScroll(nullptr), mHorzScroll(nullptr), mVertOffset(0), mHorzOffset(0)
+		, MRecalculateVertOffset(false), mRecalculateHorzOffset(false)
 	{
 		mContentLayout = GUILayoutY::create();
 		_registerChildElement(mContentLayout);

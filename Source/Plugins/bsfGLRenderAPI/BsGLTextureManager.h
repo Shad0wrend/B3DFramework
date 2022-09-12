@@ -23,11 +23,11 @@ namespace bs
 		/**
 		 * Converts the provided format for the specified texture type and usage into a format that is supported by OpenGL.
 		 */
-		PixelFormat getNativeFormat(TextureType ttype, PixelFormat format, int usage, bool hwGamma) override;
+		PixelFormat GetNativeFormat(TextureType ttype, PixelFormat format, int usage, bool hwGamma) override;
 
 	protected:
 		/** @copydoc TextureManager::createRenderTextureImpl */
-		SPtr<RenderTexture> createRenderTextureImpl(const RENDER_TEXTURE_DESC& desc) override;
+		SPtr<RenderTexture> CreateRenderTextureImpl(const RENDER_TEXTURE_DESC& desc) override;
 
 		ct::GLSupport& mGLSupport;
 	};

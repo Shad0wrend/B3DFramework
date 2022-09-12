@@ -23,7 +23,7 @@ namespace bs { namespace ct
 
 		/** Helper method used for initializing variations of this material. */
 		template<UINT32 MSAA, UINT32 MODE>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			SmallVector<ShaderVariation::Param, 4>({
@@ -37,7 +37,7 @@ namespace bs { namespace ct
 		BlitMat();
 
 		/** Executes the material on the currently bound render target, copying from @p source. */
-		void execute(const SPtr<Texture>& source, const Rect2& area, bool flipUV);
+		void Execute(const SPtr<Texture>& source, const Rect2& area, bool flipUV);
 
 		/**
 		 * Returns the material variation matching the provided parameters.
@@ -79,7 +79,7 @@ namespace bs { namespace ct
 		* @param[in]	target			Render target to blend with and write the results to.
 		* @param[in]	tint			Optional value to multiply all the values from @p source before blending.
 		*/
-		void execute(const SPtr<Texture>& source, const SPtr<RenderTarget>& target, const Color& tint = Color::White);
+		void Execute(const SPtr<Texture>& source, const SPtr<RenderTarget>& target, const Color& tint = Color::White);
 
 	private:
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
@@ -102,7 +102,7 @@ namespace bs { namespace ct
 
 		/** Helper method used for initializing variations of this material. */
 		template<bool HERMITE>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			SmallVector<ShaderVariation::Param, 4>({
@@ -123,7 +123,7 @@ namespace bs { namespace ct
 		*								with the target.
 		* @param[in]	tint			Optional value to multiply all the values from @p source before blending.
 		*/
-		void execute(const SPtr<Texture>& source, const SPtr<RenderTarget>& target, const Color& tint = Color::White);
+		void Execute(const SPtr<Texture>& source, const SPtr<RenderTarget>& target, const Color& tint = Color::White);
 
 		/**
 		 * Returns the material variation matching the provided parameters.
@@ -151,7 +151,7 @@ namespace bs { namespace ct
 		ClearMat();
 
 		/** Executes the material on the currently bound render target, clearing to to @p value. */
-		void execute(UINT32 value);
+		void Execute(UINT32 value);
 	private:
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
 	};
@@ -176,7 +176,7 @@ namespace bs { namespace ct
 		 *
 		 * @note	Core thread.
 		 */
-		void setPass(const SPtr<Material>& material, UINT32 passIdx = 0, UINT32 techniqueIdx = 0);
+		void SetPass(const SPtr<Material>& material, UINT32 passIdx = 0, UINT32 techniqueIdx = 0);
 
 		/**
 		 * Activates the specified material pass for compute. Any further dispatch calls will be executed using this pass.
@@ -186,7 +186,7 @@ namespace bs { namespace ct
 		 *
 		 * @note	Core thread.
 		 */
-		void setComputePass(const SPtr<Material>& material, UINT32 passIdx = 0);
+		void SetComputePass(const SPtr<Material>& material, UINT32 passIdx = 0);
 
 		/**
 		 * Sets parameters (textures, samplers, buffers) for the currently active pass.
@@ -196,7 +196,7 @@ namespace bs { namespace ct
 		 *					
 		 * @note	Core thread.
 		 */
-		void setPassParams(const SPtr<GpuParamsSet>& params, UINT32 passIdx = 0);
+		void SetPassParams(const SPtr<GpuParamsSet>& params, UINT32 passIdx = 0);
 
 		/**
 		 * Draws the specified mesh.
@@ -206,7 +206,7 @@ namespace bs { namespace ct
 		 *
 		 * @note	Core thread.
 		 */
-		void draw(const SPtr<MeshBase>& mesh, UINT32 numInstances = 1);
+		void Draw(const SPtr<MeshBase>& mesh, UINT32 numInstances = 1);
 
 		/**
 		 * Draws the specified mesh.
@@ -217,7 +217,7 @@ namespace bs { namespace ct
 		 *
 		 * @note	Core thread.
 		 */
-		void draw(const SPtr<MeshBase>& mesh, const SubMesh& subMesh, UINT32 numInstances = 1);
+		void Draw(const SPtr<MeshBase>& mesh, const SubMesh& subMesh, UINT32 numInstances = 1);
 
 		/**
 		 * Draws the specified mesh with an additional vertex buffer containing morph shape vertices.
@@ -265,7 +265,7 @@ namespace bs { namespace ct
 		 * 			
 		 * @note	Core thread.
 		 */
-		void drawScreenQuad(const Rect2& uv, const Vector2I& textureSize = Vector2I(1, 1),
+		void DrawScreenQuad(const Rect2& uv, const Vector2I& textureSize = Vector2I(1, 1),
 			UINT32 numInstances = 1, bool flipUV = false);
 
 		/**
@@ -276,10 +276,10 @@ namespace bs { namespace ct
 		 * 			
 		 * @note	Core thread.
 		 */
-		void drawScreenQuad(UINT32 numInstances = 1)
+		void DrawScreenQuad(UINT32 numInstances = 1)
 		{
-			Rect2 uv(0.0f, 0.0f, 1.0f, 1.0f);
-			Vector2I textureSize(1, 1);
+			Rect2 Uv(0.0f, 0.0f, 1.0f, 1.0f);
+			Vector2I TextureSize(1, 1);
 
 			drawScreenQuad(uv, textureSize, numInstances);
 		}
@@ -288,22 +288,22 @@ namespace bs { namespace ct
 		 * Clears the currently bound render target to the provided integer value. This is similar to
 		 * RenderAPI::clearRenderTarget(), except it supports integer clears.
 		 */
-		void clear(UINT32 value);
+		void Clear(UINT32 value);
 
 		/** Returns a unit sphere stencil mesh. */
-		SPtr<Mesh> getSphereStencil() const { return mUnitSphereStencilMesh; }
+		SPtr<Mesh> GetSphereStencil() const { return mUnitSphereStencilMesh; }
 
 		/** Returns a unit axis aligned box stencil mesh. */
-		SPtr<Mesh> getBoxStencil() const { return mUnitBoxStencilMesh; }
+		SPtr<Mesh> GetBoxStencil() const { return mUnitBoxStencilMesh; }
 
 		/**
 		 * Returns a stencil mesh used for a spot light. Actual vertex positions need to be computed in shader as this
 		 * method will return uninitialized vertex positions.
 		 */
-		SPtr<Mesh> getSpotLightStencil() const { return mSpotLightStencilMesh; }
+		SPtr<Mesh> GetSpotLightStencil() const { return mSpotLightStencilMesh; }
 
 		/** Returns a mesh that can be used for rendering a skybox. */
-		SPtr<Mesh> getSkyBoxMesh() const { return mSkyBoxMesh; }
+		SPtr<Mesh> GetSkyBoxMesh() const { return mSkyBoxMesh; }
 
 	private:
 		static constexpr UINT32 NUM_QUAD_VB_SLOTS = 1024;
@@ -321,7 +321,7 @@ namespace bs { namespace ct
 	};
 
 	/** Provides easy access to RendererUtility. */
-	BS_EXPORT RendererUtility& gRendererUtility();
+	BS_EXPORT RendererUtility& GRendererUtility();
 
 	/** @} */
 }}

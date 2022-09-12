@@ -19,18 +19,18 @@ namespace bs
 		ImportOptionsRTTI()
 		{ }
 
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "ImportOptions";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_ImportOptions;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			return bs_shared_ptr_new<ImportOptions>();
 		}

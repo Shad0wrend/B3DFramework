@@ -23,7 +23,7 @@ namespace bs
 
 	RTTITypeBase* ResourceMapping::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	HResource StandaloneResourceLoader::load(const Path& path, ResourceLoadFlags flags, bool async) const
@@ -32,15 +32,15 @@ namespace bs
 		if(iterFind != mMapping.end())
 		{
 			if(!async)
-				return gResources().load(iterFind->second, flags);
+				return GResources().load(iterFind->second, flags);
 			else
-				return gResources().loadAsync(iterFind->second, flags);
+				return GResources().loadAsync(iterFind->second, flags);
 		}
 		
 		if (!async)
-			return gResources().load(path, flags);
+			return GResources().load(path, flags);
 		else
-			return gResources().loadAsync(path, flags);
+			return GResources().loadAsync(path, flags);
 	}
 
 	void StandaloneResourceLoader::setMapping(const SPtr<ResourceMapping>& mapping)

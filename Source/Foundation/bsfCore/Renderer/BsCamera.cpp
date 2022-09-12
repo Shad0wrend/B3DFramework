@@ -20,7 +20,7 @@ namespace bs
 	const float CameraBase::INFINITE_FAR_PLANE_ADJUST = 0.00001f;
 
 	CameraBase::CameraBase()
-		: mRecalcFrustum(true), mRecalcFrustumPlanes(true), mRecalcView(true)
+		: MRecalcFrustum(true), mRecalcFrustumPlanes(true), mRecalcView(true)
 	{
 		invalidateFrustum();
 	}
@@ -117,7 +117,7 @@ namespace bs
 		Matrix4 worldMatrix;
 		worldMatrix.setTRS(tfrm.getPosition(), tfrm.getRotation(), Vector3::ONE);
 
-		Vector<Plane> worldPlanes(frustumPlanes.size());
+		Vector<Plane> WorldPlanes(frustumPlanes.size());
 		UINT32 i = 0;
 		for (auto& plane : frustumPlanes)
 		{
@@ -134,8 +134,8 @@ namespace bs
 		{
 			// Convert clipspace corners to camera space
 			Matrix4 invProj = mProjMatrix.inverse();
-			Vector3 topLeft(-0.5f, 0.5f, 0.0f);
-			Vector3 bottomRight(0.5f, -0.5f, 0.0f);
+			Vector3 TopLeft(-0.5f, 0.5f, 0.0f);
+			Vector3 BottomRight(0.5f, -0.5f, 0.0f);
 
 			topLeft = invProj.multiply(topLeft);
 			bottomRight = invProj.multiply(bottomRight);
@@ -156,7 +156,7 @@ namespace bs
 			}
 			else if (mProjType == PT_PERSPECTIVE)
 			{
-				Radian thetaX(mHorzFOV * 0.5f);
+				Radian ThetaX(mHorzFOV * 0.5f);
 				float tanThetaX = Math::tan(thetaX);
 				float tanThetaY = tanThetaX / mAspect;
 
@@ -276,8 +276,8 @@ namespace bs
 			float farDist = (mFarDist == 0) ? 100000 : mFarDist;
 
 			// Near plane bounds
-			Vector3 min(left, bottom, -farDist);
-			Vector3 max(right, top, 0);
+			Vector3 Min(left, bottom, -farDist);
+			Vector3 Max(right, top, 0);
 
 			if (mCustomProjMatrix)
 			{
@@ -464,30 +464,30 @@ namespace bs
 	Vector2I CameraBase::worldToScreenPoint(const Vector3& worldPoint) const
 	{
 		Vector2 ndcPoint = worldToNdcPoint(worldPoint);
-		return ndcToScreenPoint(ndcPoint);
+		return NdcToScreenPoint(ndcPoint);
 	}
 
 	Vector2 CameraBase::worldToNdcPoint(const Vector3& worldPoint) const
 	{
 		Vector3 viewPoint = worldToViewPoint(worldPoint);
-		return viewToNdcPoint(viewPoint);
+		return ViewToNdcPoint(viewPoint);
 	}
 
 	Vector3 CameraBase::worldToViewPoint(const Vector3& worldPoint) const
 	{
-		return getViewMatrix().multiplyAffine(worldPoint);
+		return GetViewMatrix().multiplyAffine(worldPoint);
 	}
 
 	Vector3 CameraBase::screenToWorldPoint(const Vector2I& screenPoint, float depth) const
 	{
 		Vector2 ndcPoint = screenToNdcPoint(screenPoint);
-		return ndcToWorldPoint(ndcPoint, depth);
+		return NdcToWorldPoint(ndcPoint, depth);
 	}
 
 	Vector3 CameraBase::screenToWorldPointDeviceDepth(const Vector2I& screenPoint, float deviceDepth) const
 	{
 		Vector2 ndcPoint = screenToNdcPoint(screenPoint);
-		Vector4 worldPoint(ndcPoint.x, ndcPoint.y, deviceDepth, 1.0f);
+		Vector4 WorldPoint(ndcPoint.x, ndcPoint.y, deviceDepth, 1.0f);
 		worldPoint = getProjectionMatrixRS().inverse().multiply(worldPoint);
 
 		Vector3 worldPoint3D;
@@ -500,13 +500,13 @@ namespace bs
 			worldPoint3D.z = worldPoint.z * invW;
 		}
 
-		return viewToWorldPoint(worldPoint3D);
+		return ViewToWorldPoint(worldPoint3D);
 	}
 
 	Vector3 CameraBase::screenToViewPoint(const Vector2I& screenPoint, float depth) const
 	{
 		Vector2 ndcPoint = screenToNdcPoint(screenPoint);
-		return ndcToViewPoint(ndcPoint, depth);
+		return NdcToViewPoint(ndcPoint, depth);
 	}
 
 	Vector2 CameraBase::screenToNdcPoint(const Vector2I& screenPoint) const
@@ -527,13 +527,13 @@ namespace bs
 
 	Vector3 CameraBase::viewToWorldPoint(const Vector3& viewPoint) const
 	{
-		return getViewMatrix().inverseAffine().multiplyAffine(viewPoint);
+		return GetViewMatrix().inverseAffine().multiplyAffine(viewPoint);
 	}
 
 	Vector2I CameraBase::viewToScreenPoint(const Vector3& viewPoint) const
 	{
 		Vector2 ndcPoint = viewToNdcPoint(viewPoint);
-		return ndcToScreenPoint(ndcPoint);
+		return NdcToScreenPoint(ndcPoint);
 	}
 
 	Vector2 CameraBase::viewToNdcPoint(const Vector3& viewPoint) const
@@ -546,12 +546,12 @@ namespace bs
 	Vector3 CameraBase::ndcToWorldPoint(const Vector2& ndcPoint, float depth) const
 	{
 		Vector3 viewPoint = ndcToViewPoint(ndcPoint, depth);
-		return viewToWorldPoint(viewPoint);
+		return ViewToWorldPoint(viewPoint);
 	}
 
 	Vector3 CameraBase::ndcToViewPoint(const Vector2& ndcPoint, float depth) const
 	{
-		return unprojectPoint(Vector3(ndcPoint.x, ndcPoint.y, depth));
+		return UnprojectPoint(Vector3(ndcPoint.x, ndcPoint.y, depth));
 	}
 
 	Vector2I CameraBase::ndcToScreenPoint(const Vector2& ndcPoint) const
@@ -577,7 +577,7 @@ namespace bs
 		Vector3 near = unprojectPoint(Vector3(ndcPoint.x, ndcPoint.y, mNearDist));
 		Vector3 far = unprojectPoint(Vector3(ndcPoint.x, ndcPoint.y, mNearDist + 1.0f));
 
-		Ray ray(near, Vector3::normalize(far - near));
+		Ray Ray(near, Vector3::normalize(far - near));
 		ray.transformAffine(getViewMatrix().inverseAffine());
 
 		return ray;
@@ -585,7 +585,7 @@ namespace bs
 
 	Vector3 CameraBase::projectPoint(const Vector3& point) const
 	{
-		Vector4 projPoint4(point.x, point.y, point.z, 1.0f);
+		Vector4 ProjPoint4(point.x, point.y, point.z, 1.0f);
 		projPoint4 = getProjectionMatrixRS().multiply(projPoint4);
 
 		if (Math::abs(projPoint4.w) > 1e-7f)
@@ -611,7 +611,7 @@ namespace bs
 		// (as opposed to if point.z was in device coordinates, in which case we could just inverse project)
 
 		// Get world position for a point near the far plane (0.95f)
-		Vector4 farAwayPoint(point.x, point.y, 0.95f, 1.0f);
+		Vector4 FarAwayPoint(point.x, point.y, 0.95f, 1.0f);
 		farAwayPoint = getProjectionMatrixRS().inverse().multiply(farAwayPoint);
 
 		// Can't proceed if w is too small
@@ -767,7 +767,7 @@ namespace bs
 		}
 
 		UINT8* buffer = allocator->alloc(size);
-		Bitstream stream(buffer, size);
+		Bitstream Stream(buffer, size);
 
 		rtti_write(dirtyFlag, stream);
 
@@ -810,13 +810,13 @@ namespace bs
 	}
 
 	Camera::Camera(SPtr<RenderTarget> target, float left, float top, float width, float height)
-		: mRendererId(0)
+		: MRendererId(0)
 	{
 		mViewport = Viewport::create(target, left, top, width, height);
 	}
 
 	Camera::Camera(const SPtr<Viewport>& viewport)
-		: mRendererId(0)
+		: MRendererId(0)
 	{
 		mViewport = viewport;
 	}
@@ -835,7 +835,7 @@ namespace bs
 
 	void Camera::syncToCore(const CoreSyncData& data)
 	{
-		Bitstream stream(data.getBuffer(), data.getBufferSize());
+		Bitstream Stream(data.getBuffer(), data.getBufferSize());
 
 		UINT32 dirtyFlag;
 		rtti_read(dirtyFlag, stream);

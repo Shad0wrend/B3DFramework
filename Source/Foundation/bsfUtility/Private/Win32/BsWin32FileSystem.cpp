@@ -82,7 +82,7 @@ namespace bs
 			DWORD n = GetCurrentDirectoryW(len, buffer);
 			if (n > 0 && n <= len)
 			{
-				WString result(buffer);
+				WString Result(buffer);
 				if (result[result.size() - 1] != L'\\')
 					result.append(L"\\");
 
@@ -106,7 +106,7 @@ namespace bs
 			DWORD n = GetTempPathW(len, buffer);
 			if (n > 0 && n <= len)
 			{
-				WString result(buffer);
+				WString Result(buffer);
 				if (result[result.size() - 1] != L'\\')
 					result.append(L"\\");
 

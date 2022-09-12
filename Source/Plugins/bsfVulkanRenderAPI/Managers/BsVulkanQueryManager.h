@@ -50,10 +50,10 @@ namespace bs { namespace ct
 		 * @param[in]	query		Query previously begun with beginOcclusionQuery().
 		 * @param[in]	cb			Command buffer to end the query on.
 		 */
-		void endOcclusionQuery(VulkanQuery* query, VulkanCmdBuffer* cb);
+		void EndOcclusionQuery(VulkanQuery* query, VulkanCmdBuffer* cb);
 
 		/** Releases a previously retrieved query, ensuring it can be re-used. */
-		void releaseQuery(VulkanQuery* query);
+		void ReleaseQuery(VulkanQuery* query);
 
 	private:
 		/** Query buffer pool and related information. */
@@ -67,7 +67,7 @@ namespace bs { namespace ct
 		VulkanQuery* getQuery(VkQueryType type);
 
 		/** Creates a new Vulkan query pool object. */
-		PoolInfo& allocatePool(VkQueryType type);
+		PoolInfo& AllocatePool(VkQueryType type);
 
 		static const UINT32 NUM_QUERIES_PER_POOL = 16;
 
@@ -89,13 +89,13 @@ namespace bs { namespace ct
 		VulkanQueryManager(VulkanRenderAPI& rapi);
 
 		/** @copydoc QueryManager::createEventQuery */
-		SPtr<EventQuery> createEventQuery(UINT32 deviceIdx = 0) const override;
+		SPtr<EventQuery> CreateEventQuery(UINT32 deviceIdx = 0) const override;
 
 		/** @copydoc QueryManager::createTimerQuery */
-		SPtr<TimerQuery> createTimerQuery(UINT32 deviceIdx = 0) const override;
+		SPtr<TimerQuery> CreateTimerQuery(UINT32 deviceIdx = 0) const override;
 
 		/** @copydoc QueryManager::createOcclusionQuery */
-		SPtr<OcclusionQuery> createOcclusionQuery(bool binary, UINT32 deviceIdx = 0) const override;
+		SPtr<OcclusionQuery> CreateOcclusionQuery(bool binary, UINT32 deviceIdx = 0) const override;
 
 	private:
 		VulkanRenderAPI& mRenderAPI;
@@ -114,10 +114,10 @@ namespace bs { namespace ct
 		 * @param[out]	result	Value of the query, if the method return true. Undefined otherwise.
 		 * @return				True if the result is ready, false otherwise.
 		 */
-		bool getResult(UINT64& result) const;
+		bool GetResult(UINT64& result) const;
 
 		/** Queues a command for the query reset, on the provided command buffer. */
-		void reset(VkCommandBuffer cmdBuf);
+		void Reset(VkCommandBuffer cmdBuf);
 
 	private:
 		friend class VulkanQueryPool;

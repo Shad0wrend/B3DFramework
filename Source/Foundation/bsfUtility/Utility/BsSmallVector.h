@@ -243,57 +243,57 @@ namespace bs
 			return mElements[index];
 		}
 
-		bool empty() const { return mSize == 0; }
+		bool Empty() const { return mSize == 0; }
 
-		Iterator begin() { return mElements; }
-		Iterator end() { return mElements + mSize; }
+		Iterator Begin() { return mElements; }
+		Iterator End() { return mElements + mSize; }
 
-		ConstIterator begin() const { return mElements; }
-		ConstIterator end() const { return mElements + mSize; }
+		ConstIterator Begin() const { return mElements; }
+		ConstIterator End() const { return mElements + mSize; }
 
-		ConstIterator cbegin() const { return mElements; }
-		ConstIterator cend() const { return mElements + mSize; }
+		ConstIterator Cbegin() const { return mElements; }
+		ConstIterator Cend() const { return mElements + mSize; }
 
-		ReverseIterator rbegin() { return ReverseIterator(end()); }
-		ReverseIterator rend() { return ReverseIterator(begin()); }
+		ReverseIterator Rbegin() { return ReverseIterator(end()); }
+		ReverseIterator Rend() { return ReverseIterator(begin()); }
 
-		ConstReverseIterator rbegin() const { return ConstReverseIterator(end()); }
-		ConstReverseIterator rend() const { return ConstReverseIterator(begin()); }
+		ConstReverseIterator Rbegin() const { return ConstReverseIterator(end()); }
+		ConstReverseIterator Rend() const { return ConstReverseIterator(begin()); }
 
-		ConstReverseIterator crbegin() const { return ConstReverseIterator(end()); }
-		ConstReverseIterator crend() const { return ConstReverseIterator(begin()); }
+		ConstReverseIterator Crbegin() const { return ConstReverseIterator(end()); }
+		ConstReverseIterator Crend() const { return ConstReverseIterator(begin()); }
 
-		UINT32 size() const { return mSize; }
-		UINT32 capacity() const { return mCapacity; }
+		UINT32 Size() const { return mSize; }
+		UINT32 Capacity() const { return mCapacity; }
 
 		Type* data() { return mElements; }
 		const Type* data() const { return mElements; }
 
-		Type& front()
+		Type& Front()
 		{
 			assert(!empty());
 			return mElements[0];
 		}
 
-		Type& back()
+		Type& Back()
 		{
 			assert(!empty());
 			return mElements[mSize - 1];
 		}
 
-		const Type& front() const
+		const Type& Front() const
 		{
 			assert(!empty());
 			return mElements[0];
 		}
 
-		const Type& back() const
+		const Type& Back() const
 		{
 			assert(!empty());
 			return mElements[mSize - 1];
 		}
 
-		void add(const Type& element)
+		void Add(const Type& element)
 		{
 			if (mSize == mCapacity)
 				grow(mCapacity << 1);
@@ -301,7 +301,7 @@ namespace bs
 			new (&mElements[mSize++]) Type(element);
 		}
 
-		void add(Type&& element)
+		void Add(Type&& element)
 		{
 			if (mSize == mCapacity)
 				grow(mCapacity << 1);
@@ -309,7 +309,7 @@ namespace bs
 			new (&mElements[mSize++]) Type(std::move(element));
 		}
 
-		void append(ConstIterator start, ConstIterator end) 
+		void Append(ConstIterator start, ConstIterator end)
 		{
 			const UINT32 count = (UINT32)std::distance(start, end);
 
@@ -320,7 +320,7 @@ namespace bs
 			mSize += count;
 		}
 
-		void append(UINT32 count, const Type& element) 
+		void Append(UINT32 count, const Type& element)
 		{
 			if ((size() + count) > capacity())
 				this->grow(size() + count);
@@ -329,19 +329,19 @@ namespace bs
 			mSize += count;
 		}
 
-		void append(std::initializer_list<Type> list) 
+		void Append(std::initializer_list<Type> list)
 		{
 			append(list.begin(), list.end());
 		}
 
-		void pop()
+		void Pop()
 		{
 			assert(mSize > 0 && "Popping an empty array.");
 			mSize--;
 			mElements[mSize].~Type();
 		}
 
-		Iterator erase(ConstIterator iter)
+		Iterator Erase(ConstIterator iter)
 		{
 			assert(iter >= begin() && "Iterator to erase is out of bounds.");
 			assert(iter < end() && "Erasing at past-the-end iterator.");
@@ -353,12 +353,12 @@ namespace bs
 			return toErase;
 		}
 
-		void remove(UINT32 index)
+		void Remove(UINT32 index)
 		{
 			erase(begin() + index);
 		}
 
-		bool contains(const Type& element)
+		bool Contains(const Type& element)
 		{
 			for (UINT32 i = 0; i < mSize; i++)
 			{
@@ -369,7 +369,7 @@ namespace bs
 			return false;
 		}
 
-		void removeValue(const Type& element)
+		void RemoveValue(const Type& element)
 		{
 			for (UINT32 i = 0; i < mSize; i++)
 			{
@@ -381,7 +381,7 @@ namespace bs
 			}
 		}
 
-		void clear()
+		void Clear()
 		{
 			for (UINT32 i = 0; i < mSize; ++i)
 				mElements[i].~Type();
@@ -389,13 +389,13 @@ namespace bs
 			mSize = 0;
 		}
 
-		void reserve(UINT32 capacity)
+		void Reserve(UINT32 capacity)
 		{
 			if (capacity > mCapacity)
 				grow(capacity);
 		}
 
-		void resize(UINT32 size, const Type& value = Type())
+		void Resize(UINT32 size, const Type& value = Type())
 		{
 			if(size > mCapacity)
 				grow(size);
@@ -416,9 +416,9 @@ namespace bs
 
 	private:
 		/** Returns true if the vector is still using its static memory and hasn't made any dynamic allocations. */
-		bool isSmall() const { return mElements == (Type*)mStorage; }
+		bool IsSmall() const { return mElements == (Type*)mStorage; }
 
-		void grow(UINT32 capacity)
+		void Grow(UINT32 capacity)
 		{
 			assert(capacity > N);
 

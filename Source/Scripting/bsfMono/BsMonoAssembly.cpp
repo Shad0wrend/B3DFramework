@@ -40,8 +40,8 @@ namespace bs
 	}
 
 	MonoAssembly::MonoAssembly(const Path& path, const String& name)
-		: mName(name), mPath(path), mMonoImage(nullptr), mMonoAssembly(nullptr), mDebugData(nullptr), mIsLoaded(false)
-		, mIsDependency(false), mHaveCachedClassList(false)
+		: MName(name), mPath(path), mMonoImage(nullptr), mMonoAssembly(nullptr), mDebugData(nullptr), mIsLoaded(false)
+		, MIsDependency(false), mHaveCachedClassList(false)
 	{
 
 	}
@@ -191,7 +191,7 @@ namespace bs
 		if(!mIsLoaded)
 			BS_EXCEPT(InvalidStateException, "Trying to use an unloaded assembly.");
 
-		MonoAssembly::ClassId classId(namespaceName, name);
+		MonoAssembly::ClassId ClassId(namespaceName, name);
 		auto iterFind = mClasses.find(classId);
 
 		if(iterFind != mClasses.end())
@@ -233,7 +233,7 @@ namespace bs
 		MonoClass* newClass = new (bs_alloc<MonoClass>()) MonoClass(ns, typeName, rawMonoClass, this);
 		mClassesByRaw[rawMonoClass] = newClass;
 
-		MonoAssembly::ClassId classId(ns, typeName);
+		MonoAssembly::ClassId ClassId(ns, typeName);
 		mClasses[classId] = newClass;
 
 		return newClass;
@@ -259,7 +259,7 @@ namespace bs
 
 		if (!isGenericClass(typeName)) // No point in referencing generic types by name as all instances share it
 		{
-			MonoAssembly::ClassId classId(ns, typeName);
+			MonoAssembly::ClassId ClassId(ns, typeName);
 			mClasses[classId] = newClass;
 		}
 

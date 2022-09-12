@@ -60,93 +60,93 @@ namespace bs
 		~BuiltinResources();
 
 		/**	Returns the default skin used by engine GUI elements. */
-		const HGUISkin& getGUISkin() const { return mSkin; }
+		const HGUISkin& GetGUISkin() const { return mSkin; }
 
 		/**	Returns an empty skin used to be used when no other is available. */
-		const HGUISkin& getEmptyGUISkin() const { return mEmptySkin; }
+		const HGUISkin& GetEmptyGUISkin() const { return mEmptySkin; }
 
 		/**	Returns a small entirely white texture. */
-		const HSpriteTexture& getWhiteSpriteTexture() const { return mWhiteSpriteTexture; }
+		const HSpriteTexture& GetWhiteSpriteTexture() const { return mWhiteSpriteTexture; }
 
 		/**	Returns a 2x2 sprite texture that can be used when no other is available. */
-		const HSpriteTexture& getDummySpriteTexture() const { return mDummySpriteTexture; }
+		const HSpriteTexture& GetDummySpriteTexture() const { return mDummySpriteTexture; }
 
 		/**	Returns a dummy 2x2 texture that may be used when no other is available. Don't modify the returned texture. */
-		const HTexture& getDummyTexture() const { return mDummyTexture; }
+		const HTexture& GetDummyTexture() const { return mDummyTexture; }
 
 		/**	Returns image data for an arrow cursor, along with its hotspot. */
-		const PixelData& getCursorArrow(Vector2I& hotSpot);
+		const PixelData& GetCursorArrow(Vector2I& hotSpot);
 
 		/**	Returns image data for an arrow with dragged object cursor, along with its hotspot. */
-		const PixelData& getCursorArrowDrag(Vector2I& hotSpot);
+		const PixelData& GetCursorArrowDrag(Vector2I& hotSpot);
 		
 		/**	Returns image data for a wait cursor, along with its hotspot. */
-		const PixelData& getCursorWait(Vector2I& hotSpot);
+		const PixelData& GetCursorWait(Vector2I& hotSpot);
 		
 		/**	Returns image data for an "I" beam cursor, along with its hotspot. */
-		const PixelData& getCursorIBeam(Vector2I& hotSpot);
+		const PixelData& GetCursorIBeam(Vector2I& hotSpot);
 		
 		/**	Returns image data for a NESW resize cursor, along with its hotspot. */
-		const PixelData& getCursorSizeNESW(Vector2I& hotSpot);
+		const PixelData& GetCursorSizeNESW(Vector2I& hotSpot);
 		
 		/**	Returns image data for a NS resize cursor, along with its hotspot. */
-		const PixelData& getCursorSizeNS(Vector2I& hotSpot);
+		const PixelData& GetCursorSizeNS(Vector2I& hotSpot);
 		
 		/**	Returns image data for a NWSE resize cursor, along with its hotspot. */
-		const PixelData& getCursorSizeNWSE(Vector2I& hotSpot);
+		const PixelData& GetCursorSizeNWSE(Vector2I& hotSpot);
 		
 		/**	Returns image data for a WE resize cursor, along with its hotspot. */
-		const PixelData& getCursorSizeWE(Vector2I& hotSpot);
+		const PixelData& GetCursorSizeWE(Vector2I& hotSpot);
 		
 		/**	Returns image data for a deny cursor, along with its hotspot. */
-		const PixelData& getCursorDeny(Vector2I& hotSpot);
+		const PixelData& GetCursorDeny(Vector2I& hotSpot);
 		
 		/**	Returns image data for a move left-right cursor, along with its hotspot. */
-		const PixelData& getCursorMoveLeftRight(Vector2I& hotSpot);
+		const PixelData& GetCursorMoveLeftRight(Vector2I& hotSpot);
 
 		/**	Returns the default application icon. */
-		const PixelData& getFrameworkIcon();
+		const PixelData& GetFrameworkIcon();
 
 		/**	Returns one of the builtin shader types. */
-		HShader getBuiltinShader(BuiltinShader type) const;
+		HShader GetBuiltinShader(BuiltinShader type) const;
 
 		/**	Creates a material used for textual sprite rendering (for example text in GUI). */
-		HMaterial createSpriteTextMaterial() const;
+		HMaterial CreateSpriteTextMaterial() const;
 
 		/**	Creates a material used for image sprite rendering (for example images in GUI). */
-		HMaterial createSpriteImageMaterial() const;
+		HMaterial CreateSpriteImageMaterial() const;
 
 		/** Creates a material used for antialiased line rendering (for example curve rendering in GUI). */
-		HMaterial createSpriteLineMaterial() const;
+		HMaterial CreateSpriteLineMaterial() const;
 
 		/**	Retrieves one of the builtin meshes. */
-		HMesh getMesh(BuiltinMesh mesh) const;
+		HMesh GetMesh(BuiltinMesh mesh) const;
 
 		/**
 		 * Loads a shader at the specified path.
 		 *
 		 * @param[in]	path	Path relative to the default shader folder with no file extension.
 		 */
-		HShader getShader(const Path& path) const;
+		HShader GetShader(const Path& path) const;
 
 		/** Returns the default font used by the engine. */
-		HFont getDefaultFont() const { return mFont; }
+		HFont GetDefaultFont() const { return mFont; }
 
 		/**	Retrieves one of the builtin textures. */
-		static HTexture getTexture(BuiltinTexture type);
+		static HTexture GetTexture(BuiltinTexture type);
 
 		/**	Returns absolute path to the builtin shader folder where raw shader files are located. */
-		static Path getRawShaderFolder();
+		static Path GetRawShaderFolder();
 
 		/**	Returns absolute path to the builtin shader include folder. */
-		static Path getShaderIncludeFolder();
+		static Path GetShaderIncludeFolder();
 
 		/**	Returns absolute path to the builtin icons folder. */
-		static Path getIconFolder();
+		static Path GetIconFolder();
 
 #if BS_IS_BANSHEE3D || defined BS_IS_ASSET_TOOL
 		/**	Returns absolute path to the editor builtin shader include folder. */
-		static Path getEditorShaderIncludeFolder();
+		static Path GetEditorShaderIncludeFolder();
 
 #endif
 
@@ -181,10 +181,10 @@ namespace bs
 		static constexpr const char* GUI_SKIN_FILE = u8"GUISkin";
 	private:
 		/**	Loads a GUI skin texture with the specified filename. */
-		HSpriteTexture getSkinTexture(const String& name) const;
+		HSpriteTexture GetSkinTexture(const String& name) const;
 
 		/**	Loads a cursor texture with the specified filename. */
-		HTexture getCursorTexture(const String& name) const;
+		HTexture GetCursorTexture(const String& name) const;
 
 		HGUISkin mEmptySkin;
 		HGUISkin mSkin;
@@ -258,7 +258,7 @@ namespace bs
 	};
 
 	/**	Provides easy access to BuiltinResources. */
-	BS_EXPORT BuiltinResources& gBuiltinResources();
+	BS_EXPORT BuiltinResources& GBuiltinResources();
 
 	/** @} */
 }

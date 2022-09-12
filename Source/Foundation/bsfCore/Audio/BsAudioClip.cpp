@@ -54,6 +54,6 @@ namespace bs
 
 	RTTITypeBase* AudioClip::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 }

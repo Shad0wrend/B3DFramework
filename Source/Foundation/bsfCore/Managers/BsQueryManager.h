@@ -28,14 +28,14 @@ namespace bs { namespace ct
 		 *
 		 * @param[in]	deviceIdx	Index of the GPU device to create the query on.
 		 */
-		virtual SPtr<EventQuery> createEventQuery(UINT32 deviceIdx = 0) const = 0;
+		virtual SPtr<EventQuery> CreateEventQuery(UINT32 deviceIdx = 0) const = 0;
 
 		/**
 		 * Creates a new timer query that allows you to get notified of how much time has passed between query start and end.
 		 *
 		 * @param[in]	deviceIdx	Index of the GPU device to create the query on.
 		 */
-		virtual SPtr<TimerQuery> createTimerQuery(UINT32 deviceIdx = 0) const = 0;
+		virtual SPtr<TimerQuery> CreateTimerQuery(UINT32 deviceIdx = 0) const = 0;
 
 		/**
 		 * Creates a new occlusion query that allows you to know how many fragments were rendered between query start and
@@ -47,7 +47,7 @@ namespace bs { namespace ct
 		 *							until all of the geometry is rendered.
 		 * @param[in]	deviceIdx	Index of the GPU device to create the query on.
 		 */
-		virtual SPtr<OcclusionQuery> createOcclusionQuery(bool binary, UINT32 deviceIdx = 0) const = 0;
+		virtual SPtr<OcclusionQuery> CreateOcclusionQuery(bool binary, UINT32 deviceIdx = 0) const = 0;
 
 		/** Triggers completed queries. Should be called every frame. */
 		void _update();
@@ -61,22 +61,22 @@ namespace bs { namespace ct
 		 * Deletes an Event query. Always use this method and don't delete them manually. Actual deletion will be delayed
 		 * until next update.
 		 */
-		static void deleteEventQuery(EventQuery* query);
+		static void DeleteEventQuery(EventQuery* query);
 
 		/**
 		 * Deletes a Timer query. Always use this method and don't delete them manually. Actual deletion will be delayed
 		 * until next update.
 		 */
-		static void deleteTimerQuery(TimerQuery* query);
+		static void DeleteTimerQuery(TimerQuery* query);
 
 		/**
 		 * Deletes an Occlusion query. Always use this method and don't delete them manually. Actual deletion will be
 		 * delayed until next update.
 		 */
-		static void deleteOcclusionQuery(OcclusionQuery* query);
+		static void DeleteOcclusionQuery(OcclusionQuery* query);
 
 		/** Deletes any queued queries. */
-		void processDeletedQueue();
+		void ProcessDeletedQueue();
 
 	protected:
 		mutable Vector<EventQuery*> mEventQueries;

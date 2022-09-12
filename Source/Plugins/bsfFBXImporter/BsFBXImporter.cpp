@@ -84,7 +84,7 @@ namespace bs
 		String lowerCaseExt = ext;
 		StringUtil::toLowerCase(lowerCaseExt);
 
-		return find(mExtensions.begin(), mExtensions.end(), lowerCaseExt) != mExtensions.end();
+		return Find(mExtensions.begin(), mExtensions.end(), lowerCaseExt) != mExtensions.end();
 	}
 
 	bool FBXImporter::isMagicNumberSupported(const UINT8* magicNumPtr, UINT32 numBytes) const
@@ -508,7 +508,7 @@ namespace bs
 		}
 
 		FbxAxisSystem fileCoordSystem = scene->GetGlobalSettings().GetAxisSystem();
-		FbxAxisSystem bsCoordSystem(FbxAxisSystem::eYAxis, FbxAxisSystem::eParityOdd, FbxAxisSystem::eRightHanded);
+		FbxAxisSystem BsCoordSystem(FbxAxisSystem::eYAxis, FbxAxisSystem::eParityOdd, FbxAxisSystem::eRightHanded);
 		if (fileCoordSystem != bsCoordSystem)
 			bsCoordSystem.ConvertScene(scene);
 
@@ -524,7 +524,7 @@ namespace bs
 			importScale = options.importScale;
 
 		FbxSystemUnit units = scene->GetGlobalSettings().GetSystemUnit();
-		FbxSystemUnit bsScaledUnits(100.0f / importScale);
+		FbxSystemUnit BsScaledUnits(100.0f / importScale);
 
 		const FbxSystemUnit::ConversionOptions convOptions = {
 			false,
@@ -559,7 +559,7 @@ namespace bs
 				case FbxNodeAttribute::eNurbsSurface:
 				case FbxNodeAttribute::ePatch:
 				{
-					FbxGeometryConverter geomConverter(mFBXManager);
+					FbxGeometryConverter GeomConverter(mFBXManager);
 					attrib = geomConverter.Triangulate(attrib, true);
 
 					if (attrib->GetAttributeType() == FbxNodeAttribute::eMesh)
@@ -578,7 +578,7 @@ namespace bs
 
 						if(!mesh->IsTriangleMesh())
 						{
-							FbxGeometryConverter geomConverter(mFBXManager);
+							FbxGeometryConverter GeomConverter(mFBXManager);
 							geomConverter.Triangulate(mesh, true);
 							attrib = curNode->GetNodeAttribute();
 							mesh = static_cast<FbxMesh*>(attrib);
@@ -610,7 +610,7 @@ namespace bs
 		Vector3 rotationEuler = FBXToNativeType(fbxNode->EvaluateLocalRotation(FbxTime(0)));
 		Vector3 scale = FBXToNativeType(fbxNode->EvaluateLocalScaling(FbxTime(0)));
 
-		Quaternion rotation((Degree)rotationEuler.x, (Degree)rotationEuler.y, (Degree)rotationEuler.z,
+		Quaternion Rotation((Degree)rotationEuler.x, (Degree)rotationEuler.y, (Degree)rotationEuler.z,
 			EulerAngleOrder::XYZ);
 
 		node->name = fbxNode->GetNameWithoutNameSpacePrefix().Buffer();
@@ -632,7 +632,7 @@ namespace bs
 		Vector3 geomRotEuler = FBXToNativeType(fbxNode->GeometricRotation.Get());
 		Vector3 geomScale = FBXToNativeType(fbxNode->GeometricScaling.Get());
 
-		Quaternion geomRotation((Degree)geomRotEuler.x, (Degree)geomRotEuler.y, (Degree)geomRotEuler.z, EulerAngleOrder::XYZ);
+		Quaternion GeomRotation((Degree)geomRotEuler.x, (Degree)geomRotEuler.y, (Degree)geomRotEuler.z, EulerAngleOrder::XYZ);
 		node->geomTransform = Matrix4::TRS(geomTrans, geomRotation, geomScale);
 
 		scene.nodeMap.insert(std::make_pair(fbxNode, node));
@@ -1127,7 +1127,7 @@ namespace bs
 			mElementCount(mElementArray.GetCount())
 		{}
 
-		bool get(int index, TNative& output) const
+		bool Get(int index, TNative& output) const
 		{
 			if (index < 0 || index >= mElementCount)
 				return false;
@@ -1136,7 +1136,7 @@ namespace bs
 			return true;
 		}
 
-		bool isEmpty() const
+		bool IsEmpty() const
 		{
 			return mElementCount == 0;
 		}
@@ -1157,7 +1157,7 @@ namespace bs
 			mIndexCount(mIndexArray.GetCount())
 		{}
 
-		bool get(int index, TNative& output) const
+		bool Get(int index, TNative& output) const
 		{
 			if (index < 0 || index >= mIndexCount)
 				return false;
@@ -1171,7 +1171,7 @@ namespace bs
 			return true;
 		}
 
-		bool isEmpty() const
+		bool IsEmpty() const
 		{
 			return mElementCount == 0 || mIndexCount == 0;
 		}
@@ -1184,9 +1184,9 @@ namespace bs
 	};
 
 	template<class TFBX, class TNative, class TIndexer>
-	void readLayerData(FbxLayerElementTemplate<TFBX>& layer, Vector<TNative>& output, const Vector<int>& indices)
+	void ReadLayerData(FbxLayerElementTemplate<TFBX>& layer, Vector<TNative>& output, const Vector<int>& indices)
 	{
-		TIndexer indexer(layer);
+		TIndexer Indexer(layer);
 		if (indexer.isEmpty())
 			return;
 
@@ -1241,7 +1241,7 @@ namespace bs
 	}
 
 	template<class TFBX, class TNative>
-	void readLayerData(FbxLayerElementTemplate<TFBX>& layer, Vector<TNative>& output, const Vector<int>& indices)
+	void ReadLayerData(FbxLayerElementTemplate<TFBX>& layer, Vector<TNative>& output, const Vector<int>& indices)
 	{
 		FbxLayerElement::EReferenceMode refMode = layer.GetReferenceMode();
 
@@ -1381,7 +1381,7 @@ namespace bs
 
 						if (smoothing->GetMappingMode() == FbxLayerElement::eByEdge)
 						{
-							FbxGeometryConverter converter(mFBXManager);
+							FbxGeometryConverter Converter(mFBXManager);
 							converter.ComputePolygonSmoothingFromEdgeSmoothing(mesh, 0);
 						}
 
@@ -1831,7 +1831,7 @@ namespace bs
 			}
 			else
 			{
-				Vector<TKeyframe<Vector3>> keyframes(1);
+				Vector<TKeyframe<Vector3>> Keyframes(1);
 				keyframes[0].value = defaultTranslation;
 				keyframes[0].inTangent = Vector3::ZERO;
 				keyframes[0].outTangent = Vector3::ZERO;
@@ -1848,7 +1848,7 @@ namespace bs
 			}
 			else
 			{
-				Vector<TKeyframe<Vector3>> keyframes(1);
+				Vector<TKeyframe<Vector3>> Keyframes(1);
 				keyframes[0].value = defaultScale;
 				keyframes[0].inTangent = Vector3::ZERO;
 				keyframes[0].outTangent = Vector3::ZERO;
@@ -1866,7 +1866,7 @@ namespace bs
 			}
 			else
 			{
-				Vector<TKeyframe<Vector3>> keyframes(1);
+				Vector<TKeyframe<Vector3>> Keyframes(1);
 				keyframes[0].value = defaultRotation;
 				keyframes[0].inTangent = Vector3::ZERO;
 				keyframes[0].outTangent = Vector3::ZERO;
@@ -1949,8 +1949,8 @@ namespace bs
 				FbxNode* node = todo.top();
 				todo.pop();
 
-				FbxVector4 zero(0, 0, 0);
-				FbxVector4 one(1, 1, 1);
+				FbxVector4 Zero(0, 0, 0);
+				FbxVector4 One(1, 1, 1);
 
 				// Activate pivot converting
 				node->SetPivotState(FbxNode::eSourcePivot, FbxNode::ePivotActive);
@@ -2029,7 +2029,7 @@ namespace bs
 	}
 
 	template<class T>
-	void setKeyframeValues(TKeyframe<T>& keyFrame, int idx, float value, float inTangent, float outTangent)
+	void SetKeyframeValues(TKeyframe<T>& keyFrame, int idx, float value, float inTangent, float outTangent)
 	{
 		keyFrame.value = value;
 		keyFrame.inTangent = inTangent;
@@ -2205,7 +2205,7 @@ namespace bs
 		INT32 lastLeftTangent[] = { 0, 0, 0 };
 		INT32 lastRightTangent[] = { 0, 0, 0 };
 
-		Vector<TKeyframe<T>> keyframes(numSamples);
+		Vector<TKeyframe<T>> Keyframes(numSamples);
 		for (INT32 i = 0; i < numSamples; i++)
 		{
 			float sampleTime = std::min(curveStart + i * dt, curveEnd);

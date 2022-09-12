@@ -103,7 +103,7 @@ namespace bs
 		 */
 		struct ModifiedObject : Modification
 		{
-			static SPtr<ModifiedObject> create();
+			static SPtr<ModifiedObject> Create();
 
 			Vector<ModifiedField> entries; /**< A list of entries containing each modified field in the object. */
 
@@ -119,7 +119,7 @@ namespace bs
 		/**	Contains data about all modifications in an array or a list. */
 		struct ModifiedArray : Modification
 		{
-			static SPtr<ModifiedArray> create();
+			static SPtr<ModifiedArray> Create();
 
 			Vector<ModifiedArrayEntry> entries; /**< A list of all modified array/list entries along with their indices. */
 			Vector<UINT32> origSizes; /**< Original size of the array/list (one size per dimension). */
@@ -137,7 +137,7 @@ namespace bs
 		/**	Contains data about all modifications in a dictionary. */
 		struct ModifiedDictionary : Modification
 		{
-			static SPtr<ModifiedDictionary> create();
+			static SPtr<ModifiedDictionary> Create();
 
 			/** A list of modified entries in the dictionary. */
 			Vector<ModifiedDictionaryEntry> entries;
@@ -159,7 +159,7 @@ namespace bs
 			ModifiedEntry() = default;
 			ModifiedEntry(const SPtr<ManagedSerializableFieldData>& value);
 
-			static SPtr<ModifiedEntry> create(const SPtr<ManagedSerializableFieldData>& value);
+			static SPtr<ModifiedEntry> Create(const SPtr<ManagedSerializableFieldData>& value);
 
 			SPtr<ManagedSerializableFieldData> value;
 
@@ -185,19 +185,19 @@ namespace bs
 		 *						recorded in the diff.
 		 * @return				Returns null if objects are identical.
 		 */
-		static SPtr<ManagedSerializableDiff> create(const ManagedSerializableObject* oldObj, const ManagedSerializableObject* newObj);
+		static SPtr<ManagedSerializableDiff> Create(const ManagedSerializableObject* oldObj, const ManagedSerializableObject* newObj);
 
 		/**
 		 * Applies the diff data stored in this object to the specified object, modifying all fields in the object to
 		 * correspond to the stored diff data.
 		 */
-		void apply(const SPtr<ManagedSerializableObject>& obj);
+		void Apply(const SPtr<ManagedSerializableObject>& obj);
 
 	private:
 		/**
 		 * Recursively generates a diff between all fields of the specified objects. Returns null if objects are identical.
 		 */
-		SPtr<ModifiedObject> generateDiff(const ManagedSerializableObject* oldObj, const ManagedSerializableObject* newObj);
+		SPtr<ModifiedObject> GenerateDiff(const ManagedSerializableObject* oldObj, const ManagedSerializableObject* newObj);
 
 		/**
 		 * Generates a diff between two fields. Fields can be of any type and the system will generate the diff
@@ -214,7 +214,7 @@ namespace bs
 		 * @param[in]	obj	Object to apply the modification to.
 		 * @return		New field data in the case modification needed the object to be re-created instead of just modified.
 		 */
-		SPtr<ManagedSerializableFieldData> applyDiff(const SPtr<ModifiedObject>& mod, const SPtr<ManagedSerializableObject>& obj);
+		SPtr<ManagedSerializableFieldData> ApplyDiff(const SPtr<ModifiedObject>& mod, const SPtr<ManagedSerializableObject>& obj);
 
 		/**
 		 * Applies an array modification to a managed array. Modifications are applied recursively.
@@ -223,7 +223,7 @@ namespace bs
 		 * @param[in]	obj	Array to apply the modification to.
 		 * @return		New field data in the case modification needed the array to be re-created instead of just modified.
 		 */
-		SPtr<ManagedSerializableFieldData> applyDiff(const SPtr<ModifiedArray>& mod, const SPtr<ManagedSerializableArray>& obj);
+		SPtr<ManagedSerializableFieldData> ApplyDiff(const SPtr<ModifiedArray>& mod, const SPtr<ManagedSerializableArray>& obj);
 
 		/**
 		 * Applies an list modification to a managed list. Modifications are applied recursively.
@@ -232,7 +232,7 @@ namespace bs
 		 * @param[in]	obj	List to apply the modification to.
 		 * @return		New field data in the case modification needed the list to be re-created instead of just modified.
 		 */
-		SPtr<ManagedSerializableFieldData> applyDiff(const SPtr<ModifiedArray>& mod, const SPtr<ManagedSerializableList>& obj);
+		SPtr<ManagedSerializableFieldData> ApplyDiff(const SPtr<ModifiedArray>& mod, const SPtr<ManagedSerializableList>& obj);
 
 		/**
 		 * Applies an dictionary modification to a managed dictionary. Modifications are applied recursively.
@@ -241,7 +241,7 @@ namespace bs
 		 * @param[in]	obj	Dictionary to apply the modification to.
 		 * @return	New field data in the case modification needed the dictionary to be re-created instead of just modified.
 		 */
-		SPtr<ManagedSerializableFieldData> applyDiff(const SPtr<ModifiedDictionary>& mod, const SPtr<ManagedSerializableDictionary>& obj);
+		SPtr<ManagedSerializableFieldData> ApplyDiff(const SPtr<ModifiedDictionary>& mod, const SPtr<ManagedSerializableDictionary>& obj);
 
 		/**
 		 * Applies a modification to a single field. Field type is determined and the modification is applied to the

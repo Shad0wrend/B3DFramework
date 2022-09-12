@@ -94,7 +94,7 @@ namespace bs
 	template<class COLOR, class TIME>
 	Vector<ColorGradientKey> TColorGradient<COLOR, TIME>::getKeys() const
 	{
-		Vector<ColorGradientKey> output(mNumKeys);
+		Vector<ColorGradientKey> Output(mNumKeys);
 		for(UINT32 i = 0; i < mNumKeys; i++)
 		{
 			output[i].color = impl::TGradientHelper<COLOR>::fromInternalColor(mColors[i]);

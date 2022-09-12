@@ -39,8 +39,8 @@ namespace bs
 	template <class Type>
 	struct DenseMapInfo
 	{
-		constexpr static Type getEmptyKey() { return static_cast<Type>(-1); }
-		constexpr static Type getTombstoneKey() { return static_cast<Type>(-2); }
+		constexpr static Type GetEmptyKey() { return static_cast<Type>(-1); }
+		constexpr static Type GetTombstoneKey() { return static_cast<Type>(-2); }
 	};
 
 	/** DenseMapInfo specialization that works for pointer types. */
@@ -91,7 +91,7 @@ namespace bs
 		const DensePair* end;
 
 	private:
-		void next()
+		void Next()
 		{
 			while (ptr != end && ((ptr->first == KeyInfo::getEmptyKey()) || (ptr->first == KeyInfo::getTombstoneKey())))
 				++ptr;
@@ -168,7 +168,7 @@ namespace bs
 
 		Value& operator[] (const Key& key)
 		{
-			return construct(key).second;
+			return Construct(key).second;
 		}
 
 		DenseMap& operator= (const DenseMap<Key, Value>& other)
@@ -191,36 +191,36 @@ namespace bs
 			return !(*this == other);
 		}
 
-		Iterator begin()
+		Iterator Begin()
 		{
 			return Iterator(mBuckets, mBuckets + mCount);
 		}
 
-		Iterator end()
+		Iterator End()
 		{
 			return Iterator(mBuckets + mCount, mBuckets + mCount);
 		}
 
-		ConstIterator begin() const
+		ConstIterator Begin() const
 		{
 			return ConstIterator(mBuckets, mBuckets + mCount);
 		}
 
-		ConstIterator end() const
+		ConstIterator End() const
 		{
 			return ConstIterator(mBuckets + mCount, mBuckets + mCount);
 		}
 
-		bool empty() const { return mEntries == 0; }
-		UINT32 size() const { return mEntries; }
+		bool Empty() const { return mEntries == 0; }
+		UINT32 Size() const { return mEntries; }
 
 		/** Grow so that it has at least n mBuckets. */
-		void resize(UINT32 n)
+		void Resize(UINT32 n)
 		{
 			grow(n);
 		}
 
-		void clear()
+		void Clear()
 		{
 			// If the capacity of the array is huge and the elements used is small then shrink the array.
 			if (mEntries * 4 < mCount && mCount > Size)
@@ -248,33 +248,33 @@ namespace bs
 			mTombstones = 0;
 		}
 
-		bool contains(const Key& key) const
+		bool Contains(const Key& key) const
 		{
 			DensePair* temp;
-			return lookup(key, temp);
+			return Lookup(key, temp);
 		}
 
-		Iterator find(const Key& key)
+		Iterator Find(const Key& key)
 		{
 			DensePair* temp;
 
 			if (lookup(key, temp))
 				return Iterator(temp, mBuckets + mCount);
 
-			return end();
+			return End();
 		}
 
-		ConstIterator find(const Key& key) const
+		ConstIterator Find(const Key& key) const
 		{
 			DensePair* temp;
 
 			if (lookup(key, temp))
 				return ConstIterator(temp, mBuckets + mCount);
 
-			return end();
+			return End();
 		}
 
-		std::pair<Iterator, bool> insert(const std::pair<Key, Value>& pair)
+		std::pair<Iterator, bool> Insert(const std::pair<Key, Value>& pair)
 		{
 			if (empty())
 				init();
@@ -291,7 +291,7 @@ namespace bs
 			return std::make_pair(Iterator(temp, getBuckets() + getCount()), true);
 		}
 
-		bool erase(const Key& key)
+		bool Erase(const Key& key)
 		{
 			assert(size() != 0);
 			DensePair* temp;
@@ -304,7 +304,7 @@ namespace bs
 			return true;
 		}
 
-		bool erase(Iterator iter)
+		bool Erase(Iterator iter)
 		{
 			assert(size() != 0);
 			DensePair* temp = &*iter;
@@ -314,23 +314,23 @@ namespace bs
 			return true;
 		}
 
-		DensePair& construct(const Key& key)
+		DensePair& Construct(const Key& key)
 		{
 			DensePair* temp;
 
 			if (lookup(key, temp))
 				return temp;
 
-			return insertBucket(key, Value(), temp);
+			return InsertBucket(key, Value(), temp);
 		}
 
 	private:
-		void init()
+		void Init()
 		{
 			append(Size);
 		}
 
-		void update(DensePair* t)
+		void Update(DensePair* t)
 		{
 			t->second.~Value();
 			t->first = getTombstoneKey();
@@ -338,7 +338,7 @@ namespace bs
 			++mTombstones;
 		}
 
-		void copy(const DenseMap<Key, Value>& other)
+		void Copy(const DenseMap<Key, Value>& other)
 		{
 			if (getCount() != 0 && (!std::is_pod<Key>() || !std::is_pod<Value>()))
 			{
@@ -403,7 +403,7 @@ namespace bs
 		 * Lookup the appropriate bucket for key, returning it in @p f. If the bucket contains the key and a value, 
 		 * this returns true, otherwise it returns a bucket with an empty marker or tombstone and returns false.
 		 */
-		bool lookup(const Key& key, DensePair*& f) const
+		bool Lookup(const Key& key, DensePair*& f) const
 		{
 			UINT32 bucketN = getHashValue(key);
 			UINT32 probe = 1;
@@ -452,7 +452,7 @@ namespace bs
 			}
 		}
 
-		void append(UINT32 n)
+		void Append(UINT32 n)
 		{
 			mEntries = 0;
 			mTombstones = 0;
@@ -465,7 +465,7 @@ namespace bs
 				new (&mBuckets[i].first) Key(getEmptyKey());
 		}
 
-		void grow(UINT32 n)
+		void Grow(UINT32 n)
 		{
 			const UINT32 oldCount = getCount();
 			DensePair* oldBuckets = getBuckets();
@@ -509,7 +509,7 @@ namespace bs
 			bs_free(oldBuckets);
 		}
 
-		void shrink()
+		void Shrink()
 		{
 			const UINT32 oldCount = getCount();
 			DensePair* oldBuckets = getBuckets();
@@ -539,13 +539,13 @@ namespace bs
 			mEntries = 0;
 		}
 
-		UINT32 getCount() const { return mCount; }
+		UINT32 GetCount() const { return mCount; }
 		DensePair* getBuckets() const { return mBuckets; }
-		UINT32 getTombstones() const { return mTombstones; }
+		UINT32 GetTombstones() const { return mTombstones; }
 
-		static UINT32 getHashValue(const Key& key) { return bs_hash(key); }
-		static const Key getEmptyKey() { return KeyInfo::getEmptyKey(); }
-		static const Key getTombstoneKey() { return KeyInfo::getTombstoneKey(); }
+		static UINT32 GetHashValue(const Key& key) { return bs_hash(key); }
+		static const Key GetEmptyKey() { return KeyInfo::getEmptyKey(); }
+		static const Key GetTombstoneKey() { return KeyInfo::getTombstoneKey(); }
 
 	private:
 		DensePair* mBuckets = nullptr;

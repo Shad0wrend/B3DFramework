@@ -5,7 +5,7 @@
 namespace bs
 {
 	NullPhysicsMaterial::NullPhysicsMaterial(float staFric, float dynFriction, float restitution)
-		: mStaticFriction(staFric), mDynamicFriction(dynFriction), mRestitutionCoefficient(restitution)
+		: MStaticFriction(staFric), mDynamicFriction(dynFriction), mRestitutionCoefficient(restitution)
 	{
 	}
 }

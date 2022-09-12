@@ -16,10 +16,10 @@ namespace bs
 	{
 	public:
 		/**	Text of the include file. */
-		const String& getString() const { return mString; }
+		const String& GetString() const { return mString; }
 
 		/**	Creates a new include file resource with the specified include string. */
-		static HShaderInclude create(const String& includeString);
+		static HShaderInclude Create(const String& includeString);
 
 	public: // ***** INTERNAL ******
 		/** @name Internal

@@ -51,7 +51,7 @@ namespace bs
 
 	SPtr<AudioSource> AudioSource::create()
 	{
-		return gAudio().createSource();
+		return GAudio().createSource();
 	}
 
 	void AudioSource::getListenerResources(Vector<HResource>& resources)

@@ -45,27 +45,27 @@ namespace bs
 		 * @param[in]	dependency	(optional) Task dependency if one exists. If provided the task will
 		 * 							not be executed until its dependency is complete.
 		 */
-		static SPtr<Task> create(const String& name, std::function<void()> taskWorker,
+		static SPtr<Task> Create(const String& name, std::function<void()> taskWorker,
 			TaskPriority priority = TaskPriority::Normal, SPtr<Task> dependency = nullptr);
 
 		/** Returns true if the task has completed. */
-		bool isComplete() const;
+		bool IsComplete() const;
 
 		/**	Returns true if the task has been canceled. */
-		bool isCanceled() const;
+		bool IsCanceled() const;
 
 		/** Returns true if the task has started or completed execution. */
-		bool hasStarted() const;
+		bool HasStarted() const;
 
 		/**
 		 * Blocks the current thread until the task has completed.
 		 *
 		 * @note	While waiting adds a new worker thread, so that the blocking threads core can be utilized.
 		 */
-		void wait();
+		void Wait();
 
 		/** Cancels the task and removes it from the TaskSchedulers queue. */
-		void cancel();
+		void Cancel();
 
 	private:
 		friend class TaskScheduler;
@@ -104,18 +104,18 @@ namespace bs
 		 * @param[in]	dependency	(optional) Task dependency if one exists. If provided the task will
 		 * 							not be executed until its dependency is complete.
 		 */
-		static SPtr<TaskGroup> create(String name, std::function<void(UINT32)> taskWorker, UINT32 count,
+		static SPtr<TaskGroup> Create(String name, std::function<void(UINT32)> taskWorker, UINT32 count,
 			TaskPriority priority = TaskPriority::Normal, SPtr<Task> dependency = nullptr);
 
 		/** Returns true if all the tasks in the group have completed. */
-		bool isComplete() const;
+		bool IsComplete() const;
 
 		/**
 		 * Blocks the current thread until all tasks in the group have completed.
 		 *
 		 * @note	While waiting adds a new worker thread, so that the blocking threads core can be utilized.
 		 */
-		void wait();
+		void Wait();
 
 	private:
 		friend class TaskScheduler;
@@ -151,37 +151,37 @@ namespace bs
 		~TaskScheduler();
 
 		/** Queues a new task. */
-		void addTask(SPtr<Task> task);
+		void AddTask(SPtr<Task> task);
 
 		/** Queues a new task group. */
-		void addTaskGroup(const SPtr<TaskGroup>& taskGroup);
+		void AddTaskGroup(const SPtr<TaskGroup>& taskGroup);
 
 		/**	Adds a new worker thread which will be used for executing queued tasks. */
-		void addWorker();
+		void AddWorker();
 
 		/**	Removes a worker thread (as soon as its current task is finished). */
-		void removeWorker();
+		void RemoveWorker();
 
 		/** Returns the maximum available worker threads (maximum number of tasks that can be executed simultaneously). */
-		UINT32 getNumWorkers() const { return mMaxActiveTasks; }
+		UINT32 GetNumWorkers() const { return mMaxActiveTasks; }
 	protected:
 		friend class Task;
 		friend class TaskGroup;
 
 		/**	Main task scheduler method that dispatches tasks to other threads. */
-		void runMain();
+		void RunMain();
 
 		/**	Worker method that runs a single task. */
-		void runTask(SPtr<Task> task);
+		void RunTask(SPtr<Task> task);
 
 		/**	Blocks the calling thread until the specified task has completed. */
-		void waitUntilComplete(const Task* task);
+		void WaitUntilComplete(const Task* task);
 
 		/**	Blocks the calling thread until all the tasks in the provided task group have completed. */
-		void waitUntilComplete(const TaskGroup* taskGroup);
+		void WaitUntilComplete(const TaskGroup* taskGroup);
 
 		/**	Method used for sorting tasks. */
-		static bool taskCompare(const SPtr<Task>& lhs, const SPtr<Task>& rhs);
+		static bool TaskCompare(const SPtr<Task>& lhs, const SPtr<Task>& rhs);
 
 		HThread mTaskSchedulerThread;
 		Set<SPtr<Task>, std::function<bool(const SPtr<Task>&, const SPtr<Task>&)>> mTaskQueue;

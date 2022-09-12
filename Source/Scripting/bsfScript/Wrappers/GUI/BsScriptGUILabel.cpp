@@ -36,7 +36,7 @@ namespace bs
 	{
 		GUIOptions options;
 
-		ScriptArray scriptArray(guiOptions);
+		ScriptArray ScriptArray(guiOptions);
 		UINT32 arrayLen = scriptArray.size();
 		for (UINT32 i = 0; i < arrayLen; i++)
 			options.addOption(scriptArray.get<GUIOption>(i));

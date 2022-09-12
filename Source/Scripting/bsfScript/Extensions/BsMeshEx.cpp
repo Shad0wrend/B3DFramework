@@ -66,7 +66,7 @@ namespace bs
 	Vector<SubMesh> MeshEx::getSubMeshes(const HMesh& thisPtr)
 	{
 		UINT32 numSubMeshes = thisPtr->getProperties().getNumSubMeshes();
-		Vector<SubMesh> output(numSubMeshes);
+		Vector<SubMesh> Output(numSubMeshes);
 		for (UINT32 i = 0; i < numSubMeshes; i++)
 			output[i] = thisPtr->getProperties().getSubMesh(i);
 

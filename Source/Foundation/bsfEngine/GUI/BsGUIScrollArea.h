@@ -24,7 +24,7 @@ namespace bs
 	{
 	public:
 		/** Returns type name of the GUI element used for finding GUI element styles. */
-		static const String& getGUITypeName();
+		static const String& GetGUITypeName();
 
 		/**
 		 * Creates a new empty scroll area.
@@ -72,61 +72,61 @@ namespace bs
 			const String& scrollAreaStyle = StringUtil::BLANK);
 
 		/**	Returns the scroll area layout that you may use to add elements inside the scroll area. */
-		GUILayout& getLayout() const { return *mContentLayout; }
+		GUILayout& GetLayout() const { return *mContentLayout; }
 
 		/**	Scrolls the area up by specified amount of pixels, if possible. */
-		void scrollUpPx(UINT32 pixels);
+		void ScrollUpPx(UINT32 pixels);
 
 		/**	Scrolls the area down by specified amount of pixels, if possible. */
-		void scrollDownPx(UINT32 pixels);
+		void ScrollDownPx(UINT32 pixels);
 
 		/**	Scrolls the area left by specified amount of pixels, if possible. */
-		void scrollLeftPx(UINT32 pixels);
+		void ScrollLeftPx(UINT32 pixels);
 
 		/**	Scrolls the area right by specified amount of pixels, if possible. */
-		void scrollRightPx(UINT32 pixels);
+		void ScrollRightPx(UINT32 pixels);
 
 		/**	Scrolls the area up by specified percentage (ranging [0, 1]), if possible. */
-		void scrollUpPct(float percent);
+		void ScrollUpPct(float percent);
 
 		/**	Scrolls the area down by specified percentage (ranging [0, 1]), if possible. */
-		void scrollDownPct(float percent);
+		void ScrollDownPct(float percent);
 
 		/**	Scrolls the area left by specified percentage (ranging [0, 1]), if possible. */
-		void scrollLeftPct(float percent);
+		void ScrollLeftPct(float percent);
 
 		/**	Scrolls the area right by specified percentage (ranging [0, 1]), if possible. */
-		void scrollRightPct(float percent);
+		void ScrollRightPct(float percent);
 
 		/**
 		 * Scrolls the contents to the specified position (0 meaning top-most part of the content is visible, and 1 meaning
 		 * bottom-most part is visible).
 		 */
-		void scrollToVertical(float pct);
+		void ScrollToVertical(float pct);
 
 		/**
 		 * Scrolls the contents to the specified position (0 meaning left-most part of the content is visible, and 1 meaning
 		 * right-most part is visible)
 		 */
-		void scrollToHorizontal(float pct);
+		void ScrollToHorizontal(float pct);
 
 		/**
 		 * Returns how much is the scroll area scrolled in the vertical direction. Returned value represents percentage
 		 * where 0 means no scrolling is happening, and 1 means area is fully scrolled to the bottom.
 		 */
-		float getVerticalScroll() const;
+		float GetVerticalScroll() const;
 
 		/**
 		 * Returns how much is the scroll area scrolled in the horizontal direction. Returned value represents percentage
 		 * where 0 means no scrolling is happening, and 1 means area is fully scrolled to the right.
 		 */
-		float getHorizontalScroll() const;
+		float GetHorizontalScroll() const;
 
 		/**
 		 * Returns the bounds of the scroll area not including the scroll bars (meaning only the portion that contains the
 		 * contents).
 		 */
-		Rect2I getContentBounds();
+		Rect2I GetContentBounds();
 
 		/**
 		 * Number of pixels the scroll bar will occupy when active. This is width for vertical scrollbar, and height for
@@ -149,7 +149,7 @@ namespace bs
 		LayoutSizeRange _getLayoutSizeRange() const override;
 
 		/** @copydoc GUIElementContainer::updateClippedBounds */
-		void updateClippedBounds() override;
+		void UpdateClippedBounds() override;
 
 		/** @copydoc GUIElementBase::_calculateLayoutSizeRange */
 		LayoutSizeRange _calculateLayoutSizeRange() const override;
@@ -171,14 +171,14 @@ namespace bs
 		 *
 		 * @param[in]	pct	Scrollbar position ranging [0, 1].
 		 */
-		void vertScrollUpdate(float pct);
+		void VertScrollUpdate(float pct);
 
 		/**
 		 * Called when the horizontal scrollbar moves.
 		 *
 		 * @param[in]	pct	Scrollbar position ranging [0, 1].
 		 */
-		void horzScrollUpdate(float pct);
+		void HorzScrollUpdate(float pct);
 
 		/** @copydoc	GUIElementContainer::_updateLayoutInternal */
 		void _updateLayoutInternal(const GUILayoutData& data) override;

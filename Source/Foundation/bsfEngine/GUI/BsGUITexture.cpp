@@ -136,7 +136,7 @@ namespace bs
 			textureSize.x = mDesc.texture->getFrameWidth();
 			textureSize.y = mDesc.texture->getFrameHeight();
 		}
-		Vector2I destSize(mLayoutData.area.width, mLayoutData.area.height);
+		Vector2I DestSize(mLayoutData.area.width, mLayoutData.area.height);
 
 		// ScaleToFit is the only scaling mode that might result in the GUITexture area not being completely covered by
 		// the sprite. We need the actual sprite size and offsets to center it.

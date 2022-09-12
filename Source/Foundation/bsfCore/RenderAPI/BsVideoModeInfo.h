@@ -65,16 +65,16 @@ namespace bs
 		VideoOutputInfo& operator=(const VideoOutputInfo&) = delete; // Make non-copyable
 
 		/**	Name of the output device. */
-		const String& getName() const { return mName; }
+		const String& GetName() const { return mName; }
 
 		/**	Number of available video modes for this output. */
-		UINT32 getNumVideoModes() const { return (UINT32)mVideoModes.size(); }
+		UINT32 GetNumVideoModes() const { return (UINT32)mVideoModes.size(); }
 
 		/**	Returns video mode at the specified index. */
-		const VideoMode& getVideoMode(UINT32 idx) const { return *mVideoModes.at(idx); }
+		const VideoMode& GetVideoMode(UINT32 idx) const { return *mVideoModes.at(idx); }
 
 		/**	Returns the video mode currently used by the desktop. */
-		const VideoMode& getDesktopVideoMode() const { return *mDesktopVideoMode; }
+		const VideoMode& GetDesktopVideoMode() const { return *mDesktopVideoMode; }
 
 	protected:
 		String mName;
@@ -93,13 +93,13 @@ namespace bs
 		VideoModeInfo& operator=(const VideoModeInfo&) = delete; // Make non-copyable
 
 		/**	Returns the number of available output devices. */
-		UINT32 getNumOutputs() const { return (UINT32)mOutputs.size(); }
+		UINT32 GetNumOutputs() const { return (UINT32)mOutputs.size(); }
 
 		/**
 		 * Returns video mode information about a specific output device. 0th index always represents the primary device
 		 * while order of others is undefined.
 		 */
-		const VideoOutputInfo& getOutputInfo(UINT32 idx) const { return *mOutputs[idx]; }
+		const VideoOutputInfo& GetOutputInfo(UINT32 idx) const { return *mOutputs[idx]; }
 
 	protected:
 		Vector<VideoOutputInfo*> mOutputs;

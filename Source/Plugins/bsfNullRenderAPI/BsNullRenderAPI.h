@@ -18,7 +18,7 @@ namespace bs { namespace ct
 	{
 	public:
 		/** @copydoc RenderAPI::getName */
-		const StringID& getName() const override;
+		const StringID& GetName() const override;
 		
 		/** @copydoc RenderAPI::setGraphicsPipeline */
 		void setGraphicsPipeline(const SPtr<GraphicsPipelineState>& pipelineState,
@@ -45,14 +45,14 @@ namespace bs { namespace ct
 			RenderSurfaceMask loadMask = RT_NONE, const SPtr<CommandBuffer>& commandBuffer = nullptr) override { }
 
 		/** @copydoc RenderAPI::setViewport */
-		void setViewport(const Rect2& area, const SPtr<CommandBuffer>& commandBuffer = nullptr) override { }
+		void SetViewport(const Rect2& area, const SPtr<CommandBuffer>& commandBuffer = nullptr) override { }
 
 		/** @copydoc RenderAPI::setScissorRect */
 		void setScissorRect(UINT32 left, UINT32 top, UINT32 right, UINT32 bottom,
 			const SPtr<CommandBuffer>& commandBuffer = nullptr) override { }
 
 		/** @copydoc RenderAPI::setStencilRef */
-		void setStencilRef(UINT32 value, const SPtr<CommandBuffer>& commandBuffer = nullptr) override { }
+		void SetStencilRef(UINT32 value, const SPtr<CommandBuffer>& commandBuffer = nullptr) override { }
 
 		/** @copydoc RenderAPI::setVertexBuffers */
 		void setVertexBuffers(UINT32 index, SPtr<VertexBuffer>* buffers, UINT32 numBuffers,
@@ -83,31 +83,31 @@ namespace bs { namespace ct
 			const SPtr<CommandBuffer>& commandBuffer = nullptr) override { }
 
 		/** @copydoc RenderAPI::swapBuffers() */
-		void swapBuffers(const SPtr<RenderTarget>& target, UINT32 syncMask = 0xFFFFFFFF) override { }
+		void SwapBuffers(const SPtr<RenderTarget>& target, UINT32 syncMask = 0xFFFFFFFF) override { }
 
 		/** @copydoc RenderAPI::addCommands() */
-		void addCommands(const SPtr<CommandBuffer>& commandBuffer, const SPtr<CommandBuffer>& secondary) override { }
+		void AddCommands(const SPtr<CommandBuffer>& commandBuffer, const SPtr<CommandBuffer>& secondary) override { }
 
 		/** @copydoc RenderAPI::submitCommandBuffer() */
-		void submitCommandBuffer(const SPtr<CommandBuffer>& commandBuffer, UINT32 syncMask = 0xFFFFFFFF) override { }
+		void SubmitCommandBuffer(const SPtr<CommandBuffer>& commandBuffer, UINT32 syncMask = 0xFFFFFFFF) override { }
 
 		/** @copydoc RenderAPI::convertProjectionMatrix */
-		void convertProjectionMatrix(const Matrix4& matrix, Matrix4& dest) override;
+		void ConvertProjectionMatrix(const Matrix4& matrix, Matrix4& dest) override;
 
 		/** @copydoc RenderAPI::generateParamBlockDesc() */
-		GpuParamBlockDesc generateParamBlockDesc(const String& name, Vector<GpuParamDataDesc>& params) override ;
+		GpuParamBlockDesc GenerateParamBlockDesc(const String& name, Vector<GpuParamDataDesc>& params) override ;
 
 	protected:
 		friend class NullRenderAPIFactory;
 
 		/** @copydoc RenderAPI::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 		/** @copydoc RenderAPI::initializeWithWindow */
-		void initializeWithWindow(const SPtr<RenderWindow>& primaryWindow) override;
+		void InitializeWithWindow(const SPtr<RenderWindow>& primaryWindow) override;
 
 		/** @copydoc RenderAPI::destroyCore */
-		void destroyCore() override;
+		void DestroyCore() override;
 
 		NullProgramFactory* mNullProgramFactory = nullptr;
 	};

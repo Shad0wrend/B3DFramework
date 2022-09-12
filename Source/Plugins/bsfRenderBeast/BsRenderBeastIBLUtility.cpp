@@ -165,9 +165,9 @@ namespace bs { namespace ct
 	IrradianceComputeSHMat* IrradianceComputeSHMat::getVariation(int order)
 	{
 		if (order == 3)
-			return get(getVariation<3>());
+			return Get(getVariation<3>());
 
-		return get(getVariation<5>());
+		return Get(getVariation<5>());
 	}
 
 	IrradianceComputeSHFragParamDef gIrradianceComputeSHFragParamDef;
@@ -228,7 +228,7 @@ namespace bs { namespace ct
 		mInputTexture.set(source);
 
 		auto& props = source->getProperties();
-		Vector2 halfPixel(0.5f / props.getWidth(), 0.5f / props.getHeight());
+		Vector2 HalfPixel(0.5f / props.getWidth(), 0.5f / props.getHeight());
 
 		gIrradianceAccumulateSHParamDef.gCubeFace.set(mParamBuffer, face);
 		gIrradianceAccumulateSHParamDef.gCubeMip.set(mParamBuffer, sourceMip);
@@ -271,7 +271,7 @@ namespace bs { namespace ct
 		mInputTexture.set(source);
 
 		auto& props = source->getProperties();
-		Vector2 halfPixel(0.5f / props.getWidth(), 0.5f / props.getHeight());
+		Vector2 HalfPixel(0.5f / props.getWidth(), 0.5f / props.getHeight());
 
 		gIrradianceAccumulateSHParamDef.gCubeFace.set(mParamBuffer, 0);
 		gIrradianceAccumulateSHParamDef.gCubeMip.set(mParamBuffer, sourceMip);
@@ -352,9 +352,9 @@ namespace bs { namespace ct
 	IrradianceReduceSHMat* IrradianceReduceSHMat::getVariation(int order)
 	{
 		if (order == 3)
-			return get(getVariation<3>());
+			return Get(getVariation<3>());
 
-		return get(getVariation<5>());
+		return Get(getVariation<5>());
 	}
 
 	IrradianceProjectSHParamDef gIrradianceProjectSHParamDef;
@@ -450,9 +450,9 @@ namespace bs { namespace ct
 		rapi.setRenderTarget(nullptr);
 	}
 
-	bool supportsComputeSH()
+	bool SupportsComputeSH()
 	{
-		return gRenderBeast()->getFeatureSet() == RenderBeastFeatureSet::Desktop;
+		return GRenderBeast()->getFeatureSet() == RenderBeastFeatureSet::Desktop;
 	}
 
 	void RenderBeastIBLUtility::filterCubemapForIrradiance(const SPtr<Texture>& cubemap, const SPtr<Texture>& output) const

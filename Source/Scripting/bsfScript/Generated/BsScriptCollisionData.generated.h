@@ -22,9 +22,9 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "CollisionData")
 
 		static MonoObject* box(const __CollisionDataInterop& value);
-		static __CollisionDataInterop unbox(MonoObject* value);
-		static CollisionData fromInterop(const __CollisionDataInterop& value);
-		static __CollisionDataInterop toInterop(const CollisionData& value);
+		static __CollisionDataInterop Unbox(MonoObject* value);
+		static CollisionData FromInterop(const __CollisionDataInterop& value);
+		static __CollisionDataInterop ToInterop(const CollisionData& value);
 
 	private:
 		ScriptCollisionData(MonoObject* managedInstance);

@@ -99,7 +99,7 @@ namespace bs { namespace ct
 
 	const StringID& VulkanRenderAPI::getName() const
 	{
-		static StringID strName("VulkanRenderAPI");
+		static StringID StrName("VulkanRenderAPI");
 		return strName;
 	}
 
@@ -213,7 +213,7 @@ namespace bs { namespace ct
 		result = vkEnumeratePhysicalDevices(mInstance, &mNumDevices, nullptr);
 		assert(result == VK_SUCCESS);
 
-		Vector<VkPhysicalDevice> physicalDevices(mNumDevices);
+		Vector<VkPhysicalDevice> PhysicalDevices(mNumDevices);
 		result = vkEnumeratePhysicalDevices(mInstance, &mNumDevices, physicalDevices.data());
 		assert(result == VK_SUCCESS);
 
@@ -511,7 +511,7 @@ namespace bs { namespace ct
 		VulkanCommandBuffer* cb = getCB(commandBuffer);
 		VulkanCmdBuffer* vkCB = cb->getInternal();
 
-		Rect2I area(left, top, right - left, bottom - top);
+		Rect2I Area(left, top, right - left, bottom - top);
 		vkCB->setScissorRect(area);
 	}
 
@@ -778,7 +778,7 @@ namespace bs { namespace ct
 		return static_cast<VulkanCommandBuffer*>(mMainCommandBuffer.get());
 	}
 
-	VulkanRenderAPI& gVulkanRenderAPI()
+	VulkanRenderAPI& GVulkanRenderAPI()
 	{
 		return static_cast<VulkanRenderAPI&>(RenderAPI::instance());
 	}

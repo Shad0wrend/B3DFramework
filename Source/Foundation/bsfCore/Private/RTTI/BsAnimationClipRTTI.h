@@ -22,7 +22,7 @@ namespace bs
 		enum { id = TID_AnimationEvent }; enum { hasDynamicSize = 1 };
 
 		/** @copydoc RTTIPlainType::toMemory */
-		static BitLength toMemory(const AnimationEvent& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const AnimationEvent& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]()
 				{
@@ -38,7 +38,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIPlainType::fromMemory */
-		static BitLength fromMemory(AnimationEvent& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(AnimationEvent& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
 			rtti_read_size_header(stream, compress, size);
@@ -54,7 +54,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIPlainType::getSize */
-		static BitLength getSize(const AnimationEvent& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const AnimationEvent& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength dataSize = sizeof(uint8_t);
 			dataSize += rtti_size(data.time);
@@ -82,24 +82,24 @@ namespace bs
 			BS_RTTI_MEMBER_PLAIN_NAMED(rootMotionRot, mRootMotion->rotation, 9)
 		BS_END_RTTI_MEMBERS
 	public:
-		void onDeserializationEnded(IReflectable* obj, SerializationContext* context) override
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override
 		{
 			AnimationClip* clip = static_cast<AnimationClip*>(obj);
 			clip->initialize();
 		}
 
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "AnimationClip";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_AnimationClip;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			return AnimationClip::createEmpty();
 		}

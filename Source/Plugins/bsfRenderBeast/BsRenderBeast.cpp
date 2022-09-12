@@ -339,9 +339,9 @@ namespace bs { namespace ct
 		{
 			if (name == "TiledDeferredDirectLighting")
 				TiledDeferredLightingMat::setOverride(shaderCore);
-			else if(name == "StandardDeferredPointDirectLighting")
+			else If(name == "StandardDeferredPointDirectLighting")
 				DeferredPointLightMat::setOverride(shaderCore);
-			else if(name == "StandardDeferredDirDirectLighting")
+			else If(name == "StandardDeferredDirDirectLighting")
 				DeferredDirectionalLightMat::setOverride(shaderCore);
 		};
 	
@@ -391,7 +391,7 @@ namespace bs { namespace ct
 		sceneInfo.renderableReady.resize(sceneInfo.renderables.size(), false);
 		sceneInfo.renderableReady.assign(sceneInfo.renderables.size(), false);
 		
-		FrameInfo frameInfo(timings, perFrameData);
+		FrameInfo FrameInfo(timings, perFrameData);
 
 		// Make sure any renderer tasks finish first, as rendering might depend on them
 		processTasks(false, timings.frameIdx);
@@ -527,7 +527,7 @@ namespace bs { namespace ct
 
 		view.beginFrame(frameInfo);
 
-		RenderCompositorNodeInputs inputs(viewGroup, view, sceneInfo, *mCoreOptions, frameInfo, mFeatureSet);
+		RenderCompositorNodeInputs Inputs(viewGroup, view, sceneInfo, *mCoreOptions, frameInfo, mFeatureSet);
 
 		// Register callbacks
 		if (viewProps.triggerCallbacks)
@@ -737,7 +737,7 @@ namespace bs { namespace ct
 		auto& texProps = cubemap->getProperties();
 
 		Matrix4 projTransform = Matrix4::projectionPerspective(Degree(90.0f), 1.0f, 0.05f, 1000.0f);
-		ConvexVolume localFrustum(projTransform);
+		ConvexVolume LocalFrustum(projTransform);
 		RenderAPI::instance().convertProjectionMatrix(projTransform, projTransform);
 
 		RENDERER_VIEW_DESC viewDesc;
@@ -830,7 +830,7 @@ namespace bs { namespace ct
 			const Vector<Plane>& frustumPlanes = localFrustum.getPlanes();
 			Matrix4 worldMatrix = viewDesc.viewTransform.transpose();
 
-			Vector<Plane> worldPlanes(frustumPlanes.size());
+			Vector<Plane> WorldPlanes(frustumPlanes.size());
 			UINT32 j = 0;
 			for (auto& plane : frustumPlanes)
 			{
@@ -855,17 +855,17 @@ namespace bs { namespace ct
 
 		RendererView* viewPtrs[] = { &views[0], &views[1], &views[2], &views[3], &views[4], &views[5] };
 
-		RendererViewGroup viewGroup(viewPtrs, 6, false, mCoreOptions->shadowMapSize);
+		RendererViewGroup ViewGroup(viewPtrs, 6, false, mCoreOptions->shadowMapSize);
 		viewGroup.determineVisibility(sceneInfo);
 
-		FrameInfo frameInfo({ 0.0f, 1.0f / 60.0f, 0 }, PerFrameData());
+		FrameInfo FrameInfo({ 0.0f, 1.0f / 60.0f, 0 }, PerFrameData());
 		renderViews(viewGroup, frameInfo);
 
 		// Make sure the render texture is available for reads
 		RenderAPI::instance().setRenderTarget(nullptr);
 	}
 
-	SPtr<RenderBeast> gRenderBeast()
+	SPtr<RenderBeast> GRenderBeast()
 	{
 		return std::static_pointer_cast<RenderBeast>(RendererManager::instance().getActive());
 	}

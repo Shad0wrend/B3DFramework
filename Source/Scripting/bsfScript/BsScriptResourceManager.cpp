@@ -73,7 +73,7 @@ namespace bs
 		ScriptResourceBase* output = getScriptResource(uuid);
 
 		if (output == nullptr && create)
-			return createBuiltinScriptResource(resource);
+			return CreateBuiltinScriptResource(resource);
 
 		return output;
 	}

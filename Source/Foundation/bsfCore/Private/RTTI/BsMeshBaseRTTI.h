@@ -19,16 +19,16 @@ namespace bs
 
 	class MeshBaseRTTI : public RTTIType<MeshBase, Resource, MeshBaseRTTI>
 	{
-		SubMesh& getSubMesh(MeshBase* obj, UINT32 arrayIdx) { return obj->mProperties.mSubMeshes[arrayIdx]; }
-		void setSubMesh(MeshBase* obj, UINT32 arrayIdx, SubMesh& value) { obj->mProperties.mSubMeshes[arrayIdx] = value; }
-		UINT32 getNumSubmeshes(MeshBase* obj) { return (UINT32)obj->mProperties.mSubMeshes.size(); }
-		void setNumSubmeshes(MeshBase* obj, UINT32 numElements) { obj->mProperties.mSubMeshes.resize(numElements); }
+		SubMesh& GetSubMesh(MeshBase* obj, UINT32 arrayIdx) { return obj->mProperties.mSubMeshes[arrayIdx]; }
+		void SetSubMesh(MeshBase* obj, UINT32 arrayIdx, SubMesh& value) { obj->mProperties.mSubMeshes[arrayIdx] = value; }
+		UINT32 GetNumSubmeshes(MeshBase* obj) { return (UINT32)obj->mProperties.mSubMeshes.size(); }
+		void SetNumSubmeshes(MeshBase* obj, UINT32 numElements) { obj->mProperties.mSubMeshes.resize(numElements); }
 
-		UINT32& getNumVertices(MeshBase* obj) { return obj->mProperties.mNumVertices; }
-		void setNumVertices(MeshBase* obj, UINT32& value) { obj->mProperties.mNumVertices = value; }
+		UINT32& GetNumVertices(MeshBase* obj) { return obj->mProperties.mNumVertices; }
+		void SetNumVertices(MeshBase* obj, UINT32& value) { obj->mProperties.mNumVertices = value; }
 
-		UINT32& getNumIndices(MeshBase* obj) { return obj->mProperties.mNumIndices; }
-		void setNumIndices(MeshBase* obj, UINT32& value) { obj->mProperties.mNumIndices = value; }
+		UINT32& GetNumIndices(MeshBase* obj) { return obj->mProperties.mNumIndices; }
+		void SetNumIndices(MeshBase* obj, UINT32& value) { obj->mProperties.mNumIndices = value; }
 
 	public:
 		MeshBaseRTTI()
@@ -40,19 +40,19 @@ namespace bs
 				&MeshBaseRTTI::getNumSubmeshes, &MeshBaseRTTI::setSubMesh, &MeshBaseRTTI::setNumSubmeshes);
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			BS_EXCEPT(InternalErrorException, "Cannot instantiate an abstract class.");
 			return nullptr;
 		}
 
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "MeshBase";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_MeshBase;
 		}

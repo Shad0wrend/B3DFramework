@@ -17,8 +17,8 @@ namespace bs
 	class BS_CORE_EXPORT CLightRTTI : public RTTIType <CLight, Component, CLightRTTI>
 	{
 	private:
-		SPtr<Light> getInternal(CLight* obj) { return obj->mInternal; }
-		void setInternal(CLight* obj, SPtr<Light> val) { obj->mInternal = val; }
+		SPtr<Light> GetInternal(CLight* obj) { return obj->mInternal; }
+		void SetInternal(CLight* obj, SPtr<Light> val) { obj->mInternal = val; }
 
 	public:
 		CLightRTTI()
@@ -26,18 +26,18 @@ namespace bs
 			addReflectablePtrField("mInternal", 0, &CLightRTTI::getInternal, &CLightRTTI::setInternal);
 		}
 
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "CLight";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_CLight;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			return SceneObject::createEmptyComponent<CLight>();
 		}

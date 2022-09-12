@@ -129,7 +129,7 @@ namespace bs
 	{
 		String nameStr = MonoUtil::monoToString(name);
 
-		VirtualAxis vb(nameStr);
+		VirtualAxis Vb(nameStr);
 		return vb.axisIdentifier;
 	}
 }

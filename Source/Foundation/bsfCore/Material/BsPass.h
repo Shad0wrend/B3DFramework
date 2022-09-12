@@ -56,28 +56,28 @@ namespace bs
 		virtual ~TPass() = default;
 
 		/**	Returns true if this pass has some element of transparency. */
-		bool hasBlending() const;
+		bool HasBlending() const;
 
 		/** Returns true if the pass executes a compute program. */
-		bool isCompute() const { return !mData.computeProgramDesc.source.empty(); }
+		bool IsCompute() const { return !mData.computeProgramDesc.source.empty(); }
 
 		/** Gets the stencil reference value that is used when performing operations using the stencil buffer. */
-		UINT32 getStencilRefValue() const { return mData.stencilRefValue; }
+		UINT32 GetStencilRefValue() const { return mData.stencilRefValue; }
 
 		/** Returns the GPU program descriptor for the specified GPU program type. */
-		const GPU_PROGRAM_DESC& getProgramDesc(bs::GpuProgramType type) const;
+		const GPU_PROGRAM_DESC& GetProgramDesc(bs::GpuProgramType type) const;
 
 		/**
 		 * Returns the graphics pipeline state describing this pass, or null if its a compute pass.
 		 * Only valid after compile() has been called.
 		 */
-		const SPtr<GraphicsPipelineStateType>& getGraphicsPipelineState() const { return mGraphicsPipelineState; }
+		const SPtr<GraphicsPipelineStateType>& GetGraphicsPipelineState() const { return mGraphicsPipelineState; }
 
 		/**
 		 * Returns the compute pipeline state describing this pass, or null if its a graphics pass.
 		 * Only valid after compile has been called.
 		 */
-		const SPtr<ComputePipelineStateType>& getComputePipelineState() const { return mComputePipelineState; }
+		const SPtr<ComputePipelineStateType>& GetComputePipelineState() const { return mComputePipelineState; }
 
 		/**
 		 * @name Internal
@@ -86,7 +86,7 @@ namespace bs
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P p);
+		void RttiEnumFields(P p);
 
 		/** @} */
 	protected:
@@ -94,7 +94,7 @@ namespace bs
 		TPass(const PASS_DESC& desc);
 
 		/** Creates either the graphics or the compute pipeline state from the stored pass data. */
-		void createPipelineState();
+		void CreatePipelineState();
 
 		PASS_DESC mData;
 		SPtr<GraphicsPipelineStateType> mGraphicsPipelineState;
@@ -120,17 +120,17 @@ namespace bs
 		virtual ~Pass() = default;
 
 		/** Retrieves an implementation of a pass usable only from the core thread. */
-		SPtr<ct::Pass> getCore() const;
+		SPtr<ct::Pass> GetCore() const;
 
 		/**
 		 * Initializes the pass internals by compiling the GPU programs and creating the relevant pipeline state. This
 		 * method must be called before pass pipelines can be retrieved. After initial compilation further calls do this
 		 * method will perform no operation.
 		 */
-		void compile();
+		void Compile();
 
 		/**	Creates a new empty pass. */
-		static SPtr<Pass> create(const PASS_DESC& desc);
+		static SPtr<Pass> Create(const PASS_DESC& desc);
 
 	protected:
 		friend class Technique;
@@ -139,13 +139,13 @@ namespace bs
 		Pass(const PASS_DESC& desc);
 
 		/** @copydoc CoreObject::syncToCore */
-		CoreSyncData syncToCore(FrameAlloc* allocator) override;
+		CoreSyncData SyncToCore(FrameAlloc* allocator) override;
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> createCore() const override;
+		SPtr<ct::CoreObject> CreateCore() const override;
 
 		/**	Creates a new empty pass but doesn't initialize it. */
-		static SPtr<Pass> createEmpty();
+		static SPtr<Pass> CreateEmpty();
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -175,10 +175,10 @@ namespace bs
 		virtual ~Pass() = default;
 
 		/**	Creates a new empty pass. */
-		static SPtr<Pass> create(const PASS_DESC& desc);
+		static SPtr<Pass> Create(const PASS_DESC& desc);
 
 		/** @copydoc bs::Pass::compile */
-		void compile();
+		void Compile();
 
 	protected:
 		friend class bs::Pass;
@@ -188,7 +188,7 @@ namespace bs
 		Pass(const PASS_DESC& desc);
 
 		/** @copydoc CoreObject::syncToCore */
-		void syncToCore(const CoreSyncData& data) override;
+		void SyncToCore(const CoreSyncData& data) override;
 	};
 
 	/** @} */

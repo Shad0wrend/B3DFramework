@@ -17,7 +17,7 @@ namespace bs
 	Vector<CocoaDragAndDrop::DropAreaOp> CocoaDragAndDrop::sQueuedAreaOperations;
 
 	DropTarget::DropTarget(const RenderWindow* ownerWindow, const Rect2I& area)
-		: mArea(area), mActive(false), mOwnerWindow(ownerWindow), mDropType(DropTargetType::None)
+		: MArea(area), mActive(false), mOwnerWindow(ownerWindow), mDropType(DropTargetType::None)
 	{
 		CocoaDragAndDrop::registerDropTarget(this);
 	}
@@ -38,19 +38,19 @@ namespace bs
 
 	void CocoaDragAndDrop::registerDropTarget(DropTarget* target)
 	{
-		Lock lock(sMutex);
+		Lock Lock(sMutex);
 		sQueuedAreaOperations.push_back(DropAreaOp(target, DropAreaOpType::Register, target->getArea()));
 	}
 
 	void CocoaDragAndDrop::unregisterDropTarget(DropTarget* target)
 	{
-		Lock lock(sMutex);
+		Lock Lock(sMutex);
 		sQueuedAreaOperations.push_back(DropAreaOp(target, DropAreaOpType::Unregister));
 	}
 
 	void CocoaDragAndDrop::updateDropTarget(DropTarget* target)
 	{
-		Lock lock(sMutex);
+		Lock Lock(sMutex);
 		sQueuedAreaOperations.push_back(DropAreaOp(target, DropAreaOpType::Update, target->getArea()));
 	}
 
@@ -60,7 +60,7 @@ namespace bs
 
 		// First handle any queued registration/unregistration
 		{
-			Lock lock(sMutex);
+			Lock Lock(sMutex);
 
 			for(auto& entry : sQueuedAreaOperations)
 			{
@@ -117,7 +117,7 @@ namespace bs
 		Vector<DragAndDropOp> operations;
 
 		{
-			Lock lock(sMutex);
+			Lock Lock(sMutex);
 			std::swap(operations, sQueuedOperations);
 		}
 
@@ -159,7 +159,7 @@ namespace bs
 			{
 				if(!entry.target->_isActive())
 				{
-					Lock lock(sMutex);
+					Lock Lock(sMutex);
 					sQueuedOperations.push_back(DragAndDropOp(DragAndDropOpType::Enter, entry.target,
 						position));
 
@@ -189,11 +189,11 @@ namespace bs
 			{
 				if (entry.target->_isActive())
 				{
-					Lock lock(sMutex);
+					Lock Lock(sMutex);
 					sQueuedOperations.push_back(DragAndDropOp(DragAndDropOpType::DragOver, entry.target, position));
 				} else
 				{
-					Lock lock(sMutex);
+					Lock Lock(sMutex);
 					sQueuedOperations.push_back(DragAndDropOp(DragAndDropOpType::Enter, entry.target, position));
 				}
 
@@ -206,7 +206,7 @@ namespace bs
 				if (entry.target->_isActive())
 				{
 					{
-						Lock lock(sMutex);
+						Lock Lock(sMutex);
 						sQueuedOperations.push_back(DragAndDropOp(DragAndDropOpType::Leave, entry.target));
 					}
 
@@ -232,7 +232,7 @@ namespace bs
 			if(entry.target->_isActive())
 			{
 				{
-					Lock lock(sMutex);
+					Lock Lock(sMutex);
 					sQueuedOperations.push_back(DragAndDropOp(DragAndDropOpType::Leave, entry.target));
 				}
 
@@ -256,7 +256,7 @@ namespace bs
 			if(!entry.target->_isActive())
 				continue;
 
-			Lock lock(sMutex);
+			Lock Lock(sMutex);
 			sQueuedOperations.push_back(DragAndDropOp(DragAndDropOpType::Drop, entry.target, position, paths));
 
 			eventAccepted = true;

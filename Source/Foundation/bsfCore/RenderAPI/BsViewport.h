@@ -37,50 +37,50 @@ namespace bs
 
 		/** Determines the area that the viewport covers. Coordinates are in normalized [0, 1] range. */
 		BS_SCRIPT_EXPORT(n:Area,pr:setter)
-		void setArea(const Rect2& area);
+		void SetArea(const Rect2& area);
 
 		/** @copydoc setArea() */
 		BS_SCRIPT_EXPORT(n:Area,pr:getter)
-		Rect2 getArea() const { return mNormArea; }
+		Rect2 GetArea() const { return mNormArea; }
 
 		/**	Returns the area of the render target covered by the viewport, in pixels. */
 		BS_SCRIPT_EXPORT(n:PixelArea,pr:getter)
-		Rect2I getPixelArea() const;
+		Rect2I GetPixelArea() const;
 
 		/** Determines which portions of the render target should be cleared before rendering to this viewport is performed. */
 		BS_SCRIPT_EXPORT(n:ClearFlags,pr:setter)
-		void setClearFlags(ClearFlags flags);
+		void SetClearFlags(ClearFlags flags);
 
 		/** @copydoc setClearFlags() */
 		BS_SCRIPT_EXPORT(n:ClearFlags,pr:getter)
-		ClearFlags getClearFlags() const { return mClearFlags; }
+		ClearFlags GetClearFlags() const { return mClearFlags; }
 
 		/**	Sets values to clear color, depth and stencil buffers to. */
-		void setClearValues(const Color& clearColor, float clearDepth = 0.0f, UINT16 clearStencil = 0);
+		void SetClearValues(const Color& clearColor, float clearDepth = 0.0f, UINT16 clearStencil = 0);
 
 		/** Determines the color to clear the viewport to before rendering, if color clear is enabled. */
 		BS_SCRIPT_EXPORT(n:ClearColor,pr:setter)
-		void setClearColorValue(const Color& color);
+		void SetClearColorValue(const Color& color);
 
 		/** @copydoc setClearColorValue() */
 		BS_SCRIPT_EXPORT(n:ClearColor,pr:getter)
-		const Color& getClearColorValue() const { return mClearColorValue; }
+		const Color& GetClearColorValue() const { return mClearColorValue; }
 
 		/** Determines the value to clear the depth buffer to before rendering, if depth clear is enabled. */
 		BS_SCRIPT_EXPORT(n:ClearDepth,pr:setter)
-		void setClearDepthValue(float depth);
+		void SetClearDepthValue(float depth);
 
 		/** @copydoc setClearDepthValue() */
 		BS_SCRIPT_EXPORT(n:ClearDepth,pr:getter)
-		float getClearDepthValue() const { return mClearDepthValue; }
+		float GetClearDepthValue() const { return mClearDepthValue; }
 
 		/** Determines the value to clear the stencil buffer to before rendering, if stencil clear is enabled. */
 		BS_SCRIPT_EXPORT(n:ClearStencil,pr:setter)
-		void setClearStencilValue(UINT16 value);
+		void SetClearStencilValue(UINT16 value);
 
 		/** @copydoc setClearStencilValue() */
 		BS_SCRIPT_EXPORT(n:ClearStencil,pr:getter)
-		UINT16 getClearStencilValue() const { return mClearStencilValue; }
+		UINT16 GetClearStencilValue() const { return mClearStencilValue; }
 
 	protected:
 		ViewportBase(float x = 0.0f, float y = 0.0f, float width = 1.0f, float height = 1.0f);
@@ -92,10 +92,10 @@ namespace bs
 		virtual void _markCoreDirty() { }
 
 		/** Gets the render target width. */
-		virtual UINT32 getTargetWidth() const = 0;
+		virtual UINT32 GetTargetWidth() const = 0;
 
 		/**	Gets the render target width. */
-		virtual UINT32 getTargetHeight() const = 0;
+		virtual UINT32 GetTargetHeight() const = 0;
 
 		Rect2 mNormArea;
 
@@ -122,7 +122,7 @@ namespace bs
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P p);
+		void RttiEnumFields(P p);
 
 	protected:
 		SPtr<RenderTargetType> mTarget;
@@ -143,14 +143,14 @@ namespace bs
 	public:
 		/**	Determines the render target the viewport is associated with. */
 		BS_SCRIPT_EXPORT(n:Target,pr:setter)
-		void setTarget(const SPtr<RenderTarget>& target);
+		void SetTarget(const SPtr<RenderTarget>& target);
 
 		/** @copydoc setTarget() */
 		BS_SCRIPT_EXPORT(n:Target,pr:getter)
-		SPtr<RenderTarget> getTarget() const { return mTarget; }
+		SPtr<RenderTarget> GetTarget() const { return mTarget; }
 
 		/**	Retrieves a core implementation of a viewport usable only from the core thread. */
-		SPtr<ct::Viewport> getCore() const;
+		SPtr<ct::Viewport> GetCore() const;
 
 		/**
 		 * Creates a new viewport.
@@ -168,19 +168,19 @@ namespace bs
 		void _markCoreDirty() override;
 
 		/** @copydoc ViewportBase::getTargetWidth */
-		UINT32 getTargetWidth() const override;
+		UINT32 GetTargetWidth() const override;
 
 		/** @copydoc ViewportBase::getTargetHeight */
-		UINT32 getTargetHeight() const override;
+		UINT32 GetTargetHeight() const override;
 
 		/** @copydoc CoreObject::syncToCore */
-		CoreSyncData syncToCore(FrameAlloc* allocator) override;
+		CoreSyncData SyncToCore(FrameAlloc* allocator) override;
 
 		/** @copydoc CoreObject::getCoreDependencies */
-		void getCoreDependencies(Vector<CoreObject*>& dependencies) override;
+		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> createCore() const override;
+		SPtr<ct::CoreObject> CreateCore() const override;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -188,7 +188,7 @@ namespace bs
 		Viewport() = default;
 
 		/** Creates an empty viewport for serialization purposes. */
-		static SPtr<Viewport> createEmpty();
+		static SPtr<Viewport> CreateEmpty();
 	public:
 		friend class ViewportRTTI;
 		static RTTITypeBase* getRTTIStatic();
@@ -208,10 +208,10 @@ namespace bs
 	{
 	public:
 		/**	Returns the render target the viewport is associated with. */
-		SPtr<RenderTarget> getTarget() const { return mTarget; }
+		SPtr<RenderTarget> GetTarget() const { return mTarget; }
 
 		/**	Sets the render target the viewport will be associated with. */
-		void setTarget(const SPtr<RenderTarget>& target) { mTarget = target; }
+		void SetTarget(const SPtr<RenderTarget>& target) { mTarget = target; }
 
 		/** @copydoc bs::Viewport::create() */
 		static SPtr<Viewport> create(const SPtr<RenderTarget>& target, float x = 0.0f, float y = 0.0f,
@@ -223,13 +223,13 @@ namespace bs
 		Viewport(const SPtr<RenderTarget>& target, float x = 0.0f, float y = 0.0f, float width = 1.0f, float height = 1.0f);
 
 		/** @copydoc ViewportBase::getTargetWidth */
-		UINT32 getTargetWidth() const override;
+		UINT32 GetTargetWidth() const override;
 
 		/** @copydoc ViewportBase::getTargetHeight */
-		UINT32 getTargetHeight() const override;
+		UINT32 GetTargetHeight() const override;
 
 		/** @copydoc CoreObject::syncToCore */
-		void syncToCore(const CoreSyncData& data) override;
+		void SyncToCore(const CoreSyncData& data) override;
 	};
 
 	/** @} */

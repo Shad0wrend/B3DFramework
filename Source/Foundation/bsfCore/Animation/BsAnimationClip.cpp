@@ -81,7 +81,7 @@ namespace bs
 
 	AnimationClip::AnimationClip()
 		: Resource(false), mVersion(0), mCurves(bs_shared_ptr_new<AnimationCurves>())
-		, mRootMotion(bs_shared_ptr_new<RootMotion>()), mIsAdditive(false), mLength(0.0f), mSampleRate(1)
+		, MRootMotion(bs_shared_ptr_new<RootMotion>()), mIsAdditive(false), mLength(0.0f), mSampleRate(1)
 	{
 
 	}
@@ -89,7 +89,7 @@ namespace bs
 	AnimationClip::AnimationClip(const SPtr<AnimationCurves>& curves, bool isAdditive, UINT32 sampleRate,
 		const SPtr<RootMotion>& rootMotion)
 		: Resource(false), mVersion(0), mCurves(curves), mRootMotion(rootMotion), mIsAdditive(isAdditive), mLength(0.0f)
-		, mSampleRate(sampleRate)
+		, MSampleRate(sampleRate)
 	{
 		if (mCurves == nullptr)
 			mCurves = bs_shared_ptr_new<AnimationCurves>();
@@ -283,6 +283,6 @@ namespace bs
 
 	RTTITypeBase* AnimationClip::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 }

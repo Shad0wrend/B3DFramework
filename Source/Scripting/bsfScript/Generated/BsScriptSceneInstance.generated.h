@@ -15,7 +15,7 @@ namespace bs
 
 		ScriptSceneInstance(MonoObject* managedInstance, const SPtr<SceneInstance>& value);
 
-		SPtr<SceneInstance> getInternal() const { return mInternal; }
+		SPtr<SceneInstance> GetInternal() const { return mInternal; }
 		static MonoObject* create(const SPtr<SceneInstance>& value);
 
 	private:

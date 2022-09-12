@@ -59,7 +59,7 @@ namespace bs
 		}
 
 		/**	Releases the lock on this buffer. */
-		virtual void unlock()
+		virtual void Unlock()
 		{
 			assert(isLocked() && "Cannot unlock this buffer, it is not locked!");
 
@@ -79,7 +79,7 @@ namespace bs
 		 *							no data will be read.		
 		 * @param[in]	queueIdx	Device queue to perform the read operation on. See @ref queuesDoc.
 		 */
-		virtual void readData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx = 0, UINT32 queueIdx = 0) = 0;
+		virtual void ReadData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx = 0, UINT32 queueIdx = 0) = 0;
 
 		/**
 		 * Writes data into a portion of the buffer from the source memory.
@@ -116,20 +116,20 @@ namespace bs
 		 * @param[in]	commandBuffer	Command buffer to queue the copy operation on. If null, main command buffer is
 		 *								used.
 		 */
-		virtual void copyData(HardwareBuffer& srcBuffer, const SPtr<ct::CommandBuffer>& commandBuffer = nullptr)
+		virtual void CopyData(HardwareBuffer& srcBuffer, const SPtr<ct::CommandBuffer>& commandBuffer = nullptr)
 		{
 			UINT32 sz = std::min(getSize(), srcBuffer.getSize());
 			copyData(srcBuffer, 0, 0, sz, true, commandBuffer);
 		}
 			
 		/** Returns the size of this buffer in bytes. */
-		UINT32 getSize() const { return mSize; }
+		UINT32 GetSize() const { return mSize; }
 
 		/**	Returns whether or not this buffer is currently locked. */
-		bool isLocked() const { return mIsLocked; }
+		bool IsLocked() const { return mIsLocked; }
 
 		/** Returns a mask signifying on which devices has been this buffer created on. */
-		GpuDeviceFlags getDeviceMask() const { return mDeviceMask; }
+		GpuDeviceFlags GetDeviceMask() const { return mDeviceMask; }
 
 	protected:
 		friend class HardwareBufferManager;
@@ -142,7 +142,7 @@ namespace bs
 		 * @param[in]	deviceMask		Mask that determines on which GPU devices should the object be created on.
 		 */
 		HardwareBuffer(UINT32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
-			: mSize(size), mUsage(usage), mDeviceMask(deviceMask)
+			: MSize(size), mUsage(usage), mDeviceMask(deviceMask)
 		{  }
 
 		/** @copydoc lock */
@@ -150,7 +150,7 @@ namespace bs
 			UINT32 queueIdx) { return nullptr; }
 
 		/** @copydoc unlock */
-		virtual void unmap() { }
+		virtual void Unmap() { }
 
 	protected:
 		UINT32 mSize;

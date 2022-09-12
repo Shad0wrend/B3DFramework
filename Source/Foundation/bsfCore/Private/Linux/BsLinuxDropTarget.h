@@ -87,28 +87,28 @@ namespace bs
 		 *
 		 * @note	Core thread only.
 		 */
-		static void startUp(::Display* xDisplay);
+		static void StartUp(::Display* xDisplay);
 
 		/**
 		 * Shuts down the drag and drop system. Should be called after no more calls to the system are expected.
 		 *
 		 * @note	Core thread only.
 		 */
-		static void shutDown();
+		static void ShutDown();
 
 		/**
 		 * Triggers any drag and drop events.
 		 *
 		 * @note 	Sim thread only.
 		 */
-		static void update();
+		static void Update();
 
 		/**
 		 * Marks an X11 window as drag and drop aware (being able to accept and send drag and drop events).
 		 *
 		 * @note	Core thread only.
 		 */
-		static void makeDNDAware(::Window xWindow);
+		static void MakeDNDAware(::Window xWindow);
 
 		/**
 		 * Registers a new drop target Any further events processed will take this target into account, trigger its event
@@ -116,21 +116,21 @@ namespace bs
 		 *
 		 * @note 	Thread safe.
 		 */
-		static void registerDropTarget(DropTarget* target);
+		static void RegisterDropTarget(DropTarget* target);
 
 		/**
 		 * Updates information about previous registered DropTarget. Call this when drop target area changes.
 		 *
 		 * @note	Thread safe.
 		 */
-		static void updateDropTarget(DropTarget* target);
+		static void UpdateDropTarget(DropTarget* target);
 
 		/**
 		 * Unregisters a drop target. Its events will no longer be triggered.
 		 *
 		 * @note	Thread safe.
 		 */
-		static void unregisterDropTarget(DropTarget* target);
+		static void UnregisterDropTarget(DropTarget* target);
 
 		/**
 		 * Processes X11 ClientMessage event and handles any messages relating to drag and drop. Returns true if a message
@@ -138,7 +138,7 @@ namespace bs
 		 *
 		 * @note 	Core thread only.
 		 */
-		static bool handleClientMessage(XClientMessageEvent& event);
+		static bool HandleClientMessage(XClientMessageEvent& event);
 
 		/**
 		 * Processes X11 SelectionNotify event and handles it if it relates to drag and drop. Returns true if the event was
@@ -146,7 +146,7 @@ namespace bs
 		 *
 		 * @note 	Core thread only.
 		 */
-		static bool handleSelectionNotify(XSelectionEvent& event);
+		static bool HandleSelectionNotify(XSelectionEvent& event);
 
 	private:
 		static ::Display* sXDisplay;

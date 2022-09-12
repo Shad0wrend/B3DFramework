@@ -202,7 +202,7 @@ namespace bs
 		Vector<Color> veccolors;
 		if(colors != nullptr)
 		{
-			ScriptArray arraycolors(colors);
+			ScriptArray Arraycolors(colors);
 			veccolors.resize(arraycolors.size());
 			for(int i = 0; i < (int)arraycolors.size(); i++)
 			{

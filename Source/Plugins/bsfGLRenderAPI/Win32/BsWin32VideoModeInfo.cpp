@@ -5,7 +5,7 @@
 
 namespace bs { namespace ct
 {
-	BOOL CALLBACK monitorEnumCallback(HMONITOR hMonitor, HDC hdc, LPRECT rect, LPARAM lParam)
+	BOOL CALLBACK MonitorEnumCallback(HMONITOR hMonitor, HDC hdc, LPRECT rect, LPARAM lParam)
 	{
 		Vector<HMONITOR>* outputInfos = (Vector<HMONITOR>*)lParam;
 		outputInfos->push_back(hMonitor);

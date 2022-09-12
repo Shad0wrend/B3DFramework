@@ -29,7 +29,7 @@ namespace bs { namespace ct
 		~D3D11Device();
 
 		/**	Shuts down the device any releases any internal resources. */
-		void shutdown();
+		void Shutdown();
 
 		/**	Returns DX11 immediate context object. */
 		ID3D11DeviceContext* getImmediateContext() const { return mImmediateContext; }
@@ -41,25 +41,25 @@ namespace bs { namespace ct
 		ID3D11Device* getD3D11Device() const { return mD3D11Device; }		
 
 		/** Returns information about optional features supported by the device. */
-		const D3D11_FEATURE_DATA_D3D11_OPTIONS& getFeatureOptions() const { return mD3D11FeatureOptions; }
+		const D3D11_FEATURE_DATA_D3D11_OPTIONS& GetFeatureOptions() const { return mD3D11FeatureOptions; }
 
 		/**	Resets error state & error messages. */
-		void clearErrors();
+		void ClearErrors();
 
 		/**
 		 * Query if error occurred at any point since last clearErrors() call. Use getErrorDescription to get a string
 		 * describing the error.
 		 */
-		bool hasError() const;
+		bool HasError() const;
 
 		/**	Returns a string describing an error if one occurred. */
-		String getErrorDescription(bool clearErrors = true);
+		String GetErrorDescription(bool clearErrors = true);
 		
 		/**
 		 * Sets the level for which we want to receive errors for. Errors will be reported for the provided level and any
 		 * higher priority level.
 		 */
-		void setExceptionsErrorLevel(const BS_D3D11_ERROR_LEVEL exceptionsErrorLevel);
+		void SetExceptionsErrorLevel(const BS_D3D11_ERROR_LEVEL exceptionsErrorLevel);
 
 	private:
 		D3D11Device() = default;

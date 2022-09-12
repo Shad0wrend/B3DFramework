@@ -30,7 +30,7 @@ namespace bs
 
 		if (!mData->mIsCreated)
 		{
-			Lock lock(mResourceCreatedMutex);
+			Lock Lock(mResourceCreatedMutex);
 			while (!mData->mIsCreated)
 			{
 				mResourceCreatedCondition.wait(lock);
@@ -81,7 +81,7 @@ namespace bs
 	{
 		if (!mData->mIsCreated)
 		{
-			Lock lock(mResourceCreatedMutex);
+			Lock Lock(mResourceCreatedMutex);
 			{
 				mData->mIsCreated = true;
 			}
@@ -94,7 +94,7 @@ namespace bs
 	{
 		mData->mPtr = nullptr;
 
-		Lock lock(mResourceCreatedMutex);
+		Lock Lock(mResourceCreatedMutex);
 		mData->mIsCreated = false;
 	}
 
@@ -125,7 +125,7 @@ namespace bs
 
 	RTTITypeBase* TResourceHandleBase<true>::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	RTTITypeBase* TResourceHandleBase<false>::getRTTIStatic()
@@ -135,6 +135,6 @@ namespace bs
 
 	RTTITypeBase* TResourceHandleBase<false>::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 }

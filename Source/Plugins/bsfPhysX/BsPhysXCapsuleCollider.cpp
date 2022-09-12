@@ -13,7 +13,7 @@ namespace bs
 		const Quaternion& rotation, float radius, float halfHeight)
 		:mRadius(radius), mHalfHeight(halfHeight)
 	{
-		PxCapsuleGeometry geometry(radius, halfHeight);
+		PxCapsuleGeometry Geometry(radius, halfHeight);
 
 		PxShape* shape = physx->createShape(geometry, *gPhysX().getDefaultMaterial(), true);
 		shape->setLocalPose(toPxTransform(position, rotation));
@@ -58,7 +58,7 @@ namespace bs
 
 	void PhysXCapsuleCollider::applyGeometry()
 	{
-		PxCapsuleGeometry geometry(std::max(0.01f, mRadius * std::max(mScale.x, mScale.z)),
+		PxCapsuleGeometry Geometry(std::max(0.01f, mRadius * std::max(mScale.x, mScale.z)),
 			std::max(0.01f, mHalfHeight * mScale.y));
 
 		getInternal()->_getShape()->setGeometry(geometry);

@@ -18,19 +18,19 @@ namespace bs { namespace ct
 		virtual ~D3D11GpuProgram();
 
 		/**	Returns compiled shader microcode. */
-		const DataBlob& getMicroCode() const { return mBytecode->instructions; }
+		const DataBlob& GetMicroCode() const { return mBytecode->instructions; }
 
 		/**	Returns unique GPU program ID. */
-		UINT32 getProgramId() const { return mProgramId; }
+		UINT32 GetProgramId() const { return mProgramId; }
 
 	protected:
 		D3D11GpuProgram(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask);
 
 		/** @copydoc GpuProgram::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 		/**	Loads the shader from microcode. */
-		virtual void loadFromMicrocode(D3D11Device& device, const DataBlob& microcode) = 0;
+		virtual void LoadFromMicrocode(D3D11Device& device, const DataBlob& microcode) = 0;
 
 	protected:
 		static UINT32 GlobalProgramId;
@@ -53,7 +53,7 @@ namespace bs { namespace ct
 		D3D11GpuVertexProgram(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask);
 
 		/** @copydoc D3D11GpuProgram::loadFromMicrocode */
-		void loadFromMicrocode(D3D11Device& device, const DataBlob& microcode) override;
+		void LoadFromMicrocode(D3D11Device& device, const DataBlob& microcode) override;
 
 	protected:
 		ID3D11VertexShader* mVertexShader;
@@ -74,7 +74,7 @@ namespace bs { namespace ct
 		D3D11GpuFragmentProgram(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask);
 
 		/** @copydoc D3D11GpuProgram::loadFromMicrocode */
-		void loadFromMicrocode(D3D11Device& device, const DataBlob& microcode) override;
+		void LoadFromMicrocode(D3D11Device& device, const DataBlob& microcode) override;
 
 	protected:
 		ID3D11PixelShader* mPixelShader;
@@ -95,7 +95,7 @@ namespace bs { namespace ct
 		D3D11GpuDomainProgram(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask);
 
 		/** @copydoc D3D11GpuProgram::loadFromMicrocode */
-		void loadFromMicrocode(D3D11Device& device, const DataBlob& microcode) override;
+		void LoadFromMicrocode(D3D11Device& device, const DataBlob& microcode) override;
 
 	protected:
 		ID3D11DomainShader* mDomainShader;
@@ -116,7 +116,7 @@ namespace bs { namespace ct
 		D3D11GpuHullProgram(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask);
 
 		/** @copydoc D3D11GpuProgram::loadFromMicrocode */
-		void loadFromMicrocode(D3D11Device& device, const DataBlob& microcode) override;
+		void LoadFromMicrocode(D3D11Device& device, const DataBlob& microcode) override;
 
 	protected:
 		ID3D11HullShader* mHullShader;
@@ -137,7 +137,7 @@ namespace bs { namespace ct
 		D3D11GpuGeometryProgram(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask);
 
 		/** @copydoc D3D11GpuProgram::loadFromMicrocode */
-		void loadFromMicrocode(D3D11Device& device, const DataBlob& microcode) override;
+		void LoadFromMicrocode(D3D11Device& device, const DataBlob& microcode) override;
 
 	protected:
 		ID3D11GeometryShader* mGeometryShader;
@@ -158,7 +158,7 @@ namespace bs { namespace ct
 		D3D11GpuComputeProgram(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask);
 
 		/** @copydoc D3D11GpuProgram::loadFromMicrocode */
-		void loadFromMicrocode(D3D11Device& device, const DataBlob& microcode) override;
+		void LoadFromMicrocode(D3D11Device& device, const DataBlob& microcode) override;
 
 	protected:
 		ID3D11ComputeShader* mComputeShader;

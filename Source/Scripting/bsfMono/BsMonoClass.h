@@ -20,12 +20,12 @@ namespace bs
 		{
 			struct Hash
 			{
-				size_t operator()(const MethodId& v) const;
+				size_t Operator()(const MethodId& v) const;
 			};
 			
 			struct Equals
 			{
-				bool operator()(const MethodId& a, const MethodId& b) const;
+				bool Operator()(const MethodId& a, const MethodId& b) const;
 			};
 
 			MethodId(const String& name, UINT32 numParams);
@@ -40,13 +40,13 @@ namespace bs
 		~MonoClass();
 
 		/**	Returns the namespace of this class. */
-		const String& getNamespace() const { return mNamespace; }
+		const String& GetNamespace() const { return mNamespace; }
 
 		/**	Returns the type name of this class. */
-		const String& getTypeName() const { return mTypeName; }
+		const String& GetTypeName() const { return mTypeName; }
 
 		/**	Returns the full name (Namespace::TypeName) of this class. */
-		const String& getFullName() const { return mFullName; }
+		const String& GetFullName() const { return mFullName; }
 
 		/**
 		 * Returns an object referencing a method with the specified name and number of parameters.
@@ -120,19 +120,19 @@ namespace bs
 		Vector<MonoClass*> getAllAttributes() const;
 
 		/**	Check if this class has an attribute of the type @p monoClass. */
-		bool hasAttribute(MonoClass* monoClass) const;
+		bool HasAttribute(MonoClass* monoClass) const;
 
 		/**	Check if this class has a field with the specified name. Does not check base classes. */
-		bool hasField(const String& name) const;
+		bool HasField(const String& name) const;
 
 		/**	Checks if this class is a sub class of the specified class. */
-		bool isSubClassOf(const MonoClass* monoClass) const;
+		bool IsSubClassOf(const MonoClass* monoClass) const;
 
 		/**	Checks is the provided object instance of this class' type. */
-		bool isInstanceOfType(MonoObject* object) const;
+		bool IsInstanceOfType(MonoObject* object) const;
 
 		/** Returns the size of an instance of this class, in bytes. */
-		UINT32 getInstanceSize() const;
+		UINT32 GetInstanceSize() const;
 
 		/**
 		 * Shortcut for invoking a method on a class. Invokes a method with the provided name and number of parameters.
@@ -154,7 +154,7 @@ namespace bs
 		 * Hooks up an internal call that will trigger the provided method callback when the managed method with the
 		 * specified name is called. If name is not valid this will silently fail.
 		 */
-		void addInternalCall(const String& name, const void* method);
+		void AddInternalCall(const String& name, const void* method);
 
 		/**
 		 * Creates a new instance of this class and optionally constructs it. If you don't construct the instance then you
@@ -188,7 +188,7 @@ namespace bs
 		::MonoClass* _getInternalClass() const { return mClass; }
 
 		/** Invokes the parameterless constructor on the provided object. */
-		static void construct(MonoObject* object);
+		static void Construct(MonoObject* object);
 	private:
 		friend class MonoAssembly;
 

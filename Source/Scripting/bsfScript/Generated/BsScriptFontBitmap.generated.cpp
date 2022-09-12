@@ -165,7 +165,7 @@ namespace bs
 		Vector<ResourceHandle<Texture>> vecvalue;
 		if(value != nullptr)
 		{
-			ScriptArray arrayvalue(value);
+			ScriptArray Arrayvalue(value);
 			vecvalue.resize(arrayvalue.size());
 			for(int i = 0; i < (int)arrayvalue.size(); i++)
 			{

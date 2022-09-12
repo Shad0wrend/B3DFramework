@@ -16,7 +16,7 @@ namespace bs
 		ScriptImportOptionsBase(MonoObject* instance);
 		virtual ~ScriptImportOptionsBase() {}
 
-		SPtr<ImportOptions> getInternal() const;
+		SPtr<ImportOptions> GetInternal() const;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptImportOptions : public TScriptReflectable<ScriptImportOptions, ImportOptions, ScriptImportOptionsBase>

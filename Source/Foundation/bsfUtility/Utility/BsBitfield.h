@@ -23,7 +23,7 @@ namespace bs
 			:mData(data), mBitMask(bitMask)
 		{ }
 
-		operator bool() const
+		operator Bool() const
 		{
 			return (mData & mBitMask) != 0;
 		}
@@ -41,7 +41,7 @@ namespace bs
 			:mData(data), mBitMask(bitMask)
 		{ }
 
-		operator bool() const
+		operator Bool() const
 		{
 			return (mData & mBitMask) != 0;
 		}
@@ -95,7 +95,7 @@ namespace bs
 		typedef typename TBitfieldIteratorTypes<CONST>::ReferenceType ReferenceType;
 
 		TBitfieldIterator(ArrayType owner, uint32_t bitIndex, uint32_t dwordIndex, uint32_t mask)
-			: mOwner(owner), mBitIndex(bitIndex), mDwordIndex(dwordIndex), mMask(mask)
+			: MOwner(owner), mBitIndex(bitIndex), mDwordIndex(dwordIndex), mMask(mask)
 		{ }
 
 		TBitfieldIterator& operator++()
@@ -112,7 +112,7 @@ namespace bs
 			return *this;
 		}
 
-		operator bool() const
+		operator Bool() const
 		{
 			return mBitIndex < mOwner.size();
 		}
@@ -192,9 +192,9 @@ namespace bs
 		}
 
 		Bitfield(Bitfield&& other)
-			: mData(std::exchange(other.mData, nullptr))
-			, mMaxBits(std::exchange(other.mMaxBits, 0))
-			, mNumBits(std::exchange(other.mNumBits, 0))
+			: MData(std::exchange(other.mData, nullptr))
+			, MMaxBits(std::exchange(other.mMaxBits, 0))
+			, MNumBits(std::exchange(other.mNumBits, 0))
 		{ }
 
 		Bitfield& operator=(const Bitfield& rhs)
@@ -252,7 +252,7 @@ namespace bs
 		}
 
 		/** Adds a new bit value to the end of the bitfield and returns the index of the added bit. */
-		uint32_t add(bool value)
+		uint32_t Add(bool value)
 		{
 			if(mNumBits >= mMaxBits)
 			{
@@ -269,7 +269,7 @@ namespace bs
 		}
 
 		/** Removes a bit at the specified index. */
-		void remove(uint32_t index)
+		void Remove(uint32_t index)
 		{
 			assert(index < mNumBits);
 
@@ -300,7 +300,7 @@ namespace bs
 		}
 
 		/** Attempts to find the first non-zero bit in the field. Returns -1 if all bits are zero or the field is empty. */
-		uint32_t find(bool value) const
+		uint32_t Find(bool value) const
 		{
 			const uint32_t mask = value ? 0 : (uint32_t)-1;
 			const uint32_t numDWords = Math::divideAndRoundUp(mNumBits, BITS_PER_DWORD);
@@ -321,7 +321,7 @@ namespace bs
 		}
 
 		/** Counts the number of values in the bit field. */
-		uint32_t count(bool value) const
+		uint32_t Count(bool value) const
 		{
 			// Note: Implement this faster via popcnt and similar instructions
 
@@ -336,7 +336,7 @@ namespace bs
 		}
 
 		/** Resets all the bits in the field to the specified value. */
-		void reset(bool value = false)
+		void Reset(bool value = false)
 		{
 			if(mNumBits == 0)
 				return;
@@ -350,7 +350,7 @@ namespace bs
 		 * Removes all the bits from the field. If @p free is true then the underlying memory buffers will be freed as
 		 * well.
 		 */
-		void clear(bool free = false)
+		void Clear(bool free = false)
 		{
 			mNumBits = 0;
 
@@ -367,19 +367,19 @@ namespace bs
 		}
 
 		/** Returns the number of bits in the bitfield */
-		uint32_t size() const
+		uint32_t Size() const
 		{
 			return mNumBits;
 		}
 
 		/** Returns a non-const iterator pointing to the first bit in the bitfield. */
-		Iterator begin()
+		Iterator Begin()
 		{
 			return Iterator(*this, 0, 0, 1);
 		}
 
 		/** Returns a non-const interator pointing past the last bit in the bitfield. */
-		Iterator end()
+		Iterator End()
 		{
 			uint32_t bitIndex = mNumBits;
 			uint32_t dwordIndex = bitIndex >> BITS_PER_DWORD_LOG2;
@@ -389,13 +389,13 @@ namespace bs
 		}
 
 		/** Returns a const iterator pointing to the first bit in the bitfield. */
-		ConstIterator begin() const
+		ConstIterator Begin() const
 		{
 			return ConstIterator(*this, 0, 0, 1);
 		}
 
 		/** Returns a const interator pointing past the last bit in the bitfield. */
-		ConstIterator end() const
+		ConstIterator End() const
 		{
 			uint32_t bitIndex = mNumBits;
 			uint32_t dwordIndex = bitIndex >> BITS_PER_DWORD_LOG2;
@@ -409,7 +409,7 @@ namespace bs
 		friend class TBitfieldIterator;
 
 		/** Reallocates the internal buffer making enough room for @p numBits (rounded to a multiple of DWORD). */
-		void realloc(uint32_t numBits)
+		void Realloc(uint32_t numBits)
 		{
 			numBits = Math::divideAndRoundUp(numBits, BITS_PER_DWORD) * BITS_PER_DWORD;
 
@@ -448,14 +448,14 @@ namespace bs
 
 namespace std
 {
-	template <> inline void swap(bs::BitReference& lhs, bs::BitReference& rhs)
+	template <> inline void Swap(bs::BitReference& lhs, bs::BitReference& rhs)
 	{
 		const bool temp = lhs;
 		lhs = rhs;
 		rhs = temp;
 	}
 
-	inline void swap(bs::BitReference&& lhs, bs::BitReference&& rhs)
+	inline void Swap(bs::BitReference&& lhs, bs::BitReference&& rhs)
 	{
 		const bool temp = lhs;
 		lhs = rhs;

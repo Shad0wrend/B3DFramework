@@ -34,7 +34,7 @@ namespace bs { namespace ct
 
 		/** Helper method used for initializing variations of this material. */
 		template<UINT32 msaa>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -83,7 +83,7 @@ namespace bs { namespace ct
 		TextureArrayToMSAATexture();
 
 		/** Binds the material for rendering, sets up parameters and executes it. */
-		void execute(const SPtr<Texture>& inputArray, const SPtr<Texture>& target);
+		void Execute(const SPtr<Texture>& inputArray, const SPtr<Texture>& target);
 
 	private:
 		GpuParamTexture mInputParam;
@@ -122,7 +122,7 @@ namespace bs { namespace ct
 		 * Binds the material for rendering, sets up parameters and executes it. Only works on variations of
 		 * this material intended for buffers.
 		 */
-		void execute(const SPtr<GpuBuffer>& target, const Color& clearValue = Color::ZERO);
+		void Execute(const SPtr<GpuBuffer>& target, const Color& clearValue = Color::ZERO);
 
 		/**
 		 * Returns the material variation matching the provided parameters.
@@ -160,7 +160,7 @@ namespace bs { namespace ct
 
 		/** Helper method used for initializing variations of this material. */
 		template<UINT32 msaa>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{

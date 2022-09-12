@@ -73,7 +73,7 @@ namespace bs
 
 	void LinuxRenderWindow::syncProperties()
 	{
-		ScopedSpinLock lock(getCore()->_getPropertiesLock());
+		ScopedSpinLock Lock(getCore()->_getPropertiesLock());
 		mProperties = getCore()->mSyncedProperties;
 	}
 
@@ -81,7 +81,7 @@ namespace bs
 	{
 	LinuxRenderWindow::LinuxRenderWindow(const RENDER_WINDOW_DESC& desc, UINT32 windowId, VulkanRenderAPI& renderAPI)
 		: RenderWindow(desc, windowId), mRenderAPI(renderAPI), mRequiresNewBackBuffer(true), mWindow(nullptr)
-		, mProperties(desc), mSyncedProperties(desc), mIsChild(false), mShowOnSwap(false)
+		, MProperties(desc), mSyncedProperties(desc), mIsChild(false), mShowOnSwap(false)
 	{ }
 
 	LinuxRenderWindow::~LinuxRenderWindow()
@@ -223,7 +223,7 @@ namespace bs
 			setVSync(true, mDesc.vsyncInterval);
 
 		{
-			ScopedSpinLock lock(mLock);
+			ScopedSpinLock Lock(mLock);
 			mSyncedProperties = props;
 		}
 
@@ -254,7 +254,7 @@ namespace bs
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
-		VideoMode videoMode(width, height, refreshRate, monitorIdx);
+		VideoMode VideoMode(width, height, refreshRate, monitorIdx);
 		setFullscreen(videoMode);
 	}
 
@@ -428,7 +428,7 @@ namespace bs
 		_windowMovedOrResized();
 
 		{
-			ScopedSpinLock lock(mLock);
+			ScopedSpinLock Lock(mLock);
 			mSyncedProperties.left = props.left;
 			mSyncedProperties.top = props.top;
 			mSyncedProperties.width = props.width;
@@ -478,7 +478,7 @@ namespace bs
 		_windowMovedOrResized();
 
 		{
-			ScopedSpinLock lock(mLock);
+			ScopedSpinLock Lock(mLock);
 			mSyncedProperties.left = props.left;
 			mSyncedProperties.top = props.top;
 			mSyncedProperties.width = props.width;
@@ -504,7 +504,7 @@ namespace bs
 			props.left = mWindow->getLeft();
 
 			{
-				ScopedSpinLock lock(mLock);
+				ScopedSpinLock Lock(mLock);
 				mSyncedProperties.top = props.top;
 				mSyncedProperties.left = props.left;
 			}
@@ -528,7 +528,7 @@ namespace bs
 			props.height = mWindow->getHeight();
 
 			{
-				ScopedSpinLock lock(mLock);
+				ScopedSpinLock Lock(mLock);
 				mSyncedProperties.width = props.width;
 				mSyncedProperties.height = props.height;
 			}
@@ -579,7 +579,7 @@ namespace bs
 		LinuxPlatform::unlockX();
 
 		{
-			ScopedSpinLock lock(mLock);
+			ScopedSpinLock Lock(mLock);
 			mSyncedProperties.vsync = enabled;
 			mSyncedProperties.vsyncInterval = interval;
 		}
@@ -728,7 +728,7 @@ namespace bs
 
 	void LinuxRenderWindow::syncProperties()
 	{
-		ScopedSpinLock lock(mLock);
+		ScopedSpinLock Lock(mLock);
 		mProperties = mSyncedProperties;
 	}
 

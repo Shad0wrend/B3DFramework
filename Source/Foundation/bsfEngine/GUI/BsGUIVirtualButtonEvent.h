@@ -18,12 +18,12 @@ namespace bs
 		GUIVirtualButtonEvent() = default;
 
 		/**	Returns the virtual button the event is referring to. */
-		const VirtualButton& getButton() const { return mButton; }
+		const VirtualButton& GetButton() const { return mButton; }
 	private:
 		friend class GUIManager;
 		
 		/**	Initializes the data for the event. */
-		void setButton(const VirtualButton& button) { mButton = button; }
+		void SetButton(const VirtualButton& button) { mButton = button; }
 
 		VirtualButton mButton;
 	};

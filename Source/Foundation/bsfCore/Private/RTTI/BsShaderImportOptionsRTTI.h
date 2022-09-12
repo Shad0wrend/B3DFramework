@@ -23,18 +23,18 @@ namespace bs
 			BS_RTTI_MEMBER_PLAIN(languages, 1)
 		BS_END_RTTI_MEMBERS
 
-		std::pair<String, String>& getDefinePair(ShaderImportOptions* obj, UINT32 idx)
+		std::pair<String, String>& GetDefinePair(ShaderImportOptions* obj, UINT32 idx)
 		{
 			return mDefinePairs[idx];
 		}
 
-		void setDefinePair(ShaderImportOptions* obj, UINT32 idx, std::pair<String, String>& val)
+		void SetDefinePair(ShaderImportOptions* obj, UINT32 idx, std::pair<String, String>& val)
 		{
 			obj->mDefines[val.first] = val.second;
 		}
 
-		UINT32 getNumDefines(ShaderImportOptions* obj) { return (UINT32)obj->mDefines.size(); }
-		void setNumDefines(ShaderImportOptions* obj, UINT32 val) { /* Do nothing */ }
+		UINT32 GetNumDefines(ShaderImportOptions* obj) { return (UINT32)obj->mDefines.size(); }
+		void SetNumDefines(ShaderImportOptions* obj, UINT32 val) { /* Do nothing */ }
 
 	public:
 		ShaderImportOptionsRTTI()
@@ -45,7 +45,7 @@ namespace bs
 		}
 
 		/** @copydoc ShaderImportOptionsRTTI::onSerializationStarted */
-		void onSerializationStarted(IReflectable* obj, SerializationContext* context) override
+		void OnSerializationStarted(IReflectable* obj, SerializationContext* context) override
 		{
 			ShaderImportOptions* importOptions = static_cast<ShaderImportOptions*>(obj);
 
@@ -55,20 +55,20 @@ namespace bs
 		}
 
 		/** @copydoc RTTIType::getRTTIName */
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "ShaderImportOptions";
 			return name;
 		}
 
 		/** @copydoc RTTIType::getRTTIId */
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_ShaderImportOptions;
 		}
 
 		/** @copydoc RTTIType::newRTTIObject */
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			return bs_shared_ptr_new<ShaderImportOptions>();
 		}

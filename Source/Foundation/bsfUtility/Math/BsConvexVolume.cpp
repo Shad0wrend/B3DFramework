@@ -97,7 +97,7 @@ namespace bs
 	{
 		Vector3 center = box.getCenter();
 		Vector3 extents = box.getHalfSize();
-		Vector3 absExtents(Math::abs(extents.x), Math::abs(extents.y), Math::abs(extents.z));
+		Vector3 AbsExtents(Math::abs(extents.x), Math::abs(extents.y), Math::abs(extents.z));
 
 		for (auto& plane : mPlanes)
 		{

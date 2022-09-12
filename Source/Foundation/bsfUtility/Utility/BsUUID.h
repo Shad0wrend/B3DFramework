@@ -54,13 +54,13 @@ namespace bs
 		}
 
 		/** Checks has the UUID been initialized to a valid value. */
-		constexpr bool empty() const
+		constexpr bool Empty() const
 		{
 			return mData[0] == 0 && mData[1] == 0 && mData[2] == 0 && mData[3] == 0;
 		}
 
 		/** Converts the UUID into its string representation. */
-		String toString() const;
+		String ToString() const;
 
 		static UUID EMPTY;
 	private:
@@ -78,7 +78,7 @@ namespace bs
 	{
 	public:
 		/**	Generate a new random universally unique identifier. */
-		static UUID generateRandom();
+		static UUID GenerateRandom();
 	};
 
 	/** @} */
@@ -96,7 +96,7 @@ namespace std
 template<>
 struct hash<bs::UUID>
 {
-	size_t operator()(const bs::UUID& value) const
+	size_t Operator()(const bs::UUID& value) const
 	{
 		size_t hash = 0;
 		bs::bs_hash_combine(hash, value.mData[0]);

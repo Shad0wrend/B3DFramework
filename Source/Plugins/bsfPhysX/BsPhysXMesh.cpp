@@ -22,7 +22,7 @@ namespace bs
 	 * data buffer, and its size in @p size. The data buffer will be allocated used the generic allocator and is up to the
 	 * caller to free it.
 	 */
-	bool cookConvex(PxCooking* cooking, const SPtr<MeshData>& meshData, UINT8** data, UINT32& size)
+	bool CookConvex(PxCooking* cooking, const SPtr<MeshData>& meshData, UINT8** data, UINT32& size)
 	{
 		SPtr<VertexDataDesc> vertexDesc = meshData->getVertexDesc();
 		
@@ -98,7 +98,7 @@ namespace bs
 	 * and its size in @p size. The data buffer will be allocated used the generic allocator and is up to the caller to
 	 * free it.
 	 */
-	bool cookMesh(const SPtr<MeshData>& meshData, PhysicsMeshType type, UINT8** data, UINT32& size)
+	bool CookMesh(const SPtr<MeshData>& meshData, PhysicsMeshType type, UINT8** data, UINT32& size)
 	{
 		if (meshData == nullptr)
 			return false;
@@ -226,7 +226,7 @@ namespace bs
 		{
 			PxPhysics* physx = gPhysX().getPhysX();
 
-			PxDefaultMemoryInputData input(mCookedData, mCookedDataSize);
+			PxDefaultMemoryInputData Input(mCookedData, mCookedDataSize);
 			if (mType == PhysicsMeshType::Convex)
 				mConvexMesh = physx->createConvexMesh(input);
 			else
@@ -338,6 +338,6 @@ namespace bs
 
 	RTTITypeBase* FPhysXMesh::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 }

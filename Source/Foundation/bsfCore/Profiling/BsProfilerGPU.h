@@ -94,7 +94,7 @@ namespace bs
 		 * Signals a start of a new frame. Every frame will generate a separate profiling report. This call must be followed
 		 * by endFrame(), and any sampling operations must happen between beginFrame() and endFrame().
 		 */
-		void beginFrame();
+		void BeginFrame();
 
 		/**
 		 * Signals an end of the currently sampled frame. Results of the sampling will be available once
@@ -103,7 +103,7 @@ namespace bs
 		 *
 		 * @param[in]	 discard		If true, the results of the frame will not be resolved and it will be discarded.
 		 */
-		void endFrame(bool discard = false);
+		void EndFrame(bool discard = false);
 
 		/**
 		 * Signals that all following sample calls are used for rendering a particular view represented with the provided
@@ -113,10 +113,10 @@ namespace bs
 		 * @param[in]	id			Identifier that can be used to uniquely identify the view.
 		 * @param[in]	title		Title describing the view.
 		 */
-		void beginView(UINT64 id, ProfilerString title);
+		void BeginView(UINT64 id, ProfilerString title);
 
 		/** Signals the end of rendering for a particular view. Must match the corresponding beginView() call. */
-		void endView();
+		void EndView();
 
 		/**
 		 * Begins sample measurement. Must be followed by endSample().
@@ -125,7 +125,7 @@ namespace bs
 		 *
 		 * @note	Must be called between beginFrame()/endFrame() calls.
 		 */
-		void beginSample(ProfilerString name);
+		void BeginSample(ProfilerString name);
 
 		/**
 		 * Ends sample measurement.
@@ -136,7 +136,7 @@ namespace bs
 		 * Unique name is primarily needed to more easily identify mismatched begin/end sample pairs. Otherwise the name in
 		 * beginSample() would be enough. Must be called between beginFrame()/endFrame() calls.
 		 */
-		void endSample(const ProfilerString& name);
+		void EndSample(const ProfilerString& name);
 
 		/**
 		 * Returns number of profiling reports that are ready but haven't been retrieved yet.
@@ -147,7 +147,7 @@ namespace bs
 		 * @note
 		 * Thread safe.
 		 */
-		UINT32 getNumAvailableReports();
+		UINT32 GetNumAvailableReports();
 
 		/**
 		 * Gets the oldest report available and removes it from the internal list. Throws an exception if no reports are
@@ -155,7 +155,7 @@ namespace bs
 		 *
 		 * @note	Thread safe.
 		 */
-		GPUProfilerReport getNextReport();
+		GPUProfilerReport GetNextReport();
 
 	public:
 		// ***** INTERNAL ******
@@ -172,25 +172,25 @@ namespace bs
 
 	private:
 		/** Assigns start values for the provided sample. */
-		void beginSampleInternal(ProfiledSample& sample, bool issueOcclusion);
+		void BeginSampleInternal(ProfiledSample& sample, bool issueOcclusion);
 
 		/**	Assigns end values for the provided sample. */
-		void endSampleInternal(ProfiledSample& sample);
+		void EndSampleInternal(ProfiledSample& sample);
 
 		/**	Creates a new timer query or returns an existing free query. */
-		SPtr<ct::TimerQuery> getTimerQuery() const;
+		SPtr<ct::TimerQuery> GetTimerQuery() const;
 
 		/**	Creates a new occlusion query or returns an existing free query. */
-		SPtr<ct::OcclusionQuery> getOcclusionQuery() const;
+		SPtr<ct::OcclusionQuery> GetOcclusionQuery() const;
 
 		/** Frees the memory used by all the child samples. */
-		void freeSample(ProfiledSample& sample);
+		void FreeSample(ProfiledSample& sample);
 
 		/** Frees the memory used by all the samples in the frame. */
-		void freeFrame(ProfiledFrame& frame);
+		void FreeFrame(ProfiledFrame& frame);
 
 		/** Resolves an active sample and converts it to report sample. */
-		void resolveSample(const ProfiledSample& sample, GPUProfileSample& reportSample);
+		void ResolveSample(const ProfiledSample& sample, GPUProfileSample& reportSample);
 
 	private:
 		bool mIsFrameActive = false;
@@ -215,7 +215,7 @@ namespace bs
 	};
 
 	/** Provides global access to ProfilerGPU instance. */
-	BS_CORE_EXPORT ProfilerGPU& gProfilerGPU();
+	BS_CORE_EXPORT ProfilerGPU& GProfilerGPU();
 
 	/** Profiling macros that allow profiling functionality to be disabled at compile time. */
 #if BS_PROFILING_ENABLED

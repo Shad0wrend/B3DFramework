@@ -92,10 +92,10 @@ namespace bs
 		ScriptGameObjectBase* getScriptGameObject(UINT64 instanceId) const;
 
 		/**	Destroys and unregisters the specified SceneObject interop object. */
-		void destroyScriptSceneObject(ScriptSceneObject* sceneObject);
+		void DestroyScriptSceneObject(ScriptSceneObject* sceneObject);
 
 		/**	Destroys and unregisters the specified ManagedComponent interop object. */
-		void destroyScriptComponent(ScriptComponentBase* component);
+		void DestroyScriptComponent(ScriptComponentBase* component);
 
 	private:
 		/**
@@ -103,10 +103,10 @@ namespace bs
 		 *
 		 * @note	Usually this happens after an assembly reload.
 		 */
-		void sendComponentResetEvents();
+		void SendComponentResetEvents();
 
 		/**	Triggered when the any game object is destroyed. */
-		void onGameObjectDestroyed(const HGameObject& go);
+		void OnGameObjectDestroyed(const HGameObject& go);
 
 		UnorderedMap<UINT64, ScriptComponentBase*> mScriptComponents;
 		UnorderedMap<UINT64, ScriptSceneObject*> mScriptSceneObjects;

@@ -22,7 +22,7 @@ namespace bs
 		ScriptGUIListBox(MonoObject* instance, GUIListBox* listBox);
 
 		/**	Triggered when the selected index in the native list box changes. */
-		void onSelectionChanged(UINT32 index, bool enabled);
+		void OnSelectionChanged(UINT32 index, bool enabled);
 
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/

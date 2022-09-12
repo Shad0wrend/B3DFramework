@@ -101,7 +101,7 @@ namespace bs
 
 	float ScriptResources::internal_GetLoadProgress(ScriptRRefBase* resource, bool loadDependencies)
 	{
-		return gResources().getLoadProgress(resource->getHandle(), loadDependencies);
+		return GResources().getLoadProgress(resource->getHandle(), loadDependencies);
 	}
 
 	void ScriptResources::internal_Release(ScriptResourceBase* resource)

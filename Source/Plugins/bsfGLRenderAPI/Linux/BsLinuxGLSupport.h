@@ -70,19 +70,19 @@ namespace bs { namespace ct
 		LinuxGLSupport();
 
 		/** @copydoc GLSupport::newWindow */
-		SPtr<bs::RenderWindow> newWindow(RENDER_WINDOW_DESC& desc, UINT32 windowId, SPtr<bs::RenderWindow> parentWindow) override;
+		SPtr<bs::RenderWindow> NewWindow(RENDER_WINDOW_DESC& desc, UINT32 windowId, SPtr<bs::RenderWindow> parentWindow) override;
 
 		/** @copydoc GLSupport::start */
-		void start() override;
+		void Start() override;
 
 		/** @copydoc GLSupport::stop */
-		void stop() override;
+		void Stop() override;
 
 		/** @copydoc GLSupport::getProcAddress */
 		void* getProcAddress(const String& procname) override;
 
 		/** Creates a new OpenGL context. */
-		SPtr<LinuxContext> createContext(::Display* x11display, XVisualInfo& visualInfo);
+		SPtr<LinuxContext> CreateContext(::Display* x11display, XVisualInfo& visualInfo);
 
 		/**
 		 * Selects an appropriate X11 visual info depending on the provided parameters. Visual info should then be used
@@ -96,10 +96,10 @@ namespace bs { namespace ct
 		 * 							will automatically be encoded into gamma space on write.
 		 * @return					X11 visual info structure you may use to initialize a window.
 		 */
-		GLVisualConfig findBestVisual(::Display* display, bool depthStencil, UINT32 multisample, bool srgb) const;
+		GLVisualConfig FindBestVisual(::Display* display, bool depthStencil, UINT32 multisample, bool srgb) const;
 
 		/** @copydoc GLSupport::getVideoModeInfo */
-		SPtr<VideoModeInfo> getVideoModeInfo() const override;
+		SPtr<VideoModeInfo> GetVideoModeInfo() const override;
 
 	private:
 	};

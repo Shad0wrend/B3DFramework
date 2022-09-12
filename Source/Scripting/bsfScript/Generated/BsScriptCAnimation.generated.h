@@ -26,11 +26,11 @@ namespace bs
 		void _scriptUpdateFloatProperties();
 		void _scriptOnEventTriggered(const ResourceHandle<AnimationClip>& p0, const String& p1);
 
-		typedef void(BS_THUNKCALL *_scriptRebuildFloatPropertiesThunkDef) (MonoObject*, MonoObject* p0, MonoException**);
+		typedef Void(BS_THUNKCALL *_scriptRebuildFloatPropertiesThunkDef) (MonoObject*, MonoObject* p0, MonoException**);
 		static _scriptRebuildFloatPropertiesThunkDef _scriptRebuildFloatPropertiesThunk;
-		typedef void(BS_THUNKCALL *_scriptUpdateFloatPropertiesThunkDef) (MonoObject*, MonoException**);
+		typedef Void(BS_THUNKCALL *_scriptUpdateFloatPropertiesThunkDef) (MonoObject*, MonoException**);
 		static _scriptUpdateFloatPropertiesThunkDef _scriptUpdateFloatPropertiesThunk;
-		typedef void(BS_THUNKCALL *_scriptOnEventTriggeredThunkDef) (MonoObject*, MonoObject* p0, MonoString* p1, MonoException**);
+		typedef Void(BS_THUNKCALL *_scriptOnEventTriggeredThunkDef) (MonoObject*, MonoObject* p0, MonoString* p1, MonoException**);
 		static _scriptOnEventTriggeredThunkDef _scriptOnEventTriggeredThunk;
 
 		static void Internal_setDefaultClip(ScriptCAnimation* thisPtr, MonoObject* clip);

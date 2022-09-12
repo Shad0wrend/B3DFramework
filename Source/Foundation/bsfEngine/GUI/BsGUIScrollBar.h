@@ -17,34 +17,34 @@ namespace bs
 	{
 	public:
 		/** Style type name for the horizontal scroll handle. */
-		static const String& getHScrollHandleType();
+		static const String& GetHScrollHandleType();
 
 		/** Style type name for the vertical scroll handle. */
-		static const String& getVScrollHandleType();
+		static const String& GetVScrollHandleType();
 
 		/**	Returns the position of the scroll handle in percent (ranging [0, 1]). */
-		float getScrollPos() const;
+		float GetScrollPos() const;
 
 		/** Sets the position of the scroll handle in percent (ranging [0, 1]). */
-		void setScrollPos(float pct);
+		void SetScrollPos(float pct);
 
 		/** Gets the size of the scroll handle in percent (ranging [0, 1]) of the total scroll bar area. */
-		float getHandleSize() const;
+		float GetHandleSize() const;
 
 		/** Sets the size of the scroll handle in percent (ranging [0, 1]) of the total scroll bar area. */
-		void setHandleSize(float pct);
+		void SetHandleSize(float pct);
 
 		/**
 		 * Moves the handle by some amount. Amount is specified in the percentage of the entire scrollable area. Values out
 		 * of range will be clamped.
 		 */
-		void scroll(float amount);
+		void Scroll(float amount);
 
 		/**	Returns the maximum scrollable size the handle can move within (for example scroll bar length). */
-		UINT32 getScrollableSize() const;
+		UINT32 GetScrollableSize() const;
 
 		/** @copydoc GUIElement::setTint */
-		void setTint(const Color& color) override;
+		void SetTint(const Color& color) override;
 
 		/**
 		 * Triggered whenever the scrollbar handle is moved or resized. Values provided are the handle position and size
@@ -102,23 +102,23 @@ namespace bs
 			UINT32 renderElementIdx) const override;
 
 		/** @copydoc GUIElement::updateRenderElementsInternal */
-		void updateRenderElementsInternal() override;
+		void UpdateRenderElementsInternal() override;
 
 		/** @copydoc GUIElement::updateClippedBounds */
-		void updateClippedBounds() override;
+		void UpdateClippedBounds() override;
 
 		/** @copydoc	GUIElement::_getRenderElementDepthRange */
 		UINT32 _getRenderElementDepthRange() const override;
 
 		/** @copydoc GUIElement::styleUpdated */
-		void styleUpdated() override;
+		void StyleUpdated() override;
 
 		/**
 		 * Helper method that returns style name used by a specific scrollbar type. If override style is empty, default
 		 * style for that type is returned.
 		 */
 		template<class T>
-		static const String& getStyleName(bool resizeable, const String& overrideStyle)
+		static const String& GetStyleName(bool resizeable, const String& overrideStyle)
 		{
 			if(overrideStyle == StringUtil::BLANK)
 				return T::getGUITypeName(resizeable);
@@ -130,13 +130,13 @@ namespace bs
 		 * Triggered whenever the scroll handle moves. Provided value represents the new position and size of the handle
 		 * in percent (ranging [0, 1]).
 		 */
-		void handleMoved(float handlePct, float sizePct);
+		void HandleMoved(float handlePct, float sizePct);
 
 		/**	Triggered when scroll up button is clicked. */
-		void upButtonClicked();
+		void UpButtonClicked();
 
 		/**	Triggered when scroll down button is clicked. */
-		void downButtonClicked();
+		void DownButtonClicked();
 
 		GUILayout* mLayout;
 		ImageSprite* mImageSprite;

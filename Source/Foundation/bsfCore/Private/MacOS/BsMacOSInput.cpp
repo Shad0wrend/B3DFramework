@@ -12,7 +12,7 @@ namespace bs
 	 * Helper method that creates a dictionary that is used for matching a specific set of devices (matching the provided
 	 * page and usage values, as USB HID values), used for initializing a HIDManager.
 	 */
-	static CFDictionaryRef createHIDDeviceMatchDictionary(UINT32 page, UINT32 usage)
+	static CFDictionaryRef CreateHIDDeviceMatchDictionary(UINT32 page, UINT32 usage)
 	{
 		CFDictionaryRef output = nullptr;
 		CFNumberRef pageNumRef = CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &page);
@@ -36,7 +36,7 @@ namespace bs
 	}
 
 	/** Returns the name of the run loop used for processing events for the specified category of input devices. */
-	static CFStringRef getRunLoopMode(HIDType type)
+	static CFStringRef GetRunLoopMode(HIDType type)
 	{
 		static CFStringRef KeyboardMode = CFSTR("BSKeyboard");
 		static CFStringRef MouseMode = CFSTR("BSMouse");
@@ -394,7 +394,7 @@ namespace bs
 	}
 
 	/** Converts a keyboard scan key (as reported by the HID manager) into engine's ButtonCode. */
-	static ButtonCode scanCodeToKeyCode(UINT32 scanCode)
+	static ButtonCode ScanCodeToKeyCode(UINT32 scanCode)
 	{
 		switch(scanCode)
 		{
@@ -780,14 +780,14 @@ namespace bs
 						}
 					}
 				}
-				else if(usagePage == kHIDPage_Button)
+				else If(usagePage == kHIDPage_Button)
 				{
 					if(mData.type == HIDType::Mouse)
 					{
 						if (usage > 0 && usage <= BC_NumMouse)
 							button = (ButtonCode) ((UINT32) BC_MOUSE_LEFT + usage - 1);
 					}
-					else if(mData.type == HIDType::Gamepad)
+					else If(mData.type == HIDType::Gamepad)
 					{
 						// These are based on the xbox controller:
 						switch(usage)
@@ -818,7 +818,7 @@ namespace bs
 						}
 					}
 				}
-				else if(usagePage == kHIDPage_KeyboardOrKeypad)
+				else If(usagePage == kHIDPage_KeyboardOrKeypad)
 				{
 					// Usage -1 and 1 are special signals that happen along with every button press/release and should be
 					// ignored

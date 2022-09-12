@@ -98,7 +98,7 @@ namespace bs
 		META_LastEntry;																										\
 																															\
 	public:																													\
-		static Vector<BuiltinResourceInfo> getEntries()																		\
+		static Vector<BuiltinResourceInfo> GetEntries()																		\
 		{																													\
 			Vector<BuiltinResourceInfo> entries;																			\
 			META_GetPrevEntries(entries, META_LastEntry());																	\

@@ -35,7 +35,7 @@ namespace bs
 		GameObjectHandle<CCollider> veccollider[2];
 		if(value.collider != nullptr)
 		{
-			ScriptArray arraycollider(value.collider);
+			ScriptArray Arraycollider(value.collider);
 			for(int i = 0; i < (int)arraycollider.size(); i++)
 			{
 				ScriptCColliderBase* scriptcollider;
@@ -53,7 +53,7 @@ namespace bs
 		Vector<ContactPoint> veccontactPoints;
 		if(value.contactPoints != nullptr)
 		{
-			ScriptArray arraycontactPoints(value.contactPoints);
+			ScriptArray ArraycontactPoints(value.contactPoints);
 			veccontactPoints.resize(arraycontactPoints.size());
 			for(int i = 0; i < (int)arraycontactPoints.size(); i++)
 			{

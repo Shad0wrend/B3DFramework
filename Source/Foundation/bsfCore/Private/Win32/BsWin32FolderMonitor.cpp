@@ -23,7 +23,7 @@ namespace bs
 	public:
 		WorkerFunc(FolderMonitor* owner);
 
-		void operator()();
+		void Operator()();
 
 	private:
 		FolderMonitor* mOwner;
@@ -34,8 +34,8 @@ namespace bs
 		FolderWatchInfo(const Path& folderToMonitor, HANDLE dirHandle, bool monitorSubdirectories, DWORD monitorFlags);
 		~FolderWatchInfo();
 
-		void startMonitor(HANDLE compPortHandle);
-		void stopMonitor(HANDLE compPortHandle);
+		void StartMonitor(HANDLE compPortHandle);
+		void StopMonitor(HANDLE compPortHandle);
 
 		static const UINT32 READ_BUFFER_SIZE = 65536;
 
@@ -75,7 +75,7 @@ namespace bs
 			return; // Already monitoring
 
 		{
-			Lock lock(mStatusMutex);
+			Lock Lock(mStatusMutex);
 
 			mState = MonitorState::Starting;
 			PostQueuedCompletionStatus(compPortHandle, sizeof(this), (ULONG_PTR)this, &mOverlapped);
@@ -87,7 +87,7 @@ namespace bs
 		if(mReadError != ERROR_SUCCESS)
 		{
 			{
-				Lock lock(mStatusMutex);
+				Lock Lock(mStatusMutex);
 				mState = MonitorState::Inactive;
 			}
 
@@ -100,7 +100,7 @@ namespace bs
 	{
 		if(mState != MonitorState::Inactive)
 		{
-			Lock lock(mStatusMutex);
+			Lock Lock(mStatusMutex);
 
 			mState = MonitorState::Shutdown;
 			PostQueuedCompletionStatus(compPortHandle, sizeof(this), (ULONG_PTR)this, &mOverlapped);
@@ -125,11 +125,11 @@ namespace bs
 			mCurrentRecord = (PFILE_NOTIFY_INFORMATION)mBuffer;
 		}
 
-		bool getNext();
+		bool GetNext();
 	
 		DWORD	getAction() const;
-		WString getFileName() const;
-		WString getFileNameWithPath(const Path& rootPath) const;
+		WString GetFileName() const;
+		WString GetFileNameWithPath(const Path& rootPath) const;
 
 	protected:
 		UINT8* mBuffer;
@@ -289,7 +289,7 @@ namespace bs
 			return action;
 		}
 
-		static void destroy(FileAction* action)
+		static void Destroy(FileAction* action)
 		{
 			bs_free(action);
 		}
@@ -432,7 +432,7 @@ namespace bs
 				// Even though we wait for a condition variable from the worker thread in stopMonitor,
 				// that doesn't mean the worker thread is done with the condition variable
 				// (which is stored inside watchInfo)
-				Lock lock(m->mMainMutex);
+				Lock Lock(m->mMainMutex);
 				bs_delete(watchInfo);
 			}
 		}
@@ -475,7 +475,7 @@ namespace bs
 				MonitorState state;
 
 				{
-					Lock lock(watchInfo->mStatusMutex);
+					Lock Lock(watchInfo->mStatusMutex);
 					state = watchInfo->mState;
 				}
 
@@ -493,7 +493,7 @@ namespace bs
 						watchInfo->mReadError = ERROR_SUCCESS;
 
 						{
-							Lock lock(watchInfo->mStatusMutex);
+							Lock Lock(watchInfo->mStatusMutex);
 							watchInfo->mState = MonitorState::Monitoring;
 						}
 					}
@@ -503,7 +503,7 @@ namespace bs
 					break;
 				case MonitorState::Monitoring:
 					{
-						FileNotifyInfo info(watchInfo->mBuffer, FolderWatchInfo::READ_BUFFER_SIZE);
+						FileNotifyInfo Info(watchInfo->mBuffer, FolderWatchInfo::READ_BUFFER_SIZE);
 						handleNotifications(info, *watchInfo);
 
 						if(!ReadDirectoryChangesW(watchInfo->mDirHandle, watchInfo->mBuffer, FolderWatchInfo::READ_BUFFER_SIZE,
@@ -525,19 +525,19 @@ namespace bs
 						watchInfo->mDirHandle = INVALID_HANDLE_VALUE;
 
 						{
-							Lock lock(watchInfo->mStatusMutex);
+							Lock Lock(watchInfo->mStatusMutex);
 							watchInfo->mState = MonitorState::Shutdown2;
 						}
 					}
 					else
 					{
 						{
-							Lock lock(watchInfo->mStatusMutex);
+							Lock Lock(watchInfo->mStatusMutex);
 							watchInfo->mState = MonitorState::Inactive;
 						}
 
 						{
-							Lock lock(m->mMainMutex); // Ensures that we don't delete "watchInfo" before this thread is done with mStartStopEvent
+							Lock Lock(m->mMainMutex); // Ensures that we don't delete "watchInfo" before this thread is done with mStartStopEvent
 							watchInfo->mStartStopEvent.notify_one();
 						}
 					}
@@ -553,12 +553,12 @@ namespace bs
 					else
 					{
 						{
-							Lock lock(watchInfo->mStatusMutex);
+							Lock Lock(watchInfo->mStatusMutex);
 							watchInfo->mState = MonitorState::Inactive;
 						}
 
 						{
-							Lock lock(m->mMainMutex); // Ensures that we don't delete "watchInfo" before this thread is done with mStartStopEvent
+							Lock Lock(m->mMainMutex); // Ensures that we don't delete "watchInfo" before this thread is done with mStartStopEvent
 							watchInfo->mStartStopEvent.notify_one();
 						}
 					}
@@ -606,7 +606,7 @@ namespace bs
 		} while(notifyInfo.getNext());
 
 		{
-			Lock lock(m->mMainMutex);
+			Lock Lock(m->mMainMutex);
 
 			for(auto& action : mActions)
 				m->mFileActions.push(action);
@@ -616,7 +616,7 @@ namespace bs
 	void FolderMonitor::_update()
 	{
 		{
-			Lock lock(m->mMainMutex);
+			Lock Lock(m->mMainMutex);
 
 			while (!m->mFileActions.empty())
 			{

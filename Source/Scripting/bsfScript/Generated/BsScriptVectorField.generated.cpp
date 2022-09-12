@@ -44,7 +44,7 @@ namespace bs
 		Vector<Vector3> vecvalues;
 		if(values != nullptr)
 		{
-			ScriptArray arrayvalues(values);
+			ScriptArray Arrayvalues(values);
 			vecvalues.resize(arrayvalues.size());
 			for(int i = 0; i < (int)arrayvalues.size(); i++)
 			{

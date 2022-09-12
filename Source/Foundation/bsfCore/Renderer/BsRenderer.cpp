@@ -69,7 +69,7 @@ namespace bs { namespace ct
 
 	void Renderer::addTask(const SPtr<RendererTask>& task)
 	{
-		Lock lock(mTaskMutex);
+		Lock Lock(mTaskMutex);
 
 		assert(task->mState != 1 && "Task is already executing, it cannot be executed again until it finishes.");
 		task->mState.store(0); // Reset state in case the task is getting re-queued
@@ -82,7 +82,7 @@ namespace bs { namespace ct
 	{
 		// Move all tasks to the core thread queue
 		{
-			Lock lock(mTaskMutex);
+			Lock Lock(mTaskMutex);
 
 			for(UINT32 i = 0; i < (UINT32)mQueuedTasks.size();)
 			{
@@ -109,7 +109,7 @@ namespace bs { namespace ct
 
 				const bool complete = [&entry]()
 				{
-					ProfileGPUBlock sampleBlock("Renderer task: " + ProfilerString(entry->mName.data(), entry->mName.size()));
+					ProfileGPUBlock SampleBlock("Renderer task: " + ProfilerString(entry->mName.data(), entry->mName.size()));
 					return entry->mTaskWorker();
 				}();
 
@@ -128,7 +128,7 @@ namespace bs { namespace ct
 	{
 		// Move task to the core thread queue
 		{
-			Lock lock(mTaskMutex);
+			Lock Lock(mTaskMutex);
 
 			for(UINT32 i = 0; i < (UINT32)mQueuedTasks.size(); i++)
 			{
@@ -150,7 +150,7 @@ namespace bs { namespace ct
 			gProfilerGPU().beginFrame();
 			gProfilerCPU().beginThread("RenderTask");
 			{
-				ProfileGPUBlock sampleBlock("Renderer task: " + ProfilerString(task.mName.data(), task.mName.size()));
+				ProfileGPUBlock SampleBlock("Renderer task: " + ProfilerString(task.mName.data(), task.mName.size()));
 				complete = task.mTaskWorker();
 			}
 			gProfilerCPU().endThread();
@@ -164,7 +164,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	SPtr<Renderer> gRenderer()
+	SPtr<Renderer> GRenderer()
 	{
 		return std::static_pointer_cast<Renderer>(RendererManager::instance().getActive());
 	}

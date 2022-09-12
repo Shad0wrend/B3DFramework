@@ -24,16 +24,16 @@ namespace bs
 		ScriptGUIButton(MonoObject* instance, GUIButton* button);
 
 		/**	Triggers when the GUI button is clicked. */
-		void onClick();
+		void OnClick();
 
 		/**	Triggers when the GUI button is double-clicked. */
-		void onDoubleClick();
+		void OnDoubleClick();
 
 		/**	Triggers when the GUI button is hovered over. */
-		void onHover();
+		void OnHover();
 
 		/**	Triggers when the pointer leaves the GUI button. */
-		void onOut();
+		void OnOut();
 
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/

@@ -164,7 +164,7 @@ namespace bs
 			state = createDepthStencilStateInternal(desc, id);
 			state->initialize();
 
-			CachedDepthStencilState cachedData(id);
+			CachedDepthStencilState CachedData(id);
 			cachedData.state = state;
 
 			notifyDepthStencilStateCreated(desc, cachedData);
@@ -182,7 +182,7 @@ namespace bs
 			state = createRasterizerStateInternal(desc, id);
 			state->initialize();
 
-			CachedRasterizerState cachedData(id);
+			CachedRasterizerState CachedData(id);
 			cachedData.state = state;
 
 			notifyRasterizerStateCreated(desc, cachedData);
@@ -200,7 +200,7 @@ namespace bs
 			state = createBlendStateInternal(desc, id);
 			state->initialize();
 
-			CachedBlendState cachedData(id);
+			CachedBlendState CachedData(id);
 			cachedData.state = state;
 
 			notifyBlendStateCreated(desc, cachedData);
@@ -258,7 +258,7 @@ namespace bs
 		{
 			state = createDepthStencilStateInternal(desc, id);
 
-			CachedDepthStencilState cachedData(id);
+			CachedDepthStencilState CachedData(id);
 			cachedData.state = state;
 
 			notifyDepthStencilStateCreated(desc, cachedData);
@@ -275,7 +275,7 @@ namespace bs
 		{
 			state = createRasterizerStateInternal(desc, id);
 
-			CachedRasterizerState cachedData(id);
+			CachedRasterizerState CachedData(id);
 			cachedData.state = state;
 
 			notifyRasterizerStateCreated(desc, cachedData);
@@ -292,7 +292,7 @@ namespace bs
 		{
 			state = createBlendStateInternal(desc, id);
 
-			CachedBlendState cachedData(id);
+			CachedBlendState CachedData(id);
 			cachedData.state = state;
 
 			notifyBlendStateCreated(desc, cachedData);
@@ -379,42 +379,42 @@ namespace bs
 
 	void RenderStateManager::notifySamplerStateCreated(const SAMPLER_STATE_DESC& desc, const SPtr<SamplerState>& state) const
 	{
-		Lock lock(mMutex);
+		Lock Lock(mMutex);
 
 		mCachedSamplerStates[desc] = state;
 	}
 
 	void RenderStateManager::notifyBlendStateCreated(const BLEND_STATE_DESC& desc, const CachedBlendState& state) const
 	{
-		Lock lock(mMutex);
+		Lock Lock(mMutex);
 
 		mCachedBlendStates[desc] = state;
 	}
 
 	void RenderStateManager::notifyRasterizerStateCreated(const RASTERIZER_STATE_DESC& desc, const CachedRasterizerState& state) const
 	{
-		Lock lock(mMutex);
+		Lock Lock(mMutex);
 
 		mCachedRasterizerStates[desc] = state;
 	}
 
 	void RenderStateManager::notifyDepthStencilStateCreated(const DEPTH_STENCIL_STATE_DESC& desc, const CachedDepthStencilState& state) const
 	{
-		Lock lock(mMutex);
+		Lock Lock(mMutex);
 
 		mCachedDepthStencilStates[desc] = state;
 	}
 
 	void RenderStateManager::notifySamplerStateDestroyed(const SAMPLER_STATE_DESC& desc) const
 	{
-		Lock lock(mMutex);
+		Lock Lock(mMutex);
 
 		mCachedSamplerStates.erase(desc);
 	}
 
 	SPtr<SamplerState> RenderStateManager::findCachedState(const SAMPLER_STATE_DESC& desc) const
 	{
-		Lock lock(mMutex);
+		Lock Lock(mMutex);
 
 		auto iterFind = mCachedSamplerStates.find(desc);
 		if (iterFind != mCachedSamplerStates.end())
@@ -425,7 +425,7 @@ namespace bs
 
 	SPtr<BlendState> RenderStateManager::findCachedState(const BLEND_STATE_DESC& desc, UINT32& id) const
 	{
-		Lock lock(mMutex);
+		Lock Lock(mMutex);
 
 		auto iterFind = mCachedBlendStates.find(desc);
 		if (iterFind != mCachedBlendStates.end())
@@ -446,7 +446,7 @@ namespace bs
 
 	SPtr<RasterizerState> RenderStateManager::findCachedState(const RASTERIZER_STATE_DESC& desc, UINT32& id) const
 	{
-		Lock lock(mMutex);
+		Lock Lock(mMutex);
 
 		auto iterFind = mCachedRasterizerStates.find(desc);
 		if (iterFind != mCachedRasterizerStates.end())
@@ -467,7 +467,7 @@ namespace bs
 
 	SPtr<DepthStencilState> RenderStateManager::findCachedState(const DEPTH_STENCIL_STATE_DESC& desc, UINT32& id) const
 	{
-		Lock lock(mMutex);
+		Lock Lock(mMutex);
 
 		auto iterFind = mCachedDepthStencilStates.find(desc);
 		if (iterFind != mCachedDepthStencilStates.end())

@@ -88,20 +88,20 @@ namespace bs { namespace ct
 		return gpuProg;
 	}
 
-	UINT32 parseErrorMessage(const char* message)
+	UINT32 ParseErrorMessage(const char* message)
 	{
 		if (message == nullptr)
 			return 0;
 
 		String pattern = R"(\(([0-9]*),.*\))";
-		std::regex regex(pattern);
+		std::regex Regex(pattern);
 
 		std::cmatch results;
 		if (std::regex_search(message, results, regex))
 		{
 			std::string result = results[1].str();
 
-			return strtol(result.c_str(), nullptr, 10) - 1;
+			return Strtol(result.c_str(), nullptr, 10) - 1;
 		}
 
 		return 0;

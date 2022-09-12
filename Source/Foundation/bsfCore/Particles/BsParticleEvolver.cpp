@@ -30,7 +30,7 @@ namespace bs
 
 	/** Helper method that applies a transform to either a point or a direction. */
 	template<bool dir>
-	Vector3 applyTransform(const Matrix4& tfrm, const Vector3& input)
+	Vector3 ApplyTransform(const Matrix4& tfrm, const Vector3& input)
 	{
 		return tfrm.multiplyAffine(input);		
 	}
@@ -152,7 +152,7 @@ namespace bs
 
 	RTTITypeBase* ParticleTextureAnimation::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	ParticleOrbit::ParticleOrbit(const PARTICLE_ORBIT_DESC& desc)
@@ -188,7 +188,7 @@ namespace bs
 
 			orbitVelocity *= timeStep;
 
-			const Matrix3 rotation(Radian(orbitVelocity.x), Radian(orbitVelocity.y), Radian(orbitVelocity.z));
+			const Matrix3 Rotation(Radian(orbitVelocity.x), Radian(orbitVelocity.y), Radian(orbitVelocity.z));
 
 			const Vector3 point = particles.position[i] - center;
 			const Vector3 newPoint = rotation.multiply(point);
@@ -221,7 +221,7 @@ namespace bs
 
 	RTTITypeBase* ParticleOrbit::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	ParticleVelocity::ParticleVelocity(const PARTICLE_VELOCITY_DESC& desc)
@@ -272,7 +272,7 @@ namespace bs
 
 	RTTITypeBase* ParticleVelocity::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	ParticleForce::ParticleForce(const PARTICLE_FORCE_DESC& desc)
@@ -323,7 +323,7 @@ namespace bs
 
 	RTTITypeBase* ParticleForce::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	ParticleGravity::ParticleGravity(const PARTICLE_GRAVITY_DESC& desc)
@@ -373,7 +373,7 @@ namespace bs
 
 	RTTITypeBase* ParticleGravity::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	ParticleColor::ParticleColor(const PARTICLE_COLOR_DESC& desc)
@@ -412,7 +412,7 @@ namespace bs
 
 	RTTITypeBase* ParticleColor::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	ParticleSize::ParticleSize(const PARTICLE_SIZE_DESC& desc)
@@ -465,7 +465,7 @@ namespace bs
 
 	RTTITypeBase* ParticleSize::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	ParticleRotation::ParticleRotation(const PARTICLE_ROTATION_DESC& desc)
@@ -518,7 +518,7 @@ namespace bs
 
 	RTTITypeBase* ParticleRotation::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	/** Information about a particle collision. */
@@ -784,6 +784,6 @@ namespace bs
 
 	RTTITypeBase* ParticleCollisions::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 }

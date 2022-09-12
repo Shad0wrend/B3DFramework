@@ -152,9 +152,9 @@ namespace bs
 			{ }
 
 			/** Checks if the range contains the provided child. */
-			bool contains(HChildNode child)
+			bool Contains(HChildNode child)
 			{
-				NodeChildRange childRange(child);
+				NodeChildRange ChildRange(child);
 				return (allBits & childRange.allBits) == childRange.allBits;
 			}
 		};
@@ -175,7 +175,7 @@ namespace bs
 			}
 
 			/** Checks has the specified child node been created. */
-			bool hasChild(HChildNode child) const
+			bool HasChild(HChildNode child) const
 			{
 				return mChildren[child.index] != nullptr;
 			}
@@ -185,7 +185,7 @@ namespace bs
 			friend class Quadtree;
 
 			/** Maps a global element index to a set of element groups and an index within those groups. */
-			UINT32 mapToGroup(UINT32 elementIdx, ElementGroup** elements, ElementBoundGroup** bounds)
+			UINT32 MapToGroup(UINT32 elementIdx, ElementGroup** elements, ElementBoundGroup** bounds)
 			{
 				UINT32 numGroups = Math::divideAndRoundUp(mElements.count, (UINT32)Options::MaxElementsPerNode);
 				UINT32 groupIdx = numGroups - elementIdx / Options::MaxElementsPerNode - 1;
@@ -230,10 +230,10 @@ namespace bs
 			}
 
 			/** Returns the bounds of the node this object represents. */
-			const simd::Rect2& getBounds() const { return mBounds; }
+			const simd::Rect2& GetBounds() const { return mBounds; }
 
 			/** Attempts to find a child node that can fully contain the provided bounds. */
-			HChildNode findContainingChild(const simd::Rect2& bounds) const
+			HChildNode FindContainingChild(const simd::Rect2& bounds) const
 			{
 				auto queryCenter = simd::load<simd::float32x4>(&bounds.center);
 
@@ -276,7 +276,7 @@ namespace bs
 			}
 
 			/** Returns a range of child nodes that intersect the provided bounds. */
-			NodeChildRange findIntersectingChildren(const simd::Rect2& bounds) const
+			NodeChildRange FindIntersectingChildren(const simd::Rect2& bounds) const
 			{
 				auto queryCenter = simd::load<simd::float32x4>(&bounds.center);
 				auto queryExtents = simd::load<simd::float32x4>(&bounds.extents);
@@ -320,7 +320,7 @@ namespace bs
 			}
 
 			/** Calculates bounds for the provided child node. */
-			NodeBounds getChild(HChildNode child) const
+			NodeBounds GetChild(HChildNode child) const
 			{
 				static constexpr const float map[2] = { -1.0f, 1.0f };
 
@@ -355,7 +355,7 @@ namespace bs
 			const Node* getNode() const { return mNode; }
 
 			/** Returns the node bounds. */
-			const NodeBounds& getBounds() const { return mBounds; }
+			const NodeBounds& GetBounds() const { return mBounds; }
 
 		private:
 			const Node* mNode = nullptr;
@@ -388,14 +388,14 @@ namespace bs
 			 * Returns a reference to the current node. moveNext() must be called at least once and it must return true
 			 * prior to attempting to access this data.
 			 */
-			const HNode& getCurrent() const { return mCurrentNode; }
+			const HNode& GetCurrent() const { return mCurrentNode; }
 
 			/**
 			 * Moves to the next entry in the iterator. Iterator starts at a position before the first element, therefore
 			 * this method must be called at least once before attempting to access the current node. If the method returns
 			 * false it means the iterator end has been reached and attempting to access data will result in an error.
 			 */
-			bool moveNext()
+			bool MoveNext()
 			{
 				if (mNodeStack.empty())
 				{
@@ -410,7 +410,7 @@ namespace bs
 			}
 
 			/** Inserts a child of the current node to be iterated over. */
-			void pushChild(const HChildNode& child)
+			void PushChild(const HChildNode& child)
 			{
 				Node* childNode = mCurrentNode.getNode()->getChild(child);
 				NodeBounds childBounds = mCurrentNode.getBounds().getChild(child);
@@ -432,9 +432,9 @@ namespace bs
 
 			/** Constructs an iterator that iterates over the specified node's elements. */
 			ElementIterator(const Node* node)
-				: mCurrentIdx(-1)
-				, mCurrentElemGroup(node->mElements.values)
-				, mCurrentBoundGroup(node->mElements.bounds)
+				: MCurrentIdx(-1)
+				, MCurrentElemGroup(node->mElements.values)
+				, MCurrentBoundGroup(node->mElements.bounds)
 			{
 				UINT32 numGroups = Math::divideAndRoundUp(node->mElements.count, (UINT32)Options::MaxElementsPerNode);
 				mElemsInGroup = node->mElements.count - (numGroups - 1) * Options::MaxElementsPerNode;
@@ -445,7 +445,7 @@ namespace bs
 			 * this method must be called at least once before attempting to access the current element data. If the method
 			 * returns false it means iterator end has been reached and attempting to access data will result in an error.
 			 */
-			bool moveNext()
+			bool MoveNext()
 			{
 				if (!mCurrentElemGroup)
 					return false;
@@ -470,13 +470,13 @@ namespace bs
 			 * Returns the bounds of the current element. moveNext() must be called at least once and it must return true
 			 * prior to attempting to access this data.
 			 */
-			const simd::Rect2& getCurrentBounds() const { return mCurrentBoundGroup->v[mCurrentIdx]; }
+			const simd::Rect2& GetCurrentBounds() const { return mCurrentBoundGroup->v[mCurrentIdx]; }
 
 			/**
 			 * Returns the contents of the current element. moveNext() must be called at least once and it must return true
 			 * prior to attempting to access this data.
 			 */
-			const ElemType& getCurrentElem() const { return mCurrentElemGroup->v[mCurrentIdx]; }
+			const ElemType& GetCurrentElem() const { return mCurrentElemGroup->v[mCurrentIdx]; }
 
 		private:
 			INT32 mCurrentIdx = -1;
@@ -501,7 +501,7 @@ namespace bs
 			 * Returns the contents of the current element. moveNext() must be called at least once and it must return true
 			 * prior to attempting to access this data.
 			 */
-			const ElemType& getElement() const
+			const ElemType& GetElement() const
 			{
 				return mElemIter.getCurrentElem();
 			}
@@ -511,7 +511,7 @@ namespace bs
 			 * this method must be called at least once before attempting to access the current element data. If the method
 			 * returns false it means iterator end has been reached and attempting to access data will result in an error.
 			 */
-			bool moveNext()
+			bool MoveNext()
 			{
 				while (true)
 				{
@@ -557,9 +557,9 @@ namespace bs
 		 *							methods on the provided Options class.
 		 */
 		Quadtree(const Vector2& center, float extent, void* context = nullptr)
-			: mRootBounds(simd::Rect2(center, extent))
-			, mMinNodeExtent(extent * std::pow(0.5f * (1.0f + 1.0f / Options::LoosePadding), Options::MaxDepth))
-			, mContext(context)
+			: MRootBounds(simd::Rect2(center, extent))
+			, MMinNodeExtent(extent * std::pow(0.5f * (1.0f + 1.0f / Options::LoosePadding), Options::MaxDepth))
+			, MContext(context)
 		{
 		}
 
@@ -569,13 +569,13 @@ namespace bs
 		}
 
 		/** Adds a new element to the quadtree. */
-		void addElement(const ElemType& elem)
+		void AddElement(const ElemType& elem)
 		{
 			addElementToNode(elem, &mRoot, mRootBounds);
 		}
 
 		/** Removes an existing element from the quadtree. */
-		void removeElement(const QuadtreeElementId& elemId)
+		void RemoveElement(const QuadtreeElementId& elemId)
 		{
 			Node* node = (Node*)elemId.node;
 
@@ -613,7 +613,7 @@ namespace bs
 							{
 								Node* childNode = curNode->getChild(i);
 
-								ElementIterator elemIter(childNode);
+								ElementIterator ElemIter(childNode);
 								while (elemIter.moveNext())
 									pushElement(node, elemIter.getCurrentElem(), elemIter.getCurrentBounds());
 
@@ -642,7 +642,7 @@ namespace bs
 
 	private:
 		/** Adds a new element to the specified node. Potentially also subdivides the node. */
-		void addElementToNode(const ElemType& elem, Node* node, const NodeBounds& nodeBounds)
+		void AddElementToNode(const ElemType& elem, Node* node, const NodeBounds& nodeBounds)
 		{
 			simd::Rect2 elemBounds = Options::getBounds(elem, mContext);
 
@@ -657,7 +657,7 @@ namespace bs
 					// Clear all elements from the current node
 					NodeElements elements = node->mElements;
 
-					ElementIterator elemIter(node);
+					ElementIterator ElemIter(node);
 					node->mElements = NodeElements();
 
 					// Mark the node as non-leaf, allowing children to be created
@@ -702,7 +702,7 @@ namespace bs
 		}
 
 		/** Cleans up memory used by the provided node. Should be called instead of the node destructor. */
-		void destroyNode(Node* node)
+		void DestroyNode(Node* node)
 		{
 			freeElements(node->mElements);
 
@@ -717,7 +717,7 @@ namespace bs
 		}
 
 		/** Adds a new element to the node's element list. */
-		void pushElement(Node* node, const ElemType& elem, const simd::Rect2& bounds)
+		void PushElement(Node* node, const ElemType& elem, const simd::Rect2& bounds)
 		{
 			NodeElements& elements = node->mElements;
 
@@ -744,7 +744,7 @@ namespace bs
 		}
 
 		/** Removes the specified element from the node's element list. */
-		void popElement(Node* node, UINT32 elementIdx)
+		void PopElement(Node* node, UINT32 elementIdx)
 		{
 			NodeElements& elements = node->mElements;
 
@@ -777,7 +777,7 @@ namespace bs
 		}
 
 		/** Clears all elements from a node. */
-		void freeElements(NodeElements& elements)
+		void FreeElements(NodeElements& elements)
 		{
 			// Free the element and bound groups from this node
 			ElementGroup* curElemGroup = elements.values;

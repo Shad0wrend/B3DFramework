@@ -19,7 +19,7 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "Plane")
 
 		/** Unboxes a boxed managed Plane struct and returns the native version of the structure. */
-		static Plane unbox(MonoObject* obj);
+		static Plane Unbox(MonoObject* obj);
 
 		/**	Boxes a native Plane struct and returns a managed object containing it. */
 		static MonoObject* box(const Plane& value);

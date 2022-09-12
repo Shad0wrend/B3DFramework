@@ -16,7 +16,7 @@ namespace bs
 	{
 	public:
 		/** Returns type name of the GUI element used for finding GUI element styles.  */
-		static const String& getGUITypeName();
+		static const String& GetGUITypeName();
 
 		/**
 		 * Creates a new drop down hit box that will detect mouse input over certain area.
@@ -43,10 +43,10 @@ namespace bs
 		static GUIDropDownHitBox* create(bool captureMouseOver, bool captureMousePresses, const GUIOptions& options);
 
 		/** Sets a single rectangle bounds in which the hitbox will capture mouse events. */
-		void setBounds(const Rect2I& bounds);
+		void SetBounds(const Rect2I& bounds);
 
 		/** Sets complex bounds consisting of multiple rectangles in which the hitbox will capture mouse events. */
-		void setBounds(const Vector<Rect2I>& bounds);
+		void SetBounds(const Vector<Rect2I>& bounds);
 
 		/** Triggered when hit box loses focus (for example user clicks outside of its bounds). */
 		Event<void()> onFocusLost;
@@ -58,7 +58,7 @@ namespace bs
 		GUIDropDownHitBox(bool captureMouseOver, bool captureMousePresses, const GUIDimensions& dimensions);
 
 		/** @copydoc GUIElementContainer::updateClippedBounds */
-		void updateClippedBounds() override;
+		void UpdateClippedBounds() override;
 
 		/** @copydoc GUIElementContainer::_commandEvent */
 		bool _commandEvent(const GUICommandEvent& ev) override;

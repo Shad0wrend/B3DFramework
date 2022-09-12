@@ -21,7 +21,7 @@ namespace bs
 		HThread(ThreadPool* pool, UINT32 threadId);
 
 		/**	Block the calling thread until the thread this handle points to completes. */
-		void blockUntilComplete();
+		void BlockUntilComplete();
 
 	private:
 		UINT32 mThreadId = 0;
@@ -48,7 +48,7 @@ namespace bs
 		virtual ~PooledThread() = default;
 
 		/**	Initializes the pooled thread. Must be called right after the object is constructed. */
-		void initialize();
+		void Initialize();
 
 		/**
 		 * Starts executing the given worker method.
@@ -57,43 +57,43 @@ namespace bs
 		 * Caller must ensure worker method is not null and that the thread is currently idle, otherwise undefined behavior
 		 * will occur.
 		 */
-		void start(std::function<void()> workerMethod, UINT32 id);
+		void Start(std::function<void()> workerMethod, UINT32 id);
 
 		/**
 		 * Attempts to join the currently running thread and destroys it. Caller must ensure that any worker method
 		 * currently running properly returns, otherwise this will block indefinitely.
 		 */
-		void destroy();
+		void Destroy();
 
 		/**	Returns true if the thread is idle and new worker method can be scheduled on it. */
-		bool isIdle();
+		bool IsIdle();
 
 		/** Returns how long has the thread been idle. Value is undefined if thread is not idle. */
-		time_t idleTime();
+		time_t IdleTime();
 
 		/**	Sets a name of the thread. */
-		void setName(const String& name);
+		void SetName(const String& name);
 
 		/**	Gets unique ID of the currently executing thread. */
-		UINT32 getId() const;
+		UINT32 GetId() const;
 
 		/**	Blocks the current thread until this thread completes. Returns immediately if the thread is idle. */
-		void blockUntilComplete();
+		void BlockUntilComplete();
 
 		/**	Called when the thread is first created. */
-		virtual void onThreadStarted(const String& name) = 0;
+		virtual void OnThreadStarted(const String& name) = 0;
 
 		/**	Called when the thread is being shut down. */
-		virtual void onThreadEnded(const String& name) = 0;
+		virtual void OnThreadEnded(const String& name) = 0;
 
 	protected:
 		friend class HThread;
 
 		/** Primary worker method that is ran when the thread is first initialized. */
-		void run();
+		void Run();
 
 #if BS_PLATFORM == BS_PLATFORM_WIN32
-		void runFunctionHelper(const std::function<void()>& function) const;
+		void RunFunctionHelper(const std::function<void()>& function) const;
 #endif
 
 
@@ -127,13 +127,13 @@ namespace bs
 		using PooledThread::PooledThread;
 
 		/** @copydoc PooledThread::onThreadStarted */
-		void onThreadStarted(const String& name) override
+		void OnThreadStarted(const String& name) override
 		{
 			ThreadPolicy::onThreadStarted(name);
 		}
 
 		/** @copydoc PooledThread::onThreadEnded */
-		void onThreadEnded(const String& name) override
+		void OnThreadEnded(const String& name) override
 		{
 			ThreadPolicy::onThreadEnded(name);
 		}
@@ -171,25 +171,25 @@ namespace bs
 		 * @param[in]	workerMethod	The worker method to be called by the thread.
 		 * @return						A thread handle you may use for monitoring the thread execution.
 		 */
-		HThread run(const String& name, std::function<void()> workerMethod);
+		HThread Run(const String& name, std::function<void()> workerMethod);
 
 		/**
 		 * Stops all threads and destroys them. Caller must ensure each threads worker method returns otherwise this will
 		 * never return.
 		 */
-		void stopAll();
+		void StopAll();
 
 		/** Clear any unused threads that are over the capacity. */
-		void clearUnused();
+		void ClearUnused();
 
 		/**	Returns the number of unused threads in the pool. */
-		UINT32 getNumAvailable() const;
+		UINT32 GetNumAvailable() const;
 
 		/**	Returns the number of running threads in the pool. */
-		UINT32 getNumActive() const;
+		UINT32 GetNumActive() const;
 
 		/**	Returns the total number of created threads in the pool	(both running and unused). */
-		UINT32 getNumAllocated() const;
+		UINT32 GetNumAllocated() const;
 
 	protected:
 		friend class HThread;
@@ -200,7 +200,7 @@ namespace bs
 		virtual PooledThread* createThread(const String& name) = 0;
 
 		/**	Destroys the specified thread. Caller needs to make sure the thread is actually shut down beforehand. */
-		void destroyThread(PooledThread* thread);
+		void DestroyThread(PooledThread* thread);
 
 		/**
 		 * Returns the first unused thread if one exists, otherwise creates a new one.
@@ -234,8 +234,8 @@ namespace bs
 	class ThreadNoPolicy
 	{
 	public:
-		static void onThreadStarted(const String& name) { }
-		static void onThreadEnded(const String& name) { }
+		static void OnThreadStarted(const String& name) { }
+		static void OnThreadEnded(const String& name) { }
 	};
 
 	/**

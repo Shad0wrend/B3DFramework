@@ -22,9 +22,9 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "TangentRef")
 
 		static MonoObject* box(const __TangentRefInterop& value);
-		static __TangentRefInterop unbox(MonoObject* value);
-		static TangentRef fromInterop(const __TangentRefInterop& value);
-		static __TangentRefInterop toInterop(const TangentRef& value);
+		static __TangentRefInterop Unbox(MonoObject* value);
+		static TangentRef FromInterop(const __TangentRefInterop& value);
+		static __TangentRefInterop ToInterop(const TangentRef& value);
 
 	private:
 		ScriptTangentRef(MonoObject* managedInstance);

@@ -19,7 +19,7 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "VirtualButton")
 
 		/**	Unboxes a boxed managed VirtualButton struct and returns the native version of the structure. */
-		static VirtualButton unbox(MonoObject* obj);
+		static VirtualButton Unbox(MonoObject* obj);
 
 		/**	Boxes a native VirtualButton struct and returns a managed object containing it. */
 		static MonoObject* box(const VirtualButton& value);

@@ -46,7 +46,7 @@ namespace bs
 		Vector<SubResource> vecentries;
 		if(entries != nullptr)
 		{
-			ScriptArray arrayentries(entries);
+			ScriptArray Arrayentries(entries);
 			vecentries.resize(arrayentries.size());
 			for(int i = 0; i < (int)arrayentries.size(); i++)
 			{
@@ -79,7 +79,7 @@ namespace bs
 		Vector<SubResource> vecvalue;
 		if(value != nullptr)
 		{
-			ScriptArray arrayvalue(value);
+			ScriptArray Arrayvalue(value);
 			vecvalue.resize(arrayvalue.size());
 			for(int i = 0; i < (int)arrayvalue.size(); i++)
 			{

@@ -19,7 +19,7 @@ namespace bs
 	{
 	public:
 		/** Returns type name of the GUI element used for finding GUI element styles.  */
-		static const String& getGUITypeName();
+		static const String& GetGUITypeName();
 
 		/**
 		 * Creates a new label with the specified text.
@@ -62,7 +62,7 @@ namespace bs
 		static GUILabel* create(const GUIContent& content, const GUIOptions& options, const String& styleName = StringUtil::BLANK);
 
 		/** Changes the active content of the label. */
-		void setContent(const GUIContent& content);
+		void SetContent(const GUIContent& content);
 
 	public: // ***** INTERNAL ******
 		/** @name Internal
@@ -94,7 +94,7 @@ namespace bs
 			UINT32 renderElementIdx) const override;
 
 		/** @copydoc GUIElement::updateRenderElementsInternal */
-		void updateRenderElementsInternal() override;
+		void UpdateRenderElementsInternal() override;
 
 	private:
 		GUILabel(const String& styleName, const GUIContent& content, const GUIDimensions& dimensions);

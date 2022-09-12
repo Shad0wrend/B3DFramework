@@ -146,7 +146,7 @@ namespace bs
 		 * @param[in]	inStride		Distance between two entries in the @p source buffer, in bytes.
 		 * @param[in]	outStride		Distance between two entries in the @p destination buffer, in bytes.
 		 */
-		static void packNormals(Vector3* source, UINT8* destination, UINT32 count, UINT32 inStride, UINT32 outStride);
+		static void PackNormals(Vector3* source, UINT8* destination, UINT32 count, UINT32 inStride, UINT32 outStride);
 
 		/**
 		 * Encodes normals from 32-bit float format into 4D 8-bit packed format.
@@ -157,7 +157,7 @@ namespace bs
 		 * @param[in]	inStride		Distance between two entries in the @p source buffer, in bytes.
 		 * @param[in]	outStride		Distance between two entries in the @p destination buffer, in bytes.
 		 */
-		static void packNormals(Vector4* source, UINT8* destination, UINT32 count, UINT32 inStride, UINT32 outStride);
+		static void PackNormals(Vector4* source, UINT8* destination, UINT32 count, UINT32 inStride, UINT32 outStride);
 
 		/**
 		 * Decodes normals from 4D 8-bit packed format into a 32-bit float format.
@@ -167,7 +167,7 @@ namespace bs
 		 * @param[in]	count			Number of entries in the @p source and @p destination arrays.
 		 * @param[in]	stride			Distance between two entries in the @p source buffer, in bytes.
 		 */
-		static void unpackNormals(UINT8* source, Vector3* destination, UINT32 count, UINT32 stride);
+		static void UnpackNormals(UINT8* source, Vector3* destination, UINT32 count, UINT32 stride);
 
 		/**
 		 * Decodes normals from 4D 8-bit packed format into a 32-bit float format.
@@ -177,10 +177,10 @@ namespace bs
 		 * @param[in]	count			Number of entries in the @p source and @p destination arrays.
 		 * @param[in]	stride			Distance between two entries in the @p source buffer, in bytes.
 		 */
-		static void unpackNormals(UINT8* source, Vector4* destination, UINT32 count, UINT32 stride);
+		static void UnpackNormals(UINT8* source, Vector4* destination, UINT32 count, UINT32 stride);
 
 		/** Decodes a normal from 4D 8-bit packed format into a 32-bit float format. */
-		static Vector3 unpackNormal(const UINT8* source)
+		static Vector3 UnpackNormal(const UINT8* source)
 		{
 			const PackedNormal& packed = *(PackedNormal*)source;
 			Vector3 output;

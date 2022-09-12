@@ -237,7 +237,7 @@ namespace bs { namespace ct
 		if (loadMask == RT_NONE && readMask == RT_NONE && clearMask == CLEAR_NONE)
 			return mDefault;
 
-		VariantKey key(loadMask, readMask, clearMask);
+		VariantKey Key(loadMask, readMask, clearMask);
 		auto iterFind = mVariants.find(key);
 		if (iterFind != mVariants.end())
 			return iterFind->second;
@@ -253,9 +253,9 @@ namespace bs { namespace ct
 		if (clearMask == CLEAR_NONE)
 			return 0;
 		else if (clearMask == CLEAR_ALL)
-			return getNumAttachments();
+			return GetNumAttachments();
 		else if (((UINT32)clearMask & (UINT32)(CLEAR_DEPTH | CLEAR_STENCIL)) != 0 && hasDepthAttachment())
-			return getNumAttachments();
+			return GetNumAttachments();
 
 		UINT32 numAttachments = 0;
 		for(INT32 i = BS_MAX_MULTIPLE_RENDER_TARGETS - 1; i >= 0; i--)
@@ -279,11 +279,11 @@ namespace bs { namespace ct
 
 	VulkanRenderPass* VulkanRenderPasses::get(const VkDevice& device, const VULKAN_RENDER_PASS_DESC& desc)
 	{
-		VariantKey key(device, desc);
+		VariantKey Key(device, desc);
 
 		VulkanRenderPass* pass;
 		{
-			Lock lock(mMutex);
+			Lock Lock(mMutex);
 
 			auto iterFind = mVariants.find(key);
 			if (iterFind != mVariants.end())

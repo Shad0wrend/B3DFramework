@@ -55,7 +55,7 @@ namespace bs { namespace ct
 	CommandBufferState D3D11CommandBuffer::getState() const
 	{
 		if (mIsSubmitted)
-			return isComplete() ? CommandBufferState::Done : CommandBufferState::Executing;
+			return IsComplete() ? CommandBufferState::Done : CommandBufferState::Executing;
 
 		return mCommandQueued ? CommandBufferState::Recording : CommandBufferState::Empty;
 	}

@@ -30,37 +30,37 @@ namespace bs
 
 		/**	Returns an unique name of the resource manifest. */
 		BS_SCRIPT_EXPORT(pr:getter,n:Name)
-		const String& getName() const { return mName; }
+		const String& GetName() const { return mName; }
 
 		/**	Registers a new resource in the manifest. */
 		BS_SCRIPT_EXPORT()
-		void registerResource(const UUID& uuid, const Path& filePath);
+		void RegisterResource(const UUID& uuid, const Path& filePath);
 
 		/**	Removes a resource from the manifest. */
 		BS_SCRIPT_EXPORT()
-		void unregisterResource(const UUID& uuid);
+		void UnregisterResource(const UUID& uuid);
 
 		/**
 		 * Attempts to find a resource with the provided UUID and outputs the path to the resource if found. Returns true
 		 * if UUID was found, false otherwise.
 		 */
 		BS_SCRIPT_EXPORT()
-		bool uuidToFilePath(const UUID& uuid, Path& filePath) const;
+		bool UuidToFilePath(const UUID& uuid, Path& filePath) const;
 
 		/**
 		 * Attempts to find a resource with the provided path and outputs the UUID to the resource if found. Returns true
 		 * if path was found, false otherwise.
 		 */
 		BS_SCRIPT_EXPORT()
-		bool filePathToUUID(const Path& filePath, UUID& outUUID) const;
+		bool FilePathToUUID(const Path& filePath, UUID& outUUID) const;
 
 		/**	Checks if provided UUID exists in the manifest. */
 		BS_SCRIPT_EXPORT()
-		bool uuidExists(const UUID& uuid) const;
+		bool UuidExists(const UUID& uuid) const;
 
 		/**	Checks if the provided path exists in the manifest. */
 		BS_SCRIPT_EXPORT()
-		bool filePathExists(const Path& filePath) const;
+		bool FilePathExists(const Path& filePath) const;
 
 		/**
 		 * Saves the resource manifest to the specified location.
@@ -71,7 +71,7 @@ namespace bs
 		 *								path.
 		 */
 		BS_SCRIPT_EXPORT()
-		static void save(const SPtr<ResourceManifest>& manifest, const Path& path, const Path& relativePath);
+		static void Save(const SPtr<ResourceManifest>& manifest, const Path& path, const Path& relativePath);
 
 		/**
 		 * Loads the resource manifest from the specified location.
@@ -80,11 +80,11 @@ namespace bs
 		 * @param[in]	relativePath	If not empty, all loaded pathnames will have this path prepended.
 		 */
 		BS_SCRIPT_EXPORT()
-		static SPtr<ResourceManifest> load(const Path& path, const Path& relativePath);
+		static SPtr<ResourceManifest> Load(const Path& path, const Path& relativePath);
 
 		/** Creates a new empty resource manifest. Provided name should be unique among manifests. */
 		BS_SCRIPT_EXPORT(ec:ResourceManifest)
-		static SPtr<ResourceManifest> create(const String& name);
+		static SPtr<ResourceManifest> Create(const String& name);
 
 	private:
 		String mName;
@@ -96,7 +96,7 @@ namespace bs
 		/************************************************************************/
 
 		/**	Creates a new empty resource manifest. */
-		static SPtr<ResourceManifest> createEmpty();
+		static SPtr<ResourceManifest> CreateEmpty();
 
 	public:
 		friend class ResourceManifestRTTI;

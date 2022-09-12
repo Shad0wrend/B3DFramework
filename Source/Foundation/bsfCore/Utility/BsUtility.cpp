@@ -10,7 +10,7 @@ namespace bs
 	 * Checks if the specified type (or any of its derived classes) have any IReflectable pointer or value types as
 	 * their fields.
 	 */
-	bool hasReflectableChildren(RTTITypeBase* type)
+	bool HasReflectableChildren(RTTITypeBase* type)
 	{
 		UINT32 numFields = type->getNumFields();
 		for (UINT32 i = 0; i < numFields; i++)
@@ -151,7 +151,7 @@ namespace bs
 
 		gFrameAlloc().clear();
 
-		Vector<ResourceDependency> dependencyList(dependencies.size());
+		Vector<ResourceDependency> DependencyList(dependencies.size());
 		UINT32 i = 0;
 		for (auto& entry : dependencies)
 		{
@@ -206,18 +206,18 @@ namespace bs
 	class CoreSerializationContextRTTI :
 		public RTTIType<CoreSerializationContext, SerializationContext, CoreSerializationContextRTTI>
 	{
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "CoreSerializationContext";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_CoreSerializationContext;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			BS_EXCEPT(InternalErrorException, "Cannot instantiate an abstract class.");
 			return nullptr;
@@ -231,7 +231,7 @@ namespace bs
 
 	RTTITypeBase* CoreSerializationContext::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 }

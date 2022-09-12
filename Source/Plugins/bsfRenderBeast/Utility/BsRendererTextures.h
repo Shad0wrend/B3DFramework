@@ -22,10 +22,10 @@ namespace bs { namespace ct
 	{
 	public:
 		/** Initializes the renderer textures. Must be called before using the textures. */
-		static void startUp(const LoadedRendererTextures& textures);
+		static void StartUp(const LoadedRendererTextures& textures);
 
 		/** Cleans up renderer textures. */
-		static void shutDown();
+		static void ShutDown();
 
 		/**
 		 * 2D 2-channel texture containing a pre-integrated G and F factors of the microfactet BRDF. This is an

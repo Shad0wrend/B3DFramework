@@ -54,10 +54,10 @@ namespace bs
 			virtual ~TVectorField() = default;
 
 			/** Returns the internal texture representing the vector field. */
-			TextureType getTexture() const { return mTexture; }
+			TextureType GetTexture() const { return mTexture; }
 
 			/** Returns a structure describing the properties of the object. */
-			const VECTOR_FIELD_DESC& getDesc() const { return mDesc; }
+			const VECTOR_FIELD_DESC& GetDesc() const { return mDesc; }
 
 		protected:
 			VECTOR_FIELD_DESC mDesc;
@@ -79,7 +79,7 @@ namespace bs
 	{
 	public:
 		/**	Retrieves a core implementation of a vector field usable only from the core thread. */
-		SPtr<ct::VectorField> getCore() const;
+		SPtr<ct::VectorField> GetCore() const;
 
 		/************************************************************************/
 		/* 								STATICS		                     		*/
@@ -93,7 +93,7 @@ namespace bs
 		 *						countX * countY * countZ.
 		 */
 		BS_SCRIPT_EXPORT(ec:T)
-		static HVectorField create(const VECTOR_FIELD_DESC& desc, const Vector<Vector3>& values);
+		static HVectorField Create(const VECTOR_FIELD_DESC& desc, const Vector<Vector3>& values);
 
 		/** @name Internal
 		 *  @{
@@ -111,7 +111,7 @@ namespace bs
 		VectorField(const VECTOR_FIELD_DESC& desc, const Vector<Vector3>& values);
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> createCore() const override;
+		SPtr<ct::CoreObject> CreateCore() const override;
 
 		/************************************************************************/
 		/* 								SERIALIZATION                      		*/
@@ -151,13 +151,13 @@ namespace bs
 	{
 	public:
 		/** @copydoc SpecificImporter::isExtensionSupported */
-		bool isExtensionSupported(const String& ext) const override;
+		bool IsExtensionSupported(const String& ext) const override;
 
 		/** @copydoc SpecificImporter::isMagicNumberSupported */
-		bool isMagicNumberSupported(const UINT8* magicNumPtr, UINT32 numBytes) const override;
+		bool IsMagicNumberSupported(const UINT8* magicNumPtr, UINT32 numBytes) const override;
 
 		/** @copydoc SpecificImporter::import */
-		SPtr<Resource> import(const Path& filePath, SPtr<const ImportOptions> importOptions) override;
+		SPtr<Resource> Import(const Path& filePath, SPtr<const ImportOptions> importOptions) override;
 	};
 
 	/** @} */

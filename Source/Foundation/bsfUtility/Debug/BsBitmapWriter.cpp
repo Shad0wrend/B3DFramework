@@ -78,7 +78,7 @@ namespace bs
 				input += widthBytes;
 			}
 		}
-		else if(bmpBytesPerPixel < bytesPerPixel) // More bytes in source than supported in BMP, just truncate excess data
+		else If(bmpBytesPerPixel < bytesPerPixel) // More bytes in source than supported in BMP, just truncate excess data
 		{
 			for(INT32 y = height - 1; y >= 0 ; y--)
 			{
@@ -134,6 +134,6 @@ namespace bs
 		UINT32 rowPitch = (width * bmpBytesPerPixel) + padding;
 		UINT32 dataSize = height * rowPitch;
 
-		return sizeof(BMP_HEADER) + dataSize;
+		return Sizeof(BMP_HEADER) + dataSize;
 	}
 }

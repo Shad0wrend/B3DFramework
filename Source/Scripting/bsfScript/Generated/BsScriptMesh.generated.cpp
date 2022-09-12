@@ -83,7 +83,7 @@ namespace bs
 		Vector<SubMesh> vecsubMeshes;
 		if(subMeshes != nullptr)
 		{
-			ScriptArray arraysubMeshes(subMeshes);
+			ScriptArray ArraysubMeshes(subMeshes);
 			vecsubMeshes.resize(arraysubMeshes.size());
 			for(int i = 0; i < (int)arraysubMeshes.size(); i++)
 			{
@@ -116,7 +116,7 @@ namespace bs
 		Vector<SubMesh> vecsubMeshes;
 		if(subMeshes != nullptr)
 		{
-			ScriptArray arraysubMeshes(subMeshes);
+			ScriptArray ArraysubMeshes(subMeshes);
 			vecsubMeshes.resize(arraysubMeshes.size());
 			for(int i = 0; i < (int)arraysubMeshes.size(); i++)
 			{

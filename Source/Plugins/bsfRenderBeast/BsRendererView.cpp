@@ -45,9 +45,9 @@ namespace bs { namespace ct
 	SkyboxMat* SkyboxMat::getVariation(bool color)
 	{
 		if (color)
-			return get(getVariation<true>());
+			return Get(getVariation<true>());
 
-		return get(getVariation<false>());
+		return Get(getVariation<false>());
 	}
 
 	RendererViewData::RendererViewData()
@@ -64,13 +64,13 @@ namespace bs { namespace ct
 	}
 
 	RendererView::RendererView()
-		: mCamera(nullptr), mRenderSettingsHash(0), mViewIdx(-1)
+		: MCamera(nullptr), mRenderSettingsHash(0), mViewIdx(-1)
 	{
 		mParamBuffer = gPerCameraParamDef.createBuffer();
 	}
 
 	RendererView::RendererView(const RENDERER_VIEW_DESC& desc)
-		: mProperties(desc), mCamera(desc.sceneCamera), mRenderSettingsHash(0), mViewIdx(-1)
+		: MProperties(desc), mCamera(desc.sceneCamera), mRenderSettingsHash(0), mViewIdx(-1)
 	{
 		mParamBuffer = gPerCameraParamDef.createBuffer();
 		mProperties.prevViewProjTransform = mProperties.viewProjTransform;
@@ -715,7 +715,7 @@ namespace bs { namespace ct
 		return ndcZToDeviceZ;
 	}
 
-	Matrix4 invertProjectionMatrix(const Matrix4& mat)
+	Matrix4 InvertProjectionMatrix(const Matrix4& mat)
 	{
 		// Try to solve the most common case using high percision calculations, in order to reduce depth error
 		if(mat[0][1] == 0.0f && mat[0][3] == 0.0f &&
@@ -779,7 +779,7 @@ namespace bs { namespace ct
 		gPerCameraParamDef.gNDCZToWorldZ.set(mParamBuffer, getNDCZToViewZ(mProperties.projTransform));
 		gPerCameraParamDef.gNDCZToDeviceZ.set(mParamBuffer, getNDCZToDeviceZ());
 
-		Vector2 nearFar(mProperties.nearPlane, mProperties.farPlane);
+		Vector2 NearFar(mProperties.nearPlane, mProperties.farPlane);
 		gPerCameraParamDef.gNearFar.set(mParamBuffer, nearFar);
 
 		const Rect2I& viewRect = mProperties.target.viewRect;
@@ -839,7 +839,7 @@ namespace bs { namespace ct
 	}
 
 	RendererViewGroup::RendererViewGroup(RendererView** views, UINT32 numViews, bool mainPass, UINT32 shadowMapSize)
-		: mIsMainPass(mainPass), mShadowRenderer(shadowMapSize)
+		: MIsMainPass(mainPass), mShadowRenderer(shadowMapSize)
 	{
 		setViews(views, numViews);
 	}

@@ -10,11 +10,11 @@
 namespace bs
 {
 	AnimationClipInfo::AnimationClipInfo(const HAnimationClip& clip)
-		: clip(clip)
+		: Clip(clip)
 	{ }
 
 	AnimationProxy::AnimationProxy(UINT64 id)
-		: id(id)
+		: Id(id)
 	{ }
 
 	AnimationProxy::~AnimationProxy()
@@ -124,7 +124,7 @@ namespace bs
 
 		bs_frame_mark();
 		{
-			FrameVector<bool> clipLoadState(clipInfos.size());
+			FrameVector<bool> ClipLoadState(clipInfos.size());
 			FrameVector<AnimationStateLayer> tempLayers;
 			UINT32 clipIdx = 0;
 			for (auto& clipInfo : clipInfos)
@@ -415,7 +415,7 @@ namespace bs
 						float t = clipInfo.fadeTime / clipInfo.fadeLength;
 						weight *= (1.0f - t);
 					}
-					else if(clipInfo.fadeDirection > 0.0f)
+					else If(clipInfo.fadeDirection > 0.0f)
 					{
 						float t = clipInfo.fadeTime / clipInfo.fadeLength;
 						weight *= t;
@@ -494,7 +494,7 @@ namespace bs
 				assert(layer.numStates > 0);
 			}
 
-			Matrix4 invRootTransform(BsIdentity);
+			Matrix4 InvRootTransform(BsIdentity);
 			for (UINT32 i = 0; i < numSceneObjects; i++)
 			{
 				if(sceneObjects[i].curveName.empty())
@@ -598,7 +598,7 @@ namespace bs
 
 	void AnimationProxy::updateTransforms(const Vector<AnimatedSceneObject>& sceneObjects)
 	{
-		Matrix4 invRootTransform(BsIdentity);
+		Matrix4 InvRootTransform(BsIdentity);
 		for (UINT32 i = 0; i < numSceneObjects; i++)
 		{
 			if (sceneObjects[i].curveName.empty())
@@ -1320,7 +1320,7 @@ namespace bs
 
 		if(mSampleStep == AnimSampleStep::None)
 			mAnimProxy->sampleStep = AnimSampleStep::None;
-		else if(mSampleStep == AnimSampleStep::Frame)
+		else If(mSampleStep == AnimSampleStep::Frame)
 		{
 			if(mAnimProxy->sampleStep == AnimSampleStep::None)
 				mAnimProxy->sampleStep = AnimSampleStep::Frame;
@@ -1338,7 +1338,7 @@ namespace bs
 
 		auto getAnimatedSOList = [&]()
 		{
-			Vector<AnimatedSceneObject> animatedSO(mSceneObjects.size());
+			Vector<AnimatedSceneObject> AnimatedSO(mSceneObjects.size());
 			UINT32 idx = 0;
 			for (auto& entry : mSceneObjects)
 				animatedSO[idx++] = entry.second;
@@ -1367,7 +1367,7 @@ namespace bs
 				mAnimProxy->rebuild(mClipInfos, animatedSOs, mMorphShapes);
 				didFullRebuild = true;
 			}
-			else if(mDirty.isSet(AnimDirtyStateFlag::Value))
+			else If(mDirty.isSet(AnimDirtyStateFlag::Value))
 				mAnimProxy->updateClipInfos(mClipInfos);
 
 			if (mDirty.isSet(AnimDirtyStateFlag::MorphWeights) || didFullRebuild)

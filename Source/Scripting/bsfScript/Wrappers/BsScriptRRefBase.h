@@ -22,7 +22,7 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "RRefBase")
 
 		/**	Returns a weak handle to the resource referenced by this object. */
-		ResourceHandle<Resource> getHandle() const { return mResource; }
+		ResourceHandle<Resource> GetHandle() const { return mResource; }
 
 		/** Returns the managed version of this object. */
 		MonoObject* getManagedInstance() const;
@@ -39,7 +39,7 @@ namespace bs
 		template<class T>
 		static ScriptRRefBase* create(const ResourceHandle<T>& handle, ::MonoClass* rawType = nullptr)
 		{
-			return createInternal(handle, rawType);
+			return CreateInternal(handle, rawType);
 		}
 
 		/** Creates a RRef type with the provided class bound as its template parameter. */
@@ -58,7 +58,7 @@ namespace bs
 		void _onManagedInstanceDeleted(bool assemblyRefresh) override;
 
 		/** Clears the internal cached ScriptResource reference. Should be called if the resource got destroyed. */
-		void clearResource() { mScriptResource = nullptr; }
+		void ClearResource() { mScriptResource = nullptr; }
 
 		/** @copydoc create() */
 		static ScriptRRefBase* createInternal(const ResourceHandle<Resource>& handle, ::MonoClass* rawType = nullptr);

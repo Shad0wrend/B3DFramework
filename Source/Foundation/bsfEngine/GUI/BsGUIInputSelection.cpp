@@ -27,7 +27,7 @@ namespace bs
 
 			mSprites.erase(mSprites.begin() + mSelectionRects.size(), mSprites.end());
 		}
-		else if(diff < 0)
+		else If(diff < 0)
 		{
 			for(INT32 i = diff; i < 0; i++)
 			{
@@ -60,10 +60,10 @@ namespace bs
 
 	Rect2I GUIInputSelection::getSelectionSpriteClipRect(UINT32 spriteIdx, const Rect2I& parentClipRect) const
 	{
-		Vector2I selectionOffset(mSelectionRects[spriteIdx].x, mSelectionRects[spriteIdx].y);
+		Vector2I SelectionOffset(mSelectionRects[spriteIdx].x, mSelectionRects[spriteIdx].y);
 		Vector2I clipOffset = selectionOffset + mElement->_getTextInputOffset();
 
-		Rect2I clipRect(-clipOffset.x, -clipOffset.y, mTextDesc.width, mTextDesc.height);
+		Rect2I ClipRect(-clipOffset.x, -clipOffset.y, mTextDesc.width, mTextDesc.height);
 
 		Rect2I localParentCliprect = parentClipRect;
 

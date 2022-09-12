@@ -36,7 +36,7 @@ namespace bs
 	void ProfilingManager::_updateCore()
 	{
 #if BS_PROFILING_ENABLED
-		Lock lock(mSync);
+		Lock Lock(mSync);
 		mSavedCoreReports[mNextCoreReportIdx].cpuReport = gProfilerCPU().generateReport();
 
 		gProfilerCPU().reset();
@@ -51,7 +51,7 @@ namespace bs
 
 		if(thread == ProfiledThread::Core)
 		{
-			Lock lock(mSync);
+			Lock Lock(mSync);
 
 			UINT32 reportIdx = mNextCoreReportIdx + (UINT32)((INT32)NUM_SAVED_FRAMES - ((INT32)idx + 1));
 			reportIdx = (reportIdx) % NUM_SAVED_FRAMES;
@@ -67,7 +67,7 @@ namespace bs
 		}
 	}
 
-	ProfilingManager& gProfiler()
+	ProfilingManager& GProfiler()
 	{
 		return ProfilingManager::instance();
 	}

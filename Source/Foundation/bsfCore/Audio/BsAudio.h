@@ -32,39 +32,39 @@ namespace bs
 		 * @param[in]	position	Position in world space to play the clip at. Only relevant if the clip is 3D.
 		 * @param[in]	volume		Volume to play the clip at.
 		 */
-		void play(const HAudioClip& clip, const Vector3& position = Vector3::ZERO, float volume = 1.0f);
+		void Play(const HAudioClip& clip, const Vector3& position = Vector3::ZERO, float volume = 1.0f);
 
 		/** Determines global audio volume. In range [0, 1]. */
 		BS_SCRIPT_EXPORT(n:Volume,pr:setter)
-		virtual void setVolume(float volume) = 0;
+		virtual void SetVolume(float volume) = 0;
 
 		/** @copydoc setVolume() */
 		BS_SCRIPT_EXPORT(n:Volume,pr:getter)
-		virtual float getVolume() const = 0;
+		virtual float GetVolume() const = 0;
 
 		/** Determines if audio reproduction is paused globally. */
 		BS_SCRIPT_EXPORT(n:Paused,pr:setter)
-		virtual void setPaused(bool paused) = 0;
+		virtual void SetPaused(bool paused) = 0;
 
 		/** @copydoc setPaused() */
 		BS_SCRIPT_EXPORT(n:Paused,pr:getter)
-		virtual bool isPaused() const = 0;
+		virtual bool IsPaused() const = 0;
 
 		/** Determines the device on which is the audio played back on. */
 		BS_SCRIPT_EXPORT(n:ActiveDevice,pr:setter)
-		virtual void setActiveDevice(const AudioDevice& device) = 0;
+		virtual void SetActiveDevice(const AudioDevice& device) = 0;
 
 		/** @copydoc setActiveDevice() */
 		BS_SCRIPT_EXPORT(n:ActiveDevice,pr:getter)
-		virtual AudioDevice getActiveDevice() const = 0;
+		virtual AudioDevice GetActiveDevice() const = 0;
 		
 		/** Returns the default audio device identifier. */
 		BS_SCRIPT_EXPORT(n:DefaultDevice,pr:getter)
-		virtual AudioDevice getDefaultDevice() const = 0;
+		virtual AudioDevice GetDefaultDevice() const = 0;
 
 		/** Returns a list of all available audio devices. */
 		BS_SCRIPT_EXPORT(n:AllDevices,pr:getter)
-		virtual const Vector<AudioDevice>& getAllDevices() const = 0;
+		virtual const Vector<AudioDevice>& GetAllDevices() const = 0;
 
 		/** @name Internal
 		 *  @{
@@ -92,13 +92,13 @@ namespace bs
 			const AUDIO_CLIP_DESC& desc) = 0;
 
 		/** Creates a new AudioListener. */
-		virtual SPtr<AudioListener> createListener() = 0;
+		virtual SPtr<AudioListener> CreateListener() = 0;
 
 		/** Creates a new AudioSource. */
-		virtual SPtr<AudioSource> createSource() = 0;
+		virtual SPtr<AudioSource> CreateSource() = 0;
 
 		/** Stops playback of all sources started with Audio::play calls. */
-		void stopManualSources();
+		void StopManualSources();
 
 	private:
 		Vector<SPtr<AudioSource>> mManualSources;
@@ -106,7 +106,7 @@ namespace bs
 	};
 
 	/** Provides easier access to Audio. */
-	BS_CORE_EXPORT Audio& gAudio();
+	BS_CORE_EXPORT Audio& GAudio();
 
 	/** @} */
 }

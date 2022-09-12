@@ -7,7 +7,7 @@
 
 namespace
 {
-	void verifyLockAndThread(const bs::GpuResourceData *data)
+	void VerifyLockAndThread(const bs::GpuResourceData *data)
 	{
 		using namespace bs;
 #if !BS_FORCE_SINGLETHREADED_RENDERING

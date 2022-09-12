@@ -10,45 +10,45 @@ using namespace physx;
 
 namespace bs
 {
-	PxExtendedVec3 toPxExtVector(const Vector3& input)
+	PxExtendedVec3 ToPxExtVector(const Vector3& input)
 	{
 		return PxExtendedVec3(input.x, input.y, input.z);
 	}
 
-	Vector3 fromPxExtVector(const PxExtendedVec3& input)
+	Vector3 FromPxExtVector(const PxExtendedVec3& input)
 	{
 		return Vector3((float)input.x, (float)input.y, (float)input.z);
 	}
 
-	PxCapsuleClimbingMode::Enum toPxEnum(CharacterClimbingMode value)
+	PxCapsuleClimbingMode::Enum ToPxEnum(CharacterClimbingMode value)
 	{
 		return value == CharacterClimbingMode::Normal
 			? PxCapsuleClimbingMode::eEASY
 			: PxCapsuleClimbingMode::eCONSTRAINED;
 	}
 
-	PxControllerNonWalkableMode::Enum toPxEnum(CharacterNonWalkableMode value)
+	PxControllerNonWalkableMode::Enum ToPxEnum(CharacterNonWalkableMode value)
 	{
 		return value == CharacterNonWalkableMode::Prevent
 			? PxControllerNonWalkableMode::ePREVENT_CLIMBING
 			: PxControllerNonWalkableMode::ePREVENT_CLIMBING_AND_FORCE_SLIDING;
 	}
 
-	CharacterClimbingMode fromPxEnum(PxCapsuleClimbingMode::Enum value)
+	CharacterClimbingMode FromPxEnum(PxCapsuleClimbingMode::Enum value)
 	{
 		return value == PxCapsuleClimbingMode::eEASY
 			? CharacterClimbingMode::Normal
 			: CharacterClimbingMode::Constrained;
 	}
 
-	CharacterNonWalkableMode fromPxEnum(PxControllerNonWalkableMode::Enum value)
+	CharacterNonWalkableMode FromPxEnum(PxControllerNonWalkableMode::Enum value)
 	{
 		return value == PxControllerNonWalkableMode::ePREVENT_CLIMBING
 			? CharacterNonWalkableMode::Prevent
 			: CharacterNonWalkableMode::PreventAndSlide;
 	}
 
-	PxCapsuleControllerDesc toPxDesc(const CHAR_CONTROLLER_DESC& desc)
+	PxCapsuleControllerDesc ToPxDesc(const CHAR_CONTROLLER_DESC& desc)
 	{
 		PxCapsuleControllerDesc output;
 		output.climbingMode = toPxEnum(desc.climbingMode);
@@ -110,7 +110,7 @@ namespace bs
 
 	Vector3 PhysXCharacterController::getPosition() const
 	{
-		return fromPxExtVector(mController->getPosition());
+		return FromPxExtVector(mController->getPosition());
 	}
 
 	void PhysXCharacterController::setPosition(const Vector3& position)
@@ -120,7 +120,7 @@ namespace bs
 
 	Vector3 PhysXCharacterController::getFootPosition() const
 	{
-		return fromPxExtVector(mController->getFootPosition());
+		return FromPxExtVector(mController->getFootPosition());
 	}
 
 	void PhysXCharacterController::setFootPosition(const Vector3& position)
@@ -150,7 +150,7 @@ namespace bs
 
 	Vector3 PhysXCharacterController::getUp() const
 	{
-		return fromPxVector(mController->getUpDirection());
+		return FromPxVector(mController->getUpDirection());
 	}
 
 	void PhysXCharacterController::setUp(const Vector3& up)
@@ -160,7 +160,7 @@ namespace bs
 
 	CharacterClimbingMode PhysXCharacterController::getClimbingMode() const
 	{
-		return fromPxEnum(mController->getClimbingMode());
+		return FromPxEnum(mController->getClimbingMode());
 	}
 
 	void PhysXCharacterController::setClimbingMode(CharacterClimbingMode mode)
@@ -170,7 +170,7 @@ namespace bs
 
 	CharacterNonWalkableMode PhysXCharacterController::getNonWalkableMode() const
 	{
-		return fromPxEnum(mController->getNonWalkableMode());
+		return FromPxEnum(mController->getNonWalkableMode());
 	}
 
 	void PhysXCharacterController::setNonWalkableMode(CharacterNonWalkableMode mode)

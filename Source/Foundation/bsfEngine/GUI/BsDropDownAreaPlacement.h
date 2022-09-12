@@ -55,37 +55,37 @@ namespace bs
 		 * box to correspond to the position, but if other corners offer more space for the contents, those will be used
 		 * instead.
 		 */
-		static DropDownAreaPlacement aroundPosition(const Vector2I& position);
+		static DropDownAreaPlacement AroundPosition(const Vector2I& position);
 
 		/**
 		 * Drop down box will be placed at the specified bounds. Box will be horizontally aligned to the left of the
 		 * provided bounds. Vertically system prefers placing the box at the bottom of the bounds, but may choose to align
 		 * it with the top of the bounds if it offers more space for the contents.
 		 */
-		static DropDownAreaPlacement aroundBoundsVert(const Rect2I& bounds);
+		static DropDownAreaPlacement AroundBoundsVert(const Rect2I& bounds);
 		
 		/**
 		 * Drop down box will be placed at the specified bounds. Box will be vertically aligned to the top of the provided
 		 * bounds. Horizontally system prefers placing the box at the right of the bounds, but may choose to align it with
 		 * the left of the bounds if it offers more space for the contents.
 		 */
-		static DropDownAreaPlacement aroundBoundsHorz(const Rect2I& bounds);
+		static DropDownAreaPlacement AroundBoundsHorz(const Rect2I& bounds);
 
 		/**
 		 * Drop down box will be placed at the specified bounds. Box will be vertically aligned to the top or bottom of the
 		 * provided bounds, with bottom being preferred. Horizontally system prefers placing the box at the right of the
 		 * bounds, but may choose to align it with the left of the bounds if it offers more space for the contents.
 		 */
-		static DropDownAreaPlacement aroundBounds(const Rect2I& bounds);
+		static DropDownAreaPlacement AroundBounds(const Rect2I& bounds);
 
 		/**	Returns drop down box positioning type. */
-		Type getType() const { return mType; }
+		Type GetType() const { return mType; }
 
 		/** Returns bounds around which to position the drop down box if one of the bounds positioning types is used. */
-		const Rect2I& getBounds() const { return mBounds; }
+		const Rect2I& GetBounds() const { return mBounds; }
 
 		/**	Returns position around which to position the drop down box if position positioning type is used. */
-		const Vector2I& getPosition() const { return mPosition; }
+		const Vector2I& GetPosition() const { return mPosition; }
 
 		/**
 		 * Calculates the optimal bounds to place an element of the specified size, within the available area using the

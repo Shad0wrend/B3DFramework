@@ -16,19 +16,19 @@ namespace bs
 	{
 	public:
 		/**	Gets the source code contained in the resource. */
-		const WString& getString() const { return mString; }
+		const WString& GetString() const { return mString; }
 
 		/**	Sets the source code contained in the resource. */
-		void setString(const WString& data) { mString = data; }
+		void SetString(const WString& data) { mString = data; }
 
 		/**	Gets a value that determines should the script code be compiled with editor assemblies. */
-		bool getIsEditorScript() const { return mEditorScript; }
+		bool GetIsEditorScript() const { return mEditorScript; }
 
 		/**	Sets a value that determines should the script code be compiled with editor assemblies. */
-		void setIsEditorScript(bool editorScript) { mEditorScript = editorScript; }
+		void SetIsEditorScript(bool editorScript) { mEditorScript = editorScript; }
 
 		/**	Creates a new script code resource with the specified source code. */
-		static HScriptCode create(const WString& data, bool editorScript = false);
+		static HScriptCode Create(const WString& data, bool editorScript = false);
 
 		/** @name Internal
 		 *  @{

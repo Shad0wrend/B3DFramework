@@ -23,7 +23,7 @@ namespace bs
 
 		ScriptRendererMeshData(MonoObject* managedInstance, const SPtr<RendererMeshData>& value);
 
-		SPtr<RendererMeshData> getInternal() const { return mInternal; }
+		SPtr<RendererMeshData> GetInternal() const { return mInternal; }
 		static MonoObject* create(const SPtr<RendererMeshData>& value);
 
 	private:

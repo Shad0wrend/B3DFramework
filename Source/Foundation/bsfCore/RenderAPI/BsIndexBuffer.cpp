@@ -8,19 +8,19 @@
 
 namespace bs
 {
-	UINT32 calcIndexSize(IndexType type)
+	UINT32 CalcIndexSize(IndexType type)
 	{
 		switch (type)
 		{
 		case IT_16BIT:
-			return sizeof(unsigned short);
+			return Sizeof(unsigned short);
 		default:
 		case IT_32BIT:
-			return sizeof(unsigned int);
+			return Sizeof(unsigned int);
 		}
 	}
 
-	void checkValidDesc(const INDEX_BUFFER_DESC& desc)
+	void CheckValidDesc(const INDEX_BUFFER_DESC& desc)
 	{
 		if(desc.numIndices == 0)
 			BS_EXCEPT(InvalidParametersException, "Index buffer index count is not allowed to be zero.");
@@ -62,7 +62,7 @@ namespace bs
 	{
 	IndexBuffer::IndexBuffer(const INDEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask)
 		: HardwareBuffer(calcIndexSize(desc.indexType) * desc.numIndices, desc.usage, deviceMask)
-		, mProperties(desc.indexType, desc.numIndices)
+		, MProperties(desc.indexType, desc.numIndices)
 	{
 #if BS_DEBUG_MODE
 		checkValidDesc(desc);

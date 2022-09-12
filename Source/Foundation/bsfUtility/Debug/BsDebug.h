@@ -37,10 +37,10 @@ namespace bs
 		 * @param[in]	verbosity	Verbosity of the message, determining its importance.
 		 * @param[in]	category	Category of the message, determining which system is it relevant to.
 		 */
-		void log(const String& message, LogVerbosity verbosity, UINT32 category = 0);
+		void Log(const String& message, LogVerbosity verbosity, UINT32 category = 0);
 
 		/** Retrieves the Log used by the Debug instance. */
-		Log& getLog() { return mLog; }
+		Log& GetLog() { return mLog; }
 
 		/** Converts raw pixels into a BMP image and saves it as a file */
 		void writeAsBMP(UINT8* rawPixels, UINT32 bytesPerPixel, UINT32 width, UINT32 height, const Path& filePath,
@@ -52,21 +52,21 @@ namespace bs
 		 * @param	path	Absolute path to the log filename.
 		 * @param   type    Format of the saved log.
 		 */
-		void saveLog(const Path& path, SavedLogType type = SavedLogType::HTML) const;
+		void SaveLog(const Path& path, SavedLogType type = SavedLogType::HTML) const;
 		
 		/**
 		 * Saves a log about the current state of the application to the specified location as a HTML file.
 		 *
 		 * @param	path	Absolute path to the log filename.
 		 */
-		void saveHtmlLog(const Path& path) const;
+		void SaveHtmlLog(const Path& path) const;
 		
 		/**
 		 * Saves a log about the current state of the application to the specified location as a text file.
 		 *
 		 * @param	path	Absolute path to the log filename.
 		 */
-		void saveTextLog(const Path& path) const;
+		void SaveTextLog(const Path& path) const;
 		
 		/**
 		 * Triggered when a new entry in the log is added.
@@ -109,7 +109,7 @@ namespace bs
 	};
 
 	/** A simpler way of accessing the Debug module. */
-	BS_UTILITY_EXPORT Debug& gDebug();
+	BS_UTILITY_EXPORT Debug& GDebug();
 
 #ifndef BS_LOG_VERBOSITY
 	#if BS_DEBUG_MODE
@@ -137,7 +137,7 @@ namespace bs
 	using namespace ::bs;																			\
 	if ((INT32)LogVerbosity::verbosity <= (INT32)BS_LOG_VERBOSITY)									\
 	{																								\
-	  gDebug().log(StringUtil::format(message, ##__VA_ARGS__) + String("\n\t\t in ") +				\
+	  GDebug().log(StringUtil::format(message, ##__VA_ARGS__) + String("\n\t\t in ") +				\
 					   __PRETTY_FUNCTION__ + " [" + __FILE__ + ":" + toString(__LINE__) + "]\n",	\
 				   LogVerbosity::verbosity, LogCategory##category::_id);							\
 	}																								\

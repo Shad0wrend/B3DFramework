@@ -24,7 +24,7 @@ namespace bs
 			BS_RTTI_MEMBER_REFLPTR(mIrradiance, 3)
 		BS_END_RTTI_MEMBERS
 	public:
-		void onSerializationStarted(IReflectable* obj, SerializationContext* context) override
+		void OnSerializationStarted(IReflectable* obj, SerializationContext* context) override
 		{
 			Skybox* skybox = static_cast<Skybox*>(obj);
 
@@ -33,7 +33,7 @@ namespace bs
 				skybox->mRendererTask->wait();
 		}
 
-		void onDeserializationEnded(IReflectable* obj, SerializationContext* context) override
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override
 		{
 			// Note: Since this is a CoreObject I should call initialize() right after deserialization,
 			// but since this specific type is used in Components we delay initialization until Component
@@ -41,18 +41,18 @@ namespace bs
 			// purposes (you'll need to call initialize manually).
 		}
 
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "Skybox";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_Skybox;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			return Skybox::createEmpty();
 		}

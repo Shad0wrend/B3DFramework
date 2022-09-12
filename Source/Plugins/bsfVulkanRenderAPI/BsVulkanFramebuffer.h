@@ -72,16 +72,16 @@ namespace bs { namespace ct
 		~VulkanFramebuffer();
 
 		/** Returns a unique ID of this framebuffer. */
-		UINT32 getId() const { return mId; }
+		UINT32 GetId() const { return mId; }
 
 		/** Returns the width of the framebuffer, in pixels. */
-		UINT32 getWidth() const { return mWidth; }
+		UINT32 GetWidth() const { return mWidth; }
 
 		/** Returns the height of the framebuffer, in pixels. */
-		UINT32 getHeight() const { return mHeight; }
+		UINT32 GetHeight() const { return mHeight; }
 
 		/** Gets the internal Vulkan framebuffer object. */
-		VkFramebuffer getVkFramebuffer() const { return mVkFramebuffer; }
+		VkFramebuffer GetVkFramebuffer() const { return mVkFramebuffer; }
 
 		/** Returns the render pass that this framebuffer is tied to. */
 		VulkanRenderPass* getRenderPass() const { return mRenderPass; }
@@ -90,13 +90,13 @@ namespace bs { namespace ct
 		 * Gets the number of layers in each framebuffer surface. A layer is an element in a texture array, or a depth
 		 * slice in a 3D texture).
 		 */
-		UINT32 getNumLayers() const { return mNumLayers; }
+		UINT32 GetNumLayers() const { return mNumLayers; }
 
 		/** Returns information about a color attachment at the specified index. */
-		const VulkanFramebufferAttachment& getColorAttachment(UINT32 colorIdx) const { return mColorAttachments[colorIdx]; }
+		const VulkanFramebufferAttachment& GetColorAttachment(UINT32 colorIdx) const { return mColorAttachments[colorIdx]; }
 
 		/** Returns information about a depth-stencil attachment. */
-		const VulkanFramebufferAttachment& getDepthStencilAttachment() const { return mDepthStencilAttachment; }
+		const VulkanFramebufferAttachment& GetDepthStencilAttachment() const { return mDepthStencilAttachment; }
 	private:
 		UINT32 mId;
 		VkFramebuffer mVkFramebuffer;

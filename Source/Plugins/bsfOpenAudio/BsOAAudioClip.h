@@ -31,7 +31,7 @@ namespace bs
 		 *
 		 * @note	Implementation must be thread safe as this will get called from audio streaming thread.
 		 */
-		void getSamples(UINT8* samples, UINT32 offset, UINT32 count) const;
+		void GetSamples(UINT8* samples, UINT32 offset, UINT32 count) const;
 
 		/** @name Internal
 		 *  @{
@@ -43,10 +43,10 @@ namespace bs
 		/** @} */
 	protected:
 		/** @copydoc Resource::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 		/** @copydoc AudioClip::getSourceStream */
-		SPtr<DataStream> getSourceStream(UINT32& size) override;
+		SPtr<DataStream> GetSourceStream(UINT32& size) override;
 	private:
 		mutable Mutex mMutex;
 		mutable OggVorbisDecoder mVorbisReader;

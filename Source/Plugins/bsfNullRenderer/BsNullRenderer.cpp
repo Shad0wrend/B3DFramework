@@ -36,7 +36,7 @@ namespace bs
 			CoreObjectManager::instance().syncToCore();
 		}
 
-		SPtr<NullRenderer> gNullRenderer()
+		SPtr<NullRenderer> GNullRenderer()
 		{
 			return std::static_pointer_cast<NullRenderer>(RendererManager::instance().getActive());
 		}

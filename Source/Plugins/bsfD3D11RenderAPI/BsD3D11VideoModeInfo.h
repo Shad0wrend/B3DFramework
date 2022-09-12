@@ -19,13 +19,13 @@ namespace bs { namespace ct
 			UINT32 refreshRateDenominator, DXGI_MODE_DESC mode);
 
 		/**	Returns an internal DXGI representation of this video mode. */
-		const DXGI_MODE_DESC& getDXGIModeDesc() const { return mD3D11Mode; }
+		const DXGI_MODE_DESC& GetDXGIModeDesc() const { return mD3D11Mode; }
 
 		/**	Gets internal DX11 refresh rate numerator. */
-		UINT32 getRefreshRateNumerator() const { return mRefreshRateNumerator; }
+		UINT32 GetRefreshRateNumerator() const { return mRefreshRateNumerator; }
 
 		/**	Gets internal DX11 refresh rate denominator. */
-		UINT32 getRefreshRateDenominator() const { return mRefreshRateDenominator; }
+		UINT32 GetRefreshRateDenominator() const { return mRefreshRateDenominator; }
 
 	private:
 		friend class D3D11VideoOutputInfo;

@@ -22,32 +22,32 @@ namespace bs { namespace ct
 		D3D11Driver& operator=(const D3D11Driver& r);
 
 		/**	Returns the name of the driver. */
-		String getDriverName() const;
+		String GetDriverName() const;
 
 		/**	Returns the description of the driver. */
-		String getDriverDescription() const;
+		String GetDriverDescription() const;
 
 		/**	Returns adapter index of the adapter the driver is managing. */
-		UINT32 getAdapterNumber() const { return mAdapterNumber; }
+		UINT32 GetAdapterNumber() const { return mAdapterNumber; }
 
 		/**	Returns number of outputs connected to the adapter the driver is managing. */
-		UINT32 getNumAdapterOutputs() const { return mNumOutputs; }
+		UINT32 GetNumAdapterOutputs() const { return mNumOutputs; }
 
 		/**	Returns a description of the adapter the driver is managing. */
-		const DXGI_ADAPTER_DESC& getAdapterIdentifier() const { return mAdapterIdentifier; }
+		const DXGI_ADAPTER_DESC& GetAdapterIdentifier() const { return mAdapterIdentifier; }
 
 		/**	Returns internal DXGI adapter object for the driver. */
 		IDXGIAdapter* getDeviceAdapter() const { return mDXGIAdapter; }
 
 		/**	Returns description of an output device at the specified index. */
-		DXGI_OUTPUT_DESC getOutputDesc(UINT32 adapterOutputIdx) const;
+		DXGI_OUTPUT_DESC GetOutputDesc(UINT32 adapterOutputIdx) const;
 
 		/**	Returns a list of all available video modes for all output devices. */
-		SPtr<VideoModeInfo> getVideoModeInfo() const { return mVideoModeInfo; }
+		SPtr<VideoModeInfo> GetVideoModeInfo() const { return mVideoModeInfo; }
 
 	private:
 		/**	Initializes the internal data. */
-		void construct();
+		void Construct();
 
 	private:
 		UINT32 mAdapterNumber;

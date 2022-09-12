@@ -19,7 +19,7 @@ namespace bs
 		/**
 		 * Returns type name of the GUI element used for finding GUI element styles.
 		 */
-		static const String& getGUITypeName();
+		static const String& GetGUITypeName();
 
 		/**
 		 * Creates a new button with the specified label.

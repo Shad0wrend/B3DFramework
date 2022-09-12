@@ -13,8 +13,8 @@ namespace bs
 	const Color ViewportBase::DEFAULT_CLEAR_COLOR = Color(0.0f, 0.3685f, 0.7969f);
 
 	ViewportBase::ViewportBase(float x, float y, float width, float height)
-		: mNormArea(x, y, width, height), mClearFlags(ClearFlagBits::Color | ClearFlagBits::Depth)
-		, mClearColorValue(DEFAULT_CLEAR_COLOR), mClearDepthValue(1.0f), mClearStencilValue(0)
+		: MNormArea(x, y, width, height), mClearFlags(ClearFlagBits::Color | ClearFlagBits::Depth)
+		, MClearColorValue(DEFAULT_CLEAR_COLOR), mClearDepthValue(1.0f), mClearStencilValue(0)
 	{
 
 	}
@@ -148,7 +148,7 @@ namespace bs
 		UINT32 size = csync_size(*this);
 
 		UINT8* buffer = allocator->alloc(size);
-		Bitstream stream(buffer, size);
+		Bitstream Stream(buffer, size);
 
 		csync_write(*this, stream);
 
@@ -225,7 +225,7 @@ namespace bs
 
 	void Viewport::syncToCore(const CoreSyncData& data)
 	{
-		Bitstream stream(data.getBuffer(), data.getBufferSize());
+		Bitstream Stream(data.getBuffer(), data.getBufferSize());
 		csync_read(*this, stream);
 	}
 	}

@@ -52,7 +52,7 @@ namespace bs::ct
 		if(!image)
 			return nullptr;
 
-		return dlsym(image, (const char*)procname.c_str());
+		return Dlsym(image, (const char*)procname.c_str());
 	}
 
 	SPtr<VideoModeInfo> MacOSGLSupport::getVideoModeInfo() const

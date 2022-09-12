@@ -14,13 +14,13 @@ namespace bs
 	}
 
 	HEString::HEString(const String& identifier, const String& defaultString)
-		: mInternal(identifier, defaultString, ENGINE_STRING_TABLE_ID)
+		: MInternal(identifier, defaultString, ENGINE_STRING_TABLE_ID)
 	{
 		
 	}
 
 	HEString::HEString()
-		: mInternal(ENGINE_STRING_TABLE_ID)
+		: MInternal(ENGINE_STRING_TABLE_ID)
 	{
 		
 	}

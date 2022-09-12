@@ -16,7 +16,7 @@ namespace bs
 
 		ScriptAnimationUtility(MonoObject* managedInstance, const SPtr<AnimationUtility>& value);
 
-		SPtr<AnimationUtility> getInternal() const { return mInternal; }
+		SPtr<AnimationUtility> GetInternal() const { return mInternal; }
 		static MonoObject* create(const SPtr<AnimationUtility>& value);
 
 	private:

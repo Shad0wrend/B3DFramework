@@ -168,8 +168,8 @@ namespace bs
 							auto dataA = bs_managed_stack_alloc(typeSizeA);
 							auto dataB = bs_managed_stack_alloc(typeSizeB);
 
-							Bitstream streamA((uint8_t*)static_cast<void*>(dataA), typeSizeA);
-							Bitstream streamB((uint8_t*)static_cast<void*>(dataB), typeSizeB);
+							Bitstream StreamA((uint8_t*)static_cast<void*>(dataA), typeSizeA);
+							Bitstream StreamB((uint8_t*)static_cast<void*>(dataB), typeSizeB);
 
 							curField->arrayElemToStream(rttiInstanceA, &a, arrIdx, streamA);
 							curField->arrayElemToStream(rttiInstanceB, &b, arrIdx, streamB);
@@ -261,8 +261,8 @@ namespace bs
 						auto dataA = bs_managed_stack_alloc(typeSizeA);
 						auto dataB = bs_managed_stack_alloc(typeSizeB);
 
-						Bitstream streamA((uint8_t*)static_cast<void*>(dataA), typeSizeA);
-						Bitstream streamB((uint8_t*)static_cast<void*>(dataB), typeSizeB);
+						Bitstream StreamA((uint8_t*)static_cast<void*>(dataA), typeSizeA);
+						Bitstream StreamB((uint8_t*)static_cast<void*>(dataB), typeSizeB);
 
 						curField->toStream(rttiInstanceA, &a, streamA);
 						curField->toStream(rttiInstanceB, &b, streamB);

@@ -19,10 +19,10 @@ namespace bs { namespace ct
 		~GLEventQuery();
 
 		/** @copydoc EventQuery::begin */
-		void begin(const SPtr<CommandBuffer>& cb = nullptr) override;
+		void Begin(const SPtr<CommandBuffer>& cb = nullptr) override;
 
 		/** @copydoc EventQuery::isReady */
-		bool isReady() const override;
+		bool IsReady() const override;
 
 	private:
 		GLuint mQueryObj = 0;

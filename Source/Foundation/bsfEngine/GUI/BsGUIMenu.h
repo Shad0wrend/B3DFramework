@@ -17,7 +17,7 @@ namespace bs
 	/** Used for comparing GUI menu items in order to determine the order in which they are presented. */
 	struct GUIMenuItemComparer
 	{
-		bool operator() (const GUIMenuItem* const& a, const GUIMenuItem* const& b) const;
+		bool Operator() (const GUIMenuItem* const& a, const GUIMenuItem* const& b) const;
 	};
 
 	/** Holds information about a single element in a GUI menu. */
@@ -50,34 +50,34 @@ namespace bs
 		~GUIMenuItem();
 
 		/**	Registers a new child with the item. */
-		void addChild(GUIMenuItem* child) { mChildren.insert(child); }
+		void AddChild(GUIMenuItem* child) { mChildren.insert(child); }
 
 		/**	Returns number of child menu items. */
-		UINT32 getNumChildren() const { return (UINT32)mChildren.size(); }
+		UINT32 GetNumChildren() const { return (UINT32)mChildren.size(); }
 
 		/**	Returns the parent menu item, or null if none. */
 		GUIMenuItem* getParent() const { return mParent; }
 
 		/**	Returns name of the menu item. Empty if separator. */
-		const String& getName() const { return mName; }
+		const String& GetName() const { return mName; }
 
 		/**	Returns callback that will trigger when menu item is selected. Null for separators. */
 		std::function<void()> getCallback() const { return mCallback; }
 
 		/**	Returns a keyboard shortcut that may be used for triggering the menu item callback. */
-		const ShortcutKey& getShortcut() const { return mShortcut; }
+		const ShortcutKey& GetShortcut() const { return mShortcut; }
 
 		/**	Checks is the menu item a separator or a normal named menu item. */
-		bool isSeparator() const { return mIsSeparator; }
+		bool IsSeparator() const { return mIsSeparator; }
 
 		/** Attempts to find a child menu item with the specified name. Only direct descendants are searched. */
 		const GUIMenuItem* findChild(const String& name) const;
 
 		/**	Removes the first child with the specified name. */
-		void removeChild(const String& name);
+		void RemoveChild(const String& name);
 
 		/**	Removes the specified child. */
-		void removeChild(const GUIMenuItem* item);
+		void RemoveChild(const GUIMenuItem* item);
 
 	private:
 		friend class GUIMenu;
@@ -144,7 +144,7 @@ namespace bs
 		GUIMenuItem* getMenuItem(const String& path);
 
 		/**	Removes the specified menu item from the path. If the menu item has any sub-menus they will also be removed. */
-		void removeMenuItem(const GUIMenuItem* item);
+		void RemoveMenuItem(const GUIMenuItem* item);
 
 		/**
 		 * Normally menu items use values from their paths as their names. However path labels don't provide a way of
@@ -156,17 +156,17 @@ namespace bs
 		 *								want to localize)
 		 * @param[in]	localizedName	Localized string with the name.
 		 */
-		void setLocalizedName(const String& menuItemLabel, const HString& localizedName);
+		void SetLocalizedName(const String& menuItemLabel, const HString& localizedName);
 
 		/**	Returns data used for initializing a drop down list, for all elements. */
-		GUIDropDownData getDropDownData() const;
+		GUIDropDownData GetDropDownData() const;
 	protected:
 		/**	Adds a menu item at the specified path, as a normal button or as a separator. */
 		GUIMenuItem* addMenuItemInternal(const String& path, std::function<void()> callback, bool isSeparator,
 			INT32 priority, const ShortcutKey& key);
 
 		/**	Return drop down data for the specified menu. */
-		GUIDropDownData getDropDownDataInternal(const GUIMenuItem& menu) const;
+		GUIDropDownData GetDropDownDataInternal(const GUIMenuItem& menu) const;
 
 		GUIMenuItem mRootElement;
 		UnorderedMap<String, HString> mLocalizedEntryNames;

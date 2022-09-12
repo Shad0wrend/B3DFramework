@@ -93,7 +93,7 @@ namespace bs
 		 * Creates a new prefab diff by comparing the provided instanced scene object hierarchy with the prefab scene
 		 * object hierarchy.
 		 */
-		static SPtr<PrefabDiff> create(const HSceneObject& prefab, const HSceneObject& instance);
+		static SPtr<PrefabDiff> Create(const HSceneObject& prefab, const HSceneObject& instance);
 
 		/**
 		 * Applies the internal prefab diff to the provided object. The object should have similar hierarchy as the prefab
@@ -103,7 +103,7 @@ namespace bs
 		 *			that this method will be called on a fresh copy of a scene object hierarchy, and everything to be
 		 *			instantiated at once after diff is applied.
 		 */
-		void apply(const HSceneObject& object);
+		void Apply(const HSceneObject& object);
 
 	private:
 		/** A reference to a renamed game object instance data, and its original ID so it may be restored later. */
@@ -118,14 +118,14 @@ namespace bs
 		 *
 		 * @see		create
 		 */
-		static SPtr<PrefabObjectDiff> generateDiff(const HSceneObject& prefab, const HSceneObject& instance);
+		static SPtr<PrefabObjectDiff> GenerateDiff(const HSceneObject& prefab, const HSceneObject& instance);
 
 		/**
 		 * Recursively applies a per-object set of prefab differences to a specific object.
 		 *
 		 * @see		apply			
 		 */
-		static void applyDiff(const SPtr<PrefabObjectDiff>& diff, const HSceneObject& object, SerializationContext* context);
+		static void ApplyDiff(const SPtr<PrefabObjectDiff>& diff, const HSceneObject& object, SerializationContext* context);
 
 		/**
 		 * Renames all game objects in the provided instance so that IDs of the objects will match the IDs of their
@@ -139,14 +139,14 @@ namespace bs
 		 * the prefab instance hierarchy aren't recorded by the diff system, since we want those to remain as they are
 		 * after applying the diff.
 		 */
-		static void renameInstanceIds(const HSceneObject& prefab, const HSceneObject& instance, Vector<RenamedGameObject>& output);
+		static void RenameInstanceIds(const HSceneObject& prefab, const HSceneObject& instance, Vector<RenamedGameObject>& output);
 
 		/**
 		 * Restores any instance IDs that were modified by the renameInstanceIds() method.
 		 *
 		 * @see		renameInstanceIds
 		 */
-		static void restoreInstanceIds(const Vector<RenamedGameObject>& renamedObjects);
+		static void RestoreInstanceIds(const Vector<RenamedGameObject>& renamedObjects);
 
 		SPtr<PrefabObjectDiff> mRoot;
 

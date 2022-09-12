@@ -54,7 +54,7 @@ namespace bs
 
 	UINT32 MeshData::getInternalBufferSize() const
 	{
-		return getIndexBufferSize() + getStreamSize();
+		return GetIndexBufferSize() + getStreamSize();
 	}
 
 	// TODO - This doesn't handle the case where multiple elements in same slot have different data types
@@ -317,12 +317,12 @@ namespace bs
 
 	UINT8* MeshData::getElementData(VertexElementSemantic semantic, UINT32 semanticIdx, UINT32 streamIdx) const
 	{
-		return getData() + getIndexBufferSize() + getElementOffset(semantic, semanticIdx, streamIdx);
+		return GetData() + getIndexBufferSize() + getElementOffset(semantic, semanticIdx, streamIdx);
 	}
 
 	UINT8* MeshData::getStreamData(UINT32 streamIdx) const
 	{
-		return getData() + getIndexBufferSize() + getStreamOffset(streamIdx);
+		return GetData() + getIndexBufferSize() + getStreamOffset(streamIdx);
 	}
 
 	UINT32 MeshData::getIndexElementSize() const
@@ -332,7 +332,7 @@ namespace bs
 
 	UINT32 MeshData::getElementOffset(VertexElementSemantic semantic, UINT32 semanticIdx, UINT32 streamIdx) const
 	{
-		return getStreamOffset(streamIdx) + mVertexData->getElementOffsetFromStream(semantic, semanticIdx, streamIdx);
+		return GetStreamOffset(streamIdx) + mVertexData->getElementOffsetFromStream(semantic, semanticIdx, streamIdx);
 	}
 
 	UINT32 MeshData::getIndexBufferSize() const

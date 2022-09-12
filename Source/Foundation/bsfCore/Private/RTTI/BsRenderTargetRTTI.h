@@ -20,19 +20,19 @@ namespace bs
 	class RenderTargetRTTI : public RTTIType<RenderTarget, IReflectable, RenderTargetRTTI>
 	{
 	public:
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			BS_EXCEPT(InvalidStateException, "Unable to instantiate abstract class.");
 			return nullptr;
 		}
 
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "RenderTarget";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_RenderTarget;
 		}
@@ -41,19 +41,19 @@ namespace bs
 	class RenderTextureRTTI : public RTTIType<RenderTexture, RenderTarget, RenderTextureRTTI>
 	{
 	public:
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			BS_EXCEPT(InvalidStateException, "This object cannot be instantiated using reflection.");
 			return nullptr;
 		}
 
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "RenderTexture";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_RenderTexture;
 		}
@@ -62,19 +62,19 @@ namespace bs
 	class RenderWindowRTTI : public RTTIType<RenderWindow, RenderTarget, RenderWindowRTTI>
 	{
 	public:
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			BS_EXCEPT(InvalidStateException, "This object cannot be instantiated using reflection.");
 			return nullptr;
 		}
 
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "RenderWindow";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_RenderWindow;
 		}

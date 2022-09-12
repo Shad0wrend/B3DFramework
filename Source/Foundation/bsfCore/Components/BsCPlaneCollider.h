@@ -24,19 +24,19 @@ namespace bs
 
 		/** Normal vector that determines the local orientation of the plane. */
 		BS_SCRIPT_EXPORT(n:Normal,pr:setter)
-		void setNormal(const Vector3& normal);
+		void SetNormal(const Vector3& normal);
 
 		/** @copydoc setNormal() */
 		BS_SCRIPT_EXPORT(n:Normal,pr:getter)
-		Vector3 getNormal() const { return mNormal; }
+		Vector3 GetNormal() const { return mNormal; }
 
 		/** Determines the distance of the plane from the local origin, along its normal vector. */
 		BS_SCRIPT_EXPORT(n:Distance,pr:setter)
-		void setDistance(float distance);
+		void SetDistance(float distance);
 
 		/** @copydoc setDistance() */
 		BS_SCRIPT_EXPORT(n:Distance,pr:getter)
-		float getDistance() const { return mDistance; }
+		float GetDistance() const { return mDistance; }
 
 		/** @name Internal
 		 *  @{
@@ -54,10 +54,10 @@ namespace bs
 		friend class SceneObject;
 
 		/** @copydoc CCollider::createInternal */
-		SPtr<Collider> createInternal() override;
+		SPtr<Collider> CreateInternal() override;
 
 		/** @copydoc CCollider::isValidParent */
-		bool isValidParent(const HRigidbody& parent) const override;
+		bool IsValidParent(const HRigidbody& parent) const override;
 
 	protected:
 		Vector3 mNormal = Vector3::UNIT_Y;

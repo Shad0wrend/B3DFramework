@@ -19,22 +19,22 @@ namespace bs::ct
 	{
 	public:
 		/** @copydoc GLSupport::newWindow */
-		SPtr<bs::RenderWindow> newWindow(RENDER_WINDOW_DESC& desc, UINT32 windowId, SPtr<bs::RenderWindow> parentWindow) override;
+		SPtr<bs::RenderWindow> NewWindow(RENDER_WINDOW_DESC& desc, UINT32 windowId, SPtr<bs::RenderWindow> parentWindow) override;
 
 		/** @copydoc GLSupport::start */
-		void start() override;
+		void Start() override;
 
 		/** @copydoc GLSupport::stop */
-		void stop() override;
+		void Stop() override;
 
 		/** @copydoc GLSupport::getProcAddress */
 		void* getProcAddress(const String& procname) override;
 
 		/** Creates a new OpenGL context. */
-		SPtr<MacOSContext> createContext(bool depthStencil, UINT32 msaaCount);
+		SPtr<MacOSContext> CreateContext(bool depthStencil, UINT32 msaaCount);
 
 		/** @copydoc GLSupport::getVideoModeInfo */
-		SPtr<VideoModeInfo> getVideoModeInfo() const override;
+		SPtr<VideoModeInfo> GetVideoModeInfo() const override;
 	};
 
 	/** @} */

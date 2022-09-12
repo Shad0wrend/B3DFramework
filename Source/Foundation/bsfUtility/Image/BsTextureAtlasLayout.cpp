@@ -56,7 +56,7 @@ namespace bs
 			if (addToNode(node->children[0], width, height, x, y, allowGrowth))
 				return true;
 
-			return addToNode(node->children[1], width, height, x, y, allowGrowth);
+			return AddToNode(node->children[1], width, height, x, y, allowGrowth);
 		}
 		else
 		{
@@ -101,7 +101,7 @@ namespace bs
 				mNodes.emplace_back(nodeCopy.x, nodeCopy.y + height, nodeCopy.width, nodeCopy.height - height);
 			}
 
-			return addToNode(nodeCopy.children[0], width, height, x, y, allowGrowth);
+			return AddToNode(nodeCopy.children[0], width, height, x, y, allowGrowth);
 		}
 	}
 

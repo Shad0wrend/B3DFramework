@@ -20,12 +20,12 @@ namespace bs
 		{
 			struct Hash
 			{
-				size_t operator()(const ClassId& v) const;
+				size_t Operator()(const ClassId& v) const;
 			};
 
 			struct Equals
 			{
-				bool operator()(const ClassId &a, const ClassId &b) const;
+				bool Operator()(const ClassId &a, const ClassId &b) const;
 			};
 
 			ClassId(const String& namespaceName, String name, ::MonoClass* genericInstance = nullptr);
@@ -40,7 +40,7 @@ namespace bs
 		virtual ~MonoAssembly();
 
 		/**	Returns the name of this assembly. */
-		const String& getName() const { return mName; }
+		const String& GetName() const { return mName; }
 
 		/**
 	     * Attempts to find a managed class with the specified namespace and name in this assembly. Returns null if one
@@ -58,7 +58,7 @@ namespace bs
 	     * Invokes a zero-parameter static method in the format "Class::Method". Used primarily for invoking an assembly
 		 * entry point.
 	     */
-		void invoke(const String& functionName);
+		void Invoke(const String& functionName);
 
 	private:
 		friend class MonoManager;
@@ -72,7 +72,7 @@ namespace bs
 		MonoClass* getClass(const String& namespaceName, const String& name, ::MonoClass* rawMonoClass) const;
 
 		/**	Loads an assembly into the current domain. */
-		void load();
+		void Load();
 
 		/**
 		 * Initializes an assembly from an internal mono image.
@@ -80,20 +80,20 @@ namespace bs
 		 * @note	
 		 * Normally used for assemblies that were already loaded by the managed runtime as dependencies.
 		 */
-		void loadFromImage(MonoImage* image);
+		void LoadFromImage(MonoImage* image);
 
 		/**
 		 * Unloads the assembly and all the types associated with it. Caller must ensure not to use any types from this
 		 * assembly after it has been unloaded.
 		 */
-		void unload();
+		void Unload();
 
 		/**
 	     * Returns true if the provided name represents a generic class.
 		 *
 		 * @note	This method only analyzes the name to determine if it is in generic class format.
 	     */
-		bool isGenericClass(const String& name) const;
+		bool IsGenericClass(const String& name) const;
 
 		String mName;
 		Path mPath;

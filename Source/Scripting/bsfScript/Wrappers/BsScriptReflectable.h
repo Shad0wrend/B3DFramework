@@ -20,10 +20,10 @@ namespace bs
 	{
 	public:
 		/**	Returns the wrapped reflectable object. */
-		SPtr<IReflectable> getReflectable() const { return mInternal; }
+		SPtr<IReflectable> GetReflectable() const { return mInternal; }
 
 		/** @copydoc ScriptObjectBase::isReflectable */
-		bool isReflectable() const override { return true; }
+		bool IsReflectable() const override { return true; }
 
 	protected:
 		ScriptReflectableBase(MonoObject* instance);
@@ -38,7 +38,7 @@ namespace bs
 	{
 	public:
 		/** Returns the wrapped reflectable object. */
-		SPtr<InternalType> getInternal() const { return std::static_pointer_cast<InternalType>(this->mInternal); }
+		SPtr<InternalType> GetInternal() const { return std::static_pointer_cast<InternalType>(this->mInternal); }
 
 	protected:
 		TScriptReflectable(MonoObject* instance, const SPtr<IReflectable>& reflectable)

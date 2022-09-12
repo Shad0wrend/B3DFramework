@@ -39,7 +39,7 @@ namespace bs {	namespace ct
 
 	/** Returns a specific forward rendering shader variation. */
 	template<bool SKINNED, bool MORPH, bool CLUSTERED, bool WRITE_VELOCITY>
-	static const ShaderVariation& getForwardRenderingVariation(bool supportsVelocityWrites)
+	static const ShaderVariation& GetForwardRenderingVariation(bool supportsVelocityWrites)
 	{
 		if (!supportsVelocityWrites)
 		{
@@ -129,7 +129,7 @@ namespace bs {	namespace ct
 		return techniqueIdx;
 	}
 
-	static void validateBasePassMaterial(Material& material, RenderableAnimType animType, UINT32 techniqueIdx, VertexDeclaration& vertexDecl)
+	static void ValidateBasePassMaterial(Material& material, RenderableAnimType animType, UINT32 techniqueIdx, VertexDeclaration& vertexDecl)
 	{
 		// Validate mesh <-> shader vertex bindings
 		UINT32 numPasses = material.getNumPasses(techniqueIdx);
@@ -307,7 +307,7 @@ namespace bs {	namespace ct
 
 		if (light->getType() == LightType::Radial)
 			mInfo.radialLightWorldBounds[lightId] = light->getBounds();
-		else if(light->getType() == LightType::Spot)
+		else If(light->getType() == LightType::Spot)
 			mInfo.spotLightWorldBounds[lightId] = light->getBounds();
 	}
 
@@ -1443,21 +1443,21 @@ namespace bs {	namespace ct
 			const auto iterFind = particleRenderData->cpuData.find(entry.particleSystem->getId());
 			if(iterFind != particleRenderData->cpuData.end())
 				worldAABox = iterFind->second->bounds;
-			else if(entry.gpuParticleSystem)
+			else If(entry.gpuParticleSystem)
 				worldAABox = entry.gpuParticleSystem->getBounds();
 
 			const ParticleSystemSettings& settings = entry.particleSystem->getSettings();
 			if (settings.simulationSpace == ParticleSimulationSpace::Local)
 				worldAABox.transformAffine(entry.localToWorld);
 
-			const Sphere worldSphere(worldAABox.getCenter(), worldAABox.getRadius());
+			const Sphere WorldSphere(worldAABox.getCenter(), worldAABox.getRadius());
 			mInfo.particleSystemCullInfos[rendererId].bounds = Bounds(worldAABox, worldSphere);
 		}
 	}
 
 	MaterialSamplerOverrides* RendererScene::allocSamplerStateOverrides(RenderElement& elem)
 	{
-		SamplerOverrideKey samplerKey(elem.material, elem.defaultTechniqueIdx);
+		SamplerOverrideKey SamplerKey(elem.material, elem.defaultTechniqueIdx);
 		auto iterFind = mSamplerOverrides.find(samplerKey);
 		if (iterFind != mSamplerOverrides.end())
 		{
@@ -1479,7 +1479,7 @@ namespace bs {	namespace ct
 
 	void RendererScene::freeSamplerStateOverrides(RenderElement& elem)
 	{
-		SamplerOverrideKey samplerKey(elem.material, elem.defaultTechniqueIdx);
+		SamplerOverrideKey SamplerKey(elem.material, elem.defaultTechniqueIdx);
 
 		auto iterFind = mSamplerOverrides.find(samplerKey);
 		assert(iterFind != mSamplerOverrides.end());

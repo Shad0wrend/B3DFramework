@@ -24,62 +24,62 @@ namespace bs
 		virtual ~DecalBase() = default;
 
 		/** Width and height of the decal. */
-		void setSize(const Vector2& size) { mSize = Vector2::max(Vector2::ZERO, size); _markCoreDirty(); updateBounds(); }
+		void SetSize(const Vector2& size) { mSize = Vector2::max(Vector2::ZERO, size); _markCoreDirty(); updateBounds(); }
 
 		/** @copydoc setSize */
-		Vector2 getSize() const { return mSize; }
+		Vector2 GetSize() const { return mSize; }
 
 		/** Returns width and height of the decal, scaled by decal's transform. */
-		Vector2 getWorldSize() const
+		Vector2 GetWorldSize() const
 		{
 			return Vector2(mSize.x * mTransform.getScale().x, mSize.y * mTransform.getScale().y);
 		}
 
 		/** Determines the maximum distance (from its origin) at which the decal is displayed. */
-		void setMaxDistance(float distance) { mMaxDistance = Math::max(0.0f, distance); _markCoreDirty(); updateBounds(); }
+		void SetMaxDistance(float distance) { mMaxDistance = Math::max(0.0f, distance); _markCoreDirty(); updateBounds(); }
 
 		/** @copydoc getSize */
-		float getMaxDistance() const { return mMaxDistance; }
+		float GetMaxDistance() const { return mMaxDistance; }
 
 		/** Maximum distance (from its origin) at which the decal is displayed, scaled by decal's transform. */
-		float getWorldMaxDistance() const { return mMaxDistance * mTransform.getScale().z; }
+		float GetWorldMaxDistance() const { return mMaxDistance * mTransform.getScale().z; }
 
 		/**
 		 * Bitfield that allows you to mask on which objects will the decal be projected onto. Only objects with the
 		 * matching layers will be projected onto. Note that decal layer mask only supports 32-bits and objects with
 		 * layers in bits >= 32 will always be projected onto.
 		 */
-		void setLayerMask(UINT32 mask) { mLayerMask = mask; _markCoreDirty(); }
+		void SetLayerMask(UINT32 mask) { mLayerMask = mask; _markCoreDirty(); }
 
 		/** @copydoc setLayerMask */
-		UINT32 getLayerMask() const { return mLayerMask; }
+		UINT32 GetLayerMask() const { return mLayerMask; }
 
 		/**
 		 * Determines the layer that controls whether a system is considered visible in a specific camera. Layer must match
 		 * camera layer bitfield in order for the camera to render the decal.
 		 */
-		void setLayer(UINT64 layer);
+		void SetLayer(UINT64 layer);
 
 		/** @copydoc setLayer() */
-		UINT64 getLayer() const { return mLayer; }
+		UINT64 GetLayer() const { return mLayer; }
 
 		/**	Gets world bounds of this object. */
-		Bounds getBounds() const { return mBounds; }
+		Bounds GetBounds() const { return mBounds; }
 
 		/**	Returns the transform matrix that is applied to the object when its being rendered. */
-		Matrix4 getMatrix() const { return mTfrmMatrix; }
+		Matrix4 GetMatrix() const { return mTfrmMatrix; }
 
 		/**
 		 * Returns the transform matrix that is applied to the object when its being rendered. This transform matrix does
 		 * not include scale values.
 		 */
-		Matrix4 getMatrixNoScale() const { return mTfrmMatrixNoScale; }
+		Matrix4 GetMatrixNoScale() const { return mTfrmMatrixNoScale; }
 
 		/** @copydoc SceneActor::setTransform */
-		void setTransform(const Transform& transform) override;
+		void SetTransform(const Transform& transform) override;
 	protected:
 		/** Updates the internal bounds for the decal. Call this whenever a property affecting the bounds changes. */
-		void updateBounds();
+		void UpdateBounds();
 
 		Vector2 mSize = Vector2::ONE;
 		float mMaxDistance = 10.0f;
@@ -105,14 +105,14 @@ namespace bs
 		virtual ~TDecal() = default;
 
 		/** Determines the material to use when rendering the decal. */
-		void setMaterial(const MaterialType& material) { mMaterial = material; _markCoreDirty(); }
+		void SetMaterial(const MaterialType& material) { mMaterial = material; _markCoreDirty(); }
 
 		/** @copydoc setMaterial */
-		const MaterialType& getMaterial() const { return mMaterial; }
+		const MaterialType& GetMaterial() const { return mMaterial; }
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P p);
+		void RttiEnumFields(P p);
 
 	protected:
 		MaterialType mMaterial;
@@ -133,7 +133,7 @@ namespace bs
 	{
 	public:
 		/**	Retrieves an implementation of the decal usable only from the core thread. */
-		SPtr<ct::Decal> getCore() const;
+		SPtr<ct::Decal> GetCore() const;
 
 		/**
 		 * Creates a new decal.
@@ -144,25 +144,25 @@ namespace bs
 		 *								along the negative Z axis).
 		 * @returns						New decal object.
 		 */
-		static SPtr<Decal> create(const HMaterial& material, const Vector2& size = Vector2::ONE, float maxDistance = 10.0f);
+		static SPtr<Decal> Create(const HMaterial& material, const Vector2& size = Vector2::ONE, float maxDistance = 10.0f);
 
 	protected:
 		Decal(const HMaterial& material, const Vector2& size, float maxDistance);
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> createCore() const override;
+		SPtr<ct::CoreObject> CreateCore() const override;
 
 		/** @copydoc CoreObject::getCoreDependencies */
-		void getCoreDependencies(Vector<CoreObject*>& dependencies) override;
+		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
 
 		/** @copydoc DecalBase::_markCoreDirty */
 		void _markCoreDirty(ActorDirtyFlag flags = ActorDirtyFlag::Everything) override;
 
 		/** @copydoc CoreObject::syncToCore */
-		CoreSyncData syncToCore(FrameAlloc* allocator) override;
+		CoreSyncData SyncToCore(FrameAlloc* allocator) override;
 
 		/**	Creates the object with without initializing it. Used for serialization. */
-		static SPtr<Decal> createEmpty();
+		static SPtr<Decal> CreateEmpty();
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -185,10 +185,10 @@ namespace bs
 		~Decal();
 
 		/**	Sets an ID that can be used for uniquely identifying this object by the renderer. */
-		void setRendererId(UINT32 id) { mRendererId = id; }
+		void SetRendererId(UINT32 id) { mRendererId = id; }
 
 		/**	Retrieves an ID that can be used for uniquely identifying this object by the renderer. */
-		UINT32 getRendererId() const { return mRendererId; }
+		UINT32 GetRendererId() const { return mRendererId; }
 
 	protected:
 		friend class bs::Decal;
@@ -196,10 +196,10 @@ namespace bs
 		Decal(const SPtr<Material>& material, const Vector2& size, float maxDistance);
 
 		/** @copydoc CoreObject::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 		/** @copydoc CoreObject::syncToCore */
-		void syncToCore(const CoreSyncData& data) override;
+		void SyncToCore(const CoreSyncData& data) override;
 
 		UINT32 mRendererId = 0;
 	};

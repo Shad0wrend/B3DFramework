@@ -27,7 +27,7 @@ namespace bs
 		 * @param[in]	scene		Scene to which to add the joint.
 		 * @param[in]	desc		Settings describing the joint.
 		 */
-		static SPtr<FixedJoint> create(PhysicsScene& scene, const FIXED_JOINT_DESC& desc);
+		static SPtr<FixedJoint> Create(PhysicsScene& scene, const FIXED_JOINT_DESC& desc);
 	};
 
 	/** Structure used for initializing a new FixedJoint. */

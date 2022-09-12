@@ -22,7 +22,7 @@ namespace bs { namespace ct
 		const VkPipelineVertexInputStateCreateInfo* getCreateInfo() const { return &mCreateInfo; }
 
 		/** Returns an identifier which uniquely represents this vertex input configuration. */
-		UINT32 getId() const { return mId; }
+		UINT32 GetId() const { return mId; }
 
 	private:
 		UINT32 mId;
@@ -46,14 +46,14 @@ namespace bs { namespace ct
 		class HashFunc
 		{
 		public:
-			::std::size_t operator()(const VertexDeclarationKey& key) const;
+			::std::size_t Operator()(const VertexDeclarationKey& key) const;
 		};
 
 		/**	Compares two vertex declaration keys. */
 		class EqualFunc
 		{
 		public:
-			bool operator()(const VertexDeclarationKey& a, const VertexDeclarationKey& b) const;
+			bool Operator()(const VertexDeclarationKey& a, const VertexDeclarationKey& b) const;
 		};
 
 		/**	Contains data about a single instance of vertex input object. */
@@ -83,10 +83,10 @@ namespace bs { namespace ct
 
 	private:
 		/**	Creates a vertex input using the specified parameters and stores it in the input layout map. */
-		void addNew(const SPtr<VertexDeclaration>& vbDecl, const SPtr<VertexDeclaration>& shaderDecl);
+		void AddNew(const SPtr<VertexDeclaration>& vbDecl, const SPtr<VertexDeclaration>& shaderDecl);
 
 		/**	Removes the least used vertex input. */
-		void removeLeastUsed();
+		void RemoveLeastUsed();
 
 	private:
 		static const int DECLARATION_BUFFER_SIZE = 1024;

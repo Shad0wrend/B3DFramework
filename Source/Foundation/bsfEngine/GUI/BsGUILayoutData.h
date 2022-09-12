@@ -23,7 +23,7 @@ namespace bs
 		}
 
 		/**	Set widget part of element depth (Most significant part). */
-		void setWidgetDepth(UINT8 widgetDepth)
+		void SetWidgetDepth(UINT8 widgetDepth)
 		{
 			UINT32 shiftedDepth = widgetDepth << 24;
 
@@ -31,7 +31,7 @@ namespace bs
 		}
 
 		/** Set panel part of element depth. Less significant than widget depth but more than custom element depth. */
-		void setPanelDepth(INT16 panelDepth)
+		void SetPanelDepth(INT16 panelDepth)
 		{
 			UINT32 signedDepth = ((INT32)panelDepth + 32768) << 8;
 
@@ -39,19 +39,19 @@ namespace bs
 		}
 
 		/**	Retrieve widget part of element depth (Most significant part). */
-		UINT8 getWidgetDepth() const
+		UINT8 GetWidgetDepth() const
 		{
 			return (depth >> 24) & 0xFF;
 		}
 
 		/** Retrieve panel part of element depth. Less significant than widget depth but more than custom element depth. */
-		INT16 getPanelDepth() const
+		INT16 GetPanelDepth() const
 		{
 			return (((INT32)depth >> 8) & 0xFFFF) - 32768;
 		}
 
 		/**	Returns a clip rectangle that is relative to the current bounds. */
-		Rect2I getLocalClipRect() const
+		Rect2I GetLocalClipRect() const
 		{
 			Rect2I localClipRect = clipRect;
 			localClipRect.x -= area.x;

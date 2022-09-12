@@ -77,7 +77,7 @@ namespace bs
 		void* params[1] = { &size };
 		MonoObject* instance = listClass->createInstance("int", params);
 		
-		ScriptArray tempArray(typeInfo->mElementType->getMonoClass(), size);
+		ScriptArray TempArray(typeInfo->mElementType->getMonoClass(), size);
 		params[0] = tempArray.getInternal();
 
 		MonoMethod* addRangeMethod = listClass->getMethod("AddRange", 1);
@@ -141,7 +141,7 @@ namespace bs
 	{
 		if (mGCHandle != 0)
 		{
-			ScriptArray tempArray(mListTypeInfo->mElementType->getMonoClass(), newSize);
+			ScriptArray TempArray(mListTypeInfo->mElementType->getMonoClass(), newSize);
 
 			UINT32 minSize = std::min(mNumElements, newSize);
 			UINT32 dummy = 0;

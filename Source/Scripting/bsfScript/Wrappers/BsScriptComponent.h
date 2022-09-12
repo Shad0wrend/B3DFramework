@@ -21,19 +21,19 @@ namespace bs
 		virtual ~ScriptComponentBase() = default;
 
 		/** Returns the component wrapped by this object. */
-		HComponent getComponent() const { return static_object_cast<Component>(getNativeHandle()); }
+		HComponent GetComponent() const { return static_object_cast<Component>(getNativeHandle()); }
 
 	protected:
 		friend class ScriptGameObjectManager;
 
 		/** Destroys the interop object, unless refresh is in progress in which case it is just prepared for re-creation. */
-		void destroy(bool assemblyRefresh);
+		void Destroy(bool assemblyRefresh);
 
 		/**	Triggered by the script game object manager when the handle this object is referencing is destroyed. */
 		virtual void _notifyDestroyed() { }
 
 		/** Checks if the provided game object is destroyed and logs a warning if it is. */
-		static bool checkIfDestroyed(const GameObjectHandleBase& handle);
+		static bool CheckIfDestroyed(const GameObjectHandleBase& handle);
 	};
 
 	/**	Base class for a specific builtin component's interop object. */
@@ -42,13 +42,13 @@ namespace bs
 	{
 	public:
 		/**	Returns a generic handle to the internal wrapped component. */
-		HGameObject getNativeHandle() const override { return static_object_cast<GameObject>(mComponent); }
+		HGameObject GetNativeHandle() const override { return static_object_cast<GameObject>(mComponent); }
 
 		/**	Sets the internal component this object wraps. */
-		void setNativeHandle(const HGameObject& gameObject) override { mComponent = static_object_cast<CompType>(gameObject); }
+		void SetNativeHandle(const HGameObject& gameObject) override { mComponent = static_object_cast<CompType>(gameObject); }
 
 		/**	Returns a handle to the internal wrapped component. */
-		const GameObjectHandle<CompType>& getHandle() const { return mComponent; }
+		const GameObjectHandle<CompType>& GetHandle() const { return mComponent; }
 
 	protected:
 		friend class ScriptGameObjectManager;

@@ -92,7 +92,7 @@ namespace bs
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P processor);
+		void RttiEnumFields(P processor);
 	public:
 		friend class AutoExposureSettingsRTTI;
 		static RTTITypeBase* getRTTIStatic();
@@ -151,7 +151,7 @@ namespace bs
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P processor);
+		void RttiEnumFields(P processor);
 	public:
 		friend class TonemappingSettingsRTTI;
 		static RTTITypeBase* getRTTIStatic();
@@ -188,7 +188,7 @@ namespace bs
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P processor);
+		void RttiEnumFields(P processor);
 	public:
 		friend class WhiteBalanceSettingsRTTI;
 		static RTTITypeBase* getRTTIStatic();
@@ -234,7 +234,7 @@ namespace bs
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P processor);
+		void RttiEnumFields(P processor);
 	public:
 		friend class ColorGradingSettingsRTTI;
 		static RTTITypeBase* getRTTIStatic();
@@ -310,7 +310,7 @@ namespace bs
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P processor);
+		void RttiEnumFields(P processor);
 	public:
 		friend class AmbientOcclusionSettingsRTTI;
 		static RTTITypeBase* getRTTIStatic();
@@ -468,7 +468,7 @@ namespace bs
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P processor);
+		void RttiEnumFields(P processor);
 
 	protected:
 		~TDepthOfFieldSettings() = default;
@@ -585,7 +585,7 @@ namespace bs
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P processor);
+		void RttiEnumFields(P processor);
 	public:
 		friend class MotionBlurSettingsRTTI;
 		static RTTITypeBase* getRTTIStatic();
@@ -620,7 +620,7 @@ namespace bs
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P processor);
+		void RttiEnumFields(P processor);
 	public:
 		friend class TemporalAASettingsRTTI;
 		static RTTITypeBase* getRTTIStatic();
@@ -669,7 +669,7 @@ namespace bs
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P processor);
+		void RttiEnumFields(P processor);
 	public:
 		friend class ScreenSpaceReflectionsRTTI;
 		static RTTITypeBase* getRTTIStatic();
@@ -725,7 +725,7 @@ namespace bs
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P processor);
+		void RttiEnumFields(P processor);
 	public:
 		friend class BloomSettingsRTTI;
 		static RTTITypeBase* getRTTIStatic();
@@ -836,7 +836,7 @@ namespace bs
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P processor);
+		void RttiEnumFields(P processor);
 	public:
 		friend class ScreenSpaceLensFlareSettingsRTTI;
 		static RTTITypeBase* getRTTIStatic();
@@ -900,7 +900,7 @@ namespace bs
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P processor);
+		void RttiEnumFields(P processor);
 
 	protected:
 		~TChromaticAberrationSettings() = default;
@@ -954,7 +954,7 @@ namespace bs
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P processor);
+		void RttiEnumFields(P processor);
 	public:
 		friend class FilmGrainSettingsRTTI;
 		static RTTITypeBase* getRTTIStatic();
@@ -1006,7 +1006,7 @@ namespace bs
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P processor);
+		void RttiEnumFields(P processor);
 	public:
 		friend class ShadowSettingsRTTI;
 		static RTTITypeBase* getRTTIStatic();
@@ -1196,7 +1196,7 @@ namespace bs
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P processor);
+		void RttiEnumFields(P processor);
 
 	protected:
 		~TRenderSettings() = default;

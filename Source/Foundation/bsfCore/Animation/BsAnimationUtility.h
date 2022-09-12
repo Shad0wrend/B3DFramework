@@ -19,43 +19,43 @@ namespace bs
 	struct TCurveProperties<float>
 	{
 		enum { NumComponents = 1 };
-		static float getZero() { return 0.0f; }
-		static float getComponent(float val, UINT32 i) { return val; }
-		static void setComponent(float& val, UINT32 i, float newVal) { val = newVal; }
+		static float GetZero() { return 0.0f; }
+		static float GetComponent(float val, UINT32 i) { return val; }
+		static void SetComponent(float& val, UINT32 i, float newVal) { val = newVal; }
 	};
 
 	template<>
 	struct TCurveProperties<INT32>
 	{
 		enum { NumComponents = 1 };
-		static INT32 getZero() { return 0; }
+		static INT32 GetZero() { return 0; }
 	};
 
 	template<>
 	struct TCurveProperties<Vector2>
 	{
 		enum { NumComponents = 2 };
-		static Vector2 getZero() { return Vector2::ZERO; }
-		static float getComponent(const Vector2& val, UINT32 i) { return val[i]; }
-		static void setComponent(Vector2& val, UINT32 i, float newVal) { val[i] = newVal; }
+		static Vector2 GetZero() { return Vector2::ZERO; }
+		static float GetComponent(const Vector2& val, UINT32 i) { return val[i]; }
+		static void SetComponent(Vector2& val, UINT32 i, float newVal) { val[i] = newVal; }
 	};
 
 	template<>
 	struct TCurveProperties<Vector3>
 	{
 		enum { NumComponents = 3 };
-		static Vector3 getZero() { return Vector3::ZERO; }
-		static float getComponent(const Vector3& val, UINT32 i) { return val[i]; }
-		static void setComponent(Vector3& val, UINT32 i, float newVal) { val[i] = newVal; }
+		static Vector3 GetZero() { return Vector3::ZERO; }
+		static float GetComponent(const Vector3& val, UINT32 i) { return val[i]; }
+		static void SetComponent(Vector3& val, UINT32 i, float newVal) { val[i] = newVal; }
 	};
 
 	template<>
 	struct TCurveProperties<Quaternion>
 	{
 		enum { NumComponents = 4 };
-		static Quaternion getZero() { return Quaternion::ZERO; }
-		static float getComponent(const Quaternion& val, UINT32 i) { return val[i]; }
-		static void setComponent(Quaternion& val, UINT32 i, float newVal) { val[i] = newVal; }
+		static Quaternion GetZero() { return Quaternion::ZERO; }
+		static float GetComponent(const Quaternion& val, UINT32 i) { return val[i]; }
+		static void SetComponent(Quaternion& val, UINT32 i, float newVal) { val[i] = newVal; }
 	};
 
 	/** Helper class for dealing with animations, animation clips and curves. */
@@ -70,7 +70,7 @@ namespace bs
 		 * @param[in]		end		End of the range.
 		 * @param[in]		loop	If true the value will be wrapped, otherwise clamped to range.
 		 */
-		static void wrapTime(float& time, float start, float end, bool loop);
+		static void WrapTime(float& time, float start, float end, bool loop);
 
 		/** Converts a curve in euler angles (in degrees) into a curve using quaternions. */
 		BS_SCRIPT_EXPORT()
@@ -79,23 +79,23 @@ namespace bs
 
 		/** Converts a curve in quaternions into a curve using euler angles (in degrees). */
 		BS_SCRIPT_EXPORT()
-		static SPtr<TAnimationCurve<Vector3>> quaternionToEulerCurve(const SPtr<TAnimationCurve<Quaternion>>& quatCurve);
+		static SPtr<TAnimationCurve<Vector3>> QuaternionToEulerCurve(const SPtr<TAnimationCurve<Quaternion>>& quatCurve);
 
 		/** Splits a Vector3 curve into three individual curves, one for each component. */
 		BS_SCRIPT_EXPORT()
-		static Vector<SPtr<TAnimationCurve<float>>> splitCurve3D(const SPtr<TAnimationCurve<Vector3>>& compoundCurve);
+		static Vector<SPtr<TAnimationCurve<float>>> SplitCurve3D(const SPtr<TAnimationCurve<Vector3>>& compoundCurve);
 
 		/** Combines three single component curves into a Vector3 curve. */
 		BS_SCRIPT_EXPORT()
-		static SPtr<TAnimationCurve<Vector3>> combineCurve3D(const Vector<SPtr<TAnimationCurve<float>>>& curveComponents);
+		static SPtr<TAnimationCurve<Vector3>> CombineCurve3D(const Vector<SPtr<TAnimationCurve<float>>>& curveComponents);
 
 		/** Splits a Vector2 curve into two individual curves, one for each component. */
 		BS_SCRIPT_EXPORT()
-		static Vector<SPtr<TAnimationCurve<float>>> splitCurve2D(const SPtr<TAnimationCurve<Vector2>>& compoundCurve);
+		static Vector<SPtr<TAnimationCurve<float>>> SplitCurve2D(const SPtr<TAnimationCurve<Vector2>>& compoundCurve);
 
 		/** Combines two single component curves into a Vector2 curve. */
 		BS_SCRIPT_EXPORT()
-		static SPtr<TAnimationCurve<Vector2>> combineCurve2D(const Vector<SPtr<TAnimationCurve<float>>>& curveComponents);
+		static SPtr<TAnimationCurve<Vector2>> CombineCurve2D(const Vector<SPtr<TAnimationCurve<float>>>& curveComponents);
 
 		/** Splits a multi-component curve into multiple individual curves, one for each component. */
 		template<class T>
@@ -104,7 +104,7 @@ namespace bs
 
 		/** Combines multiple single component curves into a multi-component curve. */
 		template<class T>
-		static void combineCurve(const TAnimationCurve<float> (&curveComponents)[TCurveProperties<T>::NumComponents],
+		static void CombineCurve(const TAnimationCurve<float> (&curveComponents)[TCurveProperties<T>::NumComponents],
 			TAnimationCurve<T>& output);
 		/**
 		 * Calculates the total range covered by a set of curves.
@@ -125,15 +125,15 @@ namespace bs
 
 		/** Scales all curve values and tangents by the specified scale factor. */
 		template<class T>
-		static TAnimationCurve<T> scaleCurve(const TAnimationCurve<T>& curve, float factor);
+		static TAnimationCurve<T> ScaleCurve(const TAnimationCurve<T>& curve, float factor);
 
 		/** Adds a time offset to all keyframes in the provided curve. */
 		template<class T>
-		static TAnimationCurve<T> offsetCurve(const TAnimationCurve<T>& curve, float offset);
+		static TAnimationCurve<T> OffsetCurve(const TAnimationCurve<T>& curve, float offset);
 
 		/** Updates the provided list of keyframes by automatically calculating their tangents. */
 		template<class T>
-		static void calculateTangents(Vector<TKeyframe<T>>& keyframes);
+		static void CalculateTangents(Vector<TKeyframe<T>>& keyframes);
 	};
 
 	/** Type of tangent on a keyframe in an animation curve. */

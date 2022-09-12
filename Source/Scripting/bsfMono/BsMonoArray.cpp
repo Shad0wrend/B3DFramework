@@ -63,13 +63,13 @@ namespace bs
 	}
 
 	ScriptArray::ScriptArray(MonoClass& klass, UINT32 size)
-		: mInternal(nullptr)
+		: MInternal(nullptr)
 	{
 		mInternal = mono_array_new(MonoManager::instance().getDomain(), klass._getInternalClass(), size);
 	}
 
 	ScriptArray::ScriptArray(::MonoClass* klass, UINT32 size)
-		: mInternal(nullptr)
+		: MInternal(nullptr)
 	{
 		mInternal = mono_array_new(MonoManager::instance().getDomain(), klass, size);
 	}

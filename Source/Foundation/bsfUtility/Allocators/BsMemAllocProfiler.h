@@ -27,11 +27,11 @@ namespace bs
 		/** Allocates the given number of bytes. */
 		static void* allocate(size_t bytes)
 		{
-			return malloc(bytes);
+			return Malloc(bytes);
 		}
 
 		/** Frees memory previously allocated with allocate(). */
-		static void free(void* ptr)
+		static void Free(void* ptr)
 		{
 			::free(ptr);
 		}

@@ -30,7 +30,7 @@ namespace bs
 						break;
 
 					// Clean up the name to get the actual hardware name
-					String fixedName(deviceName.data(), deviceName.size());
+					String FixedName(deviceName.data(), deviceName.size());
 					fixedName = StringUtil::replaceAll(fixedName, u8"OpenAL Soft on ", u8"");
 
 					mAllDevices.push_back({ fixedName });
@@ -141,9 +141,9 @@ namespace bs
 			return false;
 
 		if ((extension.length() > 2) && (extension.substr(0, 3) == "ALC"))
-			return alcIsExtensionPresent(mDevice, extension.c_str()) != AL_FALSE;
+			return AlcIsExtensionPresent(mDevice, extension.c_str()) != AL_FALSE;
 		else
-			return alIsExtensionPresent(extension.c_str()) != AL_FALSE;
+			return AlIsExtensionPresent(extension.c_str()) != AL_FALSE;
 	}
 
 	void OAAudio::_registerListener(OAAudioListener* listener)
@@ -174,7 +174,7 @@ namespace bs
 
 	void OAAudio::startStreaming(OAAudioSource* source)
 	{
-		Lock lock(mMutex);
+		Lock Lock(mMutex);
 
 		mStreamingCommandQueue.push_back({ StreamingCommandType::Start, source });
 		mDestroyedSources.erase(source);
@@ -182,7 +182,7 @@ namespace bs
 
 	void OAAudio::stopStreaming(OAAudioSource* source)
 	{
-		Lock lock(mMutex);
+		Lock Lock(mMutex);
 
 		mStreamingCommandQueue.push_back({ StreamingCommandType::Stop, source });
 		mDestroyedSources.insert(source);
@@ -267,7 +267,7 @@ namespace bs
 	void OAAudio::updateStreaming()
 	{
 		{
-			Lock lock(mMutex);
+			Lock Lock(mMutex);
 
 			for(auto& command : mStreamingCommandQueue)
 			{
@@ -292,7 +292,7 @@ namespace bs
 		{
 			// Check if the source got destroyed while streaming
 			{
-				Lock lock(mMutex);
+				Lock Lock(mMutex);
 
 				auto iterFind = mDestroyedSources.find(source);
 				if (iterFind != mDestroyedSources.end())
@@ -313,10 +313,10 @@ namespace bs
 			{
 			case 1:  return AL_FORMAT_MONO8;
 			case 2:  return AL_FORMAT_STEREO8;
-			case 4:  return alGetEnumValue("AL_FORMAT_QUAD8");
-			case 6:  return alGetEnumValue("AL_FORMAT_51CHN8");
-			case 7:  return alGetEnumValue("AL_FORMAT_61CHN8");
-			case 8:  return alGetEnumValue("AL_FORMAT_71CHN8");
+			case 4:  return AlGetEnumValue("AL_FORMAT_QUAD8");
+			case 6:  return AlGetEnumValue("AL_FORMAT_51CHN8");
+			case 7:  return AlGetEnumValue("AL_FORMAT_61CHN8");
+			case 8:  return AlGetEnumValue("AL_FORMAT_71CHN8");
 			default:
 				assert(false);
 				return 0;
@@ -328,10 +328,10 @@ namespace bs
 			{
 			case 1:  return AL_FORMAT_MONO16;
 			case 2:  return AL_FORMAT_STEREO16;
-			case 4:  return alGetEnumValue("AL_FORMAT_QUAD16");
-			case 6:  return alGetEnumValue("AL_FORMAT_51CHN16");
-			case 7:  return alGetEnumValue("AL_FORMAT_61CHN16");
-			case 8:  return alGetEnumValue("AL_FORMAT_71CHN16");
+			case 4:  return AlGetEnumValue("AL_FORMAT_QUAD16");
+			case 6:  return AlGetEnumValue("AL_FORMAT_51CHN16");
+			case 7:  return AlGetEnumValue("AL_FORMAT_61CHN16");
+			case 8:  return AlGetEnumValue("AL_FORMAT_71CHN16");
 			default:
 				assert(false);
 				return 0;
@@ -341,12 +341,12 @@ namespace bs
 		{
 			switch (numChannels)
 			{
-			case 1:  return alGetEnumValue("AL_FORMAT_MONO_FLOAT32");
-			case 2:  return alGetEnumValue("AL_FORMAT_STEREO_FLOAT32");
-			case 4:  return alGetEnumValue("AL_FORMAT_QUAD32");
-			case 6:  return alGetEnumValue("AL_FORMAT_51CHN32");
-			case 7:  return alGetEnumValue("AL_FORMAT_61CHN32");
-			case 8:  return alGetEnumValue("AL_FORMAT_71CHN32");
+			case 1:  return AlGetEnumValue("AL_FORMAT_MONO_FLOAT32");
+			case 2:  return AlGetEnumValue("AL_FORMAT_STEREO_FLOAT32");
+			case 4:  return AlGetEnumValue("AL_FORMAT_QUAD32");
+			case 6:  return AlGetEnumValue("AL_FORMAT_51CHN32");
+			case 7:  return AlGetEnumValue("AL_FORMAT_61CHN32");
+			case 8:  return AlGetEnumValue("AL_FORMAT_71CHN32");
 			default:
 				assert(false);
 				return 0;
@@ -392,7 +392,7 @@ namespace bs
 					bs_stack_free(sampleBuffer16);
 				}
 			}
-			else if(info.bitDepth == 8)
+			else If(info.bitDepth == 8)
 			{
 				// OpenAL expects unsigned 8-bit data, but engine stores it as signed, so convert
 				UINT32 bufferSize = info.numSamples * (info.bitDepth / 8);
@@ -450,7 +450,7 @@ namespace bs
 		}
 	}
 
-	OAAudio& gOAAudio()
+	OAAudio& GOAAudio()
 	{
 		return static_cast<OAAudio&>(OAAudio::instance());
 	}

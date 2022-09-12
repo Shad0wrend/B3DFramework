@@ -20,8 +20,8 @@ namespace bs
 	class BS_CORE_EXPORT RasterizerStateRTTI : public RTTIType<RasterizerState, IReflectable, RasterizerStateRTTI>
 	{
 	private:
-		RASTERIZER_STATE_DESC& getData(RasterizerState* obj) { return obj->mProperties.mData; }
-		void setData(RasterizerState* obj, RASTERIZER_STATE_DESC& val) { obj->mProperties.mData = val; }
+		RASTERIZER_STATE_DESC& GetData(RasterizerState* obj) { return obj->mProperties.mData; }
+		void SetData(RasterizerState* obj, RASTERIZER_STATE_DESC& val) { obj->mProperties.mData = val; }
 
 	public:
 		RasterizerStateRTTI()
@@ -29,24 +29,24 @@ namespace bs
 			addPlainField("mData", 0, &RasterizerStateRTTI::getData, &RasterizerStateRTTI::setData);
 		}
 
-		void onDeserializationEnded(IReflectable* obj, SerializationContext* context) override
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override
 		{
 			RasterizerState* rasterizerState = static_cast<RasterizerState*>(obj);
 			rasterizerState->initialize();
 		}
 
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "RasterizerState";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_RasterizerState;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			return RenderStateManager::instance()._createRasterizerStatePtr(RASTERIZER_STATE_DESC());
 		}

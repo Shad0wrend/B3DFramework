@@ -25,19 +25,19 @@ namespace bs
 
 		/** @copydoc Skybox::getTexture */
 		BS_SCRIPT_EXPORT(n:Texture,pr:getter)
-		HTexture getTexture() const { return mInternal->getTexture(); }
+		HTexture GetTexture() const { return mInternal->getTexture(); }
 
 		/** @copydoc Skybox::setTexture */
 		BS_SCRIPT_EXPORT(n:Texture,pr:setter)
-		void setTexture(const HTexture& texture) { mInternal->setTexture(texture); }
+		void SetTexture(const HTexture& texture) { mInternal->setTexture(texture); }
 
 		/** @copydoc Skybox::setBrightness */
 		BS_SCRIPT_EXPORT(n:Brightness,pr:setter)
-		void setBrightness(float brightness) { mInternal->setBrightness(brightness); }
+		void SetBrightness(float brightness) { mInternal->setBrightness(brightness); }
 
 		/** @copydoc Skybox::getBrightness */
 		BS_SCRIPT_EXPORT(n:Brightness,pr:getter)
-		float getBrightness() const { return mInternal->getBrightness(); }
+		float GetBrightness() const { return mInternal->getBrightness(); }
 
 		/** @name Internal
 		 *  @{
@@ -58,13 +58,13 @@ namespace bs
 		friend class SceneObject;
 
 		/** @copydoc Component::onInitialized */
-		void onInitialized() override;
+		void OnInitialized() override;
 
 		/** @copydoc Component::onDestroyed */
-		void onDestroyed() override;
+		void OnDestroyed() override;
 
 		/** @copydoc Component::update */
-		void update() override { }
+		void Update() override { }
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/

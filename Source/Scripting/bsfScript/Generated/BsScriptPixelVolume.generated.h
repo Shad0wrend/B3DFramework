@@ -14,7 +14,7 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "PixelVolume")
 
 		static MonoObject* box(const PixelVolume& value);
-		static PixelVolume unbox(MonoObject* value);
+		static PixelVolume Unbox(MonoObject* value);
 
 	private:
 		ScriptPixelVolume(MonoObject* managedInstance);

@@ -151,14 +151,14 @@ namespace bs
 
 	UINT32 ProfilerGPU::getNumAvailableReports()
 	{
-		Lock lock(mMutex);
+		Lock Lock(mMutex);
 
 		return mReportCount;
 	}
 
 	GPUProfilerReport ProfilerGPU::getNextReport()
 	{
-		Lock lock(mMutex);
+		Lock Lock(mMutex);
 
 		if (mReportCount == 0)
 		{
@@ -218,7 +218,7 @@ namespace bs
 			mUnresolvedFrames.pop();
 
 			{
-				Lock lock(mMutex);
+				Lock Lock(mMutex);
 				mReadyReports[(mReportHeadPos + mReportCount) % MAX_QUEUE_ELEMENTS] = report;
 				if (mReportCount == MAX_QUEUE_ELEMENTS)
 					mReportHeadPos = (mReportHeadPos + 1) % MAX_QUEUE_ELEMENTS;
@@ -348,7 +348,7 @@ namespace bs
 		return ct::OcclusionQuery::create(false);
 	}
 
-	ProfilerGPU& gProfilerGPU()
+	ProfilerGPU& GProfilerGPU()
 	{
 		return ProfilerGPU::instance();
 	}

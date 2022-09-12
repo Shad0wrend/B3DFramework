@@ -167,7 +167,7 @@ namespace bs { namespace ct
 		UINT32 mipHeight = std::max(1u, mProperties.getHeight() >> mipLevel);
 		UINT32 mipDepth = std::max(1u, mProperties.getDepth() >> mipLevel);
 
-		PixelData lockedArea(mipWidth, mipHeight, mipDepth, mInternalFormat);
+		PixelData LockedArea(mipWidth, mipHeight, mipDepth, mInternalFormat);
 
 		D3D11_MAP flags = D3D11Mappings::getLockOptions(options);
 		UINT32 rowPitch, slicePitch;
@@ -450,7 +450,7 @@ namespace bs { namespace ct
 			rs->determineMultisampleSettings(sampleCount, d3dPF, &sampleDesc);
 			desc.SampleDesc		= sampleDesc;
 		}
-		else if((usage & TU_DEPTHSTENCIL) != 0)
+		else If((usage & TU_DEPTHSTENCIL) != 0)
 		{
 			desc.Usage			= D3D11_USAGE_DEFAULT;
 			desc.CPUAccessFlags = 0;
@@ -715,7 +715,7 @@ namespace bs { namespace ct
 		D3D11Device& device = rs->getPrimaryDevice();
 		device.getImmediateContext()->CopyResource(mStagingBuffer, mTex);
 
-		return map(mStagingBuffer, flags, face, mipLevel, rowPitch, slicePitch);
+		return Map(mStagingBuffer, flags, face, mipLevel, rowPitch, slicePitch);
 	}
 
 	void D3D11Texture::unmapstagingbuffer()

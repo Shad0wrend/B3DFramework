@@ -33,7 +33,7 @@ namespace bs { namespace ct
 	UnorderedMap<StringID, RenderCompositor::NodeType*> RenderCompositor::mNodeTypes;
 
 	/** Renders all elements in a render queue. */
-	void renderQueueElements(const Vector<RenderQueueElement>& elements)
+	void RenderQueueElements(const Vector<RenderQueueElement>& elements)
 	{
 		for(auto& entry : elements)
 		{
@@ -386,7 +386,7 @@ namespace bs { namespace ct
 					rendererParticles.bindCPUSimulatedInputs(renderData, inputs.view);
 				}
 				// Bind textures/buffers from GPU simulation
-				else if(rendererParticles.gpuParticleSystem)
+				else If(rendererParticles.gpuParticleSystem)
 					rendererParticles.bindGPUSimulatedInputs(gpuSimResources, inputs.view);
 			}
 		}
@@ -428,7 +428,7 @@ namespace bs { namespace ct
 		RenderAPI& rapi = RenderAPI::instance();
 		rapi.setRenderTarget(renderTarget);
 
-		Rect2 area(0.0f, 0.0f, 1.0f, 1.0f);
+		Rect2 Area(0.0f, 0.0f, 1.0f, 1.0f);
 		rapi.setViewport(area);
 
 		// Clear all targets
@@ -568,7 +568,7 @@ namespace bs { namespace ct
 		RenderAPI& rapi = RenderAPI::instance();
 		rapi.setRenderTarget(renderTarget, FBT_DEPTH | FBT_STENCIL, RT_DEPTH_STENCIL);
 
-		Rect2 area(0.0f, 0.0f, 1.0f, 1.0f);
+		Rect2 Area(0.0f, 0.0f, 1.0f, 1.0f);
 		rapi.setViewport(area);
 
 		TextureArrayToMSAATexture* material = TextureArrayToMSAATexture::get();
@@ -902,7 +902,7 @@ namespace bs { namespace ct
 		// Render unshadowed lights
 		if(!tiledDeferredSupported)
 		{
-			ProfileGPUBlock sampleBlock("Standard deferred unshadowed lights");
+			ProfileGPUBlock SampleBlock("Standard deferred unshadowed lights");
 
 			rapi.setRenderTarget(output->renderTarget, FBT_DEPTH | FBT_STENCIL, RT_DEPTH_STENCIL);
 
@@ -954,7 +954,7 @@ namespace bs { namespace ct
 
 		// Render shadowed lights
 		{
-			ProfileGPUBlock sampleBlock("Standard deferred shadowed lights");
+			ProfileGPUBlock SampleBlock("Standard deferred shadowed lights");
 
 			const ShadowRendering& shadowRenderer = inputs.viewGroup.getShadowRenderer();
 			for (UINT32 i = 0; i < (UINT32)LightType::Count; i++)
@@ -969,7 +969,7 @@ namespace bs { namespace ct
 				{
 					rapi.setRenderTarget(mLightOcclusionRT, FBT_DEPTH, RT_DEPTH_STENCIL);
 
-					Rect2 area(0.0f, 0.0f, 1.0f, 1.0f);
+					Rect2 Area(0.0f, 0.0f, 1.0f, 1.0f);
 					rapi.setViewport(area);
 
 					rapi.clearViewport(FBT_COLOR, Color::ZERO);
@@ -1594,7 +1594,7 @@ namespace bs { namespace ct
 		RenderAPI& rapi = RenderAPI::instance();
 		rapi.setRenderTarget(sceneColorNode->renderTarget, readOnlyFlags, RT_COLOR0 | RT_DEPTH_STENCIL);
 
-		Rect2 area(0.0f, 0.0f, 1.0f, 1.0f);
+		Rect2 Area(0.0f, 0.0f, 1.0f, 1.0f);
 		rapi.setViewport(area);
 
 		SPtr<Mesh> mesh = gRendererUtility().getSkyBoxMesh();

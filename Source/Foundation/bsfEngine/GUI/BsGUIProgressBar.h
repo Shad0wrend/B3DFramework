@@ -20,13 +20,13 @@ namespace bs
 	{
 	public:
 		/** Returns type name of the GUI element used for finding GUI element styles.  */
-		static const String& getGUITypeName();
+		static const String& GetGUITypeName();
 
 		/**	Name of the style for the fill image used by the progress bar. */
-		static const String& getBarStyleType();
+		static const String& GetBarStyleType();
 
 		/**	Name of the style for the background image used by the progress bar. */
-		static const String& getBackgroundStyleType();
+		static const String& GetBackgroundStyleType();
 
 		/**
 		 * Creates a new progress bar.
@@ -51,13 +51,13 @@ namespace bs
 		 *
 		 * @param[in]	pct	How far to extend the fill image, in percent ranging [0.0f, 1.0f]
 		 */
-		void setPercent(float pct);
+		void SetPercent(float pct);
 
 		/**	Gets the percentage of how full is the progress bar currently. */
-		float getPercent() const { return mPercent; }
+		float GetPercent() const { return mPercent; }
 
 		/** @copydoc GUIElement::setTint */
-		virtual void setTint(const Color& color) override;
+		virtual void SetTint(const Color& color) override;
 
 	public: // ***** INTERNAL ******
 		/** @name Internal
@@ -75,7 +75,7 @@ namespace bs
 		virtual void _updateLayoutInternal(const GUILayoutData& data) override;
 
 		/** @copydoc GUIElementContainer::styleUpdated */
-		void styleUpdated() override;
+		void StyleUpdated() override;
 
 	private:
 		GUITexture* mBar;

@@ -36,8 +36,8 @@ namespace bs
 			BS_RTTI_MEMBER_PLAIN_NAMED(format, mProperties.mDesc.format, 10)
 		BS_END_RTTI_MEMBERS
 
-		INT32& getUsage(Texture* obj) { return obj->mProperties.mDesc.usage; }
-		void setUsage(Texture* obj, INT32& val)
+		INT32& GetUsage(Texture* obj) { return obj->mProperties.mDesc.usage; }
+		void SetUsage(Texture* obj, INT32& val)
 		{
 			// Render target and depth stencil texture formats are for in-memory use only
 			// and don't make sense when serialized
@@ -50,7 +50,7 @@ namespace bs
 				obj->mProperties.mDesc.usage = val;
 		}
 
-		SPtr<PixelData> getPixelData(Texture* obj, UINT32 idx)
+		SPtr<PixelData> GetPixelData(Texture* obj, UINT32 idx)
 		{
 			UINT32 face = (size_t)Math::floor(idx / (float)(obj->mProperties.getNumMipmaps() + 1));
 			UINT32 mipmap = idx % (obj->mProperties.getNumMipmaps() + 1);
@@ -63,17 +63,17 @@ namespace bs
 			return pixelData;
 		}
 
-		void setPixelData(Texture* obj, UINT32 idx, SPtr<PixelData> data)
+		void SetPixelData(Texture* obj, UINT32 idx, SPtr<PixelData> data)
 		{
 			mPixelData[idx] = data;
 		}
 
-		UINT32 getPixelDataArraySize(Texture* obj)
+		UINT32 GetPixelDataArraySize(Texture* obj)
 		{
 			return obj->mProperties.getNumFaces() * (obj->mProperties.getNumMipmaps() + 1);
 		}
 
-		void setPixelDataArraySize(Texture* obj, UINT32 size)
+		void SetPixelDataArraySize(Texture* obj, UINT32 size)
 		{
 			mPixelData.resize(size);
 		}
@@ -87,7 +87,7 @@ namespace bs
 				&TextureRTTI::setPixelData, &TextureRTTI::setPixelDataArraySize, RTTIFieldInfo(RTTIFieldFlag::SkipInReferenceSearch));
 		}
 
-		void onDeserializationEnded(IReflectable* obj, SerializationContext* context) override
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override
 		{
 			Texture* texture = static_cast<Texture*>(obj);
 			TextureProperties& texProps = texture->mProperties;
@@ -125,18 +125,18 @@ namespace bs
 			}
 		}
 
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "Texture";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_Texture;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			return TextureManager::instance()._createEmpty();
 		}

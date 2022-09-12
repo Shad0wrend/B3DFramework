@@ -71,44 +71,44 @@ namespace bs
 		 * Returns texture addressing mode for each possible texture coordinate. Addressing modes determine how are texture
 		 * coordinates outside of [0, 1] range handled.
 		 */
-		const UVWAddressingMode& getTextureAddressingMode() const { return mData.addressMode; }
+		const UVWAddressingMode& GetTextureAddressingMode() const { return mData.addressMode; }
 
 		/** Gets the filtering used when sampling from a texture. */
-		FilterOptions getTextureFiltering(FilterType ftpye) const;
+		FilterOptions GetTextureFiltering(FilterType ftpye) const;
 
 		/**
 		 * Gets the anisotropy level. Higher anisotropy means better filtering for textures displayed on an angled slope
 		 * relative to the viewer.
 		 */
-		unsigned int getTextureAnisotropy() const { return mData.maxAniso; }
+		unsigned int GetTextureAnisotropy() const { return mData.maxAniso; }
 
 		/** Gets a function that compares sampled data with existing sampled data. */
-		CompareFunction getComparisonFunction() const { return mData.comparisonFunc; }
+		CompareFunction GetComparisonFunction() const { return mData.comparisonFunc; }
 
 		/**
 		 * Mipmap bias allows you to adjust the mipmap selection calculation. Negative values  force a larger mipmap to be
 		 * used, and positive values smaller. Units are in values of mip levels, so -1 means use a mipmap one level higher
 		 * than default.
 		 */
-		float getTextureMipmapBias() const { return mData.mipmapBias; }
+		float GetTextureMipmapBias() const { return mData.mipmapBias; }
 
 		/** Returns the minimum mip map level. */
-		float getMinimumMip() const { return mData.mipMin; }
+		float GetMinimumMip() const { return mData.mipMin; }
 
 		/** Returns the maximum mip map level. */
-		float getMaximumMip() const { return mData.mipMax; }
+		float GetMaximumMip() const { return mData.mipMax; }
 
 		/**
 		 * Gets the border color that will be used when border texture addressing is used and texture address is outside of
 		 * the valid range.
 		 */
-		const Color& getBorderColor() const;
+		const Color& GetBorderColor() const;
 
 		/**	Returns the hash value generated from the sampler state properties. */
-		UINT64 getHash() const { return mHash; }
+		UINT64 GetHash() const { return mHash; }
 
 		/**	Returns the descriptor originally used for creating the sampler state. */
-		SAMPLER_STATE_DESC getDesc() const { return mData; }
+		SAMPLER_STATE_DESC GetDesc() const { return mData; }
 
 	protected:
 		friend class SamplerState;
@@ -134,25 +134,25 @@ namespace bs
 		virtual ~SamplerState() = default;
 
 		/**	Returns information about the sampler state. */
-		const SamplerProperties& getProperties() const;
+		const SamplerProperties& GetProperties() const;
 
 		/**	Retrieves a core implementation of the sampler state usable only from the core thread. */
-		SPtr<ct::SamplerState> getCore() const;
+		SPtr<ct::SamplerState> GetCore() const;
 
 		/**	Creates a new sampler state using the provided descriptor structure. */
-		static SPtr<SamplerState> create(const SAMPLER_STATE_DESC& desc);
+		static SPtr<SamplerState> Create(const SAMPLER_STATE_DESC& desc);
 
 		/**	Returns the default sampler state. */
-		static const SPtr<SamplerState>& getDefault();
+		static const SPtr<SamplerState>& GetDefault();
 
 		/**	Generates a hash value from a sampler state descriptor. */
-		static UINT64 generateHash(const SAMPLER_STATE_DESC& desc);
+		static UINT64 GenerateHash(const SAMPLER_STATE_DESC& desc);
 
 	protected:
 		SamplerState(const SAMPLER_STATE_DESC& desc);
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> createCore() const override;
+		SPtr<ct::CoreObject> CreateCore() const override;
 
 		SamplerProperties mProperties;
 
@@ -187,13 +187,13 @@ namespace bs
 		virtual ~SamplerState();
 
 		/**	Returns information about the sampler state. */
-		const SamplerProperties& getProperties() const;
+		const SamplerProperties& GetProperties() const;
 
 		/**	@copydoc RenderStateManager::createSamplerState */
-		static SPtr<SamplerState> create(const SAMPLER_STATE_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
+		static SPtr<SamplerState> Create(const SAMPLER_STATE_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
 		/**	Returns the default sampler state. */
-		static const SPtr<SamplerState>& getDefault();
+		static const SPtr<SamplerState>& GetDefault();
 
 	protected:
 		friend class RenderStateManager;
@@ -201,10 +201,10 @@ namespace bs
 		SamplerState(const SAMPLER_STATE_DESC& desc, GpuDeviceFlags deviceMask);
 
 		/** @copydoc CoreObject::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 		/**	Creates any API-specific state objects. */
-		virtual void createInternal() { }
+		virtual void CreateInternal() { }
 
 		SamplerProperties mProperties;
 	};
@@ -224,7 +224,7 @@ namespace std
 template<>
 struct hash<bs::SAMPLER_STATE_DESC>
 {
-	size_t operator()(const bs::SAMPLER_STATE_DESC& value) const
+	size_t Operator()(const bs::SAMPLER_STATE_DESC& value) const
 	{
 		return (size_t)bs::SamplerState::generateHash(value);
 	}

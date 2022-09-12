@@ -82,7 +82,7 @@ namespace bs
 		 * @param[in] ignoreEvents 	If true the system will not trigger any external events for the reported input. This
 		 * 							can be useful for situations where input is disabled, like an out-of-focus window.
 		 */
-		void capture(IOHIDDeviceRef device, bool ignoreEvents = false);
+		void Capture(IOHIDDeviceRef device, bool ignoreEvents = false);
 
 	private:
 		IOHIDManagerRef mHIDManager = nullptr;

@@ -58,7 +58,7 @@ namespace bs
 				UINT32 lineHeight = line.getYOffset();
 				INT32 lineYStart = alignmentOffsets[curLineIdx].y;
 
-				GUIInputLineDesc lineDesc(startChar, endChar, lineHeight, lineYStart, hasNewline);
+				GUIInputLineDesc LineDesc(startChar, endChar, lineHeight, lineYStart, hasNewline);
 				mLineDescs.push_back(lineDesc);
 
 				curCharIdx = lineDesc.getEndChar();
@@ -72,7 +72,7 @@ namespace bs
 
 	Vector2I GUIInputTool::getTextOffset() const
 	{
-		Vector2I offset(mElement->_getLayoutData().area.x, mElement->_getLayoutData().area.y);
+		Vector2I Offset(mElement->_getLayoutData().area.x, mElement->_getLayoutData().area.y);
 
 		return offset + mElement->_getTextInputOffset() + Vector2I(mElement->_getTextInputRect().x, mElement->_getTextInputRect().y);
 	}
@@ -121,7 +121,7 @@ namespace bs
 
 	INT32 GUIInputTool::getCharIdxAtPos(const Vector2I& pos) const
 	{
-		Vector2 vecPos((float)pos.x, (float)pos.y);
+		Vector2 VecPos((float)pos.x, (float)pos.y);
 
 		UINT32 lineStartChar = 0;
 		UINT32 lineEndChar = 0;

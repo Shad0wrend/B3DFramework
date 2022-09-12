@@ -61,15 +61,15 @@ namespace bs
 		SPtr<Resource> importedResource = _import(inputFilePath, importOptions);
 
 		if(UUID.empty())
-			return gResources()._createResourceHandle(importedResource);
+			return GResources()._createResourceHandle(importedResource);
 
-		return gResources()._createResourceHandle(importedResource, UUID);
+		return GResources()._createResourceHandle(importedResource, UUID);
 	}
 
 	TAsyncOp<HResource> Importer::importAsync(const Path& inputFilePath, SPtr<const ImportOptions> importOptions,
 		const UUID& UUID)
 	{
-		TAsyncOp<HResource> output(mAsyncOpSyncData);
+		TAsyncOp<HResource> Output(mAsyncOpSyncData);
 
 		SpecificImporter* importer = prepareForImport(inputFilePath, importOptions);
 		if(!importer)
@@ -99,7 +99,7 @@ namespace bs
 	TAsyncOp<SPtr<MultiResource>> Importer::importAllAsync(const Path& inputFilePath,
 		SPtr<const ImportOptions> importOptions)
 	{
-		TAsyncOp<SPtr<MultiResource>> output(mAsyncOpSyncData);
+		TAsyncOp<SPtr<MultiResource>> Output(mAsyncOpSyncData);
 
 		SpecificImporter* importer = prepareForImport(inputFilePath, importOptions);
 		if(!importer)
@@ -123,7 +123,7 @@ namespace bs
 		
 		if(importer->getAsyncMode() == ImporterAsyncMode::Single)
 		{
-			Lock lock(mLastTaskMutex);
+			Lock Lock(mLastTaskMutex);
 			auto iterFind = mLastQueuedTask.find(importer);
 			if (iterFind != mLastQueuedTask.end())
 			{
@@ -148,7 +148,7 @@ namespace bs
 
 		if(importer->getAsyncMode() == ImporterAsyncMode::Single)
 		{
-			Lock lock(mLastTaskMutex);
+			Lock Lock(mLastTaskMutex);
 			auto iterFind = mLastQueuedTask.find(importer);
 			if (iterFind != mLastQueuedTask.end())
 			{
@@ -195,7 +195,7 @@ namespace bs
 		const ImporterAsyncMode asyncMode = importer->getAsyncMode();
 		if(asyncMode == ImporterAsyncMode::Single)
 		{
-			Lock lock(mLastTaskMutex);
+			Lock Lock(mLastTaskMutex);
 
 			// Wait for any existing async tasks to complete
 			while(true)
@@ -280,7 +280,7 @@ namespace bs
 
 			// Clear itself from the task list so we don't unnecessarily keep a reference. But first make sure we are the
 			// last task by comparing the ids.
-			Lock lock(mLastTaskMutex);
+			Lock Lock(mLastTaskMutex);
 			auto iterFind = mLastQueuedTask.find(importer);
 			if(iterFind != mLastQueuedTask.end())
 			{
@@ -357,7 +357,7 @@ namespace bs
 		return nullptr;
 	}
 
-	BS_CORE_EXPORT Importer& gImporter()
+	BS_CORE_EXPORT Importer& GImporter()
 	{
 		return Importer::instance();
 	}

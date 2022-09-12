@@ -11,7 +11,7 @@ namespace bs
 	{
 		clearIfItExists(type, semantic, semanticIdx, streamIdx);
 
-		VertexElement newElement(streamIdx, 0, type, semantic, semanticIdx, instanceStepRate);
+		VertexElement NewElement(streamIdx, 0, type, semantic, semanticIdx, instanceStepRate);
 
 		// Insert it so it is sorted by stream
 		UINT32 insertToIndex = (UINT32)mVertexElements.size();

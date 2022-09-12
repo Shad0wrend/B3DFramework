@@ -53,8 +53,8 @@ namespace bs
 		RTTIFieldSchema() = default;
 		RTTIFieldSchema(INT16 id, bool isArray, bool hasDynamicSize, BitLength size, SerializableFieldType type,
 			UINT32 fieldTypeId, SPtr<RTTISchema> fieldTypeSchema, const RTTIFieldInfo& info)
-			: id(id), isArray(isArray), hasDynamicSize(hasDynamicSize), size(size), type(type)
-			, fieldTypeId(fieldTypeId), fieldTypeSchema(std::move(fieldTypeSchema)), info(info)
+			: Id(id), isArray(isArray), hasDynamicSize(hasDynamicSize), size(size), type(type)
+			, FieldTypeId(fieldTypeId), fieldTypeSchema(std::move(fieldTypeSchema)), info(info)
 		{ }
 		
 		UINT16 id = 0;
@@ -92,16 +92,16 @@ namespace bs
 		 * Gets the size of an array contained by the field, if the field represents an array. Throws exception if field
 		 * is not an array.
 		 */
-		virtual UINT32 getArraySize(RTTITypeBase* rtti, void* object) = 0;
+		virtual UINT32 GetArraySize(RTTITypeBase* rtti, void* object) = 0;
 
 		/**
 		 * Changes the size of an array contained by the field, if the field represents an array. Throws exception if field
 		 * is not an array.
 		 */
-		virtual void setArraySize(RTTITypeBase* rtti, void* object, UINT32 size) = 0;
+		virtual void SetArraySize(RTTITypeBase* rtti, void* object, UINT32 size) = 0;
 
 		/** Initializes the field's RTTI schema. Should be called once after construction. */
-		virtual void initSchema() {}
+		virtual void InitSchema() {}
 		
 		/**
 		 * Throws an exception depending if the field is or isn't an array.
@@ -109,10 +109,10 @@ namespace bs
 		 * @param[in]	array	If true, then exception will be thrown if field is not an array.
 		 * 						If false, then it will be thrown if field is an array.
 		 */
-		void checkIsArray(bool array) const;
+		void CheckIsArray(bool array) const;
 
 	protected:
-		void init(String name, const RTTIFieldSchema& schema)
+		void Init(String name, const RTTIFieldSchema& schema)
 		{
 			this->name = std::move(name);
 			this->schema = schema;

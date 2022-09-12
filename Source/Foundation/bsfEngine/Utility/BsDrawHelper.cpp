@@ -145,7 +145,7 @@ namespace bs
 		mLineListData.push_back(LineListData());
 		LineListData& lineListData = mLineListData.back();
 
-		Vector3 center(BsZero);
+		Vector3 Center(BsZero);
 		for (auto& point : lines)
 			center += point;
 
@@ -927,7 +927,7 @@ namespace bs
 					case ShapeType::Cube:
 					{
 						CubeData& cubeData = mSolidCubeData[shapeData.idx];
-						AABox box(cubeData.position - cubeData.extents, cubeData.position + cubeData.extents);
+						AABox Box(cubeData.position - cubeData.extents, cubeData.position + cubeData.extents);
 						ShapeMeshes3D::solidAABox(box, meshData[typeIdx], vertexOffset[typeIdx], indexOffset[typeIdx]);
 
 						transform = &cubeData.transform;
@@ -937,7 +937,7 @@ namespace bs
 					case ShapeType::Sphere:
 					{
 						SphereData& sphereData = mSolidSphereData[shapeData.idx];
-						Sphere sphere(sphereData.position, sphereData.radius);
+						Sphere Sphere(sphereData.position, sphereData.radius);
 						ShapeMeshes3D::solidSphere(sphere, meshData[typeIdx], vertexOffset[typeIdx], indexOffset[typeIdx],
 							sphereData.quality);
 
@@ -1056,7 +1056,7 @@ namespace bs
 					}
 				}
 			}
-			else if(batch.type == MeshType::Line)
+			else If(batch.type == MeshType::Line)
 			{
 				meshInfos.push_back(ShapeMeshData());
 				ShapeMeshData& newMesh = meshInfos.back();
@@ -1078,7 +1078,7 @@ namespace bs
 					{
 						CubeData& cubeData = mWireCubeData[shapeData.idx];
 
-						AABox box(cubeData.position - cubeData.extents, cubeData.position + cubeData.extents);
+						AABox Box(cubeData.position - cubeData.extents, cubeData.position + cubeData.extents);
 						ShapeMeshes3D::wireAABox(box, meshData[typeIdx], vertexOffset[typeIdx], indexOffset[typeIdx]);
 
 						transform = &cubeData.transform;
@@ -1089,7 +1089,7 @@ namespace bs
 					{
 						SphereData& sphereData = mWireSphereData[shapeData.idx];
 
-						Sphere sphere(sphereData.position, sphereData.radius);
+						Sphere Sphere(sphereData.position, sphereData.radius);
 						ShapeMeshes3D::wireSphere(sphere, meshData[typeIdx], vertexOffset[typeIdx], indexOffset[typeIdx],
 							sphereData.quality);
 
@@ -1101,7 +1101,7 @@ namespace bs
 					{
 						SphereData& sphereData = mWireHemisphereData[shapeData.idx];
 
-						Sphere sphere(sphereData.position, sphereData.radius);
+						Sphere Sphere(sphereData.position, sphereData.radius);
 						ShapeMeshes3D::wireHemisphere(sphere, meshData[typeIdx], vertexOffset[typeIdx], indexOffset[typeIdx],
 							sphereData.quality);
 
@@ -1243,7 +1243,7 @@ namespace bs
 
 					for (UINT32 j = 0; j < shapeData.numVertices; j++)
 					{
-						Vector3 vertexPos(screenPos.x + tempVertices[j].x, screenPos.y + tempVertices[j].y, z);
+						Vector3 VertexPos(screenPos.x + tempVertices[j].x, screenPos.y + tempVertices[j].y, z);
 
 						positionIter[typeIdx].addValue(vertexPos);
 						textUVIter.addValue(tempUVs[j]);

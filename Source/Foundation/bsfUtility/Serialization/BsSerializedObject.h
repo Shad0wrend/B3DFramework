@@ -26,7 +26,7 @@ namespace bs
 		 *							same instances of data. The original will retain data ownership and it will go out of
 		 *							scope when the original does.
 		 */
-		virtual SPtr<SerializedInstance> clone(bool cloneData = true) = 0;
+		virtual SPtr<SerializedInstance> Clone(bool cloneData = true) = 0;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -92,10 +92,10 @@ namespace bs
 	struct BS_UTILITY_EXPORT SerializedObject : SerializedInstance
 	{
 		/** Returns the RTTI type ID for the most-derived class of this object. */
-		UINT32 getRootTypeId() const;
+		UINT32 GetRootTypeId() const;
 
 		/** @copydoc SerializedInstance::clone */
-		SPtr<SerializedInstance> clone(bool cloneData = true) override;
+		SPtr<SerializedInstance> Clone(bool cloneData = true) override;
 
 		/**
 		 * Decodes the serialized object back into its original IReflectable object form.
@@ -105,7 +105,7 @@ namespace bs
 		 *								maintaining state or sharing information between objects during
 		 *								serialization.
 		 */
-		SPtr<IReflectable> decode(SerializationContext* context = nullptr) const;
+		SPtr<IReflectable> Decode(SerializationContext* context = nullptr) const;
 
 		/**
 		 * Serializes the provided object and returns its SerializedObject representation.
@@ -144,7 +144,7 @@ namespace bs
 		}
 
 		/** @copydoc SerializedInstance::clone */
-		SPtr<SerializedInstance> clone(bool cloneData = true) override;
+		SPtr<SerializedInstance> Clone(bool cloneData = true) override;
 
 		UINT8* value = nullptr;
 		UINT32 size = 0;
@@ -165,7 +165,7 @@ namespace bs
 		SerializedDataBlock() = default;
 
 		/** @copydoc SerializedInstance::clone */
-		SPtr<SerializedInstance> clone(bool cloneData = true) override;
+		SPtr<SerializedInstance> Clone(bool cloneData = true) override;
 
 		SPtr<DataStream> stream;
 		UINT32 offset = 0;
@@ -203,7 +203,7 @@ namespace bs
 		SerializedArray() = default;
 
 		/** @copydoc SerializedInstance::clone */
-		SPtr<SerializedInstance> clone(bool cloneData = true) override;
+		SPtr<SerializedInstance> Clone(bool cloneData = true) override;
 
 		UnorderedMap<UINT32, SerializedArrayEntry> entries;
 		UINT32 numElements = 0;

@@ -30,31 +30,31 @@ namespace bs
 		 * 			
 		 * @note	Field type must not be an array.
 		 */
-		virtual IReflectable& getValue(RTTITypeBase* rtti, void* object) = 0;
+		virtual IReflectable& GetValue(RTTITypeBase* rtti, void* object) = 0;
 
 		/**
 		 * Retrieves the IReflectable value from an array on the provided instance and index.
 		 * 			
 		 * @note	Field type must be an array.
 		 */
-		virtual IReflectable& getArrayValue(RTTITypeBase* rtti, void* object, UINT32 index) = 0;
+		virtual IReflectable& GetArrayValue(RTTITypeBase* rtti, void* object, UINT32 index) = 0;
 
 		/**
 		 * Sets the IReflectable value in the provided instance.
 		 * 			
 		 * @note	Field type must not be an array.
 		 */
-		virtual void setValue(RTTITypeBase* rtti, void* object, IReflectable& value) = 0;
+		virtual void SetValue(RTTITypeBase* rtti, void* object, IReflectable& value) = 0;
 
 		/**
 		 * Sets the IReflectable value in an array on the provided instance and index.
 		 * 			
 		 * @note	Field type must be an array.
 		 */
-		virtual void setArrayValue(RTTITypeBase* rtti, void* object, UINT32 index, IReflectable& value) = 0;
+		virtual void SetArrayValue(RTTITypeBase* rtti, void* object, UINT32 index, IReflectable& value) = 0;
 
 		/** Creates a new object of the field type. */
-		virtual SPtr<IReflectable> newObject() = 0;
+		virtual SPtr<IReflectable> NewObject() = 0;
 
 		/** Retrieves the RTTI object for the type the field contains. */
 		virtual RTTITypeBase* getType() = 0;
@@ -70,7 +70,7 @@ namespace bs
 		typedef DataType& (InterfaceType::*ArrayGetterType)(ObjectType*, UINT32);
 		typedef void (InterfaceType::*ArraySetterType)(ObjectType*, UINT32, DataType&);
 		typedef UINT32(InterfaceType::*ArrayGetSizeType)(ObjectType*);
-		typedef void(InterfaceType::*ArraySetSizeType)(ObjectType*, UINT32);
+		typedef Void(InterfaceType::*ArraySetSizeType)(ObjectType*, UINT32);
 
 		/**
 		 * Initializes a field containing a single data type implementing IReflectable interface.
@@ -83,7 +83,7 @@ namespace bs
 		 * @param[in]	setter  	The setter method for the field.
 		 * @param[in]	info		Various optional information about the field.
 		 */
-		void initSingle(String name, UINT16 uniqueId, GetterType getter, SetterType setter, const RTTIFieldInfo& info)
+		void InitSingle(String name, UINT16 uniqueId, GetterType getter, SetterType setter, const RTTIFieldInfo& info)
 		{
 			this->getter = getter;
 			this->setter = setter;
@@ -120,7 +120,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIField::initSchema */
-		void initSchema() override
+		void InitSchema() override
 		{
 			// This need to be initialized after the field itself, otherwise we get recursive static constructor
 			// calls due to one type calling getRTTIStatic() on one another
@@ -129,7 +129,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIReflectableFieldBase::getValue */
-		IReflectable& getValue(RTTITypeBase* rtti, void* object) override
+		IReflectable& GetValue(RTTITypeBase* rtti, void* object) override
 		{
 			checkIsArray(false);
 
@@ -141,7 +141,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIReflectableFieldBase::getArrayValue */
-		IReflectable& getArrayValue(RTTITypeBase* rtti, void* object, UINT32 index) override
+		IReflectable& GetArrayValue(RTTITypeBase* rtti, void* object, UINT32 index) override
 		{
 			checkIsArray(true);
 
@@ -153,7 +153,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIReflectableFieldBase::setValue */
-		void setValue(RTTITypeBase* rtti, void* object, IReflectable& value) override
+		void SetValue(RTTITypeBase* rtti, void* object, IReflectable& value) override
 		{
 			checkIsArray(false);
 
@@ -171,7 +171,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIReflectableFieldBase::setArrayValue */
-		void setArrayValue(RTTITypeBase* rtti, void* object, UINT32 index, IReflectable& value) override
+		void SetArrayValue(RTTITypeBase* rtti, void* object, UINT32 index, IReflectable& value) override
 		{
 			checkIsArray(true);
 
@@ -189,7 +189,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIField::getArraySize */
-		UINT32 getArraySize(RTTITypeBase* rtti, void* object) override
+		UINT32 GetArraySize(RTTITypeBase* rtti, void* object) override
 		{
 			checkIsArray(true);
 
@@ -200,7 +200,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIField::setArraySize */
-		void setArraySize(RTTITypeBase* rtti, void* object, UINT32 size) override
+		void SetArraySize(RTTITypeBase* rtti, void* object, UINT32 size) override
 		{
 			checkIsArray(true);
 
@@ -217,7 +217,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIReflectableFieldBase::newObject */
-		SPtr<IReflectable> newObject() override
+		SPtr<IReflectable> NewObject() override
 		{
 			return DataType::getRTTIStatic()->newRTTIObject();
 		}

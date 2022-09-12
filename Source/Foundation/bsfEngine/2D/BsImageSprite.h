@@ -59,17 +59,17 @@ namespace bs
 		 *						example you don't want the sprites to share the same material if they use different world
 		 *						transform matrices).
 		 */
-		void update(const IMAGE_SPRITE_DESC& desc, UINT64 groupId);
+		void Update(const IMAGE_SPRITE_DESC& desc, UINT64 groupId);
 
 		/**
 		 * Calculates the required UV scale in order for a texture of size @p sourceSize to be placed on the surface
 		 * of @p destSize size, while respecting the chosen scale mode.
 		 */
-		static Vector2 getTextureUVScale(Vector2I sourceSize, Vector2I destSize, TextureScaleMode scaleMode);
+		static Vector2 GetTextureUVScale(Vector2I sourceSize, Vector2I destSize, TextureScaleMode scaleMode);
 
 	private:
 		/**	Clears internal geometry buffers. */
-		void clearMesh();
+		void ClearMesh();
 	};
 
 	/** @} */

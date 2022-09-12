@@ -23,7 +23,7 @@ namespace bs { namespace ct
 
 	protected:
 		/** @copydoc IndexBuffer::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 		D3D11Device& mDevice;
 	};

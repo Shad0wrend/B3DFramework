@@ -17,18 +17,18 @@ namespace bs
 	class FNullPhysicsMeshRTTI : public RTTIType<FNullPhysicsMesh, FPhysicsMesh, FNullPhysicsMeshRTTI>
 	{
 	public:
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "FNullPhysicsMesh";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_FNullPhysicsMesh;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			return bs_shared_ptr_new<FNullPhysicsMesh>();
 		}

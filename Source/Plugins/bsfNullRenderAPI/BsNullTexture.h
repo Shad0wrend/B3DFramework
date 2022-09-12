@@ -17,11 +17,11 @@ namespace bs
 	{
 	public:
 		/** @copydoc TextureManager::getNativeFormat */
-		PixelFormat getNativeFormat(TextureType ttype, PixelFormat format, int usage, bool hwGamma) override;
+		PixelFormat GetNativeFormat(TextureType ttype, PixelFormat format, int usage, bool hwGamma) override;
 
 	protected:		
 		/** @copydoc TextureManager::createRenderTextureImpl */
-		SPtr<RenderTexture> createRenderTextureImpl(const RENDER_TEXTURE_DESC& desc) override;
+		SPtr<RenderTexture> CreateRenderTextureImpl(const RENDER_TEXTURE_DESC& desc) override;
 	};
 
 	namespace ct
@@ -52,7 +52,7 @@ namespace bs
 				UINT32 queueIdx = 0) override;
 
 			/** @copydoc Texture::unlockImpl */
-			void unlockImpl() override;
+			void UnlockImpl() override;
 
 			/** @copydoc Texture::copyImpl */
 			void copyImpl(const SPtr<Texture>& target, const TEXTURE_COPY_DESC& desc,

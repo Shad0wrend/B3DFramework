@@ -374,7 +374,7 @@ namespace bs
 	Vector<bool> BuiltinResourcesHelper::generateImportFlags(const nlohmann::json& entries, const Path& inputFolder,
 		time_t lastUpdateTime, bool forceImport, const nlohmann::json* dependencies, const Path& dependencyFolder)
 	{
-		Vector<bool> output(entries.size());
+		Vector<bool> Output(entries.size());
 		UINT32 idx = 0;
 		for (auto& entry : entries)
 		{
@@ -887,7 +887,7 @@ namespace bs
 		Path texturePath = mTexturePath;
 		texturePath.append(u8"sprite_" + name + u8".asset");
 
-		return gResources().load<SpriteTexture>(texturePath);
+		return GResources().load<SpriteTexture>(texturePath);
 	}
 
 	HFont BuiltinResourceGUIElementStyleLoader::loadFont(const String& name) const
@@ -895,6 +895,6 @@ namespace bs
 		Path fontPath = mFontPath;
 		fontPath.append(name + u8".asset");
 
-		return gResources().load<Font>(fontPath);
+		return GResources().load<Font>(fontPath);
 	}
 }

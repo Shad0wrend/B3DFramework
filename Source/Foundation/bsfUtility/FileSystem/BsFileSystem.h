@@ -20,7 +20,7 @@ namespace bs
 		 * @param[in]	fullPath	Full path to a file.
 		 * @param[in]	readOnly	(optional) If true, returned stream will only be readable.
 		 */
-		static SPtr<DataStream> openFile(const Path& fullPath, bool readOnly = true);
+		static SPtr<DataStream> OpenFile(const Path& fullPath, bool readOnly = true);
 
 		/**
 		 * Opens a file and returns a data stream capable of reading and writing to that file. If file doesn't exist new
@@ -28,14 +28,14 @@ namespace bs
 		 *
 		 * @param[in]	fullPath	Full path to a file.
 		 */
-		static SPtr<DataStream> createAndOpenFile(const Path& fullPath);
+		static SPtr<DataStream> CreateAndOpenFile(const Path& fullPath);
 
 		/**
 		 * Returns the size of a file in bytes.
 		 *
 		 * @param[in]	fullPath	Full path to a file.
 		 */
-		static UINT64 getFileSize(const Path& fullPath);
+		static UINT64 GetFileSize(const Path& fullPath);
 
 		/**
 		 * Deletes a file or a folder at the specified path.
@@ -44,7 +44,7 @@ namespace bs
 		 * @param[in]	recursively	(optional) If true, folders will have their contents deleted as well. Otherwise an
 		 *							exception will be thrown for non-empty folders.
 		 */
-		static void remove(const Path& fullPath, bool recursively = true);
+		static void Remove(const Path& fullPath, bool recursively = true);
 
 		/**
 		 * Moves a file or a folder from one to another path. This can also be used as a rename operation.
@@ -54,7 +54,7 @@ namespace bs
 		 * @param[in]	overwriteExisting	(optional) If true, any existing file/folder at the new location will be
 		 *									overwritten, otherwise an exception will be thrown if a file/folder already exists.
 		 */
-		static void move(const Path& oldPath, const Path& newPath, bool overwriteExisting = true);
+		static void Move(const Path& oldPath, const Path& newPath, bool overwriteExisting = true);
 
 		/**
 		 * Makes a copy of a file or a folder in the specified path.
@@ -64,35 +64,35 @@ namespace bs
 		 * @param[in]	overwriteExisting	(optional) If true, any existing file/folder at the new location will be
 		 *									overwritten, otherwise an exception will be thrown if a file/folder already exists.
 		 */
-		static void copy(const Path& oldPath, const Path& newPath, bool overwriteExisting = true);
+		static void Copy(const Path& oldPath, const Path& newPath, bool overwriteExisting = true);
 
 		/**
 		 * Creates a folder at the specified path.
 		 *
 		 * @param[in]	fullPath	Full path to a full folder to create.
 		 */
-		static void createDir(const Path& fullPath);
+		static void CreateDir(const Path& fullPath);
 
 		/**
 		 * Returns true if a file or a folder exists at the specified path.
 		 *
 		 * @param[in]	fullPath	Full path to a file or folder.
 		 */
-		static bool exists(const Path& fullPath);
+		static bool Exists(const Path& fullPath);
 
 		/**
 		 * Returns true if a file exists at the specified path.
 		 *
 		 * @param[in]	fullPath	Full path to a file or folder.
 		 */
-		static bool isFile(const Path& fullPath);
+		static bool IsFile(const Path& fullPath);
 
 		/**
 		 * Returns true if a folder exists at the specified path.
 		 *
 		 * @param[in]	fullPath	Full path to a file or folder.
 		 */
-		static bool isDirectory(const Path& fullPath);
+		static bool IsDirectory(const Path& fullPath);
 
 		/**
 		 * Returns all files or folders located in the specified folder.
@@ -101,7 +101,7 @@ namespace bs
 		 * @param[out]	files	   		Full paths to all files located directly in specified folder.
 		 * @param[out]	directories		Full paths to all folders located directly in specified folder.
 		 */
-		static void getChildren(const Path& dirPath, Vector<Path>& files, Vector<Path>& directories);
+		static void GetChildren(const Path& dirPath, Vector<Path>& files, Vector<Path>& directories);
 
 		/**
 		 * Iterates over all files and directories in the specified folder and calls the provided callback when a
@@ -115,7 +115,7 @@ namespace bs
 		 * @return						True if iteration finished iterating over all files/folders, or false if it was
 		 *								interrupted by a callback returning false.
 		 */
-		static bool iterate(const Path& dirPath, std::function<bool(const Path&)> fileCallback,
+		static bool Iterate(const Path& dirPath, std::function<bool(const Path&)> fileCallback,
 			std::function<bool(const Path&)> dirCallback = nullptr, bool recursive = true);
 
 		/**
@@ -123,21 +123,21 @@ namespace bs
 		 *
 		 * @param[in]	fullPath	Full path to a file or a folder.
 		 */
-		static std::time_t getLastModifiedTime(const Path& fullPath);
+		static std::time_t GetLastModifiedTime(const Path& fullPath);
 
 		/** Returns the path to the currently working directory. */
-		static Path getWorkingDirectoryPath();
+		static Path GetWorkingDirectoryPath();
 
 		/** Returns the path to a directory where temporary files may be stored. */
-		static Path getTempDirectoryPath();
+		static Path GetTempDirectoryPath();
 
 	private:
 		/** Copy a single file. Internal function used by copy(). */
-		static void copyFile(const Path& oldPath, const Path& newPath);
+		static void CopyFile(const Path& oldPath, const Path& newPath);
 		/** Remove a single file. Internal function used by remove(). */
-		static void removeFile(const Path& path);
+		static void RemoveFile(const Path& path);
 		/** Move a single file. Internal function used by move(). */
-		static void moveFile(const Path& oldPath, const Path& newPath);
+		static void MoveFile(const Path& oldPath, const Path& newPath);
 	};
 
 	/**
@@ -151,7 +151,7 @@ namespace bs
 		 * Locks access and doesn't allow other threads to get past this point until access is unlocked. Any scheduled
 		 * file access should happen past this point.
 		 */
-		static void lock(const Path& path)
+		static void Lock(const Path& path)
 		{
 			// Note: File path should be analyzed and determined on which drive does the path belong to. Locks can then
 			// be issued on a per-drive basis, instead of having one global lock. This would allow multiple files to be
@@ -163,7 +163,7 @@ namespace bs
 		 * Unlocks access and allows another thread to lock file access. Must be provided with the same file path as
 		 * lock().
 		 */
-		static void unlock(const Path& path)
+		static void Unlock(const Path& path)
 		{
 			mMutex.unlock();
 		}
@@ -172,7 +172,7 @@ namespace bs
 		 * Returns a lock object that immediately locks access (same as lock()), and then calls unlock() when it goes
 		 * out of scope.
 		 */
-		static Lock getLock(const Path& path)
+		static Lock GetLock(const Path& path)
 		{
 			return Lock(mMutex);
 		}

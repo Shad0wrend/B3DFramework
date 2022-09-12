@@ -7,7 +7,7 @@
 
 namespace bs
 {
-	void checkValidDesc(const VERTEX_BUFFER_DESC& desc)
+	void CheckValidDesc(const VERTEX_BUFFER_DESC& desc)
 	{
 		if(desc.vertexSize == 0)
 			BS_EXCEPT(InvalidParametersException, "Vertex buffer vertex size is not allowed to be zero.");
@@ -21,7 +21,7 @@ namespace bs
 	{ }
 
 	VertexBuffer::VertexBuffer(const VERTEX_BUFFER_DESC& desc)
-		: mProperties(desc.numVerts, desc.vertexSize), mUsage(desc.usage), mStreamOut(desc.streamOut)
+		: MProperties(desc.numVerts, desc.vertexSize), mUsage(desc.usage), mStreamOut(desc.streamOut)
 	{
 #if BS_DEBUG_MODE
 		checkValidDesc(desc);

@@ -21,17 +21,17 @@ namespace bs
 
 	Vector2I GUIInputCaret::getSpriteOffset() const
 	{
-		return getCaretPosition(getTextOffset());
+		return GetCaretPosition(getTextOffset());
 	}
 
 	Rect2I GUIInputCaret::getSpriteClipRect(const Rect2I& parentClipRect) const
 	{
-		Vector2I offset(mElement->_getLayoutData().area.x, mElement->_getLayoutData().area.y);
+		Vector2I Offset(mElement->_getLayoutData().area.x, mElement->_getLayoutData().area.y);
 
 		Vector2I clipOffset = getSpriteOffset() - offset -
 			Vector2I(mElement->_getTextInputRect().x, mElement->_getTextInputRect().y);
 
-		Rect2I clipRect(-clipOffset.x, -clipOffset.y, mTextDesc.width, mTextDesc.height);
+		Rect2I ClipRect(-clipOffset.x, -clipOffset.y, mTextDesc.width, mTextDesc.height);
 
 		Rect2I localParentCliprect = parentClipRect;
 
@@ -227,7 +227,7 @@ namespace bs
 
 	UINT32 GUIInputCaret::getCharIdxAtCaretPos() const
 	{
-		return getCharIdxAtInputIdx(mCaretPos);
+		return GetCharIdxAtInputIdx(mCaretPos);
 	}
 
 	Vector2I GUIInputCaret::getCaretPosition(const Vector2I& offset) const
@@ -275,7 +275,7 @@ namespace bs
 		if(charIdx < mNumChars && isDescValid())
 		{
 			UINT32 lineIdx = getLineForChar(charIdx);
-			return getLineDesc(lineIdx).getLineHeight();
+			return GetLineDesc(lineIdx).getLineHeight();
 		}
 		else
 		{
@@ -294,7 +294,7 @@ namespace bs
 
 	bool GUIInputCaret::isCaretAtNewline() const
 	{
-		return isNewline(mCaretPos);
+		return IsNewline(mCaretPos);
 	}
 
 	UINT32 GUIInputCaret::getMaxCaretPos() const

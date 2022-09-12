@@ -27,32 +27,32 @@ namespace bs
 	template<class Type>
 	struct TransposePolicy
 	{
-		static Type transpose(const Type& value) { return value; }
-		static bool transposeEnabled(bool enabled) { return false; }
+		static Type Transpose(const Type& value) { return value; }
+		static bool TransposeEnabled(bool enabled) { return false; }
 	};
 
 	/** Transpose policy for 3x3 matrix. */
 	template<>
 	struct TransposePolicy<Matrix3>
 	{
-		static Matrix3 transpose(const Matrix3& value) { return value.transpose(); }
-		static bool transposeEnabled(bool enabled) { return enabled; }
+		static Matrix3 Transpose(const Matrix3& value) { return value.transpose(); }
+		static bool TransposeEnabled(bool enabled) { return enabled; }
 	};
 
 	/**	Transpose policy for 4x4 matrix. */
 	template<>
 	struct TransposePolicy<Matrix4>
 	{
-		static Matrix4 transpose(const Matrix4& value) { return value.transpose(); }
-		static bool transposeEnabled(bool enabled) { return enabled; }
+		static Matrix4 Transpose(const Matrix4& value) { return value.transpose(); }
+		static bool TransposeEnabled(bool enabled) { return enabled; }
 	};
 
 	/**	Transpose policy for NxM matrix. */
 	template<int N, int M>
 	struct TransposePolicy<MatrixNxM<N, M>>
 	{
-		static MatrixNxM<M, N> transpose(const MatrixNxM<N, M>& value) { return value.transpose(); }
-		static bool transposeEnabled(bool enabled) { return enabled; }
+		static MatrixNxM<M, N> Transpose(const MatrixNxM<N, M>& value) { return value.transpose(); }
+		static bool TransposeEnabled(bool enabled) { return enabled; }
 	};
 
 	/**
@@ -89,7 +89,7 @@ namespace bs
 		 * Like with all GPU parameters, the actual GPU buffer will not be updated until rendering with material this
 		 * parameter was created from starts on the core thread.
 		 */
-		void set(const T& value, UINT32 arrayIdx = 0) const;
+		void Set(const T& value, UINT32 arrayIdx = 0) const;
 
 		/**
 		 * Returns a value of a parameter at the specified array index. If parameter does not contain an array leave the
@@ -97,10 +97,10 @@ namespace bs
 		 *
 		 * @note	No GPU reads are done. Data returned was cached when it was written.
 		 */
-		T get(UINT32 arrayIdx = 0) const;
+		T Get(UINT32 arrayIdx = 0) const;
 
 		/** Returns meta-data about the parameter. */
-		const GpuParamDataDesc& getDesc() const { return *mParamDesc; }
+		const GpuParamDataDesc& GetDesc() const { return *mParamDesc; }
 
 		/** Checks if param is initialized. */
 		bool operator==(const std::nullptr_t& nullval) const
@@ -125,16 +125,16 @@ namespace bs
 		TGpuParamStruct(GpuParamDataDesc* paramDesc, const GpuParamsType& parent);
 
 		/** @copydoc TGpuDataParam::set */
-		void set(const void* value, UINT32 sizeBytes, UINT32 arrayIdx = 0) const;
+		void Set(const void* value, UINT32 sizeBytes, UINT32 arrayIdx = 0) const;
 
 		/** @copydoc TGpuDataParam::get */
-		void get(void* value, UINT32 sizeBytes, UINT32 arrayIdx = 0) const;
+		void Get(void* value, UINT32 sizeBytes, UINT32 arrayIdx = 0) const;
 
 		/**	Returns the size of the struct in bytes. */
-		UINT32 getElementSize() const;
+		UINT32 GetElementSize() const;
 
 		/** Returns meta-data about the parameter. */
-		const GpuParamDataDesc& getDesc() const { return *mParamDesc; }
+		const GpuParamDataDesc& GetDesc() const { return *mParamDesc; }
 
 		/**	Checks if param is initialized. */
 		bool operator==(const std::nullptr_t& nullval) const
@@ -163,13 +163,13 @@ namespace bs
 		TGpuParamTexture(GpuParamObjectDesc* paramDesc, const GpuParamsType& parent);
 
 		/** @copydoc TGpuDataParam::set */
-		void set(const TextureType& texture, const TextureSurface& surface = TextureSurface::COMPLETE) const;
+		void Set(const TextureType& texture, const TextureSurface& surface = TextureSurface::COMPLETE) const;
 
 		/** @copydoc TGpuDataParam::get */
-		TextureType get() const;
+		TextureType Get() const;
 
 		/** @copydoc TGpuDataParam::getDesc */
-		const GpuParamObjectDesc& getDesc() const { return *mParamDesc; }
+		const GpuParamObjectDesc& GetDesc() const { return *mParamDesc; }
 
 		/** Checks if param is initialized. */
 		bool operator==(const std::nullptr_t& nullval) const
@@ -198,13 +198,13 @@ namespace bs
 		TGpuParamLoadStoreTexture(GpuParamObjectDesc* paramDesc, const GpuParamsType& parent);
 
 		/** @copydoc TGpuDataParam::set */
-		void set(const TextureType& texture, const TextureSurface& surface = TextureSurface()) const;
+		void Set(const TextureType& texture, const TextureSurface& surface = TextureSurface()) const;
 
 		/** @copydoc TGpuDataParam::get */
-		TextureType get() const;
+		TextureType Get() const;
 
 		/** @copydoc TGpuDataParam::getDesc */
-		const GpuParamObjectDesc& getDesc() const { return *mParamDesc; }
+		const GpuParamObjectDesc& GetDesc() const { return *mParamDesc; }
 
 		/**	Checks if param is initialized. */
 		bool operator==(const std::nullptr_t& nullval) const
@@ -233,13 +233,13 @@ namespace bs
 		TGpuParamBuffer(GpuParamObjectDesc* paramDesc, const GpuParamsType& parent);
 
 		/** @copydoc TGpuDataParam::set */
-		void set(const BufferType& buffer) const;
+		void Set(const BufferType& buffer) const;
 
 		/** @copydoc TGpuDataParam::get */
-		BufferType get() const;
+		BufferType Get() const;
 
 		/** @copydoc TGpuDataParam::getDesc */
-		const GpuParamObjectDesc& getDesc() const { return *mParamDesc; }
+		const GpuParamObjectDesc& GetDesc() const { return *mParamDesc; }
 
 		/** Checks if param is initialized. */
 		bool operator==(const std::nullptr_t& nullval) const
@@ -268,13 +268,13 @@ namespace bs
 		TGpuParamSampState(GpuParamObjectDesc* paramDesc, const GpuParamsType& parent);
 
 		/** @copydoc TGpuDataParam::set */
-		void set(const SamplerStateType& samplerState) const;
+		void Set(const SamplerStateType& samplerState) const;
 
 		/** @copydoc TGpuDataParam::get */
-		SamplerStateType get() const;
+		SamplerStateType Get() const;
 
 		/** @copydoc TGpuDataParam::getDesc */
-		const GpuParamObjectDesc& getDesc() const { return *mParamDesc; }
+		const GpuParamObjectDesc& GetDesc() const { return *mParamDesc; }
 
 		/**	Checks if param is initialized. */
 		bool operator==(const std::nullptr_t& nullval) const

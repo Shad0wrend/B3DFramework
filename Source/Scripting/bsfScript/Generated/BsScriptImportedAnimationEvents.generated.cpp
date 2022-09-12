@@ -81,7 +81,7 @@ namespace bs
 		Vector<AnimationEvent> vecvalue;
 		if(value != nullptr)
 		{
-			ScriptArray arrayvalue(value);
+			ScriptArray Arrayvalue(value);
 			vecvalue.resize(arrayvalue.size());
 			for(int i = 0; i < (int)arrayvalue.size(); i++)
 			{

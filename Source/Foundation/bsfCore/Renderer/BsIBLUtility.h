@@ -24,7 +24,7 @@ namespace bs { namespace ct
 		 * @param[in]		scratch		Temporary cubemap texture to use for the filtering process. Must match the size of
 		 *								the source cubemap. Provide null to automatically create a scratch cubemap.
 		 */
-		virtual void filterCubemapForSpecular(const SPtr<Texture>& cubemap, const SPtr<Texture>& scratch) const = 0;
+		virtual void FilterCubemapForSpecular(const SPtr<Texture>& cubemap, const SPtr<Texture>& scratch) const = 0;
 
 		/**
 		 * Performs filtering on the cubemap, populating the output cubemap with values that can be used for evaluating
@@ -34,7 +34,7 @@ namespace bs { namespace ct
 		 * @param[in]		cubemap		Cubemap to filter. Its mip level 0 will be used as source.
 		 * @param[in]		output		Output cubemap to store the irradiance data in.
 		 */
-		virtual void filterCubemapForIrradiance(const SPtr<Texture>& cubemap, const SPtr<Texture>& output) const = 0;
+		virtual void FilterCubemapForIrradiance(const SPtr<Texture>& cubemap, const SPtr<Texture>& output) const = 0;
 
 		/**
 		 * Performs filtering on the cubemap, populating the output texture with values that can be used for evaluating
@@ -58,23 +58,23 @@ namespace bs { namespace ct
 		 * @param[in]   dst				Desination texture to output the scaled data to. Must be usable as a render target.
 		 * @param[in]   dstMip			Determines which mip level of the destination texture to scale.
 		 */
-		virtual void scaleCubemap(const SPtr<Texture>& src, UINT32 srcMip, const SPtr<Texture>& dst, UINT32 dstMip) const = 0;
+		virtual void ScaleCubemap(const SPtr<Texture>& src, UINT32 srcMip, const SPtr<Texture>& dst, UINT32 dstMip) const = 0;
 
 
 		/** Returns the size of the texture required to store the provided number of SH coefficient sets. */
-		static Vector2I getSHCoeffTextureSize(UINT32 numCoeffSets, UINT32 shOrder);
+		static Vector2I GetSHCoeffTextureSize(UINT32 numCoeffSets, UINT32 shOrder);
 		
 		/**
 		 * Determines the position of a set of coefficients in the coefficient texture, depending on the coefficient index.
 		 */
-		static Vector2I getSHCoeffXYFromIdx(UINT32 idx, UINT32 shOrder);
+		static Vector2I GetSHCoeffXYFromIdx(UINT32 idx, UINT32 shOrder);
 
 		static const UINT32 REFLECTION_CUBEMAP_SIZE;
 		static const UINT32 IRRADIANCE_CUBEMAP_SIZE;
 	};
 
 	/**	Provides easy access to IBLUtility. */
-	BS_CORE_EXPORT const IBLUtility& gIBLUtility();
+	BS_CORE_EXPORT const IBLUtility& GIBLUtility();
 
 	/** @} */
 }}

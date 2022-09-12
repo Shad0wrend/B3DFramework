@@ -23,9 +23,9 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "ContactPoint")
 
 		static MonoObject* box(const __ContactPointInterop& value);
-		static __ContactPointInterop unbox(MonoObject* value);
-		static ContactPoint fromInterop(const __ContactPointInterop& value);
-		static __ContactPointInterop toInterop(const ContactPoint& value);
+		static __ContactPointInterop Unbox(MonoObject* value);
+		static ContactPoint FromInterop(const __ContactPointInterop& value);
+		static __ContactPointInterop ToInterop(const ContactPoint& value);
 
 	private:
 		ScriptContactPoint(MonoObject* managedInstance);

@@ -152,7 +152,7 @@ namespace bs
 		UINT32 size = csync_size(*this);
 		UINT8* data = allocator->alloc(size);
 
-		Bitstream stream(data, size);
+		Bitstream Stream(data, size);
 		csync_write(*this, stream);
 
 		return CoreSyncData(data, size);
@@ -203,7 +203,7 @@ namespace bs
 
 	void Pass::syncToCore(const CoreSyncData& data)
 	{
-		Bitstream stream(data.getBuffer(), data.getBufferSize());
+		Bitstream Stream(data.getBuffer(), data.getBufferSize());
 		csync_read(*this, stream);
 	}
 

@@ -62,7 +62,7 @@ namespace bs
 		 * @param[in]	name	Name of the scene object.
 		 * @param[in]	flags	Optional flags that control object behavior. See SceneObjectFlags.
 		 */
-		static HSceneObject create(const String& name, UINT32 flags = 0);
+		static HSceneObject Create(const String& name, UINT32 flags = 0);
 
 		/**
 		 * Destroys this object and any of its held components.
@@ -70,10 +70,10 @@ namespace bs
 		 * @param[in]	immediate	If true, the object will be deallocated and become unusable right away. Otherwise the
 		 *							deallocation will be delayed to the end of frame (preferred method).
 		 */
-		void destroy(bool immediate = false);
+		void Destroy(bool immediate = false);
 
 		/**	Returns a handle to this object. */
-		HSceneObject getHandle() const { return mThisHandle; }
+		HSceneObject GetHandle() const { return mThisHandle; }
 
 		/**
 		 * Returns the UUID of the prefab this object is linked to, if any.
@@ -81,22 +81,22 @@ namespace bs
 		 * @param[in]	onlyDirect	If true, this method will return prefab link only for the root object of the prefab
 		 *							instance. If false the parent objects will be searched for the prefab ID.
 		 */
-		UUID getPrefabLink(bool onlyDirect = false) const;
+		UUID GetPrefabLink(bool onlyDirect = false) const;
 
 		/**
 		 * Returns the root object of the prefab instance that this object belongs to, if any. Returns null if the object
 		 * is not part of a prefab instance.
 		 */
-		HSceneObject getPrefabParent() const;
+		HSceneObject GetPrefabParent() const;
 
 		/**
 		 * Breaks the link between this prefab instance and its prefab. Object will retain all current values but will no
 		 * longer be influenced by modifications to its parent prefab.
 		 */
-		void breakPrefabLink();
+		void BreakPrefabLink();
 
 		/**	Checks if the scene object has a specific bit flag set. */
-		bool hasFlag(UINT32 flag) const;
+		bool HasFlag(UINT32 flag) const;
 
 	public: // ***** INTERNAL ******
 		/** @name Internal
@@ -160,7 +160,7 @@ namespace bs
 		 * When creating objects with DontInstantiate flag it is the callers responsibility to manually destroy the object,
 		 * otherwise it will leak.
 		 */
-		static HSceneObject createInternal(const String& name, UINT32 flags = 0);
+		static HSceneObject CreateInternal(const String& name, UINT32 flags = 0);
 
 		/**
 		 * Creates a new SceneObject instance from an existing pointer, registers it with the game object manager, creates
@@ -168,7 +168,7 @@ namespace bs
 		 *			
 		 * @param[in]	soPtr		Pointer to the scene object register and return a handle to.
 		 */
-		static HSceneObject createInternal(const SPtr<SceneObject>& soPtr);
+		static HSceneObject CreateInternal(const SPtr<SceneObject>& soPtr);
 
 		/**
 		 * Destroys this object and any of its held components.
@@ -179,10 +179,10 @@ namespace bs
 		 *
 		 * @note	Unlike destroy(), does not remove the object from its parent.
 		 */
-		void destroyInternal(GameObjectHandleBase& handle, bool immediate = false) override;
+		void DestroyInternal(GameObjectHandleBase& handle, bool immediate = false) override;
 
 		/**	Checks is the scene object instantiated and visible in the scene. */
-		bool isInstantiated() const { return (mFlags & SOF_DontInstantiate) == 0; }
+		bool IsInstantiated() const { return (mFlags & SOF_DontInstantiate) == 0; }
 
 	private:
 		HSceneObject mThisHandle;
@@ -196,61 +196,61 @@ namespace bs
 		/************************************************************************/
 	public:
 		/** Gets the transform object representing object's position/rotation/scale in world space. */
-		const Transform& getTransform() const;
+		const Transform& GetTransform() const;
 
 		/** Gets the transform object representing object's position/rotation/scale relative to its parent. */
-		const Transform& getLocalTransform() const { return mLocalTfrm; }
+		const Transform& GetLocalTransform() const { return mLocalTfrm; }
 
 		/**	Sets the local position of the object. */
-		void setPosition(const Vector3& position);
+		void SetPosition(const Vector3& position);
 
 		/**	Sets the world position of the object. */
-		void setWorldPosition(const Vector3& position);
+		void SetWorldPosition(const Vector3& position);
 
 		/**	Sets the local rotation of the object. */
-		void setRotation(const Quaternion& rotation);
+		void SetRotation(const Quaternion& rotation);
 
 		/**	Sets the world rotation of the object. */
-		void setWorldRotation(const Quaternion& rotation);
+		void SetWorldRotation(const Quaternion& rotation);
 
 		/**	Sets the local scale of the object. */
-		void setScale(const Vector3& scale);
+		void SetScale(const Vector3& scale);
 
 		/**
 		 * Sets the world scale of the object.
 		 *
 		 * @note	This will not work properly if this object or any of its parents have non-affine transform matrices.
 		 */
-		void setWorldScale(const Vector3& scale);
+		void SetWorldScale(const Vector3& scale);
 
 		/**
 		 * Orients the object so it is looking at the provided @p location (world space) where @p up is used for
 		 * determining the location of the object's Y axis.
 		 */
-		void lookAt(const Vector3& location, const Vector3& up = Vector3::UNIT_Y);
+		void LookAt(const Vector3& location, const Vector3& up = Vector3::UNIT_Y);
 
 		/**
 		 * Gets the objects world transform matrix.
 		 *
 		 * @note	Performance warning: This might involve updating the transforms if the transform is dirty.
 		 */
-		const Matrix4& getWorldMatrix() const;
+		const Matrix4& GetWorldMatrix() const;
 
 		/**
 		 * Gets the objects inverse world transform matrix.
 		 *
 		 * @note	Performance warning: This might involve updating the transforms if the transform is dirty.
 		 */
-		Matrix4 getInvWorldMatrix() const;
+		Matrix4 GetInvWorldMatrix() const;
 
 		/** Gets the objects local transform matrix. */
-		const Matrix4& getLocalMatrix() const;
+		const Matrix4& GetLocalMatrix() const;
 
 		/**	Moves the object's position by the vector offset provided along world axes. */
-		void move(const Vector3& vec);
+		void Move(const Vector3& vec);
 
 		/**	Moves the object's position by the vector offset provided along it's own axes (relative to orientation). */
-		void moveRelative(const Vector3& vec);
+		void MoveRelative(const Vector3& vec);
 
 		/**
 		 * Rotates the game object so it's forward axis faces the provided direction.
@@ -259,34 +259,34 @@ namespace bs
 		 *
 		 * @note	Local forward axis is considered to be negative Z.
 		 */
-		void setForward(const Vector3& forwardDir);
+		void SetForward(const Vector3& forwardDir);
 
 		/**	Rotate the object around an arbitrary axis. */
-		void rotate(const Vector3& axis, const Radian& angle);
+		void Rotate(const Vector3& axis, const Radian& angle);
 
 		/**	Rotate the object around an arbitrary axis using a Quaternion. */
-		void rotate(const Quaternion& q);
+		void Rotate(const Quaternion& q);
 
 		/**
 		 * Rotates around local Z axis.
 		 *
 		 * @param[in]	angle	Angle to rotate by.
 		 */
-		void roll(const Radian& angle);
+		void Roll(const Radian& angle);
 
 		/**
 		 * Rotates around Y axis.
 		 *
 		 * @param[in]	angle	Angle to rotate by.
 		 */
-		void yaw(const Radian& angle);
+		void Yaw(const Radian& angle);
 
 		/**
 		 * Rotates around X axis
 		 *
 		 * @param[in]	angle	Angle to rotate by.
 		 */
-		void pitch(const Radian& angle);
+		void Pitch(const Radian& angle);
 
 		/**
 		 * Forces any dirty transform matrices on this object to be updated.
@@ -295,13 +295,13 @@ namespace bs
 		 * Normally this is done internally when retrieving a transform, but sometimes it is useful to update transforms
 		 * manually.
 		 */
-		void updateTransformsIfDirty();
+		void UpdateTransformsIfDirty();
 
 		/**
 		 * Returns a hash value that changes whenever a scene objects transform gets updated. It allows you to detect
 		 * changes with the local or world transforms without directly comparing their values with some older state.
 		 */
-		UINT32 getTransformHash() const { return mDirtyHash; }
+		UINT32 GetTransformHash() const { return mDirtyHash; }
 
 	private:
 		Transform mLocalTfrm;
@@ -318,23 +318,23 @@ namespace bs
 		 *
 		 * @param	flags		Specifies in what way was the transform changed.
 		 */
-		void notifyTransformChanged(TransformChangedFlags flags) const;
+		void NotifyTransformChanged(TransformChangedFlags flags) const;
 
 		/** Updates the local transform. Normally just reconstructs the transform matrix from the position/rotation/scale. */
-		void updateLocalTfrm() const;
+		void UpdateLocalTfrm() const;
 
 		/**
 		 * Updates the world transform. Reconstructs the local transform matrix and multiplies it with any parent transforms.
 		 *
 		 * @note	If parent transforms are dirty they will be updated.
 		 */
-		void updateWorldTfrm() const;
+		void UpdateWorldTfrm() const;
 
 		/**	Checks if cached local transform needs updating. */
-		bool isCachedLocalTfrmUpToDate() const { return (mDirtyFlags & DirtyFlags::LocalTfrmDirty) == 0; }
+		bool IsCachedLocalTfrmUpToDate() const { return (mDirtyFlags & DirtyFlags::LocalTfrmDirty) == 0; }
 
 		/**	Checks if cached world transform needs updating. */
-		bool isCachedWorldTfrmUpToDate() const { return (mDirtyFlags & DirtyFlags::WorldTfrmDirty) == 0; }
+		bool IsCachedWorldTfrmUpToDate() const { return (mDirtyFlags & DirtyFlags::WorldTfrmDirty) == 0; }
 
 		/************************************************************************/
 		/* 								Hierarchy	                     		*/
@@ -348,14 +348,14 @@ namespace bs
 		 * @param[in]	keepWorldTransform	Determines should the current transform be maintained even after the parent is
 		 *									changed (this means the local transform will be modified accordingly).
 		 */
-		void setParent(const HSceneObject& parent, bool keepWorldTransform = true);
+		void SetParent(const HSceneObject& parent, bool keepWorldTransform = true);
 
 		/**
 		 * Gets the parent of this object.
 		 *
 		 * @return	Parent object, or nullptr if this SceneObject is at root level.
 		 */
-		HSceneObject getParent() const { return mParent; }
+		HSceneObject GetParent() const { return mParent; }
 
 		/**
 		 * Gets a child of this item.
@@ -363,7 +363,7 @@ namespace bs
 		 * @param[in]	idx	The zero based index of the child.
 		 * @return		SceneObject of the child.
 		 */
-		HSceneObject getChild(UINT32 idx) const;
+		HSceneObject GetChild(UINT32 idx) const;
 
 		/**
 		 * Find the index of the specified child. Don't persist this value as it may change whenever you add/remove children.
@@ -371,13 +371,13 @@ namespace bs
 		 * @param[in]	child	The child to look for.
 		 * @return				The zero-based index of the found child, or -1 if no match was found.
 		 */
-		int indexOfChild(const HSceneObject& child) const;
+		int IndexOfChild(const HSceneObject& child) const;
 
 		/**	Gets the number of all child GameObjects. */
-		UINT32 getNumChildren() const { return (UINT32)mChildren.size(); }
+		UINT32 GetNumChildren() const { return (UINT32)mChildren.size(); }
 
 		/** Returns the scene this object is part of. Can be null if scene object hasn't been instantiated. */
-		const SPtr<SceneInstance>& getScene() const;
+		const SPtr<SceneInstance>& GetScene() const;
 
 		/**
 		 * Searches the scene object hierarchy to find a child scene object using the provided path.
@@ -385,7 +385,7 @@ namespace bs
 		 * @param[in]	path	Path to the property, where each element of the path is separated with "/" Path elements signify
 		 *						names of child scene objects (first one relative to this object).
 		 */
-		HSceneObject findPath(const String& path) const;
+		HSceneObject FindPath(const String& path) const;
 
 		/**
 		 * Searches the child objects for an object matching the specified name.
@@ -395,7 +395,7 @@ namespace bs
 		 *							children.
 		 * @return					First found scene object, or empty handle if none found.
 		 */
-		HSceneObject findChild(const String& name, bool recursive = true);
+		HSceneObject FindChild(const String& name, bool recursive = true);
 
 		/**
 		 * Searches the child objects for objects matching the specified name.
@@ -405,13 +405,13 @@ namespace bs
 		 *							children.
 		 * @return					All scene objects matching the specified name.
 		 */
-		Vector<HSceneObject> findChildren(const String& name, bool recursive = true);
+		Vector<HSceneObject> FindChildren(const String& name, bool recursive = true);
 
 		/**
 		 * Enables or disables this object. Disabled objects also implicitly disable all their child objects. No components
 		 * on the disabled object are updated.
 		 */
-		void setActive(bool active);
+		void SetActive(bool active);
 
 		/**
 		 * Returns whether or not an object is active.
@@ -419,7 +419,7 @@ namespace bs
 		 * @param[in]	self	If true, the method will only check if this particular object was activated or deactivated
 		 *						directly via setActive. If false we we also check if any of the objects parents are inactive.
 		 */
-		bool getActive(bool self = false) const;
+		bool GetActive(bool self = false) const;
 
 		/**
 		 * Sets the mobility of a scene object. This is used primarily as a performance hint to engine systems. Objects
@@ -427,12 +427,12 @@ namespace bs
 		 * the engine itself, while for others the caller must be sure not to break the promise he made when mobility was
 		 * set. By default scene object's mobility is unrestricted.
 		 */
-		void setMobility(ObjectMobility mobility);
+		void SetMobility(ObjectMobility mobility);
 
 		/**
 		 * Gets the mobility setting for this scene object. See setMobility();
 		 */
-		ObjectMobility getMobility() const { return mMobility; }
+		ObjectMobility GetMobility() const { return mMobility; }
 
 		/**
 		 * Makes a deep copy of this object.
@@ -444,7 +444,7 @@ namespace bs
 		 *								scene objects should never have the same UUID, so if preserving UUID's make sure
 		 *								the original is destroyed before instantiating.
 		 */
-		HSceneObject clone(bool instantiate = true, bool preserveUUIDs = false);
+		HSceneObject Clone(bool instantiate = true, bool preserveUUIDs = false);
 
 	private:
 		SPtr<SceneInstance> mParentScene;
@@ -464,24 +464,24 @@ namespace bs
 		void _setParent(const HSceneObject& parent, bool keepWorldTransform = true);
 
 		/** Changes the owning scene of the scene object and all children. */
-		void setScene(const SPtr<SceneInstance>& scene);
+		void SetScene(const SPtr<SceneInstance>& scene);
 
 		/**
 		 * Adds a child to the child array. This method doesn't check for null or duplicate values.
 		 *
 		 * @param[in]	object	New child.
 		 */
-		void addChild(const HSceneObject& object);
+		void AddChild(const HSceneObject& object);
 		
 		/**
 		 * Removes the child from the object.
 		 *
 		 * @param[in]	object	Child to remove.
 		 */
-		void removeChild(const HSceneObject& object);
+		void RemoveChild(const HSceneObject& object);
 
 		/** Changes the object active in hierarchy state, and triggers necessary events. */
-		void setActiveHierarchy(bool active, bool triggerEvents = true);
+		void SetActiveHierarchy(bool active, bool triggerEvents = true);
 
 		/************************************************************************/
 		/* 								Component	                     		*/
@@ -489,12 +489,12 @@ namespace bs
 	public:
 		/** Constructs a new component of the specified type and adds it to the internal component list. */
 		template<class T, class... Args>
-		GameObjectHandle<T> addComponent(Args &&... args)
+		GameObjectHandle<T> AddComponent(Args &&... args)
 		{
 			static_assert((std::is_base_of<bs::Component, T>::value),
 				"Specified type is not a valid Component.");
 
-			SPtr<T> gameObject(new (bs_alloc<T>()) T(mThisHandle,
+			SPtr<T> GameObject(new (bs_alloc<T>()) T(mThisHandle,
 				std::forward<Args>(args)...),
 				&bs_delete<T>, StdAlloc<T>());
 
@@ -509,7 +509,7 @@ namespace bs
 		 * Constructs a new component of the specified type id and adds it to the internal component list. Component must
 		 * have a parameterless constructor.
 		 */
-		HComponent addComponent(UINT32 typeId);
+		HComponent AddComponent(UINT32 typeId);
 
 		/**
 		 * Searches for a component with the specific type and returns the first one it finds. Will also return components
@@ -523,7 +523,7 @@ namespace bs
 		 * for further use.
 		 */
 		template <typename T>
-		GameObjectHandle<T> getComponent()
+		GameObjectHandle<T> GetComponent()
 		{
 			static_assert((std::is_base_of<bs::Component, T>::value),
 				"Specified type is not a valid Component.");
@@ -542,7 +542,7 @@ namespace bs
 		 * for further use.
 		 */
 		template <typename T>
-		Vector<GameObjectHandle<T>> getComponents()
+		Vector<GameObjectHandle<T>> GetComponents()
 		{
 			static_assert((std::is_base_of<bs::Component, T>::value),
 				"Specified type is not a valid Component.");
@@ -567,7 +567,7 @@ namespace bs
 		 * @note	Don't call this too often as it is relatively slow.
 		 */
 		template <typename T>
-		bool hasComponent()
+		bool HasComponent()
 		{
 			static_assert((std::is_base_of<bs::Component, T>::value),
 				"Specified type is not a valid Component.");
@@ -592,7 +592,7 @@ namespace bs
 		 * Don't call this too often as it is relatively slow. It is more efficient to call it once and store the result
 		 * for further use.
 		 */
-		HComponent getComponent(RTTITypeBase* type) const;
+		HComponent GetComponent(RTTITypeBase* type) const;
 
 		/**
 		 * Removes the component from this object, and deallocates it.
@@ -601,7 +601,7 @@ namespace bs
 		 * @param[in]	immediate	If true, the component will be deallocated and become unusable right away. Otherwise
 		 *							the deallocation will be delayed to the end of frame (preferred method).
 		 */
-		void destroyComponent(const HComponent component, bool immediate = false);
+		void DestroyComponent(const HComponent component, bool immediate = false);
 
 		/**
 		 * Removes the component from this object, and deallocates it.
@@ -610,19 +610,19 @@ namespace bs
 		 * @param[in]	immediate	If true, the component will be deallocated and become unusable right away. Otherwise
 		 *							the deallocation will be delayed to the end of frame (preferred method).
 		 */
-		void destroyComponent(Component* component, bool immediate = false);
+		void DestroyComponent(Component* component, bool immediate = false);
 
 		/**	Returns all components on this object. */
-		const Vector<HComponent>& getComponents() const { return mComponents; }
+		const Vector<HComponent>& GetComponents() const { return mComponents; }
 
 		/**	Creates an empty component with the default constructor. Primarily used for RTTI purposes. */
 		template <typename T>
-		static SPtr<T> createEmptyComponent()
+		static SPtr<T> CreateEmptyComponent()
 		{
 			static_assert((std::is_base_of<bs::Component, T>::value), "Specified type is not a valid Component.");
 
 			T* rawPtr = new (bs_alloc<T>()) T();
-			SPtr<T> gameObject(rawPtr, &bs_delete<T>, StdAlloc<T>());
+			SPtr<T> GameObject(rawPtr, &bs_delete<T>, StdAlloc<T>());
 			gameObject->mRTTIData = gameObject;
 			
 			return gameObject;
@@ -639,13 +639,13 @@ namespace bs
 		/** @} */
 	private:
 		/**	Adds the component to the internal component array. */
-		void addComponentInternal(const SPtr<Component>& component);
+		void AddComponentInternal(const SPtr<Component>& component);
 
 		/**	Adds the component to the internal component array, and initializes it. */
-		void addAndInitializeComponent(const HComponent& component);
+		void AddAndInitializeComponent(const HComponent& component);
 
 		/**	Adds the component to the internal component array, and initializes it. */
-		void addAndInitializeComponent(const SPtr<Component>& component);
+		void AddAndInitializeComponent(const SPtr<Component>& component);
 
 		Vector<HComponent> mComponents;
 

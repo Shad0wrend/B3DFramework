@@ -195,7 +195,7 @@ namespace bs { namespace ct
 						BS_CHECK_GL_ERROR();
 					}
 				}
-				else if(texType == TEX_TYPE_CUBE_MAP)
+				else If(texType == TEX_TYPE_CUBE_MAP)
 				{
 					if (numFaces <= 6)
 					{
@@ -302,7 +302,7 @@ namespace bs { namespace ct
 
 	GLenum GLTexture::getGLTextureTarget() const
 	{
-		return getGLTextureTarget(mProperties.getTextureType(), mProperties.getNumSamples(), mProperties.getNumFaces());
+		return GetGLTextureTarget(mProperties.getTextureType(), mProperties.getNumSamples(), mProperties.getNumFaces());
 	}
 
 	GLuint GLTexture::getGLID() const
@@ -388,7 +388,7 @@ namespace bs { namespace ct
 		UINT32 mipHeight = std::max(1u, mProperties.getHeight() >> mipLevel);
 		UINT32 mipDepth = std::max(1u, mProperties.getDepth() >> mipLevel);
 
-		PixelData lockedArea(mipWidth, mipHeight, mipDepth, mProperties.getFormat());
+		PixelData LockedArea(mipWidth, mipHeight, mipDepth, mProperties.getFormat());
 
 		mLockedBuffer = getBuffer(face, mipLevel);
 		lockedArea.setExternalBuffer((UINT8*)mLockedBuffer->lock(options));
@@ -418,7 +418,7 @@ namespace bs { namespace ct
 
 		if(dest.getFormat() != mInternalFormat)
 		{
-			PixelData temp(dest.getExtents(), mInternalFormat);
+			PixelData Temp(dest.getExtents(), mInternalFormat);
 			temp.allocateInternalBuffer();
 
 			getBuffer(face, mipLevel)->download(temp);
@@ -439,7 +439,7 @@ namespace bs { namespace ct
 
 		if (src.getFormat() != mInternalFormat)
 		{
-			PixelData temp(src.getExtents(), mInternalFormat);
+			PixelData Temp(src.getExtents(), mInternalFormat);
 			temp.allocateInternalBuffer();
 
 			PixelUtil::bulkPixelConversion(src, temp);

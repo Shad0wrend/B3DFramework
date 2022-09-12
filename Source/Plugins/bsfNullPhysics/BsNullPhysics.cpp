@@ -126,7 +126,7 @@ namespace bs
 		return bs_shared_ptr_new<NullPhysicsCharacterController>(desc);
 	}
 
-	NullPhysics& gNullPhysics()
+	NullPhysics& GNullPhysics()
 	{
 		return static_cast<NullPhysics&>(NullPhysics::instance());
 	}

@@ -55,7 +55,7 @@ namespace bs { namespace ct
 			UINT32* indexData = meshData->getIndices32();
 			UINT8* positionData = meshData->getElementData(VES_POSITION);
 
-			Sphere localSphere(Vector3::ZERO, 1.0f);
+			Sphere LocalSphere(Vector3::ZERO, 1.0f);
 			ShapeMeshes3D::solidSphere(localSphere, positionData, nullptr, nullptr, 0,
 				vertexDesc->getVertexStride(), indexData, 0, 3);
 
@@ -75,7 +75,7 @@ namespace bs { namespace ct
 			UINT32* indexData = meshData->getIndices32();
 			UINT8* positionData = meshData->getElementData(VES_POSITION);
 
-			AABox localBox(-Vector3::ONE, Vector3::ONE);
+			AABox LocalBox(-Vector3::ONE, Vector3::ONE);
 			ShapeMeshes3D::solidAABox(localBox, positionData, nullptr, nullptr, 0,
 				vertexDesc->getVertexStride(), indexData, 0);
 
@@ -153,7 +153,7 @@ namespace bs { namespace ct
 			UINT32* indexData = meshData->getIndices32();
 			UINT8* positionData = meshData->getElementData(VES_POSITION);
 
-			AABox localBox(-Vector3::ONE * 1500.0f, Vector3::ONE * 1500.0f);
+			AABox LocalBox(-Vector3::ONE * 1500.0f, Vector3::ONE * 1500.0f);
 			ShapeMeshes3D::solidAABox(localBox, positionData, nullptr, nullptr, 0,
 									   vertexDesc->getVertexStride(), indexData, 0);
 
@@ -284,7 +284,7 @@ namespace bs { namespace ct
 	{
 		auto& texProps = texture->getProperties();
 
-		Rect2 fArea((float)area.x, (float)area.y, (float)area.width, (float)area.height);
+		Rect2 FArea((float)area.x, (float)area.y, (float)area.width, (float)area.height);
 		if (area.width == 0 || area.height == 0)
 		{
 			fArea.x = 0.0f;
@@ -376,7 +376,7 @@ namespace bs { namespace ct
 		clearMat->execute(value);
 	}
 
-	RendererUtility& gRendererUtility()
+	RendererUtility& GRendererUtility()
 	{
 		return RendererUtility::instance();
 	}
@@ -409,12 +409,12 @@ namespace bs { namespace ct
 				switch (msaaCount)
 				{
 				case 2:
-					return get(getVariation<2, 0>());
+					return Get(getVariation<2, 0>());
 				case 4:
-					return get(getVariation<4, 0>());
+					return Get(getVariation<4, 0>());
 				default:
 				case 8:
-					return get(getVariation<8, 0>());
+					return Get(getVariation<8, 0>());
 				}
 			}
 			else
@@ -422,21 +422,21 @@ namespace bs { namespace ct
 				switch(msaaCount)
 				{
 				case 2:
-					return get(getVariation<2, 2>());
+					return Get(getVariation<2, 2>());
 				case 4:
-					return get(getVariation<4, 2>());
+					return Get(getVariation<4, 2>());
 				default:
 				case 8:
-					return get(getVariation<8, 2>());
+					return Get(getVariation<8, 2>());
 				}
 			}
 		}
 		else
 		{
 			if(isFiltered)
-				return get(getVariation<1, 1>());
+				return Get(getVariation<1, 1>());
 			else
-				return get(getVariation<1, 0>());
+				return Get(getVariation<1, 0>());
 		}
 	}
 
@@ -504,9 +504,9 @@ namespace bs { namespace ct
 
 		const TextureProperties& sourceProps = source->getProperties();
 
-		Vector2I texSize(sourceProps.getWidth(), sourceProps.getHeight());
-		Vector2 invPixelSize(1.0f / texSize.x, 1.0f / texSize.y);
-		Vector2 invTwoPixelSize(2.0f / texSize.x, 2.0f / texSize.y);
+		Vector2I TexSize(sourceProps.getWidth(), sourceProps.getHeight());
+		Vector2 InvPixelSize(1.0f / texSize.x, 1.0f / texSize.y);
+		Vector2 InvTwoPixelSize(2.0f / texSize.x, 2.0f / texSize.y);
 
 		gBicubicUpsampleParamDef.gTint.set(mParamBuffer, tint);
 		gBicubicUpsampleParamDef.gTextureSize.set(mParamBuffer, texSize);
@@ -524,9 +524,9 @@ namespace bs { namespace ct
 	BicubicUpsampleMat* BicubicUpsampleMat::getVariation(bool hermite)
 	{
 		if (hermite)
-			return get(getVariation<true>());
+			return Get(getVariation<true>());
 
-		return get(getVariation<false>());
+		return Get(getVariation<false>());
 	}
 
 }}

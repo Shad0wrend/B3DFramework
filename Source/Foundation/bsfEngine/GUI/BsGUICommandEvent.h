@@ -41,12 +41,12 @@ namespace bs
 		GUICommandEvent() = default;
 
 		/**	Returns type describing what kind of event this is. */
-		GUICommandEventType getType() const { return mType; }
+		GUICommandEventType GetType() const { return mType; }
 	private:
 		friend class GUIManager;
 
 		/**	Sets type describing what kind of event this is. */
-		void setType(GUICommandEventType type) { mType = type; }
+		void SetType(GUICommandEventType type) { mType = type; }
 
 		GUICommandEventType mType = GUICommandEventType::Redraw;
 	};

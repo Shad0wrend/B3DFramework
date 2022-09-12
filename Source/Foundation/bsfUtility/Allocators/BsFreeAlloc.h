@@ -24,13 +24,13 @@ namespace bs
 		}
 
 		/** Deallocates a previously allocated piece of memory. */
-		void free(void* data)
+		void Free(void* data)
 		{
 			::free(data);
 		}
 
 		/** Unused */
-		void clear()
+		void Clear()
 		{
 			// Do nothing
 		}

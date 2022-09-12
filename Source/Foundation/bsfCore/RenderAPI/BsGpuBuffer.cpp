@@ -8,7 +8,7 @@
 
 namespace bs
 {
-	UINT32 getBufferSize(const GPU_BUFFER_DESC& desc)
+	UINT32 GetBufferSize(const GPU_BUFFER_DESC& desc)
 	{
 		UINT32 elementSize;
 
@@ -21,7 +21,7 @@ namespace bs
 	}
 
 	GpuBufferProperties::GpuBufferProperties(const GPU_BUFFER_DESC& desc)
-		: mDesc(desc)
+		: MDesc(desc)
 	{
 		if(mDesc.type == GBT_STANDARD)
 			mDesc.elementSize = GpuBuffer::getFormatSize(mDesc.format);
@@ -110,7 +110,7 @@ namespace bs
 
 	GpuBuffer::GpuBuffer(const GPU_BUFFER_DESC& desc, SPtr<HardwareBuffer> underlyingBuffer)
 		: HardwareBuffer(getBufferSize(desc), desc.usage, underlyingBuffer->getDeviceMask()), mProperties(desc)
-		, mBuffer(underlyingBuffer.get()), mSharedBuffer(std::move(underlyingBuffer)), mIsExternalBuffer(true)
+		, MBuffer(underlyingBuffer.get()), mSharedBuffer(std::move(underlyingBuffer)), mIsExternalBuffer(true)
 	{
 		const auto& props = getProperties();
 		assert(mSharedBuffer->getSize() == (props.getElementCount() * props.getElementSize()));

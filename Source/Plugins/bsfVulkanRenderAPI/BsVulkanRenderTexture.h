@@ -28,7 +28,7 @@ namespace bs
 		VulkanRenderTexture(const RENDER_TEXTURE_DESC& desc);
 
 		/** @copydoc RenderTexture::getProperties */
-		const RenderTargetProperties& getPropertiesInternal() const override { return mProperties; }
+		const RenderTargetProperties& GetPropertiesInternal() const override { return mProperties; }
 
 		RenderTextureProperties mProperties;
 	};
@@ -47,14 +47,14 @@ namespace bs
 		virtual ~VulkanRenderTexture();
 
 		/** @copydoc RenderTexture::getCustomAttribute */
-		void getCustomAttribute(const String& name, void* data) const override;
+		void GetCustomAttribute(const String& name, void* data) const override;
 
 	protected:
 		/** @copydoc CoreObject::initialize() */
-		void initialize() override;
+		void Initialize() override;
 
 		/** @copydoc RenderTexture::getProperties */
-		const RenderTargetProperties& getPropertiesInternal() const override { return mProperties; }
+		const RenderTargetProperties& GetPropertiesInternal() const override { return mProperties; }
 
 		RenderTextureProperties mProperties;
 		UINT32 mDeviceIdx;

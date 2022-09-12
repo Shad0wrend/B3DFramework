@@ -22,19 +22,19 @@ namespace bs
 		virtual ~SLImporter() = default;
 
 		/** @copydoc SpecificImporter::isExtensionSupported */
-		bool isExtensionSupported(const String& ext) const override;
+		bool IsExtensionSupported(const String& ext) const override;
 
 		/** @copydoc SpecificImporter::isMagicNumberSupported */
-		bool isMagicNumberSupported(const UINT8* magicNumPtr, UINT32 numBytes) const override;
+		bool IsMagicNumberSupported(const UINT8* magicNumPtr, UINT32 numBytes) const override;
 
 		/** @copydoc SpecificImporter::getAsyncMode */
-		ImporterAsyncMode getAsyncMode() const override { return ImporterAsyncMode::Single; }
+		ImporterAsyncMode GetAsyncMode() const override { return ImporterAsyncMode::Single; }
 
 		/** @copydoc SpecificImporter::import */
-		SPtr<Resource> import(const Path& filePath, SPtr<const ImportOptions> importOptions) override;
+		SPtr<Resource> Import(const Path& filePath, SPtr<const ImportOptions> importOptions) override;
 
 		/** @copydoc SpecificImporter::createImportOptions */
-		SPtr<ImportOptions> createImportOptions() const override;
+		SPtr<ImportOptions> CreateImportOptions() const override;
 	};
 
 	/** @} */

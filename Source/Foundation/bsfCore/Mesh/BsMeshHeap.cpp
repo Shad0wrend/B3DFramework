@@ -84,8 +84,8 @@ namespace bs
 
 	MeshHeap::MeshHeap(UINT32 numVertices, UINT32 numIndices,
 		const SPtr<VertexDataDesc>& vertexDesc, IndexType indexType, GpuDeviceFlags deviceMask)
-		: mNumVertices(numVertices), mNumIndices(numIndices), mCPUIndexData(nullptr), mVertexDesc(vertexDesc)
-		, mIndexType(indexType), mDeviceMask(deviceMask), mNextQueryId(0)
+		: MNumVertices(numVertices), mNumIndices(numIndices), mCPUIndexData(nullptr), mVertexDesc(vertexDesc)
+		, MIndexType(indexType), mDeviceMask(deviceMask), mNextQueryId(0)
 	{
 		for (UINT32 i = 0; i <= mVertexDesc->getMaxStreamIdx(); i++)
 		{

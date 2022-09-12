@@ -121,7 +121,7 @@ namespace bs
 		SPtr<Texture> normalTexture = createTexture(desc);
 		SPtr<PixelData> normalPixelData = PixelData::create(2, 2, 1, PF_RGBA8);
 
-		Color encodedNormal(0.5f, 0.5f, 1.0f);
+		Color EncodedNormal(0.5f, 0.5f, 1.0f);
 		normalPixelData->setColorAt(encodedNormal, 0, 0);
 		normalPixelData->setColorAt(encodedNormal, 0, 1);
 		normalPixelData->setColorAt(encodedNormal, 1, 0);

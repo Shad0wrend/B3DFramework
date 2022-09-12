@@ -15,7 +15,7 @@ namespace bs
 
 		ScriptHString(MonoObject* managedInstance, const SPtr<HString>& value);
 
-		SPtr<HString> getInternal() const { return mInternal; }
+		SPtr<HString> GetInternal() const { return mInternal; }
 		static MonoObject* create(const SPtr<HString>& value);
 
 	private:

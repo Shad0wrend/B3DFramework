@@ -23,19 +23,19 @@ namespace bs
 		ScriptGUIToggle(MonoObject* instance, GUIToggle* toggle);
 
 		/**	Triggered when the native toggle button is clicked. */
-		void onClick();
+		void OnClick();
 
 		/**	Triggered when the native toggle button is hover over. */
-		void onHover();
+		void OnHover();
 
 		/**	Triggered when the pointer leaves the native toggle button. */
-		void onOut();
+		void OnOut();
 
 		/**	Triggered when the native toggle button is toggled. */
-		void onToggled(bool toggled);
+		void OnToggled(bool toggled);
 
 		/**	Triggers when the native toggle button is double-clicked. */
-		void onDoubleClick();
+		void OnDoubleClick();
 
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
@@ -51,7 +51,7 @@ namespace bs
 		typedef void (BS_THUNKCALL *OnHoverThunkDef) (MonoObject*, MonoException**);
 		typedef void (BS_THUNKCALL *OnOutThunkDef) (MonoObject*, MonoException**);
 		typedef void (BS_THUNKCALL *OnToggledThunkDef) (MonoObject*, bool toggled, MonoException**);
-		typedef void(BS_THUNKCALL *OnDoubleClickThunkDef) (MonoObject*, MonoException**);
+		typedef Void(BS_THUNKCALL *OnDoubleClickThunkDef) (MonoObject*, MonoException**);
 
 		static OnClickThunkDef onClickThunk;
 		static OnHoverThunkDef onHoverThunk;

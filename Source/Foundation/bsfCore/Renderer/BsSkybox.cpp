@@ -161,7 +161,7 @@ namespace bs
 
 		UINT8* buffer = allocator->alloc(size);
 
-		Bitstream stream(buffer, size);
+		Bitstream Stream(buffer, size);
 		rtti_write(getCoreDirtyFlags(), stream);
 		csync_write((SceneActor&)*this, stream);
 		csync_write(*this, stream);
@@ -206,7 +206,7 @@ namespace bs
 
 		void Skybox::syncToCore(const CoreSyncData& data)
 		{
-			Bitstream stream(data.getBuffer(), data.getBufferSize());
+			Bitstream Stream(data.getBuffer(), data.getBufferSize());
 
 			SkyboxDirtyFlag dirtyFlags;
 			bool oldIsActive = mActive;

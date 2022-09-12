@@ -109,7 +109,7 @@ namespace bs { namespace ct
 			numUsedBuffers++;
 		}
 		
-		GLVertexArrayObject wantedVAO(0, vertexProgram->getGLHandle(), usedBuffers, numUsedBuffers);
+		GLVertexArrayObject WantedVAO(0, vertexProgram->getGLHandle(), usedBuffers, numUsedBuffers);
 
 		auto findIter = mVAObjects.find(wantedVAO);
 		if (findIter != mVAObjects.end())

@@ -33,7 +33,7 @@ namespace bs
 		 * @note
 		 * Primitives are output in the form of a line list.
 		 */
-		static void wireAABox(const AABox& box, const SPtr<MeshData>& meshData, UINT32 vertexOffset, UINT32 indexOffset);
+		static void WireAABox(const AABox& box, const SPtr<MeshData>& meshData, UINT32 vertexOffset, UINT32 indexOffset);
 
 		/**
 		 * Fills the mesh data with vertices representing a solid axis aligned box.
@@ -55,7 +55,7 @@ namespace bs
 		 * @note
 		 * Primitives are output in the form of a triangle list.
 		 */
-		static void solidAABox(const AABox& box, const SPtr<MeshData>& meshData, UINT32 vertexOffset, UINT32 indexOffset);
+		static void SolidAABox(const AABox& box, const SPtr<MeshData>& meshData, UINT32 vertexOffset, UINT32 indexOffset);
 
 		/**
 		 * Fills the mesh data with vertices representing an outline of a sphere.
@@ -392,7 +392,7 @@ namespace bs
 		 * @note
 		 * Primitives are output in the form of a triangle list.
 		 */
-		static void solidQuad(const Rect3& area, const SPtr<MeshData>& meshData, UINT32 vertexOffset, UINT32 indexOffset);
+		static void SolidQuad(const Rect3& area, const SPtr<MeshData>& meshData, UINT32 vertexOffset, UINT32 indexOffset);
 
 		/**
 		 * Fills the mesh data with vertices representing a per-pixel line.
@@ -411,7 +411,7 @@ namespace bs
 		 * @note
 		 * Primitives are output in the form of a line list.
 		 */
-		static void pixelLine(const Vector3& a, const Vector3& b, const SPtr<MeshData>& meshData, UINT32 vertexOffset, UINT32 indexOffset);
+		static void PixelLine(const Vector3& a, const Vector3& b, const SPtr<MeshData>& meshData, UINT32 vertexOffset, UINT32 indexOffset);
 
 		/**
 		 * Fills the mesh data with vertices representing an anti-aliased line of specific width. Antialiasing is done
@@ -455,7 +455,7 @@ namespace bs
 		 * @note
 		 * Primitives are output in the form of a line list.
 		 */
-		static void pixelLineList(const Vector<Vector3>& linePoints, const SPtr<MeshData>& meshData, UINT32 vertexOffset, UINT32 indexOffset);
+		static void PixelLineList(const Vector<Vector3>& linePoints, const SPtr<MeshData>& meshData, UINT32 vertexOffset, UINT32 indexOffset);
 
 		/**
 		 * Fills the mesh data with vertices representing anti-aliased lines of specific width. Antialiasing is done using
@@ -707,49 +707,49 @@ namespace bs
 			UINT32 vertexStride, UINT32* outIndices, UINT32 indexOffset);
 
 		/**	Calculates number of vertices and indices required for geometry of a solid axis aligned box. */
-		static void getNumElementsAABox(UINT32& numVertices, UINT32& numIndices);
+		static void GetNumElementsAABox(UINT32& numVertices, UINT32& numIndices);
 
 		/**	Calculates number of vertices and indices required for geometry of a wireframe axis aligned box. */
-		static void getNumElementsWireAABox(UINT32& numVertices, UINT32& numIndices);
+		static void GetNumElementsWireAABox(UINT32& numVertices, UINT32& numIndices);
 
 		/**	Calculates number of vertices and indices required for geometry of a solid sphere of the specified quality. */
-		static void getNumElementsSphere(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
+		static void GetNumElementsSphere(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
 
 		/**	Calculates number of vertices and indices required for geometry of a wire sphere of the specified quality. */
-		static void getNumElementsWireSphere(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
+		static void GetNumElementsWireSphere(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
 
 		/**	Calculates number of vertices and indices required for geometry of a wire hemisphere of the specified quality. */
-		static void getNumElementsWireHemisphere(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
+		static void GetNumElementsWireHemisphere(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
 
 		/**	Calculates number of vertices and indices required for geometry of a solid arc of the specified quality. */
-		static void getNumElementsArc(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
+		static void GetNumElementsArc(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
 
 		/**	Calculates number of vertices and indices required for geometry of a wire arc of the specified quality. */
-		static void getNumElementsWireArc(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
+		static void GetNumElementsWireArc(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
 
 		/**	Calculates number of vertices and indices required for geometry of a solid desc	of the specified quality. */
-		static void getNumElementsDisc(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
+		static void GetNumElementsDisc(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
 
 		/**	Calculates number of vertices and indices required for geometry of a wire disc of the specified quality. */
-		static void getNumElementsWireDisc(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
+		static void GetNumElementsWireDisc(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
 
 		/**	Calculates number of vertices and indices required for geometry of a solid cone of the specified quality. */
-		static void getNumElementsCone(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
+		static void GetNumElementsCone(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
 
 		/**	Calculates number of vertices and indices required for geometry of a wireframe cone of the specified quality. */
-		static void getNumElementsWireCone(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
+		static void GetNumElementsWireCone(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
 
 		/**	Calculates number of vertices and indices required for geometry of a solid cylinder of the specified quality. */
-		static void getNumElementsCylinder(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
+		static void GetNumElementsCylinder(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
 
 		/**	Calculates number of vertices and indices required for geometry of a wireframe cylinder of the specified quality. */
-		static void getNumElementsWireCylinder(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
+		static void GetNumElementsWireCylinder(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
 
 		/**	Calculates number of vertices and indices required for geometry of a frustum. */
-		static void getNumElementsFrustum(UINT32& numVertices, UINT32& numIndices);
+		static void GetNumElementsFrustum(UINT32& numVertices, UINT32& numIndices);
 
 		/**	Calculates number of vertices and indices required for geometry of a quadrirateral. */
-		static void getNumElementsQuad(UINT32& numVertices, UINT32& numIndices);
+		static void GetNumElementsQuad(UINT32& numVertices, UINT32& numIndices);
 
 		static const UINT32 NUM_VERTICES_AA_LINE;
 		static const UINT32 NUM_INDICES_AA_LINE;
@@ -842,7 +842,7 @@ namespace bs
 		 * @param[in]	vertexStride	Number of bytes between two vertices in the buffer.
 		 * @return						Center point of the vertices.
 		 */
-		static Vector3 calcCenter(UINT8* vertices, UINT32 numVertices, UINT32 vertexStride);
+		static Vector3 CalcCenter(UINT8* vertices, UINT32 numVertices, UINT32 vertexStride);
 
 		/**
 		 * Subdivides the provided triangle so it approximates a curved surface of a sphere.

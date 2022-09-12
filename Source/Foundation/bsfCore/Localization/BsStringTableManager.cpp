@@ -40,7 +40,7 @@ namespace bs
 			table->setActiveLanguage(mActiveLanguage);
 	}
 
-	StringTableManager& gStringTableManager()
+	StringTableManager& GStringTableManager()
 	{
 		return StringTableManager::instance();
 	}

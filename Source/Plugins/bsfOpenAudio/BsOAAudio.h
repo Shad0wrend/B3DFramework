@@ -20,31 +20,31 @@ namespace bs
 		virtual ~OAAudio();
 
 		/** @copydoc Audio::setVolume */
-		void setVolume(float volume) override;
+		void SetVolume(float volume) override;
 
 		/** @copydoc Audio::getVolume */
-		float getVolume() const override;
+		float GetVolume() const override;
 
 		/** @copydoc Audio::setPaused */
-		void setPaused(bool paused) override;
+		void SetPaused(bool paused) override;
 
 		/** @copydoc Audio::isPaused */
-		bool isPaused() const override { return mIsPaused; }
+		bool IsPaused() const override { return mIsPaused; }
 
 		/** @copydoc Audio::_update */
 		void _update() override;
 
 		/** @copydoc Audio::setActiveDevice */
-		void setActiveDevice(const AudioDevice& device) override;
+		void SetActiveDevice(const AudioDevice& device) override;
 
 		/** @copydoc Audio::getActiveDevice */
-		AudioDevice getActiveDevice() const override { return mActiveDevice; }
+		AudioDevice GetActiveDevice() const override { return mActiveDevice; }
 
 		/** @copydoc Audio::getDefaultDevice */
-		AudioDevice getDefaultDevice() const override { return mDefaultDevice; }
+		AudioDevice GetDefaultDevice() const override { return mDefaultDevice; }
 
 		/** @copydoc Audio::getAllDevices */
-		const Vector<AudioDevice>& getAllDevices() const override { return mAllDevices; };
+		const Vector<AudioDevice>& GetAllDevices() const override { return mAllDevices; };
 
 		/** @name Internal
 		 *  @{
@@ -107,10 +107,10 @@ namespace bs
 			const AUDIO_CLIP_DESC& desc) override;
 
 		/** @copydoc Audio::createListener */
-		SPtr<AudioListener> createListener() override;
+		SPtr<AudioListener> CreateListener() override;
 
 		/** @copydoc Audio::createSource */
-		SPtr<AudioSource> createSource() override;
+		SPtr<AudioSource> CreateSource() override;
 
 		/**
 		 * Delete all existing contexts and rebuild them according to the listener list. All audio sources will be rebuilt
@@ -118,19 +118,19 @@ namespace bs
 		 *
 		 * This should be called when listener count changes, or audio device is changed.
 		 */
-		void rebuildContexts();
+		void RebuildContexts();
 
 		/** Delete all existing OpenAL contexts. */
-		void clearContexts();
+		void ClearContexts();
 
 		/** Streams new data to audio sources that require it. */
-		void updateStreaming();
+		void UpdateStreaming();
 
 		/** Starts data streaming for the provided source. */
-		void startStreaming(OAAudioSource* source);
+		void StartStreaming(OAAudioSource* source);
 
 		/** Stops data streaming for the provided source. */
-		void stopStreaming(OAAudioSource* source);
+		void StopStreaming(OAAudioSource* source);
 
 		float mVolume = 1.0f;
 		bool mIsPaused = false;
@@ -153,7 +153,7 @@ namespace bs
 	};
 
 	/** Provides easier access to OAAudio. */
-	OAAudio& gOAAudio();
+	OAAudio& GOAAudio();
 
 	/** @} */
 }

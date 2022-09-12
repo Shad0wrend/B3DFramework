@@ -20,10 +20,10 @@ namespace bs
 
 	private:
 		/** @copydoc PhysicsMesh::initialize() */
-		void initialize() override;
+		void Initialize() override;
 
 		/** @copydoc PhysicsMesh::initialize() */
-		void destroy() override;
+		void Destroy() override;
 
 		// Note: Must not have its own RTTI type, it's important it shares the same type ID as PhysicsMesh so the
 		// system knows to recognize it. Use FPhysicsMesh instead.
@@ -37,7 +37,7 @@ namespace bs
 		~FPhysXMesh();
 
 		/** @copydoc PhysicsMesh::getMeshData */
-		SPtr<MeshData> getMeshData() const override;
+		SPtr<MeshData> GetMeshData() const override;
 
 		/**
 		 * Returns the internal PhysX representation of a triangle mesh. Caller must ensure the physics mesh type is
@@ -53,7 +53,7 @@ namespace bs
 
 	private:
 		/** Creates the internal triangle/convex mesh */
-		void initialize();
+		void Initialize();
 
 		physx::PxTriangleMesh* mTriangleMesh = nullptr;
 		physx::PxConvexMesh* mConvexMesh = nullptr;

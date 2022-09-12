@@ -38,7 +38,7 @@ namespace bs { namespace ct
 		return output;
 	}
 
-	const IBLUtility& gIBLUtility()
+	const IBLUtility& GIBLUtility()
 	{
 		return IBLUtility::instance();
 	}

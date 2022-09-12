@@ -58,22 +58,22 @@ namespace bs
 		~PhysX();
 
 		/** @copydoc Physics::fixedUpdate */
-		void fixedUpdate(float step) override;
+		void FixedUpdate(float step) override;
 
 		/** @copydoc Physics::update */
-		void update() override;
+		void Update() override;
 
 		/** @copydoc Physics::createMaterial */
-		SPtr<PhysicsMaterial> createMaterial(float staticFriction, float dynamicFriction, float restitution) override;
+		SPtr<PhysicsMaterial> CreateMaterial(float staticFriction, float dynamicFriction, float restitution) override;
 
 		/** @copydoc Physics::createMesh */
-		SPtr<PhysicsMesh> createMesh(const SPtr<MeshData>& meshData, PhysicsMeshType type) override;
+		SPtr<PhysicsMesh> CreateMesh(const SPtr<MeshData>& meshData, PhysicsMeshType type) override;
 
 		/** @copydoc Physics::createPhysicsScene */
-		SPtr<PhysicsScene> createPhysicsScene() override;
+		SPtr<PhysicsScene> CreatePhysicsScene() override;
 
 		/** @copydoc Physics::setPaused */
-		void setPaused(bool paused) override;
+		void SetPaused(bool paused) override;
 
 		/** Triggered by the PhysX simulation when an interaction between two colliders is found. */
 		void _reportContactEvent(const ContactEvent& event);
@@ -101,13 +101,13 @@ namespace bs
 		physx::PxCooking* getCooking() const { return mCooking; }
 
 		/** Returns default scale used in the PhysX scene. */
-		physx::PxTolerancesScale getScale() const { return mScale; }
+		physx::PxTolerancesScale GetScale() const { return mScale; }
 
 	private:
 		friend class PhysXEventCallback;
 
 		/** Sends out all events recorded during simulation to the necessary physics objects. */
-		void triggerEvents();
+		void TriggerEvents();
 
 		PHYSICS_INIT_DESC mInitDesc;
 		bool mPaused = false;
@@ -135,45 +135,45 @@ namespace bs
 		~PhysXScene();
 
 		/** @copydoc PhysicsScene::createRigidbody */
-		SPtr<Rigidbody> createRigidbody(const HSceneObject& linkedSO) override;
+		SPtr<Rigidbody> CreateRigidbody(const HSceneObject& linkedSO) override;
 
 		/** @copydoc PhysicsScene::createBoxCollider */
 		SPtr<BoxCollider> createBoxCollider(const Vector3& extents, const Vector3& position,
 			const Quaternion& rotation) override;
 
 		/** @copydoc PhysicsScene::createSphereCollider */
-		SPtr<SphereCollider> createSphereCollider(float radius, const Vector3& position, const Quaternion& rotation) override;
+		SPtr<SphereCollider> CreateSphereCollider(float radius, const Vector3& position, const Quaternion& rotation) override;
 
 		/** @copydoc PhysicsScene::createPlaneCollider */
-		SPtr<PlaneCollider> createPlaneCollider(const Vector3& position, const Quaternion& rotation) override;
+		SPtr<PlaneCollider> CreatePlaneCollider(const Vector3& position, const Quaternion& rotation) override;
 
 		/** @copydoc PhysicsScene::createCapsuleCollider */
 		SPtr<CapsuleCollider> createCapsuleCollider(float radius, float halfHeight, const Vector3& position,
 			const Quaternion& rotation) override;
 
 		/** @copydoc PhysicsScene::createMeshCollider */
-		SPtr<MeshCollider> createMeshCollider(const Vector3& position, const Quaternion& rotation) override;
+		SPtr<MeshCollider> CreateMeshCollider(const Vector3& position, const Quaternion& rotation) override;
 
 		/** @copydoc PhysicsScene::createFixedJoint */
-		SPtr<FixedJoint> createFixedJoint(const FIXED_JOINT_DESC& desc) override;
+		SPtr<FixedJoint> CreateFixedJoint(const FIXED_JOINT_DESC& desc) override;
 
 		/** @copydoc PhysicsScene::createDistanceJoint */
-		SPtr<DistanceJoint> createDistanceJoint(const DISTANCE_JOINT_DESC& desc) override;
+		SPtr<DistanceJoint> CreateDistanceJoint(const DISTANCE_JOINT_DESC& desc) override;
 
 		/** @copydoc PhysicsScene::createHingeJoint */
-		SPtr<HingeJoint> createHingeJoint(const HINGE_JOINT_DESC& desc) override;
+		SPtr<HingeJoint> CreateHingeJoint(const HINGE_JOINT_DESC& desc) override;
 
 		/** @copydoc PhysicsScene::createSphericalJoint */
-		SPtr<SphericalJoint> createSphericalJoint(const SPHERICAL_JOINT_DESC& desc) override;
+		SPtr<SphericalJoint> CreateSphericalJoint(const SPHERICAL_JOINT_DESC& desc) override;
 
 		/** @copydoc PhysicsScene::createSliderJoint */
-		SPtr<SliderJoint> createSliderJoint(const SLIDER_JOINT_DESC& desc) override;
+		SPtr<SliderJoint> CreateSliderJoint(const SLIDER_JOINT_DESC& desc) override;
 
 		/** @copydoc PhysicsScene::createD6Joint */
-		SPtr<D6Joint> createD6Joint(const D6_JOINT_DESC& desc) override;
+		SPtr<D6Joint> CreateD6Joint(const D6_JOINT_DESC& desc) override;
 
 		/** @copydoc PhysicsScene::createCharacterController*/
-		SPtr<CharacterController> createCharacterController(const CHAR_CONTROLLER_DESC& desc) override;
+		SPtr<CharacterController> CreateCharacterController(const CHAR_CONTROLLER_DESC& desc) override;
 
 		/** @copydoc PhysicsScene::rayCast(const Vector3&, const Vector3&, PhysicsQueryHit&, UINT64, float) const */
 		bool rayCast(const Vector3& origin, const Vector3& unitDir, PhysicsQueryHit& hit,
@@ -237,10 +237,10 @@ namespace bs
 			const Vector3& unitDir, UINT64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const override;
 
 		/** @copydoc PhysicsScene::boxOverlapAny */
-		bool boxOverlapAny(const AABox& box, const Quaternion& rotation, UINT64 layer = BS_ALL_LAYERS) const override;
+		bool BoxOverlapAny(const AABox& box, const Quaternion& rotation, UINT64 layer = BS_ALL_LAYERS) const override;
 
 		/** @copydoc PhysicsScene::sphereOverlapAny */
-		bool sphereOverlapAny(const Sphere& sphere, UINT64 layer = BS_ALL_LAYERS) const override;
+		bool SphereOverlapAny(const Sphere& sphere, UINT64 layer = BS_ALL_LAYERS) const override;
 
 		/** @copydoc PhysicsScene::capsuleOverlapAny */
 		bool capsuleOverlapAny(const Capsule& capsule, const Quaternion& rotation,
@@ -251,28 +251,28 @@ namespace bs
 			UINT64 layer = BS_ALL_LAYERS) const override;
 
 		/** @copydoc PhysicsScene::getGravity */
-		Vector3 getGravity() const override;
+		Vector3 GetGravity() const override;
 
 		/** @copydoc PhysicsScene::setGravity */
-		void setGravity(const Vector3& gravity) override;
+		void SetGravity(const Vector3& gravity) override;
 
 		/** @copydoc PhysicsScene::addBroadPhaseRegion */
-		UINT32 addBroadPhaseRegion(const AABox& region) override;
+		UINT32 AddBroadPhaseRegion(const AABox& region) override;
 
 		/** @copydoc PhysicsScene::removeBroadPhaseRegion */
-		void removeBroadPhaseRegion(UINT32 regionId) override;
+		void RemoveBroadPhaseRegion(UINT32 regionId) override;
 
 		/** @copydoc PhysicsScene::clearBroadPhaseRegions */
-		void clearBroadPhaseRegions() override;
+		void ClearBroadPhaseRegions() override;
 
 		/** @copydoc PhysicsScene::setFlag */
-		void setFlag(PhysicsFlags flags, bool enabled) override;
+		void SetFlag(PhysicsFlags flags, bool enabled) override;
 
 		/** @copydoc PhysicsScene::getMaxTesselationEdgeLength */
-		float getMaxTesselationEdgeLength() const override { return mTesselationLength; }
+		float GetMaxTesselationEdgeLength() const override { return mTesselationLength; }
 
 		/** @copydoc PhysicsScene::setMaxTesselationEdgeLength */
-		void setMaxTesselationEdgeLength(float length) override;
+		void SetMaxTesselationEdgeLength(float length) override;
 
 		/** @copydoc PhysicsScene::_boxOverlap */
 		Vector<Collider*> _boxOverlap(const AABox& box, const Quaternion& rotation,
@@ -317,7 +317,7 @@ namespace bs
 			UINT64 layer) const;
 
 		/** Helper method that checks if the provided geometry overlaps any physics object. */
-		inline bool overlapAny(const physx::PxGeometry& geometry, const physx::PxTransform& tfrm, UINT64 layer) const;
+		inline bool OverlapAny(const physx::PxGeometry& geometry, const physx::PxTransform& tfrm, UINT64 layer) const;
 
 	private:
 		friend class PhysX;
@@ -333,7 +333,7 @@ namespace bs
 	};
 
 	/** Provides easier access to PhysX. */
-	PhysX& gPhysX();
+	PhysX& GPhysX();
 
 	/** @} */
 }

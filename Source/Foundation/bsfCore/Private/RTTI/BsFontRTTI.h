@@ -29,18 +29,18 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 	public:
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "FontData";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_FontBitmap;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			return bs_shared_ptr_new<FontBitmap>();
 		}
@@ -49,7 +49,7 @@ namespace bs
 	class BS_CORE_EXPORT FontRTTI : public RTTIType<Font, Resource, FontRTTI>
 	{
 	private:
-		FontBitmap& getBitmap(Font* obj, UINT32 idx)
+		FontBitmap& GetBitmap(Font* obj, UINT32 idx)
 		{
 			if(idx >= obj->mFontDataPerSize.size())
 				BS_EXCEPT(InternalErrorException, "Index out of range: " + toString(idx) + ". Valid range: 0 .. " + toString((int)obj->mFontDataPerSize.size()));
@@ -61,18 +61,18 @@ namespace bs
 			return *iter->second;
 		}
 
-		void setBitmap(Font* obj, UINT32 idx, FontBitmap& value)
+		void SetBitmap(Font* obj, UINT32 idx, FontBitmap& value)
 		{
 			mFontDataPerSize[idx] = bs_shared_ptr_new<FontBitmap>();
 			*mFontDataPerSize[idx] = value;
 		}
 
-		UINT32 getNumBitmaps(Font* obj)
+		UINT32 GetNumBitmaps(Font* obj)
 		{
 			return (UINT32)obj->mFontDataPerSize.size();
 		}
 
-		void setNumBitmaps(Font* obj, UINT32 size)
+		void SetNumBitmaps(Font* obj, UINT32 size)
 		{
 			mFontDataPerSize.resize(size);
 		}
@@ -83,24 +83,24 @@ namespace bs
 			addReflectableArrayField("mBitmaps", 0, &FontRTTI::getBitmap, &FontRTTI::getNumBitmaps, &FontRTTI::setBitmap, &FontRTTI::setNumBitmaps);
 		}
 
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "Font";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_Font;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			return Font::_createEmpty();
 		}
 
 	protected:
-		void onDeserializationEnded(IReflectable* obj, SerializationContext* context) override
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override
 		{
 			Font* font = static_cast<Font*>(obj);
 			font->initialize(mFontDataPerSize);

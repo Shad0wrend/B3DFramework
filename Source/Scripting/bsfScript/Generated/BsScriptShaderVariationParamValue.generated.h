@@ -20,9 +20,9 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "ShaderVariationParamValue")
 
 		static MonoObject* box(const __ShaderVariationParamValueInterop& value);
-		static __ShaderVariationParamValueInterop unbox(MonoObject* value);
-		static ShaderVariationParamValue fromInterop(const __ShaderVariationParamValueInterop& value);
-		static __ShaderVariationParamValueInterop toInterop(const ShaderVariationParamValue& value);
+		static __ShaderVariationParamValueInterop Unbox(MonoObject* value);
+		static ShaderVariationParamValue FromInterop(const __ShaderVariationParamValueInterop& value);
+		static __ShaderVariationParamValueInterop ToInterop(const ShaderVariationParamValue& value);
 
 	private:
 		ScriptShaderVariationParamValue(MonoObject* managedInstance);

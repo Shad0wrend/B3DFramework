@@ -262,22 +262,22 @@ namespace bs
 		UINT32 deviceIdx; /**< Index of the device that the event originated from. */
 
 		/**	Query is the pressed button a keyboard button. */
-		bool isKeyboard() const { return (buttonCode & 0xC0000000) == 0; }
+		bool IsKeyboard() const { return (buttonCode & 0xC0000000) == 0; }
 
 		/** Query is the pressed button a mouse button. */
-		bool isMouse() const { return (buttonCode & 0x80000000) != 0; }
+		bool IsMouse() const { return (buttonCode & 0x80000000) != 0; }
 
 		/** Query is the pressed button a gamepad button. */
-		bool isGamepad() const { return (buttonCode & 0x40000000) != 0; }
+		bool IsGamepad() const { return (buttonCode & 0x40000000) != 0; }
 
 		/**
 		 * Check if the event has been marked as used. Internally this means nothing but caller might choose to ignore an
 		 * used event.
 		 */
-		bool isUsed() const { return mIsUsed; }
+		bool IsUsed() const { return mIsUsed; }
 
 		/** Mark the event as used. Internally this means nothing but caller might choose to ignore an used event. */
-		void markAsUsed() const { mIsUsed = true; }
+		void MarkAsUsed() const { mIsUsed = true; }
 	private:
 		mutable bool mIsUsed;
 	};
@@ -307,8 +307,8 @@ namespace bs
 	{
 	public:
 		PointerEvent()
-			: button(PointerEventButton::Left), type(PointerEventType::CursorMoved), shift(false)
-			, control(false), alt(false), mouseWheelScrollAmount(0.0f), mIsUsed(false)
+			: Button(PointerEventButton::Left), type(PointerEventType::CursorMoved), shift(false)
+			, Control(false), alt(false), mouseWheelScrollAmount(0.0f), mIsUsed(false)
 		{
 			buttonStates[0] = false;
 			buttonStates[1] = false;
@@ -337,10 +337,10 @@ namespace bs
 		 * Check if the event has been marked as used. Internally this means nothing but caller might choose to ignore an
 		 * used event.
 		 */
-		bool isUsed() const { return mIsUsed; }
+		bool IsUsed() const { return mIsUsed; }
 
 		/** Mark the event as used. Internally this means nothing but caller might choose to ignore an used event. */
-		void markAsUsed() const { mIsUsed = true; }
+		void MarkAsUsed() const { mIsUsed = true; }
 
 	private:
 		mutable bool mIsUsed;
@@ -371,10 +371,10 @@ namespace bs
 		 * Check if the event has been marked as used. Internally this means nothing but caller might choose to ignore an
 		 * used event.
 		 */
-		bool isUsed() const { return mIsUsed; }
+		bool IsUsed() const { return mIsUsed; }
 
 		/** Mark the event as used. Internally this means nothing but caller might choose to ignore an used event. */
-		void markAsUsed() const { mIsUsed = true; }
+		void MarkAsUsed() const { mIsUsed = true; }
 
 	private:
 		mutable bool mIsUsed;

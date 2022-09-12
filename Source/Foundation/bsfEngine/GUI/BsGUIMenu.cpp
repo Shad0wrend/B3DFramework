@@ -19,7 +19,7 @@ namespace bs
 	}
 
 	GUIMenuItem::GUIMenuItem(GUIMenuItem* parent, INT32 priority, UINT32 seqIdx)
-		: mParent(parent), mIsSeparator(true), mCallback(nullptr), mPriority(priority), mSeqIdx(seqIdx)
+		: MParent(parent), mIsSeparator(true), mCallback(nullptr), mPriority(priority), mSeqIdx(seqIdx)
 	{
 
 	}
@@ -85,12 +85,12 @@ namespace bs
 
 	GUIMenuItem* GUIMenu::addMenuItem(const String& path, std::function<void()> callback, INT32 priority, const ShortcutKey& key)
 	{
-		return addMenuItemInternal(path, callback, false, priority, key);
+		return AddMenuItemInternal(path, callback, false, priority, key);
 	}
 
 	GUIMenuItem* GUIMenu::addSeparator(const String& path, INT32 priority)
 	{
-		return addMenuItemInternal(path, nullptr, true, priority, ShortcutKey::NONE);
+		return AddMenuItemInternal(path, nullptr, true, priority, ShortcutKey::NONE);
 	}
 
 	GUIMenuItem* GUIMenu::addMenuItemInternal(const String& path, std::function<void()> callback, bool isSeparator,
@@ -165,7 +165,7 @@ namespace bs
 
 	GUIDropDownData GUIMenu::getDropDownData() const
 	{
-		return getDropDownDataInternal(mRootElement);
+		return GetDropDownDataInternal(mRootElement);
 	}
 
 	void GUIMenu::setLocalizedName(const String& menuItemLabel, const HString& localizedName)

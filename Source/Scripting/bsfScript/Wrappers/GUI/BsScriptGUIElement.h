@@ -27,23 +27,23 @@ namespace bs
 		GUIElementBase* getGUIElement() const { return (GUIElementBase*)mElement; }
 
 		/**	Destroys the underlying GUIElementBase. */
-		virtual void destroy() = 0;
+		virtual void Destroy() = 0;
 
 		/**	Checks have we destroyed the underlying GUIElementBase. */
-		bool isDestroyed() const { return mIsDestroyed; }
+		bool IsDestroyed() const { return mIsDestroyed; }
 
 		/**	Returns the parent interop object for a GUI layout or a GUI panel. */
 		ScriptGUILayout* getParent() const { return mParent; }
 
 		/**	Sets an interop object for a GUI layout or a panel as this object's parent. */
-		void setParent(ScriptGUILayout* parent) { mParent = parent; }
+		void SetParent(ScriptGUILayout* parent) { mParent = parent; }
 
 	protected:
 		/**
 		 * Initializes the interop object with a previously initialized GUI element. You must call this before using this
 		 * object.
 		 */
-		void initialize(GUIElementBase* element);
+		void Initialize(GUIElementBase* element);
 
 		/** @copydoc ScriptObjectBase::_onManagedInstanceDeleted */
 		void _onManagedInstanceDeleted(bool assemblyRefresh) override;
@@ -52,7 +52,7 @@ namespace bs
 		void _clearManagedInstance() override;
 
 		/**	Triggered when the focus changes for the underlying GUIElementBase. */
-		static void onFocusChanged(ScriptGUIElementBaseTBase* thisPtr, bool focus);
+		static void OnFocusChanged(ScriptGUIElementBaseTBase* thisPtr, bool focus);
 
 		bool mIsDestroyed = false;
 		GUIElementBase* mElement = nullptr;
@@ -86,7 +86,7 @@ namespace bs
 		virtual ~ScriptGUIElementTBase() {}
 
 		/** @copydoc ScriptGUIElementBaseTBase::destroy */
-		void destroy() override;
+		void Destroy() override;
 	};
 
 	/**
@@ -155,7 +155,7 @@ namespace bs
 		static MonoString* internal_GetStyle(ScriptGUIElementBaseTBase* nativeInstance);
 		static void internal_SetStyle(ScriptGUIElementBaseTBase* nativeInstance, MonoString* style);
 
-		typedef void(BS_THUNKCALL *OnFocusChangedThunkDef) (MonoObject*, MonoException**);
+		typedef Void(BS_THUNKCALL *OnFocusChangedThunkDef) (MonoObject*, MonoException**);
 
 	public:
 		static OnFocusChangedThunkDef onFocusGainedThunk;

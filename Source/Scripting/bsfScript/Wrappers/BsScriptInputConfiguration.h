@@ -22,7 +22,7 @@ namespace bs
 		MonoObject* getManagedInstance() const;
 
 		/**	Returns the internal wrapped InputConfiguration object. */
-		SPtr<InputConfiguration> getInternalValue() const { return mInputConfig; }
+		SPtr<InputConfiguration> GetInternalValue() const { return mInputConfig; }
 
 		/**
 		 * Attempts to find a existing interop object for the provided input configuration. Returns null if one cannot be

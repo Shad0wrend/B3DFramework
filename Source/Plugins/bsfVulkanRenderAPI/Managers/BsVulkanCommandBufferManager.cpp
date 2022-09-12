@@ -228,7 +228,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	VulkanCommandBufferManager& gVulkanCBManager()
+	VulkanCommandBufferManager& GVulkanCBManager()
 	{
 		return static_cast<VulkanCommandBufferManager&>(CommandBufferManager::instance());
 	}

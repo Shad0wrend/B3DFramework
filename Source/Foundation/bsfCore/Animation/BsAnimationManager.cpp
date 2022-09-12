@@ -37,7 +37,7 @@ namespace bs
 	{
 		// Wait for any workers to complete
 		{
-			Lock lock(mMutex);
+			Lock Lock(mMutex);
 
 			while (mNumActiveWorkers > 0)
 				mWorkerDoneSignal.wait(lock);
@@ -115,7 +115,7 @@ namespace bs
 
 		// Queue animation evaluation tasks
 		{
-			Lock lock(mMutex);
+			Lock Lock(mMutex);
 			mNumActiveWorkers = (UINT32)mProxies.size();
 		}
 
@@ -127,7 +127,7 @@ namespace bs
 				UINT32 boneIdx = curBoneIdx;
 				evaluateAnimation(anim.get(), boneIdx);
 
-				Lock lock(mMutex);
+				Lock Lock(mMutex);
 				{
 					assert(mNumActiveWorkers > 0);
 					mNumActiveWorkers--;
@@ -147,7 +147,7 @@ namespace bs
 		if(!async)
 		{
 			{
-				Lock lock(mMutex);
+				Lock Lock(mMutex);
 
 				while (mNumActiveWorkers > 0)
 					mWorkerDoneSignal.wait(lock);
@@ -514,7 +514,7 @@ namespace bs
 
 		if (hasAnimInfo)
 		{
-			Lock lock(mMutex);
+			Lock Lock(mMutex);
 			renderData.infos[anim->id] = animInfo;
 		}
 	}
@@ -530,7 +530,7 @@ namespace bs
 		mAnimations.erase(animId);
 	}
 
-	AnimationManager& gAnimation()
+	AnimationManager& GAnimation()
 	{
 		return AnimationManager::instance();
 	}

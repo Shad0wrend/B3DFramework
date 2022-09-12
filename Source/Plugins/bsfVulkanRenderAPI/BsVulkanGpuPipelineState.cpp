@@ -20,7 +20,7 @@ namespace bs { namespace ct
 	VulkanPipeline::VulkanPipeline(VulkanResourceManager* owner, VkPipeline pipeline,
 		const std::array<bool, BS_MAX_MULTIPLE_RENDER_TARGETS>& colorReadOnly, bool depthStencilReadOnly)
 		: VulkanResource(owner, true), mPipeline(pipeline), mReadOnlyColor(colorReadOnly)
-		, mReadOnlyDepth(depthStencilReadOnly)
+		, MReadOnlyDepth(depthStencilReadOnly)
 	{ }
 
 	VulkanPipeline::VulkanPipeline(VulkanResourceManager* owner, VkPipeline pipeline)
@@ -34,8 +34,8 @@ namespace bs { namespace ct
 
 	VulkanGraphicsPipelineState::GpuPipelineKey::GpuPipelineKey(
 		UINT32 framebufferId, UINT32 vertexInputId, UINT32 readOnlyFlags, DrawOperationType drawOp)
-		: framebufferId(framebufferId), vertexInputId(vertexInputId), readOnlyFlags(readOnlyFlags)
-		, drawOp(drawOp)
+		: FramebufferId(framebufferId), vertexInputId(vertexInputId), readOnlyFlags(readOnlyFlags)
+		, DrawOp(drawOp)
 	{
 		
 	}
@@ -95,7 +95,7 @@ namespace bs { namespace ct
 
 	void VulkanGraphicsPipelineState::initialize()
 	{
-		Lock lock(mMutex);
+		Lock Lock(mMutex);
 
 		GraphicsPipelineState::initialize();
 
@@ -322,13 +322,13 @@ namespace bs { namespace ct
 		UINT32 deviceIdx, VulkanRenderPass* renderPass, UINT32 readOnlyFlags, DrawOperationType drawOp,
 			const SPtr<VulkanVertexInput>& vertexInput)
 	{
-		Lock lock(mMutex);
+		Lock Lock(mMutex);
 
 		if (mPerDeviceData[deviceIdx].device == nullptr)
 			return nullptr;
 
 		readOnlyFlags &= ~FBT_COLOR; // Ignore the color
-		GpuPipelineKey key(renderPass->getId(), vertexInput->getId(), readOnlyFlags, drawOp);
+		GpuPipelineKey Key(renderPass->getId(), vertexInput->getId(), readOnlyFlags, drawOp);
 
 		PerDeviceData& perDeviceData = mPerDeviceData[deviceIdx];
 		auto iterFind = perDeviceData.pipelines.find(key);

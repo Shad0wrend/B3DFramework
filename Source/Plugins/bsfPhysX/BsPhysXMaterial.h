@@ -20,22 +20,22 @@ namespace bs
 		~PhysXMaterial();
 
 		/** @copydoc PhysicsMaterial::setStaticFriction */
-		void setStaticFriction(float value) override;
+		void SetStaticFriction(float value) override;
 
 		/** @copydoc PhysicsMaterial::getStaticFriction */
-		float getStaticFriction() const override;
+		float GetStaticFriction() const override;
 
 		/** @copydoc PhysicsMaterial::setDynamicFriction */
-		void setDynamicFriction(float value) override;
+		void SetDynamicFriction(float value) override;
 
 		/** @copydoc PhysicsMaterial::getDynamicFriction */
-		float getDynamicFriction() const override;
+		float GetDynamicFriction() const override;
 
 		/** @copydoc PhysicsMaterial::setRestitutionCoefficient */
-		void setRestitutionCoefficient(float value) override;
+		void SetRestitutionCoefficient(float value) override;
 
 		/** @copydoc PhysicsMaterial::getRestitutionCoefficient */
-		float getRestitutionCoefficient() const override;
+		float GetRestitutionCoefficient() const override;
 
 		/** Returns the internal PhysX material. */
 		physx::PxMaterial* _getInternal() const { return mInternal; }

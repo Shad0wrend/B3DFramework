@@ -10,7 +10,7 @@ using namespace physx;
 
 namespace bs
 {
-	PxPrismaticJointFlag::Enum toPxFlag(SliderJointFlag flag)
+	PxPrismaticJointFlag::Enum ToPxFlag(SliderJointFlag flag)
 	{
 		switch (flag)
 		{
@@ -57,12 +57,12 @@ namespace bs
 
 	float PhysXSliderJoint::getPosition() const
 	{
-		return getInternal()->getPosition();
+		return GetInternal()->getPosition();
 	}
 
 	float PhysXSliderJoint::getSpeed() const
 	{
-		return getInternal()->getVelocity();
+		return GetInternal()->getVelocity();
 	}
 
 	LimitLinearRange PhysXSliderJoint::getLimit() const
@@ -82,7 +82,7 @@ namespace bs
 
 	void PhysXSliderJoint::setLimit(const LimitLinearRange& limit)
 	{
-		PxJointLinearLimitPair pxLimit(gPhysX().getScale(), limit.lower, limit.upper, limit.contactDist);
+		PxJointLinearLimitPair PxLimit(gPhysX().getScale(), limit.lower, limit.upper, limit.contactDist);
 		pxLimit.stiffness = limit.spring.stiffness;
 		pxLimit.damping = limit.spring.damping;
 		pxLimit.restitution = limit.restitution;
@@ -97,7 +97,7 @@ namespace bs
 
 	bool PhysXSliderJoint::hasFlag(SliderJointFlag flag) const
 	{
-		return getInternal()->getPrismaticJointFlags() & toPxFlag(flag);
+		return GetInternal()->getPrismaticJointFlags() & toPxFlag(flag);
 	}
 
 	PxPrismaticJoint* PhysXSliderJoint::getInternal() const

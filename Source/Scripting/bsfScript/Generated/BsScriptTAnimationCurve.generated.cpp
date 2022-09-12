@@ -44,7 +44,7 @@ namespace bs
 		Vector<TKeyframe<float>> veckeyframes;
 		if(keyframes != nullptr)
 		{
-			ScriptArray arraykeyframes(keyframes);
+			ScriptArray Arraykeyframes(keyframes);
 			veckeyframes.resize(arraykeyframes.size());
 			for(int i = 0; i < (int)arraykeyframes.size(); i++)
 			{
@@ -112,7 +112,7 @@ namespace bs
 		Vector<TKeyframe<Vector3>> veckeyframes;
 		if(keyframes != nullptr)
 		{
-			ScriptArray arraykeyframes(keyframes);
+			ScriptArray Arraykeyframes(keyframes);
 			veckeyframes.resize(arraykeyframes.size());
 			for(int i = 0; i < (int)arraykeyframes.size(); i++)
 			{
@@ -177,7 +177,7 @@ namespace bs
 		Vector<TKeyframe<Vector2>> veckeyframes;
 		if(keyframes != nullptr)
 		{
-			ScriptArray arraykeyframes(keyframes);
+			ScriptArray Arraykeyframes(keyframes);
 			veckeyframes.resize(arraykeyframes.size());
 			for(int i = 0; i < (int)arraykeyframes.size(); i++)
 			{
@@ -242,7 +242,7 @@ namespace bs
 		Vector<TKeyframe<Quaternion>> veckeyframes;
 		if(keyframes != nullptr)
 		{
-			ScriptArray arraykeyframes(keyframes);
+			ScriptArray Arraykeyframes(keyframes);
 			veckeyframes.resize(arraykeyframes.size());
 			for(int i = 0; i < (int)arraykeyframes.size(); i++)
 			{
@@ -307,7 +307,7 @@ namespace bs
 		Vector<TKeyframe<int32_t>> veckeyframes;
 		if(keyframes != nullptr)
 		{
-			ScriptArray arraykeyframes(keyframes);
+			ScriptArray Arraykeyframes(keyframes);
 			veckeyframes.resize(arraykeyframes.size());
 			for(int i = 0; i < (int)arraykeyframes.size(); i++)
 			{

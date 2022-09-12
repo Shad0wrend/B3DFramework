@@ -30,7 +30,7 @@ namespace bs { namespace ct {
 
 		/** Helper method used for initializing variations of this material. */
 		template<bool msaa, bool singleSampleMSAA>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -68,7 +68,7 @@ namespace bs { namespace ct {
 
 		/** Helper method used for initializing variations of this material. */
 		template<bool inside, bool msaa, bool singleSampleMSAA>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -124,7 +124,7 @@ namespace bs { namespace ct {
 
 		/** Helper method used for initializing variations of this material. */
 		template<bool msaa, bool singleSampleMSAA>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -167,7 +167,7 @@ namespace bs { namespace ct {
 
 		/** Helper method used for initializing variations of this material. */
 		template<bool inside, bool msaa, bool singleSampleMSAA>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -213,7 +213,7 @@ namespace bs { namespace ct {
 
 		/** Helper method used for initializing variations of this material. */
 		template<bool msaa, bool singleSampleMSAA>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -256,7 +256,7 @@ namespace bs { namespace ct {
 
 		/** Helper method used for initializing variations of this material. */
 		template<bool msaa, bool singleSampleMSAA>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{

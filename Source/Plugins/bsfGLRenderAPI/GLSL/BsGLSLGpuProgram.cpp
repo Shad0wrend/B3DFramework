@@ -17,7 +17,7 @@ namespace bs { namespace ct
 	UINT32 GLSLGpuProgram::sHullShaderCount = 0;
 	UINT32 GLSLGpuProgram::sComputeShaderCount = 0;
 
-	bool checkForGLSLError(const GLuint programObj, String& outErrorMsg)
+	bool CheckForGLSLError(const GLuint programObj, String& outErrorMsg)
 	{
 		StringStream stream;
 

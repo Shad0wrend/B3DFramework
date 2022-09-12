@@ -179,7 +179,7 @@ namespace bs
 			}
 		}
 
-		ScriptArray scriptArray(metaData.scriptClass->_getInternalClass(), (UINT32)managedComponents.size());
+		ScriptArray ScriptArray(metaData.scriptClass->_getInternalClass(), (UINT32)managedComponents.size());
 		for (UINT32 i = 0; i < (UINT32)managedComponents.size(); i++)
 			scriptArray.set(i, managedComponents[i]);
 
@@ -213,7 +213,7 @@ namespace bs
 			}
 		}
 
-		ScriptArray scriptArray(metaData.scriptClass->_getInternalClass(), (UINT32)managedComponents.size());
+		ScriptArray ScriptArray(metaData.scriptClass->_getInternalClass(), (UINT32)managedComponents.size());
 		for(UINT32 i = 0; i < (UINT32)managedComponents.size(); i++)
 			scriptArray.set(i, managedComponents[i]);
 

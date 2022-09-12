@@ -81,22 +81,22 @@ namespace bs
 
 	void Win32RenderWindow::syncProperties()
 	{
-		ScopedSpinLock lock(getCore()->mLock);
+		ScopedSpinLock Lock(getCore()->mLock);
 		mProperties = getCore()->mSyncedProperties;
 	}
 
 	HWND Win32RenderWindow::getHWnd() const
 	{
 		blockUntilCoreInitialized();
-		return getCore()->_getHWnd();
+		return GetCore()->_getHWnd();
 	}
 
 	namespace ct
 	{
 	Win32RenderWindow::Win32RenderWindow(const RENDER_WINDOW_DESC& desc, UINT32 windowId, Win32GLSupport& glsupport)
 		: RenderWindow(desc, windowId), mWindow(nullptr), mGLSupport(glsupport), mHDC(nullptr), mIsChild(false)
-		, mDeviceName(nullptr), mDisplayFrequency(0), mShowOnSwap(false), mContext(nullptr), mProperties(desc)
-		, mSyncedProperties(desc)
+		, MDeviceName(nullptr), mDisplayFrequency(0), mShowOnSwap(false), mContext(nullptr), mProperties(desc)
+		, MSyncedProperties(desc)
 	{ }
 
 	Win32RenderWindow::~Win32RenderWindow()
@@ -264,7 +264,7 @@ namespace bs
 			setVSync(true, props.vsyncInterval);
 
 		{
-			ScopedSpinLock lock(mLock);
+			ScopedSpinLock Lock(mLock);
 			mSyncedProperties = props;
 		}
 
@@ -327,7 +327,7 @@ namespace bs
 		_windowMovedOrResized();
 
 		{
-			ScopedSpinLock lock(mLock);
+			ScopedSpinLock Lock(mLock);
 			mSyncedProperties.top = props.top;
 			mSyncedProperties.left = props.left;
 			mSyncedProperties.width = props.width;
@@ -392,7 +392,7 @@ namespace bs
 		_windowMovedOrResized();
 
 		{
-			ScopedSpinLock lock(mLock);
+			ScopedSpinLock Lock(mLock);
 			mSyncedProperties.top = props.top;
 			mSyncedProperties.left = props.left;
 			mSyncedProperties.width = props.width;
@@ -416,7 +416,7 @@ namespace bs
 			props.left = mWindow->getLeft();
 
 			{
-				ScopedSpinLock lock(mLock);
+				ScopedSpinLock Lock(mLock);
 				mSyncedProperties.top = props.top;
 				mSyncedProperties.left = props.left;
 			}
@@ -438,7 +438,7 @@ namespace bs
 			props.height = mWindow->getHeight();
 			
 			{
-				ScopedSpinLock lock(mLock);
+				ScopedSpinLock Lock(mLock);
 				mSyncedProperties.width = props.width;
 				mSyncedProperties.height = props.height;
 			}
@@ -477,7 +477,7 @@ namespace bs
 		mProperties.vsyncInterval = interval;
 
 		{
-			ScopedSpinLock lock(mLock);
+			ScopedSpinLock Lock(mLock);
 			mSyncedProperties.vsync = enabled;
 			mSyncedProperties.vsyncInterval = interval;
 		}
@@ -562,7 +562,7 @@ namespace bs
 			*contextPtr = mContext;
 			return;
 		}
-		else if(name == "WINDOW")
+		else If(name == "WINDOW")
 		{
 			UINT64 *pHwnd = (UINT64*)pData;
 			*pHwnd = (UINT64)_getHWnd();
@@ -613,7 +613,7 @@ namespace bs
 
 	void Win32RenderWindow::syncProperties()
 	{
-		ScopedSpinLock lock(mLock);
+		ScopedSpinLock Lock(mLock);
 		mProperties = mSyncedProperties;
 	}		
 	}

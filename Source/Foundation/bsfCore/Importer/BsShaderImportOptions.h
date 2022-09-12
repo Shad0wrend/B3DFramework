@@ -40,7 +40,7 @@ namespace bs
 		 * @param[in]	value		Value to assign to the define.
 		 */
 		BS_SCRIPT_EXPORT()
-		void setDefine(const String& define, const String& value)
+		void SetDefine(const String& define, const String& value)
 		{
 			mDefines[define] = value;
 		}
@@ -53,7 +53,7 @@ namespace bs
 		 * @returns					True if the define was found, false otherwise.
 		 */
 		BS_SCRIPT_EXPORT()
-		bool getDefine(const String& define, String& value) const
+		bool GetDefine(const String& define, String& value) const
 		{
 			auto iterFind = mDefines.find(define);
 			if(iterFind != mDefines.end())
@@ -72,7 +72,7 @@ namespace bs
 		 * @returns					True if the define was found, false otherwise.
 		 */
 		BS_SCRIPT_EXPORT()
-		bool hasDefine(const String& define) const
+		bool HasDefine(const String& define) const
 		{
 			auto iterFind = mDefines.find(define);
 			return iterFind != mDefines.end();
@@ -84,13 +84,13 @@ namespace bs
 		 * @param[in]	define		Name of the define to unregister.
 		 */
 		BS_SCRIPT_EXPORT()
-		void removeDefine(const String& define)
+		void RemoveDefine(const String& define)
 		{
 			mDefines.erase(define);
 		}
 
 		/** Returns all the set defines and their values. */
-		const UnorderedMap<String, String>& getDefines() const { return mDefines; }
+		const UnorderedMap<String, String>& GetDefines() const { return mDefines; }
 
 		/**
 		 * Flags that control which shading languages should the BSL shader be converted into. This ultimately controls on
@@ -101,7 +101,7 @@ namespace bs
 
 		/** Creates a new import options object that allows you to customize how are meshes imported. */
 		BS_SCRIPT_EXPORT(ec:T)
-		static SPtr<ShaderImportOptions> create() { return bs_shared_ptr_new<ShaderImportOptions>(); }
+		static SPtr<ShaderImportOptions> Create() { return bs_shared_ptr_new<ShaderImportOptions>(); }
 
 		/************************************************************************/
 		/* 								SERIALIZATION                      		*/

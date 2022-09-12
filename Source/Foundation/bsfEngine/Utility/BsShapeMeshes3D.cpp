@@ -797,7 +797,7 @@ namespace bs
 
 					}
 				}
-				else if(fabs(uv1.x - uv0.x) > 0.5f)
+				else If(fabs(uv1.x - uv0.x) > 0.5f)
 				{
 					if(uv0.x < 0.5f)
 					{
@@ -830,7 +830,7 @@ namespace bs
 						}
 					}
 				}
-				else if(fabs(uv1.x - uv2.x) > 0.5f)
+				else If(fabs(uv1.x - uv2.x) > 0.5f)
 				{
 					if(uv2.x < 0.5f)
 					{
@@ -883,7 +883,7 @@ namespace bs
 					// Index 0 maps to vertex 2, index 1 to vertex 1, index 2 to vertex 0
 					if(indexToSplit == 0)
 						indexToSplit = 2;
-					else if(indexToSplit == 2)
+					else If(indexToSplit == 2)
 						indexToSplit = 0;
 
 					outIndices[i + indexToSplit] = vertexOffset + numIndices + extraVertIdx;
@@ -1019,13 +1019,13 @@ namespace bs
 	{
 		float fovTan = Math::tan(FOV * 0.5f);
 
-		Vector3 nearPoint(0, 0, near);
-		Vector3 nearWidth(near * fovTan * aspect, 0, 0);
-		Vector3 nearHeight(0, (near * fovTan) / aspect, 0);
+		Vector3 NearPoint(0, 0, near);
+		Vector3 NearWidth(near * fovTan * aspect, 0, 0);
+		Vector3 NearHeight(0, (near * fovTan) / aspect, 0);
 
-		Vector3 farPoint(0, 0, far);
-		Vector3 farWidth(far * fovTan * aspect, 0, 0);
-		Vector3 farHeight(0, (far * fovTan) / aspect, 0);
+		Vector3 FarPoint(0, 0, far);
+		Vector3 FarWidth(far * fovTan * aspect, 0, 0);
+		Vector3 FarHeight(0, (far * fovTan) / aspect, 0);
 
 		Vector3 points[8] =
 		{
@@ -1621,7 +1621,7 @@ namespace bs
 		Vector3 right = dir.cross(up);
 		right.normalize();
 
-		Vector<Vector3> points(4);
+		Vector<Vector3> Points(4);
 
 		float r = width * 0.5f;
 		dir = dir * r;
@@ -1685,7 +1685,7 @@ namespace bs
 
 		outVertices += vertexOffset * vertexStride;
 		outColors += vertexOffset * vertexStride;
-		Vector<Vector3> tempNormals(numCoords);
+		Vector<Vector3> TempNormals(numCoords);
 
 		for (UINT32 i = 0, j = numCoords - 1; i < numCoords; j = i++)
 		{
@@ -1833,7 +1833,7 @@ namespace bs
 		Vector3 right = alignWithUp.rotate(alignWithStart.rotate(Vector3::UNIT_X));
 		right.normalize();
 
-		Quaternion increment(-up, angleAmount / (float)(numVertices - 1));
+		Quaternion Increment(-up, angleAmount / (float)(numVertices - 1));
 
 		outVertices += vertexOffset * vertexStride;
 		Vector3 curDirection = right * radius;
@@ -1867,7 +1867,7 @@ namespace bs
 			Vector3 engineBitangent = Vector3::cross(normal, tangent);
 			float sign = Vector3::dot(engineBitangent, bitangent);
 
-			Vector4 packedTangent(tangent.x, tangent.y, tangent.z, sign > 0 ? 1.0f : -1.0f);
+			Vector4 PackedTangent(tangent.x, tangent.y, tangent.z, sign > 0 ? 1.0f : -1.0f);
 			memcpy(tangents + (vertexOffset + i) * vertexStride, &packedTangent, sizeof(Vector4));
 		}
 

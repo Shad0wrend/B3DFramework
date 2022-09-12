@@ -71,7 +71,7 @@ namespace bs
 
 			return false;
 		}
-		else if(ev.getType() == GUICommandEventType::FocusLost)
+		else If(ev.getType() == GUICommandEventType::FocusLost)
 		{
 			if(!onFocusLost.empty())
 				onFocusLost();

@@ -35,7 +35,7 @@ namespace bs
 		FMOD::Sound* createStreamingSound() const;
 
 		/** Releases any resources with a streaming sound (created with createStreamingSound()). */
-		static void releaseStreamingSound(FMOD::Sound* sound);
+		static void ReleaseStreamingSound(FMOD::Sound* sound);
 
 		/** Returns FMOD sound representing this clip. Only valid for non-streaming clips. */
 		FMOD::Sound* getSound() const { return mSound; }
@@ -44,14 +44,14 @@ namespace bs
 		 * Checks whether the audio clip requires a streaming sound retrieved via createStreamingSound(), or can the
 		 * basic sound retrieved via getSound() be used.
 		 */
-		bool requiresStreaming() const;
+		bool RequiresStreaming() const;
 
 	protected:
 		/** @copydoc Resource::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 		/** @copydoc AudioClip::getSourceStream */
-		SPtr<DataStream> getSourceStream(UINT32& size) override;
+		SPtr<DataStream> GetSourceStream(UINT32& size) override;
 
 		FMOD::Sound* mSound = nullptr;
 

@@ -127,24 +127,24 @@ namespace bs
 		virtual ~RenderTarget() = default;
 
 		/** Queries the render target for a custom attribute. This may be anything and is implementation specific. */
-		virtual void getCustomAttribute(const String& name, void* pData) const;
+		virtual void GetCustomAttribute(const String& name, void* pData) const;
 
 		/**
 		 * @copydoc ct::RenderTarget::setPriority
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		void setPriority(INT32 priority);
+		void SetPriority(INT32 priority);
 
 		/**
 		 * Returns properties that describe the render target.
 		 *
 		 * @note	Sim thread only.
 		 */
-		const RenderTargetProperties& getProperties() const;
+		const RenderTargetProperties& GetProperties() const;
 
 		/** Retrieves a core implementation of a render target usable only from the core thread. */
-		SPtr<ct::RenderTarget> getCore() const;
+		SPtr<ct::RenderTarget> GetCore() const;
 
 		/**
 		 * Event that gets triggered whenever the render target is resized.
@@ -157,7 +157,7 @@ namespace bs
 		friend class ct::RenderTarget;
 
 		/**	Returns properties that describe the render target. */
-		virtual const RenderTargetProperties& getPropertiesInternal() const = 0;
+		virtual const RenderTargetProperties& GetPropertiesInternal() const = 0;
 		
 		/************************************************************************/
 		/* 								SERIALIZATION                      		*/
@@ -200,7 +200,7 @@ namespace bs
 		 * 			
 		 * @param[in]	priority	The priority. Higher value means the target will be rendered sooner.
 		 */
-		void setPriority(INT32 priority);
+		void SetPriority(INT32 priority);
 
 		/**
 		 * Swaps the frame buffers to display the next frame.
@@ -211,19 +211,19 @@ namespace bs
 		 *							related to this render target, you can exclude them from the sync mask for potentially
 		 *							better performance. You can use CommandSyncMask to generate a valid sync mask.
 		 */
-		virtual void swapBuffers(UINT32 syncMask = 0xFFFFFFFF) {}
+		virtual void SwapBuffers(UINT32 syncMask = 0xFFFFFFFF) {}
 
 		/** Queries the render target for a custom attribute. This may be anything and is implementation specific. */
-		virtual void getCustomAttribute(const String& name, void* pData) const;
+		virtual void GetCustomAttribute(const String& name, void* pData) const;
 
 		/**	Returns properties that describe the render target. */
-		const RenderTargetProperties& getProperties() const;
+		const RenderTargetProperties& GetProperties() const;
 
 		/**
 		 * Returns a number that increments each time the target is rendered to. External systems can use this to
 		 * determine when the target's contents changed.
 		 */
-		UINT64 getUpdateCount() const { return mUpdateCount; }
+		UINT64 GetUpdateCount() const { return mUpdateCount; }
 
 		/**
 		 * @name Internal
@@ -238,7 +238,7 @@ namespace bs
 		friend class bs::RenderTarget;
 
 		/**	Returns properties that describe the render target. */
-		virtual const RenderTargetProperties& getPropertiesInternal() const = 0;
+		virtual const RenderTargetProperties& GetPropertiesInternal() const = 0;
 
 	private:
 		UINT64 mUpdateCount = 0;

@@ -25,10 +25,10 @@ namespace bs { namespace ct
 		 * the buffer wait on before executing. Sync mask is reset after a flush. See CommandSyncMask on how to generate
 		 * a sync mask.
 		 */
-		void appendMask(UINT32 syncMask) { mSyncMask |= syncMask; }
+		void AppendMask(UINT32 syncMask) { mSyncMask |= syncMask; }
 
 		/** Resets the sync mask. */
-		void clearMask() { mSyncMask = 0; }
+		void ClearMask() { mSyncMask = 0; }
 
 		/**
 		 * Issues a pipeline barrier on the provided buffer. See vkCmdPipelineBarrier in Vulkan spec. for usage
@@ -58,7 +58,7 @@ namespace bs { namespace ct
 		 *	@param[in]	wait	If true, the caller thread will wait until all device operations on the command buffer's
 		 *						queue complete.	
 		 */
-		void flush(bool wait);
+		void Flush(bool wait);
 
 		/** Returns the internal command buffer. */
 		VulkanCmdBuffer* getCB() const { return mCB; }
@@ -66,7 +66,7 @@ namespace bs { namespace ct
 		friend class VulkanCommandBufferManager;
 
 		/** Allocates a new internal command buffer. */
-		void allocate();
+		void Allocate();
 
 		VulkanDevice* mDevice = nullptr;
 		GpuQueueType mType = GQT_GRAPHICS;
@@ -105,7 +105,7 @@ namespace bs { namespace ct
 		 *							beginning of the array. Must be able to hold at least BS_MAX_UNIQUE_QUEUES entries.
 		 * @param[out]	count		Number of semaphores provided in the @p semaphores array.
 		 */
-		void getSyncSemaphores(UINT32 deviceIdx, UINT32 syncMask, VulkanSemaphore** semaphores, UINT32& count);
+		void GetSyncSemaphores(UINT32 deviceIdx, UINT32 syncMask, VulkanSemaphore** semaphores, UINT32& count);
 
 		/**
 		 * Returns an command buffer that can be used for executing transfer operations on the specified queue.
@@ -115,7 +115,7 @@ namespace bs { namespace ct
 		VulkanTransferBuffer* getTransferBuffer(UINT32 deviceIdx, GpuQueueType type, UINT32 queueIdx);
 
 		/** Submits all transfer command buffers, ensuring all queued transfer operations get executed. */
-		void flushTransferBuffers(UINT32 deviceIdx);
+		void FlushTransferBuffers(UINT32 deviceIdx);
 
 	private:
 		/** Contains command buffers specific to one device. */
@@ -131,7 +131,7 @@ namespace bs { namespace ct
 	};
 
 	/**	Provides easy access to the VulkanCommandBufferManager. */
-	VulkanCommandBufferManager& gVulkanCBManager();
+	VulkanCommandBufferManager& GVulkanCBManager();
 
 	/** @} */
 }}

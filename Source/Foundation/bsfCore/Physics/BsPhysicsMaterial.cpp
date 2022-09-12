@@ -30,6 +30,6 @@ namespace bs
 
 	RTTITypeBase* PhysicsMaterial::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 }

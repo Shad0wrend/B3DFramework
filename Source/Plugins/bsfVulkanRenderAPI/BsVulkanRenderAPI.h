@@ -19,7 +19,7 @@ namespace bs { namespace ct
 		~VulkanRenderAPI() = default;
 
 		/** @copydoc RenderAPI::getName */
-		const StringID& getName() const override;
+		const StringID& GetName() const override;
 		
 		/** @copydoc RenderAPI::setGraphicsPipeline */
 		void setGraphicsPipeline(const SPtr<GraphicsPipelineState>& pipelineState,
@@ -46,14 +46,14 @@ namespace bs { namespace ct
 			RenderSurfaceMask loadMask = RT_NONE, const SPtr<CommandBuffer>& commandBuffer = nullptr) override;
 
 		/** @copydoc RenderAPI::setViewport */
-		void setViewport(const Rect2& area, const SPtr<CommandBuffer>& commandBuffer = nullptr) override;
+		void SetViewport(const Rect2& area, const SPtr<CommandBuffer>& commandBuffer = nullptr) override;
 
 		/** @copydoc RenderAPI::setScissorRect */
 		void setScissorRect(UINT32 left, UINT32 top, UINT32 right, UINT32 bottom,
 			const SPtr<CommandBuffer>& commandBuffer = nullptr) override;
 
 		/** @copydoc RenderAPI::setStencilRef */
-		void setStencilRef(UINT32 value, const SPtr<CommandBuffer>& commandBuffer = nullptr) override;
+		void SetStencilRef(UINT32 value, const SPtr<CommandBuffer>& commandBuffer = nullptr) override;
 
 		/** @copydoc RenderAPI::setVertexBuffers */
 		void setVertexBuffers(UINT32 index, SPtr<VertexBuffer>* buffers, UINT32 numBuffers,
@@ -84,22 +84,22 @@ namespace bs { namespace ct
 			const SPtr<CommandBuffer>& commandBuffer = nullptr) override;
 
 		/** @copydoc RenderAPI::swapBuffers() */
-		void swapBuffers(const SPtr<RenderTarget>& target, UINT32 syncMask = 0xFFFFFFFF) override;
+		void SwapBuffers(const SPtr<RenderTarget>& target, UINT32 syncMask = 0xFFFFFFFF) override;
 
 		/** @copydoc RenderAPI::addCommands() */
-		void addCommands(const SPtr<CommandBuffer>& commandBuffer, const SPtr<CommandBuffer>& secondary) override;
+		void AddCommands(const SPtr<CommandBuffer>& commandBuffer, const SPtr<CommandBuffer>& secondary) override;
 
 		/** @copydoc RenderAPI::submitCommandBuffer() */
-		void submitCommandBuffer(const SPtr<CommandBuffer>& commandBuffer, UINT32 syncMask = 0xFFFFFFFF) override;
+		void SubmitCommandBuffer(const SPtr<CommandBuffer>& commandBuffer, UINT32 syncMask = 0xFFFFFFFF) override;
 
 		/** @copydoc RenderAPI::getMainCommandBuffer() */
-		SPtr<CommandBuffer> getMainCommandBuffer() const override;
+		SPtr<CommandBuffer> GetMainCommandBuffer() const override;
 
 		/** @copydoc RenderAPI::convertProjectionMatrix */
-		void convertProjectionMatrix(const Matrix4& matrix, Matrix4& dest) override;
+		void ConvertProjectionMatrix(const Matrix4& matrix, Matrix4& dest) override;
 
 		/** @copydoc RenderAPI::generateParamBlockDesc() */
-		GpuParamBlockDesc generateParamBlockDesc(const String& name, Vector<GpuParamDataDesc>& params) override;
+		GpuParamBlockDesc GenerateParamBlockDesc(const String& name, Vector<GpuParamDataDesc>& params) override;
 
 		/**
 		 * @name Internal
@@ -132,13 +132,13 @@ namespace bs { namespace ct
 		friend class VulkanRenderAPIFactory;
 
 		/** @copydoc RenderAPI::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 		/** @copydoc RenderAPI::destroyCore */
-		void destroyCore() override;
+		void DestroyCore() override;
 
 		/** Creates and populates a set of render system capabilities describing which functionality is available. */
-		void initCapabilites();
+		void InitCapabilites();
 
 		/**
 		 * Returns a valid command buffer. Uses the provided buffer if not null. Otherwise returns the default command
@@ -161,7 +161,7 @@ namespace bs { namespace ct
 	};
 
 	/**	Provides easy access to the VulkanRenderAPI. */
-	VulkanRenderAPI& gVulkanRenderAPI();
+	VulkanRenderAPI& GVulkanRenderAPI();
 
 	extern PFN_vkGetPhysicalDeviceSurfaceSupportKHR vkGetPhysicalDeviceSurfaceSupportKHR;
 	extern PFN_vkGetPhysicalDeviceSurfaceFormatsKHR vkGetPhysicalDeviceSurfaceFormatsKHR;

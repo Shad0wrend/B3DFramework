@@ -23,11 +23,11 @@ namespace bs
 		{ }
 
 		Exception(const char* type, const String& description, const String& source, const char* file, long line)
-			: mLine(line), mTypeName(type), mDescription(description), mSource(source), mFile(file)
+			: MLine(line), mTypeName(type), mDescription(description), mSource(source), mFile(file)
 		{ }
 
 		Exception(const Exception& rhs)
-			: mLine(rhs.mLine), mTypeName(rhs.mTypeName), mDescription(rhs.mDescription),
+			: MLine(rhs.mLine), mTypeName(rhs.mTypeName), mDescription(rhs.mDescription),
 			mSource(rhs.mSource), mFile(rhs.mFile)
 		{ }
 
@@ -49,7 +49,7 @@ namespace bs
 		 * The description contains the error number, the description supplied by the thrower, what routine threw the
 		 * exception, and will also supply extra platform-specific information where applicable.
 		 */
-		virtual const String& getFullDescription() const
+		virtual const String& GetFullDescription() const
 		{
 			if (mFullDesc.empty())
 			{
@@ -71,16 +71,16 @@ namespace bs
 		}
 
 		/** Gets the source function that threw the exception. */
-		virtual const String& getSource() const { return mSource; }
+		virtual const String& GetSource() const { return mSource; }
 
 		/** Gets the source file name in which the exception was thrown. */
-		virtual const String& getFile() const { return mFile; }
+		virtual const String& GetFile() const { return mFile; }
 
 		/** Gets line number on which the exception was thrown. */
-		virtual long getLine() const { return mLine; }
+		virtual long GetLine() const { return mLine; }
 
 		/** Gets a short description about the exception. */
-		virtual const String& getDescription(void) const { return mDescription; }
+		virtual const String& GetDescription(void) const { return mDescription; }
 
 		/** Overriden std::exception::what. Returns the same value as getFullDescription(). */
 		const char* what() const noexcept override { return getFullDescription().c_str(); }

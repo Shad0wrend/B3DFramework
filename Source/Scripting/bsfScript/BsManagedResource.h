@@ -26,7 +26,7 @@ namespace bs
 		 * @return						An object containing the serialized resource. You can provide this to restore()
 		 *								method to re-create the original resource.
 		 */
-		ResourceBackupData backup();
+		ResourceBackupData Backup();
 
 		/**
 		 * Restores a resource from previously serialized data.
@@ -34,19 +34,19 @@ namespace bs
 		 * @param[in]	data		Serialized managed resource data that will be used for initializing the new managed
 		 *							instance.
 		 */
-		void restore(const ResourceBackupData& data);
+		void Restore(const ResourceBackupData& data);
 
 		/**
 		 * Creates a new managed resource wrapper from an actual managed resource object. Caller must ensure the provided
 		 * instance actually derives from Resource class.
 		 */
-		static HManagedResource create(MonoObject* managedResource);
+		static HManagedResource Create(MonoObject* managedResource);
 
 		/**
 		 * Creates an empty managed resource wrapper pointing to no managed instance. You must call setHandle() before use
 		 * manually.
 		 */
-		static SPtr<ManagedResource> createEmpty();
+		static SPtr<ManagedResource> CreateEmpty();
 
 	private:
 		friend class ScriptManagedResource;
@@ -59,10 +59,10 @@ namespace bs
 		 * @param[in]	object		Managed resource instance.
 		 * @param[in]	myHandle	Handle to myself.
 		 */
-		void setHandle(MonoObject* object, const HManagedResource& myHandle);
+		void SetHandle(MonoObject* object, const HManagedResource& myHandle);
 
 		/** @copydoc Resource::destroy */
-		void destroy() override;
+		void Destroy() override;
 
 		WeakResourceHandle<ManagedResource> mMyHandle;
 		ScriptManagedResource* mOwner = nullptr;

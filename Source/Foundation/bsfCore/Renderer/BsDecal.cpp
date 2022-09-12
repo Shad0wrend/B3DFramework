@@ -16,7 +16,7 @@ namespace bs
 	}
 
 	DecalBase::DecalBase(const Vector2& size, float maxDistance)
-		: mSize(size), mMaxDistance(maxDistance)
+		: MSize(size), mMaxDistance(maxDistance)
 	{
 		updateBounds();
 	}
@@ -132,7 +132,7 @@ namespace bs
 
 		UINT8* buffer = allocator->alloc(size);
 
-		Bitstream stream(buffer, size);
+		Bitstream Stream(buffer, size);
 		rtti_write(getCoreDirtyFlags(), stream);
 		csync_write((SceneActor&)*this, stream);
 		csync_write(*this, stream);
@@ -179,7 +179,7 @@ namespace bs
 
 	void Decal::syncToCore(const CoreSyncData& data)
 	{
-		Bitstream stream(data.getBuffer(), data.getBufferSize());
+		Bitstream Stream(data.getBuffer(), data.getBufferSize());
 
 		UINT32 dirtyFlags = 0;
 		bool oldIsActive = mActive;

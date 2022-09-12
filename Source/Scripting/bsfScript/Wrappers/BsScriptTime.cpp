@@ -25,7 +25,7 @@ namespace bs
 
 	float ScriptTime::internal_getRealElapsed()
 	{
-		return gTime().getTime();
+		return GTime().getTime();
 	}
 
 	float ScriptTime::internal_getElapsed()
@@ -35,16 +35,16 @@ namespace bs
 
 	float ScriptTime::internal_getFrameDelta()
 	{
-		return gTime().getFrameDelta();
+		return GTime().getFrameDelta();
 	}
 
 	UINT64 ScriptTime::internal_getFrameNumber()
 	{
-		return gTime().getFrameIdx();
+		return GTime().getFrameIdx();
 	}
 
 	UINT64 ScriptTime::internal_getPrecise()
 	{
-		return gTime().getTimePrecise();
+		return GTime().getTimePrecise();
 	}
 }

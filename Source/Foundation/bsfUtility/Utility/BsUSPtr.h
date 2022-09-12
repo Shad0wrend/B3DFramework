@@ -19,20 +19,20 @@ namespace bs
 		USPtr(nullptr_t) { }
 
 		explicit USPtr(T* ptr)
-			: mPtr(ptr)
+			: MPtr(ptr)
 		{
 			add();
 		}
 
 		USPtr(const USPtr& ptr) 
-			: mPtr(ptr.mPtr), mCounter(ptr.mCounter)
+			: MPtr(ptr.mPtr), mCounter(ptr.mCounter)
 		{
 			add();
 		}
 
 		template <typename U>
 		USPtr(const USPtr<U>& ptr)
-			: mPtr(static_cast<T*>(ptr.mPtr)), mCounter(ptr.mCounter)
+			: MPtr(static_cast<T*>(ptr.mPtr)), mCounter(ptr.mCounter)
 		{
 			add();
 		}
@@ -54,12 +54,12 @@ namespace bs
 			return *this;
 		}
 
-		void reset()
+		void Reset()
 		{
 			release();
 		}
 
-		void reset(T* ptr)
+		void Reset(T* ptr)
 		{
 			assert(ptr == nullptr || (ptr != mPtr));
 
@@ -71,7 +71,7 @@ namespace bs
 			add();
 		}
 
-		void swap(USPtr& rhs)
+		void Swap(USPtr& rhs)
 		{
 			std::swap(mPtr, rhs.mPtr);
 			std::swap(mCounter, rhs.mCounter);
@@ -89,16 +89,16 @@ namespace bs
 			return mPtr;
 		}
 
-		operator bool() const { return mCounter != nullptr && *mCounter > 0; }
-		bool unique() const { return mCounter != nullptr && *mCounter == 1; }
-		uint32_t useCount() const { return mCounter == nullptr ? 0 : *mCounter; }
+		operator Bool() const { return mCounter != nullptr && *mCounter > 0; }
+		bool Unique() const { return mCounter != nullptr && *mCounter == 1; }
+		uint32_t UseCount() const { return mCounter == nullptr ? 0 : *mCounter; }
 		T* get() const { return mPtr; }
 
 	private:
 		template<class U>
 		friend class USPtr;
 
-		void add()
+		void Add()
 		{
 			if (mPtr != nullptr)
 			{
@@ -109,7 +109,7 @@ namespace bs
 			}
 		}
 
-		void release() 
+		void Release()
 		{
 			if (mCounter != nullptr)
 			{

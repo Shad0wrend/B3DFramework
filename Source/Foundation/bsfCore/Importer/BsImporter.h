@@ -95,7 +95,7 @@ namespace bs
 		 * @note	Thread safe.
 		 */
 		BS_SCRIPT_EXPORT()
-		SPtr<MultiResource> importAll(const Path& inputFilePath, SPtr<const ImportOptions> importOptions = nullptr);
+		SPtr<MultiResource> ImportAll(const Path& inputFilePath, SPtr<const ImportOptions> importOptions = nullptr);
 
 		/**
 		 * Same as importAll(), except it imports a resource without blocking the main thread. The returned AsyncOp will
@@ -119,11 +119,11 @@ namespace bs
 		 * expect to be used for this file type. If you don't use a proper import options type, an exception will be thrown
 		 * during import.
 		 */
-		SPtr<ImportOptions> createImportOptions(const Path& inputFilePath);
+		SPtr<ImportOptions> CreateImportOptions(const Path& inputFilePath);
 
 		/** @copydoc createImportOptions */
 		template<class T>
-		SPtr<T> createImportOptions(const Path& inputFilePath)
+		SPtr<T> CreateImportOptions(const Path& inputFilePath)
 		{
 			return std::static_pointer_cast<T>(createImportOptions(inputFilePath));
 		}
@@ -134,7 +134,7 @@ namespace bs
 		 * @param[in]	extension	The extension without the leading dot.
 		 */
 		BS_SCRIPT_EXPORT()
-		bool supportsFileType(const String& extension) const;
+		bool SupportsFileType(const String& extension) const;
 
 		/**
 		 * Checks if we can import a file with the specified magic number.
@@ -142,7 +142,7 @@ namespace bs
 		 * @param[in]	magicNumber 	The buffer containing the magic number.
 		 * @param[in]	magicNumSize	Size of the magic number buffer.
 		 */
-		bool supportsFileType(const UINT8* magicNumber, UINT32 magicNumSize) const;
+		bool SupportsFileType(const UINT8* magicNumber, UINT32 magicNumSize) const;
 
 		/** @name Internal
 		 *  @{
@@ -196,7 +196,7 @@ namespace bs
 		 * calls to the same method appropriately wait), and return an index of the task. The caller must check to
 		 * remove the task when import is done.
 		 */
-		UINT64 waitForAsync(SpecificImporter* importer);
+		UINT64 WaitForAsync(SpecificImporter* importer);
 
 		Vector<SpecificImporter*> mAssetImporters;
 
@@ -223,7 +223,7 @@ namespace bs
 	};
 
 	/** Provides easier access to Importer. */
-	BS_CORE_EXPORT Importer& gImporter();
+	BS_CORE_EXPORT Importer& GImporter();
 
 	/** @} */
 }

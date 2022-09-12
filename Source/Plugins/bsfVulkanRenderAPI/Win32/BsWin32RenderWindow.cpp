@@ -60,12 +60,12 @@ namespace bs
 	HWND Win32RenderWindow::getHWnd() const
 	{
 		blockUntilCoreInitialized();
-		return getCore()->_getWindowHandle();
+		return GetCore()->_getWindowHandle();
 	}
 
 	void Win32RenderWindow::syncProperties()
 	{
-		ScopedSpinLock lock(getCore()->mLock);
+		ScopedSpinLock Lock(getCore()->mLock);
 		mProperties = getCore()->mSyncedProperties;
 	}
 
@@ -84,7 +84,7 @@ namespace bs
 	{
 		Win32RenderWindow::Win32RenderWindow(const RENDER_WINDOW_DESC& desc, UINT32 windowId, VulkanRenderAPI& renderAPI)
 		: RenderWindow(desc, windowId), mProperties(desc), mSyncedProperties(desc), mWindow(nullptr), mIsChild(false)
-		, mShowOnSwap(false), mDisplayFrequency(0), mRenderAPI(renderAPI), mRequiresNewBackBuffer(true)
+		, MShowOnSwap(false), mDisplayFrequency(0), mRenderAPI(renderAPI), mRequiresNewBackBuffer(true)
 	{ }
 
 		Win32RenderWindow::~Win32RenderWindow()
@@ -241,7 +241,7 @@ namespace bs
 		}
 
 		{
-			ScopedSpinLock lock(mLock);
+			ScopedSpinLock Lock(mLock);
 			mSyncedProperties = props;
 		}
 
@@ -322,7 +322,7 @@ namespace bs
 			props.left = mWindow->getLeft();
 
 			{
-				ScopedSpinLock lock(mLock);
+				ScopedSpinLock Lock(mLock);
 				mSyncedProperties.top = props.top;
 				mSyncedProperties.left = props.left;
 			}
@@ -345,7 +345,7 @@ namespace bs
 			props.height = mWindow->getHeight();
 
 			{
-				ScopedSpinLock lock(mLock);
+				ScopedSpinLock Lock(mLock);
 				mSyncedProperties.width = props.width;
 				mSyncedProperties.height = props.height;
 			}
@@ -500,7 +500,7 @@ namespace bs
 			SWP_DRAWFRAME | SWP_FRAMECHANGED | SWP_NOACTIVATE);
 
 		{
-			ScopedSpinLock lock(mLock);
+			ScopedSpinLock Lock(mLock);
 			mSyncedProperties.width = props.width;
 			mSyncedProperties.height = props.height;
 		}
@@ -516,7 +516,7 @@ namespace bs
 		rebuildSwapChain();
 
 		{
-			ScopedSpinLock lock(mLock);
+			ScopedSpinLock Lock(mLock);
 			mSyncedProperties.vsync = enabled;
 			mSyncedProperties.vsyncInterval = interval;
 		}
@@ -578,7 +578,7 @@ namespace bs
 
 	void Win32RenderWindow::syncProperties()
 	{
-		ScopedSpinLock lock(mLock);
+		ScopedSpinLock Lock(mLock);
 		mProperties = mSyncedProperties;
 	}
 

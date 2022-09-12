@@ -23,11 +23,11 @@ namespace bs
 		
 		/** Determines the name of the bone the component is referencing. */
 		BS_SCRIPT_EXPORT(n:Name,pr:setter)
-		void setBoneName(const String& name);
+		void SetBoneName(const String& name);
 
 		/** @copydoc setBoneName */
 		BS_SCRIPT_EXPORT(n:Name,pr:getter)
-		const String& getBoneName() const { return mBoneName; }
+		const String& GetBoneName() const { return mBoneName; }
 
 		/** @name Internal
 		 *  @{
@@ -45,7 +45,7 @@ namespace bs
 		/** @} */
 	private:
 		/** Attempts to find the parent Animation component and registers itself with it. */
-		void updateParentAnimation();
+		void UpdateParentAnimation();
 
 		/************************************************************************/
 		/* 						COMPONENT OVERRIDES                      		*/
@@ -54,16 +54,16 @@ namespace bs
 		friend class SceneObject;
 
 		/** @copydoc Component::onDestroyed() */
-		void onDestroyed() override;
+		void OnDestroyed() override;
 
 		/** @copydoc Component::onDisabled() */
-		void onDisabled() override;
+		void OnDisabled() override;
 
 		/** @copydoc Component::onEnabled() */
-		void onEnabled() override;
+		void OnEnabled() override;
 
 		/** @copydoc Component::onTransformChanged() */
-		void onTransformChanged(TransformChangedFlags flags) override;
+		void OnTransformChanged(TransformChangedFlags flags) override;
 	protected:
 		using Component::destroyInternal;
 

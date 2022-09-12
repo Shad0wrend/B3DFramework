@@ -44,7 +44,7 @@ namespace bs
 		MonoObject* getManagedInstance() const;
 
 		/**	Returns the type information for the internal array. */
-		SPtr<ManagedSerializableTypeInfoArray> getTypeInfo() const { return mArrayTypeInfo; }
+		SPtr<ManagedSerializableTypeInfoArray> GetTypeInfo() const { return mArrayTypeInfo; }
 
 		/**
 		 * Changes the size of the array. Operates on managed object if in linked state, or on cached data otherwise. If
@@ -54,25 +54,25 @@ namespace bs
 		 * @param[in]	newSizes	Array of sizes, one per array dimension. Number of sizes must match number of array
 		 *							dimensions as specified by its type.
 		 */
-		void resize(const Vector<UINT32>& newSizes);
+		void Resize(const Vector<UINT32>& newSizes);
 
 		/**
 		 * Returns the size of a specific dimension of the array. Operates on managed object if in linked state, or on
 		 * cached data otherwise.
 		 */
-		UINT32 getLength(UINT32 dimension) const { return mNumElements[dimension]; }
+		UINT32 GetLength(UINT32 dimension) const { return mNumElements[dimension]; }
 
 		/**
 		 * Returns the sizes of a all dimensions of the array. Operates on managed object if in linked state, or on cached
 		 * data otherwise.
 		 */
-		Vector<UINT32> getLengths() const { return mNumElements; }
+		Vector<UINT32> GetLengths() const { return mNumElements; }
 
 		/**
 		 * Returns the total of all sizes of all dimensions of the array. Operates on managed object if in linked state, or
 		 * on cached data otherwise.
 		 */
-		UINT32 getTotalLength() const;
+		UINT32 GetTotalLength() const;
 
 		/**
 		 * Sets a new element value at the specified array index. Operates on managed object if in linked state, or on
@@ -81,7 +81,7 @@ namespace bs
 		 * @param[in]	arrayIdx	Index at which to set the value.
 		 * @param[in]	val			Wrapper around the value to store in the array. Must be of the array element type.
 		 */
-		void setFieldData(UINT32 arrayIdx, const SPtr<ManagedSerializableFieldData>& val);
+		void SetFieldData(UINT32 arrayIdx, const SPtr<ManagedSerializableFieldData>& val);
 
 		/**
 		 * Returns the element value at the specified array index. Operates on managed object if in linked state, or on
@@ -90,14 +90,14 @@ namespace bs
 		 * @param[in]	arrayIdx	Index at which to retrieve the value.
 		 * @return					A wrapper around the element value in the array.
 		 */
-		SPtr<ManagedSerializableFieldData> getFieldData(UINT32 arrayIdx);
+		SPtr<ManagedSerializableFieldData> GetFieldData(UINT32 arrayIdx);
 
 		/**
 		 * Serializes the internal managed object into a set of cached data that can be saved in memory/disk and can be
 		 * deserialized later. The internal managed object will be freed (if no other references to it). Calling serialize()
 		 * again will have no result.
 		 */
-		void serialize();
+		void Serialize();
 
 		/**
 		 * Deserializes a set of cached data into a managed object. This action may fail in case the cached data contains a
@@ -115,7 +115,7 @@ namespace bs
 		 *									with the provided type info.
 		 * @param[in]	typeInfo			Type information for the array and its elements.
 		 */
-		static SPtr<ManagedSerializableArray> createFromExisting(MonoObject* managedInstance, const SPtr<ManagedSerializableTypeInfoArray>& typeInfo);
+		static SPtr<ManagedSerializableArray> CreateFromExisting(MonoObject* managedInstance, const SPtr<ManagedSerializableTypeInfoArray>& typeInfo);
 
 		/**
 		 * Creates a managed serializable array that creates and references a brand new managed array instance.
@@ -124,7 +124,7 @@ namespace bs
 		 * @param[in]	sizes		Array of sizes, one per array dimension. Number of sizes must match number of array
 		 *							dimensions as specified by its type.
 		 */
-		static SPtr<ManagedSerializableArray> createNew(const SPtr<ManagedSerializableTypeInfoArray>& typeInfo, const Vector<UINT32>& sizes);
+		static SPtr<ManagedSerializableArray> CreateNew(const SPtr<ManagedSerializableTypeInfoArray>& typeInfo, const Vector<UINT32>& sizes);
 
 		/**
 		 * Creates a managed array instance.
@@ -140,10 +140,10 @@ namespace bs
 		 * Retrieves needed Mono types and methods. Should be called before performing any operations with the managed
 		 * object.
 		 */
-		void initMonoObjects();
+		void InitMonoObjects();
 
 		/** Returns the size of the specified dimension of the array. Operates on the internal managed object. */
-		UINT32 getLengthInternal(UINT32 dimension) const;
+		UINT32 GetLengthInternal(UINT32 dimension) const;
 
 		/**
 		 * Sets a new element value at the specified array index. Operates on the provided managed instance.
@@ -152,13 +152,13 @@ namespace bs
 		 * @param[in]	arrayIdx	Index at which to set the value.
 		 * @param[in]	val			Wrapper around the value to store in the array. Must be of the array element type.
 		 */
-		void setFieldData(MonoArray* obj, UINT32 arrayIdx, const SPtr<ManagedSerializableFieldData>& val);
+		void SetFieldData(MonoArray* obj, UINT32 arrayIdx, const SPtr<ManagedSerializableFieldData>& val);
 
 		/**	Sets a value at the specified index in the array. Operates on the provided managed object. */
-		void setValueInternal(MonoArray* obj, UINT32 arrayIdx, void* val);
+		void SetValueInternal(MonoArray* obj, UINT32 arrayIdx, void* val);
 
 		/** Converts a multi-dimensional array index into a sequential one-dimensional index. */
-		UINT32 toSequentialIdx(const Vector<UINT32>& idx) const;
+		UINT32 ToSequentialIdx(const Vector<UINT32>& idx) const;
 
 		uint32_t mGCHandle = 0;
 		::MonoClass* mElementMonoClass = nullptr;
@@ -174,7 +174,7 @@ namespace bs
 		/************************************************************************/
 		
 		/**	Creates an empty and uninitialized object used for serialization purposes. */
-		static SPtr<ManagedSerializableArray> createNew();
+		static SPtr<ManagedSerializableArray> CreateNew();
 
 	public:
 		friend class ManagedSerializableArrayRTTI;

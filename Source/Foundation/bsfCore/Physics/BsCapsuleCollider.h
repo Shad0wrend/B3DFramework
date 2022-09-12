@@ -25,16 +25,16 @@ namespace bs
 		 * Determines the half height of the capsule, from the origin to one of the hemispherical centers, along the normal
 		 * vector.
 		 */
-		virtual void setHalfHeight(float halfHeight) = 0;
+		virtual void SetHalfHeight(float halfHeight) = 0;
 
 		/** @copydoc setHalfHeight() */
-		virtual float getHalfHeight() const = 0;
+		virtual float GetHalfHeight() const = 0;
 
 		/** Determines the radius of the capsule. */
-		virtual void setRadius(float radius) = 0;
+		virtual void SetRadius(float radius) = 0;
 
 		/** @copydoc setRadius() */
-		virtual float getRadius() const = 0;
+		virtual float GetRadius() const = 0;
 
 		/**
 		 * Creates a new capsule collider.

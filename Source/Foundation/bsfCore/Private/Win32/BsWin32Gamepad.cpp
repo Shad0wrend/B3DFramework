@@ -35,7 +35,7 @@ namespace bs
 	 * Initializes DirectInput gamepad device for a window with the specified handle. Only input from that window will be
 	 * reported.
 	 */
-	void initializeDirectInput(Gamepad::Pimpl* m, HWND hWnd)
+	void InitializeDirectInput(Gamepad::Pimpl* m, HWND hWnd)
 	{
 		DIPROPDWORD dipdw;
 		dipdw.diph.dwSize = sizeof(DIPROPDWORD);
@@ -64,7 +64,7 @@ namespace bs
 	}
 
 	/** Releases DirectInput resources for the provided device */
-	void releaseDirectInput(Gamepad::Pimpl* m)
+	void ReleaseDirectInput(Gamepad::Pimpl* m)
 	{
 		if(m->gamepad)
 		{
@@ -75,7 +75,7 @@ namespace bs
 	}
 
 	/** Handles a DirectInput POV event. */
-	void handlePOV(Input* owner, Gamepad::Pimpl* m, int pov, DIDEVICEOBJECTDATA& di)
+	void HandlePOV(Input* owner, Gamepad::Pimpl* m, int pov, DIDEVICEOBJECTDATA& di)
 	{
 		if (LOWORD(di.dwData) == 0xFFFF)
 		{
@@ -153,7 +153,7 @@ namespace bs
 	}
 
 	/** Converts a DirectInput or XInput button code to BSF ButtonCode. */
-	ButtonCode gamepadButtonToButtonCode(INT32 code)
+	ButtonCode GamepadButtonToButtonCode(INT32 code)
 	{
 		switch (code)
 		{
@@ -195,7 +195,7 @@ namespace bs
 	}
 
 	Gamepad::Gamepad(const String& name, const GamepadInfo& gamepadInfo, Input* owner)
-		: mName(name), mOwner(owner)
+		: MName(name), mOwner(owner)
 	{
 		InputPrivateData* pvtData = owner->_getPrivateData();
 

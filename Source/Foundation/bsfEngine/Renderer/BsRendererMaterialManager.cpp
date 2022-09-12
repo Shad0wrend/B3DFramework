@@ -34,7 +34,7 @@ namespace bs
 
 	void RendererMaterialManager::_registerMaterial(ct::RendererMaterialMetaData* metaData, const char* shaderPath)
 	{
-		Lock lock(getMutex());
+		Lock Lock(getMutex());
 
 		Vector<RendererMaterialData>& materials = getMaterials();
 		materials.push_back({ metaData, shaderPath });
@@ -42,7 +42,7 @@ namespace bs
 
 	void RendererMaterialManager::initOnCore(const Vector<SPtr<ct::Shader>>& shaders)
 	{
-		Lock lock(getMutex());
+		Lock Lock(getMutex());
 
 		Vector<RendererMaterialData>& materials = getMaterials();
 		for (UINT32 i = 0; i < materials.size(); i++)
@@ -87,7 +87,7 @@ namespace bs
 
 	void RendererMaterialManager::destroyOnCore()
 	{
-		Lock lock(getMutex());
+		Lock Lock(getMutex());
 
 		Vector<RendererMaterialData>& materials = getMaterials();
 		for (UINT32 i = 0; i < materials.size(); i++)

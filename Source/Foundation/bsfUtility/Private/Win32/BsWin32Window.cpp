@@ -226,7 +226,7 @@ namespace bs
 			FrameVector<HWND> windowsToDisable;
 			FrameVector<HWND> windowsToBringToFront;
 			{
-				Lock lock(sWindowsMutex);
+				Lock Lock(sWindowsMutex);
 
 				if (m->isModal)
 				{
@@ -283,7 +283,7 @@ namespace bs
 			{
 				FrameVector<HWND> windowsToEnable;
 				{
-					Lock lock(sWindowsMutex);
+					Lock Lock(sWindowsMutex);
 
 					// Hidden dependency: All windows must be re-enabled before a window is destroyed, otherwise the incorrect
 					// window in the z order will be activated.
@@ -327,7 +327,7 @@ namespace bs
 		}
 
 		{
-			Lock lock(sWindowsMutex);
+			Lock Lock(sWindowsMutex);
 
 			auto iterFind = std::find(sAllWindows.begin(), sAllWindows.end(), this);
 			sAllWindows.erase(iterFind);
@@ -502,7 +502,7 @@ namespace bs
 		Vector<HWND> windowsToEnable;
 
 		{
-			Lock lock(sWindowsMutex);
+			Lock Lock(sWindowsMutex);
 			for (auto& window : sAllWindows)
 				windowsToEnable.push_back(window->m->hWnd);
 		}
@@ -517,7 +517,7 @@ namespace bs
 		HWND bringToFrontHwnd = 0;
 
 		{
-			Lock lock(sWindowsMutex);
+			Lock Lock(sWindowsMutex);
 
 			if (!sModalWindowStack.empty())
 			{

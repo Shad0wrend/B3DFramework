@@ -18,7 +18,7 @@ namespace bs
 
 		ScriptRootMotion(MonoObject* managedInstance, const SPtr<RootMotion>& value);
 
-		SPtr<RootMotion> getInternal() const { return mInternal; }
+		SPtr<RootMotion> GetInternal() const { return mInternal; }
 		static MonoObject* create(const SPtr<RootMotion>& value);
 
 	private:

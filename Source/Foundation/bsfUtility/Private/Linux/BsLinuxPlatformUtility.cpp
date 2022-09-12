@@ -71,11 +71,11 @@ namespace bs
 
 		// Get CPU vendor, model and number of cores
 		{
-			std::ifstream file("/proc/cpuinfo");
+			std::ifstream File("/proc/cpuinfo");
 			std::string line;
 			while(std::getline(file, line))
 			{
-				std::stringstream lineStream(line);
+				std::stringstream LineStream(line);
 				std::string token;
 				lineStream >> token;
 
@@ -88,7 +88,7 @@ namespace bs
 							output.cpuManufacturer = vendorId.c_str();
 					}
 				}
-				else if(token == "model")
+				else If(token == "model")
 				{
 					if(lineStream >> token && token == "name")
 					{
@@ -107,7 +107,7 @@ namespace bs
 						}
 					}
 				}
-				else if(token == "cpu")
+				else If(token == "cpu")
 				{
 					if(lineStream >> token)
 					{
@@ -127,7 +127,7 @@ namespace bs
 
 		// Get CPU frequency
 		{
-			std::ifstream file("/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq");
+			std::ifstream File("/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq");
 			UINT32 frequency;
 			if(file >> frequency)
 				output.cpuClockSpeedMhz = frequency / 1000;
@@ -135,7 +135,7 @@ namespace bs
 
 		// Get amount of system memory
 		{
-			std::ifstream file("/proc/meminfo");
+			std::ifstream File("/proc/meminfo");
 			std::string token;
 			while(file >> token)
 			{
@@ -210,7 +210,7 @@ namespace bs
 		errorCode = U_ZERO_ERROR;
 		u_strToUTF8(outputStr, bufferLen, &outputStrLen, convertedUStr, convertedUStrLen, &errorCode);
 
-		String output(outputStr, outputStrLen);
+		String Output(outputStr, outputStrLen);
 
 		bs_stack_free(outputStr);
 		bs_stack_free(convertedUStr);

@@ -13,7 +13,7 @@ namespace bs
 	PhysXMeshCollider::PhysXMeshCollider(PxPhysics* physx, PxScene* scene, const Vector3& position,
 		const Quaternion& rotation)
 	{
-		PxSphereGeometry geometry(0.01f); // Dummy
+		PxSphereGeometry Geometry(0.01f); // Dummy
 
 		PxShape* shape = physx->createShape(geometry, *gPhysX().getDefaultMaterial(), true);
 		shape->setLocalPose(toPxTransform(position, rotation));

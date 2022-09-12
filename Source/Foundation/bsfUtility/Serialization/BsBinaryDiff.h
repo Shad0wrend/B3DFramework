@@ -43,7 +43,7 @@ namespace bs
 		 * Applies a previously generated per-field differences to the provided object. This will essentially transform the
 		 * original object the differences were generated for into the modified version.
 		 */
-		void applyDiff(const SPtr<IReflectable>& object, const SPtr<SerializedObject>& diff, SerializationContext* context);
+		void ApplyDiff(const SPtr<IReflectable>& object, const SPtr<SerializedObject>& diff, SerializationContext* context);
 
 		/**
 		 * @name Internal

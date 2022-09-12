@@ -114,7 +114,7 @@ namespace bs
 			{
 				if (field.second->isSerializable())
 				{
-					ManagedSerializableFieldKey key(field.second->mParentTypeId, field.second->mFieldId);
+					ManagedSerializableFieldKey Key(field.second->mParentTypeId, field.second->mFieldId);
 					mCachedData[key] = getFieldData(field.second);
 				}
 			}
@@ -167,7 +167,7 @@ namespace bs
 					UINT32 fieldId = field.second->mFieldId;
 					UINT32 typeID = field.second->mParentTypeId;
 
-					ManagedSerializableFieldKey key(typeID, fieldId);
+					ManagedSerializableFieldKey Key(typeID, fieldId);
 
 					SPtr<ManagedSerializableMemberInfo> matchingFieldInfo = objInfo->findMatchingField(field.second, curType->mTypeInfo);
 					if (matchingFieldInfo != nullptr)
@@ -226,7 +226,7 @@ namespace bs
 		}
 		else
 		{
-			ManagedSerializableFieldKey key(fieldInfo->mParentTypeId, fieldInfo->mFieldId);
+			ManagedSerializableFieldKey Key(fieldInfo->mParentTypeId, fieldInfo->mFieldId);
 			mCachedData[key] = val;
 		}
 	}
@@ -242,7 +242,7 @@ namespace bs
 		}
 		else
 		{
-			ManagedSerializableFieldKey key(fieldInfo->mParentTypeId, fieldInfo->mFieldId);
+			ManagedSerializableFieldKey Key(fieldInfo->mParentTypeId, fieldInfo->mFieldId);
 			auto iterFind = mCachedData.find(key);
 
 			if (iterFind != mCachedData.end())

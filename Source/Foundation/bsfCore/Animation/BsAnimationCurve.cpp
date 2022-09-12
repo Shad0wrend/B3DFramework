@@ -16,7 +16,7 @@ namespace bs
 		 * Checks if any components of the keyframes are constant (step) functions and updates the hermite curve coefficients
 		 * accordingly.
 		 */
-		void setStepCoefficients(const TKeyframe<float>& lhs, const TKeyframe<float>& rhs, float(&coefficients)[4])
+		void SetStepCoefficients(const TKeyframe<float>& lhs, const TKeyframe<float>& rhs, float(&coefficients)[4])
 		{
 			if (lhs.outTangent != std::numeric_limits<float>::infinity() &&
 				rhs.inTangent != std::numeric_limits<float>::infinity())
@@ -28,7 +28,7 @@ namespace bs
 			coefficients[3] = lhs.value;
 		}
 
-		void setStepCoefficients(const TKeyframe<Vector3>& lhs, const TKeyframe<Vector3>& rhs, Vector3(&coefficients)[4])
+		void SetStepCoefficients(const TKeyframe<Vector3>& lhs, const TKeyframe<Vector3>& rhs, Vector3(&coefficients)[4])
 		{
 			for (UINT32 i = 0; i < 3; i++)
 			{
@@ -43,7 +43,7 @@ namespace bs
 			}
 		}
 
-		void setStepCoefficients(const TKeyframe<Vector2>& lhs, const TKeyframe<Vector2>& rhs, Vector2(&coefficients)[4])
+		void SetStepCoefficients(const TKeyframe<Vector2>& lhs, const TKeyframe<Vector2>& rhs, Vector2(&coefficients)[4])
 		{
 			for (UINT32 i = 0; i < 2; i++)
 			{
@@ -58,7 +58,7 @@ namespace bs
 			}
 		}
 
-		void setStepCoefficients(const TKeyframe<Quaternion>& lhs, const TKeyframe<Quaternion>& rhs, Quaternion(&coefficients)[4])
+		void SetStepCoefficients(const TKeyframe<Quaternion>& lhs, const TKeyframe<Quaternion>& rhs, Quaternion(&coefficients)[4])
 		{
 			for (UINT32 i = 0; i < 4; i++)
 			{
@@ -74,7 +74,7 @@ namespace bs
 		}
 
 		/** Checks if any components of the keyframes are constant (step) functions and updates the key value. */
-		void setStepValue(const TKeyframe<float>& lhs, const TKeyframe<float>& rhs, float& value)
+		void SetStepValue(const TKeyframe<float>& lhs, const TKeyframe<float>& rhs, float& value)
 		{
 			if (lhs.outTangent != std::numeric_limits<float>::infinity() &&
 				rhs.inTangent != std::numeric_limits<float>::infinity())
@@ -83,7 +83,7 @@ namespace bs
 			value = lhs.value;
 		}
 
-		void setStepValue(const TKeyframe<Vector3>& lhs, const TKeyframe<Vector3>& rhs, Vector3& value)
+		void SetStepValue(const TKeyframe<Vector3>& lhs, const TKeyframe<Vector3>& rhs, Vector3& value)
 		{
 			for (UINT32 i = 0; i < 3; i++)
 			{
@@ -95,7 +95,7 @@ namespace bs
 			}
 		}
 
-		void setStepValue(const TKeyframe<Vector2>& lhs, const TKeyframe<Vector2>& rhs, Vector2& value)
+		void SetStepValue(const TKeyframe<Vector2>& lhs, const TKeyframe<Vector2>& rhs, Vector2& value)
 		{
 			for (UINT32 i = 0; i < 2; i++)
 			{
@@ -107,7 +107,7 @@ namespace bs
 			}
 		}
 
-		void setStepValue(const TKeyframe<Quaternion>& lhs, const TKeyframe<Quaternion>& rhs, Quaternion& value)
+		void SetStepValue(const TKeyframe<Quaternion>& lhs, const TKeyframe<Quaternion>& rhs, Quaternion& value)
 		{
 			for (UINT32 i = 0; i < 4; i++)
 			{
@@ -120,7 +120,7 @@ namespace bs
 		}
 
 		/** Checks if any components of the keyframes are constant (step) functions and updates the key tangent. */
-		void setStepTangent(const TKeyframe<float>& lhs, const TKeyframe<float>& rhs, float& tangent)
+		void SetStepTangent(const TKeyframe<float>& lhs, const TKeyframe<float>& rhs, float& tangent)
 		{
 			if (lhs.outTangent != std::numeric_limits<float>::infinity() &&
 				rhs.inTangent != std::numeric_limits<float>::infinity())
@@ -129,7 +129,7 @@ namespace bs
 			tangent = std::numeric_limits<float>::infinity();
 		}
 
-		void setStepTangent(const TKeyframe<Vector3>& lhs, const TKeyframe<Vector3>& rhs, Vector3& tangent)
+		void SetStepTangent(const TKeyframe<Vector3>& lhs, const TKeyframe<Vector3>& rhs, Vector3& tangent)
 		{
 			for (UINT32 i = 0; i < 3; i++)
 			{
@@ -141,7 +141,7 @@ namespace bs
 			}
 		}
 
-		void setStepTangent(const TKeyframe<Vector2>& lhs, const TKeyframe<Vector2>& rhs, Vector2& tangent)
+		void SetStepTangent(const TKeyframe<Vector2>& lhs, const TKeyframe<Vector2>& rhs, Vector2& tangent)
 		{
 			for (UINT32 i = 0; i < 2; i++)
 			{
@@ -153,7 +153,7 @@ namespace bs
 			}
 		}
 
-		void setStepTangent(const TKeyframe<Quaternion>& lhs, const TKeyframe<Quaternion>& rhs, Quaternion& tangent)
+		void SetStepTangent(const TKeyframe<Quaternion>& lhs, const TKeyframe<Quaternion>& rhs, Quaternion& tangent)
 		{
 			for (UINT32 i = 0; i < 4; i++)
 			{
@@ -166,33 +166,33 @@ namespace bs
 		}
 
 		/** Calculates the difference between two values. */
-		float getDiff(float lhs, float rhs)
+		float GetDiff(float lhs, float rhs)
 		{
 			return lhs - rhs;
 		}
 
-		Vector3 getDiff(const Vector3& lhs, const Vector3& rhs)
+		Vector3 GetDiff(const Vector3& lhs, const Vector3& rhs)
 		{
 			return lhs - rhs;
 		}
 
-		Vector2 getDiff(const Vector2& lhs, const Vector2& rhs)
+		Vector2 GetDiff(const Vector2& lhs, const Vector2& rhs)
 		{
 			return lhs - rhs;
 		}
 
-		Quaternion getDiff(const Quaternion& lhs, const Quaternion& rhs)
+		Quaternion GetDiff(const Quaternion& lhs, const Quaternion& rhs)
 		{
 			return rhs.inverse() * lhs;
 		}
 
-		INT32 getDiff(INT32 lhs, INT32 rhs)
+		INT32 GetDiff(INT32 lhs, INT32 rhs)
 		{
 			return lhs - rhs;
 		}
 
 		template <class T>
-		T getZero() { return 0.0f; }
+		T GetZero() { return 0.0f; }
 
 		template<>
 		float getZero<float>() { return 0.0f; }
@@ -210,7 +210,7 @@ namespace bs
 		INT32 getZero<INT32>() { return 0; }
 
 		template <class T>
-		constexpr UINT32 getNumComponents() { return 1; }
+		constexpr UINT32 GetNumComponents() { return 1; }
 
 		template<>
 		constexpr UINT32 getNumComponents<Vector3>() { return 3; }
@@ -222,59 +222,59 @@ namespace bs
 		constexpr UINT32 getNumComponents<Quaternion>() { return 4; }
 
 		template <class T>
-		float& getComponent(T& val, UINT32 idx) { return val; }
+		float& GetComponent(T& val, UINT32 idx) { return val; }
 
 		template<>
-		float& getComponent(Vector3& val, UINT32 idx) { return val[idx]; }
+		float& GetComponent(Vector3& val, UINT32 idx) { return val[idx]; }
 
 		template<>
-		float& getComponent(Vector2& val, UINT32 idx) { return val[idx]; }
+		float& GetComponent(Vector2& val, UINT32 idx) { return val[idx]; }
 
 		template<>
-		float& getComponent(Quaternion& val, UINT32 idx) { return val[idx]; }
+		float& GetComponent(Quaternion& val, UINT32 idx) { return val[idx]; }
 
 		template <class T>
-		float getComponent(const T& val, UINT32 idx) { return val; }
+		float GetComponent(const T& val, UINT32 idx) { return val; }
 
 		template<>
-		float getComponent(const Vector3& val, UINT32 idx) { return val[idx]; }
+		float GetComponent(const Vector3& val, UINT32 idx) { return val[idx]; }
 
 		template<>
-		float getComponent(const Vector2& val, UINT32 idx) { return val[idx]; }
+		float GetComponent(const Vector2& val, UINT32 idx) { return val[idx]; }
 
 		template<>
-		float getComponent(const Quaternion& val, UINT32 idx) { return val[idx]; }
+		float GetComponent(const Quaternion& val, UINT32 idx) { return val[idx]; }
 
 		template <class T>
-		void getMinMax(std::pair<T, T>& minmax, const T& value)
+		void GetMinMax(std::pair<T, T>& minmax, const T& value)
 		{
 			minmax.first = std::min(minmax.first, value);
 			minmax.second = std::max(minmax.second, value);
 		}
 
 		template <>
-		void getMinMax(std::pair<Vector3, Vector3>& minmax, const Vector3& value)
+		void GetMinMax(std::pair<Vector3, Vector3>& minmax, const Vector3& value)
 		{
 			minmax.first = Vector3::min(minmax.first, value);
 			minmax.second = Vector3::max(minmax.second, value);
 		}
 
 		template <>
-		void getMinMax(std::pair<Vector2, Vector2>& minmax, const Vector2& value)
+		void GetMinMax(std::pair<Vector2, Vector2>& minmax, const Vector2& value)
 		{
 			minmax.first = Vector2::min(minmax.first, value);
 			minmax.second = Vector2::max(minmax.second, value);
 		}
 
 		template <>
-		void getMinMax(std::pair<Quaternion, Quaternion>& minmax, const Quaternion& value)
+		void GetMinMax(std::pair<Quaternion, Quaternion>& minmax, const Quaternion& value)
 		{
 			minmax.first = Quaternion::min(minmax.first, value);
 			minmax.second = Quaternion::max(minmax.second, value);
 		}
 
 		template<class T>
-		TKeyframe<T> evaluateKey(const TKeyframe<T>& lhs, const TKeyframe<T>& rhs, float time)
+		TKeyframe<T> EvaluateKey(const TKeyframe<T>& lhs, const TKeyframe<T>& rhs, float time)
 		{
 			float length = rhs.time - lhs.time;
 
@@ -301,7 +301,7 @@ namespace bs
 		}
 
 		template<>
-		TKeyframe<INT32> evaluateKey(const TKeyframe<INT32>& lhs, const TKeyframe<INT32>& rhs, float time)
+		TKeyframe<INT32> EvaluateKey(const TKeyframe<INT32>& lhs, const TKeyframe<INT32>& rhs, float time)
 		{
 			TKeyframe<INT32> output;
 			output.time = time;
@@ -311,20 +311,20 @@ namespace bs
 		}
 
 		template <class T>
-		T evaluateCubic(float time, float start, float end, T (&coeffs)[4])
+		T EvaluateCubic(float time, float start, float end, T (&coeffs)[4])
 		{
 			float t = time - start;
 			return t * (t * (t * coeffs[0] + coeffs[1]) + coeffs[2]) + coeffs[3];
 		}
 
 		template <>
-		INT32 evaluateCubic(float time, float start, float end, INT32 (&coeffs)[4])
+		INT32 EvaluateCubic(float time, float start, float end, INT32 (&coeffs)[4])
 		{
 			return time >= end ? coeffs[1] : coeffs[0];
 		}
 
 		template<class T>
-		void calculateCoeffs(const TKeyframe<T>& lhs, const TKeyframe<T>& rhs, float time, T (&coeffs)[4])
+		void CalculateCoeffs(const TKeyframe<T>& lhs, const TKeyframe<T>& rhs, float time, T (&coeffs)[4])
 		{
 			float length = rhs.time - lhs.time;
 
@@ -343,14 +343,14 @@ namespace bs
 		}
 
 		template<>
-		void calculateCoeffs(const TKeyframe<INT32>& lhs, const TKeyframe<INT32>& rhs, float time, INT32 (&coeffs)[4])
+		void CalculateCoeffs(const TKeyframe<INT32>& lhs, const TKeyframe<INT32>& rhs, float time, INT32 (&coeffs)[4])
 		{
 			coeffs[0] = lhs.value;
 			coeffs[1] = rhs.value;
 		}
 
 		template<class T>
-		T evaluateAndUpdateCache(const TKeyframe<T>& lhs, const TKeyframe<T>& rhs, float time, T (&coeffs)[4])
+		T EvaluateAndUpdateCache(const TKeyframe<T>& lhs, const TKeyframe<T>& rhs, float time, T (&coeffs)[4])
 		{
 			calculateCoeffs(lhs, rhs, time, coeffs);
 
@@ -368,7 +368,7 @@ namespace bs
 		}
 
 		template<class T>
-		T evaluate(const TKeyframe<T>& lhs, const TKeyframe<T>& rhs, float time)
+		T Evaluate(const TKeyframe<T>& lhs, const TKeyframe<T>& rhs, float time)
 		{
 			float length = rhs.time - lhs.time;
 			assert(length > 0.0f);
@@ -398,13 +398,13 @@ namespace bs
 		}
 
 		template<>
-		INT32 evaluate(const TKeyframe<INT32>& lhs, const TKeyframe<INT32>& rhs, float time)
+		INT32 Evaluate(const TKeyframe<INT32>& lhs, const TKeyframe<INT32>& rhs, float time)
 		{
 			return time >= rhs.time ? rhs.value : lhs.value;
 		}
 
 		template <class T>
-		void integrate(T (&coeffs)[4])
+		void Integrate(T (&coeffs)[4])
 		{
 			coeffs[0] = (T)(coeffs[0] / 4.0f);
 			coeffs[1] = (T)(coeffs[1] / 3.0f);
@@ -412,7 +412,7 @@ namespace bs
 		}
 
 		template <class T>
-		void calcMinMax(std::pair<T, T>& minmax, float start, float end, T(&coeffs)[4])
+		void CalcMinMax(std::pair<T, T>& minmax, float start, float end, T(&coeffs)[4])
 		{
 			// Differentiate
 			T a = (T)(3.0f * coeffs[0]);
@@ -452,14 +452,14 @@ namespace bs
 		}
 
 		template <>
-		void calcMinMax(std::pair<INT32, INT32>& minmax, float start, float end, INT32(&coeffs)[4])
+		void CalcMinMax(std::pair<INT32, INT32>& minmax, float start, float end, INT32(&coeffs)[4])
 		{
 			getMinMax(minmax, coeffs[0]);
 			getMinMax(minmax, coeffs[1]);
 		}
 
 		template <class T>
-		void calcMinMaxIntegrated(std::pair<T, T>& minmax, float start, float end, const T& sum, T(&coeffs)[4])
+		void CalcMinMaxIntegrated(std::pair<T, T>& minmax, float start, float end, const T& sum, T(&coeffs)[4])
 		{
 			// Differentiate
 			T a = 4.0f * coeffs[0];
@@ -767,7 +767,7 @@ namespace bs
 		if (leftKeyIdx == rightKeyIdx)
 			return leftKey;
 
-		return evaluateKey(leftKey, rightKey, time);
+		return EvaluateKey(leftKey, rightKey, time);
 	}
 
 	template <class T>

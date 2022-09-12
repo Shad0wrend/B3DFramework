@@ -12,7 +12,7 @@
 namespace bs
 {
 	GUIElementBase::GUIElementBase(const GUIDimensions& dimensions)
-		: mDimensions(dimensions)
+		: MDimensions(dimensions)
 	{ }
 
 	GUIElementBase::~GUIElementBase()
@@ -173,10 +173,10 @@ namespace bs
 		if(mParentWidget)
 		{
 			const Matrix4& widgetTfrm = mParentWidget->getWorldTfrm();
-			Vector2I localPos(area.x, area.y);
+			Vector2I LocalPos(area.x, area.y);
 
 			const Vector4 widgetPosFlt = widgetTfrm.multiplyAffine(Vector4((float)localPos.x, (float)localPos.y, 0.0f, 1.0f));
-			const Vector2I widgetPos(Math::roundToInt(widgetPosFlt.x), Math::roundToInt(widgetPosFlt.y));
+			const Vector2I WidgetPos(Math::roundToInt(widgetPosFlt.x), Math::roundToInt(widgetPosFlt.y));
 
 			const RenderWindow* parentWindow = GUIManager::instance().getWidgetWindow(*mParentWidget);
 			if(parentWindow)
@@ -197,7 +197,7 @@ namespace bs
 
 	Rect2I GUIElementBase::getVisibleBounds()
 	{
-		return getBounds();
+		return GetBounds();
 	}
 	
 	void GUIElementBase::_markAsClean()

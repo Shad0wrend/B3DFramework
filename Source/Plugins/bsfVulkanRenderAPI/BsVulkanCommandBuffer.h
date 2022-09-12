@@ -33,7 +33,7 @@ namespace bs { namespace ct
 		~VulkanSemaphore();
 
 		/** Returns the internal handle to the Vulkan object. */
-		VkSemaphore getHandle() const { return mSemaphore; }
+		VkSemaphore GetHandle() const { return mSemaphore; }
 
 	private:
 		VkSemaphore mSemaphore;
@@ -132,25 +132,25 @@ namespace bs { namespace ct
 		~VulkanCmdBuffer();
 
 		/** Returns an unique identifier of this command buffer. */
-		UINT32 getId() const { return mId; }
+		UINT32 GetId() const { return mId; }
 
 		/** Returns the index of the queue family this command buffer is executing on. */
-		UINT32 getQueueFamily() const { return mQueueFamily; }
+		UINT32 GetQueueFamily() const { return mQueueFamily; }
 
 		/** Returns the index of the device this command buffer will execute on. */
-		UINT32 getDeviceIdx() const;
+		UINT32 GetDeviceIdx() const;
 
 		/** Makes the command buffer ready to start recording commands. */
-		void begin();
+		void Begin();
 
 		/** Ends command buffer command recording (as started with begin()). */
-		void end();
+		void End();
 
 		/** Begins render pass recording. Must be called within begin()/end() calls. */
-		void beginRenderPass();
+		void BeginRenderPass();
 
 		/** Ends render pass recording (as started with beginRenderPass(). */
-		void endRenderPass();
+		void EndRenderPass();
 
 		/**
 		 * Submits the command buffer for execution.
@@ -162,13 +162,13 @@ namespace bs { namespace ct
 		 * @param[in]	syncMask	Mask that controls which other command buffers does this command buffer depend upon
 		 *							(if any). See description of @p syncMask parameter in RenderAPI::executeCommands().
 		 */
-		void submit(VulkanQueue* queue, UINT32 queueIdx, UINT32 syncMask);
+		void Submit(VulkanQueue* queue, UINT32 queueIdx, UINT32 syncMask);
 
 		/** Returns the handle to the internal Vulkan command buffer wrapped by this object. */
-		VkCommandBuffer getHandle() const { return mCmdBuffer; }
+		VkCommandBuffer GetHandle() const { return mCmdBuffer; }
 
 		/** Returns a fence that can be used for tracking when the command buffer is done executing. */
-		VkFence getFence() const { return mFence; }
+		VkFence GetFence() const { return mFence; }
 
 		/**
 		 * Returns a semaphore that may be used for synchronizing execution between command buffers executing on the same
@@ -192,39 +192,39 @@ namespace bs { namespace ct
 		 * @param[out]	semaphores	Output array to place all allocated semaphores in. The array must be of size
 		 *							(BS_MAX_VULKAN_CB_DEPENDENCIES + 1).
 		 */
-		void allocateSemaphores(VkSemaphore* semaphores);
+		void AllocateSemaphores(VkSemaphore* semaphores);
 
 		/** Returns true if the command buffer is currently being processed by the device. */
-		bool isSubmitted() const { return mState == State::Submitted; }
+		bool IsSubmitted() const { return mState == State::Submitted; }
 
 		/** Returns true if the command buffer is currently recording (but not within a render pass). */
-		bool isRecording() const { return mState == State::Recording; }
+		bool IsRecording() const { return mState == State::Recording; }
 
 		/** Returns true if the command buffer is ready to be submitted to a queue. */
-		bool isReadyForSubmit() const { return mState == State::RecordingDone; }
+		bool IsReadyForSubmit() const { return mState == State::RecordingDone; }
 
 		/** Returns true if the command buffer is currently recording a render pass. */
-		bool isInRenderPass() const { return mState == State::RecordingRenderPass; }
+		bool IsInRenderPass() const { return mState == State::RecordingRenderPass; }
 
 		/**
 		 * Checks the internal fence if done executing.
 		 *
 		 * @param[in]	block	If true, the system will block until the fence is signaled.
 		 */
-		bool checkFenceStatus(bool block) const;
+		bool CheckFenceStatus(bool block) const;
 
 		/**
 		 * Resets the command buffer back in Ready state. Should be called when command buffer is done executing on a
 		 * queue.
 		 */
-		void reset();
+		void Reset();
 
 		/**
 		 * Lets the command buffer know that the provided resource has been queued on it, and will be used by the
 		 * device when the command buffer is submitted. If a resource is an image or a buffer use the more specific
 		 * registerResource() overload.
 		 */
-		void registerResource(VulkanResource* res, VulkanAccessFlags flags);
+		void RegisterResource(VulkanResource* res, VulkanAccessFlags flags);
 
 		/**
 		 * Lets the command buffer know that the provided image will be used for shader reads or writes in a subsequent draw
@@ -259,19 +259,19 @@ namespace bs { namespace ct
 		 * Lets the command buffer know that the provided framebuffer resource has been queued on it, and will be used by
 		 * the device when the command buffer is submitted.
 		 */
-		void registerResource(VulkanFramebuffer* res, RenderSurfaceMask loadMask, UINT32 readMask);
+		void RegisterResource(VulkanFramebuffer* res, RenderSurfaceMask loadMask, UINT32 readMask);
 
 		/**
 		 * Lets the command buffer know that the provided swap chain resource has been queued on it, and will be used by
 		 * the device when the command buffer is submitted.
 		 */
-		void registerResource(VulkanSwapChain* res);
+		void RegisterResource(VulkanSwapChain* res);
 
 		/** Notifies the command buffer that the provided query has been queued on it. */
-		void registerQuery(VulkanOcclusionQuery* query) { mOcclusionQueries.insert(query); }
+		void RegisterQuery(VulkanOcclusionQuery* query) { mOcclusionQueries.insert(query); }
 
 		/** Notifies the command buffer that the provided query has been queued on it. */
-		void registerQuery(VulkanTimerQuery* query) { mTimerQueries.insert(query); }
+		void RegisterQuery(VulkanTimerQuery* query) { mTimerQueries.insert(query); }
 
 		/************************************************************************/
 		/* 								COMMANDS	                     		*/
@@ -281,67 +281,67 @@ namespace bs { namespace ct
 		 * Assigns a render target the the command buffer. This render target's framebuffer and render pass will be used
 		 * when beginRenderPass() is called. Command buffer must not be currently recording a render pass.
 		 */
-		void setRenderTarget(const SPtr<RenderTarget>& rt, UINT32 readOnlyFlags, RenderSurfaceMask loadMask);
+		void SetRenderTarget(const SPtr<RenderTarget>& rt, UINT32 readOnlyFlags, RenderSurfaceMask loadMask);
 
 		/** Clears the entirety currently bound render target. */
-		void clearRenderTarget(UINT32 buffers, const Color& color, float depth, UINT16 stencil, UINT8 targetMask);
+		void ClearRenderTarget(UINT32 buffers, const Color& color, float depth, UINT16 stencil, UINT8 targetMask);
 
 		/** Clears the viewport portion of the currently bound render target. */
-		void clearViewport(UINT32 buffers, const Color& color, float depth, UINT16 stencil, UINT8 targetMask);
+		void ClearViewport(UINT32 buffers, const Color& color, float depth, UINT16 stencil, UINT8 targetMask);
 
 		/** Assigns a pipeline state to use for subsequent draw commands. */
-		void setPipelineState(const SPtr<GraphicsPipelineState>& state);
+		void SetPipelineState(const SPtr<GraphicsPipelineState>& state);
 
 		/** Assigns a pipeline state to use for subsequent dispatch commands. */
-		void setPipelineState(const SPtr<ComputePipelineState>& state);
+		void SetPipelineState(const SPtr<ComputePipelineState>& state);
 
 		/** Assign GPU params to the GPU programs bound by the pipeline state. */
-		void setGpuParams(const SPtr<GpuParams>& gpuParams);
+		void SetGpuParams(const SPtr<GpuParams>& gpuParams);
 
 		/** Sets the current viewport which determine to which portion of the render target to render to. */
-		void setViewport(const Rect2& area);
+		void SetViewport(const Rect2& area);
 
 		/**
 		 * Sets the scissor rectangle area which determines in which area if the viewport are the fragments allowed to be
 		 * generated. Only relevant if enabled on the pipeline state.
 		 */
-		void setScissorRect(const Rect2I& area);
+		void SetScissorRect(const Rect2I& area);
 
 		/** Sets a stencil reference value that will be used for comparisons in stencil operations, if enabled. */
-		void setStencilRef(UINT32 value);
+		void SetStencilRef(UINT32 value);
 
 		/** Changes how are primitives interpreted as during rendering. */
-		void setDrawOp(DrawOperationType drawOp);
+		void SetDrawOp(DrawOperationType drawOp);
 
 		/** Sets one or multiple vertex buffers that will be used for subsequent draw() or drawIndexed() calls. */
-		void setVertexBuffers(UINT32 index, SPtr<VertexBuffer>* buffers, UINT32 numBuffers);
+		void SetVertexBuffers(UINT32 index, SPtr<VertexBuffer>* buffers, UINT32 numBuffers);
 
 		/** Sets an index buffer that will be used for subsequent drawIndexed() calls. */
-		void setIndexBuffer(const SPtr<IndexBuffer>& buffer);
+		void SetIndexBuffer(const SPtr<IndexBuffer>& buffer);
 
 		/** Sets a declaration that determines how are vertex buffer contents interpreted. */
-		void setVertexDeclaration(const SPtr<VertexDeclaration>& decl);
+		void SetVertexDeclaration(const SPtr<VertexDeclaration>& decl);
 
 		/** Executes a draw command using the currently bound graphics pipeline, vertex buffer and render target. */
-		void draw(UINT32 vertexOffset, UINT32 vertexCount, UINT32 instanceCount);
+		void Draw(UINT32 vertexOffset, UINT32 vertexCount, UINT32 instanceCount);
 
 		/** Executes a draw command using the currently bound graphics pipeline, index & vertex buffer and render target. */
-		void drawIndexed(UINT32 startIndex, UINT32 indexCount, UINT32 vertexOffset, UINT32 instanceCount);
+		void DrawIndexed(UINT32 startIndex, UINT32 indexCount, UINT32 vertexOffset, UINT32 instanceCount);
 
 		/** Executes a dispatch command using the currently bound compute pipeline. */
-		void dispatch(UINT32 numGroupsX, UINT32 numGroupsY, UINT32 numGroupsZ);
+		void Dispatch(UINT32 numGroupsX, UINT32 numGroupsY, UINT32 numGroupsZ);
 
 		/**
 		 * Registers a command that signals the event when executed. Will be delayed until the end of the current
 		 * render pass, if any.
 		 */
-		void setEvent(VulkanEvent* event);
+		void SetEvent(VulkanEvent* event);
 
 		/**
 		 * Registers a command that resets the query. The command will be delayed until the next submit() if a render
 		 * pass is currently in progress, but is guaranteed to execute before this command buffer is submitted.
 		 */
-		void resetQuery(VulkanQuery* query);
+		void ResetQuery(VulkanQuery* query);
 
 		/**
 		 * Issues a pipeline barrier on the provided buffer. See vkCmdPipelineBarrier in Vulkan spec. for usage
@@ -369,7 +369,7 @@ namespace bs { namespace ct
 		 *								in the case the image is used in the framebuffer, in which case the render pass
 		 *								may perform an automated layout transition when it begins.
 		 */
-		VkImageLayout getCurrentLayout(VulkanImage* image, const VkImageSubresourceRange& range, bool inRenderPass);
+		VkImageLayout GetCurrentLayout(VulkanImage* image, const VkImageSubresourceRange& range, bool inRenderPass);
 
 	private:
 		friend class VulkanCmdBufferPool;
@@ -479,45 +479,45 @@ namespace bs { namespace ct
 		};
 
 		/** Checks if all the prerequisites for rendering have been made (e.g. render target and pipeline state are set.) */
-		bool isReadyForRender();
+		bool IsReadyForRender();
 
 		/** Marks the command buffer as submitted on a queue. */
-		void setIsSubmitted() { mState = State::Submitted; }
+		void SetIsSubmitted() { mState = State::Submitted; }
 
 		/** Binds the current graphics pipeline to the command buffer. Returns true if bind was successful. */
-		bool bindGraphicsPipeline();
+		bool BindGraphicsPipeline();
 
 		/**
 		 * Binds any dynamic states to the pipeline, as required.
 		 *
 		 * @param[in]	forceAll	If true all states will be bound. If false only states marked as dirty will be bound.
 		 */
-		void bindDynamicStates(bool forceAll);
+		void BindDynamicStates(bool forceAll);
 
 		/** Binds vertex and index buffers to the pipeline, if dirty. */
-		void bindVertexInputs();
+		void BindVertexInputs();
 
 		/** Binds the currently stored GPU parameters object, if dirty. */
-		void bindGpuParams();
+		void BindGpuParams();
 
 		/** Clears the specified area of the currently bound render target. */
 		void clearViewport(const Rect2I& area, UINT32 buffers, const Color& color, float depth, UINT16 stencil,
 			UINT8 targetMask);
 
 		/** Starts and ends a render pass, intended only for a clear operation. */
-		void executeClearPass();
+		void ExecuteClearPass();
 
 		/** Executes any queued layout transitions by issuing a pipeline barrier. */
-		void executeLayoutTransitions();
+		void ExecuteLayoutTransitions();
 
 		/** Executes any queued memory barriers. */
-		void executeWriteHazardBarrier();
+		void ExecuteWriteHazardBarrier();
 
 		/**
 		 * Updates final layouts for images used by the current framebuffer, reflecting layout changes performed by render
 		 * pass' automatic layout transitions.
 		 */
-		void updateFinalLayouts();
+		void UpdateFinalLayouts();
 
 		/**
 		 * Lets the command buffer know that the provided image subresource will be used in subsequent draw or dispatch
@@ -558,16 +558,16 @@ namespace bs { namespace ct
 			VkImageLayout layout, VulkanAccessFlags access, VkPipelineStageFlags stages);
 
 		/** Finds a subresource info structure containing the specified face and mip level of the provided image. */
-		ImageSubresourceInfo& findSubresourceInfo(VulkanImage* image, UINT32 face, UINT32 mip);
+		ImageSubresourceInfo& FindSubresourceInfo(VulkanImage* image, UINT32 face, UINT32 mip);
 
 		/** Gets all queries registered on this command buffer that haven't been ended. */
-		void getInProgressQueries(Vector<VulkanTimerQuery*>& timer, Vector<VulkanOcclusionQuery*>& occlusion) const;
+		void GetInProgressQueries(Vector<VulkanTimerQuery*>& timer, Vector<VulkanOcclusionQuery*>& occlusion) const;
 
 		/** Returns the read mask for the current framebuffer. */
-		RenderSurfaceMask getFBReadMask();
+		RenderSurfaceMask GetFBReadMask();
 
 		/** Notifies the active render target that a rendering command was queued that will potentially change its contents. */
-		void notifyRenderTargetModified();
+		void NotifyRenderTargetModified();
 
 		UINT32 mId;
 		UINT32 mQueueFamily;
@@ -652,7 +652,7 @@ namespace bs { namespace ct
 		 * @param[in]	syncMask	Mask that controls which other command buffers does this command buffer depend upon
 		 *							(if any). See description of @p syncMask parameter in RenderAPI::executeCommands().
 		 */
-		void submit(UINT32 syncMask);
+		void Submit(UINT32 syncMask);
 
 		/**
 		 * Returns the internal command buffer.
@@ -662,10 +662,10 @@ namespace bs { namespace ct
 		VulkanCmdBuffer* getInternal() const { return mBuffer; }
 
 		/** @copydoc CommandBuffer::getState() */
-		CommandBufferState getState() const override;
+		CommandBufferState GetState() const override;
 
 		/** @copydoc CommandBuffer::reset() */
-		void reset() override;
+		void Reset() override;
 		
 	private:
 		friend class VulkanCommandBufferManager;
@@ -677,7 +677,7 @@ namespace bs { namespace ct
 		 * Tasks the command buffer to find a new internal command buffer. Call this after the command buffer has been
 		 * submitted to a queue (it's not allowed to be used until the queue is done with it).
 		 */
-		void acquireNewBuffer();
+		void AcquireNewBuffer();
 
 		VulkanCmdBuffer* mBuffer;
 		VulkanDevice& mDevice;

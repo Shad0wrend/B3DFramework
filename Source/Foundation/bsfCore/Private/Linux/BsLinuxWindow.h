@@ -46,46 +46,46 @@ namespace bs
 		~LinuxWindow();
 
 		/**	Returns position of the left-most border of the window, relative to the screen. */
-		INT32 getLeft() const;
+		INT32 GetLeft() const;
 
 		/**	Returns position of the top-most border of the window, relative to the screen. */
-		INT32 getTop() const;
+		INT32 GetTop() const;
 
 		/**	Returns width of the window in pixels. */
-		UINT32 getWidth() const;
+		UINT32 GetWidth() const;
 
 		/**	Returns height of the window in pixels. */
-		UINT32 getHeight() const;
+		UINT32 GetHeight() const;
 
 		/** Hides the window. */
-		void hide();
+		void Hide();
 
 		/** Shows (unhides) the window. */
-		void show();
+		void Show();
 
 		/**	Minimizes the window. */
-		void minimize();
+		void Minimize();
 
 		/**	Maximizes the window over the entire current screen. */
-		void maximize();
+		void Maximize();
 
 		/**	Restores the window to original position and size if it is minimized or maximized. */
-		void restore();
+		void Restore();
 
 		/**	Change the size of the window. */
-		void resize(UINT32 width, UINT32 height);
+		void Resize(UINT32 width, UINT32 height);
 
 		/**	Reposition the window. */
-		void move(INT32 left, INT32 top);
+		void Move(INT32 left, INT32 top);
 
 		/** Sets the icon to display for the window. */
-		void setIcon(const PixelData& icon);
+		void SetIcon(const PixelData& icon);
 
 		/**	Converts screen position into window local position. */
-		Vector2I screenToWindowPos(const Vector2I& screenPos) const;
+		Vector2I ScreenToWindowPos(const Vector2I& screenPos) const;
 
 		/**	Converts window local position to screen position. */
-		Vector2I windowToScreenPos(const Vector2I& windowPos) const;
+		Vector2I WindowToScreenPos(const Vector2I& windowPos) const;
 
 		/**
 		 * @name Internal
@@ -133,37 +133,37 @@ namespace bs
 
 	private:
 		/** Checks if the window is currently maximized. */
-		bool isMaximized() const;
+		bool IsMaximized() const;
 
 		/** Checks if the window is currently minimized (iconified). */
-		bool isMinimized();
+		bool IsMinimized();
 
 		/**
 		 * Maximizes a window if @p enable is true. If false restores the window to size/position before maximization
 		 * occurred.
 		 */
-		void maximize(bool enable);
+		void Maximize(bool enable);
 
 		/**
 		 * Minimizes a window if @p enable is true. If false restores the window to size/position before minimization
 		 * occurred.
 		 */
-		void minimize(bool enable);
+		void Minimize(bool enable);
 
 		/** Shows or hides the window icon from the taskbar. */
-		void showOnTaskbar(bool enable);
+		void ShowOnTaskbar(bool enable);
 
 		/**
 		 * Shows or hides window decorations. Decorations include window title bar, border and similar. Essentially anything
 		 * not part of the main rendering area.
 		 */
-		void setShowDecorations(bool show);
+		void SetShowDecorations(bool show);
 
 		/**
 		 * Switches the window between modal and normal mode. Modal window prevents input to their parent window until
 		 * it is dismissed.
 		 */
-		void setIsModal(bool modal);
+		void SetIsModal(bool modal);
 
 		struct Pimpl;
 		Pimpl* m;

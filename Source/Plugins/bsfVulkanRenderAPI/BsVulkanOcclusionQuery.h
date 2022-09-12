@@ -19,16 +19,16 @@ namespace bs { namespace ct
 		~VulkanOcclusionQuery();
 
 		/** @copydoc OcclusionQuery::begin */
-		void begin(const SPtr<CommandBuffer>& cb) override;
+		void Begin(const SPtr<CommandBuffer>& cb) override;
 
 		/** @copydoc OcclusionQuery::end */
-		void end(const SPtr<CommandBuffer>& cb) override;
+		void End(const SPtr<CommandBuffer>& cb) override;
 
 		/** @copydoc OcclusionQuery::isReady */
-		bool isReady() const override;
+		bool IsReady() const override;
 
 		/** @copydoc OcclusionQuery::getNumSamples */
-		UINT32 getNumSamples() override;
+		UINT32 GetNumSamples() override;
 
 		/** Returns true if the query begin() was called, but not end(). */
 		bool _isInProgress() const;

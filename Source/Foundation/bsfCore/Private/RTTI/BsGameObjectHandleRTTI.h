@@ -19,7 +19,7 @@ namespace bs
 	class BS_CORE_EXPORT GameObjectHandleRTTI : public RTTIType<GameObjectHandleBase, IReflectable, GameObjectHandleRTTI>
 	{
 	private:
-		UINT64& getInstanceId(GameObjectHandleBase* obj)
+		UINT64& GetInstanceId(GameObjectHandleBase* obj)
 		{
 			static UINT64 invalidId = 0;
 
@@ -29,7 +29,7 @@ namespace bs
 			return invalidId;
 		}
 
-		void setInstanceId(GameObjectHandleBase* obj, UINT64& value) { mOriginalInstanceId = value; }
+		void SetInstanceId(GameObjectHandleBase* obj, UINT64& value) { mOriginalInstanceId = value; }
 
 	public:
 		GameObjectHandleRTTI()
@@ -37,7 +37,7 @@ namespace bs
 			addPlainField("mInstanceID", 0, &GameObjectHandleRTTI::getInstanceId, &GameObjectHandleRTTI::setInstanceId);
 		}
 
-		void onDeserializationEnded(IReflectable* obj, SerializationContext* context) override
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override
 		{
 			if(context == nullptr || !rtti_is_of_type<CoreSerializationContext>(context))
 				return;
@@ -50,18 +50,18 @@ namespace bs
 			}
 		}
 
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "GameObjectHandleBase";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_GameObjectHandleBase;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			SPtr<GameObjectHandleBase> obj = bs_shared_ptr<GameObjectHandleBase>(new (bs_alloc<GameObjectHandleBase>()) GameObjectHandleBase());
 

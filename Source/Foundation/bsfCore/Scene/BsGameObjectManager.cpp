@@ -12,7 +12,7 @@ namespace bs
 
 	GameObjectHandleBase GameObjectManager::getObject(UINT64 id) const
 	{
-		Lock lock(mMutex);
+		Lock Lock(mMutex);
 
 		const auto iterFind = mObjects.find(id);
 		if (iterFind != mObjects.end())
@@ -23,7 +23,7 @@ namespace bs
 
 	bool GameObjectManager::tryGetObject(UINT64 id, GameObjectHandleBase& object) const
 	{
-		Lock lock(mMutex);
+		Lock Lock(mMutex);
 
 		const auto iterFind = mObjects.find(id);
 		if (iterFind != mObjects.end())
@@ -37,7 +37,7 @@ namespace bs
 
 	bool GameObjectManager::objectExists(UINT64 id) const
 	{
-		Lock lock(mMutex);
+		Lock Lock(mMutex);
 
 		return mObjects.find(id) != mObjects.end();
 	}
@@ -47,7 +47,7 @@ namespace bs
 		if (oldId == newId)
 			return;
 
-		Lock lock(mMutex);
+		Lock Lock(mMutex);
 		mObjects[newId] = mObjects[oldId];
 		mObjects.erase(oldId);
 	}
@@ -79,9 +79,9 @@ namespace bs
 		const UINT64 id = mNextAvailableID.fetch_add(1, std::memory_order_relaxed);
 		object->initialize(object, id);
 
-		GameObjectHandleBase handle(object);
+		GameObjectHandleBase Handle(object);
 		{
-			Lock lock(mMutex);
+			Lock Lock(mMutex);
 			mObjects[id] = handle;
 		}
 
@@ -91,7 +91,7 @@ namespace bs
 	void GameObjectManager::unregisterObject(GameObjectHandleBase& object)
 	{
 		{
-			Lock lock(mMutex);
+			Lock Lock(mMutex);
 			mObjects.erase(object->getInstanceId());
 		}
 

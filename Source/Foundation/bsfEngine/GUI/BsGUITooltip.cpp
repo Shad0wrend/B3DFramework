@@ -41,7 +41,7 @@ namespace bs
 		const GUIElementStyle* multiLineLabelStyle = skin.getStyle(BuiltinResources::MultiLineLabelStyle);
 		const GUIElementStyle* backgroundStyle = skin.getStyle(getFrameStyleName());
 
-		Vector2I size(TOOLTIP_WIDTH, 25);
+		Vector2I Size(TOOLTIP_WIDTH, 25);
 		if (multiLineLabelStyle != nullptr)
 		{
 			GUIDimensions dimensions = GUIDimensions::create(GUIOptions(GUIOption::fixedWidth(TOOLTIP_WIDTH)));

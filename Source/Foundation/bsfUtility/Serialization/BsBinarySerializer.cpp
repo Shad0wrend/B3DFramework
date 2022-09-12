@@ -35,7 +35,7 @@ namespace bs
 
 		mAlloc->markFrame();
 
-		BufferedBitstreamWriter bufferedStream(&mBuffer, stream, WRITE_BUFFER_SIZE, FLUSH_AFTER_BYTES);
+		BufferedBitstreamWriter BufferedStream(&mBuffer, stream, WRITE_BUFFER_SIZE, FLUSH_AFTER_BYTES);
 
 		Vector<SPtr<IReflectable>> encodedObjects;
 		UINT32 objectId = findOrCreatePersistentId(object);
@@ -131,7 +131,7 @@ namespace bs
 			}
 		}
 
-		BufferedBitstreamReader bufferedStream(&mBuffer, stream, PRELOAD_CHUNK_BYTES, FLUSH_AFTER_BYTES);
+		BufferedBitstreamReader BufferedStream(&mBuffer, stream, PRELOAD_CHUNK_BYTES, FLUSH_AFTER_BYTES);
 
 		// Note: Ideally we can avoid iterating twice over the stream data
 		// We need to find offsets at which all objects start at so we can map object id to offset
@@ -1051,9 +1051,9 @@ namespace bs
 
 		if((encodedData & 0x10) != 0)
 			schema.type = SerializableFT_ReflectablePtr;
-		else if((encodedData & 0x08) != 0)
+		else If((encodedData & 0x08) != 0)
 			schema.type = SerializableFT_Reflectable;
-		else if((encodedData & 0x04) != 0)
+		else If((encodedData & 0x04) != 0)
 			schema.type = SerializableFT_DataBlock;
 		else
 			schema.type = SerializableFT_Plain;
@@ -1194,7 +1194,7 @@ namespace bs
 				BS_EXCEPT(InternalErrorException, "Error decoding data.");
 
 			decodeObjectMetaData(objectMetaData, objId, objTypeId, isBaseType);
-			return sizeof(ObjectMetaData) * 8;
+			return Sizeof(ObjectMetaData) * 8;
 		}
 		else
 		{

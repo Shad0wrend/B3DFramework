@@ -139,7 +139,7 @@ namespace bs
 
 		// When text bounds are reduced the scroll needs to be adjusted so that
 		// input box isn't filled with mostly empty space.
-		Vector2I offset(mLayoutData.area.x, mLayoutData.area.y);
+		Vector2I Offset(mLayoutData.area.x, mLayoutData.area.y);
 		clampScrollToBounds(mTextSprite->getBounds(offset, Rect2I()));
 
 		// Populate GUI render elements from the sprites
@@ -171,7 +171,7 @@ namespace bs
 
 	void GUIInputBox::updateClippedBounds()
 	{
-		Vector2I offset(mLayoutData.area.x, mLayoutData.area.y);
+		Vector2I Offset(mLayoutData.area.x, mLayoutData.area.y);
 		mClippedBounds = mImageSprite->getBounds(offset, mLayoutData.getLocalClipRect());
 	}
 
@@ -202,7 +202,7 @@ namespace bs
 			if(renderElemIdx < newNumElements)
 			{
 				localRenderElemIdx = renderElemIdx - oldNumElements;
-				return gGUIManager().getInputCaretTool()->getSprite();
+				return GGUIManager().getInputCaretTool()->getSprite();
 			}
 		}
 
@@ -231,7 +231,7 @@ namespace bs
 		UINT32 oldNumElements = 0;
 		UINT32 newNumElements = oldNumElements + mTextSprite->getNumRenderElements();
 		if(renderElemIdx < newNumElements)
-			return getTextOffset();
+			return GetTextOffset();
 
 		oldNumElements = newNumElements;
 		newNumElements += mImageSprite->getNumRenderElements();
@@ -245,7 +245,7 @@ namespace bs
 			newNumElements += gGUIManager().getInputCaretTool()->getSprite()->getNumRenderElements();
 
 			if(renderElemIdx < newNumElements)
-				return gGUIManager().getInputCaretTool()->getSpriteOffset();
+				return GGUIManager().getInputCaretTool()->getSpriteOffset();
 		}
 
 		if(mSelectionShown)
@@ -258,7 +258,7 @@ namespace bs
 				newNumElements += selectionSprite->getNumRenderElements();
 
 				if(renderElemIdx < newNumElements)
-					return gGUIManager().getInputSelectionTool()->getSelectionSpriteOffset(spriteIdx);
+					return GGUIManager().getInputSelectionTool()->getSelectionSpriteOffset(spriteIdx);
 
 				spriteIdx++;
 			}
@@ -272,7 +272,7 @@ namespace bs
 		UINT32 oldNumElements = 0;
 		UINT32 newNumElements = oldNumElements + mTextSprite->getNumRenderElements();
 		if(renderElemIdx < newNumElements)
-			return getTextClipRect();
+			return GetTextClipRect();
 
 		oldNumElements = newNumElements;
 		newNumElements += mImageSprite->getNumRenderElements();
@@ -287,7 +287,7 @@ namespace bs
 
 			if(renderElemIdx < newNumElements)
 			{
-				return gGUIManager().getInputCaretTool()->getSpriteClipRect(getTextClipRect());
+				return GGUIManager().getInputCaretTool()->getSpriteClipRect(getTextClipRect());
 			}
 		}
 
@@ -301,7 +301,7 @@ namespace bs
 				newNumElements += selectionSprite->getNumRenderElements();
 
 				if(renderElemIdx < newNumElements)
-					return gGUIManager().getInputSelectionTool()->getSelectionSpriteClipRect(spriteIdx, getTextClipRect());
+					return GGUIManager().getInputSelectionTool()->getSelectionSpriteClipRect(spriteIdx, getTextClipRect());
 
 				spriteIdx++;
 			}
@@ -405,7 +405,7 @@ namespace bs
 
 			return true;
 		}
-		else if(ev.getType() == GUIMouseEventType::MouseOut)
+		else If(ev.getType() == GUIMouseEventType::MouseOut)
 		{
 			if (!_isDisabled())
 			{
@@ -426,7 +426,7 @@ namespace bs
 
 			return true;
 		}
-		else if(ev.getType() == GUIMouseEventType::MouseDoubleClick && ev.getButton() == GUIMouseButton::Left)
+		else If(ev.getType() == GUIMouseEventType::MouseDoubleClick && ev.getButton() == GUIMouseButton::Left)
 		{
 			if (!_isDisabled())
 			{
@@ -438,7 +438,7 @@ namespace bs
 
 			return true;
 		}
-		else if(ev.getType() == GUIMouseEventType::MouseDown && ev.getButton() == GUIMouseButton::Left)
+		else If(ev.getType() == GUIMouseEventType::MouseDown && ev.getButton() == GUIMouseButton::Left)
 		{
 			if (!_isDisabled())
 			{
@@ -472,7 +472,7 @@ namespace bs
 
 			return true;
 		}
-		else if(ev.getType() == GUIMouseEventType::MouseDragStart)
+		else If(ev.getType() == GUIMouseEventType::MouseDragStart)
 		{
 			if (!_isDisabled())
 			{
@@ -489,7 +489,7 @@ namespace bs
 				}
 			}
 		}
-		else if(ev.getType() == GUIMouseEventType::MouseDragEnd)
+		else If(ev.getType() == GUIMouseEventType::MouseDragEnd)
 		{
 			if (!_isDisabled())
 			{
@@ -503,7 +503,7 @@ namespace bs
 				}
 			}
 		}
-		else if(ev.getType() == GUIMouseEventType::MouseDrag)
+		else If(ev.getType() == GUIMouseEventType::MouseDrag)
 		{
 			if (!_isDisabled())
 			{
@@ -920,18 +920,18 @@ namespace bs
 
 			return true;
 		}
-		else if(ev.getButton() == mCopyVB)
+		else If(ev.getButton() == mCopyVB)
 		{
 			copyText();
 
 			return true;
 		}
-		else if(ev.getButton() == mPasteVB)
+		else If(ev.getButton() == mPasteVB)
 		{
 			pasteText();
 			return true;
 		}
-		else if(ev.getButton() == mSelectAllVB)
+		else If(ev.getButton() == mSelectAllVB)
 		{
 			showSelection(0);
 			gGUIManager().getInputSelectionTool()->selectAll();
@@ -997,7 +997,7 @@ namespace bs
 		{
 			offset.x = left - caretPos.x;
 		}
-		else if(caretRight > right)
+		else If(caretRight > right)
 		{
 			offset.x = -(caretRight - right);
 		}
@@ -1006,7 +1006,7 @@ namespace bs
 		{
 			offset.y = top - caretPos.y;
 		}
-		else if(caretBottom > bottom)
+		else If(caretBottom > bottom)
 		{
 			offset.y = -(caretBottom - bottom);
 		}

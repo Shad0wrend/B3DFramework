@@ -16,7 +16,7 @@ namespace bs
 	{
 		assert(groupA < CollisionMapSize && groupB < CollisionMapSize);
 
-		Lock lock(mMutex);
+		Lock Lock(mMutex);
 		mCollisionMap[groupA][groupB] = enabled;
 	}
 
@@ -31,26 +31,26 @@ namespace bs
 			Flag3 = 1 << 2
 		};
 
-		Lock lock(mMutex);
+		Lock Lock(mMutex);
 		return mCollisionMap[groupA][groupB];
 	}
 
 	bool PhysicsScene::rayCast(const Ray& ray, PhysicsQueryHit& hit, UINT64 layer, float max) const
 	{
-		return rayCast(ray.getOrigin(), ray.getDirection(), hit, layer, max);
+		return RayCast(ray.getOrigin(), ray.getDirection(), hit, layer, max);
 	}
 
 	Vector<PhysicsQueryHit> PhysicsScene::rayCastAll(const Ray& ray, UINT64 layer, float max) const
 	{
-		return rayCastAll(ray.getOrigin(), ray.getDirection(), layer, max);
+		return RayCastAll(ray.getOrigin(), ray.getDirection(), layer, max);
 	}
 
 	bool PhysicsScene::rayCastAny(const Ray& ray, UINT64 layer, float max) const
 	{
-		return rayCastAny(ray.getOrigin(), ray.getDirection(), layer, max);
+		return RayCastAny(ray.getOrigin(), ray.getDirection(), layer, max);
 	}
 
-	Vector<HCollider> rawToComponent(const Vector<Collider*>& raw)
+	Vector<HCollider> RawToComponent(const Vector<Collider*>& raw)
 	{
 		if (raw.empty())
 			return Vector<HCollider>(0);
@@ -73,26 +73,26 @@ namespace bs
 
 	Vector<HCollider> PhysicsScene::boxOverlap(const AABox& box, const Quaternion& rotation, UINT64 layer) const
 	{
-		return rawToComponent(_boxOverlap(box, rotation, layer));
+		return RawToComponent(_boxOverlap(box, rotation, layer));
 	}
 
 	Vector<HCollider> PhysicsScene::sphereOverlap(const Sphere& sphere, UINT64 layer) const
 	{
-		return rawToComponent(_sphereOverlap(sphere, layer));
+		return RawToComponent(_sphereOverlap(sphere, layer));
 	}
 
 	Vector<HCollider> PhysicsScene::capsuleOverlap(const Capsule& capsule, const Quaternion& rotation, UINT64 layer) const
 	{
-		return rawToComponent(_capsuleOverlap(capsule, rotation, layer));
+		return RawToComponent(_capsuleOverlap(capsule, rotation, layer));
 	}
 
 	Vector<HCollider> PhysicsScene::convexOverlap(const HPhysicsMesh& mesh, const Vector3& position,
 		const Quaternion& rotation, UINT64 layer) const
 	{
-		return rawToComponent(_convexOverlap(mesh, position, rotation, layer));
+		return RawToComponent(_convexOverlap(mesh, position, rotation, layer));
 	}
 
-	Physics& gPhysics()
+	Physics& GPhysics()
 	{
 		return Physics::instance();
 	}

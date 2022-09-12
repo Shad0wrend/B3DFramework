@@ -29,19 +29,19 @@ namespace bs { namespace ct
 		~VulkanBuffer();
 
 		/** Returns the internal handle to the Vulkan object. */
-		VkBuffer getHandle() const { return mBuffer; }
+		VkBuffer GetHandle() const { return mBuffer; }
 
 		/**
 		 * If buffer represents an image sub-resource, this is the number of elements that separate one row of the
 		 * sub-resource from another (if no padding, it is equal to image width).
 		 */
-		UINT32 getRowPitch() const { return mRowPitch; }
+		UINT32 GetRowPitch() const { return mRowPitch; }
 
 		/**
 		 * If buffer represents an image sub-resource, this is the number of elements that separate one column of the
 		 * sub-resource from another (if no padding, it is equal to image height). Only relevant for 3D images.
 		 */
-		UINT32 getSliceHeight() const { return mSliceHeight; }
+		UINT32 GetSliceHeight() const { return mSliceHeight; }
 
 		/**
 		 * Returns a pointer to internal buffer memory. Must be followed by unmap(). Caller must ensure the buffer was
@@ -50,7 +50,7 @@ namespace bs { namespace ct
 		UINT8* map(VkDeviceSize offset, VkDeviceSize length) const;
 
 		/** Unmaps a buffer previously mapped with map(). */
-		void unmap();
+		void Unmap();
 
 		/**
 		 * Queues a command on the provided command buffer. The command copies the contents of the current buffer to
@@ -72,26 +72,26 @@ namespace bs { namespace ct
 		 * the destination buffer. Caller must ensure the provided offset and length are within valid bounds of
 		 * both buffers. Caller must ensure the offset and size is a multiple of 4, and size is equal to or less then 65536.
 		 */
-		void update(VulkanCmdBuffer* cb, UINT8* data, VkDeviceSize offset, VkDeviceSize length);
+		void Update(VulkanCmdBuffer* cb, UINT8* data, VkDeviceSize offset, VkDeviceSize length);
 
 		/** @copydoc VulkanResource::notifyDone */
-		void notifyDone(UINT32 globalQueueIdx, VulkanAccessFlags useFlags) override;
+		void NotifyDone(UINT32 globalQueueIdx, VulkanAccessFlags useFlags) override;
 
 		/** @copydoc VulkanResource::notifyUnbound */
-		void notifyUnbound() override;
+		void NotifyUnbound() override;
 
 		/**
 		 * Creates a new view of this buffer or returns an existing view if one of this format was already created. Views
 		 * must be freed by calling freeView() when doing using them. Only UNIFORM_TEXEL and STORAGE_TEXEL buffer types
 		 * support buffer views.
 		 */
-		VkBufferView getView(VkFormat format);
+		VkBufferView GetView(VkFormat format);
 
 		/**
 		 * Frees a previously allocated buffer view. Calling this is optional as all buffer views will be deallocated
 		 * when the buffer is destroyed.
 		 */
-		void freeView(VkBufferView view);
+		void FreeView(VkBufferView view);
 
 	private:
 		/** Information about a view of this buffer. */
@@ -99,7 +99,7 @@ namespace bs { namespace ct
 		{
 			ViewInfo() = default;
 			ViewInfo(VkFormat format, VkBufferView view)
-				: format(format), view(view), useCount(1)
+				: Format(format), view(view), useCount(1)
 			{ }
 
 			VkFormat format = VK_FORMAT_UNDEFINED;
@@ -111,7 +111,7 @@ namespace bs { namespace ct
 		 * Destroys any buffer views are currently not being used. This must only be called after the buffer is done
 		 * being used on a command buffer.
 		 */
-		void destroyUnusedViews();
+		void DestroyUnusedViews();
 
 		VkBuffer mBuffer;
 		Vector<ViewInfo> mViews;
@@ -145,7 +145,7 @@ namespace bs { namespace ct
 		~VulkanHardwareBuffer();
 
 		/** @copydoc HardwareBuffer::readData */
-		void readData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx = 0, UINT32 queueIdx = 0) override;
+		void ReadData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx = 0, UINT32 queueIdx = 0) override;
 
 		/** @copydoc HardwareBuffer::writeData */
 		void writeData(UINT32 offset, UINT32 length, const void* source,
@@ -166,7 +166,7 @@ namespace bs { namespace ct
 		void* map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx, UINT32 queueIdx) override;
 
 		/** @copydoc HardwareBuffer::unmap */
-		void unmap() override;
+		void Unmap() override;
 
 		/** Creates a new buffer for the specified device, matching the current buffer properties. */
 		VulkanBuffer* createBuffer(VulkanDevice& device, UINT32 size, bool staging, bool readable);

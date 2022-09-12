@@ -18,7 +18,7 @@ namespace bs
 	{
 	public:
 		/**	Returns the name of the property. */
-		const String& getName() const { return mName; }
+		const String& GetName() const { return mName; }
 
 		/**
 		 * Returns a boxed value contained in the property in the specified instance.
@@ -35,7 +35,7 @@ namespace bs
 		 * @param[in]	value		Value to set on the property. For value type it should be a pointer to the value and for
 		 *							reference type it should be a pointer to MonoObject.
 		 */
-		void set(MonoObject* instance, void* value) const;
+		void Set(MonoObject* instance, void* value) const;
 
 		/**
 		 * Returns a boxed value contained in the property in the specified instance. Used for properties with indexers.
@@ -54,16 +54,16 @@ namespace bs
 		 * @param[in]	value		Value to set on the property. For value type it should be a pointer to the value and for
 		 *							reference type it should be a pointer to MonoObject.
 		 */
-		void setIndexed(MonoObject* instance, UINT32 index, void* value) const;
+		void SetIndexed(MonoObject* instance, UINT32 index, void* value) const;
 
 		/** Checks does the property contains indexed data, or just a single value. */
-		bool isIndexed() const;
+		bool IsIndexed() const;
 
 		/**	Returns the data type the property holds. */
 		MonoClass* getReturnType() const;
 
 		/**	Checks if property has an attribute of the specified type. */
-		bool hasAttribute(MonoClass* monoClass);
+		bool HasAttribute(MonoClass* monoClass);
 
 		/**
 		 * Returns an instance of an attribute of the specified type. Returns null if the property doesn't have such an
@@ -75,7 +75,7 @@ namespace bs
 		 * Returns property visibility in the class. If getter/setter methods have different visibility, the more
 		 * restrictive one is returned.
 		 */
-		MonoMemberVisibility getVisibility();
+		MonoMemberVisibility GetVisibility();
 	private:
 		friend class MonoClass;
 
@@ -85,7 +85,7 @@ namespace bs
 		 * Some property data is not initialized by default on creation (with the assumption it will never be accessed).
 		 * This method will initialize that data.
 		 */
-		void initializeDeferred() const;
+		void InitializeDeferred() const;
 
 		String mName;
 		::MonoProperty* mProperty;

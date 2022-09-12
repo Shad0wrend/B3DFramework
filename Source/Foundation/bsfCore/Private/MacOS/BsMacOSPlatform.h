@@ -33,20 +33,20 @@ namespace bs
 	{
 	public:
 		/** Notifies the system that a new window was created. */
-		static void registerWindow(CocoaWindow* window);
+		static void RegisterWindow(CocoaWindow* window);
 
 		/** Notifies the system that a window is about to be destroyed. */
-		static void unregisterWindow(CocoaWindow* window);
+		static void UnregisterWindow(CocoaWindow* window);
 
 		/**
 		 * Locks the access to the list of CocoaWindows ensuring no new windows can be created or destroyed. This must be
 		 * called any time CocoaWindow is being used outside of the main thread to ensure the window doesn't get destroyed
 		 * while being in use. Needs to be followed by unlockWindows().
 		 */
-		static void lockWindows();
+		static void LockWindows();
 
 		/** Releases the lock acquires by lockWindows(). */
-		static void unlockWindows();
+		static void UnlockWindows();
 
 		/**
 		 *  Returns a window based on its ID. Returns null if window cannot be found. Expects the caller to lock windows
@@ -58,10 +58,10 @@ namespace bs
 		static NSImage* createNSImage(const PixelData& data);
 
 		/** Sends an event notifying the system that a key corresponding to an input command was pressed. */
-		static void sendInputCommandEvent(InputCommandType inputCommand);
+		static void SendInputCommandEvent(InputCommandType inputCommand);
 
 		/** Sends an event notifying the system that the user typed some text. */
-		static void sendCharInputEvent(UINT32 character);
+		static void SendCharInputEvent(UINT32 character);
 
 		/** Sends an event notifying the system that a pointer button was pressed. */
 		static void sendPointerButtonPressedEvent(
@@ -76,16 +76,16 @@ namespace bs
 			const OSPointerButtonStates& buttonStates);
 
 		/** Sends an event notifying the system that the user clicked the left pointer button twice in quick succession. */
-		static void sendPointerDoubleClickEvent(const Vector2I& pos, const OSPointerButtonStates& buttonStates);
+		static void SendPointerDoubleClickEvent(const Vector2I& pos, const OSPointerButtonStates& buttonStates);
 
 		/** Sends an event notifying the system that the pointer moved. */
-		static void sendPointerMovedEvent(const Vector2I& pos, const OSPointerButtonStates& buttonStates);
+		static void SendPointerMovedEvent(const Vector2I& pos, const OSPointerButtonStates& buttonStates);
 
 		/** Sends an event notifying the system the user has scrolled the mouse wheel. */
-		static void sendMouseWheelScrollEvent(float delta);
+		static void SendMouseWheelScrollEvent(float delta);
 
 		/** Notifies the system that some window-related event has occurred. */
-		static void notifyWindowEvent(WindowEventType type, UINT32 windowId);
+		static void NotifyWindowEvent(WindowEventType type, UINT32 windowId);
 
 		/** Returns the currently assigned custom cursor. */
 		static NSCursor* _getCurrentCursor();
@@ -104,13 +104,13 @@ namespace bs
 	};
 
 	/** Converts an area in screen space with bottom left origin, to top left origin. */
-	void flipY(NSScreen* screen, NSRect& rect);
+	void FlipY(NSScreen* screen, NSRect& rect);
 
 	/** Converts a point in screen space with bottom left origin, to top left origin. */
-	void flipY(NSScreen* screen, NSPoint &point);
+	void FlipY(NSScreen* screen, NSPoint &point);
 
 	/** Converts a point in window space with bottom left origin, to top left origin. */
-	void flipYWindow(NSWindow* window, NSPoint &point);
+	void FlipYWindow(NSWindow* window, NSPoint &point);
 
 	/** @} */
 }

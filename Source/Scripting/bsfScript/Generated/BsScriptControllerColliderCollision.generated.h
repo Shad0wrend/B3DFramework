@@ -25,9 +25,9 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "ControllerColliderCollision")
 
 		static MonoObject* box(const __ControllerColliderCollisionInterop& value);
-		static __ControllerColliderCollisionInterop unbox(MonoObject* value);
-		static ControllerColliderCollision fromInterop(const __ControllerColliderCollisionInterop& value);
-		static __ControllerColliderCollisionInterop toInterop(const ControllerColliderCollision& value);
+		static __ControllerColliderCollisionInterop Unbox(MonoObject* value);
+		static ControllerColliderCollision FromInterop(const __ControllerColliderCollisionInterop& value);
+		static __ControllerColliderCollisionInterop ToInterop(const ControllerColliderCollision& value);
 
 	private:
 		ScriptControllerColliderCollision(MonoObject* managedInstance);

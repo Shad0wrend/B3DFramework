@@ -34,7 +34,7 @@ namespace bs
 		 *
 		 * @param[in]	desc	Description of the buffer to create.
 		 */
-		SPtr<VertexBuffer> createVertexBuffer(const VERTEX_BUFFER_DESC& desc);
+		SPtr<VertexBuffer> CreateVertexBuffer(const VERTEX_BUFFER_DESC& desc);
 
 		/**
 		 * Creates a new index buffer that holds indices referencing vertices in a vertex buffer. Indices are interpreted
@@ -42,7 +42,7 @@ namespace bs
 		 *
 		 * @param[in]	desc	Description of the buffer to create.
 		 */
-		SPtr<IndexBuffer> createIndexBuffer(const INDEX_BUFFER_DESC& desc);
+		SPtr<IndexBuffer> CreateIndexBuffer(const INDEX_BUFFER_DESC& desc);
 
 		/**
 		 * Creates an GPU parameter block that you can use for setting parameters for GPU programs. Parameter blocks may be
@@ -52,7 +52,7 @@ namespace bs
 		 * @param[in]	size	Size of the parameter buffer in bytes.
 		 * @param[in]	usage	Usage that tells the hardware how will be buffer be used.
 		 */
-		SPtr<GpuParamBlockBuffer> createGpuParamBlockBuffer(UINT32 size, GpuBufferUsage usage = GBU_DYNAMIC);
+		SPtr<GpuParamBlockBuffer> CreateGpuParamBlockBuffer(UINT32 size, GpuBufferUsage usage = GBU_DYNAMIC);
 
 		/**
 		 * Creates a generic buffer that can be passed as a parameter to a GPU program. This type of buffer can hold various
@@ -60,17 +60,17 @@ namespace bs
 		 *
 		 * @param[in]	desc  	Description of the buffer to create.
 		 */
-		SPtr<GpuBuffer> createGpuBuffer(const GPU_BUFFER_DESC& desc);
+		SPtr<GpuBuffer> CreateGpuBuffer(const GPU_BUFFER_DESC& desc);
 
 		/**
 		 * Creates a new vertex declaration from a list of vertex elements.
 		 *
 		 * @param[in]	desc	Description of the object to create.
 		 */
-		SPtr<VertexDeclaration> createVertexDeclaration(const SPtr<VertexDataDesc>& desc);
+		SPtr<VertexDeclaration> CreateVertexDeclaration(const SPtr<VertexDataDesc>& desc);
 
 		/** @copydoc GpuParams::create(const SPtr<GpuPipelineParamInfo>&) */
-		SPtr<GpuParams> createGpuParams(const SPtr<GpuPipelineParamInfo>& paramInfo);
+		SPtr<GpuParams> CreateGpuParams(const SPtr<GpuPipelineParamInfo>& paramInfo);
 	};
 
 	namespace ct
@@ -90,13 +90,13 @@ namespace bs
 		 * @copydoc bs::HardwareBufferManager::createVertexBuffer
 		 * @param[in]	deviceMask		Mask that determines on which GPU devices should the object be created on.
 		 */
-		SPtr<VertexBuffer> createVertexBuffer(const VERTEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
+		SPtr<VertexBuffer> CreateVertexBuffer(const VERTEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
 		/**
 		 * @copydoc bs::HardwareBufferManager::createIndexBuffer
 		 * @param[in]	deviceMask		Mask that determines on which GPU devices should the object be created on.
 		 */
-		SPtr<IndexBuffer> createIndexBuffer(const INDEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
+		SPtr<IndexBuffer> CreateIndexBuffer(const INDEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
 		/**
 		 * @copydoc bs::HardwareBufferManager::createVertexDeclaration
@@ -125,10 +125,10 @@ namespace bs
 		 * @copydoc bs::HardwareBufferManager::createGpuBuffer
 		 * @param[in]	deviceMask		Mask that determines on which GPU devices should the object be created on.
 		 */
-		SPtr<GpuBuffer> createGpuBuffer(const GPU_BUFFER_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
+		SPtr<GpuBuffer> CreateGpuBuffer(const GPU_BUFFER_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
 		/** @copydoc GpuBuffer::create(const GPU_BUFFER_DESC&, SPtr<HardwareBuffer>) */
-		SPtr<GpuBuffer> createGpuBuffer(const GPU_BUFFER_DESC& desc, SPtr<HardwareBuffer> underlyingBuffer);
+		SPtr<GpuBuffer> CreateGpuBuffer(const GPU_BUFFER_DESC& desc, SPtr<HardwareBuffer> underlyingBuffer);
 
 		/** @copydoc GpuParams::create(const SPtr<GpuPipelineParamInfo>&, GpuDeviceFlags) */
 		SPtr<GpuParams> createGpuParams(const SPtr<GpuPipelineParamInfo>& paramInfo,
@@ -151,13 +151,13 @@ namespace bs
 			class HashFunction
 			{
 			public:
-				size_t operator()(const VertexDeclarationKey& key) const;
+				size_t Operator()(const VertexDeclarationKey& key) const;
 			};
 
 			class EqualFunction
 			{
 			public:
-				bool operator()(const VertexDeclarationKey& lhs, const VertexDeclarationKey& rhs) const;
+				bool Operator()(const VertexDeclarationKey& lhs, const VertexDeclarationKey& rhs) const;
 			};
 
 			Vector<VertexElement> elements;

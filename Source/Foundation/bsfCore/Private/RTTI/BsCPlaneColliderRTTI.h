@@ -22,18 +22,18 @@ namespace bs
 			BS_RTTI_MEMBER_PLAIN(mDistance, 1)
 		BS_END_RTTI_MEMBERS
 	public:
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "CPlaneCollider";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_CPlaneCollider;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			return SceneObject::createEmptyComponent<CPlaneCollider>();
 		}

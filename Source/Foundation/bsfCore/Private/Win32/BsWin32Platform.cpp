@@ -64,15 +64,15 @@ namespace bs
 	Platform::Pimpl* Platform::mData = bs_new<Platform::Pimpl>();
 
 	/** Checks if any of the windows of the current application are active. */
-	bool isAppActive(Platform::Pimpl* data)
+	bool IsAppActive(Platform::Pimpl* data)
 	{
-		Lock lock(data->mSync);
+		Lock Lock(data->mSync);
 
 		return data->mIsActive;
 	}
 
 	/** Enables or disables cursor clipping depending on the stored data. */
-	void applyClipping(Platform::Pimpl* data)
+	void ApplyClipping(Platform::Pimpl* data)
 	{
 		if(data->mCursorClipping)
 		{
@@ -290,21 +290,21 @@ namespace bs
 
 	void Platform::setCaptionNonClientAreas(const ct::RenderWindow& window, const Vector<Rect2I>& nonClientAreas)
 	{
-		Lock lock(mData->mSync);
+		Lock Lock(mData->mSync);
 
 		mData->mNonClientAreas[&window].moveAreas = nonClientAreas;
 	}
 
 	void Platform::setResizeNonClientAreas(const ct::RenderWindow& window, const Vector<NonClientResizeArea>& nonClientAreas)
 	{
-		Lock lock(mData->mSync);
+		Lock Lock(mData->mSync);
 
 		mData->mNonClientAreas[&window].resizeAreas = nonClientAreas;
 	}
 
 	void Platform::resetNonClientAreas(const ct::RenderWindow& window)
 	{
-		Lock lock(mData->mSync);
+		Lock Lock(mData->mSync);
 
 		auto iterFind = mData->mNonClientAreas.find(&window);
 
@@ -332,7 +332,7 @@ namespace bs
 			mData->mDropTargets.dropTargetsPerWindow[window] = win32DropTarget;
 
 			{
-				Lock lock(mData->mSync);
+				Lock Lock(mData->mSync);
 				mData->mDropTargets.dropTargetsToInitialize.push_back(win32DropTarget);
 			}
 		}
@@ -359,7 +359,7 @@ namespace bs
 				mData->mDropTargets.dropTargetsPerWindow.erase(iterFind);
 
 				{
-					Lock lock(mData->mSync);
+					Lock Lock(mData->mSync);
 					mData->mDropTargets.dropTargetsToDestroy.push_back(win32DropTarget);
 				}
 			}
@@ -399,7 +399,7 @@ namespace bs
 			if (hData != NULL)
 			{
 				WString::value_type* buffer = (WString::value_type*)GlobalLock(hData);
-				WString wideString(buffer);
+				WString WideString(buffer);
 				GlobalUnlock(hData);
 
 				CloseClipboard();
@@ -452,7 +452,7 @@ namespace bs
 
 	void Platform::_startUp()
 	{
-		Lock lock(mData->mSync);
+		Lock Lock(mData->mSync);
 
 		if (timeBeginPeriod(1) == TIMERR_NOCANDO)
 		{
@@ -474,7 +474,7 @@ namespace bs
 	void Platform::_coreUpdate()
 	{
 		{
-			Lock lock(mData->mSync);
+			Lock Lock(mData->mSync);
 			if (mData->mRequiresStartUp)
 			{
 				OleInitialize(nullptr);
@@ -484,7 +484,7 @@ namespace bs
 		}
 
 		{
-			Lock lock(mData->mSync);
+			Lock Lock(mData->mSync);
 			for (auto& dropTargetToDestroy : mData->mDropTargets.dropTargetsToDestroy)
 			{
 				dropTargetToDestroy->unregisterWithOS();
@@ -495,7 +495,7 @@ namespace bs
 		}
 
 		{
-			Lock lock(mData->mSync);
+			Lock Lock(mData->mSync);
 			for (auto& dropTargetToInit : mData->mDropTargets.dropTargetsToInitialize)
 			{
 				dropTargetToInit->registerWithOS();
@@ -507,7 +507,7 @@ namespace bs
 		_messagePump();
 
 		{
-			Lock lock(mData->mSync);
+			Lock Lock(mData->mSync);
 			if (mData->mRequiresShutDown)
 			{
 				OleUninitialize();
@@ -518,14 +518,14 @@ namespace bs
 
 	void Platform::_shutDown()
 	{
-		Lock lock(mData->mSync);
+		Lock Lock(mData->mSync);
 
 		timeEndPeriod(1);
 		mData->mRequiresShutDown = true;
 	}
 
 	/**	Translate engine non client area to win32 non client area. */
-	LRESULT translateNonClientAreaType(NonClientAreaBorderType type)
+	LRESULT TranslateNonClientAreaType(NonClientAreaBorderType type)
 	{
 		LRESULT dir = HTCLIENT;
 		switch(type)
@@ -560,7 +560,7 @@ namespace bs
 	}
 
 	/**	Method triggered whenever a mouse event happens. */
-	void getMouseData(HWND hWnd, WPARAM wParam, LPARAM lParam, bool nonClient, Vector2I& mousePos, OSPointerButtonStates& btnStates)
+	void GetMouseData(HWND hWnd, WPARAM wParam, LPARAM lParam, bool nonClient, Vector2I& mousePos, OSPointerButtonStates& btnStates)
 	{
 		POINT clientPoint;
 
@@ -586,7 +586,7 @@ namespace bs
 	 * @param[in]	virtualKeyCode	Virtual key code to try to translate to a command.
 	 * @param[out]	command			Input command. Only valid if function returns true.
 	 */
-	bool getCommand(unsigned int virtualKeyCode, InputCommandType& command)
+	bool GetCommand(unsigned int virtualKeyCode, InputCommandType& command)
 	{
 		bool isShiftPressed = GetAsyncKeyState(VK_SHIFT);
 		
@@ -656,7 +656,7 @@ namespace bs
 			case WA_ACTIVE:
 			case WA_CLICKACTIVE:
 				{
-					Lock lock(mData->mSync);
+					Lock Lock(mData->mSync);
 
 					mData->mIsActive = true;
 				}
@@ -665,7 +665,7 @@ namespace bs
 				break;
 			case WA_INACTIVE:
 				{
-					Lock lock(mData->mSync);
+					Lock Lock(mData->mSync);
 
 					mData->mIsActive = false;
 				}
@@ -792,7 +792,7 @@ namespace bs
 				for(auto area : resizeAreasPerWindow)
 				{
 					if (area.area.contains(mousePosInt))
-						return translateNonClientAreaType(area.type);
+						return TranslateNonClientAreaType(area.type);
 				}
 
 				Vector<Rect2I>& moveAreasPerWindow = iterFind->second.moveAreas;
@@ -826,7 +826,7 @@ namespace bs
 				// to trigger, while the mouse is still in the non-client area of the window.
 				mData->mIsTrackingMouse = false; // TrackMouseEvent ends when this message is received and needs to be re-applied
 
-				Lock lock(mData->mSync);
+				Lock Lock(mData->mSync);
 				win->_notifyWindowEvent(WindowEventType::MouseLeft);
 			}
 			return 0;

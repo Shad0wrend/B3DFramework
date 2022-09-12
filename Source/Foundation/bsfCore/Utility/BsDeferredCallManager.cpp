@@ -25,7 +25,7 @@ namespace bs
 	}
 
 	// Declared in BsPrerequisites.h
-	void deferredCall(std::function<void()> callback)
+	void DeferredCall(std::function<void()> callback)
 	{
 		DeferredCallManager::instance().queueDeferredCall(callback);
 	}

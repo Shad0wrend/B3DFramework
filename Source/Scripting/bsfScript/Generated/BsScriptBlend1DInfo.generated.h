@@ -21,9 +21,9 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "Blend1DInfo")
 
 		static MonoObject* box(const __Blend1DInfoInterop& value);
-		static __Blend1DInfoInterop unbox(MonoObject* value);
-		static Blend1DInfo fromInterop(const __Blend1DInfoInterop& value);
-		static __Blend1DInfoInterop toInterop(const Blend1DInfo& value);
+		static __Blend1DInfoInterop Unbox(MonoObject* value);
+		static Blend1DInfo FromInterop(const __Blend1DInfoInterop& value);
+		static __Blend1DInfoInterop ToInterop(const Blend1DInfo& value);
 
 	private:
 		ScriptBlend1DInfo(MonoObject* managedInstance);

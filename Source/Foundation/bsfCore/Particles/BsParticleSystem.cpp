@@ -27,7 +27,7 @@ namespace bs
 
 	RTTITypeBase* ParticleSystemSettings::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	template <bool Core>
@@ -72,7 +72,7 @@ namespace bs
 
 	RTTITypeBase* ParticleVectorFieldSettings::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	template<class P>
@@ -91,7 +91,7 @@ namespace bs
 
 	RTTITypeBase* ParticleDepthCollisionSettings::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	template<bool Core>
@@ -113,7 +113,7 @@ namespace bs
 
 	RTTITypeBase* ParticleGpuSimulationSettings::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	ParticleSystem::ParticleSystem()
@@ -397,7 +397,7 @@ namespace bs
 			return AABox::BOX_EMPTY;
 
 		const ParticleSetData& particles = mParticleSet->getParticles();
-		AABox bounds(Vector3::INF, -Vector3::INF);
+		AABox Bounds(Vector3::INF, -Vector3::INF);
 		for(UINT32 i = 0; i < particleCount; i++)
 			bounds.merge(particles.position[i]);
 
@@ -450,7 +450,7 @@ namespace bs
 		size += rtti_size(mLayer).bytes;
 
 		UINT8* data = allocator->alloc(size);
-		Bitstream stream(data, size);
+		Bitstream Stream(data, size);
 		rtti_write(getCoreDirtyFlags(), stream);
 		csync_write((SceneActor&)*this, stream);
 		csync_write(mSettings, stream);
@@ -525,7 +525,7 @@ namespace bs
 
 		void ParticleSystem::syncToCore(const CoreSyncData& data)
 		{
-			Bitstream stream((uint8_t*)data.getBuffer(), data.getBufferSize());
+			Bitstream Stream((uint8_t*)data.getBuffer(), data.getBufferSize());
 
 			UINT32 dirtyFlags = 0;
 			const bool oldIsActive = mActive;

@@ -5,13 +5,13 @@
 namespace bs
 {
 	template <class T>
-	void addToVector(const T& val, Vector<float>& output)
+	void AddToVector(const T& val, Vector<float>& output)
 	{
 		output.push_back(val);
 	}
 
 	template <>
-	void addToVector(const Vector3& val, Vector<float>& output)
+	void AddToVector(const Vector3& val, Vector<float>& output)
 	{
 		output.push_back(val.x);
 		output.push_back(val.y);
@@ -19,14 +19,14 @@ namespace bs
 	}
 
 	template <>
-	void addToVector(const Vector2& val, Vector<float>& output)
+	void AddToVector(const Vector2& val, Vector<float>& output)
 	{
 		output.push_back(val.x);
 		output.push_back(val.y);
 	}
 
 	template <>
-	void addToVector(const Color& val, Vector<float>& output)
+	void AddToVector(const Color& val, Vector<float>& output)
 	{
 		output.push_back(val.r);
 		output.push_back(val.g);

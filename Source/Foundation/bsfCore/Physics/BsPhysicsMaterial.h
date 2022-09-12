@@ -25,33 +25,33 @@ namespace bs
 		  * it is to get an object moving from a static state while it is in contact with other object(s)).
 		  */
 		BS_SCRIPT_EXPORT(n:StaticFriction,pr:setter)
-		virtual void setStaticFriction(float value) = 0;
+		virtual void SetStaticFriction(float value) = 0;
 
 		/** @copydoc setStaticFriction() */
 		BS_SCRIPT_EXPORT(n:StaticFriction,pr:getter)
-		virtual float getStaticFriction() const = 0;
+		virtual float GetStaticFriction() const = 0;
 
 		/**
 		 * Controls friction when two in-contact objects are moving lateral to each other (for example how quickly does an
 		 * object slow down when sliding along another object).
 		 */
 		BS_SCRIPT_EXPORT(n:DynamicFriction,pr:setter)
-		virtual void setDynamicFriction(float value) = 0;
+		virtual void SetDynamicFriction(float value) = 0;
 
 		/** @copydoc setDynamicFriction() */
 		BS_SCRIPT_EXPORT(n:DynamicFriction,pr:getter)
-		virtual float getDynamicFriction() const = 0;
+		virtual float GetDynamicFriction() const = 0;
 
 		/**
 		 * Controls "bounciness" of an object during a collision. Value of 1 means the collision is elastic, and value of 0
 		 * means the value is inelastic. Must be in [0, 1] range.
 		 */
 		BS_SCRIPT_EXPORT(n:Restitution,pr:setter)
-		virtual void setRestitutionCoefficient(float value) = 0;
+		virtual void SetRestitutionCoefficient(float value) = 0;
 
 		/** @copydoc setRestitutionCoefficient() */
 		BS_SCRIPT_EXPORT(n:Restitution,pr:getter)
-		virtual float getRestitutionCoefficient() const = 0;
+		virtual float GetRestitutionCoefficient() const = 0;
 
 		/**
 		 * Creates a new physics material.
@@ -67,7 +67,7 @@ namespace bs
 		 *								[0, 1] range.
 		 */
 		BS_SCRIPT_EXPORT(ec:PhysicsMaterial)
-		static HPhysicsMaterial create(float staticFriction = 0.0f, float dynamicFriction = 0.0f, float restitution = 0.0f);
+		static HPhysicsMaterial Create(float staticFriction = 0.0f, float dynamicFriction = 0.0f, float restitution = 0.0f);
 
 		/** @name Internal
 		 *  @{

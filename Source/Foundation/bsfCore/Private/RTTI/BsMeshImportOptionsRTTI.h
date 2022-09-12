@@ -34,18 +34,18 @@ namespace bs
 			BS_RTTI_MEMBER_PLAIN(importRootMotion, 11)
 		BS_END_RTTI_MEMBERS
 	public:
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "MeshImportOptions";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_MeshImportOptions;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			return bs_shared_ptr_new<MeshImportOptions>();
 		}
@@ -59,18 +59,18 @@ namespace bs
 			BS_RTTI_MEMBER_PLAIN(events, 1)
 		BS_END_RTTI_MEMBERS
 	public:
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "ImportedAnimationEvents";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_ImportedAnimationEvents;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			return bs_shared_ptr_new<ImportedAnimationEvents>();
 		}
@@ -86,18 +86,18 @@ namespace bs
 			BS_RTTI_MEMBER_PLAIN(isAdditive, 3)
 			BS_END_RTTI_MEMBERS
 	public:
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "AnimationSplitInfo";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_AnimationSplitInfo;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			return bs_shared_ptr_new<AnimationSplitInfo>();
 		}

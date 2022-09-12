@@ -45,13 +45,13 @@ namespace bs
 		virtual ~GpuPipelineParamInfoBase() = default;
 
 		/** Gets the total number of sets. */
-		UINT32 getNumSets() const { return mNumSets; }
+		UINT32 GetNumSets() const { return mNumSets; }
 
 		/** Returns the total number of elements across all sets. */
-		UINT32 getNumElements() const { return mNumElements; }
+		UINT32 GetNumElements() const { return mNumElements; }
 
 		/** Returns the number of elements in all sets for the specified parameter type. */
-		UINT32 getNumElements(ParamType type) { return mNumElementsPerType[(int)type]; }
+		UINT32 GetNumElements(ParamType type) { return mNumElementsPerType[(int)type]; }
 
 		/**
 		 * Converts a set/slot combination into a sequential index that maps to the parameter in that parameter type's
@@ -60,25 +60,25 @@ namespace bs
 		 * If the set or slot is out of valid range, the method logs an error and returns -1. Only performs range checking
 		 * in debug mode.
 		 */
-		UINT32 getSequentialSlot(ParamType type, UINT32 set, UINT32 slot) const;
+		UINT32 GetSequentialSlot(ParamType type, UINT32 set, UINT32 slot) const;
 
 		/** Converts a sequential slot index into a set/slot combination. */
-		void getBinding(ParamType type, UINT32 sequentialSlot, UINT32& set, UINT32& slot) const;
+		void GetBinding(ParamType type, UINT32 sequentialSlot, UINT32& set, UINT32& slot) const;
 
 		/**
 		 * Finds set/slot indices of a parameter with the specified name for the specified GPU program stage. Set/slot
 		 * indices are set to -1 if a stage doesn't have a block with the specified name.
 		 */
-		void getBinding(GpuProgramType progType, ParamType type, const String& name, GpuParamBinding &binding);
+		void GetBinding(GpuProgramType progType, ParamType type, const String& name, GpuParamBinding &binding);
 
 		/**
 		 * Finds set/slot indices of a parameter with the specified name for every GPU program stage. Set/slot indices are
 		 * set to -1 if a stage doesn't have a block with the specified name.
 		 */
-		void getBindings(ParamType type, const String& name, GpuParamBinding(&bindings)[GPT_COUNT]);
+		void GetBindings(ParamType type, const String& name, GpuParamBinding(&bindings)[GPT_COUNT]);
 
 		/** Returns descriptions of individual parameters for the specified GPU program type. */
-		const SPtr<GpuParamDesc>& getParamDesc(GpuProgramType type) const { return mParamDescs[(int)type]; }
+		const SPtr<GpuParamDesc>& GetParamDesc(GpuProgramType type) const { return mParamDescs[(int)type]; }
 
 	protected:
 		/** Information about a single set in the param info object. */
@@ -119,20 +119,20 @@ namespace bs
 		 *
 		 * @note	Core thread only.
 		 */
-		SPtr<ct::GpuPipelineParamInfo> getCore() const;
+		SPtr<ct::GpuPipelineParamInfo> GetCore() const;
 
 		/**
 		 * Constructs the object using the provided GPU parameter descriptors.
 		 *
 		 * @param[in]	desc	Object containing parameter descriptions for individual GPU program stages.
 		 */
-		static SPtr<GpuPipelineParamInfo> create(const GPU_PIPELINE_PARAMS_DESC& desc);
+		static SPtr<GpuPipelineParamInfo> Create(const GPU_PIPELINE_PARAMS_DESC& desc);
 
 	private:
 		GpuPipelineParamInfo(const GPU_PIPELINE_PARAMS_DESC& desc);
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> createCore() const override;
+		SPtr<ct::CoreObject> CreateCore() const override;
 	};
 
 	namespace ct

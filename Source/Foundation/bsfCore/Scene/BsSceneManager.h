@@ -45,22 +45,22 @@ namespace bs
 
 		/** Name of the scene. */
 		BS_SCRIPT_EXPORT(n:Name,pr:getter)
-		const String& getName() const { return mName; }
+		const String& GetName() const { return mName; }
 
 		/** Root object of the scene. */
 		BS_SCRIPT_EXPORT(n:Root,pr:getter)
-		const HSceneObject& getRoot() const { return mRoot; }
+		const HSceneObject& GetRoot() const { return mRoot; }
 
 		/** Checks is the scene currently active. IF inactive the scene properties aside from the name are undefined. */
 		BS_SCRIPT_EXPORT(n:IsActive,pr:getter)
-		bool isActive() const { return mIsActive; }
+		bool IsActive() const { return mIsActive; }
 
 		/**
 		 * Physical representation of the scene, as assigned by the physics sub-system. Exact implementation depends on the
 		 * physics plugin used.
 		 */
 		BS_SCRIPT_EXPORT(n:Physics,pr:getter)
-		const SPtr<PhysicsScene>& getPhysicsScene() const { return mPhysicsScene; }
+		const SPtr<PhysicsScene>& GetPhysicsScene() const { return mPhysicsScene; }
 	private:
 		friend class SceneManager;
 
@@ -81,35 +81,35 @@ namespace bs
 		~SceneManager();
 
 		/** Returns the object that represents the main scene. */
-		const SPtr<SceneInstance>& getMainScene() const { return mMainScene; }
+		const SPtr<SceneInstance>& GetMainScene() const { return mMainScene; }
 
 		/**
 		 * Destroys all scene objects in the scene.
 		 *
 		 * @param[in]	forceAll	If true, then even the persistent objects will be unloaded.
 		 */
-		void clearScene(bool forceAll = false);
+		void ClearScene(bool forceAll = false);
 
 		/**
 		 * Instantiates a new scene and makes it active. All non-persistent objects that are part of the current scene will
 		 * be destroyed.
 		 */
-		void loadScene(const HPrefab& scene);
+		void LoadScene(const HPrefab& scene);
 
 		/**
 		 * Saves all the currently active scene objects into a brand new prefab which can then be saved to disk, loaded back
 		 * and provided to setScene() for loading.
 		 */
-		HPrefab saveScene() const;
+		HPrefab SaveScene() const;
 
 		/**
 		 * Changes the component state that globally determines which component callbacks are activated. Only affects
 		 * components that don't have the ComponentFlag::AlwaysRun flag set.
 		 */
-		void setComponentState(ComponentState state);
+		void SetComponentState(ComponentState state);
 
 		/** Checks are the components currently in the Running state. */
-		bool isRunning() const { return mComponentState == ComponentState::Running; }
+		bool IsRunning() const { return mComponentState == ComponentState::Running; }
 
 		/**
 		 * Returns a list of all components of the specified type currently in the scene.
@@ -120,7 +120,7 @@ namespace bs
 		 * @return					A list of all matching components in the scene.
 		 */
 		template<class T>
-		Vector<GameObjectHandle<T>> findComponents(bool activeOnly = true);
+		Vector<GameObjectHandle<T>> FindComponents(bool activeOnly = true);
 
 		/** Returns all cameras in the scene. */
 		const UnorderedMap<Camera*, SPtr<Camera>>& getAllCameras() const { return mCameras; }
@@ -129,13 +129,13 @@ namespace bs
 		 * Returns the camera in the scene marked as main. Main camera controls the final render surface that is displayed
 		 * to the user. If there are multiple main cameras, the first one found returned.
 		 */
-		SPtr<Camera> getMainCamera() const;
+		SPtr<Camera> GetMainCamera() const;
 
 		/**
 		 * Sets the render target that the main camera in the scene (if any) will render its view to. This generally means
 		 * the main game window when running standalone, or the Game viewport when running in editor.
 		 */
-		void setMainRenderTarget(const SPtr<RenderTarget>& rt);
+		void SetMainRenderTarget(const SPtr<RenderTarget>& rt);
 
 		/** Changes the root scene object. Any persistent objects will remain in the scene, now parented to the new root. */
 		void _setRootNode(const HSceneObject& root);
@@ -219,34 +219,34 @@ namespace bs
 		 * Do NOT add nodes that have already been added (if you just want to change their parent). Normally this
 		 * method will only be called by SceneObject.
 		 */
-		void registerNewSO(const HSceneObject& node);
+		void RegisterNewSO(const HSceneObject& node);
 
 		/**	Callback that is triggered when the main render target size is changed. */
-		void onMainRenderTargetResized();
+		void OnMainRenderTargetResized();
 
 		/**
 		 * Adds a component to the specified state list. Caller is expected to first remove the component from any
 		 * existing state lists.
 		 */
-		void addToStateList(const HComponent& component, UINT32 listType);
+		void AddToStateList(const HComponent& component, UINT32 listType);
 
 		/** Removes a component from its current scene manager state list (if any). */
-		void removeFromStateList(const HComponent& component);
+		void RemoveFromStateList(const HComponent& component);
 
 		/** Iterates over components that had their state modified and moves them to the appropriate state lists. */
-		void processStateChanges();
+		void ProcessStateChanges();
 
 		/**
 		 * Encodes an index and a type into a single 32-bit integer. Top 2 bits represent the type, while the rest represent
 		 * the index.
 		 */
-		static UINT32 encodeComponentId(UINT32 idx, UINT32 type);
+		static UINT32 EncodeComponentId(UINT32 idx, UINT32 type);
 
 		/** Decodes an id encoded with encodeComponentId(). */
-		static void decodeComponentId(UINT32 id, UINT32& idx, UINT32& type);
+		static void DecodeComponentId(UINT32 id, UINT32& idx, UINT32& type);
 
 		/** Checks does the specified component type match the provided RTTI id. */
-		static bool isComponentOfType(const HComponent& component, UINT32 rttiId);
+		static bool IsComponentOfType(const HComponent& component, UINT32 rttiId);
 
 	protected:
 		SPtr<SceneInstance> mMainScene;
@@ -271,7 +271,7 @@ namespace bs
 	};
 
 	/**	Provides easy access to the SceneManager. */
-	BS_CORE_EXPORT SceneManager& gSceneManager();
+	BS_CORE_EXPORT SceneManager& GSceneManager();
 
 	template<class T>
 	Vector<GameObjectHandle<T>> SceneManager::findComponents(bool activeOnly)

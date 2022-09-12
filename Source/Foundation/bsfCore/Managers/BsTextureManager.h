@@ -24,7 +24,7 @@ namespace bs
 		virtual ~TextureManager() = default;
 
 		/** @copydoc Texture::create(const TEXTURE_DESC&) */
-		SPtr<Texture> createTexture(const TEXTURE_DESC& desc);
+		SPtr<Texture> CreateTexture(const TEXTURE_DESC& desc);
 			
 		/**
 		 * Creates a new 2D or 3D texture initialized using the provided pixel data. Texture will not have any mipmaps.
@@ -32,7 +32,7 @@ namespace bs
 		 * @param[in]	desc  		Description of the texture to create. Must match the pixel data.
 		 * @param[in]	pixelData	Data to initialize the texture width.
 		 */
-		SPtr<Texture> createTexture(const TEXTURE_DESC& desc, const SPtr<PixelData>& pixelData);
+		SPtr<Texture> CreateTexture(const TEXTURE_DESC& desc, const SPtr<PixelData>& pixelData);
 
 		/**
 		 * Creates a completely empty and uninitialized Texture.
@@ -60,21 +60,21 @@ namespace bs
 		 *
 		 * @param[in]	desc	Description of the render texture to create.
 		 */
-		virtual SPtr<RenderTexture> createRenderTexture(const RENDER_TEXTURE_DESC& desc);
+		virtual SPtr<RenderTexture> CreateRenderTexture(const RENDER_TEXTURE_DESC& desc);
 
 		/**
 		 * Gets the format which will be natively used for a requested format given the constraints of the current device.
 		 *
 		 * @note	Thread safe.
 		 */
-		virtual PixelFormat getNativeFormat(TextureType ttype, PixelFormat format, int usage, bool hwGamma) = 0;
+		virtual PixelFormat GetNativeFormat(TextureType ttype, PixelFormat format, int usage, bool hwGamma) = 0;
 
 	protected:
 		/**
 		 * Creates an empty and uninitialized render texture of a specific type. This is to be implemented by render
 		 * systems with their own implementations.
 		 */
-		virtual SPtr<RenderTexture> createRenderTextureImpl(const RENDER_TEXTURE_DESC& desc) = 0;
+		virtual SPtr<RenderTexture> CreateRenderTextureImpl(const RENDER_TEXTURE_DESC& desc) = 0;
 
 		mutable HTexture mDummyTexture;
 	};
@@ -92,22 +92,22 @@ namespace bs
 		virtual ~TextureManager() = default;
 
 		/** @copydoc Module::onStartUp */
-		void onStartUp() override;
+		void OnStartUp() override;
 
 		/** @copydoc Module::onShutDown */
-		void onShutDown() override;
+		void OnShutDown() override;
 
 		/**
 		 * @copydoc	bs::TextureManager::createTexture(const TEXTURE_DESC&)
 		 * @param[in]	deviceMask		Mask that determines on which GPU devices should the object be created on.
 		 */
-		SPtr<Texture> createTexture(const TEXTURE_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
+		SPtr<Texture> CreateTexture(const TEXTURE_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
 		/**
 		 * @copydoc bs::TextureManager::createRenderTexture(const RENDER_TEXTURE_DESC&)
 		 * @param[in]	deviceIdx		Index of the GPU device to create the object on.
 		 */
-		SPtr<RenderTexture> createRenderTexture(const RENDER_TEXTURE_DESC& desc, UINT32 deviceIdx = 0);
+		SPtr<RenderTexture> CreateRenderTexture(const RENDER_TEXTURE_DESC& desc, UINT32 deviceIdx = 0);
 
 	protected:
 		friend class bs::Texture;

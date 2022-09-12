@@ -33,7 +33,7 @@ namespace bs
 		{ MONO_LIB_DIR + "mono/4.5", "v4.0.30319" }
 	};
 
-	void monoLogCallback(const char* logDomain, const char* logLevel, const char* message, mono_bool fatal, void* userData)
+	void MonoLogCallback(const char* logDomain, const char* logLevel, const char* message, mono_bool fatal, void* userData)
 	{
 		static const char* monoErrorLevels[] =
 		{
@@ -77,12 +77,12 @@ namespace bs
 		}
 	}
 
-	void monoPrintCallback(const char* string, mono_bool isStdout)
+	void MonoPrintCallback(const char* string, mono_bool isStdout)
 	{
 		BS_LOG(Warning, Script, "Mono error: {0}", string);
 	}
 
-	void monoPrintErrorCallback(const char* string, mono_bool isStdout)
+	void MonoPrintErrorCallback(const char* string, mono_bool isStdout)
 	{
 		BS_LOG(Error, Script, "Mono error: {0}", string);
 	}	

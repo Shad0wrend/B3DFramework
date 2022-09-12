@@ -11,7 +11,7 @@
 
 namespace bs { namespace ct
 {
-	static void deleteBuffer(HardwareBuffer* buffer)
+	static void DeleteBuffer(HardwareBuffer* buffer)
 	{
 		bs_pool_delete(static_cast<D3D11HardwareBuffer*>(buffer));
 	}

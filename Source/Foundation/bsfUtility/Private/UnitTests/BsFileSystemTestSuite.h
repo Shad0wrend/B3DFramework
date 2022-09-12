@@ -10,8 +10,8 @@ namespace bs
 	{
 	public:
 		FileSystemTestSuite();
-		void startUp() override;
-		void shutDown() override;
+		void StartUp() override;
+		void ShutDown() override;
 
 	private:
 		void testExists_yes_file();
@@ -25,16 +25,16 @@ namespace bs
 		void testIsDirectory_no();
 		void testRemove_file();
 		void testRemove_directory();
-		void testMove();
+		void TestMove();
 		void testMove_overwrite_existing();
 		void testMove_no_overwrite_existing();
-		void testCopy();
+		void TestCopy();
 		void testCopy_recursive();
 		void testCopy_overwrite_existing();
 		void testCopy_no_overwrite_existing();
-		void testGetChildren();
-		void testGetLastModifiedTime();
-		void testGetTempDirectoryPath();
+		void TestGetChildren();
+		void TestGetLastModifiedTime();
+		void TestGetTempDirectoryPath();
 
 		Path mTestDirectory;
 	};

@@ -10,9 +10,9 @@ using namespace std::placeholders;
 namespace bs
 {
 	CoreObject::CoreObject(bool initializeOnCoreThread)
-		: mFlags(initializeOnCoreThread ? CGO_INIT_ON_CORE_THREAD : 0)
-		, mCoreDirtyFlags(0)
-		, mInternalID(CoreObjectManager::instance().generateId())
+		: MFlags(initializeOnCoreThread ? CGO_INIT_ON_CORE_THREAD : 0)
+		, MCoreDirtyFlags(0)
+		, MInternalID(CoreObjectManager::instance().generateId())
 	{
 	}
 
@@ -128,7 +128,7 @@ namespace bs
 	AsyncOp CoreObject::queueReturnGpuCommand(const SPtr<ct::CoreObject>& obj, std::function<void(AsyncOp&)> func)
 	{
 		// See queueGpuCommand
-		return gCoreThread().queueReturnCommand(std::bind(&CoreObject::executeReturnGpuCommand, obj, func, _1));
+		return GCoreThread().queueReturnCommand(std::bind(&CoreObject::executeReturnGpuCommand, obj, func, _1));
 	}
 
 	void CoreObject::queueInitializeGpuCommand(const SPtr<ct::CoreObject>& obj)

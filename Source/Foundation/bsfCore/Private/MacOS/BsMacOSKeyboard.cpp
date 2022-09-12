@@ -18,7 +18,7 @@ namespace bs
 	};
 
 	Keyboard::Keyboard(const String& name, Input* owner)
-			: mName(name), mOwner(owner)
+			: MName(name), mOwner(owner)
 	{
 		m = bs_new<Pimpl>(owner);
 	}

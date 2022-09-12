@@ -19,22 +19,22 @@ namespace bs { namespace ct
 		~GLOcclusionQuery();
 
 		/** @copydoc OcclusionQuery::begin */
-		void begin(const SPtr<CommandBuffer>& cb = nullptr) override;
+		void Begin(const SPtr<CommandBuffer>& cb = nullptr) override;
 
 		/** @copydoc OcclusionQuery::end */
-		void end(const SPtr<CommandBuffer>& cb = nullptr) override;
+		void End(const SPtr<CommandBuffer>& cb = nullptr) override;
 
 		/** @copydoc OcclusionQuery::isReady */
-		bool isReady() const override;
+		bool IsReady() const override;
 
 		/** @copydoc OcclusionQuery::getNumSamples */
-		UINT32 getNumSamples() override;
+		UINT32 GetNumSamples() override;
 
 	private:
 		friend class QueryManager;
 
 		/** Processes query results and saves them for later use. To be called when query has completed. */
-		void finalize();
+		void Finalize();
 
 	private:
 		GLuint mQueryObj = 0;

@@ -30,7 +30,7 @@ namespace bs
 		ScriptScriptCode(MonoObject* instance, const HScriptCode& scriptCode);
 
 		/** Parses the provided C# code and finds a list of all classes and their namespaces. Nested classes are ignored. */
-		static Vector<FullTypeName> parseTypes(const WString& code);
+		static Vector<FullTypeName> ParseTypes(const WString& code);
 
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/

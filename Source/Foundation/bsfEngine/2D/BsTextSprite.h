@@ -65,7 +65,7 @@ namespace bs
 		 *						example you don't want the sprites to share the same group if they use different world
 		 *						transform matrices).
 		 */
-		void update(const TEXT_SPRITE_DESC& desc, UINT64 groupId);
+		void Update(const TEXT_SPRITE_DESC& desc, UINT64 groupId);
 
 		/**
 		 * Calculates and returns offset for each individual text line. The offsets provide information on how much to
@@ -132,7 +132,7 @@ namespace bs
 		static const int STATIC_BUFFER_SIZE = STATIC_CHARS_TO_BUFFER * (4 * (2 * sizeof(Vector2)) + (6 * sizeof(UINT32)));
 
 		/**	Clears internal geometry buffers. */
-		void clearMesh();
+		void ClearMesh();
 
 		mutable StaticAlloc<STATIC_BUFFER_SIZE> mAlloc;
 	};

@@ -22,7 +22,7 @@ namespace bs
 		int len = mono_string_length(str);
 		mono_unichar2* monoChars = mono_string_chars(str);
 
-		WString ret(len, '0');
+		WString Ret(len, '0');
 		for (int i = 0; i < len; i++)
 			ret[i] = monoChars[i];
 
@@ -46,7 +46,7 @@ namespace bs
 
 	MonoString* MonoUtil::stringToMono(const String& str)
 	{
-		return wstringToMono(UTF8::toWide(str));
+		return WstringToMono(UTF8::toWide(str));
 	}
 
 	void MonoUtil::getClassName(MonoObject* obj, String& ns, String& typeName)
@@ -119,7 +119,7 @@ namespace bs
 	MonoReflectionType* MonoUtil::getType(MonoObject* object)
 	{
 		::MonoClass* klass = getClass(object);
-		return getType(klass);
+		return GetType(klass);
 	}
 
 	MonoReflectionType* MonoUtil::getType(::MonoClass* klass)
@@ -190,7 +190,7 @@ namespace bs
 		MonoType* monoType = mono_class_get_type(enumClass);
 		MonoType* underlyingType = mono_type_get_underlying_type(monoType);
 
-		return getPrimitiveType(mono_class_from_mono_type(underlyingType));
+		return GetPrimitiveType(mono_class_from_mono_type(underlyingType));
 	}
 
 	MonoPrimitiveType MonoUtil::getPrimitiveType(::MonoClass* monoClass)
@@ -273,7 +273,7 @@ namespace bs
 		MonoArray* array = (MonoArray*)sGenericParamsProp->get((MonoObject*)type);
 		if(array)
 		{
-			ScriptArray scriptArray(array);
+			ScriptArray ScriptArray(array);
 
 			numParams = scriptArray.size();
 

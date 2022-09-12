@@ -82,26 +82,26 @@ namespace bs
 		ScriptRRefBase* getScriptRRef(const ResourceHandle<T>& resource)
 		{
 			::MonoClass* rrefClass = ScriptResourceBase::getRRefClass(T::getRTTIStatic()->getRTTIId());
-			return getScriptRRef(resource, rrefClass);
+			return GetScriptRRef(resource, rrefClass);
 		}
 
 		/**
 		 * Deletes the provided resource interop objects. All resource interop objects should be deleted using this method.
 		 */
-		void destroyScriptResource(ScriptResourceBase* resource);
+		void DestroyScriptResource(ScriptResourceBase* resource);
 
 		/**	Throws an exception if the provided UUID already exists in the interop object lookup table. */
 		void _throwExceptionIfInvalidOrDuplicate(const UUID& uuid) const;
 
 	private:
 		/**	Triggered when the native resource has been unloaded and therefore destroyed. */
-		void onResourceDestroyed(const UUID& UUID);
+		void OnResourceDestroyed(const UUID& UUID);
 
 		/**
 		 * Clears all cached RRefs. Should be called before assembly refresh since the refs will no longer be valid
 		 * after.
 		 */
-		void clearRRefs();
+		void ClearRRefs();
 
 		UnorderedMap<UUID, ScriptResourceBase*> mScriptResources;
 		UnorderedMap<::MonoClass*, UnorderedMap<UUID, ScriptRRefBase*>> mScriptRRefsPerType;

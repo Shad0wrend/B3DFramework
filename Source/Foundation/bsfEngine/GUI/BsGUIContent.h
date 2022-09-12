@@ -60,36 +60,36 @@ namespace bs
 
 		/**	Constructs content with just a string. */
 		GUIContent(const HString& text)
-			: text(text)
+			: Text(text)
 		{ }
 
 		/**	Constructs content with a string and a tooltip. */
 		GUIContent(const HString& text, const HString& tooltip)
-			: text(text), tooltip(tooltip)
+			: Text(text), tooltip(tooltip)
 		{ }
 
 		/**	Constructs content with just an image. */
 		GUIContent(const GUIContentImages& image)
-			: images(image)
+			: Images(image)
 		{ }
 
 		/**	Constructs content with an image and a tooltip. */
 		GUIContent(const GUIContentImages& image, const HString& tooltip)
-			: images(image), tooltip(tooltip)
+			: Images(image), tooltip(tooltip)
 		{ }
 
 		/**	Constructs content with a string and an image. */
 		GUIContent(const HString& text, const GUIContentImages& image)
-			: text(text), images(image)
+			: Text(text), images(image)
 		{ }
 
 		/**	Constructs content with a string, an image and a tooltip. */
 		GUIContent(const HString& text, const GUIContentImages& image, const HString& tooltip)
-			: text(text), images(image), tooltip(tooltip)
+			: Text(text), images(image), tooltip(tooltip)
 		{ }
 
 		/**	Returns image content (if any). */
-		const HSpriteTexture& getImage(GUIElementState state = GUIElementState::Normal) const;
+		const HSpriteTexture& GetImage(GUIElementState state = GUIElementState::Normal) const;
 
 		/**	Determines the spacing between text and image content in pixels. */
 		static const UINT32 IMAGE_TEXT_SPACING;

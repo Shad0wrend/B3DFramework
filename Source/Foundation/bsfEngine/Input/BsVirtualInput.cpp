@@ -150,7 +150,7 @@ namespace bs
 					if(!onButtonDown.empty())
 						onButtonDown(event.button, event.deviceIdx);
 				}
-				else if(event.state == ButtonState::Off)
+				else If(event.state == ButtonState::Off)
 				{
 					if(!onButtonUp.empty())
 						onButtonUp(event.button, event.deviceIdx);
@@ -212,9 +212,9 @@ namespace bs
 	{
 		if(event.buttonCode == BC_LSHIFT || event.buttonCode == BC_RSHIFT)
 			mActiveModifiers |= (UINT32)ButtonModifier::Shift;
-		else if(event.buttonCode == BC_LCONTROL || event.buttonCode == BC_RCONTROL)
+		else If(event.buttonCode == BC_LCONTROL || event.buttonCode == BC_RCONTROL)
 			mActiveModifiers |= (UINT32)ButtonModifier::Ctrl;
-		else if(event.buttonCode == BC_LMENU || event.buttonCode == BC_RMENU)
+		else If(event.buttonCode == BC_LMENU || event.buttonCode == BC_RMENU)
 			mActiveModifiers |= (UINT32)ButtonModifier::Alt;
 
 		tempButtons.clear();
@@ -257,9 +257,9 @@ namespace bs
 	{
 		if(event.buttonCode == BC_LSHIFT || event.buttonCode == BC_RSHIFT)
 			mActiveModifiers &= ~(UINT32)ButtonModifier::Shift;
-		else if(event.buttonCode == BC_LCONTROL || event.buttonCode == BC_RCONTROL)
+		else If(event.buttonCode == BC_LCONTROL || event.buttonCode == BC_RCONTROL)
 			mActiveModifiers &= ~(UINT32)ButtonModifier::Ctrl;
-		else if(event.buttonCode == BC_LMENU || event.buttonCode == BC_RMENU)
+		else If(event.buttonCode == BC_LMENU || event.buttonCode == BC_RMENU)
 			mActiveModifiers &= ~(UINT32)ButtonModifier::Alt;
 
 		tempButtons.clear();
@@ -301,7 +301,7 @@ namespace bs
 		}
 	}
 
-	VirtualInput& gVirtualInput()
+	VirtualInput& GVirtualInput()
 	{
 		return VirtualInput::instance();
 	}

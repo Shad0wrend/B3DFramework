@@ -18,13 +18,13 @@ namespace bs { namespace ct
 		~GLSLGpuProgram();
 
 		/** @copydoc GpuProgram::isSupported */
-		bool isSupported() const override;
+		bool IsSupported() const override;
 
 		/**	Gets internal OpenGL handle to the program. */
-		GLuint getGLHandle() const { return mGLHandle; }
+		GLuint GetGLHandle() const { return mGLHandle; }
 
 		/** Gets an unique index for this GPU program. Each created GPU program is assigned a unique index on creation. */
-		UINT32 getProgramID() const { return mProgramID; }
+		UINT32 GetProgramID() const { return mProgramID; }
 
 	private:
 		friend class GLSLProgramFactory;
@@ -32,7 +32,7 @@ namespace bs { namespace ct
 		GLSLGpuProgram(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask);
 
 		/** @copydoc GpuProgram::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 	private:
 		UINT32 mProgramID = 0;

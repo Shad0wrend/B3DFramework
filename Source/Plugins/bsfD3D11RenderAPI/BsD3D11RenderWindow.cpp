@@ -64,12 +64,12 @@ namespace bs
 	HWND D3D11RenderWindow::getHWnd() const
 	{
 		blockUntilCoreInitialized();
-		return getCore()->_getWindowHandle();
+		return GetCore()->_getWindowHandle();
 	}
 
 	void D3D11RenderWindow::syncProperties()
 	{
-		ScopedSpinLock lock(getCore()->mLock);
+		ScopedSpinLock Lock(getCore()->mLock);
 		mProperties = getCore()->mSyncedProperties;
 	}
 
@@ -212,7 +212,7 @@ namespace bs
 		mDXGIFactory->MakeWindowAssociation(mWindow->getHWnd(), NULL);
 
 		{
-			ScopedSpinLock lock(mLock);
+			ScopedSpinLock Lock(mLock);
 			mSyncedProperties = props;
 		}
 
@@ -250,7 +250,7 @@ namespace bs
 			props.left = mWindow->getLeft();
 
 			{
-				ScopedSpinLock lock(mLock);
+				ScopedSpinLock Lock(mLock);
 				mSyncedProperties.top = props.top;
 				mSyncedProperties.left = props.left;
 			}
@@ -273,7 +273,7 @@ namespace bs
 			props.height = mWindow->getHeight();
 
 			{
-				ScopedSpinLock lock(mLock);
+				ScopedSpinLock Lock(mLock);
 				mSyncedProperties.width = props.width;
 				mSyncedProperties.height = props.height;
 			}
@@ -370,7 +370,7 @@ namespace bs
 		mSwapChain->SetFullscreenState(true, outputInfo.getDXGIOutput());
 
 		{
-			ScopedSpinLock lock(mLock);
+			ScopedSpinLock Lock(mLock);
 			mSyncedProperties.top = mProperties.top;
 			mSyncedProperties.left = mProperties.left;
 			mSyncedProperties.width = mProperties.width;
@@ -412,7 +412,7 @@ namespace bs
 		mSwapChain->SetFullscreenState(true, outputInfo.getDXGIOutput());
 
 		{
-			ScopedSpinLock lock(mLock);
+			ScopedSpinLock Lock(mLock);
 			mSyncedProperties.top = mProperties.top;
 			mSyncedProperties.left = mProperties.left;
 			mSyncedProperties.width = mProperties.width;
@@ -450,7 +450,7 @@ namespace bs
 		mSwapChain->ResizeTarget(&modeDesc);
 
 		{
-			ScopedSpinLock lock(mLock);
+			ScopedSpinLock Lock(mLock);
 			mSyncedProperties.top = mProperties.top;
 			mSyncedProperties.left = mProperties.left;
 			mSyncedProperties.width = mProperties.width;
@@ -467,7 +467,7 @@ namespace bs
 		mProperties.vsyncInterval = interval;
 
 		{
-			ScopedSpinLock lock(mLock);
+			ScopedSpinLock Lock(mLock);
 			mSyncedProperties.vsync = enabled;
 			mSyncedProperties.vsyncInterval = interval;
 		}
@@ -494,7 +494,7 @@ namespace bs
 			*static_cast<ID3D11RenderTargetView**>(pData) = mRenderTargetView;
 			return;
 		}
-		else if(name == "DSV")
+		else If(name == "DSV")
 		{
 			if (mDepthStencilView != nullptr)
 			{
@@ -612,7 +612,7 @@ namespace bs
 		mDevice.getImmediateContext()->Map(tempTexture, 0,D3D11_MAP_READ, 0, &mappedTex2D);
 
 		// Copy the the texture to the dest
-		PixelData src(getProperties().width, getProperties().height, 1, PF_RGBA8);
+		PixelData Src(getProperties().width, getProperties().height, 1, PF_RGBA8);
 		src.setExternalBuffer((UINT8*)mappedTex2D.pData);
 		PixelUtil::bulkPixelConversion(src, dst);
 
@@ -801,7 +801,7 @@ namespace bs
 
 	void D3D11RenderWindow::syncProperties()
 	{
-		ScopedSpinLock lock(mLock);
+		ScopedSpinLock Lock(mLock);
 		mProperties = mSyncedProperties;
 	}		
 	}

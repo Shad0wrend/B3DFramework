@@ -21,62 +21,62 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableArrayRTTI : public RTTIType<ManagedSerializableArray, IReflectable, ManagedSerializableArrayRTTI>
 	{
 	private:
-		SPtr<ManagedSerializableTypeInfoArray> getTypeInfo(ManagedSerializableArray* obj)
+		SPtr<ManagedSerializableTypeInfoArray> GetTypeInfo(ManagedSerializableArray* obj)
 		{
 			return obj->mArrayTypeInfo;
 		}
 
-		void setTypeInfo(ManagedSerializableArray* obj, SPtr<ManagedSerializableTypeInfoArray> val)
+		void SetTypeInfo(ManagedSerializableArray* obj, SPtr<ManagedSerializableTypeInfoArray> val)
 		{
 			obj->mArrayTypeInfo = val;
 		}
 
-		UINT32& getElementSize(ManagedSerializableArray* obj)
+		UINT32& GetElementSize(ManagedSerializableArray* obj)
 		{
 			return (UINT32&)obj->mElemSize;
 		}
 
-		void setElementSize(ManagedSerializableArray* obj, UINT32& numElements)
+		void SetElementSize(ManagedSerializableArray* obj, UINT32& numElements)
 		{
 			obj->mElemSize = numElements;
 		}
 
-		UINT32& getNumElements(ManagedSerializableArray* obj, UINT32 arrayIdx)
+		UINT32& GetNumElements(ManagedSerializableArray* obj, UINT32 arrayIdx)
 		{
 			return (UINT32&)obj->mNumElements[arrayIdx];
 		}
 
-		void setNumElements(ManagedSerializableArray* obj, UINT32 arrayIdx, UINT32& numElements)
+		void SetNumElements(ManagedSerializableArray* obj, UINT32 arrayIdx, UINT32& numElements)
 		{
 			obj->mNumElements[arrayIdx] = numElements;
 		}
 
-		UINT32 getNumElementsNumEntries(ManagedSerializableArray* obj)
+		UINT32 GetNumElementsNumEntries(ManagedSerializableArray* obj)
 		{
 			return (UINT32)obj->mNumElements.size();
 		}
 
-		void setNumElementsNumEntries(ManagedSerializableArray* obj, UINT32 numEntries)
+		void SetNumElementsNumEntries(ManagedSerializableArray* obj, UINT32 numEntries)
 		{
 			obj->mNumElements.resize(numEntries);
 		}
 
-		SPtr<ManagedSerializableFieldData> getArrayEntry(ManagedSerializableArray* obj, UINT32 arrayIdx)
+		SPtr<ManagedSerializableFieldData> GetArrayEntry(ManagedSerializableArray* obj, UINT32 arrayIdx)
 		{
 			return obj->getFieldData(arrayIdx);
 		}
 
-		void setArrayEntry(ManagedSerializableArray* obj, UINT32 arrayIdx, SPtr<ManagedSerializableFieldData> val)
+		void SetArrayEntry(ManagedSerializableArray* obj, UINT32 arrayIdx, SPtr<ManagedSerializableFieldData> val)
 		{
 			obj->setFieldData(arrayIdx, val);
 		}
 
-		UINT32 getNumArrayEntries(ManagedSerializableArray* obj)
+		UINT32 GetNumArrayEntries(ManagedSerializableArray* obj)
 		{
 			return obj->getTotalLength();
 		}
 
-		void setNumArrayEntries(ManagedSerializableArray* obj, UINT32 numEntries)
+		void SetNumArrayEntries(ManagedSerializableArray* obj, UINT32 numEntries)
 		{
 			obj->mCachedEntries = Vector<SPtr<ManagedSerializableFieldData>>(numEntries);
 		}
@@ -92,18 +92,18 @@ namespace bs
 				&ManagedSerializableArrayRTTI::setArrayEntry, &ManagedSerializableArrayRTTI::setNumArrayEntries);
 		}
 
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "ScriptSerializableArray";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_ScriptSerializableArray;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			return ManagedSerializableArray::createNew();
 		}

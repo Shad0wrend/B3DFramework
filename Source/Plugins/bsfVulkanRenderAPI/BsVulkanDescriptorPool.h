@@ -18,7 +18,7 @@ namespace bs { namespace ct
 		~VulkanDescriptorPool();
 
 		/** Returns a handle to the internal Vulkan descriptor pool. */
-		VkDescriptorPool getHandle() const { return mPool; }
+		VkDescriptorPool GetHandle() const { return mPool; }
 
 	private:
 		static const UINT32 sMaxSets = 8192;

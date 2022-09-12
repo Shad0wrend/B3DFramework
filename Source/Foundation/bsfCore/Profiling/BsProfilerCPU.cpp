@@ -286,7 +286,7 @@ namespace bs
 	{
 		reset();
 
-		Lock lock(mThreadSync);
+		Lock Lock(mThreadSync);
 
 		for(auto& threadInfo : mActiveThreads)
 			bs_delete<ThreadInfo, ProfilerAlloc>(threadInfo);
@@ -301,7 +301,7 @@ namespace bs
 			thread = ThreadInfo::activeThread;
 
 			{
-				Lock lock(mThreadSync);
+				Lock Lock(mThreadSync);
 
 				mActiveThreads.push_back(thread);
 			}
@@ -997,7 +997,7 @@ namespace bs
 		}
 	}
 
-	ProfilerCPU& gProfilerCPU()
+	ProfilerCPU& GProfilerCPU()
 	{
 		return ProfilerCPU::instance();
 	}

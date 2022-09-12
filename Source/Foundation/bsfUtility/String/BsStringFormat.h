@@ -55,7 +55,7 @@ namespace bs
 		 * Total number of parameters that can be referenced is 200.
 		 */
 		template<class T, class... Args>
-		static BasicString<T> format(const T* source, Args&& ...args)
+		static BasicString<T> Format(const T* source, Args&& ...args)
 		{
 			UINT32 strLength = getLength(source);
 
@@ -153,7 +153,7 @@ namespace bs
 
 			memcpy(outputBuffer + copyDestIdx, source + copySourceIdx, (finalStringSize - copyDestIdx) * sizeof(T));
 
-			BasicString<T> outputStr(outputBuffer, finalStringSize);
+			BasicString<T> OutputStr(outputBuffer, finalStringSize);
 			bs_free(outputBuffer);
 
 			for (UINT32 i = 0; i < MAX_PARAMS; i++)
@@ -170,41 +170,41 @@ namespace bs
 		 * Set of methods that can be specialized so we have a generalized way for retrieving length of strings of
 		 * different types.
 		 */
-		static UINT32 getLength(const char* source) { return (UINT32)strlen(source); }
+		static UINT32 GetLength(const char* source) { return (UINT32)strlen(source); }
 
 		/**
 		 * Set of methods that can be specialized so we have a generalized way for retrieving length of strings of
 		 * different types.
 		 */
-		static UINT32 getLength(const wchar_t* source) { return (UINT32)wcslen(source); }
+		static UINT32 GetLength(const wchar_t* source) { return (UINT32)wcslen(source); }
 
 		/** Parses the string and returns an integer value extracted from string characters. */
-		static UINT32 strToInt(const char* buffer)
+		static UINT32 StrToInt(const char* buffer)
 		{
 			return (UINT32)strtoul(buffer, nullptr, 10);
 		}
 
 		/** Parses the string and returns an integer value extracted from string characters. */
-		static UINT32 strToInt(const wchar_t* buffer)
+		static UINT32 StrToInt(const wchar_t* buffer)
 		{
 			return (UINT32)wcstoul(buffer, nullptr, 10);
 		}
 
 		/**	Helper method for converting any data type to a narrow string. */
-		template<class T> static String toString(const T& param) { return bs::toString(param); }
+		template<class T> static String ToString(const T& param) { return bs::toString(param); }
 
 		/**	Helper method that "converts" a narrow string to a narrow string (simply a pass through). */
-		static String toString(const String& param) { return param; }
+		static String ToString(const String& param) { return param; }
 
 		/**	Helper method that converts a narrow character array to a narrow string. */
-		template<class T> static String toString(T* param)
+		template<class T> static String ToString(T* param)
 		{
 			static_assert(!std::is_same<T,T>::value, "Invalid pointer type.");
 			return "";
 		}
 
 		/**	Helper method that converts a narrow character array to a narrow string. */
-		static String toString(const char* param)
+		static String ToString(const char* param)
 		{
 			if (param == nullptr)
 				return String();
@@ -213,7 +213,7 @@ namespace bs
 		}
 
 		/**	Helper method that converts a narrow character array to a narrow string. */
-		static String toString(char* param)
+		static String ToString(char* param)
 		{
 			if (param == nullptr)
 				return String();
@@ -222,20 +222,20 @@ namespace bs
 		}
 
 		/**	Helper method for converting any data type to a wide string. */
-		template<class T> static WString toWString(const T& param) { return bs::toWString(param); }
+		template<class T> static WString ToWString(const T& param) { return bs::toWString(param); }
 
 		/**	Helper method that "converts" a wide string to a wide string (simply a pass through). */
-		static WString toWString(const WString& param) { return param; }
+		static WString ToWString(const WString& param) { return param; }
 
 		/**	Helper method that converts a wide character array to a wide string. */
-		template<class T> static WString toWString(T* param)
+		template<class T> static WString ToWString(T* param)
 		{
 			static_assert(!std::is_same<T,T>::value, "Invalid pointer type.");
 			return L"";
 		}
 
 		/**	Helper method that converts a wide character array to a wide string. */
-		static WString toWString(const wchar_t* param)
+		static WString ToWString(const wchar_t* param)
 		{
 			if (param == nullptr)
 				return WString();
@@ -244,7 +244,7 @@ namespace bs
 		}
 
 		/**	Helper method that converts a wide character array to a wide string. */
-		static WString toWString(wchar_t* param)
+		static WString ToWString(wchar_t* param)
 		{
 			if (param == nullptr)
 				return WString();
@@ -256,7 +256,7 @@ namespace bs
 		 * Converts all the provided parameters into string representations and populates the provided @p parameters array.
 		 */
 		template<class P, class... Args>
-		static void getParams(ParamData<char>* parameters, UINT32 idx, P&& param, Args&& ...args)
+		static void GetParams(ParamData<char>* parameters, UINT32 idx, P&& param, Args&& ...args)
 		{
 			if (idx >= MAX_PARAMS)
 				return;
@@ -274,7 +274,7 @@ namespace bs
 		 * Converts all the provided parameters into string representations and populates the provided @p parameters array.
 		 */
 		template<class P, class... Args>
-		static void getParams(ParamData<wchar_t>* parameters, UINT32 idx, P&& param, Args&& ...args)
+		static void GetParams(ParamData<wchar_t>* parameters, UINT32 idx, P&& param, Args&& ...args)
 		{
 			if (idx >= MAX_PARAMS)
 				return;
@@ -289,13 +289,13 @@ namespace bs
 		}
 
 		/** Helper method for parameter size calculation. Used as a stopping point in template recursion. */
-		static void getParams(ParamData<char>* parameters, UINT32 idx)
+		static void GetParams(ParamData<char>* parameters, UINT32 idx)
 		{
 			// Do nothing
 		}
 
 		/**	Helper method for parameter size calculation. Used as a stopping point in template recursion. */
-		static void getParams(ParamData<wchar_t>* parameters, UINT32 idx)
+		static void GetParams(ParamData<wchar_t>* parameters, UINT32 idx)
 		{
 			// Do nothing
 		}

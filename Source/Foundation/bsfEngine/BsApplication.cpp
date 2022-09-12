@@ -173,7 +173,7 @@ namespace bs
 		return bs_shared_ptr_new<EngineShaderIncludeHandler>();
 	}
 
-	Application& gApplication()
+	Application& GApplication()
 	{
 		return static_cast<Application&>(Application::instance());
 	}

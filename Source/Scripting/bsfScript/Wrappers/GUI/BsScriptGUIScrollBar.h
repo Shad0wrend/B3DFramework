@@ -42,14 +42,14 @@ namespace bs
 		ScriptGUIScrollBarH(MonoObject* instance, GUIScrollBarHorz* scrollBar);
 
 		/**	Triggers when the user scrolls the scroll bar. */
-		void onScroll(float position, float size);
+		void OnScroll(float position, float size);
 
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
 		static void internal_CreateInstance(MonoObject* instance, MonoString* style, MonoArray* guiOptions);
 
-		typedef void(BS_THUNKCALL *OnScrolledThunkDef) (MonoObject*, float, MonoException**);
+		typedef Void(BS_THUNKCALL *OnScrolledThunkDef) (MonoObject*, float, MonoException**);
 		static OnScrolledThunkDef onScrolledThunk;
 	};
 
@@ -63,14 +63,14 @@ namespace bs
 		ScriptGUIScrollBarV(MonoObject* instance, GUIScrollBarVert* scrollBar);
 
 		/**	Triggers when the user scrolls the scroll bar. */
-		void onScroll(float position, float size);
+		void OnScroll(float position, float size);
 
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
 		static void internal_CreateInstance(MonoObject* instance, MonoString* style, MonoArray* guiOptions);
 
-		typedef void(BS_THUNKCALL *OnScrolledThunkDef) (MonoObject*, float, MonoException**);
+		typedef Void(BS_THUNKCALL *OnScrolledThunkDef) (MonoObject*, float, MonoException**);
 		static OnScrolledThunkDef onScrolledThunk;
 	};
 
@@ -84,14 +84,14 @@ namespace bs
 		ScriptGUIResizeableScrollBarH(MonoObject* instance, GUIScrollBarHorz* scrollBar);
 
 		/**	Triggers when the user scrolls the scroll bar. */
-		void onScroll(float position, float size);
+		void OnScroll(float position, float size);
 
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
 		static void internal_CreateInstance(MonoObject* instance, MonoString* style, MonoArray* guiOptions);
 
-		typedef void(BS_THUNKCALL *OnScrollOrResizeThunkDef) (MonoObject*, float, float, MonoException**);
+		typedef Void(BS_THUNKCALL *OnScrollOrResizeThunkDef) (MonoObject*, float, float, MonoException**);
 		static OnScrollOrResizeThunkDef onScrollOrResizeThunk;
 	};
 
@@ -105,14 +105,14 @@ namespace bs
 		ScriptGUIResizeableScrollBarV(MonoObject* instance, GUIScrollBarVert* scrollBar);
 
 		/**	Triggers when the user scrolls the scroll bar. */
-		void onScroll(float position, float size);
+		void OnScroll(float position, float size);
 
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
 		static void internal_CreateInstance(MonoObject* instance, MonoString* style, MonoArray* guiOptions);
 
-		typedef void(BS_THUNKCALL *OnScrollOrResizeThunkDef) (MonoObject*, float, float, MonoException**);
+		typedef Void(BS_THUNKCALL *OnScrollOrResizeThunkDef) (MonoObject*, float, float, MonoException**);
 		static OnScrollOrResizeThunkDef onScrollOrResizeThunk;
 	};
 

@@ -28,10 +28,10 @@ namespace bs
 		VertexBufferProperties(UINT32 numVertices, UINT32 vertexSize);
 
 		/**	Gets the size in bytes of a single vertex in this buffer. */
-		UINT32 getVertexSize() const { return mVertexSize; }
+		UINT32 GetVertexSize() const { return mVertexSize; }
 
 		/**	Get the number of vertices in this buffer. */
-		UINT32 getNumVertices() const { return mNumVertices; }
+		UINT32 GetNumVertices() const { return mNumVertices; }
 
 	protected:
 		friend class VertexBuffer;
@@ -52,10 +52,10 @@ namespace bs
 		 *
 		 * @note	Core thread only.
 		 */
-		SPtr<ct::VertexBuffer> getCore() const;
+		SPtr<ct::VertexBuffer> GetCore() const;
 
 		/** @copydoc HardwareBufferManager::createVertexBuffer */
-		static SPtr<VertexBuffer> create(const VERTEX_BUFFER_DESC& desc);
+		static SPtr<VertexBuffer> Create(const VERTEX_BUFFER_DESC& desc);
 
 		static const int MAX_SEMANTIC_IDX = 8;
 	protected:
@@ -64,7 +64,7 @@ namespace bs
 		VertexBuffer(const VERTEX_BUFFER_DESC& desc);
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> createCore() const override;
+		SPtr<ct::CoreObject> CreateCore() const override;
 
 		VertexBufferProperties mProperties;
 		GpuBufferUsage mUsage;
@@ -87,10 +87,10 @@ namespace bs
 		virtual ~VertexBuffer();
 
 		/**	Returns information about the vertex buffer. */
-		const VertexBufferProperties& getProperties() const { return mProperties; }
+		const VertexBufferProperties& GetProperties() const { return mProperties; }
 
 		/** @copydoc HardwareBuffer::readData */
-		void readData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx = 0, UINT32 queueIdx = 0) override;
+		void ReadData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx = 0, UINT32 queueIdx = 0) override;
 
 		/** @copydoc HardwareBuffer::writeData */
 		void writeData(UINT32 offset, UINT32 length, const void* source,
@@ -116,10 +116,10 @@ namespace bs
 		 *								can happen if the buffer hasn't been created with GBU_LOADSTORE usage or if the
 		 *								element size doesn't divide the current buffer size.
 		 */
-		SPtr<GpuBuffer> getLoadStore(GpuBufferType type, GpuBufferFormat format, UINT32 elementSize = 0);
+		SPtr<GpuBuffer> GetLoadStore(GpuBufferType type, GpuBufferFormat format, UINT32 elementSize = 0);
 
 		/** @copydoc HardwareBufferManager::createVertexBuffer */
-		static SPtr<VertexBuffer> create(const VERTEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
+		static SPtr<VertexBuffer> Create(const VERTEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
 	protected:
 		friend class HardwareBufferManager;
@@ -128,10 +128,10 @@ namespace bs
 		void* map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx, UINT32 queueIdx) override;
 
 		/** @copydoc HardwareBuffer::unmap */
-		void unmap() override;
+		void Unmap() override;
 
 		/** @copydoc CoreObject::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 		VertexBufferProperties mProperties;
 
@@ -139,7 +139,7 @@ namespace bs
 		SPtr<HardwareBuffer> mSharedBuffer;
 		Vector<SPtr<GpuBuffer>> mLoadStoreViews;
 
-		typedef void(*Deleter)(HardwareBuffer*);
+		typedef Void(*Deleter)(HardwareBuffer*);
 		Deleter mBufferDeleter = nullptr;
 	};
 

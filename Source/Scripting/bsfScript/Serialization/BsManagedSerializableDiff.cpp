@@ -23,7 +23,7 @@ namespace bs
 
 	RTTITypeBase* ManagedSerializableDiff::ModifiedField::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	ManagedSerializableDiff::ModifiedArrayEntry::ModifiedArrayEntry(UINT32 idx, const SPtr<Modification>& modification)
@@ -37,7 +37,7 @@ namespace bs
 
 	RTTITypeBase* ManagedSerializableDiff::ModifiedArrayEntry::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	ManagedSerializableDiff::ModifiedDictionaryEntry::ModifiedDictionaryEntry(
@@ -52,7 +52,7 @@ namespace bs
 
 	RTTITypeBase* ManagedSerializableDiff::ModifiedDictionaryEntry::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	RTTITypeBase* ManagedSerializableDiff::Modification::getRTTIStatic()
@@ -62,7 +62,7 @@ namespace bs
 
 	RTTITypeBase* ManagedSerializableDiff::Modification::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	SPtr<ManagedSerializableDiff::ModifiedObject> ManagedSerializableDiff::ModifiedObject::create()
@@ -77,7 +77,7 @@ namespace bs
 
 	RTTITypeBase* ManagedSerializableDiff::ModifiedObject::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	SPtr<ManagedSerializableDiff::ModifiedArray> ManagedSerializableDiff::ModifiedArray::create()
@@ -92,7 +92,7 @@ namespace bs
 
 	RTTITypeBase* ManagedSerializableDiff::ModifiedArray::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	SPtr<ManagedSerializableDiff::ModifiedDictionary> ManagedSerializableDiff::ModifiedDictionary::create()
@@ -107,7 +107,7 @@ namespace bs
 
 	RTTITypeBase* ManagedSerializableDiff::ModifiedDictionary::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	ManagedSerializableDiff::ModifiedEntry::ModifiedEntry(const SPtr<ManagedSerializableFieldData>& value)
@@ -126,11 +126,11 @@ namespace bs
 
 	RTTITypeBase* ManagedSerializableDiff::ModifiedEntry::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	ManagedSerializableDiff::ManagedSerializableDiff()
-		: mModificationRoot(ModifiedObject::create())
+		: MModificationRoot(ModifiedObject::create())
 	{
 		
 	}

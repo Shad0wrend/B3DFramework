@@ -58,7 +58,7 @@ namespace bs
 		};
 
 		/**	Decodes a single IReflectable object. */
-		void decodeEntry(const SPtr<IReflectable>& object, const SerializedObject* serializableObject);
+		void DecodeEntry(const SPtr<IReflectable>& object, const SerializedObject* serializableObject);
 
 		/** Encodes a single IReflectable object. */
 		static SPtr<SerializedObject> encodeEntry(IReflectable* object, SerializedObjectEncodeFlags flags,

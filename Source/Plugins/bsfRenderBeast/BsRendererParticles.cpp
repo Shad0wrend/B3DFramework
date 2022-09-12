@@ -75,7 +75,7 @@ namespace bs { namespace ct
 	ParticlesParamDef gParticlesParamDef;
 	GpuParticlesParamDef gGpuParticlesParamDef;
 
-	void writeIndices(GpuBuffer* buffer, const Vector<UINT32>& input, UINT32 texSize)
+	void WriteIndices(GpuBuffer* buffer, const Vector<UINT32>& input, UINT32 texSize)
 	{
 		const auto numParticles = (UINT32)input.size();
 		if (numParticles == 0)
@@ -377,7 +377,7 @@ namespace bs { namespace ct
 		vbDesc.vertexSize = m->billboardVD->getProperties().getVertexSize(0);
 		m->billboardVB = VertexBuffer::create(vbDesc);
 
-		MeshData meshData(4, 0, vertexDesc);
+		MeshData MeshData(4, 0, vertexDesc);
 		auto vecIter = meshData.getVec3DataIter(VES_POSITION);
 		vecIter.addValue(Vector3(-0.5f, -0.5f, 0.0f));
 		vecIter.addValue(Vector3(-0.5f, 0.5f, 0.0f));
@@ -393,7 +393,7 @@ namespace bs { namespace ct
 		UINT32 stride = meshData.getVertexDesc()->getVertexStride(0);
 
 		Vector3 normal = Vector3::UNIT_Y;
-		Vector4 tangent(1.0f, 0.0f, 0.0f, 1.0f);
+		Vector4 Tangent(1.0f, 0.0f, 0.0f, 1.0f);
 
 		UINT8* normalDst = meshData.getElementData(VES_NORMAL);
 		for(UINT32 i = 0; i < 4; i++)

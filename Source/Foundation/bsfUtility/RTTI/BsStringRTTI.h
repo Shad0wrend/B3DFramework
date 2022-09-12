@@ -16,7 +16,7 @@ namespace bs
 	{
 		enum { id = 20 }; enum { hasDynamicSize = 1 };
 
-		static BitLength toMemory(const String& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const String& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]()
 			{
@@ -27,7 +27,7 @@ namespace bs
 			});
 		}
 
-		static BitLength fromMemory(String& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(String& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
 			rtti_read_size_header(stream, compress, size);
@@ -43,7 +43,7 @@ namespace bs
 			return size;
 		}
 
-		static BitLength getSize(const String& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const String& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength dataSize = (uint32_t)(data.size() * sizeof(String::value_type));
 
@@ -56,7 +56,7 @@ namespace bs
 	{
 		enum { id = TID_WString }; enum { hasDynamicSize = 1 };
 
-		static BitLength toMemory(const WString& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const WString& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]()
 			{
@@ -67,7 +67,7 @@ namespace bs
 			});
 		}
 
-		static BitLength fromMemory(WString& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(WString& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
 			rtti_read_size_header(stream, compress, size);
@@ -85,7 +85,7 @@ namespace bs
 			return size;
 		}
 
-		static BitLength getSize(const WString& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const WString& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength dataSize = (uint32_t)(data.size() * sizeof(WString::value_type));
 

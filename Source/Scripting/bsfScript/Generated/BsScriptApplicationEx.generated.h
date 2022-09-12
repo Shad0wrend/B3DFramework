@@ -19,7 +19,7 @@ namespace bs
 
 		ScriptApplicationEx(MonoObject* managedInstance, const SPtr<ApplicationEx>& value);
 
-		SPtr<ApplicationEx> getInternal() const { return mInternal; }
+		SPtr<ApplicationEx> GetInternal() const { return mInternal; }
 		static MonoObject* create(const SPtr<ApplicationEx>& value);
 
 	private:

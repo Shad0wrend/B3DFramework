@@ -20,7 +20,7 @@ namespace bs
 	}
 
 	FrameAlloc::FrameAlloc(UINT32 blockSize)
-		: mBlockSize(blockSize), mFreeBlock(nullptr), mNextBlockIdx(0), mTotalAllocBytes(0), mLastFrame(nullptr)
+		: MBlockSize(blockSize), mFreeBlock(nullptr), mNextBlockIdx(0), mTotalAllocBytes(0), mLastFrame(nullptr)
 	{
 	}
 
@@ -223,7 +223,7 @@ namespace bs
 
 				allocBlock(totalBytes);
 			}
-			else if(mBlocks.size() > 0)
+			else If(mBlocks.size() > 0)
 				mBlocks[0]->mFreePtr = 0;
 		}
 	}
@@ -282,7 +282,7 @@ namespace bs
 
 	BS_THREADLOCAL FrameAlloc* _GlobalFrameAlloc = nullptr;
 
-	BS_UTILITY_EXPORT FrameAlloc& gFrameAlloc()
+	BS_UTILITY_EXPORT FrameAlloc& GFrameAlloc()
 	{
 		if (_GlobalFrameAlloc == nullptr)
 		{
@@ -296,12 +296,12 @@ namespace bs
 
 	BS_UTILITY_EXPORT UINT8* bs_frame_alloc(UINT32 numBytes)
 	{
-		return gFrameAlloc().alloc(numBytes);
+		return GFrameAlloc().alloc(numBytes);
 	}
 
 	BS_UTILITY_EXPORT UINT8* bs_frame_alloc_aligned(UINT32 count, UINT32 align)
 	{
-		return gFrameAlloc().allocAligned(count, align);
+		return GFrameAlloc().allocAligned(count, align);
 	}
 
 	BS_UTILITY_EXPORT void bs_frame_free(void* data)

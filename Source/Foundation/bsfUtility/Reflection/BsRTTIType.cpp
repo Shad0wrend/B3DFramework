@@ -78,23 +78,23 @@ namespace bs
 
 	RTTITypeBase* RTTISchema::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	class SerializationContextRTTI : public RTTIType<SerializationContext, IReflectable, SerializationContextRTTI>
 	{
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "SerializationContext";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_SerializationContext;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			BS_EXCEPT(InternalErrorException, "Cannot instantiate an abstract class.");
 			return nullptr;
@@ -108,7 +108,7 @@ namespace bs
 
 	RTTITypeBase* SerializationContext::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	SPtr<IReflectable> rtti_create(UINT32 rttiId)

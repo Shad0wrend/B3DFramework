@@ -20,14 +20,14 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "NativeGUIWidget")
 
 		/**	Gets the wrapped native GUIWidget object. */
-		SPtr<GUIWidget> getInternal() const { return mGUIWidget; }
+		SPtr<GUIWidget> GetInternal() const { return mGUIWidget; }
 
 	private:
 		ScriptGUIWidget(MonoObject* managedInstance);
 		~ScriptGUIWidget();
 
 		/**	Destroys the internal GUI widget handler object. */
-		void destroy(bool destroyPanel = true);
+		void Destroy(bool destroyPanel = true);
 
 		/** @copydoc ScriptObjectBase::_onManagedInstanceDeleted */
 		void _onManagedInstanceDeleted(bool assemblyRefresh) override;

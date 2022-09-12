@@ -94,7 +94,7 @@ namespace bs
 		UINT32 numValidTypes = (UINT32)validTypes.size();
 		MonoClass* typeClass = ScriptAssemblyManager::instance().getBuiltinClasses().systemTypeClass;
 
-		ScriptArray scriptArray(typeClass->_getInternalClass(), numValidTypes);
+		ScriptArray ScriptArray(typeClass->_getInternalClass(), numValidTypes);
 		for (UINT32 i = 0; i < numValidTypes; i++)
 			scriptArray.set(i, validTypes[i]);
 
@@ -121,7 +121,7 @@ namespace bs
 		// and writing out Unicode ranges for all the characters C# supports as identifiers is too tedious at the moment.
 		// Classes that need to match: \p{Lu}\p{Ll}\p{Lt}\p{Lm}\p{Lo}\p{Nl}\p{Mn}\p{Mc}\p{Nd}\p{Pc}\p{Cf}
 		WString identifierPattern = LR"([_@a-zA-Z][_\da-zA-Z]*)";
-		std::wregex identifierRegex(identifierPattern);
+		std::wregex IdentifierRegex(identifierPattern);
 
 		WString nsToken = L"namespace";
 		WString classToken = L"class";

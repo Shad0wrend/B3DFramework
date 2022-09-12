@@ -11,7 +11,7 @@ using namespace std::placeholders;
 namespace bs
 {
 #if BS_DEBUG_MODE
-	void throwIfNotSimThread()
+	void ThrowIfNotSimThread()
 	{
 		if(BS_THREAD_CURRENT_ID != CoreApplication::instance().getSimThreadId())
 			BS_EXCEPT(InternalErrorException, "This method can only be accessed from the simulation thread.");
@@ -39,7 +39,7 @@ namespace bs
 	void ResourceListenerManager::registerListener(IResourceListener* listener)
 	{
 #if BS_DEBUG_MODE
-		RecursiveLock lock(mMutex);
+		RecursiveLock Lock(mMutex);
 		mActiveListeners.insert(listener);
 #endif
 	}
@@ -48,13 +48,13 @@ namespace bs
 	{
 #if BS_DEBUG_MODE
 		{
-			RecursiveLock lock(mMutex);
+			RecursiveLock Lock(mMutex);
 			mActiveListeners.erase(listener);
 		}
 #endif
 		
 		{
-			RecursiveLock lock(mMutex);
+			RecursiveLock Lock(mMutex);
 			mDirtyListeners.erase(listener);
 		}
 
@@ -63,7 +63,7 @@ namespace bs
 
 	void ResourceListenerManager::markListenerDirty(IResourceListener* listener)
 	{
-		RecursiveLock lock(mMutex);
+		RecursiveLock Lock(mMutex);
 		mDirtyListeners.insert(listener);
 	}
 
@@ -73,7 +73,7 @@ namespace bs
 		updateListeners();
 
 		{
-			RecursiveLock lock(mMutex);
+			RecursiveLock Lock(mMutex);
 
 			for (auto& entry : mLoadedResources)
 				sendResourceLoaded(entry.second);
@@ -89,7 +89,7 @@ namespace bs
 	void ResourceListenerManager::updateListeners()
 	{
 		{
-			RecursiveLock lock(mMutex);
+			RecursiveLock Lock(mMutex);
 
 			for (auto& listener : mDirtyListeners)
 				mTempListenerBuffer.push_back(listener);
@@ -114,7 +114,7 @@ namespace bs
 
 		HResource loadedResource;
 		{
-			RecursiveLock lock(mMutex);
+			RecursiveLock Lock(mMutex);
 
 			const auto iterFind = mLoadedResources.find(resourceUUID);
 			if (iterFind != mLoadedResources.end())
@@ -129,7 +129,7 @@ namespace bs
 
 		HResource modifiedResource;
 		{
-			RecursiveLock lock(mMutex);
+			RecursiveLock Lock(mMutex);
 
 			const auto iterFind = mModifiedResources.find(resourceUUID);
 			if (iterFind != mModifiedResources.end())
@@ -145,14 +145,14 @@ namespace bs
 
 	void ResourceListenerManager::onResourceLoaded(const HResource& resource)
 	{
-		RecursiveLock lock(mMutex);
+		RecursiveLock Lock(mMutex);
 
 		mLoadedResources[resource.getUUID()] = resource;
 	}
 
 	void ResourceListenerManager::onResourceModified(const HResource& resource)
 	{
-		RecursiveLock lock(mMutex);
+		RecursiveLock Lock(mMutex);
 
 		mModifiedResources[resource.getUUID()] = resource;
 	}
@@ -227,7 +227,7 @@ namespace bs
 
 		if (mTempResourceBuffer.size() > 0)
 		{
-			Vector<UINT64> resourceHandleIds(mTempResourceBuffer.size());
+			Vector<UINT64> ResourceHandleIds(mTempResourceBuffer.size());
 			UINT32 idx = 0;
 			for (auto& resource : mTempResourceBuffer)
 			{

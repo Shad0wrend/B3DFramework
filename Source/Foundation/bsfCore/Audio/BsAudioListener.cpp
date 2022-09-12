@@ -13,7 +13,7 @@ namespace bs
 
 	SPtr<AudioListener> AudioListener::create()
 	{
-		return gAudio().createListener();
+		return GAudio().createListener();
 	}	
 
 	RTTITypeBase* AudioListener::getRTTIStatic()

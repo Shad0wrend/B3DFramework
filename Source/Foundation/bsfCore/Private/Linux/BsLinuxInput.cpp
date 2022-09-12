@@ -20,13 +20,13 @@ namespace bs
 	};
 
 	/** Checks is the bit at the specified location in a byte array is set. */
-	bool isBitSet(UINT8 bits[], UINT32 bit)
+	bool IsBitSet(UINT8 bits[], UINT32 bit)
 	{
 		return ((bits[bit/8] >> (bit%8)) & 1) != 0;
 	}
 
 	/** Returns information about an input event device attached to he provided file handle. */
-	bool getEventInfo(int fileHandle, EventInfo& eventInfo)
+	bool GetEventInfo(int fileHandle, EventInfo& eventInfo)
 	{
 		UINT8 eventBits[1 + EV_MAX/8];
 		bs_zero_out(eventBits);
@@ -60,7 +60,7 @@ namespace bs
 						}
 					}
 				}
-				else if(i == EV_REL)
+				else If(i == EV_REL)
 				{
 					UINT8 relAxisBits[1 + REL_MAX/8];
 					bs_zero_out(relAxisBits);
@@ -77,7 +77,7 @@ namespace bs
 							eventInfo.relAxes.push_back(j);
 					}
 				}
-				else if(i == EV_KEY)
+				else If(i == EV_KEY)
 				{
 					UINT8 keyBits[1 + KEY_MAX/8];
 					bs_zero_out(keyBits);
@@ -101,7 +101,7 @@ namespace bs
 	}
 
 	/** Converts a Linux button code to Banshee ButtonCode. */
-	ButtonCode gamepadMapCommonButton(INT32 code)
+	ButtonCode GamepadMapCommonButton(INT32 code)
 	{
 		// Note: Assuming XBox controller layout here
 		switch (code)
@@ -143,7 +143,7 @@ namespace bs
 	 * Maps an absolute axis as reported by the Linux system, to a Banshee axis. This will be one of the InputAxis enum
 	 * members, or -1 if it cannot be mapped.
 	 */
-	INT32 gamepadMapCommonAxis(INT32 axis)
+	INT32 GamepadMapCommonAxis(INT32 axis)
 	{
 		switch(axis)
 		{
@@ -162,7 +162,7 @@ namespace bs
 	 * Returns true if the input event attached to the specified file handle is a gamepad,
 	 * and populates the gamepad info structure. Returns false otherwise.
 	 */
-	bool parseGamepadInfo(int fileHandle, int eventHandlerIdx, GamepadInfo& info)
+	bool ParseGamepadInfo(int fileHandle, int eventHandlerIdx, GamepadInfo& info)
 	{
 		EventInfo eventInfo;
 		if(!getEventInfo(fileHandle, eventInfo))

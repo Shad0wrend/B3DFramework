@@ -34,16 +34,16 @@ namespace bs { namespace ct
 		virtual ~GLPixelBuffer();
 
 		/**	Returns width of the surface in pixels. */
-		UINT32 getWidth() const { return mWidth; }
+		UINT32 GetWidth() const { return mWidth; }
 
 		/**	Returns height of the surface in pixels. */
-		UINT32 getHeight() const { return mHeight; }
+		UINT32 GetHeight() const { return mHeight; }
 
 		/**	Returns depth of the surface in pixels. */
-		UINT32 getDepth() const { return mDepth; }
+		UINT32 GetDepth() const { return mDepth; }
 
 		/**	Returns format of the pixels in the surface. */
-		PixelFormat getFormat() const { return mFormat; }
+		PixelFormat GetFormat() const { return mFormat; }
 
 		/**
 		 * Locks a certain region of the pixel buffer for reading and returns a pointer to the locked region.
@@ -53,7 +53,7 @@ namespace bs { namespace ct
 		 *
 		 * @note	Returned object is only valid while the lock is active.
 		 */
-		const PixelData& lock(const PixelVolume& lockBox, GpuLockOptions options);
+		const PixelData& Lock(const PixelVolume& lockBox, GpuLockOptions options);
 		
 		/**
 		 * Locks a portion of the buffer and returns pointer to the locked area. You must call unlock() when done.
@@ -75,11 +75,11 @@ namespace bs { namespace ct
 		 */
 		void* lock(GpuLockOptions options)
 		{
-			return lock(0, mSizeInBytes, options);
+			return Lock(0, mSizeInBytes, options);
 		}
 
 		/**	Releases the lock on this buffer. */
-		void unlock();
+		void Unlock();
 
 		/**
 		 * Upload some pixel data to the buffer.
@@ -87,13 +87,13 @@ namespace bs { namespace ct
 		 * @param[in]	data	Data to upload.
 		 * @param[in]	dest	Coordinates to which to upload the data.
 		 */
-		virtual void upload(const PixelData& data, const PixelVolume& dest);
+		virtual void Upload(const PixelData& data, const PixelVolume& dest);
 
 		/**
 		 * Reads data from the pixel buffer into the provided object. Caller must ensure the data object is of adequate
 		 * size.
 		 */
-		virtual void download(const PixelData& data);
+		virtual void Download(const PixelData& data);
 
 		/**
 		 * Binds the buffers to a frame buffer object at the specified attachment point.
@@ -102,26 +102,26 @@ namespace bs { namespace ct
 		 * @param[in]	zoffset		Depth slice to bind, in the case of a 3D texture.
 		 * @param[in]	allLayers	Should all layers of the texture be bound, or just one (zoffset is ignored if true).
 		 */
-		virtual void bindToFramebuffer(GLenum attachment, UINT32 zoffset, bool allLayers);
+		virtual void BindToFramebuffer(GLenum attachment, UINT32 zoffset, bool allLayers);
 
 		/**
 		 * Blits the contents of the provided buffer into this pixel buffer. Data is bilinearily interpolated in case buffer
 		 * sizes don't match.
 		 */
-		virtual void blitFromTexture(GLTextureBuffer* src);
+		virtual void BlitFromTexture(GLTextureBuffer* src);
 
 		/**
 		 * Blits contents of a sub-region of the provided buffer into a sub-region of this pixel buffer. Data is bilinearily
 		 * interpolated in case source and destination sizes don't match.
 		 */
-		virtual void blitFromTexture(GLTextureBuffer* src, const PixelVolume& srcBox, const PixelVolume& dstBox);
+		virtual void BlitFromTexture(GLTextureBuffer* src, const PixelVolume& srcBox, const PixelVolume& dstBox);
 
 	protected:
 		/**	Allocates an internal buffer on the CPU, the size of the hardware buffer. */
-		void allocateBuffer();
+		void AllocateBuffer();
 
 		/**	Deallocates the internal CPU buffer. */
-		void freeBuffer();
+		void FreeBuffer();
 
 	protected:
 		UINT32 mSizeInBytes;
@@ -159,26 +159,26 @@ namespace bs { namespace ct
 		~GLTextureBuffer() = default;
 		
 		/** @copydoc GLPixelBuffer::bindToFramebuffer */
-		void bindToFramebuffer(GLenum attachment, UINT32 zoffset, bool allLayers) override;
+		void BindToFramebuffer(GLenum attachment, UINT32 zoffset, bool allLayers) override;
 
 		/** @copydoc GLPixelBuffer::upload */
-		void upload(const PixelData &data, const PixelVolume &dest) override;
+		void Upload(const PixelData &data, const PixelVolume &dest) override;
 
 		/** @copydoc GLPixelBuffer::download */
-		void download(const PixelData &data) override;
+		void Download(const PixelData &data) override;
 
 		/** @copydoc GLPixelBuffer::blitFromTexture */
-		void blitFromTexture(GLTextureBuffer *src) override;
+		void BlitFromTexture(GLTextureBuffer *src) override;
 
 		/** @copydoc GLPixelBuffer::blitFromTexture */
-		void blitFromTexture(GLTextureBuffer *src, const PixelVolume &srcBox, const PixelVolume &dstBox) override;
+		void BlitFromTexture(GLTextureBuffer *src, const PixelVolume &srcBox, const PixelVolume &dstBox) override;
 
 		/**
 		 * Populate texture buffer with the data in the currently attached frame buffer.
 		 *
 		 * @param[in]	zoffset		3D slice of the texture to copy to. 0 if texture is not 3D.
 		 */
-		void copyFromFramebuffer(UINT32 zoffset);
+		void CopyFromFramebuffer(UINT32 zoffset);
 
 	protected:
 		GLenum mTarget;

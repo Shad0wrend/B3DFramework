@@ -8,7 +8,7 @@ namespace bs
 	Transform Transform::IDENTITY;
 
 	Transform::Transform(const Vector3& position, const Quaternion& rotation, const Vector3& scale)
-		: mPosition(position), mRotation(rotation), mScale(scale)
+		: MPosition(position), mRotation(rotation), mScale(scale)
 	{ }
 
 	Matrix4 Transform::getMatrix() const

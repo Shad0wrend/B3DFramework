@@ -202,57 +202,57 @@ namespace bs
 			return mElements[index];
 		}
 
-		bool empty() const { return mSize == 0; }
+		bool Empty() const { return mSize == 0; }
 
-		Iterator begin() { return mElements; }
-		Iterator end() { return mElements + mSize; }
+		Iterator Begin() { return mElements; }
+		Iterator End() { return mElements + mSize; }
 
-		ConstIterator begin() const { return mElements; }
-		ConstIterator end() const { return mElements + mSize; }
+		ConstIterator Begin() const { return mElements; }
+		ConstIterator End() const { return mElements + mSize; }
 
-		ConstIterator cbegin() const { return mElements; }
-		ConstIterator cend() const { return mElements + mSize; }
+		ConstIterator Cbegin() const { return mElements; }
+		ConstIterator Cend() const { return mElements + mSize; }
 
-		ReverseIterator rbegin() { return ReverseIterator(end()); }
-		ReverseIterator rend() { return ReverseIterator(begin()); }
+		ReverseIterator Rbegin() { return ReverseIterator(end()); }
+		ReverseIterator Rend() { return ReverseIterator(begin()); }
 
-		ConstReverseIterator rbegin() const { return ReverseIterator(end()); }
-		ConstReverseIterator rend() const { return ReverseIterator(begin()); }
+		ConstReverseIterator Rbegin() const { return ReverseIterator(end()); }
+		ConstReverseIterator Rend() const { return ReverseIterator(begin()); }
 
-		ConstReverseIterator crbegin() const { return ReverseIterator(end()); }
-		ConstReverseIterator crend() const { return ReverseIterator(begin()); }
+		ConstReverseIterator Crbegin() const { return ReverseIterator(end()); }
+		ConstReverseIterator Crend() const { return ReverseIterator(begin()); }
 
-		UINT32 size() const { return mSize; }
-		UINT32 capacity() const { return mCapacity; }
+		UINT32 Size() const { return mSize; }
+		UINT32 Capacity() const { return mCapacity; }
 
 		Type* data() { return mElements; }
 		const Type* data() const { return mElements; }
 
-		Type& front()
+		Type& Front()
 		{
 			assert(!empty());
 			return *mElements[0];
 		}
 
-		Type& back()
+		Type& Back()
 		{
 			assert(!empty());
 			return *mElements[mSize - 1];
 		}
 
-		const Type& front() const
+		const Type& Front() const
 		{
 			assert(!empty());
 			return mElements[0];
 		}
 
-		const Type& back() const
+		const Type& Back() const
 		{
 			assert(!empty());
 			return mElements[mSize - 1];
 		}
 
-		void add(const Type& element)
+		void Add(const Type& element)
 		{
 			if (size() == capacity())
 				realloc(std::max(1U, capacity() * 2));
@@ -260,7 +260,7 @@ namespace bs
 			new (&mElements[mSize++]) Type(element);
 		}
 
-		void add(Type&& element)
+		void Add(Type&& element)
 		{
 			if (size() == capacity())
 				realloc(std::max(1U, capacity() * 2));
@@ -268,19 +268,19 @@ namespace bs
 			new (&mElements[mSize++]) Type(std::move(element));
 		}
 
-		void pop()
+		void Pop()
 		{
 			assert(mSize > 0 && "Popping an empty array.");
 			--mSize;
 			mElements[mSize].~Type();
 		}
 
-		void remove(UINT32 index)
+		void Remove(UINT32 index)
 		{
 			erase(begin() + index);
 		}
 
-		bool contains(const Type& element)
+		bool Contains(const Type& element)
 		{
 			for (UINT32 i = 0; i < mSize; i++)
 			{
@@ -291,7 +291,7 @@ namespace bs
 			return false;
 		}
 
-		void removeValue(const Type& element)
+		void RemoveValue(const Type& element)
 		{
 			for (UINT32 i = 0; i < mSize; i++)
 			{
@@ -303,7 +303,7 @@ namespace bs
 			}
 		}
 
-		void clear()
+		void Clear()
 		{
 			for (UINT32 i = 0; i < mSize; ++i)
 				mElements[i].~Type();
@@ -311,7 +311,7 @@ namespace bs
 			mSize = 0;
 		}
 
-		void resize(UINT32 size, const Type& value = Type())
+		void Resize(UINT32 size, const Type& value = Type())
 		{
 			if (size > capacity())
 				realloc(size);
@@ -330,18 +330,18 @@ namespace bs
 			mSize = size;
 		}
 
-		void reserve(UINT32 size)
+		void Reserve(UINT32 size)
 		{
 			if (size > capacity())
 				realloc(size);
 		}
 
-		void shrink()
+		void Shrink()
 		{
 			realloc(mSize);
 		}
 
-		void append(ConstIterator start, ConstIterator end)
+		void Append(ConstIterator start, ConstIterator end)
 		{
 			const UINT32 count = (UINT32)std::distance(start, end);
 
@@ -352,7 +352,7 @@ namespace bs
 			mSize += count;
 		}
 
-		void append(UINT32 count, const Type& element)
+		void Append(UINT32 count, const Type& element)
 		{
 			if ((size() + count) > capacity())
 				realloc(size() + count);
@@ -361,12 +361,12 @@ namespace bs
 			mSize += count;
 		}
 
-		void append(std::initializer_list<Type> list)
+		void Append(std::initializer_list<Type> list)
 		{
 			append(list.begin(), list.end());
 		}
 
-		void swap(DynArray<ValueType>& other)
+		void Swap(DynArray<ValueType>& other)
 		{
 			const UINT32 tmpSize = size();
 			const UINT32 tmpCapacity = capacity();
@@ -381,7 +381,7 @@ namespace bs
 			other.mElements = tmp;
 		}
 
-		bool swapAndErase(Iterator iter)
+		bool SwapAndErase(Iterator iter)
 		{
 			assert(!empty());
 
@@ -399,7 +399,7 @@ namespace bs
 		}
 
 		template <typename ...Args>
-		void emplaceBack(Args&& ...args)
+		void EmplaceBack(Args&& ...args)
 		{
 			if (size() == capacity())
 				realloc(std::max(1U, capacity() * 2));
@@ -408,7 +408,7 @@ namespace bs
 		}
 
 		template <typename ...Args>
-		Iterator emplace(ConstIterator it, Args&&... args)
+		Iterator Emplace(ConstIterator it, Args&&... args)
 		{
 			Iterator iterc = const_cast<Iterator>(it);
 			DifferenceType offset = iterc - begin();
@@ -419,10 +419,10 @@ namespace bs
 			new (&mElements[mSize++]) Type(std::forward<Args>(args) ...);
 			std::rotate(begin() + offset, end() - 1, end());
 
-			return begin() + offset;
+			return Begin() + offset;
 		}
 
-		Iterator insert(ConstIterator it, const ValueType& element)
+		Iterator Insert(ConstIterator it, const ValueType& element)
 		{
 			Iterator iterc = const_cast<Iterator>(it);
 			DifferenceType offset = iterc - begin();
@@ -433,10 +433,10 @@ namespace bs
 			new (&mElements[mSize++]) Type(element);
 			std::rotate(begin() + offset, end() - 1, end());
 
-			return begin() + offset;
+			return Begin() + offset;
 		}
 
-		Iterator insert(ConstIterator it, ValueType&& element)
+		Iterator Insert(ConstIterator it, ValueType&& element)
 		{
 			Iterator iterc = const_cast<Iterator>(it);
 			DifferenceType offset = iterc - begin();
@@ -447,10 +447,10 @@ namespace bs
 			new (&mElements[mSize++]) Type(std::move(element));
 			std::rotate(begin() + offset, end() - 1, end());
 
-			return begin() + offset;
+			return Begin() + offset;
 		}
 
-		Iterator insert(ConstIterator it, UINT32 n, const ValueType& element)
+		Iterator Insert(ConstIterator it, UINT32 n, const ValueType& element)
 		{
 			Iterator iterc = const_cast<Iterator>(it);
 			DifferenceType offset = iterc - begin();
@@ -468,7 +468,7 @@ namespace bs
 
 			std::rotate(begin() + offset, end() - n, end());
 
-			return begin() + offset;
+			return Begin() + offset;
 		}
 
 		template <typename InputIt>
@@ -488,7 +488,7 @@ namespace bs
 			std::rotate(begin() + offset, end() - n, end());
 		}
 
-		Iterator insert(ConstIterator it, std::initializer_list<ValueType> list)
+		Iterator Insert(ConstIterator it, std::initializer_list<ValueType> list)
 		{
 			Iterator iterc = const_cast<Iterator>(it);
 			DifferenceType offset = iterc - begin();
@@ -509,7 +509,7 @@ namespace bs
 			return iter;
 		}
 
-		Iterator erase(ConstIterator first, ConstIterator last)
+		Iterator Erase(ConstIterator first, ConstIterator last)
 		{
 			assert(first >= begin() && "Iterator to insert is out of bounds.");
 			assert(last < end() && "Inserting at past-the-end iterator.");
@@ -528,7 +528,7 @@ namespace bs
 			return iter;
 		}
 
-		Iterator erase(ConstIterator it)
+		Iterator Erase(ConstIterator it)
 		{
 			assert(it >= begin() && "Iterator to erase is out of bounds.");
 			assert(it < end() && "Erasing at past-the-end iterator.");
@@ -541,7 +541,7 @@ namespace bs
 		}
 
 	private:
-		void realloc(UINT32 capacity)
+		void Realloc(UINT32 capacity)
 		{
 			Type* buffer = bs_allocN<Type>(capacity);
 

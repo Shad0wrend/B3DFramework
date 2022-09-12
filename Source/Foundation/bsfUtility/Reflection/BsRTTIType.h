@@ -306,34 +306,34 @@ namespace bs
 		virtual RTTITypeBase* getBaseClass() = 0;
 
 		/** Returns true if current RTTI class is derived from @p base. (Or if it is the same type as base) */
-		virtual bool isDerivedFrom(RTTITypeBase* base) = 0;
+		virtual bool IsDerivedFrom(RTTITypeBase* base) = 0;
 
 		/** Creates a new instance of the class owning this RTTI type. */
-		virtual SPtr<IReflectable> newRTTIObject() = 0;
+		virtual SPtr<IReflectable> NewRTTIObject() = 0;
 
 		/** Returns the name of the class owning this RTTI type. */
-		virtual const String& getRTTIName() = 0;
+		virtual const String& GetRTTIName() = 0;
 
 		/** Returns an RTTI id that uniquely represents each class in the RTTI system. */
-		virtual UINT32 getRTTIId() = 0;
+		virtual UINT32 GetRTTIId() = 0;
 
 		/**
 		 * Called by the serializers when serialization for this object has started. Use this to do any preprocessing on
 		 * data you might need during serialization itself.
 		 */
-		virtual void onSerializationStarted(IReflectable* obj, SerializationContext* context) {}
+		virtual void OnSerializationStarted(IReflectable* obj, SerializationContext* context) {}
 
 		/**
 		 * Called by the serializers when serialization for this object has ended. After serialization has ended you can
 		 * be sure that the type has been fully serialized, and you may clean up any temporary data.
 		 */
-		virtual void onSerializationEnded(IReflectable* obj, SerializationContext* context) {}
+		virtual void OnSerializationEnded(IReflectable* obj, SerializationContext* context) {}
 
 		/**
 		 * Called by the serializers when deserialization for this object has started. Use this to do any preprocessing
 		 * on data you might need during deserialization itself.
 		 */
-		virtual void onDeserializationStarted(IReflectable* obj, SerializationContext* context) {}
+		virtual void OnDeserializationStarted(IReflectable* obj, SerializationContext* context) {}
 
 		/**
 		 * Called by the serializers when deserialization for this object has ended. At this point you can be sure the
@@ -342,28 +342,28 @@ namespace bs
 		 * One exception being are fields you marked with RTTI_Flag_WeakRef, as they might be resolved only after
 		 * deserialization has fully completed for all objects.
 		 */
-		virtual void onDeserializationEnded(IReflectable* obj, SerializationContext* context) {}
+		virtual void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) {}
 
 		/**
 		 * Returns a handler that determines how are "diffs" generated and applied when it comes to objects of this RTTI
 		 * type. A "diff" is a list of differences between two objects that may be saved, viewed or applied to another
 		 * object to transform it.
 		 */
-		virtual IDiff& getDiffHandler() const
+		virtual IDiff& GetDiffHandler() const
 		{
 			static BinaryDiff diffHandler;
 			return diffHandler;
 		}
 
 		/** Returns a handler that determines how are IReflectable objects compared for equality. */
-		virtual ICompare& getCompareHandler() const
+		virtual ICompare& GetCompareHandler() const
 		{
 			static BinaryCompare compareHandler;
 			return compareHandler;
 		}
 
 		/** Returns the total number of fields in this RTTI type. */
-		UINT32 getNumFields() const { return (UINT32)mFields.size(); }
+		UINT32 GetNumFields() const { return (UINT32)mFields.size(); }
 
 		/** Returns a field based on the field index. Use getNumFields() to get total number of fields available. */
 		RTTIField* getField(UINT32 idx) { return mFields.at(idx); }
@@ -386,7 +386,7 @@ namespace bs
 		RTTIField* findField(int uniqueFieldId);
 
 		/** Returns a set of serializable meta-data describing the RTTI type. */
-		const SPtr<RTTISchema>& getSchema() const { return mSchema; }
+		const SPtr<RTTISchema>& GetSchema() const { return mSchema; }
 		
 		/** @name Internal
 		 *  @{
@@ -414,7 +414,7 @@ namespace bs
 		 *
 		 * @param[in]	field	Field, must be non-null.
 		 */
-		void addNewField(RTTIField* field);
+		void AddNewField(RTTIField* field);
 
 		SPtr<RTTISchema> mSchema;
 
@@ -436,7 +436,7 @@ namespace bs
 			BaseType::getRTTIStatic()->_registerDerivedClass(rttiType);
 		}
 
-		void makeSureIAmInstantiated() { }
+		void MakeSureIAmInstantiated() { }
 	};
 
 	/** Specialization for root class of RTTI hierarchy - IReflectable */
@@ -452,7 +452,7 @@ namespace bs
 			IReflectable::_registerRTTIType(rttiType);
 		}
 
-		void makeSureIAmInstantiated() { }
+		void MakeSureIAmInstantiated() { }
 	};
 
 	/**
@@ -530,7 +530,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTITypeBase::isDerivedFrom */
-		bool isDerivedFrom(RTTITypeBase* base) override
+		bool IsDerivedFrom(RTTITypeBase* base) override
 		{
 			assert(base != nullptr);
 
@@ -672,7 +672,7 @@ namespace bs
 
 		/** Registers a field referencing a blob of memory. */
 		template<class InterfaceType, class ObjectType>
-		void addDataBlockField(const String& name, UINT32 uniqueId, SPtr<DataStream> (InterfaceType::*getter)(ObjectType*, UINT32&),
+		void AddDataBlockField(const String& name, UINT32 uniqueId, SPtr<DataStream> (InterfaceType::*getter)(ObjectType*, UINT32&),
 			void (InterfaceType::*setter)(ObjectType*, const SPtr<DataStream>&, UINT32),
 			const RTTIFieldInfo& info = RTTIFieldInfo::DEFAULT)
 		{

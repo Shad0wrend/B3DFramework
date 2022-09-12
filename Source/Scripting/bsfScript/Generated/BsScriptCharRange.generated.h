@@ -15,7 +15,7 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "CharRange")
 
 		static MonoObject* box(const CharRange& value);
-		static CharRange unbox(MonoObject* value);
+		static CharRange Unbox(MonoObject* value);
 
 	private:
 		ScriptCharRange(MonoObject* managedInstance);

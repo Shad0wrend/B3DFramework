@@ -42,7 +42,7 @@ namespace bs
 
 		~NullProgram() = default;
 
-		bool isSupported() const override { return false; }
+		bool IsSupported() const override { return false; }
 	};
 
 	SPtr<GpuProgram> NullProgramFactory::create(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask)
@@ -82,14 +82,14 @@ namespace bs
 
 	void GpuProgramManager::addFactory(const String& language, GpuProgramFactory* factory)
 	{
-		Lock lock(mMutex);
+		Lock Lock(mMutex);
 
 		mFactories[language] = factory;
 	}
 
 	void GpuProgramManager::removeFactory(const String& language)
 	{
-		Lock lock(mMutex);
+		Lock Lock(mMutex);
 
 		auto iter = mFactories.find(language);
 		if (iter != mFactories.end())
@@ -107,7 +107,7 @@ namespace bs
 
 	bool GpuProgramManager::isLanguageSupported(const String& lang)
 	{
-		Lock lock(mMutex);
+		Lock Lock(mMutex);
 
 		auto iter = mFactories.find(lang);
 		return iter != mFactories.end();

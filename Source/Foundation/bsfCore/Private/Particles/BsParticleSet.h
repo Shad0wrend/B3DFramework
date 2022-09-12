@@ -78,7 +78,7 @@ namespace bs
 		 * Allocates a new set of buffers with enough space to store number of particles equal to the current capacity. *
 		 * Called must ensure any previously allocated buffer is freed by calling free().
 		 */
-		void allocate()
+		void Allocate()
 		{
 			alloc.
 				reserve<Vector3>(capacity).
@@ -108,7 +108,7 @@ namespace bs
 		}
 
 		/** Frees the internal buffers. */
-		void free()
+		void Free()
 		{
 			if(prevPosition) alloc.free(prevPosition);
 			if(position) alloc.free(position);
@@ -126,7 +126,7 @@ namespace bs
 		}
 
 		/** Transfers ownership of @p other internal buffers to this object. */
-		void move(ParticleSetData& other)
+		void Move(ParticleSetData& other)
 		{
 			prevPosition = std::exchange(other.prevPosition, nullptr);
 			position = std::exchange(other.position, nullptr);
@@ -145,7 +145,7 @@ namespace bs
 		}
 
 		/** Copies data from @p other buffers to this object. */
-		void copy(const ParticleSetData& other)
+		void Copy(const ParticleSetData& other)
 		{
 			assert(capacity >= other.capacity);
 
@@ -185,7 +185,7 @@ namespace bs
 		 * persistent and can become invalid after a call to freeParticle(). Returns the index to the first allocated
 		 * particle.
 		 */
-		UINT32 allocParticles(UINT32 count)
+		UINT32 AllocParticles(UINT32 count)
 		{
 			const UINT32 particleIdx = mCount;
 			mCount += count;
@@ -193,7 +193,7 @@ namespace bs
 			if(mCount > mParticles.capacity)
 			{
 				const auto newCapacity = (UINT32)(mCount * CAPACITY_SCALE);
-				ParticleSetData newData(newCapacity, mParticles);
+				ParticleSetData NewData(newCapacity, mParticles);
 				mParticles = std::move(newData);
 			}
 
@@ -208,7 +208,7 @@ namespace bs
 		}
 
 		/** Deallocates a particle. Can invalidate particle indices. */
-		void freeParticle(UINT32 idx)
+		void FreeParticle(UINT32 idx)
 		{
 			// Note: We always keep the active particles sequential. This makes it faster to iterate over all particles, but
 			// increases the cost when removing particles. Considering iteration should happen many times per-particle,
@@ -237,26 +237,26 @@ namespace bs
 		}
 
 		/** Frees all active partices past the provided particle count (0 to clear all particles). */
-		void clear(UINT32 numPartices = 0)
+		void Clear(UINT32 numPartices = 0)
 		{
 			if(mCount > numPartices)
 				mCount = numPartices;
 		}
 
 		/** Returns all data about the particles. Active particles are always sequential at the start of the buffer. */
-		ParticleSetData& getParticles() { return mParticles; }
+		ParticleSetData& GetParticles() { return mParticles; }
 
 		/** Returns all data about the particles. Active particles are always sequential at the start of the buffer. */
-		const ParticleSetData& getParticles() const { return mParticles; }
+		const ParticleSetData& GetParticles() const { return mParticles; }
 
 		/** Returns the number of particles that are currently active. */
-		UINT32 getParticleCount() const { return mCount; }
+		UINT32 GetParticleCount() const { return mCount; }
 
 		/**
 		 * Calculates the size of a texture required for storing the data of this particle set. The texture is assumed
 		 * to be square.
 		 */
-		UINT32 determineTextureSize() const
+		UINT32 DetermineTextureSize() const
 		{
 			const UINT32 count = std::max(2U, getParticleCount());
 

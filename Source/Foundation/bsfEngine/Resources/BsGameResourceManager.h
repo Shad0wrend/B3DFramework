@@ -20,13 +20,13 @@ namespace bs
 	{
 	public:
 		/** Returns the resource path map. */
-		const UnorderedMap<Path, Path>& getMap() const { return mMapping; }
+		const UnorderedMap<Path, Path>& GetMap() const { return mMapping; }
 
 		/** Adds a new entry to the resource map. Translated from path @p from to path @p to. */
-		void add(const Path& from, const Path& to);
+		void Add(const Path& from, const Path& to);
 
 		/** Creates a new empty resource mapping. */
-		static SPtr<ResourceMapping> create();
+		static SPtr<ResourceMapping> Create();
 	private:
 		UnorderedMap<Path, Path> mMapping;
 
@@ -46,10 +46,10 @@ namespace bs
 		virtual ~IGameResourceLoader() = default;
 
 		/**	Loads the resource at the specified path. */
-		virtual HResource load(const Path& path, ResourceLoadFlags flags, bool async) const = 0;
+		virtual HResource Load(const Path& path, ResourceLoadFlags flags, bool async) const = 0;
 
 		/** @copydoc GameResourceManager::setMapping */
-		virtual void setMapping(const SPtr<ResourceMapping>& mapping) { }
+		virtual void SetMapping(const SPtr<ResourceMapping>& mapping) { }
 	};
 
 	/**	Handles loading of game resources when the standalone game is running. */
@@ -57,10 +57,10 @@ namespace bs
 	{
 	public:
 		/** @copydoc IGameResourceLoader::load */
-		HResource load(const Path& path, ResourceLoadFlags flags, bool async) const override;
+		HResource Load(const Path& path, ResourceLoadFlags flags, bool async) const override;
 
 		/** @copydoc IGameResourceLoader::setMapping */
-		void setMapping(const SPtr<ResourceMapping>& mapping) override;
+		void SetMapping(const SPtr<ResourceMapping>& mapping) override;
 
 	private:
 		UnorderedMap<Path, Path> mMapping;
@@ -82,11 +82,11 @@ namespace bs
 		 * 			
 		 * @see	Resources::load
 		 */
-		HResource load(const Path& path, ResourceLoadFlags flags, bool async) const;
+		HResource Load(const Path& path, ResourceLoadFlags flags, bool async) const;
 
 		/** @copydoc load */
 		template <class T>
-		ResourceHandle<T> load(const Path& filePath, ResourceLoadFlags flags, bool async)
+		ResourceHandle<T> Load(const Path& filePath, ResourceLoadFlags flags, bool async)
 		{
 			return static_resource_cast<T>(load(filePath, flags, async));
 		}
@@ -100,10 +100,10 @@ namespace bs
 		 *
 		 * Provided paths should be relative to the working directory.
 		 */
-		void setMapping(const SPtr<ResourceMapping>& mapping);
+		void SetMapping(const SPtr<ResourceMapping>& mapping);
 
 		/** Sets the resource loader implementation that determines how are the paths provided to load() loaded. */
-		void setLoader(const SPtr<IGameResourceLoader>& loader);
+		void SetLoader(const SPtr<IGameResourceLoader>& loader);
 
 	private:
 		SPtr<IGameResourceLoader> mLoader;

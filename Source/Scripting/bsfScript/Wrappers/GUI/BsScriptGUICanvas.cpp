@@ -34,7 +34,7 @@ namespace bs
 	{
 		GUIOptions options;
 
-		ScriptArray scriptArray(guiOptions);
+		ScriptArray ScriptArray(guiOptions);
 		UINT32 arrayLen = scriptArray.size();
 		for (UINT32 i = 0; i < arrayLen; i++)
 			options.addOption(scriptArray.get<GUIOption>(i));
@@ -56,10 +56,10 @@ namespace bs
 	{
 		GUICanvas* canvas = (GUICanvas*)nativeInstance->getGUIElement();
 
-		ScriptArray verticesArray(vertices);
+		ScriptArray VerticesArray(vertices);
 		UINT32 size = verticesArray.size();
 
-		Vector<Vector2I> nativeVertices(size);
+		Vector<Vector2I> NativeVertices(size);
 		memcpy(nativeVertices.data(), verticesArray.getRaw<Vector2I>(), sizeof(Vector2I) * size);
 
 		canvas->drawPolyLine(nativeVertices, *color, depth);
@@ -82,10 +82,10 @@ namespace bs
 	{
 		GUICanvas* canvas = (GUICanvas*)nativeInstance->getGUIElement();
 
-		ScriptArray verticesArray(vertices);
+		ScriptArray VerticesArray(vertices);
 		UINT32 size = verticesArray.size();
 
-		Vector<Vector2I> nativeVertices(size);
+		Vector<Vector2I> NativeVertices(size);
 		memcpy(nativeVertices.data(), verticesArray.getRaw<Vector2I>(), sizeof(Vector2I) * size);
 
 		canvas->drawTriangleStrip(nativeVertices, *color, depth);
@@ -96,10 +96,10 @@ namespace bs
 	{
 		GUICanvas* canvas = (GUICanvas*)nativeInstance->getGUIElement();
 
-		ScriptArray verticesArray(vertices);
+		ScriptArray VerticesArray(vertices);
 		UINT32 size = verticesArray.size();
 
-		Vector<Vector2I> nativeVertices(size);
+		Vector<Vector2I> NativeVertices(size);
 		memcpy(nativeVertices.data(), verticesArray.getRaw<Vector2I>(), sizeof(Vector2I) * size);
 
 		canvas->drawTriangleList(nativeVertices, *color, depth);

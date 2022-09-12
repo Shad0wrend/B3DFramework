@@ -74,7 +74,7 @@ namespace bs
 		 * @param[in]	count	Number of bits to write.
 		 * @return				Number of bits written.
 		 */
-		uint64_t writeBits(const QuantType* data, uint64_t count);
+		uint64_t WriteBits(const QuantType* data, uint64_t count);
 
 		/**
 		 * Reads bits from the stream into the provided buffer from the current cursor location and advances the cursor.
@@ -83,7 +83,7 @@ namespace bs
 		 * @param[in]	count	Number of bits to read.
 		 * @return				Number of bits read.
 		 */
-		uint64_t readBits(QuantType* data, uint64_t count);
+		uint64_t ReadBits(QuantType* data, uint64_t count);
 
 		/**
 		 * Writes the provided data into the stream at the current cursor location and advances the cursor. This
@@ -93,7 +93,7 @@ namespace bs
 		 * @return				Number of bits written.
 		 */
 		template<class T>
-		uint64_t write(const T& value);
+		uint64_t Write(const T& value);
 
 		/**
 		 * Reads bits from the stream previously written by write() and stores them into the provided object. Data is
@@ -103,19 +103,19 @@ namespace bs
 		 * @return				Number of bits read.
 		 */
 		template<class T>
-		uint64_t read(T& value);
+		uint64_t Read(T& value);
 
 		/** @copydoc write(const T&) */
-		uint64_t write(const bool& value);
+		uint64_t Write(const bool& value);
 
 		/** @copydoc read(T&) */
-		uint64_t read(bool& value);
+		uint64_t Read(bool& value);
 
 		/** @copydoc write(const T&) */
-		uint64_t write(const String& value);
+		uint64_t Write(const String& value);
 
 		/** @copydoc read(T&) */
-		uint64_t read(String& value);
+		uint64_t Read(String& value);
 
 		/**
 		 * Writes the provided data into the stream at the current cursor location and advances the cursor.
@@ -125,7 +125,7 @@ namespace bs
 		 * @return				Number of bytes written.
 		 */
 		template<class T>
-		uint32_t writeBytes(const T& value);
+		uint32_t WriteBytes(const T& value);
 
 		/**
 		 * Reads bits from the stream previously written by writeBytes() and stores them into the provided object. Data is
@@ -135,7 +135,7 @@ namespace bs
 		 * @return				Number of bytes read.
 		 */
 		template<class T>
-		uint32_t readBytes(T& value);
+		uint32_t ReadBytes(T& value);
 
 		/**
 		 * Writes bytes from the provided buffer into the stream at the current cursor location and advances the cursor.
@@ -144,7 +144,7 @@ namespace bs
 		 * @param[in]	count	Number of bytes to write.
 		 * @return				Number of bytes written.
 		 */
-		uint32_t writeBytes(const QuantType* data, uint32_t count);
+		uint32_t WriteBytes(const QuantType* data, uint32_t count);
 
 		/**
 		 * Reads bytes from the stream into the provided buffer from the current cursor location and advances the cursor.
@@ -153,80 +153,80 @@ namespace bs
 		 * @param[in]	count	Number of bytes to read.
 		 * @return				Number of bytes read.
 		 */
-		uint32_t readBytes(QuantType* data, uint32_t count);
+		uint32_t ReadBytes(QuantType* data, uint32_t count);
 
 		/**
 		 * Checks if the provided value differs from the last provided value, and if they are equivalent writes just a
 		 * single bit signifying no change. Otherwise the value is encoded as if calling write().
 		 */
 		template<class T>
-		uint64_t writeDelta(const T& value, const T& lastValue);
+		uint64_t WriteDelta(const T& value, const T& lastValue);
 
 		/** Reads the data written by writeDelta() from the current cursor location and advances the cursor. */
 		template<class T>
-		uint64_t readDelta(T& value, const T& lastValue);
+		uint64_t ReadDelta(T& value, const T& lastValue);
 
 		/** @copydoc writeDelta(const T&, const T&) */
-		uint32_t writeDelta(bool value, bool lastValue);
+		uint32_t WriteDelta(bool value, bool lastValue);
 
 		/** @copydoc readDelta(T&, const T&) */
-		uint32_t readDelta(bool& value, bool lastValue);
+		uint32_t ReadDelta(bool& value, bool lastValue);
 
 		/**
 		 * Encodes a 32-bit integer value as a base-128 varint and writes it to the stream. Write is performed at the
 		 * current cursor location and advances the cursor. Varints are a method of serializing integers using one or
 		 * more bytes, where smaller values use less bytes. Returns the number of bits written.
 		 */
-		uint32_t writeVarInt(uint32_t value);
+		uint32_t WriteVarInt(uint32_t value);
 
 		/**
 		 * Encodes a 32-bit integer value as a base-128 varint and writes it to the stream. Write is performed at the
 		 * current cursor location and advances the cursor. Varints are a method of serializing integers using one or
 		 * more bytes, where smaller values use less bytes. Returns the number of bits written.
 		 */
-		uint32_t writeVarInt(int32_t value);
+		uint32_t WriteVarInt(int32_t value);
 
 		/**
 		 * Encodes a 64-bit integer value as a base-128 varint and writes it to the stream. Write is performed at the
 		 * current cursor location and advances the cursor. Varints are a method of serializing integers using one or
 		 * more bytes, where smaller values use less bytes. Returns the number of bits written.
 		 */
-		uint32_t writeVarInt(uint64_t value);
+		uint32_t WriteVarInt(uint64_t value);
 
 		/**
 		 * Encodes a 64-bit integer value as a base-128 varint and writes it to the stream. Write is performed at the
 		 * current cursor location and advances the cursor. Varints are a method of serializing integers using one or
 		 * more bytes, where smaller values use less bytes. Returns the number of bits written.
 		 */
-		uint32_t writeVarInt(int64_t value);
+		uint32_t WriteVarInt(int64_t value);
 
 		/**
 		 * Decodes a 32-bit integer value encoded as a base-128 varint from the stream. Read is performed at the
 		 * current cursor location and advances the cursor. Varints are a method of serializing integers using one or
 		 * more bytes, where smaller values use less bytes. Returns the number of bits written.
 		 */
-		uint32_t readVarInt(uint32_t& value);
+		uint32_t ReadVarInt(uint32_t& value);
 
 		/**
 		 * Decodes a 32-bit integer value encoded as a base-128 varint from the stream. Read is performed at the
 		 * current cursor location and advances the cursor. Varints are a method of serializing integers using one or
 		 * more bytes, where smaller values use less bytes. Returns the number of bits written.
 		 */
-		uint32_t readVarInt(int32_t& value);
+		uint32_t ReadVarInt(int32_t& value);
 
 		/**
 		 * Decodes a 32-bit integer value encoded as a base-128 varint from the stream. Read is performed at the
 		 * current cursor location and advances the cursor. Varints are a method of serializing integers using one or
 		 * more bytes, where smaller values use less bytes. Returns the number of bits written.
 		 */
-		uint32_t readVarInt(uint64_t& value);
+		uint32_t ReadVarInt(uint64_t& value);
 
 		/**
 		 * Decodes a 32-bit integer value encoded as a base-128 varint from the stream. Read is performed at the
 		 * current cursor location and advances the cursor. Varints are a method of serializing integers using one or
 		 * more bytes, where smaller values use less bytes. Returns the number of bits written.
 		 */
-		uint32_t readVarInt(int64_t& value);
+		uint32_t ReadVarInt(int64_t& value);
 
 		/**
 		 * Checks if the provided value differs from the last provided value, and if they are equivalent writes just a
@@ -234,63 +234,63 @@ namespace bs
 		 * of bits written.
 		 */
 		template<class T>
-		uint32_t writeVarIntDelta(const T& value, const T& lastValue);
+		uint32_t WriteVarIntDelta(const T& value, const T& lastValue);
 
 		/**
 		 * Reads the data written by writeVarIntDelta() from the current cursor location and advances the cursor.
 		 * Returns the number of bits read.
 		 */
 		template<class T>
-		uint32_t readVarIntDelta(T& value, const T& lastValue);
+		uint32_t ReadVarIntDelta(T& value, const T& lastValue);
 
 		/**
 		 * Encodes a float in range [0, 1] into a fixed point representation using a specific number of bits, and writes it
 		 * to the stream. Write is performed at the current cursor location and advances the cursor.
 		 */
-		void writeNorm(float value, uint32_t bits = 16);
+		void WriteNorm(float value, uint32_t bits = 16);
 
 		/**
 		 * Decodes a float encoded using writeNorm(float, uint32_t). Read is performed at the current cursor location and
 		 * advances the cursor. Same number of bits need to be used as when the float was encoded.
 		 */
-		void readNorm(float& value, uint32_t bits = 16);
+		void ReadNorm(float& value, uint32_t bits = 16);
 
 		/**
 		 * Encodes a 3D vector with individual components in range [-1, 1] into a fixed point representation where each
 		 * component uses a specific number of bits, and writes it to the stream. Write is performed at the current cursor
 		 * location and advances the cursor.
 		 */
-		void writeNorm(const Vector3& value, uint32_t bits = 16);
+		void WriteNorm(const Vector3& value, uint32_t bits = 16);
 
 		/**
 		 * Decodes a 3D vector encoded using writeNorm(Vector3, uint32_t). Read is performed at the current cursor location
 		 * and advances the cursor. Same number of bits need to be used as when the float was encoded.
 		 */
-		void readNorm(Vector3& value, uint32_t bits = 16);
+		void ReadNorm(Vector3& value, uint32_t bits = 16);
 
 		/**
 		 * Encodes a quaternion with individual components in range [-1, 1] into a fixed point representation where each
 		 * component uses a specific number of bits, and writes it to the stream. Write is performed at the current cursor
 		 * location and advances the cursor.
 		 */
-		void writeNorm(const Quaternion& value, uint32_t bits = 16);
+		void WriteNorm(const Quaternion& value, uint32_t bits = 16);
 
 		/**
 		 * Decodes a quaternion encoded using writeNorm(Quaternion, uint32_t). Read is performed at the current cursor
 		 * location and advances the cursor. Same number of bits need to be used as when the float was encoded.
 		 */
-		void readNorm(Quaternion& value, uint32_t bits = 16);
+		void ReadNorm(Quaternion& value, uint32_t bits = 16);
 
 		/**
 		 * Checks if the provided value differs from the last provided value, and if they are equivalent writes just a
 		 * single bit signifying no change. Otherwise the value is encoded as if calling writeNorm().
 		 */
 		template<class T>
-		void writeNormDelta(const T& value, const T& lastValue, uint32_t bits = 16);
+		void WriteNormDelta(const T& value, const T& lastValue, uint32_t bits = 16);
 
 		/** Reads the data written by writeNormDelta() from the current cursor location and advances the cursor. */
 		template<class T>
-		void readNormDelta(T& value, const T& lastValue, uint32_t bits = 16);
+		void ReadNormDelta(T& value, const T& lastValue, uint32_t bits = 16);
 
 		/**
 		 * Encodes an integer in a specific range, using the range the reduce the number of bits required, and writes it
@@ -298,7 +298,7 @@ namespace bs
 		 * of bits written.
 		 */
 		template<class T>
-		uint32_t writeRange(const T& value, const T& min, const T& max);
+		uint32_t WriteRange(const T& value, const T& min, const T& max);
 
 		/**
 		 * Decodes an integer encoded using writeRange(const T&, const T&, const T&). Read is performed at the current
@@ -306,7 +306,7 @@ namespace bs
 		 * number of bits read.
 		 */
 		template<class T>
-		uint32_t readRange(T& value, const T& min, const T& max);
+		uint32_t ReadRange(T& value, const T& min, const T& max);
 
 		/**
 		 * Checks if the provided value differs from the last provided value, and if they are equivalent writes just a
@@ -314,84 +314,84 @@ namespace bs
 		 * writeRange(const T&, const T&, const T&). Returns the number of bits written.
 		 */
 		template<class T>
-		uint32_t writeRangeDelta(const T& value, const T& lastValue, const T& min, const T& max);
+		uint32_t WriteRangeDelta(const T& value, const T& lastValue, const T& min, const T& max);
 
 		/**
 		 * Reads the data written by writeRangeDelta(const T&, const T&, const T&, const T&) from the current cursor
 		 * location and advances the cursor. Returns the number of bits read.
 		 */
 		template<class T>
-		uint32_t readRangeDelta(T& value, const T& lastValue, const T& min, const T& max);
+		uint32_t ReadRangeDelta(T& value, const T& lastValue, const T& min, const T& max);
 
 		/**
 		 * Encodes a float in a specific range into a fixed point representation using a specific number of bits, and
 		 * writes it to the stream. Write is performed at the current cursor location and advances the cursor.
 		 */
-		void writeRange(float value, float min, float max, uint32_t bits = 16);
+		void WriteRange(float value, float min, float max, uint32_t bits = 16);
 
 		/**
 		 * Decodes a float encoded using writeRange(float, float, float, uint32_t). Read is performed at the current cursor
 		 * location and advances the cursor. Same number of bits, and the same range needs to be used as when the float was
 		 * encoded.
 		 */
-		void readRange(float& value, float min, float max, uint32_t bits = 16);
+		void ReadRange(float& value, float min, float max, uint32_t bits = 16);
 
 		/**
 		 * Checks if the provided value differs from the last provided value, and if they are equivalent writes just a
 		 * single bit signifying no change. Otherwise the value is encoded as if calling
 		 * writeRange(float, float, float, uint32_t).
 		 */
-		void writeRangeDelta(float value, float lastValue, float min, float max, uint32_t bits = 16);
+		void WriteRangeDelta(float value, float lastValue, float min, float max, uint32_t bits = 16);
 
 		/**
 		 * Reads the data written by writeRangeDelta(float, float, float, float, uint32_t) from the current cursor
 		 * location and advances the cursor.
 		 */
-		void readRangeDelta(float& value, float lastValue, float min, float max, uint32_t bits = 16);
+		void ReadRangeDelta(float& value, float lastValue, float min, float max, uint32_t bits = 16);
 
 		/**
 		 * Skip a defined number of bits, moving the read/write cursor by this amount. This can also be a negative value,
 		 * in which case the file pointer rewinds a defined number of bits. Note the cursor can never skip past the
 		 * capacity of the buffer, and will be clamped.
 		 */
-		void skip(int64_t count);
+		void Skip(int64_t count);
 
 		/** Same as skip() except is uses number of bytes instead of number of bits as the parameter. */
-		void skipBytes(int32_t count) { return skip((uint64_t)count * 8); }
+		void SkipBytes(int32_t count) { return skip((uint64_t)count * 8); }
 
 		/**
 		 * Repositions the read/write cursor to the specified bit. Note the cursor can never skip past the capacity
 		 * of the buffer, and will be clamped.
 		 */
-		void seek(uint64_t pos);
+		void Seek(uint64_t pos);
 
 		/**
 		 * Aligns the read/write cursor to a byte boundary. @p count determines the alignment in bytes. Note the
 		 * requested alignment might not be achieved if count > 1 and it would move the cursor past the capacity of the
 		 * buffer, as the cursor will be clamped to buffer end regardless of alignment.
 		 */
-		void align(uint32_t count = 1);
+		void Align(uint32_t count = 1);
 
 		/** Expands the capacity to the specified number of bytes, unless already equal or greater. */
-		void reserve(uint32_t count);
+		void Reserve(uint32_t count);
 		
 		/**
 		 * Expands the capacity and size to the specified number of bytes. Capacity will not be reduced if already
 		 * equal or larger.
 		 */
-		void resize(uint32_t count);
+		void Resize(uint32_t count);
 
 		/** Returns the current read/write cursor position, in bits. */
-		uint64_t tell() const { return mCursor; }
+		uint64_t Tell() const { return mCursor; }
 
 		/** Returns true if the stream has reached the end. */
-		bool eof() const { return mCursor >= mNumBits; }
+		bool Eof() const { return mCursor >= mNumBits; }
 
 		/** Returns the total number of bits available in the stream. */
-		uint64_t size() const { return mNumBits; }
+		uint64_t Size() const { return mNumBits; }
 
 		/** Returns the total number of bits the stream can store without needing to allocate more memory. */
-		uint64_t capacity() const { return mMaxBits; }
+		uint64_t Capacity() const { return mMaxBits; }
 
 		/** Returns the internal data buffer. */
 		QuantType* data() const { return mData; }
@@ -401,10 +401,10 @@ namespace bs
 
 	private:
 		/** Checks if the internal memory buffer needs to grow in order to accomodate @p numBits bits. */
-		void reallocIfNeeded(uint64_t numBits);
+		void ReallocIfNeeded(uint64_t numBits);
 
 		/** Reallocates the internal buffer making enough room for @p numBits (rounded to a multiple of BYTES_PER_QUANT. */
-		void realloc(uint64_t numBits);
+		void Realloc(uint64_t numBits);
 
 		QuantType* mData = nullptr;
 		uint64_t mMaxBits = 0;
@@ -422,7 +422,7 @@ namespace bs
 	}
 
 	inline Bitstream::Bitstream(QuantType* data, uint32_t count)
-		: mData(data), mMaxBits((uint64_t)count * 8), mNumBits((uint64_t)count * 8), mOwnsMemory(false) { }
+		: MData(data), mMaxBits((uint64_t)count * 8), mNumBits((uint64_t)count * 8), mOwnsMemory(false) { }
 
 	inline Bitstream::~Bitstream()
 	{
@@ -585,14 +585,14 @@ namespace bs
 	template <class T>
 	uint64_t Bitstream::write(const T& value)
 	{
-		return writeBits((QuantType*)&value, sizeof(value) * 8);
+		return WriteBits((QuantType*)&value, sizeof(value) * 8);
 	}
 
 	template <class T>
 	uint64_t Bitstream::read(T& value)
 	{
 		QuantType* temp = (QuantType*)&value;
-		return readBits(temp, sizeof(value) * 8);
+		return ReadBits(temp, sizeof(value) * 8);
 	}
 
 	inline uint64_t Bitstream::write(const bool& value)
@@ -681,9 +681,9 @@ namespace bs
 	uint64_t Bitstream::writeDelta(const T& value, const T& lastValue)
 	{
 		if (value == lastValue)
-			return write(true);
+			return Write(true);
 		else
-			return write(false) + write(value);
+			return Write(false) + write(value);
 	}
 
 	template <class T>
@@ -698,7 +698,7 @@ namespace bs
 			return 1;
 		}
 		else
-			return read(value) + 1;
+			return Read(value) + 1;
 	}
 
 	inline uint32_t Bitstream::writeDelta(bool value, bool lastValue)
@@ -814,7 +814,7 @@ namespace bs
 		else
 		{
 			write(false);
-			return writeVarInt(value) + 1;
+			return WriteVarInt(value) + 1;
 		}
 	}
 
@@ -830,7 +830,7 @@ namespace bs
 			return 1;
 		}
 		else
-			return readVarInt(value) + 1;
+			return ReadVarInt(value) + 1;
 	}
 
 	inline void Bitstream::writeNorm(float value, uint32_t bits)
@@ -937,7 +937,7 @@ namespace bs
 		else
 		{
 			write(false);
-			return writeRange(value, min, max) + 1;
+			return WriteRange(value, min, max) + 1;
 		}
 	}
 
@@ -953,7 +953,7 @@ namespace bs
 			return 1;
 		}
 		else
-			return readRange(value, min, max) + 1;
+			return ReadRange(value, min, max) + 1;
 	}
 
 	inline void Bitstream::writeRange(float value, float min, float max, uint32_t bits)

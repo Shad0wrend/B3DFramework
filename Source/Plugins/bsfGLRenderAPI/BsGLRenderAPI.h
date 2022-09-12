@@ -24,7 +24,7 @@ namespace bs { namespace ct
 		~GLRenderAPI() = default;
 
 		/** @copydoc RenderAPI::getName() */
-		const StringID& getName() const override;
+		const StringID& GetName() const override;
 
 		/** @copydoc RenderAPI::setGraphicsPipeline */
 		void setGraphicsPipeline(const SPtr<GraphicsPipelineState>& pipelineState,
@@ -39,14 +39,14 @@ namespace bs { namespace ct
 			const SPtr<CommandBuffer>& commandBuffer = nullptr) override;
 
 		/** @copydoc RenderAPI::setViewport() */
-		void setViewport(const Rect2& area, const SPtr<CommandBuffer>& commandBuffer = nullptr) override;
+		void SetViewport(const Rect2& area, const SPtr<CommandBuffer>& commandBuffer = nullptr) override;
 
 		/** @copydoc RenderAPI::setScissorRect() */
 		void setScissorRect(UINT32 left, UINT32 top, UINT32 right, UINT32 bottom,
 			const SPtr<CommandBuffer>& commandBuffer = nullptr) override;
 
 		/** @copydoc RenderAPI::setStencilRef */
-		void setStencilRef(UINT32 value, const SPtr<CommandBuffer>& commandBuffer = nullptr) override;
+		void SetStencilRef(UINT32 value, const SPtr<CommandBuffer>& commandBuffer = nullptr) override;
 
 		/** @copydoc RenderAPI::setVertexBuffers() */
 		void setVertexBuffers(UINT32 index, SPtr<VertexBuffer>* buffers, UINT32 numBuffers,
@@ -61,7 +61,7 @@ namespace bs { namespace ct
 			const SPtr<CommandBuffer>& commandBuffer = nullptr) override;
 
 		/** @copydoc RenderAPI::setDrawOperation() */
-		void setDrawOperation(DrawOperationType op, const SPtr<CommandBuffer>& commandBuffer = nullptr) override;
+		void SetDrawOperation(DrawOperationType op, const SPtr<CommandBuffer>& commandBuffer = nullptr) override;
 
 		/** @copydoc RenderAPI::draw() */
 		void draw(UINT32 vertexOffset, UINT32 vertexCount, UINT32 instanceCount = 0,
@@ -76,7 +76,7 @@ namespace bs { namespace ct
 			const SPtr<CommandBuffer>& commandBuffer = nullptr) override;
 
 		/** @copydoc RenderAPI::swapBuffers() */
-		void swapBuffers(const SPtr<RenderTarget>& target, UINT32 syncMask = 0xFFFFFFFF) override;
+		void SwapBuffers(const SPtr<RenderTarget>& target, UINT32 syncMask = 0xFFFFFFFF) override;
 
 		/** @copydoc RenderAPI::setRenderTarget() */
 		void setRenderTarget(const SPtr<RenderTarget>& target, UINT32 readOnlyFlags = 0,
@@ -91,19 +91,19 @@ namespace bs { namespace ct
 			UINT8 targetMask = 0xFF, const SPtr<CommandBuffer>& commandBuffer = nullptr) override;
 
 		/** @copydoc RenderAPI::addCommands() */
-		void addCommands(const SPtr<CommandBuffer>& commandBuffer, const SPtr<CommandBuffer>& secondary) override;
+		void AddCommands(const SPtr<CommandBuffer>& commandBuffer, const SPtr<CommandBuffer>& secondary) override;
 
 		/** @copydoc RenderAPI::submitCommandBuffer() */
-		void submitCommandBuffer(const SPtr<CommandBuffer>& commandBuffer, UINT32 syncMask = 0xFFFFFFFF) override;
+		void SubmitCommandBuffer(const SPtr<CommandBuffer>& commandBuffer, UINT32 syncMask = 0xFFFFFFFF) override;
 
 		/** @copydoc RenderAPI::getMainCommandBuffer() */
-		SPtr<CommandBuffer> getMainCommandBuffer() const override;
+		SPtr<CommandBuffer> GetMainCommandBuffer() const override;
 
 		/** @copydoc RenderAPI::convertProjectionMatrix() */
-		void convertProjectionMatrix(const Matrix4& matrix, Matrix4& dest) override;
+		void ConvertProjectionMatrix(const Matrix4& matrix, Matrix4& dest) override;
 
 		/** @copydoc RenderAPI::generateParamBlockDesc() */
-		GpuParamBlockDesc generateParamBlockDesc(const String& name, Vector<GpuParamDataDesc>& params) override;
+		GpuParamBlockDesc GenerateParamBlockDesc(const String& name, Vector<GpuParamDataDesc>& params) override;
 
 		/************************************************************************/
 		/* 				Internal use by OpenGL RenderSystem only                */
@@ -120,19 +120,19 @@ namespace bs { namespace ct
 
 	protected:
 		/** @copydoc RenderAPI::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 		/** @copydoc RenderAPI::initializeWithWindow */
-		void initializeWithWindow(const SPtr<RenderWindow>& primaryWindow) override;
+		void InitializeWithWindow(const SPtr<RenderWindow>& primaryWindow) override;
 
 		/** @copydoc RenderAPI::destroyCore */
-		void destroyCore() override;
+		void DestroyCore() override;
 
 		/**	Call before doing a draw operation, this method sets everything up. */
-		void beginDraw();
+		void BeginDraw();
 
 		/**	Needs to accompany every beginDraw after you are done with a single draw operation. */
-		void endDraw();
+		void EndDraw();
 
 		/**	Clear a part of a render target. */
 		void clearArea(UINT32 buffers, const Color& color = Color::Black, float depth = 1.0f, UINT16 stencil = 0,
@@ -141,40 +141,40 @@ namespace bs { namespace ct
 		/**
 		 * Changes the currently active texture unit. Any texture related operations will then be performed on this unit.
 		 */
-		bool activateGLTextureUnit(UINT16 unit);
+		bool ActivateGLTextureUnit(UINT16 unit);
 
 		/**	Retrieves the active GPU program of the specified type. */
-		SPtr<GLSLGpuProgram> getActiveProgram(GpuProgramType gptype) const;
+		SPtr<GLSLGpuProgram> GetActiveProgram(GpuProgramType gptype) const;
 
 		/**	Converts framework's blend mode to OpenGL blend mode. */
-		GLint getBlendMode(BlendFactor blendMode) const;
+		GLint GetBlendMode(BlendFactor blendMode) const;
 
 		/**	Converts framework's texture addressing mode to OpenGL texture addressing mode. */
-		GLint getTextureAddressingMode(TextureAddressingMode tam) const;
+		GLint GetTextureAddressingMode(TextureAddressingMode tam) const;
 
 		/** Gets a combined min/mip filter value usable by OpenGL from the currently set min and mip filters. */
-		GLuint getCombinedMinMipFilter() const;
+		GLuint GetCombinedMinMipFilter() const;
 
 		/** Returns the OpenGL specific mode used for drawing, depending on the currently set draw operation. */
-		GLint getGLDrawMode() const;
+		GLint GetGLDrawMode() const;
 
 		/**	Creates render system capabilities that specify which features are or aren't supported. */
-		void initCapabilities(RenderAPICapabilities& caps) const;
+		void InitCapabilities(RenderAPICapabilities& caps) const;
 
 		/**	Finish initialization by setting up any systems dependant on render systemcapabilities. */
-		void initFromCaps(RenderAPICapabilities* caps);
+		void InitFromCaps(RenderAPICapabilities* caps);
 
 		/**
 		 * Switch the currently used OpenGL context. You will need to re-bind any previously bound values manually
 		 * (for example textures, gpu programs and such).
 		 */
-		void switchContext(const SPtr<GLContext>& context, const RenderWindow& window);
+		void SwitchContext(const SPtr<GLContext>& context, const RenderWindow& window);
 
 		/**
 		 * Returns a valid command buffer. Uses the provided buffer if not null. Otherwise returns the default command
 		 * buffer.
 		 */
-		SPtr<GLCommandBuffer> getCB(const SPtr<CommandBuffer>& buffer);
+		SPtr<GLCommandBuffer> GetCB(const SPtr<CommandBuffer>& buffer);
 
 		/************************************************************************/
 		/* 								Sampler states                     		*/
@@ -184,45 +184,45 @@ namespace bs { namespace ct
 		 * Sets the texture addressing mode for a texture unit. This determines how are UV address values outside of [0, 1]
 		 * range handled when sampling from texture.
 		 */
-		void setTextureAddressingMode(UINT16 unit, const UVWAddressingMode& uvw);
+		void SetTextureAddressingMode(UINT16 unit, const UVWAddressingMode& uvw);
 
 		/**
 		 * Sets the texture border color for a texture unit. Border color determines color returned by the texture sampler
 		 * when border addressing mode is used and texture address is outside of [0, 1] range.
 		 */
-		void setTextureBorderColor(UINT16 unit, const Color& color);
+		void SetTextureBorderColor(UINT16 unit, const Color& color);
 
 		/**
 		 * Sets the mipmap bias value for a given texture unit. Bias allows	you to adjust the mipmap selection calculation.
 		 * Negative values force a larger mipmap to be used, and positive values smaller. Units are in values of mip levels,
 		 * so -1 means use a mipmap one level higher than default.
 		 */
-		void setTextureMipmapBias(UINT16 unit, float bias);
+		void SetTextureMipmapBias(UINT16 unit, float bias);
 
 		/**
 		 * Sets a valid range for mipmaps (LOD) for a given texture unit. @p min limits the selection of the highest
 		 * resolution mipmap (lowest level), and @p max limits the selection of the lowest resolution mipmap (highest
 		 * level).
 		 */
-		void setTextureMipmapRange(UINT16 unit, float min, float max);
+		void SetTextureMipmapRange(UINT16 unit, float min, float max);
 
 		/**
 		 * Allows you to specify how is the texture bound to the specified texture unit filtered. Different filter types are
 		 * used for different situations like magnifying or minifying a texture.
 		 */
-		void setTextureFiltering(UINT16 unit, FilterType ftype, FilterOptions filter);
+		void SetTextureFiltering(UINT16 unit, FilterType ftype, FilterOptions filter);
 
 		/**	Sets anisotropy value for the specified texture unit. */
-		void setTextureAnisotropy(UINT16 unit, UINT32 maxAnisotropy);
+		void SetTextureAnisotropy(UINT16 unit, UINT32 maxAnisotropy);
 		
 		/**
 		 * Sets the compare mode to use when sampling the texture (anything but "always" implies the use of a shadow
 		 * sampler.
 		 */
-		void setTextureCompareMode(UINT16 unit, CompareFunction compare);
+		void SetTextureCompareMode(UINT16 unit, CompareFunction compare);
 
 		/**	Gets anisotropy value for the specified texture unit. */
-		GLfloat getCurrentAnisotropy(UINT16 unit);
+		GLfloat GetCurrentAnisotropy(UINT16 unit);
 
 		/************************************************************************/
 		/* 								Blend states                      		*/
@@ -232,7 +232,7 @@ namespace bs { namespace ct
 		 * Sets up blending mode that allows you to combine new pixels with pixels already in the render target.
 		 * Final pixel value = (renderTargetPixel * sourceFactor) op (pixel * destFactor).
 		 */
-		void setSceneBlending(UINT32 target, BlendFactor sourceFactor, BlendFactor destFactor, BlendOperation op);
+		void SetSceneBlending(UINT32 target, BlendFactor sourceFactor, BlendFactor destFactor, BlendOperation op);
 
 		/**
 		 * Sets up blending mode that allows you to combine new pixels with pixels already in the render target.
@@ -248,20 +248,20 @@ namespace bs { namespace ct
 		 * of rendering like regular blending does. It requires multi-sampling to be active in order to work, and you need
 		 * to supply an alpha texture that determines object transparency.
 		 */
-		void setAlphaToCoverage(bool enabled);
+		void SetAlphaToCoverage(bool enabled);
 
 		/**	Enables or disables writing to certain color channels of the render target. */
-		void setColorBufferWriteEnabled(UINT32 target, bool red, bool green, bool blue, bool alpha);
+		void SetColorBufferWriteEnabled(UINT32 target, bool red, bool green, bool blue, bool alpha);
 
 		/************************************************************************/
 		/* 								Rasterizer states                  		*/
 		/************************************************************************/
 
 		/**	Sets vertex winding order. Normally you would use this to cull back facing polygons. */
-		void setCullingMode(CullingMode mode);
+		void SetCullingMode(CullingMode mode);
 
 		/**	Sets the polygon rasterization mode. Determines how are polygons interpreted. */
-		void setPolygonMode(PolygonMode level);
+		void SetPolygonMode(PolygonMode level);
 
 		/**
 		 * Sets a depth bias that will offset the depth values of new pixels by the specified amount. Final depth bias value
@@ -270,44 +270,44 @@ namespace bs { namespace ct
 		 *
 		 * @note	This is useful if you want to avoid z fighting for objects at the same or similar depth.
 		 */
-		void setDepthBias(float constantBias, float slopeScaleBias);
+		void SetDepthBias(float constantBias, float slopeScaleBias);
 
 		/**
 		 * Scissor test allows you to mask off rendering in all but a given rectangular area identified by the rectangle
 		 * set by setScissorRect().
 		 */
-		void setScissorTestEnable(bool enable);
+		void SetScissorTestEnable(bool enable);
 
 		/**	Enables or disables multisample antialiasing. */
-		void setMultisamplingEnable(bool enable);
+		void SetMultisamplingEnable(bool enable);
 
 		/**	Enables or disables depth clipping (near/fear plane clipping). */
-		void setDepthClipEnable(bool enable);
+		void SetDepthClipEnable(bool enable);
 
 		/**	Enables or disables antialiased line rendering. */
-		void setAntialiasedLineEnable(bool enable);
+		void SetAntialiasedLineEnable(bool enable);
 
 		/************************************************************************/
 		/* 						Depth stencil state                      		*/
 		/************************************************************************/
 		
 		/**	Should new pixels perform depth testing using the set depth comparison function before being written. */
-		void setDepthBufferCheckEnabled(bool enabled = true);
+		void SetDepthBufferCheckEnabled(bool enabled = true);
 
 		/**	Should new pixels write to the depth buffer. */
-		void setDepthBufferWriteEnabled(bool enabled = true);
+		void SetDepthBufferWriteEnabled(bool enabled = true);
 
 		/**
 		 * Sets comparison function used for depth testing. Determines how are new and existing pixel values compared - if
 		 * comparison function returns true the new pixel is written.
 		 */
-		void setDepthBufferFunction(CompareFunction func = CMPF_LESS_EQUAL);
+		void SetDepthBufferFunction(CompareFunction func = CMPF_LESS_EQUAL);
 
 		/**
 		 * Turns stencil tests on or off. By default this is disabled. Stencil testing allow you to mask out a part of the
 		 * rendered image by using various stencil operations provided.
 		 */
-		void setStencilCheckEnabled(bool enabled);
+		void SetStencilCheckEnabled(bool enabled);
 
 		/**
 		 * Allows you to set stencil operations that are performed when stencil test passes or fails.
@@ -333,16 +333,16 @@ namespace bs { namespace ct
 		 * @param[in] ccw	If set to true, the stencil operations will be applied to counterclockwise
 		 *					faces. Otherwise they will be applied to clockwise faces.
 		 */
-		void setStencilBufferFunc(CompareFunction func = CMPF_ALWAYS_PASS, UINT32 mask = 0xFFFFFFFF, bool ccw = true);
+		void SetStencilBufferFunc(CompareFunction func = CMPF_ALWAYS_PASS, UINT32 mask = 0xFFFFFFFF, bool ccw = true);
 
 		/**	The bitmask applied to the stencil value before writing it to the stencil buffer. */
-		void setStencilBufferWriteMask(UINT32 mask = 0xFFFFFFFF);
+		void SetStencilBufferWriteMask(UINT32 mask = 0xFFFFFFFF);
 
 		/**
 		 * Sets a reference values used for stencil buffer comparisons. Actual comparison function and stencil operations
 		 * are set by setting the DepthStencilState.
 		 */
-		void setStencilRefValue(UINT32 refValue);
+		void SetStencilRefValue(UINT32 refValue);
 
 		/************************************************************************/
 		/* 							UTILITY METHODS                      		*/
@@ -352,19 +352,19 @@ namespace bs { namespace ct
 		 * Recalculates actual viewport dimensions based on currently set viewport normalized dimensions and render target
 		 * and applies them for further rendering.
 		 */
-		void applyViewport();
+		void ApplyViewport();
 
 		/**	Converts the provided matrix m into a representation usable by OpenGL. */
-		void makeGLMatrix(GLfloat gl_matrix[16], const Matrix4& m);
+		void MakeGLMatrix(GLfloat gl_matrix[16], const Matrix4& m);
 
 		/**	Converts the engine depth/stencil compare function into OpenGL representation. */
-		GLint convertCompareFunction(CompareFunction func) const;
+		GLint ConvertCompareFunction(CompareFunction func) const;
 
 		/** Convers the engine stencil operation in OpenGL representation. */
-		GLint convertStencilOp(StencilOperation op) const;
+		GLint ConvertStencilOp(StencilOperation op) const;
 
 		/** Notifies the active render target that a rendering command was queued that will potentially change its contents. */
-		void notifyRenderTargetModified();
+		void NotifyRenderTargetModified();
 
 	private:
 		/** Information about a currently bound texture. */

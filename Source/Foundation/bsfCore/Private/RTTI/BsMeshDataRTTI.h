@@ -21,26 +21,26 @@ namespace bs
 	class BS_CORE_EXPORT MeshDataRTTI : public RTTIType<MeshData, GpuResourceData, MeshDataRTTI>
 	{
 	private:
-		SPtr<VertexDataDesc> getVertexData(MeshData* obj) { return obj->mVertexData; }
-		void setVertexData(MeshData* obj, SPtr<VertexDataDesc> value) { obj->mVertexData = value; }
+		SPtr<VertexDataDesc> GetVertexData(MeshData* obj) { return obj->mVertexData; }
+		void SetVertexData(MeshData* obj, SPtr<VertexDataDesc> value) { obj->mVertexData = value; }
 
-		IndexType& getIndexType(MeshData* obj) { return obj->mIndexType; }
-		void setIndexType(MeshData* obj, IndexType& value) { obj->mIndexType = value; }
+		IndexType& GetIndexType(MeshData* obj) { return obj->mIndexType; }
+		void SetIndexType(MeshData* obj, IndexType& value) { obj->mIndexType = value; }
 
-		UINT32& getNumVertices(MeshData* obj) { return obj->mNumVertices; }
-		void setNumVertices(MeshData* obj, UINT32& value) { obj->mNumVertices = value; }
+		UINT32& GetNumVertices(MeshData* obj) { return obj->mNumVertices; }
+		void SetNumVertices(MeshData* obj, UINT32& value) { obj->mNumVertices = value; }
 
-		UINT32& getNumIndices(MeshData* obj) { return obj->mNumIndices; }
-		void setNumIndices(MeshData* obj, UINT32& value) { obj->mNumIndices = value; }
+		UINT32& GetNumIndices(MeshData* obj) { return obj->mNumIndices; }
+		void SetNumIndices(MeshData* obj, UINT32& value) { obj->mNumIndices = value; }
 
-		SPtr<DataStream> getData(MeshData* obj, UINT32& size)
+		SPtr<DataStream> GetData(MeshData* obj, UINT32& size)
 		{
 			size = obj->getInternalBufferSize();
 
 			return bs_shared_ptr_new<MemoryDataStream>(obj->getData(), size);
 		}
 
-		void setData(MeshData* obj, const SPtr<DataStream>& value, UINT32 size)
+		void SetData(MeshData* obj, const SPtr<DataStream>& value, UINT32 size)
 		{
 			obj->allocateInternalBuffer(size);
 			value->read(obj->getData(), size);
@@ -58,18 +58,18 @@ namespace bs
 			addDataBlockField("data", 4, &MeshDataRTTI::getData, &MeshDataRTTI::setData);
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			return bs_shared_ptr<MeshData>(new (bs_alloc<MeshData>()) MeshData());
 		}
 
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "MeshData";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_MeshData;
 		}

@@ -12,7 +12,7 @@
 
 namespace bs { namespace ct
 {
-	SPtr<Texture> generate4x4RandomizationTexture()
+	SPtr<Texture> Generate4x4RandomizationTexture()
 	{
 		UINT32 mapping[16] = { 13, 5, 1, 9, 14, 3, 7, 11, 15, 2, 6, 12, 4, 8, 0, 10 };
 		Vector2 bases[16];
@@ -40,7 +40,7 @@ namespace bs { namespace ct
 	}
 
 	// Reverse bits functions used for Hammersley sequence
-	float reverseBits(UINT32 bits)
+	float ReverseBits(UINT32 bits)
 	{
 		bits = (bits << 16u) | (bits >> 16u);
 		bits = ((bits & 0x55555555u) << 1u) | ((bits & 0xAAAAAAAAu) >> 1u);
@@ -51,13 +51,13 @@ namespace bs { namespace ct
 		return (float)(double(bits) / (double)0x100000000LL);
 	}
 
-	void hammersleySequence(UINT32 i, UINT32 count, float& e0, float& e1)
+	void HammersleySequence(UINT32 i, UINT32 count, float& e0, float& e1)
 	{
 		e0 = i / (float)count;
 		e1 = reverseBits(i);
 	}
 
-	Vector3 sphericalToCartesian(float cosTheta, float sinTheta, float phi)
+	Vector3 SphericalToCartesian(float cosTheta, float sinTheta, float phi)
 	{
 		Vector3 output;
 		output.x = sinTheta * cos(phi);
@@ -69,7 +69,7 @@ namespace bs { namespace ct
 
 	// Generates an angle in spherical coordinates, importance sampled for the specified roughness based on some uniformly
 	// distributed random variables in range [0, 1].
-	void importanceSampleGGX(float e0, float e1, float roughness4, float& cosTheta, float& phi)
+	void ImportanceSampleGGX(float e0, float e1, float roughness4, float& cosTheta, float& phi)
 	{
 		// See GGXImportanceSample.nb for derivation (essentially, take base GGX, normalize it, generate PDF, split PDF into
 		// marginal probability for theta and conditional probability for phi. Plug those into the CDF, invert it.)				
@@ -77,7 +77,7 @@ namespace bs { namespace ct
 		phi = 2.0f * Math::PI * e1;
 	}
 
-	float calcMicrofacetShadowingSmithGGX(float roughness4, float NoV, float NoL)
+	float CalcMicrofacetShadowingSmithGGX(float roughness4, float NoV, float NoL)
 	{
 		// Note: See lighting shader for derivation. Includes microfacet BRDF divisor.
 		float g1V = NoV + sqrt(NoV * (NoV - NoV * roughness4) + roughness4);
@@ -85,7 +85,7 @@ namespace bs { namespace ct
 		return 1.0f / (g1V * g1L);
 	}
 
-	SPtr<Texture> generatePreintegratedEnvBRDF()
+	SPtr<Texture> GeneratePreintegratedEnvBRDF()
 	{
 		TEXTURE_DESC desc;
 		desc.type = TEX_TYPE_2D;
@@ -175,7 +175,7 @@ namespace bs { namespace ct
 		return texture;
 	}
 
-	SPtr<Texture> generateDefaultIndirect()
+	SPtr<Texture> GenerateDefaultIndirect()
 	{
 		TEXTURE_DESC dummySkyDesc;
 		dummySkyDesc.type = TEX_TYPE_CUBE_MAP;
@@ -237,7 +237,7 @@ namespace bs { namespace ct
 		return irradiance;
 	}
 
-	SPtr<Texture> generateLensFlareGradientTint()
+	SPtr<Texture> GenerateLensFlareGradientTint()
 	{
 		Vector<ColorGradientKey> keys =
 			{
@@ -250,7 +250,7 @@ namespace bs { namespace ct
 				ColorGradientKey(Color(0.0f, 0.0f, 0.0f), 1.0f)
 			};
 
-		ColorGradient gradient(keys);
+		ColorGradient Gradient(keys);
 
 		SPtr<PixelData> pixels = PixelData::create(32, 1, 1, PF_RGBA8);
 		for(UINT32 i = 0; i < 16; i++)
@@ -263,7 +263,7 @@ namespace bs { namespace ct
 		return Texture::create(pixels);
 	}
 
-	SPtr<Texture> generateChromaticAberrationFringe()
+	SPtr<Texture> GenerateChromaticAberrationFringe()
 	{
 		SPtr<PixelData> pixels = PixelData::create(3, 1, 1, PF_RGBA8);
 		pixels->setColorAt(Color(1.0f, 0.0f, 0.0f, 1.0f), 0, 0);

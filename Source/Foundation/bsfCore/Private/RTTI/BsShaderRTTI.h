@@ -23,7 +23,7 @@ namespace bs
 	{
 		enum { id = TID_SHADER_DATA_PARAM_DESC }; enum { hasDynamicSize = 1 };
 
-		static BitLength toMemory(const SHADER_DATA_PARAM_DESC& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const SHADER_DATA_PARAM_DESC& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			static constexpr UINT32 VERSION = 1;
 
@@ -45,7 +45,7 @@ namespace bs
 			});
 		}
 
-		static BitLength fromMemory(SHADER_DATA_PARAM_DESC& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(SHADER_DATA_PARAM_DESC& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
 			BitLength sizeRead = rtti_read_size_header(stream, compress, size);
@@ -78,7 +78,7 @@ namespace bs
 			return size;
 		}
 
-		static BitLength getSize(const SHADER_DATA_PARAM_DESC& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const SHADER_DATA_PARAM_DESC& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength dataSize = rtti_size(data.arraySize) + rtti_size(data.rendererSemantic) + rtti_size(data.type) +
 				rtti_size(data.name) + rtti_size(data.gpuVariableName) + rtti_size(data.elementSize) +
@@ -93,7 +93,7 @@ namespace bs
 	{
 		enum { id = TID_SHADER_OBJECT_PARAM_DESC }; enum { hasDynamicSize = 1 };
 
-		static BitLength toMemory(const SHADER_OBJECT_PARAM_DESC& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const SHADER_OBJECT_PARAM_DESC& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			static constexpr uint32_t VERSION = 1;
 
@@ -112,7 +112,7 @@ namespace bs
 			});
 		}
 
-		static BitLength fromMemory(SHADER_OBJECT_PARAM_DESC& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(SHADER_OBJECT_PARAM_DESC& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
 			BitLength sizeRead = rtti_read_size_header(stream, compress, size);
@@ -143,7 +143,7 @@ namespace bs
 			return size;
 		}
 
-		static BitLength getSize(const SHADER_OBJECT_PARAM_DESC& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const SHADER_OBJECT_PARAM_DESC& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength dataSize = rtti_size(data.rendererSemantic) + rtti_size(data.type) +
 				rtti_size(data.name) + rtti_size(data.gpuVariableNames) +
@@ -158,7 +158,7 @@ namespace bs
 	{
 		enum { id = TID_SHADER_PARAM_BLOCK_DESC }; enum { hasDynamicSize = 1 };
 
-		static BitLength toMemory(const SHADER_PARAM_BLOCK_DESC& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const SHADER_PARAM_BLOCK_DESC& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]()
 			{
@@ -172,7 +172,7 @@ namespace bs
 			});
 		}
 
-		static BitLength fromMemory(SHADER_PARAM_BLOCK_DESC& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(SHADER_PARAM_BLOCK_DESC& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
 			rtti_read_size_header(stream, compress, size);
@@ -185,7 +185,7 @@ namespace bs
 			return size;
 		}
 
-		static BitLength getSize(const SHADER_PARAM_BLOCK_DESC& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const SHADER_PARAM_BLOCK_DESC& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength dataSize = rtti_size(data.shared) + rtti_size(data.usage) +
 				rtti_size(data.name) + rtti_size(data.rendererSemantic);
@@ -199,7 +199,7 @@ namespace bs
 	{
 		enum { id = TID_SHADER_PARAM_ATTRIBUTE }; enum { hasDynamicSize = 1 };
 
-		static BitLength toMemory(const SHADER_PARAM_ATTRIBUTE& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const SHADER_PARAM_ATTRIBUTE& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			static constexpr UINT32 VERSION = 0;
 
@@ -215,7 +215,7 @@ namespace bs
 			});
 		}
 
-		static BitLength fromMemory(SHADER_PARAM_ATTRIBUTE& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(SHADER_PARAM_ATTRIBUTE& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
 			rtti_read_size_header(stream, compress, size);
@@ -238,7 +238,7 @@ namespace bs
 			return size;
 		}
 
-		static BitLength getSize(const SHADER_PARAM_ATTRIBUTE& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const SHADER_PARAM_ATTRIBUTE& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength dataSize = rtti_size(data.type) + rtti_size(data.value) +
 				rtti_size(data.nextParamIdx) + sizeof(uint32_t);
@@ -253,7 +253,7 @@ namespace bs
 		enum { id = TID_ShaderVariationParamValue }; enum { hasDynamicSize = 1 };
 
 		/** @copydoc RTTIPlainType::toMemory */
-		static BitLength toMemory(const ShaderVariationParamValue& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const ShaderVariationParamValue& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			static constexpr uint8_t VERSION = 0;
 
@@ -269,7 +269,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIPlainType::fromMemory */
-		static BitLength fromMemory(ShaderVariationParamValue& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(ShaderVariationParamValue& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
 			rtti_read_size_header(stream, compress, size);
@@ -285,7 +285,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIPlainType::getSize */
-		static BitLength getSize(const ShaderVariationParamValue& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const ShaderVariationParamValue& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength dataSize = sizeof(uint8_t);
 			dataSize += rtti_size(data.name);
@@ -301,7 +301,7 @@ namespace bs
 		enum { id = TID_ShaderVariationParamInfo }; enum { hasDynamicSize = 1 };
 
 		/** @copydoc RTTIPlainType::toMemory */
-		static BitLength toMemory(const ShaderVariationParamInfo& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const ShaderVariationParamInfo& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			static constexpr uint8_t VERSION = 0;
 
@@ -319,7 +319,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIPlainType::fromMemory */
-		static BitLength fromMemory(ShaderVariationParamInfo& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(ShaderVariationParamInfo& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
 			rtti_read_size_header(stream, compress, size);
@@ -337,7 +337,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIPlainType::getSize */
-		static BitLength getSize(const ShaderVariationParamInfo& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const ShaderVariationParamInfo& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength dataSize = sizeof(uint8_t);
 			dataSize += rtti_size(data.name);
@@ -359,18 +359,18 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 	public:
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "SubShader";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_SubShader;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			return bs_shared_ptr_new<SubShader>();
 		}
@@ -398,7 +398,7 @@ namespace bs
 			BS_RTTI_MEMBER_PLAIN_ARRAY_NAMED(mVariationParams, mDesc.variationParams, 16)
 		BS_END_RTTI_MEMBERS
 
-		SHADER_DATA_PARAM_DESC& getDataParam(Shader* obj, UINT32 idx)
+		SHADER_DATA_PARAM_DESC& GetDataParam(Shader* obj, UINT32 idx)
 		{
 			auto iter = obj->mDesc.dataParams.begin();
 			for(UINT32 i = 0; i < idx; i++) ++iter;
@@ -406,11 +406,11 @@ namespace bs
 			return iter->second;
 		}
 
-		void setDataParam(Shader* obj, UINT32 idx, SHADER_DATA_PARAM_DESC& val) { obj->mDesc.dataParams[val.name] = val; }
-		UINT32 getDataParamsArraySize(Shader* obj) { return (UINT32)obj->mDesc.dataParams.size(); }
-		void setDataParamsArraySize(Shader* obj, UINT32 size) {  } // Do nothing
+		void SetDataParam(Shader* obj, UINT32 idx, SHADER_DATA_PARAM_DESC& val) { obj->mDesc.dataParams[val.name] = val; }
+		UINT32 GetDataParamsArraySize(Shader* obj) { return (UINT32)obj->mDesc.dataParams.size(); }
+		void SetDataParamsArraySize(Shader* obj, UINT32 size) {  } // Do nothing
 
-		SHADER_OBJECT_PARAM_DESC& getTextureParam(Shader* obj, UINT32 idx)
+		SHADER_OBJECT_PARAM_DESC& GetTextureParam(Shader* obj, UINT32 idx)
 		{
 			auto iter = obj->mDesc.textureParams.begin();
 			for(UINT32 i = 0; i < idx; i++) ++iter;
@@ -418,11 +418,11 @@ namespace bs
 			return iter->second;
 		}
 
-		void setTextureParam(Shader* obj, UINT32 idx, SHADER_OBJECT_PARAM_DESC& val) { obj->mDesc.textureParams[val.name] = val; }
-		UINT32 getTextureParamsArraySize(Shader* obj) { return (UINT32)obj->mDesc.textureParams.size(); }
-		void setTextureParamsArraySize(Shader* obj, UINT32 size) {  } // Do nothing
+		void SetTextureParam(Shader* obj, UINT32 idx, SHADER_OBJECT_PARAM_DESC& val) { obj->mDesc.textureParams[val.name] = val; }
+		UINT32 GetTextureParamsArraySize(Shader* obj) { return (UINT32)obj->mDesc.textureParams.size(); }
+		void SetTextureParamsArraySize(Shader* obj, UINT32 size) {  } // Do nothing
 
-		SHADER_OBJECT_PARAM_DESC& getSamplerParam(Shader* obj, UINT32 idx)
+		SHADER_OBJECT_PARAM_DESC& GetSamplerParam(Shader* obj, UINT32 idx)
 		{
 			auto iter = obj->mDesc.samplerParams.begin();
 			for (UINT32 i = 0; i < idx; i++) ++iter;
@@ -430,11 +430,11 @@ namespace bs
 			return iter->second;
 		}
 
-		void setSamplerParam(Shader* obj, UINT32 idx, SHADER_OBJECT_PARAM_DESC& val) { obj->mDesc.samplerParams[val.name] = val; }
-		UINT32 getSamplerParamsArraySize(Shader* obj) { return (UINT32)obj->mDesc.samplerParams.size(); }
-		void setSamplerParamsArraySize(Shader* obj, UINT32 size) {  } // Do nothing
+		void SetSamplerParam(Shader* obj, UINT32 idx, SHADER_OBJECT_PARAM_DESC& val) { obj->mDesc.samplerParams[val.name] = val; }
+		UINT32 GetSamplerParamsArraySize(Shader* obj) { return (UINT32)obj->mDesc.samplerParams.size(); }
+		void SetSamplerParamsArraySize(Shader* obj, UINT32 size) {  } // Do nothing
 
-		SHADER_OBJECT_PARAM_DESC& getBufferParam(Shader* obj, UINT32 idx)
+		SHADER_OBJECT_PARAM_DESC& GetBufferParam(Shader* obj, UINT32 idx)
 		{
 			auto iter = obj->mDesc.bufferParams.begin();
 			for (UINT32 i = 0; i < idx; i++) ++iter;
@@ -442,11 +442,11 @@ namespace bs
 			return iter->second;
 		}
 
-		void setBufferParam(Shader* obj, UINT32 idx, SHADER_OBJECT_PARAM_DESC& val) { obj->mDesc.bufferParams[val.name] = val; }
-		UINT32 getBufferParamsArraySize(Shader* obj) { return (UINT32)obj->mDesc.bufferParams.size(); }
-		void setBufferParamsArraySize(Shader* obj, UINT32 size) {  } // Do nothing
+		void SetBufferParam(Shader* obj, UINT32 idx, SHADER_OBJECT_PARAM_DESC& val) { obj->mDesc.bufferParams[val.name] = val; }
+		UINT32 GetBufferParamsArraySize(Shader* obj) { return (UINT32)obj->mDesc.bufferParams.size(); }
+		void SetBufferParamsArraySize(Shader* obj, UINT32 size) {  } // Do nothing
 
-		SHADER_PARAM_BLOCK_DESC& getParamBlock(Shader* obj, UINT32 idx)
+		SHADER_PARAM_BLOCK_DESC& GetParamBlock(Shader* obj, UINT32 idx)
 		{
 			auto iter = obj->mDesc.paramBlocks.begin();
 			for (UINT32 i = 0; i < idx; i++) ++iter;
@@ -454,9 +454,9 @@ namespace bs
 			return iter->second;
 		}
 
-		void setParamBlock(Shader* obj, UINT32 idx, SHADER_PARAM_BLOCK_DESC& val) { obj->mDesc.paramBlocks[val.name] = val; }
-		UINT32 getParamBlocksArraySize(Shader* obj) { return (UINT32)obj->mDesc.paramBlocks.size(); }
-		void setParamBlocksArraySize(Shader* obj, UINT32 size) {  } // Do nothing
+		void SetParamBlock(Shader* obj, UINT32 idx, SHADER_PARAM_BLOCK_DESC& val) { obj->mDesc.paramBlocks[val.name] = val; }
+		UINT32 GetParamBlocksArraySize(Shader* obj) { return (UINT32)obj->mDesc.paramBlocks.size(); }
+		void SetParamBlocksArraySize(Shader* obj, UINT32 size) {  } // Do nothing
 
 	public:
 		ShaderRTTI()
@@ -473,24 +473,24 @@ namespace bs
 				&ShaderRTTI::setParamBlock, &ShaderRTTI::setParamBlocksArraySize);
 		}
 
-		void onDeserializationEnded(IReflectable* obj, SerializationContext* context) override
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override
 		{
 			Shader* shader = static_cast<Shader*>(obj);
 			shader->initialize();
 		}
 
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "Shader";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_Shader;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			return Shader::createEmpty();
 		}
@@ -499,8 +499,8 @@ namespace bs
 	class BS_CORE_EXPORT ShaderMetaDataRTTI : public RTTIType < ShaderMetaData, ResourceMetaData, ShaderMetaDataRTTI >
 	{
 	private:
-		Vector<String>& getIncludes(ShaderMetaData* obj) { return obj->includes; }
-		void setIncludes(ShaderMetaData* obj, Vector<String>& includes) { obj->includes = includes; }
+		Vector<String>& GetIncludes(ShaderMetaData* obj) { return obj->includes; }
+		void SetIncludes(ShaderMetaData* obj, Vector<String>& includes) { obj->includes = includes; }
 
 	public:
 		ShaderMetaDataRTTI()
@@ -508,18 +508,18 @@ namespace bs
 			addPlainField("includes", 0, &ShaderMetaDataRTTI::getIncludes, &ShaderMetaDataRTTI::setIncludes);
 		}
 
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "ShaderMetaData";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_ShaderMetaData;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			return bs_shared_ptr_new<ShaderMetaData>();
 		}

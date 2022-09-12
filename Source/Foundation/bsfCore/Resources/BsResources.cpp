@@ -23,7 +23,7 @@ namespace bs
 	Resources::Resources()
 	{
 		{
-			Lock lock(mDefaultManifestMutex);
+			Lock Lock(mDefaultManifestMutex);
 			mDefaultResourceManifest = ResourceManifest::create("Default");
 			mResourceManifests.push_back(mDefaultResourceManifest);
 		}
@@ -48,7 +48,7 @@ namespace bs
 		if (!foundUUID)
 			uuid = UUIDGenerator::generateRandom();
 
-		return loadInternal(uuid, filePath, true, loadFlags).resource;
+		return LoadInternal(uuid, filePath, true, loadFlags).resource;
 	}
 
 	HResource Resources::load(const WeakResourceHandle<Resource>& handle, ResourceLoadFlags loadFlags)
@@ -57,7 +57,7 @@ namespace bs
 			return HResource();
 
 		UUID uuid = handle.getUUID();
-		return loadFromUUID(uuid, false, loadFlags);
+		return LoadFromUUID(uuid, false, loadFlags);
 	}
 
 	HResource Resources::loadAsync(const Path& filePath, ResourceLoadFlags loadFlags)
@@ -74,7 +74,7 @@ namespace bs
 		if (!foundUUID)
 			uuid = UUIDGenerator::generateRandom();
 
-		return loadInternal(uuid, filePath, false, loadFlags).resource;
+		return LoadInternal(uuid, filePath, false, loadFlags).resource;
 	}
 
 	HResource Resources::loadFromUUID(const UUID& uuid, bool async, ResourceLoadFlags loadFlags)
@@ -82,7 +82,7 @@ namespace bs
 		Path filePath;
 		getFilePathFromUUID(uuid, filePath);
 
-		return loadInternal(uuid, filePath, !async, loadFlags).resource;
+		return LoadInternal(uuid, filePath, !async, loadFlags).resource;
 	}
 
 	Resources::LoadInfo Resources::loadInternal(const UUID& uuid, const Path& filePath, bool synchronous,
@@ -99,8 +99,8 @@ namespace bs
 			bool alreadyLoading = false;
 
 			// Check if the resource is being loaded on a worker thread
-			Lock inProgressLock(mInProgressResourcesMutex);
-			Lock loadedLock(mLoadedResourceMutex);
+			Lock InProgressLock(mInProgressResourcesMutex);
+			Lock LoadedLock(mLoadedResourceMutex);
 
 			auto iterFind2 = mInProgressResources.find(uuid);
 			if (iterFind2 != mInProgressResources.end())
@@ -183,7 +183,7 @@ namespace bs
 					// with a lot of dependencies (e.g. scenes) this will get called for every dependency, synchronously,
 					// which might take a while. It would be nice to just read it from a single location. Another option is
 					// to make this whole block asynchronous so every dependency does it on its own thread.
-					FileDecoder fs(filePath);
+					FileDecoder Fs(filePath);
 					savedResourceData = std::static_pointer_cast<SavedResourceData>(fs.decode());
 					output.size = fs.getSize();
 				}
@@ -222,7 +222,7 @@ namespace bs
 					}
 				}
 				// The resource is already being loaded, or is loaded, but we might still need to load some dependencies
-				else if(loadDependencies && savedResourceData != nullptr)
+				else If(loadDependencies && savedResourceData != nullptr)
 				{
 					const Vector<UUID>& dependencies = savedResourceData->getDependencies();
 					if (!dependencies.empty())
@@ -313,7 +313,7 @@ namespace bs
 			if (loadFlags.isSet(ResourceLoadFlag::KeepSourceData))
 				depLoadFlags |= ResourceLoadFlag::KeepSourceData;
 
-			Vector<HResource> dependencies(numDependencies);
+			Vector<HResource> Dependencies(numDependencies);
 			UINT32 dependencySize = 0;
 			for (UINT32 i = 0; i < numDependencies; i++)
 			{
@@ -338,7 +338,7 @@ namespace bs
 
 			// Keep dependencies alive until the parent is done loading, and record total size of dependencies to load
 			{
-				Lock inProgressLock(mInProgressResourcesMutex);
+				Lock InProgressLock(mInProgressResourcesMutex);
 
 				// If we're doing a dependency-only load (main resource itself was previously loaded), then the in-progress
 				// operation could have already finished when the last dependency was loaded (this will always be true for
@@ -357,7 +357,7 @@ namespace bs
 		bool waitOnLoadInProgress = false;
 		SPtr<Task> loadTask;
 		{
-			Lock inProgressLock(mInProgressResourcesMutex);
+			Lock InProgressLock(mInProgressResourcesMutex);
 
 			const auto iterFind = mInProgressResources.find(uuid);
 			if (iterFind != mInProgressResources.end())
@@ -400,7 +400,7 @@ namespace bs
 
 				// Register the task
 				{
-					Lock inProgressLock(mInProgressResourcesMutex);
+					Lock InProgressLock(mInProgressResourcesMutex);
 
 					const auto iterFind = mInProgressResources.find(uuid);
 					if (iterFind != mInProgressResources.end())
@@ -508,7 +508,7 @@ namespace bs
 			bool loadInProgress = false;
 
 			{
-				Lock inProgressLock(mInProgressResourcesMutex);
+				Lock InProgressLock(mInProgressResourcesMutex);
 				auto iterFind2 = mInProgressResources.find(uuid);
 				if (iterFind2 != mInProgressResources.end())
 					loadInProgress = true;
@@ -523,7 +523,7 @@ namespace bs
 
 			bool lostLastRef = false;
 			{
-				Lock loadedLock(mLoadedResourceMutex);
+				Lock LoadedLock(mLoadedResourceMutex);
 				auto iterFind = mLoadedResources.find(uuid);
 				if (iterFind != mLoadedResources.end())
 				{
@@ -548,7 +548,7 @@ namespace bs
 		Vector<HResource> resourcesToUnload;
 
 		{
-			Lock lock(mLoadedResourceMutex);
+			Lock Lock(mLoadedResourceMutex);
 			for(auto iter = mLoadedResources.begin(); iter != mLoadedResources.end(); ++iter)
 			{
 				const LoadedResourceData& resData = iter->second;
@@ -576,7 +576,7 @@ namespace bs
 		UnorderedMap<UUID, LoadedResourceData> loadedResourcesCopy;
 		
 		{
-			Lock lock(mLoadedResourceMutex);
+			Lock Lock(mLoadedResourceMutex);
 			loadedResourcesCopy = mLoadedResources;
 		}
 
@@ -589,7 +589,7 @@ namespace bs
 		if (resource.mData == nullptr)
 			return;
 
-		RecursiveLock lock(mDestroyMutex);
+		RecursiveLock Lock(mDestroyMutex);
 
 		// If load in progress, first wait until it completes
 		const UUID& uuid = resource.getUUID();
@@ -597,7 +597,7 @@ namespace bs
 		{
 			bool loadInProgress = false;
 			{
-				Lock lock(mInProgressResourcesMutex);
+				Lock Lock(mInProgressResourcesMutex);
 				auto iterFind2 = mInProgressResources.find(uuid);
 				if (iterFind2 != mInProgressResources.end())
 					loadInProgress = true;
@@ -617,7 +617,7 @@ namespace bs
 		resource.mData->mPtr->destroy();
 
 		{
-			Lock lock(mLoadedResourceMutex);
+			Lock Lock(mLoadedResourceMutex);
 			auto iterFind = mLoadedResources.find(uuid);
 			if (iterFind != mLoadedResources.end())
 			{
@@ -648,7 +648,7 @@ namespace bs
 		{
 			bool loadInProgress = false;
 			{
-				Lock lock(mInProgressResourcesMutex);
+				Lock Lock(mInProgressResourcesMutex);
 				auto iterFind2 = mInProgressResources.find(resource.getUUID());
 				if (iterFind2 != mInProgressResources.end())
 					loadInProgress = true;
@@ -668,7 +668,7 @@ namespace bs
 		}
 
 		{
-			Lock lock(mDefaultManifestMutex);
+			Lock Lock(mDefaultManifestMutex);
 			mDefaultResourceManifest->registerResource(resource.getUUID(), filePath);
 		}
 
@@ -694,7 +694,7 @@ namespace bs
 		}
 
 		Vector<ResourceDependency> dependencyList = Utility::findResourceDependencies(*resource);
-		Vector<UUID> dependencyUUIDs(dependencyList.size());
+		Vector<UUID> DependencyUUIDs(dependencyList.size());
 		for (UINT32 i = 0; i < (UINT32)dependencyList.size(); i++)
 			dependencyUUIDs[i] = dependencyList[i].resource.getUUID();
 
@@ -807,7 +807,7 @@ namespace bs
 
 		if(resource)
 		{
-			Lock lock(mLoadedResourceMutex);
+			Lock Lock(mLoadedResourceMutex);
 			auto iterFind = mLoadedResources.find(uuid);
 			if (iterFind == mLoadedResources.end())
 			{
@@ -827,7 +827,7 @@ namespace bs
 		SPtr<SavedResourceData> savedResourceData;
 		if (!filePath.isEmpty())
 		{
-			FileDecoder fs(filePath);
+			FileDecoder Fs(filePath);
 			savedResourceData = std::static_pointer_cast<SavedResourceData>(fs.decode());
 		}
 
@@ -868,7 +868,7 @@ namespace bs
 	{
 		if (checkInProgress)
 		{
-			Lock inProgressLock(mInProgressResourcesMutex);
+			Lock InProgressLock(mInProgressResourcesMutex);
 			auto iterFind2 = mInProgressResources.find(uuid);
 			if (iterFind2 != mInProgressResources.end())
 			{
@@ -877,7 +877,7 @@ namespace bs
 		}
 
 		{
-			Lock loadedLock(mLoadedResourceMutex);
+			Lock LoadedLock(mLoadedResourceMutex);
 			auto iterFind = mLoadedResources.find(uuid);
 			if (iterFind != mLoadedResources.end())
 			{
@@ -894,8 +894,8 @@ namespace bs
 		if(uuid.empty())
 			return 0.0f;
 
-		Lock inProgressLock(mInProgressResourcesMutex);
-		Lock loadedLock(mLoadedResourceMutex);
+		Lock InProgressLock(mInProgressResourcesMutex);
+		Lock LoadedLock(mLoadedResourceMutex);
 
 		// Fully loaded
 		auto iterFind = mLoadedResources.find(uuid);
@@ -942,10 +942,10 @@ namespace bs
 
 	HResource Resources::_createResourceHandle(const SPtr<Resource>& obj, const UUID& UUID)
 	{
-		HResource newHandle(obj, UUID);
+		HResource NewHandle(obj, UUID);
 
 		{
-			Lock lock(mLoadedResourceMutex);
+			Lock Lock(mLoadedResourceMutex);
 
 			if(obj)
 			{
@@ -961,7 +961,7 @@ namespace bs
 
 	HResource Resources::_getResourceHandle(const UUID& uuid)
 	{
-		Lock lock(mLoadedResourceMutex);
+		Lock Lock(mLoadedResourceMutex);
 		auto iterFind3 = mHandles.find(uuid);
 		if (iterFind3 != mHandles.end()) // Not loaded, but handle does exist
 		{
@@ -969,7 +969,7 @@ namespace bs
 		}
 
 		// Create new handle
-		HResource handle(uuid);
+		HResource Handle(uuid);
 		mHandles[uuid] = handle.getWeak();
 
 		return handle;
@@ -1011,7 +1011,7 @@ namespace bs
 		bool finishLoad = true;
 		Vector<ResourceLoadData*> dependantLoads;
 		{
-			Lock inProgresslock(mInProgressResourcesMutex);
+			Lock InProgresslock(mInProgressResourcesMutex);
 
 			auto iterFind = mInProgressResources.find(uuid);
 			if (iterFind != mInProgressResources.end())
@@ -1036,7 +1036,7 @@ namespace bs
 				// by its dependencies.
 				if (myLoadData != nullptr && myLoadData->loadedData != nullptr)
 				{
-					Lock loadedLock(mLoadedResourceMutex);
+					Lock LoadedLock(mLoadedResourceMutex);
 
 					mLoadedResources[uuid] = myLoadData->resData;
 					resource.setHandleData(myLoadData->loadedData, uuid);
@@ -1074,14 +1074,14 @@ namespace bs
 	{
 		ResourceLoadData* myLoadData;
 		{
-			Lock lock(mInProgressResourcesMutex);
+			Lock Lock(mInProgressResourcesMutex);
 			myLoadData = mInProgressResources[resource.getUUID()];
 		}
 
 		SPtr<Resource> rawResource = loadFromDiskAndDeserialize(filePath, loadWithSaveData, myLoadData->progress);
 
 		{
-			Lock lock(mInProgressResourcesMutex);
+			Lock Lock(mInProgressResourcesMutex);
 
 			myLoadData->loadedData = rawResource;
 			myLoadData->remainingDependencies--;
@@ -1091,7 +1091,7 @@ namespace bs
 		loadComplete(resource, true);
 	}
 
-	BS_CORE_EXPORT Resources& gResources()
+	BS_CORE_EXPORT Resources& GResources()
 	{
 		return Resources::instance();
 	}

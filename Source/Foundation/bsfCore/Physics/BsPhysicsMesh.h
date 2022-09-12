@@ -25,10 +25,10 @@ namespace bs
 
 		/** Returns the type of the physics mesh. */
 		BS_SCRIPT_EXPORT(n:Type,pr:getter)
-		PhysicsMeshType getType() const;
+		PhysicsMeshType GetType() const;
 
 		/** Returns the mesh's indices and vertices. */
-		SPtr<MeshData> getMeshData() const;
+		SPtr<MeshData> GetMeshData() const;
 
 		/**
 		 * Creates a new physics mesh.
@@ -37,7 +37,7 @@ namespace bs
 		 * @param[in]	type		Type of the mesh. If convex the provided mesh geometry will be converted into a convex
 		 *							mesh (that might not be the same as the provided mesh data).
 		 */
-		static HPhysicsMesh create(const SPtr<MeshData>& meshData, PhysicsMeshType type = PhysicsMeshType::Convex);
+		static HPhysicsMesh Create(const SPtr<MeshData>& meshData, PhysicsMeshType type = PhysicsMeshType::Convex);
 
 		/** @name Internal
 		 *  @{
@@ -57,7 +57,7 @@ namespace bs
 
 	protected:
 		/** @copydoc Resource::initialize() */
-		void initialize() override;
+		void Initialize() override;
 
 		SPtr<FPhysicsMesh> mInternal;
 		SPtr<MeshData> mInitMeshData; // Transient, only used during initalization
@@ -85,7 +85,7 @@ namespace bs
 		virtual ~FPhysicsMesh();
 
 		/** Returns the mesh's indices and vertices. */
-		virtual SPtr<MeshData> getMeshData() const = 0;
+		virtual SPtr<MeshData> GetMeshData() const = 0;
 
 	protected:
 		friend class PhysicsMesh;

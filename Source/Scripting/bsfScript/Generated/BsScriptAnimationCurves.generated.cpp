@@ -157,7 +157,7 @@ namespace bs
 		Vector<TNamedAnimationCurve<Vector3>> vecvalue;
 		if(value != nullptr)
 		{
-			ScriptArray arrayvalue(value);
+			ScriptArray Arrayvalue(value);
 			vecvalue.resize(arrayvalue.size());
 			for(int i = 0; i < (int)arrayvalue.size(); i++)
 			{
@@ -189,7 +189,7 @@ namespace bs
 		Vector<TNamedAnimationCurve<Quaternion>> vecvalue;
 		if(value != nullptr)
 		{
-			ScriptArray arrayvalue(value);
+			ScriptArray Arrayvalue(value);
 			vecvalue.resize(arrayvalue.size());
 			for(int i = 0; i < (int)arrayvalue.size(); i++)
 			{
@@ -221,7 +221,7 @@ namespace bs
 		Vector<TNamedAnimationCurve<Vector3>> vecvalue;
 		if(value != nullptr)
 		{
-			ScriptArray arrayvalue(value);
+			ScriptArray Arrayvalue(value);
 			vecvalue.resize(arrayvalue.size());
 			for(int i = 0; i < (int)arrayvalue.size(); i++)
 			{
@@ -253,7 +253,7 @@ namespace bs
 		Vector<TNamedAnimationCurve<float>> vecvalue;
 		if(value != nullptr)
 		{
-			ScriptArray arrayvalue(value);
+			ScriptArray Arrayvalue(value);
 			vecvalue.resize(arrayvalue.size());
 			for(int i = 0; i < (int)arrayvalue.size(); i++)
 			{

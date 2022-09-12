@@ -25,7 +25,7 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "KeyFrameInt")
 
 		static MonoObject* box(const TKeyframe<int32_t>& value);
-		static TKeyframe<int32_t> unbox(MonoObject* value);
+		static TKeyframe<int32_t> Unbox(MonoObject* value);
 
 	private:
 		ScriptTKeyframeint32_t(MonoObject* managedInstance);
@@ -38,7 +38,7 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "KeyFrame")
 
 		static MonoObject* box(const TKeyframe<float>& value);
-		static TKeyframe<float> unbox(MonoObject* value);
+		static TKeyframe<float> Unbox(MonoObject* value);
 
 	private:
 		ScriptTKeyframefloat(MonoObject* managedInstance);
@@ -59,9 +59,9 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "KeyFrameVec3")
 
 		static MonoObject* box(const __TKeyframeVector3Interop& value);
-		static __TKeyframeVector3Interop unbox(MonoObject* value);
-		static TKeyframe<Vector3> fromInterop(const __TKeyframeVector3Interop& value);
-		static __TKeyframeVector3Interop toInterop(const TKeyframe<Vector3>& value);
+		static __TKeyframeVector3Interop Unbox(MonoObject* value);
+		static TKeyframe<Vector3> FromInterop(const __TKeyframeVector3Interop& value);
+		static __TKeyframeVector3Interop ToInterop(const TKeyframe<Vector3>& value);
 
 	private:
 		ScriptTKeyframeVector3(MonoObject* managedInstance);
@@ -82,9 +82,9 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "KeyFrameVec2")
 
 		static MonoObject* box(const __TKeyframeVector2Interop& value);
-		static __TKeyframeVector2Interop unbox(MonoObject* value);
-		static TKeyframe<Vector2> fromInterop(const __TKeyframeVector2Interop& value);
-		static __TKeyframeVector2Interop toInterop(const TKeyframe<Vector2>& value);
+		static __TKeyframeVector2Interop Unbox(MonoObject* value);
+		static TKeyframe<Vector2> FromInterop(const __TKeyframeVector2Interop& value);
+		static __TKeyframeVector2Interop ToInterop(const TKeyframe<Vector2>& value);
 
 	private:
 		ScriptTKeyframeVector2(MonoObject* managedInstance);
@@ -105,9 +105,9 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "KeyFrameQuat")
 
 		static MonoObject* box(const __TKeyframeQuaternionInterop& value);
-		static __TKeyframeQuaternionInterop unbox(MonoObject* value);
-		static TKeyframe<Quaternion> fromInterop(const __TKeyframeQuaternionInterop& value);
-		static __TKeyframeQuaternionInterop toInterop(const TKeyframe<Quaternion>& value);
+		static __TKeyframeQuaternionInterop Unbox(MonoObject* value);
+		static TKeyframe<Quaternion> FromInterop(const __TKeyframeQuaternionInterop& value);
+		static __TKeyframeQuaternionInterop ToInterop(const TKeyframe<Quaternion>& value);
 
 	private:
 		ScriptTKeyframeQuaternion(MonoObject* managedInstance);

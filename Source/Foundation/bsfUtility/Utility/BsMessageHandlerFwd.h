@@ -46,7 +46,7 @@ namespace bs
 		HMessage() = default;
 
 		/** Disconnects the message listener so it will no longer receive events from the messaging system. */
-		void disconnect();
+		void Disconnect();
 
 	private:
 		friend class MessageHandler;
@@ -61,7 +61,7 @@ namespace bs
 	 *
 	 * @note	Sim thread only.
 	 */
-	void BS_UTILITY_EXPORT sendMessage(MessageId message);
+	void BS_UTILITY_EXPORT SendMessage(MessageId message);
 
 	class MessageHandler;
 

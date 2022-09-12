@@ -26,7 +26,7 @@ namespace bs
 	{
 		CharRange() = default;
 		CharRange(UINT32 start, UINT32 end)
-			: start(start), end(end)
+			: Start(start), end(end)
 		{ }
 
 		UINT32 start = 0;
@@ -65,7 +65,7 @@ namespace bs
 
 		/** Creates a new import options object that allows you to customize how are fonts imported. */
 		BS_SCRIPT_EXPORT(ec:T)
-		static SPtr<FontImportOptions> create();
+		static SPtr<FontImportOptions> Create();
 
 		/************************************************************************/
 		/* 								SERIALIZATION                      		*/

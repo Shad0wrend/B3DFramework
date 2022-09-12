@@ -39,7 +39,7 @@ namespace bs
 		if (Input::instance().isButtonHeld(BC_LMENU) || Input::instance().isButtonHeld(BC_RMENU))
 			modifiers |= (UINT32)ButtonModifier::Alt;
 
-		ShortcutKey searchKey((ButtonModifier)modifiers, event.buttonCode);
+		ShortcutKey SearchKey((ButtonModifier)modifiers, event.buttonCode);
 
 		auto iterFind = mShortcuts.find(searchKey);
 		if (iterFind != mShortcuts.end())

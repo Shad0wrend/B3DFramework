@@ -27,25 +27,25 @@ namespace bs
 	}
 
 	GpuProgram::GpuProgram(const GPU_PROGRAM_DESC& desc)
-		: mNeedsAdjacencyInfo(desc.requiresAdjacency), mLanguage(desc.language), mType(desc.type)
-		, mEntryPoint(desc.entryPoint), mSource(desc.source)
+		: MNeedsAdjacencyInfo(desc.requiresAdjacency), mLanguage(desc.language), mType(desc.type)
+		, MEntryPoint(desc.entryPoint), mSource(desc.source)
 	{
 
 	}
 
 	bool GpuProgram::isCompiled() const
 	{
-		return getCore()->isCompiled();
+		return GetCore()->isCompiled();
 	}
 
 	String GpuProgram::getCompileErrorMessage() const
 	{
-		return getCore()->getCompileErrorMessage();
+		return GetCore()->getCompileErrorMessage();
 	}
 
 	SPtr<GpuParamDesc> GpuProgram::getParamDesc() const
 	{
-		return getCore()->getParamDesc();
+		return GetCore()->getParamDesc();
 	}
 
 	SPtr<ct::GpuProgram> GpuProgram::getCore() const
@@ -87,8 +87,8 @@ namespace bs
 	namespace ct
 	{
 	GpuProgram::GpuProgram(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask)
-		: mNeedsAdjacencyInfo(desc.requiresAdjacency), mType(desc.type), mEntryPoint(desc.entryPoint), mSource(desc.source)
-		, mBytecode(desc.bytecode)
+		: MNeedsAdjacencyInfo(desc.requiresAdjacency), mType(desc.type), mEntryPoint(desc.entryPoint), mSource(desc.source)
+		, MBytecode(desc.bytecode)
 	{
 		mParametersDesc = bs_shared_ptr_new<GpuParamDesc>();
 	}

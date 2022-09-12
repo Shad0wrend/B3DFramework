@@ -67,7 +67,7 @@ namespace bs
 		 * @return							Printable IP string, such as "192.0.0.1" or "2001:db8:63b3:1::3490". If
 		 *									@p withPort is true the string will also include a port component.
 		 */
-		String toString(bool withPort = false) const;
+		String ToString(bool withPort = false) const;
 
 		/**
 		 * Compares the IP portion of a network address with another address (ignoring port).
@@ -75,7 +75,7 @@ namespace bs
 		 * @param[in]	other		Other address to compare with.
 		 * @return					True if the IP addresses match, false otherwise.
 		 */
-		bool compareIP(const NetworkAddress& other) const;
+		bool CompareIP(const NetworkAddress& other) const;
 
 		NetworkAddress& operator=(const NetworkAddress& rhs);
 		bool operator==(const NetworkAddress& rhs) const;
@@ -275,7 +275,7 @@ namespace bs
 		 * @return						True if the connection attempt succesfully started, and false otherwise. If false
 		 *								the relevant error message will be printed in the log.
 		 */
-		bool connect(const char* host, UINT16 port);
+		bool Connect(const char* host, UINT16 port);
 
 		/**
 		 * Disconnects from a previously connected remote peer.
@@ -285,7 +285,7 @@ namespace bs
 		 *							message. If false the peer will immediately close the connection without notifying the
 		 *							remote.
 		 */
-		void disconnect(const NetworkAddress& address, bool silent = false);
+		void Disconnect(const NetworkAddress& address, bool silent = false);
 
 		/**
 		 * Disconnects from a previously connected remote peer.
@@ -295,7 +295,7 @@ namespace bs
 		 *							message. If false the peer will immediately close the connection without notifying the
 		 *							remote.
 		 */
-		void disconnect(const NetworkId& id, bool silent = false);
+		void Disconnect(const NetworkId& id, bool silent = false);
 
 		// TODO Low priority - Maybe make use of UPtr to free the event? Instead on relying on the user to manually
 		// free them
@@ -346,10 +346,10 @@ namespace bs
 		 *							reserved).
 		 * @param[in]	channel		Channel determining reliability, ordering and priority of the sent data.
 		 */
-		void broadcast(const PacketData& data, const PacketChannel& channel);
+		void Broadcast(const PacketData& data, const PacketChannel& channel);
 
 		/** Frees a network event received though a call to @p receive(). */
-		void free(NetworkEvent* event);
+		void Free(NetworkEvent* event);
 
 		// TODO - Other methods needed:
 		// AveragePing(AddrOrId)
@@ -387,7 +387,7 @@ namespace bs
 		};
 
 		// TODO - Doc
-		const UUID& getNetworkUUID() const { return mNetworkUUID; }
+		const UUID& GetNetworkUUID() const { return mNetworkUUID; }
 
 		// TODO - Special case for spawning prefabs, to avoid syncing all their state
 		// (Probably not part of this class, but keeping the comment here so I don't forget)
@@ -396,16 +396,16 @@ namespace bs
 		 * Spawns the network object across all relevant clients. Only usable on the server. If the object is already
 		 * spawned, no change is made.
 		 */
-		void networkSpawn();
+		void NetworkSpawn();
 
 		/**
 		 * Destroys the object across all clients it was spawned on. Only usable on the server. If the object is already
 		 * destroyed, or hasn't been spawned at all, no change is made.
 		 */
-		void networkDespawn();
+		void NetworkDespawn();
 
 		/** Gets the current state of all replicable fields on an object. */
-		NetworkObjectState getNetworkState() const;
+		NetworkObjectState GetNetworkState() const;
 		
 	public:
 		NetworkObject() = default;
@@ -435,12 +435,12 @@ namespace bs
 		NetworkEncoder();
 		~NetworkEncoder();
 
-		void encode(UINT8 type, const UUID& uuid, IReflectable* object, SerializationContext* context = nullptr);
+		void Encode(UINT8 type, const UUID& uuid, IReflectable* object, SerializationContext* context = nullptr);
 		UINT8* getOutput(UINT32& size);
-		void clear();
+		void Clear();
 
 	private:
-		BufferPiece allocBufferPiece();
+		BufferPiece AllocBufferPiece();
 
 		Vector<BufferPiece> mBufferPieces;
 		Vector<BufferPiece> mBufferPiecePool;
@@ -458,7 +458,7 @@ namespace bs
 	public:
 		NetworkDecoder(const SPtr<MemoryDataStream>& data);
 
-		SPtr<IReflectable> decode(UINT8& type, UUID& uuid, SerializationContext* context = nullptr);
+		SPtr<IReflectable> Decode(UINT8& type, UUID& uuid, SerializationContext* context = nullptr);
 
 	private:
 		SPtr<MemoryDataStream> mInputStream;
@@ -473,15 +473,15 @@ namespace bs
 	public:
 		// TODO- Doc
 
-		bool isHost() const { return mState == NetworkState::Hosting; }
-		bool isClient() const { return mState == NetworkState::Connected || mState == NetworkState::Connecting; }
+		bool IsHost() const { return mState == NetworkState::Hosting; }
+		bool IsClient() const { return mState == NetworkState::Connected || mState == NetworkState::Connecting; }
 
 		// TODO - Handle cases when network is already in host or client state when one of these is called again
-		void host(const SmallVector<NetworkAddress, 4>& listenAddresses, UINT32 tickRate = 30, UINT32 maxConnections = 64);
-		void connect(const char* host, UINT16 port);
-		void disconnect();
+		void Host(const SmallVector<NetworkAddress, 4>& listenAddresses, UINT32 tickRate = 30, UINT32 maxConnections = 64);
+		void Connect(const char* host, UINT16 port);
+		void Disconnect();
 
-		void update(float dt);
+		void Update(float dt);
 
 		void _notifyNetworkObjectSpawned(NetworkObject* object);
 		void _notifyNetworkObjectDespawned(NetworkObject* object);

@@ -45,16 +45,16 @@ namespace bs
 		{ }
 
 		/** Determines how important is the message and when should it be displayed. */
-		LogVerbosity getVerbosity() const { return mVerbosity; }
+		LogVerbosity GetVerbosity() const { return mVerbosity; }
 
 		/** Category of the system the message originated from. */
-		UINT32 getCategory() const { return mCategory; }
+		UINT32 GetCategory() const { return mCategory; }
 
 		/** Text of the message. */
-		const String& getMessage() const { return mMsg; }
+		const String& GetMessage() const { return mMsg; }
 
 		/** Local time of message */
-		const std::time_t& getLocalTime() const { return mLocalTime; }
+		const std::time_t& GetLocalTime() const { return mLocalTime; }
 
 	private:
 		String mMsg;
@@ -82,19 +82,19 @@ namespace bs
 		 * @param[in]	verbosity	Verbosity of the message, determining its importance.
 		 * @param[in]	category	Category of the message, determining which system is it relevant to.
 		 */
-		void logMsg(const String& message, LogVerbosity verbosity, UINT32 category);
+		void LogMsg(const String& message, LogVerbosity verbosity, UINT32 category);
 
 		/** Removes all log entries. */
-		void clear();
+		void Clear();
 
 		/**
 		 * Removes all log entries for a specific verbosity level and/or category. Specify -1 to clear all verbosity levels
 		 * and/or categories.
 		 */
-		void clear(LogVerbosity verbosity, UINT32 category);
+		void Clear(LogVerbosity verbosity, UINT32 category);
 
 		/** Returns all existing log entries. */
-		Vector<LogEntry> getEntries() const;
+		Vector<LogEntry> GetEntries() const;
 
 		/**
 		 * Returns the latest unread entry from the log queue, and removes the entry from the unread entries list.
@@ -102,7 +102,7 @@ namespace bs
 		 * @param[out]	entry	Entry that was retrieved, or undefined if no entries exist.
 		 * @return				True if an unread entry was retrieved, false otherwise.
 		 */
-		bool getUnreadEntry(LogEntry& entry);
+		bool GetUnreadEntry(LogEntry& entry);
 
 		/**
 		 * Returns the last available log entry.
@@ -110,13 +110,13 @@ namespace bs
 		 * @param[out]	entry	Entry that was retrieved, or undefined if no entries exist.
 		 * @return				True if an entry was retrieved, false otherwise.
 		 */
-		bool getLastEntry(LogEntry& entry);
+		bool GetLastEntry(LogEntry& entry);
 
 		/**
 		 * Returns a hash value that is modified whenever entries in the log change. This can be used for
 		 * checking for changes by external systems.
 		 */
-		UINT64 getHash() const { return mHash; }
+		UINT64 GetHash() const { return mHash; }
 		
 		/**
 		 * Checks if the category with the specified ID exists.
@@ -124,10 +124,10 @@ namespace bs
 		 *  @param[in] id	Number representing the category's ID.
 		 *  @return			True if exists, otherwise false.
 		 */
-		static bool categoryExists(UINT32 id);
+		static bool CategoryExists(UINT32 id);
 		
 		/** Returns the number of registered log categories. */
-		static UINT32 getNumCategories() { return (UINT32)sCategories.size(); };
+		static UINT32 GetNumCategories() { return (UINT32)sCategories.size(); };
 		
 		/**
 		 *  Get the name of the category based on its ID.
@@ -137,7 +137,7 @@ namespace bs
 		 *  @return				If found will write the name and return true. Otherwise will write the name "Unknown"
 		 *						and return false.
 		 */
-		static bool getCategoryName(UINT32 id, String& name);
+		static bool GetCategoryName(UINT32 id, String& name);
 
 		/**
 		 * @name Internal
@@ -159,7 +159,7 @@ namespace bs
 		friend class Debug;
 
 		/** Returns all log entries, including those marked as unread. */
-		Vector<LogEntry> getAllEntries() const;
+		Vector<LogEntry> GetAllEntries() const;
 
 		Vector<LogEntry> mEntries;
 		Queue<LogEntry> mUnreadEntries;

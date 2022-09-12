@@ -79,7 +79,7 @@ namespace bs
 		Vector<ResourceHandle<Texture>> veccolorSurface;
 		if(colorSurface != nullptr)
 		{
-			ScriptArray arraycolorSurface(colorSurface);
+			ScriptArray ArraycolorSurface(colorSurface);
 			veccolorSurface.resize(arraycolorSurface.size());
 			for(int i = 0; i < (int)arraycolorSurface.size(); i++)
 			{
@@ -101,7 +101,7 @@ namespace bs
 		Vector<ResourceHandle<Texture>> veccolorSurface;
 		if(colorSurface != nullptr)
 		{
-			ScriptArray arraycolorSurface(colorSurface);
+			ScriptArray ArraycolorSurface(colorSurface);
 			veccolorSurface.resize(arraycolorSurface.size());
 			for(int i = 0; i < (int)arraycolorSurface.size(); i++)
 			{

@@ -14,7 +14,7 @@ using namespace physx;
 
 namespace bs
 {
-	PxForceMode::Enum toPxForceMode(ForceMode mode)
+	PxForceMode::Enum ToPxForceMode(ForceMode mode)
 	{
 		switch(mode)
 		{
@@ -31,7 +31,7 @@ namespace bs
 		return PxForceMode::eFORCE;
 	}
 
-	PxForceMode::Enum toPxForceMode(PointForceMode mode)
+	PxForceMode::Enum ToPxForceMode(PointForceMode mode)
 	{
 		switch (mode)
 		{
@@ -100,12 +100,12 @@ namespace bs
 
 	Vector3 PhysXRigidbody::getPosition() const
 	{
-		return fromPxVector(mInternal->getGlobalPose().p);
+		return FromPxVector(mInternal->getGlobalPose().p);
 	}
 
 	Quaternion PhysXRigidbody::getRotation() const
 	{
-		return fromPxQuaternion(mInternal->getGlobalPose().q);
+		return FromPxQuaternion(mInternal->getGlobalPose().q);
 	}
 
 	void PhysXRigidbody::setTransform(const Vector3& pos, const Quaternion& rot)
@@ -181,7 +181,7 @@ namespace bs
 
 	Vector3 PhysXRigidbody::getVelocity() const
 	{
-		return fromPxVector(mInternal->getLinearVelocity());
+		return FromPxVector(mInternal->getLinearVelocity());
 	}
 
 	void PhysXRigidbody::setAngularVelocity(const Vector3& velocity)
@@ -191,7 +191,7 @@ namespace bs
 
 	Vector3 PhysXRigidbody::getAngularVelocity() const
 	{
-		return fromPxVector(mInternal->getAngularVelocity());
+		return FromPxVector(mInternal->getAngularVelocity());
 	}
 
 	void PhysXRigidbody::setDrag(float drag)
@@ -228,7 +228,7 @@ namespace bs
 
 	Vector3 PhysXRigidbody::getInertiaTensor() const
 	{
-		return fromPxVector(mInternal->getMassSpaceInertiaTensor());
+		return FromPxVector(mInternal->getMassSpaceInertiaTensor());
 	}
 
 	void PhysXRigidbody::setMaxAngularVelocity(float maxVelocity)
@@ -256,13 +256,13 @@ namespace bs
 	Vector3 PhysXRigidbody::getCenterOfMassPosition() const
 	{
 		PxTransform cMassTfrm = mInternal->getCMassLocalPose();
-		return fromPxVector(cMassTfrm.p);
+		return FromPxVector(cMassTfrm.p);
 	}
 
 	Quaternion PhysXRigidbody::getCenterOfMassRotation() const
 	{
 		PxTransform cMassTfrm = mInternal->getCMassLocalPose();
-		return fromPxQuaternion(cMassTfrm.q);
+		return FromPxQuaternion(cMassTfrm.q);
 	}
 
 	void PhysXRigidbody::setPositionSolverCount(UINT32 count)
@@ -354,7 +354,7 @@ namespace bs
 		PxVec3 velocity = mInternal->getLinearVelocity();
 		velocity += mInternal->getAngularVelocity().cross(rpoint);
 
-		return fromPxVector(velocity);
+		return FromPxVector(velocity);
 	}
 
 	void PhysXRigidbody::updateMassDistribution()

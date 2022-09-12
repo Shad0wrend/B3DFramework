@@ -24,7 +24,7 @@ namespace bs { namespace ct
 	struct GpuSortProperties
 	{
 		GpuSortProperties(UINT32 count)
-			: count(count)
+			: Count(count)
 		{ }
 
 		const UINT32 count;
@@ -37,7 +37,7 @@ namespace bs { namespace ct
 	};
 
 	/** Set up common defines required by all radix sort shaders. */
-	void initCommonDefines(ShaderDefines& defines)
+	void InitCommonDefines(ShaderDefines& defines)
 	{
 		defines.set("RADIX_NUM_BITS", RADIX_NUM_BITS);
 		defines.set("NUM_THREADS", NUM_THREADS);
@@ -45,13 +45,13 @@ namespace bs { namespace ct
 		defines.set("MAX_NUM_GROUPS", MAX_NUM_GROUPS);
 	}
 
-	void runSortTest();
+	void RunSortTest();
 
 	/**
 	 * Creates a new GPU parameter block buffer according to gRadixSortParamDef definition and writes GpuSort properties
 	 * into the buffer.
 	 */
-	SPtr<GpuParamBlockBuffer> createGpuSortParams(const GpuSortProperties& props)
+	SPtr<GpuParamBlockBuffer> CreateGpuSortParams(const GpuSortProperties& props)
 	{
 		SPtr<GpuParamBlockBuffer> buffer = gRadixSortParamsDef.createBuffer();
 
@@ -91,7 +91,7 @@ namespace bs { namespace ct
 	}
 
 	/** Creates a helper buffers used for storing intermediate information during GpuSort::sort. */
-	SPtr<GpuBuffer> createHelperBuffer()
+	SPtr<GpuBuffer> CreateHelperBuffer()
 	{
 		GPU_BUFFER_DESC desc;
 		desc.elementCount = MAX_NUM_GROUPS * NUM_DIGITS;
@@ -252,7 +252,7 @@ namespace bs { namespace ct
 			return 0;
 		}
 
-		const GpuSortProperties gpuSortProps(numKeys);
+		const GpuSortProperties GpuSortProps(numKeys);
 		SPtr<GpuParamBlockBuffer> params = createGpuSortParams(gpuSortProps);
 
 		UINT32 bitOffset = 0;
@@ -302,7 +302,7 @@ namespace bs { namespace ct
 	// Note: This test isn't currently hooked up anywhere. It might be a good idea to set it up as a unit test, but it would
 	// require exposing parts of GpuSort to the public, which I don't feel like it's worth doing just for a test. So instead
 	// just make sure to run the test below if you modify any of the GpuSort code.
-	void runSortTest()
+	void RunSortTest()
 	{
 		// Generate test keys
 		static constexpr UINT32 NUM_INPUT_KEYS = 10000;
@@ -318,7 +318,7 @@ namespace bs { namespace ct
 		UINT32 bitMask = (1 << RADIX_NUM_BITS) - 1;
 
 		// Prepare buffers
-		const GpuSortProperties gpuSortProps(count);
+		const GpuSortProperties GpuSortProps(count);
 		SPtr<GpuParamBlockBuffer> params = createGpuSortParams(gpuSortProps);
 
 		gRadixSortParamsDef.gBitOffset.set(params, bitOffset);
@@ -335,7 +335,7 @@ namespace bs { namespace ct
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		// SERIAL:
-		Vector<UINT32> counts(gpuSortProps.numGroups * NUM_DIGITS);
+		Vector<UINT32> Counts(gpuSortProps.numGroups * NUM_DIGITS);
 		for(UINT32 groupIdx = 0; groupIdx < gpuSortProps.numGroups; groupIdx++)
 		{
 			// Count keys per thread
@@ -459,7 +459,7 @@ namespace bs { namespace ct
 
 		// Compare with GPU count
 		const UINT32 helperBufferLength = helperBuffers[0]->getProperties().getElementCount();
-		Vector<UINT32> bufferCounts(helperBufferLength);
+		Vector<UINT32> BufferCounts(helperBufferLength);
 		helperBuffers[0]->readData(0, helperBufferLength * sizeof(UINT32), bufferCounts.data());
 
 		for(UINT32 i = 0; i < (UINT32)counts.size(); i++)
@@ -471,7 +471,7 @@ namespace bs { namespace ct
 
 		// SERIAL:
 		// Prefix sum over per-digit counts over all groups
-		Vector<UINT32> perDigitPrefixSum(NUM_DIGITS * MAX_NUM_GROUPS);
+		Vector<UINT32> PerDigitPrefixSum(NUM_DIGITS * MAX_NUM_GROUPS);
 		for(UINT32 groupIdx = 0; groupIdx < gpuSortProps.numGroups; groupIdx++)
 		{
 			for (UINT32 j = 0; j < NUM_DIGITS; j++)
@@ -543,7 +543,7 @@ namespace bs { namespace ct
 
 		totalsPrefixSum[0] = 0;
 
-		Vector<UINT32> offsets(gpuSortProps.numGroups * NUM_DIGITS);
+		Vector<UINT32> Offsets(gpuSortProps.numGroups * NUM_DIGITS);
 		for (UINT32 groupIdx = 0; groupIdx < gpuSortProps.numGroups; groupIdx++)
 		{
 			for (UINT32 i = 0; i < NUM_DIGITS; i++)
@@ -555,7 +555,7 @@ namespace bs { namespace ct
 		RenderAPI::instance().submitCommandBuffer(nullptr);
 
 		// Compare with GPU offsets
-		Vector<UINT32> bufferOffsets(helperBufferLength);
+		Vector<UINT32> BufferOffsets(helperBufferLength);
 		helperBuffers[1]->readData(0, helperBufferLength * sizeof(UINT32), bufferOffsets.data());
 
 		for(UINT32 i = 0; i < (UINT32)offsets.size(); i++)
@@ -567,7 +567,7 @@ namespace bs { namespace ct
 
 		// SERIAL:
 		// Reorder within each tile
-		Vector<UINT32> sortedKeys(inputKeys.size());
+		Vector<UINT32> SortedKeys(inputKeys.size());
 		UINT32 sGroupOffsets[NUM_DIGITS];
 		UINT32 sLocalScratch[NUM_DIGITS * NUM_THREADS];
 		UINT32 sTileTotals[NUM_DIGITS];
@@ -786,7 +786,7 @@ namespace bs { namespace ct
 		RenderAPI::instance().submitCommandBuffer(nullptr);
 
 		// Compare with GPU keys
-		Vector<UINT32> bufferSortedKeys(count);
+		Vector<UINT32> BufferSortedKeys(count);
 		sortBuffers.keys[1]->readData(0, count * sizeof(UINT32), bufferSortedKeys.data());
 
 		for(UINT32 i = 0; i < count; i++)

@@ -15,7 +15,7 @@ namespace bs
 		ScriptParticleEmitterShapeBase(MonoObject* instance);
 		virtual ~ScriptParticleEmitterShapeBase() {}
 
-		SPtr<ParticleEmitterShape> getInternal() const;
+		SPtr<ParticleEmitterShape> GetInternal() const;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptParticleEmitterShape : public TScriptReflectable<ScriptParticleEmitterShape, ParticleEmitterShape, ScriptParticleEmitterShapeBase>

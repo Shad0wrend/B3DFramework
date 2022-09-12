@@ -35,8 +35,8 @@ namespace bs { namespace ct
 
 	VulkanImage::VulkanImage(VulkanResourceManager* owner, const VULKAN_IMAGE_DESC& desc, bool ownsImage)
 		: VulkanResource(owner, false), mImage(desc.image), mAllocation(desc.allocation)
-		, mFramebufferMainView(VK_NULL_HANDLE), mUsage(desc.usage), mOwnsImage(ownsImage), mNumFaces(desc.numFaces)
-		, mNumMipLevels(desc.numMipLevels)
+		, MFramebufferMainView(VK_NULL_HANDLE), mUsage(desc.usage), mOwnsImage(ownsImage), mNumFaces(desc.numFaces)
+		, MNumMipLevels(desc.numMipLevels)
 	{
 		mImageViewCI.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 		mImageViewCI.pNext = nullptr;
@@ -67,7 +67,7 @@ namespace bs { namespace ct
 			break;
 		}
 
-		TextureSurface completeSurface(0, desc.numMipLevels, 0, desc.numFaces);
+		TextureSurface CompleteSurface(0, desc.numMipLevels, 0, desc.numFaces);
 		if ((mUsage & TU_DEPTHSTENCIL) != 0)
 		{
 			mFramebufferMainView = createView(completeSurface, desc.format, getAspectFlags());
@@ -134,13 +134,13 @@ namespace bs { namespace ct
 
 	VkImageView VulkanImage::getView(const TextureSurface& surface, bool framebuffer) const
 	{
-		return getView(mImageViewCI.format, surface, framebuffer);
+		return GetView(mImageViewCI.format, surface, framebuffer);
 	}
 
 	VkImageView VulkanImage::getView(VkFormat format, bool framebuffer) const
 	{
-		TextureSurface completeSurface(0, mNumMipLevels, 0, mNumFaces);
-		return getView(format, completeSurface, framebuffer);
+		TextureSurface CompleteSurface(0, mNumMipLevels, 0, mNumFaces);
+		return GetView(format, completeSurface, framebuffer);
 	}
 
 	VkImageView VulkanImage::getView(VkFormat format, const TextureSurface& surface, bool framebuffer) const
@@ -195,7 +195,7 @@ namespace bs { namespace ct
 		case VK_IMAGE_VIEW_TYPE_CUBE:
 			if(numFaces == 1)
 				mImageViewCI.viewType = VK_IMAGE_VIEW_TYPE_2D;
-			else if(numFaces % 6 == 0)
+			else If(numFaces % 6 == 0)
 			{
 				if(mNumFaces > 6)
 					mImageViewCI.viewType = VK_IMAGE_VIEW_TYPE_CUBE_ARRAY;
@@ -478,7 +478,7 @@ namespace bs { namespace ct
 
 		bs_frame_mark();
 		{
-			FrameVector<bool> processed(numSubresources, false);
+			FrameVector<bool> Processed(numSubresources, false);
 
 			// Add first subresource
 			VulkanImageSubresource* subresource = getSubresource(face, mip);
@@ -600,9 +600,9 @@ namespace bs { namespace ct
 	VulkanTexture::VulkanTexture(const TEXTURE_DESC& desc, const SPtr<PixelData>& initialData,
 										 GpuDeviceFlags deviceMask)
 		: Texture(desc, initialData, deviceMask), mImages(), mInternalFormats(), mDeviceMask(deviceMask)
-		, mStagingBuffer(nullptr), mMappedDeviceIdx((UINT32)-1), mMappedGlobalQueueIdx((UINT32)-1)
-		, mMappedMip(0), mMappedFace(0), mMappedRowPitch(0), mMappedSlicePitch(0)
-		, mMappedLockOptions(GBL_WRITE_ONLY), mDirectlyMappable(false), mSupportsGPUWrites(false), mIsMapped(false)
+		, MStagingBuffer(nullptr), mMappedDeviceIdx((UINT32)-1), mMappedGlobalQueueIdx((UINT32)-1)
+		, MMappedMip(0), mMappedFace(0), mMappedRowPitch(0), mMappedSlicePitch(0)
+		, MMappedLockOptions(GBL_WRITE_ONLY), mDirectlyMappable(false), mSupportsGPUWrites(false), mIsMapped(false)
 	{
 		
 	}
@@ -1048,7 +1048,7 @@ namespace bs { namespace ct
 		UINT32 mipHeight = std::max(1u, props.getHeight() >> mipLevel);
 		UINT32 mipDepth = std::max(1u, props.getDepth() >> mipLevel);
 
-		PixelData lockedArea(mipWidth, mipHeight, mipDepth, mInternalFormats[deviceIdx]);
+		PixelData LockedArea(mipWidth, mipHeight, mipDepth, mInternalFormats[deviceIdx]);
 
 		VulkanImage* image = mImages[deviceIdx];
 

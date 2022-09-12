@@ -19,7 +19,7 @@ namespace bs
 	{
 	public:
 		/** Returns type name of the GUI element used for finding GUI element styles. */
-		static const String& getGUITypeName();
+		static const String& GetGUITypeName();
 
 		/**
 		 * Creates a new element with the provided render texture.
@@ -67,7 +67,7 @@ namespace bs
 			const String& styleName = StringUtil::BLANK);
 
 		/** Changes the active render texture whose contents to display in the GUI element. */
-		void setRenderTexture(const SPtr<RenderTexture>& texture);
+		void SetRenderTexture(const SPtr<RenderTexture>& texture);
 
 	protected:
 		GUIRenderTexture(const String& styleName, const SPtr<RenderTexture>& texture, bool transparent,
@@ -75,7 +75,7 @@ namespace bs
 		virtual ~GUIRenderTexture();
 
 		/** @copydoc GUIElement::updateRenderElementsInternal */
-		void updateRenderElementsInternal() override;
+		void UpdateRenderElementsInternal() override;
 
 		SPtr<RenderTexture> mSourceTexture;
 		bool mTransparent;

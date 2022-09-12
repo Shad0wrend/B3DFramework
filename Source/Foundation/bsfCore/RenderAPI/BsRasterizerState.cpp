@@ -26,7 +26,7 @@ namespace bs
 	{ }
 
 	RasterizerState::RasterizerState(const RASTERIZER_STATE_DESC& desc)
-		: mProperties(desc), mId(0)
+		: MProperties(desc), mId(0)
 	{
 
 	}
@@ -97,7 +97,7 @@ namespace bs
 	namespace ct
 	{
 	RasterizerState::RasterizerState(const RASTERIZER_STATE_DESC& desc, UINT32 id)
-		: mProperties(desc), mId(id)
+		: MProperties(desc), mId(id)
 	{
 
 	}

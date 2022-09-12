@@ -104,21 +104,21 @@ namespace bs
 		{
 			if(rtti_is_of_type<ParticleEmitterStaticMeshShape>(tmp__output))
 				__output = ScriptParticleEmitterStaticMeshShape::create(std::static_pointer_cast<ParticleEmitterStaticMeshShape>(tmp__output));
-			else if(rtti_is_of_type<ParticleEmitterCircleShape>(tmp__output))
+			else If(rtti_is_of_type<ParticleEmitterCircleShape>(tmp__output))
 				__output = ScriptParticleEmitterCircleShape::create(std::static_pointer_cast<ParticleEmitterCircleShape>(tmp__output));
-			else if(rtti_is_of_type<ParticleEmitterConeShape>(tmp__output))
+			else If(rtti_is_of_type<ParticleEmitterConeShape>(tmp__output))
 				__output = ScriptParticleEmitterConeShape::create(std::static_pointer_cast<ParticleEmitterConeShape>(tmp__output));
-			else if(rtti_is_of_type<ParticleEmitterSphereShape>(tmp__output))
+			else If(rtti_is_of_type<ParticleEmitterSphereShape>(tmp__output))
 				__output = ScriptParticleEmitterSphereShape::create(std::static_pointer_cast<ParticleEmitterSphereShape>(tmp__output));
-			else if(rtti_is_of_type<ParticleEmitterHemisphereShape>(tmp__output))
+			else If(rtti_is_of_type<ParticleEmitterHemisphereShape>(tmp__output))
 				__output = ScriptParticleEmitterHemisphereShape::create(std::static_pointer_cast<ParticleEmitterHemisphereShape>(tmp__output));
-			else if(rtti_is_of_type<ParticleEmitterBoxShape>(tmp__output))
+			else If(rtti_is_of_type<ParticleEmitterBoxShape>(tmp__output))
 				__output = ScriptParticleEmitterBoxShape::create(std::static_pointer_cast<ParticleEmitterBoxShape>(tmp__output));
-			else if(rtti_is_of_type<ParticleEmitterLineShape>(tmp__output))
+			else If(rtti_is_of_type<ParticleEmitterLineShape>(tmp__output))
 				__output = ScriptParticleEmitterLineShape::create(std::static_pointer_cast<ParticleEmitterLineShape>(tmp__output));
-			else if(rtti_is_of_type<ParticleEmitterRectShape>(tmp__output))
+			else If(rtti_is_of_type<ParticleEmitterRectShape>(tmp__output))
 				__output = ScriptParticleEmitterRectShape::create(std::static_pointer_cast<ParticleEmitterRectShape>(tmp__output));
-			else if(rtti_is_of_type<ParticleEmitterSkinnedMeshShape>(tmp__output))
+			else If(rtti_is_of_type<ParticleEmitterSkinnedMeshShape>(tmp__output))
 				__output = ScriptParticleEmitterSkinnedMeshShape::create(std::static_pointer_cast<ParticleEmitterSkinnedMeshShape>(tmp__output));
 			else
 				__output = ScriptParticleEmitterShape::create(tmp__output);
@@ -155,7 +155,7 @@ namespace bs
 		Vector<ParticleBurst> vecbursts;
 		if(bursts != nullptr)
 		{
-			ScriptArray arraybursts(bursts);
+			ScriptArray Arraybursts(bursts);
 			vecbursts.resize(arraybursts.size());
 			for(int i = 0; i < (int)arraybursts.size(); i++)
 			{

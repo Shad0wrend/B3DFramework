@@ -229,7 +229,7 @@ namespace bs
 				s = center[i] - min[i];
 				d += s * s;
 			}
-			else if(center[i] > max[i])
+			else If(center[i] > max[i])
 			{
 				s = center[i] - max[i];
 				d += s * s;
@@ -248,7 +248,7 @@ namespace bs
 		float lowt = 0.0f;
 		float t;
 		bool hit = false;
-		Vector3 hitpoint(BsZero);
+		Vector3 Hitpoint(BsZero);
 		const Vector3& min = getMin();
 		const Vector3& max = getMax();
 		const Vector3& rayorig = ray.getOrigin();

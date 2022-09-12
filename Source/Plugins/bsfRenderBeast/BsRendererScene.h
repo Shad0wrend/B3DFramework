@@ -79,88 +79,88 @@ namespace bs
 		~RendererScene();
 
 		/** Registers a new camera in the scene. */
-		void registerCamera(Camera* camera);
+		void RegisterCamera(Camera* camera);
 
 		/** Updates information about a previously registered camera. */
-		void updateCamera(Camera* camera, UINT32 updateFlag);
+		void UpdateCamera(Camera* camera, UINT32 updateFlag);
 
 		/** Removes a camera from the scene. */
-		void unregisterCamera(Camera* camera);
+		void UnregisterCamera(Camera* camera);
 
 		/** Registers a new light in the scene. */
-		void registerLight(Light* light);
+		void RegisterLight(Light* light);
 
 		/** Updates information about a previously registered light. */
-		void updateLight(Light* light);
+		void UpdateLight(Light* light);
 
 		/** Removes a light from the scene. */
-		void unregisterLight(Light* light);
+		void UnregisterLight(Light* light);
 
 		/** Registers a new renderable object in the scene. */
-		void registerRenderable(Renderable* renderable);
+		void RegisterRenderable(Renderable* renderable);
 
 		/** Updates information about a previously registered renderable object. */
-		void updateRenderable(Renderable* renderable);
+		void UpdateRenderable(Renderable* renderable);
 
 		/** Removes a renderable object from the scene. */
-		void unregisterRenderable(Renderable* renderable);
+		void UnregisterRenderable(Renderable* renderable);
 
 		/** Registers a new reflection probe in the scene. */
-		void registerReflectionProbe(ReflectionProbe* probe);
+		void RegisterReflectionProbe(ReflectionProbe* probe);
 
 		/** Updates information about a previously registered reflection probe. */
-		void updateReflectionProbe(ReflectionProbe* probe, bool texture);
+		void UpdateReflectionProbe(ReflectionProbe* probe, bool texture);
 
 		/** Removes a reflection probe from the scene. */
-		void unregisterReflectionProbe(ReflectionProbe* probe);
+		void UnregisterReflectionProbe(ReflectionProbe* probe);
 
 		/** Updates the index at which the reflection probe's texture is stored at, in the global array. */
-		void setReflectionProbeArrayIndex(UINT32 probeIdx, UINT32 arrayIdx, bool markAsClean);
+		void SetReflectionProbeArrayIndex(UINT32 probeIdx, UINT32 arrayIdx, bool markAsClean);
 
 		/** Registers a new light probe volume in the scene. */
-		void registerLightProbeVolume(LightProbeVolume* volume);
+		void RegisterLightProbeVolume(LightProbeVolume* volume);
 
 		/** Updates information about a previously registered light probe volume. */
-		void updateLightProbeVolume(LightProbeVolume* volume);
+		void UpdateLightProbeVolume(LightProbeVolume* volume);
 
 		/** Removes a light probe volume from the scene. */
-		void unregisterLightProbeVolume(LightProbeVolume* volume);
+		void UnregisterLightProbeVolume(LightProbeVolume* volume);
 
 		/**
 		 * Rebuilds any light probe related information. Should be called once immediately before rendering. If no change
 		 * is detected since the last call, the call does nothing.
 		 */
-		void updateLightProbes();
+		void UpdateLightProbes();
 
 		/** Registers a new sky texture in the scene. */
-		void registerSkybox(Skybox* skybox);
+		void RegisterSkybox(Skybox* skybox);
 
 		/** Removes a skybox from the scene. */
-		void unregisterSkybox(Skybox* skybox);
+		void UnregisterSkybox(Skybox* skybox);
 
 		/** Registers a new particle system in the scene. */
-		void registerParticleSystem(ParticleSystem* particleSystem);
+		void RegisterParticleSystem(ParticleSystem* particleSystem);
 
 		/** Updates information about a previously registered particle system. */
-		void updateParticleSystem(ParticleSystem* particleSystem, bool tfrmOnly);
+		void UpdateParticleSystem(ParticleSystem* particleSystem, bool tfrmOnly);
 
 		/** Removes a particle system from the scene. */
-		void unregisterParticleSystem(ParticleSystem* particleSystem);
+		void UnregisterParticleSystem(ParticleSystem* particleSystem);
 
 		/** Registers a new decal object in the scene. */
-		void registerDecal(Decal* decal);
+		void RegisterDecal(Decal* decal);
 
 		/** Updates information about a previously registered decal object. */
-		void updateDecal(Decal* decal);
+		void UpdateDecal(Decal* decal);
 
 		/** Removes a decal object from the scene. */
-		void unregisterDecal(Decal* decal);
+		void UnregisterDecal(Decal* decal);
 
 		/** Returns a container with all relevant scene objects. */
-		const SceneInfo& getSceneInfo() const { return mInfo; }
+		const SceneInfo& GetSceneInfo() const { return mInfo; }
 
 		/** Updates scene according to the newly provided renderer options. */
-		void setOptions(const SPtr<RenderBeastOptions>& options);
+		void SetOptions(const SPtr<RenderBeastOptions>& options);
 
 		/**
 		 * Checks all sampler overrides in case material sampler states changed, and updates them.
@@ -168,10 +168,10 @@ namespace bs
 		 * @param[in]	force	If true, all sampler overrides will be updated, regardless of a change in the material
 		 *						was detected or not.
 		 */
-		void refreshSamplerOverrides(bool force = false);
+		void RefreshSamplerOverrides(bool force = false);
 
 		/** Updates global per frame parameter buffers with new values. To be called at the start of every frame. */
-		void setParamFrameParams(float time);
+		void SetParamFrameParams(float time);
 
 		/**
 		 * Performs necessary per-frame updates to a renderable. This must be called once every frame for every renderable.
@@ -179,7 +179,7 @@ namespace bs
 		 * @param[in]	idx			Index of the renderable to prepare.
 		 * @param[in]	frameInfo	Global information describing the current frame.
 		 */
-		void prepareRenderable(UINT32 idx, const FrameInfo& frameInfo);
+		void PrepareRenderable(UINT32 idx, const FrameInfo& frameInfo);
 
 		/**
 		 * Performs necessary steps to make a renderable ready for rendering. This must be called at least once every frame
@@ -189,7 +189,7 @@ namespace bs
 		 * @param[in]	idx			Index of the renderable to prepare.
 		 * @param[in]	frameInfo	Global information describing the current frame.
 		 */
-		void prepareVisibleRenderable(UINT32 idx, const FrameInfo& frameInfo);
+		void PrepareVisibleRenderable(UINT32 idx, const FrameInfo& frameInfo);
 
 		/**
 		 * Performs necessary steps to make a particle system ready for rendering. This must be called at least once every
@@ -198,7 +198,7 @@ namespace bs
 		 * @param[in]	idx			Index of the particle system to prepare.
 		 * @param[in]	frameInfo	Global information describing the current frame.
 		 */
-		void prepareParticleSystem(UINT32 idx, const FrameInfo& frameInfo);
+		void PrepareParticleSystem(UINT32 idx, const FrameInfo& frameInfo);
 
 		/**
 		 * Performs necessary steps to make a decal ready for rendering. This must be called at least once every frame
@@ -207,22 +207,22 @@ namespace bs
 		 * @param[in]	idx			Index of the decal to prepare.
 		 * @param[in]	frameInfo	Global information describing the current frame.
 		 */
-		void prepareDecal(UINT32 idx, const FrameInfo& frameInfo);
+		void PrepareDecal(UINT32 idx, const FrameInfo& frameInfo);
 
 		/** Updates the bounds for all the particle systems from the provided object. */
-		void updateParticleSystemBounds(const ParticlePerFrameData* particleRenderData);
+		void UpdateParticleSystemBounds(const ParticlePerFrameData* particleRenderData);
 
 		/** Returns a modifiable version of SceneInfo. Only to be used by friends who know what they are doing. */
 		SceneInfo& _getSceneInfo() { return mInfo; }
 	private:
 		/** Creates a renderer view descriptor for the particular camera. */
-		RENDERER_VIEW_DESC createViewDesc(Camera* camera) const;
+		RENDERER_VIEW_DESC CreateViewDesc(Camera* camera) const;
 
 		/**
 		 * Find the render target the camera belongs to and adds it to the relevant list. If the camera was previously
 		 * registered with some other render target it will be removed from it and added to the new target.
 		 */
-		void updateCameraRenderTargets(Camera* camera, bool remove = false);
+		void UpdateCameraRenderTargets(Camera* camera, bool remove = false);
 
 		/**
 		 * Allocates (or returns existing) set of sampler state overrides that can be used for the provided render
@@ -231,7 +231,7 @@ namespace bs
 		MaterialSamplerOverrides* allocSamplerStateOverrides(RenderElement& elem);
 
 		/** Frees sampler state overrides previously allocated with allocSamplerStateOverrides(). */
-		void freeSamplerStateOverrides(RenderElement& elem);
+		void FreeSamplerStateOverrides(RenderElement& elem);
 
 		SceneInfo mInfo;
 		SPtr<GpuParamBlockBuffer> mPerFrameParamBuffer;

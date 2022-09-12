@@ -26,8 +26,8 @@ namespace bs
 			BS_RTTI_MEMBER_PLAIN(mIsScene, 4)
 		BS_END_RTTI_MEMBERS
 
-		SPtr<SceneObject> getSceneObject(Prefab* obj) { return obj->mRoot.getInternalPtr(); }
-		void setSceneObject(Prefab* obj, SPtr<SceneObject> value) { obj->mRoot = value->getHandle(); }
+		SPtr<SceneObject> GetSceneObject(Prefab* obj) { return obj->mRoot.getInternalPtr(); }
+		void SetSceneObject(Prefab* obj, SPtr<SceneObject> value) { obj->mRoot = value->getHandle(); }
 
 	public:
 		PrefabRTTI()
@@ -35,7 +35,7 @@ namespace bs
 			addReflectablePtrField("mRoot", 0, &PrefabRTTI::getSceneObject, &PrefabRTTI::setSceneObject);
 		}
 
-		void onDeserializationStarted(IReflectable* ptr, SerializationContext* context) override
+		void OnDeserializationStarted(IReflectable* ptr, SerializationContext* context) override
 		{
 			BS_ASSERT(context != nullptr && rtti_is_of_type<CoreSerializationContext>(context));
 			auto coreContext = static_cast<CoreSerializationContext*>(context);
@@ -47,18 +47,18 @@ namespace bs
 			coreContext->goState = bs_shared_ptr_new<GameObjectDeserializationState>(GODM_BreakExternal | GODM_UseNewIds);
 		}
 
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "Prefab";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_Prefab;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			return Prefab::createEmpty();
 		}

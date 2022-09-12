@@ -18,7 +18,7 @@ namespace bs
 	{
 		enum { id = TID_RTTIFieldInfo }; enum { hasDynamicSize = 0 };
 
-		static BitLength toMemory(const RTTIFieldInfo& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const RTTIFieldInfo& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
 			size += rtti_write(data.flags, stream);
@@ -26,7 +26,7 @@ namespace bs
 			return size;
 		}
 
-		static BitLength fromMemory(RTTIFieldInfo& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(RTTIFieldInfo& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
 			size += rtti_read(data.flags, stream);
@@ -34,7 +34,7 @@ namespace bs
 			return size;
 		}
 
-		static BitLength getSize(const RTTIFieldInfo& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const RTTIFieldInfo& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return rtti_size(data.flags);
 		}
@@ -55,18 +55,18 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 		
 	public:
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "RTTIFieldSchema";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_RTTIFieldSchema;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			return bs_shared_ptr_new<RTTIFieldSchema>();
 		}
@@ -82,18 +82,18 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 		
 	public:
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "RTTISchema";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_RTTISchema;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			return bs_shared_ptr_new<RTTISchema>();
 		}

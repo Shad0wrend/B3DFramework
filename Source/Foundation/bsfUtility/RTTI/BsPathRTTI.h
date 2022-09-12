@@ -18,7 +18,7 @@ namespace bs
 	{
 		enum { id = TID_Path }; enum { hasDynamicSize = 1 };
 
-		static BitLength toMemory(const Path& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const Path& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]()
 			{
@@ -33,7 +33,7 @@ namespace bs
 			});
 		}
 
-		static BitLength fromMemory(Path& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(Path& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
 			rtti_read_size_header(stream, compress, size);
@@ -47,7 +47,7 @@ namespace bs
 			return size;
 		}
 
-		static BitLength getSize(const Path& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const Path& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength dataSize = rtti_size(data.mDevice) + rtti_size(data.mNode) +
 				rtti_size(data.mFilename) + rtti_size(data.mIsAbsolute) + rtti_size(data.mDirectories);

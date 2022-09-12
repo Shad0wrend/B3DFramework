@@ -164,12 +164,12 @@ namespace bs
 	DebugDrawMat* DebugDrawMat::getVariation(DebugDrawMaterial mat)
 	{
 		if (mat == DebugDrawMaterial::Solid)
-			return get(getVariation<true, false, false>());
+			return Get(getVariation<true, false, false>());
 		
 		if (mat == DebugDrawMaterial::Wire)
-			return get(getVariation<false, false, true>());
+			return Get(getVariation<false, false, true>());
 
-		return get(getVariation<false, true, false>());
+		return Get(getVariation<false, true, false>());
 	}
 
 	DebugDrawRenderer::DebugDrawRenderer()

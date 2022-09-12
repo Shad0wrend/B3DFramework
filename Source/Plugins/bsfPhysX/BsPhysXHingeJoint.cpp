@@ -9,7 +9,7 @@ using namespace physx;
 
 namespace bs
 {
-	PxRevoluteJointFlag::Enum toPxFlag(HingeJointFlag flag)
+	PxRevoluteJointFlag::Enum ToPxFlag(HingeJointFlag flag)
 	{
 		switch (flag)
 		{
@@ -68,7 +68,7 @@ namespace bs
 
 	float PhysXHingeJoint::getSpeed() const
 	{
-		return getInternal()->getVelocity();
+		return GetInternal()->getVelocity();
 	}
 
 	LimitAngularRange PhysXHingeJoint::getLimit() const
@@ -88,7 +88,7 @@ namespace bs
 
 	void PhysXHingeJoint::setLimit(const LimitAngularRange& limit)
 	{
-		PxJointAngularLimitPair pxLimit(limit.lower.valueRadians(), limit.upper.valueRadians(), limit.contactDist);
+		PxJointAngularLimitPair PxLimit(limit.lower.valueRadians(), limit.upper.valueRadians(), limit.contactDist);
 		pxLimit.stiffness = limit.spring.stiffness;
 		pxLimit.damping = limit.spring.damping;
 		pxLimit.restitution = limit.restitution;
@@ -122,7 +122,7 @@ namespace bs
 
 	bool PhysXHingeJoint::hasFlag(HingeJointFlag flag) const
 	{
-		return getInternal()->getRevoluteJointFlags() & toPxFlag(flag);
+		return GetInternal()->getRevoluteJointFlags() & toPxFlag(flag);
 	}
 
 	PxRevoluteJoint* PhysXHingeJoint::getInternal() const

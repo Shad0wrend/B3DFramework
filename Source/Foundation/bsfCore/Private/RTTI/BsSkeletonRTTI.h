@@ -17,10 +17,10 @@ namespace bs
 	class BS_CORE_EXPORT SkeletonRTTI : public RTTIType <Skeleton, IReflectable, SkeletonRTTI>
 	{
 	private:
-		Matrix4& getBindPose(Skeleton* obj, UINT32 idx) { return obj->mInvBindPoses[idx]; }
-		void setBindPose(Skeleton* obj, UINT32 idx, Matrix4& value) { obj->mInvBindPoses[idx] = value; }
+		Matrix4& GetBindPose(Skeleton* obj, UINT32 idx) { return obj->mInvBindPoses[idx]; }
+		void SetBindPose(Skeleton* obj, UINT32 idx, Matrix4& value) { obj->mInvBindPoses[idx] = value; }
 
-		void setNumBindPoses(Skeleton* obj, UINT32 size)
+		void SetNumBindPoses(Skeleton* obj, UINT32 size)
 		{
 			obj->mNumBones = size;
 
@@ -28,10 +28,10 @@ namespace bs
 			obj->mInvBindPoses = bs_newN<Matrix4>(size);
 		}
 
-		SkeletonBoneInfo& getBoneInfo(Skeleton* obj, UINT32 idx) { return obj->mBoneInfo[idx]; }
-		void setBoneInfo(Skeleton* obj, UINT32 idx, SkeletonBoneInfo& value) { obj->mBoneInfo[idx] = value; }
+		SkeletonBoneInfo& GetBoneInfo(Skeleton* obj, UINT32 idx) { return obj->mBoneInfo[idx]; }
+		void SetBoneInfo(Skeleton* obj, UINT32 idx, SkeletonBoneInfo& value) { obj->mBoneInfo[idx] = value; }
 
-		void setNumBoneInfos(Skeleton* obj, UINT32 size)
+		void SetNumBoneInfos(Skeleton* obj, UINT32 size)
 		{
 			obj->mNumBones = size;
 
@@ -39,10 +39,10 @@ namespace bs
 			obj->mBoneInfo = bs_newN<SkeletonBoneInfo>(size);
 		}
 
-		Transform& getBoneTransform(Skeleton* obj, UINT32 idx) { return obj->mBoneTransforms[idx]; }
-		void setBoneTransform(Skeleton* obj, UINT32 idx, Transform& value) { obj->mBoneTransforms[idx] = value; }
+		Transform& GetBoneTransform(Skeleton* obj, UINT32 idx) { return obj->mBoneTransforms[idx]; }
+		void SetBoneTransform(Skeleton* obj, UINT32 idx, Transform& value) { obj->mBoneTransforms[idx] = value; }
 
-		void setNumBoneTransforms(Skeleton* obj, UINT32 size)
+		void SetNumBoneTransforms(Skeleton* obj, UINT32 size)
 		{
 			obj->mNumBones = size;
 
@@ -50,7 +50,7 @@ namespace bs
 			obj->mBoneTransforms = bs_newN<Transform>(size);
 		}
 
-		UINT32 getNumBones(Skeleton* obj) { return obj->mNumBones; }
+		UINT32 GetNumBones(Skeleton* obj) { return obj->mNumBones; }
 	public:
 		SkeletonRTTI()
 		{
@@ -62,18 +62,18 @@ namespace bs
 				&SkeletonRTTI::setBoneTransform, &SkeletonRTTI::setNumBoneTransforms);
 		}
 
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "Skeleton";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_Skeleton;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			return Skeleton::createEmpty();
 		}
@@ -84,7 +84,7 @@ namespace bs
 		enum { id = TID_SkeletonBoneInfo }; enum { hasDynamicSize = 1 };
 
 		/** @copydoc RTTIPlainType::toMemory */
-		static BitLength toMemory(const SkeletonBoneInfo& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const SkeletonBoneInfo& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]()
 			{
@@ -97,7 +97,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIPlainType::fromMemory */
-		static BitLength fromMemory(SkeletonBoneInfo& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(SkeletonBoneInfo& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
 			rtti_read_size_header(stream, compress, size);
@@ -109,7 +109,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIPlainType::getSize */
-		static BitLength getSize(const SkeletonBoneInfo& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const SkeletonBoneInfo& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength dataSize;
 			dataSize += rtti_size(data.name);

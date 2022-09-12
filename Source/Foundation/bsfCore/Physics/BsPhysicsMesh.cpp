@@ -53,7 +53,7 @@ namespace bs
 
 	RTTITypeBase* PhysicsMesh::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	FPhysicsMesh::FPhysicsMesh(const SPtr<MeshData>& meshData, PhysicsMeshType type)
@@ -74,6 +74,6 @@ namespace bs
 
 	RTTITypeBase* FPhysicsMesh::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 }

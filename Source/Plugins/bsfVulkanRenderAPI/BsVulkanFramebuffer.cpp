@@ -13,7 +13,7 @@ namespace bs { namespace ct
 	VulkanFramebuffer::VulkanFramebuffer(VulkanResourceManager* owner, VulkanRenderPass* renderPass,
 		const VULKAN_FRAMEBUFFER_DESC& desc)
 		: VulkanResource(owner, false), mRenderPass(renderPass), mWidth(desc.width), mHeight(desc.height)
-		, mNumLayers(desc.layers)
+		, MNumLayers(desc.layers)
 	{
 		mId = sNextValidId++;
 

@@ -32,10 +32,10 @@ namespace bs
 	struct BS_EXPORT GUIDimensions
 	{
 		/**	Creates new default layout options. */
-		static GUIDimensions create();
+		static GUIDimensions Create();
 
 		/**	Creates layout options with user defined options. */
-		static GUIDimensions create(const GUIOptions& options);
+		static GUIDimensions Create(const GUIOptions& options);
 
 		GUIDimensions() = default;
 
@@ -43,26 +43,26 @@ namespace bs
 		 * Updates layout options from the provided style. If user has not manually set a specific layout property, that
 		 * property will be inherited from style.
 		 */
-		void updateWithStyle(const GUIElementStyle* style);
+		void UpdateWithStyle(const GUIElementStyle* style);
 
 		/**
 		 * Calculates size range for a GUI element using this layout.
 		 *
 		 * @param[in]	optimal	Preferred size of the GUI element.
 		 */
-		LayoutSizeRange calculateSizeRange(const Vector2I& optimal) const;
+		LayoutSizeRange CalculateSizeRange(const Vector2I& optimal) const;
 
 		/**	Checks do the dimensions override the style height. */
-		bool overridenHeight() const { return (flags & GUIDF_OverHeight) != 0; }
+		bool OverridenHeight() const { return (flags & GUIDF_OverHeight) != 0; }
 
 		/**	Checks do the dimensions override the style width. */
-		bool overridenWidth() const { return (flags & GUIDF_OverWidth) != 0; }
+		bool OverridenWidth() const { return (flags & GUIDF_OverWidth) != 0; }
 
 		/**	Checks do the dimensions contain fixed width. */
-		bool fixedWidth() const { return (flags & GUIDF_FixedWidth) != 0; }
+		bool FixedWidth() const { return (flags & GUIDF_FixedWidth) != 0; }
 
 		/**	Checks do the dimensions contain fixed height. */
-		bool fixedHeight() const { return (flags & GUIDF_FixedHeight) != 0; }
+		bool FixedHeight() const { return (flags & GUIDF_FixedHeight) != 0; }
 
 		INT32 x = 0;
 		INT32 y = 0;

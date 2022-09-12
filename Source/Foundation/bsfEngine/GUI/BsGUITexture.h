@@ -17,7 +17,7 @@ namespace bs
 	{
 	public:
 		/** Returns type name of the GUI element used for finding GUI element styles.  */
-		static const String& getGUITypeName();
+		static const String& GetGUITypeName();
 
 		/**
 		 * Creates a new GUI texture element.
@@ -140,7 +140,7 @@ namespace bs
 		/**
 		 * Changes the active texture. If the provided texture is null then the texture specified by the style will be used.
 		 */
-		void setTexture(const HSpriteTexture& texture);
+		void SetTexture(const HSpriteTexture& texture);
 
 	public: // ***** INTERNAL ******
 		/** @name Internal
@@ -171,10 +171,10 @@ namespace bs
 			UINT32 renderElementIdx) const override;
 
 		/** @copydoc GUIElement::updateRenderElementsInternal */
-		void updateRenderElementsInternal() override;
+		void UpdateRenderElementsInternal() override;
 
 		/** @copydoc GUIElement::styleUpdated */
-		void styleUpdated() override;
+		void StyleUpdated() override;
 
 		ImageSprite* mImageSprite;
 		Vector2I mImageSpriteOffset;

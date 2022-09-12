@@ -20,31 +20,31 @@ namespace bs
 		enum { id = TID_KeyFrame }; enum { hasDynamicSize = 0 };
 
 		/** @copydoc RTTIPlainType::toMemory */
-		static BitLength toMemory(const TKeyframe<T>& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const TKeyframe<T>& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			rtti_write(data.value, stream);
 			rtti_write(data.inTangent, stream);
 			rtti_write(data.outTangent, stream);
 			rtti_write(data.time, stream);
 
-			return sizeof(TKeyframe<T>);
+			return Sizeof(TKeyframe<T>);
 		}
 
 		/** @copydoc RTTIPlainType::fromMemory */
-		static BitLength fromMemory(TKeyframe<T>& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(TKeyframe<T>& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			rtti_read(data.value, stream);
 			rtti_read(data.inTangent, stream);
 			rtti_read(data.outTangent, stream);
 			rtti_read(data.time, stream);
 			
-			return sizeof(TKeyframe<T>);
+			return Sizeof(TKeyframe<T>);
 		}
 
 		/** @copydoc RTTIPlainType::getSize */
-		static BitLength getSize(const TKeyframe<T>& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const TKeyframe<T>& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
-			return sizeof(TKeyframe<T>);
+			return Sizeof(TKeyframe<T>);
 		}
 	};
 
@@ -53,7 +53,7 @@ namespace bs
 		enum { id = TID_AnimationCurve }; enum { hasDynamicSize = 1 };
 
 		/** @copydoc RTTIPlainType::toMemory */
-		static BitLength toMemory(const TAnimationCurve<T>& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const TAnimationCurve<T>& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]()
 			{
@@ -71,7 +71,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIPlainType::fromMemory */
-		static BitLength fromMemory(TAnimationCurve<T>& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(TAnimationCurve<T>& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
 			rtti_read_size_header(stream, compress, size);
@@ -88,7 +88,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIPlainType::getSize */
-		static BitLength getSize(const TAnimationCurve<T>& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const TAnimationCurve<T>& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength dataSize = sizeof(uint32_t);
 			dataSize += rtti_size(data.mStart);
@@ -106,7 +106,7 @@ namespace bs
 		enum { id = TID_NamedAnimationCurve }; enum { hasDynamicSize = 1 };
 
 		/** @copydoc RTTIPlainType::toMemory */
-		static BitLength toMemory(const TNamedAnimationCurve<T>& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const TNamedAnimationCurve<T>& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]()
 			{
@@ -120,7 +120,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIPlainType::fromMemory */
-		static BitLength fromMemory(TNamedAnimationCurve<T>& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(TNamedAnimationCurve<T>& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
 			rtti_read_size_header(stream, compress, size);
@@ -133,7 +133,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIPlainType::getSize */
-		static BitLength getSize(const TNamedAnimationCurve<T>& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const TNamedAnimationCurve<T>& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength dataSize;
 			dataSize += rtti_size(data.name);

@@ -20,16 +20,16 @@ namespace bs { namespace ct
 	{
 	public:
 		/** Registers a new command in the command buffer. */
-		void queueCommand(const std::function<void()> command);
+		void QueueCommand(const std::function<void()> command);
 
 		/** Executes all commands in the command buffer. Not supported on secondary buffer. */
-		void executeCommands();
+		void ExecuteCommands();
 
 		/** @copydoc CommandBuffer::getState() */
-		CommandBufferState getState() const override;
+		CommandBufferState GetState() const override;
 
 		/** @copydoc CommandBuffer::reset() */
-		void reset() override;
+		void Reset() override;
 		
 	private:
 		friend class GLCommandBufferManager;
@@ -38,7 +38,7 @@ namespace bs { namespace ct
 		GLCommandBuffer(GpuQueueType type, UINT32 deviceIdx, UINT32 queueIdx, bool secondary);
 
 		/** Returns true if the command buffer has finished executing on the GPU. */
-		bool isComplete() const;
+		bool IsComplete() const;
 
 		GLsync mFence = 0;
 		bool mCommandQueued = false;

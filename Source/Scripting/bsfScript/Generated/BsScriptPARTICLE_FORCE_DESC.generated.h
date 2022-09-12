@@ -21,9 +21,9 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "ParticleForceOptions")
 
 		static MonoObject* box(const __PARTICLE_FORCE_DESCInterop& value);
-		static __PARTICLE_FORCE_DESCInterop unbox(MonoObject* value);
-		static PARTICLE_FORCE_DESC fromInterop(const __PARTICLE_FORCE_DESCInterop& value);
-		static __PARTICLE_FORCE_DESCInterop toInterop(const PARTICLE_FORCE_DESC& value);
+		static __PARTICLE_FORCE_DESCInterop Unbox(MonoObject* value);
+		static PARTICLE_FORCE_DESC FromInterop(const __PARTICLE_FORCE_DESCInterop& value);
+		static __PARTICLE_FORCE_DESCInterop ToInterop(const PARTICLE_FORCE_DESC& value);
 
 	private:
 		ScriptPARTICLE_FORCE_DESC(MonoObject* managedInstance);

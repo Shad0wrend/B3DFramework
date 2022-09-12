@@ -95,7 +95,7 @@ namespace bs
 
 	MonoObject* ScriptSerializableProperty::internal_createManagedArrayInstance(ScriptSerializableProperty* nativeInstance, MonoArray* sizes)
 	{
-		ScriptArray scriptArray(sizes);
+		ScriptArray ScriptArray(sizes);
 
 		Vector<UINT32> nativeSizes;
 		UINT32 arrayLen = scriptArray.size();

@@ -6,7 +6,7 @@
 
 namespace bs
 {
-	bool checkIfDestroyed(ScriptGameObject* nativeInstance)
+	bool CheckIfDestroyed(ScriptGameObject* nativeInstance)
 	{
 		HGameObject go = nativeInstance->getNativeHandle();
 		if (go.isDestroyed())

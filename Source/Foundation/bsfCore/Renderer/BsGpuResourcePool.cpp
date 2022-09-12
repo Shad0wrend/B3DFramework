@@ -290,7 +290,7 @@ namespace bs { namespace ct
 		return desc;
 	}
 
-	GpuResourcePool& gGpuResourcePool()
+	GpuResourcePool& GGpuResourcePool()
 	{
 		return GpuResourcePool::instance();
 	}

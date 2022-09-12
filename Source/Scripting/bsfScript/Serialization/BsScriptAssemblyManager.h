@@ -74,10 +74,10 @@ namespace bs
 		 * @param[in]	assemblyName		Name of the assembly to load the information about.
 		 * @param[in]	typeMappings		Contains information about managed objects that wrap native objects.
 		 */
-		void loadAssemblyInfo(const String& assemblyName, const BuiltinTypeMappings& typeMappings);
+		void LoadAssemblyInfo(const String& assemblyName, const BuiltinTypeMappings& typeMappings);
 
 		/**	Clears any assembly data previously loaded with loadAssemblyInfo(). */
-		void clearAssemblyInfo();
+		void ClearAssemblyInfo();
 
 		/**
 		 * Returns managed serializable object info for a specific managed type.
@@ -92,7 +92,7 @@ namespace bs
 			SPtr<ManagedSerializableObjectInfo>& outInfo);
 
 		/**	Generates or retrieves a type info object for the specified managed class, if the class is serializable. */
-		SPtr<ManagedSerializableTypeInfo> getTypeInfo(MonoClass* monoClass);
+		SPtr<ManagedSerializableTypeInfo> GetTypeInfo(MonoClass* monoClass);
 
 		/**
 		 * Maps a mono type to information about a wrapped built-in component. Returns null if type doesn't correspond to
@@ -143,13 +143,13 @@ namespace bs
 		 * @param[in]	typeName	Name of the type.
 		 * @return					True if the object info was found, false otherwise.
 		 */
-		bool hasSerializableObjectInfo(const String& ns, const String& typeName);
+		bool HasSerializableObjectInfo(const String& ns, const String& typeName);
 
 		/**	Returns names of all assemblies that currently have managed serializable object data loaded. */
-		Vector<String> getScriptAssemblies() const;
+		Vector<String> GetScriptAssemblies() const;
 
 		/** Returns type information for various built-in classes. */
-		const BuiltinScriptClasses& getBuiltinClasses() const { return mBuiltin; }
+		const BuiltinScriptClasses& GetBuiltinClasses() const { return mBuiltin; }
 
 
 		/**
@@ -158,23 +158,23 @@ namespace bs
 		* object is serialized and the serialized version of the object is returned. The provided object cannot be an array,
 		* list, dictionary, component or a resource.
 		*/
-		SPtr<IReflectable> getReflectableFromManagedObject(MonoObject* value);
+		SPtr<IReflectable> GetReflectableFromManagedObject(MonoObject* value);
 
 	private:
 		/**	Deletes all stored managed serializable object infos for all assemblies. */
-		void clearScriptObjects();
+		void ClearScriptObjects();
 
 		/**
 		 * Initializes the base managed types. These are the types we expect must exist in loaded assemblies as they're used
 		 * for various common operations.
 		 */
-		void initializeBaseTypes();
+		void InitializeBaseTypes();
 
 		/**
 		 * Adds mappings between managed objects and their native wrappers to their respective lookup tables and
 		 * initializes any assembly specific data.
 		 */
-		void loadTypeMappings(MonoAssembly& assembly, const BuiltinTypeMappings& mapping);
+		void LoadTypeMappings(MonoAssembly& assembly, const BuiltinTypeMappings& mapping);
 
 		UnorderedMap<String, SPtr<ManagedSerializableAssemblyInfo>> mAssemblyInfos;
 		UnorderedMap<::MonoReflectionType*, BuiltinComponentInfo> mBuiltinComponentInfos;

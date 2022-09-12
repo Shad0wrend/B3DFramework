@@ -14,7 +14,7 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "SpriteSheetGridAnimation")
 
 		static MonoObject* box(const SpriteSheetGridAnimation& value);
-		static SpriteSheetGridAnimation unbox(MonoObject* value);
+		static SpriteSheetGridAnimation Unbox(MonoObject* value);
 
 	private:
 		ScriptSpriteSheetGridAnimation(MonoObject* managedInstance);

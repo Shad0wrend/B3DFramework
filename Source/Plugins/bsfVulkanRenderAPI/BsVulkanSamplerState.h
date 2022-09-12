@@ -20,7 +20,7 @@ namespace bs { namespace ct
 		~VulkanSampler();
 
 		/** Returns the internal handle to the Vulkan object. */
-		VkSampler getHandle() const { return mSampler; }
+		VkSampler GetHandle() const { return mSampler; }
 
 	private:
 		VkSampler mSampler;
@@ -44,7 +44,7 @@ namespace bs { namespace ct
 		VulkanSamplerState(const SAMPLER_STATE_DESC& desc, GpuDeviceFlags deviceMask);
 
 		/** @copydoc SamplerState::createInternal */
-		void createInternal() override;
+		void CreateInternal() override;
 
 		VulkanSampler* mSamplers[BS_MAX_DEVICES];
 		GpuDeviceFlags mDeviceMask;

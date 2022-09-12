@@ -24,83 +24,83 @@ namespace bs
 		~PhysXCharacterController();
 
 		/** @copydoc CharacterController::move */
-		CharacterCollisionFlags move(const Vector3& displacement) override;
+		CharacterCollisionFlags Move(const Vector3& displacement) override;
 
 		/** @copydoc CharacterController::getPosition */
-		Vector3 getPosition() const override;
+		Vector3 GetPosition() const override;
 
 		/** @copydoc CharacterController::setPosition */
-		void setPosition(const Vector3& position) override;
+		void SetPosition(const Vector3& position) override;
 
 		/** @copydoc CharacterController::getFootPosition */
-		Vector3 getFootPosition() const override;
+		Vector3 GetFootPosition() const override;
 
 		/** @copydoc CharacterController::setFootPosition */
-		void setFootPosition(const Vector3& position) override;
+		void SetFootPosition(const Vector3& position) override;
 
 		/** @copydoc CharacterController::getRadius */
-		float getRadius() const override;
+		float GetRadius() const override;
 
 		/** @copydoc CharacterController::setRadius */
-		void setRadius(float radius) override;
+		void SetRadius(float radius) override;
 
 		/** @copydoc CharacterController::getHeight */
-		float getHeight() const override;
+		float GetHeight() const override;
 
 		/** @copydoc CharacterController::setHeight */
-		void setHeight(float height) override;
+		void SetHeight(float height) override;
 
 		/** @copydoc CharacterController::getUp */
-		Vector3 getUp() const override;
+		Vector3 GetUp() const override;
 
 		/** @copydoc CharacterController::setUp */
-		void setUp(const Vector3& up) override;
+		void SetUp(const Vector3& up) override;
 
 		/** @copydoc CharacterController::getClimbingMode */
-		CharacterClimbingMode getClimbingMode() const override;
+		CharacterClimbingMode GetClimbingMode() const override;
 
 		/** @copydoc CharacterController::setClimbingMode */
-		void setClimbingMode(CharacterClimbingMode mode) override;
+		void SetClimbingMode(CharacterClimbingMode mode) override;
 
 		/** @copydoc CharacterController::getNonWalkableMode */
-		CharacterNonWalkableMode getNonWalkableMode() const override;
+		CharacterNonWalkableMode GetNonWalkableMode() const override;
 
 		/** @copydoc CharacterController::setNonWalkableMode */
-		void setNonWalkableMode(CharacterNonWalkableMode mode) override;
+		void SetNonWalkableMode(CharacterNonWalkableMode mode) override;
 
 		/** @copydoc CharacterController::getMinMoveDistance */
-		float getMinMoveDistance() const override;
+		float GetMinMoveDistance() const override;
 
 		/** @copydoc CharacterController::setMinMoveDistance */
-		void setMinMoveDistance(float value) override;
+		void SetMinMoveDistance(float value) override;
 
 		/** @copydoc CharacterController::getContactOffset */
-		float getContactOffset() const override;
+		float GetContactOffset() const override;
 
 		/** @copydoc CharacterController::setContactOffset */
-		void setContactOffset(float value) override;
+		void SetContactOffset(float value) override;
 
 		/** @copydoc CharacterController::getStepOffset */
-		float getStepOffset() const override;
+		float GetStepOffset() const override;
 
 		/** @copydoc CharacterController::setStepOffset */
-		void setStepOffset(float value) override;
+		void SetStepOffset(float value) override;
 
 		/** @copydoc CharacterController::getSlopeLimit */
-		Radian getSlopeLimit() const override;
+		Radian GetSlopeLimit() const override;
 
 		/** @copydoc CharacterController::setSlopeLimit */
-		void setSlopeLimit(Radian value) override;
+		void SetSlopeLimit(Radian value) override;
 
 	private:
 		/** @copydoc physx::PxUserControllerHitReport::onShapeHit */
-		void onShapeHit(const physx::PxControllerShapeHit& hit) override;
+		void OnShapeHit(const physx::PxControllerShapeHit& hit) override;
 
 		/** @copydoc physx::PxUserControllerHitReport::onControllerHit */
-		void onControllerHit(const physx::PxControllersHit& hit) override;
+		void OnControllerHit(const physx::PxControllersHit& hit) override;
 
 		/** @copydoc physx::PxUserControllerHitReport::onObstacleHit */
-		void onObstacleHit(const physx::PxControllerObstacleHit& hit) override { /* Do nothing */ };
+		void OnObstacleHit(const physx::PxControllerObstacleHit& hit) override { /* Do nothing */ };
 
 		/** @copydoc physx::PxQueryFilterCallback::preFilter */
 		physx::PxQueryHitType::Enum preFilter(const physx::PxFilterData& filterData, const physx::PxShape* shape,
@@ -111,7 +111,7 @@ namespace bs
 			const physx::PxQueryHit& hit) override;
 
 		/** @copydoc physx::PxControllerFilterCallback::filter */
-		bool filter(const physx::PxController& a, const physx::PxController& b) override;
+		bool Filter(const physx::PxController& a, const physx::PxController& b) override;
 
 		physx::PxCapsuleController* mController = nullptr;
 		float mMinMoveDistance = 0.0f;

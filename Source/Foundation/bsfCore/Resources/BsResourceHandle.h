@@ -36,24 +36,24 @@ namespace bs
 		 * @param[in]	checkDependencies	If true, and if resource has any dependencies, this method will also check if
 		 *									they are loaded.
 		 */
-		bool isLoaded(bool checkDependencies = true) const;
+		bool IsLoaded(bool checkDependencies = true) const;
 
 		/**
 		 * Blocks the current thread until the resource is fully loaded.
 		 *
 		 * @note	Careful not to call this on the thread that does the loading.
 		 */
-		void blockUntilLoaded(bool waitForDependencies = true) const;
+		void BlockUntilLoaded(bool waitForDependencies = true) const;
 
 		/**
 		 * Releases an internal reference to this resource held by the resources system, if there is one.
 		 *
 		 * @see		Resources::release(ResourceHandleBase&)
 		 */
-		void release();
+		void Release();
 
 		/** Returns the UUID of the resource the handle is referring to. */
-		const UUID& getUUID() const { return mData != nullptr ? mData->mUUID : UUID::EMPTY; }
+		const UUID& GetUUID() const { return mData != nullptr ? mData->mUUID : UUID::EMPTY; }
 
 	public: // ***** INTERNAL ******
 		/** @name Internal
@@ -61,12 +61,12 @@ namespace bs
 		 */
 
 		/**	Gets the handle data. For internal use only. */
-		const SPtr<ResourceHandleData>& getHandleData() const { return mData; }
+		const SPtr<ResourceHandleData>& GetHandleData() const { return mData; }
 
 		/** @} */
 	protected:
 		/**	Destroys the resource the handle is pointing to. */
-		void destroy();
+		void Destroy();
 
 		/**
 		 * Sets the created flag to true and assigns the resource pointer. Called by the constructors, or if you
@@ -78,25 +78,25 @@ namespace bs
 		 * @note
 		 * Internal method.
 		 */
-		void setHandleData(const SPtr<Resource>& ptr, const UUID& uuid);
+		void SetHandleData(const SPtr<Resource>& ptr, const UUID& uuid);
 
 		/**
 		 * Clears the created flag and the resource pointer, making the handle invalid until the resource is loaded again
 		 * and assigned through setHandleData().
 		 */
-		void clearHandleData();
+		void ClearHandleData();
 
 		/** Increments the reference count of the handle. Only to be used by Resources for keeping internal references. */
-		void addInternalRef();
+		void AddInternalRef();
 
 		/** Decrements the reference count of the handle. Only to be used by Resources for keeping internal references. */
-		void removeInternalRef();
+		void RemoveInternalRef();
 
 		/**
 		 * Notification sent by the resource system when the resource is done with the loading process. This will trigger
 		 * even if the load fails.
 		 */
-		void notifyLoadComplete();
+		void NotifyLoadComplete();
 
 		/**
 		 * @note
@@ -111,7 +111,7 @@ namespace bs
 		static Mutex mResourceCreatedMutex;
 
 	protected:
-		void throwIfNotLoaded() const;
+		void ThrowIfNotLoaded() const;
 	};
 
 	/**
@@ -128,8 +128,8 @@ namespace bs
 	class BS_CORE_EXPORT TResourceHandleBase<true> : public ResourceHandleBase
 	{
 	protected:
-		void addRef() { };
-		void releaseRef() { };
+		void AddRef() { };
+		void ReleaseRef() { };
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -145,13 +145,13 @@ namespace bs
 	class BS_CORE_EXPORT TResourceHandleBase<false> : public ResourceHandleBase
 	{
 	protected:
-		void addRef()
+		void AddRef()
 		{
 			if (mData)
 				mData->mRefCount.fetch_add(1, std::memory_order_relaxed);
 		};
 
-		void releaseRef()
+		void ReleaseRef()
 		{
 			if (mData)
 			{
@@ -284,7 +284,7 @@ namespace bs
 		 *
 		 * @note	Throws exception if handle is invalid.
 		 */
-		SPtr<T> getInternalPtr() const
+		SPtr<T> GetInternalPtr() const
 		{
 			this->throwIfNotLoaded();
 
@@ -292,7 +292,7 @@ namespace bs
 		}
 
 		/** Converts a handle into a weak handle. */
-		TResourceHandle<T, true> getWeak() const
+		TResourceHandle<T, true> GetWeak() const
 		{
 			TResourceHandle<T, true> handle;
 			handle.setHandleData(this->getHandleData());
@@ -347,7 +347,7 @@ namespace bs
 		}
 
 		/**	Replaces the internal handle data pointer, effectively transforming the handle into a different handle. */
-		void setHandleData(const SPtr<ResourceHandleData>& data)
+		void SetHandleData(const SPtr<ResourceHandleData>& data)
 		{
 			this->releaseRef();
 			this->mData = data;
@@ -355,7 +355,7 @@ namespace bs
 		}
 
 		/**	Converts a weak handle into a normal handle. */
-		TResourceHandle<T, false> lock() const
+		TResourceHandle<T, false> Lock() const
 		{
 			TResourceHandle<Resource, false> handle;
 			handle.setHandleData(this->getHandleData());

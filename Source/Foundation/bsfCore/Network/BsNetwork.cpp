@@ -19,7 +19,7 @@ namespace bs
 	static_assert(NETWORK_BACKEND_FIRST_FREE_ID == ID_USER_PACKET_ENUM, "");
 
 	/** Converts a RakNet SystemAddress into the framework's NetworkAddress type. */
-	void systemToNetworkAddress(const SystemAddress& address, NetworkAddress& output)
+	void SystemToNetworkAddress(const SystemAddress& address, NetworkAddress& output)
 	{
 		if(address.address.addr4.sin_family == AF_INET)
 		{
@@ -41,7 +41,7 @@ namespace bs
 	 * Same as systemToNetworkAddress(const SystemAddress&, NetworkAddress&) except it returns a brand new NetworkAddress
 	 * object.
 	 */
-	NetworkAddress systemToNetworkAddress(const SystemAddress& address)
+	NetworkAddress SystemToNetworkAddress(const SystemAddress& address)
 	{
 		NetworkAddress output;
 		systemToNetworkAddress(address, output);
@@ -49,7 +49,7 @@ namespace bs
 	}
 
 	/** Converts the framework's NetworkAddress into RakNet's SystemAddres type. */
-	SystemAddress networkToSystemAddress(const NetworkAddress& address)
+	SystemAddress NetworkToSystemAddress(const NetworkAddress& address)
 	{
 		SystemAddress output;
 		output.address.addr4.sin_port = address.port;
@@ -71,7 +71,7 @@ namespace bs
 	}
 
 	/** Converts PacketChannel reliability, priority and ordering into equivalent RakNet enums. */
-	void mapChannelToRakNet(const PacketChannel& channel, ::PacketReliability& reliability, ::PacketPriority& priority)
+	void MapChannelToRakNet(const PacketChannel& channel, ::PacketReliability& reliability, ::PacketPriority& priority)
 	{
 		switch(channel.priority)
 		{
@@ -119,13 +119,13 @@ namespace bs
 
 	NetworkAddress::NetworkAddress(const char* address)
 	{
-		SystemAddress sysAddress(address);
+		SystemAddress SysAddress(address);
 		systemToNetworkAddress(sysAddress, *this);
 	}
 
 	NetworkAddress::NetworkAddress(const char* ip, UINT16 port)
 	{
-		SystemAddress sysAddress(ip, port);
+		SystemAddress SysAddress(ip, port);
 		systemToNetworkAddress(sysAddress, *this);
 	}
 
@@ -141,7 +141,7 @@ namespace bs
 			return false;
 
 		if(ipType == IPV4)
-			return memcmp(ip, other.ip, 4) == 0;
+			return Memcmp(ip, other.ip, 4) == 0;
 
 		return (memcmp(ip, other.ip, sizeof(ip)) == 0 && ip6FlowInfo == other.ip6FlowInfo && ip6ScopeId == other.ip6ScopeId);
 	}
@@ -204,7 +204,7 @@ namespace bs
 		 * Using a RakNet address or a GUID, attempts to retrieve a network ID, or allocates a new ID if one cannot be
 		 * found.
 		 */
-		NetworkId getOrRegisterNetworkId(const SystemAddress& address, const RakNetGUID& guid)
+		NetworkId GetOrRegisterNetworkId(const SystemAddress& address, const RakNetGUID& guid)
 		{
 			INT32 systemIndex = address.systemIndex;
 			assert(systemIndex >= 0 && systemIndex < (INT32)networkIdMapping.size());
@@ -261,7 +261,7 @@ namespace bs
 		}
 
 		/** Frees an event allocated with allocNetworkEvent(). */
-		void freeNetworkEvent(NetworkEvent* event)
+		void FreeNetworkEvent(NetworkEvent* event)
 		{
 			Packet* packet = (Packet*)event->_backendData;
 

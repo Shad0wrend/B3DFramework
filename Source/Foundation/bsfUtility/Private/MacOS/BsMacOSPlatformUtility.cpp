@@ -92,7 +92,7 @@ namespace bs
 		const char* chars = CFStringGetCStringPtr(mutableString, kCFStringEncodingUTF8);
 		if(chars)
 		{
-			String output(chars);
+			String Output(chars);
 			CFRelease(mutableString);
 
 			return output;
@@ -104,7 +104,7 @@ namespace bs
 		CFStringGetCString(mutableString, buffer, stringLength, kCFStringEncodingUTF8);
 		CFRelease(mutableString);
 
-		String output(buffer);
+		String Output(buffer);
 		bs_stack_free(buffer);
 
 		return output;

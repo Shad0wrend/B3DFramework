@@ -37,7 +37,7 @@ namespace bs
 
 	void RenderAPI::setVertexBuffers(UINT32 index, const Vector<SPtr<VertexBuffer>>& buffers)
 	{
-		Vector<SPtr<ct::VertexBuffer>> coreBuffers(buffers.size());
+		Vector<SPtr<ct::VertexBuffer>> CoreBuffers(buffers.size());
 		for (UINT32 i = 0; i < (UINT32)buffers.size(); i++)
 			coreBuffers[i] = buffers[i] != nullptr ? buffers[i]->getCore() : nullptr;
 
@@ -142,7 +142,7 @@ namespace bs
 	namespace ct
 	{
 	RenderAPI::RenderAPI()
-		: mCurrentCapabilities(nullptr), mNumDevices(0)
+		: MCurrentCapabilities(nullptr), mNumDevices(0)
 	{
 	}
 

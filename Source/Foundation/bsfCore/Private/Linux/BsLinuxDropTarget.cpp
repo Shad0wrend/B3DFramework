@@ -47,7 +47,7 @@ namespace bs
 	};
 
 	// Results must be freed using XFree
-	X11Property readX11Property(::Display *display, ::Window window, Atom type)
+	X11Property ReadX11Property(::Display *display, ::Window window, Atom type)
 	{
 		X11Property output;
 		output.data = nullptr;
@@ -72,7 +72,7 @@ namespace bs
 	/**
 	 * Decodes percent (%) encoded characters in an URI to actual characters. Characters are decoded into the input string.
 	 */
-	void decodeURI(char* uri)
+	void DecodeURI(char* uri)
 	{
 		if(uri == nullptr)
 			return;
@@ -123,9 +123,9 @@ namespace bs
 					char offset = '\0';
 					if(isn)
 						offset = 0 - '0';
-					else if(isa)
+					else If(isa)
 						offset = 10 - 'a';
-					else if(isA)
+					else If(isA)
 						offset = 10 - 'A';
 
 					decodedChar |= (uri[i] + offset) << ((2 - decodeState) * 4);
@@ -189,7 +189,7 @@ namespace bs
 	}
 
 	DropTarget::DropTarget(const RenderWindow* ownerWindow, const Rect2I& area)
-		: mArea(area), mActive(false), mOwnerWindow(ownerWindow), mDropType(DropTargetType::None)
+		: MArea(area), mActive(false), mOwnerWindow(ownerWindow), mDropType(DropTargetType::None)
 	{
 		LinuxDragAndDrop::registerDropTarget(this);
 	}
@@ -242,19 +242,19 @@ namespace bs
 
 	void LinuxDragAndDrop::registerDropTarget(DropTarget* target)
 	{
-		Lock lock(sMutex);
+		Lock Lock(sMutex);
 		sQueuedAreaOperations.push_back(DropAreaOp(target, DropAreaOpType::Register, target->getArea()));
 	}
 
 	void LinuxDragAndDrop::unregisterDropTarget(DropTarget* target)
 	{
-		Lock lock(sMutex);
+		Lock Lock(sMutex);
 		sQueuedAreaOperations.push_back(DropAreaOp(target, DropAreaOpType::Unregister));
 	}
 
 	void LinuxDragAndDrop::updateDropTarget(DropTarget* target)
 	{
-		Lock lock(sMutex);
+		Lock Lock(sMutex);
 		sQueuedAreaOperations.push_back(DropAreaOp(target, DropAreaOpType::Update, target->getArea()));
 	}
 
@@ -262,7 +262,7 @@ namespace bs
 	{
 		// First handle any queued registration/unregistration
 		{
-			Lock lock(sMutex);
+			Lock Lock(sMutex);
 
 			for(auto& entry : sQueuedAreaOperations)
 			{
@@ -368,7 +368,7 @@ namespace bs
 			sDragActive = foundSupportedType;
 		}
 		// Cursor moved while drag is active (also includes the initial cursor activity when drag entered)
-		else if(event.message_type == sXdndPosition)
+		else If(event.message_type == sXdndPosition)
 		{
 			::Window source = (::Window)event.data.l[0];
 
@@ -408,13 +408,13 @@ namespace bs
 
 							if(dropArea.target->_isActive())
 							{
-								Lock lock(sMutex);
+								Lock Lock(sMutex);
 								sQueuedOperations.push_back(DragAndDropOp(DragAndDropOpType::DragOver, dropArea.target,
 									windowPos));
 							}
 							else
 							{
-								Lock lock(sMutex);
+								Lock Lock(sMutex);
 								sQueuedOperations.push_back(DragAndDropOp(DragAndDropOpType::Enter, dropArea.target,
 										windowPos));
 							}
@@ -427,7 +427,7 @@ namespace bs
 							if(dropArea.target->_isActive())
 							{
 								{
-									Lock lock(sMutex);
+									Lock Lock(sMutex);
 									sQueuedOperations.push_back(DragAndDropOp(DragAndDropOpType::Leave, dropArea.target));
 								}
 
@@ -442,14 +442,14 @@ namespace bs
 			XFlush(sXDisplay);
 		}
 		// Cursor left the target window, or the drop was rejected
-		else if(event.message_type == sXdndLeave)
+		else If(event.message_type == sXdndLeave)
 		{
 			for(auto& dropArea : sDropAreas)
 			{
 				if(dropArea.target->_isActive())
 				{
 					{
-						Lock lock(sMutex);
+						Lock Lock(sMutex);
 						sQueuedOperations.push_back(DragAndDropOp(DragAndDropOpType::Leave, dropArea.target));
 					}
 
@@ -459,7 +459,7 @@ namespace bs
 
 			sDragActive = false;
 		}
-		else if(event.message_type == sXdndDrop)
+		else If(event.message_type == sXdndDrop)
 		{
 			::Window source = (::Window)event.data.l[0];
 			bool dropAccepted = false;
@@ -549,7 +549,7 @@ namespace bs
 
 				Vector2I windowPos = linuxWindow->screenToWindowPos(sDragPosition);
 
-				Lock lock(sMutex);
+				Lock Lock(sMutex);
 				sQueuedOperations.push_back(DragAndDropOp(DragAndDropOpType::Drop, dropArea.target, windowPos, filePaths));
 
 				dropArea.target->_setActive(false);
@@ -586,7 +586,7 @@ namespace bs
 		Vector<DragAndDropOp> operations;
 
 		{
-			Lock lock(sMutex);
+			Lock Lock(sMutex);
 			std::swap(operations, sQueuedOperations);
 		}
 

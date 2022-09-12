@@ -34,8 +34,8 @@ namespace bs
 	}
 
 	MonoClass::MonoClass(const String& ns, const String& type, ::MonoClass* monoClass, const MonoAssembly* parentAssembly)
-		: mParentAssembly(parentAssembly), mClass(monoClass), mNamespace(ns), mTypeName(type), mHasCachedFields(false)
-		, mHasCachedProperties(false), mHasCachedMethods(false)
+		: MParentAssembly(parentAssembly), mClass(monoClass), mNamespace(ns), mTypeName(type), mHasCachedFields(false)
+		, MHasCachedProperties(false), mHasCachedMethods(false)
 	{
 		mFullName = ns + "." + type;
 	}
@@ -66,7 +66,7 @@ namespace bs
 
 	MonoMethod* MonoClass::getMethod(const String& name, UINT32 numParams) const
 	{
-		MethodId mehodId(name, numParams);
+		MethodId MehodId(name, numParams);
 		auto iterFind = mMethods.find(mehodId);
 		if(iterFind != mMethods.end())
 			return iterFind->second;
@@ -83,7 +83,7 @@ namespace bs
 
 	MonoMethod* MonoClass::getMethodExact(const String& name, const String& signature) const
 	{
-		MethodId mehodId(name + "(" + signature + ")", 0);
+		MethodId MehodId(name + "(" + signature + ")", 0);
 		auto iterFind = mMethods.find(mehodId);
 		if(iterFind != mMethods.end())
 			return iterFind->second;
@@ -255,7 +255,7 @@ namespace bs
 
 	MonoObject* MonoClass::invokeMethod(const String& name, MonoObject* instance, void** params, UINT32 numParams)
 	{
-		return getMethod(name, numParams)->invoke(instance, params);
+		return GetMethod(name, numParams)->invoke(instance, params);
 	}
 
 	void MonoClass::addInternalCall(const String& name, const void* method)

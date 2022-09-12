@@ -19,7 +19,7 @@ namespace bs { namespace ct
 		~D3D11DriverList();
 
 		/**	Returns the number of available drivers. */
-		UINT32 count() const;
+		UINT32 Count() const;
 
 		/**	Returns a driver at the specified index. */
 		D3D11Driver* item(UINT32 idx) const;
@@ -29,7 +29,7 @@ namespace bs { namespace ct
 
 	private:
 		/**	Enumerates the DXGI factory object and constructs a list of available drivers. */
-		void enumerate(IDXGIFactory1* dxgiFactory);
+		void Enumerate(IDXGIFactory1* dxgiFactory);
 
 		Vector<D3D11Driver*> mDriverList;
 	};

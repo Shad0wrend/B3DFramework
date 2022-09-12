@@ -39,7 +39,7 @@ namespace bs
 		shutdownCoreThread();
 
 		{
-			Lock lock(mSubmitMutex);
+			Lock Lock(mSubmitMutex);
 
 			for(auto& queue : mAllQueues)
 				bs_delete(queue);
@@ -67,7 +67,7 @@ namespace bs
 		mCoreThread = ThreadPool::instance().run("Core", std::bind(&CoreThread::runCoreThread, this));
 #else
 		{
-			Lock lock(sAppStartedMutex);
+			Lock Lock(sAppStartedMutex);
 			sAppStarted = true;
 		}
 
@@ -75,7 +75,7 @@ namespace bs
 #endif
 		
 		// Need to wait to unsure thread ID is correctly set before continuing
-		Lock lock(mThreadStartedMutex);
+		Lock Lock(mThreadStartedMutex);
 
 		while (!mCoreThreadStarted)
 			mCoreThreadStartedCondition.wait(lock);
@@ -87,7 +87,7 @@ namespace bs
 	{
 		// Wait for the application to reach a point where core thread can be safely started
 		{
-			Lock lock(sAppStartedMutex);
+			Lock Lock(sAppStartedMutex);
 
 			while (!sAppStarted)
 				sAppStartedCondition.wait(lock);
@@ -105,7 +105,7 @@ namespace bs
 		TaskScheduler::instance().removeWorker(); // One less worker because we are reserving one core for this thread
 
 		{
-			Lock lock(mThreadStartedMutex);
+			Lock Lock(mThreadStartedMutex);
 
 			mCoreThreadStarted = true;
 			mCoreThreadId = BS_THREAD_CURRENT_ID;
@@ -118,7 +118,7 @@ namespace bs
 			// Wait until we get some ready commands
 			Queue<QueuedCommand>* commands = nullptr;
 			{
-				Lock lock(mCommandQueueMutex);
+				Lock Lock(mCommandQueueMutex);
 
 				while(mCommandQueue->isEmpty())
 				{
@@ -147,7 +147,7 @@ namespace bs
 #if !BS_FORCE_SINGLETHREADED_RENDERING
 
 		{
-			Lock lock(mCommandQueueMutex);
+			Lock Lock(mCommandQueueMutex);
 			mCoreThreadShutdown = true;
 		}
 
@@ -171,7 +171,7 @@ namespace bs
 			mPerThreadQueue.current->queue = newQueue;
 			mPerThreadQueue.current->isMain = BS_THREAD_CURRENT_ID == mSimThreadId;
 
-			Lock lock(mSubmitMutex);
+			Lock Lock(mSubmitMutex);
 			mAllQueues.push_back(mPerThreadQueue.current);
 		}
 
@@ -197,7 +197,7 @@ namespace bs
 		{
 			// This lock is needed mainly because of blocking. Without it another submitting thread might flush a command
 			// we want to wait on.
-			Lock lock(mSubmitMutex);
+			Lock Lock(mSubmitMutex);
 
 			// Submit workers first
 			ThreadQueueContainer* mainQueue = nullptr;
@@ -215,7 +215,7 @@ namespace bs
 
 			if(blockUntilComplete)
 			{
-				Lock lock2(mCommandQueueMutex);
+				Lock Lock2(mCommandQueueMutex);
 
 				blockCommandId = mMaxCommandNotifyId++;
 				mCommandQueue->queue([](){}, true, blockCommandId);
@@ -231,14 +231,14 @@ namespace bs
 
 	void CoreThread::submit(bool blockUntilComplete)
 	{
-		Lock lock(mSubmitMutex);
+		Lock Lock(mSubmitMutex);
 
 		CommandQueue<CommandQueueSync>& queue = *getQueue();
 		Queue<QueuedCommand>* commands = queue.flush();
 
 		UINT32 commandId = -1;
 		{
-			Lock lock2(mCommandQueueMutex);
+			Lock Lock2(mCommandQueueMutex);
 
 			if (blockUntilComplete)
 			{
@@ -263,7 +263,7 @@ namespace bs
 #endif
 
 		if (!flags.isSet(CTQF_InternalQueue))
-			return getQueue()->queueReturn(commandCallback);
+			return GetQueue()->queueReturn(commandCallback);
 		else
 		{
 			bool blockUntilComplete = flags.isSet(CTQF_BlockUntilComplete);
@@ -271,7 +271,7 @@ namespace bs
 			AsyncOp op;
 			UINT32 commandId = -1;
 			{
-				Lock lock(mCommandQueueMutex);
+				Lock Lock(mCommandQueueMutex);
 
 				if (blockUntilComplete)
 				{
@@ -305,7 +305,7 @@ namespace bs
 
 			UINT32 commandId = -1;
 			{
-				Lock lock(mCommandQueueMutex);
+				Lock Lock(mCommandQueueMutex);
 
 				if (blockUntilComplete)
 				{
@@ -344,7 +344,7 @@ namespace bs
 
 		while(true)
 		{
-			Lock lock(mCommandNotifyMutex);
+			Lock Lock(mCommandNotifyMutex);
 
 			// Check if our command id is in the completed list
 			auto iter = mCommandsCompleted.begin();
@@ -365,19 +365,19 @@ namespace bs
 	void CoreThread::commandCompletedNotify(UINT32 commandId)
 	{
 		{
-			Lock lock(mCommandNotifyMutex);
+			Lock Lock(mCommandNotifyMutex);
 			mCommandsCompleted.push_back(commandId);
 		}
 
 		mCommandCompleteCondition.notify_all();
 	}
 
-	CoreThread& gCoreThread()
+	CoreThread& GCoreThread()
 	{
 		return CoreThread::instance();
 	}
 
-	void throwIfNotCoreThread()
+	void ThrowIfNotCoreThread()
 	{
 #if !BS_FORCE_SINGLETHREADED_RENDERING
 		if(BS_THREAD_CURRENT_ID != CoreThread::instance().getCoreThreadId())
@@ -385,7 +385,7 @@ namespace bs
 #endif
 	}
 
-	void throwIfCoreThread()
+	void ThrowIfCoreThread()
 	{
 #if !BS_FORCE_SINGLETHREADED_RENDERING
 		if(BS_THREAD_CURRENT_ID == CoreThread::instance().getCoreThreadId())

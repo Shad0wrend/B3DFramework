@@ -21,17 +21,17 @@ namespace bs { namespace ct
 		~GLVertexBuffer();
 
 		/**	Returns internal OpenGL buffer ID. */
-		GLuint getGLBufferId() const { return static_cast<GLHardwareBuffer*>(mBuffer)->getGLBufferId(); }
+		GLuint GetGLBufferId() const { return static_cast<GLHardwareBuffer*>(mBuffer)->getGLBufferId(); }
 
 		/**	Registers a new VertexArrayObject that uses this vertex buffer. */
-		void registerVAO(const GLVertexArrayObject& vao);
+		void RegisterVAO(const GLVertexArrayObject& vao);
 
 		/**	Unregisters a VAO from this vertex buffer. Does not destroy it. */
-		void unregisterVAO(const GLVertexArrayObject& vao);
+		void UnregisterVAO(const GLVertexArrayObject& vao);
 
 	protected:
 		/** @copydoc VertexBuffer::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 	private:
 		Vector<GLVertexArrayObject> mVAObjects;

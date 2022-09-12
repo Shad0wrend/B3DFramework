@@ -17,36 +17,36 @@ namespace bs { namespace ct
 		VulkanQueue(VulkanDevice& device, VkQueue queue, GpuQueueType type, UINT32 index);
 
 		/** Returns the internal handle to the Vulkan queue object. */
-		VkQueue getHandle() const { return mQueue; }
+		VkQueue GetHandle() const { return mQueue; }
 		
 		/** Returns the device that owns the queue. */
-		VulkanDevice& getDevice() const { return mDevice; }
+		VulkanDevice& GetDevice() const { return mDevice; }
 
 		/** Returns the type of the queue. */
-		GpuQueueType getType() const { return mType; }
+		GpuQueueType GetType() const { return mType; }
 
 		/** Returns the unique index of the queue, for its type. */
-		UINT32 getIndex() const { return mIndex; }
+		UINT32 GetIndex() const { return mIndex; }
 
 		/**
 		 * Checks if anything is currently executing on this queue.
 		 *
 		 * @note	This status is only updated after a VulkanCommandBufferManager::refreshStates() call.
 		 */
-		bool isExecuting() const;
+		bool IsExecuting() const;
 
 		/** Submits the provided command buffer on the queue. */
-		void submit(VulkanCmdBuffer* cmdBuffer, VulkanSemaphore** waitSemaphores, UINT32 semaphoresCount);
+		void Submit(VulkanCmdBuffer* cmdBuffer, VulkanSemaphore** waitSemaphores, UINT32 semaphoresCount);
 
 		/**
 		 * Stores information about a submit internally, but doesn't actually execute it. The intended use is to queue
 		 * multiple submits and execute them all at once using submitQueued(), ensuring better performance than queuing them
 		 * all individually.
 		 */
-		void queueSubmit(VulkanCmdBuffer* cmdBuffer, VulkanSemaphore** waitSemaphores, UINT32 semaphoresCount);
+		void QueueSubmit(VulkanCmdBuffer* cmdBuffer, VulkanSemaphore** waitSemaphores, UINT32 semaphoresCount);
 
 		/** Submits all previously queued commands buffers, as recorded by queueSubmit(). */
-		void submitQueued();
+		void SubmitQueued();
 
 		/**
 		 * Presents the back buffer of the provided swap chain.
@@ -56,10 +56,10 @@ namespace bs { namespace ct
 		 * @param[in]	semaphoresCount		Number of semaphores in the @p semaphores array.
 		 * @return							Return code of the present operation.
 		 */
-		VkResult present(VulkanSwapChain* swapChain, VulkanSemaphore** waitSemaphores, UINT32 semaphoresCount);
+		VkResult Present(VulkanSwapChain* swapChain, VulkanSemaphore** waitSemaphores, UINT32 semaphoresCount);
 
 		/** Blocks the calling thread until all operations on the queue finish. */
-		void waitIdle() const;
+		void WaitIdle() const;
 
 		/**
 		 * Checks if any of the active command buffers finished executing on the queue and updates their states
@@ -69,7 +69,7 @@ namespace bs { namespace ct
 		 * @param[in]	queueEmpty	Set to true if the caller guarantees the queue will be empty (e.g. on shutdown). This
 		 *							allows the system to free all needed resources.
 		 */
-		void refreshStates(bool forceWait, bool queueEmpty = false);
+		void RefreshStates(bool forceWait, bool queueEmpty = false);
 
 		/** Returns the last command buffer that was submitted on this queue. */
 		VulkanCmdBuffer* getLastCommandBuffer() const { return mLastCommandBuffer; }
@@ -90,14 +90,14 @@ namespace bs { namespace ct
 		 * @param[in, out]	semaphoresCount	Number of semaphores in @p inSemaphores when calling. When method returns this
 		 *									will contain number of semaphores in @p outSemaphores.
 		 */
-		void prepareSemaphores(VulkanSemaphore** inSemaphores, VkSemaphore* outSemaphores, UINT32& semaphoresCount);
+		void PrepareSemaphores(VulkanSemaphore** inSemaphores, VkSemaphore* outSemaphores, UINT32& semaphoresCount);
 
 		/** Information about a single submitted command buffer. */
 		struct SubmitInfo
 		{
 			SubmitInfo(VulkanCmdBuffer* cmdBuffer, UINT32 submitIdx, UINT32 numSemaphores, UINT32 numCommandBuffers)
-				: cmdBuffer(cmdBuffer), submitIdx(submitIdx), numSemaphores(numSemaphores)
-				, numCommandBuffers(numCommandBuffers)
+				: CmdBuffer(cmdBuffer), submitIdx(submitIdx), numSemaphores(numSemaphores)
+				, NumCommandBuffers(numCommandBuffers)
 			{ }
 
 			VulkanCmdBuffer* cmdBuffer;

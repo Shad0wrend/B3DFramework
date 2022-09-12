@@ -16,7 +16,7 @@ namespace bs
 		renderWindow->_setThisPtr(renderWindow);
 		
 		{
-			Lock lock(mWindowMutex);
+			Lock Lock(mWindowMutex);
 
 			mWindows[renderWindow->mWindowId] = renderWindow.get();
 		}
@@ -32,7 +32,7 @@ namespace bs
 	void RenderWindowManager::notifyWindowDestroyed(RenderWindow* window)
 	{
 		{
-			Lock lock(mWindowMutex);
+			Lock Lock(mWindowMutex);
 
 			auto iterFind = std::find(begin(mMovedOrResizedWindows), end(mMovedOrResizedWindows), window);
 
@@ -55,7 +55,7 @@ namespace bs
 
 	void RenderWindowManager::notifyFocusReceived(ct::RenderWindow* coreWindow)
 	{
-		Lock lock(mWindowMutex);
+		Lock Lock(mWindowMutex);
 
 		RenderWindow* window = getNonCore(coreWindow);
 		mNewWindowInFocus = window;
@@ -63,14 +63,14 @@ namespace bs
 
 	void RenderWindowManager::notifyFocusLost(ct::RenderWindow* coreWindow)
 	{
-		Lock lock(mWindowMutex);
+		Lock Lock(mWindowMutex);
 
 		mNewWindowInFocus = nullptr;
 	}
 
 	void RenderWindowManager::notifyMovedOrResized(ct::RenderWindow* coreWindow)
 	{
-		Lock lock(mWindowMutex);
+		Lock Lock(mWindowMutex);
 
 		RenderWindow* window = getNonCore(coreWindow);
 		if (window == nullptr)
@@ -83,7 +83,7 @@ namespace bs
 
 	void RenderWindowManager::notifyMouseLeft(ct::RenderWindow* coreWindow)
 	{
-		Lock lock(mWindowMutex);
+		Lock Lock(mWindowMutex);
 
 		RenderWindow* window = getNonCore(coreWindow);
 		auto iterFind = std::find(begin(mMouseLeftWindows), end(mMouseLeftWindows), window);
@@ -94,7 +94,7 @@ namespace bs
 
 	void RenderWindowManager::notifyCloseRequested(ct::RenderWindow* coreWindow)
 	{
-		Lock lock(mWindowMutex);
+		Lock Lock(mWindowMutex);
 
 		RenderWindow* window = getNonCore(coreWindow);
 		auto iterFind = std::find(begin(mCloseRequestedWindows), end(mCloseRequestedWindows), window);
@@ -105,7 +105,7 @@ namespace bs
 
 	void RenderWindowManager::notifySyncDataDirty(ct::RenderWindow* coreWindow)
 	{
-		Lock lock(mWindowMutex);
+		Lock Lock(mWindowMutex);
 
 		RenderWindow* window = getNonCore(coreWindow);
 
@@ -121,7 +121,7 @@ namespace bs
 		Vector<RenderWindow*> closeRequestedWindows;
 
 		{
-			Lock lock(mWindowMutex);
+			Lock Lock(mWindowMutex);
 			newWinInFocus = mNewWindowInFocus;
 
 			std::swap(mMovedOrResizedWindows, movedOrResizedWindows);
@@ -171,7 +171,7 @@ namespace bs
 
 	Vector<RenderWindow*> RenderWindowManager::getRenderWindows() const
 	{
-		Lock lock(mWindowMutex);
+		Lock Lock(mWindowMutex);
 
 		Vector<RenderWindow*> windows;
 		for (auto& windowPair : mWindows)
@@ -208,7 +208,7 @@ namespace bs
 
 	void RenderWindowManager::_update()
 	{
-		Lock lock(mWindowMutex);
+		Lock Lock(mWindowMutex);
 
 		for (auto& dirtyPropertyWindow : mDirtyProperties)
 			dirtyPropertyWindow->syncProperties();
@@ -218,7 +218,7 @@ namespace bs
 
 	void RenderWindowManager::windowCreated(RenderWindow* window)
 	{
-		Lock lock(mWindowMutex);
+		Lock Lock(mWindowMutex);
 
 		mCreatedWindows.push_back(window);
 	}
@@ -226,7 +226,7 @@ namespace bs
 	void RenderWindowManager::windowDestroyed(RenderWindow* window)
 	{
 		{
-			Lock lock(mWindowMutex);
+			Lock Lock(mWindowMutex);
 
 			auto iterFind = std::find(begin(mCreatedWindows), end(mCreatedWindows), window);
 
@@ -240,14 +240,14 @@ namespace bs
 
 	Vector<RenderWindow*> RenderWindowManager::getRenderWindows() const
 	{
-		Lock lock(mWindowMutex);
+		Lock Lock(mWindowMutex);
 
 		return mCreatedWindows;
 	}
 
 	void RenderWindowManager::notifySyncDataDirty(RenderWindow* window)
 	{
-		Lock lock(mWindowMutex);
+		Lock Lock(mWindowMutex);
 
 		mDirtyProperties.insert(window);
 	}

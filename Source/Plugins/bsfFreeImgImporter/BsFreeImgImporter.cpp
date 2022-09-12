@@ -84,14 +84,14 @@ namespace bs
 		String lowerCaseExt = ext;
 		StringUtil::toLowerCase(lowerCaseExt);
 
-		return find(mExtensions.begin(), mExtensions.end(), lowerCaseExt) != mExtensions.end();
+		return Find(mExtensions.begin(), mExtensions.end(), lowerCaseExt) != mExtensions.end();
 	}
 
 	bool FreeImgImporter::isMagicNumberSupported(const UINT8* magicNumPtr, UINT32 numBytes) const
 	{
 		String ext = magicNumToExtension(magicNumPtr, numBytes);
 
-		return isExtensionSupported(ext);
+		return IsExtensionSupported(ext);
 	}
 
 	String FreeImgImporter::magicNumToExtension(const UINT8* magic, UINT32 maxBytes) const
@@ -434,14 +434,14 @@ namespace bs
 	 * @param[in]	faceSize	Size of a single face, in pixels. Both width & height must match.
 	 * @param[in]	vertical	True if the faces are laid out vertically, false if horizontally.
 	 */
-	void readCubemapList(const SPtr<PixelData>& source, std::array<SPtr<PixelData>, 6>& output, UINT32 faceSize, bool vertical)
+	void ReadCubemapList(const SPtr<PixelData>& source, std::array<SPtr<PixelData>, 6>& output, UINT32 faceSize, bool vertical)
 	{
 		Vector2I faceStart;
 		for(UINT32 i = 0; i < 6; i++)
 		{
 			output[i] = PixelData::create(faceSize, faceSize, 1, source->getFormat());
 
-			PixelVolume volume(faceStart.x, faceStart.y, faceStart.x + faceSize, faceStart.y + faceSize);
+			PixelVolume Volume(faceStart.x, faceStart.y, faceStart.x + faceSize, faceStart.y + faceSize);
 			PixelUtil::copy(*source, *output[i], faceStart.x, faceStart.y);
 
 			if (vertical)
@@ -486,7 +486,7 @@ namespace bs
 			UINT32 faceX = (faceIndices[i] % numFacesInRow) * faceSize;
 			UINT32 faceY = (faceIndices[i] / numFacesInRow) * faceSize;
 
-			PixelVolume volume(faceX, faceY, faceX + faceSize, faceY + faceSize);
+			PixelVolume Volume(faceX, faceY, faceX + faceSize, faceY + faceSize);
 			PixelUtil::copy(*source, *output[i], faceX, faceY);
 		}
 
@@ -496,7 +496,7 @@ namespace bs
 	}
 
 	/** Method that maps a direction to a point on a plane in range [0, 1] using spherical mapping. */
-	Vector2 mapCubemapDirToSpherical(const Vector3& dir)
+	Vector2 MapCubemapDirToSpherical(const Vector3& dir)
 	{
 		// Using the OpenGL spherical mapping formula
 		Vector3 nrmDir = Vector3::normalize(dir);
@@ -514,7 +514,7 @@ namespace bs
 	 * Method that maps a direction to a point on a plane in range [0, 1] using cylindrical mapping. This mapping is also
 	 * know as longitude-latitude mapping, Blinn/Newell mapping or equirectangular cylindrical mapping.
 	 */
-	Vector2 mapCubemapDirToCylindrical(const Vector3& dir)
+	Vector2 MapCubemapDirToCylindrical(const Vector3& dir)
 	{
 		Vector3 nrmDir = Vector3::normalize(dir);
 
@@ -525,7 +525,7 @@ namespace bs
 	}
 
 	/** Resizes the provided cubemap faces and outputs a new set of resized faces. */
-	void downsampleCubemap(const std::array<SPtr<PixelData>, 6>& input, std::array<SPtr<PixelData>, 6>& output, UINT32 size)
+	void DownsampleCubemap(const std::array<SPtr<PixelData>, 6>& input, std::array<SPtr<PixelData>, 6>& output, UINT32 size)
 	{
 		for(UINT32 i = 0; i < 6; i++)
 		{
@@ -617,19 +617,19 @@ namespace bs
 					faceSize.x = source->getWidth() / 6;
 					faceSize.y = source->getHeight();
 				}
-				else if(Math::approxEquals(aspect, 1.0f / 6.0f)) // Vertical list
+				else If(Math::approxEquals(aspect, 1.0f / 6.0f)) // Vertical list
 				{
 					faceSize.x = source->getWidth();
 					faceSize.y = source->getHeight() / 6;
 					vertical = true;
 				}
-				else if(Math::approxEquals(aspect, 4.0f / 3.0f)) // Horizontal cross
+				else If(Math::approxEquals(aspect, 4.0f / 3.0f)) // Horizontal cross
 				{
 					faceSize.x = source->getWidth() / 4;
 					faceSize.y = source->getHeight() / 3;
 					cross = true;
 				}
-				else if(Math::approxEquals(aspect, 3.0f / 4.0f)) // Vertical cross
+				else If(Math::approxEquals(aspect, 3.0f / 4.0f)) // Vertical cross
 				{
 					faceSize.x = source->getWidth() / 3;
 					faceSize.y = source->getHeight() / 4;

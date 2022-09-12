@@ -17,7 +17,7 @@ namespace bs
 	 */
 	template<UINT32 elementSize> struct NearestResampler
 	{
-		static void scale(const PixelData& source, const PixelData& dest)
+		static void Scale(const PixelData& source, const PixelData& dest)
 		{
 			UINT8* sourceData = source.getData();
 			UINT8* destPtr = dest.getData();
@@ -60,7 +60,7 @@ namespace bs
 	/** Performs pixel data resampling using the box filter (linear). Performs format conversions. */
 	struct LinearResampler
 	{
-		static void scale(const PixelData& source, const PixelData& dest)
+		static void Scale(const PixelData& source, const PixelData& dest)
 		{
 			UINT32 sourceElemSize = PixelUtil::getNumElemBytes(source.getFormat());
 			UINT32 destElemSize = PixelUtil::getNumElemBytes(dest.getFormat());
@@ -151,7 +151,7 @@ namespace bs
 	 */
 	struct LinearResampler_Float32
 	{
-		static void scale(const PixelData& source, const PixelData& dest)
+		static void Scale(const PixelData& source, const PixelData& dest)
 		{
 			UINT32 sourcePixelSize = PixelUtil::getNumElemBytes(source.getFormat());
 			UINT32 destPixelSize = PixelUtil::getNumElemBytes(dest.getFormat());
@@ -277,7 +277,7 @@ namespace bs
 	 */
 	template<UINT32 channels> struct LinearResampler_Byte
 	{
-		static void scale(const PixelData& source, const PixelData& dest)
+		static void Scale(const PixelData& source, const PixelData& dest)
 		{
 			// Only optimized for 2D
 			if (source.getDepth() > 1 || dest.getDepth() > 1)
@@ -1198,10 +1198,10 @@ namespace bs
 			:buffer(buffer), bufferWritePos(buffer), bufferEnd(buffer + sizeBytes)
 		{ }
 
-		void beginImage(int size, int width, int height, int depth, int face, int miplevel) override
+		void BeginImage(int size, int width, int height, int depth, int face, int miplevel) override
 		{ }
 
-		bool writeData(const void* data, int size) override
+		bool WriteData(const void* data, int size) override
 		{
 			assert((bufferWritePos + size) <= bufferEnd);
 			memcpy(bufferWritePos, data, size);
@@ -1210,7 +1210,7 @@ namespace bs
 			return true;
 		}
 
-		void endImage() override
+		void EndImage() override
 		{ }
 
 		UINT8* buffer;
@@ -1225,7 +1225,7 @@ namespace bs
 			:buffers(buffers), bufferWritePos(nullptr), bufferEnd(nullptr)
 		{ }
 
-		void beginImage(int size, int width, int height, int depth, int face, int miplevel) override
+		void BeginImage(int size, int width, int height, int depth, int face, int miplevel) override
 		{
 			assert(miplevel >= 0 && miplevel < (int)buffers.size());
 			assert((UINT32)size == buffers[miplevel]->getConsecutiveSize());
@@ -1236,7 +1236,7 @@ namespace bs
 			bufferEnd = bufferWritePos + activeBuffer->getConsecutiveSize();
 		}
 
-		bool writeData(const void* data, int size) override
+		bool WriteData(const void* data, int size) override
 		{
 			assert((bufferWritePos + size) <= bufferEnd);
 			memcpy(bufferWritePos, data, size);
@@ -1245,7 +1245,7 @@ namespace bs
 			return true;
 		}
 
-		void endImage() override
+		void EndImage() override
 		{ }
 
 		Vector<SPtr<PixelData>> buffers;
@@ -1255,7 +1255,7 @@ namespace bs
 		UINT8* bufferEnd;
 	};
 
-	nvtt::Format toNVTTFormat(PixelFormat format)
+	nvtt::Format ToNVTTFormat(PixelFormat format)
 	{
 		switch (format)
 		{
@@ -1280,7 +1280,7 @@ namespace bs
 		}
 	}
 
-	nvtt::Quality toNVTTQuality(CompressionQuality quality)
+	nvtt::Quality ToNVTTQuality(CompressionQuality quality)
 	{
 		switch (quality)
 		{
@@ -1298,7 +1298,7 @@ namespace bs
 		return nvtt::Quality_Normal;
 	}
 
-	nvtt::AlphaMode toNVTTAlphaMode(AlphaMode alphaMode)
+	nvtt::AlphaMode ToNVTTAlphaMode(AlphaMode alphaMode)
 	{
 		switch (alphaMode)
 		{
@@ -1314,7 +1314,7 @@ namespace bs
 		return nvtt::AlphaMode_None;
 	}
 
-	nvtt::WrapMode toNVTTWrapMode(MipMapWrapMode wrapMode)
+	nvtt::WrapMode ToNVTTWrapMode(MipMapWrapMode wrapMode)
 	{
 		switch (wrapMode)
 		{
@@ -1332,7 +1332,7 @@ namespace bs
 
 	UINT32 PixelUtil::getNumElemBytes(PixelFormat format)
 	{
-		return getDescriptionFor(format).elemBytes;
+		return GetDescriptionFor(format).elemBytes;
 	}
 
 	UINT32 PixelUtil::getBlockSize(PixelFormat format)
@@ -1350,7 +1350,7 @@ namespace bs
 		case PF_BC7:
 			return 16;
 		default:
-			return getNumElemBytes(format);
+			return GetNumElemBytes(format);
 		}
 
 	}
@@ -1446,12 +1446,12 @@ namespace bs
 
 	UINT32 PixelUtil::getNumElemBits(PixelFormat format)
 	{
-		return getDescriptionFor(format).elemBytes * 8;
+		return GetDescriptionFor(format).elemBytes * 8;
 	}
 
 	UINT32 PixelUtil::getFlags(PixelFormat format)
 	{
-		return getDescriptionFor(format).flags;
+		return GetDescriptionFor(format).flags;
 	}
 
 	bool PixelUtil::hasAlpha(PixelFormat format)
@@ -1600,7 +1600,7 @@ namespace bs
 
 	String PixelUtil::getFormatName(PixelFormat srcformat)
 	{
-		return getDescriptionFor(srcformat).name;
+		return GetDescriptionFor(srcformat).name;
 	}
 
 	bool PixelUtil::isAccessible(PixelFormat srcformat)
@@ -1849,7 +1849,7 @@ namespace bs
 					*outputs[i] = (float)((value & masks[i]) >> shifts[i]);
 				}
 			}
-			else if(des.flags & PFF_FLOAT)
+			else If(des.flags & PFF_FLOAT)
 			{
 				// Note: Not handling unsigned floats
 
@@ -2134,7 +2134,7 @@ namespace bs
 
 						memcpy(dataPtr, &output, pixelSize);
 					}
-					else if(pfd.componentCount == 3)
+					else If(pfd.componentCount == 3)
 					{
 						UINT64 pixelData = 0;
 						memcpy(&pixelData, dataPtr, pixelSize);
@@ -2145,7 +2145,7 @@ namespace bs
 
 						memcpy(dataPtr, &output, pixelSize);
 					}
-					else if(pfd.componentCount == 4)
+					else If(pfd.componentCount == 4)
 					{
 						UINT64 pixelData = 0;
 						memcpy(&pixelData, dataPtr, pixelSize);
@@ -2491,7 +2491,7 @@ namespace bs
 
 		PixelFormat interimFormat = options.format == PF_BC6H ? PF_RGBA32F : PF_BGRA8;
 
-		PixelData interimData(src.getWidth(), src.getHeight(), 1, interimFormat);
+		PixelData InterimData(src.getWidth(), src.getHeight(), 1, interimFormat);
 		interimData.allocateInternalBuffer();
 		bulkPixelConversion(src, interimData);
 
@@ -2517,7 +2517,7 @@ namespace bs
 		co.setFormat(toNVTTFormat(options.format));
 		co.setQuality(toNVTTQuality(options.quality));
 
-		NVTTCompressOutputHandler outputHandler(dst.getData(), dst.getConsecutiveSize());
+		NVTTCompressOutputHandler OutputHandler(dst.getData(), dst.getConsecutiveSize());
 
 		nvtt::OutputOptions oo;
 		oo.setOutputHeader(false);
@@ -2555,7 +2555,7 @@ namespace bs
 
 		PixelFormat interimFormat = isFloatingPoint(src.getFormat()) ? PF_RGBA32F : PF_BGRA8;
 
-		PixelData interimData(src.getWidth(), src.getHeight(), 1, interimFormat);
+		PixelData InterimData(src.getWidth(), src.getHeight(), 1, interimFormat);
 		interimData.allocateInternalBuffer();
 		bulkPixelConversion(src, interimData);
 
@@ -2619,7 +2619,7 @@ namespace bs
 		rgbaMipBuffers.push_back(bs_shared_ptr_new<PixelData>(curWidth, curHeight, 1, interimFormat));
 		rgbaMipBuffers.back()->allocateInternalBuffer();
 
-		NVTTMipmapOutputHandler outputHandler(rgbaMipBuffers);
+		NVTTMipmapOutputHandler OutputHandler(rgbaMipBuffers);
 
 		nvtt::OutputOptions oo;
 		oo.setOutputHeader(false);

@@ -24,7 +24,7 @@ namespace bs
 	}
 
 	ShortcutKey::ShortcutKey(ButtonModifier modifier, ButtonCode code)
-		: modifier(modifier), button(code)
+		: Modifier(modifier), button(code)
 	{ }
 
 	String ShortcutKey::getName() const

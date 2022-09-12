@@ -55,18 +55,18 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 	public:
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "SerializedGpuProgramData";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_SerializedGpuProgramData;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			return bs_shared_ptr_new<SerializedGpuProgramData>();
 		}
@@ -79,7 +79,7 @@ namespace bs
 
 	RTTITypeBase* SerializedGpuProgramData::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	class BS_CORE_EXPORT PassRTTI : public RTTIType<Pass, IReflectable, PassRTTI>
@@ -93,62 +93,62 @@ namespace bs
 			BS_RTTI_MEMBER_PLAIN_NAMED(stencilRefValue, mData.stencilRefValue, 9)
 		BS_END_RTTI_MEMBERS
 
-		SerializedGpuProgramData& getVertexProgramDesc(Pass* obj)
+		SerializedGpuProgramData& GetVertexProgramDesc(Pass* obj)
 		{
 			return mVertexProgramDesc;
 		}
 
-		void setVertexProgramDesc(Pass* obj, SerializedGpuProgramData& val)
+		void SetVertexProgramDesc(Pass* obj, SerializedGpuProgramData& val)
 		{
 			obj->mData.vertexProgramDesc = val;
 		}
 
-		SerializedGpuProgramData& getFragmentProgramDesc(Pass* obj)
+		SerializedGpuProgramData& GetFragmentProgramDesc(Pass* obj)
 		{
 			return mFragmentProgramDesc;
 		}
 
-		void setFragmentProgramDesc(Pass* obj, SerializedGpuProgramData& val)
+		void SetFragmentProgramDesc(Pass* obj, SerializedGpuProgramData& val)
 		{
 			obj->mData.fragmentProgramDesc = val;
 		}
 
-		SerializedGpuProgramData& getGeometryProgramDesc(Pass* obj)
+		SerializedGpuProgramData& GetGeometryProgramDesc(Pass* obj)
 		{
 			return mGeometryProgramDesc;
 		}
 
-		void setGeometryProgramDesc(Pass* obj, SerializedGpuProgramData& val)
+		void SetGeometryProgramDesc(Pass* obj, SerializedGpuProgramData& val)
 		{
 			obj->mData.geometryProgramDesc = val;
 		}
 
-		SerializedGpuProgramData& getHullProgramDesc(Pass* obj)
+		SerializedGpuProgramData& GetHullProgramDesc(Pass* obj)
 		{
 			return mHullProgramDesc;
 		}
 
-		void setHullProgramDesc(Pass* obj, SerializedGpuProgramData& val)
+		void SetHullProgramDesc(Pass* obj, SerializedGpuProgramData& val)
 		{
 			obj->mData.hullProgramDesc = val;
 		}
 
-		SerializedGpuProgramData& getDomainProgramDesc(Pass* obj)
+		SerializedGpuProgramData& GetDomainProgramDesc(Pass* obj)
 		{
 			return mDomainProgramDesc;
 		}
 
-		void setDomainProgramDesc(Pass* obj, SerializedGpuProgramData& val)
+		void SetDomainProgramDesc(Pass* obj, SerializedGpuProgramData& val)
 		{
 			obj->mData.domainProgramDesc = val;
 		}
 
-		SerializedGpuProgramData& getComputeProgramDesc(Pass* obj)
+		SerializedGpuProgramData& GetComputeProgramDesc(Pass* obj)
 		{
 			return mComputeProgramDesc;
 		}
 
-		void setComputeProgramDesc(Pass* obj, SerializedGpuProgramData& val)
+		void SetComputeProgramDesc(Pass* obj, SerializedGpuProgramData& val)
 		{
 			obj->mData.computeProgramDesc = val;
 		}
@@ -163,7 +163,7 @@ namespace bs
 			addReflectableField("mComputeProgramDesc", 8, &PassRTTI::getComputeProgramDesc, &PassRTTI::setComputeProgramDesc);
 		}
 
-		void onSerializationStarted(IReflectable* obj, SerializationContext* context) override
+		void OnSerializationStarted(IReflectable* obj, SerializationContext* context) override
 		{
 			Pass* pass = static_cast<Pass*>(obj);
 
@@ -198,24 +198,24 @@ namespace bs
 				initBytecode(computePipeline->getProgram(), mComputeProgramDesc);
 		}
 
-		void onDeserializationEnded(IReflectable* obj, SerializationContext* context) override
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override
 		{
 			Pass* pass = static_cast<Pass*>(obj);
 			pass->initialize();
 		}
 
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "Pass";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_Pass;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			return Pass::createEmpty();
 		}

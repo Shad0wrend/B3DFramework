@@ -51,22 +51,22 @@ namespace bs
 		void* getThunk() const;
 
 		/**	Returns the name of the method. */
-		String getName() const;
+		String GetName() const;
 
 		/** Returns the type of the return value. Returns null if method has no return value. */
 		MonoClass* getReturnType() const;
 
 		/**	Returns the number of parameters the method expects. */
-		UINT32 getNumParameters() const;
+		UINT32 GetNumParameters() const;
 
 		/**	Returns the type of the method parameter at the specified index. */
 		MonoClass* getParameterType(UINT32 paramIdx) const;
 
 		/**	Returns true if the method doesn't require a class instance. */
-		bool isStatic() const;
+		bool IsStatic() const;
 
 		/**	Checks if method has an attribute of the specified type. */
-		 bool hasAttribute(MonoClass* monoClass) const;
+		 bool HasAttribute(MonoClass* monoClass) const;
 
 		/**
 		 * Returns an instance of an attribute of the specified type. Returns null if the method doesn't have such an
@@ -75,7 +75,7 @@ namespace bs
 		MonoObject* getAttribute(MonoClass* monoClass) const;
 
 		/**	Returns method visibility in the class. */
-		MonoMemberVisibility getVisibility();
+		MonoMemberVisibility GetVisibility();
 
 	private:
 		friend class MonoClass;
@@ -83,7 +83,7 @@ namespace bs
 
 		MonoMethod(::MonoMethod* method);
 
-		void cacheSignature() const;
+		void CacheSignature() const;
 
 		::MonoMethod* mMethod;
 

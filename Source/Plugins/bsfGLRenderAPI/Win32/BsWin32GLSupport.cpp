@@ -203,7 +203,7 @@ namespace bs { namespace ct
 			// Check for pixel format and multisampling support
 			if (_wglGetExtensionsStringARB != nullptr)
 			{
-				std::istringstream wglexts(_wglGetExtensionsStringARB(hdc));
+				std::istringstream Wglexts(_wglGetExtensionsStringARB(hdc));
 				String ext;
 				while (wglexts >> ext)
 				{
@@ -330,7 +330,7 @@ namespace bs { namespace ct
 		return bs_shared_ptr_new<Win32VideoModeInfo>();
 	}
 
-	String translateWGLError()
+	String TranslateWGLError()
 	{
 		int winError = GetLastError();
 		char errDesc[255];

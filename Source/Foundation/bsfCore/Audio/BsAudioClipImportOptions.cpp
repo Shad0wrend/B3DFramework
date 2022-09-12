@@ -20,6 +20,6 @@ namespace bs
 
 	RTTITypeBase* AudioClipImportOptions::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 }

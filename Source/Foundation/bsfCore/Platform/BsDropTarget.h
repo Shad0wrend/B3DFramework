@@ -32,18 +32,18 @@ namespace bs
 		~DropTarget();
 
 		/**	Sets the drop target area, in local window coordinates. */
-		void setArea(const Rect2I& area);
+		void SetArea(const Rect2I& area);
 
 		/** Returns the drop target area, in local window coordinates. */
-		const Rect2I& getArea() const { return mArea;}
+		const Rect2I& GetArea() const { return mArea;}
 
 		/**	Gets the type of drop that this drop target is looking for. Only valid after a drop has been triggered. */
-		DropTargetType getDropType() const { return mDropType; }
+		DropTargetType GetDropType() const { return mDropType; }
 
 		/**
 		 * Returns a list of files received by the drop target. Only valid after a drop of FileList type has been triggered.
 		 */
-		const Vector<Path>& getFileList() const { return mFileList; }
+		const Vector<Path>& GetFileList() const { return mFileList; }
 
 		/**
 		 * Creates a new drop target. Any drop events that happen on the specified window's drop area will be reported
@@ -53,7 +53,7 @@ namespace bs
 		 * @param[in]	area		Area, relative to the window, in which the drop events are allowed.
 		 * @return					Newly created drop target.
 		 */
-		static SPtr<DropTarget> create(const RenderWindow* window, const Rect2I& area);
+		static SPtr<DropTarget> Create(const RenderWindow* window, const Rect2I& area);
 
 		/**
 		 * Triggered when a pointer is being dragged over the drop area. Provides window coordinates of the pointer position.

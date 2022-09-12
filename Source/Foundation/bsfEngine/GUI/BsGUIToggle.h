@@ -21,7 +21,7 @@ namespace bs
 	{
 	public:
 		/** Returns type name of the GUI element used for finding GUI element styles.  */
-		static const String& getGUITypeName();
+		static const String& GetGUITypeName();
 
 		/**
 		 * Creates a new toggle button with the specified label.
@@ -120,16 +120,16 @@ namespace bs
 		 * @param[in]	allowAllOff	If true all of the toggle buttons can be turned off, if false one will always be turned
 		 *							on.
 		 */
-		static SPtr<GUIToggleGroup> createToggleGroup(bool allowAllOff = false);
+		static SPtr<GUIToggleGroup> CreateToggleGroup(bool allowAllOff = false);
 
 		/**	Checks the toggle, making it active. */
-		void toggleOn() { _toggleOn(false); }
+		void ToggleOn() { _toggleOn(false); }
 
 		/**	Unchecks the toggle, making it inactive. */
-		void toggleOff() { _toggleOff(false); }
+		void ToggleOff() { _toggleOff(false); }
 
 		/**	Checks is the toggle currently on. */
-		bool isToggled() const { return mIsToggled; }
+		bool IsToggled() const { return mIsToggled; }
 
 		/**	Triggered whenever the button is toggled on or off. */
 		Event<void(bool)> onToggled;

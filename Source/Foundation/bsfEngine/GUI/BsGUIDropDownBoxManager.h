@@ -30,7 +30,7 @@ namespace bs
 			GUIDropDownType type, std::function<void()> onClosedCallback);
 
 		/**	Closes the currently active drop down box (if any). */
-		void closeDropDownBox();
+		void CloseDropDownBox();
 
 	private:
 		HSceneObject mDropDownSO;

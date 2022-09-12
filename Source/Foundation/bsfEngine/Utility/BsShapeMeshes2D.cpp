@@ -135,7 +135,7 @@ namespace bs
 			diff.normalize();
 
 			// Flip 90 degrees
-			Vector2 normal(diff.y, -diff.x);
+			Vector2 Normal(diff.y, -diff.x);
 
 			prevPoints[0] = a - normal * width - diff * border;
 			prevPoints[1] = a + normal * width - diff * border;
@@ -162,8 +162,8 @@ namespace bs
 				diffNext.normalize();
 
 				// Flip 90 degrees
-				Vector2 normalPrev(diffPrev.y, -diffPrev.x);
-				Vector2 normalNext(diffNext.y, -diffNext.x);
+				Vector2 NormalPrev(diffPrev.y, -diffPrev.x);
+				Vector2 NormalNext(diffNext.y, -diffNext.x);
 
 				Vector2 curPoints[2];
 
@@ -171,10 +171,10 @@ namespace bs
 				for (UINT32 j = 0; j < 2; j++)
 				{
 					Vector2 linePrevPoint = a + normalPrev * width * sign[j];
-					Line2 linePrev(linePrevPoint, diffPrev);
+					Line2 LinePrev(linePrevPoint, diffPrev);
 
 					Vector2 lineNextPoint = b + normalNext * width * sign[j];
-					Line2 lineNext(lineNextPoint, diffNext);
+					Line2 LineNext(lineNextPoint, diffNext);
 
 					auto intersect = linePrev.intersects(lineNext);
 					if (intersect.second != 0.0f) // Not parallel
@@ -215,7 +215,7 @@ namespace bs
 			diff.normalize();
 
 			// Flip 90 degrees
-			Vector2 normal(diff.y, -diff.x);
+			Vector2 Normal(diff.y, -diff.x);
 
 			Vector2 curPoints[2];
 			curPoints[0] = b - normal * width + diff * border;

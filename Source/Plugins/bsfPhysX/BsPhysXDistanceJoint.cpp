@@ -9,7 +9,7 @@ using namespace physx;
 
 namespace bs
 {
-	PxDistanceJointFlag::Enum toPxFlag(DistanceJointFlag flag)
+	PxDistanceJointFlag::Enum ToPxFlag(DistanceJointFlag flag)
 	{
 		switch (flag)
 		{
@@ -69,12 +69,12 @@ namespace bs
 
 	float PhysXDistanceJoint::getDistance() const
 	{
-		return getInternal()->getDistance();
+		return GetInternal()->getDistance();
 	}
 
 	float PhysXDistanceJoint::getMinDistance() const
 	{
-		return getInternal()->getMinDistance();
+		return GetInternal()->getMinDistance();
 	}
 
 	void PhysXDistanceJoint::setMinDistance(float value)
@@ -84,7 +84,7 @@ namespace bs
 
 	float PhysXDistanceJoint::getMaxDistance() const
 	{
-		return getInternal()->getMaxDistance();
+		return GetInternal()->getMaxDistance();
 	}
 
 	void PhysXDistanceJoint::setMaxDistance(float value)
@@ -94,7 +94,7 @@ namespace bs
 
 	float PhysXDistanceJoint::getTolerance() const
 	{
-		return getInternal()->getTolerance();
+		return GetInternal()->getTolerance();
 	}
 
 	void PhysXDistanceJoint::setTolerance(float value)
@@ -123,7 +123,7 @@ namespace bs
 
 	bool PhysXDistanceJoint::hasFlag(DistanceJointFlag flag) const
 	{
-		return getInternal()->getDistanceJointFlags() & toPxFlag(flag);
+		return GetInternal()->getDistanceJointFlags() & toPxFlag(flag);
 	}
 
 	PxDistanceJoint* PhysXDistanceJoint::getInternal() const

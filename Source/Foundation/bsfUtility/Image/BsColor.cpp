@@ -262,7 +262,7 @@ namespace bs
 		return val32;
 	}
 
-	float linearToSRGB(float x)
+	float LinearToSRGB(float x)
 	{
 		if (x <= 0.0f)
 			return 0.0f;

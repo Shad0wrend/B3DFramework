@@ -18,7 +18,7 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "ContextMenu")
 
 		/**	Returns the internal native context menu object. */
-		SPtr<GUIContextMenu> getInternal() const { return mContextMenu; }
+		SPtr<GUIContextMenu> GetInternal() const { return mContextMenu; }
 
 	private:
 		ScriptContextMenu(MonoObject* instance);
@@ -28,7 +28,7 @@ namespace bs
 		 *
 		 * @param[in]	idx		Sequential index of the item that was clicked.
 		 */
-		void onContextMenuItemTriggered(UINT32 idx);
+		void OnContextMenuItemTriggered(UINT32 idx);
 
 		SPtr<GUIContextMenu> mContextMenu;
 		UINT32 mGCHandle = 0;
@@ -36,7 +36,7 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		typedef void(BS_THUNKCALL *OnEntryTriggeredThunkDef) (MonoObject*, UINT32 callbackIdx, MonoException**);
+		typedef Void(BS_THUNKCALL *OnEntryTriggeredThunkDef) (MonoObject*, UINT32 callbackIdx, MonoException**);
 		static OnEntryTriggeredThunkDef onEntryTriggered;
 
 		static void internal_CreateInstance(MonoObject* instance);

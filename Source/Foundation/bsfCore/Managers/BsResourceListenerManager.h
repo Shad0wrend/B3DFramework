@@ -28,14 +28,14 @@ namespace bs
 		 *
 		 * @note	Thread safe
 		 */
-		void registerListener(IResourceListener* listener);
+		void RegisterListener(IResourceListener* listener);
 
 		/**	
 		 * Unregister a listener so it will no longer receive notifications.
 		 *
 		 * @note	Thread safe
 		 */
-		void unregisterListener(IResourceListener* listener);
+		void UnregisterListener(IResourceListener* listener);
 
 		/**
 		 * Marks the listener as dirty which forces the manager to updates its internal list of resources for the
@@ -43,38 +43,38 @@ namespace bs
 		 *
 		 * @note	Thread safe
 		 */
-		void markListenerDirty(IResourceListener* listener);
+		void MarkListenerDirty(IResourceListener* listener);
 
 		/**	Refreshes the resource maps based on dirty listeners and sends out the necessary events. */
-		void update();
+		void Update();
 
 		/**
 		 * Forces the listener to send out events about the specified resource immediately, instead of waiting for the
 		 * next update() call.
 		 */
-		void notifyListeners(const UUID& resourceUUID);
+		void NotifyListeners(const UUID& resourceUUID);
 
 	private:
 		/** Refreshes the listener mapping for any listeners marked as dirty. */
-		void updateListeners();
+		void UpdateListeners();
 
 		/**	Triggered by the resources system when a resource has finished loading. */
-		void onResourceLoaded(const HResource& resource);
+		void OnResourceLoaded(const HResource& resource);
 
 		/**	Triggered by the resources system after a resource handle is modified (points to a new resource). */
-		void onResourceModified(const HResource& resource);
+		void OnResourceModified(const HResource& resource);
 
 		/**	Sends resource loaded event to all listeners referencing this resource. */
-		void sendResourceLoaded(const HResource& resource);
+		void SendResourceLoaded(const HResource& resource);
 
 		/**	Sends resource modified event to all listeners referencing this resource. */
-		void sendResourceModified(const HResource& resource);
+		void SendResourceModified(const HResource& resource);
 
 		/**	Clears all the stored dependencies for the listener. */
-		void clearDependencies(IResourceListener* listener);
+		void ClearDependencies(IResourceListener* listener);
 
 		/**	Registers all the resource dependencies for the listener. */
-		void addDependencies(IResourceListener* listener);
+		void AddDependencies(IResourceListener* listener);
 
 		HEvent mResourceLoadedConn;
 		HEvent mResourceModifiedConn;

@@ -20,7 +20,7 @@ void logToIDEConsole(const bs::String& message, const char* channel)
 {
 	static bs::Mutex mutex;
 
-	bs::Lock lock(mutex);
+	bs::Lock Lock(mutex);
 	OutputDebugString("[");
 	OutputDebugString(channel);
 	OutputDebugString("] ");
@@ -468,7 +468,7 @@ table td
 		
 	}
 	
-	BS_UTILITY_EXPORT Debug& gDebug()
+	BS_UTILITY_EXPORT Debug& GDebug()
 	{
 		static Debug debug;
 		return debug;

@@ -13,7 +13,7 @@ namespace bs
 {
 	const String testDirectoryName = "FileSystemTestDirectory/";
 
-	void createFile(Path path, String content)
+	void CreateFile(Path path, String content)
 	{
 		std::ofstream fs;
 		fs.open(path.toPlatformString().c_str());
@@ -21,12 +21,12 @@ namespace bs
 		fs.close();
 	}
 
-	void createEmptyFile(Path path)
+	void CreateEmptyFile(Path path)
 	{
 		createFile(path, "");
 	}
 
-	String readFile(Path path)
+	String ReadFile(Path path)
 	{
 		String content;
 		std::ifstream fs;

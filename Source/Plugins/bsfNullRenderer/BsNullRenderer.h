@@ -17,10 +17,10 @@ namespace bs
 		static constexpr const char* SystemName = "bsfNullRenderer";
 
 		/** @copydoc RendererFactory::create */
-		SPtr<ct::Renderer> create() override;
+		SPtr<ct::Renderer> Create() override;
 
 		/** @copydoc RendererFactory::name */
-		const String& name() const override;
+		const String& Name() const override;
 	};
 
 	namespace ct
@@ -37,10 +37,10 @@ namespace bs
 		NullRenderer() = default;
 
 		/** @copydoc Renderer::getName */
-		const StringID& getName() const override;
+		const StringID& GetName() const override;
 
 		/** @copydoc Renderer::renderAll */
-		void renderAll(PerFrameData perFrameData) override;
+		void RenderAll(PerFrameData perFrameData) override;
 
 		/** @copydoc Renderer::captureSceneCubeMap */
 		void captureSceneCubeMap(const SPtr<Texture>& cubemap, const Vector3& position,
@@ -52,21 +52,21 @@ namespace bs
 	{
 	public:
 		/** @copydoc IBLUtility::filterCubemapForSpecular */
-		void filterCubemapForSpecular(const SPtr<Texture>& cubemap, const SPtr<Texture>& scratch) const override { }
+		void FilterCubemapForSpecular(const SPtr<Texture>& cubemap, const SPtr<Texture>& scratch) const override { }
 
 		/** @copydoc IBLUtility::filterCubemapForIrradiance(const SPtr<Texture>&, const SPtr<Texture>&) const */
-		void filterCubemapForIrradiance(const SPtr<Texture>& cubemap, const SPtr<Texture>& output) const override { }
+		void FilterCubemapForIrradiance(const SPtr<Texture>& cubemap, const SPtr<Texture>& output) const override { }
 
 		/** @copydoc IBLUtility::filterCubemapForIrradiance(const SPtr<Texture>&, const SPtr<Texture>&, UINT32) const */
 		void filterCubemapForIrradiance(const SPtr<Texture>& cubemap, const SPtr<Texture>& output,
 			UINT32 outputIdx) const override { }
 
 		/** @copydoc IBLUtility::scaleCubemap */
-		void scaleCubemap(const SPtr<Texture>& src, UINT32 srcMip, const SPtr<Texture>& dst, UINT32 dstMip) const override { }
+		void ScaleCubemap(const SPtr<Texture>& src, UINT32 srcMip, const SPtr<Texture>& dst, UINT32 dstMip) const override { }
 	};
 
 	/**	Provides easy access to the null renderer. */
-	SPtr<NullRenderer> gNullRenderer();
+	SPtr<NullRenderer> GNullRenderer();
 
 	/** @} */
 }}

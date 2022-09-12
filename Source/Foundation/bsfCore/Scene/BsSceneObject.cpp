@@ -560,7 +560,7 @@ namespace bs
 
 		BS_LOG(Warning, Scene,
 			"Attempting to access a scene of a SceneObject with no scene, returning main scene instead.");
-		return gSceneManager().getMainScene();
+		return GSceneManager().getMainScene();
 		
 	}
 

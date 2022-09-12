@@ -25,43 +25,43 @@ namespace bs
 		
 		/** @copydoc ParticleSystem::setSettings */
 		BS_SCRIPT_EXPORT(pr:setter,n:Settings,passByCopy,inline)
-		void setSettings(const ParticleSystemSettings& settings);
+		void SetSettings(const ParticleSystemSettings& settings);
 
 		/** @copydoc ParticleSystem::getSettings */
 		BS_SCRIPT_EXPORT(pr:getter,n:Settings,passByCopy)
-		const ParticleSystemSettings& getSettings() const { return mSettings; }
+		const ParticleSystemSettings& GetSettings() const { return mSettings; }
 
 		/** @copydoc ParticleSystem::setGpuSimulationSettings */
 		BS_SCRIPT_EXPORT(pr:setter,n:GpuSimulationSettings,passByCopy)
-		void setGpuSimulationSettings(const ParticleGpuSimulationSettings& settings);
+		void SetGpuSimulationSettings(const ParticleGpuSimulationSettings& settings);
 
 		/** @copydoc ParticleSystem::getGpuSimulationSettings */
 		BS_SCRIPT_EXPORT(pr:getter,n:GpuSimulationSettings,passByCopy)
-		const ParticleGpuSimulationSettings& getGpuSimulationSettings() const { return mGpuSimulationSettings; }
+		const ParticleGpuSimulationSettings& GetGpuSimulationSettings() const { return mGpuSimulationSettings; }
 
 		/** @copydoc ParticleSystem::setEmitters */
 		BS_SCRIPT_EXPORT(pr:setter,n:Emitters)
-		void setEmitters(const Vector<SPtr<ParticleEmitter>>& emitters);
+		void SetEmitters(const Vector<SPtr<ParticleEmitter>>& emitters);
 
 		/** @copydoc ParticleSystem::getEmitters */
 		BS_SCRIPT_EXPORT(pr:getter,n:Emitters)
-		const Vector<SPtr<ParticleEmitter>>& getEmitters() const { return mEmitters; }
+		const Vector<SPtr<ParticleEmitter>>& GetEmitters() const { return mEmitters; }
 
 		/** @copydoc ParticleSystem::setEvolvers */
 		BS_SCRIPT_EXPORT(pr:setter,n:Evolvers)
-		void setEvolvers(const Vector<SPtr<ParticleEvolver>>& evolvers);
+		void SetEvolvers(const Vector<SPtr<ParticleEvolver>>& evolvers);
 
 		/** @copydoc ParticleSystem::getEvolvers */
 		BS_SCRIPT_EXPORT(pr:getter,n:Evolvers)
-		const Vector<SPtr<ParticleEvolver>>& getEvolvers() const { return mEvolvers; }
+		const Vector<SPtr<ParticleEvolver>>& GetEvolvers() const { return mEvolvers; }
 
 		/** @copydoc ParticleSystem::setLayer() */
 		BS_SCRIPT_EXPORT(pr:setter,n:Layer,layerMask)
-		void setLayer(UINT64 layer);
+		void SetLayer(UINT64 layer);
 
 		/** @copydoc ParticleSystem::getLayer() */
 		BS_SCRIPT_EXPORT(pr:getter,n:Layer,layerMask)
-		UINT64 getLayer() const { return mLayer; }
+		UINT64 GetLayer() const { return mLayer; }
 
 		/** @name Internal
 		 *  @{
@@ -87,22 +87,22 @@ namespace bs
 		friend class SceneObject;
 
 		/** @copydoc Component::onDestroyed() */
-		void onDestroyed() override;
+		void OnDestroyed() override;
 
 		/** @copydoc Component::onDisabled() */
-		void onDisabled() override;
+		void OnDisabled() override;
 
 		/** @copydoc Component::onEnabled() */
-		void onEnabled() override;
+		void OnEnabled() override;
 
 	protected:
 		using Component::destroyInternal;
 
 		/** Creates the internal representation of the ParticleSystem and restores the values saved by the Component. */
-		void restoreInternal();
+		void RestoreInternal();
 
 		/** Destroys the internal ParticleSystem representation. */
-		void destroyInternal();
+		void DestroyInternal();
 
 		SPtr<ParticleSystem> mInternal;
 

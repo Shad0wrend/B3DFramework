@@ -27,7 +27,7 @@ namespace bs
 
 	RTTITypeBase* AutoExposureSettings::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	template <class Processor>
@@ -49,7 +49,7 @@ namespace bs
 
 	RTTITypeBase* TonemappingSettings::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	template <class Processor>
@@ -66,7 +66,7 @@ namespace bs
 
 	RTTITypeBase* WhiteBalanceSettings::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	template <class Processor>
@@ -85,7 +85,7 @@ namespace bs
 
 	RTTITypeBase* ColorGradingSettings::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	template <class Processor>
@@ -108,7 +108,7 @@ namespace bs
 
 	RTTITypeBase* AmbientOcclusionSettings::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	template <bool Core>
@@ -144,7 +144,7 @@ namespace bs
 
 	RTTITypeBase* DepthOfFieldSettings::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	template <class Processor>
@@ -163,7 +163,7 @@ namespace bs
 
 	RTTITypeBase* ScreenSpaceReflectionsSettings::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	template <class Processor>
@@ -184,7 +184,7 @@ namespace bs
 
 	RTTITypeBase* BloomSettings::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	template <class Processor>
@@ -214,7 +214,7 @@ namespace bs
 
 	RTTITypeBase* ScreenSpaceLensFlareSettings::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	template <class Processor>
@@ -234,7 +234,7 @@ namespace bs
 
 	RTTITypeBase* MotionBlurSettings::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	template <class Processor>
@@ -252,7 +252,7 @@ namespace bs
 
 	RTTITypeBase* TemporalAASettings::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	template <bool Core>
@@ -275,7 +275,7 @@ namespace bs
 
 	RTTITypeBase* ChromaticAberrationSettings::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	template <class Processor>
@@ -293,7 +293,7 @@ namespace bs
 
 	RTTITypeBase* FilmGrainSettings::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	template <class Processor>
@@ -312,7 +312,7 @@ namespace bs
 
 	RTTITypeBase* ShadowSettings::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	template <bool Core>
@@ -363,6 +363,6 @@ namespace bs
 
 	RTTITypeBase* RenderSettings::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 }

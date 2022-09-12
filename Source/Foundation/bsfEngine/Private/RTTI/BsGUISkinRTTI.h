@@ -32,11 +32,11 @@ namespace bs
 	class BS_EXPORT GUISkinEntryRTTI : public RTTIType <GUISkinEntry, IReflectable, GUISkinEntryRTTI>
 	{
 	private:
-		String& getName(GUISkinEntry* obj) { return obj->name; }
-		void setName(GUISkinEntry* obj, String& val) { obj->name = val; }
+		String& GetName(GUISkinEntry* obj) { return obj->name; }
+		void SetName(GUISkinEntry* obj, String& val) { obj->name = val; }
 
-		GUIElementStyle& getStyle(GUISkinEntry* obj) { return obj->style; }
-		void setStyle(GUISkinEntry* obj, GUIElementStyle& val) { obj->style = val; }
+		GUIElementStyle& GetStyle(GUISkinEntry* obj) { return obj->style; }
+		void SetStyle(GUISkinEntry* obj, GUIElementStyle& val) { obj->style = val; }
 
 	public:
 		GUISkinEntryRTTI()
@@ -45,18 +45,18 @@ namespace bs
 			addReflectableField("style", 1, &GUISkinEntryRTTI::getStyle, &GUISkinEntryRTTI::setStyle);
 		}
 
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "GUISkinEntry";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_GUISkinEntry;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			return bs_shared_ptr_new<GUISkinEntry>();
 		}
@@ -65,14 +65,14 @@ namespace bs
 	class BS_EXPORT GUISkinRTTI : public RTTIType <GUISkin, Resource, GUISkinRTTI>
 	{
 	private:
-		GUISkinEntry& getStyle(GUISkin* obj, UINT32 idx)
+		GUISkinEntry& GetStyle(GUISkin* obj, UINT32 idx)
 		{
 			return mStyles[idx];
 		}
 
-		void setStyle(GUISkin* obj, UINT32 idx, GUISkinEntry& val) { obj->mStyles[val.name] = val.style; }
-		UINT32 getStyleArraySize(GUISkin* obj) { return (UINT32)obj->mStyles.size(); }
-		void setStyleArraySize(GUISkin* obj, UINT32 size) { /* Do nothing */ }
+		void SetStyle(GUISkin* obj, UINT32 idx, GUISkinEntry& val) { obj->mStyles[val.name] = val.style; }
+		UINT32 GetStyleArraySize(GUISkin* obj) { return (UINT32)obj->mStyles.size(); }
+		void SetStyleArraySize(GUISkin* obj, UINT32 size) { /* Do nothing */ }
 
 	public:
 		GUISkinRTTI()
@@ -81,7 +81,7 @@ namespace bs
 				&GUISkinRTTI::setStyle, &GUISkinRTTI::setStyleArraySize);
 		}
 
-		void onSerializationStarted(IReflectable* obj, SerializationContext* context) override
+		void OnSerializationStarted(IReflectable* obj, SerializationContext* context) override
 		{
 			GUISkin* skin = static_cast<GUISkin*>(obj);
 
@@ -89,18 +89,18 @@ namespace bs
 				mStyles.push_back(GUISkinEntry(style.first, style.second));
 		}
 
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "GUISkin";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_GUISkin;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			return GUISkin::_createPtr();
 		}

@@ -59,47 +59,47 @@ namespace bs
 	{
 	public:
 		/** Increments draw call counter indicating how many times were render system API Draw methods called. */
-		void incNumDrawCalls() { mData.numDrawCalls++; }
+		void IncNumDrawCalls() { mData.numDrawCalls++; }
 
 		/** Increments compute call counter indicating how many times were compute shaders dispatched. */
-		void incNumComputeCalls() { mData.numComputeCalls++; }
+		void IncNumComputeCalls() { mData.numComputeCalls++; }
 
 		/** Increments render target change counter indicating how many times did the active render target change. */
-		void incNumRenderTargetChanges() { mData.numRenderTargetChanges++; }
+		void IncNumRenderTargetChanges() { mData.numRenderTargetChanges++; }
 
 		/** Increments render target present counter indicating how many times did the buffer swap happen. */
-		void incNumPresents() { mData.numPresents++; }
+		void IncNumPresents() { mData.numPresents++; }
 
 		/**
 		 * Increments render target clear counter indicating how many times did the target the cleared, entirely or
 		 * partially.
 		 */
-		void incNumClears() { mData.numClears++; }
+		void IncNumClears() { mData.numClears++; }
 
 		/** Increments vertex draw counter indicating how many vertices were sent to the pipeline. */
-		void addNumVertices(UINT32 count) { mData.numVertices += count; }
+		void AddNumVertices(UINT32 count) { mData.numVertices += count; }
 
 		/** Increments primitive draw counter indicating how many primitives were sent to the pipeline. */
-		void addNumPrimitives(UINT32 count) { mData.numPrimitives += count; }
+		void AddNumPrimitives(UINT32 count) { mData.numPrimitives += count; }
 
 		/** Increments pipeline state change counter indicating how many times was a pipeline state bound. */
-		void incNumPipelineStateChanges() { mData.numPipelineStateChanges++; }
+		void IncNumPipelineStateChanges() { mData.numPipelineStateChanges++; }
 
 		/** Increments GPU parameter change counter indicating how many times were GPU parameters bound to the pipeline. */
-		void incNumGpuParamBinds() { mData.numGpuParamBinds++; }
+		void IncNumGpuParamBinds() { mData.numGpuParamBinds++; }
 
 		/** Increments vertex buffer change counter indicating how many times was a vertex buffer bound to the pipeline. */
-		void incNumVertexBufferBinds() { mData.numVertexBufferBinds++; }
+		void IncNumVertexBufferBinds() { mData.numVertexBufferBinds++; }
 
 		/** Increments index buffer change counter indicating how many times was a index buffer bound to the pipeline. */
-		void incNumIndexBufferBinds() { mData.numIndexBufferBinds++; }
+		void IncNumIndexBufferBinds() { mData.numIndexBufferBinds++; }
 
 		/**
 		 * Increments created GPU resource counter.
 		 *
 		 * @param[in]	category	Category of the resource.
 		 */
-		void incResCreated(UINT32 category)
+		void IncResCreated(UINT32 category)
 		{
 			// TODO - I'm ignoring resourceType for now. Later I will want to
 			// count object creation/destruction/read/write per type. I will
@@ -117,21 +117,21 @@ namespace bs
 		 *
 		 * @param[in]	category	Category of the resource.
 		 */
-		void incResDestroyed(UINT32 category) { mData.numObjectsDestroyed++; }
+		void IncResDestroyed(UINT32 category) { mData.numObjectsDestroyed++; }
 
 		/**
 		 * Increments GPU resource read counter.
 		 *
 		 * @param[in]	category	Category of the resource.
 		 */
-		void incResRead(UINT32 category) { mData.numResourceReads++; }
+		void IncResRead(UINT32 category) { mData.numResourceReads++; }
 
 		/**
 		 * Increments GPU resource write counter.
 		 *
 		 * @param[in]	category	Category of the resource.
 		 */
-		void incResWrite(UINT32 category) { mData.numResourceWrites++; }
+		void IncResWrite(UINT32 category) { mData.numResourceWrites++; }
 
 		/**
 		 * Returns an object containing various rendering statistics.
@@ -139,7 +139,7 @@ namespace bs
 		 * @note	
 		 * Do not modify the returned state unless you know what you are doing, it will change the actual internal object.
 		 */
-		RenderStatsData& getData() { return mData; }
+		RenderStatsData& GetData() { return mData; }
 
 	private:
 		RenderStatsData mData;

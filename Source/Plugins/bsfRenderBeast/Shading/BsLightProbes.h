@@ -38,7 +38,7 @@ namespace bs { namespace ct
 
 		/** Helper method used for initializing variations of this material. */
 		template<bool msaa, bool singleSampleMSAA>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -97,7 +97,7 @@ namespace bs { namespace ct
 
 		/** Helper method used for initializing variations of this material. */
 		template<bool msaa, bool singleSampleMSAA, bool skyOnly>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -217,26 +217,26 @@ namespace bs { namespace ct
 		LightProbes();
 
 		/** Notifies sthe manager that the provided light probe volume has been added. */
-		void notifyAdded(LightProbeVolume* volume);
+		void NotifyAdded(LightProbeVolume* volume);
 
 		/** Notifies the manager that the provided light probe volume has some dirty light probes. */
-		void notifyDirty(LightProbeVolume* volume);
+		void NotifyDirty(LightProbeVolume* volume);
 
 		/** Notifies the manager that all the probes in the provided volume have been removed. */
-		void notifyRemoved(LightProbeVolume* volume);
+		void NotifyRemoved(LightProbeVolume* volume);
 
 		/** Updates light probe tetrahedron data after probes changed (added/removed/moved). */
-		void updateProbes();
+		void UpdateProbes();
 
 		/** Returns true if there are any registered light probes. */
-		bool hasAnyProbes() const;
+		bool HasAnyProbes() const;
 
 		/**
 		 * Returns a set of buffers that can be used for rendering the light probes. updateProbes() must be called
 		 * at least once before the buffer is populated. If the probes changed since the last call, call updateProbes()
 		 * to refresh the buffer.
 		 */
-		LightProbesInfo getInfo() const;
+		LightProbesInfo GetInfo() const;
 
 	private:
 		/**
@@ -257,16 +257,16 @@ namespace bs { namespace ct
 			Vector<TetrahedronFaceData>& faces, bool generateExtrapolationVolume = false);
 
 		/** Resizes the GPU buffer used for holding tetrahedron data, to the specified size (in number of tetraheda). */
-		void resizeTetrahedronBuffer(UINT32 count);
+		void ResizeTetrahedronBuffer(UINT32 count);
 
 		/** Resizes the GPU buffer used for holding tetrahedron face data, to the specified size (in number of faces). */
-		void resizeTetrahedronFaceBuffer(UINT32 count);
+		void ResizeTetrahedronFaceBuffer(UINT32 count);
 
 		/**
 		 * Resized the GPU buffer that stores light probe SH coefficients, to the specified number of rows (each row
 		 * holds 4096 coefficients, and each volume starts in its own row.).
 		 */
-		void resizeCoefficientTexture(UINT32 numRows);
+		void ResizeCoefficientTexture(UINT32 numRows);
 
 		Vector<VolumeInfo> mVolumes;
 		bool mTetrahedronVolumeDirty;

@@ -105,11 +105,11 @@ namespace bs
 		 * @see		release(ResourceHandleBase&), unloadAllUnused()
 		 */
 		BS_SCRIPT_EXPORT()
-		BS_NORREF HResource load(const Path& filePath, ResourceLoadFlags loadFlags = ResourceLoadFlag::Default);
+		BS_NORREF HResource Load(const Path& filePath, ResourceLoadFlags loadFlags = ResourceLoadFlag::Default);
 
 		/** @copydoc load(const Path&, ResourceLoadFlags) */
 		template <class T>
-		ResourceHandle<T> load(const Path& filePath, ResourceLoadFlags loadFlags = ResourceLoadFlag::Default)
+		ResourceHandle<T> Load(const Path& filePath, ResourceLoadFlags loadFlags = ResourceLoadFlag::Default)
 		{
 			return static_resource_cast<T>(load(filePath, loadFlags));
 		}
@@ -119,11 +119,11 @@ namespace bs
 		 * 			
 		 * @see		load(const Path&, ResourceLoadFlags)
 		 */
-		HResource load(const WeakResourceHandle<Resource>& handle, ResourceLoadFlags loadFlags = ResourceLoadFlag::Default);
+		HResource Load(const WeakResourceHandle<Resource>& handle, ResourceLoadFlags loadFlags = ResourceLoadFlag::Default);
 
 		/** @copydoc load(const WeakResourceHandle<Resource>&, ResourceLoadFlags) */
 		template <class T>
-		ResourceHandle<T> load(const WeakResourceHandle<T>& handle, ResourceLoadFlags loadFlags = ResourceLoadFlag::Default)
+		ResourceHandle<T> Load(const WeakResourceHandle<T>& handle, ResourceLoadFlags loadFlags = ResourceLoadFlag::Default)
 		{
 			return static_resource_cast<T>(load((const WeakResourceHandle<Resource>&)handle, loadFlags));
 		}
@@ -139,11 +139,11 @@ namespace bs
 		 * @see		load(const Path&, ResourceLoadFlags)
 		 */
 		BS_SCRIPT_EXPORT()
-		HResource loadAsync(const Path& filePath, ResourceLoadFlags loadFlags = ResourceLoadFlag::Default);
+		HResource LoadAsync(const Path& filePath, ResourceLoadFlags loadFlags = ResourceLoadFlag::Default);
 
 		/** @copydoc loadAsync */
 		template <class T>
-		ResourceHandle<T> loadAsync(const Path& filePath, ResourceLoadFlags loadFlags = ResourceLoadFlag::Default)
+		ResourceHandle<T> LoadAsync(const Path& filePath, ResourceLoadFlags loadFlags = ResourceLoadFlag::Default)
 		{
 			return static_resource_cast<T>(loadAsync(filePath, loadFlags));
 		}
@@ -159,7 +159,7 @@ namespace bs
 		 * @see		load(const Path&, bool)
 		 */
 		BS_SCRIPT_EXPORT()
-		HResource loadFromUUID(const UUID& uuid, bool async = false, ResourceLoadFlags loadFlags = ResourceLoadFlag::Default);
+		HResource LoadFromUUID(const UUID& uuid, bool async = false, ResourceLoadFlags loadFlags = ResourceLoadFlag::Default);
 
 		/**
 		 * Releases an internal reference to the resource held by the resources system. This allows the resource to be
@@ -172,10 +172,10 @@ namespace bs
 		 * @param[in]	resource	Handle of the resource to release.
 		 */
 		BS_SCRIPT_EXPORT()
-		void release(const HResource& resource) { release((ResourceHandleBase&)resource); }
+		void Release(const HResource& resource) { release((ResourceHandleBase&)resource); }
 
 		/** @copydoc release(const HResource&) */
-		void release(ResourceHandleBase& resource);
+		void Release(ResourceHandleBase& resource);
 
 		/**
 		 * Finds all resources that aren't being referenced outside of the resources system and unloads them.
@@ -183,11 +183,11 @@ namespace bs
 		 * @see		release(const HResource&)
 		 */
 		BS_SCRIPT_EXPORT()
-		void unloadAllUnused();
+		void UnloadAllUnused();
 
 		/** Forces unload of all resources, whether they are being used or not. */
 		BS_SCRIPT_EXPORT()
-		void unloadAll();
+		void UnloadAll();
 
 		/**
 		 * Saves the resource at the specified location.
@@ -209,7 +209,7 @@ namespace bs
 		 * Thread safe if you guarantee the resource isn't being written to from another thread.
 		 */
 		BS_SCRIPT_EXPORT()
-		void save(BS_NORREF const HResource& resource, const Path& filePath, bool overwrite, bool compress = false);
+		void Save(BS_NORREF const HResource& resource, const Path& filePath, bool overwrite, bool compress = false);
 
 		/**
 		 * Saves an existing resource to its previous location.
@@ -229,13 +229,13 @@ namespace bs
 		 * Thread safe if you guarantee the resource isn't being written to from another thread.
 		 */
 		BS_SCRIPT_EXPORT()
-		void save(BS_NORREF const HResource& resource, bool compress = false);
+		void Save(BS_NORREF const HResource& resource, bool compress = false);
 
 		/**
 		 * Updates an existing resource handle with a new resource. Caller must ensure that new resource type matches the
 		 * original resource type.
 		 */
-		void update(HResource& handle, const SPtr<Resource>& resource);
+		void Update(HResource& handle, const SPtr<Resource>& resource);
 
 		/**
 		 * Returns a list of dependencies from the resources at the specified path. Resource will not be loaded or parsed,
@@ -245,7 +245,7 @@ namespace bs
 		 * @return					List of dependencies represented as UUIDs.
 		 */
 		BS_SCRIPT_EXPORT()
-		Vector<UUID> getDependencies(const Path& filePath);
+		Vector<UUID> GetDependencies(const Path& filePath);
 
 		/**
 		 * Checks is the resource with the specified UUID loaded.
@@ -256,7 +256,7 @@ namespace bs
 		 * @return						True if loaded or loading in progress, false otherwise.
 		 */
 		BS_SCRIPT_EXPORT()
-		bool isLoaded(const UUID& uuid, bool checkInProgress = true);
+		bool IsLoaded(const UUID& uuid, bool checkInProgress = true);
 
 		/**
 		 * Returns the loading progress of a resource that's being asynchronously loaded.
@@ -268,7 +268,7 @@ namespace bs
 		 * @return								Load progress in range [0, 1].
 		 */
 		BS_SCRIPT_EXPORT()
-		float getLoadProgress(const HResource& resource, bool includeDependencies = true);
+		float GetLoadProgress(const HResource& resource, bool includeDependencies = true);
 
 		/**
 		 *Allows you to set a resource manifest containing UUID <-> file path mapping that is used when resolving
@@ -280,11 +280,11 @@ namespace bs
 		 * upon startup. Otherwise resources will be assigned brand new UUIDs and references will be broken.
 		 */
 		BS_SCRIPT_EXPORT()
-		void registerResourceManifest(const SPtr<ResourceManifest>& manifest);
+		void RegisterResourceManifest(const SPtr<ResourceManifest>& manifest);
 
 		/**	Unregisters a resource manifest previously registered with registerResourceManifest(). */
 		BS_SCRIPT_EXPORT()
-		void unregisterResourceManifest(const SPtr<ResourceManifest>& manifest);
+		void UnregisterResourceManifest(const SPtr<ResourceManifest>& manifest);
 
 		/**
 		 * Allows you to retrieve resource manifest containing UUID <-> file path mapping that is used when resolving
@@ -296,15 +296,15 @@ namespace bs
 		 * @see		registerResourceManifest
 		 */
 		BS_SCRIPT_EXPORT()
-		SPtr<ResourceManifest> getResourceManifest(const String& name) const;
+		SPtr<ResourceManifest> GetResourceManifest(const String& name) const;
 
 		/** Attempts to retrieve file path from the provided UUID. Returns true if successful, false otherwise. */
 		BS_SCRIPT_EXPORT()
-		bool getFilePathFromUUID(const UUID& uuid, Path& filePath) const;
+		bool GetFilePathFromUUID(const UUID& uuid, Path& filePath) const;
 
 		/** Attempts to retrieve UUID from the provided file path. Returns true if successful, false otherwise. */
 		BS_SCRIPT_EXPORT()
-		bool getUUIDFromFilePath(const Path& path, UUID& uuid) const;
+		bool GetUUIDFromFilePath(const Path& path, UUID& uuid) const;
 
 		/**
 		 * Called when the resource has been successfully loaded.
@@ -369,19 +369,19 @@ namespace bs
 		 * resource, although you may provide an empty path in which case the resource will be retrieved from memory if its
 		 * currently loaded.
 		 */
-		LoadInfo loadInternal(const UUID& UUID, const Path& filePath, bool synchronous, ResourceLoadFlags loadFlags);
+		LoadInfo LoadInternal(const UUID& UUID, const Path& filePath, bool synchronous, ResourceLoadFlags loadFlags);
 
 		/** Performs actually reading and deserializing of the resource file. Called from various worker threads. */
-		SPtr<Resource> loadFromDiskAndDeserialize(const Path& filePath, bool loadWithSaveData, std::atomic<float>& progress);
+		SPtr<Resource> LoadFromDiskAndDeserialize(const Path& filePath, bool loadWithSaveData, std::atomic<float>& progress);
 
 		/**	Triggered when individual resource has finished loading. */
-		void loadComplete(HResource& resource, bool notifyProgress);
+		void LoadComplete(HResource& resource, bool notifyProgress);
 
 		/**	Callback triggered when the task manager is ready to process the loading task. */
-		void loadCallback(const Path& filePath, HResource& resource, bool loadWithSaveData);
+		void LoadCallback(const Path& filePath, HResource& resource, bool loadWithSaveData);
 
 		/**	Destroys a resource, freeing its memory. */
-		void destroy(ResourceHandleBase& resource);
+		void Destroy(ResourceHandleBase& resource);
 
 	private:
 		Vector<SPtr<ResourceManifest>> mResourceManifests;
@@ -399,7 +399,7 @@ namespace bs
 	};
 
 	/** Provides easier access to Resources manager. */
-	BS_CORE_EXPORT Resources& gResources();
+	BS_CORE_EXPORT Resources& GResources();
 
 	/** @} */
 }

@@ -26,7 +26,7 @@ namespace bs
 		 *
 		 * @param[in]	func	The function to execute.
 		 */
-		void queueDeferredCall(std::function<void()> func);
+		void QueueDeferredCall(std::function<void()> func);
 
 		/** Executes all the scheduled calls. To be called once per frame. */
 		void _update();

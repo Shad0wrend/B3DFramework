@@ -22,7 +22,7 @@ namespace bs
 	 * Initializes DirectInput keyboard device for a window with the specified handle. Only input from that window will be
 	 * reported.
 	 */
-	void initializeDirectInput(Keyboard::Pimpl* m, HWND hWnd)
+	void InitializeDirectInput(Keyboard::Pimpl* m, HWND hWnd)
 	{
 		DIPROPDWORD dipdw;
 		dipdw.diph.dwSize = sizeof(DIPROPDWORD);
@@ -51,7 +51,7 @@ namespace bs
 	}
 
 	/** Releases DirectInput resources for the provided device */
-	void releaseDirectInput(Keyboard::Pimpl* m)
+	void ReleaseDirectInput(Keyboard::Pimpl* m)
 	{
 		if(m->keyboard)
 		{
@@ -62,7 +62,7 @@ namespace bs
 	}
 
 	Keyboard::Keyboard(const String& name, Input* owner)
-		: mName(name), mOwner(owner)
+		: MName(name), mOwner(owner)
 	{
 		InputPrivateData* pvtData = owner->_getPrivateData();
 

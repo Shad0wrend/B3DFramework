@@ -221,7 +221,7 @@ namespace bs
 
 	void GUICanvas::updateRenderElementsInternal()
 	{
-		Vector2 offset((float)mLayoutData.area.x, (float)mLayoutData.area.y);
+		Vector2 Offset((float)mLayoutData.area.x, (float)mLayoutData.area.y);
 		Rect2I clipRect = mLayoutData.getLocalClipRect();
 		buildAllTriangleElementsIfDirty(offset, clipRect);
 
@@ -329,7 +329,7 @@ namespace bs
 		Vector2I layoutOffset = Vector2I(mLayoutData.area.x, mLayoutData.area.y) + offset;
 		Rect2I clipRect = mLayoutData.getLocalClipRect();
 
-		Vector2 floatOffset((float)layoutOffset.x, (float)layoutOffset.y);
+		Vector2 FloatOffset((float)layoutOffset.x, (float)layoutOffset.y);
 		buildAllTriangleElementsIfDirty(floatOffset, clipRect);
 
 		const CanvasElement& element = findElement(renderElementIdx);
@@ -383,7 +383,7 @@ namespace bs
 			UINT8* uvDst = uvs + startVert * vertexStride;
 			UINT32* indexDst = indices + startIndex;
 
-			Vector2 zeroUV(BsZero);
+			Vector2 ZeroUV(BsZero);
 			for(UINT32 i = 0; i < element.clippedNumVertices; i++)
 			{
 				memcpy(vertDst, &mClippedVertices[element.clippedVertexStart + i], sizeof(Vector2));
@@ -449,7 +449,7 @@ namespace bs
 			textureSize.y = desc.texture->getHeight();
 		}
 
-		Vector2I destSize(mLayoutData.area.width, mLayoutData.area.height);
+		Vector2I DestSize(mLayoutData.area.width, mLayoutData.area.height);
 		desc.uvScale = ImageSprite::getTextureUVScale(textureSize, destSize, element.scaleMode);
 
 		element.imageSprite->update(desc, (UINT64)_getParentWidget());

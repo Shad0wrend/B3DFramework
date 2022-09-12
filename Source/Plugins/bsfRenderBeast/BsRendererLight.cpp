@@ -83,7 +83,7 @@ namespace bs { namespace ct
 
 		const Transform& tfrm = internal->getTransform();
 
-		Quaternion lightRotation(BsIdentity);
+		Quaternion LightRotation(BsIdentity);
 		lightRotation.lookRotation(-tfrm.getRotation().zAxis());
 
 		Matrix4 transform = Matrix4::TRS(lightData.shiftedLightPosition, lightRotation, Vector3::ONE);
@@ -103,7 +103,7 @@ namespace bs { namespace ct
 	}
 
 	GBufferParams::GBufferParams(GpuProgramType type, const SPtr<GpuParams>& gpuParams)
-		: mParams(gpuParams)
+		: MParams(gpuParams)
 	{
 		if(mParams->hasTexture(type, "gGBufferATex"))
 			mParams->getTextureParam(type, "gGBufferATex", mGBufferA);
@@ -324,7 +324,7 @@ namespace bs { namespace ct
 		{
 			const LightData* lightData = &mVisibleLightData[j];
 
-			Sphere lightSphere(lightData->position, lightData->boundsRadius);
+			Sphere LightSphere(lightData->position, lightData->boundsRadius);
 			if (bounds.getSphere().intersects(lightSphere))
 			{
 				float distance = bounds.getSphere().getCenter().squaredDistance(lightData->position);

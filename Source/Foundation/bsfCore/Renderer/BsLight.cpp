@@ -10,17 +10,17 @@
 namespace bs
 {
 	LightBase::LightBase()
-		: mType(LightType::Radial), mCastsShadows(false), mColor(Color::White), mAttRadius(10.0f), mSourceRadius(0.0f)
-		, mIntensity(100.0f), mSpotAngle(45), mSpotFalloffAngle(35.0f), mAutoAttenuation(false), mShadowBias(0.5f)
+		: MType(LightType::Radial), mCastsShadows(false), mColor(Color::White), mAttRadius(10.0f), mSourceRadius(0.0f)
+		, MIntensity(100.0f), mSpotAngle(45), mSpotFalloffAngle(35.0f), mAutoAttenuation(false), mShadowBias(0.5f)
 	{
 		updateAttenuationRange();
 	}
 
 	LightBase::LightBase(LightType type, Color color, float intensity, float attRadius, float srcRadius, bool castsShadows,
 		Degree spotAngle, Degree spotFalloffAngle)
-		: mType(type), mCastsShadows(castsShadows), mColor(color), mAttRadius(attRadius), mSourceRadius(srcRadius)
-		, mIntensity(intensity), mSpotAngle(spotAngle), mSpotFalloffAngle(spotFalloffAngle), mAutoAttenuation(false)
-		, mShadowBias(0.5f)
+		: MType(type), mCastsShadows(castsShadows), mColor(color), mAttRadius(attRadius), mSourceRadius(srcRadius)
+		, MIntensity(intensity), mSpotAngle(spotAngle), mSpotFalloffAngle(spotFalloffAngle), mAutoAttenuation(false)
+		, MShadowBias(0.5f)
 	{
 		updateAttenuationRange();
 	}
@@ -149,11 +149,11 @@ namespace bs
 			// Note: We could use the formula for calculating the circumcircle of a triangle (after projecting the cone),
 			// but the radius of the sphere is the same as in the formula we use here, yet it is much simpler with no need
 			// to calculate multiple determinants. Neither are good approximations when cone angle is wide.
-			Vector3 offset(0, 0, mAttRadius * 0.5f);
+			Vector3 Offset(0, 0, mAttRadius * 0.5f);
 
 			// Direction along the edge of the cone, on the YZ plane (doesn't matter if we used XZ instead)
 			Degree angle = Math::clamp(mSpotAngle * 0.5f, Degree(-89), Degree(89));
-			Vector3 coneDir(0, Math::tan(angle)*mAttRadius, mAttRadius);
+			Vector3 ConeDir(0, Math::tan(angle)*mAttRadius, mAttRadius);
 
 			// Distance between the "corner" of the cone and our center, must be the radius (provided the center is at
 			// the middle of the range)
@@ -246,7 +246,7 @@ namespace bs
 
 		UINT8* buffer = allocator->alloc(size);
 
-		Bitstream stream(buffer, size);
+		Bitstream Stream(buffer, size);
 		rtti_write(getCoreDirtyFlags(), stream);
 		csync_write((SceneActor&)*this, stream);
 		csync_write(*this, stream);
@@ -296,7 +296,7 @@ namespace bs
 
 	void Light::syncToCore(const CoreSyncData& data)
 	{
-		Bitstream stream(data.getBuffer(), data.getBufferSize());
+		Bitstream Stream(data.getBuffer(), data.getBufferSize());
 
 		UINT32 dirtyFlags = 0;
 		bool oldIsActive = mActive;
@@ -332,7 +332,7 @@ namespace bs
 				gRenderer()->notifyLightAdded(this);
 			}
 		}
-		else if((dirtyFlags & (UINT32)ActorDirtyFlag::Mobility) != 0)
+		else If((dirtyFlags & (UINT32)ActorDirtyFlag::Mobility) != 0)
 		{
 			gRenderer()->notifyLightRemoved(this);
 			gRenderer()->notifyLightAdded(this);

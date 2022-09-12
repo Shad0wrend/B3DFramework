@@ -15,7 +15,7 @@ namespace bs
 {
 	namespace impl
 	{
-		SPtr<ct::Texture> getSpriteTextureAtlas(const SPtr<ct::SpriteTexture>& spriteTexture)
+		SPtr<ct::Texture> GetSpriteTextureAtlas(const SPtr<ct::SpriteTexture>& spriteTexture)
 		{
 			if(spriteTexture)
 				return spriteTexture->getTexture();
@@ -23,7 +23,7 @@ namespace bs
 			return nullptr;
 		}
 
-		HTexture getSpriteTextureAtlas(const HSpriteTexture& spriteTexture)
+		HTexture GetSpriteTextureAtlas(const HSpriteTexture& spriteTexture)
 		{
 			if(spriteTexture.isLoaded())
 				return spriteTexture->getTexture();
@@ -39,7 +39,7 @@ namespace bs
 		const Map<String, SHADER_OBJECT_PARAM_DESC>& samplerParams,
 		UINT64 initialParamVersion
 	)
-		: mParamVersion(initialParamVersion)
+		: MParamVersion(initialParamVersion)
 	{
 		mDataSize = 0;
 
@@ -203,7 +203,7 @@ namespace bs
 		if (result != GetParamResult::Success)
 			return EMPTY_GRADIENT;
 
-		return getColorGradientParam(*param, arrayIdx);
+		return GetColorGradientParam(*param, arrayIdx);
 	}
 
 	void MaterialParamsBase::setColorGradientParam(const String& name, UINT32 arrayIdx, const ColorGradientHDR& input) const
@@ -311,7 +311,7 @@ namespace bs
 
 	RTTITypeBase* MaterialParamStructData::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	RTTITypeBase* MaterialParamTextureData::getRTTIStatic()
@@ -321,7 +321,7 @@ namespace bs
 
 	RTTITypeBase* MaterialParamTextureData::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	template<bool Core>
@@ -614,7 +614,7 @@ namespace bs
 		if (arrayIdx >= param.arraySize)
 			return false;
 
-		return isAnimated(param, arrayIdx);
+		return IsAnimated(param, arrayIdx);
 	}
 
 	template<bool Core>
@@ -660,7 +660,7 @@ namespace bs
 
 		if(textureParam.texture)
 			value = textureParam.texture;
-		else if(textureParam.spriteTexture)
+		else If(textureParam.spriteTexture)
 			value = impl::getSpriteTextureAtlas(textureParam.spriteTexture);
 
 		surface = textureParam.surface;
@@ -907,7 +907,7 @@ namespace bs
 			return;
 		}
 
-		Bitstream stream((uint8_t*)buffer, size);
+		Bitstream Stream((uint8_t*)buffer, size);
 
 		// Dirty counts for each parameter type
 		rtti_write(numDirtyDataParams, stream);
@@ -1221,7 +1221,7 @@ namespace bs
 
 	void MaterialParams::setSyncData(UINT8* buffer, UINT32 size)
 	{
-		Bitstream stream((uint8_t*)buffer, size);
+		Bitstream Stream((uint8_t*)buffer, size);
 
 		UINT32 numDirtyDataParams = 0;
 		UINT32 numDirtyTextureParams = 0;

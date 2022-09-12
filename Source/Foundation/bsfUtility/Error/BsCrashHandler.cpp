@@ -12,7 +12,7 @@ namespace bs
 	const String CrashHandler::sFatalErrorMsg =
 		"A fatal error occurred and the program has to terminate!";
 
-	CrashHandler& gCrashHandler()
+	CrashHandler& GCrashHandler()
 	{
 		return CrashHandler::instance();
 	}

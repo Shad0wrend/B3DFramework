@@ -14,7 +14,7 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "HingeJointDrive")
 
 		static MonoObject* box(const HingeJointDrive& value);
-		static HingeJointDrive unbox(MonoObject* value);
+		static HingeJointDrive Unbox(MonoObject* value);
 
 	private:
 		ScriptHingeJointDrive(MonoObject* managedInstance);

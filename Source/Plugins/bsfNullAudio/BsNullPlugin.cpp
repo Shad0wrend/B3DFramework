@@ -10,12 +10,12 @@ namespace bs
 	class NullFactory : public AudioFactory
 	{
 	public:
-		void startUp() override
+		void StartUp() override
 		{
 			Audio::startUp<NullAudio>();
 		}
 
-		void shutDown() override
+		void ShutDown() override
 		{
 			Audio::shutDown();
 		}

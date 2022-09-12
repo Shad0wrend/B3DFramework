@@ -26,7 +26,7 @@ namespace bs
 		const Vector<Plane>& frustumPlanes = getFrustum().getPlanes();
 		Matrix4 worldMatrix = SO()->getWorldMatrix();
 
-		Vector<Plane> worldPlanes(frustumPlanes.size());
+		Vector<Plane> WorldPlanes(frustumPlanes.size());
 		UINT32 i = 0;
 		for (auto& plane : frustumPlanes)
 		{

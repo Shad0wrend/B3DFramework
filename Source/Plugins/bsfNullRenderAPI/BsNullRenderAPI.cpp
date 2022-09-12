@@ -17,7 +17,7 @@ namespace bs { namespace ct
 {
 	const StringID& NullRenderAPI::getName() const
 	{
-		static StringID strName("NullRenderAPI");
+		static StringID StrName("NullRenderAPI");
 		return strName;
 	}
 

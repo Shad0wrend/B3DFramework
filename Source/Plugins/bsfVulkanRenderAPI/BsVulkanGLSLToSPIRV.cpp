@@ -124,7 +124,7 @@ namespace bs { namespace ct
 		/* .generalConstantMatrixVectorIndexing = */ 1,
 		} };
 
-	VertexElementType mapGLSLangToVertexElemType(const glslang::TType& type)
+	VertexElementType MapGLSLangToVertexElemType(const glslang::TType& type)
 	{
 		if (type.isVector())
 		{
@@ -175,7 +175,7 @@ namespace bs { namespace ct
 		return VET_UNKNOWN;
 	}
 
-	GpuParamDataType mapGLSLangToGpuParamDataType(const glslang::TType& type)
+	GpuParamDataType MapGLSLangToGpuParamDataType(const glslang::TType& type)
 	{
 		if (type.getBasicType() == glslang::EbtStruct)
 			return GPDT_STRUCT;
@@ -269,7 +269,7 @@ namespace bs { namespace ct
 		return GPDT_UNKNOWN;
 	}
 
-	GpuBufferFormat mapSamplerBasicType(const glslang::TSampler& sampler)
+	GpuBufferFormat MapSamplerBasicType(const glslang::TSampler& sampler)
 	{
 		UINT32 vectorSize = sampler.vectorSize;
 		switch (sampler.type)
@@ -359,24 +359,24 @@ namespace bs { namespace ct
 		 * of the two compared strings must match, and the remaining non-matching bit will be assumed to be the semantic
 		 * index. Returns -1 if no match is made.
 		 */
-		INT32 matchesName(const String& name) const
+		INT32 MatchesName(const String& name) const
 		{
 			if (!StringUtil::startsWith(name, mName, false))
 				return -1;
 
 			UINT32 length = (UINT32)mName.size();
-			return parseINT32(name.substr(length));
+			return ParseINT32(name.substr(length));
 		}
 
 		/**	Returns the semantic of this attribute. */
-		VertexElementSemantic getSemantic() const { return mSemantic; }
+		VertexElementSemantic GetSemantic() const { return mSemantic; }
 
 	private:
 		String mName;
 		VertexElementSemantic mSemantic;
 	};
 
-	bool attribNameToElementSemantic(const String& name, VertexElementSemantic& semantic, UINT16& index)
+	bool AttribNameToElementSemantic(const String& name, VertexElementSemantic& semantic, UINT16& index)
 	{
 		static GLSLAttribute attributes[] =
 		{
@@ -414,7 +414,7 @@ namespace bs { namespace ct
 		return false;
 	}
 
-	bool parseVertexAttributes(const glslang::TProgram* program, Vector<VertexElement>& elementList, String& log)
+	bool ParseVertexAttributes(const glslang::TProgram* program, Vector<VertexElement>& elementList, String& log)
 	{
 		int numAttributes = program->getNumLiveAttributes();
 		for (int i = 0; i < numAttributes; i++)
@@ -457,7 +457,7 @@ namespace bs { namespace ct
 		return true;
 	}
 
-	void parseStruct(const glslang::TTypeList* typeList, UINT32& size)
+	void ParseStruct(const glslang::TTypeList* typeList, UINT32& size)
 	{
 		for (auto iter = typeList->begin(); iter != typeList->end(); ++iter)
 		{
@@ -487,7 +487,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	bool parseUniforms(const glslang::TProgram* program, GpuParamDesc& desc, String& log)
+	bool ParseUniforms(const glslang::TProgram* program, GpuParamDesc& desc, String& log)
 	{
 		// Parse individual uniforms
 		struct UniformInfo

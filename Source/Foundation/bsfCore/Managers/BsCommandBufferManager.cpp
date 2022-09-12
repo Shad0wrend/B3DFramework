@@ -9,6 +9,6 @@ namespace bs { namespace ct
 	{
 		assert(deviceIdx < BS_MAX_DEVICES);
 
-		return createInternal(type, deviceIdx, queueIdx, secondary);
+		return CreateInternal(type, deviceIdx, queueIdx, secondary);
 	}
 }}

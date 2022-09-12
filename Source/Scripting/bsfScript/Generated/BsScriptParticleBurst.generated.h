@@ -23,9 +23,9 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "ParticleBurst")
 
 		static MonoObject* box(const __ParticleBurstInterop& value);
-		static __ParticleBurstInterop unbox(MonoObject* value);
-		static ParticleBurst fromInterop(const __ParticleBurstInterop& value);
-		static __ParticleBurstInterop toInterop(const ParticleBurst& value);
+		static __ParticleBurstInterop Unbox(MonoObject* value);
+		static ParticleBurst FromInterop(const __ParticleBurstInterop& value);
+		static __ParticleBurstInterop ToInterop(const ParticleBurst& value);
 
 	private:
 		ScriptParticleBurst(MonoObject* managedInstance);

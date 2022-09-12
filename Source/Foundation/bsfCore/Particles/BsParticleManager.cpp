@@ -13,7 +13,7 @@ namespace bs
 {
 	/** Helper method used for writing particle data into the @p pixels buffer. */
 	template<class T, class PR>
-	void iterateOverPixels(PixelData& pixels, UINT32 count, UINT32 stride, PR predicate)
+	void IterateOverPixels(PixelData& pixels, UINT32 count, UINT32 stride, PR predicate)
 	{
 		auto dest = (UINT8*)pixels.getData();
 
@@ -35,7 +35,7 @@ namespace bs
 
 	/** Helper method used for writing particle data into the @p pixels buffer. */
 	template<class T, class PR>
-	void iterateOverPixels(PixelData& pixels, UINT32 count, PR predicate)
+	void IterateOverPixels(PixelData& pixels, UINT32 count, PR predicate)
 	{
 		iterateOverPixels<T>(pixels, count, sizeof(T), predicate);
 	}
@@ -56,7 +56,7 @@ namespace bs
 	public:
 		~ParticleSimulationDataPool()
 		{
-			Lock lock(mMutex);
+			Lock Lock(mMutex);
 
 			for (auto& sizeEntry : mBillboardBufferList)
 			{
@@ -85,7 +85,7 @@ namespace bs
 			ParticleBillboardRenderData* output = nullptr;
 
 			{
-				Lock lock(mMutex);
+				Lock Lock(mMutex);
 
 				BuffersPerSize& buffers = mBillboardBufferList[size];
 				if (buffers.nextFreeIdx < (UINT32)buffers.buffers.size())
@@ -99,7 +99,7 @@ namespace bs
 			{
 				output = createNewBillboardBuffersCPU(size);
 
-				Lock lock(mMutex);
+				Lock Lock(mMutex);
 
 				BuffersPerSize& buffers = mBillboardBufferList[size];
 				buffers.buffers.push_back(output);
@@ -152,7 +152,7 @@ namespace bs
 			ParticleMeshRenderData* output = nullptr;
 
 			{
-				Lock lock(mMutex);
+				Lock Lock(mMutex);
 
 				BuffersPerSize& buffers = mMeshBufferList[size];
 				if (buffers.nextFreeIdx < (UINT32)buffers.buffers.size())
@@ -166,7 +166,7 @@ namespace bs
 			{
 				output = createNewMeshBuffersCPU(size);
 
-				Lock lock(mMutex);
+				Lock Lock(mMutex);
 
 				BuffersPerSize& buffers = mMeshBufferList[size];
 				buffers.buffers.push_back(output);
@@ -224,7 +224,7 @@ namespace bs
 			ParticleGPUSimulationData* output = nullptr;
 
 			{
-				Lock lock(mMutex);
+				Lock Lock(mMutex);
 
 				if (mNextFreeGPUBuffer < (UINT32)mGPUBufferList.size())
 				{
@@ -237,7 +237,7 @@ namespace bs
 			{
 				output = createNewBuffersGPU();
 
-				Lock lock(mMutex);
+				Lock Lock(mMutex);
 
 				mGPUBufferList.push_back(output);
 				mNextFreeGPUBuffer++;
@@ -268,9 +268,9 @@ namespace bs
 		}
 
 		/** Makes all the buffers available for allocations. Does not free internal buffer memory. */
-		void clear()
+		void Clear()
 		{
-			Lock lock(mMutex);
+			Lock Lock(mMutex);
 
 			for(auto& buffers : mBillboardBufferList)
 				buffers.second.nextFreeIdx = 0;
@@ -377,7 +377,7 @@ namespace bs
 
 		// Queue evaluation tasks
 		{
-			Lock lock(mMutex);
+			Lock Lock(mMutex);
 			mNumActiveWorkers = (UINT32)mSystems.size();
 		}
 
@@ -435,14 +435,14 @@ namespace bs
 				}
 
 				{
-					Lock lock(mMutex);
+					Lock Lock(mMutex);
 
 					assert(mNumActiveWorkers > 0);
 					mNumActiveWorkers--;
 
 					if(simulationDataCPU)
 						simulationData.cpuData[system->mId] = simulationDataCPU;
-					else if(simulationDataGPU)
+					else If(simulationDataGPU)
 						simulationData.gpuData[system->mId] = simulationDataGPU;
 				}
 
@@ -456,7 +456,7 @@ namespace bs
 		// Wait for tasks to complete
 		TaskScheduler::instance().addWorker(); // Make the current core available for work (since this thread waits)
 		{
-			Lock lock(mMutex);
+			Lock Lock(mMutex);
 
 			while (mNumActiveWorkers > 0)
 				mWorkerDoneSignal.wait(lock);

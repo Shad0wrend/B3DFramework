@@ -19,10 +19,10 @@ namespace bs
 
 	private:
 		/** @copydoc PhysicsMesh::initialize() */
-		void initialize() override;
+		void Initialize() override;
 
 		/** @copydoc PhysicsMesh::initialize() */
-		void destroy() override;
+		void Destroy() override;
 
 		// Note: Must not have its own RTTI type, it's important it shares the same type ID as PhysicsMesh so the
 		// system knows to recognize it. Use FPhysicsMesh instead.
@@ -36,7 +36,7 @@ namespace bs
 		~FNullPhysicsMesh() = default;
 
 		/** @copydoc PhysicsMesh::getMeshData */
-		SPtr<MeshData> getMeshData() const override;
+		SPtr<MeshData> GetMeshData() const override;
 
 		/************************************************************************/
 		/* 								SERIALIZATION                      		*/

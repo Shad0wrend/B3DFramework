@@ -21,52 +21,52 @@ namespace bs
 		~FPhysXCollider();
 
 		/** @copydoc FCollider::getPosition */
-		Vector3 getPosition() const override;
+		Vector3 GetPosition() const override;
 
 		/** @copydoc FCollider::getRotation */
-		Quaternion getRotation() const override;
+		Quaternion GetRotation() const override;
 
 		/** @copydoc FCollider::setTransform */
-		void setTransform(const Vector3& pos, const Quaternion& rotation) override;
+		void SetTransform(const Vector3& pos, const Quaternion& rotation) override;
 
 		/** @copydoc FCollider::setIsTrigger */
-		void setIsTrigger(bool value) override;
+		void SetIsTrigger(bool value) override;
 
 		/** @copydoc FCollider::getIsTrigger */
-		bool getIsTrigger() const override;
+		bool GetIsTrigger() const override;
 
 		/** @copydoc FCollider::setIsStatic */
-		void setIsStatic(bool value) override;
+		void SetIsStatic(bool value) override;
 
 		/** @copydoc FCollider::getIsStatic */
-		bool getIsStatic() const override;
+		bool GetIsStatic() const override;
 
 		/** @copydoc FCollider::setContactOffset */
-		void setContactOffset(float value) override;
+		void SetContactOffset(float value) override;
 
 		/** @copydoc FCollider::getContactOffset */
-		float getContactOffset() const override;
+		float GetContactOffset() const override;
 
 		/** @copydoc FCollider::setRestOffset */
-		void setRestOffset(float value) override;
+		void SetRestOffset(float value) override;
 
 		/** @copydoc FCollider::getRestOffset */
-		float getRestOffset() const override;
+		float GetRestOffset() const override;
 
 		/** @copydoc FCollider::setMaterial */
-		void setMaterial(const HPhysicsMaterial& material) override;
+		void SetMaterial(const HPhysicsMaterial& material) override;
 
 		/** @copydoc FCollider::getLayer */
-		UINT64 getLayer() const override;
+		UINT64 GetLayer() const override;
 
 		/** @copydoc FCollider::setLayer */
-		void setLayer(UINT64 layer) override;
+		void SetLayer(UINT64 layer) override;
 
 		/** @copydoc FCollider::getCollisionReportMode */
-		CollisionReportMode getCollisionReportMode() const override;
+		CollisionReportMode GetCollisionReportMode() const override;
 
 		/** @copydoc FCollider::setCollisionReportMode */
-		void setCollisionReportMode(CollisionReportMode mode) override;
+		void SetCollisionReportMode(CollisionReportMode mode) override;
 
 		/** @copydoc FCollider::_setCCD */
 		void _setCCD(bool enabled) override;
@@ -81,7 +81,7 @@ namespace bs
 		void _setShape(physx::PxShape* shape);
 	protected:
 		/** Updates shape filter data from stored values. */
-		void updateFilter();
+		void UpdateFilter();
 
 		physx::PxScene* mScene = nullptr;
 		physx::PxShape* mShape = nullptr;

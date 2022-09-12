@@ -17,8 +17,8 @@ namespace bs
 	class BS_CORE_EXPORT CReflectionProbeRTTI : public RTTIType <CReflectionProbe, Component, CReflectionProbeRTTI>
 	{
 	private:
-		SPtr<ReflectionProbe> getInternal(CReflectionProbe* obj) { return obj->mInternal; }
-		void setInternal(CReflectionProbe* obj, SPtr<ReflectionProbe> val) { obj->mInternal = val; }
+		SPtr<ReflectionProbe> GetInternal(CReflectionProbe* obj) { return obj->mInternal; }
+		void SetInternal(CReflectionProbe* obj, SPtr<ReflectionProbe> val) { obj->mInternal = val; }
 
 	public:
 		CReflectionProbeRTTI()
@@ -26,18 +26,18 @@ namespace bs
 			addReflectablePtrField("mInternal", 0, &CReflectionProbeRTTI::getInternal, &CReflectionProbeRTTI::setInternal);
 		}
 
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "CReflectionProbe";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_CReflectionProbe;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			return SceneObject::createEmptyComponent<CReflectionProbe>();
 		}

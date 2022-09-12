@@ -32,7 +32,7 @@ namespace bs { namespace ct
 
 		if(mParams->hasSamplerState(GPT_FRAGMENT_PROGRAM, "gDepthBufferSamp"))
 			mParams->setSamplerState(GPT_FRAGMENT_PROGRAM, "gDepthBufferSamp", pointSampState);
-		else if(mParams->hasSamplerState(GPT_FRAGMENT_PROGRAM, "gDepthBufferTex"))
+		else If(mParams->hasSamplerState(GPT_FRAGMENT_PROGRAM, "gDepthBufferTex"))
 			mParams->setSamplerState(GPT_FRAGMENT_PROGRAM, "gDepthBufferTex", pointSampState);
 
 		mParamBuffer = gTetrahedraRenderParamDef.createBuffer();
@@ -46,7 +46,7 @@ namespace bs { namespace ct
 
 		const TextureProperties& texProps = sceneDepth->getProperties();
 
-		Vector2I texSize(texProps.getWidth(), texProps.getHeight());
+		Vector2I TexSize(texProps.getWidth(), texProps.getHeight());
 		gTetrahedraRenderParamDef.gDepthTexSize.set(mParamBuffer, texSize);
 
 		mDepthBufferTex.set(sceneDepth);
@@ -76,12 +76,12 @@ namespace bs { namespace ct
 		if (msaa)
 		{
 			if (singleSampleMSAA)
-				return get(getVariation<true, true>());
+				return Get(getVariation<true, true>());
 
-			return get(getVariation<true, false>());
+			return Get(getVariation<true, false>());
 		}
 
-		return get(getVariation<false, false>());
+		return Get(getVariation<false, false>());
 	}
 
 	IrradianceEvaluateParamDef gIrradianceEvaluateParamDef;
@@ -170,31 +170,31 @@ namespace bs { namespace ct
 			if (msaa)
 			{
 				if (singleSampleMSAA)
-					return get(getVariation<true, true, true>());
+					return Get(getVariation<true, true, true>());
 
-				return get(getVariation<true, false, true>());
+				return Get(getVariation<true, false, true>());
 			}
 
-			return get(getVariation<false, false, true>());
+			return Get(getVariation<false, false, true>());
 		}
 		else
 		{
 			if (msaa)
 			{
 				if (singleSampleMSAA)
-					return get(getVariation<true, true, false>());
+					return Get(getVariation<true, true, false>());
 
-				return get(getVariation<true, false, false>());
+				return Get(getVariation<true, false, false>());
 			}
 
-			return get(getVariation<false, false, false>());
+			return Get(getVariation<false, false, false>());
 		}
 	}
 
 	/** Hash value generator for std::pair<INT32, INT32>. */
 	struct pair_hash
 	{
-		size_t operator()(const std::pair<INT32, INT32>& key) const
+		size_t Operator()(const std::pair<INT32, INT32>& key) const
 		{
 			size_t hash = 0;
 			bs::bs_hash_combine(hash, key.first);
@@ -392,7 +392,7 @@ namespace bs { namespace ct
 
 			const Tetrahedron& volume = mTetrahedronInfos[i].volume;
 
-			Vector3 center(BsZero);
+			Vector3 Center(BsZero);
 			for(UINT32 j = 0; j < 4; j++)
 				center += mTempTetrahedronPositions[volume.vertices[j]];
 
@@ -493,7 +493,7 @@ namespace bs { namespace ct
 			static const UINT32 Permutations[2][3] = { {0, 1, 2 }, { 3, 4, 5} };
 
 			// Make sure the triangle is clockwise, facing away from the center
-			Vector3 center(BsZero);
+			Vector3 Center(BsZero);
 			for (UINT32 k = 0; k < 3; k++)
 			{
 				center += mTempTetrahedronPositions[entry.innerVertices[k]];
@@ -552,7 +552,7 @@ namespace bs { namespace ct
 				const TetrahedronFaceData& face = outerFaces[edge.face[i]];
 
 				// Make sure the triangle is clockwise, facing away from the center
-				Vector3 center(BsZero);
+				Vector3 Center(BsZero);
 				for (UINT32 k = 0; k < 3; k++)
 				{
 					center += mTempTetrahedronPositions[face.innerVertices[k]];
@@ -618,7 +618,7 @@ namespace bs { namespace ct
 			// Make sure the triangle is clockwise, facing toward the center
 			const Tetrahedron& tet = mTetrahedronInfos[entry.tetrahedron].volume;
 
-			Vector3 center(BsZero);
+			Vector3 Center(BsZero);
 			for(UINT32 j = 0; j < 4; j++)
 				center += mTempTetrahedronPositions[tet.vertices[j]];
 
@@ -871,7 +871,7 @@ namespace bs { namespace ct
 					UINT32 outerIdx = -1;
 				};
 
-				FrameVector<Vector3> faceNormals(volume.outerFaces.size());
+				FrameVector<Vector3> FaceNormals(volume.outerFaces.size());
 				for (UINT32 i = 0; i < (UINT32)volume.outerFaces.size(); ++i)
 				{
 					const Vector3& v0 = positions[volume.outerFaces[i].vertices[0]];
@@ -884,7 +884,7 @@ namespace bs { namespace ct
 					// Make sure the normal is facing away from the center
 					const Tetrahedron& tet = volume.tetrahedra[volume.outerFaces[i].tetrahedron];
 
-					Vector3 center(BsZero);
+					Vector3 Center(BsZero);
 					for(UINT32 j = 0; j < 4; j++)
 						center += positions[tet.vertices[j]];
 

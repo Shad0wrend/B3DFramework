@@ -33,10 +33,10 @@ namespace bs
 		~ScriptObjectManager();
 
 		/**	Registers a newly created script interop object. */
-		void registerScriptObject(ScriptObjectBase* instance);
+		void RegisterScriptObject(ScriptObjectBase* instance);
 
 		/**	Unregisters a script interop object that is no longer valid. */
-		void unregisterScriptObject(ScriptObjectBase* instance);
+		void UnregisterScriptObject(ScriptObjectBase* instance);
 
 		/**
 		 * Refreshes the list of active assemblies. Unloads all current assemblies and loads the newly provided set. This
@@ -45,10 +45,10 @@ namespace bs
 		 * @param[in]	assemblies	A list of assembly names and paths to load. First value represents the assembly name,
 		 *							and second a path its the assembly .dll. Assemblies will be loaded in order specified.
 		 */
-		void refreshAssemblies(const Vector<AssemblyRefreshInfo>& assemblies);
+		void RefreshAssemblies(const Vector<AssemblyRefreshInfo>& assemblies);
 
 		/**	Called once per frame. Triggers queued finalizer callbacks. */
-		void update();
+		void Update();
 
 		/**
 		 * Call this when object finalizer is triggered. At the end of the frame all objects queued with this method will
@@ -56,14 +56,14 @@ namespace bs
 		 *
 		 * @note	Thread safe.
 		 */
-		void notifyObjectFinalized(ScriptObjectBase* instance);
+		void NotifyObjectFinalized(ScriptObjectBase* instance);
 
 		/**
 		 * Triggers _onManagedInstanceDeleted deleted callbacks on all objects that were finalized this frame. This allows
 		 * the native portions of those objects to properly clean up any resources. @p assemblyRefresh lets the
 		 * script objects know if finalization is happening due to assembly refresh.
 		 */
-		void processFinalizedObjects(bool assemblyRefresh = false);
+		void ProcessFinalizedObjects(bool assemblyRefresh = false);
 
 		/**
 		 * Triggered right after a domain was reloaded. This signals the outside world that they should update any kept Mono

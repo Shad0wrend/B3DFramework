@@ -18,7 +18,7 @@ namespace bs
 	{
 	public:
 		/**	Returns the name of the field. */
-		const String& getName() const { return mName; }
+		const String& GetName() const { return mName; }
 
 		/**	Returns the class representing the type of data the field holds. */
 		MonoClass* getType();
@@ -31,7 +31,7 @@ namespace bs
 		 * Value will be a pointer to raw data type for value types (for example int, float), and a MonoObject* for
 		 * reference types.
 		 */
-		void get(MonoObject* instance, void* outValue);
+		void Get(MonoObject* instance, void* outValue);
 
 		/**
 		 * Retrieves value currently set in the field on the specified object instance. If field is static object instance
@@ -46,10 +46,10 @@ namespace bs
 		 * Value should be a pointer to raw data type for value types (for example int, float), and a MonoObject* for
 		 * reference types.
 		 */
-		void set(MonoObject* instance, void* value);
+		void Set(MonoObject* instance, void* value);
 
 		/**	Checks if field has an attribute of the specified type. */
-		bool hasAttribute(MonoClass* monoClass);
+		bool HasAttribute(MonoClass* monoClass);
 
 		/**
 		 * Returns an instance of an attribute of the specified type. Returns null if the field doesn't have such an
@@ -58,10 +58,10 @@ namespace bs
 		MonoObject* getAttribute(MonoClass* monoClass);
 
 		/**	Returns field visibility in the class. */
-		MonoMemberVisibility getVisibility();
+		MonoMemberVisibility GetVisibility();
 
 		/**	Query if the field is static. */
-		bool isStatic();
+		bool IsStatic();
 
 	private:
 		friend class MonoClass;

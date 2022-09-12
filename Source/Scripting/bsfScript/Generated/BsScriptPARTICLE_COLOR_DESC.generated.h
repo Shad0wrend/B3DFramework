@@ -20,9 +20,9 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "ParticleColorOptions")
 
 		static MonoObject* box(const __PARTICLE_COLOR_DESCInterop& value);
-		static __PARTICLE_COLOR_DESCInterop unbox(MonoObject* value);
-		static PARTICLE_COLOR_DESC fromInterop(const __PARTICLE_COLOR_DESCInterop& value);
-		static __PARTICLE_COLOR_DESCInterop toInterop(const PARTICLE_COLOR_DESC& value);
+		static __PARTICLE_COLOR_DESCInterop Unbox(MonoObject* value);
+		static PARTICLE_COLOR_DESC FromInterop(const __PARTICLE_COLOR_DESCInterop& value);
+		static __PARTICLE_COLOR_DESCInterop ToInterop(const PARTICLE_COLOR_DESC& value);
 
 	private:
 		ScriptPARTICLE_COLOR_DESC(MonoObject* managedInstance);

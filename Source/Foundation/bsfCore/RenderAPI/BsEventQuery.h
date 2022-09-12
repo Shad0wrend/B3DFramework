@@ -36,10 +36,10 @@ namespace bs { namespace ct
 		 * Once the query is started you may poll isReady() method to check when query has finished, or you may hook up
 		 * an #onTriggered callback and be notified that way.
 		 */
-		virtual void begin(const SPtr<CommandBuffer>& cb = nullptr) = 0;
+		virtual void Begin(const SPtr<CommandBuffer>& cb = nullptr) = 0;
 
 		/** Check if GPU has processed the query. */
-		virtual bool isReady() const = 0;
+		virtual bool IsReady() const = 0;
 
 		/**	Triggered when GPU starts processing the query. */
 		Event<void()> onTriggered;
@@ -49,14 +49,14 @@ namespace bs { namespace ct
 		 *
 		 * @param[in]	deviceIdx	Index of the GPU device to create the query on.
 		 */
-		static SPtr<EventQuery> create(UINT32 deviceIdx = 0);
+		static SPtr<EventQuery> Create(UINT32 deviceIdx = 0);
 
 	protected:
 		friend class QueryManager;
 
 		/**	Returns true if the has still not been completed by the GPU. */
-		bool isActive() const { return mActive; }
-		void setActive(bool active) { mActive = active; }
+		bool IsActive() const { return mActive; }
+		void SetActive(bool active) { mActive = active; }
 
 	protected:
 		bool mActive = false;

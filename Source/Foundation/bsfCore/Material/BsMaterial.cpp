@@ -28,16 +28,16 @@ namespace bs
 	};
 	
 	template<class T>
-	bool isShaderValid(const T& shader) { return false; }
+	bool IsShaderValid(const T& shader) { return false; }
 
 	template<>
-	bool isShaderValid(const HShader& shader) { return shader.isLoaded(); }
+	bool IsShaderValid(const HShader& shader) { return shader.isLoaded(); }
 
 	template<>
-	bool isShaderValid(const SPtr<ct::Shader>& shader) { return shader != nullptr; }
+	bool IsShaderValid(const SPtr<ct::Shader>& shader) { return shader != nullptr; }
 
 	template<bool Core>
-	SPtr<CoreVariantType<Material, Core>> getMaterialPtr(const TMaterial<Core>* material)
+	SPtr<CoreVariantType<Material, Core>> GetMaterialPtr(const TMaterial<Core>* material)
 	{
 		return std::static_pointer_cast<CoreVariantType<Material, Core>>(
 			static_cast<const CoreVariantType<Material, Core>*>(material)->getThisPtr());
@@ -647,7 +647,7 @@ namespace bs
 		{
 			shader = mShader->getCore();
 
-			Vector<SPtr<ct::Technique>> techniques(mTechniques.size());
+			Vector<SPtr<ct::Technique>> Techniques(mTechniques.size());
 			for (UINT32 i = 0; i < (UINT32)mTechniques.size(); i++)
 				techniques[i] = mTechniques[i]->getCore();
 			
@@ -681,7 +681,7 @@ namespace bs
 		size += csync_size(mVariation);
 
 		UINT8* buffer = allocator->alloc(size);
-		Bitstream stream(buffer, size);
+		Bitstream Stream(buffer, size);
 
 		rtti_write(syncAllParams, stream);
 		
@@ -897,7 +897,7 @@ namespace bs
 					TMaterialCurveParam<float, false> curParam = getParamFloatCurve(param.first);
 					curParam.set(params->getCurveParam<float>(*paramData, i), i);
 				}
-				else if(param.second.type == GPDT_COLOR)
+				else If(param.second.type == GPDT_COLOR)
 				{
 					TMaterialColorGradientParam<false> curParam = getParamColorGradient(param.first);
 					curParam.set(params->getColorGradientParam(*paramData, i), i);
@@ -993,7 +993,7 @@ namespace bs
 
 	HMaterial Material::create(const HShader& shader)
 	{
-		return create(shader, ShaderVariation::EMPTY);
+		return Create(shader, ShaderVariation::EMPTY);
 	}
 
 	HMaterial Material::create(const HShader& shader, const ShaderVariation& variation)
@@ -1054,7 +1054,7 @@ namespace bs
 	
 	void Material::syncToCore(const CoreSyncData& data)
 	{
-		Bitstream stream(data.getBuffer(), data.getBufferSize());
+		Bitstream Stream(data.getBuffer(), data.getBufferSize());
 
 		bool syncAllParams;
 		rtti_read(syncAllParams, stream);

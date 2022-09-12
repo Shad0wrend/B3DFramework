@@ -14,7 +14,7 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "SubMesh")
 
 		static MonoObject* box(const SubMesh& value);
-		static SubMesh unbox(MonoObject* value);
+		static SubMesh Unbox(MonoObject* value);
 
 	private:
 		ScriptSubMesh(MonoObject* managedInstance);

@@ -14,7 +14,7 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "KerningPair")
 
 		static MonoObject* box(const KerningPair& value);
-		static KerningPair unbox(MonoObject* value);
+		static KerningPair Unbox(MonoObject* value);
 
 	private:
 		ScriptKerningPair(MonoObject* managedInstance);

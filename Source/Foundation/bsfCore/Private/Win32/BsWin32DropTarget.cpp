@@ -31,7 +31,7 @@ namespace bs
 
 	Win32DropTarget::~Win32DropTarget()
 	{
-		Lock lock(mSync);
+		Lock Lock(mSync);
 
 		for(auto& fileList : mFileLists)
 			bs_delete(fileList);
@@ -96,7 +96,7 @@ namespace bs
 			return S_OK;
 
 		{
-			Lock lock(mSync);
+			Lock Lock(mSync);
 
 			mFileLists.push_back(getFileListFromData(pDataObj));
 
@@ -119,7 +119,7 @@ namespace bs
 			return S_OK;
 
 		{
-			Lock lock(mSync);
+			Lock Lock(mSync);
 
 			ScreenToClient(mHWnd, (POINT *)&pt);
 			mQueuedDropOps.push_back(DropTargetOp(DropOpType::DragOver, Vector2I((int)pt.x, (int)pt.y)));
@@ -135,7 +135,7 @@ namespace bs
 	HRESULT __stdcall Win32DropTarget::DragLeave()
 	{
 		{
-			Lock lock(mSync);
+			Lock Lock(mSync);
 
 			mQueuedDropOps.push_back(DropTargetOp(DropOpType::Leave, Vector2I()));
 
@@ -156,7 +156,7 @@ namespace bs
 			return S_OK;
 
 		{
-			Lock lock(mSync);
+			Lock Lock(mSync);
 
 			mFileLists.push_back(getFileListFromData(pDataObj));
 
@@ -190,7 +190,7 @@ namespace bs
 
 	void Win32DropTarget::update()
 	{
-		Lock lock(mSync);
+		Lock Lock(mSync);
 
 		for(auto& op: mQueuedDropOps)
 		{
@@ -209,7 +209,7 @@ namespace bs
 
 						if(op.type == DropOpType::DragOver)
 							target->onDragOver(op.position.x, op.position.y);
-						else if(op.type == DropOpType::Drop)
+						else If(op.type == DropOpType::Drop)
 						{
 							target->_setFileList(*op.mFileList);
 							target->onDrop(op.position.x, op.position.y);

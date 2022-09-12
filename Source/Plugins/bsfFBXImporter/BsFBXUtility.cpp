@@ -12,19 +12,19 @@ namespace bs
 		int group = 0;
 		Vector3 normal = Vector3::ZERO;
 
-		void addNormal(int group, const Vector3& normal)
+		void AddNormal(int group, const Vector3& normal)
 		{
 			this->group |= group;
 			this->normal += normal;
 		}
 
-		void addNormal(const SmoothNormal& other)
+		void AddNormal(const SmoothNormal& other)
 		{
 			this->group |= other.group;
 			this->normal += other.normal;
 		}
 
-		void normalize()
+		void Normalize()
 		{
 			normal.normalize();
 		}
@@ -34,7 +34,7 @@ namespace bs
 	{
 		Vector<SmoothNormal> normals;
 
-		void addNormal(int group, const Vector3& normal)
+		void AddNormal(int group, const Vector3& normal)
 		{
 			bool found = false;
 
@@ -73,7 +73,7 @@ namespace bs
 			}
 		}
 
-		Vector3 getNormal(int group) const
+		Vector3 GetNormal(int group) const
 		{
 			for (size_t i = 0; i < normals.size(); i++)
 			{
@@ -84,7 +84,7 @@ namespace bs
 			return Vector3::ZERO;
 		}
 
-		void normalize()
+		void Normalize()
 		{
 			for (size_t i = 0; i < normals.size(); ++i)
 				normals[i].normalize();

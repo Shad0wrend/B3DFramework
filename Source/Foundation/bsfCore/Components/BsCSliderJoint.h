@@ -24,27 +24,27 @@ namespace bs
 
 		/** @copydoc SliderJoint::getPosition */
 		BS_SCRIPT_EXPORT(n:Position,pr:getter)
-		float getPosition() const;
+		float GetPosition() const;
 
 		/** @copydoc SliderJoint::getSpeed */
 		BS_SCRIPT_EXPORT(n:Speed,pr:getter)
-		float getSpeed() const;
+		float GetSpeed() const;
 
 		/** @copydoc SliderJoint::getLimit */
 		BS_SCRIPT_EXPORT(n:Limit,pr:getter)
-		LimitLinearRange getLimit() const;
+		LimitLinearRange GetLimit() const;
 
 		/** @copydoc SliderJoint::setLimit */
 		BS_SCRIPT_EXPORT(n:Limit,pr:setter)
-		void setLimit(const LimitLinearRange& limit);
+		void SetLimit(const LimitLinearRange& limit);
 
 		/** @copydoc SliderJoint::setFlag */
 		BS_SCRIPT_EXPORT(n:SetFlag)
-		void setFlag(SliderJointFlag flag, bool enabled);
+		void SetFlag(SliderJointFlag flag, bool enabled);
 
 		/** @copydoc SliderJoint::hasFlag */
 		BS_SCRIPT_EXPORT(n:HasFlag)
-		bool hasFlag(SliderJointFlag flag) const;
+		bool HasFlag(SliderJointFlag flag) const;
 
 		/** @name Internal
 		 *  @{
@@ -62,10 +62,10 @@ namespace bs
 		friend class SceneObject;
 
 		/** @copydoc CJoint::createInternal */
-		SPtr<Joint> createInternal() override;
+		SPtr<Joint> CreateInternal() override;
 
 		/** @copydoc CJoint::getLocalTransform */
-		void getLocalTransform(JointBody body, Vector3& position, Quaternion& rotation) override;
+		void GetLocalTransform(JointBody body, Vector3& position, Quaternion& rotation) override;
 
 		SLIDER_JOINT_DESC mDesc;
 

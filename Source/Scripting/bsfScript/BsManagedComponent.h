@@ -32,13 +32,13 @@ namespace bs
 		MonoReflectionType* getRuntimeType() const { return mRuntimeType; }
 
 		/**	Returns namespace of the managed component. */
-		const String& getManagedNamespace() const { return mNamespace; }
+		const String& GetManagedNamespace() const { return mNamespace; }
 
 		/**	Returns type name of the managed component. */
-		const String& getManagedTypeName() const { return mTypeName; }
+		const String& GetManagedTypeName() const { return mTypeName; }
 
 		/**	Returns namespace and type name of the component in format "namespace.typename". */
-		const String& getManagedFullTypeName() const { return mFullTypeName; }
+		const String& GetManagedFullTypeName() const { return mFullTypeName; }
 
 		/**
 		 * Serializes the internal managed component.
@@ -48,7 +48,7 @@ namespace bs
 		 * @return						An object containing the serialized component. You can provide this to restore()
 		 *								method to re-create the original component.
 		 */
-		RawBackupData backup(bool clearExisting = true);
+		RawBackupData Backup(bool clearExisting = true);
 
 		/**
 		 * Restores a component from previously serialized data.
@@ -59,10 +59,10 @@ namespace bs
 		 *							serialized data will be stored internally until later date when user perhaps restores
 		 *							the type with another refresh. @p instance must be null if this is true.
 		 */
-		void restore(const RawBackupData& data, bool missingType);
+		void Restore(const RawBackupData& data, bool missingType);
 
 		/**	Triggers the managed OnReset callback. */
-		void triggerOnReset();
+		void TriggerOnReset();
 
 	private:
 		friend class ScriptManagedComponent;
@@ -73,16 +73,16 @@ namespace bs
 		 * @param[in]	owner		Script class that handles interop between the native and managed code for this
 		 *							component.
 		 */
-		void initialize(ScriptManagedComponent* owner);
+		void Initialize(ScriptManagedComponent* owner);
 
-		typedef void(BS_THUNKCALL *OnCreatedThunkDef) (MonoObject*, MonoException**);
-		typedef void(BS_THUNKCALL *OnInitializedThunkDef) (MonoObject*, MonoException**);
-		typedef void(BS_THUNKCALL *OnUpdateThunkDef) (MonoObject*, MonoException**);
-		typedef void(BS_THUNKCALL *OnDestroyedThunkDef) (MonoObject*, MonoException**);
-		typedef void(BS_THUNKCALL *OnResetThunkDef) (MonoObject*, MonoException**);
-		typedef void(BS_THUNKCALL *OnEnabledThunkDef) (MonoObject*, MonoException**);
-		typedef void(BS_THUNKCALL *OnDisabledThunkDef) (MonoObject*, MonoException**);
-		typedef void(BS_THUNKCALL *OnTransformChangedThunkDef) (MonoObject*, TransformChangedFlags, MonoException**);
+		typedef Void(BS_THUNKCALL *OnCreatedThunkDef) (MonoObject*, MonoException**);
+		typedef Void(BS_THUNKCALL *OnInitializedThunkDef) (MonoObject*, MonoException**);
+		typedef Void(BS_THUNKCALL *OnUpdateThunkDef) (MonoObject*, MonoException**);
+		typedef Void(BS_THUNKCALL *OnDestroyedThunkDef) (MonoObject*, MonoException**);
+		typedef Void(BS_THUNKCALL *OnResetThunkDef) (MonoObject*, MonoException**);
+		typedef Void(BS_THUNKCALL *OnEnabledThunkDef) (MonoObject*, MonoException**);
+		typedef Void(BS_THUNKCALL *OnDisabledThunkDef) (MonoObject*, MonoException**);
+		typedef Void(BS_THUNKCALL *OnTransformChangedThunkDef) (MonoObject*, TransformChangedFlags, MonoException**);
 
 		MonoClass* mManagedClass = nullptr;
 		MonoReflectionType* mRuntimeType = nullptr;
@@ -121,32 +121,32 @@ namespace bs
 		void _instantiate() override;
 
 		/** @copydoc Component::onCreated */
-		void onCreated() override;
+		void OnCreated() override;
 
 		/** @copydoc Component::onInitialized */
-		void onInitialized() override;
+		void OnInitialized() override;
 
 		/** @copydoc Component::onDestroyed */
-		void onDestroyed() override;
+		void OnDestroyed() override;
 
 		/** @copydoc Component::onEnabled  */
-		void onEnabled() override;
+		void OnEnabled() override;
 
 		/** @copydoc Component::onDisabled  */
-		void onDisabled() override;
+		void OnDisabled() override;
 
 		/** @copydoc Component::onTransformChanged  */
-		void onTransformChanged(TransformChangedFlags flags) override;
+		void OnTransformChanged(TransformChangedFlags flags) override;
 
 	public:
 		/** @copydoc Component::update */
-		void update() override;
+		void Update() override;
 
 		/** @copydoc Component::typeEquals */
-		bool typeEquals(const Component& other) override;
+		bool TypeEquals(const Component& other) override;
 
 		/** @copydoc Component::calculateBounds */
-		bool calculateBounds(Bounds& bounds) override;
+		bool CalculateBounds(Bounds& bounds) override;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/

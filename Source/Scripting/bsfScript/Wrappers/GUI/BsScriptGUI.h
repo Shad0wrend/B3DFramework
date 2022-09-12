@@ -18,13 +18,13 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "GUI")
 
 		/**	Creates the globally accessible GUIWidget and makes the system ready to use. */
-		static void startUp();
+		static void StartUp();
 
 		/** Updates the main camera the widget renders to, if it changes. Should be called every frame. */
-		static void update();
+		static void Update();
 
 		/** Destroys the globally accessible GUIWidget and all its GUI elements. */
-		static void shutDown();
+		static void ShutDown();
 
 	private:
 		ScriptGUI(MonoObject* managedInstance);

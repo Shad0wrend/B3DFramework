@@ -22,7 +22,7 @@ namespace bs
 		 * Initializes the interop object by providing it with the interop object for the internal layout held by the
 		 * scroll area.
 		 */
-		 void initialize(ScriptGUIScrollAreaLayout* layout);
+		 void Initialize(ScriptGUIScrollAreaLayout* layout);
 
 	private:
 		friend class ScriptGUIScrollAreaLayout;
@@ -30,12 +30,12 @@ namespace bs
 		ScriptGUIScrollArea(MonoObject* instance, GUIScrollArea* scrollArea);
 
 		/** @copydoc TScriptGUIElement::destroy */
-		void destroy() override;
+		void Destroy() override;
 
 		/**
 		 * Called when the child script GUI layout gets destroyed. Notifies this object that it shouldn't use it anymore.
 		 */
-		void notifyLayoutDestroyed();
+		void NotifyLayoutDestroyed();
 
 		ScriptGUIScrollAreaLayout* mLayout;
 

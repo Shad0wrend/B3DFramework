@@ -24,9 +24,9 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "LimitLinearRange")
 
 		static MonoObject* box(const __LimitLinearRangeInterop& value);
-		static __LimitLinearRangeInterop unbox(MonoObject* value);
-		static LimitLinearRange fromInterop(const __LimitLinearRangeInterop& value);
-		static __LimitLinearRangeInterop toInterop(const LimitLinearRange& value);
+		static __LimitLinearRangeInterop Unbox(MonoObject* value);
+		static LimitLinearRange FromInterop(const __LimitLinearRangeInterop& value);
+		static __LimitLinearRangeInterop ToInterop(const LimitLinearRange& value);
 
 	private:
 		ScriptLimitLinearRange(MonoObject* managedInstance);

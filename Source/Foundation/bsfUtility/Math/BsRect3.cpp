@@ -46,7 +46,7 @@ namespace bs
 					Vector3 segStart = segCenter - scaledAxes[1 - i];
 					Vector3 segEnd = segCenter + scaledAxes[1 - i];
 
-					LineSegment3 segment(segStart, segEnd);
+					LineSegment3 Segment(segStart, segEnd);
 					auto segResult = segment.getNearestPoint(ray);
 
 					if (segResult.second < distance)

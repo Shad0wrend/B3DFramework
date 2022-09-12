@@ -20,9 +20,9 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "AnimationEvent")
 
 		static MonoObject* box(const __AnimationEventInterop& value);
-		static __AnimationEventInterop unbox(MonoObject* value);
-		static AnimationEvent fromInterop(const __AnimationEventInterop& value);
-		static __AnimationEventInterop toInterop(const AnimationEvent& value);
+		static __AnimationEventInterop Unbox(MonoObject* value);
+		static AnimationEvent FromInterop(const __AnimationEventInterop& value);
+		static __AnimationEventInterop ToInterop(const AnimationEvent& value);
 
 	private:
 		ScriptAnimationEvent(MonoObject* managedInstance);

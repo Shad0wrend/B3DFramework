@@ -15,22 +15,22 @@ namespace bs
 	{
 	public:
 		/** Adds a new define with a floating point value. */
-		void set(const String& name, float value);
+		void Set(const String& name, float value);
 
 		/** Adds a new define with an integer value. */
-		void set(const String& name, INT32 value);
+		void Set(const String& name, INT32 value);
 
 		/** Adds a new define with an integer value. */
-		void set(const String& name, UINT32 value);
+		void Set(const String& name, UINT32 value);
 
 		/** Adds a new define with a string point value. */
-		void set(const String& name, const String& value);
+		void Set(const String& name, const String& value);
 
 		/**	Returns a list of all defines. */
-		UnorderedMap<String, String> getAll() const { return mDefines; }
+		UnorderedMap<String, String> GetAll() const { return mDefines; }
 
 		/** Removes all defines. */
-		void clear() { mDefines.clear(); }
+		void Clear() { mDefines.clear(); }
 
 	protected:
 		UnorderedMap<String, String> mDefines;
@@ -97,72 +97,72 @@ namespace bs
 		 * found.
 		 */
 		BS_SCRIPT_EXPORT()
-		INT32 getInt(const StringID& name);
+		INT32 GetInt(const StringID& name);
 
 		/**
 		 * Returns the value of a unsigned integer parameter with the specified name. Returns 0 if the parameter cannot be
 		 * found.
 		 */
 		BS_SCRIPT_EXPORT()
-		UINT32 getUInt(const StringID& name);
+		UINT32 GetUInt(const StringID& name);
 
 		/** Returns the value of a float parameter with the specified name. Returns 0 if the parameter cannot be found.  */
 		BS_SCRIPT_EXPORT()
-		float getFloat(const StringID& name);
+		float GetFloat(const StringID& name);
 
 		/**
 		 * Returns the value of a boolean parameter with the specified name. Returns false if the parameter cannot be
 		 * found.
 		 */
 		BS_SCRIPT_EXPORT()
-		bool getBool(const StringID& name);
+		bool GetBool(const StringID& name);
 
 		/**
 		 * Sets the value of the parameter for the provided name. Any previous value for a parameter with the same name
 		 * will be overwritten.
 		 */
 		BS_SCRIPT_EXPORT()
-		void setInt(const StringID& name, INT32 value);
+		void SetInt(const StringID& name, INT32 value);
 
 		/**
 		 * Sets the value of the parameter for the provided name. Any previous value for a parameter with the same name
 		 * will be overwritten.
 		 */
 		BS_SCRIPT_EXPORT()
-		void setUInt(const StringID& name, UINT32 value);
+		void SetUInt(const StringID& name, UINT32 value);
 
 		/**
 		 * Sets the value of the parameter for the provided name. Any previous value for a parameter with the same name
 		 * will be overwritten.
 		 */
 		BS_SCRIPT_EXPORT()
-		void setFloat(const StringID& name, float value);
+		void SetFloat(const StringID& name, float value);
 
 		/**
 		 * Sets the value of the parameter for the provided name. Any previous value for a parameter with the same name
 		 * will be overwritten.
 		 */
 		BS_SCRIPT_EXPORT()
-		void setBool(const StringID& name, bool value);
+		void SetBool(const StringID& name, bool value);
 
 		/** Registers a new parameter that controls the variation. */
-		void addParam(const Param& param) { mParams[param.name] = param; }
+		void AddParam(const Param& param) { mParams[param.name] = param; }
 
 		/** Removes a parameter with the specified name. */
 		BS_SCRIPT_EXPORT()
-		void removeParam(const StringID& paramName) { mParams.erase(paramName); }
+		void RemoveParam(const StringID& paramName) { mParams.erase(paramName); }
 
 		/** Checks if the variation has a parameter with the specified name. */
 		BS_SCRIPT_EXPORT()
-		bool hasParam(const StringID& paramName) { return mParams.find(paramName) != mParams.end(); }
+		bool HasParam(const StringID& paramName) { return mParams.find(paramName) != mParams.end(); }
 
 		/** Removes all parameters. */
 		BS_SCRIPT_EXPORT()
-		void clearParams() { mParams.clear(); }
+		void ClearParams() { mParams.clear(); }
 
 		/** Returns a list of names of all registered parameters. */
 		BS_SCRIPT_EXPORT(n:ParamNames,pr:getter)
-		Vector<String> getParamNames() const;
+		Vector<String> GetParamNames() const;
 
 		/**
 		 * Checks if this variation matches some other variation.
@@ -173,10 +173,10 @@ namespace bs
 		 *								parameters present in @p other is used for comparison, while any extra parameters
 		 *								present in this object are ignored.
 		 */
-		bool matches(const ShaderVariation& other, bool exact = true) const;
+		bool Matches(const ShaderVariation& other, bool exact = true) const;
 
 		/** Returns all the variation parameters. */
-		const UnorderedMap<StringID, Param>& getParams() const { return mParams; }
+		const UnorderedMap<StringID, Param>& GetParams() const { return mParams; }
 
 		bool operator==(const ShaderVariation& rhs) const;
 
@@ -189,19 +189,19 @@ namespace bs
 		 */
 
 		/** Converts all the variation parameters in a ShaderDefines object, that may be consumed by the shader compiler. */
-		ShaderDefines getDefines() const;
+		ShaderDefines GetDefines() const;
 
 		/**
 		 * Returns a unique index of this variation, relative to all other variations registered in ShaderVariations object.
 		 */
-		UINT32 getIdx() const { return mIdx;  }
+		UINT32 GetIdx() const { return mIdx;  }
 
 		/** Assigns a unique index to the variation that can later be used for quick lookup. */
-		void setIdx(UINT32 idx) const { mIdx = idx; }
+		void SetIdx(UINT32 idx) const { mIdx = idx; }
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P p)
+		void RttiEnumFields(P p)
 		{
 			p(mParams);
 		}
@@ -228,19 +228,19 @@ namespace bs
 	{
 	public:
 		/** Registers a new variation. */
-		void add(const ShaderVariation& variation);
+		void Add(const ShaderVariation& variation);
 
 		/** Returns a variation at the specified index. Variations are indexed sequentially as they are added. */
-		const ShaderVariation& get(UINT32 idx) { return mVariations[idx]; }
+		const ShaderVariation& Get(UINT32 idx) { return mVariations[idx]; }
 
 		/**
 		 * Scans a list of stored variations and returns an index of a variation that has the same parameters as the
 		 * provided one, or -1 if one is not found.
 		 */
-		UINT32 find(const ShaderVariation& variation) const;
+		UINT32 Find(const ShaderVariation& variation) const;
 
 		/** Returns a list of all variations. */
-		const SmallVector<ShaderVariation, 4>& getVariations() const { return mVariations; }
+		const SmallVector<ShaderVariation, 4>& GetVariations() const { return mVariations; }
 
 	private:
 		SmallVector<ShaderVariation, 4> mVariations;

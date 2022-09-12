@@ -43,19 +43,19 @@ namespace bs
 		 * Retrieves a sub-mesh containing data used for rendering a certain portion of this mesh. If no sub-meshes are
 		 * specified manually a special sub-mesh containing all indices is returned.
 		 */
-		const SubMesh& getSubMesh(UINT32 subMeshIdx = 0) const;
+		const SubMesh& GetSubMesh(UINT32 subMeshIdx = 0) const;
 
 		/** Retrieves a total number of sub-meshes in this mesh. */
-		UINT32 getNumSubMeshes() const;
+		UINT32 GetNumSubMeshes() const;
 
 		/**	Returns maximum number of vertices the mesh may store. */
-		UINT32 getNumVertices() const { return mNumVertices; }
+		UINT32 GetNumVertices() const { return mNumVertices; }
 
 		/**	Returns maximum number of indices the mesh may store. */
-		UINT32 getNumIndices() const { return mNumIndices; }
+		UINT32 GetNumIndices() const { return mNumIndices; }
 
 		/**	Returns bounds of the geometry contained in the vertex buffers for all sub-meshes. */
-		const Bounds& getBounds() const { return mBounds; }
+		const Bounds& GetBounds() const { return mBounds; }
 
 	protected:
 		friend class MeshBase;
@@ -111,14 +111,14 @@ namespace bs
 		virtual ~MeshBase();
 
 		/**	Returns properties that contain information about the mesh. */
-		const MeshProperties& getProperties() const { return mProperties; }
+		const MeshProperties& GetProperties() const { return mProperties; }
 
 		/**	Retrieves a core implementation of a mesh usable only from the core thread. */
-		SPtr<ct::MeshBase> getCore() const;
+		SPtr<ct::MeshBase> GetCore() const;
 
 	protected:
 		/** @copydoc CoreObject::syncToCore */
-		CoreSyncData syncToCore(FrameAlloc* allocator) override;
+		CoreSyncData SyncToCore(FrameAlloc* allocator) override;
 
 		MeshProperties mProperties;
 
@@ -150,10 +150,10 @@ namespace bs
 		virtual ~MeshBase() { }
 
 		/**	Get vertex data used for rendering. */
-		virtual SPtr<VertexData> getVertexData() const = 0;
+		virtual SPtr<VertexData> GetVertexData() const = 0;
 
 		/**	Get index data used for rendering. */
-		virtual SPtr<IndexBuffer> getIndexBuffer() const = 0;
+		virtual SPtr<IndexBuffer> GetIndexBuffer() const = 0;
 
 		/**
 		 * Returns an offset into the vertex buffers that is returned by getVertexData() that signifies where this meshes
@@ -161,7 +161,7 @@ namespace bs
 		 * 			
 		 * @note	Used when multiple meshes share the same buffers.
 		 */
-		virtual UINT32 getVertexOffset() const { return 0; }
+		virtual UINT32 GetVertexOffset() const { return 0; }
 
 		/**
 		 * Returns an offset into the index buffer that is returned by getIndexData() that signifies where this meshes
@@ -169,10 +169,10 @@ namespace bs
 		 * 			
 		 * @note	Used when multiple meshes share the same buffers.
 		 */
-		virtual UINT32 getIndexOffset() const { return 0; }
+		virtual UINT32 GetIndexOffset() const { return 0; }
 
 		/** Returns a structure that describes how are the vertices stored in the mesh's vertex buffer. */
-		virtual SPtr<VertexDataDesc> getVertexDesc() const = 0;
+		virtual SPtr<VertexDataDesc> GetVertexDesc() const = 0;
 
 		/**
 		 * Called whenever this mesh starts being used on the GPU.
@@ -182,11 +182,11 @@ namespace bs
 		virtual void _notifyUsedOnGPU() { }
 
 		/**	Returns properties that contain information about the mesh. */
-		const MeshProperties& getProperties() const { return mProperties; }
+		const MeshProperties& GetProperties() const { return mProperties; }
 
 	protected:
 		/** @copydoc CoreObject::syncToCore */
-		void syncToCore(const CoreSyncData& data) override;
+		void SyncToCore(const CoreSyncData& data) override;
 
 		MeshProperties mProperties;
 	};

@@ -114,7 +114,7 @@ namespace bs
 	{
 		if(relativePath.isEmpty())
 		{
-			FileEncoder fs(path);
+			FileEncoder Fs(path);
 			fs.encode(manifest.get());
 		}
 		else
@@ -147,14 +147,14 @@ namespace bs
 				copy->mUUIDToFilePath[elem.first] = elementRelativePath;
 			}
 
-			FileEncoder fs(path);
+			FileEncoder Fs(path);
 			fs.encode(copy.get());
 		}
 	}
 
 	SPtr<ResourceManifest> ResourceManifest::load(const Path& path, const Path& relativePath)
 	{
-		FileDecoder fs(path);
+		FileDecoder Fs(path);
 		SPtr<ResourceManifest> manifest = std::static_pointer_cast<ResourceManifest>(fs.decode());
 
 		if(relativePath.isEmpty())

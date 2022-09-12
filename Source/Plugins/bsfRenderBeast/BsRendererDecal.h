@@ -47,7 +47,7 @@ namespace bs { namespace ct
 
 	/** Returns a specific decal shader variation. */
 	template<bool INSIDE_GEOMETRY, MSAAMode MSAA_MODE>
-	static const ShaderVariation& getDecalShaderVariation()
+	static const ShaderVariation& GetDecalShaderVariation()
 	{
 		static ShaderVariation variation = ShaderVariation(
 		{
@@ -84,7 +84,7 @@ namespace bs { namespace ct
 		GpuParamTexture maskInputTexture;
 
 		/** @copydoc RenderElement::draw */
-		void draw() const override;
+		void Draw() const override;
 	};
 
 	 /** Contains information about a Decal, used by the Renderer. */
@@ -93,7 +93,7 @@ namespace bs { namespace ct
 		RendererDecal();
 
 		/** Updates the per-object GPU buffer according to the currently set properties. */
-		void updatePerObjectBuffer();
+		void UpdatePerObjectBuffer();
 
 		/**
 		 * Updates the per-call GPU buffer according to the provided parameters.
@@ -101,7 +101,7 @@ namespace bs { namespace ct
 		 * @param[in]	viewProj	Combined view-projection matrix of the current camera.
 		 * @param[in]	flush		True if the buffer contents should be immediately flushed to the GPU.
 		 */
-		void updatePerCallBuffer(const Matrix4& viewProj, bool flush = true) const;
+		void UpdatePerCallBuffer(const Matrix4& viewProj, bool flush = true) const;
 
 		Decal* decal;
 		mutable DecalRenderElement renderElement;

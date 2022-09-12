@@ -115,12 +115,12 @@ namespace bs
 
 	UINT32 SpriteTexture::getFrameWidth() const
 	{
-		return getWidth() / std::max(1U, mAnimation.numColumns);
+		return GetWidth() / std::max(1U, mAnimation.numColumns);
 	}
 
 	UINT32 SpriteTexture::getFrameHeight() const
 	{
-		return getHeight() / std::max(1U, mAnimation.numRows);
+		return GetHeight() / std::max(1U, mAnimation.numRows);
 	}
 
 	void SpriteTexture::_markCoreDirty()
@@ -155,7 +155,7 @@ namespace bs
 		UINT32 size = csync_size(*this);
 
 		UINT8* buffer = allocator->alloc(size);
-		Bitstream stream(buffer, size);
+		Bitstream Stream(buffer, size);
 		csync_write(*this, stream);
 
 		return CoreSyncData(buffer, size);
@@ -240,7 +240,7 @@ namespace bs
 
 		void SpriteTexture::syncToCore(const CoreSyncData& data)
 		{
-			Bitstream stream(data.getBuffer(), data.getBufferSize());
+			Bitstream Stream(data.getBuffer(), data.getBufferSize());
 			csync_read(*this, stream);
 		}
 	}

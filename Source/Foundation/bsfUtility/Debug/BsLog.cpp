@@ -14,14 +14,14 @@ namespace bs
 
 	void Log::logMsg(const String& message, LogVerbosity verbosity, UINT32 category)
 	{
-		RecursiveLock lock(mMutex);
+		RecursiveLock Lock(mMutex);
 
 		mUnreadEntries.push(LogEntry(message, verbosity, category));
 	}
 
 	void Log::clear()
 	{
-		RecursiveLock lock(mMutex);
+		RecursiveLock Lock(mMutex);
 
 		mEntries.clear();
 
@@ -33,7 +33,7 @@ namespace bs
 
 	void Log::clear(LogVerbosity verbosity, UINT32 category)
 	{
-		RecursiveLock lock(mMutex);
+		RecursiveLock Lock(mMutex);
 
 		Vector<LogEntry> newEntries;
 		for(auto& entry : mEntries)
@@ -66,7 +66,7 @@ namespace bs
 
 	bool Log::getUnreadEntry(LogEntry& entry)
 	{
-		RecursiveLock lock(mMutex);
+		RecursiveLock Lock(mMutex);
 
 		if (mUnreadEntries.empty())
 			return false;
@@ -90,7 +90,7 @@ namespace bs
 
 	Vector<LogEntry> Log::getEntries() const
 	{
-		RecursiveLock lock(mMutex);
+		RecursiveLock Lock(mMutex);
 
 		return mEntries;
 	}
@@ -128,7 +128,7 @@ namespace bs
 	{
 		Vector<LogEntry> entries;
 		{
-			RecursiveLock lock(mMutex);
+			RecursiveLock Lock(mMutex);
 
 			for (auto& entry : mEntries)
 				entries.push_back(entry);

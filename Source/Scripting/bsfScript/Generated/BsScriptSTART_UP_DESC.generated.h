@@ -30,9 +30,9 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "StartUpDesc")
 
 		static MonoObject* box(const __START_UP_DESCInterop& value);
-		static __START_UP_DESCInterop unbox(MonoObject* value);
-		static START_UP_DESC fromInterop(const __START_UP_DESCInterop& value);
-		static __START_UP_DESCInterop toInterop(const START_UP_DESC& value);
+		static __START_UP_DESCInterop Unbox(MonoObject* value);
+		static START_UP_DESC FromInterop(const __START_UP_DESCInterop& value);
+		static __START_UP_DESCInterop ToInterop(const START_UP_DESC& value);
 
 	private:
 		ScriptSTART_UP_DESC(MonoObject* managedInstance);

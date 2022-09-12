@@ -28,7 +28,7 @@ namespace bs
 
 		BS_SCRIPT_EXPORT()
 		AnimationSplitInfo(const String& name, UINT32 startFrame, UINT32 endFrame, bool isAdditive = false)
-			: name(name), startFrame(startFrame), endFrame(endFrame), isAdditive(isAdditive)
+			: Name(name), startFrame(startFrame), endFrame(endFrame), isAdditive(isAdditive)
 		{ }
 
 		BS_SCRIPT_EXPORT()
@@ -146,7 +146,7 @@ namespace bs
 
 		/** Creates a new import options object that allows you to customize how are meshes imported. */
 		BS_SCRIPT_EXPORT(ec:T)
-		static SPtr<MeshImportOptions> create();
+		static SPtr<MeshImportOptions> Create();
 
 		/************************************************************************/
 		/* 								SERIALIZATION                      		*/

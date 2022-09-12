@@ -50,7 +50,7 @@ namespace bs
 
 			// Reached the end, wrap around
 			if(iterFind == mOrderedElements.end())
-				return focusFirst();
+				return FocusFirst();
 
 			// If a next element with an explicit index exists, select it
 			if(iterFind->first != 0)
@@ -79,7 +79,7 @@ namespace bs
 			{
 				struct YCompare
 				{
-					bool operator()(const GUIElement* lhs, const GUIElement* rhs) const
+					bool Operator()(const GUIElement* lhs, const GUIElement* rhs) const
 					{
 						const Rect2I boundsLHS = lhs->_getClippedBounds();
 						const Rect2I boundsRHS = rhs->_getClippedBounds();
@@ -245,7 +245,7 @@ namespace bs
 			if(elemBounds.width == 0 || elemBounds.height == 0)
 				continue;
 
-			Vector2I elementPos(elemBounds.x, elemBounds.y);
+			Vector2I ElementPos(elemBounds.x, elemBounds.y);
 
 			const UINT32 dist = elementPos.squaredLength();
 			if (dist < lowestDist)

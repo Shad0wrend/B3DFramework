@@ -6,10 +6,10 @@
 namespace bs
 {
 	LookupTable::LookupTable(Vector<float> values, float startTime, float endTime, uint32_t sampleSize)
-		: mValues(std::move(values))
-		, mSampleSize(std::max(sampleSize, 1U))
-		, mNumSamples((uint32_t)mValues.size() / mSampleSize)
-		, mTimeStart(startTime)
+		: MValues(std::move(values))
+		, MSampleSize(std::max(sampleSize, 1U))
+		, MNumSamples((uint32_t)mValues.size() / mSampleSize)
+		, MTimeStart(startTime)
 	{
 		if(endTime < startTime)
 			endTime = startTime;

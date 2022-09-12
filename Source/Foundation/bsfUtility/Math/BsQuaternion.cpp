@@ -103,9 +103,9 @@ namespace bs
 		float cz = Math::cos(halfZAngle);
 		float sz = Math::sin(halfZAngle);
 
-		Quaternion quatX(cx, sx, 0.0f, 0.0f);
-		Quaternion quatY(cy, 0.0f, sy, 0.0f);
-		Quaternion quatZ(cz, 0.0f, 0.0f, sz);
+		Quaternion QuatX(cx, sx, 0.0f, 0.0f);
+		Quaternion QuatY(cy, 0.0f, sy, 0.0f);
+		Quaternion QuatZ(cz, 0.0f, 0.0f, sz);
 
 		*this = quatZ * (quatX * quatY);
 	}

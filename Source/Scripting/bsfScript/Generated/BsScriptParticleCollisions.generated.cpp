@@ -47,7 +47,7 @@ namespace bs
 		Vector<Plane> vecplanes;
 		if(planes != nullptr)
 		{
-			ScriptArray arrayplanes(planes);
+			ScriptArray Arrayplanes(planes);
 			vecplanes.resize(arrayplanes.size());
 			for(int i = 0; i < (int)arrayplanes.size(); i++)
 			{
@@ -79,7 +79,7 @@ namespace bs
 		Vector<GameObjectHandle<SceneObject>> vecobjects;
 		if(objects != nullptr)
 		{
-			ScriptArray arrayobjects(objects);
+			ScriptArray Arrayobjects(objects);
 			vecobjects.resize(arrayobjects.size());
 			for(int i = 0; i < (int)arrayobjects.size(); i++)
 			{

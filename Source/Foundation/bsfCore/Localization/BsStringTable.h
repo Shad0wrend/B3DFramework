@@ -235,8 +235,8 @@ namespace bs
 		UINT32 numParameters = 0;
 		ParamOffset* parameterOffsets = nullptr;
 
-		void concatenateString(String& outputString, String* parameters, UINT32 numParameterValues) const;
-		void updateString(const String& string);
+		void ConcatenateString(String& outputString, String* parameters, UINT32 numParameterValues) const;
+		void UpdateString(const String& string);
 	};
 
 	/** Data for a single language in the string table. */
@@ -266,27 +266,27 @@ namespace bs
 		 * @return						True if the identifier exists in the table, false otherwise.
 		 */
 		BS_SCRIPT_EXPORT()
-		bool contains(const String& identifier);
+		bool Contains(const String& identifier);
 
 		/** Returns a total number of strings in the table. */
 		BS_SCRIPT_EXPORT(n:NumStrings,pr:getter)
-		UINT32 getNumStrings() const { return (UINT32)mIdentifiers.size(); }
+		UINT32 GetNumStrings() const { return (UINT32)mIdentifiers.size(); }
 
 		/** Returns all identifiers that the string table contains localized strings for. */
 		BS_SCRIPT_EXPORT(n:Identifiers,pr:getter)
-		Vector<String> getIdentifiers() const;
+		Vector<String> GetIdentifiers() const;
 
 		/**	Adds or modifies string translation for the specified language. */
 		BS_SCRIPT_EXPORT()
-		void setString(const String& identifier, Language language, const String& value);
+		void SetString(const String& identifier, Language language, const String& value);
 
 		/**	Returns a string translation for the specified language. Returns the identifier itself if one doesn't exist. */
 		BS_SCRIPT_EXPORT()
-		String getString(const String& identifier, Language language);
+		String GetString(const String& identifier, Language language);
 
 		/** Removes the string described by identifier, from all languages. */
 		BS_SCRIPT_EXPORT()
-		void removeString(const String& identifier);
+		void RemoveString(const String& identifier);
 
 		/**
 		 * Gets a string data for the specified string identifier and currently active language.
@@ -297,7 +297,7 @@ namespace bs
 		 *									identifier as the translation string.
 		 * @return							The string data. Don't store reference to this data as it may get deleted.
 		 */
-		SPtr<LocalizedStringData> getStringData(const String& identifier, bool insertIfNonExisting = true);
+		SPtr<LocalizedStringData> GetStringData(const String& identifier, bool insertIfNonExisting = true);
 
 		/**
 		 * Gets a string data for the specified string identifier and language.
@@ -309,11 +309,11 @@ namespace bs
 		 *									identifier as the translation string.
 		 * @return							The string data. Don't store reference to this data as it may get deleted.
 		 */
-		SPtr<LocalizedStringData> getStringData(const String& identifier, Language language, bool insertIfNonExisting = true);
+		SPtr<LocalizedStringData> GetStringData(const String& identifier, Language language, bool insertIfNonExisting = true);
 
 		/** Creates a new empty string table resource. */
 		BS_SCRIPT_EXPORT(ec:StringTable)
-		static HStringTable create();
+		static HStringTable Create();
 
 		static const Language DEFAULT_LANGUAGE;
 	public: // ***** INTERNAL ******
@@ -334,10 +334,10 @@ namespace bs
 		friend class StringTableManager;
 
 		/** Gets the currently active language. */
-		Language getActiveLanguage() const { return mActiveLanguage; }
+		Language GetActiveLanguage() const { return mActiveLanguage; }
 
 		/** Changes the currently active language. Any newly created strings will use this value. */
-		void setActiveLanguage(Language language);
+		void SetActiveLanguage(Language language);
 
 		Language mActiveLanguage;
 		LanguageData* mActiveLanguageData;

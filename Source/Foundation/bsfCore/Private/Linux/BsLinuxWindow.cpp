@@ -308,7 +308,7 @@ namespace bs
 	{
 		if(isMaximized())
 			maximize(false);
-		else if(isMinimized())
+		else If(isMinimized())
 			minimize(false);
 	}
 
@@ -375,7 +375,7 @@ namespace bs
 		constexpr UINT32 WIDTH = 128;
 		constexpr UINT32 HEIGHT = 128;
 
-		PixelData resizedData(WIDTH, HEIGHT, 1, PF_RGBA8);
+		PixelData ResizedData(WIDTH, HEIGHT, 1, PF_RGBA8);
 		resizedData.allocateInternalBuffer();
 
 		PixelUtil::scale(data, resizedData);
@@ -398,7 +398,7 @@ namespace bs
 		// Also try to set _NET_WM_ICON for modern window managers.
 		// Using long because the spec for XChangeProperty states that format size of 32 = long (this means for 64-bit it
 		// is padded in upper 4 bytes)
-		Vector<long> wmIconData(2 + WIDTH * HEIGHT, 0);
+		Vector<long> WmIconData(2 + WIDTH * HEIGHT, 0);
 		wmIconData[0] = WIDTH;
 		wmIconData[1] = HEIGHT;
 		for (UINT32 y = 0; y < HEIGHT; y++)

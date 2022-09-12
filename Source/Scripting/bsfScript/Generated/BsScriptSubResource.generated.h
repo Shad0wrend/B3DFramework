@@ -21,9 +21,9 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "SubResource")
 
 		static MonoObject* box(const __SubResourceInterop& value);
-		static __SubResourceInterop unbox(MonoObject* value);
-		static SubResource fromInterop(const __SubResourceInterop& value);
-		static __SubResourceInterop toInterop(const SubResource& value);
+		static __SubResourceInterop Unbox(MonoObject* value);
+		static SubResource FromInterop(const __SubResourceInterop& value);
+		static __SubResourceInterop ToInterop(const SubResource& value);
 
 	private:
 		ScriptSubResource(MonoObject* managedInstance);

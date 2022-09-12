@@ -82,14 +82,14 @@ namespace bs
 
 		/** Returns all sub-meshes contained in the mesh. */
 		BS_SCRIPT_EXPORT(e:Mesh,pr:getter,n:SubMeshes)
-		static Vector<SubMesh> getSubMeshes(const HMesh& thisPtr);
+		static Vector<SubMesh> GetSubMeshes(const HMesh& thisPtr);
 		
 		/** Returns the number of sub-meshes contained in this mesh. */
 		BS_SCRIPT_EXPORT(e:Mesh,pr:getter,n:SubMeshCount)
-		static UINT32 getSubMeshCount(const HMesh& thisPtr);
+		static UINT32 GetSubMeshCount(const HMesh& thisPtr);
 		
 		BS_SCRIPT_EXPORT(e:Mesh,in:true)
-		static void getBounds(const HMesh& thisPtr, AABox* box, Sphere* sphere);
+		static void GetBounds(const HMesh& thisPtr, AABox* box, Sphere* sphere);
 		
 		/**
 		 * Accesses the vertex and index data of the mesh. If reading, mesh must have been created with the
@@ -97,9 +97,9 @@ namespace bs
 		 * layout and index format.
 		 */
 		BS_SCRIPT_EXPORT(e:Mesh,pr:getter,n:MeshData)
-		static SPtr<RendererMeshData> getMeshData(const HMesh& thisPtr);
+		static SPtr<RendererMeshData> GetMeshData(const HMesh& thisPtr);
 		BS_SCRIPT_EXPORT(e:Mesh,pr:setter,n:MeshData)
-		static void setMeshData(const HMesh& thisPtr, const SPtr<RendererMeshData>& value);
+		static void SetMeshData(const HMesh& thisPtr, const SPtr<RendererMeshData>& value);
 	};
 
 	/** @endcond */

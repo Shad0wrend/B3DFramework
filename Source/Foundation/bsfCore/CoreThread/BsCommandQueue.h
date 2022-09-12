@@ -21,12 +21,12 @@ namespace bs
 	public:
 		struct LockGuard { };
 
-		bool isValidThread(ThreadId ownerThread) const
+		bool IsValidThread(ThreadId ownerThread) const
 		{
 			return BS_THREAD_CURRENT_ID == ownerThread;
 		}
 
-		LockGuard lock();
+		LockGuard Lock();
 	};
 
 	/**
@@ -41,12 +41,12 @@ namespace bs
 			Lock lock;
 		};
 
-		bool isValidThread(ThreadId ownerThread) const
+		bool IsValidThread(ThreadId ownerThread) const
 		{
 			return true;
 		}
 
-		LockGuard lock()
+		LockGuard Lock()
 		{
 			return LockGuard { Lock(mCommandQueueMutex) };
 		};
@@ -64,26 +64,26 @@ namespace bs
 #if BS_DEBUG_MODE
 		QueuedCommand(std::function<void(AsyncOp&)> _callback, UINT32 _debugId, const SPtr<AsyncOpSyncData>& asyncOpSyncData,
 			bool _notifyWhenComplete = false, UINT32 _callbackId = 0)
-			: debugId(_debugId), callbackWithReturnValue(_callback), asyncOp(asyncOpSyncData), returnsValue(true)
-			, callbackId(_callbackId), notifyWhenComplete(_notifyWhenComplete)
+			: DebugId(_debugId), callbackWithReturnValue(_callback), asyncOp(asyncOpSyncData), returnsValue(true)
+			, CallbackId(_callbackId), notifyWhenComplete(_notifyWhenComplete)
 		{ }
 
 		QueuedCommand(std::function<void()> _callback, UINT32 _debugId, bool _notifyWhenComplete = false, UINT32 _callbackId = 0)
 			:debugId(_debugId), callback(_callback), asyncOp(AsyncOpEmpty()), returnsValue(false), callbackId(_callbackId)
-			, notifyWhenComplete(_notifyWhenComplete)
+			, NotifyWhenComplete(_notifyWhenComplete)
 		{ }
 
 		UINT32 debugId;
 #else
 		QueuedCommand(std::function<void(AsyncOp&)> _callback, const SPtr<AsyncOpSyncData>& asyncOpSyncData,
 			bool _notifyWhenComplete = false, UINT32 _callbackId = 0)
-			: callbackWithReturnValue(_callback), asyncOp(asyncOpSyncData), returnsValue(true), callbackId(_callbackId)
-			, notifyWhenComplete(_notifyWhenComplete)
+			: CallbackWithReturnValue(_callback), asyncOp(asyncOpSyncData), returnsValue(true), callbackId(_callbackId)
+			, NotifyWhenComplete(_notifyWhenComplete)
 		{ }
 
 		QueuedCommand(std::function<void()> _callback, bool _notifyWhenComplete = false, UINT32 _callbackId = 0)
-			: callback(_callback), asyncOp(AsyncOpEmpty()), returnsValue(false), callbackId(_callbackId)
-			, notifyWhenComplete(_notifyWhenComplete)
+			: Callback(_callback), asyncOp(AsyncOpEmpty()), returnsValue(false), callbackId(_callbackId)
+			, NotifyWhenComplete(_notifyWhenComplete)
 		{ }
 #endif
 
@@ -145,7 +145,7 @@ namespace bs
 		 * @note	If the command queue is using a synchonized access policy generally this is not relevant as it may be
 		 *			used on multiple threads.
 		 */
-		ThreadId getThreadId() const { return mMyThreadId; }
+		ThreadId GetThreadId() const { return mMyThreadId; }
 
 		/**
 		 * Executes all provided commands one by one in order. To get the commands you should call flush().
@@ -154,10 +154,10 @@ namespace bs
 		 * @param[in]	notifyCallback  	Callback that will be called if a command that has @p notifyOnComplete flag set.
 		 * 									The callback will receive @p callbackId of the command.
 		 */
-		void playbackWithNotify(Queue<QueuedCommand>* commands, std::function<void(UINT32)> notifyCallback);
+		void PlaybackWithNotify(Queue<QueuedCommand>* commands, std::function<void(UINT32)> notifyCallback);
 
 		/** Executes all provided commands one by one in order. To get the commands you should call flush(). */
-		void playback(Queue<QueuedCommand>* commands);
+		void Playback(Queue<QueuedCommand>* commands);
 
 		/**
 		 * Allows you to set a breakpoint that will trigger when the specified command is executed.		
@@ -171,7 +171,7 @@ namespace bs
 		 * breakpoint so that it gets triggered next time you run the program. At that point you can know exactly which part
 		 * of code queued the command by examining the stack trace.
 		 */
-		static void addBreakpoint(UINT32 queueIdx, UINT32 commandIdx);
+		static void AddBreakpoint(UINT32 queueIdx, UINT32 commandIdx);
 
 		/**
 		 * Queue up a new command to execute. Make sure the provided function has all of its parameters properly bound.
@@ -192,7 +192,7 @@ namespace bs
 		 * Callback method also needs to call AsyncOp::markAsResolved once it is done processing. (If it doesn't it will
 		 * still be called automatically, but the return value will default to nullptr)
 		 */
-		AsyncOp queueReturn(std::function<void(AsyncOp&)> commandCallback, bool _notifyWhenComplete = false, UINT32 _callbackId = 0);
+		AsyncOp QueueReturn(std::function<void(AsyncOp&)> commandCallback, bool _notifyWhenComplete = false, UINT32 _callbackId = 0);
 
 		/**
 		 * Queue up a new command to execute. Make sure the provided function has all of its parameters properly bound.
@@ -205,7 +205,7 @@ namespace bs
 		 * @param[in]	_callbackId		   	(optional) Identifier for the callback so you can then later find
 		 * 									it if needed.
 		 */
-		void queue(std::function<void()> commandCallback, bool _notifyWhenComplete = false, UINT32 _callbackId = 0);
+		void Queue(std::function<void()> commandCallback, bool _notifyWhenComplete = false, UINT32 _callbackId = 0);
 
 		/**
 		 * Returns a copy of all queued commands and makes room for new ones. Must be called from the thread that created
@@ -214,10 +214,10 @@ namespace bs
 		Queue<QueuedCommand>* flush();
 
 		/** Cancels all currently queued commands. */
-		void cancelAll();
+		void CancelAll();
 
 		/**	Returns true if no commands are queued. */
-		bool isEmpty();
+		bool IsEmpty();
 
 	protected:
 		~CommandQueueBase();
@@ -226,7 +226,7 @@ namespace bs
 		 * Helper method that throws an "Invalid thread" exception. Used primarily so we can avoid including Exception
 		 * include in this header.
 		 */
-		void throwInvalidThreadException(const String& message) const;
+		void ThrowInvalidThreadException(const String& message) const;
 
 	private:
 		Queue<QueuedCommand>* mCommands;
@@ -245,13 +245,13 @@ namespace bs
 			class HashFunction
 			{
 			public:
-				size_t operator()(const QueueBreakpoint &key) const;
+				size_t Operator()(const QueueBreakpoint &key) const;
 			};
 
 			class EqualFunction
 			{
 			public:
-				bool operator()(const QueueBreakpoint &a, const QueueBreakpoint &b) const;
+				bool Operator()(const QueueBreakpoint &a, const QueueBreakpoint &b) const;
 			};
 
 			QueueBreakpoint(UINT32 _queueIdx, UINT32 _commandIdx)
@@ -261,7 +261,7 @@ namespace bs
 			UINT32 queueIdx;
 			UINT32 commandIdx;
 
-			inline size_t operator()(const QueueBreakpoint& v) const;
+			inline size_t Operator()(const QueueBreakpoint& v) const;
 		};
 
 		UINT32 mMaxDebugIdx;
@@ -272,7 +272,7 @@ namespace bs
 		static Mutex CommandQueueBreakpointMutex;
 
 		/** Checks if the specified command has a breakpoint and throw an assert if it does. */
-		static void breakIfNeeded(UINT32 queueIdx, UINT32 commandIdx);
+		static void BreakIfNeeded(UINT32 queueIdx, UINT32 commandIdx);
 #endif
 	};
 
@@ -295,7 +295,7 @@ namespace bs
 		{ }
 
 		/** @copydoc CommandQueueBase::queueReturn */
-		AsyncOp queueReturn(std::function<void(AsyncOp&)> commandCallback, bool _notifyWhenComplete = false, UINT32 _callbackId = 0)
+		AsyncOp QueueReturn(std::function<void(AsyncOp&)> commandCallback, bool _notifyWhenComplete = false, UINT32 _callbackId = 0)
 		{
 #if BS_DEBUG_MODE
 			if(!this->isValidThread(getThreadId()))
@@ -309,7 +309,7 @@ namespace bs
 		}
 
 		/** @copydoc CommandQueueBase::queue */
-		void queue(std::function<void()> commandCallback, bool _notifyWhenComplete = false, UINT32 _callbackId = 0)
+		void Queue(std::function<void()> commandCallback, bool _notifyWhenComplete = false, UINT32 _callbackId = 0)
 		{
 #if BS_DEBUG_MODE
 			if(!this->isValidThread(getThreadId()))
@@ -335,7 +335,7 @@ namespace bs
 		}
 
 		/** @copydoc CommandQueueBase::cancelAll */
-		void cancelAll()
+		void CancelAll()
 		{
 #if BS_DEBUG_MODE
 			if(!this->isValidThread(getThreadId()))
@@ -347,7 +347,7 @@ namespace bs
 		}
 
 		/** @copydoc CommandQueueBase::isEmpty */
-		bool isEmpty()
+		bool IsEmpty()
 		{
 #if BS_DEBUG_MODE
 			if(!this->isValidThread(getThreadId()))

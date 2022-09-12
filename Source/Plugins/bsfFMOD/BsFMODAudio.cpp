@@ -17,7 +17,7 @@ namespace bs
 	{
 		// Note: Not using framework's allocators, but have no easy alternative to implement realloc manually.
 		// This is okay to use in combination with general purpose bs_alloc/bs_free since they internally use malloc/free.
-		return realloc(ptr, size);
+		return Realloc(ptr, size);
 	}
 
 	void F_CALLBACK FMODFree(void *ptr, FMOD_MEMORY_TYPE type, const char *sourcestr)
@@ -192,7 +192,7 @@ namespace bs
 		mSources.erase(source);
 	}
 
-	FMODAudio& gFMODAudio()
+	FMODAudio& GFMODAudio()
 	{
 		return static_cast<FMODAudio&>(FMODAudio::instance());
 	}

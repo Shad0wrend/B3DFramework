@@ -41,37 +41,37 @@ namespace bs
 			UINT32 streamIdx = 0, UINT32 instanceStepRate = 0);
 
 		/**	Query if we have vertex data for the specified semantic. */
-		bool hasElement(VertexElementSemantic semantic, UINT32 semanticIdx = 0, UINT32 streamIdx = 0) const;
+		bool HasElement(VertexElementSemantic semantic, UINT32 semanticIdx = 0, UINT32 streamIdx = 0) const;
 
 		/**	Returns the size in bytes of the vertex element with the specified semantic. */
-		UINT32 getElementSize(VertexElementSemantic semantic, UINT32 semanticIdx = 0, UINT32 streamIdx = 0) const;
+		UINT32 GetElementSize(VertexElementSemantic semantic, UINT32 semanticIdx = 0, UINT32 streamIdx = 0) const;
 
 		/**	Returns offset of the vertex from start of the stream in bytes. */
-		UINT32 getElementOffsetFromStream(VertexElementSemantic semantic, UINT32 semanticIdx = 0, UINT32 streamIdx = 0) const;
+		UINT32 GetElementOffsetFromStream(VertexElementSemantic semantic, UINT32 semanticIdx = 0, UINT32 streamIdx = 0) const;
 
 		/**	Gets vertex stride in bytes (offset from one vertex to another) in the specified stream. */
-		UINT32 getVertexStride(UINT32 streamIdx) const;
+		UINT32 GetVertexStride(UINT32 streamIdx) const;
 
 		/**	Gets vertex stride in bytes (offset from one vertex to another) in all the streams. */
-		UINT32 getVertexStride() const;
+		UINT32 GetVertexStride() const;
 
 		/**	Gets offset in bytes from the start of the internal buffer to the start of the specified stream. */
-		UINT32 getStreamOffset(UINT32 streamIdx) const;
+		UINT32 GetStreamOffset(UINT32 streamIdx) const;
 
 		/**	Returns the number of vertex elements. */
-		UINT32 getNumElements() const { return (UINT32)mVertexElements.size(); }
+		UINT32 GetNumElements() const { return (UINT32)mVertexElements.size(); }
 
 		/**	Returns the vertex element at the specified index. */
-		const VertexElement& getElement(UINT32 idx) const { return mVertexElements[idx]; }
+		const VertexElement& GetElement(UINT32 idx) const { return mVertexElements[idx]; }
 
 		/**	Returns the vertex element with the specified semantic. */
 		const VertexElement* getElement(VertexElementSemantic semantic, UINT32 semanticIdx = 0, UINT32 streamIdx = 0) const;
 
 		/**	Creates a list of vertex elements from internal data. */
-		Vector<VertexElement> createElements() const;
+		Vector<VertexElement> CreateElements() const;
 
 		/**	Creates a new empty vertex data descriptor. */
-		static SPtr<VertexDataDesc> create();
+		static SPtr<VertexDataDesc> Create();
 
 	private:
 		friend class Mesh;
@@ -80,13 +80,13 @@ namespace bs
 		friend class ct::MeshHeap;
 
 		/**	Returns the largest stream index of all the stored vertex elements. */
-		UINT32 getMaxStreamIdx() const;
+		UINT32 GetMaxStreamIdx() const;
 
 		/**	Checks if any of the vertex elements use the specified stream index. */
-		bool hasStream(UINT32 streamIdx) const;
+		bool HasStream(UINT32 streamIdx) const;
 
 		/**	Removes a vertex element of the specified type and semantics if it exists. */
-		void clearIfItExists(VertexElementType type, VertexElementSemantic semantic, UINT32 semanticIdx, UINT32 streamIdx);
+		void ClearIfItExists(VertexElementType type, VertexElementSemantic semantic, UINT32 semanticIdx, UINT32 streamIdx);
 
 	private:
 		Vector<VertexElement> mVertexElements;

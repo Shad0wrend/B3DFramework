@@ -83,7 +83,7 @@ namespace bs
 		Vector<Vector3> vecvalue;
 		if(value != nullptr)
 		{
-			ScriptArray arrayvalue(value);
+			ScriptArray Arrayvalue(value);
 			vecvalue.resize(arrayvalue.size());
 			for(int i = 0; i < (int)arrayvalue.size(); i++)
 			{
@@ -115,7 +115,7 @@ namespace bs
 		Vector<Vector3> vecvalue;
 		if(value != nullptr)
 		{
-			ScriptArray arrayvalue(value);
+			ScriptArray Arrayvalue(value);
 			vecvalue.resize(arrayvalue.size());
 			for(int i = 0; i < (int)arrayvalue.size(); i++)
 			{
@@ -147,7 +147,7 @@ namespace bs
 		Vector<Vector4> vecvalue;
 		if(value != nullptr)
 		{
-			ScriptArray arrayvalue(value);
+			ScriptArray Arrayvalue(value);
 			vecvalue.resize(arrayvalue.size());
 			for(int i = 0; i < (int)arrayvalue.size(); i++)
 			{
@@ -179,7 +179,7 @@ namespace bs
 		Vector<Color> vecvalue;
 		if(value != nullptr)
 		{
-			ScriptArray arrayvalue(value);
+			ScriptArray Arrayvalue(value);
 			vecvalue.resize(arrayvalue.size());
 			for(int i = 0; i < (int)arrayvalue.size(); i++)
 			{
@@ -211,7 +211,7 @@ namespace bs
 		Vector<Vector2> vecvalue;
 		if(value != nullptr)
 		{
-			ScriptArray arrayvalue(value);
+			ScriptArray Arrayvalue(value);
 			vecvalue.resize(arrayvalue.size());
 			for(int i = 0; i < (int)arrayvalue.size(); i++)
 			{
@@ -243,7 +243,7 @@ namespace bs
 		Vector<Vector2> vecvalue;
 		if(value != nullptr)
 		{
-			ScriptArray arrayvalue(value);
+			ScriptArray Arrayvalue(value);
 			vecvalue.resize(arrayvalue.size());
 			for(int i = 0; i < (int)arrayvalue.size(); i++)
 			{
@@ -275,7 +275,7 @@ namespace bs
 		Vector<BoneWeight> vecvalue;
 		if(value != nullptr)
 		{
-			ScriptArray arrayvalue(value);
+			ScriptArray Arrayvalue(value);
 			vecvalue.resize(arrayvalue.size());
 			for(int i = 0; i < (int)arrayvalue.size(); i++)
 			{
@@ -307,7 +307,7 @@ namespace bs
 		Vector<uint32_t> vecvalue;
 		if(value != nullptr)
 		{
-			ScriptArray arrayvalue(value);
+			ScriptArray Arrayvalue(value);
 			vecvalue.resize(arrayvalue.size());
 			for(int i = 0; i < (int)arrayvalue.size(); i++)
 			{

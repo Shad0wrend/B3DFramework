@@ -111,7 +111,7 @@ namespace bs { namespace ct
 				iter++;
 
 			const char* end = iter;
-			std::string name(start, end);
+			std::string Name(start, end);
 
 			UINT32 numExtensions = sizeof(gExtensionMap) / sizeof(gExtensionMap[0]);
 			for (UINT32 i = 0; i < numExtensions; ++i)

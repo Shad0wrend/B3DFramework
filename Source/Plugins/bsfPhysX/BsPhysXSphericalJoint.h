@@ -21,16 +21,16 @@ namespace bs
 		~PhysXSphericalJoint();
 
 		/** @copydoc SphericalJoint::getLimit */
-		LimitConeRange getLimit() const override;
+		LimitConeRange GetLimit() const override;
 
 		/** @copydoc SphericalJoint::setLimit */
-		void setLimit(const LimitConeRange& limit) override;
+		void SetLimit(const LimitConeRange& limit) override;
 
 		/** @copydoc SphericalJoint::setFlag */
-		void setFlag(SphericalJointFlag flag, bool enabled) override;
+		void SetFlag(SphericalJointFlag flag, bool enabled) override;
 
 		/** @copydoc SphericalJoint::hasFlag */
-		bool hasFlag(SphericalJointFlag flag) const override;
+		bool HasFlag(SphericalJointFlag flag) const override;
 
 	private:
 		/** Returns the internal PhysX representation of the spherical joint. */

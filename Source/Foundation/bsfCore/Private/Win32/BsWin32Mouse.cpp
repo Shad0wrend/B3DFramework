@@ -20,7 +20,7 @@ namespace bs
 	 * Initializes DirectInput mouse device for a window with the specified handle. Only input from that window will be
 	 * reported.
 	 */
-	void initializeDirectInput(Mouse::Pimpl* m, HWND hWnd)
+	void InitializeDirectInput(Mouse::Pimpl* m, HWND hWnd)
 	{
 		DIPROPDWORD dipdw;
 		dipdw.diph.dwSize = sizeof(DIPROPDWORD);
@@ -49,7 +49,7 @@ namespace bs
 	}
 
 	/** Releases DirectInput resources for the provided device */
-	void releaseDirectInput(Mouse::Pimpl* m)
+	void ReleaseDirectInput(Mouse::Pimpl* m)
 	{
 		if(m->mouse)
 		{
@@ -60,7 +60,7 @@ namespace bs
 	}
 
 	/** Notifies the input handler that a mouse press or release occurred. Triggers an event in the input handler. */
-	void doMouseClick(Input* owner, ButtonCode mouseButton, const DIDEVICEOBJECTDATA& data)
+	void DoMouseClick(Input* owner, ButtonCode mouseButton, const DIDEVICEOBJECTDATA& data)
 	{
 		if (data.dwData & 0x80)
 			owner->_notifyButtonPressed(0, mouseButton, data.dwTimeStamp);
@@ -69,7 +69,7 @@ namespace bs
 	}
 
 	Mouse::Mouse(const String& name, Input* owner)
-		: mName(name), mOwner(owner)
+		: MName(name), mOwner(owner)
 	{
 		InputPrivateData* pvtData = owner->_getPrivateData();
 

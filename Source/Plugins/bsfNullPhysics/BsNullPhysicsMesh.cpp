@@ -51,6 +51,6 @@ namespace bs
 
 	RTTITypeBase* FNullPhysicsMesh::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 }

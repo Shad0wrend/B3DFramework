@@ -58,7 +58,7 @@ namespace bs
 			bs_delete(lib);
 	}
 
-	DynLibManager& gDynLibManager()
+	DynLibManager& GDynLibManager()
 	{
 		return DynLibManager::instance();
 	}

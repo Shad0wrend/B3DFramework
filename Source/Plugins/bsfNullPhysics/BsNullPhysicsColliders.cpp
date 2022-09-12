@@ -6,7 +6,7 @@
 namespace bs
 {
 	FNullPhysicsCollider::FNullPhysicsCollider(const Vector3& position, const Quaternion& rotation)
-		: mPosition(position), mRotation(rotation)
+		: MPosition(position), mRotation(rotation)
 	{ }
 
 	void FNullPhysicsCollider::setTransform(const Vector3& pos, const Quaternion& rotation)

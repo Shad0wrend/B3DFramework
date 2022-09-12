@@ -231,19 +231,19 @@ namespace bs
 
 			return true;
 		}
-		else if(ev.getType() == GUICommandEventType::FocusLost)
+		else If(ev.getType() == GUICommandEventType::FocusLost)
 		{
 			mHasFocus = false;
 			mBackground->setTexture(bgStyle->normal.texture);
 
 			return true;
 		}
-		else if(ev.getType() == GUICommandEventType::MoveLeft)
+		else If(ev.getType() == GUICommandEventType::MoveLeft)
 		{
 			mSliderHandle->moveOneStep(false);
 			return true;
 		}
-		else if(ev.getType() == GUICommandEventType::MoveRight)
+		else If(ev.getType() == GUICommandEventType::MoveRight)
 		{
 			mSliderHandle->moveOneStep(true);
 			return true;

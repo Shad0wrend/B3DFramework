@@ -16,22 +16,22 @@ namespace bs
 	{
 		struct BS_EXPORT Hash
 		{
-			size_t operator()(const ShortcutKey& x) const;
+			size_t Operator()(const ShortcutKey& x) const;
 		};
 
 		struct BS_EXPORT Equals
 		{
-			bool operator()(const ShortcutKey& a, const ShortcutKey& b) const;
+			bool Operator()(const ShortcutKey& a, const ShortcutKey& b) const;
 		};
 
 		ShortcutKey() = default;
 		ShortcutKey(ButtonModifier modifier, ButtonCode code);
 
 		/**	Checks is the shortcut button and modifier combination valid. */
-		bool isValid() const { return button != BC_UNASSIGNED; }
+		bool IsValid() const { return button != BC_UNASSIGNED; }
 
 		/**	Returns a readable name of the shortcut key (for example "Shift + F"). */
-		String getName() const;
+		String GetName() const;
 
 		ButtonModifier modifier = ButtonModifier::None;
 		ButtonCode button = BC_UNASSIGNED;

@@ -14,7 +14,7 @@ namespace bs
 
 	bool Component::typeEquals(const Component& other)
 	{
-		return getRTTI()->getRTTIId() == other.getRTTI()->getRTTIId();
+		return GetRTTI()->getRTTIId() == other.getRTTI()->getRTTIId();
 	}
 
 	bool Component::calculateBounds(Bounds& bounds)

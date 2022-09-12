@@ -23,15 +23,15 @@ namespace bs
 		ScriptCRigidbody(MonoObject* managedInstance, const GameObjectHandle<CRigidbody>& value);
 
 	private:
-		void onCollisionBegin(const CollisionData& p0);
-		void onCollisionStay(const CollisionData& p0);
-		void onCollisionEnd(const CollisionData& p0);
+		void OnCollisionBegin(const CollisionData& p0);
+		void OnCollisionStay(const CollisionData& p0);
+		void OnCollisionEnd(const CollisionData& p0);
 
-		typedef void(BS_THUNKCALL *onCollisionBeginThunkDef) (MonoObject*, MonoObject* p0, MonoException**);
+		typedef Void(BS_THUNKCALL *onCollisionBeginThunkDef) (MonoObject*, MonoObject* p0, MonoException**);
 		static onCollisionBeginThunkDef onCollisionBeginThunk;
-		typedef void(BS_THUNKCALL *onCollisionStayThunkDef) (MonoObject*, MonoObject* p0, MonoException**);
+		typedef Void(BS_THUNKCALL *onCollisionStayThunkDef) (MonoObject*, MonoObject* p0, MonoException**);
 		static onCollisionStayThunkDef onCollisionStayThunk;
-		typedef void(BS_THUNKCALL *onCollisionEndThunkDef) (MonoObject*, MonoObject* p0, MonoException**);
+		typedef Void(BS_THUNKCALL *onCollisionEndThunkDef) (MonoObject*, MonoObject* p0, MonoException**);
 		static onCollisionEndThunkDef onCollisionEndThunk;
 
 		static void Internal_move(ScriptCRigidbody* thisPtr, Vector3* position);

@@ -73,7 +73,7 @@ namespace bs { namespace ct
 			const SPtr<RenderBeastOptions>& options);
 
 		/**	Destroys sampler overrides previously generated with generateSamplerOverrides(). */
-		static void destroySamplerOverrides(MaterialSamplerOverrides* overrides);
+		static void DestroySamplerOverrides(MaterialSamplerOverrides* overrides);
 
 		/**
 		 * Checks if the provided sampler state requires an override, in case the render options have requirements not
@@ -101,7 +101,7 @@ namespace std
 	template<>
 	struct hash<bs::ct::SamplerOverrideKey>
 	{
-		size_t operator()(const bs::ct::SamplerOverrideKey& key) const
+		size_t Operator()(const bs::ct::SamplerOverrideKey& key) const
 		{
 			size_t hash = 0;
 			bs::bs_hash_combine(hash, key.material);

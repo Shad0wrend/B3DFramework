@@ -49,7 +49,7 @@ namespace bs
 
 	public:
 		/** Returns type name of the GUI element used for finding GUI element styles.  */
-		static const String& getGUITypeName();
+		static const String& GetGUITypeName();
 
 		/**
 		 * Creates a new handle.
@@ -73,31 +73,31 @@ namespace bs
 			const String& styleName = StringUtil::BLANK);
 
 		/**	Gets the current position of the handle, in percent ranging [0.0f, 1.0f]. */
-		float getHandlePos() const;
+		float GetHandlePos() const;
 
 		/** Gets the minimum percentual variation of the handle position */
-		float getStep() const;
+		float GetStep() const;
 
 		/**	Returns the position of the slider handle, in pixels. Relative to this object. */
-		INT32 getHandlePosPx() const;
+		INT32 GetHandlePosPx() const;
 
 		/**	Returns remaining length of the scrollable area not covered by the handle, in pixels. */
-		UINT32 getScrollableSize() const;
+		UINT32 GetScrollableSize() const;
 
 		/**	Returns the total length of the area the handle can move in, in pixels. */
-		UINT32 getMaxSize() const;
+		UINT32 GetMaxSize() const;
 
 		/**	
 		 * Sets a step that defines the minimal increment the value can be increased/decreased by. Set to zero to have no
 		 * step. In percent.
 		 */
-		void setStep(float step);
+		void SetStep(float step);
 
 		/**
 		 * Moves the slider handle one step forwards or backwards. Step size is determined by step (if set) or handle size
 		 * otherwise. If @p forward is true the handle is moved one step forward, otherwise one step backward.
 		 */
-		void moveOneStep(bool forward);
+		void MoveOneStep(bool forward);
 
 		/** Triggered when the user drags the handle. */
 		Event<void(float pos, float size)> onHandleMovedOrResized;
@@ -145,10 +145,10 @@ namespace bs
 			UINT32 renderElementIdx) const override;
 
 		/** @copydoc GUIElement::updateRenderElementsInternal() */
-		void updateRenderElementsInternal() override;
+		void UpdateRenderElementsInternal() override;
 
 		/** @copydoc GUIElement::updateClippedBounds() */
-		void updateClippedBounds() override;
+		void UpdateClippedBounds() override;
 	private:
 		GUISliderHandle(GUISliderHandleFlags flags, const String& styleName, const GUIDimensions& dimensions);
 
@@ -156,19 +156,19 @@ namespace bs
 		bool _mouseEvent(const GUIMouseEvent& ev) override;
 
 		/** Checks are the specified over the scroll handle. Coordinates are relative to the parent widget. */
-		bool isOnHandle(const Vector2I& pos) const;
+		bool IsOnHandle(const Vector2I& pos) const;
 
 		/**	Sets the position of the slider handle, in pixels. Relative to this object. */
-		void setHandlePosPx(INT32 pos);
+		void SetHandlePosPx(INT32 pos);
 
 		/** Returns the size of the handle button, in pixels. */
-		UINT32 getHandleSize() const;
+		UINT32 GetHandleSize() const;
 
 		/**	Gets the currently active texture, depending on handle state. */
-		const HSpriteTexture& getActiveTexture() const;
+		const HSpriteTexture& GetActiveTexture() const;
 
 		/** @copydoc GUIElement::styleUpdated */
-		void styleUpdated() override;
+		void StyleUpdated() override;
 
 		static const UINT32 RESIZE_HANDLE_SIZE;
 

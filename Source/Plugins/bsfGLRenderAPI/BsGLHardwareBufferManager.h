@@ -16,10 +16,10 @@ namespace bs { namespace ct
 	{
 	public:
 		/**	Converts engine buffer usage flags into OpenGL specific flags. */
-		static GLenum getGLUsage(GpuBufferUsage usage);
+		static GLenum GetGLUsage(GpuBufferUsage usage);
 
 		/**	Converts vertex element type into OpenGL specific type. */
-		static GLenum getGLType(VertexElementType type);
+		static GLenum GetGLType(VertexElementType type);
 
 	protected:
 		/** @copydoc HardwareBufferManager::createVertexBufferInternal */

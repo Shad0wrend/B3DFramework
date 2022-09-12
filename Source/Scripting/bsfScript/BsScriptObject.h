@@ -47,10 +47,10 @@ namespace bs
 		 * Should the interop object persist through assembly reload. If false then the interop object will be destroyed on
 		 * reload.
 		 */
-		virtual bool isPersistent() const { return false; }
+		virtual bool IsPersistent() const { return false; }
 
 		/** Returns true if the script objects wraps an object implementing the IReflectable interface. */
-		virtual bool isReflectable() const { return false; }
+		virtual bool IsReflectable() const { return false; }
 
 		/**
 		 * Clears any managed instance references from the interop object, and releases any GC handles. Called during
@@ -65,13 +65,13 @@ namespace bs
 		virtual void _onManagedInstanceDeleted(bool assemblyRefresh);
 
 		/**	Called before assembly reload starts to give the object a chance to back up its data. */
-		virtual ScriptObjectBackup beginRefresh();
+		virtual ScriptObjectBackup BeginRefresh();
 
 		/**
 		 * Called after assembly reload starts to give the object a chance to restore the data backed up by the previous
 		 * beginRefresh() call.
 		 */
-		virtual void endRefresh(const ScriptObjectBackup& data);
+		virtual void EndRefresh(const ScriptObjectBackup& data);
 	};
 
 	/**	Base class for all persistent interop objects. Persistent objects persist through assembly reload. */
@@ -82,7 +82,7 @@ namespace bs
 		virtual ~PersistentScriptObjectBase() = default;
 
 		/** @copydoc ScriptObjectBase::isPersistent  */
-		bool isPersistent() const override { return true; }
+		bool IsPersistent() const override { return true; }
 	};
 
 	template <class Type, class Base>
@@ -98,7 +98,7 @@ namespace bs
 			ScriptObject<Type, Base>::_initMetaData();
 		}
 
-		void makeSureIAmInstantiated() { }
+		void MakeSureIAmInstantiated() { }
 	};
 
 	/**	Template version of ScriptObjectBase populates the object meta-data on library load. */
@@ -183,10 +183,10 @@ namespace bs
 
 /** Helper macro to use with script interop objects that form a link between C++ and CLR. */
 #define SCRIPT_OBJ(assembly, namespace, name)		\
-	static String getAssemblyName() { return assembly; }	\
-	static String getNamespace() { return namespace; }		\
-	static String getTypeName() { return name; }			\
-	static void initRuntimeData();
+	static String GetAssemblyName() { return assembly; }	\
+	static String GetNamespace() { return namespace; }		\
+	static String GetTypeName() { return name; }			\
+	static void InitRuntimeData();
 
 	/**	Interop class between C++ & CLR for ScriptObject. */
 	class BS_SCR_BE_EXPORT ScriptObjectImpl : public ScriptObject<ScriptObjectImpl>

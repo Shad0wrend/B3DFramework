@@ -54,14 +54,14 @@ namespace bs
 		~CrashHandler();
 
 		/** Constructs and starts the module. */
-		static void startUp(const CrashHandlerSettings& settings = CrashHandlerSettings())
+		static void StartUp(const CrashHandlerSettings& settings = CrashHandlerSettings())
 		{
 			if(_instance() == nullptr)
 				_instance() = bs_new<CrashHandler>(settings);
 		}
 
 		/** Shuts down this module and frees any resources it is using. */
-		static void shutDown()
+		static void ShutDown()
 		{
 			if(_instance() != nullptr)
 			{
@@ -71,7 +71,7 @@ namespace bs
 		}
 
 		/** Returns a reference to the module instance. */
-		static CrashHandler& instance() { return *_instance(); }
+		static CrashHandler& Instance() { return *_instance(); }
 
 		/**
 		 * Records a crash with a custom error message.
@@ -94,7 +94,7 @@ namespace bs
 		 *
 		 * @note	Available in Windows builds only.
 		 */
-		int reportCrash(void* exceptionData) const;
+		int ReportCrash(void* exceptionData) const;
 #endif
 
 		/**
@@ -103,10 +103,10 @@ namespace bs
 		 *
 		 * @return	String containing the call stack with each function on its own line.
 		 */
-		static String getStackTrace();
+		static String GetStackTrace();
 	private:
 		/** Does what it says. Internal utility function used by reportCrash(). */
-		void logErrorAndStackTrace(const String& message, const String& stackTrace) const;
+		void LogErrorAndStackTrace(const String& message, const String& stackTrace) const;
 		/** Does what it says. Internal utility function used by reportCrash(). */
 		void logErrorAndStackTrace(const String& type,
 		                           const String& description,
@@ -114,12 +114,12 @@ namespace bs
 		                           const String& file,
 		                           UINT32 line) const;
 		/** Does what it says. Internal utility function used by reportCrash(). */
-		void saveCrashLog() const;
+		void SaveCrashLog() const;
 		/** Creates the crash report directory and returns its path. */
-		static const Path& getCrashFolder();
+		static const Path& GetCrashFolder();
 		/** Returns the current time as a string timestamp.  This is used
 		 * to name the crash report directory.. */
-		static String getCrashTimestamp();
+		static String GetCrashTimestamp();
 
 		/** Returns a singleton instance of this module. */
 		static CrashHandler*& _instance() { static CrashHandler* inst = nullptr; return inst; }
@@ -141,7 +141,7 @@ namespace bs
 	};
 
 	/** Easier way of accessing the CrashHandler. */
-	BS_UTILITY_EXPORT CrashHandler& gCrashHandler();
+	BS_UTILITY_EXPORT CrashHandler& GCrashHandler();
 
 	/** @} */
 	/** @} */

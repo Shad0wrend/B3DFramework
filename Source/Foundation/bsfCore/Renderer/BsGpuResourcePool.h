@@ -62,7 +62,7 @@ namespace bs { namespace ct
 		 *
 		 * @param[in]	desc		Descriptor structure that describes what kind of texture to retrieve.
 		 */
-		SPtr<PooledRenderTexture> get(const POOLED_RENDER_TEXTURE_DESC& desc);
+		SPtr<PooledRenderTexture> Get(const POOLED_RENDER_TEXTURE_DESC& desc);
 
 		/**
 		 * Attempts to find the unused render texture with the specified parameters in the pool, or creates a new texture
@@ -75,7 +75,7 @@ namespace bs { namespace ct
 		 *								value will be output through this parameter.
 		 * @param[in]		desc		Descriptor structure that describes what kind of texture to retrieve.
 		 */
-		void get(SPtr<PooledRenderTexture>& texture, const POOLED_RENDER_TEXTURE_DESC& desc);
+		void Get(SPtr<PooledRenderTexture>& texture, const POOLED_RENDER_TEXTURE_DESC& desc);
 
 		/**
 		 * Attempts to find the unused storage buffer with the specified parameters in the pool, or creates a new buffer
@@ -83,7 +83,7 @@ namespace bs { namespace ct
 		 *
 		 * @param[in]	desc		Descriptor structure that describes what kind of buffer to retrieve.
 		 */
-		SPtr<PooledStorageBuffer> get(const POOLED_STORAGE_BUFFER_DESC& desc);
+		SPtr<PooledStorageBuffer> Get(const POOLED_STORAGE_BUFFER_DESC& desc);
 
 		/**
 		 * Attempts to find the unused storage buffer with the specified parameters in the pool, or creates a new buffer
@@ -96,16 +96,16 @@ namespace bs { namespace ct
 		 *								value will be output through this parameter.
 		 * @param[in]	desc			Descriptor structure that describes what kind of buffer to retrieve.
 		 */
-		void get(SPtr<PooledStorageBuffer>& buffer, const POOLED_STORAGE_BUFFER_DESC& desc);
+		void Get(SPtr<PooledStorageBuffer>& buffer, const POOLED_STORAGE_BUFFER_DESC& desc);
 
 		/** Lets the pool know that another frame has passed. */
-		void update();
+		void Update();
 
 		/**
 		 * Destroys all unreferenced resources with that were last used @p age frames ago. Specify 0 to destroy all
 		 * unreferenced resources.
 		 */
-		void prune(UINT32 age);
+		void Prune(UINT32 age);
 	private:
 		/**
 		 * Checks does the provided texture match the parameters.
@@ -114,7 +114,7 @@ namespace bs { namespace ct
 		 * @param[in]	desc		Descriptor structure that describes what kind of texture to match.
 		 * @return					True if the texture matches the descriptor, false otherwise.
 		 */
-		static bool matches(const SPtr<Texture>& texture, const POOLED_RENDER_TEXTURE_DESC& desc);
+		static bool Matches(const SPtr<Texture>& texture, const POOLED_RENDER_TEXTURE_DESC& desc);
 
 		/**
 		 * Checks does the provided buffer match the parameters.
@@ -123,7 +123,7 @@ namespace bs { namespace ct
 		 * @param[in]	desc	Descriptor structure that describes what kind of buffer to match.
 		 * @return				True if the buffer matches the descriptor, false otherwise.
 		 */
-		static bool matches(const SPtr<GpuBuffer>& buffer, const POOLED_STORAGE_BUFFER_DESC& desc);
+		static bool Matches(const SPtr<GpuBuffer>& buffer, const POOLED_STORAGE_BUFFER_DESC& desc);
 
 		DynArray<SPtr<PooledRenderTexture>> mTextures;
 		DynArray<SPtr<PooledStorageBuffer>> mBuffers;
@@ -231,7 +231,7 @@ namespace bs { namespace ct
 	};
 
 	/**	Provides easy access to the GpuResourcePool. */
-	BS_CORE_EXPORT GpuResourcePool& gGpuResourcePool();
+	BS_CORE_EXPORT GpuResourcePool& GGpuResourcePool();
 
 	/** @} */
 }}

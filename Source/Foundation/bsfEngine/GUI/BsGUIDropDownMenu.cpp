@@ -103,7 +103,7 @@ namespace bs
 
 		SPtr<Viewport> viewport = desc.camera->getViewport();
 
-		Rect2I targetBounds(0, 0, viewport->getPixelArea().width, viewport->getPixelArea().height);
+		Rect2I TargetBounds(0, 0, viewport->getPixelArea().width, viewport->getPixelArea().height);
 		Vector<Rect2I> captureBounds;
 		targetBounds.cut(desc.additionalBounds, captureBounds);
 
@@ -183,10 +183,10 @@ namespace bs
 	GUIDropDownMenu::DropDownSubMenu::DropDownSubMenu(GUIDropDownMenu* owner, DropDownSubMenu* parent,
 		const DropDownAreaPlacement& placement, const Rect2I& availableBounds, const GUIDropDownData& dropDownData,
 		GUIDropDownType type, UINT32 depthOffset)
-		: mOwner(owner), mType(type), mData(dropDownData), mPage(0), x(0), y(0), width(0), height(0)
-		, mDepthOffset(depthOffset), mOpenedUpward(false), mContent(nullptr), mBackgroundFrame(nullptr)
-		, mBackgroundPanel(nullptr), mContentPanel(nullptr), mContentLayout(nullptr), mSidebarPanel(nullptr)
-		, mParent(parent), mSubMenu(nullptr)
+		: MOwner(owner), mType(type), mData(dropDownData), mPage(0), x(0), y(0), width(0), height(0)
+		, MDepthOffset(depthOffset), mOpenedUpward(false), mContent(nullptr), mBackgroundFrame(nullptr)
+		, MBackgroundPanel(nullptr), mContentPanel(nullptr), mContentLayout(nullptr), mSidebarPanel(nullptr)
+		, MParent(parent), mSubMenu(nullptr)
 	{
 		mAvailableBounds = availableBounds;
 

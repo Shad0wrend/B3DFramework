@@ -43,43 +43,43 @@ namespace bs
 	};
 
 	/** Converts a framework vector to a PhysX vector. */
-	inline const physx::PxVec3& toPxVector(const Vector3& input)
+	inline const physx::PxVec3& ToPxVector(const Vector3& input)
 	{
 		return *(physx::PxVec3*)&input;
 	}
 
 	/** Converts a framework vector to a PhysX vector. */
-	inline const physx::PxVec4& toPxVector(const Vector4& input)
+	inline const physx::PxVec4& ToPxVector(const Vector4& input)
 	{
 		return *(physx::PxVec4*)&input;
 	}
 
 	/** Converts a framework quaternion to a PhysX quaternion. */
-	inline const physx::PxQuat& toPxQuaternion(const Quaternion& input)
+	inline const physx::PxQuat& ToPxQuaternion(const Quaternion& input)
 	{
 		return *(physx::PxQuat*)&input;
 	}
 
 	/** Converts a framework position/rotation pair to a PhysX transform. */
-	inline physx::PxTransform toPxTransform(const Vector3& pos, const Quaternion& rot)
+	inline physx::PxTransform ToPxTransform(const Vector3& pos, const Quaternion& rot)
 	{
 		return physx::PxTransform(toPxVector(pos), toPxQuaternion(rot));
 	}
 
 	/** Converts a PhysX vector to framework's vector. */
-	inline const Vector3& fromPxVector(const physx::PxVec3& input)
+	inline const Vector3& FromPxVector(const physx::PxVec3& input)
 	{
 		return *(Vector3*)&input;
 	}
 
 	/** Converts a PhysX vector to framework's vector. */
-	inline const Vector4& fromPxVector(const physx::PxVec4& input)
+	inline const Vector4& FromPxVector(const physx::PxVec4& input)
 	{
 		return *(Vector4*)&input;
 	}
 
 	/** Converts a PhysX quaternion to framework's quaternion. */
-	inline const Quaternion& fromPxQuaternion(const physx::PxQuat& input)
+	inline const Quaternion& FromPxQuaternion(const physx::PxQuat& input)
 	{
 		return *(Quaternion*)&input;
 	}

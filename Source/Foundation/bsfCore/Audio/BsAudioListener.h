@@ -22,13 +22,13 @@ namespace bs
 		virtual ~AudioListener() = default;
 
 		/** Sets the velocity of the listener. */
-		virtual void setVelocity(const Vector3& velocity);
+		virtual void SetVelocity(const Vector3& velocity);
 
 		/** Retrieves the velocity of the listener. */
-		Vector3 getVelocity() const { return mVelocity; }
+		Vector3 GetVelocity() const { return mVelocity; }
 
 		/** Creates a new audio listener. */
-		static SPtr<AudioListener> create();
+		static SPtr<AudioListener> Create();
 
 	protected:
 		AudioListener() = default;

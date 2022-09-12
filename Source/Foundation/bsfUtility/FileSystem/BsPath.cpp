@@ -104,14 +104,14 @@ namespace bs
 		switch (type)
 		{
 		case PathType::Windows:
-			return buildWindows();
+			return BuildWindows();
 		case PathType::Unix:
-			return buildUnix();
+			return BuildUnix();
 		default:
 #if BS_PLATFORM == BS_PLATFORM_WIN32
-			return buildWindows();
+			return BuildWindows();
 #elif BS_PLATFORM == BS_PLATFORM_OSX || BS_PLATFORM == BS_PLATFORM_LINUX
-			return buildUnix();
+			return BuildUnix();
 #else
 			static_assert(false, "Unsupported platform for path.");
 #endif
@@ -347,7 +347,7 @@ namespace bs
 	void Path::setExtension(const String& extension)
 	{
 		StringStream stream;
-		stream << getFilename(false);
+		stream << GetFilename(false);
 		stream << extension;
 
 		mFilename = stream.str();
@@ -479,7 +479,7 @@ namespace bs
 
 	Path& Path::operator+= (const Path& rhs)
 	{
-		return append(rhs);
+		return Append(rhs);
 	}
 
 	bool Path::comparePathElem(const String& left, const String& right)

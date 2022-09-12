@@ -4,7 +4,7 @@
 
 namespace bs
 {
-	void convertToMono8(const INT8* input, UINT8* output, UINT32 numSamples, UINT32 numChannels)
+	void ConvertToMono8(const INT8* input, UINT8* output, UINT32 numSamples, UINT32 numChannels)
 	{
 		for (UINT32 i = 0; i < numSamples; i++)
 		{
@@ -20,7 +20,7 @@ namespace bs
 		}
 	}
 
-	void convertToMono16(const INT16* input, INT16* output, UINT32 numSamples, UINT32 numChannels)
+	void ConvertToMono16(const INT16* input, INT16* output, UINT32 numSamples, UINT32 numChannels)
 	{
 		for (UINT32 i = 0; i < numSamples; i++)
 		{
@@ -36,7 +36,7 @@ namespace bs
 		}
 	}
 
-	void convert32To24Bits(const INT32 input, UINT8* output)
+	void Convert32To24Bits(const INT32 input, UINT8* output)
 	{
 		UINT32 valToEncode = *(UINT32*)&input;
 		output[0] = (valToEncode >> 8) & 0x000000FF;
@@ -44,7 +44,7 @@ namespace bs
 		output[2] = (valToEncode >> 24) & 0x000000FF;
 	}
 
-	void convertToMono24(const UINT8* input, UINT8* output, UINT32 numSamples, UINT32 numChannels)
+	void ConvertToMono24(const UINT8* input, UINT8* output, UINT32 numSamples, UINT32 numChannels)
 	{
 		for (UINT32 i = 0; i < numSamples; i++)
 		{
@@ -61,7 +61,7 @@ namespace bs
 		}
 	}
 
-	void convertToMono32(const INT32* input, INT32* output, UINT32 numSamples, UINT32 numChannels)
+	void ConvertToMono32(const INT32* input, INT32* output, UINT32 numSamples, UINT32 numChannels)
 	{
 		for (UINT32 i = 0; i < numSamples; i++)
 		{
@@ -77,7 +77,7 @@ namespace bs
 		}
 	}
 
-	void convert8To32Bits(const INT8* input, INT32* output, UINT32 numSamples)
+	void Convert8To32Bits(const INT8* input, INT32* output, UINT32 numSamples)
 	{
 		for (UINT32 i = 0; i < numSamples; i++)
 		{
@@ -86,13 +86,13 @@ namespace bs
 		}
 	}
 
-	void convert16To32Bits(const INT16* input, INT32* output, UINT32 numSamples)
+	void Convert16To32Bits(const INT16* input, INT32* output, UINT32 numSamples)
 	{
 		for (UINT32 i = 0; i < numSamples; i++)
 			output[i] = input[i] << 16;
 	}
 
-	void convert24To32Bits(const UINT8* input, INT32* output, UINT32 numSamples)
+	void Convert24To32Bits(const UINT8* input, INT32* output, UINT32 numSamples)
 	{
 		for (UINT32 i = 0; i < numSamples; i++)
 		{
@@ -101,19 +101,19 @@ namespace bs
 		}
 	}
 
-	void convert32To8Bits(const INT32* input, UINT8* output, UINT32 numSamples)
+	void Convert32To8Bits(const INT32* input, UINT8* output, UINT32 numSamples)
 	{
 		for (UINT32 i = 0; i < numSamples; i++)
 			output[i] = (INT8)(input[i] >> 24);
 	}
 
-	void convert32To16Bits(const INT32* input, INT16* output, UINT32 numSamples)
+	void Convert32To16Bits(const INT32* input, INT16* output, UINT32 numSamples)
 	{
 		for (UINT32 i = 0; i < numSamples; i++)
 			output[i] = (INT16)(input[i] >> 16);
 	}
 
-	void convert32To24Bits(const INT32* input, UINT8* output, UINT32 numSamples)
+	void Convert32To24Bits(const INT32* input, UINT8* output, UINT32 numSamples)
 	{
 		for (UINT32 i = 0; i < numSamples; i++)
 		{

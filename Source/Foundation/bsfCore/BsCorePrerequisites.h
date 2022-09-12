@@ -771,7 +771,7 @@ namespace bs
 	 *
 	 * @param[in]	callback	The callback.
 	 */
-	void BS_CORE_EXPORT deferredCall(std::function<void()> callback);
+	void BS_CORE_EXPORT DeferredCall(std::function<void()> callback);
 
 	// Special types for use by profilers
 	typedef std::basic_string<char, std::char_traits<char>, StdAlloc<char, ProfilerAlloc>> ProfilerString;
@@ -786,12 +786,12 @@ namespace bs
 	class BS_CORE_EXPORT ThreadDefaultPolicy
 	{
 	public:
-		static void onThreadStarted(const String& name)
+		static void OnThreadStarted(const String& name)
 		{
 			MemStack::beginThread();
 		}
 
-		static void onThreadEnded(const String& name)
+		static void OnThreadEnded(const String& name)
 		{
 			MemStack::endThread();
 		}
@@ -864,13 +864,13 @@ namespace bs
 		{ }
 
 		/** Returns true if both the component and the actor fields are not assigned. */
-		bool empty() const
+		bool Empty() const
 		{
 			return !mActor && !mComponent;
 		}
 
 		/** Returns the assigned value as a scene actor. */
-		SPtr<T> getActor() const
+		SPtr<T> GetActor() const
 		{
 			if(mActor)
 				return mActor;
@@ -879,7 +879,7 @@ namespace bs
 		}
 
 		/** Returns the assigned value as a component. */
-		HandleType getComponent() const
+		HandleType GetComponent() const
 		{
 			return mComponent;
 		}

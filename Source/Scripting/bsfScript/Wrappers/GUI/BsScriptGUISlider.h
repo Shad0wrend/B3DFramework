@@ -21,7 +21,7 @@ namespace bs
 		ScriptGUISliderH(MonoObject* instance, GUISliderHorz* slider);
 
 		/**	Triggered when the native slider is moved. */
-		void onChanged(float percent);
+		void OnChanged(float percent);
 
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
@@ -38,7 +38,7 @@ namespace bs
 		static float internal_getStep(ScriptGUISliderH* nativeInstance);
 		static void internal_setTint(ScriptGUISliderH* nativeInstance, Color* color);
 
-		typedef void(BS_THUNKCALL *OnChangedThunkDef) (MonoObject*, float, MonoException**);
+		typedef Void(BS_THUNKCALL *OnChangedThunkDef) (MonoObject*, float, MonoException**);
 		static OnChangedThunkDef onChangedThunk;
 	};
 
@@ -52,7 +52,7 @@ namespace bs
 		ScriptGUISliderV(MonoObject* instance, GUISliderVert* slider);
 
 		/**	Triggered when the native slider is moved. */
-		void onChanged(float percent);
+		void OnChanged(float percent);
 
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
@@ -69,7 +69,7 @@ namespace bs
 		static float internal_getStep(ScriptGUISliderV* nativeInstance);
 		static void internal_setTint(ScriptGUISliderV* nativeInstance, Color* color);
 
-		typedef void(BS_THUNKCALL *OnChangedThunkDef) (MonoObject*, float, MonoException**);
+		typedef Void(BS_THUNKCALL *OnChangedThunkDef) (MonoObject*, float, MonoException**);
 		static OnChangedThunkDef onChangedThunk;
 	};
 

@@ -57,7 +57,7 @@ namespace bs
 	{
 		mContext = context;
 
-		return encodeEntry(object, flags, context, mAlloc);
+		return EncodeEntry(object, flags, context, mAlloc);
 	}
 
 	void IntermediateSerializer::decodeEntry(const SPtr<IReflectable>& object, const SerializedObject* serializableObject)
@@ -182,7 +182,7 @@ namespace bs
 							SPtr<SerializedField> fieldData = std::static_pointer_cast<SerializedField>(arrayElem.second.serialized);
 							if (fieldData != nullptr)
 							{
-								Bitstream tempStream(fieldData->value, fieldData->size);
+								Bitstream TempStream(fieldData->value, fieldData->size);
 								curField->arrayElemFromBuffer(rttiInstance, object.get(), arrayElem.first, tempStream);
 							}
 						}
@@ -271,7 +271,7 @@ namespace bs
 						SPtr<SerializedField> fieldData = std::static_pointer_cast<SerializedField>(entryData);
 						if (fieldData != nullptr)
 						{
-							Bitstream tempStream(fieldData->value, fieldData->size);
+							Bitstream TempStream(fieldData->value, fieldData->size);
 							curField->fromBuffer(rttiInstance, object.get(), tempStream);
 						}
 					}
@@ -469,7 +469,7 @@ namespace bs
 					serializedField->ownsMemory = true;
 					serializedField->size = typeSize;
 
-					Bitstream tempStream(serializedField->value, typeSize);
+					Bitstream TempStream(serializedField->value, typeSize);
 					curField->arrayElemToStream(rtti, object, arrIdx, tempStream);
 
 					if (wholeArray)
@@ -534,7 +534,7 @@ namespace bs
 				serializedField->ownsMemory = true;
 				serializedField->size = typeSize;
 
-				Bitstream tempStream(serializedField->value, typeSize);
+				Bitstream TempStream(serializedField->value, typeSize);
 				curField->toStream(rtti, object, tempStream);
 
 				output = serializedField;

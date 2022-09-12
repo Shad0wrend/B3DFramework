@@ -34,100 +34,100 @@ namespace bs
 		virtual ~AudioSource() = default;
 
 		/** Audio clip to play. */
-		virtual void setClip(const HAudioClip& clip);
+		virtual void SetClip(const HAudioClip& clip);
 
 		/** @copydoc setClip() */
-		HAudioClip getClip() const { return mAudioClip; }
+		HAudioClip GetClip() const { return mAudioClip; }
 
 		/**
 		 * Velocity of the source. Determines pitch in relation to AudioListener's position. Only relevant for spatial
 		 * (3D) sources.
 		 */
-		virtual void setVelocity(const Vector3& velocity);
+		virtual void SetVelocity(const Vector3& velocity);
 
 		/** @copydoc setVelocity() */
-		Vector3 getVelocity() const { return mVelocity; }
+		Vector3 GetVelocity() const { return mVelocity; }
 
 		/** Volume of the audio played from this source, in [0, 1] range. */
-		virtual void setVolume(float volume);
+		virtual void SetVolume(float volume);
 
 		/** @copydoc setVolume() */
-		float getVolume() const { return mVolume; }
+		float GetVolume() const { return mVolume; }
 
 		/** Determines the pitch of the played audio. 1 is the default. */
-		virtual void setPitch(float pitch);
+		virtual void SetPitch(float pitch);
 
 		/** @copydoc setPitch() */
-		float getPitch() const { return mPitch; }
+		float GetPitch() const { return mPitch; }
 
 		/** Determines whether the audio clip should loop when it finishes playing. */
-		virtual void setIsLooping(bool loop);
+		virtual void SetIsLooping(bool loop);
 
 		/** @copydoc setIsLooping() */
-		bool getIsLooping() const { return mLoop; }
+		bool GetIsLooping() const { return mLoop; }
 
 		/**
 		 * Determines the priority of the audio source. If more audio sources are playing than supported by the hardware,
 		 * some might get disabled. By setting a higher priority the audio source is guaranteed to be disabled after sources
 		 * with lower priority.
 		 */
-		virtual void setPriority(INT32 priority);
+		virtual void SetPriority(INT32 priority);
 
 		/** @copydoc setPriority() */
-		UINT32 getPriority() const { return mPriority; }
+		UINT32 GetPriority() const { return mPriority; }
 
 		/**
 		 * Minimum distance at which audio attenuation starts. When the listener is closer to the source
 		 * than this value, audio is heard at full volume. Once farther away the audio starts attenuating.
 		 */
-		virtual void setMinDistance(float distance);
+		virtual void SetMinDistance(float distance);
 
 		/** @copydoc setMinDistance() */
-		float getMinDistance() const { return mMinDistance; }
+		float GetMinDistance() const { return mMinDistance; }
 
 		/**
 		 * Attenuation that controls how quickly does audio volume drop off as the listener moves further from the source.
 		 */
-		virtual void setAttenuation(float attenuation);
+		virtual void SetAttenuation(float attenuation);
 
 		/** @copydoc setAttenuation() */
-		float getAttenuation() const { return mAttenuation; }
+		float GetAttenuation() const { return mAttenuation; }
 
 		/** Starts playing the currently assigned audio clip. */
-		virtual void play() = 0;
+		virtual void Play() = 0;
 
 		/** Pauses the audio playback. */
-		virtual void pause() = 0;
+		virtual void Pause() = 0;
 
 		/** Stops audio playback, rewinding it to the start. */
-		virtual void stop() = 0;
+		virtual void Stop() = 0;
 
 		/**
 		 * Determines the current time of playback. If playback hasn't yet started, it specifies the time at which playback
 		 * will start at. The time is in seconds, in range [0, clipLength].
 		 */
-		virtual void setTime(float time) = 0;
+		virtual void SetTime(float time) = 0;
 
 		/** @copydoc setTime() */
-		virtual float getTime() const = 0;
+		virtual float GetTime() const = 0;
 
 		/** Returns the current state of the audio playback (playing/paused/stopped). */
-		virtual AudioSourceState getState() const = 0;
+		virtual AudioSourceState GetState() const = 0;
 
 		/** Creates a new audio source. */
-		static SPtr<AudioSource> create();
+		static SPtr<AudioSource> Create();
 
 	protected:
 		AudioSource() = default;
 
 		/** @copydoc IResourceListener::getListenerResources */
-		void getListenerResources(Vector<HResource>& resources) override;
+		void GetListenerResources(Vector<HResource>& resources) override;
 
 		/** @copydoc IResourceListener::notifyResourceChanged */
-		void notifyResourceChanged(const HResource& resource) override;
+		void NotifyResourceChanged(const HResource& resource) override;
 
 		/** Triggered by the resources system whenever the attached audio clip changed (e.g. was reimported.) */
-		virtual void onClipChanged() { }
+		virtual void OnClipChanged() { }
 
 		HAudioClip mAudioClip;
 		Vector3 mVelocity = BsZero;

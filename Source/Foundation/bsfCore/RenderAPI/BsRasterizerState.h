@@ -83,34 +83,34 @@ namespace bs
 		RasterizerProperties(const RASTERIZER_STATE_DESC& desc);
 
 		/** @copydoc RASTERIZER_STATE_DESC::polygonMode */
-		PolygonMode getPolygonMode() const { return mData.polygonMode; }
+		PolygonMode GetPolygonMode() const { return mData.polygonMode; }
 
 		/** @copydoc RASTERIZER_STATE_DESC::cullMode */
-		CullingMode getCullMode() const { return mData.cullMode; }
+		CullingMode GetCullMode() const { return mData.cullMode; }
 
 		/** @copydoc RASTERIZER_STATE_DESC::depthBias */
-		float getDepthBias() const { return mData.depthBias; }
+		float GetDepthBias() const { return mData.depthBias; }
 
 		/** @copydoc RASTERIZER_STATE_DESC::depthBiasClamp */
-		float getDepthBiasClamp() const { return mData.depthBiasClamp; }
+		float GetDepthBiasClamp() const { return mData.depthBiasClamp; }
 
 		/** @copydoc RASTERIZER_STATE_DESC::slopeScaledDepthBias */
-		float getSlopeScaledDepthBias() const { return mData.slopeScaledDepthBias; }
+		float GetSlopeScaledDepthBias() const { return mData.slopeScaledDepthBias; }
 
 		/** @copydoc RASTERIZER_STATE_DESC::depthClipEnable */
-		bool getDepthClipEnable() const { return mData.depthClipEnable; }
+		bool GetDepthClipEnable() const { return mData.depthClipEnable; }
 
 		/** @copydoc RASTERIZER_STATE_DESC::scissorEnable */
-		bool getScissorEnable() const { return mData.scissorEnable; }
+		bool GetScissorEnable() const { return mData.scissorEnable; }
 
 		/** @copydoc RASTERIZER_STATE_DESC::multisampleEnable */
-		bool getMultisampleEnable() const { return mData.multisampleEnable; }
+		bool GetMultisampleEnable() const { return mData.multisampleEnable; }
 
 		/** @copydoc RASTERIZER_STATE_DESC::antialiasedLineEnable */
-		bool getAntialiasedLineEnable() const { return mData.antialiasedLineEnable; }
+		bool GetAntialiasedLineEnable() const { return mData.antialiasedLineEnable; }
 
 		/** Returns the hash value generated from the rasterizer state properties. */
-		UINT64 getHash() const { return mHash; }
+		UINT64 GetHash() const { return mHash; }
 
 	protected:
 		friend class RasterizerState;
@@ -133,19 +133,19 @@ namespace bs
 		virtual ~RasterizerState();
 
 		/**	Returns information about the rasterizer state. */
-		const RasterizerProperties& getProperties() const;
+		const RasterizerProperties& GetProperties() const;
 
 		/** Retrieves a core implementation of the rasterizer state usable only from the core thread. */
-		SPtr<ct::RasterizerState> getCore() const;
+		SPtr<ct::RasterizerState> GetCore() const;
 
 		/** Creates a new rasterizer state using the specified rasterizer state descriptor structure. */
-		static SPtr<RasterizerState> create(const RASTERIZER_STATE_DESC& desc);
+		static SPtr<RasterizerState> Create(const RASTERIZER_STATE_DESC& desc);
 
 		/**	Returns the default rasterizer state. */
-		static const SPtr<RasterizerState>& getDefault();
+		static const SPtr<RasterizerState>& GetDefault();
 
 		/**	Generates a hash value from a rasterizer state descriptor. */
-		static UINT64 generateHash(const RASTERIZER_STATE_DESC& desc);
+		static UINT64 GenerateHash(const RASTERIZER_STATE_DESC& desc);
 
 	protected:
 		friend class RenderStateManager;
@@ -153,7 +153,7 @@ namespace bs
 		RasterizerState(const RASTERIZER_STATE_DESC& desc);
 		
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> createCore() const override;
+		SPtr<ct::CoreObject> CreateCore() const override;
 
 		RasterizerProperties mProperties;
 		mutable UINT32 mId;
@@ -187,16 +187,16 @@ namespace bs
 		virtual ~RasterizerState();
 
 		/** Returns information about the rasterizer state. */
-		const RasterizerProperties& getProperties() const;
+		const RasterizerProperties& GetProperties() const;
 
 		/**	Returns a unique state ID. Only the lowest 10 bits are used. */
-		UINT32 getId() const { return mId; }
+		UINT32 GetId() const { return mId; }
 
 		/** Creates a new rasterizer state using the specified rasterizer state descriptor structure. */
-		static SPtr<RasterizerState> create(const RASTERIZER_STATE_DESC& desc);
+		static SPtr<RasterizerState> Create(const RASTERIZER_STATE_DESC& desc);
 
 		/** Returns the default rasterizer state. */
-		static const SPtr<RasterizerState>& getDefault();
+		static const SPtr<RasterizerState>& GetDefault();
 
 	protected:
 		friend class RenderStateManager;
@@ -204,10 +204,10 @@ namespace bs
 		RasterizerState(const RASTERIZER_STATE_DESC& desc, UINT32 id);
 
 		/** @copydoc CoreObject::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 		/**	Creates any API-specific state objects. */
-		virtual void createInternal() { }
+		virtual void CreateInternal() { }
 
 		RasterizerProperties mProperties;
 		UINT32 mId;
@@ -228,7 +228,7 @@ namespace std
 template<>
 struct hash<bs::RASTERIZER_STATE_DESC>
 {
-	size_t operator()(const bs::RASTERIZER_STATE_DESC& value) const
+	size_t Operator()(const bs::RASTERIZER_STATE_DESC& value) const
 	{
 		return (size_t)bs::RasterizerState::generateHash(value);
 	}

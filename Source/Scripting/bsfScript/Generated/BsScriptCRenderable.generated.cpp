@@ -103,7 +103,7 @@ namespace bs
 		Vector<ResourceHandle<Material>> vecmaterials;
 		if(materials != nullptr)
 		{
-			ScriptArray arraymaterials(materials);
+			ScriptArray Arraymaterials(materials);
 			vecmaterials.resize(arraymaterials.size());
 			for(int i = 0; i < (int)arraymaterials.size(); i++)
 			{

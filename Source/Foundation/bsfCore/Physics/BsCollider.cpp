@@ -112,11 +112,11 @@ namespace bs
 
 	bool Collider::rayCast(const Ray& ray, PhysicsQueryHit& hit, float maxDist) const
 	{
-		return gPhysics()._rayCast(ray.getOrigin(), ray.getDirection(), *this, hit, maxDist);
+		return GPhysics()._rayCast(ray.getOrigin(), ray.getDirection(), *this, hit, maxDist);
 	}
 
 	bool Collider::rayCast(const Vector3& origin, const Vector3& unitDir, PhysicsQueryHit& hit, float maxDist) const
 	{
-		return gPhysics()._rayCast(origin, unitDir, *this, hit, maxDist);
+		return GPhysics()._rayCast(origin, unitDir, *this, hit, maxDist);
 	}
 }

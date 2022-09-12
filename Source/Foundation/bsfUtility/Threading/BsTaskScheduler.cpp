@@ -7,7 +7,7 @@ namespace bs
 {
 	Task::Task(const PrivatelyConstruct& dummy, const String& name, std::function<void()> taskWorker,
 		TaskPriority priority, SPtr<Task> dependency)
-		: mName(name), mPriority(priority), mTaskWorker(std::move(taskWorker)), mTaskDependency(std::move(dependency))
+		: MName(name), mPriority(priority), mTaskWorker(std::move(taskWorker)), mTaskDependency(std::move(dependency))
 	{
 
 	}
@@ -48,8 +48,8 @@ namespace bs
 
 	TaskGroup::TaskGroup(const PrivatelyConstruct& dummy, String name, std::function<void(UINT32)> taskWorker,
 		UINT32 count, TaskPriority priority, SPtr<Task> dependency)
-		: mName(std::move(name)), mCount(count), mPriority(priority), mTaskWorker(std::move(taskWorker))
-		, mTaskDependency(std::move(dependency))
+		: MName(std::move(name)), mCount(count), mPriority(priority), mTaskWorker(std::move(taskWorker))
+		, MTaskDependency(std::move(dependency))
 	{
 
 	}
@@ -84,7 +84,7 @@ namespace bs
 	{
 		// Wait until all tasks complete
 		{
-			Lock activeTaskLock(mReadyMutex);
+			Lock ActiveTaskLock(mReadyMutex);
 
 			while (mActiveTasks.size() > 0)
 			{
@@ -98,7 +98,7 @@ namespace bs
 
 		// Start shutdown of the main queue worker and wait until it exits
 		{
-			Lock lock(mReadyMutex);
+			Lock Lock(mReadyMutex);
 
 			mShutdown = true;
 		}
@@ -110,7 +110,7 @@ namespace bs
 
 	void TaskScheduler::addTask(SPtr<Task> task)
 	{
-		Lock lock(mReadyMutex);
+		Lock Lock(mReadyMutex);
 
 		assert(task->mState != 1 && "Task is already executing, it cannot be executed again until it finishes.");
 
@@ -127,7 +127,7 @@ namespace bs
 
 	void TaskScheduler::addTaskGroup(const SPtr<TaskGroup>& taskGroup)
 	{
-		Lock lock(mReadyMutex);
+		Lock Lock(mReadyMutex);
 
 		for(UINT32 i = 0; i < taskGroup->mCount; i++)
 		{
@@ -154,7 +154,7 @@ namespace bs
 
 	void TaskScheduler::addWorker()
 	{
-		Lock lock(mReadyMutex);
+		Lock Lock(mReadyMutex);
 
 		mMaxActiveTasks++;
 
@@ -164,7 +164,7 @@ namespace bs
 
 	void TaskScheduler::removeWorker()
 	{
-		Lock lock(mReadyMutex);
+		Lock Lock(mReadyMutex);
 
 		if(mMaxActiveTasks > 0)
 			mMaxActiveTasks--;
@@ -174,7 +174,7 @@ namespace bs
 	{
 		while(true)
 		{
-			Lock lock(mReadyMutex);
+			Lock Lock(mReadyMutex);
 
 			while((!mCheckTasks || (UINT32)mActiveTasks.size() >= mMaxActiveTasks) && !mShutdown)
 				mTaskReadyCond.wait(lock);
@@ -228,7 +228,7 @@ namespace bs
 		task->mTaskWorker();
 
 		{
-			Lock lock(mReadyMutex);
+			Lock Lock(mReadyMutex);
 
 			auto findIter = std::find(mActiveTasks.begin(), mActiveTasks.end(), task);
 			if (findIter != mActiveTasks.end())
@@ -236,7 +236,7 @@ namespace bs
 		}
 
 		{
-			Lock lock(mCompleteMutex);
+			Lock Lock(mCompleteMutex);
 			task->mState.store(2);
 
 			mTaskCompleteCond.notify_all();
@@ -244,7 +244,7 @@ namespace bs
 
 		// Wake the main scheduler thread in case there are other tasks waiting or this task was someone's dependency
 		{
-			Lock lock(mReadyMutex);
+			Lock Lock(mReadyMutex);
 
 			mCheckTasks = true;
 			mTaskReadyCond.notify_one();
@@ -262,7 +262,7 @@ namespace bs
 		// If we haven't started executing the task yet, just execute it right here
 		SPtr<Task> queuedTask;
 		{
-			Lock lock(mReadyMutex);
+			Lock Lock(mReadyMutex);
 
 			if(!task->hasStarted())
 			{
@@ -286,7 +286,7 @@ namespace bs
 
 		// Otherwise we wait until the task completes
 		{
-			Lock lock(mCompleteMutex);
+			Lock Lock(mCompleteMutex);
 
 			while(!task->isComplete())
 			{
@@ -299,7 +299,7 @@ namespace bs
 
 	void TaskScheduler::waitUntilComplete(const TaskGroup* taskGroup)
 	{
-		Lock lock(mCompleteMutex);
+		Lock Lock(mCompleteMutex);
 
 		while (taskGroup->mNumRemainingTasks > 0)
 		{

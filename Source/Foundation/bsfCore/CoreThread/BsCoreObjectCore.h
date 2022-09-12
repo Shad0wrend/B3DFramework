@@ -34,10 +34,10 @@ namespace bs
 		virtual ~CoreObject();
 
 		/**	Called on the core thread when the object is first created. */
-		virtual void initialize();
+		virtual void Initialize();
 
 		/** Returns a shared_ptr version of "this" pointer. */
-		SPtr<CoreObject> getThisPtr() const { return mThis.lock(); }
+		SPtr<CoreObject> GetThisPtr() const { return mThis.lock(); }
 
 	public: // ***** INTERNAL ******
 		/** @name Internal
@@ -65,7 +65,7 @@ namespace bs
 		 * This generally happens at the start of a core thread frame. Data used was recorded on the previous sim thread
 		 * frame.
 		 */
-		virtual void syncToCore(const CoreSyncData& data) { }
+		virtual void SyncToCore(const CoreSyncData& data) { }
 
 		/**
 		 * Blocks the current thread until the resource is fully initialized.
@@ -73,17 +73,17 @@ namespace bs
 		 * @note	
 		 * If you call this without calling initialize first a deadlock will occur. You should not call this from core thread.
 		 */
-		void synchronize();
+		void Synchronize();
 
 		/**
 		 * Returns true if the object has been properly initialized. Methods are not allowed to be called on the object
 		 * until it is initialized.
 		 */
-		bool isInitialized() const { return (mFlags & CGCO_INITIALIZED) != 0; }
-		bool isScheduledToBeInitialized() const { return (mFlags & CGCO_SCHEDULED_FOR_INIT) != 0; }
+		bool IsInitialized() const { return (mFlags & CGCO_INITIALIZED) != 0; }
+		bool IsScheduledToBeInitialized() const { return (mFlags & CGCO_SCHEDULED_FOR_INIT) != 0; }
 
-		void setIsInitialized(bool initialized) { mFlags = initialized ? mFlags | CGCO_INITIALIZED : mFlags & ~CGCO_INITIALIZED; }
-		void setScheduledToBeInitialized(bool scheduled) { mFlags = scheduled ? mFlags | CGCO_SCHEDULED_FOR_INIT : mFlags & ~CGCO_SCHEDULED_FOR_INIT; }
+		void SetIsInitialized(bool initialized) { mFlags = initialized ? mFlags | CGCO_INITIALIZED : mFlags & ~CGCO_INITIALIZED; }
+		void SetScheduledToBeInitialized(bool scheduled) { mFlags = scheduled ? mFlags | CGCO_SCHEDULED_FOR_INIT : mFlags & ~CGCO_SCHEDULED_FOR_INIT; }
 
 		volatile UINT8 mFlags;
 		std::weak_ptr<CoreObject> mThis;

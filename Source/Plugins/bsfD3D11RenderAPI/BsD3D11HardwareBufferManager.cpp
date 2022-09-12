@@ -10,7 +10,7 @@
 namespace bs { namespace ct
 {
 	D3D11HardwareBufferManager::D3D11HardwareBufferManager(D3D11Device& device)
-		: mDevice(device)
+		: MDevice(device)
 	{ }
 
 	SPtr<VertexBuffer> D3D11HardwareBufferManager::createVertexBufferInternal(const VERTEX_BUFFER_DESC& desc,

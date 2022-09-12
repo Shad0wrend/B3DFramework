@@ -109,21 +109,21 @@ namespace bs
 		~GUIManager();
 
 		/** Registers a newly created widget with the GUI manager. This should be called by every GUI widget on creation. */
-		void registerWidget(GUIWidget* widget);
+		void RegisterWidget(GUIWidget* widget);
 
 		/**
 		 * Unregisters a GUI widget from the GUI manager. This should be called by every GUI widget before getting deleted.
 		 */
-		void unregisterWidget(GUIWidget* widget);
+		void UnregisterWidget(GUIWidget* widget);
 
 		/**	Called once per frame. */
-		void update();
+		void Update();
 
 		/** Queues the GUI element for destruction. Element will be destroyed during the next call to update(). */
-		void queueForDestroy(GUIElement* element);
+		void QueueForDestroy(GUIElement* element);
 
 		/** Forces all GUI elements that are queued for destruction to be destroyed immediately. */
-		void processDestroyQueue();
+		void ProcessDestroyQueue();
 
 		/**	
 		 * Change the GUI element focus state.
@@ -133,22 +133,22 @@ namespace bs
 		 * @param[in]	clear		If true the focus will be cleared from any elements currently in focus. Otherwise
 		 *							the element will just be appended to the in-focus list (if enabling focus).
 		 */
-		void setFocus(GUIElement* element, bool focus, bool clear);
+		void SetFocus(GUIElement* element, bool focus, bool clear);
 
 		/**	Changes the color of the input caret used in input boxes and similar controls. */
-		void setCaretColor(const Color& color) { mCaretColor = color; updateCaretTexture(); }
+		void SetCaretColor(const Color& color) { mCaretColor = color; updateCaretTexture(); }
 
 		/**	Changes the text selection highlight color used in input boxes and similar controls. */
-		void setTextSelectionColor(const Color& color) { mTextSelectionColor = color; updateTextSelectionTexture(); }
+		void SetTextSelectionColor(const Color& color) { mTextSelectionColor = color; updateTextSelectionTexture(); }
 
 		/**	Returns the default caret texture used for rendering the input caret sprite. */
-		const HSpriteTexture& getCaretTexture() const { return mCaretTexture; }
+		const HSpriteTexture& GetCaretTexture() const { return mCaretTexture; }
 
 		/**	Returns the default selection highlight texture used for rendering the selection highlight sprites. */
-		const HSpriteTexture& getTextSelectionTexture() const { return mTextSelectionTexture; }
+		const HSpriteTexture& GetTextSelectionTexture() const { return mTextSelectionTexture; }
 
 		/**	Checks is the input caret visible this frame. */
-		bool getCaretBlinkState() const { return mIsCaretOn; }
+		bool GetCaretBlinkState() const { return mIsCaretOn; }
 
 		/**
 		 * Returns input caret helper tool that allows you to easily position and show an input caret in your GUI controls.
@@ -178,7 +178,7 @@ namespace bs
 		 * @note			
 		 * Bridged element needs to remove itself as the bridge when it is destroyed.
 		 */
-		void setInputBridge(const SPtr<RenderTexture>& renderTex, const GUIElement* element);
+		void SetInputBridge(const SPtr<RenderTexture>& renderTex, const GUIElement* element);
 
 		/**
 		 * Converts window coordinates to coordinates relative to the specified bridged render target (target displayed
@@ -186,7 +186,7 @@ namespace bs
 		 *
 		 * @return	If provided widget has no bridge, coordinates are returned as is.
 		 */
-		Vector2I windowToBridgedCoords(const SPtr<RenderTarget>& target, const Vector2I& windowPos) const;
+		Vector2I WindowToBridgedCoords(const SPtr<RenderTarget>& target, const Vector2I& windowPos) const;
 
 		/**
 		 * Returns the render window that holds the GUI element that displays the provided render texture.
@@ -195,10 +195,10 @@ namespace bs
 		 * @return				Window that displays the GUI element with the render texture, or null if the render texture
 		 *						is not bridged.
 		 */
-		SPtr<RenderWindow> getBridgeWindow(const SPtr<RenderTexture>& target) const;
+		SPtr<RenderWindow> GetBridgeWindow(const SPtr<RenderTexture>& target) const;
 
 		/** Returns all GUI elements that have input bridging set up and belong to the provided GUI widget. */
-		void getBridgedElements(const GUIWidget* widget, SmallVector<std::pair<const GUIElement*, SPtr<const RenderTarget>>, 4>& elements);
+		void GetBridgedElements(const GUIWidget* widget, SmallVector<std::pair<const GUIElement*, SPtr<const RenderTarget>>, 4>& elements);
 
 		/**	Returns the parent render window of the specified widget. */
 		const RenderWindow* getWidgetWindow(const GUIWidget& widget) const;
@@ -207,17 +207,17 @@ namespace bs
 		friend class ct::GUIRenderer;
 
 		/**	Recreates the input caret texture. */
-		void updateCaretTexture();
+		void UpdateCaretTexture();
 
 		/**	Recreates the input text selection highlight texture. */
-		void updateTextSelectionTexture();
+		void UpdateTextSelectionTexture();
 
 		/**
 		 * Destroys the core thread counterpart of the GUI manager.
 		 *
 		 * @param[in]	core	Previously constructed core thread GUI manager instance.
 		 */
-		void destroyCore(ct::GUIRenderer* core);
+		void DestroyCore(ct::GUIRenderer* core);
 
 		/**
 		 * Destroys any elements or widgets queued for destruction.
@@ -226,7 +226,7 @@ namespace bs
 		 * Returns true if more elements have been added for destruction (will happen when destruction of one element
 		 * queues up destruction of another). Usually needs to be run in a loop with multiple iterations.
 		 */
-		bool processDestroyQueueIteration();
+		bool ProcessDestroyQueueIteration();
 
 		/**
 		 * Finds a GUI element under the pointer at the specified screen position. This method will also trigger pointer
@@ -238,55 +238,55 @@ namespace bs
 		 * @param[in]	control			Is control key held.
 		 * @param[in]	alt				Is alt key held.
 		 */
-		bool findElementUnderPointer(const Vector2I& screenMousePos, bool buttonStates[3], bool shift, bool control, bool alt);
+		bool FindElementUnderPointer(const Vector2I& screenMousePos, bool buttonStates[3], bool shift, bool control, bool alt);
 
 		/**	Called whenever a pointer (for example mouse cursor) is moved. */
-		void onPointerMoved(const PointerEvent& event);
+		void OnPointerMoved(const PointerEvent& event);
 
 		/**	Called whenever a pointer button (for example mouse button) is released. */
-		void onPointerReleased(const PointerEvent& event);
+		void OnPointerReleased(const PointerEvent& event);
 
 		/**	Called whenever a pointer button (for example mouse button) is pressed. */
-		void onPointerPressed(const PointerEvent& event);
+		void OnPointerPressed(const PointerEvent& event);
 
 		/**	Called whenever a pointer button (for example mouse button) is double clicked. */
-		void onPointerDoubleClick(const PointerEvent& event);
+		void OnPointerDoubleClick(const PointerEvent& event);
 
 		/**	Called whenever a text is input. */
-		void onTextInput(const TextInputEvent& event);
+		void OnTextInput(const TextInputEvent& event);
 
 		/**	Called whenever an input command is input. */
-		void onInputCommandEntered(InputCommandType commandType);
+		void OnInputCommandEntered(InputCommandType commandType);
 
 		/**	Called whenever a virtual button is pressed. */
-		void onVirtualButtonDown(const VirtualButton& button, UINT32 deviceIdx);
+		void OnVirtualButtonDown(const VirtualButton& button, UINT32 deviceIdx);
 
 		/**	Called by the drag and drop managed to notify us the drag ended. */
-		void onMouseDragEnded(const PointerEvent& event, DragCallbackInfo& dragInfo);
+		void OnMouseDragEnded(const PointerEvent& event, DragCallbackInfo& dragInfo);
 
 		/**	Called when the specified window gains focus. */
-		void onWindowFocusGained(RenderWindow& win);
+		void OnWindowFocusGained(RenderWindow& win);
 
 		/**	Called when the specified window loses focus. */
-		void onWindowFocusLost(RenderWindow& win);
+		void OnWindowFocusLost(RenderWindow& win);
 
 		/**	Called when the mouse leaves the specified window. */
-		void onMouseLeftWindow(RenderWindow& win);
+		void OnMouseLeftWindow(RenderWindow& win);
 
 		/**	Converts pointer buttons to mouse buttons. */
-		GUIMouseButton buttonToGUIButton(PointerEventButton pointerButton) const;
+		GUIMouseButton ButtonToGUIButton(PointerEventButton pointerButton) const;
 
 		/**	Converts screen coordinates to coordinates relative to the specified widget. */
-		Vector2I getWidgetRelativePos(const GUIWidget* widget, const Vector2I& screenPos) const;
+		Vector2I GetWidgetRelativePos(const GUIWidget* widget, const Vector2I& screenPos) const;
 
 		/**	Hides the tooltip if any is shown. */
-		void hideTooltip();
+		void HideTooltip();
 
 		/** Switches the focus to the first element in the tab group. */
-		void tabFocusFirst();
+		void TabFocusFirst();
 
 		/** Switches the focus to the next element in the tab group. Usually triggered when the user hits Tab key. */
-		void tabFocusNext();
+		void TabFocusNext();
 
 		/**
 		 * Sends a mouse event to the specified GUI element.
@@ -294,7 +294,7 @@ namespace bs
 		 * @param[in]	element	Element to send the event to.
 		 * @param[in]	event	Event data.
 		 */
-		bool sendMouseEvent(GUIElement* element, const GUIMouseEvent& event);
+		bool SendMouseEvent(GUIElement* element, const GUIMouseEvent& event);
 
 		/**
 		 * Sends a text input event to the specified GUI element.
@@ -302,7 +302,7 @@ namespace bs
 		 * @param[in]	element	Element to send the event to.
 		 * @param[in]	event	Event data.
 		 */
-		bool sendTextInputEvent(GUIElement* element, const GUITextInputEvent& event);
+		bool SendTextInputEvent(GUIElement* element, const GUITextInputEvent& event);
 
 		/**
 		 * Sends a command event to the specified GUI element.
@@ -310,7 +310,7 @@ namespace bs
 		 * @param[in]	element	Element to send the event to.
 		 * @param[in]	event	Event data.
 		 */
-		bool sendCommandEvent(GUIElement* element, const GUICommandEvent& event);
+		bool SendCommandEvent(GUIElement* element, const GUICommandEvent& event);
 
 		/**
 		 * Sends a virtual button event to the specified GUI element.
@@ -318,7 +318,7 @@ namespace bs
 		 * @param[in]	element	Element to send the event to.
 		 * @param[in]	event	Event data.
 		 */
-		bool sendVirtualButtonEvent(GUIElement* element, const GUIVirtualButtonEvent& event);
+		bool SendVirtualButtonEvent(GUIElement* element, const GUIVirtualButtonEvent& event);
 
 		static const UINT32 DRAG_DISTANCE;
 		static const float TOOLTIP_HOVER_TIME;
@@ -416,24 +416,24 @@ namespace bs
 		GUIRenderer();
 
 		/**	@copydoc RendererExtension::initialize */
-		void initialize(const Any& data) override;
+		void Initialize(const Any& data) override;
 
 		/**	@copydoc RendererExtension::check */
-		RendererExtensionRequest check(const Camera& camera) override;
+		RendererExtensionRequest Check(const Camera& camera) override;
 
 		/**	@copydoc RendererExtension::render */
-		void render(const Camera& camera, const RendererViewContext& viewContext) override;
+		void Render(const Camera& camera, const RendererViewContext& viewContext) override;
 
 	private:
 		/** Called every frame from the main thread with the time of the current frame. */
-		void update(float time);
+		void Update(float time);
 
 		/** Updates the data required for rendering draw groups on the specified widget. */
 		void updateDrawGroups(const SPtr<Camera>& camera, UINT64 widgetId, UINT32 widgetDepth, const Matrix4& worldTransform, 
 			const GUIDrawGroupRenderDataUpdate& data);
 
 		/** Clears all draw groups from the specified widget. */
-		void clearDrawGroups(const SPtr<Camera>& camera, UINT64 widgetId);
+		void ClearDrawGroups(const SPtr<Camera>& camera, UINT64 widgetId);
 
 		/** Updates the parameter block buffer for the specified mesh. */
 		void updateParamBlockBuffer(const SPtr<GpuParamBlockBuffer>& buffer, float invViewportWidth, float invViewportHeight, bool flipY,
@@ -460,7 +460,7 @@ namespace bs
 	}
 
 	/** Provides easier access to GUIManager. */
-	BS_EXPORT GUIManager& gGUIManager();
+	BS_EXPORT GUIManager& GGUIManager();
 
 	/** @} */
 }

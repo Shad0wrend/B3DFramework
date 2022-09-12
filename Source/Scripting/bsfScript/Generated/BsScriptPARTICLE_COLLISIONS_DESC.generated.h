@@ -14,7 +14,7 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "ParticleCollisionsOptions")
 
 		static MonoObject* box(const PARTICLE_COLLISIONS_DESC& value);
-		static PARTICLE_COLLISIONS_DESC unbox(MonoObject* value);
+		static PARTICLE_COLLISIONS_DESC Unbox(MonoObject* value);
 
 	private:
 		ScriptPARTICLE_COLLISIONS_DESC(MonoObject* managedInstance);

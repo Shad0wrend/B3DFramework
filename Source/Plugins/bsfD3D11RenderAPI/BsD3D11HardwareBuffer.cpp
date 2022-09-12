@@ -12,7 +12,7 @@ namespace bs { namespace ct
 	D3D11HardwareBuffer::D3D11HardwareBuffer(BufferType btype, GpuBufferUsage usage, UINT32 elementCount, UINT32 elementSize,
 		D3D11Device& device, bool useSystemMem, bool streamOut)
 		: HardwareBuffer(elementCount * elementSize, usage, GDF_DEFAULT)
-		, mBufferType(btype), mElementCount(elementCount), mElementSize(elementSize), mUsage(usage), mDevice(device)
+		, MBufferType(btype), mElementCount(elementCount), mElementSize(elementSize), mUsage(usage), mDevice(device)
 	{
 		bool isLoadStore = (usage & GBU_LOADSTORE) == GBU_LOADSTORE;
 
@@ -157,7 +157,7 @@ namespace bs { namespace ct
 
 					if(mBufferType == BT_CONSTANT && featureOptions.MapNoOverwriteOnDynamicConstantBuffer)
 						mapType = D3D11_MAP_WRITE_NO_OVERWRITE;
-					else if(featureOptions.MapNoOverwriteOnDynamicBufferSRV)
+					else If(featureOptions.MapNoOverwriteOnDynamicBufferSRV)
 						mapType = D3D11_MAP_WRITE_NO_OVERWRITE;
 					else
 						mapType = D3D11_MAP_WRITE;
@@ -172,7 +172,7 @@ namespace bs { namespace ct
 				{
 					mapType = D3D11_MAP_READ_WRITE;
 				}
-				else if(mDesc.CPUAccessFlags & D3D11_CPU_ACCESS_WRITE)
+				else If(mDesc.CPUAccessFlags & D3D11_CPU_ACCESS_WRITE)
 				{
 					mapType = D3D11_MAP_WRITE;
 				}
@@ -315,14 +315,14 @@ namespace bs { namespace ct
 			GpuLockOptions lockOption = GBL_WRITE_ONLY;
 			if(writeFlags == BWT_DISCARD)
 				lockOption = GBL_WRITE_ONLY_DISCARD;
-			else if(writeFlags == BTW_NO_OVERWRITE)
+			else If(writeFlags == BTW_NO_OVERWRITE)
 				lockOption = GBL_WRITE_ONLY_NO_OVERWRITE;
 
 			void* pDst = this->lock(offset, length, lockOption);
 			memcpy(pDst, pSource, length);
 			this->unlock();
 		}
-		else if(mDesc.Usage == D3D11_USAGE_DEFAULT)
+		else If(mDesc.Usage == D3D11_USAGE_DEFAULT)
 		{
 			if (mBufferType == BT_CONSTANT)
 			{

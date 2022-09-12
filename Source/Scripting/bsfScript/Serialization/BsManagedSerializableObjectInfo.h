@@ -87,14 +87,14 @@ namespace bs
 		virtual ~ManagedSerializableTypeInfo() = default;
 
 		/**	Checks if the current type matches the provided type. */
-		virtual bool matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const = 0;
+		virtual bool Matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const = 0;
 
 		/**
 		 * Checks does the managed type this object represents still exists.
 		 *
 		 * @note	For example if assemblies get refreshed user could have renamed or removed some types.
 		 */
-		virtual bool isTypeLoaded() const = 0;
+		virtual bool IsTypeLoaded() const = 0;
 
 		/**
 		 * Returns the internal managed class of the type this object represents. Returns null if the type doesn't exist.
@@ -115,10 +115,10 @@ namespace bs
 	{
 	public:
 		/** @copydoc ManagedSerializableTypeInfo::matches */
-		bool matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
+		bool Matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
 
 		/** @copydoc ManagedSerializableTypeInfo::isTypeLoaded */
-		bool isTypeLoaded() const override;
+		bool IsTypeLoaded() const override;
 
 		/** @copydoc ManagedSerializableTypeInfo::getMonoClass */
 		::MonoClass* getMonoClass() const override;
@@ -139,10 +139,10 @@ namespace bs
 	{
 	public:
 		/** @copydoc ManagedSerializableTypeInfo::matches */
-		bool matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
+		bool Matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
 
 		/** @copydoc ManagedSerializableTypeInfo::isTypeLoaded */
-		bool isTypeLoaded() const override;
+		bool IsTypeLoaded() const override;
 
 		/** @copydoc ManagedSerializableTypeInfo::getMonoClass */
 		::MonoClass* getMonoClass() const override;
@@ -165,10 +165,10 @@ namespace bs
 	{
 	public:
 		/** @copydoc ManagedSerializableTypeInfo::matches */
-		bool matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
+		bool Matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
 
 		/** @copydoc ManagedSerializableTypeInfo::isTypeLoaded */
-		bool isTypeLoaded() const override;
+		bool IsTypeLoaded() const override;
 
 		/** @copydoc ManagedSerializableTypeInfo::getMonoClass */
 		::MonoClass* getMonoClass() const override;
@@ -192,10 +192,10 @@ namespace bs
 	{
 	public:
 		/** @copydoc ManagedSerializableTypeInfo::matches */
-		bool matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
+		bool Matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
 
 		/** @copydoc ManagedSerializableTypeInfo::isTypeLoaded */
-		bool isTypeLoaded() const override;
+		bool IsTypeLoaded() const override;
 
 		/** @copydoc ManagedSerializableTypeInfo::getMonoClass */
 		::MonoClass* getMonoClass() const override;
@@ -216,10 +216,10 @@ namespace bs
 	{
 	public:
 		/** @copydoc ManagedSerializableTypeInfo::matches */
-		bool matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
+		bool Matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
 
 		/** @copydoc ManagedSerializableTypeInfo::isTypeLoaded */
-		bool isTypeLoaded() const override;
+		bool IsTypeLoaded() const override;
 
 		/** @copydoc ManagedSerializableTypeInfo::getMonoClass */
 		::MonoClass* getMonoClass() const override;
@@ -245,10 +245,10 @@ namespace bs
 	{
 	public:
 		/** @copydoc ManagedSerializableTypeInfo::matches */
-		bool matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
+		bool Matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
 
 		/** @copydoc ManagedSerializableTypeInfo::isTypeLoaded */
-		bool isTypeLoaded() const override;
+		bool IsTypeLoaded() const override;
 
 		/** @copydoc ManagedSerializableTypeInfo::getMonoClass */
 		::MonoClass* getMonoClass() const override;
@@ -270,10 +270,10 @@ namespace bs
 	{
 	public:
 		/** @copydoc ManagedSerializableTypeInfo::matches */
-		bool matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
+		bool Matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
 
 		/** @copydoc ManagedSerializableTypeInfo::isTypeLoaded */
-		bool isTypeLoaded() const override;
+		bool IsTypeLoaded() const override;
 
 		/** @copydoc ManagedSerializableTypeInfo::getMonoClass */
 		::MonoClass* getMonoClass() const override;
@@ -294,10 +294,10 @@ namespace bs
 	{
 	public:
 		/** @copydoc ManagedSerializableTypeInfo::matches */
-		bool matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
+		bool Matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
 
 		/** @copydoc ManagedSerializableTypeInfo::isTypeLoaded */
-		bool isTypeLoaded() const override;
+		bool IsTypeLoaded() const override;
 
 		/** @copydoc ManagedSerializableTypeInfo::getMonoClass */
 		::MonoClass* getMonoClass() const override;
@@ -322,7 +322,7 @@ namespace bs
 		virtual ~ManagedSerializableMemberInfo() = default;
 
 		/**	Determines should the member be serialized when serializing the parent object. */
-		bool isSerializable() const { return mFlags.isSet(ScriptFieldFlag::Serializable); }
+		bool IsSerializable() const { return mFlags.isSet(ScriptFieldFlag::Serializable); }
 
 		/**
 		 * Returns a boxed value contained in the member in the specified object instance.
@@ -339,7 +339,7 @@ namespace bs
 		 * @param[in]	value		Value to set on the property. For value type it should be a pointer to the value and for
 		 *							reference type it should be a pointer to MonoObject.
 		 */
-		virtual void setValue(MonoObject* instance, void* value) const = 0;
+		virtual void SetValue(MonoObject* instance, void* value) const = 0;
 
 		/**
 		 * Checks if the attribute of the provided type exists on the member and returns it, or returns null if the
@@ -376,7 +376,7 @@ namespace bs
 		MonoObject* getValue(MonoObject* instance) const override;
 
 		/** @copydoc ManagedSerializableMemberInfo::setValue */
-		void setValue(MonoObject* instance, void* value) const override;
+		void SetValue(MonoObject* instance, void* value) const override;
 
 		MonoField* mMonoField = nullptr;
 
@@ -402,7 +402,7 @@ namespace bs
 		MonoObject* getValue(MonoObject* instance) const override;
 
 		/** @copydoc ManagedSerializableMemberInfo::setValue */
-		void setValue(MonoObject* instance, void* value) const override;
+		void SetValue(MonoObject* instance, void* value) const override;
 
 		MonoProperty* mMonoProperty = nullptr;
 
@@ -422,7 +422,7 @@ namespace bs
 		ManagedSerializableObjectInfo() = default;
 
 		/** Returns the managed type name of the object's type, including the namespace in format "namespace.typename". */
-		String getFullTypeName() const { return mTypeInfo->mTypeNamespace + "." + mTypeInfo->mTypeName; }
+		String GetFullTypeName() const { return mTypeInfo->mTypeNamespace + "." + mTypeInfo->mTypeName; }
 
 		/**
 		 * Attempts to find a field part of this object that matches the provided parameters.

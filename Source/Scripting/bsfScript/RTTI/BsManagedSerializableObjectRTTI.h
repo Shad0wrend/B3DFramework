@@ -20,17 +20,17 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableObjectRTTI : public RTTIType<ManagedSerializableObject, IReflectable, ManagedSerializableObjectRTTI>
 	{
 	private:
-		SPtr<ManagedSerializableObjectInfo> getInfo(ManagedSerializableObject* obj)
+		SPtr<ManagedSerializableObjectInfo> GetInfo(ManagedSerializableObject* obj)
 		{
 			return obj->mObjInfo;
 		}
 
-		void setInfo(ManagedSerializableObject* obj, SPtr<ManagedSerializableObjectInfo> val)
+		void SetInfo(ManagedSerializableObject* obj, SPtr<ManagedSerializableObjectInfo> val)
 		{
 			obj->mObjInfo = val;
 		}
 
-		SPtr<ManagedSerializableFieldDataEntry> getFieldEntry(ManagedSerializableObject* obj, UINT32 arrayIdx)
+		SPtr<ManagedSerializableFieldDataEntry> GetFieldEntry(ManagedSerializableObject* obj, UINT32 arrayIdx)
 		{
 			SPtr<ManagedSerializableMemberInfo> field = mSequentialFields[arrayIdx];
 
@@ -40,17 +40,17 @@ namespace bs
 			return ManagedSerializableFieldDataEntry::create(fieldKey, fieldData);
 		}
 
-		void setFieldsEntry(ManagedSerializableObject* obj, UINT32 arrayIdx, SPtr<ManagedSerializableFieldDataEntry> val)
+		void SetFieldsEntry(ManagedSerializableObject* obj, UINT32 arrayIdx, SPtr<ManagedSerializableFieldDataEntry> val)
 		{
 			obj->mCachedData[*val->mKey] = val->mValue;
 		}
 
-		UINT32 getNumFieldEntries(ManagedSerializableObject* obj)
+		UINT32 GetNumFieldEntries(ManagedSerializableObject* obj)
 		{
 			return (UINT32)mSequentialFields.size();
 		}
 
-		void setNumFieldEntries(ManagedSerializableObject* obj, UINT32 numEntries)
+		void SetNumFieldEntries(ManagedSerializableObject* obj, UINT32 numEntries)
 		{
 			// Do nothing
 		}
@@ -63,7 +63,7 @@ namespace bs
 				&ManagedSerializableObjectRTTI::setFieldsEntry, &ManagedSerializableObjectRTTI::setNumFieldEntries);
 		}
 
-		void onSerializationStarted(IReflectable* obj, SerializationContext* context) override
+		void OnSerializationStarted(IReflectable* obj, SerializationContext* context) override
 		{
 			ManagedSerializableObject* castObj = static_cast<ManagedSerializableObject*>(obj);
 
@@ -80,30 +80,30 @@ namespace bs
 			}
 		}
 
-		IDiff& getDiffHandler() const override
+		IDiff& GetDiffHandler() const override
 		{
 			static ManagedDiff managedDiffHandler;
 			return managedDiffHandler;
 		}
 
-		ICompare& getCompareHandler() const override
+		ICompare& GetCompareHandler() const override
 		{
 			static ManagedCompare managedCompareHandler;
 			return managedCompareHandler;
 		}
 
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "ScriptSerializableObject";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_ScriptSerializableObject;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			return ManagedSerializableObject::createEmpty();
 		}

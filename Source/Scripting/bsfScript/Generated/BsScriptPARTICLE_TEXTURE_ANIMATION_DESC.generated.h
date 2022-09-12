@@ -14,7 +14,7 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "ParticleTextureAnimationOptions")
 
 		static MonoObject* box(const PARTICLE_TEXTURE_ANIMATION_DESC& value);
-		static PARTICLE_TEXTURE_ANIMATION_DESC unbox(MonoObject* value);
+		static PARTICLE_TEXTURE_ANIMATION_DESC Unbox(MonoObject* value);
 
 	private:
 		ScriptPARTICLE_TEXTURE_ANIMATION_DESC(MonoObject* managedInstance);

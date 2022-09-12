@@ -997,7 +997,7 @@ namespace bs
 
 						if(element->_isVisible() && element->_isInBounds(localPos))
 						{
-							ElementInfoUnderPointer elementInfo(element, widget);
+							ElementInfoUnderPointer ElementInfo(element, widget);
 
 							auto iterFind = std::find_if(mElementsUnderPointer.begin(), mElementsUnderPointer.end(),
 								[=](const ElementInfoUnderPointer& x) { return x.element == element; });
@@ -1333,9 +1333,9 @@ namespace bs
 	{
 		if(pointerButton == PointerEventButton::Left)
 			return GUIMouseButton::Left;
-		else if(pointerButton == PointerEventButton::Middle)
+		else If(pointerButton == PointerEventButton::Middle)
 			return GUIMouseButton::Middle;
-		else if(pointerButton == PointerEventButton::Right)
+		else If(pointerButton == PointerEventButton::Right)
 			return GUIMouseButton::Right;
 
 		BS_EXCEPT(InvalidParametersException, "Provided button is not a GUI supported mouse button.");
@@ -1357,7 +1357,7 @@ namespace bs
 		const Matrix4& worldTfrm = widget->getWorldTfrm();
 
 		Vector4 vecLocalPos = worldTfrm.inverse().multiplyAffine(Vector4((float)windowPos.x, (float)windowPos.y, 0.0f, 1.0f));
-		Vector2I curLocalPos(Math::roundToInt(vecLocalPos.x), Math::roundToInt(vecLocalPos.y));
+		Vector2I CurLocalPos(Math::roundToInt(vecLocalPos.x), Math::roundToInt(vecLocalPos.y));
 
 		return curLocalPos;
 	}
@@ -1419,7 +1419,7 @@ namespace bs
 				return nullptr;
 
 			if(parentWidget != &widget)
-				return getWidgetWindow(*parentWidget);
+				return GetWidgetWindow(*parentWidget);
 		}
 
 		Vector<RenderWindow*> renderWindows = RenderWindowManager::instance().getRenderWindows();
@@ -1499,7 +1499,7 @@ namespace bs
 				if (isFullyClipped)
 					continue;
 
-				Vector2I elementPos(elemBounds.x, elemBounds.y);
+				Vector2I ElementPos(elemBounds.x, elemBounds.y);
 				Vector2I screenPos = window->windowToScreenPos(elementPos);
 
 				const UINT32 dist = screenPos.squaredLength();
@@ -1568,7 +1568,7 @@ namespace bs
 		return element->_virtualButtonEvent(event);
 	}
 
-	GUIManager& gGUIManager()
+	GUIManager& GGUIManager()
 	{
 		return GUIManager::instance();
 	}
@@ -1947,7 +1947,7 @@ namespace bs
 			float invWidth = 1.0f / renderData.spriteTexture->getAnimation().numColumns;
 			float invHeight = 1.0f / renderData.spriteTexture->getAnimation().numRows;
 
-			Vector4 sizeOffset(invWidth, invHeight, column * invWidth, row * invHeight);
+			Vector4 SizeOffset(invWidth, invHeight, column * invWidth, row * invHeight);
 			gGUISpriteParamBlockDef.gUVSizeOffset.set(buffer, sizeOffset);
 		}
 		else

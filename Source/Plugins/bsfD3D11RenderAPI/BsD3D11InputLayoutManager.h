@@ -26,14 +26,14 @@ namespace bs { namespace ct
 		class HashFunc
 		{
 		public:
-			::std::size_t operator()(const VertexDeclarationKey &key) const;
+			::std::size_t Operator()(const VertexDeclarationKey &key) const;
 		};
 
 		/**	Compares two vertex declaration keys. */
 		class EqualFunc
 		{
 		public:
-			bool operator()(const VertexDeclarationKey &a, const VertexDeclarationKey &b) const;
+			bool Operator()(const VertexDeclarationKey &a, const VertexDeclarationKey &b) const;
 		};
 
 		/**	Contains data about a single instance of DX11 input layout object. */
@@ -69,7 +69,7 @@ namespace bs { namespace ct
 			D3D11GpuProgram& vertexProgram);
 
 		/**	Destroys least used input layout. */
-		void removeLeastUsed();
+		void RemoveLeastUsed();
 
 	private:
 		static const int DECLARATION_BUFFER_SIZE = 1024;

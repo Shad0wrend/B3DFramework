@@ -28,7 +28,7 @@ namespace bs
 		 * @param[in]	numChannels		Determines the number of audio channels. Channel data will be output interleaved
 		 *								in the output buffer.
 		 */
-		bool open(std::function<void(UINT8*, UINT32)> writeCallback, UINT32 sampleRate, UINT32 bitDepth, UINT32 numChannels);
+		bool Open(std::function<void(UINT8*, UINT32)> writeCallback, UINT32 sampleRate, UINT32 bitDepth, UINT32 numChannels);
 
 		/**
 		 * Writes a new set of samples and converts them to Ogg Vorbis.
@@ -37,19 +37,19 @@ namespace bs
 		 *							Each sample is assumed to be the bit depth that was provided to the open() method.
 		 * @param[in]	numSamples	Number of samples to encode.
 		 */
-		void write(UINT8* samples, UINT32 numSamples);
+		void Write(UINT8* samples, UINT32 numSamples);
 
 		/**
 		 * Flushes the last of the data into the write buffer (triggers the write callback). This is called automatically
 		 * when the writer is closed or goes out of scope.
 		 */
-		void flush();
+		void Flush();
 
 		/**
 		 * Closes the encoder and flushes the last of the data into the write buffer (triggers the write callback). This is
 		 * called automatically when the writer goes out of scope.
 		 */
-		void close();
+		void Close();
 
 		/**
 		 * Helper method that allows you to quickly convert PCM to Ogg Vorbis data.
@@ -62,7 +62,7 @@ namespace bs
 		static SPtr<MemoryDataStream> PCMToOggVorbis(UINT8* samples, const AudioDataInfo& info, UINT32& size);
 	private:
 		/** Writes Vorbis blocks into Ogg packets. */
-		void writeBlocks();
+		void WriteBlocks();
 
 		static const UINT32 BUFFER_SIZE = 4096;
 

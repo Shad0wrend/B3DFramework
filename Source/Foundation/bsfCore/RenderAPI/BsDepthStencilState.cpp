@@ -105,7 +105,7 @@ namespace bs
 	namespace ct
 	{
 	DepthStencilState::DepthStencilState(const DEPTH_STENCIL_STATE_DESC& desc, UINT32 id)
-		: mProperties(desc), mId(id)
+		: MProperties(desc), mId(id)
 	{
 
 	}

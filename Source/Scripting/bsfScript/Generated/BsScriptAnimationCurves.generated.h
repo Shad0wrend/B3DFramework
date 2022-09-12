@@ -25,7 +25,7 @@ namespace bs
 
 		ScriptAnimationCurves(MonoObject* managedInstance, const SPtr<AnimationCurves>& value);
 
-		SPtr<AnimationCurves> getInternal() const { return mInternal; }
+		SPtr<AnimationCurves> GetInternal() const { return mInternal; }
 		static MonoObject* create(const SPtr<AnimationCurves>& value);
 
 	private:

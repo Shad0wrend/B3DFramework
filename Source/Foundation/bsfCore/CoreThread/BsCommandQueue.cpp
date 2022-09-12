@@ -15,7 +15,7 @@ namespace bs
 		mCommands = bs_new<bs::Queue<QueuedCommand>>();
 
 		{
-			Lock lock(CommandQueueBreakpointMutex);
+			Lock Lock(CommandQueueBreakpointMutex);
 
 			mCommandQueueIdx = MaxCommandQueueIdx++;
 		}
@@ -46,9 +46,9 @@ namespace bs
 #if BS_DEBUG_MODE
 		breakIfNeeded(mCommandQueueIdx, mMaxDebugIdx);
 
-		QueuedCommand newCommand(commandCallback, mMaxDebugIdx++, mAsyncOpSyncData, _notifyWhenComplete, _callbackId);
+		QueuedCommand NewCommand(commandCallback, mMaxDebugIdx++, mAsyncOpSyncData, _notifyWhenComplete, _callbackId);
 #else
-		QueuedCommand newCommand(commandCallback, mAsyncOpSyncData, _notifyWhenComplete, _callbackId);
+		QueuedCommand NewCommand(commandCallback, mAsyncOpSyncData, _notifyWhenComplete, _callbackId);
 #endif
 
 		mCommands->push(newCommand);
@@ -66,9 +66,9 @@ namespace bs
 #if BS_DEBUG_MODE
 		breakIfNeeded(mCommandQueueIdx, mMaxDebugIdx);
 
-		QueuedCommand newCommand(commandCallback, mMaxDebugIdx++, _notifyWhenComplete, _callbackId);
+		QueuedCommand NewCommand(commandCallback, mMaxDebugIdx++, _notifyWhenComplete, _callbackId);
 #else
-		QueuedCommand newCommand(commandCallback, _notifyWhenComplete, _callbackId);
+		QueuedCommand NewCommand(commandCallback, _notifyWhenComplete, _callbackId);
 #endif
 
 		mCommands->push(newCommand);
@@ -83,7 +83,7 @@ namespace bs
 	{
 		bs::Queue<QueuedCommand>* oldCommands = mCommands;
 
-		Lock lock(mEmptyCommandQueueMutex);
+		Lock Lock(mEmptyCommandQueueMutex);
 		if(!mEmptyCommandQueues.empty())
 		{
 			mCommands = mEmptyCommandQueues.top();
@@ -134,7 +134,7 @@ namespace bs
 			commands->pop();
 		}
 
-		Lock lock(mEmptyCommandQueueMutex);
+		Lock Lock(mEmptyCommandQueueMutex);
 		mEmptyCommandQueues.push(commands);
 	}
 
@@ -150,7 +150,7 @@ namespace bs
 		while(!commands->empty())
 			commands->pop();
 
-		Lock lock(mEmptyCommandQueueMutex);
+		Lock Lock(mEmptyCommandQueueMutex);
 		mEmptyCommandQueues.push(commands);
 	}
 
@@ -190,7 +190,7 @@ namespace bs
 
 	void CommandQueueBase::addBreakpoint(UINT32 queueIdx, UINT32 commandIdx)
 	{
-		Lock lock(CommandQueueBreakpointMutex);
+		Lock Lock(CommandQueueBreakpointMutex);
 
 		SetBreakpoints.insert(QueueBreakpoint(queueIdx, commandIdx));
 	}

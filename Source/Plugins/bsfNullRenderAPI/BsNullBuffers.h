@@ -46,7 +46,7 @@ namespace bs { namespace ct
 		NullHardwareBuffer(GpuBufferUsage usage, UINT32 elementCount, UINT32 elementSize);
 
 		/** @copydoc HardwareBuffer::readData */
-		void readData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx = 0, UINT32 queueIdx = 0) override { }
+		void ReadData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx = 0, UINT32 queueIdx = 0) override { }
 
 		/** @copydoc HardwareBuffer::writeData */
 		void writeData(UINT32 offset, UINT32 length, const void* source,
@@ -61,7 +61,7 @@ namespace bs { namespace ct
 		void* map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx, UINT32 queueIdx) override;
 
 		/** @copydoc HardwareBuffer::unmap */
-		void unmap() override;
+		void Unmap() override;
 
 		void* mStagingBuffer = nullptr;
 	};
@@ -77,7 +77,7 @@ namespace bs { namespace ct
 		friend class NullHardwareBufferManager;
 
 		/** @copydoc GpuBuffer::initialize */
-		void initialize() override;
+		void Initialize() override;
 	};
 
 	/**	Null implementation of a parameter block buffer (constant buffer in DX11 lingo). */
@@ -88,7 +88,7 @@ namespace bs { namespace ct
 
 	protected:
 		/** @copydoc GpuParamBlockBuffer::initialize */
-		void initialize() override;
+		void Initialize() override;
 	};
 
 	/**	Null implementation of an index buffer. */
@@ -99,7 +99,7 @@ namespace bs { namespace ct
 
 	protected:
 		/** @copydoc IndexBuffer::initialize */
-		void initialize() override;
+		void Initialize() override;
 	};
 
 	/**	Null implementation of a vertex buffer. */
@@ -110,7 +110,7 @@ namespace bs { namespace ct
 
 	protected:
 		/** @copydoc VertexBuffer::initialize */
-		void initialize() override;
+		void Initialize() override;
 	};
 
 	/** @} */

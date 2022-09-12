@@ -69,8 +69,8 @@ namespace bs
 	BS_LOG_CATEGORY_IMPL(Importer)
 
 	CoreApplication::CoreApplication(START_UP_DESC desc)
-		: mPrimaryWindow(nullptr), mStartUpDesc(desc), mRendererPlugin(nullptr), mIsFrameRenderingFinished(true)
-		, mSimThreadId(BS_THREAD_CURRENT_ID), mRunMainLoop(false)
+		: MPrimaryWindow(nullptr), mStartUpDesc(desc), mRendererPlugin(nullptr), mIsFrameRenderingFinished(true)
+		, MSimThreadId(BS_THREAD_CURRENT_ID), mRunMainLoop(false)
 	{
 		// Ensure all errors are reported properly
 		CrashHandler::startUp(desc.crashHandling);
@@ -315,7 +315,7 @@ namespace bs
 		// thread, in which case sim thread needs to wait. Optimal solution would be to get an average
 		// difference between sim/core thread and start the sim thread a bit later so they finish at nearly the same time.
 		{
-			Lock lock(mFrameRenderingFinishedMutex);
+			Lock Lock(mFrameRenderingFinishedMutex);
 
 			while(!mIsFrameRenderingFinished)
 			{
@@ -345,7 +345,7 @@ namespace bs
 
 	void CoreApplication::waitUntilFrameFinished()
 	{
-		Lock lock(mFrameRenderingFinishedMutex);
+		Lock Lock(mFrameRenderingFinishedMutex);
 
 		while (!mIsFrameRenderingFinished)
 		{
@@ -391,7 +391,7 @@ namespace bs
 
 	void CoreApplication::frameRenderingFinishedCallback()
 	{
-		Lock lock(mFrameRenderingFinishedMutex);
+		Lock Lock(mFrameRenderingFinishedMutex);
 
 		mIsFrameRenderingFinished = true;
 		mFrameRenderingFinishedCondition.notify_one();
@@ -474,7 +474,7 @@ namespace bs
 		return bs_shared_ptr_new<DefaultShaderIncludeHandler>();
 	}
 
-	CoreApplication& gCoreApplication()
+	CoreApplication& GCoreApplication()
 	{
 		return CoreApplication::instance();
 	}

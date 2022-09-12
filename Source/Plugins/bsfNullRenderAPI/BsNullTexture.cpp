@@ -52,7 +52,7 @@ namespace bs
 			mMappedBuffer = bs_new<PixelData>(mipWidth, mipHeight, mipDepth, mProperties.getFormat());
 			mMappedBuffer->allocateInternalBuffer();
 
-			PixelData output(mipWidth, mipHeight, mipDepth, mProperties.getFormat());
+			PixelData Output(mipWidth, mipHeight, mipDepth, mProperties.getFormat());
 			output.setExternalBuffer(mMappedBuffer->getData());
 
 			return output;

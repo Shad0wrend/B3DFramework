@@ -58,7 +58,7 @@ namespace bs
 		return mSourceStreamData;
 	}
 
-	NullAudio& gNullAudio()
+	NullAudio& GNullAudio()
 	{
 		return static_cast<NullAudio&>(NullAudio::instance());
 	}

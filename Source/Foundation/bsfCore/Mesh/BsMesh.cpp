@@ -50,7 +50,7 @@ namespace bs
 
 		};
 
-		return gCoreThread().queueReturnCommand(std::bind(func, getCore(),
+		return GCoreThread().queueReturnCommand(std::bind(func, getCore(),
 			 data, discardEntireBuffer, std::placeholders::_1));
 	}
 
@@ -70,7 +70,7 @@ namespace bs
 
 		};
 
-		return gCoreThread().queueReturnCommand(std::bind(func, getCore(),
+		return GCoreThread().queueReturnCommand(std::bind(func, getCore(),
 			data, std::placeholders::_1));
 	}
 
@@ -260,8 +260,8 @@ namespace bs
 	{
 	Mesh::Mesh(const SPtr<MeshData>& initialMeshData, const MESH_DESC& desc, GpuDeviceFlags deviceMask)
 		: MeshBase(desc.numVertices, desc.numIndices, desc.subMeshes), mVertexData(nullptr), mIndexBuffer(nullptr)
-		, mVertexDesc(desc.vertexDesc), mUsage(desc.usage), mIndexType(desc.indexType), mDeviceMask(deviceMask)
-		, mTempInitialMeshData(initialMeshData), mSkeleton(desc.skeleton), mMorphShapes(desc.morphShapes)
+		, MVertexDesc(desc.vertexDesc), mUsage(desc.usage), mIndexType(desc.indexType), mDeviceMask(deviceMask)
+		, MTempInitialMeshData(initialMeshData), mSkeleton(desc.skeleton), mMorphShapes(desc.morphShapes)
 
 	{ }
 

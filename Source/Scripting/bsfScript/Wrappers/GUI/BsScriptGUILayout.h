@@ -31,20 +31,20 @@ namespace bs
 		GUILayout* getInternalValue() const { return mLayout; }
 
 		/**	Registers a new managed child GUI element and inserts it at the end of the layout. */
-		void addChild(ScriptGUIElementBaseTBase* element);
+		void AddChild(ScriptGUIElementBaseTBase* element);
 
 		/**	Registers a new managed child GUI element and inserts it at a specific location in the layout. */
-		void insertChild(UINT32 index, ScriptGUIElementBaseTBase* element);
+		void InsertChild(UINT32 index, ScriptGUIElementBaseTBase* element);
 
 		/**	Removes a managed GUI element from the layout. */
-		void removeChild(ScriptGUIElementBaseTBase* element);
+		void RemoveChild(ScriptGUIElementBaseTBase* element);
 
 		/**
 		 * @copydoc	ScriptGUIElementBaseTBase::destroy
 		 *
 		 * Destroys the layout and all of its managed children.
 		 */
-		void destroy() override;
+		void Destroy() override;
 	protected:
 		friend class ScriptGUIPanel;
 
@@ -104,7 +104,7 @@ namespace bs
 		ScriptGUIScrollAreaLayout(MonoObject* instance, GUILayout* layout);
 
 		/** @copydoc ScriptGUILayout::destroy */
-		void destroy() override;
+		void Destroy() override;
 
 	private:
 		friend class ScriptGUIScrollArea;

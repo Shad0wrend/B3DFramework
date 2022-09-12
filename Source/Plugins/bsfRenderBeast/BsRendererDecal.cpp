@@ -28,8 +28,8 @@ namespace bs { namespace ct
 		const Vector2 extent = size * 0.5f;
 		const float maxDistance = decal->getWorldMaxDistance();
 
-		const Vector3 scale(extent.x, extent.y, maxDistance * 0.5f);
-		const Vector3 offset(0.0f, 0.0f, -maxDistance * 0.5f);
+		const Vector3 Scale(extent.x, extent.y, maxDistance * 0.5f);
+		const Vector3 Offset(0.0f, 0.0f, -maxDistance * 0.5f);
 
 		const Matrix4 scaleAndOffset = Matrix4::TRS(offset, Quaternion::IDENTITY, scale);
 

@@ -25,7 +25,7 @@ namespace bs
 	class BS_UTILITY_EXPORT TestSuite
 	{
 	public:
-		typedef void(TestSuite::*Func)();
+		typedef Void(TestSuite::*Func)();
 
 	private:
 		/** Contains data about a single unit test. */
@@ -41,14 +41,14 @@ namespace bs
 		virtual ~TestSuite() = default;
 
 		/** Runs all the tests in the suite (and sub-suites). Tests results are reported to the provided output class. */
-		void run(TestOutput& output);
+		void Run(TestOutput& output);
 
 		/** Adds a new child suite to this suite. This method allows you to group suites and execute them all at once. */
-		void add(const SPtr<TestSuite>& suite);
+		void Add(const SPtr<TestSuite>& suite);
 
 		/**	Creates a new suite of a particular type. */
 		template <class T>
-		static SPtr<TestSuite> create()
+		static SPtr<TestSuite> Create()
 		{
 			static_assert((std::is_base_of<TestSuite, T>::value), "Invalid test suite type. It needs to derive from bs::TestSuite.");
 
@@ -59,10 +59,10 @@ namespace bs
 		TestSuite() = default;
 
 		/** Called right before any tests are ran. */
-		virtual void startUp() {}
+		virtual void StartUp() {}
 
 		/**	Called after all tests and child suite's tests are ran. */
-		virtual void shutDown() {}
+		virtual void ShutDown() {}
 
 		/**
 		 * Register a new unit test.
@@ -70,7 +70,7 @@ namespace bs
 		 * @param[in]	test	Function to call in order to execute the test.
 		 * @param[in]	name	Name of the test we can use for referencing it later.
 		 */
-		void addTest(Func test, const String& name);
+		void AddTest(Func test, const String& name);
 
 		/**
 		 * Reports success or failure depending on the result of an expression.
@@ -80,7 +80,7 @@ namespace bs
 		 * @param[in]	file		Name of the source code file the assertment originates from.
 		 * @param[in]	line		Line number at which the assertment was triggered at.
 		 */
-		void assertment(bool success, const String& desc, const String& file, long line);
+		void Assertment(bool success, const String& desc, const String& file, long line);
 
 		Vector<TestEntry> mTests;
 		Vector<SPtr<TestSuite>> mSuites;

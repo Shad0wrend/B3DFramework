@@ -28,7 +28,7 @@ namespace bs { namespace ct
 		Win32VideoOutputInfo(HMONITOR monitorHandle, UINT32 outputIdx);
 
 		/**	Gets a Win32 handle to the monitor referenced by this object. */
-		HMONITOR getMonitorHandle() const { return mMonitorHandle; }
+		HMONITOR GetMonitorHandle() const { return mMonitorHandle; }
 
 	private:
 		HMONITOR mMonitorHandle;

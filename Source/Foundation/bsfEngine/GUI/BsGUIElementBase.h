@@ -54,49 +54,49 @@ namespace bs
 		 * Be aware that this value will be ignored if GUI element is part of a layout since then the layout controls its
 		 * placement.
 		 */
-		void setPosition(INT32 x, INT32 y);
+		void SetPosition(INT32 x, INT32 y);
 
 		/**	Sets element width in pixels.  */
-		void setWidth(UINT32 width);
+		void SetWidth(UINT32 width);
 
 		/**
 		 * Sets element width in pixels. Element will be resized according to its contents and parent layout but will
 		 * always stay within the provided range. If maximum width is zero, the element is allowed to expand as much as
 		 * it needs.
 		 */
-		void setFlexibleWidth(UINT32 minWidth = 0, UINT32 maxWidth = 0);
+		void SetFlexibleWidth(UINT32 minWidth = 0, UINT32 maxWidth = 0);
 
 		/**	Sets element height in pixels. */
-		void setHeight(UINT32 height);
+		void SetHeight(UINT32 height);
 
 		/** Sets width and height of a GUI element in pixels. */
-		void setSize(UINT32 width, UINT32 height);
+		void SetSize(UINT32 width, UINT32 height);
 
 		/**
 		 * Sets element height in pixels. Element will be resized according to its contents and parent layout but will
 		 * always stay within the provided range. If maximum height is zero, the element is allowed to expand as much as
 		 * it needs.
 		 */
-		void setFlexibleHeight(UINT32 minHeight = 0, UINT32 maxHeight = 0);
+		void SetFlexibleHeight(UINT32 minHeight = 0, UINT32 maxHeight = 0);
 
 		/**	Resets element dimensions to their initial values dictated by the element's style. */
-		virtual void resetDimensions();
+		virtual void ResetDimensions();
 
 		/**
 		 * Hides or shows this element and recursively applies the same state to all the child elements. This will not
 		 * remove the element from the layout, the room for it will still be reserved but it just won't be visible.
 		 */
-		void setVisible(bool visible);
+		void SetVisible(bool visible);
 
 		/**
 		 * Activates or deactives this element and recursively applies the same state to all the child elements. This has
 		 * the same effect as setVisible(), but when disabled it will also remove the element from the layout, essentially
 		 * having the same effect is if you destroyed the element.
 		 */
-		void setActive(bool active);
+		void SetActive(bool active);
 
 		/** Disables or enables the element. Disabled elements cannot be interacted with and have a faded out appearance. */
-		void setDisabled(bool disabled);
+		void SetDisabled(bool disabled);
 
 		/**
 		 * Returns non-clipped bounds of the GUI element. Relative to a parent GUI panel.
@@ -107,27 +107,27 @@ namespace bs
 		 *
 		 * @note	This call can be potentially expensive if the GUI state is dirty.
 		 */
-		Rect2I getBounds(GUIPanel* relativeTo = nullptr);
+		Rect2I GetBounds(GUIPanel* relativeTo = nullptr);
 
 		/**
 		 * Sets the bounds of the GUI element. Relative to a parent GUI panel. Equivalent to calling setPosition(),
 		 * setWidth() and setHeight().
 		 */
-		void setBounds(const Rect2I& bounds);
+		void SetBounds(const Rect2I& bounds);
 
 		/**
 		 * Returns non-clipped bounds of the GUI element. Relative to a parent GUI widget.
 		 *
 		 * @note	This call can be potentially expensive if the GUI state is dirty.
 		 */
-		Rect2I getGlobalBounds();
+		Rect2I GetGlobalBounds();
 
 		/**
 		 * Returns non-clipped bounds of the GUI element in screenspace.
 		 *
 		 * @note	This call can be potentially expensive if the GUI state is dirty.
 		 */
-		Rect2I getScreenBounds() const;
+		Rect2I GetScreenBounds() const;
 
 		/**
 		 * Returns non-clipped visible bounds of the GUI element (bounds exclude the margins). Relative to the parent GUI
@@ -135,7 +135,7 @@ namespace bs
 		 *
 		 * @note	This call can be potentially expensive as the bounds need to be calculated based on current GUI state.
 		 */
-		virtual Rect2I getVisibleBounds();
+		virtual Rect2I GetVisibleBounds();
 
 	public: // ***** INTERNAL ******
 		/** @name Internal
@@ -302,7 +302,7 @@ namespace bs
 		void _updateAUParents();
 
 		/**	Refreshes update parents of all child elements. */
-		void refreshChildUpdateParents();
+		void RefreshChildUpdateParents();
 
 		/**
 		 * Finds the first parent element whose size doesn't depend on child sizes.
@@ -317,16 +317,16 @@ namespace bs
 		 * Helper method for recursion in _updateAUParents(). Sets the provided anchor parent for all children recursively.
 		 * Recursion stops when a child anchor is detected.
 		 */
-		void setAnchorParent(GUIPanel* anchorParent);
+		void SetAnchorParent(GUIPanel* anchorParent);
 
 		/**
 		 * Helper method for recursion in _updateAUParents(). Sets the provided update parent for all children recursively.
 		 * Recursion stops when a child update parent is detected.
 		 */
-		void setUpdateParent(GUIElementBase* updateParent);
+		void SetUpdateParent(GUIElementBase* updateParent);
 
 		/** Unregisters and destroys all child elements. */
-		void destroyChildElements();
+		void DestroyChildElements();
 
 		GUIWidget* mParentWidget = nullptr;
 		GUIPanel* mAnchorParent = nullptr;

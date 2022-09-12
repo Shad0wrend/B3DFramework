@@ -331,7 +331,7 @@ namespace bs
 			size += sizeof(UINT32) * numRemovedProbes;
 
 			buffer = allocator->alloc(size);
-			Bitstream stream(buffer, size);
+			Bitstream Stream(buffer, size);
 
 			csync_write((SceneActor&)*this, stream);
 			rtti_write(numDirtyProbes, stream);
@@ -487,7 +487,7 @@ namespace bs
 
 	void LightProbeVolume::syncToCore(const CoreSyncData& data)
 	{
-		Bitstream stream(data.getBuffer(), data.getBufferSize());
+		Bitstream Stream(data.getBuffer(), data.getBufferSize());
 
 		bool oldIsActive = mActive;
 

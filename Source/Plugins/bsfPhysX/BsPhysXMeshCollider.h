@@ -21,20 +21,20 @@ namespace bs
 		~PhysXMeshCollider();
 
 		/** @copydoc MeshCollider::setScale */
-		void setScale(const Vector3& scale) override;
+		void SetScale(const Vector3& scale) override;
 
 	private:
 		/** Returns the PhysX collider implementation common to all colliders. */
 		FPhysXCollider* getInternal() const;
 
 		/** @copydoc MeshCollider::onMeshChanged */
-		void onMeshChanged() override;
+		void OnMeshChanged() override;
 
 		/** Applies mesh geometry using the set mesh and scale. */
-		void applyGeometry();
+		void ApplyGeometry();
 
 		/** Sets new geometry to the underlying shape. Rebuilds the shape if necessary. */
-		void setGeometry(const physx::PxGeometry& geometry);
+		void SetGeometry(const physx::PxGeometry& geometry);
 	};
 
 	/** @} */

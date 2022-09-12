@@ -6,15 +6,15 @@
 
 namespace bs { namespace ct
 {
-	typedef int(*ErrorHandlerProc)(::Display*, XErrorEvent*);
-	int contextErrorHandler(::Display* display, XErrorEvent* error)
+	typedef Int(*ErrorHandlerProc)(::Display*, XErrorEvent*);
+	int ContextErrorHandler(::Display* display, XErrorEvent* error)
 	{
 		// Do nothing
 		return 0;
 	}
 
 	LinuxContext::LinuxContext(::Display* display, XVisualInfo& visualInfo)
-	: mDisplay(display)
+	: MDisplay(display)
 	{
 		LinuxPlatform::lockX();
 

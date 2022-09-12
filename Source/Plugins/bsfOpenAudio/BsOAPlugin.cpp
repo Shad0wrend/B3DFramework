@@ -11,12 +11,12 @@ namespace bs
 	class OAFactory : public AudioFactory
 	{
 	public:
-		void startUp() override
+		void StartUp() override
 		{
 			Audio::startUp<OAAudio>();
 		}
 
-		void shutDown() override
+		void ShutDown() override
 		{
 			Audio::shutDown();
 		}

@@ -18,13 +18,13 @@ namespace bs { namespace ct
 		~VulkanDescriptorLayout();
 
 		/** Returns a handle to the Vulkan set layout object. */
-		VkDescriptorSetLayout getHandle() const { return mLayout; }
+		VkDescriptorSetLayout GetHandle() const { return mLayout; }
 
 		/** Returns a hash value for the descriptor layout. */
-		size_t getHash() const { return mHash; }
+		size_t GetHash() const { return mHash; }
 
 		/** Calculates a has value for the provided descriptor set layout bindings. */
-		static size_t calculateHash(VkDescriptorSetLayoutBinding* bindings, UINT32 numBindings);
+		static size_t CalculateHash(VkDescriptorSetLayoutBinding* bindings, UINT32 numBindings);
 
 	protected:
 		VulkanDevice& mDevice;

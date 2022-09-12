@@ -69,12 +69,12 @@ namespace bs
 
 	Vector3 FPhysXCollider::getPosition() const
 	{
-		return fromPxVector(mShape->getLocalPose().p);
+		return FromPxVector(mShape->getLocalPose().p);
 	}
 
 	Quaternion FPhysXCollider::getRotation() const
 	{
-		return fromPxQuaternion(mShape->getLocalPose().q);
+		return FromPxQuaternion(mShape->getLocalPose().q);
 	}
 
 	void FPhysXCollider::setTransform(const Vector3& pos, const Quaternion& rotation)

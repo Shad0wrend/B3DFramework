@@ -9,7 +9,7 @@ using namespace physx;
 
 namespace bs
 {
-	PxJointActorIndex::Enum toJointActor(JointBody body)
+	PxJointActorIndex::Enum ToJointActor(JointBody body)
 	{
 		if (body == JointBody::Target)
 			return PxJointActorIndex::eACTOR0;
@@ -67,14 +67,14 @@ namespace bs
 	{
 		PxVec3 position = mJoint->getLocalPose(toJointActor(body)).p;
 
-		return fromPxVector(position);
+		return FromPxVector(position);
 	}
 
 	Quaternion FPhysXJoint::getRotation(JointBody body) const
 	{
 		PxQuat rotation = mJoint->getLocalPose(toJointActor(body)).q;
 
-		return fromPxQuaternion(rotation);
+		return FromPxQuaternion(rotation);
 	}
 
 	void FPhysXJoint::setTransform(JointBody body, const Vector3& position, const Quaternion& rotation)

@@ -42,14 +42,14 @@ namespace bs
 
 		/** Returns the name of the shape. */
 		BS_SCRIPT_EXPORT(pr:getter,n:Name)
-		const String& getName() const { return mName; }
+		const String& GetName() const { return mName; }
 
 		/** Returns the weight of the shape, determining how are different shapes within a channel blended. */
 		BS_SCRIPT_EXPORT(pr:getter,n:Weight)
-		float getWeight() const { return mWeight; }
+		float GetWeight() const { return mWeight; }
 
 		/** Returns a reference to all of the shape's vertices. Contains only vertices that differ from the base. */
-		const Vector<MorphVertex>& getVertices() const { return mVertices; }
+		const Vector<MorphVertex>& GetVertices() const { return mVertices; }
 
 		/**
 		 * Creates a new morph shape from the provided set of vertices.
@@ -60,7 +60,7 @@ namespace bs
 		 *							then shape A will be displayed first and then be blended towards shape B as time passes.
 		 * @param[in]	vertices	Vertices of the base mesh modified by the shape.
 		 */
-		static SPtr<MorphShape> create(const String& name, float weight, const Vector<MorphVertex>& vertices);
+		static SPtr<MorphShape> Create(const String& name, float weight, const Vector<MorphVertex>& vertices);
 
 	private:
 		String mName;
@@ -88,20 +88,20 @@ namespace bs
 	public:
 		/** Returns the unique name of the channel. */
 		BS_SCRIPT_EXPORT(pr:getter,n:Name)
-		const String& getName() const { return mName; }
+		const String& GetName() const { return mName; }
 
 		/** Returns the number of available morph shapes. */
-		UINT32 getNumShapes() const { return (UINT32)mShapes.size(); }
+		UINT32 GetNumShapes() const { return (UINT32)mShapes.size(); }
 
 		/** Returns the morph shape at the specified index. */
-		SPtr<MorphShape> getShape(UINT32 idx) const { return mShapes[idx]; }
+		SPtr<MorphShape> GetShape(UINT32 idx) const { return mShapes[idx]; }
 
 		/** Returns all morph shapes within this channel, in order from lowest to highest. */
 		BS_SCRIPT_EXPORT(pr:getter,n:Shapes)
-		const Vector<SPtr<MorphShape>>& getShapes() const { return mShapes; }
+		const Vector<SPtr<MorphShape>>& GetShapes() const { return mShapes; }
 
 		/** Creates a new channel from a set of morph shapes. */
-		static SPtr<MorphChannel> create(const String& name, const Vector<SPtr<MorphShape>>& shapes);
+		static SPtr<MorphChannel> Create(const String& name, const Vector<SPtr<MorphShape>>& shapes);
 
 	private:
 		MorphChannel() = default;
@@ -123,7 +123,7 @@ namespace bs
 		 *
 		 * @note	For serialization use only.
 		 */
-		static SPtr<MorphChannel> createEmpty();
+		static SPtr<MorphChannel> CreateEmpty();
 	};
 
 	/**
@@ -135,20 +135,20 @@ namespace bs
 	{
 	public:
 		/** Returns the number of available morph channels. */
-		UINT32 getNumChannels() const { return (UINT32)mChannels.size(); }
+		UINT32 GetNumChannels() const { return (UINT32)mChannels.size(); }
 
 		/** Returns the morph channel at the specified index. */
-		SPtr<MorphChannel> getChannel(UINT32 idx) const { return mChannels[idx]; }
+		SPtr<MorphChannel> GetChannel(UINT32 idx) const { return mChannels[idx]; }
 
 		/** Returns a list of all morph channels in the morph animation. */
 		BS_SCRIPT_EXPORT(pr:getter,n:Channels)
-		const Vector<SPtr<MorphChannel>>& getChannels() const { return mChannels; }
+		const Vector<SPtr<MorphChannel>>& GetChannels() const { return mChannels; }
 
 		/** Returns the number of vertices per morph shape. */
-		UINT32 getNumVertices() const { return mNumVertices; }
+		UINT32 GetNumVertices() const { return mNumVertices; }
 
 		/** Creates a new set of morph shapes. */
-		static SPtr<MorphShapes> create(const Vector<SPtr<MorphChannel>>& channels, UINT32 numVertices);
+		static SPtr<MorphShapes> Create(const Vector<SPtr<MorphChannel>>& channels, UINT32 numVertices);
 
 	private:
 		MorphShapes() = default;
@@ -170,7 +170,7 @@ namespace bs
 		 *
 		 * @note	For serialization use only.
 		 */
-		static SPtr<MorphShapes> createEmpty();
+		static SPtr<MorphShapes> CreateEmpty();
 	};
 
 	/** @} */

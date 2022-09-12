@@ -40,7 +40,7 @@ namespace bs { namespace ct
 		 *
 		 * @note	View will only truly get released once all references to it are released.
 		 */
-		static void releaseView(GpuBufferView* view);
+		static void ReleaseView(GpuBufferView* view);
 
 		/**	Returns the internal DX11 GPU buffer object. */
 		ID3D11Buffer* getDX11Buffer() const;
@@ -58,10 +58,10 @@ namespace bs { namespace ct
 		D3D11GpuBuffer(const GPU_BUFFER_DESC& desc, SPtr<HardwareBuffer> underlyingBuffer);
 
 		/**	Destroys all buffer views regardless if their reference count is zero or not. */
-		void clearBufferViews();
+		void ClearBufferViews();
 
 		/** @copydoc GpuBuffer::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 	private:
 		/**	Helper class to help with reference counting for GPU buffer views. */

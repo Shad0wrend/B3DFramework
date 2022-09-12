@@ -18,12 +18,12 @@ namespace bs
 
 	ManagedSerializableArray::ManagedSerializableArray(const ConstructPrivately& dummy,
 		const SPtr<ManagedSerializableTypeInfoArray>& typeInfo, MonoObject* managedInstance)
-		: mArrayTypeInfo(typeInfo)
+		: MArrayTypeInfo(typeInfo)
 		
 	{
 		mGCHandle = MonoUtil::newGCHandle(managedInstance, false);
 
-		ScriptArray scriptArray((MonoArray*)managedInstance);
+		ScriptArray ScriptArray((MonoArray*)managedInstance);
 		mElemSize = scriptArray.elementSize();
 
 		initMonoObjects();
@@ -73,7 +73,7 @@ namespace bs
 
 		MonoMethod* createInstance = arrayClass->getMethodExact("CreateInstance", "Type,int[]");
 
-		ScriptArray lengthArray(MonoUtil::getINT32Class(), (UINT32)sizes.size());
+		ScriptArray LengthArray(MonoUtil::getINT32Class(), (UINT32)sizes.size());
 		for (UINT32 i = 0; i < (UINT32)sizes.size(); i++)
 			lengthArray.set(i, sizes[i]);
 
@@ -118,7 +118,7 @@ namespace bs
 		if (mGCHandle != 0)
 		{
 			MonoArray* array = (MonoArray*)MonoUtil::getObjectFromGCHandle(mGCHandle);
-			ScriptArray scriptArray(array);
+			ScriptArray ScriptArray(array);
 
 			UINT32 numElems = scriptArray.size();
 			assert(arrayIdx < numElems);
@@ -171,7 +171,7 @@ namespace bs
 		if (managedInstance == nullptr)
 			return nullptr;
 
-		ScriptArray scriptArray((MonoArray*)managedInstance);
+		ScriptArray ScriptArray((MonoArray*)managedInstance);
 		mElemSize = scriptArray.elementSize();
 
 		initMonoObjects();
@@ -192,7 +192,7 @@ namespace bs
 	
 	void ManagedSerializableArray::setValueInternal(MonoArray* obj, UINT32 arrayIdx, void* val)
 	{
-		ScriptArray scriptArray(obj);
+		ScriptArray ScriptArray(obj);
 		UINT32 numElems = (UINT32)scriptArray.size();
 		assert(arrayIdx < numElems);
 	

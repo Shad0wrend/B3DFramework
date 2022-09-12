@@ -19,7 +19,7 @@ namespace bs
 	public:
 		/** @copydoc ColorGradient::evaluate */
 		BS_SCRIPT_EXPORT(e:ColorGradient)
-		static Color evaluate(const SPtr<ColorGradient>& thisPtr, float t);
+		static Color Evaluate(const SPtr<ColorGradient>& thisPtr, float t);
 	};
 
 	
@@ -29,7 +29,7 @@ namespace bs
 	public:
 		/** @copydoc ColorGradientHDR::evaluate */
 		BS_SCRIPT_EXPORT(e:ColorGradientHDR)
-		static Color evaluate(const SPtr<ColorGradientHDR>& thisPtr, float t);
+		static Color Evaluate(const SPtr<ColorGradientHDR>& thisPtr, float t);
 	};
 
 	/** @endcond */

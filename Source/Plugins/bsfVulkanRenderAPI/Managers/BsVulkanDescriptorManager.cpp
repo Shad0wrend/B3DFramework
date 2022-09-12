@@ -95,7 +95,7 @@ namespace bs { namespace ct
 
 	VulkanDescriptorLayout* VulkanDescriptorManager::getLayout(VkDescriptorSetLayoutBinding* bindings, UINT32 numBindings)
 	{
-		VulkanLayoutKey key(bindings, numBindings);
+		VulkanLayoutKey Key(bindings, numBindings);
 
 		auto iterFind = mLayouts.find(key);
 		if (iterFind != mLayouts.end())
@@ -142,7 +142,7 @@ namespace bs { namespace ct
 
 	VkPipelineLayout VulkanDescriptorManager::getPipelineLayout(VulkanDescriptorLayout** layouts, UINT32 numLayouts)
 	{
-		VulkanPipelineLayoutKey key(layouts, numLayouts);
+		VulkanPipelineLayoutKey Key(layouts, numLayouts);
 
 		auto iterFind = mPipelineLayouts.find(key);
 		if (iterFind != mPipelineLayouts.end())

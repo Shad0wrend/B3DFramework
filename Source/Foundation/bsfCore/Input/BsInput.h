@@ -71,7 +71,7 @@ namespace bs
 		 * @param[in]	type		Type of axis to query. Usually a type from InputAxis but can be a custom value.
 		 * @param[in]	deviceIdx	Index of the device in case more than one is hooked up (0 - primary).
 		 */
-		float getAxisValue(UINT32 type, UINT32 deviceIdx = 0) const;
+		float GetAxisValue(UINT32 type, UINT32 deviceIdx = 0) const;
 
 		/**
 		 * Query if the provided button is currently being held (this frame or previous frames).
@@ -79,7 +79,7 @@ namespace bs
 		 * @param[in]	keyCode		Code of the button to query.
 		 * @param[in]	deviceIdx	Device to query the button on (0 - primary).
 		 */
-		bool isButtonHeld(ButtonCode keyCode, UINT32 deviceIdx = 0) const;
+		bool IsButtonHeld(ButtonCode keyCode, UINT32 deviceIdx = 0) const;
 
 		/**
 		 * Query if the provided button is currently being released (only true for one frame).
@@ -87,7 +87,7 @@ namespace bs
 		 * @param[in]	keyCode		Code of the button to query.
 		 * @param[in]	deviceIdx	Device to query the button on (0 - primary).
 		 */
-		bool isButtonUp(ButtonCode keyCode, UINT32 deviceIdx = 0) const;
+		bool IsButtonUp(ButtonCode keyCode, UINT32 deviceIdx = 0) const;
 
 		/**
 		 * Query if the provided button is currently being pressed (only true for one frame).
@@ -95,46 +95,46 @@ namespace bs
 		 * @param[in]	keyCode		Code of the button to query.
 		 * @param[in]	deviceIdx	Device to query the button on (0 - primary).
 		 */
-		bool isButtonDown(ButtonCode keyCode, UINT32 deviceIdx = 0) const;
+		bool IsButtonDown(ButtonCode keyCode, UINT32 deviceIdx = 0) const;
 
 		/** Returns position of the pointer (for example mouse cursor) relative to the screen. */
-		Vector2I getPointerPosition() const;
+		Vector2I GetPointerPosition() const;
 
 		/** Returns difference between pointer position between current and last frame. */
-		Vector2I getPointerDelta() const { return mPointerDelta; }
+		Vector2I GetPointerDelta() const { return mPointerDelta; }
 
 		/**
 		 * Query if the provided pointer button is currently being held (this frame or previous frames).
 		 *
 		 * @param[in]	pointerButton		Code of the button to query.
 		 */
-		bool isPointerButtonHeld(PointerEventButton pointerButton) const;
+		bool IsPointerButtonHeld(PointerEventButton pointerButton) const;
 
 		/**
 		 * Query if the provided pointer button is currently being released (only true for one frame).
 		 *
 		 * @param[in]	pointerButton		Code of the button to query.
 		 */
-		bool isPointerButtonUp(PointerEventButton pointerButton) const;
+		bool IsPointerButtonUp(PointerEventButton pointerButton) const;
 
 		/**
 		 * Query if the provided pointer button is currently being pressed (only true for one frame).
 		 *
 		 * @param[in]	pointerButton		Code of the button to query.
 		 */
-		bool isPointerButtonDown(PointerEventButton pointerButton) const;
+		bool IsPointerButtonDown(PointerEventButton pointerButton) const;
 
 		/** Query has the left pointer button has been double-clicked this frame. */
-		bool isPointerDoubleClicked() const;
+		bool IsPointerDoubleClicked() const;
 
 		/** Enables or disables mouse smoothing. Smoothing makes the changes to mouse axes more gradual. */
-		void setMouseSmoothing(bool enabled);
+		void SetMouseSmoothing(bool enabled);
 
 		/** Returns the number of detected devices of the specified type. */
-		UINT32 getDeviceCount(InputDevice device) const;
+		UINT32 GetDeviceCount(InputDevice device) const;
 
 		/** Returns the name of a specific input device. Returns empty string if the device doesn't exist. */
-		String getDeviceName(InputDevice type, UINT32 idx);
+		String GetDeviceName(InputDevice type, UINT32 idx);
 
 		/** Triggered whenever a button is first pressed. */
 		Event<void(const ButtonEvent&)> onButtonDown;
@@ -197,10 +197,10 @@ namespace bs
 
 	private:
 		/** Performs platform specific raw input system initialization. */
-		void initRawInput();
+		void InitRawInput();
 
 		/** Performs platform specific raw input system cleanup. */
-		void cleanUpRawInput();
+		void CleanUpRawInput();
 		
 		/**
 		 * Smooths the input mouse axis value. Smoothing makes the changes to the axis more gradual depending on previous
@@ -210,74 +210,74 @@ namespace bs
 		 * @param[in]	idx		Index of the mouse axis to smooth, 0 - horizontal, 1 - vertical.
 		 * @return				Smoothed value.
 		 */
-		float smoothMouse(float value, UINT32 idx);
+		float SmoothMouse(float value, UINT32 idx);
 
 		/**	Triggered by input handler when a button is pressed. */
-		void buttonDown(UINT32 deviceIdx, ButtonCode code, UINT64 timestamp);
+		void ButtonDown(UINT32 deviceIdx, ButtonCode code, UINT64 timestamp);
 
 		/**	Triggered by input handler when a button is released. */
-		void buttonUp(UINT32 deviceIdx, ButtonCode code, UINT64 timestamp);
+		void ButtonUp(UINT32 deviceIdx, ButtonCode code, UINT64 timestamp);
 
 		/**	Triggered by input handler when a mouse/joystick axis is moved. */
-		void axisMoved(UINT32 deviceIdx, float value, UINT32 axis);
+		void AxisMoved(UINT32 deviceIdx, float value, UINT32 axis);
 
 		/**
 		 * Called from the message loop to notify user has entered a character.
 		 * 			
 		 * @see		onCharInput
 		 */
-		void charInput(UINT32 character);
+		void CharInput(UINT32 character);
 
 		/**
 		 * Called from the message loop to notify user has moved the cursor.
 		 * 			
 		 * @see		onCursorMoved
 		 */
-		void cursorMoved(const Vector2I& cursorPos, const OSPointerButtonStates& btnStates);
+		void CursorMoved(const Vector2I& cursorPos, const OSPointerButtonStates& btnStates);
 
 		/**
 		 * Called from the message loop to notify user has pressed a mouse button.
 		 * 			
 		 * @see		onCursorPressed
 		 */
-		void cursorPressed(const Vector2I& cursorPos, OSMouseButton button, const OSPointerButtonStates& btnStates);
+		void CursorPressed(const Vector2I& cursorPos, OSMouseButton button, const OSPointerButtonStates& btnStates);
 
 		/**
 		 * Called from the message loop to notify user has released a mouse button.
 		 * 			
 		 * @see		onCursorReleased
 		 */
-		void cursorReleased(const Vector2I& cursorPos, OSMouseButton button, const OSPointerButtonStates& btnStates);
+		void CursorReleased(const Vector2I& cursorPos, OSMouseButton button, const OSPointerButtonStates& btnStates);
 
 		/**
 		 * Called from the message loop to notify user has double-clicked a mouse button.
 		 *
 		 * @see		onDoubleClick
 		 */
-		void cursorDoubleClick(const Vector2I& cursorPos, const OSPointerButtonStates& btnStates);
+		void CursorDoubleClick(const Vector2I& cursorPos, const OSPointerButtonStates& btnStates);
 
 		/**
 		 * Called from the message loop to notify user has entered an input command.
 		 * 			
 		 * @see		onInputCommand
 		 */
-		void inputCommandEntered(InputCommandType commandType);
+		void InputCommandEntered(InputCommandType commandType);
 
 		/**
 		 * Called from the message loop to notify user has scrolled the mouse wheel.
 		 * 			
 		 * @see		onMouseWheelScrolled
 		 */
-		void mouseWheelScrolled(float scrollPos);
+		void MouseWheelScrolled(float scrollPos);
 
 		/** Called when window in focus changes, as reported by the OS. */
-		void inputWindowChanged(RenderWindow& win);
+		void InputWindowChanged(RenderWindow& win);
 
 		/**
 		 * Called when the current window loses input focus. This might be followed by inputWindowChanged() if the focus
 		 * just switched to another of this application's windows.
 		 */
-		void inputFocusLost();
+		void InputFocusLost();
 
 	private:
 		Mutex mMutex;
@@ -341,7 +341,7 @@ namespace bs
 	};
 
 	/** Provides global access to Input. */
-	BS_CORE_EXPORT Input& gInput();
+	BS_CORE_EXPORT Input& GInput();
 
 	/** @} */
 }

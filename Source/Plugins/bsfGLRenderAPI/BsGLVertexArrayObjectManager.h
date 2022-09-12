@@ -22,14 +22,14 @@ namespace bs { namespace ct
 		class Hash
 		{
 		public:
-			::std::size_t operator()(const GLVertexArrayObject& vao) const;
+			::std::size_t Operator()(const GLVertexArrayObject& vao) const;
 		};
 
 		/**	Checks if two VAO objects are equal. */
 		class Equal
 		{
 		public:
-			bool operator()(const GLVertexArrayObject &a, const GLVertexArrayObject &b) const;
+			bool Operator()(const GLVertexArrayObject &a, const GLVertexArrayObject &b) const;
 		};
 
 	public:
@@ -37,7 +37,7 @@ namespace bs { namespace ct
 		bool operator!= (const GLVertexArrayObject& obj);
 
 		/**	Returns internal OpenGL VBO handle. */
-		GLuint getGLHandle() const { return mHandle;  }
+		GLuint GetGLHandle() const { return mHandle;  }
 
 	private:
 		friend class GLVertexArrayObjectManager;
@@ -67,7 +67,7 @@ namespace bs { namespace ct
 			const SPtr<VertexDeclaration>& vertexDecl, const std::array<SPtr<VertexBuffer>, 32>& boundBuffers);
 
 		/**	Called when a vertex buffer containing the provided VAO is destroyed. */
-		void notifyBufferDestroyed(GLVertexArrayObject vao);
+		void NotifyBufferDestroyed(GLVertexArrayObject vao);
 	private:
 		typedef UnorderedSet<GLVertexArrayObject, GLVertexArrayObject::Hash, GLVertexArrayObject::Equal> VAOMap;
 

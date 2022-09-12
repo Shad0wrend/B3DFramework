@@ -160,7 +160,7 @@ namespace bs
 			nullptr,
 			0);
 
-		WString outputWideString(requiredNumChars, ' ');
+		WString OutputWideString(requiredNumChars, ' ');
 
 		LCMapStringEx(
 			LOCALE_NAME_USER_DEFAULT,

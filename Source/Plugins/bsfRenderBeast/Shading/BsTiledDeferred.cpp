@@ -122,14 +122,14 @@ namespace bs { namespace ct
 		switch(msaaCount)
 		{
 		case 1:
-			return get(getVariation<1>());
+			return Get(getVariation<1>());
 		case 2:
-			return get(getVariation<2>());
+			return Get(getVariation<2>());
 		case 4:
-			return get(getVariation<4>());
+			return Get(getVariation<4>());
 		case 8:
 		default:
-			return get(getVariation<8>());
+			return Get(getVariation<8>());
 		}
 	}
 
@@ -153,7 +153,7 @@ namespace bs { namespace ct
 
 		bind();
 
-		Rect2 area(0.0f, 0.0f, (float)targetProps.getWidth(), (float)targetProps.getHeight());
+		Rect2 Area(0.0f, 0.0f, (float)targetProps.getWidth(), (float)targetProps.getHeight());
 		gRendererUtility().drawScreenQuad(area);
 	}
 
@@ -228,7 +228,7 @@ namespace bs { namespace ct
 
 	/** Helper method used for initializing variations of the ClearLoadStore material. */
 	template<ClearLoadStoreType OBJ_TYPE, ClearLoadStoreDataType DATA_TYPE, UINT32 NUM_COMPONENTS>
-	static const ShaderVariation& getClearLoadStoreVariation()
+	static const ShaderVariation& GetClearLoadStoreVariation()
 	{
 		static ShaderVariation variation = ShaderVariation(
 			{
@@ -242,7 +242,7 @@ namespace bs { namespace ct
 	}
 
 	template<ClearLoadStoreType BUFFER_TYPE, ClearLoadStoreDataType DATA_TYPE>
-	const ShaderVariation& getClearLoadStoreVariation(UINT32 numComponents)
+	const ShaderVariation& GetClearLoadStoreVariation(UINT32 numComponents)
 	{
 		switch (numComponents)
 		{
@@ -266,24 +266,24 @@ namespace bs { namespace ct
 		default:
 		case ClearLoadStoreType::Texture:
 			if(dataType == ClearLoadStoreDataType::Float)
-				return get(getClearLoadStoreVariation<ClearLoadStoreType::Texture, ClearLoadStoreDataType::Float>(numComponents));
+				return Get(getClearLoadStoreVariation<ClearLoadStoreType::Texture, ClearLoadStoreDataType::Float>(numComponents));
 			else
-				return get(getClearLoadStoreVariation<ClearLoadStoreType::Texture, ClearLoadStoreDataType::Int>(numComponents));
+				return Get(getClearLoadStoreVariation<ClearLoadStoreType::Texture, ClearLoadStoreDataType::Int>(numComponents));
 		case ClearLoadStoreType::TextureArray:
 			if(dataType == ClearLoadStoreDataType::Float)
-				return get(getClearLoadStoreVariation<ClearLoadStoreType::TextureArray, ClearLoadStoreDataType::Float>(numComponents));
+				return Get(getClearLoadStoreVariation<ClearLoadStoreType::TextureArray, ClearLoadStoreDataType::Float>(numComponents));
 			else
-				return get(getClearLoadStoreVariation<ClearLoadStoreType::TextureArray, ClearLoadStoreDataType::Int>(numComponents));
+				return Get(getClearLoadStoreVariation<ClearLoadStoreType::TextureArray, ClearLoadStoreDataType::Int>(numComponents));
 		case ClearLoadStoreType::Buffer:
 			if(dataType == ClearLoadStoreDataType::Float)
-				return get(getClearLoadStoreVariation<ClearLoadStoreType::Buffer, ClearLoadStoreDataType::Float>(numComponents));
+				return Get(getClearLoadStoreVariation<ClearLoadStoreType::Buffer, ClearLoadStoreDataType::Float>(numComponents));
 			else
-				return get(getClearLoadStoreVariation<ClearLoadStoreType::Buffer, ClearLoadStoreDataType::Int>(numComponents));
+				return Get(getClearLoadStoreVariation<ClearLoadStoreType::Buffer, ClearLoadStoreDataType::Int>(numComponents));
 		case ClearLoadStoreType::StructuredBuffer:
 			if(dataType == ClearLoadStoreDataType::Float)
-				return get(getClearLoadStoreVariation<ClearLoadStoreType::StructuredBuffer, ClearLoadStoreDataType::Float>(numComponents));
+				return Get(getClearLoadStoreVariation<ClearLoadStoreType::StructuredBuffer, ClearLoadStoreDataType::Float>(numComponents));
 			else
-				return get(getClearLoadStoreVariation<ClearLoadStoreType::StructuredBuffer, ClearLoadStoreDataType::Int>(numComponents));
+				return Get(getClearLoadStoreVariation<ClearLoadStoreType::StructuredBuffer, ClearLoadStoreDataType::Int>(numComponents));
 		}
 	}
 
@@ -387,14 +387,14 @@ namespace bs { namespace ct
 		switch(msaaCount)
 		{
 		case 1:
-			return get(getVariation<1>());
+			return Get(getVariation<1>());
 		case 2:
-			return get(getVariation<2>());
+			return Get(getVariation<2>());
 		case 4:
-			return get(getVariation<4>());
+			return Get(getVariation<4>());
 		case 8:
 		default:
-			return get(getVariation<8>());
+			return Get(getVariation<8>());
 		}
 	}
 }}

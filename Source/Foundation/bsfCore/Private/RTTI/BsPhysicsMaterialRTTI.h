@@ -17,26 +17,26 @@ namespace bs
 	class BS_CORE_EXPORT PhysicsMaterialRTTI : public RTTIType<PhysicsMaterial, Resource, PhysicsMaterialRTTI>
 	{
 	private:
-		float& getStaticFriction(PhysicsMaterial* obj)
+		float& GetStaticFriction(PhysicsMaterial* obj)
 		{
 			return mStaticFriction;
 		}
 
-		void setStaticFriction(PhysicsMaterial* obj, float& size) { obj->setStaticFriction(size); }
+		void SetStaticFriction(PhysicsMaterial* obj, float& size) { obj->setStaticFriction(size); }
 
-		float& getDynamicFriction(PhysicsMaterial* obj)
+		float& GetDynamicFriction(PhysicsMaterial* obj)
 		{
 			return mDynamicFriction;
 		}
 
-		void setDynamicFriction(PhysicsMaterial* obj, float& size) { obj->setDynamicFriction(size); }
+		void SetDynamicFriction(PhysicsMaterial* obj, float& size) { obj->setDynamicFriction(size); }
 
-		float& getRestitutionCoefficient(PhysicsMaterial* obj)
+		float& GetRestitutionCoefficient(PhysicsMaterial* obj)
 		{
 			return mRestitutionCoefficient;
 		}
 
-		void setRestitutionCoefficient(PhysicsMaterial* obj, float& size) { obj->setRestitutionCoefficient(size); }
+		void SetRestitutionCoefficient(PhysicsMaterial* obj, float& size) { obj->setRestitutionCoefficient(size); }
 
 	public:
 		PhysicsMaterialRTTI()
@@ -46,7 +46,7 @@ namespace bs
 			addPlainField("restitutionCoefficient", 2, &PhysicsMaterialRTTI::getRestitutionCoefficient, &PhysicsMaterialRTTI::setRestitutionCoefficient);
 		}
 
-		void onSerializationStarted(IReflectable* obj, SerializationContext* context) override
+		void OnSerializationStarted(IReflectable* obj, SerializationContext* context) override
 		{
 			PhysicsMaterial* material = static_cast<PhysicsMaterial*>(obj);
 
@@ -55,18 +55,18 @@ namespace bs
 			mRestitutionCoefficient = material->getRestitutionCoefficient();
 		}
 
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "PhysicsMaterial";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_PhysicsMaterial;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			return PhysicsMaterial::_createPtr();
 		}

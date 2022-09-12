@@ -92,7 +92,7 @@ namespace bs { namespace ct
 	void VulkanBuffer::notifyDone(UINT32 globalQueueIdx, VulkanAccessFlags useFlags)
 	{
 		{
-			Lock lock(mMutex);
+			Lock Lock(mMutex);
 
 			// Note: With often used buffers this block might never execute, in which case views won't  get freed.
 			// If that ever becomes an issue (unlikely) then we'll need to track usage per-view.
@@ -107,7 +107,7 @@ namespace bs { namespace ct
 	void VulkanBuffer::notifyUnbound()
 	{
 		{
-			Lock lock(mMutex);
+			Lock Lock(mMutex);
 
 			// Note: With often used buffers this block might never execute, in which case views won't  get freed.
 			// If that ever becomes an issue (unlikely) then we'll need to track usage per-view.
@@ -180,9 +180,9 @@ namespace bs { namespace ct
 	VulkanHardwareBuffer::VulkanHardwareBuffer(BufferType type, GpuBufferFormat format, GpuBufferUsage usage,
 		UINT32 size, GpuDeviceFlags deviceMask)
 		: HardwareBuffer(size, usage, deviceMask), mBuffers(), mStagingBuffer(nullptr), mStagingMemory(nullptr)
-		, mMappedDeviceIdx(-1), mMappedGlobalQueueIdx(-1), mMappedOffset(0), mMappedSize(0)
-		, mMappedLockOptions(GBL_WRITE_ONLY), mDirectlyMappable((usage & GBU_DYNAMIC) != 0)
-		, mSupportsGPUWrites(type == BT_STRUCTURED || ((usage & GBU_LOADSTORE) == GBU_LOADSTORE)), mIsMapped(false)
+		, MMappedDeviceIdx(-1), mMappedGlobalQueueIdx(-1), mMappedOffset(0), mMappedSize(0)
+		, MMappedLockOptions(GBL_WRITE_ONLY), mDirectlyMappable((usage & GBU_DYNAMIC) != 0)
+		, MSupportsGPUWrites(type == BT_STRUCTURED || ((usage & GBU_LOADSTORE) == GBU_LOADSTORE)), mIsMapped(false)
 	{
 		VkBufferUsageFlags usageFlags = 0;
 		switch(type)
@@ -260,7 +260,7 @@ namespace bs { namespace ct
 			if (readable)
 				mBufferCI.usage |= VK_BUFFER_USAGE_TRANSFER_DST_BIT;
 		}
-		else if(readable) // Non-staging readable
+		else If(readable) // Non-staging readable
 			mBufferCI.usage |= VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
 
 		mBufferCI.size = size;

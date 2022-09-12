@@ -25,16 +25,16 @@ namespace bs
 		 *
 		 * @note	Derived implementations must add the resources to the provided @p resources array.
 		 */
-		virtual void getListenerResources(Vector<HResource>& resources) = 0;
+		virtual void GetListenerResources(Vector<HResource>& resources) = 0;
 
 		/**	Marks the resource dependencies list as dirty and schedules it for rebuild. */
-		virtual void markListenerResourcesDirty();
+		virtual void MarkListenerResourcesDirty();
 
 		/**	Called when a resource has been fully loaded. */
-		virtual void notifyResourceLoaded(const HResource& resource) { }
+		virtual void NotifyResourceLoaded(const HResource& resource) { }
 
 		/**	Called when the internal resource the resource handle is pointing to changes. */
-		virtual void notifyResourceChanged(const HResource& resource) { }
+		virtual void NotifyResourceChanged(const HResource& resource) { }
 	};
 
 	/** @} */

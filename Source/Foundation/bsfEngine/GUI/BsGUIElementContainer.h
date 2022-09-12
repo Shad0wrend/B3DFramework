@@ -16,7 +16,7 @@ namespace bs
 	{
 	public:
 		/** @copydoc GUIElement::setFocus */
-		void setFocus(bool enabled, bool clear = false) override;
+		void SetFocus(bool enabled, bool clear = false) override;
 
 	protected:
 		GUIElementContainer(const GUIDimensions& dimensions, const char* style,

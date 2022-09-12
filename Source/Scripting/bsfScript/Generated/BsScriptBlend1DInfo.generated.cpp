@@ -32,7 +32,7 @@ namespace bs
 		Vector<BlendClipInfo> vecclips;
 		if(value.clips != nullptr)
 		{
-			ScriptArray arrayclips(value.clips);
+			ScriptArray Arrayclips(value.clips);
 			vecclips.resize(arrayclips.size());
 			for(int i = 0; i < (int)arrayclips.size(); i++)
 			{

@@ -239,7 +239,7 @@ namespace bs
 
 	SPtr<LocalizedStringData> StringTable::getStringData(const String& identifier, bool insertIfNonExisting)
 	{
-		return getStringData(identifier, mActiveLanguage, insertIfNonExisting);
+		return GetStringData(identifier, mActiveLanguage, insertIfNonExisting);
 	}
 
 	SPtr<LocalizedStringData> StringTable::getStringData(const String& identifier, Language language, bool insertIfNonExisting)

@@ -258,7 +258,7 @@ namespace bs
 			rows.resize(curIdx);
 		}
 
-		void addData(UINT32 depth, const String& name, float timeMs)
+		void AddData(UINT32 depth, const String& name, float timeMs)
 		{
 			if (curIdx >= rows.size())
 			{
@@ -400,7 +400,7 @@ namespace bs
 
 		mGPULayoutSamples = mWidget->getPanel()->addNewElement<GUIPanel>();
 
-		HString gpuSamplesStr(u8"__ProfOvGPUSamples", u8"Samples");
+		HString GpuSamplesStr(u8"__ProfOvGPUSamples", u8"Samples");
 		mGPULayoutSamples->addNewElement<GUILabel>(gpuSamplesStr);
 
 		for(UINT32 i = 0; i < GPU_NUM_SAMPLE_COLUMNS; i++)
@@ -408,8 +408,8 @@ namespace bs
 			mGPULayoutSampleLabels[i] = mGPULayoutSamples->addNewElement<GUILayoutY>();
 			mGPULayoutSampleContents[i] = mGPULayoutSamples->addNewElement<GUILayoutY>();
 
-			HString gpuSamplesNameStr(u8"__ProfOvGPUSampName", u8"Name");
-			HString gpuSamplesTimeStr(u8"__ProfOvGPUSampTime", u8"Time");
+			HString GpuSamplesNameStr(u8"__ProfOvGPUSampName", u8"Name");
+			HString GpuSamplesTimeStr(u8"__ProfOvGPUSampTime", u8"Time");
 			mGPULayoutSampleLabels[i]->addElement(GUILabel::create(gpuSamplesNameStr, GUIOptions(GUIOption::fixedWidth(200))));
 			mGPULayoutSampleContents[i]->addElement(GUILabel::create(gpuSamplesTimeStr, GUIOptions(GUIOption::fixedWidth(100))));
 
@@ -648,7 +648,7 @@ namespace bs
 			UINT32 depth;
 		};
 
-		BasicRowFiller basicRowFiller(mBasicRows, *mBasicLayoutLabels, *mBasicLayoutContents, *mWidget->_getInternal());
+		BasicRowFiller BasicRowFiller(mBasicRows, *mBasicLayoutLabels, *mBasicLayoutContents, *mWidget->_getInternal());
 		Stack<TodoBasic> todoBasic;
 
 		const CPUProfilerBasicSamplingEntry* basicRootEntries[NUM_ROOT_ENTRIES];
@@ -678,7 +678,7 @@ namespace bs
 			}
 		}
 
-		PreciseRowFiller preciseRowFiller(mPreciseRows, *mBasicLayoutLabels, *mBasicLayoutContents, *mWidget->_getInternal());
+		PreciseRowFiller PreciseRowFiller(mPreciseRows, *mBasicLayoutLabels, *mBasicLayoutContents, *mWidget->_getInternal());
 		Stack<TodoPrecise> todoPrecise;
 
 		const CPUProfilerPreciseSamplingEntry* preciseRootEntries[NUM_ROOT_ENTRIES];

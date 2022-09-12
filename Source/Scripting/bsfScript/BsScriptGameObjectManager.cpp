@@ -46,7 +46,7 @@ namespace bs
 		if (so != nullptr)
 			return so;
 
-		return createScriptSceneObject(sceneObject);
+		return CreateScriptSceneObject(sceneObject);
 	}
 
 	ScriptSceneObject* ScriptGameObjectManager::createScriptSceneObject(const HSceneObject& sceneObject)
@@ -54,7 +54,7 @@ namespace bs
 		MonoClass* sceneObjectClass = ScriptAssemblyManager::instance().getBuiltinClasses().sceneObjectClass;
 		MonoObject* instance = sceneObjectClass->createInstance();
 
-		return createScriptSceneObject(instance, sceneObject);
+		return CreateScriptSceneObject(instance, sceneObject);
 	}
 
 	ScriptSceneObject* ScriptGameObjectManager::createScriptSceneObject(MonoObject* existingInstance, const HSceneObject& sceneObject)
@@ -105,7 +105,7 @@ namespace bs
 			return scriptComponent;
 
 		if(createNonExisting)
-			return createBuiltinScriptComponent(component);
+			return CreateBuiltinScriptComponent(component);
 
 		return nullptr;
 	}

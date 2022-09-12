@@ -200,7 +200,7 @@ namespace bs
 		Path texturePath = mEngineSkinSpritesFolder;
 		texturePath.append(u8"sprite_" + name + u8".asset");
 
-		return gResources().load<SpriteTexture>(texturePath);
+		return GResources().load<SpriteTexture>(texturePath);
 	}
 
 	HShader BuiltinResources::getShader(const Path& path) const
@@ -209,7 +209,7 @@ namespace bs
 		programPath.append(path);
 		programPath.setExtension(programPath.getExtension() + ".asset");
 
-		return gResources().load<Shader>(programPath);
+		return GResources().load<Shader>(programPath);
 	}
 
 	HTexture BuiltinResources::getCursorTexture(const String& name) const
@@ -217,7 +217,7 @@ namespace bs
 		Path cursorPath = mEngineCursorFolder;
 		cursorPath.append(name + u8".asset");
 
-		return gResources().load<Texture>(cursorPath);
+		return GResources().load<Texture>(cursorPath);
 	}
 
 	const PixelData& BuiltinResources::getCursorArrow(Vector2I& hotSpot)
@@ -333,7 +333,7 @@ namespace bs
 			break;
 		}
 
-		return gResources().load<Mesh>(meshPath);
+		return GResources().load<Mesh>(meshPath);
 	}
 
 	HShader BuiltinResources::getBuiltinShader(BuiltinShader type) const
@@ -380,7 +380,7 @@ namespace bs
 			break;
 		}
 
-		return gResources().load<Texture>(texturePath);
+		return GResources().load<Texture>(texturePath);
 	}
 
 	HMaterial BuiltinResources::createSpriteTextMaterial() const
@@ -398,7 +398,7 @@ namespace bs
 		return Material::create(mShaderSpriteLine);
 	}
 
-	BuiltinResources& gBuiltinResources()
+	BuiltinResources& GBuiltinResources()
 	{
 		return BuiltinResources::instance();
 	}

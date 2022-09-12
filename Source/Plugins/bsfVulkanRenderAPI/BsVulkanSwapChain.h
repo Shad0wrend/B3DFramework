@@ -40,13 +40,13 @@ namespace bs { namespace ct
 		 * Returns the actual width of the swap chain, in pixels. This might differ from the requested size in case it
 		 * wasn't supported.
 		 */
-		UINT32 getWidth() const { return mWidth; }
+		UINT32 GetWidth() const { return mWidth; }
 
 		/**
 		 * Returns the actual height of the swap chain, in pixels. This might differ from the requested size in case it
 		 * wasn't supported.
 		 */
-		UINT32 getHeight() const { return mHeight; }
+		UINT32 GetHeight() const { return mHeight; }
 
 		/**
 		 * Attempts to acquire a new back buffer image. Caller can retrieve the surface by calling getBackBuffer(). Caller
@@ -55,7 +55,7 @@ namespace bs { namespace ct
 		 *
 		 * @note Must only be called once in-between present() calls, or before the first present() call.
 		 */
-		VkResult acquireBackBuffer();
+		VkResult AcquireBackBuffer();
 
 		/**
 		 * Prepares the swap chain for the present operation.
@@ -63,22 +63,22 @@ namespace bs { namespace ct
 		 * @param[out] backBufferIdx	Index of the image representing the current back buffer.
 		 * @return						True if there is anything to present, false otherwise.
 		 */
-		bool prepareForPresent(UINT32& backBufferIdx);
+		bool PrepareForPresent(UINT32& backBufferIdx);
 
 		/** Notifies the chain that the semaphore waiting for the back buffer to become available is being waited on. */
-		void notifyBackBufferWaitIssued();
+		void NotifyBackBufferWaitIssued();
 
 		/** Returns information describing the current back buffer. */
-		const SwapChainSurface& getBackBuffer() { return mSurfaces[mCurrentBackBufferIdx]; }
+		const SwapChainSurface& GetBackBuffer() { return mSurfaces[mCurrentBackBufferIdx]; }
 
 		/** Returns the number of available color surfaces. */
-		UINT32 getNumColorSurfaces() const { return (UINT32)mSurfaces.size(); }
+		UINT32 GetNumColorSurfaces() const { return (UINT32)mSurfaces.size(); }
 
 		/** Returns the internal swap chain handle. */
-		VkSwapchainKHR getHandle() const { return mSwapChain; }
+		VkSwapchainKHR GetHandle() const { return mSwapChain; }
 	private:
 		/** Destroys current swap chain and depth stencil image (if any). */
-		void clear(VkSwapchainKHR swapChain);
+		void Clear(VkSwapchainKHR swapChain);
 
 		VkDevice mDevice = VK_NULL_HANDLE;
 		VkSwapchainKHR mSwapChain = VK_NULL_HANDLE;

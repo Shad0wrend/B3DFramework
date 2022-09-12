@@ -23,7 +23,7 @@ namespace bs { namespace ct
 
 	protected:
 		/** @copydoc VertexBuffer::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 		D3D11Device& mDevice;
 		bool mStreamOut;

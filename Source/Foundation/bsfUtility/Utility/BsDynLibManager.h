@@ -28,14 +28,14 @@ namespace bs
 		DynLib* load(String name);
 
 		/** Unloads the given library. */
-		void unload(DynLib* lib);
+		void Unload(DynLib* lib);
 
 	protected:
 		Set<UPtr<DynLib>, std::less<>> mLoadedLibraries;
 	};
 
 	/** Easy way of accessing DynLibManager. */
-	BS_UTILITY_EXPORT DynLibManager& gDynLibManager();
+	BS_UTILITY_EXPORT DynLibManager& GDynLibManager();
 
 	/** @} */
 }

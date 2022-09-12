@@ -48,7 +48,7 @@ namespace bs
 
 	bool IReflectable::isDerivedFrom(RTTITypeBase* base)
 	{
-		return getRTTI()->isDerivedFrom(base);
+		return GetRTTI()->isDerivedFrom(base);
 	}
 
 	void IReflectable::_checkForCircularReferences()
@@ -96,12 +96,12 @@ namespace bs
 
 	UINT32 IReflectable::getTypeId() const
 	{
-		return getRTTI()->getRTTIId();
+		return GetRTTI()->getRTTIId();
 	}
 
 	const String& IReflectable::getTypeName() const
 	{
-		return getRTTI()->getRTTIName();
+		return GetRTTI()->getRTTIName();
 	}
 
 	RTTITypeBase* IReflectable::getRTTIStatic()

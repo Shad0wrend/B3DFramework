@@ -13,7 +13,7 @@
 namespace bs
 {
 	ReflectionProbeBase::ReflectionProbeBase(ReflectionProbeType type, float radius, const Vector3& extents)
-		: mType(type), mRadius(radius), mExtents(extents)
+		: MType(type), mRadius(radius), mExtents(extents)
 	{ }
 
 	float ReflectionProbeBase::getRadius() const
@@ -204,7 +204,7 @@ namespace bs
 
 		UINT8* buffer = allocator->alloc(size);
 
-		Bitstream stream(buffer, size);
+		Bitstream Stream(buffer, size);
 		rtti_write(getCoreDirtyFlags(), stream);
 		csync_write((SceneActor&)*this, stream);
 		csync_write(*this, stream);
@@ -254,7 +254,7 @@ namespace bs
 
 	void ReflectionProbe::syncToCore(const CoreSyncData& data)
 	{
-		Bitstream stream(data.getBuffer(), data.getBufferSize());
+		Bitstream Stream(data.getBuffer(), data.getBufferSize());
 
 		UINT32 dirtyFlags = 0;
 		bool oldIsActive = mActive;

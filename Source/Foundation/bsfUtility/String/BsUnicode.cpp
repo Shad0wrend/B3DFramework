@@ -203,7 +203,7 @@ namespace bs
 	}
 
 	template<typename T>
-	T wideToUTF32(T begin, T end, char32_t& output, char32_t invalidChar = 0)
+	T WideToUTF32(T begin, T end, char32_t& output, char32_t invalidChar = 0)
 	{
 		if (sizeof(wchar_t) == 4) // Assuming UTF-32 (i.e. Unix)
 		{

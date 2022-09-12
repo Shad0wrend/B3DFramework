@@ -30,7 +30,7 @@ namespace bs { namespace ct
 	bool VulkanEvent::isSignaled() const
 	{
 		VkDevice vkDevice = mOwner->getDevice().getLogical();
-		return vkGetEventStatus(vkDevice, mEvent) == VK_EVENT_SET;
+		return VkGetEventStatus(vkDevice, mEvent) == VK_EVENT_SET;
 	}
 
 	void VulkanEvent::reset()

@@ -49,7 +49,7 @@ namespace bs { namespace ct
 		~VulkanRenderPass();
 
 		/** Returns a unique ID of this render pass. */
-		UINT32 getId() const { return mId; }
+		UINT32 GetId() const { return mId; }
 
 		/**
 		 * Gets internal Vulkan render pass object.
@@ -59,37 +59,37 @@ namespace bs { namespace ct
 		 * @param[in]	clearMask	Mask that controls which render targets should be cleared on render pass start. Target
 		 *							cannot have both load and clear bits set. If load bit is set, clear will be ignored.
 		 */
-		VkRenderPass getVkRenderPass(RenderSurfaceMask loadMask, RenderSurfaceMask readMask, ClearMask clearMask) const;
+		VkRenderPass GetVkRenderPass(RenderSurfaceMask loadMask, RenderSurfaceMask readMask, ClearMask clearMask) const;
 
 		/**
 		 * Returns the attachment descriptor for the specified color attachment. The attachment index is sequential in
 		 * range [0, getNumColorAttachments()).
 		 */
-		const VkAttachmentDescription& getColorDesc(UINT32 idx) const { return mAttachments[idx]; }
+		const VkAttachmentDescription& GetColorDesc(UINT32 idx) const { return mAttachments[idx]; }
 
 		/**
 		 * Returns the attachment descriptor for the depth attachment. Only valid if depth attachment was requested
 		 * during render pass creation.
 		 */
-		const VkAttachmentDescription& getDepthDesc() const { return mAttachments[mNumColorAttachments]; }
+		const VkAttachmentDescription& GetDepthDesc() const { return mAttachments[mNumColorAttachments]; }
 
 		/** Gets the total number of frame-buffer attachments, including both color and depth. */
-		UINT32 getNumAttachments() const { return mNumAttachments; }
+		UINT32 GetNumAttachments() const { return mNumAttachments; }
 
 		/** Gets the number of color frame-buffer attachments. */
-		UINT32 getNumColorAttachments() const { return mNumColorAttachments; }
+		UINT32 GetNumColorAttachments() const { return mNumColorAttachments; }
 
 		/** Returns true if the framebuffer has a depth attachment. */
-		bool hasDepthAttachment() const { return mHasDepth; }
+		bool HasDepthAttachment() const { return mHasDepth; }
 
 		/** Returns sample flags that determine if the framebuffer supports multi-sampling, and for how many samples. */
-		VkSampleCountFlagBits getSampleFlags() const { return mSampleFlags; }
+		VkSampleCountFlagBits GetSampleFlags() const { return mSampleFlags; }
 
 		/**
 		 * Returns the maximum required number of clear entries to provide in a render pass start structure. This depends on
 		 * the clear mask and the number of attachments.
 		 */
-		UINT32 getNumClearEntries(ClearMask clearMask) const;
+		UINT32 GetNumClearEntries(ClearMask clearMask) const;
 	private:
 		/** Key used for identifying different types of frame-buffer variants. */
 		struct VariantKey
@@ -99,13 +99,13 @@ namespace bs { namespace ct
 			class HashFunction
 			{
 			public:
-				size_t operator()(const VariantKey& key) const;
+				size_t Operator()(const VariantKey& key) const;
 			};
 
 			class EqualFunction
 			{
 			public:
-				bool operator()(const VariantKey& lhs, const VariantKey& rhs) const;
+				bool Operator()(const VariantKey& lhs, const VariantKey& rhs) const;
 			};
 
 			RenderSurfaceMask loadMask;
@@ -114,7 +114,7 @@ namespace bs { namespace ct
 		};
 
 		/** Creates a new variant of the render pass. */
-		VkRenderPass createVariant(RenderSurfaceMask loadMask, RenderSurfaceMask readMask, ClearMask clearMask) const;
+		VkRenderPass CreateVariant(RenderSurfaceMask loadMask, RenderSurfaceMask readMask, ClearMask clearMask) const;
 
 		UINT32 mId;
 		UINT32 mNumAttachments;
@@ -161,13 +161,13 @@ namespace bs { namespace ct
 			class HashFunction
 			{
 			public:
-				size_t operator()(const VariantKey& key) const;
+				size_t Operator()(const VariantKey& key) const;
 			};
 
 			class EqualFunction
 			{
 			public:
-				bool operator()(const VariantKey& lhs, const VariantKey& rhs) const;
+				bool Operator()(const VariantKey& lhs, const VariantKey& rhs) const;
 			};
 
 			VkDevice device = VK_NULL_HANDLE;

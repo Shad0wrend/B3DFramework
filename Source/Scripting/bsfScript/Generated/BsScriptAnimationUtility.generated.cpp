@@ -103,7 +103,7 @@ namespace bs
 		Vector<SPtr<TAnimationCurve<float>>> veccurveComponents;
 		if(curveComponents != nullptr)
 		{
-			ScriptArray arraycurveComponents(curveComponents);
+			ScriptArray ArraycurveComponents(curveComponents);
 			veccurveComponents.resize(arraycurveComponents.size());
 			for(int i = 0; i < (int)arraycurveComponents.size(); i++)
 			{
@@ -155,7 +155,7 @@ namespace bs
 		Vector<SPtr<TAnimationCurve<float>>> veccurveComponents;
 		if(curveComponents != nullptr)
 		{
-			ScriptArray arraycurveComponents(curveComponents);
+			ScriptArray ArraycurveComponents(curveComponents);
 			veccurveComponents.resize(arraycurveComponents.size());
 			for(int i = 0; i < (int)arraycurveComponents.size(); i++)
 			{
@@ -181,7 +181,7 @@ namespace bs
 		Vector<SPtr<TAnimationCurve<float>>> veccurves;
 		if(curves != nullptr)
 		{
-			ScriptArray arraycurves(curves);
+			ScriptArray Arraycurves(curves);
 			veccurves.resize(arraycurves.size());
 			for(int i = 0; i < (int)arraycurves.size(); i++)
 			{

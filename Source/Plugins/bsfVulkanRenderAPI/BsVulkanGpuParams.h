@@ -19,7 +19,7 @@ namespace bs { namespace ct
 		~VulkanGpuParams();
 
 		/** @copydoc GpuParams::setParamBlockBuffer(UINT32, UINT32, const ParamsBufferType&) */
-		void setParamBlockBuffer(UINT32 set, UINT32 slot, const SPtr<GpuParamBlockBuffer>& paramBlockBuffer) override;
+		void SetParamBlockBuffer(UINT32 set, UINT32 slot, const SPtr<GpuParamBlockBuffer>& paramBlockBuffer) override;
 
 		/** @copydoc GpuParams::setTexture */
 		void setTexture(UINT32 set, UINT32 slot, const SPtr<Texture>& texture,
@@ -30,13 +30,13 @@ namespace bs { namespace ct
 			const TextureSurface& surface) override;
 
 		/** @copydoc GpuParams::setBuffer */
-		void setBuffer(UINT32 set, UINT32 slot, const SPtr<GpuBuffer>& buffer) override;
+		void SetBuffer(UINT32 set, UINT32 slot, const SPtr<GpuBuffer>& buffer) override;
 
 		/** @copydoc GpuParams::setSamplerState */
-		void setSamplerState(UINT32 set, UINT32 slot, const SPtr<SamplerState>& sampler) override;
+		void SetSamplerState(UINT32 set, UINT32 slot, const SPtr<SamplerState>& sampler) override;
 
 		/** Returns the total number of descriptor sets used by this object. */
-		UINT32 getNumSets() const;
+		UINT32 GetNumSets() const;
 
 		/**
 		 * Prepares the internal descriptor sets for a bind operation on the provided command buffer. It generates and/or
@@ -51,7 +51,7 @@ namespace bs { namespace ct
 		 *
 		 * @note	Thread safe.
 		 */
-		void prepareForBind(VulkanCmdBuffer& buffer, VkDescriptorSet* sets);
+		void PrepareForBind(VulkanCmdBuffer& buffer, VkDescriptorSet* sets);
 
 	protected:
 		/** Contains data about writing to either buffer or a texture descriptor. */
@@ -91,7 +91,7 @@ namespace bs { namespace ct
 		VulkanGpuParams(const SPtr<GpuPipelineParamInfo>& paramInfo, GpuDeviceFlags deviceMask);
 
 		/** @copydoc GpuParams::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 		PerDeviceData mPerDeviceData[BS_MAX_DEVICES];
 		GpuDeviceFlags mDeviceMask;

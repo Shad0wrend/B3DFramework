@@ -21,9 +21,9 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "ParticleVelocityOptions")
 
 		static MonoObject* box(const __PARTICLE_VELOCITY_DESCInterop& value);
-		static __PARTICLE_VELOCITY_DESCInterop unbox(MonoObject* value);
-		static PARTICLE_VELOCITY_DESC fromInterop(const __PARTICLE_VELOCITY_DESCInterop& value);
-		static __PARTICLE_VELOCITY_DESCInterop toInterop(const PARTICLE_VELOCITY_DESC& value);
+		static __PARTICLE_VELOCITY_DESCInterop Unbox(MonoObject* value);
+		static PARTICLE_VELOCITY_DESC FromInterop(const __PARTICLE_VELOCITY_DESCInterop& value);
+		static __PARTICLE_VELOCITY_DESCInterop ToInterop(const PARTICLE_VELOCITY_DESC& value);
 
 	private:
 		ScriptPARTICLE_VELOCITY_DESC(MonoObject* managedInstance);

@@ -20,12 +20,12 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedResourceRTTI : public RTTIType<ManagedResource, Resource, ManagedResourceRTTI>
 	{
 	private:
-		SPtr<ManagedSerializableObject> getObjectData(ManagedResource* obj)
+		SPtr<ManagedSerializableObject> GetObjectData(ManagedResource* obj)
 		{
 			return any_cast<SPtr<ManagedSerializableObject>>(mSerializableObject);
 		}
 
-		void setObjectData(ManagedResource* obj, SPtr<ManagedSerializableObject> val)
+		void SetObjectData(ManagedResource* obj, SPtr<ManagedSerializableObject> val)
 		{
 			mSerializableObject = val;
 		}
@@ -36,13 +36,13 @@ namespace bs
 			addReflectablePtrField("mObjectData", 0, &ManagedResourceRTTI::getObjectData, &ManagedResourceRTTI::setObjectData);
 		}
 
-		void onSerializationStarted(IReflectable* obj, SerializationContext* context) override
+		void OnSerializationStarted(IReflectable* obj, SerializationContext* context) override
 		{
 			ManagedResource* mr = static_cast<ManagedResource*>(obj);
 			mSerializableObject = ManagedSerializableObject::createFromExisting(mr->getManagedInstance());
 		}
 
-		void onDeserializationEnded(IReflectable* obj, SerializationContext* context) override
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override
 		{
 			ManagedResource* mr = static_cast<ManagedResource*>(obj);
 
@@ -51,18 +51,18 @@ namespace bs
 			mr->setHandle(mSerializableObject->deserialize(), handle);
 		}
 
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "ManagedResource";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_ManagedResource;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			return ManagedResource::createEmpty();
 		}

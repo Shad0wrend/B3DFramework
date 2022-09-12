@@ -19,7 +19,7 @@ namespace bs
 {
 	namespace impl
 	{
-		SPtr<VertexDataDesc> gGUITriangleMeshDesc()
+		SPtr<VertexDataDesc> GGUITriangleMeshDesc()
 		{
 			static SPtr<VertexDataDesc> sDesc;
 
@@ -33,7 +33,7 @@ namespace bs
 			return sDesc;
 		}
 
-		SPtr<VertexDataDesc> gGUILineMeshDesc()
+		SPtr<VertexDataDesc> GGUILineMeshDesc()
 		{
 			static SPtr<VertexDataDesc> sDesc;
 
@@ -700,7 +700,7 @@ namespace bs
 					auto typeIdx = (UINT32)group.meshType;
 					guiMesh.indexOffset = indexOffset[typeIdx];
 
-					Vector2I groupOffset(0, 0);
+					Vector2I GroupOffset(0, 0);
 					if(guiMesh.material->allowBatching())
 						groupOffset = Vector2I(-group.drawGroup->bounds.x, -group.drawGroup->bounds.y);
 					
@@ -861,13 +861,13 @@ namespace bs
 	}
 
 	GUIWidget::GUIWidget(const SPtr<Camera>& camera)
-		: mCamera(camera), mDrawGroups(this)
+		: MCamera(camera), mDrawGroups(this)
 	{
 		construct(camera);
 	}
 
 	GUIWidget::GUIWidget(const HCamera& camera)
-		: mCamera(camera->_getCamera()), mDrawGroups(this)
+		: MCamera(camera->_getCamera()), mDrawGroups(this)
 	{
 		construct(mCamera);
 	}
@@ -1236,10 +1236,10 @@ namespace bs
 		if(!target->getPixelArea().contains(position))
 			return false;
 
-		Vector3 vecPos((float)position.x, (float)position.y, 0.0f);
+		Vector3 VecPos((float)position.x, (float)position.y, 0.0f);
 		vecPos = mTransform.inverse().multiplyAffine(vecPos);
 
-		Vector2I localPos(Math::roundToInt(vecPos.x), Math::roundToInt(vecPos.y));
+		Vector2I LocalPos(Math::roundToInt(vecPos.x), Math::roundToInt(vecPos.y));
 		return mBounds.contains(localPos);
 	}
 

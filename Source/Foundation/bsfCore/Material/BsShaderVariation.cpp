@@ -153,7 +153,7 @@ namespace bs
 
 	bool ShaderVariation::operator==(const ShaderVariation& rhs) const
 	{
-		return matches(rhs, true);
+		return Matches(rhs, true);
 	}
 
 	void ShaderVariations::add(const ShaderVariation& variation)

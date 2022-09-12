@@ -24,7 +24,7 @@ namespace bs
 		 * @param[in]	file		File the unit test failed in.
 		 * @param[in]	line		Line of code the unit test failed on.
 		 */
-		virtual void outputFail(const String& desc, const String& function, const String& file, long line) = 0;
+		virtual void OutputFail(const String& desc, const String& function, const String& file, long line) = 0;
 	};
 
 	/** Outputs unit test results so that failures are reported as exceptions. Success is not reported. */
@@ -32,7 +32,7 @@ namespace bs
 	{
 	public:
 		/** @copydoc TestOutput::outputFail */
-		void outputFail(const String& desc, const String& function, const String& file, long line) final override;
+		void OutputFail(const String& desc, const String& function, const String& file, long line) final override;
 	};
 
 	/** @} */

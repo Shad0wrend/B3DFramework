@@ -9,14 +9,14 @@ namespace bs
 {
 	VertexElement::VertexElement(UINT16 source, UINT32 offset,
 		VertexElementType theType, VertexElementSemantic semantic, UINT16 index, UINT32 instanceStepRate)
-		: mSource(source), mOffset(offset), mType(theType), mSemantic(semantic), mIndex(index)
-		, mInstanceStepRate(instanceStepRate)
+		: MSource(source), mOffset(offset), mType(theType), mSemantic(semantic), mIndex(index)
+		, MInstanceStepRate(instanceStepRate)
 	{
 	}
 
 	UINT32 VertexElement::getSize(void) const
 	{
-		return getTypeSize(mType);
+		return GetTypeSize(mType);
 	}
 
 	UINT32 VertexElement::getTypeSize(VertexElementType etype)
@@ -26,47 +26,47 @@ namespace bs
 		case VET_COLOR:
 		case VET_COLOR_ABGR:
 		case VET_COLOR_ARGB:
-			return sizeof(RGBA);
+			return Sizeof(RGBA);
 		case VET_UBYTE4_NORM:
-			return sizeof(UINT32);
+			return Sizeof(UINT32);
 		case VET_FLOAT1:
-			return sizeof(float);
+			return Sizeof(float);
 		case VET_FLOAT2:
-			return sizeof(float) * 2;
+			return Sizeof(float) * 2;
 		case VET_FLOAT3:
-			return sizeof(float) * 3;
+			return Sizeof(float) * 3;
 		case VET_FLOAT4:
-			return sizeof(float) * 4;
+			return Sizeof(float) * 4;
 		case VET_USHORT1:
-			return sizeof(UINT16);
+			return Sizeof(UINT16);
 		case VET_USHORT2:
-			return sizeof(UINT16) * 2;
+			return Sizeof(UINT16) * 2;
 		case VET_USHORT4:
-			return sizeof(UINT16) * 4;
+			return Sizeof(UINT16) * 4;
 		case VET_SHORT1:
-			return sizeof(INT16);
+			return Sizeof(INT16);
 		case VET_SHORT2:
-			return sizeof(INT16) * 2;
+			return Sizeof(INT16) * 2;
 		case VET_SHORT4:
-			return sizeof(INT16) * 4;
+			return Sizeof(INT16) * 4;
 		case VET_UINT1:
-			return sizeof(UINT32);
+			return Sizeof(UINT32);
 		case VET_UINT2:
-			return sizeof(UINT32) * 2;
+			return Sizeof(UINT32) * 2;
 		case VET_UINT3:
-			return sizeof(UINT32) * 3;
+			return Sizeof(UINT32) * 3;
 		case VET_UINT4:
-			return sizeof(UINT32) * 4;
+			return Sizeof(UINT32) * 4;
 		case VET_INT4:
-			return sizeof(INT32) * 4;
+			return Sizeof(INT32) * 4;
 		case VET_INT1:
-			return sizeof(INT32);
+			return Sizeof(INT32);
 		case VET_INT2:
-			return sizeof(INT32) * 2;
+			return Sizeof(INT32) * 2;
 		case VET_INT3:
-			return sizeof(INT32) * 3;
+			return Sizeof(INT32) * 3;
 		case VET_UBYTE4:
-			return sizeof(UINT8) * 4;
+			return Sizeof(UINT8) * 4;
 		default:
 			break;
 		}
@@ -281,10 +281,10 @@ namespace bs
 
 	RTTITypeBase* VertexDeclaration::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
-	String toString(const VertexElementSemantic& val)
+	String ToString(const VertexElementSemantic& val)
 	{
 		switch (val)
 		{

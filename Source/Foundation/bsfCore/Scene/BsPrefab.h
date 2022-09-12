@@ -30,7 +30,7 @@ namespace bs
 		 * @param[in]	isScene			Determines if the prefab represents a scene or just a generic group of objects.
 		 *								@see isScene().
 		 */
-		static HPrefab create(const HSceneObject& sceneObject, bool isScene = true);
+		static HPrefab Create(const HSceneObject& sceneObject, bool isScene = true);
 
 		/**
 		 * Instantiates a prefab by creating an instance of the prefab's scene object hierarchy. The returned hierarchy
@@ -38,19 +38,19 @@ namespace bs
 		 *			
 		 * @return	Instantiated clone of the prefab's scene object hierarchy.
 		 */
-		HSceneObject instantiate() const { return _instantiate(); }
+		HSceneObject Instantiate() const { return _instantiate(); }
 
 		/**
 		 * Replaces the contents of this prefab with new contents from the provided object. Object will be automatically
 		 * linked to this prefab, and its previous prefab link (if any) will be broken.
 		 */
-		void update(const HSceneObject& sceneObject);
+		void Update(const HSceneObject& sceneObject);
 
 		/**
 		 * Returns a hash value that can be used for determining if a prefab changed by comparing it to a previously saved
 		 * hash.
 		 */
-		UINT32 getHash() const { return mHash; }
+		UINT32 GetHash() const { return mHash; }
 
 		/**
 		 * Determines if the prefab represents a scene or just a generic group of objects. The only difference between the
@@ -58,7 +58,7 @@ namespace bs
 		 * hidden), while object group root is a normal scene object (not hidden). This is relevant when when prefabs are
 		 * loaded, so the systems knows to append the root object to non-scene prefabs.
 		 */
-		bool isScene() const { return mIsScene; }
+		bool IsScene() const { return mIsScene; }
 
 	public: // ***** INTERNAL ******
 		/** @name Internal
@@ -103,10 +103,10 @@ namespace bs
 		using CoreObject::initialize;
 
 		/**	Initializes the internal prefab hierarchy. Must be called druing creation. */
-		void initialize(const HSceneObject& sceneObject);
+		void Initialize(const HSceneObject& sceneObject);
 
 		/**	Creates an empty and uninitialized prefab. */
-		static SPtr<Prefab> createEmpty();
+		static SPtr<Prefab> CreateEmpty();
 
 		HSceneObject mRoot;
 		UINT32 mHash = 0;

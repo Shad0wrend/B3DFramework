@@ -31,7 +31,7 @@ namespace bs
 		GLRenderTexture(const RENDER_TEXTURE_DESC& desc);
 
 		/** @copydoc RenderTexture::getProperties */
-		const RenderTargetProperties& getPropertiesInternal() const override { return mProperties; }
+		const RenderTargetProperties& GetPropertiesInternal() const override { return mProperties; }
 
 		RenderTextureProperties mProperties;
 	};
@@ -50,16 +50,16 @@ namespace bs
 		virtual ~GLRenderTexture();
 
 		/** @copydoc RenderTexture::getCustomAttribute */
-		void getCustomAttribute(const String& name, void* data) const override;
+		void GetCustomAttribute(const String& name, void* data) const override;
 
 	protected:
 		friend class bs::GLRenderTexture;
 
 		/** @copydoc RenderTexture::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 		/** @copydoc RenderTexture::getProperties */
-		const RenderTargetProperties& getPropertiesInternal() const override { return mProperties; }
+		const RenderTargetProperties& GetPropertiesInternal() const override { return mProperties; }
 
 		RenderTextureProperties mProperties;
 		GLFrameBufferObject* mFB;
@@ -81,20 +81,20 @@ namespace bs
 		 *
 		 * @note	Thread safe.
 		 */
-		bool checkFormat(PixelFormat format) const { return mProps[format].valid; }
+		bool CheckFormat(PixelFormat format) const { return mProps[format].valid; }
 
 		/**
 		 * Get the closest supported alternative format. If format is supported, returns format.
 		 *
 		 * @note	Thread safe.
 		 */
-		virtual PixelFormat getSupportedAlternative(PixelFormat format);
+		virtual PixelFormat GetSupportedAlternative(PixelFormat format);
 
 		/** Returns a persistent FBO that is used as a source buffer for blit operations. */
-		GLuint getBlitReadFBO() const { return mBlitReadFBO; }
+		GLuint GetBlitReadFBO() const { return mBlitReadFBO; }
 
 		/** Returns a persistent FBO that is used as a destination buffer for blit operations. */
-		GLuint getBlitDrawFBO() const { return mBlitWriteFBO; }
+		GLuint GetBlitDrawFBO() const { return mBlitWriteFBO; }
 	private:
 		/** Frame buffer object properties for a certain texture format. */
 		struct FormatProperties
@@ -111,7 +111,7 @@ namespace bs
 		};
 
 		/** Detect which internal formats are allowed to be used on render target color or depth/stencil surfaces. */
-		void detectFBOFormats();
+		void DetectFBOFormats();
 
 		/**	Checks are the specified depth & stencil formats compatible. */
 		bool _tryFormat(GLenum depthFormat, GLenum stencilFormat);

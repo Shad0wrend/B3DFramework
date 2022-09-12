@@ -16,7 +16,7 @@ namespace bs
 	{
 	public:
 		/** Returns type name of the GUI element used for finding GUI element styles.  */
-		static const String& getGUITypeName(bool resizable);
+		static const String& GetGUITypeName(bool resizable);
 
 		/**
 		 * Creates a new horizontal scroll bar.

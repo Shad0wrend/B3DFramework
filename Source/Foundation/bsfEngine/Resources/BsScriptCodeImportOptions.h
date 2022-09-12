@@ -24,7 +24,7 @@ namespace bs
 
 		/** Creates a new import options object that allows you to customize how is script code imported. */
 		BS_SCRIPT_EXPORT(ec:T)
-		static SPtr<ScriptCodeImportOptions> create();
+		static SPtr<ScriptCodeImportOptions> Create();
 
 		/************************************************************************/
 		/* 								SERIALIZATION                      		*/

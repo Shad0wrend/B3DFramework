@@ -19,11 +19,11 @@ namespace bs
 	public:
 		/** @copydoc PhysicsMesh::create() */
 		BS_SCRIPT_EXPORT(ec:PhysicsMesh)
-		static HPhysicsMesh create(const SPtr<RendererMeshData>& meshData, PhysicsMeshType type = PhysicsMeshType::Convex);
+		static HPhysicsMesh Create(const SPtr<RendererMeshData>& meshData, PhysicsMeshType type = PhysicsMeshType::Convex);
 
 		/** @copydoc PhysicsMesh::getMeshData() */
 		BS_SCRIPT_EXPORT(e:PhysicsMesh,n:MeshData,pr:getter)
-		static SPtr<RendererMeshData> getMeshData(const HPhysicsMesh& thisPtr);
+		static SPtr<RendererMeshData> GetMeshData(const HPhysicsMesh& thisPtr);
 	};
 
 	/** @endcond */

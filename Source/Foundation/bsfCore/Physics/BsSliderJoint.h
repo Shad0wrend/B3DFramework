@@ -30,13 +30,13 @@ namespace bs
 		virtual ~SliderJoint() = default;
 
 		/** Returns the current position of the slider. */
-		virtual float getPosition() const = 0;
+		virtual float GetPosition() const = 0;
 
 		/** Returns the current speed of the slider. */
-		virtual float getSpeed() const = 0;
+		virtual float GetSpeed() const = 0;
 
 		/** @copydoc setLimit() */
-		virtual LimitLinearRange getLimit() const = 0;
+		virtual LimitLinearRange GetLimit() const = 0;
 
 		/**
 		 * Determines a limit that constrains the movement of the joint to a specific minimum and maximum distance. You must
@@ -44,13 +44,13 @@ namespace bs
 		 *
 		 * @see LimitLinearRange
 		 */
-		virtual void setLimit(const LimitLinearRange& limit) = 0;
+		virtual void SetLimit(const LimitLinearRange& limit) = 0;
 
 		/** Enables or disables a flag that controls the joint's behaviour. */
-		virtual void setFlag(SliderJointFlag flag, bool enabled) = 0;
+		virtual void SetFlag(SliderJointFlag flag, bool enabled) = 0;
 
 		/** Checks is the specified flag enabled. */
-		virtual bool hasFlag(SliderJointFlag flag) const = 0;
+		virtual bool HasFlag(SliderJointFlag flag) const = 0;
 
 		/**
 		 * Creates a new spherical joint.
@@ -58,7 +58,7 @@ namespace bs
 		 * @param[in]	scene		Scene to which to add the joint.
 		 * @param[in]	desc		Settings describing the joint.
 		 */
-		static SPtr<SliderJoint> create(PhysicsScene& scene, const SLIDER_JOINT_DESC& desc);
+		static SPtr<SliderJoint> Create(PhysicsScene& scene, const SLIDER_JOINT_DESC& desc);
 	};
 
 	/** Structure used for initializing a new SliderJoint. */

@@ -25,13 +25,13 @@ namespace bs { namespace ct
 		virtual ~LinuxContext();
 
 		/** @copydoc GLContext::setCurrent */
-		void setCurrent(const RenderWindow& window) override;
+		void SetCurrent(const RenderWindow& window) override;
 
 		/** @copydoc GLContext::endCurrent */
-		void endCurrent() override;
+		void EndCurrent() override;
 
 		/** @copydoc GLContext::releaseContext  */
-		void releaseContext() override;
+		void ReleaseContext() override;
 
 	protected:
 		::Display* mDisplay;

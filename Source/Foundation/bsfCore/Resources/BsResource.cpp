@@ -24,7 +24,7 @@ namespace bs
 
 	void Resource::getResourceDependencies(FrameVector<HResource>& dependencies) const
 	{
-		Lock lock(mDependenciesMutex);
+		Lock Lock(mDependenciesMutex);
 
 		for(auto& dependency : mDependencies)
 		{
@@ -35,7 +35,7 @@ namespace bs
 
 	bool Resource::areDependenciesLoaded() const
 	{
-		Lock lock(mDependenciesMutex);
+		Lock Lock(mDependenciesMutex);
 		bs_frame_mark();
 
 		bool areLoaded = true;
@@ -59,13 +59,13 @@ namespace bs
 		if(resource == nullptr)
 			return;
 
-		Lock lock(mDependenciesMutex);
+		Lock Lock(mDependenciesMutex);
 		mDependencies.push_back(resource.getWeak());
 	}
 
 	void Resource::removeResourceDependency(const HResource& resource)
 	{
-		Lock lock(mDependenciesMutex);
+		Lock Lock(mDependenciesMutex);
 		mDependencies.erase(std::remove(mDependencies.begin(), mDependencies.end(), resource.getWeak()),
 			mDependencies.end());
 	}

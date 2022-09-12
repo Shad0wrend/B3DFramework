@@ -21,131 +21,131 @@ namespace bs
 		~NullPhysicsRigidbody() = default;
 
 		/** @copydoc Rigidbody::move */
-		void move(const Vector3& position) override;
+		void Move(const Vector3& position) override;
 
 		/** @copydoc Rigidbody::rotate */
-		void rotate(const Quaternion& rotation) override;
+		void Rotate(const Quaternion& rotation) override;
 
 		/** @copydoc Rigidbody::getPosition */
-		Vector3 getPosition() const override;
+		Vector3 GetPosition() const override;
 
 		/** @copydoc Rigidbody::getRotation */
-		Quaternion getRotation() const override;
+		Quaternion GetRotation() const override;
 
 		/** @copydoc Rigidbody::setTransform */
-		void setTransform(const Vector3& pos, const Quaternion& rot) override;
+		void SetTransform(const Vector3& pos, const Quaternion& rot) override;
 
 		/** @copydoc Rigidbody::setMass */
-		void setMass(float mass) override { mMass = mass; }
+		void SetMass(float mass) override { mMass = mass; }
 
 		/** @copydoc Rigidbody::getMass */
-		float getMass() const override { return mMass; }
+		float GetMass() const override { return mMass; }
 
 		/** @copydoc Rigidbody::setIsKinematic */
-		void setIsKinematic(bool kinematic) override { mIsKinematic = kinematic; }
+		void SetIsKinematic(bool kinematic) override { mIsKinematic = kinematic; }
 
 		/** @copydoc Rigidbody::getIsKinematic */
-		bool getIsKinematic() const override { return mIsKinematic; }
+		bool GetIsKinematic() const override { return mIsKinematic; }
 
 		/** @copydoc Rigidbody::isSleeping */
-		bool isSleeping() const override { return false; }
+		bool IsSleeping() const override { return false; }
 
 		/** @copydoc Rigidbody::sleep */
-		void sleep() override { }
+		void Sleep() override { }
 
 		/** @copydoc Rigidbody::wakeUp */
-		void wakeUp() override { }
+		void WakeUp() override { }
 
 		/** @copydoc Rigidbody::setSleepThreshold */
-		void setSleepThreshold(float threshold) override { mSleepThreshold = threshold; }
+		void SetSleepThreshold(float threshold) override { mSleepThreshold = threshold; }
 
 		/** @copydoc Rigidbody::getSleepThreshold */
-		float getSleepThreshold() const override { return mSleepThreshold; }
+		float GetSleepThreshold() const override { return mSleepThreshold; }
 
 		/** @copydoc Rigidbody::setUseGravity */
-		void setUseGravity(bool gravity) override { mUseGravity = gravity; }
+		void SetUseGravity(bool gravity) override { mUseGravity = gravity; }
 
 		/** @copydoc Rigidbody::getUseGravity */
-		bool getUseGravity() const override { return mUseGravity; }
+		bool GetUseGravity() const override { return mUseGravity; }
 
 		/** @copydoc Rigidbody::setVelocity */
-		void setVelocity(const Vector3& velocity) override { mVelocity = velocity; }
+		void SetVelocity(const Vector3& velocity) override { mVelocity = velocity; }
 
 		/** @copydoc Rigidbody::getVelocity */
-		Vector3 getVelocity() const override { return mVelocity; }
+		Vector3 GetVelocity() const override { return mVelocity; }
 
 		/** @copydoc Rigidbody::setAngularVelocity */
-		void setAngularVelocity(const Vector3& velocity) override { mAngularVelocity = velocity; }
+		void SetAngularVelocity(const Vector3& velocity) override { mAngularVelocity = velocity; }
 
 		/** @copydoc Rigidbody::getAngularVelocity */
-		Vector3 getAngularVelocity() const override { return mAngularVelocity; }
+		Vector3 GetAngularVelocity() const override { return mAngularVelocity; }
 
 		/** @copydoc Rigidbody::setDrag */
-		void setDrag(float drag) override { mDrag = drag; }
+		void SetDrag(float drag) override { mDrag = drag; }
 
 		/** @copydoc Rigidbody::getDrag */
-		float getDrag() const override { return mDrag; }
+		float GetDrag() const override { return mDrag; }
 
 		/** @copydoc Rigidbody::setAngularDrag */
-		void setAngularDrag(float drag) override { mAngularDrag = drag; }
+		void SetAngularDrag(float drag) override { mAngularDrag = drag; }
 
 		/** @copydoc Rigidbody::getAngularDrag */
-		float getAngularDrag() const override { return mAngularDrag; }
+		float GetAngularDrag() const override { return mAngularDrag; }
 
 		/** @copydoc Rigidbody::setInertiaTensor */
-		void setInertiaTensor(const Vector3& tensor) override { mInertiaTensor = tensor; }
+		void SetInertiaTensor(const Vector3& tensor) override { mInertiaTensor = tensor; }
 
 		/** @copydoc Rigidbody::getInertiaTensor */
-		Vector3 getInertiaTensor() const override { return mInertiaTensor; }
+		Vector3 GetInertiaTensor() const override { return mInertiaTensor; }
 
 		/** @copydoc Rigidbody::setMaxAngularVelocity */
-		void setMaxAngularVelocity(float maxVelocity) override { mMaxAngularVelocity = maxVelocity; }
+		void SetMaxAngularVelocity(float maxVelocity) override { mMaxAngularVelocity = maxVelocity; }
 
 		/** @copydoc Rigidbody::getMaxAngularVelocity */
-		float getMaxAngularVelocity() const override { return mMaxAngularVelocity; }
+		float GetMaxAngularVelocity() const override { return mMaxAngularVelocity; }
 
 		/** @copydoc Rigidbody::setCenterOfMass */
-		void setCenterOfMass(const Vector3& position, const Quaternion& rotation) override;
+		void SetCenterOfMass(const Vector3& position, const Quaternion& rotation) override;
 
 		/** @copydoc Rigidbody::getCenterOfMassPosition */
-		Vector3 getCenterOfMassPosition() const override { return mCenterOfMassPosition; }
+		Vector3 GetCenterOfMassPosition() const override { return mCenterOfMassPosition; }
 
 		/** @copydoc Rigidbody::getCenterOfMassRotation */
-		Quaternion getCenterOfMassRotation() const override { return mCenterOfMassRotation; }
+		Quaternion GetCenterOfMassRotation() const override { return mCenterOfMassRotation; }
 
 		/** @copydoc Rigidbody::setPositionSolverCount */
-		void setPositionSolverCount(UINT32 count) override { mPositionSolverCount = count; }
+		void SetPositionSolverCount(UINT32 count) override { mPositionSolverCount = count; }
 
 		/** @copydoc Rigidbody::getPositionSolverCount */
-		UINT32 getPositionSolverCount() const override { return mPositionSolverCount; }
+		UINT32 GetPositionSolverCount() const override { return mPositionSolverCount; }
 
 		/** @copydoc Rigidbody::setVelocitySolverCount */
-		void setVelocitySolverCount(UINT32 count) override { mVelocitySolverCount = count; }
+		void SetVelocitySolverCount(UINT32 count) override { mVelocitySolverCount = count; }
 
 		/** @copydoc Rigidbody::getVelocitySolverCount */
-		UINT32 getVelocitySolverCount() const override { return mVelocitySolverCount; }
+		UINT32 GetVelocitySolverCount() const override { return mVelocitySolverCount; }
 
 		/** @copydoc Rigidbody::addForce */
-		void addForce(const Vector3& force, ForceMode mode = ForceMode::Force) override { }
+		void AddForce(const Vector3& force, ForceMode mode = ForceMode::Force) override { }
 
 		/** @copydoc Rigidbody::addTorque */
-		void addTorque(const Vector3& torque, ForceMode mode = ForceMode::Force) override { }
+		void AddTorque(const Vector3& torque, ForceMode mode = ForceMode::Force) override { }
 
 		/** @copydoc Rigidbody::addForceAtPoint */
 		void addForceAtPoint(const Vector3& force, const Vector3& position,
 			PointForceMode mode = PointForceMode::Force) override { }
 
 		/** @copydoc Rigidbody::getVelocityAtPoint */
-		Vector3 getVelocityAtPoint(const Vector3& point) const override { return Vector3::ZERO; }
+		Vector3 GetVelocityAtPoint(const Vector3& point) const override { return Vector3::ZERO; }
 
 		/** @copydoc Rigidbody::addCollider */
-		void addCollider(Collider* collider) override { }
+		void AddCollider(Collider* collider) override { }
 
 		/** @copydoc Rigidbody::removeCollider */
-		void removeCollider(Collider* collider) override { }
+		void RemoveCollider(Collider* collider) override { }
 
 		/** @copydoc Rigidbody::removeColliders */
-		void removeColliders() override { }
+		void RemoveColliders() override { }
 		
 	private:
 		Vector3 mPosition = Vector3::ZERO;

@@ -66,7 +66,7 @@ namespace bs
 		{
 			if(iter->first == size)
 				return size;
-			else if(iter->first > size)
+			else If(iter->first > size)
 			{
 				UINT32 diff = iter->first - size;
 				if(diff < minDiff)

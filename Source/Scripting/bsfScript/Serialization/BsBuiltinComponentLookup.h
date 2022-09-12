@@ -53,7 +53,7 @@ namespace bs
 		META_LastEntry;																										\
 																															\
 	public:																													\
-		static Vector<BuiltinComponentInfo> getEntries()																	\
+		static Vector<BuiltinComponentInfo> GetEntries()																	\
 		{																													\
 			Vector<BuiltinComponentInfo> entries;																			\
 			META_GetPrevEntries(entries, META_LastEntry());																	\

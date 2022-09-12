@@ -42,16 +42,16 @@ namespace bs
 		friend class ct::RendererMaterialBase;
 
 		/**	Initializes all materials on the core thread. */
-		static void initOnCore(const Vector<SPtr<ct::Shader>>& shaders);
+		static void InitOnCore(const Vector<SPtr<ct::Shader>>& shaders);
 
 		/**	Destroys all materials on the core thread. */
-		static void destroyOnCore();
+		static void DestroyOnCore();
 
 		/**	Returns a list in which are all materials managed by this module. */
-		static Vector<RendererMaterialData>& getMaterials();
+		static Vector<RendererMaterialData>& GetMaterials();
 
 		/**	Returns a mutex used for inter-thread access to the materials list. */
-		static Mutex& getMutex();
+		static Mutex& GetMutex();
 	};
 
 	/** @} */

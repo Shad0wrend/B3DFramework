@@ -77,7 +77,7 @@ namespace bs
 
 	UINT32 GUISliderHandle::getScrollableSize() const
 	{
-		return getMaxSize() - getHandleSize();
+		return GetMaxSize() - getHandleSize();
 	}
 
 	void GUISliderHandle::updateRenderElementsInternal()

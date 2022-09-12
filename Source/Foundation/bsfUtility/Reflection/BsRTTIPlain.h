@@ -111,7 +111,7 @@ namespace bs
 		 * the written data will be aligned to byte boundaries. @p fieldInfo can be used for providing additional data, such as wanted method of serialization
 		 * and compression.
 		 **/
-		static BitLength toMemory(const T& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const T& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return stream.writeBytes(data);
 		}
@@ -120,15 +120,15 @@ namespace bs
 		 * Deserializes a previously allocated object from the provided stream and advances the stream cursor. Return the number of bytes read. @p compress
 		 * and @p fieldInfo should match the values provided when it was originally encoded using toMemory(). See toMemory() for the description of those parameters.
 		 */
-		static BitLength fromMemory(T& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(T& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return stream.readBytes(data);
 		}
 
 		/** Returns the size of the provided object. (Works for both static and dynamic size types) */
-		static BitLength getSize(const T& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const T& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
-			return sizeof(T);
+			return Sizeof(T);
 		}
 	};
 
@@ -138,7 +138,7 @@ namespace bs
 		enum { id = TID_Bool };
 		enum { hasDynamicSize = 0 };
 
-		static BitLength toMemory(const bool& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const bool& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			if (!compress)
 				return stream.writeBytes(data);
@@ -151,7 +151,7 @@ namespace bs
 			}
 		}
 
-		static BitLength fromMemory(bool& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(bool& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			if (!compress)
 				return stream.readBytes(data);
@@ -165,10 +165,10 @@ namespace bs
 			}
 		}
 
-		static BitLength getSize(const bool& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const bool& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			if (!compress)
-				return sizeof(data);
+				return Sizeof(data);
 			else
 				return BitLength(0, 1);
 		}
@@ -180,7 +180,7 @@ namespace bs
 		enum { id = TID_UInt32 };
 		enum { hasDynamicSize = 0 };
 
-		static BitLength toMemory(const uint32_t& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const uint32_t& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			if (!compress)
 				return stream.writeBytes(data);
@@ -188,7 +188,7 @@ namespace bs
 				return stream.writeVarInt(data);
 		}
 
-		static BitLength fromMemory(uint32_t& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(uint32_t& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			if (!compress)
 				return stream.readBytes(data);
@@ -196,10 +196,10 @@ namespace bs
 				return stream.readVarInt(data);
 		}
 
-		static BitLength getSize(const uint32_t& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const uint32_t& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			if (!compress)
-				return sizeof(data);
+				return Sizeof(data);
 			else
 			{
 				UINT8 buffer[5];
@@ -214,7 +214,7 @@ namespace bs
 		enum { id = TID_Int32 };
 		enum { hasDynamicSize = 0 };
 
-		static BitLength toMemory(const int32_t& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const int32_t& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			if (!compress)
 				return stream.writeBytes(data);
@@ -222,7 +222,7 @@ namespace bs
 				return stream.writeVarInt(data);
 		}
 
-		static BitLength fromMemory(int32_t& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(int32_t& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			if (!compress)
 				return stream.readBytes(data);
@@ -230,10 +230,10 @@ namespace bs
 				return stream.readVarInt(data);
 		}
 
-		static BitLength getSize(const int32_t& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const int32_t& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			if (!compress)
-				return sizeof(data);
+				return Sizeof(data);
 			else
 			{
 				UINT8 buffer[5];
@@ -362,12 +362,12 @@ namespace bs
 		struct dummy {};
 
 		template <typename C, typename P>
-		static auto test(P* p) -> decltype(std::declval<C>().rttiEnumFields(*p), std::true_type());
+		static auto Test(P* p) -> decltype(std::declval<C>().rttiEnumFields(*p), std::true_type());
 
 		template <typename, typename>
-		static std::false_type test(...);
+		static std::false_type Test(...);
 
-		typedef decltype(test<T, dummy>(nullptr)) type;
+		typedef Decltype(test<T, dummy>(nullptr)) type;
 		static const bool value = std::is_same<std::true_type, decltype(test<T, dummy>(nullptr))>::value;
 	};
 
@@ -383,11 +383,11 @@ namespace bs
 						#type " is not trivially copyable");															\
 	template<> struct RTTIPlainType<type>																				\
 	{	enum { id=0 }; enum { hasDynamicSize = 0 };																		\
-		static BitLength toMemory(const type& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)	\
+		static BitLength ToMemory(const type& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)	\
 		{ return stream.writeBytes(data); }																				\
-		static BitLength fromMemory(type& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)		\
+		static BitLength FromMemory(type& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)		\
 		{ return stream.readBytes(data); }																				\
-		static BitLength getSize(const type& data, const RTTIFieldInfo& fieldInfo, bool compress)						\
+		static BitLength GetSize(const type& data, const RTTIFieldInfo& fieldInfo, bool compress)						\
 		{ return sizeof(type); }																						\
 	};
 

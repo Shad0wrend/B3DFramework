@@ -12,7 +12,7 @@ namespace bs
 	INT32 SIGNALS[] = { SIGFPE, SIGILL, SIGSEGV, SIGTERM };
 	struct sigaction gSavedSignals[4];
 
-	void signalHandler(int signal, siginfo_t* info, void* context)
+	void SignalHandler(int signal, siginfo_t* info, void* context)
 	{
 		// Restore old signal handlers
 		INT32 i = 0;
@@ -142,7 +142,7 @@ namespace bs
 			bool lineContainsMangledSymbol = mangedName != nullptr && offsetBegin != nullptr && offsetEnd != nullptr &&
 				mangedName < offsetBegin;
 
-			stackTrace << toString(i) << ") ";
+			stackTrace << ToString(i) << ") ";
 
 			if (lineContainsMangledSymbol)
 			{

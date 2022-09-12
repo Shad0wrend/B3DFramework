@@ -42,25 +42,25 @@ namespace bs
 		}
 
 		/**	Adds a new element to the layout after all existing elements. */
-		void addElement(GUIElementBase* element);
+		void AddElement(GUIElementBase* element);
 
 		/**	Removes the specified element from the layout. */
-		void removeElement(GUIElementBase* element);
+		void RemoveElement(GUIElementBase* element);
 
 		/**	Removes a child element at the specified index. */
-		void removeElementAt(UINT32 idx);
+		void RemoveElementAt(UINT32 idx);
 
 		/**	Inserts a GUI element before the element at the specified index. */
-		void insertElement(UINT32 idx, GUIElementBase* element);
+		void InsertElement(UINT32 idx, GUIElementBase* element);
 
 		/** Removes all child elements and destroys them. */
-		void clear();
+		void Clear();
 
 		/**	Returns number of child elements in the layout. */
-		UINT32 getNumChildren() const { return (UINT32)mChildren.size(); }
+		UINT32 GetNumChildren() const { return (UINT32)mChildren.size(); }
 
 		/**	Destroy the layout. Removes it from parent and widget, and deletes it. */
-		static void destroy(GUILayout* layout);
+		static void Destroy(GUILayout* layout);
 
 	public: // ***** INTERNAL ******
 		/** @name Internal

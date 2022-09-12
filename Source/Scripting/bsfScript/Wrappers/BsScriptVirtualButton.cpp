@@ -20,7 +20,7 @@ namespace bs
 	{
 		String nameStr = MonoUtil::monoToString(name);
 
-		VirtualButton vb(nameStr);
+		VirtualButton Vb(nameStr);
 		return vb.buttonIdentifier;
 	}
 

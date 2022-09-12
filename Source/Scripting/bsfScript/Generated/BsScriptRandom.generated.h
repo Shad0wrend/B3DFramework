@@ -18,7 +18,7 @@ namespace bs
 
 		ScriptRandom(MonoObject* managedInstance, const SPtr<Random>& value);
 
-		SPtr<Random> getInternal() const { return mInternal; }
+		SPtr<Random> GetInternal() const { return mInternal; }
 		static MonoObject* create(const SPtr<Random>& value);
 
 	private:

@@ -9,7 +9,7 @@ using namespace physx;
 
 namespace bs
 {
-	PxSphericalJointFlag::Enum toPxFlag(SphericalJointFlag flag)
+	PxSphericalJointFlag::Enum ToPxFlag(SphericalJointFlag flag)
 	{
 		switch (flag)
 		{
@@ -71,7 +71,7 @@ namespace bs
 
 	void PhysXSphericalJoint::setLimit(const LimitConeRange& limit)
 	{
-		PxJointLimitCone pxLimit(limit.yLimitAngle.valueRadians(), limit.zLimitAngle.valueRadians(), limit.contactDist);
+		PxJointLimitCone PxLimit(limit.yLimitAngle.valueRadians(), limit.zLimitAngle.valueRadians(), limit.contactDist);
 		pxLimit.stiffness = limit.spring.stiffness;
 		pxLimit.damping = limit.spring.damping;
 		pxLimit.restitution = limit.restitution;
@@ -86,7 +86,7 @@ namespace bs
 
 	bool PhysXSphericalJoint::hasFlag(SphericalJointFlag flag) const
 	{
-		return getInternal()->getSphericalJointFlags() & toPxFlag(flag);
+		return GetInternal()->getSphericalJointFlags() & toPxFlag(flag);
 	}
 
 	PxSphericalJoint* PhysXSphericalJoint::getInternal() const

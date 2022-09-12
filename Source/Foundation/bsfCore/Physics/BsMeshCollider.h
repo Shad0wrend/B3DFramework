@@ -25,10 +25,10 @@ namespace bs
 		 * Triangle meshes are not supported as triggers, nor are they supported for colliders that are parts of a
 		 * non-kinematic rigidbody.
 		 */
-		void setMesh(const HPhysicsMesh& mesh) { mMesh = mesh; onMeshChanged(); markListenerResourcesDirty(); }
+		void SetMesh(const HPhysicsMesh& mesh) { mMesh = mesh; onMeshChanged(); markListenerResourcesDirty(); }
 
 		/** @copydoc setMesh() */
-		HPhysicsMesh getMesh() const { return mMesh; }
+		HPhysicsMesh GetMesh() const { return mMesh; }
 
 		/**
 		 * Creates a new mesh collider.
@@ -42,18 +42,18 @@ namespace bs
 
 	protected:
 		/** @copydoc IResourceListener::getListenerResources */
-		void getListenerResources(Vector<HResource>& resources) override;
+		void GetListenerResources(Vector<HResource>& resources) override;
 
 		/** @copydoc IResourceListener::notifyResourceLoaded */
-		void notifyResourceLoaded(const HResource& resource) override;
+		void NotifyResourceLoaded(const HResource& resource) override;
 
 		/** @copydoc IResourceListener::notifyResourceChanged */
-		void notifyResourceChanged(const HResource& resource) override;
+		void NotifyResourceChanged(const HResource& resource) override;
 
 		/**
 		 * Triggered by the resources system whenever the attached collision mesh changed (e.g. was reimported) or loaded.
 		 */
-		virtual void onMeshChanged() { }
+		virtual void OnMeshChanged() { }
 
 		HPhysicsMesh mMesh;
 	};

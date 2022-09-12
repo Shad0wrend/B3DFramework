@@ -36,35 +36,35 @@ namespace bs
 		Cursor();
 
 		/**	Moves the cursor to the specified screen position. */
-		void setScreenPosition(const Vector2I& screenPos);
+		void SetScreenPosition(const Vector2I& screenPos);
 
 		/**	Retrieves the cursor position in screen coordinates. */
-		Vector2I getScreenPosition();
+		Vector2I GetScreenPosition();
 
 		/**	Hides the cursor. */
-		void hide();
+		void Hide();
 
 		/**	Shows the cursor. */
-		void show();
+		void Show();
 
 		/**	Limit cursor movement to the specified window. */
-		void clipToWindow(const RenderWindow& window);
+		void ClipToWindow(const RenderWindow& window);
 
 		/**	Limit cursor movement to specific area on the screen. */
-		void clipToRect(const Rect2I& screenRect);
+		void ClipToRect(const Rect2I& screenRect);
 
 		/**	Disables cursor clipping that was set using any of the clipTo* methods. */
-		void clipDisable();
+		void ClipDisable();
 		
 		/**	Sets a cursor icon. Uses one of the built-in cursor types. */
-		void setCursor(CursorType type);
+		void SetCursor(CursorType type);
 
 		/**
 		 * Sets a cursor icon. Uses one of the manually registered icons.
 		 * 			
 		 * @param[in]	name		The name to identify the cursor, one set previously by calling setCursorIcon().
 		 */
-		void setCursor(const String& name);
+		void SetCursor(const String& name);
 
 		/**
 		 * Registers a new custom cursor icon you can then set by calling "setCursor".
@@ -78,7 +78,7 @@ namespace bs
 		 * Stores an internal copy of the pixel data. Clear it by calling removeCursorIcon(). If a custom icon with the
 		 * same name already exists it will be replaced.
 		 */
-		void setCursorIcon(const String& name, const PixelData& pixelData, const Vector2I& hotSpot);
+		void SetCursorIcon(const String& name, const PixelData& pixelData, const Vector2I& hotSpot);
 
 		/**
 		 * Registers a new custom cursor icon you can then set by calling setCursor().
@@ -92,23 +92,23 @@ namespace bs
 		 * Stores an internal copy of the pixel data. Clear it by calling removeCursorIcon(). If a custom icon with the
 		 * same type already exists it will be replaced.
 		 */
-		void setCursorIcon(CursorType type, const PixelData& pixelData, const Vector2I& hotSpot);
+		void SetCursorIcon(CursorType type, const PixelData& pixelData, const Vector2I& hotSpot);
 
 		/**	Removes a custom cursor icon and releases any data associated with it. */
-		void clearCursorIcon(const String& name);
+		void ClearCursorIcon(const String& name);
 
 		/**
 		 * Removes a custom cursor icon and releases any data associated with it. Restores original icon associated with
 		 * this cursor type.
 		 */
-		void clearCursorIcon(CursorType type);
+		void ClearCursorIcon(CursorType type);
 
 	private:
 		/**	Restores the default cursor icon for the specified cursor type. */
-		void restoreCursorIcon(CursorType type);
+		void RestoreCursorIcon(CursorType type);
 
 		/**	Sends the cursor image to the OS, making it active. */
-		void updateCursorImage();
+		void UpdateCursorImage();
 
 		UnorderedMap<String, UINT32> mCustomIconNameToId;
 		UnorderedMap<UINT32, CustomIcon> mCustomIcons;
@@ -117,7 +117,7 @@ namespace bs
 	};
 
 	/** Easy way to access Cursor. */
-	BS_EXPORT Cursor& gCursor();
+	BS_EXPORT Cursor& GCursor();
 
 	/** @} */
 }

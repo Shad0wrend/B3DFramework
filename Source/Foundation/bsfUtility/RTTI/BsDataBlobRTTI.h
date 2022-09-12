@@ -17,7 +17,7 @@ namespace bs
 	{
 		enum { id = TID_DataBlob }; enum { hasDynamicSize = 1 };
 
-		static BitLength toMemory(const DataBlob& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const DataBlob& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]()
 			{
@@ -25,7 +25,7 @@ namespace bs
 			});
 		}
 
-		static BitLength fromMemory(DataBlob& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(DataBlob& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
 			rtti_read_size_header(stream, compress, size);
@@ -41,7 +41,7 @@ namespace bs
 			return size;
 		}
 
-		static BitLength getSize(const DataBlob& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const DataBlob& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength dataSize = data.size;
 

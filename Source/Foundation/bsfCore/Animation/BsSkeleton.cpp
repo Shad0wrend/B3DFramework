@@ -8,7 +8,7 @@
 namespace bs
 {
 	LocalSkeletonPose::LocalSkeletonPose(UINT32 numBones, bool individualOverride)
-		: numBones(numBones)
+		: NumBones(numBones)
 	{
 		const UINT32 overridesPerBone = individualOverride ? 3 : 1;
 
@@ -46,7 +46,7 @@ namespace bs
 		, rotations{std::exchange(other.rotations, nullptr)}
 		, scales{std::exchange(other.scales, nullptr)}
 		, hasOverride{std::exchange(other.hasOverride, nullptr)}
-		, numBones(std::exchange(other.numBones, 0))
+		, NumBones(std::exchange(other.numBones, 0))
 	{ }
 
 	LocalSkeletonPose::~LocalSkeletonPose()
@@ -73,8 +73,8 @@ namespace bs
 	}
 
 	Skeleton::Skeleton(BONE_DESC* bones, UINT32 numBones)
-		: mNumBones(numBones), mBoneTransforms(bs_newN<Transform>(numBones)), mInvBindPoses(bs_newN<Matrix4>(numBones))
-		, mBoneInfo(bs_newN<SkeletonBoneInfo>(numBones))
+		: MNumBones(numBones), mBoneTransforms(bs_newN<Transform>(numBones)), mInvBindPoses(bs_newN<Matrix4>(numBones))
+		, MBoneInfo(bs_newN<SkeletonBoneInfo>(numBones))
 	{
 		for(UINT32 i = 0; i < numBones; i++)
 		{
@@ -109,7 +109,7 @@ namespace bs
 	{
 		bs_frame_mark();
 		{
-			FrameVector<AnimationCurveMapping> boneToCurveMapping(mNumBones);
+			FrameVector<AnimationCurveMapping> BoneToCurveMapping(mNumBones);
 
 			AnimationState state;
 			state.curves = clip.getCurves();
@@ -119,9 +119,9 @@ namespace bs
 			state.weight = 1.0f;
 			state.time = time;
 
-			FrameVector<TCurveCache<Vector3>> positionCache(state.curves->position.size());
-			FrameVector<TCurveCache<Quaternion>> rotationCache(state.curves->rotation.size());
-			FrameVector<TCurveCache<Vector3>> scaleCache(state.curves->scale.size());
+			FrameVector<TCurveCache<Vector3>> PositionCache(state.curves->position.size());
+			FrameVector<TCurveCache<Quaternion>> RotationCache(state.curves->rotation.size());
+			FrameVector<TCurveCache<Vector3>> ScaleCache(state.curves->scale.size());
 
 			state.positionCaches = positionCache.data();
 			state.rotationCaches = rotationCache.data();
@@ -364,6 +364,6 @@ namespace bs
 
 	RTTITypeBase* Skeleton::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 }

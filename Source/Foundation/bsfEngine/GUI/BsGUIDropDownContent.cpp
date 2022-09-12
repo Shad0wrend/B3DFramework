@@ -24,8 +24,8 @@ namespace bs
 	GUIDropDownContent::GUIDropDownContent(GUIDropDownMenu::DropDownSubMenu* parent, const GUIDropDownData& dropDownData,
 		const String& style, const GUIDimensions& dimensions)
 		: GUIElementContainer(dimensions, style), mDropDownData(dropDownData), mStates(dropDownData.states)
-		, mSelectedIdx(UINT_MAX), mRangeStart(0), mRangeEnd(0), mParent(parent), mKeyboardFocus(true)
-		, mIsToggle(parent->getType() == GUIDropDownType::MultiListBox)
+		, MSelectedIdx(UINT_MAX), mRangeStart(0), mRangeEnd(0), mParent(parent), mKeyboardFocus(true)
+		, MIsToggle(parent->getType() == GUIDropDownType::MultiListBox)
 	{
 
 	}

@@ -18,21 +18,21 @@ namespace bs
 
 		ScriptResources(MonoObject* managedInstance);
 
-		static void startUp();
-		static void shutDown();
+		static void StartUp();
+		static void ShutDown();
 
 	private:
 		uint32_t mGCHandle = 0;
 
-		static void onResourceLoaded(const ResourceHandle<Resource>& p0);
-		static void onResourceDestroyed(const UUID& p0);
-		static void onResourceModified(const ResourceHandle<Resource>& p0);
+		static void OnResourceLoaded(const ResourceHandle<Resource>& p0);
+		static void OnResourceDestroyed(const UUID& p0);
+		static void OnResourceModified(const ResourceHandle<Resource>& p0);
 
-		typedef void(BS_THUNKCALL *onResourceLoadedThunkDef) (MonoObject* p0, MonoException**);
+		typedef Void(BS_THUNKCALL *onResourceLoadedThunkDef) (MonoObject* p0, MonoException**);
 		static onResourceLoadedThunkDef onResourceLoadedThunk;
-		typedef void(BS_THUNKCALL *onResourceDestroyedThunkDef) (MonoObject* p0, MonoException**);
+		typedef Void(BS_THUNKCALL *onResourceDestroyedThunkDef) (MonoObject* p0, MonoException**);
 		static onResourceDestroyedThunkDef onResourceDestroyedThunk;
-		typedef void(BS_THUNKCALL *onResourceModifiedThunkDef) (MonoObject* p0, MonoException**);
+		typedef Void(BS_THUNKCALL *onResourceModifiedThunkDef) (MonoObject* p0, MonoException**);
 		static onResourceModifiedThunkDef onResourceModifiedThunk;
 
 		static HEvent onResourceLoadedConn;

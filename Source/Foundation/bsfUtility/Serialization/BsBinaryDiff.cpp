@@ -56,10 +56,10 @@ namespace bs
 			RTTISubObjectWrapper(SerializedObject* obj, UINT32 subObjectIdx);
 
 			/** Returns the type ID of the RTTIType. */
-			UINT32 getTypeId() const;
+			UINT32 GetTypeId() const;
 
 			/** Returns an iterator that will iterate over all fields in the RTTIType. */
-			RTTIFieldWrapperIterator<false> getFieldIter() const;
+			RTTIFieldWrapperIterator<false> GetFieldIter() const;
 
 		private:
 			SerializedObject* mObj = nullptr;
@@ -75,10 +75,10 @@ namespace bs
 			RTTISubObjectWrapper(IReflectable* obj, RTTITypeBase* rttiType);
 
 			/** Returns the type ID of the RTTIType. */
-			UINT32 getTypeId() const;
+			UINT32 GetTypeId() const;
 
 			/** Returns an iterator that will iterate over all fields in the RTTIType. */
-			RTTIFieldWrapperIterator<true> getFieldIter() const;
+			RTTIFieldWrapperIterator<true> GetFieldIter() const;
 
 		private:
 			IReflectable* mObj = nullptr;
@@ -93,10 +93,10 @@ namespace bs
 			RTTIObjectWrapper(SerializedObject* obj);
 
 			/** Returns the type ID of the root RTTIType. */
-			UINT32 getTypeId() const;
+			UINT32 GetTypeId() const;
 
 			/** Returns an iterator that will iterate over all the RTTITypes of the object. */
-			RTTISubObjectWrapperIterator<false> getSubObjectIterator() const;
+			RTTISubObjectWrapperIterator<false> GetSubObjectIterator() const;
 
 			/** Returns the raw pointer to the underlying wrapped object. */
 			IReflectable* getObjectPtr() const { return mObj; }
@@ -113,10 +113,10 @@ namespace bs
 			RTTIObjectWrapper(IReflectable* obj, RTTITypeBase* rttiType);
 
 			/** Returns the type ID of the root RTTIType. */
-			UINT32 getTypeId() const;
+			UINT32 GetTypeId() const;
 
 			/** Returns an iterator that will iterate over all the RTTITypes of the object. */
-			RTTISubObjectWrapperIterator<true> getSubObjectIterator() const;
+			RTTISubObjectWrapperIterator<true> GetSubObjectIterator() const;
 
 			/** Returns the raw pointer to the underlying wrapped object. */
 			IReflectable* getObjectPtr() const { return mObj; }
@@ -136,13 +136,13 @@ namespace bs
 			 * Moves to the next base type and return false if no type was available (end was reached).
 			 * Initially in before-start position and must be called once to read the first element.
 			 */
-			bool moveNext();
+			bool MoveNext();
 
 			/**
 			 * Returns the current value as pointer by the iterator. moveNext() must previously be called and
 			 * return true.
 			 */
-			RTTISubObjectWrapper<false> value() const;
+			RTTISubObjectWrapper<false> Value() const;
 
 		private:
 			SerializedObject* mObj;
@@ -159,13 +159,13 @@ namespace bs
 			 * Moves to the next base type and return false if no type was available (end was reached).
 			 * Initially in before-start position and must be called once to read the first element.
 			 */
-			bool moveNext();
+			bool MoveNext();
 
 			/**
 			 * Returns the current value as pointer by the iterator. moveNext() must previously be called and
 			 * return true.
 			 */
-			RTTISubObjectWrapper<true> value() const;
+			RTTISubObjectWrapper<true> Value() const;
 
 		private:
 			IReflectable* mObj;
@@ -182,37 +182,37 @@ namespace bs
 			RTTIFieldWrapper(UINT32 fieldId, SPtr<SerializedInstance> data);
 
 			/** Returns the unique identifier of the field within a RTTIType. */
-			UINT32 getId() const;
+			UINT32 GetId() const;
 
 			/** Returns the size of the array held by the field. Only valid if a field represents an array. */
-			UINT32 getArraySize() const;
+			UINT32 GetArraySize() const;
 
 			/**
 			 * Returns a wrapper that holds information about specific element of an array. Only valid if this
 			 * field represents an array.
 			 */
-			RTTIFieldWrapper<false> getArrayElement(int index) const;
+			RTTIFieldWrapper<false> GetArrayElement(int index) const;
 
 			/**
 			 * Returns a wrapper that holds the object held by the field. Only valid if the field points to
 			 * a reflectable type (pointer or otherwise).
 			 */
-			RTTIObjectWrapper<false> getObject() const;
+			RTTIObjectWrapper<false> GetObject() const;
 
 			/** Returns a data stream held by the field. Only valid if the field is a data block field. */
-			SPtr<DataStream> getDataStream(UINT32& size, UINT32& offset) const;
+			SPtr<DataStream> GetDataStream(UINT32& size, UINT32& offset) const;
 
 			/** Returns the size of the plain data in a field, in bytes. Only valid if the field holds a plain type. */
-			UINT32 getPlainSize() const;
+			UINT32 GetPlainSize() const;
 
 			/** Compares the data between two plain fields and returns true if they're equal. */
-			bool comparePlain(const RTTIFieldWrapper<false>& other) const;
+			bool ComparePlain(const RTTIFieldWrapper<false>& other) const;
 
 			/** Compares the data between two plain fields and returns true if they're equal. */
-			bool comparePlain(const RTTIFieldWrapper<true>& other) const;
+			bool ComparePlain(const RTTIFieldWrapper<true>& other) const;
 
 			/** Clones the contents of this field and returns them as intermediate serialized data. */
-			SPtr<SerializedInstance> clone(SerializedObjectEncodeFlags flags, SerializationContext* context, FrameAlloc* alloc) const;
+			SPtr<SerializedInstance> Clone(SerializedObjectEncodeFlags flags, SerializationContext* context, FrameAlloc* alloc) const;
 		private:
 			friend struct RTTIFieldWrapper<true>;
 			
@@ -229,44 +229,44 @@ namespace bs
 			RTTIFieldWrapper(RTTITypeBase* rttiType, RTTIField* field, bool isArrayElem, UINT32 arrayIdx, IReflectable* data);
 
 			/** Returns the unique identifier of the field within a RTTIType. */
-			UINT32 getId() const;
+			UINT32 GetId() const;
 
 			/** Returns the size of the array held by the field. Only valid if a field represents an array. */
-			UINT32 getArraySize() const;
+			UINT32 GetArraySize() const;
 
 			/**
 			 * Returns a wrapper that holds information about specific element of an array. Only valid if this
 			 * field represents an array.
 			 */
-			RTTIFieldWrapper<true> getArrayElement(int index) const;
+			RTTIFieldWrapper<true> GetArrayElement(int index) const;
 
 			/**
 			 * Returns a wrapper that holds the object held by the field. Only valid if the field points to
 			 * a reflectable type (pointer or otherwise).
 			 */
-			RTTIObjectWrapper<true> getObject() const;
+			RTTIObjectWrapper<true> GetObject() const;
 
 			/** Returns a data stream held by the field. Only valid if the field is a data block field. */
-			SPtr<DataStream> getDataStream(UINT32& size, UINT32& offset) const;
+			SPtr<DataStream> GetDataStream(UINT32& size, UINT32& offset) const;
 
 			/** Returns the size of the plain data in a field, in bytes. Only valid if the field holds a plain type. */
-			UINT32 getPlainSize() const;
+			UINT32 GetPlainSize() const;
 
 			/**
 			 * Writes the data contained in the field into @p buffer. Caller must allocate the buffer and ensure it is of
 			 * adequate size. Buffer size in bytes must be provided as @p bufferSize. Only valid if the field holds a plain
 			 * type.
 			 */
-			void getPlainData(UINT8* buffer, UINT32 bufferSize) const;
+			void GetPlainData(UINT8* buffer, UINT32 bufferSize) const;
 
 			/** Compares the data between two plain fields and returns true if they're equal. */
-			bool comparePlain(const RTTIFieldWrapper<false>& other) const;
+			bool ComparePlain(const RTTIFieldWrapper<false>& other) const;
 
 			/** Compares the data between two plain fields and returns true if they're equal. */
-			bool comparePlain(const RTTIFieldWrapper<true>& other) const;
+			bool ComparePlain(const RTTIFieldWrapper<true>& other) const;
 
 			/** Clones the contents of this field and returns them as intermediate serialized data. */
-			SPtr<SerializedInstance> clone(SerializedObjectEncodeFlags flags, SerializationContext* context, FrameAlloc* alloc) const;
+			SPtr<SerializedInstance> Clone(SerializedObjectEncodeFlags flags, SerializationContext* context, FrameAlloc* alloc) const;
 		private:
 			friend struct RTTIFieldWrapper<false>;
 			
@@ -287,13 +287,13 @@ namespace bs
 			 * Moves to the next field and return false if no field was available (end was reached).
 			 * Initially in before-start position and must be called once to read the first element.
 			 */
-			bool moveNext();
+			bool MoveNext();
 
 			/**
 			 * Returns the current value as pointer by the iterator. moveNext() must previously be called and
 			 * return true.
 			 */
-			RTTIFieldWrapper<false> value() const;
+			RTTIFieldWrapper<false> Value() const;
 
 		private:
 			SerializedObject* mObj;
@@ -313,13 +313,13 @@ namespace bs
 			 * Moves to the next field and return false if no field was available (end was reached).
 			 * Initially in before-start position and must be called once to read the first element.
 			 */
-			bool moveNext();
+			bool MoveNext();
 
 			/**
 			 * Returns the current value as pointer by the iterator. moveNext() must previously be called and
 			 * return true.
 			 */
-			RTTIFieldWrapper<true> value() const;
+			RTTIFieldWrapper<true> Value() const;
 
 		private:
 			IReflectable* mObj;
@@ -364,7 +364,7 @@ namespace bs
 		}
 
 		RTTISubObjectWrapper<true>::RTTISubObjectWrapper(IReflectable* obj, RTTITypeBase* type)
-			: mObj(obj), mRTTIType(type)
+			: MObj(obj), mRTTIType(type)
 		{ }
 
 		UINT32 RTTISubObjectWrapper<true>::getTypeId() const
@@ -378,7 +378,7 @@ namespace bs
 		}
 
 		RTTISubObjectWrapperIterator<false>::RTTISubObjectWrapperIterator(SerializedObject* obj)
-			: mObj(obj)
+			: MObj(obj)
 		{ }
 
 		bool RTTISubObjectWrapperIterator<false>::moveNext()
@@ -507,7 +507,7 @@ namespace bs
 
 		RTTIFieldWrapper<true>::RTTIFieldWrapper(RTTITypeBase* rttiType, RTTIField* field,
 			bool isArrayElem, UINT32 arrayIdx, IReflectable* data)
-			: mRTTIType(rttiType), mField(field), mIsArrayElem(isArrayElem), mArrayIdx(arrayIdx), mObj(data)
+			: MRTTIType(rttiType), mField(field), mIsArrayElem(isArrayElem), mArrayIdx(arrayIdx), mObj(data)
 		{ }
 
 		UINT32 RTTIFieldWrapper<true>::getId() const { return mField->schema.id; }
@@ -620,7 +620,7 @@ namespace bs
 		void RTTIFieldWrapper<true>::getPlainData(UINT8* buffer, UINT32 bufferSize) const
 		{
 			auto* field = static_cast<RTTIPlainFieldBase*>(mField);
-			Bitstream tempStream(buffer, bufferSize);
+			Bitstream TempStream(buffer, bufferSize);
 
 			if (mIsArrayElem)
 				field->arrayElemToStream(mRTTIType, mObj, mArrayIdx, tempStream);
@@ -1118,7 +1118,7 @@ namespace bs
 				{
 					auto* field = static_cast<RTTIPlainFieldBase*>(command.field);
 
-					Bitstream tempStream(command.value, command.size);
+					Bitstream TempStream(command.value, command.size);
 					field->arrayElemFromBuffer(rttiInstance, destObject, command.arrayIdx, tempStream);
 				}
 					break;
@@ -1146,7 +1146,7 @@ namespace bs
 				{
 					auto* field = static_cast<RTTIPlainFieldBase*>(command.field);
 
-					Bitstream tempStream(command.value, command.size);
+					Bitstream TempStream(command.value, command.size);
 					field->fromBuffer(rttiInstance, destObject, tempStream);
 				}
 					break;
@@ -1177,28 +1177,28 @@ namespace bs
 	{
 		if(orgObj->getTypeId() == TID_SerializedObject)
 		{
-			impl::RTTIObjectWrapper<false> orgObjWrapper(static_cast<SerializedObject*>(orgObj));
+			impl::RTTIObjectWrapper<false> OrgObjWrapper(static_cast<SerializedObject*>(orgObj));
 			
 			if(newObj->getTypeId() == TID_SerializedObject)
 			{
-				impl::RTTIObjectWrapper<false> newObjWrapper(static_cast<SerializedObject*>(newObj));
+				impl::RTTIObjectWrapper<false> NewObjWrapper(static_cast<SerializedObject*>(newObj));
 				return impl::generateDiff(orgObjWrapper, newObjWrapper, objectMap, replicableOnly);
 			}
 
-			impl::RTTIObjectWrapper<true> newObjWrapper(newObj, newObj->getRTTI());
+			impl::RTTIObjectWrapper<true> NewObjWrapper(newObj, newObj->getRTTI());
 			return impl::generateDiff(orgObjWrapper, newObjWrapper, objectMap, replicableOnly);
 		}
 		else
 		{
-			impl::RTTIObjectWrapper<true> orgObjWrapper(orgObj, orgObj->getRTTI());
+			impl::RTTIObjectWrapper<true> OrgObjWrapper(orgObj, orgObj->getRTTI());
 			
 			if(newObj->getTypeId() == TID_SerializedObject)
 			{
-				impl::RTTIObjectWrapper<false> newObjWrapper(static_cast<SerializedObject*>(newObj));
+				impl::RTTIObjectWrapper<false> NewObjWrapper(static_cast<SerializedObject*>(newObj));
 				return impl::generateDiff(orgObjWrapper, newObjWrapper, objectMap, replicableOnly);
 			}
 
-			impl::RTTIObjectWrapper<true> newObjWrapper(newObj, newObj->getRTTI());
+			impl::RTTIObjectWrapper<true> NewObjWrapper(newObj, newObj->getRTTI());
 			return impl::generateDiff(orgObjWrapper, newObjWrapper, objectMap, replicableOnly);
 		}
 	}
@@ -1327,7 +1327,7 @@ namespace bs
 
 						UINT32 orgArraySize = genericField->getArraySize(rttiInstance, object.get());
 
-						Vector<SPtr<IReflectable>> newArrayElements(numArrayElements);
+						Vector<SPtr<IReflectable>> NewArrayElements(numArrayElements);
 						UINT32 minArrayLength = std::min(orgArraySize, numArrayElements);
 						for (UINT32 i = 0; i < minArrayLength; i++)
 						{

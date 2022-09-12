@@ -18,12 +18,12 @@ namespace bs
 
 	GUIButton* GUIButton::create(const HString& text, const String& styleName)
 	{
-		return create(GUIContent(text), styleName);
+		return Create(GUIContent(text), styleName);
 	}
 
 	GUIButton* GUIButton::create(const HString& text, const GUIOptions& options, const String& styleName)
 	{
-		return create(GUIContent(text), options, styleName);
+		return Create(GUIContent(text), options, styleName);
 	}
 
 	GUIButton* GUIButton::create(const GUIContent& content, const String& styleName)

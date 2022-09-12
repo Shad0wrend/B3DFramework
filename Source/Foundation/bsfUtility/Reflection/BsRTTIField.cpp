@@ -14,7 +14,7 @@ namespace bs
 
 	RTTITypeBase* RTTIFieldSchema::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 	
 	RTTIFieldInfo RTTIFieldInfo::DEFAULT;

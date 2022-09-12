@@ -10,31 +10,31 @@ namespace bs
 	const UINT32 DataStream::StreamTempSize = 128;
 
 	/** Checks does the provided buffer has an UTF32 byte order mark in little endian order. */
-	bool isUTF32LE(const UINT8* buffer)
+	bool IsUTF32LE(const UINT8* buffer)
 	{
 		return buffer[0] == 0xFF && buffer[1] == 0xFE && buffer[2] == 0x00 && buffer[3] == 0x00;
 	}
 
 	/** Checks does the provided buffer has an UTF32 byte order mark in big endian order. */
-	bool isUTF32BE(const UINT8* buffer)
+	bool IsUTF32BE(const UINT8* buffer)
 	{
 		return buffer[0] == 0x00 && buffer[1] == 0x00 && buffer[2] == 0xFE && buffer[3] == 0xFF;
 	}
 
 	/** Checks does the provided buffer has an UTF16 byte order mark in little endian order. */
-	bool isUTF16LE(const UINT8* buffer)
+	bool IsUTF16LE(const UINT8* buffer)
 	{
 		return buffer[0] == 0xFF && buffer[1] == 0xFE;
 	}
 
 	/**	Checks does the provided buffer has an UTF16 byte order mark in big endian order. */
-	bool isUTF16BE(const UINT8* buffer)
+	bool IsUTF16BE(const UINT8* buffer)
 	{
 		return buffer[0] == 0xFE && buffer[1] == 0xFF;
 	}
 
 	/**	Checks does the provided buffer has an UTF8 byte order mark. */
-	bool isUTF8(const UINT8* buffer)
+	bool IsUTF8(const UINT8* buffer)
 	{
 		return (buffer[0] == 0xEF && buffer[1] == 0xBB && buffer[2] == 0xBF);
 	}
@@ -342,13 +342,13 @@ namespace bs
 	size_t DataStream::readBits(uint8_t* data, uint32_t count)
 	{
 		uint32_t numBytes = Math::divideAndRoundUp(count, 8U);
-		return read(data, numBytes) * 8;
+		return Read(data, numBytes) * 8;
 	}
 
 	size_t DataStream::writeBits(const uint8_t* data, uint32_t count)
 	{
 		uint32_t numBytes = Math::divideAndRoundUp(count, 8U);
-		return write(data, numBytes) * 8;
+		return Write(data, numBytes) * 8;
 	}
 
 	void MemoryDataStream::skip(size_t count)

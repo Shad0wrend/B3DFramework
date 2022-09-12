@@ -21,7 +21,7 @@ namespace bs
 	public:
 		/**	Checks if the style with the specified name exists. */
 		BS_SCRIPT_EXPORT()
-		bool hasStyle(const String& name) const;
+		bool HasStyle(const String& name) const;
 
 		/**
 		 * Returns a style for the specified GUI element type.
@@ -37,7 +37,7 @@ namespace bs
 		 * @see		GUIElement::getGUITypeName
 		 */
 		BS_SCRIPT_EXPORT()
-		void setStyle(const String& guiElemType, const GUIElementStyle& style);
+		void SetStyle(const String& guiElemType, const GUIElementStyle& style);
 
 		/**
 		 * Removes a style for the specified GUI element type.
@@ -45,15 +45,15 @@ namespace bs
 		 * @see		GUIElement::getGUITypeName
 		 */
 		BS_SCRIPT_EXPORT()
-		void removeStyle(const String& guiElemType);
+		void RemoveStyle(const String& guiElemType);
 
 		/**	Returns names of all styles registered on this skin. */
 		BS_SCRIPT_EXPORT(pr:getter,n:StyleNames)
-		Vector<String> getStyleNames() const;
+		Vector<String> GetStyleNames() const;
 
 		/**	Creates an empty GUI skin and returns a handle to it. */
 		BS_SCRIPT_EXPORT(ec:GUISkin)
-		static HGUISkin create();
+		static HGUISkin Create();
 
 		/**	Default style that may be used when no other is available. */
 		static GUIElementStyle DefaultStyle;

@@ -49,7 +49,7 @@ namespace bs
 		META_LastEntry;																										\
 																															\
 	public:																													\
-		static Vector<ReflectableTypeInfo> getEntries()																		\
+		static Vector<ReflectableTypeInfo> GetEntries()																		\
 		{																													\
 			Vector<ReflectableTypeInfo> entries;																			\
 			META_GetPrevEntries(entries, META_LastEntry());																	\

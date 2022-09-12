@@ -104,7 +104,7 @@ namespace bs
 
 	void InputConfiguration::registerAxis(const String& name, const VIRTUAL_AXIS_DESC& desc)
 	{
-		VirtualAxis axis(name);
+		VirtualAxis Axis(name);
 
 		if (axis.axisIdentifier >= (UINT32)mAxes.size())
 			mAxes.resize(axis.axisIdentifier + 1);

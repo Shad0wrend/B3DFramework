@@ -7,12 +7,12 @@
 
 namespace bs
 {
-	float evalPosition(float acceleration, float velocity, float time)
+	float EvalPosition(float acceleration, float velocity, float time)
 	{
 		return acceleration * time * time * 0.5f + velocity * time;
 	}
 
-	float evalVelocity(float acceleration, float time)
+	float EvalVelocity(float acceleration, float time)
 	{
 		return acceleration * time;
 	}
@@ -23,8 +23,8 @@ namespace bs
 		CoreTestSuite();
 
 	private:
-		void testAnimCurveIntegration();
-		void testLookupTable();
+		void TestAnimCurveIntegration();
+		void TestLookupTable();
 	};
 
 	CoreTestSuite::CoreTestSuite()

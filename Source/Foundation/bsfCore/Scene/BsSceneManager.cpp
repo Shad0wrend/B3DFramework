@@ -246,7 +246,7 @@ namespace bs
 		// Make sure the per-state lists are up-to-date
 		processStateChanges();
 
-		ScopeToggle toggle(mDisableStateChange);
+		ScopeToggle Toggle(mDisableStateChange);
 
 		// Wake up all components with onInitialize/onEnable events if moving to running or paused state
 		if(state == ComponentState::Running || state == ComponentState::Paused)
@@ -343,7 +343,7 @@ namespace bs
 		// Queue the change before any callbacks trigger, as the callbacks could trigger their own changes and they should
 		// be in order
 		mStateChanges.emplace_back(component, ComponentStateEventType::Created);
-		ScopeToggle toggle(mDisableStateChange);
+		ScopeToggle Toggle(mDisableStateChange);
 		
 		component->onCreated();
 		
@@ -364,7 +364,7 @@ namespace bs
 		// Queue the change before any callbacks trigger, as the callbacks could trigger their own changes and they should
 		// be in order
 		mStateChanges.emplace_back(component, ComponentStateEventType::Activated);
-		ScopeToggle toggle(mDisableStateChange);
+		ScopeToggle Toggle(mDisableStateChange);
 
 		const bool alwaysRun = component->hasFlag(ComponentFlag::AlwaysRun);
 		if(alwaysRun || mComponentState != ComponentState::Stopped)
@@ -381,7 +381,7 @@ namespace bs
 		// Queue the change before any callbacks trigger, as the callbacks could trigger their own changes and they should
 		// be in order
 		mStateChanges.emplace_back(component, ComponentStateEventType::Deactivated);
-		ScopeToggle toggle(mDisableStateChange);
+		ScopeToggle Toggle(mDisableStateChange);
 
 		const bool alwaysRun = component->hasFlag(ComponentFlag::AlwaysRun);
 		if(alwaysRun || mComponentState != ComponentState::Stopped)
@@ -403,7 +403,7 @@ namespace bs
 			mStateChanges.emplace_back(component, ComponentStateEventType::Destroyed);
 		}
 
-		ScopeToggle toggle(mDisableStateChange);
+		ScopeToggle Toggle(mDisableStateChange);
 
 		const bool alwaysRun = component->hasFlag(ComponentFlag::AlwaysRun);
 		const bool isEnabled = component->sceneObject()->getActive() && (alwaysRun ||
@@ -543,7 +543,7 @@ namespace bs
 		// Note: Eventually perform updates based on component types and/or on component priority. Right now we just
 		// iterate in an undefined order, but it wouldn't be hard to change it.
 
-		ScopeToggle toggle(mDisableStateChange);
+		ScopeToggle Toggle(mDisableStateChange);
 		for (auto& entry : mActiveComponents)
 			entry->update();
 
@@ -554,7 +554,7 @@ namespace bs
 	{
 		processStateChanges();
 
-		ScopeToggle toggle(mDisableStateChange);
+		ScopeToggle Toggle(mDisableStateChange);
 		for (auto& entry : mActiveComponents)
 			entry->fixedUpdate();
 	}
@@ -574,7 +574,7 @@ namespace bs
 			entry->setAspectRatio(aspect);
 	}
 
-	SceneManager& gSceneManager()
+	SceneManager& GSceneManager()
 	{
 		return SceneManager::instance();
 	}

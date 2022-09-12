@@ -125,7 +125,7 @@ namespace bs
 	{
 		Vector<VertexElement> elements = desc->createElements();
 
-		return createVertexDeclaration(elements, deviceMask);
+		return CreateVertexDeclaration(elements, deviceMask);
 	}
 
 	SPtr<GpuParams> HardwareBufferManager::createGpuParams(const SPtr<GpuPipelineParamInfo>& paramInfo,
@@ -140,7 +140,7 @@ namespace bs
 	SPtr<VertexDeclaration> HardwareBufferManager::createVertexDeclaration(const Vector<VertexElement>& elements,
 		GpuDeviceFlags deviceMask)
 	{
-		VertexDeclarationKey key(elements);
+		VertexDeclarationKey Key(elements);
 
 		auto iterFind = mCachedDeclarations.find(key);
 		if (iterFind != mCachedDeclarations.end())

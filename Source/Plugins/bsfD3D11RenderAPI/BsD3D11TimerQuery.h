@@ -19,20 +19,20 @@ namespace bs { namespace ct
 		~D3D11TimerQuery();
 
 		/** @copydoc TimerQuery::begin */
-		void begin(const SPtr<CommandBuffer>& cb = nullptr) override;
+		void Begin(const SPtr<CommandBuffer>& cb = nullptr) override;
 
 		/** @copydoc TimerQuery::end */
-		void end(const SPtr<CommandBuffer>& cb = nullptr) override;
+		void End(const SPtr<CommandBuffer>& cb = nullptr) override;
 
 		/** @copydoc TimerQuery::isReady */
-		bool isReady() const override;
+		bool IsReady() const override;
 
 		/** @copydoc TimerQuery::getTimeMs */
-		float getTimeMs() override;
+		float GetTimeMs() override;
 
 	private:
 		/**	Resolve timing information after the query has finished. */
-		void finalize();
+		void Finalize();
 
 		bool mFinalized = false;
 		bool mQueryEndCalled = false;

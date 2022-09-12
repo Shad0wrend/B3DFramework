@@ -18,15 +18,15 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "Debug")
 
 		/**	Registers internal callbacks. Must be called on scripting system load. */
-		static void startUp();
+		static void StartUp();
 
 		/**	Unregisters internal callbacks. Must be called on scripting system shutdown. */
-		static void shutDown();
+		static void ShutDown();
 	private:
 		ScriptDebug(MonoObject* instance);
 
 		/**	Triggered when a new entry is added to the debug log. */
-		static void onLogEntryAdded(const LogEntry& entry);
+		static void OnLogEntryAdded(const LogEntry& entry);
 
 		static HEvent mOnLogEntryAddedConn;
 
@@ -40,7 +40,7 @@ namespace bs
 		static void internal_clear(LogVerbosity verbosity, UINT32 category);
 		static MonoArray* internal_getMessages();
 
-		typedef void(BS_THUNKCALL *OnAddedThunkDef) (MonoString*, UINT32, UINT32, MonoException**);
+		typedef Void(BS_THUNKCALL *OnAddedThunkDef) (MonoString*, UINT32, UINT32, MonoException**);
 
 		static OnAddedThunkDef onAddedThunk;
 	};

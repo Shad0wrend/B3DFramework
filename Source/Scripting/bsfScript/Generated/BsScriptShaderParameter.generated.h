@@ -24,9 +24,9 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "ShaderParameter")
 
 		static MonoObject* box(const __ShaderParameterInterop& value);
-		static __ShaderParameterInterop unbox(MonoObject* value);
-		static ShaderParameter fromInterop(const __ShaderParameterInterop& value);
-		static __ShaderParameterInterop toInterop(const ShaderParameter& value);
+		static __ShaderParameterInterop Unbox(MonoObject* value);
+		static ShaderParameter FromInterop(const __ShaderParameterInterop& value);
+		static __ShaderParameterInterop ToInterop(const ShaderParameter& value);
 
 	private:
 		ScriptShaderParameter(MonoObject* managedInstance);

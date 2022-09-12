@@ -71,46 +71,46 @@ namespace bs
 		 *
 		 * This will run infinitely until stopMainLoop is called (usually from another thread or internally).
 		 */
-		void runMainLoop();
+		void RunMainLoop();
 
 		/**	Stops the (infinite) main loop from running. The loop will complete its current cycle before stopping. */
-		void stopMainLoop();
+		void StopMainLoop();
 
-		bool isMainLoopRunning() const { return mRunMainLoop; }
+		bool IsMainLoopRunning() const { return mRunMainLoop; }
 
 		/** Changes the maximum FPS the application is allowed to run in. Zero means unlimited. */
-		void setFPSLimit(UINT32 limit);
+		void SetFPSLimit(UINT32 limit);
 
 		/**
 		 * Issues a request for the application to close. Application may choose to ignore the request depending on the
 		 * circumstances and the implementation.
 		 */
-		virtual void quitRequested();
+		virtual void QuitRequested();
 
 		/** Call before the first time runMainLoopFrame is called */
-		virtual void beginMainLoop();
+		virtual void BeginMainLoop();
 
 		/** Call after the last time runMainLoopFrame is called */
-		virtual void endMainLoop();
+		virtual void EndMainLoop();
 
 		/** Alternative to runMainLoop, processes one step at a time */
-		void runMainLoopFrame();
+		void RunMainLoopFrame();
 
 		/** Waits until previous frame is complete */
-		void waitUntilFrameFinished();
+		void WaitUntilFrameFinished();
 
 		/**	Returns the main window that was created on application start-up. */
-		SPtr<RenderWindow> getPrimaryWindow() const { return mPrimaryWindow; }
+		SPtr<RenderWindow> GetPrimaryWindow() const { return mPrimaryWindow; }
 
 		/**
 		 * Returns the id of the simulation thread.
 		 *
 		 * @note	Thread safe.
 		 */
-		ThreadId getSimThreadId() const { return mSimThreadId; }
+		ThreadId GetSimThreadId() const { return mSimThreadId; }
 
 		/**	Returns true if the application is running in an editor, false if standalone. */
-		virtual bool isEditor() const { return false; }
+		virtual bool IsEditor() const { return false; }
 
 		/**
 		 * Loads a plugin.
@@ -123,38 +123,38 @@ namespace bs
 		void* loadPlugin(const String& pluginName, DynLib** library = nullptr, void* passThrough = nullptr);
 
 		/**	Unloads a previously loaded plugin. */
-		void unloadPlugin(DynLib* library);
+		void UnloadPlugin(DynLib* library);
 
 	protected:
 		/** @copydoc Module::onStartUp */
-		void onStartUp() override;
+		void OnStartUp() override;
 
 		/**	Called for each iteration of the main loop. Called before any game objects or plugins are updated. */
-		virtual void preUpdate();
+		virtual void PreUpdate();
 
 		/**	Called for each iteration of the main loop. Called after all game objects and plugins are updated. */
-		virtual void postUpdate();
+		virtual void PostUpdate();
 
 		/** Called during the fixed update of the main loop. Called after preUpdate and before postUpdate. */
-		virtual void fixedUpdate();
+		virtual void FixedUpdate();
 
 		/**	Initializes the renderer specified during construction. Called during initialization. */
-		virtual void startUpRenderer();
+		virtual void StartUpRenderer();
 
 		/**	Returns a handler that is used for resolving shader include file paths. */
-		virtual SPtr<IShaderIncludeHandler> getShaderIncludeHandler() const;
+		virtual SPtr<IShaderIncludeHandler> GetShaderIncludeHandler() const;
 
 		/**	Called when the frame finishes rendering. */
-		void frameRenderingFinishedCallback();
+		void FrameRenderingFinishedCallback();
 
 		/**	Called by the core thread to begin profiling. */
-		void beginCoreProfiling();
+		void BeginCoreProfiling();
 
 		/**	Called by the core thread to end profiling. */
-		void endCoreProfiling();
+		void EndCoreProfiling();
 
 	protected:
-		typedef void(*UpdatePluginFunc)();
+		typedef Void(*UpdatePluginFunc)();
 
 		SPtr<RenderWindow> mPrimaryWindow;
 		START_UP_DESC mStartUpDesc;
@@ -177,7 +177,7 @@ namespace bs
 	};
 
 	/**	Provides easy access to CoreApplication. */
-	BS_CORE_EXPORT CoreApplication& gCoreApplication();
+	BS_CORE_EXPORT CoreApplication& GCoreApplication();
 
 	/** @} */
 }

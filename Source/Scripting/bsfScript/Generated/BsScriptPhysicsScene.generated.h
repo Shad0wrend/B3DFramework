@@ -22,7 +22,7 @@ namespace bs
 
 		ScriptPhysicsScene(MonoObject* managedInstance, const SPtr<PhysicsScene>& value);
 
-		SPtr<PhysicsScene> getInternal() const { return mInternal; }
+		SPtr<PhysicsScene> GetInternal() const { return mInternal; }
 		static MonoObject* create(const SPtr<PhysicsScene>& value);
 
 	private:

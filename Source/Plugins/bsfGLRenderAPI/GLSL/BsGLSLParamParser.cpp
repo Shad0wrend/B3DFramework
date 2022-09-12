@@ -12,7 +12,7 @@ namespace bs { namespace ct
 			if (name.substr(0, mName.length()) == mName)
 			{
 				String indexStr = name.substr(mName.length(), name.length());
-				return parseUINT32(indexStr, 0);
+				return ParseUINT32(indexStr, 0);
 			}
 		}
 
@@ -557,7 +557,7 @@ namespace bs { namespace ct
 
 				BS_CHECK_GL_ERROR();
 			}
-			else if(isRWBuffer)
+			else If(isRWBuffer)
 			{
 				GpuParamObjectDesc bufferParam;
 				bufferParam.name = paramName;

@@ -98,7 +98,7 @@ namespace bs
 		}
 
 		/** Swaps the contents of this matrix with another. */
-		void swap(Matrix3& other)
+		void Swap(Matrix3& other)
 		{
 			std::swap(m[0][0], other.m[0][0]);
 			std::swap(m[0][1], other.m[0][1]);
@@ -119,8 +119,8 @@ namespace bs
 			return (float*)m[row];
 		}
 
-		Vector3 getColumn(UINT32 col) const;
-		void setColumn(UINT32 col, const Vector3& vec);
+		Vector3 GetColumn(UINT32 col) const;
+		void SetColumn(UINT32 col, const Vector3& vec);
 
 		bool operator== (const Matrix3& rhs) const;
 		bool operator!= (const Matrix3& rhs) const;
@@ -134,7 +134,7 @@ namespace bs
 		friend Matrix3 operator* (float lhs, const Matrix3& rhs);
 
 		/** Transforms the given vector by this matrix and returns the newly transformed vector. */
-		Vector3 multiply(const Vector3& vec) const;
+		Vector3 Multiply(const Vector3& vec) const;
 
 		/** Returns a transpose of the matrix (switched columns and rows). */
 		Matrix3 transpose () const;
@@ -147,7 +147,7 @@ namespace bs
 		 * 							Zero determinant means inverse doesn't exist.
 		 * @return					True if inverse exists, false otherwise.
 		 */
-		bool inverse(Matrix3& mat, float fTolerance = 1e-06f) const;
+		bool Inverse(Matrix3& mat, float fTolerance = 1e-06f) const;
 
 		/**
 		 * Calculates an inverse of the matrix if it exists.
@@ -157,10 +157,10 @@ namespace bs
 		 *
 		 * @return					Resulting matrix inverse if it exists, otherwise a zero matrix.
 		 */
-		Matrix3 inverse(float fTolerance = 1e-06f) const;
+		Matrix3 Inverse(float fTolerance = 1e-06f) const;
 
 		/** Calculates the matrix determinant. */
-		float determinant() const;
+		float Determinant() const;
 
 		/**
 		 * Decompose a Matrix3 to rotation and scale.
@@ -169,7 +169,7 @@ namespace bs
 		 * Matrix must consist only of rotation and uniform scale transformations, otherwise accurate results are not
 		 * guaranteed. Applying non-uniform scale guarantees rotation portion will not be accurate.
 		 */
-		void decomposition(Quaternion& rotation, Vector3& scale) const;
+		void Decomposition(Quaternion& rotation, Vector3& scale) const;
 
 		/**
 		 * Decomposes the matrix into various useful values.
@@ -180,7 +180,7 @@ namespace bs
 		 * @param[out]	matR	Unitary matrix. Columns form orthonormal bases. If your matrix is affine and
 		 * 						doesn't use non-uniform scaling this matrix will be the rotation part of the matrix.
 		 */
-		void singularValueDecomposition(Matrix3& matL, Vector3& matS, Matrix3& matR) const;
+		void SingularValueDecomposition(Matrix3& matL, Vector3& matS, Matrix3& matR) const;
 
 		/**
 		 * Decomposes the matrix into a set of values.
@@ -193,30 +193,30 @@ namespace bs
 		void QDUDecomposition(Matrix3& matQ, Vector3& vecD, Vector3& vecU) const;
 
 		/** Gram-Schmidt orthonormalization (applied to columns of rotation matrix) */
-		void orthonormalize();
+		void Orthonormalize();
 
 		/**
 		 * Converts an orthonormal matrix to axis angle representation.
 		 *
 		 * @note	Matrix must be orthonormal.
 		 */
-		void toAxisAngle(Vector3& axis, Radian& angle) const;
+		void ToAxisAngle(Vector3& axis, Radian& angle) const;
 
 		/** Creates a rotation matrix from an axis angle representation. */
-		void fromAxisAngle(const Vector3& axis, const Radian& angle);
+		void FromAxisAngle(const Vector3& axis, const Radian& angle);
 
 		/**
 		 * Converts an orthonormal matrix to quaternion representation.
 		 *
 		 * @note	Matrix must be orthonormal.
 		 */
-		void toQuaternion(Quaternion& quat) const;
+		void ToQuaternion(Quaternion& quat) const;
 
 		/** Creates a rotation matrix from a quaternion representation. */
-		void fromQuaternion(const Quaternion& quat);
+		void FromQuaternion(const Quaternion& quat);
 
 		/** Creates a matrix from a three axes. */
-		void fromAxes(const Vector3& xAxis, const Vector3& yAxis, const Vector3& zAxis);
+		void FromAxes(const Vector3& xAxis, const Vector3& yAxis, const Vector3& zAxis);
 
 		/**
 		 * Converts an orthonormal matrix to euler angle (pitch/yaw/roll) representation.
@@ -228,7 +228,7 @@ namespace bs
 		 *
 		 * @note	Matrix must be orthonormal.
 		 */
-		bool toEulerAngles(Radian& xAngle, Radian& yAngle, Radian& zAngle) const;
+		bool ToEulerAngles(Radian& xAngle, Radian& yAngle, Radian& zAngle) const;
 
 		/**
 		 * Creates a rotation matrix from the provided Pitch/Yaw/Roll angles.
@@ -241,7 +241,7 @@ namespace bs
 		 * 			Since different values will be produced depending in which order are the rotations applied, this method assumes
 		 * 			they are applied in YXZ order. If you need a specific order, use the overloaded "fromEulerAngles" method instead.
 		 */
-		void fromEulerAngles(const Radian& xAngle, const Radian& yAngle, const Radian& zAngle);
+		void FromEulerAngles(const Radian& xAngle, const Radian& yAngle, const Radian& zAngle);
 
 		/**
 		 * Creates a rotation matrix from the provided Pitch/Yaw/Roll angles.
@@ -254,7 +254,7 @@ namespace bs
 		 *
 		 * @note	Matrix must be orthonormal.
 		 */
-		void fromEulerAngles(const Radian& xAngle, const Radian& yAngle, const Radian& zAngle, EulerAngleOrder order);
+		void FromEulerAngles(const Radian& xAngle, const Radian& yAngle, const Radian& zAngle, EulerAngleOrder order);
 
 		/**
 		 * Eigensolver, matrix must be symmetric.
@@ -264,7 +264,7 @@ namespace bs
 		 * Eigenvalue is that magnitude. In other words you will get the same result whether you multiply the vector by the
 		 * matrix or by its eigenvalue.
 		 */
-		void eigenSolveSymmetric(float eigenValues[3], Vector3 eigenVectors[3]) const;
+		void EigenSolveSymmetric(float eigenValues[3], Vector3 eigenVectors[3]) const;
 
 		static constexpr const float EPSILON = 1e-06f;
 		static const Matrix3 ZERO;

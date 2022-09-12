@@ -25,7 +25,7 @@ namespace bs { namespace ct
 
 	protected:
 		/** @copydoc IndexBuffer::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 	private:
 		GpuDeviceFlags mDeviceMask;

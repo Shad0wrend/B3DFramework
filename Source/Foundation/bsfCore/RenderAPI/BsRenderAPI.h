@@ -38,70 +38,70 @@ namespace bs
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		static void setGpuParams(const SPtr<GpuParams>& gpuParams);
+		static void SetGpuParams(const SPtr<GpuParams>& gpuParams);
 
 		/**
 		 * @see ct::RenderAPI::setGraphicsPipeline()
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		static void setGraphicsPipeline(const SPtr<GraphicsPipelineState>& pipelineState);
+		static void SetGraphicsPipeline(const SPtr<GraphicsPipelineState>& pipelineState);
 
 		/**
 		 * @see ct::RenderAPI::setComputePipeline()
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		static void setComputePipeline(const SPtr<ComputePipelineState>& pipelineState);
+		static void SetComputePipeline(const SPtr<ComputePipelineState>& pipelineState);
 
 		/**
 		 * @see ct::RenderAPI::setVertexBuffers()
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		static void setVertexBuffers(UINT32 index, const Vector<SPtr<VertexBuffer>>& buffers);
+		static void SetVertexBuffers(UINT32 index, const Vector<SPtr<VertexBuffer>>& buffers);
 
 		/**
 		 * @see ct::RenderAPI::setIndexBuffer()
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		static void setIndexBuffer(const SPtr<IndexBuffer>& buffer);
+		static void SetIndexBuffer(const SPtr<IndexBuffer>& buffer);
 
 		/**
 		 * @see ct::RenderAPI::setVertexDeclaration()
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		static void setVertexDeclaration(const SPtr<VertexDeclaration>& vertexDeclaration);
+		static void SetVertexDeclaration(const SPtr<VertexDeclaration>& vertexDeclaration);
 
 		/**
 		 * @see ct::RenderAPI::setViewport()
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		static void setViewport(const Rect2& area);
+		static void SetViewport(const Rect2& area);
 
 		/**
 		 * @see ct::RenderAPI::setStencilRef()
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		static void setStencilRef(UINT32 value);
+		static void SetStencilRef(UINT32 value);
 
 		/**
 		 * @see ct::RenderAPI::setDrawOperation()
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		static void setDrawOperation(DrawOperationType op);
+		static void SetDrawOperation(DrawOperationType op);
 
 		/**
 		 * @see ct::RenderAPI::setScissorRect()
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		static void setScissorRect(UINT32 left = 0, UINT32 top = 0, UINT32 right = 800, UINT32 bottom = 600);
+		static void SetScissorRect(UINT32 left = 0, UINT32 top = 0, UINT32 right = 800, UINT32 bottom = 600);
 
 		/**
 		 * @see ct::RenderAPI::setRenderTarget()
@@ -132,14 +132,14 @@ namespace bs
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		static void swapBuffers(const SPtr<RenderTarget>& target);
+		static void SwapBuffers(const SPtr<RenderTarget>& target);
 
 		/**
 		 * @see ct::RenderAPI::draw()
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		static void draw(UINT32 vertexOffset, UINT32 vertexCount, UINT32 instanceCount = 0);
+		static void Draw(UINT32 vertexOffset, UINT32 vertexCount, UINT32 instanceCount = 0);
 
 		/**
 		 * @see ct::RenderAPI::drawIndexed()
@@ -154,13 +154,13 @@ namespace bs
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		static void dispatchCompute(UINT32 numGroupsX, UINT32 numGroupsY = 1, UINT32 numGroupsZ = 1);
+		static void DispatchCompute(UINT32 numGroupsX, UINT32 numGroupsY = 1, UINT32 numGroupsZ = 1);
 
 		/** @copydoc ct::RenderAPI::getVideoModeInfo */
-		static const VideoModeInfo& getVideoModeInfo();
+		static const VideoModeInfo& GetVideoModeInfo();
 
 		/** @copydoc ct::RenderAPI::convertProjectionMatrix */
-		static void convertProjectionMatrix(const Matrix4& matrix, Matrix4& dest);
+		static void ConvertProjectionMatrix(const Matrix4& matrix, Matrix4& dest);
 	};
 
 	/** @} */
@@ -195,7 +195,7 @@ namespace bs
 		 *
 		 * @note	Thread safe.
 		 */
-		virtual const StringID& getName() const = 0;
+		virtual const StringID& GetName() const = 0;
 
 		/**
 		 * Applies a set of parameters that control execution of all currently bound GPU programs. These are the uniforms
@@ -237,7 +237,7 @@ namespace bs
 		 *								is executed immediately. Otherwise it is executed when executeCommands() is called.
 		 *								Buffer must support graphics operations.
 		 */
-		virtual void setViewport(const Rect2& area, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
+		virtual void SetViewport(const Rect2& area, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
 
 		/**
 		 * Allows you to set up a region in which rendering can take place. Coordinates are in pixels. No rendering will be
@@ -262,7 +262,7 @@ namespace bs
 		 *								is executed immediately. Otherwise it is executed when executeCommands() is called.
 		 *								Buffer must support graphics operations.
 		 */
-		virtual void setStencilRef(UINT32 value, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
+		virtual void SetStencilRef(UINT32 value, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
 
 		/**
 		 * Sets the provided vertex buffers starting at the specified source index.	Set buffer to nullptr to clear the
@@ -367,7 +367,7 @@ namespace bs
 		 *							related to the provided render target, you can exclude them from the sync mask for
 		 *							potentially better performance. You can use CommandSyncMask to generate a valid sync mask.
 		 */
-		virtual void swapBuffers(const SPtr<RenderTarget>& target, UINT32 syncMask = 0xFFFFFFFF) = 0;
+		virtual void SwapBuffers(const SPtr<RenderTarget>& target, UINT32 syncMask = 0xFFFFFFFF) = 0;
 
 		/**
 		 * Change the render target into which we want to draw.
@@ -427,7 +427,7 @@ namespace bs
 			UINT16 stencil = 0, UINT8 targetMask = 0xFF, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
 
 		/** Appends all commands from the provided secondary command buffer into the primary command buffer. */
-		virtual void addCommands(const SPtr<CommandBuffer>& commandBuffer, const SPtr<CommandBuffer>& secondary) = 0;
+		virtual void AddCommands(const SPtr<CommandBuffer>& commandBuffer, const SPtr<CommandBuffer>& secondary) = 0;
 
 		/**
 		 * Executes all commands in the provided command buffer. Command buffer cannot be secondary.
@@ -445,13 +445,13 @@ namespace bs
 		 *
 		 * @note	Core thread only.
 		 */
-		virtual void submitCommandBuffer(const SPtr<CommandBuffer>& commandBuffer, UINT32 syncMask = 0xFFFFFFFF) = 0;
+		virtual void SubmitCommandBuffer(const SPtr<CommandBuffer>& commandBuffer, UINT32 syncMask = 0xFFFFFFFF) = 0;
 
 		/**
 		 * Returns the currently active main command buffer instance. All commands queues without a user-provided command
 		 * buffer will be queued on this command buffer. The command buffer instance will change after it has been submitted.
 		 */
-		virtual SPtr<CommandBuffer> getMainCommandBuffer() const = 0;
+		virtual SPtr<CommandBuffer> GetMainCommandBuffer() const = 0;
 		
 		/**
 		 * Gets the capabilities of a specific GPU.
@@ -460,17 +460,17 @@ namespace bs
 		 *
 		 * @note	Thread safe.
 		 */
-		const RenderAPICapabilities& getCapabilities(UINT32 deviceIdx) const;
+		const RenderAPICapabilities& GetCapabilities(UINT32 deviceIdx) const;
 
 		/** Returns the number of devices supported by this render API. */
-		UINT32 getNumDevices() const { return mNumDevices; }
+		UINT32 GetNumDevices() const { return mNumDevices; }
 
 		/**
 		 * Returns information about available output devices and their video modes.
 		 *
 		 * @note	Thread safe.
 		 */
-		const VideoModeInfo& getVideoModeInfo() const { return *mVideoModeInfo; }
+		const VideoModeInfo& GetVideoModeInfo() const { return *mVideoModeInfo; }
 
 		/************************************************************************/
 		/* 								UTILITY METHODS                    		*/
@@ -481,7 +481,7 @@ namespace bs
 		 *
 		 * @note	Thread safe.
 		 */
-		virtual void convertProjectionMatrix(const Matrix4& matrix, Matrix4& dest) = 0;
+		virtual void ConvertProjectionMatrix(const Matrix4& matrix, Matrix4& dest) = 0;
 
 		/**
 		 * Generates a parameter block description and calculates per-parameter offsets for the provided gpu data
@@ -495,7 +495,7 @@ namespace bs
 		 * @return				Descriptor for the parameter block holding the provided parameters as laid out by the
 		 *						default render API layout.
 		 */
-		virtual GpuParamBlockDesc generateParamBlockDesc(const String& name, Vector<GpuParamDataDesc>& params) = 0;
+		virtual GpuParamBlockDesc GenerateParamBlockDesc(const String& name, Vector<GpuParamDataDesc>& params) = 0;
 
 		/************************************************************************/
 		/* 							INTERNAL METHODS				        	*/
@@ -506,29 +506,29 @@ namespace bs
 		 *
 		 * @note Sim thread only.
 		 */
-		SPtr<bs::RenderWindow> initialize(const RENDER_WINDOW_DESC& primaryWindowDesc);
+		SPtr<bs::RenderWindow> Initialize(const RENDER_WINDOW_DESC& primaryWindowDesc);
 
 		/** Initializes the render API system. Called before the primary render window is created. */
-		virtual void initialize();
+		virtual void Initialize();
 
 		/**
 		 * Performs (optional) secondary initialization of the render API system. Called after the render window is
 		 * created.
 		 */
-		virtual void initializeWithWindow(const SPtr<RenderWindow>& primaryWindow);
+		virtual void InitializeWithWindow(const SPtr<RenderWindow>& primaryWindow);
 
 		/**
 		 * Shuts down the render API system and cleans up all resources.
 		 *
 		 * @note	Sim thread.
 		 */
-		void destroy();
+		void Destroy();
 
 		/** Performs render API system shutdown on the core thread. */
-		virtual void destroyCore();
+		virtual void DestroyCore();
 
 		/** Converts the number of vertices to number of primitives based on the specified draw operation. */
-		UINT32 vertexCountToPrimCount(DrawOperationType type, UINT32 elementCount);
+		UINT32 VertexCountToPrimCount(DrawOperationType type, UINT32 elementCount);
 
 		/************************************************************************/
 		/* 								INTERNAL DATA					       	*/
@@ -545,7 +545,7 @@ namespace bs
 	};
 
 	/** Shorthand for RenderAPI::getCapabilities(). */
-	inline const RenderAPICapabilities& gCaps(UINT32 deviceIdx = 0)
+	inline const RenderAPICapabilities& GCaps(UINT32 deviceIdx = 0)
 	{
 		return RenderAPI::instance().getCapabilities(deviceIdx);
 	}

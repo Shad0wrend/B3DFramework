@@ -50,17 +50,17 @@ namespace bs
 
 	SPtr<RenderTexture> RenderTextureEx::create(const HTexture& colorSurface)
 	{
-		return create(Vector<HTexture>{ colorSurface }, HTexture());
+		return Create(Vector<HTexture>{ colorSurface }, HTexture());
 	}
 
 	SPtr<RenderTexture> RenderTextureEx::create(const HTexture& colorSurface, const HTexture& depthStencilSurface)
 	{
-		return create(Vector<HTexture>{ colorSurface }, depthStencilSurface);
+		return Create(Vector<HTexture>{ colorSurface }, depthStencilSurface);
 	}
 
 	SPtr<RenderTexture> RenderTextureEx::create(const Vector<HTexture>& colorSurface)
 	{
-		return create(Vector<HTexture>{ colorSurface }, HTexture());
+		return Create(Vector<HTexture>{ colorSurface }, HTexture());
 	}
 		
 	SPtr<RenderTexture> RenderTextureEx::create(const Vector<HTexture>& colorSurfaces, const HTexture& depthStencilSurface)

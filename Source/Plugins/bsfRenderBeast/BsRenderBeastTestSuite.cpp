@@ -12,7 +12,7 @@ namespace bs
 		RenderBeastTestSuite();
 
 	private:
-		void testTextureRowAllocator();
+		void TestTextureRowAllocator();
 	};
 
 	RenderBeastTestSuite::RenderBeastTestSuite()

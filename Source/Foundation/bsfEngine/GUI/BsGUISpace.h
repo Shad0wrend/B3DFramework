@@ -22,16 +22,16 @@ namespace bs
 		~GUIFixedSpace();
 
 		/**	Returns the size of the space in pixels. */
-		UINT32 getSize() const { return mSize; }
+		UINT32 GetSize() const { return mSize; }
 
 		/**	Changes the size of the space to the specified value, in pixels. */
-		void setSize(UINT32 size) { if (mSize != size) { mSize = size; _markLayoutAsDirty(); } }
+		void SetSize(UINT32 size) { if (mSize != size) { mSize = size; _markLayoutAsDirty(); } }
 
 		/**	Creates a new fixed space GUI element. */
 		static GUIFixedSpace* create(UINT32 size);
 
 		/**	Destroys the space and removes it from its parent. */
-		static void destroy(GUIFixedSpace* space);
+		static void Destroy(GUIFixedSpace* space);
 
 	public: // ***** INTERNAL ******
 		/** @name Internal
@@ -79,7 +79,7 @@ namespace bs
 		static GUIFlexibleSpace* create();
 
 		/**	Destroys the space and removes it from its parent. */
-		static void destroy(GUIFlexibleSpace* space);
+		static void Destroy(GUIFlexibleSpace* space);
 
 	public: // ***** INTERNAL ******
 		/** @name Internal

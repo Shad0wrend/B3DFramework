@@ -21,70 +21,70 @@ namespace bs { namespace ct
 			TextureType texType, int usage, bool optimalTiling, bool hwGamma);
 
 		/** Converts between framework's and Vulkan pixel format. */
-		static VkFormat getPixelFormat(PixelFormat format, bool sRGB = false);
+		static VkFormat GetPixelFormat(PixelFormat format, bool sRGB = false);
 
 		/** Converts between framework's and Vulkan buffer element format. */
-		static VkFormat getBufferFormat(GpuBufferFormat format);
+		static VkFormat GetBufferFormat(GpuBufferFormat format);
 
 		/** Converts between framework's and Vulkan vertex element types. */
-		static VkFormat getVertexType(VertexElementType type);
+		static VkFormat GetVertexType(VertexElementType type);
 
 		/**	Converts between framework's and Vulkan texture addressing mode. */
-		static VkSamplerAddressMode getAddressingMode(TextureAddressingMode mode);
+		static VkSamplerAddressMode GetAddressingMode(TextureAddressingMode mode);
 
 		/**
 		 * Attempts to map the provided color to one of the built-in border colors. Maps to black if no better match
 		 * is found.
 		 */
-		static VkBorderColor getBorderColor(const Color& color);
+		static VkBorderColor GetBorderColor(const Color& color);
 
 		/**	Converts between framework's and Vulkan blend factor. */
-		static VkBlendFactor getBlendFactor(BlendFactor factor);
+		static VkBlendFactor GetBlendFactor(BlendFactor factor);
 
 		/**	Converts between framework's and Vulkan blend operation. */
-		static VkBlendOp getBlendOp(BlendOperation op);
+		static VkBlendOp GetBlendOp(BlendOperation op);
 
 		/**	Converts between framework's and Vulkan comparison operation. */
-		static VkCompareOp getCompareOp(CompareFunction op);
+		static VkCompareOp GetCompareOp(CompareFunction op);
 
 		/**	Converts between framework's and Vulkan cull mode. */
-		static VkCullModeFlagBits getCullMode(CullingMode mode);
+		static VkCullModeFlagBits GetCullMode(CullingMode mode);
 
 		/**	Converts between framework's and Vulkan polygon mode. */
-		static VkPolygonMode getPolygonMode(PolygonMode mode);
+		static VkPolygonMode GetPolygonMode(PolygonMode mode);
 
 		/**	Converts between framework's and Vulkan stencil op. */
-		static VkStencilOp getStencilOp(StencilOperation op);
+		static VkStencilOp GetStencilOp(StencilOperation op);
 
 		/**	Converts between framework's and Vulkan index type. */
-		static VkIndexType getIndexType(IndexType op);
+		static VkIndexType GetIndexType(IndexType op);
 
 		/**	Converts between framework's and Vulkan draw operation (i.e. primitive topology). */
-		static VkPrimitiveTopology getDrawOp(DrawOperationType op);
+		static VkPrimitiveTopology GetDrawOp(DrawOperationType op);
 
 		/**	Converts between framework's and Vulkan texture filtering modes. */
-		static VkFilter getFilter(FilterOptions filter);
+		static VkFilter GetFilter(FilterOptions filter);
 
 		/**	Converts between framework's and Vulkan texture filtering modes. */
-		static VkSamplerMipmapMode getMipFilter(FilterOptions filter);
+		static VkSamplerMipmapMode GetMipFilter(FilterOptions filter);
 
 		/** Gets Vulkan flags representing the number of samples in an image. Sample count must be a power of 2. */
-		static VkSampleCountFlagBits getSampleFlags(UINT32 numSamples);
+		static VkSampleCountFlagBits GetSampleFlags(UINT32 numSamples);
 
 		/** Gets Vulkan flags representing a certain shader stage. */
-		static VkShaderStageFlagBits getShaderStage(GpuProgramType type);
+		static VkShaderStageFlagBits GetShaderStage(GpuProgramType type);
 
 		/** Converts a set of shader stage flags into a pipeline stage flags set containing the relevant shader stages. */
-		static VkPipelineStageFlags shaderToPipelineStage(VkShaderStageFlags shaderStageFlags);
+		static VkPipelineStageFlags ShaderToPipelineStage(VkShaderStageFlags shaderStageFlags);
 
 		/**
 		 * Populates the provided array with Vulkan devices that correspond to provided flags. Sets null in unused slots.
 		 * Each device is placed at its own index in the output array.
 		 */
-		static void getDevices(const VulkanRenderAPI& rapi, GpuDeviceFlags flags, VulkanDevice* (&devices)[BS_MAX_DEVICES]);
+		static void GetDevices(const VulkanRenderAPI& rapi, GpuDeviceFlags flags, VulkanDevice* (&devices)[BS_MAX_DEVICES]);
 
 		/** Checks is a flag for a particular device enabled. */
-		static bool isDeviceIdxSet(const VulkanRenderAPI& rapi, UINT32 idx, GpuDeviceFlags flags);
+		static bool IsDeviceIdxSet(const VulkanRenderAPI& rapi, UINT32 idx, GpuDeviceFlags flags);
 
 		/**
 		 * Subdivides an image subresource range by cutting it with another range. If the ranges don't overlap, or the
@@ -99,7 +99,7 @@ namespace bs { namespace ct
 							 std::array<VkImageSubresourceRange, 5>& output, UINT32& numAreas);
 
 		/** Checks if the two image subresource ranges have any overlapping subresources. */
-		static bool rangeOverlaps(const VkImageSubresourceRange& a, const VkImageSubresourceRange& b);
+		static bool RangeOverlaps(const VkImageSubresourceRange& a, const VkImageSubresourceRange& b);
 
 		/**
 		 * Calculates the size and alignment of a single element within a shader interface block using the std140 layout.
@@ -111,7 +111,7 @@ namespace bs { namespace ct
 		 *								alignment. In multiples of 4 bytes.
 		 * @return						Size of the element, in multiples of 4 bytes.
 		 */
-		static UINT32 calcInterfaceBlockElementSizeAndOffset(GpuParamDataType type, UINT32 arraySize, UINT32& offset);
+		static UINT32 CalcInterfaceBlockElementSizeAndOffset(GpuParamDataType type, UINT32 arraySize, UINT32& offset);
 	};
 
 	/** @} */

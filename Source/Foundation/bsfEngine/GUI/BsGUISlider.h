@@ -17,56 +17,56 @@ namespace bs
 	{
 	public:
 		/**	Name of the style for the handle button used by the slider. */
-		static const String& getHandleStyleType();
+		static const String& GetHandleStyleType();
 
 		/**	Name of the style for the background image used by the slider. */
-		static const String& getBackgroundStyleType();
+		static const String& GetBackgroundStyleType();
 
 		/**	Name of the style for the background fill image used by the slider. */
-		static const String& getFillStyleType();
+		static const String& GetFillStyleType();
 
 		/**
 		 * Moves the slider handle the the specified position in the handle area.
 		 *
 		 * @param[in]	pct	Position to move the handle to, in percent ranging [0.0f, 1.0f]
 		 */
-		void setPercent(float pct);
+		void SetPercent(float pct);
 
 		/**	Gets the current position of the slider handle, in percent ranging [0.0f, 1.0f]. */
-		float getPercent() const;
+		float GetPercent() const;
 
 		/**
 		 * Gets the current value of the slider. This is the slider handle position percentage scaled within the current
 		 * minimum and maximum range, rounded up to nearest step increment.
 		 */
-		float getValue() const;
+		float GetValue() const;
 
 		/**	Sets a new value of the slider. This value should be within minimum and maximum range values. */
-		void setValue(float value);
+		void SetValue(float value);
 
 		/**
 		 * Sets a minimum and maximum allow values in the input field. Set to large negative/positive values if you don't
 		 * require clamping.
 		 */
-		void setRange(float min, float max);
+		void SetRange(float min, float max);
 
 		/** Returns the minimum value of the slider */
-		float getRangeMinimum() const;
+		float GetRangeMinimum() const;
 
 		/** Returns the maximum value of the slider */
-		float getRangeMaximum() const;
+		float GetRangeMaximum() const;
 
 		/**
 		 * Sets a step that defines the minimal increment the value can be increased/decreased by. Set to zero to have no
 		 * step.
 		 */
-		void setStep(float step);
+		void SetStep(float step);
 
 		/** Gets the minimum percentual variation of the handle position */
-		float getStep() const;
+		float GetStep() const;
 
 		/** @copydoc GUIElement::setTint */
-		void setTint(const Color& color) override;
+		void SetTint(const Color& color) override;
 
 		/** Triggered when the user changes the value of the slider. */
 		Event<void(float percent)> onChanged;
@@ -88,10 +88,10 @@ namespace bs
 		void _updateLayoutInternal(const GUILayoutData& data) override;
 
 		/** @copydoc GUIElementContainer::styleUpdated */
-		void styleUpdated() override;
+		void StyleUpdated() override;
 
 		/**	Triggered when the slider handles moves. */
-		void onHandleMoved(float newPosition, float newSize);
+		void OnHandleMoved(float newPosition, float newSize);
 
 		/** @copydoc GUIElement::_commandEvent */
 		bool _commandEvent(const GUICommandEvent& ev) override;
@@ -118,7 +118,7 @@ namespace bs
 	{
 	public:
 		/** Returns type name of the GUI element used for finding GUI element styles.  */
-		static const String& getGUITypeName();
+		static const String& GetGUITypeName();
 
 		/**
 		 * Creates a new horizontal slider.
@@ -147,7 +147,7 @@ namespace bs
 	{
 	public:
 		/** Returns type name of the GUI element used for finding GUI element styles.  */
-		static const String& getGUITypeName();
+		static const String& GetGUITypeName();
 
 		/**
 		 * Creates a new vertical slider.

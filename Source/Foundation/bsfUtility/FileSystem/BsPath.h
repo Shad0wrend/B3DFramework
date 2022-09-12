@@ -86,10 +86,10 @@ namespace bs
 		const String& operator[] (UINT32 idx) const { return getDirectory(idx); }
 
 		/** Swap internal data with another Path object. */
-		void swap(Path& path);
+		void Swap(Path& path);
 
 		/**	Create a path from another Path object. */
-		void assign(const Path& path);
+		void Assign(const Path& path);
 
 		/**
 		 * Constructs a path by parsing the provided path string. Throws exception if provided path is not valid.
@@ -98,7 +98,7 @@ namespace bs
 		 * @param[in]	type	If set to default path will be parsed according to the rules of the platform the application
 		 *						is being compiled to. Otherwise it will be parsed according to provided type.
 		 */
-		void assign(const String& pathStr, PathType type = PathType::Default);
+		void Assign(const String& pathStr, PathType type = PathType::Default);
 
 		/**
 		 * Constructs a path by parsing the provided path null terminated string. Throws exception if provided path is not
@@ -109,7 +109,7 @@ namespace bs
 		 *							application is being compiled to. Otherwise it will be parsed according to provided
 		 *							type.
 		 */
-		void assign(const char* pathStr, PathType type = PathType::Default);
+		void Assign(const char* pathStr, PathType type = PathType::Default);
 
 		/**
 		 * Converts the path in a string according to platform path rules.
@@ -118,7 +118,7 @@ namespace bs
 		 *					being compiled to. Otherwise it will be parsed according to provided type.
 		 * @return			String representing the path using the UTF8 string encoding.
 		 */
-		String toString(PathType type = PathType::Default) const;
+		String ToString(PathType type = PathType::Default) const;
 
 		/**
 		 * Converts the path to either a string or a wstring, doing The Right Thing for the current platform.
@@ -126,133 +126,133 @@ namespace bs
 		 * This method is equivalent to toWString() on Windows, and to toString() elsewhere.
 		 */
 #if BS_PLATFORM == BS_PLATFORM_WIN32
-		WString toPlatformString() const;
+		WString ToPlatformString() const;
 #else
-		String toPlatformString() const { return toString(); }
+		String ToPlatformString() const { return toString(); }
 #endif
 
 		/** Checks is the path a directory (contains no file-name). */
-		bool isDirectory() const { return mFilename.empty(); }
+		bool IsDirectory() const { return mFilename.empty(); }
 
 		/** Checks does the path point to a file. */
-		bool isFile() const { return !mFilename.empty(); }
+		bool IsFile() const { return !mFilename.empty(); }
 
 		/** Checks is the contained path absolute. */
-		bool isAbsolute() const { return mIsAbsolute; }
+		bool IsAbsolute() const { return mIsAbsolute; }
 
 		/**
 		 * Returns parent path. If current path points to a file the parent path will be the folder where the file is located.
 		 * Or if it contains a directory the parent will be the parent directory. If no parent exists, same path will be
 		 * returned.
 		 */
-		Path getParent() const;
+		Path GetParent() const;
 
 		/**
 		 * Returns an absolute path by appending the current path to the provided base. If path was already absolute no
 		 * changes are made and copy of current path is returned. If base is not absolute, then the returned path will be
 		 * made relative to base, but will not be absolute.
 		 */
-		Path getAbsolute(const Path& base) const;
+		Path GetAbsolute(const Path& base) const;
 
 		/**
 		 * Returns a relative path by making the current path relative to the provided base. Base must be a part of the
 		 * current path. If base is not a part of the path no changes are made and a copy of the current path is returned.
 		 */
-		Path getRelative(const Path& base) const;
+		Path GetRelative(const Path& base) const;
 
 		/**
 		 * Returns the path as a path to directory. If path was pointing to a file, the filename is removed, otherwise no
 		 * changes are made and exact copy is returned.
 		 */
-		Path getDirectory() const;
+		Path GetDirectory() const;
 
 		/**
 		 * Makes the path the parent of the current path. If current path points to a file the parent path will be the
 		 * folder where the file is located. Or if it contains a directory the parent will be the parent directory. If no
 		 * parent exists, same path will be returned.
 		 */
-		Path& makeParent();
+		Path& MakeParent();
 
 		/**
 		 * Makes the current path absolute by appending it to base. If path was already absolute no changes are made and
 		 * copy of current path is returned. If base is not absolute, then the returned path will be made relative to base,
 		 * but will not be absolute.
 		 */
-		Path& makeAbsolute(const Path& base);
+		Path& MakeAbsolute(const Path& base);
 
 		/**
 		 * Makes the current path relative to the provided base. Base must be a part of the current path. If base is not
 		 * a part of the path no changes are made and a copy of the current path is returned.
 		 */
-		Path& makeRelative(const Path& base);
+		Path& MakeRelative(const Path& base);
 
 		/** Appends another path to the end of this path. */
-		Path& append(const Path& path);
+		Path& Append(const Path& path);
 
 		/**
 		 * Checks if the current path contains the provided path. Comparison is case insensitive and paths will be compared
 		 * as-is, without canonization.
 		 */
-		bool includes(const Path& child) const;
+		bool Includes(const Path& child) const;
 
 		/**
 		 * Compares two paths and returns true if they match. Comparison is case insensitive and paths will be compared
 		 * as-is, without canonization.
 		 */
-		bool equals(const Path& other) const;
+		bool Equals(const Path& other) const;
 
 		/** Change or set the filename in the path. */
-		void setFilename(const String& filename) { mFilename = filename; }
+		void SetFilename(const String& filename) { mFilename = filename; }
 
 		/**
 		 * Change or set the base name in the path. Base name changes the filename by changing its base to the provided
 		 * value but keeping extension intact.
 		 */
-		void setBasename(const String& basename);
+		void SetBasename(const String& basename);
 
 		/**
 		 * Change or set the extension of the filename in the path.
 		 *
 		 * @param[in]	extension	Extension with a leading ".".
 		 */
-		void setExtension(const String& extension);
+		void SetExtension(const String& extension);
 
 		/** Returns a filename with extension. */
-		const String& getFilename() const { return mFilename; }
+		const String& GetFilename() const { return mFilename; }
 
 		/**
 		 * Returns a filename in the path.
 		 *
 		 * @param[in]	extension	If true, returned filename will contain an extension.
 		 */
-		String getFilename(bool extension) const;
+		String GetFilename(bool extension) const;
 
 		/** Returns file extension with the leading ".". */
-		String getExtension() const;
+		String GetExtension() const;
 
 		/** Gets the number of directories in the path. */
-		UINT32 getNumDirectories() const { return (UINT32)mDirectories.size(); }
+		UINT32 GetNumDirectories() const { return (UINT32)mDirectories.size(); }
 
 		/** Gets a directory name with the specified index from the path. */
-		const String& getDirectory(UINT32 idx) const;
+		const String& GetDirectory(UINT32 idx) const;
 
 		/** Returns path device (for example drive, volume, etc.) if one exists in the path. */
-		const String& getDevice() const { return mDevice; }
+		const String& GetDevice() const { return mDevice; }
 
 		/** Returns path node (for example network name) if one exists in the path. */
-		const String& getNode() const { return mNode; }
+		const String& GetNode() const { return mNode; }
 
 		/**
 		 * Gets last element in the path, filename if it exists, otherwise the last directory. If no directories exist
 		 * returns device or node.
 		 */
-		const String& getTail() const;
+		const String& GetTail() const;
 
 		/** Clears the path to nothing. */
-		void clear();
+		void Clear();
 
 		/** Returns true if no path has been set. */
-		bool isEmpty() const { return mDirectories.empty() && mFilename.empty() && mDevice.empty() && mNode.empty(); }
+		bool IsEmpty() const { return mDirectories.empty() && mFilename.empty() && mDevice.empty() && mNode.empty(); }
 
 		/** Concatenates two paths. */
 		Path operator+ (const Path& rhs) const;
@@ -261,13 +261,13 @@ namespace bs
 		Path& operator+= (const Path& rhs);
 
 		/** Compares two path elements (filenames, directory names, etc.). */
-		static bool comparePathElem(const String& left, const String& right);
+		static bool ComparePathElem(const String& left, const String& right);
 
 		/** Combines two paths and returns the result. Right path should be relative. */
-		static Path combine(const Path& left, const Path& right);
+		static Path Combine(const Path& left, const Path& right);
 
 		/** Strips invalid characters from the provided string and replaces them with empty spaces. */
-		static void stripInvalid(String& path);
+		static void StripInvalid(String& path);
 
 		static const Path BLANK;
 	private:
@@ -280,11 +280,11 @@ namespace bs
 		 *							application is being compiled to. Otherwise it will be parsed according to provided
 		 *							type.
 		 */
-		void assign(const char* pathStr, UINT32 numChars, PathType type = PathType::Default);
+		void Assign(const char* pathStr, UINT32 numChars, PathType type = PathType::Default);
 
 		/** Parses a Windows path and stores the parsed data internally. Throws an exception if parsing fails. */
 		template<class T>
-		void parseWindows(const T* pathStr, UINT32 numChars)
+		void ParseWindows(const T* pathStr, UINT32 numChars)
 		{
 			clear();
 
@@ -363,7 +363,7 @@ namespace bs
 
 		/** Parses a Unix path and stores the parsed data internally. Throws an exception if parsing fails. */
 		template<class T>
-		void parseUnix(const T* pathStr, UINT32 numChars)
+		void ParseUnix(const T* pathStr, UINT32 numChars)
 		{
 			clear();
 
@@ -429,20 +429,20 @@ namespace bs
 			}
 		}
 
-		void setNode(const String& node) { mNode = node; }
-		void setDevice(const String& device) { mDevice = device; }
+		void SetNode(const String& node) { mNode = node; }
+		void SetDevice(const String& device) { mDevice = device; }
 
 		/** Build a Windows path string from internal path data. */
-		String buildWindows() const;
+		String BuildWindows() const;
 
 		/** Build a Unix path string from internal path data. */
-		String buildUnix() const;
+		String BuildUnix() const;
 
 		/** Add new directory to the end of the path. */
-		void pushDirectory(const String& dir);
+		void PushDirectory(const String& dir);
 
 		/** Helper method that throws invalid path exception. */
-		void throwInvalidPathException(const String& path) const;
+		void ThrowInvalidPathException(const String& path) const;
 	private:
 		friend struct RTTIPlainType<Path>; // For serialization
 		friend struct ::std::hash<bs::Path>;
@@ -465,7 +465,7 @@ namespace std
 	template<>
 	struct hash<bs::Path>
 	{
-		size_t operator()(const bs::Path& path) const
+		size_t Operator()(const bs::Path& path) const
 		{
 			size_t hash = 0;
 			bs::bs_hash_combine(hash, path.mFilename);

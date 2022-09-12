@@ -13,7 +13,7 @@ namespace bs
 	};
 
 	Mouse::Mouse(const String& name, Input* owner)
-		: mName(name), mOwner(owner)
+		: MName(name), mOwner(owner)
 	{
 		m = bs_new<Pimpl>();
 		m->hasInputFocus = true;
@@ -26,7 +26,7 @@ namespace bs
 
 	void Mouse::capture()
 	{
-		Lock lock(LinuxPlatform::eventLock);
+		Lock Lock(LinuxPlatform::eventLock);
 
 		if(m->hasInputFocus)
 		{

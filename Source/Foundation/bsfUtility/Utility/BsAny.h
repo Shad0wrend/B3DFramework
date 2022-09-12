@@ -64,7 +64,7 @@ namespace bs
 		}
 
 		/** Swaps the contents of this object with another. */
-		Any& swap(Any& rhs)
+		Any& Swap(Any& rhs)
 		{
 			std::swap(mData, rhs.mData);
 			return *this;
@@ -84,7 +84,7 @@ namespace bs
 		}
 
 		/** Returns true if no type is set. */
-		bool empty() const
+		bool Empty() const
 		{
 			return mData == nullptr;
 		}

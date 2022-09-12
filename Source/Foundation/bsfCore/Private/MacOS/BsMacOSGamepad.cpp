@@ -15,7 +15,7 @@ namespace bs
 	};
 
 	Gamepad::Gamepad(const String& name, const GamepadInfo& gamepadInfo, Input* owner)
-		: mName(name), mOwner(owner)
+		: MName(name), mOwner(owner)
 	{
 		m = bs_new<Pimpl>();
 		m->hid = gamepadInfo.hid;

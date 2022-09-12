@@ -18,13 +18,13 @@
 namespace bs
 {
 	template<class T>
-	bool isMeshValid(const T& mesh) { return false; }
+	bool IsMeshValid(const T& mesh) { return false; }
 
 	template<>
-	bool isMeshValid(const HMesh& mesh) { return mesh.isLoaded(); }
+	bool IsMeshValid(const HMesh& mesh) { return mesh.isLoaded(); }
 
 	template<>
-	bool isMeshValid(const SPtr<ct::Mesh>& mesh) { return mesh != nullptr; }
+	bool IsMeshValid(const SPtr<ct::Mesh>& mesh) { return mesh != nullptr; }
 
 	template<bool Core>
 	TRenderable<Core>::TRenderable()
@@ -188,9 +188,9 @@ namespace bs
 	{
 		if(mUseOverrideBounds)
 		{
-			Sphere sphere(mOverrideBounds.getCenter(), mOverrideBounds.getRadius());
+			Sphere Sphere(mOverrideBounds.getCenter(), mOverrideBounds.getRadius());
 
-			Bounds bounds(mOverrideBounds, sphere);
+			Bounds Bounds(mOverrideBounds, sphere);
 			bounds.transformAffine(mTfrmMatrix);
 
 			return bounds;
@@ -202,8 +202,8 @@ namespace bs
 		{
 			const Transform& tfrm = getTransform();
 
-			AABox box(tfrm.getPosition(), tfrm.getPosition());
-			Sphere sphere(tfrm.getPosition(), 0.0f);
+			AABox Box(tfrm.getPosition(), tfrm.getPosition());
+			Sphere Sphere(tfrm.getPosition(), 0.0f);
 
 			return Bounds(box, sphere);
 		}
@@ -349,7 +349,7 @@ namespace bs
 
 
 		UINT8* data = allocator->alloc(size);
-		Bitstream stream(data, size);
+		Bitstream Stream(data, size);
 
 		rtti_write(dirtyFlags, stream);
 		SceneActor::rttiEnumFields(RttiCoreSyncWriter(stream), (ActorDirtyFlags)dirtyFlags);
@@ -489,9 +489,9 @@ namespace bs
 	{
 		if (mUseOverrideBounds)
 		{
-			Sphere sphere(mOverrideBounds.getCenter(), mOverrideBounds.getRadius());
+			Sphere Sphere(mOverrideBounds.getCenter(), mOverrideBounds.getRadius());
 
-			Bounds bounds(mOverrideBounds, sphere);
+			Bounds Bounds(mOverrideBounds, sphere);
 			bounds.transformAffine(mTfrmMatrix);
 
 			return bounds;
@@ -503,8 +503,8 @@ namespace bs
 		{
 			const Transform& tfrm = getTransform();
 
-			AABox box(tfrm.getPosition(), tfrm.getPosition());
-			Sphere sphere(tfrm.getPosition(), 0.0f);
+			AABox Box(tfrm.getPosition(), tfrm.getPosition());
+			Sphere Sphere(tfrm.getPosition(), 0.0f);
 
 			return Bounds(box, sphere);
 		}
@@ -517,7 +517,7 @@ namespace bs
 		}
 	}
 
-	SPtr<GpuBuffer> createBoneMatrixBuffer(UINT32 numBones)
+	SPtr<GpuBuffer> CreateBoneMatrixBuffer(UINT32 numBones)
 	{
 		GPU_BUFFER_DESC desc;
 		desc.elementCount = numBones * 3;
@@ -659,7 +659,7 @@ namespace bs
 
 	void Renderable::syncToCore(const CoreSyncData& data)
 	{
-		Bitstream stream(data.getBuffer(), data.getBufferSize());
+		Bitstream Stream(data.getBuffer(), data.getBufferSize());
 
 		mMaterials.clear();
 
@@ -733,7 +733,7 @@ namespace bs
 				gRenderer()->notifyRenderableAdded(this);
 			}
 		}
-		else if((dirtyFlags & (UINT32)ActorDirtyFlag::Mobility) != 0)
+		else If((dirtyFlags & (UINT32)ActorDirtyFlag::Mobility) != 0)
 		{
 				gRenderer()->notifyRenderableRemoved(this);
 				gRenderer()->notifyRenderableAdded(this);

@@ -34,12 +34,12 @@ namespace bs { namespace ct {
 		if (msaa)
 		{
 			if (singleSampleMSAA)
-				return get(getVariation<true, true>());
+				return Get(getVariation<true, true>());
 			else
-				return get(getVariation<true, false>());
+				return Get(getVariation<true, false>());
 		}
 
-		return get(getVariation<false, false>());
+		return Get(getVariation<false, false>());
 	}
 
 	DeferredPointLightMat::DeferredPointLightMat()
@@ -66,24 +66,24 @@ namespace bs { namespace ct {
 			if (inside)
 			{
 				if (singleSampleMSAA)
-					return get(getVariation<true, true, true>());
+					return Get(getVariation<true, true, true>());
 
-				return get(getVariation<true, true, false>());
+				return Get(getVariation<true, true, false>());
 			}
 			else
 			{
 				if (singleSampleMSAA)
-					return get(getVariation<false, true, true>());
+					return Get(getVariation<false, true, true>());
 
-				return get(getVariation<false, true, false>());
+				return Get(getVariation<false, true, false>());
 			}
 		}
 		else
 		{
 			if (inside)
-				return get(getVariation<true, false, false>());
+				return Get(getVariation<true, false, false>());
 			else
-				return get(getVariation<false, false, false>());
+				return Get(getVariation<false, false, false>());
 		}
 	}
 
@@ -114,13 +114,13 @@ namespace bs { namespace ct {
 		if(msaa)
 		{
 			if (singleSampleMSAA)
-				return get(getVariation<true, true>());
+				return Get(getVariation<true, true>());
 
-			return get(getVariation<true, false>());
+			return Get(getVariation<true, false>());
 		}
 		else
 		{
-			return get(getVariation<false, false>());
+			return Get(getVariation<false, false>());
 		}
 	}
 
@@ -147,7 +147,7 @@ namespace bs { namespace ct {
 			gPerProbeParamDef.gExtents.set(mParamBuffer, probeData.boxExtents);
 		else
 		{
-			Vector3 extents(probeData.radius, probeData.radius, probeData.radius);
+			Vector3 Extents(probeData.radius, probeData.radius, probeData.radius);
 			gPerProbeParamDef.gExtents.set(mParamBuffer, extents);
 		}
 
@@ -168,24 +168,24 @@ namespace bs { namespace ct {
 			if (inside)
 			{
 				if (singleSampleMSAA)
-					return get(getVariation<true, true, true>());
+					return Get(getVariation<true, true, true>());
 
-				return get(getVariation<true, true, false>());
+				return Get(getVariation<true, true, false>());
 			}
 			else
 			{
 				if (singleSampleMSAA)
-					return get(getVariation<false, true, true>());
+					return Get(getVariation<false, true, true>());
 
-				return get(getVariation<false, true, false>());
+				return Get(getVariation<false, true, false>());
 			}
 		}
 		else
 		{
 			if (inside)
-				return get(getVariation<true, false, false>());
+				return Get(getVariation<true, false, false>());
 			else
-				return get(getVariation<false, false, false>());
+				return Get(getVariation<false, false, false>());
 		}
 	}
 
@@ -214,13 +214,13 @@ namespace bs { namespace ct {
 		if(msaa)
 		{
 			if (singleSampleMSAA)
-				return get(getVariation<true, true>());
+				return Get(getVariation<true, true>());
 
-			return get(getVariation<true, false>());
+			return Get(getVariation<true, false>());
 		}
 		else
 		{
-			return get(getVariation<false, false>());
+			return Get(getVariation<false, false>());
 		}
 	}
 
@@ -253,13 +253,13 @@ namespace bs { namespace ct {
 		if(msaa)
 		{
 			if (singleSampleMSAA)
-				return get(getVariation<true, true>());
+				return Get(getVariation<true, true>());
 
-			return get(getVariation<true, false>());
+			return Get(getVariation<true, false>());
 		}
 		else
 		{
-			return get(getVariation<false, false>());
+			return Get(getVariation<false, false>());
 		}
 	}
 
@@ -355,7 +355,7 @@ namespace bs { namespace ct {
 		else // Box
 		{
 			Vector3 extents = probeData.boxExtents + radiusBuffer;
-			AABox box(probeData.position - extents, probeData.position + extents);
+			AABox Box(probeData.position - extents, probeData.position + extents);
 
 			isInside = box.contains(viewProps.viewOrigin);
 			stencilMesh = RendererUtility::instance().getBoxStencil();

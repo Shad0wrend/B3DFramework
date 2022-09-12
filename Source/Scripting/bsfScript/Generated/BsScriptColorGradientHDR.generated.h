@@ -18,7 +18,7 @@ namespace bs
 
 		ScriptColorGradientHDR(MonoObject* managedInstance, const SPtr<ColorGradientHDR>& value);
 
-		SPtr<ColorGradientHDR> getInternal() const { return mInternal; }
+		SPtr<ColorGradientHDR> GetInternal() const { return mInternal; }
 		static MonoObject* create(const SPtr<ColorGradientHDR>& value);
 
 	private:

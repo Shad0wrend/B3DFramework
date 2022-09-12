@@ -34,7 +34,7 @@ namespace bs { namespace ct
 		GpuParticleClearMat();
 
 		/** Binds the material to the pipeline, along with the @p tileUVs buffer containing locations of tiles to clear. */
-		void bind(const SPtr<GpuBuffer>& tileUVs);
+		void Bind(const SPtr<GpuBuffer>& tileUVs);
 
 	private:
 		GpuParamBuffer mTileUVParam;
@@ -100,7 +100,7 @@ namespace bs { namespace ct
 
 		/** Helper method used for initializing variations of this material. */
 		template<UINT32 DEPTH_COLLISIONS>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -172,7 +172,7 @@ namespace bs { namespace ct
 		GpuParticleBoundsMat();
 
 		/** Binds the material to the pipeline along with the global input texture containing particle positions and times. */
-		void bind(const SPtr<Texture>& positionAndTime);
+		void Bind(const SPtr<Texture>& positionAndTime);
 
 		/**
 		 * Executes the material, calculating the bounds. Note that this function reads back from the GPU and should not
@@ -181,7 +181,7 @@ namespace bs { namespace ct
 		 * @param[in]	indices			Buffer containing offsets into the position texture for each particle.
 		 * @param[in]	numParticles	Number of particle in the provided indices buffer.
 		 */
-		AABox execute(const SPtr<GpuBuffer>& indices, UINT32 numParticles);
+		AABox Execute(const SPtr<GpuBuffer>& indices, UINT32 numParticles);
 
 	private:
 		GpuParamBuffer mParticleIndicesParam;
@@ -212,7 +212,7 @@ namespace bs { namespace ct
 		GpuParticleSortPrepareMat();
 
 		/** Binds the material to the pipeline along with the global input texture containing particle positions and times. */
-		void bind(const SPtr<Texture>& positionAndTime);
+		void Bind(const SPtr<Texture>& positionAndTime);
 
 		/**
 		 * Executes the material, generating sort data for a particular particle system and injecting it into the specified
@@ -909,7 +909,7 @@ namespace bs { namespace ct
 			gVectorFieldParamsDef.gFieldIntensity.set(m->vectorFieldParams, simSettings.vectorField.intensity);
 
 			const Vector3 rotationRate = simSettings.vectorField.rotationRate.evaluate(nrmTime, random) * time;
-			const Quaternion addedRotation(Degree(rotationRate.x), Degree(rotationRate.y), Degree(rotationRate.z));
+			const Quaternion AddedRotation(Degree(rotationRate.x), Degree(rotationRate.y), Degree(rotationRate.z));
 
 			const Vector3 offset = vfDesc.bounds.getMin() + simSettings.vectorField.offset;
 			const Quaternion rotation = simSettings.vectorField.rotation * addedRotation;
@@ -1031,12 +1031,12 @@ namespace bs { namespace ct
 		return m->resources;
 	}
 
-	SPtr<GpuParamBlockBuffer> createGpuParticleVertexInputBuffer()
+	SPtr<GpuParamBlockBuffer> CreateGpuParticleVertexInputBuffer()
 	{
 		SPtr<GpuParamBlockBuffer> inputBuffer = gGpuParticleTileVertexParamsDef.createBuffer();
 
 		// [0, 1] -> [-1, 1] and flip Y
-		Vector4 uvToNdc(2.0f, -2.0f, -1.0f, 1.0f);
+		Vector4 UvToNdc(2.0f, -2.0f, -1.0f, 1.0f);
 
 		const Conventions& rapiConventions = gCaps().conventions;
 
@@ -1191,12 +1191,12 @@ namespace bs { namespace ct
 		if(depthCollisions)
 		{
 			if(localSpace)
-				return get(getVariation<2>());
+				return Get(getVariation<2>());
 
-			return get(getVariation<1>());
+			return Get(getVariation<1>());
 		}
 
-		return get(getVariation<0>());
+		return Get(getVariation<0>());
 	}
 
 	GpuParticleBoundsMat::GpuParticleBoundsMat()

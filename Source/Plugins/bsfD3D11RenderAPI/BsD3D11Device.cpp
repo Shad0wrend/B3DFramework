@@ -6,7 +6,7 @@
 namespace bs { namespace ct
 {
 	D3D11Device::D3D11Device(ID3D11Device* device)
-		: mD3D11Device(device)
+		: MD3D11Device(device)
 	{
 		assert(device != nullptr);
 

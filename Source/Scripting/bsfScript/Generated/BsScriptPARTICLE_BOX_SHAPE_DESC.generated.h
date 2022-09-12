@@ -22,9 +22,9 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "ParticleBoxShapeOptions")
 
 		static MonoObject* box(const __PARTICLE_BOX_SHAPE_DESCInterop& value);
-		static __PARTICLE_BOX_SHAPE_DESCInterop unbox(MonoObject* value);
-		static PARTICLE_BOX_SHAPE_DESC fromInterop(const __PARTICLE_BOX_SHAPE_DESCInterop& value);
-		static __PARTICLE_BOX_SHAPE_DESCInterop toInterop(const PARTICLE_BOX_SHAPE_DESC& value);
+		static __PARTICLE_BOX_SHAPE_DESCInterop Unbox(MonoObject* value);
+		static PARTICLE_BOX_SHAPE_DESC FromInterop(const __PARTICLE_BOX_SHAPE_DESCInterop& value);
+		static __PARTICLE_BOX_SHAPE_DESCInterop ToInterop(const PARTICLE_BOX_SHAPE_DESC& value);
 
 	private:
 		ScriptPARTICLE_BOX_SHAPE_DESC(MonoObject* managedInstance);

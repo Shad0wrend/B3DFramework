@@ -19,7 +19,7 @@ namespace bs
 
 	GUIElement::GUIElement(const char* styleName, const GUIDimensions& dimensions, GUIElementOptions options)
 		: GUIElementBase(dimensions), mOptionFlags(options), mStyle(&GUISkin::DefaultStyle)
-		, mStyleName(styleName ? styleName : StringUtil::BLANK)
+		, MStyleName(styleName ? styleName : StringUtil::BLANK)
 	{
 		// Style is set to default here, and the proper one is assigned once GUI element
 		// is assigned to a parent (that's when the active GUI skin becomes known)
@@ -231,7 +231,7 @@ namespace bs
 		
 		// Transform into element space so we can clip it using the element clip rectangle
 		Vector2I offsetDiff = Vector2I(contentBounds.x - mLayoutData.area.x, contentBounds.y - mLayoutData.area.y);
-		Rect2I contentClipRect(offsetDiff.x, offsetDiff.y, contentBounds.width, contentBounds.height);
+		Rect2I ContentClipRect(offsetDiff.x, offsetDiff.y, contentBounds.width, contentBounds.height);
 		contentClipRect.clip(mLayoutData.getLocalClipRect());
 
 		// Transform into content sprite space

@@ -132,12 +132,12 @@ namespace bs
 
 	GUILabel* GUILabel::create(const HString& text, const String& styleName)
 	{
-		return create(GUIContent(text), styleName);
+		return Create(GUIContent(text), styleName);
 	}
 
 	GUILabel* GUILabel::create(const HString& text, const GUIOptions& options, const String& styleName)
 	{
-		return create(GUIContent(text), options, styleName);
+		return Create(GUIContent(text), options, styleName);
 	}
 
 	GUILabel* GUILabel::create(const GUIContent& content, const String& styleName)

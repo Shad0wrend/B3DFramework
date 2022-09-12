@@ -19,33 +19,33 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "Input")
 
 		/**	Registers internal callbacks. Must be called on scripting system load. */
-		static void startUp();
+		static void StartUp();
 
 		/**	Unregisters internal callbacks. Must be called on scripting system shutdown. */
-		static void shutDown();
+		static void ShutDown();
 	private:
 		ScriptInput(MonoObject* instance);
 
 		/**	Triggered when the specified button is pressed. */
-		static void onButtonDown(const ButtonEvent& ev);
+		static void OnButtonDown(const ButtonEvent& ev);
 
 		/**	Triggered when the specified button is released. */
-		static void onButtonUp(const ButtonEvent& ev);
+		static void OnButtonUp(const ButtonEvent& ev);
 
 		/**	Triggered when the specified character is entered. */
-		static void onCharInput(const TextInputEvent& ev);
+		static void OnCharInput(const TextInputEvent& ev);
 
 		/**	Triggered when the pointer is moved. */
-		static void onPointerMoved(const PointerEvent& ev);
+		static void OnPointerMoved(const PointerEvent& ev);
 
 		/**	Triggered when a pointer button is pressed. */
-		static void onPointerPressed(const PointerEvent& ev);
+		static void OnPointerPressed(const PointerEvent& ev);
 
 		/**	Triggered when a pointer button is released. */
-		static void onPointerReleased(const PointerEvent& ev);
+		static void OnPointerReleased(const PointerEvent& ev);
 
 		/**	Triggered when a pointer button is double-clicked. */
-		static void onPointerDoubleClick(const PointerEvent& ev);
+		static void OnPointerDoubleClick(const PointerEvent& ev);
 
 		static HEvent OnButtonPressedConn;
 		static HEvent OnButtonReleasedConn;
@@ -69,9 +69,9 @@ namespace bs
 		static void internal_getPointerPosition(Vector2I* position);
 		static void internal_getPointerDelta(Vector2I* position);
 
-		typedef void(BS_THUNKCALL *OnButtonEventThunkDef) (ButtonCode, UINT32, bool, MonoException**);
-		typedef void(BS_THUNKCALL *OnCharInputEventThunkDef) (UINT32, bool, MonoException**);
-		typedef void(BS_THUNKCALL *OnPointerEventThunkDef) (MonoObject*, MonoObject*, PointerEventButton,
+		typedef Void(BS_THUNKCALL *OnButtonEventThunkDef) (ButtonCode, UINT32, bool, MonoException**);
+		typedef Void(BS_THUNKCALL *OnCharInputEventThunkDef) (UINT32, bool, MonoException**);
+		typedef Void(BS_THUNKCALL *OnPointerEventThunkDef) (MonoObject*, MonoObject*, PointerEventButton,
 			bool, bool, bool, float, bool, MonoException**);
 
 		static OnButtonEventThunkDef OnButtonPressedThunk;

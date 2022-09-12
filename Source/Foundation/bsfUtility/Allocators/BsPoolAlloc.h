@@ -63,7 +63,7 @@ namespace bs
 			}
 
 			/** Deallocates the provided pointer. */
-			void dealloc(void* data)
+			void Dealloc(void* data)
 			{
 				UINT32* entryPtr = (UINT32*)data;
 				*entryPtr = freePtr;
@@ -88,7 +88,7 @@ namespace bs
 
 		~PoolAlloc()
 		{
-			ScopedLock<Lock> lock(mLockPolicy);
+			ScopedLock<Lock> Lock(mLockPolicy);
 
 			MemBlock* curBlock = mFreeBlock;
 			while (curBlock != nullptr)
@@ -103,7 +103,7 @@ namespace bs
 		/** Allocates enough memory for a single element in the pool. */
 		UINT8* alloc()
 		{
-			ScopedLock<Lock> lock(mLockPolicy);
+			ScopedLock<Lock> Lock(mLockPolicy);
 
 			if(mFreeBlock == nullptr || mFreeBlock->freeElems == 0)
 				allocBlock();
@@ -115,9 +115,9 @@ namespace bs
 		}
 
 		/** Deallocates an element from the pool. */
-		void free(void* data)
+		void Free(void* data)
 		{
-			ScopedLock<Lock> lock(mLockPolicy);
+			ScopedLock<Lock> Lock(mLockPolicy);
 
 			MemBlock* curBlock = mFreeBlock;
 			while(curBlock)
@@ -162,7 +162,7 @@ namespace bs
 
 		/** Destructs and deallocates a single pool element. */
 		template<class T>
-		void destruct(T* data)
+		void Destruct(T* data)
 		{
 			data->~T();
 			free(data);
@@ -213,7 +213,7 @@ namespace bs
 		}
 
 		/** Deallocates a block of memory. */
-		void deallocBlock(MemBlock* block)
+		void DeallocBlock(MemBlock* block)
 		{
 			block->~MemBlock();
 			bs_free(block);

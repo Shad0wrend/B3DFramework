@@ -22,7 +22,7 @@ namespace bs
 
 	RTTITypeBase* MorphShape::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	MorphChannel::MorphChannel(const String& name, const Vector<SPtr<MorphShape>>& shapes)
@@ -54,7 +54,7 @@ namespace bs
 
 	RTTITypeBase* MorphChannel::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 
 	MorphShapes::MorphShapes(const Vector<SPtr<MorphChannel>>& channels, UINT32 numVertices)
@@ -82,6 +82,6 @@ namespace bs
 
 	RTTITypeBase* MorphShapes::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRTTIStatic();
 	}
 }

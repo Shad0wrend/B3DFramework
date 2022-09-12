@@ -25,7 +25,7 @@ namespace bs { namespace ct
 
 	protected:
 		/** @copydoc VertexBuffer::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 	private:
 		GpuDeviceFlags mDeviceMask;

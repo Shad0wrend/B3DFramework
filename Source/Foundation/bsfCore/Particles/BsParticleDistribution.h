@@ -44,31 +44,31 @@ namespace bs
 		/** Creates a new empty distribution. */
 		BS_SCRIPT_EXPORT()
 		TColorDistribution()
-			: mType(PDT_Constant)
-			, mMinGradient({ ColorGradientKey(Color::Black, 0.0f) })
-			, mMaxGradient({ ColorGradientKey(Color::Black, 0.0f) })
+			: MType(PDT_Constant)
+			, MMinGradient({ ColorGradientKey(Color::Black, 0.0f) })
+			, MMaxGradient({ ColorGradientKey(Color::Black, 0.0f) })
 		{ }
 
 		/** Creates a new distribution that returns a constant color. */
 		BS_SCRIPT_EXPORT()
 		TColorDistribution(const Color& color)
-			: mType(PDT_Constant)
-			, mMinGradient({ ColorGradientKey(color, 0.0f) })
-			, mMaxGradient({ ColorGradientKey(color, 0.0f) })
+			: MType(PDT_Constant)
+			, MMinGradient({ ColorGradientKey(color, 0.0f) })
+			, MMaxGradient({ ColorGradientKey(color, 0.0f) })
 		{ }
 
 		/** Creates a new distribution that returns a random color in the specified range. */
 		BS_SCRIPT_EXPORT()
 		TColorDistribution(const Color& minColor, const Color& maxColor)
-			: mType(PDT_RandomRange)
-			, mMinGradient({ ColorGradientKey(minColor, 0.0f) })
-			, mMaxGradient({ ColorGradientKey(maxColor, 0.0f) })
+			: MType(PDT_RandomRange)
+			, MMinGradient({ ColorGradientKey(minColor, 0.0f) })
+			, MMaxGradient({ ColorGradientKey(maxColor, 0.0f) })
 		{ }
 
 		/** Creates a new distribution that evaluates a color gradient. */
 		BS_SCRIPT_EXPORT()
 		TColorDistribution(const T& gradient)
-			: mType(PDT_Curve), mMinGradient(gradient), mMaxGradient(gradient)
+			: MType(PDT_Curve), mMinGradient(gradient), mMaxGradient(gradient)
 		{
 			if(mMinGradient.getNumKeys() == 0)
 				mMinGradient = T({ ColorGradientKey(Color::Black, 0.0f) });
@@ -80,7 +80,7 @@ namespace bs
 		/** Creates a new distribution that returns a random color in a range determined by two gradients. */
 		BS_SCRIPT_EXPORT()
 		TColorDistribution(const T& minGradient, const T& maxGradient)
-			: mType(PDT_RandomCurveRange), mMinGradient(minGradient), mMaxGradient(maxGradient)
+			: MType(PDT_RandomCurveRange), mMinGradient(minGradient), mMaxGradient(maxGradient)
 		{
 			if(mMinGradient.getNumKeys() == 0)
 				mMinGradient = T({ ColorGradientKey(Color::Black, 0.0f) });
@@ -91,34 +91,34 @@ namespace bs
 
 		/** Returns the type of the represented distribution. */
 		BS_SCRIPT_EXPORT(pr:getter,n:DistributionType)
-		PropertyDistributionType getType() const { return mType; }
+		PropertyDistributionType GetType() const { return mType; }
 
 		/**
 		 * Returns the constant value of the distribution, or the minimal value of a constant range. Undefined if
 		 * the distribution is represented by a gradient.
 		 */
 		BS_SCRIPT_EXPORT()
-		Color getMinConstant() const { return mMinGradient.getKey(0).color; }
+		Color GetMinConstant() const { return mMinGradient.getKey(0).color; }
 
 		/**
 		 * Returns the maximum value of a constant range. Only defined if the distribution represents a non-gradient range.
 		 */
 		BS_SCRIPT_EXPORT()
-		Color getMaxConstant() const { return mMaxGradient.getKey(0).color; }
+		Color GetMaxConstant() const { return mMaxGradient.getKey(0).color; }
 
 		/**
 		 * Returns the gradient representing the distribution, or the first gradient representing a gradient range.
 		 * Undefined if the distribution is represented by a constant or a non-gradient range.
 		 */
 		BS_SCRIPT_EXPORT()
-		const T& getMinGradient() const { return mMinGradient; }
+		const T& GetMinGradient() const { return mMinGradient; }
 
 		/**
 		 * Returns the curve representing the second gradient of a gradient range. Only defined if the distribution
 		 * represents a gradient range.
 		 */
 		BS_SCRIPT_EXPORT()
-		const T& getMaxGradient() const { return mMaxGradient; }
+		const T& GetMaxGradient() const { return mMaxGradient; }
 
 		/**
 		 * Evaluates the value of the distribution.
@@ -131,7 +131,7 @@ namespace bs
 		 * @return				Evaluated color.
 		 *
 		 */
-		typename T::ColorType evaluate(float t, float factor) const
+		typename T::ColorType Evaluate(float t, float factor) const
 		{
 			const auto lerpFactor = impl::TGradientHelper<typename T::ColorType>::toLerpFactor(factor);
 			switch(mType)
@@ -168,7 +168,7 @@ namespace bs
 		 * @return				Evaluated color.
 		 *
 		 */
-		typename T::ColorType evaluate(float t, const Random& factor) const
+		typename T::ColorType Evaluate(float t, const Random& factor) const
 		{
 			switch(mType)
 			{
@@ -208,7 +208,7 @@ namespace bs
 		 *									the maximum curve values will follow the minimum curve values of each sample.
 		 * @return							Resampled lookup table.
 		 */
-		LookupTable toLookupTable(UINT32 numSamples = 128, bool ignoreRange = false) const;
+		LookupTable ToLookupTable(UINT32 numSamples = 128, bool ignoreRange = false) const;
 
 		bool operator== (const TColorDistribution<T>& rhs) const
 		{
@@ -245,30 +245,30 @@ namespace bs
 		/** Creates a new empty distribution. */
 		BS_SCRIPT_EXPORT()
 		TDistribution()
-			: mType(PDT_Constant)
-			, mMinCurve({ TKeyframe<T>{ T(), TCurveProperties<T>::getZero(), TCurveProperties<T>::getZero(), 0.0f} })
-			, mMaxCurve({ TKeyframe<T>{ T(), TCurveProperties<T>::getZero(), TCurveProperties<T>::getZero(), 0.0f} })
+			: MType(PDT_Constant)
+			, MMinCurve({ TKeyframe<T>{ T(), TCurveProperties<T>::getZero(), TCurveProperties<T>::getZero(), 0.0f} })
+			, MMaxCurve({ TKeyframe<T>{ T(), TCurveProperties<T>::getZero(), TCurveProperties<T>::getZero(), 0.0f} })
 		{ }
 		/** Creates a new distribution that returns a constant value. */
 		BS_SCRIPT_EXPORT()
 		TDistribution(T value)
-			: mType(PDT_Constant)
-			, mMinCurve({ TKeyframe<T>{ value, TCurveProperties<T>::getZero(), TCurveProperties<T>::getZero(), 0.0f} })
-			, mMaxCurve({ TKeyframe<T>{ value, TCurveProperties<T>::getZero(), TCurveProperties<T>::getZero(), 0.0f} })
+			: MType(PDT_Constant)
+			, MMinCurve({ TKeyframe<T>{ value, TCurveProperties<T>::getZero(), TCurveProperties<T>::getZero(), 0.0f} })
+			, MMaxCurve({ TKeyframe<T>{ value, TCurveProperties<T>::getZero(), TCurveProperties<T>::getZero(), 0.0f} })
 		{ }
 
 		/** Creates a new distribution that returns a random value in the specified range. */
 		BS_SCRIPT_EXPORT()
 		TDistribution(T minValue, T maxValue)
-			: mType(PDT_RandomRange)
-			, mMinCurve({ TKeyframe<T>{ minValue, TCurveProperties<T>::getZero(), TCurveProperties<T>::getZero(), 0.0f} })
-			, mMaxCurve({ TKeyframe<T>{ maxValue, TCurveProperties<T>::getZero(), TCurveProperties<T>::getZero(), 0.0f} })
+			: MType(PDT_RandomRange)
+			, MMinCurve({ TKeyframe<T>{ minValue, TCurveProperties<T>::getZero(), TCurveProperties<T>::getZero(), 0.0f} })
+			, MMaxCurve({ TKeyframe<T>{ maxValue, TCurveProperties<T>::getZero(), TCurveProperties<T>::getZero(), 0.0f} })
 		{ }
 
 		/** Creates a new distribution that evaluates a curve. */
 		BS_SCRIPT_EXPORT()
 		TDistribution(const TAnimationCurve<T>& curve)
-			: mType(PDT_Curve), mMinCurve(curve), mMaxCurve(curve)
+			: MType(PDT_Curve), mMinCurve(curve), mMaxCurve(curve)
 		{
 			if(mMinCurve.getKeyFrames().empty())
 				mMinCurve = TAnimationCurve<T>({ TKeyframe<T>{ T(), TCurveProperties<T>::getZero(), TCurveProperties<T>::getZero(), 0.0f} });
@@ -280,7 +280,7 @@ namespace bs
 		/** Creates a new distribution that returns a random value in a range determined by two curves. */
 		BS_SCRIPT_EXPORT()
 		TDistribution(const TAnimationCurve<T>& minCurve, const TAnimationCurve<T>& maxCurve)
-			: mType(PDT_RandomCurveRange), mMinCurve(minCurve), mMaxCurve(maxCurve)
+			: MType(PDT_RandomCurveRange), mMinCurve(minCurve), mMaxCurve(maxCurve)
 		{
 			if(mMinCurve.getKeyFrames().empty())
 				mMinCurve = TAnimationCurve<T>({ TKeyframe<T>{ T(), TCurveProperties<T>::getZero(), TCurveProperties<T>::getZero(), 0.0f} });
@@ -291,34 +291,34 @@ namespace bs
 
 		/** Returns the type of the represented distribution. */
 		BS_SCRIPT_EXPORT(pr:getter,n:DistributionType)
-		PropertyDistributionType getType() const { return mType; }
+		PropertyDistributionType GetType() const { return mType; }
 
 		/**
 		 * Returns the constant value of the distribution, or the minimal value of a constant range. Undefined if
 		 * the distribution is represented by a curve.
 		 */
 		BS_SCRIPT_EXPORT()
-		const T& getMinConstant() const { return mMinCurve.getKeyFrames()[0].value; }
+		const T& GetMinConstant() const { return mMinCurve.getKeyFrames()[0].value; }
 
 		/**
 		 * Returns the maximum value of a constant range. Only defined if the distribution represents a non-curve range.
 		 */
 		BS_SCRIPT_EXPORT()
-		const T& getMaxConstant() const { return mMaxCurve.getKeyFrames()[0].value; }
+		const T& GetMaxConstant() const { return mMaxCurve.getKeyFrames()[0].value; }
 
 		/**
 		 * Returns the curve representing the distribution, or the first curve representing a curve range. Undefined if
 		 * the distribution is represented by a constant or a non-curve range.
 		 */
 		BS_SCRIPT_EXPORT()
-		const TAnimationCurve<T>& getMinCurve() const { return mMinCurve; }
+		const TAnimationCurve<T>& GetMinCurve() const { return mMinCurve; }
 
 		/**
 		 * Returns the curve representing the second curve of a curve range. Only defined if the distribution represents
 		 * a curve range.
 		 */
 		BS_SCRIPT_EXPORT()
-		const TAnimationCurve<T>& getMaxCurve() const { return mMaxCurve; }
+		const TAnimationCurve<T>& GetMaxCurve() const { return mMaxCurve; }
 
 		/**
 		 * Evaluates the value of the distribution.
@@ -332,13 +332,13 @@ namespace bs
 		 *
 		 */
 		BS_SCRIPT_EXPORT()
-		T evaluate(float t, float factor) const
+		T Evaluate(float t, float factor) const
 		{
 			switch(mType)
 			{
 			default:
 			case PDT_Constant:
-				return getMinConstant();
+				return GetMinConstant();
 			case PDT_RandomRange:
 				return Math::lerp(factor, getMinConstant(), getMaxConstant());
 			case PDT_Curve:
@@ -364,13 +364,13 @@ namespace bs
 		 *
 		 */
 		BS_SCRIPT_EXPORT()
-		T evaluate(float t, const Random& factor) const
+		T Evaluate(float t, const Random& factor) const
 		{
 			switch(mType)
 			{
 			default:
 			case PDT_Constant:
-				return getMinConstant();
+				return GetMinConstant();
 			case PDT_RandomRange:
 				return Math::lerp(factor.getUNorm(), getMinConstant(), getMaxConstant());
 			case PDT_Curve:
@@ -397,7 +397,7 @@ namespace bs
 		 *									the maximum curve values will follow the minimum curve values of each sample.
 		 * @return							Resampled lookup table.
 		 */
-		LookupTable toLookupTable(UINT32 numSamples = 128, bool ignoreRange = false) const;
+		LookupTable ToLookupTable(UINT32 numSamples = 128, bool ignoreRange = false) const;
 
 		bool operator== (const TDistribution<T>& rhs) const
 		{

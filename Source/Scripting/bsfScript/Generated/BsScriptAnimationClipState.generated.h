@@ -14,7 +14,7 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "AnimationClipState")
 
 		static MonoObject* box(const AnimationClipState& value);
-		static AnimationClipState unbox(MonoObject* value);
+		static AnimationClipState Unbox(MonoObject* value);
 
 	private:
 		ScriptAnimationClipState(MonoObject* managedInstance);

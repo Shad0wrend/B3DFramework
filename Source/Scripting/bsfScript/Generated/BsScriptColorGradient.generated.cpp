@@ -58,7 +58,7 @@ namespace bs
 		Vector<ColorGradientKey> veckeys;
 		if(keys != nullptr)
 		{
-			ScriptArray arraykeys(keys);
+			ScriptArray Arraykeys(keys);
 			veckeys.resize(arraykeys.size());
 			for(int i = 0; i < (int)arraykeys.size(); i++)
 			{
@@ -74,7 +74,7 @@ namespace bs
 		Vector<ColorGradientKey> veckeys;
 		if(keys != nullptr)
 		{
-			ScriptArray arraykeys(keys);
+			ScriptArray Arraykeys(keys);
 			veckeys.resize(arraykeys.size());
 			for(int i = 0; i < (int)arraykeys.size(); i++)
 			{

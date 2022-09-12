@@ -11,12 +11,12 @@ namespace bs
 	class FMODFactory : public AudioFactory
 	{
 	public:
-		void startUp() override
+		void StartUp() override
 		{
 			Audio::startUp<FMODAudio>();
 		}
 
-		void shutDown() override
+		void ShutDown() override
 		{
 			Audio::shutDown();
 		}

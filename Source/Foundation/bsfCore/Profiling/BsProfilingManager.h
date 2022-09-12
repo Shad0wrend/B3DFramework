@@ -58,7 +58,7 @@ namespace bs
 		 * Profiler reports get updated every frame. Oldest reports that no longer fit in the saved reports buffer are
 		 * discarded.
 		 */
-		const ProfilerReport& getReport(ProfiledThread thread, UINT32 idx = 0) const;
+		const ProfilerReport& GetReport(ProfiledThread thread, UINT32 idx = 0) const;
 
 	private:
 		static const UINT32 NUM_SAVED_FRAMES;
@@ -72,7 +72,7 @@ namespace bs
 	};
 
 	/** Easy way to access ProfilingManager. */
-	BS_CORE_EXPORT ProfilingManager& gProfiler();
+	BS_CORE_EXPORT ProfilingManager& GProfiler();
 
 	/** @} */
 }

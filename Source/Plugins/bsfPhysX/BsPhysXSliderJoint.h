@@ -21,22 +21,22 @@ namespace bs
 		~PhysXSliderJoint();
 
 		/** @copydoc SliderJoint::getPosition */
-		float getPosition() const override;
+		float GetPosition() const override;
 
 		/** @copydoc SliderJoint::getSpeed */
-		float getSpeed() const override;
+		float GetSpeed() const override;
 
 		/** @copydoc SliderJoint::getLimit */
-		LimitLinearRange getLimit() const override;
+		LimitLinearRange GetLimit() const override;
 
 		/** @copydoc SliderJoint::setLimit */
-		void setLimit(const LimitLinearRange& limit) override;
+		void SetLimit(const LimitLinearRange& limit) override;
 
 		/** @copydoc SliderJoint::setFlag */
-		void setFlag(SliderJointFlag flag, bool enabled) override;
+		void SetFlag(SliderJointFlag flag, bool enabled) override;
 
 		/** @copydoc SliderJoint::hasFlag */
-		bool hasFlag(SliderJointFlag flag) const override;
+		bool HasFlag(SliderJointFlag flag) const override;
 
 	private:
 		/** Returns the internal PhysX representation of the slider (prismatic) joint. */

@@ -61,7 +61,7 @@ namespace bs
 			 * @note	Pointer to @p data isn't actually needed, but is provided for debug purposes in order to more
 			 * 			easily track out-of-order deallocations.
 			 */
-			void dealloc(UINT8* data, UINT32 amount)
+			void Dealloc(UINT8* data, UINT32 amount)
 			{
 				mFreePtr -= amount;
 				assert((&mData[mFreePtr]) == data && "Out of order stack deallocation detected. Deallocations need to happen in order opposite of allocations.");
@@ -123,7 +123,7 @@ namespace bs
 		}
 
 		/** Deallocates the given memory. Data must be deallocated in opposite order then when it was allocated. */
-		void dealloc(UINT8* data)
+		void Dealloc(UINT8* data)
 		{
 			data -= sizeof(UINT32);
 
@@ -207,7 +207,7 @@ namespace bs
 		}
 
 		/** Deallocates a block of memory. */
-		void deallocBlock(MemBlock* block)
+		void DeallocBlock(MemBlock* block)
 		{
 			block->~MemBlock();
 			bs_free(block);
@@ -234,19 +234,19 @@ namespace bs
 		 * Sets up the stack with the currently active thread. You need to call this on any thread before doing any
 		 * allocations or deallocations.
 		 */
-		static BS_UTILITY_EXPORT void beginThread();
+		static BS_UTILITY_EXPORT void BeginThread();
 
 		/**
 		 * Cleans up the stack for the current thread. You may not perform any allocations or deallocations after this is
 		 * called, unless you call beginThread again.
 		 */
-		static BS_UTILITY_EXPORT void endThread();
+		static BS_UTILITY_EXPORT void EndThread();
 
 		/** @copydoc MemStackInternal::alloc() */
 		static BS_UTILITY_EXPORT UINT8* alloc(UINT32 amount);
 
 		/** @copydoc MemStackInternal::dealloc() */
-		static BS_UTILITY_EXPORT void deallocLast(UINT8* data);
+		static BS_UTILITY_EXPORT void DeallocLast(UINT8* data);
 
 	private:
 		static BS_THREADLOCAL MemStackInternal<1024 * 1024>* ThreadMemStack;
@@ -384,13 +384,13 @@ namespace bs
 		constexpr operator T*() const && noexcept = delete;
 
 		explicit constexpr StackMemory(T* p, size_t count = 1)
-		 : mPtr(p), mCount(count)
+		 : MPtr(p), mCount(count)
 		{ }
 
 		/** Needed until c++17 */
 		StackMemory(StackMemory && other)
-		 : mPtr(std::exchange(other.mPtr, nullptr))
-		 , mCount(std::exchange(other.mCount, 0))
+		 : MPtr(std::exchange(other.mPtr, nullptr))
+		 , MCount(std::exchange(other.mCount, 0))
 		{ }
 
 		StackMemory(StackMemory const&) = delete;
@@ -495,7 +495,7 @@ namespace bs
 			return bs_stack_alloc((UINT32)bytes);
 		}
 
-		static void free(void* ptr)
+		static void Free(void* ptr)
 		{
 			bs_stack_free(ptr);
 		}

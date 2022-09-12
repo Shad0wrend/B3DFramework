@@ -13,8 +13,8 @@
 namespace bs { namespace ct
 {
 	GLPixelBuffer::GLPixelBuffer(UINT32 inWidth, UINT32 inHeight, UINT32 inDepth, PixelFormat inFormat, GpuBufferUsage usage)
-		: mUsage(usage), mWidth(inWidth), mHeight(inHeight), mDepth(inDepth), mFormat(inFormat)
-		, mBuffer(inWidth, inHeight, inDepth, inFormat)
+		: MUsage(usage), mWidth(inWidth), mHeight(inHeight), mDepth(inDepth), mFormat(inFormat)
+		, MBuffer(inWidth, inHeight, inDepth, inFormat)
 	{
 		mSizeInBytes = mHeight*mWidth*PixelUtil::getNumElemBytes(mFormat);
 		mCurrentLockOptions = (GpuLockOptions)0;
@@ -45,7 +45,7 @@ namespace bs { namespace ct
 		assert(!mIsLocked && "Cannot lock this buffer, it is already locked!");
 		assert(offset == 0 && length == mSizeInBytes && "Cannot lock memory region, most lock box or entire buffer");
 
-		PixelVolume volume(0, 0, 0, mWidth, mHeight, mDepth);
+		PixelVolume Volume(0, 0, 0, mWidth, mHeight, mDepth);
 		const PixelData& lockedData = lock(volume, options);
 		return lockedData.getData();
 	}
@@ -114,7 +114,7 @@ namespace bs { namespace ct
 	GLTextureBuffer::GLTextureBuffer(GLenum target, GLuint id, GLint face, GLint level, PixelFormat format,
 		GpuBufferUsage usage, bool hwGamma, UINT32 multisampleCount)
 		: GLPixelBuffer(0, 0, 0, format, usage), mTarget(target), mTextureID(id), mFace(face)
-		, mLevel(level), mMultisampleCount(multisampleCount), mHwGamma(hwGamma)
+		, MLevel(level), mMultisampleCount(multisampleCount), mHwGamma(hwGamma)
 	{
 		GLint value = 0;
 	

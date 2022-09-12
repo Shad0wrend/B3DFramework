@@ -109,21 +109,21 @@ namespace bs
 	String Time::getCurrentDateTimeString(bool isUTC)
 	{
 		std::time_t t = std::time(nullptr);
-		return toString(t, isUTC, false, TimeToStringConversionType::Full);
+		return ToString(t, isUTC, false, TimeToStringConversionType::Full);
 	}
 
 	String Time::getCurrentTimeString(bool isUTC)
 	{
 		std::time_t t = std::time(nullptr);
-		return toString(t, isUTC, false, TimeToStringConversionType::Time);
+		return ToString(t, isUTC, false, TimeToStringConversionType::Time);
 	}
 
 	String Time::getAppStartUpDateString(bool isUTC)
 	{
-		return toString(mAppStartUpDate,isUTC, false, TimeToStringConversionType::Full);
+		return ToString(mAppStartUpDate,isUTC, false, TimeToStringConversionType::Full);
 	}
 	
-	Time& gTime()
+	Time& GTime()
 	{
 		return Time::instance();
 	}

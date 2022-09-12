@@ -19,49 +19,49 @@ namespace bs
 		EngineScriptLibrary() = default;
 
 		/** @copydoc ScriptLibrary::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 		/** @copydoc ScriptLibrary::update */
-		void update() override;
+		void Update() override;
 
 		/** @copydoc ScriptLibrary::reload */
-		void reload() override;
+		void Reload() override;
 
 		/** @copydoc ScriptLibrary::destroy */
-		void destroy() override;
+		void Destroy() override;
 
 		/**	Returns the absolute path to the builtin managed engine assembly file. */
-		Path getEngineAssemblyPath() const;
+		Path GetEngineAssemblyPath() const;
 
 #if BS_IS_BANSHEE3D
 		/**	Returns the absolute path to the game managed assembly file. */
-		Path getGameAssemblyPath() const;
+		Path GetGameAssemblyPath() const;
 #endif
 
 		/**	Returns the absolute path to the folder where built-in assemblies are located in. */
-		virtual Path getBuiltinAssemblyFolder() const;
+		virtual Path GetBuiltinAssemblyFolder() const;
 
 		/**	Returns the absolute path to the folder where script assemblies are located in. */
-		virtual Path getScriptAssemblyFolder() const;
+		virtual Path GetScriptAssemblyFolder() const;
 
 		/**	Returns the absolute path where the managed release assemblies are located. */
-		static const Path& getReleaseAssemblyPath();
+		static const Path& GetReleaseAssemblyPath();
 
 		/**	Returns the absolute path where the managed debug assemblies are located. */
-		static const Path& getDebugAssemblyPath();
+		static const Path& GetDebugAssemblyPath();
 
 		/** Returns the singleton instance of this library. */
-		static EngineScriptLibrary& instance()
+		static EngineScriptLibrary& Instance()
 		{
 			return static_cast<EngineScriptLibrary&>(*ScriptManager::instance()._getScriptLibrary());
 		}
 
 	protected:
 		/** Unloads all manages assemblies and the mono domain. */
-		void unloadAssemblies();
+		void UnloadAssemblies();
 
 		/** Shuts down all script engine modules. */
-		void shutdownModules();
+		void ShutdownModules();
 
 		BuiltinTypeMappings mEngineTypeMappings;
 

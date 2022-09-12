@@ -22,7 +22,7 @@ namespace bs
 
 		ScriptTColorDistributionColorGradient(MonoObject* managedInstance, const SPtr<TColorDistribution<ColorGradient>>& value);
 
-		SPtr<TColorDistribution<ColorGradient>> getInternal() const { return mInternal; }
+		SPtr<TColorDistribution<ColorGradient>> GetInternal() const { return mInternal; }
 		static MonoObject* create(const SPtr<TColorDistribution<ColorGradient>>& value);
 
 	private:
@@ -47,7 +47,7 @@ namespace bs
 
 		ScriptTColorDistributionColorGradientHDR(MonoObject* managedInstance, const SPtr<TColorDistribution<ColorGradientHDR>>& value);
 
-		SPtr<TColorDistribution<ColorGradientHDR>> getInternal() const { return mInternal; }
+		SPtr<TColorDistribution<ColorGradientHDR>> GetInternal() const { return mInternal; }
 		static MonoObject* create(const SPtr<TColorDistribution<ColorGradientHDR>>& value);
 
 	private:

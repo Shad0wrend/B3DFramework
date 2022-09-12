@@ -99,7 +99,7 @@ namespace bs { namespace ct
 
 	const StringID& GLRenderAPI::getName() const
 	{
-		static StringID strName("GLRenderAPI");
+		static StringID StrName("GLRenderAPI");
 		return strName;
 	}
 
@@ -1238,7 +1238,7 @@ namespace bs { namespace ct
 				return;
 
 			const RenderTargetProperties& rtProps = mActiveRenderTarget->getProperties();
-			Rect2I clearRect(0, 0, rtProps.width, rtProps.height);
+			Rect2I ClearRect(0, 0, rtProps.width, rtProps.height);
 
 			clearArea(buffers, color, depth, stencil, clearRect, targetMask);
 		};
@@ -1254,7 +1254,7 @@ namespace bs { namespace ct
 	{
 		auto executeRef = [&](UINT32 buffers, const Color& color, float depth, UINT16 stencil, UINT8 targetMask)
 		{
-			Rect2I clearRect(mViewportLeft, mViewportTop, mViewportWidth, mViewportHeight);
+			Rect2I ClearRect(mViewportLeft, mViewportTop, mViewportWidth, mViewportHeight);
 
 			clearArea(buffers, color, depth, stencil, clearRect, targetMask);
 		};

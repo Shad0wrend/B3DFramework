@@ -148,7 +148,7 @@ namespace bs
 		OSPointerButtonStates pointerState;
 
 		{
-			Lock lock(mMutex);
+			Lock Lock(mMutex);
 
 			std::swap(mQueuedEvents[0], mQueuedEvents[1]);
 
@@ -338,7 +338,7 @@ namespace bs
 
 	void Input::buttonDown(UINT32 deviceIdx, ButtonCode code, UINT64 timestamp)
 	{
-		Lock lock(mMutex);
+		Lock Lock(mMutex);
 
 		while (deviceIdx >= (UINT32)mDevices.size())
 			mDevices.push_back(DeviceData());
@@ -354,7 +354,7 @@ namespace bs
 
 	void Input::buttonUp(UINT32 deviceIdx, ButtonCode code, UINT64 timestamp)
 	{
-		Lock lock(mMutex);
+		Lock Lock(mMutex);
 
 		ButtonEvent btnEvent;
 		btnEvent.buttonCode = code;
@@ -380,7 +380,7 @@ namespace bs
 
 	void Input::cursorMoved(const Vector2I& cursorPos, const OSPointerButtonStates& btnStates)
 	{
-		Lock lock(mMutex);
+		Lock Lock(mMutex);
 
 		mPointerPosition = cursorPos;
 		mPointerState = btnStates;
@@ -388,7 +388,7 @@ namespace bs
 
 	void Input::cursorPressed(const Vector2I& cursorPos, OSMouseButton button, const OSPointerButtonStates& btnStates)
 	{
-		Lock lock(mMutex);
+		Lock Lock(mMutex);
 
 		PointerEvent event;
 		event.alt = false;
@@ -422,7 +422,7 @@ namespace bs
 
 	void Input::cursorReleased(const Vector2I& cursorPos, OSMouseButton button, const OSPointerButtonStates& btnStates)
 	{
-		Lock lock(mMutex);
+		Lock Lock(mMutex);
 
 		PointerEvent event;
 		event.alt = false;
@@ -456,7 +456,7 @@ namespace bs
 
 	void Input::cursorDoubleClick(const Vector2I& cursorPos, const OSPointerButtonStates& btnStates)
 	{
-		Lock lock(mMutex);
+		Lock Lock(mMutex);
 
 		PointerEvent event;
 		event.alt = false;
@@ -475,7 +475,7 @@ namespace bs
 
 	void Input::inputCommandEntered(InputCommandType commandType)
 	{
-		Lock lock(mMutex);
+		Lock Lock(mMutex);
 
 		mQueuedEvents[0].push_back(QueuedEvent(EventType::Command, (UINT32)mCommandEvents[0].size()));
 		mCommandEvents[0].push_back(commandType);
@@ -483,14 +483,14 @@ namespace bs
 
 	void Input::mouseWheelScrolled(float scrollPos)
 	{
-		Lock lock(mMutex);
+		Lock Lock(mMutex);
 
 		mMouseScroll = scrollPos;
 	}
 
 	void Input::charInput(UINT32 chr)
 	{
-		Lock lock(mMutex);
+		Lock Lock(mMutex);
 
 		TextInputEvent textInputEvent;
 		textInputEvent.textChar = chr;
@@ -637,7 +637,7 @@ namespace bs
 		return value;
 	}
 
-	Input& gInput()
+	Input& GInput()
 	{
 		return Input::instance();
 	}

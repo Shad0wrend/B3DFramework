@@ -17,42 +17,42 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableListRTTI : public RTTIType<ManagedSerializableList, IReflectable, ManagedSerializableListRTTI>
 	{
 	private:
-		SPtr<ManagedSerializableTypeInfoList> getTypeInfo(ManagedSerializableList* obj)
+		SPtr<ManagedSerializableTypeInfoList> GetTypeInfo(ManagedSerializableList* obj)
 		{
 			return obj->mListTypeInfo;
 		}
 
-		void setTypeInfo(ManagedSerializableList* obj, SPtr<ManagedSerializableTypeInfoList> val)
+		void SetTypeInfo(ManagedSerializableList* obj, SPtr<ManagedSerializableTypeInfoList> val)
 		{
 			obj->mListTypeInfo = val;
 		}
 
-		UINT32& getNumElements(ManagedSerializableList* obj)
+		UINT32& GetNumElements(ManagedSerializableList* obj)
 		{
 			return (UINT32&)obj->mNumElements;
 		}
 
-		void setNumElements(ManagedSerializableList* obj, UINT32& numElements)
+		void SetNumElements(ManagedSerializableList* obj, UINT32& numElements)
 		{
 			obj->mNumElements = numElements;
 		}
 
-		SPtr<ManagedSerializableFieldData> getListEntry(ManagedSerializableList* obj, UINT32 arrayIdx)
+		SPtr<ManagedSerializableFieldData> GetListEntry(ManagedSerializableList* obj, UINT32 arrayIdx)
 		{
 			return obj->getFieldData(arrayIdx);
 		}
 
-		void setListEntry(ManagedSerializableList* obj, UINT32 arrayIdx, SPtr<ManagedSerializableFieldData> val)
+		void SetListEntry(ManagedSerializableList* obj, UINT32 arrayIdx, SPtr<ManagedSerializableFieldData> val)
 		{
 			obj->setFieldData(arrayIdx, val);
 		}
 
-		UINT32 getNumListEntries(ManagedSerializableList* obj)
+		UINT32 GetNumListEntries(ManagedSerializableList* obj)
 		{
 			return (UINT32)obj->mNumElements;
 		}
 
-		void setNumListEntries(ManagedSerializableList* obj, UINT32 numEntries)
+		void SetNumListEntries(ManagedSerializableList* obj, UINT32 numEntries)
 		{
 			obj->mCachedEntries = Vector<SPtr<ManagedSerializableFieldData>>(numEntries);
 		}
@@ -66,18 +66,18 @@ namespace bs
 				&ManagedSerializableListRTTI::setListEntry, &ManagedSerializableListRTTI::setNumListEntries);
 		}
 
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "ScriptSerializableList";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_ScriptSerializableList;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			return ManagedSerializableList::createEmpty();
 		}

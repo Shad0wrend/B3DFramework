@@ -39,7 +39,7 @@ namespace bs
 		SmallVector<ShaderVariationParamValue, 4> vecvalues;
 		if(value.values != nullptr)
 		{
-			ScriptArray arrayvalues(value.values);
+			ScriptArray Arrayvalues(value.values);
 			vecvalues.resize(arrayvalues.size());
 			for(int i = 0; i < (int)arrayvalues.size(); i++)
 			{

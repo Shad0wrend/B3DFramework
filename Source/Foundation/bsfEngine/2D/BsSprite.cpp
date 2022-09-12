@@ -42,7 +42,7 @@ namespace bs
 		UINT8* uvDst = uv + startVert * vertexStride;
 
 		// TODO - I'm sure this can be done in a more cache friendly way. Profile it later.
-		Vector2 vecOffset((float)offset.x, (float)offset.y);
+		Vector2 VecOffset((float)offset.x, (float)offset.y);
 		if(clip)
 		{
 			for(UINT32 i = 0; i < renderElem.numQuads; i++)

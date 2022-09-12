@@ -399,7 +399,7 @@ namespace bs
 				packNormals = true;
 				type |= (INT32)VertexLayout::Normal;
 			}
-			else if(normalElem->getType() == VET_UBYTE4_NORM)
+			else If(normalElem->getType() == VET_UBYTE4_NORM)
 				type |= (INT32)VertexLayout::Normal;
 		}
 

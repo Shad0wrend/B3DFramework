@@ -157,10 +157,10 @@ namespace bs
 		return outputStream.str();
 	}
 
-	typedef bool(WINAPI *EnumProcessModulesType)(HANDLE hProcess, HMODULE* lphModule, DWORD cb, LPDWORD lpcbNeeded);
+	typedef Bool(WINAPI *EnumProcessModulesType)(HANDLE hProcess, HMODULE* lphModule, DWORD cb, LPDWORD lpcbNeeded);
 	typedef DWORD(WINAPI *GetModuleBaseNameType)(HANDLE hProcess, HMODULE hModule, LPSTR lpBaseName, DWORD nSize);
 	typedef DWORD(WINAPI *GetModuleFileNameExType)(HANDLE hProcess, HMODULE hModule, LPSTR lpFilename, DWORD nSize);
-	typedef bool(WINAPI *GetModuleInformationType)(HANDLE hProcess, HMODULE hModule, LPMODULEINFO lpmodinfo, DWORD cb);
+	typedef Bool(WINAPI *GetModuleInformationType)(HANDLE hProcess, HMODULE hModule, LPMODULEINFO lpmodinfo, DWORD cb);
 
 	static DynLib* gPSAPILib = nullptr;
 
@@ -475,7 +475,7 @@ namespace bs
 		}
 
 		// Win32 debug methods are not thread safe
-		Lock lock(m->mutex);
+		Lock Lock(m->mutex);
 
 		logErrorAndStackTrace(type, description, function, file, line);
 
@@ -506,7 +506,7 @@ namespace bs
 		EXCEPTION_POINTERS* exceptionData = (EXCEPTION_POINTERS*)exceptionDataPtr;
 
 		// Win32 debug methods are not thread safe
-		Lock lock(m->mutex);
+		Lock Lock(m->mutex);
 
 		win32_initPSAPI();
 		win32_loadSymbols();

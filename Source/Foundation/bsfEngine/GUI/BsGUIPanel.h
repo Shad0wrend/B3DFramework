@@ -32,7 +32,7 @@ namespace bs
 		 *								depth outside of the range [depth - depthRangeMin, depth + depthRangeMax] it will
 		 *								be clamped to nearest extreme. Value of -1 means infinite range.
 		 */
-		void setDepthRange(INT16 depth = 0, UINT16 depthRangeMin = -1, UINT16 depthRangeMax = -1);
+		void SetDepthRange(INT16 depth = 0, UINT16 depthRangeMin = -1, UINT16 depthRangeMax = -1);
 
 		/**
 		 * Creates a new GUI panel.

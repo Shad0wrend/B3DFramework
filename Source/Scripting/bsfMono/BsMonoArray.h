@@ -26,18 +26,18 @@ namespace bs
 
 		/** Retrieves an entry from the array at the specified index. */
 		template<class T>
-		T get(UINT32 idx);
+		T Get(UINT32 idx);
 
 		/** Assigns a value to the specified index. */
 		template<class T>
-		void set(UINT32 idx, const T& value);
+		void Set(UINT32 idx, const T& value);
 
 		/**
 		 * Assigns some data represented as raw memory to the array at the specified index. User must provide the size of
 		 * the data, and it must match the element size expected by the array. Multiple array elements can be provided
 		 * sequentially by setting the @p count parameter.
 		 */
-		void setRaw(UINT32 idx, const UINT8* value, UINT32 size, UINT32 count = 1);
+		void SetRaw(UINT32 idx, const UINT8* value, UINT32 size, UINT32 count = 1);
 
 		/**
 		 * Returns the raw memory of the data at the specified array index. Returned value should not be used for writing
@@ -69,13 +69,13 @@ namespace bs
 		 * @tparam	T	ScriptObject wrapper for the specified managed type.
 		 */
 		template<class T>
-		static ScriptArray create(UINT32 size);
+		static ScriptArray Create(UINT32 size);
 
 		/** Returns number of elements in the array. */
-		UINT32 size() const;
+		UINT32 Size() const;
 
 		/** Returns the size of an individual element in the array, in bytes. */
-		UINT32 elementSize() const;
+		UINT32 ElementSize() const;
 
 		/** Returns the managed object representing this array. */
 		MonoArray* getInternal() const { return mInternal; }
@@ -84,7 +84,7 @@ namespace bs
 		static ::MonoClass* getElementClass(::MonoClass* arrayClass);
 
 		/** Returns the rank of the provided array class. */
-		static UINT32 getRank(::MonoClass* arrayClass);
+		static UINT32 GetRank(::MonoClass* arrayClass);
 
 		/** Builds an array class from the provided element class and a rank. */
 		static ::MonoClass* buildArrayClass(::MonoClass* elementClass, UINT32 rank);

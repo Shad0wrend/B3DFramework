@@ -22,10 +22,10 @@ namespace bs
 		BoxCollider() = default;
 
 		/** Determines the extents (half size) of the geometry of the box. */
-		virtual void setExtents(const Vector3& extents) = 0;
+		virtual void SetExtents(const Vector3& extents) = 0;
 
 		/** @copydoc setExtents() */
-		virtual Vector3 getExtents() const = 0;
+		virtual Vector3 GetExtents() const = 0;
 
 		/**
 		 * Creates a new box collider.

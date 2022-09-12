@@ -12,12 +12,12 @@ namespace bs
 		FolderWatchInfo(const Path& folderToMonitor, int inHandle, bool monitorSubdirectories, FolderChangeBits filter);
 		~FolderWatchInfo();
 
-		void startMonitor();
-		void stopMonitor();
+		void StartMonitor();
+		void StopMonitor();
 
-		void addPath(const Path& path);
-		void removePath(const Path& path);
-		Path getPath(INT32 handle);
+		void AddPath(const Path& path);
+		void RemovePath(const Path& path);
+		Path GetPath(INT32 handle);
 
 		Path folderToMonitor;
 		int dirHandle;
@@ -30,8 +30,8 @@ namespace bs
 
 	FolderMonitor::FolderWatchInfo::FolderWatchInfo(const Path& folderToMonitor, int inHandle, bool monitorSubdirectories,
 													FolderChangeBits filter)
-		: folderToMonitor(folderToMonitor), dirHandle(inHandle), monitorSubdirectories(monitorSubdirectories)
-		, filter(filter)
+		: FolderToMonitor(folderToMonitor), dirHandle(inHandle), monitorSubdirectories(monitorSubdirectories)
+		, Filter(filter)
 	{ }
 
 	FolderMonitor::FolderWatchInfo::~FolderWatchInfo()
@@ -193,7 +193,7 @@ namespace bs
 			return action;
 		}
 
-		static void destroy(FileAction* action)
+		static void Destroy(FileAction* action)
 		{
 			bs_free(action);
 		}
@@ -274,7 +274,7 @@ namespace bs
 		// Initialize inotify if required
 		if(!m->started)
 		{
-			Lock lock(m->mainMutex);
+			Lock Lock(m->mainMutex);
 
 			m->inHandle = inotify_init();
 			m->started = true;
@@ -284,7 +284,7 @@ namespace bs
 
 		// Register and start the monitor
 		{
-			Lock lock(m->mainMutex);
+			Lock Lock(m->mainMutex);
 
 			m->monitors.push_back(watchInfo);
 			watchInfo->startMonitor();
@@ -312,7 +312,7 @@ namespace bs
 				stopMonitorAll();
 			else
 			{
-				Lock lock(m->mainMutex);
+				Lock Lock(m->mainMutex);
 				FolderWatchInfo* watchInfo = *findIter;
 
 				watchInfo->stopMonitor();
@@ -327,7 +327,7 @@ namespace bs
 	{
 		if(m->started)
 		{
-			Lock lock(m->mainMutex);
+			Lock Lock(m->mainMutex);
 
 			// First tell the thread it's ready to be shutdown
 			m->started = false;
@@ -353,7 +353,7 @@ namespace bs
 
 		// Close the inotify handle
 		{
-			Lock lock(m->mainMutex);
+			Lock Lock(m->mainMutex);
 			if (m->inHandle != 0)
 			{
 				close(m->inHandle);
@@ -397,7 +397,7 @@ namespace bs
 				if(event->len > 0)
 				{
 					{
-						Lock lock(m->mainMutex);
+						Lock Lock(m->mainMutex);
 
 						Path path;
 						FolderWatchInfo* monitor = nullptr;
@@ -425,7 +425,7 @@ namespace bs
 
 							if(added)
 								monitor->addPath(path);
-							else if(removed)
+							else If(removed)
 								monitor->removePath(path);
 						}
 
@@ -489,7 +489,7 @@ namespace bs
 	void FolderMonitor::_update()
 	{
 		{
-			Lock lock(m->mainMutex);
+			Lock Lock(m->mainMutex);
 
 			std::swap(m->fileActions, m->activeFileActions);
 		}

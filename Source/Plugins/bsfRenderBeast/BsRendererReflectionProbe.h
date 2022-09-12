@@ -44,16 +44,16 @@ namespace bs { namespace ct
 		 * Updates the internal buffers with a new set of refl. probes. Before calling make sure that probe visibility has
 		 * been calculated for the provided view group.
 		 */
-		void update(const SceneInfo& sceneInfo, const RendererViewGroup& viewGroup);
+		void Update(const SceneInfo& sceneInfo, const RendererViewGroup& viewGroup);
 
 		/** Returns a GPU bindable buffer containing information about every reflection probe. */
-		SPtr<GpuBuffer> getProbeBuffer() const { return mProbeBuffer; }
+		SPtr<GpuBuffer> GetProbeBuffer() const { return mProbeBuffer; }
 
 		/** Returns the number of reflection probes in the probe buffer. */
-		UINT32 getNumProbes() const { return mNumProbes; }
+		UINT32 GetNumProbes() const { return mNumProbes; }
 
 		/** Returns information about a probe at the specified index. */
-		const ReflProbeData& getProbeData(UINT32 idx) const { return mReflProbeData[idx]; }
+		const ReflProbeData& GetProbeData(UINT32 idx) const { return mReflProbeData[idx]; }
 
 	private:
 		Vector<ReflProbeData> mReflProbeData;
@@ -79,7 +79,7 @@ namespace bs { namespace ct
 		RendererReflectionProbe(ReflectionProbe* probe);
 
 		/** Populates the structure with reflection probe parameters. */
-		void getParameters(ReflProbeData& output) const;
+		void GetParameters(ReflProbeData& output) const;
 
 		ReflectionProbe* probe;
 		UINT32 arrayIdx;

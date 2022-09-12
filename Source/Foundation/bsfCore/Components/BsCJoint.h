@@ -25,47 +25,47 @@ namespace bs
 
 		/** @copydoc Joint::getBody */
 		BS_SCRIPT_EXPORT(n:GetBody)
-		HRigidbody getBody(JointBody body) const;
+		HRigidbody GetBody(JointBody body) const;
 
 		/** @copydoc Joint::setBody */
 		BS_SCRIPT_EXPORT(n:SetBody)
-		void setBody(JointBody body, const HRigidbody& value);
+		void SetBody(JointBody body, const HRigidbody& value);
 
 		/** @copydoc Joint::getPosition */
 		BS_SCRIPT_EXPORT(n:GetPosition)
-		Vector3 getPosition(JointBody body) const;
+		Vector3 GetPosition(JointBody body) const;
 
 		/** @copydoc Joint::getRotation */
 		BS_SCRIPT_EXPORT(n:GetRotation)
-		Quaternion getRotation(JointBody body) const;
+		Quaternion GetRotation(JointBody body) const;
 
 		/** @copydoc Joint::setTransform */
 		BS_SCRIPT_EXPORT(n:SetTransform)
-		void setTransform(JointBody body, const Vector3& position, const Quaternion& rotation);
+		void SetTransform(JointBody body, const Vector3& position, const Quaternion& rotation);
 
 		/** @copydoc Joint::getBreakForce */
 		BS_SCRIPT_EXPORT(n:BreakForce,pr:getter)
-		float getBreakForce() const;
+		float GetBreakForce() const;
 
 		/** @copydoc Joint::setBreakForce */
 		BS_SCRIPT_EXPORT(n:BreakForce,pr:setter)
-		void setBreakForce(float force);
+		void SetBreakForce(float force);
 
 		/** @copydoc Joint::getBreakTorque */
 		BS_SCRIPT_EXPORT(n:BreakTorque,pr:getter)
-		float getBreakTorque() const;
+		float GetBreakTorque() const;
 
 		/** @copydoc Joint::setBreakTorque */
 		BS_SCRIPT_EXPORT(n:BreakTorque,pr:setter)
-		void setBreakTorque(float torque);
+		void SetBreakTorque(float torque);
 
 		/** @copydoc Joint::getEnableCollision */
 		BS_SCRIPT_EXPORT(n:EnableCollision,pr:getter)
-		bool getEnableCollision() const;
+		bool GetEnableCollision() const;
 
 		/** @copydoc Joint::setEnableCollision */
 		BS_SCRIPT_EXPORT(n:EnableCollision,pr:setter)
-		void setEnableCollision(bool value);
+		void SetEnableCollision(bool value);
 
 		/** @copydoc Joint::onJointBreak */
 		BS_SCRIPT_EXPORT(n:OnJointBreak)
@@ -87,47 +87,47 @@ namespace bs
 		friend class SceneObject;
 
 		/** @copydoc Component::onInitialized() */
-		void onInitialized() override;
+		void OnInitialized() override;
 
 		/** @copydoc Component::onDestroyed() */
-		void onDestroyed() override;
+		void OnDestroyed() override;
 
 		/** @copydoc Component::onDisabled() */
-		void onDisabled() override;
+		void OnDisabled() override;
 
 		/** @copydoc Component::onEnabled() */
-		void onEnabled() override;
+		void OnEnabled() override;
 
 		/** @copydoc Component::onTransformChanged() */
-		void onTransformChanged(TransformChangedFlags flags) override;
+		void OnTransformChanged(TransformChangedFlags flags) override;
 
 	protected:
 		friend class CRigidbody;
 		using Component::destroyInternal;
 
 		/** Creates the internal representation of the Joint for use by the component. */
-		virtual SPtr<Joint> createInternal() = 0;
+		virtual SPtr<Joint> CreateInternal() = 0;
 
 		/** Creates the internal representation of the Joint and restores the values saved by the Component. */
-		virtual void restoreInternal();
+		virtual void RestoreInternal();
 
 		/** Calculates the local position/rotation that needs to be applied to the particular joint body. */
-		virtual void getLocalTransform(JointBody body, Vector3& position, Quaternion& rotation);
+		virtual void GetLocalTransform(JointBody body, Vector3& position, Quaternion& rotation);
 
 		/** Destroys the internal joint representation. */
-		void destroyInternal();
+		void DestroyInternal();
 
 		/** Notifies the joint that one of the attached rigidbodies moved and that its transform needs updating. */
-		void notifyRigidbodyMoved(const HRigidbody& body);
+		void NotifyRigidbodyMoved(const HRigidbody& body);
 
 		/** Checks can the provided rigidbody be used for initializing the joint. */
-		bool isBodyValid(const HRigidbody& body);
+		bool IsBodyValid(const HRigidbody& body);
 
 		/** Updates the local transform for the specified body attached to the joint. */
-		void updateTransform(JointBody body);
+		void UpdateTransform(JointBody body);
 
 		/** Triggered when the joint constraint gets broken. */
-		void triggerOnJointBroken();
+		void TriggerOnJointBroken();
 
 		SPtr<Joint> mInternal;
 

@@ -123,7 +123,7 @@ namespace bs
 			const UnorderedMap<String, String>& defines);
 
 		/** Parses the shader/mixin node and outputs the relevant meta-data. */
-		static ShaderMetaData parseShaderMetaData(ASTFXNode* shader);
+		static ShaderMetaData ParseShaderMetaData(ASTFXNode* shader);
 
 		/**
 		 * Parses the root AST node and outputs a list of all mixins/shaders and their meta-data, sub-shader meta-data,
@@ -134,85 +134,85 @@ namespace bs
 			SHADER_DESC& shaderDesc);
 
 		/** Parses the sub-shader node and outputs the relevant data. */
-		static SubShaderData parseSubShader(ASTFXNode* subShader);
+		static SubShaderData ParseSubShader(ASTFXNode* subShader);
 
 		/** Parses shader variations and writes them to the provided meta-data object. */
-		static void parseVariations(ShaderMetaData& metaData, ASTFXNode* variations);
+		static void ParseVariations(ShaderMetaData& metaData, ASTFXNode* variations);
 
 		/** Parses a single variation option node. */
-		static VariationOption parseVariationOption(ASTFXNode* variationOption);
+		static VariationOption ParseVariationOption(ASTFXNode* variationOption);
 
 		/** Parses BSL attributes. */
-		static AttributeData parseAttributes(ASTFXNode* attributes);
+		static AttributeData ParseAttributes(ASTFXNode* attributes);
 
 		/**	Maps BSL queue sort type enum into in-engine queue sort type mode. */
-		static QueueSortType parseSortType(CullAndSortModeValue sortType);
+		static QueueSortType ParseSortType(CullAndSortModeValue sortType);
 
 		/**	Maps BSL comparison function enum into in-engine compare function. */
-		static CompareFunction parseCompFunc(CompFuncValue compFunc);
+		static CompareFunction ParseCompFunc(CompFuncValue compFunc);
 
 		/**	Maps BSL operation to in-engine blend factor. */
-		static BlendFactor parseBlendFactor(OpValue factor);
+		static BlendFactor ParseBlendFactor(OpValue factor);
 
 		/**	Maps BSL blend operation to in-engine blend operation. */
-		static BlendOperation parseBlendOp(BlendOpValue op);
+		static BlendOperation ParseBlendOp(BlendOpValue op);
 
 		/**	Maps BSL operation to in-engine stencil operation. */
-		static StencilOperation parseStencilOp(OpValue op);
+		static StencilOperation ParseStencilOp(OpValue op);
 		
 		/**	Maps BSL cull mode enum to in-engine cull mode. */
-		static CullingMode parseCullMode(CullAndSortModeValue cm);
+		static CullingMode ParseCullMode(CullAndSortModeValue cm);
 
 		/**	Maps BSL fill mode enum to in-engine fill mode. */
-		static PolygonMode parseFillMode(FillModeValue fm);
+		static PolygonMode ParseFillMode(FillModeValue fm);
 
 		/**
 		 * Populates the front facing operation portion of the depth-stencil state descriptor from the provided stencil-op
 		 * AST node.
 		 */
-		static void parseStencilFront(DEPTH_STENCIL_STATE_DESC& desc, ASTFXNode* stencilOpNode);
+		static void ParseStencilFront(DEPTH_STENCIL_STATE_DESC& desc, ASTFXNode* stencilOpNode);
 
 		/**
 		 * Populates the back backing operation portion of the depth-stencil state descriptor from the provided stencil-op
 		 * AST node.
 		 */
-		static void parseStencilBack(DEPTH_STENCIL_STATE_DESC& desc, ASTFXNode* stencilOpNode);
+		static void ParseStencilBack(DEPTH_STENCIL_STATE_DESC& desc, ASTFXNode* stencilOpNode);
 
 		/** Populates the color (RGB) portion of the blend state descriptor from the provided blend definition AST node. */
-		static void parseColorBlendDef(RENDER_TARGET_BLEND_STATE_DESC& desc, ASTFXNode* blendDefNode);
+		static void ParseColorBlendDef(RENDER_TARGET_BLEND_STATE_DESC& desc, ASTFXNode* blendDefNode);
 
 		/** Populates the alpha portion of the blend state descriptor from the provided blend definition AST node. */
-		static void parseAlphaBlendDef(RENDER_TARGET_BLEND_STATE_DESC& desc, ASTFXNode* blendDefNode);
+		static void ParseAlphaBlendDef(RENDER_TARGET_BLEND_STATE_DESC& desc, ASTFXNode* blendDefNode);
 
 		/**
 		 * Populates blend state descriptor for a single render target from the provided AST node. Which target gets
 		 * updated depends on the index set in the AST node.
 		 */
-		static void parseRenderTargetBlendState(BLEND_STATE_DESC& desc, ASTFXNode* targetNode, UINT32& index);
+		static void ParseRenderTargetBlendState(BLEND_STATE_DESC& desc, ASTFXNode* targetNode, UINT32& index);
 
 		/**
 		 * Parses the blend state AST node and populates the pass' blend state descriptor. Returns false if the descriptor
 		 * wasn't modified.
 		 */
-		static bool parseBlendState(PassData& passData, ASTFXNode* blendNode);
+		static bool ParseBlendState(PassData& passData, ASTFXNode* blendNode);
 
 		/**
 		 * Parses the rasterizer state AST node and populates the pass' rasterizer state descriptor. Returns false if the
 		 * descriptor wasn't modified.
 		 */
-		static bool parseRasterizerState(PassData& passData, ASTFXNode* rasterNode);
+		static bool ParseRasterizerState(PassData& passData, ASTFXNode* rasterNode);
 
 		/**
 		 * Parses the depth state AST node and populates the pass' depth-stencil state descriptor. Returns false if the
 		 * descriptor wasn't modified.
 		 */
-		static bool parseDepthState(PassData& passData, ASTFXNode* depthNode);
+		static bool ParseDepthState(PassData& passData, ASTFXNode* depthNode);
 
 		/**
 		* Parses the stencil state AST node and populates the pass' depth-stencil state descriptor. Returns false if the
 		* descriptor wasn't modified.
 		*/
-		static bool parseStencilState(PassData& passData, ASTFXNode* stencilNode);
+		static bool ParseStencilState(PassData& passData, ASTFXNode* stencilNode);
 
 		/**
 		 * Parses a code AST node and outputs the result in one of the streams within the provided pass data.
@@ -222,7 +222,7 @@ namespace bs
 		 * @param[in]	passData	Pass data containing temporary pass data, including the code streams that the code
 		 *							block code will be written to.
 		 */
-		static void parseCodeBlock(ASTFXNode* codeNode, const Vector<String>& codeBlocks, PassData& passData);
+		static void ParseCodeBlock(ASTFXNode* codeNode, const Vector<String>& codeBlocks, PassData& passData);
 
 		/**
 		 * Parses the pass AST node and populates the provided @p passData with all relevant pass parameters.
@@ -231,7 +231,7 @@ namespace bs
 		 * @param[in]	codeBlocks		GPU program source code.
 		 * @param[out]	passData		Will contain pass data after parsing.
 		 */
-		static void parsePass(ASTFXNode* passNode, const Vector<String>& codeBlocks, PassData& passData);
+		static void ParsePass(ASTFXNode* passNode, const Vector<String>& codeBlocks, PassData& passData);
 
 		/**
 		 * Parses the shader AST node and generates a single shader object.
@@ -240,7 +240,7 @@ namespace bs
 		 * @param[in]	codeBlocks		GPU program source code.
 		 * @param[out]	shaderData		Will contain shader data after parsing.
 		 */
-		static void parseShader(ASTFXNode* shaderNode, const Vector<String>& codeBlocks, ShaderData& shaderData);
+		static void ParseShader(ASTFXNode* shaderNode, const Vector<String>& codeBlocks, ShaderData& shaderData);
 
 		/**
 		 * Parser the options AST node that contains global shader options.
@@ -248,16 +248,16 @@ namespace bs
 		 * @param[in]	optionsNode		Node to parse.
 		 * @param[in]	shaderDesc		Descriptor to apply the found options to.
 		 */
-		static void parseOptions(ASTFXNode* optionsNode, SHADER_DESC& shaderDesc);
+		static void ParseOptions(ASTFXNode* optionsNode, SHADER_DESC& shaderDesc);
 
 		/**
 		 * Iterates over all provided mixins/shaders and inherits any variations. The variations are written in-place, to
 		 * the @p shaderMetaData array, for any non-mixins.
 		 */
-		static BSLFXCompileResult populateVariations(Vector<std::pair<ASTFXNode*, ShaderMetaData>>& shaderMetaData);
+		static BSLFXCompileResult PopulateVariations(Vector<std::pair<ASTFXNode*, ShaderMetaData>>& shaderMetaData);
 
 		/** Populates the information about variation parameters and their values. */
-		static void populateVariationParamInfos(const ShaderMetaData& shaderMetaData, SHADER_DESC& desc);
+		static void PopulateVariationParamInfos(const ShaderMetaData& shaderMetaData, SHADER_DESC& desc);
 
 		/**
 		 * Parses the provided source and generates a SHADER_DESC containing techniques for all shader variations, any
@@ -321,7 +321,7 @@ namespace bs
 		 * Converts a null-terminated string into a standard string, and eliminates quotes that are assumed to be at the
 		 * first and last index.
 		 */
-		static String removeQuotes(const char* input);
+		static String RemoveQuotes(const char* input);
 	};
 
 	/** @} */

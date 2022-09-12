@@ -24,13 +24,13 @@ namespace bs { namespace ct
 		ID3D11ShaderResourceView* getSRV() const;
 
 		/** Returns DXGI pixel format that was used to create the texture. */
-		DXGI_FORMAT getDXGIFormat() const { return mDXGIFormat; }
+		DXGI_FORMAT GetDXGIFormat() const { return mDXGIFormat; }
 
 		/** Returns DXGI pixel used for reading the texture as a shader resource or writing as a render target. */
-		DXGI_FORMAT getColorFormat() const { return mDXGIColorFormat; }
+		DXGI_FORMAT GetColorFormat() const { return mDXGIColorFormat; }
 
 		/** Returns DXGI pixel used for writing to a depth stencil texture. */
-		DXGI_FORMAT getDepthStencilFormat() const { return mDXGIDepthStencilFormat; }
+		DXGI_FORMAT GetDepthStencilFormat() const { return mDXGIDepthStencilFormat; }
 
 	protected:
 		friend class D3D11TextureManager;
@@ -38,14 +38,14 @@ namespace bs { namespace ct
 		D3D11Texture(const TEXTURE_DESC& desc, const SPtr<PixelData>& initialData, GpuDeviceFlags deviceMask);
 
 		/** @copydoc CoreObject::initialize() */
-		void initialize() override;
+		void Initialize() override;
 
 		/** @copydoc Texture::lockImpl */
 		PixelData lockImpl(GpuLockOptions options, UINT32 mipLevel = 0, UINT32 face = 0, UINT32 deviceIdx = 0,
 						   UINT32 queueIdx = 0) override;
 
 		/** @copydoc Texture::unlockImpl */
-		void unlockImpl() override;
+		void UnlockImpl() override;
 
 		/** @copydoc Texture::copyImpl */
 		void copyImpl(const SPtr<Texture>& target, const TEXTURE_COPY_DESC& desc,
@@ -60,19 +60,19 @@ namespace bs { namespace ct
 					   UINT32 queueIdx = 0) override;
 
 		/**	Creates a blank DX11 1D texture object. */
-		void create1DTex();
+		void Create1DTex();
 
 		/**	Creates a blank DX11 2D texture object. */
-		void create2DTex();
+		void Create2DTex();
 
 		/**	Creates a blank DX11 3D texture object. */
-		void create3DTex();
+		void Create3DTex();
 
 		/**
 		 * Creates a staging buffer that is used as a temporary buffer for read operations on textures that do not support
 		 * direct reading.
 		 */
-		void createStagingBuffer();
+		void CreateStagingBuffer();
 
 		/**
 		 * Maps the specified texture surface for reading/writing.
@@ -92,7 +92,7 @@ namespace bs { namespace ct
 		void* map(ID3D11Resource* res, D3D11_MAP flags, UINT32 mipLevel, UINT32 face, UINT32& rowPitch, UINT32& slicePitch);
 
 		/**	Unmaps a previously mapped texture. */
-		void unmap(ID3D11Resource* res);
+		void Unmap(ID3D11Resource* res);
 
 		/**
 		 * Copies texture data into a staging buffer and maps the staging buffer. Will create a staging buffer if one
@@ -108,7 +108,7 @@ namespace bs { namespace ct
 		void* mapstagingbuffer(D3D11_MAP flags, UINT32 mipLevel, UINT32 face, UINT32& rowPitch, UINT32& slicePitch);
 
 		/**	Unmaps a previously mapped staging buffer. */
-		void unmapstagingbuffer();
+		void Unmapstagingbuffer();
 		
 		/**
 		 * Maps a static buffer, for writing only. Returned pointer points to temporary CPU memory that will be copied to
@@ -121,10 +121,10 @@ namespace bs { namespace ct
 		void* mapstaticbuffer(PixelData lock, UINT32 mipLevel, UINT32 face);
 
 		/**	Unmaps a previously mapped static buffer and flushes its data to the actual GPU buffer. */
-		void unmapstaticbuffer();
+		void Unmapstaticbuffer();
 
 		/**	Creates an empty and uninitialized texture view object. */
-		SPtr<TextureView> createView(const TEXTURE_VIEW_DESC& desc) override;
+		SPtr<TextureView> CreateView(const TEXTURE_VIEW_DESC& desc) override;
 
 	protected:
 		ID3D11Texture1D* m1DTex = nullptr;

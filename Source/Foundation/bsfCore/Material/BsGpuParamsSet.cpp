@@ -46,7 +46,7 @@ namespace std
 	template<>
 	struct hash<bs::ValidParamKey>
 	{
-		size_t operator()(const bs::ValidParamKey& key) const
+		size_t Operator()(const bs::ValidParamKey& key) const
 		{
 			size_t hash = 0;
 			bs::bs_hash_combine(hash, key.name);
@@ -72,7 +72,7 @@ namespace bs
 		UINT32 slot;
 	};
 
-	Vector<SPtr<GpuParamDesc>> getAllParamDescs(const SPtr<Technique>& technique)
+	Vector<SPtr<GpuParamDesc>> GetAllParamDescs(const SPtr<Technique>& technique)
 	{
 		Vector<SPtr<GpuParamDesc>> allParamDescs;
 
@@ -136,7 +136,7 @@ namespace bs
 		return allParamDescs;
 	}
 
-	Vector<SPtr<GpuParamDesc>> getAllParamDescs(const SPtr<ct::Technique>& technique)
+	Vector<SPtr<GpuParamDesc>> GetAllParamDescs(const SPtr<ct::Technique>& technique)
 	{
 		Vector<SPtr<GpuParamDesc>> allParamDescs;
 
@@ -182,7 +182,7 @@ namespace bs
 		return allParamDescs;
 	}
 
-	bool areParamsEqual(const GpuParamDataDesc& paramA, const GpuParamDataDesc& paramB, bool ignoreBufferOffsets)
+	bool AreParamsEqual(const GpuParamDataDesc& paramA, const GpuParamDataDesc& paramB, bool ignoreBufferOffsets)
 	{
 		bool equal = paramA.arraySize == paramB.arraySize && paramA.elementSize == paramB.elementSize
 			&& paramA.type == paramB.type && paramA.arrayElementStride == paramB.arrayElementStride;
@@ -375,7 +375,7 @@ namespace bs
 		return validParams;
 	}
 
-	Map<String, String> determineParameterToBlockMapping(const Vector<SPtr<GpuParamDesc>>& paramDescs)
+	Map<String, String> DetermineParameterToBlockMapping(const Vector<SPtr<GpuParamDesc>>& paramDescs)
 	{
 		Map<String, String> paramToParamBlock;
 
@@ -439,7 +439,7 @@ namespace bs
 			if (findBlockIter == paramToParamBlockMap.end())
 				BS_EXCEPT(InternalErrorException, "Parameter doesn't exist in param to param block map but exists in valid param map.");
 
-			ValidParamKey key(iter->second.gpuVariableName, MaterialParams::ParamType::Data);
+			ValidParamKey Key(iter->second.gpuVariableName, MaterialParams::ParamType::Data);
 			validParams.insert(std::make_pair(key, iter->first));
 		}
 
@@ -455,7 +455,7 @@ namespace bs
 					{
 						if ((*iter3)->name == (*iter2))
 						{
-							ValidParamKey key(*iter2, paramType);
+							ValidParamKey Key(*iter2, paramType);
 							validParams.insert(std::make_pair(key, iter->first));
 
 							break;
@@ -585,7 +585,7 @@ namespace bs
 						if (dataParam.second.paramBlockSet != blockDesc.set || dataParam.second.paramBlockSlot != blockDesc.slot)
 							continue;
 
-						ValidParamKey key(dataParam.first, MaterialParams::ParamType::Data);
+						ValidParamKey Key(dataParam.first, MaterialParams::ParamType::Data);
 
 						auto iterFind = validParams.find(key);
 						if (iterFind == validParams.end())
@@ -649,7 +649,7 @@ namespace bs
 					{
 						for (auto& param : gpuParams)
 						{
-							ValidParamKey key(param.first, paramType);
+							ValidParamKey Key(param.first, paramType);
 
 							auto iterFind = validParams.find(key);
 							if (iterFind == validParams.end())

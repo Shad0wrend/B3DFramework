@@ -170,7 +170,7 @@ namespace bs
 		 *
 		 * @note	Does not recurse into child prefab instances.
 		 */
-		void restoreUnlinkedInstanceData(const HSceneObject& so, SceneObjectProxy& proxy)
+		void RestoreUnlinkedInstanceData(const HSceneObject& so, SceneObjectProxy& proxy)
 		{
 			struct StackEntry
 			{

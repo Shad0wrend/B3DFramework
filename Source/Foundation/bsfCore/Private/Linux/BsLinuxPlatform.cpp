@@ -131,7 +131,7 @@ namespace bs
 		}
 	}
 
-	void applyCurrentCursor(Platform::Pimpl* data, ::Window window)
+	void ApplyCurrentCursor(Platform::Pimpl* data, ::Window window)
 	{
 		if(data->isCursorHidden)
 			XDefineCursor(data->xDisplay, window, data->emptyCursor);
@@ -144,7 +144,7 @@ namespace bs
 		}
 	}
 
-	void updateClipBounds(Platform::Pimpl* data, LinuxWindow* window)
+	void UpdateClipBounds(Platform::Pimpl* data, LinuxWindow* window)
 	{
 		if(!data->cursorClipEnabled || data->cursorClipWindow != window)
 			return;
@@ -155,7 +155,7 @@ namespace bs
 		data->cursorClipRect.height = window->getHeight();
 	}
 
-	bool clipCursor(Platform::Pimpl* data, Vector2I& pos)
+	bool ClipCursor(Platform::Pimpl* data, Vector2I& pos)
 	{
 		if(!data->cursorClipEnabled)
 			return false;
@@ -165,12 +165,12 @@ namespace bs
 
 		if(clippedX < 0)
 			clippedX = 0;
-		else if(clippedX >= (INT32)data->cursorClipRect.width)
+		else If(clippedX >= (INT32)data->cursorClipRect.width)
 			clippedX = data->cursorClipRect.width > 0 ? data->cursorClipRect.width - 1 : 0;
 
 		if(clippedY < 0)
 			clippedY = 0;
-		else if(clippedY >= (INT32)data->cursorClipRect.height)
+		else If(clippedY >= (INT32)data->cursorClipRect.height)
 			clippedY = data->cursorClipRect.height > 0 ? data->cursorClipRect.height - 1 : 0;
 
 		clippedX += data->cursorClipRect.x;
@@ -187,13 +187,13 @@ namespace bs
 		return false;
 	}
 
-	void clipCursorDisable(Platform::Pimpl* data)
+	void ClipCursorDisable(Platform::Pimpl* data)
 	{
 		data->cursorClipEnabled = false;
 		data->cursorClipWindow = None;
 	}
 
-	void setCurrentCursor(Platform::Pimpl* data, ::Cursor cursor)
+	void SetCurrentCursor(Platform::Pimpl* data, ::Cursor cursor)
 	{
 		if(data->currentCursor)
 			XFreeCursor(data->xDisplay, data->currentCursor);
@@ -207,7 +207,7 @@ namespace bs
 	 * Searches the window hierarchy, from top to bottom, looking for the top-most window that contains the specified
 	 * point. Returns 0 if one is not found.
 	 */
-	::Window getWindowUnderPoint(::Display* display, ::Window rootWindow, ::Window window, const Vector2I& screenPos)
+	::Window GetWindowUnderPoint(::Display* display, ::Window rootWindow, ::Window window, const Vector2I& screenPos)
 	{
 		::Window outRoot, outParent;
 		::Window* children;
@@ -233,11 +233,11 @@ namespace bs
 			if(!XTranslateCoordinates(display, curWindow, rootWindow, 0, 0, &pos.x, &pos.y, &outChild))
 				continue;
 
-			Rect2I area(pos.x, pos.y, (UINT32)xwa.width, (UINT32)xwa.height);
+			Rect2I Area(pos.x, pos.y, (UINT32)xwa.width, (UINT32)xwa.height);
 			if(area.contains(screenPos))
 			{
 				XFree(children);
-				return getWindowUnderPoint(display, rootWindow, curWindow, screenPos);
+				return GetWindowUnderPoint(display, rootWindow, curWindow, screenPos);
 			}
 		}
 
@@ -245,7 +245,7 @@ namespace bs
 		return 0;
 	}
 
-	int x11ErrorHandler(::Display* display, XErrorEvent* event)
+	int X11ErrorHandler(::Display* display, XErrorEvent* event)
 	{
 		// X11 by default crashes the app on error, even though some errors can be just fine. So we provide our own handler.
 
@@ -263,20 +263,20 @@ namespace bs
 
 	Vector2I Platform::getCursorPosition()
 	{
-		Lock lock(mData->lock);
+		Lock Lock(mData->lock);
 		return _getCursorPosition(mData);
 	}
 
 	void Platform::setCursorPosition(const Vector2I& screenPos)
 	{
-		Lock lock(mData->lock);
+		Lock Lock(mData->lock);
 
 		_setCursorPosition(mData, screenPos);
 	}
 
 	void Platform::captureMouse(const RenderWindow& window)
 	{
-		Lock lock(mData->lock);
+		Lock Lock(mData->lock);
 
 		LinuxWindow* linuxWindow;
 		window.getCustomAttribute("LINUX_WINDOW", &linuxWindow);
@@ -289,7 +289,7 @@ namespace bs
 
 	void Platform::releaseMouseCapture()
 	{
-		Lock lock(mData->lock);
+		Lock Lock(mData->lock);
 
 		XUngrabPointer(mData->xDisplay, CurrentTime);
 		XSync(mData->xDisplay, False);
@@ -297,7 +297,7 @@ namespace bs
 
 	bool Platform::isPointOverWindow(const RenderWindow& window, const Vector2I& screenPos)
 	{
-		Lock lock(mData->lock);
+		Lock Lock(mData->lock);
 
 		LinuxWindow* linuxWindow;
 		window.getCustomAttribute("LINUX_WINDOW", &linuxWindow);
@@ -318,7 +318,7 @@ namespace bs
 
 	void Platform::hideCursor()
 	{
-		Lock lock(mData->lock);
+		Lock Lock(mData->lock);
 		mData->isCursorHidden = true;
 
 		for(auto& entry : mData->windowMap)
@@ -327,7 +327,7 @@ namespace bs
 
 	void Platform::showCursor()
 	{
-		Lock lock(mData->lock);
+		Lock Lock(mData->lock);
 		mData->isCursorHidden = false;
 
 		for(auto& entry : mData->windowMap)
@@ -336,13 +336,13 @@ namespace bs
 
 	bool Platform::isCursorHidden()
 	{
-		Lock lock(mData->lock);
+		Lock Lock(mData->lock);
 		return mData->isCursorHidden;
 	}
 
 	void Platform::clipCursorToWindow(const RenderWindow& window)
 	{
-		Lock lock(mData->lock);
+		Lock Lock(mData->lock);
 
 		LinuxWindow* linuxWindow;
 		window.getCustomAttribute("LINUX_WINDOW", &linuxWindow);
@@ -360,7 +360,7 @@ namespace bs
 
 	void Platform::clipCursorToRect(const Rect2I& screenRect)
 	{
-		Lock lock(mData->lock);
+		Lock Lock(mData->lock);
 
 		mData->cursorClipEnabled = true;
 		mData->cursorClipRect = screenRect;
@@ -374,7 +374,7 @@ namespace bs
 
 	void Platform::clipCursorDisable()
 	{
-		Lock lock(mData->lock);
+		Lock Lock(mData->lock);
 
 		bs::clipCursorDisable(mData);
 	}
@@ -384,7 +384,7 @@ namespace bs
 		SPtr<PixelData> bgraData = PixelData::create(pixelData.getWidth(), pixelData.getHeight(), 1, PF_BGRA8);
 		PixelUtil::bulkPixelConversion(pixelData, *bgraData);
 
-		Lock lock(mData->lock);
+		Lock Lock(mData->lock);
 
 		XcursorImage* image = XcursorImageCreate((int)bgraData->getWidth(), (int)bgraData->getHeight());
 		image->xhot = (XcursorDim)hotSpot.x;
@@ -410,7 +410,7 @@ namespace bs
 
 		LinuxWindow* mainLinuxWindow = iterFind->second;
 
-		Lock lock(mData->lock);
+		Lock Lock(mData->lock);
 		mainLinuxWindow->setIcon(pixelData);
 	}
 
@@ -419,7 +419,7 @@ namespace bs
 		if(nonClientAreas.size() == 0)
 			return;
 
-		Lock lock(mData->lock);
+		Lock Lock(mData->lock);
 
 		LinuxWindow* linuxWindow;
 		window.getCustomAttribute("LINUX_WINDOW", &linuxWindow);
@@ -434,7 +434,7 @@ namespace bs
 
 	void Platform::resetNonClientAreas(const ct::RenderWindow& window)
 	{
-		Lock lock(mData->lock);
+		Lock Lock(mData->lock);
 
 		LinuxWindow* linuxWindow;
 		window.getCustomAttribute("LINUX_WINDOW", &linuxWindow);
@@ -449,7 +449,7 @@ namespace bs
 
 	void Platform::copyToClipboard(const String& string)
 	{
-		Lock lock(mData->lock);
+		Lock Lock(mData->lock);
 		mData->clipboardData = string;
 
 		Atom clipboardAtom = XInternAtom(mData->xDisplay, "CLIPBOARD", 0);
@@ -458,7 +458,7 @@ namespace bs
 
 	String Platform::copyFromClipboard()
 	{
-		Lock lock(mData->lock);
+		Lock Lock(mData->lock);
 		Atom clipboardAtom = XInternAtom(mData->xDisplay, "CLIPBOARD", 0);
 		::Window selOwner = XGetSelectionOwner(mData->xDisplay, clipboardAtom);
 
@@ -508,7 +508,7 @@ namespace bs
 	}
 
 	/** Maps X11 mouse button codes to Banshee button codes. */
-	ButtonCode xButtonToButtonCode(int button)
+	ButtonCode XButtonToButtonCode(int button)
 	{
 		switch (button)
 		{
@@ -677,7 +677,7 @@ namespace bs
 
 	String Platform::keyCodeToUnicode(UINT32 buttonCode)
 	{
-		Lock lock(mData->lock);
+		Lock Lock(mData->lock);
 
 		const char* keyName = buttonCodeToKeyName((ButtonCode)buttonCode);
 		if(keyName == nullptr)
@@ -737,7 +737,7 @@ namespace bs
 	 * @param[out]	command			Input command. Only valid if function returns true.
 	 * @return						True if the KeySym is an input command.
 	 */
-	bool parseInputCommand(KeySym keySym, bool shift, InputCommandType& command)
+	bool ParseInputCommand(KeySym keySym, bool shift, InputCommandType& command)
 	{
 		switch (keySym)
 		{
@@ -803,12 +803,12 @@ namespace bs
 	 * @param pressed   true if the button was pressed, false if it was released
 	 * @param timestamp Time when the event happened
 	 */
-	void enqueueButtonEvent(ButtonCode bc, bool pressed, UINT64 timestamp)
+	void EnqueueButtonEvent(ButtonCode bc, bool pressed, UINT64 timestamp)
 	{
 		if (bc == BC_UNASSIGNED)
 			return;
 
-		Lock eventLock(LinuxPlatform::eventLock);
+		Lock EventLock(LinuxPlatform::eventLock);
 
 		LinuxButtonEvent event;
 		event.button = bc;
@@ -821,7 +821,7 @@ namespace bs
 	{
 		while(true)
 		{
-			Lock lock(mData->lock);
+			Lock Lock(mData->lock);
 
 			if(XPending(mData->xDisplay) <= 0)
 				break;
@@ -851,7 +851,7 @@ namespace bs
 							if (XIMaskIsSet(xInput2Event->valuators.mask, valuator))
 								deltas[valuator] = xInput2Event->raw_values[currentValuesIndex++];
 
-						Lock eventLock(LinuxPlatform::eventLock);
+						Lock EventLock(LinuxPlatform::eventLock);
 						LinuxPlatform::mouseMotionEvent.deltaX += deltas[0];
 						LinuxPlatform::mouseMotionEvent.deltaY += deltas[1];
 						LinuxPlatform::mouseMotionEvent.deltaZ += deltas[3]; // Not a typo - 2 is for horizontal scroll.
@@ -1169,7 +1169,7 @@ namespace bs
 
 					response.xselection.property = selReq.property;
 				}
-				else if(selReq.target == targetsAtom)
+				else If(selReq.target == targetsAtom)
 				{
 					Atom data[2];
 					data[0] = utf8StringAtom;
@@ -1258,7 +1258,7 @@ namespace bs
 
 	void Platform::_startUp()
 	{
-		Lock lock(mData->lock);
+		Lock Lock(mData->lock);
 		mData->xDisplay = XOpenDisplay(nullptr);
 		XSetErrorHandler(x11ErrorHandler);
 
@@ -1369,7 +1369,7 @@ namespace bs
 
 	void Platform::_shutDown()
 	{
-		Lock lock(mData->lock);
+		Lock Lock(mData->lock);
 
 		// Free empty cursor
 		XFreeCursor(mData->xDisplay, mData->emptyCursor);

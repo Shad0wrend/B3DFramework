@@ -49,7 +49,7 @@ namespace bs
 			bs_frame_mark();
 
 			const U32String utf32text = UTF8::toUTF32(text);
-			TextData<FrameAlloc> textData(utf32text, style.font, style.fontSize, wordWrapWidth, 0, style.wordWrap);
+			TextData<FrameAlloc> TextData(utf32text, style.font, style.fontSize, wordWrapWidth, 0, style.wordWrap);
 
 			contentWidth += textData.getWidth();
 			contentHeight += textData.getNumLines() * textData.getLineHeight();
@@ -68,7 +68,7 @@ namespace bs
 			bs_frame_mark();
 
 			const U32String utf32text = UTF8::toUTF32(text);
-			TextData<FrameAlloc> textData(utf32text, font, fontSize, 0, 0, false);
+			TextData<FrameAlloc> TextData(utf32text, font, fontSize, 0, 0, false);
 
 			size.x = textData.getWidth();
 			size.y = textData.getNumLines() * textData.getLineHeight();

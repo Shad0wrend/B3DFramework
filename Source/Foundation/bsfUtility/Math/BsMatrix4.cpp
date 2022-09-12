@@ -182,7 +182,7 @@ namespace bs
 	{
 		// Invert the parameters
 		Vector3 invTranslate = -translation;
-		Vector3 invScale(1 / scale.x, 1 / scale.y, 1 / scale.z);
+		Vector3 InvScale(1 / scale.x, 1 / scale.y, 1 / scale.z);
 		Quaternion invRot = rotation.inverse();
 
 		// Because we're inverting, order is translation, rotation, scale
@@ -332,7 +332,7 @@ namespace bs
 		// Note: Duplicate code in Camera, bring it all here eventually
 		static constexpr float INFINITE_FAR_PLANE_ADJUST = 0.00001f;
 
-		Radian thetaX(horzFOV * 0.5f);
+		Radian ThetaX(horzFOV * 0.5f);
 		float tanThetaX = Math::tan(thetaX);
 		float tanThetaY = tanThetaX / aspect;
 

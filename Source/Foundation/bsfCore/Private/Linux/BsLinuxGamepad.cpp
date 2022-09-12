@@ -18,7 +18,7 @@ namespace bs
 	};
 
 	Gamepad::Gamepad(const String& name, const GamepadInfo& gamepadInfo, Input* owner)
-			: mName(name), mOwner(owner)
+			: MName(name), mOwner(owner)
 	{
 		m = bs_new<Pimpl>();
 		m->info = gamepadInfo;
@@ -105,7 +105,7 @@ namespace bs
 							axisState[axisInfo.axisIdx].value = Gamepad::MIN_AXIS + (INT32)(normalizedValue * range);
 						}
 					}
-					else if(events[i].code <= ABS_HAT3Y) // POV
+					else If(events[i].code <= ABS_HAT3Y) // POV
 					{
 						// Note: We only support a single POV and report events from all POVs as if they were from the
 						// same source
@@ -116,14 +116,14 @@ namespace bs
 						{
 							if(events[i].value == -1)
 								povButton = BC_GAMEPAD_DPAD_LEFT;
-							else if(events[i].value == 1)
+							else If(events[i].value == 1)
 								povButton = BC_GAMEPAD_DPAD_RIGHT;
 						}
 						else // Odd, y axis
 						{
 							if(events[i].value == -1)
 								povButton = BC_GAMEPAD_DPAD_UP;
-							else if(events[i].value == 1)
+							else If(events[i].value == 1)
 								povButton = BC_GAMEPAD_DPAD_DOWN;
 						}
 

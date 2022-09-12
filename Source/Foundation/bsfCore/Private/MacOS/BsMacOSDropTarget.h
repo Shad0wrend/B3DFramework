@@ -89,7 +89,7 @@ namespace bs
 		 *
 		 * @note 	Sim thread only.
 		 */
-		static void update();
+		static void Update();
 
 		/**
 		 * Registers a new drop target. Any further events processed will take this target into account, trigger its events
@@ -97,21 +97,21 @@ namespace bs
 		 *
 		 * @note 	Thread safe.
 		 */
-		static void registerDropTarget(DropTarget* target);
+		static void RegisterDropTarget(DropTarget* target);
 
 		/**
 		 * Updates information about previous registered DropTarget. Call this when drop target area changes.
 		 *
 		 * @note	Thread safe.
 		 */
-		static void updateDropTarget(DropTarget* target);
+		static void UpdateDropTarget(DropTarget* target);
 
 		/**
 		 * Unregisters a drop target. Its events will no longer be triggered.
 		 *
 		 * @note	Thread safe.
 		 */
-		static void unregisterDropTarget(DropTarget* target);
+		static void UnregisterDropTarget(DropTarget* target);
 
 		/** Triggered by Cocoa window when mouse cursor enters its content area while dragging. */
 		static bool _notifyDragEntered(UINT32 windowId, const Vector2I& position);

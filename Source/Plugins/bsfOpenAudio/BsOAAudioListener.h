@@ -19,31 +19,31 @@ namespace bs
 		virtual ~OAAudioListener();
 
 		/** @copydoc SceneActor::setTransform */
-		void setTransform(const Transform& transform) override;
+		void SetTransform(const Transform& transform) override;
 
 		/** @copydoc AudioListener::setVelocity */
-		void setVelocity(const Vector3& velocity) override;
+		void SetVelocity(const Vector3& velocity) override;
 
 	private:
 		friend class OAAudio;
 
 		/** Re-applies stored properties to the listener. */
-		void rebuild();
+		void Rebuild();
 
 		/** Returns forward and up direction as a single vector. */
-		inline std::array<float, 6> getOrientation() const;
+		inline std::array<float, 6> GetOrientation() const;
 
 		/** Updates internal position of the listener. */
-		inline void updatePosition();
+		inline void UpdatePosition();
 
 		/** Updates internal forward and up directions of the listener. */
-		inline void updateOrientation(const std::array<float, 6>& orientation);
+		inline void UpdateOrientation(const std::array<float, 6>& orientation);
 
 		/** Updates internal velocity of the listener. */
-		inline void updateVelocity();
+		inline void UpdateVelocity();
 
 		/** Updates internal volume of the listener. */
-		inline void updateVolume(float volume);
+		inline void UpdateVolume(float volume);
 	};
 
 	/** @} */

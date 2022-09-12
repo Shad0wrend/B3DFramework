@@ -80,7 +80,7 @@ namespace bs
 			NULL
 		);
 
-		String ret((char*)lpMsgBuf);
+		String Ret((char*)lpMsgBuf);
 
 		// Free the buffer.
 		LocalFree(lpMsgBuf);

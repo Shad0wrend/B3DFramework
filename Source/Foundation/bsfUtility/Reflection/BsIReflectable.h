@@ -40,20 +40,20 @@ namespace bs
 		}
 
 		/** Returns true if current RTTI class is derived from @p base (Or if it is the same type as base). */
-		bool isDerivedFrom(RTTITypeBase* base);
+		bool IsDerivedFrom(RTTITypeBase* base);
 
 		/** Returns an unique type identifier of the class. */
-		UINT32 getTypeId() const;
+		UINT32 GetTypeId() const;
 
 		/**
 		 * Returns the type name of the class.
 		 *
 		 * @note	Name is not necessarily unique.
 		 */
-		const String& getTypeName() const;
+		const String& GetTypeName() const;
 
 		/** Creates an empty instance of a class from a type identifier. */
-		static SPtr<IReflectable> createInstanceFromTypeId(UINT32 rttiTypeId);
+		static SPtr<IReflectable> CreateInstanceFromTypeId(UINT32 rttiTypeId);
 
 		/** @name Internal
 		 *  @{

@@ -51,7 +51,7 @@ namespace bs
 	{
 	public:
 		GameObjectHandleBase()
-			: mData(bs_shared_ptr_new<GameObjectHandleData>(nullptr))
+			: MData(bs_shared_ptr_new<GameObjectHandleData>(nullptr))
 		{ }
 
 		/**
@@ -62,10 +62,10 @@ namespace bs
 		 *							completely inaccessible (fully destroyed). If this is true this method will return true
 		 *							if object is completely inaccessible or if it is just queued for destruction.
 		 */
-		bool isDestroyed(bool checkQueued = false) const;
+		bool IsDestroyed(bool checkQueued = false) const;
 
 		/**	Returns the instance ID of the object the handle is referencing. */
-		UINT64 getInstanceId() const { return mData->mPtr != nullptr ? mData->mPtr->mInstanceId : 0; }
+		UINT64 GetInstanceId() const { return mData->mPtr != nullptr ? mData->mPtr->mInstanceId : 0; }
 
 		/**
 		 * Returns pointer to the referenced GameObject.
@@ -84,7 +84,7 @@ namespace bs
 		 *
 		 * @note	Throws exception if the GameObject was destroyed.
 		 */
-		SPtr<GameObject> getInternalPtr() const
+		SPtr<GameObject> GetInternalPtr() const
 		{
 			throwIfDestroyed();
 
@@ -131,18 +131,18 @@ namespace bs
 		GameObjectHandleBase(const SPtr<GameObject>& ptr);
 
 		GameObjectHandleBase(SPtr<GameObjectHandleData> data)
-			: mData(std::move(data))
+			: MData(std::move(data))
 		{ }
 
 		GameObjectHandleBase(std::nullptr_t ptr)
-			: mData(bs_shared_ptr_new<GameObjectHandleData>(nullptr))
+			: MData(bs_shared_ptr_new<GameObjectHandleData>(nullptr))
 		{ }
 
 		/**	Throws an exception if the referenced GameObject has been destroyed. */
-		void throwIfDestroyed() const;
+		void ThrowIfDestroyed() const;
 		
 		/**	Invalidates the handle signifying the referenced object was destroyed. */
-		void destroy()
+		void Destroy()
 		{
 			// It's important not to clear mData->mPtr as some code might rely
 			// on it. (for example for restoring lost handles)
@@ -221,7 +221,7 @@ namespace bs
 		 *
 		 * @note	Throws exception if the GameObject was destroyed.
 		 */
-		SPtr<T> getInternalPtr() const
+		SPtr<T> GetInternalPtr() const
 		{
 			throwIfDestroyed();
 

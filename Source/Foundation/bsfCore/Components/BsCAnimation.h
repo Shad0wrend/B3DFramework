@@ -37,71 +37,71 @@ namespace bs
 		 * modify their states individually.
 		 */
 		BS_SCRIPT_EXPORT(n:DefaultClip,pr:setter)
-		void setDefaultClip(const HAnimationClip& clip);
+		void SetDefaultClip(const HAnimationClip& clip);
 
 		/** @copydoc setDefaultClip */
 		BS_SCRIPT_EXPORT(n:DefaultClip,pr:getter)
-		HAnimationClip getDefaultClip() const { return mDefaultClip; }
+		HAnimationClip GetDefaultClip() const { return mDefaultClip; }
 
 		/** @copydoc Animation::setWrapMode */
 		BS_SCRIPT_EXPORT(n:WrapMode,pr:setter)
-		void setWrapMode(AnimWrapMode wrapMode);
+		void SetWrapMode(AnimWrapMode wrapMode);
 
 		/** @copydoc setWrapMode */
 		BS_SCRIPT_EXPORT(n:WrapMode,pr:getter)
-		AnimWrapMode getWrapMode() const { return mWrapMode; }
+		AnimWrapMode GetWrapMode() const { return mWrapMode; }
 
 		/** @copydoc Animation::setSpeed */
 		BS_SCRIPT_EXPORT(n:Speed,pr:setter)
-		void setSpeed(float speed);
+		void SetSpeed(float speed);
 
 		/** @copydoc setSpeed */
 		BS_SCRIPT_EXPORT(n:Speed,pr:getter)
-		float getSpeed() const { return mSpeed; }
+		float GetSpeed() const { return mSpeed; }
 
 		/** @copydoc Animation::play */
 		BS_SCRIPT_EXPORT(n:Play)
-		void play(const HAnimationClip& clip);
+		void Play(const HAnimationClip& clip);
 
 		/** @copydoc Animation::blendAdditive */
 		BS_SCRIPT_EXPORT(n:BlendAdditive)
-		void blendAdditive(const HAnimationClip& clip, float weight, float fadeLength = 0.0f, UINT32 layer = 0);
+		void BlendAdditive(const HAnimationClip& clip, float weight, float fadeLength = 0.0f, UINT32 layer = 0);
 
 		/** @copydoc Animation::blend1D */
 		BS_SCRIPT_EXPORT(n:Blend1D)
-		void blend1D(const Blend1DInfo& info, float t);
+		void Blend1D(const Blend1DInfo& info, float t);
 
 		/** @copydoc Animation::blend2D */
 		BS_SCRIPT_EXPORT(n:Blend2D)
-		void blend2D(const Blend2DInfo& info, const Vector2& t);
+		void Blend2D(const Blend2DInfo& info, const Vector2& t);
 
 		/** @copydoc Animation::crossFade */
 		BS_SCRIPT_EXPORT(n:CrossFade)
-		void crossFade(const HAnimationClip& clip, float fadeLength);
+		void CrossFade(const HAnimationClip& clip, float fadeLength);
 
 		/** @copydoc Animation::sample */
 		BS_SCRIPT_EXPORT(n:Sample)
-		void sample(const HAnimationClip& clip, float time);
+		void Sample(const HAnimationClip& clip, float time);
 
 		/** @copydoc Animation::stop */
 		BS_SCRIPT_EXPORT(n:Stop)
-		void stop(UINT32 layer);
+		void Stop(UINT32 layer);
 
 		/** @copydoc Animation::stopAll */
 		BS_SCRIPT_EXPORT(n:StopAll)
-		void stopAll();
+		void StopAll();
 		
 		/** @copydoc Animation::isPlaying */
 		BS_SCRIPT_EXPORT(n:IsPlaying,pr:getter)
-		bool isPlaying() const;
+		bool IsPlaying() const;
 
 		/** @copydoc Animation::getState */
 		BS_SCRIPT_EXPORT(n:GetState)
-		bool getState(const HAnimationClip& clip, AnimationClipState& state);
+		bool GetState(const HAnimationClip& clip, AnimationClipState& state);
 
 		/** @copydoc Animation::setState */
 		BS_SCRIPT_EXPORT(n:SetState)
-		void setState(const HAnimationClip& clip, AnimationClipState state);
+		void SetState(const HAnimationClip& clip, AnimationClipState state);
 
 		/**
 		 * Changes a weight of a single morph channel, determining how much of it to apply on top of the base mesh.
@@ -111,42 +111,42 @@ namespace bs
 		 * @param weight	Weight that determines how much of the channel to apply to the mesh, in range [0, 1]. 	
 		 */
 		BS_SCRIPT_EXPORT(n:SetMorphChannelWeight)
-		void setMorphChannelWeight(const String& name, float weight);
+		void SetMorphChannelWeight(const String& name, float weight);
 
 		/** Determines bounds that will be used for animation and mesh culling. Only relevant if setUseBounds() is set to true. */
 		BS_SCRIPT_EXPORT(n:Bounds,pr:setter)
-		void setBounds(const AABox& bounds);
+		void SetBounds(const AABox& bounds);
 
 		/** @copydoc setBounds */
 		BS_SCRIPT_EXPORT(n:Bounds,pr:getter)
-		const AABox& getBounds() const { return mBounds; }
+		const AABox& GetBounds() const { return mBounds; }
 
 		/**
 		 * Determines should animation bounds be used for visibility determination (culling). If false the bounds of the
 		 * mesh attached to the relevant CRenderable component will be used instead.
 		 */
 		BS_SCRIPT_EXPORT(n:UseBounds,pr:setter)
-		void setUseBounds(bool enable);
+		void SetUseBounds(bool enable);
 
 		/** @copydoc setUseBounds */
 		BS_SCRIPT_EXPORT(n:UseBounds,pr:getter)
-		bool getUseBounds() const { return mUseBounds; }
+		bool GetUseBounds() const { return mUseBounds; }
 
 		/** Enables or disables culling of the animation when out of view. Culled animation will not be evaluated. */
 		BS_SCRIPT_EXPORT(n:Cull,pr:setter)
-		void setEnableCull(bool enable);
+		void SetEnableCull(bool enable);
 
 		/** Checks whether the animation will be evaluated when it is out of view. */
 		BS_SCRIPT_EXPORT(n:Cull,pr:getter)
-		bool getEnableCull() const { return mEnableCull; }
+		bool GetEnableCull() const { return mEnableCull; }
 
 		/** @copydoc Animation::getNumClips */
 		BS_SCRIPT_EXPORT(in:true)
-		UINT32 getNumClips() const;
+		UINT32 GetNumClips() const;
 
 		/** @copydoc Animation::getClip */
 		BS_SCRIPT_EXPORT(in:true)
-		HAnimationClip getClip(UINT32 idx) const;
+		HAnimationClip GetClip(UINT32 idx) const;
 
 		/** Triggered whenever an animation event is reached. */
 		Event<void(const HAnimationClip&, const String&)> onEventTriggered;
@@ -228,54 +228,54 @@ namespace bs
 		friend class SceneObject;
 
 		/** @copydoc Component::onInitialized() */
-		void onInitialized() override;
+		void OnInitialized() override;
 
 		/** @copydoc Component::onDestroyed() */
-		void onDestroyed() override;
+		void OnDestroyed() override;
 
 		/** @copydoc Component::update() */
-		void update() override;
+		void Update() override;
 
 		/** @copydoc Component::onDisabled() */
-		void onDisabled() override;
+		void OnDisabled() override;
 
 		/** @copydoc Component::onEnabled() */
-		void onEnabled() override;
+		void OnEnabled() override;
 
 		/** @copydoc Component::onTransformChanged() */
-		void onTransformChanged(TransformChangedFlags flags) override;
+		void OnTransformChanged(TransformChangedFlags flags) override;
 	protected:
 		using Component::destroyInternal;
 
 		/** Creates the internal representation of the Animation and restores the values saved by the Component. */
-		void restoreInternal(bool previewMode);
+		void RestoreInternal(bool previewMode);
 
 		/** Destroys the internal Animation representation. */
-		void destroyInternal();
+		void DestroyInternal();
 
 		/** Callback triggered whenever an animation event is triggered. */
-		void eventTriggered(const HAnimationClip& clip, const String& name);
+		void EventTriggered(const HAnimationClip& clip, const String& name);
 
 		/**
 		 * Finds any scene objects that are mapped to bone transforms. Such object's transforms will be affected by
 		 * skeleton bone animation.
 		 */
-		void setBoneMappings();
+		void SetBoneMappings();
 
 		/**
 		 * Finds any curves that affect a transform of a specific scene object, and ensures that animation properly updates
 		 * those transforms. This does not include curves referencing bones.
 		 */
-		void updateSceneObjectMapping();
+		void UpdateSceneObjectMapping();
 
 		/** @copydoc Animation::mapCurveToSceneObject */
-		void mapCurveToSceneObject(const String& curve, const HSceneObject& so);
+		void MapCurveToSceneObject(const String& curve, const HSceneObject& so);
 
 		/** @copydoc Animation::unmapSceneObject */
-		void unmapSceneObject(const HSceneObject& so);
+		void UnmapSceneObject(const HSceneObject& so);
 		
 		/** Searches child scene objects for Bone components and returns any found ones. */
-		Vector<HBone> findChildBones();
+		Vector<HBone> FindChildBones();
 
 		SPtr<Animation> mInternal;
 		HRenderable mAnimatedRenderable;

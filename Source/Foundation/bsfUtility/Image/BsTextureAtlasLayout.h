@@ -20,7 +20,7 @@ namespace bs
 		public:
 			constexpr TexAtlasNode() = default;
 			constexpr TexAtlasNode(UINT32 x, UINT32 y, UINT32 width, UINT32 height)
-				: x(x), y(y), width(width), height(height)
+				: X(x), y(y), width(width), height(height)
 			{ }
 
 			UINT32 x = 0;
@@ -44,7 +44,7 @@ namespace bs
 		 * @param[in]	pow2			When true the resulting atlas size will always be a power of two.
 		 */
 		TextureAtlasLayout(UINT32 width, UINT32 height, UINT32 maxWidth, UINT32 maxHeight, bool pow2 = false)
-			: mInitialWidth(width), mInitialHeight(height), mWidth(width), mHeight(height), mPow2(pow2)
+			: MInitialWidth(width), mInitialHeight(height), mWidth(width), mHeight(height), mPow2(pow2)
 		{
 			mNodes.push_back(TexAtlasNode(0, 0, maxWidth, maxHeight));
 		}
@@ -59,19 +59,19 @@ namespace bs
 		 * @param[out]	y		Vertical position of the new element within the atlas. Only valid if method returns true.
 		 * @return				True if the element was added to the atlas, false if the element doesn't fit.
 		 */
-		bool addElement(UINT32 width, UINT32 height, UINT32& x, UINT32& y);
+		bool AddElement(UINT32 width, UINT32 height, UINT32& x, UINT32& y);
 
 		/** Removes all entries from the layout. */
-		void clear();
+		void Clear();
 
 		/** Checks have any elements been added to the layout. */
-		bool isEmpty() const { return mNodes.size() == 1; }
+		bool IsEmpty() const { return mNodes.size() == 1; }
 
 		/** Returns the width of the atlas texture, in pixels. */
-		UINT32 getWidth() const { return mWidth; }
+		UINT32 GetWidth() const { return mWidth; }
 
 		/** Returns the height of the atlas texture, in pixels. */
-		UINT32 getHeight() const { return mHeight; }
+		UINT32 GetHeight() const { return mHeight; }
 
 	private:
 		/*
@@ -87,7 +87,7 @@ namespace bs
 		 * @param[in]	allowGrowth		When true, the width/height of the atlas will be allowed to grow to fit the element.
 		 * @return						True if the element was added to the atlas, false if the element doesn't fit.
 		 */
-		bool addToNode(UINT32 nodeIdx, UINT32 width, UINT32 height, UINT32& x, UINT32& y, bool allowGrowth);
+		bool AddToNode(UINT32 nodeIdx, UINT32 width, UINT32 height, UINT32& x, UINT32& y, bool allowGrowth);
 
 		UINT32 mInitialWidth = 0;
 		UINT32 mInitialHeight = 0;

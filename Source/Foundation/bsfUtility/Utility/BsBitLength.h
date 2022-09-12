@@ -59,7 +59,7 @@ namespace bs
 		{
 			if (rhs.bytes > bytes)
 				return BitLength();
-			else if(rhs.bytes == bytes)
+			else If(rhs.bytes == bytes)
 			{
 				if (rhs.bits >= bits)
 					return BitLength();
@@ -103,10 +103,10 @@ namespace bs
 		}
 
 		/** Returns the encoded length in number of bits. */
-		uint64_t getBits() const { return ((uint64_t)bytes * 8) + bits; }
+		uint64_t GetBits() const { return ((uint64_t)bytes * 8) + bits; }
 
 		/** Constructs a new bit length object from a number of bits. */
-		static BitLength fromBits(uint64_t bits)
+		static BitLength FromBits(uint64_t bits)
 		{
 			return BitLength((uint32_t)(bits / 8), (uint32_t)(bits % 8));
 		}

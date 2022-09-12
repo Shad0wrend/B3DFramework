@@ -103,7 +103,7 @@ namespace bs
 			return action;
 		}
 
-		static void destroy(FileAction* action)
+		static void Destroy(FileAction* action)
 		{
 			bs_free(action);
 		}
@@ -138,8 +138,8 @@ namespace bs
 			FolderChangeBits filter);
 		~FolderWatchInfo();
 
-		void startMonitor();
-		void stopMonitor();
+		void StartMonitor();
+		void StopMonitor();
 
 		Path folderToMonitor;
 		FolderMonitor* owner;
@@ -155,12 +155,12 @@ namespace bs
 		FolderMonitor* owner,
 		bool monitorSubdirectories,
 		FolderChangeBits filter)
-			: folderToMonitor(folderToMonitor)
-			, owner(owner)
-			, monitorSubdirectories(monitorSubdirectories)
-			, filter(filter)
-			, streamRef(nullptr)
-			, hasStarted(false)
+			: FolderToMonitor(folderToMonitor)
+			, Owner(owner)
+			, MonitorSubdirectories(monitorSubdirectories)
+			, Filter(filter)
+			, StreamRef(nullptr)
+			, HasStarted(false)
 	{ }
 
 	FolderMonitor::FolderWatchInfo::~FolderWatchInfo()
@@ -237,7 +237,7 @@ namespace bs
 			if(pathLength == 0)
 				continue;
 
-			Lock lock(folderData->mainMutex);
+			Lock Lock(folderData->mainMutex);
 
 			// If not monitoring subdirectories, ignore paths that aren't direct descendants of the root path
 			if(!watcher->monitorSubdirectories)
@@ -381,7 +381,7 @@ namespace bs
 
 		// Register and start the monitor
 		{
-			Lock lock(m->mainMutex);
+			Lock Lock(m->mainMutex);
 
 			m->monitorsToStart.push_back(watchInfo);
 			m->monitors.push_back(watchInfo);
@@ -409,7 +409,7 @@ namespace bs
 				stopMonitorAll();
 			else
 			{
-				Lock lock(m->mainMutex);
+				Lock Lock(m->mainMutex);
 				FolderWatchInfo* watchInfo = *findIter;
 
 				m->monitorsToStop.push_back(watchInfo);
@@ -421,7 +421,7 @@ namespace bs
 	void FolderMonitor::stopMonitorAll()
 	{
 		{
-			Lock lock(m->mainMutex);
+			Lock Lock(m->mainMutex);
 
 			// Remove all watches (this will also wake up the thread)
 			for (auto& watchInfo : m->monitors)
@@ -447,7 +447,7 @@ namespace bs
 		{
 			// Start up any newly added monitors
 			{
-				Lock lock(m->mainMutex);
+				Lock Lock(m->mainMutex);
 
 				for(auto& entry : m->monitorsToStart)
 					entry->startMonitor();
@@ -460,7 +460,7 @@ namespace bs
 
 			// Delete any stopped monitors
 			{
-				Lock lock(m->mainMutex);
+				Lock Lock(m->mainMutex);
 
 				for (auto& entry : m->monitorsToStop)
 					bs_delete(entry);
@@ -474,7 +474,7 @@ namespace bs
 
 			// Check if any created files have completed writing, and handle rename events
 			{
-				Lock lock(m->mainMutex);
+				Lock Lock(m->mainMutex);
 
 				for(auto& monitor : m->monitors)
 				{
@@ -507,7 +507,7 @@ namespace bs
 			// Note: In this case we may also pay a 0.1 second timeout cost, since we don't explicitly wake the run loop.
 			//       Ideally we would also wake the run loop from the main thread so it is able to exit immediately.
 			{
-				Lock lock(m->mainMutex);
+				Lock Lock(m->mainMutex);
 
 				if(m->monitors.empty())
 					break;
@@ -525,7 +525,7 @@ namespace bs
 	void FolderMonitor::_update()
 	{
 		{
-			Lock lock(m->mainMutex);
+			Lock Lock(m->mainMutex);
 
 			std::swap(m->fileActions, m->activeFileActions);
 		}

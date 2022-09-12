@@ -22,7 +22,7 @@ namespace bs { namespace ct
 		ID3D11Buffer* getD3D11Buffer() const;
 	protected:
 		/** @copydoc GpuParamBlockBuffer::initialize */
-		void initialize() override;
+		void Initialize() override;
 	};
 
 	/** @} */

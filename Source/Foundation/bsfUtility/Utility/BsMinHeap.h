@@ -53,10 +53,10 @@ namespace bs
 		HeapNode<K, V> operator[] (UINT32 index) { return mNode[index]; }
 		const HeapNode<K, V> operator[] (UINT32 index) const { return mNode[index]; }
 
-		bool empty() const { return mSize == 0; }
-		UINT32 size() const { return mSize; }
+		bool Empty() const { return mSize == 0; }
+		UINT32 Size() const { return mSize; }
 
-		void minimum(K& key, V& value)
+		void Minimum(K& key, V& value)
 		{
 			assert(mSize > 0);
 
@@ -94,7 +94,7 @@ namespace bs
 			return mPtr[child];
 		}
 
-		void erase(K& key, V& value)
+		void Erase(K& key, V& value)
 		{
 			assert(mSize > 0);
 
@@ -135,7 +135,7 @@ namespace bs
 			mPtr[last]->index = last;
 		}
 
-		void update(HeapNode<K, V>* node, const V& value)
+		void Update(HeapNode<K, V>* node, const V& value)
 		{
 			if (!node)
 				return;
@@ -200,7 +200,7 @@ namespace bs
 			}
 		}
 
-		void resize(UINT32 elements)
+		void Resize(UINT32 elements)
 		{
 			mSize = 0;
 			if (elements > 0)
@@ -221,7 +221,7 @@ namespace bs
 			}
 		}
 
-		bool valid() const
+		bool Valid() const
 		{
 			for (int i = 0; i < (int)mSize; ++i)
 			{

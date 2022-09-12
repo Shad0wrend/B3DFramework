@@ -5,7 +5,7 @@
 
 namespace bs
 {
-	FLAC__StreamDecoderReadStatus streamRead(const FLAC__StreamDecoder*, FLAC__byte buffer[], size_t* bytes, void* clientData)
+	FLAC__StreamDecoderReadStatus StreamRead(const FLAC__StreamDecoder*, FLAC__byte buffer[], size_t* bytes, void* clientData)
 	{
 		FLACDecoderData* data = (FLACDecoderData*)(clientData);
 
@@ -22,7 +22,7 @@ namespace bs
 		return FLAC__STREAM_DECODER_READ_STATUS_ABORT;
 	}
 
-	FLAC__StreamDecoderSeekStatus streamSeek(const FLAC__StreamDecoder*, FLAC__uint64 absoluteByteOffset, void* clientData)
+	FLAC__StreamDecoderSeekStatus StreamSeek(const FLAC__StreamDecoder*, FLAC__uint64 absoluteByteOffset, void* clientData)
 	{
 		FLACDecoderData* data = (FLACDecoderData*)(clientData);
 
@@ -34,7 +34,7 @@ namespace bs
 			return FLAC__STREAM_DECODER_SEEK_STATUS_ERROR;
 	}
 
-	FLAC__StreamDecoderTellStatus streamTell(const FLAC__StreamDecoder*, FLAC__uint64* absoluteByteOffset, void* clientData)
+	FLAC__StreamDecoderTellStatus StreamTell(const FLAC__StreamDecoder*, FLAC__uint64* absoluteByteOffset, void* clientData)
 	{
 		FLACDecoderData* data = (FLACDecoderData*)(clientData);
 
@@ -50,7 +50,7 @@ namespace bs
 		}
 	}
 
-	FLAC__StreamDecoderLengthStatus streamLength(const FLAC__StreamDecoder*, FLAC__uint64* streamLength, void* clientData)
+	FLAC__StreamDecoderLengthStatus StreamLength(const FLAC__StreamDecoder*, FLAC__uint64* streamLength, void* clientData)
 	{
 		FLACDecoderData* data = (FLACDecoderData*)(clientData);
 
@@ -58,14 +58,14 @@ namespace bs
 		return FLAC__STREAM_DECODER_LENGTH_STATUS_OK;
 	}
 
-	FLAC__bool streamEof(const FLAC__StreamDecoder*, void* clientData)
+	FLAC__bool StreamEof(const FLAC__StreamDecoder*, void* clientData)
 	{
 		FLACDecoderData* data = (FLACDecoderData*)(clientData);
 
 		return data->stream->eof();
 	}
 
-	FLAC__StreamDecoderWriteStatus streamWrite(const FLAC__StreamDecoder*, const FLAC__Frame* frame, const FLAC__int32* const buffer[], void* clientData)
+	FLAC__StreamDecoderWriteStatus StreamWrite(const FLAC__StreamDecoder*, const FLAC__Frame* frame, const FLAC__int32* const buffer[], void* clientData)
 	{
 		FLACDecoderData* data = (FLACDecoderData*)(clientData);
 
@@ -109,7 +109,7 @@ namespace bs
 		return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
 	}
 
-	void streamMetadata(const FLAC__StreamDecoder*, const FLAC__StreamMetadata* meta, void* clientData)
+	void StreamMetadata(const FLAC__StreamDecoder*, const FLAC__StreamMetadata* meta, void* clientData)
 	{
 		FLACDecoderData* data = (FLACDecoderData*)(clientData);
 
@@ -122,7 +122,7 @@ namespace bs
 		}
 	}
 
-	void streamError(const FLAC__StreamDecoder*, FLAC__StreamDecoderErrorStatus, void* clientData)
+	void StreamError(const FLAC__StreamDecoder*, FLAC__StreamDecoderErrorStatus, void* clientData)
 	{
 		FLACDecoderData* data = (FLACDecoderData*)(clientData);
 		data->error = true;

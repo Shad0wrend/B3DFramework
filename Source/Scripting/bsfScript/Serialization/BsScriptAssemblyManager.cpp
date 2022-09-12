@@ -453,7 +453,7 @@ namespace bs
 
 				return typeInfo;
 			}
-			else if(monoClass == ScriptRRefBase::getMetaData()->scriptClass) // Resource reference
+			else If(monoClass == ScriptRRefBase::getMetaData()->scriptClass) // Resource reference
 				return bs_shared_ptr_new<ManagedSerializableTypeInfoRRef>();
 			else if (monoClass->isSubClassOf(mBuiltin.sceneObjectClass) || monoClass->isSubClassOf(mBuiltin.componentClass)) // Game object
 			{
@@ -537,7 +537,7 @@ namespace bs
 
 				return typeInfo;
 			}
-			else if(monoClass->getFullName() == mBuiltin.systemGenericDictionaryClass->getFullName())
+			else If(monoClass->getFullName() == mBuiltin.systemGenericDictionaryClass->getFullName())
 			{
 				SPtr<ManagedSerializableTypeInfoDictionary> typeInfo = bs_shared_ptr_new<ManagedSerializableTypeInfoDictionary>();
 
@@ -563,7 +563,7 @@ namespace bs
 
 				return typeInfo;
 			}
-			else if(monoClass->getFullName() == mBuiltin.genericRRefClass->getFullName())
+			else If(monoClass->getFullName() == mBuiltin.genericRRefClass->getFullName())
 			{
 				SPtr<ManagedSerializableTypeInfoRRef> typeInfo = bs_shared_ptr_new<ManagedSerializableTypeInfoRRef>();
 				

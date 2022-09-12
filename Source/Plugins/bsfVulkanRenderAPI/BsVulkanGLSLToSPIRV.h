@@ -22,7 +22,7 @@ namespace bs { namespace ct
 		~GLSLToSPIRV();
 
 		/** Performs the GLSL -> SPIR-V conversion. */
-		SPtr<GpuProgramBytecode> convert(const GPU_PROGRAM_DESC& desc);
+		SPtr<GpuProgramBytecode> Convert(const GPU_PROGRAM_DESC& desc);
 	};
 
 	/** @} */

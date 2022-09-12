@@ -27,7 +27,7 @@ namespace bs
 
 		ScriptTDistributionfloat(MonoObject* managedInstance, const SPtr<TDistribution<float>>& value);
 
-		SPtr<TDistribution<float>> getInternal() const { return mInternal; }
+		SPtr<TDistribution<float>> GetInternal() const { return mInternal; }
 		static MonoObject* create(const SPtr<TDistribution<float>>& value);
 
 	private:
@@ -54,7 +54,7 @@ namespace bs
 
 		ScriptTDistributionVector3(MonoObject* managedInstance, const SPtr<TDistribution<Vector3>>& value);
 
-		SPtr<TDistribution<Vector3>> getInternal() const { return mInternal; }
+		SPtr<TDistribution<Vector3>> GetInternal() const { return mInternal; }
 		static MonoObject* create(const SPtr<TDistribution<Vector3>>& value);
 
 	private:
@@ -81,7 +81,7 @@ namespace bs
 
 		ScriptTDistributionVector2(MonoObject* managedInstance, const SPtr<TDistribution<Vector2>>& value);
 
-		SPtr<TDistribution<Vector2>> getInternal() const { return mInternal; }
+		SPtr<TDistribution<Vector2>> GetInternal() const { return mInternal; }
 		static MonoObject* create(const SPtr<TDistribution<Vector2>>& value);
 
 	private:

@@ -83,10 +83,10 @@ namespace bs { namespace ct
 		virtual ~RendererMaterialBase() = default;
 
 		/** Returns the shader used by the material. */
-		SPtr<Shader> getShader() const { return mShader; }
+		SPtr<Shader> GetShader() const { return mShader; }
 
 		/** Returns the internal parameter set containing GPU bindable parameters. */
-		SPtr<GpuParams> getParams() const { return mParams; }
+		SPtr<GpuParams> GetParams() const { return mParams; }
 
 		/**
 		 * Helper field to be set before construction. Identifiers the variation of the material to initialize this
@@ -116,7 +116,7 @@ namespace bs { namespace ct
 		}
 
 		/**	Forces the compiler to not optimize out construction of this type. */
-		void instantiate() { }
+		void Instantiate() { }
 	};
 
 	/** Wrapper class around Material that allows a simple way to load and set up materials used by the renderer. */
@@ -168,7 +168,7 @@ namespace bs { namespace ct
 		 * to using the default shader. All existing instances of the material will be invalidated (get() methods need to
 		 * be called again).
 		 */
-		static void setOverride(const SPtr<Shader>& shader)
+		static void SetOverride(const SPtr<Shader>& shader)
 		{
 			if(mMetaData.overrideShader == shader)
 				return;
@@ -185,17 +185,17 @@ namespace bs { namespace ct
 		}
 
 		/** Returns the path to the built-in (non-overriden) shader used by this material. */
-		static Path getShaderPath() { return mMetaData.shaderPath; }
+		static Path GetShaderPath() { return mMetaData.shaderPath; }
 
 		/** Returns a set of dynamically defined defines used when compiling this shader. */
-		static ShaderDefines getShaderDefines() { return mMetaData.defines; }
+		static ShaderDefines GetShaderDefines() { return mMetaData.defines; }
 
 		/**
 		 * Binds the materials and its parameters to the pipeline. This material will be used for rendering any subsequent
 		 * draw calls, or executing dispatch calls. If @p bindParams is false you need to call bindParams() separately
 		 * to bind material parameters (if any).
 		 */
-		void bind(bool bindParams = true) const
+		void Bind(bool bindParams = true) const
 		{
 			RenderAPI& rapi = RenderAPI::instance();
 
@@ -212,7 +212,7 @@ namespace bs { namespace ct
 		}
 
 		/** Binds the material parameters to the pipeline. */
-		void bindParams() const
+		void BindParams() const
 		{
 			RenderAPI& rapi = RenderAPI::instance();
 			rapi.setGpuParams(mParams);

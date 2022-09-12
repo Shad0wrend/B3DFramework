@@ -13,7 +13,7 @@ namespace bs
 		const Quaternion& rotation, float radius)
 		:mRadius(radius)
 	{
-		PxSphereGeometry geometry(radius);
+		PxSphereGeometry Geometry(radius);
 
 		PxShape* shape = physx->createShape(geometry, *gPhysX().getDefaultMaterial(), true);
 		shape->setLocalPose(toPxTransform(position, rotation));
@@ -48,7 +48,7 @@ namespace bs
 	void PhysXSphereCollider::applyGeometry()
 	{
 		float radius = std::max(0.01f, mRadius * std::max(std::max(mScale.x, mScale.y), mScale.z));
-		PxSphereGeometry geometry(radius);
+		PxSphereGeometry Geometry(radius);
 
 		getInternal()->_getShape()->setGeometry(geometry);
 	}

@@ -21,7 +21,7 @@
 namespace bs
 {
 	template<class T>
-	bool compareFieldData(const T* a, const SPtr<ManagedSerializableFieldData>& b)
+	bool CompareFieldData(const T* a, const SPtr<ManagedSerializableFieldData>& b)
 	{
 		if (rtti_is_of_type<T>(b))
 		{
@@ -32,7 +32,7 @@ namespace bs
 		return false;
 	}
 
-	bool compareFieldData(const SPtr<ManagedSerializableFieldData>& oldData, const SPtr<ManagedSerializableFieldData>& newData)
+	bool CompareFieldData(const SPtr<ManagedSerializableFieldData>& oldData, const SPtr<ManagedSerializableFieldData>& newData)
 	{
 		if (!oldData)
 			return !newData;
@@ -45,11 +45,11 @@ namespace bs
 		return oldData->equals(newData);
 	}
 
-	bool isPrimitiveOrEnumType(const SPtr<ManagedSerializableTypeInfo>& typeInfo, ScriptPrimitiveType underlyingType)
+	bool IsPrimitiveOrEnumType(const SPtr<ManagedSerializableTypeInfo>& typeInfo, ScriptPrimitiveType underlyingType)
 	{
 		if(const auto primitiveTypeInfo = rtti_cast<ManagedSerializableTypeInfoPrimitive>(typeInfo.get()))
 			return primitiveTypeInfo->mType == underlyingType;
-		else if(const auto enumTypeInfo = rtti_cast<ManagedSerializableTypeInfoEnum>(typeInfo.get()))
+		else If(const auto enumTypeInfo = rtti_cast<ManagedSerializableTypeInfoEnum>(typeInfo.get()))
 			return enumTypeInfo->mUnderlyingType == underlyingType;
 
 		return false;
@@ -76,12 +76,12 @@ namespace bs
 
 	SPtr<ManagedSerializableFieldData> ManagedSerializableFieldData::create(const SPtr<ManagedSerializableTypeInfo>& typeInfo, MonoObject* value)
 	{
-		return create(typeInfo, value, true);
+		return Create(typeInfo, value, true);
 	}
 
 	SPtr<ManagedSerializableFieldData> ManagedSerializableFieldData::createDefault(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
-		return create(typeInfo, nullptr, false);
+		return Create(typeInfo, nullptr, false);
 	}
 
 	SPtr<ManagedSerializableFieldData> ManagedSerializableFieldData::create(const SPtr<ManagedSerializableTypeInfo>& typeInfo, MonoObject* value, bool allowNull)
@@ -92,7 +92,7 @@ namespace bs
 
 			if(auto primitiveTypeInfo = rtti_cast<ManagedSerializableTypeInfoPrimitive>(typeInfo.get()))
 				primitiveType = primitiveTypeInfo->mType;
-			else if(auto enumTypeInfo = rtti_cast<ManagedSerializableTypeInfoEnum>(typeInfo.get()))
+			else If(auto enumTypeInfo = rtti_cast<ManagedSerializableTypeInfoEnum>(typeInfo.get()))
 				primitiveType = enumTypeInfo->mUnderlyingType;
 
 			switch (primitiveType)
@@ -306,7 +306,7 @@ namespace bs
 				break;
 			}
 		}
-		else if(typeInfo->getTypeId() == TID_SerializableTypeInfoRRef)
+		else If(typeInfo->getTypeId() == TID_SerializableTypeInfoRRef)
 		{
 			auto fieldData = bs_shared_ptr_new<ManagedSerializableFieldDataResourceRef>();
 
@@ -318,7 +318,7 @@ namespace bs
 
 			return fieldData;
 		}
-		else if(typeInfo->getTypeId() == TID_SerializableTypeInfoObject)
+		else If(typeInfo->getTypeId() == TID_SerializableTypeInfoObject)
 		{
 			auto fieldData = bs_shared_ptr_new<ManagedSerializableFieldDataObject>();
 			if (value != nullptr)
@@ -328,7 +328,7 @@ namespace bs
 
 			return fieldData;
 		}
-		else if(typeInfo->getTypeId() == TID_SerializableTypeInfoArray)
+		else If(typeInfo->getTypeId() == TID_SerializableTypeInfoArray)
 		{
 			SPtr<ManagedSerializableTypeInfoArray> arrayTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoArray>(typeInfo);
 
@@ -337,13 +337,13 @@ namespace bs
 				fieldData->value = ManagedSerializableArray::createFromExisting(value, arrayTypeInfo);
 			else if (!allowNull)
 			{
-				Vector<UINT32> sizes(arrayTypeInfo->mRank, 0);
+				Vector<UINT32> Sizes(arrayTypeInfo->mRank, 0);
 				fieldData->value = ManagedSerializableArray::createNew(arrayTypeInfo, sizes);
 			}
 
 			return fieldData;
 		}
-		else if(typeInfo->getTypeId() == TID_SerializableTypeInfoList)
+		else If(typeInfo->getTypeId() == TID_SerializableTypeInfoList)
 		{
 			SPtr<ManagedSerializableTypeInfoList> listTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoList>(typeInfo);
 
@@ -355,7 +355,7 @@ namespace bs
 
 			return fieldData;
 		}
-		else if(typeInfo->getTypeId() == TID_SerializableTypeInfoDictionary)
+		else If(typeInfo->getTypeId() == TID_SerializableTypeInfoDictionary)
 		{
 			SPtr<ManagedSerializableTypeInfoDictionary> dictTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoDictionary>(typeInfo);
 
@@ -530,7 +530,7 @@ namespace bs
 				return scriptResource->getManagedInstance();
 			}
 		}
-		else if(typeInfo->getTypeId() == TID_SerializableTypeInfoRRef)
+		else If(typeInfo->getTypeId() == TID_SerializableTypeInfoRRef)
 		{
 			const auto refTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoRRef>(typeInfo);
 
@@ -871,62 +871,62 @@ namespace bs
 
 	bool ManagedSerializableFieldDataBool::equals(const SPtr<ManagedSerializableFieldData>& other)
 	{
-		return compareFieldData(this, other);
+		return CompareFieldData(this, other);
 	}
 
 	bool ManagedSerializableFieldDataChar::equals(const SPtr<ManagedSerializableFieldData>& other)
 	{
-		return compareFieldData(this, other);
+		return CompareFieldData(this, other);
 	}
 
 	bool ManagedSerializableFieldDataI8::equals(const SPtr<ManagedSerializableFieldData>& other)
 	{
-		return compareFieldData(this, other);
+		return CompareFieldData(this, other);
 	}
 
 	bool ManagedSerializableFieldDataU8::equals(const SPtr<ManagedSerializableFieldData>& other)
 	{
-		return compareFieldData(this, other);
+		return CompareFieldData(this, other);
 	}
 
 	bool ManagedSerializableFieldDataI16::equals(const SPtr<ManagedSerializableFieldData>& other)
 	{
-		return compareFieldData(this, other);
+		return CompareFieldData(this, other);
 	}
 
 	bool ManagedSerializableFieldDataU16::equals(const SPtr<ManagedSerializableFieldData>& other)
 	{
-		return compareFieldData(this, other);
+		return CompareFieldData(this, other);
 	}
 
 	bool ManagedSerializableFieldDataI32::equals(const SPtr<ManagedSerializableFieldData>& other)
 	{
-		return compareFieldData(this, other);
+		return CompareFieldData(this, other);
 	}
 
 	bool ManagedSerializableFieldDataU32::equals(const SPtr<ManagedSerializableFieldData>& other)
 	{
-		return compareFieldData(this, other);
+		return CompareFieldData(this, other);
 	}
 
 	bool ManagedSerializableFieldDataI64::equals(const SPtr<ManagedSerializableFieldData>& other)
 	{
-		return compareFieldData(this, other);
+		return CompareFieldData(this, other);
 	}
 
 	bool ManagedSerializableFieldDataU64::equals(const SPtr<ManagedSerializableFieldData>& other)
 	{
-		return compareFieldData(this, other);
+		return CompareFieldData(this, other);
 	}
 
 	bool ManagedSerializableFieldDataFloat::equals(const SPtr<ManagedSerializableFieldData>& other)
 	{
-		return compareFieldData(this, other);
+		return CompareFieldData(this, other);
 	}
 
 	bool ManagedSerializableFieldDataDouble::equals(const SPtr<ManagedSerializableFieldData>& other)
 	{
-		return compareFieldData(this, other);
+		return CompareFieldData(this, other);
 	}
 
 	bool ManagedSerializableFieldDataString::equals(const SPtr<ManagedSerializableFieldData>& other)
@@ -942,17 +942,17 @@ namespace bs
 
 	bool ManagedSerializableFieldDataResourceRef::equals(const SPtr<ManagedSerializableFieldData>& other)
 	{
-		return compareFieldData(this, other);
+		return CompareFieldData(this, other);
 	}
 
 	bool ManagedSerializableFieldDataGameObjectRef::equals(const SPtr<ManagedSerializableFieldData>& other)
 	{
-		return compareFieldData(this, other);
+		return CompareFieldData(this, other);
 	}
 
 	bool ManagedSerializableFieldDataReflectableRef::equals(const SPtr<ManagedSerializableFieldData>& other)
 	{
-		return compareFieldData(this, other);
+		return CompareFieldData(this, other);
 	}
 
 	bool ManagedSerializableFieldDataObject::equals(const SPtr<ManagedSerializableFieldData>& other)

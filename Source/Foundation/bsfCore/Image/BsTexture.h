@@ -122,50 +122,50 @@ namespace bs
 		TextureProperties(const TEXTURE_DESC& desc);
 
 		/**	Gets the type of texture. */
-		TextureType getTextureType() const { return mDesc.type; }
+		TextureType GetTextureType() const { return mDesc.type; }
 
 		/**
 		 * Gets the number of mipmaps to be used for this texture. This number excludes the top level map (which is always
 		 * assumed to be present).
 		 */
-		UINT32 getNumMipmaps() const { return mDesc.numMips; }
+		UINT32 GetNumMipmaps() const { return mDesc.numMips; }
 
 		/**
 		 * Determines does the texture contain gamma corrected data. If true then the GPU will automatically convert the
 		 * pixels to linear space before reading from the texture, and convert them to gamma space when writing to the
 		 * texture.
 		 */
-		bool isHardwareGammaEnabled() const { return mDesc.hwGamma; }
+		bool IsHardwareGammaEnabled() const { return mDesc.hwGamma; }
 
 		/**	Gets the number of samples used for multisampling (0 or 1 if multisampling is not used). */
-		UINT32 getNumSamples() const { return mDesc.numSamples; }
+		UINT32 GetNumSamples() const { return mDesc.numSamples; }
 
 		/**	Returns the height of the texture.  */
-		UINT32 getHeight() const { return mDesc.height; }
+		UINT32 GetHeight() const { return mDesc.height; }
 
 		/**	Returns the width of the texture. */
-		UINT32 getWidth() const { return mDesc.width; }
+		UINT32 GetWidth() const { return mDesc.width; }
 
 		/**	Returns the depth of the texture (only applicable for 3D textures). */
-		UINT32 getDepth() const { return mDesc.depth; }
+		UINT32 GetDepth() const { return mDesc.depth; }
 
 		/**	Returns a value that signals the engine in what way is the texture expected to be used. */
-		int getUsage() const { return mDesc.usage; }
+		int GetUsage() const { return mDesc.usage; }
 
 		/**	Returns the pixel format for the texture surface. */
-		PixelFormat getFormat() const { return mDesc.format; }
+		PixelFormat GetFormat() const { return mDesc.format; }
 
 		/**	Returns true if the texture has an alpha layer. */
-		bool hasAlpha() const;
+		bool HasAlpha() const;
 
 		/**
 		 * Returns the number of faces this texture has. This includes array slices (if texture is an array texture),
 		 * as well as cube-map faces.
 		 */
-		UINT32 getNumFaces() const;
+		UINT32 GetNumFaces() const;
 
 		/** Returns the number of array slices of the texture (if the texture is an array texture). */
-		UINT32 getNumArraySlices() const { return mDesc.numArraySlices; }
+		UINT32 GetNumArraySlices() const { return mDesc.numArraySlices; }
 
 		/**
 		 * Allocates a buffer that exactly matches the format of the texture described by these properties, for the provided
@@ -174,7 +174,7 @@ namespace bs
 		 * 			
 		 * @note	Thread safe.
 		 */
-		SPtr<PixelData> allocBuffer(UINT32 face, UINT32 mipLevel) const;
+		SPtr<PixelData> AllocBuffer(UINT32 face, UINT32 mipLevel) const;
 
 	protected:
 		friend class TextureRTTI;
@@ -184,12 +184,12 @@ namespace bs
 		 * Maps a sub-resource index to an exact face and mip level. Sub-resource indexes are used when reading or writing
 		 * to the resource.
 		 */
-		void mapFromSubresourceIdx(UINT32 subresourceIdx, UINT32& face, UINT32& mip) const;
+		void MapFromSubresourceIdx(UINT32 subresourceIdx, UINT32& face, UINT32& mip) const;
 
 		/**
 		 * Map a face and a mip level to a sub-resource index you can use for updating or reading a specific sub-resource.
 		 */
-		UINT32 mapToSubresourceIdx(UINT32 face, UINT32 mip) const;
+		UINT32 MapToSubresourceIdx(UINT32 face, UINT32 mip) const;
 
 		TEXTURE_DESC mDesc;
 	};
@@ -233,7 +233,7 @@ namespace bs
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		AsyncOp readData(const SPtr<PixelData>& data, UINT32 face = 0, UINT32 mipLevel = 0);
+		AsyncOp ReadData(const SPtr<PixelData>& data, UINT32 face = 0, UINT32 mipLevel = 0);
 
 		/**
 		 * Reads internal texture data into a newly allocated buffer.
@@ -246,7 +246,7 @@ namespace bs
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
 		BS_SCRIPT_EXPORT(n:GetGPUPixels)
-		TAsyncOp<SPtr<PixelData>> readData(UINT32 face = 0, UINT32 mipLevel = 0);
+		TAsyncOp<SPtr<PixelData>> ReadData(UINT32 face = 0, UINT32 mipLevel = 0);
 
 		/**
 		 * Reads data from the cached system memory texture buffer into the provided buffer.
@@ -262,13 +262,13 @@ namespace bs
 		 * @note
 		 * The texture must have been created with TU_CPUCACHED usage otherwise this method will not return any data.
 		 */
-		void readCachedData(PixelData& data, UINT32 face = 0, UINT32 mipLevel = 0);
+		void ReadCachedData(PixelData& data, UINT32 face = 0, UINT32 mipLevel = 0);
 
 		/**	Returns properties that contain information about the texture. */
-		const TextureProperties& getProperties() const { return mProperties; }
+		const TextureProperties& GetProperties() const { return mProperties; }
 
 		/**	Retrieves a core implementation of a texture usable only from the core thread. */
-		SPtr<ct::Texture> getCore() const;
+		SPtr<ct::Texture> GetCore() const;
 
 		/************************************************************************/
 		/* 								STATICS		                     		*/
@@ -279,7 +279,7 @@ namespace bs
 		 *
 		 * @param[in]	desc  	Description of the texture to create.
 		 */
-		static HTexture create(const TEXTURE_DESC& desc);
+		static HTexture Create(const TEXTURE_DESC& desc);
 
 		/**
 		 * Creates a new 2D or 3D texture initialized using the provided pixel data. Texture will not have any mipmaps.
@@ -289,7 +289,7 @@ namespace bs
 		 * @param[in]	hwGammaCorrection	If true the texture data is assumed to have been gamma corrected and will be
 		 *									converted back to linear space when sampled on GPU.
 		 */
-		static HTexture create(const SPtr<PixelData>& pixelData, int usage = TU_DEFAULT, bool hwGammaCorrection = false);
+		static HTexture Create(const SPtr<PixelData>& pixelData, int usage = TU_DEFAULT, bool hwGammaCorrection = false);
 
 		/** @name Internal
 		 *  @{
@@ -311,23 +311,23 @@ namespace bs
 		Texture(const TEXTURE_DESC& desc, const SPtr<PixelData>& pixelData);
 
 		/** @copydoc Resource::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> createCore() const override;
+		SPtr<ct::CoreObject> CreateCore() const override;
 
 		/** Calculates the size of the texture, in bytes. */
-		UINT32 calculateSize() const;
+		UINT32 CalculateSize() const;
 
 		/**
 		 * Creates buffers used for caching of CPU texture data.
 		 *
 		 * @note	Make sure to initialize all texture properties before calling this.
 		 */
-		void createCPUBuffers();
+		void CreateCPUBuffers();
 
 		/**	Updates the cached CPU buffers with new data. */
-		void updateCPUBuffers(UINT32 subresourceIdx, const PixelData& data);
+		void UpdateCPUBuffers(UINT32 subresourceIdx, const PixelData& data);
 
 	protected:
 		Vector<SPtr<PixelData>> mCPUSubresourceData;
@@ -366,7 +366,7 @@ namespace bs
 
 
 		/** @copydoc CoreObject::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 		/**
 		 * Locks the buffer for reading or writing.
@@ -390,7 +390,7 @@ namespace bs
 		 *
 		 * @see	lock()
 		 */
-		void unlock();
+		void Unlock();
 
 		/**
 		 * Copies the contents a subresource in this texture to another texture. Texture format and size of the subresource
@@ -415,7 +415,7 @@ namespace bs
 		 * @param[in]	face			Face (array index or cubemap face) to clear.
 		 * @param[in]	queueIdx		Device queue to perform the write operation on. See @ref queuesDoc.
 		 */
-		void clear(const Color& value, UINT32 mipLevel = 0, UINT32 face = 0, UINT32 queueIdx = 0);
+		void Clear(const Color& value, UINT32 mipLevel = 0, UINT32 face = 0, UINT32 queueIdx = 0);
 
 		/**
 		 * Reads data from the texture buffer into the provided buffer.
@@ -444,7 +444,7 @@ namespace bs
 							   UINT32 queueIdx = 0);
 
 		/**	Returns properties that contain information about the texture. */
-		const TextureProperties& getProperties() const { return mProperties; }
+		const TextureProperties& GetProperties() const { return mProperties; }
 
 		/************************************************************************/
 		/* 								STATICS		                     		*/
@@ -454,7 +454,7 @@ namespace bs
 		 * @copydoc bs::Texture::create(const TEXTURE_DESC&)
 		 * @param[in]	deviceMask		Mask that determines on which GPU devices should the object be created on.
 		 */
-		static SPtr<Texture> create(const TEXTURE_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
+		static SPtr<Texture> Create(const TEXTURE_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
 		/**
 		 * @copydoc bs::Texture::create(const SPtr<PixelData>&, int, bool)
@@ -490,7 +490,7 @@ namespace bs
 			UINT32 queueIdx = 0) = 0;
 
 		/** @copydoc unlock */
-		virtual void unlockImpl() = 0;
+		virtual void UnlockImpl() = 0;
 
 		/** @copydoc copy */
 		virtual void copyImpl(const SPtr<Texture>& target, const TEXTURE_COPY_DESC& desc,
@@ -505,17 +505,17 @@ namespace bs
 			bool discardWholeBuffer = false, UINT32 queueIdx = 0) = 0;
 
 		/** @copydoc clear */
-		virtual void clearImpl(const Color& value, UINT32 mipLevel = 0, UINT32 face = 0, UINT32 queueIdx = 0);
+		virtual void ClearImpl(const Color& value, UINT32 mipLevel = 0, UINT32 face = 0, UINT32 queueIdx = 0);
 
 		/************************************************************************/
 		/* 								TEXTURE VIEW                      		*/
 		/************************************************************************/
 
 		/**	Creates a view of a specific subresource in a texture. */
-		virtual SPtr<TextureView> createView(const TEXTURE_VIEW_DESC& desc);
+		virtual SPtr<TextureView> CreateView(const TEXTURE_VIEW_DESC& desc);
 
 		/** Releases all internal texture view references. */
-		void clearBufferViews();
+		void ClearBufferViews();
 
 		UnorderedMap<TEXTURE_VIEW_DESC, SPtr<TextureView>, TextureView::HashFunction, TextureView::EqualFunction> mTextureViews;
 		TextureProperties mProperties;

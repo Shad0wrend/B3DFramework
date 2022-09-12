@@ -40,7 +40,7 @@ namespace bs
 		mTempSources.clear();
 	}
 
-	Audio& gAudio()
+	Audio& GAudio()
 	{
 		return Audio::instance();
 	}

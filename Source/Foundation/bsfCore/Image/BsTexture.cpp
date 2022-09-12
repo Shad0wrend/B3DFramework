@@ -71,7 +71,7 @@ namespace bs
 	}
 
 	Texture::Texture(const TEXTURE_DESC& desc, const SPtr<PixelData>& pixelData)
-		: mProperties(desc), mInitData(pixelData)
+		: MProperties(desc), mInitData(pixelData)
 	{
 		if (mInitData != nullptr)
 			mInitData->_lock();
@@ -122,7 +122,7 @@ namespace bs
 
 		};
 
-		return gCoreThread().queueReturnCommand(std::bind(func, getCore(), face, mipLevel,
+		return GCoreThread().queueReturnCommand(std::bind(func, getCore(), face, mipLevel,
 			data, discardEntireBuffer, std::placeholders::_1));
 	}
 
@@ -143,7 +143,7 @@ namespace bs
 
 		};
 
-		return gCoreThread().queueReturnCommand(std::bind(func, getCore(), face, mipLevel,
+		return GCoreThread().queueReturnCommand(std::bind(func, getCore(), face, mipLevel,
 			data, std::placeholders::_1));
 	}
 
@@ -409,7 +409,7 @@ namespace bs
 			return PixelData(0, 0, 0, PF_UNKNOWN);
 		}
 
-		return lockImpl(options, mipLevel, face, deviceIdx, queueIdx);
+		return LockImpl(options, mipLevel, face, deviceIdx, queueIdx);
 	}
 
 	void Texture::unlock()

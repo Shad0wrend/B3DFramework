@@ -40,7 +40,7 @@ namespace bs
 
 	bool GpuParamsBase::hasParam(GpuProgramType type, const String& name) const
 	{
-		return getParamDesc(type, name) != nullptr;
+		return GetParamDesc(type, name) != nullptr;
 	}
 
 	bool GpuParamsBase::hasTexture(GpuProgramType type, const String& name) const

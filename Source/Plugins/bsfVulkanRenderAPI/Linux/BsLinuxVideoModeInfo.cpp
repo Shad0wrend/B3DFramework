@@ -65,7 +65,7 @@ namespace bs { namespace ct
 
 	LinuxVideoOutputInfo::LinuxVideoOutputInfo(::Display* x11Display, INT32 screen, XRROutputInfo* outputInfo,
 		XRRCrtcInfo* crtcInfo, XRRScreenResources* screenRes, RROutput outputID, UINT32 outputIdx)
-			: mOutputID(outputID), mScreen(screen)
+			: MOutputID(outputID), mScreen(screen)
 	{
 		RRMode currentMode = crtcInfo->mode;
 
@@ -105,7 +105,7 @@ namespace bs { namespace ct
 								name[m] = '\0';
 								break;
 							}
-							else if(nameSrc[m] == 0x00)
+							else If(nameSrc[m] == 0x00)
 								name[m] = ' ';
 							else
 								name[m] = nameSrc[m];

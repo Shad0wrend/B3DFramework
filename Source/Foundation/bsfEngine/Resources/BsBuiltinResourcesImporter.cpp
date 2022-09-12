@@ -30,7 +30,7 @@ namespace bs
 	static Path sManifestPath;
 	static SPtr<ResourceManifest> sManifest;
 
-	void processAssets(bool, bool, time_t);
+	void ProcessAssets(bool, bool, time_t);
 }
 
 int main(int argc, char * argv[])
@@ -68,7 +68,7 @@ int main(int argc, char * argv[])
 	{
 		if(strcmp(argv[i], "--editor") == 0)
 			generateGenerated = false;
-		else if(strcmp(argv[i], "--force") == 0)
+		else If(strcmp(argv[i], "--force") == 0)
 			forceImport = true;
 	}
 
@@ -110,7 +110,7 @@ int main(int argc, char * argv[])
 
 namespace bs
 {
-	void generateTextures()
+	void GenerateTextures()
 	{
 		SPtr<PixelData> blackPixelData = PixelData::create(2, 2, 1, PF_RGBA8);
 		blackPixelData->setColorAt(Color::Black, 0, 0);
@@ -130,7 +130,7 @@ namespace bs
 
 		SPtr<PixelData> normalPixelData = PixelData::create(2, 2, 1, PF_RGBA8);
 
-		Color encodedNormal(0.5f, 0.5f, 1.0f);
+		Color EncodedNormal(0.5f, 0.5f, 1.0f);
 		normalPixelData->setColorAt(encodedNormal, 0, 0);
 		normalPixelData->setColorAt(encodedNormal, 0, 1);
 		normalPixelData->setColorAt(encodedNormal, 1, 0);
@@ -159,7 +159,7 @@ namespace bs
 		saveTexture(normalPath, normalTexture, "afb29163-1ef0-4440-9cfb-c1ebb3b3d452");
 	}
 
-	void generateMeshes()
+	void GenerateMeshes()
 	{
 		SPtr<VertexDataDesc> vertexDesc = bs_shared_ptr_new<VertexDataDesc>();
 		vertexDesc->addVertElem(VET_FLOAT3, VES_POSITION);
@@ -172,7 +172,7 @@ namespace bs
 		UINT32 boxNumIndices = 0;
 		ShapeMeshes3D::getNumElementsAABox(boxNumVertices, boxNumIndices);
 		SPtr<MeshData> boxMeshData = MeshData::create(boxNumVertices, boxNumIndices, vertexDesc);
-		AABox box(Vector3(-0.5f, -0.5f, -0.5f), Vector3(0.5f, 0.5f, 0.5f));
+		AABox Box(Vector3(-0.5f, -0.5f, -0.5f), Vector3(0.5f, 0.5f, 0.5f));
 
 		ShapeMeshes3D::solidAABox(box, boxMeshData, 0, 0);
 		SPtr<Mesh> boxMesh = Mesh::_createPtr(RendererMeshData::convert(boxMeshData));
@@ -208,7 +208,7 @@ namespace bs
 
 		std::array<Vector3, 2> axes = {{ Vector3::UNIT_X, Vector3::UNIT_Z }};
 		std::array<float, 2> sizes = {{ 1.0f, 1.0f }};
-		Rect3 rect(Vector3::ZERO, axes, sizes);
+		Rect3 Rect(Vector3::ZERO, axes, sizes);
 		ShapeMeshes3D::solidQuad(rect, quadMeshData, 0, 0);
 		SPtr<Mesh> quadMesh = Mesh::_createPtr(RendererMeshData::convert(quadMeshData));
 
@@ -250,12 +250,12 @@ namespace bs
 		saveMesh(discPath, discMesh, "6f496313-344a-495c-83e8-152e3053c52d");
 	}
 
-	SPtr<GUISkin> generateGUISkin()
+	SPtr<GUISkin> GenerateGUISkin()
 	{
 		using nlohmann::json;
 
 		const Path skinFolder = sOutputFolder + BuiltinResources::SKIN_FOLDER + BuiltinResources::SPRITE_FOLDER;
-		BuiltinResourceGUIElementStyleLoader loader(sOutputFolder, skinFolder);
+		BuiltinResourceGUIElementStyleLoader Loader(sOutputFolder, skinFolder);
 
 		Path guiSkinPath = sInputFolder + GUI_SKIN_JSON;
 		SPtr<DataStream> guiSkinStream = FileSystem::openFile(guiSkinPath);
@@ -274,7 +274,7 @@ namespace bs
 		return skin;
 	}
 
-	void processAssets(bool generateGenerated, bool forceImport, time_t lastUpdateTime)
+	void ProcessAssets(bool generateGenerated, bool forceImport, time_t lastUpdateTime)
 	{
 		using nlohmann::json;
 
@@ -719,8 +719,8 @@ namespace bs
 				for (auto& sizeEntry : fontSizesJSON)
 					fontSizes.push_back(sizeEntry);
 
-				String inputName(path.data(), path.size());
-				String outputName(name.data(), name.size());
+				String InputName(path.data(), path.size());
+				String OutputName(name.data(), name.size());
 				UUID UUID(String(uuidStr.data(), uuidStr.size()));
 
 				const Path fontSourcePath = sInputFolder + inputName;
@@ -736,7 +736,7 @@ namespace bs
 			std::string name = guiSkinJSON["Path"];
 			std::string uuidStr = guiSkinJSON["UUID"];
 
-			String fileName(name.data(), name.size());
+			String FileName(name.data(), name.size());
 			UUID UUID(String(uuidStr.data(), uuidStr.size()));
 
 			const SPtr<GUISkin> skin = generateGUISkin();
@@ -752,7 +752,7 @@ namespace bs
 		if(!splashScreenJSON.is_null())
 		{
 			std::string name = splashScreenJSON["Path"];
-			String fileName(name.data(), name.size());
+			String FileName(name.data(), name.size());
 
 			Path inputPath = sInputFolder + fileName;
 			Path outputPath = sOutputFolder + (fileName + ".asset");
@@ -765,7 +765,7 @@ namespace bs
 			SPtr<PixelData> splashPixelData = splashTexture->getProperties().allocBuffer(0, 0);
 			splashTexture->readCachedData(*splashPixelData);
 
-			FileEncoder fe(outputPath);
+			FileEncoder Fe(outputPath);
 			fe.encode(splashPixelData.get());
 		}
 	}

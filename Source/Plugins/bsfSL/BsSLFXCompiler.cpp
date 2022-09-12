@@ -97,7 +97,7 @@ namespace bs
 			}
 		}
 
-		void getMessages(StringStream& output)
+		void GetMessages(StringStream& output)
 		{
 			printAndClearReports(output, mInfos);
 			printAndClearReports(output, mWarnings, (mWarnings.size() == 1 ? "WARNING" : "WARNINGS"));
@@ -111,7 +111,7 @@ namespace bs
 			Xsc::Report      report;
 		};
 
-		static void printMultiLineString(StringStream& output, const std::string& str, const std::string& indent)
+		static void PrintMultiLineString(StringStream& output, const std::string& str, const std::string& indent)
 		{
 			// Determine at which position the actual text begins (excluding the "error (X:Y) : " or the like)
 			auto textStartPos = str.find(" : ");
@@ -120,7 +120,7 @@ namespace bs
 			else
 				textStartPos = 0;
 
-			std::string newLineIndent(textStartPos, ' ');
+			std::string NewLineIndent(textStartPos, ' ');
 
 			size_t start = 0;
 			bool useNewLineIndent = false;
@@ -150,7 +150,7 @@ namespace bs
 			}
 		}
 
-		void printReport(StringStream& output, const IndentReport& r)
+		void PrintReport(StringStream& output, const IndentReport& r)
 		{
 			// Print optional context description
 			if (!r.report.Context().empty())
@@ -178,7 +178,7 @@ namespace bs
 				output << r.indent << hint << std::endl;
 		}
 
-		void printAndClearReports(StringStream& output, Vector<IndentReport>& reports, const String& headline = "")
+		void PrintAndClearReports(StringStream& output, Vector<IndentReport>& reports, const String& headline = "")
 		{
 			if (!reports.empty())
 			{
@@ -274,7 +274,7 @@ namespace bs
 		}
 	}
 
-	HTexture getBuiltinTexture(UINT32 idx)
+	HTexture GetBuiltinTexture(UINT32 idx)
 	{
 		if (idx == 1)
 			return BuiltinResources::getTexture(BuiltinTexture::White);
@@ -286,7 +286,7 @@ namespace bs
 		return HTexture();
 	}
 
-	UINT32 getStructSize(INT32 structIdx, const std::vector<Xsc::Reflection::Struct>& structLookup)
+	UINT32 GetStructSize(INT32 structIdx, const std::vector<Xsc::Reflection::Struct>& structLookup)
 	{
 		if(structIdx < 0 || structIdx >= (INT32)structLookup.size())
 			return 0;
@@ -307,14 +307,14 @@ namespace bs
 				size += typeInfo.numColumns * typeInfo.numRows * typeInfo.baseTypeSize * entry.arraySize;
 
 			}
-			else if(entry.type == Xsc::Reflection::VariableType::Struct)
+			else If(entry.type == Xsc::Reflection::VariableType::Struct)
 				size += getStructSize(entry.baseType, structLookup);
 		}
 
 		return size;
 	}
 
-	TextureAddressingMode parseTexAddrMode(Xsc::Reflection::TextureAddressMode addrMode)
+	TextureAddressingMode ParseTexAddrMode(Xsc::Reflection::TextureAddressMode addrMode)
 	{
 		switch (addrMode)
 		{
@@ -331,7 +331,7 @@ namespace bs
 		}
 	}
 
-	CompareFunction parseCompFunction(Xsc::Reflection::ComparisonFunc compFunc)
+	CompareFunction ParseCompFunction(Xsc::Reflection::ComparisonFunc compFunc)
 	{
 		switch(compFunc)
 		{
@@ -355,7 +355,7 @@ namespace bs
 		}
 	}
 
-	SPtr<SamplerState> parseSamplerState(const Xsc::Reflection::SamplerState& sampState)
+	SPtr<SamplerState> ParseSamplerState(const Xsc::Reflection::SamplerState& sampState)
 	{
 		SAMPLER_STATE_DESC desc;
 
@@ -437,7 +437,7 @@ namespace bs
 		return SamplerState::create(desc);
 	}
 
-	void parseParameters(const Xsc::Reflection::ReflectionData& reflData, SHADER_DESC& desc)
+	void ParseParameters(const Xsc::Reflection::ReflectionData& reflData, SHADER_DESC& desc)
 	{
 		for(auto& entry : reflData.uniforms)
 		{
@@ -789,12 +789,12 @@ namespace bs
 		return output.str();
 	}
 
-	String crossCompile(const String& hlsl, GpuProgramType type, CrossCompileOutput outputType, UINT32& startBindingSlot)
+	String CrossCompile(const String& hlsl, GpuProgramType type, CrossCompileOutput outputType, UINT32& startBindingSlot)
 	{
-		return crossCompile(hlsl, type, outputType, false, startBindingSlot);
+		return CrossCompile(hlsl, type, outputType, false, startBindingSlot);
 	}
 
-	void reflectHLSL(const String& hlsl, SHADER_DESC& shaderDesc, Vector<GpuProgramType>& entryPoints)
+	void ReflectHLSL(const String& hlsl, SHADER_DESC& shaderDesc, Vector<GpuProgramType>& entryPoints)
 	{
 		UINT32 dummy = 0;
 		crossCompile(hlsl, GPT_VERTEX_PROGRAM, CrossCompileOutput::GLSL45, true, dummy, &shaderDesc, &entryPoints);
@@ -861,7 +861,7 @@ namespace bs
 
 			goto cleanup;
 		}
-		else if(parsingFailed)
+		else If(parsingFailed)
 		{
 			output.errorMessage = "Internal error: Parsing failed.";
 			goto cleanup;
@@ -1000,7 +1000,7 @@ cleanup:
 				{
 					if (entry.first == OT_AttrName)
 						variationData.name = entry.second;
-					else if(entry.first == OT_AttrShow)
+					else If(entry.first == OT_AttrShow)
 						variationData.internal = false;
 				}
 				}
@@ -2512,7 +2512,7 @@ cleanup:
 	String BSLFXCompiler::removeQuotes(const char* input)
 	{
 		UINT32 len = (UINT32)strlen(input);
-		String output(len - 2, ' ');
+		String Output(len - 2, ' ');
 
 		for (UINT32 i = 0; i < (len - 2); i++)
 			output[i] = input[i + 1];

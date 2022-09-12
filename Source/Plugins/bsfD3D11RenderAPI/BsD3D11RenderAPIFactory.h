@@ -18,7 +18,7 @@ namespace bs { namespace ct
 		static constexpr const char* SystemName = "bsfD3D11RenderAPI";
 
 		/** @copydoc RenderAPIFactory::create */
-		void create() override;
+		void Create() override;
 
 		/** @copydoc RenderAPIFactory::name */
 		const char* name() const override { return SystemName; }

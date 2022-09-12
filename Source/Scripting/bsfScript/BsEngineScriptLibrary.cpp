@@ -176,7 +176,7 @@ namespace bs
 
 	Path EngineScriptLibrary::getScriptAssemblyFolder() const
 	{
-		return getBuiltinAssemblyFolder();
+		return GetBuiltinAssemblyFolder();
 	}
 
 	const Path& EngineScriptLibrary::getReleaseAssemblyPath()

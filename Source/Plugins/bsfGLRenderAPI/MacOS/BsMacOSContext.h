@@ -26,34 +26,34 @@ namespace bs::ct
 		virtual ~MacOSContext();
 
 		/** @copydoc GLContext::setCurrent */
-		void setCurrent(const RenderWindow& window) override;
+		void SetCurrent(const RenderWindow& window) override;
 
 		/** @copydoc GLContext::endCurrent */
-		void endCurrent() override;
+		void EndCurrent() override;
 
 		/** @copydoc GLContext::releaseContext  */
-		void releaseContext() override;
+		void ReleaseContext() override;
 
 		/** Marks the context as dirty and requiring update. Should be called when the drawable changes size or location. */
-		void markAsDirty();
+		void MarkAsDirty();
 
 		/** Updates the context if dirty. */
-		void updateIfDirty();
+		void UpdateIfDirty();
 
 		/** Enables or disables VSync using the specified interval. Interval of 0 disables VSync. */
-		void setVSync(int interval);
+		void SetVSync(int interval);
 
 		/** Swaps the framebuffer currently attached to this context. */
-		void swapBuffers();
+		void SwapBuffers();
 
 		/**
 		 * Locks the context so it can safely be used across threads. Should be called before performing any OpenGL
 		 * action or direct operation on the context. When done unlock it via unlock().
 		 */
-		void lock();
+		void Lock();
 
 		/** Unlocks the context locked via lock(). */
-		void unlock();
+		void Unlock();
 
 	private:
 		Pimpl* m;

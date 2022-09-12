@@ -135,7 +135,7 @@ namespace bs { namespace ct
 	}
 
 	/** Returns a set of pipeline stages that can are allowed to be used for the specified set of access flags. */
-	VkPipelineStageFlags getPipelineStageFlags(VkAccessFlags accessFlags)
+	VkPipelineStageFlags GetPipelineStageFlags(VkAccessFlags accessFlags)
 	{
 		VkPipelineStageFlags flags = 0;
 
@@ -182,7 +182,7 @@ namespace bs { namespace ct
 	}
 
 	template<class T>
-	void getPipelineStageFlags(const Vector<T>& barriers, VkPipelineStageFlags& src, VkPipelineStageFlags& dst)
+	void GetPipelineStageFlags(const Vector<T>& barriers, VkPipelineStageFlags& src, VkPipelineStageFlags& dst)
 	{
 		for(auto& entry : barriers)
 		{
@@ -198,10 +198,10 @@ namespace bs { namespace ct
 	}
 
 	VulkanCmdBuffer::VulkanCmdBuffer(VulkanDevice& device, UINT32 id, VkCommandPool pool, UINT32 queueFamily, bool secondary)
-		: mId(id), mQueueFamily(queueFamily), mDevice(device), mPool(pool)
-		, mNeedsWARMemoryBarrier(false), mNeedsRAWMemoryBarrier(false), mGfxPipelineRequiresBind(true)
-		, mCmpPipelineRequiresBind(true), mViewportRequiresBind(true), mStencilRefRequiresBind(true)
-		, mScissorRequiresBind(true), mBoundParamsDirty(false), mVertexInputsDirty(false)
+		: MId(id), mQueueFamily(queueFamily), mDevice(device), mPool(pool)
+		, MNeedsWARMemoryBarrier(false), mNeedsRAWMemoryBarrier(false), mGfxPipelineRequiresBind(true)
+		, MCmpPipelineRequiresBind(true), mViewportRequiresBind(true), mStencilRefRequiresBind(true)
+		, MScissorRequiresBind(true), mBoundParamsDirty(false), mVertexInputsDirty(false)
 	{
 		UINT32 maxBoundDescriptorSets = device.getDeviceProperties().limits.maxBoundDescriptorSets;
 		mDescriptorSetsTemp = (VkDescriptorSet*)bs_alloc(sizeof(VkDescriptorSet) * maxBoundDescriptorSets);
@@ -242,7 +242,7 @@ namespace bs { namespace ct
 			// Resources have been marked as used, make sure to notify them we're done with them
 			reset();
 		}
-		else if(mState != State::Ready)
+		else If(mState != State::Ready)
 		{
 			// Notify any resources that they are no longer bound
 			for (auto& entry : mResources)
@@ -348,7 +348,7 @@ namespace bs { namespace ct
 		{
 			// If a previous clear is queued, but it doesn't match the rendered area, need to execute a separate pass
 			// just for it
-			Rect2I rtArea(0, 0, mFramebuffer->getWidth(), mFramebuffer->getHeight());
+			Rect2I RtArea(0, 0, mFramebuffer->getWidth(), mFramebuffer->getHeight());
 			if (mClearArea != rtArea)
 				executeClearPass();
 		}
@@ -1152,7 +1152,7 @@ namespace bs { namespace ct
 
 	void VulkanCmdBuffer::clearRenderTarget(UINT32 buffers, const Color& color, float depth, UINT16 stencil, UINT8 targetMask)
 	{
-		Rect2I area(0, 0, mFramebuffer->getWidth(), mFramebuffer->getHeight());
+		Rect2I Area(0, 0, mFramebuffer->getWidth(), mFramebuffer->getHeight());
 		clearViewport(area, buffers, color, depth, stencil, targetMask);
 	}
 
@@ -2634,7 +2634,7 @@ namespace bs { namespace ct
 	VulkanCommandBuffer::VulkanCommandBuffer(VulkanDevice& device, GpuQueueType type, UINT32 deviceIdx,
 		UINT32 queueIdx, bool secondary)
 		: CommandBuffer(type, deviceIdx, queueIdx, secondary), mBuffer(nullptr)
-		, mDevice(device), mQueue(nullptr), mIdMask(0)
+		, MDevice(device), mQueue(nullptr), mIdMask(0)
 	{
 		UINT32 numQueues = device.getNumQueues(mType);
 		if (numQueues == 0) // Fall back to graphics queue

@@ -147,44 +147,44 @@ namespace bs
 		};
 
 		/** Encodes a single IReflectable object. */
-		bool encodeEntry(IReflectable* object, UINT32 objectId, BufferedBitstreamWriter& stream, BinarySerializerFlags flags);
+		bool EncodeEntry(IReflectable* object, UINT32 objectId, BufferedBitstreamWriter& stream, BinarySerializerFlags flags);
 
 		/**	Decodes a single IReflectable object. */
 		bool decodeEntry(BufferedBitstreamReader& stream, size_t dataLength, BinarySerializerFlags flags, const SPtr<IReflectable>& output,
 			SPtr<RTTISchema> schema);
 
 		/**	Helper method for encoding a complex object and writing its data to a stream. */
-		bool complexTypeToStream(IReflectable* object, BufferedBitstreamWriter& stream, BinarySerializerFlags flags);
+		bool ComplexTypeToStream(IReflectable* object, BufferedBitstreamWriter& stream, BinarySerializerFlags flags);
 
 		/**	Finds an existing, or creates a unique unique identifier for the specified object. */
-		UINT32 findOrCreatePersistentId(IReflectable* object);
+		UINT32 FindOrCreatePersistentId(IReflectable* object);
 
 		/**
 		 * Finds or creates an id for the provided object and returns it. And it adds the object to a list of objects that
 		 * need to be encoded, if it's not already there.
 		 */
-		UINT32 registerObjectPtr(SPtr<IReflectable> object);
+		UINT32 RegisterObjectPtr(SPtr<IReflectable> object);
 
 		/**
 		 * Decodes object meta-data from the current location in the stream. Decoding accounts for the serializer flags to decode
 		 * using the correct format. Returns number of bits read.
 		 */
-		static UINT32 readObjectMetaData(BufferedBitstreamReader& stream, BinarySerializerFlags flags, UINT32& objId, UINT32& objTypeId, bool& isBaseType);
+		static UINT32 ReadObjectMetaData(BufferedBitstreamReader& stream, BinarySerializerFlags flags, UINT32& objId, UINT32& objTypeId, bool& isBaseType);
 		
 		/** Encodes data required for representing a serialized field, into 4 bytes. */
-		static UINT32 encodeFieldMetaData(const RTTIFieldSchema& fieldSchema, bool terminator);
+		static UINT32 EncodeFieldMetaData(const RTTIFieldSchema& fieldSchema, bool terminator);
 
 		/** Decode meta field that was encoded using encodeFieldMetaData().*/
-		static RTTIFieldSchema decodeFieldMetaData(UINT32 encodedData, bool& terminator);
+		static RTTIFieldSchema DecodeFieldMetaData(UINT32 encodedData, bool& terminator);
 
 		/** Encodes data representing a field terminator into 1 byte. */
-		static UINT8 encodeFieldTerminator();
+		static UINT8 EncodeFieldTerminator();
 
 		/** Skips the builtin type at the current location in the stream. */
-		static void skipBuiltinType(UINT32 fieldType, BufferedBitstreamReader& stream, bool compressed);
+		static void SkipBuiltinType(UINT32 fieldType, BufferedBitstreamReader& stream, bool compressed);
 		
 		/** Returns true if the data in the provided byte represents a field terminator as encoded with encodeFieldTerminator(). */
-		static bool isFieldTerminator(UINT8 data);
+		static bool IsFieldTerminator(UINT8 data);
 
 		/**
 		 * Encodes an object identifier, its type and other meta-data into 8 bytes.
@@ -194,13 +194,13 @@ namespace bs
 		 * @param[in]	isBaseClass	True if this object is base class (that is, just a part of a larger object).
 		 * @return		Encoded object id, type ID and other meta-data.
 		 */
-		static ObjectMetaData encodeObjectMetaData(UINT32 objId, UINT32 objTypeId, bool isBaseClass);
+		static ObjectMetaData EncodeObjectMetaData(UINT32 objId, UINT32 objTypeId, bool isBaseClass);
 
 		/** Decode meta field that was encoded using encodeObjectMetaData(UINT32, UINT32, bool). */
-		static void decodeObjectMetaData(ObjectMetaData encodedData, UINT32& objId, UINT32& objTypeId, bool& isBaseClass);
+		static void DecodeObjectMetaData(ObjectMetaData encodedData, UINT32& objId, UINT32& objTypeId, bool& isBaseClass);
 
 		/** Returns true if the provided encoded meta data represents object meta data. */
-		static bool isObjectMetaData(UINT32 encodedData);
+		static bool IsObjectMetaData(UINT32 encodedData);
 
 		/**
 		 * Encodes an object identifier and meta-data into 4 bytes. 
@@ -209,10 +209,10 @@ namespace bs
 		 * @param[in]	isBaseClass	true if this object is base class (that is, just a part of a larger object).
 		 * @return		Encoded object id and other meta-data.
 		 */
-		static UINT32 encodeObjectMetaData(UINT32 objId,  bool isBaseClass);
+		static UINT32 EncodeObjectMetaData(UINT32 objId,  bool isBaseClass);
 
 		/** Decode meta field that was encoded using encodeObjectMetaData(UINT32, bool). */
-		static void decodeObjectMetaData(UINT32 encodedData, UINT32& objId, bool& isBaseClass);
+		static void DecodeObjectMetaData(UINT32 encodedData, UINT32& objId, bool& isBaseClass);
 
 		Map<UINT32, ObjectToDecode> mDecodeObjectMap;
 		Vector<ObjectToEncode> mObjectsToEncode;

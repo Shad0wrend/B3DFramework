@@ -37,7 +37,7 @@ namespace bs { namespace ct
 {
 	const StringID& D3D11RenderAPI::getName() const
 	{
-		static StringID strName("D3D11RenderAPI");
+		static StringID StrName("D3D11RenderAPI");
 		return strName;
 	}
 
@@ -868,7 +868,7 @@ namespace bs { namespace ct
 
 			const RenderTargetProperties& rtProps = mActiveRenderTarget->getProperties();
 
-			Rect2I clearArea((int)mViewport.TopLeftX, (int)mViewport.TopLeftY, (int)mViewport.Width, (int)mViewport.Height);
+			Rect2I ClearArea((int)mViewport.TopLeftX, (int)mViewport.TopLeftY, (int)mViewport.Width, (int)mViewport.Height);
 
 			bool clearEntireTarget = clearArea.width == 0 || clearArea.height == 0;
 			clearEntireTarget |= (clearArea.x == 0 && clearArea.y == 0 && clearArea.width == rtProps.width &&

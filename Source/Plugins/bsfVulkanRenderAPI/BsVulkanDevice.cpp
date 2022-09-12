@@ -13,7 +13,7 @@
 namespace bs { namespace ct
 {
 	VulkanDevice::VulkanDevice(VkPhysicalDevice device, UINT32 deviceIdx)
-		: mPhysicalDevice(device), mDeviceIdx(deviceIdx), mQueueInfos()
+		: MPhysicalDevice(device), mDeviceIdx(deviceIdx), mQueueInfos()
 	{
 		// Set to default
 		for (UINT32 i = 0; i < GQT_COUNT; i++)
@@ -26,7 +26,7 @@ namespace bs { namespace ct
 		uint32_t numQueueFamilies;
 		vkGetPhysicalDeviceQueueFamilyProperties(device, &numQueueFamilies, nullptr);
 
-		Vector<VkQueueFamilyProperties> queueFamilyProperties(numQueueFamilies);
+		Vector<VkQueueFamilyProperties> QueueFamilyProperties(numQueueFamilies);
 		vkGetPhysicalDeviceQueueFamilyProperties(device, &numQueueFamilies, queueFamilyProperties.data());
 
 		// Create queues
@@ -97,7 +97,7 @@ namespace bs { namespace ct
 		vkEnumerateDeviceExtensionProperties(device, nullptr, &numAvailableExtensions, nullptr);
 		if (numAvailableExtensions > 0)
 		{
-			Vector<VkExtensionProperties> availableExtensions(numAvailableExtensions);
+			Vector<VkExtensionProperties> AvailableExtensions(numAvailableExtensions);
 			if (vkEnumerateDeviceExtensionProperties(device, nullptr, &numAvailableExtensions, availableExtensions.data()) == VK_SUCCESS)
 			{
 				for (auto entry : extensions)
@@ -107,7 +107,7 @@ namespace bs { namespace ct
 						extensions[numExtensions++] = VK_KHR_DEDICATED_ALLOCATION_EXTENSION_NAME;
 						dedicatedAllocExt = true;
 					}
-					else if(entry == VK_KHR_GET_MEMORY_REQUIREMENTS_2_EXTENSION_NAME)
+					else If(entry == VK_KHR_GET_MEMORY_REQUIREMENTS_2_EXTENSION_NAME)
 					{
 						extensions[numExtensions++] = VK_KHR_GET_MEMORY_REQUIREMENTS_2_EXTENSION_NAME;
 						getMemReqExt = true;

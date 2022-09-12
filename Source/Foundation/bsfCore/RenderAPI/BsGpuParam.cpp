@@ -215,7 +215,7 @@ namespace bs
 
 	template<bool Core>
 	TGpuParamBuffer<Core>::TGpuParamBuffer(GpuParamObjectDesc* paramDesc, const GpuParamsType& parent)
-		: mParent(parent), mParamDesc(paramDesc)
+		: MParent(parent), mParamDesc(paramDesc)
 	{ }
 
 	template<bool Core>

@@ -30,7 +30,7 @@ namespace bs
 	}
 
 	ManagedSerializableDictionary::Enumerator::Enumerator(const ManagedSerializableDictionary* parent)
-		: mIteratorInitialized(false), mParent(parent)
+		: MIteratorInitialized(false), mParent(parent)
 	{
 		MonoArray* keysArray = nullptr;
 		MonoArray* valuesArray = nullptr;
@@ -45,8 +45,8 @@ namespace bs
 			mKeyType = parent->mDictionaryTypeInfo->mKeyType->getMonoClass();
 			mValueType = parent->mDictionaryTypeInfo->mValueType->getMonoClass();
 
-			ScriptArray keys(mKeyType, mNumEntries);
-			ScriptArray values(mValueType, mNumEntries);
+			ScriptArray Keys(mKeyType, mNumEntries);
+			ScriptArray Values(mValueType, mNumEntries);
 
 			UINT32 offset = 0;
 			void* keyParams[2] = { keys.getInternal(), &offset };
@@ -70,7 +70,7 @@ namespace bs
 	}
 
 	ManagedSerializableDictionary::Enumerator::Enumerator(const Enumerator& other)
-		: mNumEntries(other.mNumEntries), mIteratorInitialized(false), mParent(other.mParent)
+		: MNumEntries(other.mNumEntries), mIteratorInitialized(false), mParent(other.mParent)
 	{
 		if(other.mKeysArrayHandle != 0 && other.mValuesArrayHandle != 0)
 		{
@@ -135,7 +135,7 @@ namespace bs
 		if (mKeysArrayHandle != 0)
 		{
 			MonoArray* keysArray = (MonoArray*)MonoUtil::getObjectFromGCHandle(mKeysArrayHandle);
-			ScriptArray keys(keysArray);
+			ScriptArray Keys(keysArray);
 
 			if(mCurrentIdx != (UINT32)-1)
 			{
@@ -166,7 +166,7 @@ namespace bs
 		if (mValuesArrayHandle != 0)
 		{
 			MonoArray* valuesArray = (MonoArray*)MonoUtil::getObjectFromGCHandle(mValuesArrayHandle);
-			ScriptArray values(valuesArray);
+			ScriptArray Values(valuesArray);
 
 			if(mCurrentIdx != (UINT32)-1)
 			{
@@ -222,7 +222,7 @@ namespace bs
 	{ }
 
 	ManagedSerializableDictionary::ManagedSerializableDictionary(const ConstructPrivately& dummy, const SPtr<ManagedSerializableTypeInfoDictionary>& typeInfo, MonoObject* managedInstance)
-		: mDictionaryTypeInfo(typeInfo)
+		: MDictionaryTypeInfo(typeInfo)
 	{
 		mGCHandle = MonoUtil::newGCHandle(managedInstance, false);
 

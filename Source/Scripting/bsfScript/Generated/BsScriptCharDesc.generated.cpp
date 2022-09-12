@@ -44,7 +44,7 @@ namespace bs
 		Vector<KerningPair> veckerningPairs;
 		if(value.kerningPairs != nullptr)
 		{
-			ScriptArray arraykerningPairs(value.kerningPairs);
+			ScriptArray ArraykerningPairs(value.kerningPairs);
 			veckerningPairs.resize(arraykerningPairs.size());
 			for(int i = 0; i < (int)arraykerningPairs.size(); i++)
 			{

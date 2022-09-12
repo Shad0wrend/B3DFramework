@@ -97,8 +97,8 @@ namespace bs
 
 	void FileSystem::copyFile(const Path& source, const Path& destination)
 	{
-		std::ifstream sourceStream(source.toString().c_str(), std::ios::binary);
-		std::ofstream destinationStream(destination.toString().c_str(), std::ios::binary);
+		std::ifstream SourceStream(source.toString().c_str(), std::ios::binary);
+		std::ofstream DestinationStream(destination.toString().c_str(), std::ios::binary);
 
 		destinationStream << sourceStream.rdbuf();
 		sourceStream.close();
@@ -112,8 +112,8 @@ namespace bs
 		if (std::rename(oldPathStr.c_str(), newPathStr.c_str()) == -1)
 		{
 			// Cross-filesystem copy is likely needed (for example, /tmp to Banshee install dir while copying assets)
-			std::ifstream src(oldPathStr.c_str(), std::ios::binary);
-			std::ofstream dst(newPathStr.c_str(), std::ios::binary);
+			std::ifstream Src(oldPathStr.c_str(), std::ios::binary);
+			std::ofstream Dst(newPathStr.c_str(), std::ios::binary);
 			dst << src.rdbuf(); // First, copy
 
 			// Error handling
@@ -218,7 +218,7 @@ namespace bs
 		struct dirent *ep;
 		while ( (ep = readdir(dp)) )
 		{
-			const String filename(ep->d_name);
+			const String Filename(ep->d_name);
 			if (filename != "." && filename != "..")
 			{
 				if (unix_isDirectory(pathStr + "/" + filename))
@@ -271,7 +271,7 @@ namespace bs
 		dirent* entry;
 		while((entry = readdir(dirHandle)))
 		{
-			String filename(entry->d_name);
+			String Filename(entry->d_name);
 			if (filename == "." || filename == "..")
 				continue;
 
@@ -338,7 +338,7 @@ namespace bs
 		tmpdir.append("/bsf-XXXXXX");
 		
 		// null terminated, modifiable tmpdir name template
-		Vector<char> nameTemplate(tmpdir.c_str(), tmpdir.c_str() + tmpdir.size() + 1);
+		Vector<char> NameTemplate(tmpdir.c_str(), tmpdir.c_str() + tmpdir.size() + 1);
 		char *directoryName = mkdtemp(nameTemplate.data());
 
 		if (directoryName == nullptr)

@@ -14,7 +14,7 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "KeyframeRef")
 
 		static MonoObject* box(const KeyframeRef& value);
-		static KeyframeRef unbox(MonoObject* value);
+		static KeyframeRef Unbox(MonoObject* value);
 
 	private:
 		ScriptKeyframeRef(MonoObject* managedInstance);

@@ -25,16 +25,16 @@ namespace bs
 		static ::Display* getXDisplay();
 
 		/** Returns the main X11 window. Caller must ensure the main window has been created. */
-		static ::Window getMainXWindow();
+		static ::Window GetMainXWindow();
 
 		/** Retruns the absolute path to the user's home directory. */
-		static Path getHomeDir();
+		static Path GetHomeDir();
 
 		/** Locks access to the X11 system, not allowing any other thread to access it. Must be used for every X11 access. */
-		static void lockX();
+		static void LockX();
 
 		/** Unlocks access to the X11 system. Must follow every call to lockX(). */
-		static void unlockX();
+		static void UnlockX();
 
 		/** Notifies the system that a new window was created. */
 		static void _registerWindow(::Window xWindow, LinuxWindow* window);
@@ -43,7 +43,7 @@ namespace bs
 		static void _unregisterWindow(::Window xWindow);
 
 		/** Generates a X11 Pixmap from the provided pixel data. */
-		static Pixmap createPixmap(const PixelData& data, UINT32 depth);
+		static Pixmap CreatePixmap(const PixelData& data, UINT32 depth);
 
 		/** Mutex for accessing buttonEvents / mouseEvent. */
 		static Mutex eventLock;

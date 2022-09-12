@@ -14,7 +14,7 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "BoneWeight")
 
 		static MonoObject* box(const BoneWeight& value);
-		static BoneWeight unbox(MonoObject* value);
+		static BoneWeight Unbox(MonoObject* value);
 
 	private:
 		ScriptBoneWeight(MonoObject* managedInstance);

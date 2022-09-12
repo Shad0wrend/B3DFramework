@@ -56,7 +56,7 @@ namespace bs
 		if (!checkIsLocked(thisPtr))
 			return Vector<char>();
 
-		Vector<char> output(thisPtr->getSize());
+		Vector<char> Output(thisPtr->getSize());
 		memcpy(output.data(), thisPtr->getData(), thisPtr->getSize());
 
 		return output;

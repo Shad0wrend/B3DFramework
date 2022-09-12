@@ -16,7 +16,7 @@ namespace bs
 		if (updateOptimalSizes)
 			layout->_updateOptimalLayoutSizes();
 
-		return calcActualSizeInternal(width, height, layout);
+		return CalcActualSizeInternal(width, height, layout);
 	}
 
 	Vector2I GUILayoutUtility::calcActualSizeInternal(UINT32 width, UINT32 height, GUILayout* layout)

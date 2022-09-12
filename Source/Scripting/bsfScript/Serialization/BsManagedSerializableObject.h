@@ -37,13 +37,13 @@ namespace bs
 		/**	Generates a hash value for field key data identifying a single field in the object. */
 		struct BS_SCR_BE_EXPORT Hash
 		{
-			size_t operator()(const ManagedSerializableFieldKey& x) const;
+			size_t Operator()(const ManagedSerializableFieldKey& x) const;
 		};
 
 		/**	Compares two field key objects. */
 		struct BS_SCR_BE_EXPORT Equals
 		{
-			bool operator()(const ManagedSerializableFieldKey& a, const ManagedSerializableFieldKey& b) const;
+			bool Operator()(const ManagedSerializableFieldKey& a, const ManagedSerializableFieldKey& b) const;
 		};
 
 	public:
@@ -57,7 +57,7 @@ namespace bs
 		MonoObject* getManagedInstance() const;
 
 		/**	Returns the type information for the internal object. */
-		SPtr<ManagedSerializableObjectInfo> getObjectInfo() const { return mObjInfo; }
+		SPtr<ManagedSerializableObjectInfo> GetObjectInfo() const { return mObjInfo; }
 
 		/**
 		 * Sets a new value of the specified field. Operates on managed object if in linked state, or on cached data
@@ -67,7 +67,7 @@ namespace bs
 		 *							type this object is initialized with.
 		 * @param[in]	val			Wrapper around the value to store in the field.
 		 */
-		void setFieldData(const SPtr<ManagedSerializableMemberInfo>& fieldInfo, const SPtr<ManagedSerializableFieldData>& val);
+		void SetFieldData(const SPtr<ManagedSerializableMemberInfo>& fieldInfo, const SPtr<ManagedSerializableFieldData>& val);
 
 		/**
 		 * Returns the value of the specified field. Operates on managed object if in linked state, or on cached data
@@ -77,14 +77,14 @@ namespace bs
 		 *							type this object is initialized with.
 		 * @return					A wrapper around the value of the field.
 		 */
-		SPtr<ManagedSerializableFieldData> getFieldData(const SPtr<ManagedSerializableMemberInfo>& fieldInfo) const;
+		SPtr<ManagedSerializableFieldData> GetFieldData(const SPtr<ManagedSerializableMemberInfo>& fieldInfo) const;
 
 		/**
 		 * Serializes the internal managed object into a set of cached data that can be saved in memory/disk and can be
 		 * deserialized later. The internal managed object will be freed (if no other references to it). Calling serialize()
 		 * again will have no result.
 		 */
-		void serialize();
+		void Serialize();
 
 		/**
 		 * Deserializes a set of cached data into a managed object. This action may fail in case the cached data contains a
@@ -101,10 +101,10 @@ namespace bs
 		 * @param[in]	instance	Existing managed instance of the same type this serializable object represents.
 		 * @param[in]	objInfo		Serializable object info for the managed object type.
 		 */
-		void deserialize(MonoObject* instance, const SPtr<ManagedSerializableObjectInfo>& objInfo);
+		void Deserialize(MonoObject* instance, const SPtr<ManagedSerializableObjectInfo>& objInfo);
 
 		/** Checks if this object has the same contents as the provided object. */
-		bool equals(ManagedSerializableObject& other);
+		bool Equals(ManagedSerializableObject& other);
 
 		/**
 		 * Creates a managed serializable object that references an existing managed object. Created object will be in
@@ -112,14 +112,14 @@ namespace bs
 		 *
 		 * @param[in]	managedInstance		Constructed managed instance of the object to link with.
 		 */
-		static SPtr<ManagedSerializableObject> createFromExisting(MonoObject* managedInstance);
+		static SPtr<ManagedSerializableObject> CreateFromExisting(MonoObject* managedInstance);
 
 		/**
 		 * Creates a managed serializable object that creates and references a brand new managed object instance. 	
 		 *
 		 * @param[in]	type	Type of the object to create.
 		 */
-		static SPtr<ManagedSerializableObject> createNew(const SPtr<ManagedSerializableTypeInfoObject>& type);
+		static SPtr<ManagedSerializableObject> CreateNew(const SPtr<ManagedSerializableTypeInfoObject>& type);
 
 		/**
 		 * Creates a managed object instance.
@@ -137,7 +137,7 @@ namespace bs
 		/************************************************************************/
 		
 		/**	Creates an empty and uninitialized object used for serialization purposes. */
-		static SPtr<ManagedSerializableObject> createEmpty();
+		static SPtr<ManagedSerializableObject> CreateEmpty();
 
 	public:
 		friend class ManagedSerializableObjectRTTI;

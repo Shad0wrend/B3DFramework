@@ -17,22 +17,22 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedResourceMetaDataRTTI : public RTTIType<ManagedResourceMetaData, ResourceMetaData, ManagedResourceMetaDataRTTI>
 	{
 	private:
-		String& getNamespace(ManagedResourceMetaData* obj)
+		String& GetNamespace(ManagedResourceMetaData* obj)
 		{
 			return obj->typeNamespace;
 		}
 
-		void setNamespace(ManagedResourceMetaData* obj, String& val)
+		void SetNamespace(ManagedResourceMetaData* obj, String& val)
 		{
 			obj->typeNamespace = val;
 		}
 
-		String& getTypename(ManagedResourceMetaData* obj)
+		String& GetTypename(ManagedResourceMetaData* obj)
 		{
 			return obj->typeName;
 		}
 
-		void setTypename(ManagedResourceMetaData* obj, String& val)
+		void SetTypename(ManagedResourceMetaData* obj, String& val)
 		{
 			obj->typeName = val;
 		}
@@ -44,18 +44,18 @@ namespace bs
 			addPlainField("mTypeName", 1, &ManagedResourceMetaDataRTTI::getTypename, &ManagedResourceMetaDataRTTI::setTypename);
 		}
 
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "ManagedResourceMetaData";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_ManagedResourceMetaData;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			return bs_shared_ptr_new<ManagedResourceMetaData>();
 		}

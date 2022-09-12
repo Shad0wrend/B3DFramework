@@ -22,10 +22,10 @@ namespace bs
 		SphereCollider() = default;
 
 		/** Determines the radius of the sphere geometry. */
-		virtual void setRadius(float radius) = 0;
+		virtual void SetRadius(float radius) = 0;
 
 		/** @copydoc setRadius */
-		virtual float getRadius() const = 0;
+		virtual float GetRadius() const = 0;
 
 		/**
 		 * Creates a new sphere collider.

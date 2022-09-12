@@ -31,7 +31,7 @@ namespace bs
 		return _aligned_malloc(size, 16);
 	}
 
-	inline void platformAlignedFree16(void* ptr)
+	inline void PlatformAlignedFree16(void* ptr)
 	{
 		_aligned_free(ptr);
 	}
@@ -41,7 +41,7 @@ namespace bs
 		return _aligned_malloc(size, alignment);
 	}
 
-	inline void platformAlignedFree(void* ptr)
+	inline void PlatformAlignedFree(void* ptr)
 	{
 		_aligned_free(ptr);
 	}
@@ -51,7 +51,7 @@ namespace bs
 		return ::memalign(16, size);
 	}
 
-	inline void platformAlignedFree16(void* ptr)
+	inline void PlatformAlignedFree16(void* ptr)
 	{
 		::free(ptr);
 	}
@@ -61,7 +61,7 @@ namespace bs
 		return ::memalign(alignment, size);
 	}
 
-	inline void platformAlignedFree(void* ptr)
+	inline void PlatformAlignedFree(void* ptr)
 	{
 		::free(ptr);
 	}
@@ -71,7 +71,7 @@ namespace bs
 		return ::malloc(size);
 	}
 
-	inline void platformAlignedFree16(void* ptr)
+	inline void PlatformAlignedFree16(void* ptr)
 	{
 		::free(ptr);
 	}
@@ -89,7 +89,7 @@ namespace bs
 		return alignedData;
 	}
 
-	inline void platformAlignedFree(void* ptr)
+	inline void PlatformAlignedFree(void* ptr)
 	{
 		// TODO: Document how this works.
 		::free(((void**)ptr)[-1]);
@@ -103,12 +103,12 @@ namespace bs
 	class MemoryCounter
 	{
 	public:
-		static BS_UTILITY_EXPORT uint64_t getNumAllocs()
+		static BS_UTILITY_EXPORT uint64_t GetNumAllocs()
 		{
 			return Allocs;
 		}
 
-		static BS_UTILITY_EXPORT uint64_t getNumFrees()
+		static BS_UTILITY_EXPORT uint64_t GetNumFrees()
 		{
 			return Frees;
 		}
@@ -117,8 +117,8 @@ namespace bs
 		friend class MemoryAllocatorBase;
 
 		// Threadlocal data can't be exported, so some magic to make it accessible from MemoryAllocator
-		static BS_UTILITY_EXPORT void incAllocCount() { ++Allocs; }
-		static BS_UTILITY_EXPORT void incFreeCount() { ++Frees; }
+		static BS_UTILITY_EXPORT void IncAllocCount() { ++Allocs; }
+		static BS_UTILITY_EXPORT void IncFreeCount() { ++Frees; }
 
 		static BS_THREADLOCAL uint64_t Allocs;
 		static BS_THREADLOCAL uint64_t Frees;
@@ -128,8 +128,8 @@ namespace bs
 	class MemoryAllocatorBase
 	{
 	protected:
-		static void incAllocCount() { MemoryCounter::incAllocCount(); }
-		static void incFreeCount() { MemoryCounter::incFreeCount(); }
+		static void IncAllocCount() { MemoryCounter::incAllocCount(); }
+		static void IncFreeCount() { MemoryCounter::incFreeCount(); }
 	};
 
 	/**
@@ -149,7 +149,7 @@ namespace bs
 			incAllocCount();
 #endif
 
-			return malloc(bytes);
+			return Malloc(bytes);
 		}
 
 		/**
@@ -162,7 +162,7 @@ namespace bs
 			incAllocCount();
 #endif
 
-			return platformAlignedAlloc(bytes, alignment);
+			return PlatformAlignedAlloc(bytes, alignment);
 		}
 
 		/** Allocates @p bytes and aligns them to a 16 byte boundary. */
@@ -172,11 +172,11 @@ namespace bs
 			incAllocCount();
 #endif
 
-			return platformAlignedAlloc16(bytes);
+			return PlatformAlignedAlloc16(bytes);
 		}
 
 		/** Frees the memory at the specified location. */
-		static void free(void* ptr)
+		static void Free(void* ptr)
 		{
 #if BS_PROFILING_ENABLED
 			incFreeCount();
@@ -186,7 +186,7 @@ namespace bs
 		}
 
 		/** Frees memory allocated with allocateAligned() */
-		static void freeAligned(void* ptr)
+		static void FreeAligned(void* ptr)
 		{
 #if BS_PROFILING_ENABLED
 			incFreeCount();
@@ -196,7 +196,7 @@ namespace bs
 		}
 
 		/** Frees memory allocated with allocateAligned16() */
-		static void freeAligned16(void* ptr)
+		static void FreeAligned16(void* ptr)
 		{
 #if BS_PROFILING_ENABLED
 			incFreeCount();
@@ -279,7 +279,7 @@ namespace bs
 		template <class T2, std::enable_if_t<std::is_convertible<T2*, T*>::value, int> = 0>
 		constexpr Deleter(const Deleter<T2, Alloc>& other) noexcept { }
 
-		void operator()(T* ptr) const
+		void Operator()(T* ptr) const
 		{
 			bs_delete<T, Alloc>(ptr);
 		}
@@ -434,16 +434,16 @@ namespace bs
 		}
 
 		/** Deallocate storage p of deleted elements. */
-		static void deallocate(pointer p, size_type)
+		static void Deallocate(pointer p, size_type)
 		{
 			bs_free<Alloc>(p);
 		}
 
 		static constexpr size_t max_size() { return std::numeric_limits<size_type>::max() / sizeof(T); }
-		static constexpr void destroy(pointer p) { p->~T(); }
+		static constexpr void Destroy(pointer p) { p->~T(); }
 
 		template<class... Args>
-		static void construct(pointer p, Args&&... args) { new(p) T(std::forward<Args>(args)...); }
+		static void Construct(pointer p, Args&&... args) { new(p) T(std::forward<Args>(args)...); }
 	};
 
 	/** @} */

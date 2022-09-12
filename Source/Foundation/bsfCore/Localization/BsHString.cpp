@@ -73,7 +73,7 @@ namespace bs
 
 	HString::operator const String& () const
 	{
-		return getValue();
+		return GetValue();
 	}
 
 	HString& HString::operator=(const HString& rhs)

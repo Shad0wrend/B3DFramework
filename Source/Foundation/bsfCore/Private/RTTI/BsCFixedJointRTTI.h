@@ -20,18 +20,18 @@ namespace bs
 		CFixedJointRTTI()
 		{ }
 
-		const String& getRTTIName() override
+		const String& GetRTTIName() override
 		{
 			static String name = "CFixedJoint";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRTTIId() override
 		{
 			return TID_CFixedJoint;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRTTIObject() override
 		{
 			return SceneObject::createEmptyComponent<CFixedJoint>();
 		}

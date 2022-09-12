@@ -37,16 +37,16 @@ namespace bs { namespace ct
 		if(skinned)
 		{
 			if(morph)
-				return get(getVariation<true, true>());
+				return Get(getVariation<true, true>());
 
-			return get(getVariation<true, false>());
+			return Get(getVariation<true, false>());
 		}
 		else
 		{
 			if(morph)
-				return get(getVariation<false, true>());
+				return Get(getVariation<false, true>());
 
-			return get(getVariation<false, false>());
+			return Get(getVariation<false, false>());
 		}
 	}
 
@@ -73,16 +73,16 @@ namespace bs { namespace ct
 		if(skinned)
 		{
 			if(morph)
-				return get(getVariation<true, true>());
+				return Get(getVariation<true, true>());
 
-			return get(getVariation<true, false>());
+			return Get(getVariation<true, false>());
 		}
 		else
 		{
 			if(morph)
-				return get(getVariation<false, true>());
+				return Get(getVariation<false, true>());
 
-			return get(getVariation<false, false>());
+			return Get(getVariation<false, false>());
 		}
 	}
 
@@ -108,16 +108,16 @@ namespace bs { namespace ct
 		if(skinned)
 		{
 			if(morph)
-				return get(getVariation<true, true>());
+				return Get(getVariation<true, true>());
 
-			return get(getVariation<true, false>());
+			return Get(getVariation<true, false>());
 		}
 		else
 		{
 			if(morph)
-				return get(getVariation<false, true>());
+				return Get(getVariation<false, true>());
 
-			return get(getVariation<false, false>());
+			return Get(getVariation<false, false>());
 		}
 	}
 
@@ -151,16 +151,16 @@ namespace bs { namespace ct
 		if(skinned)
 		{
 			if(morph)
-				return get(getVariation<true, true>());
+				return Get(getVariation<true, true>());
 
-			return get(getVariation<true, false>());
+			return Get(getVariation<true, false>());
 		}
 		else
 		{
 			if(morph)
-				return get(getVariation<false, true>());
+				return Get(getVariation<false, true>());
 
-			return get(getVariation<false, false>());
+			return Get(getVariation<false, false>());
 		}
 	}
 
@@ -176,7 +176,7 @@ namespace bs { namespace ct
 
 	void ShadowProjectStencilMat::bind(const SPtr<GpuParamBlockBuffer>& perCamera)
 	{
-		Vector4 lightPosAndScale(0, 0, 0, 1);
+		Vector4 LightPosAndScale(0, 0, 0, 1);
 		gShadowProjectVertParamsDef.gPositionAndScale.set(mVertParams, lightPosAndScale);
 
 		mParams->setParamBlockBuffer("PerCamera", perCamera);
@@ -187,18 +187,18 @@ namespace bs { namespace ct
 	ShadowProjectStencilMat* ShadowProjectStencilMat::getVariation(bool directional, bool useZFailStencil)
 	{
 		if(directional)
-			return get(getVariation<true, true>());
+			return Get(getVariation<true, true>());
 		else
 		{
 			if (useZFailStencil)
-				return get(getVariation<false, true>());
+				return Get(getVariation<false, true>());
 			else
-				return get(getVariation<false, false>());
+				return Get(getVariation<false, false>());
 		}
 	}
 
 	ShadowProjectMat::ShadowProjectMat()
-		: mGBufferParams(GPT_FRAGMENT_PROGRAM, mParams)
+		: MGBufferParams(GPT_FRAGMENT_PROGRAM, mParams)
 	{
 		mParams->getTextureParam(GPT_FRAGMENT_PROGRAM, "gShadowTex", mShadowMapParam);
 		if(mParams->hasSamplerState(GPT_FRAGMENT_PROGRAM, "gShadowSampler"))
@@ -223,7 +223,7 @@ namespace bs { namespace ct
 
 	void ShadowProjectMat::bind(const ShadowProjectParams& params)
 	{
-		Vector4 lightPosAndScale(Vector3(0.0f, 0.0f, 0.0f), 1.0f);
+		Vector4 LightPosAndScale(Vector3(0.0f, 0.0f, 0.0f), 1.0f);
 		gShadowProjectVertParamsDef.gPositionAndScale.set(mVertParams, lightPosAndScale);
 
 		mGBufferParams.bind(params.gbuffer);
@@ -243,21 +243,21 @@ namespace bs { namespace ct
 	{																\
 		if(directional)												\
 			if (MSAA)												\
-				return get(getVariation<QUALITY, true, true>());	\
+				return Get(getVariation<QUALITY, true, true>());	\
 			else													\
-				return get(getVariation<QUALITY, true, false>());	\
+				return Get(getVariation<QUALITY, true, false>());	\
 		else														\
 			if (MSAA)												\
-				return get(getVariation<QUALITY, false, true>());	\
+				return Get(getVariation<QUALITY, false, true>());	\
 			else													\
-				return get(getVariation<QUALITY, false, false>());	\
+				return Get(getVariation<QUALITY, false, false>());	\
 	}
 
 		if(quality <= 1)
 			BIND_MAT(1)
-		else if(quality == 2)
+		else If(quality == 2)
 			BIND_MAT(2)
-		else if(quality == 3)
+		else If(quality == 3)
 			BIND_MAT(3)
 		else // 4 or higher
 			BIND_MAT(4)
@@ -268,7 +268,7 @@ namespace bs { namespace ct
 	ShadowProjectOmniParamsDef gShadowProjectOmniParamsDef;
 
 	ShadowProjectOmniMat::ShadowProjectOmniMat()
-		: mGBufferParams(GPT_FRAGMENT_PROGRAM, mParams)
+		: MGBufferParams(GPT_FRAGMENT_PROGRAM, mParams)
 	{
 		mParams->getTextureParam(GPT_FRAGMENT_PROGRAM, "gShadowCubeTex", mShadowMapParam);
 
@@ -295,7 +295,7 @@ namespace bs { namespace ct
 
 	void ShadowProjectOmniMat::bind(const ShadowProjectParams& params)
 	{
-		Vector4 lightPosAndScale(params.light.getTransform().getPosition(), params.light.getAttenuationRadius());
+		Vector4 LightPosAndScale(params.light.getTransform().getPosition(), params.light.getAttenuationRadius());
 		gShadowProjectVertParamsDef.gPositionAndScale.set(mVertParams, lightPosAndScale);
 
 		mGBufferParams.bind(params.gbuffer);
@@ -315,21 +315,21 @@ namespace bs { namespace ct
 	{																\
 		if(inside)													\
 			if (MSAA)												\
-				return get(getVariation<QUALITY, true, true>());	\
+				return Get(getVariation<QUALITY, true, true>());	\
 			else													\
-				return get(getVariation<QUALITY, true, false>());	\
+				return Get(getVariation<QUALITY, true, false>());	\
 		else														\
 			if (MSAA)												\
-				return get(getVariation<QUALITY, false, true>());	\
+				return Get(getVariation<QUALITY, false, true>());	\
 			else													\
-				return get(getVariation<QUALITY, false, false>());	\
+				return Get(getVariation<QUALITY, false, false>());	\
 	}
 
 		if(quality <= 1)
 			BIND_MAT(1)
-		else if(quality == 2)
+		else If(quality == 2)
 			BIND_MAT(2)
-		else if(quality == 3)
+		else If(quality == 3)
 			BIND_MAT(3)
 		else // 4 or higher
 			BIND_MAT(4)
@@ -346,7 +346,7 @@ namespace bs { namespace ct
 	}
 
 	ShadowMapAtlas::ShadowMapAtlas(UINT32 size)
-		: mLayout(0, 0, size, size, true), mLastUsedCounter(0)
+		: MLayout(0, 0, size, size, true), mLastUsedCounter(0)
 	{
 		mAtlas = GpuResourcePool::instance().get(
 			POOLED_RENDER_TEXTURE_DESC::create2D(SHADOW_MAP_FORMAT, size, size, TU_DEPTHSTENCIL));
@@ -390,7 +390,7 @@ namespace bs { namespace ct
 	}
 
 	ShadowMapBase::ShadowMapBase(UINT32 size)
-		: mSize(size), mIsUsed(false), mLastUsedCounter (0)
+		: MSize(size), mIsUsed(false), mLastUsedCounter (0)
 	{ }
 
 	SPtr<Texture> ShadowMapBase::getTexture() const
@@ -461,7 +461,7 @@ namespace bs { namespace ct
 		};
 
 		template<class Options>
-		static void execute(RendererScene& scene, const FrameInfo& frameInfo, const Options& opt)
+		static void Execute(RendererScene& scene, const FrameInfo& frameInfo, const Options& opt)
 		{
 			static_assert((UINT32)RenderableAnimType::Count == 4, "RenderableAnimType is expected to have four sequential entries.");
 
@@ -546,28 +546,28 @@ namespace bs { namespace ct
 			const SPtr<GpuParamBlockBuffer>& shadowParamsBuffer,
 			const SPtr<GpuParamBlockBuffer>& shadowCubeMatricesBuffer,
 			const SPtr<GpuParamBlockBuffer>& shadowCubeMasksBuffer)
-			: frustums(frustums), boundingVolume(boundingVolume), shadowParamsBuffer(shadowParamsBuffer)
-			, shadowCubeMatricesBuffer(shadowCubeMatricesBuffer), shadowCubeMasksBuffer(shadowCubeMasksBuffer)
+			: Frustums(frustums), boundingVolume(boundingVolume), shadowParamsBuffer(shadowParamsBuffer)
+			, ShadowCubeMatricesBuffer(shadowCubeMatricesBuffer), shadowCubeMasksBuffer(shadowCubeMasksBuffer)
 		{ }
 
-		bool intersects(const Sphere& bounds) const
+		bool Intersects(const Sphere& bounds) const
 		{
 			return boundingVolume.intersects(bounds);
 		}
 
-		void prepare(ShadowRenderQueue::Command& command, const Sphere& bounds) const
+		void Prepare(ShadowRenderQueue::Command& command, const Sphere& bounds) const
 		{
 			for (UINT32 j = 0; j < 6; j++)
 				command.mask |= (frustums[j].intersects(bounds) ? 1 : 0) << j;
 		}
 
-		void bindMaterial(const ShaderVariation& variation) const
+		void BindMaterial(const ShaderVariation& variation) const
 		{
 			material = ShadowDepthCubeMat::get(variation);
 			material->bind(shadowParamsBuffer, shadowCubeMatricesBuffer);
 		}
 
-		void bindRenderable(ShadowRenderQueue::Command& command) const
+		void BindRenderable(ShadowRenderQueue::Command& command) const
 		{
 			RendererRenderable* renderable = command.renderable;
 
@@ -592,25 +592,25 @@ namespace bs { namespace ct
 		ShadowRenderQueueCubeSingleOptions(
 				const ConvexVolume& boundingVolume,
 				const SPtr<GpuParamBlockBuffer>& shadowParamsBuffer)
-				: boundingVolume(boundingVolume), shadowParamsBuffer(shadowParamsBuffer)
+				: BoundingVolume(boundingVolume), shadowParamsBuffer(shadowParamsBuffer)
 		{ }
 
-		bool intersects(const Sphere& bounds) const
+		bool Intersects(const Sphere& bounds) const
 		{
 			return boundingVolume.intersects(bounds);
 		}
 
-		void prepare(ShadowRenderQueue::Command& command, const Sphere& bounds) const
+		void Prepare(ShadowRenderQueue::Command& command, const Sphere& bounds) const
 		{
 		}
 
-		void bindMaterial(const ShaderVariation& variation) const
+		void BindMaterial(const ShaderVariation& variation) const
 		{
 			material = ShadowDepthNormalNoPSMat::get(variation);
 			material->bind(shadowParamsBuffer);
 		}
 
-		void bindRenderable(ShadowRenderQueue::Command& command) const
+		void BindRenderable(ShadowRenderQueue::Command& command) const
 		{
 			RendererRenderable* renderable = command.renderable;
 
@@ -629,25 +629,25 @@ namespace bs { namespace ct
 		ShadowRenderQueueSpotOptions(
 			const ConvexVolume& boundingVolume,
 			const SPtr<GpuParamBlockBuffer>& shadowParamsBuffer)
-			: boundingVolume(boundingVolume), shadowParamsBuffer(shadowParamsBuffer)
+			: BoundingVolume(boundingVolume), shadowParamsBuffer(shadowParamsBuffer)
 		{ }
 
-		bool intersects(const Sphere& bounds) const
+		bool Intersects(const Sphere& bounds) const
 		{
 			return boundingVolume.intersects(bounds);
 		}
 
-		void prepare(ShadowRenderQueue::Command& command, const Sphere& bounds) const
+		void Prepare(ShadowRenderQueue::Command& command, const Sphere& bounds) const
 		{
 		}
 
-		void bindMaterial(const ShaderVariation& variation) const
+		void BindMaterial(const ShaderVariation& variation) const
 		{
 			material = ShadowDepthNormalMat::get(variation);
 			material->bind(shadowParamsBuffer);
 		}
 
-		void bindRenderable(ShadowRenderQueue::Command& command) const
+		void BindRenderable(ShadowRenderQueue::Command& command) const
 		{
 			RendererRenderable* renderable = command.renderable;
 
@@ -666,25 +666,25 @@ namespace bs { namespace ct
 		ShadowRenderQueueDirOptions(
 			const ConvexVolume& boundingVolume,
 			const SPtr<GpuParamBlockBuffer>& shadowParamsBuffer)
-			: boundingVolume(boundingVolume), shadowParamsBuffer(shadowParamsBuffer)
+			: BoundingVolume(boundingVolume), shadowParamsBuffer(shadowParamsBuffer)
 		{ }
 
-		bool intersects(const Sphere& bounds) const
+		bool Intersects(const Sphere& bounds) const
 		{
 			return boundingVolume.intersects(bounds);
 		}
 
-		void prepare(ShadowRenderQueue::Command& command, const Sphere& bounds) const
+		void Prepare(ShadowRenderQueue::Command& command, const Sphere& bounds) const
 		{
 		}
 
-		void bindMaterial(const ShaderVariation& variation) const
+		void BindMaterial(const ShaderVariation& variation) const
 		{
 			material = ShadowDepthDirectionalMat::get(variation);
 			material->bind(shadowParamsBuffer);
 		}
 
-		void bindRenderable(ShadowRenderQueue::Command& command) const
+		void BindRenderable(ShadowRenderQueue::Command& command) const
 		{
 			RendererRenderable* renderable = command.renderable;
 
@@ -705,7 +705,7 @@ namespace bs { namespace ct
 	const float ShadowRendering::CASCADE_FRACTION_FADE = 0.1f;
 
 	ShadowRendering::ShadowRendering(UINT32 shadowMapSize)
-		: mShadowMapSize(shadowMapSize)
+		: MShadowMapSize(shadowMapSize)
 	{
 		SPtr<VertexDataDesc> vertexDesc = VertexDataDesc::create();
 		vertexDesc->addVertElem(VET_FLOAT3, VES_POSITION);
@@ -928,7 +928,7 @@ namespace bs { namespace ct
 	 * @return						Individual vertices of the frustum corners, in world space. Ordered using the
 	 *								AABox::CornerEnum.
 	 */
-	std::array<Vector3, 8> getFrustum(const Matrix4& invVP, ConvexVolume& worldFrustum)
+	std::array<Vector3, 8> GetFrustum(const Matrix4& invVP, ConvexVolume& worldFrustum)
 	{
 		std::array<Vector3, 8> output;
 
@@ -949,7 +949,7 @@ namespace bs { namespace ct
 			output[i] = invVP.multiply(corner);
 		}
 
-		Vector<Plane> planes(6);
+		Vector<Plane> Planes(6);
 		planes[FRUSTUM_PLANE_NEAR] = Plane(output[AABox::NEAR_LEFT_BOTTOM], output[AABox::NEAR_RIGHT_BOTTOM], output[AABox::NEAR_RIGHT_TOP]);
 		planes[FRUSTUM_PLANE_FAR] = Plane(output[AABox::FAR_LEFT_BOTTOM], output[AABox::FAR_LEFT_TOP], output[AABox::FAR_RIGHT_TOP]);
 		planes[FRUSTUM_PLANE_LEFT] = Plane(output[AABox::NEAR_LEFT_BOTTOM], output[AABox::NEAR_LEFT_TOP], output[AABox::FAR_LEFT_TOP]);
@@ -1016,7 +1016,7 @@ namespace bs { namespace ct
 
 		SPtr<GpuParamBlockBuffer> perViewBuffer = view.getPerViewBuffer();
 
-		ProfileGPUBlock sampleBlock("Render shadow occlusion");
+		ProfileGPUBlock SampleBlock("Render shadow occlusion");
 
 		const RenderAPICapabilities& caps = gCaps();
 		// TODO - Calculate and set a scissor rectangle for the light
@@ -1047,7 +1047,7 @@ namespace bs { namespace ct
 				gShadowProjectOmniParamsDef.gInvResolution.set(shadowOmniParamBuffer, 1.0f / shadowInfo.area.width);
 
 				const Transform& tfrm = light->getTransform();
-				Vector4 lightPosAndRadius(tfrm.getPosition(), light->getAttenuationRadius());
+				Vector4 LightPosAndRadius(tfrm.getPosition(), light->getAttenuationRadius());
 				gShadowProjectOmniParamsDef.gLightPosAndRadius.set(shadowOmniParamBuffer, lightPosAndRadius);
 
 				// Reduce shadow quality based on shadow map resolution for spot lights
@@ -1059,7 +1059,7 @@ namespace bs { namespace ct
 				bool viewerInsideVolume = (tfrm.getPosition() - viewProps.viewOrigin).length() < lightRadius;
 
 				SPtr<Texture> shadowMap = mShadowCubemaps[shadowInfo.textureIdx].getTexture();
-				ShadowProjectParams shadowParams(*light, shadowMap, shadowOmniParamBuffer, perViewBuffer, gbuffer);
+				ShadowProjectParams ShadowParams(*light, shadowMap, shadowOmniParamBuffer, perViewBuffer, gbuffer);
 
 				ShadowProjectOmniMat* mat = ShadowProjectOmniMat::getVariation(effectiveShadowQuality, viewerInsideVolume,
 					viewProps.target.numSamples > 1);
@@ -1134,7 +1134,7 @@ namespace bs { namespace ct
 
 				auto shadowMapProps = shadowMap->getProperties();
 
-				Vector2 shadowMapSize((float)shadowMapProps.getWidth(), (float)shadowMapProps.getHeight());
+				Vector2 ShadowMapSize((float)shadowMapProps.getWidth(), (float)shadowMapProps.getHeight());
 				float transitionScale = getFadeTransition(*light, shadowInfo->subjectBounds.getRadius(),
 					shadowInfo->depthRange, shadowInfo->area.width);
 
@@ -1189,7 +1189,7 @@ namespace bs { namespace ct
 				}
 
 				gShadowProjectParamsDef.gFace.set(shadowParamBuffer, (float)shadowMapFace);
-				ShadowProjectParams shadowParams(*light, shadowMap, shadowParamBuffer, perViewBuffer, gbuffer);
+				ShadowProjectParams ShadowParams(*light, shadowMap, shadowParamBuffer, perViewBuffer, gbuffer);
 
 				ShadowProjectMat* mat = ShadowProjectMat::getVariation(effectiveShadowQuality, isCSM,
 					viewProps.target.numSamples > 1);
@@ -1265,10 +1265,10 @@ namespace bs { namespace ct
 
 		ShadowCascadedMap& shadowMap = mCascadedShadowMaps[shadowInfo.textureIdx];
 
-		Quaternion lightRotation(BsIdentity);
+		Quaternion LightRotation(BsIdentity);
 		lightRotation.lookRotation(lightDir, Vector3::UNIT_Y);
 
-		ProfileGPUBlock profileSample("Project directional light shadow");
+		ProfileGPUBlock ProfileSample("Project directional light shadow");
 
 		for (UINT32 i = 0; i < numCascades; ++i)
 		{
@@ -1286,7 +1286,7 @@ namespace bs { namespace ct
 			Matrix4 shadowView = Matrix4::view(Vector3::ZERO, lightRotation);
 			Vector3 shadowSpaceOrigin = shadowView.multiplyAffine(casterOrigin);
 
-			Vector2 snapOffset(fmod(shadowSpaceOrigin.x, worldUnitsPerTexel), fmod(shadowSpaceOrigin.y, worldUnitsPerTexel));
+			Vector2 SnapOffset(fmod(shadowSpaceOrigin.x, worldUnitsPerTexel), fmod(shadowSpaceOrigin.y, worldUnitsPerTexel));
 			shadowSpaceOrigin.x -= snapOffset.x;
 			shadowSpaceOrigin.y -= snapOffset.y;
 
@@ -1386,7 +1386,7 @@ namespace bs { namespace ct
 		mapInfo.updateNormArea(MAX_ATLAS_SIZE);
 		ShadowMapAtlas& atlas = mDynamicShadowMaps[mapInfo.textureIdx];
 
-		ProfileGPUBlock profileSample("Project spot light shadows");
+		ProfileGPUBlock ProfileSample("Project spot light shadows");
 
 		RenderAPI& rapi = RenderAPI::instance();
 		rapi.setRenderTarget(atlas.getTarget());
@@ -1419,7 +1419,7 @@ namespace bs { namespace ct
 		const Vector<Plane>& frustumPlanes = localFrustum.getPlanes();
 		Matrix4 worldMatrix = view.inverseAffine();
 
-		Vector<Plane> worldPlanes(frustumPlanes.size());
+		Vector<Plane> WorldPlanes(frustumPlanes.size());
 		UINT32 j = 0;
 		for (auto& plane : frustumPlanes)
 		{
@@ -1427,7 +1427,7 @@ namespace bs { namespace ct
 			j++;
 		}
 
-		ConvexVolume worldFrustum(worldPlanes);
+		ConvexVolume WorldFrustum(worldPlanes);
 
 		// Render all renderables into the shadow map
 		ShadowRenderQueueSpotOptions spotOptions(
@@ -1494,9 +1494,9 @@ namespace bs { namespace ct
 
 		// Note: Projecting on positive Z axis, because cubemaps use a left-handed coordinate system
 		Matrix4 proj = Matrix4::projectionPerspective(Degree(90.0f), 1.0f, 0.05f, light->getAttenuationRadius(), true);
-		ConvexVolume localFrustum(proj);
+		ConvexVolume LocalFrustum(proj);
 
-		ProfileGPUBlock profileSample("Project radial light shadows");
+		ProfileGPUBlock ProfileSample("Project radial light shadows");
 
 		const RenderAPICapabilities& caps = gCaps();
 		const Conventions& rapiConventions = gCaps().conventions;
@@ -1580,7 +1580,7 @@ namespace bs { namespace ct
 
 			Matrix4 worldMatrix = Matrix4::translation(lightPos) * Matrix4(viewRotationMat);
 
-			Vector<Plane> worldPlanes(frustumPlanes.size());
+			Vector<Plane> WorldPlanes(frustumPlanes.size());
 			UINT32 j = 0;
 			for (auto& plane : frustumPlanes)
 			{
@@ -1588,7 +1588,7 @@ namespace bs { namespace ct
 				j++;
 			}
 
-			ConvexVolume frustum(worldPlanes);
+			ConvexVolume Frustum(worldPlanes);
 
 			if(renderAllFacesAtOnce)
 			{
@@ -1613,7 +1613,7 @@ namespace bs { namespace ct
 				rapi.clearRenderTarget(FBT_DEPTH);
 
 				// Render all renderables into the shadow map
-				ConvexVolume boundingVolume(boundingPlanes);
+				ConvexVolume BoundingVolume(boundingPlanes);
 				ShadowRenderQueueCubeSingleOptions cubeOptions(
 						frustum,
 						shadowParamsBuffer
@@ -1629,7 +1629,7 @@ namespace bs { namespace ct
 			rapi.clearRenderTarget(FBT_DEPTH);
 
 			// Render all renderables into the shadow map
-			ConvexVolume boundingVolume(boundingPlanes);
+			ConvexVolume BoundingVolume(boundingPlanes);
 			ShadowRenderQueueCubeOptions cubeOptions(
 					frustums,
 					boundingVolume,
@@ -2001,6 +2001,6 @@ namespace bs { namespace ct
 			return DIR_LIGHT_SCALE;
 		}
 		else
-			return fabs(light.getShadowBias()) * SPOT_LIGHT_SCALE;
+			return Fabs(light.getShadowBias()) * SPOT_LIGHT_SCALE;
 	}
 }}

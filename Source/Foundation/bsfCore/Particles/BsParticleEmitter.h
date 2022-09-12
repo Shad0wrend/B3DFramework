@@ -95,13 +95,13 @@ namespace bs
 		 * @param[in]	shape		AABB for the emitter shape itself.
 		 * @param[in]	velocity	AABB for the generated normals.
 		 */
-		virtual void calcBounds(AABox& shape, AABox& velocity) const = 0;
+		virtual void CalcBounds(AABox& shape, AABox& velocity) const = 0;
 
 		/**
 		 * Checks has the emitter been initialized properly. If the emitter is not valid then the spawn() method is
 		 * not allowed to be called.
 		 */
-		bool isValid() const { return mIsValid; }
+		bool IsValid() const { return mIsValid; }
 
 		bool mIsValid = true;
 	};
@@ -158,19 +158,19 @@ namespace bs
 
 		/** Options describing the shape. */
 		BS_SCRIPT_EXPORT(pr:setter,n:Options,inline)
-		void setOptions(const PARTICLE_CONE_SHAPE_DESC& options) { mInfo = options; }
+		void SetOptions(const PARTICLE_CONE_SHAPE_DESC& options) { mInfo = options; }
 
 		/** @copydoc setOptions */
 		BS_SCRIPT_EXPORT(pr:getter,n:Options)
-		const PARTICLE_CONE_SHAPE_DESC& getOptions() const { return mInfo; }
+		const PARTICLE_CONE_SHAPE_DESC& GetOptions() const { return mInfo; }
 
 		/** Creates a new particle emitter cone shape. */
 		BS_SCRIPT_EXPORT(ec:T)
-		static SPtr<ParticleEmitterConeShape> create(const PARTICLE_CONE_SHAPE_DESC& desc);
+		static SPtr<ParticleEmitterConeShape> Create(const PARTICLE_CONE_SHAPE_DESC& desc);
 
 		/** Creates a new particle emitter cone shape. */
 		BS_SCRIPT_EXPORT(ec:T)
-		static SPtr<ParticleEmitterConeShape> create();
+		static SPtr<ParticleEmitterConeShape> Create();
 
 		/**
 		 * @name Internal
@@ -190,10 +190,10 @@ namespace bs
 		/** @} */
 	protected:
 		/** @copydoc ParticleEmitterShape::calcBounds */
-		void calcBounds(AABox& shape, AABox& velocity) const override;
+		void CalcBounds(AABox& shape, AABox& velocity) const override;
 
 		/** Generates a position and normal of a particle based on the input 2D position on the cone circle base. */
-		void getPointInCone(const Vector2& pos2D, float distance, Vector3& position, Vector3& normal) const;
+		void GetPointInCone(const Vector2& pos2D, float distance, Vector3& position, Vector3& normal) const;
 
 		PARTICLE_CONE_SHAPE_DESC mInfo;
 
@@ -233,19 +233,19 @@ namespace bs
 
 		/** Options describing the shape. */
 		BS_SCRIPT_EXPORT(pr:setter,n:Options,inline)
-		void setOptions(const PARTICLE_SPHERE_SHAPE_DESC& options) { mInfo = options; }
+		void SetOptions(const PARTICLE_SPHERE_SHAPE_DESC& options) { mInfo = options; }
 
 		/** @copydoc setOptions */
 		BS_SCRIPT_EXPORT(pr:getter,n:Options)
-		const PARTICLE_SPHERE_SHAPE_DESC& getOptions() const { return mInfo; }
+		const PARTICLE_SPHERE_SHAPE_DESC& GetOptions() const { return mInfo; }
 
 		/** Creates a new particle emitter sphere shape. */
 		BS_SCRIPT_EXPORT(ec:T)
-		static SPtr<ParticleEmitterSphereShape> create(const PARTICLE_SPHERE_SHAPE_DESC& desc);
+		static SPtr<ParticleEmitterSphereShape> Create(const PARTICLE_SPHERE_SHAPE_DESC& desc);
 
 		/** Creates a new particle emitter sphere shape. */
 		BS_SCRIPT_EXPORT(ec:T)
-		static SPtr<ParticleEmitterSphereShape> create();
+		static SPtr<ParticleEmitterSphereShape> Create();
 
 		/**
 		 * @name Internal
@@ -262,7 +262,7 @@ namespace bs
 		/** @} */
 	protected:
 		/** @copydoc ParticleEmitterShape::calcBounds */
-		void calcBounds(AABox& shape, AABox& velocity) const override;
+		void CalcBounds(AABox& shape, AABox& velocity) const override;
 
 		PARTICLE_SPHERE_SHAPE_DESC mInfo;
 
@@ -302,19 +302,19 @@ namespace bs
 
 		/** Options describing the shape. */
 		BS_SCRIPT_EXPORT(pr:setter,n:Options,inline)
-		void setOptions(const PARTICLE_HEMISPHERE_SHAPE_DESC& options) { mInfo = options; }
+		void SetOptions(const PARTICLE_HEMISPHERE_SHAPE_DESC& options) { mInfo = options; }
 
 		/** @copydoc setOptions */
 		BS_SCRIPT_EXPORT(pr:getter,n:Options)
-		const PARTICLE_HEMISPHERE_SHAPE_DESC& getOptions() const { return mInfo; }
+		const PARTICLE_HEMISPHERE_SHAPE_DESC& GetOptions() const { return mInfo; }
 
 		/** Creates a new particle emitter sphere shape. */
 		BS_SCRIPT_EXPORT(ec:T)
-		static SPtr<ParticleEmitterHemisphereShape> create(const PARTICLE_HEMISPHERE_SHAPE_DESC& desc);
+		static SPtr<ParticleEmitterHemisphereShape> Create(const PARTICLE_HEMISPHERE_SHAPE_DESC& desc);
 
 		/** Creates a new particle emitter sphere shape. */
 		BS_SCRIPT_EXPORT(ec:T)
-		static SPtr<ParticleEmitterHemisphereShape> create();
+		static SPtr<ParticleEmitterHemisphereShape> Create();
 
 		/**
 		 * @name Internal
@@ -331,7 +331,7 @@ namespace bs
 		/** @} */
 	protected:
 		/** @copydoc ParticleEmitterShape::calcBounds */
-		void calcBounds(AABox& shape, AABox& velocity) const override;
+		void CalcBounds(AABox& shape, AABox& velocity) const override;
 
 		PARTICLE_HEMISPHERE_SHAPE_DESC mInfo;
 
@@ -377,19 +377,19 @@ namespace bs
 
 		/** Options describing the shape. */
 		BS_SCRIPT_EXPORT(pr:setter,n:Options,inline)
-		void setOptions(const PARTICLE_BOX_SHAPE_DESC& options) { mInfo = options; }
+		void SetOptions(const PARTICLE_BOX_SHAPE_DESC& options) { mInfo = options; }
 
 		/** @copydoc setOptions */
 		BS_SCRIPT_EXPORT(pr:getter,n:Options)
-		const PARTICLE_BOX_SHAPE_DESC& getOptions() const { return mInfo; }
+		const PARTICLE_BOX_SHAPE_DESC& GetOptions() const { return mInfo; }
 
 		/** Creates a new particle emitter box shape. */
 		BS_SCRIPT_EXPORT(ec:T)
-		static SPtr<ParticleEmitterBoxShape> create(const PARTICLE_BOX_SHAPE_DESC& desc);
+		static SPtr<ParticleEmitterBoxShape> Create(const PARTICLE_BOX_SHAPE_DESC& desc);
 
 		/** Creates a new particle emitter box shape. */
 		BS_SCRIPT_EXPORT(ec:T)
-		static SPtr<ParticleEmitterBoxShape> create();
+		static SPtr<ParticleEmitterBoxShape> Create();
 
 		/**
 		 * @name Internal
@@ -406,7 +406,7 @@ namespace bs
 		/** @} */
 	protected:
 		/** @copydoc ParticleEmitterShape::calcBounds */
-		void calcBounds(AABox& shape, AABox& velocity) const override;
+		void CalcBounds(AABox& shape, AABox& velocity) const override;
 
 		PARTICLE_BOX_SHAPE_DESC mInfo;
 
@@ -441,19 +441,19 @@ namespace bs
 
 		/** Options describing the shape. */
 		BS_SCRIPT_EXPORT(pr:setter,n:Options,inline)
-		void setOptions(const PARTICLE_LINE_SHAPE_DESC& options) { mInfo = options; }
+		void SetOptions(const PARTICLE_LINE_SHAPE_DESC& options) { mInfo = options; }
 
 		/** @copydoc setOptions */
 		BS_SCRIPT_EXPORT(pr:getter,n:Options)
-		const PARTICLE_LINE_SHAPE_DESC& getOptions() const { return mInfo; }
+		const PARTICLE_LINE_SHAPE_DESC& GetOptions() const { return mInfo; }
 
 		/** Creates a new particle emitter edge shape. */
 		BS_SCRIPT_EXPORT(ec:T)
-		static SPtr<ParticleEmitterLineShape> create(const PARTICLE_LINE_SHAPE_DESC& desc);
+		static SPtr<ParticleEmitterLineShape> Create(const PARTICLE_LINE_SHAPE_DESC& desc);
 
 		/** Creates a new particle emitter edge shape. */
 		BS_SCRIPT_EXPORT(ec:T)
-		static SPtr<ParticleEmitterLineShape> create();
+		static SPtr<ParticleEmitterLineShape> Create();
 
 		/**
 		 * @name Internal
@@ -473,7 +473,7 @@ namespace bs
 		/** @} */
 	protected:
 		/** @copydoc ParticleEmitterShape::calcBounds */
-		void calcBounds(AABox& shape, AABox& velocity) const override;
+		void CalcBounds(AABox& shape, AABox& velocity) const override;
 
 		PARTICLE_LINE_SHAPE_DESC mInfo;
 
@@ -520,19 +520,19 @@ namespace bs
 
 		/** Options describing the shape. */
 		BS_SCRIPT_EXPORT(pr:setter,n:Options,inline)
-		void setOptions(const PARTICLE_CIRCLE_SHAPE_DESC& options) { mInfo = options; }
+		void SetOptions(const PARTICLE_CIRCLE_SHAPE_DESC& options) { mInfo = options; }
 
 		/** @copydoc setOptions */
 		BS_SCRIPT_EXPORT(pr:getter,n:Options)
-		const PARTICLE_CIRCLE_SHAPE_DESC& getOptions() const { return mInfo; }
+		const PARTICLE_CIRCLE_SHAPE_DESC& GetOptions() const { return mInfo; }
 
 		/** Creates a new particle emitter circle shape. */
 		BS_SCRIPT_EXPORT(ec:T)
-		static SPtr<ParticleEmitterCircleShape> create(const PARTICLE_CIRCLE_SHAPE_DESC& desc);
+		static SPtr<ParticleEmitterCircleShape> Create(const PARTICLE_CIRCLE_SHAPE_DESC& desc);
 
 		/** Creates a new particle emitter circle shape. */
 		BS_SCRIPT_EXPORT(ec:T)
-		static SPtr<ParticleEmitterCircleShape> create();
+		static SPtr<ParticleEmitterCircleShape> Create();
 
 		/**
 		 * @name Internal
@@ -552,7 +552,7 @@ namespace bs
 		/** @} */
 	protected:
 		/** @copydoc ParticleEmitterShape::calcBounds */
-		void calcBounds(AABox& shape, AABox& velocity) const override;
+		void CalcBounds(AABox& shape, AABox& velocity) const override;
 
 		PARTICLE_CIRCLE_SHAPE_DESC mInfo;
 
@@ -581,19 +581,19 @@ namespace bs
 
 		/** Options describing the shape. */
 		BS_SCRIPT_EXPORT(pr:setter,n:Options,inline)
-		void setOptions(const PARTICLE_RECT_SHAPE_DESC& options) { mInfo = options; }
+		void SetOptions(const PARTICLE_RECT_SHAPE_DESC& options) { mInfo = options; }
 
 		/** @copydoc setOptions */
 		BS_SCRIPT_EXPORT(pr:getter,n:Options)
-		const PARTICLE_RECT_SHAPE_DESC& getOptions() const { return mInfo; }
+		const PARTICLE_RECT_SHAPE_DESC& GetOptions() const { return mInfo; }
 
 		/** Creates a new particle emitter rectangle shape. */
 		BS_SCRIPT_EXPORT(ec:T)
-		static SPtr<ParticleEmitterRectShape> create(const PARTICLE_RECT_SHAPE_DESC& desc);
+		static SPtr<ParticleEmitterRectShape> Create(const PARTICLE_RECT_SHAPE_DESC& desc);
 
 		/** Creates a new particle emitter rectangle shape. */
 		BS_SCRIPT_EXPORT(ec:T)
-		static SPtr<ParticleEmitterRectShape> create();
+		static SPtr<ParticleEmitterRectShape> Create();
 
 		/**
 		 * @name Internal
@@ -610,7 +610,7 @@ namespace bs
 		/** @} */
 	protected:
 		/** @copydoc ParticleEmitterShape::calcBounds */
-		void calcBounds(AABox& shape, AABox& velocity) const override;
+		void CalcBounds(AABox& shape, AABox& velocity) const override;
 
 		PARTICLE_RECT_SHAPE_DESC mInfo;
 
@@ -671,10 +671,10 @@ namespace bs
 		MeshWeightedTriangles(const MeshData& meshData);
 
 		/** Updates the weights from the provided mesh data. */
-		void calculate(const MeshData& meshData);
+		void Calculate(const MeshData& meshData);
 
 		/** Find a random triangle on the mesh and outputs its vertex indices. */
-		void getTriangle(const Random& random, std::array<UINT32, 3>& indices) const;
+		void GetTriangle(const Random& random, std::array<UINT32, 3>& indices) const;
 
 	private:
 		Vector<TriangleWeight> mWeights;
@@ -693,16 +693,16 @@ namespace bs
 		 * @param[in]	skinning	Set to true if the mesh will be animated using skinning.
 		 * @return					True if initialized, or false if issues were detected.
 		 */
-		bool initialize(const HMesh& mesh, bool perVertex, bool skinning);
+		bool Initialize(const HMesh& mesh, bool perVertex, bool skinning);
 
 		/**
 		 * Returns the next sequential vertex on the mesh and increments the internal counter so the next vertex is
 		 * returned on the following call. Loops around if end is reached. Returns vertex position, normal and index.
 		 */
-		void getSequentialVertex(Vector3& position, Vector3& normal, UINT32& idx) const;
+		void GetSequentialVertex(Vector3& position, Vector3& normal, UINT32& idx) const;
 
 		/** Randomly picks a vertex on the mesh and returns its position, normal and index. */
-		void getRandomVertex(const Random& random, Vector3& position, Vector3& normal, UINT32& idx) const;
+		void GetRandomVertex(const Random& random, Vector3& position, Vector3& normal, UINT32& idx) const;
 
 		/** Randomly picks an edge on the mesh and returns the position, normal and indices of its vertices. */
 		void getRandomEdge(const Random& random, std::array<Vector3, 2>& position, std::array<Vector3, 2>& normal,
@@ -713,7 +713,7 @@ namespace bs
 			std::array<UINT32, 3>& idx) const;
 
 		/** Evaluates a blend matrix for a vertex at the specified index. */
-		Matrix4 getBlendMatrix(const Matrix4* bones, UINT32 vertexIdx) const;
+		Matrix4 GetBlendMatrix(const Matrix4* bones, UINT32 vertexIdx) const;
 
 	private:
 		MeshWeightedTriangles mWeightedTriangles;
@@ -747,19 +747,19 @@ namespace bs
 
 		/** Options describing the shape. */
 		BS_SCRIPT_EXPORT(pr:setter,n:Options,inline)
-		void setOptions(const PARTICLE_STATIC_MESH_SHAPE_DESC& options);
+		void SetOptions(const PARTICLE_STATIC_MESH_SHAPE_DESC& options);
 
 		/** @copydoc setOptions */
 		BS_SCRIPT_EXPORT(pr:getter,n:Options)
-		const PARTICLE_STATIC_MESH_SHAPE_DESC& getOptions() const { return mInfo; }
+		const PARTICLE_STATIC_MESH_SHAPE_DESC& GetOptions() const { return mInfo; }
 
 		/** Creates a new particle emitter static mesh shape. */
 		BS_SCRIPT_EXPORT(ec:T)
-		static SPtr<ParticleEmitterStaticMeshShape> create(const PARTICLE_STATIC_MESH_SHAPE_DESC& desc);
+		static SPtr<ParticleEmitterStaticMeshShape> Create(const PARTICLE_STATIC_MESH_SHAPE_DESC& desc);
 
 		/** Creates a new particle emitter static mesh shape. */
 		BS_SCRIPT_EXPORT(ec:T)
-		static SPtr<ParticleEmitterStaticMeshShape> create();
+		static SPtr<ParticleEmitterStaticMeshShape> Create();
 
 		/**
 		 * @name Internal
@@ -773,7 +773,7 @@ namespace bs
 		/** @} */
 	protected:
 		/** @copydoc ParticleEmitterShape::calcBounds */
-		void calcBounds(AABox& shape, AABox& velocity) const override;
+		void CalcBounds(AABox& shape, AABox& velocity) const override;
 
 		PARTICLE_STATIC_MESH_SHAPE_DESC mInfo;
 		MeshEmissionHelper mMeshEmissionHelper;
@@ -822,19 +822,19 @@ namespace bs
 
 		/** Options describing the shape. */
 		BS_SCRIPT_EXPORT(pr:setter,n:Options,inline)
-		void setOptions(const PARTICLE_SKINNED_MESH_SHAPE_DESC& options);
+		void SetOptions(const PARTICLE_SKINNED_MESH_SHAPE_DESC& options);
 
 		/** @copydoc setOptions */
 		BS_SCRIPT_EXPORT(pr:getter,n:Options)
-		const PARTICLE_SKINNED_MESH_SHAPE_DESC& getOptions() const { return mInfo; }
+		const PARTICLE_SKINNED_MESH_SHAPE_DESC& GetOptions() const { return mInfo; }
 
 		/** Creates a new particle emitter skinned mesh shape. */
 		BS_SCRIPT_EXPORT(ec:T)
-		static SPtr<ParticleEmitterSkinnedMeshShape> create(const PARTICLE_SKINNED_MESH_SHAPE_DESC& desc);
+		static SPtr<ParticleEmitterSkinnedMeshShape> Create(const PARTICLE_SKINNED_MESH_SHAPE_DESC& desc);
 
 		/** Creates a new particle emitter skinned mesh shape. */
 		BS_SCRIPT_EXPORT(ec:T)
-		static SPtr<ParticleEmitterSkinnedMeshShape> create();
+		static SPtr<ParticleEmitterSkinnedMeshShape> Create();
 
 		/**
 		 * @name Internal
@@ -848,7 +848,7 @@ namespace bs
 		/** @} */
 	protected:
 		/** @copydoc ParticleEmitterShape::calcBounds */
-		void calcBounds(AABox& shape, AABox& velocity) const override;
+		void CalcBounds(AABox& shape, AABox& velocity) const override;
 
 		PARTICLE_SKINNED_MESH_SHAPE_DESC mInfo;
 		MeshEmissionHelper mMeshEmissionHelper;
@@ -892,157 +892,157 @@ namespace bs
 	public:
 		/** Shape over which to emit the particles. */
 		BS_SCRIPT_EXPORT(pr:setter,n:Shape)
-		void setShape(SPtr<ParticleEmitterShape> shape) { mShape = std::move(shape); }
+		void SetShape(SPtr<ParticleEmitterShape> shape) { mShape = std::move(shape); }
 
 		/** @copydoc setShape */
 		BS_SCRIPT_EXPORT(pr:getter,n:Shape)
-		const SPtr<ParticleEmitterShape>& getShape() const { return mShape; }
+		const SPtr<ParticleEmitterShape>& GetShape() const { return mShape; }
 
 		/** Determines the number of particles that are emitted every second. */
 		BS_SCRIPT_EXPORT(pr:setter,n:EmissionRate)
-		void setEmissionRate(FloatDistribution value) { mEmissionRate = std::move(value); }
+		void SetEmissionRate(FloatDistribution value) { mEmissionRate = std::move(value); }
 
 		/** @copydoc setEmissionRate */
 		BS_SCRIPT_EXPORT(pr:getter,n:EmissionRate)
-		const FloatDistribution& getEmissionRate() const { return mEmissionRate; }
+		const FloatDistribution& GetEmissionRate() const { return mEmissionRate; }
 
 		/** Determines discrete intervals to emit particles. */
 		BS_SCRIPT_EXPORT(pr:setter,n:EmissionBursts)
-		void setEmissionBursts(Vector<ParticleBurst> bursts);
+		void SetEmissionBursts(Vector<ParticleBurst> bursts);
 
 		/** @copydoc setEmissionBursts */
 		BS_SCRIPT_EXPORT(pr:getter,n:EmissionBursts)
-		const Vector<ParticleBurst>& getEmissionBursts() const { return mBursts; }
+		const Vector<ParticleBurst>& GetEmissionBursts() const { return mBursts; }
 
 		/** Determines the lifetime of particles when they are initially spawned, in seconds. */
 		BS_SCRIPT_EXPORT(pr:setter,n:InitialLifetime)
-		void setInitialLifetime(FloatDistribution value) { mInitialLifetime = std::move(value); }
+		void SetInitialLifetime(FloatDistribution value) { mInitialLifetime = std::move(value); }
 
 		/** @copydoc setInitialLifetime */
 		BS_SCRIPT_EXPORT(pr:getter,n:InitialLifetime)
-		const FloatDistribution& getInitialLifetime() const { return mInitialLifetime; }
+		const FloatDistribution& GetInitialLifetime() const { return mInitialLifetime; }
 
 		/**
 		 * Sets the initial speed of the particles, in meters/second. The speed is applied along the particle's velocity
 		 * direction, which is determined by the emission shape and potentially other properties.
 		 */
 		BS_SCRIPT_EXPORT(pr:setter,n:InitialSpeed)
-		void setInitialSpeed(FloatDistribution value) { mInitialSpeed = std::move(value); }
+		void SetInitialSpeed(FloatDistribution value) { mInitialSpeed = std::move(value); }
 
 		/** @copydoc setInitialSpeed */
 		BS_SCRIPT_EXPORT(pr:getter,n:InitialSpeed)
-		const FloatDistribution& getInitialSpeed() const { return mInitialSpeed; }
+		const FloatDistribution& GetInitialSpeed() const { return mInitialSpeed; }
 
 		/**
 		 * Determines the size of the particles when initially spawned. The size is applied uniformly in all dimensions.
 		 * Only used if 3D size is disabled.
 		 */
 		BS_SCRIPT_EXPORT(pr:setter,n:InitialSize)
-		void setInitialSize(FloatDistribution value) { mInitialSize = std::move(value); }
+		void SetInitialSize(FloatDistribution value) { mInitialSize = std::move(value); }
 
 		/** @copydoc setInitialSize */
 		BS_SCRIPT_EXPORT(pr:getter,n:InitialSize)
-		const FloatDistribution& getInitialSize() const { return mInitialSize; }
+		const FloatDistribution& GetInitialSize() const { return mInitialSize; }
 
 		/**
 		 * Determines the size of the particles when initially spawned. Size can be specified for each dimension separately.
 		 * Only used if 3D size is enabled.
 		 */
 		BS_SCRIPT_EXPORT(pr:setter,n:InitialSize3D)
-		void setInitialSize3D(Vector3Distribution value) { mInitialSize3D = std::move(value); }
+		void SetInitialSize3D(Vector3Distribution value) { mInitialSize3D = std::move(value); }
 
 		/** @copydoc setInitialSize3D */
 		BS_SCRIPT_EXPORT(pr:getter,n:InitialSize3D)
-		const Vector3Distribution& getInitialSize3D() const { return mInitialSize3D; }
+		const Vector3Distribution& GetInitialSize3D() const { return mInitialSize3D; }
 
 		/**
 		 * Determines should the initial particle size be applied uniformly (if disabled), or evaluated separately for each
 		 * dimension (if enabled).
 		 */
 		BS_SCRIPT_EXPORT(pr:setter,n:Use3DSize)
-		void setUse3DSize(bool value) { mUse3DSize = value; }
+		void SetUse3DSize(bool value) { mUse3DSize = value; }
 
 		/** @copydoc setUse3DSize */
 		BS_SCRIPT_EXPORT(pr:getter,n:Use3DSize)
-		bool getUse3DSize() const { return mUse3DSize; }
+		bool GetUse3DSize() const { return mUse3DSize; }
 
 		/**
 		 * Determines the rotation of the particles when initially spawned, in degrees. The rotation is applied around the
 		 * particle's local Z axis. Only used if 3D rotation is disabled.
 		 */
 		BS_SCRIPT_EXPORT(pr:setter,n:InitialRotation)
-		void setInitialRotation(FloatDistribution value) { mInitialRotation = std::move(value); }
+		void SetInitialRotation(FloatDistribution value) { mInitialRotation = std::move(value); }
 
 		/** @copydoc setInitialRotation */
 		BS_SCRIPT_EXPORT(pr:getter,n:InitialRotation)
-		const FloatDistribution& getInitialRotation() const { return mInitialRotation; }
+		const FloatDistribution& GetInitialRotation() const { return mInitialRotation; }
 
 		/**
 		 * Determines the rotation of the particles when initially spawned, in Euler angles. Only used if 3D rotation is
 		 * enabled.
 		 */
 		BS_SCRIPT_EXPORT(pr:setter,n:InitialRotation3D)
-		void setInitialRotation3D(Vector3Distribution value) { mInitialRotation3D = std::move(value); }
+		void SetInitialRotation3D(Vector3Distribution value) { mInitialRotation3D = std::move(value); }
 
 		/** @copydoc setInitialRotation3D */
 		BS_SCRIPT_EXPORT(pr:getter,n:InitialRotation3D)
-		const Vector3Distribution& getInitialRotation3D() const { return mInitialRotation3D; }
+		const Vector3Distribution& GetInitialRotation3D() const { return mInitialRotation3D; }
 
 		/**
 		 * Determines should the initial particle rotation be a single angle applied around a Z axis (if disabled), or a
 		 * set of Euler angles that allow you to rotate around every axis (if enabled).
 		 */
 		BS_SCRIPT_EXPORT(pr:setter,n:Use3DRotation)
-		void setUse3DRotation(bool value) { mUse3DRotation = value; }
+		void SetUse3DRotation(bool value) { mUse3DRotation = value; }
 
 		/** @copydoc setUse3DRotation */
 		BS_SCRIPT_EXPORT(pr:getter,n:Use3DRotation)
-		bool getUse3DRotation() const { return mUse3DRotation; }
+		bool GetUse3DRotation() const { return mUse3DRotation; }
 
 		/** Determines the initial color (in RGB channels) and transparency (in A channel) of particles. */
 		BS_SCRIPT_EXPORT(pr:setter,n:InitialColor)
-		void setInitialColor(const ColorDistribution& value) { mInitialColor = value; }
+		void SetInitialColor(const ColorDistribution& value) { mInitialColor = value; }
 
 		/** @copydoc setInitialColor */
 		BS_SCRIPT_EXPORT(pr:getter,n:InitialColor)
-		const ColorDistribution& getInitialColor() const { return mInitialColor; }
+		const ColorDistribution& GetInitialColor() const { return mInitialColor; }
 
 		/**
 		 * Determines a range of values determining a random offset to apply to particle position after it has been emitted.
 		 * Offset will be randomly selected in all three axes in range [-value, value].
 		 */
 		BS_SCRIPT_EXPORT(pr:setter,n:RandomOffset)
-		void setRandomOffset(float value) { mRandomOffset = value; }
+		void SetRandomOffset(float value) { mRandomOffset = value; }
 
 		/** @copydoc setRandomOffset */
 		BS_SCRIPT_EXPORT(pr:getter,n:RandomOffset)
-		float getRandomOffset() const { return mRandomOffset; }
+		float GetRandomOffset() const { return mRandomOffset; }
 
 		/**
 		 * Determines should particle U texture coordinate be randomly flipped, mirroring the image. The value represents
 		 * a percent of particles that should be flipped, in range [0, 1].
 		 */
 		BS_SCRIPT_EXPORT(pr:setter,n:FlipU)
-		void setFlipU(float value) { mFlipU = Math::clamp01(value); }
+		void SetFlipU(float value) { mFlipU = Math::clamp01(value); }
 
 		/** @copydoc setFlipU */
 		BS_SCRIPT_EXPORT(pr:getter,n:FlipU)
-		float getFlipU() const { return mFlipU; }
+		float GetFlipU() const { return mFlipU; }
 
 		/**
 		 * Determines should particle V texture coordinate be randomly flipped, mirroring the image. The value represents
 		 * a percent of particles that should be flipped, in range [0, 1].
 		 */
 		BS_SCRIPT_EXPORT(pr:setter,n:FlipV)
-		void setFlipV(float value) { mFlipV = Math::clamp01(value); }
+		void SetFlipV(float value) { mFlipV = Math::clamp01(value); }
 
 		/** @copydoc setFlipV */
 		BS_SCRIPT_EXPORT(pr:getter,n:FlipV)
-		float getFlipV() const { return mFlipV; }
+		float GetFlipV() const { return mFlipV; }
 
 		/** Creates a new emitter. */
 		BS_SCRIPT_EXPORT(ec:T)
-		static SPtr<ParticleEmitter> create();
+		static SPtr<ParticleEmitter> Create();
 	private:
 		friend class ParticleSystem;
 
@@ -1053,7 +1053,7 @@ namespace bs
 		 * @param[in]	state			Various per-frame information provided by the parent particle system.
 		 * @param[in]	set				Set to which to append new particles to.
 		 */
-		void spawn(Random& random, const ParticleSystemState& state, ParticleSet& set) const;
+		void Spawn(Random& random, const ParticleSystemState& state, ParticleSet& set) const;
 
 		/**
 		 * Spawns the specified number of particles.
@@ -1067,7 +1067,7 @@ namespace bs
 		 *								unifomly distributed in this time range.
 		 * @return						Actual number of spawned particles.
 		 */
-		UINT32 spawn(UINT32 count, Random& random, const ParticleSystemState& state, ParticleSet& set, bool spacing) const;
+		UINT32 Spawn(UINT32 count, Random& random, const ParticleSystemState& state, ParticleSet& set, bool spacing) const;
 
 		// User-visible properties
 		SPtr<ParticleEmitterShape> mShape;

@@ -76,40 +76,40 @@ namespace bs
 		~CocoaWindow();
 
 		/** Returns the current area of the window, relative to the top-left origin of the screen. */
-		Rect2I getArea() const;
+		Rect2I GetArea() const;
 
 		/** Hides the window. */
-		void hide();
+		void Hide();
 
 		/** Shows (unhides) the window. */
-		void show();
+		void Show();
 
 		/**	Minimizes the window. */
-		void minimize();
+		void Minimize();
 
 		/**	Maximizes the window over the entire current screen. */
-		void maximize();
+		void Maximize();
 
 		/**	Restores the window to original position and size if it is minimized or maximized. */
-		void restore();
+		void Restore();
 
 		/**	Change the size of the window. */
-		void resize(UINT32 width, UINT32 height);
+		void Resize(UINT32 width, UINT32 height);
 
 		/**	Reposition the window. */
-		void move(INT32 left, INT32 top);
+		void Move(INT32 left, INT32 top);
 
 		/** Switches from fullscreen to windowed mode. */
-		void setWindowed();
+		void SetWindowed();
 
 		/** Switches from windowed to fullscreen mode. */
-		void setFullscreen();
+		void SetFullscreen();
 
 		/**	Converts screen position into window local position. */
-		Vector2I screenToWindowPos(const Vector2I& screenPos) const;
+		Vector2I ScreenToWindowPos(const Vector2I& screenPos) const;
 
 		/**	Converts window local position to screen position. */
-		Vector2I windowToScreenPos(const Vector2I& windowPos) const;
+		Vector2I WindowToScreenPos(const Vector2I& windowPos) const;
 
 		/**
 		 * @name Internal

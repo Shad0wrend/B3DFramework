@@ -49,7 +49,7 @@ namespace bs { namespace ct
 		return bufferPtr;
 	}
 
-	static void deleteBuffer(HardwareBuffer* buffer)
+	static void DeleteBuffer(HardwareBuffer* buffer)
 	{
 		bs_pool_delete(static_cast<NullHardwareBuffer*>(buffer));
 	}

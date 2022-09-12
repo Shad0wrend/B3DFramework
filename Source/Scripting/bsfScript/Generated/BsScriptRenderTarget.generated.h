@@ -16,7 +16,7 @@ namespace bs
 		ScriptRenderTargetBase(MonoObject* instance);
 		virtual ~ScriptRenderTargetBase() {}
 
-		SPtr<RenderTarget> getInternal() const;
+		SPtr<RenderTarget> GetInternal() const;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptRenderTarget : public TScriptReflectable<ScriptRenderTarget, RenderTarget, ScriptRenderTargetBase>

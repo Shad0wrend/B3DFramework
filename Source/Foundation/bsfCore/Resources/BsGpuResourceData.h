@@ -42,13 +42,13 @@ namespace bs
 		 *
 		 * @note If any internal data is allocated, it is freed.
 		 */
-		void setData(UPtr<UINT8[]> &data);
+		void SetData(UPtr<UINT8[]> &data);
 
 		/**
 		 * Allocates an internal buffer of a certain size. If there is another buffer already allocated, it will be freed
 		 * and new one will be allocated. Buffer size is determined based on parameters used for initializing the class.
 		 */
-		void allocateInternalBuffer();
+		void AllocateInternalBuffer();
 
 		/**
 		 * Allocates an internal buffer of a certain size. If there is another buffer already allocated, it will be freed
@@ -56,13 +56,13 @@ namespace bs
 		 *
 		 * @param[in]	size	The size of the buffer in bytes.
 		 */
-		void allocateInternalBuffer(UINT32 size);
+		void AllocateInternalBuffer(UINT32 size);
 
 		/**
 		 * Frees the internal buffer that was allocated using allocateInternalBuffer(). Called automatically when the
 		 * instance of the class is destroyed.
 		 */
-		void freeInternalBuffer();
+		void FreeInternalBuffer();
 
 		/**
 		 * Makes the internal data pointer point to some external data. No copying is done, so you must ensure that external
@@ -71,10 +71,10 @@ namespace bs
 		 *
 		 * @note	If any internal data is allocated, it is freed.
 		 */
-		void setExternalBuffer(UINT8* data);
+		void SetExternalBuffer(UINT8* data);
 
 		/** Checks if the internal buffer is locked due to some other thread using it. */
-		bool isLocked() const { return mLocked; }
+		bool IsLocked() const { return mLocked; }
 
 		/** Locks the data and makes it available only to the core thread. */
 		void _lock() const;
@@ -87,7 +87,7 @@ namespace bs
 		 * Returns the size of the internal buffer in bytes. This is calculated based on parameters provided upon
 		 * construction and specific implementation details.
 		 */
-		virtual UINT32 getInternalBufferSize() const = 0;
+		virtual UINT32 GetInternalBufferSize() const = 0;
 
 	private:
 		UINT8* mData = nullptr;

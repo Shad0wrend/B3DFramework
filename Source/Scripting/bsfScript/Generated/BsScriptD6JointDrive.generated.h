@@ -14,7 +14,7 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "D6JointDrive")
 
 		static MonoObject* box(const D6JointDrive& value);
-		static D6JointDrive unbox(MonoObject* value);
+		static D6JointDrive Unbox(MonoObject* value);
 
 	private:
 		ScriptD6JointDrive(MonoObject* managedInstance);
