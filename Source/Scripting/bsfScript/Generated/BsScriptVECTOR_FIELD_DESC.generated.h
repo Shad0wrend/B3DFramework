@@ -22,10 +22,10 @@ namespace bs
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "VectorFieldOptions")
 
-		static MonoObject* box(const __VECTOR_FIELD_DESCInterop& value);
-		static __VECTOR_FIELD_DESCInterop unbox(MonoObject* value);
-		static VECTOR_FIELD_DESC fromInterop(const __VECTOR_FIELD_DESCInterop& value);
-		static __VECTOR_FIELD_DESCInterop toInterop(const VECTOR_FIELD_DESC& value);
+		static MonoObject* Box(const __VECTOR_FIELD_DESCInterop& value);
+		static __VECTOR_FIELD_DESCInterop Unbox(MonoObject* value);
+		static VECTOR_FIELD_DESC FromInterop(const __VECTOR_FIELD_DESCInterop& value);
+		static __VECTOR_FIELD_DESCInterop ToInterop(const VECTOR_FIELD_DESC& value);
 
 	private:
 		ScriptVECTOR_FIELD_DESC(MonoObject* managedInstance);

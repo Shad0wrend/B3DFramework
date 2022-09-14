@@ -39,7 +39,7 @@ namespace bs { namespace ct
 				isLoadStore = false;
 			}
 
-			if(D3D11Mappings::isDynamic(usage))
+			if(D3D11Mappings::IsDynamic(usage))
 			{
 				BS_LOG(Warning, RenderBackend, "Dynamic usage not supported with LoadStore usage.");
 				usage = (GpuBufferUsage)(usage & ~GBU_DYNAMIC);
@@ -123,7 +123,7 @@ namespace bs { namespace ct
 			bs_delete(mpTempStagingBuffer);
 	}
 
-	void* D3D11HardwareBuffer::map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx, UINT32 queueIdx)
+	void* D3D11HardwareBuffer::Map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx, UINT32 queueIdx)
 	{
 		if (length > mSize)
 			BS_EXCEPT(RenderingAPIException, "Provided length " + toString(length) + " larger than the buffer " + toString(mSize) + ".");		
@@ -226,7 +226,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	void D3D11HardwareBuffer::unmap()
+	void D3D11HardwareBuffer::Unmap()
 	{
 		if (mUseTempStagingBuffer)
 		{
@@ -249,7 +249,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	void D3D11HardwareBuffer::copyData(HardwareBuffer& srcBuffer, UINT32 srcOffset,
+	void D3D11HardwareBuffer::CopyData(HardwareBuffer& srcBuffer, UINT32 srcOffset,
 		UINT32 dstOffset, UINT32 length, bool discardWholeBuffer, const SPtr<ct::CommandBuffer>& commandBuffer)
 	{
 		auto executeRef = [this](HardwareBuffer& srcBuffer, UINT32 srcOffset, UINT32 dstOffset, UINT32 length)
@@ -299,7 +299,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	void D3D11HardwareBuffer::readData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx, UINT32 queueIdx)
+	void D3D11HardwareBuffer::ReadData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx, UINT32 queueIdx)
 	{
 		// There is no functional interface in D3D, just do via manual lock, copy & unlock
 		void* pSrc = this->lock(offset, length, GBL_READ_ONLY);
@@ -307,7 +307,7 @@ namespace bs { namespace ct
 		this->unlock();
 	}
 
-	void D3D11HardwareBuffer::writeData(UINT32 offset, UINT32 length, const void* pSource, BufferWriteType writeFlags,
+	void D3D11HardwareBuffer::WriteData(UINT32 offset, UINT32 length, const void* pSource, BufferWriteType writeFlags,
 		UINT32 queueIdx)
 	{
 		if(mDesc.Usage == D3D11_USAGE_DYNAMIC || mDesc.Usage == D3D11_USAGE_STAGING)

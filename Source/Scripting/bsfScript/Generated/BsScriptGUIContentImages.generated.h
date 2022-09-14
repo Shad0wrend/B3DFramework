@@ -25,10 +25,10 @@ namespace bs
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "GUIContentImages")
 
-		static MonoObject* box(const __GUIContentImagesInterop& value);
-		static __GUIContentImagesInterop unbox(MonoObject* value);
-		static GUIContentImages fromInterop(const __GUIContentImagesInterop& value);
-		static __GUIContentImagesInterop toInterop(const GUIContentImages& value);
+		static MonoObject* Box(const __GUIContentImagesInterop& value);
+		static __GUIContentImagesInterop Unbox(MonoObject* value);
+		static GUIContentImages FromInterop(const __GUIContentImagesInterop& value);
+		static __GUIContentImagesInterop ToInterop(const GUIContentImages& value);
 
 	private:
 		ScriptGUIContentImages(MonoObject* managedInstance);

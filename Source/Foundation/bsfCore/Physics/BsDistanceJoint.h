@@ -30,37 +30,37 @@ namespace bs
 		virtual ~DistanceJoint() = default;
 
 		/** Returns the current distance between the two joint bodies. */
-		virtual float getDistance() const = 0;
+		virtual float GetDistance() const = 0;
 
 		/** @copydoc setMinDistance() */
-		virtual float getMinDistance() const = 0;
+		virtual float GetMinDistance() const = 0;
 
 		/**
 		 * Determines the minimum distance the bodies are allowed to be at, they will get no closer. You must enable min
 		 * distance flag in order for this limit to be applied.
 		 */
-		virtual void setMinDistance(float value) = 0;
+		virtual void SetMinDistance(float value) = 0;
 
 		/** @copydoc setMaxDistance() */
-		virtual float getMaxDistance() const = 0;
+		virtual float GetMaxDistance() const = 0;
 
 		/**
 		 * Determines the maximum distance the bodies are allowed to be at, they will get no further. You must enable max
 		 * distance flag in order for this limit to be applied.
 		 */
-		virtual void setMaxDistance(float value) = 0;
+		virtual void SetMaxDistance(float value) = 0;
 
 		/** @copydoc setTolerance() */
-		virtual float getTolerance() const = 0;
+		virtual float GetTolerance() const = 0;
 
 		/**
 		 * Determines the error tolerance of the joint at which the joint becomes active. This value slightly extends the
 		 * lower and upper limit.
 		 */
-		virtual void setTolerance(float value) = 0;
+		virtual void SetTolerance(float value) = 0;
 
 		/** @copydoc setSpring() */
-		virtual Spring getSpring() const = 0;
+		virtual Spring GetSpring() const = 0;
 
 		/**
 		 * Determines a spring that controls how the joint responds when a limit is reached. You must enable the spring
@@ -68,13 +68,13 @@ namespace bs
 		 *
 		 * @see	Spring
 		 */
-		virtual void setSpring(const Spring& value) = 0;
+		virtual void SetSpring(const Spring& value) = 0;
 
 		/** Enables or disables a flag that controls joint behaviour. */
-		virtual void setFlag(DistanceJointFlag flag, bool enabled) = 0;
+		virtual void SetFlag(DistanceJointFlag flag, bool enabled) = 0;
 
 		/** Checks whether a certain joint flag is enabled. */
-		virtual bool hasFlag(DistanceJointFlag flag) const = 0;
+		virtual bool HasFlag(DistanceJointFlag flag) const = 0;
 
 		/**
 		 * Creates a new distance joint.
@@ -82,7 +82,7 @@ namespace bs
 		 * @param[in]	scene		Scene to which to add the joint.
 		 * @param[in]	desc		Settings describing the joint.
 		 */
-		static SPtr<DistanceJoint> create(PhysicsScene& scene, const DISTANCE_JOINT_DESC& desc);
+		static SPtr<DistanceJoint> Create(PhysicsScene& scene, const DISTANCE_JOINT_DESC& desc);
 	};
 
 	/** Structure used for initializing a new DistanceJoint. */

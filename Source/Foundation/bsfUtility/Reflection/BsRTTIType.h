@@ -45,7 +45,7 @@ namespace bs
 	struct META_NextEntry_##name{};																\
 	void META_InitPrevEntry(META_NextEntry_##name typeId)										\
 	{																							\
-		addPlainField(#name, id, &MyType::get##name, &MyType::set##name, info);					\
+		AddPlainField(#name, id, &MyType::get##name, &MyType::set##name, info);					\
 		META_InitPrevEntry(META_Entry_##name());												\
 	}																							\
 																								\
@@ -79,7 +79,7 @@ namespace bs
 	struct META_NextEntry_##name{};																\
 	void META_InitPrevEntry(META_NextEntry_##name typeId)										\
 	{																							\
-		addPlainArrayField(#name, id, &MyType::get##name, &MyType::getSize##name, &MyType::set##name, &MyType::setSize##name, info);					\
+		AddPlainArrayField(#name, id, &MyType::get##name, &MyType::getSize##name, &MyType::set##name, &MyType::setSize##name, info);					\
 		META_InitPrevEntry(META_Entry_##name());												\
 	}																							\
 																								\
@@ -114,7 +114,7 @@ namespace bs
 	struct META_NextEntry_##name{};																\
 	void META_InitPrevEntry(META_NextEntry_##name typeId)										\
 	{																							\
-		addReflectableField(#name, id, &MyType::get##name, &MyType::set##name, info);			\
+		AddReflectableField(#name, id, &MyType::get##name, &MyType::set##name, info);			\
 		META_InitPrevEntry(META_Entry_##name());												\
 	}																							\
 																								\
@@ -147,7 +147,7 @@ namespace bs
 	struct META_NextEntry_##name{};																\
 	void META_InitPrevEntry(META_NextEntry_##name typeId)										\
 	{																							\
-		addReflectableArrayField(#name, id, &MyType::get##name, &MyType::getSize##name, &MyType::set##name, &MyType::setSize##name, info);				\
+		AddReflectableArrayField(#name, id, &MyType::get##name, &MyType::getSize##name, &MyType::set##name, &MyType::setSize##name, info);				\
 		META_InitPrevEntry(META_Entry_##name());												\
 	}																							\
 																								\
@@ -183,7 +183,7 @@ namespace bs
 	struct META_NextEntry_##name{};																\
 	void META_InitPrevEntry(META_NextEntry_##name typeId)										\
 	{																							\
-		addReflectablePtrField(#name, id, &MyType::get##name, &MyType::set##name, info);		\
+		AddReflectablePtrField(#name, id, &MyType::get##name, &MyType::set##name, info);		\
 		META_InitPrevEntry(META_Entry_##name());												\
 	}																							\
 																								\
@@ -216,7 +216,7 @@ namespace bs
 	struct META_NextEntry_##name{};																\
 	void META_InitPrevEntry(META_NextEntry_##name typeId)										\
 	{																							\
-		addReflectablePtrArrayField(#name, id, &MyType::get##name, &MyType::getSize##name, &MyType::set##name, &MyType::setSize##name, info);			\
+		AddReflectablePtrArrayField(#name, id, &MyType::get##name, &MyType::getSize##name, &MyType::set##name, &MyType::setSize##name, info);			\
 		META_InitPrevEntry(META_Entry_##name());												\
 	}																							\
 																								\
@@ -264,8 +264,8 @@ namespace bs
 		SPtr<RTTISchema> baseTypeSchema;
 		Vector<RTTIFieldSchema> fieldSchemas;
 
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** @} */
@@ -297,43 +297,43 @@ namespace bs
 		virtual ~RTTITypeBase();
 
 		/** Returns RTTI type information for all classes that derive from the class that owns this RTTI type. */
-		virtual Vector<RTTITypeBase*>& getDerivedClasses() = 0;
+		virtual Vector<RTTITypeBase*>& GetDerivedClasses() = 0;
 
 		/**
 		 * Returns RTTI type information for the class that owns this RTTI type. If the class has not base type, null is
 		 * returned instead.
 		 */
-		virtual RTTITypeBase* getBaseClass() = 0;
+		virtual RTTITypeBase* GetBaseClass() = 0;
 
 		/** Returns true if current RTTI class is derived from @p base. (Or if it is the same type as base) */
-		virtual bool isDerivedFrom(RTTITypeBase* base) = 0;
+		virtual bool IsDerivedFrom(RTTITypeBase* base) = 0;
 
 		/** Creates a new instance of the class owning this RTTI type. */
-		virtual SPtr<IReflectable> newRTTIObject() = 0;
+		virtual SPtr<IReflectable> NewRttiObject() = 0;
 
 		/** Returns the name of the class owning this RTTI type. */
-		virtual const String& getRTTIName() = 0;
+		virtual const String& GetRttiName() = 0;
 
 		/** Returns an RTTI id that uniquely represents each class in the RTTI system. */
-		virtual UINT32 getRTTIId() = 0;
+		virtual UINT32 GetRttiId() = 0;
 
 		/**
 		 * Called by the serializers when serialization for this object has started. Use this to do any preprocessing on
 		 * data you might need during serialization itself.
 		 */
-		virtual void onSerializationStarted(IReflectable* obj, SerializationContext* context) {}
+		virtual void OnSerializationStarted(IReflectable* obj, SerializationContext* context) {}
 
 		/**
 		 * Called by the serializers when serialization for this object has ended. After serialization has ended you can
 		 * be sure that the type has been fully serialized, and you may clean up any temporary data.
 		 */
-		virtual void onSerializationEnded(IReflectable* obj, SerializationContext* context) {}
+		virtual void OnSerializationEnded(IReflectable* obj, SerializationContext* context) {}
 
 		/**
 		 * Called by the serializers when deserialization for this object has started. Use this to do any preprocessing
 		 * on data you might need during deserialization itself.
 		 */
-		virtual void onDeserializationStarted(IReflectable* obj, SerializationContext* context) {}
+		virtual void OnDeserializationStarted(IReflectable* obj, SerializationContext* context) {}
 
 		/**
 		 * Called by the serializers when deserialization for this object has ended. At this point you can be sure the
@@ -342,38 +342,38 @@ namespace bs
 		 * One exception being are fields you marked with RTTI_Flag_WeakRef, as they might be resolved only after
 		 * deserialization has fully completed for all objects.
 		 */
-		virtual void onDeserializationEnded(IReflectable* obj, SerializationContext* context) {}
+		virtual void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) {}
 
 		/**
 		 * Returns a handler that determines how are "diffs" generated and applied when it comes to objects of this RTTI
 		 * type. A "diff" is a list of differences between two objects that may be saved, viewed or applied to another
 		 * object to transform it.
 		 */
-		virtual IDiff& getDiffHandler() const
+		virtual IDiff& GetDiffHandler() const
 		{
 			static BinaryDiff diffHandler;
 			return diffHandler;
 		}
 
 		/** Returns a handler that determines how are IReflectable objects compared for equality. */
-		virtual ICompare& getCompareHandler() const
+		virtual ICompare& GetCompareHandler() const
 		{
 			static BinaryCompare compareHandler;
 			return compareHandler;
 		}
 
 		/** Returns the total number of fields in this RTTI type. */
-		UINT32 getNumFields() const { return (UINT32)mFields.size(); }
+		UINT32 GetNumFields() const { return (UINT32)mFields.size(); }
 
 		/** Returns a field based on the field index. Use getNumFields() to get total number of fields available. */
-		RTTIField* getField(UINT32 idx) { return mFields.at(idx); }
+		RTTIField* GetField(UINT32 idx) { return mFields.at(idx); }
 
 		/**
 		 * Tries to find a field with the specified name. Throws an exception if it can't.
 		 *
 		 * @param	name	The name of the field.
 		 */
-		RTTIField* findField(const String& name);
+		RTTIField* FindField(const String& name);
 
 		/**
 		 * Tries to find a field with the specified unique ID. Doesn't throw an exception if it can't find the field
@@ -383,10 +383,10 @@ namespace bs
 		 *
 		 * @return	nullptr if it can't find the field.
 		 */
-		RTTIField* findField(int uniqueFieldId);
+		RTTIField* FindField(int uniqueFieldId);
 
 		/** Returns a set of serializable meta-data describing the RTTI type. */
-		const SPtr<RTTISchema>& getSchema() const { return mSchema; }
+		const SPtr<RTTISchema>& GetSchema() const { return mSchema; }
 		
 		/** @name Internal
 		 *  @{
@@ -414,7 +414,7 @@ namespace bs
 		 *
 		 * @param[in]	field	Field, must be non-null.
 		 */
-		void addNewField(RTTIField* field);
+		void AddNewField(RTTIField* field);
 
 		SPtr<RTTISchema> mSchema;
 
@@ -429,14 +429,14 @@ namespace bs
 	public:
 		InitRTTIOnStart()
 		{
-			RTTITypeBase* rttiType = Type::getRTTIStatic();
+			RTTITypeBase* rttiType = Type::GetRttiStatic();
 			rttiType->InitSchemaInternal();
 			
 			IReflectable::RegisterRTTITypeInternal(rttiType);
-			BaseType::getRTTIStatic()->RegisterDerivedClassInternal(rttiType);
+			BaseType::GetRttiStatic()->RegisterDerivedClassInternal(rttiType);
 		}
 
-		void makeSureIAmInstantiated() { }
+		void MakeSureIAmInstantiated() { }
 	};
 
 	/** Specialization for root class of RTTI hierarchy - IReflectable */
@@ -446,13 +446,13 @@ namespace bs
 	public:
 		InitRTTIOnStart()
 		{
-			RTTITypeBase* rttiType = Type::getRTTIStatic();
+			RTTITypeBase* rttiType = Type::GetRttiStatic();
 			rttiType->InitSchemaInternal();
 
 			IReflectable::RegisterRTTITypeInternal(rttiType);
 		}
 
-		void makeSureIAmInstantiated() { }
+		void MakeSureIAmInstantiated() { }
 	};
 
 	/**
@@ -462,7 +462,7 @@ namespace bs
 	template<typename Type>
 	struct GetRTTIType
 	{
-		RTTITypeBase* operator()() { return Type::getRTTIStatic(); }
+		RTTITypeBase* operator()() { return Type::GetRttiStatic(); }
 	};
 
 	/** Specialization for root class of RTTI hierarchy - IReflectable. */
@@ -505,32 +505,32 @@ namespace bs
 			// Compiler will only generate code for stuff that is directly used, including static data members,
 			// so we fool it here like we're using the class directly. Otherwise compiler won't generate the code for the member
 			// and our type won't get initialized on start (Actual behavior is a bit more random)
-			initOnStart.makeSureIAmInstantiated();
+			initOnStart.MakeSureIAmInstantiated();
 		}
 		virtual ~RTTIType() = default;
 
 		/** Returns a singleton of this RTTI type. */
-		static MyRTTIType* instance()
+		static MyRTTIType* Instance()
 		{
 			static MyRTTIType inst;
 			return &inst;
 		}
 
 		/** @copydoc RTTITypeBase::getDerivedClasses */
-		Vector<RTTITypeBase*>& getDerivedClasses() override
+		Vector<RTTITypeBase*>& GetDerivedClasses() 
 		{
 			static Vector<RTTITypeBase*> mRTTIDerivedClasses;
 			return mRTTIDerivedClasses;
 		}
 
 		/** @copydoc RTTITypeBase::getBaseClass */
-		RTTITypeBase* getBaseClass() override
+		RTTITypeBase* GetBaseClass() override
 		{
 			return GetRTTIType<BaseType>()();
 		}
 
 		/** @copydoc RTTITypeBase::isDerivedFrom */
-		bool isDerivedFrom(RTTITypeBase* base) override
+		bool IsDerivedFrom(RTTITypeBase* base) override
 		{
 			assert(base != nullptr);
 
@@ -542,10 +542,10 @@ namespace bs
 				RTTITypeBase* currentType = todo.top();
 				todo.pop();
 
-				if (currentType->getRTTIId() == getRTTIId())
+				if (currentType->GetRttiId() == GetRttiId())
 					return true;
 
-				for (const auto& item : currentType->getDerivedClasses())
+				for (const auto& item : currentType->GetDerivedClasses())
 					todo.push(item);
 			}
 
@@ -555,13 +555,13 @@ namespace bs
 		/** @copydoc RTTITypeBase::_registerDerivedClass */
 		void RegisterDerivedClassInternal(RTTITypeBase* derivedClass) override
 		{
-			getDerivedClasses().push_back(derivedClass);
+			GetDerivedClasses().push_back(derivedClass);
 		}
 
 		/** @copydoc RTTITypeBase::_clone */
 		RTTITypeBase* CloneInternal(FrameAlloc& alloc) override
 		{
-			return alloc.construct<MyRTTIType>();
+			return alloc.Construct<MyRTTIType>();
 		}
 
 	protected:
@@ -570,7 +570,7 @@ namespace bs
 
 		/** Registers a field referencing a plain type. */
 		template<class InterfaceType, class ObjectType, class DataType>
-		void addPlainField(const String& name, UINT32 uniqueId,
+		void AddPlainField(const String& name, UINT32 uniqueId,
 			DataType& (InterfaceType::*getter)(ObjectType*),
 			void (InterfaceType::*setter)(ObjectType*, DataType&),
 			const RTTIFieldInfo& info = RTTIFieldInfo::DEFAULT)
@@ -588,7 +588,7 @@ namespace bs
 
 		/** Registers a field referencing an IReflectable type passed by value. */
 		template<class InterfaceType, class ObjectType, class DataType>
-		void addReflectableField(const String& name, UINT32 uniqueId,
+		void AddReflectableField(const String& name, UINT32 uniqueId,
 			DataType& (InterfaceType::*getter)(ObjectType*),
 			void (InterfaceType::*setter)(ObjectType*, DataType&),
 			const RTTIFieldInfo& info = RTTIFieldInfo::DEFAULT)
@@ -603,7 +603,7 @@ namespace bs
 
 		/** Registers a field referencing an IReflectable type passed by pointer. */
 		template<class InterfaceType, class ObjectType, class DataType>
-		void addReflectablePtrField(const String& name, UINT32 uniqueId,
+		void AddReflectablePtrField(const String& name, UINT32 uniqueId,
 			SPtr<DataType> (InterfaceType::*getter)(ObjectType*),
 			void (InterfaceType::*setter)(ObjectType*, SPtr<DataType>),
 			const RTTIFieldInfo& info = RTTIFieldInfo::DEFAULT)
@@ -618,7 +618,7 @@ namespace bs
 
 		/** Registers a field referencing an array of plain types. */
 		template<class InterfaceType, class ObjectType, class DataType>
-		void addPlainArrayField(const String& name, UINT32 uniqueId,
+		void AddPlainArrayField(const String& name, UINT32 uniqueId,
 			DataType& (InterfaceType::*getter)(ObjectType*, UINT32),
 			UINT32(InterfaceType::*getSize)(ObjectType*),
 			void (InterfaceType::*setter)(ObjectType*, UINT32, DataType&),
@@ -638,7 +638,7 @@ namespace bs
 
 		/** Registers a field referencing an array of IReflectable objects. */
 		template<class InterfaceType, class ObjectType, class DataType>
-		void addReflectableArrayField(const String& name, UINT32 uniqueId,
+		void AddReflectableArrayField(const String& name, UINT32 uniqueId,
 			DataType& (InterfaceType::*getter)(ObjectType*, UINT32),
 			UINT32 (InterfaceType::*getSize)(ObjectType*),
 			void (InterfaceType::*setter)(ObjectType*, UINT32, DataType&),
@@ -655,7 +655,7 @@ namespace bs
 
 		/** Registers a field referencing an array of IReflectable pointers. */
 		template<class InterfaceType, class ObjectType, class DataType>
-		void addReflectablePtrArrayField(const String& name, UINT32 uniqueId,
+		void AddReflectablePtrArrayField(const String& name, UINT32 uniqueId,
 			SPtr<DataType> (InterfaceType::*getter)(ObjectType*, UINT32),
 			UINT32 (InterfaceType::*getSize)(ObjectType*),
 			void (InterfaceType::*setter)(ObjectType*, UINT32, SPtr<DataType>),
@@ -672,7 +672,7 @@ namespace bs
 
 		/** Registers a field referencing a blob of memory. */
 		template<class InterfaceType, class ObjectType>
-		void addDataBlockField(const String& name, UINT32 uniqueId, SPtr<DataStream> (InterfaceType::*getter)(ObjectType*, UINT32&),
+		void AddDataBlockField(const String& name, UINT32 uniqueId, SPtr<DataStream> (InterfaceType::*getter)(ObjectType*, UINT32&),
 			void (InterfaceType::*setter)(ObjectType*, const SPtr<DataStream>&, UINT32),
 			const RTTIFieldInfo& info = RTTIFieldInfo::DEFAULT)
 		{
@@ -690,8 +690,8 @@ namespace bs
 	{
 		UINT32 flags = 0;
 
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** Returns true if the provided object can be safely cast into type T. */
@@ -701,7 +701,7 @@ namespace bs
 		static_assert((std::is_base_of<bs::IReflectable, T>::value),
 			"Invalid data type for type checking. It needs to derive from bs::IReflectable.");
 
-		return object->getTypeId() == T::getRTTIStatic()->getRTTIId();
+		return object->GetTypeId() == T::GetRttiStatic()->getRTTIId();
 	}
 
 	/** Returns true if the provided object can be safely cast into type T. */
@@ -711,7 +711,7 @@ namespace bs
 		static_assert((std::is_base_of<bs::IReflectable, T>::value),
 			"Invalid data type for type checking. It needs to derive from bs::IReflectable.");
 
-		return object->getTypeId() == T::getRTTIStatic()->getRTTIId();
+		return object->GetTypeId() == T::GetRttiStatic()->getRTTIId();
 	}
 
 	/** Creates a new object just from its type ID. */
@@ -724,7 +724,7 @@ namespace bs
 		static_assert((std::is_base_of<bs::IReflectable, T>::value),
 			"Invalid data type for type checking. It needs to derive from bs::IReflectable.");
 
-		return object && object->isDerivedFrom(T::getRTTIStatic());
+		return object && object->IsDerivedFrom(T::GetRttiStatic());
 	}
 
 	/** Checks is the current object a subclass of some type. */
@@ -734,7 +734,7 @@ namespace bs
 		static_assert((std::is_base_of<bs::IReflectable, T>::value),
 			"Invalid data type for type checking. It needs to derive from bs::IReflectable.");
 
-		return object && object->isDerivedFrom(T::getRTTIStatic());
+		return object && object->IsDerivedFrom(T::GetRttiStatic());
 	}
 
 	/** Attempts to cast the object to the provided type, or returns null if cast is not valid. */

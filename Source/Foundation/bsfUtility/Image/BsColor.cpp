@@ -14,7 +14,7 @@ namespace bs
 	const Color Color::LightGray = Color(200.0f / 255.0f, 200.0f / 255.0f, 200.0f / 255.0f);
 	const Color Color::BansheeOrange = Color(1.0f, (168.0f/255.0f), 0.0f);
 
-	Color Color::fromRGBA(RGBA val)
+	Color Color::FromRgba(RGBA val)
 	{
 		Color output;
 		const UINT32 val32 = val;
@@ -27,7 +27,7 @@ namespace bs
 		return output;
 	}
 
-	Color Color::fromABGR(UINT32 val)
+	Color Color::FromAbgr(UINT32 val)
 	{
 		Color output;
 		const UINT32 val32 = val;
@@ -40,7 +40,7 @@ namespace bs
 		return output;
 	}
 
-	Color Color::fromARGB(ARGB val)
+	Color Color::FromArgb(ARGB val)
 	{
 		Color output;
 		const UINT32 val32 = val;
@@ -53,7 +53,7 @@ namespace bs
 		return output;
 	}
 
-	Color Color::fromBGRA(BGRA val)
+	Color Color::FromBgra(BGRA val)
 	{
 		Color output;
 		const UINT32 val32 = val;
@@ -66,7 +66,7 @@ namespace bs
 		return output;
 	}
 
-	Color Color::fromHSB(float hue, float saturation, float brightness)
+	Color Color::FromHsb(float hue, float saturation, float brightness)
 	{
 		Color output;
 
@@ -152,7 +152,7 @@ namespace bs
 		return output;
 	}
 
-	ABGR Color::getAsABGR() const
+	ABGR Color::GetAsAbgr() const
 	{
 		UINT8 val8;
 		UINT32 val32 = 0;
@@ -179,7 +179,7 @@ namespace bs
 		return val32;
 	}
 
-	BGRA Color::getAsBGRA() const
+	BGRA Color::GetAsBgra() const
 	{
 		UINT8 val8;
 		UINT32 val32 = 0;
@@ -206,7 +206,7 @@ namespace bs
 		return val32;
 	}
 
-	ARGB Color::getAsARGB() const
+	ARGB Color::GetAsArgb() const
 	{
 		UINT8 val8;
 		UINT32 val32 = 0;
@@ -234,7 +234,7 @@ namespace bs
 		return val32;
 	}
 
-	RGBA Color::getAsRGBA() const
+	RGBA Color::GetAsRgba() const
 	{
 		UINT8 val8;
 		UINT32 val32 = 0;
@@ -286,7 +286,7 @@ namespace bs
 			return std::pow((x + 0.055f) / 1.055f, 2.4f);
 	}
 
-	Color Color::getGamma() const
+	Color Color::GetGamma() const
 	{
 		return Color(
 				bs::linearToSRGB(r),
@@ -295,7 +295,7 @@ namespace bs
 				a);
 	}
 
-	Color Color::getLinear() const
+	Color Color::GetLinear() const
 	{
 		return Color(
 				bs::SRGBToLinear(r),
@@ -317,7 +317,7 @@ namespace bs
 		return !(*this == rhs);
 	}
 
-	void Color::getHSB(float* hue, float* saturation, float* brightness) const
+	void Color::GetHsb(float* hue, float* saturation, float* brightness) const
 	{
 		float vMin = std::min(r, std::min(g, b));
 		float vMax = std::max(r, std::max(g, b));
@@ -325,7 +325,7 @@ namespace bs
 
 		*brightness = vMax;
 
-		if (Math::approxEquals(delta, 0.0f, 1e-6f))
+		if (Math::ApproxEquals(delta, 0.0f, 1e-6f))
 		{
 			// grey
 			*hue = 0;
@@ -340,11 +340,11 @@ namespace bs
 			float deltaG = (((vMax - g) / 6.0f) + (delta / 2.0f)) / delta;
 			float deltaB = (((vMax - b) / 6.0f) + (delta / 2.0f)) / delta;
 
-			if (Math::approxEquals(r, vMax))
+			if (Math::ApproxEquals(r, vMax))
 				*hue = deltaB - deltaG;
-			else if (Math::approxEquals(g, vMax))
+			else if (Math::ApproxEquals(g, vMax))
 				*hue = 0.3333333f + deltaR - deltaB;
-			else if (Math::approxEquals(b, vMax))
+			else if (Math::ApproxEquals(b, vMax))
 				*hue = 0.6666667f + deltaG - deltaR;
 
 			if (*hue < 0.0f)
@@ -354,9 +354,9 @@ namespace bs
 		}
 	}
 
-	Color Color::lerp(float t, const Color& a, const Color& b)
+	Color Color::Lerp(float t, const Color& a, const Color& b)
 	{
-		t = Math::clamp01(t);
+		t = Math::Clamp01(t);
 		return Color(a.r + (b.r - a.r) * t,
 					 a.g + (b.g - a.g) * t,
 					 a.b + (b.b - a.b) * t,

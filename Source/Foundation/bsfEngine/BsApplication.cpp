@@ -34,82 +34,82 @@ namespace bs
 	Application::~Application()
 	{
 		// Cleanup any new objects queued for destruction by unloaded scripts
-		CoreObjectManager::instance().syncToCore();
+		CoreObjectManager::Instance().syncToCore();
 		gCoreThread().update();
 		gCoreThread().submitAll(true);
 
-		Cursor::shutDown();
+		Cursor::ShutDown();
 
-		GUIManager::shutDown();
-		SpriteManager::shutDown();
-		BuiltinResources::shutDown();
-		RendererMaterialManager::shutDown();
-		VirtualInput::shutDown();
+		GUIManager::ShutDown();
+		SpriteManager::ShutDown();
+		BuiltinResources::ShutDown();
+		RendererMaterialManager::ShutDown();
+		VirtualInput::ShutDown();
 	}
 
-	void Application::onStartUp()
+	void Application::OnStartUp()
 	{
 		CoreApplication::onStartUp();
 
 		PlainTextImporter* importer = bs_new<PlainTextImporter>();
-		Importer::instance().RegisterAssetImporterInternal(importer);
+		Importer::Instance().RegisterAssetImporterInternal(importer);
 
-		VirtualInput::startUp();
-		BuiltinResources::startUp();
-		RendererMaterialManager::startUp();
-		RendererManager::instance().initialize();
-		SpriteManager::startUp();
-		GUIManager::startUp();
-		ShortcutManager::startUp();
+		VirtualInput::StartUp();
+		BuiltinResources::StartUp();
+		RendererMaterialManager::StartUp();
+		RendererManager::Instance().initialize();
+		SpriteManager::StartUp();
+		GUIManager::StartUp();
+		ShortcutManager::StartUp();
 
-		Cursor::startUp();
-		Cursor::instance().setCursor(CursorType::Arrow);
-		Platform::setIcon(BuiltinResources::instance().getFrameworkIcon());
+		Cursor::StartUp();
+		Cursor::Instance().setCursor(CursorType::Arrow);
+		Platform::setIcon(BuiltinResources::Instance().getFrameworkIcon());
 
-		SceneManager::instance().setMainRenderTarget(getPrimaryWindow());
-		DebugDraw::startUp();
+		SceneManager::Instance().setMainRenderTarget(getPrimaryWindow());
+		DebugDraw::StartUp();
 
 		startUpScriptManager();
 	}
 
-	void Application::onShutDown()
+	void Application::OnShutDown()
 	{
 		// Need to clear all objects before I unload any plugins, as they
 		// could have allocated parts or all of those objects.
-		SceneManager::instance().clearScene(true);
+		SceneManager::Instance().clearScene(true);
 
 		// Resources too (Prefabs especially, since they hold the same data as a scene)
-		Resources::instance().unloadAll();
+		Resources::Instance().unloadAll();
 
 		// Shut down before script manager as scripts could have registered shortcut callbacks
-		ShortcutManager::shutDown();
+		ShortcutManager::ShutDown();
 
-		ScriptManager::shutDown();
-		DebugDraw::shutDown();
+		ScriptManager::ShutDown();
+		DebugDraw::ShutDown();
 
 		CoreApplication::onShutDown();
 	}
 
-	void Application::preUpdate()
+	void Application::PreUpdate()
 	{
 		CoreApplication::preUpdate();
 
-		VirtualInput::instance().UpdateInternal();
+		VirtualInput::Instance().UpdateInternal();
 
 		if(mProfilerOverlay)
 			mProfilerOverlay->update();
 	}
 
-	void Application::postUpdate()
+	void Application::PostUpdate()
 	{
 		CoreApplication::postUpdate();
 		updateScriptManager();
 
-		PROFILE_CALL(GUIManager::instance().update(), "GUI");
-		DebugDraw::instance().UpdateInternal();
+		PROFILE_CALL(GUIManager::Instance().update(), "GUI");
+		DebugDraw::Instance().UpdateInternal();
 	}
 
-	void Application::showProfilerOverlay(ProfilerOverlayType type, const SPtr<Camera>& camera)
+	void Application::ShowProfilerOverlay(ProfilerOverlayType type, const SPtr<Camera>& camera)
 	{
 		const SPtr<Camera>& overlayCamera = camera ? camera : gSceneManager().getMainCamera();
 		if(!overlayCamera)
@@ -123,7 +123,7 @@ namespace bs
 		mProfilerOverlay->show(type);
 	}
 
-	void Application::hideProfilerOverlay()
+	void Application::HideProfilerOverlay()
 	{
 		if(mProfilerOverlay)
 			mProfilerOverlay->hide();
@@ -131,22 +131,22 @@ namespace bs
 		mProfilerOverlay = nullptr;
 	}
 
-	void Application::startUpRenderer()
+	void Application::StartUpRenderer()
 	{
 		// Do nothing, we activate the renderer at a later stage
 	}
 
-	void Application::startUpScriptManager()
+	void Application::StartUpScriptManager()
 	{
-		ScriptManager::startUp();
+		ScriptManager::StartUp();
 	}
 
-	void Application::updateScriptManager()
+	void Application::UpdateScriptManager()
 	{
-		ScriptManager::instance().update();
+		ScriptManager::Instance().update();
 	}
 
-	START_UP_DESC Application::buildStartUpDesc(VideoMode videoMode, const String& title, bool fullscreen)
+	START_UP_DESC Application::BuildStartUpDesc(VideoMode videoMode, const String& title, bool fullscreen)
 	{
 		START_UP_DESC desc;
 
@@ -168,13 +168,13 @@ namespace bs
 		return desc;
 	}
 
-	SPtr<IShaderIncludeHandler> Application::getShaderIncludeHandler() const
+	SPtr<IShaderIncludeHandler> Application::GetShaderIncludeHandler() const
 	{
 		return bs_shared_ptr_new<EngineShaderIncludeHandler>();
 	}
 
 	Application& gApplication()
 	{
-		return static_cast<Application&>(Application::instance());
+		return static_cast<Application&>(Application::Instance());
 	}
 }

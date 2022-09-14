@@ -33,9 +33,9 @@ namespace bs
 		class StringIDUtil
 		{
 		public:
-			static UINT32 size(T const& input) { return 0; }
-			static void copy(T const& input, char* dest) { }
-			static bool compare(T const& a, char* b) { return 0; }
+			static UINT32 Size(T const& input) { return 0; }
+			static void Copy(T const& input, char* dest) { }
+			static bool Compare(T const& a, char* b) { return 0; }
 		};
 
 		/**	Internal data that is shared by all instances for a specific string. */
@@ -57,12 +57,12 @@ namespace bs
 
 		StringID(const char* name)
 		{
-			construct(name);
+			Construct(name);
 		}
 
 		StringID(const String& name)
 		{
-			construct(name);
+			Construct(name);
 		}
 
 		template<int N>
@@ -87,13 +87,13 @@ namespace bs
 		operator String() const { return String(mData->chars); }
 
 		/**	Returns true if the string id has no value assigned. */
-		bool empty() const
+		bool Empty() const
 		{
 			return mData == nullptr;
 		}
 
 		/**	Returns the null-terminated name of the string id. */
-		const char* c_str() const
+		const char* CStr() const
 		{
 			if (mData == nullptr)
 				return "";
@@ -102,24 +102,24 @@ namespace bs
 		}
 
 		/** Returns the unique identifier of the string. */
-		UINT32 id() const { return mData ? mData->id : -1; }
+		UINT32 Id() const { return mData ? mData->id : -1; }
 
 		static const StringID NONE;
 
 	private:
 		/**Constructs a StringID object in a way that works for pointers to character arrays and standard strings. */
 		template<class T>
-		void construct(T const& name);
+		void Construct(T const& name);
 
 		/**	Calculates a hash value for the provided null-terminated string. */
 		template<class T>
-		UINT32 calcHash(T const& input);
+		UINT32 CalcHash(T const& input);
 
 		/**
 		 * Allocates a new string entry and assigns it a unique ID. Optionally expands the chunks buffer if the new entry
 		 * doesn't fit.
 		 */
-		InternalData* allocEntry();
+		InternalData* AllocEntry();
 
 		InternalData* mData = nullptr;
 
@@ -148,7 +148,7 @@ struct hash<bs::StringID>
 {
 	size_t operator()(const bs::StringID& value) const
 	{
-		return (size_t)value.id();
+		return (size_t)value.Id();
 	}
 };
 }

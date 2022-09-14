@@ -15,31 +15,31 @@ namespace bs
 
 	void ScriptAudioClip::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_GetRef", (void*)&ScriptAudioClip::Internal_getRef);
-		metaData.scriptClass->addInternalCall("Internal_getBitDepth", (void*)&ScriptAudioClip::Internal_getBitDepth);
-		metaData.scriptClass->addInternalCall("Internal_getFrequency", (void*)&ScriptAudioClip::Internal_getFrequency);
-		metaData.scriptClass->addInternalCall("Internal_getNumChannels", (void*)&ScriptAudioClip::Internal_getNumChannels);
-		metaData.scriptClass->addInternalCall("Internal_getFormat", (void*)&ScriptAudioClip::Internal_getFormat);
-		metaData.scriptClass->addInternalCall("Internal_getReadMode", (void*)&ScriptAudioClip::Internal_getReadMode);
-		metaData.scriptClass->addInternalCall("Internal_getLength", (void*)&ScriptAudioClip::Internal_getLength);
-		metaData.scriptClass->addInternalCall("Internal_getNumSamples", (void*)&ScriptAudioClip::Internal_getNumSamples);
-		metaData.scriptClass->addInternalCall("Internal_is3D", (void*)&ScriptAudioClip::Internal_is3D);
+		metaData.scriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptAudioClip::InternalGetRef);
+		metaData.scriptClass->AddInternalCall("Internal_getBitDepth", (void*)&ScriptAudioClip::InternalGetBitDepth);
+		metaData.scriptClass->AddInternalCall("Internal_getFrequency", (void*)&ScriptAudioClip::InternalGetFrequency);
+		metaData.scriptClass->AddInternalCall("Internal_getNumChannels", (void*)&ScriptAudioClip::InternalGetNumChannels);
+		metaData.scriptClass->AddInternalCall("Internal_getFormat", (void*)&ScriptAudioClip::InternalGetFormat);
+		metaData.scriptClass->AddInternalCall("Internal_getReadMode", (void*)&ScriptAudioClip::InternalGetReadMode);
+		metaData.scriptClass->AddInternalCall("Internal_getLength", (void*)&ScriptAudioClip::InternalGetLength);
+		metaData.scriptClass->AddInternalCall("Internal_getNumSamples", (void*)&ScriptAudioClip::InternalGetNumSamples);
+		metaData.scriptClass->AddInternalCall("Internal_is3D", (void*)&ScriptAudioClip::InternalIs3D);
 
 	}
 
-	 MonoObject*ScriptAudioClip::createInstance()
+	 MonoObject*ScriptAudioClip::CreateInstance()
 	{
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
 		return metaData.scriptClass->createInstance("bool", ctorParams);
 	}
-	MonoObject* ScriptAudioClip::Internal_getRef(ScriptAudioClip* thisPtr)
+	MonoObject* ScriptAudioClip::InternalGetRef(ScriptAudioClip* thisPtr)
 	{
 		return thisPtr->getRRef();
 	}
 
-	uint32_t ScriptAudioClip::Internal_getBitDepth(ScriptAudioClip* thisPtr)
+	uint32_t ScriptAudioClip::InternalGetBitDepth(ScriptAudioClip* thisPtr)
 	{
 		uint32_t tmp__output;
 		tmp__output = thisPtr->getHandle()->getBitDepth();
@@ -50,7 +50,7 @@ namespace bs
 		return __output;
 	}
 
-	uint32_t ScriptAudioClip::Internal_getFrequency(ScriptAudioClip* thisPtr)
+	uint32_t ScriptAudioClip::InternalGetFrequency(ScriptAudioClip* thisPtr)
 	{
 		uint32_t tmp__output;
 		tmp__output = thisPtr->getHandle()->getFrequency();
@@ -61,7 +61,7 @@ namespace bs
 		return __output;
 	}
 
-	uint32_t ScriptAudioClip::Internal_getNumChannels(ScriptAudioClip* thisPtr)
+	uint32_t ScriptAudioClip::InternalGetNumChannels(ScriptAudioClip* thisPtr)
 	{
 		uint32_t tmp__output;
 		tmp__output = thisPtr->getHandle()->getNumChannels();
@@ -72,7 +72,7 @@ namespace bs
 		return __output;
 	}
 
-	AudioFormat ScriptAudioClip::Internal_getFormat(ScriptAudioClip* thisPtr)
+	AudioFormat ScriptAudioClip::InternalGetFormat(ScriptAudioClip* thisPtr)
 	{
 		AudioFormat tmp__output;
 		tmp__output = thisPtr->getHandle()->getFormat();
@@ -83,7 +83,7 @@ namespace bs
 		return __output;
 	}
 
-	AudioReadMode ScriptAudioClip::Internal_getReadMode(ScriptAudioClip* thisPtr)
+	AudioReadMode ScriptAudioClip::InternalGetReadMode(ScriptAudioClip* thisPtr)
 	{
 		AudioReadMode tmp__output;
 		tmp__output = thisPtr->getHandle()->getReadMode();
@@ -94,7 +94,7 @@ namespace bs
 		return __output;
 	}
 
-	float ScriptAudioClip::Internal_getLength(ScriptAudioClip* thisPtr)
+	float ScriptAudioClip::InternalGetLength(ScriptAudioClip* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->getHandle()->getLength();
@@ -105,7 +105,7 @@ namespace bs
 		return __output;
 	}
 
-	uint32_t ScriptAudioClip::Internal_getNumSamples(ScriptAudioClip* thisPtr)
+	uint32_t ScriptAudioClip::InternalGetNumSamples(ScriptAudioClip* thisPtr)
 	{
 		uint32_t tmp__output;
 		tmp__output = thisPtr->getHandle()->getNumSamples();
@@ -116,7 +116,7 @@ namespace bs
 		return __output;
 	}
 
-	bool ScriptAudioClip::Internal_is3D(ScriptAudioClip* thisPtr)
+	bool ScriptAudioClip::InternalIs3D(ScriptAudioClip* thisPtr)
 	{
 		bool tmp__output;
 		tmp__output = thisPtr->getHandle()->is3D();

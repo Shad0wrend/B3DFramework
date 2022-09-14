@@ -13,7 +13,7 @@ namespace bs
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "Order")
 
-		static MonoField* getIndexField() { return indexField; }
+		static MonoField* GetIndexField() { return indexField; }
 
 	private:
 		ScriptOrder(MonoObject* instance);

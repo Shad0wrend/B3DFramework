@@ -30,22 +30,22 @@ namespace bs
 		time = 0.0f;
 	}
 
-	void ProfilerCPU::Timer::start()
+	void ProfilerCPU::Timer::Start()
 	{
-		startTime = getCurrentTime();
+		startTime = GetCurrentTime();
 	}
 
-	void ProfilerCPU::Timer::stop()
+	void ProfilerCPU::Timer::Stop()
 	{
-		time += getCurrentTime() - startTime;
+		time += GetCurrentTime() - startTime;
 	}
 
-	void ProfilerCPU::Timer::reset()
+	void ProfilerCPU::Timer::Reset()
 	{
 		time = 0.0f;
 	}
 
-	inline double ProfilerCPU::Timer::getCurrentTime() const
+	inline double ProfilerCPU::Timer::GetCurrentTime() const
 	{
 		high_resolution_clock::time_point timeNow = mHRClock.now();
 		nanoseconds timeNowNs = timeNow.time_since_epoch();
@@ -58,22 +58,22 @@ namespace bs
 		cycles = 0;
 	}
 
-	void ProfilerCPU::TimerPrecise::start()
+	void ProfilerCPU::TimerPrecise::Start()
 	{
-		startCycles = getNumCycles();
+		startCycles = GetNumCycles();
 	}
 
-	void ProfilerCPU::TimerPrecise::stop()
+	void ProfilerCPU::TimerPrecise::Stop()
 	{
-		cycles += getNumCycles() - startCycles;
+		cycles += GetNumCycles() - startCycles;
 	}
 
-	void ProfilerCPU::TimerPrecise::reset()
+	void ProfilerCPU::TimerPrecise::Reset()
 	{
 		cycles = 0;
 	}
 
-	inline UINT64 ProfilerCPU::TimerPrecise::getNumCycles()
+	inline UINT64 ProfilerCPU::TimerPrecise::GetNumCycles()
 	{
 #if BS_COMPILER == BS_COMPILER_GNUC || BS_COMPILER == BS_COMPILER_CLANG
 		unsigned int a = 0;
@@ -103,10 +103,10 @@ namespace bs
 		:samples(alloc)
 	{ }
 
-	void ProfilerCPU::ProfileData::beginSample()
+	void ProfilerCPU::ProfileData::BeginSample()
 	{
-		memAllocs = MemoryCounter::getNumAllocs();
-		memFrees = MemoryCounter::getNumFrees();
+		memAllocs = MemoryCounter::GetNumAllocs();
+		memFrees = MemoryCounter::GetNumFrees();
 
 		timer.reset();
 		timer.start();
@@ -122,7 +122,7 @@ namespace bs
 		samples.push_back(ProfileSample(timer.time, numAllocs, numFrees));
 	}
 
-	void ProfilerCPU::ProfileData::resumeLastSample()
+	void ProfilerCPU::ProfileData::ResumeLastSample()
 	{
 		timer.start();
 		samples.erase(samples.end() - 1);
@@ -132,7 +132,7 @@ namespace bs
 		:samples(alloc)
 	{ }
 
-	void ProfilerCPU::PreciseProfileData::beginSample()
+	void ProfilerCPU::PreciseProfileData::BeginSample()
 	{
 		memAllocs = MemoryCounter::getNumAllocs();
 		memFrees = MemoryCounter::getNumFrees();
@@ -141,7 +141,7 @@ namespace bs
 		timer.start();
 	}
 
-	void ProfilerCPU::PreciseProfileData::endSample()
+	void ProfilerCPU::PreciseProfileData::EndSample()
 	{
 		timer.stop();
 
@@ -151,7 +151,7 @@ namespace bs
 		samples.push_back(PreciseProfileSample(timer.cycles, numAllocs, numFrees));
 	}
 
-	void ProfilerCPU::PreciseProfileData::resumeLastSample()
+	void ProfilerCPU::PreciseProfileData::ResumeLastSample()
 	{
 		timer.start();
 		samples.erase(samples.end() - 1);
@@ -165,7 +165,7 @@ namespace bs
 
 	}
 	
-	void ProfilerCPU::ThreadInfo::begin(const char* _name)
+	void ProfilerCPU::ThreadInfo::Begin(const char* _name)
 	{
 		if(isActive)
 		{
@@ -187,7 +187,7 @@ namespace bs
 		isActive = true;
 	}
 
-	void ProfilerCPU::ThreadInfo::end()
+	void ProfilerCPU::ThreadInfo::End()
 	{
 		if(activeBlock.type == ActiveSamplingType::Basic)
 			activeBlock.block->basic.endSample();
@@ -223,7 +223,7 @@ namespace bs
 		activeBlocks = nullptr;
 	}
 
-	void ProfilerCPU::ThreadInfo::reset()
+	void ProfilerCPU::ThreadInfo::Reset()
 	{
 		if(isActive)
 			end();
@@ -235,7 +235,7 @@ namespace bs
 		frameAlloc.clear(); // Note: This never actually frees memory
 	}
 
-	ProfilerCPU::ProfiledBlock* ProfilerCPU::ThreadInfo::getBlock(const char* name)
+	ProfilerCPU::ProfiledBlock* ProfilerCPU::ThreadInfo::GetBlock(const char* name)
 	{
 		ProfiledBlock* block = frameAlloc.construct<ProfiledBlock>(&frameAlloc);
 		block->name = (char*)frameAlloc.alloc(((UINT32)strlen(name) + 1) * sizeof(char));
@@ -244,7 +244,7 @@ namespace bs
 		return block;
 	}
 
-	void ProfilerCPU::ThreadInfo::releaseBlock(ProfiledBlock* block)
+	void ProfilerCPU::ThreadInfo::ReleaseBlock(ProfiledBlock* block)
 	{
 		frameAlloc.free((UINT8*)block->name);
 		frameAlloc.free(block);
@@ -264,7 +264,7 @@ namespace bs
 		children.clear();
 	}
 
-	ProfilerCPU::ProfiledBlock* ProfilerCPU::ProfiledBlock::findChild(const char* name) const
+	ProfilerCPU::ProfiledBlock* ProfilerCPU::ProfiledBlock::FindChild(const char* name) const
 	{
 		for(auto& child : children)
 		{
@@ -292,7 +292,7 @@ namespace bs
 			bs_delete<ThreadInfo, ProfilerAlloc>(threadInfo);
 	}
 
-	void ProfilerCPU::beginThread(const char* name)
+	void ProfilerCPU::BeginThread(const char* name)
 	{
 		ThreadInfo* thread = ThreadInfo::activeThread;
 		if(thread == nullptr)
@@ -310,13 +310,13 @@ namespace bs
 		thread->begin(name);
 	}
 
-	void ProfilerCPU::endThread()
+	void ProfilerCPU::EndThread()
 	{
 		// I don't do a nullcheck where on purpose, so endSample can be called ASAP
 		ThreadInfo::activeThread->end();
 	}
 
-	void ProfilerCPU::beginSample(const char* name)
+	void ProfilerCPU::BeginSample(const char* name)
 	{
 		ThreadInfo* thread = ThreadInfo::activeThread;
 		if(thread == nullptr || !thread->isActive)
@@ -347,7 +347,7 @@ namespace bs
 		block->basic.beginSample();
 	}
 
-	void ProfilerCPU::endSample(const char* name)
+	void ProfilerCPU::EndSample(const char* name)
 	{
 		ThreadInfo* thread = ThreadInfo::activeThread;
 		ProfiledBlock* block = thread->activeBlock.block;
@@ -383,7 +383,7 @@ namespace bs
 			thread->activeBlock = ActiveBlock();
 	}
 
-	void ProfilerCPU::beginSamplePrecise(const char* name)
+	void ProfilerCPU::BeginSamplePrecise(const char* name)
 	{
 		// Note: There is a (small) possibility a context switch will happen during this measurement in which case result will be skewed.
 		// Increasing thread priority might help. This is generally only a problem with code that executes a long time (10-15+ ms - depending on OS quant length)
@@ -414,7 +414,7 @@ namespace bs
 		block->precise.beginSample();
 	}
 
-	void ProfilerCPU::endSamplePrecise(const char* name)
+	void ProfilerCPU::EndSamplePrecise(const char* name)
 	{
 		ThreadInfo* thread = ThreadInfo::activeThread;
 		ProfiledBlock* block = thread->activeBlock.block;
@@ -450,7 +450,7 @@ namespace bs
 			thread->activeBlock = ActiveBlock();
 	}
 
-	void ProfilerCPU::reset()
+	void ProfilerCPU::Reset()
 	{
 		ThreadInfo* thread = ThreadInfo::activeThread;
 
@@ -458,7 +458,7 @@ namespace bs
 			thread->reset();
 	}
 
-	CPUProfilerReport ProfilerCPU::generateReport()
+	CPUProfilerReport ProfilerCPU::GenerateReport()
 	{
 		CPUProfilerReport report;
 
@@ -758,7 +758,7 @@ namespace bs
 		return report;
 	}
 
-	void ProfilerCPU::estimateTimerOverhead()
+	void ProfilerCPU::EstimateTimerOverhead()
 	{
 		// Get an idea of how long timer calls and RDTSC takes
 		const UINT32 reps = 1000, sampleReps = 20;
@@ -999,6 +999,6 @@ namespace bs
 
 	ProfilerCPU& gProfilerCPU()
 	{
-		return ProfilerCPU::instance();
+		return ProfilerCPU::Instance();
 	}
 }

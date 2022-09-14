@@ -17,29 +17,29 @@ namespace bs
 
 	void ScriptCHingeJoint::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_getAngle", (void*)&ScriptCHingeJoint::Internal_getAngle);
-		metaData.scriptClass->addInternalCall("Internal_getSpeed", (void*)&ScriptCHingeJoint::Internal_getSpeed);
-		metaData.scriptClass->addInternalCall("Internal_getLimit", (void*)&ScriptCHingeJoint::Internal_getLimit);
-		metaData.scriptClass->addInternalCall("Internal_setLimit", (void*)&ScriptCHingeJoint::Internal_setLimit);
-		metaData.scriptClass->addInternalCall("Internal_getDrive", (void*)&ScriptCHingeJoint::Internal_getDrive);
-		metaData.scriptClass->addInternalCall("Internal_setDrive", (void*)&ScriptCHingeJoint::Internal_setDrive);
-		metaData.scriptClass->addInternalCall("Internal_setFlag", (void*)&ScriptCHingeJoint::Internal_setFlag);
-		metaData.scriptClass->addInternalCall("Internal_hasFlag", (void*)&ScriptCHingeJoint::Internal_hasFlag);
+		metaData.scriptClass->AddInternalCall("Internal_getAngle", (void*)&ScriptCHingeJoint::InternalGetAngle);
+		metaData.scriptClass->AddInternalCall("Internal_getSpeed", (void*)&ScriptCHingeJoint::InternalGetSpeed);
+		metaData.scriptClass->AddInternalCall("Internal_getLimit", (void*)&ScriptCHingeJoint::InternalGetLimit);
+		metaData.scriptClass->AddInternalCall("Internal_setLimit", (void*)&ScriptCHingeJoint::InternalSetLimit);
+		metaData.scriptClass->AddInternalCall("Internal_getDrive", (void*)&ScriptCHingeJoint::InternalGetDrive);
+		metaData.scriptClass->AddInternalCall("Internal_setDrive", (void*)&ScriptCHingeJoint::InternalSetDrive);
+		metaData.scriptClass->AddInternalCall("Internal_setFlag", (void*)&ScriptCHingeJoint::InternalSetFlag);
+		metaData.scriptClass->AddInternalCall("Internal_hasFlag", (void*)&ScriptCHingeJoint::InternalHasFlag);
 
 	}
 
-	void ScriptCHingeJoint::Internal_getAngle(ScriptCHingeJoint* thisPtr, Radian* __output)
+	void ScriptCHingeJoint::InternalGetAngle(ScriptCHingeJoint* thisPtr, Radian* __output)
 	{
 		Radian tmp__output;
-		tmp__output = thisPtr->getHandle()->getAngle();
+		tmp__output = thisPtr->GetHandle()->GetAngle();
 
 		*__output = tmp__output;
 	}
 
-	float ScriptCHingeJoint::Internal_getSpeed(ScriptCHingeJoint* thisPtr)
+	float ScriptCHingeJoint::InternalGetSpeed(ScriptCHingeJoint* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getHandle()->getSpeed();
+		tmp__output = thisPtr->GetHandle()->GetSpeed();
 
 		float __output;
 		__output = tmp__output;
@@ -47,42 +47,42 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptCHingeJoint::Internal_getLimit(ScriptCHingeJoint* thisPtr, __LimitAngularRangeInterop* __output)
+	void ScriptCHingeJoint::InternalGetLimit(ScriptCHingeJoint* thisPtr, __LimitAngularRangeInterop* __output)
 	{
 		LimitAngularRange tmp__output;
-		tmp__output = thisPtr->getHandle()->getLimit();
+		tmp__output = thisPtr->GetHandle()->GetLimit();
 
 		__LimitAngularRangeInterop interop__output;
-		interop__output = ScriptLimitAngularRange::toInterop(tmp__output);
-		MonoUtil::valueCopy(__output, &interop__output, ScriptLimitAngularRange::getMetaData()->scriptClass->GetInternalClassInternal());
+		interop__output = ScriptLimitAngularRange::ToInterop(tmp__output);
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptLimitAngularRange::GetMetaData()->scriptClass->GetInternalClassInternal());
 	}
 
-	void ScriptCHingeJoint::Internal_setLimit(ScriptCHingeJoint* thisPtr, __LimitAngularRangeInterop* limit)
+	void ScriptCHingeJoint::InternalSetLimit(ScriptCHingeJoint* thisPtr, __LimitAngularRangeInterop* limit)
 	{
 		LimitAngularRange tmplimit;
-		tmplimit = ScriptLimitAngularRange::fromInterop(*limit);
-		thisPtr->getHandle()->setLimit(tmplimit);
+		tmplimit = ScriptLimitAngularRange::FromInterop(*limit);
+		thisPtr->GetHandle()->SetLimit(tmplimit);
 	}
 
-	void ScriptCHingeJoint::Internal_getDrive(ScriptCHingeJoint* thisPtr, HingeJointDrive* __output)
+	void ScriptCHingeJoint::InternalGetDrive(ScriptCHingeJoint* thisPtr, HingeJointDrive* __output)
 	{
 		HingeJointDrive tmp__output;
-		tmp__output = thisPtr->getHandle()->getDrive();
+		tmp__output = thisPtr->GetHandle()->getDrive();
 
 		*__output = tmp__output;
 	}
 
-	void ScriptCHingeJoint::Internal_setDrive(ScriptCHingeJoint* thisPtr, HingeJointDrive* drive)
+	void ScriptCHingeJoint::InternalSetDrive(ScriptCHingeJoint* thisPtr, HingeJointDrive* drive)
 	{
 		thisPtr->getHandle()->setDrive(*drive);
 	}
 
-	void ScriptCHingeJoint::Internal_setFlag(ScriptCHingeJoint* thisPtr, HingeJointFlag flag, bool enabled)
+	void ScriptCHingeJoint::InternalSetFlag(ScriptCHingeJoint* thisPtr, HingeJointFlag flag, bool enabled)
 	{
 		thisPtr->getHandle()->setFlag(flag, enabled);
 	}
 
-	bool ScriptCHingeJoint::Internal_hasFlag(ScriptCHingeJoint* thisPtr, HingeJointFlag flag)
+	bool ScriptCHingeJoint::InternalHasFlag(ScriptCHingeJoint* thisPtr, HingeJointFlag flag)
 	{
 		bool tmp__output;
 		tmp__output = thisPtr->getHandle()->hasFlag(flag);

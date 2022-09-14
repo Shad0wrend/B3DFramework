@@ -17,30 +17,30 @@ namespace bs
 
 	void ScriptParticleEmitterSphereShape::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_setOptions", (void*)&ScriptParticleEmitterSphereShape::Internal_setOptions);
-		metaData.scriptClass->addInternalCall("Internal_getOptions", (void*)&ScriptParticleEmitterSphereShape::Internal_getOptions);
-		metaData.scriptClass->addInternalCall("Internal_create", (void*)&ScriptParticleEmitterSphereShape::Internal_create);
-		metaData.scriptClass->addInternalCall("Internal_create0", (void*)&ScriptParticleEmitterSphereShape::Internal_create0);
+		metaData.scriptClass->AddInternalCall("Internal_setOptions", (void*)&ScriptParticleEmitterSphereShape::InternalSetOptions);
+		metaData.scriptClass->AddInternalCall("Internal_getOptions", (void*)&ScriptParticleEmitterSphereShape::InternalGetOptions);
+		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptParticleEmitterSphereShape::InternalCreate);
+		metaData.scriptClass->AddInternalCall("Internal_create0", (void*)&ScriptParticleEmitterSphereShape::InternalCreate0);
 
 	}
 
-	MonoObject* ScriptParticleEmitterSphereShape::create(const SPtr<ParticleEmitterSphereShape>& value)
+	MonoObject* ScriptParticleEmitterSphereShape::Create(const SPtr<ParticleEmitterSphereShape>& value)
 	{
 		if(value == nullptr) return nullptr; 
 
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptParticleEmitterSphereShape>()) ScriptParticleEmitterSphereShape(managedInstance, value);
 		return managedInstance;
 	}
-	void ScriptParticleEmitterSphereShape::Internal_setOptions(ScriptParticleEmitterSphereShape* thisPtr, PARTICLE_SPHERE_SHAPE_DESC* options)
+	void ScriptParticleEmitterSphereShape::InternalSetOptions(ScriptParticleEmitterSphereShape* thisPtr, PARTICLE_SPHERE_SHAPE_DESC* options)
 	{
-		thisPtr->getInternal()->setOptions(*options);
+		thisPtr->GetInternal()->setOptions(*options);
 	}
 
-	void ScriptParticleEmitterSphereShape::Internal_getOptions(ScriptParticleEmitterSphereShape* thisPtr, PARTICLE_SPHERE_SHAPE_DESC* __output)
+	void ScriptParticleEmitterSphereShape::InternalGetOptions(ScriptParticleEmitterSphereShape* thisPtr, PARTICLE_SPHERE_SHAPE_DESC* __output)
 	{
 		PARTICLE_SPHERE_SHAPE_DESC tmp__output;
 		tmp__output = thisPtr->getInternal()->getOptions();
@@ -48,15 +48,15 @@ namespace bs
 		*__output = tmp__output;
 	}
 
-	void ScriptParticleEmitterSphereShape::Internal_create(MonoObject* managedInstance, PARTICLE_SPHERE_SHAPE_DESC* desc)
+	void ScriptParticleEmitterSphereShape::InternalCreate(MonoObject* managedInstance, PARTICLE_SPHERE_SHAPE_DESC* desc)
 	{
-		SPtr<ParticleEmitterSphereShape> instance = ParticleEmitterSphereShape::create(*desc);
+		SPtr<ParticleEmitterSphereShape> instance = ParticleEmitterSphereShape::Create(*desc);
 		new (bs_alloc<ScriptParticleEmitterSphereShape>())ScriptParticleEmitterSphereShape(managedInstance, instance);
 	}
 
-	void ScriptParticleEmitterSphereShape::Internal_create0(MonoObject* managedInstance)
+	void ScriptParticleEmitterSphereShape::InternalCreate0(MonoObject* managedInstance)
 	{
-		SPtr<ParticleEmitterSphereShape> instance = ParticleEmitterSphereShape::create();
+		SPtr<ParticleEmitterSphereShape> instance = ParticleEmitterSphereShape::Create();
 		new (bs_alloc<ScriptParticleEmitterSphereShape>())ScriptParticleEmitterSphereShape(managedInstance, instance);
 	}
 }

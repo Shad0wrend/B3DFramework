@@ -39,36 +39,36 @@ namespace bs
 		friend class SceneObject;
 
 		/** @copydoc Component::onInitialized() */
-		void onInitialized() override;
+		void OnInitialized() override;
 
 		/** @copydoc Component::onDestroyed() */
-		void onDestroyed() override;
+		void OnDestroyed() override;
 
 		/** @copydoc Component::onDisabled() */
-		void onDisabled() override;
+		void OnDisabled() override;
 
 		/** @copydoc Component::onEnabled() */
-		void onEnabled() override;
+		void OnEnabled() override;
 
 		/** @copydoc Component::onTransformChanged() */
-		void onTransformChanged(TransformChangedFlags flags) override;
+		void OnTransformChanged(TransformChangedFlags flags) override;
 
 		/** @copydoc Component::update() */
-		void update() override;
+		void Update() override;
 	protected:
-		using Component::destroyInternal;
+		using Component::DestroyInternal;
 
 		/** Creates the internal representation of the AudioListener and restores the values saved by the Component. */
-		void restoreInternal();
+		void RestoreInternal();
 
 		/** Destroys the internal AudioListener representation. */
-		void destroyInternal();
+		void DestroyInternal();
 
 		/**
 		 * Updates the transform of the internal AudioListener representation from the transform of the component's scene
 		 * object.
 		 */
-		void updateTransform();
+		void UpdateTransform();
 
 		SPtr<AudioListener> mInternal;
 		Vector3 mLastPosition = Vector3::ZERO;
@@ -79,8 +79,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class CAudioListenerRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const ;
 
 	protected:
 		CAudioListener(); // Serialization only

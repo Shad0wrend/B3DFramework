@@ -34,7 +34,7 @@ namespace bs { namespace ct
 
 		/** Helper method used for initializing variations of this material. */
 		template<UINT32 msaa>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -47,12 +47,12 @@ namespace bs { namespace ct
 		TiledDeferredLightingMat();
 
 		/** Binds the material for rendering, sets up parameters and executes it. */
-		void execute(const RendererView& view, const VisibleLightData& lightData, const GBufferTextures& gbuffer,
+		void Execute(const RendererView& view, const VisibleLightData& lightData, const GBufferTextures& gbuffer,
 			const SPtr<Texture>& inputTexture, const SPtr<Texture>& lightAccumTex, const SPtr<Texture>& lightAccumTexArray,
 			const SPtr<Texture>& msaaCoverage);
 
 		/** Returns the material variation matching the provided parameters. */
-		static TiledDeferredLightingMat* getVariation(UINT32 msaaCount);
+		static TiledDeferredLightingMat* GetVariation(UINT32 msaaCount);
 
 	private:
 		UINT32 mSampleCount;
@@ -83,7 +83,7 @@ namespace bs { namespace ct
 		TextureArrayToMSAATexture();
 
 		/** Binds the material for rendering, sets up parameters and executes it. */
-		void execute(const SPtr<Texture>& inputArray, const SPtr<Texture>& target);
+		void Execute(const SPtr<Texture>& inputArray, const SPtr<Texture>& target);
 
 	private:
 		GpuParamTexture mInputParam;
@@ -115,14 +115,14 @@ namespace bs { namespace ct
 		 * Binds the material for rendering, sets up parameters and executes it. Only works on variations of
 		 * this material intended for textures and texture arrays.
 		 */
-		void execute(const SPtr<Texture>& target, const Color& clearValue = Color::ZERO,
+		void Execute(const SPtr<Texture>& target, const Color& clearValue = Color::ZERO,
 				const TextureSurface& surface = TextureSurface::COMPLETE);
 
 		/**
 		 * Binds the material for rendering, sets up parameters and executes it. Only works on variations of
 		 * this material intended for buffers.
 		 */
-		void execute(const SPtr<GpuBuffer>& target, const Color& clearValue = Color::ZERO);
+		void Execute(const SPtr<GpuBuffer>& target, const Color& clearValue = Color::ZERO);
 
 		/**
 		 * Returns the material variation matching the provided parameters.
@@ -133,7 +133,7 @@ namespace bs { namespace ct
 		 * 									In range [1, 4].
 		 * @return							Material variation matching the provided values.
 		 */
-		static ClearLoadStoreMat* getVariation(ClearLoadStoreType objType, ClearLoadStoreDataType dataType,
+		static ClearLoadStoreMat* GetVariation(ClearLoadStoreType objType, ClearLoadStoreDataType dataType,
 				UINT32 numComponents);
 	private:
 		/** TILE_SIZE * TILE_SIZE is the number of pixels to process per thread. */
@@ -160,7 +160,7 @@ namespace bs { namespace ct
 
 		/** Helper method used for initializing variations of this material. */
 		template<UINT32 msaa>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -186,11 +186,11 @@ namespace bs { namespace ct
 		TiledDeferredImageBasedLightingMat();
 
 		/** Binds the material for rendering, sets up parameters and executes it. */
-		void execute(const RendererView& view, const SceneInfo& sceneInfo, const VisibleReflProbeData& probeData,
+		void Execute(const RendererView& view, const SceneInfo& sceneInfo, const VisibleReflProbeData& probeData,
 			const Inputs& inputs);
 
 		/** Returns the material variation matching the provided parameters. */
-		static TiledDeferredImageBasedLightingMat* getVariation(UINT32 msaaCount);
+		static TiledDeferredImageBasedLightingMat* GetVariation(UINT32 msaaCount);
 
 	private:
 		UINT32 mSampleCount;

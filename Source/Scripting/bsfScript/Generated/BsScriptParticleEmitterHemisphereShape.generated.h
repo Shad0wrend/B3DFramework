@@ -18,12 +18,12 @@ namespace bs
 
 		ScriptParticleEmitterHemisphereShape(MonoObject* managedInstance, const SPtr<ParticleEmitterHemisphereShape>& value);
 
-		static MonoObject* create(const SPtr<ParticleEmitterHemisphereShape>& value);
+		static MonoObject* Create(const SPtr<ParticleEmitterHemisphereShape>& value);
 
 	private:
-		static void Internal_setOptions(ScriptParticleEmitterHemisphereShape* thisPtr, PARTICLE_HEMISPHERE_SHAPE_DESC* options);
-		static void Internal_getOptions(ScriptParticleEmitterHemisphereShape* thisPtr, PARTICLE_HEMISPHERE_SHAPE_DESC* __output);
-		static void Internal_create(MonoObject* managedInstance, PARTICLE_HEMISPHERE_SHAPE_DESC* desc);
-		static void Internal_create0(MonoObject* managedInstance);
+		static void InternalSetOptions(ScriptParticleEmitterHemisphereShape* thisPtr, PARTICLE_HEMISPHERE_SHAPE_DESC* options);
+		static void InternalGetOptions(ScriptParticleEmitterHemisphereShape* thisPtr, PARTICLE_HEMISPHERE_SHAPE_DESC* __output);
+		static void InternalCreate(MonoObject* managedInstance, PARTICLE_HEMISPHERE_SHAPE_DESC* desc);
+		static void InternalCreate0(MonoObject* managedInstance);
 	};
 }

@@ -8,27 +8,27 @@ namespace bs
 #define WAVE_FORMAT_PCM			0x0001
 #define WAVE_FORMAT_EXTENDED	0xFFFE
 
-	bool WaveDecoder::isValid(const SPtr<DataStream>& stream, UINT32 offset)
+	bool WaveDecoder::IsValid(const SPtr<DataStream>& stream, UINT32 offset)
 	{
-		stream->seek(offset);
+		stream->Seek(offset);
 
 		INT8 header[MAIN_CHUNK_SIZE];
-		if (stream->read(header, sizeof(header)) < (sizeof(header)))
+		if (stream->Read(header, sizeof(header)) < (sizeof(header)))
 			return false;
 
 		return (header[0] == 'R') && (header[1] == 'I') && (header[2] == 'F') && (header[3] == 'F')
 			&& (header[8] == 'W') && (header[9] == 'A') && (header[10] == 'V') && (header[11] == 'E');
 	}
 
-	bool WaveDecoder::open(const SPtr<DataStream>& stream, AudioDataInfo& info, UINT32 offset)
+	bool WaveDecoder::Open(const SPtr<DataStream>& stream, AudioDataInfo& info, UINT32 offset)
 	{
 		if (stream == nullptr)
 			return false;
 
 		mStream = stream;
-		mStream->seek(offset + MAIN_CHUNK_SIZE);
+		mStream->Seek(offset + MAIN_CHUNK_SIZE);
 		
-		if (!parseHeader(info))
+		if (!ParseHeader(info))
 		{
 			BS_LOG(Error, Audio, "Provided file is not a valid WAVE file.");
 			return false;
@@ -37,14 +37,14 @@ namespace bs
 		return true;
 	}
 
-	void WaveDecoder::seek(UINT32 offset)
+	void WaveDecoder::Seek(UINT32 offset)
 	{
-		mStream->seek(mDataOffset + offset * mBytesPerSample);
+		mStream->Seek(mDataOffset + offset * mBytesPerSample);
 	}
 
-	UINT32 WaveDecoder::read(UINT8* samples, UINT32 numSamples)
+	UINT32 WaveDecoder::Read(UINT8* samples, UINT32 numSamples)
 	{
-		UINT32 numRead = (UINT32)mStream->read(samples, numSamples * mBytesPerSample);
+		UINT32 numRead = (UINT32)mStream->Read(samples, numSamples * mBytesPerSample);
 
 		if(mBytesPerSample == 1) // 8-bit samples are stored as unsigned, but engine convention is to store all bit depths as signed
 		{
@@ -58,25 +58,25 @@ namespace bs
 		return numRead;
 	}
 
-	bool WaveDecoder::parseHeader(AudioDataInfo& info)
+	bool WaveDecoder::ParseHeader(AudioDataInfo& info)
 	{
 		bool foundData = false;
 		while (!foundData)
 		{
 			// Get sub-chunk ID and size
 			UINT8 subChunkId[4];
-			if (mStream->read(subChunkId, sizeof(subChunkId)) != sizeof(subChunkId))
+			if (mStream->Read(subChunkId, sizeof(subChunkId)) != sizeof(subChunkId))
 				return false;
 
 			UINT32 subChunkSize = 0;
-			if (mStream->read(&subChunkSize, sizeof(subChunkSize)) != sizeof(subChunkSize))
+			if (mStream->Read(&subChunkSize, sizeof(subChunkSize)) != sizeof(subChunkSize))
 				return false;
 
 			// FMT chunk
 			if (subChunkId[0] == 'f' && subChunkId[1] == 'm' && subChunkId[2] == 't' && subChunkId[3] == ' ')
 			{
 				UINT16 format = 0;
-				if (mStream->read(&format, sizeof(format)) != sizeof(format))
+				if (mStream->Read(&format, sizeof(format)) != sizeof(format))
 					return false;
 
 				if (format != WAVE_FORMAT_PCM && format != WAVE_FORMAT_EXTENDED)
@@ -86,15 +86,15 @@ namespace bs
 				}
 
 				UINT16 numChannels = 0;
-				if (mStream->read(&numChannels, sizeof(numChannels)) != sizeof(numChannels))
+				if (mStream->Read(&numChannels, sizeof(numChannels)) != sizeof(numChannels))
 					return false;
 
 				UINT32 sampleRate = 0;
-				if (mStream->read(&sampleRate, sizeof(sampleRate)) != sizeof(sampleRate))
+				if (mStream->Read(&sampleRate, sizeof(sampleRate)) != sizeof(sampleRate))
 					return false;
 
 				UINT32 byteRate = 0;
-				if (mStream->read(&byteRate, sizeof(byteRate)) != sizeof(byteRate))
+				if (mStream->Read(&byteRate, sizeof(byteRate)) != sizeof(byteRate))
 					return false;
 
 				UINT16 blockAlign = 0;

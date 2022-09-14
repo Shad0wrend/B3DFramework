@@ -46,7 +46,7 @@ namespace bs
 			 * Returns the first free address and increments the free pointer. Caller needs to ensure the remaining block
 			 * size is adequate before calling.
 			 */
-			UINT8* alloc(UINT32 amount)
+			UINT8* Alloc(UINT32 amount)
 			{
 				UINT8* freePtr = &mData[mFreePtr];
 				mFreePtr += amount;
@@ -61,7 +61,7 @@ namespace bs
 			 * @note	Pointer to @p data isn't actually needed, but is provided for debug purposes in order to more
 			 * 			easily track out-of-order deallocations.
 			 */
-			void dealloc(UINT8* data, UINT32 amount)
+			void Dealloc(UINT8* data, UINT32 amount)
 			{
 				mFreePtr -= amount;
 				assert((&mData[mFreePtr]) == data && "Out of order stack deallocation detected. Deallocations need to happen in order opposite of allocations.");
@@ -106,7 +106,7 @@ namespace bs
 		 * @note
 		 * Each allocation comes with a 4 byte overhead.
 		 */
-		UINT8* alloc(UINT32 amount)
+		UINT8* Alloc(UINT32 amount)
 		{
 			amount += sizeof(UINT32);
 
@@ -123,7 +123,7 @@ namespace bs
 		}
 
 		/** Deallocates the given memory. Data must be deallocated in opposite order then when it was allocated. */
-		void dealloc(UINT8* data)
+		void Dealloc(UINT8* data)
 		{
 			data -= sizeof(UINT32);
 
@@ -162,7 +162,7 @@ namespace bs
 		 * Allocates a new block of memory using a heap allocator. Block will never be smaller than BlockCapacity no matter
 		 * the @p wantedSize.
 		 */
-		MemBlock* allocBlock(UINT32 wantedSize)
+		MemBlock* AllocBlock(UINT32 wantedSize)
 		{
 			UINT32 blockSize = BlockCapacity;
 			if(wantedSize > blockSize)
@@ -207,7 +207,7 @@ namespace bs
 		}
 
 		/** Deallocates a block of memory. */
-		void deallocBlock(MemBlock* block)
+		void DeallocBlock(MemBlock* block)
 		{
 			block->~MemBlock();
 			bs_free(block);
@@ -234,19 +234,19 @@ namespace bs
 		 * Sets up the stack with the currently active thread. You need to call this on any thread before doing any
 		 * allocations or deallocations.
 		 */
-		static BS_UTILITY_EXPORT void beginThread();
+		static BS_UTILITY_EXPORT void BeginThread();
 
 		/**
 		 * Cleans up the stack for the current thread. You may not perform any allocations or deallocations after this is
 		 * called, unless you call beginThread again.
 		 */
-		static BS_UTILITY_EXPORT void endThread();
+		static BS_UTILITY_EXPORT void EndThread();
 
 		/** @copydoc MemStackInternal::alloc() */
-		static BS_UTILITY_EXPORT UINT8* alloc(UINT32 amount);
+		static BS_UTILITY_EXPORT UINT8* Alloc(UINT32 amount);
 
 		/** @copydoc MemStackInternal::dealloc() */
-		static BS_UTILITY_EXPORT void deallocLast(UINT8* data);
+		static BS_UTILITY_EXPORT void DeallocLast(UINT8* data);
 
 	private:
 		static BS_THREADLOCAL MemStackInternal<1024 * 1024>* ThreadMemStack;
@@ -262,7 +262,7 @@ namespace bs
 	/** @copydoc MemStackInternal::alloc() */
 	inline void* bs_stack_alloc(UINT32 amount)
 	{
-		return (void*)MemStack::alloc(amount);
+		return (void*)MemStack::Alloc(amount);
 	}
 
 	/**
@@ -350,13 +350,13 @@ namespace bs
 
 	inline void bs_stack_delete(void* data, UINT32 count)
 	{
-		MemStack::deallocLast((UINT8*)data);
+		MemStack::DeallocLast((UINT8*)data);
 	}
 
 	/** @copydoc MemStackInternal::dealloc() */
 	inline void bs_stack_free(void* data)
 	{
-		return MemStack::deallocLast((UINT8*)data);
+		return MemStack::DeallocLast((UINT8*)data);
 	}
 
 	/**
@@ -490,12 +490,12 @@ namespace bs
 	class MemoryAllocator<StackAlloc> : public MemoryAllocatorBase
 	{
 	public:
-		static void* allocate(size_t bytes)
+		static void* Allocate(size_t bytes)
 		{
 			return bs_stack_alloc((UINT32)bytes);
 		}
 
-		static void free(void* ptr)
+		static void Free(void* ptr)
 		{
 			bs_stack_free(ptr);
 		}

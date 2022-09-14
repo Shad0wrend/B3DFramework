@@ -16,13 +16,13 @@ namespace bs
 
 		ScriptWhiteBalanceSettings(MonoObject* managedInstance, const SPtr<WhiteBalanceSettings>& value);
 
-		static MonoObject* create(const SPtr<WhiteBalanceSettings>& value);
+		static MonoObject* Create(const SPtr<WhiteBalanceSettings>& value);
 
 	private:
-		static void Internal_WhiteBalanceSettings(MonoObject* managedInstance);
-		static float Internal_gettemperature(ScriptWhiteBalanceSettings* thisPtr);
-		static void Internal_settemperature(ScriptWhiteBalanceSettings* thisPtr, float value);
-		static float Internal_gettint(ScriptWhiteBalanceSettings* thisPtr);
-		static void Internal_settint(ScriptWhiteBalanceSettings* thisPtr, float value);
+		static void InternalWhiteBalanceSettings(MonoObject* managedInstance);
+		static float InternalGettemperature(ScriptWhiteBalanceSettings* thisPtr);
+		static void InternalSettemperature(ScriptWhiteBalanceSettings* thisPtr, float value);
+		static float InternalGettint(ScriptWhiteBalanceSettings* thisPtr);
+		static void InternalSettint(ScriptWhiteBalanceSettings* thisPtr, float value);
 	};
 }

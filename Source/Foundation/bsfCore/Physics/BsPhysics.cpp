@@ -12,7 +12,7 @@ namespace bs
 		memset(mCollisionMap, 1, CollisionMapSize * CollisionMapSize * sizeof(bool));
 	}
 
-	void Physics::toggleCollision(UINT64 groupA, UINT64 groupB, bool enabled)
+	void Physics::ToggleCollision(UINT64 groupA, UINT64 groupB, bool enabled)
 	{
 		assert(groupA < CollisionMapSize && groupB < CollisionMapSize);
 
@@ -20,7 +20,7 @@ namespace bs
 		mCollisionMap[groupA][groupB] = enabled;
 	}
 
-	bool Physics::isCollisionEnabled(UINT64 groupA, UINT64 groupB) const
+	bool Physics::IsCollisionEnabled(UINT64 groupA, UINT64 groupB) const
 	{
 		assert(groupA < CollisionMapSize && groupB < CollisionMapSize);
 
@@ -35,17 +35,17 @@ namespace bs
 		return mCollisionMap[groupA][groupB];
 	}
 
-	bool PhysicsScene::rayCast(const Ray& ray, PhysicsQueryHit& hit, UINT64 layer, float max) const
+	bool PhysicsScene::RayCast(const Ray& ray, PhysicsQueryHit& hit, UINT64 layer, float max) const
 	{
 		return rayCast(ray.getOrigin(), ray.getDirection(), hit, layer, max);
 	}
 
-	Vector<PhysicsQueryHit> PhysicsScene::rayCastAll(const Ray& ray, UINT64 layer, float max) const
+	Vector<PhysicsQueryHit> PhysicsScene::RayCastAll(const Ray& ray, UINT64 layer, float max) const
 	{
 		return rayCastAll(ray.getOrigin(), ray.getDirection(), layer, max);
 	}
 
-	bool PhysicsScene::rayCastAny(const Ray& ray, UINT64 layer, float max) const
+	bool PhysicsScene::RayCastAny(const Ray& ray, UINT64 layer, float max) const
 	{
 		return rayCastAny(ray.getOrigin(), ray.getDirection(), layer, max);
 	}
@@ -65,28 +65,28 @@ namespace bs
 			if (component == nullptr)
 				continue;
 
-			output.push_back(static_object_cast<CCollider>(component->getHandle()));
+			output.push_back(static_object_cast<CCollider>(component->GetHandle()));
 		}
 
 		return output;
 	}
 
-	Vector<HCollider> PhysicsScene::boxOverlap(const AABox& box, const Quaternion& rotation, UINT64 layer) const
+	Vector<HCollider> PhysicsScene::BoxOverlap(const AABox& box, const Quaternion& rotation, UINT64 layer) const
 	{
 		return rawToComponent(BoxOverlapInternal(box, rotation, layer));
 	}
 
-	Vector<HCollider> PhysicsScene::sphereOverlap(const Sphere& sphere, UINT64 layer) const
+	Vector<HCollider> PhysicsScene::SphereOverlap(const Sphere& sphere, UINT64 layer) const
 	{
 		return rawToComponent(SphereOverlapInternal(sphere, layer));
 	}
 
-	Vector<HCollider> PhysicsScene::capsuleOverlap(const Capsule& capsule, const Quaternion& rotation, UINT64 layer) const
+	Vector<HCollider> PhysicsScene::CapsuleOverlap(const Capsule& capsule, const Quaternion& rotation, UINT64 layer) const
 	{
 		return rawToComponent(CapsuleOverlapInternal(capsule, rotation, layer));
 	}
 
-	Vector<HCollider> PhysicsScene::convexOverlap(const HPhysicsMesh& mesh, const Vector3& position,
+	Vector<HCollider> PhysicsScene::ConvexOverlap(const HPhysicsMesh& mesh, const Vector3& position,
 		const Quaternion& rotation, UINT64 layer) const
 	{
 		return rawToComponent(ConvexOverlapInternal(mesh, position, rotation, layer));
@@ -94,6 +94,6 @@ namespace bs
 
 	Physics& gPhysics()
 	{
-		return Physics::instance();
+		return Physics::Instance();
 	}
 }

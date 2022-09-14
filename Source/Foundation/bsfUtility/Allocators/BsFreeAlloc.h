@@ -18,19 +18,19 @@ namespace bs
 	{
 	public:
 		/** Allocates memory. */
-		UINT8* alloc(UINT32 amount)
+		UINT8* Alloc(UINT32 amount)
 		{
 			return (UINT8*)malloc(amount);
 		}
 
 		/** Deallocates a previously allocated piece of memory. */
-		void free(void* data)
+		void Free(void* data)
 		{
 			::free(data);
 		}
 
 		/** Unused */
-		void clear()
+		void Clear()
 		{
 			// Do nothing
 		}

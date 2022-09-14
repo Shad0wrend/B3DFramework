@@ -7,27 +7,27 @@ namespace bs
 {
 	ManagedResourceManager::~ManagedResourceManager()
 	{
-		clear();
+		Clear();
 	}
 
-	void ManagedResourceManager::clear()
+	void ManagedResourceManager::Clear()
 	{
 		UnorderedMap<UUID, WeakResourceHandle<ManagedResource>> resourceCopy = mResources;
 		for (auto& resourcePair : resourceCopy)
 		{
 			WeakResourceHandle<ManagedResource> resource = resourcePair.second;
-			gResources().release((WeakResourceHandle<Resource>&)resource);
+			gResources().Release((WeakResourceHandle<Resource>&)resource);
 		}
 
 		mResources.clear();
 	}
 
-	void ManagedResourceManager::registerManagedResource(const WeakResourceHandle<ManagedResource>& resource)
+	void ManagedResourceManager::RegisterManagedResource(const WeakResourceHandle<ManagedResource>& resource)
 	{
 		mResources.insert(std::make_pair(resource.getUUID(), resource));
 	}
 
-	void ManagedResourceManager::unregisterManagedResource(const WeakResourceHandle<ManagedResource>& resource)
+	void ManagedResourceManager::UnregisterManagedResource(const WeakResourceHandle<ManagedResource>& resource)
 	{
 		mResources.erase(resource.getUUID());
 	}

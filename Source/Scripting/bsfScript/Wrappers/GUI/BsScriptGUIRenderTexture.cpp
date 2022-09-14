@@ -27,18 +27,18 @@ namespace bs
 
 	void ScriptGUIRenderTexture::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_CreateInstance", (void*)&ScriptGUIRenderTexture::internal_createInstance);
-		metaData.scriptClass->addInternalCall("Internal_SetTexture", (void*)&ScriptGUIRenderTexture::internal_setTexture);
-		metaData.scriptClass->addInternalCall("Internal_SetTint", (void*)&ScriptGUIRenderTexture::internal_setTint);
+		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIRenderTexture::InternalCreateInstance);
+		metaData.scriptClass->AddInternalCall("Internal_SetTexture", (void*)&ScriptGUIRenderTexture::InternalSetTexture);
+		metaData.scriptClass->AddInternalCall("Internal_SetTint", (void*)&ScriptGUIRenderTexture::InternalSetTint);
 	}
 
-	void ScriptGUIRenderTexture::internal_createInstance(MonoObject* instance,
+	void ScriptGUIRenderTexture::InternalCreateInstance(MonoObject* instance,
 		ScriptRenderTexture* texture, bool transparent, MonoString* style, MonoArray* guiOptions)
 	{
 		GUIOptions options;
 
 		ScriptArray scriptArray(guiOptions);
-		UINT32 arrayLen = scriptArray.size();
+		UINT32 arrayLen = scriptArray.Size();
 		for (UINT32 i = 0; i < arrayLen; i++)
 			options.addOption(scriptArray.get<GUIOption>(i));
 
@@ -46,12 +46,12 @@ namespace bs
 		if (texture != nullptr)
 			renderTexture = texture->getInternal();
 
-		GUIRenderTexture* guiTexture = GUIRenderTexture::create(renderTexture, transparent, options, MonoUtil::monoToString(style));
+		GUIRenderTexture* guiTexture = GUIRenderTexture::Create(renderTexture, transparent, options, MonoUtil::monoToString(style));
 
 		new (bs_alloc<ScriptGUIRenderTexture>()) ScriptGUIRenderTexture(instance, guiTexture);
 	}
 
-	void ScriptGUIRenderTexture::internal_setTexture(ScriptGUIRenderTexture* nativeInstance, ScriptRenderTexture* texture)
+	void ScriptGUIRenderTexture::InternalSetTexture(ScriptGUIRenderTexture* nativeInstance, ScriptRenderTexture* texture)
 	{
 		SPtr<RenderTexture> renderTexture;
 		if (texture != nullptr)
@@ -61,7 +61,7 @@ namespace bs
 		guiTexture->setRenderTexture(renderTexture);
 	}
 
-	void ScriptGUIRenderTexture::internal_setTint(ScriptGUIRenderTexture* nativeInstance, Color* color)
+	void ScriptGUIRenderTexture::InternalSetTint(ScriptGUIRenderTexture* nativeInstance, Color* color)
 	{
 		GUIRenderTexture* guiTexture = (GUIRenderTexture*)nativeInstance->getGUIElement();
 		guiTexture->setTint(*color);

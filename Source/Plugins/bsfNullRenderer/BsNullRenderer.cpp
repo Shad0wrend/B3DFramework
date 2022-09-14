@@ -12,12 +12,12 @@ namespace bs
 {
 	constexpr const char* NullRendererFactory::SystemName;
 
-	SPtr<ct::Renderer> NullRendererFactory::create()
+	SPtr<ct::Renderer> NullRendererFactory::Create()
 	{
 		return bs_shared_ptr_new<ct::NullRenderer>();
 	}
 
-	const String& NullRendererFactory::name() const
+	const String& NullRendererFactory::Name() const
 	{
 		static String StrSystemName = SystemName;
 		return StrSystemName;
@@ -25,20 +25,20 @@ namespace bs
 
 	namespace ct
 	{
-		const StringID& NullRenderer::getName() const
+		const StringID& NullRenderer::GetName() const
 		{
 			static StringID name = "NullRenderer";
 			return name;
 		}
 
-		void NullRenderer::renderAll(PerFrameData perFrameData)
+		void NullRenderer::RenderAll(PerFrameData perFrameData)
 		{
-			CoreObjectManager::instance().syncToCore();
+			CoreObjectManager::Instance().syncToCore();
 		}
 
 		SPtr<NullRenderer> gNullRenderer()
 		{
-			return std::static_pointer_cast<NullRenderer>(RendererManager::instance().getActive());
+			return std::static_pointer_cast<NullRenderer>(RendererManager::Instance().getActive());
 		}
 	}
 }

@@ -22,10 +22,10 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "RRefBase")
 
 		/**	Returns a weak handle to the resource referenced by this object. */
-		ResourceHandle<Resource> getHandle() const { return mResource; }
+		ResourceHandle<Resource> GetHandle() const { return mResource; }
 
 		/** Returns the managed version of this object. */
-		MonoObject* getManagedInstance() const;
+		MonoObject* GetManagedInstance() const;
 
 		/**
 		 * Creates a new managed RRefBase for the provided resource.
@@ -37,13 +37,13 @@ namespace bs
 		 *						template parameter of RRef matches the actual resource type.
 		 */
 		template<class T>
-		static ScriptRRefBase* create(const ResourceHandle<T>& handle, ::MonoClass* rawType = nullptr)
+		static ScriptRRefBase* Create(const ResourceHandle<T>& handle, ::MonoClass* rawType = nullptr)
 		{
 			return createInternal(handle, rawType);
 		}
 
 		/** Creates a RRef type with the provided class bound as its template parameter. */
-		static ::MonoClass* bindGenericParam(::MonoClass* param);
+		static ::MonoClass* BindGenericParam(::MonoClass* param);
 
 	private:
 		friend class ScriptResourceManager;
@@ -58,10 +58,10 @@ namespace bs
 		void OnManagedInstanceDeletedInternal(bool assemblyRefresh) override;
 
 		/** Clears the internal cached ScriptResource reference. Should be called if the resource got destroyed. */
-		void clearResource() { mScriptResource = nullptr; }
+		void ClearResource() { mScriptResource = nullptr; }
 
 		/** @copydoc create() */
-		static ScriptRRefBase* createInternal(const ResourceHandle<Resource>& handle, ::MonoClass* rawType = nullptr);
+		static ScriptRRefBase* CreateInternal(const ResourceHandle<Resource>& handle, ::MonoClass* rawType = nullptr);
 
 		ResourceHandle<Resource> mResource;
 		ScriptResourceBase* mScriptResource = nullptr;
@@ -70,10 +70,10 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static bool internal_IsLoaded(ScriptRRefBase* thisPtr);
-		static MonoObject* internal_GetResource(ScriptRRefBase* thisPtr);
-		static void internal_GetUUID(ScriptRRefBase* thisPtr, UUID* uuid);
-		static MonoObject* internal_CastAs(ScriptRRefBase* thisPtr, MonoReflectionType* type);
+		static bool InternalIsLoaded(ScriptRRefBase* thisPtr);
+		static MonoObject* InternalGetResource(ScriptRRefBase* thisPtr);
+		static void InternalGetUuid(ScriptRRefBase* thisPtr, UUID* uuid);
+		static MonoObject* InternalCastAs(ScriptRRefBase* thisPtr, MonoReflectionType* type);
 	};
 
 	/** @} */

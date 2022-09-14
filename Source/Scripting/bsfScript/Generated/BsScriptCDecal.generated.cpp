@@ -32,7 +32,7 @@ namespace bs
 
 	}
 
-	void ScriptCDecal::Internal_setMaterial(ScriptCDecal* thisPtr, MonoObject* material)
+	void ScriptCDecal::InternalSetMaterial(ScriptCDecal* thisPtr, MonoObject* material)
 	{
 		ResourceHandle<Material> tmpmaterial;
 		ScriptRRefBase* scriptmaterial;
@@ -42,14 +42,14 @@ namespace bs
 		thisPtr->getHandle()->setMaterial(tmpmaterial);
 	}
 
-	MonoObject* ScriptCDecal::Internal_getMaterial(ScriptCDecal* thisPtr)
+	MonoObject* ScriptCDecal::InternalGetMaterial(ScriptCDecal* thisPtr)
 	{
 		ResourceHandle<Material> tmp__output;
 		tmp__output = thisPtr->getHandle()->getMaterial();
 
 		MonoObject* __output;
 		ScriptRRefBase* script__output;
-		script__output = ScriptResourceManager::instance().getScriptRRef(tmp__output);
+		script__output = ScriptResourceManager::Instance().getScriptRRef(tmp__output);
 		if(script__output != nullptr)
 			__output = script__output->getManagedInstance();
 		else
@@ -58,12 +58,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptCDecal::Internal_setSize(ScriptCDecal* thisPtr, Vector2* size)
+	void ScriptCDecal::InternalSetSize(ScriptCDecal* thisPtr, Vector2* size)
 	{
 		thisPtr->getHandle()->setSize(*size);
 	}
 
-	void ScriptCDecal::Internal_getSize(ScriptCDecal* thisPtr, Vector2* __output)
+	void ScriptCDecal::InternalGetSize(ScriptCDecal* thisPtr, Vector2* __output)
 	{
 		Vector2 tmp__output;
 		tmp__output = thisPtr->getHandle()->getSize();
@@ -71,12 +71,12 @@ namespace bs
 		*__output = tmp__output;
 	}
 
-	void ScriptCDecal::Internal_setMaxDistance(ScriptCDecal* thisPtr, float distance)
+	void ScriptCDecal::InternalSetMaxDistance(ScriptCDecal* thisPtr, float distance)
 	{
 		thisPtr->getHandle()->setMaxDistance(distance);
 	}
 
-	float ScriptCDecal::Internal_getMaxDistance(ScriptCDecal* thisPtr)
+	float ScriptCDecal::InternalGetMaxDistance(ScriptCDecal* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->getHandle()->getMaxDistance();
@@ -87,12 +87,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptCDecal::Internal_setLayer(ScriptCDecal* thisPtr, uint64_t layer)
+	void ScriptCDecal::InternalSetLayer(ScriptCDecal* thisPtr, uint64_t layer)
 	{
 		thisPtr->getHandle()->setLayer(layer);
 	}
 
-	uint64_t ScriptCDecal::Internal_getLayer(ScriptCDecal* thisPtr)
+	uint64_t ScriptCDecal::InternalGetLayer(ScriptCDecal* thisPtr)
 	{
 		uint64_t tmp__output;
 		tmp__output = thisPtr->getHandle()->getLayer();
@@ -103,12 +103,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptCDecal::Internal_setLayerMask(ScriptCDecal* thisPtr, uint32_t mask)
+	void ScriptCDecal::InternalSetLayerMask(ScriptCDecal* thisPtr, uint32_t mask)
 	{
 		thisPtr->getHandle()->setLayerMask(mask);
 	}
 
-	uint32_t ScriptCDecal::Internal_getLayerMask(ScriptCDecal* thisPtr)
+	uint32_t ScriptCDecal::InternalGetLayerMask(ScriptCDecal* thisPtr)
 	{
 		uint32_t tmp__output;
 		tmp__output = thisPtr->getHandle()->getLayerMask();

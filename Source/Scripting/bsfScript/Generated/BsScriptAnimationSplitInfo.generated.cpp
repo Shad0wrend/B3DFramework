@@ -28,7 +28,7 @@ namespace bs
 
 	}
 
-	MonoObject* ScriptAnimationSplitInfo::create(const SPtr<AnimationSplitInfo>& value)
+	MonoObject* ScriptAnimationSplitInfo::Create(const SPtr<AnimationSplitInfo>& value)
 	{
 		if(value == nullptr) return nullptr; 
 

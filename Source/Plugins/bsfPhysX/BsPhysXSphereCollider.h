@@ -21,20 +21,20 @@ namespace bs
 		~PhysXSphereCollider();
 
 		/** @copydoc SphereCollider::setScale */
-		void setScale(const Vector3& scale) override;
+		void SetScale(const Vector3& scale) ;
 
 		/** @copydoc SphereCollider::setRadius */
-		void setRadius(float radius) override;
+		void SetRadius(float radius) ;
 
 		/** @copydoc SphereCollider::getRadius */
-		float getRadius() const override;
+		float GetRadius() const ;
 
 	private:
 		/** Returns the PhysX collider implementation common to all colliders. */
-		FPhysXCollider* getInternal() const;
+		FPhysXCollider* GetInternal() const;
 
 		/** Applies the sphere geometry to the internal object based on set radius and scale. */
-		void applyGeometry();
+		void ApplyGeometry();
 
 		float mRadius;
 	};

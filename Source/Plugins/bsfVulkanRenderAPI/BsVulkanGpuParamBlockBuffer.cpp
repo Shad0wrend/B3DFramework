@@ -16,15 +16,15 @@ namespace bs { namespace ct
 			bs_pool_delete(static_cast<VulkanHardwareBuffer*>(mBuffer));
 	}
 
-	void VulkanGpuParamBlockBuffer::initialize()
+	void VulkanGpuParamBlockBuffer::Initialize()
 	{
 		mBuffer = bs_pool_new<VulkanHardwareBuffer>(VulkanHardwareBuffer::BT_UNIFORM, BF_UNKNOWN, mUsage, mSize, mDeviceMask);
 
-		GpuParamBlockBuffer::initialize();
+		GpuParamBlockBuffer::Initialize();
 	}
 
-	VulkanBuffer* VulkanGpuParamBlockBuffer::getResource(UINT32 deviceIdx) const
+	VulkanBuffer* VulkanGpuParamBlockBuffer::GetResource(UINT32 deviceIdx) const
 	{
-		return static_cast<VulkanHardwareBuffer*>(mBuffer)->getResource(deviceIdx);
+		return static_cast<VulkanHardwareBuffer*>(mBuffer)->GetResource(deviceIdx);
 	}
 }}

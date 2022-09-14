@@ -16,7 +16,7 @@ namespace bs
 	{
 	public:
 		/** Returns type name of the GUI element used for finding GUI element styles.  */
-		static const String& getGUITypeName(bool resizeable);
+		static const String& GetGuiTypeName(bool resizeable);
 
 		/**
 		 * Creates a new vertical scroll bar.
@@ -24,7 +24,7 @@ namespace bs
 		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
 		 *								GUIWidget the element is used on. If not specified default style is used.
 		 */
-		static GUIScrollBarVert* create(const String& styleName = StringUtil::BLANK);
+		static GUIScrollBarVert* Create(const String& styleName = StringUtil::BLANK);
 
 		/**
 		 * Creates a new vertical scroll bar.
@@ -34,7 +34,7 @@ namespace bs
 		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
 		 *								GUIWidget the element is used on. If not specified default style is used.
 		 */
-		static GUIScrollBarVert* create(bool resizable, const String& styleName = StringUtil::BLANK);
+		static GUIScrollBarVert* Create(bool resizable, const String& styleName = StringUtil::BLANK);
 
 		/**
 		 * Creates a new vertical scroll bar.
@@ -44,7 +44,7 @@ namespace bs
 		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
 		 *								GUIWidget the element is used on. If not specified default style is used.
 		 */
-		static GUIScrollBarVert* create(const GUIOptions& options, const String& styleName = StringUtil::BLANK);
+		static GUIScrollBarVert* Create(const GUIOptions& options, const String& styleName = StringUtil::BLANK);
 
 		/**
 		 * Creates a new vertical scroll bar.
@@ -56,7 +56,7 @@ namespace bs
 		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
 		 *								GUIWidget the element is used on. If not specified default style is used.
 		 */
-		static GUIScrollBarVert* create(bool resizable, const GUIOptions& options, const String& styleName = StringUtil::BLANK);
+		static GUIScrollBarVert* Create(bool resizable, const GUIOptions& options, const String& styleName = StringUtil::BLANK);
 	protected:
 		GUIScrollBarVert(bool resizable, const String& styleName, const GUIDimensions& dimensions);
 		~GUIScrollBarVert() = default;

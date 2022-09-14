@@ -27,13 +27,13 @@ namespace bs
 		IndexBufferProperties(IndexType idxType, UINT32 numIndexes);
 
 		/**	Returns the type of indices stored. */
-		IndexType getType() const { return mIndexType; }
+		IndexType GetType() const { return mIndexType; }
 
 		/**	Returns the number of indices this buffer can hold. */
-		UINT32 getNumIndices() const { return mNumIndices; }
+		UINT32 GetNumIndices() const { return mNumIndices; }
 
 		/**	Returns the size of a single index in bytes. */
-		UINT32 getIndexSize() const { return mIndexSize; }
+		UINT32 GetIndexSize() const { return mIndexSize; }
 
 	protected:
 		friend class IndexBuffer;
@@ -51,17 +51,17 @@ namespace bs
 		virtual ~IndexBuffer() { }
 
 		/** Returns information about the index buffer. */
-		const IndexBufferProperties& getProperties() const { return mProperties; }
+		const IndexBufferProperties& GetProperties() const { return mProperties; }
 
 		/**
 		 * Retrieves a core implementation of an index buffer usable only from the core thread.
 		 *
 		 * @note	Core thread only.
 		 */
-		SPtr<ct::IndexBuffer> getCore() const;
+		SPtr<ct::IndexBuffer> GetCore() const;
 
 		/** @copydoc HardwareBufferManager::createIndexBuffer */
-		static SPtr<IndexBuffer> create(const INDEX_BUFFER_DESC& desc);
+		static SPtr<IndexBuffer> Create(const INDEX_BUFFER_DESC& desc);
 
 	protected:
 		friend class HardwareBufferManager;
@@ -69,7 +69,7 @@ namespace bs
 		IndexBuffer(const INDEX_BUFFER_DESC& desc);
 
 		/** @copydoc CoreObject::createCore */
-		virtual SPtr<ct::CoreObject> createCore() const;
+		virtual SPtr<ct::CoreObject> CreateCore() const;
 
 		IndexBufferProperties mProperties;
 		GpuBufferUsage mUsage;
@@ -91,18 +91,18 @@ namespace bs
 		virtual ~IndexBuffer();
 
 		/**	Returns information about the index buffer. */
-		const IndexBufferProperties& getProperties() const { return mProperties; }
+		const IndexBufferProperties& GetProperties() const { return mProperties; }
 
 		/** @copydoc HardwareBuffer::readData */
-		void readData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx = 0, UINT32 queueIdx = 0) override;
+		void ReadData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx = 0, UINT32 queueIdx = 0) override;
 
 		/** @copydoc HardwareBuffer::writeData */
-		void writeData(UINT32 offset, UINT32 length, const void* source,
+		void WriteData(UINT32 offset, UINT32 length, const void* source,
 			BufferWriteType writeFlags = BWT_NORMAL, UINT32 queueIdx = 0) override;
 
 		/** @copydoc HardwareBuffer::copyData */
-		void copyData(HardwareBuffer& srcBuffer, UINT32 srcOffset, UINT32 dstOffset, UINT32 length,
-			bool discardWholeBuffer = false, const SPtr<CommandBuffer>& commandBuffer = nullptr) override;
+		void CopyData(HardwareBuffer& srcBuffer, UINT32 srcOffset, UINT32 dstOffset, UINT32 length,
+			bool discardWholeBuffer = false, const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
 
 		/**
 		* Returns a view of this buffer that can be used for load-store operations. Buffer must have been created with
@@ -120,22 +120,22 @@ namespace bs
 		*								can happen if the buffer hasn't been created with GBU_LOADSTORE usage or if the
 		*								element size doesn't divide the current buffer size.
 		*/
-		SPtr<GpuBuffer> getLoadStore(GpuBufferType type, GpuBufferFormat format, UINT32 elementSize = 0);
+		SPtr<GpuBuffer> GetLoadStore(GpuBufferType type, GpuBufferFormat format, UINT32 elementSize = 0);
 
 		/** @copydoc HardwareBufferManager::createIndexBuffer */
-		static SPtr<IndexBuffer> create(const INDEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
+		static SPtr<IndexBuffer> Create(const INDEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
 	protected:
 		friend class HardwareBufferManager;
 
 		/** @copydoc HardwareBuffer::map */
-		void* map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx, UINT32 queueIdx) override;
+		void* Map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx, UINT32 queueIdx) override;
 
 		/** @copydoc HardwareBuffer::unmap */
-		void unmap() override;
+		void Unmap() override;
 
 		/** @copydoc CoreObject::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 		IndexBufferProperties mProperties;
 

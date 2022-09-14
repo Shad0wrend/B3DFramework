@@ -20,7 +20,7 @@ namespace bs
 		setName("SliderJoint");
 	}
 
-	float CSliderJoint::getPosition() const
+	float CSliderJoint::GetPosition() const
 	{
 		if (mInternal == nullptr)
 			return 0.0f;
@@ -28,7 +28,7 @@ namespace bs
 		return GetInternalInternal()->getPosition();
 	}
 
-	float CSliderJoint::getSpeed() const
+	float CSliderJoint::GetSpeed() const
 	{
 		if (mInternal == nullptr)
 			return 0.0f;
@@ -36,12 +36,12 @@ namespace bs
 		return GetInternalInternal()->getSpeed();
 	}
 
-	LimitLinearRange CSliderJoint::getLimit() const
+	LimitLinearRange CSliderJoint::GetLimit() const
 	{
 		return mDesc.limit;
 	}
 
-	void CSliderJoint::setLimit(const LimitLinearRange& limit)
+	void CSliderJoint::SetLimit(const LimitLinearRange& limit)
 	{
 		if (mDesc.limit == limit)
 			return;
@@ -52,7 +52,7 @@ namespace bs
 			GetInternalInternal()->setLimit(limit);
 	}
 
-	void CSliderJoint::setFlag(SliderJointFlag flag, bool enabled)
+	void CSliderJoint::SetFlag(SliderJointFlag flag, bool enabled)
 	{
 		bool isEnabled = ((UINT32)mDesc.flag & (UINT32)flag) != 0;
 		if (isEnabled == enabled)
@@ -67,21 +67,21 @@ namespace bs
 			GetInternalInternal()->setFlag(flag, enabled);
 	}
 
-	bool CSliderJoint::hasFlag(SliderJointFlag flag) const
+	bool CSliderJoint::HasFlag(SliderJointFlag flag) const
 	{
 		return ((UINT32)mDesc.flag & (UINT32)flag) != 0;
 	}
 
-	SPtr<Joint> CSliderJoint::createInternal()
+	SPtr<Joint> CSliderJoint::CreateInternal()
 	{
 		const SPtr<SceneInstance>& scene = SO()->getScene();
-		SPtr<Joint> joint = SliderJoint::create(*scene->getPhysicsScene(), mDesc);
+		SPtr<Joint> joint = SliderJoint::Create(*scene->getPhysicsScene(), mDesc);
 
 		joint->SetOwnerInternal(PhysicsOwnerType::Component, this);
 		return joint;
 	}
 
-	void CSliderJoint::getLocalTransform(JointBody body, Vector3& position, Quaternion& rotation)
+	void CSliderJoint::GetLocalTransform(JointBody body, Vector3& position, Quaternion& rotation)
 	{
 		position = mPositions[(UINT32)body];
 		rotation = mRotations[(UINT32)body];
@@ -107,13 +107,13 @@ namespace bs
 		}
 	}
 
-	RTTITypeBase* CSliderJoint::getRTTIStatic()
+	RTTITypeBase* CSliderJoint::GetRttiStatic()
 	{
-		return CSliderJointRTTI::instance();
+		return CSliderJointRTTI::Instance();
 	}
 
-	RTTITypeBase* CSliderJoint::getRTTI() const
+	RTTITypeBase* CSliderJoint::GetRtti() const
 	{
-		return CSliderJoint::getRTTIStatic();
+		return CSliderJoint::GetRttiStatic();
 	}
 }

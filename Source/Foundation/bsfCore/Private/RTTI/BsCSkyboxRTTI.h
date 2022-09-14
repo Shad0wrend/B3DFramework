@@ -17,8 +17,8 @@ namespace bs
 	class BS_CORE_EXPORT CSkyboxRTTI : public RTTIType <CSkybox, Component, CSkyboxRTTI>
 	{
 	private:
-		SPtr<Skybox> getInternal(CSkybox* obj) { return obj->mInternal; }
-		void setInternal(CSkybox* obj, SPtr<Skybox> val) { obj->mInternal = val; }
+		SPtr<Skybox> GetInternal(CSkybox* obj) { return obj->mInternal; }
+		void SetInternal(CSkybox* obj, SPtr<Skybox> val) { obj->mInternal = val; }
 
 	public:
 		CSkyboxRTTI()
@@ -26,20 +26,20 @@ namespace bs
 			addReflectablePtrField("mInternal", 0, &CSkyboxRTTI::getInternal, &CSkyboxRTTI::setInternal);
 		}
 
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "CSkybox";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_CSkybox;
 		}
 
 		SPtr<IReflectable> newRTTIObject() override
 		{
-			return SceneObject::createEmptyComponent<CSkybox>();
+			return SceneObject::CreateEmptyComponent<CSkybox>();
 		}
 	};
 

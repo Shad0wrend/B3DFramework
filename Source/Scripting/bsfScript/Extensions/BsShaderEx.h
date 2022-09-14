@@ -61,7 +61,7 @@ namespace bs
 	public:
 		/** Returns information about all parameters available in the shader. */
 		BS_SCRIPT_EXPORT(e:Shader,pr:getter,n:Parameters)
-		static Vector<ShaderParameter> getParameters(const HShader& thisPtr);
+		static Vector<ShaderParameter> GetParameters(const HShader& thisPtr);
 	};
 
 	/** @endcond */

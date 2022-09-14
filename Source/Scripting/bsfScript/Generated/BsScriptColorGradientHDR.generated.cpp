@@ -19,18 +19,18 @@ namespace bs
 	void ScriptColorGradientHDR::initRuntimeData()
 	{
 		metaData.scriptClass->addInternalCall("Internal_ColorGradientHDR", (void*)&ScriptColorGradientHDR::Internal_ColorGradientHDR);
-		metaData.scriptClass->addInternalCall("Internal_ColorGradientHDR0", (void*)&ScriptColorGradientHDR::Internal_ColorGradientHDR0);
-		metaData.scriptClass->addInternalCall("Internal_ColorGradientHDR1", (void*)&ScriptColorGradientHDR::Internal_ColorGradientHDR1);
+		metaData.scriptClass->AddInternalCall("Internal_ColorGradientHDR0", (void*)&ScriptColorGradientHDR::InternalColorGradientHdR0);
+		metaData.scriptClass->AddInternalCall("Internal_ColorGradientHDR1", (void*)&ScriptColorGradientHDR::InternalColorGradientHdR1);
 		metaData.scriptClass->addInternalCall("Internal_setKeys", (void*)&ScriptColorGradientHDR::Internal_setKeys);
 		metaData.scriptClass->addInternalCall("Internal_getKeys", (void*)&ScriptColorGradientHDR::Internal_getKeys);
-		metaData.scriptClass->addInternalCall("Internal_getNumKeys", (void*)&ScriptColorGradientHDR::Internal_getNumKeys);
-		metaData.scriptClass->addInternalCall("Internal_getKey", (void*)&ScriptColorGradientHDR::Internal_getKey);
+		metaData.scriptClass->AddInternalCall("Internal_getNumKeys", (void*)&ScriptColorGradientHDR::InternalGetNumKeys);
+		metaData.scriptClass->AddInternalCall("Internal_getKey", (void*)&ScriptColorGradientHDR::InternalGetKey);
 		metaData.scriptClass->addInternalCall("Internal_setConstant", (void*)&ScriptColorGradientHDR::Internal_setConstant);
 		metaData.scriptClass->addInternalCall("Internal_evaluate", (void*)&ScriptColorGradientHDR::Internal_evaluate);
 
 	}
 
-	MonoObject* ScriptColorGradientHDR::create(const SPtr<ColorGradientHDR>& value)
+	MonoObject* ScriptColorGradientHDR::Create(const SPtr<ColorGradientHDR>& value)
 	{
 		if(value == nullptr) return nullptr; 
 
@@ -41,19 +41,19 @@ namespace bs
 		new (bs_alloc<ScriptColorGradientHDR>()) ScriptColorGradientHDR(managedInstance, value);
 		return managedInstance;
 	}
-	void ScriptColorGradientHDR::Internal_ColorGradientHDR(MonoObject* managedInstance)
+	void ScriptColorGradientHDR::InternalColorGradientHdr(MonoObject* managedInstance)
 	{
 		SPtr<ColorGradientHDR> instance = bs_shared_ptr_new<ColorGradientHDR>();
 		new (bs_alloc<ScriptColorGradientHDR>())ScriptColorGradientHDR(managedInstance, instance);
 	}
 
-	void ScriptColorGradientHDR::Internal_ColorGradientHDR0(MonoObject* managedInstance, Color* color)
+	void ScriptColorGradientHDR::InternalColorGradientHdR0(MonoObject* managedInstance, Color* color)
 	{
 		SPtr<ColorGradientHDR> instance = bs_shared_ptr_new<ColorGradientHDR>(*color);
 		new (bs_alloc<ScriptColorGradientHDR>())ScriptColorGradientHDR(managedInstance, instance);
 	}
 
-	void ScriptColorGradientHDR::Internal_ColorGradientHDR1(MonoObject* managedInstance, MonoArray* keys)
+	void ScriptColorGradientHDR::InternalColorGradientHdR1(MonoObject* managedInstance, MonoArray* keys)
 	{
 		Vector<ColorGradientKey> veckeys;
 		if(keys != nullptr)
@@ -69,7 +69,7 @@ namespace bs
 		new (bs_alloc<ScriptColorGradientHDR>())ScriptColorGradientHDR(managedInstance, instance);
 	}
 
-	void ScriptColorGradientHDR::Internal_setKeys(ScriptColorGradientHDR* thisPtr, MonoArray* keys, float duration)
+	void ScriptColorGradientHDR::InternalSetKeys(ScriptColorGradientHDR* thisPtr, MonoArray* keys, float duration)
 	{
 		Vector<ColorGradientKey> veckeys;
 		if(keys != nullptr)
@@ -85,7 +85,7 @@ namespace bs
 		thisPtr->getInternal()->setKeys(veckeys, duration);
 	}
 
-	MonoArray* ScriptColorGradientHDR::Internal_getKeys(ScriptColorGradientHDR* thisPtr)
+	MonoArray* ScriptColorGradientHDR::InternalGetKeys(ScriptColorGradientHDR* thisPtr)
 	{
 		Vector<ColorGradientKey> vec__output;
 		vec__output = thisPtr->getInternal()->getKeys();
@@ -102,7 +102,7 @@ namespace bs
 		return __output;
 	}
 
-	uint32_t ScriptColorGradientHDR::Internal_getNumKeys(ScriptColorGradientHDR* thisPtr)
+	uint32_t ScriptColorGradientHDR::InternalGetNumKeys(ScriptColorGradientHDR* thisPtr)
 	{
 		uint32_t tmp__output;
 		tmp__output = thisPtr->getInternal()->getNumKeys();
@@ -113,7 +113,7 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptColorGradientHDR::Internal_getKey(ScriptColorGradientHDR* thisPtr, uint32_t idx, __ColorGradientKeyInterop* __output)
+	void ScriptColorGradientHDR::InternalGetKey(ScriptColorGradientHDR* thisPtr, uint32_t idx, __ColorGradientKeyInterop* __output)
 	{
 		ColorGradientKey tmp__output;
 		tmp__output = thisPtr->getInternal()->getKey(idx);
@@ -123,12 +123,12 @@ namespace bs
 		MonoUtil::valueCopy(__output, &interop__output, ScriptColorGradientKey::getMetaData()->scriptClass->GetInternalClassInternal());
 	}
 
-	void ScriptColorGradientHDR::Internal_setConstant(ScriptColorGradientHDR* thisPtr, Color* color)
+	void ScriptColorGradientHDR::InternalSetConstant(ScriptColorGradientHDR* thisPtr, Color* color)
 	{
 		thisPtr->getInternal()->setConstant(*color);
 	}
 
-	void ScriptColorGradientHDR::Internal_evaluate(ScriptColorGradientHDR* thisPtr, float t, Color* __output)
+	void ScriptColorGradientHDR::InternalEvaluate(ScriptColorGradientHDR* thisPtr, float t, Color* __output)
 	{
 		Color tmp__output;
 		tmp__output = ColorGradientHDREx::evaluate(thisPtr->getInternal(), t);

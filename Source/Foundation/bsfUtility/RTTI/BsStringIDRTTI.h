@@ -17,26 +17,26 @@ namespace bs
 	{
 		enum { id = TID_StringID }; enum { hasDynamicSize = 1 };
 
-		static BitLength toMemory(const StringID& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const StringID& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]()
 			{
 				BitLength size = 0;
 
-				bool isEmpty = data.empty();
+				bool isEmpty = data.Empty();
 				size += rtti_write(isEmpty, stream);
 
 				if (!isEmpty)
 				{
 					auto length = (uint32_t)strlen(data.c_str());
-					size += stream.writeBytes((uint8_t*)data.c_str(), length * sizeof(char));
+					size += stream.SkipBytes((uint8_t*)data.c_str(), length * sizeof(char));
 				}
 
 				return size;
 			});
 		}
 
-		static BitLength fromMemory(StringID& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(StringID& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
 			rtti_read_size_header(stream, compress, size);
@@ -59,11 +59,11 @@ namespace bs
 			return size;
 		}
 
-		static BitLength getSize(const StringID& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const StringID& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength dataSize = sizeof(bool);
 
-			bool isEmpty = data.empty();
+			bool isEmpty = data.Empty();
 			if (!isEmpty)
 			{
 				auto length = (uint32_t)strlen(data.c_str());

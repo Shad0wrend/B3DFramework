@@ -19,18 +19,18 @@ namespace bs
 	{
 		BS_ASSERT(instance != nullptr);
 
-		MonoUtil::getClassName(instance, mNamespace, mType);
-		mGCHandle = MonoUtil::newGCHandle(instance, false);
+		MonoUtil::GetClassName(instance, mNamespace, mType);
+		mGCHandle = MonoUtil::NewGcHandle(instance, false);
 	}
 
 	void ScriptManagedResource::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_CreateInstance", (void*)&ScriptManagedResource::internal_createInstance);
+		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptManagedResource::InternalCreateInstance);
 	}
 
-	void ScriptManagedResource::internal_createInstance(MonoObject* instance)
+	void ScriptManagedResource::InternalCreateInstance(MonoObject* instance)
 	{
-		HManagedResource resource = ManagedResource::create(instance);
+		HManagedResource resource = ManagedResource::Create(instance);
 	}
 
 	MonoObject* ScriptManagedResource::CreateManagedInstanceInternal(bool construct)
@@ -38,10 +38,10 @@ namespace bs
 		SPtr<ManagedSerializableObjectInfo> currentObjInfo = nullptr;
 
 		// See if this type even still exists
-		if (!ScriptAssemblyManager::instance().getSerializableObjectInfo(mNamespace, mType, currentObjInfo))
+		if (!ScriptAssemblyManager::Instance().GetSerializableObjectInfo(mNamespace, mType, currentObjInfo))
 			return nullptr;
 
-		MonoObject* instance = currentObjInfo->mMonoClass->createInstance(construct);
+		MonoObject* instance = currentObjInfo->mMonoClass->CreateInstance(construct);
 		mGCHandle = MonoUtil::newGCHandle(instance, false);
 
 		return instance;
@@ -52,7 +52,7 @@ namespace bs
 		freeManagedInstance();
 	}
 
-	ScriptObjectBackup ScriptManagedResource::beginRefresh()
+	ScriptObjectBackup ScriptManagedResource::BeginRefresh()
 	{
 		ScriptObjectBackup backupData;
 		backupData.data = mResource->backup();
@@ -60,7 +60,7 @@ namespace bs
 		return backupData;
 	}
 
-	void ScriptManagedResource::endRefresh(const ScriptObjectBackup& backupData)
+	void ScriptManagedResource::EndRefresh(const ScriptObjectBackup& backupData)
 	{
 		MonoObject* instance = MonoUtil::getObjectFromGCHandle(mGCHandle);
 
@@ -85,7 +85,7 @@ namespace bs
 			// should make sure all instances are unloaded before that happens.
 			BS_ASSERT(mResource == nullptr || !mResource.isLoaded());
 
-			ScriptResourceManager::instance().destroyScriptResource(this);
+			ScriptResourceManager::Instance().destroyScriptResource(this);
 		}
 	}
 
@@ -94,7 +94,7 @@ namespace bs
 		freeManagedInstance();
 	}
 
-	void ScriptManagedResource::setResource(const HResource& resource)
+	void ScriptManagedResource::SetResource(const HResource& resource)
 	{
 		mResource = static_resource_cast<ManagedResource>(resource);
 	}

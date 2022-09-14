@@ -91,34 +91,34 @@ namespace bs
 
 		/** Returns the type of the represented distribution. */
 		BS_SCRIPT_EXPORT(pr:getter,n:DistributionType)
-		PropertyDistributionType getType() const { return mType; }
+		PropertyDistributionType GetType() const { return mType; }
 
 		/**
 		 * Returns the constant value of the distribution, or the minimal value of a constant range. Undefined if
 		 * the distribution is represented by a gradient.
 		 */
 		BS_SCRIPT_EXPORT()
-		Color getMinConstant() const { return mMinGradient.getKey(0).color; }
+		Color GetMinConstant() const { return mMinGradient.getKey(0).color; }
 
 		/**
 		 * Returns the maximum value of a constant range. Only defined if the distribution represents a non-gradient range.
 		 */
 		BS_SCRIPT_EXPORT()
-		Color getMaxConstant() const { return mMaxGradient.getKey(0).color; }
+		Color GetMaxConstant() const { return mMaxGradient.getKey(0).color; }
 
 		/**
 		 * Returns the gradient representing the distribution, or the first gradient representing a gradient range.
 		 * Undefined if the distribution is represented by a constant or a non-gradient range.
 		 */
 		BS_SCRIPT_EXPORT()
-		const T& getMinGradient() const { return mMinGradient; }
+		const T& GetMinGradient() const { return mMinGradient; }
 
 		/**
 		 * Returns the curve representing the second gradient of a gradient range. Only defined if the distribution
 		 * represents a gradient range.
 		 */
 		BS_SCRIPT_EXPORT()
-		const T& getMaxGradient() const { return mMaxGradient; }
+		const T& GetMaxGradient() const { return mMaxGradient; }
 
 		/**
 		 * Evaluates the value of the distribution.
@@ -131,7 +131,7 @@ namespace bs
 		 * @return				Evaluated color.
 		 *
 		 */
-		typename T::ColorType evaluate(float t, float factor) const
+		typename T::ColorType Evaluate(float t, float factor) const
 		{
 			const auto lerpFactor = impl::TGradientHelper<typename T::ColorType>::toLerpFactor(factor);
 			switch(mType)
@@ -168,7 +168,7 @@ namespace bs
 		 * @return				Evaluated color.
 		 *
 		 */
-		typename T::ColorType evaluate(float t, const Random& factor) const
+		typename T::ColorType Evaluate(float t, const Random& factor) const
 		{
 			switch(mType)
 			{
@@ -208,7 +208,7 @@ namespace bs
 		 *									the maximum curve values will follow the minimum curve values of each sample.
 		 * @return							Resampled lookup table.
 		 */
-		LookupTable toLookupTable(UINT32 numSamples = 128, bool ignoreRange = false) const;
+		LookupTable ToLookupTable(UINT32 numSamples = 128, bool ignoreRange = false) const;
 
 		bool operator== (const TColorDistribution<T>& rhs) const
 		{
@@ -270,10 +270,10 @@ namespace bs
 		TDistribution(const TAnimationCurve<T>& curve)
 			: mType(PDT_Curve), mMinCurve(curve), mMaxCurve(curve)
 		{
-			if(mMinCurve.getKeyFrames().empty())
+			if(mMinCurve.GetKeyFrames().empty())
 				mMinCurve = TAnimationCurve<T>({ TKeyframe<T>{ T(), TCurveProperties<T>::getZero(), TCurveProperties<T>::getZero(), 0.0f} });
 
-			if(mMaxCurve.getKeyFrames().empty())
+			if(mMaxCurve.GetKeyFrames().empty())
 				mMaxCurve = TAnimationCurve<T>({ TKeyframe<T>{ T(), TCurveProperties<T>::getZero(), TCurveProperties<T>::getZero(), 0.0f} });
 		}
 
@@ -282,43 +282,43 @@ namespace bs
 		TDistribution(const TAnimationCurve<T>& minCurve, const TAnimationCurve<T>& maxCurve)
 			: mType(PDT_RandomCurveRange), mMinCurve(minCurve), mMaxCurve(maxCurve)
 		{
-			if(mMinCurve.getKeyFrames().empty())
+			if(mMinCurve.GetKeyFrames().empty())
 				mMinCurve = TAnimationCurve<T>({ TKeyframe<T>{ T(), TCurveProperties<T>::getZero(), TCurveProperties<T>::getZero(), 0.0f} });
 
-			if(mMaxCurve.getKeyFrames().empty())
+			if(mMaxCurve.GetKeyFrames().empty())
 				mMaxCurve = TAnimationCurve<T>({ TKeyframe<T>{ T(), TCurveProperties<T>::getZero(), TCurveProperties<T>::getZero(), 0.0f} });
 		}
 
 		/** Returns the type of the represented distribution. */
 		BS_SCRIPT_EXPORT(pr:getter,n:DistributionType)
-		PropertyDistributionType getType() const { return mType; }
+		PropertyDistributionType GetType() const { return mType; }
 
 		/**
 		 * Returns the constant value of the distribution, or the minimal value of a constant range. Undefined if
 		 * the distribution is represented by a curve.
 		 */
 		BS_SCRIPT_EXPORT()
-		const T& getMinConstant() const { return mMinCurve.getKeyFrames()[0].value; }
+		const T& GetMinConstant() const { return mMinCurve.GetKeyFrames()[0].value; }
 
 		/**
 		 * Returns the maximum value of a constant range. Only defined if the distribution represents a non-curve range.
 		 */
 		BS_SCRIPT_EXPORT()
-		const T& getMaxConstant() const { return mMaxCurve.getKeyFrames()[0].value; }
+		const T& GetMaxConstant() const { return mMaxCurve.GetKeyFrames()[0].value; }
 
 		/**
 		 * Returns the curve representing the distribution, or the first curve representing a curve range. Undefined if
 		 * the distribution is represented by a constant or a non-curve range.
 		 */
 		BS_SCRIPT_EXPORT()
-		const TAnimationCurve<T>& getMinCurve() const { return mMinCurve; }
+		const TAnimationCurve<T>& GetMinCurve() const { return mMinCurve; }
 
 		/**
 		 * Returns the curve representing the second curve of a curve range. Only defined if the distribution represents
 		 * a curve range.
 		 */
 		BS_SCRIPT_EXPORT()
-		const TAnimationCurve<T>& getMaxCurve() const { return mMaxCurve; }
+		const TAnimationCurve<T>& GetMaxCurve() const { return mMaxCurve; }
 
 		/**
 		 * Evaluates the value of the distribution.
@@ -332,7 +332,7 @@ namespace bs
 		 *
 		 */
 		BS_SCRIPT_EXPORT()
-		T evaluate(float t, float factor) const
+		T Evaluate(float t, float factor) const
 		{
 			switch(mType)
 			{
@@ -364,7 +364,7 @@ namespace bs
 		 *
 		 */
 		BS_SCRIPT_EXPORT()
-		T evaluate(float t, const Random& factor) const
+		T Evaluate(float t, const Random& factor) const
 		{
 			switch(mType)
 			{
@@ -397,7 +397,7 @@ namespace bs
 		 *									the maximum curve values will follow the minimum curve values of each sample.
 		 * @return							Resampled lookup table.
 		 */
-		LookupTable toLookupTable(UINT32 numSamples = 128, bool ignoreRange = false) const;
+		LookupTable ToLookupTable(UINT32 numSamples = 128, bool ignoreRange = false) const;
 
 		bool operator== (const TDistribution<T>& rhs) const
 		{

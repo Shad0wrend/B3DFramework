@@ -28,7 +28,7 @@ namespace bs
 		MessageHandler() = default;
 
 		/** Sends a message to all subscribed listeners. */
-		void send(MessageId message);
+		void Send(MessageId message);
 
 		/**
 		 * Subscribes a message listener for the specified message. Provided callback will be triggered whenever that
@@ -36,11 +36,11 @@ namespace bs
 		 *
 		 * @return	A handle to the message subscription that you can use to unsubscribe from listening.
 		 */
-		HMessage listen(MessageId message, std::function<void()> callback);
+		HMessage Listen(MessageId message, std::function<void()> callback);
 
 	private:
 		friend class HMessage;
-		void unsubscribe(UINT32 handleId);
+		void Unsubscribe(UINT32 handleId);
 
 		Map<UINT32, Vector<MessageHandlerData>> mMessageHandlers;
 		Map<UINT32, UINT32> mHandlerIdToMessageMap;

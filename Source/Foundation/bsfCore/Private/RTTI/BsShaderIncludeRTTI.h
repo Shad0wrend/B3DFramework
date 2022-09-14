@@ -17,26 +17,26 @@ namespace bs
 	class BS_CORE_EXPORT ShaderIncludeRTTI : public RTTIType <ShaderInclude, Resource, ShaderIncludeRTTI>
 	{
 	private:
-		String& getString(ShaderInclude* obj) { return obj->mString; }
-		void setString(ShaderInclude* obj, String& val) { obj->mString = val; }
+		String& GetString(ShaderInclude* obj) { return obj->mString; }
+		void SetString(ShaderInclude* obj, String& val) { obj->mString = val; }
 	public:
 		ShaderIncludeRTTI()
 		{
-			addPlainField("mString", 0, &ShaderIncludeRTTI::getString, &ShaderIncludeRTTI::setString);
+			AddPlainField("mString", 0, &ShaderIncludeRTTI::GetString, &ShaderIncludeRTTI::SetString);
 		}
 
-		const String& getRTTIName() override
+		const String& GetRttiName() 
 		{
 			static String name = "ShaderInclude";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() 
 		{
 			return TID_ShaderInclude;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return ShaderInclude::CreatePtrInternal(""); // Initial string doesn't matter, it'll get overwritten
 		}

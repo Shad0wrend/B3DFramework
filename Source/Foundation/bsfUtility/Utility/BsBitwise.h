@@ -68,7 +68,7 @@ namespace bs
 	{
 	public:
 		/** Returns the power-of-two number greater or equal to the provided value. */
-		static UINT32 nextPow2(UINT32 n)
+		static UINT32 NextPow2(UINT32 n)
 		{
 			--n;
 			n |= n >> 16;
@@ -81,9 +81,9 @@ namespace bs
 		}
 
 		/** Returns the power-of-two number closest to the provided value. */
-		static UINT32 closestPow2(UINT32 n)
+		static UINT32 ClosestPow2(UINT32 n)
 		{
-			UINT32 next = nextPow2(n);
+			UINT32 next = NextPow2(n);
 
 			UINT32 prev = next >> 1;
 			if (n - prev < next - n)
@@ -94,7 +94,7 @@ namespace bs
 
 
 		/** Returns base-2 logarithm for common bit counts (8, 16, 32, 64), as a constant expression. */
-		static constexpr UINT32 bitsLog2(UINT32 v)
+		static constexpr UINT32 BitsLog2(UINT32 v)
 		{
 			switch(v)
 			{
@@ -107,7 +107,7 @@ namespace bs
 		}
 
 		/** Returns modular exponentiation for integers. */
-		static UINT32 modPow(UINT32 val1, UINT32 val2, UINT32 t)
+		static UINT32 ModPow(UINT32 val1, UINT32 val2, UINT32 t)
 		{
 			int res = 1;
 
@@ -127,7 +127,7 @@ namespace bs
 #endif
 
 		/** Finds the most-significant non-zero bit in the provided value and returns the index of that bit. */
-		static UINT32 mostSignificantBit(UINT32 val)
+		static UINT32 MostSignificantBit(UINT32 val)
 		{
 #if BS_COMPILER == BS_COMPILER_MSVC
 			unsigned long index;
@@ -140,7 +140,7 @@ namespace bs
 #endif
 		}
 		/** Finds the least-significant non-zero bit in the provided value and returns the index of that bit. */
-		static UINT32 leastSignificantBit(UINT32 val)
+		static UINT32 LeastSignificantBit(UINT32 val)
 		{
 #if BS_COMPILER == BS_COMPILER_MSVC
 			unsigned long index;
@@ -154,7 +154,7 @@ namespace bs
 		}
 
 		/** Finds the most-significant non-zero bit in the provided value and returns the index of that bit. */
-		static UINT32 mostSignificantBit(UINT64 val)
+		static UINT32 MostSignificantBit(UINT64 val)
 		{
 #if BS_COMPILER == BS_COMPILER_MSVC
 #if BS_ARCH_TYPE == BS_ARCHITECTURE_x86_64
@@ -180,7 +180,7 @@ namespace bs
 #endif // BS_COMPILER
 		}
 		/** Finds the least-significant non-zero bit in the provided value and returns the index of that bit. */
-		static UINT32 leastSignificantBit(UINT64 val)
+		static UINT32 LeastSignificantBit(UINT64 val)
 		{
 #if BS_COMPILER == BS_COMPILER_MSVC
 #if BS_ARCH_TYPE == BS_ARCHITECTURE_x86_64
@@ -208,14 +208,14 @@ namespace bs
 
 		/** Determines whether the number is power-of-two or not. */
 		template<typename T>
-		static bool isPow2(T n)
+		static bool IsPow2(T n)
 		{
 			return (n & (n - 1)) == 0;
 		}
 
 		/** Returns the number of bits a pattern must be shifted right by to remove right-hand zeros. */
 		template<typename T>
-		static uint32_t getBitShift(T mask)
+		static uint32_t GetBitShift(T mask)
 		{
 			if (mask == 0)
 				return 0;
@@ -229,7 +229,7 @@ namespace bs
 		}
 
 		/** Count the number of set bits in a mask. */
-		static uint32_t countSetBits(uint32_t val)
+		static uint32_t CountSetBits(uint32_t val)
 		{
 			uint32_t count = 0;
 			for (count = 0; val; count++)
@@ -240,7 +240,7 @@ namespace bs
 
 		/** Takes a value with a given src bit mask, and produces another value with a desired bit mask. */
 		template<typename SrcT, typename DestT>
-		static DestT convertBitPattern(SrcT srcValue, SrcT srcBitMask, DestT destBitMask)
+		static DestT ConvertBitPattern(SrcT srcValue, SrcT srcBitMask, DestT destBitMask)
 		{
 			// Mask off irrelevant source value bits (if any)
 			srcValue = srcValue & srcBitMask;
@@ -265,7 +265,7 @@ namespace bs
 		 * Convert N bit color channel value to P bits. It fills P bits with the bit pattern repeated.
 		 * (this is /((1<<n)-1) in fixed point).
 		 */
-		static uint32_t fixedToFixed(UINT32 value, uint32_t n, uint32_t p)
+		static uint32_t FixedToFixed(UINT32 value, uint32_t n, uint32_t p)
 		{
 			if (n > p)
 			{
@@ -289,32 +289,32 @@ namespace bs
 		 * Converts floating point value in range [0, 1] to an unsigned integer of a certain number of bits. Works for any
 		 * value of bits between 0 and 31.
 		 */
-		static uint32_t unormToUint(float value, uint32_t bits)
+		static uint32_t UnormToUint(float value, uint32_t bits)
 		{
 			if (value <= 0.0f) return 0;
 			if (value >= 1.0f) return (1 << bits) - 1;
-			return Math::roundToInt(value * (1 << bits));
+			return Math::RoundToInt(value * (1 << bits));
 		}
 
 		/**
 		 * Converts floating point value in range [-1, 1] to an unsigned integer of a certain number of bits. Works for any
 		 * value of bits between 0 and 31.
 		 */
-		static uint32_t snormToUint(float value, uint32_t bits)
+		static uint32_t SnormToUint(float value, uint32_t bits)
 		{
-			return unormToUint((value + 1.0f) * 0.5f, bits);
+			return UnormToUint((value + 1.0f) * 0.5f, bits);
 		}
 
 		/** Converts an unsigned integer to a floating point in range [0, 1]. */
-		static float uintToUnorm(uint32_t value, uint32_t bits)
+		static float UintToUnorm(uint32_t value, uint32_t bits)
 		{
 			return (float)value / (float)((1 << bits) - 1);
 		}
 
 		/** Converts an unsigned integer to a floating point in range [-1, 1]. */
-		static float uintToSnorm(uint32_t value, uint32_t bits)
+		static float UintToSnorm(uint32_t value, uint32_t bits)
 		{
-			return uintToUnorm(value) * 2.0f - 1.0f;
+			return UintToUnorm(value) * 2.0f - 1.0f;
 		}
 
 		/**
@@ -322,7 +322,7 @@ namespace bs
 		 * value of bits between 0 and 31.
 		 */
 		template<uint32_t bits = 8>
-		static uint32_t unormToUint(float value)
+		static uint32_t UnormToUint(float value)
 		{
 			if (value <= 0.0f) return 0;
 			if (value >= 1.0f) return (1 << bits) - 1;
@@ -334,21 +334,21 @@ namespace bs
 		 * value of bits between 0 and 31.
 		 */
 		template<uint32_t bits = 8>
-		static uint32_t snormToUint(float value)
+		static uint32_t SnormToUint(float value)
 		{
 			return unormToUint<bits>((value + 1.0f) * 0.5f);
 		}
 
 		/** Converts an unsigned integer to a floating point in range [0, 1]. */
 		template<uint32_t bits = 8>
-		static float uintToUnorm(uint32_t value)
+		static float UintToUnorm(uint32_t value)
 		{
 			return (float)value / (float)((1 << bits) - 1);
 		}
 
 		/** Converts an unsigned integer to a floating point in range [-1, 1]. */
 		template<uint32_t bits = 8>
-		static float uintToSnorm(uint32_t value)
+		static float UintToSnorm(uint32_t value)
 		{
 			return uintToUnorm<bits>(value) * 2.0f - 1.0f;
 		}
@@ -358,7 +358,7 @@ namespace bs
 		 * is zero, @p from value will be returned, and when it is 255 @p to value will be returned, and interpolation
 		 * between @p from and @p to will occurr for in-between values.
 		 */
-		static uint32_t lerpByte(uint32_t from, uint32_t to, uint32_t t)
+		static uint32_t LerpByte(uint32_t from, uint32_t to, uint32_t t)
 		{
 			assert((from & 0xFF) == from);
 			assert((to & 0xFF) == to);
@@ -373,7 +373,7 @@ namespace bs
 		 * is zero, @p from value will be returned, and when it is 65536 @p to value will be returned, and interpolation
 		 * between @p from and @p to will occurr for in-between values.
 		 */
-		static uint32_t lerpWord(uint32_t from, uint32_t to, uint32_t t)
+		static uint32_t LerpWord(uint32_t from, uint32_t to, uint32_t t)
 		{
 			assert((from & 0xFFFF) == from);
 			assert((to & 0xFFFF) == to);
@@ -388,7 +388,7 @@ namespace bs
 		 * returned if @p val is less or equal than @p from, and 255 is returned if @p val is equal to greater to @p to,
 		 * and in-between values returned accordingly. All values must be in [0, 255] range.
 		 */
-		static uint32_t invLerpByte(uint32_t from, uint32_t to, uint32_t val)
+		static uint32_t InvLerpByte(uint32_t from, uint32_t to, uint32_t val)
 		{
 			assert((from & 0xFF) == from);
 			assert((to & 0xFF) == to);
@@ -403,7 +403,7 @@ namespace bs
 		 * returned if @p val is less or equal than @p from, and 65536 is returned if @p val is equal to greater to @p to,
 		 * and in-between values returned accordingly. All values must be in [0, 65536] range.
 		 */
-		static uint32_t invLerpWord(uint32_t from, uint32_t to, uint32_t val)
+		static uint32_t InvLerpWord(uint32_t from, uint32_t to, uint32_t val)
 		{
 			assert((from & 0xFFFF) == from);
 			assert((to & 0xFFFF) == to);
@@ -414,7 +414,7 @@ namespace bs
 		}
 
 		/** Write a n*8 bits integer value to memory in native endian. */
-		static void intWrite(void *dest, const int32_t n, const uint32_t value)
+		static void IntWrite(void *dest, const int32_t n, const uint32_t value)
 		{
 			switch(n) {
 				case 1:
@@ -441,7 +441,7 @@ namespace bs
 		}
 
 		/** Read a n*8 bits integer value to memory in native endian. */
-		static uint32_t intRead(const void *src, int32_t n) {
+		static uint32_t IntRead(const void *src, int32_t n) {
 			switch(n) {
 				case 1:
 					return ((UINT8*)src)[0];
@@ -464,15 +464,15 @@ namespace bs
 		}
 
 		/** Convert a float32 to a float16 (NV_half_float). */
-		static UINT16 floatToHalf(float i)
+		static UINT16 FloatToHalf(float i)
 		{
 			union { float f; UINT32 i; } v;
 			v.f = i;
-			return floatToHalfI(v.i);
+			return FloatToHalfI(v.i);
 		}
 
 		/** Converts float in UINT32 format to a a half in UINT16 format. */
-		static UINT16 floatToHalfI(UINT32 i)
+		static UINT16 FloatToHalfI(UINT32 i)
 		{
 			int32_t s =  (i >> 16) & 0x00008000;
 			int32_t e = ((i >> 23) & 0x000000ff) - (127 - 15);
@@ -512,15 +512,15 @@ namespace bs
 		}
 		
 		/** Convert a float16 (NV_half_float) to a float32. */
-		static float halfToFloat(UINT16 y)
+		static float HalfToFloat(UINT16 y)
 		{
 			union { float f; UINT32 i; } v;
-			v.i = halfToFloatI(y);
+			v.i = HalfToFloatI(y);
 			return v.f;
 		}
 
 		/** Converts a half in UINT16 format to a float in UINT32 format. */
-		static UINT32 halfToFloatI(UINT16 y)
+		static UINT32 HalfToFloatI(UINT16 y)
 		{
 			int32_t s = (y >> 15) & 0x00000001;
 			int32_t e = (y >> 10) & 0x0000001f;
@@ -563,7 +563,7 @@ namespace bs
 		}
 
 		/** Converts a 32-bit float to a 10-bit float according to OpenGL packed_float extension. */
-		static UINT32 floatToFloat10(float v)
+		static UINT32 FloatToFloat10(float v)
 		{
 			Float754 f;
 			f.value = v;
@@ -603,7 +603,7 @@ namespace bs
 		}
 
 		/** Converts a 32-bit float to a 11-bit float according to OpenGL packed_float extension. */
-		static UINT32 floatToFloat11(float v)
+		static UINT32 FloatToFloat11(float v)
 		{
 			Float754 f;
 			f.value = v;
@@ -643,7 +643,7 @@ namespace bs
 		}
 
 		/** Converts a 10-bit float to a 32-bit float according to OpenGL packed_float extension. */
-		static float float10ToFloat(UINT32 v)
+		static float Float10ToFloat(UINT32 v)
 		{
 			Float10 f;
 			f.raw = v;
@@ -685,7 +685,7 @@ namespace bs
 		}
 
 		/** Converts a 11-bit float to a 32-bit float according to OpenGL packed_float extension. */
-		static float float11ToFloat(UINT32 v)
+		static float Float11ToFloat(UINT32 v)
 		{
 			Float11 f;
 			f.raw = v;
@@ -734,7 +734,7 @@ namespace bs
 		 * @param[out]	output		Buffer to store the encoded bytes in. Must be at least 5 bytes in length.
 		 * @return					Number of bytes required to store the value, in range [1, 5]
 		 */
-		static UINT32 encodeVarInt(UINT32 value, UINT8* output)
+		static UINT32 EncodeVarInt(UINT32 value, UINT8* output)
 		{
 			UINT32 idx = 0;
 			if (value & 0xFFFFFF80U)
@@ -773,7 +773,7 @@ namespace bs
 		 * @param[in]	size	Size of the input buffer.
 		 * @return				Number of bytes read.
 		 */
-		static UINT32 decodeVarInt(UINT32& value, const UINT8* input, UINT32 size)
+		static UINT32 DecodeVarInt(UINT32& value, const UINT8* input, UINT32 size)
 		{
 			if(size == 0)
 				return 0;
@@ -802,19 +802,19 @@ namespace bs
 		}
 
 		/** @copydoc encodeVarInt(UINT32, UINT8*) */
-		static UINT32 encodeVarInt(INT32 value, UINT8* output)
+		static UINT32 EncodeVarInt(INT32 value, UINT8* output)
 		{
 			// Encode using zig-zag pattern so that negative values don't take up max byte count
 			UINT32 temp = (value << 1) ^ (value >> 31);
-			return encodeVarInt(temp, output);
+			return EncodeVarInt(temp, output);
 		}
 
 		/** @copydoc decodeVarInt(UINT32&, const UINT8*, UINT32) */
-		static UINT32 decodeVarInt(INT32& value, const UINT8* input, UINT32 size)
+		static UINT32 DecodeVarInt(INT32& value, const UINT8* input, UINT32 size)
 		{
 			UINT32 temp;
 			
-			UINT32 readBytes = decodeVarInt(temp, input, size);
+			UINT32 readBytes = DecodeVarInt(temp, input, size);
 			value = (INT32)((temp >> 1) ^ -((INT32)temp & 1));
 
 			return readBytes;
@@ -828,7 +828,7 @@ namespace bs
 		 * @param[out]	output		Buffer to store the encoded bytes in. Must be at least 10 bytes in length.
 		 * @return					Number of bytes required to store the value, in range [1, 10]
 		 */
-		static UINT32 encodeVarInt(UINT64 value, UINT8* output)
+		static UINT32 EncodeVarInt(UINT64 value, UINT8* output)
 		{
 			UINT32 idx = 0;
 			if (value & 0xFFFFFFFFFFFFFF80ULL)
@@ -897,7 +897,7 @@ namespace bs
 		 * @param[in]	size	Size of the input buffer.
 		 * @return				Number of bytes read.
 		 */
-		static UINT32 decodeVarInt(UINT64& value, const UINT8* input, UINT32 size)
+		static UINT32 DecodeVarInt(UINT64& value, const UINT8* input, UINT32 size)
 		{
 			if(size == 0)
 				return 0;
@@ -951,32 +951,32 @@ namespace bs
 		}
 
 		/** @copydoc encodeVarInt(UINT64, UINT8*) */
-		static UINT32 encodeVarInt(INT64 value, UINT8* output)
+		static UINT32 EncodeVarInt(INT64 value, UINT8* output)
 		{
 			// Encode using zig-zag pattern so that negative values don't take up max byte count
 			UINT64 temp = (value << 1) ^ (value >> 63);
-			return encodeVarInt(temp, output);
+			return EncodeVarInt(temp, output);
 		}
 
 		/** @copydoc decodeVarInt(UINT64&, const UINT8*, UINT32) */
-		static UINT32 decodeVarInt(INT64& value, const UINT8* input, UINT32 size)
+		static UINT32 DecodeVarInt(INT64& value, const UINT8* input, UINT32 size)
 		{
 			UINT64 temp;
 
-			UINT32 readBytes = decodeVarInt(temp, input, size);
+			UINT32 readBytes = DecodeVarInt(temp, input, size);
 			value = (INT64)((temp >> 1) ^ -((INT64)temp & 1));
 
 			return readBytes;
 		}
 
 		/** Converts a float in range [-1,1] into an unsigned 8-bit integer. */
-		static UINT8 quantize8BitSigned(float v)
+		static UINT8 Quantize8BitSigned(float v)
 		{
-			return quantize8BitUnsigned(v * 0.5f + 0.5f);
+			return Quantize8BitUnsigned(v * 0.5f + 0.5f);
 		}
 
 		/** Converts a float in range [0,1] into an unsigned 8-bit integer. */
-		static UINT8 quantize8BitUnsigned(float v)
+		static UINT8 Quantize8BitUnsigned(float v)
 		{
 			return (UINT8)(v * 255.999f);
 		}

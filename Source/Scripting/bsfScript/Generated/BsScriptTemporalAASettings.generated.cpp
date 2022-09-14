@@ -14,33 +14,33 @@ namespace bs
 
 	void ScriptTemporalAASettings::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_TemporalAASettings", (void*)&ScriptTemporalAASettings::Internal_TemporalAASettings);
+		metaData.scriptClass->AddInternalCall("Internal_TemporalAASettings", (void*)&ScriptTemporalAASettings::InternalTemporalAaSettings);
 		metaData.scriptClass->addInternalCall("Internal_getenabled", (void*)&ScriptTemporalAASettings::Internal_getenabled);
 		metaData.scriptClass->addInternalCall("Internal_setenabled", (void*)&ScriptTemporalAASettings::Internal_setenabled);
 
 	}
 
-	MonoObject* ScriptTemporalAASettings::create(const SPtr<TemporalAASettings>& value)
+	MonoObject* ScriptTemporalAASettings::Create(const SPtr<TemporalAASettings>& value)
 	{
 		if(value == nullptr) return nullptr; 
 
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptTemporalAASettings>()) ScriptTemporalAASettings(managedInstance, value);
 		return managedInstance;
 	}
-	void ScriptTemporalAASettings::Internal_TemporalAASettings(MonoObject* managedInstance)
+	void ScriptTemporalAASettings::InternalTemporalAaSettings(MonoObject* managedInstance)
 	{
 		SPtr<TemporalAASettings> instance = bs_shared_ptr_new<TemporalAASettings>();
 		new (bs_alloc<ScriptTemporalAASettings>())ScriptTemporalAASettings(managedInstance, instance);
 	}
 
-	bool ScriptTemporalAASettings::Internal_getenabled(ScriptTemporalAASettings* thisPtr)
+	bool ScriptTemporalAASettings::InternalGetenabled(ScriptTemporalAASettings* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->getInternal()->enabled;
+		tmp__output = thisPtr->GetInternal()->enabled;
 
 		bool __output;
 		__output = tmp__output;
@@ -48,8 +48,8 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptTemporalAASettings::Internal_setenabled(ScriptTemporalAASettings* thisPtr, bool value)
+	void ScriptTemporalAASettings::InternalSetenabled(ScriptTemporalAASettings* thisPtr, bool value)
 	{
-		thisPtr->getInternal()->enabled = value;
+		thisPtr->GetInternal()->enabled = value;
 	}
 }

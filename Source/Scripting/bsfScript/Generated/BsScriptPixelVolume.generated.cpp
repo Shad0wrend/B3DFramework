@@ -14,14 +14,14 @@ namespace bs
 	void ScriptPixelVolume::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptPixelVolume::box(const PixelVolume& value)
+	MonoObject*ScriptPixelVolume::Box(const PixelVolume& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	PixelVolume ScriptPixelVolume::unbox(MonoObject* value)
+	PixelVolume ScriptPixelVolume::Unbox(MonoObject* value)
 	{
-		return *(PixelVolume*)MonoUtil::unbox(value);
+		return *(PixelVolume*)MonoUtil::Unbox(value);
 	}
 
 }

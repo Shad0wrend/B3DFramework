@@ -15,62 +15,62 @@ namespace bs
 
 	void ScriptCursor::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_GetScreenPosition", (void*)&ScriptCursor::internal_getScreenPosition);
-		metaData.scriptClass->addInternalCall("Internal_SetScreenPosition", (void*)&ScriptCursor::internal_setScreenPosition);
-		metaData.scriptClass->addInternalCall("Internal_Hide", (void*)&ScriptCursor::internal_hide);
-		metaData.scriptClass->addInternalCall("Internal_Show", (void*)&ScriptCursor::internal_show);
-		metaData.scriptClass->addInternalCall("Internal_ClipToRect", (void*)&ScriptCursor::internal_clipToRect);
-		metaData.scriptClass->addInternalCall("Internal_ClipDisable", (void*)&ScriptCursor::internal_clipDisable);
-		metaData.scriptClass->addInternalCall("Internal_SetCursor", (void*)&ScriptCursor::internal_setCursor);
-		metaData.scriptClass->addInternalCall("Internal_SetCursorStr", (void*)&ScriptCursor::internal_setCursorStr);
-		metaData.scriptClass->addInternalCall("Internal_SetCursorIcon", (void*)&ScriptCursor::internal_setCursorIcon);
-		metaData.scriptClass->addInternalCall("Internal_SetCursorIconStr", (void*)&ScriptCursor::internal_setCursorIconStr);
-		metaData.scriptClass->addInternalCall("Internal_ClearCursorIcon", (void*)&ScriptCursor::internal_clearCursorIcon);
-		metaData.scriptClass->addInternalCall("Internal_ClearCursorIconStr", (void*)&ScriptCursor::internal_clearCursorIconStr);
+		metaData.scriptClass->AddInternalCall("Internal_GetScreenPosition", (void*)&ScriptCursor::InternalGetScreenPosition);
+		metaData.scriptClass->AddInternalCall("Internal_SetScreenPosition", (void*)&ScriptCursor::InternalSetScreenPosition);
+		metaData.scriptClass->AddInternalCall("Internal_Hide", (void*)&ScriptCursor::InternalHide);
+		metaData.scriptClass->AddInternalCall("Internal_Show", (void*)&ScriptCursor::InternalShow);
+		metaData.scriptClass->AddInternalCall("Internal_ClipToRect", (void*)&ScriptCursor::InternalClipToRect);
+		metaData.scriptClass->AddInternalCall("Internal_ClipDisable", (void*)&ScriptCursor::InternalClipDisable);
+		metaData.scriptClass->AddInternalCall("Internal_SetCursor", (void*)&ScriptCursor::InternalSetCursor);
+		metaData.scriptClass->AddInternalCall("Internal_SetCursorStr", (void*)&ScriptCursor::InternalSetCursorStr);
+		metaData.scriptClass->AddInternalCall("Internal_SetCursorIcon", (void*)&ScriptCursor::InternalSetCursorIcon);
+		metaData.scriptClass->AddInternalCall("Internal_SetCursorIconStr", (void*)&ScriptCursor::InternalSetCursorIconStr);
+		metaData.scriptClass->AddInternalCall("Internal_ClearCursorIcon", (void*)&ScriptCursor::InternalClearCursorIcon);
+		metaData.scriptClass->AddInternalCall("Internal_ClearCursorIconStr", (void*)&ScriptCursor::InternalClearCursorIconStr);
 	}
 
-	void ScriptCursor::internal_getScreenPosition(Vector2I* value)
+	void ScriptCursor::InternalGetScreenPosition(Vector2I* value)
 	{
-		Cursor::instance().getScreenPosition();
+		Cursor::Instance().GetScreenPosition();
 	}
 
-	void ScriptCursor::internal_setScreenPosition(Vector2I* value)
+	void ScriptCursor::InternalSetScreenPosition(Vector2I* value)
 	{
-		Cursor::instance().setScreenPosition(*value);
+		Cursor::Instance().SetScreenPosition(*value);
 	}
 
-	void ScriptCursor::internal_hide()
+	void ScriptCursor::InternalHide()
 	{
-		Cursor::instance().hide();
+		Cursor::Instance().Hide();
 	}
 
-	void ScriptCursor::internal_show()
+	void ScriptCursor::InternalShow()
 	{
-		Cursor::instance().show();
+		Cursor::Instance().show();
 	}
 
-	void ScriptCursor::internal_clipToRect(Rect2I* value)
+	void ScriptCursor::InternalClipToRect(Rect2I* value)
 	{
-		Cursor::instance().clipToRect(*value);
+		Cursor::Instance().clipToRect(*value);
 	}
 
-	void ScriptCursor::internal_clipDisable()
+	void ScriptCursor::InternalClipDisable()
 	{
-		Cursor::instance().clipDisable();
+		Cursor::Instance().clipDisable();
 	}
 
-	void ScriptCursor::internal_setCursorStr(MonoString* name)
+	void ScriptCursor::InternalSetCursorStr(MonoString* name)
 	{
 		String nameStr = MonoUtil::monoToString(name);
-		Cursor::instance().setCursor(nameStr);
+		Cursor::Instance().setCursor(nameStr);
 	}
 
-	void ScriptCursor::internal_setCursor(CursorType cursor)
+	void ScriptCursor::InternalSetCursor(CursorType cursor)
 	{
-		Cursor::instance().setCursor(cursor);
+		Cursor::Instance().setCursor(cursor);
 	}
 
-	void ScriptCursor::internal_setCursorIconStr(MonoString* name, MonoObject* iconData, Vector2I* hotspot)
+	void ScriptCursor::InternalSetCursorIconStr(MonoString* name, MonoObject* iconData, Vector2I* hotspot)
 	{
 		String nameStr = MonoUtil::monoToString(name);
 
@@ -79,33 +79,33 @@ namespace bs
 		if (scriptPixelData != nullptr)
 		{
 			SPtr<PixelData> pixelData = scriptPixelData->getInternal();
-			Cursor::instance().setCursorIcon(nameStr, *pixelData, *hotspot);
+			Cursor::Instance().setCursorIcon(nameStr, *pixelData, *hotspot);
 		}
 		else
-			Cursor::instance().clearCursorIcon(nameStr);
+			Cursor::Instance().clearCursorIcon(nameStr);
 	}
 
-	void ScriptCursor::internal_setCursorIcon(CursorType cursor, MonoObject* iconData, Vector2I* hotspot)
+	void ScriptCursor::InternalSetCursorIcon(CursorType cursor, MonoObject* iconData, Vector2I* hotspot)
 	{
 		ScriptPixelData* scriptPixelData = ScriptPixelData::toNative(iconData);
 
 		if (scriptPixelData != nullptr)
 		{
 			SPtr<PixelData> pixelData = scriptPixelData->getInternal();
-			Cursor::instance().setCursorIcon(cursor, *pixelData, *hotspot);
+			Cursor::Instance().setCursorIcon(cursor, *pixelData, *hotspot);
 		}
 		else
-			Cursor::instance().clearCursorIcon(cursor);
+			Cursor::Instance().clearCursorIcon(cursor);
 	}
 
-	void ScriptCursor::internal_clearCursorIconStr(MonoString* name)
+	void ScriptCursor::InternalClearCursorIconStr(MonoString* name)
 	{
 		String nameStr = MonoUtil::monoToString(name);
-		Cursor::instance().clearCursorIcon(nameStr);
+		Cursor::Instance().clearCursorIcon(nameStr);
 	}
 
-	void ScriptCursor::internal_clearCursorIcon(CursorType cursor)
+	void ScriptCursor::InternalClearCursorIcon(CursorType cursor)
 	{
-		Cursor::instance().clearCursorIcon(cursor);
+		Cursor::Instance().clearCursorIcon(cursor);
 	}
 }

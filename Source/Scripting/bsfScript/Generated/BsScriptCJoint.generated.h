@@ -26,21 +26,21 @@ namespace bs
 		ScriptCJoint(MonoObject* managedInstance, const GameObjectHandle<CJoint>& value);
 
 	private:
-		void onJointBreak();
+		void OnJointBreak();
 
 		typedef void(BS_THUNKCALL *onJointBreakThunkDef) (MonoObject*, MonoException**);
 		static onJointBreakThunkDef onJointBreakThunk;
 
-		static MonoObject* Internal_getBody(ScriptCJointBase* thisPtr, JointBody body);
-		static void Internal_setBody(ScriptCJointBase* thisPtr, JointBody body, MonoObject* value);
-		static void Internal_getPosition(ScriptCJointBase* thisPtr, JointBody body, Vector3* __output);
-		static void Internal_getRotation(ScriptCJointBase* thisPtr, JointBody body, Quaternion* __output);
-		static void Internal_setTransform(ScriptCJointBase* thisPtr, JointBody body, Vector3* position, Quaternion* rotation);
-		static float Internal_getBreakForce(ScriptCJointBase* thisPtr);
-		static void Internal_setBreakForce(ScriptCJointBase* thisPtr, float force);
-		static float Internal_getBreakTorque(ScriptCJointBase* thisPtr);
-		static void Internal_setBreakTorque(ScriptCJointBase* thisPtr, float torque);
-		static bool Internal_getEnableCollision(ScriptCJointBase* thisPtr);
-		static void Internal_setEnableCollision(ScriptCJointBase* thisPtr, bool value);
+		static MonoObject* InternalGetBody(ScriptCJointBase* thisPtr, JointBody body);
+		static void InternalSetBody(ScriptCJointBase* thisPtr, JointBody body, MonoObject* value);
+		static void InternalGetPosition(ScriptCJointBase* thisPtr, JointBody body, Vector3* __output);
+		static void InternalGetRotation(ScriptCJointBase* thisPtr, JointBody body, Quaternion* __output);
+		static void InternalSetTransform(ScriptCJointBase* thisPtr, JointBody body, Vector3* position, Quaternion* rotation);
+		static float InternalGetBreakForce(ScriptCJointBase* thisPtr);
+		static void InternalSetBreakForce(ScriptCJointBase* thisPtr, float force);
+		static float InternalGetBreakTorque(ScriptCJointBase* thisPtr);
+		static void InternalSetBreakTorque(ScriptCJointBase* thisPtr, float torque);
+		static bool InternalGetEnableCollision(ScriptCJointBase* thisPtr);
+		static void InternalSetEnableCollision(ScriptCJointBase* thisPtr, bool value);
 	};
 }

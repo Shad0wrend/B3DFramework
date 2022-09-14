@@ -22,18 +22,18 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 	public:
-		const String& getRTTIName() override
+		const String& GetRttiName() 
 		{
 			static String name = "ResourceMetaData";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() 
 		{
 			return TID_ResourceMetaData;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return bs_shared_ptr_new<ResourceMetaData>();
 		}

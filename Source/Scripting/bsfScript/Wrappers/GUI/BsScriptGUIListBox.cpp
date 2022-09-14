@@ -30,18 +30,18 @@ namespace bs
 
 	void ScriptGUIListBox::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_CreateInstance", (void*)&ScriptGUIListBox::internal_createInstance);
-		metaData.scriptClass->addInternalCall("Internal_SetElements", (void*)&ScriptGUIListBox::internal_setElements);
-		metaData.scriptClass->addInternalCall("Internal_SetTint", (void*)&ScriptGUIListBox::internal_setTint);
-		metaData.scriptClass->addInternalCall("Internal_SelectElement", (void*)&ScriptGUIListBox::internal_selectElement);
-		metaData.scriptClass->addInternalCall("Internal_DeselectElement", (void*)&ScriptGUIListBox::internal_deselectElement);
-		metaData.scriptClass->addInternalCall("Internal_GetElementStates", (void*)&ScriptGUIListBox::internal_getElementStates);
-		metaData.scriptClass->addInternalCall("Internal_SetElementStates", (void*)&ScriptGUIListBox::internal_setElementStates);
+		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIListBox::InternalCreateInstance);
+		metaData.scriptClass->AddInternalCall("Internal_SetElements", (void*)&ScriptGUIListBox::InternalSetElements);
+		metaData.scriptClass->AddInternalCall("Internal_SetTint", (void*)&ScriptGUIListBox::InternalSetTint);
+		metaData.scriptClass->AddInternalCall("Internal_SelectElement", (void*)&ScriptGUIListBox::InternalSelectElement);
+		metaData.scriptClass->AddInternalCall("Internal_DeselectElement", (void*)&ScriptGUIListBox::InternalDeselectElement);
+		metaData.scriptClass->AddInternalCall("Internal_GetElementStates", (void*)&ScriptGUIListBox::InternalGetElementStates);
+		metaData.scriptClass->AddInternalCall("Internal_SetElementStates", (void*)&ScriptGUIListBox::InternalSetElementStates);
 
 		onSelectionChangedThunk = (OnSelectionChangedThunkDef)metaData.scriptClass->getMethod("DoOnSelectionChanged", 1)->getThunk();
 	}
 
-	void ScriptGUIListBox::internal_createInstance(MonoObject* instance, MonoArray* elements, bool multiselect,
+	void ScriptGUIListBox::InternalCreateInstance(MonoObject* instance, MonoArray* elements, bool multiselect,
 		MonoString* style, MonoArray* guiOptions)
 	{
 		GUIOptions options;
@@ -67,14 +67,14 @@ namespace bs
 			}
 		}
 
-		GUIListBox* guiListBox = GUIListBox::create(nativeElements, multiselect, options, MonoUtil::monoToString(style));
+		GUIListBox* guiListBox = GUIListBox::Create(nativeElements, multiselect, options, MonoUtil::monoToString(style));
 
 		auto nativeInstance = new (bs_alloc<ScriptGUIListBox>()) ScriptGUIListBox(instance, guiListBox);
 
 		guiListBox->onSelectionToggled.connect(std::bind(&ScriptGUIListBox::onSelectionChanged, nativeInstance, _1, _2));
 	}
 
-	void ScriptGUIListBox::internal_setElements(ScriptGUIListBox* nativeInstance, MonoArray* elements)
+	void ScriptGUIListBox::InternalSetElements(ScriptGUIListBox* nativeInstance, MonoArray* elements)
 	{
 		ScriptArray elemsArray(elements);
 		UINT32 elementsArrayLen = elemsArray.size();
@@ -96,25 +96,25 @@ namespace bs
 		listBox->setElements(nativeElements);
 	}
 
-	void ScriptGUIListBox::internal_setTint(ScriptGUIListBox* nativeInstance, Color* color)
+	void ScriptGUIListBox::InternalSetTint(ScriptGUIListBox* nativeInstance, Color* color)
 	{
 		GUIListBox* listBox = (GUIListBox*)nativeInstance->getGUIElement();
 		listBox->setTint(*color);
 	}
 
-	void ScriptGUIListBox::internal_selectElement(ScriptGUIListBox* nativeInstance, int idx)
+	void ScriptGUIListBox::InternalSelectElement(ScriptGUIListBox* nativeInstance, int idx)
 	{
 		GUIListBox* listBox = (GUIListBox*)nativeInstance->getGUIElement();
 		listBox->selectElement(idx);
 	}
 
-	void ScriptGUIListBox::internal_deselectElement(ScriptGUIListBox* nativeInstance, int idx)
+	void ScriptGUIListBox::InternalDeselectElement(ScriptGUIListBox* nativeInstance, int idx)
 	{
 		GUIListBox* listBox = (GUIListBox*)nativeInstance->getGUIElement();
 		listBox->deselectElement(idx);
 	}
 
-	MonoArray* ScriptGUIListBox::internal_getElementStates(ScriptGUIListBox* nativeInstance)
+	MonoArray* ScriptGUIListBox::InternalGetElementStates(ScriptGUIListBox* nativeInstance)
 	{
 		GUIListBox* listBox = (GUIListBox*)nativeInstance->getGUIElement();
 		const Vector<bool>& states = listBox->getElementStates();
@@ -128,7 +128,7 @@ namespace bs
 		return outStates.getInternal();
 	}
 
-	void ScriptGUIListBox::internal_setElementStates(ScriptGUIListBox* nativeInstance, MonoArray* monoStates)
+	void ScriptGUIListBox::InternalSetElementStates(ScriptGUIListBox* nativeInstance, MonoArray* monoStates)
 	{
 		if (monoStates == nullptr)
 			return;
@@ -144,7 +144,7 @@ namespace bs
 		listBox->setElementStates(states);
 	}
 
-	void ScriptGUIListBox::onSelectionChanged(UINT32 index, bool enabled)
+	void ScriptGUIListBox::OnSelectionChanged(UINT32 index, bool enabled)
 	{
 		MonoUtil::invokeThunk(onSelectionChangedThunk, getManagedInstance(), index);
 	}

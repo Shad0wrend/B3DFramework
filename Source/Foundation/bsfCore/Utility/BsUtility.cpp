@@ -12,21 +12,21 @@ namespace bs
 	 */
 	bool hasReflectableChildren(RTTITypeBase* type)
 	{
-		UINT32 numFields = type->getNumFields();
+		UINT32 numFields = type->GetNumFields();
 		for (UINT32 i = 0; i < numFields; i++)
 		{
-			RTTIField* field = type->getField(i);
+			RTTIField* field = type->GetField(i);
 			if (field->schema.type == SerializableFT_Reflectable || field->schema.type == SerializableFT_ReflectablePtr)
 				return true;
 		}
 
-		const Vector<RTTITypeBase*>& derivedClasses = type->getDerivedClasses();
+		const Vector<RTTITypeBase*>& derivedClasses = type->GetDerivedClasses();
 		for (auto& derivedClass : derivedClasses)
 		{
-			numFields = derivedClass->getNumFields();
+			numFields = derivedClass->GetNumFields();
 			for (UINT32 i = 0; i < numFields; i++)
 			{
-				RTTIField* field = derivedClass->getField(i);
+				RTTIField* field = derivedClass->GetField(i);
 				if (field->schema.type == SerializableFT_Reflectable || field->schema.type == SerializableFT_ReflectablePtr)
 					return true;
 			}
@@ -41,13 +41,13 @@ namespace bs
 		RTTITypeBase* rtti = obj.getRTTI();
 		do {
 			RTTITypeBase* rttiInstance = rtti->CloneInternal(alloc);
-			rttiInstance->onSerializationStarted(&obj, nullptr);
+			rttiInstance->OnSerializationStarted(&obj, nullptr);
 
-			const UINT32 numFields = rtti->getNumFields();
+			const UINT32 numFields = rtti->GetNumFields();
 			for (UINT32 i = 0; i < numFields; i++)
 			{
-				RTTIField* field = rtti->getField(i);
-				if (field->schema.info.flags.isSet(RTTIFieldFlag::SkipInReferenceSearch))
+				RTTIField* field = rtti->GetField(i);
+				if (field->schema.info.flags.IsSet(RTTIFieldFlag::SkipInReferenceSearch))
 					continue;
 
 				if (field->schema.type == SerializableFT_Reflectable)
@@ -58,10 +58,10 @@ namespace bs
 					{
 						if (reflectableField->schema.isArray)
 						{
-							const UINT32 numElements = reflectableField->getArraySize(rttiInstance, &obj);
+							const UINT32 numElements = reflectableField->GetArraySize(rttiInstance, &obj);
 							for (UINT32 j = 0; j < numElements; j++)
 							{
-								HResource resource = (HResource&)reflectableField->getArrayValue(rttiInstance, &obj, j);
+								HResource resource = (HResource&)reflectableField->GetArrayValue(rttiInstance, &obj, j);
 								if (!resource.getUUID().empty())
 								{
 									ResourceDependency& dependency = dependencies[resource.getUUID()];
@@ -142,7 +142,7 @@ namespace bs
 		} while(rtti != nullptr);
 	}
 
-	Vector<ResourceDependency> Utility::findResourceDependencies(IReflectable& obj, bool recursive)
+	Vector<ResourceDependency> Utility::FindResourceDependencies(IReflectable& obj, bool recursive)
 	{
 		gFrameAlloc().markFrame();
 
@@ -162,7 +162,7 @@ namespace bs
 		return dependencyList;
 	}
 
-	UINT32 Utility::getSceneObjectDepth(const HSceneObject& so)
+	UINT32 Utility::GetSceneObjectDepth(const HSceneObject& so)
 	{
 		HSceneObject parent = so->getParent();
 		
@@ -176,7 +176,7 @@ namespace bs
 		return depth;
 	}
 
-	Vector<HComponent> Utility::findComponents(const HSceneObject& object, UINT32 typeId)
+	Vector<HComponent> Utility::FindComponents(const HSceneObject& object, UINT32 typeId)
 	{
 		Vector<HComponent> output;
 
@@ -206,13 +206,13 @@ namespace bs
 	class CoreSerializationContextRTTI :
 		public RTTIType<CoreSerializationContext, SerializationContext, CoreSerializationContextRTTI>
 	{
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "CoreSerializationContext";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_CoreSerializationContext;
 		}
@@ -224,14 +224,14 @@ namespace bs
 		}
 	};
 
-	RTTITypeBase* CoreSerializationContext::getRTTIStatic()
+	RTTITypeBase* CoreSerializationContext::GetRttiStatic()
 	{
-		return CoreSerializationContextRTTI::instance();
+		return CoreSerializationContextRTTI::Instance();
 	}
 
-	RTTITypeBase* CoreSerializationContext::getRTTI() const
+	RTTITypeBase* CoreSerializationContext::GetRtti() const
 	{
-		return getRTTIStatic();
+		return GetRttiStatic();
 	}
 
 }

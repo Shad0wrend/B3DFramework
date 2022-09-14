@@ -194,6 +194,6 @@ namespace bs
 
 	FMODAudio& gFMODAudio()
 	{
-		return static_cast<FMODAudio&>(FMODAudio::instance());
+		return static_cast<FMODAudio&>(FMODAudio::Instance());
 	}
 }

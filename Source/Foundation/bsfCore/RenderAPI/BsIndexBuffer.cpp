@@ -38,24 +38,24 @@ namespace bs
 #endif
 	}
 
-	SPtr<ct::IndexBuffer> IndexBuffer::getCore() const
+	SPtr<ct::IndexBuffer> IndexBuffer::GetCore() const
 	{
 		return std::static_pointer_cast<ct::IndexBuffer>(mCoreSpecific);
 	}
 
-	SPtr<ct::CoreObject> IndexBuffer::createCore() const
+	SPtr<ct::CoreObject> IndexBuffer::CreateCore() const
 	{
 		INDEX_BUFFER_DESC desc;
 		desc.indexType = mProperties.mIndexType;
 		desc.numIndices = mProperties.mNumIndices;
 		desc.usage = mUsage;
 
-		return ct::HardwareBufferManager::instance().createIndexBufferInternal(desc);
+		return ct::HardwareBufferManager::Instance().CreateIndexBufferInternal(desc);
 	}
 
-	SPtr<IndexBuffer> IndexBuffer::create(const INDEX_BUFFER_DESC& desc)
+	SPtr<IndexBuffer> IndexBuffer::Create(const INDEX_BUFFER_DESC& desc)
 	{
-		return HardwareBufferManager::instance().createIndexBuffer(desc);
+		return HardwareBufferManager::Instance().createIndexBuffer(desc);
 	}
 
 	namespace ct
@@ -77,13 +77,13 @@ namespace bs
 		BS_INC_RENDER_STAT_CAT(ResDestroyed, RenderStatObject_IndexBuffer);
 	}
 
-	void IndexBuffer::initialize()
+	void IndexBuffer::Initialize()
 	{
 		BS_INC_RENDER_STAT_CAT(ResCreated, RenderStatObject_IndexBuffer);
 		CoreObject::initialize();
 	}
 
-	void* IndexBuffer::map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx, UINT32 queueIdx)
+	void* IndexBuffer::Map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx, UINT32 queueIdx)
 	{
 #if BS_PROFILING_ENABLED
 		if (options == GBL_READ_ONLY || options == GBL_READ_WRITE)
@@ -100,19 +100,19 @@ namespace bs
 		return mBuffer->lock(offset, length, options, deviceIdx, queueIdx);
 	}
 
-	void IndexBuffer::unmap()
+	void IndexBuffer::Unmap()
 	{
 		mBuffer->unlock();
 	}
 
-	void IndexBuffer::readData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx, UINT32 queueIdx)
+	void IndexBuffer::ReadData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx, UINT32 queueIdx)
 	{
 		mBuffer->readData(offset, length, dest, deviceIdx, queueIdx);
 
 		BS_INC_RENDER_STAT_CAT(ResRead, RenderStatObject_IndexBuffer);
 	}
 
-	void IndexBuffer::writeData(UINT32 offset, UINT32 length, const void* source, BufferWriteType writeFlags,
+	void IndexBuffer::WriteData(UINT32 offset, UINT32 length, const void* source, BufferWriteType writeFlags,
 		UINT32 queueIdx)
 	{
 		mBuffer->writeData(offset, length, source, writeFlags, queueIdx);
@@ -120,14 +120,14 @@ namespace bs
 		BS_INC_RENDER_STAT_CAT(ResWrite, RenderStatObject_IndexBuffer);
 	}
 
-	void IndexBuffer::copyData(HardwareBuffer& srcBuffer, UINT32 srcOffset, UINT32 dstOffset, UINT32 length,
+	void IndexBuffer::CopyData(HardwareBuffer& srcBuffer, UINT32 srcOffset, UINT32 dstOffset, UINT32 length,
 		bool discardWholeBuffer, const SPtr<CommandBuffer>& commandBuffer)
 	{
 		auto& srcIndexBuffer = static_cast<IndexBuffer&>(srcBuffer);
 		mBuffer->copyData(*srcIndexBuffer.mBuffer, srcOffset, dstOffset, length, discardWholeBuffer, commandBuffer);
 	}
 
-	SPtr<GpuBuffer> IndexBuffer::getLoadStore(GpuBufferType type, GpuBufferFormat format, UINT32 elementSize)
+	SPtr<GpuBuffer> IndexBuffer::GetLoadStore(GpuBufferType type, GpuBufferFormat format, UINT32 elementSize)
 	{
 		if((mUsage & GBU_LOADSTORE) != GBU_LOADSTORE)
 			return nullptr;
@@ -163,15 +163,15 @@ namespace bs
 		if(!mSharedBuffer)
 			mSharedBuffer = bs_shared_ptr(mBuffer, mBufferDeleter);
 
-		SPtr<GpuBuffer> newView = GpuBuffer::create(desc, mSharedBuffer);
+		SPtr<GpuBuffer> newView = GpuBuffer::Create(desc, mSharedBuffer);
 		mLoadStoreViews.push_back(newView);
 		
 		return newView;
 	}
 
-	SPtr<IndexBuffer> IndexBuffer::create(const INDEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask)
+	SPtr<IndexBuffer> IndexBuffer::Create(const INDEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask)
 	{
-		return HardwareBufferManager::instance().createIndexBuffer(desc, deviceMask);
+		return HardwareBufferManager::Instance().createIndexBuffer(desc, deviceMask);
 	}
 	}
 }

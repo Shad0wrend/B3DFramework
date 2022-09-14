@@ -6,7 +6,7 @@
 
 namespace bs
 {
-	void ConsoleTestOutput::outputFail(const String& desc,
+	void ConsoleTestOutput::OutputFail(const String& desc,
 	                                   const String& function,
 	                                   const String& file,
 	                                   long line)

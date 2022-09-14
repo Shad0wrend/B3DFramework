@@ -35,16 +35,16 @@ namespace bs
 		 * @note	
 		 * Offsets provided by MeshData are ignored. MeshHeap will determine where the data will be written internally.
 		 */
-		SPtr<TransientMesh> alloc(const SPtr<MeshData>& meshData, DrawOperationType drawOp = DOT_TRIANGLE_LIST);
+		SPtr<TransientMesh> Alloc(const SPtr<MeshData>& meshData, DrawOperationType drawOp = DOT_TRIANGLE_LIST);
 
 		/**
 		 * Deallocates the provided mesh and makes that room on the heap re-usable as soon as the GPU is also done with the
 		 * mesh.
 		 */
-		void dealloc(const SPtr<TransientMesh>& mesh);
+		void Dealloc(const SPtr<TransientMesh>& mesh);
 
 		/** Retrieves a core implementation of a mesh heap usable only from the core thread. */
-		SPtr<ct::MeshHeap> getCore() const;
+		SPtr<ct::MeshHeap> GetCore() const;
 
 		/**
 		 * Creates a new mesh heap.
@@ -54,7 +54,7 @@ namespace bs
 		 * @param[in]	vertexDesc	Description of the stored vertices.
 		 * @param[in]	indexType	Type of the stored indices.
 		 */
-		static SPtr<MeshHeap> create(UINT32 numVertices, UINT32 numIndices,
+		static SPtr<MeshHeap> Create(UINT32 numVertices, UINT32 numIndices,
 			const SPtr<VertexDataDesc>& vertexDesc, IndexType indexType = IT_32BIT);
 
 	private:
@@ -63,7 +63,7 @@ namespace bs
 			const SPtr<VertexDataDesc>& vertexDesc, IndexType indexType = IT_32BIT);
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> createCore() const override;
+		SPtr<ct::CoreObject> CreateCore() const ;
 
 	private:
 		UINT32 mNumVertices;
@@ -136,7 +136,7 @@ namespace bs
 			const SPtr<VertexDataDesc>& vertexDesc, IndexType indexType, GpuDeviceFlags deviceMask);
 
 		/** @copydoc CoreObject::initialize() */
-		void initialize() override;
+		void Initialize() ;
 
 		/**
 		 * Allocates a new mesh in the heap, expanding the heap if needed.
@@ -144,53 +144,53 @@ namespace bs
 		 * @param[in]	mesh		Mesh for which we are allocating the data.
 		 * @param[in]	meshData	Data to initialize the new mesh with.
 		 */
-		void alloc(SPtr<TransientMesh> mesh, const SPtr<MeshData>& meshData);
+		void Alloc(SPtr<TransientMesh> mesh, const SPtr<MeshData>& meshData);
 
 		/** Deallocates the provided mesh. Freed memory will be re-used as soon as the GPU is done with the mesh. */
-		void dealloc(SPtr<TransientMesh> mesh);
+		void Dealloc(SPtr<TransientMesh> mesh);
 
 		/** Resizes the vertex buffers so they max contain the provided number of vertices. */
-		void growVertexBuffer(UINT32 numVertices);
+		void GrowVertexBuffer(UINT32 numVertices);
 
 		/** Resizes the index buffer so they max contain the provided number of indices. */
-		void growIndexBuffer(UINT32 numIndices);
+		void GrowIndexBuffer(UINT32 numIndices);
 
 		/**
 		 * Creates a new event query or returns an existing one from the pool if available. Returned value is an index
 		 * into event query array.
 		 */
-		UINT32 createEventQuery();
+		UINT32 CreateEventQuery();
 
 		/** Frees the event query with the specified index and returns it to the pool so it may be reused later. */
-		void freeEventQuery(UINT32 idx);
+		void FreeEventQuery(UINT32 idx);
 
 		/**	Gets internal vertex data for all the meshes. */
-		SPtr<VertexData> getVertexData() const;
+		SPtr<VertexData> GetVertexData() const;
 
 		/**	Gets internal index data for all the meshes. */
-		SPtr<IndexBuffer> getIndexBuffer() const;
+		SPtr<IndexBuffer> GetIndexBuffer() const;
 
 		/** Returns a structure that describes how are the vertices stored in the mesh's vertex buffer. */
-		SPtr<VertexDataDesc> getVertexDesc() const;
+		SPtr<VertexDataDesc> GetVertexDesc() const;
 
 		/**
 		 * Returns the offset in vertices from the start of the buffer to the first vertex of the mesh with the provided ID.
 		 */
-		UINT32 getVertexOffset(UINT32 meshId) const;
+		UINT32 GetVertexOffset(UINT32 meshId) const;
 
 		/**
 		 * Returns the offset in indices from the start of the buffer to the first index of the mesh with the provided ID.
 		 */
-		UINT32 getIndexOffset(UINT32 meshId) const;
+		UINT32 GetIndexOffset(UINT32 meshId) const;
 
 		/** Called by the render system when a mesh gets queued to the GPU. */
-		void notifyUsedOnGPU(UINT32 meshId);
+		void NotifyUsedOnGpu(UINT32 meshId);
 
 		/**
 		 * Called by an GPU event query when GPU processes the query. Normally signals the heap that the GPU is done with
 		 * the mesh.
 		 */
-		static void queryTriggered(SPtr<MeshHeap> thisPtr, UINT32 meshId, UINT32 queryId);
+		static void QueryTriggered(SPtr<MeshHeap> thisPtr, UINT32 meshId, UINT32 queryId);
 
 		/**
 		 * Attempts to reorganize the vertex and index buffer chunks in order to in order to make free memory contigous.
@@ -198,7 +198,7 @@ namespace bs
 		 * @note	
 		 * This will not actually copy any data from index/vertex buffers, and will only modify the chunk descriptors.
 		 */
-		void mergeWithNearbyChunks(UINT32 chunkVertIdx, UINT32 chunkIdxIdx);
+		void MergeWithNearbyChunks(UINT32 chunkVertIdx, UINT32 chunkIdxIdx);
 
 	private:
 		UINT32 mNumVertices;

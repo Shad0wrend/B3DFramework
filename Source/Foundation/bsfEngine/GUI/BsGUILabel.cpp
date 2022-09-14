@@ -28,10 +28,10 @@ namespace bs
 		return 2;
 	}
 
-	void GUILabel::updateRenderElementsInternal()
+	void GUILabel::UpdateRenderElementsInternal()
 	{		
 		const HSpriteTexture& activeTex = GetStyleInternal()->normal.texture;
-		if (SpriteTexture::checkIsLoaded(activeTex))
+		if (SpriteTexture::CheckIsLoaded(activeTex))
 		{
 			mImageDesc.texture = activeTex;
 
@@ -58,9 +58,9 @@ namespace bs
 			mImageDesc.borderRight = GetStyleInternal()->border.right;
 			mImageDesc.borderTop = GetStyleInternal()->border.top;
 			mImageDesc.borderBottom = GetStyleInternal()->border.bottom;
-			mImageDesc.color = getTint();
+			mImageDesc.color = GetTint();
 
-			mImageSprite->update(mImageDesc, (UINT64)GetParentWidgetInternal());
+			mImageSprite->Update(mImageDesc, (UINT64)GetParentWidgetInternal());
 		}
 
 		mDesc.font = GetStyleInternal()->font;
@@ -71,14 +71,14 @@ namespace bs
 		mDesc.width = mLayoutData.area.width;
 		mDesc.height = mLayoutData.area.height;
 		mDesc.text = mContent.text;
-		mDesc.color = getTint() * GetStyleInternal()->normal.textColor;;
+		mDesc.color = GetTint() * GetStyleInternal()->normal.textColor;;
 
-		mTextSprite->update(mDesc, (UINT64)GetParentWidgetInternal());
+		mTextSprite->Update(mDesc, (UINT64)GetParentWidgetInternal());
 
 		// Populate GUI render elements from the sprites
 		{
 			using T = impl::GUIRenderElementHelper;
-			T::populate({ T::SpriteInfo(mTextSprite), T::SpriteInfo(mImageSprite, 1) }, mRenderElements);
+			T::Populate({ T::SpriteInfo(mTextSprite), T::SpriteInfo(mImageSprite, 1) }, mRenderElements);
 		}
 
 		GUIElement::updateRenderElementsInternal();
@@ -89,7 +89,7 @@ namespace bs
 		return GUIHelper::calcOptimalContentsSize(mContent, *GetStyleInternal(), GetDimensionsInternal());
 	}
 
-	void GUILabel::_fillBuffer(
+	void GUILabel::FillBuffer(
 		UINT8* vertices,
 		UINT32* indices,
 		UINT32 vertexOffset,
@@ -118,7 +118,7 @@ namespace bs
 			vertexStride, indexStride, imageSpriteIdx - renderElementIdx, layoutOffset, mLayoutData.getLocalClipRect());
 	}
 
-	void GUILabel::setContent(const GUIContent& content)
+	void GUILabel::SetContent(const GUIContent& content)
 	{
 		Vector2I origSize = mDimensions.calculateSizeRange(GetOptimalSizeInternal()).optimal;
 		mContent = content;
@@ -130,27 +130,27 @@ namespace bs
 			MarkContentAsDirtyInternal();
 	}
 
-	GUILabel* GUILabel::create(const HString& text, const String& styleName)
+	GUILabel* GUILabel::Create(const HString& text, const String& styleName)
 	{
 		return create(GUIContent(text), styleName);
 	}
 
-	GUILabel* GUILabel::create(const HString& text, const GUIOptions& options, const String& styleName)
+	GUILabel* GUILabel::Create(const HString& text, const GUIOptions& options, const String& styleName)
 	{
 		return create(GUIContent(text), options, styleName);
 	}
 
-	GUILabel* GUILabel::create(const GUIContent& content, const String& styleName)
+	GUILabel* GUILabel::Create(const GUIContent& content, const String& styleName)
 	{
-		return new (bs_alloc<GUILabel>()) GUILabel(getStyleName<GUILabel>(styleName), content, GUIDimensions::create());
+		return new (bs_alloc<GUILabel>()) GUILabel(getStyleName<GUILabel>(styleName), content, GUIDimensions::Create());
 	}
 
-	GUILabel* GUILabel::create(const GUIContent& content, const GUIOptions& options, const String& styleName)
+	GUILabel* GUILabel::Create(const GUIContent& content, const GUIOptions& options, const String& styleName)
 	{
-		return new (bs_alloc<GUILabel>()) GUILabel(getStyleName<GUILabel>(styleName), content, GUIDimensions::create(options));
+		return new (bs_alloc<GUILabel>()) GUILabel(getStyleName<GUILabel>(styleName), content, GUIDimensions::Create(options));
 	}
 
-	const String& GUILabel::getGUITypeName()
+	const String& GUILabel::GetGuiTypeName()
 	{
 		static String typeName = "Label";
 		return typeName;

@@ -17,36 +17,36 @@ namespace bs
 	class BS_CORE_EXPORT PhysicsMaterialRTTI : public RTTIType<PhysicsMaterial, Resource, PhysicsMaterialRTTI>
 	{
 	private:
-		float& getStaticFriction(PhysicsMaterial* obj)
+		float& GetStaticFriction(PhysicsMaterial* obj)
 		{
 			return mStaticFriction;
 		}
 
-		void setStaticFriction(PhysicsMaterial* obj, float& size) { obj->setStaticFriction(size); }
+		void SetStaticFriction(PhysicsMaterial* obj, float& size) { obj->SetStaticFriction(size); }
 
-		float& getDynamicFriction(PhysicsMaterial* obj)
+		float& GetDynamicFriction(PhysicsMaterial* obj)
 		{
 			return mDynamicFriction;
 		}
 
-		void setDynamicFriction(PhysicsMaterial* obj, float& size) { obj->setDynamicFriction(size); }
+		void SetDynamicFriction(PhysicsMaterial* obj, float& size) { obj->SetDynamicFriction(size); }
 
-		float& getRestitutionCoefficient(PhysicsMaterial* obj)
+		float& GetRestitutionCoefficient(PhysicsMaterial* obj)
 		{
 			return mRestitutionCoefficient;
 		}
 
-		void setRestitutionCoefficient(PhysicsMaterial* obj, float& size) { obj->setRestitutionCoefficient(size); }
+		void SetRestitutionCoefficient(PhysicsMaterial* obj, float& size) { obj->SetRestitutionCoefficient(size); }
 
 	public:
 		PhysicsMaterialRTTI()
 		{
-			addPlainField("staticFriction", 0, &PhysicsMaterialRTTI::getStaticFriction, &PhysicsMaterialRTTI::setStaticFriction);
-			addPlainField("dynamicFriction", 1, &PhysicsMaterialRTTI::getDynamicFriction, &PhysicsMaterialRTTI::setDynamicFriction);
-			addPlainField("restitutionCoefficient", 2, &PhysicsMaterialRTTI::getRestitutionCoefficient, &PhysicsMaterialRTTI::setRestitutionCoefficient);
+			AddPlainField("staticFriction", 0, &PhysicsMaterialRTTI::GetStaticFriction, &PhysicsMaterialRTTI::SetStaticFriction);
+			addPlainField("dynamicFriction", 1, &PhysicsMaterialRTTI::GetDynamicFriction, &PhysicsMaterialRTTI::SetDynamicFriction);
+			addPlainField("restitutionCoefficient", 2, &PhysicsMaterialRTTI::GetRestitutionCoefficient, &PhysicsMaterialRTTI::SetRestitutionCoefficient);
 		}
 
-		void onSerializationStarted(IReflectable* obj, SerializationContext* context) override
+		void OnSerializationStarted(IReflectable* obj, SerializationContext* context) 
 		{
 			PhysicsMaterial* material = static_cast<PhysicsMaterial*>(obj);
 
@@ -55,18 +55,18 @@ namespace bs
 			mRestitutionCoefficient = material->getRestitutionCoefficient();
 		}
 
-		const String& getRTTIName() override
+		const String& GetRttiName() 
 		{
 			static String name = "PhysicsMaterial";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() 
 		{
 			return TID_PhysicsMaterial;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return PhysicsMaterial::CreatePtrInternal();
 		}

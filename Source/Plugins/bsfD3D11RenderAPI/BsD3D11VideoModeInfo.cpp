@@ -22,7 +22,7 @@ namespace bs { namespace ct
 	{
 		DXGI_OUTPUT_DESC outputDesc;
 		output->GetDesc(&outputDesc);
-		mName = UTF8::fromWide(WString(outputDesc.DeviceName));
+		mName = UTF8::FromWide(WString(outputDesc.DeviceName));
 
 		UINT32 numModes = 0;
 

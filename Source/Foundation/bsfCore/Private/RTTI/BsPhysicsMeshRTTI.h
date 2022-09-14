@@ -23,26 +23,26 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 	public:
-		void onDeserializationEnded(IReflectable* obj, SerializationContext* context) override
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) 
 		{
 			PhysicsMesh* mesh = static_cast<PhysicsMesh*>(obj);
-			mesh->initialize();
+			mesh->Initialize();
 		}
 
-		const String& getRTTIName() override
+		const String& GetRttiName() 
 		{
 			static String name = "PhysicsMesh";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() 
 		{
 			return TID_PhysicsMesh;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
-			SPtr<PhysicsMesh> mesh = gPhysics().createMesh(nullptr, PhysicsMeshType::Convex);
+			SPtr<PhysicsMesh> mesh = gPhysics().CreateMesh(nullptr, PhysicsMeshType::Convex);
 			mesh->SetThisPtrInternal(mesh);
 
 			return mesh;
@@ -56,13 +56,13 @@ namespace bs
 			BS_RTTI_MEMBER_PLAIN(mType, 0)
 		BS_END_RTTI_MEMBERS
 	public:
-		const String& getRTTIName() override
+		const String& GetRttiName() 
 		{
 			static String name = "FPhysicsMesh";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_FPhysicsMesh;
 		}

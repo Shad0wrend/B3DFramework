@@ -25,8 +25,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ImportOptionsRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const ;
 	};
 
 	/** @} */

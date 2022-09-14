@@ -183,7 +183,7 @@ namespace bs
 
 		Quaternion getDiff(const Quaternion& lhs, const Quaternion& rhs)
 		{
-			return rhs.inverse() * lhs;
+			return rhs.Inverse() * lhs;
 		}
 
 		INT32 getDiff(INT32 lhs, INT32 rhs)
@@ -255,22 +255,22 @@ namespace bs
 		template <>
 		void getMinMax(std::pair<Vector3, Vector3>& minmax, const Vector3& value)
 		{
-			minmax.first = Vector3::min(minmax.first, value);
-			minmax.second = Vector3::max(minmax.second, value);
+			minmax.first = Vector3::Min(minmax.first, value);
+			minmax.second = Vector3::Max(minmax.second, value);
 		}
 
 		template <>
 		void getMinMax(std::pair<Vector2, Vector2>& minmax, const Vector2& value)
 		{
-			minmax.first = Vector2::min(minmax.first, value);
-			minmax.second = Vector2::max(minmax.second, value);
+			minmax.first = Vector2::Min(minmax.first, value);
+			minmax.second = Vector2::Max(minmax.second, value);
 		}
 
 		template <>
 		void getMinMax(std::pair<Quaternion, Quaternion>& minmax, const Quaternion& value)
 		{
-			minmax.first = Quaternion::min(minmax.first, value);
-			minmax.second = Quaternion::max(minmax.second, value);
+			minmax.first = Quaternion::Min(minmax.first, value);
+			minmax.second = Quaternion::Max(minmax.second, value);
 		}
 
 		template<class T>
@@ -591,7 +591,7 @@ namespace bs
 	}
 
 	template <class T>
-	T TAnimationCurve<T>::evaluate(float time, const TCurveCache<T>& cache, bool loop) const
+	T TAnimationCurve<T>::Evaluate(float time, const TCurveCache<T>& cache, bool loop) const
 	{
 		if (mKeyframes.empty())
 			return impl::getZero<T>();
@@ -658,7 +658,7 @@ namespace bs
 	}
 
 	template <class T>
-	T TAnimationCurve<T>::evaluate(float time, bool loop) const
+	T TAnimationCurve<T>::Evaluate(float time, bool loop) const
 	{
 		if (mKeyframes.empty())
 			return impl::getZero<T>();
@@ -681,7 +681,7 @@ namespace bs
 	}
 
 	template <class T>
-	T TAnimationCurve<T>::evaluateIntegrated(float time, const TCurveIntegrationCache<T>& integrationCache) const
+	T TAnimationCurve<T>::EvaluateIntegrated(float time, const TCurveIntegrationCache<T>& integrationCache) const
 	{
 		const auto numKeyframes = (UINT32)mKeyframes.size();
 		if (numKeyframes == 0)
@@ -713,7 +713,7 @@ namespace bs
 	}
 
 	template <class T>
-	T TAnimationCurve<T>::evaluateIntegratedDouble(float time, const TCurveIntegrationCache<T>& integrationCache) const
+	T TAnimationCurve<T>::EvaluateIntegratedDouble(float time, const TCurveIntegrationCache<T>& integrationCache) const
 	{
 		const auto numKeyframes = (UINT32)mKeyframes.size();
 		if (numKeyframes == 0)
@@ -749,7 +749,7 @@ namespace bs
 	}
 
 	template <class T>
-	TKeyframe<T> TAnimationCurve<T>::evaluateKey(float time, bool loop) const
+	TKeyframe<T> TAnimationCurve<T>::EvaluateKey(float time, bool loop) const
 	{
 		if (mKeyframes.empty())
 			return TKeyframe<T>();
@@ -771,7 +771,7 @@ namespace bs
 	}
 
 	template <class T>
-	void TAnimationCurve<T>::findKeys(float time, const TCurveCache<T>& animInstance, UINT32& leftKey, UINT32& rightKey) const
+	void TAnimationCurve<T>::FindKeys(float time, const TCurveCache<T>& animInstance, UINT32& leftKey, UINT32& rightKey) const
 	{
 		// Check nearby keys first if there is cached data
 		if (animInstance.cachedKey != (UINT32)-1)
@@ -819,7 +819,7 @@ namespace bs
 	}
 
 	template <class T>
-	void TAnimationCurve<T>::findKeys(float time, UINT32& leftKey, UINT32& rightKey) const
+	void TAnimationCurve<T>::FindKeys(float time, UINT32& leftKey, UINT32& rightKey) const
 	{
 		INT32 start = 0;
 		auto searchLength = (INT32)mKeyframes.size();
@@ -845,7 +845,7 @@ namespace bs
 	}
 
 	template <class T>
-	UINT32 TAnimationCurve<T>::findKey(float time)
+	UINT32 TAnimationCurve<T>::FindKey(float time)
 	{
 		UINT32 leftKeyIdx;
 		UINT32 rightKeyIdx;
@@ -862,13 +862,13 @@ namespace bs
 	}
 
 	template <class T>
-	TKeyframe<T> TAnimationCurve<T>::evaluateKey(const KeyFrame& lhs, const KeyFrame& rhs, float time) const
+	TKeyframe<T> TAnimationCurve<T>::EvaluateKey(const KeyFrame& lhs, const KeyFrame& rhs, float time) const
 	{
 		return impl::evaluateKey(lhs, rhs, time);
 	}
 
 	template <class T>
-	TAnimationCurve<T> TAnimationCurve<T>::split(float start, float end)
+	TAnimationCurve<T> TAnimationCurve<T>::Split(float start, float end)
 	{
 		Vector<TKeyframe<T>> keyFrames;
 
@@ -963,7 +963,7 @@ namespace bs
 	}
 
 	template <class T>
-	void TAnimationCurve<T>::makeAdditive()
+	void TAnimationCurve<T>::MakeAdditive()
 	{
 		if (mKeyframes.size() < 2)
 			return;
@@ -976,7 +976,7 @@ namespace bs
 	}
 
 	template <class T>
-	std::pair<float, float> TAnimationCurve<T>::getTimeRange() const
+	std::pair<float, float> TAnimationCurve<T>::GetTimeRange() const
 	{
 		if(mKeyframes.empty())
 			return std::make_pair(0.0f, 0.0f);
@@ -988,7 +988,7 @@ namespace bs
 	}
 
 	template <class T>
-	std::pair<T, T> TAnimationCurve<T>::calculateRange() const
+	std::pair<T, T> TAnimationCurve<T>::CalculateRange() const
 	{
 		const auto numKeys = (UINT32)mKeyframes.size();
 		if(numKeys == 0)
@@ -1014,7 +1014,7 @@ namespace bs
 	}
 
 	template <class T>
-	std::pair<T, T> TAnimationCurve<T>::calculateRangeIntegrated(const TCurveIntegrationCache<T>& cache) const
+	std::pair<T, T> TAnimationCurve<T>::CalculateRangeIntegrated(const TCurveIntegrationCache<T>& cache) const
 	{
 		std::pair<T, T> output = std::make_pair(impl::getZero<T>(), impl::getZero<T>());
 
@@ -1042,7 +1042,7 @@ namespace bs
 	}
 
 	template <class T>
-	std::pair<T, T> TAnimationCurve<T>::calculateRangeIntegratedDouble(const TCurveIntegrationCache<T>& cache) const
+	std::pair<T, T> TAnimationCurve<T>::CalculateRangeIntegratedDouble(const TCurveIntegrationCache<T>& cache) const
 	{
 		std::pair<T, T> output = std::make_pair(impl::getZero<T>(), impl::getZero<T>());
 
@@ -1072,7 +1072,7 @@ namespace bs
 	}
 
 	template <class T>
-	void TAnimationCurve<T>::buildIntegrationCache(const TCurveIntegrationCache<T>& cache) const
+	void TAnimationCurve<T>::BuildIntegrationCache(const TCurveIntegrationCache<T>& cache) const
 	{
 		assert(!cache.segmentSums);
 
@@ -1101,7 +1101,7 @@ namespace bs
 	}
 
 	template <class T>
-	void TAnimationCurve<T>::buildDoubleIntegrationCache(const TCurveIntegrationCache<T>& cache) const
+	void TAnimationCurve<T>::BuildDoubleIntegrationCache(const TCurveIntegrationCache<T>& cache) const
 	{
 		assert(!cache.segmentSums);
 

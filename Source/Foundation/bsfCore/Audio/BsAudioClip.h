@@ -79,15 +79,15 @@ namespace bs
 
 		/** Returns the size of a single sample, in bits. */
 		BS_SCRIPT_EXPORT(n:BitDepth,pr:getter)
-		UINT32 getBitDepth() const { return mDesc.bitDepth; }
+		UINT32 GetBitDepth() const { return mDesc.bitDepth; }
 		
 		/** Returns how many samples per second is the audio encoded in. */
 		BS_SCRIPT_EXPORT(n:SampleRate,pr:getter)
-		UINT32 getFrequency() const { return mDesc.frequency; }
+		UINT32 GetFrequency() const { return mDesc.frequency; }
 
 		/** Returns the number of channels provided by the clip. */
 		BS_SCRIPT_EXPORT(n:NumChannels,pr:getter)
-		UINT32 getNumChannels() const { return mDesc.numChannels; }
+		UINT32 GetNumChannels() const { return mDesc.numChannels; }
 
 		/**
 		 * Returns in which format is audio data stored in.
@@ -95,7 +95,7 @@ namespace bs
 		 * @see	AudioFormat
 		 */
 		BS_SCRIPT_EXPORT(n:Format,pr:getter)
-		AudioFormat getFormat() const { return mDesc.format; }
+		AudioFormat GetFormat() const { return mDesc.format; }
 
 		/**
 		 * Returns how is the audio data read/decoded.
@@ -103,19 +103,19 @@ namespace bs
 		 * @see	AudioReadMode
 		 */
 		BS_SCRIPT_EXPORT(n:ReadMode,pr:getter)
-		AudioReadMode getReadMode() const { return mDesc.readMode; }
+		AudioReadMode GetReadMode() const { return mDesc.readMode; }
 
 		/** Returns the length of the audio clip, in seconds. */
 		BS_SCRIPT_EXPORT(n:Duration,pr:getter)
-		float getLength() const { return mLength; }
+		float GetLength() const { return mLength; }
 
 		/** Returns the total number of samples in the clip (includes all channels). */
 		BS_SCRIPT_EXPORT(n:NumSamples,pr:getter)
-		UINT32 getNumSamples() const { return mNumSamples; }
+		UINT32 GetNumSamples() const { return mNumSamples; }
 
 		/** Determines will the clip be played a spatial 3D sound, or as a normal sound (for example music). */
 		BS_SCRIPT_EXPORT(n:Is3D,pr:getter)
-		bool is3D() const { return mDesc.is3D; }
+		bool Is3D() const { return mDesc.is3D; }
 
 		/**
 		 * Creates a new AudioClip and populates it with provided samples.
@@ -130,7 +130,7 @@ namespace bs
 		 *
 		 * @note	If the provided samples are in PCM format, they should be signed integers of provided bit depth.
 		 */
-		static HAudioClip create(const SPtr<DataStream>& samples, UINT32 streamSize, UINT32 numSamples,
+		static HAudioClip Create(const SPtr<DataStream>& samples, UINT32 streamSize, UINT32 numSamples,
 			const AUDIO_CLIP_DESC& desc);
 
 	public: // ***** INTERNAL ******
@@ -147,13 +147,13 @@ namespace bs
 		AudioClip(const SPtr<DataStream>& samples, UINT32 streamSize, UINT32 numSamples, const AUDIO_CLIP_DESC& desc);
 
 		/** @copydoc Resource::initialize */
-		void initialize() override;
+		void Initialize() ;
 
 		/** @copydoc Resource::isCompressible */
-		bool isCompressible() const override { return false; } // Compression handled on a case by case basis manually by the audio system
+		bool IsCompressible() const override { return false; } // Compression handled on a case by case basis manually by the audio system
 
 		/** Returns original audio data. Only available if @p keepSourceData has been provided on creation. */
-		virtual SPtr<DataStream> getSourceStream(UINT32& size) = 0;
+		virtual SPtr<DataStream> GetSourceStream(UINT32& size) = 0;
 
 	protected:
 		AUDIO_CLIP_DESC mDesc;
@@ -168,15 +168,15 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class AudioClipRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const ;
 
 		/**
 		 * Creates an AudioClip with no samples. You must populate its data manually followed by a call to initialize().
 		 *
 		 * @note	For serialization use only.
 		 */
-		static SPtr<AudioClip> createEmpty();
+		static SPtr<AudioClip> CreateEmpty();
 	};
 
 	/** @} */

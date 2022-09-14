@@ -31,13 +31,13 @@ namespace bs
 			BS_RTTI_MEMBER_REFL(spriteTexture, 3)
 		BS_END_RTTI_MEMBERS
 
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "TextureParamData";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_TextureParamData;
 		}
@@ -51,14 +51,14 @@ namespace bs
 	class BS_CORE_EXPORT MaterialParamStructDataRTTI : public RTTIType<MaterialParamStructData, IReflectable, MaterialParamStructDataRTTI>
 	{
 	public:
-		SPtr<DataStream> getDataBuffer(MaterialParamStructData* obj, UINT32& size)
+		SPtr<DataStream> GetDataBuffer(MaterialParamStructData* obj, UINT32& size)
 		{
 			size = obj->dataSize;
 
 			return bs_shared_ptr_new<MemoryDataStream>(obj->data, obj->dataSize);
 		}
 
-		void setDataBuffer(MaterialParamStructData* obj, const SPtr<DataStream>& value, UINT32 size)
+		void SetDataBuffer(MaterialParamStructData* obj, const SPtr<DataStream>& value, UINT32 size)
 		{
 			obj->data = (UINT8*)bs_alloc(size);
 			value->read(obj->data, size);
@@ -71,13 +71,13 @@ namespace bs
 			addDataBlockField("dataBuffer", 0, &MaterialParamStructDataRTTI::getDataBuffer, &MaterialParamStructDataRTTI::setDataBuffer);
 		}
 
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "StructParamData";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_StructParamData;
 		}
@@ -98,12 +98,12 @@ namespace bs
 			MaterialParams::ParamData data;
 		};
 
-		MaterialParam& getParamData(MaterialParams* obj, UINT32 idx)
+		MaterialParam& GetParamData(MaterialParams* obj, UINT32 idx)
 		{
 			return mMatParams[idx];
 		}
 
-		void setParamData(MaterialParams* obj, UINT32 idx, MaterialParam& param)
+		void SetParamData(MaterialParams* obj, UINT32 idx, MaterialParam& param)
 		{
 			UINT32 paramIdx = param.index;
 
@@ -118,24 +118,24 @@ namespace bs
 			obj->mParamLookup[param.name] = paramIdx;
 		}
 
-		UINT32 getParamDataArraySize(MaterialParams* obj)
+		UINT32 GetParamDataArraySize(MaterialParams* obj)
 		{
 			return (UINT32)mMatParams.size();
 		}
 
-		void setParamDataArraySize(MaterialParams* obj, UINT32 size)
+		void SetParamDataArraySize(MaterialParams* obj, UINT32 size)
 		{
 			obj->mParams.resize(size);
 		}
 
-		SPtr<DataStream> getDataBuffer(MaterialParams* obj, UINT32& size)
+		SPtr<DataStream> GetDataBuffer(MaterialParams* obj, UINT32& size)
 		{
 			size = obj->mDataSize;
 
 			return bs_shared_ptr_new<MemoryDataStream>(obj->mDataParamsBuffer, obj->mDataSize);
 		}
 
-		void setDataBuffer(MaterialParams* obj, const SPtr<DataStream>& value, UINT32 size)
+		void SetDataBuffer(MaterialParams* obj, const SPtr<DataStream>& value, UINT32 size)
 		{
 			obj->mDataParamsBuffer = obj->mAlloc.alloc(size);
 			value->read(obj->mDataParamsBuffer, size);
@@ -143,8 +143,8 @@ namespace bs
 			obj->mDataSize = size;
 		}
 
-		MaterialParamStructData& getStructParam(MaterialParams* obj, UINT32 idx) { return obj->mStructParams[idx]; }
-		void setStructParam(MaterialParams* obj, UINT32 idx, MaterialParamStructData& param)
+		MaterialParamStructData& GetStructParam(MaterialParams* obj, UINT32 idx) { return obj->mStructParams[idx]; }
+		void SetStructParam(MaterialParams* obj, UINT32 idx, MaterialParamStructData& param)
 		{
 			MaterialParamStructData& newStructParam = obj->mStructParams[idx];
 			newStructParam.data = (UINT8*)obj->mAlloc.alloc(param.dataSize);
@@ -154,46 +154,46 @@ namespace bs
 			bs_free(param.data);
 			param.data = nullptr;
 		}
-		UINT32 getStructArraySize(MaterialParams* obj) { return (UINT32)obj->mNumStructParams; }
-		void setStructArraySize(MaterialParams* obj, UINT32 size)
+		UINT32 GetStructArraySize(MaterialParams* obj) { return (UINT32)obj->mNumStructParams; }
+		void SetStructArraySize(MaterialParams* obj, UINT32 size)
 		{
 			obj->mNumStructParams = size;
 			obj->mStructParams = obj->mAlloc.construct<MaterialParamStructData>(size);
 		}
 
-		MaterialParamTextureData& getTextureParam(MaterialParams* obj, UINT32 idx) { return obj->mTextureParams[idx]; }
-		void setTextureParam(MaterialParams* obj, UINT32 idx, MaterialParamTextureData& param) { obj->mTextureParams[idx] = param; }
-		UINT32 getTextureArraySize(MaterialParams* obj) { return (UINT32)obj->mNumTextureParams; }
-		void setTextureArraySize(MaterialParams* obj, UINT32 size)
+		MaterialParamTextureData& GetTextureParam(MaterialParams* obj, UINT32 idx) { return obj->mTextureParams[idx]; }
+		void SetTextureParam(MaterialParams* obj, UINT32 idx, MaterialParamTextureData& param) { obj->mTextureParams[idx] = param; }
+		UINT32 GetTextureArraySize(MaterialParams* obj) { return (UINT32)obj->mNumTextureParams; }
+		void SetTextureArraySize(MaterialParams* obj, UINT32 size)
 		{
 			obj->mNumTextureParams = size;
 			obj->mTextureParams = obj->mAlloc.construct<MaterialParamTextureData>(size);
 		}
 
-		SPtr<SamplerState> getSamplerStateParam(MaterialParams* obj, UINT32 idx) { return obj->mSamplerStateParams[idx].value; }
-		void setSamplerStateParam(MaterialParams* obj, UINT32 idx, SPtr<SamplerState> param) { obj->mSamplerStateParams[idx].value = param; }
-		UINT32 getSamplerStateArraySize(MaterialParams* obj) { return (UINT32)obj->mNumSamplerParams; }
-		void setSamplerStateArraySize(MaterialParams* obj, UINT32 size)
+		SPtr<SamplerState> GetSamplerStateParam(MaterialParams* obj, UINT32 idx) { return obj->mSamplerStateParams[idx].value; }
+		void SetSamplerStateParam(MaterialParams* obj, UINT32 idx, SPtr<SamplerState> param) { obj->mSamplerStateParams[idx].value = param; }
+		UINT32 GetSamplerStateArraySize(MaterialParams* obj) { return (UINT32)obj->mNumSamplerParams; }
+		void SetSamplerStateArraySize(MaterialParams* obj, UINT32 size)
 		{
 			obj->mNumSamplerParams = size;
 			obj->mSamplerStateParams = obj->mAlloc.construct<MaterialParamSamplerStateData>(size);
 		}
 
-		UINT32& getNumBufferParams(MaterialParams* obj)
+		UINT32& GetNumBufferParams(MaterialParams* obj)
 		{
 			return obj->mNumBufferParams;
 		}
 
-		void setNumBufferParams(MaterialParams* obj, UINT32& value)
+		void SetNumBufferParams(MaterialParams* obj, UINT32& value)
 		{
 			obj->mNumBufferParams = value;
 			obj->mBufferParams = obj->mAlloc.construct<MaterialParamBufferData>(value);
 		}
 
-		MaterialParamsBase::DataParamInfo& getDataParam(MaterialParams* obj, UINT32 idx) { return obj->mDataParams[idx]; }
-		void setDataParam(MaterialParams* obj, UINT32 idx, MaterialParamsBase::DataParamInfo& param) { obj->mDataParams[idx] = param; }
-		UINT32 getDataParamArraySize(MaterialParams* obj) { return (UINT32)obj->mNumDataParams; }
-		void setDataParamArraySize(MaterialParams* obj, UINT32 size)
+		MaterialParamsBase::DataParamInfo& GetDataParam(MaterialParams* obj, UINT32 idx) { return obj->mDataParams[idx]; }
+		void SetDataParam(MaterialParams* obj, UINT32 idx, MaterialParamsBase::DataParamInfo& param) { obj->mDataParams[idx] = param; }
+		UINT32 GetDataParamArraySize(MaterialParams* obj) { return (UINT32)obj->mNumDataParams; }
+		void SetDataParamArraySize(MaterialParams* obj, UINT32 size)
 		{
 			obj->mNumDataParams = size;
 			obj->mDataParams = obj->mAlloc.construct<MaterialParamsBase::DataParamInfo>(size);
@@ -201,27 +201,27 @@ namespace bs
 
 		MaterialParamsRTTI()
 		{
-			addPlainArrayField("paramData", 0, &MaterialParamsRTTI::getParamData, &MaterialParamsRTTI::getParamDataArraySize,
-				&MaterialParamsRTTI::setParamData, &MaterialParamsRTTI::setParamDataArraySize);
+			addPlainArrayField("paramData", 0, &MaterialParamsRTTI::GetParamData, &MaterialParamsRTTI::GetParamDataArraySize,
+				&MaterialParamsRTTI::SetParamData, &MaterialParamsRTTI::SetParamDataArraySize);
 
 			addDataBlockField("dataBuffer", 1, &MaterialParamsRTTI::getDataBuffer, &MaterialParamsRTTI::setDataBuffer);
 
-			addReflectableArrayField("structParams", 2, &MaterialParamsRTTI::getStructParam,
-				&MaterialParamsRTTI::getStructArraySize, &MaterialParamsRTTI::setStructParam, &MaterialParamsRTTI::setStructArraySize);
+			addReflectableArrayField("structParams", 2, &MaterialParamsRTTI::GetStructParam,
+				&MaterialParamsRTTI::GetStructArraySize, &MaterialParamsRTTI::SetStructParam, &MaterialParamsRTTI::SetStructArraySize);
 
-			addReflectableArrayField("textureParams", 3, &MaterialParamsRTTI::getTextureParam,
-				&MaterialParamsRTTI::getTextureArraySize, &MaterialParamsRTTI::setTextureParam, &MaterialParamsRTTI::setTextureArraySize);
+			addReflectableArrayField("textureParams", 3, &MaterialParamsRTTI::GetTextureParam,
+				&MaterialParamsRTTI::GetTextureArraySize, &MaterialParamsRTTI::SetTextureParam, &MaterialParamsRTTI::SetTextureArraySize);
 
 			addReflectablePtrArrayField("samplerStateParams", 4, &MaterialParamsRTTI::getSamplerStateParam,
 				&MaterialParamsRTTI::getSamplerStateArraySize, &MaterialParamsRTTI::setSamplerStateParam, &MaterialParamsRTTI::setSamplerStateArraySize);
 
-			addPlainField("numBufferParams", 5, &MaterialParamsRTTI::getNumBufferParams, &MaterialParamsRTTI::setNumBufferParams);
+			addPlainField("numBufferParams", 5, &MaterialParamsRTTI::GetNumBufferParams, &MaterialParamsRTTI::SetNumBufferParams);
 
-			addPlainArrayField("dataParams", 6, &MaterialParamsRTTI::getDataParam,
-				&MaterialParamsRTTI::getDataParamArraySize, &MaterialParamsRTTI::setDataParam, &MaterialParamsRTTI::setDataParamArraySize);
+			addPlainArrayField("dataParams", 6, &MaterialParamsRTTI::GetDataParam,
+				&MaterialParamsRTTI::GetDataParamArraySize, &MaterialParamsRTTI::SetDataParam, &MaterialParamsRTTI::SetDataParamArraySize);
 		}
 
-		void onSerializationStarted(IReflectable* obj, SerializationContext* context) override
+		void OnSerializationStarted(IReflectable* obj, SerializationContext* context) override
 		{
 			MaterialParams* paramsObj = static_cast<MaterialParams*>(obj);
 
@@ -232,7 +232,7 @@ namespace bs
 			}
 		}
 
-		void onDeserializationEnded(IReflectable* obj, SerializationContext* context) override
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override
 		{
 			MaterialParams* paramsObj = static_cast<MaterialParams*>(obj);
 
@@ -275,13 +275,13 @@ namespace bs
 			}
 		}
 
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "MaterialParams";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_MaterialParams;
 		}
@@ -300,7 +300,7 @@ namespace bs
 	{
 		enum { id = TID_MaterialParamData }; enum { hasDynamicSize = 0 };
 
-		static BitLength toMemory(const MaterialParamsBase::ParamData& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const MaterialParamsBase::ParamData& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			rtti_write(data.type, stream);
 			rtti_write(data.dataType, stream);
@@ -311,7 +311,7 @@ namespace bs
 			return sizeof(MaterialParamsBase::ParamData);
 		}
 
-		static BitLength fromMemory(MaterialParamsBase::ParamData& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(MaterialParamsBase::ParamData& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			rtti_read(data.type, stream);
 			rtti_read(data.dataType, stream);
@@ -324,7 +324,7 @@ namespace bs
 			return sizeof(MaterialParamsBase::ParamData);
 		}
 
-		static BitLength getSize(const MaterialParamsBase::ParamData& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const MaterialParamsBase::ParamData& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return sizeof(MaterialParamsBase::ParamData);
 		}
@@ -334,7 +334,7 @@ namespace bs
 	{
 		enum { id = TID_DataParamInfo }; enum { hasDynamicSize = 1 };
 
-		static BitLength toMemory(const MaterialParamsBase::DataParamInfo& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const MaterialParamsBase::DataParamInfo& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			static constexpr uint32_t VERSION = 1;
 
@@ -365,7 +365,7 @@ namespace bs
 			});
 		}
 
-		static BitLength fromMemory(MaterialParamsBase::DataParamInfo& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(MaterialParamsBase::DataParamInfo& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
 			rtti_read_size_header(stream, compress, size);
@@ -425,7 +425,7 @@ namespace bs
 			return size;
 		}
 
-		static BitLength getSize(const MaterialParamsBase::DataParamInfo& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const MaterialParamsBase::DataParamInfo& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size = rtti_size(data.offset) + sizeof(uint32_t) * 2;
 
@@ -445,7 +445,7 @@ namespace bs
 	{	
 		enum { id = TID_MaterialRTTIParam }; enum { hasDynamicSize = 1 };
 
-		static BitLength toMemory(const MaterialParamsRTTI::MaterialParam& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const MaterialParamsRTTI::MaterialParam& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			static constexpr UINT32 VERSION = 1;
 
@@ -463,7 +463,7 @@ namespace bs
 			});
 		}
 
-		static BitLength fromMemory(MaterialParamsRTTI::MaterialParam& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(MaterialParamsRTTI::MaterialParam& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
 			
@@ -493,7 +493,7 @@ namespace bs
 			return size;
 		}
 
-		static BitLength getSize(const MaterialParamsRTTI::MaterialParam& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const MaterialParamsRTTI::MaterialParam& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size = rtti_size(data.name) + rtti_size(data.data) + rtti_size(data.index) +
 				sizeof(uint32_t) * 1;

@@ -18,26 +18,26 @@ namespace bs
 
 		ScriptSpriteTexture(MonoObject* managedInstance, const ResourceHandle<SpriteTexture>& value);
 
-		static MonoObject* createInstance();
+		static MonoObject* CreateInstance();
 
 	private:
-		static MonoObject* Internal_getRef(ScriptSpriteTexture* thisPtr);
+		static MonoObject* InternalGetRef(ScriptSpriteTexture* thisPtr);
 
-		static void Internal_setTexture(ScriptSpriteTexture* thisPtr, MonoObject* texture);
-		static MonoObject* Internal_getTexture(ScriptSpriteTexture* thisPtr);
-		static uint32_t Internal_getWidth(ScriptSpriteTexture* thisPtr);
-		static uint32_t Internal_getHeight(ScriptSpriteTexture* thisPtr);
-		static uint32_t Internal_getFrameWidth(ScriptSpriteTexture* thisPtr);
-		static uint32_t Internal_getFrameHeight(ScriptSpriteTexture* thisPtr);
-		static void Internal_setOffset(ScriptSpriteTexture* thisPtr, Vector2* offset);
-		static void Internal_getOffset(ScriptSpriteTexture* thisPtr, Vector2* __output);
-		static void Internal_setScale(ScriptSpriteTexture* thisPtr, Vector2* scale);
-		static void Internal_getScale(ScriptSpriteTexture* thisPtr, Vector2* __output);
-		static void Internal_setAnimation(ScriptSpriteTexture* thisPtr, SpriteSheetGridAnimation* anim);
-		static void Internal_getAnimation(ScriptSpriteTexture* thisPtr, SpriteSheetGridAnimation* __output);
-		static void Internal_setAnimationPlayback(ScriptSpriteTexture* thisPtr, SpriteAnimationPlayback playback);
-		static SpriteAnimationPlayback Internal_getAnimationPlayback(ScriptSpriteTexture* thisPtr);
-		static void Internal_create(MonoObject* managedInstance, MonoObject* texture);
-		static void Internal_create0(MonoObject* managedInstance, Vector2* uvOffset, Vector2* uvScale, MonoObject* texture);
+		static void InternalSetTexture(ScriptSpriteTexture* thisPtr, MonoObject* texture);
+		static MonoObject* InternalGetTexture(ScriptSpriteTexture* thisPtr);
+		static uint32_t InternalGetWidth(ScriptSpriteTexture* thisPtr);
+		static uint32_t InternalGetHeight(ScriptSpriteTexture* thisPtr);
+		static uint32_t InternalGetFrameWidth(ScriptSpriteTexture* thisPtr);
+		static uint32_t InternalGetFrameHeight(ScriptSpriteTexture* thisPtr);
+		static void InternalSetOffset(ScriptSpriteTexture* thisPtr, Vector2* offset);
+		static void InternalGetOffset(ScriptSpriteTexture* thisPtr, Vector2* __output);
+		static void InternalSetScale(ScriptSpriteTexture* thisPtr, Vector2* scale);
+		static void InternalGetScale(ScriptSpriteTexture* thisPtr, Vector2* __output);
+		static void InternalSetAnimation(ScriptSpriteTexture* thisPtr, SpriteSheetGridAnimation* anim);
+		static void InternalGetAnimation(ScriptSpriteTexture* thisPtr, SpriteSheetGridAnimation* __output);
+		static void InternalSetAnimationPlayback(ScriptSpriteTexture* thisPtr, SpriteAnimationPlayback playback);
+		static SpriteAnimationPlayback InternalGetAnimationPlayback(ScriptSpriteTexture* thisPtr);
+		static void InternalCreate(MonoObject* managedInstance, MonoObject* texture);
+		static void InternalCreate0(MonoObject* managedInstance, Vector2* uvOffset, Vector2* uvScale, MonoObject* texture);
 	};
 }

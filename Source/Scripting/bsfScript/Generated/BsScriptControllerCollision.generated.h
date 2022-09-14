@@ -22,10 +22,10 @@ namespace bs
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "ControllerCollision")
 
-		static MonoObject* box(const __ControllerCollisionInterop& value);
-		static __ControllerCollisionInterop unbox(MonoObject* value);
-		static ControllerCollision fromInterop(const __ControllerCollisionInterop& value);
-		static __ControllerCollisionInterop toInterop(const ControllerCollision& value);
+		static MonoObject* Box(const __ControllerCollisionInterop& value);
+		static __ControllerCollisionInterop Unbox(MonoObject* value);
+		static ControllerCollision FromInterop(const __ControllerCollisionInterop& value);
+		static __ControllerCollisionInterop ToInterop(const ControllerCollision& value);
 
 	private:
 		ScriptControllerCollision(MonoObject* managedInstance);

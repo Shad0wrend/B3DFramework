@@ -17,7 +17,7 @@ namespace bs
 	extern "C" BS_PLUGIN_EXPORT void* loadPlugin()
 	{
 		FBXImporter* importer = bs_new<FBXImporter>();
-		Importer::instance().RegisterAssetImporterInternal(importer);
+		Importer::Instance().RegisterAssetImporterInternal(importer);
 
 		return nullptr;
 	}

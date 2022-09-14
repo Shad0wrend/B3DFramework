@@ -19,10 +19,10 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "VirtualInput")
 
 		/**	Must be called on library load. Hooks up necessary callbacks. */
-		static void startUp();
+		static void StartUp();
 
 		/**	Must be called before library shutdown. Releases previously hooked callbacks. */
-		static void shutDown();
+		static void ShutDown();
 	private:
 		/**
 		 * Triggered whenever a virtual button is pressed.
@@ -30,7 +30,7 @@ namespace bs
 		 * @param[in]	btn			Virtual button that was pressed.
 		 * @param[in]	deviceIdx	Index of the device the button was pressed on.
 		 */
-		static void onButtonDown(const VirtualButton& btn, UINT32 deviceIdx);
+		static void OnButtonDown(const VirtualButton& btn, UINT32 deviceIdx);
 
 		/**
 		 * Triggered whenever a virtual button is released.
@@ -38,7 +38,7 @@ namespace bs
 		 * @param[in]	btn			Virtual button that was released.
 		 * @param[in]	deviceIdx	Index of the device the button was released on.
 		 */
-		static void onButtonUp(const VirtualButton& btn, UINT32 deviceIdx);
+		static void OnButtonUp(const VirtualButton& btn, UINT32 deviceIdx);
 
 		/**
 		 * Triggered every frame while a virtual button is held down.
@@ -46,7 +46,7 @@ namespace bs
 		 * @param[in]	btn			Virtual button that is being held.
 		 * @param[in]	deviceIdx	Index of the device the button is held.
 		 */
-		static void onButtonHeld(const VirtualButton& btn, UINT32 deviceIdx);
+		static void OnButtonHeld(const VirtualButton& btn, UINT32 deviceIdx);
 
 		static HEvent OnButtonPressedConn;
 		static HEvent OnButtonReleasedConn;
@@ -58,12 +58,12 @@ namespace bs
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
 
-		static MonoObject* internal_getKeyConfig();
-		static void internal_setKeyConfig(MonoObject* keyConfig);
-		static bool internal_isButtonHeld(VirtualButton* btn, UINT32 deviceIdx);
-		static bool internal_isButtonDown(VirtualButton* btn, UINT32 deviceIdx);
-		static bool internal_isButtonUp(VirtualButton* btn, UINT32 deviceIdx);
-		static float internal_getAxisValue(VirtualAxis* axis, UINT32 deviceIdx);
+		static MonoObject* InternalGetKeyConfig();
+		static void InternalSetKeyConfig(MonoObject* keyConfig);
+		static bool InternalIsButtonHeld(VirtualButton* btn, UINT32 deviceIdx);
+		static bool InternalIsButtonDown(VirtualButton* btn, UINT32 deviceIdx);
+		static bool InternalIsButtonUp(VirtualButton* btn, UINT32 deviceIdx);
+		static float InternalGetAxisValue(VirtualAxis* axis, UINT32 deviceIdx);
 
 		typedef void(BS_THUNKCALL *OnButtonEventThunkDef) (MonoObject*, UINT32, MonoException**);
 

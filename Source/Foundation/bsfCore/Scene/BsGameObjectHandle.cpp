@@ -14,7 +14,7 @@ namespace bs
 		mData = bs_shared_ptr_new<GameObjectHandleData>(ptr->mInstanceData);
 	}
 
-	bool GameObjectHandleBase::isDestroyed(bool checkQueued) const
+	bool GameObjectHandleBase::IsDestroyed(bool checkQueued) const
 	{
 		return mData->mPtr == nullptr || mData->mPtr->object == nullptr
 			|| (checkQueued && mData->mPtr->object->GetIsDestroyedInternal());
@@ -25,21 +25,21 @@ namespace bs
 		mData->mPtr = object->mInstanceData;
 	}
 
-	void GameObjectHandleBase::throwIfDestroyed() const
+	void GameObjectHandleBase::ThrowIfDestroyed() const
 	{
-		if(isDestroyed())
+		if(IsDestroyed())
 		{
 			BS_EXCEPT(InternalErrorException, "Trying to access an object that has been destroyed.");
 		}
 	}
 
-	RTTITypeBase* GameObjectHandleBase::getRTTIStatic()
+	RTTITypeBase* GameObjectHandleBase::GetRttiStatic()
 	{
-		return GameObjectHandleRTTI::instance();
+		return GameObjectHandleRTTI::Instance();
 	}
 
-	RTTITypeBase* GameObjectHandleBase::getRTTI() const
+	RTTITypeBase* GameObjectHandleBase::GetRtti() const
 	{
-		return GameObjectHandleBase::getRTTIStatic();
+		return GameObjectHandleBase::GetRttiStatic();
 	}
 }

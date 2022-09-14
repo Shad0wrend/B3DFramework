@@ -18,7 +18,7 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "GUIToggleGroup")
 
 		/**	Returns the native toggle group that this object wraps. */
-		SPtr<GUIToggleGroup> getInternalValue() const { return mToggleGroup; }
+		SPtr<GUIToggleGroup> GetInternalValue() const { return mToggleGroup; }
 
 	private:
 		ScriptGUIToggleGroup(MonoObject* instance, const SPtr<GUIToggleGroup>& toggleGroup);
@@ -28,7 +28,7 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static void internal_createInstance(MonoObject* instance, bool allowAllOff);
+		static void InternalCreateInstance(MonoObject* instance, bool allowAllOff);
 	};
 
 	/** @} */

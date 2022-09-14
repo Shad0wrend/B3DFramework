@@ -17,52 +17,52 @@ namespace bs
 
 	void ScriptParticleOrbit::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_setOptions", (void*)&ScriptParticleOrbit::Internal_setOptions);
-		metaData.scriptClass->addInternalCall("Internal_getOptions", (void*)&ScriptParticleOrbit::Internal_getOptions);
-		metaData.scriptClass->addInternalCall("Internal_create", (void*)&ScriptParticleOrbit::Internal_create);
-		metaData.scriptClass->addInternalCall("Internal_create0", (void*)&ScriptParticleOrbit::Internal_create0);
+		metaData.scriptClass->AddInternalCall("Internal_setOptions", (void*)&ScriptParticleOrbit::InternalSetOptions);
+		metaData.scriptClass->AddInternalCall("Internal_getOptions", (void*)&ScriptParticleOrbit::InternalGetOptions);
+		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptParticleOrbit::InternalCreate);
+		metaData.scriptClass->AddInternalCall("Internal_create0", (void*)&ScriptParticleOrbit::InternalCreate0);
 
 	}
 
-	MonoObject* ScriptParticleOrbit::create(const SPtr<ParticleOrbit>& value)
+	MonoObject* ScriptParticleOrbit::Create(const SPtr<ParticleOrbit>& value)
 	{
 		if(value == nullptr) return nullptr; 
 
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptParticleOrbit>()) ScriptParticleOrbit(managedInstance, value);
 		return managedInstance;
 	}
-	void ScriptParticleOrbit::Internal_setOptions(ScriptParticleOrbit* thisPtr, __PARTICLE_ORBIT_DESCInterop* options)
+	void ScriptParticleOrbit::InternalSetOptions(ScriptParticleOrbit* thisPtr, __PARTICLE_ORBIT_DESCInterop* options)
 	{
 		PARTICLE_ORBIT_DESC tmpoptions;
-		tmpoptions = ScriptPARTICLE_ORBIT_DESC::fromInterop(*options);
-		thisPtr->getInternal()->setOptions(tmpoptions);
+		tmpoptions = ScriptPARTICLE_ORBIT_DESC::FromInterop(*options);
+		thisPtr->GetInternal()->setOptions(tmpoptions);
 	}
 
-	void ScriptParticleOrbit::Internal_getOptions(ScriptParticleOrbit* thisPtr, __PARTICLE_ORBIT_DESCInterop* __output)
+	void ScriptParticleOrbit::InternalGetOptions(ScriptParticleOrbit* thisPtr, __PARTICLE_ORBIT_DESCInterop* __output)
 	{
 		PARTICLE_ORBIT_DESC tmp__output;
 		tmp__output = thisPtr->getInternal()->getOptions();
 
 		__PARTICLE_ORBIT_DESCInterop interop__output;
-		interop__output = ScriptPARTICLE_ORBIT_DESC::toInterop(tmp__output);
+		interop__output = ScriptPARTICLE_ORBIT_DESC::ToInterop(tmp__output);
 		MonoUtil::valueCopy(__output, &interop__output, ScriptPARTICLE_ORBIT_DESC::getMetaData()->scriptClass->GetInternalClassInternal());
 	}
 
-	void ScriptParticleOrbit::Internal_create(MonoObject* managedInstance, __PARTICLE_ORBIT_DESCInterop* desc)
+	void ScriptParticleOrbit::InternalCreate(MonoObject* managedInstance, __PARTICLE_ORBIT_DESCInterop* desc)
 	{
 		PARTICLE_ORBIT_DESC tmpdesc;
-		tmpdesc = ScriptPARTICLE_ORBIT_DESC::fromInterop(*desc);
-		SPtr<ParticleOrbit> instance = ParticleOrbit::create(tmpdesc);
+		tmpdesc = ScriptPARTICLE_ORBIT_DESC::FromInterop(*desc);
+		SPtr<ParticleOrbit> instance = ParticleOrbit::Create(tmpdesc);
 		new (bs_alloc<ScriptParticleOrbit>())ScriptParticleOrbit(managedInstance, instance);
 	}
 
-	void ScriptParticleOrbit::Internal_create0(MonoObject* managedInstance)
+	void ScriptParticleOrbit::InternalCreate0(MonoObject* managedInstance)
 	{
-		SPtr<ParticleOrbit> instance = ParticleOrbit::create();
+		SPtr<ParticleOrbit> instance = ParticleOrbit::Create();
 		new (bs_alloc<ScriptParticleOrbit>())ScriptParticleOrbit(managedInstance, instance);
 	}
 }

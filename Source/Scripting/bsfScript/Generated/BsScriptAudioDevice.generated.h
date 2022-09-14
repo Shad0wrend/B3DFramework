@@ -18,10 +18,10 @@ namespace bs
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "AudioDevice")
 
-		static MonoObject* box(const __AudioDeviceInterop& value);
-		static __AudioDeviceInterop unbox(MonoObject* value);
-		static AudioDevice fromInterop(const __AudioDeviceInterop& value);
-		static __AudioDeviceInterop toInterop(const AudioDevice& value);
+		static MonoObject* Box(const __AudioDeviceInterop& value);
+		static __AudioDeviceInterop Unbox(MonoObject* value);
+		static AudioDevice FromInterop(const __AudioDeviceInterop& value);
+		static __AudioDeviceInterop ToInterop(const AudioDevice& value);
 
 	private:
 		ScriptAudioDevice(MonoObject* managedInstance);

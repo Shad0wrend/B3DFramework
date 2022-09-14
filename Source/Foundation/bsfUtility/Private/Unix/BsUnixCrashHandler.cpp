@@ -32,7 +32,7 @@ namespace bs
 
 		// Note: Not safe to grab a stack-trace here (nor do memory allocations), but we might as well try since we're
 		// crashing anyway
-		CrashHandler::instance().reportCrash(signalName, "Received fatal signal", "", "");
+		CrashHandler::Instance().reportCrash(signalName, "Received fatal signal", "", "");
 
 		kill(getpid(), signal);
 		exit(signal);

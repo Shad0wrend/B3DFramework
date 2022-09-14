@@ -62,13 +62,13 @@ namespace ct
 		friend class RenderCompositor;
 
 		/** Executes the task implemented in the node. */
-		virtual void render(const RenderCompositorNodeInputs& inputs) = 0;
+		virtual void Render(const RenderCompositorNodeInputs& inputs) = 0;
 
 		/**
 		 * Cleans up any temporary resources allocated in a render() call. Any resources lasting longer than one frame
 		 * should be kept alive and released in some other manner.
 		 */
-		virtual void clear() = 0;
+		virtual void Clear() = 0;
 	};
 
 	/**
@@ -103,14 +103,14 @@ namespace ct
 		 *							to the views render target. All other nodes will be deduced from this node's
 		 *							dependencies.
 		 */
-		void build(const RendererView& view, const StringID& finalNode);
+		void Build(const RendererView& view, const StringID& finalNode);
 
 		/** Performs rendering using the current render node hierarchy. This is expected to be called once per frame. */
-		void execute(RenderCompositorNodeInputs& inputs) const;
+		void Execute(RenderCompositorNodeInputs& inputs) const;
 
 	private:
 		/** Clears the render node hierarchy. */
-		void clear();
+		void Clear();
 
 		Vector<NodeInfo> mNodeInfos;
 		bool mIsValid = false;
@@ -125,10 +125,10 @@ namespace ct
 			virtual ~NodeType() = default;
 
 			/** Creates a new node of this type. */
-			virtual RenderCompositorNode* create() const = 0;
+			virtual RenderCompositorNode* Create() const = 0;
 
 			/** Returns identifier for all the dependencies of a node of this type. */
-			virtual SmallVector<StringID, 4> getDependencies(const RendererView& view) const = 0;
+			virtual SmallVector<StringID, 4> GetDependencies(const RendererView& view) const = 0;
 
 			StringID id;
 		};
@@ -142,11 +142,11 @@ namespace ct
 				id = T::getNodeId();
 			}
 
-			/** @copydoc NodeType::create() */
-			RenderCompositorNode* create() const override { return bs_new<T>(); }
+			/** @copydoc NodeType::Create() */
+			RenderCompositorNode* Create() const override { return bs_new<T>(); }
 
 			/** @copydoc NodeType::getDependencies() */
-			SmallVector<StringID, 4> getDependencies(const RendererView& view) const override
+			SmallVector<StringID, 4> GetDependencies(const RendererView& view) const override
 			{
 				return T::getDependencies(view);
 			}
@@ -157,7 +157,7 @@ namespace ct
 		 * in the node hierarchy.
 		 */
 		template<class T>
-		static void registerNodeType()
+		static void RegisterNodeType()
 		{
 			auto findIter = mNodeTypes.find(T::getNodeId());
 			if (findIter != mNodeTypes.end())
@@ -167,7 +167,7 @@ namespace ct
 		}
 
 		/** Releases any information about render node types. */
-		static void cleanUp()
+		static void CleanUp()
 		{
 			for (auto& entry : mNodeTypes)
 				bs_delete(entry.second);
@@ -190,14 +190,14 @@ namespace ct
 		// Outputs
 		SPtr<PooledRenderTexture> depthTex;
 
-		static StringID getNodeId() { return "SceneDepth"; }
-		static SmallVector<StringID, 4> getDependencies(const RendererView& view);
+		static StringID GetNodeId() { return "SceneDepth"; }
+		static SmallVector<StringID, 4> GetDependencies(const RendererView& view);
 	protected:
 		/** @copydoc RenderCompositorNode::render */
-		void render(const RenderCompositorNodeInputs& inputs) override;
+		void Render(const RenderCompositorNodeInputs& inputs) override;
 
 		/** @copydoc RenderCompositorNode::clear */
-		void clear() override;
+		void Clear() override;
 	};
 
 	/**
@@ -217,14 +217,14 @@ namespace ct
 		SPtr<RenderTexture> renderTarget;
 		SPtr<RenderTexture> renderTargetNoMask;
 
-		static StringID getNodeId() { return "BasePass"; }
-		static SmallVector<StringID, 4> getDependencies(const RendererView& view);
+		static StringID GetNodeId() { return "BasePass"; }
+		static SmallVector<StringID, 4> GetDependencies(const RendererView& view);
 	protected:
 		/** @copydoc RenderCompositorNode::render */
-		void render(const RenderCompositorNodeInputs& inputs) override;
+		void Render(const RenderCompositorNodeInputs& inputs) override;
 
 		/** @copydoc RenderCompositorNode::clear */
-		void clear() override;
+		void Clear() override;
 	};
 
 	/** Initializes the scene color texture and/or buffer. Does not perform any rendering. */
@@ -247,25 +247,25 @@ namespace ct
 		SPtr<RenderTexture> renderTarget;
 
 		/** Converts MSAA data from the texture array into the MSAA texture. */
-		void msaaTexArrayToTexture();
+		void MsaaTexArrayToTexture();
 
 		/**
 		 * Updates the internal scene color texture with the provided texture. MSAA scene color texture array must have
 		 * been resolved before this call. This will not update the render target.
 		 */
-		void setExternalTexture(const SPtr<PooledRenderTexture>& texture);
+		void SetExternalTexture(const SPtr<PooledRenderTexture>& texture);
 
 		/** Swaps the render textures between this node and the light accumulation nodes. */
-		void swap(RCNodeLightAccumulation* lightAccumNode);
+		void Swap(RCNodeLightAccumulation* lightAccumNode);
 
-		static StringID getNodeId() { return "SceneColor"; }
-		static SmallVector<StringID, 4> getDependencies(const RendererView& view);
+		static StringID GetNodeId() { return "SceneColor"; }
+		static SmallVector<StringID, 4> GetDependencies(const RendererView& view);
 	protected:
 		/** @copydoc RenderCompositorNode::render */
-		void render(const RenderCompositorNodeInputs& inputs) override;
+		void Render(const RenderCompositorNodeInputs& inputs) override;
 
 		/** @copydoc RenderCompositorNode::clear */
-		void clear() override;
+		void Clear() override;
 	};
 
 	/**
@@ -279,14 +279,14 @@ namespace ct
 		// Outputs
 		SPtr<PooledRenderTexture> output;
 
-		static StringID getNodeId() { return "MSAACoverage"; }
-		static SmallVector<StringID, 4> getDependencies(const RendererView& view);
+		static StringID GetNodeId() { return "MSAACoverage"; }
+		static SmallVector<StringID, 4> GetDependencies(const RendererView& view);
 	protected:
 		/** @copydoc RenderCompositorNode::render */
-		void render(const RenderCompositorNodeInputs& inputs) override;
+		void Render(const RenderCompositorNodeInputs& inputs) override;
 
 		/** @copydoc RenderCompositorNode::clear */
-		void clear() override;
+		void Clear() override;
 	};
 
 	/************************************************************************/
@@ -297,28 +297,28 @@ namespace ct
 	class RCNodeParticleSimulate : public RenderCompositorNode
 	{
 	public:
-		static StringID getNodeId() { return "ParticleSimulate"; }
-		static SmallVector<StringID, 4> getDependencies(const RendererView& view);
+		static StringID GetNodeId() { return "ParticleSimulate"; }
+		static SmallVector<StringID, 4> GetDependencies(const RendererView& view);
 	protected:
 		/** @copydoc RenderCompositorNode::render */
-		void render(const RenderCompositorNodeInputs& inputs) override;
+		void Render(const RenderCompositorNodeInputs& inputs) override;
 
 		/** @copydoc RenderCompositorNode::clear */
-		void clear() override;
+		void Clear() override;
 	};
 
 	/** Performs view-based sorting on CPU simulated particle systems. */
 	class RCNodeParticleSort : public RenderCompositorNode
 	{
 	public:
-		static StringID getNodeId() { return "ParticleSort"; }
-		static SmallVector<StringID, 4> getDependencies(const RendererView& view);
+		static StringID GetNodeId() { return "ParticleSort"; }
+		static SmallVector<StringID, 4> GetDependencies(const RendererView& view);
 	protected:
 		/** @copydoc RenderCompositorNode::render */
-		void render(const RenderCompositorNodeInputs& inputs) override;
+		void Render(const RenderCompositorNodeInputs& inputs) override;
 
 		/** @copydoc RenderCompositorNode::clear */
-		void clear() override;
+		void Clear() override;
 	};
 
 	/************************************************************************/
@@ -345,16 +345,16 @@ namespace ct
 		SPtr<RenderTexture> renderTarget;
 
 		/** Converts MSAA data from the texture array into the MSAA texture. */
-		void msaaTexArrayToTexture();
+		void MsaaTexArrayToTexture();
 
-		static StringID getNodeId() { return "LightAccumulation"; }
-		static SmallVector<StringID, 4> getDependencies(const RendererView& view);
+		static StringID GetNodeId() { return "LightAccumulation"; }
+		static SmallVector<StringID, 4> GetDependencies(const RendererView& view);
 	protected:
 		/** @copydoc RenderCompositorNode::render */
-		void render(const RenderCompositorNodeInputs& inputs) override;
+		void Render(const RenderCompositorNodeInputs& inputs) override;
 
 		/** @copydoc RenderCompositorNode::clear */
-		void clear() override;
+		void Clear() override;
 	};
 
 	/**
@@ -367,14 +367,14 @@ namespace ct
 		// Outputs
 		RCNodeLightAccumulation* output;
 
-		static StringID getNodeId() { return "DeferredDirectLighting"; }
-		static SmallVector<StringID, 4> getDependencies(const RendererView& view);
+		static StringID GetNodeId() { return "DeferredDirectLighting"; }
+		static SmallVector<StringID, 4> GetDependencies(const RendererView& view);
 	protected:
 		/** @copydoc RenderCompositorNode::render */
-		void render(const RenderCompositorNodeInputs& inputs) override;
+		void Render(const RenderCompositorNodeInputs& inputs) override;
 
 		/** @copydoc RenderCompositorNode::clear */
-		void clear() override;
+		void Clear() override;
 
 		SPtr<RenderTexture> mLightOcclusionRT;
 	};
@@ -390,14 +390,14 @@ namespace ct
 		// Outputs
 		RCNodeLightAccumulation* output;
 
-		static StringID getNodeId() { return "DeferredIndirectSpecularLighting"; }
-		static SmallVector<StringID, 4> getDependencies(const RendererView& view);
+		static StringID GetNodeId() { return "DeferredIndirectSpecularLighting"; }
+		static SmallVector<StringID, 4> GetDependencies(const RendererView& view);
 	protected:
 		/** @copydoc RenderCompositorNode::render */
-		void render(const RenderCompositorNodeInputs& inputs) override;
+		void Render(const RenderCompositorNodeInputs& inputs) override;
 
 		/** @copydoc RenderCompositorNode::clear */
-		void clear() override;
+		void Clear() override;
 	};
 
 	/**
@@ -409,14 +409,14 @@ namespace ct
 	public:
 		// Outputs to the unflattened RCNodeLightAccumulation
 
-		static StringID getNodeId() { return "IndirectDiffuseLighting"; }
-		static SmallVector<StringID, 4> getDependencies(const RendererView& view);
+		static StringID GetNodeId() { return "IndirectDiffuseLighting"; }
+		static SmallVector<StringID, 4> GetDependencies(const RendererView& view);
 	protected:
 		/** @copydoc RenderCompositorNode::render */
-		void render(const RenderCompositorNodeInputs& inputs) override;
+		void Render(const RenderCompositorNodeInputs& inputs) override;
 
 		/** @copydoc RenderCompositorNode::clear */
-		void clear() override;
+		void Clear() override;
 	};
 
 	/**
@@ -426,14 +426,14 @@ namespace ct
 	class RCNodeClusteredForward : public RenderCompositorNode
 	{
 	public:
-		static StringID getNodeId() { return "ClusteredForward"; }
-		static SmallVector<StringID, 4> getDependencies(const RendererView& view);
+		static StringID GetNodeId() { return "ClusteredForward"; }
+		static SmallVector<StringID, 4> GetDependencies(const RendererView& view);
 	protected:
 		/** @copydoc RenderCompositorNode::render */
-		void render(const RenderCompositorNodeInputs& inputs) override;
+		void Render(const RenderCompositorNodeInputs& inputs) override;
 
 		/** @copydoc RenderCompositorNode::clear */
-		void clear() override;
+		void Clear() override;
 
 		SPtr<RenderTexture> renderTarget;
 	};
@@ -445,28 +445,28 @@ namespace ct
 	class RCNodeSkybox : public RenderCompositorNode
 	{
 	public:
-		static StringID getNodeId() { return "Skybox"; }
-		static SmallVector<StringID, 4> getDependencies(const RendererView& view);
+		static StringID GetNodeId() { return "Skybox"; }
+		static SmallVector<StringID, 4> GetDependencies(const RendererView& view);
 	protected:
 		/** @copydoc RenderCompositorNode::render */
-		void render(const RenderCompositorNodeInputs& inputs) override;
+		void Render(const RenderCompositorNodeInputs& inputs) override;
 
 		/** @copydoc RenderCompositorNode::clear */
-		void clear() override;
+		void Clear() override;
 	};
 
 	/** Moves the contents of the scene color texture into the view's output target. */
 	class RCNodeFinalResolve : public RenderCompositorNode
 	{
 	public:
-		static StringID getNodeId() { return "FinalResolve"; }
-		static SmallVector<StringID, 4> getDependencies(const RendererView& view);
+		static StringID GetNodeId() { return "FinalResolve"; }
+		static SmallVector<StringID, 4> GetDependencies(const RendererView& view);
 	protected:
 		/** @copydoc RenderCompositorNode::render */
-		void render(const RenderCompositorNodeInputs& inputs) override;
+		void Render(const RenderCompositorNodeInputs& inputs) override;
 
 		/** @copydoc RenderCompositorNode::clear */
-		void clear() override;
+		void Clear() override;
 	};
 
 	/************************************************************************/
@@ -484,19 +484,19 @@ namespace ct
 		 * Returns a texture that can be used for rendering a post-process effect, and the result of the previous
 		 * output. Switches these textures so the next call they are returned in the opposite parameters.
 		 */
-		void getAndSwitch(const RendererView& view, SPtr<RenderTexture>& output, SPtr<Texture>& lastFrame) const;
+		void GetAndSwitch(const RendererView& view, SPtr<RenderTexture>& output, SPtr<Texture>& lastFrame) const;
 
 		/** Returns a texture that contains the last rendererd post process output. */
-		SPtr<Texture> getLastOutput() const;
+		SPtr<Texture> GetLastOutput() const;
 
-		static StringID getNodeId() { return "PostProcess"; }
-		static SmallVector<StringID, 4> getDependencies(const RendererView& view);
+		static StringID GetNodeId() { return "PostProcess"; }
+		static SmallVector<StringID, 4> GetDependencies(const RendererView& view);
 	protected:
 		/** @copydoc RenderCompositorNode::render */
-		void render(const RenderCompositorNodeInputs& inputs) override;
+		void Render(const RenderCompositorNodeInputs& inputs) override;
 
 		/** @copydoc RenderCompositorNode::clear */
-		void clear() override;
+		void Clear() override;
 
 		mutable SPtr<PooledRenderTexture> mOutput[2];
 		mutable UINT32 mCurrentIdx = 0;
@@ -508,20 +508,20 @@ namespace ct
 	public:
 		SPtr<PooledRenderTexture> output;
 
-		static StringID getNodeId() { return "EyeAdaptation"; }
-		static SmallVector<StringID, 4> getDependencies(const RendererView& view);
+		static StringID GetNodeId() { return "EyeAdaptation"; }
+		static SmallVector<StringID, 4> GetDependencies(const RendererView& view);
 	protected:
 		/** @copydoc RenderCompositorNode::render */
-		void render(const RenderCompositorNodeInputs& inputs) override;
+		void Render(const RenderCompositorNodeInputs& inputs) override;
 
 		/** @copydoc RenderCompositorNode::clear */
-		void clear() override;
+		void Clear() override;
 
 		/**
 		 * Returns true if the more advanced (and more expensive) compute shader based method of computing eye adaptation
 		 * should be used.
 		 */
-		bool useHistogramEyeAdapatation(const RenderCompositorNodeInputs& inputs);
+		bool UseHistogramEyeAdapatation(const RenderCompositorNodeInputs& inputs);
 
 		SPtr<PooledRenderTexture> previous;
 	};
@@ -533,14 +533,14 @@ namespace ct
 	class RCNodeTonemapping : public RenderCompositorNode
 	{
 	public:
-		static StringID getNodeId() { return "Tonemapping"; }
-		static SmallVector<StringID, 4> getDependencies(const RendererView& view);
+		static StringID GetNodeId() { return "Tonemapping"; }
+		static SmallVector<StringID, 4> GetDependencies(const RendererView& view);
 	protected:
 		/** @copydoc RenderCompositorNode::render */
-		void render(const RenderCompositorNodeInputs& inputs) override;
+		void Render(const RenderCompositorNodeInputs& inputs) override;
 
 		/** @copydoc RenderCompositorNode::clear */
-		void clear() override;
+		void Clear() override;
 
 		SPtr<PooledRenderTexture> mTonemapLUT;
 		UINT64 mTonemapLastUpdateHash = -1;
@@ -550,14 +550,14 @@ namespace ct
 	class RCNodeBokehDOF : public RenderCompositorNode
 	{
 	public:
-		static StringID getNodeId() { return "BokehDOF"; }
-		static SmallVector<StringID, 4> getDependencies(const RendererView& view);
+		static StringID GetNodeId() { return "BokehDOF"; }
+		static SmallVector<StringID, 4> GetDependencies(const RendererView& view);
 	protected:
 		/** @copydoc RenderCompositorNode::render */
-		void render(const RenderCompositorNodeInputs& inputs) override;
+		void Render(const RenderCompositorNodeInputs& inputs) override;
 
 		/** @copydoc RenderCompositorNode::clear */
-		void clear() override;
+		void Clear() override;
 	};
 
 	/**
@@ -568,42 +568,42 @@ namespace ct
 	class RCNodeMotionBlur : public RenderCompositorNode
 	{
 	public:
-		static StringID getNodeId() { return "MotionBlur"; }
-		static SmallVector<StringID, 4> getDependencies(const RendererView & view);
+		static StringID GetNodeId() { return "MotionBlur"; }
+		static SmallVector<StringID, 4> GetDependencies(const RendererView & view);
 	protected:
 		/** @copydoc RenderCompositorNode::render */
-		void render(const RenderCompositorNodeInputs& inputs) override;
+		void Render(const RenderCompositorNodeInputs& inputs) override;
 
 		/** @copydoc RenderCompositorNode::clear */
-		void clear() override;
+		void Clear() override;
 	};
 
 	/** Renders the depth of field effect using Gaussian blurring. */
 	class RCNodeGaussianDOF : public RenderCompositorNode
 	{
 	public:
-		static StringID getNodeId() { return "GaussianDOF"; }
-		static SmallVector<StringID, 4> getDependencies(const RendererView& view);
+		static StringID GetNodeId() { return "GaussianDOF"; }
+		static SmallVector<StringID, 4> GetDependencies(const RendererView& view);
 	protected:
 		/** @copydoc RenderCompositorNode::render */
-		void render(const RenderCompositorNodeInputs& inputs) override;
+		void Render(const RenderCompositorNodeInputs& inputs) override;
 
 		/** @copydoc RenderCompositorNode::clear */
-		void clear() override;
+		void Clear() override;
 	};
 
 	/** Renders FXAA. */
 	class RCNodeFXAA : public RenderCompositorNode
 	{
 	public:
-		static StringID getNodeId() { return "FXAA"; }
-		static SmallVector<StringID, 4> getDependencies(const RendererView& view);
+		static StringID GetNodeId() { return "FXAA"; }
+		static SmallVector<StringID, 4> GetDependencies(const RendererView& view);
 	protected:
 		/** @copydoc RenderCompositorNode::render */
-		void render(const RenderCompositorNodeInputs& inputs) override;
+		void Render(const RenderCompositorNodeInputs& inputs) override;
 
 		/** @copydoc RenderCompositorNode::clear */
-		void clear() override;
+		void Clear() override;
 	};
 
 	/************************************************************************/
@@ -616,14 +616,14 @@ namespace ct
 	public:
 		SPtr<PooledRenderTexture> output;
 
-		static StringID getNodeId() { return "HalfSceneColor"; }
-		static SmallVector<StringID, 4> getDependencies(const RendererView& view);
+		static StringID GetNodeId() { return "HalfSceneColor"; }
+		static SmallVector<StringID, 4> GetDependencies(const RendererView& view);
 	protected:
 		/** @copydoc RenderCompositorNode::render */
-		void render(const RenderCompositorNodeInputs& inputs) override;
+		void Render(const RenderCompositorNodeInputs& inputs) override;
 
 		/** @copydoc RenderCompositorNode::clear */
-		void clear() override;
+		void Clear() override;
 	};
 
 	/**
@@ -638,14 +638,14 @@ namespace ct
 		SPtr<PooledRenderTexture> output[MAX_NUM_DOWNSAMPLES];
 		UINT32 availableDownsamples = 0;
 
-		static StringID getNodeId() { return "SceneColorDownsamples"; }
-		static SmallVector<StringID, 4> getDependencies(const RendererView& view);
+		static StringID GetNodeId() { return "SceneColorDownsamples"; }
+		static SmallVector<StringID, 4> GetDependencies(const RendererView& view);
 	protected:
 		/** @copydoc RenderCompositorNode::render */
-		void render(const RenderCompositorNodeInputs& inputs) override;
+		void Render(const RenderCompositorNodeInputs& inputs) override;
 
 		/** @copydoc RenderCompositorNode::clear */
-		void clear() override;
+		void Clear() override;
 	};
 
 	/** Resolves the depth buffer (if multi-sampled). Otherwise just references the original depth buffer. */
@@ -654,14 +654,14 @@ namespace ct
 	public:
 		SPtr<PooledRenderTexture> output;
 
-		static StringID getNodeId() { return "ResolvedSceneDepth"; }
-		static SmallVector<StringID, 4> getDependencies(const RendererView& view);
+		static StringID GetNodeId() { return "ResolvedSceneDepth"; }
+		static SmallVector<StringID, 4> GetDependencies(const RendererView& view);
 	protected:
 		/** @copydoc RenderCompositorNode::render */
-		void render(const RenderCompositorNodeInputs& inputs) override;
+		void Render(const RenderCompositorNodeInputs& inputs) override;
 
 		/** @copydoc RenderCompositorNode::clear */
-		void clear() override;
+		void Clear() override;
 	};
 
 	/** Builds the hierarchical Z buffer. */
@@ -670,14 +670,14 @@ namespace ct
 	public:
 		SPtr<PooledRenderTexture> output;
 
-		static StringID getNodeId() { return "HiZ"; }
-		static SmallVector<StringID, 4> getDependencies(const RendererView& view);
+		static StringID GetNodeId() { return "HiZ"; }
+		static SmallVector<StringID, 4> GetDependencies(const RendererView& view);
 	protected:
 		/** @copydoc RenderCompositorNode::render */
-		void render(const RenderCompositorNodeInputs& inputs) override;
+		void Render(const RenderCompositorNodeInputs& inputs) override;
 
 		/** @copydoc RenderCompositorNode::clear */
-		void clear() override;
+		void Clear() override;
 	};
 
 	/** Renders screen space ambient occlusion. */
@@ -686,14 +686,14 @@ namespace ct
 	public:
 		SPtr<Texture> output;
 
-		static StringID getNodeId() { return "SSAO"; }
-		static SmallVector<StringID, 4> getDependencies(const RendererView& view);
+		static StringID GetNodeId() { return "SSAO"; }
+		static SmallVector<StringID, 4> GetDependencies(const RendererView& view);
 	protected:
 		/** @copydoc RenderCompositorNode::render */
-		void render(const RenderCompositorNodeInputs& inputs) override;
+		void Render(const RenderCompositorNodeInputs& inputs) override;
 
 		/** @copydoc RenderCompositorNode::clear */
-		void clear() override;
+		void Clear() override;
 
 		SPtr<PooledRenderTexture> mPooledOutput;
 	};
@@ -706,17 +706,17 @@ namespace ct
 
 		~RCNodeSSR();
 
-		static StringID getNodeId() { return "SSR"; }
-		static SmallVector<StringID, 4> getDependencies(const RendererView& view);
+		static StringID GetNodeId() { return "SSR"; }
+		static SmallVector<StringID, 4> GetDependencies(const RendererView& view);
 	protected:
 		/** @copydoc RenderCompositorNode::render */
-		void render(const RenderCompositorNodeInputs& inputs) override;
+		void Render(const RenderCompositorNodeInputs& inputs) override;
 
 		/** @copydoc RenderCompositorNode::clear */
-		void clear() override;
+		void Clear() override;
 
 		/** Cleans up any outputs. */
-		void deallocOutputs();
+		void DeallocOutputs();
 
 		SPtr<PooledRenderTexture> mPooledOutput;
 		SPtr<PooledRenderTexture> mPrevFrame;
@@ -734,17 +734,17 @@ namespace ct
 
 		~RCNodeTemporalAA();
 
-		static StringID getNodeId() { return "TemporalAA"; }
-		static SmallVector<StringID, 4> getDependencies(const RendererView& view);
+		static StringID GetNodeId() { return "TemporalAA"; }
+		static SmallVector<StringID, 4> GetDependencies(const RendererView& view);
 	protected:
 		/** @copydoc RenderCompositorNode::render */
-		void render(const RenderCompositorNodeInputs& inputs) override;
+		void Render(const RenderCompositorNodeInputs& inputs) override;
 
 		/** @copydoc RenderCompositorNode::clear */
-		void clear() override;
+		void Clear() override;
 
 		/** Cleans up any outputs. */
-		void deallocOutputs();
+		void DeallocOutputs();
 
 		SPtr<PooledRenderTexture> mPooledOutput;
 		SPtr<PooledRenderTexture> mPrevFrame;
@@ -756,14 +756,14 @@ namespace ct
 	public:
 		SPtr<Texture> output;
 
-		static StringID getNodeId() { return "Bloom"; }
-		static SmallVector<StringID, 4> getDependencies(const RendererView& view);
+		static StringID GetNodeId() { return "Bloom"; }
+		static SmallVector<StringID, 4> GetDependencies(const RendererView& view);
 	protected:
 		/** @copydoc RenderCompositorNode::render */
-		void render(const RenderCompositorNodeInputs& inputs) override;
+		void Render(const RenderCompositorNodeInputs& inputs) override;
 
 		/** @copydoc RenderCompositorNode::clear */
-		void clear() override;
+		void Clear() override;
 
 		SPtr<PooledRenderTexture> mPooledOutput;
 	};
@@ -772,42 +772,42 @@ namespace ct
 	class RCNodeScreenSpaceLensFlare : public RenderCompositorNode
 	{
 	public:
-		static StringID getNodeId() { return "ScreenSpaceLensFlare"; }
-		static SmallVector<StringID, 4> getDependencies(const RendererView& view);
+		static StringID GetNodeId() { return "ScreenSpaceLensFlare"; }
+		static SmallVector<StringID, 4> GetDependencies(const RendererView& view);
 	protected:
 		/** @copydoc RenderCompositorNode::render */
-		void render(const RenderCompositorNodeInputs& inputs) override;
+		void Render(const RenderCompositorNodeInputs& inputs) override;
 
 		/** @copydoc RenderCompositorNode::clear */
-		void clear() override;
+		void Clear() override;
 	};
 
 	/** Renders the chromatic aberration effect. */
 	class RCNodeChromaticAberration : public RenderCompositorNode
 	{
 	public:
-		static StringID getNodeId() { return "ChromaticAberration"; }
-		static SmallVector<StringID, 4> getDependencies(const RendererView & view);
+		static StringID GetNodeId() { return "ChromaticAberration"; }
+		static SmallVector<StringID, 4> GetDependencies(const RendererView & view);
 	protected:
 		/** @copydoc RenderCompositorNode::render */
-		void render(const RenderCompositorNodeInputs& inputs) override;
+		void Render(const RenderCompositorNodeInputs& inputs) override;
 
 		/** @copydoc RenderCompositorNode::clear */
-		void clear() override;
+		void Clear() override;
 	};
 
 	/** Renders the film grain effect. */
 	class RCNodeFilmGrain : public RenderCompositorNode
 	{
 	public:
-		static StringID getNodeId() { return "FilmGrain"; }
-		static SmallVector<StringID, 4> getDependencies(const RendererView & view);
+		static StringID GetNodeId() { return "FilmGrain"; }
+		static SmallVector<StringID, 4> GetDependencies(const RendererView & view);
 	protected:
 		/** @copydoc RenderCompositorNode::render */
-		void render(const RenderCompositorNodeInputs& inputs) override;
+		void Render(const RenderCompositorNodeInputs& inputs) override;
 
 		/** @copydoc RenderCompositorNode::clear */
-		void clear() override;
+		void Clear() override;
 	};
 
 	/** @} */

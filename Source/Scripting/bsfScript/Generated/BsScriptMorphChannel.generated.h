@@ -16,10 +16,10 @@ namespace bs
 
 		ScriptMorphChannel(MonoObject* managedInstance, const SPtr<MorphChannel>& value);
 
-		static MonoObject* create(const SPtr<MorphChannel>& value);
+		static MonoObject* Create(const SPtr<MorphChannel>& value);
 
 	private:
-		static MonoString* Internal_getName(ScriptMorphChannel* thisPtr);
-		static MonoArray* Internal_getShapes(ScriptMorphChannel* thisPtr);
+		static MonoString* InternalGetName(ScriptMorphChannel* thisPtr);
+		static MonoArray* InternalGetShapes(ScriptMorphChannel* thisPtr);
 	};
 }

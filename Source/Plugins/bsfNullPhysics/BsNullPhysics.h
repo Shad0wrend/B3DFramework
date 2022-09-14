@@ -22,22 +22,22 @@ namespace bs
 		~NullPhysics();
 
 		/** @copydoc Physics::fixedUpdate */
-		void fixedUpdate(float step) override { }
+		void FixedUpdate(float step) override { }
 
 		/** @copydoc Physics::update */
-		void update() override { }
+		void Update() override { }
 
 		/** @copydoc Physics::createMaterial */
-		SPtr<PhysicsMaterial> createMaterial(float staticFriction, float dynamicFriction, float restitution) override;
+		SPtr<PhysicsMaterial> CreateMaterial(float staticFriction, float dynamicFriction, float restitution) ;
 
 		/** @copydoc Physics::createMesh */
-		SPtr<PhysicsMesh> createMesh(const SPtr<MeshData>& meshData, PhysicsMeshType type) override;
+		SPtr<PhysicsMesh> CreateMesh(const SPtr<MeshData>& meshData, PhysicsMeshType type) ;
 
 		/** @copydoc Physics::createPhysicsScene */
-		SPtr<PhysicsScene> createPhysicsScene() override;
+		SPtr<PhysicsScene> CreatePhysicsScene() ;
 
 		/** @copydoc Physics::setPaused */
-		void setPaused(bool paused) override { }
+		void SetPaused(bool paused) override { }
 
 		bool RayCastInternal(const Vector3& origin, const Vector3& unitDir, const Collider& collider, PhysicsQueryHit& hit,
 			float maxDist = FLT_MAX) const override { return false; }
@@ -60,192 +60,192 @@ namespace bs
 		~NullPhysicsScene();
 
 		/** @copydoc PhysicsScene::createRigidbody */
-		SPtr<Rigidbody> createRigidbody(const HSceneObject& linkedSO) override;
+		SPtr<Rigidbody> CreateRigidbody(const HSceneObject& linkedSO) ;
 
 		/** @copydoc PhysicsScene::createBoxCollider */
-		SPtr<BoxCollider> createBoxCollider(const Vector3& extents, const Vector3& position,
-			const Quaternion& rotation) override;
+		SPtr<BoxCollider> CreateBoxCollider(const Vector3& extents, const Vector3& position,
+			const Quaternion& rotation) ;
 
 		/** @copydoc PhysicsScene::createSphereCollider */
-		SPtr<SphereCollider> createSphereCollider(float radius, const Vector3& position, const Quaternion& rotation) override;
+		SPtr<SphereCollider> CreateSphereCollider(float radius, const Vector3& position, const Quaternion& rotation) ;
 
 		/** @copydoc PhysicsScene::createPlaneCollider */
-		SPtr<PlaneCollider> createPlaneCollider(const Vector3& position, const Quaternion& rotation) override;
+		SPtr<PlaneCollider> CreatePlaneCollider(const Vector3& position, const Quaternion& rotation) ;
 
 		/** @copydoc PhysicsScene::createCapsuleCollider */
-		SPtr<CapsuleCollider> createCapsuleCollider(float radius, float halfHeight, const Vector3& position,
-			const Quaternion& rotation) override;
+		SPtr<CapsuleCollider> CreateCapsuleCollider(float radius, float halfHeight, const Vector3& position,
+			const Quaternion& rotation) ;
 
 		/** @copydoc PhysicsScene::createMeshCollider */
-		SPtr<MeshCollider> createMeshCollider(const Vector3& position, const Quaternion& rotation) override;
+		SPtr<MeshCollider> CreateMeshCollider(const Vector3& position, const Quaternion& rotation) ;
 
 		/** @copydoc PhysicsScene::createFixedJoint */
-		SPtr<FixedJoint> createFixedJoint(const FIXED_JOINT_DESC& desc) override;
+		SPtr<FixedJoint> CreateFixedJoint(const FIXED_JOINT_DESC& desc) ;
 
 		/** @copydoc PhysicsScene::createDistanceJoint */
-		SPtr<DistanceJoint> createDistanceJoint(const DISTANCE_JOINT_DESC& desc) override;
+		SPtr<DistanceJoint> CreateDistanceJoint(const DISTANCE_JOINT_DESC& desc) ;
 
 		/** @copydoc PhysicsScene::createHingeJoint */
-		SPtr<HingeJoint> createHingeJoint(const HINGE_JOINT_DESC& desc) override;
+		SPtr<HingeJoint> CreateHingeJoint(const HINGE_JOINT_DESC& desc) ;
 
 		/** @copydoc PhysicsScene::createSphericalJoint */
-		SPtr<SphericalJoint> createSphericalJoint(const SPHERICAL_JOINT_DESC& desc) override;
+		SPtr<SphericalJoint> CreateSphericalJoint(const SPHERICAL_JOINT_DESC& desc) ;
 
 		/** @copydoc PhysicsScene::createSliderJoint */
-		SPtr<SliderJoint> createSliderJoint(const SLIDER_JOINT_DESC& desc) override;
+		SPtr<SliderJoint> CreateSliderJoint(const SLIDER_JOINT_DESC& desc) ;
 
 		/** @copydoc PhysicsScene::createD6Joint */
-		SPtr<D6Joint> createD6Joint(const D6_JOINT_DESC& desc) override;
+		SPtr<D6Joint> CreateD6Joint(const D6_JOINT_DESC& desc) ;
 
 		/** @copydoc PhysicsScene::createCharacterController*/
-		SPtr<CharacterController> createCharacterController(const CHAR_CONTROLLER_DESC& desc) override;
+		SPtr<CharacterController> CreateCharacterController(const CHAR_CONTROLLER_DESC& desc) ;
 
 		/** @copydoc PhysicsScene::rayCast(const Vector3&, const Vector3&, PhysicsQueryHit&, UINT64, float) const */
-		bool rayCast(const Vector3& origin, const Vector3& unitDir, PhysicsQueryHit& hit,
+		bool RayCast(const Vector3& origin, const Vector3& unitDir, PhysicsQueryHit& hit,
 			UINT64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const override
 		{
 			return false;
 		}
 
 		/** @copydoc PhysicsScene::boxCast */
-		bool boxCast(const AABox& box, const Quaternion& rotation, const Vector3& unitDir, PhysicsQueryHit& hit,
+		bool BoxCast(const AABox& box, const Quaternion& rotation, const Vector3& unitDir, PhysicsQueryHit& hit,
 			UINT64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const override
 		{
 			return false;
 		}
 
 		/** @copydoc PhysicsScene::sphereCast */
-		bool sphereCast(const Sphere& sphere, const Vector3& unitDir, PhysicsQueryHit& hit,
+		bool SphereCast(const Sphere& sphere, const Vector3& unitDir, PhysicsQueryHit& hit,
 			UINT64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const override
 		{
 			return false;
 		}
 
 		/** @copydoc PhysicsScene::capsuleCast */
-		bool capsuleCast(const Capsule& capsule, const Quaternion& rotation, const Vector3& unitDir,
+		bool CapsuleCast(const Capsule& capsule, const Quaternion& rotation, const Vector3& unitDir,
 			PhysicsQueryHit& hit, UINT64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const override
 		{
 			return false;
 		}
 
 		/** @copydoc PhysicsScene::convexCast */
-		bool convexCast(const HPhysicsMesh& mesh, const Vector3& position, const Quaternion& rotation,
+		bool ConvexCast(const HPhysicsMesh& mesh, const Vector3& position, const Quaternion& rotation,
 			const Vector3& unitDir, PhysicsQueryHit& hit, UINT64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const override
 		{
 			return false;
 		}
 
 		/** @copydoc PhysicsScene::rayCastAll(const Vector3&, const Vector3&, UINT64, float) const */
-		Vector<PhysicsQueryHit> rayCastAll(const Vector3& origin, const Vector3& unitDir,
-			UINT64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const override
+		Vector<PhysicsQueryHit> RayCastAll(const Vector3& origin, const Vector3& unitDir,
+			UINT64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const 
 		{
 			return {};
 		}
 
 		/** @copydoc PhysicsScene::boxCastAll */
-		Vector<PhysicsQueryHit> boxCastAll(const AABox& box, const Quaternion& rotation,
-			const Vector3& unitDir, UINT64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const override
+		Vector<PhysicsQueryHit> BoxCastAll(const AABox& box, const Quaternion& rotation,
+			const Vector3& unitDir, UINT64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const 
 		{
 			return {};
 		}
 
 		/** @copydoc PhysicsScene::sphereCastAll */
-		Vector<PhysicsQueryHit> sphereCastAll(const Sphere& sphere, const Vector3& unitDir,
-			UINT64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const override
+		Vector<PhysicsQueryHit> SphereCastAll(const Sphere& sphere, const Vector3& unitDir,
+			UINT64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const 
 		{
 			return {};
 		}
 
 		/** @copydoc PhysicsScene::capsuleCastAll */
-		Vector<PhysicsQueryHit> capsuleCastAll(const Capsule& capsule, const Quaternion& rotation,
+		Vector<PhysicsQueryHit> CapsuleCastAll(const Capsule& capsule, const Quaternion& rotation,
 			const Vector3& unitDir, UINT64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const override
 		{
 			return {};
 		}
 
 		/** @copydoc PhysicsScene::convexCastAll */
-		Vector<PhysicsQueryHit> convexCastAll(const HPhysicsMesh& mesh, const Vector3& position,
+		Vector<PhysicsQueryHit> ConvexCastAll(const HPhysicsMesh& mesh, const Vector3& position,
 			const Quaternion& rotation, const Vector3& unitDir, UINT64 layer = BS_ALL_LAYERS,
-			float max = FLT_MAX) const override
+			float max = FLT_MAX) const 
 		{
 			return {};
 		}
 
 		/** @copydoc PhysicsScene::rayCastAny(const Vector3&, const Vector3&, UINT64, float) const */
-		bool rayCastAny(const Vector3& origin, const Vector3& unitDir,
+		bool RayCastAny(const Vector3& origin, const Vector3& unitDir,
 			UINT64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const override
 		{
 			return false;
 		}
 
 		/** @copydoc PhysicsScene::boxCastAny */
-		bool boxCastAny(const AABox& box, const Quaternion& rotation, const Vector3& unitDir,
+		bool BoxCastAny(const AABox& box, const Quaternion& rotation, const Vector3& unitDir,
 			UINT64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const override
 		{
 			return false;
 		}
 
 		/** @copydoc PhysicsScene::sphereCastAny */
-		bool sphereCastAny(const Sphere& sphere, const Vector3& unitDir,
+		bool SphereCastAny(const Sphere& sphere, const Vector3& unitDir,
 			UINT64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const override
 		{
 			return false;
 		}
 
 		/** @copydoc PhysicsScene::capsuleCastAny */
-		bool capsuleCastAny(const Capsule& capsule, const Quaternion& rotation, const Vector3& unitDir,
+		bool CapsuleCastAny(const Capsule& capsule, const Quaternion& rotation, const Vector3& unitDir,
 			UINT64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const override
 		{
 			return false;
 		}
 
 		/** @copydoc PhysicsScene::convexCastAny */
-		bool convexCastAny(const HPhysicsMesh& mesh, const Vector3& position, const Quaternion& rotation,
+		bool ConvexCastAny(const HPhysicsMesh& mesh, const Vector3& position, const Quaternion& rotation,
 			const Vector3& unitDir, UINT64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const override
 		{
 			return false;
 		}
 
 		/** @copydoc PhysicsScene::boxOverlapAny */
-		bool boxOverlapAny(const AABox& box, const Quaternion& rotation, UINT64 layer = BS_ALL_LAYERS) const override
+		bool BoxOverlapAny(const AABox& box, const Quaternion& rotation, UINT64 layer = BS_ALL_LAYERS) const override
 		{
 			return false;
 		}
 
 		/** @copydoc PhysicsScene::sphereOverlapAny */
-		bool sphereOverlapAny(const Sphere& sphere, UINT64 layer = BS_ALL_LAYERS) const override { return false; }
+		bool SphereOverlapAny(const Sphere& sphere, UINT64 layer = BS_ALL_LAYERS) const override { return false; }
 
 		/** @copydoc PhysicsScene::capsuleOverlapAny */
-		bool capsuleOverlapAny(const Capsule& capsule, const Quaternion& rotation,
+		bool CapsuleOverlapAny(const Capsule& capsule, const Quaternion& rotation,
 			UINT64 layer = BS_ALL_LAYERS) const override { return false; }
 
 		/** @copydoc PhysicsScene::convexOverlapAny */
-		bool convexOverlapAny(const HPhysicsMesh& mesh, const Vector3& position, const Quaternion& rotation,
+		bool ConvexOverlapAny(const HPhysicsMesh& mesh, const Vector3& position, const Quaternion& rotation,
 			UINT64 layer = BS_ALL_LAYERS) const override { return false; }
 
 		/** @copydoc PhysicsScene::getGravity */
-		Vector3 getGravity() const override { return mGravity; }
+		Vector3 GetGravity() const override { return mGravity; }
 
 		/** @copydoc PhysicsScene::setGravity */
-		void setGravity(const Vector3& gravity) override { mGravity = gravity; }
+		void SetGravity(const Vector3& gravity) override { mGravity = gravity; }
 
 		/** @copydoc PhysicsScene::addBroadPhaseRegion */
-		UINT32 addBroadPhaseRegion(const AABox& region) override { return 0; }
+		UINT32 AddBroadPhaseRegion(const AABox& region) override { return 0; }
 
 		/** @copydoc PhysicsScene::removeBroadPhaseRegion */
-		void removeBroadPhaseRegion(UINT32 regionId) override { }
+		void RemoveBroadPhaseRegion(UINT32 regionId) override { }
 
 		/** @copydoc PhysicsScene::clearBroadPhaseRegions */
-		void clearBroadPhaseRegions() override { }
+		void ClearBroadPhaseRegions() override { }
 
 		/** @copydoc PhysicsScene::setFlag */
-		void setFlag(PhysicsFlags flags, bool enabled) override { }
+		void SetFlag(PhysicsFlags flags, bool enabled) override { }
 
 		/** @copydoc PhysicsScene::getMaxTesselationEdgeLength */
-		float getMaxTesselationEdgeLength() const override { return mTesselationLength; }
+		float GetMaxTesselationEdgeLength() const override { return mTesselationLength; }
 
 		/** @copydoc PhysicsScene::setMaxTesselationEdgeLength */
-		void setMaxTesselationEdgeLength(float length) override { mTesselationLength = length; }
+		void SetMaxTesselationEdgeLength(float length) override { mTesselationLength = length; }
 
 		/** @copydoc PhysicsScene::BoxOverlapInternal */
 		Vector<Collider*> BoxOverlapInternal(const AABox& box, const Quaternion& rotation,

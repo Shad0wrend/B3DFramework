@@ -19,7 +19,7 @@ namespace bs
 	{
 	public:
 		/** Returns type name of the GUI element used for finding GUI element styles. */
-		static const String& getGUITypeName();
+		static const String& GetGuiTypeName();
 
 		/**
 		 * Creates a new listbox with the provided elements.
@@ -29,7 +29,7 @@ namespace bs
 		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
 		 *								GUIWidget the element is used on. If not specified default style is used.
 		 */
-		static GUIListBox* create(const Vector<HString>& elements, bool multiselect = false,
+		static GUIListBox* Create(const Vector<HString>& elements, bool multiselect = false,
 			const String& styleName = StringUtil::BLANK);
 
 		/**
@@ -42,7 +42,7 @@ namespace bs
 		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
 		 *								GUIWidget the element is used on. If not specified default style is used.
 		 */
-		static GUIListBox* create(const Vector<HString>& elements, bool multiselect,
+		static GUIListBox* Create(const Vector<HString>& elements, bool multiselect,
 			const GUIOptions& options, const String& styleName = StringUtil::BLANK);
 
 		/**
@@ -54,29 +54,29 @@ namespace bs
 		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
 		 *								GUIWidget the element is used on. If not specified default style is used.
 		 */
-		static GUIListBox* create(const Vector<HString>& elements, const GUIOptions& options,
+		static GUIListBox* Create(const Vector<HString>& elements, const GUIOptions& options,
 			const String& styleName = StringUtil::BLANK);
 
 		/**	Checks whether the listbox supports multiple selected elements at once. */
-		bool isMultiselect() const { return mIsMultiselect; }
+		bool IsMultiselect() const { return mIsMultiselect; }
 
 		/**	Changes the list box elements. */
-		void setElements(const Vector<HString>& elements);
+		void SetElements(const Vector<HString>& elements);
 
 		/**	Makes the element with the specified index selected. */
-		void selectElement(UINT32 idx);
+		void SelectElement(UINT32 idx);
 
 		/**	Deselect element the element with the specified index. Only relevant for multi-select list boxes. */
-		void deselectElement(UINT32 idx);
+		void DeselectElement(UINT32 idx);
 
 		/**	Returns states of all element in the list box (enabled or disabled). */
-		const Vector<bool>& getElementStates() const { return mElementStates; }
+		const Vector<bool>& GetElementStates() const { return mElementStates; }
 
 		/**
 		 * Sets states for all list box elements. Only valid for multi-select list boxes. Number of states must match number
 		 * of list box elements.
 		 */
-		void setElementStates(const Vector<bool>& states);
+		void SetElementStates(const Vector<bool>& states);
 
 		/**
 		 * Triggered whenever user selects or deselects an element in the list box. Returned index maps to the element in
@@ -107,19 +107,19 @@ namespace bs
 		bool CommandEventInternal(const GUICommandEvent& ev) override;
 
 		/**	Triggered when user clicks on an element. */
-		void elementSelected(UINT32 idx);
+		void ElementSelected(UINT32 idx);
 
 		/**	Opens the list box drop down menu. */
-		void openListBox();
+		void OpenListBox();
 
 		/**	Closes the list box drop down menu. */
-		void closeListBox();
+		void CloseListBox();
 
 		/** Called when the list box drop down menu is closed by external influence. */
-		void onListBoxClosed();
+		void OnListBoxClosed();
 
 		/**	Updates visible contents depending on selected element(s). */
-		void updateContents();
+		void UpdateContents();
 
 	private:
 		Vector<HString> mElements;

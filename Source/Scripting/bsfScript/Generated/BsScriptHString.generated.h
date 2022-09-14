@@ -15,17 +15,17 @@ namespace bs
 
 		ScriptHString(MonoObject* managedInstance, const SPtr<HString>& value);
 
-		SPtr<HString> getInternal() const { return mInternal; }
-		static MonoObject* create(const SPtr<HString>& value);
+		SPtr<HString> GetInternal() const { return mInternal; }
+		static MonoObject* Create(const SPtr<HString>& value);
 
 	private:
 		SPtr<HString> mInternal;
 
-		static void Internal_HString(MonoObject* managedInstance, MonoString* identifier, uint32_t stringTableId);
-		static void Internal_HString0(MonoObject* managedInstance, MonoString* identifier, MonoString* defaultString, uint32_t stringTableId);
-		static void Internal_HString1(MonoObject* managedInstance, uint32_t stringTableId);
-		static void Internal_HString2(MonoObject* managedInstance);
-		static MonoString* Internal_getValue(ScriptHString* thisPtr);
-		static void Internal_setParameter(ScriptHString* thisPtr, uint32_t idx, MonoString* value);
+		static void InternalHString(MonoObject* managedInstance, MonoString* identifier, uint32_t stringTableId);
+		static void InternalHString0(MonoObject* managedInstance, MonoString* identifier, MonoString* defaultString, uint32_t stringTableId);
+		static void InternalHString1(MonoObject* managedInstance, uint32_t stringTableId);
+		static void InternalHString2(MonoObject* managedInstance);
+		static MonoString* InternalGetValue(ScriptHString* thisPtr);
+		static void InternalSetParameter(ScriptHString* thisPtr, uint32_t idx, MonoString* value);
 	};
 }

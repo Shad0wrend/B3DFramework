@@ -135,7 +135,7 @@ namespace bs
 		 * @note	It is more efficient to use the other getPose overload as sequential calls can benefit from animation
 		 *			evaluator cache.
 		 */
-		void getPose(Matrix4* pose, LocalSkeletonPose& localPose, const SkeletonMask& mask, const AnimationClip& clip,
+		void GetPose(Matrix4* pose, LocalSkeletonPose& localPose, const SkeletonMask& mask, const AnimationClip& clip,
 			float time, bool loop = true);
 
 		/**
@@ -150,24 +150,24 @@ namespace bs
 		 * @param[in]	layers		One or multiple layers, containing one or multiple animation states to evaluate.
 		 * @param[in]	numLayers	Number of layers in the @p layers array.
 		 */
-		void getPose(Matrix4* pose, LocalSkeletonPose& localPose, const SkeletonMask& mask,
+		void GetPose(Matrix4* pose, LocalSkeletonPose& localPose, const SkeletonMask& mask,
 			const AnimationStateLayer* layers, UINT32 numLayers);
 
 		/** Returns the total number of bones in the skeleton. */
 		BS_SCRIPT_EXPORT(pr:getter,n:NumBones)
-		UINT32 getNumBones() const { return mNumBones; }
+		UINT32 GetNumBones() const { return mNumBones; }
 
 		/** Returns information about a bone at the provided index. */
-		const SkeletonBoneInfo& getBoneInfo(UINT32 idx) const { return mBoneInfo[idx]; }
+		const SkeletonBoneInfo& GetBoneInfo(UINT32 idx) const { return mBoneInfo[idx]; }
 
 		/** Searches all bones to find a root bone. Returns -1 if no root can be found. */
-		UINT32 getRootBoneIndex() const;
+		UINT32 GetRootBoneIndex() const;
 
 		/** Returns the inverse bind pose for the bone at the provided index. */
-		const Matrix4& getInvBindPose(UINT32 idx) const { return mInvBindPoses[idx]; }
+		const Matrix4& GetInvBindPose(UINT32 idx) const { return mInvBindPoses[idx]; }
 
 		/** Calculates the bind-pose transform of the bone at the specified index. */
-		Transform calcBoneTransform(UINT32 idx) const;
+		Transform CalcBoneTransform(UINT32 idx) const;
 
 		/**
 		 * Creates a new Skeleton.
@@ -175,7 +175,7 @@ namespace bs
 		 * @param[in]	bones		An array of bones to initialize the skeleton with. Data will be copied.
 		 * @param[in]	numBones	Number of bones in the @p bones array.
 		 */
-		static SPtr<Skeleton> create(BONE_DESC* bones, UINT32 numBones);
+		static SPtr<Skeleton> Create(BONE_DESC* bones, UINT32 numBones);
 
 	private:
 		Skeleton() = default;
@@ -191,15 +191,15 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class SkeletonRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 
 		/**
 		 * Creates a Skeleton with no data. You must populate its data manually.
 		 *
 		 * @note	For serialization use only.
 		 */
-		static SPtr<Skeleton> createEmpty();
+		static SPtr<Skeleton> CreateEmpty();
 	};
 
 	/** @} */

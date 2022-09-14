@@ -9,13 +9,13 @@ namespace bs
 		:mDependencies(dependencies), mAllowAsync(allowAsync), mCompressionMethod(compressionMethod)
 	{ }
 
-	RTTITypeBase* SavedResourceData::getRTTIStatic()
+	RTTITypeBase* SavedResourceData::GetRttiStatic()
 	{
-		return SavedResourceDataRTTI::instance();
+		return SavedResourceDataRTTI::Instance();
 	}
 
-	RTTITypeBase* SavedResourceData::getRTTI() const
+	RTTITypeBase* SavedResourceData::GetRtti() const
 	{
-		return SavedResourceData::getRTTIStatic();
+		return SavedResourceData::GetRttiStatic();
 	}
 }

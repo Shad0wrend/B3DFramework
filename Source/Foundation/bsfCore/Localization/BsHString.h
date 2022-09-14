@@ -61,7 +61,7 @@ namespace bs
 		operator const String& () const;
 
 		BS_SCRIPT_EXPORT(in:true)
-		const String& getValue() const;
+		const String& GetValue() const;
 
 		/**
 		 * Sets a value of a string parameter. Parameters are specified as bracketed values within the string itself
@@ -70,10 +70,10 @@ namespace bs
 		 * @note	This is useful for strings that have dynamically changing values, like numbers, embedded in them.
 		 */
 		BS_SCRIPT_EXPORT()
-		void setParameter(UINT32 idx, const String& value);
+		void SetParameter(UINT32 idx, const String& value);
 		
 		/** Returns an empty string. */
-		static const HString& dummy();
+		static const HString& Dummy();
 	private:
 		SPtr<LocalizedStringData> mStringData;
 		String* mParameters = nullptr;

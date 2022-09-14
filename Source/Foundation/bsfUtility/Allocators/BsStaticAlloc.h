@@ -38,7 +38,7 @@ namespace bs
 			{ }
 
 			/** Allocates a piece of memory within the block. Caller must ensure the block has enough empty space. */
-			UINT8* alloc(UINT32 amount)
+			UINT8* Alloc(UINT32 amount)
 			{
 				UINT8* freePtr = &mData[mFreePtr];
 				mFreePtr += amount;
@@ -50,14 +50,14 @@ namespace bs
 			 * Frees a piece of memory within the block. If the memory isn't the last allocated memory, no deallocation
 			 * happens and that memory is instead orphaned.
 			 */
-			void free(UINT8* data, UINT32 allocSize)
+			void Free(UINT8* data, UINT32 allocSize)
 			{
 				if((data + allocSize) == (mData + mFreePtr))
 					mFreePtr -= allocSize;
 			}
 
 			/** Releases all allocations within a block but doesn't actually free the memory. */
-			void clear()
+			void Clear()
 			{
 				mFreePtr = 0;
 			}
@@ -77,7 +77,7 @@ namespace bs
 		 *
 		 * @param[in]	amount	Amount of memory to allocate, in bytes.
 		 */
-		UINT8* alloc(UINT32 amount)
+		UINT8* Alloc(UINT32 amount)
 		{
 			if (amount == 0)
 				return nullptr;
@@ -110,7 +110,7 @@ namespace bs
 		}
 
 		/** Deallocates a previously allocated piece of memory. */
-		void free(void* data, UINT32 allocSize)
+		void Free(void* data, UINT32 allocSize)
 		{
 			if (data == nullptr)
 				return;
@@ -133,7 +133,7 @@ namespace bs
 		}
 
 		/** Deallocates a previously allocated piece of memory. */
-		void free(void* data)
+		void Free(void* data)
 		{
 			if (data == nullptr)
 				return;
@@ -153,7 +153,7 @@ namespace bs
 		 * Allocates enough memory to hold the object(s) of specified type using the static allocator, and constructs them.
 		 */
 		template<class T>
-		T* construct(UINT32 count = 0)
+		T* Construct(UINT32 count = 0)
 		{
 			T* data = (T*)alloc(sizeof(T) * count);
 
@@ -167,7 +167,7 @@ namespace bs
 		 * Allocates enough memory to hold the object(s) of specified type using the static allocator, and constructs them.
 		 */
 		template<class T, class... Args>
-		T* construct(Args &&...args, UINT32 count = 0)
+		T* Construct(Args &&...args, UINT32 count = 0)
 		{
 			T* data = (T*)alloc(sizeof(T) * count);
 
@@ -179,7 +179,7 @@ namespace bs
 
 		/** Destructs and deallocates an object allocated with the static allocator. */
 		template<class T>
-		void destruct(T* data)
+		void Destruct(T* data)
 		{
 			data->~T();
 
@@ -188,7 +188,7 @@ namespace bs
 
 		/** Destructs and deallocates an array of objects allocated with the static frame allocator. */
 		template<class T>
-		void destruct(T* data, UINT32 count)
+		void Destruct(T* data, UINT32 count)
 		{
 			for(unsigned int i = 0; i < count; i++)
 				data[i].~T();
@@ -197,7 +197,7 @@ namespace bs
 		}
 
 		/** Frees the internal memory buffers. All external allocations must be freed before calling this. */
-		void clear()
+		void Clear()
 		{
 			assert(mTotalAllocBytes == 0);
 
@@ -239,7 +239,7 @@ namespace bs
 		template<class U> class rebind { public: typedef StdStaticAlloc<BlockSize, U> other; };
 
 		/** Allocate but don't initialize number elements of type T.*/
-		T* allocate(const size_t num) const
+		T* Allocate(const size_t num) const
 		{
 			if (num == 0)
 				return nullptr;
@@ -255,18 +255,18 @@ namespace bs
 		}
 
 		/** Deallocate storage p of deleted elements. */
-		void deallocate(T* p, size_t num) const noexcept
+		void Deallocate(T* p, size_t num) const noexcept
 		{
 			mStaticAlloc->free((UINT8*)p, (UINT32)num);
 		}
 
 		StaticAlloc<BlockSize, FreeAlloc>* mStaticAlloc = nullptr;
 
-		size_t max_size() const { return std::numeric_limits<UINT32>::max() / sizeof(T); }
-		void construct(pointer p, const_reference t) { new (p) T(t); }
-		void destroy(pointer p) { p->~T(); }
+		size_t MaxSize() const { return std::numeric_limits<UINT32>::max() / sizeof(T); }
+		void Construct(pointer p, const_reference t) { new (p) T(t); }
+		void Destroy(pointer p) { p->~T(); }
 		template<class U, class... Args>
-		void construct(U* p, Args&&... args) { new(p) U(std::forward<Args>(args)...); }
+		void Construct(U* p, Args&&... args) { new(p) U(std::forward<Args>(args)...); }
 
 		template <class T1, int N1, class T2, int N2>
 		friend bool operator== (const StdStaticAlloc<N1, T1>& a, const StdStaticAlloc<N2, T2>& b) throw();

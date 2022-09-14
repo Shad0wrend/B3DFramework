@@ -26,28 +26,28 @@ namespace bs
 
 	void ScriptGUILabel::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_CreateInstance", (void*)&ScriptGUILabel::internal_createInstance);
-		metaData.scriptClass->addInternalCall("Internal_SetContent", (void*)&ScriptGUILabel::internal_setContent);
-		metaData.scriptClass->addInternalCall("Internal_SetTint", (void*)&ScriptGUILabel::internal_setTint);
+		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUILabel::InternalCreateInstance);
+		metaData.scriptClass->AddInternalCall("Internal_SetContent", (void*)&ScriptGUILabel::InternalSetContent);
+		metaData.scriptClass->AddInternalCall("Internal_SetTint", (void*)&ScriptGUILabel::InternalSetTint);
 	}
 
-	void ScriptGUILabel::internal_createInstance(MonoObject* instance, __GUIContentInterop* content, MonoString* style,
+	void ScriptGUILabel::InternalCreateInstance(MonoObject* instance, __GUIContentInterop* content, MonoString* style,
 		MonoArray* guiOptions)
 	{
 		GUIOptions options;
 
 		ScriptArray scriptArray(guiOptions);
-		UINT32 arrayLen = scriptArray.size();
+		UINT32 arrayLen = scriptArray.Size();
 		for (UINT32 i = 0; i < arrayLen; i++)
-			options.addOption(scriptArray.get<GUIOption>(i));
+			options.AddOption(scriptArray.get<GUIOption>(i));
 
 		GUIContent nativeContent = ScriptGUIContent::fromInterop(*content);
-		GUILabel* guiLabel = GUILabel::create(nativeContent, options, MonoUtil::monoToString(style));
+		GUILabel* guiLabel = GUILabel::Create(nativeContent, options, MonoUtil::monoToString(style));
 
 		new (bs_alloc<ScriptGUILabel>()) ScriptGUILabel(instance, guiLabel);
 	}
 
-	void ScriptGUILabel::internal_setContent(ScriptGUILabel* nativeInstance, __GUIContentInterop* content)
+	void ScriptGUILabel::InternalSetContent(ScriptGUILabel* nativeInstance, __GUIContentInterop* content)
 	{
 		GUIContent nativeContent = ScriptGUIContent::fromInterop(*content);
 
@@ -55,7 +55,7 @@ namespace bs
 		label->setContent(nativeContent);
 	}
 
-	void ScriptGUILabel::internal_setTint(ScriptGUILabel* nativeInstance, Color* color)
+	void ScriptGUILabel::InternalSetTint(ScriptGUILabel* nativeInstance, Color* color)
 	{
 		GUILabel* label = (GUILabel*)nativeInstance->getGUIElement();
 		label->setTint(*color);

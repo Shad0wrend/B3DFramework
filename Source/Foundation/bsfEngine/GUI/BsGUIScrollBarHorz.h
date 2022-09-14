@@ -16,7 +16,7 @@ namespace bs
 	{
 	public:
 		/** Returns type name of the GUI element used for finding GUI element styles.  */
-		static const String& getGUITypeName(bool resizable);
+		static const String& GetGuiTypeName(bool resizable);
 
 		/**
 		 * Creates a new horizontal scroll bar.
@@ -24,7 +24,7 @@ namespace bs
 		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
 		 *								GUIWidget the element is used on. If not specified default style is used.
 		 */
-		static GUIScrollBarHorz* create(const String& styleName = StringUtil::BLANK);
+		static GUIScrollBarHorz* Create(const String& styleName = StringUtil::BLANK);
 
 		/**
 		 * Creates a new horizontal scroll bar.
@@ -34,7 +34,7 @@ namespace bs
 		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
 		 *								GUIWidget the element is used on. If not specified default style is used.
 		 */
-		static GUIScrollBarHorz* create(bool resizeable, const String& styleName = StringUtil::BLANK);
+		static GUIScrollBarHorz* Create(bool resizeable, const String& styleName = StringUtil::BLANK);
 
 		/**
 		 * Creates a new horizontal scroll bar.
@@ -44,7 +44,7 @@ namespace bs
 		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
 		 *								GUIWidget the element is used on. If not specified default style is used.
 		 */
-		static GUIScrollBarHorz* create(const GUIOptions& options, const String& styleName = StringUtil::BLANK);
+		static GUIScrollBarHorz* Create(const GUIOptions& options, const String& styleName = StringUtil::BLANK);
 
 		/**
 		 * Creates a new horizontal scroll bar.
@@ -56,7 +56,7 @@ namespace bs
 		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
 		 *								GUIWidget the element is used on. If not specified default style is used.
 		 */
-		static GUIScrollBarHorz* create(bool resizeable, const GUIOptions& options,
+		static GUIScrollBarHorz* Create(bool resizeable, const GUIOptions& options,
 			const String& styleName = StringUtil::BLANK);
 	protected:
 		GUIScrollBarHorz(bool resizeable, const String& styleName, const GUIDimensions& dimensions);

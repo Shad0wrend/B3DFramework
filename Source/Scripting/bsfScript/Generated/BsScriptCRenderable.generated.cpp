@@ -22,7 +22,7 @@ namespace bs
 		metaData.scriptClass->addInternalCall("Internal_setMesh", (void*)&ScriptCRenderable::Internal_setMesh);
 		metaData.scriptClass->addInternalCall("Internal_getMesh", (void*)&ScriptCRenderable::Internal_getMesh);
 		metaData.scriptClass->addInternalCall("Internal_setMaterial", (void*)&ScriptCRenderable::Internal_setMaterial);
-		metaData.scriptClass->addInternalCall("Internal_setMaterial0", (void*)&ScriptCRenderable::Internal_setMaterial0);
+		metaData.scriptClass->AddInternalCall("Internal_setMaterial0", (void*)&ScriptCRenderable::Internal_setMaterial0);
 		metaData.scriptClass->addInternalCall("Internal_getMaterial", (void*)&ScriptCRenderable::Internal_getMaterial);
 		metaData.scriptClass->addInternalCall("Internal_setMaterials", (void*)&ScriptCRenderable::Internal_setMaterials);
 		metaData.scriptClass->addInternalCall("Internal_getMaterials", (void*)&ScriptCRenderable::Internal_getMaterials);
@@ -36,7 +36,7 @@ namespace bs
 
 	}
 
-	void ScriptCRenderable::Internal_setMesh(ScriptCRenderable* thisPtr, MonoObject* mesh)
+	void ScriptCRenderable::InternalSetMesh(ScriptCRenderable* thisPtr, MonoObject* mesh)
 	{
 		ResourceHandle<Mesh> tmpmesh;
 		ScriptRRefBase* scriptmesh;
@@ -46,14 +46,14 @@ namespace bs
 		thisPtr->getHandle()->setMesh(tmpmesh);
 	}
 
-	MonoObject* ScriptCRenderable::Internal_getMesh(ScriptCRenderable* thisPtr)
+	MonoObject* ScriptCRenderable::InternalGetMesh(ScriptCRenderable* thisPtr)
 	{
 		ResourceHandle<Mesh> tmp__output;
 		tmp__output = thisPtr->getHandle()->getMesh();
 
 		MonoObject* __output;
 		ScriptRRefBase* script__output;
-		script__output = ScriptResourceManager::instance().getScriptRRef(tmp__output);
+		script__output = ScriptResourceManager::Instance().getScriptRRef(tmp__output);
 		if(script__output != nullptr)
 			__output = script__output->getManagedInstance();
 		else
@@ -62,7 +62,7 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptCRenderable::Internal_setMaterial(ScriptCRenderable* thisPtr, uint32_t idx, MonoObject* material)
+	void ScriptCRenderable::InternalSetMaterial(ScriptCRenderable* thisPtr, uint32_t idx, MonoObject* material)
 	{
 		ResourceHandle<Material> tmpmaterial;
 		ScriptRRefBase* scriptmaterial;
@@ -72,7 +72,7 @@ namespace bs
 		thisPtr->getHandle()->setMaterial(idx, tmpmaterial);
 	}
 
-	void ScriptCRenderable::Internal_setMaterial0(ScriptCRenderable* thisPtr, MonoObject* material)
+	void ScriptCRenderable::InternalSetMaterial0(ScriptCRenderable* thisPtr, MonoObject* material)
 	{
 		ResourceHandle<Material> tmpmaterial;
 		ScriptRRefBase* scriptmaterial;
@@ -82,14 +82,14 @@ namespace bs
 		thisPtr->getHandle()->setMaterial(tmpmaterial);
 	}
 
-	MonoObject* ScriptCRenderable::Internal_getMaterial(ScriptCRenderable* thisPtr, uint32_t idx)
+	MonoObject* ScriptCRenderable::InternalGetMaterial(ScriptCRenderable* thisPtr, uint32_t idx)
 	{
 		ResourceHandle<Material> tmp__output;
 		tmp__output = thisPtr->getHandle()->getMaterial(idx);
 
 		MonoObject* __output;
 		ScriptRRefBase* script__output;
-		script__output = ScriptResourceManager::instance().getScriptRRef(tmp__output);
+		script__output = ScriptResourceManager::Instance().getScriptRRef(tmp__output);
 		if(script__output != nullptr)
 			__output = script__output->getManagedInstance();
 		else
@@ -98,7 +98,7 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptCRenderable::Internal_setMaterials(ScriptCRenderable* thisPtr, MonoArray* materials)
+	void ScriptCRenderable::InternalSetMaterials(ScriptCRenderable* thisPtr, MonoArray* materials)
 	{
 		Vector<ResourceHandle<Material>> vecmaterials;
 		if(materials != nullptr)
@@ -119,7 +119,7 @@ namespace bs
 		thisPtr->getHandle()->setMaterials(vecmaterials);
 	}
 
-	MonoArray* ScriptCRenderable::Internal_getMaterials(ScriptCRenderable* thisPtr)
+	MonoArray* ScriptCRenderable::InternalGetMaterials(ScriptCRenderable* thisPtr)
 	{
 		Vector<ResourceHandle<Material>> vec__output;
 		vec__output = thisPtr->getHandle()->getMaterials();
@@ -130,7 +130,7 @@ namespace bs
 		for(int i = 0; i < arraySize__output; i++)
 		{
 			ScriptRRefBase* script__output;
-			script__output = ScriptResourceManager::instance().getScriptRRef(vec__output[i]);
+			script__output = ScriptResourceManager::Instance().getScriptRRef(vec__output[i]);
 			if(script__output != nullptr)
 				array__output.set(i, script__output->getManagedInstance());
 			else
@@ -141,12 +141,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptCRenderable::Internal_setCullDistanceFactor(ScriptCRenderable* thisPtr, float factor)
+	void ScriptCRenderable::InternalSetCullDistanceFactor(ScriptCRenderable* thisPtr, float factor)
 	{
 		thisPtr->getHandle()->setCullDistanceFactor(factor);
 	}
 
-	float ScriptCRenderable::Internal_getCullDistanceFactor(ScriptCRenderable* thisPtr)
+	float ScriptCRenderable::InternalGetCullDistanceFactor(ScriptCRenderable* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->getHandle()->getCullDistanceFactor();
@@ -157,12 +157,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptCRenderable::Internal_setWriteVelocity(ScriptCRenderable* thisPtr, bool enable)
+	void ScriptCRenderable::InternalSetWriteVelocity(ScriptCRenderable* thisPtr, bool enable)
 	{
 		thisPtr->getHandle()->setWriteVelocity(enable);
 	}
 
-	bool ScriptCRenderable::Internal_getWriteVelocity(ScriptCRenderable* thisPtr)
+	bool ScriptCRenderable::InternalGetWriteVelocity(ScriptCRenderable* thisPtr)
 	{
 		bool tmp__output;
 		tmp__output = thisPtr->getHandle()->getWriteVelocity();
@@ -173,12 +173,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptCRenderable::Internal_setLayer(ScriptCRenderable* thisPtr, uint64_t layer)
+	void ScriptCRenderable::InternalSetLayer(ScriptCRenderable* thisPtr, uint64_t layer)
 	{
 		thisPtr->getHandle()->setLayer(layer);
 	}
 
-	uint64_t ScriptCRenderable::Internal_getLayer(ScriptCRenderable* thisPtr)
+	uint64_t ScriptCRenderable::InternalGetLayer(ScriptCRenderable* thisPtr)
 	{
 		uint64_t tmp__output;
 		tmp__output = thisPtr->getHandle()->getLayer();
@@ -189,7 +189,7 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptCRenderable::Internal_getBounds(ScriptCRenderable* thisPtr, Bounds* __output)
+	void ScriptCRenderable::InternalGetBounds(ScriptCRenderable* thisPtr, Bounds* __output)
 	{
 		Bounds tmp__output;
 		tmp__output = thisPtr->getHandle()->getBounds();

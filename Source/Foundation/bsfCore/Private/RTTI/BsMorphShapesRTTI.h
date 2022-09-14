@@ -24,18 +24,18 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 	public:
-		const String& getRTTIName() override
+		const String& GetRttiName() 
 		{
 			static String name = "MorphShape";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() 
 		{
 			return TID_MorphShape;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return bs_shared_ptr_new<MorphShape>();
 		}
@@ -50,20 +50,20 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 	public:
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "MorphChannel";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_MorphChannel;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() override
 		{
-			return MorphChannel::createEmpty();
+			return MorphChannel::CreateEmpty();
 		}
 	};
 
@@ -76,20 +76,20 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 	public:
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "MorphShapes";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_MorphShapes;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() override
 		{
-			return MorphShapes::createEmpty();
+			return MorphShapes::CreateEmpty();
 		}
 	};
 

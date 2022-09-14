@@ -18,22 +18,22 @@ namespace bs
 	void ScriptPARTICLE_ROTATION_DESC::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptPARTICLE_ROTATION_DESC::box(const __PARTICLE_ROTATION_DESCInterop& value)
+	MonoObject*ScriptPARTICLE_ROTATION_DESC::Box(const __PARTICLE_ROTATION_DESCInterop& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	__PARTICLE_ROTATION_DESCInterop ScriptPARTICLE_ROTATION_DESC::unbox(MonoObject* value)
+	__PARTICLE_ROTATION_DESCInterop ScriptPARTICLE_ROTATION_DESC::Unbox(MonoObject* value)
 	{
-		return *(__PARTICLE_ROTATION_DESCInterop*)MonoUtil::unbox(value);
+		return *(__PARTICLE_ROTATION_DESCInterop*)MonoUtil::Unbox(value);
 	}
 
-	PARTICLE_ROTATION_DESC ScriptPARTICLE_ROTATION_DESC::fromInterop(const __PARTICLE_ROTATION_DESCInterop& value)
+	PARTICLE_ROTATION_DESC ScriptPARTICLE_ROTATION_DESC::FromInterop(const __PARTICLE_ROTATION_DESCInterop& value)
 	{
 		PARTICLE_ROTATION_DESC output;
 		SPtr<TDistribution<float>> tmprotation;
 		ScriptTDistributionfloat* scriptrotation;
-		scriptrotation = ScriptTDistributionfloat::toNative(value.rotation);
+		scriptrotation = ScriptTDistributionfloat::ToNative(value.rotation);
 		if(scriptrotation != nullptr)
 			tmprotation = scriptrotation->getInternal();
 		if(tmprotation != nullptr)
@@ -50,18 +50,18 @@ namespace bs
 		return output;
 	}
 
-	__PARTICLE_ROTATION_DESCInterop ScriptPARTICLE_ROTATION_DESC::toInterop(const PARTICLE_ROTATION_DESC& value)
+	__PARTICLE_ROTATION_DESCInterop ScriptPARTICLE_ROTATION_DESC::ToInterop(const PARTICLE_ROTATION_DESC& value)
 	{
 		__PARTICLE_ROTATION_DESCInterop output;
 		MonoObject* tmprotation;
 		SPtr<TDistribution<float>> tmprotationcopy;
 		tmprotationcopy = bs_shared_ptr_new<TDistribution<float>>(value.rotation);
-		tmprotation = ScriptTDistributionfloat::create(tmprotationcopy);
+		tmprotation = ScriptTDistributionfloat::Create(tmprotationcopy);
 		output.rotation = tmprotation;
 		MonoObject* tmprotation3D;
 		SPtr<TDistribution<Vector3>> tmprotation3Dcopy;
 		tmprotation3Dcopy = bs_shared_ptr_new<TDistribution<Vector3>>(value.rotation3D);
-		tmprotation3D = ScriptTDistributionVector3::create(tmprotation3Dcopy);
+		tmprotation3D = ScriptTDistributionVector3::Create(tmprotation3Dcopy);
 		output.rotation3D = tmprotation3D;
 		output.use3DRotation = value.use3DRotation;
 

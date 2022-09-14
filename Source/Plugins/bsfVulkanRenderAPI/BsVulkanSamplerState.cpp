@@ -13,7 +13,7 @@ namespace bs { namespace ct
 
 	VulkanSampler::~VulkanSampler()
 	{
-		vkDestroySampler(mOwner->getDevice().getLogical(), mSampler, gVulkanAllocator);
+		vkDestroySampler(mOwner->GetDevice().GetLogical(), mSampler, gVulkanAllocator);
 	}
 
 	VulkanSamplerState::VulkanSamplerState(const SAMPLER_STATE_DESC& desc, GpuDeviceFlags deviceMask)
@@ -27,14 +27,14 @@ namespace bs { namespace ct
 			if (mSamplers[i] == nullptr)
 				return;
 
-			mSamplers[i]->destroy();
+			mSamplers[i]->Destroy();
 		}
 	}
 
-	void VulkanSamplerState::createInternal()
+	void VulkanSamplerState::CreateInternal()
 	{
-		FilterOptions minFilter = getProperties().getTextureFiltering(FT_MIN);
-		FilterOptions magFilter = getProperties().getTextureFiltering(FT_MAG);
+		FilterOptions minFilter = GetProperties().GetTextureFiltering(FT_MIN);
+		FilterOptions magFilter = GetProperties().GetTextureFiltering(FT_MAG);
 		FilterOptions mipFilter = getProperties().getTextureFiltering(FT_MIP);
 
 		bool anisotropy = minFilter == FO_ANISOTROPIC || magFilter == FO_ANISOTROPIC || mipFilter == FO_ANISOTROPIC;
@@ -62,7 +62,7 @@ namespace bs { namespace ct
 		samplerInfo.borderColor = VulkanUtility::getBorderColor(getProperties().getBorderColor());
 		samplerInfo.unnormalizedCoordinates = false;
 
-		VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::instance());
+		VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
 		VulkanDevice* devices[BS_MAX_DEVICES];
 		VulkanUtility::getDevices(rapi, mDeviceMask, devices);
 

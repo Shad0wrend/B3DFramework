@@ -97,14 +97,14 @@ namespace bs
 			bs_deleteN(mBoneInfo, mNumBones);
 	}
 
-	SPtr<Skeleton> Skeleton::create(BONE_DESC* bones, UINT32 numBones)
+	SPtr<Skeleton> Skeleton::Create(BONE_DESC* bones, UINT32 numBones)
 	{
 		Skeleton* rawPtr = new (bs_alloc<Skeleton>()) Skeleton(bones, numBones);
 
 		return bs_shared_ptr<Skeleton>(rawPtr);
 	}
 
-	void Skeleton::getPose(Matrix4* pose, LocalSkeletonPose& localPose, const SkeletonMask& mask,
+	void Skeleton::GetPose(Matrix4* pose, LocalSkeletonPose& localPose, const SkeletonMask& mask,
 		const AnimationClip& clip, float time, bool loop)
 	{
 		bs_frame_mark();
@@ -112,8 +112,8 @@ namespace bs
 			FrameVector<AnimationCurveMapping> boneToCurveMapping(mNumBones);
 
 			AnimationState state;
-			state.curves = clip.getCurves();
-			state.length = clip.getLength();
+			state.curves = clip.GetCurves();
+			state.length = clip.GetLength();
 			state.boneToCurveMapping = boneToCurveMapping.data();
 			state.loop = loop;
 			state.weight = 1.0f;
@@ -135,14 +135,14 @@ namespace bs
 			layer.states = &state;
 			layer.numStates = 1;
 
-			clip.getBoneMapping(*this, state.boneToCurveMapping);
+			clip.GetBoneMapping(*this, state.boneToCurveMapping);
 
-			getPose(pose, localPose, mask, &layer, 1);
+			GetPose(pose, localPose, mask, &layer, 1);
 		}
 		bs_frame_clear();
 	}
 
-	void Skeleton::getPose(Matrix4* pose, LocalSkeletonPose& localPose, const SkeletonMask& mask,
+	void Skeleton::GetPose(Matrix4* pose, LocalSkeletonPose& localPose, const SkeletonMask& mask,
 		const AnimationStateLayer* layers, UINT32 numLayers)
 	{
 		// Note: If more performance is required this method could be optimized with vector instructions
@@ -187,12 +187,12 @@ namespace bs
 				float normWeight = state.weight * invLayerWeight;
 
 				// Early exit for clips that don't contribute (which there could be plenty especially for sequential blends)
-				if (Math::approxEquals(normWeight, 0.0f))
+				if (Math::ApproxEquals(normWeight, 0.0f))
 					continue;
 
 				for (UINT32 k = 0; k < mNumBones; k++)
 				{
-					if (!mask.isEnabled(k))
+					if (!mask.IsEnabled(k))
 						continue;
 
 					const AnimationCurveMapping& mapping = state.boneToCurveMapping[k];
@@ -200,7 +200,7 @@ namespace bs
 					if (curveIdx != (UINT32)-1)
 					{
 						const TAnimationCurve<Vector3>& curve = state.curves->position[curveIdx].curve;
-						localPose.positions[k] += curve.evaluate(state.time, state.positionCaches[curveIdx], false) * normWeight;
+						localPose.positions[k] += curve.Evaluate(state.time, state.positionCaches[curveIdx], false) * normWeight;
 
 						localPose.hasOverride[k] = false;
 						hasAnimCurve[k] = true;
@@ -210,7 +210,7 @@ namespace bs
 					if (curveIdx != (UINT32)-1)
 					{
 						const TAnimationCurve<Vector3>& curve = state.curves->scale[curveIdx].curve;
-						localPose.scales[k] *= curve.evaluate(state.time, state.scaleCaches[curveIdx], false) * normWeight;
+						localPose.scales[k] *= curve.Evaluate(state.time, state.scaleCaches[curveIdx], false) * normWeight;
 
 						localPose.hasOverride[k] = false;
 						hasAnimCurve[k] = true;
@@ -227,8 +227,8 @@ namespace bs
 
 							const TAnimationCurve<Quaternion>& curve = state.curves->rotation[curveIdx].curve;
 
-							Quaternion value = curve.evaluate(state.time, state.rotationCaches[curveIdx], false);
-							value = Quaternion::lerp(normWeight, Quaternion::IDENTITY, value);
+							Quaternion value = curve.Evaluate(state.time, state.rotationCaches[curveIdx], false);
+							value = Quaternion::Lerp(normWeight, Quaternion::IDENTITY, value);
 
 							localPose.rotations[k] *= value;
 							localPose.hasOverride[k] = false;
@@ -241,9 +241,9 @@ namespace bs
 						if (curveIdx != (UINT32)-1)
 						{
 							const TAnimationCurve<Quaternion>& curve = state.curves->rotation[curveIdx].curve;
-							Quaternion value = curve.evaluate(state.time, state.rotationCaches[curveIdx], false) * normWeight;
+							Quaternion value = curve.Evaluate(state.time, state.rotationCaches[curveIdx], false) * normWeight;
 
-							if (value.dot(localPose.rotations[k]) < 0.0f)
+							if (value.Dot(localPose.rotations[k]) < 0.0f)
 								value = -value;
 
 							localPose.rotations[k] += value;
@@ -261,9 +261,9 @@ namespace bs
 			if(hasAnimCurve[i])
 				continue;
 
-			localPose.positions[i] = mBoneTransforms[i].getPosition();
-			localPose.rotations[i] = mBoneTransforms[i].getRotation();
-			localPose.scales[i] = mBoneTransforms[i].getScale();
+			localPose.positions[i] = mBoneTransforms[i].GetPosition();
+			localPose.rotations[i] = mBoneTransforms[i].GetRotation();
+			localPose.scales[i] = mBoneTransforms[i].GetScale();
 		}
 
 		// Calculate local pose matrices
@@ -277,7 +277,7 @@ namespace bs
 			if (!isAssigned)
 				localPose.rotations[i] = Quaternion::IDENTITY;
 			else
-				localPose.rotations[i].normalize();
+				localPose.rotations[i].Normalize();
 
 			if (localPose.hasOverride[i])
 			{
@@ -320,7 +320,7 @@ namespace bs
 		bs_stack_free(hasAnimCurve);
 	}
 
-	Transform Skeleton::calcBoneTransform(UINT32 idx) const
+	Transform Skeleton::CalcBoneTransform(UINT32 idx) const
 	{
 		if(idx >= mNumBones)
 			return Transform::IDENTITY;
@@ -330,7 +330,7 @@ namespace bs
 		UINT32 parentIdx = mBoneInfo[idx].parent;
 		while(parentIdx != (UINT32)-1)
 		{
-			output.makeWorld(mBoneTransforms[parentIdx]);
+			output.MakeWorld(mBoneTransforms[parentIdx]);
 
 			parentIdx = mBoneInfo[parentIdx].parent;
 		}
@@ -338,7 +338,7 @@ namespace bs
 		return output;
 	}
 
-	UINT32 Skeleton::getRootBoneIndex() const
+	UINT32 Skeleton::GetRootBoneIndex() const
 	{
 		for (UINT32 i = 0; i < mNumBones; i++)
 		{
@@ -349,7 +349,7 @@ namespace bs
 		return (UINT32)-1;
 	}
 
-	SPtr<Skeleton> Skeleton::createEmpty()
+	SPtr<Skeleton> Skeleton::CreateEmpty()
 	{
 		Skeleton* rawPtr = new (bs_alloc<Skeleton>()) Skeleton();
 
@@ -357,13 +357,13 @@ namespace bs
 		return newSkeleton;
 	}
 
-	RTTITypeBase* Skeleton::getRTTIStatic()
+	RTTITypeBase* Skeleton::GetRttiStatic()
 	{
-		return SkeletonRTTI::instance();
+		return SkeletonRTTI::Instance();
 	}
 
-	RTTITypeBase* Skeleton::getRTTI() const
+	RTTITypeBase* Skeleton::GetRtti() const
 	{
-		return getRTTIStatic();
+		return GetRttiStatic();
 	}
 }

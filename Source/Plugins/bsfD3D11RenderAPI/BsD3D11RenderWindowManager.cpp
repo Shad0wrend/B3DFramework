@@ -13,16 +13,16 @@ namespace bs
 		assert(mRenderSystem != nullptr);
 	}
 
-	SPtr<RenderWindow> D3D11RenderWindowManager::createImpl(RENDER_WINDOW_DESC& desc, UINT32 windowId,
+	SPtr<RenderWindow> D3D11RenderWindowManager::CreateImpl(RENDER_WINDOW_DESC& desc, UINT32 windowId,
 		const SPtr<RenderWindow>& parentWindow)
 	{
-		ct::RenderAPI* rs = ct::RenderAPI::instancePtr();
+		ct::RenderAPI* rs = ct::RenderAPI::InstancePtr();
 		ct::D3D11RenderAPI* d3d11rs = static_cast<ct::D3D11RenderAPI*>(rs);
 
 		if(parentWindow != nullptr)
 		{
 			UINT64 hWnd;
-			parentWindow->getCustomAttribute("WINDOW", &hWnd);
+			parentWindow->GetCustomAttribute("WINDOW", &hWnd);
 			desc.platformSpecific["parentWindowHandle"] = toString(hWnd);
 		}
 

@@ -5,13 +5,13 @@
 
 namespace bs
 {
-	RTTITypeBase* ResourceMetaData::getRTTIStatic()
+	RTTITypeBase* ResourceMetaData::GetRttiStatic()
 	{
-		return ResourceMetaDataRTTI::instance();
+		return ResourceMetaDataRTTI::Instance();
 	}
 
-	RTTITypeBase* ResourceMetaData::getRTTI() const
+	RTTITypeBase* ResourceMetaData::GetRtti() const
 	{
-		return ResourceMetaData::getRTTIStatic();
+		return ResourceMetaData::GetRttiStatic();
 	}
 }

@@ -20,52 +20,52 @@ namespace bs
 		virtual ~FMODAudioSource();
 
 		/** @copydoc SceneActor::setTransform */
-		void setTransform(const Transform& transform) override;
+		void SetTransform(const Transform& transform) override;
 
 		/** @copydoc AudioSource::setClip */
-		void setClip(const HAudioClip& clip) override;
+		void SetClip(const HAudioClip& clip) override;
 
 		/** @copydoc AudioSource::setVelocity */
-		void setVelocity(const Vector3& velocity) override;
+		void SetVelocity(const Vector3& velocity) override;
 
 		/** @copydoc AudioSource::setVolume */
-		void setVolume(float volume) override;
+		void SetVolume(float volume) override;
 
 		/** @copydoc AudioSource::setPitch */
-		void setPitch(float pitch) override;
+		void SetPitch(float pitch) override;
 
 		/** @copydoc AudioSource::setIsLooping */
-		void setIsLooping(bool loop) override;
+		void SetIsLooping(bool loop) override;
 
 		/** @copydoc AudioSource::setPriority */
-		void setPriority(INT32 priority) override;
+		void SetPriority(INT32 priority) override;
 
 		/** @copydoc AudioSource::setTime */
-		void setTime(float time) override;
+		void SetTime(float time) override;
 
 		/** @copydoc AudioSource::getTime */
-		float getTime() const override;
+		float GetTime() const override;
 
 		/** @copydoc AudioSource::play */
-		void play() override;
+		void Play() override;
 
 		/** @copydoc AudioSource::pause */
-		void pause() override;
+		void Pause() override;
 
 		/** @copydoc AudioSource::stop */
-		void stop() override;
+		void Stop() override;
 
 		/** @copydoc AudioSource::getState */
-		AudioSourceState getState() const override;
+		AudioSourceState GetState() const override;
 
 	private:
 		friend class FMODAudio;
 
 		/** Pauses or resumes audio playback due to the global pause setting. */
-		void setGlobalPause(bool pause);
+		void SetGlobalPause(bool pause);
 
 		/** @copydoc AudioSource::onClipChanged */
-		void onClipChanged() override;
+		void OnClipChanged() override;
 
 		FMOD::Channel* mChannel = nullptr;
 		FMOD::Sound* mStreamingSound = nullptr;

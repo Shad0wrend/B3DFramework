@@ -25,7 +25,7 @@ namespace bs
 
 	}
 
-	MonoObject* ScriptApplicationEx::create(const SPtr<ApplicationEx>& value)
+	MonoObject* ScriptApplicationEx::Create(const SPtr<ApplicationEx>& value)
 	{
 		if(value == nullptr) return nullptr; 
 
@@ -40,7 +40,7 @@ namespace bs
 	{
 		START_UP_DESC tmpdesc;
 		tmpdesc = ScriptSTART_UP_DESC::fromInterop(*desc);
-		ApplicationEx::startUp(tmpdesc);
+		ApplicationEx::StartUp(tmpdesc);
 	}
 
 	void ScriptApplicationEx::Internal_startUp0(__VideoModeInterop* videoMode, MonoString* title, bool fullscreen)
@@ -49,7 +49,7 @@ namespace bs
 		tmpvideoMode = ScriptVideoMode::fromInterop(*videoMode);
 		String tmptitle;
 		tmptitle = MonoUtil::monoToString(title);
-		ApplicationEx::startUp(tmpvideoMode, tmptitle, fullscreen);
+		ApplicationEx::StartUp(tmpvideoMode, tmptitle, fullscreen);
 	}
 
 	void ScriptApplicationEx::Internal_runMainLoop()
@@ -59,7 +59,7 @@ namespace bs
 
 	void ScriptApplicationEx::Internal_shutDown()
 	{
-		ApplicationEx::shutDown();
+		ApplicationEx::ShutDown();
 	}
 #endif
 }

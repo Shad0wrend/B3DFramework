@@ -95,18 +95,18 @@ namespace bs { namespace ct
 		buffer->unlock();
 	}
 
-	void ParticlesRenderElement::draw() const
+	void ParticlesRenderElement::Draw() const
 	{
 		if (numParticles > 0)
 		{
 			if (is3D)
 				gRendererUtility().draw(mesh, numParticles);
 			else
-				ParticleRenderer::instance().drawBillboards(numParticles);
+				ParticleRenderer::Instance().drawBillboards(numParticles);
 		}
 	}
 
-	void RendererParticles::updatePerObjectBuffer()
+	void RendererParticles::UpdatePerObjectBuffer()
 	{
 		const ParticleSystemSettings& settings = particleSystem->getSettings();
 		const UINT32 layer = Bitwise::mostSignificantBit(particleSystem->getLayer());
@@ -122,9 +122,9 @@ namespace bs { namespace ct
 		PerObjectBuffer::update(perObjectParamBuffer, localToWorld, localToWorldNoScale, prevLocalToWorld, layer);
 	}
 
-	void RendererParticles::bindCPUSimulatedInputs(const ParticleRenderData* renderData, const RendererView& view) const
+	void RendererParticles::BindCpuSimulatedInputs(const ParticleRenderData* renderData, const RendererView& view) const
 	{
-		ParticleTexturePool& particlesTexPool = ParticleRenderer::instance().getTexturePool();
+		ParticleTexturePool& particlesTexPool = ParticleRenderer::Instance().getTexturePool();
 
 		const ParticleSystemSettings& settings = particleSystem->getSettings();
 		UINT32 texSize;
@@ -174,11 +174,11 @@ namespace bs { namespace ct
 		}
 	}
 
-	void RendererParticles::bindGPUSimulatedInputs(const GpuParticleResources& gpuSimResources, const RendererView& view) const
+	void RendererParticles::BindGpuSimulatedInputs(const GpuParticleResources& gpuSimResources, const RendererView& view) const
 	{
-		const GpuParticleStateTextures& gpuSimStateTextures = gpuSimResources.getCurrentState();
-		const GpuParticleStaticTextures& gpuSimStaticTextures = gpuSimResources.getStaticTextures();
-		const GpuParticleCurves& gpuCurves = gpuSimResources.getCurveTexture();
+		const GpuParticleStateTextures& gpuSimStateTextures = gpuSimResources.GetCurrentState();
+		const GpuParticleStaticTextures& gpuSimStaticTextures = gpuSimResources.GetStaticTextures();
+		const GpuParticleCurves& gpuCurves = gpuSimResources.GetCurveTexture();
 		const SPtr<GpuBuffer>& sortedIndices = gpuSimResources.getSortedIndices();
 
 		renderElement.paramsGPU.positionTimeTexture.set(gpuSimStateTextures.positionAndTimeTex);
@@ -186,7 +186,7 @@ namespace bs { namespace ct
 		renderElement.paramsGPU.curvesTexture.set(gpuCurves.getTexture());
 		renderElement.numParticles = gpuParticleSystem->getNumTiles() * GpuParticleResources::PARTICLES_PER_TILE;
 
-		if (gpuParticleSystem->hasSortInfo())
+		if (gpuParticleSystem->HasSortInfo())
 		{
 			renderElement.indicesBuffer.set(sortedIndices);
 			gParticlesParamDef.gBufferOffset.set(particlesParamBuffer,
@@ -225,7 +225,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	const ParticleBillboardTextures* ParticleTexturePool::alloc(const ParticleBillboardRenderData& simulationData)
+	const ParticleBillboardTextures* ParticleTexturePool::Alloc(const ParticleBillboardRenderData& simulationData)
 	{
 		const UINT32 size = simulationData.color.getWidth();
 
@@ -254,7 +254,7 @@ namespace bs { namespace ct
 		return output;
 	}
 
-	const ParticleMeshTextures* ParticleTexturePool::alloc(const ParticleMeshRenderData& simulationData)
+	const ParticleMeshTextures* ParticleTexturePool::Alloc(const ParticleMeshRenderData& simulationData)
 	{
 		const UINT32 size = simulationData.color.getWidth();
 
@@ -284,7 +284,7 @@ namespace bs { namespace ct
 		return output;
 	}
 
-	void ParticleTexturePool::clear()
+	void ParticleTexturePool::Clear()
 	{
 		for(auto& buffers : mBillboardBufferList)
 			buffers.second.nextFreeIdx = 0;
@@ -293,7 +293,7 @@ namespace bs { namespace ct
 			buffers.second.nextFreeIdx = 0;
 	}
 
-	ParticleBillboardTextures* ParticleTexturePool::createNewBillboardTextures(UINT32 size)
+	ParticleBillboardTextures* ParticleTexturePool::CreateNewBillboardTextures(UINT32 size)
 	{
 		ParticleBillboardTextures* output = mBillboardAlloc.construct<ParticleBillboardTextures>();
 
@@ -304,26 +304,26 @@ namespace bs { namespace ct
 		texDesc.usage = TU_DYNAMIC;
 
 		texDesc.format = PF_RGBA32F;
-		output->positionAndRotation = Texture::create(texDesc);
+		output->positionAndRotation = Texture::Create(texDesc);
 
 		texDesc.format = PF_RGBA8;
-		output->color = Texture::create(texDesc);
+		output->color = Texture::Create(texDesc);
 
 		texDesc.format = PF_RGBA16F;
-		output->sizeAndFrameIdx = Texture::create(texDesc);
+		output->sizeAndFrameIdx = Texture::Create(texDesc);
 
 		GPU_BUFFER_DESC bufferDesc;
 		bufferDesc.type = GBT_STANDARD;
 		bufferDesc.elementCount = size * size;
 		bufferDesc.format = BF_16X2U;
 
-		output->indices = GpuBuffer::create(bufferDesc);
+		output->indices = GpuBuffer::Create(bufferDesc);
 
 		mBillboardBufferList[size].buffers.push_back(output);
 		return output;
 	}
 
-	ParticleMeshTextures* ParticleTexturePool::createNewMeshTextures(UINT32 size)
+	ParticleMeshTextures* ParticleTexturePool::CreateNewMeshTextures(UINT32 size)
 	{
 		ParticleMeshTextures* output = mMeshAlloc.construct<ParticleMeshTextures>();
 
@@ -334,23 +334,23 @@ namespace bs { namespace ct
 		texDesc.usage = TU_DYNAMIC;
 
 		texDesc.format = PF_RGBA32F;
-		output->position = Texture::create(texDesc);
+		output->position = Texture::Create(texDesc);
 
 		texDesc.format = PF_RGBA8;
-		output->color = Texture::create(texDesc);
+		output->color = Texture::Create(texDesc);
 
 		texDesc.format = PF_RGBA16F;
-		output->size = Texture::create(texDesc);
+		output->size = Texture::Create(texDesc);
 
 		texDesc.format = PF_RGBA16F;
-		output->rotation = Texture::create(texDesc);
+		output->rotation = Texture::Create(texDesc);
 
 		GPU_BUFFER_DESC bufferDesc;
 		bufferDesc.type = GBT_STANDARD;
 		bufferDesc.elementCount = size * size;
 		bufferDesc.format = BF_16X2U;
 
-		output->indices = GpuBuffer::create(bufferDesc);
+		output->indices = GpuBuffer::Create(bufferDesc);
 
 		mMeshBufferList[size].buffers.push_back(output);
 		return output;
@@ -370,12 +370,12 @@ namespace bs { namespace ct
 		vertexDesc->addVertElem(VET_UBYTE4_NORM, VES_NORMAL);
 		vertexDesc->addVertElem(VET_UBYTE4_NORM, VES_TANGENT);
 
-		m->billboardVD = VertexDeclaration::create(vertexDesc);
+		m->billboardVD = VertexDeclaration::Create(vertexDesc);
 
 		VERTEX_BUFFER_DESC vbDesc;
 		vbDesc.numVerts = 4;
 		vbDesc.vertexSize = m->billboardVD->getProperties().getVertexSize(0);
-		m->billboardVB = VertexBuffer::create(vbDesc);
+		m->billboardVB = VertexBuffer::Create(vbDesc);
 
 		MeshData meshData(4, 0, vertexDesc);
 		auto vecIter = meshData.getVec3DataIter(VES_POSITION);
@@ -417,18 +417,18 @@ namespace bs { namespace ct
 		bs_delete(m);
 	}
 
-	void ParticleRenderer::drawBillboards(UINT32 count)
+	void ParticleRenderer::DrawBillboards(UINT32 count)
 	{
 		SPtr<VertexBuffer> vertexBuffers[] = { m->billboardVB };
 
-		RenderAPI& rapi = RenderAPI::instance();
+		RenderAPI& rapi = RenderAPI::Instance();
 		rapi.setVertexDeclaration(m->billboardVD);
 		rapi.setVertexBuffers(0, vertexBuffers, 1);
 		rapi.setDrawOperation(DOT_TRIANGLE_STRIP);
 		rapi.draw(0, 4, count);
 	}
 
-	void ParticleRenderer::sortByDistance(const Vector3& refPoint, const PixelData& positions, UINT32 numParticles,
+	void ParticleRenderer::SortByDistance(const Vector3& refPoint, const PixelData& positions, UINT32 numParticles,
 		UINT32 stride, Vector<UINT32>& indices)
 	{
 		struct ParticleSortData

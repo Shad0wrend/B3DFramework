@@ -18,10 +18,10 @@ namespace bs { namespace ct
 		static constexpr const char* SystemName = "bsfD3D11RenderAPI";
 
 		/** @copydoc RenderAPIFactory::create */
-		void create() override;
+		void Create() ;
 
 		/** @copydoc RenderAPIFactory::name */
-		const char* name() const override { return SystemName; }
+		const char* Name() const { return SystemName; }
 
 	private:
 
@@ -35,7 +35,7 @@ namespace bs { namespace ct
 				if(newFactory == nullptr)
 				{
 					newFactory = bs_shared_ptr_new<D3D11RenderAPIFactory>();
-					RenderAPIManager::instance().registerFactory(newFactory);
+					RenderAPIManager::Instance().RegisterFactory(newFactory);
 				}
 			}
 		};

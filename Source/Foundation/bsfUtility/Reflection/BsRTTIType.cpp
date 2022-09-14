@@ -12,7 +12,7 @@ namespace bs
 			bs_delete(item);
 	}
 
-	RTTIField* RTTITypeBase::findField(const String& name)
+	RTTIField* RTTITypeBase::FindField(const String& name)
 	{
 		auto foundElement = std::find_if(mFields.begin(), mFields.end(), [&name](RTTIField* x) { return x->name == name; });
 
@@ -25,7 +25,7 @@ namespace bs
 		return *foundElement;
 	}
 
-	RTTIField* RTTITypeBase::findField(int uniqueFieldId)
+	RTTIField* RTTITypeBase::FindField(int uniqueFieldId)
 	{
 		auto foundElement = std::find_if(mFields.begin(), mFields.end(), [&uniqueFieldId](RTTIField* x) { return x->schema.id == uniqueFieldId; });
 
@@ -35,7 +35,7 @@ namespace bs
 		return *foundElement;
 	}
 
-	void RTTITypeBase::addNewField(RTTIField* field)
+	void RTTITypeBase::AddNewField(RTTIField* field)
 	{
 		if(field == nullptr)
 			BS_EXCEPT(InvalidParametersException, "Field argument can't be null.");
@@ -71,25 +71,25 @@ namespace bs
 		}
 	}
 
-	RTTITypeBase* RTTISchema::getRTTIStatic()
+	RTTITypeBase* RTTISchema::GetRttiStatic()
 	{
-		return RTTISchemaRTTI::instance();
+		return RTTISchemaRTTI::Instance();
 	}
 
-	RTTITypeBase* RTTISchema::getRTTI() const
+	RTTITypeBase* RTTISchema::GetRtti() const
 	{
-		return getRTTIStatic();
+		return GetRttiStatic();
 	}
 
 	class SerializationContextRTTI : public RTTIType<SerializationContext, IReflectable, SerializationContextRTTI>
 	{
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "SerializationContext";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_SerializationContext;
 		}
@@ -101,14 +101,14 @@ namespace bs
 		}
 	};
 
-	RTTITypeBase* SerializationContext::getRTTIStatic()
+	RTTITypeBase* SerializationContext::GetRttiStatic()
 	{
-		return SerializationContextRTTI::instance();
+		return SerializationContextRTTI::Instance();
 	}
 
-	RTTITypeBase* SerializationContext::getRTTI() const
+	RTTITypeBase* SerializationContext::GetRtti() const
 	{
-		return getRTTIStatic();
+		return GetRttiStatic();
 	}
 
 	SPtr<IReflectable> rtti_create(UINT32 rttiId)

@@ -14,14 +14,14 @@ namespace bs
 	void ScriptKeyframeRef::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptKeyframeRef::box(const KeyframeRef& value)
+	MonoObject*ScriptKeyframeRef::Box(const KeyframeRef& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	KeyframeRef ScriptKeyframeRef::unbox(MonoObject* value)
+	KeyframeRef ScriptKeyframeRef::Unbox(MonoObject* value)
 	{
-		return *(KeyframeRef*)MonoUtil::unbox(value);
+		return *(KeyframeRef*)MonoUtil::Unbox(value);
 	}
 
 }

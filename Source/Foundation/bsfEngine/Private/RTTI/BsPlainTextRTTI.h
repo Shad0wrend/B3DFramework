@@ -17,26 +17,26 @@ namespace bs
 	class BS_EXPORT PlainTextRTTI : public RTTIType <PlainText, Resource, PlainTextRTTI>
 	{
 	private:
-		WString& getString(PlainText* obj) { return obj->mString; }
-		void setString(PlainText* obj, WString& val) { obj->mString = val; }
+		WString& GetString(PlainText* obj) { return obj->mString; }
+		void SetString(PlainText* obj, WString& val) { obj->mString = val; }
 	public:
 		PlainTextRTTI()
 		{
-			addPlainField("mString", 0, &PlainTextRTTI::getString, &PlainTextRTTI::setString);
+			AddPlainField("mString", 0, &PlainTextRTTI::GetString, &PlainTextRTTI::SetString);
 		}
 
-		const String& getRTTIName() override
+		const String& GetRttiName() 
 		{
 			static String name = "PlainText";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() 
 		{
 			return TID_PlainText;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return PlainText::CreatePtrInternal(L""); // Initial string doesn't matter, it'll get overwritten
 		}

@@ -27,30 +27,30 @@ namespace bs
 		 *
 		 * @return	The time since application start, in seconds.
 		 */
-		float getTime() const { return mTimeSinceStart; }
+		float GetTime() const { return mTimeSinceStart; }
 
 		/**
 		 * Gets the time elapsed since application start. Only gets updated once per frame.
 		 *
 		 * @return	The time since application start, in miliseconds.
 		 */
-		UINT64 getTimeMs() const { return mTimeSinceStartMs; }
+		UINT64 GetTimeMs() const { return mTimeSinceStartMs; }
 
 		/**
 		 * Gets the time since last frame was executed. Only gets updated once per frame.
 		 *
 		 * @return	Time since last frame was executed, in seconds.
 		 */
-		float getFrameDelta() const { return mFrameDelta; }
+		float GetFrameDelta() const { return mFrameDelta; }
 
 		/** Returns the step (in seconds) between fixed frame updates. */
-		float getFixedFrameDelta() const { return (float)(mFixedStep * MICROSEC_TO_SEC); }
+		float GetFixedFrameDelta() const { return (float)(mFixedStep * MICROSEC_TO_SEC); }
 
 		/** Returns the time (in seconds) the latest frame has started. */
-		float getLastFrameTime() const { return (float)(mLastFrameTime * MICROSEC_TO_SEC); }
+		float GetLastFrameTime() const { return (float)(mLastFrameTime * MICROSEC_TO_SEC); }
 
 		/** Returns the time (in seconds) the latest fixed update has started. */
-		float getLastFixedUpdateTime() const { return (float)(mLastFixedUpdateTime * MICROSEC_TO_SEC); }
+		float GetLastFixedUpdateTime() const { return (float)(mLastFixedUpdateTime * MICROSEC_TO_SEC); }
 
 		/**
 		 * Returns the sequential index of the current frame. First frame is 0.
@@ -59,7 +59,7 @@ namespace bs
 		 *
 		 * @note	Thread safe, but only counts sim thread frames.
 		 */
-		UINT64 getFrameIdx() const { return mCurrentFrame.load(); }
+		UINT64 GetFrameIdx() const { return mCurrentFrame.load(); }
 
 		/**
 		 * Returns the precise time since application start, in microseconds. Unlike other time methods this is not only
@@ -71,14 +71,14 @@ namespace bs
 		 * You will generally only want to use this for performance measurements and similar. Use non-precise methods in
 		 * majority of code as it is useful to keep the time value equal in all methods during a single frame.
 		 */
-		UINT64 getTimePrecise() const;
+		UINT64 GetTimePrecise() const;
 
 		/**
 		 * Gets the time at which the application was started, counting from system start.
 		 *
 		 * @return	The time since system to application start, in milliseconds.
 		 */
-		UINT64 getStartTimeMs() const { return mAppStartTime; }
+		UINT64 GetStartTimeMs() const { return mAppStartTime; }
 
 		/**
 		 * Gets the current date and time in textual form.
@@ -91,7 +91,7 @@ namespace bs
 		 * Thread safe.
 		 * The output format is [DayOfWeek], [Month] [NumericalDate], [NumericalYear] [HH]::[MM]::[SS].
 		 */
-		String getCurrentDateTimeString(bool isUTC);
+		String GetCurrentDateTimeString(bool isUTC);
 
 		/**
 		 * Gets the current time in textual form
@@ -104,7 +104,7 @@ namespace bs
 		 * Thread safe.
 		 * The output format is [HH]::[MM]::[SS].
 		 */
-		String getCurrentTimeString(bool isUTC);
+		String GetCurrentTimeString(bool isUTC);
 
 		/**
 		 * Gets the date and time where the application has been started in textual form.
@@ -117,7 +117,7 @@ namespace bs
 		 * Thread safe.
 		 * The output format is [DayOfWeek], [Month] [NumericalDate], [NumericalYear] [HH]::[MM]::[SS].
 		 */
-		String getAppStartUpDateString(bool isUTC);
+		String GetAppStartUpDateString(bool isUTC);
 
 		/** @name Internal
 		 *  @{

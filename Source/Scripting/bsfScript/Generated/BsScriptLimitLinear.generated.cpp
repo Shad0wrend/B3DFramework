@@ -16,17 +16,17 @@ namespace bs
 	void ScriptLimitLinear::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptLimitLinear::box(const __LimitLinearInterop& value)
+	MonoObject*ScriptLimitLinear::Box(const __LimitLinearInterop& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	__LimitLinearInterop ScriptLimitLinear::unbox(MonoObject* value)
+	__LimitLinearInterop ScriptLimitLinear::Unbox(MonoObject* value)
 	{
-		return *(__LimitLinearInterop*)MonoUtil::unbox(value);
+		return *(__LimitLinearInterop*)MonoUtil::Unbox(value);
 	}
 
-	LimitLinear ScriptLimitLinear::fromInterop(const __LimitLinearInterop& value)
+	LimitLinear ScriptLimitLinear::FromInterop(const __LimitLinearInterop& value)
 	{
 		LimitLinear output;
 		output.extent = value.extent;
@@ -37,7 +37,7 @@ namespace bs
 		return output;
 	}
 
-	__LimitLinearInterop ScriptLimitLinear::toInterop(const LimitLinear& value)
+	__LimitLinearInterop ScriptLimitLinear::ToInterop(const LimitLinear& value)
 	{
 		__LimitLinearInterop output;
 		output.extent = value.extent;

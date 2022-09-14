@@ -27,7 +27,7 @@ namespace bs
 
 	}
 
-	MonoObject* ScriptShaderImportOptions::create(const SPtr<ShaderImportOptions>& value)
+	MonoObject* ScriptShaderImportOptions::Create(const SPtr<ShaderImportOptions>& value)
 	{
 		if(value == nullptr) return nullptr; 
 
@@ -84,7 +84,7 @@ namespace bs
 
 	void ScriptShaderImportOptions::Internal_create(MonoObject* managedInstance)
 	{
-		SPtr<ShaderImportOptions> instance = ShaderImportOptions::create();
+		SPtr<ShaderImportOptions> instance = ShaderImportOptions::Create();
 		new (bs_alloc<ScriptShaderImportOptions>())ScriptShaderImportOptions(managedInstance, instance);
 	}
 	ShadingLanguageFlag ScriptShaderImportOptions::Internal_getlanguages(ScriptShaderImportOptions* thisPtr)

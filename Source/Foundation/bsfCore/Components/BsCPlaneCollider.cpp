@@ -23,7 +23,7 @@ namespace bs
 		mLocalRotation = Quaternion::getRotationFromTo(Vector3::UNIT_X, mNormal);
 	}
 
-	void CPlaneCollider::setNormal(const Vector3& normal)
+	void CPlaneCollider::SetNormal(const Vector3& normal)
 	{
 		if (mNormal == normal)
 			return;
@@ -38,7 +38,7 @@ namespace bs
 			updateTransform();
 	}
 
-	void CPlaneCollider::setDistance(float distance)
+	void CPlaneCollider::SetDistance(float distance)
 	{
 		if (mDistance == distance)
 			return;
@@ -50,30 +50,30 @@ namespace bs
 			updateTransform();
 	}
 
-	SPtr<Collider> CPlaneCollider::createInternal()
+	SPtr<Collider> CPlaneCollider::CreateInternal()
 	{
 		const SPtr<SceneInstance>& scene = SO()->getScene();
 		const Transform& tfrm = SO()->getTransform();
 
-		SPtr<Collider> collider = PlaneCollider::create(*scene->getPhysicsScene(), tfrm.getPosition(), tfrm.getRotation());
+		SPtr<Collider> collider = PlaneCollider::Create(*scene->getPhysicsScene(), tfrm.getPosition(), tfrm.getRotation());
 
 		collider->SetOwnerInternal(PhysicsOwnerType::Component, this);
 		return collider;
 	}
 
-	bool CPlaneCollider::isValidParent(const HRigidbody& parent) const
+	bool CPlaneCollider::IsValidParent(const HRigidbody& parent) const
 	{
 		// Planes cannot be added to non-kinematic rigidbodies
 		return parent->getIsKinematic();
 	}
 
-	RTTITypeBase* CPlaneCollider::getRTTIStatic()
+	RTTITypeBase* CPlaneCollider::GetRttiStatic()
 	{
-		return CPlaneColliderRTTI::instance();
+		return CPlaneColliderRTTI::Instance();
 	}
 
-	RTTITypeBase* CPlaneCollider::getRTTI() const
+	RTTITypeBase* CPlaneCollider::GetRtti() const
 	{
-		return CPlaneCollider::getRTTIStatic();
+		return CPlaneCollider::GetRttiStatic();
 	}
 }

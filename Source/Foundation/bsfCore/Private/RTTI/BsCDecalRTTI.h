@@ -22,20 +22,20 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 	public:
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "CDecal";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_CDecal;
 		}
 
 		SPtr<IReflectable> newRTTIObject() override
 		{
-			return SceneObject::createEmptyComponent<CDecal>();
+			return SceneObject::CreateEmptyComponent<CDecal>();
 		}
 	};
 

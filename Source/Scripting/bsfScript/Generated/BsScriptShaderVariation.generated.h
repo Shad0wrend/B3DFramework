@@ -16,21 +16,21 @@ namespace bs
 
 		ScriptShaderVariation(MonoObject* managedInstance, const SPtr<ShaderVariation>& value);
 
-		static MonoObject* create(const SPtr<ShaderVariation>& value);
+		static MonoObject* Create(const SPtr<ShaderVariation>& value);
 
 	private:
-		static void Internal_ShaderVariation(MonoObject* managedInstance);
-		static int32_t Internal_getInt(ScriptShaderVariation* thisPtr, MonoString* name);
-		static uint32_t Internal_getUInt(ScriptShaderVariation* thisPtr, MonoString* name);
-		static float Internal_getFloat(ScriptShaderVariation* thisPtr, MonoString* name);
-		static bool Internal_getBool(ScriptShaderVariation* thisPtr, MonoString* name);
-		static void Internal_setInt(ScriptShaderVariation* thisPtr, MonoString* name, int32_t value);
-		static void Internal_setUInt(ScriptShaderVariation* thisPtr, MonoString* name, uint32_t value);
-		static void Internal_setFloat(ScriptShaderVariation* thisPtr, MonoString* name, float value);
-		static void Internal_setBool(ScriptShaderVariation* thisPtr, MonoString* name, bool value);
-		static void Internal_removeParam(ScriptShaderVariation* thisPtr, MonoString* paramName);
-		static bool Internal_hasParam(ScriptShaderVariation* thisPtr, MonoString* paramName);
-		static void Internal_clearParams(ScriptShaderVariation* thisPtr);
-		static MonoArray* Internal_getParamNames(ScriptShaderVariation* thisPtr);
+		static void InternalShaderVariation(MonoObject* managedInstance);
+		static int32_t InternalGetInt(ScriptShaderVariation* thisPtr, MonoString* name);
+		static uint32_t InternalGetUInt(ScriptShaderVariation* thisPtr, MonoString* name);
+		static float InternalGetFloat(ScriptShaderVariation* thisPtr, MonoString* name);
+		static bool InternalGetBool(ScriptShaderVariation* thisPtr, MonoString* name);
+		static void InternalSetInt(ScriptShaderVariation* thisPtr, MonoString* name, int32_t value);
+		static void InternalSetUInt(ScriptShaderVariation* thisPtr, MonoString* name, uint32_t value);
+		static void InternalSetFloat(ScriptShaderVariation* thisPtr, MonoString* name, float value);
+		static void InternalSetBool(ScriptShaderVariation* thisPtr, MonoString* name, bool value);
+		static void InternalRemoveParam(ScriptShaderVariation* thisPtr, MonoString* paramName);
+		static bool InternalHasParam(ScriptShaderVariation* thisPtr, MonoString* paramName);
+		static void InternalClearParams(ScriptShaderVariation* thisPtr);
+		static MonoArray* InternalGetParamNames(ScriptShaderVariation* thisPtr);
 	};
 }

@@ -18,25 +18,25 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "Scene")
 
 		/** Registers internal callbacks. Must be called on scripting system load. */
-		static void startUp();
+		static void StartUp();
 
 		/** Unregisters internal callbacks. Must be called on scripting system shutdown. */
-		static void shutDown();
+		static void ShutDown();
 
 		/** Handles per-frame operations. Needs to be called every frame. */
-		static void update();
+		static void Update();
 
 	private:
 		ScriptScene(MonoObject* instance);
 
 		/** Triggered when the assembly refresh starts. */
-		static void onRefreshStarted();
+		static void OnRefreshStarted();
 
 		/** Triggered when assembly domain is loaded during assembly refresh. */
-		static void onRefreshDomainLoaded();
+		static void OnRefreshDomainLoaded();
 
 		/** Makes the provided prefab the currently active scene. */
-		static void setActiveScene(const HPrefab& prefab);
+		static void SetActiveScene(const HPrefab& prefab);
 
 		static HEvent OnRefreshDomainLoadedConn;
 		static HEvent OnRefreshStartedConn;
@@ -48,12 +48,12 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static MonoObject* internal_GetRoot();
-		static MonoObject* internal_GetMainCameraSO();
+		static MonoObject* InternalGetRoot();
+		static MonoObject* InternalGetMainCameraSo();
 
 #if BS_IS_BANSHEE3D
-		static void internal_SetActiveScene(ScriptPrefab* scriptPrefab);
-		static void internal_ClearScene();
+		static void InternalSetActiveScene(ScriptPrefab* scriptPrefab);
+		static void InternalClearScene();
 
 		typedef void(BS_THUNKCALL *OnUpdateThunkDef)(MonoException**);
 		static OnUpdateThunkDef onUpdateThunk;

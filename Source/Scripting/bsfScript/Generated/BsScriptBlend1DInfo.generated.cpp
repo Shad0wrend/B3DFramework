@@ -16,25 +16,25 @@ namespace bs
 	void ScriptBlend1DInfo::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptBlend1DInfo::box(const __Blend1DInfoInterop& value)
+	MonoObject*ScriptBlend1DInfo::Box(const __Blend1DInfoInterop& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	__Blend1DInfoInterop ScriptBlend1DInfo::unbox(MonoObject* value)
+	__Blend1DInfoInterop ScriptBlend1DInfo::Unbox(MonoObject* value)
 	{
-		return *(__Blend1DInfoInterop*)MonoUtil::unbox(value);
+		return *(__Blend1DInfoInterop*)MonoUtil::Unbox(value);
 	}
 
-	Blend1DInfo ScriptBlend1DInfo::fromInterop(const __Blend1DInfoInterop& value)
+	Blend1DInfo ScriptBlend1DInfo::FromInterop(const __Blend1DInfoInterop& value)
 	{
 		Blend1DInfo output;
 		Vector<BlendClipInfo> vecclips;
 		if(value.clips != nullptr)
 		{
 			ScriptArray arrayclips(value.clips);
-			vecclips.resize(arrayclips.size());
-			for(int i = 0; i < (int)arrayclips.size(); i++)
+			vecclips.resize(arrayclips.Size());
+			for(int i = 0; i < (int)arrayclips.Size(); i++)
 			{
 				vecclips[i] = ScriptBlendClipInfo::fromInterop(arrayclips.get<__BlendClipInfoInterop>(i));
 			}
@@ -44,17 +44,17 @@ namespace bs
 		return output;
 	}
 
-	__Blend1DInfoInterop ScriptBlend1DInfo::toInterop(const Blend1DInfo& value)
+	__Blend1DInfoInterop ScriptBlend1DInfo::ToInterop(const Blend1DInfo& value)
 	{
 		__Blend1DInfoInterop output;
 		int arraySizeclips = (int)value.clips.size();
 		MonoArray* vecclips;
-		ScriptArray arrayclips = ScriptArray::create<ScriptBlendClipInfo>(arraySizeclips);
+		ScriptArray arrayclips = ScriptArray::Create<ScriptBlendClipInfo>(arraySizeclips);
 		for(int i = 0; i < arraySizeclips; i++)
 		{
-			arrayclips.set(i, ScriptBlendClipInfo::toInterop(value.clips[i]));
+			arrayclips.set(i, ScriptBlendClipInfo::ToInterop(value.clips[i]));
 		}
-		vecclips = arrayclips.getInternal();
+		vecclips = arrayclips.GetInternal();
 		output.clips = vecclips;
 
 		return output;

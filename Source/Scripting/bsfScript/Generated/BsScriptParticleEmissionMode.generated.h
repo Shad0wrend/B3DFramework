@@ -13,8 +13,8 @@ namespace bs
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "ParticleEmissionMode")
 
-		static MonoObject* box(const ParticleEmissionMode& value);
-		static ParticleEmissionMode unbox(MonoObject* value);
+		static MonoObject* Box(const ParticleEmissionMode& value);
+		static ParticleEmissionMode Unbox(MonoObject* value);
 
 	private:
 		ScriptParticleEmissionMode(MonoObject* managedInstance);

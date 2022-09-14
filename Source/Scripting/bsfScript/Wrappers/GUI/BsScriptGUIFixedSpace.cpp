@@ -21,16 +21,16 @@ namespace bs
 
 	void ScriptGUIFixedSpace::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_CreateInstance", (void*)&ScriptGUIFixedSpace::internal_createInstance);
-		metaData.scriptClass->addInternalCall("Internal_SetSize", (void*)&ScriptGUIFixedSpace::internal_setSize);
+		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIFixedSpace::InternalCreateInstance);
+		metaData.scriptClass->AddInternalCall("Internal_SetSize", (void*)&ScriptGUIFixedSpace::InternalSetSize);
 	}
 
-	void ScriptGUIFixedSpace::destroy()
+	void ScriptGUIFixedSpace::Destroy()
 	{
 		if (!mIsDestroyed)
 		{
 			if (mParent != nullptr)
-				mParent->removeChild(this);
+				mParent->RemoveChild(this);
 
 			GUIFixedSpace::destroy(mFixedSpace);
 
@@ -38,15 +38,15 @@ namespace bs
 		}
 	}
 
-	void ScriptGUIFixedSpace::internal_createInstance(MonoObject* instance, UINT32 size)
+	void ScriptGUIFixedSpace::InternalCreateInstance(MonoObject* instance, UINT32 size)
 	{
-		GUIFixedSpace* space = GUIFixedSpace::create(size);
+		GUIFixedSpace* space = GUIFixedSpace::Create(size);
 
 		new (bs_alloc<ScriptGUIFixedSpace>()) ScriptGUIFixedSpace(instance, space);
 	}
 
-	void ScriptGUIFixedSpace::internal_setSize(ScriptGUIFixedSpace* nativeInstance, UINT32 size)
+	void ScriptGUIFixedSpace::InternalSetSize(ScriptGUIFixedSpace* nativeInstance, UINT32 size)
 	{
-		nativeInstance->mFixedSpace->setSize(size);
+		nativeInstance->mFixedSpace->SetSize(size);
 	}
 }

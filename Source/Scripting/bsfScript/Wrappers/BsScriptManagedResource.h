@@ -21,22 +21,22 @@ namespace bs
 		ScriptManagedResource(MonoObject* instance, const HManagedResource& resource);
 
 		/** @copydoc ScriptResourceBase::getGenericHandle */
-		HResource getGenericHandle() const override { return mResource; }
+		HResource GetGenericHandle() const override { return mResource; }
 
 		/** @copydoc ScriptResourceBase::setResource */
-		void setResource(const HResource& resource) override;
+		void SetResource(const HResource& resource) override;
 
 		/**	Returns a handle to the internal wrapped resource. */
-		const HManagedResource& getHandle() const { return mResource; }
+		const HManagedResource& GetHandle() const { return mResource; }
 	private:
 		friend class ScriptResourceManager;
 		friend class ManagedResource;
 
 		/** @copydoc ScriptObjectBase::beginRefresh */
-		ScriptObjectBackup beginRefresh() override;
+		ScriptObjectBackup BeginRefresh() override;
 
 		/** @copydoc ScriptObjectBase::endRefresh */
-		void endRefresh(const ScriptObjectBackup& backupData) override;
+		void EndRefresh(const ScriptObjectBackup& backupData) override;
 
 		/** @copydoc ScriptObject::_createManagedInstance */
 		MonoObject* CreateManagedInstanceInternal(bool construct) override;
@@ -57,7 +57,7 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static void internal_createInstance(MonoObject* instance);
+		static void InternalCreateInstance(MonoObject* instance);
 	};
 
 	/** @} */

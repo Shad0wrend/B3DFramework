@@ -47,7 +47,7 @@ namespace bs
 			BS_RTTI_MEMBER_PLAIN(mMain, 24)
 		BS_END_RTTI_MEMBERS
 		
-		CameraFlags& getCameraFlags(Camera* obj)
+		CameraFlags& GetCameraFlags(Camera* obj)
 		{
 			mFlags = obj->getFlags();
 
@@ -57,14 +57,14 @@ namespace bs
 			return mFlags;
 		}
 
-		void setCameraFlags(Camera* obj, CameraFlags& val) { obj->mCameraFlags = val; }
+		void SetCameraFlags(Camera* obj, CameraFlags& val) { obj->mCameraFlags = val; }
 	public:
 		CameraRTTI()
 		{
-			addPlainField("mCameraFlags", 25, &CameraRTTI::getCameraFlags, &CameraRTTI::setCameraFlags);
+			addPlainField("mCameraFlags", 25, &CameraRTTI::GetCameraFlags, &CameraRTTI::SetCameraFlags);
 		}
 
-		void onDeserializationEnded(IReflectable* obj, SerializationContext* context) override
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override
 		{
 			// Note: Since this is a CoreObject I should call initialize() right after deserialization,
 			// but since this specific type is used in Components we delay initialization until Component
@@ -72,20 +72,20 @@ namespace bs
 			// purposes (you'll need to call initialize manually).
 		}
 
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "Camera";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_Camera;
 		}
 
 		SPtr<IReflectable> newRTTIObject() override
 		{
-			return Camera::createEmpty();
+			return Camera::CreateEmpty();
 		}
 
 	private:

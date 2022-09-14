@@ -29,168 +29,168 @@ namespace bs
 
 		/** @copydoc Rigidbody::move */
 		BS_SCRIPT_EXPORT(n:Move)
-		void move(const Vector3& position);
+		void Move(const Vector3& position);
 
 		/** @copydoc Rigidbody::rotate */
 		BS_SCRIPT_EXPORT(n:Rotate)
-		void rotate(const Quaternion& rotation);
+		void Rotate(const Quaternion& rotation);
 
 		/** @copydoc Rigidbody::setMass */
 		BS_SCRIPT_EXPORT(n:Mass,pr:setter)
-		void setMass(float mass);
+		void SetMass(float mass);
 
 		/** @copydoc Rigidbody::getMass */
 		BS_SCRIPT_EXPORT(n:Mass,pr:getter)
-		float getMass() const { return mMass; };
+		float GetMass() const { return mMass; };
 
 		/** @copydoc Rigidbody::setIsKinematic */
 		BS_SCRIPT_EXPORT(n:IsKinematic,pr:setter)
-		void setIsKinematic(bool kinematic);
+		void SetIsKinematic(bool kinematic);
 
 		/** @copydoc Rigidbody::getIsKinematic */
 		BS_SCRIPT_EXPORT(n:IsKinematic,pr:getter)
-		bool getIsKinematic() const { return mIsKinematic; }
+		bool GetIsKinematic() const { return mIsKinematic; }
 
 		/** @copydoc Rigidbody::isSleeping */
 		BS_SCRIPT_EXPORT(n:IsSleeping,pr:getter)
-		bool isSleeping() const;
+		bool IsSleeping() const;
 
 		/** @copydoc Rigidbody::sleep */
 		BS_SCRIPT_EXPORT(n:Sleep)
-		void sleep();
+		void Sleep();
 
 		/** @copydoc Rigidbody::wakeUp */
 		BS_SCRIPT_EXPORT(n:WakeUp)
-		void wakeUp();
+		void WakeUp();
 
 		/** @copydoc Rigidbody::setSleepThreshold */
 		BS_SCRIPT_EXPORT(n:SleepThreshold,pr:setter,hide)
-		void setSleepThreshold(float threshold);
+		void SetSleepThreshold(float threshold);
 
 		/** @copydoc Rigidbody::getSleepThreshold */
 		BS_SCRIPT_EXPORT(n:SleepThreshold,pr:getter)
-		float getSleepThreshold() const { return mSleepThreshold; }
+		float GetSleepThreshold() const { return mSleepThreshold; }
 
 		/** @copydoc Rigidbody::setUseGravity */
 		BS_SCRIPT_EXPORT(n:UseGravity,pr:setter)
-		void setUseGravity(bool gravity);
+		void SetUseGravity(bool gravity);
 
 		/** @copydoc Rigidbody::getUseGravity */
 		BS_SCRIPT_EXPORT(n:UseGravity,pr:getter)
-		bool getUseGravity() const { return mUseGravity; }
+		bool GetUseGravity() const { return mUseGravity; }
 
 		/** @copydoc Rigidbody::setVelocity */
 		BS_SCRIPT_EXPORT(n:Velocity,pr:setter,hide)
-		void setVelocity(const Vector3& velocity);
+		void SetVelocity(const Vector3& velocity);
 
 		/** @copydoc Rigidbody::getVelocity */
 		BS_SCRIPT_EXPORT(n:Velocity,pr:getter)
-		Vector3 getVelocity() const;
+		Vector3 GetVelocity() const;
 
 		/** @copydoc Rigidbody::setAngularVelocity */
 		BS_SCRIPT_EXPORT(n:AngularVelocity,pr:setter,hide)
-		void setAngularVelocity(const Vector3& velocity);
+		void SetAngularVelocity(const Vector3& velocity);
 
 		/** @copydoc Rigidbody::getAngularVelocity */
 		BS_SCRIPT_EXPORT(n:AngularVelocity,pr:getter)
-		Vector3 getAngularVelocity() const;
+		Vector3 GetAngularVelocity() const;
 
 		/** @copydoc Rigidbody::setDrag */
 		BS_SCRIPT_EXPORT(n:Drag,pr:setter)
-		void setDrag(float drag);
+		void SetDrag(float drag);
 
 		/** @copydoc Rigidbody::getDrag */
 		BS_SCRIPT_EXPORT(n:Drag,pr:getter)
-		float getDrag() const { return mLinearDrag; }
+		float GetDrag() const { return mLinearDrag; }
 
 		/** @copydoc Rigidbody::setAngularDrag */
 		BS_SCRIPT_EXPORT(n:AngularDrag,pr:setter)
-		void setAngularDrag(float drag);
+		void SetAngularDrag(float drag);
 
 		/** @copydoc Rigidbody::getAngularDrag */
 		BS_SCRIPT_EXPORT(n:AngularDrag,pr:getter)
-		float getAngularDrag() const { return mAngularDrag; }
+		float GetAngularDrag() const { return mAngularDrag; }
 
 		/** @copydoc Rigidbody::setInertiaTensor */
 		BS_SCRIPT_EXPORT(n:InertiaTensor,pr:setter,hide)
-		void setInertiaTensor(const Vector3& tensor);
+		void SetInertiaTensor(const Vector3& tensor);
 
 		/** @copydoc Rigidbody::getInertiaTensor */
 		BS_SCRIPT_EXPORT(n:InertiaTensor,pr:getter)
-		Vector3 getInertiaTensor() const;
+		Vector3 GetInertiaTensor() const;
 
 		/** @copydoc Rigidbody::setMaxAngularVelocity */
 		BS_SCRIPT_EXPORT(n:MaxAngularVelocity,pr:setter,hide)
-		void setMaxAngularVelocity(float maxVelocity);
+		void SetMaxAngularVelocity(float maxVelocity);
 
 		/** @copydoc Rigidbody::getMaxAngularVelocity */
 		BS_SCRIPT_EXPORT(n:MaxAngularVelocity,pr:getter)
-		float getMaxAngularVelocity() const { return mMaxAngularVelocity; }
+		float GetMaxAngularVelocity() const { return mMaxAngularVelocity; }
 
 		/** Determines the rigidbody's center of mass position. Only relevant if RigibodyFlag::AutoTensors is turned off. */
 		BS_SCRIPT_EXPORT(n:CenterOfMassPosition,pr:setter,hide)
-		void setCenterOfMassPosition(const Vector3& position);
+		void SetCenterOfMassPosition(const Vector3& position);
 
 		/** @copydoc setCenterOfMassPosition() */
 		BS_SCRIPT_EXPORT(n:CenterOfMassPosition,pr:getter)
-		Vector3 getCenterOfMassPosition() const;
+		Vector3 GetCenterOfMassPosition() const;
 
 		/** Determines the rigidbody's center of mass rotation. Only relevant if RigibodyFlag::AutoTensors is turned off. */
 		BS_SCRIPT_EXPORT(n:CenterOfMassRotation,pr:setter,hide)
-		void setCenterOfMassRotation(const Quaternion& rotation);
+		void SetCenterOfMassRotation(const Quaternion& rotation);
 
 		/** @copydoc setCenterOfMassRotation() */
 		BS_SCRIPT_EXPORT(n:CenterOfMassRotation,pr:getter)
-		Quaternion getCenterOfMassRotation() const;
+		Quaternion GetCenterOfMassRotation() const;
 
 		/** @copydoc Rigidbody::setPositionSolverCount */
 		BS_SCRIPT_EXPORT(n:PositionSolverCount,pr:setter,hide)
-		void setPositionSolverCount(UINT32 count);
+		void SetPositionSolverCount(UINT32 count);
 
 		/** @copydoc Rigidbody::getPositionSolverCount */
 		BS_SCRIPT_EXPORT(n:PositionSolverCount,pr:getter)
-		UINT32 getPositionSolverCount() const { return mPositionSolverCount; }
+		UINT32 GetPositionSolverCount() const { return mPositionSolverCount; }
 
 		/** @copydoc Rigidbody::setVelocitySolverCount */
 		BS_SCRIPT_EXPORT(n:VelocitySolverCount,pr:setter,hide)
-		void setVelocitySolverCount(UINT32 count);
+		void SetVelocitySolverCount(UINT32 count);
 
 		/** @copydoc Rigidbody::getVelocitySolverCount */
 		BS_SCRIPT_EXPORT(n:VelocitySolverCount,pr:getter)
-		UINT32 getVelocitySolverCount() const { return mVelocitySolverCount; }
+		UINT32 GetVelocitySolverCount() const { return mVelocitySolverCount; }
 
 		/** Sets a value that determines which (if any) collision events are reported. */
 		BS_SCRIPT_EXPORT(n:CollisionReportMode,pr:setter)
-		void setCollisionReportMode(CollisionReportMode mode);
+		void SetCollisionReportMode(CollisionReportMode mode);
 
 		/** Gets a value that determines which (if any) collision events are reported. */
 		BS_SCRIPT_EXPORT(n:CollisionReportMode,pr:getter)
-		CollisionReportMode getCollisionReportMode() const { return mCollisionReportMode; }
+		CollisionReportMode GetCollisionReportMode() const { return mCollisionReportMode; }
 
 		/** @copydoc Rigidbody::setFlags */
 		BS_SCRIPT_EXPORT(n:Flags,pr:setter,hide)
-		void setFlags(RigidbodyFlag flags);
+		void SetFlags(RigidbodyFlag flags);
 
 		/** @copydoc Rigidbody::getFlags */
 		BS_SCRIPT_EXPORT(n:Flags,pr:getter)
-		RigidbodyFlag getFlags() const { return mFlags; }
+		RigidbodyFlag GetFlags() const { return mFlags; }
 
 		/** @copydoc Rigidbody::addForce */
 		BS_SCRIPT_EXPORT(n:AddForce)
-		void addForce(const Vector3& force, ForceMode mode = ForceMode::Force);
+		void AddForce(const Vector3& force, ForceMode mode = ForceMode::Force);
 
 		/** @copydoc Rigidbody::addTorque */
 		BS_SCRIPT_EXPORT(n:AddTorque)
-		void addTorque(const Vector3& torque, ForceMode mode = ForceMode::Force);
+		void AddTorque(const Vector3& torque, ForceMode mode = ForceMode::Force);
 
 		/** @copydoc Rigidbody::addForceAtPoint */
 		BS_SCRIPT_EXPORT(n:AddForceAtPoint)
-		void addForceAtPoint(const Vector3& force, const Vector3& position,
+		void AddForceAtPoint(const Vector3& force, const Vector3& position,
 			PointForceMode mode = PointForceMode::Force);
 
 		/** @copydoc Rigidbody::getVelocityAtPoint */
 		BS_SCRIPT_EXPORT(n:GetVelocityAtPoint)
-		Vector3 getVelocityAtPoint(const Vector3& point) const;
+		Vector3 GetVelocityAtPoint(const Vector3& point) const;
 
 		/** @copydoc Rigidbody::onCollisionBegin */
 		BS_SCRIPT_EXPORT(n:OnCollisionBegin)
@@ -221,43 +221,43 @@ namespace bs
 	protected:
 		friend class CCollider;
 
-		using Component::destroyInternal;
+		using Component::DestroyInternal;
 
 		/**
 		 * Searches child scene objects for Collider components and attaches them to the rigidbody. Make sure to call
 		 * clearColliders() if you need to clear old colliders first.
 		 */
-		void updateColliders();
+		void UpdateColliders();
 
 		/** Unregisters all child colliders from the Rigidbody. */
-		void clearColliders();
+		void ClearColliders();
 
 		/**
 		 * Registers a new collider with the Rigidbody. This collider will then be used to calculate Rigidbody's geometry
 		 * used for collisions, and optionally (depending on set flags) total mass, inertia tensors and center of mass.
 		 */
-		void addCollider(const HCollider& collider);
+		void AddCollider(const HCollider& collider);
 
 		/** Unregisters the collider from the Rigidbody. */
-		void removeCollider(const HCollider& collider);
+		void RemoveCollider(const HCollider& collider);
 
 		/** Checks if the rigidbody is nested under another rigidbody, and throws out a warning if so. */
-		void checkForNestedRigibody();
+		void CheckForNestedRigibody();
 
 		/** Appends Component referenes for the colliders to the collision data. */
-		void processCollisionData(const CollisionDataRaw& raw, CollisionData& output);
+		void ProcessCollisionData(const CollisionDataRaw& raw, CollisionData& output);
 
 		/** Destroys the internal rigidbody representation. */
-		void destroyInternal();
+		void DestroyInternal();
 
 		/** Triggered when the internal rigidbody begins touching another object. */
-		void triggerOnCollisionBegin(const CollisionDataRaw& data);
+		void TriggerOnCollisionBegin(const CollisionDataRaw& data);
 
 		/** Triggered when the internal rigidbody continues touching another object. */
-		void triggerOnCollisionStay(const CollisionDataRaw& data);
+		void TriggerOnCollisionStay(const CollisionDataRaw& data);
 
 		/** Triggered when the internal rigidbody ends touching another object. */
-		void triggerOnCollisionEnd(const CollisionDataRaw& data);
+		void TriggerOnCollisionEnd(const CollisionDataRaw& data);
 
 		/************************************************************************/
 		/* 						COMPONENT OVERRIDES                      		*/
@@ -266,19 +266,19 @@ namespace bs
 		friend class SceneObject;
 
 		/** @copydoc Component::onInitialized() */
-		void onInitialized() override;
+		void OnInitialized() override;
 
 		/** @copydoc Component::onDestroyed() */
-		void onDestroyed() override;
+		void OnDestroyed() override;
 
 		/** @copydoc Component::onDisabled() */
-		void onDisabled() override;
+		void OnDisabled() override;
 
 		/** @copydoc Component::onEnabled() */
-		void onEnabled() override;
+		void OnEnabled() override;
 
 		/** @copydoc Component::onTransformChanged() */
-		void onTransformChanged(TransformChangedFlags flags) override;
+		void OnTransformChanged(TransformChangedFlags flags) override;
 
 		SPtr<Rigidbody> mInternal;
 		Vector<HCollider> mChildren;
@@ -304,8 +304,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class CRigidbodyRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 
 	protected:
 		CRigidbody(); // Serialization only

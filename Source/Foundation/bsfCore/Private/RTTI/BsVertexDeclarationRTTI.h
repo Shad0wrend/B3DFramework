@@ -21,7 +21,7 @@ namespace bs
 	class VertexDeclarationRTTI : public RTTIType<VertexDeclaration, IReflectable, VertexDeclarationRTTI>
 	{
 	private:
-		VertexElement& getElement(VertexDeclaration* obj, UINT32 idx)
+		VertexElement& GetElement(VertexDeclaration* obj, UINT32 idx)
 		{
 			Vector<VertexElement>& elemList = obj->mProperties.mElementList;
 
@@ -32,7 +32,7 @@ namespace bs
 			return *iter;
 		}
 
-		void setElement(VertexDeclaration* obj, UINT32 idx, VertexElement& data)
+		void SetElement(VertexDeclaration* obj, UINT32 idx, VertexElement& data)
 		{
 			Vector<VertexElement>& elemList = obj->mProperties.mElementList;
 
@@ -43,14 +43,14 @@ namespace bs
 			*iter = data;
 		}
 
-		UINT32 getElementArraySize(VertexDeclaration* obj)
+		UINT32 GetElementArraySize(VertexDeclaration* obj)
 		{
 			Vector<VertexElement>& elemList = obj->mProperties.mElementList;
 
 			return (UINT32)elemList.size();
 		}
 
-		void setElementArraySize(VertexDeclaration* obj, UINT32 size)
+		void SetElementArraySize(VertexDeclaration* obj, UINT32 size)
 		{
 			Vector<VertexElement>& elemList = obj->mProperties.mElementList;
 
@@ -61,22 +61,22 @@ namespace bs
 	public:
 		VertexDeclarationRTTI()
 		{
-			addPlainArrayField("mElementList", 0, &VertexDeclarationRTTI::getElement, &VertexDeclarationRTTI::getElementArraySize,
-				&VertexDeclarationRTTI::setElement, &VertexDeclarationRTTI::setElementArraySize);
+			AddPlainArrayField("mElementList", 0, &VertexDeclarationRTTI::GetElement, &VertexDeclarationRTTI::GetElementArraySize,
+				&VertexDeclarationRTTI::SetElement, &VertexDeclarationRTTI::SetElementArraySize);
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
-			return HardwareBufferManager::instance().createVertexDeclaration(VertexDataDesc::create());
+			return HardwareBufferManager::Instance().createVertexDeclaration(VertexDataDesc::Create());
 		}
 
-		const String& getRTTIName() override
+		const String& GetRttiName() 
 		{
 			static String name = "VertexDeclaration";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() 
 		{
 			return TID_VertexDeclaration;
 		}

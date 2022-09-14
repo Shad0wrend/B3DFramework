@@ -16,14 +16,14 @@ namespace bs
 		mKeepSourceData = desc.keepSourceData;
 	}
 
-	void AudioClip::initialize()
+	void AudioClip::Initialize()
 	{
 		mLength = mNumSamples / mDesc.numChannels / (float)mDesc.frequency;
 
 		Resource::initialize();
 	}
 
-	HAudioClip AudioClip::create(const SPtr<DataStream>& samples, UINT32 streamSize, UINT32 numSamples, const AUDIO_CLIP_DESC& desc)
+	HAudioClip AudioClip::Create(const SPtr<DataStream>& samples, UINT32 streamSize, UINT32 numSamples, const AUDIO_CLIP_DESC& desc)
 	{
 		return static_resource_cast<AudioClip>(gResources().CreateResourceHandleInternal(CreatePtrInternal(samples, streamSize, numSamples, desc)));
 	}
@@ -37,7 +37,7 @@ namespace bs
 		return newClip;
 	}
 
-	SPtr<AudioClip> AudioClip::createEmpty()
+	SPtr<AudioClip> AudioClip::CreateEmpty()
 	{
 		AUDIO_CLIP_DESC desc;
 
@@ -47,13 +47,13 @@ namespace bs
 		return newClip;
 	}
 
-	RTTITypeBase* AudioClip::getRTTIStatic()
+	RTTITypeBase* AudioClip::GetRttiStatic()
 	{
-		return AudioClipRTTI::instance();
+		return AudioClipRTTI::Instance();
 	}
 
-	RTTITypeBase* AudioClip::getRTTI() const
+	RTTITypeBase* AudioClip::GetRtti() const
 	{
-		return getRTTIStatic();
+		return GetRttiStatic();
 	}
 }

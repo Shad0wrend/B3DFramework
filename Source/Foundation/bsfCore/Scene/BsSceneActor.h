@@ -39,32 +39,32 @@ namespace bs
 		virtual ~SceneActor() = default;
 
 		/** Determines the position, rotation and scale of the actor. */
-		virtual void setTransform(const Transform& transform);
+		virtual void SetTransform(const Transform& transform);
 
 		/** @copydoc setTransform */
-		const Transform& getTransform() const { return mTransform; }
+		const Transform& GetTransform() const { return mTransform; }
 
 		/** Shorthand for getTransform(). */
-		const Transform& tfrm() const { return mTransform; }
+		const Transform& Tfrm() const { return mTransform; }
 
 		/**
 		 * Determines if the actor is currently active. Deactivated actors act as if they have been destroyed, without
 		 * actually being destroyed.
 		 */
-		virtual void setActive(bool active);
+		virtual void SetActive(bool active);
 
 		/** @copydoc setActive */
-		bool getActive() const { return mActive; }
+		bool GetActive() const { return mActive; }
 
 		/**
 		 * Determines the mobility of the actor. This is used primarily as a performance hint to engine systems. Objects
 		 * with more restricted mobility will result in higher performance. Any transform changes to immobile actors will
 		 * be ignored. By default actor's mobility is unrestricted.
 		 */
-		virtual void setMobility(ObjectMobility mobility);
+		virtual void SetMobility(ObjectMobility mobility);
 
 		/** @copydoc setMobility */
-		ObjectMobility getMobility() const { return mMobility; }
+		ObjectMobility GetMobility() const { return mMobility; }
 
 		/**
 		 * @name Internal
@@ -83,7 +83,7 @@ namespace bs
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P p, ActorDirtyFlags flags = ActorDirtyFlag::Everything)
+		void RttiEnumFields(P p, ActorDirtyFlags flags = ActorDirtyFlag::Everything)
 		{
 			if (flags.isSetAny(ActorDirtyFlag::Transform | ActorDirtyFlag::Everything))
 				p(mTransform);

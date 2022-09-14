@@ -8,13 +8,13 @@ namespace bs
 		:name(name), style(style)
 	{ }
 
-	RTTITypeBase* GUISkinEntry::getRTTIStatic()
+	RTTITypeBase* GUISkinEntry::GetRttiStatic()
 	{
-		return GUISkinEntryRTTI::instance();
+		return GUISkinEntryRTTI::Instance();
 	}
 
-	RTTITypeBase* GUISkinEntry::getRTTI() const
+	RTTITypeBase* GUISkinEntry::GetRtti() const
 	{
-		return GUISkinEntry::getRTTIStatic();
+		return GUISkinEntry::GetRttiStatic();
 	}
 }

@@ -62,46 +62,46 @@ namespace bs
 		virtual ~CameraBase() = default;
 
 		/** @copydoc SceneActor::setTransform */
-		void setTransform(const Transform& transform) override;
+		void SetTransform(const Transform& transform) override;
 
 		/** Determines flags used for controlling the camera behaviour. */
-		void setFlags(CameraFlags flag);
+		void SetFlags(CameraFlags flag);
 
 		/** @copydoc setFlags() */
-		CameraFlags getFlags() const { return mCameraFlags; }
+		CameraFlags GetFlags() const { return mCameraFlags; }
 
 		/**
 		 * Determines the camera horizontal field of view. This determines how wide the camera viewing angle is along the
 		 * horizontal axis. Vertical FOV is calculated from the horizontal FOV and the aspect ratio.
 		 */
-		virtual void setHorzFOV(const Radian& fovy);
+		virtual void SetHorzFov(const Radian& fovy);
 
 		/** @copydoc setHorzFOV() */
-		virtual const Radian& getHorzFOV() const { return mHorzFOV; }
+		virtual const Radian& GetHorzFov() const { return mHorzFOV; }
 
 		/**
 		 * Determines the distance from the frustum to the near clipping plane. Anything closer than the near clipping plane will
 		 * not be rendered. Decreasing this value decreases depth buffer precision.
 		 */
-		virtual void setNearClipDistance(float nearDist);
+		virtual void SetNearClipDistance(float nearDist);
 
 		/** @copydoc setNearClipDistance() */
-		virtual float getNearClipDistance() const { return mNearDist; }
+		virtual float GetNearClipDistance() const { return mNearDist; }
 
 		/**
 		 * Determines the distance from the frustum to the far clipping plane. Anything farther than the far clipping plane will
 		 * not be rendered. Increasing this value decreases depth buffer precision.
 		 */
-		virtual void setFarClipDistance(float farDist);
+		virtual void SetFarClipDistance(float farDist);
 
 		/** @copydoc setFarClipDistance() */
-		virtual float getFarClipDistance() const { return mFarDist; }
+		virtual float GetFarClipDistance() const { return mFarDist; }
 
 		/**	Determines the current viewport aspect ratio (width / height). */
-		virtual void setAspectRatio(float ratio);
+		virtual void SetAspectRatio(float ratio);
 
 		/** @copydoc setAspectRatio() */
-		virtual float getAspectRatio() const;
+		virtual float GetAspectRatio() const;
 
 		/** Manually set the extents of the frustum that will be used when calculating the projection matrix. This will
 		 * prevents extents for being automatically calculated from aspect and near plane so it is up to the caller to keep
@@ -112,16 +112,16 @@ namespace bs
 		 * @param[in] top		The position where the top clip plane intersect the near clip plane, in view space.
 		 * @param[in] bottom	The position where the bottom clip plane intersect the near clip plane, in view space.
 		*/
-		virtual void setFrustumExtents(float left, float right, float top, float bottom);
+		virtual void SetFrustumExtents(float left, float right, float top, float bottom);
 
 		/**
 		 * Resets frustum extents so they are automatically derived from other values. This is only relevant if you have
 		 * previously set custom extents.
 		 */
-		virtual void resetFrustumExtents();
+		virtual void ResetFrustumExtents();
 
 		/** Returns the extents of the frustum in view space at the near plane. */
-		virtual void getFrustumExtents(float& outleft, float& outright, float& outtop, float& outbottom) const;
+		virtual void GetFrustumExtents(float& outleft, float& outright, float& outtop, float& outbottom) const;
 
 		/**
 		 * Returns the standard projection matrix that determines how are 3D points projected to two dimensions. The layout
@@ -131,63 +131,63 @@ namespace bs
 		 * You should use this matrix when sending the matrix to the render system to make sure everything works
 		 * consistently when other render systems are used.
 		 */
-		virtual const Matrix4& getProjectionMatrixRS() const;
+		virtual const Matrix4& GetProjectionMatrixRs() const;
 
 		/** Returns the inverse of the render-system specific projection matrix. See getProjectionMatrixRS(). */
-		virtual const Matrix4& getProjectionMatrixRSInv() const;
+		virtual const Matrix4& GetProjectionMatrixRsInv() const;
 
 		/**
 		 * Returns the standard projection matrix that determines how are 3D points projected to two dimensions. Returned
 		 * matrix is standard following right-hand rules and depth range of [-1, 1]. In case you need a render-system specific
 		 * projection matrix call getProjectionMatrixRS().
 		 */
-		virtual const Matrix4& getProjectionMatrix() const;
+		virtual const Matrix4& GetProjectionMatrix() const;
 
 		/** Returns the inverse of the projection matrix. See getProjectionMatrix(). */
-		virtual const Matrix4& getProjectionMatrixInv() const;
+		virtual const Matrix4& GetProjectionMatrixInv() const;
 
 		/** Gets the camera view matrix. Used for positioning/orienting the camera. */
-		virtual const Matrix4& getViewMatrix() const;
+		virtual const Matrix4& GetViewMatrix() const;
 
 		/** Returns the inverse of the view matrix. See getViewMatrix(). */
-		virtual const Matrix4& getViewMatrixInv() const;
+		virtual const Matrix4& GetViewMatrixInv() const;
 
 		/**
 		 * Sets whether the camera should use the custom view matrix. When this is enabled camera will no longer calculate
 		 * its view matrix based on position/orientation and caller will be resonsible to keep the view matrix up to date.
 		 */
-		virtual void setCustomViewMatrix(bool enable, const Matrix4& viewMatrix = Matrix4::IDENTITY);
+		virtual void SetCustomViewMatrix(bool enable, const Matrix4& viewMatrix = Matrix4::IDENTITY);
 
 		/** Returns true if a custom view matrix is used. */
-		virtual bool isCustomViewMatrixEnabled() const { return mCustomViewMatrix; }
+		virtual bool IsCustomViewMatrixEnabled() const { return mCustomViewMatrix; }
 		
 		/**
 		 * Sets whether the camera should use the custom projection matrix. When this is enabled camera will no longer
 		 * calculate its projection matrix based on field of view, aspect and other parameters and caller will be resonsible
 		 * to keep the projection matrix up to date.
 		 */
-		virtual void setCustomProjectionMatrix(bool enable, const Matrix4& projectionMatrix = Matrix4::IDENTITY);
+		virtual void SetCustomProjectionMatrix(bool enable, const Matrix4& projectionMatrix = Matrix4::IDENTITY);
 
 		/** Returns true if a custom projection matrix is used. */
-		virtual bool isCustomProjectionMatrixEnabled() const { return mCustomProjMatrix; }
+		virtual bool IsCustomProjectionMatrixEnabled() const { return mCustomProjMatrix; }
 
 		/** Returns a convex volume representing the visible area of the camera, in local space. */
-		virtual const ConvexVolume& getFrustum() const;
+		virtual const ConvexVolume& GetFrustum() const;
 
 		/** Returns a convex volume representing the visible area of the camera, in world space. */
-		virtual ConvexVolume getWorldFrustum() const;
+		virtual ConvexVolume GetWorldFrustum() const;
 
 		/**	Returns the bounding of the frustum. */
-		const AABox& getBoundingBox() const;
+		const AABox& GetBoundingBox() const;
 
 		/**
 		 * Determines the type of projection used by the camera. Projection type controls how is 3D geometry projected onto a
 		 * 2D plane.
 		 */
-		virtual void setProjectionType(ProjectionType pt);
+		virtual void SetProjectionType(ProjectionType pt);
 
 		/** @copydoc setProjectionType() */
-		virtual ProjectionType getProjectionType() const;
+		virtual ProjectionType GetProjectionType() const;
 
 		/**
 		 * Sets the orthographic window height, for use with orthographic rendering only.
@@ -199,55 +199,55 @@ namespace bs
 		 * Calling this method will recalculate the aspect ratio, use setOrthoWindowHeight() or setOrthoWindowWidth() alone
 		 * if you wish to preserve the aspect ratio but just fit one or other dimension to a particular size.
 		 */
-		virtual void setOrthoWindow(float w, float h);
+		virtual void SetOrthoWindow(float w, float h);
 
 		/**
 		 * Determines the orthographic window height, for use with orthographic rendering only. The width of the window
 		 * will be calculated from the aspect ratio. Value is specified in world units.
 		 */
-		virtual void setOrthoWindowHeight(float h);
+		virtual void SetOrthoWindowHeight(float h);
 
 		/** @copydoc setOrthoWindowHeight() */
-		virtual float getOrthoWindowHeight() const;
+		virtual float GetOrthoWindowHeight() const;
 
 		/**
 		 * Determines the orthographic window width, for use with orthographic rendering only. The height of the window
 		 * will be calculated from the aspect ratio. Value is specified in world units.
 		 */
-		virtual void setOrthoWindowWidth(float w);
+		virtual void SetOrthoWindowWidth(float w);
 
 		/** @copydoc setOrthoWindowWidth() */
-		virtual float getOrthoWindowWidth() const;
+		virtual float GetOrthoWindowWidth() const;
 
 		/**
 		 * Determines a priority that determines in which orders the cameras are rendered. This only applies to cameras rendering
 		 * to the same render target. Higher value means the camera will be rendered sooner.
 		 */
-		void setPriority(INT32 priority) { mPriority = priority; MarkCoreDirtyInternal(); }
+		void SetPriority(INT32 priority) { mPriority = priority; MarkCoreDirtyInternal(); }
 
 		/** @copydoc setPriority() */
-		INT32 getPriority() const { return mPriority; }
+		INT32 GetPriority() const { return mPriority; }
 
 		/**	Determines layer bitfield that is used when determining which object should the camera render. */
-		void setLayers(UINT64 layers) { mLayers = layers; MarkCoreDirtyInternal(); }
+		void SetLayers(UINT64 layers) { mLayers = layers; MarkCoreDirtyInternal(); }
 
 		/** @copydoc setLayers() */
-		UINT64 getLayers() const { return mLayers; }
+		UINT64 GetLayers() const { return mLayers; }
 
 		/**
 		 * Determines number of samples to use when rendering to this camera. Values larger than 1 will enable MSAA
 		 * rendering.
 		 */
-		void setMSAACount(UINT32 count) { mMSAA = count; MarkCoreDirtyInternal(); }
+		void SetMsaaCount(UINT32 count) { mMSAA = count; MarkCoreDirtyInternal(); }
 
 		/** @copydoc setMSAACount() */
-		UINT32 getMSAACount() const { return mMSAA; }
+		UINT32 GetMsaaCount() const { return mMSAA; }
 
 		/**
 		 * Notifies a on-demand camera that it should re-draw its contents on the next frame. Ignored for a camera
 		 * that isn't on-demand.
 		 */
-		void notifyNeedsRedraw() { MarkCoreDirtyInternal((ActorDirtyFlag)CameraDirtyFlag::Redraw); }
+		void NotifyNeedsRedraw() { MarkCoreDirtyInternal((ActorDirtyFlag)CameraDirtyFlag::Redraw); }
 		
 		/**
 		 * Converts a point in world space to screen coordinates.
@@ -255,7 +255,7 @@ namespace bs
 		 * @param[in]	worldPoint		3D point in world space.
 		 * @return						2D point on the render target attached to the camera's viewport, in pixels.
 		 */
-		Vector2I worldToScreenPoint(const Vector3& worldPoint) const;
+		Vector2I WorldToScreenPoint(const Vector3& worldPoint) const;
 
 		/**	
 		 * Converts a point in world space to normalized device coordinates.
@@ -263,7 +263,7 @@ namespace bs
 		 * @param[in]	worldPoint		3D point in world space.
 		 * @return						2D point in normalized device coordinates ([-1, 1] range), relative to the camera's viewport.
 		 */
-		Vector2 worldToNdcPoint(const Vector3& worldPoint) const;
+		Vector2 WorldToNdcPoint(const Vector3& worldPoint) const;
 
 		/**
 		 * Converts a point in world space to view space coordinates.
@@ -271,7 +271,7 @@ namespace bs
 		 * @param[in]	worldPoint		3D point in world space.
 		 * @return						3D point relative to the camera's coordinate system.
 		 */
-		Vector3 worldToViewPoint(const Vector3& worldPoint) const;
+		Vector3 WorldToViewPoint(const Vector3& worldPoint) const;
 
 		/**
 		 * Converts a point in screen space to a point in world space.
@@ -281,7 +281,7 @@ namespace bs
 		 *							vector going from camera origin to the point on the near plane.
 		 * @return					3D point in world space.
 		 */
-		Vector3 screenToWorldPoint(const Vector2I& screenPoint, float depth = 0.5f) const;
+		Vector3 ScreenToWorldPoint(const Vector2I& screenPoint, float depth = 0.5f) const;
 
 		/**
 		* Converts a point in screen space (pixels corresponding to render target attached to the camera) to a point in
@@ -291,7 +291,7 @@ namespace bs
 		* @param[in]	deviceDepth	Depth to place the world point at, in normalized device coordinates.
 		* @return					3D point in world space.
 		*/
-		Vector3 screenToWorldPointDeviceDepth(const Vector2I& screenPoint, float deviceDepth = 0.5f) const;
+		Vector3 ScreenToWorldPointDeviceDepth(const Vector2I& screenPoint, float deviceDepth = 0.5f) const;
 
 		/**
 		 * Converts a point in screen space to a point in view space.
@@ -301,7 +301,7 @@ namespace bs
 		 *							vector going from camera origin to the point on the near plane.
 		 * @return					3D point relative to the camera's coordinate system.
 		 */
-		Vector3 screenToViewPoint(const Vector2I& screenPoint, float depth = 0.5f) const;
+		Vector3 ScreenToViewPoint(const Vector2I& screenPoint, float depth = 0.5f) const;
 
 		/**
 		 * Converts a point in screen space to normalized device coordinates.
@@ -310,7 +310,7 @@ namespace bs
 		 * @return						2D point in normalized device coordinates ([-1, 1] range), relative to
 		 *								the camera's viewport.
 		 */
-		Vector2 screenToNdcPoint(const Vector2I& screenPoint) const;
+		Vector2 ScreenToNdcPoint(const Vector2I& screenPoint) const;
 
 		/**
 		 * Converts a point in view space to world space.
@@ -318,7 +318,7 @@ namespace bs
 		 * @param[in]	viewPoint		3D point relative to the camera's coordinate system.
 		 * @return						3D point in world space.
 		 */
-		Vector3 viewToWorldPoint(const Vector3& viewPoint) const;
+		Vector3 ViewToWorldPoint(const Vector3& viewPoint) const;
 
 		/**
 		 * Converts a point in view space to screen space.
@@ -326,7 +326,7 @@ namespace bs
 		 * @param[in]	viewPoint		3D point relative to the camera's coordinate system.
 		 * @return						2D point on the render target attached to the camera's viewport, in pixels.
 		 */
-		Vector2I viewToScreenPoint(const Vector3& viewPoint) const;
+		Vector2I ViewToScreenPoint(const Vector3& viewPoint) const;
 
 		/**
 		 * Converts a point in view space to normalized device coordinates.
@@ -335,7 +335,7 @@ namespace bs
 		 * @return						2D point in normalized device coordinates ([-1, 1] range), relative to
 		 *								the camera's viewport.
 		 */
-		Vector2 viewToNdcPoint(const Vector3& viewPoint) const;
+		Vector2 ViewToNdcPoint(const Vector3& viewPoint) const;
 
 		/**
 		 * Converts a point in normalized device coordinates to world space.
@@ -346,7 +346,7 @@ namespace bs
 		 *							vector going from camera origin to the point on the near plane.
 		 * @return					3D point in world space.
 		 */
-		Vector3 ndcToWorldPoint(const Vector2& ndcPoint, float depth = 0.5f) const;
+		Vector3 NdcToWorldPoint(const Vector2& ndcPoint, float depth = 0.5f) const;
 
 		/**
 		 * Converts a point in normalized device coordinates to view space.
@@ -357,7 +357,7 @@ namespace bs
 		 *							vector going from camera origin to the point on the near plane.
 		 * @return					3D point relative to the camera's coordinate system.
 		 */
-		Vector3 ndcToViewPoint(const Vector2& ndcPoint, float depth = 0.5f) const;
+		Vector3 NdcToViewPoint(const Vector2& ndcPoint, float depth = 0.5f) const;
 
 		/**
 		 * Converts a point in normalized device coordinates to screen space.
@@ -366,7 +366,7 @@ namespace bs
 		 *							the camera's viewport.
 		 * @return					2D point on the render target attached to the camera's viewport, in pixels.
 		 */
-		Vector2I ndcToScreenPoint(const Vector2& ndcPoint) const;
+		Vector2I NdcToScreenPoint(const Vector2& ndcPoint) const;
 
 		/**
 		 * Converts a point in screen space to a ray in world space.
@@ -374,7 +374,7 @@ namespace bs
 		 * @param[in]	screenPoint		2D point on the render target attached to the camera's viewport, in pixels.
 		 * @return						Ray in world space, originating at the selected point on the camera near plane.
 		 */
-		Ray screenPointToRay(const Vector2I& screenPoint) const;
+		Ray ScreenPointToRay(const Vector2I& screenPoint) const;
 
 		/**	
 		 * Projects a point in view space to normalized device coordinates. Similar to viewToNdcPoint() but preserves
@@ -384,7 +384,7 @@ namespace bs
 		 * @return						3D point in normalized device coordinates ([-1, 1] range), relative to the
 		 *								camera's viewport. Z value range depends on active render API.
 		 */
-		Vector3 projectPoint(const Vector3& point) const;
+		Vector3 ProjectPoint(const Vector3& point) const;
 
 		/**	Un-projects a point in normalized device space to view space.
 		 *
@@ -392,7 +392,7 @@ namespace bs
 		 *								camera's viewport. Z value range depends on active render API.
 		 * @return						3D point relative to the camera's coordinate system.
 		 */
-		Vector3 unprojectPoint(const Vector3& point) const;
+		Vector3 UnprojectPoint(const Vector3& point) const;
 
 		static const float INFINITE_FAR_PLANE_ADJUST; /**< Small constant used to reduce far plane projection to avoid inaccuracies. */
 
@@ -400,29 +400,29 @@ namespace bs
 		CameraBase();
 
 		/**	Calculate projection parameters that are used when constructing the projection matrix. */
-		virtual void calcProjectionParameters(float& left, float& right, float& bottom, float& top) const;
+		virtual void CalcProjectionParameters(float& left, float& right, float& bottom, float& top) const;
 
 		/**	Recalculate frustum if dirty. */
-		virtual void updateFrustum() const;
+		virtual void UpdateFrustum() const;
 
 		/**	Recalculate frustum planes if dirty. */
-		virtual void updateFrustumPlanes() const;
+		virtual void UpdateFrustumPlanes() const;
 
 		/**
 		 * Update view matrix from parent position/orientation.
 		 *
 		 * @note	Does nothing when custom view matrix is set.
 		 */
-		virtual void updateView() const;
+		virtual void UpdateView() const;
 
 		/**	Checks if the frustum requires updating. */
-		virtual bool isFrustumOutOfDate() const;
+		virtual bool IsFrustumOutOfDate() const;
 
 		/**	Notify camera that the frustum requires to be updated. */
-		virtual void invalidateFrustum() const;
+		virtual void InvalidateFrustum() const;
 
 		/**	Returns a rectangle that defines the viewport position and size, in pixels. */
-		virtual Rect2I getViewportRect() const = 0;
+		virtual Rect2I GetViewportRect() const = 0;
 
 	protected:
 		UINT64 mLayers = 0xFFFFFFFFFFFFFFFF; /**< Bitfield that can be used for filtering what objects the camera sees. */
@@ -470,21 +470,21 @@ namespace bs
 		virtual ~TCamera() = default;
 
 		/**	Returns the viewport used by the camera. */	
-		SPtr<ViewportType> getViewport() const { return mViewport; }
+		SPtr<ViewportType> GetViewport() const { return mViewport; }
 
 		/**
 		 * Settings that control rendering for this view. They determine how will the renderer process this view, which
 		 * effects will be enabled, and what properties will those effects use.
 		 */
-		void setRenderSettings(const SPtr<RenderSettingsType>& settings)
+		void SetRenderSettings(const SPtr<RenderSettingsType>& settings)
 			{ mRenderSettings = settings; MarkCoreDirtyInternal((ActorDirtyFlag)CameraDirtyFlag::RenderSettings); }
 
 		/** @copydoc setRenderSettings() */
-		const SPtr<RenderSettingsType>& getRenderSettings() const { return mRenderSettings; }
+		const SPtr<RenderSettingsType>& GetRenderSettings() const { return mRenderSettings; }
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P p);
+		void RttiEnumFields(P p);
 
 	protected:
 		/** Viewport that describes a 2D rendering surface. */
@@ -511,16 +511,16 @@ namespace bs
 		 * Determines whether this is the main application camera. Main camera controls the final render surface that is
 		 * displayed to the user.
 		 */	
-		void setMain(bool main);
+		void SetMain(bool main);
 
 		/** @copydoc setMain() */
-		bool isMain() const { return mMain; }
+		bool IsMain() const { return mMain; }
 
 		/** Retrieves an implementation of a camera handler usable only from the core thread. */
-		SPtr<ct::Camera> getCore() const;
+		SPtr<ct::Camera> GetCore() const;
 
 		/**	Creates a new camera that renders to the specified portion of the provided render target. */
-		static SPtr<Camera> create();
+		static SPtr<Camera> Create();
 
 		/**
 		 * @name Internal
@@ -528,38 +528,38 @@ namespace bs
 		 */
 
 		/** @copydoc CoreObject::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 		/** @copydoc CoreObject::destroy */
-		void destroy() override;
+		void Destroy() override;
 
 		/** @} */
 	protected:
 		/** @copydoc CameraBase */
-		Rect2I getViewportRect() const override;
+		Rect2I GetViewportRect() const override;
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> createCore() const override;
+		SPtr<ct::CoreObject> CreateCore() const ;
 
 		/** @copydoc CameraBase::_markCoreDirty */
 		void MarkCoreDirtyInternal(ActorDirtyFlag flag = ActorDirtyFlag::Everything) override;
 
 		/** @copydoc CoreObject::syncToCore */
-		CoreSyncData syncToCore(FrameAlloc* allocator) override;
+		CoreSyncData SyncToCore(FrameAlloc* allocator) override;
 
 		/** @copydoc CoreObject::getCoreDependencies */
-		void getCoreDependencies(Vector<CoreObject*>& dependencies) override;
+		void GetCoreDependencies(Vector<CoreObject*>& dependencies) ;
 
 		/**	Creates a new camera without initializing it. */
-		static SPtr<Camera> createEmpty();
+		static SPtr<Camera> CreateEmpty();
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
 		/************************************************************************/
 	public:
 		friend class CameraRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	namespace ct
@@ -571,13 +571,13 @@ namespace bs
 		~Camera();
 
 		/** @copydoc bs::Camera::setMain() */
-		bool isMain() const { return mMain; }
+		bool IsMain() const { return mMain; }
 
 		/**	Sets an ID that can be used for uniquely identifying this object by the renderer. */
-		void setRendererId(UINT32 id) { mRendererId = id; }
+		void SetRendererId(UINT32 id) { mRendererId = id; }
 
 		/**	Retrieves an ID that can be used for uniquely identifying this object by the renderer. */
-		UINT32 getRendererId() const { return mRendererId; }
+		UINT32 GetRendererId() const { return mRendererId; }
 		
 	protected:
 		friend class bs::Camera;
@@ -588,13 +588,13 @@ namespace bs
 		Camera(const SPtr<Viewport>& viewport);
 
 		/** @copydoc CoreObject::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 		/** @copydoc CameraBase */
-		Rect2I getViewportRect() const override;
+		Rect2I GetViewportRect() const override;
 
 		/** @copydoc CoreObject::syncToCore */
-		void syncToCore(const CoreSyncData& data) override;
+		void SyncToCore(const CoreSyncData& data) override;
 
 		UINT32 mRendererId;
 	};

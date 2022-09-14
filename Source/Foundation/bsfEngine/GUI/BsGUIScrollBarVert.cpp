@@ -11,31 +11,31 @@ namespace bs
 
 	}
 
-	GUIScrollBarVert* GUIScrollBarVert::create(const String& styleName)
+	GUIScrollBarVert* GUIScrollBarVert::Create(const String& styleName)
 	{
-		return new (bs_alloc<GUIScrollBarVert>()) GUIScrollBarVert(false, getStyleName<GUIScrollBarVert>(false, styleName),
-			GUIDimensions::create());
+		return new (bs_alloc<GUIScrollBarVert>()) GUIScrollBarVert(false, GetStyleName<GUIScrollBarVert>(false, styleName),
+			GUIDimensions::Create());
 	}
 
-	GUIScrollBarVert* GUIScrollBarVert::create(bool resizeable, const String& styleName)
+	GUIScrollBarVert* GUIScrollBarVert::Create(bool resizeable, const String& styleName)
 	{
-		return new (bs_alloc<GUIScrollBarVert>()) GUIScrollBarVert(resizeable, getStyleName<GUIScrollBarVert>(resizeable, styleName),
-			GUIDimensions::create());
+		return new (bs_alloc<GUIScrollBarVert>()) GUIScrollBarVert(resizeable, GetStyleName<GUIScrollBarVert>(resizeable, styleName),
+			GUIDimensions::Create());
 	}
 
-	GUIScrollBarVert* GUIScrollBarVert::create(const GUIOptions& options, const String& styleName)
+	GUIScrollBarVert* GUIScrollBarVert::Create(const GUIOptions& options, const String& styleName)
 	{
-		return new (bs_alloc<GUIScrollBarVert>()) GUIScrollBarVert(false, getStyleName<GUIScrollBarVert>(false, styleName),
-			GUIDimensions::create(options));
+		return new (bs_alloc<GUIScrollBarVert>()) GUIScrollBarVert(false, GetStyleName<GUIScrollBarVert>(false, styleName),
+			GUIDimensions::Create(options));
 	}
 
-	GUIScrollBarVert* GUIScrollBarVert::create(bool resizeable, const GUIOptions& options, const String& styleName)
+	GUIScrollBarVert* GUIScrollBarVert::Create(bool resizeable, const GUIOptions& options, const String& styleName)
 	{
-		return new (bs_alloc<GUIScrollBarVert>()) GUIScrollBarVert(resizeable, getStyleName<GUIScrollBarVert>(resizeable, styleName),
-			GUIDimensions::create(options));
+		return new (bs_alloc<GUIScrollBarVert>()) GUIScrollBarVert(resizeable, GetStyleName<GUIScrollBarVert>(resizeable, styleName),
+			GUIDimensions::Create(options));
 	}
 
-	const String& GUIScrollBarVert::getGUITypeName(bool resizable)
+	const String& GUIScrollBarVert::GetGuiTypeName(bool resizable)
 	{
 		static String typeName = "ScrollBarVert";
 		static String resizableTypeName = "ResizeableScrollBarVert";

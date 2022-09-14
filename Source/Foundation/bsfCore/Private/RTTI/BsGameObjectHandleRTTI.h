@@ -19,7 +19,7 @@ namespace bs
 	class BS_CORE_EXPORT GameObjectHandleRTTI : public RTTIType<GameObjectHandleBase, IReflectable, GameObjectHandleRTTI>
 	{
 	private:
-		UINT64& getInstanceId(GameObjectHandleBase* obj)
+		UINT64& GetInstanceId(GameObjectHandleBase* obj)
 		{
 			static UINT64 invalidId = 0;
 
@@ -29,15 +29,15 @@ namespace bs
 			return invalidId;
 		}
 
-		void setInstanceId(GameObjectHandleBase* obj, UINT64& value) { mOriginalInstanceId = value; }
+		void SetInstanceId(GameObjectHandleBase* obj, UINT64& value) { mOriginalInstanceId = value; }
 
 	public:
 		GameObjectHandleRTTI()
 		{
-			addPlainField("mInstanceID", 0, &GameObjectHandleRTTI::getInstanceId, &GameObjectHandleRTTI::setInstanceId);
+			AddPlainField("mInstanceID", 0, &GameObjectHandleRTTI::GetInstanceId, &GameObjectHandleRTTI::SetInstanceId);
 		}
 
-		void onDeserializationEnded(IReflectable* obj, SerializationContext* context) override
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) 
 		{
 			if(context == nullptr || !rtti_is_of_type<CoreSerializationContext>(context))
 				return;
@@ -46,22 +46,22 @@ namespace bs
 			if(coreContext->goState)
 			{
 				GameObjectHandleBase* gameObjectHandle = static_cast<GameObjectHandleBase*>(obj);
-				coreContext->goState->registerUnresolvedHandle(mOriginalInstanceId, *gameObjectHandle);
+				coreContext->goState->RegisterUnresolvedHandle(mOriginalInstanceId, *gameObjectHandle);
 			}
 		}
 
-		const String& getRTTIName() override
+		const String& GetRttiName() 
 		{
 			static String name = "GameObjectHandleBase";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() 
 		{
 			return TID_GameObjectHandleBase;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			SPtr<GameObjectHandleBase> obj = bs_shared_ptr<GameObjectHandleBase>(new (bs_alloc<GameObjectHandleBase>()) GameObjectHandleBase());
 

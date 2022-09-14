@@ -19,12 +19,12 @@ namespace bs
 
 	void ScriptGUIToggleGroup::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_CreateInstance", (void*)&ScriptGUIToggleGroup::internal_createInstance);
+		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIToggleGroup::InternalCreateInstance);
 	}
 
-	void ScriptGUIToggleGroup::internal_createInstance(MonoObject* instance, bool allowAllOff)
+	void ScriptGUIToggleGroup::InternalCreateInstance(MonoObject* instance, bool allowAllOff)
 	{
-		SPtr<GUIToggleGroup> toggleGroup = GUIToggle::createToggleGroup(allowAllOff);
+		SPtr<GUIToggleGroup> toggleGroup = GUIToggle::CreateToggleGroup(allowAllOff);
 
 		new (bs_alloc<ScriptGUIToggleGroup>()) ScriptGUIToggleGroup(instance, toggleGroup);
 	}

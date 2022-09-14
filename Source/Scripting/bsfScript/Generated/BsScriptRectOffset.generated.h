@@ -13,8 +13,8 @@ namespace bs
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "RectOffset")
 
-		static MonoObject* box(const RectOffset& value);
-		static RectOffset unbox(MonoObject* value);
+		static MonoObject* Box(const RectOffset& value);
+		static RectOffset Unbox(MonoObject* value);
 
 	private:
 		ScriptRectOffset(MonoObject* managedInstance);

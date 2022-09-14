@@ -83,12 +83,12 @@ namespace bs { namespace ct
 		static const char* VERSION_CHARS = "410";
 #endif
 		
-		if (!isSupported())
+		if (!IsSupported())
 		{
 			mIsCompiled = false;
 			mCompileMessages = "Specified GPU program type is not supported by the current render system.";
 
-			GpuProgram::initialize();
+			initialize();
 			return;
 		}
 
@@ -254,12 +254,12 @@ namespace bs { namespace ct
 		if (mIsCompiled)
 		{
 			GLSLParamParser paramParser;
-			paramParser.buildUniformDescriptions(mGLHandle, mType, *mParametersDesc);
+			paramParser.BuildUniformDescriptions(mGLHandle, mType, *mParametersDesc);
 
 			if (mType == GPT_VERTEX_PROGRAM)
 			{
-				Vector<VertexElement> elementList = paramParser.buildVertexDeclaration(mGLHandle);
-				mInputDeclaration = HardwareBufferManager::instance().createVertexDeclaration(elementList);
+				Vector<VertexElement> elementList = paramParser.BuildVertexDeclaration(mGLHandle);
+				mInputDeclaration = HardwareBufferManager::Instance().CreateVertexDeclaration(elementList);
 			}
 		}
 
@@ -267,7 +267,7 @@ namespace bs { namespace ct
 		GpuProgram::initialize();
 	}
 
-	bool GLSLGpuProgram::isSupported() const
+	bool GLSLGpuProgram::IsSupported() const
 	{
 		RenderAPI* rapi = RenderAPI::instancePtr();
 		const RenderAPICapabilities& caps = rapi->getCapabilities(0);

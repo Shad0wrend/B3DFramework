@@ -18,35 +18,35 @@ namespace bs
 	class BS_CORE_EXPORT BlendStateRTTI : public RTTIType<BlendState, IReflectable, BlendStateRTTI>
 	{
 	private:
-		BLEND_STATE_DESC& getData(BlendState* obj) { return obj->mProperties.mData; }
-		void setData(BlendState* obj, BLEND_STATE_DESC& val) { obj->mProperties.mData = val; }
+		BLEND_STATE_DESC& GetData(BlendState* obj) { return obj->mProperties.mData; }
+		void SetData(BlendState* obj, BLEND_STATE_DESC& val) { obj->mProperties.mData = val; }
 
 	public:
 		BlendStateRTTI()
 		{
-			addPlainField("mData", 0, &BlendStateRTTI::getData, &BlendStateRTTI::setData);
+			addPlainField("mData", 0, &BlendStateRTTI::GetData, &BlendStateRTTI::SetData);
 		}
 
-		void onDeserializationEnded(IReflectable* obj, SerializationContext* context) override
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override
 		{
 			BlendState* blendState = static_cast<BlendState*>(obj);
 			blendState->initialize();
 		}
 
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "BlendState";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_BlendState;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() override
 		{
-			return RenderStateManager::instance().CreateBlendStatePtrInternal(BLEND_STATE_DESC());
+			return RenderStateManager::Instance().CreateBlendStatePtrInternal(BLEND_STATE_DESC());
 		}
 	};
 
@@ -54,7 +54,7 @@ namespace bs
 	{
 		enum { id = TID_BLEND_STATE_DESC }; enum { hasDynamicSize = 1 };
 
-		static BitLength toMemory(const BLEND_STATE_DESC& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const BLEND_STATE_DESC& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]()
 			{
@@ -62,7 +62,7 @@ namespace bs
 			});
 		}
 
-		static BitLength fromMemory(BLEND_STATE_DESC& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(BLEND_STATE_DESC& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
 			rtti_read_size_header(stream, compress, size);
@@ -71,7 +71,7 @@ namespace bs
 			return size;
 		}
 
-		static BitLength getSize(const BLEND_STATE_DESC& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const BLEND_STATE_DESC& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength dataSize = sizeof(data);
 			rtti_add_header_size(dataSize, compress);

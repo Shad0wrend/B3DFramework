@@ -9,14 +9,14 @@ namespace bs
 {
 	ImageSprite::~ImageSprite()
 	{
-		clearMesh();
+		ClearMesh();
 	}
 
-	void ImageSprite::update(const IMAGE_SPRITE_DESC& desc, UINT64 groupId)
+	void ImageSprite::Update(const IMAGE_SPRITE_DESC& desc, UINT64 groupId)
 	{
-		if(!SpriteTexture::checkIsLoaded(desc.texture))
+		if(!SpriteTexture::CheckIsLoaded(desc.texture))
 		{
-			clearMesh();
+			ClearMesh();
 			return;
 		}
 
@@ -49,7 +49,7 @@ namespace bs
 				renderElem.numQuads = newNumQuads;
 			}
 
-			const HTexture& tex = desc.texture->getTexture();
+			const HTexture& tex = desc.texture->GetTexture();
 
 			SpriteMaterialInfo& matInfo = renderElem.matInfo;
 			matInfo.groupId = groupId;
@@ -61,7 +61,7 @@ namespace bs
 			if(animated)
 				matInfo.spriteTexture = desc.texture;
 
-			renderElem.material = SpriteManager::instance().getImageMaterial(
+			renderElem.material = SpriteManager::Instance().GetImageMaterial(
 				desc.transparent ? SpriteMaterialTransparency::Alpha : SpriteMaterialTransparency::Opaque, animated);
 		}
 
@@ -75,7 +75,7 @@ namespace bs
 			renderElem.indexes[i * 6 + 5] = i * 4 + 2;
 		}
 
-		Vector2I offset = getAnchorOffset(desc.anchor, desc.width, desc.height);
+		Vector2I offset = GetAnchorOffset(desc.anchor, desc.width, desc.height);
 		Vector2 uvOffset = desc.uvOffset;
 		Vector2 uvScale = desc.uvScale;
 		
@@ -149,8 +149,8 @@ namespace bs
 			renderElem.vertices[34] = Vector2(topRightStart, bottomStart + bottomBorder);
 			renderElem.vertices[35] = Vector2(topRightStart + rightBorder, bottomStart + bottomBorder);
 
-			float invWidth = 1.0f / (float)desc.texture->getTexture()->getProperties().getWidth();
-			float invHeight = 1.0f / (float)desc.texture->getTexture()->getProperties().getHeight();
+			float invWidth = 1.0f / (float)desc.texture->GetTexture()->GetProperties().GetWidth();
+			float invHeight = 1.0f / (float)desc.texture->GetTexture()->GetProperties().getHeight();
 
 			float uvLeftBorder = desc.borderLeft * invWidth;
 			float uvRightBorder = desc.borderRight * invWidth;
@@ -236,7 +236,7 @@ namespace bs
 		updateBounds();
 	}
 
-	void ImageSprite::clearMesh()
+	void ImageSprite::ClearMesh()
 	{
 		for (auto& renderElem : mCachedRenderElements)
 		{
@@ -266,7 +266,7 @@ namespace bs
 		updateBounds();
 	}
 
-	Vector2 ImageSprite::getTextureUVScale(Vector2I sourceSize, Vector2I destSize, TextureScaleMode scaleMode)
+	Vector2 ImageSprite::GetTextureUvScale(Vector2I sourceSize, Vector2I destSize, TextureScaleMode scaleMode)
 	{
 		Vector2 uvScale = Vector2(1.0f, 1.0f);
 

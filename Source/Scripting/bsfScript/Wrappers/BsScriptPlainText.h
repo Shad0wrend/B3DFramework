@@ -20,7 +20,7 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "PlainText")
 
 		/**	Creates an empty, uninitialized managed instance of the resource interop object. */
-		static MonoObject* createInstance();
+		static MonoObject* CreateInstance();
 
 	private:
 		friend class ScriptResourceManager;
@@ -31,9 +31,9 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static void internal_createInstance(MonoObject* instance, MonoString* text);
-		static MonoString* internal_getText(ScriptPlainText* thisPtr);
-		static void internal_setText(ScriptPlainText* thisPtr, MonoString* text);
+		static void InternalCreateInstance(MonoObject* instance, MonoString* text);
+		static MonoString* InternalGetText(ScriptPlainText* thisPtr);
+		static void InternalSetText(ScriptPlainText* thisPtr, MonoString* text);
 	};
 
 	/** @} */

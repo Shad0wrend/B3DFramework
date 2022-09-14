@@ -194,7 +194,7 @@ namespace bs
 		mAlloc.clear();
 	}
 
-	const ColorGradientHDR& MaterialParamsBase::getColorGradientParam(const String& name, UINT32 arrayIdx) const
+	const ColorGradientHDR& MaterialParamsBase::GetColorGradientParam(const String& name, UINT32 arrayIdx) const
 	{
 		static ColorGradientHDR EMPTY_GRADIENT;
 
@@ -206,7 +206,7 @@ namespace bs
 		return getColorGradientParam(*param, arrayIdx);
 	}
 
-	void MaterialParamsBase::setColorGradientParam(const String& name, UINT32 arrayIdx, const ColorGradientHDR& input) const
+	void MaterialParamsBase::SetColorGradientParam(const String& name, UINT32 arrayIdx, const ColorGradientHDR& input) const
 	{
 		const ParamData* param = nullptr;
 		auto result = getParamData(name, ParamType::Data, GPDT_COLOR, arrayIdx, &param);
@@ -216,7 +216,7 @@ namespace bs
 		setColorGradientParam(*param, arrayIdx, input);
 	}
 
-	const ColorGradientHDR& MaterialParamsBase::getColorGradientParam(const ParamData& param, UINT32 arrayIdx) const
+	const ColorGradientHDR& MaterialParamsBase::GetColorGradientParam(const ParamData& param, UINT32 arrayIdx) const
 	{
 		const DataParamInfo& paramInfo = mDataParams[param.index + arrayIdx];
 		if (paramInfo.colorGradient)
@@ -226,7 +226,7 @@ namespace bs
 		return EMPTY_GRADIENT;
 	}
 
-	void MaterialParamsBase::setColorGradientParam(const ParamData& param, UINT32 arrayIdx, const ColorGradientHDR& input) const
+	void MaterialParamsBase::SetColorGradientParam(const ParamData& param, UINT32 arrayIdx, const ColorGradientHDR& input) const
 	{
 		DataParamInfo& paramInfo = mDataParams[param.index + arrayIdx];
 		if (paramInfo.colorGradient)
@@ -237,7 +237,7 @@ namespace bs
 		param.version = ++mParamVersion;
 	}
 
-	UINT32 MaterialParamsBase::getParamIndex(const String& name) const
+	UINT32 MaterialParamsBase::GetParamIndex(const String& name) const
 	{
 		auto iterFind = mParamLookup.find(name);
 		if (iterFind == mParamLookup.end())
@@ -246,7 +246,7 @@ namespace bs
 		return iterFind->second;
 	}
 
-	MaterialParamsBase::GetParamResult MaterialParamsBase::getParamIndex(const String& name, ParamType type,
+	MaterialParamsBase::GetParamResult MaterialParamsBase::GetParamIndex(const String& name, ParamType type,
 		GpuParamDataType dataType, UINT32 arrayIdx, UINT32& output) const
 	{
 		auto iterFind = mParamLookup.find(name);
@@ -266,7 +266,7 @@ namespace bs
 		return GetParamResult::Success;
 	}
 
-	MaterialParamsBase::GetParamResult MaterialParamsBase::getParamData(const String& name, ParamType type,
+	MaterialParamsBase::GetParamResult MaterialParamsBase::GetParamData(const String& name, ParamType type,
 		GpuParamDataType dataType, UINT32 arrayIdx, const ParamData** output) const
 	{
 		auto iterFind = mParamLookup.find(name);
@@ -286,7 +286,7 @@ namespace bs
 		return GetParamResult::Success;
 	}
 
-	void MaterialParamsBase::reportGetParamError(GetParamResult errorCode, const String& name, UINT32 arrayIdx) const
+	void MaterialParamsBase::ReportGetParamError(GetParamResult errorCode, const String& name, UINT32 arrayIdx) const
 	{
 		switch (errorCode)
 		{
@@ -304,24 +304,24 @@ namespace bs
 		}
 	}
 
-	RTTITypeBase* MaterialParamStructData::getRTTIStatic()
+	RTTITypeBase* MaterialParamStructData::GetRttiStatic()
 	{
-		return MaterialParamStructDataRTTI::instance();
+		return MaterialParamStructDataRTTI::Instance();
 	}
 
-	RTTITypeBase* MaterialParamStructData::getRTTI() const
+	RTTITypeBase* MaterialParamStructData::GetRtti() const
 	{
-		return getRTTIStatic();
+		return GetRttiStatic();
 	}
 
-	RTTITypeBase* MaterialParamTextureData::getRTTIStatic()
+	RTTITypeBase* MaterialParamTextureData::GetRttiStatic()
 	{
-		return MaterialParamTextureDataRTTI::instance();
+		return MaterialParamTextureDataRTTI::Instance();
 	}
 
-	RTTITypeBase* MaterialParamTextureData::getRTTI() const
+	RTTITypeBase* MaterialParamTextureData::GetRtti() const
 	{
-		return getRTTIStatic();
+		return GetRttiStatic();
 	}
 
 	template<bool Core>
@@ -431,7 +431,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TMaterialParams<Core>::getStructData(const String& name, void* value, UINT32 size, UINT32 arrayIdx) const
+	void TMaterialParams<Core>::GetStructData(const String& name, void* value, UINT32 size, UINT32 arrayIdx) const
 	{
 		const ParamData* param = nullptr;
 		GetParamResult result = getParamData(name, ParamType::Data, GPDT_STRUCT, arrayIdx, &param);
@@ -445,7 +445,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TMaterialParams<Core>::setStructData(const String& name, const void* value, UINT32 size, UINT32 arrayIdx)
+	void TMaterialParams<Core>::SetStructData(const String& name, const void* value, UINT32 size, UINT32 arrayIdx)
 	{
 		const ParamData* param = nullptr;
 		GetParamResult result = getParamData(name, ParamType::Data, GPDT_STRUCT, arrayIdx, &param);
@@ -459,7 +459,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TMaterialParams<Core>::getTexture(const String& name, TextureType& value, TextureSurface& surface) const
+	void TMaterialParams<Core>::GetTexture(const String& name, TextureType& value, TextureSurface& surface) const
 	{
 		const ParamData* param = nullptr;
 		GetParamResult result = getParamData(name, ParamType::Texture, GPDT_UNKNOWN, 0, &param);
@@ -473,7 +473,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TMaterialParams<Core>::setTexture(const String& name, const TextureType& value, const TextureSurface& surface)
+	void TMaterialParams<Core>::SetTexture(const String& name, const TextureType& value, const TextureSurface& surface)
 	{
 		const ParamData* param = nullptr;
 		GetParamResult result = getParamData(name, ParamType::Texture, GPDT_UNKNOWN, 0, &param);
@@ -487,7 +487,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TMaterialParams<Core>::getSpriteTexture(const String& name, SpriteTextureType& value) const
+	void TMaterialParams<Core>::GetSpriteTexture(const String& name, SpriteTextureType& value) const
 	{
 		const ParamData* param = nullptr;
 		GetParamResult result = getParamData(name, ParamType::Texture, GPDT_UNKNOWN, 0, &param);
@@ -501,7 +501,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TMaterialParams<Core>::setSpriteTexture(const String& name, const SpriteTextureType& value)
+	void TMaterialParams<Core>::SetSpriteTexture(const String& name, const SpriteTextureType& value)
 	{
 		const ParamData* param = nullptr;
 		GetParamResult result = getParamData(name, ParamType::Texture, GPDT_UNKNOWN, 0, &param);
@@ -515,7 +515,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TMaterialParams<Core>::getLoadStoreTexture(const String& name, TextureType& value, TextureSurface& surface) const
+	void TMaterialParams<Core>::GetLoadStoreTexture(const String& name, TextureType& value, TextureSurface& surface) const
 	{
 		const ParamData* param = nullptr;
 		GetParamResult result = getParamData(name, ParamType::Texture, GPDT_UNKNOWN, 0, &param);
@@ -529,7 +529,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TMaterialParams<Core>::setLoadStoreTexture(const String& name, const TextureType& value, const TextureSurface& surface)
+	void TMaterialParams<Core>::SetLoadStoreTexture(const String& name, const TextureType& value, const TextureSurface& surface)
 	{
 		const ParamData* param = nullptr;
 		GetParamResult result = getParamData(name, ParamType::Texture, GPDT_UNKNOWN, 0, &param);
@@ -543,7 +543,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TMaterialParams<Core>::getBuffer(const String& name, BufferType& value) const
+	void TMaterialParams<Core>::GetBuffer(const String& name, BufferType& value) const
 	{
 		const ParamData* param = nullptr;
 		GetParamResult result = getParamData(name, ParamType::Buffer, GPDT_UNKNOWN, 0, &param);
@@ -557,7 +557,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TMaterialParams<Core>::setBuffer(const String& name, const BufferType& value)
+	void TMaterialParams<Core>::SetBuffer(const String& name, const BufferType& value)
 	{
 		const ParamData* param = nullptr;
 		GetParamResult result = getParamData(name, ParamType::Buffer, GPDT_UNKNOWN, 0, &param);
@@ -571,7 +571,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TMaterialParams<Core>::getSamplerState(const String& name, SamplerType& value) const
+	void TMaterialParams<Core>::GetSamplerState(const String& name, SamplerType& value) const
 	{
 		const ParamData* param = nullptr;
 		GetParamResult result = getParamData(name, ParamType::Sampler, GPDT_UNKNOWN, 0, &param);
@@ -585,7 +585,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TMaterialParams<Core>::setSamplerState(const String& name, const SamplerType& value)
+	void TMaterialParams<Core>::SetSamplerState(const String& name, const SamplerType& value)
 	{
 		const ParamData* param = nullptr;
 		GetParamResult result = getParamData(name, ParamType::Sampler, GPDT_UNKNOWN, 0, &param);
@@ -599,7 +599,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	bool TMaterialParams<Core>::isAnimated(const String& name, UINT32 arrayIdx)
+	bool TMaterialParams<Core>::IsAnimated(const String& name, UINT32 arrayIdx)
 	{
 		auto iterFind = mParamLookup.find(name);
 		if (iterFind == mParamLookup.end())
@@ -618,7 +618,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TMaterialParams<Core>::getStructData(const ParamData& param, void* value, UINT32 size, UINT32 arrayIdx) const
+	void TMaterialParams<Core>::GetStructData(const ParamData& param, void* value, UINT32 size, UINT32 arrayIdx) const
 	{
 		const ParamStructDataType& structParam = mStructParams[param.index + arrayIdx];
 		if (structParam.dataSize != size)
@@ -632,7 +632,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TMaterialParams<Core>::setStructData(const ParamData& param, const void* value, UINT32 size, UINT32 arrayIdx)
+	void TMaterialParams<Core>::SetStructData(const ParamData& param, const void* value, UINT32 size, UINT32 arrayIdx)
 	{
 		const ParamStructDataType& structParam = mStructParams[param.index + arrayIdx];
 		if (structParam.dataSize != size)
@@ -647,14 +647,14 @@ namespace bs
 	}
 
 	template<bool Core>
-	UINT32 TMaterialParams<Core>::getStructSize(const ParamData& param) const
+	UINT32 TMaterialParams<Core>::GetStructSize(const ParamData& param) const
 	{
 		const ParamStructDataType& structParam = mStructParams[param.index];
 		return structParam.dataSize;
 	}
 
 	template<bool Core>
-	void TMaterialParams<Core>::getTexture(const ParamData& param, TextureType& value, TextureSurface& surface) const
+	void TMaterialParams<Core>::GetTexture(const ParamData& param, TextureType& value, TextureSurface& surface) const
 	{
 		ParamTextureDataType& textureParam = mTextureParams[param.index];
 
@@ -667,7 +667,7 @@ namespace bs
 	}
 	
 	template<bool Core>
-	void TMaterialParams<Core>::setTexture(const ParamData& param, const TextureType& value, const TextureSurface& surface)
+	void TMaterialParams<Core>::SetTexture(const ParamData& param, const TextureType& value, const TextureSurface& surface)
 	{
 		ParamTextureDataType& textureParam = mTextureParams[param.index];
 		textureParam.texture = value;
@@ -679,14 +679,14 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TMaterialParams<Core>::getSpriteTexture(const ParamData& param, SpriteTextureType& value) const
+	void TMaterialParams<Core>::GetSpriteTexture(const ParamData& param, SpriteTextureType& value) const
 	{
 		ParamTextureDataType& textureParam = mTextureParams[param.index];
 		value = textureParam.spriteTexture;
 	}
 	
 	template<bool Core>
-	void TMaterialParams<Core>::setSpriteTexture(const ParamData& param, const SpriteTextureType& value)
+	void TMaterialParams<Core>::SetSpriteTexture(const ParamData& param, const SpriteTextureType& value)
 	{
 		ParamTextureDataType& textureParam = mTextureParams[param.index];
 		textureParam.texture = nullptr;
@@ -698,13 +698,13 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TMaterialParams<Core>::getBuffer(const ParamData& param, BufferType& value) const
+	void TMaterialParams<Core>::GetBuffer(const ParamData& param, BufferType& value) const
 	{
 		value = mBufferParams[param.index].value;
 	}
 
 	template<bool Core>
-	void TMaterialParams<Core>::setBuffer(const ParamData& param, const BufferType& value)
+	void TMaterialParams<Core>::SetBuffer(const ParamData& param, const BufferType& value)
 	{
 		mBufferParams[param.index].value = value;
 
@@ -712,7 +712,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TMaterialParams<Core>::getLoadStoreTexture(const ParamData& param, TextureType& value, TextureSurface& surface) const
+	void TMaterialParams<Core>::GetLoadStoreTexture(const ParamData& param, TextureType& value, TextureSurface& surface) const
 	{
 		ParamTextureDataType& textureParam = mTextureParams[param.index];
 		value = textureParam.texture;
@@ -720,7 +720,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TMaterialParams<Core>::setLoadStoreTexture(const ParamData& param, const TextureType& value, const TextureSurface& surface)
+	void TMaterialParams<Core>::SetLoadStoreTexture(const ParamData& param, const TextureType& value, const TextureSurface& surface)
 	{
 		ParamTextureDataType& textureParam = mTextureParams[param.index];
 		textureParam.texture = value;
@@ -732,13 +732,13 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TMaterialParams<Core>::getSamplerState(const ParamData& param, SamplerType& value) const
+	void TMaterialParams<Core>::GetSamplerState(const ParamData& param, SamplerType& value) const
 	{
 		value = mSamplerStateParams[param.index].value;
 	}
 
 	template<bool Core>
-	void TMaterialParams<Core>::setSamplerState(const ParamData& param, const SamplerType& value)
+	void TMaterialParams<Core>::SetSamplerState(const ParamData& param, const SamplerType& value)
 	{
 		mSamplerStateParams[param.index].value = value;
 
@@ -746,7 +746,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	MateralParamTextureType TMaterialParams<Core>::getTextureType(const ParamData& param) const
+	MateralParamTextureType TMaterialParams<Core>::GetTextureType(const ParamData& param) const
 	{
 		if(mTextureParams[param.index].isLoadStore)
 			return MateralParamTextureType::LoadStore;
@@ -758,7 +758,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	bool TMaterialParams<Core>::isAnimated(const ParamData& param, UINT32 arrayIdx) const
+	bool TMaterialParams<Core>::IsAnimated(const ParamData& param, UINT32 arrayIdx) const
 	{
 		const DataParamInfo& paramInfo = mDataParams[param.index + arrayIdx];
 
@@ -766,7 +766,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	typename TMaterialParams<Core>::SpriteTextureType TMaterialParams<Core>::getOwningSpriteTexture(const ParamData& param) const
+	typename TMaterialParams<Core>::SpriteTextureType TMaterialParams<Core>::GetOwningSpriteTexture(const ParamData& param) const
 	{
 		SpriteTextureType output;
 
@@ -782,13 +782,13 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TMaterialParams<Core>::getDefaultTexture(const ParamData& param, TextureType& value) const
+	void TMaterialParams<Core>::GetDefaultTexture(const ParamData& param, TextureType& value) const
 	{
 		value = mDefaultTextureParams[param.index];
 	}
 
 	template<bool Core>
-	void TMaterialParams<Core>::getDefaultSamplerState(const ParamData& param, SamplerType& value) const
+	void TMaterialParams<Core>::GetDefaultSamplerState(const ParamData& param, SamplerType& value) const
 	{
 		value = mDefaultSamplerStateParams[param.index];
 	}
@@ -800,7 +800,7 @@ namespace bs
 		:TMaterialParams(shader, initialParamVersion), mLastSyncVersion(1)
 	{ }
 
-	void MaterialParams::getSyncData(UINT8* buffer, UINT32& size, bool forceAll)
+	void MaterialParams::GetSyncData(UINT8* buffer, UINT32& size, bool forceAll)
 	{
 		// Note: Not syncing struct data
 
@@ -1059,7 +1059,7 @@ namespace bs
 		mLastSyncVersion = mParamVersion;
 	}
 
-	void MaterialParams::getResourceDependencies(Vector<HResource>& resources)
+	void MaterialParams::GetResourceDependencies(Vector<HResource>& resources)
 	{
 		for (UINT32 i = 0; i < (UINT32)mParams.size(); i++)
 		{
@@ -1076,7 +1076,7 @@ namespace bs
 		}
 	}
 
-	void MaterialParams::getCoreObjectDependencies(Vector<CoreObject*>& coreObjects)
+	void MaterialParams::GetCoreObjectDependencies(Vector<CoreObject*>& coreObjects)
 	{
 		for (UINT32 i = 0; i < (UINT32)mParams.size(); i++)
 		{
@@ -1118,14 +1118,14 @@ namespace bs
 		}
 	}
 
-	RTTITypeBase* MaterialParams::getRTTIStatic()
+	RTTITypeBase* MaterialParams::GetRttiStatic()
 	{
-		return MaterialParamsRTTI::instance();
+		return MaterialParamsRTTI::Instance();
 	}
 
-	RTTITypeBase* MaterialParams::getRTTI() const
+	RTTITypeBase* MaterialParams::GetRtti() const
 	{
-		return MaterialParams::getRTTIStatic();
+		return MaterialParams::GetRttiStatic();
 	}
 
 	namespace ct
@@ -1219,7 +1219,7 @@ namespace bs
 		}
 	}
 
-	void MaterialParams::setSyncData(UINT8* buffer, UINT32 size)
+	void MaterialParams::SetSyncData(UINT8* buffer, UINT32 size)
 	{
 		Bitstream stream((uint8_t*)buffer, size);
 

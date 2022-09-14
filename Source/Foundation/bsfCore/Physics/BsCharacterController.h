@@ -65,85 +65,85 @@ namespace bs
 		 *
 		 * Does not account for gravity, you must apply it manually.
 		 */
-		virtual CharacterCollisionFlags move(const Vector3& displacement) = 0;
+		virtual CharacterCollisionFlags Move(const Vector3& displacement) = 0;
 
 		/** Returns position of the center of the controller. */
-		virtual Vector3 getPosition() const = 0;
+		virtual Vector3 GetPosition() const = 0;
 
 		/**
 		 * Sets position of the center of the controller. This will teleport the character to the location. Use move()
 		 * for movement that includes physics.
 		 */
-		virtual void setPosition(const Vector3& position) = 0;
+		virtual void SetPosition(const Vector3& position) = 0;
 
 		/** @copydoc setFootPosition() */
-		virtual Vector3 getFootPosition() const = 0;
+		virtual Vector3 GetFootPosition() const = 0;
 
 		/**
 		 * Determines the  position of the bottom of the controller. Position takes contact offset into account. Changing
 		 * this will teleport the character to the location. Use move() for movement that includes physics.
 		 */
-		virtual void setFootPosition(const Vector3& position) = 0;
+		virtual void SetFootPosition(const Vector3& position) = 0;
 
 		/** @copydoc setRadius() */
-		virtual float getRadius() const = 0;
+		virtual float GetRadius() const = 0;
 
 		/** Determines the radius of the controller capsule. */
-		virtual void setRadius(float radius) = 0;
+		virtual void SetRadius(float radius) = 0;
 
 		/** @copydoc setHeight() */
-		virtual float getHeight() const = 0;
+		virtual float GetHeight() const = 0;
 
 		/** Determines the height between the centers of the two spheres of the controller capsule. */
-		virtual void setHeight(float height) = 0;
+		virtual void SetHeight(float height) = 0;
 
 		/** @copydoc setUp() */
-		virtual Vector3 getUp() const = 0;
+		virtual Vector3 GetUp() const = 0;
 
 		/** Determines the up direction of capsule. Determines capsule orientation. */
-		virtual void setUp(const Vector3& up) = 0;
+		virtual void SetUp(const Vector3& up) = 0;
 
 		/** @copydoc CHAR_CONTROLLER_DESC::climbingMode */
-		virtual CharacterClimbingMode getClimbingMode() const = 0;
+		virtual CharacterClimbingMode GetClimbingMode() const = 0;
 
 		/** @copydoc CHAR_CONTROLLER_DESC::climbingMode */
-		virtual void setClimbingMode(CharacterClimbingMode mode) = 0;
+		virtual void SetClimbingMode(CharacterClimbingMode mode) = 0;
 
 		/** @copydoc CHAR_CONTROLLER_DESC::nonWalkableMode */
-		virtual CharacterNonWalkableMode getNonWalkableMode() const = 0;
+		virtual CharacterNonWalkableMode GetNonWalkableMode() const = 0;
 
 		/** @copydoc CHAR_CONTROLLER_DESC::nonWalkableMode */
-		virtual void setNonWalkableMode(CharacterNonWalkableMode mode) = 0;
+		virtual void SetNonWalkableMode(CharacterNonWalkableMode mode) = 0;
 
 		/** @copydoc CHAR_CONTROLLER_DESC::minMoveDistance */
-		virtual float getMinMoveDistance() const = 0;
+		virtual float GetMinMoveDistance() const = 0;
 
 		/** @copydoc CHAR_CONTROLLER_DESC::minMoveDistance */
-		virtual void setMinMoveDistance(float value) = 0;
+		virtual void SetMinMoveDistance(float value) = 0;
 
 		/** @copydoc CHAR_CONTROLLER_DESC::contactOffset */
-		virtual float getContactOffset() const = 0;
+		virtual float GetContactOffset() const = 0;
 
 		/** @copydoc CHAR_CONTROLLER_DESC::contactOffset */
-		virtual void setContactOffset(float value) = 0;
+		virtual void SetContactOffset(float value) = 0;
 
 		/** @copydoc CHAR_CONTROLLER_DESC::stepOffset */
-		virtual float getStepOffset() const = 0;
+		virtual float GetStepOffset() const = 0;
 
 		/** @copydoc CHAR_CONTROLLER_DESC::stepOffset */
-		virtual void setStepOffset(float value) = 0;
+		virtual void SetStepOffset(float value) = 0;
 
 		/** @copydoc CHAR_CONTROLLER_DESC::slopeLimit */
-		virtual Radian getSlopeLimit() const = 0;
+		virtual Radian GetSlopeLimit() const = 0;
 
 		/** @copydoc CHAR_CONTROLLER_DESC::slopeLimit */
-		virtual void setSlopeLimit(Radian value) = 0;
+		virtual void SetSlopeLimit(Radian value) = 0;
 
 		/** Determines the layer that controls what can the controller collide with. */
-		virtual void setLayer(UINT64 layer) { mLayer = layer; }
+		virtual void SetLayer(UINT64 layer) { mLayer = layer; }
 
 		/** @copydoc setLayer() */
-		virtual UINT64 getLayer() const { return mLayer; }
+		virtual UINT64 GetLayer() const { return mLayer; }
 
 		/**
 		 * Creates a new character controller.
@@ -151,7 +151,7 @@ namespace bs
 		 * @param[in]	scene		Scene to add the controller to.
 		 * @param[in]	desc		Describes controller geometry and movement.
 		 */
-		static SPtr<CharacterController> create(PhysicsScene& scene, const CHAR_CONTROLLER_DESC& desc);
+		static SPtr<CharacterController> Create(PhysicsScene& scene, const CHAR_CONTROLLER_DESC& desc);
 
 		/** Triggered when the controller hits a collider. */
 		Event<void(const ControllerColliderCollision&)> onColliderHit;

@@ -22,22 +22,22 @@ namespace bs
 		virtual ~FreeImgImporter();
 
 		/** @copydoc SpecificImporter::isExtensionSupported */
-		bool isExtensionSupported(const String& ext) const override;
+		bool IsExtensionSupported(const String& ext) const ;
 
 		/** @copydoc SpecificImporter::isMagicNumberSupported */
-		bool isMagicNumberSupported(const UINT8* magicNumPtr, UINT32 numBytes) const override;
+		bool IsMagicNumberSupported(const UINT8* magicNumPtr, UINT32 numBytes) const ;
 
 		/** @copydoc SpecificImporter::import */
-		SPtr<Resource> import(const Path& filePath, SPtr<const ImportOptions> importOptions) override;
+		SPtr<Resource> Import(const Path& filePath, SPtr<const ImportOptions> importOptions) ;
 
 		/** @copydoc SpecificImporter::createImportOptions */
-		SPtr<ImportOptions> createImportOptions() const override;
+		SPtr<ImportOptions> CreateImportOptions() const ;
 	private:
 		/**	Converts a magic number into an extension name. */
-		String magicNumToExtension(const UINT8* magic, UINT32 maxBytes) const;
+		String MagicNumToExtension(const UINT8* magic, UINT32 maxBytes) const;
 
 		/**	Imports an image from the provided data stream. */
-		SPtr<PixelData> importRawImage(const Path& fileData);
+		SPtr<PixelData> ImportRawImage(const Path& fileData);
 
 		/**
 		 * Generates six cubemap faces from the provided source texture. *
@@ -48,7 +48,7 @@ namespace bs
 		 *							same order as presented in the CubemapFace enum.
 		 * @return					True if the cubemap faces were successfully generated, false otherwise.
 		 */
-		bool generateCubemap(const SPtr<PixelData>& source, CubemapSourceType sourceType,
+		bool GenerateCubemap(const SPtr<PixelData>& source, CubemapSourceType sourceType,
 			std::array<SPtr<PixelData>, 6>& output);
 
 		Vector<String> mExtensions;

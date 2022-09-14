@@ -19,10 +19,10 @@ namespace bs
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "BlendClipInfo")
 
-		static MonoObject* box(const __BlendClipInfoInterop& value);
-		static __BlendClipInfoInterop unbox(MonoObject* value);
-		static BlendClipInfo fromInterop(const __BlendClipInfoInterop& value);
-		static __BlendClipInfoInterop toInterop(const BlendClipInfo& value);
+		static MonoObject* Box(const __BlendClipInfoInterop& value);
+		static __BlendClipInfoInterop Unbox(MonoObject* value);
+		static BlendClipInfo FromInterop(const __BlendClipInfoInterop& value);
+		static __BlendClipInfoInterop ToInterop(const BlendClipInfo& value);
 
 	private:
 		ScriptBlendClipInfo(MonoObject* managedInstance);

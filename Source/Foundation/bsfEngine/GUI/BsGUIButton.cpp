@@ -6,7 +6,7 @@
 
 namespace bs
 {
-	const String& GUIButton::getGUITypeName()
+	const String& GUIButton::GetGuiTypeName()
 	{
 		static String name = "Button";
 		return name;
@@ -16,24 +16,24 @@ namespace bs
 		:GUIButtonBase(styleName, content, dimensions)
 	{ }
 
-	GUIButton* GUIButton::create(const HString& text, const String& styleName)
+	GUIButton* GUIButton::Create(const HString& text, const String& styleName)
 	{
-		return create(GUIContent(text), styleName);
+		return Create(GUIContent(text), styleName);
 	}
 
-	GUIButton* GUIButton::create(const HString& text, const GUIOptions& options, const String& styleName)
+	GUIButton* GUIButton::Create(const HString& text, const GUIOptions& options, const String& styleName)
 	{
-		return create(GUIContent(text), options, styleName);
+		return Create(GUIContent(text), options, styleName);
 	}
 
-	GUIButton* GUIButton::create(const GUIContent& content, const String& styleName)
+	GUIButton* GUIButton::Create(const GUIContent& content, const String& styleName)
 	{
-		return new (bs_alloc<GUIButton>()) GUIButton(getStyleName<GUIButton>(styleName), content, GUIDimensions::create());
+		return new (bs_alloc<GUIButton>()) GUIButton(GetStyleName<GUIButton>(styleName), content, GUIDimensions::Create());
 	}
 
-	GUIButton* GUIButton::create(const GUIContent& content, const GUIOptions& options, const String& styleName)
+	GUIButton* GUIButton::Create(const GUIContent& content, const GUIOptions& options, const String& styleName)
 	{
-		return new (bs_alloc<GUIButton>()) GUIButton(getStyleName<GUIButton>(styleName), content, GUIDimensions::create(options));
+		return new (bs_alloc<GUIButton>()) GUIButton(getStyleName<GUIButton>(styleName), content, GUIDimensions::Create(options));
 	}
 
 	bool GUIButton::CommandEventInternal(const GUICommandEvent& ev)

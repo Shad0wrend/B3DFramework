@@ -29,7 +29,7 @@ namespace bs
 
 		/** Throws an exception if the current field type and provided template types don't match. */
 		template<class DataType>
-		void checkType()
+		void CheckType()
 		{
 			// TODO: Low priority. Because I wanted to get rid of SerializableType I have no way of checking the actual
 			// type of the field and the type provided to get/set methods matches
@@ -43,13 +43,13 @@ namespace bs
 		}
 		
 		/** Returns the unique identifier for the type owned by the field. */
-		virtual UINT32 getTypeId()
+		virtual UINT32 GetTypeId()
 		{
 			return 0;
 		}
 
 		/** Gets the dynamic size of the object. If object has no dynamic size, static size of the object is returned. */
-		virtual BitLength getDynamicSize(RTTITypeBase* rtti, void* object, bool compress)
+		virtual BitLength GetDynamicSize(RTTITypeBase* rtti, void* object, bool compress)
 		{
 			return 0;
 		}
@@ -58,7 +58,7 @@ namespace bs
 		 * Gets the dynamic size of an array element. If the element has no dynamic size, static size of the element
 		 * is returned.
 		 */
-		virtual BitLength getArrayElemDynamicSize(RTTITypeBase* rtti, void* object, int index, bool compress)
+		virtual BitLength GetArrayElemDynamicSize(RTTITypeBase* rtti, void* object, int index, bool compress)
 		{
 			return 0;
 		}
@@ -68,14 +68,14 @@ namespace bs
 		 * check if stream buffer is large enough. If @p compress is true then the value is allowed to be compressed into
 		 * less bytes than its raw type, and at sub-byte increments (e.g. one bit for a boolean).
 		 */
-		virtual void toStream(RTTITypeBase* rtti, void* object, Bitstream& stream, bool compress = false) = 0;
+		virtual void ToStream(RTTITypeBase* rtti, void* object, Bitstream& stream, bool compress = false) = 0;
 
 		/**
 		 * Retrieves the value at the specified array index on the provided field of the provided object, and copies it into
 		 * the stream. It does not check if stream buffer is large enough. If @p compress is true then the value is allowed
 		 * to be compressed into less bytes than its raw type, and at sub-byte increments (e.g. one bit for a boolean).
 		 */
-		virtual void arrayElemToStream(RTTITypeBase* rtti, void* object, int index, Bitstream& stream, bool compress = false) = 0;
+		virtual void ArrayElemToStream(RTTITypeBase* rtti, void* object, int index, Bitstream& stream, bool compress = false) = 0;
 
 		/**
 		 * Sets the value on the provided field of the provided object. Value is copied from the stream. It does not check
@@ -83,7 +83,7 @@ namespace bs
 		 * the proper type. If @p compress is true then the value is allowed to be compressed into less bytes than its raw type,
 		 * and at sub-byte increments (e.g. one bit for a boolean).
 		 */
-		virtual void fromBuffer(RTTITypeBase* rtti, void* object, Bitstream& stream, bool compress = false) = 0;
+		virtual void FromBuffer(RTTITypeBase* rtti, void* object, Bitstream& stream, bool compress = false) = 0;
 
 		/**
 		 * Sets the value at the specified array index on the provided field of the provided object. Value is copied from
@@ -91,7 +91,7 @@ namespace bs
 		 * proper location and contains the proper type. If @p compress is true then the value is allowed to be compressed into
 		 * less bytes than its raw type, and at sub-byte increments (e.g. one bit for a boolean).
 		 */
-		virtual void arrayElemFromBuffer(RTTITypeBase* rtti, void* object, int index, Bitstream& stream, bool compress = false) = 0;
+		virtual void ArrayElemFromBuffer(RTTITypeBase* rtti, void* object, int index, Bitstream& stream, bool compress = false) = 0;
 	};
 
 	/** Represents a plain class field containing a specific type. */
@@ -117,7 +117,7 @@ namespace bs
 		 * @param[in]	setter  	The setter method for the field.
 		 * @param[in]	info		Various optional information about the field.
 		 */
-		void initSingle(String name, UINT16 uniqueId, GetterType getter, SetterType setter, const RTTIFieldInfo& info)
+		void InitSingle(String name, UINT16 uniqueId, GetterType getter, SetterType setter, const RTTIFieldInfo& info)
 		{
 			static_assert(sizeof(RTTIPlainType<DataType>::id) > 0, "Type has no RTTI ID."); // Just making sure provided type has a type ID
 
@@ -149,7 +149,7 @@ namespace bs
 		 * @param[in]	setSize 	Setter method that allows you to resize an array. Can be null.
 		 * @param[in]	info		Various optional information about the field.
 		 */
-		void initArray(String name, UINT16 uniqueId, ArrayGetterType getter,
+		void InitArray(String name, UINT16 uniqueId, ArrayGetterType getter,
 			ArrayGetSizeType getSize, ArraySetterType setter, ArraySetSizeType setSize, const RTTIFieldInfo& info)
 		{
 			static_assert((RTTIPlainType<DataType>::id != 0) || true, ""); // Just making sure provided type has a type ID
@@ -172,13 +172,13 @@ namespace bs
 		}
 
 		/** @copydoc RTTIPlainFieldBase::getTypeId */
-		UINT32 getTypeId() override
+		UINT32 GetTypeId() override
 		{
 			return RTTIPlainType<DataType>::id;
 		}
 
 		/** @copydoc RTTIPlainFieldBase::getDynamicSize */
-		BitLength getDynamicSize(RTTITypeBase* rtti, void* object, bool compress) override
+		BitLength GetDynamicSize(RTTITypeBase* rtti, void* object, bool compress) override
 		{
 			checkIsArray(false);
 			checkType<DataType>();
@@ -191,7 +191,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIPlainFieldBase::getArrayElemDynamicSize */
-		BitLength getArrayElemDynamicSize(RTTITypeBase* rtti, void* object, int index, bool compress) override
+		BitLength GetArrayElemDynamicSize(RTTITypeBase* rtti, void* object, int index, bool compress) override
 		{
 			checkIsArray(true);
 			checkType<DataType>();
@@ -204,7 +204,7 @@ namespace bs
 		}
 
 		/** Returns the size of the array managed by the field. */
-		UINT32 getArraySize(RTTITypeBase* rtti, void* object) override
+		UINT32 GetArraySize(RTTITypeBase* rtti, void* object) override
 		{
 			checkIsArray(true);
 
@@ -214,7 +214,7 @@ namespace bs
 		}
 
 		/** Changes the size of the array managed by the field. Array must be re-populated after. */
-		void setArraySize(RTTITypeBase* rtti, void* object, UINT32 size) override
+		void SetArraySize(RTTITypeBase* rtti, void* object, UINT32 size) override
 		{
 			checkIsArray(true);
 
@@ -229,7 +229,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIPlainFieldBase::toBuffer */
-		void toStream(RTTITypeBase* rtti, void* object, Bitstream& stream, bool compress) override
+		void ToStream(RTTITypeBase* rtti, void* object, Bitstream& stream, bool compress) override
 		{
 			checkIsArray(false);
 			checkType<DataType>();
@@ -242,7 +242,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIPlainFieldBase::arrayElemToBuffer */
-		void arrayElemToStream(RTTITypeBase* rtti, void* object, int index, Bitstream& stream, bool compress) override
+		void ArrayElemToStream(RTTITypeBase* rtti, void* object, int index, Bitstream& stream, bool compress) override
 		{
 			checkIsArray(true);
 			checkType<DataType>();
@@ -255,7 +255,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIPlainFieldBase::fromBuffer */
-		void fromBuffer(RTTITypeBase* rtti, void* object, Bitstream& stream, bool compress) override
+		void FromBuffer(RTTITypeBase* rtti, void* object, Bitstream& stream, bool compress) override
 		{
 			checkIsArray(false);
 			checkType<DataType>();
@@ -276,7 +276,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIPlainFieldBase::arrayElemFromBuffer */
-		void arrayElemFromBuffer(RTTITypeBase* rtti, void* object, int index, Bitstream& stream, bool compress) override
+		void ArrayElemFromBuffer(RTTITypeBase* rtti, void* object, int index, Bitstream& stream, bool compress) override
 		{
 			checkIsArray(true);
 			checkType<DataType>();

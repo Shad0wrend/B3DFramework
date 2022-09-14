@@ -17,19 +17,19 @@ namespace bs
 		ScriptCRenderable(MonoObject* managedInstance, const GameObjectHandle<CRenderable>& value);
 
 	private:
-		static void Internal_setMesh(ScriptCRenderable* thisPtr, MonoObject* mesh);
-		static MonoObject* Internal_getMesh(ScriptCRenderable* thisPtr);
-		static void Internal_setMaterial(ScriptCRenderable* thisPtr, uint32_t idx, MonoObject* material);
-		static void Internal_setMaterial0(ScriptCRenderable* thisPtr, MonoObject* material);
-		static MonoObject* Internal_getMaterial(ScriptCRenderable* thisPtr, uint32_t idx);
-		static void Internal_setMaterials(ScriptCRenderable* thisPtr, MonoArray* materials);
-		static MonoArray* Internal_getMaterials(ScriptCRenderable* thisPtr);
-		static void Internal_setCullDistanceFactor(ScriptCRenderable* thisPtr, float factor);
-		static float Internal_getCullDistanceFactor(ScriptCRenderable* thisPtr);
-		static void Internal_setWriteVelocity(ScriptCRenderable* thisPtr, bool enable);
-		static bool Internal_getWriteVelocity(ScriptCRenderable* thisPtr);
-		static void Internal_setLayer(ScriptCRenderable* thisPtr, uint64_t layer);
-		static uint64_t Internal_getLayer(ScriptCRenderable* thisPtr);
-		static void Internal_getBounds(ScriptCRenderable* thisPtr, Bounds* __output);
+		static void InternalSetMesh(ScriptCRenderable* thisPtr, MonoObject* mesh);
+		static MonoObject* InternalGetMesh(ScriptCRenderable* thisPtr);
+		static void InternalSetMaterial(ScriptCRenderable* thisPtr, uint32_t idx, MonoObject* material);
+		static void InternalSetMaterial0(ScriptCRenderable* thisPtr, MonoObject* material);
+		static MonoObject* InternalGetMaterial(ScriptCRenderable* thisPtr, uint32_t idx);
+		static void InternalSetMaterials(ScriptCRenderable* thisPtr, MonoArray* materials);
+		static MonoArray* InternalGetMaterials(ScriptCRenderable* thisPtr);
+		static void InternalSetCullDistanceFactor(ScriptCRenderable* thisPtr, float factor);
+		static float InternalGetCullDistanceFactor(ScriptCRenderable* thisPtr);
+		static void InternalSetWriteVelocity(ScriptCRenderable* thisPtr, bool enable);
+		static bool InternalGetWriteVelocity(ScriptCRenderable* thisPtr);
+		static void InternalSetLayer(ScriptCRenderable* thisPtr, uint64_t layer);
+		static uint64_t InternalGetLayer(ScriptCRenderable* thisPtr);
+		static void InternalGetBounds(ScriptCRenderable* thisPtr, Bounds* __output);
 	};
 }

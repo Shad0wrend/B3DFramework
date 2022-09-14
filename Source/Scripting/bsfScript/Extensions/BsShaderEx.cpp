@@ -5,12 +5,12 @@
 
 namespace bs
 {
-	Vector<ShaderParameter> ShaderEx::getParameters(const HShader& thisPtr)
+	Vector<ShaderParameter> ShaderEx::GetParameters(const HShader& thisPtr)
 	{
 		if (!thisPtr.isLoaded())
 			return Vector<ShaderParameter>();
 
-		const Map<String, SHADER_DATA_PARAM_DESC>& dataParams = thisPtr->getDataParams();
+		const Map<String, SHADER_DATA_PARAM_DESC>& dataParams = thisPtr->GetDataParams();
 		const Map<String, SHADER_OBJECT_PARAM_DESC>& textureParams = thisPtr->getTextureParams();
 		const Map<String, SHADER_OBJECT_PARAM_DESC>& samplerParams = thisPtr->getSamplerParams();
 		const Vector<SHADER_PARAM_ATTRIBUTE> attributes = thisPtr->getParamAttributes();

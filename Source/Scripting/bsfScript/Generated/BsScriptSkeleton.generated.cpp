@@ -16,26 +16,26 @@ namespace bs
 
 	void ScriptSkeleton::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_getNumBones", (void*)&ScriptSkeleton::Internal_getNumBones);
-		metaData.scriptClass->addInternalCall("Internal_getBoneInfo", (void*)&ScriptSkeleton::Internal_getBoneInfo);
+		metaData.scriptClass->AddInternalCall("Internal_getNumBones", (void*)&ScriptSkeleton::InternalGetNumBones);
+		metaData.scriptClass->AddInternalCall("Internal_getBoneInfo", (void*)&ScriptSkeleton::InternalGetBoneInfo);
 
 	}
 
-	MonoObject* ScriptSkeleton::create(const SPtr<Skeleton>& value)
+	MonoObject* ScriptSkeleton::Create(const SPtr<Skeleton>& value)
 	{
 		if(value == nullptr) return nullptr; 
 
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptSkeleton>()) ScriptSkeleton(managedInstance, value);
 		return managedInstance;
 	}
-	uint32_t ScriptSkeleton::Internal_getNumBones(ScriptSkeleton* thisPtr)
+	uint32_t ScriptSkeleton::InternalGetNumBones(ScriptSkeleton* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->getInternal()->getNumBones();
+		tmp__output = thisPtr->GetInternal()->GetNumBones();
 
 		uint32_t __output;
 		__output = tmp__output;

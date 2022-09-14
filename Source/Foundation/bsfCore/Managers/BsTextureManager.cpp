@@ -7,24 +7,24 @@
 
 namespace bs
 {
-	SPtr<Texture> TextureManager::createTexture(const TEXTURE_DESC& desc)
+	SPtr<Texture> TextureManager::CreateTexture(const TEXTURE_DESC& desc)
 	{
 		Texture* tex = new (bs_alloc<Texture>()) Texture(desc);
 		SPtr<Texture> ret = bs_core_ptr<Texture>(tex);
 
 		ret->SetThisPtrInternal(ret);
-		ret->initialize();
+		ret->Initialize();
 
 		return ret;
 	}
 
-	SPtr<Texture> TextureManager::createTexture(const TEXTURE_DESC& desc, const SPtr<PixelData>& pixelData)
+	SPtr<Texture> TextureManager::CreateTexture(const TEXTURE_DESC& desc, const SPtr<PixelData>& pixelData)
 	{
 		Texture* tex = new (bs_alloc<Texture>()) Texture(desc, pixelData);
 		SPtr<Texture> ret = bs_core_ptr<Texture>(tex);
 
 		ret->SetThisPtrInternal(ret);
-		ret->initialize();
+		ret->Initialize();
 
 		return ret;
 	}
@@ -38,14 +38,14 @@ namespace bs
 		return texture;
 	}
 
-	SPtr<RenderTexture> TextureManager::createRenderTexture(const TEXTURE_DESC& colorDesc, bool createDepth,
+	SPtr<RenderTexture> TextureManager::CreateRenderTexture(const TEXTURE_DESC& colorDesc, bool createDepth,
 		PixelFormat depthStencilFormat)
 	{
 		TEXTURE_DESC textureDesc = colorDesc;
 		textureDesc.usage = TU_RENDERTARGET;
 		textureDesc.numMips = 0;
 
-		HTexture texture = Texture::create(textureDesc);
+		HTexture texture = Texture::Create(textureDesc);
 
 		HTexture depthStencil;
 		if(createDepth)
@@ -54,7 +54,7 @@ namespace bs
 			textureDesc.hwGamma = false;
 			textureDesc.usage = TU_DEPTHSTENCIL;
 
-			depthStencil = Texture::create(textureDesc);
+			depthStencil = Texture::Create(textureDesc);
 		}
 
 		RENDER_TEXTURE_DESC desc;
@@ -73,7 +73,7 @@ namespace bs
 		return newRT;
 	}
 
-	SPtr<RenderTexture> TextureManager::createRenderTexture(const RENDER_TEXTURE_DESC& desc)
+	SPtr<RenderTexture> TextureManager::CreateRenderTexture(const RENDER_TEXTURE_DESC& desc)
 	{
 		SPtr<RenderTexture> newRT = createRenderTextureImpl(desc);
 		newRT->SetThisPtrInternal(newRT);
@@ -84,7 +84,7 @@ namespace bs
 
 	namespace ct
 	{
-	void TextureManager::onStartUp()
+	void TextureManager::OnStartUp()
 	{
 		TEXTURE_DESC desc;
 		desc.type = TEX_TYPE_2D;
@@ -96,7 +96,7 @@ namespace bs
 		// White built-in texture
 		SPtr<Texture> whiteTexture = createTexture(desc);
 
-		SPtr<PixelData> whitePixelData = PixelData::create(2, 2, 1, PF_RGBA8);
+		SPtr<PixelData> whitePixelData = PixelData::Create(2, 2, 1, PF_RGBA8);
 		whitePixelData->setColorAt(Color::White, 0, 0);
 		whitePixelData->setColorAt(Color::White, 0, 1);
 		whitePixelData->setColorAt(Color::White, 1, 0);
@@ -108,7 +108,7 @@ namespace bs
 		// Black built-in texture
 		SPtr<Texture> blackTexture = createTexture(desc);
 
-		SPtr<PixelData> blackPixelData = PixelData::create(2, 2, 1, PF_RGBA8);
+		SPtr<PixelData> blackPixelData = PixelData::Create(2, 2, 1, PF_RGBA8);
 		blackPixelData->setColorAt(Color::ZERO, 0, 0);
 		blackPixelData->setColorAt(Color::ZERO, 0, 1);
 		blackPixelData->setColorAt(Color::ZERO, 1, 0);
@@ -119,7 +119,7 @@ namespace bs
 
 		// Normal (Y = Up) built-in texture
 		SPtr<Texture> normalTexture = createTexture(desc);
-		SPtr<PixelData> normalPixelData = PixelData::create(2, 2, 1, PF_RGBA8);
+		SPtr<PixelData> normalPixelData = PixelData::Create(2, 2, 1, PF_RGBA8);
 
 		Color encodedNormal(0.5f, 0.5f, 1.0f);
 		normalPixelData->setColorAt(encodedNormal, 0, 0);
@@ -131,7 +131,7 @@ namespace bs
 		Texture::NORMAL = normalTexture;
 	}
 
-	void TextureManager::onShutDown()
+	void TextureManager::OnShutDown()
 	{
 		// Need to make sure these are freed while still on the core thread
 		Texture::WHITE = nullptr;
@@ -139,7 +139,7 @@ namespace bs
 		Texture::NORMAL = nullptr;
 	}
 
-	SPtr<Texture> TextureManager::createTexture(const TEXTURE_DESC& desc, GpuDeviceFlags deviceMask)
+	SPtr<Texture> TextureManager::CreateTexture(const TEXTURE_DESC& desc, GpuDeviceFlags deviceMask)
 	{
 		SPtr<Texture> newTex = createTextureInternal(desc, nullptr, deviceMask);
 		newTex->initialize();
@@ -147,7 +147,7 @@ namespace bs
 		return newTex;
 	}
 
-	SPtr<RenderTexture> TextureManager::createRenderTexture(const RENDER_TEXTURE_DESC& desc,
+	SPtr<RenderTexture> TextureManager::CreateRenderTexture(const RENDER_TEXTURE_DESC& desc,
 																	UINT32 deviceIdx)
 	{
 		SPtr<RenderTexture> newRT = createRenderTextureInternal(desc, deviceIdx);

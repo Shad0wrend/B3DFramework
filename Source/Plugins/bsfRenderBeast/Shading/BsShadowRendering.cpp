@@ -17,22 +17,22 @@ namespace bs { namespace ct
 {
 	ShadowParamsDef gShadowParamsDef;
 
-	void ShadowDepthNormalMat::bind(const SPtr<GpuParamBlockBuffer>& shadowParams)
+	void ShadowDepthNormalMat::Bind(const SPtr<GpuParamBlockBuffer>& shadowParams)
 	{
 		mParams->setParamBlockBuffer("ShadowParams", shadowParams);
 
-		RenderAPI::instance().setGraphicsPipeline(mGfxPipeline);
-		RenderAPI::instance().setStencilRef(mStencilRef);
+		RenderAPI::Instance().setGraphicsPipeline(mGfxPipeline);
+		RenderAPI::Instance().setStencilRef(mStencilRef);
 	}
 	
-	void ShadowDepthNormalMat::setPerObjectBuffer(const SPtr<GpuParamBlockBuffer>& perObjectParams)
+	void ShadowDepthNormalMat::SetPerObjectBuffer(const SPtr<GpuParamBlockBuffer>& perObjectParams)
 	{
 		mParams->setParamBlockBuffer("PerObject", perObjectParams);
 
-		RenderAPI::instance().setGpuParams(mParams);
+		RenderAPI::Instance().setGpuParams(mParams);
 	}
 	
-	ShadowDepthNormalMat* ShadowDepthNormalMat::getVariation(bool skinned, bool morph)
+	ShadowDepthNormalMat* ShadowDepthNormalMat::GetVariation(bool skinned, bool morph)
 	{
 		if(skinned)
 		{
@@ -53,22 +53,22 @@ namespace bs { namespace ct
 	ShadowDepthNormalNoPSMat::ShadowDepthNormalNoPSMat()
 	{ }
 
-	void ShadowDepthNormalNoPSMat::bind(const SPtr<GpuParamBlockBuffer>& shadowParams)
+	void ShadowDepthNormalNoPSMat::Bind(const SPtr<GpuParamBlockBuffer>& shadowParams)
 	{
 		mParams->setParamBlockBuffer("ShadowParams", shadowParams);
 
-		RenderAPI::instance().setGraphicsPipeline(mGfxPipeline);
-		RenderAPI::instance().setStencilRef(mStencilRef);
+		RenderAPI::Instance().setGraphicsPipeline(mGfxPipeline);
+		RenderAPI::Instance().setStencilRef(mStencilRef);
 	}
 
-	void ShadowDepthNormalNoPSMat::setPerObjectBuffer(const SPtr<GpuParamBlockBuffer>& perObjectParams)
+	void ShadowDepthNormalNoPSMat::SetPerObjectBuffer(const SPtr<GpuParamBlockBuffer>& perObjectParams)
 	{
 		mParams->setParamBlockBuffer("PerObject", perObjectParams);
 
-		RenderAPI::instance().setGpuParams(mParams);
+		RenderAPI::Instance().setGpuParams(mParams);
 	}
 
-	ShadowDepthNormalNoPSMat* ShadowDepthNormalNoPSMat::getVariation(bool skinned, bool morph)
+	ShadowDepthNormalNoPSMat* ShadowDepthNormalNoPSMat::GetVariation(bool skinned, bool morph)
 	{
 		if(skinned)
 		{
@@ -89,21 +89,21 @@ namespace bs { namespace ct
 	ShadowDepthDirectionalMat::ShadowDepthDirectionalMat()
 	{ }
 
-	void ShadowDepthDirectionalMat::bind(const SPtr<GpuParamBlockBuffer>& shadowParams)
+	void ShadowDepthDirectionalMat::Bind(const SPtr<GpuParamBlockBuffer>& shadowParams)
 	{
 		mParams->setParamBlockBuffer("ShadowParams", shadowParams);
 
-		RenderAPI::instance().setGraphicsPipeline(mGfxPipeline);
-		RenderAPI::instance().setStencilRef(mStencilRef);
+		RenderAPI::Instance().setGraphicsPipeline(mGfxPipeline);
+		RenderAPI::Instance().setStencilRef(mStencilRef);
 	}
 	
-	void ShadowDepthDirectionalMat::setPerObjectBuffer(const SPtr<GpuParamBlockBuffer>& perObjectParams)
+	void ShadowDepthDirectionalMat::SetPerObjectBuffer(const SPtr<GpuParamBlockBuffer>& perObjectParams)
 	{
 		mParams->setParamBlockBuffer("PerObject", perObjectParams);
-		RenderAPI::instance().setGpuParams(mParams);
+		RenderAPI::Instance().setGpuParams(mParams);
 	}
 	
-	ShadowDepthDirectionalMat* ShadowDepthDirectionalMat::getVariation(bool skinned, bool morph)
+	ShadowDepthDirectionalMat* ShadowDepthDirectionalMat::GetVariation(bool skinned, bool morph)
 	{
 		if(skinned)
 		{
@@ -127,26 +127,26 @@ namespace bs { namespace ct
 	ShadowDepthCubeMat::ShadowDepthCubeMat()
 	{ }
 
-	void ShadowDepthCubeMat::bind(const SPtr<GpuParamBlockBuffer>& shadowParams,
+	void ShadowDepthCubeMat::Bind(const SPtr<GpuParamBlockBuffer>& shadowParams,
 		const SPtr<GpuParamBlockBuffer>& shadowCubeMatrices)
 	{
 		mParams->setParamBlockBuffer("ShadowParams", shadowParams);
 		mParams->setParamBlockBuffer("ShadowCubeMatrices", shadowCubeMatrices);
 
-		RenderAPI::instance().setGraphicsPipeline(mGfxPipeline);
-		RenderAPI::instance().setStencilRef(mStencilRef);
+		RenderAPI::Instance().setGraphicsPipeline(mGfxPipeline);
+		RenderAPI::Instance().setStencilRef(mStencilRef);
 	}
 
-	void ShadowDepthCubeMat::setPerObjectBuffer(const SPtr<GpuParamBlockBuffer>& perObjectParams,
+	void ShadowDepthCubeMat::SetPerObjectBuffer(const SPtr<GpuParamBlockBuffer>& perObjectParams,
 		const SPtr<GpuParamBlockBuffer>& shadowCubeMasks)
 	{
 		mParams->setParamBlockBuffer("PerObject", perObjectParams);
 		mParams->setParamBlockBuffer("ShadowCubeMasks", shadowCubeMasks);
 
-		RenderAPI::instance().setGpuParams(mParams);
+		RenderAPI::Instance().setGpuParams(mParams);
 	}
 	
-	ShadowDepthCubeMat* ShadowDepthCubeMat::getVariation(bool skinned, bool morph)
+	ShadowDepthCubeMat* ShadowDepthCubeMat::GetVariation(bool skinned, bool morph)
 	{
 		if(skinned)
 		{
@@ -174,7 +174,7 @@ namespace bs { namespace ct
 			mParams->setParamBlockBuffer(GPT_VERTEX_PROGRAM, "VertParams", mVertParams);
 	}
 
-	void ShadowProjectStencilMat::bind(const SPtr<GpuParamBlockBuffer>& perCamera)
+	void ShadowProjectStencilMat::Bind(const SPtr<GpuParamBlockBuffer>& perCamera)
 	{
 		Vector4 lightPosAndScale(0, 0, 0, 1);
 		gShadowProjectVertParamsDef.gPositionAndScale.set(mVertParams, lightPosAndScale);
@@ -184,7 +184,7 @@ namespace bs { namespace ct
 		RendererMaterial::bind();
 	}
 
-	ShadowProjectStencilMat* ShadowProjectStencilMat::getVariation(bool directional, bool useZFailStencil)
+	ShadowProjectStencilMat* ShadowProjectStencilMat::GetVariation(bool directional, bool useZFailStencil)
 	{
 		if(directional)
 			return get(getVariation<true, true>());
@@ -214,14 +214,14 @@ namespace bs { namespace ct
 		desc.addressMode.v = TAM_CLAMP;
 		desc.addressMode.w = TAM_CLAMP;
 
-		mSamplerState = SamplerState::create(desc);
+		mSamplerState = SamplerState::Create(desc);
 
 		mVertParams = gShadowProjectVertParamsDef.createBuffer();
 		if(mParams->hasParamBlock(GPT_VERTEX_PROGRAM, "VertParams"))
 			mParams->setParamBlockBuffer(GPT_VERTEX_PROGRAM, "VertParams", mVertParams);
 	}
 
-	void ShadowProjectMat::bind(const ShadowProjectParams& params)
+	void ShadowProjectMat::Bind(const ShadowProjectParams& params)
 	{
 		Vector4 lightPosAndScale(Vector3(0.0f, 0.0f, 0.0f), 1.0f);
 		gShadowProjectVertParamsDef.gPositionAndScale.set(mVertParams, lightPosAndScale);
@@ -237,7 +237,7 @@ namespace bs { namespace ct
 		RendererMaterial::bind();
 	}
 
-	ShadowProjectMat* ShadowProjectMat::getVariation(UINT32 quality, bool directional, bool MSAA)
+	ShadowProjectMat* ShadowProjectMat::GetVariation(UINT32 quality, bool directional, bool MSAA)
 	{
 #define BIND_MAT(QUALITY)											\
 	{																\
@@ -286,14 +286,14 @@ namespace bs { namespace ct
 		desc.addressMode.w = TAM_CLAMP;
 		desc.comparisonFunc = CMPF_GREATER_EQUAL;
 
-		mSamplerState = SamplerState::create(desc);
+		mSamplerState = SamplerState::Create(desc);
 
 		mVertParams = gShadowProjectVertParamsDef.createBuffer();
 		if(mParams->hasParamBlock(GPT_VERTEX_PROGRAM, "VertParams"))
 			mParams->setParamBlockBuffer(GPT_VERTEX_PROGRAM, "VertParams", mVertParams);
 	}
 
-	void ShadowProjectOmniMat::bind(const ShadowProjectParams& params)
+	void ShadowProjectOmniMat::Bind(const ShadowProjectParams& params)
 	{
 		Vector4 lightPosAndScale(params.light.getTransform().getPosition(), params.light.getAttenuationRadius());
 		gShadowProjectVertParamsDef.gPositionAndScale.set(mVertParams, lightPosAndScale);
@@ -309,7 +309,7 @@ namespace bs { namespace ct
 		RendererMaterial::bind();
 	}
 
-	ShadowProjectOmniMat* ShadowProjectOmniMat::getVariation(UINT32 quality, bool inside, bool MSAA)
+	ShadowProjectOmniMat* ShadowProjectOmniMat::GetVariation(UINT32 quality, bool inside, bool MSAA)
 	{
 #define BIND_MAT(QUALITY)											\
 	{																\
@@ -337,7 +337,7 @@ namespace bs { namespace ct
 #undef BIND_MAT
 	}
 
-	void ShadowInfo::updateNormArea(UINT32 atlasSize)
+	void ShadowInfo::UpdateNormArea(UINT32 atlasSize)
 	{
 		normArea.x = area.x / (float)atlasSize;
 		normArea.y = area.y / (float)atlasSize;
@@ -348,11 +348,11 @@ namespace bs { namespace ct
 	ShadowMapAtlas::ShadowMapAtlas(UINT32 size)
 		: mLayout(0, 0, size, size, true), mLastUsedCounter(0)
 	{
-		mAtlas = GpuResourcePool::instance().get(
+		mAtlas = GpuResourcePool::Instance().get(
 			POOLED_RENDER_TEXTURE_DESC::create2D(SHADOW_MAP_FORMAT, size, size, TU_DEPTHSTENCIL));
 	}
 
-	bool ShadowMapAtlas::addMap(UINT32 size, Rect2I& area, UINT32 border)
+	bool ShadowMapAtlas::AddMap(UINT32 size, Rect2I& area, UINT32 border)
 	{
 		UINT32 sizeWithBorder = size + border * 2;
 
@@ -368,23 +368,23 @@ namespace bs { namespace ct
 		return true;
 	}
 
-	void ShadowMapAtlas::clear()
+	void ShadowMapAtlas::Clear()
 	{
 		mLayout.clear();
 		mLastUsedCounter++;
 	}
 
-	bool ShadowMapAtlas::isEmpty() const
+	bool ShadowMapAtlas::IsEmpty() const
 	{
 		return mLayout.isEmpty();
 	}
 
-	SPtr<Texture> ShadowMapAtlas::getTexture() const
+	SPtr<Texture> ShadowMapAtlas::GetTexture() const
 	{
 		return mAtlas->texture;
 	}
 
-	SPtr<RenderTexture> ShadowMapAtlas::getTarget() const
+	SPtr<RenderTexture> ShadowMapAtlas::GetTarget() const
 	{
 		return mAtlas->renderTexture;
 	}
@@ -393,7 +393,7 @@ namespace bs { namespace ct
 		: mSize(size), mIsUsed(false), mLastUsedCounter (0)
 	{ }
 
-	SPtr<Texture> ShadowMapBase::getTexture() const
+	SPtr<Texture> ShadowMapBase::GetTexture() const
 	{
 		return mShadowMap->texture;
 	}
@@ -401,11 +401,11 @@ namespace bs { namespace ct
 	ShadowCubemap::ShadowCubemap(UINT32 size)
 		:ShadowMapBase(size)
 	{
-		mShadowMap = GpuResourcePool::instance().get(
+		mShadowMap = GpuResourcePool::Instance().get(
 			POOLED_RENDER_TEXTURE_DESC::createCube(SHADOW_MAP_FORMAT, size, size, TU_DEPTHSTENCIL));
 	}
 
-	SPtr<RenderTexture> ShadowCubemap::getTarget() const
+	SPtr<RenderTexture> ShadowCubemap::GetTarget() const
 	{
 		return mShadowMap->renderTexture;
 	}
@@ -413,7 +413,7 @@ namespace bs { namespace ct
 	ShadowCascadedMap::ShadowCascadedMap(UINT32 size, UINT32 numCascades)
 		:ShadowMapBase(size), mNumCascades(numCascades), mTargets(numCascades), mShadowInfos(numCascades)
 	{
-		mShadowMap = GpuResourcePool::instance().get(POOLED_RENDER_TEXTURE_DESC::create2D(SHADOW_MAP_FORMAT, size, size,
+		mShadowMap = GpuResourcePool::Instance().get(POOLED_RENDER_TEXTURE_DESC::create2D(SHADOW_MAP_FORMAT, size, size,
 			TU_DEPTHSTENCIL, 0, false, numCascades));
 
 		RENDER_TEXTURE_DESC rtDesc;
@@ -423,11 +423,11 @@ namespace bs { namespace ct
 		for (UINT32 i = 0; i < mNumCascades; ++i)
 		{
 			rtDesc.depthStencilSurface.face = i;
-			mTargets[i] = RenderTexture::create(rtDesc);
+			mTargets[i] = RenderTexture::Create(rtDesc);
 		}
 	}
 
-	SPtr<RenderTexture> ShadowCascadedMap::getTarget(UINT32 cascadeIdx) const
+	SPtr<RenderTexture> ShadowCascadedMap::GetTarget(UINT32 cascadeIdx) const
 	{
 		return mTargets[cascadeIdx];
 	}
@@ -461,7 +461,7 @@ namespace bs { namespace ct
 		};
 
 		template<class Options>
-		static void execute(RendererScene& scene, const FrameInfo& frameInfo, const Options& opt)
+		static void Execute(RendererScene& scene, const FrameInfo& frameInfo, const Options& opt)
 		{
 			static_assert((UINT32)RenderableAnimType::Count == 4, "RenderableAnimType is expected to have four sequential entries.");
 
@@ -550,24 +550,24 @@ namespace bs { namespace ct
 			, shadowCubeMatricesBuffer(shadowCubeMatricesBuffer), shadowCubeMasksBuffer(shadowCubeMasksBuffer)
 		{ }
 
-		bool intersects(const Sphere& bounds) const
+		bool Intersects(const Sphere& bounds) const
 		{
 			return boundingVolume.intersects(bounds);
 		}
 
-		void prepare(ShadowRenderQueue::Command& command, const Sphere& bounds) const
+		void Prepare(ShadowRenderQueue::Command& command, const Sphere& bounds) const
 		{
 			for (UINT32 j = 0; j < 6; j++)
 				command.mask |= (frustums[j].intersects(bounds) ? 1 : 0) << j;
 		}
 
-		void bindMaterial(const ShaderVariation& variation) const
+		void BindMaterial(const ShaderVariation& variation) const
 		{
 			material = ShadowDepthCubeMat::get(variation);
 			material->bind(shadowParamsBuffer, shadowCubeMatricesBuffer);
 		}
 
-		void bindRenderable(ShadowRenderQueue::Command& command) const
+		void BindRenderable(ShadowRenderQueue::Command& command) const
 		{
 			RendererRenderable* renderable = command.renderable;
 
@@ -595,22 +595,22 @@ namespace bs { namespace ct
 				: boundingVolume(boundingVolume), shadowParamsBuffer(shadowParamsBuffer)
 		{ }
 
-		bool intersects(const Sphere& bounds) const
+		bool Intersects(const Sphere& bounds) const
 		{
 			return boundingVolume.intersects(bounds);
 		}
 
-		void prepare(ShadowRenderQueue::Command& command, const Sphere& bounds) const
+		void Prepare(ShadowRenderQueue::Command& command, const Sphere& bounds) const
 		{
 		}
 
-		void bindMaterial(const ShaderVariation& variation) const
+		void BindMaterial(const ShaderVariation& variation) const
 		{
 			material = ShadowDepthNormalNoPSMat::get(variation);
 			material->bind(shadowParamsBuffer);
 		}
 
-		void bindRenderable(ShadowRenderQueue::Command& command) const
+		void BindRenderable(ShadowRenderQueue::Command& command) const
 		{
 			RendererRenderable* renderable = command.renderable;
 
@@ -632,22 +632,22 @@ namespace bs { namespace ct
 			: boundingVolume(boundingVolume), shadowParamsBuffer(shadowParamsBuffer)
 		{ }
 
-		bool intersects(const Sphere& bounds) const
+		bool Intersects(const Sphere& bounds) const
 		{
 			return boundingVolume.intersects(bounds);
 		}
 
-		void prepare(ShadowRenderQueue::Command& command, const Sphere& bounds) const
+		void Prepare(ShadowRenderQueue::Command& command, const Sphere& bounds) const
 		{
 		}
 
-		void bindMaterial(const ShaderVariation& variation) const
+		void BindMaterial(const ShaderVariation& variation) const
 		{
 			material = ShadowDepthNormalMat::get(variation);
 			material->bind(shadowParamsBuffer);
 		}
 
-		void bindRenderable(ShadowRenderQueue::Command& command) const
+		void BindRenderable(ShadowRenderQueue::Command& command) const
 		{
 			RendererRenderable* renderable = command.renderable;
 
@@ -669,22 +669,22 @@ namespace bs { namespace ct
 			: boundingVolume(boundingVolume), shadowParamsBuffer(shadowParamsBuffer)
 		{ }
 
-		bool intersects(const Sphere& bounds) const
+		bool Intersects(const Sphere& bounds) const
 		{
 			return boundingVolume.intersects(bounds);
 		}
 
-		void prepare(ShadowRenderQueue::Command& command, const Sphere& bounds) const
+		void Prepare(ShadowRenderQueue::Command& command, const Sphere& bounds) const
 		{
 		}
 
-		void bindMaterial(const ShaderVariation& variation) const
+		void BindMaterial(const ShaderVariation& variation) const
 		{
 			material = ShadowDepthDirectionalMat::get(variation);
 			material->bind(shadowParamsBuffer);
 		}
 
-		void bindRenderable(ShadowRenderQueue::Command& command) const
+		void BindRenderable(ShadowRenderQueue::Command& command) const
 		{
 			RendererRenderable* renderable = command.renderable;
 
@@ -707,10 +707,10 @@ namespace bs { namespace ct
 	ShadowRendering::ShadowRendering(UINT32 shadowMapSize)
 		: mShadowMapSize(shadowMapSize)
 	{
-		SPtr<VertexDataDesc> vertexDesc = VertexDataDesc::create();
+		SPtr<VertexDataDesc> vertexDesc = VertexDataDesc::Create();
 		vertexDesc->addVertElem(VET_FLOAT3, VES_POSITION);
 
-		mPositionOnlyVD = VertexDeclaration::create(vertexDesc);
+		mPositionOnlyVD = VertexDeclaration::Create(vertexDesc);
 
 		// Create plane index and vertex buffers
 		{
@@ -719,13 +719,13 @@ namespace bs { namespace ct
 			vbDesc.usage = GBU_DYNAMIC;
 			vbDesc.vertexSize = mPositionOnlyVD->getProperties().getVertexSize(0);
 
-			mPlaneVB = VertexBuffer::create(vbDesc);
+			mPlaneVB = VertexBuffer::Create(vbDesc);
 
 			INDEX_BUFFER_DESC ibDesc;
 			ibDesc.indexType = IT_32BIT;
 			ibDesc.numIndices = 12;
 
-			mPlaneIB = IndexBuffer::create(ibDesc);
+			mPlaneIB = IndexBuffer::Create(ibDesc);
 
 			UINT32 indices[] =
 			{
@@ -748,18 +748,18 @@ namespace bs { namespace ct
 			vbDesc.usage = GBU_DYNAMIC;
 			vbDesc.vertexSize = mPositionOnlyVD->getProperties().getVertexSize(0);
 
-			mFrustumVB = VertexBuffer::create(vbDesc);
+			mFrustumVB = VertexBuffer::Create(vbDesc);
 
 			INDEX_BUFFER_DESC ibDesc;
 			ibDesc.indexType = IT_32BIT;
 			ibDesc.numIndices = 36;
 
-			mFrustumIB = IndexBuffer::create(ibDesc);
+			mFrustumIB = IndexBuffer::Create(ibDesc);
 			mFrustumIB->writeData(0, sizeof(AABox::CUBE_INDICES), AABox::CUBE_INDICES);
 		}
 	}
 
-	void ShadowRendering::setShadowMapSize(UINT32 size)
+	void ShadowRendering::SetShadowMapSize(UINT32 size)
 	{
 		if (mShadowMapSize == size)
 			return;
@@ -771,7 +771,7 @@ namespace bs { namespace ct
 		mShadowMapSize = size;
 	}
 
-	void ShadowRendering::renderShadowMaps(RendererScene& scene, const RendererViewGroup& viewGroup,
+	void ShadowRendering::RenderShadowMaps(RendererScene& scene, const RendererViewGroup& viewGroup,
 		const FrameInfo& frameInfo)
 	{
 		// Note: Currently all shadows are dynamic and are rebuilt every frame. I should later added support for static
@@ -1001,7 +1001,7 @@ namespace bs { namespace ct
 		return shadowMapTfrm * mixedToShadow;
 	}
 
-	void ShadowRendering::renderShadowOcclusion(const RendererView& view, const RendererLight& rendererLight,
+	void ShadowRendering::RenderShadowOcclusion(const RendererView& view, const RendererLight& rendererLight,
 		GBufferTextures gbuffer) const
 	{
 		UINT32 shadowQuality = view.getRenderSettings().shadowSettings.shadowFilteringQuality;
@@ -1203,7 +1203,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	void ShadowRendering::renderCascadedShadowMaps(const RendererView& view, UINT32 lightIdx, RendererScene& scene,
+	void ShadowRendering::RenderCascadedShadowMaps(const RendererView& view, UINT32 lightIdx, RendererScene& scene,
 		const FrameInfo& frameInfo)
 	{
 		UINT32 viewIdx = view.getViewIdx();
@@ -1226,7 +1226,7 @@ namespace bs { namespace ct
 		const RendererLight& rendererLight = sceneInfo.directionalLights[lightIdx];
 		Light* light = rendererLight.internal;
 
-		RenderAPI& rapi = RenderAPI::instance();
+		RenderAPI& rapi = RenderAPI::Instance();
 
 		const Transform& tfrm = light->getTransform();
 		Vector3 lightDir = -tfrm.getRotation().zAxis();
@@ -1302,7 +1302,7 @@ namespace bs { namespace ct
 			Matrix4 proj = Matrix4::projectionOrthographic(-orthoSize, orthoSize, orthoSize, -orthoSize, 0.0f,
 				shadowInfo.depthRange);
 
-			RenderAPI::instance().convertProjectionMatrix(proj, proj);
+			RenderAPI::Instance().convertProjectionMatrix(proj, proj);
 
 			shadowInfo.cascadeIdx = i;
 			shadowInfo.shadowVPTransform = proj * offsetViewMat;
@@ -1348,7 +1348,7 @@ namespace bs { namespace ct
 		lightShadows.numShadows = 1;
 	}
 
-	void ShadowRendering::renderSpotShadowMap(const RendererLight& rendererLight, const ShadowMapOptions& options,
+	void ShadowRendering::RenderSpotShadowMap(const RendererLight& rendererLight, const ShadowMapOptions& options,
 		RendererScene& scene, const FrameInfo& frameInfo)
 	{
 		Light* light = rendererLight.internal;
@@ -1388,7 +1388,7 @@ namespace bs { namespace ct
 
 		ProfileGPUBlock profileSample("Project spot light shadows");
 
-		RenderAPI& rapi = RenderAPI::instance();
+		RenderAPI& rapi = RenderAPI::Instance();
 		rapi.setRenderTarget(atlas.getTarget());
 		rapi.setViewport(mapInfo.normArea);
 		rapi.clearViewport(FBT_DEPTH);
@@ -1407,7 +1407,7 @@ namespace bs { namespace ct
 		Matrix4 proj = Matrix4::projectionPerspective(light->getSpotAngle(), 1.0f, 0.05f, light->getAttenuationRadius());
 
 		ConvexVolume localFrustum = ConvexVolume(proj);
-		RenderAPI::instance().convertProjectionMatrix(proj, proj);
+		RenderAPI::Instance().convertProjectionMatrix(proj, proj);
 
 		mapInfo.shadowVPTransform = proj * view;
 
@@ -1445,7 +1445,7 @@ namespace bs { namespace ct
 		lightShadows.numShadows++;
 	}
 
-	void ShadowRendering::renderRadialShadowMap(const RendererLight& rendererLight,
+	void ShadowRendering::RenderRadialShadowMap(const RendererLight& rendererLight,
 		const ShadowMapOptions& options, RendererScene& scene, const FrameInfo& frameInfo)
 	{
 		Light* light = rendererLight.internal;
@@ -1501,7 +1501,7 @@ namespace bs { namespace ct
 		const RenderAPICapabilities& caps = gCaps();
 		const Conventions& rapiConventions = gCaps().conventions;
 
-		RenderAPI& rapi = RenderAPI::instance();
+		RenderAPI& rapi = RenderAPI::Instance();
 		rapi.convertProjectionMatrix(proj, proj);
 
 		// Render cubemaps upside down if necessary
@@ -1607,7 +1607,7 @@ namespace bs { namespace ct
 				rtDesc.depthStencilSurface.face = i;
 				rtDesc.depthStencilSurface.numFaces = 1;
 
-				SPtr<RenderTarget> faceRt = RenderTexture::create(rtDesc);
+				SPtr<RenderTarget> faceRt = RenderTexture::Create(rtDesc);
 
 				rapi.setRenderTarget(faceRt);
 				rapi.clearRenderTarget(FBT_DEPTH);
@@ -1647,7 +1647,7 @@ namespace bs { namespace ct
 		lightShadows.numShadows++;
 	}
 
-	void ShadowRendering::calcShadowMapProperties(const RendererLight& light, const RendererViewGroup& viewGroup,
+	void ShadowRendering::CalcShadowMapProperties(const RendererLight& light, const RendererViewGroup& viewGroup,
 		UINT32 border, UINT32& size, SmallVector<float, 6>& fadePercents, float& maxFadePercent) const
 	{
 		const static float SHADOW_TEXELS_PER_PIXEL = 1.0f;
@@ -1705,7 +1705,7 @@ namespace bs { namespace ct
 		size = std::max(effectiveMapSize - 2 * border, 1u);
 	}
 
-	void ShadowRendering::drawNearFarPlanes(float near, float far, bool drawNear) const
+	void ShadowRendering::DrawNearFarPlanes(float near, float far, bool drawNear) const
 	{
 		const Conventions& rapiConventions = gCaps().conventions;
 		float flipY = (rapiConventions.ndcYAxis == Conventions::Axis::Down) ? -1.0f : 1.0f;
@@ -1729,7 +1729,7 @@ namespace bs { namespace ct
 		mPlaneVB->writeData(0, sizeof(vertices), vertices, BWT_DISCARD);
 
 		// Draw the mesh
-		RenderAPI& rapi = RenderAPI::instance();
+		RenderAPI& rapi = RenderAPI::Instance();
 		rapi.setVertexDeclaration(mPositionOnlyVD);
 		rapi.setVertexBuffers(0, &mPlaneVB, 1);
 		rapi.setIndexBuffer(mPlaneIB);
@@ -1738,9 +1738,9 @@ namespace bs { namespace ct
 		rapi.drawIndexed(0, drawNear ? 12 : 6, 0, drawNear ? 8 : 4);
 	}
 
-	void ShadowRendering::drawFrustum(const std::array<Vector3, 8>& corners) const
+	void ShadowRendering::DrawFrustum(const std::array<Vector3, 8>& corners) const
 	{
-		RenderAPI& rapi = RenderAPI::instance();
+		RenderAPI& rapi = RenderAPI::Instance();
 
 		// Update VB with new vertices
 		mFrustumVB->writeData(0, sizeof(Vector3) * 8, corners.data(), BWT_DISCARD);
@@ -1754,7 +1754,7 @@ namespace bs { namespace ct
 		rapi.drawIndexed(0, 36, 0, 8);
 	}
 
-	UINT32 ShadowRendering::getShadowQuality(UINT32 requestedQuality, UINT32 shadowMapResolution, UINT32 minAllowedQuality)
+	UINT32 ShadowRendering::GetShadowQuality(UINT32 requestedQuality, UINT32 shadowMapResolution, UINT32 minAllowedQuality)
 	{
 		static const UINT32 TARGET_RESOLUTION = 512;
 
@@ -1769,7 +1769,7 @@ namespace bs { namespace ct
 		return requestedQuality;
 	}
 
-	ConvexVolume ShadowRendering::getCSMSplitFrustum(const RendererView& view, const Vector3& lightDir, UINT32 cascade,
+	ConvexVolume ShadowRendering::GetCsmSplitFrustum(const RendererView& view, const Vector3& lightDir, UINT32 cascade,
 		UINT32 numCascades, Sphere& outBounds)
 	{
 		// Determine split range
@@ -1912,7 +1912,7 @@ namespace bs { namespace ct
 		return ConvexVolume(lightVolume);
 	}
 
-	float ShadowRendering::getCSMSplitDistance(const RendererView& view, UINT32 index, UINT32 numCascades)
+	float ShadowRendering::GetCsmSplitDistance(const RendererView& view, UINT32 index, UINT32 numCascades)
 	{
 		auto& shadowSettings = view.getRenderSettings().shadowSettings;
 		float distributionExponent = shadowSettings.cascadeDistributionExponent;
@@ -1945,7 +1945,7 @@ namespace bs { namespace ct
 		return near + (far - near) * scale;
 	}
 
-	float ShadowRendering::getDepthBias(const Light& light, float radius, float depthRange, UINT32 mapSize)
+	float ShadowRendering::GetDepthBias(const Light& light, float radius, float depthRange, UINT32 mapSize)
 	{
 		const static float RADIAL_LIGHT_BIAS = 0.005f;
 		const static float SPOT_DEPTH_BIAS = 0.01f;
@@ -1988,7 +1988,7 @@ namespace bs { namespace ct
 		return defaultBias * light.getShadowBias() * resolutionScale * rangeScale;
 	}
 
-	float ShadowRendering::getFadeTransition(const Light& light, float radius, float depthRange, UINT32 mapSize)
+	float ShadowRendering::GetFadeTransition(const Light& light, float radius, float depthRange, UINT32 mapSize)
 	{
 		const static float SPOT_LIGHT_SCALE = 1000.0f;
 		const static float DIR_LIGHT_SCALE = 50000000.0f;

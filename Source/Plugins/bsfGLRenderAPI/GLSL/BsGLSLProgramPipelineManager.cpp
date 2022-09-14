@@ -37,15 +37,15 @@ namespace bs { namespace ct
 		}
 	}
 
-	const GLSLProgramPipeline* GLSLProgramPipelineManager::getPipeline(GLSLGpuProgram* vertexProgram, GLSLGpuProgram* fragmentProgram,
+	const GLSLProgramPipeline* GLSLProgramPipelineManager::GetPipeline(GLSLGpuProgram* vertexProgram, GLSLGpuProgram* fragmentProgram,
 		GLSLGpuProgram* geometryProgram, GLSLGpuProgram* hullProgram, GLSLGpuProgram* domainProgram)
 	{
 		ProgramPipelineKey key;
-		key.vertexProgKey = vertexProgram != nullptr ? vertexProgram->getProgramID() : 0;
-		key.fragmentProgKey = fragmentProgram != nullptr ? fragmentProgram->getProgramID() : 0;
-		key.geometryProgKey = geometryProgram != nullptr ? geometryProgram->getProgramID() : 0;
-		key.hullProgKey = hullProgram != nullptr ? hullProgram->getProgramID() : 0;
-		key.domainProgKey = domainProgram != nullptr ? domainProgram->getProgramID() : 0;
+		key.vertexProgKey = vertexProgram != nullptr ? vertexProgram->GetProgramId() : 0;
+		key.fragmentProgKey = fragmentProgram != nullptr ? fragmentProgram->GetProgramId() : 0;
+		key.geometryProgKey = geometryProgram != nullptr ? geometryProgram->GetProgramId() : 0;
+		key.hullProgKey = hullProgram != nullptr ? hullProgram->GetProgramId() : 0;
+		key.domainProgKey = domainProgram != nullptr ? domainProgram->GetProgramId() : 0;
 
 		auto iterFind = mPipelines.find(key);
 
@@ -58,31 +58,31 @@ namespace bs { namespace ct
 
 			if(vertexProgram != nullptr)
 			{
-				glUseProgramStages(newPipeline.glHandle, GL_VERTEX_SHADER_BIT, vertexProgram->getGLHandle());
+				glUseProgramStages(newPipeline.glHandle, GL_VERTEX_SHADER_BIT, vertexProgram->GetGlHandle());
 				BS_CHECK_GL_ERROR();
 			}
 
 			if(fragmentProgram != nullptr)
 			{
-				glUseProgramStages(newPipeline.glHandle, GL_FRAGMENT_SHADER_BIT, fragmentProgram->getGLHandle());
+				glUseProgramStages(newPipeline.glHandle, GL_FRAGMENT_SHADER_BIT, fragmentProgram->GetGlHandle());
 				BS_CHECK_GL_ERROR();
 			}
 
 			if(geometryProgram != nullptr)
 			{
-				glUseProgramStages(newPipeline.glHandle, GL_GEOMETRY_SHADER_BIT, geometryProgram->getGLHandle());
+				glUseProgramStages(newPipeline.glHandle, GL_GEOMETRY_SHADER_BIT, geometryProgram->GetGlHandle());
 				BS_CHECK_GL_ERROR();
 			}
 
 			if(hullProgram != nullptr)
 			{
-				glUseProgramStages(newPipeline.glHandle, GL_TESS_CONTROL_SHADER_BIT, hullProgram->getGLHandle());
+				glUseProgramStages(newPipeline.glHandle, GL_TESS_CONTROL_SHADER_BIT, hullProgram->GetGlHandle());
 				BS_CHECK_GL_ERROR();
 			}
 
 			if(domainProgram != nullptr)
 			{
-				glUseProgramStages(newPipeline.glHandle, GL_TESS_EVALUATION_SHADER_BIT, domainProgram->getGLHandle());
+				glUseProgramStages(newPipeline.glHandle, GL_TESS_EVALUATION_SHADER_BIT, domainProgram->GetGlHandle());
 				BS_CHECK_GL_ERROR();
 			}
 

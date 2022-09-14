@@ -16,17 +16,17 @@ namespace bs
 	void ScriptLimitCommon::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptLimitCommon::box(const __LimitCommonInterop& value)
+	MonoObject*ScriptLimitCommon::Box(const __LimitCommonInterop& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	__LimitCommonInterop ScriptLimitCommon::unbox(MonoObject* value)
+	__LimitCommonInterop ScriptLimitCommon::Unbox(MonoObject* value)
 	{
-		return *(__LimitCommonInterop*)MonoUtil::unbox(value);
+		return *(__LimitCommonInterop*)MonoUtil::Unbox(value);
 	}
 
-	LimitCommon ScriptLimitCommon::fromInterop(const __LimitCommonInterop& value)
+	LimitCommon ScriptLimitCommon::FromInterop(const __LimitCommonInterop& value)
 	{
 		LimitCommon output;
 		output.contactDist = value.contactDist;
@@ -36,7 +36,7 @@ namespace bs
 		return output;
 	}
 
-	__LimitCommonInterop ScriptLimitCommon::toInterop(const LimitCommon& value)
+	__LimitCommonInterop ScriptLimitCommon::ToInterop(const LimitCommon& value)
 	{
 		__LimitCommonInterop output;
 		output.contactDist = value.contactDist;

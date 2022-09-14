@@ -12,12 +12,12 @@ namespace bs { namespace ct
 		: GpuPipelineParamInfo(desc, deviceMask), mDeviceMask(deviceMask), mLayouts(), mLayoutInfos()
 	{ }
 
-	void VulkanGpuPipelineParamInfo::initialize()
+	void VulkanGpuPipelineParamInfo::Initialize()
 	{
-		VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::instance());
+		VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
 
 		VulkanDevice* devices[BS_MAX_DEVICES];
-		VulkanUtility::getDevices(rapi, mDeviceMask, devices);
+		VulkanUtility::GetDevices(rapi, mDeviceMask, devices);
 
 		UINT32 numDevices = 0;
 		for (UINT32 i = 0; i < BS_MAX_DEVICES; i++)
@@ -30,7 +30,7 @@ namespace bs { namespace ct
 		for (UINT32 i = 0; i < mNumSets; i++)
 			totalNumSlots += mSetInfos[i].numSlots;
 
-		mAlloc.reserve<VkDescriptorSetLayoutBinding>(mNumElements)
+		mAlloc.Reserve<VkDescriptorSetLayoutBinding>(mNumElements)
 			.reserve<GpuParamObjectType>(mNumElements)
 			.reserve<GpuBufferFormat>(mNumElements)
 			.reserve<LayoutInfo>(mNumSets)
@@ -216,7 +216,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	VulkanDescriptorLayout* VulkanGpuPipelineParamInfo::getLayout(UINT32 deviceIdx, UINT32 layoutIdx) const
+	VulkanDescriptorLayout* VulkanGpuPipelineParamInfo::GetLayout(UINT32 deviceIdx, UINT32 layoutIdx) const
 	{
 		if (deviceIdx >= BS_MAX_DEVICES || mLayouts[deviceIdx] == nullptr)
 			return nullptr;

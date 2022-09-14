@@ -46,7 +46,7 @@ namespace bs
 		 * @param[in]	compress		True if the imported asset should be compressed when saved to the disk.
 		 * @param[in]	mipmap			True if mipmaps should be generated.
 		 */
-		static void importAssets(const nlohmann::json& entries, const Vector<bool>& importFlags, const Path& inputFolder,
+		static void ImportAssets(const nlohmann::json& entries, const Vector<bool>& importFlags, const Path& inputFolder,
 			const Path& outputFolder, const SPtr<ResourceManifest>& manifest, AssetType mode = AssetType::Normal,
 			nlohmann::json* dependencies = nullptr, bool compress = false, bool mipmap = false);
 
@@ -54,7 +54,7 @@ namespace bs
 		 * Imports a font from the specified file. Imported font assets are saved in the output folder. All saved resources
 		 * are registered in the provided resource manifest.
 		 */
-		static void importFont(const Path& inputFile, const String& outputName, const Path& outputFolder,
+		static void ImportFont(const Path& inputFile, const String& outputName, const Path& outputFolder,
 			const Vector<UINT32>& fontSizes, bool antialiasing, const UUID& UUID, const SPtr<ResourceManifest>& manifest);
 
 		/**
@@ -74,7 +74,7 @@ namespace bs
 		 * @return							An array of the same size as the @p entries array, containing value true if
 		 *									an asset should be imported, or false otherwise.
 		 */
-		static Vector<bool> generateImportFlags(const nlohmann::json& entries, const Path& inputFolder,
+		static Vector<bool> GenerateImportFlags(const nlohmann::json& entries, const Path& inputFolder,
 			time_t lastUpdateTime, bool forceImport, const nlohmann::json* dependencies = nullptr,
 			const Path& dependencyFolder = Path::BLANK);
 
@@ -86,7 +86,7 @@ namespace bs
 		 * @param[in]		type		Type of entries in the folder. Determines the type of JSON data generated.
 		 * @param[in, out]	entries		Current data file entries.
 		 */
-		static bool updateJSON(const Path& folder, AssetType type, nlohmann::json& entries);
+		static bool UpdateJson(const Path& folder, AssetType type, nlohmann::json& entries);
 
 		/**
 		 * Updates the resource manifest from the UUID's and paths provided in the JSON.
@@ -96,27 +96,27 @@ namespace bs
 		 * @param[in]		manifest	Manifest in which to register the assets in.
 		 * @param[in]		type		Type of assets we're registering.
 		 */
-		static void updateManifest(const Path& folder, const nlohmann::json& entries,
+		static void UpdateManifest(const Path& folder, const nlohmann::json& entries,
 			const SPtr<ResourceManifest>& manifest, AssetType type);
 
 		/** Writes a timestamp with the current date and time in the specified file. */
-		static void writeTimestamp(const Path& file);
+		static void WriteTimestamp(const Path& file);
 
 		/**
 		 * Checks all files in the specified folder for modifications compared to the time stored in the timestamp file.
 		 * Timestamp file must have been saved using writeTimestamp(). Returns 0 if no changes, 1 if timestamp is out date,
 		 * or 2 if timestamp doesn't exist. @p lastUpdateTime will contain the time stored in the timestamp, if it exist.
 		 */
-		static UINT32 checkForModifications(const Path& folder, const Path& timeStampFile, time_t& lastUpdateTime);
+		static UINT32 CheckForModifications(const Path& folder, const Path& timeStampFile, time_t& lastUpdateTime);
 
 		/** Checks if the shader compiled properly and reports the problem if it hasn't. Returns true if shader is valid. */
-		static bool verifyAndReportShader(const HShader& shader);
+		static bool VerifyAndReportShader(const HShader& shader);
 
 		/** Loads the shader at the specified path, updates its bytecode if required, and re-saves the shader file. */
-		static void updateShaderBytecode(const Path& path);
+		static void UpdateShaderBytecode(const Path& path);
 
 		/** Constructs a GUIElementStyle from the provided JSON entry. */
-		static GUIElementStyle loadGUIStyleFromJSON(const nlohmann::json& entry, const GUIElementStyleLoader& loader);
+		static GUIElementStyle LoadGuiStyleFromJson(const nlohmann::json& entry, const GUIElementStyleLoader& loader);
 	};
 
 	/**
@@ -129,10 +129,10 @@ namespace bs
 		virtual ~GUIElementStyleLoader() = default;
 
 		/** Loads a font with the specified name. */
-		virtual HFont loadFont(const String& name) const = 0;
+		virtual HFont LoadFont(const String& name) const = 0;
 
 		/** Loads a sprite texture with the specified name. */
-		virtual HSpriteTexture loadTexture(const String& name) const = 0;
+		virtual HSpriteTexture LoadTexture(const String& name) const = 0;
 	};
 
 	/** Handles loading of GUIELementStyle resources by retrieving them from the builtin resources folder. */
@@ -142,10 +142,10 @@ namespace bs
 		BuiltinResourceGUIElementStyleLoader(const Path& fontPath, const Path& texturePath);
 
 		/** Loads a font with the specified name. */
-		HFont loadFont(const String& name) const override;
+		HFont LoadFont(const String& name) const override;
 
 		/** Loads a sprite texture with the specified name. */
-		HSpriteTexture loadTexture(const String& name) const override;
+		HSpriteTexture LoadTexture(const String& name) const override;
 
 	private:
 		Path mFontPath;

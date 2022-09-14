@@ -25,18 +25,18 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static void internal_getMemorySize(UINT32 width, UINT32 height, UINT32 depth, PixelFormat format, UINT32* value);
-		static void internal_hasAlpha(PixelFormat format, bool* value);
-		static void internal_isFloatingPoint(PixelFormat format, bool* value);
-		static void internal_isCompressed(PixelFormat format, bool* value);
-		static void internal_isDepth(PixelFormat format, bool* value);
-		static void internal_getMaxMipmaps(UINT32 width, UINT32 height, UINT32 depth, PixelFormat format, UINT32* value);
-		static MonoObject* internal_convertFormat(MonoObject* source, PixelFormat newFormat);
-		static MonoObject* internal_compress(MonoObject* source, CompressionOptions* options);
-		static MonoArray* internal_generateMipmaps(MonoObject* source, MipMapGenOptions* options);
-		static MonoObject* internal_scale(MonoObject* source, PixelVolume* newSize, PixelUtil::Filter filter);
-		static void internal_linearToSRGB(MonoObject* source);
-		static void internal_SRGBToLinear(MonoObject* source);
+		static void InternalGetMemorySize(UINT32 width, UINT32 height, UINT32 depth, PixelFormat format, UINT32* value);
+		static void InternalHasAlpha(PixelFormat format, bool* value);
+		static void InternalIsFloatingPoint(PixelFormat format, bool* value);
+		static void InternalIsCompressed(PixelFormat format, bool* value);
+		static void InternalIsDepth(PixelFormat format, bool* value);
+		static void InternalGetMaxMipmaps(UINT32 width, UINT32 height, UINT32 depth, PixelFormat format, UINT32* value);
+		static MonoObject* InternalConvertFormat(MonoObject* source, PixelFormat newFormat);
+		static MonoObject* InternalCompress(MonoObject* source, CompressionOptions* options);
+		static MonoArray* InternalGenerateMipmaps(MonoObject* source, MipMapGenOptions* options);
+		static MonoObject* InternalScale(MonoObject* source, PixelVolume* newSize, PixelUtil::Filter filter);
+		static void InternalLinearToSrgb(MonoObject* source);
+		static void InternalSrgbToLinear(MonoObject* source);
 	};
 
 	/** @} */

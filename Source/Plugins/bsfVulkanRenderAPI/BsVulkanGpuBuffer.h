@@ -18,23 +18,23 @@ namespace bs { namespace ct
 		~VulkanGpuBuffer();
 
 		/** @copydoc GpuBuffer::readData */
-		void readData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx = 0, UINT32 queueIdx = 0) override;
+		void ReadData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx = 0, UINT32 queueIdx = 0) ;
 
 		/** @copydoc GpuBuffer::writeData */
-		void writeData(UINT32 offset, UINT32 length, const void* source,
-			BufferWriteType writeFlags = BWT_NORMAL, UINT32 queueIdx = 0) override;
+		void WriteData(UINT32 offset, UINT32 length, const void* source,
+			BufferWriteType writeFlags = BWT_NORMAL, UINT32 queueIdx = 0) ;
 
 		/**
 		 * Gets the resource wrapping the buffer object, on the specified device. If the object wasn't initialized for the
 		 * specified device, null is returned.
 		 */
-		VulkanBuffer* getResource(UINT32 deviceIdx) const;
+		VulkanBuffer* GetResource(UINT32 deviceIdx) const;
 
 		/**
 		 * Returns a view of the buffer object using the format specified when creating this object, per device. If the
 		 * object wasn't initialized for the specified device, null is returned.
 		 */
-		VkBufferView getView(UINT32 deviceIdx) const;
+		VkBufferView GetView(UINT32 deviceIdx) const;
 	protected:
 		friend class VulkanHardwareBufferManager;
 
@@ -42,16 +42,16 @@ namespace bs { namespace ct
 		VulkanGpuBuffer(const GPU_BUFFER_DESC& desc, SPtr<HardwareBuffer> underlyingBuffer);
 
 		/** @copydoc GpuBuffer::initialize */
-		void initialize() override;
+		void Initialize() ;
 
 		/** @copydoc GpuBuffer::map */
-		void* map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx = 0, UINT32 queueIdx = 0) override;
+		void* Map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx = 0, UINT32 queueIdx = 0) ;
 
 		/** @copydoc GpuBuffer::unmap */
-		void unmap() override;
+		void Unmap() ;
 
 		/** Updates buffer views if they are missing or don't match the buffers. */
-		void updateViews();
+		void UpdateViews();
 	private:
 		VkBuffer mCachedBuffers[BS_MAX_DEVICES] { };
 		VkBufferView mBufferViews[BS_MAX_DEVICES] { };

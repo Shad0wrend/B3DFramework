@@ -16,36 +16,36 @@ namespace bs
 
 	void ScriptFont::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_GetRef", (void*)&ScriptFont::Internal_getRef);
-		metaData.scriptClass->addInternalCall("Internal_getBitmap", (void*)&ScriptFont::Internal_getBitmap);
-		metaData.scriptClass->addInternalCall("Internal_getClosestSize", (void*)&ScriptFont::Internal_getClosestSize);
+		metaData.scriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptFont::InternalGetRef);
+		metaData.scriptClass->AddInternalCall("Internal_getBitmap", (void*)&ScriptFont::InternalGetBitmap);
+		metaData.scriptClass->AddInternalCall("Internal_getClosestSize", (void*)&ScriptFont::InternalGetClosestSize);
 
 	}
 
-	 MonoObject*ScriptFont::createInstance()
+	 MonoObject*ScriptFont::CreateInstance()
 	{
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		return metaData.scriptClass->createInstance("bool", ctorParams);
+		return metaData.scriptClass->CreateInstance("bool", ctorParams);
 	}
-	MonoObject* ScriptFont::Internal_getRef(ScriptFont* thisPtr)
+	MonoObject* ScriptFont::InternalGetRef(ScriptFont* thisPtr)
 	{
 		return thisPtr->getRRef();
 	}
 
-	MonoObject* ScriptFont::Internal_getBitmap(ScriptFont* thisPtr, uint32_t size)
+	MonoObject* ScriptFont::InternalGetBitmap(ScriptFont* thisPtr, uint32_t size)
 	{
 		SPtr<FontBitmap> tmp__output;
 		tmp__output = thisPtr->getHandle()->getBitmap(size);
 
 		MonoObject* __output;
-		__output = ScriptFontBitmap::create(tmp__output);
+		__output = ScriptFontBitmap::Create(tmp__output);
 
 		return __output;
 	}
 
-	int32_t ScriptFont::Internal_getClosestSize(ScriptFont* thisPtr, uint32_t size)
+	int32_t ScriptFont::InternalGetClosestSize(ScriptFont* thisPtr, uint32_t size)
 	{
 		int32_t tmp__output;
 		tmp__output = thisPtr->getHandle()->getClosestSize(size);

@@ -35,7 +35,7 @@ namespace bs
 		gCoreThread().queueCommand(std::bind(&SpriteMaterial::destroy, mMaterial, mParams, mAlphaParams));
 	}
 
-	void SpriteMaterial::initialize()
+	void SpriteMaterial::Initialize()
 	{
 		// Make sure that mMaterial assignment completes on the previous thread before continuing
 		const bool materialStored = mMaterialStored.load(std::memory_order_acquire);
@@ -68,12 +68,12 @@ namespace bs
 			BS_LOG(Error, GUI, "Sprite material shader missing \"GUIParams\" block.");
 	}
 
-	void SpriteMaterial::destroy(const SPtr<ct::Material>& material, const SPtr<ct::GpuParamsSet>& params, const SPtr<ct::GpuParamsSet>& alphaParams)
+	void SpriteMaterial::Destroy(const SPtr<ct::Material>& material, const SPtr<ct::GpuParamsSet>& params, const SPtr<ct::GpuParamsSet>& alphaParams)
 	{
 		// Do nothing, we just need to make sure the material pointer's last reference is lost while on the core thread
 	}
 
-	UINT64 SpriteMaterial::getMergeHash(const SpriteMaterialInfo& info) const
+	UINT64 SpriteMaterial::GetMergeHash(const SpriteMaterialInfo& info) const
 	{
 		UINT64 textureId = 0;
 		if (info.texture.isLoaded())
@@ -88,7 +88,7 @@ namespace bs
 		return (UINT64)hash;
 	}
 
-	void SpriteMaterial::render(const SPtr<ct::MeshBase>& mesh, const SubMesh& subMesh, const SPtr<ct::Texture>& texture,
+	void SpriteMaterial::Render(const SPtr<ct::MeshBase>& mesh, const SubMesh& subMesh, const SPtr<ct::Texture>& texture,
 		const SPtr<ct::SamplerState>& sampler, const SPtr<ct::GpuParamBlockBuffer>& paramBuffer,
 		const SPtr<SpriteMaterialExtraInfo>& additionalData, bool alphaOnly) const
 	{

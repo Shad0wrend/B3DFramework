@@ -22,7 +22,7 @@ namespace bs
 
 	private:
 		/** Returns the PhysX collider implementation common to all colliders. */
-		FPhysXCollider* getInternal() const;
+		FPhysXCollider* GetInternal() const;
 	};
 
 	/** @} */

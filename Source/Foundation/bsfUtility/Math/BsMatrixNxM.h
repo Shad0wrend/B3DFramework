@@ -32,7 +32,7 @@ namespace bs
 		}
 
 		/** Returns a transpose of the matrix (switched columns and rows). */
-		MatrixNxM<M, N> transpose() const
+		MatrixNxM<M, N> Transpose() const
 		{
 			MatrixNxM<M, N> matTranspose;
 			for (UINT32 row = 0; row < N; row++)

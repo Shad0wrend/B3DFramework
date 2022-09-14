@@ -21,19 +21,19 @@ namespace bs { namespace ct
 		 * Returns a shader resource view. Caller must take care this texture view actually contains a shader resource view,
 		 * otherwise it returns null.
 		 */
-		ID3D11ShaderResourceView* getSRV() const { return mSRV; }
+		ID3D11ShaderResourceView* GetSrv() const { return mSRV; }
 
 		/**
 		 * Returns a render target view. Caller must take care this texture view actually contains a render target view,
 		 * otherwise it returns null.
 		 */
-		ID3D11RenderTargetView*	getRTV() const { return mRTV; }
+		ID3D11RenderTargetView*	GetRtv() const { return mRTV; }
 
 		/**
 		 * Returns a unordered access view. Caller must take care this texture view actually contains a unordered access
 		 * view, otherwise it returns null.
 		 */
-		ID3D11UnorderedAccessView* getUAV() const { return mUAV; }
+		ID3D11UnorderedAccessView* GetUav() const { return mUAV; }
 
 		/**
 		 * Returns a depth stencil view. Caller must take care this texture view actually contains a depth stencil view,
@@ -46,7 +46,7 @@ namespace bs { namespace ct
 		 *								depth/stencil buffer(allows the bound texture to be also used as a shader resource
 		 *								view while bound as a depth stencil target).
 		 */
-		ID3D11DepthStencilView*	getDSV(bool readOnlyDepth, bool readOnlyStencil) const;
+		ID3D11DepthStencilView*	GetDsv(bool readOnlyDepth, bool readOnlyStencil) const;
 
 	protected:
 		friend class D3D11Texture;
@@ -66,7 +66,7 @@ namespace bs { namespace ct
 		 *								for 1D and 2D array textures, number of slices for 3D textures, and number of cubes
 		 *								for cube textures.
 		 */
-		ID3D11ShaderResourceView* createSRV(const D3D11Texture* texture,
+		ID3D11ShaderResourceView* CreateSrv(const D3D11Texture* texture,
 			UINT32 mostDetailMip, UINT32 numMips, UINT32 firstArraySlice, UINT32 numArraySlices);
 
 		/**
@@ -81,7 +81,7 @@ namespace bs { namespace ct
 		 *								for 1D and 2D array textures, number of slices for 3D textures, and number of cubes
 		 *								for cube textures.
 		 */
-		ID3D11RenderTargetView* createRTV(const D3D11Texture* texture,
+		ID3D11RenderTargetView* CreateRtv(const D3D11Texture* texture,
 			UINT32 mipSlice, UINT32 firstArraySlice, UINT32 numArraySlices);
 
 		/**
@@ -96,7 +96,7 @@ namespace bs { namespace ct
 		 *								for 1D and 2D array textures, number of slices for 3D textures, and number of cubes
 		 *								for cube textures.
 		 */
-		ID3D11UnorderedAccessView* createUAV(const D3D11Texture* texture,
+		ID3D11UnorderedAccessView* CreateUav(const D3D11Texture* texture,
 			UINT32 mipSlice, UINT32 firstArraySlice, UINT32 numArraySlices);
 
 		/**
@@ -117,7 +117,7 @@ namespace bs { namespace ct
 		 *								depth/stencil buffer(allows the bound texture to be also used as a shader resource
 		 *								view while bound as a depth stencil target).
 		 */
-		ID3D11DepthStencilView* createDSV(const D3D11Texture* texture, UINT32 mipSlice, UINT32 firstArraySlice,
+		ID3D11DepthStencilView* CreateDsv(const D3D11Texture* texture, UINT32 mipSlice, UINT32 firstArraySlice,
 			UINT32 numArraySlices, bool readOnlyDepth, bool readOnlyStencil);
 
 		ID3D11ShaderResourceView* mSRV = nullptr;

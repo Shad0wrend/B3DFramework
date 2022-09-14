@@ -18,22 +18,22 @@ namespace bs
 	void ScriptPARTICLE_SIZE_DESC::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptPARTICLE_SIZE_DESC::box(const __PARTICLE_SIZE_DESCInterop& value)
+	MonoObject*ScriptPARTICLE_SIZE_DESC::Box(const __PARTICLE_SIZE_DESCInterop& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	__PARTICLE_SIZE_DESCInterop ScriptPARTICLE_SIZE_DESC::unbox(MonoObject* value)
+	__PARTICLE_SIZE_DESCInterop ScriptPARTICLE_SIZE_DESC::Unbox(MonoObject* value)
 	{
-		return *(__PARTICLE_SIZE_DESCInterop*)MonoUtil::unbox(value);
+		return *(__PARTICLE_SIZE_DESCInterop*)MonoUtil::Unbox(value);
 	}
 
-	PARTICLE_SIZE_DESC ScriptPARTICLE_SIZE_DESC::fromInterop(const __PARTICLE_SIZE_DESCInterop& value)
+	PARTICLE_SIZE_DESC ScriptPARTICLE_SIZE_DESC::FromInterop(const __PARTICLE_SIZE_DESCInterop& value)
 	{
 		PARTICLE_SIZE_DESC output;
 		SPtr<TDistribution<float>> tmpsize;
 		ScriptTDistributionfloat* scriptsize;
-		scriptsize = ScriptTDistributionfloat::toNative(value.size);
+		scriptsize = ScriptTDistributionfloat::ToNative(value.size);
 		if(scriptsize != nullptr)
 			tmpsize = scriptsize->getInternal();
 		if(tmpsize != nullptr)
@@ -50,18 +50,18 @@ namespace bs
 		return output;
 	}
 
-	__PARTICLE_SIZE_DESCInterop ScriptPARTICLE_SIZE_DESC::toInterop(const PARTICLE_SIZE_DESC& value)
+	__PARTICLE_SIZE_DESCInterop ScriptPARTICLE_SIZE_DESC::ToInterop(const PARTICLE_SIZE_DESC& value)
 	{
 		__PARTICLE_SIZE_DESCInterop output;
 		MonoObject* tmpsize;
 		SPtr<TDistribution<float>> tmpsizecopy;
 		tmpsizecopy = bs_shared_ptr_new<TDistribution<float>>(value.size);
-		tmpsize = ScriptTDistributionfloat::create(tmpsizecopy);
+		tmpsize = ScriptTDistributionfloat::Create(tmpsizecopy);
 		output.size = tmpsize;
 		MonoObject* tmpsize3D;
 		SPtr<TDistribution<Vector3>> tmpsize3Dcopy;
 		tmpsize3Dcopy = bs_shared_ptr_new<TDistribution<Vector3>>(value.size3D);
-		tmpsize3D = ScriptTDistributionVector3::create(tmpsize3Dcopy);
+		tmpsize3D = ScriptTDistributionVector3::Create(tmpsize3Dcopy);
 		output.size3D = tmpsize3D;
 		output.use3DSize = value.use3DSize;
 

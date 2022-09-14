@@ -16,17 +16,17 @@ namespace bs
 	void ScriptLightProbeInfo::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptLightProbeInfo::box(const __LightProbeInfoInterop& value)
+	MonoObject*ScriptLightProbeInfo::Box(const __LightProbeInfoInterop& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	__LightProbeInfoInterop ScriptLightProbeInfo::unbox(MonoObject* value)
+	__LightProbeInfoInterop ScriptLightProbeInfo::Unbox(MonoObject* value)
 	{
-		return *(__LightProbeInfoInterop*)MonoUtil::unbox(value);
+		return *(__LightProbeInfoInterop*)MonoUtil::Unbox(value);
 	}
 
-	LightProbeInfo ScriptLightProbeInfo::fromInterop(const __LightProbeInfoInterop& value)
+	LightProbeInfo ScriptLightProbeInfo::FromInterop(const __LightProbeInfoInterop& value)
 	{
 		LightProbeInfo output;
 		output.handle = value.handle;
@@ -35,7 +35,7 @@ namespace bs
 		return output;
 	}
 
-	__LightProbeInfoInterop ScriptLightProbeInfo::toInterop(const LightProbeInfo& value)
+	__LightProbeInfoInterop ScriptLightProbeInfo::ToInterop(const LightProbeInfo& value)
 	{
 		__LightProbeInfoInterop output;
 		output.handle = value.handle;

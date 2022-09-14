@@ -22,18 +22,18 @@ namespace bs
 		ScriptGUIInputBox(MonoObject* instance, GUIInputBox* inputBox);
 
 		/**	Triggered when the value in the native input box changes. */
-		void onChanged(const String& newValue);
+		void OnChanged(const String& newValue);
 
 		/**	Triggered when the user confirms input in the native input box. */
-		void onConfirmed();
+		void OnConfirmed();
 
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static void internal_createInstance(MonoObject* instance, bool multiline, MonoString* style, MonoArray* guiOptions);
-		static void internal_setText(ScriptGUIInputBox* nativeInstance, MonoString* text);
-		static void internal_getText(ScriptGUIInputBox* nativeInstance, MonoString** text);
-		static void internal_setTint(ScriptGUIInputBox* nativeInstance, Color* color);
+		static void InternalCreateInstance(MonoObject* instance, bool multiline, MonoString* style, MonoArray* guiOptions);
+		static void InternalSetText(ScriptGUIInputBox* nativeInstance, MonoString* text);
+		static void InternalGetText(ScriptGUIInputBox* nativeInstance, MonoString** text);
+		static void InternalSetTint(ScriptGUIInputBox* nativeInstance, Color* color);
 
 		typedef void(BS_THUNKCALL *OnChangedThunkDef) (MonoObject*, MonoString*, MonoException**);
 		typedef void(BS_THUNKCALL *OnConfirmedThunkDef) (MonoObject*, MonoException**);

@@ -19,8 +19,8 @@ namespace bs
 
 	void ScriptGUISkin::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_GetRef", (void*)&ScriptGUISkin::Internal_getRef);
-		metaData.scriptClass->addInternalCall("Internal_hasStyle", (void*)&ScriptGUISkin::Internal_hasStyle);
+		metaData.scriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptGUISkin::InternalGetRef);
+		metaData.scriptClass->AddInternalCall("Internal_hasStyle", (void*)&ScriptGUISkin::InternalHasStyle);
 		metaData.scriptClass->addInternalCall("Internal_getStyle", (void*)&ScriptGUISkin::Internal_getStyle);
 		metaData.scriptClass->addInternalCall("Internal_setStyle", (void*)&ScriptGUISkin::Internal_setStyle);
 		metaData.scriptClass->addInternalCall("Internal_removeStyle", (void*)&ScriptGUISkin::Internal_removeStyle);
@@ -29,19 +29,19 @@ namespace bs
 
 	}
 
-	 MonoObject*ScriptGUISkin::createInstance()
+	 MonoObject*ScriptGUISkin::CreateInstance()
 	{
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
 		return metaData.scriptClass->createInstance("bool", ctorParams);
 	}
-	MonoObject* ScriptGUISkin::Internal_getRef(ScriptGUISkin* thisPtr)
+	MonoObject* ScriptGUISkin::InternalGetRef(ScriptGUISkin* thisPtr)
 	{
 		return thisPtr->getRRef();
 	}
 
-	bool ScriptGUISkin::Internal_hasStyle(ScriptGUISkin* thisPtr, MonoString* name)
+	bool ScriptGUISkin::InternalHasStyle(ScriptGUISkin* thisPtr, MonoString* name)
 	{
 		bool tmp__output;
 		String tmpname;
@@ -54,7 +54,7 @@ namespace bs
 		return __output;
 	}
 
-	MonoObject* ScriptGUISkin::Internal_getStyle(ScriptGUISkin* thisPtr, MonoString* guiElemType)
+	MonoObject* ScriptGUISkin::InternalGetStyle(ScriptGUISkin* thisPtr, MonoString* guiElemType)
 	{
 		SPtr<GUIElementStyle> tmp__output = bs_shared_ptr_new<GUIElementStyle>();
 		String tmpguiElemType;
@@ -62,12 +62,12 @@ namespace bs
 		*tmp__output = *thisPtr->getHandle()->getStyle(tmpguiElemType);
 
 		MonoObject* __output;
-		__output = ScriptGUIElementStyle::create(tmp__output);
+		__output = ScriptGUIElementStyle::Create(tmp__output);
 
 		return __output;
 	}
 
-	void ScriptGUISkin::Internal_setStyle(ScriptGUISkin* thisPtr, MonoString* guiElemType, MonoObject* style)
+	void ScriptGUISkin::InternalSetStyle(ScriptGUISkin* thisPtr, MonoString* guiElemType, MonoObject* style)
 	{
 		String tmpguiElemType;
 		tmpguiElemType = MonoUtil::monoToString(guiElemType);
@@ -79,14 +79,14 @@ namespace bs
 		thisPtr->getHandle()->setStyle(tmpguiElemType, *tmpstyle);
 	}
 
-	void ScriptGUISkin::Internal_removeStyle(ScriptGUISkin* thisPtr, MonoString* guiElemType)
+	void ScriptGUISkin::InternalRemoveStyle(ScriptGUISkin* thisPtr, MonoString* guiElemType)
 	{
 		String tmpguiElemType;
 		tmpguiElemType = MonoUtil::monoToString(guiElemType);
 		thisPtr->getHandle()->removeStyle(tmpguiElemType);
 	}
 
-	MonoArray* ScriptGUISkin::Internal_getStyleNames(ScriptGUISkin* thisPtr)
+	MonoArray* ScriptGUISkin::InternalGetStyleNames(ScriptGUISkin* thisPtr)
 	{
 		Vector<String> vec__output;
 		vec__output = thisPtr->getHandle()->getStyleNames();
@@ -103,9 +103,9 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptGUISkin::Internal_create(MonoObject* managedInstance)
+	void ScriptGUISkin::InternalCreate(MonoObject* managedInstance)
 	{
-		ResourceHandle<GUISkin> instance = GUISkin::create();
-		ScriptResourceManager::instance().createBuiltinScriptResource(instance, managedInstance);
+		ResourceHandle<GUISkin> instance = GUISkin::Create();
+		ScriptResourceManager::Instance().createBuiltinScriptResource(instance, managedInstance);
 	}
 }

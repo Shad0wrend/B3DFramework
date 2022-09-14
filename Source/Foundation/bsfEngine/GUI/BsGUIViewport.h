@@ -17,7 +17,7 @@ namespace bs
 	{
 	public:
 		/** Returns type name of the GUI element used for finding GUI element styles.  */
-		static const String& getGUITypeName();
+		static const String& GetGuiTypeName();
 
 		/**
 		 * Creates a new GUI viewport element.
@@ -31,7 +31,7 @@ namespace bs
 		 *
 		 * @note Render target used by the GUIWidget and Camera must be the same.
 		 */
-		static GUIViewport* create(const HCamera& camera, float aspectRatio, Degree fieldOfView, const String& styleName = StringUtil::BLANK);
+		static GUIViewport* Create(const HCamera& camera, float aspectRatio, Degree fieldOfView, const String& styleName = StringUtil::BLANK);
 
 		/**
 		 * Creates a new GUI viewport element.
@@ -47,7 +47,7 @@ namespace bs
 		 *
 		 * @note Render target used by the GUIWidget and Camera must be the same.
 		 */
-		static GUIViewport* create(const GUIOptions& options, const HCamera& camera,
+		static GUIViewport* Create(const GUIOptions& options, const HCamera& camera,
 			float aspectRatio, Degree fieldOfView, const String& styleName = StringUtil::BLANK);
 
 	public: // ***** INTERNAL ******
@@ -64,7 +64,7 @@ namespace bs
 		~GUIViewport() = default;
 
 		/** @copydoc GUIElement::_fillBuffer */
-		void _fillBuffer(
+		void FillBuffer(
 			UINT8* vertices,
 			UINT32* indices,
 			UINT32 vertexOffset,
@@ -72,13 +72,13 @@ namespace bs
 			const Vector2I& offset,
 			UINT32 maxNumVerts,
 			UINT32 maxNumIndices,
-			UINT32 renderElementIdx) const override;
+			UINT32 renderElementIdx) const ;
 
 		/** @copydoc GUIElement::updateClippedBounds */
-		void updateClippedBounds() override;
+		void UpdateClippedBounds() ;
 
 		/** @copydoc GUIElement::updateRenderElementsInternal */
-		void updateRenderElementsInternal() override;
+		void UpdateRenderElementsInternal() ;
 
 	private:
 		GUIViewport(const String& styleName, const HCamera& camera, float aspectRatio, Degree fieldOfView, const GUIDimensions& dimensions);

@@ -176,7 +176,7 @@ namespace bs
 			mSyncedProperties = props;
 		}
 
-		bs::RenderWindowManager::instance().notifySyncDataDirty(this);
+		bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
 		RenderWindow::initialize();
 	}
 
@@ -240,7 +240,7 @@ namespace bs
 			return;
 
 		const LinuxVideoModeInfo& videoModeInfo =
-				static_cast<const LinuxVideoModeInfo&>(RenderAPI::instance().getVideoModeInfo());
+				static_cast<const LinuxVideoModeInfo&>(RenderAPI::Instance().getVideoModeInfo());
 
 		UINT32 outputIdx = mode.outputIdx;
 		if(outputIdx >= videoModeInfo.getNumOutputs())
@@ -365,8 +365,8 @@ namespace bs
 			mSyncedProperties.height = props.height;
 		}
 
-		bs::RenderWindowManager::instance().notifySyncDataDirty(this);
-		bs::RenderWindowManager::instance().notifyMovedOrResized(this);
+		bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
+		bs::RenderWindowManager::Instance().notifyMovedOrResized(this);
 	}
 
 	void LinuxRenderWindow::setWindowed(UINT32 width, UINT32 height)
@@ -380,7 +380,7 @@ namespace bs
 
 		// Restore old screen config
 		const LinuxVideoModeInfo& videoModeInfo =
-				static_cast<const LinuxVideoModeInfo&>(RenderAPI::instance().getVideoModeInfo());
+				static_cast<const LinuxVideoModeInfo&>(RenderAPI::Instance().getVideoModeInfo());
 
 		UINT32 outputIdx = 0; // 0 is always primary
 		if(outputIdx >= videoModeInfo.getNumOutputs())
@@ -415,8 +415,8 @@ namespace bs
 			mSyncedProperties.height = props.height;
 		}
 
-		bs::RenderWindowManager::instance().notifySyncDataDirty(this);
-		bs::RenderWindowManager::instance().notifyMovedOrResized(this);
+		bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
+		bs::RenderWindowManager::Instance().notifyMovedOrResized(this);
 	}
 
 	void LinuxRenderWindow::move(INT32 left, INT32 top)
@@ -439,7 +439,7 @@ namespace bs
 				mSyncedProperties.left = props.left;
 			}
 
-			bs::RenderWindowManager::instance().notifySyncDataDirty(this);
+			bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
 		}
 	}
 
@@ -463,7 +463,7 @@ namespace bs
 				mSyncedProperties.height = props.height;
 			}
 
-			bs::RenderWindowManager::instance().notifySyncDataDirty(this);
+			bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
 		}
 	}
 
@@ -521,7 +521,7 @@ namespace bs
 			mSyncedProperties.vsyncInterval = interval;
 		}
 
-		bs::RenderWindowManager::instance().notifySyncDataDirty(this);		
+		bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
 	}
 
 	void LinuxRenderWindow::swapBuffers(UINT32 syncMask)

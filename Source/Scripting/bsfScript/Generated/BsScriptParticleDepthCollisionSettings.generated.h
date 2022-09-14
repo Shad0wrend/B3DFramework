@@ -16,17 +16,17 @@ namespace bs
 
 		ScriptParticleDepthCollisionSettings(MonoObject* managedInstance, const SPtr<ParticleDepthCollisionSettings>& value);
 
-		static MonoObject* create(const SPtr<ParticleDepthCollisionSettings>& value);
+		static MonoObject* Create(const SPtr<ParticleDepthCollisionSettings>& value);
 
 	private:
-		static void Internal_ParticleDepthCollisionSettings(MonoObject* managedInstance);
-		static bool Internal_getenabled(ScriptParticleDepthCollisionSettings* thisPtr);
-		static void Internal_setenabled(ScriptParticleDepthCollisionSettings* thisPtr, bool value);
-		static float Internal_getrestitution(ScriptParticleDepthCollisionSettings* thisPtr);
-		static void Internal_setrestitution(ScriptParticleDepthCollisionSettings* thisPtr, float value);
-		static float Internal_getdampening(ScriptParticleDepthCollisionSettings* thisPtr);
-		static void Internal_setdampening(ScriptParticleDepthCollisionSettings* thisPtr, float value);
-		static float Internal_getradiusScale(ScriptParticleDepthCollisionSettings* thisPtr);
-		static void Internal_setradiusScale(ScriptParticleDepthCollisionSettings* thisPtr, float value);
+		static void InternalParticleDepthCollisionSettings(MonoObject* managedInstance);
+		static bool InternalGetenabled(ScriptParticleDepthCollisionSettings* thisPtr);
+		static void InternalSetenabled(ScriptParticleDepthCollisionSettings* thisPtr, bool value);
+		static float InternalGetrestitution(ScriptParticleDepthCollisionSettings* thisPtr);
+		static void InternalSetrestitution(ScriptParticleDepthCollisionSettings* thisPtr, float value);
+		static float InternalGetdampening(ScriptParticleDepthCollisionSettings* thisPtr);
+		static void InternalSetdampening(ScriptParticleDepthCollisionSettings* thisPtr, float value);
+		static float InternalGetradiusScale(ScriptParticleDepthCollisionSettings* thisPtr);
+		static void InternalSetradiusScale(ScriptParticleDepthCollisionSettings* thisPtr, float value);
 	};
 }

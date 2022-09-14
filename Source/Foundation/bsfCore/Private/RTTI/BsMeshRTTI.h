@@ -28,7 +28,7 @@ namespace bs
 			BS_RTTI_MEMBER_REFLPTR(mMorphShapes, 5)
 		BS_END_RTTI_MEMBERS
 
-		SPtr<MeshData> getMeshData(Mesh* obj)
+		SPtr<MeshData> GetMeshData(Mesh* obj)
 		{
 			SPtr<MeshData> meshData = obj->allocBuffer();
 
@@ -38,7 +38,7 @@ namespace bs
 			return meshData;
 		}
 
-		void setMeshData(Mesh* obj, SPtr<MeshData> meshData)
+		void SetMeshData(Mesh* obj, SPtr<MeshData> meshData)
 		{
 			obj->mCPUData = meshData;
 		}
@@ -46,10 +46,10 @@ namespace bs
 	public:
 		MeshRTTI()
 		{
-			addReflectablePtrField("mMeshData", 3, &MeshRTTI::getMeshData, &MeshRTTI::setMeshData);
+			addReflectablePtrField("mMeshData", 3, &MeshRTTI::GetMeshData, &MeshRTTI::SetMeshData);
 		}
 
-		void onDeserializationEnded(IReflectable* obj, SerializationContext* context) override
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override
 		{
 			Mesh* mesh = static_cast<Mesh*>(obj);
 			mesh->initialize();
@@ -57,16 +57,16 @@ namespace bs
 
 		SPtr<IReflectable> newRTTIObject() override
 		{
-			return Mesh::createEmpty();
+			return Mesh::CreateEmpty();
 		}
 
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "Mesh";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_Mesh;
 		}

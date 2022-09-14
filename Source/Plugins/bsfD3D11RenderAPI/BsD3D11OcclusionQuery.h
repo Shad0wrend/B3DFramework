@@ -19,22 +19,22 @@ namespace bs { namespace ct
 		~D3D11OcclusionQuery();
 
 		/** @copydoc OcclusionQuery::begin */
-		void begin(const SPtr<CommandBuffer>& cb = nullptr) override;
+		void Begin(const SPtr<CommandBuffer>& cb = nullptr) ;
 
 		/** @copydoc OcclusionQuery::end */
-		void end(const SPtr<CommandBuffer>& cb = nullptr) override;
+		void End(const SPtr<CommandBuffer>& cb = nullptr) ;
 
 		/** @copydoc OcclusionQuery::isReady */
-		bool isReady() const override;
+		bool IsReady() const ;
 
 		/** @copydoc OcclusionQuery::getNumSamples */
-		UINT32 getNumSamples() override;
+		UINT32 GetNumSamples() ;
 
 	private:
 		friend class QueryManager;
 
 		/** Resolves query results after it is ready. */
-		void finalize();
+		void Finalize();
 
 		ID3D11Query* mQuery = nullptr;
 		ID3D11DeviceContext* mContext = nullptr;

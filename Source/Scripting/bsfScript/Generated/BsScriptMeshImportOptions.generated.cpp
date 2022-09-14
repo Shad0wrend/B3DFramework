@@ -47,7 +47,7 @@ namespace bs
 
 	}
 
-	MonoObject* ScriptMeshImportOptions::create(const SPtr<MeshImportOptions>& value)
+	MonoObject* ScriptMeshImportOptions::Create(const SPtr<MeshImportOptions>& value)
 	{
 		if(value == nullptr) return nullptr; 
 
@@ -60,7 +60,7 @@ namespace bs
 	}
 	void ScriptMeshImportOptions::Internal_create(MonoObject* managedInstance)
 	{
-		SPtr<MeshImportOptions> instance = MeshImportOptions::create();
+		SPtr<MeshImportOptions> instance = MeshImportOptions::Create();
 		new (bs_alloc<ScriptMeshImportOptions>())ScriptMeshImportOptions(managedInstance, instance);
 	}
 	bool ScriptMeshImportOptions::Internal_getcpuCached(ScriptMeshImportOptions* thisPtr)
@@ -236,7 +236,7 @@ namespace bs
 			SPtr<AnimationSplitInfo> arrayElemPtr__output = bs_shared_ptr_new<AnimationSplitInfo>();
 			*arrayElemPtr__output = vec__output[i];
 			MonoObject* arrayElem__output;
-			arrayElem__output = ScriptAnimationSplitInfo::create(arrayElemPtr__output);
+			arrayElem__output = ScriptAnimationSplitInfo::Create(arrayElemPtr__output);
 			array__output.set(i, arrayElem__output);
 		}
 		__output = array__output.getInternal();
@@ -280,7 +280,7 @@ namespace bs
 			SPtr<ImportedAnimationEvents> arrayElemPtr__output = bs_shared_ptr_new<ImportedAnimationEvents>();
 			*arrayElemPtr__output = vec__output[i];
 			MonoObject* arrayElem__output;
-			arrayElem__output = ScriptImportedAnimationEvents::create(arrayElemPtr__output);
+			arrayElem__output = ScriptImportedAnimationEvents::Create(arrayElemPtr__output);
 			array__output.set(i, arrayElem__output);
 		}
 		__output = array__output.getInternal();

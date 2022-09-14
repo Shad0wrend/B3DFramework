@@ -14,13 +14,13 @@ namespace bs
 
 	CrashHandler& gCrashHandler()
 	{
-		return CrashHandler::instance();
+		return CrashHandler::Instance();
 	}
 
-	const Path& CrashHandler::getCrashFolder()
+	const Path& CrashHandler::GetCrashFolder()
 	{
-		static const Path path = FileSystem::getWorkingDirectoryPath() + sCrashReportFolder +
-			getCrashTimestamp();
+		static const Path path = FileSystem::GetWorkingDirectoryPath() + sCrashReportFolder +
+			GetCrashTimestamp();
 		
 		static bool first = true;
 		if (first)
@@ -32,7 +32,7 @@ namespace bs
 		return path;
 	}
 
-	void CrashHandler::logErrorAndStackTrace(const String& errorMsg, const String& stackTrace) const
+	void CrashHandler::LogErrorAndStackTrace(const String& errorMsg, const String& stackTrace) const
 	{
 		StringStream errorMessage;
 		errorMessage << sFatalErrorMsg << std::endl;
@@ -40,10 +40,10 @@ namespace bs
 		errorMessage << "\n\nStack trace: \n";
 		errorMessage << stackTrace;
 
-		gDebug().log(errorMessage.str(), LogVerbosity::Fatal);
+		gDebug().Log(errorMessage.str(), LogVerbosity::Fatal);
 	}
 
-	void CrashHandler::logErrorAndStackTrace(const String& type, const String& description, const String& function,
+	void CrashHandler::LogErrorAndStackTrace(const String& type, const String& description, const String& function,
 		const String& file, UINT32 line) const
 	{
 		StringStream errorMessage;
@@ -51,11 +51,11 @@ namespace bs
 		errorMessage << "  - Description: " << description << std::endl;
 		errorMessage << "  - In function: " << function << std::endl;
 		errorMessage << "  - In file: " << file << ":" << line;
-		logErrorAndStackTrace(errorMessage.str(), getStackTrace());
+		LogErrorAndStackTrace(errorMessage.str(), GetStackTrace());
 	}
 
-	void CrashHandler::saveCrashLog() const
+	void CrashHandler::SaveCrashLog() const
 	{
-		gDebug().saveLog(getCrashFolder() + sCrashLogName, SavedLogType::HTML);
+		gDebug().SaveLog(GetCrashFolder() + sCrashLogName, SavedLogType::HTML);
 	}
 }

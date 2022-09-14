@@ -18,13 +18,13 @@ namespace bs
 	{
 	public:
 		/**	Returns a generic handle to the internal wrapped resource. */
-		virtual HResource getGenericHandle() const = 0;
+		virtual HResource GetGenericHandle() const = 0;
 
 		/**	Sets the internal resource this object wraps. */
-		virtual void setResource(const HResource& resource) = 0;
+		virtual void SetResource(const HResource& resource) = 0;
 
 		/** Returns the managed version of this resource. */
-		MonoObject* getManagedInstance() const;
+		MonoObject* GetManagedInstance() const;
 
 		/**
 		 * Returns a reference wrapper for the provided resource.
@@ -32,19 +32,19 @@ namespace bs
 		 * @param[in]	resource	Handle to the resource to retrieve the reference wrapper for.
 		 * @param[in]	rttiId		Type ID for the resource type to create a RRef for.
 		 */
-		static MonoObject* getRRef(const HResource& resource, UINT32 rttiId);
+		static MonoObject* GetRRef(const HResource& resource, UINT32 rttiId);
 
 		/**
 		 * Maps a RTTI ID to a class representing the specified resource type in managed code. Returns null if the ID
 		 * cannot be mapped to a managed resource class.
 		 */
-		static ::MonoClass* getManagedResourceClass(UINT32 rttiId);
+		static ::MonoClass* GetManagedResourceClass(UINT32 rttiId);
 
 		/**
 		 * Returns a RRef<T> type that can be used for wrapping a resource of the type represented by the provided
 		 * RTTI ID.
 		 */
-		static ::MonoClass* getRRefClass(UINT32 rttiId);
+		static ::MonoClass* GetRRefClass(UINT32 rttiId);
 	protected:
 		friend class ScriptResourceManager;
 
@@ -58,21 +58,21 @@ namespace bs
 		 * creates a strong reference to the managed instance, and you need to make sure to release it with
 		 * freeManagedInstance() when no longer required.
 		 */
-		void setManagedInstance(MonoObject* instance);
+		void SetManagedInstance(MonoObject* instance);
 
 		/**
 		 * Frees a managed instace assigned with setManagedInstance(). Should be called before the object is destroyed or
 		 * when you changing the managed instance it points to (in order to release the previous instance).
 		 */
-		void freeManagedInstance();
+		void FreeManagedInstance();
 
 		/**	
 		 * Triggered by the script resource managed when the native resource handle this object point to has been destroyed.
 		 */
-		virtual void notifyResourceDestroyed() { }
+		virtual void NotifyResourceDestroyed() { }
 
 		/** Destroys the interop object, unless refresh is in progress in which case it is just prepared for re-creation. */
-		void destroy();
+		void Destroy();
 
 		UINT32 mGCHandle = 0;
 	};
@@ -83,18 +83,18 @@ namespace bs
 	{
 	public:
 		/**	Returns a generic handle to the internal wrapped resource. */
-		HResource getGenericHandle() const override { return mResource; }
+		HResource GetGenericHandle() const { return mResource; }
 
 		/**	Sets the internal resource this object wraps. */
-		void setResource(const HResource& resource) override { mResource = static_resource_cast<ResType>(resource); }
+		void SetResource(const HResource& resource) { mResource = static_resource_cast<ResType>(resource); }
 
 		/**	Returns a handle to the internal wrapped resource. */
-		const ResourceHandle<ResType>& getHandle() const { return mResource; }
+		const ResourceHandle<ResType>& GetHandle() const { return mResource; }
 
 		/** Returns a reference wrapper for this resource. */
-		MonoObject* getRRef() const
+		MonoObject* GetRRef() const
 		{
-			return ScriptResourceBase::getRRef(mResource, ResType::getRTTIStatic()->getRTTIId());
+			return ScriptResourceBase::getRRef(mResource, ResType::GetRttiStatic()->getRTTIId());
 		}
 
 	protected:
@@ -126,7 +126,7 @@ namespace bs
 		/**	
 		 * Triggered by the script resource managed when the native resource handle this object point to has been destroyed.
 		 */
-		void notifyResourceDestroyed() override
+		void NotifyResourceDestroyed() 
 		{
 			this->freeManagedInstance();
 		}
@@ -155,9 +155,9 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static MonoString* internal_getName(ScriptResourceBase* nativeInstance);
-		static void internal_getUUID(ScriptResourceBase* nativeInstance, UUID* uuid);
-		static void internal_release(ScriptResourceBase* nativeInstance);
+		static MonoString* InternalGetName(ScriptResourceBase* nativeInstance);
+		static void InternalGetUuid(ScriptResourceBase* nativeInstance, UUID* uuid);
+		static void InternalRelease(ScriptResourceBase* nativeInstance);
 	};
 
 	/**	Interop class between C++ & CLR for UUID. */
@@ -167,10 +167,10 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "UUID")
 
 		/**	Unboxes a boxed managed UUID struct and returns the native version of the structure. */
-		static UUID unbox(MonoObject* obj);
+		static UUID Unbox(MonoObject* obj);
 
 		/**	Boxes a native UUID struct and returns a managed object containing it. */
-		static MonoObject* box(const UUID& value);
+		static MonoObject* Box(const UUID& value);
 
 	private:
 		ScriptUUID(MonoObject* instance);

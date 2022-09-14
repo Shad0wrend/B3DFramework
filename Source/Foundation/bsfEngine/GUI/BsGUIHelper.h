@@ -24,7 +24,7 @@ namespace bs
 		 * @param[in]	style			Style to use for determining size constraints.
 		 * @param[in]	dimensions		Dimension constraints of a GUI element.
 		 */
-		static Vector2I calcOptimalContentsSize(const Vector2I& contentSize, const GUIElementStyle& style,
+		static Vector2I CalcOptimalContentsSize(const Vector2I& contentSize, const GUIElementStyle& style,
 			const GUIDimensions& dimensions);
 
 		/**
@@ -36,7 +36,7 @@ namespace bs
 		 * @param[in]	dimensions		Dimension constraints of a GUI element.
 		 * @param[in]	state			State of the GUI element in case the content changes according to state.
 		 */
-		static Vector2I calcOptimalContentsSize(const GUIContent& content, const GUIElementStyle& style,
+		static Vector2I CalcOptimalContentsSize(const GUIContent& content, const GUIElementStyle& style,
 			const GUIDimensions& dimensions, GUIElementState state = GUIElementState::Normal);
 
 		/**
@@ -47,7 +47,7 @@ namespace bs
 		 * @param[in]	style			Style to use for determining size constraints.
 		 * @param[in]	dimensions		Dimension constraints of a GUI element.
 		 */
-		static Vector2I calcOptimalContentsSize(const String& text, const GUIElementStyle& style,
+		static Vector2I CalcOptimalContentsSize(const String& text, const GUIElementStyle& style,
 			const GUIDimensions& dimensions);
 
 		/**
@@ -59,7 +59,7 @@ namespace bs
 		 * @param[in]	fontSize		Size of individual characters in the font, in points.
 		 * @return						Width/height required to display the text, in pixels.
 		 */
-		static Vector2I calcTextSize(const String& text, const HFont& font, UINT32 fontSize);
+		static Vector2I CalcTextSize(const String& text, const HFont& font, UINT32 fontSize);
 	};
 
 	/** @} */

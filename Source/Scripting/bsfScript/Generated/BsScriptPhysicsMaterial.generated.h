@@ -15,17 +15,17 @@ namespace bs
 
 		ScriptPhysicsMaterial(MonoObject* managedInstance, const ResourceHandle<PhysicsMaterial>& value);
 
-		static MonoObject* createInstance();
+		static MonoObject* CreateInstance();
 
 	private:
-		static MonoObject* Internal_getRef(ScriptPhysicsMaterial* thisPtr);
+		static MonoObject* InternalGetRef(ScriptPhysicsMaterial* thisPtr);
 
-		static void Internal_setStaticFriction(ScriptPhysicsMaterial* thisPtr, float value);
-		static float Internal_getStaticFriction(ScriptPhysicsMaterial* thisPtr);
-		static void Internal_setDynamicFriction(ScriptPhysicsMaterial* thisPtr, float value);
-		static float Internal_getDynamicFriction(ScriptPhysicsMaterial* thisPtr);
-		static void Internal_setRestitutionCoefficient(ScriptPhysicsMaterial* thisPtr, float value);
-		static float Internal_getRestitutionCoefficient(ScriptPhysicsMaterial* thisPtr);
-		static void Internal_create(MonoObject* managedInstance, float staticFriction, float dynamicFriction, float restitution);
+		static void InternalSetStaticFriction(ScriptPhysicsMaterial* thisPtr, float value);
+		static float InternalGetStaticFriction(ScriptPhysicsMaterial* thisPtr);
+		static void InternalSetDynamicFriction(ScriptPhysicsMaterial* thisPtr, float value);
+		static float InternalGetDynamicFriction(ScriptPhysicsMaterial* thisPtr);
+		static void InternalSetRestitutionCoefficient(ScriptPhysicsMaterial* thisPtr, float value);
+		static float InternalGetRestitutionCoefficient(ScriptPhysicsMaterial* thisPtr);
+		static void InternalCreate(MonoObject* managedInstance, float staticFriction, float dynamicFriction, float restitution);
 	};
 }

@@ -35,13 +35,13 @@
 
 namespace bs { namespace ct
 {
-	const StringID& D3D11RenderAPI::getName() const
+	const StringID& D3D11RenderAPI::GetName() const
 	{
 		static StringID strName("D3D11RenderAPI");
 		return strName;
 	}
 
-	void D3D11RenderAPI::initialize()
+	void D3D11RenderAPI::Initialize()
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -96,57 +96,57 @@ namespace bs { namespace ct
 
 		mDevice = bs_new<D3D11Device>(device);
 		
-		CommandBufferManager::startUp<D3D11CommandBufferManager>();
+		CommandBufferManager::StartUp<D3D11CommandBufferManager>();
 
 		// Create the texture manager for use by others		
-		bs::TextureManager::startUp<bs::D3D11TextureManager>();
-		TextureManager::startUp<D3D11TextureManager>();
+		bs::TextureManager::StartUp<bs::D3D11TextureManager>();
+		TextureManager::StartUp<D3D11TextureManager>();
 
 		// Create hardware buffer manager		
-		bs::HardwareBufferManager::startUp();
-		HardwareBufferManager::startUp<D3D11HardwareBufferManager>(std::ref(*mDevice));
+		bs::HardwareBufferManager::StartUp();
+		HardwareBufferManager::StartUp<D3D11HardwareBufferManager>(std::ref(*mDevice));
 
 		// Create render window manager
-		bs::RenderWindowManager::startUp<bs::D3D11RenderWindowManager>(this);
-		RenderWindowManager::startUp();
+		bs::RenderWindowManager::StartUp<bs::D3D11RenderWindowManager>(this);
+		RenderWindowManager::StartUp();
 
 		// Create & register HLSL factory		
 		mHLSLFactory = bs_new<D3D11HLSLProgramFactory>();
 
 		// Create render state manager
-		RenderStateManager::startUp<D3D11RenderStateManager>();
+		RenderStateManager::StartUp<D3D11RenderStateManager>();
 
 		// Create main command buffer
-		mMainCommandBuffer = std::static_pointer_cast<D3D11CommandBuffer>(CommandBuffer::create(GQT_GRAPHICS));
+		mMainCommandBuffer = std::static_pointer_cast<D3D11CommandBuffer>(CommandBuffer::Create(GQT_GRAPHICS));
 
 		mNumDevices = 1;
 		mCurrentCapabilities = bs_newN<RenderAPICapabilities>(mNumDevices);
 		initCapabilites(selectedAdapter, mCurrentCapabilities[0]);
 				
-		GpuProgramManager::instance().addFactory("hlsl", mHLSLFactory);
+		GpuProgramManager::Instance().addFactory("hlsl", mHLSLFactory);
 
 		mIAManager = bs_new<D3D11InputLayoutManager>();
 
 		RenderAPI::initialize();
 	}
 
-	void D3D11RenderAPI::initializeWithWindow(const SPtr<RenderWindow>& primaryWindow)
+	void D3D11RenderAPI::InitializeWithWindow(const SPtr<RenderWindow>& primaryWindow)
 	{
-		D3D11RenderUtility::startUp(mDevice);
+		D3D11RenderUtility::StartUp(mDevice);
 
-		QueryManager::startUp<D3D11QueryManager>();
+		QueryManager::StartUp<D3D11QueryManager>();
 
 		RenderAPI::initializeWithWindow(primaryWindow);
 	}
 
-	void D3D11RenderAPI::destroyCore()
+	void D3D11RenderAPI::DestroyCore()
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
 		// Ensure that all GPU commands finish executing before shutting down the device. If we don't do this a crash
 		// on shutdown may occurr as the driver is still executing the commands, and we unload this library.
 		mDevice->getImmediateContext()->Flush();
-		SPtr<EventQuery> query = EventQuery::create();
+		SPtr<EventQuery> query = EventQuery::Create();
 		query->begin();
 		while(!query->isReady())
 		{
@@ -154,8 +154,8 @@ namespace bs { namespace ct
 		}
 		query = nullptr;
 
-		QueryManager::shutDown();
-		D3D11RenderUtility::shutDown();
+		QueryManager::ShutDown();
+		D3D11RenderUtility::ShutDown();
 
 		if(mIAManager != nullptr)
 		{
@@ -175,14 +175,14 @@ namespace bs { namespace ct
 		mActiveDepthStencilState = nullptr;
 		mMainCommandBuffer = nullptr;
 
-		RenderStateManager::shutDown();
-		RenderWindowManager::shutDown();
-		bs::RenderWindowManager::shutDown();
-		HardwareBufferManager::shutDown();
-		bs::HardwareBufferManager::shutDown();
-		TextureManager::shutDown();
-		bs::TextureManager::shutDown();
-		CommandBufferManager::shutDown();
+		RenderStateManager::ShutDown();
+		RenderWindowManager::ShutDown();
+		bs::RenderWindowManager::ShutDown();
+		HardwareBufferManager::ShutDown();
+		bs::HardwareBufferManager::ShutDown();
+		TextureManager::ShutDown();
+		bs::TextureManager::ShutDown();
+		CommandBufferManager::ShutDown();
 
 		SAFE_RELEASE(mDXGIFactory);
 
@@ -203,7 +203,7 @@ namespace bs { namespace ct
 		RenderAPI::destroyCore();
 	}
 
-	void D3D11RenderAPI::setGraphicsPipeline(const SPtr<GraphicsPipelineState>& pipelineState,
+	void D3D11RenderAPI::SetGraphicsPipeline(const SPtr<GraphicsPipelineState>& pipelineState,
 		const SPtr<CommandBuffer>& commandBuffer)
 	{
 		auto executeRef = [&](const SPtr<GraphicsPipelineState>& pipelineState)
@@ -295,7 +295,7 @@ namespace bs { namespace ct
 		BS_INC_RENDER_STAT(NumPipelineStateChanges);
 	}
 
-	void D3D11RenderAPI::setComputePipeline(const SPtr<ComputePipelineState>& pipelineState,
+	void D3D11RenderAPI::SetComputePipeline(const SPtr<ComputePipelineState>& pipelineState,
 		const SPtr<CommandBuffer>& commandBuffer)
 	{
 		auto executeRef = [&](const SPtr<ComputePipelineState>& pipelineState)
@@ -323,7 +323,7 @@ namespace bs { namespace ct
 		BS_INC_RENDER_STAT(NumPipelineStateChanges);
 	}
 
-	void D3D11RenderAPI::setGpuParams(const SPtr<GpuParams>& gpuParams, const SPtr<CommandBuffer>& commandBuffer)
+	void D3D11RenderAPI::SetGpuParams(const SPtr<GpuParams>& gpuParams, const SPtr<CommandBuffer>& commandBuffer)
 	{
 		auto executeRef = [&](const SPtr<GpuParams>& gpuParams)
 		{
@@ -603,7 +603,7 @@ namespace bs { namespace ct
 		BS_INC_RENDER_STAT(NumGpuParamBinds);
 	}
 
-	void D3D11RenderAPI::setViewport(const Rect2& vp, const SPtr<CommandBuffer>& commandBuffer)
+	void D3D11RenderAPI::SetViewport(const Rect2& vp, const SPtr<CommandBuffer>& commandBuffer)
 	{
 		auto executeRef = [&](const Rect2& vp)
 		{
@@ -619,7 +619,7 @@ namespace bs { namespace ct
 		cb->queueCommand(execute);
 	}
 
-	void D3D11RenderAPI::setVertexBuffers(UINT32 index, SPtr<VertexBuffer>* buffers, UINT32 numBuffers,
+	void D3D11RenderAPI::SetVertexBuffers(UINT32 index, SPtr<VertexBuffer>* buffers, UINT32 numBuffers,
 		const SPtr<CommandBuffer>& commandBuffer)
 	{
 		auto executeRef = [&](UINT32 index, const SmallVector<SPtr<VertexBuffer>, 8>& buffers, UINT32 numBuffers)
@@ -664,7 +664,7 @@ namespace bs { namespace ct
 		BS_INC_RENDER_STAT(NumVertexBufferBinds);
 	}
 
-	void D3D11RenderAPI::setIndexBuffer(const SPtr<IndexBuffer>& buffer, const SPtr<CommandBuffer>& commandBuffer)
+	void D3D11RenderAPI::SetIndexBuffer(const SPtr<IndexBuffer>& buffer, const SPtr<CommandBuffer>& commandBuffer)
 	{
 		auto executeRef = [&](const SPtr<IndexBuffer>& buffer)
 		{
@@ -691,7 +691,7 @@ namespace bs { namespace ct
 		BS_INC_RENDER_STAT(NumIndexBufferBinds);
 	}
 
-	void D3D11RenderAPI::setVertexDeclaration(const SPtr<VertexDeclaration>& vertexDeclaration,
+	void D3D11RenderAPI::SetVertexDeclaration(const SPtr<VertexDeclaration>& vertexDeclaration,
 		const SPtr<CommandBuffer>& commandBuffer)
 	{
 		auto executeRef = [&](const SPtr<VertexDeclaration>& vertexDeclaration)
@@ -707,7 +707,7 @@ namespace bs { namespace ct
 		cb->queueCommand(execute);
 	}
 
-	void D3D11RenderAPI::setDrawOperation(DrawOperationType op, const SPtr<CommandBuffer>& commandBuffer)
+	void D3D11RenderAPI::SetDrawOperation(DrawOperationType op, const SPtr<CommandBuffer>& commandBuffer)
 	{
 		auto executeRef = [&](DrawOperationType op)
 		{
@@ -723,7 +723,7 @@ namespace bs { namespace ct
 		cb->queueCommand(execute);
 	}
 
-	void D3D11RenderAPI::draw(UINT32 vertexOffset, UINT32 vertexCount, UINT32 instanceCount,
+	void D3D11RenderAPI::Draw(UINT32 vertexOffset, UINT32 vertexCount, UINT32 instanceCount,
 		const SPtr<CommandBuffer>& commandBuffer)
 	{
 		auto executeRef = [&](UINT32 vertexOffset, UINT32 vertexCount, UINT32 instanceCount)
@@ -757,7 +757,7 @@ namespace bs { namespace ct
 		BS_ADD_RENDER_STAT(NumPrimitives, primCount);
 	}
 
-	void D3D11RenderAPI::drawIndexed(UINT32 startIndex, UINT32 indexCount, UINT32 vertexOffset, UINT32 vertexCount,
+	void D3D11RenderAPI::DrawIndexed(UINT32 startIndex, UINT32 indexCount, UINT32 vertexOffset, UINT32 vertexCount,
 		UINT32 instanceCount, const SPtr<CommandBuffer>& commandBuffer)
 	{
 		auto executeRef = [&](UINT32 startIndex, UINT32 indexCount, UINT32 vertexOffset, UINT32 vertexCount,
@@ -792,7 +792,7 @@ namespace bs { namespace ct
 		BS_ADD_RENDER_STAT(NumPrimitives, primCount);
 	}
 
-	void D3D11RenderAPI::dispatchCompute(UINT32 numGroupsX, UINT32 numGroupsY, UINT32 numGroupsZ,
+	void D3D11RenderAPI::DispatchCompute(UINT32 numGroupsX, UINT32 numGroupsY, UINT32 numGroupsZ,
 		const SPtr<CommandBuffer>& commandBuffer)
 	{
 		auto executeRef = [&](UINT32 numGroupsX, UINT32 numGroupsY, UINT32 numGroupsZ)
@@ -815,7 +815,7 @@ namespace bs { namespace ct
 		BS_INC_RENDER_STAT(NumComputeCalls);
 	}
 
-	void D3D11RenderAPI::setScissorRect(UINT32 left, UINT32 top, UINT32 right, UINT32 bottom,
+	void D3D11RenderAPI::SetScissorRect(UINT32 left, UINT32 top, UINT32 right, UINT32 bottom,
 		const SPtr<CommandBuffer>& commandBuffer)
 	{
 		auto executeRef = [&](UINT32 left, UINT32 top, UINT32 right, UINT32 bottom)
@@ -836,7 +836,7 @@ namespace bs { namespace ct
 		cb->queueCommand(execute);
 	}
 
-	void D3D11RenderAPI::setStencilRef(UINT32 value, const SPtr<CommandBuffer>& commandBuffer)
+	void D3D11RenderAPI::SetStencilRef(UINT32 value, const SPtr<CommandBuffer>& commandBuffer)
 	{
 		auto executeRef = [&](UINT32 value)
 		{
@@ -856,7 +856,7 @@ namespace bs { namespace ct
 		cb->queueCommand(execute);
 	}
 
-	void D3D11RenderAPI::clearViewport(UINT32 buffers, const Color& color, float depth, UINT16 stencil, UINT8 targetMask,
+	void D3D11RenderAPI::ClearViewport(UINT32 buffers, const Color& color, float depth, UINT16 stencil, UINT8 targetMask,
 		const SPtr<CommandBuffer>& commandBuffer)
 	{
 		auto executeRef = [&](UINT32 buffers, const Color& color, float depth, UINT16 stencil, UINT8 targetMask)
@@ -877,7 +877,7 @@ namespace bs { namespace ct
 			if (!clearEntireTarget)
 			{
 				// TODO - Ignoring targetMask here
-				D3D11RenderUtility::instance().drawClearQuad(buffers, color, depth, stencil);
+				D3D11RenderUtility::Instance().drawClearQuad(buffers, color, depth, stencil);
 				BS_INC_RENDER_STAT(NumClears);
 
 				notifyRenderTargetModified();
@@ -892,7 +892,7 @@ namespace bs { namespace ct
 		cb->queueCommand(execute);
 	}
 
-	void D3D11RenderAPI::clearRenderTarget(UINT32 buffers, const Color& color, float depth, UINT16 stencil,
+	void D3D11RenderAPI::ClearRenderTarget(UINT32 buffers, const Color& color, float depth, UINT16 stencil,
 		UINT8 targetMask, const SPtr<CommandBuffer>& commandBuffer)
 	{
 		auto executeRef = [&](UINT32 buffers, const Color& color, float depth, UINT16 stencil, UINT8 targetMask)
@@ -962,7 +962,7 @@ namespace bs { namespace ct
 		BS_INC_RENDER_STAT(NumClears);
 	}
 
-	void D3D11RenderAPI::setRenderTarget(const SPtr<RenderTarget>& target, UINT32 readOnlyFlags,
+	void D3D11RenderAPI::SetRenderTarget(const SPtr<RenderTarget>& target, UINT32 readOnlyFlags,
 		RenderSurfaceMask loadMask, const SPtr<CommandBuffer>& commandBuffer)
 	{
 		auto executeRef = [&](const SPtr<RenderTarget>& target, UINT32 readOnlyFlags)
@@ -1015,7 +1015,7 @@ namespace bs { namespace ct
 		BS_INC_RENDER_STAT(NumRenderTargetChanges);
 	}
 
-	void D3D11RenderAPI::swapBuffers(const SPtr<RenderTarget>& target, UINT32 syncMask)
+	void D3D11RenderAPI::SwapBuffers(const SPtr<RenderTarget>& target, UINT32 syncMask)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -1025,28 +1025,28 @@ namespace bs { namespace ct
 		BS_INC_RENDER_STAT(NumPresents);
 	}
 
-	void D3D11RenderAPI::addCommands(const SPtr<CommandBuffer>& commandBuffer, const SPtr<CommandBuffer>& secondary)
+	void D3D11RenderAPI::AddCommands(const SPtr<CommandBuffer>& commandBuffer, const SPtr<CommandBuffer>& secondary)
 	{
 		// We're not supporting this as we don't support command buffer command queuing at all (i.e. they are executed
 		// straight away).
 		BS_LOG(Error, RenderBackend, "Secondary command buffers not supported on DirectX 11.");
 	}
 
-	void D3D11RenderAPI::submitCommandBuffer(const SPtr<CommandBuffer>& commandBuffer, UINT32 syncMask)
+	void D3D11RenderAPI::SubmitCommandBuffer(const SPtr<CommandBuffer>& commandBuffer, UINT32 syncMask)
 	{
 		SPtr<D3D11CommandBuffer> cb = getCB(commandBuffer);
 		cb->executeCommands();
 
 		if (cb == mMainCommandBuffer)
-			mMainCommandBuffer = std::static_pointer_cast<D3D11CommandBuffer>(CommandBuffer::create(GQT_GRAPHICS));
+			mMainCommandBuffer = std::static_pointer_cast<D3D11CommandBuffer>(CommandBuffer::Create(GQT_GRAPHICS));
 	}
 
-	SPtr<CommandBuffer> D3D11RenderAPI::getMainCommandBuffer() const
+	SPtr<CommandBuffer> D3D11RenderAPI::GetMainCommandBuffer() const
 	{
 		return mMainCommandBuffer;
 	}
 
-	SPtr<D3D11CommandBuffer> D3D11RenderAPI::getCB(const SPtr<CommandBuffer>& buffer)
+	SPtr<D3D11CommandBuffer> D3D11RenderAPI::GetCb(const SPtr<CommandBuffer>& buffer)
 	{
 		if (buffer != nullptr)
 			return std::static_pointer_cast<D3D11CommandBuffer>(buffer);
@@ -1054,7 +1054,7 @@ namespace bs { namespace ct
 		return std::static_pointer_cast<D3D11CommandBuffer>(mMainCommandBuffer);
 	}
 
-	void D3D11RenderAPI::applyViewport()
+	void D3D11RenderAPI::ApplyViewport()
 	{
 		if (mActiveRenderTarget == nullptr)
 			return;
@@ -1079,7 +1079,7 @@ namespace bs { namespace ct
 		mDevice->getImmediateContext()->RSSetViewports(1, &mViewport);
 	}
 
-	void D3D11RenderAPI::notifyRenderTargetModified()
+	void D3D11RenderAPI::NotifyRenderTargetModified()
 	{
 		if (mActiveRenderTarget == nullptr || mActiveRenderTargetModified)
 			return;
@@ -1088,7 +1088,7 @@ namespace bs { namespace ct
 		mActiveRenderTargetModified = true;
 	}
 
-	void D3D11RenderAPI::initCapabilites(IDXGIAdapter* adapter, RenderAPICapabilities& caps) const
+	void D3D11RenderAPI::InitCapabilites(IDXGIAdapter* adapter, RenderAPICapabilities& caps) const
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -1204,7 +1204,7 @@ namespace bs { namespace ct
 		caps.numMultiRenderTargets = D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT;
 	}
 
-	void D3D11RenderAPI::determineMultisampleSettings(UINT32 multisampleCount, DXGI_FORMAT format, DXGI_SAMPLE_DESC* outputSampleDesc)
+	void D3D11RenderAPI::DetermineMultisampleSettings(UINT32 multisampleCount, DXGI_FORMAT format, DXGI_SAMPLE_DESC* outputSampleDesc)
 	{
 		if(multisampleCount == 0 || multisampleCount == 1)
 		{
@@ -1305,7 +1305,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	void D3D11RenderAPI::convertProjectionMatrix(const Matrix4& matrix, Matrix4& dest)
+	void D3D11RenderAPI::ConvertProjectionMatrix(const Matrix4& matrix, Matrix4& dest)
 	{
 		dest = matrix;
 
@@ -1316,7 +1316,7 @@ namespace bs { namespace ct
 		dest[2][3] = (dest[2][3] + dest[3][3]) / 2;
 	}
 
-	GpuParamBlockDesc D3D11RenderAPI::generateParamBlockDesc(const String& name, Vector<GpuParamDataDesc>& params)
+	GpuParamBlockDesc D3D11RenderAPI::GenerateParamBlockDesc(const String& name, Vector<GpuParamDataDesc>& params)
 	{
 		GpuParamBlockDesc block;
 		block.blockSize = 0;
@@ -1399,7 +1399,7 @@ namespace bs { namespace ct
 	/* 								PRIVATE		                     		*/
 	/************************************************************************/
 
-	void D3D11RenderAPI::applyInputLayout()
+	void D3D11RenderAPI::ApplyInputLayout()
 	{
 		if(mActiveVertexDeclaration == nullptr)
 		{

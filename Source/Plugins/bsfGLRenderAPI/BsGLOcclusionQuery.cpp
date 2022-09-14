@@ -26,7 +26,7 @@ namespace bs { namespace ct
 		BS_INC_RENDER_STAT_CAT(ResDestroyed, RenderStatObject_Query);
 	}
 
-	void GLOcclusionQuery::begin(const SPtr<CommandBuffer>& cb)
+	void GLOcclusionQuery::Begin(const SPtr<CommandBuffer>& cb)
 	{
 		auto execute = [&]()
 		{
@@ -43,11 +43,11 @@ namespace bs { namespace ct
 		else
 		{
 			SPtr<GLCommandBuffer> glCB = std::static_pointer_cast<GLCommandBuffer>(cb);
-			glCB->queueCommand(execute);
+			glCB->QueueCommand(execute);
 		}
 	}
 
-	void GLOcclusionQuery::end(const SPtr<CommandBuffer>& cb)
+	void GLOcclusionQuery::End(const SPtr<CommandBuffer>& cb)
 	{
 		auto execute = [&]()
 		{
@@ -67,7 +67,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	bool GLOcclusionQuery::isReady() const
+	bool GLOcclusionQuery::IsReady() const
 	{
 		if (!mEndIssued)
 			return false;
@@ -79,7 +79,7 @@ namespace bs { namespace ct
 		return done == GL_TRUE;
 	}
 
-	UINT32 GLOcclusionQuery::getNumSamples()
+	UINT32 GLOcclusionQuery::GetNumSamples()
 	{
 		if (!mFinalized && isReady())
 		{
@@ -89,7 +89,7 @@ namespace bs { namespace ct
 		return mNumSamples;
 	}
 
-	void GLOcclusionQuery::finalize()
+	void GLOcclusionQuery::Finalize()
 	{
 		mFinalized = true;
 

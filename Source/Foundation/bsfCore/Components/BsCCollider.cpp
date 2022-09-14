@@ -12,7 +12,7 @@ namespace bs
 {
 	CCollider::CCollider()
 	{
-		setName("Collider");
+		SetName("Collider");
 
 		mNotifyFlags = (TransformChangedFlags)(TCF_Parent | TCF_Transform);
 	}
@@ -20,12 +20,12 @@ namespace bs
 	CCollider::CCollider(const HSceneObject& parent)
 		: Component(parent)
 	{
-		setName("Collider");
+		SetName("Collider");
 
 		mNotifyFlags = (TransformChangedFlags)(TCF_Parent | TCF_Transform);
 	}
 
-	void CCollider::setIsTrigger(bool value)
+	void CCollider::SetIsTrigger(bool value)
 	{
 		if (mIsTrigger == value)
 			return;
@@ -34,14 +34,14 @@ namespace bs
 
 		if (mInternal != nullptr)
 		{
-			mInternal->setIsTrigger(value);
+			mInternal->SetIsTrigger(value);
 
-			updateParentRigidbody();
-			updateTransform();
+			UpdateParentRigidbody();
+			UpdateTransform();
 		}
 	}
 
-	void CCollider::setMass(float mass)
+	void CCollider::SetMass(float mass)
 	{
 		if (mMass == mass)
 			return;
@@ -50,84 +50,84 @@ namespace bs
 
 		if (mInternal != nullptr)
 		{
-			mInternal->setMass(mass);
+			mInternal->SetMass(mass);
 
 			if (mParent != nullptr)
 				mParent->UpdateMassDistributionInternal();
 		}
 	}
 
-	void CCollider::setMaterial(const HPhysicsMaterial& material)
+	void CCollider::SetMaterial(const HPhysicsMaterial& material)
 	{
 		mMaterial = material;
 
 		if (mInternal != nullptr)
-			mInternal->setMaterial(material);
+			mInternal->SetMaterial(material);
 	}
 
-	void CCollider::setContactOffset(float value)
+	void CCollider::SetContactOffset(float value)
 	{
-		value = std::max(0.0f, std::max(value, getRestOffset()));
+		value = std::max(0.0f, std::max(value, GetRestOffset()));
 
 		mContactOffset = value;
 
 		if (mInternal != nullptr)
-			mInternal->setContactOffset(value);
+			mInternal->SetContactOffset(value);
 	}
 
-	void CCollider::setRestOffset(float value)
+	void CCollider::SetRestOffset(float value)
 	{
-		value = std::min(value, getContactOffset());
+		value = std::min(value, GetContactOffset());
 
 		mRestOffset = value;
 
 		if (mInternal != nullptr)
-			mInternal->setRestOffset(value);
+			mInternal->SetRestOffset(value);
 	}
 
-	void CCollider::setLayer(UINT64 layer)
+	void CCollider::SetLayer(UINT64 layer)
 	{
 		mLayer = layer;
 
 		if (mInternal != nullptr)
-			mInternal->setLayer(layer);
+			mInternal->SetLayer(layer);
 	}
 
-	void CCollider::setCollisionReportMode(CollisionReportMode mode)
+	void CCollider::SetCollisionReportMode(CollisionReportMode mode)
 	{
 		mCollisionReportMode = mode;
 
 		if (mInternal != nullptr)
-			updateCollisionReportMode();
+			UpdateCollisionReportMode();
 	}
 
-	void CCollider::onInitialized()
+	void CCollider::OnInitialized()
 	{
 
 	}
 
-	void CCollider::onDestroyed()
+	void CCollider::OnDestroyed()
 	{
-		destroyInternal();
+		DestroyInternal();
 	}
 
-	void CCollider::onDisabled()
+	void CCollider::OnDisabled()
 	{
-		destroyInternal();
+		DestroyInternal();
 	}
 
-	void CCollider::onEnabled()
+	void CCollider::OnEnabled()
 	{
-		restoreInternal();
+		RestoreInternal();
 	}
 
-	void CCollider::onTransformChanged(TransformChangedFlags flags)
+	void CCollider::OnTransformChanged(TransformChangedFlags flags)
 	{
-		if (!SO()->getActive())
+		if (!SO()->GetActive())
 			return;
 
 		if ((flags & TCF_Parent) != 0)
-			updateParentRigidbody();
+			UpdateParentRigidbody();
 
 		// Don't update the transform if it's due to Physics update since then we can guarantee it will remain at the same
 		// relative transform to its parent
@@ -135,10 +135,10 @@ namespace bs
 			return;
 
 		if ((flags & (TCF_Parent | TCF_Transform)) != 0)
-			updateTransform();
+			UpdateTransform();
 	}
 
-	void CCollider::setRigidbody(const HRigidbody& rigidbody, bool internal)
+	void CCollider::SetRigidbody(const HRigidbody& rigidbody, bool internal)
 	{
 		if (rigidbody == mParent)
 			return;
@@ -146,50 +146,50 @@ namespace bs
 		if (mInternal != nullptr && !internal)
 		{
 			if (mParent != nullptr)
-				mParent->removeCollider(static_object_cast<CCollider>(mThisHandle));
+				mParent->RemoveCollider(static_object_cast<CCollider>(mThisHandle));
 
 			Rigidbody* rigidBodyPtr = nullptr;
 
 			if (rigidbody != nullptr)
 				rigidBodyPtr = rigidbody->GetInternalInternal();
 
-			mInternal->setRigidbody(rigidBodyPtr);
+			mInternal->SetRigidbody(rigidBodyPtr);
 
 			if (rigidbody != nullptr)
-				rigidbody->addCollider(static_object_cast<CCollider>(mThisHandle));
+				rigidbody->AddCollider(static_object_cast<CCollider>(mThisHandle));
 		}
 
 		mParent = rigidbody;
-		updateCollisionReportMode();
-		updateTransform();
+		UpdateCollisionReportMode();
+		UpdateTransform();
 	}
 
-	bool CCollider::rayCast(const Ray& ray, PhysicsQueryHit& hit, float maxDist) const
+	bool CCollider::RayCast(const Ray& ray, PhysicsQueryHit& hit, float maxDist) const
 	{
 		if (mInternal == nullptr)
 			return false;
 
-		return mInternal->rayCast(ray, hit, maxDist);
+		return mInternal->RayCast(ray, hit, maxDist);
 	}
 
-	bool CCollider::rayCast(const Vector3& origin, const Vector3& unitDir, PhysicsQueryHit& hit,
+	bool CCollider::RayCast(const Vector3& origin, const Vector3& unitDir, PhysicsQueryHit& hit,
 		float maxDist) const
 	{
 		if (mInternal == nullptr)
 			return false;
 
-		return mInternal->rayCast(origin, unitDir, hit, maxDist);
+		return mInternal->RayCast(origin, unitDir, hit, maxDist);
 	}
 
-	void CCollider::restoreInternal()
+	void CCollider::RestoreInternal()
 	{
 		if (mInternal == nullptr)
 		{
-			mInternal = createInternal();
+			mInternal = CreateInternal();
 
-			mInternal->onCollisionBegin.connect(std::bind(&CCollider::triggerOnCollisionBegin, this, _1));
-			mInternal->onCollisionStay.connect(std::bind(&CCollider::triggerOnCollisionStay, this, _1));
-			mInternal->onCollisionEnd.connect(std::bind(&CCollider::triggerOnCollisionEnd, this, _1));
+			mInternal->onCollisionBegin.Connect(std::bind(&CCollider::TriggerOnCollisionBegin, this, _1));
+			mInternal->onCollisionStay.Connect(std::bind(&CCollider::TriggerOnCollisionStay, this, _1));
+			mInternal->onCollisionEnd.Connect(std::bind(&CCollider::TriggerOnCollisionEnd, this, _1));
 		}
 
 		// Note: Merge into one call to avoid many virtual function calls
@@ -205,7 +205,7 @@ namespace bs
 		updateCollisionReportMode();
 	}
 
-	void CCollider::destroyInternal()
+	void CCollider::DestroyInternal()
 	{
 		if (mParent != nullptr)
 			mParent->removeCollider(static_object_cast<CCollider>(mThisHandle));
@@ -220,7 +220,7 @@ namespace bs
 		}
 	}
 
-	void CCollider::updateParentRigidbody()
+	void CCollider::UpdateParentRigidbody()
 	{
 		if (mIsTrigger)
 		{
@@ -249,7 +249,7 @@ namespace bs
 		setRigidbody(HRigidbody());
 	}
 
-	void CCollider::updateTransform()
+	void CCollider::UpdateTransform()
 	{
 		const Transform& tfrm = SO()->getTransform();
 		Vector3 myScale = tfrm.getScale();
@@ -296,7 +296,7 @@ namespace bs
 			mInternal->setScale(myScale);
 	}
 
-	void CCollider::updateCollisionReportMode()
+	void CCollider::UpdateCollisionReportMode()
 	{
 		CollisionReportMode mode = mCollisionReportMode;
 
@@ -307,7 +307,7 @@ namespace bs
 			mInternal->setCollisionReportMode(mode);
 	}
 
-	void CCollider::triggerOnCollisionBegin(const CollisionDataRaw& data)
+	void CCollider::TriggerOnCollisionBegin(const CollisionDataRaw& data)
 	{
 		CollisionData hit;
 		hit.contactPoints = data.contactPoints;
@@ -322,7 +322,7 @@ namespace bs
 		onCollisionBegin(hit);
 	}
 
-	void CCollider::triggerOnCollisionStay(const CollisionDataRaw& data)
+	void CCollider::TriggerOnCollisionStay(const CollisionDataRaw& data)
 	{
 		CollisionData hit;
 		hit.contactPoints = data.contactPoints;
@@ -337,7 +337,7 @@ namespace bs
 		onCollisionStay(hit);
 	}
 
-	void CCollider::triggerOnCollisionEnd(const CollisionDataRaw& data)
+	void CCollider::TriggerOnCollisionEnd(const CollisionDataRaw& data)
 	{
 		CollisionData hit;
 		hit.contactPoints = data.contactPoints;
@@ -352,13 +352,13 @@ namespace bs
 		onCollisionEnd(hit);
 	}
 
-	RTTITypeBase* CCollider::getRTTIStatic()
+	RTTITypeBase* CCollider::GetRttiStatic()
 	{
-		return CColliderRTTI::instance();
+		return CColliderRTTI::Instance();
 	}
 
-	RTTITypeBase* CCollider::getRTTI() const
+	RTTITypeBase* CCollider::GetRtti() const
 	{
-		return CCollider::getRTTIStatic();
+		return CCollider::GetRttiStatic();
 	}
 }

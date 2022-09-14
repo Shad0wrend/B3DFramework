@@ -194,7 +194,7 @@ namespace bs
 		 *
 		 * @note	Should be called from the sim thread when the caller is sure the animation thread is not using it.
 		 */
-		void rebuild(const SPtr<Skeleton>& skeleton, const SkeletonMask& mask, Vector<AnimationClipInfo>& clipInfos,
+		void Rebuild(const SPtr<Skeleton>& skeleton, const SkeletonMask& mask, Vector<AnimationClipInfo>& clipInfos,
 			const Vector<AnimatedSceneObject>& sceneObjects, const SPtr<MorphShapes>& morphShapes);
 
 		/**
@@ -209,7 +209,7 @@ namespace bs
 		 *
 		 * @note	Should be called from the sim thread when the caller is sure the animation thread is not using it.
 		 */
-		void rebuild(Vector<AnimationClipInfo>& clipInfos, const Vector<AnimatedSceneObject>& sceneObjects,
+		void Rebuild(Vector<AnimationClipInfo>& clipInfos, const Vector<AnimatedSceneObject>& sceneObjects,
 			const SPtr<MorphShapes>& morphShapes);
 
 		/**
@@ -218,13 +218,13 @@ namespace bs
 		 *
 		 * @note	Should be called from the sim thread when the caller is sure the animation thread is not using it.
 		 */
-		void updateClipInfos(const Vector<AnimationClipInfo>& clipInfos);
+		void UpdateClipInfos(const Vector<AnimationClipInfo>& clipInfos);
 
 		/**
 		 * Updates the proxy data with new weights used for morph shapes. Caller must ensure the weights are ordered so
 		 * they match with the morph shapes provided to the last rebuild() call.
 		 */
-		void updateMorphChannelWeights(const Vector<float>& weights);
+		void UpdateMorphChannelWeights(const Vector<float>& weights);
 
 		/**
 		 * Updates the proxy data with new scene object transforms. Caller must guarantee that clip layout didn't
@@ -232,7 +232,7 @@ namespace bs
 		 *
 		 * @note	Should be called from the sim thread when the caller is sure the animation thread is not using it.
 		 */
-		void updateTransforms(const Vector<AnimatedSceneObject>& sceneObjects);
+		void UpdateTransforms(const Vector<AnimatedSceneObject>& sceneObjects);
 
 		/**
 		 * Updates the proxy data with new clip times. Caller must guarantee that clip layout didn't change since the last
@@ -240,10 +240,10 @@ namespace bs
 		 *
 		 * @note	Should be called from the sim thread when the caller is sure the animation thread is not using it.
 		 */
-		void updateTime(const Vector<AnimationClipInfo>& clipInfos);
+		void UpdateTime(const Vector<AnimationClipInfo>& clipInfos);
 
 		/** Destroys all dynamically allocated objects. */
-		void clear();
+		void Clear();
 
 		UINT64 id;
 
@@ -294,13 +294,13 @@ namespace bs
 		 * Changes the skeleton which will the translation/rotation/scale animation values manipulate. If no skeleton is set
 		 * the animation will only evaluate the generic curves, and the root translation/rotation/scale curves.
 		 */
-		void setSkeleton(const SPtr<Skeleton>& skeleton);
+		void SetSkeleton(const SPtr<Skeleton>& skeleton);
 
 		/**
 		 * Sets morph shapes that can be used for per-vertex blending animation. After they're set call
 		 * setMorphShapeWeight() to apply morph shapes.
 		 */
-		void setMorphShapes(const SPtr<MorphShapes>& morphShapes);
+		void SetMorphShapes(const SPtr<MorphShapes>& morphShapes);
 
 		/**
 		 * Changes a weight of a single morph channel, determining how much of it to apply on top of the base mesh.
@@ -309,44 +309,44 @@ namespace bs
 		 *					provided to setMorphShapes().
 		 * @param weight	Weight that determines how much of the channel to apply to the mesh, in range [0, 1]. 	
 		 */
-		void setMorphChannelWeight(UINT32 idx, float weight);
+		void SetMorphChannelWeight(UINT32 idx, float weight);
 
 		/**
 		 * Sets a mask that allows certain bones from the skeleton to be disabled. Caller must ensure that the mask matches
 		 * the skeleton assigned to the animation.
 		 */
-		void setMask(const SkeletonMask& mask);
+		void SetMask(const SkeletonMask& mask);
 
 		/**
 		 * Determines the wrap mode for all active animations. Wrap mode determines what happens when animation reaches the
 		 * first or last frame.
 		 */
-		void setWrapMode(AnimWrapMode wrapMode);
+		void SetWrapMode(AnimWrapMode wrapMode);
 
 		/** Determines the speed for all animations. The default value is 1.0f. Use negative values to play-back in reverse. */
-		void setSpeed(float speed);
+		void SetSpeed(float speed);
 
 		/** Determines bounds that will be used for animation culling, if enabled. Bounds must be in world space. */
-		void setBounds(const AABox& bounds);
+		void SetBounds(const AABox& bounds);
 
 		/** @copydoc setBounds */
-		const AABox& getBounds() const { return mBounds; }
+		const AABox& GetBounds() const { return mBounds; }
 
 		/**
 		 * When enabled, animation that is not in a view of any camera will not be evaluated. View determination is done by
 		 * checking the bounds provided in setBounds().
 		 */
-		void setCulling(bool cull);
+		void SetCulling(bool cull);
 
 		/** @copydoc setCulling */
-		bool getCulling() const { return mCull; }
+		bool GetCulling() const { return mCull; }
 
 		/**
 		 * Plays the specified animation clip.
 		 *
 		 * @param[in]	clip		Clip to play.
 		 */
-		void play(const HAnimationClip& clip);
+		void Play(const HAnimationClip& clip);
 
 		/**
 		 * Plays the specified animation clip on top of the animation currently playing in the main layer. Multiple
@@ -361,7 +361,7 @@ namespace bs
 		 * @param[in]	layer		Layer to play the clip in. Multiple additive clips can be playing at once in separate
 		 *							layers and each layer has its own weight.
 		 */
-		void blendAdditive(const HAnimationClip& clip, float weight, float fadeLength = 0.0f, UINT32 layer = 0);
+		void BlendAdditive(const HAnimationClip& clip, float weight, float fadeLength = 0.0f, UINT32 layer = 0);
 
 		/**
 		 * Blend multiple animation clips between each other using linear interpolation. Unlike normal animations these
@@ -372,7 +372,7 @@ namespace bs
 		 * @param[in]	t		Parameter that controls the blending. Range depends on the positions of the provided
 		 *						animation clips.
 		 */
-		void blend1D(const Blend1DInfo& info, float t);
+		void Blend1D(const Blend1DInfo& info, float t);
 
 		/**
 		 * Blend four animation clips between each other using bilinear interpolation. Unlike normal animations these
@@ -385,7 +385,7 @@ namespace bs
 		 *						t = (0, 1) means bottom left animation has full influence, t = (1, 1) means bottom right
 		 *						animation has full influence.
 		 */
-		void blend2D(const Blend2DInfo& info, const Vector2& t);
+		void Blend2D(const Blend2DInfo& info, const Vector2& t);
 
 		/**
 		 * Fades the specified animation clip in, while fading other playing animation out, over the specified time
@@ -394,7 +394,7 @@ namespace bs
 		 * @param[in]	clip		Clip to fade in.
 		 * @param[in]	fadeLength	Determines the time period over which the fade occurs. In seconds.
 		 */
-		void crossFade(const HAnimationClip& clip, float fadeLength);
+		void CrossFade(const HAnimationClip& clip, float fadeLength);
 
 		/**
 		 * Samples an animation clip at the specified time, displaying only that particular frame without further playback.
@@ -402,22 +402,22 @@ namespace bs
 		 * @param[in] clip	Animation clip to sample.
 		 * @param[in] time	Time to sample the clip at.
 		 */
-		void sample(const HAnimationClip& clip, float time);
+		void Sample(const HAnimationClip& clip, float time);
 
 		/**
 		 * Stops playing all animations on the provided layer. Specify -1 to stop animation on the main layer
 		 * (non-additive animations).
 		 */
-		void stop(UINT32 layer);
+		void Stop(UINT32 layer);
 
 		/** Stops playing all animations. */
-		void stopAll();
+		void StopAll();
 		
 		/** Checks if any animation clips are currently playing. */
-		bool isPlaying() const;
+		bool IsPlaying() const;
 
 		/** Returns the total number of animation clips influencing this animation. */
-		UINT32 getNumClips() const;
+		UINT32 GetNumClips() const;
 
 		/**
 		 * Returns one of the animation clips influencing this animation.
@@ -425,7 +425,7 @@ namespace bs
 		 * @param[in]	idx		Sequential index of the animation clip to retrieve. In range [0, getNumClips()].
 		 * @return				Animation clip at the specified index, or null if the index is out of range.
 		 */
-		HAnimationClip getClip(UINT32 idx) const;
+		HAnimationClip GetClip(UINT32 idx) const;
 
 		/**
 		 * Retrieves detailed information about a currently playing animation clip.
@@ -435,7 +435,7 @@ namespace bs
 		 *						true.
 		 * @return				True if the state was found (animation clip is playing), false otherwise.
 		 */
-		bool getState(const HAnimationClip& clip, AnimationClipState& state);
+		bool GetState(const HAnimationClip& clip, AnimationClipState& state);
 
 		/**
 		 * Changes the state of a playing animation clip. If animation clip is not currently playing the playback is started
@@ -444,7 +444,7 @@ namespace bs
 		 * @param[in]	clip	Clip to change the state for.
 		 * @param[in]	state	New state of the animation (e.g. changing the time for seeking).
 		 */
-		void setState(const HAnimationClip& clip, AnimationClipState state);
+		void SetState(const HAnimationClip& clip, AnimationClipState state);
 
 		/**
 		 * Ensures that any position/rotation/scale animation of a specific animation curve is transfered to the
@@ -455,10 +455,10 @@ namespace bs
 		 *						root bone, regardless of the bone name.
 		 * @param[in]	so		Scene object to influence by the curve modifications, and vice versa.
 		 */
-		void mapCurveToSceneObject(const String& curve, const HSceneObject& so);
+		void MapCurveToSceneObject(const String& curve, const HSceneObject& so);
 
 		/** Removes the curve <-> scene object mapping that was set via mapCurveToSceneObject(). */
-		void unmapSceneObject(const HSceneObject& so);
+		void UnmapSceneObject(const HSceneObject& so);
 
 		/**
 		 * Retrieves an evaluated value for a generic curve with the specified index.
@@ -471,10 +471,10 @@ namespace bs
 		 *							animation clip changed since the last frame (the last problem can be avoided by ensuring
 		 *							to read the curve values before changing the clip).
 		 */
-		bool getGenericCurveValue(UINT32 curveIdx, float& value);
+		bool GetGenericCurveValue(UINT32 curveIdx, float& value);
 
 		/** Creates a new empty Animation object. */
-		static SPtr<Animation> create();
+		static SPtr<Animation> Create();
 
 		/** Triggered whenever an animation event is reached. */
 		Event<void(const HAnimationClip&, const String&)> onEventTriggered;
@@ -500,37 +500,37 @@ namespace bs
 		 *
 		 * @param[in]	delta			Time elapsed since the last call to this method.
 		 */
-		void triggerEvents(float delta);
+		void TriggerEvents(float delta);
 
 		/**
 		 * Updates the animation proxy object based on the currently set skeleton, playing clips and dirty flags.
 		 *
 		 * @param[in]	timeDelta	Seconds passed since the last call to this method.
 		 */
-		void updateAnimProxy(float timeDelta);
+		void UpdateAnimProxy(float timeDelta);
 
 		/**
 		 * Applies any outputs stored in the animation proxy (as written by the animation thread), and uses them to update
 		 * the animation state on the simulation thread. Caller must ensure that the animation thread has finished
 		 * with the animation proxy.
 		 */
-		void updateFromProxy();
+		void UpdateFromProxy();
 
 		/**
 		 * Registers a new animation in the specified layer, or returns an existing animation clip info if the animation is
 		 * already registered. If @p stopExisting is true any existing animations in the layer will be stopped. Layout
 		 * will be marked as dirty if any changes were made.
 		 */
-		AnimationClipInfo* addClip(const HAnimationClip& clip, UINT32 layer, bool stopExisting = true);
+		AnimationClipInfo* AddClip(const HAnimationClip& clip, UINT32 layer, bool stopExisting = true);
 
 		/** @copydoc IResourceListener::getListenerResources */
-		void getListenerResources(Vector<HResource>& resources) override;
+		void GetListenerResources(Vector<HResource>& resources) ;
 
 		/** @copydoc IResourceListener::notifyResourceLoaded */
-		void notifyResourceLoaded(const HResource& resource) override;
+		void NotifyResourceLoaded(const HResource& resource) override;
 
 		/** @copydoc IResourceListener::notifyResourceChanged */
-		void notifyResourceChanged(const HResource& resource) override;
+		void NotifyResourceChanged(const HResource& resource) override;
 
 		UINT64 mId;
 		AnimWrapMode mDefaultWrapMode = AnimWrapMode::Loop;

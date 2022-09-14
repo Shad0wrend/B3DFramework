@@ -19,22 +19,22 @@ namespace bs { namespace ct
 		~GLTimerQuery();
 
 		/** @copydoc TimerQuery::begin */
-		void begin(const SPtr<CommandBuffer>& cb = nullptr) override;
+		void Begin(const SPtr<CommandBuffer>& cb = nullptr) ;
 
 		/** @copydoc TimerQuery::end */
-		void end(const SPtr<CommandBuffer>& cb = nullptr) override;
+		void End(const SPtr<CommandBuffer>& cb = nullptr) ;
 
 		/** @copydoc TimerQuery::isReady */
-		bool isReady() const override;
+		bool IsReady() const ;
 
 		/** @copydoc TimerQuery::getTimeMs */
-		float getTimeMs() override;
+		float GetTimeMs() ;
 
 	private:
 		friend class QueryManager;
 
 		/** Processes query results and saves them for later use. To be called when query has completed. */
-		void finalize();
+		void Finalize();
 
 	private:
 		GLuint mQueryStartObj = 0;

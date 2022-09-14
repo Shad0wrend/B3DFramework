@@ -17,30 +17,30 @@ namespace bs
 	void ScriptGUIContentImages::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptGUIContentImages::box(const __GUIContentImagesInterop& value)
+	MonoObject*ScriptGUIContentImages::Box(const __GUIContentImagesInterop& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	__GUIContentImagesInterop ScriptGUIContentImages::unbox(MonoObject* value)
+	__GUIContentImagesInterop ScriptGUIContentImages::Unbox(MonoObject* value)
 	{
-		return *(__GUIContentImagesInterop*)MonoUtil::unbox(value);
+		return *(__GUIContentImagesInterop*)MonoUtil::Unbox(value);
 	}
 
-	GUIContentImages ScriptGUIContentImages::fromInterop(const __GUIContentImagesInterop& value)
+	GUIContentImages ScriptGUIContentImages::FromInterop(const __GUIContentImagesInterop& value)
 	{
 		GUIContentImages output;
 		ResourceHandle<SpriteTexture> tmpnormal;
 		ScriptSpriteTexture* scriptnormal;
-		scriptnormal = ScriptSpriteTexture::toNative(value.normal);
+		scriptnormal = ScriptSpriteTexture::ToNative(value.normal);
 		if(scriptnormal != nullptr)
-			tmpnormal = scriptnormal->getHandle();
+			tmpnormal = scriptnormal->GetHandle();
 		output.normal = tmpnormal;
 		ResourceHandle<SpriteTexture> tmphover;
 		ScriptSpriteTexture* scripthover;
-		scripthover = ScriptSpriteTexture::toNative(value.hover);
+		scripthover = ScriptSpriteTexture::ToNative(value.hover);
 		if(scripthover != nullptr)
-			tmphover = scripthover->getHandle();
+			tmphover = scripthover->GetHandle();
 		output.hover = tmphover;
 		ResourceHandle<SpriteTexture> tmpactive;
 		ScriptSpriteTexture* scriptactive;
@@ -82,11 +82,11 @@ namespace bs
 		return output;
 	}
 
-	__GUIContentImagesInterop ScriptGUIContentImages::toInterop(const GUIContentImages& value)
+	__GUIContentImagesInterop ScriptGUIContentImages::ToInterop(const GUIContentImages& value)
 	{
 		__GUIContentImagesInterop output;
 		ScriptResourceBase* scriptnormal;
-		scriptnormal = ScriptResourceManager::instance().getScriptResource(value.normal, true);
+		scriptnormal = ScriptResourceManager::Instance().getScriptResource(value.normal, true);
 		MonoObject* tmpnormal;
 		if(scriptnormal != nullptr)
 			tmpnormal = scriptnormal->getManagedInstance();
@@ -94,7 +94,7 @@ namespace bs
 			tmpnormal = nullptr;
 		output.normal = tmpnormal;
 		ScriptResourceBase* scripthover;
-		scripthover = ScriptResourceManager::instance().getScriptResource(value.hover, true);
+		scripthover = ScriptResourceManager::Instance().getScriptResource(value.hover, true);
 		MonoObject* tmphover;
 		if(scripthover != nullptr)
 			tmphover = scripthover->getManagedInstance();
@@ -102,7 +102,7 @@ namespace bs
 			tmphover = nullptr;
 		output.hover = tmphover;
 		ScriptResourceBase* scriptactive;
-		scriptactive = ScriptResourceManager::instance().getScriptResource(value.active, true);
+		scriptactive = ScriptResourceManager::Instance().getScriptResource(value.active, true);
 		MonoObject* tmpactive;
 		if(scriptactive != nullptr)
 			tmpactive = scriptactive->getManagedInstance();
@@ -110,7 +110,7 @@ namespace bs
 			tmpactive = nullptr;
 		output.active = tmpactive;
 		ScriptResourceBase* scriptfocused;
-		scriptfocused = ScriptResourceManager::instance().getScriptResource(value.focused, true);
+		scriptfocused = ScriptResourceManager::Instance().getScriptResource(value.focused, true);
 		MonoObject* tmpfocused;
 		if(scriptfocused != nullptr)
 			tmpfocused = scriptfocused->getManagedInstance();
@@ -118,7 +118,7 @@ namespace bs
 			tmpfocused = nullptr;
 		output.focused = tmpfocused;
 		ScriptResourceBase* scriptnormalOn;
-		scriptnormalOn = ScriptResourceManager::instance().getScriptResource(value.normalOn, true);
+		scriptnormalOn = ScriptResourceManager::Instance().getScriptResource(value.normalOn, true);
 		MonoObject* tmpnormalOn;
 		if(scriptnormalOn != nullptr)
 			tmpnormalOn = scriptnormalOn->getManagedInstance();
@@ -126,7 +126,7 @@ namespace bs
 			tmpnormalOn = nullptr;
 		output.normalOn = tmpnormalOn;
 		ScriptResourceBase* scripthoverOn;
-		scripthoverOn = ScriptResourceManager::instance().getScriptResource(value.hoverOn, true);
+		scripthoverOn = ScriptResourceManager::Instance().getScriptResource(value.hoverOn, true);
 		MonoObject* tmphoverOn;
 		if(scripthoverOn != nullptr)
 			tmphoverOn = scripthoverOn->getManagedInstance();
@@ -134,7 +134,7 @@ namespace bs
 			tmphoverOn = nullptr;
 		output.hoverOn = tmphoverOn;
 		ScriptResourceBase* scriptactiveOn;
-		scriptactiveOn = ScriptResourceManager::instance().getScriptResource(value.activeOn, true);
+		scriptactiveOn = ScriptResourceManager::Instance().getScriptResource(value.activeOn, true);
 		MonoObject* tmpactiveOn;
 		if(scriptactiveOn != nullptr)
 			tmpactiveOn = scriptactiveOn->getManagedInstance();
@@ -142,7 +142,7 @@ namespace bs
 			tmpactiveOn = nullptr;
 		output.activeOn = tmpactiveOn;
 		ScriptResourceBase* scriptfocusedOn;
-		scriptfocusedOn = ScriptResourceManager::instance().getScriptResource(value.focusedOn, true);
+		scriptfocusedOn = ScriptResourceManager::Instance().getScriptResource(value.focusedOn, true);
 		MonoObject* tmpfocusedOn;
 		if(scriptfocusedOn != nullptr)
 			tmpfocusedOn = scriptfocusedOn->getManagedInstance();

@@ -21,7 +21,7 @@ namespace bs
 		enum { id = TID_ShaderVariationParam }; enum { hasDynamicSize = 1 };
 
 		/** @copydoc RTTIPlainType::toMemory */
-		static BitLength toMemory(const ShaderVariation::Param& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const ShaderVariation::Param& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			static constexpr uint8_t VERSION = 0;
 
@@ -38,7 +38,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIPlainType::fromMemory */
-		static BitLength fromMemory(ShaderVariation::Param& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(ShaderVariation::Param& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
 			rtti_read_size_header(stream, compress, size);
@@ -55,7 +55,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIPlainType::getSize */
-		static BitLength getSize(const ShaderVariation::Param& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const ShaderVariation::Param& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength dataSize = sizeof(uint8_t);
 			dataSize += rtti_size(data.name);
@@ -74,18 +74,18 @@ namespace bs
 			BS_RTTI_MEMBER_PLAIN(mParams, 0)
 		BS_END_RTTI_MEMBERS
 	public:
-		const String& getRTTIName() override
+		const String& GetRttiName() 
 		{
 			static String name = "ShaderVariation";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() 
 		{
 			return TID_ShaderVariation;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return bs_shared_ptr_new<ShaderVariation>();
 		}

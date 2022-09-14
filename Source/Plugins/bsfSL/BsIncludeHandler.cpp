@@ -18,7 +18,7 @@ char* includePush(ParseState* state, const char* filename, int line, int column,
 	memcpy(filenameNoQuote, filename + 1, filenameQuotesLen - 2);
 	filenameNoQuote[filenameQuotesLen - 2] = '\0';
 
-	HShaderInclude include = ShaderManager::instance().findInclude(filenameNoQuote);
+	HShaderInclude include = ShaderManager::Instance().FindInclude(filenameNoQuote);
 
 	if (include != nullptr)
 		include.blockUntilLoaded();
@@ -26,7 +26,7 @@ char* includePush(ParseState* state, const char* filename, int line, int column,
 	int filenameLen = (int)strlen(filenameNoQuote);
 	if (include.isLoaded())
 	{
-		String includeSource = include->getString();
+		String includeSource = include->GetString();
 
 		*size = (int)includeSource.size() + 2;
 		char* output = (char*)mmalloc(state->memContext, *size);

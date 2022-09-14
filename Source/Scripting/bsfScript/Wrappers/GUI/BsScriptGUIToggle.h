@@ -23,29 +23,29 @@ namespace bs
 		ScriptGUIToggle(MonoObject* instance, GUIToggle* toggle);
 
 		/**	Triggered when the native toggle button is clicked. */
-		void onClick();
+		void OnClick();
 
 		/**	Triggered when the native toggle button is hover over. */
-		void onHover();
+		void OnHover();
 
 		/**	Triggered when the pointer leaves the native toggle button. */
-		void onOut();
+		void OnOut();
 
 		/**	Triggered when the native toggle button is toggled. */
-		void onToggled(bool toggled);
+		void OnToggled(bool toggled);
 
 		/**	Triggers when the native toggle button is double-clicked. */
-		void onDoubleClick();
+		void OnDoubleClick();
 
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static void internal_createInstance(MonoObject* instance, __GUIContentInterop* content,
+		static void InternalCreateInstance(MonoObject* instance, __GUIContentInterop* content,
 			MonoObject* toggleGroup, MonoString* style, MonoArray* guiOptions);
-		static void internal_setContent(ScriptGUIToggle* nativeInstance, __GUIContentInterop* content);
-		static bool internal_getValue(ScriptGUIToggle* nativeInstance);
-		static void internal_setValue(ScriptGUIToggle* nativeInstance, bool value);
-		static void internal_setTint(ScriptGUIToggle* nativeInstance, Color* color);
+		static void InternalSetContent(ScriptGUIToggle* nativeInstance, __GUIContentInterop* content);
+		static bool InternalGetValue(ScriptGUIToggle* nativeInstance);
+		static void InternalSetValue(ScriptGUIToggle* nativeInstance, bool value);
+		static void InternalSetTint(ScriptGUIToggle* nativeInstance, Color* color);
 
 		typedef void (BS_THUNKCALL *OnClickThunkDef) (MonoObject*, MonoException**);
 		typedef void (BS_THUNKCALL *OnHoverThunkDef) (MonoObject*, MonoException**);

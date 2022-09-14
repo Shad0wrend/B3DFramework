@@ -13,12 +13,12 @@ namespace bs
 		assert(mRenderSystem != nullptr);
 	}
 
-	SPtr<RenderWindow> GLRenderWindowManager::createImpl(RENDER_WINDOW_DESC& desc, UINT32 windowId,
+	SPtr<RenderWindow> GLRenderWindowManager::CreateImpl(RENDER_WINDOW_DESC& desc, UINT32 windowId,
 		const SPtr<RenderWindow>& parentWindow)
 	{
-		ct::GLSupport* glSupport = mRenderSystem->getGLSupport();
+		ct::GLSupport* glSupport = mRenderSystem->GetGlSupport();
 
 		// Create the window
-		return glSupport->newWindow(desc, windowId, parentWindow);
+		return glSupport->NewWindow(desc, windowId, parentWindow);
 	}
 }

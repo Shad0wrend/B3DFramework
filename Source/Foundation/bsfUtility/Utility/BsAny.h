@@ -22,7 +22,7 @@ namespace bs
 		public:
 			virtual ~DataBase() = default;
 
-			virtual DataBase* clone() const = 0;
+			virtual DataBase* Clone() const = 0;
 		};
 
 		template <typename ValueType>
@@ -33,7 +33,7 @@ namespace bs
 				:value(value)
 			{ }
 
-			DataBase* clone() const override
+			DataBase* Clone() const override
 			{
 				return bs_new<Data>(Data(value));
 			}
@@ -54,7 +54,7 @@ namespace bs
 		{ }
 
 		Any(const Any& other)
-			:mData(other.mData != nullptr ? other.mData->clone() : nullptr)
+			:mData(other.mData != nullptr ? other.mData->Clone() : nullptr)
 		{ }
 
 		~Any()
@@ -64,7 +64,7 @@ namespace bs
 		}
 
 		/** Swaps the contents of this object with another. */
-		Any& swap(Any& rhs)
+		Any& Swap(Any& rhs)
 		{
 			std::swap(mData, rhs.mData);
 			return *this;
@@ -79,12 +79,12 @@ namespace bs
 
 		Any& operator= (const Any& rhs)
 		{
-			Any(rhs).swap(*this);
+			Any(rhs).Swap(*this);
 			return *this;
 		}
 
 		/** Returns true if no type is set. */
-		bool empty() const
+		bool Empty() const
 		{
 			return mData == nullptr;
 		}

@@ -16,48 +16,48 @@ namespace bs { namespace ct
 		: mUsage(usage), mWidth(inWidth), mHeight(inHeight), mDepth(inDepth), mFormat(inFormat)
 		, mBuffer(inWidth, inHeight, inDepth, inFormat)
 	{
-		mSizeInBytes = mHeight*mWidth*PixelUtil::getNumElemBytes(mFormat);
+		mSizeInBytes = mHeight*mWidth*PixelUtil::GetNumElemBytes(mFormat);
 		mCurrentLockOptions = (GpuLockOptions)0;
 	}
 
 	GLPixelBuffer::~GLPixelBuffer()
 	{
-		mBuffer.freeInternalBuffer();
+		mBuffer.FreeInternalBuffer();
 	}
 
-	void GLPixelBuffer::allocateBuffer()
+	void GLPixelBuffer::AllocateBuffer()
 	{
-		if(mBuffer.getData())
+		if(mBuffer.GetData())
 			return;
 
-		mBuffer.allocateInternalBuffer();
+		mBuffer.AllocateInternalBuffer();
 		// TODO: use PBO if we're HBU_DYNAMIC
 	}
 
-	void GLPixelBuffer::freeBuffer()
+	void GLPixelBuffer::FreeBuffer()
 	{
 		if(mUsage & GBU_STATIC)
 			mBuffer.freeInternalBuffer();
 	}
 
-	void* GLPixelBuffer::lock(UINT32 offset, UINT32 length, GpuLockOptions options)
+	void* GLPixelBuffer::Lock(UINT32 offset, UINT32 length, GpuLockOptions options)
 	{
 		assert(!mIsLocked && "Cannot lock this buffer, it is already locked!");
 		assert(offset == 0 && length == mSizeInBytes && "Cannot lock memory region, most lock box or entire buffer");
 
 		PixelVolume volume(0, 0, 0, mWidth, mHeight, mDepth);
-		const PixelData& lockedData = lock(volume, options);
+		const PixelData& lockedData = Lock(volume, options);
 		return lockedData.getData();
 	}
 
-	const PixelData& GLPixelBuffer::lock(const PixelVolume& lockBox, GpuLockOptions options)
+	const PixelData& GLPixelBuffer::Lock(const PixelVolume& lockBox, GpuLockOptions options)
 	{
-		allocateBuffer();
+		AllocateBuffer();
 
 		if (options != GBL_WRITE_ONLY_DISCARD)
 		{
 			// Download the old contents of the texture
-			download(mBuffer);
+			Download(mBuffer);
 		}
 
 		mCurrentLockOptions = options;
@@ -69,44 +69,44 @@ namespace bs { namespace ct
 		return mCurrentLock;
 	}
 
-	void GLPixelBuffer::unlock()
+	void GLPixelBuffer::Unlock()
 	{
 		assert(mIsLocked && "Cannot unlock this buffer, it is not locked!");
 
 		if (mCurrentLockOptions != GBL_READ_ONLY)
 		{
 			// From buffer to card, only upload if was locked for writing
-			upload(mCurrentLock, mLockedBox);
+			Upload(mCurrentLock, mLockedBox);
 		}
 
-		freeBuffer();
+		FreeBuffer();
 		mIsLocked = false;
 	}
 
-	void GLPixelBuffer::upload(const PixelData& data, const PixelVolume& dest)
+	void GLPixelBuffer::Upload(const PixelData& data, const PixelVolume& dest)
 	{
 		BS_EXCEPT(RenderingAPIException, "Upload not possible for this pixel buffer type");
 	}
 
-	void GLPixelBuffer::download(const PixelData& data)
+	void GLPixelBuffer::Download(const PixelData& data)
 	{
 		BS_EXCEPT(RenderingAPIException, "Download not possible for this pixel buffer type");
 	}
 
-	void GLPixelBuffer::blitFromTexture(GLTextureBuffer* src)
+	void GLPixelBuffer::BlitFromTexture(GLTextureBuffer* src)
 	{
-		blitFromTexture(src,
-			PixelVolume(0, 0, 0, src->getWidth(), src->getHeight(), src->getDepth()),
+		BlitFromTexture(src,
+			PixelVolume(0, 0, 0, src->GetWidth(), src->GetHeight(), src->GetDepth()),
 			PixelVolume(0, 0, 0, mWidth, mHeight, mDepth)
 			);
 	}
 
-	void GLPixelBuffer::blitFromTexture(GLTextureBuffer* src, const PixelVolume& srcBox, const PixelVolume& dstBox)
+	void GLPixelBuffer::BlitFromTexture(GLTextureBuffer* src, const PixelVolume& srcBox, const PixelVolume& dstBox)
 	{
 		BS_EXCEPT(RenderingAPIException, "BlitFromTexture not possible for this pixel buffer type");
 	}
 
-	void GLPixelBuffer::bindToFramebuffer(GLenum attachment, UINT32 zoffset, bool allLayers)
+	void GLPixelBuffer::BindToFramebuffer(GLenum attachment, UINT32 zoffset, bool allLayers)
 	{
 		BS_EXCEPT(RenderingAPIException, "Framebuffer bind not possible for this pixel buffer type");
 	}
@@ -161,7 +161,7 @@ namespace bs { namespace ct
 		mBuffer = PixelData(mWidth, mHeight, mDepth, mFormat);
 	}
 
-	void GLTextureBuffer::upload(const PixelData& data, const PixelVolume& dest)
+	void GLTextureBuffer::Upload(const PixelData& data, const PixelVolume& dest)
 	{
 		if ((mUsage & TU_DEPTHSTENCIL) != 0)
 		{
@@ -301,9 +301,9 @@ namespace bs { namespace ct
 		BS_INC_RENDER_STAT_CAT(ResWrite, RenderStatObject_Texture);
 	}
 
-	void GLTextureBuffer::download(const PixelData &data)
+	void GLTextureBuffer::Download(const PixelData &data)
 	{
-		if (data.getWidth() != getWidth() || data.getHeight() != getHeight() || data.getDepth() != getDepth())
+		if (data.getWidth() != GetWidth() || data.getHeight() != GetHeight() || data.getDepth() != GetDepth())
 		{
 			BS_LOG(Error, RenderBackend, "Only download of entire buffer is supported by OpenGL.");
 			return;
@@ -388,7 +388,7 @@ namespace bs { namespace ct
 		BS_INC_RENDER_STAT_CAT(ResRead, RenderStatObject_Texture);
 	}
 
-	void GLTextureBuffer::bindToFramebuffer(GLenum attachment, UINT32 zoffset, bool allLayers)
+	void GLTextureBuffer::BindToFramebuffer(GLenum attachment, UINT32 zoffset, bool allLayers)
 	{
 		if(mTarget == GL_TEXTURE_1D || mTarget == GL_TEXTURE_2D)
 			allLayers = true;
@@ -437,7 +437,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	void GLTextureBuffer::copyFromFramebuffer(UINT32 zoffset)
+	void GLTextureBuffer::CopyFromFramebuffer(UINT32 zoffset)
 	{
 		glBindTexture(mTarget, mTextureID);
 		BS_CHECK_GL_ERROR();
@@ -460,12 +460,12 @@ namespace bs { namespace ct
 		}
 	}
 
-	void GLTextureBuffer::blitFromTexture(GLTextureBuffer* src)
+	void GLTextureBuffer::BlitFromTexture(GLTextureBuffer* src)
 	{
-		GLPixelBuffer::blitFromTexture(src);
+		GLPixelBuffer::BlitFromTexture(src);
 	}
 
-	void GLTextureBuffer::blitFromTexture(GLTextureBuffer* src, const PixelVolume& srcBox, const PixelVolume& dstBox)
+	void GLTextureBuffer::BlitFromTexture(GLTextureBuffer* src, const PixelVolume& srcBox, const PixelVolume& dstBox)
 	{
 		// If supported, prefer direct image copy. If not supported, or if sample counts don't match, fall back to FB blit
 #if BS_OPENGL_4_3 || BS_OPENGLES_3_2
@@ -481,20 +481,20 @@ namespace bs { namespace ct
 			glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFBO);
 			BS_CHECK_GL_ERROR();
 
-			GLuint readFBO = GLRTTManager::instance().getBlitReadFBO();
-			GLuint drawFBO = GLRTTManager::instance().getBlitDrawFBO();
+			GLuint readFBO = GLRTTManager::Instance().getBlitReadFBO();
+			GLuint drawFBO = GLRTTManager::Instance().getBlitDrawFBO();
 
 			// Attach source texture
 			glBindFramebuffer(GL_FRAMEBUFFER, readFBO);
 			BS_CHECK_GL_ERROR();
 
-			src->bindToFramebuffer(GL_COLOR_ATTACHMENT0, 0, false);
+			src->BindToFramebuffer(GL_COLOR_ATTACHMENT0, 0, false);
 
 			// Attach destination texture
 			glBindFramebuffer(GL_FRAMEBUFFER, drawFBO);
 			BS_CHECK_GL_ERROR();
 
-			bindToFramebuffer(GL_COLOR_ATTACHMENT0, 0, false);
+			BindToFramebuffer(GL_COLOR_ATTACHMENT0, 0, false);
 
 			// Perform blit
 			glBindFramebuffer(GL_READ_FRAMEBUFFER, readFBO);

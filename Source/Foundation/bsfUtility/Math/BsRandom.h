@@ -20,12 +20,12 @@ namespace bs
 		BS_SCRIPT_EXPORT()
 		Random(uint32_t seed = 0)
 		{
-			setSeed(seed);
+			SetSeed(seed);
 		}
 
 		/** Changes the seed of the generator to the specified value. */
 		BS_SCRIPT_EXPORT()
-		void setSeed(uint32_t seed)
+		void SetSeed(uint32_t seed)
 		{
 			mSeed[0] = seed;
 			mSeed[1] = seed * 0x72e0447c + 1; // Arbitrary random numbers
@@ -35,7 +35,7 @@ namespace bs
 
 		/** Returns a random value in range [0, std::numeric_limits<uint32_t>::max()]. */
 		BS_SCRIPT_EXPORT()
-		uint32_t get() const
+		uint32_t Get() const
 		{
 			// Using xorshift128 algorithm
 			uint32_t t = mSeed[3];
@@ -56,7 +56,7 @@ namespace bs
 
 		/** Returns a random value in range [min, max]. */
 		BS_SCRIPT_EXPORT()
-		int32_t getRange(int32_t min, int32_t max) const
+		int32_t GetRange(int32_t min, int32_t max) const
 		{
 			assert(max > min);
 
@@ -64,27 +64,27 @@ namespace bs
 			const int32_t range = max - min + 1;
 
 			constexpr static float DELTA = 0e-5f;
-			return min + (int32_t)(getUNorm() * ((float)range - DELTA));
+			return min + (int32_t)(GetUNorm() * ((float)range - DELTA));
 		}
 
 		/** Returns a random value in range [0, 1]. */
 		BS_SCRIPT_EXPORT()
-		float getUNorm() const
+		float GetUNorm() const
 		{
 			// Mask first 23 bits and divide by 2^23-1
-			return float(get() & 0x007FFFFF) / 8388607.0f;
+			return float(Get() & 0x007FFFFF) / 8388607.0f;
 		}
 		
 		/** Returns a random value in range [-1, 1]. */
 		BS_SCRIPT_EXPORT()
-		float getSNorm() const
+		float GetSNorm() const
 		{
-			return getUNorm() * 2.0f - 1.0f;
+			return GetUNorm() * 2.0f - 1.0f;
 		}
 
 		/** Returns a random unit vector in three dimensions. */
 		BS_SCRIPT_EXPORT()
-		Vector3 getUnitVector() const
+		Vector3 GetUnitVector() const
 		{
 			// Pick a random number on a unit cube and use the result only if squared size less than 1. This is faster
 			// than most other methods, and generally not many iterations are required to get the required vector.
@@ -94,10 +94,10 @@ namespace bs
 
 			do
 			{
-				output.x = getSNorm();
-				output.y = getSNorm();
-				output.z = getSNorm();
-				sqrdSize = output.squaredLength();
+				output.x = GetSNorm();
+				output.y = GetSNorm();
+				output.z = GetSNorm();
+				sqrdSize = output.SquaredLength();
 				
 			} while (sqrdSize > 1.0f || sqrdSize < 0.001f);
 
@@ -106,7 +106,7 @@ namespace bs
 
 		/** Returns a random unit vector in two dimensions. */
 		BS_SCRIPT_EXPORT()
-		Vector2 getUnitVector2D() const
+		Vector2 GetUnitVector2D() const
 		{
 			// Pick a random number on a unit square and use the result only if squared size less than 1. This is faster
 			// than most other methods, and generally not many iterations are required to get the required vector.
@@ -116,9 +116,9 @@ namespace bs
 
 			do
 			{
-				output.x = getSNorm();
-				output.y = getSNorm();
-				sqrdSize = output.squaredLength();
+				output.x = GetSNorm();
+				output.y = GetSNorm();
+				sqrdSize = output.SquaredLength();
 				
 			} while (sqrdSize > 1.0f || sqrdSize < 0.001f);
 
@@ -127,10 +127,10 @@ namespace bs
 
 		/** Returns a random point inside a unit sphere. */
 		BS_SCRIPT_EXPORT()
-		Vector3 getPointInSphere() const
+		Vector3 GetPointInSphere() const
 		{
-			const Vector3 dir = getUnitVector();
-			return dir * std::pow(getUNorm(), 1.0f / 3.0f);
+			const Vector3 dir = GetUnitVector();
+			return dir * std::pow(GetUNorm(), 1.0f / 3.0f);
 		}
 
 		/**
@@ -140,20 +140,20 @@ namespace bs
 		 * between two concentric spheres.
 		 */
 		BS_SCRIPT_EXPORT()
-		Vector3 getPointInSphereShell(float thickness) const
+		Vector3 GetPointInSphereShell(float thickness) const
 		{
 			const float minRadius = 1.0f - thickness;
 
-			const Vector3 dir = getUnitVector();
-			return dir * (minRadius + thickness * std::pow(getUNorm(), 1.0f / 3.0f));
+			const Vector3 dir = GetUnitVector();
+			return dir * (minRadius + thickness * std::pow(GetUNorm(), 1.0f / 3.0f));
 		}
 
 		/** Returns a random point inside a unit circle. */
 		BS_SCRIPT_EXPORT()
-		Vector2 getPointInCircle() const
+		Vector2 GetPointInCircle() const
 		{
-			const Vector2 dir = getUnitVector2D();
-			return dir * std::pow(getUNorm(), 1.0f / 2.0f);
+			const Vector2 dir = GetUnitVector2D();
+			return dir * std::pow(GetUNorm(), 1.0f / 2.0f);
 		}
 
 		/**
@@ -163,19 +163,19 @@ namespace bs
 		 * between two concentric circles.
 		 */
 		BS_SCRIPT_EXPORT()
-		Vector2 getPointInCircleShell(float thickness) const
+		Vector2 GetPointInCircleShell(float thickness) const
 		{
 			const float minRadius = 1.0f - thickness;
 
-			const Vector2 dir = getUnitVector2D();
-			return dir * (minRadius + thickness * std::pow(getUNorm(), 1.0f / 2.0f));
+			const Vector2 dir = GetUnitVector2D();
+			return dir * (minRadius + thickness * std::pow(GetUNorm(), 1.0f / 2.0f));
 		}
 
 		/** Returns a random point on a unit arc with the specified length (angle). Angle of 360 represents a circle. */
 		BS_SCRIPT_EXPORT()
-		Vector2 getPointInArc(Degree angle) const
+		Vector2 GetPointInArc(Degree angle) const
 		{
-			float val = getUNorm() * angle.valueRadians();
+			float val = GetUNorm() * angle.ValueRadians();
 			return Vector2(Math::cos(val), Math::sin(val));
 		}
 
@@ -186,22 +186,22 @@ namespace bs
 		 * Intermediate vlaues represent the shell, which is the surface between two concentric circles.
 		 */
 		BS_SCRIPT_EXPORT()
-		Vector2 getPointInArcShell(Degree angle, float thickness) const
+		Vector2 GetPointInArcShell(Degree angle, float thickness) const
 		{
 			const float minRadius = 1.0f - thickness;
 
-			const float val = getUNorm() * angle.valueRadians();
+			const float val = GetUNorm() * angle.ValueRadians();
 			const Vector2 dir(Math::cos(val), Math::sin(val));
 
-			return dir * (minRadius + thickness * std::pow(getUNorm(), 1.0f / 2.0f));
+			return dir * (minRadius + thickness * std::pow(GetUNorm(), 1.0f / 2.0f));
 		}
 
 		/** Returns a random set of Barycentric coordinates that may be used for generating random points on a triangle. */
 		BS_SCRIPT_EXPORT()
-		Vector3 getBarycentric() const
+		Vector3 GetBarycentric() const
 		{
-			float u = getUNorm();
-			float v = getUNorm();
+			float u = GetUNorm();
+			float v = GetUNorm();
 
 			if((u + v) > 1.0f)
 			{

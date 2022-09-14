@@ -152,7 +152,7 @@ namespace bs
 		 * @param[in]	styleName	Name of the style in GUI skin to use for the sub-element.
 		 */
 		BS_SCRIPT_EXPORT()
-		void addSubStyle(const String& guiType, const String& styleName)
+		void AddSubStyle(const String& guiType, const String& styleName)
 		{
 			subStyles[guiType] = styleName;
 		}
@@ -164,8 +164,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class GUIElementStyleRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const ;
 	};
 
 	/** @} */

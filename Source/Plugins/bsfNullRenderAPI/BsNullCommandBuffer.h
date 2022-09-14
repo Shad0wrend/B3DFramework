@@ -17,8 +17,8 @@ namespace bs { namespace ct
 	{
 	public:
 		/** @copydoc CommandBufferManager::createInternal() */
-		SPtr<CommandBuffer> createInternal(GpuQueueType type, UINT32 deviceIdx = 0, UINT32 queueIdx = 0,
-			bool secondary = false) override;
+		SPtr<CommandBuffer> CreateInternal(GpuQueueType type, UINT32 deviceIdx = 0, UINT32 queueIdx = 0,
+			bool secondary = false) ;
 	};
 
 	/** Command buffer implementation for the null render backend. */
@@ -32,8 +32,8 @@ namespace bs { namespace ct
 		{ }
 
 	public:
-		CommandBufferState getState() const override { return CommandBufferState::Empty; }
-		void reset() override { }
+		CommandBufferState GetState() const { return CommandBufferState::Empty; }
+		void Reset() { }
 	};
 
 	/** @} */

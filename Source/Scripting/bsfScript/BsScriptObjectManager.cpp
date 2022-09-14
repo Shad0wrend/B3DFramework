@@ -11,52 +11,52 @@ namespace bs
 {
 	ScriptObjectManager::~ScriptObjectManager()
 	{
-		processFinalizedObjects();
+		ProcessFinalizedObjects();
 	}
 
-	void ScriptObjectManager::registerScriptObject(ScriptObjectBase* instance)
+	void ScriptObjectManager::RegisterScriptObject(ScriptObjectBase* instance)
 	{
 		mScriptObjects.insert(instance);
 	}
 
-	void ScriptObjectManager::unregisterScriptObject(ScriptObjectBase* instance)
+	void ScriptObjectManager::UnregisterScriptObject(ScriptObjectBase* instance)
 	{
 		mScriptObjects.erase(instance);
 	}
 
-	void ScriptObjectManager::refreshAssemblies(const Vector<AssemblyRefreshInfo>& assemblies)
+	void ScriptObjectManager::RefreshAssemblies(const Vector<AssemblyRefreshInfo>& assemblies)
 	{
 		Map<ScriptObjectBase*, ScriptObjectBackup> backupData;
 
 		onRefreshStarted();
 
 		// Make sure any managed game objects are properly destroyed so their OnDestroy callbacks fire before unloading the domain
-		GameObjectManager::instance().destroyQueuedObjects();
+		GameObjectManager::Instance().DestroyQueuedObjects();
 
 		// Make sure all objects that are finalized due to reasons other than assembly refreshed are destroyed
-		processFinalizedObjects(false);
+		ProcessFinalizedObjects(false);
 
 		for (auto& scriptObject : mScriptObjects)
-			backupData[scriptObject] = scriptObject->beginRefresh();
+			backupData[scriptObject] = scriptObject->BeginRefresh();
 
 		for (auto& scriptObject : mScriptObjects)
 			scriptObject->ClearManagedInstanceInternal();
 
-		MonoManager::instance().unloadScriptDomain();
+		MonoManager::Instance().UnloadScriptDomain();
 
 		// Unload script domain should trigger finalizers on everything, but since we usually delay
 		// their processing we need to manually trigger it here.
-		processFinalizedObjects(true);
+		ProcessFinalizedObjects(true);
 
 		for (auto& scriptObject : mScriptObjects)
-			assert(scriptObject->isPersistent() && "Non-persistent ScriptObject alive after domain unload.");
+			assert(scriptObject->IsPersistent() && "Non-persistent ScriptObject alive after domain unload.");
 
-		ScriptAssemblyManager::instance().clearAssemblyInfo();
+		ScriptAssemblyManager::Instance().ClearAssemblyInfo();
 
 		for (auto& entry : assemblies)
 		{
-			MonoManager::instance().loadAssembly(*entry.path, entry.name);
-			ScriptAssemblyManager::instance().loadAssemblyInfo(entry.name, *entry.typeMapping);
+			MonoManager::Instance().LoadAssembly(*entry.path, entry.name);
+			ScriptAssemblyManager::Instance().LoadAssemblyInfo(entry.name, *entry.typeMapping);
 		}
 
 		Vector<ScriptObjectBase*> scriptObjCopy(mScriptObjects.size()); // Store originals as we could add new objects during the next iteration
@@ -70,7 +70,7 @@ namespace bs
 			scriptObject->RestoreManagedInstanceInternal();
 
 		for (auto& scriptObject : scriptObjCopy)
-			scriptObject->endRefresh(backupData[scriptObject]);
+			scriptObject->EndRefresh(backupData[scriptObject]);
 
 		onRefreshComplete();
 	}
@@ -83,12 +83,12 @@ namespace bs
 		mFinalizedObjects[mFinalizedQueueIdx].push_back(instance);
 	}
 
-	void ScriptObjectManager::update()
+	void ScriptObjectManager::Update()
 	{
 		processFinalizedObjects();
 	}
 
-	void ScriptObjectManager::processFinalizedObjects(bool assemblyRefresh)
+	void ScriptObjectManager::ProcessFinalizedObjects(bool assemblyRefresh)
 	{
 		UINT32 readQueueIdx = 0;
 		{

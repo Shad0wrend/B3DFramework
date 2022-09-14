@@ -12,12 +12,12 @@ namespace bs
 		setName("Component");
 	}
 
-	bool Component::typeEquals(const Component& other)
+	bool Component::TypeEquals(const Component& other)
 	{
 		return getRTTI()->getRTTIId() == other.getRTTI()->getRTTIId();
 	}
 
-	bool Component::calculateBounds(Bounds& bounds)
+	bool Component::CalculateBounds(Bounds& bounds)
 	{
 		Vector3 position = SO()->getTransform().getPosition();
 
@@ -25,26 +25,26 @@ namespace bs
 		return false;
 	}
 
-	void Component::destroy(bool immediate)
+	void Component::Destroy(bool immediate)
 	{
 		SO()->destroyComponent(this, immediate);
 	}
 
-	void Component::destroyInternal(GameObjectHandleBase& handle, bool immediate)
+	void Component::DestroyInternal(GameObjectHandleBase& handle, bool immediate)
 	{
 		if (immediate)
-			GameObjectManager::instance().unregisterObject(handle);
+			GameObjectManager::Instance().unregisterObject(handle);
 		else
-			GameObjectManager::instance().queueForDestroy(handle);
+			GameObjectManager::Instance().queueForDestroy(handle);
 	}
 
-	RTTITypeBase* Component::getRTTIStatic()
+	RTTITypeBase* Component::GetRttiStatic()
 	{
-		return ComponentRTTI::instance();
+		return ComponentRTTI::Instance();
 	}
 
-	RTTITypeBase* Component::getRTTI() const
+	RTTITypeBase* Component::GetRtti() const
 	{
-		return Component::getRTTIStatic();
+		return Component::GetRttiStatic();
 	}
 }

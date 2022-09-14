@@ -5,11 +5,11 @@
 
 namespace bs
 {
-	bool ManagedCompare::run(IReflectable& a, IReflectable& b)
+	bool ManagedCompare::Run(IReflectable& a, IReflectable& b)
 	{
 		auto managedA = static_cast<ManagedSerializableObject&>(a);
 		auto managedB = static_cast<ManagedSerializableObject&>(b);
 
-		return managedA.equals(managedB);
+		return managedA.Equals(managedB);
 	}
 }

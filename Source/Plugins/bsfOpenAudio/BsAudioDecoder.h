@@ -24,7 +24,7 @@ namespace bs
 		 * @param[in]	offset	Offset at which audio data in the stream begins, in bytes.
 		 * @return				True if the data is valid, false otherwise.
 		 */
-		virtual bool open(const SPtr<DataStream>& stream, AudioDataInfo& info, UINT32 offset = 0) = 0;
+		virtual bool Open(const SPtr<DataStream>& stream, AudioDataInfo& info, UINT32 offset = 0) = 0;
 
 		/**
 		 * Moves the read pointer to the specified offset. Any further read() calls will read from this location. User must
@@ -32,7 +32,7 @@ namespace bs
 		 *
 		 * @param[in]	offset	Offset to move the pointer in. In number of samples.
 		 */
-		virtual void seek(UINT32 offset) = 0;
+		virtual void Seek(UINT32 offset) = 0;
 
 		/**
 		 * Reads a set of samples from the audio data.
@@ -44,7 +44,7 @@ namespace bs
 		 *
 		 * @note All values are returned as signed values.
 		 */
-		virtual UINT32 read(UINT8* samples, UINT32 numSamples) = 0;
+		virtual UINT32 Read(UINT8* samples, UINT32 numSamples) = 0;
 
 		/**
 		 * Checks if the data in the provided stream valid audio data for the current format. You should check this before
@@ -54,7 +54,7 @@ namespace bs
 		 * @param[in]	offset	Offset at which audio data in the stream begins, in bytes.
 		 * @return				True if the data is valid, false otherwise.
 		 */
-		virtual bool isValid(const SPtr<DataStream>& stream, UINT32 offset = 0) = 0;
+		virtual bool IsValid(const SPtr<DataStream>& stream, UINT32 offset = 0) = 0;
 	};
 
 	/** @} */

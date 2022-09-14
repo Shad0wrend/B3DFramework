@@ -23,19 +23,19 @@ namespace bs
 
 	void ScriptGUILayoutUtility::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_CalculateOptimalSize", (void*)&ScriptGUILayoutUtility::internal_CalculateOptimalSize);
-		metaData.scriptClass->addInternalCall("Internal_CalculateBounds", (void*)&ScriptGUILayoutUtility::internal_CalculateBounds);
-		metaData.scriptClass->addInternalCall("Internal_CalculateTextBounds", (void*)&ScriptGUILayoutUtility::internal_CalculateTextBounds);
+		metaData.scriptClass->AddInternalCall("Internal_CalculateOptimalSize", (void*)&ScriptGUILayoutUtility::InternalCalculateOptimalSize);
+		metaData.scriptClass->AddInternalCall("Internal_CalculateBounds", (void*)&ScriptGUILayoutUtility::InternalCalculateBounds);
+		metaData.scriptClass->AddInternalCall("Internal_CalculateTextBounds", (void*)&ScriptGUILayoutUtility::InternalCalculateTextBounds);
 	}
 
-	void ScriptGUILayoutUtility::internal_CalculateOptimalSize(ScriptGUIElementBaseTBase* guiElement, Vector2I* output)
+	void ScriptGUILayoutUtility::InternalCalculateOptimalSize(ScriptGUIElementBaseTBase* guiElement, Vector2I* output)
 	{
-		*output = GUILayoutUtility::calcOptimalSize(guiElement->getGUIElement());;
+		*output = GUILayoutUtility::CalcOptimalSize(guiElement->GetGuiElement());;
 	}
 
-	void ScriptGUILayoutUtility::internal_CalculateBounds(ScriptGUIElementBaseTBase* guiElement, ScriptGUILayout* relativeTo, Rect2I* output)
+	void ScriptGUILayoutUtility::InternalCalculateBounds(ScriptGUIElementBaseTBase* guiElement, ScriptGUILayout* relativeTo, Rect2I* output)
 	{
-		if (guiElement->isDestroyed())
+		if (guiElement->IsDestroyed())
 		{
 			*output = Rect2I();
 			return;
@@ -48,7 +48,7 @@ namespace bs
 		*output = guiElement->getGUIElement()->getBounds(relativeToPanel);
 	}
 
-	void ScriptGUILayoutUtility::internal_CalculateTextBounds(MonoString* text, ScriptFont* fontPtr, int fontSize, Vector2I* output)
+	void ScriptGUILayoutUtility::InternalCalculateTextBounds(MonoString* text, ScriptFont* fontPtr, int fontSize, Vector2I* output)
 	{
 		String nativeText = MonoUtil::monoToString(text);
 		HFont nativeFont = fontPtr->getHandle();

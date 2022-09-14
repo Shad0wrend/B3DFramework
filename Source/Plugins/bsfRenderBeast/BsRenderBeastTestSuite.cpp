@@ -12,43 +12,43 @@ namespace bs
 		RenderBeastTestSuite();
 
 	private:
-		void testTextureRowAllocator();
+		void TestTextureRowAllocator();
 	};
 
 	RenderBeastTestSuite::RenderBeastTestSuite()
 	{
-		BS_ADD_TEST(RenderBeastTestSuite::testTextureRowAllocator);
+		BS_ADD_TEST(RenderBeastTestSuite::TestTextureRowAllocator);
 	}
 
-	void RenderBeastTestSuite::testTextureRowAllocator()
+	void RenderBeastTestSuite::TestTextureRowAllocator()
 	{
 		ct::TextureRowAllocator<128, 128> alloc;
 
-		auto a0 = alloc.alloc(16);
+		auto a0 = alloc.Alloc(16);
 		BS_TEST_ASSERT(a0.x == 0 && a0.y == 0 && a0.length == 16);
 
-		auto a1 = alloc.alloc(16);
+		auto a1 = alloc.Alloc(16);
 		BS_TEST_ASSERT(a1.x == (a0.x + a0.length));
 
-		auto a2 = alloc.alloc(8);
-		auto a3 = alloc.alloc(8);
-		auto a4 = alloc.alloc(16);
-		auto a5 = alloc.alloc(16);
-		auto a6 = alloc.alloc(8);
-		auto a7 = alloc.alloc(8);
-		alloc.alloc(32);
+		auto a2 = alloc.Alloc(8);
+		auto a3 = alloc.Alloc(8);
+		auto a4 = alloc.Alloc(16);
+		auto a5 = alloc.Alloc(16);
+		auto a6 = alloc.Alloc(8);
+		auto a7 = alloc.Alloc(8);
+		alloc.Alloc(32);
 
 		// Test if free space can get re-allocated
-		alloc.free(a1);
+		alloc.Free(a1);
 
-		auto a8 = alloc.alloc(16);
+		auto a8 = alloc.Alloc(16);
 		BS_TEST_ASSERT(a8.x == a1.x);
 
 		// Test if free space gets merged and can be reallocated
-		alloc.free(a4);
-		alloc.free(a2);
-		alloc.free(a3);
-		alloc.free(a6);
+		alloc.Free(a4);
+		alloc.Free(a2);
+		alloc.Free(a3);
+		alloc.Free(a6);
 		alloc.free(a7);
 		alloc.free(a5);
 

@@ -13,7 +13,7 @@
 namespace bs
 {
 	ScriptRRefBase::ScriptRRefBase(MonoObject* instance, ResourceHandle<Resource> resource)
-		:ScriptObject(instance), mResource(std::move(resource)), mGCHandle(MonoUtil::newGCHandle(instance))
+		:ScriptObject(instance), mResource(std::move(resource)), mGCHandle(MonoUtil::NewGcHandle(instance))
 	{ }
 
 	ScriptRRefBase::~ScriptRRefBase()
@@ -23,20 +23,20 @@ namespace bs
 
 	void ScriptRRefBase::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_IsLoaded", (void*)&ScriptRRefBase::internal_IsLoaded);
-		metaData.scriptClass->addInternalCall("Internal_GetResource", (void*)&ScriptRRefBase::internal_GetResource);
-		metaData.scriptClass->addInternalCall("Internal_GetUUID", (void*)&ScriptRRefBase::internal_GetUUID);
-		metaData.scriptClass->addInternalCall("Internal_CastAs", (void*)&ScriptRRefBase::internal_CastAs);
+		metaData.scriptClass->AddInternalCall("Internal_IsLoaded", (void*)&ScriptRRefBase::InternalIsLoaded);
+		metaData.scriptClass->AddInternalCall("Internal_GetResource", (void*)&ScriptRRefBase::InternalGetResource);
+		metaData.scriptClass->AddInternalCall("Internal_GetUUID", (void*)&ScriptRRefBase::InternalGetUuid);
+		metaData.scriptClass->AddInternalCall("Internal_CastAs", (void*)&ScriptRRefBase::internal_CastAs);
 	}
 
-	ScriptRRefBase* ScriptRRefBase::createInternal(const ResourceHandle<Resource>& handle, ::MonoClass* rawType)
+	ScriptRRefBase* ScriptRRefBase::CreateInternal(const ResourceHandle<Resource>& handle, ::MonoClass* rawType)
 	{
 		MonoClass* type = nullptr;
 		if(rawType == nullptr)
 			type = metaData.scriptClass;
 		else
 		{
-			type = MonoManager::instance().findClass(rawType);
+			type = MonoManager::Instance().findClass(rawType);
 			if (type == nullptr)
 				type = metaData.scriptClass;
 			else
@@ -53,7 +53,7 @@ namespace bs
 		return output;
 	}
 
-	MonoObject* ScriptRRefBase::getManagedInstance() const
+	MonoObject* ScriptRRefBase::GetManagedInstance() const
 	{
 		return MonoUtil::getObjectFromGCHandle(mGCHandle);
 	}
@@ -78,20 +78,20 @@ namespace bs
 		ScriptObjectBase::OnManagedInstanceDeletedInternal(assemblyRefresh);
 	}
 
-	::MonoClass* ScriptRRefBase::bindGenericParam(::MonoClass* param)
+	::MonoClass* ScriptRRefBase::BindGenericParam(::MonoClass* param)
 	{
-		MonoClass* rrefClass = ScriptAssemblyManager::instance().getBuiltinClasses().genericRRefClass;
+		MonoClass* rrefClass = ScriptAssemblyManager::Instance().getBuiltinClasses().genericRRefClass;
 
 		::MonoClass* params[1] = { param };
 		return MonoUtil::bindGenericParameters(rrefClass->GetInternalClassInternal(), params, 1);
 	}
 
-	bool ScriptRRefBase::internal_IsLoaded(ScriptRRefBase* thisPtr)
+	bool ScriptRRefBase::InternalIsLoaded(ScriptRRefBase* thisPtr)
 	{
 		return thisPtr->mResource.isLoaded(false);
 	}
 
-	MonoObject* ScriptRRefBase::internal_GetResource(ScriptRRefBase* thisPtr)
+	MonoObject* ScriptRRefBase::InternalGetResource(ScriptRRefBase* thisPtr)
 	{
 		if(thisPtr->mScriptResource)
 			return thisPtr->mScriptResource->getManagedInstance();
@@ -101,7 +101,7 @@ namespace bs
 			return nullptr;
 
 		if(resource.isLoaded(false))
-			thisPtr->mScriptResource = ScriptResourceManager::instance().getScriptResource(resource, true);
+			thisPtr->mScriptResource = ScriptResourceManager::Instance().getScriptResource(resource, true);
 		else
 		{
 			ResourceLoadFlags loadFlags = ResourceLoadFlag::LoadDependencies;
@@ -110,7 +110,7 @@ namespace bs
 				loadFlags |= ResourceLoadFlag::KeepSourceData;
 
 			const HResource loadedResource = gResources().loadFromUUID(thisPtr->getHandle().getUUID(), false, loadFlags);
-			thisPtr->mScriptResource = ScriptResourceManager::instance().getScriptResource(loadedResource, true);
+			thisPtr->mScriptResource = ScriptResourceManager::Instance().getScriptResource(loadedResource, true);
 		}
 
 		if(thisPtr->mScriptResource)
@@ -119,16 +119,16 @@ namespace bs
 		return nullptr;
 	}
 
-	void ScriptRRefBase::internal_GetUUID(ScriptRRefBase* thisPtr, UUID* uuid)
+	void ScriptRRefBase::InternalGetUuid(ScriptRRefBase* thisPtr, UUID* uuid)
 	{
 		*uuid = thisPtr->getHandle().getUUID();
 	}
 
-	MonoObject* ScriptRRefBase::internal_CastAs(ScriptRRefBase* thisPtr, MonoReflectionType* type)
+	MonoObject* ScriptRRefBase::InternalCastAs(ScriptRRefBase* thisPtr, MonoReflectionType* type)
 	{
 		::MonoClass* rawResType = MonoUtil::getClass(type);
 
-		MonoClass* resType = MonoManager::instance().findClass(rawResType);
+		MonoClass* resType = MonoManager::Instance().findClass(rawResType);
 		if (resType == nullptr)
 			return nullptr; // Not a valid type
 

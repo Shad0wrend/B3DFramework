@@ -23,20 +23,20 @@ namespace bs
 			BS_RTTI_MEMBER_PLAIN(mHalfHeight, 2)
 		BS_END_RTTI_MEMBERS
 	public:
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "CCapsuleCollider";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_CCapsuleCollider;
 		}
 
 		SPtr<IReflectable> newRTTIObject() override
 		{
-			return SceneObject::createEmptyComponent<CCapsuleCollider>();
+			return SceneObject::CreateEmptyComponent<CCapsuleCollider>();
 		}
 	};
 

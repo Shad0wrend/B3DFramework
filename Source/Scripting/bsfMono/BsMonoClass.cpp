@@ -64,7 +64,7 @@ namespace bs
 		mProperties.clear();
 	}
 
-	MonoMethod* MonoClass::getMethod(const String& name, UINT32 numParams) const
+	MonoMethod* MonoClass::GetMethod(const String& name, UINT32 numParams) const
 	{
 		MethodId mehodId(name, numParams);
 		auto iterFind = mMethods.find(mehodId);
@@ -81,7 +81,7 @@ namespace bs
 		return newMethod;
 	}
 
-	MonoMethod* MonoClass::getMethodExact(const String& name, const String& signature) const
+	MonoMethod* MonoClass::GetMethodExact(const String& name, const String& signature) const
 	{
 		MethodId mehodId(name + "(" + signature + ")", 0);
 		auto iterFind = mMethods.find(mehodId);
@@ -111,14 +111,14 @@ namespace bs
 		return nullptr;
 	}
 
-	bool MonoClass::hasField(const String& name) const
+	bool MonoClass::HasField(const String& name) const
 	{
 		MonoClassField* field = mono_class_get_field_from_name(mClass, name.c_str());
 
 		return field != nullptr;
 	}
 
-	bool MonoClass::isSubClassOf(const MonoClass* monoClass) const
+	bool MonoClass::IsSubClassOf(const MonoClass* monoClass) const
 	{
 		if(monoClass == nullptr)
 			return false;
@@ -126,7 +126,7 @@ namespace bs
 		return mono_class_is_subclass_of(mClass, monoClass->mClass, true) != 0;
 	}
 
-	MonoField* MonoClass::getField(const String& name) const
+	MonoField* MonoClass::GetField(const String& name) const
 	{
 		auto iterFind = mFields.find(name);
 		if(iterFind != mFields.end())
@@ -142,7 +142,7 @@ namespace bs
 		return newField;
 	}
 
-	MonoProperty* MonoClass::getProperty(const String& name) const
+	MonoProperty* MonoClass::GetProperty(const String& name) const
 	{
 		auto iterFind = mProperties.find(name);
 		if(iterFind != mProperties.end())
@@ -158,7 +158,7 @@ namespace bs
 		return newProperty;
 	}
 
-	const Vector<MonoField*>& MonoClass::getAllFields() const
+	const Vector<MonoField*>& MonoClass::GetAllFields() const
 	{
 		if(mHasCachedFields)
 			return mCachedFieldList;
@@ -170,7 +170,7 @@ namespace bs
 		while(curClassField != nullptr)
 		{
 			const char* fieldName = mono_field_get_name(curClassField);
-			MonoField* curField = getField(fieldName);
+			MonoField* curField = GetField(fieldName);
 
 			mCachedFieldList.push_back(curField);
 
@@ -181,7 +181,7 @@ namespace bs
 		return mCachedFieldList;
 	}
 
-	const Vector<MonoProperty*>& MonoClass::getAllProperties() const
+	const Vector<MonoProperty*>& MonoClass::GetAllProperties() const
 	{
 		if (mHasCachedProperties)
 			return mCachedPropertyList;
@@ -193,7 +193,7 @@ namespace bs
 		while (curClassProperty != nullptr)
 		{
 			const char* propertyName = mono_property_get_name(curClassProperty);
-			MonoProperty* curProperty = getProperty(propertyName);
+			MonoProperty* curProperty = GetProperty(propertyName);
 
 			mCachedPropertyList.push_back(curProperty);
 
@@ -204,7 +204,7 @@ namespace bs
 		return mCachedPropertyList;
 	}
 
-	const Vector<MonoMethod*>& MonoClass::getAllMethods() const
+	const Vector<MonoMethod*>& MonoClass::GetAllMethods() const
 	{
 		if (mHasCachedMethods)
 			return mCachedMethodList;
@@ -220,7 +220,7 @@ namespace bs
 			const char* sigDesc = mono_signature_get_desc(sig, false);
 			const char* methodName = mono_method_get_name(curClassMethod);
 
-			MonoMethod* curMethod = getMethodExact(methodName, sigDesc);
+			MonoMethod* curMethod = GetMethodExact(methodName, sigDesc);
 			mCachedMethodList.push_back(curMethod);
 
 			curClassMethod = mono_class_get_methods(mClass, &iter);
@@ -230,7 +230,7 @@ namespace bs
 		return mCachedMethodList;
 	}
 
-	Vector<MonoClass*> MonoClass::getAllAttributes() const
+	Vector<MonoClass*> MonoClass::GetAllAttributes() const
 	{
 		// TODO - Consider caching custom attributes or just initializing them all at load
 		Vector<MonoClass*> attributes;
@@ -242,7 +242,7 @@ namespace bs
 		for (INT32 i = 0; i < attrInfo->num_attrs; i++)
 		{
 			::MonoClass* attribClass = mono_method_get_class(attrInfo->attrs[i].ctor);
-			MonoClass* klass = MonoManager::instance().findClass(attribClass);
+			MonoClass* klass = MonoManager::Instance().FindClass(attribClass);
 
 			if (klass != nullptr)
 				attributes.push_back(klass);
@@ -253,12 +253,12 @@ namespace bs
 		return attributes;
 	}
 
-	MonoObject* MonoClass::invokeMethod(const String& name, MonoObject* instance, void** params, UINT32 numParams)
+	MonoObject* MonoClass::InvokeMethod(const String& name, MonoObject* instance, void** params, UINT32 numParams)
 	{
-		return getMethod(name, numParams)->invoke(instance, params);
+		return GetMethod(name, numParams)->Invoke(instance, params);
 	}
 
-	void MonoClass::addInternalCall(const String& name, const void* method)
+	void MonoClass::AddInternalCall(const String& name, const void* method)
 	{
 		String fullMethodName = mFullName + "::" + name;
 		mono_add_internal_call(fullMethodName.c_str(), method);
@@ -266,7 +266,7 @@ namespace bs
 
 	MonoObject* MonoClass::createInstance(bool construct) const
 	{
-		MonoObject* obj = mono_object_new(MonoManager::instance().getDomain(), mClass);
+		MonoObject* obj = mono_object_new(MonoManager::Instance().getDomain(), mClass);
 
 		if(construct)
 			mono_runtime_object_init(obj);
@@ -274,28 +274,28 @@ namespace bs
 		return obj;
 	}
 
-	MonoObject* MonoClass::createInstance(void** params, UINT32 numParams)
+	MonoObject* MonoClass::CreateInstance(void** params, UINT32 numParams)
 	{
-		MonoObject* obj = mono_object_new(MonoManager::instance().getDomain(), mClass);
+		MonoObject* obj = mono_object_new(MonoManager::Instance().getDomain(), mClass);
 		getMethod(".ctor", numParams)->invoke(obj, params);
 
 		return obj;
 	}
 
-	MonoObject* MonoClass::createInstance(const String& ctorSignature, void** params)
+	MonoObject* MonoClass::CreateInstance(const String& ctorSignature, void** params)
 	{
-		MonoObject* obj = mono_object_new(MonoManager::instance().getDomain(), mClass);
+		MonoObject* obj = mono_object_new(MonoManager::Instance().getDomain(), mClass);
 		getMethodExact(".ctor", ctorSignature)->invoke(obj, params);
 
 		return obj;
 	}
 
-	void MonoClass::construct(MonoObject* object)
+	void MonoClass::Construct(MonoObject* object)
 	{
 		mono_runtime_object_init(object);
 	}
 
-	bool MonoClass::hasAttribute(MonoClass* monoClass) const
+	bool MonoClass::HasAttribute(MonoClass* monoClass) const
 	{
 		// TODO - Consider caching custom attributes or just initializing them all at load
 
@@ -310,7 +310,7 @@ namespace bs
 		return hasAttr;
 	}
 
-	MonoObject* MonoClass::getAttribute(MonoClass* monoClass) const
+	MonoObject* MonoClass::GetAttribute(MonoClass* monoClass) const
 	{
 		// TODO - Consider caching custom attributes or just initializing them all at load
 
@@ -326,7 +326,7 @@ namespace bs
 		return foundAttr;
 	}
 
-	MonoClass* MonoClass::getBaseClass() const
+	MonoClass* MonoClass::GetBaseClass() const
 	{
 		::MonoClass* monoBase = mono_class_get_parent(mClass);
 		if(monoBase == nullptr)
@@ -336,10 +336,10 @@ namespace bs
 		String type;
 		MonoUtil::getClassName(monoBase, ns, type);
 
-		return MonoManager::instance().findClass(ns, type);
+		return MonoManager::Instance().findClass(ns, type);
 	}
 
-	bool MonoClass::isInstanceOfType(MonoObject* object) const
+	bool MonoClass::IsInstanceOfType(MonoObject* object) const
 	{
 		if(object == nullptr)
 			return false;
@@ -348,7 +348,7 @@ namespace bs
 		return mono_class_is_subclass_of(monoClass, mClass, false) != 0;
 	}
 
-	UINT32 MonoClass::getInstanceSize() const
+	UINT32 MonoClass::GetInstanceSize() const
 	{
 		UINT32 dummy = 0;
 

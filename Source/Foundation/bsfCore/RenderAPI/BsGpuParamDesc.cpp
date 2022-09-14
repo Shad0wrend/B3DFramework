@@ -9,13 +9,13 @@ namespace bs
 	constexpr UINT32 RTTIPlainType<GpuParamObjectDesc>::VERSION;
 	constexpr UINT32 RTTIPlainType<GpuParamDataDesc>::VERSION;
 
-	RTTITypeBase* GpuParamDesc::getRTTIStatic()
+	RTTITypeBase* GpuParamDesc::GetRttiStatic()
 	{
-		return GpuParamDescRTTI::instance();
+		return GpuParamDescRTTI::Instance();
 	}
 
-	RTTITypeBase* GpuParamDesc::getRTTI() const
+	RTTITypeBase* GpuParamDesc::GetRtti() const
 	{
-		return GpuParamDesc::getRTTIStatic();
+		return GpuParamDesc::GetRttiStatic();
 	}
 }

@@ -50,23 +50,23 @@ namespace bs
 	{
 	public:
 		/**	Returns the SceneObject this Component is assigned to. */
-		const HSceneObject& sceneObject() const { return mParent; }
+		const HSceneObject& SceneObject() const { return mParent; }
 
 		/** @copydoc sceneObject */
-		const HSceneObject& SO() const { return sceneObject(); }
+		const HSceneObject& SO() const { return SceneObject(); }
 
 		/**	Returns a handle to this object. */
-		const HComponent& getHandle() const { return mThisHandle; }
+		const HComponent& GetHandle() const { return mThisHandle; }
 
 		/** Called once per frame. Only called if the component is in Running state. */
-		virtual void update() { }
+		virtual void Update() { }
 
 		/**
 		 * Called at fixed time intervals (e.g. 60 times per frame). Generally any physics-related functionality should
 		 * go in this method in order to ensure stability of calculations. Only called if the component is in Running
 		 * state.
 		 */
-		virtual void fixedUpdate() { }
+		virtual void FixedUpdate() { }
 
 		/**
 		 * Calculates bounds of the visible contents represented by this component (for example a mesh for Renderable).
@@ -74,7 +74,7 @@ namespace bs
 		 * @param[in]	bounds	Bounds of the contents in world space coordinates.	
 		 * @return				True if the component has bounds with non-zero volume, otherwise false.
 		 */
-		virtual bool calculateBounds(Bounds& bounds);
+		virtual bool CalculateBounds(Bounds& bounds);
 
 		/**
 		 * Checks if this and the provided component represent the same type.
@@ -83,7 +83,7 @@ namespace bs
 		 * RTTI type cannot be checked directly since components can be further specialized internally for scripting
 		 * purposes.
 		 */
-		virtual bool typeEquals(const Component& other);
+		virtual bool TypeEquals(const Component& other);
 
 		/**
 		 * Removes the component from parent SceneObject and deletes it. All the references to this component will be
@@ -92,7 +92,7 @@ namespace bs
 		 * @param[in]	immediate	If true the destruction will be performed immediately, otherwise it will be delayed
 		 *							until the end of the current frame (preferred option).
 		 */
-		void destroy(bool immediate = false);
+		void Destroy(bool immediate = false);
 
 		/** @name Internal
 		 *  @{
@@ -105,7 +105,7 @@ namespace bs
 		virtual void InstantiateInternal() {}
 
 		/** Sets new flags that determine when is onTransformChanged called. */
-		void setNotifyFlags(TransformChangedFlags flags) { mNotifyFlags = flags; }
+		void SetNotifyFlags(TransformChangedFlags flags) { mNotifyFlags = flags; }
 
 		/** Gets the currently assigned notify flags. See SetNotifyFlagsInternal(). */
 		TransformChangedFlags GetNotifyFlagsInternal() const { return mNotifyFlags; }
@@ -120,50 +120,50 @@ namespace bs
 		virtual ~Component() = default;
 
 		/** Called once when the component has been created. Called regardless of the state the component is in. */
-		virtual void onCreated() {}
+		virtual void OnCreated() {}
 
 		/**	
 		 * Called once when the component first leaves the Stopped state. This includes component creation if requirements
 		 * for leaving Stopped state are met, in which case it is called after onCreated.
 		 */
-		virtual void onInitialized() {}
+		virtual void OnInitialized() {}
 
 		/**	Called once just before the component is destroyed. Called regardless of the state the component is in. */
-		virtual void onDestroyed() {}
+		virtual void OnDestroyed() {}
 
 		/**	
 		 * Called every time a component is placed into the Stopped state. This includes component destruction if component
 		 * wasn't already in Stopped state during destruction. When called during destruction it is called before
 		 * onDestroyed.
 		 */
-		virtual void onDisabled() {}
+		virtual void OnDisabled() {}
 
 		/**	
 		 * Called every time a component leaves the Stopped state. This includes component creation if requirements
 		 * for leaving the Stopped state are met. When called during creation it is called after onInitialized.
 		 */
-		virtual void onEnabled() {}
+		virtual void OnEnabled() {}
 
 		/**
 		 * Called when the component's parent scene object has changed. Not called if the component is in Stopped state.
 		* Also only called if necessary notify flags are set via SetNotifyFlagsInternal().
 		 */
-		virtual void onTransformChanged(TransformChangedFlags flags) { }
+		virtual void OnTransformChanged(TransformChangedFlags flags) { }
 
 		/** Checks whether the component wants to received the specified transform changed message. */
-		bool supportsNotify(TransformChangedFlags flags) const { return (mNotifyFlags & flags) != 0; }
+		bool SupportsNotify(TransformChangedFlags flags) const { return (mNotifyFlags & flags) != 0; }
 
 		/** Enables or disabled a flag controlling component's behaviour. */
-		void setFlag(ComponentFlag flag, bool enabled) { if (enabled) mFlags.set(flag); else mFlags.unset(flag); }
+		void SetFlag(ComponentFlag flag, bool enabled) { if (enabled) mFlags.Set(flag); else mFlags.Unset(flag); }
 
 		/** Checks if the component has a certain flag enabled. */
-		bool hasFlag(ComponentFlag flag) const { return mFlags.isSet(flag); }
+		bool HasFlag(ComponentFlag flag) const { return mFlags.IsSet(flag); }
 
 		/** Sets an index that uniquely identifies a component with the SceneManager. */
-		void setSceneManagerId(UINT32 id) { mSceneManagerId = id; }
+		void SetSceneManagerId(UINT32 id) { mSceneManagerId = id; }
 
 		/** Returns an index that unique identifies a component with the SceneManager. */
-		UINT32 getSceneManagerId() const { return mSceneManagerId; }
+		UINT32 GetSceneManagerId() const { return mSceneManagerId; }
 
 		/**
 		 * Destroys this component.
@@ -174,7 +174,7 @@ namespace bs
 		 *
 		 * @note	Unlike destroy(), does not remove the component from its parent.
 		 */
-		void destroyInternal(GameObjectHandleBase& handle, bool immediate) override;
+		void DestroyInternal(GameObjectHandleBase& handle, bool immediate) override;
 	private:
 		Component(const Component& other) { }
 
@@ -192,8 +192,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ComponentRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 
 	protected:
 		Component() = default; // Serialization only

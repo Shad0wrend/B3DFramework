@@ -25,7 +25,7 @@ namespace bs
 		setName(mTypeName);
 	}
 
-	MonoObject* ManagedComponent::getManagedInstance() const
+	MonoObject* ManagedComponent::GetManagedInstance() const
 	{
 		if(mOwner)
 			return mOwner->getManagedInstance();
@@ -33,7 +33,7 @@ namespace bs
 		return nullptr;
 	}
 
-	RawBackupData ManagedComponent::backup(bool clearExisting)
+	RawBackupData ManagedComponent::Backup(bool clearExisting)
 	{
 		RawBackupData backupData;
 
@@ -95,7 +95,7 @@ namespace bs
 		return backupData;
 	}
 
-	void ManagedComponent::restore(const RawBackupData& data, bool missingType)
+	void ManagedComponent::Restore(const RawBackupData& data, bool missingType)
 	{
 		initialize(mOwner);
 		mObjInfo = nullptr;
@@ -116,7 +116,7 @@ namespace bs
 
 			if (!missingType)
 			{
-				ScriptAssemblyManager::instance().getSerializableObjectInfo(mNamespace, mTypeName, mObjInfo);
+				ScriptAssemblyManager::Instance().getSerializableObjectInfo(mNamespace, mTypeName, mObjInfo);
 
 				serializableObject->deserialize(instance, mObjInfo);
 			}
@@ -131,7 +131,7 @@ namespace bs
 		mRequiresReset = true;
 	}
 
-	void ManagedComponent::initialize(ScriptManagedComponent* owner)
+	void ManagedComponent::Initialize(ScriptManagedComponent* owner)
 	{
 		mOwner = owner;
 		mFullTypeName = mNamespace + "." + mTypeName;
@@ -143,7 +143,7 @@ namespace bs
 			::MonoClass* monoClass = MonoUtil::getClass(instance);
 			mRuntimeType = MonoUtil::getType(monoClass);
 
-			mManagedClass = MonoManager::instance().findClass(monoClass);
+			mManagedClass = MonoManager::Instance().findClass(monoClass);
 		}
 
 		mOnCreatedThunk = nullptr;
@@ -227,7 +227,7 @@ namespace bs
 
 		if (mManagedClass != nullptr)
 		{
-			MonoAssembly* engineAssembly = MonoManager::instance().getAssembly(ENGINE_ASSEMBLY);
+			MonoAssembly* engineAssembly = MonoManager::Instance().getAssembly(ENGINE_ASSEMBLY);
 			if (engineAssembly == nullptr)
 				BS_EXCEPT(InvalidStateException, String(ENGINE_ASSEMBLY) + " assembly is not loaded.");
 
@@ -241,7 +241,7 @@ namespace bs
 		}
 	}
 
-	bool ManagedComponent::typeEquals(const Component& other)
+	bool ManagedComponent::TypeEquals(const Component& other)
 	{
 		if(Component::typeEquals(other))
 		{
@@ -254,7 +254,7 @@ namespace bs
 		return false;
 	}
 
-	bool ManagedComponent::calculateBounds(Bounds& bounds)
+	bool ManagedComponent::CalculateBounds(Bounds& bounds)
 	{
 		MonoObject* instance = nullptr;
 		
@@ -282,7 +282,7 @@ namespace bs
 		return Component::calculateBounds(bounds);
 	}
 
-	void ManagedComponent::update()
+	void ManagedComponent::Update()
 	{
 		if (mOnUpdateThunk != nullptr)
 		{
@@ -294,7 +294,7 @@ namespace bs
 		}
 	}
 
-	void ManagedComponent::triggerOnReset()
+	void ManagedComponent::TriggerOnReset()
 	{
 		if (mRequiresReset && mOnResetThunk != nullptr)
 		{
@@ -313,9 +313,9 @@ namespace bs
 		mObjInfo = nullptr;
 
 		MonoObject* instance;
-		if (!ScriptAssemblyManager::instance().getSerializableObjectInfo(mNamespace, mTypeName, mObjInfo))
+		if (!ScriptAssemblyManager::Instance().getSerializableObjectInfo(mNamespace, mTypeName, mObjInfo))
 		{
-			instance = ScriptAssemblyManager::instance().getBuiltinClasses().missingComponentClass->createInstance(true);
+			instance = ScriptAssemblyManager::Instance().getBuiltinClasses().missingComponentClass->createInstance(true);
 			mMissingType = true;
 		}
 		else
@@ -340,10 +340,10 @@ namespace bs
 		}
 
 		assert(componentHandle != nullptr);
-		ScriptGameObjectManager::instance().createManagedScriptComponent(instance, componentHandle);
+		ScriptGameObjectManager::Instance().createManagedScriptComponent(instance, componentHandle);
 	}
 
-	void ManagedComponent::onCreated()
+	void ManagedComponent::OnCreated()
 	{
 		MonoObject* instance = mOwner->getManagedInstance();
 
@@ -363,7 +363,7 @@ namespace bs
 		triggerOnReset();
 	}
 
-	void ManagedComponent::onInitialized()
+	void ManagedComponent::OnInitialized()
 	{
 		if (mOnInitializedThunk != nullptr)
 		{
@@ -377,7 +377,7 @@ namespace bs
 		triggerOnReset();
 	}
 
-	void ManagedComponent::onDestroyed()
+	void ManagedComponent::OnDestroyed()
 	{
 		if (mOnDestroyThunk != nullptr)
 		{
@@ -389,7 +389,7 @@ namespace bs
 		}
 	}
 
-	void ManagedComponent::onEnabled()
+	void ManagedComponent::OnEnabled()
 	{
 		if (mOnEnabledThunk != nullptr)
 		{
@@ -401,7 +401,7 @@ namespace bs
 		}
 	}
 
-	void ManagedComponent::onDisabled()
+	void ManagedComponent::OnDisabled()
 	{
 		if (mOnDisabledThunk != nullptr)
 		{
@@ -413,7 +413,7 @@ namespace bs
 		}
 	}
 
-	void ManagedComponent::onTransformChanged(TransformChangedFlags flags)
+	void ManagedComponent::OnTransformChanged(TransformChangedFlags flags)
 	{
 		if(mOnTransformChangedThunk != nullptr)
 		{
@@ -425,13 +425,13 @@ namespace bs
 		}
 	}
 
-	RTTITypeBase* ManagedComponent::getRTTIStatic()
+	RTTITypeBase* ManagedComponent::GetRttiStatic()
 	{
-		return ManagedComponentRTTI::instance();
+		return ManagedComponentRTTI::Instance();
 	}
 
-	RTTITypeBase* ManagedComponent::getRTTI() const
+	RTTITypeBase* ManagedComponent::GetRtti() const
 	{
-		return ManagedComponent::getRTTIStatic();
+		return ManagedComponent::GetRttiStatic();
 	}
 }

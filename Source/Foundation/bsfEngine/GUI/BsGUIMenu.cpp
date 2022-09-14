@@ -30,9 +30,9 @@ namespace bs
 			bs_delete(child);
 	}
 
-	const GUIMenuItem* GUIMenuItem::findChild(const String& name) const
+	const GUIMenuItem* GUIMenuItem::FindChild(const String& name) const
 	{
-		auto iterFind = std::find_if(begin(mChildren), end(mChildren), [&] (GUIMenuItem* x) { return x->getName() == name; });
+		auto iterFind = std::find_if(begin(mChildren), end(mChildren), [&] (GUIMenuItem* x) { return x->GetName() == name; });
 
 		if(iterFind != mChildren.end())
 			return *iterFind;
@@ -40,9 +40,9 @@ namespace bs
 		return nullptr;
 	}
 
-	GUIMenuItem* GUIMenuItem::findChild(const String& name)
+	GUIMenuItem* GUIMenuItem::FindChild(const String& name)
 	{
-		auto iterFind = std::find_if(begin(mChildren), end(mChildren), [&] (GUIMenuItem* x) { return x->getName() == name; });
+		auto iterFind = std::find_if(begin(mChildren), end(mChildren), [&] (GUIMenuItem* x) { return x->GetName() == name; });
 
 		if(iterFind != mChildren.end())
 			return *iterFind;
@@ -50,9 +50,9 @@ namespace bs
 		return nullptr;
 	}
 
-	void GUIMenuItem::removeChild(const String& name)
+	void GUIMenuItem::RemoveChild(const String& name)
 	{
-		auto iterFind = std::find_if(begin(mChildren), end(mChildren), [&] (GUIMenuItem* x) { return x->getName() == name; });
+		auto iterFind = std::find_if(begin(mChildren), end(mChildren), [&] (GUIMenuItem* x) { return x->GetName() == name; });
 
 		if(iterFind != mChildren.end())
 		{
@@ -61,7 +61,7 @@ namespace bs
 		}
 	}
 
-	void GUIMenuItem::removeChild(const GUIMenuItem* item)
+	void GUIMenuItem::RemoveChild(const GUIMenuItem* item)
 	{
 		auto iterFind = std::find(begin(mChildren), end(mChildren), item);
 
@@ -83,20 +83,20 @@ namespace bs
 
 	}
 
-	GUIMenuItem* GUIMenu::addMenuItem(const String& path, std::function<void()> callback, INT32 priority, const ShortcutKey& key)
+	GUIMenuItem* GUIMenu::AddMenuItem(const String& path, std::function<void()> callback, INT32 priority, const ShortcutKey& key)
 	{
-		return addMenuItemInternal(path, callback, false, priority, key);
+		return AddMenuItemInternal(path, callback, false, priority, key);
 	}
 
-	GUIMenuItem* GUIMenu::addSeparator(const String& path, INT32 priority)
+	GUIMenuItem* GUIMenu::AddSeparator(const String& path, INT32 priority)
 	{
-		return addMenuItemInternal(path, nullptr, true, priority, ShortcutKey::NONE);
+		return AddMenuItemInternal(path, nullptr, true, priority, ShortcutKey::NONE);
 	}
 
-	GUIMenuItem* GUIMenu::addMenuItemInternal(const String& path, std::function<void()> callback, bool isSeparator,
+	GUIMenuItem* GUIMenu::AddMenuItemInternal(const String& path, std::function<void()> callback, bool isSeparator,
 		INT32 priority, const ShortcutKey& key)
 	{
-		Vector<String> pathElements = StringUtil::split(path, "/");
+		Vector<String> pathElements = StringUtil::Split(path, "/");
 
 		GUIMenuItem* curSubMenu = &mRootElement;
 		for(UINT32 i = 0; i < (UINT32)pathElements.size(); i++)
@@ -136,7 +136,7 @@ namespace bs
 		return curSubMenu;
 	}
 
-	GUIMenuItem* GUIMenu::getMenuItem(const String& path)
+	GUIMenuItem* GUIMenu::GetMenuItem(const String& path)
 	{
 		Vector<String> pathElements = StringUtil::split(path, "/");
 
@@ -155,7 +155,7 @@ namespace bs
 		return curSubMenu;
 	}
 
-	void GUIMenu::removeMenuItem(const GUIMenuItem* item)
+	void GUIMenu::RemoveMenuItem(const GUIMenuItem* item)
 	{
 		GUIMenuItem* parent = item->mParent;
 		assert(parent != nullptr);
@@ -163,17 +163,17 @@ namespace bs
 		parent->removeChild(item->getName());
 	}
 
-	GUIDropDownData GUIMenu::getDropDownData() const
+	GUIDropDownData GUIMenu::GetDropDownData() const
 	{
 		return getDropDownDataInternal(mRootElement);
 	}
 
-	void GUIMenu::setLocalizedName(const String& menuItemLabel, const HString& localizedName)
+	void GUIMenu::SetLocalizedName(const String& menuItemLabel, const HString& localizedName)
 	{
 		mLocalizedEntryNames[menuItemLabel] = localizedName;
 	}
 
-	GUIDropDownData GUIMenu::getDropDownDataInternal(const GUIMenuItem& menu) const
+	GUIDropDownData GUIMenu::GetDropDownDataInternal(const GUIMenuItem& menu) const
 	{
 		GUIDropDownData dropDownData;
 

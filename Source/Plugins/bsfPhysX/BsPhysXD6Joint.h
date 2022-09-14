@@ -21,65 +21,65 @@ namespace bs
 		~PhysXD6Joint();
 
 		/** @copydoc D6Joint::getMotion */
-		D6JointMotion getMotion(D6JointAxis axis) const override;
+		D6JointMotion GetMotion(D6JointAxis axis) const override;
 
 		/** @copydoc D6Joint::setMotion */
-		void setMotion(D6JointAxis axis, D6JointMotion motion) override;
+		void SetMotion(D6JointAxis axis, D6JointMotion motion) override;
 
 		/** @copydoc D6Joint::getTwist */
-		Radian getTwist() const override;
+		Radian GetTwist() const override;
 
 		/** @copydoc D6Joint::getSwingY */
-		Radian getSwingY() const override;
+		Radian GetSwingY() const override;
 
 		/** @copydoc D6Joint::getSwingZ */
-		Radian getSwingZ() const override;
+		Radian GetSwingZ() const override;
 
 		/** @copydoc D6Joint::getLimitLinear */
-		LimitLinear getLimitLinear() const override;
+		LimitLinear GetLimitLinear() const override;
 
 		/** @copydoc D6Joint::setLimitLinear */
-		void setLimitLinear(const LimitLinear& limit) override;
+		void SetLimitLinear(const LimitLinear& limit) override;
 
 		/** @copydoc D6Joint::getLimitTwist */
-		LimitAngularRange getLimitTwist() const override;
+		LimitAngularRange GetLimitTwist() const override;
 
 		/** @copydoc D6Joint::setLimitTwist */
-		void setLimitTwist(const LimitAngularRange& limit) override;
+		void SetLimitTwist(const LimitAngularRange& limit) override;
 
 		/** @copydoc D6Joint::getLimitSwing */
-		LimitConeRange getLimitSwing() const override;
+		LimitConeRange GetLimitSwing() const override;
 
 		/** @copydoc D6Joint::setLimitSwing */
-		void setLimitSwing(const LimitConeRange& limit) override;
+		void SetLimitSwing(const LimitConeRange& limit) override;
 
 		/** @copydoc D6Joint::getDrive */
-		D6JointDrive getDrive(D6JointDriveType type) const override;
+		D6JointDrive GetDrive(D6JointDriveType type) const override;
 
 		/** @copydoc D6Joint::setDrive */
-		void setDrive(D6JointDriveType type, const D6JointDrive& drive) override;
+		void SetDrive(D6JointDriveType type, const D6JointDrive& drive) override;
 
 		/** @copydoc D6Joint::getDrivePosition */
-		Vector3 getDrivePosition() const override;
+		Vector3 GetDrivePosition() const override;
 
 		/** @copydoc D6Joint::getDriveRotation */
-		Quaternion getDriveRotation() const override;
+		Quaternion GetDriveRotation() const override;
 
 		/** @copydoc D6Joint::setDriveTransform */
-		void setDriveTransform(const Vector3& position, const Quaternion& rotation) override;
+		void SetDriveTransform(const Vector3& position, const Quaternion& rotation) override;
 
 		/** @copydoc D6Joint::getDriveLinearVelocity */
-		Vector3 getDriveLinearVelocity() const override;
+		Vector3 GetDriveLinearVelocity() const override;
 
 		/** @copydoc D6Joint::getDriveAngularVelocity */
-		Vector3 getDriveAngularVelocity() const override;
+		Vector3 GetDriveAngularVelocity() const override;
 
 		/** @copydoc D6Joint::setDriveVelocity */
-		void setDriveVelocity(const Vector3& linear, const Vector3& angular) override;
+		void SetDriveVelocity(const Vector3& linear, const Vector3& angular) override;
 
 	private:
 		/** Returns the internal PhysX representation of the D6 joint. */
-		inline physx::PxD6Joint* getInternal() const;
+		inline physx::PxD6Joint* GetInternal() const;
 	};
 
 	/** @} */

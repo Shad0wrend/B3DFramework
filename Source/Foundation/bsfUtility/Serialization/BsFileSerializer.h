@@ -28,7 +28,7 @@ namespace bs
 		 *							maintaining state or sharing information between objects during
 		 *							serialization.
 		 */
-		void encode(IReflectable* object, SerializationContext* context = nullptr);
+		void Encode(IReflectable* object, SerializationContext* context = nullptr);
 
 	private:
 		SPtr<DataStream> mOutputStream;
@@ -48,13 +48,13 @@ namespace bs
 		 *							maintaining state or sharing information between objects during
 		 *							deserialization.
 		 */
-		SPtr<IReflectable> decode(SerializationContext* context = nullptr);
+		SPtr<IReflectable> Decode(SerializationContext* context = nullptr);
 
 		/** Gets the size in bytes of the next object in the file. Returns 0 if no next object. */
-		UINT32 getSize() const;
+		UINT32 GetSize() const;
 
 		/** Skips over than object in the file. Calling decode() will decode the next object. */
-		void skip();
+		void Skip();
 
 	private:
 		SPtr<DataStream> mInputStream;

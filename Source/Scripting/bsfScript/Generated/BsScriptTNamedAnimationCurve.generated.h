@@ -34,10 +34,10 @@ namespace bs
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "NamedFloatCurve")
 
-		static MonoObject* box(const __TNamedAnimationCurvefloatInterop& value);
-		static __TNamedAnimationCurvefloatInterop unbox(MonoObject* value);
-		static TNamedAnimationCurve<float> fromInterop(const __TNamedAnimationCurvefloatInterop& value);
-		static __TNamedAnimationCurvefloatInterop toInterop(const TNamedAnimationCurve<float>& value);
+		static MonoObject* Box(const __TNamedAnimationCurvefloatInterop& value);
+		static __TNamedAnimationCurvefloatInterop Unbox(MonoObject* value);
+		static TNamedAnimationCurve<float> FromInterop(const __TNamedAnimationCurvefloatInterop& value);
+		static __TNamedAnimationCurvefloatInterop ToInterop(const TNamedAnimationCurve<float>& value);
 
 	private:
 		ScriptTNamedAnimationCurvefloat(MonoObject* managedInstance);
@@ -56,10 +56,10 @@ namespace bs
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "NamedVector3Curve")
 
-		static MonoObject* box(const __TNamedAnimationCurveVector3Interop& value);
-		static __TNamedAnimationCurveVector3Interop unbox(MonoObject* value);
-		static TNamedAnimationCurve<Vector3> fromInterop(const __TNamedAnimationCurveVector3Interop& value);
-		static __TNamedAnimationCurveVector3Interop toInterop(const TNamedAnimationCurve<Vector3>& value);
+		static MonoObject* Box(const __TNamedAnimationCurveVector3Interop& value);
+		static __TNamedAnimationCurveVector3Interop Unbox(MonoObject* value);
+		static TNamedAnimationCurve<Vector3> FromInterop(const __TNamedAnimationCurveVector3Interop& value);
+		static __TNamedAnimationCurveVector3Interop ToInterop(const TNamedAnimationCurve<Vector3>& value);
 
 	private:
 		ScriptTNamedAnimationCurveVector3(MonoObject* managedInstance);
@@ -78,10 +78,10 @@ namespace bs
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "NamedVector2Curve")
 
-		static MonoObject* box(const __TNamedAnimationCurveVector2Interop& value);
-		static __TNamedAnimationCurveVector2Interop unbox(MonoObject* value);
-		static TNamedAnimationCurve<Vector2> fromInterop(const __TNamedAnimationCurveVector2Interop& value);
-		static __TNamedAnimationCurveVector2Interop toInterop(const TNamedAnimationCurve<Vector2>& value);
+		static MonoObject* Box(const __TNamedAnimationCurveVector2Interop& value);
+		static __TNamedAnimationCurveVector2Interop Unbox(MonoObject* value);
+		static TNamedAnimationCurve<Vector2> FromInterop(const __TNamedAnimationCurveVector2Interop& value);
+		static __TNamedAnimationCurveVector2Interop ToInterop(const TNamedAnimationCurve<Vector2>& value);
 
 	private:
 		ScriptTNamedAnimationCurveVector2(MonoObject* managedInstance);
@@ -100,10 +100,10 @@ namespace bs
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "NamedQuaternionCurve")
 
-		static MonoObject* box(const __TNamedAnimationCurveQuaternionInterop& value);
-		static __TNamedAnimationCurveQuaternionInterop unbox(MonoObject* value);
-		static TNamedAnimationCurve<Quaternion> fromInterop(const __TNamedAnimationCurveQuaternionInterop& value);
-		static __TNamedAnimationCurveQuaternionInterop toInterop(const TNamedAnimationCurve<Quaternion>& value);
+		static MonoObject* Box(const __TNamedAnimationCurveQuaternionInterop& value);
+		static __TNamedAnimationCurveQuaternionInterop Unbox(MonoObject* value);
+		static TNamedAnimationCurve<Quaternion> FromInterop(const __TNamedAnimationCurveQuaternionInterop& value);
+		static __TNamedAnimationCurveQuaternionInterop ToInterop(const TNamedAnimationCurve<Quaternion>& value);
 
 	private:
 		ScriptTNamedAnimationCurveQuaternion(MonoObject* managedInstance);
@@ -122,10 +122,10 @@ namespace bs
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "NamedIntegerCurve")
 
-		static MonoObject* box(const __TNamedAnimationCurveint32_tInterop& value);
-		static __TNamedAnimationCurveint32_tInterop unbox(MonoObject* value);
-		static TNamedAnimationCurve<int32_t> fromInterop(const __TNamedAnimationCurveint32_tInterop& value);
-		static __TNamedAnimationCurveint32_tInterop toInterop(const TNamedAnimationCurve<int32_t>& value);
+		static MonoObject* Box(const __TNamedAnimationCurveint32_tInterop& value);
+		static __TNamedAnimationCurveint32_tInterop Unbox(MonoObject* value);
+		static TNamedAnimationCurve<int32_t> FromInterop(const __TNamedAnimationCurveint32_tInterop& value);
+		static __TNamedAnimationCurveint32_tInterop ToInterop(const TNamedAnimationCurve<int32_t>& value);
 
 	private:
 		ScriptTNamedAnimationCurveint32_t(MonoObject* managedInstance);

@@ -24,35 +24,35 @@ namespace bs
 
 		/** Normal vector that determines how is the capsule oriented. */
 		BS_SCRIPT_EXPORT(n:Normal,pr:setter)
-		void setNormal(const Vector3& normal);
+		void SetNormal(const Vector3& normal);
 
 		/** @copydoc setNormal() */
 		BS_SCRIPT_EXPORT(n:Normal,pr:getter)
-		Vector3 getNormal() const { return mNormal; }
+		Vector3 GetNormal() const { return mNormal; }
 
 		/** Determines the position of the capsule shape, relative to the component's scene object. */
 		BS_SCRIPT_EXPORT(n:Center,pr:setter)
-		void setCenter(const Vector3& center);
+		void SetCenter(const Vector3& center);
 
 		/** @copydoc setCenter() */
 		BS_SCRIPT_EXPORT(n:Center,pr:getter)
-		Vector3 getCenter() const { return mLocalPosition; }
+		Vector3 GetCenter() const { return mLocalPosition; }
 
 		/** @copydoc CapsuleCollider::setHalfHeight() */
 		BS_SCRIPT_EXPORT(n:HalfHeight,pr:setter)
-		void setHalfHeight(float halfHeight);
+		void SetHalfHeight(float halfHeight);
 
 		/** @copydoc CapsuleCollider::getHalfHeight() */
 		BS_SCRIPT_EXPORT(n:HalfHeight,pr:getter)
-		float getHalfHeight() const { return mHalfHeight; }
+		float GetHalfHeight() const { return mHalfHeight; }
 
 		/** @copydoc CapsuleCollider::setRadius() */
 		BS_SCRIPT_EXPORT(n:Radius,pr:setter)
-		void setRadius(float radius);
+		void SetRadius(float radius);
 
 		/** @copydoc CapsuleCollider::getRadius() */
 		BS_SCRIPT_EXPORT(n:Radius,pr:getter)
-		float getRadius() const { return mRadius; }
+		float GetRadius() const { return mRadius; }
 
 		/** @name Internal
 		 *  @{
@@ -70,7 +70,7 @@ namespace bs
 		friend class SceneObject;
 
 		/** @copydoc CCollider::createInternal */
-		SPtr<Collider> createInternal() override;
+		SPtr<Collider> CreateInternal() ;
 
 	protected:
 		Vector3 mNormal = Vector3::UNIT_Y;
@@ -82,8 +82,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class CCapsuleColliderRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const ;
 
 	protected:
 		CCapsuleCollider(); // Serialization only

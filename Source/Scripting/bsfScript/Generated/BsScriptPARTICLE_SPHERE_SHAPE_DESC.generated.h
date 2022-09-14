@@ -13,8 +13,8 @@ namespace bs
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "ParticleSphereShapeOptions")
 
-		static MonoObject* box(const PARTICLE_SPHERE_SHAPE_DESC& value);
-		static PARTICLE_SPHERE_SHAPE_DESC unbox(MonoObject* value);
+		static MonoObject* Box(const PARTICLE_SPHERE_SHAPE_DESC& value);
+		static PARTICLE_SPHERE_SHAPE_DESC Unbox(MonoObject* value);
 
 	private:
 		ScriptPARTICLE_SPHERE_SHAPE_DESC(MonoObject* managedInstance);

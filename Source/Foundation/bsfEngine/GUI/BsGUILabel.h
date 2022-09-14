@@ -19,7 +19,7 @@ namespace bs
 	{
 	public:
 		/** Returns type name of the GUI element used for finding GUI element styles.  */
-		static const String& getGUITypeName();
+		static const String& GetGuiTypeName();
 
 		/**
 		 * Creates a new label with the specified text.
@@ -28,7 +28,7 @@ namespace bs
 		 * @param[in]	styleName	Optional style to use for the element. Style will be retrieved from GUISkin of the
 		 *							GUIWidget the element is used on. If not specified default button style is used.
 		 */
-		static GUILabel* create(const HString& text, const String& styleName = StringUtil::BLANK);
+		static GUILabel* Create(const HString& text, const String& styleName = StringUtil::BLANK);
 
 		/**
 		 * Creates a new label with the specified text.
@@ -39,7 +39,7 @@ namespace bs
 		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
 		 *								GUIWidget the element is used on. If not specified default button style is used.
 		 */
-		static GUILabel* create(const HString& text, const GUIOptions& options, const String& styleName = StringUtil::BLANK);
+		static GUILabel* Create(const HString& text, const GUIOptions& options, const String& styleName = StringUtil::BLANK);
 
 		/**
 		 * Creates a new label with the specified content (text + optional image).
@@ -48,7 +48,7 @@ namespace bs
 		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
 		 *								GUIWidget the element is used on. If not specified default button style is used.
 		 */
-		static GUILabel* create(const GUIContent& content, const String& styleName = StringUtil::BLANK);
+		static GUILabel* Create(const GUIContent& content, const String& styleName = StringUtil::BLANK);
 
 		/**
 		 * Creates a new label with the specified content (text + optional image).
@@ -59,10 +59,10 @@ namespace bs
 		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
 		 *								GUIWidget the element is used on. If not specified default button style is used.
 		 */
-		static GUILabel* create(const GUIContent& content, const GUIOptions& options, const String& styleName = StringUtil::BLANK);
+		static GUILabel* Create(const GUIContent& content, const GUIOptions& options, const String& styleName = StringUtil::BLANK);
 
 		/** Changes the active content of the label. */
-		void setContent(const GUIContent& content);
+		void SetContent(const GUIContent& content);
 
 	public: // ***** INTERNAL ******
 		/** @name Internal
@@ -83,7 +83,7 @@ namespace bs
 		UINT32 GetRenderElementDepthRangeInternal() const override;
 
 		/** @copydoc GUIElement::_fillBuffer */
-		void _fillBuffer(
+		void FillBuffer(
 			UINT8* vertices,
 			UINT32* indices,
 			UINT32 vertexOffset,
@@ -94,7 +94,7 @@ namespace bs
 			UINT32 renderElementIdx) const override;
 
 		/** @copydoc GUIElement::updateRenderElementsInternal */
-		void updateRenderElementsInternal() override;
+		void UpdateRenderElementsInternal() override;
 
 	private:
 		GUILabel(const String& styleName, const GUIContent& content, const GUIDimensions& dimensions);

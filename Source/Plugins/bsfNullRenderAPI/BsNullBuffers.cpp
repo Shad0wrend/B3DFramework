@@ -4,7 +4,7 @@
 
 namespace bs { namespace ct
 {
-	SPtr<VertexBuffer> NullHardwareBufferManager::createVertexBufferInternal(const VERTEX_BUFFER_DESC& desc,
+	SPtr<VertexBuffer> NullHardwareBufferManager::CreateVertexBufferInternal(const VERTEX_BUFFER_DESC& desc,
 		GpuDeviceFlags deviceMask)
 	{
 		SPtr<NullVertexBuffer> ret = bs_shared_ptr_new<NullVertexBuffer>(desc, deviceMask);
@@ -13,7 +13,7 @@ namespace bs { namespace ct
 		return ret;
 	}
 
-	SPtr<IndexBuffer> NullHardwareBufferManager::createIndexBufferInternal(const INDEX_BUFFER_DESC& desc,
+	SPtr<IndexBuffer> NullHardwareBufferManager::CreateIndexBufferInternal(const INDEX_BUFFER_DESC& desc,
 		GpuDeviceFlags deviceMask)
 	{
 		SPtr<NullIndexBuffer> ret = bs_shared_ptr_new<NullIndexBuffer>(desc, deviceMask);
@@ -22,7 +22,7 @@ namespace bs { namespace ct
 		return ret;
 	}
 
-	SPtr<GpuParamBlockBuffer> NullHardwareBufferManager::createGpuParamBlockBufferInternal(UINT32 size,
+	SPtr<GpuParamBlockBuffer> NullHardwareBufferManager::CreateGpuParamBlockBufferInternal(UINT32 size,
 		GpuBufferUsage usage, GpuDeviceFlags deviceMask)
 	{
 		SPtr<GpuParamBlockBuffer> paramBlockBufferPtr = bs_shared_ptr_new<NullGpuParamBlockBuffer>(size, usage, deviceMask);
@@ -31,7 +31,7 @@ namespace bs { namespace ct
 		return paramBlockBufferPtr;
 	}
 
-	SPtr<GpuBuffer> NullHardwareBufferManager::createGpuBufferInternal(const GPU_BUFFER_DESC& desc,
+	SPtr<GpuBuffer> NullHardwareBufferManager::CreateGpuBufferInternal(const GPU_BUFFER_DESC& desc,
 		GpuDeviceFlags deviceMask)
 	{
 		SPtr<NullGpuBuffer> bufferPtr = bs_shared_ptr_new<NullGpuBuffer>(desc, deviceMask);
@@ -40,7 +40,7 @@ namespace bs { namespace ct
 		return bufferPtr;
 	}
 
-	SPtr<GpuBuffer> NullHardwareBufferManager::createGpuBufferInternal(const GPU_BUFFER_DESC& desc,
+	SPtr<GpuBuffer> NullHardwareBufferManager::CreateGpuBufferInternal(const GPU_BUFFER_DESC& desc,
 		SPtr<HardwareBuffer> underlyingBuffer)
 	{
 		SPtr<NullGpuBuffer> bufferPtr = bs_shared_ptr_new<NullGpuBuffer>(desc, std::move(underlyingBuffer));
@@ -62,33 +62,33 @@ namespace bs { namespace ct
 		: GpuBuffer(desc, std::move(underlyingBuffer))
 	{ }
 
-	void NullGpuBuffer::initialize()
+	void NullGpuBuffer::Initialize()
 	{
-		const GpuBufferProperties& props = getProperties();
+		const GpuBufferProperties& props = GetProperties();
 		mBufferDeleter = &deleteBuffer;
 
 		// Create a new buffer if not wrapping an external one
 		if(!mBuffer)
-			mBuffer = bs_pool_new<NullHardwareBuffer>(props.getUsage(), props.getElementCount(), props.getElementSize());
+			mBuffer = bs_pool_new<NullHardwareBuffer>(props.GetUsage(), props.GetElementCount(), props.GetElementSize());
 
-		GpuBuffer::initialize();
+		GpuBuffer::Initialize();
 	}
 
 	NullGpuParamBlockBuffer::NullGpuParamBlockBuffer(UINT32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
 		:GpuParamBlockBuffer(size, usage, deviceMask)
 	{ }
 
-	void NullGpuParamBlockBuffer::initialize()
+	void NullGpuParamBlockBuffer::Initialize()
 	{
 		mBuffer = bs_pool_new<NullHardwareBuffer>(mUsage, 1, mSize);
-		GpuParamBlockBuffer::initialize();
+		GpuParamBlockBuffer::Initialize();
 	}
 
 	NullHardwareBuffer::NullHardwareBuffer(GpuBufferUsage usage, UINT32 elementCount, UINT32 elementSize)
 		: HardwareBuffer(elementCount * elementSize, usage, GDF_DEFAULT)
 	{ }
 
-	void* NullHardwareBuffer::map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx, UINT32 queueIdx)
+	void* NullHardwareBuffer::Map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx, UINT32 queueIdx)
 	{
 		assert(mStagingBuffer == nullptr);
 
@@ -106,7 +106,7 @@ namespace bs { namespace ct
 		:IndexBuffer(desc, deviceMask)
 	{ }
 
-	void NullIndexBuffer::initialize()
+	void NullIndexBuffer::Initialize()
 	{
 		mBuffer = bs_pool_new<NullHardwareBuffer>(mUsage, 1, mSize);
 		mBufferDeleter = &deleteBuffer;
@@ -118,7 +118,7 @@ namespace bs { namespace ct
 		: VertexBuffer(desc, deviceMask)
 	{ }
 
-	void NullVertexBuffer::initialize()
+	void NullVertexBuffer::Initialize()
 	{
 		mBuffer = bs_pool_new<NullHardwareBuffer>(mUsage, 1, mSize);
 		mBufferDeleter = &deleteBuffer;

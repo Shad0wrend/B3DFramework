@@ -11,7 +11,7 @@ namespace bs
 		:ScriptReflectableBase(managedInstance)
 	 { }
 
-	SPtr<ParticleEvolver> ScriptParticleEvolverBase::getInternal() const
+	SPtr<ParticleEvolver> ScriptParticleEvolverBase::GetInternal() const
 	{
 		return std::static_pointer_cast<ParticleEvolver>(mInternal);
 	}
@@ -26,14 +26,14 @@ namespace bs
 
 	}
 
-	MonoObject* ScriptParticleEvolver::create(const SPtr<ParticleEvolver>& value)
+	MonoObject* ScriptParticleEvolver::Create(const SPtr<ParticleEvolver>& value)
 	{
 		if(value == nullptr) return nullptr; 
 
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptParticleEvolver>()) ScriptParticleEvolver(managedInstance, value);
 		return managedInstance;
 	}

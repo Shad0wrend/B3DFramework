@@ -7,7 +7,7 @@
 
 namespace bs
 {
-	bool PlainTextImporter::isExtensionSupported(const String& ext) const
+	bool PlainTextImporter::IsExtensionSupported(const String& ext) const
 	{
 		String lowerCaseExt = ext;
 		StringUtil::toLowerCase(lowerCaseExt);
@@ -15,25 +15,25 @@ namespace bs
 		return lowerCaseExt == u8"txt" || lowerCaseExt == u8"xml" || lowerCaseExt == u8"json";
 	}
 
-	bool PlainTextImporter::isMagicNumberSupported(const UINT8* magicNumPtr, UINT32 numBytes) const
+	bool PlainTextImporter::IsMagicNumberSupported(const UINT8* magicNumPtr, UINT32 numBytes) const
 	{
 		return true; // Plain-text so we don't even check for magic number
 	}
 
-	SPtr<Resource> PlainTextImporter::import(const Path& filePath, SPtr<const ImportOptions> importOptions)
+	SPtr<Resource> PlainTextImporter::Import(const Path& filePath, SPtr<const ImportOptions> importOptions)
 	{
 		WString textData;
 		{
-			Lock fileLock = FileScheduler::getLock(filePath);
+			Lock fileLock = FileScheduler::GetLock(filePath);
 
-			SPtr<DataStream> stream = FileSystem::openFile(filePath);
-			textData = stream->getAsWString();
+			SPtr<DataStream> stream = FileSystem::OpenFile(filePath);
+			textData = stream->GetAsWString();
 		}
 
 		SPtr<PlainText> plainText = PlainText::CreatePtrInternal(textData);
 
-		String fileName = filePath.getFilename(false);
-		plainText->setName(fileName);
+		String fileName = filePath.GetFilename(false);
+		plainText->SetName(fileName);
 
 		return plainText;
 	}

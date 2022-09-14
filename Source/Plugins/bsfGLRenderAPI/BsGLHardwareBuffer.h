@@ -22,25 +22,25 @@ namespace bs { namespace ct
 		~GLHardwareBuffer();
 
 		/** @copydoc HardwareBuffer::readData */
-		void readData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx = 0, UINT32 queueIdx = 0) override;
+		void ReadData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx = 0, UINT32 queueIdx = 0) ;
 
 		/** @copydoc HardwareBuffer::writeData */
-		void writeData(UINT32 offset, UINT32 length, const void* source, BufferWriteType writeFlags = BWT_NORMAL,
-			UINT32 queueIdx = 0) override;
+		void WriteData(UINT32 offset, UINT32 length, const void* source, BufferWriteType writeFlags = BWT_NORMAL,
+			UINT32 queueIdx = 0) ;
 
 		/** @copydoc HardwareBuffer::copyData */
-		void copyData(HardwareBuffer& srcBuffer, UINT32 srcOffset, UINT32 dstOffset, UINT32 length,
-			bool discardWholeBuffer = false, const SPtr<ct::CommandBuffer>& commandBuffer = nullptr) override;
+		void CopyData(HardwareBuffer& srcBuffer, UINT32 srcOffset, UINT32 dstOffset, UINT32 length,
+			bool discardWholeBuffer = false, const SPtr<ct::CommandBuffer>& commandBuffer = nullptr) ;
 
 		/**	Returns internal OpenGL buffer ID. */
-		GLuint getGLBufferId() const { return mBufferId; }
+		GLuint GetGlBufferId() const { return mBufferId; }
 
 	private:
 		/** @copydoc HardwareBuffer::map */
-		void* map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx, UINT32 queueIdx) override;
+		void* Map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx, UINT32 queueIdx) ;
 
 		/** @copydoc HardwareBuffer::unmap */
-		void unmap() override;
+		void Unmap() ;
 
 		GLenum mTarget;
 		GLuint mBufferId = 0;

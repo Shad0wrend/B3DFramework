@@ -22,7 +22,7 @@ namespace bs
 		 * @param[in]	locale	Locale that determines how are the ANSI characters interpreted.
 		 * @return				UTF-8 encoded string.
 		 */
-		static String fromANSI(const String& input, const std::locale& locale = std::locale(""));
+		static String FromAnsi(const String& input, const std::locale& locale = std::locale(""));
 
 		/**
 		 * Converts from an UTF-8 encoding into ANSI encoding in the specified locale.
@@ -33,7 +33,7 @@ namespace bs
 		 *								the selected ANSI code page.
 		 * @return						ANSI encoded string in the specified locale.
 		 */
-		static String toANSI(const String& input, const std::locale& locale = std::locale(""), char invalidChar = 0);
+		static String ToAnsi(const String& input, const std::locale& locale = std::locale(""), char invalidChar = 0);
 
 		/**
 		 * Converts from a system-specific wide character encoding into UTF-8.
@@ -42,7 +42,7 @@ namespace bs
 		 *						Windows and UTF-32 on Unix.
 		 * @return				UTF-8 encoded string.
 		 */
-		static String fromWide(const WString& input);
+		static String FromWide(const WString& input);
 
 		/**
 		 * Converts from an UTF-8 encoding into system-specific wide character encoding.
@@ -51,7 +51,7 @@ namespace bs
 		 * @return				Wide string encoded in a system-specific manner. Actual encoding can be assumed to be UTF-16
 		 *						on Windows and UTF-32 and Unix.
 		 */
-		static WString toWide(const String& input);
+		static WString ToWide(const String& input);
 
 		/**
 		 * Converts from an UTF-16 encoding into UTF-8.
@@ -59,7 +59,7 @@ namespace bs
 		 * @param[in]	input	String encoded as UTF-16.
 		 * @return				UTF-8 encoded string.
 		 */
-		static String fromUTF16(const U16String& input);
+		static String FromUtF16(const U16String& input);
 
 		/**
 		 * Converts from an UTF-8 encoding into UTF-16.
@@ -67,7 +67,7 @@ namespace bs
 		 * @param[in]	input	String encoded as UTF-8.
 		 * @return				UTF-16 encoded string.
 		 */
-		static U16String toUTF16(const String& input);
+		static U16String ToUtF16(const String& input);
 
 		/**
 		 * Converts from an UTF-32 encoding into UTF-8.
@@ -75,7 +75,7 @@ namespace bs
 		 * @param[in]	input	String encoded as UTF-32.
 		 * @return				UTF-8 encoded string.
 		 */
-		static String fromUTF32(const U32String& input);
+		static String FromUtF32(const U32String& input);
 
 		/**
 		 * Converts from an UTF-8 encoding into UTF-32.
@@ -83,26 +83,26 @@ namespace bs
 		 * @param[in]	input	String encoded as UTF-8.
 		 * @return				UTF-32 encoded string.
 		 */
-		static U32String toUTF32(const String& input);
+		static U32String ToUtF32(const String& input);
 
 		/** Counts the number of characters in the provided UTF-8 input string. */
-		static UINT32 count(const String& input);
+		static UINT32 Count(const String& input);
 
 		/** Converts the provided UTF8 encoded string to lowercase. */
-		static String toLower(const String& input);
+		static String ToLower(const String& input);
 
 		/** Converts the provided UTF8 encoded string to uppercase. */
-		static String toUpper(const String& input);
+		static String ToUpper(const String& input);
 
 		/**
 		 * Returns the byte at which the character with the specified index starts. The string is expected to be in UTF-8
 		 * encoding. If @p charIdx is out of range the method returns the index past the last byte in the string (same
 		 * as the string length in bytes).
 		 */
-		static UINT32 charToByteIndex(const String& input, UINT32 charIdx);
+		static UINT32 CharToByteIndex(const String& input, UINT32 charIdx);
 
 		/** Calculates the number of bytes taken up by the character at the specified position. */
-		static UINT32 charByteCount(const String& input, UINT32 charIdx);
+		static UINT32 CharByteCount(const String& input, UINT32 charIdx);
 	};
 
 	/** @} */

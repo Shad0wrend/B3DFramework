@@ -62,7 +62,7 @@ namespace bs { namespace ct
 		 *
 		 * @param[in]	desc		Descriptor structure that describes what kind of texture to retrieve.
 		 */
-		SPtr<PooledRenderTexture> get(const POOLED_RENDER_TEXTURE_DESC& desc);
+		SPtr<PooledRenderTexture> Get(const POOLED_RENDER_TEXTURE_DESC& desc);
 
 		/**
 		 * Attempts to find the unused render texture with the specified parameters in the pool, or creates a new texture
@@ -75,7 +75,7 @@ namespace bs { namespace ct
 		 *								value will be output through this parameter.
 		 * @param[in]		desc		Descriptor structure that describes what kind of texture to retrieve.
 		 */
-		void get(SPtr<PooledRenderTexture>& texture, const POOLED_RENDER_TEXTURE_DESC& desc);
+		void Get(SPtr<PooledRenderTexture>& texture, const POOLED_RENDER_TEXTURE_DESC& desc);
 
 		/**
 		 * Attempts to find the unused storage buffer with the specified parameters in the pool, or creates a new buffer
@@ -83,7 +83,7 @@ namespace bs { namespace ct
 		 *
 		 * @param[in]	desc		Descriptor structure that describes what kind of buffer to retrieve.
 		 */
-		SPtr<PooledStorageBuffer> get(const POOLED_STORAGE_BUFFER_DESC& desc);
+		SPtr<PooledStorageBuffer> Get(const POOLED_STORAGE_BUFFER_DESC& desc);
 
 		/**
 		 * Attempts to find the unused storage buffer with the specified parameters in the pool, or creates a new buffer
@@ -96,16 +96,16 @@ namespace bs { namespace ct
 		 *								value will be output through this parameter.
 		 * @param[in]	desc			Descriptor structure that describes what kind of buffer to retrieve.
 		 */
-		void get(SPtr<PooledStorageBuffer>& buffer, const POOLED_STORAGE_BUFFER_DESC& desc);
+		void Get(SPtr<PooledStorageBuffer>& buffer, const POOLED_STORAGE_BUFFER_DESC& desc);
 
 		/** Lets the pool know that another frame has passed. */
-		void update();
+		void Update();
 
 		/**
 		 * Destroys all unreferenced resources with that were last used @p age frames ago. Specify 0 to destroy all
 		 * unreferenced resources.
 		 */
-		void prune(UINT32 age);
+		void Prune(UINT32 age);
 	private:
 		/**
 		 * Checks does the provided texture match the parameters.
@@ -114,7 +114,7 @@ namespace bs { namespace ct
 		 * @param[in]	desc		Descriptor structure that describes what kind of texture to match.
 		 * @return					True if the texture matches the descriptor, false otherwise.
 		 */
-		static bool matches(const SPtr<Texture>& texture, const POOLED_RENDER_TEXTURE_DESC& desc);
+		static bool Matches(const SPtr<Texture>& texture, const POOLED_RENDER_TEXTURE_DESC& desc);
 
 		/**
 		 * Checks does the provided buffer match the parameters.
@@ -123,7 +123,7 @@ namespace bs { namespace ct
 		 * @param[in]	desc	Descriptor structure that describes what kind of buffer to match.
 		 * @return				True if the buffer matches the descriptor, false otherwise.
 		 */
-		static bool matches(const SPtr<GpuBuffer>& buffer, const POOLED_STORAGE_BUFFER_DESC& desc);
+		static bool Matches(const SPtr<GpuBuffer>& buffer, const POOLED_STORAGE_BUFFER_DESC& desc);
 
 		DynArray<SPtr<PooledRenderTexture>> mTextures;
 		DynArray<SPtr<PooledStorageBuffer>> mBuffers;
@@ -150,7 +150,7 @@ namespace bs { namespace ct
 		 * @param[in]	mipCount	Number of mip levels, excluding the root mip level.
 		 * @return					Descriptor that is accepted by RenderTexturePool.
 		 */
-		static POOLED_RENDER_TEXTURE_DESC create2D(PixelFormat format, UINT32 width, UINT32 height,
+		static POOLED_RENDER_TEXTURE_DESC Create2D(PixelFormat format, UINT32 width, UINT32 height,
 			INT32 usage = TU_STATIC, UINT32 samples = 0, bool hwGamma = false, UINT32 arraySize = 1, UINT32 mipCount = 0);
 
 		/**
@@ -163,7 +163,7 @@ namespace bs { namespace ct
 		 * @param[in]	usage		Usage flags that control in which way is the texture going to be used.
 		 * @return					Descriptor that is accepted by RenderTexturePool.
 		 */
-		static POOLED_RENDER_TEXTURE_DESC create3D(PixelFormat format, UINT32 width, UINT32 height, UINT32 depth,
+		static POOLED_RENDER_TEXTURE_DESC Create3D(PixelFormat format, UINT32 width, UINT32 height, UINT32 depth,
 			INT32 usage = TU_STATIC);
 
 		/**
@@ -176,7 +176,7 @@ namespace bs { namespace ct
 		 * @param[in]	arraySize	Number of textures in a texture array. Specify 1 for no array.
 		 * @return					Descriptor that is accepted by RenderTexturePool.
 		 */
-		static POOLED_RENDER_TEXTURE_DESC createCube(PixelFormat format, UINT32 width, UINT32 height,
+		static POOLED_RENDER_TEXTURE_DESC CreateCube(PixelFormat format, UINT32 width, UINT32 height,
 			INT32 usage = TU_STATIC, UINT32 arraySize = 1);
 
 	private:
@@ -207,7 +207,7 @@ namespace bs { namespace ct
 		 * @param[in]	numElements	Number of elements in the buffer.
 		 * @param[in]	usage		Usage flag hinting the driver how is buffer going to be used.
 		 */
-		static POOLED_STORAGE_BUFFER_DESC createStandard(GpuBufferFormat format, UINT32 numElements,
+		static POOLED_STORAGE_BUFFER_DESC CreateStandard(GpuBufferFormat format, UINT32 numElements,
 			GpuBufferUsage usage = GBU_LOADSTORE);
 
 		/**
@@ -217,7 +217,7 @@ namespace bs { namespace ct
 		 * @param[in]	numElements		Number of elements in the buffer.
 		 * @param[in]	usage		Usage flag hinting the driver how is buffer going to be used.
 		 */
-		static POOLED_STORAGE_BUFFER_DESC createStructured(UINT32 elementSize, UINT32 numElements,
+		static POOLED_STORAGE_BUFFER_DESC CreateStructured(UINT32 elementSize, UINT32 numElements,
 			GpuBufferUsage usage = GBU_LOADSTORE);
 
 	private:

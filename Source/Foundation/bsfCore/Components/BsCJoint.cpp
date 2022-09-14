@@ -34,12 +34,12 @@ namespace bs
 		mNotifyFlags = (TransformChangedFlags)(TCF_Parent | TCF_Transform);
 	}
 
-	HRigidbody CJoint::getBody(JointBody body) const
+	HRigidbody CJoint::GetBody(JointBody body) const
 	{
 		return mBodies[(int)body];
 	}
 
-	void CJoint::setBody(JointBody body, const HRigidbody& value)
+	void CJoint::SetBody(JointBody body, const HRigidbody& value)
 	{
 		if (mBodies[(int)body] == value)
 			return;
@@ -55,8 +55,8 @@ namespace bs
 		// If joint already exists, destroy it if we removed all bodies, otherwise update its transform
 		if(mInternal != nullptr)
 		{
-			if (!isBodyValid(mBodies[0]) && !isBodyValid(mBodies[1]))
-				destroyInternal();
+			if (!IsBodyValid(mBodies[0]) && !IsBodyValid(mBodies[1]))
+				DestroyInternal();
 			else
 			{
 				Rigidbody* rigidbody = nullptr;
@@ -64,30 +64,30 @@ namespace bs
 					rigidbody = value->GetInternalInternal();
 
 				mInternal->setBody(body, rigidbody);
-				updateTransform(body);
+				UpdateTransform(body);
 			}
 		}
 		else // If joint doesn't exist, check if we can create it
 		{
 			// Must be an active component and at least one of the bodies must be non-null
-			if (SO()->getActive() && (isBodyValid(mBodies[0]) || isBodyValid(mBodies[1])))
+			if (SO()->getActive() && (IsBodyValid(mBodies[0]) || IsBodyValid(mBodies[1])))
 			{
-				restoreInternal();
+				RestoreInternal();
 			}
 		}
 	}
 
-	Vector3 CJoint::getPosition(JointBody body) const
+	Vector3 CJoint::GetPosition(JointBody body) const
 	{
 		return mPositions[(int)body];
 	}
 
-	Quaternion CJoint::getRotation(JointBody body) const
+	Quaternion CJoint::GetRotation(JointBody body) const
 	{
 		return mRotations[(int)body];
 	}
 
-	void CJoint::setTransform(JointBody body, const Vector3& position, const Quaternion& rotation)
+	void CJoint::SetTransform(JointBody body, const Vector3& position, const Quaternion& rotation)
 	{
 		if (mPositions[(int)body] == position && mRotations[(int)body] == rotation)
 			return;
@@ -96,15 +96,15 @@ namespace bs
 		mRotations[(int)body] = rotation;
 
 		if (mInternal != nullptr)
-			updateTransform(body);
+			UpdateTransform(body);
 	}
 
-	float CJoint::getBreakForce() const
+	float CJoint::GetBreakForce() const
 	{
 		return mDesc.breakForce;
 	}
 
-	void CJoint::setBreakForce(float force)
+	void CJoint::SetBreakForce(float force)
 	{
 		if (mDesc.breakForce == force)
 			return;
@@ -115,12 +115,12 @@ namespace bs
 			mInternal->setBreakForce(force);
 	}
 
-	float CJoint::getBreakTorque() const
+	float CJoint::GetBreakTorque() const
 	{
 		return mDesc.breakTorque;
 	}
 
-	void CJoint::setBreakTorque(float torque)
+	void CJoint::SetBreakTorque(float torque)
 	{
 		if (mDesc.breakTorque == torque)
 			return;
@@ -131,12 +131,12 @@ namespace bs
 			mInternal->setBreakTorque(torque);
 	}
 
-	bool CJoint::getEnableCollision() const
+	bool CJoint::GetEnableCollision() const
 	{
 		return mDesc.enableCollision;
 	}
 
-	void CJoint::setEnableCollision(bool value)
+	void CJoint::SetEnableCollision(bool value)
 	{
 		if (mDesc.enableCollision == value)
 			return;
@@ -147,12 +147,12 @@ namespace bs
 			mInternal->setEnableCollision(value);
 	}
 
-	void CJoint::onInitialized()
+	void CJoint::OnInitialized()
 	{
 
 	}
 
-	void CJoint::onDestroyed()
+	void CJoint::OnDestroyed()
 	{
 		if (mBodies[0] != nullptr)
 			mBodies[0]->SetJointInternal(HJoint());
@@ -161,22 +161,22 @@ namespace bs
 			mBodies[1]->SetJointInternal(HJoint());
 
 		if(mInternal != nullptr)
-			destroyInternal();
+			DestroyInternal();
 	}
 
-	void CJoint::onDisabled()
+	void CJoint::OnDisabled()
 	{
 		if (mInternal != nullptr)
-			destroyInternal();
+			DestroyInternal();
 	}
 
-	void CJoint::onEnabled()
+	void CJoint::OnEnabled()
 	{
-		if(isBodyValid(mBodies[0]) || isBodyValid(mBodies[1]))
-			restoreInternal();
+		if(IsBodyValid(mBodies[0]) || IsBodyValid(mBodies[1]))
+			RestoreInternal();
 	}
 
-	void CJoint::onTransformChanged(TransformChangedFlags flags)
+	void CJoint::OnTransformChanged(TransformChangedFlags flags)
 	{
 		if (mInternal == nullptr)
 			return;
@@ -190,11 +190,11 @@ namespace bs
 		if (gPhysics().IsUpdateInProgressInternal())
 			return;
 
-		updateTransform(JointBody::Target);
-		updateTransform(JointBody::Anchor);
+		UpdateTransform(JointBody::Target);
+		UpdateTransform(JointBody::Anchor);
 	}
 
-	void CJoint::restoreInternal()
+	void CJoint::RestoreInternal()
 	{
 		if (mBodies[0] != nullptr)
 			mDesc.bodies[0].body = mBodies[0]->GetInternalInternal();
@@ -206,15 +206,15 @@ namespace bs
 		else
 			mDesc.bodies[1].body = nullptr;
 
-		getLocalTransform(JointBody::Target, mDesc.bodies[0].position, mDesc.bodies[0].rotation);
-		getLocalTransform(JointBody::Anchor, mDesc.bodies[1].position, mDesc.bodies[1].rotation);
+		GetLocalTransform(JointBody::Target, mDesc.bodies[0].position, mDesc.bodies[0].rotation);
+		GetLocalTransform(JointBody::Anchor, mDesc.bodies[1].position, mDesc.bodies[1].rotation);
 
-		mInternal = createInternal();
+		mInternal = CreateInternal();
 
 		mInternal->onJointBreak.connect(std::bind(&CJoint::triggerOnJointBroken, this));
 	}
 
-	void CJoint::destroyInternal()
+	void CJoint::DestroyInternal()
 	{
 		// This should release the last reference and destroy the internal joint
 		if(mInternal)
@@ -224,7 +224,7 @@ namespace bs
 		}
 	}
 
-	void CJoint::notifyRigidbodyMoved(const HRigidbody& body)
+	void CJoint::NotifyRigidbodyMoved(const HRigidbody& body)
 	{
 		if (mInternal == nullptr)
 			return;
@@ -234,14 +234,14 @@ namespace bs
 			return;
 
 		if (mBodies[0] == body)
-			updateTransform(JointBody::Target);
+			UpdateTransform(JointBody::Target);
 		else if (mBodies[1] == body)
-			updateTransform(JointBody::Anchor);
+			UpdateTransform(JointBody::Anchor);
 		else
 			assert(false); // Not allowed to happen
 	}
 
-	bool CJoint::isBodyValid(const HRigidbody& body)
+	bool CJoint::IsBodyValid(const HRigidbody& body)
 	{
 		if (body == nullptr)
 			return false;
@@ -252,16 +252,16 @@ namespace bs
 		return true;
 	}
 
-	void CJoint::updateTransform(JointBody body)
+	void CJoint::UpdateTransform(JointBody body)
 	{
 		Vector3 localPos;
 		Quaternion localRot;
-		getLocalTransform(body, localPos, localRot);
+		GetLocalTransform(body, localPos, localRot);
 
 		mInternal->setTransform(body, localPos, localRot);
 	}
 
-	void CJoint::getLocalTransform(JointBody body, Vector3& position, Quaternion& rotation)
+	void CJoint::GetLocalTransform(JointBody body, Vector3& position, Quaternion& rotation)
 	{
 		position = mPositions[(UINT32)body];
 		rotation = mRotations[(UINT32)body];
@@ -281,18 +281,18 @@ namespace bs
 		}
 	}
 	
-	void CJoint::triggerOnJointBroken()
+	void CJoint::TriggerOnJointBroken()
 	{
 		onJointBreak();
 	}
 
-	RTTITypeBase* CJoint::getRTTIStatic()
+	RTTITypeBase* CJoint::GetRttiStatic()
 	{
-		return CJointRTTI::instance();
+		return CJointRTTI::Instance();
 	}
 
-	RTTITypeBase* CJoint::getRTTI() const
+	RTTITypeBase* CJoint::GetRtti() const
 	{
-		return CJoint::getRTTIStatic();
+		return CJoint::GetRttiStatic();
 	}
 }

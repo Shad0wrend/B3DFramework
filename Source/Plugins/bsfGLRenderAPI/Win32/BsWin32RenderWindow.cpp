@@ -34,42 +34,42 @@ namespace bs
 	{
 	}
 
-	void Win32RenderWindow::getCustomAttribute(const String& name, void* pData) const
+	void Win32RenderWindow::GetCustomAttribute(const String& name, void* pData) const
 	{
 		if (name == "WINDOW")
 		{
 			UINT64 *pHwnd = (UINT64*)pData;
-			*pHwnd = (UINT64)getHWnd();
+			*pHwnd = (UINT64)GetHWnd();
 			return;
 		}
 	}
 
-	Vector2I Win32RenderWindow::screenToWindowPos(const Vector2I& screenPos) const
+	Vector2I Win32RenderWindow::ScreenToWindowPos(const Vector2I& screenPos) const
 	{
 		POINT pos;
 		pos.x = screenPos.x;
 		pos.y = screenPos.y;
 
-		ScreenToClient(getHWnd(), &pos);
+		ScreenToClient(GetHWnd(), &pos);
 		return Vector2I(pos.x, pos.y);
 	}
 
-	Vector2I Win32RenderWindow::windowToScreenPos(const Vector2I& windowPos) const
+	Vector2I Win32RenderWindow::WindowToScreenPos(const Vector2I& windowPos) const
 	{
 		POINT pos;
 		pos.x = windowPos.x;
 		pos.y = windowPos.y;
 
-		ClientToScreen(getHWnd(), &pos);
+		ClientToScreen(GetHWnd(), &pos);
 		return Vector2I(pos.x, pos.y);
 	}
 
-	SPtr<ct::Win32RenderWindow> Win32RenderWindow::getCore() const
+	SPtr<ct::Win32RenderWindow> Win32RenderWindow::GetCore() const
 	{
 		return std::static_pointer_cast<ct::Win32RenderWindow>(mCoreSpecific);
 	}
 
-	SPtr<ct::CoreObject> Win32RenderWindow::createCore() const
+	SPtr<ct::CoreObject> Win32RenderWindow::CreateCore() const
 	{
 		RENDER_WINDOW_DESC desc = mDesc;
 		SPtr<ct::Win32RenderWindow> coreObj = bs_shared_ptr_new<ct::Win32RenderWindow>(desc, mWindowId, mGLSupport);
@@ -79,13 +79,13 @@ namespace bs
 		return coreObj;
 	}
 
-	void Win32RenderWindow::syncProperties()
+	void Win32RenderWindow::SyncProperties()
 	{
 		ScopedSpinLock lock(getCore()->mLock);
 		mProperties = getCore()->mSyncedProperties;
 	}
 
-	HWND Win32RenderWindow::getHWnd() const
+	HWND Win32RenderWindow::GetHWnd() const
 	{
 		blockUntilCoreInitialized();
 		return getCore()->GetHWndInternal();
@@ -122,7 +122,7 @@ namespace bs
 		Platform::resetNonClientAreas(*this);
 	}
 
-	void Win32RenderWindow::initialize()
+	void Win32RenderWindow::Initialize()
 	{
 		RenderWindowProperties& props = mProperties;
 
@@ -162,13 +162,13 @@ namespace bs
 		if (opt != mDesc.platformSpecific.end())
 			windowDesc.external = (HWND)parseUINT64(opt->second);
 		
-		const Win32VideoModeInfo& videoModeInfo = static_cast<const Win32VideoModeInfo&>(RenderAPI::instance().getVideoModeInfo());
+		const Win32VideoModeInfo& videoModeInfo = static_cast<const Win32VideoModeInfo&>(RenderAPI::Instance().getVideoModeInfo());
 		UINT32 numOutputs = videoModeInfo.getNumOutputs();
 		if (numOutputs > 0)
 		{
 			UINT32 actualMonitorIdx = std::min(mDesc.videoMode.outputIdx, numOutputs - 1);
 			const Win32VideoOutputInfo& outputInfo = static_cast<const Win32VideoOutputInfo&>(videoModeInfo.getOutputInfo(actualMonitorIdx));
-			windowDesc.monitor = outputInfo.getMonitorHandle();
+			windowDesc.monitor = outputInfo.GetMonitorHandle();
 		}
 
 		mIsChild = windowDesc.parent != nullptr;
@@ -222,14 +222,14 @@ namespace bs
 
 		int testMultisample = props.multisampleCount;
 		bool testHwGamma = mDesc.gamma;
-		bool formatOk = mGLSupport.selectPixelFormat(mHDC, 32, testMultisample, testHwGamma, mDesc.depthBuffer);
+		bool formatOk = mGLSupport.SelectPixelFormat(mHDC, 32, testMultisample, testHwGamma, mDesc.depthBuffer);
 		if (!formatOk)
 		{
 			if (props.multisampleCount > 0)
 			{
 				// Try without multisampling
 				testMultisample = 0;
-				formatOk = mGLSupport.selectPixelFormat(mHDC, 32, testMultisample, testHwGamma, mDesc.depthBuffer);
+				formatOk = mGLSupport.SelectPixelFormat(mHDC, 32, testMultisample, testHwGamma, mDesc.depthBuffer);
 			}
 
 			if (!formatOk && mDesc.gamma)
@@ -237,7 +237,7 @@ namespace bs
 				// Try without sRGB
 				testHwGamma = false;
 				testMultisample = props.multisampleCount;
-				formatOk = mGLSupport.selectPixelFormat(mHDC, 32, testMultisample, testHwGamma, mDesc.depthBuffer);
+				formatOk = mGLSupport.SelectPixelFormat(mHDC, 32, testMultisample, testHwGamma, mDesc.depthBuffer);
 			}
 
 			if (!formatOk && mDesc.gamma && (props.multisampleCount > 0))
@@ -245,7 +245,7 @@ namespace bs
 				// Try without both
 				testHwGamma = false;
 				testMultisample = 0;
-				formatOk = mGLSupport.selectPixelFormat(mHDC, 32, testMultisample, testHwGamma, mDesc.depthBuffer);
+				formatOk = mGLSupport.SelectPixelFormat(mHDC, 32, testMultisample, testHwGamma, mDesc.depthBuffer);
 			}
 
 			if (!formatOk)
@@ -261,25 +261,25 @@ namespace bs
 		mContext = mGLSupport.createContext(mHDC, nullptr);
 
 		if (props.vsync && props.vsyncInterval > 0)
-			setVSync(true, props.vsyncInterval);
+			SetVSync(true, props.vsyncInterval);
 
 		{
 			ScopedSpinLock lock(mLock);
 			mSyncedProperties = props;
 		}
 
-		bs::RenderWindowManager::instance().notifySyncDataDirty(this);
+		bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
 		RenderWindow::initialize();
 	}
 
-	void Win32RenderWindow::setFullscreen(UINT32 width, UINT32 height, float refreshRate, UINT32 monitorIdx)
+	void Win32RenderWindow::SetFullscreen(UINT32 width, UINT32 height, float refreshRate, UINT32 monitorIdx)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
 		if (mIsChild)
 			return;
 
-		const Win32VideoModeInfo& videoModeInfo = static_cast<const Win32VideoModeInfo&>(RenderAPI::instance().getVideoModeInfo());
+		const Win32VideoModeInfo& videoModeInfo = static_cast<const Win32VideoModeInfo&>(RenderAPI::Instance().getVideoModeInfo());
 		UINT32 numOutputs = videoModeInfo.getNumOutputs();
 		if (numOutputs == 0)
 			return;
@@ -302,7 +302,7 @@ namespace bs
 		displayDeviceMode.dmDisplayFrequency = mDisplayFrequency;
 		displayDeviceMode.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT | DM_DISPLAYFREQUENCY;
 
-		HMONITOR hMonitor = outputInfo.getMonitorHandle();
+		HMONITOR hMonitor = outputInfo.GetMonitorHandle();
 		MONITORINFOEX monitorInfo;
 
 		memset(&monitorInfo, 0, sizeof(MONITORINFOEX));
@@ -334,18 +334,18 @@ namespace bs
 			mSyncedProperties.height = props.height;
 		}
 
-		bs::RenderWindowManager::instance().notifySyncDataDirty(this);
-		bs::RenderWindowManager::instance().notifyMovedOrResized(this);
+		bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
+		bs::RenderWindowManager::Instance().notifyMovedOrResized(this);
 	}
 
-	void Win32RenderWindow::setFullscreen(const VideoMode& mode)
+	void Win32RenderWindow::SetFullscreen(const VideoMode& mode)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
-		setFullscreen(mode.width, mode.height, mode.refreshRate, mode.outputIdx);
+		SetFullscreen(mode.width, mode.height, mode.refreshRate, mode.outputIdx);
 	}
 
-	void Win32RenderWindow::setWindowed(UINT32 width, UINT32 height)
+	void Win32RenderWindow::SetWindowed(UINT32 width, UINT32 height)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -399,11 +399,11 @@ namespace bs
 			mSyncedProperties.height = props.height;
 		}
 
-		bs::RenderWindowManager::instance().notifySyncDataDirty(this);
-		bs::RenderWindowManager::instance().notifyMovedOrResized(this);
+		bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
+		bs::RenderWindowManager::Instance().notifyMovedOrResized(this);
 	}
 
-	void Win32RenderWindow::move(INT32 left, INT32 top)
+	void Win32RenderWindow::Move(INT32 left, INT32 top)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -421,11 +421,11 @@ namespace bs
 				mSyncedProperties.left = props.left;
 			}
 
-			bs::RenderWindowManager::instance().notifySyncDataDirty(this);
+			bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
 		}
 	}
 
-	void Win32RenderWindow::resize(UINT32 width, UINT32 height)
+	void Win32RenderWindow::Resize(UINT32 width, UINT32 height)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -443,32 +443,32 @@ namespace bs
 				mSyncedProperties.height = props.height;
 			}
 
-			bs::RenderWindowManager::instance().notifySyncDataDirty(this);
+			bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
 		}
 	}
 
-	void Win32RenderWindow::minimize()
+	void Win32RenderWindow::Minimize()
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
 		mWindow->minimize();
 	}
 
-	void Win32RenderWindow::maximize()
+	void Win32RenderWindow::Maximize()
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
 		mWindow->maximize();
 	}
 
-	void Win32RenderWindow::restore()
+	void Win32RenderWindow::Restore()
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
 		mWindow->restore();
 	}
 
-	void Win32RenderWindow::setVSync(bool enabled, UINT32 interval)
+	void Win32RenderWindow::SetVSync(bool enabled, UINT32 interval)
 	{
 		wglSwapIntervalEXT(interval);
 		BS_CHECK_GL_ERROR();
@@ -482,20 +482,20 @@ namespace bs
 			mSyncedProperties.vsyncInterval = interval;
 		}
 
-		bs::RenderWindowManager::instance().notifySyncDataDirty(this);
+		bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
 	}
 
-	void Win32RenderWindow::swapBuffers(UINT32 syncMask)
+	void Win32RenderWindow::SwapBuffers(UINT32 syncMask)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
 		if (mShowOnSwap)
-			setHidden(false);
+			SetHidden(false);
 
 		SwapBuffers(mHDC);
 	}
 
-	void Win32RenderWindow::copyToMemory(PixelData &dst, FrameBuffer buffer)
+	void Win32RenderWindow::CopyToMemory(PixelData &dst, FrameBuffer buffer)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -511,8 +511,8 @@ namespace bs
 			buffer = mProperties.isFullScreen ? FB_FRONT : FB_BACK;
 		}
 
-		GLenum format = GLPixelUtil::getGLOriginFormat(dst.getFormat());
-		GLenum type = GLPixelUtil::getGLOriginDataType(dst.getFormat());
+		GLenum format = GLPixelUtil::GetGlOriginFormat(dst.getFormat());
+		GLenum type = GLPixelUtil::GetGlOriginDataType(dst.getFormat());
 
 		if ((format == GL_NONE) || (type == 0))
 		{
@@ -554,7 +554,7 @@ namespace bs
 		}
 	}
 
-	void Win32RenderWindow::getCustomAttribute(const String& name, void* pData) const
+	void Win32RenderWindow::GetCustomAttribute(const String& name, void* pData) const
 	{
 		if(name == "GLCONTEXT")
 		{
@@ -570,7 +570,7 @@ namespace bs
 		}
 	}
 
-	void Win32RenderWindow::setActive(bool state)
+	void Win32RenderWindow::SetActive(bool state)
 	{	
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -579,7 +579,7 @@ namespace bs
 		RenderWindow::setActive(state);
 	}
 
-	void Win32RenderWindow::setHidden(bool hidden)
+	void Win32RenderWindow::SetHidden(bool hidden)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -611,7 +611,7 @@ namespace bs
 		return mWindow->getHWnd();
 	}
 
-	void Win32RenderWindow::syncProperties()
+	void Win32RenderWindow::SyncProperties()
 	{
 		ScopedSpinLock lock(mLock);
 		mProperties = mSyncedProperties;

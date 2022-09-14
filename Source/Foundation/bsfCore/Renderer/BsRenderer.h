@@ -138,26 +138,26 @@ namespace bs
 		virtual ~Renderer() = default;
 
 		/** Initializes the renderer. Must be called before using the renderer. */
-		virtual void initialize() { }
+		virtual void Initialize() { }
 
 		/** Called every frame. Triggers render task callbacks. */
-		void update();
+		void Update();
 
 		/**	Cleans up the renderer. Must be called before the renderer is deleted. */
-		virtual void destroy() { }
+		virtual void Destroy() { }
 
 		/** Name of the renderer. Used by materials to find an appropriate technique for this renderer. */
-		virtual const StringID& getName() const = 0;
+		virtual const StringID& GetName() const = 0;
 
 		/** Called in order to render all currently active cameras. */
-		virtual void renderAll(PerFrameData perFrameData) = 0;
+		virtual void RenderAll(PerFrameData perFrameData) = 0;
 
 		/**
 		 * Called whenever a new camera is created.
 		 *
 		 * @note	Core thread.
 		 */
-		virtual void notifyCameraAdded(Camera* camera) { }
+		virtual void NotifyCameraAdded(Camera* camera) { }
 
 		/**
 		 * Called whenever a camera's position or rotation is updated.
@@ -167,154 +167,154 @@ namespace bs
 		 *
 		 * @note	Core thread.
 		 */
-		virtual void notifyCameraUpdated(Camera* camera, UINT32 updateFlag) { }
+		virtual void NotifyCameraUpdated(Camera* camera, UINT32 updateFlag) { }
 
 		/**
 		 * Called whenever a camera is destroyed.
 		 *
 		 * @note	Core thread.
 		 */
-		virtual void notifyCameraRemoved(Camera* camera) { }
+		virtual void NotifyCameraRemoved(Camera* camera) { }
 
 		/**
 		 * Called whenever a new renderable is created.
 		 *
 		 * @note	Core thread.
 		 */
-		virtual void notifyRenderableAdded(Renderable* renderable) { }
+		virtual void NotifyRenderableAdded(Renderable* renderable) { }
 
 		/**
 		 * Called whenever a renderable is updated.
 		 *
 		 * @note	Core thread.
 		 */
-		virtual void notifyRenderableUpdated(Renderable* renderable) { }
+		virtual void NotifyRenderableUpdated(Renderable* renderable) { }
 
 		/**
 		 * Called whenever a renderable is destroyed.
 		 *
 		 * @note	Core thread.
 		 */
-		virtual void notifyRenderableRemoved(Renderable* renderable) { }
+		virtual void NotifyRenderableRemoved(Renderable* renderable) { }
 
 		/**
 		 * Called whenever a new light is created.
 		 *
 		 * @note	Core thread.
 		 */
-		virtual void notifyLightAdded(Light* light) { }
+		virtual void NotifyLightAdded(Light* light) { }
 
 		/**
 		 * Called whenever a light is updated.
 		 *
 		 * @note	Core thread.
 		 */
-		virtual void notifyLightUpdated(Light* light) { }
+		virtual void NotifyLightUpdated(Light* light) { }
 
 		/**
 		 * Called whenever a light is destroyed.
 		 *
 		 * @note	Core thread.
 		 */
-		virtual void notifyLightRemoved(Light* light) { }
+		virtual void NotifyLightRemoved(Light* light) { }
 
 		/**
 		 * Called whenever a new reflection probe is created.
 		 *
 		 * @note	Core thread.
 		 */
-		virtual void notifyReflectionProbeAdded(ReflectionProbe* probe) { }
+		virtual void NotifyReflectionProbeAdded(ReflectionProbe* probe) { }
 
 		/**
 		 * Called whenever a reflection probe is updated.
 		 *
 		 * @note	Core thread.
 		 */
-		virtual void notifyReflectionProbeUpdated(ReflectionProbe* probe, bool texture) { }
+		virtual void NotifyReflectionProbeUpdated(ReflectionProbe* probe, bool texture) { }
 
 		/**
 		 * Called whenever a reflection probe is destroyed.
 		 *
 		 * @note	Core thread.
 		 */
-		virtual void notifyReflectionProbeRemoved(ReflectionProbe* probe) { }
+		virtual void NotifyReflectionProbeRemoved(ReflectionProbe* probe) { }
 
 		/**
 		 * Called whenever a new light probe volume is created.
 		 *
 		 * @note	Core thread.
 		 */
-		virtual void notifyLightProbeVolumeAdded(LightProbeVolume* volume) { }
+		virtual void NotifyLightProbeVolumeAdded(LightProbeVolume* volume) { }
 
 		/**
 		 * Called whenever a light probe volume is updated.
 		 *
 		 * @note	Core thread.
 		 */
-		virtual void notifyLightProbeVolumeUpdated(LightProbeVolume* volume) { }
+		virtual void NotifyLightProbeVolumeUpdated(LightProbeVolume* volume) { }
 
 		/**
 		 * Called whenever a light probe volume is destroyed.
 		 *
 		 * @note	Core thread.
 		 */
-		virtual void notifyLightProbeVolumeRemoved(LightProbeVolume* volume) { }
+		virtual void NotifyLightProbeVolumeRemoved(LightProbeVolume* volume) { }
 
 		/**
 		 * Called whenever a skybox is created.
 		 *
 		 * @note	Core thread.
 		 */
-		virtual void notifySkyboxAdded(Skybox* skybox) { }
+		virtual void NotifySkyboxAdded(Skybox* skybox) { }
 
 		/**
 		 * Called whenever a skybox is destroyed.
 		 *
 		 * @note	Core thread.
 		 */
-		virtual void notifySkyboxRemoved(Skybox* skybox) { }
+		virtual void NotifySkyboxRemoved(Skybox* skybox) { }
 
 		/**
 		 * Called whenever a new particle system is created.
 		 *
 		 * @note	Core thread.
 		 */
-		virtual void notifyParticleSystemAdded(ParticleSystem* particleSystem) { }
+		virtual void NotifyParticleSystemAdded(ParticleSystem* particleSystem) { }
 
 		/**
 		 * Called whenever a particle system is updated.
 		 *
 		 * @note	Core thread.
 		 */
-		virtual void notifyParticleSystemUpdated(ParticleSystem* particleSystem, bool tfrmOnly) { }
+		virtual void NotifyParticleSystemUpdated(ParticleSystem* particleSystem, bool tfrmOnly) { }
 
 		/**
 		 * Called whenever a particle system is destroyed.
 		 *
 		 * @note	Core thread.
 		 */
-		virtual void notifyParticleSystemRemoved(ParticleSystem* particleSystem) { }
+		virtual void NotifyParticleSystemRemoved(ParticleSystem* particleSystem) { }
 
 		/**
 		 * Called whenever a new decal is created.
 		 *
 		 * @note	Core thread.
 		 */
-		virtual void notifyDecalAdded(Decal* decal) { }
+		virtual void NotifyDecalAdded(Decal* decal) { }
 
 		/**
 		 * Called whenever a decal is updated.
 		 *
 		 * @note	Core thread.
 		 */
-		virtual void notifyDecalUpdated(Decal* decal) { }
+		virtual void NotifyDecalUpdated(Decal* decal) { }
 
 		/**
 		 * Called whenever a decal is destroyed.
 		 *
 		 * @note	Core thread.
 		 */
-		virtual void notifyDecalRemoved(Decal* decal) { }
+		virtual void NotifyDecalRemoved(Decal* decal) { }
 
 		/**
 		 * Captures the scene at the specified location into a cubemap.
@@ -325,7 +325,7 @@ namespace bs
 		 *
 		 * @note	Core thread.
 		 */
-		virtual void captureSceneCubeMap(const SPtr<Texture>& cubemap, const Vector3& position,
+		virtual void CaptureSceneCubeMap(const SPtr<Texture>& cubemap, const Vector3& position,
 			const CaptureSettings& settings) = 0;
 
 		/**
@@ -352,27 +352,27 @@ namespace bs
 		 *
 		 * @note	Core thread.
 		 */
-		void addPlugin(RendererExtension* plugin) { mCallbacks.insert(plugin); }
+		void AddPlugin(RendererExtension* plugin) { mCallbacks.insert(plugin); }
 
 		/**
 		 * Unregisters an extension registered with addPlugin().
 		 *
 		 * @note	Core thread.
 		 */
-		void removePlugin(RendererExtension* plugin) { mCallbacks.erase(plugin); }
+		void RemovePlugin(RendererExtension* plugin) { mCallbacks.erase(plugin); }
 
 		/**
 		 * Registers a new task for execution on the core thread.
 		 *
 		 * @note	Thread safe.
 		 */
-		void addTask(const SPtr<RendererTask>& task);
+		void AddTask(const SPtr<RendererTask>& task);
 
 		/**	Sets options used for controlling the rendering. */
-		virtual void setOptions(const SPtr<RendererOptions>& options) { }
+		virtual void SetOptions(const SPtr<RendererOptions>& options) { }
 
 		/**	Returns current set of options used for controlling the rendering. */
-		virtual SPtr<RendererOptions> getOptions() const { return SPtr<RendererOptions>(); }
+		virtual SPtr<RendererOptions> GetOptions() const { return SPtr<RendererOptions>(); }
 
 		/**
 		 * Returns information about a set of shaders corresponding to a renderer extension point. These shaders are the
@@ -394,19 +394,19 @@ namespace bs
 		 *							renderer documentation.
 		 * @returns					A list of overridable shaders in the extension point.
 		 */
-		virtual ShaderExtensionPointInfo getShaderExtensionPointInfo(const String& name) { return {}; }
+		virtual ShaderExtensionPointInfo GetShaderExtensionPointInfo(const String& name) { return {}; }
 
 		/**
 		 * Allows the caller to override some built-in renderer functionality with a custom shader. The exact set of
 		 * overridable shaders can be retrieved through getShaderExtensionPointInfo().
 		 */
-		virtual void setGlobalShaderOverride(const String& name, const SPtr<bs::Shader>& shader) { }
+		virtual void SetGlobalShaderOverride(const String& name, const SPtr<bs::Shader>& shader) { }
 
 		/**
 		 * Provides the same functionality as setGlobalShaderOverride(const String&, const SPtr<bs::Shader>&), but it automatically
 		 * evaluates all sub-shaders of the provided shader and registers them as overrides.
 		 */
-		void setGlobalShaderOverride(const SPtr<bs::Shader>& shader);
+		void SetGlobalShaderOverride(const SPtr<bs::Shader>& shader);
 	protected:
 		friend class RendererTask;
 
@@ -430,7 +430,7 @@ namespace bs
 		 *
 		 * @note	Core thread.
 		 */
-		void processTasks(bool forceAll, UINT64 upToFrame = std::numeric_limits<UINT64>::max());
+		void ProcessTasks(bool forceAll, UINT64 upToFrame = std::numeric_limits<UINT64>::max());
 
 		/**
 		 * Executes the provided renderer task.
@@ -440,10 +440,10 @@ namespace bs
 		 *
 		 * @note	Core thread.
 		 */
-		void processTask(RendererTask& task, bool forceAll);
+		void ProcessTask(RendererTask& task, bool forceAll);
 
 		/** Callback to trigger when comparing the order in which renderer extensions are called. */
-		static bool compareCallback(const RendererExtension* a, const RendererExtension* b);
+		static bool CompareCallback(const RendererExtension* a, const RendererExtension* b);
 
 		Set<RendererExtension*, std::function<bool(const RendererExtension*, const RendererExtension*)>> mCallbacks;
 
@@ -479,19 +479,19 @@ namespace bs
 		 *							multiple frames, in which case this method should return false (if there's more
 		 *							work to be done), or true (if the task has completed).
 		 */
-		static SPtr<RendererTask> create(String name, std::function<bool()> taskWorker);
+		static SPtr<RendererTask> Create(String name, std::function<bool()> taskWorker);
 
 		/** Returns true if the task has completed. */
-		bool isComplete() const;
+		bool IsComplete() const;
 
 		/**	Returns true if the task has been canceled. */
-		bool isCanceled() const;
+		bool IsCanceled() const;
 
 		/** Blocks the current thread until the task has completed. */
-		void wait();
+		void Wait();
 
 		/** Cancels the task and removes it from the Renderer's queue. */
-		void cancel();
+		void Cancel();
 
 		/**
 		 * Callback triggered on the sim thread, when the task completes. Is not triggered if the task is cancelled.

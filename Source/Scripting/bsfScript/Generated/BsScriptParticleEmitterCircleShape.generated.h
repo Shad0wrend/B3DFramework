@@ -18,12 +18,12 @@ namespace bs
 
 		ScriptParticleEmitterCircleShape(MonoObject* managedInstance, const SPtr<ParticleEmitterCircleShape>& value);
 
-		static MonoObject* create(const SPtr<ParticleEmitterCircleShape>& value);
+		static MonoObject* Create(const SPtr<ParticleEmitterCircleShape>& value);
 
 	private:
-		static void Internal_setOptions(ScriptParticleEmitterCircleShape* thisPtr, __PARTICLE_CIRCLE_SHAPE_DESCInterop* options);
-		static void Internal_getOptions(ScriptParticleEmitterCircleShape* thisPtr, __PARTICLE_CIRCLE_SHAPE_DESCInterop* __output);
-		static void Internal_create(MonoObject* managedInstance, __PARTICLE_CIRCLE_SHAPE_DESCInterop* desc);
-		static void Internal_create0(MonoObject* managedInstance);
+		static void InternalSetOptions(ScriptParticleEmitterCircleShape* thisPtr, __PARTICLE_CIRCLE_SHAPE_DESCInterop* options);
+		static void InternalGetOptions(ScriptParticleEmitterCircleShape* thisPtr, __PARTICLE_CIRCLE_SHAPE_DESCInterop* __output);
+		static void InternalCreate(MonoObject* managedInstance, __PARTICLE_CIRCLE_SHAPE_DESCInterop* desc);
+		static void InternalCreate0(MonoObject* managedInstance);
 	};
 }

@@ -19,7 +19,7 @@ namespace bs
 		setName("DistanceJoint");
 	}
 
-	float CDistanceJoint::getDistance() const
+	float CDistanceJoint::GetDistance() const
 	{
 		if (mInternal == nullptr)
 			return 0.0f;
@@ -27,12 +27,12 @@ namespace bs
 		return GetInternalInternal()->getDistance();
 	}
 
-	float CDistanceJoint::getMinDistance() const
+	float CDistanceJoint::GetMinDistance() const
 	{
 		return mDesc.minDistance;
 	}
 
-	void CDistanceJoint::setMinDistance(float value)
+	void CDistanceJoint::SetMinDistance(float value)
 	{
 		if (mDesc.minDistance == value)
 			return;
@@ -43,12 +43,12 @@ namespace bs
 			GetInternalInternal()->setMinDistance(value);
 	}
 
-	float CDistanceJoint::getMaxDistance() const
+	float CDistanceJoint::GetMaxDistance() const
 	{
 		return mDesc.maxDistance;
 	}
 
-	void CDistanceJoint::setMaxDistance(float value)
+	void CDistanceJoint::SetMaxDistance(float value)
 	{
 		if (mDesc.maxDistance == value)
 			return;
@@ -59,12 +59,12 @@ namespace bs
 			GetInternalInternal()->setMaxDistance(value);
 	}
 
-	float CDistanceJoint::getTolerance() const
+	float CDistanceJoint::GetTolerance() const
 	{
 		return mDesc.tolerance;
 	}
 
-	void CDistanceJoint::setTolerance(float value)
+	void CDistanceJoint::SetTolerance(float value)
 	{
 		if (mDesc.tolerance == value)
 			return;
@@ -75,12 +75,12 @@ namespace bs
 			GetInternalInternal()->setTolerance(value);
 	}
 
-	Spring CDistanceJoint::getSpring() const
+	Spring CDistanceJoint::GetSpring() const
 	{
 		return mDesc.spring;
 	}
 
-	void CDistanceJoint::setSpring(const Spring& value)
+	void CDistanceJoint::SetSpring(const Spring& value)
 	{
 		if (mDesc.spring == value)
 			return;
@@ -91,7 +91,7 @@ namespace bs
 			GetInternalInternal()->setSpring(value);
 	}
 
-	void CDistanceJoint::setFlag(DistanceJointFlag flag, bool enabled)
+	void CDistanceJoint::SetFlag(DistanceJointFlag flag, bool enabled)
 	{
 		bool isEnabled = ((UINT32)mDesc.flag & (UINT32)flag) != 0;
 		if (isEnabled == enabled)
@@ -106,27 +106,27 @@ namespace bs
 			GetInternalInternal()->setFlag(flag, enabled);
 	}
 
-	bool CDistanceJoint::hasFlag(DistanceJointFlag flag) const
+	bool CDistanceJoint::HasFlag(DistanceJointFlag flag) const
 	{
 		return ((UINT32)mDesc.flag & (UINT32)flag) != 0;
 	}
 
-	SPtr<Joint> CDistanceJoint::createInternal()
+	SPtr<Joint> CDistanceJoint::CreateInternal()
 	{
 		const SPtr<SceneInstance>& scene = SO()->getScene();
-		SPtr<Joint> joint = DistanceJoint::create(*scene->getPhysicsScene(), mDesc);
+		SPtr<Joint> joint = DistanceJoint::Create(*scene->getPhysicsScene(), mDesc);
 
 		joint->SetOwnerInternal(PhysicsOwnerType::Component, this);
 		return joint;
 	}
 
-	RTTITypeBase* CDistanceJoint::getRTTIStatic()
+	RTTITypeBase* CDistanceJoint::GetRttiStatic()
 	{
-		return CDistanceJointRTTI::instance();
+		return CDistanceJointRTTI::Instance();
 	}
 
-	RTTITypeBase* CDistanceJoint::getRTTI() const
+	RTTITypeBase* CDistanceJoint::GetRtti() const
 	{
-		return CDistanceJoint::getRTTIStatic();
+		return CDistanceJoint::GetRttiStatic();
 	}
 }

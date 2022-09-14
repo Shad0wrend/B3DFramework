@@ -18,26 +18,26 @@ namespace bs
 	{ }
 
 	Plane::Plane(const Vector3& normal, const Vector3& point)
-		:normal(normal), d(normal.dot(point))
+		:normal(normal), d(normal.Dot(point))
 	{ }
 
 	Plane::Plane(const Vector3& point0, const Vector3& point1, const Vector3& point2)
 	{
 		Vector3 kEdge1 = point1 - point0;
 		Vector3 kEdge2 = point2 - point0;
-		normal = kEdge1.cross(kEdge2);
-		normal.normalize();
-		d = normal.dot(point0);
+		normal = kEdge1.Cross(kEdge2);
+		normal.Normalize();
+		d = normal.Dot(point0);
 	}
 
-	float Plane::getDistance(const Vector3& point) const
+	float Plane::GetDistance(const Vector3& point) const
 	{
-		return normal.dot(point) - d;
+		return normal.Dot(point) - d;
 	}
 
-	Plane::Side Plane::getSide(const Vector3& point, float epsilon) const
+	Plane::Side Plane::GetSide(const Vector3& point, float epsilon) const
 	{
-		float dist = getDistance(point);
+		float dist = GetDistance(point);
 
 		if (dist > epsilon)
 			return Plane::POSITIVE_SIDE;
@@ -48,15 +48,15 @@ namespace bs
 		return Plane::NO_SIDE;
 	}
 
-	Plane::Side Plane::getSide(const AABox& box) const
+	Plane::Side Plane::GetSide(const AABox& box) const
 	{
 		// Calculate the distance between box centre and the plane
 		float dist = getDistance(box.getCenter());
 
 		// Calculate the maximize allows absolute distance for
 		// the distance between box centre and plane
-		Vector3 halfSize = box.getHalfSize();
-		float maxAbsDist = Math::abs(normal.x * halfSize.x) + Math::abs(normal.y * halfSize.y) + Math::abs(normal.z * halfSize.z);
+		Vector3 halfSize = box.GetHalfSize();
+		float maxAbsDist = abs(normal.x * halfSize.x) + abs(normal.y * halfSize.y) + abs(normal.z * halfSize.z);
 
 		if (dist < -maxAbsDist)
 			return Plane::NEGATIVE_SIDE;
@@ -67,11 +67,11 @@ namespace bs
 		return Plane::BOTH_SIDE;
 	}
 
-	Plane::Side Plane::getSide(const Sphere& sphere) const
+	Plane::Side Plane::GetSide(const Sphere& sphere) const
 	{
 		// Calculate the distance between box centre and the plane
 		float dist = getDistance(sphere.getCenter());
-		float radius = sphere.getRadius();
+		float radius = sphere.GetRadius();
 
 		if (dist < -radius)
 			return Plane::NEGATIVE_SIDE;
@@ -82,7 +82,7 @@ namespace bs
 		return Plane::BOTH_SIDE;
 	}
 
-	Vector3 Plane::projectVector(const Vector3& point) const
+	Vector3 Plane::ProjectVector(const Vector3& point) const
 	{
 		// We know plane normal is unit length, so use simple method
 		Matrix3 xform;
@@ -95,7 +95,7 @@ namespace bs
 		xform[2][0] = -normal.z * normal.x;
 		xform[2][1] = -normal.z * normal.y;
 		xform[2][2] = 1.0f - normal.z * normal.z;
-		return xform.multiply(point);
+		return xform.Multiply(point);
 
 	}
 
@@ -114,17 +114,17 @@ namespace bs
 		return fLength;
 	}
 
-	bool Plane::intersects(const AABox& box) const
+	bool Plane::Intersects(const AABox& box) const
 	{
 		return box.intersects(*this);
 	}
 
-	bool Plane::intersects(const Sphere& sphere) const
+	bool Plane::Intersects(const Sphere& sphere) const
 	{
 		return sphere.intersects(*this);
 	}
 
-	std::pair<bool, float> Plane::intersects(const Ray& ray) const
+	std::pair<bool, float> Plane::Intersects(const Ray& ray) const
 	{
 		float denom = normal.dot(ray.getDirection());
 		if (Math::abs(denom) < std::numeric_limits<float>::epsilon())

@@ -22,42 +22,42 @@ namespace bs
 
 		ScriptPhysicsScene(MonoObject* managedInstance, const SPtr<PhysicsScene>& value);
 
-		SPtr<PhysicsScene> getInternal() const { return mInternal; }
-		static MonoObject* create(const SPtr<PhysicsScene>& value);
+		SPtr<PhysicsScene> GetInternal() const { return mInternal; }
+		static MonoObject* Create(const SPtr<PhysicsScene>& value);
 
 	private:
 		SPtr<PhysicsScene> mInternal;
 
-		static bool Internal_rayCast(ScriptPhysicsScene* thisPtr, Ray* ray, __PhysicsQueryHitInterop* hit, uint64_t layer, float max);
-		static bool Internal_rayCast0(ScriptPhysicsScene* thisPtr, Vector3* origin, Vector3* unitDir, __PhysicsQueryHitInterop* hit, uint64_t layer, float max);
-		static bool Internal_boxCast(ScriptPhysicsScene* thisPtr, AABox* box, Quaternion* rotation, Vector3* unitDir, __PhysicsQueryHitInterop* hit, uint64_t layer, float max);
-		static bool Internal_sphereCast(ScriptPhysicsScene* thisPtr, Sphere* sphere, Vector3* unitDir, __PhysicsQueryHitInterop* hit, uint64_t layer, float max);
-		static bool Internal_capsuleCast(ScriptPhysicsScene* thisPtr, Capsule* capsule, Quaternion* rotation, Vector3* unitDir, __PhysicsQueryHitInterop* hit, uint64_t layer, float max);
-		static bool Internal_convexCast(ScriptPhysicsScene* thisPtr, MonoObject* mesh, Vector3* position, Quaternion* rotation, Vector3* unitDir, __PhysicsQueryHitInterop* hit, uint64_t layer, float max);
-		static MonoArray* Internal_rayCastAll(ScriptPhysicsScene* thisPtr, Ray* ray, uint64_t layer, float max);
-		static MonoArray* Internal_rayCastAll0(ScriptPhysicsScene* thisPtr, Vector3* origin, Vector3* unitDir, uint64_t layer, float max);
-		static MonoArray* Internal_boxCastAll(ScriptPhysicsScene* thisPtr, AABox* box, Quaternion* rotation, Vector3* unitDir, uint64_t layer, float max);
-		static MonoArray* Internal_sphereCastAll(ScriptPhysicsScene* thisPtr, Sphere* sphere, Vector3* unitDir, uint64_t layer, float max);
-		static MonoArray* Internal_capsuleCastAll(ScriptPhysicsScene* thisPtr, Capsule* capsule, Quaternion* rotation, Vector3* unitDir, uint64_t layer, float max);
-		static MonoArray* Internal_convexCastAll(ScriptPhysicsScene* thisPtr, MonoObject* mesh, Vector3* position, Quaternion* rotation, Vector3* unitDir, uint64_t layer, float max);
-		static bool Internal_rayCastAny(ScriptPhysicsScene* thisPtr, Ray* ray, uint64_t layer, float max);
-		static bool Internal_rayCastAny0(ScriptPhysicsScene* thisPtr, Vector3* origin, Vector3* unitDir, uint64_t layer, float max);
-		static bool Internal_boxCastAny(ScriptPhysicsScene* thisPtr, AABox* box, Quaternion* rotation, Vector3* unitDir, uint64_t layer, float max);
-		static bool Internal_sphereCastAny(ScriptPhysicsScene* thisPtr, Sphere* sphere, Vector3* unitDir, uint64_t layer, float max);
-		static bool Internal_capsuleCastAny(ScriptPhysicsScene* thisPtr, Capsule* capsule, Quaternion* rotation, Vector3* unitDir, uint64_t layer, float max);
-		static bool Internal_convexCastAny(ScriptPhysicsScene* thisPtr, MonoObject* mesh, Vector3* position, Quaternion* rotation, Vector3* unitDir, uint64_t layer, float max);
-		static MonoArray* Internal_boxOverlap(ScriptPhysicsScene* thisPtr, AABox* box, Quaternion* rotation, uint64_t layer);
-		static MonoArray* Internal_sphereOverlap(ScriptPhysicsScene* thisPtr, Sphere* sphere, uint64_t layer);
-		static MonoArray* Internal_capsuleOverlap(ScriptPhysicsScene* thisPtr, Capsule* capsule, Quaternion* rotation, uint64_t layer);
-		static MonoArray* Internal_convexOverlap(ScriptPhysicsScene* thisPtr, MonoObject* mesh, Vector3* position, Quaternion* rotation, uint64_t layer);
-		static bool Internal_boxOverlapAny(ScriptPhysicsScene* thisPtr, AABox* box, Quaternion* rotation, uint64_t layer);
-		static bool Internal_sphereOverlapAny(ScriptPhysicsScene* thisPtr, Sphere* sphere, uint64_t layer);
-		static bool Internal_capsuleOverlapAny(ScriptPhysicsScene* thisPtr, Capsule* capsule, Quaternion* rotation, uint64_t layer);
-		static bool Internal_convexOverlapAny(ScriptPhysicsScene* thisPtr, MonoObject* mesh, Vector3* position, Quaternion* rotation, uint64_t layer);
-		static void Internal_getGravity(ScriptPhysicsScene* thisPtr, Vector3* __output);
-		static void Internal_setGravity(ScriptPhysicsScene* thisPtr, Vector3* gravity);
-		static uint32_t Internal_addBroadPhaseRegion(ScriptPhysicsScene* thisPtr, AABox* region);
-		static void Internal_removeBroadPhaseRegion(ScriptPhysicsScene* thisPtr, uint32_t handle);
-		static void Internal_clearBroadPhaseRegions(ScriptPhysicsScene* thisPtr);
+		static bool InternalRayCast(ScriptPhysicsScene* thisPtr, Ray* ray, __PhysicsQueryHitInterop* hit, uint64_t layer, float max);
+		static bool InternalRayCast0(ScriptPhysicsScene* thisPtr, Vector3* origin, Vector3* unitDir, __PhysicsQueryHitInterop* hit, uint64_t layer, float max);
+		static bool InternalBoxCast(ScriptPhysicsScene* thisPtr, AABox* box, Quaternion* rotation, Vector3* unitDir, __PhysicsQueryHitInterop* hit, uint64_t layer, float max);
+		static bool InternalSphereCast(ScriptPhysicsScene* thisPtr, Sphere* sphere, Vector3* unitDir, __PhysicsQueryHitInterop* hit, uint64_t layer, float max);
+		static bool InternalCapsuleCast(ScriptPhysicsScene* thisPtr, Capsule* capsule, Quaternion* rotation, Vector3* unitDir, __PhysicsQueryHitInterop* hit, uint64_t layer, float max);
+		static bool InternalConvexCast(ScriptPhysicsScene* thisPtr, MonoObject* mesh, Vector3* position, Quaternion* rotation, Vector3* unitDir, __PhysicsQueryHitInterop* hit, uint64_t layer, float max);
+		static MonoArray* InternalRayCastAll(ScriptPhysicsScene* thisPtr, Ray* ray, uint64_t layer, float max);
+		static MonoArray* InternalRayCastAll0(ScriptPhysicsScene* thisPtr, Vector3* origin, Vector3* unitDir, uint64_t layer, float max);
+		static MonoArray* InternalBoxCastAll(ScriptPhysicsScene* thisPtr, AABox* box, Quaternion* rotation, Vector3* unitDir, uint64_t layer, float max);
+		static MonoArray* InternalSphereCastAll(ScriptPhysicsScene* thisPtr, Sphere* sphere, Vector3* unitDir, uint64_t layer, float max);
+		static MonoArray* InternalCapsuleCastAll(ScriptPhysicsScene* thisPtr, Capsule* capsule, Quaternion* rotation, Vector3* unitDir, uint64_t layer, float max);
+		static MonoArray* InternalConvexCastAll(ScriptPhysicsScene* thisPtr, MonoObject* mesh, Vector3* position, Quaternion* rotation, Vector3* unitDir, uint64_t layer, float max);
+		static bool InternalRayCastAny(ScriptPhysicsScene* thisPtr, Ray* ray, uint64_t layer, float max);
+		static bool InternalRayCastAny0(ScriptPhysicsScene* thisPtr, Vector3* origin, Vector3* unitDir, uint64_t layer, float max);
+		static bool InternalBoxCastAny(ScriptPhysicsScene* thisPtr, AABox* box, Quaternion* rotation, Vector3* unitDir, uint64_t layer, float max);
+		static bool InternalSphereCastAny(ScriptPhysicsScene* thisPtr, Sphere* sphere, Vector3* unitDir, uint64_t layer, float max);
+		static bool InternalCapsuleCastAny(ScriptPhysicsScene* thisPtr, Capsule* capsule, Quaternion* rotation, Vector3* unitDir, uint64_t layer, float max);
+		static bool InternalConvexCastAny(ScriptPhysicsScene* thisPtr, MonoObject* mesh, Vector3* position, Quaternion* rotation, Vector3* unitDir, uint64_t layer, float max);
+		static MonoArray* InternalBoxOverlap(ScriptPhysicsScene* thisPtr, AABox* box, Quaternion* rotation, uint64_t layer);
+		static MonoArray* InternalSphereOverlap(ScriptPhysicsScene* thisPtr, Sphere* sphere, uint64_t layer);
+		static MonoArray* InternalCapsuleOverlap(ScriptPhysicsScene* thisPtr, Capsule* capsule, Quaternion* rotation, uint64_t layer);
+		static MonoArray* InternalConvexOverlap(ScriptPhysicsScene* thisPtr, MonoObject* mesh, Vector3* position, Quaternion* rotation, uint64_t layer);
+		static bool InternalBoxOverlapAny(ScriptPhysicsScene* thisPtr, AABox* box, Quaternion* rotation, uint64_t layer);
+		static bool InternalSphereOverlapAny(ScriptPhysicsScene* thisPtr, Sphere* sphere, uint64_t layer);
+		static bool InternalCapsuleOverlapAny(ScriptPhysicsScene* thisPtr, Capsule* capsule, Quaternion* rotation, uint64_t layer);
+		static bool InternalConvexOverlapAny(ScriptPhysicsScene* thisPtr, MonoObject* mesh, Vector3* position, Quaternion* rotation, uint64_t layer);
+		static void InternalGetGravity(ScriptPhysicsScene* thisPtr, Vector3* __output);
+		static void InternalSetGravity(ScriptPhysicsScene* thisPtr, Vector3* gravity);
+		static uint32_t InternalAddBroadPhaseRegion(ScriptPhysicsScene* thisPtr, AABox* region);
+		static void InternalRemoveBroadPhaseRegion(ScriptPhysicsScene* thisPtr, uint32_t handle);
+		static void InternalClearBroadPhaseRegions(ScriptPhysicsScene* thisPtr);
 	};
 }

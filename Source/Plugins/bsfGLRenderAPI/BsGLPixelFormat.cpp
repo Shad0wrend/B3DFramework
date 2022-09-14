@@ -7,16 +7,16 @@
 
 namespace bs { namespace ct
 {
-	PixelFormat GLPixelUtil::getClosestSupportedPF(PixelFormat format, TextureType texType, int usage)
+	PixelFormat GLPixelUtil::GetClosestSupportedPf(PixelFormat format, TextureType texType, int usage)
 	{
 		// Check for any obvious issues first
-		PixelUtil::checkFormat(format, texType, usage);
+		PixelUtil::CheckFormat(format, texType, usage);
 		
 		// We don't check for any platform-specific format issues, assumed all are supported
 		return format;
 	}
 
-	GLenum GLPixelUtil::getGLOriginFormat(PixelFormat format)
+	GLenum GLPixelUtil::GetGlOriginFormat(PixelFormat format)
 	{
 		switch (format)
 		{
@@ -105,7 +105,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	GLenum GLPixelUtil::getGLOriginDataType(PixelFormat format)
+	GLenum GLPixelUtil::GetGlOriginDataType(PixelFormat format)
 	{
 		switch (format)
 		{
@@ -169,7 +169,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	GLenum GLPixelUtil::getGLInternalFormat(PixelFormat format, bool hwGamma)
+	GLenum GLPixelUtil::GetGlInternalFormat(PixelFormat format, bool hwGamma)
 	{
 		switch (format)
 		{
@@ -309,7 +309,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	GLenum GLPixelUtil::getDepthStencilTypeFromPF(PixelFormat format)
+	GLenum GLPixelUtil::GetDepthStencilTypeFromPf(PixelFormat format)
 	{
 		switch(format)
 		{
@@ -349,7 +349,7 @@ namespace bs { namespace ct
 		return GL_DEPTH_STENCIL;
 	}
 
-	GLenum GLPixelUtil::getBufferFormat(GpuBufferFormat format)
+	GLenum GLPixelUtil::GetBufferFormat(GpuBufferFormat format)
 	{
 		static bool lookupInitialized = false;
 

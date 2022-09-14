@@ -20,19 +20,19 @@ namespace bs
 	const UINT32 GUITooltip::TOOLTIP_WIDTH = 200;
 	const UINT32 GUITooltip::CURSOR_SIZE = 16;
 
-	String GUITooltip::getFrameStyleName()
+	String GUITooltip::GetFrameStyleName()
 	{
 		return "TooltipFrame";
 	}
 
 	GUITooltip::GUITooltip(const HSceneObject& parent, const GUIWidget& overlaidWidget, const Vector2I& position,
 		const String& text)
-		:CGUIWidget(parent, overlaidWidget.getCamera())
+		:CGUIWidget(parent, overlaidWidget.GetCamera())
 	{
-		setDepth(0); // Needs to be in front of everything
+		SetDepth(0); // Needs to be in front of everything
 		setSkin(overlaidWidget.getSkinResource());
 		
-		SPtr<Camera> camera = overlaidWidget.getCamera();
+		SPtr<Camera> camera = overlaidWidget.GetCamera();
 		SPtr<Viewport> viewport = camera->getViewport();
 
 		Rect2I availableBounds = viewport->getPixelArea();
@@ -44,7 +44,7 @@ namespace bs
 		Vector2I size(TOOLTIP_WIDTH, 25);
 		if (multiLineLabelStyle != nullptr)
 		{
-			GUIDimensions dimensions = GUIDimensions::create(GUIOptions(GUIOption::fixedWidth(TOOLTIP_WIDTH)));
+			GUIDimensions dimensions = GUIDimensions::Create(GUIOptions(GUIOption::fixedWidth(TOOLTIP_WIDTH)));
 			size = GUIHelper::calcOptimalContentsSize(text, *multiLineLabelStyle, dimensions);
 		}
 
@@ -73,7 +73,7 @@ namespace bs
 
 		GUILayout* backgroundLayout = backgroundPanel->addNewElement<GUILayoutX>();
 
-		GUITexture* backgroundFrame = GUITexture::create(TextureScaleMode::StretchToFit, getFrameStyleName());
+		GUITexture* backgroundFrame = GUITexture::Create(TextureScaleMode::StretchToFit, getFrameStyleName());
 		backgroundLayout->addElement(backgroundFrame);
 
 		GUILayout* contentLayout = contentPanel->addNewElement<GUILayoutY>();

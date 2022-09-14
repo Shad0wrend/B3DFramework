@@ -9,26 +9,26 @@
 
 namespace bs
 {
-	void GUIInputTool::updateText(const GUIElement* element, const TEXT_SPRITE_DESC& textDesc)
+	void GUIInputTool::UpdateText(const GUIElement* element, const TEXT_SPRITE_DESC& textDesc)
 	{
 		mElement = element;
 		mTextDesc = textDesc;
-		mNumChars = UTF8::count(mTextDesc.text);
+		mNumChars = UTF8::Count(mTextDesc.text);
 
 		mLineDescs.clear();
 
 		bs_frame_mark();
 		{
-			const U32String utf32text = UTF8::toUTF32(mTextDesc.text);
+			const U32String utf32text = UTF8::ToUtF32(mTextDesc.text);
 			TextData<FrameAlloc> textData(utf32text, mTextDesc.font, mTextDesc.fontSize,
 				mTextDesc.width, mTextDesc.height, mTextDesc.wordWrap, mTextDesc.wordBreak);
 
-			UINT32 numLines = textData.getNumLines();
-			UINT32 numPages = textData.getNumPages();
+			UINT32 numLines = textData.GetNumLines();
+			UINT32 numPages = textData.GetNumPages();
 
 			mNumQuads = 0;
 			for (UINT32 i = 0; i < numPages; i++)
-				mNumQuads += textData.getNumQuadsForPage(i);
+				mNumQuads += textData.GetNumQuadsForPage(i);
 
 			if (mQuads != nullptr)
 				bs_delete(mQuads);
@@ -70,14 +70,14 @@ namespace bs
 		bs_frame_clear();
 	}
 
-	Vector2I GUIInputTool::getTextOffset() const
+	Vector2I GUIInputTool::GetTextOffset() const
 	{
 		Vector2I offset(mElement->GetLayoutDataInternal().area.x, mElement->GetLayoutDataInternal().area.y);
 
 		return offset + mElement->GetTextInputOffsetInternal() + Vector2I(mElement->GetTextInputRectInternal().x, mElement->GetTextInputRectInternal().y);
 	}
 
-	Rect2I GUIInputTool::getCharRect(UINT32 charIdx) const
+	Rect2I GUIInputTool::GetCharRect(UINT32 charIdx) const
 	{
 		Rect2I charRect = getLocalCharRect(charIdx);
 		Vector2I textOffset = getTextOffset();
@@ -88,7 +88,7 @@ namespace bs
 		return charRect;
 	}
 
-	Rect2I GUIInputTool::getLocalCharRect(UINT32 charIdx) const
+	Rect2I GUIInputTool::GetLocalCharRect(UINT32 charIdx) const
 	{
 		UINT32 lineIdx = getLineForChar(charIdx);
 
@@ -119,7 +119,7 @@ namespace bs
 		return Rect2I();
 	}
 
-	INT32 GUIInputTool::getCharIdxAtPos(const Vector2I& pos) const
+	INT32 GUIInputTool::GetCharIdxAtPos(const Vector2I& pos) const
 	{
 		Vector2 vecPos((float)pos.x, (float)pos.y);
 
@@ -175,7 +175,7 @@ namespace bs
 		return nearestChar;
 	}
 
-	UINT32 GUIInputTool::getLineForChar(UINT32 charIdx, bool newlineCountsOnNextLine) const
+	UINT32 GUIInputTool::GetLineForChar(UINT32 charIdx, bool newlineCountsOnNextLine) const
 	{
 		UINT32 idx = 0;
 		for(auto& line : mLineDescs)
@@ -196,7 +196,7 @@ namespace bs
 		return 0;
 	}
 
-	UINT32 GUIInputTool::getCharIdxAtInputIdx(UINT32 inputIdx) const
+	UINT32 GUIInputTool::GetCharIdxAtInputIdx(UINT32 inputIdx) const
 	{
 		if(mNumChars == 0)
 			return 0;
@@ -231,7 +231,7 @@ namespace bs
 		return 0;
 	}
 
-	bool GUIInputTool::isNewline(UINT32 inputIdx) const
+	bool GUIInputTool::IsNewline(UINT32 inputIdx) const
 	{
 		if(mNumChars == 0)
 			return true;
@@ -252,14 +252,14 @@ namespace bs
 		return false;
 	}
 
-	bool GUIInputTool::isNewlineChar(UINT32 charIdx) const
+	bool GUIInputTool::IsNewlineChar(UINT32 charIdx) const
 	{
 		UINT32 byteIdx = UTF8::charToByteIndex(mTextDesc.text, charIdx);
 
 		return mTextDesc.text[byteIdx] == '\n';
 	}
 
-	bool GUIInputTool::isDescValid() const
+	bool GUIInputTool::IsDescValid() const
 	{
 		// We we have some text but line descs are empty we may assume
 		// something went wrong when creating the line descs, therefore it is
@@ -276,7 +276,7 @@ namespace bs
 
 	}
 
-	UINT32 GUIInputLineDesc::getEndChar(bool includeNewline) const
+	UINT32 GUIInputLineDesc::GetEndChar(bool includeNewline) const
 	{
 		if(mIncludesNewline)
 		{
@@ -294,7 +294,7 @@ namespace bs
 			return mEndChar;
 	}
 
-	bool GUIInputLineDesc::isNewline(UINT32 charIdx) const
+	bool GUIInputLineDesc::IsNewline(UINT32 charIdx) const
 	{
 		if(mIncludesNewline)
 		{

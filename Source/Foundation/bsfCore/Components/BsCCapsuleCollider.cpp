@@ -23,7 +23,7 @@ namespace bs
 		mLocalRotation = Quaternion::getRotationFromTo(Vector3::UNIT_X, mNormal);
 	}
 
-	void CCapsuleCollider::setNormal(const Vector3& normal)
+	void CCapsuleCollider::SetNormal(const Vector3& normal)
 	{
 		if (mNormal == normal)
 			return;
@@ -35,7 +35,7 @@ namespace bs
 			updateTransform();
 	}
 
-	void CCapsuleCollider::setCenter(const Vector3& center)
+	void CCapsuleCollider::SetCenter(const Vector3& center)
 	{
 		if (mLocalPosition == center)
 			return;
@@ -46,7 +46,7 @@ namespace bs
 			updateTransform();
 	}
 
-	void CCapsuleCollider::setHalfHeight(float halfHeight)
+	void CCapsuleCollider::SetHalfHeight(float halfHeight)
 	{
 		float clampedHalfHeight = std::max(halfHeight, 0.01f);
 		if (mHalfHeight == clampedHalfHeight)
@@ -56,14 +56,14 @@ namespace bs
 
 		if (mInternal != nullptr)
 		{
-			GetInternalInternal()->setHalfHeight(clampedHalfHeight);
+			GetInternalInternal()->SetHalfHeight(clampedHalfHeight);
 
 			if (mParent != nullptr)
 				mParent->UpdateMassDistributionInternal();
 		}
 	}
 
-	void CCapsuleCollider::setRadius(float radius)
+	void CCapsuleCollider::SetRadius(float radius)
 	{
 		float clampedRadius = std::max(radius, 0.01f);
 		if (mRadius == clampedRadius)
@@ -73,32 +73,32 @@ namespace bs
 
 		if (mInternal != nullptr)
 		{
-			GetInternalInternal()->setRadius(clampedRadius);
+			GetInternalInternal()->SetRadius(clampedRadius);
 
 			if (mParent != nullptr)
 				mParent->UpdateMassDistributionInternal();
 		}
 	}
 
-	SPtr<Collider> CCapsuleCollider::createInternal()
+	SPtr<Collider> CCapsuleCollider::CreateInternal()
 	{
 		const SPtr<SceneInstance>& scene = SO()->getScene();
 		const Transform& tfrm = SO()->getTransform();
 
-		SPtr<Collider> collider = CapsuleCollider::create(*scene->getPhysicsScene(), mRadius, mHalfHeight,
+		SPtr<Collider> collider = CapsuleCollider::Create(*scene->getPhysicsScene(), mRadius, mHalfHeight,
 			tfrm.getPosition(), tfrm.getRotation());
 
 		collider->SetOwnerInternal(PhysicsOwnerType::Component, this);
 		return collider;
 	}
 
-	RTTITypeBase* CCapsuleCollider::getRTTIStatic()
+	RTTITypeBase* CCapsuleCollider::GetRttiStatic()
 	{
-		return CCapsuleColliderRTTI::instance();
+		return CCapsuleColliderRTTI::Instance();
 	}
 
-	RTTITypeBase* CCapsuleCollider::getRTTI() const
+	RTTITypeBase* CCapsuleCollider::GetRtti() const
 	{
-		return CCapsuleCollider::getRTTIStatic();
+		return CCapsuleCollider::GetRttiStatic();
 	}
 }

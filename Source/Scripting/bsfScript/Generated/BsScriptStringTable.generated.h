@@ -16,17 +16,17 @@ namespace bs
 
 		ScriptStringTable(MonoObject* managedInstance, const ResourceHandle<StringTable>& value);
 
-		static MonoObject* createInstance();
+		static MonoObject* CreateInstance();
 
 	private:
-		static MonoObject* Internal_getRef(ScriptStringTable* thisPtr);
+		static MonoObject* InternalGetRef(ScriptStringTable* thisPtr);
 
-		static bool Internal_contains(ScriptStringTable* thisPtr, MonoString* identifier);
-		static uint32_t Internal_getNumStrings(ScriptStringTable* thisPtr);
-		static MonoArray* Internal_getIdentifiers(ScriptStringTable* thisPtr);
-		static void Internal_setString(ScriptStringTable* thisPtr, MonoString* identifier, Language language, MonoString* value);
-		static MonoString* Internal_getString(ScriptStringTable* thisPtr, MonoString* identifier, Language language);
-		static void Internal_removeString(ScriptStringTable* thisPtr, MonoString* identifier);
-		static void Internal_create(MonoObject* managedInstance);
+		static bool InternalContains(ScriptStringTable* thisPtr, MonoString* identifier);
+		static uint32_t InternalGetNumStrings(ScriptStringTable* thisPtr);
+		static MonoArray* InternalGetIdentifiers(ScriptStringTable* thisPtr);
+		static void InternalSetString(ScriptStringTable* thisPtr, MonoString* identifier, Language language, MonoString* value);
+		static MonoString* InternalGetString(ScriptStringTable* thisPtr, MonoString* identifier, Language language);
+		static void InternalRemoveString(ScriptStringTable* thisPtr, MonoString* identifier);
+		static void InternalCreate(MonoObject* managedInstance);
 	};
 }

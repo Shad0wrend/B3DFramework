@@ -19,11 +19,11 @@ namespace bs
 	public:
 		/** @copydoc ColorDistribution::evaluate(float, float) */
 		BS_SCRIPT_EXPORT(e:ColorDistribution)
-		static Color evaluate(const SPtr<ColorDistribution>& thisPtr, float t, float factor);
+		static Color Evaluate(const SPtr<ColorDistribution>& thisPtr, float t, float factor);
 
 		/** @copydoc ColorDistribution::evaluate(float, const Random&) */
 		BS_SCRIPT_EXPORT(e:ColorDistribution)
-		static Color evaluate(const SPtr<ColorDistribution>& thisPtr, float t, Random& factor);
+		static Color Evaluate(const SPtr<ColorDistribution>& thisPtr, float t, Random& factor);
 	};
 
 	/** @endcond */

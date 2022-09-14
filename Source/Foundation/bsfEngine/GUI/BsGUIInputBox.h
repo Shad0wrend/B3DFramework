@@ -30,7 +30,7 @@ namespace bs
 
 	public:
 		/** Returns type name of the GUI element used for finding GUI element styles.  */
-		static const String& getGUITypeName();
+		static const String& GetGuiTypeName();
 
 		/**
 		 * Creates a new input box.
@@ -41,7 +41,7 @@ namespace bs
 		 *								GUIWidget the element is used on. If not specified default style for this element
 		 *								is used.
 		 */
-		static GUIInputBox* create(bool multiline = false, const String& styleName = StringUtil::BLANK);
+		static GUIInputBox* Create(bool multiline = false, const String& styleName = StringUtil::BLANK);
 
 		/**
 		 * Creates a new input box.
@@ -53,7 +53,7 @@ namespace bs
 		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
 		 *								GUIWidget the element is used on. If not specified default button style is used.
 		 */
-		static GUIInputBox* create(bool multiline, const GUIOptions& options, const String& styleName = StringUtil::BLANK);
+		static GUIInputBox* Create(bool multiline, const GUIOptions& options, const String& styleName = StringUtil::BLANK);
 
 		/**
 		 * Creates a new single-line input box.
@@ -63,19 +63,19 @@ namespace bs
 		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
 		 *								GUIWidget the element is used on. If not specified default button style is used.
 		 */
-		static GUIInputBox* create(const GUIOptions& options, const String& styleName = StringUtil::BLANK);
+		static GUIInputBox* Create(const GUIOptions& options, const String& styleName = StringUtil::BLANK);
 
 		/**	Returns the text currently entered in the input box. */
-		const String& getText() const { return mText; }
+		const String& GetText() const { return mText; }
 
 		/**	Sets the text inside the input box. This will replace any current text. */
-		void setText(const String& text);
+		void SetText(const String& text);
 
 		/**
 		 * Sets an optional filter that can control what is allowed to be entered into the input box. Filter should return
 		 * true if the provided string is valid and false otherwise. Set the filter to null to deactivate filtering.
 		 */
-		void setFilter(std::function<bool(const String&)> filter) { mFilter = filter; }
+		void SetFilter(std::function<bool(const String&)> filter) { mFilter = filter; }
 
 		/**	Triggered whenever input text has changed. */
 		Event<void(const String&)> onValueChanged;
@@ -100,7 +100,7 @@ namespace bs
 		virtual ~GUIInputBox();
 
 		/** @copydoc GUIElement::FillBufferInternal() */
-		void _fillBuffer(
+		void FillBuffer(
 			UINT8* vertices,
 			UINT32* indices,
 			UINT32 vertexOffset,
@@ -108,13 +108,13 @@ namespace bs
 			const Vector2I& offset,
 			UINT32 maxNumVerts,
 			UINT32 maxNumIndices,
-			UINT32 renderElementIdx) const override;
+			UINT32 renderElementIdx) const ;
 
 		/** @copydoc GUIElement::updateRenderElementsInternal() */
-		void updateRenderElementsInternal() override;
+		void UpdateRenderElementsInternal() ;
 
 		/** @copydoc GUIElement::updateClippedBounds() */
-		void updateClippedBounds() override;
+		void UpdateClippedBounds() ;
 
 		/** @copydoc GUIElement::_mouseEvent */
 		bool MouseEventInternal(const GUIMouseEvent& ev) override;
@@ -153,28 +153,28 @@ namespace bs
 		 * Retrieves a sprite from a render element index, and a local render element index that represents render element
 		 * within the returned sprite.
 		 */
-		Sprite* renderElemToSprite(UINT32 renderElemIdx, UINT32& localRenderElemIdx) const;
+		Sprite* RenderElemToSprite(UINT32 renderElemIdx, UINT32& localRenderElemIdx) const;
 
 		/**
 		 * Returns offset at which is the element with the provided render element index. Offset is relative to parent
 		 * widget.
 		 */
-		Vector2I renderElemToOffset(UINT32 renderElemIdx) const;
+		Vector2I RenderElemToOffset(UINT32 renderElemIdx) const;
 
 		/**
 		 * Returns a clip rectangle that can be used for clipping the render element with the provided index. Rectangle is
 		 * in local coordiantes relative to element origin.
 		 */
-		Rect2I renderElemToClipRect(UINT32 renderElemIdx) const;
+		Rect2I RenderElemToClipRect(UINT32 renderElemIdx) const;
 
 		/** Inserts a new string into the current text at the specified index. */
-		void insertString(UINT32 charIdx, const String& string);
+		void InsertString(UINT32 charIdx, const String& string);
 
 		/**	Inserts a new character into the current text at the specified index. */
-		void insertChar(UINT32 charIdx, UINT32 charCode);
+		void InsertChar(UINT32 charIdx, UINT32 charCode);
 
 		/**	Erases a single character at the specified index. */
-		void eraseChar(UINT32 charIdx);
+		void EraseChar(UINT32 charIdx);
 
 		/**
 		 * Deletes text that is currently selected.
@@ -182,56 +182,56 @@ namespace bs
 		 * @param[in]	internal	If internal no filter will be applied after the text is deleted, and no event will be
 		 * 							triggered either.
 		 */
-		void deleteSelectedText(bool internal = false);
+		void DeleteSelectedText(bool internal = false);
 
 		/**	Returns currently selected text. */
-		String getSelectedText();
+		String GetSelectedText();
 
 		/**	Shows the input caret. You must position the caret manually after showing it. */
-		void showCaret();
+		void ShowCaret();
 
 		/**	Hides the input caret. */
-		void hideCaret();
+		void HideCaret();
 
 		/**
 		 * Shows selection with the specified anchor position. You must position selection start and end before selection
 		 * will actually render. Anchor position determines selection behavior as the user moves the selection with the
 		 * keyboard.
 		 */
-		void showSelection(UINT32 anchorCaretPos);
+		void ShowSelection(UINT32 anchorCaretPos);
 
 		/**	Removes any active selection. */
-		void clearSelection();
+		void ClearSelection();
 
 		/**	Adjusts the text offset (scroll) so that the caret is visible. */
-		void scrollTextToCaret();
+		void ScrollTextToCaret();
 
 		/** Clamps the text offset (scroll)	so that the text fits in the provided bounds nicely with minimal white space. */
-		void clampScrollToBounds(Rect2I unclippedTextBounds);
+		void ClampScrollToBounds(Rect2I unclippedTextBounds);
 
 		/**	Returns offset at which to render the text. Relative to parent widget. */
-		Vector2I getTextOffset() const;
+		Vector2I GetTextOffset() const;
 
 		/**	Returns rectangle used for clipping the text. Relative to element. */
-		Rect2I getTextClipRect() const;
+		Rect2I GetTextClipRect() const;
 
 		/**	Returns text sprite descriptor determining how is text sprite created. */
-		TEXT_SPRITE_DESC getTextDesc() const;
+		TEXT_SPRITE_DESC GetTextDesc() const;
 
 		/**	Returns currently active input box texture, depending on active state. */
-		const HSpriteTexture& getActiveTexture() const;
+		const HSpriteTexture& GetActiveTexture() const;
 		
 		/**	Returns currently active input box text color, depending on active state. */
-		Color getActiveTextColor() const;
+		Color GetActiveTextColor() const;
 
 		/**	Cuts currently selected text to clipboard. */
-		void cutText();
+		void CutText();
 
 		/**	Copies currently selected text to clipboard. */
-		void copyText();
+		void CopyText();
 
 		/**	Inserts text from clipboard to current caret location. */
-		void pasteText();
+		void PasteText();
 
 	private:
 		static VirtualButton mCopyVB;

@@ -20,35 +20,35 @@ namespace bs
 	class BS_CORE_EXPORT DepthStencilStateRTTI : public RTTIType<DepthStencilState, IReflectable, DepthStencilStateRTTI>
 	{
 	private:
-		DEPTH_STENCIL_STATE_DESC& getData(DepthStencilState* obj) { return obj->mProperties.mData; }
-		void setData(DepthStencilState* obj, DEPTH_STENCIL_STATE_DESC& val) { obj->mProperties.mData = val; }
+		DEPTH_STENCIL_STATE_DESC& GetData(DepthStencilState* obj) { return obj->mProperties.mData; }
+		void SetData(DepthStencilState* obj, DEPTH_STENCIL_STATE_DESC& val) { obj->mProperties.mData = val; }
 
 	public:
 		DepthStencilStateRTTI()
 		{
-			addPlainField("mData", 0, &DepthStencilStateRTTI::getData, &DepthStencilStateRTTI::setData);
+			addPlainField("mData", 0, &DepthStencilStateRTTI::GetData, &DepthStencilStateRTTI::SetData);
 		}
 
-		void onDeserializationEnded(IReflectable* obj, SerializationContext* context) override
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override
 		{
 			DepthStencilState* depthStencilState = static_cast<DepthStencilState*>(obj);
 			depthStencilState->initialize();
 		}
 
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "DepthStencilState";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_DepthStencilState;
 		}
 
 		SPtr<IReflectable> newRTTIObject() override
 		{
-			return RenderStateManager::instance().CreateDepthStencilStatePtrInternal(DEPTH_STENCIL_STATE_DESC());
+			return RenderStateManager::Instance().CreateDepthStencilStatePtrInternal(DEPTH_STENCIL_STATE_DESC());
 		}
 	};
 

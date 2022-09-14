@@ -32,23 +32,23 @@ namespace bs
 		 * Creates a new streaming sound. Only valid if the clip was created with AudioReadMode::Stream. Caller is
 		 * responsible for releasing the sound. Make sure to call releaseStreamingSound() when done.
 		 */
-		FMOD::Sound* createStreamingSound() const;
+		FMOD::Sound* CreateStreamingSound() const;
 
 		/** Releases any resources with a streaming sound (created with createStreamingSound()). */
-		static void releaseStreamingSound(FMOD::Sound* sound);
+		static void ReleaseStreamingSound(FMOD::Sound* sound);
 
 		/** Returns FMOD sound representing this clip. Only valid for non-streaming clips. */
-		FMOD::Sound* getSound() const { return mSound; }
+		FMOD::Sound* GetSound() const { return mSound; }
 
 		/**
 		 * Checks whether the audio clip requires a streaming sound retrieved via createStreamingSound(), or can the
 		 * basic sound retrieved via getSound() be used.
 		 */
-		bool requiresStreaming() const;
+		bool RequiresStreaming() const;
 
 	protected:
 		/** @copydoc Resource::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 		/** @copydoc AudioClip::getSourceStream */
 		SPtr<DataStream> getSourceStream(UINT32& size) override;

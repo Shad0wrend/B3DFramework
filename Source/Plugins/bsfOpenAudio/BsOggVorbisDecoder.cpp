@@ -9,7 +9,7 @@ namespace bs
 	size_t oggRead(void* ptr, size_t size, size_t nmemb, void* data)
 	{
 		OggDecoderData* decoderData = static_cast<OggDecoderData*>(data);
-		return static_cast<std::size_t>(decoderData->stream->read(ptr, size * nmemb));
+		return static_cast<std::size_t>(decoderData->stream->Read(ptr, size * nmemb));
 	}
 
 	int oggSeek(void* data, ogg_int64_t offset, int whence)
@@ -21,21 +21,21 @@ namespace bs
 			offset += decoderData->offset;
 			break;
 		case SEEK_CUR:
-			offset += decoderData->stream->tell();
+			offset += decoderData->stream->Tell();
 			break;
 		case SEEK_END:
-			offset = std::max(0, (INT32)decoderData->stream->size() - 1);
+			offset = std::max(0, (INT32)decoderData->stream->Size() - 1);
 			break;
 		}
 
-		decoderData->stream->seek((UINT32)offset);
-		return (int)(decoderData->stream->tell() - decoderData->offset);
+		decoderData->stream->Seek((UINT32)offset);
+		return (int)(decoderData->stream->Tell() - decoderData->offset);
 	}
 
 	long oggTell(void* data)
 	{
 		OggDecoderData* decoderData = static_cast<OggDecoderData*>(data);
-		return (long)(decoderData->stream->tell() - decoderData->offset);
+		return (long)(decoderData->stream->Tell() - decoderData->offset);
 	}
 
 	static ov_callbacks callbacks = { &oggRead, &oggSeek, nullptr, &oggTell };
@@ -51,9 +51,9 @@ namespace bs
 			ov_clear(&mOggVorbisFile);
 	}
 
-	bool OggVorbisDecoder::isValid(const SPtr<DataStream>& stream, UINT32 offset)
+	bool OggVorbisDecoder::IsValid(const SPtr<DataStream>& stream, UINT32 offset)
 	{
-		stream->seek(offset);
+		stream->Seek(offset);
 		mDecoderData.stream = stream;
 		mDecoderData.offset = offset;
 
@@ -67,12 +67,12 @@ namespace bs
 		return false;
 	}
 
-	bool OggVorbisDecoder::open(const SPtr<DataStream>& stream, AudioDataInfo& info, UINT32 offset)
+	bool OggVorbisDecoder::Open(const SPtr<DataStream>& stream, AudioDataInfo& info, UINT32 offset)
 	{
 		if (stream == nullptr)
 			return false;
 
-		stream->seek(offset);
+		stream->Seek(offset);
 		mDecoderData.stream = stream;
 		mDecoderData.offset = offset;
 
@@ -93,12 +93,12 @@ namespace bs
 		return true;
 	}
 
-	void OggVorbisDecoder::seek(UINT32 offset)
+	void OggVorbisDecoder::Seek(UINT32 offset)
 	{
 		ov_pcm_seek(&mOggVorbisFile, offset / mChannelCount);
 	}
 
-	UINT32 OggVorbisDecoder::read(UINT8* samples, UINT32 numSamples)
+	UINT32 OggVorbisDecoder::Read(UINT8* samples, UINT32 numSamples)
 	{
 		UINT32 numReadSamples = 0;
 		while (numReadSamples < numSamples)

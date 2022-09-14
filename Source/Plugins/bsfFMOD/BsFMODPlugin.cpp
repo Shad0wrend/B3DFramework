@@ -11,14 +11,14 @@ namespace bs
 	class FMODFactory : public AudioFactory
 	{
 	public:
-		void startUp() override
+		void StartUp() override
 		{
-			Audio::startUp<FMODAudio>();
+			Audio::StartUp<FMODAudio>();
 		}
 
-		void shutDown() override
+		void ShutDown() override
 		{
-			Audio::shutDown();
+			Audio::ShutDown();
 		}
 	};
 
@@ -33,7 +33,7 @@ namespace bs
 	extern "C" BS_PLUGIN_EXPORT void* loadPlugin()
 	{
 		FMODImporter* importer = bs_new<FMODImporter>();
-		Importer::instance().RegisterAssetImporterInternal(importer);
+		Importer::Instance().RegisterAssetImporterInternal(importer);
 
 		return bs_new<FMODFactory>();
 	}

@@ -77,38 +77,38 @@ namespace bs
 		 * @param[in]	clear		If true the focus will be cleared from any elements currently in focus. Otherwise
 		 *							the element will just be appended to the in-focus list (if enabling focus).
 		 */
-		virtual void setFocus(bool enabled, bool clear = false);
+		virtual void SetFocus(bool enabled, bool clear = false);
 
 		/**	Sets the tint of the GUI element. */
-		virtual void setTint(const Color& color);
+		virtual void SetTint(const Color& color);
 
 		/** @copydoc GUIElementBase::resetDimensions */
-		void resetDimensions() override;
+		void ResetDimensions() override;
 
 		/**	Sets new style to be used by the element. */
-		void setStyle(const String& styleName);
+		void SetStyle(const String& styleName);
 
 		/**	Returns the name of the style used by this element. */
-		const String& getStyleName() const { return mStyleName; }
+		const String& GetStyleName() const { return mStyleName; }
 
 		/** A set of flags controlling various aspects of the GUIElement. See GUIElementOptions.  */
-		void setOptionFlags(GUIElementOptions options) { mOptionFlags = options; }
+		void SetOptionFlags(GUIElementOptions options) { mOptionFlags = options; }
 
 		/** @copydoc setOptionFlags */
-		GUIElementOptions getOptionFlags() const { return mOptionFlags; }
+		GUIElementOptions GetOptionFlags() const { return mOptionFlags; }
 
 		/**
 		 * Assigns a new context menu that will be opened when the element is right clicked. Null is allowed in case no
 		 * context menu is wanted.
 		 */
-		void setContextMenu(const SPtr<GUIContextMenu>& menu) { mContextMenu = menu; }
+		void SetContextMenu(const SPtr<GUIContextMenu>& menu) { mContextMenu = menu; }
 
 		/** 
 		 * Sets a navigation group that determines in what order are GUI elements visited when using a keyboard or gamepad
 		 * to switch between the elements. If you don't set a navigation group the elements will inherit the default
 		 * navigation group from their parent GUIWidget. Also see setNavGroupIndex().
 		 */
-		void setNavGroup(const SPtr<GUINavGroup>& navGroup);
+		void SetNavGroup(const SPtr<GUINavGroup>& navGroup);
 
 		/**
 		 * Sets the index that determines in what order is the element visited compared to all the other elements in the
@@ -117,16 +117,16 @@ namespace bs
 		 * elements. The applied index is tied to the nav-group, so if the nav-group changes the index will need to be
 		 * re-applied.
 		 */
-		void setNavGroupIndex(INT32 index);
+		void SetNavGroupIndex(INT32 index);
 
 		/** @copydoc GUIElementBase::getVisibleBounds */
-		Rect2I getVisibleBounds() override;
+		Rect2I GetVisibleBounds() override;
 
 		/**
 		 * Destroy the element. Removes it from parent and widget, and queues it for deletion. Element memory will be 
 		 * released delayed, next frame.
 		 */	
-		static void destroy(GUIElement* element);
+		static void Destroy(GUIElement* element);
 
 		/**	Triggered when the element loses or gains focus. */
 		Event<void(bool)> onFocusChanged;
@@ -159,7 +159,7 @@ namespace bs
 		 * @param[in]	renderElementIdx	Zero-based index of the render element.
 		 *
 		 */
-		virtual void _fillBuffer(
+		virtual void FillBuffer(
 			UINT8* vertices,
 			UINT32* indices,
 			UINT32 vertexOffset,
@@ -278,20 +278,20 @@ namespace bs
 
 	protected:
 		/**	Called whenever render elements are dirty and need to be rebuilt. */
-		virtual void updateRenderElementsInternal();
+		virtual void UpdateRenderElementsInternal();
 
 		/**
 		 * Called whenever element clipped bounds need to be recalculated. (for example when width, height or clip 
 		 * rectangles changes).
 		 */
-		virtual void updateClippedBounds();
+		virtual void UpdateClippedBounds();
 
 		/**
 		 * Helper method that returns style name used by an element of a certain type. If override style is empty, default
 		 * style for that type is returned.
 		 */
 		template<class T>
-		static const String& getStyleName(const String& overrideStyle)
+		static const String& GetStyleName(const String& overrideStyle)
 		{
 			if(overrideStyle == StringUtil::BLANK)
 				return T::getGUITypeName();
@@ -303,25 +303,25 @@ namespace bs
 		 * Attempts to find a sub-style for the specified type in the currently set GUI element style. If one cannot be
 		 * found empty string is returned.
 		 */
-		const String& getSubStyleName(const String& subStyleTypeName) const;
+		const String& GetSubStyleName(const String& subStyleTypeName) const;
 
 		/**	Method that gets triggered whenever element style changes. */
-		virtual void styleUpdated() { }
+		virtual void StyleUpdated() { }
 
 		/**	Returns clipped bounds excluding the margins. Relative to parent widget. */
-		Rect2I getCachedVisibleBounds() const;
+		Rect2I GetCachedVisibleBounds() const;
 
 		/**	Returns bounds of the content contained within the GUI element. Relative to parent widget. */
-		Rect2I getCachedContentBounds() const;
+		Rect2I GetCachedContentBounds() const;
 
 		/**
 		 * Returns a clip rectangle that can be used for clipping the contents of this GUI element. Clip rect is relative
 		 * to GUI element origin.
 		 */
-		Rect2I getCachedContentClipRect() const;
+		Rect2I GetCachedContentClipRect() const;
 
 		/**	Returns the tint that is applied to the GUI element. */
-		Color getTint() const;
+		Color GetTint() const;
 
 		bool mIsDestroyed = false;
 		GUIElementOptions mOptionFlags;
@@ -367,7 +367,7 @@ namespace bs
 			 * many render elements from the sprite render elements and the extra information provided in SpriteInfo.
 			 */
 			template<UINT32 N>
-			static void populate(const SpriteInfo (&spriteInfos)[N], SmallVector<GUIRenderElement, 4>& output)
+			static void Populate(const SpriteInfo (&spriteInfos)[N], SmallVector<GUIRenderElement, 4>& output)
 			{
 				UINT32 totalCount = 0;
 				for (UINT32 i = 0; i < N; i++)

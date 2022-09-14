@@ -44,32 +44,32 @@ namespace bs
 
 	public:
 		/**	Creates a new separator entry. */
-		static GUIDropDownDataEntry separator();
+		static GUIDropDownDataEntry Separator();
 
 		/** Creates a new button entry with the specified callback that is triggered when button is selected. */
-		static GUIDropDownDataEntry button(const String& label, std::function<void()> callback,
+		static GUIDropDownDataEntry Button(const String& label, std::function<void()> callback,
 			const String& shortcutTag = StringUtil::BLANK);
 
 		/** Creates a new sub-menu entry that will open the provided drop down data sub-menu when activated. */
-		static GUIDropDownDataEntry subMenu(const String& label, const GUIDropDownData& data);
+		static GUIDropDownDataEntry SubMenu(const String& label, const GUIDropDownData& data);
 
 		/**	Check is the entry a separator. */
-		bool isSeparator() const { return mType == Type::Separator; }
+		bool IsSeparator() const { return mType == Type::Separator; }
 
 		/**	Check is the entry a sub menu. */
-		bool isSubMenu() const { return mType == Type::SubMenu; }
+		bool IsSubMenu() const { return mType == Type::SubMenu; }
 
 		/**	Returns display label of the entry (if an entry is a button or a sub-menu). */
-		const String& getLabel() const { return mLabel; }
+		const String& GetLabel() const { return mLabel; }
 
 		/**	Returns the shortcut key combination string that is to be displayed along the entry label. */
-		const String& getShortcutTag() const { return mShortcutTag; }
+		const String& GetShortcutTag() const { return mShortcutTag; }
 
 		/**	Returns a button callback if the entry (if an entry is a button). */
-		std::function<void()> getCallback() const { return mCallback; }
+		std::function<void()> GetCallback() const { return mCallback; }
 
 		/**	Returns sub-menu data that is used for creating a sub-menu (if an entry is a sub-menu). */
-		const GUIDropDownData& getSubMenuData() const { return mChildData; }
+		const GUIDropDownData& GetSubMenuData() const { return mChildData; }
 	private:
 		GUIDropDownDataEntry() { }
 
@@ -135,22 +135,22 @@ namespace bs
 			~DropDownSubMenu();
 
 			/**	Recreates all internal GUI elements for the entries of the current sub-menu page. */
-			void updateGUIElements();
+			void UpdateGuiElements();
 
 			/**	Moves the sub-menu to the previous page and displays its elements, if available. */
-			void scrollDown();
+			void ScrollDown();
 
 			/**	Moves the sub-menu to the next page and displays its elements, if available. */
-			void scrollUp();
+			void ScrollUp();
 
 			/**	Moves the sub-menu to the first page and displays its elements. */
-			void scrollToTop();
+			void ScrollToTop();
 
 			/**	Moves the sub-menu to the last page and displays its elements. */
-			void scrollToBottom();
+			void ScrollToBottom();
 
 			/**	Calculates ranges for all the pages of the sub-menu. */
-			Vector<PageInfo> getPageInfos() const;
+			Vector<PageInfo> GetPageInfos() const;
 
 			/**
 			 * Called when the user activates an element with the specified index.
@@ -159,29 +159,29 @@ namespace bs
 			 * @param[in]	bounds	Bounds of the GUI element that is used as a visual representation of this drop down
 			 *						element.
 			 */
-			void elementActivated(UINT32 idx, const Rect2I& bounds);
+			void ElementActivated(UINT32 idx, const Rect2I& bounds);
 
 			/**
 			 * Called when the user selects an element with the specified index.
 			 *
 			 * @param[in]	idx		Index of the element that was selected.
 			 */
-			void elementSelected(UINT32 idx);
+			void ElementSelected(UINT32 idx);
 
 			/**	Called when the user wants to close the currently open sub-menu. */
-			void closeSubMenu();
+			void CloseSubMenu();
 
 			/**	Closes this sub-menu. */
-			void close();
+			void Close();
 
 			/**	Returns the type of the displayed drop down menu. */
-			GUIDropDownType getType() const { return mType; }
+			GUIDropDownType GetType() const { return mType; }
 
 			/**	Returns actual visible bounds of the sub-menu. */
-			Rect2I getVisibleBounds() const { return mVisibleBounds; }
+			Rect2I GetVisibleBounds() const { return mVisibleBounds; }
 
 			/**	Returns the drop box object that owns this sub-menu. */
-			GUIDropDownMenu* getOwner() const { return mOwner; }
+			GUIDropDownMenu* GetOwner() const { return mOwner; }
 
 		public:
 			GUIDropDownMenu* mOwner;
@@ -215,16 +215,16 @@ namespace bs
 		friend class GUIDropDownContent;
 
 		/**	Called when the specified sub-menu is opened. */
-		void notifySubMenuOpened(DropDownSubMenu* subMenu);
+		void NotifySubMenuOpened(DropDownSubMenu* subMenu);
 
 		/**	Called when the specified sub-menu is opened. */
-		void notifySubMenuClosed(DropDownSubMenu* subMenu);
+		void NotifySubMenuClosed(DropDownSubMenu* subMenu);
 
 		/**	Called when the drop down box loses focus (and should be closed). */
-		void dropDownFocusLost();
+		void DropDownFocusLost();
 
 		/** @copydoc CGUIWidget::onDestroyed */
-		void onDestroyed() override;
+		void OnDestroyed() ;
 
 	private:
 		static const UINT32 DROP_DOWN_BOX_WIDTH;

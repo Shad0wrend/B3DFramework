@@ -18,20 +18,20 @@ namespace bs
 
 		ScriptColorGradient(MonoObject* managedInstance, const SPtr<ColorGradient>& value);
 
-		SPtr<ColorGradient> getInternal() const { return mInternal; }
-		static MonoObject* create(const SPtr<ColorGradient>& value);
+		SPtr<ColorGradient> GetInternal() const { return mInternal; }
+		static MonoObject* Create(const SPtr<ColorGradient>& value);
 
 	private:
 		SPtr<ColorGradient> mInternal;
 
-		static void Internal_ColorGradient(MonoObject* managedInstance);
-		static void Internal_ColorGradient0(MonoObject* managedInstance, Color* color);
-		static void Internal_ColorGradient1(MonoObject* managedInstance, MonoArray* keys);
-		static void Internal_setKeys(ScriptColorGradient* thisPtr, MonoArray* keys, float duration);
-		static MonoArray* Internal_getKeys(ScriptColorGradient* thisPtr);
-		static uint32_t Internal_getNumKeys(ScriptColorGradient* thisPtr);
-		static void Internal_getKey(ScriptColorGradient* thisPtr, uint32_t idx, __ColorGradientKeyInterop* __output);
-		static void Internal_setConstant(ScriptColorGradient* thisPtr, Color* color);
-		static void Internal_evaluate(ScriptColorGradient* thisPtr, float t, Color* __output);
+		static void InternalColorGradient(MonoObject* managedInstance);
+		static void InternalColorGradient0(MonoObject* managedInstance, Color* color);
+		static void InternalColorGradient1(MonoObject* managedInstance, MonoArray* keys);
+		static void InternalSetKeys(ScriptColorGradient* thisPtr, MonoArray* keys, float duration);
+		static MonoArray* InternalGetKeys(ScriptColorGradient* thisPtr);
+		static uint32_t InternalGetNumKeys(ScriptColorGradient* thisPtr);
+		static void InternalGetKey(ScriptColorGradient* thisPtr, uint32_t idx, __ColorGradientKeyInterop* __output);
+		static void InternalSetConstant(ScriptColorGradient* thisPtr, Color* color);
+		static void InternalEvaluate(ScriptColorGradient* thisPtr, float t, Color* __output);
 	};
 }

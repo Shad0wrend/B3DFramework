@@ -18,25 +18,25 @@ namespace bs
 	Signal CoreThread::sAppStartedCondition;
 #endif
 
-	void CoreThread::onStartUp()
+	void CoreThread::OnStartUp()
 	{
 		for (UINT32 i = 0; i < NUM_SYNC_BUFFERS; i++)
 		{
 			mFrameAllocs[i] = bs_new<FrameAlloc>();
-			mFrameAllocs[i]->setOwnerThread(BS_THREAD_CURRENT_ID); // Sim thread
+			mFrameAllocs[i]->SetOwnerThread(BS_THREAD_CURRENT_ID); // Sim thread
 		}
 
 		mSimThreadId = BS_THREAD_CURRENT_ID;
 		mCoreThreadId = mSimThreadId; // For now
 		mCommandQueue = bs_new<CommandQueue<CommandQueueSync>>(BS_THREAD_CURRENT_ID);
 
-		initCoreThread();
+		InitCoreThread();
 	}
 
 	CoreThread::~CoreThread()
 	{
 		// TODO - What if something gets queued between the queued call to destroy_internal and this!?
-		shutdownCoreThread();
+		ShutdownCoreThread();
 
 		{
 			Lock lock(mSubmitMutex);
@@ -55,16 +55,16 @@ namespace bs
 
 		for (UINT32 i = 0; i < NUM_SYNC_BUFFERS; i++)
 		{
-			mFrameAllocs[i]->setOwnerThread(BS_THREAD_CURRENT_ID); // Sim thread
+			mFrameAllocs[i]->SetOwnerThread(BS_THREAD_CURRENT_ID); // Sim thread
 			bs_delete(mFrameAllocs[i]);
 		}
 	}
 
-	void CoreThread::initCoreThread()
+	void CoreThread::InitCoreThread()
 	{
 #if !BS_FORCE_SINGLETHREADED_RENDERING
 #if !BS_CORE_THREAD_IS_MAIN
-		mCoreThread = ThreadPool::instance().run("Core", std::bind(&CoreThread::runCoreThread, this));
+		mCoreThread = ThreadPool::Instance().run("Core", std::bind(&CoreThread::runCoreThread, this));
 #else
 		{
 			Lock lock(sAppStartedMutex);
@@ -99,10 +99,10 @@ namespace bs
 	}
 #endif
 
-	void CoreThread::runCoreThread()
+	void CoreThread::RunCoreThread()
 	{
 #if !BS_FORCE_SINGLETHREADED_RENDERING
-		TaskScheduler::instance().removeWorker(); // One less worker because we are reserving one core for this thread
+		TaskScheduler::Instance().removeWorker(); // One less worker because we are reserving one core for this thread
 
 		{
 			Lock lock(mThreadStartedMutex);
@@ -124,13 +124,13 @@ namespace bs
 				{
 					if(mCoreThreadShutdown)
 					{
-						TaskScheduler::instance().addWorker();
+						TaskScheduler::Instance().addWorker();
 						return;
 					}
 
-					TaskScheduler::instance().addWorker(); // Do something else while we wait, otherwise this core will be unused
+					TaskScheduler::Instance().addWorker(); // Do something else while we wait, otherwise this core will be unused
 					mCommandReadyCondition.wait(lock);
-					TaskScheduler::instance().removeWorker();
+					TaskScheduler::Instance().removeWorker();
 				}
 
 				commands = mCommandQueue->flush();
@@ -142,7 +142,7 @@ namespace bs
 #endif
 	}
 
-	void CoreThread::shutdownCoreThread()
+	void CoreThread::ShutdownCoreThread()
 	{
 #if !BS_FORCE_SINGLETHREADED_RENDERING
 
@@ -162,7 +162,7 @@ namespace bs
 #endif
 	}
 
-	SPtr<CommandQueue<CommandQueueSync>> CoreThread::getQueue()
+	SPtr<CommandQueue<CommandQueueSync>> CoreThread::GetQueue()
 	{
 		if(mPerThreadQueue.current == nullptr)
 		{
@@ -178,7 +178,7 @@ namespace bs
 		return mPerThreadQueue.current->queue;
 	}
 
-	void CoreThread::submitCommandQueue(CommandQueue<CommandQueueSync>& queue, bool blockUntilComplete)
+	void CoreThread::SubmitCommandQueue(CommandQueue<CommandQueueSync>& queue, bool blockUntilComplete)
 	{
 		Queue<QueuedCommand>* commands = queue.flush();
 
@@ -190,7 +190,7 @@ namespace bs
 		queueCommand(std::bind(&CommandQueueBase::playback, &queue, commands), flags);
 	}
 
-	void CoreThread::submitAll(bool blockUntilComplete)
+	void CoreThread::SubmitAll(bool blockUntilComplete)
 	{
 		UINT32 blockCommandId = (UINT32)-1;
 
@@ -229,7 +229,7 @@ namespace bs
 		}
 	}
 
-	void CoreThread::submit(bool blockUntilComplete)
+	void CoreThread::Submit(bool blockUntilComplete)
 	{
 		Lock lock(mSubmitMutex);
 
@@ -256,7 +256,7 @@ namespace bs
 			blockUntilCommandCompleted(commandId);
 	}
 
-	AsyncOp CoreThread::queueReturnCommand(std::function<void(AsyncOp&)> commandCallback, CoreThreadQueueFlags flags)
+	AsyncOp CoreThread::QueueReturnCommand(std::function<void(AsyncOp&)> commandCallback, CoreThreadQueueFlags flags)
 	{
 #if !BS_FORCE_SINGLETHREADED_RENDERING
 		assert(BS_THREAD_CURRENT_ID != getCoreThreadId() && "Cannot queue commands on the core thread for the core thread");
@@ -291,7 +291,7 @@ namespace bs
 		}
 	}
 
-	void CoreThread::queueCommand(std::function<void()> commandCallback, CoreThreadQueueFlags flags)
+	void CoreThread::QueueCommand(std::function<void()> commandCallback, CoreThreadQueueFlags flags)
 	{
 #if !BS_FORCE_SINGLETHREADED_RENDERING
 		assert(BS_THREAD_CURRENT_ID != getCoreThreadId() && "Cannot queue commands on the core thread for the core thread");
@@ -323,7 +323,7 @@ namespace bs
 		}
 	}
 
-	void CoreThread::update()
+	void CoreThread::Update()
 	{
 		for (UINT32 i = 0; i < NUM_SYNC_BUFFERS; i++)
 			mFrameAllocs[i]->setOwnerThread(mCoreThreadId);
@@ -333,12 +333,12 @@ namespace bs
 		mFrameAllocs[mActiveFrameAlloc]->clear();
 	}
 
-	FrameAlloc* CoreThread::getFrameAlloc() const
+	FrameAlloc* CoreThread::GetFrameAlloc() const
 	{
 		return mFrameAllocs[mActiveFrameAlloc];
 	}
 
-	void CoreThread::blockUntilCommandCompleted(UINT32 commandId)
+	void CoreThread::BlockUntilCommandCompleted(UINT32 commandId)
 	{
 #if !BS_FORCE_SINGLETHREADED_RENDERING
 
@@ -362,7 +362,7 @@ namespace bs
 #endif
 	}
 
-	void CoreThread::commandCompletedNotify(UINT32 commandId)
+	void CoreThread::CommandCompletedNotify(UINT32 commandId)
 	{
 		{
 			Lock lock(mCommandNotifyMutex);
@@ -374,13 +374,13 @@ namespace bs
 
 	CoreThread& gCoreThread()
 	{
-		return CoreThread::instance();
+		return CoreThread::Instance();
 	}
 
 	void throwIfNotCoreThread()
 	{
 #if !BS_FORCE_SINGLETHREADED_RENDERING
-		if(BS_THREAD_CURRENT_ID != CoreThread::instance().getCoreThreadId())
+		if(BS_THREAD_CURRENT_ID != CoreThread::Instance().getCoreThreadId())
 			BS_EXCEPT(InternalErrorException, "This method can only be accessed from the core thread.");
 #endif
 	}
@@ -388,7 +388,7 @@ namespace bs
 	void throwIfCoreThread()
 	{
 #if !BS_FORCE_SINGLETHREADED_RENDERING
-		if(BS_THREAD_CURRENT_ID == CoreThread::instance().getCoreThreadId())
+		if(BS_THREAD_CURRENT_ID == CoreThread::Instance().getCoreThreadId())
 			BS_EXCEPT(InternalErrorException, "This method cannot be accessed from the core thread.");
 #endif
 	}

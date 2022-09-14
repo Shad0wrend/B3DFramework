@@ -18,35 +18,35 @@ namespace bs
 	void ScriptBlendClipInfo::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptBlendClipInfo::box(const __BlendClipInfoInterop& value)
+	MonoObject*ScriptBlendClipInfo::Box(const __BlendClipInfoInterop& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	__BlendClipInfoInterop ScriptBlendClipInfo::unbox(MonoObject* value)
+	__BlendClipInfoInterop ScriptBlendClipInfo::Unbox(MonoObject* value)
 	{
-		return *(__BlendClipInfoInterop*)MonoUtil::unbox(value);
+		return *(__BlendClipInfoInterop*)MonoUtil::Unbox(value);
 	}
 
-	BlendClipInfo ScriptBlendClipInfo::fromInterop(const __BlendClipInfoInterop& value)
+	BlendClipInfo ScriptBlendClipInfo::FromInterop(const __BlendClipInfoInterop& value)
 	{
 		BlendClipInfo output;
 		ResourceHandle<AnimationClip> tmpclip;
 		ScriptRRefBase* scriptclip;
-		scriptclip = ScriptRRefBase::toNative(value.clip);
+		scriptclip = ScriptRRefBase::ToNative(value.clip);
 		if(scriptclip != nullptr)
-			tmpclip = static_resource_cast<AnimationClip>(scriptclip->getHandle());
+			tmpclip = static_resource_cast<AnimationClip>(scriptclip->GetHandle());
 		output.clip = tmpclip;
 		output.position = value.position;
 
 		return output;
 	}
 
-	__BlendClipInfoInterop ScriptBlendClipInfo::toInterop(const BlendClipInfo& value)
+	__BlendClipInfoInterop ScriptBlendClipInfo::ToInterop(const BlendClipInfo& value)
 	{
 		__BlendClipInfoInterop output;
 		ScriptRRefBase* scriptclip;
-		scriptclip = ScriptResourceManager::instance().getScriptRRef(value.clip);
+		scriptclip = ScriptResourceManager::Instance().getScriptRRef(value.clip);
 		MonoObject* tmpclip;
 		if(scriptclip != nullptr)
 			tmpclip = scriptclip->getManagedInstance();

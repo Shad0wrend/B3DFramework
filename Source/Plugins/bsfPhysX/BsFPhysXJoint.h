@@ -20,37 +20,37 @@ namespace bs
 		~FPhysXJoint();
 
 		/** @copydoc FJoint::getBody */
-		Rigidbody* getBody(JointBody body) const override;
+		Rigidbody* GetBody(JointBody body) const ;
 
 		/** @copydoc FJoint::setBody */
-		void setBody(JointBody body, Rigidbody* value) override;
+		void SetBody(JointBody body, Rigidbody* value) ;
 
 		/** @copydoc FJoint::getPosition */
-		Vector3 getPosition(JointBody body) const override;
+		Vector3 GetPosition(JointBody body) const ;
 
 		/** @copydoc FJoint::getRotation */
-		Quaternion getRotation(JointBody body) const override;
+		Quaternion GetRotation(JointBody body) const ;
 
 		/** @copydoc FJoint::setTransform */
-		void setTransform(JointBody body, const Vector3& position, const Quaternion& rotation) override;
+		void SetTransform(JointBody body, const Vector3& position, const Quaternion& rotation) ;
 
 		/** @copydoc FJoint::getBreakForce */
-		float getBreakForce() const override;
+		float GetBreakForce() const ;
 
 		/** @copydoc FJoint::setBreakForce */
-		void setBreakForce(float force) override;
+		void SetBreakForce(float force) ;
 
 		/** @copydoc FJoint::getBreakTorque */
-		float getBreakTorque() const override;
+		float GetBreakTorque() const ;
 
 		/** @copydoc FJoint::setBreakTorque */
-		void setBreakTorque(float torque) override;
+		void SetBreakTorque(float torque) ;
 
 		/** @copydoc FJoint::getEnableCollision */
-		bool getEnableCollision() const override;
+		bool GetEnableCollision() const ;
 
 		/** @copydoc FJoint::setEnableCollision */
-		void setEnableCollision(bool value) override;
+		void SetEnableCollision(bool value) ;
 
 		/** Gets the internal PhysX joint object. */
 		physx::PxJoint* GetInternalInternal() const { return mJoint; }

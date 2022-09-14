@@ -24,10 +24,10 @@ namespace bs
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "LimitConeRange")
 
-		static MonoObject* box(const __LimitConeRangeInterop& value);
-		static __LimitConeRangeInterop unbox(MonoObject* value);
-		static LimitConeRange fromInterop(const __LimitConeRangeInterop& value);
-		static __LimitConeRangeInterop toInterop(const LimitConeRange& value);
+		static MonoObject* Box(const __LimitConeRangeInterop& value);
+		static __LimitConeRangeInterop Unbox(MonoObject* value);
+		static LimitConeRange FromInterop(const __LimitConeRangeInterop& value);
+		static __LimitConeRangeInterop ToInterop(const LimitConeRange& value);
 
 	private:
 		ScriptLimitConeRange(MonoObject* managedInstance);

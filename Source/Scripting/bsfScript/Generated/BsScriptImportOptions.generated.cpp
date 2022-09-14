@@ -27,7 +27,7 @@ namespace bs
 
 	}
 
-	MonoObject* ScriptImportOptions::create(const SPtr<ImportOptions>& value)
+	MonoObject* ScriptImportOptions::Create(const SPtr<ImportOptions>& value)
 	{
 		if(value == nullptr) return nullptr; 
 

@@ -31,7 +31,7 @@ namespace bs
 		 * @param[in]	curve		Curve to add to the clip.
 		 */
 		BS_SCRIPT_EXPORT(n:AddPositionCurve)
-		void addPositionCurve(const String& name, const TAnimationCurve<Vector3>& curve);
+		void AddPositionCurve(const String& name, const TAnimationCurve<Vector3>& curve);
 
 		/**
 		 * Registers a new curve used for animating rotation.
@@ -41,7 +41,7 @@ namespace bs
 		 * @param[in]	curve		Curve to add to the clip.
 		 */
 		BS_SCRIPT_EXPORT(n:AddRotationCurve)
-		void addRotationCurve(const String& name, const TAnimationCurve<Quaternion>& curve);
+		void AddRotationCurve(const String& name, const TAnimationCurve<Quaternion>& curve);
 
 		/**
 		 * Registers a new curve used for animating scale.
@@ -51,7 +51,7 @@ namespace bs
 		 * @param[in]	curve		Curve to add to the clip.
 		 */
 		BS_SCRIPT_EXPORT(n:AddScaleCurve)
-		void addScaleCurve(const String& name, const TAnimationCurve<Vector3>& curve);
+		void AddScaleCurve(const String& name, const TAnimationCurve<Vector3>& curve);
 
 		/**
 		 * Registers a new curve used for generic animation.
@@ -61,23 +61,23 @@ namespace bs
 		 * @param[in]	curve		Curve to add to the clip.
 		 */
 		BS_SCRIPT_EXPORT(n:AddGenericCurve)
-		void addGenericCurve(const String& name, const TAnimationCurve<float>& curve);
+		void AddGenericCurve(const String& name, const TAnimationCurve<float>& curve);
 
 		/** Removes an existing curve from the clip. */
 		BS_SCRIPT_EXPORT(n:RemovePositionCurve)
-		void removePositionCurve(const String& name);
+		void RemovePositionCurve(const String& name);
 
 		/** Removes an existing curve from the clip. */
 		BS_SCRIPT_EXPORT(n:RemoveRotationCurve)
-		void removeRotationCurve(const String& name);
+		void RemoveRotationCurve(const String& name);
 
 		/** Removes an existing curve from the clip. */
 		BS_SCRIPT_EXPORT(n:RemoveScaleCurve)
-		void removeScaleCurve(const String& name);
+		void RemoveScaleCurve(const String& name);
 
 		/** Removes an existing curve from the clip. */
 		BS_SCRIPT_EXPORT(n:RemoveGenericCurve)
-		void removeGenericCurve(const String& name);
+		void RemoveGenericCurve(const String& name);
 
 		/** Curves for animating scene object's position. */
 		Vector<TNamedAnimationCurve<Vector3>> position;
@@ -152,22 +152,22 @@ namespace bs
 
 		/** @copydoc setCurves() */
 		BS_SCRIPT_EXPORT(n:Curves,pr:getter)
-		SPtr<AnimationCurves> getCurves() const { return mCurves; }
+		SPtr<AnimationCurves> GetCurves() const { return mCurves; }
 
 		/**
 		 * A set of all curves stored in the animation. Returned value will not be updated if the animation clip curves are
 		 * added or removed, as it is a copy of clip's internal values.
 		 */
 		BS_SCRIPT_EXPORT(n:Curves,pr:setter)
-		void setCurves(const AnimationCurves& curves);
+		void SetCurves(const AnimationCurves& curves);
 
 		/** @copydoc setEvents() */
 		BS_SCRIPT_EXPORT(n:Events,pr:getter)
-		const Vector<AnimationEvent>& getEvents() const { return mEvents; }
+		const Vector<AnimationEvent>& GetEvents() const { return mEvents; }
 
 		/** A set of all events to be triggered as the animation is playing. */
 		BS_SCRIPT_EXPORT(n:Events,pr:setter)
-		void setEvents(const Vector<AnimationEvent>& events) { mEvents = events; }
+		void SetEvents(const Vector<AnimationEvent>& events) { mEvents = events; }
 
 		/**
 		 * Returns a set of curves containing motion of the root bone. This allows the user to evaluate the root bone
@@ -175,11 +175,11 @@ namespace bs
 		 * if animation clip was imported with root motion import enabled.
 		 */
 		BS_SCRIPT_EXPORT(n:RootMotion,pr:getter)
-		SPtr<RootMotion> getRootMotion() const { return mRootMotion; }
+		SPtr<RootMotion> GetRootMotion() const { return mRootMotion; }
 
 		/** Checks if animation clip has root motion curves separate from the normal animation curves. */
 		BS_SCRIPT_EXPORT(n:HasRootMotion,pr:getter)
-		bool hasRootMotion() const;
+		bool HasRootMotion() const;
 
 		/**
 		 * Maps skeleton bone names to animation curve names, and returns a set of indices that can be easily used for
@@ -190,7 +190,7 @@ namespace bs
 		 *							be large enough to store an index for every bone in the @p skeleton. Bones that have
 		 *							no related animation curves will be assigned value -1.
 		 */
-		void getBoneMapping(const Skeleton& skeleton, AnimationCurveMapping* mapping) const;
+		void GetBoneMapping(const Skeleton& skeleton, AnimationCurveMapping* mapping) const;
 
 		/**
 		 * Attempts to find translation/rotation/scale curves with the specified name and fills the mapping structure with
@@ -200,7 +200,7 @@ namespace bs
 		 * @param[out]	mapping		Triple containing the translation/rotation/scale indices of the found curves. Indices
 		 *							will be -1 for curves that haven't been found.
 		 */
-		void getCurveMapping(const String& name, AnimationCurveMapping& mapping) const;
+		void GetCurveMapping(const String& name, AnimationCurveMapping& mapping) const;
 
 		/**
 		 * Attempts to find a generic curve with the specified name and fills output with found index, which can then be
@@ -210,22 +210,22 @@ namespace bs
 		 * @param[out]	frameIdx	Index of the curve animating the morph shape frames, or -1 if not found.
 		 * @param[out]	weightIdx	Index of the curve animating the channel weight, or -1 if not found.
 		 */
-		void getMorphMapping(const String& name, UINT32& frameIdx, UINT32& weightIdx) const;
+		void GetMorphMapping(const String& name, UINT32& frameIdx, UINT32& weightIdx) const;
 
 		/**
 		 * Checks are the curves contained within the clip additive. Additive clips are intended to be added on top of
 		 * other clips.
 		 */
 		BS_SCRIPT_EXPORT(n:IsAddtive,pr:getter)
-		bool isAdditive() const { return mIsAdditive; }
+		bool IsAdditive() const { return mIsAdditive; }
 
 		/** Returns the length of the animation clip, in seconds. */
 		BS_SCRIPT_EXPORT(n:Length,pr:getter)
-		float getLength() const { return mLength; }
+		float GetLength() const { return mLength; }
 
 		/** @copydoc setSampleRate() */
 		BS_SCRIPT_EXPORT(n:SampleRate,pr:getter)
-		UINT32 getSampleRate() const { return mSampleRate; }
+		UINT32 GetSampleRate() const { return mSampleRate; }
 
 		/**
 		 * Number of samples per second the animation clip curves were sampled at. This value is not used by the animation
@@ -233,20 +233,20 @@ namespace bs
 		 * the original sample rate of an imported animation or similar.
 		 */
 		BS_SCRIPT_EXPORT(n:SampleRate,pr:setter)
-		void setSampleRate(UINT32 sampleRate) { mSampleRate = sampleRate; }
+		void SetSampleRate(UINT32 sampleRate) { mSampleRate = sampleRate; }
 
 		/**
 		 * Returns a version that can be used for detecting modifications on the clip by external systems. Whenever the clip
 		 * is modified the version is increased by one.
 		 */
-		UINT64 getVersion() const { return mVersion; }
+		UINT64 GetVersion() const { return mVersion; }
 
 		/**
 		 * Creates an animation clip with no curves. After creation make sure to register some animation curves before
 		 * using it.
 		 */
 		BS_SCRIPT_EXPORT(ec:AnimationClip)
-		static HAnimationClip create(bool isAdditive = false);
+		static HAnimationClip Create(bool isAdditive = false);
 
 		/**
 		 * Creates an animation clip with specified curves.
@@ -260,7 +260,7 @@ namespace bs
 		 *							animation system directly but is instead provided to the user for manual evaluation.
 		 */
 		BS_SCRIPT_EXPORT(ec:AnimationClip)
-		static HAnimationClip create(const SPtr<AnimationCurves>& curves, bool isAdditive = false, UINT32 sampleRate = 1,
+		static HAnimationClip Create(const SPtr<AnimationCurves>& curves, bool isAdditive = false, UINT32 sampleRate = 1,
 			const SPtr<RootMotion>& rootMotion = nullptr);
 
 	public: // ***** INTERNAL ******
@@ -280,13 +280,13 @@ namespace bs
 			const SPtr<RootMotion>& rootMotion);
 
 		/** @copydoc Resource::initialize() */
-		void initialize() override;
+		void Initialize() override;
 
 		/** Creates a name -> curve index mapping for quicker curve lookup by name. */
-		void buildNameMapping();
+		void BuildNameMapping();
 
 		/** Calculate the length of the clip based on assigned curves. */
-		void calculateLength();
+		void CalculateLength();
 
 		UINT64 mVersion;
 
@@ -319,15 +319,15 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class AnimationClipRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 
 		/**
 		 * Creates an AnimationClip with no data. You must populate its data manually followed by a call to initialize().
 		 *
 		 * @note	For serialization use only.
 		 */
-		static SPtr<AnimationClip> createEmpty();
+		static SPtr<AnimationClip> CreateEmpty();
 	};
 
 	/** @} */

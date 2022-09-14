@@ -30,7 +30,7 @@ namespace bs { namespace ct
 		ReflectionCubeDownsampleMat();
 
 		/** Downsamples the provided texture face and outputs it to the provided target. */
-		void execute(const SPtr<Texture>& source, UINT32 face, UINT32 mip, const SPtr<RenderTarget>& target);
+		void Execute(const SPtr<Texture>& source, UINT32 face, UINT32 mip, const SPtr<RenderTarget>& target);
 
 	private:
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
@@ -55,7 +55,7 @@ namespace bs { namespace ct
 		ReflectionCubeImportanceSampleMat();
 
 		/** Importance samples the provided texture face and outputs it to the provided target. */
-		void execute(const SPtr<Texture>& source, UINT32 face, UINT32 mip, const SPtr<RenderTarget>& target);
+		void Execute(const SPtr<Texture>& source, UINT32 face, UINT32 mip, const SPtr<RenderTarget>& target);
 
 	private:
 		static const UINT32 NUM_SAMPLES;
@@ -121,7 +121,7 @@ namespace bs { namespace ct
 
 		/** Helper method used for initializing variations of this material. */
 		template<int shOrder>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -138,10 +138,10 @@ namespace bs { namespace ct
 		 * coefficient sets (one set of coefficients for each thread group). Coefficients must be reduced and normalized
 		 * by IrradianceReduceSHMat before use. Output buffer should be created by calling createOutputBuffer().
 		 */
-		void execute(const SPtr<Texture>& source, UINT32 face, const SPtr<GpuBuffer>& output);
+		void Execute(const SPtr<Texture>& source, UINT32 face, const SPtr<GpuBuffer>& output);
 
 		/** Creates a buffer of adequate size to be used as output for this material. */
-		SPtr<GpuBuffer> createOutputBuffer(const SPtr<Texture>& source, UINT32& numCoeffSets);
+		SPtr<GpuBuffer> CreateOutputBuffer(const SPtr<Texture>& source, UINT32& numCoeffSets);
 
 		/**
 		 * Returns the material variation matching the provided parameters.
@@ -149,7 +149,7 @@ namespace bs { namespace ct
 		 * @param order		SH order, which defines the number of coefficients and quality. Only values of 3 and 5 are
 		 *					supported.
 		 */
-		static IrradianceComputeSHMat* getVariation(int order = 5);
+		static IrradianceComputeSHMat* GetVariation(int order = 5);
 
 	private:
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
@@ -174,7 +174,7 @@ namespace bs { namespace ct
 
 		/** Helper method used for initializing variations of this material. */
 		template<int shOrder>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -191,10 +191,10 @@ namespace bs { namespace ct
 		 * single set of normalized coefficients. Output texture should be created by calling createOutputTexture(). The
 		 * value will be recorded at the @p outputIdx position in the texture.
 		 */
-		void execute(const SPtr<GpuBuffer>& source, UINT32 numCoeffSets, const SPtr<Texture>& output, UINT32 outputIdx);
+		void Execute(const SPtr<GpuBuffer>& source, UINT32 numCoeffSets, const SPtr<Texture>& output, UINT32 outputIdx);
 
 		/** Creates a texture of adequate size to be used as output for this material. */
-		SPtr<Texture> createOutputTexture(UINT32 numCoeffSets);
+		SPtr<Texture> CreateOutputTexture(UINT32 numCoeffSets);
 
 		/**
 		 * Returns the material variation matching the provided parameters.
@@ -202,7 +202,7 @@ namespace bs { namespace ct
 		 * @param order		SH order, which defines the number of coefficients and quality. Only values of 3 and 5 are
 		 *					supported.
 		 */
-		static IrradianceReduceSHMat* getVariation(int order = 5);
+		static IrradianceReduceSHMat* GetVariation(int order = 5);
 
 	private:
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
@@ -237,14 +237,14 @@ namespace bs { namespace ct
 		 * per-texel weight in the alpha channel. Output coefficients must be summed up and normalized before use (using
 		 * IrradianceAccumulateCubeSH).
 		 */
-		void execute(const SPtr<Texture>& source, UINT32 face, UINT32 coefficientIdx, const SPtr<RenderTarget>& output);
+		void Execute(const SPtr<Texture>& source, UINT32 face, UINT32 coefficientIdx, const SPtr<RenderTarget>& output);
 
 		/**
 		 * Returns the texture descriptor that can be used for initializing the output render target. Note that the
 		 * output texture is a cubemap but the execute() method expects a render target that is a single face of a
 		 * cubemap.
 		 */
-		static POOLED_RENDER_TEXTURE_DESC getOutputDesc(const SPtr<Texture>& source);
+		static POOLED_RENDER_TEXTURE_DESC GetOutputDesc(const SPtr<Texture>& source);
 
 	private:
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
@@ -274,13 +274,13 @@ namespace bs { namespace ct
 		 * Downsamples the provided face and mip level of the source texture and outputs the downsampled (i.e summed up)
 		 * values in the resulting output texture.
 		 */
-		void execute(const SPtr<Texture>& source, UINT32 face, UINT32 sourceMip, const SPtr<RenderTarget>& output);
+		void Execute(const SPtr<Texture>& source, UINT32 face, UINT32 sourceMip, const SPtr<RenderTarget>& output);
 
 		/**
 		 * Returns the texture descriptor that can be used for initializing the output render target. Note the output
 		 * is a cubemap.
 		 */
-		static POOLED_RENDER_TEXTURE_DESC getOutputDesc(const SPtr<Texture>& source);
+		static POOLED_RENDER_TEXTURE_DESC GetOutputDesc(const SPtr<Texture>& source);
 
 	private:
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
@@ -303,14 +303,14 @@ namespace bs { namespace ct
 		 * Sums up all faces of the input cube texture and writes the value to the corresponding index in the output
 		 * texture. The source mip should point to a mip level with size 1x1.
 		 */
-		void execute(const SPtr<Texture>& source, UINT32 sourceMip, const Vector2I& outputOffset, UINT32 coefficientIdx,
+		void Execute(const SPtr<Texture>& source, UINT32 sourceMip, const Vector2I& outputOffset, UINT32 coefficientIdx,
 			const SPtr<RenderTarget>& output);
 
 		/**
 		 * Returns the texture descriptor that can be used for initializing the output render target. The render target
 		 * will be able to hold all required SH coefficients (even though execute() outputs just one coefficient at a time).
 		 */
-		static POOLED_RENDER_TEXTURE_DESC getOutputDesc();
+		static POOLED_RENDER_TEXTURE_DESC GetOutputDesc();
 
 	private:
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
@@ -338,7 +338,7 @@ namespace bs { namespace ct
 		 * Projects spherical harmonic coefficients calculated by IrradianceReduceSHMat and projects them onto faces of
 		 * a cubemap.
 		 */
-		void execute(const SPtr<Texture>& shCoeffs, UINT32 face, const SPtr<RenderTarget>& target);
+		void Execute(const SPtr<Texture>& shCoeffs, UINT32 face, const SPtr<RenderTarget>& target);
 
 	private:
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
@@ -370,13 +370,13 @@ namespace bs { namespace ct
 		 * @param[in]   dst		Desination texture to output the scaled data to. Must be usable as a render target.
 		 * @param[in]   dstMip	Determines which mip level of the destination texture to scale.
 		 */
-		static void downsampleCubemap(const SPtr<Texture>& src, UINT32 srcMip, const SPtr<Texture>& dst, UINT32 dstMip);
+		static void DownsampleCubemap(const SPtr<Texture>& src, UINT32 srcMip, const SPtr<Texture>& dst, UINT32 dstMip);
 
 		/**
 		 * Generates irradiance SH coefficients from the input cubemap and writes them to a 1D texture. Does not make
 		 * use of the compute shader.
 		 */
-		static void filterCubemapForIrradianceNonCompute(const SPtr<Texture>& cubemap, UINT32 outputIdx,
+		static void FilterCubemapForIrradianceNonCompute(const SPtr<Texture>& cubemap, UINT32 outputIdx,
 			const SPtr<RenderTexture>& output);
 	};
 

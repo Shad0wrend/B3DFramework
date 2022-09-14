@@ -26,18 +26,18 @@ namespace bs
 			BS_RTTI_MEMBER_REFLPTR(data, 1)
 		BS_END_RTTI_MEMBERS
 	public:
-		const String& getRTTIName() override
+		const String& GetRttiName() 
 		{
 			static String name = "PrefabComponentDiff";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() 
 		{
 			return TID_PrefabComponentDiff;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return bs_shared_ptr_new<PrefabComponentDiff>();
 		}
@@ -65,18 +65,18 @@ namespace bs
 			BS_RTTI_MEMBER_PLAIN(soFlags, 12)
 		BS_END_RTTI_MEMBERS
 	public:
-		const String& getRTTIName() override
+		const String& GetRttiName() 
 		{
 			static String name = "PrefabObjectDiff";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() 
 		{
 			return TID_PrefabObjectDiff;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() override
 		{
 			return bs_shared_ptr_new<PrefabObjectDiff>();
 		}
@@ -96,7 +96,7 @@ namespace bs
 			BS_RTTI_MEMBER_REFLPTR(mRoot, 0)
 		BS_END_RTTI_MEMBERS
 	public:
-		void onDeserializationStarted(IReflectable* obj, SerializationContext* context) override
+		void OnDeserializationStarted(IReflectable* obj, SerializationContext* context) override
 		{
 			PrefabDiff* prefabDiff = static_cast<PrefabDiff*>(obj);
 
@@ -110,7 +110,7 @@ namespace bs
 			}
 		}
 
-		void onDeserializationEnded(IReflectable* obj, SerializationContext* context) override
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override
 		{
 			BS_ASSERT(context != nullptr && rtti_is_of_type<CoreSerializationContext>(context));
 			const auto coreContext = static_cast<CoreSerializationContext*>(context);
@@ -167,21 +167,21 @@ namespace bs
 		 * all object IDs and we want to keep the handles up to date.So we deserialize them and allow them to be updated
 		 * before storing them back into binary format.
 		 */
-		static void delayedOnDeserializationEnded(PrefabDiff* prefabDiff)
+		static void DelayedOnDeserializationEnded(PrefabDiff* prefabDiff)
 		{
 			Vector<SerializedHandle>& handleData = any_cast_ref<Vector<SerializedHandle>>(prefabDiff->mRTTIData);
 
 			for (auto& serializedHandle : handleData)
 			{
 				if (serializedHandle.handle != nullptr)
-					*serializedHandle.object = *SerializedObject::create(*serializedHandle.handle);
+					*serializedHandle.object = *SerializedObject::Create(*serializedHandle.handle);
 			}
 
 			prefabDiff->mRTTIData = nullptr;
 		}
 
 		/**	Scans the entire hierarchy and find all serialized GameObjectHandle objects. */
-		static void findGameObjectHandles(const SPtr<SerializedObject>& serializedObject, UnorderedSet<SPtr<SerializedObject>>& handleObjects)
+		static void FindGameObjectHandles(const SPtr<SerializedObject>& serializedObject, UnorderedSet<SPtr<SerializedObject>>& handleObjects)
 		{
 			for (auto& subObject : serializedObject->subObjects)
 			{
@@ -227,13 +227,13 @@ namespace bs
 			}
 		}
 
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "PrefabDiff";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_PrefabDiff;
 		}

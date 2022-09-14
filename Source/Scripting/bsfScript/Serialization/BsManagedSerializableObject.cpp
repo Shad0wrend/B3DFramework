@@ -45,7 +45,7 @@ namespace bs
 		}		
 	}
 
-	SPtr<ManagedSerializableObject> ManagedSerializableObject::createFromExisting(MonoObject* managedInstance)
+	SPtr<ManagedSerializableObject> ManagedSerializableObject::CreateFromExisting(MonoObject* managedInstance)
 	{
 		if(managedInstance == nullptr)
 			return nullptr;
@@ -55,29 +55,29 @@ namespace bs
 		MonoUtil::getClassName(managedInstance, elementNs, elementTypeName);
 
 		SPtr<ManagedSerializableObjectInfo> objInfo;
-		if(!ScriptAssemblyManager::instance().getSerializableObjectInfo(elementNs, elementTypeName, objInfo))
+		if(!ScriptAssemblyManager::Instance().getSerializableObjectInfo(elementNs, elementTypeName, objInfo))
 			return nullptr;
 
 		return bs_shared_ptr_new<ManagedSerializableObject>(ConstructPrivately(), objInfo, managedInstance);
 	}
 
-	SPtr<ManagedSerializableObject> ManagedSerializableObject::createNew(const SPtr<ManagedSerializableTypeInfoObject>& type)
+	SPtr<ManagedSerializableObject> ManagedSerializableObject::CreateNew(const SPtr<ManagedSerializableTypeInfoObject>& type)
 	{
 		SPtr<ManagedSerializableObjectInfo> currentObjInfo = nullptr;
 
 		// See if this type even still exists
-		if (!ScriptAssemblyManager::instance().getSerializableObjectInfo(type->mTypeNamespace, type->mTypeName, currentObjInfo))
+		if (!ScriptAssemblyManager::Instance().getSerializableObjectInfo(type->mTypeNamespace, type->mTypeName, currentObjInfo))
 			return nullptr;
 
 		return bs_shared_ptr_new<ManagedSerializableObject>(ConstructPrivately(), currentObjInfo, createManagedInstance(type));
 	}
 
-	MonoObject* ManagedSerializableObject::createManagedInstance(const SPtr<ManagedSerializableTypeInfoObject>& type)
+	MonoObject* ManagedSerializableObject::CreateManagedInstance(const SPtr<ManagedSerializableTypeInfoObject>& type)
 	{
 		SPtr<ManagedSerializableObjectInfo> currentObjInfo = nullptr;
 
 		// See if this type even still exists
-		if (!ScriptAssemblyManager::instance().getSerializableObjectInfo(type->mTypeNamespace, type->mTypeName, currentObjInfo))
+		if (!ScriptAssemblyManager::Instance().getSerializableObjectInfo(type->mTypeNamespace, type->mTypeName, currentObjInfo))
 			return nullptr;
 
 		if(!currentObjInfo->mTypeInfo->mFlags.isSet(ScriptTypeFlag::Serializable))
@@ -87,12 +87,12 @@ namespace bs
 		return currentObjInfo->mMonoClass->createInstance(construct);
 	}
 
-	SPtr<ManagedSerializableObject> ManagedSerializableObject::createEmpty()
+	SPtr<ManagedSerializableObject> ManagedSerializableObject::CreateEmpty()
 	{
 		return bs_shared_ptr_new<ManagedSerializableObject>(ConstructPrivately());
 	}
 
-	MonoObject* ManagedSerializableObject::getManagedInstance() const
+	MonoObject* ManagedSerializableObject::GetManagedInstance() const
 	{
 		if(mGCHandle != 0)
 			return MonoUtil::getObjectFromGCHandle(mGCHandle);
@@ -100,7 +100,7 @@ namespace bs
 		return nullptr;
 	}
 
-	void ManagedSerializableObject::serialize()
+	void ManagedSerializableObject::Serialize()
 	{
 		if(mGCHandle == 0)
 			return;
@@ -130,11 +130,11 @@ namespace bs
 		mGCHandle = 0;
 	}
 
-	MonoObject* ManagedSerializableObject::deserialize()
+	MonoObject* ManagedSerializableObject::Deserialize()
 	{
 		// See if this type even still exists
 		SPtr<ManagedSerializableObjectInfo> currentObjInfo = nullptr;
-		if (!ScriptAssemblyManager::instance().getSerializableObjectInfo(mObjInfo->mTypeInfo->mTypeNamespace,
+		if (!ScriptAssemblyManager::Instance().getSerializableObjectInfo(mObjInfo->mTypeInfo->mTypeNamespace,
 			mObjInfo->mTypeInfo->mTypeName, currentObjInfo))
 		{
 			return nullptr;
@@ -146,7 +146,7 @@ namespace bs
 		return managedInstance;
 	}
 
-	void ManagedSerializableObject::deserialize(MonoObject* instance, const SPtr<ManagedSerializableObjectInfo>& objInfo)
+	void ManagedSerializableObject::Deserialize(MonoObject* instance, const SPtr<ManagedSerializableObjectInfo>& objInfo)
 	{
 		if (instance == nullptr)
 			return;
@@ -181,7 +181,7 @@ namespace bs
 		}
 	}
 
-	bool ManagedSerializableObject::equals(ManagedSerializableObject& other)
+	bool ManagedSerializableObject::Equals(ManagedSerializableObject& other)
 	{
 		SPtr<ManagedSerializableObjectInfo> otherObjInfo = other.getObjectInfo();
 
@@ -217,7 +217,7 @@ namespace bs
 		return true;
 	}
 
-	void ManagedSerializableObject::setFieldData(const SPtr<ManagedSerializableMemberInfo>& fieldInfo, const SPtr<ManagedSerializableFieldData>& val)
+	void ManagedSerializableObject::SetFieldData(const SPtr<ManagedSerializableMemberInfo>& fieldInfo, const SPtr<ManagedSerializableFieldData>& val)
 	{
 		if (mGCHandle != 0)
 		{
@@ -231,14 +231,14 @@ namespace bs
 		}
 	}
 
-	SPtr<ManagedSerializableFieldData> ManagedSerializableObject::getFieldData(const SPtr<ManagedSerializableMemberInfo>& fieldInfo) const
+	SPtr<ManagedSerializableFieldData> ManagedSerializableObject::GetFieldData(const SPtr<ManagedSerializableMemberInfo>& fieldInfo) const
 	{
 		if (mGCHandle != 0)
 		{
 			MonoObject* managedInstance = MonoUtil::getObjectFromGCHandle(mGCHandle);
 			MonoObject* fieldValue = fieldInfo->getValue(managedInstance);
 
-			return ManagedSerializableFieldData::create(fieldInfo->mTypeInfo, fieldValue);
+			return ManagedSerializableFieldData::Create(fieldInfo->mTypeInfo, fieldValue);
 		}
 		else
 		{
@@ -252,13 +252,13 @@ namespace bs
 		}
 	}
 
-	RTTITypeBase* ManagedSerializableObject::getRTTIStatic()
+	RTTITypeBase* ManagedSerializableObject::GetRttiStatic()
 	{
-		return ManagedSerializableObjectRTTI::instance();
+		return ManagedSerializableObjectRTTI::Instance();
 	}
 
-	RTTITypeBase* ManagedSerializableObject::getRTTI() const
+	RTTITypeBase* ManagedSerializableObject::GetRtti() const
 	{
-		return ManagedSerializableObject::getRTTIStatic();
+		return ManagedSerializableObject::GetRttiStatic();
 	}
 }

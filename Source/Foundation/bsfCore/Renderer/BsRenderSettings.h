@@ -92,11 +92,11 @@ namespace bs
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P processor);
+		void RttiEnumFields(P processor);
 	public:
 		friend class AutoExposureSettingsRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** Settings that control tonemap post-process. */
@@ -151,11 +151,11 @@ namespace bs
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P processor);
+		void RttiEnumFields(P processor);
 	public:
 		friend class TonemappingSettingsRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** Settings that control white balance post-process. */
@@ -188,11 +188,11 @@ namespace bs
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P processor);
+		void RttiEnumFields(P processor);
 	public:
 		friend class WhiteBalanceSettingsRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** Settings that control color grading post-process. */
@@ -234,11 +234,11 @@ namespace bs
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P processor);
+		void RttiEnumFields(P processor);
 	public:
 		friend class ColorGradingSettingsRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** Settings that control screen space ambient occlusion. */
@@ -310,11 +310,11 @@ namespace bs
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P processor);
+		void RttiEnumFields(P processor);
 	public:
 		friend class AmbientOcclusionSettingsRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** Types of available depth of field effects. */
@@ -468,7 +468,7 @@ namespace bs
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P processor);
+		void RttiEnumFields(P processor);
 
 	protected:
 		~TDepthOfFieldSettings() = default;
@@ -485,8 +485,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class DepthOfFieldSettingsRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	namespace ct
@@ -585,11 +585,11 @@ namespace bs
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P processor);
+		void RttiEnumFields(P processor);
 	public:
 		friend class MotionBlurSettingsRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** Settings that control temporal anti-aliasing. */
@@ -620,11 +620,11 @@ namespace bs
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P processor);
+		void RttiEnumFields(P processor);
 	public:
 		friend class TemporalAASettingsRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/**
@@ -669,11 +669,11 @@ namespace bs
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P processor);
+		void RttiEnumFields(P processor);
 	public:
 		friend class ScreenSpaceReflectionsRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** Settings that control the bloom effect. Bloom adds an extra highlight to bright areas of the scene. */
@@ -725,11 +725,11 @@ namespace bs
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P processor);
+		void RttiEnumFields(P processor);
 	public:
 		friend class BloomSettingsRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** Settings that control the screen-space lens flare effect. */
@@ -836,11 +836,11 @@ namespace bs
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P processor);
+		void RttiEnumFields(P processor);
 	public:
 		friend class ScreenSpaceLensFlareSettingsRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** Types of available chromatic aberration effects. */
@@ -900,7 +900,7 @@ namespace bs
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P processor);
+		void RttiEnumFields(P processor);
 
 	protected:
 		~TChromaticAberrationSettings() = default;
@@ -917,8 +917,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ChromaticAberrationSettingsRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	namespace ct
@@ -954,11 +954,11 @@ namespace bs
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P processor);
+		void RttiEnumFields(P processor);
 	public:
 		friend class FilmGrainSettingsRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** Various options that control shadow rendering for a specific view. */
@@ -1006,11 +1006,11 @@ namespace bs
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P processor);
+		void RttiEnumFields(P processor);
 	public:
 		friend class ShadowSettingsRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** Base class for both sim and core thread variants of RenderSettings. */
@@ -1196,7 +1196,7 @@ namespace bs
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P processor);
+		void RttiEnumFields(P processor);
 
 	protected:
 		~TRenderSettings() = default;
@@ -1215,8 +1215,8 @@ namespace bs
 
 	public:
 		friend class RenderSettingsRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	namespace ct

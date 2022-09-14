@@ -23,7 +23,7 @@ namespace bs
 
 	}
 
-	MonoObject* ScriptScriptCodeImportOptions::create(const SPtr<ScriptCodeImportOptions>& value)
+	MonoObject* ScriptScriptCodeImportOptions::Create(const SPtr<ScriptCodeImportOptions>& value)
 	{
 		if(value == nullptr) return nullptr; 
 
@@ -36,7 +36,7 @@ namespace bs
 	}
 	void ScriptScriptCodeImportOptions::Internal_create(MonoObject* managedInstance)
 	{
-		SPtr<ScriptCodeImportOptions> instance = ScriptCodeImportOptions::create();
+		SPtr<ScriptCodeImportOptions> instance = ScriptCodeImportOptions::Create();
 		new (bs_alloc<ScriptScriptCodeImportOptions>())ScriptScriptCodeImportOptions(managedInstance, instance);
 	}
 	bool ScriptScriptCodeImportOptions::Internal_geteditorScript(ScriptScriptCodeImportOptions* thisPtr)

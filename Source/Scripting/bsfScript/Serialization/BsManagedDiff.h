@@ -25,9 +25,9 @@ namespace bs
 		/**
 		 * @copydoc	IDiff::applyDiff(const SPtr<IReflectable>&, const SPtr<SerializedObject>&, FrameAlloc&, DiffObjectMap&, FrameVector<DiffCommand>&, SerializationContext*)
 		 */
-		void applyDiff(const SPtr<IReflectable>& object, const SPtr<SerializedObject>& serzDiff,
+		void ApplyDiff(const SPtr<IReflectable>& object, const SPtr<SerializedObject>& serzDiff,
 			FrameAlloc& alloc, DiffObjectMap& objectMap, FrameVector<DiffCommand>& diffCommands,
-			SerializationContext* context) override;
+			SerializationContext* context) ;
 	};
 
 	/** @} */

@@ -20,14 +20,14 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "NativeGUIWidget")
 
 		/**	Gets the wrapped native GUIWidget object. */
-		SPtr<GUIWidget> getInternal() const { return mGUIWidget; }
+		SPtr<GUIWidget> GetInternal() const { return mGUIWidget; }
 
 	private:
 		ScriptGUIWidget(MonoObject* managedInstance);
 		~ScriptGUIWidget();
 
 		/**	Destroys the internal GUI widget handler object. */
-		void destroy(bool destroyPanel = true);
+		void Destroy(bool destroyPanel = true);
 
 		/** @copydoc ScriptObjectBase::_onManagedInstanceDeleted */
 		void OnManagedInstanceDeletedInternal(bool assemblyRefresh) override;
@@ -40,14 +40,14 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static void internal_Create(MonoObject* instance);
-		static void internal_UpdateTransform(ScriptGUIWidget* instance, ScriptSceneObject* parentSO);
-		static void internal_UpdateMainCamera(ScriptGUIWidget* instance, ScriptCCamera* camera);
-		static void internal_SetSkin(ScriptGUIWidget* instance, ScriptGUISkin* skin);
-		static void internal_SetCamera(ScriptGUIWidget* instance, ScriptCCamera* camera);
-		static void internal_SetDepth(ScriptGUIWidget* instance, INT8 value);
-		static INT8 internal_GetDepth(ScriptGUIWidget* instance);
-		static void internal_Destroy(ScriptGUIWidget* instance);
+		static void InternalCreate(MonoObject* instance);
+		static void InternalUpdateTransform(ScriptGUIWidget* instance, ScriptSceneObject* parentSO);
+		static void InternalUpdateMainCamera(ScriptGUIWidget* instance, ScriptCCamera* camera);
+		static void InternalSetSkin(ScriptGUIWidget* instance, ScriptGUISkin* skin);
+		static void InternalSetCamera(ScriptGUIWidget* instance, ScriptCCamera* camera);
+		static void InternalSetDepth(ScriptGUIWidget* instance, INT8 value);
+		static INT8 InternalGetDepth(ScriptGUIWidget* instance);
+		static void InternalDestroy(ScriptGUIWidget* instance);
 	};
 
 	/** @} */

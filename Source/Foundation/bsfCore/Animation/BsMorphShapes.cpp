@@ -10,19 +10,19 @@ namespace bs
 	{ }
 
 	/** Creates a new morph shape from the provided set of vertices. */
-	SPtr<MorphShape> MorphShape::create(const String& name, float weight, const Vector<MorphVertex>& vertices)
+	SPtr<MorphShape> MorphShape::Create(const String& name, float weight, const Vector<MorphVertex>& vertices)
 	{
 		return bs_shared_ptr_new<MorphShape>(name, weight, vertices);
 	}
 
-	RTTITypeBase* MorphShape::getRTTIStatic()
+	RTTITypeBase* MorphShape::GetRttiStatic()
 	{
-		return MorphShapeRTTI::instance();
+		return MorphShapeRTTI::Instance();
 	}
 
-	RTTITypeBase* MorphShape::getRTTI() const
+	RTTITypeBase* MorphShape::GetRtti() const
 	{
-		return getRTTIStatic();
+		return GetRttiStatic();
 	}
 
 	MorphChannel::MorphChannel(const String& name, const Vector<SPtr<MorphShape>>& shapes)
@@ -35,26 +35,26 @@ namespace bs
 		});
 	}
 
-	SPtr<MorphChannel> MorphChannel::create(const String& name, const Vector<SPtr<MorphShape>>& shapes)
+	SPtr<MorphChannel> MorphChannel::Create(const String& name, const Vector<SPtr<MorphShape>>& shapes)
 	{
 		MorphChannel* raw = new (bs_alloc<MorphChannel>()) MorphChannel(name, shapes);
 		return bs_shared_ptr(raw);
 	}
 
-	SPtr<MorphChannel> MorphChannel::createEmpty()
+	SPtr<MorphChannel> MorphChannel::CreateEmpty()
 	{
 		MorphChannel* raw = new (bs_alloc<MorphChannel>()) MorphChannel();
 		return bs_shared_ptr(raw);
 	}
 
-	RTTITypeBase* MorphChannel::getRTTIStatic()
+	RTTITypeBase* MorphChannel::GetRttiStatic()
 	{
-		return MorphChannelRTTI::instance();
+		return MorphChannelRTTI::Instance();
 	}
 
-	RTTITypeBase* MorphChannel::getRTTI() const
+	RTTITypeBase* MorphChannel::GetRtti() const
 	{
-		return getRTTIStatic();
+		return GetRttiStatic();
 	}
 
 	MorphShapes::MorphShapes(const Vector<SPtr<MorphChannel>>& channels, UINT32 numVertices)
@@ -63,25 +63,25 @@ namespace bs
 
 	}
 
-	SPtr<MorphShapes> MorphShapes::create(const Vector<SPtr<MorphChannel>>& channels, UINT32 numVertices)
+	SPtr<MorphShapes> MorphShapes::Create(const Vector<SPtr<MorphChannel>>& channels, UINT32 numVertices)
 	{
 		MorphShapes* raw = new (bs_alloc<MorphShapes>()) MorphShapes(channels, numVertices);
 		return bs_shared_ptr(raw);
 	}
 
-	SPtr<MorphShapes> MorphShapes::createEmpty()
+	SPtr<MorphShapes> MorphShapes::CreateEmpty()
 	{
 		MorphShapes* raw = new (bs_alloc<MorphShapes>()) MorphShapes();
 		return bs_shared_ptr(raw);
 	}
 
-	RTTITypeBase* MorphShapes::getRTTIStatic()
+	RTTITypeBase* MorphShapes::GetRttiStatic()
 	{
-		return MorphShapesRTTI::instance();
+		return MorphShapesRTTI::Instance();
 	}
 
-	RTTITypeBase* MorphShapes::getRTTI() const
+	RTTITypeBase* MorphShapes::GetRtti() const
 	{
-		return getRTTIStatic();
+		return GetRttiStatic();
 	}
 }

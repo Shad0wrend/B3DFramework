@@ -20,16 +20,16 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "SceneObject")
 
 		/** @copydoc ScriptGameObjectBase::getNativeHandle */
-		HGameObject getNativeHandle() const override { return static_object_cast<GameObject>(mSceneObject); }
+		HGameObject GetNativeHandle() const override { return static_object_cast<GameObject>(mSceneObject); }
 
 		/** @copydoc ScriptGameObjectBase::setNativeHandle */
-		void setNativeHandle(const HGameObject& gameObject) override;
+		void SetNativeHandle(const HGameObject& gameObject) override;
 
 		/**	Returns the native internal scene object. */
-		HSceneObject getHandle() const { return mSceneObject; }
+		HSceneObject GetHandle() const { return mSceneObject; }
 
 		/**	Checks is the scene object wrapped by the provided interop object destroyed. */
-		static bool checkIfDestroyed(ScriptSceneObject* nativeInstance);
+		static bool CheckIfDestroyed(ScriptSceneObject* nativeInstance);
 
 	private:
 		friend class ScriptGameObjectManager;
@@ -53,54 +53,54 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static void internal_createInstance(MonoObject* instance, MonoString* name, UINT32 flags);
+		static void InternalCreateInstance(MonoObject* instance, MonoString* name, UINT32 flags);
 
-		static void internal_setName(ScriptSceneObject* nativeInstance, MonoString* name);
-		static MonoString* internal_getName(ScriptSceneObject* nativeInstance);
-		static void internal_setActive(ScriptSceneObject* nativeInstance, bool value);
-		static bool internal_getActive(ScriptSceneObject* nativeInstance);
-		static bool internal_hasFlag(ScriptSceneObject* nativeInstance, UINT32 flag);
+		static void InternalSetName(ScriptSceneObject* nativeInstance, MonoString* name);
+		static MonoString* InternalGetName(ScriptSceneObject* nativeInstance);
+		static void InternalSetActive(ScriptSceneObject* nativeInstance, bool value);
+		static bool InternalGetActive(ScriptSceneObject* nativeInstance);
+		static bool InternalHasFlag(ScriptSceneObject* nativeInstance, UINT32 flag);
 
-		static void internal_setMobility(ScriptSceneObject* nativeInstance, int value);
-		static int internal_getMobility(ScriptSceneObject* nativeInstance);
+		static void InternalSetMobility(ScriptSceneObject* nativeInstance, int value);
+		static int InternalGetMobility(ScriptSceneObject* nativeInstance);
 
-		static void internal_setParent(ScriptSceneObject* nativeInstance, MonoObject* parent);
-		static MonoObject* internal_getParent(ScriptSceneObject* nativeInstance);
-		static MonoObject* internal_getScene(ScriptSceneObject* nativeInstance);
+		static void InternalSetParent(ScriptSceneObject* nativeInstance, MonoObject* parent);
+		static MonoObject* InternalGetParent(ScriptSceneObject* nativeInstance);
+		static MonoObject* InternalGetScene(ScriptSceneObject* nativeInstance);
 
-		static void internal_getNumChildren(ScriptSceneObject* nativeInstance, UINT32* value);
-		static MonoObject* internal_getChild(ScriptSceneObject* nativeInstance, UINT32 idx);
-		static MonoObject* internal_findChild(ScriptSceneObject* nativeInstance, MonoString* name, bool recursive);
-		static MonoArray* internal_findChildren(ScriptSceneObject* nativeInstance, MonoString* name, bool recursive);
+		static void InternalGetNumChildren(ScriptSceneObject* nativeInstance, UINT32* value);
+		static MonoObject* InternalGetChild(ScriptSceneObject* nativeInstance, UINT32 idx);
+		static MonoObject* InternalFindChild(ScriptSceneObject* nativeInstance, MonoString* name, bool recursive);
+		static MonoArray* InternalFindChildren(ScriptSceneObject* nativeInstance, MonoString* name, bool recursive);
 
-		static void internal_getPosition(ScriptSceneObject* nativeInstance, Vector3* value);
-		static void internal_getLocalPosition(ScriptSceneObject* nativeInstance, Vector3* value);
-		static void internal_getRotation(ScriptSceneObject* nativeInstance, Quaternion* value);
-		static void internal_getLocalRotation(ScriptSceneObject* nativeInstance, Quaternion* value);
-		static void internal_getScale(ScriptSceneObject* nativeInstance, Vector3* value);
-		static void internal_getLocalScale(ScriptSceneObject* nativeInstance, Vector3* value);
+		static void InternalGetPosition(ScriptSceneObject* nativeInstance, Vector3* value);
+		static void InternalGetLocalPosition(ScriptSceneObject* nativeInstance, Vector3* value);
+		static void InternalGetRotation(ScriptSceneObject* nativeInstance, Quaternion* value);
+		static void InternalGetLocalRotation(ScriptSceneObject* nativeInstance, Quaternion* value);
+		static void InternalGetScale(ScriptSceneObject* nativeInstance, Vector3* value);
+		static void InternalGetLocalScale(ScriptSceneObject* nativeInstance, Vector3* value);
 
-		static void internal_setPosition(ScriptSceneObject* nativeInstance, Vector3* value);
-		static void internal_setLocalPosition(ScriptSceneObject* nativeInstance, Vector3* value);
-		static void internal_setRotation(ScriptSceneObject* nativeInstance, Quaternion* value);
-		static void internal_setLocalRotation(ScriptSceneObject* nativeInstance, Quaternion* value);
-		static void internal_setLocalScale(ScriptSceneObject* nativeInstance, Vector3* value);
+		static void InternalSetPosition(ScriptSceneObject* nativeInstance, Vector3* value);
+		static void InternalSetLocalPosition(ScriptSceneObject* nativeInstance, Vector3* value);
+		static void InternalSetRotation(ScriptSceneObject* nativeInstance, Quaternion* value);
+		static void InternalSetLocalRotation(ScriptSceneObject* nativeInstance, Quaternion* value);
+		static void InternalSetLocalScale(ScriptSceneObject* nativeInstance, Vector3* value);
 
-		static void internal_getLocalTransform(ScriptSceneObject* nativeInstance, Matrix4* value);
-		static void internal_getWorldTransform(ScriptSceneObject* nativeInstance, Matrix4* value);
-		static void internal_lookAt(ScriptSceneObject* nativeInstance, Vector3* direction, Vector3* up);
-		static void internal_move(ScriptSceneObject* nativeInstance, Vector3* value);
-		static void internal_moveLocal(ScriptSceneObject* nativeInstance, Vector3* value);
-		static void internal_rotate(ScriptSceneObject* nativeInstance, Quaternion* value);
-		static void internal_roll(ScriptSceneObject* nativeInstance, Radian* value);
-		static void internal_yaw(ScriptSceneObject* nativeInstance, Radian* value);
-		static void internal_pitch(ScriptSceneObject* nativeInstance, Radian* value);
-		static void internal_setForward(ScriptSceneObject* nativeInstance, Vector3* value);
-		static void internal_getForward(ScriptSceneObject* nativeInstance, Vector3* value);
-		static void internal_getUp(ScriptSceneObject* nativeInstance, Vector3* value);
-		static void internal_getRight(ScriptSceneObject* nativeInstance, Vector3* value);
+		static void InternalGetLocalTransform(ScriptSceneObject* nativeInstance, Matrix4* value);
+		static void InternalGetWorldTransform(ScriptSceneObject* nativeInstance, Matrix4* value);
+		static void InternalLookAt(ScriptSceneObject* nativeInstance, Vector3* direction, Vector3* up);
+		static void InternalMove(ScriptSceneObject* nativeInstance, Vector3* value);
+		static void InternalMoveLocal(ScriptSceneObject* nativeInstance, Vector3* value);
+		static void InternalRotate(ScriptSceneObject* nativeInstance, Quaternion* value);
+		static void InternalRoll(ScriptSceneObject* nativeInstance, Radian* value);
+		static void InternalYaw(ScriptSceneObject* nativeInstance, Radian* value);
+		static void InternalPitch(ScriptSceneObject* nativeInstance, Radian* value);
+		static void InternalSetForward(ScriptSceneObject* nativeInstance, Vector3* value);
+		static void InternalGetForward(ScriptSceneObject* nativeInstance, Vector3* value);
+		static void InternalGetUp(ScriptSceneObject* nativeInstance, Vector3* value);
+		static void InternalGetRight(ScriptSceneObject* nativeInstance, Vector3* value);
 
-		static void internal_destroy(ScriptSceneObject* nativeInstance, bool immediate);
+		static void InternalDestroy(ScriptSceneObject* nativeInstance, bool immediate);
 	};
 
 	/** @} */

@@ -16,24 +16,24 @@ namespace bs
 	void ScriptPARTICLE_VELOCITY_DESC::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptPARTICLE_VELOCITY_DESC::box(const __PARTICLE_VELOCITY_DESCInterop& value)
+	MonoObject*ScriptPARTICLE_VELOCITY_DESC::Box(const __PARTICLE_VELOCITY_DESCInterop& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	__PARTICLE_VELOCITY_DESCInterop ScriptPARTICLE_VELOCITY_DESC::unbox(MonoObject* value)
+	__PARTICLE_VELOCITY_DESCInterop ScriptPARTICLE_VELOCITY_DESC::Unbox(MonoObject* value)
 	{
-		return *(__PARTICLE_VELOCITY_DESCInterop*)MonoUtil::unbox(value);
+		return *(__PARTICLE_VELOCITY_DESCInterop*)MonoUtil::Unbox(value);
 	}
 
-	PARTICLE_VELOCITY_DESC ScriptPARTICLE_VELOCITY_DESC::fromInterop(const __PARTICLE_VELOCITY_DESCInterop& value)
+	PARTICLE_VELOCITY_DESC ScriptPARTICLE_VELOCITY_DESC::FromInterop(const __PARTICLE_VELOCITY_DESCInterop& value)
 	{
 		PARTICLE_VELOCITY_DESC output;
 		SPtr<TDistribution<Vector3>> tmpvelocity;
 		ScriptTDistributionVector3* scriptvelocity;
-		scriptvelocity = ScriptTDistributionVector3::toNative(value.velocity);
+		scriptvelocity = ScriptTDistributionVector3::ToNative(value.velocity);
 		if(scriptvelocity != nullptr)
-			tmpvelocity = scriptvelocity->getInternal();
+			tmpvelocity = scriptvelocity->GetInternal();
 		if(tmpvelocity != nullptr)
 		output.velocity = *tmpvelocity;
 		output.worldSpace = value.worldSpace;
@@ -41,13 +41,13 @@ namespace bs
 		return output;
 	}
 
-	__PARTICLE_VELOCITY_DESCInterop ScriptPARTICLE_VELOCITY_DESC::toInterop(const PARTICLE_VELOCITY_DESC& value)
+	__PARTICLE_VELOCITY_DESCInterop ScriptPARTICLE_VELOCITY_DESC::ToInterop(const PARTICLE_VELOCITY_DESC& value)
 	{
 		__PARTICLE_VELOCITY_DESCInterop output;
 		MonoObject* tmpvelocity;
 		SPtr<TDistribution<Vector3>> tmpvelocitycopy;
 		tmpvelocitycopy = bs_shared_ptr_new<TDistribution<Vector3>>(value.velocity);
-		tmpvelocity = ScriptTDistributionVector3::create(tmpvelocitycopy);
+		tmpvelocity = ScriptTDistributionVector3::Create(tmpvelocitycopy);
 		output.velocity = tmpvelocity;
 		output.worldSpace = value.worldSpace;
 

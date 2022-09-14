@@ -18,12 +18,12 @@ namespace bs
 
 		ScriptParticleVelocity(MonoObject* managedInstance, const SPtr<ParticleVelocity>& value);
 
-		static MonoObject* create(const SPtr<ParticleVelocity>& value);
+		static MonoObject* Create(const SPtr<ParticleVelocity>& value);
 
 	private:
-		static void Internal_setOptions(ScriptParticleVelocity* thisPtr, __PARTICLE_VELOCITY_DESCInterop* options);
-		static void Internal_getOptions(ScriptParticleVelocity* thisPtr, __PARTICLE_VELOCITY_DESCInterop* __output);
-		static void Internal_create(MonoObject* managedInstance, __PARTICLE_VELOCITY_DESCInterop* desc);
-		static void Internal_create0(MonoObject* managedInstance);
+		static void InternalSetOptions(ScriptParticleVelocity* thisPtr, __PARTICLE_VELOCITY_DESCInterop* options);
+		static void InternalGetOptions(ScriptParticleVelocity* thisPtr, __PARTICLE_VELOCITY_DESCInterop* __output);
+		static void InternalCreate(MonoObject* managedInstance, __PARTICLE_VELOCITY_DESCInterop* desc);
+		static void InternalCreate0(MonoObject* managedInstance);
 	};
 }

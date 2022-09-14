@@ -18,10 +18,10 @@ namespace bs
 	{
 	public:
 		BS_SCRIPT_EXPORT(ec:PixelData)
-		static SPtr<PixelData> create(const PixelVolume& volume, PixelFormat format = PF_BGRA8);
+		static SPtr<PixelData> Create(const PixelVolume& volume, PixelFormat format = PF_BGRA8);
 
 		BS_SCRIPT_EXPORT(ec:PixelData)
-		static SPtr<PixelData> create(UINT32 width, UINT32 height, UINT32 depth = 1, PixelFormat pixelFormat = PF_BGRA8);
+		static SPtr<PixelData> Create(UINT32 width, UINT32 height, UINT32 depth = 1, PixelFormat pixelFormat = PF_BGRA8);
 
 		/**
 		 * Returns a pixel at the specified location in the buffer.
@@ -32,7 +32,7 @@ namespace bs
 		 * @return			Value of the pixel, or undefined value if coordinates are out of range.
 		 */
 		BS_SCRIPT_EXPORT(e:PixelData,n:GetPixel)
-		static Color getPixel(const SPtr<PixelData>& thisPtr, int x, int y, int z = 0);
+		static Color GetPixel(const SPtr<PixelData>& thisPtr, int x, int y, int z = 0);
 		
 		/**
 		 * Sets a pixel at the specified location in the buffer.
@@ -43,7 +43,7 @@ namespace bs
 		 * @param[in] z			Z coordinate of the pixel.
 		 */
 		BS_SCRIPT_EXPORT(e:PixelData,n:SetPixel)
-		static void setPixel(const SPtr<PixelData>& thisPtr, const Color& value, int x, int y, int z = 0);
+		static void SetPixel(const SPtr<PixelData>& thisPtr, const Color& value, int x, int y, int z = 0);
 		
 		/**
 		 * Returns values of all pixels.
@@ -52,7 +52,7 @@ namespace bs
 		 *			each containing "height" rows of "width" pixels.
 		 */
 		BS_SCRIPT_EXPORT(e:PixelData,n:GetPixels)
-		static Vector<Color> getPixels(const SPtr<PixelData>& thisPtr);
+		static Vector<Color> GetPixels(const SPtr<PixelData>& thisPtr);
 		
 		/**
 		 * Sets all pixels in the buffer.Caller must ensure that number of pixels match the extends of the buffer.
@@ -61,7 +61,7 @@ namespace bs
 		 *				each containing "height" rows of "width" pixels.
 		 */
 		BS_SCRIPT_EXPORT(e:PixelData,n:SetPixels)
-		static void setPixels(const SPtr<PixelData>& thisPtr, const Vector<Color>& value);
+		static void SetPixels(const SPtr<PixelData>& thisPtr, const Vector<Color>& value);
 		
 		/**
 		 * Returns all pixels in the buffer as raw bytes.
@@ -70,7 +70,7 @@ namespace bs
 		 *			row and slice pitch values.
 		 */
 		BS_SCRIPT_EXPORT(e:PixelData,n:GetRawPixels)
-		static Vector<char> getRawPixels(const SPtr<PixelData>& thisPtr);
+		static Vector<char> GetRawPixels(const SPtr<PixelData>& thisPtr);
 		
 		/**
 		 * Sets all pixels in the buffer as raw bytes.
@@ -79,9 +79,9 @@ namespace bs
 		 *						potential row and slice pitch values.
 		 */
 		BS_SCRIPT_EXPORT(e:PixelData,n:SetRawPixels)
-		static void setRawPixels(const SPtr<PixelData>& thisPtr, const Vector<char>& value);
+		static void SetRawPixels(const SPtr<PixelData>& thisPtr, const Vector<char>& value);
 
-		static bool checkIsLocked(const SPtr<PixelData>& thisPtr);
+		static bool CheckIsLocked(const SPtr<PixelData>& thisPtr);
 	};
 
 	/** @endcond */

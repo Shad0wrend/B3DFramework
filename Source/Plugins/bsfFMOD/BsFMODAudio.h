@@ -20,28 +20,28 @@ namespace bs
 		virtual ~FMODAudio();
 
 		/** @copydoc Audio::setVolume */
-		void setVolume(float volume) override;
+		void SetVolume(float volume) override;
 
 		/** @copydoc Audio::getVolume */
-		float getVolume() const override;
+		float GetVolume() const override;
 
 		/** @copydoc Audio::setPaused */
-		void setPaused(bool paused) override;
+		void SetPaused(bool paused) override;
 
 		/** @copydoc Audio::isPaused */
-		bool isPaused() const override { return mIsPaused; }
+		bool IsPaused() const override { return mIsPaused; }
 
 		/** @copydoc Audio::_update */
 		void UpdateInternal() override;
 
 		/** @copydoc Audio::setActiveDevice */
-		void setActiveDevice(const AudioDevice& device) override;
+		void SetActiveDevice(const AudioDevice& device) override;
 
 		/** @copydoc Audio::getActiveDevice */
-		AudioDevice getActiveDevice() const override { return mActiveDevice; }
+		AudioDevice GetActiveDevice() const override { return mActiveDevice; }
 
 		/** @copydoc Audio::getDefaultDevice */
-		AudioDevice getDefaultDevice() const override { return mDefaultDevice; }
+		AudioDevice GetDefaultDevice() const override { return mDefaultDevice; }
 
 		/** @copydoc Audio::getAllDevices */
 		const Vector<AudioDevice>& getAllDevices() const override { return mAllDevices; }
@@ -78,7 +78,7 @@ namespace bs
 		SPtr<AudioSource> createSource() override;
 
 		/** Rebuilds information about all listeners. Should be called when listener list changes. */
-		void rebuildListeners();
+		void RebuildListeners();
 
 		FMOD::System* mFMOD = nullptr;
 		FMOD::ChannelGroup* mMasterChannelGroup = nullptr;

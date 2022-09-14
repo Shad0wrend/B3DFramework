@@ -25,7 +25,7 @@ namespace bs { namespace ct
 		 * @param[out]	inputParams	Output object that will contain a set of program input parameters. Can be null if not
 		 *							required. Only relevant for vertex programs.
 		 */
-		void parse(ID3DBlob* microcode, GpuProgramType type, GpuParamDesc& desc, Vector<VertexElement>* inputParams);
+		void Parse(ID3DBlob* microcode, GpuProgramType type, GpuParamDesc& desc, Vector<VertexElement>* inputParams);
 
 	private:
 		/** Types of HLSL parameters. */
@@ -42,20 +42,20 @@ namespace bs { namespace ct
 		 * Parses the provided constant buffer retrieving information about all of its members and storing them in the
 		 * provided GPU params description object.
 		 */
-		void parseBuffer(ID3D11ShaderReflectionConstantBuffer* bufferReflection, GpuParamDesc& desc);
+		void ParseBuffer(ID3D11ShaderReflectionConstantBuffer* bufferReflection, GpuParamDesc& desc);
 
 		/**	Parses the resource description structure and stores it in the provided GPU params description object. */
-		void parseResource(D3D11_SHADER_INPUT_BIND_DESC& resourceDesc, GpuProgramType type, GpuParamDesc& desc);
+		void ParseResource(D3D11_SHADER_INPUT_BIND_DESC& resourceDesc, GpuProgramType type, GpuParamDesc& desc);
 
 		/**
 		 * Parses a variable with the specified type and variable description. Adds the variable in the provided GPU params
 		 * description object and assigns it to the provided param block.
 		 */
-		void parseVariable(D3D11_SHADER_TYPE_DESC& varTypeDesc, D3D11_SHADER_VARIABLE_DESC& varDesc, GpuParamDesc& desc,
+		void ParseVariable(D3D11_SHADER_TYPE_DESC& varTypeDesc, D3D11_SHADER_VARIABLE_DESC& varDesc, GpuParamDesc& desc,
 			GpuParamBlockDesc& paramBlock);
 
 		/** Maps a parameter in a specific shader stage, of a specific type to a unique set index. */
-		static UINT32 mapParameterToSet(GpuProgramType progType, ParamType paramType);
+		static UINT32 MapParameterToSet(GpuProgramType progType, ParamType paramType);
 	};
 
 	/** @} */

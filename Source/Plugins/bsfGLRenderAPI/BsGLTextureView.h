@@ -18,10 +18,10 @@ namespace bs { namespace ct
 		~GLTextureView();
 
 		/**	Returns internal OpenGL texture view handle. */
-		GLuint getGLID() const { return mViewID; }
+		GLuint GetGlid() const { return mViewID; }
 
 		/**	Returns OpenGL texture target type. */
-		GLuint getGLTextureTarget() const { return mTarget; }
+		GLuint GetGlTextureTarget() const { return mTarget; }
 
 	protected:
 		friend class GLTexture;

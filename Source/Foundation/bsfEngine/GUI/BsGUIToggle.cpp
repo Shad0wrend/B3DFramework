@@ -8,7 +8,7 @@
 
 namespace bs
 {
-	const String& GUIToggle::getGUITypeName()
+	const String& GUIToggle::GetGuiTypeName()
 	{
 		static String name = "Toggle";
 		return name;
@@ -29,49 +29,49 @@ namespace bs
 		}
 	}
 
-	GUIToggle* GUIToggle::create(const HString& text, const String& styleName)
+	GUIToggle* GUIToggle::Create(const HString& text, const String& styleName)
 	{
-		return create(GUIContent(text), styleName);
+		return Create(GUIContent(text), styleName);
 	}
 
-	GUIToggle* GUIToggle::create(const HString& text, const GUIOptions& options, const String& styleName)
+	GUIToggle* GUIToggle::Create(const HString& text, const GUIOptions& options, const String& styleName)
 	{
-		return create(GUIContent(text), options, styleName);
+		return Create(GUIContent(text), options, styleName);
 	}
 
-	GUIToggle* GUIToggle::create(const HString& text, SPtr<GUIToggleGroup> toggleGroup, const String& styleName)
+	GUIToggle* GUIToggle::Create(const HString& text, SPtr<GUIToggleGroup> toggleGroup, const String& styleName)
 	{
-		return create(GUIContent(text), toggleGroup, styleName);
+		return Create(GUIContent(text), toggleGroup, styleName);
 	}
 
-	GUIToggle* GUIToggle::create(const HString& text, SPtr<GUIToggleGroup> toggleGroup,
+	GUIToggle* GUIToggle::Create(const HString& text, SPtr<GUIToggleGroup> toggleGroup,
 		const GUIOptions& options, const String& styleName)
 	{
 		return create(GUIContent(text), toggleGroup, options, styleName);
 	}
 
-	GUIToggle* GUIToggle::create(const GUIContent& content, const String& styleName)
+	GUIToggle* GUIToggle::Create(const GUIContent& content, const String& styleName)
 	{
-		return new (bs_alloc<GUIToggle>()) GUIToggle(getStyleName<GUIToggle>(styleName), content, nullptr, GUIDimensions::create());
+		return new (bs_alloc<GUIToggle>()) GUIToggle(getStyleName<GUIToggle>(styleName), content, nullptr, GUIDimensions::Create());
 	}
 
-	GUIToggle* GUIToggle::create(const GUIContent& content, const GUIOptions& options, const String& styleName)
+	GUIToggle* GUIToggle::Create(const GUIContent& content, const GUIOptions& options, const String& styleName)
 	{
-		return new (bs_alloc<GUIToggle>()) GUIToggle(getStyleName<GUIToggle>(styleName), content, nullptr, GUIDimensions::create(options));
+		return new (bs_alloc<GUIToggle>()) GUIToggle(getStyleName<GUIToggle>(styleName), content, nullptr, GUIDimensions::Create(options));
 	}
 
-	GUIToggle* GUIToggle::create(const GUIContent& content, SPtr<GUIToggleGroup> toggleGroup, const String& styleName)
+	GUIToggle* GUIToggle::Create(const GUIContent& content, SPtr<GUIToggleGroup> toggleGroup, const String& styleName)
 	{
-		return new (bs_alloc<GUIToggle>()) GUIToggle(getStyleName<GUIToggle>(styleName), content, toggleGroup, GUIDimensions::create());
+		return new (bs_alloc<GUIToggle>()) GUIToggle(getStyleName<GUIToggle>(styleName), content, toggleGroup, GUIDimensions::Create());
 	}
 
-	GUIToggle* GUIToggle::create(const GUIContent& content, SPtr<GUIToggleGroup> toggleGroup,
+	GUIToggle* GUIToggle::Create(const GUIContent& content, SPtr<GUIToggleGroup> toggleGroup,
 		const GUIOptions& options, const String& styleName)
 	{
-		return new (bs_alloc<GUIToggle>()) GUIToggle(getStyleName<GUIToggle>(styleName), content, toggleGroup, GUIDimensions::create(options));
+		return new (bs_alloc<GUIToggle>()) GUIToggle(getStyleName<GUIToggle>(styleName), content, toggleGroup, GUIDimensions::Create(options));
 	}
 
-	SPtr<GUIToggleGroup> GUIToggle::createToggleGroup(bool allowAllOff)
+	SPtr<GUIToggleGroup> GUIToggle::CreateToggleGroup(bool allowAllOff)
 	{
 		SPtr<GUIToggleGroup> toggleGroup = bs_shared_ptr<GUIToggleGroup>(new (bs_alloc<GUIToggleGroup>()) GUIToggleGroup(allowAllOff));
 		toggleGroup->initialize(toggleGroup);

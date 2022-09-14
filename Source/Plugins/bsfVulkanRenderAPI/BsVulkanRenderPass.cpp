@@ -34,7 +34,7 @@ namespace bs { namespace ct
 		:mDevice(device)
 	{
 		mId = sNextValidId++;
-		mSampleFlags = VulkanUtility::getSampleFlags(desc.numSamples);
+		mSampleFlags = VulkanUtility::GetSampleFlags(desc.numSamples);
 
 		UINT32 attachmentIdx = 0;
 		for(UINT32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
@@ -140,7 +140,7 @@ namespace bs { namespace ct
 		mRenderPassCI.dependencyCount = 2;
 		mRenderPassCI.pDependencies = mDependencies;
 
-		mDefault = createVariant(RT_NONE, RT_NONE, CLEAR_NONE);
+		mDefault = CreateVariant(RT_NONE, RT_NONE, CLEAR_NONE);
 	}
 
 	VulkanRenderPass::~VulkanRenderPass()
@@ -149,7 +149,7 @@ namespace bs { namespace ct
 			vkDestroyRenderPass(mDevice, entry.second, gVulkanAllocator);
 	}
 
-	VkRenderPass VulkanRenderPass::createVariant(RenderSurfaceMask loadMask, RenderSurfaceMask readMask,
+	VkRenderPass VulkanRenderPass::CreateVariant(RenderSurfaceMask loadMask, RenderSurfaceMask readMask,
 		ClearMask clearMask) const
 	{
 		for (UINT32 i = 0; i < mNumColorAttachments; i++)
@@ -158,12 +158,12 @@ namespace bs { namespace ct
 			VkAttachmentReference& attachmentRef = mColorReferences[i];
 			UINT32 index = mIndices[i];
 
-			if (loadMask.isSet((RenderSurfaceMaskBits)(1 << index)))
+			if (loadMask.IsSet((RenderSurfaceMaskBits)(1 << index)))
 			{
 				attachmentDesc.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
 				attachmentDesc.initialLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 			}
-			else if (clearMask.isSet((ClearMaskBits)(1 << index)))
+			else if (clearMask.IsSet((ClearMaskBits)(1 << index)))
 			{
 				attachmentDesc.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 				attachmentDesc.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
@@ -174,7 +174,7 @@ namespace bs { namespace ct
 				attachmentDesc.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 			}
 
-			if(readMask.isSet((RenderSurfaceMaskBits)(1 << index)))
+			if(readMask.IsSet((RenderSurfaceMaskBits)(1 << index)))
 				attachmentRef.layout = VK_IMAGE_LAYOUT_GENERAL;
 			else
 				attachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
@@ -185,7 +185,7 @@ namespace bs { namespace ct
 			VkAttachmentDescription& attachmentDesc = mAttachments[mNumColorAttachments];
 			VkAttachmentReference& attachmentRef = mDepthReference;
 
-			if (loadMask.isSet(RT_DEPTH) || loadMask.isSet(RT_STENCIL))
+			if (loadMask.IsSet(RT_DEPTH) || loadMask.IsSet(RT_STENCIL))
 			{
 				attachmentDesc.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
 				attachmentDesc.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
@@ -231,7 +231,7 @@ namespace bs { namespace ct
 		return output;
 	}
 
-	VkRenderPass VulkanRenderPass::getVkRenderPass(RenderSurfaceMask loadMask, RenderSurfaceMask readMask,
+	VkRenderPass VulkanRenderPass::GetVkRenderPass(RenderSurfaceMask loadMask, RenderSurfaceMask readMask,
 		ClearMask clearMask) const
 	{
 		if (loadMask == RT_NONE && readMask == RT_NONE && clearMask == CLEAR_NONE)
@@ -248,7 +248,7 @@ namespace bs { namespace ct
 		return newVariant;
 	}
 
-	UINT32 VulkanRenderPass::getNumClearEntries(ClearMask clearMask) const
+	UINT32 VulkanRenderPass::GetNumClearEntries(ClearMask clearMask) const
 	{
 		if (clearMask == CLEAR_NONE)
 			return 0;
@@ -277,7 +277,7 @@ namespace bs { namespace ct
 			bs_delete(entry.second);
 	}
 
-	VulkanRenderPass* VulkanRenderPasses::get(const VkDevice& device, const VULKAN_RENDER_PASS_DESC& desc)
+	VulkanRenderPass* VulkanRenderPasses::Get(const VkDevice& device, const VULKAN_RENDER_PASS_DESC& desc)
 	{
 		VariantKey key(device, desc);
 

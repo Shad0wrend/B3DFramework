@@ -20,26 +20,26 @@ namespace bs
 		ScriptCLight(MonoObject* managedInstance, const GameObjectHandle<CLight>& value);
 
 	private:
-		static void Internal_setType(ScriptCLight* thisPtr, LightType type);
-		static LightType Internal_getType(ScriptCLight* thisPtr);
-		static void Internal_setColor(ScriptCLight* thisPtr, Color* color);
-		static void Internal_getColor(ScriptCLight* thisPtr, Color* __output);
-		static void Internal_setIntensity(ScriptCLight* thisPtr, float intensity);
-		static float Internal_getIntensity(ScriptCLight* thisPtr);
-		static void Internal_setUseAutoAttenuation(ScriptCLight* thisPtr, bool enabled);
-		static bool Internal_getUseAutoAttenuation(ScriptCLight* thisPtr);
-		static void Internal_setAttenuationRadius(ScriptCLight* thisPtr, float radius);
-		static float Internal_getAttenuationRadius(ScriptCLight* thisPtr);
-		static void Internal_setSourceRadius(ScriptCLight* thisPtr, float radius);
-		static float Internal_getSourceRadius(ScriptCLight* thisPtr);
-		static void Internal_setSpotAngle(ScriptCLight* thisPtr, Degree* spotAngle);
-		static void Internal_getSpotAngle(ScriptCLight* thisPtr, Degree* __output);
-		static void Internal_setSpotFalloffAngle(ScriptCLight* thisPtr, Degree* spotAngle);
-		static void Internal_getSpotFalloffAngle(ScriptCLight* thisPtr, Degree* __output);
-		static void Internal_setCastsShadow(ScriptCLight* thisPtr, bool castsShadow);
-		static bool Internal_getCastsShadow(ScriptCLight* thisPtr);
-		static void Internal_setShadowBias(ScriptCLight* thisPtr, float bias);
-		static float Internal_getShadowBias(ScriptCLight* thisPtr);
-		static void Internal_getBounds(ScriptCLight* thisPtr, Sphere* __output);
+		static void InternalSetType(ScriptCLight* thisPtr, LightType type);
+		static LightType InternalGetType(ScriptCLight* thisPtr);
+		static void InternalSetColor(ScriptCLight* thisPtr, Color* color);
+		static void InternalGetColor(ScriptCLight* thisPtr, Color* __output);
+		static void InternalSetIntensity(ScriptCLight* thisPtr, float intensity);
+		static float InternalGetIntensity(ScriptCLight* thisPtr);
+		static void InternalSetUseAutoAttenuation(ScriptCLight* thisPtr, bool enabled);
+		static bool InternalGetUseAutoAttenuation(ScriptCLight* thisPtr);
+		static void InternalSetAttenuationRadius(ScriptCLight* thisPtr, float radius);
+		static float InternalGetAttenuationRadius(ScriptCLight* thisPtr);
+		static void InternalSetSourceRadius(ScriptCLight* thisPtr, float radius);
+		static float InternalGetSourceRadius(ScriptCLight* thisPtr);
+		static void InternalSetSpotAngle(ScriptCLight* thisPtr, Degree* spotAngle);
+		static void InternalGetSpotAngle(ScriptCLight* thisPtr, Degree* __output);
+		static void InternalSetSpotFalloffAngle(ScriptCLight* thisPtr, Degree* spotAngle);
+		static void InternalGetSpotFalloffAngle(ScriptCLight* thisPtr, Degree* __output);
+		static void InternalSetCastsShadow(ScriptCLight* thisPtr, bool castsShadow);
+		static bool InternalGetCastsShadow(ScriptCLight* thisPtr);
+		static void InternalSetShadowBias(ScriptCLight* thisPtr, float bias);
+		static float InternalGetShadowBias(ScriptCLight* thisPtr);
+		static void InternalGetBounds(ScriptCLight* thisPtr, Sphere* __output);
 	};
 }

@@ -21,10 +21,10 @@ namespace bs
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "Blend2DInfo")
 
-		static MonoObject* box(const __Blend2DInfoInterop& value);
-		static __Blend2DInfoInterop unbox(MonoObject* value);
-		static Blend2DInfo fromInterop(const __Blend2DInfoInterop& value);
-		static __Blend2DInfoInterop toInterop(const Blend2DInfo& value);
+		static MonoObject* Box(const __Blend2DInfoInterop& value);
+		static __Blend2DInfoInterop Unbox(MonoObject* value);
+		static Blend2DInfo FromInterop(const __Blend2DInfoInterop& value);
+		static __Blend2DInfoInterop ToInterop(const Blend2DInfo& value);
 
 	private:
 		ScriptBlend2DInfo(MonoObject* managedInstance);

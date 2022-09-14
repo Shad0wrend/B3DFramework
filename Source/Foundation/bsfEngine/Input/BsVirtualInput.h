@@ -57,13 +57,13 @@ namespace bs
 		VirtualInput();
 
 		/**	Creates a new empty input configuration. */
-		static SPtr<InputConfiguration> createConfiguration();
+		static SPtr<InputConfiguration> CreateConfiguration();
 
 		/**	Sets an input configuration that determines how physical keys map to virtual buttons. */
-		void setConfiguration(const SPtr<InputConfiguration>& input);
+		void SetConfiguration(const SPtr<InputConfiguration>& input);
 
 		/**	Retrieves the active input configuration that determines how physical keys map to virtual buttons. */
-		SPtr<InputConfiguration> getConfiguration() const { return mInputConfiguration; }
+		SPtr<InputConfiguration> GetConfiguration() const { return mInputConfiguration; }
 
 		/**
 		 * Check is the virtual button just getting pressed. This state is only active for one frame.
@@ -71,7 +71,7 @@ namespace bs
 		 * @param[in]	button		Virtual button identifier.
 		 * @param[in]	deviceIdx	Optional device index in case multiple input devices are available.
 		 */
-		bool isButtonDown(const VirtualButton& button, UINT32 deviceIdx = 0) const;
+		bool IsButtonDown(const VirtualButton& button, UINT32 deviceIdx = 0) const;
 
 		/**
 		 * Check is the virtual button just getting released. This state is only active for one frame.
@@ -79,7 +79,7 @@ namespace bs
 		 * @param[in]	button		Virtual button identifier.
 		 * @param[in]	deviceIdx	Optional device index in case multiple input devices are available.
 		 */
-		bool isButtonUp(const VirtualButton& button, UINT32 deviceIdx = 0) const;
+		bool IsButtonUp(const VirtualButton& button, UINT32 deviceIdx = 0) const;
 
 		/**
 		 * Check is the virtual button is being held. This state is active as long as the button is being held down,
@@ -88,7 +88,7 @@ namespace bs
 		 * @param[in]	button		Virtual button identifier.
 		 * @param[in]	deviceIdx	Optional device index in case multiple input devices are available.
 		 */
-		bool isButtonHeld(const VirtualButton& button, UINT32 deviceIdx = 0) const;
+		bool IsButtonHeld(const VirtualButton& button, UINT32 deviceIdx = 0) const;
 
 		/**
 		 * Returns normalized value for the specified input axis. Returned value will usually be in [-1.0, 1.0] range, but
@@ -97,7 +97,7 @@ namespace bs
 		 * @param[in]	axis		Virtual axis identifier.
 		 * @param[in]	deviceIdx	Optional device index in case multiple input devices are available.
 		 */
-		float getAxisValue(const VirtualAxis& axis, UINT32 deviceIdx = 0) const;
+		float GetAxisValue(const VirtualAxis& axis, UINT32 deviceIdx = 0) const;
 
 		/**	Triggered when a virtual button is pressed. */
 		Event<void(const VirtualButton&, UINT32 deviceIdx)> onButtonDown;
@@ -120,10 +120,10 @@ namespace bs
 		friend class VirtualButton;
 
 		/** Performs all logic related to a button press. */
-		void buttonDown(const ButtonEvent& event);
+		void ButtonDown(const ButtonEvent& event);
 
 		/** Performs all logic related to a button release. */
-		void buttonUp(const ButtonEvent& event);
+		void ButtonUp(const ButtonEvent& event);
 
 		SPtr<InputConfiguration> mInputConfiguration;
 		Vector<DeviceData> mDevices;

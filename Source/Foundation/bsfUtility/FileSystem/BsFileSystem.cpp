@@ -5,7 +5,7 @@
 
 namespace bs
 {
-	void FileSystem::copy(const Path& oldPath, const Path& newPath, bool overwriteExisting)
+	void FileSystem::Copy(const Path& oldPath, const Path& newPath, bool overwriteExisting)
 	{
 		Stack<std::tuple<Path, Path>> todo;
 		todo.push(std::make_tuple(oldPath, newPath));
@@ -16,16 +16,16 @@ namespace bs
 			todo.pop();
 
 			Path sourcePath = std::get<0>(current);
-			if (!FileSystem::exists(sourcePath))
+			if (!FileSystem::Exists(sourcePath))
 				continue;
 
-			bool srcIsFile = FileSystem::isFile(sourcePath);
+			bool srcIsFile = FileSystem::IsFile(sourcePath);
 			Path destinationPath = std::get<1>(current);
-			bool destExists = FileSystem::exists(destinationPath);
+			bool destExists = FileSystem::Exists(destinationPath);
 
 			if (destExists)
 			{
-				if (FileSystem::isFile(destinationPath))
+				if (FileSystem::IsFile(destinationPath))
 				{
 					if (overwriteExisting)
 						FileSystem::remove(destinationPath);
@@ -40,7 +40,7 @@ namespace bs
 
 			if (srcIsFile)
 			{
-				FileSystem::copyFile(sourcePath, destinationPath);
+				FileSystem::CopyFile(sourcePath, destinationPath);
 			}
 			else
 			{
@@ -49,12 +49,12 @@ namespace bs
 
 				Vector<Path> files;
 				Vector<Path> directories;
-				getChildren(destinationPath, files, directories);
+				GetChildren(destinationPath, files, directories);
 
 				for (auto& file : files)
 				{
 					Path fileDestPath = destinationPath;
-					fileDestPath.append(file.getTail());
+					fileDestPath.Append(file.GetTail());
 
 					todo.push(std::make_tuple(file, fileDestPath));
 				}
@@ -62,7 +62,7 @@ namespace bs
 				for (auto& dir : directories)
 				{
 					Path dirDestPath = destinationPath;
-					dirDestPath.append(dir.getTail());
+					dirDestPath.Append(dir.GetTail());
 
 					todo.push(std::make_tuple(dir, dirDestPath));
 				}
@@ -70,9 +70,9 @@ namespace bs
 		}
 	}
 
-	void FileSystem::remove(const Path& path, bool recursively)
+	void FileSystem::Remove(const Path& path, bool recursively)
 	{
-		if (!FileSystem::exists(path))
+		if (!FileSystem::Exists(path))
 			return;
 
 		if (recursively)
@@ -80,7 +80,7 @@ namespace bs
 			Vector<Path> files;
 			Vector<Path> directories;
 
-			getChildren(path, files, directories);
+			GetChildren(path, files, directories);
 
 			for (auto& file : files)
 				remove(file, false);
@@ -92,7 +92,7 @@ namespace bs
 		FileSystem::removeFile(path);
 	}
 
-	void FileSystem::move(const Path& oldPath, const Path& newPath, bool overwriteExisting)
+	void FileSystem::Move(const Path& oldPath, const Path& newPath, bool overwriteExisting)
 	{
 		if (FileSystem::exists(newPath))
 		{

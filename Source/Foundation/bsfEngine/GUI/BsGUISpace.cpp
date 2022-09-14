@@ -20,12 +20,12 @@ namespace bs
 		return range;
 	}
 
-	GUIFixedSpace* GUIFixedSpace::create(UINT32 size)
+	GUIFixedSpace* GUIFixedSpace::Create(UINT32 size)
 	{
 		return bs_new<GUIFixedSpace>(size);
 	}
 
-	void GUIFixedSpace::destroy(GUIFixedSpace* space)
+	void GUIFixedSpace::Destroy(GUIFixedSpace* space)
 	{
 		bs_delete(space);
 	}
@@ -46,12 +46,12 @@ namespace bs
 		return range;
 	}
 
-	GUIFlexibleSpace* GUIFlexibleSpace::create()
+	GUIFlexibleSpace* GUIFlexibleSpace::Create()
 	{
 		return bs_new<GUIFlexibleSpace>();
 	}
 
-	void GUIFlexibleSpace::destroy(GUIFlexibleSpace* space)
+	void GUIFlexibleSpace::Destroy(GUIFlexibleSpace* space)
 	{
 		bs_delete(space);
 	}

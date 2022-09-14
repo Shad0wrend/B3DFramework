@@ -21,10 +21,10 @@ namespace bs
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "LimitCommon")
 
-		static MonoObject* box(const __LimitCommonInterop& value);
-		static __LimitCommonInterop unbox(MonoObject* value);
-		static LimitCommon fromInterop(const __LimitCommonInterop& value);
-		static __LimitCommonInterop toInterop(const LimitCommon& value);
+		static MonoObject* Box(const __LimitCommonInterop& value);
+		static __LimitCommonInterop Unbox(MonoObject* value);
+		static LimitCommon FromInterop(const __LimitCommonInterop& value);
+		static __LimitCommonInterop ToInterop(const LimitCommon& value);
 
 	private:
 		ScriptLimitCommon(MonoObject* managedInstance);

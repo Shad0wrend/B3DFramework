@@ -19,7 +19,7 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "ShaderInclude")
 
 		/**	Creates an empty, uninitialized managed instance of the resource interop object. */
-		static MonoObject* createInstance();
+		static MonoObject* CreateInstance();
 
 	private:
 		friend class ScriptResourceManager;

@@ -23,7 +23,7 @@ namespace bs
 	}
 
 	template<class COLOR, class TIME>
-	COLOR TColorGradient<COLOR, TIME>::evaluate(float t) const
+	COLOR TColorGradient<COLOR, TIME>::Evaluate(float t) const
 	{
 		if(mNumKeys == 0)
 			return COLOR();
@@ -55,7 +55,7 @@ namespace bs
 	}
 
 	template<class COLOR, class TIME>
-	void TColorGradient<COLOR, TIME>::setKeys(const Vector<ColorGradientKey>& keys, float duration)
+	void TColorGradient<COLOR, TIME>::SetKeys(const Vector<ColorGradientKey>& keys, float duration)
 	{
 #if BS_DEBUG_MODE
 		// Ensure keys are sorted
@@ -105,7 +105,7 @@ namespace bs
 	}
 
 	template<class COLOR, class TIME>
-	ColorGradientKey TColorGradient<COLOR, TIME>::getKey(UINT32 idx) const
+	ColorGradientKey TColorGradient<COLOR, TIME>::GetKey(UINT32 idx) const
 	{
 		if(idx >= mNumKeys)
 			return ColorGradientKey(Color::Black, 0.0f);
@@ -116,7 +116,7 @@ namespace bs
 	}
 
 	template<class COLOR, class TIME>
-	void TColorGradient<COLOR, TIME>::setConstant(const Color& color)
+	void TColorGradient<COLOR, TIME>::SetConstant(const Color& color)
 	{
 		mColors[0] = impl::TGradientHelper<COLOR>::toInternalColor(color);
 		mTimes[0] = 0;
@@ -125,7 +125,7 @@ namespace bs
 	}
 
 	template<class COLOR, class TIME>
-	std::pair<float, float> TColorGradient<COLOR, TIME>::getTimeRange() const
+	std::pair<float, float> TColorGradient<COLOR, TIME>::GetTimeRange() const
 	{
 		if(mNumKeys == 0)
 			return std::make_pair(0.0f, 0.0f);

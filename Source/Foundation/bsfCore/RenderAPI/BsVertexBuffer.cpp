@@ -28,7 +28,7 @@ namespace bs
 #endif
 	}
 
-	SPtr<ct::CoreObject> VertexBuffer::createCore() const
+	SPtr<ct::CoreObject> VertexBuffer::CreateCore() const
 	{
 		VERTEX_BUFFER_DESC desc;
 		desc.vertexSize = mProperties.mVertexSize;
@@ -36,17 +36,17 @@ namespace bs
 		desc.usage = mUsage;
 		desc.streamOut = mStreamOut;
 
-		return ct::HardwareBufferManager::instance().createVertexBufferInternal(desc);
+		return ct::HardwareBufferManager::Instance().CreateVertexBufferInternal(desc);
 	}
 
-	SPtr<ct::VertexBuffer> VertexBuffer::getCore() const
+	SPtr<ct::VertexBuffer> VertexBuffer::GetCore() const
 	{
 		return std::static_pointer_cast<ct::VertexBuffer>(mCoreSpecific);
 	}
 
-	SPtr<VertexBuffer> VertexBuffer::create(const VERTEX_BUFFER_DESC& desc)
+	SPtr<VertexBuffer> VertexBuffer::Create(const VERTEX_BUFFER_DESC& desc)
 	{
-		return HardwareBufferManager::instance().createVertexBuffer(desc);
+		return HardwareBufferManager::Instance().CreateVertexBuffer(desc);
 	}
 
 	namespace ct
@@ -73,7 +73,7 @@ namespace bs
 		CoreObject::initialize();
 	}
 
-	void* VertexBuffer::map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx, UINT32 queueIdx)
+	void* VertexBuffer::Map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx, UINT32 queueIdx)
 	{
 #if BS_PROFILING_ENABLED
 		if (options == GBL_READ_ONLY || options == GBL_READ_WRITE)
@@ -90,32 +90,32 @@ namespace bs
 		return mBuffer->lock(offset, length, options, deviceIdx, queueIdx);
 	}
 
-	void VertexBuffer::unmap()
+	void VertexBuffer::Unmap()
 	{
 		mBuffer->unlock();
 	}
 
-	void VertexBuffer::readData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx, UINT32 queueIdx)
+	void VertexBuffer::ReadData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx, UINT32 queueIdx)
 	{
 		mBuffer->readData(offset, length, dest, deviceIdx, queueIdx);
 		BS_INC_RENDER_STAT_CAT(ResRead, RenderStatObject_VertexBuffer);
 	}
 
-	void VertexBuffer::writeData(UINT32 offset, UINT32 length, const void* source, BufferWriteType writeFlags,
+	void VertexBuffer::WriteData(UINT32 offset, UINT32 length, const void* source, BufferWriteType writeFlags,
 		UINT32 queueIdx)
 	{
 		mBuffer->writeData(offset, length, source, writeFlags, queueIdx);
 		BS_INC_RENDER_STAT_CAT(ResWrite, RenderStatObject_VertexBuffer);
 	}
 
-	void VertexBuffer::copyData(HardwareBuffer& srcBuffer, UINT32 srcOffset,
+	void VertexBuffer::CopyData(HardwareBuffer& srcBuffer, UINT32 srcOffset,
 		UINT32 dstOffset, UINT32 length, bool discardWholeBuffer, const SPtr<CommandBuffer>& commandBuffer)
 	{
 		auto& srcVertexBuffer = static_cast<VertexBuffer&>(srcBuffer);
 		mBuffer->copyData(*srcVertexBuffer.mBuffer, srcOffset, dstOffset, length, discardWholeBuffer, commandBuffer);
 	}
 
-	SPtr<GpuBuffer> VertexBuffer::getLoadStore(GpuBufferType type, GpuBufferFormat format, UINT32 elementSize)
+	SPtr<GpuBuffer> VertexBuffer::GetLoadStore(GpuBufferType type, GpuBufferFormat format, UINT32 elementSize)
 	{
 		if((mUsage & GBU_LOADSTORE) != GBU_LOADSTORE)
 			return nullptr;
@@ -151,15 +151,15 @@ namespace bs
 		if(!mSharedBuffer)
 			mSharedBuffer = bs_shared_ptr(mBuffer, mBufferDeleter);
 
-		SPtr<GpuBuffer> newView = GpuBuffer::create(desc, mSharedBuffer);
+		SPtr<GpuBuffer> newView = GpuBuffer::Create(desc, mSharedBuffer);
 		mLoadStoreViews.push_back(newView);
 		
 		return newView;
 	}
 
-	SPtr<VertexBuffer> VertexBuffer::create(const VERTEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask)
+	SPtr<VertexBuffer> VertexBuffer::Create(const VERTEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask)
 	{
-		return HardwareBufferManager::instance().createVertexBuffer(desc, deviceMask);
+		return HardwareBufferManager::Instance().createVertexBuffer(desc, deviceMask);
 	}
 	}
 }

@@ -14,13 +14,13 @@ namespace bs
 		SpriteMaterial* imageOpaqueAnimMat = registerMaterial<SpriteImageMaterial>(SpriteMaterialTransparency::Opaque, true);
 		SpriteMaterial* imageAlphaAnimMat = registerMaterial<SpriteImageMaterial>(SpriteMaterialTransparency::Alpha, true);
 		SpriteMaterial* imagePremultipliedAnimMat = registerMaterial<SpriteImageMaterial>(SpriteMaterialTransparency::Premultiplied, true);
-		SpriteMaterial* textMat = registerMaterial<SpriteTextMaterial>();
-		SpriteMaterial* lineMat = registerMaterial<SpriteLineMaterial>();
+		SpriteMaterial* textMat = RegisterMaterial<SpriteTextMaterial>();
+		SpriteMaterial* lineMat = RegisterMaterial<SpriteLineMaterial>();
 
-		builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::ImageOpaque] = imageOpaqueMat->getId();
-		builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::ImageTransparentAlpha] = imageAlphaMat->getId();
-		builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::ImageTransparentPremultiplied] = imagePremultipliedMat->getId();
-		builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::ImageOpaqueAnimated] = imageOpaqueAnimMat->getId();
+		builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::ImageOpaque] = imageOpaqueMat->GetId();
+		builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::ImageTransparentAlpha] = imageAlphaMat->GetId();
+		builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::ImageTransparentPremultiplied] = imagePremultipliedMat->GetId();
+		builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::ImageOpaqueAnimated] = imageOpaqueAnimMat->GetId();
 		builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::ImageTransparentAlphaAnimated] = imageAlphaAnimMat->getId();
 		builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::ImageTransparentPremultipliedAnimated] = imagePremultipliedAnimMat->getId();
 		builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::Text] = textMat->getId();
@@ -34,7 +34,7 @@ namespace bs
 			bs_delete(entry.second);
 	}
 
-	SpriteMaterial* SpriteManager::getMaterial(UINT32 id) const
+	SpriteMaterial* SpriteManager::GetMaterial(UINT32 id) const
 	{
 		auto iterFind = mMaterials.find(id);
 		if (iterFind != mMaterials.end())

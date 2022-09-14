@@ -36,13 +36,13 @@ namespace bs
 		 * Checks does the volume intersects the provided axis aligned box.
 		 * This will return true if the box is fully inside the volume.
 		 */
-		bool intersects(const AABox& box) const;
+		bool Intersects(const AABox& box) const;
 
 		/**
 		 * Checks does the volume intersects the provided sphere.
 		 * This will return true if the sphere is fully inside the volume.
 		 */
-		bool intersects(const Sphere& sphere) const;
+		bool Intersects(const Sphere& sphere) const;
 
 		/**
 		 * Checks if the convex volume contains the provided point.
@@ -51,13 +51,13 @@ namespace bs
 		 * @param[in]	expand	Optional value to expand the size of the convex volume by the specified value during the
 		 *						check. Negative values shrink the volume.
 		 */
-		bool contains(const Vector3& p, float expand = 0.0f) const;
+		bool Contains(const Vector3& p, float expand = 0.0f) const;
 
 		/** Returns the internal set of planes that represent the volume. */
-		Vector<Plane> getPlanes() const { return mPlanes; }
+		Vector<Plane> GetPlanes() const { return mPlanes; }
 
 		/** Returns the specified plane that represents the volume. */
-		const Plane& getPlane(FrustumPlane whichPlane) const;
+		const Plane& GetPlane(FrustumPlane whichPlane) const;
 
 	private:
 		Vector<Plane> mPlanes;

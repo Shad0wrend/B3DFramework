@@ -39,7 +39,7 @@ namespace bs
 		 * @param[in]	animation		True if the material should be able to perform sprite sheet animation.
 		 * @return						Requested sprite material.
 		 */
-		SpriteMaterial* getImageMaterial(SpriteMaterialTransparency transparency, bool animation = false) const
+		SpriteMaterial* GetImageMaterial(SpriteMaterialTransparency transparency, bool animation = false) const
 		{
 			if(!animation)
 			{
@@ -47,11 +47,11 @@ namespace bs
 				{
 				default:
 				case SpriteMaterialTransparency::Opaque:
-					return getMaterial(builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::ImageOpaque]);
+					return GetMaterial(builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::ImageOpaque]);
 				case SpriteMaterialTransparency::Alpha: 
-					return getMaterial(builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::ImageTransparentAlpha]);
+					return GetMaterial(builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::ImageTransparentAlpha]);
 				case SpriteMaterialTransparency::Premultiplied:
-					return getMaterial(builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::ImageTransparentPremultiplied]);
+					return GetMaterial(builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::ImageTransparentPremultiplied]);
 				}
 			}
 			else
@@ -60,25 +60,25 @@ namespace bs
 				{
 				default:
 				case SpriteMaterialTransparency::Opaque:
-					return getMaterial(builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::ImageOpaqueAnimated]);
+					return GetMaterial(builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::ImageOpaqueAnimated]);
 				case SpriteMaterialTransparency::Alpha: 
-					return getMaterial(builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::ImageTransparentAlphaAnimated]);
+					return GetMaterial(builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::ImageTransparentAlphaAnimated]);
 				case SpriteMaterialTransparency::Premultiplied:
-					return getMaterial(builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::ImageTransparentPremultipliedAnimated]);
+					return GetMaterial(builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::ImageTransparentPremultipliedAnimated]);
 				}
 			}
 		}
 
 		/** Returns the material used for rendering text sprites. */
-		SpriteMaterial* getTextMaterial() const
-			{ return getMaterial(builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::Text]); }
+		SpriteMaterial* GetTextMaterial() const
+			{ return GetMaterial(builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::Text]); }
 
 		/** Returns the material used for rendering antialiased lines. */
-		SpriteMaterial* getLineMaterial() const
-			{ return getMaterial(builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::Line]); }
+		SpriteMaterial* GetLineMaterial() const
+			{ return GetMaterial(builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::Line]); }
 
 		/** Returns a sprite material with the specified ID. Returns null if one cannot be found. */
-		SpriteMaterial* getMaterial(UINT32 id) const;
+		SpriteMaterial* GetMaterial(UINT32 id) const;
 
 		/**
 		 * Registers a new material in the sprite manager. Caller must ensure the material has a unique ID that doesn't
@@ -87,7 +87,7 @@ namespace bs
 		 * @return	Newly created material, or at existing one if one already exists.
 		 */
 		template <class T, class... Args>
-		SpriteMaterial* registerMaterial(Args &&...args)
+		SpriteMaterial* RegisterMaterial(Args &&...args)
 		{
 			SpriteMaterial* newMaterial = bs_new<T>(std::forward<Args>(args)...);
 			

@@ -23,7 +23,7 @@ namespace bs { namespace ct
 			bases[i].y = sin(angle);
 		}
 
-		SPtr<PixelData> pixelData = PixelData::create(4, 4, 1, PF_RG8);
+		SPtr<PixelData> pixelData = PixelData::Create(4, 4, 1, PF_RG8);
 		for(UINT32 y = 0; y < 4; ++y)
 			for(UINT32 x = 0; x < 4; ++x)
 			{
@@ -33,10 +33,10 @@ namespace bs { namespace ct
 				color.r = bases[base].x * 0.5f + 0.5f;
 				color.g = bases[base].y * 0.5f + 0.5f;
 
-				pixelData->setColorAt(color, x, y);
+				pixelData->SetColorAt(color, x, y);
 			}
 
-		return Texture::create(pixelData);
+		return Texture::Create(pixelData);
 	}
 
 	// Reverse bits functions used for Hammersley sequence
@@ -93,8 +93,8 @@ namespace bs { namespace ct
 		desc.width = 128;
 		desc.height = 32;
 
-		SPtr<Texture> texture = Texture::create(desc);
-		PixelData pixelData = texture->lock(GBL_WRITE_ONLY_DISCARD);
+		SPtr<Texture> texture = Texture::Create(desc);
+		PixelData pixelData = texture->Lock(GBL_WRITE_ONLY_DISCARD);
 
 		for (UINT32 y = 0; y < desc.height; y++)
 		{
@@ -163,10 +163,10 @@ namespace bs { namespace ct
 				offset /= NumSamples;
 
 				Color color;
-				color.r = Math::clamp01(scale);
-				color.g = Math::clamp01(offset);
+				color.r = Math::Clamp01(scale);
+				color.g = Math::Clamp01(offset);
 
-				pixelData.setColorAt(color, x, y);
+				pixelData.SetColorAt(color, x, y);
 			}
 		}
 
@@ -186,7 +186,7 @@ namespace bs { namespace ct
 		// Note: Eventually replace this with a time of day model
 		float intensity = 1.0f;
 		Color skyColor = Color::White * intensity;
-		SPtr<Texture> skyTexture = Texture::create(dummySkyDesc);
+		SPtr<Texture> skyTexture = Texture::Create(dummySkyDesc);
 		
 		UINT32 sides[] = { CF_PositiveX, CF_NegativeX, CF_PositiveZ, CF_NegativeZ };
 		for(UINT32 i = 0; i < 4; ++i)
@@ -231,7 +231,7 @@ namespace bs { namespace ct
 		irradianceCubemapDesc.numMips = 0;
 		irradianceCubemapDesc.usage = TU_STATIC | TU_RENDERTARGET;
 
-		SPtr<Texture> irradiance = Texture::create(irradianceCubemapDesc);
+		SPtr<Texture> irradiance = Texture::Create(irradianceCubemapDesc);
 		gIBLUtility().filterCubemapForIrradiance(skyTexture, irradiance);
 
 		return irradiance;
@@ -252,7 +252,7 @@ namespace bs { namespace ct
 
 		ColorGradient gradient(keys);
 
-		SPtr<PixelData> pixels = PixelData::create(32, 1, 1, PF_RGBA8);
+		SPtr<PixelData> pixels = PixelData::Create(32, 1, 1, PF_RGBA8);
 		for(UINT32 i = 0; i < 16; i++)
 			pixels->setColorAt(Color::fromRGBA(gradient.evaluate(i/16.0f)), i, 0);
 
@@ -260,17 +260,17 @@ namespace bs { namespace ct
 		for(UINT32 i = 16; i < 32; i++)
 			pixels->setColorAt(Color::Black, i, 0);
 
-		return Texture::create(pixels);
+		return Texture::Create(pixels);
 	}
 
 	SPtr<Texture> generateChromaticAberrationFringe()
 	{
-		SPtr<PixelData> pixels = PixelData::create(3, 1, 1, PF_RGBA8);
+		SPtr<PixelData> pixels = PixelData::Create(3, 1, 1, PF_RGBA8);
 		pixels->setColorAt(Color(1.0f, 0.0f, 0.0f, 1.0f), 0, 0);
 		pixels->setColorAt(Color(0.0f, 1.0f, 0.0f, 1.0f), 1, 0);
 		pixels->setColorAt(Color(0.0f, 0.0f, 1.0f, 1.0f), 2, 0);
 
-		return Texture::create(pixels);
+		return Texture::Create(pixels);
 	}
 
 	SPtr<Texture> RendererTextures::preintegratedEnvGF;
@@ -280,7 +280,7 @@ namespace bs { namespace ct
 	SPtr<Texture> RendererTextures::bokehFlare;
 	SPtr<Texture> RendererTextures::chromaticAberrationFringe;
 
-	void RendererTextures::startUp(const LoadedRendererTextures& textures)
+	void RendererTextures::StartUp(const LoadedRendererTextures& textures)
 	{
 		preintegratedEnvGF = generatePreintegratedEnvBRDF();
 		ssaoRandomization4x4 = generate4x4RandomizationTexture();
@@ -290,7 +290,7 @@ namespace bs { namespace ct
 		chromaticAberrationFringe = generateChromaticAberrationFringe();
 	}
 
-	void RendererTextures::shutDown()
+	void RendererTextures::ShutDown()
 	{
 		preintegratedEnvGF = nullptr;
 		ssaoRandomization4x4 = nullptr;

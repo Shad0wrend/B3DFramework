@@ -17,10 +17,10 @@ namespace bs
 		ScriptStringTableManager(MonoObject* managedInstance);
 
 	private:
-		static void Internal_setActiveLanguage(Language language);
-		static Language Internal_getActiveLanguage();
-		static MonoObject* Internal_getTable(uint32_t id);
-		static void Internal_removeTable(uint32_t id);
-		static void Internal_setTable(uint32_t id, MonoObject* table);
+		static void InternalSetActiveLanguage(Language language);
+		static Language InternalGetActiveLanguage();
+		static MonoObject* InternalGetTable(uint32_t id);
+		static void InternalRemoveTable(uint32_t id);
+		static void InternalSetTable(uint32_t id, MonoObject* table);
 	};
 }

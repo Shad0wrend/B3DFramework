@@ -16,24 +16,24 @@ namespace bs
 	void ScriptPARTICLE_FORCE_DESC::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptPARTICLE_FORCE_DESC::box(const __PARTICLE_FORCE_DESCInterop& value)
+	MonoObject*ScriptPARTICLE_FORCE_DESC::Box(const __PARTICLE_FORCE_DESCInterop& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	__PARTICLE_FORCE_DESCInterop ScriptPARTICLE_FORCE_DESC::unbox(MonoObject* value)
+	__PARTICLE_FORCE_DESCInterop ScriptPARTICLE_FORCE_DESC::Unbox(MonoObject* value)
 	{
-		return *(__PARTICLE_FORCE_DESCInterop*)MonoUtil::unbox(value);
+		return *(__PARTICLE_FORCE_DESCInterop*)MonoUtil::Unbox(value);
 	}
 
-	PARTICLE_FORCE_DESC ScriptPARTICLE_FORCE_DESC::fromInterop(const __PARTICLE_FORCE_DESCInterop& value)
+	PARTICLE_FORCE_DESC ScriptPARTICLE_FORCE_DESC::FromInterop(const __PARTICLE_FORCE_DESCInterop& value)
 	{
 		PARTICLE_FORCE_DESC output;
 		SPtr<TDistribution<Vector3>> tmpforce;
 		ScriptTDistributionVector3* scriptforce;
-		scriptforce = ScriptTDistributionVector3::toNative(value.force);
+		scriptforce = ScriptTDistributionVector3::ToNative(value.force);
 		if(scriptforce != nullptr)
-			tmpforce = scriptforce->getInternal();
+			tmpforce = scriptforce->GetInternal();
 		if(tmpforce != nullptr)
 		output.force = *tmpforce;
 		output.worldSpace = value.worldSpace;
@@ -41,13 +41,13 @@ namespace bs
 		return output;
 	}
 
-	__PARTICLE_FORCE_DESCInterop ScriptPARTICLE_FORCE_DESC::toInterop(const PARTICLE_FORCE_DESC& value)
+	__PARTICLE_FORCE_DESCInterop ScriptPARTICLE_FORCE_DESC::ToInterop(const PARTICLE_FORCE_DESC& value)
 	{
 		__PARTICLE_FORCE_DESCInterop output;
 		MonoObject* tmpforce;
 		SPtr<TDistribution<Vector3>> tmpforcecopy;
 		tmpforcecopy = bs_shared_ptr_new<TDistribution<Vector3>>(value.force);
-		tmpforce = ScriptTDistributionVector3::create(tmpforcecopy);
+		tmpforce = ScriptTDistributionVector3::Create(tmpforcecopy);
 		output.force = tmpforce;
 		output.worldSpace = value.worldSpace;
 

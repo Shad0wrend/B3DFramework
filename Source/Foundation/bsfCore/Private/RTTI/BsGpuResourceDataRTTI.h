@@ -19,18 +19,18 @@ namespace bs
 		GpuResourceDataRTTI()
 		{ }
 
-		const String& getRTTIName() override
+		const String& GetRttiName() 
 		{
 			static String name = "GpuResourceData";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() 
 		{
 			return TID_GpuResourceData;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			BS_EXCEPT(InternalErrorException, "Cannot instantiate an abstract class.");
 			return nullptr;

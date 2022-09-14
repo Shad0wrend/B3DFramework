@@ -7,19 +7,19 @@
 
 namespace bs
 {
-	RTTITypeBase* RTTIFieldSchema::getRTTIStatic()
+	RTTITypeBase* RTTIFieldSchema::GetRttiStatic()
 	{
-		return RTTIFieldSchemaRTTI::instance();
+		return RTTIFieldSchemaRTTI::Instance();
 	}
 
-	RTTITypeBase* RTTIFieldSchema::getRTTI() const
+	RTTITypeBase* RTTIFieldSchema::GetRtti() const
 	{
-		return getRTTIStatic();
+		return GetRttiStatic();
 	}
 	
 	RTTIFieldInfo RTTIFieldInfo::DEFAULT;
 
-	void RTTIField::checkIsArray(bool array) const
+	void RTTIField::CheckIsArray(bool array) const
 	{
 		if(array && !schema.isArray)
 		{

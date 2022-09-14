@@ -23,10 +23,10 @@ namespace bs
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "ParticleOrbitOptions")
 
-		static MonoObject* box(const __PARTICLE_ORBIT_DESCInterop& value);
-		static __PARTICLE_ORBIT_DESCInterop unbox(MonoObject* value);
-		static PARTICLE_ORBIT_DESC fromInterop(const __PARTICLE_ORBIT_DESCInterop& value);
-		static __PARTICLE_ORBIT_DESCInterop toInterop(const PARTICLE_ORBIT_DESC& value);
+		static MonoObject* Box(const __PARTICLE_ORBIT_DESCInterop& value);
+		static __PARTICLE_ORBIT_DESCInterop Unbox(MonoObject* value);
+		static PARTICLE_ORBIT_DESC FromInterop(const __PARTICLE_ORBIT_DESCInterop& value);
+		static __PARTICLE_ORBIT_DESCInterop ToInterop(const PARTICLE_ORBIT_DESC& value);
 
 	private:
 		ScriptPARTICLE_ORBIT_DESC(MonoObject* managedInstance);

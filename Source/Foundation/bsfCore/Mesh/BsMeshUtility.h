@@ -45,7 +45,7 @@ namespace bs
 		 * corner of a cube should be split into three vertices used by three triangles in order for the normals to be
 		 * valid.)
 		 */
-		static void calculateNormals(Vector3* vertices, UINT8* indices, UINT32 numVertices,
+		static void CalculateNormals(Vector3* vertices, UINT8* indices, UINT32 numVertices,
 			UINT32 numIndices, Vector3* normals, UINT32 indexSize = 4);
 
 		/**
@@ -72,7 +72,7 @@ namespace bs
 		 * corner of a cube should be split into three vertices used by three triangles in order for the normals to be
 		 * valid.)
 		 */
-		static void calculateTangents(Vector3* vertices, Vector3* normals, Vector2* uv, UINT8* indices, UINT32 numVertices,
+		static void CalculateTangents(Vector3* vertices, Vector3* normals, Vector2* uv, UINT8* indices, UINT32 numVertices,
 			UINT32 numIndices, Vector3* tangents, Vector3* bitangents, UINT32 indexSize = 4, UINT32 vertexStride = 0);
 
 		/**
@@ -97,7 +97,7 @@ namespace bs
 		 * a corner of a cube should be split into three vertices used by three triangles in order for the normals to be
 		 * valid.)
 		 */
-		static void calculateTangentSpace(Vector3* vertices, Vector2* uv, UINT8* indices, UINT32 numVertices,
+		static void CalculateTangentSpace(Vector3* vertices, Vector2* uv, UINT8* indices, UINT32 numVertices,
 			UINT32 numIndices, Vector3* normals, Vector3* tangents, Vector3* bitangents, UINT32 indexSize = 4);
 
 		/**
@@ -116,7 +116,7 @@ namespace bs
 		 *									generated and need to be stored. Vertices are always generate in tuples of
 		 *									three, forming a single triangle.
 		 */
-		static void clip2D(UINT8* vertices, UINT8* uvs, UINT32 numTris, UINT32 vertexStride, const Vector<Plane>& clipPlanes,
+		static void Clip2D(UINT8* vertices, UINT8* uvs, UINT32 numTris, UINT32 vertexStride, const Vector<Plane>& clipPlanes,
 			const std::function<void(Vector2*, Vector2*, UINT32)>& writeCallback);
 
 		/**
@@ -134,7 +134,7 @@ namespace bs
 		 *									generated and need to be stored. Vertices are always generate in tuples of
 		 *									three, forming a single triangle.
 		 */
-		static void clip3D(UINT8* vertices, UINT8* uvs, UINT32 numTris, UINT32 vertexStride, const Vector<Plane>& clipPlanes,
+		static void Clip3D(UINT8* vertices, UINT8* uvs, UINT32 numTris, UINT32 vertexStride, const Vector<Plane>& clipPlanes,
 			const std::function<void(Vector3*, Vector2*, UINT32)>& writeCallback);
 
 		/**
@@ -146,7 +146,7 @@ namespace bs
 		 * @param[in]	inStride		Distance between two entries in the @p source buffer, in bytes.
 		 * @param[in]	outStride		Distance between two entries in the @p destination buffer, in bytes.
 		 */
-		static void packNormals(Vector3* source, UINT8* destination, UINT32 count, UINT32 inStride, UINT32 outStride);
+		static void PackNormals(Vector3* source, UINT8* destination, UINT32 count, UINT32 inStride, UINT32 outStride);
 
 		/**
 		 * Encodes normals from 32-bit float format into 4D 8-bit packed format.
@@ -157,7 +157,7 @@ namespace bs
 		 * @param[in]	inStride		Distance between two entries in the @p source buffer, in bytes.
 		 * @param[in]	outStride		Distance between two entries in the @p destination buffer, in bytes.
 		 */
-		static void packNormals(Vector4* source, UINT8* destination, UINT32 count, UINT32 inStride, UINT32 outStride);
+		static void PackNormals(Vector4* source, UINT8* destination, UINT32 count, UINT32 inStride, UINT32 outStride);
 
 		/**
 		 * Decodes normals from 4D 8-bit packed format into a 32-bit float format.
@@ -167,7 +167,7 @@ namespace bs
 		 * @param[in]	count			Number of entries in the @p source and @p destination arrays.
 		 * @param[in]	stride			Distance between two entries in the @p source buffer, in bytes.
 		 */
-		static void unpackNormals(UINT8* source, Vector3* destination, UINT32 count, UINT32 stride);
+		static void UnpackNormals(UINT8* source, Vector3* destination, UINT32 count, UINT32 stride);
 
 		/**
 		 * Decodes normals from 4D 8-bit packed format into a 32-bit float format.
@@ -177,10 +177,10 @@ namespace bs
 		 * @param[in]	count			Number of entries in the @p source and @p destination arrays.
 		 * @param[in]	stride			Distance between two entries in the @p source buffer, in bytes.
 		 */
-		static void unpackNormals(UINT8* source, Vector4* destination, UINT32 count, UINT32 stride);
+		static void UnpackNormals(UINT8* source, Vector4* destination, UINT32 count, UINT32 stride);
 
 		/** Decodes a normal from 4D 8-bit packed format into a 32-bit float format. */
-		static Vector3 unpackNormal(const UINT8* source)
+		static Vector3 UnpackNormal(const UINT8* source)
 		{
 			const PackedNormal& packed = *(PackedNormal*)source;
 			Vector3 output;

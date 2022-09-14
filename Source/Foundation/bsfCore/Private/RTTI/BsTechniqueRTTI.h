@@ -28,26 +28,26 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 	public:
-		void onDeserializationEnded(IReflectable* obj, SerializationContext* context) override
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override
 		{
 			Technique* technique = static_cast<Technique*>(obj);
 			technique->initialize();
 		}
 
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "Technique";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_Technique;
 		}
 
 		SPtr<IReflectable> newRTTIObject() override
 		{
-			return Technique::createEmpty();
+			return Technique::CreateEmpty();
 		}
 	};
 

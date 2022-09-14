@@ -77,7 +77,7 @@ namespace bs
 			alcCloseDevice(mDevice);
 	}
 
-	void OAAudio::setVolume(float volume)
+	void OAAudio::SetVolume(float volume)
 	{
 		mVolume = Math::clamp01(volume);
 		
@@ -85,12 +85,12 @@ namespace bs
 			listener->rebuild();
 	}
 
-	float OAAudio::getVolume() const
+	float OAAudio::GetVolume() const
 	{
 		return mVolume;
 	}
 
-	void OAAudio::setPaused(bool paused)
+	void OAAudio::SetPaused(bool paused)
 	{
 		if (mIsPaused == paused)
 			return;
@@ -109,13 +109,13 @@ namespace bs
 		if (mStreamingTask != nullptr && !mStreamingTask->isComplete())
 			return;
 
-		mStreamingTask = Task::create("AudioStream", worker, TaskPriority::VeryHigh);
-		TaskScheduler::instance().addTask(mStreamingTask);
+		mStreamingTask = Task::Create("AudioStream", worker, TaskPriority::VeryHigh);
+		TaskScheduler::Instance().addTask(mStreamingTask);
 
 		Audio::UpdateInternal();
 	}
 
-	void OAAudio::setActiveDevice(const AudioDevice& device)
+	void OAAudio::SetActiveDevice(const AudioDevice& device)
 	{
 		if (mAllDevices.size() == 1)
 			return; // No devices to change to, keep the active device as is
@@ -172,7 +172,7 @@ namespace bs
 		mSources.erase(source);
 	}
 
-	void OAAudio::startStreaming(OAAudioSource* source)
+	void OAAudio::StartStreaming(OAAudioSource* source)
 	{
 		Lock lock(mMutex);
 
@@ -180,7 +180,7 @@ namespace bs
 		mDestroyedSources.erase(source);
 	}
 
-	void OAAudio::stopStreaming(OAAudioSource* source)
+	void OAAudio::StopStreaming(OAAudioSource* source)
 	{
 		Lock lock(mMutex);
 
@@ -208,23 +208,23 @@ namespace bs
 		return nullptr;
 	}
 
-	SPtr<AudioClip> OAAudio::createClip(const SPtr<DataStream>& samples, UINT32 streamSize, UINT32 numSamples,
+	SPtr<AudioClip> OAAudio::CreateClip(const SPtr<DataStream>& samples, UINT32 streamSize, UINT32 numSamples,
 		const AUDIO_CLIP_DESC& desc)
 	{
 		return bs_core_ptr_new<OAAudioClip>(samples, streamSize, numSamples, desc);
 	}
 
-	SPtr<AudioListener> OAAudio::createListener()
+	SPtr<AudioListener> OAAudio::CreateListener()
 	{
 		return bs_shared_ptr_new<OAAudioListener>();
 	}
 
-	SPtr<AudioSource> OAAudio::createSource()
+	SPtr<AudioSource> OAAudio::CreateSource()
 	{
 		return bs_shared_ptr_new<OAAudioSource>();
 	}
 
-	void OAAudio::rebuildContexts()
+	void OAAudio::RebuildContexts()
 	{
 		for (auto& source : mSources)
 			source->clear();
@@ -254,7 +254,7 @@ namespace bs
 			source->rebuild();
 	}
 
-	void OAAudio::clearContexts()
+	void OAAudio::ClearContexts()
 	{
 		alcMakeContextCurrent(nullptr);
 
@@ -264,7 +264,7 @@ namespace bs
 		mContexts.clear();
 	}
 
-	void OAAudio::updateStreaming()
+	void OAAudio::UpdateStreaming()
 	{
 		{
 			Lock lock(mMutex);
@@ -452,6 +452,6 @@ namespace bs
 
 	OAAudio& gOAAudio()
 	{
-		return static_cast<OAAudio&>(OAAudio::instance());
+		return static_cast<OAAudio&>(OAAudio::Instance());
 	}
 }

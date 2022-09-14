@@ -16,17 +16,17 @@ namespace bs
 	void ScriptColorGradientKey::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptColorGradientKey::box(const __ColorGradientKeyInterop& value)
+	MonoObject*ScriptColorGradientKey::Box(const __ColorGradientKeyInterop& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	__ColorGradientKeyInterop ScriptColorGradientKey::unbox(MonoObject* value)
+	__ColorGradientKeyInterop ScriptColorGradientKey::Unbox(MonoObject* value)
 	{
-		return *(__ColorGradientKeyInterop*)MonoUtil::unbox(value);
+		return *(__ColorGradientKeyInterop*)MonoUtil::Unbox(value);
 	}
 
-	ColorGradientKey ScriptColorGradientKey::fromInterop(const __ColorGradientKeyInterop& value)
+	ColorGradientKey ScriptColorGradientKey::FromInterop(const __ColorGradientKeyInterop& value)
 	{
 		ColorGradientKey output;
 		output.color = value.color;
@@ -35,7 +35,7 @@ namespace bs
 		return output;
 	}
 
-	__ColorGradientKeyInterop ScriptColorGradientKey::toInterop(const ColorGradientKey& value)
+	__ColorGradientKeyInterop ScriptColorGradientKey::ToInterop(const ColorGradientKey& value)
 	{
 		__ColorGradientKeyInterop output;
 		output.color = value.color;

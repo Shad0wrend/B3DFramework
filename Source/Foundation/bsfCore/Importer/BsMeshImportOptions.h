@@ -48,8 +48,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class AnimationSplitInfoRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** A set of animation events that will be added to an animation clip during animation import. */
@@ -69,8 +69,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ImportedAnimationEventsRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/**
@@ -146,15 +146,15 @@ namespace bs
 
 		/** Creates a new import options object that allows you to customize how are meshes imported. */
 		BS_SCRIPT_EXPORT(ec:T)
-		static SPtr<MeshImportOptions> create();
+		static SPtr<MeshImportOptions> Create();
 
 		/************************************************************************/
 		/* 								SERIALIZATION                      		*/
 		/************************************************************************/
 	public:
 		friend class MeshImportOptionsRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** @} */

@@ -32,17 +32,17 @@ namespace bs
 
 	void ScriptGUIButton::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_CreateInstance", (void*)&ScriptGUIButton::internal_createInstance);
-		metaData.scriptClass->addInternalCall("Internal_SetContent", (void*)&ScriptGUIButton::internal_setContent);
-		metaData.scriptClass->addInternalCall("Internal_SetTint", (void*)&ScriptGUIButton::internal_setTint);
+		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIButton::InternalCreateInstance);
+		metaData.scriptClass->AddInternalCall("Internal_SetContent", (void*)&ScriptGUIButton::InternalSetContent);
+		metaData.scriptClass->AddInternalCall("Internal_SetTint", (void*)&ScriptGUIButton::InternalSetTint);
 
-		onClickThunk = (OnClickThunkDef)metaData.scriptClass->getMethod("DoOnClick")->getThunk();
-		onDoubleClickThunk = (OnDoubleClickThunkDef)metaData.scriptClass->getMethod("DoOnDoubleClick")->getThunk();
+		onClickThunk = (OnClickThunkDef)metaData.scriptClass->GetMethod("DoOnClick")->GetThunk();
+		onDoubleClickThunk = (OnDoubleClickThunkDef)metaData.scriptClass->GetMethod("DoOnDoubleClick")->GetThunk();
 		onHoverThunk = (OnHoverThunkDef)metaData.scriptClass->getMethod("DoOnHover")->getThunk();
 		onOutThunk = (OnOutThunkDef)metaData.scriptClass->getMethod("DoOnOut")->getThunk();
 	}
 
-	void ScriptGUIButton::internal_createInstance(MonoObject* instance, __GUIContentInterop* content,
+	void ScriptGUIButton::InternalCreateInstance(MonoObject* instance, __GUIContentInterop* content,
 		MonoString* style, MonoArray* guiOptions)
 	{
 		GUIOptions options;
@@ -53,7 +53,7 @@ namespace bs
 			options.addOption(scriptArray.get<GUIOption>(i));
 
 		GUIContent nativeContent = ScriptGUIContent::fromInterop(*content);
-		GUIButton* guiButton = GUIButton::create(nativeContent, options, MonoUtil::monoToString(style));
+		GUIButton* guiButton = GUIButton::Create(nativeContent, options, MonoUtil::monoToString(style));
 
 		auto nativeInstance = new (bs_alloc<ScriptGUIButton>()) ScriptGUIButton(instance, guiButton);
 
@@ -63,7 +63,7 @@ namespace bs
 		guiButton->onOut.connect(std::bind(&ScriptGUIButton::onOut, nativeInstance));
 	}
 
-	void ScriptGUIButton::internal_setContent(ScriptGUIButton* nativeInstance, __GUIContentInterop* content)
+	void ScriptGUIButton::InternalSetContent(ScriptGUIButton* nativeInstance, __GUIContentInterop* content)
 	{
 		GUIContent nativeContent = ScriptGUIContent::fromInterop(*content);
 
@@ -71,28 +71,28 @@ namespace bs
 		button->setContent(nativeContent);
 	}
 
-	void ScriptGUIButton::internal_setTint(ScriptGUIButton* nativeInstance, Color* color)
+	void ScriptGUIButton::InternalSetTint(ScriptGUIButton* nativeInstance, Color* color)
 	{
 		GUIButton* button = (GUIButton*)nativeInstance->getGUIElement();
 		button->setTint(*color);
 	}
 
-	void ScriptGUIButton::onClick()
+	void ScriptGUIButton::OnClick()
 	{
 		MonoUtil::invokeThunk(onClickThunk, getManagedInstance());
 	}
 
-	void ScriptGUIButton::onDoubleClick()
+	void ScriptGUIButton::OnDoubleClick()
 	{
 		MonoUtil::invokeThunk(onDoubleClickThunk, getManagedInstance());
 	}
 
-	void ScriptGUIButton::onHover()
+	void ScriptGUIButton::OnHover()
 	{
 		MonoUtil::invokeThunk(onHoverThunk, getManagedInstance());
 	}
 
-	void ScriptGUIButton::onOut()
+	void ScriptGUIButton::OnOut()
 	{
 		MonoUtil::invokeThunk(onOutThunk, getManagedInstance());
 	}

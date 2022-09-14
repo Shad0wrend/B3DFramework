@@ -32,7 +32,7 @@ namespace bs { namespace ct
 		 * @note Only Default and RandomWrite views are supported for this type of buffer.
 		 */
 		// TODO Low Priority: Perhaps reflect usage flag limitation by having an enum with only the supported two options?
-		static GpuBufferView* requestView(D3D11GpuBuffer* buffer, UINT32 firstElement, UINT32 numElements,
+		static GpuBufferView* RequestView(D3D11GpuBuffer* buffer, UINT32 firstElement, UINT32 numElements,
 			GpuViewUsage usage);
 
 		/**
@@ -40,16 +40,16 @@ namespace bs { namespace ct
 		 *
 		 * @note	View will only truly get released once all references to it are released.
 		 */
-		static void releaseView(GpuBufferView* view);
+		static void ReleaseView(GpuBufferView* view);
 
 		/**	Returns the internal DX11 GPU buffer object. */
-		ID3D11Buffer* getDX11Buffer() const;
+		ID3D11Buffer* GetDX11Buffer() const;
 
 		/** Returns the DX11 shader resource view object for the buffer. */
-		ID3D11ShaderResourceView* getSRV() const;
+		ID3D11ShaderResourceView* GetSrv() const;
 
 		/** Returns the DX11 unordered access view object for the buffer. */
-		ID3D11UnorderedAccessView* getUAV() const;
+		ID3D11UnorderedAccessView* GetUav() const;
 
 	protected:
 		friend class D3D11HardwareBufferManager;
@@ -58,10 +58,10 @@ namespace bs { namespace ct
 		D3D11GpuBuffer(const GPU_BUFFER_DESC& desc, SPtr<HardwareBuffer> underlyingBuffer);
 
 		/**	Destroys all buffer views regardless if their reference count is zero or not. */
-		void clearBufferViews();
+		void ClearBufferViews();
 
 		/** @copydoc GpuBuffer::initialize */
-		void initialize() override;
+		void Initialize() ;
 
 	private:
 		/**	Helper class to help with reference counting for GPU buffer views. */

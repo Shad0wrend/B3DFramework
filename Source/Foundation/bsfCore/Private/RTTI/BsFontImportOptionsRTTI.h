@@ -28,13 +28,13 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 		// For compability with old version
-		Vector<std::pair<UINT32, UINT32>>& getCharIndexRangesOld(FontImportOptions* obj)
+		Vector<std::pair<UINT32, UINT32>>& GetCharIndexRangesOld(FontImportOptions* obj)
 		{
 			static Vector<std::pair<UINT32, UINT32>> dummy;
 			return dummy;
 		}
 
-		void setCharIndexRangesOld(FontImportOptions* obj, Vector<std::pair<UINT32, UINT32>>& value)
+		void SetCharIndexRangesOld(FontImportOptions* obj, Vector<std::pair<UINT32, UINT32>>& value)
 		{
 			// If already set it's assumed the new version already populated it
 			if(!obj->charIndexRanges.empty())
@@ -47,22 +47,22 @@ namespace bs
 	public:
 		FontImportOptionsRTTI()
 		{
-			addPlainField("mCharIndexRangesOld", 1, &FontImportOptionsRTTI::getCharIndexRangesOld,
-				&FontImportOptionsRTTI::setCharIndexRangesOld);
+			addPlainField("mCharIndexRangesOld", 1, &FontImportOptionsRTTI::GetCharIndexRangesOld,
+				&FontImportOptionsRTTI::SetCharIndexRangesOld);
 		}
 
-		const String& getRTTIName() override
+		const String& GetRttiName() 
 		{
 			static String name = "FontImportOptions";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() 
 		{
 			return TID_FontImportOptions;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return bs_shared_ptr_new<FontImportOptions>();
 		}

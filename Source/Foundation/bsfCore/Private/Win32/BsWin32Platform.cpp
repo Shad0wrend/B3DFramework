@@ -96,7 +96,7 @@ namespace bs
 		mData = nullptr;
 	}
 
-	Vector2I Platform::getCursorPosition()
+	Vector2I Platform::GetCursorPosition()
 	{
 		Vector2I screenPos;
 
@@ -109,45 +109,45 @@ namespace bs
 		return screenPos;
 	}
 
-	void Platform::setCursorPosition(const Vector2I& screenPos)
+	void Platform::SetCursorPosition(const Vector2I& screenPos)
 	{
 		SetCursorPos(screenPos.x, screenPos.y);
 	}
 
-	void Platform::captureMouse(const RenderWindow& window)
+	void Platform::CaptureMouse(const RenderWindow& window)
 	{
-		SPtr<RenderWindow> primaryWindow = gCoreApplication().getPrimaryWindow();
+		SPtr<RenderWindow> primaryWindow = gCoreApplication().GetPrimaryWindow();
 		UINT64 hwnd;
-		primaryWindow->getCustomAttribute("WINDOW", &hwnd);
+		primaryWindow->GetCustomAttribute("WINDOW", &hwnd);
 		
 		PostMessage((HWND)hwnd, WM_BS_SETCAPTURE, WPARAM((HWND)hwnd), 0);
 	}
 
-	void Platform::releaseMouseCapture()
+	void Platform::ReleaseMouseCapture()
 	{
-		SPtr<RenderWindow> primaryWindow = gCoreApplication().getPrimaryWindow();
+		SPtr<RenderWindow> primaryWindow = gCoreApplication().GetPrimaryWindow();
 		UINT64 hwnd;
-		primaryWindow->getCustomAttribute("WINDOW", &hwnd);
+		primaryWindow->GetCustomAttribute("WINDOW", &hwnd);
 
 		PostMessage((HWND)hwnd, WM_BS_RELEASECAPTURE, WPARAM((HWND)hwnd), 0);
 	}
 
-	bool Platform::isPointOverWindow(const RenderWindow& window, const Vector2I& screenPos)
+	bool Platform::IsPointOverWindow(const RenderWindow& window, const Vector2I& screenPos)
 	{
-		SPtr<RenderWindow> primaryWindow = gCoreApplication().getPrimaryWindow();
+		SPtr<RenderWindow> primaryWindow = gCoreApplication().GetPrimaryWindow();
 
 		POINT point;
 		point.x = screenPos.x;
 		point.y = screenPos.y;
 
 		UINT64 hwndToCheck;
-		window.getCustomAttribute("WINDOW", &hwndToCheck);
+		window.GetCustomAttribute("WINDOW", &hwndToCheck);
 
 		HWND hwndUnderPos = WindowFromPoint(point);
 		return hwndUnderPos == (HWND)hwndToCheck;
 	}
 
-	void Platform::hideCursor()
+	void Platform::HideCursor()
 	{
 		if (mData->mIsCursorHidden)
 			return;
@@ -157,9 +157,9 @@ namespace bs
 		// ShowCursor(FALSE) doesn't work. Presumably because we're in the wrong thread, and using
 		// WM_SETCURSOR in message loop to hide the cursor is smarter solution anyway.
 
-		SPtr<RenderWindow> primaryWindow = gCoreApplication().getPrimaryWindow();
+		SPtr<RenderWindow> primaryWindow = gCoreApplication().GetPrimaryWindow();
 		UINT64 hwnd;
-		primaryWindow->getCustomAttribute("WINDOW", &hwnd);
+		primaryWindow->GetCustomAttribute("WINDOW", &hwnd);
 
 		PostMessage((HWND)hwnd, WM_SETCURSOR, WPARAM((HWND)hwnd), (LPARAM)MAKELONG(HTCLIENT, WM_MOUSEMOVE));
 	}
@@ -181,12 +181,12 @@ namespace bs
 		PostMessage((HWND)hwnd, WM_SETCURSOR, WPARAM((HWND)hwnd), (LPARAM)MAKELONG(HTCLIENT, WM_MOUSEMOVE));
 	}
 
-	bool Platform::isCursorHidden()
+	bool Platform::IsCursorHidden()
 	{
 		return mData->mIsCursorHidden;
 	}
 
-	void Platform::clipCursorToWindow(const RenderWindow& window)
+	void Platform::ClipCursorToWindow(const RenderWindow& window)
 	{
 		UINT64 hwnd;
 		window.getCustomAttribute("WINDOW", &hwnd);
@@ -198,7 +198,7 @@ namespace bs
 			applyClipping(mData);
 	}
 
-	void Platform::clipCursorToRect(const Rect2I& screenRect)
+	void Platform::ClipCursorToRect(const Rect2I& screenRect)
 	{
 		mData->mCursorClipping = true;
 		mData->mClipWindow = 0;
@@ -212,7 +212,7 @@ namespace bs
 			applyClipping(mData);
 	}
 
-	void Platform::clipCursorDisable()
+	void Platform::ClipCursorDisable()
 	{
 		mData->mCursorClipping = false;
 		mData->mClipWindow = 0;
@@ -222,7 +222,7 @@ namespace bs
 	}
 
 	// TODO - Add support for animated custom cursor
-	void Platform::setCursor(PixelData& pixelData, const Vector2I& hotSpot)
+	void Platform::SetCursor(PixelData& pixelData, const Vector2I& hotSpot)
 	{
 		if (mData->mUsingCustomCursor)
 		{
@@ -259,7 +259,7 @@ namespace bs
 		PostMessage((HWND)hwnd, WM_SETCURSOR, WPARAM((HWND)hwnd), (LPARAM)MAKELONG(HTCLIENT, WM_MOUSEMOVE));
 	}
 
-	void Platform::setIcon(const PixelData& pixelData)
+	void Platform::SetIcon(const PixelData& pixelData)
 	{
 		Vector<Color> pixels = pixelData.getColors();
 		UINT32 width = pixelData.getWidth();
@@ -288,21 +288,21 @@ namespace bs
 		PostMessage((HWND)hwnd, WM_SETICON, WPARAM(ICON_BIG), (LPARAM)icon);
 	}
 
-	void Platform::setCaptionNonClientAreas(const ct::RenderWindow& window, const Vector<Rect2I>& nonClientAreas)
+	void Platform::SetCaptionNonClientAreas(const ct::RenderWindow& window, const Vector<Rect2I>& nonClientAreas)
 	{
 		Lock lock(mData->mSync);
 
 		mData->mNonClientAreas[&window].moveAreas = nonClientAreas;
 	}
 
-	void Platform::setResizeNonClientAreas(const ct::RenderWindow& window, const Vector<NonClientResizeArea>& nonClientAreas)
+	void Platform::SetResizeNonClientAreas(const ct::RenderWindow& window, const Vector<NonClientResizeArea>& nonClientAreas)
 	{
 		Lock lock(mData->mSync);
 
 		mData->mNonClientAreas[&window].resizeAreas = nonClientAreas;
 	}
 
-	void Platform::resetNonClientAreas(const ct::RenderWindow& window)
+	void Platform::ResetNonClientAreas(const ct::RenderWindow& window)
 	{
 		Lock lock(mData->mSync);
 
@@ -312,12 +312,12 @@ namespace bs
 			mData->mNonClientAreas.erase(iterFind);
 	}
 
-	void Platform::sleep(UINT32 duration)
+	void Platform::Sleep(UINT32 duration)
 	{
 		Sleep((DWORD)duration);
 	}
 
-	void Win32Platform::registerDropTarget(DropTarget* target)
+	void Win32Platform::RegisterDropTarget(DropTarget* target)
 	{
 		const RenderWindow* window = target->GetOwnerWindowInternal();
 
@@ -339,10 +339,10 @@ namespace bs
 		else
 			win32DropTarget = iterFind->second;
 
-		win32DropTarget->registerDropTarget(target);
+		win32DropTarget->RegisterDropTarget(target);
 	}
 
-	void Win32Platform::unregisterDropTarget(DropTarget* target)
+	void Win32Platform::UnregisterDropTarget(DropTarget* target)
 	{
 		auto iterFind = mData->mDropTargets.dropTargetsPerWindow.find(target->GetOwnerWindowInternal());
 		if (iterFind == mData->mDropTargets.dropTargetsPerWindow.end())
@@ -352,9 +352,9 @@ namespace bs
 		else
 		{
 			Win32DropTarget* win32DropTarget = iterFind->second;
-			win32DropTarget->unregisterDropTarget(target);
+			win32DropTarget->UnregisterDropTarget(target);
 
-			if(win32DropTarget->getNumDropTargets() == 0)
+			if(win32DropTarget->GetNumDropTargets() == 0)
 			{
 				mData->mDropTargets.dropTargetsPerWindow.erase(iterFind);
 
@@ -366,7 +366,7 @@ namespace bs
 		}
 	}
 
-	void Platform::copyToClipboard(const String& string)
+	void Platform::CopyToClipboard(const String& string)
 	{
 		WString wideString = UTF8::toWide(string);
 
@@ -390,7 +390,7 @@ namespace bs
 		}
 	}
 
-	String Platform::copyFromClipboard()
+	String Platform::CopyFromClipboard()
 	{
 		if (OpenClipboard(NULL))
 		{
@@ -415,7 +415,7 @@ namespace bs
 		return u8"";
 	}
 
-	String Platform::keyCodeToUnicode(UINT32 keyCode)
+	String Platform::KeyCodeToUnicode(UINT32 keyCode)
 	{
 		static HKL keyboardLayout = GetKeyboardLayout(0);
 		static UINT8 keyboarState[256];
@@ -433,7 +433,7 @@ namespace bs
 		return StringUtil::BLANK;
 	}
 
-	void Platform::openFolder(const Path& path)
+	void Platform::OpenFolder(const Path& path)
 	{
 		WString pathString = UTF8::toWide(path.toString());
 

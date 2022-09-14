@@ -32,40 +32,40 @@ namespace bs
 		 *
 		 * @note	All values are in bytes. Actual hardware buffer update is delayed until rendering.
 		 */
-		void write(UINT32 offset, const void* data, UINT32 size);
+		void Write(UINT32 offset, const void* data, UINT32 size);
 
 		/**
 		 * Read some data from the specified offset in the buffer.
 		 *			
 		 * @note	All values are in bytes. This reads from the cached CPU buffer and not from the GPU.
 		 */
-		void read(UINT32 offset, void* data, UINT32 size);
+		void Read(UINT32 offset, void* data, UINT32 size);
 
 		/**
 		 * Clear specified section of the buffer to zero.
 		 *
 		 * @note	All values are in bytes. Actual hardware buffer update is delayed until rendering.
 		 */
-		void zeroOut(UINT32 offset, UINT32 size);
+		void ZeroOut(UINT32 offset, UINT32 size);
 
 		/** Returns internal cached data of the buffer. */
-		const UINT8* getCachedData() const { return mCachedData; }
+		const UINT8* GetCachedData() const { return mCachedData; }
 
 		/**	Returns the size of the buffer in bytes. */
-		UINT32 getSize() const { return mSize; }
+		UINT32 GetSize() const { return mSize; }
 
 		/**	Retrieves a core implementation of a GPU param block buffer usable only from the core thread. */
-		SPtr<ct::GpuParamBlockBuffer> getCore() const;
+		SPtr<ct::GpuParamBlockBuffer> GetCore() const;
 
 		/** @copydoc HardwareBufferManager::createGpuParamBlockBuffer */
-		static SPtr<GpuParamBlockBuffer> create(UINT32 size, GpuBufferUsage usage = GBU_DYNAMIC);
+		static SPtr<GpuParamBlockBuffer> Create(UINT32 size, GpuBufferUsage usage = GBU_DYNAMIC);
 
 	protected:
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> createCore() const override;
+		SPtr<ct::CoreObject> CreateCore() const override;
 
 		/** @copydoc CoreObject::syncToCore */
-		CoreSyncData syncToCore(FrameAlloc* allocator) override;
+		CoreSyncData SyncToCore(FrameAlloc* allocator) override;
 
 		GpuBufferUsage mUsage;
 		UINT32 mSize;
@@ -97,14 +97,14 @@ namespace bs
 		 * @param[in]	data		Data to write. Must match the size of the buffer.
 		 * @param[in]	queueIdx	Device queue to perform the write operation on. See @ref queuesDoc.
 		 */
-		void writeToGPU(const UINT8* data, UINT32 queueIdx = 0);
+		void WriteToGpu(const UINT8* data, UINT32 queueIdx = 0);
 
 		/**
 		 * Flushes any cached data into the actual GPU buffer.
 		 *
 		 * @param[in]	queueIdx	Device queue to perform the write operation on. See @ref queuesDoc.
 		 */
-		void flushToGPU(UINT32 queueIdx = 0);
+		void FlushToGpu(UINT32 queueIdx = 0);
 
 		/**
 		 * Write some data to the specified offset in the buffer.
@@ -112,14 +112,14 @@ namespace bs
 		 * @note	All values are in bytes. Actual hardware buffer update is delayed until rendering or until
 		 *			flushToGPU() is called.
 		 */
-		void write(UINT32 offset, const void* data, UINT32 size);
+		void Write(UINT32 offset, const void* data, UINT32 size);
 
 		/**
 		 * Read some data from the specified offset in the buffer.
 		 *			
 		 * @note	All values are in bytes. This reads from the cached CPU buffer and not directly from the GPU.
 		 */
-		void read(UINT32 offset, void* data, UINT32 size);
+		void Read(UINT32 offset, void* data, UINT32 size);
 
 		/**
 		 * Clear specified section of the buffer to zero.
@@ -127,23 +127,23 @@ namespace bs
 		 * @note	All values are in bytes. Actual hardware buffer update is delayed until rendering or until
 		 *			flushToGPU() is called.
 		 */
-		void zeroOut(UINT32 offset, UINT32 size);
+		void ZeroOut(UINT32 offset, UINT32 size);
 
 		/**	Returns the size of the buffer in bytes. */
-		UINT32 getSize() const { return mSize; }
+		UINT32 GetSize() const { return mSize; }
 
 		/** @copydoc HardwareBufferManager::createGpuParamBlockBuffer */
-		static SPtr<GpuParamBlockBuffer> create(UINT32 size, GpuBufferUsage usage = GBU_DYNAMIC,
+		static SPtr<GpuParamBlockBuffer> Create(UINT32 size, GpuBufferUsage usage = GBU_DYNAMIC,
 			GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
 	protected:
 		friend class HardwareBufferManager;
 
 		/** @copydoc CoreObject::syncToCore */
-		void syncToCore(const CoreSyncData& data)  override;
+		void SyncToCore(const CoreSyncData& data)  override;
 
 		/** @copydoc CoreObject::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 		HardwareBuffer* mBuffer;
 

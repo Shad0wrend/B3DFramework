@@ -16,15 +16,15 @@ namespace bs
 	const Path Paths::EDITOR_DATA_PATH = "EditorData/";
 #endif
 
-	const Path& Paths::getDataPath()
+	const Path& Paths::GetDataPath()
 	{
 		static bool initialized = false;
 		static Path path;
 
 		if(!initialized)
 		{
-			if (FileSystem::exists(FRAMEWORK_DATA_PATH))
-				path = FileSystem::getWorkingDirectoryPath() + FRAMEWORK_DATA_PATH;
+			if (FileSystem::Exists(FRAMEWORK_DATA_PATH))
+				path = FileSystem::GetWorkingDirectoryPath() + FRAMEWORK_DATA_PATH;
 			else
 #if BS_IS_BANSHEE3D
 				path = Path(RAW_APP_ROOT) + Path("Source/bsf") + FRAMEWORK_DATA_PATH;
@@ -38,23 +38,23 @@ namespace bs
 		return path;
 	}
 
-	const Path& Paths::getBinariesPath()
+	const Path& Paths::GetBinariesPath()
 	{
 		static bool initialized = false;
 		static Path path;
 		
 		if(!initialized)
 		{
-			path = FileSystem::getWorkingDirectoryPath();
+			path = FileSystem::GetWorkingDirectoryPath();
 			
 			// Look for bsf library to find the right path
 			Path anchorFile = path;
-			anchorFile.setFilename("bsf." + String(DynLib::EXTENSION));
+			anchorFile.SetFilename("bsf." + String(DynLib::EXTENSION));
 
-			if (!FileSystem::exists(anchorFile))
+			if (!FileSystem::Exists(anchorFile))
 			{
 				path = BINARIES_PATH;
-				if (!FileSystem::exists(path))
+				if (!FileSystem::Exists(path))
 					path = ""; // No path found, keep the default
 			}
 
@@ -65,7 +65,7 @@ namespace bs
 	}
 
 #if BS_INCLUDE_B3D_PATHS
-	const Path& Paths::getEditorDataPath()
+	const Path& Paths::GetEditorDataPath()
 	{
 		static bool initialized = false;
 		static Path path;
@@ -80,15 +80,15 @@ namespace bs
 				path = FileSystem::getWorkingDirectoryPath() + editorDataPath;
 #else
 			// Otherwise, look for the folder in the direct descendant of the working directory
-			if (FileSystem::exists(EDITOR_DATA_PATH))
-				path = FileSystem::getWorkingDirectoryPath() + EDITOR_DATA_PATH;
+			if (FileSystem::Exists(EDITOR_DATA_PATH))
+				path = FileSystem::GetWorkingDirectoryPath() + EDITOR_DATA_PATH;
 #endif
 			// Then check the source distribution itself, in case we're running directly from the build directory
 			else
 			{
 				path = Path(RAW_APP_ROOT) + FRAMEWORK_DATA_PATH;
 
-				if (!FileSystem::exists(path))
+				if (!FileSystem::Exists(path))
 					BS_LOG(Error, FileSystem, "Cannot find builtin assets for the editor at path '{0}'.", path);
 			}
 
@@ -98,15 +98,15 @@ namespace bs
 		return path;
 	}
 
-	const Path& Paths::getGameSettingsPath()
+	const Path& Paths::GetGameSettingsPath()
 	{
-		static Path path = findPath(GAME_SETTINGS_NAME);
+		static Path path = FindPath(GAME_SETTINGS_NAME);
 		return path;
 	}
 
-	const Path& Paths::getGameResourcesPath()
+	const Path& Paths::GetGameResourcesPath()
 	{
-		static Path path = findPath(GAME_RESOURCES_FOLDER_NAME);
+		static Path path = FindPath(GAME_RESOURCES_FOLDER_NAME);
 		return path;
 	}
 #endif

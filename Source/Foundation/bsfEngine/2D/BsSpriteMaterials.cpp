@@ -29,16 +29,16 @@ namespace bs
 	SpriteImageMaterial::SpriteImageMaterial(SpriteMaterialTransparency transparency, bool animated)
 		:SpriteMaterial(
 			getMaterialId(transparency, animated),
-			BuiltinResources::instance().createSpriteImageMaterial(),
+			BuiltinResources::Instance().CreateSpriteImageMaterial(),
 			getMaterialVariation(transparency, animated),
 			!animated)
 	{ }
 
 	SpriteTextMaterial::SpriteTextMaterial()
-		: SpriteMaterial(6, BuiltinResources::instance().createSpriteTextMaterial())
+		: SpriteMaterial(6, BuiltinResources::Instance().CreateSpriteTextMaterial())
 	{ }
 
 	SpriteLineMaterial::SpriteLineMaterial()
-		: SpriteMaterial(7, BuiltinResources::instance().createSpriteLineMaterial())
+		: SpriteMaterial(7, BuiltinResources::Instance().CreateSpriteLineMaterial())
 	{ }
 }

@@ -7,7 +7,7 @@
 
 namespace bs { namespace ct
 {
-	SPtr<PooledRenderTexture> GpuResourcePool::get(const POOLED_RENDER_TEXTURE_DESC& desc)
+	SPtr<PooledRenderTexture> GpuResourcePool::Get(const POOLED_RENDER_TEXTURE_DESC& desc)
 	{
 		for (auto& entry : mTextures)
 		{
@@ -26,7 +26,7 @@ namespace bs { namespace ct
 		}
 
 		SPtr<PooledRenderTexture> newTexture = bs_shared_ptr_new<PooledRenderTexture>(mCurrentFrame);
-		mTextures.add(newTexture);
+		mTextures.Add(newTexture);
 
 		TEXTURE_DESC texDesc;
 		texDesc.type = desc.type;
@@ -42,7 +42,7 @@ namespace bs { namespace ct
 		if (desc.type != TEX_TYPE_3D)
 			texDesc.numArraySlices = desc.arraySize;
 
-		newTexture->texture = Texture::create(texDesc);
+		newTexture->texture = Texture::Create(texDesc);
 		
 		if ((desc.flag & (TU_RENDERTARGET | TU_DEPTHSTENCIL)) != 0)
 		{
@@ -52,7 +52,7 @@ namespace bs { namespace ct
 			{
 				rtDesc.colorSurfaces[0].texture = newTexture->texture;
 				rtDesc.colorSurfaces[0].face = 0;
-				rtDesc.colorSurfaces[0].numFaces = newTexture->texture->getProperties().getNumFaces();
+				rtDesc.colorSurfaces[0].numFaces = newTexture->texture->GetProperties().GetNumFaces();
 				rtDesc.colorSurfaces[0].mipLevel = 0;
 			}
 
@@ -60,25 +60,25 @@ namespace bs { namespace ct
 			{
 				rtDesc.depthStencilSurface.texture = newTexture->texture;
 				rtDesc.depthStencilSurface.face = 0;
-				rtDesc.depthStencilSurface.numFaces = newTexture->texture->getProperties().getNumFaces();
+				rtDesc.depthStencilSurface.numFaces = newTexture->texture->GetProperties().GetNumFaces();
 				rtDesc.depthStencilSurface.mipLevel = 0;
 			}
 
-			newTexture->renderTexture = RenderTexture::create(rtDesc);
+			newTexture->renderTexture = RenderTexture::Create(rtDesc);
 		}
 
 		return newTexture;
 	}
 
-	void GpuResourcePool::get(SPtr<PooledRenderTexture>& texture, const POOLED_RENDER_TEXTURE_DESC& desc)
+	void GpuResourcePool::Get(SPtr<PooledRenderTexture>& texture, const POOLED_RENDER_TEXTURE_DESC& desc)
 	{
-		if(texture && matches(texture->texture, desc))
+		if(texture && Matches(texture->texture, desc))
 			return;
 
-		texture = get(desc);
+		texture = Get(desc);
 	}
 
-	SPtr<PooledStorageBuffer> GpuResourcePool::get(const POOLED_STORAGE_BUFFER_DESC& desc)
+	SPtr<PooledStorageBuffer> GpuResourcePool::Get(const POOLED_STORAGE_BUFFER_DESC& desc)
 	{
 		for (auto& entry : mBuffers)
 		{
@@ -97,7 +97,7 @@ namespace bs { namespace ct
 		}
 
 		SPtr<PooledStorageBuffer> newBuffer = bs_shared_ptr_new<PooledStorageBuffer>(mCurrentFrame);
-		mBuffers.add(newBuffer);
+		mBuffers.Add(newBuffer);
 
 		GPU_BUFFER_DESC bufferDesc;
 		bufferDesc.type = desc.type;
@@ -106,29 +106,29 @@ namespace bs { namespace ct
 		bufferDesc.format = desc.format;
 		bufferDesc.usage = desc.usage;
 
-		newBuffer->buffer = GpuBuffer::create(bufferDesc);
+		newBuffer->buffer = GpuBuffer::Create(bufferDesc);
 
 		return newBuffer;
 	}
 
-	void GpuResourcePool::get(SPtr<PooledStorageBuffer>& buffer, const POOLED_STORAGE_BUFFER_DESC& desc)
+	void GpuResourcePool::Get(SPtr<PooledStorageBuffer>& buffer, const POOLED_STORAGE_BUFFER_DESC& desc)
 	{
-		if(buffer && matches(buffer->buffer, desc))
+		if(buffer && Matches(buffer->buffer, desc))
 			return;
 
-		buffer = get(desc);
+		buffer = Get(desc);
 	}
 
-	void GpuResourcePool::update()
+	void GpuResourcePool::Update()
 	{
 		mCurrentFrame++;
 
 		// Note: Should also force pruning when over some memory limit (in which case I can probably increase the
 		// age pruning limit higher)
-		prune(3);
+		Prune(3);
 	}
 
-	void GpuResourcePool::prune(UINT32 age)
+	void GpuResourcePool::Prune(UINT32 age)
 	{
 		for(auto iter = mTextures.begin(); iter != mTextures.end();)
 		{
@@ -143,7 +143,7 @@ namespace bs { namespace ct
 
 			UINT32 entryAge = mCurrentFrame - entry->mLastUsedFrame;
 			if(entryAge >= age)
-				mTextures.swapAndErase(iter);
+				mTextures.SwapAndErase(iter);
 			else
 				++iter;
 		}
@@ -167,7 +167,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	bool GpuResourcePool::matches(const SPtr<Texture>& texture, const POOLED_RENDER_TEXTURE_DESC& desc)
+	bool GpuResourcePool::Matches(const SPtr<Texture>& texture, const POOLED_RENDER_TEXTURE_DESC& desc)
 	{
 		const TextureProperties& texProps = texture->getProperties();
 
@@ -191,7 +191,7 @@ namespace bs { namespace ct
 		return match;
 	}
 
-	bool GpuResourcePool::matches(const SPtr<GpuBuffer>& buffer, const POOLED_STORAGE_BUFFER_DESC& desc)
+	bool GpuResourcePool::Matches(const SPtr<GpuBuffer>& buffer, const POOLED_STORAGE_BUFFER_DESC& desc)
 	{
 		const GpuBufferProperties& props = buffer->getProperties();
 
@@ -210,7 +210,7 @@ namespace bs { namespace ct
 		return match;
 	}
 
-	POOLED_RENDER_TEXTURE_DESC POOLED_RENDER_TEXTURE_DESC::create2D(PixelFormat format, UINT32 width, UINT32 height,
+	POOLED_RENDER_TEXTURE_DESC POOLED_RENDER_TEXTURE_DESC::Create2D(PixelFormat format, UINT32 width, UINT32 height,
 		INT32 usage, UINT32 samples, bool hwGamma, UINT32 arraySize, UINT32 mipCount)
 	{
 		POOLED_RENDER_TEXTURE_DESC desc;
@@ -228,7 +228,7 @@ namespace bs { namespace ct
 		return desc;
 	}
 
-	POOLED_RENDER_TEXTURE_DESC POOLED_RENDER_TEXTURE_DESC::create3D(PixelFormat format, UINT32 width, UINT32 height,
+	POOLED_RENDER_TEXTURE_DESC POOLED_RENDER_TEXTURE_DESC::Create3D(PixelFormat format, UINT32 width, UINT32 height,
 		UINT32 depth, INT32 usage)
 	{
 		POOLED_RENDER_TEXTURE_DESC desc;
@@ -246,7 +246,7 @@ namespace bs { namespace ct
 		return desc;
 	}
 
-	POOLED_RENDER_TEXTURE_DESC POOLED_RENDER_TEXTURE_DESC::createCube(PixelFormat format, UINT32 width, UINT32 height,
+	POOLED_RENDER_TEXTURE_DESC POOLED_RENDER_TEXTURE_DESC::CreateCube(PixelFormat format, UINT32 width, UINT32 height,
 		INT32 usage, UINT32 arraySize)
 	{
 		POOLED_RENDER_TEXTURE_DESC desc;
@@ -264,7 +264,7 @@ namespace bs { namespace ct
 		return desc;
 	}
 
-	POOLED_STORAGE_BUFFER_DESC POOLED_STORAGE_BUFFER_DESC::createStandard(GpuBufferFormat format, UINT32 numElements,
+	POOLED_STORAGE_BUFFER_DESC POOLED_STORAGE_BUFFER_DESC::CreateStandard(GpuBufferFormat format, UINT32 numElements,
 		GpuBufferUsage usage)
 	{
 		POOLED_STORAGE_BUFFER_DESC desc;
@@ -277,7 +277,7 @@ namespace bs { namespace ct
 		return desc;
 	}
 
-	POOLED_STORAGE_BUFFER_DESC POOLED_STORAGE_BUFFER_DESC::createStructured(UINT32 elementSize, UINT32 numElements,
+	POOLED_STORAGE_BUFFER_DESC POOLED_STORAGE_BUFFER_DESC::CreateStructured(UINT32 elementSize, UINT32 numElements,
 		GpuBufferUsage usage)
 	{
 		POOLED_STORAGE_BUFFER_DESC desc;
@@ -292,7 +292,7 @@ namespace bs { namespace ct
 
 	GpuResourcePool& gGpuResourcePool()
 	{
-		return GpuResourcePool::instance();
+		return GpuResourcePool::Instance();
 	}
 
 }}

@@ -112,13 +112,13 @@ namespace bs
 		 * @return					GPU parameters object that can be used for setting parameters of all GPU programs
 		 *							in a pass. Returns null if pass doesn't exist.
 		 */
-		SPtr<GpuParamsType> getGpuParams(UINT32 passIdx = 0);
+		SPtr<GpuParamsType> GetGpuParams(UINT32 passIdx = 0);
 
 		/**
 		 * Searches for a parameter block buffer with the specified name, and returns an index you can use for accessing it.
 		 * Returns -1 if buffer was not found.
 		 */
-		UINT32 getParamBlockBufferIndex(const String& name) const;
+		UINT32 GetParamBlockBufferIndex(const String& name) const;
 
 		/**
 		 * Assign a parameter block buffer with the specified index to all the relevant child GpuParams.
@@ -134,7 +134,7 @@ namespace bs
 		 * potentially sharing parameters between multiple materials. This reduces driver overhead as the parameters
 		 * in the buffers need only be set once and then reused multiple times.
 		 */
-		void setParamBlockBuffer(UINT32 index, const ParamBlockPtrType& paramBlock, bool ignoreInUpdate = false);
+		void SetParamBlockBuffer(UINT32 index, const ParamBlockPtrType& paramBlock, bool ignoreInUpdate = false);
 
 		/**
 		 * Assign a parameter block buffer with the specified name to all the relevant child GpuParams.
@@ -150,10 +150,10 @@ namespace bs
 		 * potentially sharing parameters between multiple materials. This reduces driver overhead as the parameters
 		 * in the buffers need only be set once and then reused multiple times.
 		 */
-		void setParamBlockBuffer(const String& name, const ParamBlockPtrType& paramBlock, bool ignoreInUpdate = false);
+		void SetParamBlockBuffer(const String& name, const ParamBlockPtrType& paramBlock, bool ignoreInUpdate = false);
 
 		/** Returns the number of passes the set contains the parameters for. */
-		UINT32 getNumPasses() const { return (UINT32)mPassParams.size(); }
+		UINT32 GetNumPasses() const { return (UINT32)mPassParams.size(); }
 
 		/**
 		 * Updates parameter data in this object from the provided material parameters object.
@@ -165,7 +165,7 @@ namespace bs
 		 *								and only update the dirty ones. Set this to true if you want to force all parameters
 		 *								to update, regardless of their dirty state.
 		 */
-		void update(const SPtr<MaterialParamsType>& params, float t = 0.0f, bool updateAll = false);
+		void Update(const SPtr<MaterialParamsType>& params, float t = 0.0f, bool updateAll = false);
 
 		static const UINT32 NUM_STAGES;
 	private:

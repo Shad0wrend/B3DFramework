@@ -8,7 +8,7 @@
 
 namespace bs
 {
-	bool SLImporter::isExtensionSupported(const String& ext) const
+	bool SLImporter::IsExtensionSupported(const String& ext) const
 	{
 		String lowerCaseExt = ext;
 		StringUtil::toLowerCase(lowerCaseExt);
@@ -16,33 +16,33 @@ namespace bs
 		return lowerCaseExt == u8"bsl";
 	}
 
-	bool SLImporter::isMagicNumberSupported(const UINT8* magicNumPtr, UINT32 numBytes) const
+	bool SLImporter::IsMagicNumberSupported(const UINT8* magicNumPtr, UINT32 numBytes) const
 	{
 		return true; // Plain-text so I don't even check for magic number
 	}
 
-	SPtr<Resource> SLImporter::import(const Path& filePath, SPtr<const ImportOptions> importOptions)
+	SPtr<Resource> SLImporter::Import(const Path& filePath, SPtr<const ImportOptions> importOptions)
 	{
 		String source;
 		{
-			Lock fileLock = FileScheduler::getLock(filePath);
+			Lock fileLock = FileScheduler::GetLock(filePath);
 
-			SPtr<DataStream> stream = FileSystem::openFile(filePath);
-			source = stream->getAsString();
+			SPtr<DataStream> stream = FileSystem::OpenFile(filePath);
+			source = stream->GetAsString();
 		}
 
 		SPtr<const ShaderImportOptions> io = std::static_pointer_cast<const ShaderImportOptions>(importOptions);
-		String shaderName = filePath.getFilename(false);
-		BSLFXCompileResult result = BSLFXCompiler::compile(shaderName, source, io->getDefines(), io->languages);
+		String shaderName = filePath.GetFilename(false);
+		BSLFXCompileResult result = BSLFXCompiler::Compile(shaderName, source, io->GetDefines(), io->languages);
 
 		if (result.shader != nullptr)
-			result.shader->setName(shaderName);
+			result.shader->SetName(shaderName);
 		
 		if(!result.errorMessage.empty())
 		{
 			String file;
 			if (result.errorFile.empty())
-				file = filePath.toString();
+				file = filePath.ToString();
 			else
 				file = result.errorFile;
 

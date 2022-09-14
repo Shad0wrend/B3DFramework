@@ -31,48 +31,48 @@ namespace bs
 		 * @param[in]	path				Absolute path to the assembly .dll.
 		 * @param[in]	name				Unique name for the assembly.
 		 */
-		MonoAssembly& loadAssembly(const Path& path, const String& name);
+		MonoAssembly& LoadAssembly(const Path& path, const String& name);
 
 		/** Unloads all assemblies and shuts down the runtime. Called automatically on module shut-down. */
-		void unloadAll();
+		void UnloadAll();
 
 		/**	Searches all loaded assemblies for the specified class. */
-		MonoClass* findClass(const String& ns, const String& typeName);
+		MonoClass* FindClass(const String& ns, const String& typeName);
 
 		/**	Searches all loaded assemblies for the specified class. */
-		MonoClass* findClass(::MonoClass* rawMonoClass);
+		MonoClass* FindClass(::MonoClass* rawMonoClass);
 
 		/**	Returns the main (scripting) Mono domain. */
-		MonoDomain* getDomain() const { return mScriptDomain; }
+		MonoDomain* GetDomain() const { return mScriptDomain; }
 
 		/**
 		 * Attempts to find a previously loaded assembly with the specified name. Returns null if assembly cannot be found.
 		 */
-		MonoAssembly* getAssembly(const String& name) const;
+		MonoAssembly* GetAssembly(const String& name) const;
 
 		/**
 		 * Unloads the active domain (in which all script assemblies are loaded) and destroys any managed objects
 		 * associated with it.
 		 */
-		void unloadScriptDomain();
+		void UnloadScriptDomain();
 
 		/** Returns the absolute path of the folder where Mono framework assemblies are located. */
-		Path getFrameworkAssembliesFolder() const;
+		Path GetFrameworkAssembliesFolder() const;
 
 		/** Returns the absolute path to the Mono /etc folder that is required for initializing Mono. */
-		Path getMonoEtcFolder() const;
+		Path GetMonoEtcFolder() const;
 
 		/**	Returns the absolute path to the Mono compiler managed executable. */
-		Path getCompilerPath() const;
+		Path GetCompilerPath() const;
 
 		/** Returns the absolute path to the executable capable of executing managed assemblies. */
-		Path getMonoExecPath() const;
+		Path GetMonoExecPath() const;
 
 		/**
 		 * Registers a new script type. This should be done before any assembly loading is done. Upon assembly load these
 		 * script types will be initialized with necessary information about their managed counterparts.
 		 */
-		static void registerScriptType(ScriptMeta* metaData, const ScriptMeta& localMetaData);
+		static void RegisterScriptType(ScriptMeta* metaData, const ScriptMeta& localMetaData);
 
 		/** Triggered when the assembly domain and all relevant assemblies are about to be unloaded. */
 		Event<void()> onDomainUnload;
@@ -87,10 +87,10 @@ namespace bs
 		 * Initializes any script types registered with registerScriptType() for this assembly. This sets up any
 		 * native <-> managed internal calls and other similar code for such types.
 		 */
-		void initializeScriptTypes(MonoAssembly& assembly);
+		void InitializeScriptTypes(MonoAssembly& assembly);
 
 		/**	Returns a list of all types that will be initializes with their assembly gets loaded. */
-		static UnorderedMap<String, Vector<ScriptMetaInfo>>& getScriptMetaData()
+		static UnorderedMap<String, Vector<ScriptMetaInfo>>& GetScriptMetaData()
 		{
 			static UnorderedMap<String, Vector<ScriptMetaInfo>> mTypesToInitialize;
 			return mTypesToInitialize;

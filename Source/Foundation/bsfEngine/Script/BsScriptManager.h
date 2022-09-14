@@ -18,16 +18,16 @@ namespace bs
 		virtual ~ScriptLibrary() = default;
 
 		/**	Called when the script system is being activated. */
-		virtual void initialize() = 0;
+		virtual void Initialize() = 0;
 
 		/** Called once per frame. */
-		virtual void update() { }
+		virtual void Update() { }
 
 		/** Called when the script libraries should be reloaded (for example when they are recompiled). */
-		virtual void reload() = 0;
+		virtual void Reload() = 0;
 
 		/**	Called when the script system is being destroyed. */
-		virtual void destroy() = 0;
+		virtual void Destroy() = 0;
 	};
 
 	/**	Handles initialization of a scripting system. */
@@ -38,13 +38,13 @@ namespace bs
 		~ScriptManager();
 
 		/** Called once per frame. */
-		void update();
+		void Update();
 
 		/**
 		 * Reloads any scripts in the currently active library. Should be called after some change to the scripts was made
 		 * (for example project was changed, or scripts were recompiled).
 		 */
-		void reload();
+		void Reload();
 
 		/**
 		 * Sets the active script library that controls what kind and which scripts are loaded. Must be called before

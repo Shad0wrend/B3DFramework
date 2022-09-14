@@ -17,18 +17,18 @@ namespace bs
 
 		ScriptAudioClip(MonoObject* managedInstance, const ResourceHandle<AudioClip>& value);
 
-		static MonoObject* createInstance();
+		static MonoObject* CreateInstance();
 
 	private:
-		static MonoObject* Internal_getRef(ScriptAudioClip* thisPtr);
+		static MonoObject* InternalGetRef(ScriptAudioClip* thisPtr);
 
-		static uint32_t Internal_getBitDepth(ScriptAudioClip* thisPtr);
-		static uint32_t Internal_getFrequency(ScriptAudioClip* thisPtr);
-		static uint32_t Internal_getNumChannels(ScriptAudioClip* thisPtr);
-		static AudioFormat Internal_getFormat(ScriptAudioClip* thisPtr);
-		static AudioReadMode Internal_getReadMode(ScriptAudioClip* thisPtr);
-		static float Internal_getLength(ScriptAudioClip* thisPtr);
-		static uint32_t Internal_getNumSamples(ScriptAudioClip* thisPtr);
-		static bool Internal_is3D(ScriptAudioClip* thisPtr);
+		static uint32_t InternalGetBitDepth(ScriptAudioClip* thisPtr);
+		static uint32_t InternalGetFrequency(ScriptAudioClip* thisPtr);
+		static uint32_t InternalGetNumChannels(ScriptAudioClip* thisPtr);
+		static AudioFormat InternalGetFormat(ScriptAudioClip* thisPtr);
+		static AudioReadMode InternalGetReadMode(ScriptAudioClip* thisPtr);
+		static float InternalGetLength(ScriptAudioClip* thisPtr);
+		static uint32_t InternalGetNumSamples(ScriptAudioClip* thisPtr);
+		static bool InternalIs3D(ScriptAudioClip* thisPtr);
 	};
 }

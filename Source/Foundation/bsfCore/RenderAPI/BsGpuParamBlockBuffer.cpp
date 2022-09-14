@@ -23,7 +23,7 @@ namespace bs
 			bs_free(mCachedData);
 	}
 
-	void GpuParamBlockBuffer::write(UINT32 offset, const void* data, UINT32 size)
+	void GpuParamBlockBuffer::Write(UINT32 offset, const void* data, UINT32 size)
 	{
 #if BS_DEBUG_MODE
 		if ((offset + size) > mSize)
@@ -35,10 +35,10 @@ namespace bs
 #endif
 
 		memcpy(mCachedData + offset, data, size);
-		markCoreDirty();
+		MarkCoreDirty();
 	}
 
-	void GpuParamBlockBuffer::read(UINT32 offset, void* data, UINT32 size)
+	void GpuParamBlockBuffer::Read(UINT32 offset, void* data, UINT32 size)
 	{
 #if BS_DEBUG_MODE
 		if ((offset + size) > mSize)
@@ -52,7 +52,7 @@ namespace bs
 		memcpy(data, mCachedData + offset, size);
 	}
 
-	void GpuParamBlockBuffer::zeroOut(UINT32 offset, UINT32 size)
+	void GpuParamBlockBuffer::ZeroOut(UINT32 offset, UINT32 size)
 	{
 #if BS_DEBUG_MODE
 		if ((offset + size) > mSize)
@@ -64,17 +64,17 @@ namespace bs
 #endif
 
 		memset(mCachedData + offset, 0, size);
-		markCoreDirty();
+		MarkCoreDirty();
 	}
 
-	SPtr<ct::GpuParamBlockBuffer> GpuParamBlockBuffer::getCore() const
+	SPtr<ct::GpuParamBlockBuffer> GpuParamBlockBuffer::GetCore() const
 	{
 		return std::static_pointer_cast<ct::GpuParamBlockBuffer>(mCoreSpecific);
 	}
 
-	SPtr<ct::CoreObject> GpuParamBlockBuffer::createCore() const
+	SPtr<ct::CoreObject> GpuParamBlockBuffer::CreateCore() const
 	{
-		return ct::HardwareBufferManager::instance().createGpuParamBlockBufferInternal(mSize, mUsage);
+		return ct::HardwareBufferManager::Instance().CreateGpuParamBlockBufferInternal(mSize, mUsage);
 	}
 
 	CoreSyncData GpuParamBlockBuffer::syncToCore(FrameAlloc* allocator)
@@ -85,9 +85,9 @@ namespace bs
 		return CoreSyncData(buffer, mSize);
 	}
 
-	SPtr<GpuParamBlockBuffer> GpuParamBlockBuffer::create(UINT32 size, GpuBufferUsage usage)
+	SPtr<GpuParamBlockBuffer> GpuParamBlockBuffer::Create(UINT32 size, GpuBufferUsage usage)
 	{
-		return HardwareBufferManager::instance().createGpuParamBlockBuffer(size, usage);
+		return HardwareBufferManager::Instance().createGpuParamBlockBuffer(size, usage);
 	}
 
 	namespace ct
@@ -110,14 +110,14 @@ namespace bs
 		BS_INC_RENDER_STAT_CAT(ResDestroyed, RenderStatObject_GpuParamBuffer);
 	}
 
-	void GpuParamBlockBuffer::initialize()
+	void GpuParamBlockBuffer::Initialize()
 	{
 		BS_INC_RENDER_STAT_CAT(ResCreated, RenderStatObject_GpuParamBuffer);
 
 		CoreObject::initialize();
 	}
 
-	void GpuParamBlockBuffer::write(UINT32 offset, const void* data, UINT32 size)
+	void GpuParamBlockBuffer::Write(UINT32 offset, const void* data, UINT32 size)
 	{
 #if BS_DEBUG_MODE
 		if ((offset + size) > mSize)
@@ -132,7 +132,7 @@ namespace bs
 		mGPUBufferDirty = true;
 	}
 
-	void GpuParamBlockBuffer::read(UINT32 offset, void* data, UINT32 size)
+	void GpuParamBlockBuffer::Read(UINT32 offset, void* data, UINT32 size)
 	{
 #if BS_DEBUG_MODE
 		if ((offset + size) > mSize)
@@ -146,7 +146,7 @@ namespace bs
 		memcpy(data, mCachedData + offset, size);
 	}
 
-	void GpuParamBlockBuffer::zeroOut(UINT32 offset, UINT32 size)
+	void GpuParamBlockBuffer::ZeroOut(UINT32 offset, UINT32 size)
 	{
 #if BS_DEBUG_MODE
 		if ((offset + size) > mSize)
@@ -161,7 +161,7 @@ namespace bs
 		mGPUBufferDirty = true;
 	}
 
-	void GpuParamBlockBuffer::flushToGPU(UINT32 queueIdx)
+	void GpuParamBlockBuffer::FlushToGpu(UINT32 queueIdx)
 	{
 		if (mGPUBufferDirty)
 		{
@@ -170,23 +170,23 @@ namespace bs
 		}
 	}
 
-	void GpuParamBlockBuffer::writeToGPU(const UINT8* data, UINT32 queueIdx)
+	void GpuParamBlockBuffer::WriteToGpu(const UINT8* data, UINT32 queueIdx)
 	{
 		mBuffer->writeData(0, mSize, data, BWT_DISCARD, queueIdx);
 
 		BS_INC_RENDER_STAT_CAT(ResWrite, RenderStatObject_GpuParamBuffer);
 	}
 
-	void GpuParamBlockBuffer::syncToCore(const CoreSyncData& data)
+	void GpuParamBlockBuffer::SyncToCore(const CoreSyncData& data)
 	{
 		assert(mSize == data.getBufferSize());
 
 		write(0, data.getBuffer(), data.getBufferSize());
 	}
 
-	SPtr<GpuParamBlockBuffer> GpuParamBlockBuffer::create(UINT32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
+	SPtr<GpuParamBlockBuffer> GpuParamBlockBuffer::Create(UINT32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
 	{
-		return HardwareBufferManager::instance().createGpuParamBlockBuffer(size, usage, deviceMask);
+		return HardwareBufferManager::Instance().createGpuParamBlockBuffer(size, usage, deviceMask);
 	}
 	}
 }

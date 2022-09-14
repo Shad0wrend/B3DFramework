@@ -30,7 +30,7 @@ namespace bs
 		virtual ~RenderTextureProperties() { }
 
 	private:
-		void construct(const TextureProperties* textureProps, UINT32 numSlices, UINT32 mipLevel, bool requiresFlipping,
+		void Construct(const TextureProperties* textureProps, UINT32 numSlices, UINT32 mipLevel, bool requiresFlipping,
 					   bool hwGamma);
 
 		friend class ct::RenderTexture;
@@ -49,35 +49,35 @@ namespace bs
 		virtual ~RenderTexture() = default;
 
 		/** @copydoc TextureManager::createRenderTexture(const TEXTURE_DESC&, bool, PixelFormat) */
-		static SPtr<RenderTexture> create(const TEXTURE_DESC& colorDesc,
+		static SPtr<RenderTexture> Create(const TEXTURE_DESC& colorDesc,
 			bool createDepth = true, PixelFormat depthStencilFormat = PF_D32);
 
 		/** @copydoc TextureManager::createRenderTexture(const RENDER_TEXTURE_DESC&) */
-		static SPtr<RenderTexture> create(const RENDER_TEXTURE_DESC& desc);
+		static SPtr<RenderTexture> Create(const RENDER_TEXTURE_DESC& desc);
 
 		/**
 		 * Returns a color surface texture you may bind as an input to an GPU program.
 		 *
 		 * @note	Be aware that you cannot bind a render texture for reading and writing at the same time.
 		 */
-		const HTexture& getColorTexture(UINT32 idx) const { return mBindableColorTex[idx]; }
+		const HTexture& GetColorTexture(UINT32 idx) const { return mBindableColorTex[idx]; }
 
 		/**
 		 * Returns a depth/stencil surface texture you may bind as an input to an GPU program.
 		 *
 		 * @note	Be aware that you cannot bind a render texture for reading and writing at the same time.
 		 */
-		const HTexture& getDepthStencilTexture() const { return mBindableDepthStencilTex; }
+		const HTexture& GetDepthStencilTexture() const { return mBindableDepthStencilTex; }
 
 		/**
 		 * Retrieves a core implementation of a render texture usable only from the core thread.
 		 *
 		 * @note	Core thread only.
 		 */
-		SPtr<ct::RenderTexture> getCore() const;
+		SPtr<ct::RenderTexture> GetCore() const;
 
 		/**	Returns properties that describe the render texture. */
-		const RenderTextureProperties& getProperties() const;
+		const RenderTextureProperties& GetProperties() const;
 
 	protected:
 		friend class TextureManager;
@@ -85,10 +85,10 @@ namespace bs
 		RenderTexture(const RENDER_TEXTURE_DESC& desc);
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> createCore() const override;
+		SPtr<ct::CoreObject> CreateCore() const ;
 
 		/** @copydoc CoreObject::syncToCore */
-		CoreSyncData syncToCore(FrameAlloc* allocator) override;
+		CoreSyncData SyncToCore(FrameAlloc* allocator) override;
 
 	protected:
 		HTexture mBindableColorTex[BS_MAX_MULTIPLE_RENDER_TARGETS];
@@ -101,8 +101,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class RenderTextureRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** @} */
@@ -136,35 +136,35 @@ namespace bs
 		virtual ~RenderTexture() = default;
 
 		/** @copydoc CoreObject::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 		/** @copydoc TextureManager::createRenderTexture(const RENDER_TEXTURE_DESC&, UINT32) */
-		static SPtr<RenderTexture> create(const RENDER_TEXTURE_DESC& desc, UINT32 deviceIdx = 0);
+		static SPtr<RenderTexture> Create(const RENDER_TEXTURE_DESC& desc, UINT32 deviceIdx = 0);
 
 		/**
 		 * Returns a color surface texture you may bind as an input to an GPU program.
 		 *
 		 * @note	Be aware that you cannot bind a render texture for reading and writing at the same time.
 		 */
-		SPtr<Texture> getColorTexture(UINT32 idx) const { return mDesc.colorSurfaces[idx].texture; }
+		SPtr<Texture> GetColorTexture(UINT32 idx) const { return mDesc.colorSurfaces[idx].texture; }
 
 		/**
 		 * Returns a depth/stencil surface texture you may bind as an input to an GPU program.
 		 *
 		 * @note	Be aware that you cannot bind a render texture for reading and writing at the same time.
 		 */
-		SPtr<Texture> getDepthStencilTexture() const { return mDesc.depthStencilSurface.texture; }
+		SPtr<Texture> GetDepthStencilTexture() const { return mDesc.depthStencilSurface.texture; }
 
 		/**	Returns properties that describe the render texture. */
-		const RenderTextureProperties& getProperties() const;
+		const RenderTextureProperties& GetProperties() const;
 
 	protected:
 		/** @copydoc CoreObject::syncToCore */
-		void syncToCore(const CoreSyncData& data) override;
+		void SyncToCore(const CoreSyncData& data) override;
 
 	private:
 		/**	Throws an exception of the color and depth/stencil buffers aren't compatible. */
-		void throwIfBuffersDontMatch() const;
+		void ThrowIfBuffersDontMatch() const;
 
 	protected:
 		friend class bs::RenderTexture;

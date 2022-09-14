@@ -655,7 +655,7 @@ namespace bs
 
 		/** Gets the internal data and checks the data is of valid size. */
 		template<class T>
-		const T& getData() const
+		const T& GetData() const
 		{
 			assert(sizeof(T) == size);
 
@@ -663,10 +663,10 @@ namespace bs
 		}
 
 		/**	Returns a pointer to internal data buffer. */
-		UINT8* getBuffer() const { return data; }
+		UINT8* GetBuffer() const { return data; }
 
 		/**	Returns the size of the internal data buffer. */
-		UINT32 getBufferSize() const { return size; }
+		UINT32 GetBufferSize() const { return size; }
 
 	private:
 		UINT8* data;

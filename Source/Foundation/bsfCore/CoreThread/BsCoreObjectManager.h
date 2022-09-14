@@ -65,19 +65,19 @@ namespace bs
 		~CoreObjectManager();
 
 		/** Generates a new unique ID for a core object. */
-		UINT64 generateId();
+		UINT64 GenerateId();
 
 		/** Registers a new CoreObject notifying the manager the object	is created. */
-		void registerObject(CoreObject* object);
+		void RegisterObject(CoreObject* object);
 
 		/** Unregisters a CoreObject notifying the manager the object is destroyed. */
-		void unregisterObject(CoreObject* object);
+		void UnregisterObject(CoreObject* object);
 
 		/**	Notifies the system that a CoreObject is dirty and needs to be synced with the core thread. */
-		void notifyCoreDirty(CoreObject* object);
+		void NotifyCoreDirty(CoreObject* object);
 
 		/**	Notifies the system that CoreObject dependencies are dirty and should be updated. */
-		void notifyDependenciesDirty(CoreObject* object);
+		void NotifyDependenciesDirty(CoreObject* object);
 
 		/**
 		 * Synchronizes all dirty CoreObjects with the core thread. Their dirty data will be allocated using the global
@@ -86,7 +86,7 @@ namespace bs
 		 * @note	Sim thread only.
 		 * @note	This is an @ref asyncMethod "asynchronous method".
 		 */
-		void syncToCore();
+		void SyncToCore();
 
 		/**
 		 * Synchronizes an individual dirty CoreObject with the core thread. Its dirty data will be allocated using the
@@ -95,7 +95,7 @@ namespace bs
 		 * @note	Sim thread only.
 		 * @note	This is an @ref asyncMethod "asynchronous method".
 		 */
-		void syncToCore(CoreObject* object);
+		void SyncToCore(CoreObject* object);
 
 	private:
 		/**
@@ -107,7 +107,7 @@ namespace bs
 		 * @note	Sim thread only.
 		 * @note	Must be followed by a call to syncUpload() with the same type.
 		 */
-		void syncDownload(FrameAlloc* allocator);
+		void SyncDownload(FrameAlloc* allocator);
 
 		/**
 		 * Copies all the data stored by previous call to syncDownload() into core thread versions of CoreObjects.
@@ -115,7 +115,7 @@ namespace bs
 		 * @note	Core thread only.
 		 * @note	Must be preceded by a call to syncDownload().
 		 */
-		void syncUpload();
+		void SyncUpload();
 
 		/**
 		 * Updates the cached list of dependencies and dependants for the specified object.
@@ -123,7 +123,7 @@ namespace bs
 		 * @param[in]	object			Update to update dependencies for.
 		 * @param[in]	dependencies	New set of dependencies, or null to clear all dependencies.
 		 */
-		void updateDependencies(CoreObject* object, Vector<CoreObject*>* dependencies);
+		void UpdateDependencies(CoreObject* object, Vector<CoreObject*>* dependencies);
 
 		UINT64 mNextAvailableID;
 		Map<UINT64, CoreObject*> mObjects;

@@ -55,7 +55,7 @@ namespace bs
 		output.nonWalkableMode = toPxEnum(desc.nonWalkableMode);
 		output.contactOffset = desc.contactOffset;
 		output.stepOffset = desc.stepOffset;
-		output.slopeLimit = desc.slopeLimit.valueRadians();
+		output.slopeLimit = desc.slopeLimit.ValueRadians();
 		output.height = desc.height;
 		output.radius = desc.radius;
 		output.upDirection = toPxVector(desc.up);
@@ -69,7 +69,7 @@ namespace bs
 	{
 		PxCapsuleControllerDesc pxDesc = toPxDesc(desc);
 		pxDesc.reportCallback = this;
-		pxDesc.material = gPhysX().getDefaultMaterial();
+		pxDesc.material = gPhysX().GetDefaultMaterial();
 		pxDesc.height = pxDesc.height <= 0 ? 0.01f : pxDesc.height;
 
 		mController = static_cast<PxCapsuleController*>(manager->createController(pxDesc));
@@ -82,14 +82,14 @@ namespace bs
 		mController->release();
 	}
 
-	CharacterCollisionFlags PhysXCharacterController::move(const Vector3& displacement)
+	CharacterCollisionFlags PhysXCharacterController::Move(const Vector3& displacement)
 	{
 		PxControllerFilters filters;
 		filters.mFilterCallback = this;
 		filters.mFilterFlags = PxQueryFlag::eANY_HIT | PxQueryFlag::eSTATIC | PxQueryFlag::eDYNAMIC | PxQueryFlag::ePREFILTER;
 		filters.mCCTFilterCallback = this;
 
-		float curTime = gTime().getTime();
+		float curTime = gTime().GetTime();
 		float delta = curTime - mLastMoveCall;
 		mLastMoveCall = curTime;
 
@@ -97,73 +97,73 @@ namespace bs
 
 		CharacterCollisionFlags output;
 		if (collisionFlag.isSet(PxControllerCollisionFlag::eCOLLISION_DOWN))
-			output.set(CharacterCollisionFlag::Down);
+			output.Set(CharacterCollisionFlag::Down);
 
 		if (collisionFlag.isSet(PxControllerCollisionFlag::eCOLLISION_UP))
-			output.set(CharacterCollisionFlag::Up);
+			output.Set(CharacterCollisionFlag::Up);
 
 		if (collisionFlag.isSet(PxControllerCollisionFlag::eCOLLISION_SIDES))
-			output.set(CharacterCollisionFlag::Sides);
+			output.Set(CharacterCollisionFlag::Sides);
 
 		return output;
 	}
 
-	Vector3 PhysXCharacterController::getPosition() const
+	Vector3 PhysXCharacterController::GetPosition() const
 	{
 		return fromPxExtVector(mController->getPosition());
 	}
 
-	void PhysXCharacterController::setPosition(const Vector3& position)
+	void PhysXCharacterController::SetPosition(const Vector3& position)
 	{
 		mController->setPosition(toPxExtVector(position));
 	}
 
-	Vector3 PhysXCharacterController::getFootPosition() const
+	Vector3 PhysXCharacterController::GetFootPosition() const
 	{
 		return fromPxExtVector(mController->getFootPosition());
 	}
 
-	void PhysXCharacterController::setFootPosition(const Vector3& position)
+	void PhysXCharacterController::SetFootPosition(const Vector3& position)
 	{
 		mController->setFootPosition(toPxExtVector(position));
 	}
 
-	float PhysXCharacterController::getRadius() const
+	float PhysXCharacterController::GetRadius() const
 	{
 		return mController->getRadius();
 	}
 
-	void PhysXCharacterController::setRadius(float radius)
+	void PhysXCharacterController::SetRadius(float radius)
 	{
 		mController->setRadius(radius);
 	}
 
-	float PhysXCharacterController::getHeight() const
+	float PhysXCharacterController::GetHeight() const
 	{
 		return mController->getHeight();
 	}
 
-	void PhysXCharacterController::setHeight(float height)
+	void PhysXCharacterController::SetHeight(float height)
 	{
 		mController->setHeight(height);
 	}
 
-	Vector3 PhysXCharacterController::getUp() const
+	Vector3 PhysXCharacterController::GetUp() const
 	{
 		return fromPxVector(mController->getUpDirection());
 	}
 
-	void PhysXCharacterController::setUp(const Vector3& up)
+	void PhysXCharacterController::SetUp(const Vector3& up)
 	{
 		mController->setUpDirection(toPxVector(up));
 	}
 
-	CharacterClimbingMode PhysXCharacterController::getClimbingMode() const
+	CharacterClimbingMode PhysXCharacterController::GetClimbingMode() const
 	{
 		return fromPxEnum(mController->getClimbingMode());
 	}
 
-	void PhysXCharacterController::setClimbingMode(CharacterClimbingMode mode)
+	void PhysXCharacterController::SetClimbingMode(CharacterClimbingMode mode)
 	{
 		mController->setClimbingMode(toPxEnum(mode));
 	}
@@ -173,47 +173,47 @@ namespace bs
 		return fromPxEnum(mController->getNonWalkableMode());
 	}
 
-	void PhysXCharacterController::setNonWalkableMode(CharacterNonWalkableMode mode)
+	void PhysXCharacterController::SetNonWalkableMode(CharacterNonWalkableMode mode)
 	{
 		mController->setNonWalkableMode(toPxEnum(mode));
 	}
 
-	float PhysXCharacterController::getMinMoveDistance() const
+	float PhysXCharacterController::GetMinMoveDistance() const
 	{
 		return mMinMoveDistance;
 	}
 
-	void PhysXCharacterController::setMinMoveDistance(float value)
+	void PhysXCharacterController::SetMinMoveDistance(float value)
 	{
 		mMinMoveDistance = value;
 	}
 
-	float PhysXCharacterController::getContactOffset() const
+	float PhysXCharacterController::GetContactOffset() const
 	{
 		return mController->getContactOffset();
 	}
 
-	void PhysXCharacterController::setContactOffset(float value)
+	void PhysXCharacterController::SetContactOffset(float value)
 	{
 		mController->setContactOffset(value);
 	}
 
-	float PhysXCharacterController::getStepOffset() const
+	float PhysXCharacterController::GetStepOffset() const
 	{
 		return mController->getStepOffset();
 	}
 
-	void PhysXCharacterController::setStepOffset(float value)
+	void PhysXCharacterController::SetStepOffset(float value)
 	{
 		mController->setStepOffset(value);
 	}
 
-	Radian PhysXCharacterController::getSlopeLimit() const
+	Radian PhysXCharacterController::GetSlopeLimit() const
 	{
 		return Radian(mController->getSlopeLimit());
 	}
 
-	void PhysXCharacterController::setSlopeLimit(Radian value)
+	void PhysXCharacterController::SetSlopeLimit(Radian value)
 	{
 		mController->setSlopeLimit(value.valueRadians());
 	}

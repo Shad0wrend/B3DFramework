@@ -16,25 +16,25 @@ namespace bs
 	void ScriptParticleBurst::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptParticleBurst::box(const __ParticleBurstInterop& value)
+	MonoObject*ScriptParticleBurst::Box(const __ParticleBurstInterop& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	__ParticleBurstInterop ScriptParticleBurst::unbox(MonoObject* value)
+	__ParticleBurstInterop ScriptParticleBurst::Unbox(MonoObject* value)
 	{
-		return *(__ParticleBurstInterop*)MonoUtil::unbox(value);
+		return *(__ParticleBurstInterop*)MonoUtil::Unbox(value);
 	}
 
-	ParticleBurst ScriptParticleBurst::fromInterop(const __ParticleBurstInterop& value)
+	ParticleBurst ScriptParticleBurst::FromInterop(const __ParticleBurstInterop& value)
 	{
 		ParticleBurst output;
 		output.time = value.time;
 		SPtr<TDistribution<float>> tmpcount;
 		ScriptTDistributionfloat* scriptcount;
-		scriptcount = ScriptTDistributionfloat::toNative(value.count);
+		scriptcount = ScriptTDistributionfloat::ToNative(value.count);
 		if(scriptcount != nullptr)
-			tmpcount = scriptcount->getInternal();
+			tmpcount = scriptcount->GetInternal();
 		if(tmpcount != nullptr)
 		output.count = *tmpcount;
 		output.cycles = value.cycles;
@@ -43,14 +43,14 @@ namespace bs
 		return output;
 	}
 
-	__ParticleBurstInterop ScriptParticleBurst::toInterop(const ParticleBurst& value)
+	__ParticleBurstInterop ScriptParticleBurst::ToInterop(const ParticleBurst& value)
 	{
 		__ParticleBurstInterop output;
 		output.time = value.time;
 		MonoObject* tmpcount;
 		SPtr<TDistribution<float>> tmpcountcopy;
 		tmpcountcopy = bs_shared_ptr_new<TDistribution<float>>(value.count);
-		tmpcount = ScriptTDistributionfloat::create(tmpcountcopy);
+		tmpcount = ScriptTDistributionfloat::Create(tmpcountcopy);
 		output.count = tmpcount;
 		output.cycles = value.cycles;
 		output.interval = value.interval;

@@ -50,10 +50,10 @@ namespace bs
 		~RenderBeast() = default;
 
 		/** @copydoc Renderer::getName */
-		const StringID& getName() const override;
+		const StringID& GetName() const override;
 
 		/** @copydoc Renderer::renderAll */
-		void renderAll(PerFrameData perFrameData) override;
+		void RenderAll(PerFrameData perFrameData) override;
 
 		/**	Sets options used for controlling the rendering. */
 		void setOptions(const SPtr<RendererOptions>& options) override;
@@ -62,100 +62,100 @@ namespace bs
 		SPtr<RendererOptions> getOptions() const override;
 
 		/** Returns the feature set the renderer is operating on. Core thread only. */
-		RenderBeastFeatureSet getFeatureSet() const { return mFeatureSet; }
+		RenderBeastFeatureSet GetFeatureSet() const { return mFeatureSet; }
 
 		/** @copydoc Renderer::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 		/** @copydoc Renderer::destroy */
-		void destroy() override;
+		void Destroy() override;
 
 		/** @copydoc Renderer::captureSceneCubeMap */
 		void captureSceneCubeMap(const SPtr<Texture>& cubemap, const Vector3& position,
 			const CaptureSettings& settings) override;
 
 		/** @copydoc Renderer::getShaderExtensionPointInfo */
-		ShaderExtensionPointInfo getShaderExtensionPointInfo(const String& name) override;
+		ShaderExtensionPointInfo GetShaderExtensionPointInfo(const String& name) override;
 
 		/** @copydoc Renderer::setGlobalShaderOverride */
 		void setGlobalShaderOverride(const String& name, const SPtr<bs::Shader>& shader) override;
 
 	private:
 		/** @copydoc Renderer::notifyCameraAdded */
-		void notifyCameraAdded(Camera* camera) override;
+		void NotifyCameraAdded(Camera* camera) override;
 
 		/** @copydoc Renderer::notifyCameraUpdated */
-		void notifyCameraUpdated(Camera* camera, UINT32 updateFlag) override;
+		void NotifyCameraUpdated(Camera* camera, UINT32 updateFlag) override;
 
 		/** @copydoc Renderer::notifyCameraRemoved */
-		void notifyCameraRemoved(Camera* camera) override;
+		void NotifyCameraRemoved(Camera* camera) override;
 
 		/** @copydoc Renderer::notifyLightAdded */
-		void notifyLightAdded(Light* light) override;
+		void NotifyLightAdded(Light* light) override;
 
 		/** @copydoc Renderer::notifyLightUpdated */
-		void notifyLightUpdated(Light* light) override;
+		void NotifyLightUpdated(Light* light) override;
 
 		/** @copydoc Renderer::notifyLightRemoved */
-		void notifyLightRemoved(Light* light) override;
+		void NotifyLightRemoved(Light* light) override;
 
 		/** @copydoc Renderer::notifyRenderableAdded */
-		void notifyRenderableAdded(Renderable* renderable) override;
+		void NotifyRenderableAdded(Renderable* renderable) override;
 
 		/** @copydoc Renderer::notifyRenderableUpdated */
-		void notifyRenderableUpdated(Renderable* renderable) override;
+		void NotifyRenderableUpdated(Renderable* renderable) override;
 
 		/** @copydoc Renderer::notifyRenderableRemoved */
-		void notifyRenderableRemoved(Renderable* renderable) override;
+		void NotifyRenderableRemoved(Renderable* renderable) override;
 
 		/** @copydoc Renderer::notifyReflectionProbeAdded */
-		void notifyReflectionProbeAdded(ReflectionProbe* probe) override;
+		void NotifyReflectionProbeAdded(ReflectionProbe* probe) override;
 
 		/** @copydoc Renderer::notifyReflectionProbeUpdated */
-		void notifyReflectionProbeUpdated(ReflectionProbe* probe, bool texture) override;
+		void NotifyReflectionProbeUpdated(ReflectionProbe* probe, bool texture) override;
 
 		/** @copydoc Renderer::notifyReflectionProbeRemoved */
-		void notifyReflectionProbeRemoved(ReflectionProbe* probe) override;
+		void NotifyReflectionProbeRemoved(ReflectionProbe* probe) override;
 
 		/** @copydoc Renderer::notifyLightProbeVolumeAdded */
-		void notifyLightProbeVolumeAdded(LightProbeVolume* volume) override;
+		void NotifyLightProbeVolumeAdded(LightProbeVolume* volume) override;
 
 		/** @copydoc Renderer::notifyLightProbeVolumeUpdated */
-		void notifyLightProbeVolumeUpdated(LightProbeVolume* volume) override;
+		void NotifyLightProbeVolumeUpdated(LightProbeVolume* volume) override;
 
 		/** @copydoc Renderer::notifyLightProbeVolumeRemoved */
-		void notifyLightProbeVolumeRemoved(LightProbeVolume* volume) override;
+		void NotifyLightProbeVolumeRemoved(LightProbeVolume* volume) override;
 
 		/** @copydoc Renderer::notifySkyboxAdded */
-		void notifySkyboxAdded(Skybox* skybox) override;
+		void NotifySkyboxAdded(Skybox* skybox) override;
 
 		/** @copydoc Renderer::notifySkyboxRemoved */
-		void notifySkyboxRemoved(Skybox* skybox) override;
+		void NotifySkyboxRemoved(Skybox* skybox) override;
 
 		/** @copydoc Renderer::notifyParticleSystemAdded */
-		void notifyParticleSystemAdded(ParticleSystem* particleSystem) override;
+		void NotifyParticleSystemAdded(ParticleSystem* particleSystem) override;
 
 		/** @copydoc Renderer::notifyParticleSystemUpdated */
-		void notifyParticleSystemUpdated(ParticleSystem* particleSystem, bool tfrmOnly) override;
+		void NotifyParticleSystemUpdated(ParticleSystem* particleSystem, bool tfrmOnly) override;
 
 		/** @copydoc Renderer::notifyParticleSystemRemoved */
-		void notifyParticleSystemRemoved(ParticleSystem* particleSystem) override;
+		void NotifyParticleSystemRemoved(ParticleSystem* particleSystem) override;
 
 		/** @copydoc Renderer::notifyDecalAdded */
-		void notifyDecalAdded(Decal* decal) override;
+		void NotifyDecalAdded(Decal* decal) override;
 
 		/** @copydoc Renderer::notifyDecalUpdated */
-		void notifyDecalUpdated(Decal* decal) override;
+		void NotifyDecalUpdated(Decal* decal) override;
 
 		/** @copydoc Renderer::notifyDecalRemoved */
-		void notifyDecalRemoved(Decal* decal) override;
+		void NotifyDecalRemoved(Decal* decal) override;
 
 		/**
 		 * Updates the render options on the core thread.
 		 *
 		 * @note	Core thread only.
 		 */
-		void syncOptions(const RenderBeastOptions& options);
+		void SyncOptions(const RenderBeastOptions& options);
 
 		/**
 		 * Performs rendering over all camera proxies.
@@ -165,37 +165,37 @@ namespace bs
 		 *
 		 * @note	Core thread only.
 		 */
-		void renderAllCore(FrameTimings timings, PerFrameData perFrameData);
+		void RenderAllCore(FrameTimings timings, PerFrameData perFrameData);
 
 		/**
 		 * Renders all views in the provided view group. Returns true if anything has been draw to any of the views.
 		 *
 		 * @note	Core thread only.
 		 */
-		bool renderViews(RendererViewGroup& viewGroup, const FrameInfo& frameInfo);
+		bool RenderViews(RendererViewGroup& viewGroup, const FrameInfo& frameInfo);
 
 		/**
 		 * Renders all objects visible by the provided view.
 		 *			
 		 * @note	Core thread only.
 		 */
-		void renderView(const RendererViewGroup& viewGroup, RendererView& view, const FrameInfo& frameInfo);
+		void RenderView(const RendererViewGroup& viewGroup, RendererView& view, const FrameInfo& frameInfo);
 
 		/**
 		 * Renders all overlay callbacks of the provided view. Returns true if anything has been rendered in any of the views.
 		 * 					
 		 * @note	Core thread only.
 		 */
-		bool renderOverlay(RendererView& view, const FrameInfo& frameInfo);
+		bool RenderOverlay(RendererView& view, const FrameInfo& frameInfo);
 
 		/**	Creates data used by the renderer on the core thread. */
-		void initializeCore(const LoadedRendererTextures& rendererTextures);
+		void InitializeCore(const LoadedRendererTextures& rendererTextures);
 
 		/**	Destroys data used by the renderer on the core thread. */
-		void destroyCore();
+		void DestroyCore();
 
 		/** Updates the global reflection probe cubemap array with changed probe textures. */
-		void updateReflProbeArray();
+		void UpdateReflProbeArray();
 
 		// Core thread only fields
 		RenderBeastFeatureSet mFeatureSet = RenderBeastFeatureSet::Desktop;

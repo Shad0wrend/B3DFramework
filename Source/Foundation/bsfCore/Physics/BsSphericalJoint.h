@@ -32,19 +32,19 @@ namespace bs
 		virtual ~SphericalJoint() = default;
 
 		/** @copydoc setLimit() */
-		virtual LimitConeRange getLimit() const = 0;
+		virtual LimitConeRange GetLimit() const = 0;
 
 		/**
 		 * Determines the limit of the joint. This clamps the rotation inside an eliptical angular cone. You must enable
 		 * limit flag on the joint in order for this to be recognized.
 		 */
-		virtual void setLimit(const LimitConeRange& limit) = 0;
+		virtual void SetLimit(const LimitConeRange& limit) = 0;
 
 		/** Enables or disables a flag that controls the joint's behaviour. */
-		virtual void setFlag(SphericalJointFlag flag, bool enabled) = 0;
+		virtual void SetFlag(SphericalJointFlag flag, bool enabled) = 0;
 
 		/** Checks is the specified flag enabled. */
-		virtual bool hasFlag(SphericalJointFlag flag) const = 0;
+		virtual bool HasFlag(SphericalJointFlag flag) const = 0;
 
 		/**
 		 * Creates a new spherical joint.
@@ -52,7 +52,7 @@ namespace bs
 		 * @param[in]	scene		Scene to which to add the joint.
 		 * @param[in]	desc		Settings describing the joint.
 		 */
-		static SPtr<SphericalJoint> create(PhysicsScene& scene, const SPHERICAL_JOINT_DESC& desc);
+		static SPtr<SphericalJoint> Create(PhysicsScene& scene, const SPHERICAL_JOINT_DESC& desc);
 	};
 
 	/** Structure used for initializing a new SphericalJoint. */

@@ -5,7 +5,7 @@
 
 namespace bs
 {
-	SPtr<TextureImportOptions> TextureImportOptions::create()
+	SPtr<TextureImportOptions> TextureImportOptions::Create()
 	{
 		return bs_shared_ptr_new<TextureImportOptions>();
 	}
@@ -13,13 +13,13 @@ namespace bs
 	/************************************************************************/
 	/* 								SERIALIZATION                      		*/
 	/************************************************************************/
-	RTTITypeBase* TextureImportOptions::getRTTIStatic()
+	RTTITypeBase* TextureImportOptions::GetRttiStatic()
 	{
-		return TextureImportOptionsRTTI::instance();
+		return TextureImportOptionsRTTI::Instance();
 	}
 
-	RTTITypeBase* TextureImportOptions::getRTTI() const
+	RTTITypeBase* TextureImportOptions::GetRtti() const
 	{
-		return TextureImportOptions::getRTTIStatic();
+		return TextureImportOptions::GetRttiStatic();
 	}
 }

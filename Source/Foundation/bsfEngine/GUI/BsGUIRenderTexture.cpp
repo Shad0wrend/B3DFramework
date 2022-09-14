@@ -7,7 +7,7 @@
 
 namespace bs
 {
-	const String& GUIRenderTexture::getGUITypeName()
+	const String& GUIRenderTexture::GetGuiTypeName()
 	{
 		static String name = "RenderTexture";
 		return name;
@@ -23,34 +23,34 @@ namespace bs
 	GUIRenderTexture::~GUIRenderTexture()
 	{
 		if (mSourceTexture != nullptr)
-			GUIManager::instance().setInputBridge(mSourceTexture, nullptr);
+			GUIManager::Instance().setInputBridge(mSourceTexture, nullptr);
 	}
 
-	GUIRenderTexture* GUIRenderTexture::create(const SPtr<RenderTexture>& texture, bool transparent, const String& styleName)
+	GUIRenderTexture* GUIRenderTexture::Create(const SPtr<RenderTexture>& texture, bool transparent, const String& styleName)
 	{
-		return new (bs_alloc<GUIRenderTexture>()) GUIRenderTexture(styleName, texture, transparent, GUIDimensions::create());
+		return new (bs_alloc<GUIRenderTexture>()) GUIRenderTexture(styleName, texture, transparent, GUIDimensions::Create());
 	}
 
-	GUIRenderTexture* GUIRenderTexture::create(const SPtr<RenderTexture>& texture, bool transparent, const GUIOptions& options,
+	GUIRenderTexture* GUIRenderTexture::Create(const SPtr<RenderTexture>& texture, bool transparent, const GUIOptions& options,
 		const String& styleName)
 	{
-		return new (bs_alloc<GUIRenderTexture>()) GUIRenderTexture(styleName, texture, transparent, GUIDimensions::create(options));
+		return new (bs_alloc<GUIRenderTexture>()) GUIRenderTexture(styleName, texture, transparent, GUIDimensions::Create(options));
 	}
 
-	GUIRenderTexture* GUIRenderTexture::create(const SPtr<RenderTexture>& texture, const String& styleName)
+	GUIRenderTexture* GUIRenderTexture::Create(const SPtr<RenderTexture>& texture, const String& styleName)
 	{
-		return new (bs_alloc<GUIRenderTexture>()) GUIRenderTexture(styleName, texture, false, GUIDimensions::create());
+		return new (bs_alloc<GUIRenderTexture>()) GUIRenderTexture(styleName, texture, false, GUIDimensions::Create());
 	}
 
-	GUIRenderTexture* GUIRenderTexture::create(const SPtr<RenderTexture>& texture, const GUIOptions& options, const String& styleName)
+	GUIRenderTexture* GUIRenderTexture::Create(const SPtr<RenderTexture>& texture, const GUIOptions& options, const String& styleName)
 	{
-		return new (bs_alloc<GUIRenderTexture>()) GUIRenderTexture(styleName, texture, false, GUIDimensions::create(options));
+		return new (bs_alloc<GUIRenderTexture>()) GUIRenderTexture(styleName, texture, false, GUIDimensions::Create(options));
 	}
 
-	void GUIRenderTexture::setRenderTexture(const SPtr<RenderTexture>& texture)
+	void GUIRenderTexture::SetRenderTexture(const SPtr<RenderTexture>& texture)
 	{
 		if (mSourceTexture != nullptr)
-			GUIManager::instance().setInputBridge(mSourceTexture, nullptr);
+			GUIManager::Instance().setInputBridge(mSourceTexture, nullptr);
 
 		mSourceTexture = texture;
 
@@ -62,19 +62,19 @@ namespace bs
 				mDesc.uvScale = Vector2(1.0f, -1.0f);
 			}
 
-			setTexture(SpriteTexture::create(texture->getColorTexture(0)));
+			setTexture(SpriteTexture::Create(texture->getColorTexture(0)));
 
-			GUIManager::instance().setInputBridge(mSourceTexture, this);
+			GUIManager::Instance().setInputBridge(mSourceTexture, this);
 		}
 		else
 		{
-			setTexture(SpriteTexture::create(HTexture()));
+			setTexture(SpriteTexture::Create(HTexture()));
 		}
 
 		MarkLayoutAsDirtyInternal();
 	}
 
-	void GUIRenderTexture::updateRenderElementsInternal()
+	void GUIRenderTexture::UpdateRenderElementsInternal()
 	{		
 		if(mActiveTexture != nullptr && mActiveTexture.isLoaded())
 			mDesc.texture = mActiveTexture;

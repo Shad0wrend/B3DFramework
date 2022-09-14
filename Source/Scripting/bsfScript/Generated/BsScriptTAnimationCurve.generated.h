@@ -32,15 +32,15 @@ namespace bs
 
 		ScriptTAnimationCurvefloat(MonoObject* managedInstance, const SPtr<TAnimationCurve<float>>& value);
 
-		SPtr<TAnimationCurve<float>> getInternal() const { return mInternal; }
-		static MonoObject* create(const SPtr<TAnimationCurve<float>>& value);
+		SPtr<TAnimationCurve<float>> GetInternal() const { return mInternal; }
+		static MonoObject* Create(const SPtr<TAnimationCurve<float>>& value);
 
 	private:
 		SPtr<TAnimationCurve<float>> mInternal;
 
-		static void Internal_TAnimationCurve(MonoObject* managedInstance, MonoArray* keyframes);
-		static float Internal_evaluate(ScriptTAnimationCurvefloat* thisPtr, float time, bool loop);
-		static MonoArray* Internal_getKeyFrames(ScriptTAnimationCurvefloat* thisPtr);
+		static void InternalTAnimationCurve(MonoObject* managedInstance, MonoArray* keyframes);
+		static float InternalEvaluate(ScriptTAnimationCurvefloat* thisPtr, float time, bool loop);
+		static MonoArray* InternalGetKeyFrames(ScriptTAnimationCurvefloat* thisPtr);
 	};
 
 	class BS_SCR_BE_EXPORT ScriptTAnimationCurveVector3 : public ScriptObject<ScriptTAnimationCurveVector3>
@@ -50,15 +50,15 @@ namespace bs
 
 		ScriptTAnimationCurveVector3(MonoObject* managedInstance, const SPtr<TAnimationCurve<Vector3>>& value);
 
-		SPtr<TAnimationCurve<Vector3>> getInternal() const { return mInternal; }
-		static MonoObject* create(const SPtr<TAnimationCurve<Vector3>>& value);
+		SPtr<TAnimationCurve<Vector3>> GetInternal() const { return mInternal; }
+		static MonoObject* Create(const SPtr<TAnimationCurve<Vector3>>& value);
 
 	private:
 		SPtr<TAnimationCurve<Vector3>> mInternal;
 
-		static void Internal_TAnimationCurve(MonoObject* managedInstance, MonoArray* keyframes);
-		static void Internal_evaluate(ScriptTAnimationCurveVector3* thisPtr, float time, bool loop, Vector3* __output);
-		static MonoArray* Internal_getKeyFrames(ScriptTAnimationCurveVector3* thisPtr);
+		static void InternalTAnimationCurve(MonoObject* managedInstance, MonoArray* keyframes);
+		static void InternalEvaluate(ScriptTAnimationCurveVector3* thisPtr, float time, bool loop, Vector3* __output);
+		static MonoArray* InternalGetKeyFrames(ScriptTAnimationCurveVector3* thisPtr);
 	};
 
 	class BS_SCR_BE_EXPORT ScriptTAnimationCurveVector2 : public ScriptObject<ScriptTAnimationCurveVector2>
@@ -68,15 +68,15 @@ namespace bs
 
 		ScriptTAnimationCurveVector2(MonoObject* managedInstance, const SPtr<TAnimationCurve<Vector2>>& value);
 
-		SPtr<TAnimationCurve<Vector2>> getInternal() const { return mInternal; }
-		static MonoObject* create(const SPtr<TAnimationCurve<Vector2>>& value);
+		SPtr<TAnimationCurve<Vector2>> GetInternal() const { return mInternal; }
+		static MonoObject* Create(const SPtr<TAnimationCurve<Vector2>>& value);
 
 	private:
 		SPtr<TAnimationCurve<Vector2>> mInternal;
 
-		static void Internal_TAnimationCurve(MonoObject* managedInstance, MonoArray* keyframes);
-		static void Internal_evaluate(ScriptTAnimationCurveVector2* thisPtr, float time, bool loop, Vector2* __output);
-		static MonoArray* Internal_getKeyFrames(ScriptTAnimationCurveVector2* thisPtr);
+		static void InternalTAnimationCurve(MonoObject* managedInstance, MonoArray* keyframes);
+		static void InternalEvaluate(ScriptTAnimationCurveVector2* thisPtr, float time, bool loop, Vector2* __output);
+		static MonoArray* InternalGetKeyFrames(ScriptTAnimationCurveVector2* thisPtr);
 	};
 
 	class BS_SCR_BE_EXPORT ScriptTAnimationCurveQuaternion : public ScriptObject<ScriptTAnimationCurveQuaternion>
@@ -86,15 +86,15 @@ namespace bs
 
 		ScriptTAnimationCurveQuaternion(MonoObject* managedInstance, const SPtr<TAnimationCurve<Quaternion>>& value);
 
-		SPtr<TAnimationCurve<Quaternion>> getInternal() const { return mInternal; }
-		static MonoObject* create(const SPtr<TAnimationCurve<Quaternion>>& value);
+		SPtr<TAnimationCurve<Quaternion>> GetInternal() const { return mInternal; }
+		static MonoObject* Create(const SPtr<TAnimationCurve<Quaternion>>& value);
 
 	private:
 		SPtr<TAnimationCurve<Quaternion>> mInternal;
 
-		static void Internal_TAnimationCurve(MonoObject* managedInstance, MonoArray* keyframes);
-		static void Internal_evaluate(ScriptTAnimationCurveQuaternion* thisPtr, float time, bool loop, Quaternion* __output);
-		static MonoArray* Internal_getKeyFrames(ScriptTAnimationCurveQuaternion* thisPtr);
+		static void InternalTAnimationCurve(MonoObject* managedInstance, MonoArray* keyframes);
+		static void InternalEvaluate(ScriptTAnimationCurveQuaternion* thisPtr, float time, bool loop, Quaternion* __output);
+		static MonoArray* InternalGetKeyFrames(ScriptTAnimationCurveQuaternion* thisPtr);
 	};
 
 	class BS_SCR_BE_EXPORT ScriptTAnimationCurveint32_t : public ScriptObject<ScriptTAnimationCurveint32_t>
@@ -104,14 +104,14 @@ namespace bs
 
 		ScriptTAnimationCurveint32_t(MonoObject* managedInstance, const SPtr<TAnimationCurve<int32_t>>& value);
 
-		SPtr<TAnimationCurve<int32_t>> getInternal() const { return mInternal; }
-		static MonoObject* create(const SPtr<TAnimationCurve<int32_t>>& value);
+		SPtr<TAnimationCurve<int32_t>> GetInternal() const { return mInternal; }
+		static MonoObject* Create(const SPtr<TAnimationCurve<int32_t>>& value);
 
 	private:
 		SPtr<TAnimationCurve<int32_t>> mInternal;
 
-		static void Internal_TAnimationCurve(MonoObject* managedInstance, MonoArray* keyframes);
-		static int32_t Internal_evaluate(ScriptTAnimationCurveint32_t* thisPtr, float time, bool loop);
-		static MonoArray* Internal_getKeyFrames(ScriptTAnimationCurveint32_t* thisPtr);
+		static void InternalTAnimationCurve(MonoObject* managedInstance, MonoArray* keyframes);
+		static int32_t InternalEvaluate(ScriptTAnimationCurveint32_t* thisPtr, float time, bool loop);
+		static MonoArray* InternalGetKeyFrames(ScriptTAnimationCurveint32_t* thisPtr);
 	};
 }

@@ -23,8 +23,8 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static MonoObject* internal_Clone(MonoObject* original);
-		static MonoObject* internal_Create(MonoReflectionType* type);
+		static MonoObject* InternalClone(MonoObject* original);
+		static MonoObject* InternalCreate(MonoReflectionType* type);
 	};
 
 	/** @} */

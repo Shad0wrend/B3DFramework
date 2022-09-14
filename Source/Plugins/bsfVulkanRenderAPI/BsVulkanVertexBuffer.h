@@ -21,11 +21,11 @@ namespace bs { namespace ct
 		 * Gets the resource wrapping the buffer object, on the specified device. If GPU param block buffer's device mask
 		 * doesn't include the provided device, null is returned.
 		 */
-		VulkanBuffer* getResource(UINT32 deviceIdx) const;
+		VulkanBuffer* GetResource(UINT32 deviceIdx) const;
 
 	protected:
 		/** @copydoc VertexBuffer::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 	private:
 		GpuDeviceFlags mDeviceMask;

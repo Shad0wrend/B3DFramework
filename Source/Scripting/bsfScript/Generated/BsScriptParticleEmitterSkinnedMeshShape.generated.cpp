@@ -17,52 +17,52 @@ namespace bs
 
 	void ScriptParticleEmitterSkinnedMeshShape::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_setOptions", (void*)&ScriptParticleEmitterSkinnedMeshShape::Internal_setOptions);
-		metaData.scriptClass->addInternalCall("Internal_getOptions", (void*)&ScriptParticleEmitterSkinnedMeshShape::Internal_getOptions);
-		metaData.scriptClass->addInternalCall("Internal_create", (void*)&ScriptParticleEmitterSkinnedMeshShape::Internal_create);
-		metaData.scriptClass->addInternalCall("Internal_create0", (void*)&ScriptParticleEmitterSkinnedMeshShape::Internal_create0);
+		metaData.scriptClass->AddInternalCall("Internal_setOptions", (void*)&ScriptParticleEmitterSkinnedMeshShape::InternalSetOptions);
+		metaData.scriptClass->AddInternalCall("Internal_getOptions", (void*)&ScriptParticleEmitterSkinnedMeshShape::InternalGetOptions);
+		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptParticleEmitterSkinnedMeshShape::InternalCreate);
+		metaData.scriptClass->AddInternalCall("Internal_create0", (void*)&ScriptParticleEmitterSkinnedMeshShape::InternalCreate0);
 
 	}
 
-	MonoObject* ScriptParticleEmitterSkinnedMeshShape::create(const SPtr<ParticleEmitterSkinnedMeshShape>& value)
+	MonoObject* ScriptParticleEmitterSkinnedMeshShape::Create(const SPtr<ParticleEmitterSkinnedMeshShape>& value)
 	{
 		if(value == nullptr) return nullptr; 
 
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptParticleEmitterSkinnedMeshShape>()) ScriptParticleEmitterSkinnedMeshShape(managedInstance, value);
 		return managedInstance;
 	}
-	void ScriptParticleEmitterSkinnedMeshShape::Internal_setOptions(ScriptParticleEmitterSkinnedMeshShape* thisPtr, __PARTICLE_SKINNED_MESH_SHAPE_DESCInterop* options)
+	void ScriptParticleEmitterSkinnedMeshShape::InternalSetOptions(ScriptParticleEmitterSkinnedMeshShape* thisPtr, __PARTICLE_SKINNED_MESH_SHAPE_DESCInterop* options)
 	{
 		PARTICLE_SKINNED_MESH_SHAPE_DESC tmpoptions;
-		tmpoptions = ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC::fromInterop(*options);
-		thisPtr->getInternal()->setOptions(tmpoptions);
+		tmpoptions = ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC::FromInterop(*options);
+		thisPtr->GetInternal()->setOptions(tmpoptions);
 	}
 
-	void ScriptParticleEmitterSkinnedMeshShape::Internal_getOptions(ScriptParticleEmitterSkinnedMeshShape* thisPtr, __PARTICLE_SKINNED_MESH_SHAPE_DESCInterop* __output)
+	void ScriptParticleEmitterSkinnedMeshShape::InternalGetOptions(ScriptParticleEmitterSkinnedMeshShape* thisPtr, __PARTICLE_SKINNED_MESH_SHAPE_DESCInterop* __output)
 	{
 		PARTICLE_SKINNED_MESH_SHAPE_DESC tmp__output;
 		tmp__output = thisPtr->getInternal()->getOptions();
 
 		__PARTICLE_SKINNED_MESH_SHAPE_DESCInterop interop__output;
-		interop__output = ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC::toInterop(tmp__output);
+		interop__output = ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC::ToInterop(tmp__output);
 		MonoUtil::valueCopy(__output, &interop__output, ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC::getMetaData()->scriptClass->GetInternalClassInternal());
 	}
 
-	void ScriptParticleEmitterSkinnedMeshShape::Internal_create(MonoObject* managedInstance, __PARTICLE_SKINNED_MESH_SHAPE_DESCInterop* desc)
+	void ScriptParticleEmitterSkinnedMeshShape::InternalCreate(MonoObject* managedInstance, __PARTICLE_SKINNED_MESH_SHAPE_DESCInterop* desc)
 	{
 		PARTICLE_SKINNED_MESH_SHAPE_DESC tmpdesc;
-		tmpdesc = ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC::fromInterop(*desc);
-		SPtr<ParticleEmitterSkinnedMeshShape> instance = ParticleEmitterSkinnedMeshShape::create(tmpdesc);
+		tmpdesc = ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC::FromInterop(*desc);
+		SPtr<ParticleEmitterSkinnedMeshShape> instance = ParticleEmitterSkinnedMeshShape::Create(tmpdesc);
 		new (bs_alloc<ScriptParticleEmitterSkinnedMeshShape>())ScriptParticleEmitterSkinnedMeshShape(managedInstance, instance);
 	}
 
-	void ScriptParticleEmitterSkinnedMeshShape::Internal_create0(MonoObject* managedInstance)
+	void ScriptParticleEmitterSkinnedMeshShape::InternalCreate0(MonoObject* managedInstance)
 	{
-		SPtr<ParticleEmitterSkinnedMeshShape> instance = ParticleEmitterSkinnedMeshShape::create();
+		SPtr<ParticleEmitterSkinnedMeshShape> instance = ParticleEmitterSkinnedMeshShape::Create();
 		new (bs_alloc<ScriptParticleEmitterSkinnedMeshShape>())ScriptParticleEmitterSkinnedMeshShape(managedInstance, instance);
 	}
 }

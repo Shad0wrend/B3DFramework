@@ -26,7 +26,7 @@ namespace bs
 		virtual ~ICompare() = default;
 
 		/** Checks if two IReflectable objects are equal. */
-		virtual bool run(IReflectable& a, IReflectable& b) = 0;
+		virtual bool Run(IReflectable& a, IReflectable& b) = 0;
 	};
 
 	/** Compares native IReflectable objects for equality. */
@@ -37,14 +37,14 @@ namespace bs
 		virtual ~BinaryCompare() = default;
 
 		/** @copydoc ICompare::run */
-		bool run(IReflectable& a, IReflectable& b) override;
+		bool Run(IReflectable& a, IReflectable& b) override;
 
 	protected:
 		/**
 		 * Checks if two IReflectable objects are equal. Inserts the results into an object map so multiple references
 		 * to the same object don't need to be checked twice.
 		 */
-		bool compare(IReflectable& a, IReflectable& b);
+		bool Compare(IReflectable& a, IReflectable& b);
 
 		UnorderedSet<IReflectable*> mObjectMap;
 		SerializationContext* mContext = nullptr;

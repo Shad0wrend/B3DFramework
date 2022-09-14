@@ -29,18 +29,18 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 	public:
-		const String& getRTTIName() override
+		const String& GetRttiName() 
 		{
 			static String name = "AutoExposureSettings";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() 
 		{
 			return TID_AutoExposureSettings;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return bs_shared_ptr_new<AutoExposureSettings>();
 		}
@@ -60,13 +60,13 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 	public:
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "TonemappingSettings";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_TonemappingSettings;
 		}
@@ -86,13 +86,13 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 	public:
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "WhiteBalanceSettings";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_WhiteBalanceSettings;
 		}
@@ -114,13 +114,13 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 	public:
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "ColorGradingSettings";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_ColorGradingSettings;
 		}
@@ -155,13 +155,13 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 	public:
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "DepthOfFieldSettings";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_DepthOfFieldSettings;
 		}
@@ -187,13 +187,13 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 	public:
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "AmbientOcclusionSettings";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_AmbientOcclusionSettings;
 		}
@@ -216,13 +216,13 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 	public:
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "MotionBlurSettings";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_MotionBlurSettings;
 		}
@@ -243,13 +243,13 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 	public:
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "TemporalAASettings";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_TemporalAASettings;
 		}
@@ -271,13 +271,13 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 	public:
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "ScreenSpaceReflectionsSettings";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_ScreenSpaceReflectionsSettings;
 		}
@@ -301,13 +301,13 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 	public:
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "BloomSettings";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_BloomSettings;
 		}
@@ -341,13 +341,13 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 	public:
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "ScreenSpaceLensFlareSettings";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_ScreenSpaceLensFlareSettings;
 		}
@@ -369,13 +369,13 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 	public:
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "ChromaticAberrationSettings";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_ChromaticAberrationSettings;
 		}
@@ -396,13 +396,13 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 	public:
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "FilmGrainSettings";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_FilmGrainSettings;
 		}
@@ -424,13 +424,13 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 	public:
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "ShadowSettings";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_ShadowSettings;
 		}
@@ -474,13 +474,13 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 	public:
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "RenderSettings";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_RenderSettings;
 		}

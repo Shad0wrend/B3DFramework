@@ -15,21 +15,21 @@ namespace bs
 
 	void ScriptPhysics::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_toggleCollision", (void*)&ScriptPhysics::Internal_toggleCollision);
-		metaData.scriptClass->addInternalCall("Internal_isCollisionEnabled", (void*)&ScriptPhysics::Internal_isCollisionEnabled);
-		metaData.scriptClass->addInternalCall("Internal__isUpdateInProgress", (void*)&ScriptPhysics::Internal__isUpdateInProgress);
+		metaData.scriptClass->AddInternalCall("Internal_toggleCollision", (void*)&ScriptPhysics::InternalToggleCollision);
+		metaData.scriptClass->AddInternalCall("Internal_isCollisionEnabled", (void*)&ScriptPhysics::InternalIsCollisionEnabled);
+		metaData.scriptClass->AddInternalCall("Internal__isUpdateInProgress", (void*)&ScriptPhysics::InternalIsUpdateInProgress);
 
 	}
 
-	void ScriptPhysics::Internal_toggleCollision(uint64_t groupA, uint64_t groupB, bool enabled)
+	void ScriptPhysics::InternalToggleCollision(uint64_t groupA, uint64_t groupB, bool enabled)
 	{
-		Physics::instance().toggleCollision(groupA, groupB, enabled);
+		Physics::Instance().ToggleCollision(groupA, groupB, enabled);
 	}
 
-	bool ScriptPhysics::Internal_isCollisionEnabled(uint64_t groupA, uint64_t groupB)
+	bool ScriptPhysics::InternalIsCollisionEnabled(uint64_t groupA, uint64_t groupB)
 	{
 		bool tmp__output;
-		tmp__output = Physics::instance().isCollisionEnabled(groupA, groupB);
+		tmp__output = Physics::Instance().IsCollisionEnabled(groupA, groupB);
 
 		bool __output;
 		__output = tmp__output;
@@ -37,10 +37,10 @@ namespace bs
 		return __output;
 	}
 
-	bool ScriptPhysics::Internal__isUpdateInProgress()
+	bool ScriptPhysics::InternalIsUpdateInProgress()
 	{
 		bool tmp__output;
-		tmp__output = Physics::instance().IsUpdateInProgressInternal();
+		tmp__output = Physics::Instance().IsUpdateInProgressInternal();
 
 		bool __output;
 		__output = tmp__output;

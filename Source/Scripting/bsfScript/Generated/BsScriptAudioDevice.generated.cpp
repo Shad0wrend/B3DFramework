@@ -14,31 +14,31 @@ namespace bs
 	void ScriptAudioDevice::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptAudioDevice::box(const __AudioDeviceInterop& value)
+	MonoObject*ScriptAudioDevice::Box(const __AudioDeviceInterop& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	__AudioDeviceInterop ScriptAudioDevice::unbox(MonoObject* value)
+	__AudioDeviceInterop ScriptAudioDevice::Unbox(MonoObject* value)
 	{
-		return *(__AudioDeviceInterop*)MonoUtil::unbox(value);
+		return *(__AudioDeviceInterop*)MonoUtil::Unbox(value);
 	}
 
-	AudioDevice ScriptAudioDevice::fromInterop(const __AudioDeviceInterop& value)
+	AudioDevice ScriptAudioDevice::FromInterop(const __AudioDeviceInterop& value)
 	{
 		AudioDevice output;
 		String tmpname;
-		tmpname = MonoUtil::monoToString(value.name);
+		tmpname = MonoUtil::MonoToString(value.name);
 		output.name = tmpname;
 
 		return output;
 	}
 
-	__AudioDeviceInterop ScriptAudioDevice::toInterop(const AudioDevice& value)
+	__AudioDeviceInterop ScriptAudioDevice::ToInterop(const AudioDevice& value)
 	{
 		__AudioDeviceInterop output;
 		MonoString* tmpname;
-		tmpname = MonoUtil::stringToMono(value.name);
+		tmpname = MonoUtil::StringToMono(value.name);
 		output.name = tmpname;
 
 		return output;

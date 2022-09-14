@@ -18,13 +18,13 @@ namespace bs
 		ScriptCCapsuleCollider(MonoObject* managedInstance, const GameObjectHandle<CCapsuleCollider>& value);
 
 	private:
-		static void Internal_setNormal(ScriptCCapsuleCollider* thisPtr, Vector3* normal);
-		static void Internal_getNormal(ScriptCCapsuleCollider* thisPtr, Vector3* __output);
-		static void Internal_setCenter(ScriptCCapsuleCollider* thisPtr, Vector3* center);
-		static void Internal_getCenter(ScriptCCapsuleCollider* thisPtr, Vector3* __output);
-		static void Internal_setHalfHeight(ScriptCCapsuleCollider* thisPtr, float halfHeight);
-		static float Internal_getHalfHeight(ScriptCCapsuleCollider* thisPtr);
-		static void Internal_setRadius(ScriptCCapsuleCollider* thisPtr, float radius);
-		static float Internal_getRadius(ScriptCCapsuleCollider* thisPtr);
+		static void InternalSetNormal(ScriptCCapsuleCollider* thisPtr, Vector3* normal);
+		static void InternalGetNormal(ScriptCCapsuleCollider* thisPtr, Vector3* __output);
+		static void InternalSetCenter(ScriptCCapsuleCollider* thisPtr, Vector3* center);
+		static void InternalGetCenter(ScriptCCapsuleCollider* thisPtr, Vector3* __output);
+		static void InternalSetHalfHeight(ScriptCCapsuleCollider* thisPtr, float halfHeight);
+		static float InternalGetHalfHeight(ScriptCCapsuleCollider* thisPtr);
+		static void InternalSetRadius(ScriptCCapsuleCollider* thisPtr, float radius);
+		static float InternalGetRadius(ScriptCCapsuleCollider* thisPtr);
 	};
 }

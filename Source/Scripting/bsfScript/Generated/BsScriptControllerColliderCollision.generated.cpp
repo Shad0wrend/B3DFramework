@@ -19,24 +19,24 @@ namespace bs
 	void ScriptControllerColliderCollision::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptControllerColliderCollision::box(const __ControllerColliderCollisionInterop& value)
+	MonoObject*ScriptControllerColliderCollision::Box(const __ControllerColliderCollisionInterop& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	__ControllerColliderCollisionInterop ScriptControllerColliderCollision::unbox(MonoObject* value)
+	__ControllerColliderCollisionInterop ScriptControllerColliderCollision::Unbox(MonoObject* value)
 	{
-		return *(__ControllerColliderCollisionInterop*)MonoUtil::unbox(value);
+		return *(__ControllerColliderCollisionInterop*)MonoUtil::Unbox(value);
 	}
 
-	ControllerColliderCollision ScriptControllerColliderCollision::fromInterop(const __ControllerColliderCollisionInterop& value)
+	ControllerColliderCollision ScriptControllerColliderCollision::FromInterop(const __ControllerColliderCollisionInterop& value)
 	{
 		ControllerColliderCollision output;
 		GameObjectHandle<CCollider> tmpcollider;
 		ScriptCColliderBase* scriptcollider;
-		scriptcollider = (ScriptCColliderBase*)ScriptCCollider::toNative(value.collider);
+		scriptcollider = (ScriptCColliderBase*)ScriptCCollider::ToNative(value.collider);
 		if(scriptcollider != nullptr)
-			tmpcollider = static_object_cast<CCollider>(scriptcollider->getComponent());
+			tmpcollider = static_object_cast<CCollider>(scriptcollider->GetComponent());
 		output.collider = tmpcollider;
 		output.triangleIndex = value.triangleIndex;
 		output.position = value.position;
@@ -47,15 +47,15 @@ namespace bs
 		return output;
 	}
 
-	__ControllerColliderCollisionInterop ScriptControllerColliderCollision::toInterop(const ControllerColliderCollision& value)
+	__ControllerColliderCollisionInterop ScriptControllerColliderCollision::ToInterop(const ControllerColliderCollision& value)
 	{
 		__ControllerColliderCollisionInterop output;
 		ScriptComponentBase* scriptcollider = nullptr;
 		if(value.collider)
-			scriptcollider = ScriptGameObjectManager::instance().getBuiltinScriptComponent(static_object_cast<Component>(value.collider));
+			scriptcollider = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(value.collider));
 		MonoObject* tmpcollider;
 		if(scriptcollider != nullptr)
-			tmpcollider = scriptcollider->getManagedInstance();
+			tmpcollider = scriptcollider->GetManagedInstance();
 		else
 			tmpcollider = nullptr;
 		output.collider = tmpcollider;

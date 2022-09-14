@@ -359,9 +359,9 @@ namespace bs { namespace ct
 		 * of the two compared strings must match, and the remaining non-matching bit will be assumed to be the semantic
 		 * index. Returns -1 if no match is made.
 		 */
-		INT32 matchesName(const String& name) const
+		INT32 MatchesName(const String& name) const
 		{
-			if (!StringUtil::startsWith(name, mName, false))
+			if (!StringUtil::StartsWith(name, mName, false))
 				return -1;
 
 			UINT32 length = (UINT32)mName.size();
@@ -369,7 +369,7 @@ namespace bs { namespace ct
 		}
 
 		/**	Returns the semantic of this attribute. */
-		VertexElementSemantic getSemantic() const { return mSemantic; }
+		VertexElementSemantic GetSemantic() const { return mSemantic; }
 
 	private:
 		String mName;
@@ -402,11 +402,11 @@ namespace bs { namespace ct
 
 		for (UINT32 i = 0; i < numAttribs; i++)
 		{
-			INT32 attribIndex = attributes[i].matchesName(name);
+			INT32 attribIndex = attributes[i].MatchesName(name);
 			if (attribIndex != -1)
 			{
 				index = attribIndex;
-				semantic = attributes[i].getSemantic();
+				semantic = attributes[i].GetSemantic();
 				return true;
 			}
 		}
@@ -481,7 +481,7 @@ namespace bs { namespace ct
 					continue;
 				}
 
-				UINT32 elemSize = VulkanUtility::calcInterfaceBlockElementSizeAndOffset(paramType, arraySize, size);
+				UINT32 elemSize = VulkanUtility::CalcInterfaceBlockElementSizeAndOffset(paramType, arraySize, size);
 				size += elemSize;
 			}
 		}
@@ -640,7 +640,7 @@ namespace bs { namespace ct
 			}
 			else // Uniform buffer
 			{
-				int size = Math::divideAndRoundUp(program->getUniformBlockSize(i), 16) * 16;
+				int size = Math::DivideAndRoundUp(program->getUniformBlockSize(i), 16) * 16;
 
 				GpuParamBlockDesc blockDesc;
 				blockDesc.name = name;
@@ -676,7 +676,7 @@ namespace bs { namespace ct
 						parseStruct(paramTypeList, elementSize);
 
 						// Struct alignment always a multiple of vec4
-						arrayStride = Math::divideAndRoundUp(elementSize, 4U) * 4;
+						arrayStride = Math::DivideAndRoundUp(elementSize, 4U) * 4;
 					}
 					else
 					{
@@ -697,7 +697,7 @@ namespace bs { namespace ct
 
 						// Array elements in std140 are always rounded to vec4
 						if (arraySize > 1)
-							arrayStride = Math::divideAndRoundUp(elementSize, 4U) * 4;
+							arrayStride = Math::DivideAndRoundUp(elementSize, 4U) * 4;
 						else
 							arrayStride = elementSize;
 					}
@@ -763,7 +763,7 @@ namespace bs { namespace ct
 		glslang::FinalizeProcess();
 	}
 
-	SPtr<GpuProgramBytecode> GLSLToSPIRV::convert(const GPU_PROGRAM_DESC& desc)
+	SPtr<GpuProgramBytecode> GLSLToSPIRV::Convert(const GPU_PROGRAM_DESC& desc)
 	{
 		TBuiltInResource resources = DefaultTBuiltInResource;
 		glslang::TProgram* program = bs_new<glslang::TProgram>();

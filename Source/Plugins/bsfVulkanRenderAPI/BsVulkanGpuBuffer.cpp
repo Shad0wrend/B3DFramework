@@ -31,15 +31,15 @@ namespace bs { namespace ct
 				if (mBufferViews[i] == VK_NULL_HANDLE)
 					continue;
 
-				VulkanBuffer* buffer = static_cast<VulkanHardwareBuffer*>(mBuffer)->getResource(i);
-				buffer->freeView(mBufferViews[i]);
+				VulkanBuffer* buffer = static_cast<VulkanHardwareBuffer*>(mBuffer)->GetResource(i);
+				buffer->FreeView(mBufferViews[i]);
 			}
 		}
 
 		BS_INC_RENDER_STAT_CAT(ResDestroyed, RenderStatObject_GpuBuffer);
 	}
 
-	void VulkanGpuBuffer::initialize()
+	void VulkanGpuBuffer::Initialize()
 	{
 		BS_INC_RENDER_STAT_CAT(ResCreated, RenderStatObject_GpuBuffer);
 
@@ -59,49 +59,49 @@ namespace bs { namespace ct
 			mBuffer = bs_pool_new<VulkanHardwareBuffer>(bufferType, props.getFormat(), props.getUsage(), size, mDeviceMask);
 		}
 
-		updateViews();
+		UpdateViews();
 
 		GpuBuffer::initialize();
 	}
 
-	void* VulkanGpuBuffer::map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx, UINT32 queueIdx)
+	void* VulkanGpuBuffer::Map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx, UINT32 queueIdx)
 	{
 		void* data = GpuBuffer::map(offset, length, options, deviceIdx, queueIdx);
-		updateViews();
+		UpdateViews();
 
 		return data;
 	}
 
-	void VulkanGpuBuffer::unmap()
+	void VulkanGpuBuffer::Unmap()
 	{
 		GpuBuffer::unmap();
-		updateViews();
+		UpdateViews();
 	}
 
-	void VulkanGpuBuffer::readData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx, UINT32 queueIdx)
+	void VulkanGpuBuffer::ReadData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx, UINT32 queueIdx)
 	{
 		GpuBuffer::readData(offset, length, dest, deviceIdx, queueIdx);
-		updateViews();
+		UpdateViews();
 	}
 
-	void VulkanGpuBuffer::writeData(UINT32 offset, UINT32 length, const void* source, BufferWriteType writeFlags,
+	void VulkanGpuBuffer::WriteData(UINT32 offset, UINT32 length, const void* source, BufferWriteType writeFlags,
 		UINT32 queueIdx)
 	{
 		GpuBuffer::writeData(offset, length, source, writeFlags, queueIdx);
-		updateViews();
+		UpdateViews();
 	}
 
-	VulkanBuffer* VulkanGpuBuffer::getResource(UINT32 deviceIdx) const
+	VulkanBuffer* VulkanGpuBuffer::GetResource(UINT32 deviceIdx) const
 	{
 		return static_cast<VulkanHardwareBuffer*>(mBuffer)->getResource(deviceIdx);
 	}
 
-	VkBufferView VulkanGpuBuffer::getView(UINT32 deviceIdx) const
+	VkBufferView VulkanGpuBuffer::GetView(UINT32 deviceIdx) const
 	{
 		return mBufferViews[deviceIdx];
 	}
 
-	void VulkanGpuBuffer::updateViews()
+	void VulkanGpuBuffer::UpdateViews()
 	{
 		if(mProperties.getType() == GBT_STRUCTURED)
 			return;

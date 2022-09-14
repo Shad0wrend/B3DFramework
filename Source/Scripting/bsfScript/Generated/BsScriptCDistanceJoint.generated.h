@@ -19,16 +19,16 @@ namespace bs
 		ScriptCDistanceJoint(MonoObject* managedInstance, const GameObjectHandle<CDistanceJoint>& value);
 
 	private:
-		static float Internal_getDistance(ScriptCDistanceJoint* thisPtr);
-		static float Internal_getMinDistance(ScriptCDistanceJoint* thisPtr);
-		static void Internal_setMinDistance(ScriptCDistanceJoint* thisPtr, float value);
-		static float Internal_getMaxDistance(ScriptCDistanceJoint* thisPtr);
-		static void Internal_setMaxDistance(ScriptCDistanceJoint* thisPtr, float value);
-		static float Internal_getTolerance(ScriptCDistanceJoint* thisPtr);
-		static void Internal_setTolerance(ScriptCDistanceJoint* thisPtr, float value);
-		static void Internal_getSpring(ScriptCDistanceJoint* thisPtr, Spring* __output);
-		static void Internal_setSpring(ScriptCDistanceJoint* thisPtr, Spring* value);
-		static void Internal_setFlag(ScriptCDistanceJoint* thisPtr, DistanceJointFlag flag, bool enabled);
-		static bool Internal_hasFlag(ScriptCDistanceJoint* thisPtr, DistanceJointFlag flag);
+		static float InternalGetDistance(ScriptCDistanceJoint* thisPtr);
+		static float InternalGetMinDistance(ScriptCDistanceJoint* thisPtr);
+		static void InternalSetMinDistance(ScriptCDistanceJoint* thisPtr, float value);
+		static float InternalGetMaxDistance(ScriptCDistanceJoint* thisPtr);
+		static void InternalSetMaxDistance(ScriptCDistanceJoint* thisPtr, float value);
+		static float InternalGetTolerance(ScriptCDistanceJoint* thisPtr);
+		static void InternalSetTolerance(ScriptCDistanceJoint* thisPtr, float value);
+		static void InternalGetSpring(ScriptCDistanceJoint* thisPtr, Spring* __output);
+		static void InternalSetSpring(ScriptCDistanceJoint* thisPtr, Spring* value);
+		static void InternalSetFlag(ScriptCDistanceJoint* thisPtr, DistanceJointFlag flag, bool enabled);
+		static bool InternalHasFlag(ScriptCDistanceJoint* thisPtr, DistanceJointFlag flag);
 	};
 }

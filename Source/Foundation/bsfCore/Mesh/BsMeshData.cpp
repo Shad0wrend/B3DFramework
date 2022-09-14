@@ -27,12 +27,12 @@ namespace bs
 	MeshData::~MeshData()
 	{ }
 
-	UINT32 MeshData::getNumIndices() const
+	UINT32 MeshData::GetNumIndices() const
 	{
 		return mNumIndices;
 	}
 
-	UINT16* MeshData::getIndices16() const
+	UINT16* MeshData::GetIndices16() const
 	{
 		if(mIndexType != IT_16BIT)
 			BS_EXCEPT(InternalErrorException, "Attempting to get 16bit index buffer, but internally allocated buffer is 32 bit.");
@@ -42,7 +42,7 @@ namespace bs
 		return (UINT16*)(getData() + indexBufferOffset);
 	}
 
-	UINT32* MeshData::getIndices32() const
+	UINT32* MeshData::GetIndices32() const
 	{
 		if(mIndexType != IT_32BIT)
 			BS_EXCEPT(InternalErrorException, "Attempting to get 32bit index buffer, but internally allocated buffer is 16 bit.");
@@ -52,13 +52,13 @@ namespace bs
 		return (UINT32*)(getData() + indexBufferOffset);
 	}
 
-	UINT32 MeshData::getInternalBufferSize() const
+	UINT32 MeshData::GetInternalBufferSize() const
 	{
 		return getIndexBufferSize() + getStreamSize();
 	}
 
 	// TODO - This doesn't handle the case where multiple elements in same slot have different data types
-	SPtr<MeshData> MeshData::combine(const Vector<SPtr<MeshData>>& meshes, const Vector<Vector<SubMesh>>& allSubMeshes,
+	SPtr<MeshData> MeshData::Combine(const Vector<SPtr<MeshData>>& meshes, const Vector<Vector<SubMesh>>& allSubMeshes,
 		Vector<SubMesh>& subMeshes)
 	{
 		UINT32 totalVertexCount = 0;
@@ -183,7 +183,7 @@ namespace bs
 		return combinedMeshData;
 	}
 
-	void MeshData::setVertexData(VertexElementSemantic semantic, void* data, UINT32 size, UINT32 semanticIdx, UINT32 streamIdx)
+	void MeshData::SetVertexData(VertexElementSemantic semantic, void* data, UINT32 size, UINT32 semanticIdx, UINT32 streamIdx)
 	{
 		assert(data != nullptr);
 
@@ -217,7 +217,7 @@ namespace bs
 		}
 	}
 
-	void MeshData::getVertexData(VertexElementSemantic semantic, void* data, UINT32 size, UINT32 semanticIdx, UINT32 streamIdx)
+	void MeshData::GetVertexData(VertexElementSemantic semantic, void* data, UINT32 size, UINT32 semanticIdx, UINT32 streamIdx)
 	{
 		assert(data != nullptr);
 
@@ -251,7 +251,7 @@ namespace bs
 		}
 	}
 
-	VertexElemIter<Vector2> MeshData::getVec2DataIter(VertexElementSemantic semantic, UINT32 semanticIdx, UINT32 streamIdx)
+	VertexElemIter<Vector2> MeshData::GetVec2DataIter(VertexElementSemantic semantic, UINT32 semanticIdx, UINT32 streamIdx)
 	{
 		UINT8* data;
 		UINT32 vertexStride;
@@ -260,7 +260,7 @@ namespace bs
 		return VertexElemIter<Vector2>(data, vertexStride, mNumVertices);
 	}
 
-	VertexElemIter<Vector3> MeshData::getVec3DataIter(VertexElementSemantic semantic, UINT32 semanticIdx, UINT32 streamIdx)
+	VertexElemIter<Vector3> MeshData::GetVec3DataIter(VertexElementSemantic semantic, UINT32 semanticIdx, UINT32 streamIdx)
 	{
 		UINT8* data;
 		UINT32 vertexStride;
@@ -269,7 +269,7 @@ namespace bs
 		return VertexElemIter<Vector3>(data, vertexStride, mNumVertices);
 	}
 
-	VertexElemIter<Vector4> MeshData::getVec4DataIter(VertexElementSemantic semantic, UINT32 semanticIdx, UINT32 streamIdx)
+	VertexElemIter<Vector4> MeshData::GetVec4DataIter(VertexElementSemantic semantic, UINT32 semanticIdx, UINT32 streamIdx)
 	{
 		UINT8* data;
 		UINT32 vertexStride;
@@ -278,7 +278,7 @@ namespace bs
 		return VertexElemIter<Vector4>(data, vertexStride, mNumVertices);
 	}
 
-	VertexElemIter<UINT32> MeshData::getDWORDDataIter(VertexElementSemantic semantic, UINT32 semanticIdx, UINT32 streamIdx)
+	VertexElemIter<UINT32> MeshData::GetDwordDataIter(VertexElementSemantic semantic, UINT32 semanticIdx, UINT32 streamIdx)
 	{
 		UINT8* data;
 		UINT32 vertexStride;
@@ -287,7 +287,7 @@ namespace bs
 		return VertexElemIter<UINT32>(data, vertexStride, mNumVertices);
 	}
 
-	void MeshData::getDataForIterator(VertexElementSemantic semantic, UINT32 semanticIdx, UINT32 streamIdx, UINT8*& data, UINT32& stride) const
+	void MeshData::GetDataForIterator(VertexElementSemantic semantic, UINT32 semanticIdx, UINT32 streamIdx, UINT8*& data, UINT32& stride) const
 	{
 		if(!mVertexData->hasElement(semantic, semanticIdx, streamIdx))
 		{
@@ -303,54 +303,54 @@ namespace bs
 		stride = mVertexData->getVertexStride(streamIdx);
 	}
 
-	UINT32 MeshData::getIndexBufferOffset() const
+	UINT32 MeshData::GetIndexBufferOffset() const
 	{
 		return 0;
 	}
 
-	UINT32 MeshData::getStreamOffset(UINT32 streamIdx) const
+	UINT32 MeshData::GetStreamOffset(UINT32 streamIdx) const
 	{
 		UINT32 streamOffset = mVertexData->getStreamOffset(streamIdx);
 
 		return streamOffset * mNumVertices;
 	}
 
-	UINT8* MeshData::getElementData(VertexElementSemantic semantic, UINT32 semanticIdx, UINT32 streamIdx) const
+	UINT8* MeshData::GetElementData(VertexElementSemantic semantic, UINT32 semanticIdx, UINT32 streamIdx) const
 	{
 		return getData() + getIndexBufferSize() + getElementOffset(semantic, semanticIdx, streamIdx);
 	}
 
-	UINT8* MeshData::getStreamData(UINT32 streamIdx) const
+	UINT8* MeshData::GetStreamData(UINT32 streamIdx) const
 	{
 		return getData() + getIndexBufferSize() + getStreamOffset(streamIdx);
 	}
 
-	UINT32 MeshData::getIndexElementSize() const
+	UINT32 MeshData::GetIndexElementSize() const
 	{
 		return mIndexType == IT_32BIT ? sizeof(UINT32) : sizeof(UINT16);
 	}
 
-	UINT32 MeshData::getElementOffset(VertexElementSemantic semantic, UINT32 semanticIdx, UINT32 streamIdx) const
+	UINT32 MeshData::GetElementOffset(VertexElementSemantic semantic, UINT32 semanticIdx, UINT32 streamIdx) const
 	{
 		return getStreamOffset(streamIdx) + mVertexData->getElementOffsetFromStream(semantic, semanticIdx, streamIdx);
 	}
 
-	UINT32 MeshData::getIndexBufferSize() const
+	UINT32 MeshData::GetIndexBufferSize() const
 	{
 		return mNumIndices * getIndexElementSize();
 	}
 
-	UINT32 MeshData::getStreamSize(UINT32 streamIdx) const
+	UINT32 MeshData::GetStreamSize(UINT32 streamIdx) const
 	{
 		return mVertexData->getVertexStride(streamIdx) * mNumVertices;
 	}
 
-	UINT32 MeshData::getStreamSize() const
+	UINT32 MeshData::GetStreamSize() const
 	{
 		return mVertexData->getVertexStride() * mNumVertices;
 	}
 
-	Bounds MeshData::calculateBounds() const
+	Bounds MeshData::CalculateBounds() const
 	{
 		Bounds bounds;
 
@@ -406,13 +406,13 @@ namespace bs
 	/* 								SERIALIZATION                      		*/
 	/************************************************************************/
 
-	RTTITypeBase* MeshData::getRTTIStatic()
+	RTTITypeBase* MeshData::GetRttiStatic()
 	{
-		return MeshDataRTTI::instance();
+		return MeshDataRTTI::Instance();
 	}
 
 	RTTITypeBase* MeshData::getRTTI() const
 	{
-		return MeshData::getRTTIStatic();
+		return MeshData::GetRttiStatic();
 	}
 }

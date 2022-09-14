@@ -18,21 +18,21 @@ namespace bs
 
 	void ScriptCSkybox::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_getTexture", (void*)&ScriptCSkybox::Internal_getTexture);
-		metaData.scriptClass->addInternalCall("Internal_setTexture", (void*)&ScriptCSkybox::Internal_setTexture);
-		metaData.scriptClass->addInternalCall("Internal_setBrightness", (void*)&ScriptCSkybox::Internal_setBrightness);
-		metaData.scriptClass->addInternalCall("Internal_getBrightness", (void*)&ScriptCSkybox::Internal_getBrightness);
+		metaData.scriptClass->AddInternalCall("Internal_getTexture", (void*)&ScriptCSkybox::InternalGetTexture);
+		metaData.scriptClass->AddInternalCall("Internal_setTexture", (void*)&ScriptCSkybox::InternalSetTexture);
+		metaData.scriptClass->AddInternalCall("Internal_setBrightness", (void*)&ScriptCSkybox::InternalSetBrightness);
+		metaData.scriptClass->AddInternalCall("Internal_getBrightness", (void*)&ScriptCSkybox::InternalGetBrightness);
 
 	}
 
-	MonoObject* ScriptCSkybox::Internal_getTexture(ScriptCSkybox* thisPtr)
+	MonoObject* ScriptCSkybox::InternalGetTexture(ScriptCSkybox* thisPtr)
 	{
 		ResourceHandle<Texture> tmp__output;
-		tmp__output = thisPtr->getHandle()->getTexture();
+		tmp__output = thisPtr->GetHandle()->GetTexture();
 
 		MonoObject* __output;
 		ScriptRRefBase* script__output;
-		script__output = ScriptResourceManager::instance().getScriptRRef(tmp__output);
+		script__output = ScriptResourceManager::Instance().getScriptRRef(tmp__output);
 		if(script__output != nullptr)
 			__output = script__output->getManagedInstance();
 		else
@@ -41,7 +41,7 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptCSkybox::Internal_setTexture(ScriptCSkybox* thisPtr, MonoObject* texture)
+	void ScriptCSkybox::InternalSetTexture(ScriptCSkybox* thisPtr, MonoObject* texture)
 	{
 		ResourceHandle<Texture> tmptexture;
 		ScriptRRefBase* scripttexture;
@@ -51,12 +51,12 @@ namespace bs
 		thisPtr->getHandle()->setTexture(tmptexture);
 	}
 
-	void ScriptCSkybox::Internal_setBrightness(ScriptCSkybox* thisPtr, float brightness)
+	void ScriptCSkybox::InternalSetBrightness(ScriptCSkybox* thisPtr, float brightness)
 	{
 		thisPtr->getHandle()->setBrightness(brightness);
 	}
 
-	float ScriptCSkybox::Internal_getBrightness(ScriptCSkybox* thisPtr)
+	float ScriptCSkybox::InternalGetBrightness(ScriptCSkybox* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->getHandle()->getBrightness();

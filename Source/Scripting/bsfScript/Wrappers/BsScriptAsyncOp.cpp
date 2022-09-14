@@ -18,20 +18,20 @@ namespace bs
 
 	void ScriptAsyncOpBase::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_IsComplete", (void*)&ScriptAsyncOpBase::internal_IsComplete);
-		metaData.scriptClass->addInternalCall("Internal_BlockUntilComplete", (void*)&ScriptAsyncOpBase::internal_BlockUntilComplete);
-		metaData.scriptClass->addInternalCall("Internal_GetValue", (void*)&ScriptAsyncOpBase::internal_GetValue);
+		metaData.scriptClass->AddInternalCall("Internal_IsComplete", (void*)&ScriptAsyncOpBase::InternalIsComplete);
+		metaData.scriptClass->AddInternalCall("Internal_BlockUntilComplete", (void*)&ScriptAsyncOpBase::InternalBlockUntilComplete);
+		metaData.scriptClass->AddInternalCall("Internal_GetValue", (void*)&ScriptAsyncOpBase::InternalGetValue);
 	}
 
 	MonoObject* ScriptAsyncOpBase::CreateInternal(const AsyncOpBase& op,
 		const std::function<MonoObject*(const Any&)>& convertCallback, UINT32 rttiId)
 	{
 		MonoClass* returnTypeClass = nullptr;
-		BuiltinResourceInfo* resInfo = ScriptAssemblyManager::instance().getBuiltinResourceInfo(rttiId);
+		BuiltinResourceInfo* resInfo = ScriptAssemblyManager::Instance().GetBuiltinResourceInfo(rttiId);
 		if(resInfo)
 			returnTypeClass = resInfo->monoClass;
 
-		ReflectableTypeInfo* reflTypeInfo = ScriptAssemblyManager::instance().getReflectableTypeInfo(rttiId);
+		ReflectableTypeInfo* reflTypeInfo = ScriptAssemblyManager::Instance().getReflectableTypeInfo(rttiId);
 		if(reflTypeInfo)
 			returnTypeClass = reflTypeInfo->monoClass;
 
@@ -53,7 +53,7 @@ namespace bs
 		else
 		{
 			::MonoClass* rawClass = bindGenericParam(returnTypeClass->GetInternalClassInternal());
-			asyncOpClass = MonoManager::instance().findClass(rawClass);
+			asyncOpClass = MonoManager::Instance().findClass(rawClass);
 		}
 
 		MonoObject* obj = asyncOpClass->createInstance();
@@ -71,25 +71,25 @@ namespace bs
 		return obj;
 	}
 
-	::MonoClass* ScriptAsyncOpBase::bindGenericParam(::MonoClass* param)
+	::MonoClass* ScriptAsyncOpBase::BindGenericParam(::MonoClass* param)
 	{
-		MonoClass* asyncOpClass = ScriptAssemblyManager::instance().getBuiltinClasses().genericAsyncOpClass;
+		MonoClass* asyncOpClass = ScriptAssemblyManager::Instance().getBuiltinClasses().genericAsyncOpClass;
 
 		::MonoClass* params[1] = { param };
 		return MonoUtil::bindGenericParameters(asyncOpClass->GetInternalClassInternal(), params, 1);
 	}
 
-	bool ScriptAsyncOpBase::internal_IsComplete(ScriptAsyncOpBase* thisPtr)
+	bool ScriptAsyncOpBase::InternalIsComplete(ScriptAsyncOpBase* thisPtr)
 	{
 		return thisPtr->mOp.hasCompleted();
 	}
 
-	void ScriptAsyncOpBase::internal_BlockUntilComplete(ScriptAsyncOpBase* thisPtr)
+	void ScriptAsyncOpBase::InternalBlockUntilComplete(ScriptAsyncOpBase* thisPtr)
 	{
 		thisPtr->mOp.blockUntilComplete();
 	}
 
-	MonoObject* ScriptAsyncOpBase::internal_GetValue(ScriptAsyncOpBase* thisPtr)
+	MonoObject* ScriptAsyncOpBase::InternalGetValue(ScriptAsyncOpBase* thisPtr)
 	{
 		if (!thisPtr->mOp.hasCompleted())
 			return nullptr;

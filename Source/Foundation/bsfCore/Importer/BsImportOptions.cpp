@@ -8,13 +8,13 @@ namespace bs
 	/************************************************************************/
 	/* 								SERIALIZATION                      		*/
 	/************************************************************************/
-	RTTITypeBase* ImportOptions::getRTTIStatic()
+	RTTITypeBase* ImportOptions::GetRttiStatic()
 	{
-		return ImportOptionsRTTI::instance();
+		return ImportOptionsRTTI::Instance();
 	}
 
-	RTTITypeBase* ImportOptions::getRTTI() const
+	RTTITypeBase* ImportOptions::GetRtti() const
 	{
-		return ImportOptions::getRTTIStatic();
+		return ImportOptions::GetRttiStatic();
 	}
 }

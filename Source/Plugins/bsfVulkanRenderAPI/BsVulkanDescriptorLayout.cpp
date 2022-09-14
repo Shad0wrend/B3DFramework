@@ -9,7 +9,7 @@ namespace bs { namespace ct
 		UINT32 numBindings)
 		:mDevice(device)
 	{
-		mHash = calculateHash(bindings, numBindings);
+		mHash = CalculateHash(bindings, numBindings);
 
 		VkDescriptorSetLayoutCreateInfo layoutCI;
 		layoutCI.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -18,16 +18,16 @@ namespace bs { namespace ct
 		layoutCI.bindingCount = numBindings;
 		layoutCI.pBindings = bindings;
 
-		VkResult result = vkCreateDescriptorSetLayout(device.getLogical(), &layoutCI, gVulkanAllocator, &mLayout);
+		VkResult result = vkCreateDescriptorSetLayout(device.GetLogical(), &layoutCI, gVulkanAllocator, &mLayout);
 		assert(result == VK_SUCCESS);
 	}
 
 	VulkanDescriptorLayout::~VulkanDescriptorLayout()
 	{
-		vkDestroyDescriptorSetLayout(mDevice.getLogical(), mLayout, gVulkanAllocator);
+		vkDestroyDescriptorSetLayout(mDevice.GetLogical(), mLayout, gVulkanAllocator);
 	}
 
-	size_t VulkanDescriptorLayout::calculateHash(VkDescriptorSetLayoutBinding* bindings, UINT32 numBindings)
+	size_t VulkanDescriptorLayout::CalculateHash(VkDescriptorSetLayoutBinding* bindings, UINT32 numBindings)
 	{
 		size_t hash = 0;
 		for (UINT32 i = 0; i < numBindings; i++)

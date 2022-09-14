@@ -19,13 +19,13 @@ namespace bs
 		~ManagedResourceManager();
 
 		/** Unloads all managed resources. */
-		void clear();
+		void Clear();
 
 		/**	Register a newly created managed resource. */
-		void registerManagedResource(const WeakResourceHandle<ManagedResource>& resource);
+		void RegisterManagedResource(const WeakResourceHandle<ManagedResource>& resource);
 
 		/**	Unregister a managed resource that's about to be destroyed. */
-		void unregisterManagedResource(const WeakResourceHandle<ManagedResource>& resource);
+		void UnregisterManagedResource(const WeakResourceHandle<ManagedResource>& resource);
 
 	private:
 		UnorderedMap<UUID, WeakResourceHandle<ManagedResource>> mResources;

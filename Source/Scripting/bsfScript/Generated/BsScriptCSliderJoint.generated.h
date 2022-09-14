@@ -20,11 +20,11 @@ namespace bs
 		ScriptCSliderJoint(MonoObject* managedInstance, const GameObjectHandle<CSliderJoint>& value);
 
 	private:
-		static float Internal_getPosition(ScriptCSliderJoint* thisPtr);
-		static float Internal_getSpeed(ScriptCSliderJoint* thisPtr);
-		static void Internal_getLimit(ScriptCSliderJoint* thisPtr, __LimitLinearRangeInterop* __output);
-		static void Internal_setLimit(ScriptCSliderJoint* thisPtr, __LimitLinearRangeInterop* limit);
-		static void Internal_setFlag(ScriptCSliderJoint* thisPtr, SliderJointFlag flag, bool enabled);
-		static bool Internal_hasFlag(ScriptCSliderJoint* thisPtr, SliderJointFlag flag);
+		static float InternalGetPosition(ScriptCSliderJoint* thisPtr);
+		static float InternalGetSpeed(ScriptCSliderJoint* thisPtr);
+		static void InternalGetLimit(ScriptCSliderJoint* thisPtr, __LimitLinearRangeInterop* __output);
+		static void InternalSetLimit(ScriptCSliderJoint* thisPtr, __LimitLinearRangeInterop* limit);
+		static void InternalSetFlag(ScriptCSliderJoint* thisPtr, SliderJointFlag flag, bool enabled);
+		static bool InternalHasFlag(ScriptCSliderJoint* thisPtr, SliderJointFlag flag);
 	};
 }

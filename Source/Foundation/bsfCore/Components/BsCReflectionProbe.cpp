@@ -24,21 +24,21 @@ namespace bs
 		mInternal->destroy();
 	}
 
-	Sphere CReflectionProbe::getBounds() const
+	Sphere CReflectionProbe::GetBounds() const
 	{
 		mInternal->UpdateStateInternal(*SO());
 
 		return mInternal->getBounds();
 	}
 
-	void CReflectionProbe::onInitialized()
+	void CReflectionProbe::OnInitialized()
 	{
 		// If mInternal already exists this means this object was deserialized,
 		// so all we need to do is initialize it.
 		if (mInternal != nullptr)
 			mInternal->initialize();
 		else
-			mInternal = ReflectionProbe::createBox(Vector3::ONE);
+			mInternal = ReflectionProbe::CreateBox(Vector3::ONE);
 
 		gSceneManager().BindActorInternal(mInternal, sceneObject());
 
@@ -53,18 +53,18 @@ namespace bs
 		}
 	}
 
-	void CReflectionProbe::onDestroyed()
+	void CReflectionProbe::OnDestroyed()
 	{
 		gSceneManager().UnbindActorInternal(mInternal);
 	}
 
-	RTTITypeBase* CReflectionProbe::getRTTIStatic()
+	RTTITypeBase* CReflectionProbe::GetRttiStatic()
 	{
-		return CReflectionProbeRTTI::instance();
+		return CReflectionProbeRTTI::Instance();
 	}
 
-	RTTITypeBase* CReflectionProbe::getRTTI() const
+	RTTITypeBase* CReflectionProbe::GetRtti() const
 	{
-		return CReflectionProbe::getRTTIStatic();
+		return CReflectionProbe::GetRttiStatic();
 	}
 }

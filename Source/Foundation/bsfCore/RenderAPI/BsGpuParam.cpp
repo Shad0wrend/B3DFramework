@@ -22,7 +22,7 @@ namespace bs
 	{ }
 
 	template<class T, bool Core>
-	void TGpuDataParam<T, Core>::set(const T& value, UINT32 arrayIdx) const
+	void TGpuDataParam<T, Core>::Set(const T& value, UINT32 arrayIdx) const
 	{
 		if (mParent == nullptr)
 			return;
@@ -62,7 +62,7 @@ namespace bs
 	}
 
 	template<class T, bool Core>
-	T TGpuDataParam<T, Core>::get(UINT32 arrayIdx) const
+	T TGpuDataParam<T, Core>::Get(UINT32 arrayIdx) const
 	{
 		if (mParent == nullptr)
 			return T();
@@ -99,7 +99,7 @@ namespace bs
 	{ }
 
 	template<bool Core>
-	void TGpuParamStruct<Core>::set(const void* value, UINT32 sizeBytes, UINT32 arrayIdx) const
+	void TGpuParamStruct<Core>::Set(const void* value, UINT32 sizeBytes, UINT32 arrayIdx) const
 	{
 		if (mParent == nullptr)
 			return;
@@ -139,7 +139,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TGpuParamStruct<Core>::get(void* value, UINT32 sizeBytes, UINT32 arrayIdx) const
+	void TGpuParamStruct<Core>::Get(void* value, UINT32 sizeBytes, UINT32 arrayIdx) const
 	{
 		if (mParent == nullptr)
 			return;
@@ -169,7 +169,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	UINT32 TGpuParamStruct<Core>::getElementSize() const
+	UINT32 TGpuParamStruct<Core>::GetElementSize() const
 	{
 		if (mParent == nullptr)
 			return 0;
@@ -188,7 +188,7 @@ namespace bs
 	{ }
 
 	template<bool Core>
-	void TGpuParamTexture<Core>::set(const TextureType& texture, const TextureSurface& surface) const
+	void TGpuParamTexture<Core>::Set(const TextureType& texture, const TextureSurface& surface) const
 	{
 		if (mParent == nullptr)
 			return;
@@ -200,7 +200,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	typename TGpuParamTexture<Core>::TextureType TGpuParamTexture<Core>::get() const
+	typename TGpuParamTexture<Core>::TextureType TGpuParamTexture<Core>::Get() const
 	{
 		if (mParent == nullptr)
 			return TextureType();
@@ -231,7 +231,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	typename TGpuParamBuffer<Core>::BufferType TGpuParamBuffer<Core>::get() const
+	typename TGpuParamBuffer<Core>::BufferType TGpuParamBuffer<Core>::Get() const
 	{
 		if (mParent == nullptr)
 			return BufferType();
@@ -250,7 +250,7 @@ namespace bs
 	{ }
 
 	template<bool Core>
-	void TGpuParamLoadStoreTexture<Core>::set(const TextureType& texture, const TextureSurface& surface) const
+	void TGpuParamLoadStoreTexture<Core>::Set(const TextureType& texture, const TextureSurface& surface) const
 	{
 		if (mParent == nullptr)
 			return;
@@ -262,7 +262,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	typename TGpuParamLoadStoreTexture<Core>::TextureType TGpuParamLoadStoreTexture<Core>::get() const
+	typename TGpuParamLoadStoreTexture<Core>::TextureType TGpuParamLoadStoreTexture<Core>::Get() const
 	{
 		if (mParent == nullptr)
 			return TextureType();
@@ -281,7 +281,7 @@ namespace bs
 	{ }
 
 	template<bool Core>
-	void TGpuParamSampState<Core>::set(const SamplerStateType& samplerState) const
+	void TGpuParamSampState<Core>::Set(const SamplerStateType& samplerState) const
 	{
 		if (mParent == nullptr)
 			return;
@@ -293,7 +293,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	typename TGpuParamSampState<Core>::SamplerStateType TGpuParamSampState<Core>::get() const
+	typename TGpuParamSampState<Core>::SamplerStateType TGpuParamSampState<Core>::Get() const
 	{
 		if (mParent == nullptr)
 			return SamplerStateType();

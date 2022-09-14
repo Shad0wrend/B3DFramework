@@ -18,9 +18,9 @@ namespace bs
 		ScriptCSphereCollider(MonoObject* managedInstance, const GameObjectHandle<CSphereCollider>& value);
 
 	private:
-		static void Internal_setRadius(ScriptCSphereCollider* thisPtr, float radius);
-		static float Internal_getRadius(ScriptCSphereCollider* thisPtr);
-		static void Internal_setCenter(ScriptCSphereCollider* thisPtr, Vector3* center);
-		static void Internal_getCenter(ScriptCSphereCollider* thisPtr, Vector3* __output);
+		static void InternalSetRadius(ScriptCSphereCollider* thisPtr, float radius);
+		static float InternalGetRadius(ScriptCSphereCollider* thisPtr);
+		static void InternalSetCenter(ScriptCSphereCollider* thisPtr, Vector3* center);
+		static void InternalGetCenter(ScriptCSphereCollider* thisPtr, Vector3* __output);
 	};
 }

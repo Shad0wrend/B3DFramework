@@ -14,21 +14,21 @@ namespace bs
 	void ScriptSkeletonBoneInfoEx::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptSkeletonBoneInfoEx::box(const __SkeletonBoneInfoExInterop& value)
+	MonoObject*ScriptSkeletonBoneInfoEx::Box(const __SkeletonBoneInfoExInterop& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	__SkeletonBoneInfoExInterop ScriptSkeletonBoneInfoEx::unbox(MonoObject* value)
+	__SkeletonBoneInfoExInterop ScriptSkeletonBoneInfoEx::Unbox(MonoObject* value)
 	{
-		return *(__SkeletonBoneInfoExInterop*)MonoUtil::unbox(value);
+		return *(__SkeletonBoneInfoExInterop*)MonoUtil::Unbox(value);
 	}
 
-	SkeletonBoneInfoEx ScriptSkeletonBoneInfoEx::fromInterop(const __SkeletonBoneInfoExInterop& value)
+	SkeletonBoneInfoEx ScriptSkeletonBoneInfoEx::FromInterop(const __SkeletonBoneInfoExInterop& value)
 	{
 		SkeletonBoneInfoEx output;
 		String tmpname;
-		tmpname = MonoUtil::monoToString(value.name);
+		tmpname = MonoUtil::MonoToString(value.name);
 		output.name = tmpname;
 		output.parent = value.parent;
 		output.invBindPose = value.invBindPose;
@@ -36,11 +36,11 @@ namespace bs
 		return output;
 	}
 
-	__SkeletonBoneInfoExInterop ScriptSkeletonBoneInfoEx::toInterop(const SkeletonBoneInfoEx& value)
+	__SkeletonBoneInfoExInterop ScriptSkeletonBoneInfoEx::ToInterop(const SkeletonBoneInfoEx& value)
 	{
 		__SkeletonBoneInfoExInterop output;
 		MonoString* tmpname;
-		tmpname = MonoUtil::stringToMono(value.name);
+		tmpname = MonoUtil::StringToMono(value.name);
 		output.name = tmpname;
 		output.parent = value.parent;
 		output.invBindPose = value.invBindPose;

@@ -24,27 +24,27 @@ namespace bs
 		mNotifyFlags = TCF_Transform;
 	}
 	
-	void CAudioListener::onInitialized()
+	void CAudioListener::OnInitialized()
 	{
 
 	}
 
-	void CAudioListener::onDestroyed()
+	void CAudioListener::OnDestroyed()
 	{
-		destroyInternal();
+		DestroyInternal();
 	}
 
-	void CAudioListener::onDisabled()
+	void CAudioListener::OnDisabled()
 	{
-		destroyInternal();
+		DestroyInternal();
 	}
 
-	void CAudioListener::onEnabled()
+	void CAudioListener::OnEnabled()
 	{
 		restoreInternal();
 	}
 
-	void CAudioListener::onTransformChanged(TransformChangedFlags flags)
+	void CAudioListener::OnTransformChanged(TransformChangedFlags flags)
 	{
 		if (!SO()->getActive())
 			return;
@@ -53,7 +53,7 @@ namespace bs
 			updateTransform();
 	}
 
-	void CAudioListener::update()
+	void CAudioListener::Update()
 	{
 		const Vector3 worldPos = SO()->getTransform().getPosition();
 
@@ -66,21 +66,21 @@ namespace bs
 		mLastPosition = worldPos;
 	}
 
-	void CAudioListener::restoreInternal()
+	void CAudioListener::RestoreInternal()
 	{
 		if (mInternal == nullptr)
-			mInternal = AudioListener::create();
+			mInternal = AudioListener::Create();
 
 		updateTransform();
 	}
 
-	void CAudioListener::destroyInternal()
+	void CAudioListener::DestroyInternal()
 	{
 		// This should release the last reference and destroy the internal listener
 		mInternal = nullptr;
 	}
 	
-	void CAudioListener::updateTransform()
+	void CAudioListener::UpdateTransform()
 	{
 		const Transform& tfrm = SO()->getTransform();
 
@@ -88,13 +88,13 @@ namespace bs
 		mInternal->setVelocity(mVelocity);
 	}
 	
-	RTTITypeBase* CAudioListener::getRTTIStatic()
+	RTTITypeBase* CAudioListener::GetRttiStatic()
 	{
-		return CAudioListenerRTTI::instance();
+		return CAudioListenerRTTI::Instance();
 	}
 
-	RTTITypeBase* CAudioListener::getRTTI() const
+	RTTITypeBase* CAudioListener::GetRtti() const
 	{
-		return CAudioListener::getRTTIStatic();
+		return CAudioListener::GetRttiStatic();
 	}
 }

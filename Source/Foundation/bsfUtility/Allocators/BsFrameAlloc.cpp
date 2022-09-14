@@ -6,7 +6,7 @@
 
 namespace bs
 {
-	UINT8* FrameAlloc::MemBlock::alloc(UINT32 amount)
+	UINT8* FrameAlloc::MemBlock::Alloc(UINT32 amount)
 	{
 		UINT8* freePtr = &mData[mFreePtr];
 		mFreePtr += amount;
@@ -14,7 +14,7 @@ namespace bs
 		return freePtr;
 	}
 
-	void FrameAlloc::MemBlock::clear()
+	void FrameAlloc::MemBlock::Clear()
 	{
 		mFreePtr = 0;
 	}
@@ -27,10 +27,10 @@ namespace bs
 	FrameAlloc::~FrameAlloc()
 	{
 		for(auto& block : mBlocks)
-			deallocBlock(block);
+			DeallocBlock(block);
 	}
 
-	UINT8* FrameAlloc::alloc(UINT32 amount)
+	UINT8* FrameAlloc::Alloc(UINT32 amount)
 	{
 #if BS_DEBUG_MODE
 		amount += sizeof(UINT32);
@@ -40,7 +40,7 @@ namespace bs
 			freeMem = mFreeBlock->mSize - mFreeBlock->mFreePtr;
 
 		if(amount > freeMem)
-			allocBlock(amount);
+			AllocBlock(amount);
 
 		UINT8* data = mFreeBlock->alloc(amount);
 
@@ -56,7 +56,7 @@ namespace bs
 #endif
 	}
 
-	UINT8* FrameAlloc::allocAligned(UINT32 amount, UINT32 alignment)
+	UINT8* FrameAlloc::AllocAligned(UINT32 amount, UINT32 alignment)
 	{
 #if BS_DEBUG_MODE
 		amount += sizeof(UINT32);
@@ -90,7 +90,7 @@ namespace bs
 				alignOffset = 0;
 #endif
 
-			allocBlock(amount + alignOffset);
+			AllocBlock(amount + alignOffset);
 		}
 
 		amount += alignOffset;
@@ -108,7 +108,7 @@ namespace bs
 #endif
 	}
 
-	void FrameAlloc::free(UINT8* data)
+	void FrameAlloc::Free(UINT8* data)
 	{
 		// Dealloc is only used for debug and can be removed if needed. All the actual deallocation
 		// happens in clear()
@@ -123,14 +123,14 @@ namespace bs
 #endif
 	}
 
-	void FrameAlloc::markFrame()
+	void FrameAlloc::MarkFrame()
 	{
 		void** framePtr = (void**)alloc(sizeof(void*));
 		*framePtr = mLastFrame;
 		mLastFrame = framePtr;
 	}
 
-	void FrameAlloc::clear()
+	void FrameAlloc::Clear()
 	{
 		if(mLastFrame != nullptr)
 		{
@@ -185,12 +185,12 @@ namespace bs
 					MemBlock* curBlock = mBlocks[mNextBlockIdx];
 					totalBytes += curBlock->mSize;
 
-					deallocBlock(curBlock);
+					DeallocBlock(curBlock);
 					mBlocks.erase(mBlocks.begin() + mNextBlockIdx);
 				}
 
 				UINT32 oldNextBlockIdx = mNextBlockIdx;
-				allocBlock(totalBytes);
+				AllocBlock(totalBytes);
 
 				// Point to the first non-full block, or if none available then point the the block we just allocated
 				if (oldNextBlockIdx > 0)
@@ -215,13 +215,13 @@ namespace bs
 				for (auto& block : mBlocks)
 				{
 					totalBytes += block->mSize;
-					deallocBlock(block);
+					DeallocBlock(block);
 				}
 
 				mBlocks.clear();
 				mNextBlockIdx = 0;
 
-				allocBlock(totalBytes);
+				AllocBlock(totalBytes);
 			}
 			else if(mBlocks.size() > 0)
 				mBlocks[0]->mFreePtr = 0;
@@ -270,13 +270,13 @@ namespace bs
 		return newBlock;
 	}
 
-	void FrameAlloc::deallocBlock(MemBlock* block)
+	void FrameAlloc::DeallocBlock(MemBlock* block)
 	{
 		block->~MemBlock();
 		bs_free_aligned16(block);
 	}
 
-	void FrameAlloc::setOwnerThread(ThreadId thread)
+	void FrameAlloc::SetOwnerThread(ThreadId thread)
 	{
 	}
 

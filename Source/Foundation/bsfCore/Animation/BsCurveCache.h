@@ -52,14 +52,14 @@ namespace bs
 		friend class TAnimationCurve<T>;
 
 		/** Initializes the memory required for single integration cache. */
-		void init(UINT32 numKeys) const
+		void Init(UINT32 numKeys) const
 		{
 			segmentSums = (T*)bs_alloc(sizeof(T) * numKeys * 5);
 			coeffs = (T(*)[4])(segmentSums + numKeys);
 		}
 
 		/** Initializes the memory required for double integration cache. */
-		void initDouble(UINT32 numKeys) const
+		void InitDouble(UINT32 numKeys) const
 		{
 			segmentSums = (T*)bs_alloc(sizeof(T) * numKeys * 6);
 			doubleSegmentSums = (T*)(segmentSums + numKeys);

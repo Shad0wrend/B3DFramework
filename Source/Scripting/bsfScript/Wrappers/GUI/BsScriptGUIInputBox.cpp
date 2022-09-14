@@ -24,16 +24,16 @@ namespace bs
 
 	void ScriptGUIInputBox::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_CreateInstance", (void*)&ScriptGUIInputBox::internal_createInstance);
-		metaData.scriptClass->addInternalCall("Internal_GetText", (void*)&ScriptGUIInputBox::internal_getText);
-		metaData.scriptClass->addInternalCall("Internal_SetText", (void*)&ScriptGUIInputBox::internal_setText);
-		metaData.scriptClass->addInternalCall("Internal_SetTint", (void*)&ScriptGUIInputBox::internal_setTint);
+		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIInputBox::InternalCreateInstance);
+		metaData.scriptClass->AddInternalCall("Internal_GetText", (void*)&ScriptGUIInputBox::InternalGetText);
+		metaData.scriptClass->AddInternalCall("Internal_SetText", (void*)&ScriptGUIInputBox::InternalSetText);
+		metaData.scriptClass->AddInternalCall("Internal_SetTint", (void*)&ScriptGUIInputBox::InternalSetTint);
 
-		onChangedThunk = (OnChangedThunkDef)metaData.scriptClass->getMethod("Internal_DoOnChanged", 1)->getThunk();
-		onConfirmedThunk = (OnConfirmedThunkDef)metaData.scriptClass->getMethod("Internal_DoOnConfirmed", 0)->getThunk();
+		onChangedThunk = (OnChangedThunkDef)metaData.scriptClass->GetMethod("Internal_DoOnChanged", 1)->GetThunk();
+		onConfirmedThunk = (OnConfirmedThunkDef)metaData.scriptClass->GetMethod("Internal_DoOnConfirmed", 0)->getThunk();
 	}
 
-	void ScriptGUIInputBox::internal_createInstance(MonoObject* instance, bool multiline, MonoString* style, MonoArray* guiOptions)
+	void ScriptGUIInputBox::InternalCreateInstance(MonoObject* instance, bool multiline, MonoString* style, MonoArray* guiOptions)
 	{
 		GUIOptions options;
 
@@ -42,38 +42,38 @@ namespace bs
 		for(UINT32 i = 0; i < arrayLen; i++)
 			options.addOption(scriptArray.get<GUIOption>(i));
 
-		GUIInputBox* guiInputBox = GUIInputBox::create(multiline, options, MonoUtil::monoToString(style));
+		GUIInputBox* guiInputBox = GUIInputBox::Create(multiline, options, MonoUtil::monoToString(style));
 
 		auto nativeInstance = new (bs_alloc<ScriptGUIInputBox>()) ScriptGUIInputBox(instance, guiInputBox);
 
 		guiInputBox->onValueChanged.connect(std::bind(&ScriptGUIInputBox::onChanged, nativeInstance, _1));
 	}
 
-	void ScriptGUIInputBox::internal_getText(ScriptGUIInputBox* nativeInstance, MonoString** text)
+	void ScriptGUIInputBox::InternalGetText(ScriptGUIInputBox* nativeInstance, MonoString** text)
 	{
 		GUIInputBox* inputBox = (GUIInputBox*)nativeInstance->getGUIElement();
 		MonoUtil::referenceCopy(text, (MonoObject*)MonoUtil::stringToMono(inputBox->getText()));
 	}
 
-	void ScriptGUIInputBox::internal_setText(ScriptGUIInputBox* nativeInstance, MonoString* text)
+	void ScriptGUIInputBox::InternalSetText(ScriptGUIInputBox* nativeInstance, MonoString* text)
 	{
 		GUIInputBox* inputBox = (GUIInputBox*)nativeInstance->getGUIElement();
 		inputBox->setText(MonoUtil::monoToString(text));
 	}
 
-	void ScriptGUIInputBox::internal_setTint(ScriptGUIInputBox* nativeInstance, Color* color)
+	void ScriptGUIInputBox::InternalSetTint(ScriptGUIInputBox* nativeInstance, Color* color)
 	{
 		GUIInputBox* inputBox = (GUIInputBox*)nativeInstance->getGUIElement();
 		inputBox->setTint(*color);
 	}
 
-	void ScriptGUIInputBox::onChanged(const String& newValue)
+	void ScriptGUIInputBox::OnChanged(const String& newValue)
 	{
 		MonoString* monoValue = MonoUtil::stringToMono(newValue);
 		MonoUtil::invokeThunk(onChangedThunk, getManagedInstance(), monoValue);
 	}
 
-	void ScriptGUIInputBox::onConfirmed()
+	void ScriptGUIInputBox::OnConfirmed()
 	{
 		MonoUtil::invokeThunk(onConfirmedThunk, getManagedInstance());
 	}

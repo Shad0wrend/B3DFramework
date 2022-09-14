@@ -32,13 +32,13 @@ namespace bs
 		Radian& operator= (const Degree& d);
 
 		/** Returns the value of the angle in degrees. */
-		float valueDegrees() const;
+		float ValueDegrees() const;
 
 		/** Returns the value of the angle in radians. */
-		constexpr float valueRadians() const { return mRad; }
+		constexpr float ValueRadians() const { return mRad; }
 
 		/** Wraps the angle in [0, 2 *  PI) range. */
-		Radian wrap();
+		Radian Wrap();
 
 		const Radian& operator+ () const { return *this; }
 		Radian operator+ (const Radian& r) const { return Radian (mRad + r.mRad); }

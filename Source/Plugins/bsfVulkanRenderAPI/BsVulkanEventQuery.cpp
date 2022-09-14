@@ -10,7 +10,7 @@ namespace bs { namespace ct
 	VulkanEvent::VulkanEvent(VulkanResourceManager* owner)
 		:VulkanResource(owner, false)
 	{
-		VkDevice vkDevice = owner->getDevice().getLogical();
+		VkDevice vkDevice = owner->GetDevice().GetLogical();
 
 		VkEventCreateInfo eventCI;
 		eventCI.sType = VK_STRUCTURE_TYPE_EVENT_CREATE_INFO;
@@ -23,13 +23,13 @@ namespace bs { namespace ct
 
 	VulkanEvent::~VulkanEvent()
 	{
-		VkDevice vkDevice = mOwner->getDevice().getLogical();
+		VkDevice vkDevice = mOwner->GetDevice().GetLogical();
 		vkDestroyEvent(vkDevice, mEvent, gVulkanAllocator);
 	}
 
-	bool VulkanEvent::isSignaled() const
+	bool VulkanEvent::IsSignaled() const
 	{
-		VkDevice vkDevice = mOwner->getDevice().getLogical();
+		VkDevice vkDevice = mOwner->GetDevice().GetLogical();
 		return vkGetEventStatus(vkDevice, mEvent) == VK_EVENT_SET;
 	}
 
@@ -55,7 +55,7 @@ namespace bs { namespace ct
 		BS_INC_RENDER_STAT_CAT(ResDestroyed, RenderStatObject_Query);
 	}
 
-	void VulkanEventQuery::begin(const SPtr<CommandBuffer>& cb)
+	void VulkanEventQuery::Begin(const SPtr<CommandBuffer>& cb)
 	{
 		if (mEvent != nullptr)
 		{
@@ -88,7 +88,7 @@ namespace bs { namespace ct
 		setActive(true);
 	}
 
-	bool VulkanEventQuery::isReady() const
+	bool VulkanEventQuery::IsReady() const
 	{
 		if (mEvent == nullptr)
 			return false;

@@ -20,14 +20,14 @@ namespace bs
 		~GUILayoutY() = default;
 
 		/**	Creates a new vertical layout. */
-		static GUILayoutY* create();
+		static GUILayoutY* Create();
 
 		/**
 		 * Creates a new vertical layout.
 		 *
 		 * @param[in]	options		Options that allow you to control how is the element positioned and sized.
 		 */
-		static GUILayoutY* create(const GUIOptions& options);
+		static GUILayoutY* Create(const GUIOptions& options);
 
 	public: // ***** INTERNAL ******
 		/** @name Internal

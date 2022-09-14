@@ -17,9 +17,9 @@ namespace bs
 		GUISliderHandleFlags flags = horizontal ? GUISliderHandleFlag::Horizontal : GUISliderHandleFlag::Vertical;
 		flags |= GUISliderHandleFlag::JumpOnClick;
 
-		mSliderHandle = GUISliderHandle::create(flags, getSubStyleName(getHandleStyleType()));
-		mBackground = GUITexture::create(getSubStyleName(getBackgroundStyleType()));
-		mFillBackground = GUITexture::create(getSubStyleName(getFillStyleType()));
+		mSliderHandle = GUISliderHandle::Create(flags, GetSubStyleName(GetHandleStyleType()));
+		mBackground = GUITexture::Create(getSubStyleName(GetBackgroundStyleType()));
+		mFillBackground = GUITexture::Create(getSubStyleName(getFillStyleType()));
 
 		mBackground->SetElementDepthInternal(mSliderHandle->GetRenderElementDepthRangeInternal() + mFillBackground->GetRenderElementDepthRangeInternal());
 		mFillBackground->SetElementDepthInternal(mSliderHandle->GetRenderElementDepthRangeInternal());
@@ -36,19 +36,19 @@ namespace bs
 		mHandleMovedConn.disconnect();
 	}
 
-	const String& GUISlider::getHandleStyleType()
+	const String& GUISlider::GetHandleStyleType()
 	{
 		static String HANDLE_STYLE_TYPE = "SliderHandle";
 		return HANDLE_STYLE_TYPE;
 	}
 
-	const String& GUISlider::getBackgroundStyleType()
+	const String& GUISlider::GetBackgroundStyleType()
 	{
 		static String BACKGROUND_STYLE_TYPE = "SliderBackground";
 		return BACKGROUND_STYLE_TYPE;
 	}
 
-	const String& GUISlider::getFillStyleType()
+	const String& GUISlider::GetFillStyleType()
 	{
 		static String FILL_STYLE_TYPE = "SliderFill";
 		return FILL_STYLE_TYPE;
@@ -93,7 +93,7 @@ namespace bs
 			optimalSize = mFillBackground->GetOptimalSizeInternal();
 			childData.area.height = optimalSize.y;
 			childData.area.y = data.area.y + (INT32)((data.area.height - childData.area.height) * 0.5f);
-			childData.area.width = mSliderHandle->getHandlePosPx() + handleWidth / 2;
+			childData.area.width = mSliderHandle->GetHandlePosPx() + handleWidth / 2;
 
 			childData.clipRect = data.area;
 			childData.clipRect.clip(data.clipRect);
@@ -124,7 +124,7 @@ namespace bs
 			optimalSize = mFillBackground->GetOptimalSizeInternal();
 			childData.area.width = optimalSize.x;
 			childData.area.x = data.area.x + (INT32)((data.area.width - childData.area.width) * 0.5f);
-			childData.area.height = mSliderHandle->getHandlePosPx() + handleHeight / 2;
+			childData.area.height = mSliderHandle->GetHandlePosPx() + handleHeight / 2;
 
 			childData.clipRect = data.area;
 			childData.clipRect.clip(data.clipRect);
@@ -133,7 +133,7 @@ namespace bs
 		}
 	}
 
-	void GUISlider::styleUpdated()
+	void GUISlider::StyleUpdated()
 	{
 		mBackground->setStyle(getSubStyleName(getBackgroundStyleType()));
 		mFillBackground->setStyle(getSubStyleName(getFillStyleType()));
@@ -146,27 +146,27 @@ namespace bs
 			mBackground->setTexture(bgStyle->normal.texture);
 	}
 
-	void GUISlider::setPercent(float pct)
+	void GUISlider::SetPercent(float pct)
 	{
-		float oldHandlePos = mSliderHandle->getHandlePos();
+		float oldHandlePos = mSliderHandle->GetHandlePos();
 		mSliderHandle->SetHandlePosInternal(pct);
 
-		if (oldHandlePos != mSliderHandle->getHandlePos())
+		if (oldHandlePos != mSliderHandle->GetHandlePos())
 			mSliderHandle->MarkLayoutAsDirtyInternal();
 	}
 
-	float GUISlider::getPercent() const
+	float GUISlider::GetPercent() const
 	{
-		return mSliderHandle->getHandlePos();
+		return mSliderHandle->GetHandlePos();
 	}
 
-	float GUISlider::getValue() const
+	float GUISlider::GetValue() const
 	{
 		float diff = mMaxRange - mMinRange;
-		return mMinRange + diff * mSliderHandle->getHandlePos();
+		return mMinRange + diff * mSliderHandle->GetHandlePos();
 	}
 
-	void GUISlider::setValue(float value)
+	void GUISlider::SetValue(float value)
 	{
 		float diff = mMaxRange - mMinRange;
 		float pct = (value - mMinRange) / diff;
@@ -174,23 +174,23 @@ namespace bs
 		setPercent(pct);
 	}
 
-	void GUISlider::setRange(float min, float max)
+	void GUISlider::SetRange(float min, float max)
 	{
 		mMinRange = min;
 		mMaxRange = max;
 	}
 
-	float GUISlider::getRangeMaximum() const
+	float GUISlider::GetRangeMaximum() const
 	{
 		return mMaxRange;
 	}
 
-	float GUISlider::getRangeMinimum() const
+	float GUISlider::GetRangeMinimum() const
 	{
 		return mMinRange;
 	}
 
-	void GUISlider::setStep(float step)
+	void GUISlider::SetStep(float step)
 	{
 		float range = mMaxRange - mMinRange;
 		if(range > 0.0f)
@@ -198,21 +198,21 @@ namespace bs
 		else
 			step = 0.0f;
 
-		mSliderHandle->setStep(step);
+		mSliderHandle->SetStep(step);
 	}
 
-	float GUISlider::getStep() const
+	float GUISlider::GetStep() const
 	{
-		return mSliderHandle->getStep();
+		return mSliderHandle->GetStep();
 	}
 
-	void GUISlider::setTint(const Color& color)
+	void GUISlider::SetTint(const Color& color)
 	{
 		mBackground->setTint(color);
 		mSliderHandle->setTint(color);
 	}
 
-	void GUISlider::onHandleMoved(float newPosition, float newSize)
+	void GUISlider::OnHandleMoved(float newPosition, float newSize)
 	{
 		onChanged(getValue());
 	}
@@ -240,12 +240,12 @@ namespace bs
 		}
 		else if(ev.getType() == GUICommandEventType::MoveLeft)
 		{
-			mSliderHandle->moveOneStep(false);
+			mSliderHandle->MoveOneStep(false);
 			return true;
 		}
 		else if(ev.getType() == GUICommandEventType::MoveRight)
 		{
-			mSliderHandle->moveOneStep(true);
+			mSliderHandle->MoveOneStep(true);
 			return true;
 		}
 
@@ -258,17 +258,17 @@ namespace bs
 
 	}
 
-	GUISliderHorz* GUISliderHorz::create(const String& styleName)
+	GUISliderHorz* GUISliderHorz::Create(const String& styleName)
 	{
-		return new (bs_alloc<GUISliderHorz>()) GUISliderHorz(getStyleName<GUISliderHorz>(styleName), GUIDimensions::create());
+		return new (bs_alloc<GUISliderHorz>()) GUISliderHorz(getStyleName<GUISliderHorz>(styleName), GUIDimensions::Create());
 	}
 
-	GUISliderHorz* GUISliderHorz::create(const GUIOptions& options, const String& styleName)
+	GUISliderHorz* GUISliderHorz::Create(const GUIOptions& options, const String& styleName)
 	{
-		return new (bs_alloc<GUISliderHorz>()) GUISliderHorz(getStyleName<GUISliderHorz>(styleName), GUIDimensions::create(options));
+		return new (bs_alloc<GUISliderHorz>()) GUISliderHorz(getStyleName<GUISliderHorz>(styleName), GUIDimensions::Create(options));
 	}
 
-	const String& GUISliderHorz::getGUITypeName()
+	const String& GUISliderHorz::GetGuiTypeName()
 	{
 		static String typeName = "SliderHorz";
 		return typeName;
@@ -280,17 +280,17 @@ namespace bs
 
 	}
 
-	GUISliderVert* GUISliderVert::create(const String& styleName)
+	GUISliderVert* GUISliderVert::Create(const String& styleName)
 	{
-		return new (bs_alloc<GUISliderVert>()) GUISliderVert(getStyleName<GUISliderVert>(styleName), GUIDimensions::create());
+		return new (bs_alloc<GUISliderVert>()) GUISliderVert(getStyleName<GUISliderVert>(styleName), GUIDimensions::Create());
 	}
 
-	GUISliderVert* GUISliderVert::create(const GUIOptions& options, const String& styleName)
+	GUISliderVert* GUISliderVert::Create(const GUIOptions& options, const String& styleName)
 	{
-		return new (bs_alloc<GUISliderVert>()) GUISliderVert(getStyleName<GUISliderVert>(styleName), GUIDimensions::create(options));
+		return new (bs_alloc<GUISliderVert>()) GUISliderVert(getStyleName<GUISliderVert>(styleName), GUIDimensions::Create(options));
 	}
 
-	const String& GUISliderVert::getGUITypeName()
+	const String& GUISliderVert::GetGuiTypeName()
 	{
 		static String typeName = "SliderVert";
 		return typeName;

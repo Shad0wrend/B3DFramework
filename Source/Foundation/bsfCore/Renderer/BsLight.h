@@ -44,16 +44,16 @@ namespace bs
 		virtual ~LightBase() { }
 
 		/**	Determines the type of the light. */
-		LightType getType() const { return mType; }
+		LightType GetType() const { return mType; }
 
 		/** @copydoc getType() */
-		void setType(LightType type) { mType = type; MarkCoreDirtyInternal(); updateBounds(); }
+		void SetType(LightType type) { mType = type; MarkCoreDirtyInternal(); UpdateBounds(); }
 
 		/**	Determines does this light cast shadows when rendered. */
-		void setCastsShadow(bool castsShadow) { mCastsShadows = castsShadow; MarkCoreDirtyInternal(); }
+		void SetCastsShadow(bool castsShadow) { mCastsShadows = castsShadow; MarkCoreDirtyInternal(); }
 
 		/** @copydoc setCastsShadow */
-		bool getCastsShadow() const { return mCastsShadows; }
+		bool GetCastsShadow() const { return mCastsShadows; }
 
 		/**
 		 * Shadow bias determines offset at which the shadows are rendered from the shadow caster. Bias value of 0 means
@@ -65,26 +65,26 @@ namespace bs
 		 *
 		 * Default value is 0.5. Should be in rough range [-1, 1].
 		 */
-		void setShadowBias(float bias) { mShadowBias = bias; MarkCoreDirtyInternal(); }
+		void SetShadowBias(float bias) { mShadowBias = bias; MarkCoreDirtyInternal(); }
 
 		/** @copydoc setShadowBias() */
-		float getShadowBias() const { return mShadowBias; }
+		float GetShadowBias() const { return mShadowBias; }
 
 		/** Determines the color emitted by the light. */
-		void setColor(const Color& color) { mColor = color; MarkCoreDirtyInternal(); }
+		void SetColor(const Color& color) { mColor = color; MarkCoreDirtyInternal(); }
 
 		/** @copydoc setColor() */
-		Color getColor() const { return mColor; }
+		Color GetColor() const { return mColor; }
 
 		/**
 		 * Range at which the light contribution fades out to zero. Use setUseAutoAttenuation to provide a radius
 		 * automatically dependant on light intensity. The radius will cut-off light contribution and therefore manually set
 		 * very small radius can end up being very physically incorrect.
 		 */
-		void setAttenuationRadius(float radius);
+		void SetAttenuationRadius(float radius);
 
 		/**	@copydoc setAttenuationRadius */
-		float getAttenuationRadius() const { return mAttRadius; }
+		float GetAttenuationRadius() const { return mAttRadius; }
 
 		/**
 		 * Radius of the light source. If non-zero then this light represents an area light, otherwise it is a punctual
@@ -97,48 +97,48 @@ namespace bs
 		 *  - For spot lights the shape is a disc oriented in the direction of the spot light and the source radius is the
 		 *    radius of the disc.
 		 */
-		void setSourceRadius(float radius);
+		void SetSourceRadius(float radius);
 
 		/**	@copydoc setSourceRadius */
-		float getSourceRadius() const { return mSourceRadius; }
+		float GetSourceRadius() const { return mSourceRadius; }
 
 		/**
 		 * If enabled the attenuation radius will automatically be controlled in order to provide reasonable light radius,
 		 * depending on its intensity.
 		 */
-		void setUseAutoAttenuation(bool enabled);
+		void SetUseAutoAttenuation(bool enabled);
 
 		/** @copydoc setUseAutoAttenuation */
-		bool getUseAutoAttenuation() const { return mAutoAttenuation; }
+		bool GetUseAutoAttenuation() const { return mAutoAttenuation; }
 
 		/**
 		 * Determines the power of the light source. This will be luminous flux for radial & spot lights,
 		 * luminance for directional lights with no area, and illuminance for directional lights with area (non-zero source
 		 * radius).
 		 */
-		void setIntensity(float intensity);
+		void SetIntensity(float intensity);
 
 		/** @copydoc setIntensity */
-		float getIntensity() const { return mIntensity; }
+		float GetIntensity() const { return mIntensity; }
 
 		/**	Determines the total angle covered by a spot light. */
-		void setSpotAngle(const Degree& spotAngle) { mSpotAngle = spotAngle; MarkCoreDirtyInternal(); updateBounds(); }
+		void SetSpotAngle(const Degree& spotAngle) { mSpotAngle = spotAngle; MarkCoreDirtyInternal(); UpdateBounds(); }
 
 		/** @copydoc setSpotAngle */
-		Degree getSpotAngle() const { return mSpotAngle; }
+		Degree GetSpotAngle() const { return mSpotAngle; }
 
 		/**
 		 * Determines the falloff angle covered by a spot light. Falloff angle determines at what point does light intensity
 		 * starts quadratically falling off as the angle approaches the total spot angle.
 		 */
-		void setSpotFalloffAngle(const Degree& spotFallofAngle)
-		{ mSpotFalloffAngle = spotFallofAngle; MarkCoreDirtyInternal(); updateBounds(); }
+		void SetSpotFalloffAngle(const Degree& spotFallofAngle)
+		{ mSpotFalloffAngle = spotFallofAngle; MarkCoreDirtyInternal(); UpdateBounds(); }
 
 		/** @copydoc setSpotFalloffAngle */
-		Degree getSpotFalloffAngle() const { return mSpotFalloffAngle; }
+		Degree GetSpotFalloffAngle() const { return mSpotFalloffAngle; }
 
 		/**	Returns world space bounds that completely encompass the light's area of influence. */
-		Sphere getBounds() const { return mBounds; }
+		Sphere GetBounds() const { return mBounds; }
 
 		/**
 		 * Returns the luminance of the light source. This is the value that should be used in lighting equations.
@@ -147,21 +147,21 @@ namespace bs
 		 * For point light sources this method returns luminous intensity and not luminance. We use the same method for both
 		 * as a convenience since in either case its used as a measure of intensity in lighting equations.
 		 */
-		float getLuminance() const;
+		float GetLuminance() const;
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P p);
+		void RttiEnumFields(P p);
 
 	protected:
 		/** Updates the internal bounds for the light. Call this whenever a property affecting the bounds changes. */
-		void updateBounds();
+		void UpdateBounds();
 
 		/** Calculates maximum light range based on light intensity. */
-		void updateAttenuationRange();
+		void UpdateAttenuationRange();
 
 		/** @copydoc SceneActor::setTransform */
-		void setTransform(const Transform& transform) override;
+		void SetTransform(const Transform& transform) override;
 
 		LightType mType; /**< Type of light that determines how are the rest of the parameters interpreted. */
 		bool mCastsShadows; /**< Determines whether the light casts shadows. */
@@ -188,7 +188,7 @@ namespace bs
 	{
 	public:
 		/**	Retrieves an implementation of the light usable only from the core thread. */
-		SPtr<ct::Light> getCore() const;
+		SPtr<ct::Light> GetCore() const;
 
 		/**
 		 * Creates a new light with provided settings.
@@ -203,7 +203,7 @@ namespace bs
 		 * @param[in]	spotAngle			Total angle covered by a spot light.
 		 * @param[in]	spotFalloffAngle	Spot light angle at which falloff starts. Must be smaller than total angle.
 		 */
-		static SPtr<Light> create(LightType type = LightType::Radial, Color color = Color::White,
+		static SPtr<Light> Create(LightType type = LightType::Radial, Color color = Color::White,
 			float intensity = 100.0f, float attRadius = 10.0f, bool castsShadows = false,
 			Degree spotAngle = Degree(45), Degree spotFalloffAngle = Degree(40));
 
@@ -212,24 +212,24 @@ namespace bs
 			bool castsShadows, Degree spotAngle, Degree spotFalloffAngle);
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> createCore() const override;
+		SPtr<ct::CoreObject> CreateCore() const ;
 
 		/** @copydoc LightBase::_markCoreDirty */
 		void MarkCoreDirtyInternal(ActorDirtyFlag flag = ActorDirtyFlag::Everything) override;
 
 		/** @copydoc CoreObject::syncToCore */
-		CoreSyncData syncToCore(FrameAlloc* allocator) override;
+		CoreSyncData SyncToCore(FrameAlloc* allocator) override;
 
 		/**	Creates a light with without initializing it. Used for serialization. */
-		static SPtr<Light> createEmpty();
+		static SPtr<Light> CreateEmpty();
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
 		/************************************************************************/
 	public:
 		friend class LightRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 
 	protected:
 		Light() = default; // Serialization only
@@ -244,10 +244,10 @@ namespace bs
 		~Light();
 
 		/**	Sets an ID that can be used for uniquely identifying this object by the renderer. */
-		void setRendererId(UINT32 id) { mRendererId = id; }
+		void SetRendererId(UINT32 id) { mRendererId = id; }
 
 		/**	Retrieves an ID that can be used for uniquely identifying this object by the renderer. */
-		UINT32 getRendererId() const { return mRendererId; }
+		UINT32 GetRendererId() const { return mRendererId; }
 
 		static const UINT32 LIGHT_CONE_NUM_SIDES;
 		static const UINT32 LIGHT_CONE_NUM_SLICES;
@@ -258,10 +258,10 @@ namespace bs
 			  Degree spotAngle, Degree spotFalloffAngle);
 
 		/** @copydoc CoreObject::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 		/** @copydoc CoreObject::syncToCore */
-		void syncToCore(const CoreSyncData& data) override;
+		void SyncToCore(const CoreSyncData& data) override;
 
 		UINT32 mRendererId;
 	};

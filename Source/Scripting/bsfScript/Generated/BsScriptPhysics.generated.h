@@ -16,8 +16,8 @@ namespace bs
 		ScriptPhysics(MonoObject* managedInstance);
 
 	private:
-		static void Internal_toggleCollision(uint64_t groupA, uint64_t groupB, bool enabled);
-		static bool Internal_isCollisionEnabled(uint64_t groupA, uint64_t groupB);
-		static bool Internal__isUpdateInProgress();
+		static void InternalToggleCollision(uint64_t groupA, uint64_t groupB, bool enabled);
+		static bool InternalIsCollisionEnabled(uint64_t groupA, uint64_t groupB);
+		static bool InternalIsUpdateInProgress();
 	};
 }

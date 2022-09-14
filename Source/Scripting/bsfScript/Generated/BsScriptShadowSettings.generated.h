@@ -16,17 +16,17 @@ namespace bs
 
 		ScriptShadowSettings(MonoObject* managedInstance, const SPtr<ShadowSettings>& value);
 
-		static MonoObject* create(const SPtr<ShadowSettings>& value);
+		static MonoObject* Create(const SPtr<ShadowSettings>& value);
 
 	private:
-		static void Internal_ShadowSettings(MonoObject* managedInstance);
-		static float Internal_getdirectionalShadowDistance(ScriptShadowSettings* thisPtr);
-		static void Internal_setdirectionalShadowDistance(ScriptShadowSettings* thisPtr, float value);
-		static uint32_t Internal_getnumCascades(ScriptShadowSettings* thisPtr);
-		static void Internal_setnumCascades(ScriptShadowSettings* thisPtr, uint32_t value);
-		static float Internal_getcascadeDistributionExponent(ScriptShadowSettings* thisPtr);
-		static void Internal_setcascadeDistributionExponent(ScriptShadowSettings* thisPtr, float value);
-		static uint32_t Internal_getshadowFilteringQuality(ScriptShadowSettings* thisPtr);
-		static void Internal_setshadowFilteringQuality(ScriptShadowSettings* thisPtr, uint32_t value);
+		static void InternalShadowSettings(MonoObject* managedInstance);
+		static float InternalGetdirectionalShadowDistance(ScriptShadowSettings* thisPtr);
+		static void InternalSetdirectionalShadowDistance(ScriptShadowSettings* thisPtr, float value);
+		static uint32_t InternalGetnumCascades(ScriptShadowSettings* thisPtr);
+		static void InternalSetnumCascades(ScriptShadowSettings* thisPtr, uint32_t value);
+		static float InternalGetcascadeDistributionExponent(ScriptShadowSettings* thisPtr);
+		static void InternalSetcascadeDistributionExponent(ScriptShadowSettings* thisPtr, float value);
+		static uint32_t InternalGetshadowFilteringQuality(ScriptShadowSettings* thisPtr);
+		static void InternalSetshadowFilteringQuality(ScriptShadowSettings* thisPtr, uint32_t value);
 	};
 }

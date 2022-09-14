@@ -14,7 +14,7 @@ namespace bs
 
 	void ScriptScreenSpaceReflectionsSettings::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_ScreenSpaceReflectionsSettings", (void*)&ScriptScreenSpaceReflectionsSettings::Internal_ScreenSpaceReflectionsSettings);
+		metaData.scriptClass->AddInternalCall("Internal_ScreenSpaceReflectionsSettings", (void*)&ScriptScreenSpaceReflectionsSettings::InternalScreenSpaceReflectionsSettings);
 		metaData.scriptClass->addInternalCall("Internal_getenabled", (void*)&ScriptScreenSpaceReflectionsSettings::Internal_getenabled);
 		metaData.scriptClass->addInternalCall("Internal_setenabled", (void*)&ScriptScreenSpaceReflectionsSettings::Internal_setenabled);
 		metaData.scriptClass->addInternalCall("Internal_getquality", (void*)&ScriptScreenSpaceReflectionsSettings::Internal_getquality);
@@ -26,7 +26,7 @@ namespace bs
 
 	}
 
-	MonoObject* ScriptScreenSpaceReflectionsSettings::create(const SPtr<ScreenSpaceReflectionsSettings>& value)
+	MonoObject* ScriptScreenSpaceReflectionsSettings::Create(const SPtr<ScreenSpaceReflectionsSettings>& value)
 	{
 		if(value == nullptr) return nullptr; 
 
@@ -37,13 +37,13 @@ namespace bs
 		new (bs_alloc<ScriptScreenSpaceReflectionsSettings>()) ScriptScreenSpaceReflectionsSettings(managedInstance, value);
 		return managedInstance;
 	}
-	void ScriptScreenSpaceReflectionsSettings::Internal_ScreenSpaceReflectionsSettings(MonoObject* managedInstance)
+	void ScriptScreenSpaceReflectionsSettings::InternalScreenSpaceReflectionsSettings(MonoObject* managedInstance)
 	{
 		SPtr<ScreenSpaceReflectionsSettings> instance = bs_shared_ptr_new<ScreenSpaceReflectionsSettings>();
 		new (bs_alloc<ScriptScreenSpaceReflectionsSettings>())ScriptScreenSpaceReflectionsSettings(managedInstance, instance);
 	}
 
-	bool ScriptScreenSpaceReflectionsSettings::Internal_getenabled(ScriptScreenSpaceReflectionsSettings* thisPtr)
+	bool ScriptScreenSpaceReflectionsSettings::InternalGetenabled(ScriptScreenSpaceReflectionsSettings* thisPtr)
 	{
 		bool tmp__output;
 		tmp__output = thisPtr->getInternal()->enabled;
@@ -54,12 +54,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptScreenSpaceReflectionsSettings::Internal_setenabled(ScriptScreenSpaceReflectionsSettings* thisPtr, bool value)
+	void ScriptScreenSpaceReflectionsSettings::InternalSetenabled(ScriptScreenSpaceReflectionsSettings* thisPtr, bool value)
 	{
 		thisPtr->getInternal()->enabled = value;
 	}
 
-	uint32_t ScriptScreenSpaceReflectionsSettings::Internal_getquality(ScriptScreenSpaceReflectionsSettings* thisPtr)
+	uint32_t ScriptScreenSpaceReflectionsSettings::InternalGetquality(ScriptScreenSpaceReflectionsSettings* thisPtr)
 	{
 		uint32_t tmp__output;
 		tmp__output = thisPtr->getInternal()->quality;
@@ -70,12 +70,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptScreenSpaceReflectionsSettings::Internal_setquality(ScriptScreenSpaceReflectionsSettings* thisPtr, uint32_t value)
+	void ScriptScreenSpaceReflectionsSettings::InternalSetquality(ScriptScreenSpaceReflectionsSettings* thisPtr, uint32_t value)
 	{
 		thisPtr->getInternal()->quality = value;
 	}
 
-	float ScriptScreenSpaceReflectionsSettings::Internal_getintensity(ScriptScreenSpaceReflectionsSettings* thisPtr)
+	float ScriptScreenSpaceReflectionsSettings::InternalGetintensity(ScriptScreenSpaceReflectionsSettings* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->getInternal()->intensity;
@@ -86,12 +86,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptScreenSpaceReflectionsSettings::Internal_setintensity(ScriptScreenSpaceReflectionsSettings* thisPtr, float value)
+	void ScriptScreenSpaceReflectionsSettings::InternalSetintensity(ScriptScreenSpaceReflectionsSettings* thisPtr, float value)
 	{
 		thisPtr->getInternal()->intensity = value;
 	}
 
-	float ScriptScreenSpaceReflectionsSettings::Internal_getmaxRoughness(ScriptScreenSpaceReflectionsSettings* thisPtr)
+	float ScriptScreenSpaceReflectionsSettings::InternalGetmaxRoughness(ScriptScreenSpaceReflectionsSettings* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->getInternal()->maxRoughness;
@@ -102,7 +102,7 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptScreenSpaceReflectionsSettings::Internal_setmaxRoughness(ScriptScreenSpaceReflectionsSettings* thisPtr, float value)
+	void ScriptScreenSpaceReflectionsSettings::InternalSetmaxRoughness(ScriptScreenSpaceReflectionsSettings* thisPtr, float value)
 	{
 		thisPtr->getInternal()->maxRoughness = value;
 	}

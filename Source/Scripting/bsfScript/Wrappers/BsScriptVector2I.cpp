@@ -14,14 +14,14 @@ namespace bs
 	void ScriptVector2I::initRuntimeData()
 	{ }
 
-	MonoObject* ScriptVector2I::box(const Vector2I& value)
+	MonoObject* ScriptVector2I::Box(const Vector2I& value)
 	{
 		// We're casting away const but it's fine since structs are passed by value anyway
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	Vector2I ScriptVector2I::unbox(MonoObject* obj)
+	Vector2I ScriptVector2I::Unbox(MonoObject* obj)
 	{
-		return *(Vector2I*)MonoUtil::unbox(obj);
+		return *(Vector2I*)MonoUtil::Unbox(obj);
 	}
 }

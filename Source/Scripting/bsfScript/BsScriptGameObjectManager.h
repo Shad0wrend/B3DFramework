@@ -37,65 +37,65 @@ namespace bs
 		 * Attempts to find the interop object for the specified SceneObject. If one cannot be found new one is created and
 		 * returned.
 		 */
-		ScriptSceneObject* getOrCreateScriptSceneObject(const HSceneObject& sceneObject);
+		ScriptSceneObject* GetOrCreateScriptSceneObject(const HSceneObject& sceneObject);
 
 		/** Creates a new interop object for the specified SceneObject. Throws an exception if one already exists. */
-		ScriptSceneObject* createScriptSceneObject(const HSceneObject& sceneObject);
+		ScriptSceneObject* CreateScriptSceneObject(const HSceneObject& sceneObject);
 
 		/**
 		 * Connects an existing managed SceneObject instance with the native SceneObject by creating the interop object.
 		 * Throws an exception if the interop object already exists.
 		 */
-		ScriptSceneObject* createScriptSceneObject(MonoObject* existingInstance, const HSceneObject& sceneObject);
+		ScriptSceneObject* CreateScriptSceneObject(MonoObject* existingInstance, const HSceneObject& sceneObject);
 
 		/**
 		 * Connects an existing instance of a ManagedComponent instance with the native ManagedComponent class by creating
 		 * the interop object. Throws an exception if the interop object already exists.
 		 */
-		ScriptManagedComponent* createManagedScriptComponent(MonoObject* existingInstance, const HManagedComponent& component);
+		ScriptManagedComponent* CreateManagedScriptComponent(MonoObject* existingInstance, const HManagedComponent& component);
 
 		/**
 		 * Creates a new interop object that connects a built-in native component with a managed version of that component.
 		 */
-		ScriptComponentBase* createBuiltinScriptComponent(const HComponent& component);
+		ScriptComponentBase* CreateBuiltinScriptComponent(const HComponent& component);
 
 		/**
 		 * Attempts to find the interop object for the specified built-in component. If one cannot be found a new
 		 * script interop object is created if @p createNonExisting is enabled, or returns null otherwise.
 		 */
-		ScriptComponentBase* getBuiltinScriptComponent(const HComponent& component, bool createNonExisting = true);
+		ScriptComponentBase* GetBuiltinScriptComponent(const HComponent& component, bool createNonExisting = true);
 
 		/**
 		 * Attempts to find the interop object for the specified managed component. If one cannot be found null is returned.
 		 */
-		ScriptManagedComponent* getManagedScriptComponent(const HManagedComponent& component) const;
+		ScriptManagedComponent* GetManagedScriptComponent(const HManagedComponent& component) const;
 
 		/**
 		 * Attempts to find the interop object for a component with the specified instance ID. If one cannot be
 		 * found null is returned.
 		 */
-		ScriptComponentBase* getScriptComponent(UINT64 instanceId) const;
+		ScriptComponentBase* GetScriptComponent(UINT64 instanceId) const;
 
 		/** Attempts to find the interop object for the specified SceneObject. If one cannot be found null is returned. */
-		ScriptSceneObject* getScriptSceneObject(const HSceneObject& sceneObject) const;
+		ScriptSceneObject* GetScriptSceneObject(const HSceneObject& sceneObject) const;
 
 		/**
 		 * Attempts to find the interop object for a managed scene object with the specified instance ID. If one cannot be
 		 * found null is returned.
 		 */
-		ScriptSceneObject* getScriptSceneObject(UINT64 instanceId) const;
+		ScriptSceneObject* GetScriptSceneObject(UINT64 instanceId) const;
 
 		/**
 		 * Attempts to find the interop object for a GameObject with the specified instance ID. If one cannot be found null
 		 * is returned.
 		 */
-		ScriptGameObjectBase* getScriptGameObject(UINT64 instanceId) const;
+		ScriptGameObjectBase* GetScriptGameObject(UINT64 instanceId) const;
 
 		/**	Destroys and unregisters the specified SceneObject interop object. */
-		void destroyScriptSceneObject(ScriptSceneObject* sceneObject);
+		void DestroyScriptSceneObject(ScriptSceneObject* sceneObject);
 
 		/**	Destroys and unregisters the specified ManagedComponent interop object. */
-		void destroyScriptComponent(ScriptComponentBase* component);
+		void DestroyScriptComponent(ScriptComponentBase* component);
 
 	private:
 		/**
@@ -103,10 +103,10 @@ namespace bs
 		 *
 		 * @note	Usually this happens after an assembly reload.
 		 */
-		void sendComponentResetEvents();
+		void SendComponentResetEvents();
 
 		/**	Triggered when the any game object is destroyed. */
-		void onGameObjectDestroyed(const HGameObject& go);
+		void OnGameObjectDestroyed(const HGameObject& go);
 
 		UnorderedMap<UINT64, ScriptComponentBase*> mScriptComponents;
 		UnorderedMap<UINT64, ScriptSceneObject*> mScriptSceneObjects;

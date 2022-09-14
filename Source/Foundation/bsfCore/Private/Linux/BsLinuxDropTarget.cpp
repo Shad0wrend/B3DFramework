@@ -208,7 +208,7 @@ namespace bs
 		LinuxDragAndDrop::updateDropTarget(this);
 	}
 
-	void LinuxDragAndDrop::startUp(::Display* xDisplay)
+	void LinuxDragAndDrop::StartUp(::Display* xDisplay)
 	{
 		sXDisplay = xDisplay;
 
@@ -229,7 +229,7 @@ namespace bs
 #undef INIT_ATOM
 	}
 
-	void LinuxDragAndDrop::shutDown()
+	void LinuxDragAndDrop::ShutDown()
 	{
 		sXDisplay = nullptr;
 	}

@@ -11,31 +11,31 @@ namespace bs
 
 	}
 
-	GUIScrollBarHorz* GUIScrollBarHorz::create(const String& styleName)
+	GUIScrollBarHorz* GUIScrollBarHorz::Create(const String& styleName)
 	{
-		return new (bs_alloc<GUIScrollBarHorz>()) GUIScrollBarHorz(false, getStyleName<GUIScrollBarHorz>(false, styleName),
-			GUIDimensions::create());
+		return new (bs_alloc<GUIScrollBarHorz>()) GUIScrollBarHorz(false, GetStyleName<GUIScrollBarHorz>(false, styleName),
+			GUIDimensions::Create());
 	}
 
-	GUIScrollBarHorz* GUIScrollBarHorz::create(bool resizeable, const String& styleName)
+	GUIScrollBarHorz* GUIScrollBarHorz::Create(bool resizeable, const String& styleName)
 	{
-		return new (bs_alloc<GUIScrollBarHorz>()) GUIScrollBarHorz(resizeable, getStyleName<GUIScrollBarHorz>(resizeable, styleName),
-			GUIDimensions::create());
+		return new (bs_alloc<GUIScrollBarHorz>()) GUIScrollBarHorz(resizeable, GetStyleName<GUIScrollBarHorz>(resizeable, styleName),
+			GUIDimensions::Create());
 	}
 
-	GUIScrollBarHorz* GUIScrollBarHorz::create(const GUIOptions& options, const String& styleName)
+	GUIScrollBarHorz* GUIScrollBarHorz::Create(const GUIOptions& options, const String& styleName)
 	{
-		return new (bs_alloc<GUIScrollBarHorz>()) GUIScrollBarHorz(false, getStyleName<GUIScrollBarHorz>(false, styleName),
-			GUIDimensions::create(options));
+		return new (bs_alloc<GUIScrollBarHorz>()) GUIScrollBarHorz(false, GetStyleName<GUIScrollBarHorz>(false, styleName),
+			GUIDimensions::Create(options));
 	}
 
-	GUIScrollBarHorz* GUIScrollBarHorz::create(bool resizeable, const GUIOptions& options, const String& styleName)
+	GUIScrollBarHorz* GUIScrollBarHorz::Create(bool resizeable, const GUIOptions& options, const String& styleName)
 	{
-		return new (bs_alloc<GUIScrollBarHorz>()) GUIScrollBarHorz(resizeable, getStyleName<GUIScrollBarHorz>(resizeable, styleName),
-			GUIDimensions::create(options));
+		return new (bs_alloc<GUIScrollBarHorz>()) GUIScrollBarHorz(resizeable, GetStyleName<GUIScrollBarHorz>(resizeable, styleName),
+			GUIDimensions::Create(options));
 	}
 
-	const String& GUIScrollBarHorz::getGUITypeName(bool resizable)
+	const String& GUIScrollBarHorz::GetGuiTypeName(bool resizable)
 	{
 		static String typeName = "ScrollBarHorz";
 		static String resizableTypeName = "ResizeableScrollBarHorz";

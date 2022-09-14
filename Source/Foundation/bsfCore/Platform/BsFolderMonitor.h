@@ -44,13 +44,13 @@ namespace bs
 		 * @param[in]	changeFilter	A set of flags you may OR together. Different notification events will trigger
 		 *								depending on which flags you set.
 		 */
-		void startMonitor(const Path& folderPath, bool subdirectories, FolderChangeBits changeFilter);
+		void StartMonitor(const Path& folderPath, bool subdirectories, FolderChangeBits changeFilter);
 
 		/** Stops monitoring the folder at the specified path. */
-		void stopMonitor(const Path& folderPath);
+		void StopMonitor(const Path& folderPath);
 
 		/**	Stops monitoring all folders that are currently being monitored. */
-		void stopMonitorAll();
+		void StopMonitorAll();
 
 		/** Triggers callbacks depending on events that ocurred. Expected to be called once per frame. */
 		void UpdateInternal();
@@ -78,10 +78,10 @@ namespace bs
 		/** @} */
 	private:
 		/**	Worker method that monitors the IO ports for any modification notifications. */
-		void workerThreadMain();
+		void WorkerThreadMain();
 
 		/**	Called by the worker thread whenever a modification notification is received. */
-		void handleNotifications(FileNotifyInfo& notifyInfo, FolderWatchInfo& watchInfo);
+		void HandleNotifications(FileNotifyInfo& notifyInfo, FolderWatchInfo& watchInfo);
 
 		Pimpl* m;
 	};

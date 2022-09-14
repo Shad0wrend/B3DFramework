@@ -36,7 +36,7 @@ namespace bs { namespace ct
 		defines.set("TILE_SIZE", TILE_SIZE);
 	}
 
-	void TiledDeferredLightingMat::execute(const RendererView& view, const VisibleLightData& lightData,
+	void TiledDeferredLightingMat::Execute(const RendererView& view, const VisibleLightData& lightData,
 		const GBufferTextures& gbuffer, const SPtr<Texture>& inputTexture, const SPtr<Texture>& lightAccumTex,
 		const SPtr<Texture>& lightAccumTexArray, const SPtr<Texture>& msaaCoverage)
 	{
@@ -114,10 +114,10 @@ namespace bs { namespace ct
 		UINT32 numTilesY = (UINT32)Math::ceilToInt(height / (float)TILE_SIZE);
 
 		bind();
-		RenderAPI::instance().dispatchCompute(numTilesX, numTilesY);
+		RenderAPI::Instance().dispatchCompute(numTilesX, numTilesY);
 	}
 
-	TiledDeferredLightingMat* TiledDeferredLightingMat::getVariation(UINT32 msaaCount)
+	TiledDeferredLightingMat* TiledDeferredLightingMat::GetVariation(UINT32 msaaCount)
 	{
 		switch(msaaCount)
 		{
@@ -138,7 +138,7 @@ namespace bs { namespace ct
 		mParams->getTextureParam(GPT_FRAGMENT_PROGRAM, "gInput", mInputParam);
 	}
 
-	void TextureArrayToMSAATexture::execute(const SPtr<Texture>& inputArray, const SPtr<Texture>& target)
+	void TextureArrayToMSAATexture::Execute(const SPtr<Texture>& inputArray, const SPtr<Texture>& target)
 	{
 		BS_RENMAT_PROFILE_BLOCK
 
@@ -178,7 +178,7 @@ namespace bs { namespace ct
 		defines.set("NUM_THREADS", NUM_THREADS);
 	}
 
-	void ClearLoadStoreMat::execute(const SPtr<Texture>& target, const Color& clearValue,
+	void ClearLoadStoreMat::Execute(const SPtr<Texture>& target, const Color& clearValue,
 			const TextureSurface& surface)
 	{
 		BS_RENMAT_PROFILE_BLOCK
@@ -203,10 +203,10 @@ namespace bs { namespace ct
 		UINT32 numGroupsX = Math::divideAndRoundUp(width, NUM_THREADS * TILE_SIZE);
 		UINT32 numGroupsY = Math::divideAndRoundUp(height, NUM_THREADS * TILE_SIZE);
 		
-		RenderAPI::instance().dispatchCompute(numGroupsX, numGroupsY);
+		RenderAPI::Instance().dispatchCompute(numGroupsX, numGroupsY);
 	}
 
-	void ClearLoadStoreMat::execute(const SPtr<GpuBuffer>& target, const Color& clearValue)
+	void ClearLoadStoreMat::Execute(const SPtr<GpuBuffer>& target, const Color& clearValue)
 	{
 		BS_RENMAT_PROFILE_BLOCK
 
@@ -223,7 +223,7 @@ namespace bs { namespace ct
 		bind();
 
 		UINT32 numGroupsX = Math::divideAndRoundUp(width, NUM_THREADS * (TILE_SIZE * TILE_SIZE));
-		RenderAPI::instance().dispatchCompute(numGroupsX, 1);
+		RenderAPI::Instance().dispatchCompute(numGroupsX, 1);
 	}
 
 	/** Helper method used for initializing variations of the ClearLoadStore material. */
@@ -258,7 +258,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	ClearLoadStoreMat* ClearLoadStoreMat::getVariation(ClearLoadStoreType objType, ClearLoadStoreDataType dataType,
+	ClearLoadStoreMat* ClearLoadStoreMat::GetVariation(ClearLoadStoreType objType, ClearLoadStoreDataType dataType,
 									UINT32 numComponents)
 	{
 		switch(objType)
@@ -324,7 +324,7 @@ namespace bs { namespace ct
 		defines.set("TILE_SIZE", TILE_SIZE);
 	}
 
-	void TiledDeferredImageBasedLightingMat::execute(const RendererView& view, const SceneInfo& sceneInfo,
+	void TiledDeferredImageBasedLightingMat::Execute(const RendererView& view, const SceneInfo& sceneInfo,
 		const VisibleReflProbeData& probeData, const Inputs& inputs)
 	{
 		BS_RENMAT_PROFILE_BLOCK
@@ -379,10 +379,10 @@ namespace bs { namespace ct
 		UINT32 numTilesY = (UINT32)Math::ceilToInt(height / (float)TILE_SIZE);
 
 		bind();
-		RenderAPI::instance().dispatchCompute(numTilesX, numTilesY);
+		RenderAPI::Instance().dispatchCompute(numTilesX, numTilesY);
 	}
 
-	TiledDeferredImageBasedLightingMat* TiledDeferredImageBasedLightingMat::getVariation(UINT32 msaaCount)
+	TiledDeferredImageBasedLightingMat* TiledDeferredImageBasedLightingMat::GetVariation(UINT32 msaaCount)
 	{
 		switch(msaaCount)
 		{

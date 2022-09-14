@@ -23,10 +23,10 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static void internal_createInstance(MonoObject* instance, MonoString* style, MonoArray* guiOptions);
-		static void internal_setPercent(ScriptGUIProgressBar* nativeInstance, float percent);
-		static float internal_getPercent(ScriptGUIProgressBar* nativeInstance);
-		static void internal_setTint(ScriptGUIProgressBar* nativeInstance, Color* color);
+		static void InternalCreateInstance(MonoObject* instance, MonoString* style, MonoArray* guiOptions);
+		static void InternalSetPercent(ScriptGUIProgressBar* nativeInstance, float percent);
+		static float InternalGetPercent(ScriptGUIProgressBar* nativeInstance);
+		static void InternalSetTint(ScriptGUIProgressBar* nativeInstance, Color* color);
 	};
 
 	/** @} */

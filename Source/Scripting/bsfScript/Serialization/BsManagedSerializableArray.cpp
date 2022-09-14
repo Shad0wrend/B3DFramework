@@ -42,34 +42,34 @@ namespace bs
 		}
 	}
 
-	SPtr<ManagedSerializableArray> ManagedSerializableArray::createFromExisting(MonoObject* managedInstance,
+	SPtr<ManagedSerializableArray> ManagedSerializableArray::CreateFromExisting(MonoObject* managedInstance,
 		const SPtr<ManagedSerializableTypeInfoArray>& typeInfo)
 	{
 		if(managedInstance == nullptr)
 			return nullptr;
 
-		if(!ScriptAssemblyManager::instance().getBuiltinClasses().systemArrayClass->isInstanceOfType(managedInstance))
+		if(!ScriptAssemblyManager::Instance().getBuiltinClasses().systemArrayClass->isInstanceOfType(managedInstance))
 			return nullptr;
 
 		return bs_shared_ptr_new<ManagedSerializableArray>(ConstructPrivately(), typeInfo, managedInstance);
 	}
 
-	SPtr<ManagedSerializableArray> ManagedSerializableArray::createNew(const SPtr<ManagedSerializableTypeInfoArray>& typeInfo, const Vector<UINT32>& sizes)
+	SPtr<ManagedSerializableArray> ManagedSerializableArray::CreateNew(const SPtr<ManagedSerializableTypeInfoArray>& typeInfo, const Vector<UINT32>& sizes)
 	{
 		return bs_shared_ptr_new<ManagedSerializableArray>(ConstructPrivately(), typeInfo, createManagedInstance(typeInfo, sizes));
 	}
 
-	SPtr<ManagedSerializableArray> ManagedSerializableArray::createNew()
+	SPtr<ManagedSerializableArray> ManagedSerializableArray::CreateNew()
 	{
 		return bs_shared_ptr_new<ManagedSerializableArray>(ConstructPrivately());
 	}
 
-	MonoObject* ManagedSerializableArray::createManagedInstance(const SPtr<ManagedSerializableTypeInfoArray>& typeInfo, const Vector<UINT32>& sizes)
+	MonoObject* ManagedSerializableArray::CreateManagedInstance(const SPtr<ManagedSerializableTypeInfoArray>& typeInfo, const Vector<UINT32>& sizes)
 	{
 		if (!typeInfo->isTypeLoaded())
 			return nullptr;
 
-		MonoClass* arrayClass = ScriptAssemblyManager::instance().getBuiltinClasses().systemArrayClass;
+		MonoClass* arrayClass = ScriptAssemblyManager::Instance().getBuiltinClasses().systemArrayClass;
 
 		MonoMethod* createInstance = arrayClass->getMethodExact("CreateInstance", "Type,int[]");
 
@@ -81,7 +81,7 @@ namespace bs
 		return createInstance->invoke(nullptr, params);
 	}
 
-	MonoObject* ManagedSerializableArray::getManagedInstance() const
+	MonoObject* ManagedSerializableArray::GetManagedInstance() const
 	{
 		if(mGCHandle != 0)
 			return MonoUtil::getObjectFromGCHandle(mGCHandle);
@@ -89,7 +89,7 @@ namespace bs
 		return nullptr;
 	}
 
-	void ManagedSerializableArray::setFieldData(UINT32 arrayIdx, const SPtr<ManagedSerializableFieldData>& val)
+	void ManagedSerializableArray::SetFieldData(UINT32 arrayIdx, const SPtr<ManagedSerializableFieldData>& val)
 	{
 		if (mGCHandle != 0)
 		{
@@ -102,7 +102,7 @@ namespace bs
 		}
 	}
 
-	void ManagedSerializableArray::setFieldData(MonoArray* obj, UINT32 arrayIdx, const SPtr<ManagedSerializableFieldData>& val)
+	void ManagedSerializableArray::SetFieldData(MonoArray* obj, UINT32 arrayIdx, const SPtr<ManagedSerializableFieldData>& val)
 	{
 		if (MonoUtil::isValueType(mElementMonoClass))
 			setValueInternal(obj, arrayIdx, val->getValue(mArrayTypeInfo->mElementType));
@@ -113,7 +113,7 @@ namespace bs
 		}
 	}
 
-	SPtr<ManagedSerializableFieldData> ManagedSerializableArray::getFieldData(UINT32 arrayIdx)
+	SPtr<ManagedSerializableFieldData> ManagedSerializableArray::GetFieldData(UINT32 arrayIdx)
 	{
 		if (mGCHandle != 0)
 		{
@@ -132,16 +132,16 @@ namespace bs
 				if (arrayValue != nullptr)
 					boxedObj = MonoUtil::box(mElementMonoClass, arrayValue);
 
-				return ManagedSerializableFieldData::create(mArrayTypeInfo->mElementType, boxedObj);
+				return ManagedSerializableFieldData::Create(mArrayTypeInfo->mElementType, boxedObj);
 			}
 			else
-				return ManagedSerializableFieldData::create(mArrayTypeInfo->mElementType, *(MonoObject**)arrayValue);
+				return ManagedSerializableFieldData::Create(mArrayTypeInfo->mElementType, *(MonoObject**)arrayValue);
 		}
 		else
 			return mCachedEntries[arrayIdx];
 	}
 
-	void ManagedSerializableArray::serialize()
+	void ManagedSerializableArray::Serialize()
 	{
 		if(mGCHandle == 0)
 			return;
@@ -164,7 +164,7 @@ namespace bs
 		mGCHandle = 0;
 	}
 
-	MonoObject* ManagedSerializableArray::deserialize()
+	MonoObject* ManagedSerializableArray::Deserialize()
 	{
 		MonoObject* managedInstance = createManagedInstance(mArrayTypeInfo, mNumElements);
 
@@ -190,7 +190,7 @@ namespace bs
 		return managedInstance;
 	}
 	
-	void ManagedSerializableArray::setValueInternal(MonoArray* obj, UINT32 arrayIdx, void* val)
+	void ManagedSerializableArray::SetValueInternal(MonoArray* obj, UINT32 arrayIdx, void* val)
 	{
 		ScriptArray scriptArray(obj);
 		UINT32 numElems = (UINT32)scriptArray.size();
@@ -199,15 +199,15 @@ namespace bs
 		scriptArray.setRaw(arrayIdx, (UINT8*)val, mElemSize);
 	}
 
-	void ManagedSerializableArray::initMonoObjects()
+	void ManagedSerializableArray::InitMonoObjects()
 	{
 		mElementMonoClass = mArrayTypeInfo->mElementType->getMonoClass();
 
-		MonoClass* arrayClass = ScriptAssemblyManager::instance().getBuiltinClasses().systemArrayClass;
+		MonoClass* arrayClass = ScriptAssemblyManager::Instance().getBuiltinClasses().systemArrayClass;
 		mCopyMethod = arrayClass->getMethodExact("Copy", "Array,Array,int");
 	}
 
-	UINT32 ManagedSerializableArray::toSequentialIdx(const Vector<UINT32>& idx) const
+	UINT32 ManagedSerializableArray::ToSequentialIdx(const Vector<UINT32>& idx) const
 	{
 		UINT32 mNumDims = (UINT32)mNumElements.size();
 
@@ -230,7 +230,7 @@ namespace bs
 		return curIdx;
 	}
 
-	void ManagedSerializableArray::resize(const Vector<UINT32>& newSizes)
+	void ManagedSerializableArray::Resize(const Vector<UINT32>& newSizes)
 	{
 		if (mGCHandle != 0)
 		{
@@ -267,11 +267,11 @@ namespace bs
 		}
 	}
 
-	UINT32 ManagedSerializableArray::getLengthInternal(UINT32 dimension) const
+	UINT32 ManagedSerializableArray::GetLengthInternal(UINT32 dimension) const
 	{
 		MonoObject* managedInstace = MonoUtil::getObjectFromGCHandle(mGCHandle);
 
-		MonoClass* systemArray = ScriptAssemblyManager::instance().getBuiltinClasses().systemArrayClass;
+		MonoClass* systemArray = ScriptAssemblyManager::Instance().getBuiltinClasses().systemArrayClass;
 		MonoMethod* getLength = systemArray->getMethod("GetLength", 1);
 
 		void* params[1] = { &dimension };
@@ -280,7 +280,7 @@ namespace bs
 		return *(UINT32*)MonoUtil::unbox(returnObj);
 	}
 
-	UINT32 ManagedSerializableArray::getTotalLength() const
+	UINT32 ManagedSerializableArray::GetTotalLength() const
 	{
 		UINT32 totalNumElements = 1;
 		for (auto& numElems : mNumElements)
@@ -289,13 +289,13 @@ namespace bs
 		return totalNumElements;
 	}
 
-	RTTITypeBase* ManagedSerializableArray::getRTTIStatic()
+	RTTITypeBase* ManagedSerializableArray::GetRttiStatic()
 	{
-		return ManagedSerializableArrayRTTI::instance();
+		return ManagedSerializableArrayRTTI::Instance();
 	}
 
-	RTTITypeBase* ManagedSerializableArray::getRTTI() const
+	RTTITypeBase* ManagedSerializableArray::GetRtti() const
 	{
-		return ManagedSerializableArray::getRTTIStatic();
+		return ManagedSerializableArray::GetRttiStatic();
 	}
 }

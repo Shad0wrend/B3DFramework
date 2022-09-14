@@ -17,52 +17,52 @@ namespace bs
 
 	void ScriptParticleEmitterConeShape::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_setOptions", (void*)&ScriptParticleEmitterConeShape::Internal_setOptions);
-		metaData.scriptClass->addInternalCall("Internal_getOptions", (void*)&ScriptParticleEmitterConeShape::Internal_getOptions);
-		metaData.scriptClass->addInternalCall("Internal_create", (void*)&ScriptParticleEmitterConeShape::Internal_create);
-		metaData.scriptClass->addInternalCall("Internal_create0", (void*)&ScriptParticleEmitterConeShape::Internal_create0);
+		metaData.scriptClass->AddInternalCall("Internal_setOptions", (void*)&ScriptParticleEmitterConeShape::InternalSetOptions);
+		metaData.scriptClass->AddInternalCall("Internal_getOptions", (void*)&ScriptParticleEmitterConeShape::InternalGetOptions);
+		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptParticleEmitterConeShape::InternalCreate);
+		metaData.scriptClass->AddInternalCall("Internal_create0", (void*)&ScriptParticleEmitterConeShape::InternalCreate0);
 
 	}
 
-	MonoObject* ScriptParticleEmitterConeShape::create(const SPtr<ParticleEmitterConeShape>& value)
+	MonoObject* ScriptParticleEmitterConeShape::Create(const SPtr<ParticleEmitterConeShape>& value)
 	{
 		if(value == nullptr) return nullptr; 
 
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptParticleEmitterConeShape>()) ScriptParticleEmitterConeShape(managedInstance, value);
 		return managedInstance;
 	}
-	void ScriptParticleEmitterConeShape::Internal_setOptions(ScriptParticleEmitterConeShape* thisPtr, __PARTICLE_CONE_SHAPE_DESCInterop* options)
+	void ScriptParticleEmitterConeShape::InternalSetOptions(ScriptParticleEmitterConeShape* thisPtr, __PARTICLE_CONE_SHAPE_DESCInterop* options)
 	{
 		PARTICLE_CONE_SHAPE_DESC tmpoptions;
-		tmpoptions = ScriptPARTICLE_CONE_SHAPE_DESC::fromInterop(*options);
-		thisPtr->getInternal()->setOptions(tmpoptions);
+		tmpoptions = ScriptPARTICLE_CONE_SHAPE_DESC::FromInterop(*options);
+		thisPtr->GetInternal()->setOptions(tmpoptions);
 	}
 
-	void ScriptParticleEmitterConeShape::Internal_getOptions(ScriptParticleEmitterConeShape* thisPtr, __PARTICLE_CONE_SHAPE_DESCInterop* __output)
+	void ScriptParticleEmitterConeShape::InternalGetOptions(ScriptParticleEmitterConeShape* thisPtr, __PARTICLE_CONE_SHAPE_DESCInterop* __output)
 	{
 		PARTICLE_CONE_SHAPE_DESC tmp__output;
 		tmp__output = thisPtr->getInternal()->getOptions();
 
 		__PARTICLE_CONE_SHAPE_DESCInterop interop__output;
-		interop__output = ScriptPARTICLE_CONE_SHAPE_DESC::toInterop(tmp__output);
+		interop__output = ScriptPARTICLE_CONE_SHAPE_DESC::ToInterop(tmp__output);
 		MonoUtil::valueCopy(__output, &interop__output, ScriptPARTICLE_CONE_SHAPE_DESC::getMetaData()->scriptClass->GetInternalClassInternal());
 	}
 
-	void ScriptParticleEmitterConeShape::Internal_create(MonoObject* managedInstance, __PARTICLE_CONE_SHAPE_DESCInterop* desc)
+	void ScriptParticleEmitterConeShape::InternalCreate(MonoObject* managedInstance, __PARTICLE_CONE_SHAPE_DESCInterop* desc)
 	{
 		PARTICLE_CONE_SHAPE_DESC tmpdesc;
-		tmpdesc = ScriptPARTICLE_CONE_SHAPE_DESC::fromInterop(*desc);
-		SPtr<ParticleEmitterConeShape> instance = ParticleEmitterConeShape::create(tmpdesc);
+		tmpdesc = ScriptPARTICLE_CONE_SHAPE_DESC::FromInterop(*desc);
+		SPtr<ParticleEmitterConeShape> instance = ParticleEmitterConeShape::Create(tmpdesc);
 		new (bs_alloc<ScriptParticleEmitterConeShape>())ScriptParticleEmitterConeShape(managedInstance, instance);
 	}
 
-	void ScriptParticleEmitterConeShape::Internal_create0(MonoObject* managedInstance)
+	void ScriptParticleEmitterConeShape::InternalCreate0(MonoObject* managedInstance)
 	{
-		SPtr<ParticleEmitterConeShape> instance = ParticleEmitterConeShape::create();
+		SPtr<ParticleEmitterConeShape> instance = ParticleEmitterConeShape::Create();
 		new (bs_alloc<ScriptParticleEmitterConeShape>())ScriptParticleEmitterConeShape(managedInstance, instance);
 	}
 }

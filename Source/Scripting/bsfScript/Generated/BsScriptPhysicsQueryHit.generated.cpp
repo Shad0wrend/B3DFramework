@@ -21,17 +21,17 @@ namespace bs
 	void ScriptPhysicsQueryHit::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptPhysicsQueryHit::box(const __PhysicsQueryHitInterop& value)
+	MonoObject*ScriptPhysicsQueryHit::Box(const __PhysicsQueryHitInterop& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	__PhysicsQueryHitInterop ScriptPhysicsQueryHit::unbox(MonoObject* value)
+	__PhysicsQueryHitInterop ScriptPhysicsQueryHit::Unbox(MonoObject* value)
 	{
-		return *(__PhysicsQueryHitInterop*)MonoUtil::unbox(value);
+		return *(__PhysicsQueryHitInterop*)MonoUtil::Unbox(value);
 	}
 
-	PhysicsQueryHit ScriptPhysicsQueryHit::fromInterop(const __PhysicsQueryHitInterop& value)
+	PhysicsQueryHit ScriptPhysicsQueryHit::FromInterop(const __PhysicsQueryHitInterop& value)
 	{
 		PhysicsQueryHit output;
 		output.point = value.point;
@@ -42,15 +42,15 @@ namespace bs
 		output.unmappedTriangleIdx = value.unmappedTriangleIdx;
 		GameObjectHandle<CCollider> tmpcollider;
 		ScriptCColliderBase* scriptcollider;
-		scriptcollider = (ScriptCColliderBase*)ScriptCCollider::toNative(value.collider);
+		scriptcollider = (ScriptCColliderBase*)ScriptCCollider::ToNative(value.collider);
 		if(scriptcollider != nullptr)
-			tmpcollider = static_object_cast<CCollider>(scriptcollider->getComponent());
+			tmpcollider = static_object_cast<CCollider>(scriptcollider->GetComponent());
 		output.collider = tmpcollider;
 
 		return output;
 	}
 
-	__PhysicsQueryHitInterop ScriptPhysicsQueryHit::toInterop(const PhysicsQueryHit& value)
+	__PhysicsQueryHitInterop ScriptPhysicsQueryHit::ToInterop(const PhysicsQueryHit& value)
 	{
 		__PhysicsQueryHitInterop output;
 		output.point = value.point;
@@ -61,10 +61,10 @@ namespace bs
 		output.unmappedTriangleIdx = value.unmappedTriangleIdx;
 		ScriptComponentBase* scriptcollider = nullptr;
 		if(value.collider)
-			scriptcollider = ScriptGameObjectManager::instance().getBuiltinScriptComponent(static_object_cast<Component>(value.collider));
+			scriptcollider = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(value.collider));
 		MonoObject* tmpcollider;
 		if(scriptcollider != nullptr)
-			tmpcollider = scriptcollider->getManagedInstance();
+			tmpcollider = scriptcollider->GetManagedInstance();
 		else
 			tmpcollider = nullptr;
 		output.collider = tmpcollider;

@@ -69,28 +69,28 @@ namespace bs
 		bool operator!= (const VertexElement& rhs) const;
 
 		/**	Returns index of the vertex buffer from which this element is stored. */
-		UINT16 getStreamIdx() const { return mSource; }
+		UINT16 GetStreamIdx() const { return mSource; }
 
 		/**
 		 * Returns an offset into the buffer where this vertex is stored. This value might be in bytes but doesn't have to
 		 * be, it's likely to be render API specific.
 		 */
-		UINT32 getOffset() const { return mOffset; }
+		UINT32 GetOffset() const { return mOffset; }
 
 		/** Gets the base data type of this element. */
-		VertexElementType getType() const { return mType; }
+		VertexElementType GetType() const { return mType; }
 
 		/**	Gets a semantic that describes what this element contains. */
-		VertexElementSemantic getSemantic() const { return mSemantic; }
+		VertexElementSemantic GetSemantic() const { return mSemantic; }
 
 		/**
 		 * Gets an index of this element. Only relevant when you have multiple elements with the same semantic,
 		 * for example uv0, uv1.
 		 */
-		UINT16 getSemanticIdx() const { return mIndex; }
+		UINT16 GetSemanticIdx() const { return mIndex; }
 
 		/** Returns the size of this element in bytes. */
-		UINT32 getSize() const;
+		UINT32 GetSize() const;
 
 		/**
 		 * Returns at what rate do the vertex elements advance during instanced rendering. Provide zero for default
@@ -99,19 +99,19 @@ namespace bs
 		 * each instance will retrieve a new value from the vertex buffer, a value of 2 means each second instance will,
 		 * etc.).
 		 */
-		UINT32 getInstanceStepRate() const { return mInstanceStepRate; }
+		UINT32 GetInstanceStepRate() const { return mInstanceStepRate; }
 
 		/**	Returns the size of a base element type. */
-		static UINT32 getTypeSize(VertexElementType etype);
+		static UINT32 GetTypeSize(VertexElementType etype);
 
 		/** Returns the number of values in the provided base element type. For example float4 has four values. */
-		static UINT16 getTypeCount(VertexElementType etype);
+		static UINT16 GetTypeCount(VertexElementType etype);
 
 		/**	Gets packed color vertex element type used by the active render system. */
-		static VertexElementType getBestColorVertexElementType();
+		static VertexElementType GetBestColorVertexElementType();
 
 		/** Calculates a hash value for the provided vertex element. */
-		static size_t getHash(const VertexElement& element);
+		static size_t GetHash(const VertexElement& element);
 	protected:
 		UINT16 mSource;
 		UINT32 mOffset;
@@ -131,24 +131,24 @@ namespace bs
 		bool operator!= (const VertexDeclarationProperties& rhs) const;
 
 		/**	Get the number of elements in the declaration. */
-		UINT32 getElementCount() const { return (UINT32)mElementList.size(); }
+		UINT32 GetElementCount() const { return (UINT32)mElementList.size(); }
 		
 		/**	Returns a list of vertex elements in the declaration. */
-		const Vector<VertexElement>& getElements() const { return mElementList; }
+		const Vector<VertexElement>& GetElements() const { return mElementList; }
 
 		/**	Returns a single vertex element at the specified index. */
-		const VertexElement* getElement(UINT16 index) const;
+		const VertexElement* GetElement(UINT16 index) const;
 
 		/**
 		 * Attempts to find an element by the given semantic and semantic index. If no element can be found null is returned.
 		 */
-		const VertexElement* findElementBySemantic(VertexElementSemantic sem, UINT16 index = 0) const;
+		const VertexElement* FindElementBySemantic(VertexElementSemantic sem, UINT16 index = 0) const;
 
 		/**	Returns a list of all elements that use the provided source index. */
-		Vector<VertexElement> findElementsBySource(UINT16 source) const;
+		Vector<VertexElement> FindElementsBySource(UINT16 source) const;
 
 		/**	Returns the total size of all vertex elements using the provided source index. */
-		UINT32 getVertexSize(UINT16 source) const;
+		UINT32 GetVertexSize(UINT16 source) const;
 
 	protected:
 		friend class VertexDeclaration;
@@ -168,13 +168,13 @@ namespace bs
 		virtual ~VertexDeclaration() { }
 
 		/** Returns properties describing the vertex declaration. */
-		const VertexDeclarationProperties& getProperties() const { return mProperties; }
+		const VertexDeclarationProperties& GetProperties() const { return mProperties; }
 
 		/**	Retrieves a core implementation of a vertex declaration usable only from the core thread. */
-		SPtr<ct::VertexDeclaration> getCore() const;
+		SPtr<ct::VertexDeclaration> GetCore() const;
 
 		/** @copydoc HardwareBufferManager::createVertexDeclaration */
-		static SPtr<VertexDeclaration> create(const SPtr<VertexDataDesc>& desc);
+		static SPtr<VertexDeclaration> Create(const SPtr<VertexDataDesc>& desc);
 
 	protected:
 		friend class HardwareBufferManager;
@@ -182,7 +182,7 @@ namespace bs
 		VertexDeclaration(const Vector<VertexElement>& elements);
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> createCore() const override;
+		SPtr<ct::CoreObject> CreateCore() const ;
 
 	protected:
 		VertexDeclarationProperties mProperties;
@@ -192,8 +192,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class VertexDeclarationRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/**	Converts a vertex semantic enum to a readable name. */
@@ -218,28 +218,28 @@ namespace bs
 		virtual ~VertexDeclaration() = default;
 
 		/** @copydoc CoreObject::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 		/**	Returns properties describing the vertex declaration. */
-		const VertexDeclarationProperties& getProperties() const { return mProperties; }
+		const VertexDeclarationProperties& GetProperties() const { return mProperties; }
 
 		/**	Returns an ID unique to this declaration. */
-		UINT32 getId() const { return mId; }
+		UINT32 GetId() const { return mId; }
 
 		/**
 		 * Checks can a vertex buffer declared with this declaration be bound to a shader defined with the provided
 		 * declaration.
 		 */
-		bool isCompatible(const SPtr<VertexDeclaration>& shaderDecl);
+		bool IsCompatible(const SPtr<VertexDeclaration>& shaderDecl);
 
 		/**
 		 * Returns a list of vertex elements that the provided shader's vertex declaration expects but aren't present in
 		 * this vertex declaration.
 		 */
-		Vector<VertexElement> getMissingElements(const SPtr<VertexDeclaration>& shaderDecl);
+		Vector<VertexElement> GetMissingElements(const SPtr<VertexDeclaration>& shaderDecl);
 
 		/** @copydoc HardwareBufferManager::createVertexDeclaration */
-		static SPtr<VertexDeclaration> create(const SPtr<VertexDataDesc>& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
+		static SPtr<VertexDeclaration> Create(const SPtr<VertexDataDesc>& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
 	protected:
 		friend class HardwareBufferManager;

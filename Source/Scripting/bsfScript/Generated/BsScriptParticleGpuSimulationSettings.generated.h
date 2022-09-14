@@ -21,20 +21,20 @@ namespace bs
 
 		ScriptParticleGpuSimulationSettings(MonoObject* managedInstance, const SPtr<ParticleGpuSimulationSettings>& value);
 
-		static MonoObject* create(const SPtr<ParticleGpuSimulationSettings>& value);
+		static MonoObject* Create(const SPtr<ParticleGpuSimulationSettings>& value);
 
 	private:
-		static MonoObject* Internal_getvectorField(ScriptParticleGpuSimulationSettings* thisPtr);
-		static void Internal_setvectorField(ScriptParticleGpuSimulationSettings* thisPtr, MonoObject* value);
-		static MonoObject* Internal_getcolorOverLifetime(ScriptParticleGpuSimulationSettings* thisPtr);
-		static void Internal_setcolorOverLifetime(ScriptParticleGpuSimulationSettings* thisPtr, MonoObject* value);
-		static MonoObject* Internal_getsizeScaleOverLifetime(ScriptParticleGpuSimulationSettings* thisPtr);
-		static void Internal_setsizeScaleOverLifetime(ScriptParticleGpuSimulationSettings* thisPtr, MonoObject* value);
-		static void Internal_getacceleration(ScriptParticleGpuSimulationSettings* thisPtr, Vector3* __output);
-		static void Internal_setacceleration(ScriptParticleGpuSimulationSettings* thisPtr, Vector3* value);
-		static float Internal_getdrag(ScriptParticleGpuSimulationSettings* thisPtr);
-		static void Internal_setdrag(ScriptParticleGpuSimulationSettings* thisPtr, float value);
-		static MonoObject* Internal_getdepthCollision(ScriptParticleGpuSimulationSettings* thisPtr);
-		static void Internal_setdepthCollision(ScriptParticleGpuSimulationSettings* thisPtr, MonoObject* value);
+		static MonoObject* InternalGetvectorField(ScriptParticleGpuSimulationSettings* thisPtr);
+		static void InternalSetvectorField(ScriptParticleGpuSimulationSettings* thisPtr, MonoObject* value);
+		static MonoObject* InternalGetcolorOverLifetime(ScriptParticleGpuSimulationSettings* thisPtr);
+		static void InternalSetcolorOverLifetime(ScriptParticleGpuSimulationSettings* thisPtr, MonoObject* value);
+		static MonoObject* InternalGetsizeScaleOverLifetime(ScriptParticleGpuSimulationSettings* thisPtr);
+		static void InternalSetsizeScaleOverLifetime(ScriptParticleGpuSimulationSettings* thisPtr, MonoObject* value);
+		static void InternalGetacceleration(ScriptParticleGpuSimulationSettings* thisPtr, Vector3* __output);
+		static void InternalSetacceleration(ScriptParticleGpuSimulationSettings* thisPtr, Vector3* value);
+		static float InternalGetdrag(ScriptParticleGpuSimulationSettings* thisPtr);
+		static void InternalSetdrag(ScriptParticleGpuSimulationSettings* thisPtr, float value);
+		static MonoObject* InternalGetdepthCollision(ScriptParticleGpuSimulationSettings* thisPtr);
+		static void InternalSetdepthCollision(ScriptParticleGpuSimulationSettings* thisPtr, MonoObject* value);
 	};
 }

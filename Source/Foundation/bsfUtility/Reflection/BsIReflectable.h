@@ -15,7 +15,7 @@ namespace bs
 	 * Interface implemented by classes that provide run time type information.
 	 * 			
 	 * @note	
-	 * Any class implementing this interface must implement the getRTTI() method, as well as a static getRTTIStatic()
+	 * Any class implementing this interface must implement the getRTTI() method, as well as a static GetRttiStatic()
 	 * method, returning the same value as getRTTI(). Object returned by those methods is used for retrieving actual RTTI
 	 * data about the class.
 	 */
@@ -30,30 +30,30 @@ namespace bs
 		 * @note	
 		 * You must derive your own version of RTTITypeBase, in which you may encapsulate all reflection specific operations.
 		 */
-		virtual RTTITypeBase* getRTTI() const = 0;
+		virtual RTTITypeBase* GetRtti() const = 0;
 
 		/** Returns all available RTTI types. */
-		static UnorderedMap<UINT32, RTTITypeBase*>& getAllRTTITypes()
+		static UnorderedMap<UINT32, RTTITypeBase*>& GetAllRttiTypes()
 		{
 			static UnorderedMap<UINT32, RTTITypeBase*> mAllRTTITypes;
 			return mAllRTTITypes;
 		}
 
 		/** Returns true if current RTTI class is derived from @p base (Or if it is the same type as base). */
-		bool isDerivedFrom(RTTITypeBase* base);
+		bool IsDerivedFrom(RTTITypeBase* base);
 
 		/** Returns an unique type identifier of the class. */
-		UINT32 getTypeId() const;
+		UINT32 GetTypeId() const;
 
 		/**
 		 * Returns the type name of the class.
 		 *
 		 * @note	Name is not necessarily unique.
 		 */
-		const String& getTypeName() const;
+		const String& GetTypeName() const;
 
 		/** Creates an empty instance of a class from a type identifier. */
-		static SPtr<IReflectable> createInstanceFromTypeId(UINT32 rttiTypeId);
+		static SPtr<IReflectable> CreateInstanceFromTypeId(UINT32 rttiTypeId);
 
 		/** @name Internal
 		 *  @{
@@ -79,7 +79,7 @@ namespace bs
 		static void CheckForCircularReferencesInternal();
 
 		/** Returns an interface you can use to access class' Run Time Type Information. */
-		static RTTITypeBase* getRTTIStatic();
+		static RTTITypeBase* GetRttiStatic();
 
 		/** @} */
 	};

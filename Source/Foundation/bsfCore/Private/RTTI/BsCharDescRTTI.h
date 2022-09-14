@@ -17,7 +17,7 @@ namespace bs
 	{
 		enum { id = TID_CHAR_DESC }; enum { hasDynamicSize = 1 };
 
-		static BitLength toMemory(const CharDesc& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const CharDesc& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]()
 			{
@@ -40,7 +40,7 @@ namespace bs
 			});
 		}
 
-		static BitLength fromMemory(CharDesc& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(CharDesc& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
 			rtti_read_size_header(stream, compress, size);
@@ -61,7 +61,7 @@ namespace bs
 			return size;
 		}
 
-		static BitLength getSize(const CharDesc& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const CharDesc& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength dataSize = rtti_size(data.charId)
 				+ rtti_size(data.page)

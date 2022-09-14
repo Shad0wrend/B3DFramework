@@ -24,19 +24,19 @@ namespace bs
 
 		/** @copydoc SphericalJoint::getLimit */
 		BS_SCRIPT_EXPORT(n:Limit,pr:getter)
-		LimitConeRange getLimit() const;
+		LimitConeRange GetLimit() const;
 
 		/** @copydoc SphericalJoint::setLimit */
 		BS_SCRIPT_EXPORT(n:Limit,pr:setter)
-		void setLimit(const LimitConeRange& limit);
+		void SetLimit(const LimitConeRange& limit);
 
 		/** @copydoc SphericalJoint::setFlag */
 		BS_SCRIPT_EXPORT(n:SetFlag)
-		void setFlag(SphericalJointFlag flag, bool enabled);
+		void SetFlag(SphericalJointFlag flag, bool enabled);
 
 		/** @copydoc SphericalJoint::hasFlag */
 		BS_SCRIPT_EXPORT(n:HasFlag)
-		bool hasFlag(SphericalJointFlag flag) const;
+		bool HasFlag(SphericalJointFlag flag) const;
 
 		/** @name Internal
 		 *  @{
@@ -54,7 +54,7 @@ namespace bs
 		friend class SceneObject;
 
 		/** @copydoc CJoint::createInternal */
-		SPtr<Joint> createInternal() override;
+		SPtr<Joint> CreateInternal() ;
 
 		SPHERICAL_JOINT_DESC mDesc;
 
@@ -63,8 +63,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class CSphericalJointRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const ;
 
 	protected:
 		CSphericalJoint(); // Serialization only

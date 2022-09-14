@@ -25,10 +25,10 @@ namespace bs { namespace ct
 		 * the buffer wait on before executing. Sync mask is reset after a flush. See CommandSyncMask on how to generate
 		 * a sync mask.
 		 */
-		void appendMask(UINT32 syncMask) { mSyncMask |= syncMask; }
+		void AppendMask(UINT32 syncMask) { mSyncMask |= syncMask; }
 
 		/** Resets the sync mask. */
-		void clearMask() { mSyncMask = 0; }
+		void ClearMask() { mSyncMask = 0; }
 
 		/**
 		 * Issues a pipeline barrier on the provided buffer. See vkCmdPipelineBarrier in Vulkan spec. for usage
@@ -41,7 +41,7 @@ namespace bs { namespace ct
 		 * Issues a pipeline barrier on the provided image, changing its layout. See vkCmdPipelineBarrier in Vulkan spec.
 		 * for usage information.
 		 */
-		void setLayout(VkImage image, VkAccessFlags srcAccessFlags, VkAccessFlags dstAccessFlags,
+		void SetLayout(VkImage image, VkAccessFlags srcAccessFlags, VkAccessFlags dstAccessFlags,
 			VkImageLayout oldLayout, VkImageLayout newLayout, const VkImageSubresourceRange& range);
 
 		/**
@@ -49,7 +49,7 @@ namespace bs { namespace ct
 		 * Automatically determines original layout for individual sub-resources, groups the pipeline barriers and issues
 		 * them.
 		 */
-		void setLayout(VulkanImage* image, const VkImageSubresourceRange& range, VkAccessFlags newAccessMask,
+		void SetLayout(VulkanImage* image, const VkImageSubresourceRange& range, VkAccessFlags newAccessMask,
 					   VkImageLayout newLayout);
 
 		/**
@@ -58,15 +58,15 @@ namespace bs { namespace ct
 		 *	@param[in]	wait	If true, the caller thread will wait until all device operations on the command buffer's
 		 *						queue complete.	
 		 */
-		void flush(bool wait);
+		void Flush(bool wait);
 
 		/** Returns the internal command buffer. */
-		VulkanCmdBuffer* getCB() const { return mCB; }
+		VulkanCmdBuffer* GetCb() const { return mCB; }
 	private:
 		friend class VulkanCommandBufferManager;
 
 		/** Allocates a new internal command buffer. */
-		void allocate();
+		void Allocate();
 
 		VulkanDevice* mDevice = nullptr;
 		GpuQueueType mType = GQT_GRAPHICS;
@@ -92,7 +92,7 @@ namespace bs { namespace ct
 		~VulkanCommandBufferManager();
 
 		/** @copydoc CommandBufferManager::createInternal() */
-		SPtr<CommandBuffer> createInternal(GpuQueueType type, UINT32 deviceIdx = 0, UINT32 queueIdx = 0,
+		SPtr<CommandBuffer> CreateInternal(GpuQueueType type, UINT32 deviceIdx = 0, UINT32 queueIdx = 0,
 			bool secondary = false) override;
 
 		/**
@@ -105,17 +105,17 @@ namespace bs { namespace ct
 		 *							beginning of the array. Must be able to hold at least BS_MAX_UNIQUE_QUEUES entries.
 		 * @param[out]	count		Number of semaphores provided in the @p semaphores array.
 		 */
-		void getSyncSemaphores(UINT32 deviceIdx, UINT32 syncMask, VulkanSemaphore** semaphores, UINT32& count);
+		void GetSyncSemaphores(UINT32 deviceIdx, UINT32 syncMask, VulkanSemaphore** semaphores, UINT32& count);
 
 		/**
 		 * Returns an command buffer that can be used for executing transfer operations on the specified queue.
 		 * Transfer buffers are automatically flushed (submitted) whenever a new (normal) command buffer is about to
 		 * execute.
 		 */
-		VulkanTransferBuffer* getTransferBuffer(UINT32 deviceIdx, GpuQueueType type, UINT32 queueIdx);
+		VulkanTransferBuffer* GetTransferBuffer(UINT32 deviceIdx, GpuQueueType type, UINT32 queueIdx);
 
 		/** Submits all transfer command buffers, ensuring all queued transfer operations get executed. */
-		void flushTransferBuffers(UINT32 deviceIdx);
+		void FlushTransferBuffers(UINT32 deviceIdx);
 
 	private:
 		/** Contains command buffers specific to one device. */

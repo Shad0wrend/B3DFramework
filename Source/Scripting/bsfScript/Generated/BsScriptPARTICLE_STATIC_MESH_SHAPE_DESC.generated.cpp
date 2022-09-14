@@ -18,17 +18,17 @@ namespace bs
 	void ScriptPARTICLE_STATIC_MESH_SHAPE_DESC::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptPARTICLE_STATIC_MESH_SHAPE_DESC::box(const __PARTICLE_STATIC_MESH_SHAPE_DESCInterop& value)
+	MonoObject*ScriptPARTICLE_STATIC_MESH_SHAPE_DESC::Box(const __PARTICLE_STATIC_MESH_SHAPE_DESCInterop& value)
 	{
 		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	__PARTICLE_STATIC_MESH_SHAPE_DESCInterop ScriptPARTICLE_STATIC_MESH_SHAPE_DESC::unbox(MonoObject* value)
+	__PARTICLE_STATIC_MESH_SHAPE_DESCInterop ScriptPARTICLE_STATIC_MESH_SHAPE_DESC::Unbox(MonoObject* value)
 	{
 		return *(__PARTICLE_STATIC_MESH_SHAPE_DESCInterop*)MonoUtil::unbox(value);
 	}
 
-	PARTICLE_STATIC_MESH_SHAPE_DESC ScriptPARTICLE_STATIC_MESH_SHAPE_DESC::fromInterop(const __PARTICLE_STATIC_MESH_SHAPE_DESCInterop& value)
+	PARTICLE_STATIC_MESH_SHAPE_DESC ScriptPARTICLE_STATIC_MESH_SHAPE_DESC::FromInterop(const __PARTICLE_STATIC_MESH_SHAPE_DESCInterop& value)
 	{
 		PARTICLE_STATIC_MESH_SHAPE_DESC output;
 		output.type = value.type;
@@ -43,13 +43,13 @@ namespace bs
 		return output;
 	}
 
-	__PARTICLE_STATIC_MESH_SHAPE_DESCInterop ScriptPARTICLE_STATIC_MESH_SHAPE_DESC::toInterop(const PARTICLE_STATIC_MESH_SHAPE_DESC& value)
+	__PARTICLE_STATIC_MESH_SHAPE_DESCInterop ScriptPARTICLE_STATIC_MESH_SHAPE_DESC::ToInterop(const PARTICLE_STATIC_MESH_SHAPE_DESC& value)
 	{
 		__PARTICLE_STATIC_MESH_SHAPE_DESCInterop output;
 		output.type = value.type;
 		output.sequential = value.sequential;
 		ScriptRRefBase* scriptmesh;
-		scriptmesh = ScriptResourceManager::instance().getScriptRRef(value.mesh);
+		scriptmesh = ScriptResourceManager::Instance().getScriptRRef(value.mesh);
 		MonoObject* tmpmesh;
 		if(scriptmesh != nullptr)
 			tmpmesh = scriptmesh->getManagedInstance();

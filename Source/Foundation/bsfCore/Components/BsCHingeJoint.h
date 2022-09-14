@@ -24,35 +24,35 @@ namespace bs
 
 		/** @copydoc HingeJoint::getAngle */
 		BS_SCRIPT_EXPORT(n:Angle,pr:getter)
-		Radian getAngle() const;
+		Radian GetAngle() const;
 
 		/** @copydoc HingeJoint::getSpeed */
 		BS_SCRIPT_EXPORT(n:Speed,pr:getter)
-		float getSpeed() const;
+		float GetSpeed() const;
 
 		/** @copydoc HingeJoint::getLimit */
 		BS_SCRIPT_EXPORT(n:Limit,pr:getter)
-		LimitAngularRange getLimit() const;
+		LimitAngularRange GetLimit() const;
 
 		/** @copydoc HingeJoint::setLimit */
 		BS_SCRIPT_EXPORT(n:Limit,pr:setter)
-		void setLimit(const LimitAngularRange& limit);
+		void SetLimit(const LimitAngularRange& limit);
 
 		/** @copydoc HingeJoint::getDrive */
 		BS_SCRIPT_EXPORT(n:Drive,pr:getter)
-		HingeJointDrive getDrive() const;
+		HingeJointDrive GetDrive() const;
 
 		/** @copydoc HingeJoint::setDrive */
 		BS_SCRIPT_EXPORT(n:Drive,pr:setter)
-		void setDrive(const HingeJointDrive& drive);
+		void SetDrive(const HingeJointDrive& drive);
 
 		/** @copydoc HingeJoint::setFlag */
 		BS_SCRIPT_EXPORT(n:SetFlag)
-		void setFlag(HingeJointFlag flag, bool enabled);
+		void SetFlag(HingeJointFlag flag, bool enabled);
 
 		/** @copydoc HingeJoint::hasFlag */
 		BS_SCRIPT_EXPORT(n:HasFlag)
-		bool hasFlag(HingeJointFlag flag) const;
+		bool HasFlag(HingeJointFlag flag) const;
 
 		/** @name Internal
 		 *  @{
@@ -70,7 +70,7 @@ namespace bs
 		friend class SceneObject;
 
 		/** @copydoc CJoint::createInternal */
-		SPtr<Joint> createInternal() override;
+		SPtr<Joint> CreateInternal() ;
 
 		HINGE_JOINT_DESC mDesc;
 
@@ -79,8 +79,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class CHingeJointRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const ;
 
 	protected:
 		CHingeJoint(); // Serialization only

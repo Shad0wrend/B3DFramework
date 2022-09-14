@@ -12,7 +12,7 @@
 
 namespace bs { namespace ct
 {
-	MaterialSamplerOverrides* SamplerOverrideUtility::generateSamplerOverrides(const SPtr<Shader>& shader,
+	MaterialSamplerOverrides* SamplerOverrideUtility::GenerateSamplerOverrides(const SPtr<Shader>& shader,
 		const SPtr<MaterialParams>& params, const SPtr<GpuParamsSet>& paramsSet,
 		const SPtr<RenderBeastOptions>& options)
 	{
@@ -27,7 +27,7 @@ namespace bs { namespace ct
 			FrameUnorderedMap<String, UINT32> overrideLookup;
 			Vector<SamplerOverride> overrides;
 
-			auto& samplerParams = shader->getSamplerParams();
+			auto& samplerParams = shader->GetSamplerParams();
 			for(auto& samplerParam : samplerParams)
 			{
 				UINT32 paramIdx;
@@ -46,22 +46,22 @@ namespace bs { namespace ct
 				params->getSamplerState(*materialParamData, samplerState);
 
 				if (samplerState == nullptr)
-					samplerState = SamplerState::getDefault();
+					samplerState = SamplerState::GetDefault();
 
 				override.paramIdx = paramIdx;
 				
-				if (checkNeedsOverride(samplerState, options))
-					override.state = generateSamplerOverride(samplerState, options);
+				if (CheckNeedsOverride(samplerState, options))
+					override.state = GenerateSamplerOverride(samplerState, options);
 				else
 					override.state = samplerState;
 
-				override.originalStateHash = override.state->getProperties().getHash();
+				override.originalStateHash = override.state->GetProperties().GetHash();
 
 				for (auto& entry : samplerParam.second.gpuVariableNames)
 					overrideLookup[entry] = overrideIdx;
 			}
 
-			UINT32 numPasses = paramsSet->getNumPasses();
+			UINT32 numPasses = paramsSet->GetNumPasses();
 
 			// First pass just determine if we even need to override and count the number of sampler states
 			UINT32* numSetsPerPass = (UINT32*)bs_stack_alloc<UINT32>(numPasses);
@@ -72,7 +72,7 @@ namespace bs { namespace ct
 			{
 				UINT32 maxSamplerSet = 0;
 
-				SPtr<GpuParams> paramsPtr = paramsSet->getGpuParams(i);
+				SPtr<GpuParams> paramsPtr = paramsSet->GetGpuParams(i);
 				for (UINT32 j = 0; j < GpuParamsSet::NUM_STAGES; j++)
 				{
 					GpuProgramType progType = (GpuProgramType)j;
@@ -200,7 +200,7 @@ namespace bs { namespace ct
 		return output;
 	}
 
-	void SamplerOverrideUtility::destroySamplerOverrides(MaterialSamplerOverrides* overrides)
+	void SamplerOverrideUtility::DestroySamplerOverrides(MaterialSamplerOverrides* overrides)
 	{
 		if (overrides != nullptr)
 		{
@@ -212,7 +212,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	bool SamplerOverrideUtility::checkNeedsOverride(const SPtr<SamplerState>& samplerState, const SPtr<RenderBeastOptions>& options)
+	bool SamplerOverrideUtility::CheckNeedsOverride(const SPtr<SamplerState>& samplerState, const SPtr<RenderBeastOptions>& options)
 	{
 		const SamplerProperties& props = samplerState->getProperties();
 
@@ -262,7 +262,7 @@ namespace bs { namespace ct
 		return false;
 	}
 
-	SPtr<SamplerState> SamplerOverrideUtility::generateSamplerOverride(const SPtr<SamplerState>& samplerState, const SPtr<RenderBeastOptions>& options)
+	SPtr<SamplerState> SamplerOverrideUtility::GenerateSamplerOverride(const SPtr<SamplerState>& samplerState, const SPtr<RenderBeastOptions>& options)
 	{
 		const SamplerProperties& props = samplerState->getProperties();
 		SAMPLER_STATE_DESC desc = props.getDesc();
@@ -288,6 +288,6 @@ namespace bs { namespace ct
 
 		desc.maxAniso = options->anisotropyMax;
 
-		return RenderStateManager::instance().createSamplerState(desc);
+		return RenderStateManager::Instance().createSamplerState(desc);
 	}
 }}

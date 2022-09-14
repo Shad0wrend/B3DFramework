@@ -28,7 +28,7 @@ namespace bs { namespace ct
 		pointSampDesc.addressMode.v = TAM_CLAMP;
 		pointSampDesc.addressMode.w = TAM_CLAMP;
 
-		SPtr<SamplerState> pointSampState = SamplerState::create(pointSampDesc);
+		SPtr<SamplerState> pointSampState = SamplerState::Create(pointSampDesc);
 
 		if(mParams->hasSamplerState(GPT_FRAGMENT_PROGRAM, "gDepthBufferSamp"))
 			mParams->setSamplerState(GPT_FRAGMENT_PROGRAM, "gDepthBufferSamp", pointSampState);
@@ -39,7 +39,7 @@ namespace bs { namespace ct
 		mParams->setParamBlockBuffer("Params", mParamBuffer);
 	}
 
-	void TetrahedraRenderMat::execute(const RendererView& view, const SPtr<Texture>& sceneDepth, const SPtr<Mesh>& mesh,
+	void TetrahedraRenderMat::Execute(const RendererView& view, const SPtr<Texture>& sceneDepth, const SPtr<Mesh>& mesh,
 		const SPtr<RenderTexture>& output)
 	{
 		BS_RENMAT_PROFILE_BLOCK
@@ -52,14 +52,14 @@ namespace bs { namespace ct
 		mDepthBufferTex.set(sceneDepth);
 		mParams->setParamBlockBuffer("PerCamera", view.getPerViewBuffer());
 
-		RenderAPI& rapi = RenderAPI::instance();
+		RenderAPI& rapi = RenderAPI::Instance();
 		rapi.setRenderTarget(output);
 
 		bind();
 		gRendererUtility().draw(mesh);
 	}
 
-	void TetrahedraRenderMat::getOutputDesc(const RendererView& view, POOLED_RENDER_TEXTURE_DESC& colorDesc,
+	void TetrahedraRenderMat::GetOutputDesc(const RendererView& view, POOLED_RENDER_TEXTURE_DESC& colorDesc,
 		POOLED_RENDER_TEXTURE_DESC& depthDesc)
 	{
 		const RendererViewProperties& viewProps = view.getProperties();
@@ -71,7 +71,7 @@ namespace bs { namespace ct
 		depthDesc = POOLED_RENDER_TEXTURE_DESC::create2D(PF_D32, width, height, TU_DEPTHSTENCIL, numSamples);
 	}
 
-	TetrahedraRenderMat* TetrahedraRenderMat::getVariation(bool msaa, bool singleSampleMSAA)
+	TetrahedraRenderMat* TetrahedraRenderMat::GetVariation(bool msaa, bool singleSampleMSAA)
 	{
 		if (msaa)
 		{
@@ -106,7 +106,7 @@ namespace bs { namespace ct
 		mParams->setParamBlockBuffer("Params", mParamBuffer);
 	}
 
-	void IrradianceEvaluateMat::execute(const RendererView& view, const GBufferTextures& gbuffer,
+	void IrradianceEvaluateMat::Execute(const RendererView& view, const GBufferTextures& gbuffer,
 		const SPtr<Texture>& lightProbeIndices, const LightProbesInfo& lightProbesInfo, const Skybox* skybox,
 		const SPtr<Texture>& ambientOcclusion, const SPtr<RenderTexture>& output)
 	{
@@ -152,7 +152,7 @@ namespace bs { namespace ct
 		mParams->setParamBlockBuffer("PerCamera", view.getPerViewBuffer());
 
 		// Render
-		RenderAPI& rapi = RenderAPI::instance();
+		RenderAPI& rapi = RenderAPI::Instance();
 		rapi.setRenderTarget(output, FBT_DEPTH | FBT_STENCIL, loadMask);
 
 		bind();
@@ -163,7 +163,7 @@ namespace bs { namespace ct
 		rapi.setRenderTarget(nullptr);
 	}
 
-	IrradianceEvaluateMat* IrradianceEvaluateMat::getVariation(bool msaa, bool singleSampleMSAA, bool skyOnly)
+	IrradianceEvaluateMat* IrradianceEvaluateMat::GetVariation(bool msaa, bool singleSampleMSAA, bool skyOnly)
 	{
 		if(skyOnly)
 		{
@@ -225,7 +225,7 @@ namespace bs { namespace ct
 		:mTetrahedronVolumeDirty(false), mMaxCoefficientRows(0), mMaxTetrahedra(0), mMaxFaces(0), mNumValidTetrahedra(0)
 	{ }
 
-	void LightProbes::notifyAdded(LightProbeVolume* volume)
+	void LightProbes::NotifyAdded(LightProbeVolume* volume)
 	{
 		UINT32 handle = (UINT32)mVolumes.size();
 
@@ -239,7 +239,7 @@ namespace bs { namespace ct
 		notifyDirty(volume);
 	}
 
-	void LightProbes::notifyDirty(LightProbeVolume* volume)
+	void LightProbes::NotifyDirty(LightProbeVolume* volume)
 	{
 		UINT32 handle = volume->getRendererId();
 		mVolumes[handle].isDirty = true;
@@ -247,7 +247,7 @@ namespace bs { namespace ct
 		mTetrahedronVolumeDirty = true;
 	}
 
-	void LightProbes::notifyRemoved(LightProbeVolume* volume)
+	void LightProbes::NotifyRemoved(LightProbeVolume* volume)
 	{
 		UINT32 handle = volume->getRendererId();
 
@@ -267,7 +267,7 @@ namespace bs { namespace ct
 		mTetrahedronVolumeDirty = true;
 	}
 
-	void LightProbes::updateProbes()
+	void LightProbes::UpdateProbes()
 	{
 		if (!mTetrahedronVolumeDirty)
 			return;
@@ -378,7 +378,7 @@ namespace bs { namespace ct
 		vertexDesc->addVertElem(VET_FLOAT3, VES_POSITION);
 		vertexDesc->addVertElem(VET_UINT1, VES_TEXCOORD);
 
-		SPtr<MeshData> meshData = MeshData::create(numVertices, numVertices, vertexDesc);
+		SPtr<MeshData> meshData = MeshData::Create(numVertices, numVertices, vertexDesc);
 		auto posIter = meshData->getVec3DataIter(VES_POSITION);
 		auto idIter = meshData->getDWORDDataIter(VES_TEXCOORD);
 		UINT32* indices = meshData->getIndices32();
@@ -647,7 +647,7 @@ namespace bs { namespace ct
 			capIdx++;
 		}
 
-		mVolumeMesh = Mesh::create(meshData);
+		mVolumeMesh = Mesh::Create(meshData);
 
 		// Map vertices to actual SH coefficient indices, and write GPU buffer with tetrahedron information
 		if ((mNumValidTetrahedra + numValidFaces) > mMaxTetrahedra)
@@ -744,7 +744,7 @@ namespace bs { namespace ct
 		mTetrahedronVolumeDirty = false;
 	}
 
-	bool LightProbes::hasAnyProbes() const
+	bool LightProbes::HasAnyProbes() const
 	{
 		for(auto& entry : mVolumes)
 		{
@@ -756,7 +756,7 @@ namespace bs { namespace ct
 		return false;
 	}
 
-	LightProbesInfo LightProbes::getInfo() const
+	LightProbesInfo LightProbes::GetInfo() const
 	{
 		LightProbesInfo info;
 		info.shCoefficients = mProbeCoefficientsGPU;
@@ -768,7 +768,7 @@ namespace bs { namespace ct
 		return info;
 	}
 
-	void LightProbes::resizeTetrahedronBuffer(UINT32 count)
+	void LightProbes::ResizeTetrahedronBuffer(UINT32 count)
 	{
 		static constexpr UINT32 ELEMENT_SIZE = Math::divideAndRoundUp((UINT32)sizeof(TetrahedronDataGPU), 4U);
 
@@ -779,11 +779,11 @@ namespace bs { namespace ct
 		desc.usage = GBU_STATIC;
 		desc.format = BF_32X4U;
 
-		mTetrahedronInfosGPU = GpuBuffer::create(desc);
+		mTetrahedronInfosGPU = GpuBuffer::Create(desc);
 		mMaxTetrahedra = count;
 	}
 
-	void LightProbes::resizeTetrahedronFaceBuffer(UINT32 count)
+	void LightProbes::ResizeTetrahedronFaceBuffer(UINT32 count)
 	{
 		static constexpr UINT32 ELEMENT_SIZE = Math::divideAndRoundUp((UINT32)sizeof(TetrahedronFaceDataGPU), 4U);
 
@@ -794,11 +794,11 @@ namespace bs { namespace ct
 		desc.usage = GBU_STATIC;
 		desc.format = BF_32X4F;
 
-		mTetrahedronFaceInfosGPU = GpuBuffer::create(desc);
+		mTetrahedronFaceInfosGPU = GpuBuffer::Create(desc);
 		mMaxFaces = count;
 	}
 
-	void LightProbes::resizeCoefficientTexture(UINT32 numRows)
+	void LightProbes::ResizeCoefficientTexture(UINT32 numRows)
 	{
 		TEXTURE_DESC desc;
 		desc.width = 4096;
@@ -806,7 +806,7 @@ namespace bs { namespace ct
 		desc.usage = TU_LOADSTORE | TU_RENDERTARGET;
 		desc.format = PF_RGBA32F;
 
-		SPtr<Texture> newTexture = Texture::create(desc);
+		SPtr<Texture> newTexture = Texture::Create(desc);
 		if (mProbeCoefficientsGPU)
 			mProbeCoefficientsGPU->copy(newTexture);
 
@@ -814,7 +814,7 @@ namespace bs { namespace ct
 		mMaxCoefficientRows = numRows;
 	}
 
-	void LightProbes::generateTetrahedronData(Vector<Vector3>& positions, Vector<TetrahedronData>& tetrahedra,
+	void LightProbes::GenerateTetrahedronData(Vector<Vector3>& positions, Vector<TetrahedronData>& tetrahedra,
 		Vector<TetrahedronFaceData>& faces,	bool generateExtrapolationVolume)
 	{
 		bs_frame_mark();

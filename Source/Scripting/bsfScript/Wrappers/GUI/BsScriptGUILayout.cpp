@@ -21,18 +21,18 @@ namespace bs
 
 	void ScriptGUILayout::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_CreateInstanceX", (void*)&ScriptGUILayout::internal_createInstanceX);
-		metaData.scriptClass->addInternalCall("Internal_CreateInstanceY", (void*)&ScriptGUILayout::internal_createInstanceY);
-		metaData.scriptClass->addInternalCall("Internal_CreateInstancePanel", (void*)&ScriptGUILayout::internal_createInstancePanel);
-		metaData.scriptClass->addInternalCall("Internal_CreateInstanceYFromScrollArea", (void*)&ScriptGUILayout::internal_createInstanceYFromScrollArea);
-		metaData.scriptClass->addInternalCall("Internal_AddElement", (void*)&ScriptGUILayout::internal_addElement);
-		metaData.scriptClass->addInternalCall("Internal_InsertElement", (void*)&ScriptGUILayout::internal_insertElement);
+		metaData.scriptClass->AddInternalCall("Internal_CreateInstanceX", (void*)&ScriptGUILayout::InternalCreateInstanceX);
+		metaData.scriptClass->AddInternalCall("Internal_CreateInstanceY", (void*)&ScriptGUILayout::InternalCreateInstanceY);
+		metaData.scriptClass->AddInternalCall("Internal_CreateInstancePanel", (void*)&ScriptGUILayout::InternalCreateInstancePanel);
+		metaData.scriptClass->AddInternalCall("Internal_CreateInstanceYFromScrollArea", (void*)&ScriptGUILayout::InternalCreateInstanceYFromScrollArea);
+		metaData.scriptClass->AddInternalCall("Internal_AddElement", (void*)&ScriptGUILayout::InternalAddElement);
+		metaData.scriptClass->AddInternalCall("Internal_InsertElement", (void*)&ScriptGUILayout::InternalInsertElement);
 		metaData.scriptClass->addInternalCall("Internal_GetChildCount", (void*)&ScriptGUILayout::internal_getChildCount);
 		metaData.scriptClass->addInternalCall("Internal_GetChild", (void*)&ScriptGUILayout::internal_getChild);
 		metaData.scriptClass->addInternalCall("Internal_Clear", (void*)&ScriptGUILayout::internal_clear);
 	}
 
-	void ScriptGUILayout::destroy()
+	void ScriptGUILayout::Destroy()
 	{
 		if(!mIsDestroyed)
 		{
@@ -53,7 +53,7 @@ namespace bs
 		}
 	}
 
-	void ScriptGUILayout::addChild(ScriptGUIElementBaseTBase* element)
+	void ScriptGUILayout::AddChild(ScriptGUIElementBaseTBase* element)
 	{
 		ChildInfo childInfo;
 
@@ -63,7 +63,7 @@ namespace bs
 		mChildren.push_back(childInfo);
 	}
 
-	void ScriptGUILayout::insertChild(UINT32 idx, ScriptGUIElementBaseTBase* element)
+	void ScriptGUILayout::InsertChild(UINT32 idx, ScriptGUIElementBaseTBase* element)
 	{
 		ChildInfo childInfo;
 
@@ -73,7 +73,7 @@ namespace bs
 		mChildren.insert(mChildren.begin() + idx, childInfo);
 	}
 
-	void ScriptGUILayout::removeChild(ScriptGUIElementBaseTBase* element)
+	void ScriptGUILayout::RemoveChild(ScriptGUIElementBaseTBase* element)
 	{
 		auto iterFind = std::find_if(mChildren.begin(), mChildren.end(),
 			[&](const ChildInfo& x)
@@ -92,7 +92,7 @@ namespace bs
 		}
 	}
 
-	void ScriptGUILayout::internal_createInstanceX(MonoObject* instance, MonoArray* guiOptions)
+	void ScriptGUILayout::InternalCreateInstanceX(MonoObject* instance, MonoArray* guiOptions)
 	{
 		GUIOptions options;
 
@@ -101,12 +101,12 @@ namespace bs
 		for (UINT32 i = 0; i < arrayLen; i++)
 			options.addOption(scriptArray.get<GUIOption>(i));
 
-		GUILayout* layout = GUILayoutX::create(options);
+		GUILayout* layout = GUILayoutX::Create(options);
 
 		new (bs_alloc<ScriptGUILayout>()) ScriptGUILayout(instance, layout);
 	}
 
-	void ScriptGUILayout::internal_createInstanceY(MonoObject* instance, MonoArray* guiOptions)
+	void ScriptGUILayout::InternalCreateInstanceY(MonoObject* instance, MonoArray* guiOptions)
 	{
 		GUIOptions options;
 
@@ -115,12 +115,12 @@ namespace bs
 		for (UINT32 i = 0; i < arrayLen; i++)
 			options.addOption(scriptArray.get<GUIOption>(i));
 
-		GUILayout* layout = GUILayoutY::create(options);
+		GUILayout* layout = GUILayoutY::Create(options);
 
 		new (bs_alloc<ScriptGUILayout>()) ScriptGUILayout(instance, layout);
 	}
 
-	void ScriptGUILayout::internal_createInstancePanel(MonoObject* instance, INT16 depth, UINT16 depthRangeMin, UINT32 depthRangeMax, MonoArray* guiOptions)
+	void ScriptGUILayout::InternalCreateInstancePanel(MonoObject* instance, INT16 depth, UINT16 depthRangeMin, UINT32 depthRangeMax, MonoArray* guiOptions)
 	{
 		GUIOptions options;
 
@@ -129,12 +129,12 @@ namespace bs
 		for (UINT32 i = 0; i < arrayLen; i++)
 			options.addOption(scriptArray.get<GUIOption>(i));
 
-		GUILayout* layout = GUIPanel::create(depth, depthRangeMin, depthRangeMax, options);
+		GUILayout* layout = GUIPanel::Create(depth, depthRangeMin, depthRangeMax, options);
 
 		new (bs_alloc<ScriptGUILayout>()) ScriptGUILayout(instance, layout);
 	}
 
-	void ScriptGUILayout::internal_createInstanceYFromScrollArea(MonoObject* instance, MonoObject* parentScrollArea)
+	void ScriptGUILayout::InternalCreateInstanceYFromScrollArea(MonoObject* instance, MonoObject* parentScrollArea)
 	{
 		ScriptGUIScrollArea* scriptScrollArea = ScriptGUIScrollArea::toNative(parentScrollArea);
 		GUIScrollArea* scrollArea = (GUIScrollArea*)scriptScrollArea->getGUIElement();
@@ -145,10 +145,10 @@ namespace bs
 			ScriptGUIScrollAreaLayout(instance, nativeLayout);
 
 		// This method is expected to be called during GUIScrollArea construction, so we finish its initialization
-		scriptScrollArea->initialize(nativeInstance);
+		scriptScrollArea->Initialize(nativeInstance);
 	}
 
-	void ScriptGUILayout::internal_addElement(ScriptGUILayout* instance, ScriptGUIElementBaseTBase* element)
+	void ScriptGUILayout::InternalAddElement(ScriptGUILayout* instance, ScriptGUIElementBaseTBase* element)
 	{
 		if (instance->isDestroyed() || element->isDestroyed())
 			return;
@@ -162,7 +162,7 @@ namespace bs
 		instance->addChild(element);
 	}
 
-	void ScriptGUILayout::internal_insertElement(ScriptGUILayout* instance, UINT32 index, ScriptGUIElementBaseTBase* element)
+	void ScriptGUILayout::InternalInsertElement(ScriptGUILayout* instance, UINT32 index, ScriptGUIElementBaseTBase* element)
 	{
 		if (instance->isDestroyed() || element->isDestroyed())
 			return;
@@ -176,7 +176,7 @@ namespace bs
 		instance->insertChild(index, element);
 	}
 
-	UINT32 ScriptGUILayout::internal_getChildCount(ScriptGUILayout* instance)
+	UINT32 ScriptGUILayout::InternalGetChildCount(ScriptGUILayout* instance)
 	{
 		if (instance->isDestroyed())
 			return 0;
@@ -184,7 +184,7 @@ namespace bs
 		return instance->mLayout->getNumChildren();
 	}
 
-	MonoObject* ScriptGUILayout::internal_getChild(ScriptGUILayout* instance, UINT32 index)
+	MonoObject* ScriptGUILayout::InternalGetChild(ScriptGUILayout* instance, UINT32 index)
 	{
 		if (instance->isDestroyed() || index >= instance->mChildren.size())
 			return nullptr;
@@ -192,7 +192,7 @@ namespace bs
 		return instance->mChildren[index].element->getManagedInstance();
 	}
 
-	void ScriptGUILayout::internal_clear(ScriptGUILayout* instance)
+	void ScriptGUILayout::InternalClear(ScriptGUILayout* instance)
 	{
 		if (instance->isDestroyed())
 			return;
@@ -219,7 +219,7 @@ namespace bs
 	void ScriptGUIPanel::initRuntimeData()
 	{ }
 
-	MonoObject* ScriptGUIPanel::createFromExisting(GUIPanel* panel)
+	MonoObject* ScriptGUIPanel::CreateFromExisting(GUIPanel* panel)
 	{
 		MonoObject* managedInstance = metaData.scriptClass->createInstance();
 		new (bs_alloc<ScriptGUILayout>()) ScriptGUILayout(managedInstance, panel, false);
@@ -238,7 +238,7 @@ namespace bs
 		if (!mIsDestroyed)
 		{
 			if (mParentScrollArea != nullptr)
-				mParentScrollArea->notifyLayoutDestroyed();
+				mParentScrollArea->NotifyLayoutDestroyed();
 
 			while (mChildren.size() > 0)
 			{

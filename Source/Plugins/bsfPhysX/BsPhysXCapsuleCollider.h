@@ -21,26 +21,26 @@ namespace bs
 		~PhysXCapsuleCollider();
 
 		/** @copydoc CapsuleCollider::setScale() */
-		void setScale(const Vector3& scale) override;
+		void SetScale(const Vector3& scale) ;
 
 		/** @copydoc CapsuleCollider::setHalfHeight() */
-		void setHalfHeight(float halfHeight) override;
+		void SetHalfHeight(float halfHeight) ;
 
 		/** @copydoc CapsuleCollider::getHalfHeight() */
-		float getHalfHeight() const override;
+		float GetHalfHeight() const ;
 
 		/** @copydoc CapsuleCollider::setRadius() */
-		void setRadius(float radius) override;
+		void SetRadius(float radius) ;
 
 		/** @copydoc CapsuleCollider::getRadius() */
-		float getRadius() const override;
+		float GetRadius() const ;
 
 	private:
 		/** Returns the PhysX collider implementation common to all colliders. */
-		FPhysXCollider* getInternal() const;
+		FPhysXCollider* GetInternal() const;
 
 		/** Applies the capsule geometry to the internal object based on set radius, height and scale. */
-		void applyGeometry();
+		void ApplyGeometry();
 
 		float mRadius;
 		float mHalfHeight;

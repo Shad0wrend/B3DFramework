@@ -9,34 +9,34 @@ namespace bs
 {
 	ShortcutManager::ShortcutManager()
 	{
-		mOnButtonDownConn = Input::instance().onButtonDown.connect(std::bind(&ShortcutManager::onButtonDown, this, _1));
+		mOnButtonDownConn = Input::Instance().onButtonDown.Connect(std::bind(&::bs::ShortcutManager::OnButtonDown, this, _1));
 	}
 
 	ShortcutManager::~ShortcutManager()
 	{
-		mOnButtonDownConn.disconnect();
+		mOnButtonDownConn.Disconnect();
 	}
 
-	void ShortcutManager::addShortcut(const ShortcutKey& key, std::function<void()> callback)
+	void ShortcutManager::AddShortcut(const ShortcutKey& key, std::function<void()> callback)
 	{
 		mShortcuts[key] = callback;
 	}
 
-	void ShortcutManager::removeShortcut(const ShortcutKey& key)
+	void ShortcutManager::RemoveShortcut(const ShortcutKey& key)
 	{
 		mShortcuts.erase(key);
 	}
 
-	void ShortcutManager::onButtonDown(const ButtonEvent& event)
+	void ShortcutManager::OnButtonDown(const ButtonEvent& event)
 	{
 		UINT32 modifiers = 0;
-		if (Input::instance().isButtonHeld(BC_LSHIFT) || Input::instance().isButtonHeld(BC_RSHIFT))
+		if (Input::Instance().IsButtonHeld(BC_LSHIFT) || Input::Instance().IsButtonHeld(BC_RSHIFT))
 			modifiers |= (UINT32)ButtonModifier::Shift;
 
-		if (Input::instance().isButtonHeld(BC_LCONTROL) || Input::instance().isButtonHeld(BC_RCONTROL))
+		if (Input::Instance().IsButtonHeld(BC_LCONTROL) || Input::Instance().IsButtonHeld(BC_RCONTROL))
 			modifiers |= (UINT32)ButtonModifier::Ctrl;
 
-		if (Input::instance().isButtonHeld(BC_LMENU) || Input::instance().isButtonHeld(BC_RMENU))
+		if (Input::Instance().IsButtonHeld(BC_LMENU) || Input::Instance().IsButtonHeld(BC_RMENU))
 			modifiers |= (UINT32)ButtonModifier::Alt;
 
 		ShortcutKey searchKey((ButtonModifier)modifiers, event.buttonCode);

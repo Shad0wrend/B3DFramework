@@ -24,79 +24,79 @@ namespace bs
 
 		/** @copydoc D6Joint::getMotion */
 		BS_SCRIPT_EXPORT(n:GetMotion)
-		D6JointMotion getMotion(D6JointAxis axis) const;
+		D6JointMotion GetMotion(D6JointAxis axis) const;
 
 		/** @copydoc D6Joint::setMotion */
 		BS_SCRIPT_EXPORT(n:SetMotion)
-		void setMotion(D6JointAxis axis, D6JointMotion motion);
+		void SetMotion(D6JointAxis axis, D6JointMotion motion);
 
 		/** @copydoc D6Joint::getTwist */
 		BS_SCRIPT_EXPORT(n:Twist,pr:getter)
-		Radian getTwist() const;
+		Radian GetTwist() const;
 
 		/** @copydoc D6Joint::getSwingY */
 		BS_SCRIPT_EXPORT(n:SwingY,pr:getter)
-		Radian getSwingY() const;
+		Radian GetSwingY() const;
 
 		/** @copydoc D6Joint::getSwingZ */
 		BS_SCRIPT_EXPORT(n:SwingZ,pr:getter)
-		Radian getSwingZ() const;
+		Radian GetSwingZ() const;
 
 		/** @copydoc D6Joint::getLimitLinear */
 		BS_SCRIPT_EXPORT(n:LimitLinear,pr:getter)
-		LimitLinear getLimitLinear() const;
+		LimitLinear GetLimitLinear() const;
 
 		/** @copydoc D6Joint::setLimitLinear */
 		BS_SCRIPT_EXPORT(n:LimitLinear,pr:setter)
-		void setLimitLinear(const LimitLinear& limit);
+		void SetLimitLinear(const LimitLinear& limit);
 
 		/** @copydoc D6Joint::getLimitTwist */
 		BS_SCRIPT_EXPORT(n:LimitTwist,pr:getter)
-		LimitAngularRange getLimitTwist() const;
+		LimitAngularRange GetLimitTwist() const;
 
 		/** @copydoc D6Joint::setLimitTwist */
 		BS_SCRIPT_EXPORT(n:LimitTwist,pr:setter)
-		void setLimitTwist(const LimitAngularRange& limit);
+		void SetLimitTwist(const LimitAngularRange& limit);
 
 		/** @copydoc D6Joint::getLimitSwing */
 		BS_SCRIPT_EXPORT(n:LimitSwing,pr:getter)
-		LimitConeRange getLimitSwing() const;
+		LimitConeRange GetLimitSwing() const;
 
 		/** @copydoc D6Joint::setLimitSwing */
 		BS_SCRIPT_EXPORT(n:LimitSwing,pr:setter)
-		void setLimitSwing(const LimitConeRange& limit);
+		void SetLimitSwing(const LimitConeRange& limit);
 
 		/** @copydoc D6Joint::getDrive */
 		BS_SCRIPT_EXPORT(n:GetDrive)
-		D6JointDrive getDrive(D6JointDriveType type) const;
+		D6JointDrive GetDrive(D6JointDriveType type) const;
 
 		/** @copydoc D6Joint::setDrive */
 		BS_SCRIPT_EXPORT(n:SetDrive)
-		void setDrive(D6JointDriveType type, const D6JointDrive& drive);
+		void SetDrive(D6JointDriveType type, const D6JointDrive& drive);
 
 		/** @copydoc D6Joint::getDrivePosition */
 		BS_SCRIPT_EXPORT(n:DrivePosition,pr:getter)
-		Vector3 getDrivePosition() const;
+		Vector3 GetDrivePosition() const;
 
 		/** @copydoc D6Joint::getDriveRotation */
 		BS_SCRIPT_EXPORT(n:DriveRotation,pr:getter)
-		Quaternion getDriveRotation() const;
+		Quaternion GetDriveRotation() const;
 
 		/** @copydoc D6Joint::setDriveTransform */
 		BS_SCRIPT_EXPORT(n:SetDriveTransform)
-		void setDriveTransform(const Vector3& position, const Quaternion& rotation);
+		void SetDriveTransform(const Vector3& position, const Quaternion& rotation);
 
 		/** @copydoc D6Joint::getDriveLinearVelocity */
 		BS_SCRIPT_EXPORT(n:DriveLinearVelocity,pr:getter)
-		Vector3 getDriveLinearVelocity() const;
+		Vector3 GetDriveLinearVelocity() const;
 
 		/** @copydoc D6Joint::getDriveAngularVelocity */
 		BS_SCRIPT_EXPORT(n:DriveAngularVelocity,pr:getter)
-		Vector3 getDriveAngularVelocity() const;
+		Vector3 GetDriveAngularVelocity() const;
 
 		/** @copydoc D6Joint::setDriveVelocity */
 		BS_SCRIPT_EXPORT(n:SetDriveVelocity)
-		void setDriveVelocity(const Vector3& linear, const Vector3& angular);
+		void SetDriveVelocity(const Vector3& linear, const Vector3& angular);
 
 		/** @name Internal
 		 *  @{
@@ -114,7 +114,7 @@ namespace bs
 		friend class SceneObject;
 
 		/** @copydoc CJoint::createInternal */
-		SPtr<Joint> createInternal() override;
+		SPtr<Joint> CreateInternal() ;
 
 		D6_JOINT_DESC mDesc;
 
@@ -123,8 +123,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class CD6JointRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const ;
 
 	protected:
 		CD6Joint(); // Serialization only

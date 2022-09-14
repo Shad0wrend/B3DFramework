@@ -61,12 +61,12 @@ namespace bs
 		 * @note	Thread safe.
 		 */
 		BS_SCRIPT_EXPORT()
-		BS_NORREF HResource import(const Path& inputFilePath, SPtr<const ImportOptions> importOptions = nullptr,
+		BS_NORREF HResource Import(const Path& inputFilePath, SPtr<const ImportOptions> importOptions = nullptr,
 			const UUID& UUID = UUID::EMPTY);
 
 		/** @copydoc import */
 		template <class T>
-		ResourceHandle<T> import(const Path& inputFilePath, SPtr<const ImportOptions> importOptions = nullptr,
+		ResourceHandle<T> Import(const Path& inputFilePath, SPtr<const ImportOptions> importOptions = nullptr,
 			const UUID& UUID = UUID::EMPTY)
 		{
 			return static_resource_cast<T>(import(inputFilePath, importOptions, UUID));
@@ -77,7 +77,7 @@ namespace bs
 		 * placed in the returned AsyncOp object when the import ends.
 		 */
 		BS_SCRIPT_EXPORT()
-		TAsyncOp<HResource> importAsync(const Path& inputFilePath, SPtr<const ImportOptions> importOptions = nullptr,
+		TAsyncOp<HResource> ImportAsync(const Path& inputFilePath, SPtr<const ImportOptions> importOptions = nullptr,
 			const UUID& UUID = UUID::EMPTY);
 
 		/**
@@ -95,14 +95,14 @@ namespace bs
 		 * @note	Thread safe.
 		 */
 		BS_SCRIPT_EXPORT()
-		SPtr<MultiResource> importAll(const Path& inputFilePath, SPtr<const ImportOptions> importOptions = nullptr);
+		SPtr<MultiResource> ImportAll(const Path& inputFilePath, SPtr<const ImportOptions> importOptions = nullptr);
 
 		/**
 		 * Same as importAll(), except it imports a resource without blocking the main thread. The returned AsyncOp will
 		 * contain a list of the imported resources, after the import ends.
 		 */
 		BS_SCRIPT_EXPORT()
-		TAsyncOp<SPtr<MultiResource>> importAllAsync(const Path& inputFilePath,
+		TAsyncOp<SPtr<MultiResource>> ImportAllAsync(const Path& inputFilePath,
 			SPtr<const ImportOptions> importOptions = nullptr);
 
 		/**
@@ -119,11 +119,11 @@ namespace bs
 		 * expect to be used for this file type. If you don't use a proper import options type, an exception will be thrown
 		 * during import.
 		 */
-		SPtr<ImportOptions> createImportOptions(const Path& inputFilePath);
+		SPtr<ImportOptions> CreateImportOptions(const Path& inputFilePath);
 
 		/** @copydoc createImportOptions */
 		template<class T>
-		SPtr<T> createImportOptions(const Path& inputFilePath)
+		SPtr<T> CreateImportOptions(const Path& inputFilePath)
 		{
 			return std::static_pointer_cast<T>(createImportOptions(inputFilePath));
 		}
@@ -134,7 +134,7 @@ namespace bs
 		 * @param[in]	extension	The extension without the leading dot.
 		 */
 		BS_SCRIPT_EXPORT()
-		bool supportsFileType(const String& extension) const;
+		bool SupportsFileType(const String& extension) const;
 
 		/**
 		 * Checks if we can import a file with the specified magic number.
@@ -142,7 +142,7 @@ namespace bs
 		 * @param[in]	magicNumber 	The buffer containing the magic number.
 		 * @param[in]	magicNumSize	Size of the magic number buffer.
 		 */
-		bool supportsFileType(const UINT8* magicNumber, UINT32 magicNumSize) const;
+		bool SupportsFileType(const UINT8* magicNumber, UINT32 magicNumSize) const;
 
 		/** @name Internal
 		 *  @{
@@ -173,14 +173,14 @@ namespace bs
 		 * Searches available importers and attempts to find one that can import the file of the provided type. Returns null
 		 * if one cannot be found.
 		 */
-		SpecificImporter* getImporterForFile(const Path& inputFilePath) const;
+		SpecificImporter* GetImporterForFile(const Path& inputFilePath) const;
 
 		/**
 		 * Queues resource for import on a secondary thread. The system will execute the import as soon as possible
 		 * and write the resulting resource to the provided @p op object.
 		 */
 		template<class ReturnType>
-		void queueForImport(SpecificImporter* importer, const Path& inputFilePath,
+		void QueueForImport(SpecificImporter* importer, const Path& inputFilePath,
 			const SPtr<const ImportOptions>& importOptions, const UUID& uuid, TAsyncOp<ReturnType>& op);
 
 		/**
@@ -188,7 +188,7 @@ namespace bs
 		 * or null if the file isn't valid or is of unsupported type. Also creates the default set of import options unless
 		 * already provided.
 		 */
-		SpecificImporter* prepareForImport(const Path& filePath, SPtr<const ImportOptions>& importOptions) const;
+		SpecificImporter* PrepareForImport(const Path& filePath, SPtr<const ImportOptions>& importOptions) const;
 
 		/**
 		 * Checks is the specific importer currently importing something asynchronously. If the importer doesn't support
@@ -196,7 +196,7 @@ namespace bs
 		 * calls to the same method appropriately wait), and return an index of the task. The caller must check to
 		 * remove the task when import is done.
 		 */
-		UINT64 waitForAsync(SpecificImporter* importer);
+		UINT64 WaitForAsync(SpecificImporter* importer);
 
 		Vector<SpecificImporter*> mAssetImporters;
 

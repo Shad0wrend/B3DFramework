@@ -22,10 +22,10 @@ namespace bs
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "ParticleSizeOptions")
 
-		static MonoObject* box(const __PARTICLE_SIZE_DESCInterop& value);
-		static __PARTICLE_SIZE_DESCInterop unbox(MonoObject* value);
-		static PARTICLE_SIZE_DESC fromInterop(const __PARTICLE_SIZE_DESCInterop& value);
-		static __PARTICLE_SIZE_DESCInterop toInterop(const PARTICLE_SIZE_DESC& value);
+		static MonoObject* Box(const __PARTICLE_SIZE_DESCInterop& value);
+		static __PARTICLE_SIZE_DESCInterop Unbox(MonoObject* value);
+		static PARTICLE_SIZE_DESC FromInterop(const __PARTICLE_SIZE_DESCInterop& value);
+		static __PARTICLE_SIZE_DESCInterop ToInterop(const PARTICLE_SIZE_DESC& value);
 
 	private:
 		ScriptPARTICLE_SIZE_DESC(MonoObject* managedInstance);

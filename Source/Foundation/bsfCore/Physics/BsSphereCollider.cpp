@@ -5,9 +5,9 @@
 
 namespace bs
 {
-	SPtr<SphereCollider> SphereCollider::create(PhysicsScene& scene, float radius, const Vector3& position,
+	SPtr<SphereCollider> SphereCollider::Create(PhysicsScene& scene, float radius, const Vector3& position,
 		const Quaternion& rotation)
 	{
-		return scene.createSphereCollider(radius, position, rotation);
+		return scene.CreateSphereCollider(radius, position, rotation);
 	}
 }

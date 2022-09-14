@@ -24,7 +24,7 @@ namespace bs
 
 	}
 
-	MonoObject* ScriptMultiResource::create(const SPtr<MultiResource>& value)
+	MonoObject* ScriptMultiResource::Create(const SPtr<MultiResource>& value)
 	{
 		if(value == nullptr) return nullptr; 
 

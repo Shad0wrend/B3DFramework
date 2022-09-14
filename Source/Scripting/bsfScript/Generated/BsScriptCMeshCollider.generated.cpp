@@ -23,14 +23,14 @@ namespace bs
 
 	}
 
-	void ScriptCMeshCollider::Internal_setMesh(ScriptCMeshCollider* thisPtr, MonoObject* mesh)
+	void ScriptCMeshCollider::InternalSetMesh(ScriptCMeshCollider* thisPtr, MonoObject* mesh)
 	{
 		ResourceHandle<PhysicsMesh> tmpmesh;
 		ScriptRRefBase* scriptmesh;
-		scriptmesh = ScriptRRefBase::toNative(mesh);
+		scriptmesh = ScriptRRefBase::ToNative(mesh);
 		if(scriptmesh != nullptr)
-			tmpmesh = static_resource_cast<PhysicsMesh>(scriptmesh->getHandle());
-		thisPtr->getHandle()->setMesh(tmpmesh);
+			tmpmesh = static_resource_cast<PhysicsMesh>(scriptmesh->GetHandle());
+		thisPtr->GetHandle()->SetMesh(tmpmesh);
 	}
 
 	MonoObject* ScriptCMeshCollider::Internal_getMesh(ScriptCMeshCollider* thisPtr)
@@ -40,7 +40,7 @@ namespace bs
 
 		MonoObject* __output;
 		ScriptRRefBase* script__output;
-		script__output = ScriptResourceManager::instance().getScriptRRef(tmp__output);
+		script__output = ScriptResourceManager::Instance().getScriptRRef(tmp__output);
 		if(script__output != nullptr)
 			__output = script__output->getManagedInstance();
 		else

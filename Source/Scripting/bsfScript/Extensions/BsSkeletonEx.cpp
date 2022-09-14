@@ -6,13 +6,13 @@ using namespace std::placeholders;
 
 namespace bs
 {
-	SkeletonBoneInfoEx SkeletonEx::getBoneInfo(const SPtr<Skeleton>& thisPtr, int boneIdx)
+	SkeletonBoneInfoEx SkeletonEx::GetBoneInfo(const SPtr<Skeleton>& thisPtr, int boneIdx)
 	{
-		const SkeletonBoneInfo& boneInfo = thisPtr->getBoneInfo(boneIdx);
+		const SkeletonBoneInfo& boneInfo = thisPtr->GetBoneInfo(boneIdx);
 		SkeletonBoneInfoEx boneInfoEx;
 		boneInfoEx.name = boneInfo.name;
 		boneInfoEx.parent = boneInfo.parent;
-		boneInfoEx.invBindPose = thisPtr->getInvBindPose(boneIdx);
+		boneInfoEx.invBindPose = thisPtr->GetInvBindPose(boneIdx);
 
 		return boneInfoEx;
 	}

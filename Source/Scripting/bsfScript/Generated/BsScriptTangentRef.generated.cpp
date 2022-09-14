@@ -16,17 +16,17 @@ namespace bs
 	void ScriptTangentRef::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptTangentRef::box(const __TangentRefInterop& value)
+	MonoObject*ScriptTangentRef::Box(const __TangentRefInterop& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	__TangentRefInterop ScriptTangentRef::unbox(MonoObject* value)
+	__TangentRefInterop ScriptTangentRef::Unbox(MonoObject* value)
 	{
-		return *(__TangentRefInterop*)MonoUtil::unbox(value);
+		return *(__TangentRefInterop*)MonoUtil::Unbox(value);
 	}
 
-	TangentRef ScriptTangentRef::fromInterop(const __TangentRefInterop& value)
+	TangentRef ScriptTangentRef::FromInterop(const __TangentRefInterop& value)
 	{
 		TangentRef output;
 		output.keyframeRef = value.keyframeRef;
@@ -35,7 +35,7 @@ namespace bs
 		return output;
 	}
 
-	__TangentRefInterop ScriptTangentRef::toInterop(const TangentRef& value)
+	__TangentRefInterop ScriptTangentRef::ToInterop(const TangentRef& value)
 	{
 		__TangentRefInterop output;
 		output.keyframeRef = value.keyframeRef;

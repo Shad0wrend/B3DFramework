@@ -107,37 +107,37 @@ namespace bs
 		BlendProperties(const BLEND_STATE_DESC& desc);
 
 		/** @copydoc BLEND_STATE_DESC::alphaToCoverageEnable */
-		bool getAlphaToCoverageEnabled() const { return mData.alphaToCoverageEnable; }
+		bool GetAlphaToCoverageEnabled() const { return mData.alphaToCoverageEnable; }
 
 		/** @copydoc BLEND_STATE_DESC::independantBlendEnable */
-		bool getIndependantBlendEnable() const { return mData.independantBlendEnable; }
+		bool GetIndependantBlendEnable() const { return mData.independantBlendEnable; }
 
 		/** @copydoc RENDER_TARGET_BLEND_STATE_DESC::blendEnable */
-		bool getBlendEnabled(UINT32 renderTargetIdx) const;
+		bool GetBlendEnabled(UINT32 renderTargetIdx) const;
 
 		/** @copydoc RENDER_TARGET_BLEND_STATE_DESC::srcBlend */
-		BlendFactor getSrcBlend(UINT32 renderTargetIdx) const;
+		BlendFactor GetSrcBlend(UINT32 renderTargetIdx) const;
 
 		/** @copydoc RENDER_TARGET_BLEND_STATE_DESC::dstBlend */
-		BlendFactor getDstBlend(UINT32 renderTargetIdx) const;
+		BlendFactor GetDstBlend(UINT32 renderTargetIdx) const;
 
 		/** @copydoc RENDER_TARGET_BLEND_STATE_DESC::blendOp */
-		BlendOperation getBlendOperation(UINT32 renderTargetIdx) const;
+		BlendOperation GetBlendOperation(UINT32 renderTargetIdx) const;
 
 		/** @copydoc RENDER_TARGET_BLEND_STATE_DESC::srcBlendAlpha */
-		BlendFactor getAlphaSrcBlend(UINT32 renderTargetIdx) const;
+		BlendFactor GetAlphaSrcBlend(UINT32 renderTargetIdx) const;
 
 		/** @copydoc RENDER_TARGET_BLEND_STATE_DESC::dstBlendAlpha */
-		BlendFactor getAlphaDstBlend(UINT32 renderTargetIdx) const;
+		BlendFactor GetAlphaDstBlend(UINT32 renderTargetIdx) const;
 
 		/** @copydoc RENDER_TARGET_BLEND_STATE_DESC::blendOpAlpha */
-		BlendOperation getAlphaBlendOperation(UINT32 renderTargetIdx) const;
+		BlendOperation GetAlphaBlendOperation(UINT32 renderTargetIdx) const;
 
 		/** @copydoc RENDER_TARGET_BLEND_STATE_DESC::renderTargetWriteMask */
-		UINT8 getRenderTargetWriteMask(UINT32 renderTargetIdx) const;
+		UINT8 GetRenderTargetWriteMask(UINT32 renderTargetIdx) const;
 
 		/** Returns the hash value generated from the blend state properties. */
-		UINT64 getHash() const { return mHash; }
+		UINT64 GetHash() const { return mHash; }
 
 	protected:
 		friend class BlendState;
@@ -160,19 +160,19 @@ namespace bs
 		virtual ~BlendState();
 
 		/**	Returns information about a blend state. */
-		const BlendProperties& getProperties() const;
+		const BlendProperties& GetProperties() const;
 
 		/** Retrieves a core implementation of the sampler state usable only from the core thread. */
-		SPtr<ct::BlendState> getCore() const;
+		SPtr<ct::BlendState> GetCore() const;
 
 		/**	Creates a new blend state using the specified blend state description structure. */
-		static SPtr<BlendState> create(const BLEND_STATE_DESC& desc);
+		static SPtr<BlendState> Create(const BLEND_STATE_DESC& desc);
 
 		/**	Returns the default blend state that you may use when no other is available. */
-		static const SPtr<BlendState>& getDefault();
+		static const SPtr<BlendState>& GetDefault();
 
 		/**	Generates a hash value from a blend state descriptor. */
-		static UINT64 generateHash(const BLEND_STATE_DESC& desc);
+		static UINT64 GenerateHash(const BLEND_STATE_DESC& desc);
 
 	protected:
 		friend class RenderStateManager;
@@ -180,7 +180,7 @@ namespace bs
 		BlendState(const BLEND_STATE_DESC& desc);
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> createCore() const override;
+		SPtr<ct::CoreObject> CreateCore() const ;
 
 		BlendProperties mProperties;
 		mutable UINT32 mId;
@@ -191,8 +191,8 @@ namespace bs
 
 	public:
 		friend class BlendStateRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;	
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;	
 	};
 
 	/** @} */
@@ -214,16 +214,16 @@ namespace bs
 		virtual ~BlendState();
 
 		/** Returns information about the blend state. */
-		const BlendProperties& getProperties() const;
+		const BlendProperties& GetProperties() const;
 
 		/** Returns a unique state ID. Only the lowest 10 bits are used. */
-		UINT32 getId() const { return mId; }
+		UINT32 GetId() const { return mId; }
 
 		/**	Creates a new blend state using the specified blend state description structure. */
-		static SPtr<BlendState> create(const BLEND_STATE_DESC& desc);
+		static SPtr<BlendState> Create(const BLEND_STATE_DESC& desc);
 
 		/**	Returns the default blend state that you may use when no other is available. */
-		static const SPtr<BlendState>& getDefault();
+		static const SPtr<BlendState>& GetDefault();
 
 	protected:
 		friend class RenderStateManager;
@@ -231,10 +231,10 @@ namespace bs
 		BlendState(const BLEND_STATE_DESC& desc, UINT32 id);
 
 		/** @copydoc CoreObject::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 		/**	Creates any API-specific state objects. */
-		virtual void createInternal() { }
+		virtual void CreateInternal() { }
 
 		BlendProperties mProperties;
 		UINT32 mId;
@@ -257,7 +257,7 @@ struct hash<bs::BLEND_STATE_DESC>
 {
 	size_t operator()(const bs::BLEND_STATE_DESC& value) const
 	{
-		return (size_t)bs::BlendState::generateHash(value);
+		return (size_t)bs::BlendState::GenerateHash(value);
 	}
 };
 }

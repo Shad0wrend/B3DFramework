@@ -27,7 +27,7 @@ namespace bs
 
 		/**	Returns the current play state of the game. */
 		BS_SCRIPT_EXPORT(in:true)
-		PlayInEditorState getState() const { return mState; }
+		PlayInEditorState GetState() const { return mState; }
 
 		/**	
 		 * Updates the play state of the game, making the game stop or start running. Note the actual state change
@@ -35,17 +35,17 @@ namespace bs
 		 * when the change actually happens.
 		 */
 		BS_SCRIPT_EXPORT(in:true)
-		void setState(PlayInEditorState state);
+		void SetState(PlayInEditorState state);
 
 		/**
 		 * Gets the number of seconds that have elapsed since the game was started. This time does not include time passed
 		 * while the game is paused.
 		 */
-		float getPausableTime() const { return mPausableTime; }
+		float GetPausableTime() const { return mPausableTime; }
 
 		/**	Runs the game for a single frame and then pauses it. */
 		BS_SCRIPT_EXPORT()
-		void frameStep();
+		void FrameStep();
 
 		/** Triggered right after the play mode is entered. */
 		BS_SCRIPT_EXPORT()
@@ -72,7 +72,7 @@ namespace bs
 		 *
 		 * @note	Internal method.
 		 */
-		void update();
+		void Update();
 
 		/** @} */
 
@@ -81,13 +81,13 @@ namespace bs
 		 * Updates the play state of the game, making the game stop or start running. Unlike setState() this will trigger
 		 * the state change right away.
 		 */
-		void setStateImmediate(PlayInEditorState state);
+		void SetStateImmediate(PlayInEditorState state);
 
 		/**	Saves the current state of the scene in memory. */
-		void saveSceneInMemory();
+		void SaveSceneInMemory();
 
 		/** Pauses or unpauses all pausable engine systems. */
-		void setSystemsPauseState(bool paused);
+		void SetSystemsPauseState(bool paused);
 
 		PlayInEditorState mState;
 		PlayInEditorState mNextState;

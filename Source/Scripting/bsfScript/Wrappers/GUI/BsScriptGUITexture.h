@@ -24,10 +24,10 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static void internal_createInstance(MonoObject* instance, MonoObject* texture,
+		static void InternalCreateInstance(MonoObject* instance, MonoObject* texture,
 			TextureScaleMode scale, bool transparent, MonoString* style, MonoArray* guiOptions);
-		static void internal_setTexture(ScriptGUITexture* nativeInstance, MonoObject* texture);
-		static void internal_setTint(ScriptGUITexture* nativeInstance, Color* color);
+		static void InternalSetTexture(ScriptGUITexture* nativeInstance, MonoObject* texture);
+		static void InternalSetTint(ScriptGUITexture* nativeInstance, Color* color);
 	};
 
 	/** @} */

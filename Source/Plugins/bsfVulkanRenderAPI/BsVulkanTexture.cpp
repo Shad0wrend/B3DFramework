@@ -18,12 +18,12 @@ namespace bs { namespace ct
 		VULKAN_IMAGE_DESC desc;
 		desc.image = image;
 		desc.allocation = allocation;
-		desc.type = props.getTextureType();
+		desc.type = props.GetTextureType();
 		desc.format = actualFormat;
-		desc.numFaces = props.getNumFaces();
-		desc.numMipLevels = props.getNumMipmaps() + 1;
+		desc.numFaces = props.GetNumFaces();
+		desc.numMipLevels = props.GetNumMipmaps() + 1;
 		desc.layout = layout;
-		desc.usage = (UINT32)props.getUsage();
+		desc.usage = (UINT32)props.GetUsage();
 
 		return desc;
 	}
@@ -70,11 +70,11 @@ namespace bs { namespace ct
 		TextureSurface completeSurface(0, desc.numMipLevels, 0, desc.numFaces);
 		if ((mUsage & TU_DEPTHSTENCIL) != 0)
 		{
-			mFramebufferMainView = createView(completeSurface, desc.format, getAspectFlags());
-			mMainView = createView(completeSurface, desc.format, VK_IMAGE_ASPECT_DEPTH_BIT);
+			mFramebufferMainView = CreateView(completeSurface, desc.format, GetAspectFlags());
+			mMainView = CreateView(completeSurface, desc.format, VK_IMAGE_ASPECT_DEPTH_BIT);
 		}
 		else
-			mMainView = createView(completeSurface, desc.format, VK_IMAGE_ASPECT_COLOR_BIT);
+			mMainView = CreateView(completeSurface, desc.format, VK_IMAGE_ASPECT_COLOR_BIT);
 
 		ImageViewInfo mainViewInfo;
 		mainViewInfo.surface = completeSurface;
@@ -124,7 +124,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	VkImageView VulkanImage::getView(bool framebuffer) const
+	VkImageView VulkanImage::GetView(bool framebuffer) const
 	{
 		if(framebuffer && (mUsage & TU_DEPTHSTENCIL) != 0)
 			return mFramebufferMainView;
@@ -132,18 +132,18 @@ namespace bs { namespace ct
 		return mMainView;
 	}
 
-	VkImageView VulkanImage::getView(const TextureSurface& surface, bool framebuffer) const
+	VkImageView VulkanImage::GetView(const TextureSurface& surface, bool framebuffer) const
 	{
 		return getView(mImageViewCI.format, surface, framebuffer);
 	}
 
-	VkImageView VulkanImage::getView(VkFormat format, bool framebuffer) const
+	VkImageView VulkanImage::GetView(VkFormat format, bool framebuffer) const
 	{
 		TextureSurface completeSurface(0, mNumMipLevels, 0, mNumFaces);
 		return getView(format, completeSurface, framebuffer);
 	}
 
-	VkImageView VulkanImage::getView(VkFormat format, const TextureSurface& surface, bool framebuffer) const
+	VkImageView VulkanImage::GetView(VkFormat format, const TextureSurface& surface, bool framebuffer) const
 	{
 		for(auto& entry : mImageInfos)
 		{
@@ -183,7 +183,7 @@ namespace bs { namespace ct
 		return info.view;
 	}
 
-	VkImageView VulkanImage::createView(const TextureSurface& surface, VkFormat format, VkImageAspectFlags aspectMask) const
+	VkImageView VulkanImage::CreateView(const TextureSurface& surface, VkFormat format, VkImageAspectFlags aspectMask) const
 	{
 		VkImageViewType oldViewType = mImageViewCI.viewType;
 		VkFormat oldFormat = mImageViewCI.format;
@@ -232,7 +232,7 @@ namespace bs { namespace ct
 		return view;
 	}
 
-	VkImageLayout VulkanImage::getOptimalLayout() const
+	VkImageLayout VulkanImage::GetOptimalLayout() const
 	{
 		// If it's load-store, no other flags matter, it must be in general layout
 		if ((mUsage & TU_LOADSTORE) != 0)
@@ -251,7 +251,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	VkImageAspectFlags VulkanImage::getAspectFlags() const
+	VkImageAspectFlags VulkanImage::GetAspectFlags() const
 	{
 		if ((mUsage & TU_DEPTHSTENCIL) != 0)
 		{
@@ -268,7 +268,7 @@ namespace bs { namespace ct
 		return VK_IMAGE_ASPECT_COLOR_BIT;
 	}
 
-	VkImageSubresourceRange VulkanImage::getRange() const
+	VkImageSubresourceRange VulkanImage::GetRange() const
 	{
 		VkImageSubresourceRange range;
 		range.baseArrayLayer = 0;
@@ -280,7 +280,7 @@ namespace bs { namespace ct
 		return range;
 	}
 
-	VkImageSubresourceRange VulkanImage::getRange(const TextureSurface& surface) const
+	VkImageSubresourceRange VulkanImage::GetRange(const TextureSurface& surface) const
 	{
 		VkImageSubresourceRange range;
 		range.baseArrayLayer = surface.face;
@@ -292,13 +292,13 @@ namespace bs { namespace ct
 		return range;
 	}
 
-	VulkanImageSubresource* VulkanImage::getSubresource(UINT32 face, UINT32 mipLevel)
+	VulkanImageSubresource* VulkanImage::GetSubresource(UINT32 face, UINT32 mipLevel)
 	{
 		assert(mipLevel * mNumFaces + face < mNumFaces * mNumMipLevels);
 		return mSubresources[mipLevel * mNumFaces + face];
 	}
 
-	void VulkanImage::map(UINT32 face, UINT32 mipLevel, PixelData& output) const
+	void VulkanImage::Map(UINT32 face, UINT32 mipLevel, PixelData& output) const
 	{
 		VulkanDevice& device = mOwner->getDevice();
 
@@ -328,7 +328,7 @@ namespace bs { namespace ct
 		output.setExternalBuffer(data);
 	}
 
-	UINT8* VulkanImage::map(UINT32 offset, UINT32 size) const
+	UINT8* VulkanImage::Map(UINT32 offset, UINT32 size) const
 	{
 		VulkanDevice& device = mOwner->getDevice();
 
@@ -343,7 +343,7 @@ namespace bs { namespace ct
 		return data;
 	}
 
-	void VulkanImage::unmap()
+	void VulkanImage::Unmap()
 	{
 		VulkanDevice& device = mOwner->getDevice();
 
@@ -354,7 +354,7 @@ namespace bs { namespace ct
 		vkUnmapMemory(device.getLogical(), memory);
 	}
 
-	void VulkanImage::copy(VulkanTransferBuffer* cb, VulkanBuffer* destination, const VkExtent3D& extent,
+	void VulkanImage::Copy(VulkanTransferBuffer* cb, VulkanBuffer* destination, const VkExtent3D& extent,
 						   const VkImageSubresourceLayers& range, VkImageLayout layout)
 	{
 		VkBufferImageCopy region;
@@ -370,7 +370,7 @@ namespace bs { namespace ct
 		vkCmdCopyImageToBuffer(cb->getCB()->getHandle(), mImage, layout, destination->getHandle(), 1, &region);
 	}
 
-	VkAccessFlags VulkanImage::getAccessFlags(VkImageLayout layout, bool readOnly)
+	VkAccessFlags VulkanImage::GetAccessFlags(VkImageLayout layout, bool readOnly)
 	{
 		VkAccessFlags accessFlags;
 
@@ -438,7 +438,7 @@ namespace bs { namespace ct
 		return accessFlags;
 	}
 
-	void VulkanImage::getBarriers(const VkImageSubresourceRange& range, Vector<VkImageMemoryBarrier>& barriers)
+	void VulkanImage::GetBarriers(const VkImageSubresourceRange& range, Vector<VkImageMemoryBarrier>& barriers)
 	{
 		UINT32 numSubresources = range.levelCount * range.layerCount;
 
@@ -622,7 +622,7 @@ namespace bs { namespace ct
 		BS_INC_RENDER_STAT_CAT(ResDestroyed, RenderStatObject_Texture);
 	}
 
-	void VulkanTexture::initialize()
+	void VulkanTexture::Initialize()
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -715,7 +715,7 @@ namespace bs { namespace ct
 		mImageCI.queueFamilyIndexCount = 0;
 		mImageCI.pQueueFamilyIndices = nullptr;
 
-		VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::instance());
+		VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
 		VulkanDevice* devices[BS_MAX_DEVICES];
 		VulkanUtility::getDevices(rapi, mDeviceMask, devices);
 
@@ -739,7 +739,7 @@ namespace bs { namespace ct
 		Texture::initialize();
 	}
 
-	VulkanImage* VulkanTexture::createImage(VulkanDevice& device, PixelFormat format)
+	VulkanImage* VulkanTexture::CreateImage(VulkanDevice& device, PixelFormat format)
 	{
 		bool directlyMappable = mImageCI.tiling == VK_IMAGE_TILING_LINEAR;
 		VkMemoryPropertyFlags flags = directlyMappable ?
@@ -759,7 +759,7 @@ namespace bs { namespace ct
 			getProperties());
 	}
 
-	VulkanBuffer* VulkanTexture::createStaging(VulkanDevice& device, const PixelData& pixelData, bool readable)
+	VulkanBuffer* VulkanTexture::CreateStaging(VulkanDevice& device, const PixelData& pixelData, bool readable)
 	{
 		VkBufferCreateInfo bufferCI;
 		bufferCI.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -802,7 +802,7 @@ namespace bs { namespace ct
 			rowPitchInPixels, slicePitchInPixels);
 	}
 
-	void VulkanTexture::copyImage(VulkanTransferBuffer* cb, VulkanImage* srcImage, VulkanImage* dstImage,
+	void VulkanTexture::CopyImage(VulkanTransferBuffer* cb, VulkanImage* srcImage, VulkanImage* dstImage,
 									  VkImageLayout srcFinalLayout, VkImageLayout dstFinalLayout)
 	{
 		UINT32 numFaces = mProperties.getNumFaces();
@@ -876,7 +876,7 @@ namespace bs { namespace ct
 		bs_stack_free(imageRegions);
 	}
 
-	void VulkanTexture::copyImpl(const SPtr<Texture>& target, const TEXTURE_COPY_DESC& desc,
+	void VulkanTexture::CopyImpl(const SPtr<Texture>& target, const TEXTURE_COPY_DESC& desc,
 			const SPtr<CommandBuffer>& commandBuffer)
 	{
 		VulkanTexture* other = static_cast<VulkanTexture*>(target.get());
@@ -971,7 +971,7 @@ namespace bs { namespace ct
 		dstRange.baseMipLevel = desc.dstMip;
 		dstRange.levelCount = 1;
 
-		VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::instance());
+		VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
 
 		VulkanCmdBuffer* vkCB;
 		if (commandBuffer != nullptr)
@@ -1021,7 +1021,7 @@ namespace bs { namespace ct
 		vkCB->registerImageTransfer(dstImage, dstRange, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VulkanAccessFlag::Write);
 	}
 
-	PixelData VulkanTexture::lockImpl(GpuLockOptions options, UINT32 mipLevel, UINT32 face, UINT32 deviceIdx,
+	PixelData VulkanTexture::LockImpl(GpuLockOptions options, UINT32 mipLevel, UINT32 face, UINT32 deviceIdx,
 										  UINT32 queueIdx)
 	{
 		const TextureProperties& props = getProperties();
@@ -1062,7 +1062,7 @@ namespace bs { namespace ct
 		mMappedMip = mipLevel;
 		mMappedLockOptions = options;
 
-		VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::instance());
+		VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
 		VulkanDevice& device = *rapi.GetDeviceInternal(deviceIdx);
 
 		VulkanCommandBufferManager& cbManager = gVulkanCBManager();
@@ -1275,7 +1275,7 @@ namespace bs { namespace ct
 		return lockedArea;
 	}
 
-	void VulkanTexture::unlockImpl()
+	void VulkanTexture::UnlockImpl()
 	{
 		// Possibly map() failed with some error
 		if (!mIsMapped)
@@ -1295,7 +1295,7 @@ namespace bs { namespace ct
 			// If the caller wrote anything to the staging buffer, we need to upload it back to the main buffer
 			if (isWrite)
 			{
-				VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::instance());
+				VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
 				VulkanDevice& device = *rapi.GetDeviceInternal(mMappedDeviceIdx);
 
 				VulkanCommandBufferManager& cbManager = gVulkanCBManager();
@@ -1425,7 +1425,7 @@ namespace bs { namespace ct
 		mIsMapped = false;
 	}
 
-	void VulkanTexture::readDataImpl(PixelData& dest, UINT32 mipLevel, UINT32 face, UINT32 deviceIdx, UINT32 queueIdx)
+	void VulkanTexture::ReadDataImpl(PixelData& dest, UINT32 mipLevel, UINT32 face, UINT32 deviceIdx, UINT32 queueIdx)
 	{
 		if (mProperties.getNumSamples() > 1)
 		{
@@ -1440,7 +1440,7 @@ namespace bs { namespace ct
 		BS_INC_RENDER_STAT_CAT(ResRead, RenderStatObject_Texture);
 	}
 
-	void VulkanTexture::writeDataImpl(const PixelData& src, UINT32 mipLevel, UINT32 face, bool discardWholeBuffer,
+	void VulkanTexture::WriteDataImpl(const PixelData& src, UINT32 mipLevel, UINT32 face, bool discardWholeBuffer,
 									  UINT32 queueIdx)
 	{
 		if(src.getSize() == 0)

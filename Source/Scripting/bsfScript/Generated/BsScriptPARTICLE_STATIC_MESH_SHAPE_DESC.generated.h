@@ -21,10 +21,10 @@ namespace bs
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "ParticleStaticMeshShapeOptions")
 
-		static MonoObject* box(const __PARTICLE_STATIC_MESH_SHAPE_DESCInterop& value);
-		static __PARTICLE_STATIC_MESH_SHAPE_DESCInterop unbox(MonoObject* value);
-		static PARTICLE_STATIC_MESH_SHAPE_DESC fromInterop(const __PARTICLE_STATIC_MESH_SHAPE_DESCInterop& value);
-		static __PARTICLE_STATIC_MESH_SHAPE_DESCInterop toInterop(const PARTICLE_STATIC_MESH_SHAPE_DESC& value);
+		static MonoObject* Box(const __PARTICLE_STATIC_MESH_SHAPE_DESCInterop& value);
+		static __PARTICLE_STATIC_MESH_SHAPE_DESCInterop Unbox(MonoObject* value);
+		static PARTICLE_STATIC_MESH_SHAPE_DESC FromInterop(const __PARTICLE_STATIC_MESH_SHAPE_DESCInterop& value);
+		static __PARTICLE_STATIC_MESH_SHAPE_DESCInterop ToInterop(const PARTICLE_STATIC_MESH_SHAPE_DESC& value);
 
 	private:
 		ScriptPARTICLE_STATIC_MESH_SHAPE_DESC(MonoObject* managedInstance);

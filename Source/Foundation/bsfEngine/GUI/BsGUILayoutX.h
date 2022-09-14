@@ -20,14 +20,14 @@ namespace bs
 		~GUILayoutX() = default;
 
 		/**	Creates a new horizontal layout. */
-		static GUILayoutX* create();
+		static GUILayoutX* Create();
 
 		/**
 		 * Creates a new horizontal layout.
 		 *
 		 * @param[in]	options		Options that allow you to control how is the element positioned and sized.
 		 */
-		static GUILayoutX* create(const GUIOptions& options);
+		static GUILayoutX* Create(const GUIOptions& options);
 
 	public: // ***** INTERNAL ******
 		/** @name Internal

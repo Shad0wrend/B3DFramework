@@ -6,27 +6,27 @@
 
 namespace bs
 {
-	void ResourceMapping::add(const Path& from, const Path& to)
+	void ResourceMapping::Add(const Path& from, const Path& to)
 	{
 		mMapping[from] = to;
 	}
 
-	SPtr<ResourceMapping> ResourceMapping::create()
+	SPtr<ResourceMapping> ResourceMapping::Create()
 	{
 		return bs_shared_ptr_new<ResourceMapping>();
 	}
 
-	RTTITypeBase* ResourceMapping::getRTTIStatic()
+	RTTITypeBase* ResourceMapping::GetRttiStatic()
 	{
-		return ResourceMappingRTTI::instance();
+		return ResourceMappingRTTI::Instance();
 	}
 
-	RTTITypeBase* ResourceMapping::getRTTI() const
+	RTTITypeBase* ResourceMapping::GetRtti() const
 	{
-		return getRTTIStatic();
+		return GetRttiStatic();
 	}
 
-	HResource StandaloneResourceLoader::load(const Path& path, ResourceLoadFlags flags, bool async) const
+	HResource StandaloneResourceLoader::Load(const Path& path, ResourceLoadFlags flags, bool async) const
 	{
 		auto iterFind = mMapping.find(path);
 		if(iterFind != mMapping.end())
@@ -43,7 +43,7 @@ namespace bs
 			return gResources().loadAsync(path, flags);
 	}
 
-	void StandaloneResourceLoader::setMapping(const SPtr<ResourceMapping>& mapping)
+	void StandaloneResourceLoader::SetMapping(const SPtr<ResourceMapping>& mapping)
 	{
 		mMapping = mapping->getMap();
 	}
@@ -54,17 +54,17 @@ namespace bs
 		
 	}
 
-	HResource GameResourceManager::load(const Path& path, ResourceLoadFlags flags, bool async) const
+	HResource GameResourceManager::Load(const Path& path, ResourceLoadFlags flags, bool async) const
 	{
 		return mLoader->load(path, flags, async);
 	}
 
-	void GameResourceManager::setMapping(const SPtr<ResourceMapping>& mapping)
+	void GameResourceManager::SetMapping(const SPtr<ResourceMapping>& mapping)
 	{
 		mLoader->setMapping(mapping);
 	}
 
-	void GameResourceManager::setLoader(const SPtr<IGameResourceLoader>& loader)
+	void GameResourceManager::SetLoader(const SPtr<IGameResourceLoader>& loader)
 	{
 		mLoader = loader;
 

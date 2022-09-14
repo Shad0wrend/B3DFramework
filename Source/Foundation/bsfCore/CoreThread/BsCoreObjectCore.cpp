@@ -19,24 +19,24 @@ namespace bs
 		THROW_IF_NOT_CORE_THREAD;
 	}
 
-	void CoreObject::initialize()
+	void CoreObject::Initialize()
 	{
 		{
 			Lock lock(mCoreGpuObjectLoadedMutex);
-			setIsInitialized(true);
+			SetIsInitialized(true);
 		}
 
-		setScheduledToBeInitialized(false);
+		SetScheduledToBeInitialized(false);
 
 		mCoreGpuObjectLoadedCondition.notify_all();
 	}
 
-	void CoreObject::synchronize()
+	void CoreObject::Synchronize()
 	{
-		if (!isInitialized())
+		if (!IsInitialized())
 		{
 #if BS_DEBUG_MODE
-			if (BS_THREAD_CURRENT_ID == CoreThread::instance().getCoreThreadId())
+			if (BS_THREAD_CURRENT_ID == CoreThread::Instance().GetCoreThreadId())
 				BS_EXCEPT(InternalErrorException, "You cannot call this method on the core thread. It will cause a deadlock!");
 #endif
 

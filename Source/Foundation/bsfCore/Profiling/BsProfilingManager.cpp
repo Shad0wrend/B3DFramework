@@ -25,9 +25,9 @@ namespace bs
 	void ProfilingManager::UpdateInternal()
 	{
 #if BS_PROFILING_ENABLED
-		mSavedSimReports[mNextSimReportIdx].cpuReport = gProfilerCPU().generateReport();
+		mSavedSimReports[mNextSimReportIdx].cpuReport = gProfilerCPU().GenerateReport();
 
-		gProfilerCPU().reset();
+		gProfilerCPU().Reset();
 
 		mNextSimReportIdx = (mNextSimReportIdx + 1) % NUM_SAVED_FRAMES;
 #endif
@@ -37,17 +37,17 @@ namespace bs
 	{
 #if BS_PROFILING_ENABLED
 		Lock lock(mSync);
-		mSavedCoreReports[mNextCoreReportIdx].cpuReport = gProfilerCPU().generateReport();
+		mSavedCoreReports[mNextCoreReportIdx].cpuReport = gProfilerCPU().GenerateReport();
 
-		gProfilerCPU().reset();
+		gProfilerCPU().Reset();
 
 		mNextCoreReportIdx = (mNextCoreReportIdx + 1) % NUM_SAVED_FRAMES;
 #endif
 	}
 
-	const ProfilerReport& ProfilingManager::getReport(ProfiledThread thread, UINT32 idx) const
+	const ProfilerReport& ProfilingManager::GetReport(ProfiledThread thread, UINT32 idx) const
 	{
-		idx = Math::clamp(idx, 0U, (UINT32)(NUM_SAVED_FRAMES - 1));
+		idx = Math::Clamp(idx, 0U, (UINT32)(NUM_SAVED_FRAMES - 1));
 
 		if(thread == ProfiledThread::Core)
 		{
@@ -69,6 +69,6 @@ namespace bs
 
 	ProfilingManager& gProfiler()
 	{
-		return ProfilingManager::instance();
+		return ProfilingManager::Instance();
 	}
 }

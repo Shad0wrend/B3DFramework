@@ -22,30 +22,30 @@ namespace bs
 
 	void ScriptSerializableObject::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_CreateInstance", (void*)&ScriptSerializableObject::internal_createInstance);
-		metaData.scriptClass->addInternalCall("Internal_GetBaseClass", (void*)&ScriptSerializableObject::internal_getBaseClass);
+		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptSerializableObject::InternalCreateInstance);
+		metaData.scriptClass->AddInternalCall("Internal_GetBaseClass", (void*)&ScriptSerializableObject::InternalGetBaseClass);
 
-		FieldsField = metaData.scriptClass->getField("_fields");
+		FieldsField = metaData.scriptClass->GetField("_fields");
 	}
 
-	MonoObject* ScriptSerializableObject::create(const ScriptSerializableProperty* native, MonoObject* managed,
+	MonoObject* ScriptSerializableObject::Create(const ScriptSerializableProperty* native, MonoObject* managed,
 		MonoReflectionType* reflType)
 	{
 		void* params[2] = { reflType, managed };
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("Type,SerializableProperty", params);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("Type,SerializableProperty", params);
 
 		return managedInstance;
 	}
 
-	MonoObject* ScriptSerializableObject::create(MonoObject* managed, MonoReflectionType* reflType)
+	MonoObject* ScriptSerializableObject::Create(MonoObject* managed, MonoReflectionType* reflType)
 	{
 		void* params[2] = { reflType, managed };
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("Type,object", params);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("Type,object", params);
 
 		return managedInstance;
 	}
 
-	void ScriptSerializableObject::internal_createInstance(MonoObject* instance, MonoReflectionType* type)
+	void ScriptSerializableObject::InternalCreateInstance(MonoObject* instance, MonoReflectionType* type)
 	{
 		::MonoClass* monoClass = MonoUtil::getClass(type);
 
@@ -54,21 +54,21 @@ namespace bs
 		MonoUtil::getClassName(monoClass, elementNs, elementTypeName);
 
 		SPtr<ManagedSerializableObjectInfo> objInfo;
-		ScriptAssemblyManager::instance().getSerializableObjectInfo(elementNs, elementTypeName, objInfo);
+		ScriptAssemblyManager::Instance().GetSerializableObjectInfo(elementNs, elementTypeName, objInfo);
 
-		createInternal(instance, objInfo);
+		CreateInternal(instance, objInfo);
 	}
 
-	MonoObject* ScriptSerializableObject::internal_getBaseClass(ScriptSerializableObject* thisPtr, MonoObject* owningObject)
+	MonoObject* ScriptSerializableObject::InternalGetBaseClass(ScriptSerializableObject* thisPtr, MonoObject* owningObject)
 	{
 		if(!thisPtr->mObjInfo->mBaseClass)
 			return nullptr;
 
 		MonoReflectionType* reflType = MonoUtil::getType(thisPtr->mObjInfo->mBaseClass->mMonoClass->GetInternalClassInternal());
-		return create(owningObject, reflType);
+		return Create(owningObject, reflType);
 	}
 
-	ScriptSerializableObject* ScriptSerializableObject::createInternal(MonoObject* instance, const SPtr<ManagedSerializableObjectInfo>& objInfo)
+	ScriptSerializableObject* ScriptSerializableObject::CreateInternal(MonoObject* instance, const SPtr<ManagedSerializableObjectInfo>& objInfo)
 	{
 		ScriptSerializableObject* nativeInstance = new (bs_alloc<ScriptSerializableObject>()) ScriptSerializableObject(instance, objInfo);
 
@@ -97,7 +97,7 @@ namespace bs
 		UINT32 i = 0;
 		for (auto& field : sortedFields)
 		{
-			MonoObject* fieldManagedInstance = ScriptSerializableField::create(instance, field);
+			MonoObject* fieldManagedInstance = ScriptSerializableField::Create(instance, field);
 
 			scriptArray.set(i, fieldManagedInstance);
 			i++;

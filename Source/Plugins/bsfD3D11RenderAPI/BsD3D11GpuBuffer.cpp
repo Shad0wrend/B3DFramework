@@ -28,21 +28,21 @@ namespace bs { namespace ct
 
 	D3D11GpuBuffer::~D3D11GpuBuffer()
 	{
-		clearBufferViews();
+		ClearBufferViews();
 	}
 
-	void D3D11GpuBuffer::initialize()
+	void D3D11GpuBuffer::Initialize()
 	{
-		const GpuBufferProperties& props = getProperties();
+		const GpuBufferProperties& props = GetProperties();
 		mBufferDeleter = &deleteBuffer;
 
 		// Create a new buffer if not wrapping an external one
 		if(!mBuffer)
 		{
 			D3D11HardwareBuffer::BufferType bufferType;
-			D3D11RenderAPI* rapi = static_cast<D3D11RenderAPI*>(D3D11RenderAPI::instancePtr());
+			D3D11RenderAPI* rapi = static_cast<D3D11RenderAPI*>(D3D11RenderAPI::InstancePtr());
 
-			switch (props.getType())
+			switch (props.GetType())
 			{
 			case GBT_STANDARD:
 				bufferType = D3D11HardwareBuffer::BT_STANDARD;
@@ -54,7 +54,7 @@ namespace bs { namespace ct
 				bufferType = D3D11HardwareBuffer::BT_INDIRECTARGUMENT;
 				break;
 			default:
-				BS_EXCEPT(InvalidParametersException, "Unsupported buffer type " + toString(props.getType()));
+				BS_EXCEPT(InvalidParametersException, "Unsupported buffer type " + toString(props.GetType()));
 			}
 
 			mBuffer = bs_pool_new<D3D11HardwareBuffer>(bufferType, props.getUsage(), props.getElementCount(),
@@ -73,12 +73,12 @@ namespace bs { namespace ct
 		GpuBuffer::initialize();
 	}
 
-	ID3D11Buffer* D3D11GpuBuffer::getDX11Buffer() const
+	ID3D11Buffer* D3D11GpuBuffer::GetDX11Buffer() const
 	{
 		return static_cast<D3D11HardwareBuffer*>(mBuffer)->getD3DBuffer();
 	}
 
-	GpuBufferView* D3D11GpuBuffer::requestView(D3D11GpuBuffer* buffer, UINT32 firstElement, UINT32 numElements,
+	GpuBufferView* D3D11GpuBuffer::RequestView(D3D11GpuBuffer* buffer, UINT32 firstElement, UINT32 numElements,
 		GpuViewUsage usage)
 	{
 		const auto& props = buffer->getProperties();
@@ -105,7 +105,7 @@ namespace bs { namespace ct
 		return iterFind->second->view;
 	}
 
-	void D3D11GpuBuffer::releaseView(GpuBufferView* view)
+	void D3D11GpuBuffer::ReleaseView(GpuBufferView* view)
 	{
 		D3D11GpuBuffer* buffer = view->getBuffer();
 
@@ -130,7 +130,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	void D3D11GpuBuffer::clearBufferViews()
+	void D3D11GpuBuffer::ClearBufferViews()
 	{
 		for (auto iter = mBufferViews.begin(); iter != mBufferViews.end(); ++iter)
 		{
@@ -143,12 +143,12 @@ namespace bs { namespace ct
 		mBufferViews.clear();
 	}
 
-	ID3D11ShaderResourceView* D3D11GpuBuffer::getSRV() const
+	ID3D11ShaderResourceView* D3D11GpuBuffer::GetSrv() const
 	{
 		return mBufferView->getSRV();
 	}
 
-	ID3D11UnorderedAccessView* D3D11GpuBuffer::getUAV() const
+	ID3D11UnorderedAccessView* D3D11GpuBuffer::GetUav() const
 	{
 		return mBufferView->getUAV();
 	}

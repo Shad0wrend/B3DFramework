@@ -15,14 +15,14 @@ namespace bs { namespace ct
 	class GLSLProgramFactory : public GpuProgramFactory
 	{
 	public:
-		/** @copydoc GpuProgramFactory::create(const GPU_PROGRAM_DESC&, GpuDeviceFlags) */
-		SPtr<GpuProgram> create(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT) override;
+		/** @copydoc GpuProgramFactory::Create(const GPU_PROGRAM_DESC&, GpuDeviceFlags) */
+		SPtr<GpuProgram> Create(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT) ;
 
-		/** @copydoc GpuProgramFactory::create(GpuProgramType, GpuDeviceFlags) */
-		SPtr<GpuProgram> create(GpuProgramType type, GpuDeviceFlags deviceMask = GDF_DEFAULT) override;
+		/** @copydoc GpuProgramFactory::Create(GpuProgramType, GpuDeviceFlags) */
+		SPtr<GpuProgram> Create(GpuProgramType type, GpuDeviceFlags deviceMask = GDF_DEFAULT) ;
 
 		/** @copydoc GpuProgramFactory::compileBytecode(const GPU_PROGRAM_DESC&) */
-		SPtr<GpuProgramBytecode> compileBytecode(const GPU_PROGRAM_DESC& desc) override;
+		SPtr<GpuProgramBytecode> CompileBytecode(const GPU_PROGRAM_DESC& desc) ;
 	protected:
 		static const String LANGUAGE_NAME;
 	};

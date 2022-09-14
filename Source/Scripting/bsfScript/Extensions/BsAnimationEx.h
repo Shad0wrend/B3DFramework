@@ -18,32 +18,32 @@ namespace bs
 	{
 	public:
 		BS_SCRIPT_EXPORT(e:AnimationCurves,n:Position,pr:getter)
-		static Vector<TNamedAnimationCurve<Vector3>> getPositionCurves(const SPtr<AnimationCurves>& thisPtr);
+		static Vector<TNamedAnimationCurve<Vector3>> GetPositionCurves(const SPtr<AnimationCurves>& thisPtr);
 
 		/** Curves for animating scene object's position. */
 		BS_SCRIPT_EXPORT(e:AnimationCurves,n:Position,pr:setter)
-		static void setPositionCurves(const SPtr<AnimationCurves>& thisPtr, const Vector<TNamedAnimationCurve<Vector3>>& value);
+		static void SetPositionCurves(const SPtr<AnimationCurves>& thisPtr, const Vector<TNamedAnimationCurve<Vector3>>& value);
 
 		BS_SCRIPT_EXPORT(e:AnimationCurves,n:Rotation,pr:getter)
-		static Vector<TNamedAnimationCurve<Quaternion>> getRotationCurves(const SPtr<AnimationCurves>& thisPtr);
+		static Vector<TNamedAnimationCurve<Quaternion>> GetRotationCurves(const SPtr<AnimationCurves>& thisPtr);
 
 		/** Curves for animating scene object's rotation. */
 		BS_SCRIPT_EXPORT(e:AnimationCurves,n:Rotation,pr:setter)
-		static void setRotationCurves(const SPtr<AnimationCurves>& thisPtr, const Vector<TNamedAnimationCurve<Quaternion>>& value);
+		static void SetRotationCurves(const SPtr<AnimationCurves>& thisPtr, const Vector<TNamedAnimationCurve<Quaternion>>& value);
 
 		BS_SCRIPT_EXPORT(e:AnimationCurves,n:Scale,pr:getter)
-		static Vector<TNamedAnimationCurve<Vector3>> getScaleCurves(const SPtr<AnimationCurves>& thisPtr);
+		static Vector<TNamedAnimationCurve<Vector3>> GetScaleCurves(const SPtr<AnimationCurves>& thisPtr);
 
 		/** Curves for animating scene object's scale. */
 		BS_SCRIPT_EXPORT(e:AnimationCurves,n:Scale,pr:setter)
-		static void setScaleCurves(const SPtr<AnimationCurves>& thisPtr, const Vector<TNamedAnimationCurve<Vector3>>& value);
+		static void SetScaleCurves(const SPtr<AnimationCurves>& thisPtr, const Vector<TNamedAnimationCurve<Vector3>>& value);
 
 		BS_SCRIPT_EXPORT(e:AnimationCurves,n:Generic,pr:getter)
-		static Vector<TNamedAnimationCurve<float>> getGenericCurves(const SPtr<AnimationCurves>& thisPtr);
+		static Vector<TNamedAnimationCurve<float>> GetGenericCurves(const SPtr<AnimationCurves>& thisPtr);
 
 		/** Curves for animating generic component properties. */
 		BS_SCRIPT_EXPORT(e:AnimationCurves,n:Generic,pr:setter)
-		static void setGenericCurves(const SPtr<AnimationCurves>& thisPtr, const Vector<TNamedAnimationCurve<float>>& value);
+		static void SetGenericCurves(const SPtr<AnimationCurves>& thisPtr, const Vector<TNamedAnimationCurve<float>>& value);
 	};
 
 	/** Extension class for RootMotion, for adding additional functionality for the script version of the class. */
@@ -52,11 +52,11 @@ namespace bs
 	public:
 		/** Animation curve representing the movement of the root bone. */
 		BS_SCRIPT_EXPORT(e:RootMotion,n:Position,pr:getter)
-		static TAnimationCurve<Vector3> getPositionCurves(const SPtr<RootMotion>& thisPtr);
+		static TAnimationCurve<Vector3> GetPositionCurves(const SPtr<RootMotion>& thisPtr);
 
 		/** Animation curve representing the rotation of the root bone. */
 		BS_SCRIPT_EXPORT(e:RootMotion,n:Rotation,pr:getter)
-		static TAnimationCurve<Quaternion> getRotationCurves(const SPtr<RootMotion>& thisPtr);
+		static TAnimationCurve<Quaternion> GetRotationCurves(const SPtr<RootMotion>& thisPtr);
 	};
 
 	/** @endcond */

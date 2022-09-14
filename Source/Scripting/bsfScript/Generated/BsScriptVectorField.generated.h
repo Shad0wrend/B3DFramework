@@ -17,11 +17,11 @@ namespace bs
 
 		ScriptVectorField(MonoObject* managedInstance, const ResourceHandle<VectorField>& value);
 
-		static MonoObject* createInstance();
+		static MonoObject* CreateInstance();
 
 	private:
-		static MonoObject* Internal_getRef(ScriptVectorField* thisPtr);
+		static MonoObject* InternalGetRef(ScriptVectorField* thisPtr);
 
-		static void Internal_create(MonoObject* managedInstance, __VECTOR_FIELD_DESCInterop* desc, MonoArray* values);
+		static void InternalCreate(MonoObject* managedInstance, __VECTOR_FIELD_DESCInterop* desc, MonoArray* values);
 	};
 }

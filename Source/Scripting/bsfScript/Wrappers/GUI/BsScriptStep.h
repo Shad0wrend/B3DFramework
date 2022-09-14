@@ -13,7 +13,7 @@ namespace bs
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "Step")
 
-		static MonoField* getStepField() { return stepField; }
+		static MonoField* GetStepField() { return stepField; }
 
 	private:
 		ScriptStep(MonoObject* instance);

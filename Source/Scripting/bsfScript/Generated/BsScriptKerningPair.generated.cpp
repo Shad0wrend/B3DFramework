@@ -14,14 +14,14 @@ namespace bs
 	void ScriptKerningPair::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptKerningPair::box(const KerningPair& value)
+	MonoObject*ScriptKerningPair::Box(const KerningPair& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	KerningPair ScriptKerningPair::unbox(MonoObject* value)
+	KerningPair ScriptKerningPair::Unbox(MonoObject* value)
 	{
-		return *(KerningPair*)MonoUtil::unbox(value);
+		return *(KerningPair*)MonoUtil::Unbox(value);
 	}
 
 }

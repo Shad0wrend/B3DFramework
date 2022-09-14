@@ -26,10 +26,10 @@ namespace bs
 		 *
 		 * @param[in]	typeInfo	Data about the type the property references.
 		 */
-		static MonoObject* create(const SPtr<ManagedSerializableTypeInfo>& typeInfo);
+		static MonoObject* Create(const SPtr<ManagedSerializableTypeInfo>& typeInfo);
 
 		/**	Returns the data about the type the property is referencing. */
-		SPtr<ManagedSerializableTypeInfo> getTypeInfo() const { return mTypeInfo; }
+		SPtr<ManagedSerializableTypeInfo> GetTypeInfo() const { return mTypeInfo; }
 
 		~ScriptSerializableProperty() = default;
 
@@ -41,18 +41,18 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static void internal_CreateInstance(MonoObject* instance, MonoReflectionType* reflType);
+		static void InternalCreateInstance(MonoObject* instance, MonoReflectionType* reflType);
 
-		static MonoObject* internal_createObject(ScriptSerializableProperty* nativeInstance, MonoObject* managedInstance,
+		static MonoObject* InternalCreateObject(ScriptSerializableProperty* nativeInstance, MonoObject* managedInstance,
 			MonoReflectionType* reflType);
-		static MonoObject* internal_createArray(ScriptSerializableProperty* nativeInstance, MonoObject* managedInstance);
-		static MonoObject* internal_createList(ScriptSerializableProperty* nativeInstance, MonoObject* managedInstance);
-		static MonoObject* internal_createDictionary(ScriptSerializableProperty* nativeInstance, MonoObject* managedInstance);
+		static MonoObject* InternalCreateArray(ScriptSerializableProperty* nativeInstance, MonoObject* managedInstance);
+		static MonoObject* InternalCreateList(ScriptSerializableProperty* nativeInstance, MonoObject* managedInstance);
+		static MonoObject* InternalCreateDictionary(ScriptSerializableProperty* nativeInstance, MonoObject* managedInstance);
 
-		static MonoObject* internal_createManagedObjectInstance(ScriptSerializableProperty* nativeInstance);
-		static MonoObject* internal_createManagedArrayInstance(ScriptSerializableProperty* nativeInstance, MonoArray* sizes);
-		static MonoObject* internal_createManagedListInstance(ScriptSerializableProperty* nativeInstance, int size);
-		static MonoObject* internal_createManagedDictionaryInstance(ScriptSerializableProperty* nativeInstance);
+		static MonoObject* InternalCreateManagedObjectInstance(ScriptSerializableProperty* nativeInstance);
+		static MonoObject* InternalCreateManagedArrayInstance(ScriptSerializableProperty* nativeInstance, MonoArray* sizes);
+		static MonoObject* InternalCreateManagedListInstance(ScriptSerializableProperty* nativeInstance, int size);
+		static MonoObject* InternalCreateManagedDictionaryInstance(ScriptSerializableProperty* nativeInstance);
 	};
 
 	/** @} */

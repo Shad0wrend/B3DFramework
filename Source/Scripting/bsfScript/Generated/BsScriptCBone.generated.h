@@ -16,7 +16,7 @@ namespace bs
 		ScriptCBone(MonoObject* managedInstance, const GameObjectHandle<CBone>& value);
 
 	private:
-		static void Internal_setBoneName(ScriptCBone* thisPtr, MonoString* name);
-		static MonoString* Internal_getBoneName(ScriptCBone* thisPtr);
+		static void InternalSetBoneName(ScriptCBone* thisPtr, MonoString* name);
+		static MonoString* InternalGetBoneName(ScriptCBone* thisPtr);
 	};
 }

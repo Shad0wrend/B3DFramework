@@ -27,7 +27,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	bool TPass<Core>::hasBlending() const
+	bool TPass<Core>::HasBlending() const
 	{
 		bool transparent = false;
 
@@ -48,7 +48,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	const GPU_PROGRAM_DESC& TPass<Core>::getProgramDesc(bs::GpuProgramType type) const
+	const GPU_PROGRAM_DESC& TPass<Core>::GetProgramDesc(bs::GpuProgramType type) const
 	{
 		switch(type)
 		{
@@ -69,43 +69,43 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TPass<Core>::createPipelineState()
+	void TPass<Core>::CreatePipelineState()
 	{
 		if (isCompute())
 		{
-			SPtr<GpuProgramType> program = GpuProgramType::create(mData.computeProgramDesc);
-			mComputePipelineState = ComputePipelineStateType::create(program);
+			SPtr<GpuProgramType> program = GpuProgramType::Create(mData.computeProgramDesc);
+			mComputePipelineState = ComputePipelineStateType::Create(program);
 		}
 		else
 		{
 			PipelineStateDescType desc;
 
 			if(!mData.vertexProgramDesc.source.empty())
-				desc.vertexProgram = GpuProgramType::create(mData.vertexProgramDesc);
+				desc.vertexProgram = GpuProgramType::Create(mData.vertexProgramDesc);
 
 			if(!mData.fragmentProgramDesc.source.empty())
-				desc.fragmentProgram = GpuProgramType::create(mData.fragmentProgramDesc);
+				desc.fragmentProgram = GpuProgramType::Create(mData.fragmentProgramDesc);
 
 			if(!mData.geometryProgramDesc.source.empty())
-				desc.geometryProgram = GpuProgramType::create(mData.geometryProgramDesc);
+				desc.geometryProgram = GpuProgramType::Create(mData.geometryProgramDesc);
 
 			if(!mData.hullProgramDesc.source.empty())
-				desc.hullProgram = GpuProgramType::create(mData.hullProgramDesc);
+				desc.hullProgram = GpuProgramType::Create(mData.hullProgramDesc);
 
 			if(!mData.domainProgramDesc.source.empty())
-				desc.domainProgram = GpuProgramType::create(mData.domainProgramDesc);
+				desc.domainProgram = GpuProgramType::Create(mData.domainProgramDesc);
 
-			desc.blendState = BlendStateType::create(mData.blendStateDesc);
-			desc.rasterizerState = RasterizerStateType::create(mData.rasterizerStateDesc);
-			desc.depthStencilState = DepthStencilStateType::create(mData.depthStencilStateDesc);
+			desc.blendState = BlendStateType::Create(mData.blendStateDesc);
+			desc.rasterizerState = RasterizerStateType::Create(mData.rasterizerStateDesc);
+			desc.depthStencilState = DepthStencilStateType::Create(mData.depthStencilStateDesc);
 
-			mGraphicsPipelineState = GraphicsPipelineStateType::create(desc);
+			mGraphicsPipelineState = GraphicsPipelineStateType::Create(desc);
 		}
 	}
 
 	template <bool Core>
 	template <class P>
-	void TPass<Core>::rttiEnumFields(P p)
+	void TPass<Core>::RttiEnumFields(P p)
 	{
 		p(mGraphicsPipelineState);
 		p(mComputePipelineState);
@@ -118,12 +118,12 @@ namespace bs
 		:TPass(desc)
 	{ }
 
-	SPtr<ct::Pass> Pass::getCore() const
+	SPtr<ct::Pass> Pass::GetCore() const
 	{
 		return std::static_pointer_cast<ct::Pass>(mCoreSpecific);
 	}
 
-	SPtr<ct::CoreObject> Pass::createCore() const
+	SPtr<ct::CoreObject> Pass::CreateCore() const
 	{
 		ct::Pass* pass = new (bs_alloc<ct::Pass>()) ct::Pass(mData);
 
@@ -133,7 +133,7 @@ namespace bs
 		return passPtr;
 	}
 
-	void Pass::compile()
+	void Pass::Compile()
 	{
 		if(mComputePipelineState || mGraphicsPipelineState)
 			return; // Already compiled
@@ -147,7 +147,7 @@ namespace bs
 		CoreObject::syncToCore();
 	}
 
-	CoreSyncData Pass::syncToCore(FrameAlloc* allocator)
+	CoreSyncData Pass::SyncToCore(FrameAlloc* allocator)
 	{
 		UINT32 size = csync_size(*this);
 		UINT8* data = allocator->alloc(size);
@@ -158,7 +158,7 @@ namespace bs
 		return CoreSyncData(data, size);
 	}
 
-	SPtr<Pass> Pass::create(const PASS_DESC& desc)
+	SPtr<Pass> Pass::Create(const PASS_DESC& desc)
 	{
 		Pass* newPass = new (bs_alloc<Pass>()) Pass(desc);
 		SPtr<Pass> newPassPtr = bs_core_ptr<Pass>(newPass);
@@ -168,7 +168,7 @@ namespace bs
 		return newPassPtr;
 	}
 
-	SPtr<Pass> Pass::createEmpty()
+	SPtr<Pass> Pass::CreateEmpty()
 	{
 		Pass* newPass = new (bs_alloc<Pass>()) Pass();
 		SPtr<Pass> newPassPtr = bs_core_ptr<Pass>(newPass);
@@ -177,14 +177,14 @@ namespace bs
 		return newPassPtr;
 	}
 
-	RTTITypeBase* Pass::getRTTIStatic()
+	RTTITypeBase* Pass::GetRttiStatic()
 	{
-		return PassRTTI::instance();
+		return PassRTTI::Instance();
 	}
 
-	RTTITypeBase* Pass::getRTTI() const
+	RTTITypeBase* Pass::GetRtti() const
 	{
-		return Pass::getRTTIStatic();
+		return Pass::GetRttiStatic();
 	}
 
 	namespace ct
@@ -193,7 +193,7 @@ namespace bs
 		:TPass(desc)
 	{ }
 
-	void Pass::compile()
+	void Pass::Compile()
 	{
 		if(mComputePipelineState || mGraphicsPipelineState)
 			return; // Already compiled
@@ -201,13 +201,13 @@ namespace bs
 		createPipelineState();
 	}
 
-	void Pass::syncToCore(const CoreSyncData& data)
+	void Pass::SyncToCore(const CoreSyncData& data)
 	{
 		Bitstream stream(data.getBuffer(), data.getBufferSize());
 		csync_read(*this, stream);
 	}
 
-	SPtr<Pass> Pass::create(const PASS_DESC& desc)
+	SPtr<Pass> Pass::Create(const PASS_DESC& desc)
 	{
 		Pass* newPass = new (bs_alloc<Pass>()) Pass(desc);
 		SPtr<Pass> newPassPtr = bs_shared_ptr<Pass>(newPass);

@@ -16,13 +16,13 @@ namespace bs { namespace ct
 	{
 	public:
 		/** @copydoc QueryManager::createEventQuery */
-		SPtr<EventQuery> createEventQuery(UINT32 deviceIdx = 0) const override;
+		SPtr<EventQuery> CreateEventQuery(UINT32 deviceIdx = 0) const ;
 
 		/** @copydoc QueryManager::createTimerQuery */
-		SPtr<TimerQuery> createTimerQuery(UINT32 deviceIdx = 0) const override;
+		SPtr<TimerQuery> CreateTimerQuery(UINT32 deviceIdx = 0) const ;
 
 		/** @copydoc QueryManager::createOcclusionQuery */
-		SPtr<OcclusionQuery> createOcclusionQuery(bool binary, UINT32 deviceIdx = 0) const override;
+		SPtr<OcclusionQuery> CreateOcclusionQuery(bool binary, UINT32 deviceIdx = 0) const ;
 	};
 
 	/** @} */

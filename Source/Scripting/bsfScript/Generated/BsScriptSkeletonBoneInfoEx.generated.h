@@ -21,10 +21,10 @@ namespace bs
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "BoneInfo")
 
-		static MonoObject* box(const __SkeletonBoneInfoExInterop& value);
-		static __SkeletonBoneInfoExInterop unbox(MonoObject* value);
-		static SkeletonBoneInfoEx fromInterop(const __SkeletonBoneInfoExInterop& value);
-		static __SkeletonBoneInfoExInterop toInterop(const SkeletonBoneInfoEx& value);
+		static MonoObject* Box(const __SkeletonBoneInfoExInterop& value);
+		static __SkeletonBoneInfoExInterop Unbox(MonoObject* value);
+		static SkeletonBoneInfoEx FromInterop(const __SkeletonBoneInfoExInterop& value);
+		static __SkeletonBoneInfoExInterop ToInterop(const SkeletonBoneInfoEx& value);
 
 	private:
 		ScriptSkeletonBoneInfoEx(MonoObject* managedInstance);

@@ -48,7 +48,7 @@ namespace bs
 		 * Converts a set of input points into a set of tetrahedrons generated using Delaunay tetrahedralization
 		 * algorithm. Minimum of 4 points must be provided in order for the process to work.
 		 */
-		static TetrahedronVolume tetrahedralize(const Vector<Vector3>& points);
+		static TetrahedronVolume Tetrahedralize(const Vector<Vector3>& points);
 	};
 
 	/** @} */

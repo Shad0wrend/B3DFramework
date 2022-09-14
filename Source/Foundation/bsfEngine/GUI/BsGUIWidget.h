@@ -88,19 +88,19 @@ namespace bs
 		GUIDrawGroups(GUIWidget* parentWidget);
 		
 		/** Iterates over all the render elements in the GUI elements and adds them to suitable draw groups. */
-		void add(GUIElement* element);
+		void Add(GUIElement* element);
 
 		/** Removes all render elements in the provided GUI element from their current set of draw groups. */
-		void remove(GUIElement* element);
+		void Remove(GUIElement* element);
 
 		/** Rebuilds any dirty internal data and returns the data structure required for updating the GUI renderer. */
-		GUIDrawGroupRenderDataUpdate rebuildDirty(bool forceRebuildMeshes);
+		GUIDrawGroupRenderDataUpdate RebuildDirty(bool forceRebuildMeshes);
 
 		/** Notifies the system that element's contents were marked as dirty. */
-		void notifyContentDirty(GUIElement* element);
+		void NotifyContentDirty(GUIElement* element);
 
 		/** Notifies the system that element's mesh was marked as dirty. */
-		void notifyMeshDirty(GUIElement* element);
+		void NotifyMeshDirty(GUIElement* element);
 		
 	private:
 		/** Single render element in a GUIDrawGroup */
@@ -150,37 +150,37 @@ namespace bs
 		};
 
 		/** Splits the provided draw group at the specified depth. Returns the second half of the group. */
-		GUIDrawGroup& split(UINT32 groupIdx, UINT32 depth);
+		GUIDrawGroup& Split(UINT32 groupIdx, UINT32 depth);
 
 		/** Rebuilds the GUI element meshes. */
-		void rebuildMeshes();
+		void RebuildMeshes();
 
 		/**
 		 * Adds a specific render element of a GUI element to the specified draw group. Caller is responsible for
 		 * ensuring the element is a valid match for the group.
 		 */
-		void add(GUIGroupElement& element, UINT32 renderElementIdx, UINT32 groupIdx);
+		void Add(GUIGroupElement& element, UINT32 renderElementIdx, UINT32 groupIdx);
 
 		/** Adds a specific render element of a GUI element and adds it to a suitable draw group. */
-		void add(GUIGroupElement& element, UINT32 renderElementIdx);
+		void Add(GUIGroupElement& element, UINT32 renderElementIdx);
 
 		/**
 		 * Removes a specific render element in the provided GUI element from the provided draw group. Caller is
 		 * responsible for ensuring the provided draw group is the element's current draw group.
 		 */
-		void remove(GUIGroupElement& element, UINT32 renderElementIdx, UINT32 groupIdx);
+		void Remove(GUIGroupElement& element, UINT32 renderElementIdx, UINT32 groupIdx);
 
 		/** Removes a specific render element in the provided GUI element from their current draw group. */
-		void remove(GUIGroupElement& element, UINT32 renderElementIdx);
+		void Remove(GUIGroupElement& element, UINT32 renderElementIdx);
 
 		/** Builds a structure with information required for rendering the provided mesh. */
-		static GUIMeshRenderData getRenderData(const GUIMesh& guiMesh);
+		static GUIMeshRenderData GetRenderData(const GUIMesh& guiMesh);
 
 		/** Builds a structure with information required for rendering the provided draw group. */
-		static GUIDrawGroupRenderData getRenderData(const GUIDrawGroup& drawGroup);
+		static GUIDrawGroupRenderData GetRenderData(const GUIDrawGroup& drawGroup);
 		
 		/** Calculates the bounds of all visible elements in the draw group. */
-		static Rect2I calculateBounds(GUIDrawGroup& group);
+		static Rect2I CalculateBounds(GUIDrawGroup& group);
 
 		Vector<GUIDrawGroup> mDrawGroups;
 		UnorderedMap<GUIElement*, GUIGroupElement> mElements;
@@ -211,69 +211,69 @@ namespace bs
 		virtual ~GUIWidget();
 
 		/** Sets the skin used for all GUI elements in the widget. This will update the look of all current elements. */
-		void setSkin(const HGUISkin& skin);
+		void SetSkin(const HGUISkin& skin);
 
 		/**	Returns the currently active GUI skin. */
-		const GUISkin& getSkin() const;
+		const GUISkin& GetSkin() const;
 
 		/**	Returns the currently active GUI skin resource. */
-		const HGUISkin& getSkinResource() const { return mSkin; }
+		const HGUISkin& GetSkinResource() const { return mSkin; }
 
 		/** Returns the root GUI panel for the widget. */
-		GUIPanel* getPanel() const { return mPanel; }
+		GUIPanel* GetPanel() const { return mPanel; }
 
 		/**
 		 * Returns the depth to render the widget at. If two widgets overlap the widget with the lower depth will be
 		 * rendered in front.
 		 */
-		UINT8 getDepth() const { return mDepth; }
+		UINT8 GetDepth() const { return mDepth; }
 
 		/**
 		 * Changes the depth to render the widget at. If two widgets overlap the widget with the lower depth will be
 		 * rendered in front.
 		 */
-		void setDepth(UINT8 depth);
+		void SetDepth(UINT8 depth);
 
 		/**
 		 * Checks are the specified coordinates within widget bounds. Coordinates should be relative to the parent window.
 		 */
-		bool inBounds(const Vector2I& position) const;
+		bool InBounds(const Vector2I& position) const;
 
 		/** Returns bounds of the widget, relative to the parent window. */
-		const Rect2I& getBounds() const { return mBounds; }
+		const Rect2I& GetBounds() const { return mBounds; }
 
 		/**
 		 * Rebuilds any dirty data required for GUI element rendering and returns the data required for updating the GUI
 		 * renderer.
 		 */
-		GUIDrawGroupRenderDataUpdate rebuildDirtyRenderData();
+		GUIDrawGroupRenderDataUpdate RebuildDirtyRenderData();
 
 		/**	Returns the viewport that this widget will be rendered on. */
-		Viewport* getTarget() const;
+		Viewport* GetTarget() const;
 
 		/**	Returns the camera this widget is being rendered to. */
-		SPtr<Camera> getCamera() const { return mCamera; }
+		SPtr<Camera> GetCamera() const { return mCamera; }
 
 		/** Changes to which camera does the widget output its contents. */
-		void setCamera(const SPtr<Camera>& camera);
+		void SetCamera(const SPtr<Camera>& camera);
 
 		/**	Returns a list of all elements parented to this widget. */
-		const Vector<GUIElement*>& getElements() const { return mElements; }
+		const Vector<GUIElement*>& GetElements() const { return mElements; }
 
 		/** Returns the world transform that all GUI elements beloning to this widget will be transformed by. */
-		const Matrix4 getWorldTfrm() const { return mTransform; }
+		const Matrix4 GetWorldTfrm() const { return mTransform; }
 
 		/**	Checks whether the widget should be rendered or not. */
-		bool getIsActive() const { return mIsActive; }
+		bool GetIsActive() const { return mIsActive; }
 
 		/**	Sets whether the widget should be rendered or not. */
-		void setIsActive(bool active);
+		void SetIsActive(bool active);
 
 		/**	Creates a new GUI widget that will be rendered on the provided camera. */
-		static SPtr<GUIWidget> create(const SPtr<Camera>& camera);
+		static SPtr<GUIWidget> Create(const SPtr<Camera>& camera);
 
 		/**	Creates a new GUI widget that will be rendered on the provided camera. */
-		static SPtr<GUIWidget> create(const HCamera& camera);
+		static SPtr<GUIWidget> Create(const HCamera& camera);
 
 		/**	Triggered when the widget's viewport size changes. */
 		Event<void()> onOwnerTargetResized;
@@ -350,10 +350,10 @@ namespace bs
 		GUIWidget(const HCamera& camera);
 
 		/**	Common code for constructors. */
-		void construct(const SPtr<Camera>& camera);
+		void Construct(const SPtr<Camera>& camera);
 
 		/**	Called when the parent window gained or lost focus. */
-		virtual void ownerWindowFocusChanged();
+		virtual void OwnerWindowFocusChanged();
 	private:
 		struct GUIGroupElement
 		{
@@ -378,10 +378,10 @@ namespace bs
 		};
 		
 		/**	Calculates widget bounds using the bounds of all child elements. */
-		void updateBounds() const;
+		void UpdateBounds() const;
 
 		/**	Updates the size of the primary GUI panel based on the viewport. */
-		void updateRootPanel();
+		void UpdateRootPanel();
 
 		SPtr<Camera> mCamera;
 		Vector<GUIElement*> mElements;

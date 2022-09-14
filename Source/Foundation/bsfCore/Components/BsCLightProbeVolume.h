@@ -26,51 +26,51 @@ namespace bs
 
 		/** @copydoc LightProbeVolume::addProbe() */
 		BS_SCRIPT_EXPORT()
-		UINT32 addProbe(const Vector3& position) { return mInternal->addProbe(position); }
+		UINT32 AddProbe(const Vector3& position) { return mInternal->AddProbe(position); }
 
 		/** @copydoc LightProbeVolume::setProbePosition() */
 		BS_SCRIPT_EXPORT()
-		void setProbePosition(UINT32 handle, const Vector3& position) { mInternal->setProbePosition(handle, position); }
+		void SetProbePosition(UINT32 handle, const Vector3& position) { mInternal->SetProbePosition(handle, position); }
 
 		/** @copydoc LightProbeVolume::getProbePosition() */
 		BS_SCRIPT_EXPORT()
-		Vector3 getProbePosition(UINT32 handle) const { return mInternal->getProbePosition(handle); }
+		Vector3 GetProbePosition(UINT32 handle) const { return mInternal->GetProbePosition(handle); }
 
 		/** @copydoc LightProbeVolume::removeProbe() */
 		BS_SCRIPT_EXPORT()
-		void removeProbe(UINT32 handle) { mInternal->removeProbe(handle); }
+		void RemoveProbe(UINT32 handle) { mInternal->RemoveProbe(handle); }
 
 		/** @copydoc LightProbeVolume::getProbes() */
 		BS_SCRIPT_EXPORT()
-		Vector<LightProbeInfo> getProbes() const;
+		Vector<LightProbeInfo> GetProbes() const;
 
 		/** @copydoc LightProbeVolume::renderProbe() */
 		BS_SCRIPT_EXPORT()
-		void renderProbe(UINT32 handle);
+		void RenderProbe(UINT32 handle);
 
 		/** @copydoc LightProbeVolume::renderProbes() */
 		BS_SCRIPT_EXPORT()
-		void renderProbes();
+		void RenderProbes();
 
 		/** @copydoc LightProbeVolume::resize() */
 		BS_SCRIPT_EXPORT()		
-		void resize(const AABox& volume, const Vector3I& cellCount = Vector3I(1, 1, 1)) { mInternal->resize(volume, cellCount); }
+		void Resize(const AABox& volume, const Vector3I& cellCount = Vector3I(1, 1, 1)) { mInternal->Resize(volume, cellCount); }
 
 		/** @copydoc LightProbeVolume::clip() */
 		BS_SCRIPT_EXPORT()
-		void clip() { mInternal->clip(); }
+		void Clip() { mInternal->Clip(); }
 
 		/** @copydoc LightProbeVolume::reset() */
 		BS_SCRIPT_EXPORT()
-		void reset() { mInternal->reset(); }
+		void Reset() { mInternal->Reset(); }
 
 		/** @copydoc LightProbeVolume::getGridVolume() */
 		BS_SCRIPT_EXPORT(n:GridVolume,pr:getter)
-		const AABox& getGridVolume() const { return mVolume; }
+		const AABox& GetGridVolume() const { return mVolume; }
 
 		/** @copydoc LightProbeVolume::getCellCount() */
 		BS_SCRIPT_EXPORT(n:CellCount,pr:getter)
-		const Vector3I& getCellCount() const { return mCellCount; }
+		const Vector3I& GetCellCount() const { return mCellCount; }
 
 		/** @name Internal
 		 *  @{
@@ -95,21 +95,21 @@ namespace bs
 		friend class SceneObject;
 
 		/** @copydoc Component::onInitialized */
-		void onInitialized() override;
+		void OnInitialized() ;
 
 		/** @copydoc Component::onDestroyed */
-		void onDestroyed() override;
+		void OnDestroyed() ;
 
 		/** @copydoc Component::update */
-		void update() override { }
+		void Update() { }
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
 		/************************************************************************/
 	public:
 		friend class CLightProbeVolumeRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const ;
 
 	protected:
 		CLightProbeVolume(); // Serialization only

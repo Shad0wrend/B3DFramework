@@ -25,58 +25,58 @@ namespace bs
 
 	void ScriptSerializableField::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_CreateProperty", (void*)&ScriptSerializableField::internal_createProperty);
-		metaData.scriptClass->addInternalCall("Internal_GetValue", (void*)&ScriptSerializableField::internal_getValue);
-		metaData.scriptClass->addInternalCall("Internal_SetValue", (void*)&ScriptSerializableField::internal_setValue);
-		metaData.scriptClass->addInternalCall("Internal_GetStyle", (void*)&ScriptSerializableField::internal_getStyle);
+		metaData.scriptClass->AddInternalCall("Internal_CreateProperty", (void*)&ScriptSerializableField::InternalCreateProperty);
+		metaData.scriptClass->AddInternalCall("Internal_GetValue", (void*)&ScriptSerializableField::InternalGetValue);
+		metaData.scriptClass->AddInternalCall("Internal_SetValue", (void*)&ScriptSerializableField::InternalSetValue);
+		metaData.scriptClass->AddInternalCall("Internal_GetStyle", (void*)&ScriptSerializableField::InternalGetStyle);
 	}
 
-	MonoObject* ScriptSerializableField::create(MonoObject* parentObject, const SPtr<ManagedSerializableMemberInfo>& fieldInfo)
+	MonoObject* ScriptSerializableField::Create(MonoObject* parentObject, const SPtr<ManagedSerializableMemberInfo>& fieldInfo)
 	{
-		MonoString* monoStrName = MonoUtil::wstringToMono(toWString(fieldInfo->mName));
+		MonoString* monoStrName = MonoUtil::WstringToMono(toWString(fieldInfo->mName));
 		MonoReflectionType* internalType = MonoUtil::getType(fieldInfo->mTypeInfo->getMonoClass());
 		UINT32 fieldFlags = (UINT32)fieldInfo->mFlags;
 
 		void* params[4] = { parentObject, monoStrName, &fieldFlags, internalType };
-		MonoObject* managedInstance = metaData.scriptClass->createInstance(params, 4);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance(params, 4);
 
 		new (bs_alloc<ScriptSerializableField>()) ScriptSerializableField(managedInstance, fieldInfo);
 		return managedInstance;
 	}
 
-	MonoObject* ScriptSerializableField::internal_createProperty(ScriptSerializableField* nativeInstance)
+	MonoObject* ScriptSerializableField::InternalCreateProperty(ScriptSerializableField* nativeInstance)
 	{
-		return ScriptSerializableProperty::create(nativeInstance->mFieldInfo->mTypeInfo);
+		return ScriptSerializableProperty::Create(nativeInstance->mFieldInfo->mTypeInfo);
 	}
 
-	MonoObject* ScriptSerializableField::internal_getValue(ScriptSerializableField* nativeInstance, MonoObject* instance)
+	MonoObject* ScriptSerializableField::InternalGetValue(ScriptSerializableField* nativeInstance, MonoObject* instance)
 	{
-		return nativeInstance->mFieldInfo->getValue(instance);
+		return nativeInstance->mFieldInfo->GetValue(instance);
 	}
 
-	void ScriptSerializableField::internal_setValue(ScriptSerializableField* nativeInstance, MonoObject* instance, MonoObject* value)
+	void ScriptSerializableField::InternalSetValue(ScriptSerializableField* nativeInstance, MonoObject* instance, MonoObject* value)
 	{
-		if (value != nullptr && MonoUtil::isValueType((MonoUtil::getClass(value))))
+		if (value != nullptr && MonoUtil::IsValueType((MonoUtil::GetClass(value))))
 		{
-			void* rawValue = MonoUtil::unbox(value);
-			nativeInstance->mFieldInfo->setValue(instance, rawValue);
+			void* rawValue = MonoUtil::Unbox(value);
+			nativeInstance->mFieldInfo->SetValue(instance, rawValue);
 		}
 		else
-			nativeInstance->mFieldInfo->setValue(instance, value);
+			nativeInstance->mFieldInfo->SetValue(instance, value);
 	}
 
-	void ScriptSerializableField::internal_getStyle(ScriptSerializableField* nativeInstance, SerializableMemberStyle* style)
+	void ScriptSerializableField::InternalGetStyle(ScriptSerializableField* nativeInstance, SerializableMemberStyle* style)
 	{
 		SPtr<ManagedSerializableMemberInfo> fieldInfo = nativeInstance->mFieldInfo;
 		SerializableMemberStyle interopStyle;
 
 		ScriptFieldFlags fieldFlags = fieldInfo->mFlags;
-		if (fieldFlags.isSet(ScriptFieldFlag::Range))
+		if (fieldFlags.IsSet(ScriptFieldFlag::Range))
 		{
-			MonoClass* range = ScriptAssemblyManager::instance().getBuiltinClasses().rangeAttribute;
+			MonoClass* range = ScriptAssemblyManager::Instance().GetBuiltinClasses().rangeAttribute;
 			if (range != nullptr)
 			{
-				MonoObject* attrib = fieldInfo->getAttribute(range);
+				MonoObject* attrib = fieldInfo->GetAttribute(range);
 
 				ScriptRange::getMinRangeField()->get(attrib, &interopStyle.rangeMin);
 				ScriptRange::getMaxRangeField()->get(attrib, &interopStyle.rangeMax);
@@ -86,7 +86,7 @@ namespace bs
 
 		if (fieldFlags.isSet(ScriptFieldFlag::Step))
 		{
-			MonoClass* step = ScriptAssemblyManager::instance().getBuiltinClasses().stepAttribute;
+			MonoClass* step = ScriptAssemblyManager::Instance().getBuiltinClasses().stepAttribute;
 			if (step != nullptr)
 			{
 				MonoObject* attrib = fieldInfo->getAttribute(step);
@@ -96,17 +96,17 @@ namespace bs
 
 		if (fieldFlags.isSet(ScriptFieldFlag::Category))
 		{
-			MonoClass* category = ScriptAssemblyManager::instance().getBuiltinClasses().categoryAttribute;
+			MonoClass* category = ScriptAssemblyManager::Instance().getBuiltinClasses().categoryAttribute;
 			if (category != nullptr)
 			{
 				MonoObject* attrib = fieldInfo->getAttribute(category);
-				ScriptCategory::getNameField()->get(attrib, &interopStyle.categoryName);
+				ScriptCategory::GetNameField()->get(attrib, &interopStyle.categoryName);
 			}
 		}
 
 		if (fieldFlags.isSet(ScriptFieldFlag::Order))
 		{
-			MonoClass* order = ScriptAssemblyManager::instance().getBuiltinClasses().orderAttribute;
+			MonoClass* order = ScriptAssemblyManager::Instance().getBuiltinClasses().orderAttribute;
 			if (order != nullptr)
 			{
 				MonoObject* attrib = fieldInfo->getAttribute(order);

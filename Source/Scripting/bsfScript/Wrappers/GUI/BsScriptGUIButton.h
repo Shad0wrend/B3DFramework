@@ -24,23 +24,23 @@ namespace bs
 		ScriptGUIButton(MonoObject* instance, GUIButton* button);
 
 		/**	Triggers when the GUI button is clicked. */
-		void onClick();
+		void OnClick();
 
 		/**	Triggers when the GUI button is double-clicked. */
-		void onDoubleClick();
+		void OnDoubleClick();
 
 		/**	Triggers when the GUI button is hovered over. */
-		void onHover();
+		void OnHover();
 
 		/**	Triggers when the pointer leaves the GUI button. */
-		void onOut();
+		void OnOut();
 
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static void internal_createInstance(MonoObject* instance, __GUIContentInterop* content, MonoString* style, MonoArray* guiOptions);
-		static void internal_setContent(ScriptGUIButton* nativeInstance, __GUIContentInterop* content);
-		static void internal_setTint(ScriptGUIButton* nativeInstance, Color* color);
+		static void InternalCreateInstance(MonoObject* instance, __GUIContentInterop* content, MonoString* style, MonoArray* guiOptions);
+		static void InternalSetContent(ScriptGUIButton* nativeInstance, __GUIContentInterop* content);
+		static void InternalSetTint(ScriptGUIButton* nativeInstance, Color* color);
 
 		typedef void (BS_THUNKCALL *OnClickThunkDef) (MonoObject*, MonoException**);
 		typedef void (BS_THUNKCALL *OnDoubleClickThunkDef) (MonoObject*, MonoException**);

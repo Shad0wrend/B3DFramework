@@ -13,8 +13,8 @@ namespace bs
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "Vector3I")
 
-		static MonoObject* box(const Vector3I& value);
-		static Vector3I unbox(MonoObject* value);
+		static MonoObject* Box(const Vector3I& value);
+		static Vector3I Unbox(MonoObject* value);
 
 	private:
 		ScriptVector3I(MonoObject* managedInstance);

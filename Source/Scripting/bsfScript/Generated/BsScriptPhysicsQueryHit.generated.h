@@ -26,10 +26,10 @@ namespace bs
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "PhysicsQueryHit")
 
-		static MonoObject* box(const __PhysicsQueryHitInterop& value);
-		static __PhysicsQueryHitInterop unbox(MonoObject* value);
-		static PhysicsQueryHit fromInterop(const __PhysicsQueryHitInterop& value);
-		static __PhysicsQueryHitInterop toInterop(const PhysicsQueryHit& value);
+		static MonoObject* Box(const __PhysicsQueryHitInterop& value);
+		static __PhysicsQueryHitInterop Unbox(MonoObject* value);
+		static PhysicsQueryHit FromInterop(const __PhysicsQueryHitInterop& value);
+		static __PhysicsQueryHitInterop ToInterop(const PhysicsQueryHit& value);
 
 	private:
 		ScriptPhysicsQueryHit(MonoObject* managedInstance);

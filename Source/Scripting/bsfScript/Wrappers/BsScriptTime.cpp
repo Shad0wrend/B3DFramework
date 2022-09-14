@@ -16,35 +16,35 @@ namespace bs
 
 	void ScriptTime::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_GetRealElapsed", (void*)&ScriptTime::internal_getRealElapsed);
-		metaData.scriptClass->addInternalCall("Internal_GetElapsed", (void*)&ScriptTime::internal_getElapsed);
-		metaData.scriptClass->addInternalCall("Internal_GetFrameDelta", (void*)&ScriptTime::internal_getFrameDelta);
-		metaData.scriptClass->addInternalCall("Internal_GetFrameNumber", (void*)&ScriptTime::internal_getFrameNumber);
-		metaData.scriptClass->addInternalCall("Internal_GetPrecise", (void*)&ScriptTime::internal_getPrecise);
+		metaData.scriptClass->AddInternalCall("Internal_GetRealElapsed", (void*)&ScriptTime::InternalGetRealElapsed);
+		metaData.scriptClass->AddInternalCall("Internal_GetElapsed", (void*)&ScriptTime::InternalGetElapsed);
+		metaData.scriptClass->AddInternalCall("Internal_GetFrameDelta", (void*)&ScriptTime::InternalGetFrameDelta);
+		metaData.scriptClass->AddInternalCall("Internal_GetFrameNumber", (void*)&ScriptTime::InternalGetFrameNumber);
+		metaData.scriptClass->AddInternalCall("Internal_GetPrecise", (void*)&ScriptTime::InternalGetPrecise);
 	}
 
-	float ScriptTime::internal_getRealElapsed()
+	float ScriptTime::InternalGetRealElapsed()
 	{
-		return gTime().getTime();
+		return gTime().GetTime();
 	}
 
-	float ScriptTime::internal_getElapsed()
+	float ScriptTime::InternalGetElapsed()
 	{
-		return PlayInEditor::instance().getPausableTime();
+		return PlayInEditor::Instance().GetPausableTime();
 	}
 
-	float ScriptTime::internal_getFrameDelta()
+	float ScriptTime::InternalGetFrameDelta()
 	{
-		return gTime().getFrameDelta();
+		return gTime().GetFrameDelta();
 	}
 
-	UINT64 ScriptTime::internal_getFrameNumber()
+	UINT64 ScriptTime::InternalGetFrameNumber()
 	{
-		return gTime().getFrameIdx();
+		return gTime().GetFrameIdx();
 	}
 
-	UINT64 ScriptTime::internal_getPrecise()
+	UINT64 ScriptTime::InternalGetPrecise()
 	{
-		return gTime().getTimePrecise();
+		return gTime().GetTimePrecise();
 	}
 }

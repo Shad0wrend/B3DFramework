@@ -45,13 +45,13 @@ namespace bs
 		 *
 		 * @param[in]	force	True if the process should be forcefully terminated with no cleanup.
 		 */
-		[[noreturn]] static void terminate(bool force = false);
+		[[noreturn]] static void Terminate(bool force = false);
 
 		/** Returns information about the underlying hardware. */
-		static SystemInfo getSystemInfo();
+		static SystemInfo GetSystemInfo();
 
 		/** Creates a new universally unique identifier (UUID/GUID). */
-		static UUID generateUUID();
+		static UUID GenerateUuid();
 
 		/**
 		 * Converts a UTF8 encoded string into uppercase or lowercase.
@@ -60,7 +60,7 @@ namespace bs
 		 * @param[in]	toUpper	If true, converts the character to uppercase. Otherwise convert to lowercase.
 		 * @return				Converted string.
 		 */
-		static String convertCaseUTF8(const String& input, bool toUpper);
+		static String ConvertCaseUtF8(const String& input, bool toUpper);
 
 		/** @name Internal
 		 *  @{

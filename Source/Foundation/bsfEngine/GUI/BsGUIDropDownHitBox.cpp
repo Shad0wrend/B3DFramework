@@ -6,22 +6,22 @@
 
 namespace bs
 {
-	const String& GUIDropDownHitBox::getGUITypeName()
+	const String& GUIDropDownHitBox::GetGuiTypeName()
 	{
 		static String name = "DropDownHitBox";
 		return name;
 	}
 
-	GUIDropDownHitBox* GUIDropDownHitBox::create(bool captureMouseOver, bool captureMousePresses)
+	GUIDropDownHitBox* GUIDropDownHitBox::Create(bool captureMouseOver, bool captureMousePresses)
 	{
 		return new (bs_alloc<GUIDropDownHitBox>())
-			GUIDropDownHitBox(captureMouseOver, captureMousePresses, GUIDimensions::create());
+			GUIDropDownHitBox(captureMouseOver, captureMousePresses, GUIDimensions::Create());
 	}
 
-	GUIDropDownHitBox* GUIDropDownHitBox::create(bool captureMouseOver, bool captureMousePresses, const GUIOptions& options)
+	GUIDropDownHitBox* GUIDropDownHitBox::Create(bool captureMouseOver, bool captureMousePresses, const GUIOptions& options)
 	{
 		return new (bs_alloc<GUIDropDownHitBox>())
-			GUIDropDownHitBox(captureMouseOver, captureMousePresses, GUIDimensions::create(options));
+			GUIDropDownHitBox(captureMouseOver, captureMousePresses, GUIDimensions::Create(options));
 	}
 
 	GUIDropDownHitBox::GUIDropDownHitBox(bool captureMouseOver,
@@ -29,25 +29,25 @@ namespace bs
 		:GUIElementContainer(dimensions), mCaptureMouseOver(captureMouseOver),
 		mCaptureMousePresses(captureMousePresses)
 	{
-		mOptionFlags.set(GUIElementOption::ClickThrough);
+		mOptionFlags.Set(GUIElementOption::ClickThrough);
 	}
 
-	void GUIDropDownHitBox::setBounds(const Rect2I& bounds)
+	void GUIDropDownHitBox::SetBounds(const Rect2I& bounds)
 	{
 		mBounds.clear();
 		mBounds.push_back(bounds);
 
-		updateClippedBounds();
+		UpdateClippedBounds();
 	}
 
-	void GUIDropDownHitBox::setBounds(const Vector<Rect2I>& bounds)
+	void GUIDropDownHitBox::SetBounds(const Vector<Rect2I>& bounds)
 	{
 		mBounds = bounds;
 
-		updateClippedBounds();
+		UpdateClippedBounds();
 	}
 
-	void GUIDropDownHitBox::updateClippedBounds()
+	void GUIDropDownHitBox::UpdateClippedBounds()
 	{
 		mClippedBounds = Rect2I();
 
@@ -56,7 +56,7 @@ namespace bs
 			mClippedBounds = mBounds[0];
 
 			for (UINT32 i = 1; i < (UINT32)mBounds.size(); i++)
-				mClippedBounds.encapsulate(mBounds[i]);
+				mClippedBounds.Encapsulate(mBounds[i]);
 		}
 	}
 
@@ -64,7 +64,7 @@ namespace bs
 	{
 		bool processed = GUIElementContainer::CommandEventInternal(ev);
 
-		if(ev.getType() == GUICommandEventType::FocusGained)
+		if(ev.GetType() == GUICommandEventType::FocusGained)
 		{
 			if(!onFocusGained.empty())
 				onFocusGained();

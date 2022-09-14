@@ -10,7 +10,7 @@ namespace bs { namespace ct
 	PerObjectParamDef gPerObjectParamDef;
 	PerCallParamDef gPerCallParamDef;
 
-	void PerObjectBuffer::update(SPtr<GpuParamBlockBuffer>& buffer, const Matrix4& tfrm, const Matrix4& tfrmNoScale,
+	void PerObjectBuffer::Update(SPtr<GpuParamBlockBuffer>& buffer, const Matrix4& tfrm, const Matrix4& tfrmNoScale,
 		const Matrix4& prevTfrm, UINT32 layer)
 	{
 		gPerObjectParamDef.gMatWorld.set(buffer, tfrm);
@@ -22,7 +22,7 @@ namespace bs { namespace ct
 		gPerObjectParamDef.gLayer.set(buffer, (INT32)layer);
 	}
 
-	void RenderableElement::draw() const
+	void RenderableElement::Draw() const
 	{
 		if (morphVertexDeclaration == nullptr)
 			gRendererUtility().draw(mesh, subMesh);
@@ -36,7 +36,7 @@ namespace bs { namespace ct
 		perCallParamBuffer = gPerCallParamDef.createBuffer();
 	}
 
-	void RendererRenderable::updatePerObjectBuffer()
+	void RendererRenderable::UpdatePerObjectBuffer()
 	{
 		const Matrix4 worldNoScaleTransform = renderable->getMatrixNoScale();
 		const UINT32 layer = Bitwise::mostSignificantBit(renderable->getLayer());
@@ -44,7 +44,7 @@ namespace bs { namespace ct
 		PerObjectBuffer::update(perObjectParamBuffer, worldTfrm, worldNoScaleTransform, prevWorldTfrm, layer);
 	}
 
-	void RendererRenderable::updatePerCallBuffer(const Matrix4& viewProj, bool flush)
+	void RendererRenderable::UpdatePerCallBuffer(const Matrix4& viewProj, bool flush)
 	{
 		const Matrix4 worldViewProjMatrix = viewProj * renderable->getMatrix();
 

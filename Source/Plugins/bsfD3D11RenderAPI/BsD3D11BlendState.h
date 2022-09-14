@@ -18,7 +18,7 @@ namespace bs { namespace ct
 		~D3D11BlendState();
 
 		/**	Returns the internal DX11 blend state object. */
-		ID3D11BlendState* getInternal() const { return mBlendState; }
+		ID3D11BlendState* GetInternal() const { return mBlendState; }
 
 	protected:
 		friend class D3D11RenderStateManager;
@@ -26,7 +26,7 @@ namespace bs { namespace ct
 		D3D11BlendState(const BLEND_STATE_DESC& desc, UINT32 id);
 
 		/** @copydoc BlendState::createInternal */
-		void createInternal() override;
+		void CreateInternal() ;
 
 		ID3D11BlendState* mBlendState = nullptr;
 	};

@@ -25,10 +25,10 @@ namespace bs
 	{
 	public:
 		/** Called when a new DropTarget gets created. */
-		static void registerDropTarget(DropTarget* target);
+		static void RegisterDropTarget(DropTarget* target);
 
 		/** Called just before a DropTarget gets destroyed. */
-		static void unregisterDropTarget(DropTarget* target);
+		static void UnregisterDropTarget(DropTarget* target);
 
 		/** Main message loop callback that processes messages received from windows. */
 		static LRESULT CALLBACK Win32WndProcInternal(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

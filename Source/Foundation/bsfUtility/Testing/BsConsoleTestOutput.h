@@ -16,10 +16,10 @@ namespace bs
 	{
 	public:
 		/** @copydoc TestOutput::outputFail */
-		void outputFail(const String& desc,
+		void OutputFail(const String& desc,
 		                const String& function,
 		                const String& file,
-		                long line) final override;
+		                long line) ;
 	};
 
 	/** @} */

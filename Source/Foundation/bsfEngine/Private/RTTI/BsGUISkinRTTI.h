@@ -25,38 +25,38 @@ namespace bs
 
 	public:
 		friend class GUISkinEntryRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const ;
 	};
 
 	class BS_EXPORT GUISkinEntryRTTI : public RTTIType <GUISkinEntry, IReflectable, GUISkinEntryRTTI>
 	{
 	private:
-		String& getName(GUISkinEntry* obj) { return obj->name; }
-		void setName(GUISkinEntry* obj, String& val) { obj->name = val; }
+		String& GetName(GUISkinEntry* obj) { return obj->name; }
+		void SetName(GUISkinEntry* obj, String& val) { obj->name = val; }
 
-		GUIElementStyle& getStyle(GUISkinEntry* obj) { return obj->style; }
-		void setStyle(GUISkinEntry* obj, GUIElementStyle& val) { obj->style = val; }
+		GUIElementStyle& GetStyle(GUISkinEntry* obj) { return obj->style; }
+		void SetStyle(GUISkinEntry* obj, GUIElementStyle& val) { obj->style = val; }
 
 	public:
 		GUISkinEntryRTTI()
 		{
-			addPlainField("name", 0, &GUISkinEntryRTTI::getName, &GUISkinEntryRTTI::setName);
-			addReflectableField("style", 1, &GUISkinEntryRTTI::getStyle, &GUISkinEntryRTTI::setStyle);
+			AddPlainField("name", 0, &GUISkinEntryRTTI::GetName, &GUISkinEntryRTTI::SetName);
+			AddReflectableField("style", 1, &GUISkinEntryRTTI::GetStyle, &GUISkinEntryRTTI::SetStyle);
 		}
 
-		const String& getRTTIName() override
+		const String& GetRttiName() 
 		{
 			static String name = "GUISkinEntry";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() 
 		{
 			return TID_GUISkinEntry;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() override
 		{
 			return bs_shared_ptr_new<GUISkinEntry>();
 		}
@@ -65,23 +65,23 @@ namespace bs
 	class BS_EXPORT GUISkinRTTI : public RTTIType <GUISkin, Resource, GUISkinRTTI>
 	{
 	private:
-		GUISkinEntry& getStyle(GUISkin* obj, UINT32 idx)
+		GUISkinEntry& GetStyle(GUISkin* obj, UINT32 idx)
 		{
 			return mStyles[idx];
 		}
 
-		void setStyle(GUISkin* obj, UINT32 idx, GUISkinEntry& val) { obj->mStyles[val.name] = val.style; }
-		UINT32 getStyleArraySize(GUISkin* obj) { return (UINT32)obj->mStyles.size(); }
-		void setStyleArraySize(GUISkin* obj, UINT32 size) { /* Do nothing */ }
+		void SetStyle(GUISkin* obj, UINT32 idx, GUISkinEntry& val) { obj->mStyles[val.name] = val.style; }
+		UINT32 GetStyleArraySize(GUISkin* obj) { return (UINT32)obj->mStyles.size(); }
+		void SetStyleArraySize(GUISkin* obj, UINT32 size) { /* Do nothing */ }
 
 	public:
 		GUISkinRTTI()
 		{
-			addReflectableArrayField("mStyles", 0, &GUISkinRTTI::getStyle, &GUISkinRTTI::getStyleArraySize,
-				&GUISkinRTTI::setStyle, &GUISkinRTTI::setStyleArraySize);
+			addReflectableArrayField("mStyles", 0, &GUISkinRTTI::GetStyle, &GUISkinRTTI::GetStyleArraySize,
+				&GUISkinRTTI::SetStyle, &GUISkinRTTI::SetStyleArraySize);
 		}
 
-		void onSerializationStarted(IReflectable* obj, SerializationContext* context) override
+		void OnSerializationStarted(IReflectable* obj, SerializationContext* context) override
 		{
 			GUISkin* skin = static_cast<GUISkin*>(obj);
 
@@ -89,13 +89,13 @@ namespace bs
 				mStyles.push_back(GUISkinEntry(style.first, style.second));
 		}
 
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "GUISkin";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_GUISkin;
 		}

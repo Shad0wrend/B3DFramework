@@ -30,24 +30,24 @@ namespace bs
 		ScriptCD6Joint(MonoObject* managedInstance, const GameObjectHandle<CD6Joint>& value);
 
 	private:
-		static D6JointMotion Internal_getMotion(ScriptCD6Joint* thisPtr, D6JointAxis axis);
-		static void Internal_setMotion(ScriptCD6Joint* thisPtr, D6JointAxis axis, D6JointMotion motion);
-		static void Internal_getTwist(ScriptCD6Joint* thisPtr, Radian* __output);
-		static void Internal_getSwingY(ScriptCD6Joint* thisPtr, Radian* __output);
-		static void Internal_getSwingZ(ScriptCD6Joint* thisPtr, Radian* __output);
-		static void Internal_getLimitLinear(ScriptCD6Joint* thisPtr, __LimitLinearInterop* __output);
-		static void Internal_setLimitLinear(ScriptCD6Joint* thisPtr, __LimitLinearInterop* limit);
-		static void Internal_getLimitTwist(ScriptCD6Joint* thisPtr, __LimitAngularRangeInterop* __output);
-		static void Internal_setLimitTwist(ScriptCD6Joint* thisPtr, __LimitAngularRangeInterop* limit);
-		static void Internal_getLimitSwing(ScriptCD6Joint* thisPtr, __LimitConeRangeInterop* __output);
-		static void Internal_setLimitSwing(ScriptCD6Joint* thisPtr, __LimitConeRangeInterop* limit);
-		static void Internal_getDrive(ScriptCD6Joint* thisPtr, D6JointDriveType type, D6JointDrive* __output);
-		static void Internal_setDrive(ScriptCD6Joint* thisPtr, D6JointDriveType type, D6JointDrive* drive);
-		static void Internal_getDrivePosition(ScriptCD6Joint* thisPtr, Vector3* __output);
-		static void Internal_getDriveRotation(ScriptCD6Joint* thisPtr, Quaternion* __output);
-		static void Internal_setDriveTransform(ScriptCD6Joint* thisPtr, Vector3* position, Quaternion* rotation);
-		static void Internal_getDriveLinearVelocity(ScriptCD6Joint* thisPtr, Vector3* __output);
-		static void Internal_getDriveAngularVelocity(ScriptCD6Joint* thisPtr, Vector3* __output);
-		static void Internal_setDriveVelocity(ScriptCD6Joint* thisPtr, Vector3* linear, Vector3* angular);
+		static D6JointMotion InternalGetMotion(ScriptCD6Joint* thisPtr, D6JointAxis axis);
+		static void InternalSetMotion(ScriptCD6Joint* thisPtr, D6JointAxis axis, D6JointMotion motion);
+		static void InternalGetTwist(ScriptCD6Joint* thisPtr, Radian* __output);
+		static void InternalGetSwingY(ScriptCD6Joint* thisPtr, Radian* __output);
+		static void InternalGetSwingZ(ScriptCD6Joint* thisPtr, Radian* __output);
+		static void InternalGetLimitLinear(ScriptCD6Joint* thisPtr, __LimitLinearInterop* __output);
+		static void InternalSetLimitLinear(ScriptCD6Joint* thisPtr, __LimitLinearInterop* limit);
+		static void InternalGetLimitTwist(ScriptCD6Joint* thisPtr, __LimitAngularRangeInterop* __output);
+		static void InternalSetLimitTwist(ScriptCD6Joint* thisPtr, __LimitAngularRangeInterop* limit);
+		static void InternalGetLimitSwing(ScriptCD6Joint* thisPtr, __LimitConeRangeInterop* __output);
+		static void InternalSetLimitSwing(ScriptCD6Joint* thisPtr, __LimitConeRangeInterop* limit);
+		static void InternalGetDrive(ScriptCD6Joint* thisPtr, D6JointDriveType type, D6JointDrive* __output);
+		static void InternalSetDrive(ScriptCD6Joint* thisPtr, D6JointDriveType type, D6JointDrive* drive);
+		static void InternalGetDrivePosition(ScriptCD6Joint* thisPtr, Vector3* __output);
+		static void InternalGetDriveRotation(ScriptCD6Joint* thisPtr, Quaternion* __output);
+		static void InternalSetDriveTransform(ScriptCD6Joint* thisPtr, Vector3* position, Quaternion* rotation);
+		static void InternalGetDriveLinearVelocity(ScriptCD6Joint* thisPtr, Vector3* __output);
+		static void InternalGetDriveAngularVelocity(ScriptCD6Joint* thisPtr, Vector3* __output);
+		static void InternalSetDriveVelocity(ScriptCD6Joint* thisPtr, Vector3* linear, Vector3* angular);
 	};
 }

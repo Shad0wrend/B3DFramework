@@ -36,22 +36,22 @@ namespace bs
 		virtual ~GameObject() = default;
 
 		/**	Returns the unique instance ID of the GameObject. */
-		UINT64 getInstanceId() const { return mInstanceData->mInstanceId; }
+		UINT64 GetInstanceId() const { return mInstanceData->mInstanceId; }
 
 		/**
 		 * Returns an ID that identifies a link between this object and its equivalent in the linked prefab. This will be
 		 * -1 if the object has no prefab link, or if the object is specific to the instance and has no prefab equivalent.
 		 */
-		UINT32 getLinkId() const { return mLinkId; }
+		UINT32 GetLinkId() const { return mLinkId; }
 
 		/**	Globally unique identifier of the game object that persists scene save/load. */
-		const UUID& getUUID() const { return mUUID; }
+		const UUID& GetUuid() const { return mUUID; }
 
 		/**	Gets the name of the object. */
-		const String& getName() const { return mName; }
+		const String& GetName() const { return mName; }
 
 		/**	Sets the name of the object. */
-		void setName(const String& name) { mName = name; }
+		void SetName(const String& name) { mName = name; }
 
 	public: // ***** INTERNAL ******
 		/** @name Internal
@@ -94,7 +94,7 @@ namespace bs
 		friend class PrefabUtility;
 
 		/**	Initializes the GameObject after construction. */
-		void initialize(const SPtr<GameObject>& object, UINT64 instanceId);
+		void Initialize(const SPtr<GameObject>& object, UINT64 instanceId);
 
 		/**
 		 * Destroys this object.
@@ -103,7 +103,7 @@ namespace bs
 		 * @param[in]	immediate	If true, the object will be deallocated and become unusable right away. Otherwise the
 		 *							deallocation will be delayed to the end of frame (preferred method).
 		 */
-		virtual void destroyInternal(GameObjectHandleBase& handle, bool immediate = false) = 0;
+		virtual void DestroyInternal(GameObjectHandleBase& handle, bool immediate = false) = 0;
 
 	protected:
 		String mName;
@@ -124,8 +124,8 @@ namespace bs
 
 	public:
 		friend class GameObjectRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** @} */

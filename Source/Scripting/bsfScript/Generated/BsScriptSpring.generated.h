@@ -13,8 +13,8 @@ namespace bs
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "Spring")
 
-		static MonoObject* box(const Spring& value);
-		static Spring unbox(MonoObject* value);
+		static MonoObject* Box(const Spring& value);
+		static Spring Unbox(MonoObject* value);
 
 	private:
 		ScriptSpring(MonoObject* managedInstance);

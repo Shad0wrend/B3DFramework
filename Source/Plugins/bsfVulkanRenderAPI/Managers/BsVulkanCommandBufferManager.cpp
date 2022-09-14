@@ -12,31 +12,31 @@ namespace bs { namespace ct
 	VulkanTransferBuffer::VulkanTransferBuffer(VulkanDevice* device, GpuQueueType type, UINT32 queueIdx)
 		:mDevice(device), mType(type), mQueueIdx(queueIdx)
 	{
-		UINT32 numQueues = device->getNumQueues(mType);
+		UINT32 numQueues = device->GetNumQueues(mType);
 		if (numQueues == 0)
 		{
 			mType = GQT_GRAPHICS;
-			numQueues = device->getNumQueues(GQT_GRAPHICS);
+			numQueues = device->GetNumQueues(GQT_GRAPHICS);
 		}
 
 		UINT32 physicalQueueIdx = queueIdx % numQueues;
-		mQueue = device->getQueue(mType, physicalQueueIdx);
-		mQueueMask = device->getQueueMask(mType, queueIdx);
+		mQueue = device->GetQueue(mType, physicalQueueIdx);
+		mQueueMask = device->GetQueueMask(mType, queueIdx);
 	}
 
 	VulkanTransferBuffer::~VulkanTransferBuffer()
 	{
 		if (mCB != nullptr)
-			mCB->end();
+			mCB->End();
 	}
 
-	void VulkanTransferBuffer::allocate()
+	void VulkanTransferBuffer::Allocate()
 	{
 		if (mCB != nullptr)
 			return;
 
-		UINT32 queueFamily = mDevice->getQueueFamily(mType);
-		mCB = mDevice->getCmdBufferPool().getBuffer(queueFamily, false);
+		UINT32 queueFamily = mDevice->GetQueueFamily(mType);
+		mCB = mDevice->GetCmdBufferPool().getBuffer(queueFamily, false);
 	}
 
 	void VulkanTransferBuffer::memoryBarrier(VkBuffer buffer, VkAccessFlags srcAccessFlags, VkAccessFlags dstAccessFlags,
@@ -45,13 +45,13 @@ namespace bs { namespace ct
 		mCB->memoryBarrier(buffer, srcAccessFlags, dstAccessFlags, srcStage, dstStage);
 	}
 
-	void VulkanTransferBuffer::setLayout(VkImage image, VkAccessFlags srcAccessFlags, VkAccessFlags dstAccessFlags,
+	void VulkanTransferBuffer::SetLayout(VkImage image, VkAccessFlags srcAccessFlags, VkAccessFlags dstAccessFlags,
 		VkImageLayout oldLayout, VkImageLayout newLayout, const VkImageSubresourceRange& range)
 	{
 		mCB->setLayout(image, srcAccessFlags, dstAccessFlags, oldLayout, newLayout, range);
 	}
 
-	void VulkanTransferBuffer::setLayout(VulkanImage* image, const VkImageSubresourceRange& range,
+	void VulkanTransferBuffer::SetLayout(VulkanImage* image, const VkImageSubresourceRange& range,
 										 VkAccessFlags newAccessMask, VkImageLayout newLayout)
 	{
 		image->getBarriers(range, mBarriersTemp);
@@ -92,7 +92,7 @@ namespace bs { namespace ct
 		mBarriersTemp.clear();		
 	}
 
-	void VulkanTransferBuffer::flush(bool wait)
+	void VulkanTransferBuffer::Flush(bool wait)
 	{
 		if (mCB == nullptr)
 			return;
@@ -136,7 +136,7 @@ namespace bs { namespace ct
 		bs_deleteN(mDeviceData, mNumDevices);
 	}
 
-	SPtr<CommandBuffer> VulkanCommandBufferManager::createInternal(GpuQueueType type, UINT32 deviceIdx,
+	SPtr<CommandBuffer> VulkanCommandBufferManager::CreateInternal(GpuQueueType type, UINT32 deviceIdx,
 		UINT32 queueIdx, bool secondary)
 	{
 		UINT32 numDevices = mRapi.GetNumDevicesInternal();
@@ -156,7 +156,7 @@ namespace bs { namespace ct
 		return bs_shared_ptr(buffer);
 	}
 
-	void VulkanCommandBufferManager::getSyncSemaphores(UINT32 deviceIdx, UINT32 syncMask, VulkanSemaphore** semaphores,
+	void VulkanCommandBufferManager::GetSyncSemaphores(UINT32 deviceIdx, UINT32 syncMask, VulkanSemaphore** semaphores,
 													   UINT32& count)
 	{
 		bool semaphoreRequestFailed = false;
@@ -204,7 +204,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	VulkanTransferBuffer* VulkanCommandBufferManager::getTransferBuffer(UINT32 deviceIdx, GpuQueueType type,
+	VulkanTransferBuffer* VulkanCommandBufferManager::GetTransferBuffer(UINT32 deviceIdx, GpuQueueType type,
 		UINT32 queueIdx)
 	{
 		assert(deviceIdx < mNumDevices);
@@ -216,7 +216,7 @@ namespace bs { namespace ct
 		return transferBuffer;
 	}
 
-	void VulkanCommandBufferManager::flushTransferBuffers(UINT32 deviceIdx)
+	void VulkanCommandBufferManager::FlushTransferBuffers(UINT32 deviceIdx)
 	{
 		assert(deviceIdx < mNumDevices);
 
@@ -230,6 +230,6 @@ namespace bs { namespace ct
 
 	VulkanCommandBufferManager& gVulkanCBManager()
 	{
-		return static_cast<VulkanCommandBufferManager&>(CommandBufferManager::instance());
+		return static_cast<VulkanCommandBufferManager&>(CommandBufferManager::Instance());
 	}
 }}

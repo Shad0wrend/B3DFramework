@@ -27,7 +27,7 @@ namespace bs
 		: modifier(modifier), button(code)
 	{ }
 
-	String ShortcutKey::getName() const
+	String ShortcutKey::GetName() const
 	{
 		static const String MODIFIER_TO_NAME[8] =
 		{
@@ -81,7 +81,7 @@ namespace bs
 		}
 		else
 		{
-			charStr = Platform::keyCodeToUnicode((UINT32)button);
+			charStr = Platform::KeyCodeToUnicode((UINT32)button);
 			StringUtil::toUpperCase(charStr);
 		}
 

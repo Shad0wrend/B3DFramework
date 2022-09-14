@@ -18,20 +18,20 @@ namespace bs
 		Timer();
 
 		/** Reset the timer to zero. */
-		void reset();
+		void Reset();
 
 		/** Returns time in milliseconds since timer was initialized or last reset. */
-		UINT64 getMilliseconds() const;
+		UINT64 GetMilliseconds() const;
 
 		/** Returns time in microseconds since timer was initialized or last reset. */
-		UINT64 getMicroseconds() const;
+		UINT64 GetMicroseconds() const;
 
 		/**
 		 * Returns the time at which the timer was initialized, in milliseconds.
 		 *
 		 * @return	Time in milliseconds.
 		 */
-		UINT64 getStartMs() const;
+		UINT64 GetStartMs() const;
 
 	private:
 		std::chrono::high_resolution_clock mHRClock;

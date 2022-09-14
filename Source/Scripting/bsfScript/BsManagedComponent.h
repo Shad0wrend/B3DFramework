@@ -23,22 +23,22 @@ namespace bs
 		~ManagedComponent() = default;
 
 		/**	Returns managed component object instance. */
-		MonoObject* getManagedInstance() const;
+		MonoObject* GetManagedInstance() const;
 
 		/**	Returns managed class of the component. */
-		MonoClass* getClass() const { return mManagedClass; }
+		MonoClass* GetClass() const { return mManagedClass; }
 
 		/**	Returns managed type of the component. */
-		MonoReflectionType* getRuntimeType() const { return mRuntimeType; }
+		MonoReflectionType* GetRuntimeType() const { return mRuntimeType; }
 
 		/**	Returns namespace of the managed component. */
-		const String& getManagedNamespace() const { return mNamespace; }
+		const String& GetManagedNamespace() const { return mNamespace; }
 
 		/**	Returns type name of the managed component. */
-		const String& getManagedTypeName() const { return mTypeName; }
+		const String& GetManagedTypeName() const { return mTypeName; }
 
 		/**	Returns namespace and type name of the component in format "namespace.typename". */
-		const String& getManagedFullTypeName() const { return mFullTypeName; }
+		const String& GetManagedFullTypeName() const { return mFullTypeName; }
 
 		/**
 		 * Serializes the internal managed component.
@@ -48,7 +48,7 @@ namespace bs
 		 * @return						An object containing the serialized component. You can provide this to restore()
 		 *								method to re-create the original component.
 		 */
-		RawBackupData backup(bool clearExisting = true);
+		RawBackupData Backup(bool clearExisting = true);
 
 		/**
 		 * Restores a component from previously serialized data.
@@ -59,10 +59,10 @@ namespace bs
 		 *							serialized data will be stored internally until later date when user perhaps restores
 		 *							the type with another refresh. @p instance must be null if this is true.
 		 */
-		void restore(const RawBackupData& data, bool missingType);
+		void Restore(const RawBackupData& data, bool missingType);
 
 		/**	Triggers the managed OnReset callback. */
-		void triggerOnReset();
+		void TriggerOnReset();
 
 	private:
 		friend class ScriptManagedComponent;
@@ -73,7 +73,7 @@ namespace bs
 		 * @param[in]	owner		Script class that handles interop between the native and managed code for this
 		 *							component.
 		 */
-		void initialize(ScriptManagedComponent* owner);
+		void Initialize(ScriptManagedComponent* owner);
 
 		typedef void(BS_THUNKCALL *OnCreatedThunkDef) (MonoObject*, MonoException**);
 		typedef void(BS_THUNKCALL *OnInitializedThunkDef) (MonoObject*, MonoException**);
@@ -121,40 +121,40 @@ namespace bs
 		void InstantiateInternal() override;
 
 		/** @copydoc Component::onCreated */
-		void onCreated() override;
+		void OnCreated() ;
 
 		/** @copydoc Component::onInitialized */
-		void onInitialized() override;
+		void OnInitialized() ;
 
 		/** @copydoc Component::onDestroyed */
-		void onDestroyed() override;
+		void OnDestroyed() ;
 
 		/** @copydoc Component::onEnabled  */
-		void onEnabled() override;
+		void OnEnabled() ;
 
 		/** @copydoc Component::onDisabled  */
-		void onDisabled() override;
+		void OnDisabled() ;
 
 		/** @copydoc Component::onTransformChanged  */
-		void onTransformChanged(TransformChangedFlags flags) override;
+		void OnTransformChanged(TransformChangedFlags flags) override;
 
 	public:
 		/** @copydoc Component::update */
-		void update() override;
+		void Update() override;
 
 		/** @copydoc Component::typeEquals */
-		bool typeEquals(const Component& other) override;
+		bool TypeEquals(const Component& other) override;
 
 		/** @copydoc Component::calculateBounds */
-		bool calculateBounds(Bounds& bounds) override;
+		bool CalculateBounds(Bounds& bounds) override;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
 		/************************************************************************/
 	public:
 		friend class ManagedComponentRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 
 	protected:
 		ManagedComponent() = default; // Serialization only

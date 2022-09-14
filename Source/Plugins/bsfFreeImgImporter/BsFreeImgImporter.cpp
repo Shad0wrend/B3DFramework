@@ -54,7 +54,7 @@ namespace bs
 			strExt << exts;
 
 			// Pull off individual formats (separated by comma by FI)
-			Vector<String> extsVector = StringUtil::split(exts, u8",");
+			Vector<String> extsVector = StringUtil::Split(exts, u8",");
 			for (auto v = extsVector.begin(); v != extsVector.end(); ++v)
 			{
 				auto findIter = std::find(mExtensions.begin(), mExtensions.end(), *v);
@@ -87,14 +87,14 @@ namespace bs
 		return find(mExtensions.begin(), mExtensions.end(), lowerCaseExt) != mExtensions.end();
 	}
 
-	bool FreeImgImporter::isMagicNumberSupported(const UINT8* magicNumPtr, UINT32 numBytes) const
+	bool FreeImgImporter::IsMagicNumberSupported(const UINT8* magicNumPtr, UINT32 numBytes) const
 	{
 		String ext = magicNumToExtension(magicNumPtr, numBytes);
 
 		return isExtensionSupported(ext);
 	}
 
-	String FreeImgImporter::magicNumToExtension(const UINT8* magic, UINT32 maxBytes) const
+	String FreeImgImporter::MagicNumToExtension(const UINT8* magic, UINT32 maxBytes) const
 	{
 		// Set error handler
 		FreeImage_SetOutputMessage(FreeImageLoadErrorHandler);
@@ -117,12 +117,12 @@ namespace bs
 		}
 	}
 
-	SPtr<ImportOptions> FreeImgImporter::createImportOptions() const
+	SPtr<ImportOptions> FreeImgImporter::CreateImportOptions() const
 	{
 		return bs_shared_ptr_new<TextureImportOptions>();
 	}
 
-	SPtr<Resource> FreeImgImporter::import(const Path& filePath, SPtr<const ImportOptions> importOptions)
+	SPtr<Resource> FreeImgImporter::Import(const Path& filePath, SPtr<const ImportOptions> importOptions)
 	{
 		const TextureImportOptions* textureImportOptions = static_cast<const TextureImportOptions*>(importOptions.get());
 
@@ -213,7 +213,7 @@ namespace bs
 		return newTexture;
 	}
 
-	SPtr<PixelData> FreeImgImporter::importRawImage(const Path& filePath)
+	SPtr<PixelData> FreeImgImporter::ImportRawImage(const Path& filePath)
 	{
 		UPtr<MemoryDataStream> memStream;
 		FREE_IMAGE_FORMAT imageFormat;
@@ -439,7 +439,7 @@ namespace bs
 		Vector2I faceStart;
 		for(UINT32 i = 0; i < 6; i++)
 		{
-			output[i] = PixelData::create(faceSize, faceSize, 1, source->getFormat());
+			output[i] = PixelData::Create(faceSize, faceSize, 1, source->getFormat());
 
 			PixelVolume volume(faceStart.x, faceStart.y, faceStart.x + faceSize, faceStart.y + faceSize);
 			PixelUtil::copy(*source, *output[i], faceStart.x, faceStart.y);
@@ -481,7 +481,7 @@ namespace bs
 
 		for (UINT32 i = 0; i < 6; i++)
 		{
-			output[i] = PixelData::create(faceSize, faceSize, 1, source->getFormat());
+			output[i] = PixelData::Create(faceSize, faceSize, 1, source->getFormat());
 
 			UINT32 faceX = (faceIndices[i] % numFacesInRow) * faceSize;
 			UINT32 faceY = (faceIndices[i] / numFacesInRow) * faceSize;
@@ -529,7 +529,7 @@ namespace bs
 	{
 		for(UINT32 i = 0; i < 6; i++)
 		{
-			output[i] = PixelData::create(size, size, 1, input[i]->getFormat());
+			output[i] = PixelData::Create(size, size, 1, input[i]->getFormat());
 			PixelUtil::scale(*input[i], *output[i]);
 		}
 	}
@@ -566,7 +566,7 @@ namespace bs
 		float invSize = 1.0f / faceSize;
 		for (UINT32 faceIdx = 0; faceIdx < 6; faceIdx++)
 		{
-			output[faceIdx] = PixelData::create(faceSize, faceSize, 1, source->getFormat());
+			output[faceIdx] = PixelData::Create(faceSize, faceSize, 1, source->getFormat());
 
 			const RemapInfo& remapInfo = remapLookup[faceIdx];
 			for (UINT32 y = 0; y < faceSize; y++)
@@ -596,7 +596,7 @@ namespace bs
 		}
 	}
 
-	bool FreeImgImporter::generateCubemap(const SPtr<PixelData>& source, CubemapSourceType sourceType,
+	bool FreeImgImporter::GenerateCubemap(const SPtr<PixelData>& source, CubemapSourceType sourceType,
 						 std::array<SPtr<PixelData>, 6>& output)
 	{
 		// Note: Expose this as a parameter if needed:

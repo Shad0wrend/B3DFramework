@@ -63,7 +63,7 @@ namespace bs { namespace ct {
 		}
 
 #if BS_OPENGL_4_3 || BS_OPENGLES_3_1
-		GLuint originalTexture = texture->getGLID();
+		GLuint originalTexture = texture->GetGlid();
 
 		glGenTextures(1, &mViewID);
 		BS_CHECK_GL_ERROR();
@@ -72,7 +72,7 @@ namespace bs { namespace ct {
 			mViewID,
 			target,
 			originalTexture,
-			texture->getGLFormat(),
+			texture->GetGlFormat(),
 			desc.mostDetailMip,
 			desc.numMips,
 			desc.firstArraySlice,

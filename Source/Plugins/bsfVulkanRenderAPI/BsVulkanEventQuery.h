@@ -20,13 +20,13 @@ namespace bs { namespace ct
 		~VulkanEvent();
 
 		/** Returns the internal handle to the Vulkan object. */
-		VkEvent getHandle() const { return mEvent; }
+		VkEvent GetHandle() const { return mEvent; }
 
 		/** Checks if the event has been signaled on the device. */
-		bool isSignaled() const;
+		bool IsSignaled() const;
 
 		/** Resets an event back to unsignaled state, making it re-usable. */
-		void reset();
+		void Reset();
 	private:
 		VkEvent mEvent;
 	};
@@ -39,10 +39,10 @@ namespace bs { namespace ct
 		~VulkanEventQuery();
 
 		/** @copydoc EventQuery::begin */
-		void begin(const SPtr<CommandBuffer>& cb) override;
+		void Begin(const SPtr<CommandBuffer>& cb) ;
 
 		/** @copydoc EventQuery::isReady */
-		bool isReady() const override;
+		bool IsReady() const override;
 
 	private:
 		VulkanDevice& mDevice;

@@ -19,10 +19,10 @@ namespace bs { namespace ct
 		VulkanVertexInput(UINT32 id, const VkPipelineVertexInputStateCreateInfo& createInfo);
 
 		/** Returns an object contining the necessary information to initialize the vertex input on a pipeline. */
-		const VkPipelineVertexInputStateCreateInfo* getCreateInfo() const { return &mCreateInfo; }
+		const VkPipelineVertexInputStateCreateInfo* GetCreateInfo() const { return &mCreateInfo; }
 
 		/** Returns an identifier which uniquely represents this vertex input configuration. */
-		UINT32 getId() const { return mId; }
+		UINT32 GetId() const { return mId; }
 
 	private:
 		UINT32 mId;
@@ -78,15 +78,15 @@ namespace bs { namespace ct
 		 * @param[in]	shaderDecl	Describes the vertex element inputs expected by a vertex shader.
 		 * @return					Vertex input state description, usable by Vulkan.
 		 */
-		SPtr<VulkanVertexInput> getVertexInfo(const SPtr<VertexDeclaration>& vbDecl,
+		SPtr<VulkanVertexInput> GetVertexInfo(const SPtr<VertexDeclaration>& vbDecl,
 											  const SPtr<VertexDeclaration>& shaderDecl);
 
 	private:
 		/**	Creates a vertex input using the specified parameters and stores it in the input layout map. */
-		void addNew(const SPtr<VertexDeclaration>& vbDecl, const SPtr<VertexDeclaration>& shaderDecl);
+		void AddNew(const SPtr<VertexDeclaration>& vbDecl, const SPtr<VertexDeclaration>& shaderDecl);
 
 		/**	Removes the least used vertex input. */
-		void removeLeastUsed();
+		void RemoveLeastUsed();
 
 	private:
 		static const int DECLARATION_BUFFER_SIZE = 1024;

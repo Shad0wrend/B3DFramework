@@ -14,14 +14,14 @@ namespace bs
 	void ScriptSpriteSheetGridAnimation::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptSpriteSheetGridAnimation::box(const SpriteSheetGridAnimation& value)
+	MonoObject*ScriptSpriteSheetGridAnimation::Box(const SpriteSheetGridAnimation& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	SpriteSheetGridAnimation ScriptSpriteSheetGridAnimation::unbox(MonoObject* value)
+	SpriteSheetGridAnimation ScriptSpriteSheetGridAnimation::Unbox(MonoObject* value)
 	{
-		return *(SpriteSheetGridAnimation*)MonoUtil::unbox(value);
+		return *(SpriteSheetGridAnimation*)MonoUtil::Unbox(value);
 	}
 
 }

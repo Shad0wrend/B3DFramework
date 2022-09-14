@@ -17,21 +17,21 @@ namespace bs
 
 		ScriptBloomSettings(MonoObject* managedInstance, const SPtr<BloomSettings>& value);
 
-		static MonoObject* create(const SPtr<BloomSettings>& value);
+		static MonoObject* Create(const SPtr<BloomSettings>& value);
 
 	private:
-		static void Internal_BloomSettings(MonoObject* managedInstance);
-		static bool Internal_getenabled(ScriptBloomSettings* thisPtr);
-		static void Internal_setenabled(ScriptBloomSettings* thisPtr, bool value);
-		static uint32_t Internal_getquality(ScriptBloomSettings* thisPtr);
-		static void Internal_setquality(ScriptBloomSettings* thisPtr, uint32_t value);
-		static float Internal_getthreshold(ScriptBloomSettings* thisPtr);
-		static void Internal_setthreshold(ScriptBloomSettings* thisPtr, float value);
-		static float Internal_getintensity(ScriptBloomSettings* thisPtr);
-		static void Internal_setintensity(ScriptBloomSettings* thisPtr, float value);
-		static void Internal_gettint(ScriptBloomSettings* thisPtr, Color* __output);
-		static void Internal_settint(ScriptBloomSettings* thisPtr, Color* value);
-		static float Internal_getfilterSize(ScriptBloomSettings* thisPtr);
-		static void Internal_setfilterSize(ScriptBloomSettings* thisPtr, float value);
+		static void InternalBloomSettings(MonoObject* managedInstance);
+		static bool InternalGetenabled(ScriptBloomSettings* thisPtr);
+		static void InternalSetenabled(ScriptBloomSettings* thisPtr, bool value);
+		static uint32_t InternalGetquality(ScriptBloomSettings* thisPtr);
+		static void InternalSetquality(ScriptBloomSettings* thisPtr, uint32_t value);
+		static float InternalGetthreshold(ScriptBloomSettings* thisPtr);
+		static void InternalSetthreshold(ScriptBloomSettings* thisPtr, float value);
+		static float InternalGetintensity(ScriptBloomSettings* thisPtr);
+		static void InternalSetintensity(ScriptBloomSettings* thisPtr, float value);
+		static void InternalGettint(ScriptBloomSettings* thisPtr, Color* __output);
+		static void InternalSettint(ScriptBloomSettings* thisPtr, Color* value);
+		static float InternalGetfilterSize(ScriptBloomSettings* thisPtr);
+		static void InternalSetfilterSize(ScriptBloomSettings* thisPtr, float value);
 	};
 }

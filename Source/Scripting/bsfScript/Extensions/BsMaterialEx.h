@@ -18,17 +18,17 @@ namespace bs
 	{
 	public:
 		BS_SCRIPT_EXPORT(e:Material,in:true)
-		static void setTexture(const HMaterial& thisPtr, const String& name, const HTexture& value,
+		static void SetTexture(const HMaterial& thisPtr, const String& name, const HTexture& value,
 			UINT32 mipLevel, UINT32 numMipLevels, UINT32 arraySlice, UINT32 numArraySlices);
 
 		BS_SCRIPT_EXPORT(e:Material,in:true)
-		static HTexture getTexture(const HMaterial& thisPtr, const String& name);
+		static HTexture GetTexture(const HMaterial& thisPtr, const String& name);
 
 		BS_SCRIPT_EXPORT(e:Material,in:true)
-		static void setSpriteTexture(const HMaterial& thisPtr, const String& name, const HSpriteTexture& value);
+		static void SetSpriteTexture(const HMaterial& thisPtr, const String& name, const HSpriteTexture& value);
 
 		BS_SCRIPT_EXPORT(e:Material,in:true)
-		static HSpriteTexture getSpriteTexture(const HMaterial& thisPtr, const String& name);
+		static HSpriteTexture GetSpriteTexture(const HMaterial& thisPtr, const String& name);
 	};
 
 	/** @endcond */

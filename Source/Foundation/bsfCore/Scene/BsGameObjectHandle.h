@@ -62,19 +62,19 @@ namespace bs
 		 *							completely inaccessible (fully destroyed). If this is true this method will return true
 		 *							if object is completely inaccessible or if it is just queued for destruction.
 		 */
-		bool isDestroyed(bool checkQueued = false) const;
+		bool IsDestroyed(bool checkQueued = false) const;
 
 		/**	Returns the instance ID of the object the handle is referencing. */
-		UINT64 getInstanceId() const { return mData->mPtr != nullptr ? mData->mPtr->mInstanceId : 0; }
+		UINT64 GetInstanceId() const { return mData->mPtr != nullptr ? mData->mPtr->mInstanceId : 0; }
 
 		/**
 		 * Returns pointer to the referenced GameObject.
 		 *
 		 * @note	Throws exception if the GameObject was destroyed.
 		 */
-		GameObject* get() const
+		GameObject* Get() const
 		{
-			throwIfDestroyed();
+			ThrowIfDestroyed();
 
 			return mData->mPtr->object.get();
 		}
@@ -84,9 +84,9 @@ namespace bs
 		 *
 		 * @note	Throws exception if the GameObject was destroyed.
 		 */
-		SPtr<GameObject> getInternalPtr() const
+		SPtr<GameObject> GetInternalPtr() const
 		{
-			throwIfDestroyed();
+			ThrowIfDestroyed();
 
 			return mData->mPtr->object;
 		}
@@ -96,14 +96,14 @@ namespace bs
 		 *
 		 * @note	Throws exception if the GameObject was destroyed.
 		 */
-		GameObject* operator->() const { return get(); }
+		GameObject* operator->() const { return Get(); }
 
 		/**
 		 * Returns reference to the referenced GameObject.
 		 *
 		 * @note	Throws exception if the GameObject was destroyed.
 		 */
-		GameObject& operator*() const { return *get(); }
+		GameObject& operator*() const { return *Get(); }
 
 	public: // ***** INTERNAL ******
 		/** @name Internal
@@ -139,10 +139,10 @@ namespace bs
 		{ }
 
 		/**	Throws an exception if the referenced GameObject has been destroyed. */
-		void throwIfDestroyed() const;
+		void ThrowIfDestroyed() const;
 		
 		/**	Invalidates the handle signifying the referenced object was destroyed. */
-		void destroy()
+		void Destroy()
 		{
 			// It's important not to clear mData->mPtr as some code might rely
 			// on it. (for example for restoring lost handles)
@@ -158,8 +158,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class GameObjectHandleRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** @} */
@@ -209,7 +209,7 @@ namespace bs
 		 *
 		 * @note	Throws exception if the GameObject was destroyed.
 		 */
-		T* get() const
+		T* Get() const
 		{
 			throwIfDestroyed();
 
@@ -221,7 +221,7 @@ namespace bs
 		 *
 		 * @note	Throws exception if the GameObject was destroyed.
 		 */
-		SPtr<T> getInternalPtr() const
+		SPtr<T> GetInternalPtr() const
 		{
 			throwIfDestroyed();
 

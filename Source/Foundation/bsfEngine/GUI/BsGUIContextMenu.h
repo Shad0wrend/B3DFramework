@@ -22,16 +22,16 @@ namespace bs
 		~GUIContextMenu();
 
 		/** Opens a context menu at the specified position relative to the provided widget. */
-		void open(const Vector2I& position, GUIWidget& widget);
+		void Open(const Vector2I& position, GUIWidget& widget);
 
 	private:
 		/**	Closes the context menu if open. */
-		void close();
+		void Close();
 
 		/**	
 		 * Called when the context menu is closed externally (for example when user selects an item or clicks outside it).
 		 */
-		void onMenuClosed();
+		void OnMenuClosed();
 
 	private:
 		bool mContextMenuOpen = false;

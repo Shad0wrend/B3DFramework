@@ -47,10 +47,10 @@ namespace bs
 		 * Should the interop object persist through assembly reload. If false then the interop object will be destroyed on
 		 * reload.
 		 */
-		virtual bool isPersistent() const { return false; }
+		virtual bool IsPersistent() const { return false; }
 
 		/** Returns true if the script objects wraps an object implementing the IReflectable interface. */
-		virtual bool isReflectable() const { return false; }
+		virtual bool IsReflectable() const { return false; }
 
 		/**
 		 * Clears any managed instance references from the interop object, and releases any GC handles. Called during
@@ -65,13 +65,13 @@ namespace bs
 		virtual void OnManagedInstanceDeletedInternal(bool assemblyRefresh);
 
 		/**	Called before assembly reload starts to give the object a chance to back up its data. */
-		virtual ScriptObjectBackup beginRefresh();
+		virtual ScriptObjectBackup BeginRefresh();
 
 		/**
 		 * Called after assembly reload starts to give the object a chance to restore the data backed up by the previous
 		 * beginRefresh() call.
 		 */
-		virtual void endRefresh(const ScriptObjectBackup& data);
+		virtual void EndRefresh(const ScriptObjectBackup& data);
 	};
 
 	/**	Base class for all persistent interop objects. Persistent objects persist through assembly reload. */
@@ -82,7 +82,7 @@ namespace bs
 		virtual ~PersistentScriptObjectBase() = default;
 
 		/** @copydoc ScriptObjectBase::isPersistent  */
-		bool isPersistent() const override { return true; }
+		bool IsPersistent() const override { return true; }
 	};
 
 	template <class Type, class Base>
@@ -98,7 +98,7 @@ namespace bs
 			ScriptObject<Type, Base>::InitMetaDataInternal();
 		}
 
-		void makeSureIAmInstantiated() { }
+		void MakeSureIAmInstantiated() { }
 	};
 
 	/**	Template version of ScriptObjectBase populates the object meta-data on library load. */
@@ -128,20 +128,20 @@ namespace bs
 			Type* param = (Type*)(Base*)this; // Needed due to multiple inheritance. Safe since Type must point to an class derived from this one.
 
 			if (metaData.thisPtrField != nullptr && instance != nullptr)
-				metaData.thisPtrField->set(instance, &param);
+				metaData.thisPtrField->Set(instance, &param);
 		}
 
 		/**	Creates a new managed instance of the type wrapped by this interop object. */
 		virtual MonoObject* CreateManagedInstanceInternal(bool construct)
 		{
-			return metaData.scriptClass->createInstance(construct);
+			return metaData.scriptClass->CreateInstance(construct);
 		}
 
 		/**
 		 * Converts a managed instance into a specific interop object. Caller must ensure the managed instance is of the
 		 * proper type.
 		 */
-		static Type* toNative(MonoObject* managedInstance)
+		static Type* ToNative(MonoObject* managedInstance)
 		{
 			Type* nativeInstance = nullptr;
 
@@ -152,7 +152,7 @@ namespace bs
 		}
 
 		/** Returns the meta-data containing class and method information for the managed type. */
-		static const ScriptMeta* getMetaData() { return &metaData; }
+		static const ScriptMeta* GetMetaData() { return &metaData; }
 
 		/**
 		 * Initializes the meta-data containing class and method information for the managed type. Called on library load
@@ -200,7 +200,7 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static void internal_managedInstanceDeleted(ScriptObjectBase* instance);
+		static void InternalManagedInstanceDeleted(ScriptObjectBase* instance);
 	};
 
 	/** @} */

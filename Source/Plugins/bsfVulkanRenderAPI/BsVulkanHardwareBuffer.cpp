@@ -22,25 +22,25 @@ namespace bs { namespace ct
 
 	VulkanBuffer::~VulkanBuffer()
 	{
-		VulkanDevice& device = mOwner->getDevice();
+		VulkanDevice& device = mOwner->GetDevice();
 
 		for(auto& entry : mViews)
-			vkDestroyBufferView(device.getLogical(), entry.view, gVulkanAllocator);
+			vkDestroyBufferView(device.GetLogical(), entry.view, gVulkanAllocator);
 
-		vkDestroyBuffer(device.getLogical(), mBuffer, gVulkanAllocator);
-		device.freeMemory(mAllocation);
+		vkDestroyBuffer(device.GetLogical(), mBuffer, gVulkanAllocator);
+		device.FreeMemory(mAllocation);
 	}
 
-	UINT8* VulkanBuffer::map(VkDeviceSize offset, VkDeviceSize length) const
+	UINT8* VulkanBuffer::Map(VkDeviceSize offset, VkDeviceSize length) const
 	{
-		VulkanDevice& device = mOwner->getDevice();
+		VulkanDevice& device = mOwner->GetDevice();
 
 		VkDeviceMemory memory;
 		VkDeviceSize memoryOffset;
-		device.getAllocationInfo(mAllocation, memory, memoryOffset);
+		device.GetAllocationInfo(mAllocation, memory, memoryOffset);
 
 		UINT8* data;
-		VkResult result = vkMapMemory(device.getLogical(), memory, memoryOffset + offset, length, 0, (void**)&data);
+		VkResult result = vkMapMemory(device.GetLogical(), memory, memoryOffset + offset, length, 0, (void**)&data);
 		assert(result == VK_SUCCESS);
 
 		return data;
@@ -57,7 +57,7 @@ namespace bs { namespace ct
 		vkUnmapMemory(device.getLogical(), memory);
 	}
 
-	void VulkanBuffer::copy(VulkanCmdBuffer* cb, VulkanBuffer* destination, VkDeviceSize srcOffset,
+	void VulkanBuffer::Copy(VulkanCmdBuffer* cb, VulkanBuffer* destination, VkDeviceSize srcOffset,
 		VkDeviceSize dstOffset, VkDeviceSize length)
 	{
 		VkBufferCopy region;
@@ -68,7 +68,7 @@ namespace bs { namespace ct
 		vkCmdCopyBuffer(cb->getHandle(), mBuffer, destination->getHandle(), 1, &region);
 	}
 
-	void VulkanBuffer::copy(VulkanCmdBuffer* cb, VulkanImage* destination, const VkExtent3D& extent,
+	void VulkanBuffer::Copy(VulkanCmdBuffer* cb, VulkanImage* destination, const VkExtent3D& extent,
 		const VkImageSubresourceLayers& range, VkImageLayout layout)
 	{
 		VkBufferImageCopy region;
@@ -84,12 +84,12 @@ namespace bs { namespace ct
 		vkCmdCopyBufferToImage(cb->getHandle(), mBuffer, destination->getHandle(), layout, 1, &region);
 	}
 
-	void VulkanBuffer::update(VulkanCmdBuffer* cb, UINT8* data, VkDeviceSize offset, VkDeviceSize length)
+	void VulkanBuffer::Update(VulkanCmdBuffer* cb, UINT8* data, VkDeviceSize offset, VkDeviceSize length)
 	{
 		vkCmdUpdateBuffer(cb->getHandle(), mBuffer, offset, length, (uint32_t*)data);
 	}
 
-	void VulkanBuffer::notifyDone(UINT32 globalQueueIdx, VulkanAccessFlags useFlags)
+	void VulkanBuffer::NotifyDone(UINT32 globalQueueIdx, VulkanAccessFlags useFlags)
 	{
 		{
 			Lock lock(mMutex);
@@ -104,7 +104,7 @@ namespace bs { namespace ct
 		VulkanResource::notifyDone(globalQueueIdx, useFlags);
 	}
 
-	void VulkanBuffer::notifyUnbound()
+	void VulkanBuffer::NotifyUnbound()
 	{
 		{
 			Lock lock(mMutex);
@@ -119,7 +119,7 @@ namespace bs { namespace ct
 		VulkanResource::notifyUnbound();
 	}
 
-	VkBufferView VulkanBuffer::getView(VkFormat format)
+	VkBufferView VulkanBuffer::GetView(VkFormat format)
 	{
 		const auto iterFind = std::find_if(mViews.begin(), mViews.end(),
 			[format](const ViewInfo& x) { return x.format == format; });
@@ -147,7 +147,7 @@ namespace bs { namespace ct
 		return view;
 	}
 
-	void VulkanBuffer::freeView(VkBufferView view)
+	void VulkanBuffer::FreeView(VkBufferView view)
 	{
 		const auto iterFind = std::find_if(mViews.begin(), mViews.end(),
 			[view](const ViewInfo& x) { return x.view == view; });
@@ -163,7 +163,7 @@ namespace bs { namespace ct
 		}
 	}
 	
-	void VulkanBuffer::destroyUnusedViews()
+	void VulkanBuffer::DestroyUnusedViews()
 	{
 		for(auto iter = mViews.begin(); iter != mViews.end();)
 		{
@@ -222,7 +222,7 @@ namespace bs { namespace ct
 		mBufferCI.queueFamilyIndexCount = 0;
 		mBufferCI.pQueueFamilyIndices = nullptr;
 
-		VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::instance());
+		VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
 		VulkanDevice* devices[BS_MAX_DEVICES];
 		VulkanUtility::getDevices(rapi, deviceMask, devices);
 
@@ -249,7 +249,7 @@ namespace bs { namespace ct
 		assert(mStagingBuffer == nullptr);
 	}
 
-	VulkanBuffer* VulkanHardwareBuffer::createBuffer(VulkanDevice& device, UINT32 size, bool staging, bool readable)
+	VulkanBuffer* VulkanHardwareBuffer::CreateBuffer(VulkanDevice& device, UINT32 size, bool staging, bool readable)
 	{
 		VkBufferUsageFlags usage = mBufferCI.usage;
 		if (staging)
@@ -299,7 +299,7 @@ namespace bs { namespace ct
 		return device.getResourceManager().create<VulkanBuffer>(buffer, allocation);
 	}
 
-	void* VulkanHardwareBuffer::map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx, UINT32 queueIdx)
+	void* VulkanHardwareBuffer::Map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx, UINT32 queueIdx)
 	{
 		if ((offset + length) > mSize)
 		{
@@ -324,7 +324,7 @@ namespace bs { namespace ct
 		mMappedSize = length;
 		mMappedLockOptions = options;
 
-		VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::instance());
+		VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
 		VulkanDevice& device = *rapi.GetDeviceInternal(deviceIdx);
 
 		VulkanCommandBufferManager& cbManager = gVulkanCBManager();
@@ -506,7 +506,7 @@ namespace bs { namespace ct
 		return mStagingBuffer->map(0, length);
 	}
 
-	void VulkanHardwareBuffer::unmap()
+	void VulkanHardwareBuffer::Unmap()
 	{
 		// Possibly map() failed with some error
 		if (!mIsMapped)
@@ -529,7 +529,7 @@ namespace bs { namespace ct
 			// We the caller wrote anything to the staging buffer, we need to upload it back to the main buffer
 			if(isWrite)
 			{
-				VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::instance());
+				VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
 				VulkanDevice& device = *rapi.GetDeviceInternal(mMappedDeviceIdx);
 
 				VulkanCommandBufferManager& cbManager = gVulkanCBManager();
@@ -630,7 +630,7 @@ namespace bs { namespace ct
 		mIsMapped = false;
 	}
 
-	void VulkanHardwareBuffer::copyData(HardwareBuffer& srcBuffer, UINT32 srcOffset,
+	void VulkanHardwareBuffer::CopyData(HardwareBuffer& srcBuffer, UINT32 srcOffset,
 		UINT32 dstOffset, UINT32 length, bool discardWholeBuffer, const SPtr<CommandBuffer>& commandBuffer)
 	{
 		if ((dstOffset + length) > mSize)
@@ -651,7 +651,7 @@ namespace bs { namespace ct
 
 		VulkanHardwareBuffer& vkSource = static_cast<VulkanHardwareBuffer&>(srcBuffer);
 
-		VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::instance());
+		VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
 		VulkanCmdBuffer* vkCB;
 		if (commandBuffer != nullptr)
 			vkCB = static_cast<VulkanCommandBuffer*>(commandBuffer.get())->getInternal();
@@ -676,14 +676,14 @@ namespace bs { namespace ct
 		vkCB->registerBuffer(dst, BufferUseFlagBits::Transfer, VulkanAccessFlag::Write);
 	}
 
-	void VulkanHardwareBuffer::readData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx, UINT32 queueIdx)
+	void VulkanHardwareBuffer::ReadData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx, UINT32 queueIdx)
 	{
 		void* lockedData = lock(offset, length, GBL_READ_ONLY, deviceIdx, queueIdx);
 		memcpy(dest, lockedData, length);
 		unlock();
 	}
 
-	void VulkanHardwareBuffer::writeData(UINT32 offset, UINT32 length, const void* source, BufferWriteType writeFlags,
+	void VulkanHardwareBuffer::WriteData(UINT32 offset, UINT32 length, const void* source, BufferWriteType writeFlags,
 		UINT32 queueIdx)
 	{
 		GpuLockOptions lockOptions = GBL_WRITE_ONLY_DISCARD_RANGE;

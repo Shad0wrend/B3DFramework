@@ -17,10 +17,10 @@ namespace bs
 		virtual ~RenderAPIFactory() = default;
 
 		/**	Creates and starts up the render system managed by this factory.  */
-		virtual void create() = 0;
+		virtual void Create() = 0;
 
 		/**	Returns the name of the render system this factory creates. */
-		virtual const char* name() const = 0;
+		virtual const char* Name() const = 0;
 	};
 
 	/** @} */

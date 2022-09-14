@@ -15,23 +15,23 @@ namespace bs
 				"\" has a duplicate ID: " + toString(rttiType->getRTTIId()));
 		}
 
-		getAllRTTITypes()[rttiType->getRTTIId()] = rttiType;
+		GetAllRttiTypes()[rttiType->getRTTIId()] = rttiType;
 	}
 
-	SPtr<IReflectable> IReflectable::createInstanceFromTypeId(UINT32 rttiTypeId)
+	SPtr<IReflectable> IReflectable::CreateInstanceFromTypeId(UINT32 rttiTypeId)
 	{
 		RTTITypeBase* type = GetRTTIfromTypeIdInternal(rttiTypeId);
 
 		SPtr<IReflectable> output;
 		if(type != nullptr)
-			output = type->newRTTIObject();
+			output = type->NewRttiObject();
 		
 		return output;
 	}
 
 	RTTITypeBase* IReflectable::GetRTTIfromTypeIdInternal(UINT32 rttiTypeId)
 	{
-		const auto iterFind = getAllRTTITypes().find(rttiTypeId);
+		const auto iterFind = GetAllRttiTypes().find(rttiTypeId);
 		if(iterFind != getAllRTTITypes().end())
 			return iterFind->second;
 
@@ -46,7 +46,7 @@ namespace bs
 		return IReflectable::GetRTTIfromTypeIdInternal(typeId) != nullptr;
 	}
 
-	bool IReflectable::isDerivedFrom(RTTITypeBase* base)
+	bool IReflectable::IsDerivedFrom(RTTITypeBase* base)
 	{
 		return getRTTI()->isDerivedFrom(base);
 	}
@@ -94,18 +94,18 @@ namespace bs
 		}
 	}
 
-	UINT32 IReflectable::getTypeId() const
+	UINT32 IReflectable::GetTypeId() const
 	{
 		return getRTTI()->getRTTIId();
 	}
 
-	const String& IReflectable::getTypeName() const
+	const String& IReflectable::GetTypeName() const
 	{
 		return getRTTI()->getRTTIName();
 	}
 
-	RTTITypeBase* IReflectable::getRTTIStatic()
+	RTTITypeBase* IReflectable::GetRttiStatic()
 	{
-		return IReflectableRTTI::instance();
+		return IReflectableRTTI::Instance();
 	}
 }

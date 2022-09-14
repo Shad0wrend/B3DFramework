@@ -19,16 +19,16 @@ namespace bs
 
 		ScriptParticleCollisions(MonoObject* managedInstance, const SPtr<ParticleCollisions>& value);
 
-		static MonoObject* create(const SPtr<ParticleCollisions>& value);
+		static MonoObject* Create(const SPtr<ParticleCollisions>& value);
 
 	private:
-		static void Internal_setPlanes(ScriptParticleCollisions* thisPtr, MonoArray* planes);
-		static MonoArray* Internal_getPlanes(ScriptParticleCollisions* thisPtr);
-		static void Internal_setPlaneObjects(ScriptParticleCollisions* thisPtr, MonoArray* objects);
-		static MonoArray* Internal_getPlaneObjects(ScriptParticleCollisions* thisPtr);
-		static void Internal_setOptions(ScriptParticleCollisions* thisPtr, PARTICLE_COLLISIONS_DESC* options);
-		static void Internal_getOptions(ScriptParticleCollisions* thisPtr, PARTICLE_COLLISIONS_DESC* __output);
-		static void Internal_create(MonoObject* managedInstance, PARTICLE_COLLISIONS_DESC* desc);
-		static void Internal_create0(MonoObject* managedInstance);
+		static void InternalSetPlanes(ScriptParticleCollisions* thisPtr, MonoArray* planes);
+		static MonoArray* InternalGetPlanes(ScriptParticleCollisions* thisPtr);
+		static void InternalSetPlaneObjects(ScriptParticleCollisions* thisPtr, MonoArray* objects);
+		static MonoArray* InternalGetPlaneObjects(ScriptParticleCollisions* thisPtr);
+		static void InternalSetOptions(ScriptParticleCollisions* thisPtr, PARTICLE_COLLISIONS_DESC* options);
+		static void InternalGetOptions(ScriptParticleCollisions* thisPtr, PARTICLE_COLLISIONS_DESC* __output);
+		static void InternalCreate(MonoObject* managedInstance, PARTICLE_COLLISIONS_DESC* desc);
+		static void InternalCreate0(MonoObject* managedInstance);
 	};
 }

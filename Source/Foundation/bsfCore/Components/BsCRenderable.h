@@ -23,62 +23,62 @@ namespace bs
 	public:
 		/** @copydoc Renderable::setMesh */
 		BS_SCRIPT_EXPORT(n:Mesh,pr:setter)
-		void setMesh(HMesh mesh);
+		void SetMesh(HMesh mesh);
 
 		/** @copydoc Renderable::getMesh */
 		BS_SCRIPT_EXPORT(n:Mesh,pr:getter)
-		HMesh getMesh() const { return mInternal->getMesh(); }
+		HMesh GetMesh() const { return mInternal->GetMesh(); }
 
 		/** @copydoc Renderable::setMaterial */
 		BS_SCRIPT_EXPORT(n:SetMaterial)
-		void setMaterial(UINT32 idx, HMaterial material) { mInternal->setMaterial(idx, material); }
+		void SetMaterial(UINT32 idx, HMaterial material) { mInternal->SetMaterial(idx, material); }
 
 		/** @copydoc Renderable::setMaterial */
 		BS_SCRIPT_EXPORT(n:SetMaterial)
-		void setMaterial(HMaterial material) { mInternal->setMaterial(material); }
+		void SetMaterial(HMaterial material) { mInternal->SetMaterial(material); }
 
 		/** @copydoc Renderable::getMaterial */
 		BS_SCRIPT_EXPORT(n:GetMaterial)
-		HMaterial getMaterial(UINT32 idx) const { return mInternal->getMaterial(idx); }
+		HMaterial GetMaterial(UINT32 idx) const { return mInternal->GetMaterial(idx); }
 
 		/** @copydoc Renderable::setMaterials */
 		BS_SCRIPT_EXPORT(n:Materials,pr:setter)
-		void setMaterials(const Vector<HMaterial>& materials) { mInternal->setMaterials(materials); }
+		void SetMaterials(const Vector<HMaterial>& materials) { mInternal->SetMaterials(materials); }
 
 		/** @copydoc Renderable::getMaterials */
 		BS_SCRIPT_EXPORT(n:Materials,pr:getter)
-		const Vector<HMaterial>& getMaterials() { return mInternal->getMaterials(); }
+		const Vector<HMaterial>& GetMaterials() { return mInternal->GetMaterials(); }
 
 		/** @copydoc Renderable::setCullDistanceFactor */
 		BS_SCRIPT_EXPORT(n:CullDistance, pr:setter)
-		void setCullDistanceFactor(float factor) { mInternal->setCullDistanceFactor(factor); }
+		void SetCullDistanceFactor(float factor) { mInternal->SetCullDistanceFactor(factor); }
 
 		/** @copydoc Renderable::getCullDistanceFactor */
 		BS_SCRIPT_EXPORT(n:CullDistance, pr:getter)
-		float getCullDistanceFactor() const { return mInternal->getCullDistanceFactor(); }
+		float GetCullDistanceFactor() const { return mInternal->GetCullDistanceFactor(); }
 
 		/** @copydoc Renderable::setWriteVelocity */
 		BS_SCRIPT_EXPORT(n:WriteVelocity, pr:setter)
-		void setWriteVelocity(bool enable) { mInternal->setWriteVelocity(enable); }
+		void SetWriteVelocity(bool enable) { mInternal->SetWriteVelocity(enable); }
 
 		/** @copydoc Renderable::getWriteVelocity */
 		BS_SCRIPT_EXPORT(n:WriteVelocity, pr:getter)
-		bool getWriteVelocity() const { return mInternal->getWriteVelocity(); }
+		bool GetWriteVelocity() const { return mInternal->GetWriteVelocity(); }
 		
 		/** @copydoc Renderable::setLayer */
 		BS_SCRIPT_EXPORT(n:Layers,pr:setter)
-		void setLayer(UINT64 layer) { mInternal->setLayer(layer); }
+		void SetLayer(UINT64 layer) { mInternal->SetLayer(layer); }
 
 		/** @copydoc Renderable::getLayer */
 		BS_SCRIPT_EXPORT(n:Layers,pr:getter)
-		UINT64 getLayer() const { return mInternal->getLayer(); }
+		UINT64 GetLayer() const { return mInternal->GetLayer(); }
 
 		/**	Gets world bounds of the mesh rendered by this object. */
 		BS_SCRIPT_EXPORT(n:Bounds,pr:getter)
-		Bounds getBounds() const;
+		Bounds GetBounds() const;
 
 		/** @copydoc Component::calculateBounds */
-		bool calculateBounds(Bounds& bounds) override;
+		bool CalculateBounds(Bounds& bounds) override;
 
 		/** @name Internal
 		 *  @{
@@ -109,22 +109,22 @@ namespace bs
 		CRenderable(const HSceneObject& parent);
 
 		/** @copydoc Component::onInitialized */
-		void onInitialized() override;
+		void OnInitialized() override;
 
 		/** @copydoc Component::onDestroyed */
-		void onDestroyed() override;
+		void OnDestroyed() override;
 
 	public:
 		/** @copydoc Component::update */
-		void update() override;
+		void Update() override;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
 		/************************************************************************/
 	public:
 		friend class CRenderableRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 
 	protected:
 		CRenderable(); // Serialization only

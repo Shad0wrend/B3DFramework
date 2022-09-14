@@ -24,11 +24,11 @@ namespace bs
 
 		/** @copydoc MeshCollider::setMesh */
 		BS_SCRIPT_EXPORT(n:Mesh,pr:setter)
-		void setMesh(const HPhysicsMesh& mesh);
+		void SetMesh(const HPhysicsMesh& mesh);
 
 		/** @copydoc MeshCollider::getMesh */
 		BS_SCRIPT_EXPORT(n:Mesh,pr:getter)
-		HPhysicsMesh getMesh() const { return mMesh; }
+		HPhysicsMesh GetMesh() const { return mMesh; }
 
 		/** @name Internal
 		 *  @{
@@ -46,10 +46,10 @@ namespace bs
 		friend class SceneObject;
 
 		/** @copydoc CCollider::createInternal */
-		SPtr<Collider> createInternal() override;
+		SPtr<Collider> CreateInternal() ;
 
 		/** @copydoc CCollider::isValidParent */
-		bool isValidParent(const HRigidbody& parent) const override;
+		bool IsValidParent(const HRigidbody& parent) const ;
 
 	protected:
 		HPhysicsMesh mMesh;
@@ -59,8 +59,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class CMeshColliderRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const ;
 
 	protected:
 		CMeshCollider(); // Serialization only

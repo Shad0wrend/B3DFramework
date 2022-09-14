@@ -14,14 +14,14 @@ namespace bs
 	void ScriptSubMesh::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptSubMesh::box(const SubMesh& value)
+	MonoObject*ScriptSubMesh::Box(const SubMesh& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	SubMesh ScriptSubMesh::unbox(MonoObject* value)
+	SubMesh ScriptSubMesh::Unbox(MonoObject* value)
 	{
-		return *(SubMesh*)MonoUtil::unbox(value);
+		return *(SubMesh*)MonoUtil::Unbox(value);
 	}
 
 }

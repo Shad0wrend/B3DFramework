@@ -19,10 +19,10 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "Color")
 
 		/** Unboxes a boxed managed Color struct and returns the native version of the structure. */
-		static Color unbox(MonoObject* obj);
+		static Color Unbox(MonoObject* obj);
 
 		/**	Boxes a native Color struct and returns a managed object containing it. */
-		static MonoObject* box(const Color& value);
+		static MonoObject* Box(const Color& value);
 
 	private:
 		ScriptColor(MonoObject* instance);

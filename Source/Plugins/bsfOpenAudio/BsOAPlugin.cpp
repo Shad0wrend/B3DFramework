@@ -11,14 +11,14 @@ namespace bs
 	class OAFactory : public AudioFactory
 	{
 	public:
-		void startUp() override
+		void StartUp() 
 		{
-			Audio::startUp<OAAudio>();
+			startUp<OAAudio>();
 		}
 
-		void shutDown() override
+		void shutDown() 
 		{
-			Audio::shutDown();
+			shutDown();
 		}
 	};
 
@@ -33,7 +33,7 @@ namespace bs
 	extern "C" BS_PLUGIN_EXPORT void* loadPlugin()
 	{
 		OAImporter* importer = bs_new<OAImporter>();
-		Importer::instance().RegisterAssetImporterInternal(importer);
+		Importer::Instance().RegisterAssetImporterInternal(importer);
 
 		return bs_new<OAFactory>();
 	}

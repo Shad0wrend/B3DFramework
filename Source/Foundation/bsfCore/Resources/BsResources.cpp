@@ -24,19 +24,19 @@ namespace bs
 	{
 		{
 			Lock lock(mDefaultManifestMutex);
-			mDefaultResourceManifest = ResourceManifest::create("Default");
+			mDefaultResourceManifest = ResourceManifest::Create("Default");
 			mResourceManifests.push_back(mDefaultResourceManifest);
 		}
 	}
 
 	Resources::~Resources()
 	{
-		unloadAll();
+		UnloadAll();
 	}
 
-	HResource Resources::load(const Path& filePath, ResourceLoadFlags loadFlags)
+	HResource Resources::Load(const Path& filePath, ResourceLoadFlags loadFlags)
 	{
-		if (!FileSystem::isFile(filePath))
+		if (!FileSystem::IsFile(filePath))
 		{
 			BS_LOG(Warning, Resources, "Cannot load resource. Specified file: {0} doesn't exist.", filePath);
 			return HResource();
@@ -51,7 +51,7 @@ namespace bs
 		return loadInternal(uuid, filePath, true, loadFlags).resource;
 	}
 
-	HResource Resources::load(const WeakResourceHandle<Resource>& handle, ResourceLoadFlags loadFlags)
+	HResource Resources::Load(const WeakResourceHandle<Resource>& handle, ResourceLoadFlags loadFlags)
 	{
 		if (handle.mData == nullptr)
 			return HResource();
@@ -60,7 +60,7 @@ namespace bs
 		return loadFromUUID(uuid, false, loadFlags);
 	}
 
-	HResource Resources::loadAsync(const Path& filePath, ResourceLoadFlags loadFlags)
+	HResource Resources::LoadAsync(const Path& filePath, ResourceLoadFlags loadFlags)
 	{
 		if (!FileSystem::isFile(filePath))
 		{
@@ -77,7 +77,7 @@ namespace bs
 		return loadInternal(uuid, filePath, false, loadFlags).resource;
 	}
 
-	HResource Resources::loadFromUUID(const UUID& uuid, bool async, ResourceLoadFlags loadFlags)
+	HResource Resources::LoadFromUuid(const UUID& uuid, bool async, ResourceLoadFlags loadFlags)
 	{
 		Path filePath;
 		getFilePathFromUUID(uuid, filePath);
@@ -85,7 +85,7 @@ namespace bs
 		return loadInternal(uuid, filePath, !async, loadFlags).resource;
 	}
 
-	Resources::LoadInfo Resources::loadInternal(const UUID& uuid, const Path& filePath, bool synchronous,
+	Resources::LoadInfo Resources::LoadInternal(const UUID& uuid, const Path& filePath, bool synchronous,
 		ResourceLoadFlags loadFlags)
 	{
 		LoadInfo output;
@@ -395,7 +395,7 @@ namespace bs
 				String taskName = "Resource load: " + fileName;
 
 				bool keepSourceData = loadFlags.isSet(ResourceLoadFlag::KeepSourceData);
-				SPtr<Task> task = Task::create(taskName,
+				SPtr<Task> task = Task::Create(taskName,
 					std::bind(&Resources::loadCallback, this, filePath, output.resource, keepSourceData));
 
 				// Register the task
@@ -406,7 +406,7 @@ namespace bs
 					if (iterFind != mInProgressResources.end())
 						iterFind->second->task = task;
 
-					TaskScheduler::instance().addTask(task);
+					TaskScheduler::Instance().addTask(task);
 				}
 			}
 		}
@@ -423,7 +423,7 @@ namespace bs
 		return output;
 	}
 
-	SPtr<Resource> Resources::loadFromDiskAndDeserialize(const Path& filePath, bool loadWithSaveData,
+	SPtr<Resource> Resources::LoadFromDiskAndDeserialize(const Path& filePath, bool loadWithSaveData,
 		std::atomic<float>& progress)
 	{
 		Lock fileLock = FileScheduler::getLock(filePath);
@@ -492,7 +492,7 @@ namespace bs
 			BS_LOG(Error, Resources, "Unable to load resource at path \"{0}\"", filePath);
 		else
 		{
-			if (!loadedData->isDerivedFrom(Resource::getRTTIStatic()))
+			if (!loadedData->isDerivedFrom(Resource::GetRttiStatic()))
 				BS_EXCEPT(InternalErrorException, "Loaded class doesn't derive from Resource.");
 		}
 
@@ -500,7 +500,7 @@ namespace bs
 		return resource;
 	}
 
-	void Resources::release(ResourceHandleBase& resource)
+	void Resources::Release(ResourceHandleBase& resource)
 	{
 		const UUID& uuid = resource.getUUID();
 
@@ -543,7 +543,7 @@ namespace bs
 		}
 	}
 
-	void Resources::unloadAllUnused()
+	void Resources::UnloadAllUnused()
 	{
 		Vector<HResource> resourcesToUnload;
 
@@ -570,7 +570,7 @@ namespace bs
 		}
 	}
 
-	void Resources::unloadAll()
+	void Resources::UnloadAll()
 	{
 		// Unload and invalidate all resources
 		UnorderedMap<UUID, LoadedResourceData> loadedResourcesCopy;
@@ -584,7 +584,7 @@ namespace bs
 			destroy(loadedResourcePair.second.resource);
 	}
 
-	void Resources::destroy(ResourceHandleBase& resource)
+	void Resources::Destroy(ResourceHandleBase& resource)
 	{
 		if (resource.mData == nullptr)
 			return;
@@ -639,7 +639,7 @@ namespace bs
 		resource.clearHandleData();
 	}
 
-	void Resources::save(const HResource& resource, const Path& filePath, bool overwrite, bool compress)
+	void Resources::Save(const HResource& resource, const Path& filePath, bool overwrite, bool compress)
 	{
 		if (resource == nullptr)
 			return;
@@ -675,7 +675,7 @@ namespace bs
 		SaveInternal(resource.getInternalPtr(), filePath, compress);
 	}
 
-	void Resources::save(const HResource& resource, bool compress)
+	void Resources::Save(const HResource& resource, bool compress)
 	{
 		if (resource == nullptr)
 			return;
@@ -799,7 +799,7 @@ namespace bs
 		}
 	}
 
-	void Resources::update(HResource& handle, const SPtr<Resource>& resource)
+	void Resources::Update(HResource& handle, const SPtr<Resource>& resource)
 	{
 		const UUID& uuid = handle.getUUID();
 		handle.setHandleData(resource, uuid);
@@ -819,10 +819,10 @@ namespace bs
 		onResourceModified(handle);
 
 		// This method is not thread safe due to this call (callable from main thread only)
-		ResourceListenerManager::instance().notifyListeners(uuid);
+		ResourceListenerManager::Instance().notifyListeners(uuid);
 	}
 
-	Vector<UUID> Resources::getDependencies(const Path& filePath)
+	Vector<UUID> Resources::GetDependencies(const Path& filePath)
 	{
 		SPtr<SavedResourceData> savedResourceData;
 		if (!filePath.isEmpty())
@@ -834,7 +834,7 @@ namespace bs
 		return savedResourceData->getDependencies();
 	}
 
-	void Resources::registerResourceManifest(const SPtr<ResourceManifest>& manifest)
+	void Resources::RegisterResourceManifest(const SPtr<ResourceManifest>& manifest)
 	{
 		auto findIter = std::find(mResourceManifests.begin(), mResourceManifests.end(), manifest);
 		if(findIter == mResourceManifests.end())
@@ -843,7 +843,7 @@ namespace bs
 			*findIter = manifest;
 	}
 
-	void Resources::unregisterResourceManifest(const SPtr<ResourceManifest>& manifest)
+	void Resources::UnregisterResourceManifest(const SPtr<ResourceManifest>& manifest)
 	{
 		if (manifest->getName() == "Default")
 			return;
@@ -853,7 +853,7 @@ namespace bs
 			mResourceManifests.erase(findIter);
 	}
 
-	SPtr<ResourceManifest> Resources::getResourceManifest(const String& name) const
+	SPtr<ResourceManifest> Resources::GetResourceManifest(const String& name) const
 	{
 		for(auto iter = mResourceManifests.rbegin(); iter != mResourceManifests.rend(); ++iter)
 		{
@@ -864,7 +864,7 @@ namespace bs
 		return nullptr;
 	}
 
-	bool Resources::isLoaded(const UUID& uuid, bool checkInProgress)
+	bool Resources::IsLoaded(const UUID& uuid, bool checkInProgress)
 	{
 		if (checkInProgress)
 		{
@@ -888,7 +888,7 @@ namespace bs
 		return false;
 	}
 
-	float Resources::getLoadProgress(const HResource& resource, bool includeDependencies)
+	float Resources::GetLoadProgress(const HResource& resource, bool includeDependencies)
 	{
 		const UUID& uuid = resource.getUUID();
 		if(uuid.empty())
@@ -975,7 +975,7 @@ namespace bs
 		return handle;
 	}
 
-	bool Resources::getFilePathFromUUID(const UUID& uuid, Path& filePath) const
+	bool Resources::GetFilePathFromUuid(const UUID& uuid, Path& filePath) const
 	{
 		// Default manifest is at 0th index but all other take priority since Default manifest could
 		// contain obsolete data.
@@ -988,7 +988,7 @@ namespace bs
 		return false;
 	}
 
-	bool Resources::getUUIDFromFilePath(const Path& path, UUID& uuid) const
+	bool Resources::GetUuidFromFilePath(const Path& path, UUID& uuid) const
 	{
 		Path manifestPath = path;
 		if (!manifestPath.isAbsolute())
@@ -1003,7 +1003,7 @@ namespace bs
 		return false;
 	}
 
-	void Resources::loadComplete(HResource& resource, bool notifyProgress)
+	void Resources::LoadComplete(HResource& resource, bool notifyProgress)
 	{
 		UUID uuid = resource.getUUID();
 
@@ -1064,13 +1064,13 @@ namespace bs
 
 			// This should only ever be true on the main thread
 			if (myLoadData->notifyImmediately)
-				ResourceListenerManager::instance().notifyListeners(uuid);
+				ResourceListenerManager::Instance().notifyListeners(uuid);
 
 			bs_delete(myLoadData);
 		}
 	}
 
-	void Resources::loadCallback(const Path& filePath, HResource& resource, bool loadWithSaveData)
+	void Resources::LoadCallback(const Path& filePath, HResource& resource, bool loadWithSaveData)
 	{
 		ResourceLoadData* myLoadData;
 		{
@@ -1093,6 +1093,6 @@ namespace bs
 
 	BS_CORE_EXPORT Resources& gResources()
 	{
-		return Resources::instance();
+		return Resources::Instance();
 	}
 }

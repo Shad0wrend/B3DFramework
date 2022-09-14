@@ -53,22 +53,22 @@ namespace bs { namespace ct
 		}
 	}
 
-	SPtr<VulkanVertexInput> VulkanVertexInputManager::getVertexInfo(
+	SPtr<VulkanVertexInput> VulkanVertexInputManager::GetVertexInfo(
 		const SPtr<VertexDeclaration>& vbDecl, const SPtr<VertexDeclaration>& shaderDecl)
 	{
 		Lock lock(mMutex);
 
 		VertexDeclarationKey pair;
-		pair.bufferDeclId = vbDecl->getId();
-		pair.shaderDeclId = shaderDecl->getId();
+		pair.bufferDeclId = vbDecl->GetId();
+		pair.shaderDeclId = shaderDecl->GetId();
 
 		auto iterFind = mVertexInputMap.find(pair);
 		if (iterFind == mVertexInputMap.end())
 		{
 			if (mVertexInputMap.size() >= DECLARATION_BUFFER_SIZE)
-				removeLeastUsed(); // Prune so the buffer doesn't just infinitely grow
+				RemoveLeastUsed(); // Prune so the buffer doesn't just infinitely grow
 
-			addNew(vbDecl, shaderDecl);
+			AddNew(vbDecl, shaderDecl);
 
 			iterFind = mVertexInputMap.find(pair);
 		}
@@ -77,11 +77,11 @@ namespace bs { namespace ct
 		return iterFind->second.vertexInput;
 	}
 
-	void VulkanVertexInputManager::addNew(const SPtr<VertexDeclaration>& vbDecl,
+	void VulkanVertexInputManager::AddNew(const SPtr<VertexDeclaration>& vbDecl,
 		const SPtr<VertexDeclaration>& shaderInputDecl)
 	{
-		const Vector<VertexElement>& vbElements = vbDecl->getProperties().getElements();
-		const Vector<VertexElement>& inputElements = shaderInputDecl->getProperties().getElements();
+		const Vector<VertexElement>& vbElements = vbDecl->GetProperties().GetElements();
+		const Vector<VertexElement>& inputElements = shaderInputDecl->GetProperties().GetElements();
 
 		UINT32 numAttributes = 0;
 		UINT32 numBindings = 0;
@@ -91,7 +91,7 @@ namespace bs { namespace ct
 			bool foundSemantic = false;
 			for (auto& inputElem : inputElements)
 			{
-				if (inputElem.getSemantic() == vbElem.getSemantic() && inputElem.getSemanticIdx() == vbElem.getSemanticIdx())
+				if (inputElem.GetSemantic() == vbElem.GetSemantic() && inputElem.GetSemanticIdx() == vbElem.GetSemanticIdx())
 				{
 					foundSemantic = true;
 					break;
@@ -102,7 +102,7 @@ namespace bs { namespace ct
 				continue;
 
 			numAttributes++;
-			numBindings = std::max(numBindings, (UINT32)vbElem.getStreamIdx() + 1);
+			numBindings = std::max(numBindings, (UINT32)vbElem.GetStreamIdx() + 1);
 		}
 
 		VertexInputEntry newEntry;
@@ -191,7 +191,7 @@ namespace bs { namespace ct
 		mVertexInputMap[pair] = std::move(newEntry);
 	}
 
-	void VulkanVertexInputManager::removeLeastUsed()
+	void VulkanVertexInputManager::RemoveLeastUsed()
 	{
 		Lock lock(mMutex);
 

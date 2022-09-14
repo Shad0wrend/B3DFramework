@@ -17,25 +17,25 @@ namespace bs
 
 	class BS_CORE_EXPORT CD6JointRTTI : public RTTIType<CD6Joint, CJoint, CD6JointRTTI>
 	{
-		D6JointMotion& getMotion(CD6Joint* obj, UINT32 idx) { return obj->mDesc.motion[idx]; }
-		void setMotion(CD6Joint* obj, UINT32 idx, D6JointMotion& value) { obj->mDesc.motion[idx] = value; }
-		UINT32 getMotionCount(CD6Joint* obj) { return (UINT32)D6JointMotion::Count; }
-		void setMotionCount(CD6Joint* obj, UINT32 size) { /* Do nothing */ }
+		D6JointMotion& GetMotion(CD6Joint* obj, UINT32 idx) { return obj->mDesc.motion[idx]; }
+		void SetMotion(CD6Joint* obj, UINT32 idx, D6JointMotion& value) { obj->mDesc.motion[idx] = value; }
+		UINT32 GetMotionCount(CD6Joint* obj) { return (UINT32)D6JointMotion::Count; }
+		void SetMotionCount(CD6Joint* obj, UINT32 size) { /* Do nothing */ }
 
-		float& getDriveStiffness(CD6Joint* obj, UINT32 idx) { return obj->mDesc.drive[idx].stiffness; }
-		void setDriveStiffness(CD6Joint* obj, UINT32 idx, float& value) { obj->mDesc.drive[idx].stiffness = value; }
+		float& GetDriveStiffness(CD6Joint* obj, UINT32 idx) { return obj->mDesc.drive[idx].stiffness; }
+		void SetDriveStiffness(CD6Joint* obj, UINT32 idx, float& value) { obj->mDesc.drive[idx].stiffness = value; }
 
-		float& getDriveDamping(CD6Joint* obj, UINT32 idx) { return obj->mDesc.drive[idx].damping; }
-		void setDriveDamping(CD6Joint* obj, UINT32 idx, float& value) { obj->mDesc.drive[idx].damping = value; }
+		float& GetDriveDamping(CD6Joint* obj, UINT32 idx) { return obj->mDesc.drive[idx].damping; }
+		void SetDriveDamping(CD6Joint* obj, UINT32 idx, float& value) { obj->mDesc.drive[idx].damping = value; }
 
-		float& getDriveForceLimit(CD6Joint* obj, UINT32 idx) { return obj->mDesc.drive[idx].forceLimit; }
-		void setDriveForceLimit(CD6Joint* obj, UINT32 idx, float& value) { obj->mDesc.drive[idx].forceLimit = value; }
+		float& GetDriveForceLimit(CD6Joint* obj, UINT32 idx) { return obj->mDesc.drive[idx].forceLimit; }
+		void SetDriveForceLimit(CD6Joint* obj, UINT32 idx, float& value) { obj->mDesc.drive[idx].forceLimit = value; }
 
-		bool& getDriveAcceleration(CD6Joint* obj, UINT32 idx) { return obj->mDesc.drive[idx].acceleration; }
-		void setDriveAcceleration(CD6Joint* obj, UINT32 idx, bool& value) { obj->mDesc.drive[idx].acceleration = value; }
+		bool& GetDriveAcceleration(CD6Joint* obj, UINT32 idx) { return obj->mDesc.drive[idx].acceleration; }
+		void SetDriveAcceleration(CD6Joint* obj, UINT32 idx, bool& value) { obj->mDesc.drive[idx].acceleration = value; }
 
-		UINT32 getDriveCount(CD6Joint* obj) { return (UINT32)D6JointDriveType::Count; }
-		void setDriveCount(CD6Joint* obj, UINT32 size) { /* Do nothing */ }
+		UINT32 GetDriveCount(CD6Joint* obj) { return (UINT32)D6JointDriveType::Count; }
+		void SetDriveCount(CD6Joint* obj, UINT32 size) { /* Do nothing */ }
 
 		BS_BEGIN_RTTI_MEMBERS
 			BS_RTTI_MEMBER_PLAIN_NAMED(mLimitLinearExtent, mDesc.limitLinear.extent, 5)
@@ -67,32 +67,32 @@ namespace bs
 	public:
 		CD6JointRTTI()
 		{
-			addPlainArrayField("mMotion", 0, &CD6JointRTTI::getMotion, &CD6JointRTTI::getMotionCount,
-				&CD6JointRTTI::setMotion, &CD6JointRTTI::setMotionCount);
-			addPlainArrayField("mDriveStiffnes", 1, &CD6JointRTTI::getDriveStiffness, &CD6JointRTTI::getDriveCount,
-				&CD6JointRTTI::setDriveStiffness, &CD6JointRTTI::setDriveCount);
-			addPlainArrayField("mDriveDamping", 2, &CD6JointRTTI::getDriveDamping, &CD6JointRTTI::getDriveCount,
-				&CD6JointRTTI::setDriveDamping, &CD6JointRTTI::setDriveCount);
-			addPlainArrayField("mDriveForceLimit", 3, &CD6JointRTTI::getDriveForceLimit, &CD6JointRTTI::getDriveCount,
-				&CD6JointRTTI::setDriveForceLimit, &CD6JointRTTI::setDriveCount);
-			addPlainArrayField("mDriveAcceleartion", 4, &CD6JointRTTI::getDriveAcceleration, &CD6JointRTTI::getDriveCount,
-				&CD6JointRTTI::setDriveAcceleration, &CD6JointRTTI::setDriveCount);
+			addPlainArrayField("mMotion", 0, &CD6JointRTTI::GetMotion, &CD6JointRTTI::GetMotionCount,
+				&CD6JointRTTI::SetMotion, &CD6JointRTTI::SetMotionCount);
+			addPlainArrayField("mDriveStiffnes", 1, &CD6JointRTTI::GetDriveStiffness, &CD6JointRTTI::GetDriveCount,
+				&CD6JointRTTI::SetDriveStiffness, &CD6JointRTTI::SetDriveCount);
+			addPlainArrayField("mDriveDamping", 2, &CD6JointRTTI::GetDriveDamping, &CD6JointRTTI::GetDriveCount,
+				&CD6JointRTTI::SetDriveDamping, &CD6JointRTTI::SetDriveCount);
+			addPlainArrayField("mDriveForceLimit", 3, &CD6JointRTTI::GetDriveForceLimit, &CD6JointRTTI::GetDriveCount,
+				&CD6JointRTTI::SetDriveForceLimit, &CD6JointRTTI::SetDriveCount);
+			addPlainArrayField("mDriveAcceleartion", 4, &CD6JointRTTI::GetDriveAcceleration, &CD6JointRTTI::GetDriveCount,
+				&CD6JointRTTI::SetDriveAcceleration, &CD6JointRTTI::SetDriveCount);
 		}
 
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "CD6Joint";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_CD6Joint;
 		}
 
 		SPtr<IReflectable> newRTTIObject() override
 		{
-			return SceneObject::createEmptyComponent<CD6Joint>();
+			return SceneObject::CreateEmptyComponent<CD6Joint>();
 		}
 	};
 

@@ -39,7 +39,7 @@ namespace bs
 
 		~USPtr()
 		{
-			release();
+			Release();
 		}
 
 		USPtr& operator= (const USPtr& ptr)
@@ -54,12 +54,12 @@ namespace bs
 			return *this;
 		}
 
-		void reset()
+		void Reset()
 		{
 			release();
 		}
 
-		void reset(T* ptr)
+		void Reset(T* ptr)
 		{
 			assert(ptr == nullptr || (ptr != mPtr));
 
@@ -71,7 +71,7 @@ namespace bs
 			add();
 		}
 
-		void swap(USPtr& rhs)
+		void Swap(USPtr& rhs)
 		{
 			std::swap(mPtr, rhs.mPtr);
 			std::swap(mCounter, rhs.mCounter);
@@ -90,15 +90,15 @@ namespace bs
 		}
 
 		operator bool() const { return mCounter != nullptr && *mCounter > 0; }
-		bool unique() const { return mCounter != nullptr && *mCounter == 1; }
-		uint32_t useCount() const { return mCounter == nullptr ? 0 : *mCounter; }
-		T* get() const { return mPtr; }
+		bool Unique() const { return mCounter != nullptr && *mCounter == 1; }
+		uint32_t UseCount() const { return mCounter == nullptr ? 0 : *mCounter; }
+		T* Get() const { return mPtr; }
 
 	private:
 		template<class U>
 		friend class USPtr;
 
-		void add()
+		void Add()
 		{
 			if (mPtr != nullptr)
 			{
@@ -109,7 +109,7 @@ namespace bs
 			}
 		}
 
-		void release() 
+		void Release() 
 		{
 			if (mCounter != nullptr)
 			{

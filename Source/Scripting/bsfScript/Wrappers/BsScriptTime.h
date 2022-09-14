@@ -23,11 +23,11 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static float internal_getRealElapsed();
-		static float internal_getElapsed();
-		static float internal_getFrameDelta();
-		static UINT64 internal_getFrameNumber();
-		static UINT64 internal_getPrecise();
+		static float InternalGetRealElapsed();
+		static float InternalGetElapsed();
+		static float InternalGetFrameDelta();
+		static UINT64 InternalGetFrameNumber();
+		static UINT64 InternalGetPrecise();
 	};
 
 	/** @} */

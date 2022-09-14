@@ -66,10 +66,10 @@ namespace bs
 		using TMaterialDataCommon<TGpuDataParamInfo<T>::TypeId, Core>::TMaterialDataCommon;
 
 		/** @copydoc TGpuDataParam::set */
-		void set(const T& value, UINT32 arrayIdx = 0) const;
+		void Set(const T& value, UINT32 arrayIdx = 0) const;
 
 		/** @copydoc TGpuDataParam::get */
-		T get(UINT32 arrayIdx = 0) const;
+		T Get(UINT32 arrayIdx = 0) const;
 	};
 
 	/** @copydoc TMaterialDataParam */
@@ -82,10 +82,10 @@ namespace bs
 		using TMaterialDataCommon<TGpuDataParamInfo<T>::TypeId, Core>::TMaterialDataCommon;
 
 		/** @copydoc TGpuDataParam::set */
-		void set(TAnimationCurve<T> value, UINT32 arrayIdx = 0) const;
+		void Set(TAnimationCurve<T> value, UINT32 arrayIdx = 0) const;
 
 		/** @copydoc TGpuDataParam::get */
-		const TAnimationCurve<T>& get(UINT32 arrayIdx = 0) const;
+		const TAnimationCurve<T>& Get(UINT32 arrayIdx = 0) const;
 	};
 	
 	/** @copydoc TMaterialDataParam */
@@ -98,10 +98,10 @@ namespace bs
 		using TMaterialDataCommon<GPDT_COLOR, Core>::TMaterialDataCommon;
 
 		/** @copydoc TGpuDataParam::set */
-		void set(const ColorGradientHDR& value, UINT32 arrayIdx = 0) const;
+		void Set(const ColorGradientHDR& value, UINT32 arrayIdx = 0) const;
 
 		/** @copydoc TGpuDataParam::get */
-		const ColorGradientHDR& get(UINT32 arrayIdx = 0) const;
+		const ColorGradientHDR& Get(UINT32 arrayIdx = 0) const;
 	};
 
 	/** @copydoc TMaterialDataParam */
@@ -114,13 +114,13 @@ namespace bs
 		using TMaterialDataCommon<GPDT_STRUCT, Core>::TMaterialDataCommon;
 
 		/** @copydoc TGpuParamStruct::set */
-		void set(const void* value, UINT32 sizeBytes, UINT32 arrayIdx = 0) const;
+		void Set(const void* value, UINT32 sizeBytes, UINT32 arrayIdx = 0) const;
 
 		/** @copydoc TGpuParamStruct::get */
-		void get(void* value, UINT32 sizeBytes, UINT32 arrayIdx = 0) const;
+		void Get(void* value, UINT32 sizeBytes, UINT32 arrayIdx = 0) const;
 
 		/** @copydoc TGpuParamStruct::getElementSize */
-		UINT32 getElementSize() const;
+		UINT32 GetElementSize() const;
 	};
 
 	/** @copydoc TMaterialDataParam */
@@ -136,10 +136,10 @@ namespace bs
 		TMaterialParamTexture() { }
 
 		/** @copydoc GpuParamTexture::set */
-		void set(const TextureType& texture, const TextureSurface& surface = TextureSurface::COMPLETE) const;
+		void Set(const TextureType& texture, const TextureSurface& surface = TextureSurface::COMPLETE) const;
 
 		/** @copydoc GpuParamTexture::get */
-		TextureType get() const;
+		TextureType Get() const;
 
 		/** Checks if param is initialized. */
 		bool operator==(const std::nullptr_t& nullval) const
@@ -166,10 +166,10 @@ namespace bs
 		TMaterialParamSpriteTexture() { }
 
 		/** @copydoc GpuParamTexture::set */
-		void set(const SpriteTextureType& texture)const;
+		void Set(const SpriteTextureType& texture)const;
 
 		/** @copydoc GpuParamTexture::get */
-		SpriteTextureType get() const;
+		SpriteTextureType Get() const;
 
 		/** Checks if param is initialized. */
 		bool operator==(const std::nullptr_t& nullval) const
@@ -195,10 +195,10 @@ namespace bs
 		TMaterialParamLoadStoreTexture() { }
 
 		/** @copydoc GpuParamLoadStoreTexture::set */
-		void set(const TextureType& texture, const TextureSurface& surface = TextureSurface()) const;
+		void Set(const TextureType& texture, const TextureSurface& surface = TextureSurface()) const;
 
 		/** @copydoc GpuParamLoadStoreTexture::get */
-		TextureType get() const;
+		TextureType Get() const;
 
 		/** Checks if param is initialized. */
 		bool operator==(const std::nullptr_t& nullval) const
@@ -224,10 +224,10 @@ namespace bs
 		TMaterialParamBuffer() { }
 
 		/** @copydoc GpuParamBuffer::set */
-		void set(const BufferType& buffer) const;
+		void Set(const BufferType& buffer) const;
 
 		/** @copydoc GpuParamBuffer::get */
-		BufferType get() const;
+		BufferType Get() const;
 
 		/** Checks if param is initialized. */
 		bool operator==(const std::nullptr_t& nullval) const
@@ -253,10 +253,10 @@ namespace bs
 		TMaterialParamSampState() { }
 
 		/** @copydoc GpuParamSampState::set */
-		void set(const SamplerStateType& sampState) const;
+		void Set(const SamplerStateType& sampState) const;
 
 		/** @copydoc GpuParamSampState::get */
-		SamplerStateType get() const;
+		SamplerStateType Get() const;
 
 		/** Checks if param is initialized. */
 		bool operator==(const std::nullptr_t& nullval) const

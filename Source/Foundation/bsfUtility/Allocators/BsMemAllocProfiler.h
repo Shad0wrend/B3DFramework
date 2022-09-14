@@ -25,13 +25,13 @@ namespace bs
 	{
 	public:
 		/** Allocates the given number of bytes. */
-		static void* allocate(size_t bytes)
+		static void* Allocate(size_t bytes)
 		{
 			return malloc(bytes);
 		}
 
 		/** Frees memory previously allocated with allocate(). */
-		static void free(void* ptr)
+		static void Free(void* ptr)
 		{
 			::free(ptr);
 		}

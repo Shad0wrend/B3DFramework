@@ -36,7 +36,7 @@ namespace bs
 		return content;
 	}
 
-	void FileSystemTestSuite::startUp()
+	void FileSystemTestSuite::StartUp()
 	{
 		mTestDirectory = FileSystem::getWorkingDirectoryPath() + testDirectoryName;
 		if (FileSystem::exists(mTestDirectory))
@@ -48,11 +48,11 @@ namespace bs
 		else
 		{
 			FileSystem::createDir(mTestDirectory);
-			BS_TEST_ASSERT_MSG(FileSystem::exists(mTestDirectory), "FileSystemTestSuite::startUp(): test directory creation failed");
+			BS_TEST_ASSERT_MSG(FileSystem::exists(mTestDirectory), "FileSystemTestSuite::StartUp(): test directory creation failed");
 		}
 	}
 
-	void FileSystemTestSuite::shutDown()
+	void FileSystemTestSuite::ShutDown()
 	{
 		FileSystem::remove(mTestDirectory, true);
 		if (FileSystem::exists(mTestDirectory))

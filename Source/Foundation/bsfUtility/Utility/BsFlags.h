@@ -33,25 +33,25 @@ namespace bs
 		}
 
 		/** Checks whether all of the provided bits are set */
-		bool isSet(Enum value) const
+		bool IsSet(Enum value) const
 		{
 			return (mBits & static_cast<Storage>(value)) == static_cast<Storage>(value);
 		}
 
 		/** Checks whether any of the provided bits are set */
-		bool isSetAny(Enum value) const
+		bool IsSetAny(Enum value) const
 		{
 			return (mBits & static_cast<Storage>(value)) != 0;
 		}
 
 		/** Checks whether any of the provided bits are set */
-		bool isSetAny(const Flags<Enum, Storage>& value) const
+		bool IsSetAny(const Flags<Enum, Storage>& value) const
 		{
 			return (mBits & value.mBits) != 0;
 		}
 
 		/** Activates all of the provided bits. */
-		Flags<Enum, Storage>& set(Enum value)
+		Flags<Enum, Storage>& Set(Enum value)
 		{
 			mBits |= static_cast<Storage>(value);
 
@@ -59,7 +59,7 @@ namespace bs
 		}
 
 		/** Deactivates all of the provided bits. */
-		void unset(Enum value)
+		void Unset(Enum value)
 		{
 			mBits &= ~static_cast<Storage>(value);
 		}

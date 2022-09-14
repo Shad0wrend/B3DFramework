@@ -14,14 +14,14 @@ namespace bs
 	void ScriptVector4I::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptVector4I::box(const Vector4I& value)
+	MonoObject*ScriptVector4I::Box(const Vector4I& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	Vector4I ScriptVector4I::unbox(MonoObject* value)
+	Vector4I ScriptVector4I::Unbox(MonoObject* value)
 	{
-		return *(Vector4I*)MonoUtil::unbox(value);
+		return *(Vector4I*)MonoUtil::Unbox(value);
 	}
 
 }

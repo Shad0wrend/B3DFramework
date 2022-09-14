@@ -53,7 +53,7 @@ namespace bs
 			 * Returns the first free address and increments the free pointer. Caller needs to ensure the remaining block
 			 * size is adequate before calling.
 			 */
-			UINT8* alloc()
+			UINT8* Alloc()
 			{
 				UINT8* freeEntry = &blockData[freePtr];
 				freePtr = *(UINT32*)freeEntry;
@@ -63,7 +63,7 @@ namespace bs
 			}
 
 			/** Deallocates the provided pointer. */
-			void dealloc(void* data)
+			void Dealloc(void* data)
 			{
 				UINT32* entryPtr = (UINT32*)data;
 				*entryPtr = freePtr;
@@ -101,7 +101,7 @@ namespace bs
 		}
 
 		/** Allocates enough memory for a single element in the pool. */
-		UINT8* alloc()
+		UINT8* Alloc()
 		{
 			ScopedLock<Lock> lock(mLockPolicy);
 
@@ -115,7 +115,7 @@ namespace bs
 		}
 
 		/** Deallocates an element from the pool. */
-		void free(void* data)
+		void Free(void* data)
 		{
 			ScopedLock<Lock> lock(mLockPolicy);
 
@@ -152,7 +152,7 @@ namespace bs
 
 		/** Allocates and constructs a single pool element. */
 		template<class T, class... Args>
-		T* construct(Args &&...args)
+		T* Construct(Args &&...args)
 		{
 			T* data = (T*)alloc();
 			new ((void*)data) T(std::forward<Args>(args)...);
@@ -162,7 +162,7 @@ namespace bs
 
 		/** Destructs and deallocates a single pool element. */
 		template<class T>
-		void destruct(T* data)
+		void Destruct(T* data)
 		{
 			data->~T();
 			free(data);
@@ -170,7 +170,7 @@ namespace bs
 
 	private:
 		/** Allocates a new block of memory using a heap allocator. */
-		MemBlock* allocBlock()
+		MemBlock* AllocBlock()
 		{
 			MemBlock* newBlock = nullptr;
 			MemBlock* curBlock = mFreeBlock;
@@ -213,7 +213,7 @@ namespace bs
 		}
 
 		/** Deallocates a block of memory. */
-		void deallocBlock(MemBlock* block)
+		void DeallocBlock(MemBlock* block)
 		{
 			block->~MemBlock();
 			bs_free(block);

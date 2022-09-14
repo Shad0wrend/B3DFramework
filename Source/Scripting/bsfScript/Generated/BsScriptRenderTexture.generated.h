@@ -19,16 +19,16 @@ namespace bs
 
 		ScriptRenderTexture(MonoObject* managedInstance, const SPtr<RenderTexture>& value);
 
-		static MonoObject* create(const SPtr<RenderTexture>& value);
+		static MonoObject* Create(const SPtr<RenderTexture>& value);
 
 	private:
-		static void Internal_create(MonoObject* managedInstance, PixelFormat format, int32_t width, int32_t height, int32_t numSamples, bool gammaCorrection, bool createDepth, PixelFormat depthStencilFormat);
-		static void Internal_create0(MonoObject* managedInstance, MonoObject* colorSurface);
-		static void Internal_create1(MonoObject* managedInstance, MonoObject* colorSurface, MonoObject* depthStencilSurface);
-		static void Internal_create2(MonoObject* managedInstance, MonoArray* colorSurface);
-		static void Internal_create3(MonoObject* managedInstance, MonoArray* colorSurface, MonoObject* depthStencilSurface);
-		static MonoObject* Internal_getColorSurface(ScriptRenderTexture* thisPtr);
-		static MonoArray* Internal_getColorSurfaces(ScriptRenderTexture* thisPtr);
-		static MonoObject* Internal_getDepthStencilSurface(ScriptRenderTexture* thisPtr);
+		static void InternalCreate(MonoObject* managedInstance, PixelFormat format, int32_t width, int32_t height, int32_t numSamples, bool gammaCorrection, bool createDepth, PixelFormat depthStencilFormat);
+		static void InternalCreate0(MonoObject* managedInstance, MonoObject* colorSurface);
+		static void InternalCreate1(MonoObject* managedInstance, MonoObject* colorSurface, MonoObject* depthStencilSurface);
+		static void InternalCreate2(MonoObject* managedInstance, MonoArray* colorSurface);
+		static void InternalCreate3(MonoObject* managedInstance, MonoArray* colorSurface, MonoObject* depthStencilSurface);
+		static MonoObject* InternalGetColorSurface(ScriptRenderTexture* thisPtr);
+		static MonoArray* InternalGetColorSurfaces(ScriptRenderTexture* thisPtr);
+		static MonoObject* InternalGetDepthStencilSurface(ScriptRenderTexture* thisPtr);
 	};
 }

@@ -14,14 +14,14 @@ namespace bs
 	void ScriptPARTICLE_COLLISIONS_DESC::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptPARTICLE_COLLISIONS_DESC::box(const PARTICLE_COLLISIONS_DESC& value)
+	MonoObject*ScriptPARTICLE_COLLISIONS_DESC::Box(const PARTICLE_COLLISIONS_DESC& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	PARTICLE_COLLISIONS_DESC ScriptPARTICLE_COLLISIONS_DESC::unbox(MonoObject* value)
+	PARTICLE_COLLISIONS_DESC ScriptPARTICLE_COLLISIONS_DESC::Unbox(MonoObject* value)
 	{
-		return *(PARTICLE_COLLISIONS_DESC*)MonoUtil::unbox(value);
+		return *(PARTICLE_COLLISIONS_DESC*)MonoUtil::Unbox(value);
 	}
 
 }

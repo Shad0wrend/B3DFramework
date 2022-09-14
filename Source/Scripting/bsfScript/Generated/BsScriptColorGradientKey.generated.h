@@ -20,10 +20,10 @@ namespace bs
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "ColorGradientKey")
 
-		static MonoObject* box(const __ColorGradientKeyInterop& value);
-		static __ColorGradientKeyInterop unbox(MonoObject* value);
-		static ColorGradientKey fromInterop(const __ColorGradientKeyInterop& value);
-		static __ColorGradientKeyInterop toInterop(const ColorGradientKey& value);
+		static MonoObject* Box(const __ColorGradientKeyInterop& value);
+		static __ColorGradientKeyInterop Unbox(MonoObject* value);
+		static ColorGradientKey FromInterop(const __ColorGradientKeyInterop& value);
+		static __ColorGradientKeyInterop ToInterop(const ColorGradientKey& value);
 
 	private:
 		ScriptColorGradientKey(MonoObject* managedInstance);

@@ -19,19 +19,19 @@ namespace bs { namespace ct
 		Win32GLSupport();
 
 		/** @copydoc GLSupport::newWindow */
-		SPtr<bs::RenderWindow> newWindow(RENDER_WINDOW_DESC& desc, UINT32 windowId, SPtr<bs::RenderWindow> parentWindow) override;
+		SPtr<bs::RenderWindow> NewWindow(RENDER_WINDOW_DESC& desc, UINT32 windowId, SPtr<bs::RenderWindow> parentWindow) ;
 
 		/** @copydoc GLSupport::start */
-		void start() override;
+		void Start() override;
 
 		/** @copydoc GLSupport::stop */
-		void stop() override;
+		void Stop() override;
 
 		/** @copydoc GLSupport::getProcAddress */
-		void* getProcAddress(const String& procname) override;
+		void* GetProcAddress(const String& procname) override;
 
 		/** @copydoc GLSupport::initializeExtensions */
-		void initializeExtensions() override;
+		void InitializeExtensions() override;
 		
 		/**
 		 * Creates a new OpenGL context.
@@ -41,7 +41,7 @@ namespace bs { namespace ct
 		 *								created.
 		 * @return						Newly created GLContext class referencing the created or external context handle.
 		 */
-		SPtr<Win32Context> createContext(HDC hdc, HGLRC externalGlrc = 0);
+		SPtr<Win32Context> CreateContext(HDC hdc, HGLRC externalGlrc = 0);
 
 		/**
 		 * Selects and sets an appropriate pixel format based on the provided parameters.
@@ -53,20 +53,20 @@ namespace bs { namespace ct
 		 * @param[in]	depth		Should the pixel format contain the depth/stencil buffer.
 		 * @return					True if a pixel format was successfully set.
 		 */
-		bool selectPixelFormat(HDC hdc, int colorDepth, int multisample, bool hwGamma, bool depth);
+		bool SelectPixelFormat(HDC hdc, int colorDepth, int multisample, bool hwGamma, bool depth);
 
 		/** @copydoc GLSupport::getVideoModeInfo */
-		SPtr<VideoModeInfo> getVideoModeInfo() const override;
+		SPtr<VideoModeInfo> GetVideoModeInfo() const ;
 
 		/** Notifies the manager that a new window has been created. */
 		void NotifyWindowCreatedInternal(Win32RenderWindow* window);
 
 	private:
 		/**	Initializes windows specific OpenGL extensions needed for advanced context creation. */
-		void initialiseWGL();
+		void InitialiseWgl();
 
 		/**	Dummy window procedure used when creating the initial dummy OpenGL context. */
-		static LRESULT CALLBACK dummyWndProc(HWND hwnd, UINT umsg, WPARAM wp, LPARAM lp);
+		static LRESULT CALLBACK DummyWndProc(HWND hwnd, UINT umsg, WPARAM wp, LPARAM lp);
 
 		Vector<DEVMODE>    mDevModes;
 		Win32RenderWindow* mInitialWindow = nullptr;

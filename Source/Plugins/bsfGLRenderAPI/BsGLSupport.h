@@ -31,37 +31,37 @@ namespace bs { namespace ct
 		 *								window cannot have a parent.
 		 * @return						Returns newly created window.
 		 */
-		virtual SPtr<bs::RenderWindow> newWindow(RENDER_WINDOW_DESC& desc, UINT32 windowId, SPtr<bs::RenderWindow> parentWindow) = 0;
+		virtual SPtr<bs::RenderWindow> NewWindow(RENDER_WINDOW_DESC& desc, UINT32 windowId, SPtr<bs::RenderWindow> parentWindow) = 0;
 
 		/**	Called when OpenGL is being initialized. */
-		virtual void start() = 0;
+		virtual void Start() = 0;
 
 		/**	Called when OpenGL is being shut down. */
-		virtual void stop() = 0;
+		virtual void Stop() = 0;
 
 		/**	Gets OpenGL vendor name. */
-		const String& getGLVendor() const
+		const String& GetGlVendor() const
 		{
 			return mVendor;
 		}
 
 		/**	Gets OpenGL version string. */
-		const String& getGLVersion() const
+		const String& GetGlVersion() const
 		{
 			return mVersion;
 		}
 
 		/**	Checks is the specified extension available. */
-		virtual bool checkExtension(const String& ext) const;
+		virtual bool CheckExtension(const String& ext) const;
 
 		/**	Gets an address of an OpenGL procedure with the specified name. */
-		virtual void* getProcAddress(const String& procname) = 0;
+		virtual void* GetProcAddress(const String& procname) = 0;
 
 		/** Initializes OpenGL extensions. Must be called after we have a valid and active OpenGL context. */
-		virtual void initializeExtensions();
+		virtual void InitializeExtensions();
 
 		/**	Gets a structure describing all available video modes. */
-		virtual SPtr<VideoModeInfo> getVideoModeInfo() const = 0;
+		virtual SPtr<VideoModeInfo> GetVideoModeInfo() const = 0;
 
 	protected:
 		Set<String> extensionList;

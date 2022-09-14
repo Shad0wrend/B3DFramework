@@ -29,7 +29,7 @@ namespace bs { namespace ct
 
 	VulkanPipeline::~VulkanPipeline()
 	{
-		vkDestroyPipeline(mOwner->getDevice().getLogical(), mPipeline, gVulkanAllocator);
+		vkDestroyPipeline(mOwner->GetDevice().GetLogical(), mPipeline, gVulkanAllocator);
 	}
 
 	VulkanGraphicsPipelineState::GpuPipelineKey::GpuPipelineKey(
@@ -87,17 +87,17 @@ namespace bs { namespace ct
 				continue;
 
 			for(auto& entry : mPerDeviceData[i].pipelines)
-				entry.second->destroy();
+				entry.second->Destroy();
 		}
 
 		BS_INC_RENDER_STAT_CAT(ResDestroyed, RenderStatObject_PipelineState);
 	}
 
-	void VulkanGraphicsPipelineState::initialize()
+	void VulkanGraphicsPipelineState::Initialize()
 	{
 		Lock lock(mMutex);
 
-		GraphicsPipelineState::initialize();
+		GraphicsPipelineState::Initialize();
 
 		std::pair<VkShaderStageFlagBits, GpuProgram*> stages[] =
 			{
@@ -122,7 +122,7 @@ namespace bs { namespace ct
 			stageCI.flags = 0;
 			stageCI.stage = stages[i].first;
 			stageCI.module = VK_NULL_HANDLE;
-			stageCI.pName = program->getEntryPoint().c_str();
+			stageCI.pName = program->GetEntryPoint().c_str();
 			stageCI.pSpecializationInfo = nullptr;
 
 			stageOutputIdx++;
@@ -289,7 +289,7 @@ namespace bs { namespace ct
 		if(mData.vertexProgram != nullptr)
 			mVertexDecl = mData.vertexProgram->getInputDeclaration();
 
-		VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::instance());
+		VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
 
 		VulkanDevice* devices[BS_MAX_DEVICES];
 		VulkanUtility::getDevices(rapi, mDeviceMask, devices);
@@ -318,7 +318,7 @@ namespace bs { namespace ct
 		BS_INC_RENDER_STAT_CAT(ResCreated, RenderStatObject_PipelineState);
 	}
 
-	VulkanPipeline* VulkanGraphicsPipelineState::getPipeline(
+	VulkanPipeline* VulkanGraphicsPipelineState::GetPipeline(
 		UINT32 deviceIdx, VulkanRenderPass* renderPass, UINT32 readOnlyFlags, DrawOperationType drawOp,
 			const SPtr<VulkanVertexInput>& vertexInput)
 	{
@@ -341,12 +341,12 @@ namespace bs { namespace ct
 		return newPipeline;
 	}
 
-	VkPipelineLayout VulkanGraphicsPipelineState::getPipelineLayout(UINT32 deviceIdx) const
+	VkPipelineLayout VulkanGraphicsPipelineState::GetPipelineLayout(UINT32 deviceIdx) const
 	{
 		return mPerDeviceData[deviceIdx].pipelineLayout;
 	}
 
-	void VulkanGraphicsPipelineState::registerPipelineResources(VulkanCmdBuffer* cmdBuffer)
+	void VulkanGraphicsPipelineState::RegisterPipelineResources(VulkanCmdBuffer* cmdBuffer)
 	{
 		UINT32 deviceIdx = cmdBuffer->getDeviceIdx();
 
@@ -370,7 +370,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	VulkanPipeline* VulkanGraphicsPipelineState::createPipeline(UINT32 deviceIdx, VulkanRenderPass* renderPass,
+	VulkanPipeline* VulkanGraphicsPipelineState::CreatePipeline(UINT32 deviceIdx, VulkanRenderPass* renderPass,
 		UINT32 readOnlyFlags, DrawOperationType drawOp, const SPtr<VulkanVertexInput>& vertexInput)
 	{
 		mInputAssemblyInfo.topology = VulkanUtility::getDrawOp(drawOp);
@@ -512,7 +512,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	void VulkanComputePipelineState::initialize()
+	void VulkanComputePipelineState::Initialize()
 	{
 		ComputePipelineState::initialize();
 
@@ -540,7 +540,7 @@ namespace bs { namespace ct
 		pipelineCI.basePipelineHandle = VK_NULL_HANDLE;
 		pipelineCI.basePipelineIndex = -1;
 
-		VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::instance());
+		VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
 
 		VulkanDevice* devices[BS_MAX_DEVICES];
 		VulkanUtility::getDevices(rapi, mDeviceMask, devices);
@@ -585,17 +585,17 @@ namespace bs { namespace ct
 		BS_INC_RENDER_STAT_CAT(ResCreated, RenderStatObject_PipelineState);
 	}
 
-	VulkanPipeline* VulkanComputePipelineState::getPipeline(UINT32 deviceIdx) const
+	VulkanPipeline* VulkanComputePipelineState::GetPipeline(UINT32 deviceIdx) const
 	{
 		return mPerDeviceData[deviceIdx].pipeline;
 	}
 
-	VkPipelineLayout VulkanComputePipelineState::getPipelineLayout(UINT32 deviceIdx) const
+	VkPipelineLayout VulkanComputePipelineState::GetPipelineLayout(UINT32 deviceIdx) const
 	{
 		return mPerDeviceData[deviceIdx].pipelineLayout;
 	}
 
-	void VulkanComputePipelineState::registerPipelineResources(VulkanCmdBuffer* cmdBuffer)
+	void VulkanComputePipelineState::RegisterPipelineResources(VulkanCmdBuffer* cmdBuffer)
 	{
 		UINT32 deviceIdx = cmdBuffer->getDeviceIdx();
 

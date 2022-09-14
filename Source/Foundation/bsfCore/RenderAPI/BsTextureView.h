@@ -66,22 +66,22 @@ namespace bs
 		virtual ~TextureView() = default;
 
 		/**	Returns the most detailed mip level visible by the view. */
-		UINT32 getMostDetailedMip() const { return mDesc.mostDetailMip; }
+		UINT32 GetMostDetailedMip() const { return mDesc.mostDetailMip; }
 
 		/**	Returns the number of mip levels in a single slice visible by the view. */
-		UINT32 getNumMips() const { return mDesc.numMips; }
+		UINT32 GetNumMips() const { return mDesc.numMips; }
 
 		/**	Returns the first array slice index visible by this view. */
-		UINT32 getFirstArraySlice() const { return mDesc.firstArraySlice; }
+		UINT32 GetFirstArraySlice() const { return mDesc.firstArraySlice; }
 
 		/**	Returns the number of array slices visible by this view. */
-		UINT32 getNumArraySlices() const { return mDesc.numArraySlices; }
+		UINT32 GetNumArraySlices() const { return mDesc.numArraySlices; }
 
 		/**	Returns texture view usage. This determines where on the pipeline can be bind the view. */
-		GpuViewUsage getUsage() const { return mDesc.usage; }
+		GpuViewUsage GetUsage() const { return mDesc.usage; }
 
 		/**	Returns the descriptor structure used for initializing the view. */
-		const TEXTURE_VIEW_DESC& getDesc() const { return mDesc; }
+		const TEXTURE_VIEW_DESC& GetDesc() const { return mDesc; }
 
 	protected:
 		TextureView(const TEXTURE_VIEW_DESC& _desc);

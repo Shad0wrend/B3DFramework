@@ -18,7 +18,7 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "ContextMenu")
 
 		/**	Returns the internal native context menu object. */
-		SPtr<GUIContextMenu> getInternal() const { return mContextMenu; }
+		SPtr<GUIContextMenu> GetInternal() const { return mContextMenu; }
 
 	private:
 		ScriptContextMenu(MonoObject* instance);
@@ -28,7 +28,7 @@ namespace bs
 		 *
 		 * @param[in]	idx		Sequential index of the item that was clicked.
 		 */
-		void onContextMenuItemTriggered(UINT32 idx);
+		void OnContextMenuItemTriggered(UINT32 idx);
 
 		SPtr<GUIContextMenu> mContextMenu;
 		UINT32 mGCHandle = 0;
@@ -39,11 +39,11 @@ namespace bs
 		typedef void(BS_THUNKCALL *OnEntryTriggeredThunkDef) (MonoObject*, UINT32 callbackIdx, MonoException**);
 		static OnEntryTriggeredThunkDef onEntryTriggered;
 
-		static void internal_CreateInstance(MonoObject* instance);
-		static void internal_Open(ScriptContextMenu* instance, Vector2I* position, ScriptGUILayout* layoutPtr);
-		static void internal_AddItem(ScriptContextMenu* instance, MonoString* path, UINT32 callbackIdx, ShortcutKey* shortcut);
-		static void internal_AddSeparator(ScriptContextMenu* instance, MonoString* path);
-		static void internal_SetLocalizedName(ScriptContextMenu* instance, MonoString* label, ScriptHString* name);
+		static void InternalCreateInstance(MonoObject* instance);
+		static void InternalOpen(ScriptContextMenu* instance, Vector2I* position, ScriptGUILayout* layoutPtr);
+		static void InternalAddItem(ScriptContextMenu* instance, MonoString* path, UINT32 callbackIdx, ShortcutKey* shortcut);
+		static void InternalAddSeparator(ScriptContextMenu* instance, MonoString* path);
+		static void InternalSetLocalizedName(ScriptContextMenu* instance, MonoString* label, ScriptHString* name);
 	};
 
 	/** @} */

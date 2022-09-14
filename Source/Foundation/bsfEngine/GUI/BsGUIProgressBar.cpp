@@ -13,8 +13,8 @@ namespace bs
 	GUIProgressBar::GUIProgressBar(const String& styleName, const GUIDimensions& dimensions)
 		:GUIElementContainer(dimensions, styleName), mPercent(0)
 	{
-		mBar = GUITexture::create(getSubStyleName(getBarStyleType()));
-		mBackground = GUITexture::create(getSubStyleName(getBackgroundStyleType()));
+		mBar = GUITexture::Create(GetSubStyleName(GetBarStyleType()));
+		mBackground = GUITexture::Create(GetSubStyleName(GetBackgroundStyleType()));
 
 		mBackground->SetElementDepthInternal(mBar->GetRenderElementDepthRangeInternal());
 
@@ -22,13 +22,13 @@ namespace bs
 		RegisterChildElementInternal(mBackground);
 	}
 
-	const String& GUIProgressBar::getBarStyleType()
+	const String& GUIProgressBar::GetBarStyleType()
 	{
 		static String HANDLE_STYLE_TYPE = "ProgressBarFill";
 		return HANDLE_STYLE_TYPE;
 	}
 
-	const String& GUIProgressBar::getBackgroundStyleType()
+	const String& GUIProgressBar::GetBackgroundStyleType()
 	{
 		static String BACKGROUND_STYLE_TYPE = "ProgressBarBackground";
 		return BACKGROUND_STYLE_TYPE;
@@ -65,13 +65,13 @@ namespace bs
 		mBar->SetLayoutDataInternal(barLayoutData);
 	}
 
-	void GUIProgressBar::styleUpdated()
+	void GUIProgressBar::StyleUpdated()
 	{
 		mBar->setStyle(getSubStyleName(getBarStyleType()));
 		mBackground->setStyle(getSubStyleName(getBackgroundStyleType()));
 	}
 
-	void GUIProgressBar::setPercent(float pct)
+	void GUIProgressBar::SetPercent(float pct)
 	{
 		mPercent = pct;
 		MarkLayoutAsDirtyInternal();
@@ -83,17 +83,17 @@ namespace bs
 		mBackground->setTint(color);
 	}
 
-	GUIProgressBar* GUIProgressBar::create(const String& styleName)
+	GUIProgressBar* GUIProgressBar::Create(const String& styleName)
 	{
-		return new (bs_alloc<GUIProgressBar>()) GUIProgressBar(getStyleName<GUIProgressBar>(styleName), GUIDimensions::create());
+		return new (bs_alloc<GUIProgressBar>()) GUIProgressBar(getStyleName<GUIProgressBar>(styleName), GUIDimensions::Create());
 	}
 
-	GUIProgressBar* GUIProgressBar::create(const GUIOptions& options, const String& styleName)
+	GUIProgressBar* GUIProgressBar::Create(const GUIOptions& options, const String& styleName)
 	{
-		return new (bs_alloc<GUIProgressBar>()) GUIProgressBar(getStyleName<GUIProgressBar>(styleName), GUIDimensions::create(options));
+		return new (bs_alloc<GUIProgressBar>()) GUIProgressBar(getStyleName<GUIProgressBar>(styleName), GUIDimensions::Create(options));
 	}
 
-	const String& GUIProgressBar::getGUITypeName()
+	const String& GUIProgressBar::GetGuiTypeName()
 	{
 		static String typeName = "ProgressBar";
 		return typeName;

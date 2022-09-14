@@ -37,7 +37,7 @@ namespace bs { namespace ct
 		bool operator!= (const GLVertexArrayObject& obj);
 
 		/**	Returns internal OpenGL VBO handle. */
-		GLuint getGLHandle() const { return mHandle;  }
+		GLuint GetGlHandle() const { return mHandle;  }
 
 	private:
 		friend class GLVertexArrayObjectManager;
@@ -63,11 +63,11 @@ namespace bs { namespace ct
 		 *
 		 * Lifetime of returned VAO is managed by the vertex buffers that it binds.
 		 */
-		const GLVertexArrayObject& getVAO(const SPtr<GLSLGpuProgram>& vertexProgram,
+		const GLVertexArrayObject& GetVao(const SPtr<GLSLGpuProgram>& vertexProgram,
 			const SPtr<VertexDeclaration>& vertexDecl, const std::array<SPtr<VertexBuffer>, 32>& boundBuffers);
 
 		/**	Called when a vertex buffer containing the provided VAO is destroyed. */
-		void notifyBufferDestroyed(GLVertexArrayObject vao);
+		void NotifyBufferDestroyed(GLVertexArrayObject vao);
 	private:
 		typedef UnorderedSet<GLVertexArrayObject, GLVertexArrayObject::Hash, GLVertexArrayObject::Equal> VAOMap;
 

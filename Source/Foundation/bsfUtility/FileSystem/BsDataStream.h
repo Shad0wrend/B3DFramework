@@ -43,14 +43,14 @@ namespace bs
 
 		virtual ~DataStream() = default;
 
-		const String& getName() const { return mName; }
-		UINT16 getAccessMode() const { return mAccess; }
+		const String& GetName() const { return mName; }
+		UINT16 GetAccessMode() const { return mAccess; }
 
-		virtual bool isReadable() const { return (mAccess & READ) != 0; }
-		virtual bool isWriteable() const { return (mAccess & WRITE) != 0; }
+		virtual bool IsReadable() const { return (mAccess & READ) != 0; }
+		virtual bool IsWriteable() const { return (mAccess & WRITE) != 0; }
 
 		/** Checks whether the stream reads/writes from a file system. */
-		virtual bool isFile() const = 0;
+		virtual bool IsFile() const = 0;
 
 		/** Reads data from the buffer and copies it to the specified value. */
 		template<typename T> DataStream& operator>>(T& val);
@@ -65,7 +65,7 @@ namespace bs
 		 * 			
 		 * @note	Stream must be created with READ access mode.
 		 */
-		virtual size_t read(void* buf, size_t count) const = 0;
+		virtual size_t Read(void* buf, size_t count) const = 0;
 
 		/**
 		 * Write the requisite number of bytes to the stream and advance the write pointer.
@@ -76,7 +76,7 @@ namespace bs
 		 * 			
 		 * @note	Stream must be created with WRITE access mode.
 		 */
-		virtual size_t write(const void* buf, size_t count) { return 0; }
+		virtual size_t Write(const void* buf, size_t count) { return 0; }
 
 		/**
 		 * Reads bits from the stream into the provided buffer from the current cursor location and advances the cursor.
@@ -88,7 +88,7 @@ namespace bs
 		 *
 		 * @note	Stream must be created with READ access mode.
 		 */
-		virtual size_t readBits(uint8_t* data, uint32_t count);
+		virtual size_t ReadBits(uint8_t* data, uint32_t count);
 
 		/**
 		 * Writes bits from the provided buffer into the stream at the current cursor location and advances the cursor.
@@ -100,7 +100,7 @@ namespace bs
 		 *
 		 * @note	Stream must be created with WRITE access mode.
 		 */
-		virtual size_t writeBits(const uint8_t* data, uint32_t count);
+		virtual size_t WriteBits(const uint8_t* data, uint32_t count);
 
 		/**
 		 * Writes the provided narrow string to the steam. String is convered to the required encoding before being written.
@@ -108,7 +108,7 @@ namespace bs
 		 * @param[in]	string		String containing narrow characters to write, encoded as UTF8.
 		 * @param[in]	encoding	Encoding to convert the string to before writing.
 		 */
-		virtual void writeString(const String& string, StringEncoding encoding = StringEncoding::UTF8);
+		virtual void WriteString(const String& string, StringEncoding encoding = StringEncoding::UTF8);
 
 		/**
 		 * Writes the provided wide string to the steam. String is convered to the required encoding before being written.
@@ -117,7 +117,7 @@ namespace bs
 		 * 							wide characters.
 		 * @param[in]	encoding	Encoding to convert the string to before writing.
 		 */
-		virtual void writeString(const WString& string, StringEncoding encoding = StringEncoding::UTF8);
+		virtual void WriteString(const WString& string, StringEncoding encoding = StringEncoding::UTF8);
 
 		/**
 		 * Returns a string containing the entire stream.
@@ -127,7 +127,7 @@ namespace bs
 		 * @note	This is a convenience method for text streams only, allowing you to retrieve a String object containing
 		 *			all the data in the stream.
 		 */
-		virtual String getAsString();
+		virtual String GetAsString();
 
 		/**
 		 * Returns a wide string containing the entire stream.
@@ -137,32 +137,32 @@ namespace bs
 		 * @note	This is a convenience method for text streams only, allowing you to retrieve a WString object
 		 *			containing all the data in the stream.
 		 */
-		virtual WString getAsWString();
+		virtual WString GetAsWString();
 
 		/**
 		 * Skip a defined number of bytes. This can also be a negative value, in which case the file pointer rewinds a
 		 * defined number of bytes.
 		 */
-		virtual void skip(size_t count) = 0;
+		virtual void Skip(size_t count) = 0;
 	
 		/** Repositions the read point to a specified byte. */
-		virtual void seek(size_t pos) = 0;
+		virtual void Seek(size_t pos) = 0;
 		
 		/** Returns the current byte offset from beginning. */
-		virtual size_t tell() const = 0;
+		virtual size_t Tell() const = 0;
 
 		/**
 		 * Aligns the read/write cursor to a byte boundary. @p count determines the alignment in bytes. Note the
 		 * requested alignment might not be achieved if count > 1 and it would move the cursor past the capacity of the
 		 * buffer, as the cursor will be clamped to buffer end regardless of alignment.
 		 */
-		virtual void align(uint32_t count = 1);
+		virtual void Align(uint32_t count = 1);
 
 		/** Returns true if the stream has reached the end. */
-		virtual bool eof() const = 0;
+		virtual bool Eof() const = 0;
 
 		/** Returns the total size of the data to be read from the stream, or 0 if this is indeterminate for this stream. */
-		size_t size() const { return mSize; }
+		size_t Size() const { return mSize; }
 
 		/**
 		 * Creates a copy of this stream.
@@ -171,10 +171,10 @@ namespace bs
 		 *							reference the data from the original stream (in which case the caller must ensure the
 		 *							original stream outlives the clone). This is not relevant for file streams.
 		 */
-		virtual SPtr<DataStream> clone(bool copyData = true) const = 0;
+		virtual SPtr<DataStream> Clone(bool copyData = true) const = 0;
 
 		/** Close the stream. This makes further operations invalid. */
-		virtual void close() = 0;
+		virtual void Close() = 0;
 		
 	protected:
 		static const UINT32 StreamTempSize;
@@ -230,47 +230,47 @@ namespace bs
 		MemoryDataStream& operator= (MemoryDataStream&& other);
 
 		/** @copydoc DataStream::isFile */
-		bool isFile() const override { return false; }
+		bool IsFile() const override { return false; }
 
 		/** Get a pointer to the start of the memory block this stream holds. */
-		uint8_t* data() const { return mData; }
+		uint8_t* Data() const { return mData; }
 		
 		/** Get a pointer to the current position in the memory block this stream holds. */
-		uint8_t* cursor() const { return mCursor; }
+		uint8_t* Cursor() const { return mCursor; }
 		
 		/** @copydoc DataStream::read */
-		size_t read(void* buf, size_t count) const override;
+		size_t Read(void* buf, size_t count) const override;
 
 		/** @copydoc DataStream::write */
-		size_t write(const void* buf, size_t count) override;
+		size_t Write(const void* buf, size_t count) override;
 
 		/** @copydoc DataStream::skip */
-		void skip(size_t count) override;
+		void Skip(size_t count) override;
 	
 		/** @copydoc DataStream::seek */
-		void seek(size_t pos) override;
+		void Seek(size_t pos) override;
 		
 		/** @copydoc DataStream::tell */
-		size_t tell() const override;
+		size_t Tell() const override;
 
 		/** @copydoc DataStream::eof */
-		bool eof() const override;
+		bool Eof() const override;
 
 		/** @copydoc DataStream::clone */
-		SPtr<DataStream> clone(bool copyData = true) const override;
+		SPtr<DataStream> Clone(bool copyData = true) const ;
 
 		/** @copydoc DataStream::close */
-		void close() override;
+		void Close() override;
 
 		/**
 		 * Disowns the internal memory buffer, ensuring it wont be released when the stream goes out of scope.
 		 * The caller becomes responsible for freeing the internal data buffer.
 		 */
-		uint8_t* disownMemory() { mOwnsMemory = false; return mData;  }
+		uint8_t* DisownMemory() { mOwnsMemory = false; return mData;  }
 
 	protected:
 		/** Reallocates the internal buffer making enough room for @p numBytes. */
-		void realloc(size_t numBytes);
+		void Realloc(size_t numBytes);
 		
 		uint8_t* mData = nullptr;
 		mutable uint8_t* mCursor = nullptr;
@@ -295,34 +295,34 @@ namespace bs
 
 		~FileDataStream();
 
-		bool isFile() const override { return true; }
+		bool IsFile() const override { return true; }
 
 		/** @copydoc DataStream::read */
-		size_t read(void* buf, size_t count) const override;
+		size_t Read(void* buf, size_t count) const override;
 
 		/** @copydoc DataStream::write */
-		size_t write(const void* buf, size_t count) override;
+		size_t Write(const void* buf, size_t count) override;
 
 		/** @copydoc DataStream::skip */
-		void skip(size_t count) override;
+		void Skip(size_t count) override;
 	
 		/** @copydoc DataStream::seek */
-		void seek(size_t pos) override;
+		void Seek(size_t pos) override;
 
 		/** @copydoc DataStream::tell */
-		size_t tell() const override;
+		size_t Tell() const override;
 
 		/** @copydoc DataStream::eof */
-		bool eof() const override;
+		bool Eof() const override;
 
 		/** @copydoc DataStream::clone */
-		SPtr<DataStream> clone(bool copyData = true) const override;
+		SPtr<DataStream> Clone(bool copyData = true) const ;
 
 		/** @copydoc DataStream::close */
-		void close() override;
+		void Close() override;
 
 		/** Returns the path of the file opened by the stream. */
-		const Path& getPath() const { return mPath; }
+		const Path& GetPath() const { return mPath; }
 
 	protected:
 		Path mPath;

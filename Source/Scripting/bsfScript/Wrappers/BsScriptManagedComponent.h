@@ -19,13 +19,13 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "ManagedComponent")
 
 		/**	Returns a generic handle to the internal wrapped component. */
-		HGameObject getNativeHandle() const override { return static_object_cast<GameObject>(mComponent); }
+		HGameObject GetNativeHandle() const { return static_object_cast<GameObject>(mComponent); }
 
 		/**	Sets the internal component this object wraps. */
-		void setNativeHandle(const HGameObject& gameObject) override { mComponent = static_object_cast<ManagedComponent>(gameObject); }
+		void SetNativeHandle(const HGameObject& gameObject) { mComponent = static_object_cast<ManagedComponent>(gameObject); }
 
 		/**	Returns a handle to the internal wrapped component. */
-		const HManagedComponent& getHandle() const { return mComponent; }
+		const HManagedComponent& GetHandle() const { return mComponent; }
 
 	private:
 		friend class ScriptGameObjectManager;
@@ -34,10 +34,10 @@ namespace bs
 		ScriptManagedComponent(MonoObject* instance, const HManagedComponent& component);
 		
 		/** @copydoc ScriptObjectBase::beginRefresh */
-		ScriptObjectBackup beginRefresh() override;
+		ScriptObjectBackup BeginRefresh() ;
 
 		/** @copydoc ScriptObjectBase::endRefresh */
-		void endRefresh(const ScriptObjectBackup& backupData) override;
+		void EndRefresh(const ScriptObjectBackup& backupData) ;
 
 		/** @copydoc ScriptObject::_createManagedInstance */
 		MonoObject* CreateManagedInstanceInternal(bool construct) override;
@@ -59,7 +59,7 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static void internal_invoke(ScriptManagedComponent* nativeInstance, MonoString* name);
+		static void InternalInvoke(ScriptManagedComponent* nativeInstance, MonoString* name);
 	};
 
 	/** @} */

@@ -21,12 +21,12 @@ namespace bs
 	class BS_CORE_EXPORT ResourceManifestRTTI : public RTTIType<ResourceManifest, IReflectable, ResourceManifestRTTI>
 	{
 	private:
-		String& getName(ResourceManifest* obj) { return obj->mName; }
-		void setName(ResourceManifest* obj, String& val) { obj->mName = val; }
+		String& GetName(ResourceManifest* obj) { return obj->mName; }
+		void SetName(ResourceManifest* obj, String& val) { obj->mName = val; }
 
-		UnorderedMap<UUID, Path>& getUUIDMap(ResourceManifest* obj) { return obj->mUUIDToFilePath; }
+		UnorderedMap<UUID, Path>& GetUuidMap(ResourceManifest* obj) { return obj->mUUIDToFilePath; }
 
-		void setUUIDMap(ResourceManifest* obj, UnorderedMap<UUID, Path>& val)
+		void SetUuidMap(ResourceManifest* obj, UnorderedMap<UUID, Path>& val)
 		{
 			obj->mUUIDToFilePath = val;
 
@@ -40,24 +40,24 @@ namespace bs
 	public:
 		ResourceManifestRTTI()
 		{
-			addPlainField("mName", 0, &ResourceManifestRTTI::getName, &ResourceManifestRTTI::setName);
-			addPlainField("mUUIDToFilePath", 1, &ResourceManifestRTTI::getUUIDMap, &ResourceManifestRTTI::setUUIDMap);
+			AddPlainField("mName", 0, &ResourceManifestRTTI::GetName, &ResourceManifestRTTI::SetName);
+			AddPlainField("mUUIDToFilePath", 1, &ResourceManifestRTTI::GetUuidMap, &ResourceManifestRTTI::SetUuidMap);
 		}
 
-		const String& getRTTIName() override
+		const String& GetRttiName() 
 		{
 			static String name = "ResourceManifest";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() 
 		{
 			return TID_ResourceManifest;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
-			return ResourceManifest::createEmpty();
+			return ResourceManifest::CreateEmpty();
 		}
 	};
 

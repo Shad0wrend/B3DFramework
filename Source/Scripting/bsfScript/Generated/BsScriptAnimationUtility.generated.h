@@ -16,18 +16,18 @@ namespace bs
 
 		ScriptAnimationUtility(MonoObject* managedInstance, const SPtr<AnimationUtility>& value);
 
-		SPtr<AnimationUtility> getInternal() const { return mInternal; }
-		static MonoObject* create(const SPtr<AnimationUtility>& value);
+		SPtr<AnimationUtility> GetInternal() const { return mInternal; }
+		static MonoObject* Create(const SPtr<AnimationUtility>& value);
 
 	private:
 		SPtr<AnimationUtility> mInternal;
 
-		static MonoObject* Internal_eulerToQuaternionCurve(MonoObject* eulerCurve, EulerAngleOrder order);
-		static MonoObject* Internal_quaternionToEulerCurve(MonoObject* quatCurve);
-		static MonoArray* Internal_splitCurve3D(MonoObject* compoundCurve);
-		static MonoObject* Internal_combineCurve3D(MonoArray* curveComponents);
-		static MonoArray* Internal_splitCurve2D(MonoObject* compoundCurve);
-		static MonoObject* Internal_combineCurve2D(MonoArray* curveComponents);
-		static void Internal_calculateRange(MonoArray* curves, float* xMin, float* xMax, float* yMin, float* yMax);
+		static MonoObject* InternalEulerToQuaternionCurve(MonoObject* eulerCurve, EulerAngleOrder order);
+		static MonoObject* InternalQuaternionToEulerCurve(MonoObject* quatCurve);
+		static MonoArray* InternalSplitCurve3D(MonoObject* compoundCurve);
+		static MonoObject* InternalCombineCurve3D(MonoArray* curveComponents);
+		static MonoArray* InternalSplitCurve2D(MonoObject* compoundCurve);
+		static MonoObject* InternalCombineCurve2D(MonoArray* curveComponents);
+		static void InternalCalculateRange(MonoArray* curves, float* xMin, float* xMax, float* yMin, float* yMax);
 	};
 }

@@ -67,8 +67,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class GpuParamDescRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const ;
 	};
 
 	/** @} */

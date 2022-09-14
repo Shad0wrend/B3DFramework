@@ -26,24 +26,24 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 	public:
-		const String& getRTTIName() override
+		const String& GetRttiName() 
 		{
 			static String name = "SpriteTexture";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() 
 		{
 			return TID_SpriteTexture;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
-			return SpriteTexture::createEmpty();
+			return SpriteTexture::CreateEmpty();
 		}
 
 	private:
-		void onDeserializationEnded(IReflectable* obj, SerializationContext* context) override
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) 
 		{
 			SpriteTexture* texture = static_cast<SpriteTexture*>(obj);
 			texture->initialize();
@@ -54,7 +54,7 @@ namespace bs
 	{	
 		enum { id = TID_SpriteSheetGridAnimation }; enum { hasDynamicSize = 1 };
 
-		static BitLength toMemory(const SpriteSheetGridAnimation& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const SpriteSheetGridAnimation& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			static constexpr uint32_t VERSION = 0;
 
@@ -71,7 +71,7 @@ namespace bs
 			});
 		}
 
-		static BitLength fromMemory(SpriteSheetGridAnimation& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(SpriteSheetGridAnimation& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
 			rtti_read_size_header(stream, compress, size);
@@ -97,7 +97,7 @@ namespace bs
 			return size;
 		}
 
-		static BitLength getSize(const SpriteSheetGridAnimation& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const SpriteSheetGridAnimation& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength dataSize = rtti_size(data.numRows) + rtti_size(data.numColumns) +
 				rtti_size(data.count) + rtti_size(data.fps) + sizeof(uint32_t);

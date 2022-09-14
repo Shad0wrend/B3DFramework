@@ -37,10 +37,10 @@ namespace bs { namespace ct
 		desc.type = GBT_STRUCTURED;
 		desc.elementSize = 4;
 
-		mLightsCounter = GpuBuffer::create(desc);
+		mLightsCounter = GpuBuffer::Create(desc);
 		mLightsCounterParam.set(mLightsCounter);
 
-		mProbesCounter = GpuBuffer::create(desc);
+		mProbesCounter = GpuBuffer::Create(desc);
 		mProbesCounterParam.set(mProbesCounter);
 	}
 
@@ -49,7 +49,7 @@ namespace bs { namespace ct
 		defines.set("THREADGROUP_SIZE", THREADGROUP_SIZE);
 	}
 
-	void LightGridLLCreationMat::setParams(const Vector3I& gridSize, const SPtr<GpuParamBlockBuffer>& gridParams,
+	void LightGridLLCreationMat::SetParams(const Vector3I& gridSize, const SPtr<GpuParamBlockBuffer>& gridParams,
 		const SPtr<GpuBuffer>& lightsBuffer, const SPtr<GpuBuffer>& probesBuffer)
 	{
 		mGridSize = gridSize;
@@ -64,10 +64,10 @@ namespace bs { namespace ct
 			desc.type = GBT_STRUCTURED;
 			desc.elementSize = 4;
 
-			mLightsLLHeads = GpuBuffer::create(desc);
+			mLightsLLHeads = GpuBuffer::Create(desc);
 			mLightsLLHeadsParam.set(mLightsLLHeads);
 
-			mProbesLLHeads = GpuBuffer::create(desc);
+			mProbesLLHeads = GpuBuffer::Create(desc);
 			mProbesLLHeadsParam.set(mProbesLLHeads);
 
 			desc.type = GBT_STANDARD;
@@ -75,11 +75,11 @@ namespace bs { namespace ct
 			desc.elementCount = numCells * MAX_LIGHTS_PER_CELL;
 			desc.elementSize = 0;
 
-			mLightsLL = GpuBuffer::create(desc);
+			mLightsLL = GpuBuffer::Create(desc);
 			mLightsLLParam.set(mLightsLL);
 
 			desc.format = BF_32X2U;
-			mProbesLL = GpuBuffer::create(desc);
+			mProbesLL = GpuBuffer::Create(desc);
 			mProbesLLParam.set(mProbesLL);
 
 			mBufferNumCells = numCells;
@@ -107,7 +107,7 @@ namespace bs { namespace ct
 		mProbesBufferParam.set(probesBuffer);
 	}
 
-	void LightGridLLCreationMat::execute(const RendererView& view)
+	void LightGridLLCreationMat::Execute(const RendererView& view)
 	{
 		BS_RENMAT_PROFILE_BLOCK
 
@@ -118,10 +118,10 @@ namespace bs { namespace ct
 		UINT32 numGroupsZ = (mGridSize[2] + THREADGROUP_SIZE - 1) / THREADGROUP_SIZE;
 
 		bind();
-		RenderAPI::instance().dispatchCompute(numGroupsX, numGroupsY, numGroupsZ);
+		RenderAPI::Instance().dispatchCompute(numGroupsX, numGroupsY, numGroupsZ);
 	}
 
-	void LightGridLLCreationMat::getOutputs(SPtr<GpuBuffer>& lightsLLHeads, SPtr<GpuBuffer>& lightsLL,
+	void LightGridLLCreationMat::GetOutputs(SPtr<GpuBuffer>& lightsLLHeads, SPtr<GpuBuffer>& lightsLL,
 		SPtr<GpuBuffer>& probesLLHeads, SPtr<GpuBuffer>& probesLL) const
 	{
 		lightsLLHeads = mLightsLLHeads;
@@ -154,7 +154,7 @@ namespace bs { namespace ct
 		desc.type = GBT_STRUCTURED;
 		desc.elementSize = 4;
 
-		mGridDataCounter = GpuBuffer::create(desc);
+		mGridDataCounter = GpuBuffer::Create(desc);
 		mGridDataCounterParam.set(mGridDataCounter);
 	}
 
@@ -163,7 +163,7 @@ namespace bs { namespace ct
 		defines.set("THREADGROUP_SIZE", THREADGROUP_SIZE);
 	}
 
-	void LightGridLLReductionMat::setParams(const Vector3I& gridSize, const SPtr<GpuParamBlockBuffer>& gridParams,
+	void LightGridLLReductionMat::SetParams(const Vector3I& gridSize, const SPtr<GpuParamBlockBuffer>& gridParams,
 		const SPtr<GpuBuffer>& lightsLLHeads, const SPtr<GpuBuffer>& lightsLL,
 		const SPtr<GpuBuffer>& probeLLHeads, const SPtr<GpuBuffer>& probeLL)
 	{
@@ -179,20 +179,20 @@ namespace bs { namespace ct
 			desc.type = GBT_STANDARD;
 			desc.elementSize = 0;
 
-			mGridLightOffsetAndSize = GpuBuffer::create(desc);
+			mGridLightOffsetAndSize = GpuBuffer::Create(desc);
 			mGridLightOffsetAndSizeParam.set(mGridLightOffsetAndSize);
 
 			desc.format = BF_32X2U;
 
-			mGridProbeOffsetAndSize = GpuBuffer::create(desc);
+			mGridProbeOffsetAndSize = GpuBuffer::Create(desc);
 			mGridProbeOffsetAndSizeParam.set(mGridProbeOffsetAndSize);
 
 			desc.format = BF_32X1U;
 			desc.elementCount = numCells * MAX_LIGHTS_PER_CELL;
-			mGridLightIndices = GpuBuffer::create(desc);
+			mGridLightIndices = GpuBuffer::Create(desc);
 			mGridLightIndicesParam.set(mGridLightIndices);
 
-			mGridProbeIndices = GpuBuffer::create(desc);
+			mGridProbeIndices = GpuBuffer::Create(desc);
 			mGridProbeIndicesParam.set(mGridProbeIndices);
 
 			mBufferNumCells = numCells;
@@ -212,7 +212,7 @@ namespace bs { namespace ct
 		mProbesLLParam.set(probeLL);
 	}
 
-	void LightGridLLReductionMat::execute(const RendererView& view)
+	void LightGridLLReductionMat::Execute(const RendererView& view)
 	{
 		BS_RENMAT_PROFILE_BLOCK
 
@@ -223,10 +223,10 @@ namespace bs { namespace ct
 		UINT32 numGroupsZ = (mGridSize[2] + THREADGROUP_SIZE - 1) / THREADGROUP_SIZE;
 
 		bind();
-		RenderAPI::instance().dispatchCompute(numGroupsX, numGroupsY, numGroupsZ);
+		RenderAPI::Instance().dispatchCompute(numGroupsX, numGroupsY, numGroupsZ);
 	}
 
-	void LightGridLLReductionMat::getOutputs(SPtr<GpuBuffer>& gridLightOffsetsAndSize, SPtr<GpuBuffer>& gridLightIndices,
+	void LightGridLLReductionMat::GetOutputs(SPtr<GpuBuffer>& gridLightOffsetsAndSize, SPtr<GpuBuffer>& gridLightIndices,
 		SPtr<GpuBuffer>& gridProbeOffsetsAndSize, SPtr<GpuBuffer>& gridProbeIndices) const
 	{
 		gridLightOffsetsAndSize = mGridLightOffsetAndSize;
@@ -240,7 +240,7 @@ namespace bs { namespace ct
 		mGridParamBuffer = gLightGridParamDefDef.createBuffer();
 	}
 
-	void LightGrid::updateGrid(const RendererView& view, const VisibleLightData& lightData, const VisibleReflProbeData& probeData,
+	void LightGrid::UpdateGrid(const RendererView& view, const VisibleLightData& lightData, const VisibleReflProbeData& probeData,
 		bool noLighting)
 	{
 		const RendererViewProperties& viewProps = view.getProperties();
@@ -301,7 +301,7 @@ namespace bs { namespace ct
 		reductionMat->execute(view);
 	}
 
-	LightGridOutputs LightGrid::getOutputs() const
+	LightGridOutputs LightGrid::GetOutputs() const
 	{
 		LightGridOutputs outputs;
 

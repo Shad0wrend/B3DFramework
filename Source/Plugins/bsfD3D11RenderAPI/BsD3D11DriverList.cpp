@@ -8,7 +8,7 @@ namespace bs { namespace ct
 {
 	D3D11DriverList::D3D11DriverList(IDXGIFactory1* dxgiFactory)
 	{
-		enumerate(dxgiFactory);
+		Enumerate(dxgiFactory);
 	}
 
 	D3D11DriverList::~D3D11DriverList(void)
@@ -21,7 +21,7 @@ namespace bs { namespace ct
 		mDriverList.clear();
 	}
 
-	void D3D11DriverList::enumerate(IDXGIFactory1* dxgiFactory)
+	void D3D11DriverList::Enumerate(IDXGIFactory1* dxgiFactory)
 	{
 		UINT32 adapterIdx = 0;
 		IDXGIAdapter* dxgiAdapter = nullptr;
@@ -42,21 +42,21 @@ namespace bs { namespace ct
 		}
 	}
 
-	UINT32 D3D11DriverList::count() const
+	UINT32 D3D11DriverList::Count() const
 	{
 		return (UINT32)mDriverList.size();
 	}
 
-	D3D11Driver* D3D11DriverList::item(UINT32 idx) const
+	D3D11Driver* D3D11DriverList::Item(UINT32 idx) const
 	{
 		return mDriverList.at(idx);
 	}
 
-	D3D11Driver* D3D11DriverList::item(const String &name) const
+	D3D11Driver* D3D11DriverList::Item(const String &name) const
 	{
 		for (auto it = mDriverList.begin(); it != mDriverList.end(); ++it)
 		{
-			if ((*it)->getDriverDescription() == name)
+			if ((*it)->GetDriverDescription() == name)
 				return (*it);
 		}
 

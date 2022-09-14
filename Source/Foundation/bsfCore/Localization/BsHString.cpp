@@ -8,7 +8,7 @@ namespace bs
 {
 	HString::HString()
 	{
-		mStringData = StringTableManager::instance().getTable(0)->getStringData(u8"");
+		mStringData = StringTableManager::Instance().GetTable(0)->GetStringData(u8"");
 
 		if (mStringData->numParameters > 0)
 			mParameters = bs_newN<String>(mStringData->numParameters);
@@ -16,7 +16,7 @@ namespace bs
 
 	HString::HString(UINT32 stringTableId)
 	{
-		mStringData = StringTableManager::instance().getTable(stringTableId)->getStringData(u8"");
+		mStringData = StringTableManager::Instance().GetTable(stringTableId)->GetStringData(u8"");
 
 		if (mStringData->numParameters > 0)
 			mParameters = bs_newN<String>(mStringData->numParameters);
@@ -24,7 +24,7 @@ namespace bs
 
 	HString::HString(const String& identifierString, UINT32 stringTableId)
 	{
-		mStringData = StringTableManager::instance().getTable(stringTableId)->getStringData(identifierString);
+		mStringData = StringTableManager::Instance().GetTable(stringTableId)->GetStringData(identifierString);
 
 		if (mStringData->numParameters > 0)
 			mParameters = bs_newN<String>(mStringData->numParameters);
@@ -32,10 +32,10 @@ namespace bs
 
 	HString::HString(const String& identifierString, const String& defaultString, UINT32 stringTableId)
 	{
-		HStringTable table = StringTableManager::instance().getTable(stringTableId);
-		table->setString(identifierString, StringTable::DEFAULT_LANGUAGE, defaultString);
+		HStringTable table = StringTableManager::Instance().GetTable(stringTableId);
+		table->SetString(identifierString, StringTable::DEFAULT_LANGUAGE, defaultString);
 
-		mStringData = table->getStringData(identifierString);
+		mStringData = table->GetStringData(identifierString);
 
 		if (mStringData->numParameters > 0)
 			mParameters = bs_newN<String>(mStringData->numParameters);
@@ -73,7 +73,7 @@ namespace bs
 
 	HString::operator const String& () const
 	{
-		return getValue();
+		return GetValue();
 	}
 
 	HString& HString::operator=(const HString& rhs)
@@ -108,7 +108,7 @@ namespace bs
 		return *this;
 	}
 
-	const String& HString::getValue() const
+	const String& HString::GetValue() const
 	{
 		if (mIsDirty)
 		{
@@ -128,7 +128,7 @@ namespace bs
 		return *mStringPtr;
 	}
 
-	void HString::setParameter(UINT32 idx, const String& value)
+	void HString::SetParameter(UINT32 idx, const String& value)
 	{
 		if (idx >= mStringData->numParameters)
 			return;
@@ -137,7 +137,7 @@ namespace bs
 		mIsDirty = true;
 	}
 
-	const HString& HString::dummy()
+	const HString& HString::Dummy()
 	{
 		static HString dummyVal;
 

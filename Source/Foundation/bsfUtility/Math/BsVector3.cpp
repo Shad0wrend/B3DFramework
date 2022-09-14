@@ -12,23 +12,23 @@ namespace bs
 
 	}
 
-	Radian Vector3::angleBetween(const Vector3& dest) const
+	Radian Vector3::AngleBetween(const Vector3& dest) const
 	{
-		float lenProduct = length() * dest.length();
+		float lenProduct = Length() * dest.Length();
 
 		// Divide by zero check
 		if (lenProduct < 1e-6f)
 			lenProduct = 1e-6f;
 
-		float f = dot(dest) / lenProduct;
+		float f = Dot(dest) / lenProduct;
 
-		f = Math::clamp(f, -1.0f, 1.0f);
+		f = Math::Clamp(f, -1.0f, 1.0f);
 		return Math::acos(f);
 	}
 
-	bool Vector3::isNaN() const
+	bool Vector3::IsNaN() const
 	{
-		return Math::isNaN(x) || Math::isNaN(y) || Math::isNaN(z);
+		return Math::IsNaN(x) || Math::IsNaN(y) || Math::IsNaN(z);
 	}
 
 	const Vector3 Vector3::ZERO{BS_ZERO()};

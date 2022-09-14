@@ -21,7 +21,7 @@ namespace bs
 		 * Creates a new serializable list interop object from the data in the provided property. Caller must ensure the
 		 * property references a System.Collections.Generic.List.
 		 */
-		static MonoObject* create(const ScriptSerializableProperty* native, MonoObject* managed);
+		static MonoObject* Create(const ScriptSerializableProperty* native, MonoObject* managed);
 
 	private:
 		ScriptSerializableList(MonoObject* instance, const SPtr<ManagedSerializableTypeInfoList>& typeInfo);
@@ -31,7 +31,7 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static MonoObject* internal_createProperty(ScriptSerializableList* nativeInstance);
+		static MonoObject* InternalCreateProperty(ScriptSerializableList* nativeInstance);
 	};
 
 	/** @} */

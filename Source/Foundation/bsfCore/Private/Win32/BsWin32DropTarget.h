@@ -55,8 +55,8 @@ namespace bs
 		Win32DropTarget(HWND hWnd);
 		~Win32DropTarget();
 
-		void registerWithOS();
-		void unregisterWithOS();
+		void RegisterWithOs();
+		void UnregisterWithOs();
 
 		HRESULT __stdcall QueryInterface(REFIID iid, void** ppvObject) override;
 
@@ -99,30 +99,30 @@ namespace bs
 		 *
 		 * @note	Sim thread only.
 		 */
-		void registerDropTarget(DropTarget* dropTarget);
+		void RegisterDropTarget(DropTarget* dropTarget);
 
 		/**
 		 * Unregisters an existing drop target and stops monitoring it.
 		 *
 		 * @note	Sim thread only.
 		 */
-		void unregisterDropTarget(DropTarget* dropTarget);
+		void UnregisterDropTarget(DropTarget* dropTarget);
 
 		/**
 		 * Gets the total number of monitored drop targets.
 		 * 			
 		 * @note	Sim thread only.
 		 */
-		unsigned int getNumDropTargets() const;
+		unsigned int GetNumDropTargets() const;
 
 		/** Called every frame by the sim thread. Internal method. */
-		void update();
+		void Update();
 	private:
 		/**	Check if we support the data in the provided drag and drop data object. */
-		bool isDataValid(IDataObject* data);
+		bool IsDataValid(IDataObject* data);
 
 		/**	Gets a file list from data. Caller must ensure that the data actually contains a file list. */
-		Vector<Path>* getFileListFromData(IDataObject* data);
+		Vector<Path>* GetFileListFromData(IDataObject* data);
 
 	private:
 		Vector<DropTarget*> mDropTargets;

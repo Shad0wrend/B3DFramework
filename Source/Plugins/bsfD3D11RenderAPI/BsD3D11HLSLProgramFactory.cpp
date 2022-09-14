@@ -9,7 +9,7 @@
 
 namespace bs { namespace ct
 {
-	SPtr<GpuProgram> D3D11HLSLProgramFactory::create(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask)
+	SPtr<GpuProgram> D3D11HLSLProgramFactory::Create(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask)
 	{
 		SPtr<GpuProgram> gpuProg;
 
@@ -47,7 +47,7 @@ namespace bs { namespace ct
 		return gpuProg;
 	}
 
-	SPtr<GpuProgram> D3D11HLSLProgramFactory::create(GpuProgramType type, GpuDeviceFlags deviceMask)
+	SPtr<GpuProgram> D3D11HLSLProgramFactory::Create(GpuProgramType type, GpuDeviceFlags deviceMask)
 	{
 		SPtr<GpuProgram> gpuProg;
 
@@ -107,7 +107,7 @@ namespace bs { namespace ct
 		return 0;
 	}
 
-	SPtr<GpuProgramBytecode> D3D11HLSLProgramFactory::compileBytecode(const GPU_PROGRAM_DESC& desc)
+	SPtr<GpuProgramBytecode> D3D11HLSLProgramFactory::CompileBytecode(const GPU_PROGRAM_DESC& desc)
 	{
 		String hlslProfile;
 		switch(desc.type)
@@ -179,7 +179,7 @@ namespace bs { namespace ct
 			const char* message = static_cast<const char*>(messages->GetBufferPointer());
 			UINT32 lineIdx = parseErrorMessage(message);
 
-			Vector<String> sourceLines = StringUtil::split(source, "\n");
+			Vector<String> sourceLines = StringUtil::Split(source, "\n");
 			String sourceLine;
 			if (lineIdx < sourceLines.size())
 				sourceLine = sourceLines[lineIdx];
@@ -213,9 +213,9 @@ namespace bs { namespace ct
 			bytecode->paramDesc = bs_shared_ptr_new<GpuParamDesc>();
 
 			if (desc.type == GPT_VERTEX_PROGRAM)
-				parser.parse(microcode, desc.type, *bytecode->paramDesc, &bytecode->vertexInput);
+				parser.Parse(microcode, desc.type, *bytecode->paramDesc, &bytecode->vertexInput);
 			else
-				parser.parse(microcode, desc.type, *bytecode->paramDesc, nullptr);
+				parser.Parse(microcode, desc.type, *bytecode->paramDesc, nullptr);
 		}
 		
 		SAFE_RELEASE(microcode);

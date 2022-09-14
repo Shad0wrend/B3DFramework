@@ -11,7 +11,7 @@ namespace bs
 		close();
 	}
 
-	void GUIContextMenu::open(const Vector2I& position, GUIWidget& widget)
+	void GUIContextMenu::Open(const Vector2I& position, GUIWidget& widget)
 	{
 		DROP_DOWN_BOX_DESC desc;
 		desc.camera = widget.getCamera();
@@ -19,22 +19,22 @@ namespace bs
 		desc.placement = DropDownAreaPlacement::aroundPosition(position);
 		desc.dropDownData = getDropDownData();
 
-		GameObjectHandle<GUIDropDownMenu> dropDownBox = GUIDropDownBoxManager::instance().openDropDownBox(
+		GameObjectHandle<GUIDropDownMenu> dropDownBox = GUIDropDownBoxManager::Instance().openDropDownBox(
 			desc, GUIDropDownType::ContextMenu, std::bind(&GUIContextMenu::onMenuClosed, this));
 
 		mContextMenuOpen = true;
 	}
 
-	void GUIContextMenu::close()
+	void GUIContextMenu::Close()
 	{
 		if(mContextMenuOpen)
 		{
-			GUIDropDownBoxManager::instance().closeDropDownBox();
+			GUIDropDownBoxManager::Instance().closeDropDownBox();
 			mContextMenuOpen = false;
 		}
 	}
 
-	void GUIContextMenu::onMenuClosed()
+	void GUIContextMenu::OnMenuClosed()
 	{
 		mContextMenuOpen = false;
 	}

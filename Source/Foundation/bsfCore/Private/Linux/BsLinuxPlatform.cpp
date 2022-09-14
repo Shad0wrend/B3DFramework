@@ -381,7 +381,7 @@ namespace bs
 
 	void Platform::setCursor(PixelData& pixelData, const Vector2I& hotSpot)
 	{
-		SPtr<PixelData> bgraData = PixelData::create(pixelData.getWidth(), pixelData.getHeight(), 1, PF_BGRA8);
+		SPtr<PixelData> bgraData = PixelData::Create(pixelData.getWidth(), pixelData.getHeight(), 1, PF_BGRA8);
 		PixelUtil::bulkPixelConversion(pixelData, *bgraData);
 
 		Lock lock(mData->lock);
@@ -1305,7 +1305,7 @@ namespace bs
 		mData->atomWmStateMaxVert = XInternAtom(mData->xDisplay, "_NET_WM_STATE_MAXIMIZED_VERT", False);
 
 		// Drag and drop
-		LinuxDragAndDrop::startUp(mData->xDisplay);
+		LinuxDragAndDrop::StartUp(mData->xDisplay);
 
 		// Create empty cursor
 		char data[1];
@@ -1376,7 +1376,7 @@ namespace bs
 		mData->emptyCursor = None;
 
 		// Shutdown drag and drop
-		LinuxDragAndDrop::shutDown();
+		LinuxDragAndDrop::ShutDown();
 
 		if(mData->IC)
 		{
@@ -1472,7 +1472,7 @@ namespace bs
 		}
 
 		// Convert to BGRA
-		SPtr<PixelData> bgraData = PixelData::create(data.getWidth(), data.getHeight(), 1, PF_BGRA8);
+		SPtr<PixelData> bgraData = PixelData::Create(data.getWidth(), data.getHeight(), 1, PF_BGRA8);
 		bgraData->setColors(colors);
 
 		XImage* image = XCreateImage(mData->xDisplay, CopyFromParent, depth, ZPixmap, 0,

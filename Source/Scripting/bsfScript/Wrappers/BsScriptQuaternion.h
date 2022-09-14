@@ -19,10 +19,10 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "Quaternion")
 
 		/** Unboxes a boxed managed Quaternion struct and returns the native version of the structure. */
-		static Quaternion unbox(MonoObject* obj);
+		static Quaternion Unbox(MonoObject* obj);
 
 		/**	Boxes a native Quaternion struct and returns a managed object containing it. */
-		static MonoObject* box(const Quaternion& value);
+		static MonoObject* Box(const Quaternion& value);
 
 	private:
 		ScriptQuaternion(MonoObject* instance);

@@ -24,10 +24,10 @@ namespace bs
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "LimitAngularRange")
 
-		static MonoObject* box(const __LimitAngularRangeInterop& value);
-		static __LimitAngularRangeInterop unbox(MonoObject* value);
-		static LimitAngularRange fromInterop(const __LimitAngularRangeInterop& value);
-		static __LimitAngularRangeInterop toInterop(const LimitAngularRange& value);
+		static MonoObject* Box(const __LimitAngularRangeInterop& value);
+		static __LimitAngularRangeInterop Unbox(MonoObject* value);
+		static LimitAngularRange FromInterop(const __LimitAngularRangeInterop& value);
+		static __LimitAngularRangeInterop ToInterop(const LimitAngularRange& value);
 
 	private:
 		ScriptLimitAngularRange(MonoObject* managedInstance);

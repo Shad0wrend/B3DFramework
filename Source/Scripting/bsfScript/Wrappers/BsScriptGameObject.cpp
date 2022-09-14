@@ -9,7 +9,7 @@ namespace bs
 	bool checkIfDestroyed(ScriptGameObject* nativeInstance)
 	{
 		HGameObject go = nativeInstance->getNativeHandle();
-		if (go.isDestroyed())
+		if (go.IsDestroyed())
 		{
 			BS_LOG(Warning, Scene, "Trying to access a destroyed GameObject with instance ID: {0}", go.getInstanceId());
 			return true;
@@ -29,19 +29,19 @@ namespace bs
 		BS_ASSERT(mGCHandle == 0 && "Object being destroyed without its managed instance being freed first.");
 	}
 	
-	MonoObject* ScriptGameObjectBase::getManagedInstance() const
+	MonoObject* ScriptGameObjectBase::GetManagedInstance() const
 	{
-		return MonoUtil::getObjectFromGCHandle(mGCHandle);
+		return MonoUtil::GetObjectFromGcHandle(mGCHandle);
 	}
 
-	void ScriptGameObjectBase::setManagedInstance(::MonoObject* instance)
+	void ScriptGameObjectBase::SetManagedInstance(::MonoObject* instance)
 	{
 		BS_ASSERT(mGCHandle == 0 && "Attempting to set a new managed instance without freeing the old one.");
 
-		mGCHandle = MonoUtil::newGCHandle(instance, false);
+		mGCHandle = MonoUtil::NewGcHandle(instance, false);
 	}
 
-	void ScriptGameObjectBase::freeManagedInstance()
+	void ScriptGameObjectBase::FreeManagedInstance()
 	{
 		if (mGCHandle != 0)
 		{
@@ -56,17 +56,17 @@ namespace bs
 
 	void ScriptGameObject::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_GetInstanceId", (void*)&ScriptGameObject::internal_getInstanceId);
-		metaData.scriptClass->addInternalCall("Internal_GetUUID", (void*)&ScriptGameObject::internal_getUUID);
-		metaData.scriptClass->addInternalCall("Internal_GetIsDestroyed", (void*)&ScriptGameObject::internal_getIsDestroyed);
+		metaData.scriptClass->AddInternalCall("Internal_GetInstanceId", (void*)&ScriptGameObject::InternalGetInstanceId);
+		metaData.scriptClass->AddInternalCall("Internal_GetUUID", (void*)&ScriptGameObject::InternalGetUuid);
+		metaData.scriptClass->AddInternalCall("Internal_GetIsDestroyed", (void*)&ScriptGameObject::InternalGetIsDestroyed);
 	}
 
-	UINT64 ScriptGameObject::internal_getInstanceId(ScriptGameObject* nativeInstance)
+	UINT64 ScriptGameObject::InternalGetInstanceId(ScriptGameObject* nativeInstance)
 	{
 		return nativeInstance->getNativeHandle().getInstanceId();
 	}
 
-	void ScriptGameObject::internal_getUUID(ScriptGameObject* nativeInstance, UUID* uuid)
+	void ScriptGameObject::InternalGetUuid(ScriptGameObject* nativeInstance, UUID* uuid)
 	{
 		if (checkIfDestroyed(nativeInstance))
 		{
@@ -77,7 +77,7 @@ namespace bs
 		*uuid = nativeInstance->getNativeHandle()->getUUID();
 	}
 
-	bool ScriptGameObject::internal_getIsDestroyed(ScriptGameObject* nativeInstance)
+	bool ScriptGameObject::InternalGetIsDestroyed(ScriptGameObject* nativeInstance)
 	{
 		return nativeInstance->getNativeHandle().isDestroyed(true);
 	}

@@ -50,7 +50,7 @@ namespace bs
 		 *
 		 * @note	Thread safe.
 		 */
-		GameObjectHandleBase registerObject(const SPtr<GameObject>& object);
+		GameObjectHandleBase RegisterObject(const SPtr<GameObject>& object);
 
 		/**
 		 * Unregisters a GameObject. Handles to this object will no longer be valid after this call. This should be called
@@ -58,7 +58,7 @@ namespace bs
 		 *
 		 * @note	Thread safe.
 		 */
-		void unregisterObject(GameObjectHandleBase& object);
+		void UnregisterObject(GameObjectHandleBase& object);
 
 		/**
 		 * Attempts to find a GameObject handle based on the GameObject instance ID. Returns empty handle if ID cannot be
@@ -66,7 +66,7 @@ namespace bs
 		 *
 		 * @note	Thread safe.
 		 */
-		GameObjectHandleBase getObject(UINT64 id) const;
+		GameObjectHandleBase GetObject(UINT64 id) const;
 
 		/**
 		 * Attempts to find a GameObject handle based on the GameObject instance ID. Returns true if object with the
@@ -74,14 +74,14 @@ namespace bs
 		 *
 		 * @note	Thread safe.
 		 */
-		bool tryGetObject(UINT64 id, GameObjectHandleBase& object) const;
+		bool TryGetObject(UINT64 id, GameObjectHandleBase& object) const;
 
 		/**	
 		 * Checks if the GameObject with the specified instance ID exists.
 		 *
 		 * @note	Thread safe.
 		 */
-		bool objectExists(UINT64 id) const;
+		bool ObjectExists(UINT64 id) const;
 
 		/**
 		 * Changes the instance ID by which an object can be retrieved by.
@@ -89,20 +89,20 @@ namespace bs
 		 * @note	Caller is required to update the object itself with the new ID.
 		 * @note	Thread safe.
 		 */
-		void remapId(UINT64 oldId, UINT64 newId);
+		void RemapId(UINT64 oldId, UINT64 newId);
 
 		/**
 		 * Allocates a new unique game object ID.
 		 *
 		 * @note	Thread safe.
 		 */
-		UINT64 reserveId();
+		UINT64 ReserveId();
 
 		/**	Queues the object to be destroyed at the end of a GameObject update cycle. */
-		void queueForDestroy(const GameObjectHandleBase& object);
+		void QueueForDestroy(const GameObjectHandleBase& object);
 
 		/**	Destroys any GameObjects that were queued for destruction. */
-		void destroyQueuedObjects();
+		void DestroyQueuedObjects();
 
 		/**	Triggered when a game object is being destroyed. */
 		Event<void(const HGameObject&)> onDestroyed;
@@ -137,19 +137,19 @@ namespace bs
 		~GameObjectDeserializationState();
 
 		/**	Queues the specified handle and resolves it when deserialization ends. */
-		void registerUnresolvedHandle(UINT64 originalId, GameObjectHandleBase& object);
+		void RegisterUnresolvedHandle(UINT64 originalId, GameObjectHandleBase& object);
 
 		/** Notifies the system about a new deserialized game object and its original ID. */
-		void registerObject(UINT64 originalId, GameObjectHandleBase& object);
+		void RegisterObject(UINT64 originalId, GameObjectHandleBase& object);
 
 		/**	Registers a callback that will be triggered when GameObject serialization ends. */
-		void registerOnDeserializationEndCallback(std::function<void()> callback);
+		void RegisterOnDeserializationEndCallback(std::function<void()> callback);
 
 		/** Resolves all registered handles and objects, and triggers end callbacks. */
-		void resolve();
+		void Resolve();
 
 		/** Determines should new UUID's be generated for deserialized objects, or existing ones kept. */
-		bool getUseNewUUIDs() const { return (mOptions & GODM_UseNewUUID) != 0; }
+		bool GetUseNewUuiDs() const { return (mOptions & GODM_UseNewUUID) != 0; }
 
 	private:
 		UnorderedMap<UINT64, UINT64> mIdMapping;

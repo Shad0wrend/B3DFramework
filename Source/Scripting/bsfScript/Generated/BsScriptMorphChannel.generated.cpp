@@ -15,49 +15,49 @@ namespace bs
 
 	void ScriptMorphChannel::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_getName", (void*)&ScriptMorphChannel::Internal_getName);
-		metaData.scriptClass->addInternalCall("Internal_getShapes", (void*)&ScriptMorphChannel::Internal_getShapes);
+		metaData.scriptClass->AddInternalCall("Internal_getName", (void*)&ScriptMorphChannel::InternalGetName);
+		metaData.scriptClass->AddInternalCall("Internal_getShapes", (void*)&ScriptMorphChannel::InternalGetShapes);
 
 	}
 
-	MonoObject* ScriptMorphChannel::create(const SPtr<MorphChannel>& value)
+	MonoObject* ScriptMorphChannel::Create(const SPtr<MorphChannel>& value)
 	{
 		if(value == nullptr) return nullptr; 
 
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptMorphChannel>()) ScriptMorphChannel(managedInstance, value);
 		return managedInstance;
 	}
-	MonoString* ScriptMorphChannel::Internal_getName(ScriptMorphChannel* thisPtr)
+	MonoString* ScriptMorphChannel::InternalGetName(ScriptMorphChannel* thisPtr)
 	{
 		String tmp__output;
-		tmp__output = thisPtr->getInternal()->getName();
+		tmp__output = thisPtr->GetInternal()->GetName();
 
 		MonoString* __output;
-		__output = MonoUtil::stringToMono(tmp__output);
+		__output = MonoUtil::StringToMono(tmp__output);
 
 		return __output;
 	}
 
-	MonoArray* ScriptMorphChannel::Internal_getShapes(ScriptMorphChannel* thisPtr)
+	MonoArray* ScriptMorphChannel::InternalGetShapes(ScriptMorphChannel* thisPtr)
 	{
 		Vector<SPtr<MorphShape>> vec__output;
-		vec__output = thisPtr->getInternal()->getShapes();
+		vec__output = thisPtr->GetInternal()->GetShapes();
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
-		ScriptArray array__output = ScriptArray::create<ScriptMorphShape>(arraySize__output);
+		ScriptArray array__output = create<ScriptMorphShape>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
 			SPtr<MorphShape> arrayElemPtr__output = vec__output[i];
 			MonoObject* arrayElem__output;
-			arrayElem__output = ScriptMorphShape::create(arrayElemPtr__output);
+			arrayElem__output = ScriptMorphShape::Create(arrayElemPtr__output);
 			array__output.set(i, arrayElem__output);
 		}
-		__output = array__output.getInternal();
+		__output = array__output.GetInternal();
 
 		return __output;
 	}

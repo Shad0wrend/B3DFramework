@@ -24,25 +24,25 @@ namespace bs
 		 *
 		 * @return	Boolean result and distance to the nearest intersection point.
 		 */
-		std::pair<bool, float> intersects(const Ray& ray) const;
+		std::pair<bool, float> Intersects(const Ray& ray) const;
 
 		/**
 		 * Returns the line segment along which the capsule lies. All capsule points are at equal distance from this
 		 * segment.
 		 */
-		const LineSegment3& getSegment() const { return mSegment; }
+		const LineSegment3& GetSegment() const { return mSegment; }
 
 		/** Returns the radius of the capsule. It defines the distance of the capsule from its line segment. */
-		float getRadius() const { return mRadius; }
+		float GetRadius() const { return mRadius; }
 
 		/**
 		 * Returns the height of the capsule. The height is the distance between centers of the hemispheres that form the
 		 * capsule's ends.
 		 */
-		float getHeight() const { return mSegment.getLength(); }
+		float GetHeight() const { return mSegment.GetLength(); }
 
 		/** Returns the center point of the capsule. */
-		Vector3 getCenter() const { return mSegment.getCenter(); }
+		Vector3 GetCenter() const { return mSegment.GetCenter(); }
 
 	private:
 		LineSegment3 mSegment;

@@ -18,10 +18,10 @@ namespace bs
 		virtual ~AudioFactory() = default;
 
 		/** Initializes the audio system. */
-		virtual void startUp() = 0;
+		virtual void StartUp() = 0;
 
 		/** Shuts down the audio system. */
-		virtual void shutDown() = 0;
+		virtual void ShutDown() = 0;
 	};
 
 	/** Takes care of loading, initializing and shutting down of a particular audio system implementation. */

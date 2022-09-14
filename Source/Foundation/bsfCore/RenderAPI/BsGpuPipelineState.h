@@ -90,24 +90,24 @@ namespace bs
 
 		virtual ~TGraphicsPipelineState() = default;
 
-		bool hasVertexProgram() const { return mData.vertexProgram != nullptr; }
-		bool hasFragmentProgram() const { return mData.fragmentProgram != nullptr; }
-		bool hasGeometryProgram() const { return mData.geometryProgram != nullptr; }
-		bool hasHullProgram() const { return mData.hullProgram != nullptr; }
-		bool hasDomainProgram() const { return mData.domainProgram != nullptr; }
+		bool HasVertexProgram() const { return mData.vertexProgram != nullptr; }
+		bool HasFragmentProgram() const { return mData.fragmentProgram != nullptr; }
+		bool HasGeometryProgram() const { return mData.geometryProgram != nullptr; }
+		bool HasHullProgram() const { return mData.hullProgram != nullptr; }
+		bool HasDomainProgram() const { return mData.domainProgram != nullptr; }
 
-		BlendStateType getBlendState() const { return mData.blendState; }
-		RasterizerStateType getRasterizerState() const { return mData.rasterizerState; }
-		DepthStencilStateType getDepthStencilState() const { return mData.depthStencilState; }
+		BlendStateType GetBlendState() const { return mData.blendState; }
+		RasterizerStateType GetRasterizerState() const { return mData.rasterizerState; }
+		DepthStencilStateType GetDepthStencilState() const { return mData.depthStencilState; }
 
-		const GpuProgramType& getVertexProgram() const { return mData.vertexProgram; }
-		const GpuProgramType& getFragmentProgram() const { return mData.fragmentProgram; }
-		const GpuProgramType& getGeometryProgram() const { return mData.geometryProgram; }
-		const GpuProgramType& getHullProgram() const { return mData.hullProgram; }
-		const GpuProgramType& getDomainProgram() const { return mData.domainProgram; }
+		const GpuProgramType& GetVertexProgram() const { return mData.vertexProgram; }
+		const GpuProgramType& GetFragmentProgram() const { return mData.fragmentProgram; }
+		const GpuProgramType& GetGeometryProgram() const { return mData.geometryProgram; }
+		const GpuProgramType& GetHullProgram() const { return mData.hullProgram; }
+		const GpuProgramType& GetDomainProgram() const { return mData.domainProgram; }
 
 		/** Returns an object containing meta-data for parameters of all GPU programs used in this pipeline state. */
-		const SPtr<GpuPipelineParamInfoType>& getParamInfo() const { return mParamInfo; }
+		const SPtr<GpuPipelineParamInfoType>& GetParamInfo() const { return mParamInfo; }
 
 	protected:
 		TGraphicsPipelineState() = default;
@@ -130,10 +130,10 @@ namespace bs
 
 		virtual ~TComputePipelineState() = default;
 
-		const GpuProgramType& getProgram() const { return mProgram; }
+		const GpuProgramType& GetProgram() const { return mProgram; }
 
 		/** Returns an object containing meta-data for parameters of the GPU program used in this pipeline state. */
-		const SPtr<GpuPipelineParamInfoType>& getParamInfo() const { return mParamInfo; }
+		const SPtr<GpuPipelineParamInfoType>& GetParamInfo() const { return mParamInfo; }
 
 	protected:
 		TComputePipelineState();
@@ -164,17 +164,17 @@ namespace bs
 		 *
 		 * @note	Core thread only.
 		 */
-		SPtr<ct::GraphicsPipelineState> getCore() const;
+		SPtr<ct::GraphicsPipelineState> GetCore() const;
 
 		/** @copydoc RenderStateManager::createGraphicsPipelineState */
-		static SPtr<GraphicsPipelineState> create(const PIPELINE_STATE_DESC& desc);
+		static SPtr<GraphicsPipelineState> Create(const PIPELINE_STATE_DESC& desc);
 	protected:
 		friend class RenderStateManager;
 
 		GraphicsPipelineState(const PIPELINE_STATE_DESC& desc);
 
 		/** @copydoc CoreObject::createCore */
-		virtual SPtr<ct::CoreObject> createCore() const;
+		virtual SPtr<ct::CoreObject> CreateCore() const;
 	};
 
 	/**
@@ -192,17 +192,17 @@ namespace bs
 		 *
 		 * @note	Core thread only.
 		 */
-		SPtr<ct::ComputePipelineState> getCore() const;
+		SPtr<ct::ComputePipelineState> GetCore() const;
 
 		/** @copydoc RenderStateManager::createComputePipelineState */
-		static SPtr<ComputePipelineState> create(const SPtr<GpuProgram>& program);
+		static SPtr<ComputePipelineState> Create(const SPtr<GpuProgram>& program);
 	protected:
 		friend class RenderStateManager;
 
 		ComputePipelineState(const SPtr<GpuProgram>& program);
 
 		/** @copydoc CoreObject::createCore */
-		virtual SPtr<ct::CoreObject> createCore() const;
+		virtual SPtr<ct::CoreObject> CreateCore() const;
 	};
 
 	/** @} */
@@ -221,10 +221,10 @@ namespace bs
 		virtual ~GraphicsPipelineState() = default;
 
 		/** @copydoc CoreObject::initialize() */
-		void initialize() override;
+		void Initialize() override;
 
 		/** @copydoc RenderStateManager::createGraphicsPipelineState */
-		static SPtr<GraphicsPipelineState> create(const PIPELINE_STATE_DESC& desc,
+		static SPtr<GraphicsPipelineState> Create(const PIPELINE_STATE_DESC& desc,
 			GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
 	protected:
@@ -239,10 +239,10 @@ namespace bs
 		virtual ~ComputePipelineState() = default;
 
 		/** @copydoc CoreObject::initialize() */
-		void initialize() override;
+		void Initialize() override;
 
 		/** @copydoc RenderStateManager::createComputePipelineState */
-		static SPtr<ComputePipelineState> create(const SPtr<GpuProgram>& program,
+		static SPtr<ComputePipelineState> Create(const SPtr<GpuProgram>& program,
 			GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
 	protected:

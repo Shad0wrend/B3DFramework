@@ -34,13 +34,13 @@ namespace bs
 			BS_RTTI_MEMBER_PLAIN(importRootMotion, 11)
 		BS_END_RTTI_MEMBERS
 	public:
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "MeshImportOptions";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_MeshImportOptions;
 		}
@@ -59,13 +59,13 @@ namespace bs
 			BS_RTTI_MEMBER_PLAIN(events, 1)
 		BS_END_RTTI_MEMBERS
 	public:
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "ImportedAnimationEvents";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_ImportedAnimationEvents;
 		}
@@ -86,13 +86,13 @@ namespace bs
 			BS_RTTI_MEMBER_PLAIN(isAdditive, 3)
 			BS_END_RTTI_MEMBERS
 	public:
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "AnimationSplitInfo";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_AnimationSplitInfo;
 		}

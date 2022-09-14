@@ -26,15 +26,15 @@ namespace bs
 		 *							same instances of data. The original will retain data ownership and it will go out of
 		 *							scope when the original does.
 		 */
-		virtual SPtr<SerializedInstance> clone(bool cloneData = true) = 0;
+		virtual SPtr<SerializedInstance> Clone(bool cloneData = true) = 0;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
 		/************************************************************************/
 	public:
 		friend class SerializedInstanceRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** Contains data for a single field in a serialized object. */
@@ -50,8 +50,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class SerializedEntryRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** Contains a sub-set of fields of a SerializedObject for a single class in a class hierarchy. */
@@ -67,8 +67,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class SerializedSubObjectRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** Flags used for controlling the serialization process when encoding an IReflectable to a  SerializedObject. */
@@ -92,10 +92,10 @@ namespace bs
 	struct BS_UTILITY_EXPORT SerializedObject : SerializedInstance
 	{
 		/** Returns the RTTI type ID for the most-derived class of this object. */
-		UINT32 getRootTypeId() const;
+		UINT32 GetRootTypeId() const;
 
 		/** @copydoc SerializedInstance::clone */
-		SPtr<SerializedInstance> clone(bool cloneData = true) override;
+		SPtr<SerializedInstance> Clone(bool cloneData = true) ;
 
 		/**
 		 * Decodes the serialized object back into its original IReflectable object form.
@@ -105,7 +105,7 @@ namespace bs
 		 *								maintaining state or sharing information between objects during
 		 *								serialization.
 		 */
-		SPtr<IReflectable> decode(SerializationContext* context = nullptr) const;
+		SPtr<IReflectable> Decode(SerializationContext* context = nullptr) const;
 
 		/**
 		 * Serializes the provided object and returns its SerializedObject representation.
@@ -118,7 +118,7 @@ namespace bs
 		 *							deserialization.
 		 * @return					Serialized version of @p obj.
 		 */
-		static SPtr<SerializedObject> create(IReflectable& obj,
+		static SPtr<SerializedObject> Create(IReflectable& obj,
 			SerializedObjectEncodeFlags flags = SerializedObjectEncodeFlags(), SerializationContext* context = nullptr);
 
 		Vector<SerializedSubObject> subObjects;
@@ -128,8 +128,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class SerializedObjectRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** Contains data for a serialized value of a specific field or array entry. */
@@ -144,7 +144,7 @@ namespace bs
 		}
 
 		/** @copydoc SerializedInstance::clone */
-		SPtr<SerializedInstance> clone(bool cloneData = true) override;
+		SPtr<SerializedInstance> Clone(bool cloneData = true) ;
 
 		UINT8* value = nullptr;
 		UINT32 size = 0;
@@ -155,8 +155,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class SerializedFieldRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** Contains data for a serialized value of a data block field. */
@@ -165,7 +165,7 @@ namespace bs
 		SerializedDataBlock() = default;
 
 		/** @copydoc SerializedInstance::clone */
-		SPtr<SerializedInstance> clone(bool cloneData = true) override;
+		SPtr<SerializedInstance> Clone(bool cloneData = true) ;
 
 		SPtr<DataStream> stream;
 		UINT32 offset = 0;
@@ -176,8 +176,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class SerializedDataBlockRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** A serialized value representing a single entry in an array. */
@@ -193,8 +193,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class SerializedArrayEntryRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** A serialized array containing a list of all its entries. */
@@ -203,7 +203,7 @@ namespace bs
 		SerializedArray() = default;
 
 		/** @copydoc SerializedInstance::clone */
-		SPtr<SerializedInstance> clone(bool cloneData = true) override;
+		SPtr<SerializedInstance> Clone(bool cloneData = true) ;
 
 		UnorderedMap<UINT32, SerializedArrayEntry> entries;
 		UINT32 numElements = 0;
@@ -213,8 +213,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class SerializedArrayRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** @} */

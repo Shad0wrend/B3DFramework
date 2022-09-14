@@ -45,7 +45,7 @@ namespace bs
 	BS_LOG_CATEGORY_IMPL(Generic)
 	BS_LOG_CATEGORY_IMPL(Platform)
 
-	void Debug::log(const String& message, LogVerbosity verbosity, UINT32 category)
+	void Debug::Log(const String& message, LogVerbosity verbosity, UINT32 category)
 	{
 		if(mCustomLogCallback)
 		{
@@ -54,7 +54,7 @@ namespace bs
 				return;
 		}
 
-		mLog.logMsg(message, verbosity, category);
+		mLog.LogMsg(message, verbosity, category);
 
 		if(verbosity != LogVerbosity::Log)
 		{
@@ -83,26 +83,26 @@ namespace bs
 		}
 	}
 
-	void Debug::writeAsBMP(UINT8* rawPixels, UINT32 bytesPerPixel, UINT32 width, UINT32 height, const Path& filePath,
+	void Debug::WriteAsBmp(UINT8* rawPixels, UINT32 bytesPerPixel, UINT32 width, UINT32 height, const Path& filePath,
 		bool overwrite) const
 	{
-		if(FileSystem::isFile(filePath))
+		if(FileSystem::IsFile(filePath))
 		{
 			if(overwrite)
 				FileSystem::remove(filePath);
 			else
-				BS_EXCEPT(FileNotFoundException, "File already exists at specified location: " + filePath.toString());
+				BS_EXCEPT(FileNotFoundException, "File already exists at specified location: " + filePath.ToString());
 		}
 
-		SPtr<DataStream> ds = FileSystem::createAndOpenFile(filePath);
+		SPtr<DataStream> ds = FileSystem::CreateAndOpenFile(filePath);
 
-		UINT32 bmpDataSize = BitmapWriter::getBMPSize(width, height, bytesPerPixel);
+		UINT32 bmpDataSize = BitmapWriter::GetBmpSize(width, height, bytesPerPixel);
 		UINT8* bmpBuffer = bs_newN<UINT8>(bmpDataSize);
 
-		BitmapWriter::rawPixelsToBMP(rawPixels, bmpBuffer, width, height, bytesPerPixel);
+		BitmapWriter::RawPixelsToBmp(rawPixels, bmpBuffer, width, height, bytesPerPixel);
 
-		ds->write(bmpBuffer, bmpDataSize);
-		ds->close();
+		ds->Write(bmpBuffer, bmpDataSize);
+		ds->Close();
 
 		bs_deleteN(bmpBuffer, bmpDataSize);
 	}
@@ -110,12 +110,12 @@ namespace bs
 	void Debug::TriggerCallbacksInternal()
 	{
 		LogEntry entry;
-		while (mLog.getUnreadEntry(entry))
+		while (mLog.GetUnreadEntry(entry))
 		{
 			onLogEntryAdded(entry);
 		}
 
-		UINT64 hash = mLog.getHash();
+		UINT64 hash = mLog.GetHash();
 		if(mLogHash != hash)
 		{
 			onLogModified();
@@ -123,16 +123,16 @@ namespace bs
 		}
 	}
 
-	void Debug::saveLog(const Path& path, SavedLogType type) const
+	void Debug::SaveLog(const Path& path, SavedLogType type) const
 	{
 		switch (type)
 		{
 		default:
 		case SavedLogType::HTML:
-			saveHtmlLog(path);
+			SaveHtmlLog(path);
 			break;
 		case SavedLogType::Textual:
-			saveTextLog(path);
+			SaveTextLog(path);
 			break;
 		}
 	}
@@ -370,7 +370,7 @@ table td
 		return tmp;
 	}
 
-	void Debug::saveTextLog(const Path& path) const
+	void Debug::SaveTextLog(const Path& path) const
 	{
 		#if BS_IS_BANSHEE3D
 		static const char* engineHeader = "This is Banshee Engine ";

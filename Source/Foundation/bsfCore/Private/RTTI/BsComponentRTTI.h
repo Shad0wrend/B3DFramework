@@ -18,7 +18,7 @@ namespace bs
 	class BS_CORE_EXPORT ComponentRTTI : public RTTIType<Component, GameObject, ComponentRTTI>
 	{
 	public:
-		void onDeserializationEnded(IReflectable* obj, SerializationContext* context) override
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override
 		{
 			Component* comp = static_cast<Component*>(obj);
 
@@ -40,7 +40,7 @@ namespace bs
 				// deserialized handles pointing to this object can be resolved.
 				SPtr<Component> compPtr = std::static_pointer_cast<Component>(deserializationData.ptr);
 
-				GameObjectHandleBase handle = GameObjectManager::instance().registerObject(compPtr);
+				GameObjectHandleBase handle = GameObjectManager::Instance().registerObject(compPtr);
 				coreContext->goState->registerObject(deserializationData.originalId, handle);
 			}
 
@@ -50,13 +50,13 @@ namespace bs
 			comp->mRTTIData = nullptr;
 		}
 
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "Component";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_Component;
 		}

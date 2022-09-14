@@ -23,25 +23,25 @@ namespace bs
 	{
 		assert(instance != nullptr);
 
-		MonoUtil::getClassName(instance, mNamespace, mType);
-		mGCHandle = MonoUtil::newGCHandle(instance, false);
+		MonoUtil::GetClassName(instance, mNamespace, mType);
+		mGCHandle = MonoUtil::NewGcHandle(instance, false);
 
-		component->initialize(this);
+		component->Initialize(this);
 	}
 
 	void ScriptManagedComponent::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_Invoke", (void*)&ScriptManagedComponent::internal_invoke);
+		metaData.scriptClass->AddInternalCall("Internal_Invoke", (void*)&ScriptManagedComponent::InternalInvoke);
 	}
 
-	void ScriptManagedComponent::internal_invoke(ScriptManagedComponent* nativeInstance, MonoString* name)
+	void ScriptManagedComponent::InternalInvoke(ScriptManagedComponent* nativeInstance, MonoString* name)
 	{
 		HManagedComponent comp = nativeInstance->mComponent;
-		if (checkIfDestroyed(nativeInstance->mComponent))
+		if (CheckIfDestroyed(nativeInstance->mComponent))
 			return;
 
-		MonoObject* compObj = comp->getManagedInstance();
-		MonoClass* compClass = comp->getClass();
+		MonoObject* compObj = comp->GetManagedInstance();
+		MonoClass* compClass = comp->GetClass();
 
 		bool found = false;
 		String methodName = MonoUtil::monoToString(name);
@@ -76,10 +76,10 @@ namespace bs
 
 		// See if this type even still exists
 		MonoObject* instance;
-		if (!ScriptAssemblyManager::instance().getSerializableObjectInfo(mNamespace, mType, currentObjInfo))
+		if (!ScriptAssemblyManager::Instance().getSerializableObjectInfo(mNamespace, mType, currentObjInfo))
 		{
 			mTypeMissing = true;
-			instance = ScriptAssemblyManager::instance().getBuiltinClasses().missingComponentClass->createInstance(true);
+			instance = ScriptAssemblyManager::Instance().getBuiltinClasses().missingComponentClass->createInstance(true);
 		}
 		else
 		{
@@ -96,7 +96,7 @@ namespace bs
 		freeManagedInstance();
 	}
 
-	ScriptObjectBackup ScriptManagedComponent::beginRefresh()
+	ScriptObjectBackup ScriptManagedComponent::BeginRefresh()
 	{
 		HManagedComponent managedComponent = static_object_cast<ManagedComponent>(mComponent);
 		ScriptObjectBackup backupData;
@@ -109,7 +109,7 @@ namespace bs
 		return backupData;
 	}
 
-	void ScriptManagedComponent::endRefresh(const ScriptObjectBackup& backupData)
+	void ScriptManagedComponent::EndRefresh(const ScriptObjectBackup& backupData)
 	{
 		HManagedComponent managedComponent = static_object_cast<ManagedComponent>(mComponent);
 
@@ -125,7 +125,7 @@ namespace bs
 		// is still kept during assembly refresh. Such components shouldn't be restored
 		// so we delete them.
 		if (!assemblyRefresh || mComponent.isDestroyed(true))
-			ScriptGameObjectManager::instance().destroyScriptComponent(this);
+			ScriptGameObjectManager::Instance().destroyScriptComponent(this);
 	}
 
 	void ScriptManagedComponent::NotifyDestroyedInternal()

@@ -7,7 +7,7 @@ namespace bs { namespace ct
 {
 	ParamBlock::~ParamBlock()
 	{
-		ParamBlockManager::unregisterBlock(this);
+		ParamBlockManager::UnregisterBlock(this);
 	}
 
 	Vector<ParamBlock*> ParamBlockManager::sToInitialize;
@@ -15,20 +15,20 @@ namespace bs { namespace ct
 	ParamBlockManager::ParamBlockManager()
 	{
 		for (auto& entry : sToInitialize)
-			entry->initialize();
+			entry->Initialize();
 
 		sToInitialize.clear();
 	}
 
-	void ParamBlockManager::registerBlock(ParamBlock* paramBlock)
+	void ParamBlockManager::RegisterBlock(ParamBlock* paramBlock)
 	{
-		if (isStarted())
-			paramBlock->initialize();
+		if (IsStarted())
+			paramBlock->Initialize();
 		else
 			sToInitialize.push_back(paramBlock);
 	}
 
-	void ParamBlockManager::unregisterBlock(ParamBlock* paramBlock)
+	void ParamBlockManager::UnregisterBlock(ParamBlock* paramBlock)
 	{
 		auto iterFind = std::find(sToInitialize.begin(), sToInitialize.end(), paramBlock);
 		if (iterFind != sToInitialize.end())

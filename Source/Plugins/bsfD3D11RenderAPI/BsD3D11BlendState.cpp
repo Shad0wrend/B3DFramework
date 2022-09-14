@@ -19,17 +19,17 @@ namespace bs { namespace ct
 		BS_INC_RENDER_STAT_CAT(ResDestroyed, RenderStatObject_BlendState);
 	}
 
-	void D3D11BlendState::createInternal()
+	void D3D11BlendState::CreateInternal()
 	{
 		D3D11_BLEND_DESC blendStateDesc;
 		ZeroMemory(&blendStateDesc, sizeof(D3D11_BLEND_DESC));
 
-		blendStateDesc.AlphaToCoverageEnable = mProperties.getAlphaToCoverageEnabled();
-		blendStateDesc.IndependentBlendEnable = mProperties.getIndependantBlendEnable();
+		blendStateDesc.AlphaToCoverageEnable = mProperties.GetAlphaToCoverageEnabled();
+		blendStateDesc.IndependentBlendEnable = mProperties.GetIndependantBlendEnable();
 		
 		for(UINT32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
 		{
-			blendStateDesc.RenderTarget[i].BlendEnable = mProperties.getBlendEnabled(i);
+			blendStateDesc.RenderTarget[i].BlendEnable = mProperties.GetBlendEnabled(i);
 			blendStateDesc.RenderTarget[i].BlendOp = D3D11Mappings::get(mProperties.getBlendOperation(i));
 			blendStateDesc.RenderTarget[i].BlendOpAlpha = D3D11Mappings::get(mProperties.getAlphaBlendOperation(i));
 			blendStateDesc.RenderTarget[i].DestBlend = D3D11Mappings::get(mProperties.getDstBlend(i));

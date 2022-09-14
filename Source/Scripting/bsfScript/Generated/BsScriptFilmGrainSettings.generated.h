@@ -16,15 +16,15 @@ namespace bs
 
 		ScriptFilmGrainSettings(MonoObject* managedInstance, const SPtr<FilmGrainSettings>& value);
 
-		static MonoObject* create(const SPtr<FilmGrainSettings>& value);
+		static MonoObject* Create(const SPtr<FilmGrainSettings>& value);
 
 	private:
-		static void Internal_FilmGrainSettings(MonoObject* managedInstance);
-		static bool Internal_getenabled(ScriptFilmGrainSettings* thisPtr);
-		static void Internal_setenabled(ScriptFilmGrainSettings* thisPtr, bool value);
-		static float Internal_getintensity(ScriptFilmGrainSettings* thisPtr);
-		static void Internal_setintensity(ScriptFilmGrainSettings* thisPtr, float value);
-		static float Internal_getspeed(ScriptFilmGrainSettings* thisPtr);
-		static void Internal_setspeed(ScriptFilmGrainSettings* thisPtr, float value);
+		static void InternalFilmGrainSettings(MonoObject* managedInstance);
+		static bool InternalGetenabled(ScriptFilmGrainSettings* thisPtr);
+		static void InternalSetenabled(ScriptFilmGrainSettings* thisPtr, bool value);
+		static float InternalGetintensity(ScriptFilmGrainSettings* thisPtr);
+		static void InternalSetintensity(ScriptFilmGrainSettings* thisPtr, float value);
+		static float InternalGetspeed(ScriptFilmGrainSettings* thisPtr);
+		static void InternalSetspeed(ScriptFilmGrainSettings* thisPtr, float value);
 	};
 }

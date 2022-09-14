@@ -15,10 +15,10 @@ namespace bs { namespace ct
 		: VulkanResource(owner, false)
 	{
 		VulkanDevice& device = owner->getDevice();
-		mDevice = device.getLogical();
+		mDevice = device.GetLogical();
 
 		VkResult result;
-		VkPhysicalDevice physicalDevice = device.getPhysical();
+		VkPhysicalDevice physicalDevice = device.GetPhysical();
 
 		// Determine swap chain dimensions
 		VkSurfaceCapabilitiesKHR surfaceCaps;
@@ -170,7 +170,7 @@ namespace bs { namespace ct
 			imageDesc.image = depthStencilImage;
 			imageDesc.usage = TU_DEPTHSTENCIL;
 			imageDesc.format = depthFormat;
-			imageDesc.allocation = device.allocateMemory(depthStencilImage, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+			imageDesc.allocation = device.AllocateMemory(depthStencilImage, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
 			mDepthStencilImage = owner->create<VulkanImage>(imageDesc, true);
 		}
@@ -190,7 +190,7 @@ namespace bs { namespace ct
 			rpDesc.depth.enabled = true;
 		}
 
-		VulkanRenderPass* renderPass = VulkanRenderPasses::instance().get(mDevice, rpDesc);
+		VulkanRenderPass* renderPass = VulkanRenderPasses::Instance().get(mDevice, rpDesc);
 
 		// Create a framebuffer for each swap chain buffer
 		UINT32 numFramebuffers = (UINT32)mSurfaces.size();
@@ -242,7 +242,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	VkResult VulkanSwapChain::acquireBackBuffer()
+	VkResult VulkanSwapChain::AcquireBackBuffer()
 	{
 		uint32_t imageIndex;
 
@@ -268,7 +268,7 @@ namespace bs { namespace ct
 		return VK_SUCCESS;
 	}
 
-	bool VulkanSwapChain::prepareForPresent(UINT32& backBufferIdx)
+	bool VulkanSwapChain::PrepareForPresent(UINT32& backBufferIdx)
 	{
 		if (!mSurfaces[mCurrentBackBufferIdx].acquired)
 			return false;
@@ -280,7 +280,7 @@ namespace bs { namespace ct
 		return true;
 	}
 
-	void VulkanSwapChain::notifyBackBufferWaitIssued()
+	void VulkanSwapChain::NotifyBackBufferWaitIssued()
 	{
 		if (!mSurfaces[mCurrentBackBufferIdx].acquired)
 			return;

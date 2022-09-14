@@ -35,15 +35,15 @@ namespace bs
 		}
 			
 		/**	Return true if the other box is a part of this one. */
-		bool contains(const PixelVolume &volume) const
+		bool Contains(const PixelVolume &volume) const
 		{
 			return (volume.left >= left && volume.top >= top && volume.front >= front &&
 				volume.right <= right && volume.bottom <= bottom && volume.back <= back);
 		}
 			
-		UINT32 getWidth() const { return right-left; }
-		UINT32 getHeight() const { return bottom-top; }
-		UINT32 getDepth() const { return back-front; }
+		UINT32 GetWidth() const { return right-left; }
+		UINT32 GetHeight() const { return bottom-top; }
+		UINT32 GetDepth() const { return back-front; }
 	};
 
 	/** @} */

@@ -18,34 +18,34 @@ namespace bs
 	{
 		metaData.scriptClass->addInternalCall("Internal_getLimit", (void*)&ScriptCSphericalJoint::Internal_getLimit);
 		metaData.scriptClass->addInternalCall("Internal_setLimit", (void*)&ScriptCSphericalJoint::Internal_setLimit);
-		metaData.scriptClass->addInternalCall("Internal_setFlag", (void*)&ScriptCSphericalJoint::Internal_setFlag);
-		metaData.scriptClass->addInternalCall("Internal_hasFlag", (void*)&ScriptCSphericalJoint::Internal_hasFlag);
+		metaData.scriptClass->AddInternalCall("Internal_setFlag", (void*)&ScriptCSphericalJoint::InternalSetFlag);
+		metaData.scriptClass->AddInternalCall("Internal_hasFlag", (void*)&ScriptCSphericalJoint::InternalHasFlag);
 
 	}
 
-	void ScriptCSphericalJoint::Internal_getLimit(ScriptCSphericalJoint* thisPtr, __LimitConeRangeInterop* __output)
+	void ScriptCSphericalJoint::InternalGetLimit(ScriptCSphericalJoint* thisPtr, __LimitConeRangeInterop* __output)
 	{
 		LimitConeRange tmp__output;
-		tmp__output = thisPtr->getHandle()->getLimit();
+		tmp__output = thisPtr->GetHandle()->GetLimit();
 
 		__LimitConeRangeInterop interop__output;
-		interop__output = ScriptLimitConeRange::toInterop(tmp__output);
-		MonoUtil::valueCopy(__output, &interop__output, ScriptLimitConeRange::getMetaData()->scriptClass->GetInternalClassInternal());
+		interop__output = ScriptLimitConeRange::ToInterop(tmp__output);
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptLimitConeRange::GetMetaData()->scriptClass->GetInternalClassInternal());
 	}
 
-	void ScriptCSphericalJoint::Internal_setLimit(ScriptCSphericalJoint* thisPtr, __LimitConeRangeInterop* limit)
+	void ScriptCSphericalJoint::InternalSetLimit(ScriptCSphericalJoint* thisPtr, __LimitConeRangeInterop* limit)
 	{
 		LimitConeRange tmplimit;
-		tmplimit = ScriptLimitConeRange::fromInterop(*limit);
-		thisPtr->getHandle()->setLimit(tmplimit);
+		tmplimit = ScriptLimitConeRange::FromInterop(*limit);
+		thisPtr->GetHandle()->SetLimit(tmplimit);
 	}
 
-	void ScriptCSphericalJoint::Internal_setFlag(ScriptCSphericalJoint* thisPtr, SphericalJointFlag flag, bool enabled)
+	void ScriptCSphericalJoint::InternalSetFlag(ScriptCSphericalJoint* thisPtr, SphericalJointFlag flag, bool enabled)
 	{
 		thisPtr->getHandle()->setFlag(flag, enabled);
 	}
 
-	bool ScriptCSphericalJoint::Internal_hasFlag(ScriptCSphericalJoint* thisPtr, SphericalJointFlag flag)
+	bool ScriptCSphericalJoint::InternalHasFlag(ScriptCSphericalJoint* thisPtr, SphericalJointFlag flag)
 	{
 		bool tmp__output;
 		tmp__output = thisPtr->getHandle()->hasFlag(flag);

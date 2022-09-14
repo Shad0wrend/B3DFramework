@@ -20,12 +20,12 @@ namespace bs
 
 		ScriptShader(MonoObject* managedInstance, const ResourceHandle<Shader>& value);
 
-		static MonoObject* createInstance();
+		static MonoObject* CreateInstance();
 
 	private:
-		static MonoObject* Internal_getRef(ScriptShader* thisPtr);
+		static MonoObject* InternalGetRef(ScriptShader* thisPtr);
 
-		static MonoArray* Internal_getVariationParams(ScriptShader* thisPtr);
-		static MonoArray* Internal_getParameters(ScriptShader* thisPtr);
+		static MonoArray* InternalGetVariationParams(ScriptShader* thisPtr);
+		static MonoArray* InternalGetParameters(ScriptShader* thisPtr);
 	};
 }

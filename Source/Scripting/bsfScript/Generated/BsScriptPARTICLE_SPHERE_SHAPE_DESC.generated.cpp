@@ -14,14 +14,14 @@ namespace bs
 	void ScriptPARTICLE_SPHERE_SHAPE_DESC::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptPARTICLE_SPHERE_SHAPE_DESC::box(const PARTICLE_SPHERE_SHAPE_DESC& value)
+	MonoObject*ScriptPARTICLE_SPHERE_SHAPE_DESC::Box(const PARTICLE_SPHERE_SHAPE_DESC& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	PARTICLE_SPHERE_SHAPE_DESC ScriptPARTICLE_SPHERE_SHAPE_DESC::unbox(MonoObject* value)
+	PARTICLE_SPHERE_SHAPE_DESC ScriptPARTICLE_SPHERE_SHAPE_DESC::Unbox(MonoObject* value)
 	{
-		return *(PARTICLE_SPHERE_SHAPE_DESC*)MonoUtil::unbox(value);
+		return *(PARTICLE_SPHERE_SHAPE_DESC*)MonoUtil::Unbox(value);
 	}
 
 }

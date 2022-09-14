@@ -9,17 +9,17 @@ namespace bs
 
 	Log::~Log()
 	{
-		clear();
+		Clear();
 	}
 
-	void Log::logMsg(const String& message, LogVerbosity verbosity, UINT32 category)
+	void Log::LogMsg(const String& message, LogVerbosity verbosity, UINT32 category)
 	{
 		RecursiveLock lock(mMutex);
 
 		mUnreadEntries.push(LogEntry(message, verbosity, category));
 	}
 
-	void Log::clear()
+	void Log::Clear()
 	{
 		RecursiveLock lock(mMutex);
 
@@ -31,15 +31,15 @@ namespace bs
 		mHash++;
 	}
 
-	void Log::clear(LogVerbosity verbosity, UINT32 category)
+	void Log::Clear(LogVerbosity verbosity, UINT32 category)
 	{
 		RecursiveLock lock(mMutex);
 
 		Vector<LogEntry> newEntries;
 		for(auto& entry : mEntries)
 		{
-			if (((verbosity == LogVerbosity::Any) || entry.getVerbosity() == verbosity) &&
-				(category == (UINT32)-1 || entry.getCategory() == category))
+			if (((verbosity == LogVerbosity::Any) || entry.GetVerbosity() == verbosity) &&
+				(category == (UINT32)-1 || entry.GetCategory() == category))
 				continue;
 
 			newEntries.push_back(entry);
@@ -53,8 +53,8 @@ namespace bs
 			LogEntry entry = mUnreadEntries.front();
 			mUnreadEntries.pop();
 
-			if (((verbosity == LogVerbosity::Any) || entry.getVerbosity() == verbosity) &&
-				(category == (UINT32)-1 || entry.getCategory() == category))
+			if (((verbosity == LogVerbosity::Any) || entry.GetVerbosity() == verbosity) &&
+				(category == (UINT32)-1 || entry.GetCategory() == category))
 				continue;
 
 			newUnreadEntries.push(entry);
@@ -64,7 +64,7 @@ namespace bs
 		mHash++;
 	}
 
-	bool Log::getUnreadEntry(LogEntry& entry)
+	bool Log::GetUnreadEntry(LogEntry& entry)
 	{
 		RecursiveLock lock(mMutex);
 
@@ -79,7 +79,7 @@ namespace bs
 		return true;
 	}
 
-	bool Log::getLastEntry(LogEntry& entry)
+	bool Log::GetLastEntry(LogEntry& entry)
 	{
 		if (mEntries.size() == 0)
 			return false;
@@ -88,7 +88,7 @@ namespace bs
 		return true;
 	}
 
-	Vector<LogEntry> Log::getEntries() const
+	Vector<LogEntry> Log::GetEntries() const
 	{
 		RecursiveLock lock(mMutex);
 
@@ -97,7 +97,7 @@ namespace bs
 	
 	bool Log::RegisterCategoryInternal(UINT32 id, const char* name)
 	{
-		if (!categoryExists(id))
+		if (!CategoryExists(id))
 		{
 			sCategories.emplace(id, name);
 			return true;
@@ -106,12 +106,12 @@ namespace bs
 		return false;
 	}
 	
-	bool Log::categoryExists(UINT32 id)
+	bool Log::CategoryExists(UINT32 id)
 	{
 		return sCategories.find(id) != sCategories.end();
 	}
 	
-	bool Log::getCategoryName(UINT32 id, String& name)
+	bool Log::GetCategoryName(UINT32 id, String& name)
 	{
 		auto search = sCategories.find(id);
 		if (search != sCategories.end())
@@ -124,7 +124,7 @@ namespace bs
 		return false;
 	}
 	
-	Vector<LogEntry> Log::getAllEntries() const
+	Vector<LogEntry> Log::GetAllEntries() const
 	{
 		Vector<LogEntry> entries;
 		{

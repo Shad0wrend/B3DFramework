@@ -15,8 +15,8 @@ namespace bs
 	Time::Time()
 	{
 		mTimer = bs_new<Timer>();
-		mAppStartTime = mTimer->getStartMs();
-		mLastFrameTime = mTimer->getMicroseconds();
+		mAppStartTime = mTimer->GetStartMs();
+		mLastFrameTime = mTimer->GetMicroseconds();
 		mAppStartUpDate = std::time(nullptr);
 	}
 
@@ -27,7 +27,7 @@ namespace bs
 
 	void Time::UpdateInternal()
 	{
-		UINT64 currentFrameTime = mTimer->getMicroseconds();
+		UINT64 currentFrameTime = mTimer->GetMicroseconds();
 
 		if(!mFirstFrame)
 			mFrameDelta = (float)((currentFrameTime - mLastFrameTime) * MICROSEC_TO_SEC);
@@ -47,7 +47,7 @@ namespace bs
 	
 	UINT32 Time::GetFixedUpdateStepInternal(UINT64& step)
 	{
-		const UINT64 currentTime = getTimePrecise();
+		const UINT64 currentTime = GetTimePrecise();
 
 		// Skip fixed update first frame (time delta is zero, and no input received yet)
 		if (mFirstFixedFrame)
@@ -60,7 +60,7 @@ namespace bs
 		if (nextFrameTime <= currentTime)
 		{
 			const INT64 simulationAmount = (INT64)std::max(currentTime - mLastFixedUpdateTime, mFixedStep); // At least one step
-			auto numIterations = (UINT32)Math::divideAndRoundUp(simulationAmount, (INT64)mFixedStep);
+			auto numIterations = (UINT32)Math::DivideAndRoundUp(simulationAmount, (INT64)mFixedStep);
 
 			// Prevent physics from completely hogging the CPU. If the framerate is low, the physics will want to run many
 			// iterations per frame, slowing down the game even further. Therefore we limit the number of physics updates
@@ -79,8 +79,8 @@ namespace bs
 			auto stepus = (INT64)mFixedStep;
 			if (numIterations > mNumRemainingFixedUpdates)
 			{
-				stepus = Math::divideAndRoundUp(simulationAmount, (INT64)mNumRemainingFixedUpdates);
-				numIterations = (UINT32)Math::divideAndRoundUp(simulationAmount, (INT64)stepus);
+				stepus = Math::DivideAndRoundUp(simulationAmount, (INT64)mNumRemainingFixedUpdates);
+				numIterations = (UINT32)Math::DivideAndRoundUp(simulationAmount, (INT64)stepus);
 			}
 
 			assert(numIterations <= mNumRemainingFixedUpdates);
@@ -101,30 +101,30 @@ namespace bs
 		mLastFixedUpdateTime += step;
 	}
 
-	UINT64 Time::getTimePrecise() const
+	UINT64 Time::GetTimePrecise() const
 	{
-		return mTimer->getMicroseconds();
+		return mTimer->GetMicroseconds();
 	}
 
-	String Time::getCurrentDateTimeString(bool isUTC)
+	String Time::GetCurrentDateTimeString(bool isUTC)
 	{
 		std::time_t t = std::time(nullptr);
 		return toString(t, isUTC, false, TimeToStringConversionType::Full);
 	}
 
-	String Time::getCurrentTimeString(bool isUTC)
+	String Time::GetCurrentTimeString(bool isUTC)
 	{
 		std::time_t t = std::time(nullptr);
 		return toString(t, isUTC, false, TimeToStringConversionType::Time);
 	}
 
-	String Time::getAppStartUpDateString(bool isUTC)
+	String Time::GetAppStartUpDateString(bool isUTC)
 	{
 		return toString(mAppStartUpDate,isUTC, false, TimeToStringConversionType::Full);
 	}
 	
 	Time& gTime()
 	{
-		return Time::instance();
+		return Time::Instance();
 	}
 }

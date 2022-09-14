@@ -19,16 +19,16 @@ namespace bs
 	ScriptResourceManager::ScriptResourceManager()
 	{
 		mResourceDestroyedConn = gResources().onResourceDestroyed.connect(std::bind(&ScriptResourceManager::onResourceDestroyed, this, _1));
-		mDomainUnloadedConn = MonoManager::instance().onDomainUnload.connect(std::bind(&ScriptResourceManager::clearRRefs, this));
+		mDomainUnloadedConn = MonoManager::Instance().onDomainUnload.connect(std::bind(&ScriptResourceManager::clearRRefs, this));
 	}
 
 	ScriptResourceManager::~ScriptResourceManager()
 	{
-		mDomainUnloadedConn.disconnect();
-		mResourceDestroyedConn.disconnect();
+		mDomainUnloadedConn.Disconnect();
+		mResourceDestroyedConn.Disconnect();
 	}
 
-	ScriptManagedResource* ScriptResourceManager::createManagedScriptResource(const HManagedResource& resource, MonoObject* instance)
+	ScriptManagedResource* ScriptResourceManager::CreateManagedScriptResource(const HManagedResource& resource, MonoObject* instance)
 	{
 		const UUID& uuid = resource.getUUID();
 #if BS_DEBUG_MODE
@@ -41,7 +41,7 @@ namespace bs
 		return scriptResource;
 	}
 
-	ScriptResourceBase* ScriptResourceManager::createBuiltinScriptResource(const HResource& resource, MonoObject* instance)
+	ScriptResourceBase* ScriptResourceManager::CreateBuiltinScriptResource(const HResource& resource, MonoObject* instance)
 	{
 		const UUID& uuid = resource.getUUID();
 #if BS_DEBUG_MODE
@@ -52,7 +52,7 @@ namespace bs
 			return nullptr;
 
 		UINT32 rttiId = resource->getRTTI()->getRTTIId();
-		BuiltinResourceInfo* info = ScriptAssemblyManager::instance().getBuiltinResourceInfo(rttiId);
+		BuiltinResourceInfo* info = ScriptAssemblyManager::Instance().getBuiltinResourceInfo(rttiId);
 
 		if (info == nullptr)
 			return nullptr;
@@ -63,7 +63,7 @@ namespace bs
 		return scriptResource;
 	}
 
-	ScriptResourceBase* ScriptResourceManager::getScriptResource(const HResource& resource, bool create)
+	ScriptResourceBase* ScriptResourceManager::GetScriptResource(const HResource& resource, bool create)
 	{
 		const UUID& uuid = resource.getUUID();
 
@@ -78,7 +78,7 @@ namespace bs
 		return output;
 	}
 
-	ScriptResourceBase* ScriptResourceManager::getScriptResource(const UUID& uuid)
+	ScriptResourceBase* ScriptResourceManager::GetScriptResource(const UUID& uuid)
 	{
 		if (uuid.empty())
 			return nullptr;
@@ -90,20 +90,20 @@ namespace bs
 		return nullptr;
 	}
 
-	ScriptRRefBase* ScriptResourceManager::getScriptRRef(const HResource& resource, ::MonoClass* rrefClass)
+	ScriptRRefBase* ScriptResourceManager::GetScriptRRef(const HResource& resource, ::MonoClass* rrefClass)
 	{
 		UnorderedMap<UUID, ScriptRRefBase*>& rrefs = mScriptRRefsPerType[rrefClass];
 		const auto iterFind = rrefs.find(resource.getUUID());
 		if (iterFind != rrefs.end())
 			return iterFind->second;
 
-		ScriptRRefBase* newRRef = ScriptRRefBase::create(resource, rrefClass);
+		ScriptRRefBase* newRRef = ScriptRRefBase::Create(resource, rrefClass);
 		rrefs[resource.getUUID()] = newRRef;
 
 		return newRRef;
 	}
 
-	void ScriptResourceManager::destroyScriptResource(ScriptResourceBase* resource)
+	void ScriptResourceManager::DestroyScriptResource(ScriptResourceBase* resource)
 	{
 		HResource resourceHandle = resource->getGenericHandle();
 		const UUID& uuid = resourceHandle.getUUID();
@@ -130,7 +130,7 @@ namespace bs
 		mScriptResources.erase(uuid);
 	}
 
-	void ScriptResourceManager::onResourceDestroyed(const UUID& uuid)
+	void ScriptResourceManager::OnResourceDestroyed(const UUID& uuid)
 	{
 		for(auto& kvp : mScriptRRefsPerType)
 		{
@@ -149,7 +149,7 @@ namespace bs
 		}
 	}
 
-	void ScriptResourceManager::clearRRefs()
+	void ScriptResourceManager::ClearRRefs()
 	{
 		mScriptRRefsPerType.clear();
 	}

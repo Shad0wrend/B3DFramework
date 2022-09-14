@@ -14,14 +14,14 @@ namespace bs
 	void ScriptHingeJointDrive::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptHingeJointDrive::box(const HingeJointDrive& value)
+	MonoObject*ScriptHingeJointDrive::Box(const HingeJointDrive& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	HingeJointDrive ScriptHingeJointDrive::unbox(MonoObject* value)
+	HingeJointDrive ScriptHingeJointDrive::Unbox(MonoObject* value)
 	{
-		return *(HingeJointDrive*)MonoUtil::unbox(value);
+		return *(HingeJointDrive*)MonoUtil::Unbox(value);
 	}
 
 }

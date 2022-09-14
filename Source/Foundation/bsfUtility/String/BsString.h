@@ -441,16 +441,16 @@ namespace bs
 	{
 	public:
 		/** Removes any whitespace characters from beginning or end of the string. */
-		static void trim(String& str, bool left = true, bool right = true);
+		static void Trim(String& str, bool left = true, bool right = true);
 
 		/** @copydoc StringUtil::trim(String&, bool, bool) */
-		static void trim(WString& str, bool left = true, bool right = true);
+		static void Trim(WString& str, bool left = true, bool right = true);
 
 		/**	Removes specified characters from beginning or end of the string. */
-		static void trim(String& str, const String& delims, bool left = true, bool right = true);
+		static void Trim(String& str, const String& delims, bool left = true, bool right = true);
 
 		/** @copydoc StringUtil::trim(String&, const String&, bool, bool) */
-		static void trim(WString& str, const WString& delims, bool left = true, bool right = true);
+		static void Trim(WString& str, const WString& delims, bool left = true, bool right = true);
 
 		/**
 		 * Returns a vector of strings containing all the substrings delimited by the provided delimiter characters.
@@ -461,10 +461,10 @@ namespace bs
 		 * @param[in]	maxSplits	(optional) The maximum number of splits to perform (0 for unlimited splits). If this
 		 *							parameters is > 0, the splitting process will stop after this many splits, left to right.
 		 */
-		static Vector<String> split(const String& str, const String& delims = "\t\n ", unsigned int maxSplits = 0);
+		static Vector<String> Split(const String& str, const String& delims = "\t\n ", unsigned int maxSplits = 0);
 
 		/** @copydoc StringUtil::split(const String&, const String&, unsigned int) */
-		static Vector<WString> split(const WString& str, const WString& delims = L"\t\n ", unsigned int maxSplits = 0);
+		static Vector<WString> Split(const WString& str, const WString& delims = L"\t\n ", unsigned int maxSplits = 0);
 
 		/**
 		 * Returns a vector of strings containing all the substrings delimited by the provided delimiter characters, or the
@@ -479,24 +479,24 @@ namespace bs
 		 *								If this parameters is > 0, the splitting process will stop after this many splits,
 		 *								left to right.
 		 */
-		static Vector<String> tokenise(const String& str, const String& delims = "\t\n ",
+		static Vector<String> Tokenise(const String& str, const String& delims = "\t\n ",
 			const String& doubleDelims = "\"", unsigned int maxSplits = 0);
 
 		/** @copydoc StringUtil::tokenise(const String&, const String&, const String&, unsigned int) */
-		static Vector<WString> tokenise(const WString& str, const WString& delims = L"\t\n ",
+		static Vector<WString> Tokenise(const WString& str, const WString& delims = L"\t\n ",
 			const WString& doubleDelims = L"\"", unsigned int maxSplits = 0);
 
 		/** Converts all the characters in the string to lower case. Does not handle UTF8 encoded strings. */
-		static void toLowerCase(String& str);
+		static void ToLowerCase(String& str);
 
 		/** Converts all the characters in the string to lower case. Does not handle UTF8 encoded strings. */
-		static void toLowerCase(WString& str);
+		static void ToLowerCase(WString& str);
 
 		/** Converts all the characters in the string to upper case. Does not handle UTF8 encoded strings. */
-		static void toUpperCase(String& str);
+		static void ToUpperCase(String& str);
 
 		/**	Converts all the characters in the string to upper case. Does not handle UTF8 encoded strings. */
-		static void toUpperCase(WString& str);
+		static void ToUpperCase(WString& str);
 
 		/**
 		 * Returns whether the string begins with the pattern passed in.
@@ -506,10 +506,10 @@ namespace bs
 		 * @param[in]	lowerCase	(optional) If true, the start of the string will be lower cased before comparison, and
 		 *							the pattern should also be in lower case.
 		 */
-		static bool startsWith(const String& str, const String& pattern, bool lowerCase = true);
+		static bool StartsWith(const String& str, const String& pattern, bool lowerCase = true);
 
 		/** @copydoc startsWith(const String&, const String&, bool) */
-		static bool startsWith(const WString& str, const WString& pattern, bool lowerCase = true);
+		static bool StartsWith(const WString& str, const WString& pattern, bool lowerCase = true);
 
 		/**
 		 * Returns whether the string end with the pattern passed in.
@@ -519,10 +519,10 @@ namespace bs
 		 * @param[in]	lowerCase	(optional) If true, the start of the string will be lower cased before comparison, and
 		 *							the pattern should also be in lower case.
 		 */
-		static bool endsWith(const String& str, const String& pattern, bool lowerCase = true);
+		static bool EndsWith(const String& str, const String& pattern, bool lowerCase = true);
 
 		/** @copydoc endsWith(const String&, const String&, bool) */
-		static bool endsWith(const WString& str, const WString& pattern, bool lowerCase = true);
+		static bool EndsWith(const WString& str, const WString& pattern, bool lowerCase = true);
 
 		/**
 		 * Returns true if the string matches the provided pattern. Pattern may use a "*" wildcard for matching any
@@ -532,10 +532,10 @@ namespace bs
 		 * @param[in]	pattern		 	Patterns to look for.
 		 * @param[in]	caseSensitive	(optional) Should the match be case sensitive or not.
 		 */
-		static bool match(const String& str, const String& pattern, bool caseSensitive = true);
+		static bool Match(const String& str, const String& pattern, bool caseSensitive = true);
 
 		/** @copydoc match(const String&, const String&, bool) */
-		static bool match(const WString& str, const WString& pattern, bool caseSensitive = true);
+		static bool Match(const WString& str, const WString& pattern, bool caseSensitive = true);
 
 		/**
 		 * Replace all instances of a substring with a another substring.
@@ -546,10 +546,10 @@ namespace bs
 		 *
 		 * @return	An updated string with the substrings replaced.
 		 */
-		static const String replaceAll(const String& source, const String& replaceWhat, const String& replaceWithWhat);
+		static const String ReplaceAll(const String& source, const String& replaceWhat, const String& replaceWithWhat);
 
 		/** @copydoc replaceAll(const String&, const String&, const String&) */
-		static const WString replaceAll(const WString& source, const WString& replaceWhat, const WString& replaceWithWhat);
+		static const WString ReplaceAll(const WString& source, const WString& replaceWhat, const WString& replaceWithWhat);
 
 		/**
 		 * Compares two strings. Returns 0 if the two compare equal, <0 if the value of the left string is lower than of
@@ -561,7 +561,7 @@ namespace bs
 		 *								Note that case conversion does not handle UTF8 strings.
 		 */
 		template <class T>
-		static int compare(const BasicString<T>& lhs, const BasicString<T>& rhs, bool caseSensitive = true)
+		static int Compare(const BasicString<T>& lhs, const BasicString<T>& rhs, bool caseSensitive = true)
 		{
 			if (caseSensitive)
 				return (int)lhs.compare(rhs);
@@ -578,16 +578,16 @@ namespace bs
 
 		/** @copydoc StringFormat::format */
 		template<class T, class... Args>
-		static BasicString<T> format(const BasicString<T>& source, Args&& ...args)
+		static BasicString<T> Format(const BasicString<T>& source, Args&& ...args)
 		{
 			return StringFormat::format(source.c_str(), std::forward<Args>(args)...);
 		}
 
 		/** @copydoc StringFormat::format */
 		template<class T, class... Args>
-		static BasicString<T> format(const T* source, Args&& ...args)
+		static BasicString<T> Format(const T* source, Args&& ...args)
 		{
-			return StringFormat::format(source, std::forward<Args>(args)...);
+			return StringFormat::Format(source, std::forward<Args>(args)...);
 		}
 
 		/** Constant blank string, useful for returning by ref where local does not exist. */
@@ -598,7 +598,7 @@ namespace bs
 
 	private:
 		template <class T>
-		static Vector<BasicString<T>> splitInternal(const BasicString<T>& str, const BasicString<T>& delims, unsigned int maxSplits)
+		static Vector<BasicString<T>> SplitInternal(const BasicString<T>& str, const BasicString<T>& delims, unsigned int maxSplits)
 		{
 			Vector<BasicString<T>> ret;
 			// Pre-allocate some space for performance
@@ -639,7 +639,7 @@ namespace bs
 		}
 
 		template <class T>
-		static Vector<BasicString<T>> tokeniseInternal(const BasicString<T>& str, const BasicString<T>& singleDelims,
+		static Vector<BasicString<T>> TokeniseInternal(const BasicString<T>& str, const BasicString<T>& singleDelims,
 			const BasicString<T>& doubleDelims, unsigned int maxSplits)
 		{
 			Vector<BasicString<T>> ret;
@@ -709,7 +709,7 @@ namespace bs
 		}
 
 		template <class T>
-		static bool startsWithInternal(const BasicString<T>& str, const BasicString<T>& pattern, bool lowerCase)
+		static bool StartsWithInternal(const BasicString<T>& str, const BasicString<T>& pattern, bool lowerCase)
 		{
 			size_t thisLen = str.length();
 			size_t patternLen = pattern.length();
@@ -724,7 +724,7 @@ namespace bs
 		}
 
 		template <class T>
-		static bool endsWithInternal(const BasicString<T>& str, const BasicString<T>& pattern, bool lowerCase)
+		static bool EndsWithInternal(const BasicString<T>& str, const BasicString<T>& pattern, bool lowerCase)
 		{
 			size_t thisLen = str.length();
 			size_t patternLen = pattern.length();
@@ -739,7 +739,7 @@ namespace bs
 		}
 
 		template <class T>
-		static bool matchInternal(const BasicString<T>& str, const BasicString<T>& pattern, bool caseSensitive)
+		static bool MatchInternal(const BasicString<T>& str, const BasicString<T>& pattern, bool caseSensitive)
 		{
 			BasicString<T> tmpStr = str;
 			BasicString<T> tmpPattern = pattern;
@@ -805,7 +805,7 @@ namespace bs
 		}
 
 		template <class T>
-		static BasicString<T> replaceAllInternal(const BasicString<T>& source,
+		static BasicString<T> ReplaceAllInternal(const BasicString<T>& source,
 			const BasicString<T>& replaceWhat, const BasicString<T>& replaceWithWhat)
 		{
 			BasicString<T> result = source;

@@ -13,9 +13,9 @@ namespace bs
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "Range")
 
-		static MonoField* getMinRangeField() { return minRangeField; }
-		static MonoField* getMaxRangeField() { return maxRangeField; }
-		static MonoField* getSliderField() { return sliderField; }
+		static MonoField* GetMinRangeField() { return minRangeField; }
+		static MonoField* GetMaxRangeField() { return maxRangeField; }
+		static MonoField* GetSliderField() { return sliderField; }
 
 	private:
 		ScriptRange(MonoObject* instance);

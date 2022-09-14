@@ -78,7 +78,7 @@ namespace bs
 		 * Returns a set of buffers containing particle data from the provided particle set. Usable for rendering the
 		 * results of the CPU particle simulation as billboards.
 		 */
-		ParticleBillboardRenderData* allocCPUBillboard(const ParticleSet& particleSet)
+		ParticleBillboardRenderData* AllocCpuBillboard(const ParticleSet& particleSet)
 		{
 			const UINT32 size = particleSet.determineTextureSize();
 
@@ -97,7 +97,7 @@ namespace bs
 
 			if (!output)
 			{
-				output = createNewBillboardBuffersCPU(size);
+				output = CreateNewBillboardBuffersCpu(size);
 
 				Lock lock(mMutex);
 
@@ -145,7 +145,7 @@ namespace bs
 		 * Returns a set of buffers containing particle data from the provided particle set. Usable for rendering the
 		 * results of the CPU particle simulation as 3D meshes.
 		 */
-		ParticleMeshRenderData* allocCPUMesh(const ParticleSet& particleSet)
+		ParticleMeshRenderData* AllocCpuMesh(const ParticleSet& particleSet)
 		{
 			const UINT32 size = particleSet.determineTextureSize();
 
@@ -164,7 +164,7 @@ namespace bs
 
 			if (!output)
 			{
-				output = createNewMeshBuffersCPU(size);
+				output = CreateNewMeshBuffersCpu(size);
 
 				Lock lock(mMutex);
 
@@ -219,7 +219,7 @@ namespace bs
 		 * Returns a list of particles from the provided particle set that may be used for inserting the particles into the
 		 * GPU simulation.
 		 */
-		ParticleGPUSimulationData* allocGPU(const ParticleSet& particleSet)
+		ParticleGPUSimulationData* AllocGpu(const ParticleSet& particleSet)
 		{
 			ParticleGPUSimulationData* output = nullptr;
 
@@ -235,7 +235,7 @@ namespace bs
 
 			if (!output)
 			{
-				output = createNewBuffersGPU();
+				output = CreateNewBuffersGpu();
 
 				Lock lock(mMutex);
 
@@ -268,7 +268,7 @@ namespace bs
 		}
 
 		/** Makes all the buffers available for allocations. Does not free internal buffer memory. */
-		void clear()
+		void Clear()
 		{
 			Lock lock(mMutex);
 
@@ -283,7 +283,7 @@ namespace bs
 
 	private:
 		/** Allocates a new set of CPU buffers used for billboard rendering of the provided @p size width and height. */
-		ParticleBillboardRenderData* createNewBillboardBuffersCPU(UINT32 size)
+		ParticleBillboardRenderData* CreateNewBillboardBuffersCpu(UINT32 size)
 		{
 			auto output = mBillboardAlloc.construct<ParticleBillboardRenderData>();
 
@@ -300,7 +300,7 @@ namespace bs
 		}
 
 		/** Allocates a new set of CPU buffers used for mesh rendering of the provided @p size width and height. */
-		ParticleMeshRenderData* createNewMeshBuffersCPU(UINT32 size)
+		ParticleMeshRenderData* CreateNewMeshBuffersCpu(UINT32 size)
 		{
 			auto output = mMeshAlloc.construct<ParticleMeshRenderData>();
 
@@ -319,7 +319,7 @@ namespace bs
 		}
 
 		/** Allocates a new set of GPU buffers of the provided @p size width and height. */
-		ParticleGPUSimulationData* createNewBuffersGPU()
+		ParticleGPUSimulationData* CreateNewBuffersGpu()
 		{
 			return mGPUAlloc.construct<ParticleGPUSimulationData>();
 		}
@@ -350,7 +350,7 @@ namespace bs
 		bs_delete(m);
 	}
 
-	ParticlePerFrameData* ParticleManager::update(const EvaluatedAnimationData& animData)
+	ParticlePerFrameData* ParticleManager::Update(const EvaluatedAnimationData& animData)
 	{
 		// Note: Allow the worker threads to work alongside the main thread? Would require extra synchronization but
 		// potentially no benefit?
@@ -384,7 +384,7 @@ namespace bs
 		float timeDelta = gTime().getFrameDelta();
 
 		ParticleSimulationDataPool& simDataPool = m->simDataPool[mWriteBufferIdx];
-		simDataPool.clear();
+		simDataPool.Clear();
 
 		for (auto& system : mSystems)
 		{
@@ -449,26 +449,26 @@ namespace bs
 				mWorkerDoneSignal.notify_one();
 			};
 
-			SPtr<Task> task = Task::create("ParticleWorker", evaluateWorker);
-			TaskScheduler::instance().addTask(task);
+			SPtr<Task> task = Task::Create("ParticleWorker", evaluateWorker);
+			TaskScheduler::Instance().addTask(task);
 		}
 
 		// Wait for tasks to complete
-		TaskScheduler::instance().addWorker(); // Make the current core available for work (since this thread waits)
+		TaskScheduler::Instance().addWorker(); // Make the current core available for work (since this thread waits)
 		{
 			Lock lock(mMutex);
 
 			while (mNumActiveWorkers > 0)
 				mWorkerDoneSignal.wait(lock);
 		}
-		TaskScheduler::instance().removeWorker();
+		TaskScheduler::Instance().removeWorker();
 
 		mSwapBuffers = true;
 
 		return &mSimulationData[mWriteBufferIdx];
 	}
 
-	void ParticleManager::sortParticles(const ParticleSet& set, ParticleSortMode sortMode, const Vector3& viewPoint,
+	void ParticleManager::SortParticles(const ParticleSet& set, ParticleSortMode sortMode, const Vector3& viewPoint,
 		UINT32* indices)
 	{
 		assert(sortMode != ParticleSortMode::None);
@@ -529,14 +529,14 @@ namespace bs
 		bs_frame_clear();
 	}
 
-	UINT32 ParticleManager::registerParticleSystem(ParticleSystem* system)
+	UINT32 ParticleManager::RegisterParticleSystem(ParticleSystem* system)
 	{
 		mSystems.insert(system);
 
 		return mNextId++;
 	}
 
-	void ParticleManager::unregisterParticleSystem(ParticleSystem* system)
+	void ParticleManager::UnregisterParticleSystem(ParticleSystem* system)
 	{
 		mSystems.erase(system);
 	}

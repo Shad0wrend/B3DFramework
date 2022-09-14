@@ -35,7 +35,7 @@ namespace bs
 
 	}
 
-	MonoObject* ScriptTextureImportOptions::create(const SPtr<TextureImportOptions>& value)
+	MonoObject* ScriptTextureImportOptions::Create(const SPtr<TextureImportOptions>& value)
 	{
 		if(value == nullptr) return nullptr; 
 
@@ -48,7 +48,7 @@ namespace bs
 	}
 	void ScriptTextureImportOptions::Internal_create(MonoObject* managedInstance)
 	{
-		SPtr<TextureImportOptions> instance = TextureImportOptions::create();
+		SPtr<TextureImportOptions> instance = TextureImportOptions::Create();
 		new (bs_alloc<ScriptTextureImportOptions>())ScriptTextureImportOptions(managedInstance, instance);
 	}
 	PixelFormat ScriptTextureImportOptions::Internal_getformat(ScriptTextureImportOptions* thisPtr)

@@ -37,7 +37,7 @@ namespace bs { namespace ct
 		UINT32 type = 0;
 
 		/** Executes the draw call for the render element. */
-		virtual void draw() const = 0;
+		virtual void Draw() const = 0;
 
 	protected:
 		~RenderElement() = default;

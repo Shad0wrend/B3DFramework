@@ -12,41 +12,41 @@ namespace bs
 	{
 		if(mRenderAPIInitialized)
 		{
-			ct::RenderAPI::instance().destroy();
-			ct::RenderAPI::shutDown();
+			ct::RenderAPI::Instance().Destroy();
+			ct::RenderAPI::ShutDown();
 		}
 	}
 
-	SPtr<RenderWindow> RenderAPIManager::initialize(const String& pluginFilename, RENDER_WINDOW_DESC& primaryWindowDesc)
+	SPtr<RenderWindow> RenderAPIManager::Initialize(const String& pluginFilename, RENDER_WINDOW_DESC& primaryWindowDesc)
 	{
 		if(mRenderAPIInitialized)
 			return nullptr;
 
-		DynLib* loadedLibrary = gDynLibManager().load(pluginFilename);
+		DynLib* loadedLibrary = gDynLibManager().Load(pluginFilename);
 		const char* name = "";
 
 		if(loadedLibrary != nullptr)
 		{
 			typedef const char* (*GetPluginNameFunc)();
 
-			GetPluginNameFunc getPluginNameFunc = (GetPluginNameFunc)loadedLibrary->getSymbol("getPluginName");
+			GetPluginNameFunc getPluginNameFunc = (GetPluginNameFunc)loadedLibrary->GetSymbol("getPluginName");
 			name = getPluginNameFunc();
 		}
 
 		for(auto iter = mAvailableFactories.begin(); iter != mAvailableFactories.end(); ++iter)
 		{
-			if(strcmp((*iter)->name(), name) == 0)
+			if(strcmp((*iter)->Name(), name) == 0)
 			{
 				(*iter)->create();		
 				mRenderAPIInitialized = true;
-				return ct::RenderAPI::instance().initialize(primaryWindowDesc);
+				return ct::RenderAPI::Instance().initialize(primaryWindowDesc);
 			}
 		}
 
 		return nullptr;
 	}
 
-	void RenderAPIManager::registerFactory(SPtr<RenderAPIFactory> factory)
+	void RenderAPIManager::RegisterFactory(SPtr<RenderAPIFactory> factory)
 	{
 		assert(factory != nullptr);
 

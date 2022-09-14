@@ -16,11 +16,11 @@ namespace bs
 	{
 	public:
 		/** @copydoc TextureManager::getNativeFormat */
-		PixelFormat getNativeFormat(TextureType ttype, PixelFormat format, int usage, bool hwGamma) override;
+		PixelFormat GetNativeFormat(TextureType ttype, PixelFormat format, int usage, bool hwGamma) ;
 
 	protected:		
 		/** @copydoc TextureManager::createRenderTextureImpl */
-		SPtr<RenderTexture> createRenderTextureImpl(const RENDER_TEXTURE_DESC& desc) override;
+		SPtr<RenderTexture> CreateRenderTextureImpl(const RENDER_TEXTURE_DESC& desc) ;
 	};
 
 	namespace ct
@@ -30,24 +30,24 @@ namespace bs
 	{
 	public:
 		/** @copydoc TextureManager::onStartUp */
-		void onStartUp() override;
+		void OnStartUp() override;
 
 		/** Returns a dummy (empty) texture that can be bound in a shader slot of the requested type. */
-		VulkanTexture* getDummyTexture(GpuParamObjectType type) const;
+		VulkanTexture* GetDummyTexture(GpuParamObjectType type) const;
 
 		/**
 		 * Determines Vulkan format required for binding a dummy texture (as returned by getDummyTexture()) to the shader
 		 * expecting a format of type @p format.
 		 */
-		static VkFormat getDummyViewFormat(GpuBufferFormat format);
+		static VkFormat GetDummyViewFormat(GpuBufferFormat format);
 	protected:
 		/** @copydoc TextureManager::createTextureInternal */
-		SPtr<Texture> createTextureInternal(const TEXTURE_DESC& desc,
-			const SPtr<PixelData>& initialData = nullptr, GpuDeviceFlags deviceMask = GDF_DEFAULT) override;
+		SPtr<Texture> CreateTextureInternal(const TEXTURE_DESC& desc,
+			const SPtr<PixelData>& initialData = nullptr, GpuDeviceFlags deviceMask = GDF_DEFAULT) ;
 
 		/** @copydoc TextureManager::createRenderTextureInternal */
-		SPtr<RenderTexture> createRenderTextureInternal(const RENDER_TEXTURE_DESC& desc,
-			UINT32 deviceIdx = 0) override;
+		SPtr<RenderTexture> CreateRenderTextureInternal(const RENDER_TEXTURE_DESC& desc,
+			UINT32 deviceIdx = 0) ;
 
 		SPtr<VulkanTexture> mDummyReadTextures[7];
 		SPtr<VulkanTexture> mDummyStorageTextures[7];

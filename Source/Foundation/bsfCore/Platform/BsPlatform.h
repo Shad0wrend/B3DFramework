@@ -97,40 +97,40 @@ namespace bs
 		 *
 		 * @note	Thread safe.
 		 */
-		static Vector2I getCursorPosition();
+		static Vector2I GetCursorPosition();
 
 		/**
 		 * Moves the cursor to the specified screen position.
 		 *
 		 * @note	Thread safe.
 		 */
-		static void setCursorPosition(const Vector2I& screenPos);
+		static void SetCursorPosition(const Vector2I& screenPos);
 
 		/**
 		 * Capture mouse to this window so that we get mouse input even if the mouse leaves the window area.
 		 *
 		 * @note	Thread safe.
 		 */
-		static void captureMouse(const RenderWindow& window);
+		static void CaptureMouse(const RenderWindow& window);
 
 		/**
 		 * Releases the mouse capture set by captureMouse().
 		 *
 		 * @note	Thread safe.
 		 */
-		static void releaseMouseCapture();
+		static void ReleaseMouseCapture();
 
 		/**
 		 * Checks if provided over screen position is over the specified window.
 		 */
-		static bool isPointOverWindow(const RenderWindow& window, const Vector2I& screenPos);
+		static bool IsPointOverWindow(const RenderWindow& window, const Vector2I& screenPos);
 
 		/**
 		 * Limit cursor movement to the specified window.
 		 *
 		 * @note	Thread safe.
 		 */
-		static void clipCursorToWindow(const RenderWindow& window);
+		static void ClipCursorToWindow(const RenderWindow& window);
 
 		/**
 		 * Clip cursor to specific area on the screen.
@@ -138,35 +138,35 @@ namespace bs
 		 * @note	Thread safe.
 		 */
 
-		static void clipCursorToRect(const Rect2I& screenRect);
+		static void ClipCursorToRect(const Rect2I& screenRect);
 
 		/**
 		 * Disables cursor clipping.
 		 *
 		 * @note	Thread safe.
 		 */
-		static void clipCursorDisable();
+		static void ClipCursorDisable();
 
 		/**
 		 * Hides the cursor.
 		 *
 		 * @note	Thread safe.
 		 */
-		static void hideCursor();
+		static void HideCursor();
 
 		/**
 		 * Shows the cursor.
 		 *
 		 * @note	Thread safe.
 		 */
-		static void showCursor();
+		static void ShowCursor();
 
 		/**
 		 * Query if the cursor is hidden.
 		 *
 		 * @note	Thread safe.
 		 */
-		static bool isCursorHidden();
+		static bool IsCursorHidden();
 
 		/**
 		 * Sets a cursor using a custom image.
@@ -177,7 +177,7 @@ namespace bs
 		 *
 		 * @note	Thread safe.
 		 */
-		static void setCursor(PixelData& pixelData, const Vector2I& hotSpot);
+		static void SetCursor(PixelData& pixelData, const Vector2I& hotSpot);
 
 		/**
 		 * Sets an icon for the main application window.
@@ -187,7 +187,7 @@ namespace bs
 		 *
 		 * @note	Thread safe.
 		 */
-		static void setIcon(const PixelData& pixelData);
+		static void SetIcon(const PixelData& pixelData);
 
 		/**
 		 * Sets custom caption non client areas for the specified window. Using custom client areas will override window
@@ -199,7 +199,7 @@ namespace bs
 		 * All provided areas are relative to the specified window. Mostly useful for frameless windows that don't have
 		 * typical caption bar.
 		 */
-		static void setCaptionNonClientAreas(const ct::RenderWindow& window, const Vector<Rect2I>& nonClientAreas);
+		static void SetCaptionNonClientAreas(const ct::RenderWindow& window, const Vector<Rect2I>& nonClientAreas);
 
 		/**
 		 * Sets custom non client areas for the specified window. Using custom client areas will override window resize
@@ -211,14 +211,14 @@ namespace bs
 		 * All provided areas are relative to the specified window. Mostly useful for frameless windows that don't have
 		 * typical border.
 		 */
-		static void setResizeNonClientAreas(const ct::RenderWindow& window, const Vector<NonClientResizeArea>& nonClientAreas);
+		static void SetResizeNonClientAreas(const ct::RenderWindow& window, const Vector<NonClientResizeArea>& nonClientAreas);
 
 		/**
 		 * Resets the non client areas for the specified windows and allows the platform to use the default values.
 		 *
 		 * @note	Thread safe.
 		 */
-		static void resetNonClientAreas(const ct::RenderWindow& window);
+		static void ResetNonClientAreas(const ct::RenderWindow& window);
 
 		/**
 		 * Causes the current thread to pause execution for the specified amount of time.
@@ -228,21 +228,21 @@ namespace bs
 		 * @note	This method relies on timer granularity being set to 1 millisecond. If it is not, you can expect
 		 *			this method to potentially take significantly longer if you are providing it with low ms values (<10).
 		 */
-		static void sleep(UINT32 duration);
+		static void Sleep(UINT32 duration);
 
 		/**
 		 * Opens the provided folder using the default application, as specified by the operating system.
 		 *
 		 * @param[in]	path	Absolute path to the folder to open.
 		 */
-		static void openFolder(const Path& path);
+		static void OpenFolder(const Path& path);
 
 		/**
 		 * Adds a string to the clipboard.
 		 *
 		 * @note	Thread safe.
 		 */
-		static void copyToClipboard(const String& string);
+		static void CopyToClipboard(const String& string);
 
 		/**
 		 * Reads a string from the clipboard and returns it. If there is no string in the clipboard it returns an empty
@@ -253,7 +253,7 @@ namespace bs
 		 * @note
 		 * Thread safe.
 		 */
-		static String copyFromClipboard();
+		static String CopyFromClipboard();
 
 		/**
 		 * Converts a keyboard key-code to a Unicode character.
@@ -262,7 +262,7 @@ namespace bs
 		 * Normally this will output a single character, but it can happen it outputs multiple in case a accent/diacritic
 		 * character could not be combined with the virtual key into a single character.
 		 */
-		static String keyCodeToUnicode(UINT32 keyCode);
+		static String KeyCodeToUnicode(UINT32 keyCode);
 
 		/**
 		 * Message pump. Processes OS messages and returns when it's free.

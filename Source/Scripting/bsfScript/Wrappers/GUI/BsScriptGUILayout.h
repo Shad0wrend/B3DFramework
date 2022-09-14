@@ -28,23 +28,23 @@ namespace bs
 		virtual ~ScriptGUILayout() { }
 
 		/**	Returns the internal wrapped GUILayout object. */
-		GUILayout* getInternalValue() const { return mLayout; }
+		GUILayout* GetInternalValue() const { return mLayout; }
 
 		/**	Registers a new managed child GUI element and inserts it at the end of the layout. */
-		void addChild(ScriptGUIElementBaseTBase* element);
+		void AddChild(ScriptGUIElementBaseTBase* element);
 
 		/**	Registers a new managed child GUI element and inserts it at a specific location in the layout. */
-		void insertChild(UINT32 index, ScriptGUIElementBaseTBase* element);
+		void InsertChild(UINT32 index, ScriptGUIElementBaseTBase* element);
 
 		/**	Removes a managed GUI element from the layout. */
-		void removeChild(ScriptGUIElementBaseTBase* element);
+		void RemoveChild(ScriptGUIElementBaseTBase* element);
 
 		/**
 		 * @copydoc	ScriptGUIElementBaseTBase::destroy
 		 *
 		 * Destroys the layout and all of its managed children.
 		 */
-		void destroy() override;
+		void Destroy() ;
 	protected:
 		friend class ScriptGUIPanel;
 
@@ -67,16 +67,16 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static void internal_createInstanceX(MonoObject* instance, MonoArray* guiOptions);
-		static void internal_createInstanceY(MonoObject* instance, MonoArray* guiOptions);
-		static void internal_createInstancePanel(MonoObject* instance, INT16 depth, UINT16 depthRangeMin, UINT32 depthRangeMax, MonoArray* guiOptions);
-		static void internal_addElement(ScriptGUILayout* instance, ScriptGUIElementBaseTBase* element);
-		static void internal_insertElement(ScriptGUILayout* instance, UINT32 index, ScriptGUIElementBaseTBase* element);
-		static UINT32 internal_getChildCount(ScriptGUILayout* instance);
-		static MonoObject* internal_getChild(ScriptGUILayout* instance, UINT32 index);
-		static void internal_clear(ScriptGUILayout* instance);
+		static void InternalCreateInstanceX(MonoObject* instance, MonoArray* guiOptions);
+		static void InternalCreateInstanceY(MonoObject* instance, MonoArray* guiOptions);
+		static void InternalCreateInstancePanel(MonoObject* instance, INT16 depth, UINT16 depthRangeMin, UINT32 depthRangeMax, MonoArray* guiOptions);
+		static void InternalAddElement(ScriptGUILayout* instance, ScriptGUIElementBaseTBase* element);
+		static void InternalInsertElement(ScriptGUILayout* instance, UINT32 index, ScriptGUIElementBaseTBase* element);
+		static UINT32 InternalGetChildCount(ScriptGUILayout* instance);
+		static MonoObject* InternalGetChild(ScriptGUILayout* instance, UINT32 index);
+		static void InternalClear(ScriptGUILayout* instance);
 
-		static void internal_createInstanceYFromScrollArea(MonoObject* instance, MonoObject* parentScrollArea);
+		static void InternalCreateInstanceYFromScrollArea(MonoObject* instance, MonoObject* parentScrollArea);
 	};
 
 	/**	Interop class between C++ & CLR for GUIPanel.  */
@@ -86,7 +86,7 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "GUIPanel")
 
 		/**	Creates a new managed GUIPanel that wraps the provided native GUIPanel. */
-		static MonoObject* createFromExisting(GUIPanel* panel);
+		static MonoObject* CreateFromExisting(GUIPanel* panel);
 	private:
 		ScriptGUIPanel(MonoObject* instance);
 	};
@@ -104,7 +104,7 @@ namespace bs
 		ScriptGUIScrollAreaLayout(MonoObject* instance, GUILayout* layout);
 
 		/** @copydoc ScriptGUILayout::destroy */
-		void destroy() override;
+		void Destroy() ;
 
 	private:
 		friend class ScriptGUIScrollArea;

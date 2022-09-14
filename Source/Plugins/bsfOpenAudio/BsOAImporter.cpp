@@ -18,7 +18,7 @@ namespace bs
 
 	}
 
-	bool OAImporter::isExtensionSupported(const String& ext) const
+	bool OAImporter::IsExtensionSupported(const String& ext) const
 	{
 		String lowerCaseExt = ext;
 		StringUtil::toLowerCase(lowerCaseExt);
@@ -26,28 +26,28 @@ namespace bs
 		return lowerCaseExt == u8"wav" || lowerCaseExt == u8"flac" || lowerCaseExt == u8"ogg";
 	}
 
-	bool OAImporter::isMagicNumberSupported(const UINT8* magicNumPtr, UINT32 numBytes) const
+	bool OAImporter::IsMagicNumberSupported(const UINT8* magicNumPtr, UINT32 numBytes) const
 	{
 		// Don't check for magic number, rely on extension
 		return true;
 	}
 
-	SPtr<ImportOptions> OAImporter::createImportOptions() const
+	SPtr<ImportOptions> OAImporter::CreateImportOptions() const
 	{
 		return bs_shared_ptr_new<AudioClipImportOptions>();
 	}
 
-	SPtr<Resource> OAImporter::import(const Path& filePath, SPtr<const ImportOptions> importOptions)
+	SPtr<Resource> OAImporter::Import(const Path& filePath, SPtr<const ImportOptions> importOptions)
 	{
 		AudioDataInfo info;
 		UINT32 bytesPerSample;
 		UINT32 bufferSize;
 		SPtr<MemoryDataStream> sampleStream;
 		{
-			Lock fileLock = FileScheduler::getLock(filePath);
-			SPtr<DataStream> stream = FileSystem::openFile(filePath);
+			Lock fileLock = FileScheduler::GetLock(filePath);
+			SPtr<DataStream> stream = FileSystem::OpenFile(filePath);
 
-			String extension = filePath.getExtension();
+			String extension = filePath.GetExtension();
 			StringUtil::toLowerCase(extension);
 
 			UPtr<AudioDecoder> reader;
@@ -61,17 +61,17 @@ namespace bs
 			if (reader == nullptr)
 				return nullptr;
 
-			if (!reader->isValid(stream))
+			if (!reader->IsValid(stream))
 				return nullptr;
 
-			if (!reader->open(stream, info))
+			if (!reader->Open(stream, info))
 				return nullptr;
 
 			bytesPerSample = info.bitDepth / 8;
 			bufferSize = info.numSamples * bytesPerSample;
 
 			sampleStream = bs_shared_ptr_new<MemoryDataStream>(bufferSize);
-			reader->read(sampleStream->data(), info.numSamples);
+			reader->Read(sampleStream->Data(), info.numSamples);
 		}
 
 		SPtr<const AudioClipImportOptions> clipIO = std::static_pointer_cast<const AudioClipImportOptions>(importOptions);
@@ -84,7 +84,7 @@ namespace bs
 			UINT32 monoBufferSize = numSamplesPerChannel * bytesPerSample;
 			auto monoStream = bs_shared_ptr_new<MemoryDataStream>(monoBufferSize);
 
-			AudioUtility::convertToMono(sampleStream->data(), monoStream->data(), info.bitDepth, numSamplesPerChannel, info.numChannels);
+			AudioUtility::ConvertToMono(sampleStream->data(), monoStream->data(), info.bitDepth, numSamplesPerChannel, info.numChannels);
 
 			info.numSamples = numSamplesPerChannel;
 			info.numChannels = 1;

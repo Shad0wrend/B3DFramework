@@ -20,7 +20,7 @@ namespace bs { namespace ct
 		~VulkanShaderModule();
 
 		/** Returns the internal handle to the Vulkan object. */
-		VkShaderModule getHandle() const { return mModule; }
+		VkShaderModule GetHandle() const { return mModule; }
 
 	private:
 		VkShaderModule mModule;
@@ -36,10 +36,10 @@ namespace bs { namespace ct
 		 * Returns the shader module for the specified device. If program device mask doesn't include the provided device,
 		 * null is returned.
 		 */
-		VulkanShaderModule* getShaderModule(UINT32 deviceIdx) const { return mModules[deviceIdx]; }
+		VulkanShaderModule* GetShaderModule(UINT32 deviceIdx) const { return mModules[deviceIdx]; }
 
 		/** Returns the name of the program entry point function. */
-		const String& getEntryPoint() const { return mEntryPoint; }
+		const String& GetEntryPoint() const { return mEntryPoint; }
 
 	protected:
 		friend class VulkanGLSLProgramFactory;
@@ -47,7 +47,7 @@ namespace bs { namespace ct
 		VulkanGpuProgram(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask);
 
 		/** @copydoc GpuProgram::initialize */
-		void initialize() override;
+		void Initialize() ;
 
 	private:
 		GpuDeviceFlags mDeviceMask;

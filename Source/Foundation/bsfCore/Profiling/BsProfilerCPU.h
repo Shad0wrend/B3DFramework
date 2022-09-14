@@ -27,13 +27,13 @@ namespace bs
 			Timer();
 
 			/** Sets the start time for the timer. */
-			void start();
+			void Start();
 
 			/** Stops the timer and calculates the elapsed time from start time to now. */
-			void stop();
+			void Stop();
 
 			/**	Resets the elapsed time to zero. */
-			void reset();
+			void Reset();
 
 			double time;
 		private:
@@ -41,7 +41,7 @@ namespace bs
 			std::chrono::high_resolution_clock mHRClock;
 
 			/**	Returns time elapsed since CPU was started in millseconds. */
-			inline double getCurrentTime() const;
+			inline double GetCurrentTime() const;
 		};
 
 		/**	Timer class responsible for tracking number of elapsed CPU cycles. */
@@ -51,20 +51,20 @@ namespace bs
 			TimerPrecise();
 
 			/** Starts the counter marking the current number of executed CPU cycles since CPU was started. */
-			void start();
+			void Start();
 
 			/** Ends the counter and calculates the number of CPU cycles between now and the start time. */
-			void stop();
+			void Stop();
 
 			/**	Resets the cycle count to zero. */
-			void reset();
+			void Reset();
 
 			UINT64 cycles;
 		private:
 			UINT64 startCycles;
 
 			/** Queries the CPU for the current number of CPU cycles executed since the program was started. */
-			static inline UINT64 getNumCycles();
+			static inline UINT64 GetNumCycles();
 		};
 
 		/**
@@ -109,19 +109,19 @@ namespace bs
 			ProfileData(FrameAlloc* alloc);
 
 			/** Begins a new sample and records current sample state. Previous sample must not be active. */
-			void beginSample();
+			void BeginSample();
 
 			/**
 			 * Records current sample state and creates a new sample based on start and end state. Adds the sample to the
 			 * sample list.
 			 */
-			void endSample();
+			void EndSample();
 
 			/**
 			 * Removes the last added sample from the sample list and makes it active again. You must call endSample()
 			 * when done as if you called beginSample().
 			 */
-			void resumeLastSample();
+			void ResumeLastSample();
 
 			Vector<ProfileSample, StdFrameAlloc<ProfileSample>> samples;
 			Timer timer;
@@ -136,19 +136,19 @@ namespace bs
 			PreciseProfileData(FrameAlloc* alloc);
 
 			/** Begins a new sample and records current sample state. Previous sample must not be active. */
-			void beginSample();
+			void BeginSample();
 
 			/**
 			 * Records current sample state and creates a new sample based on start and end state. Adds the sample to the
 			 * sample list.
 			 */
-			void endSample();
+			void EndSample();
 
 			/**
 			 * Removes the last added sample from the sample list and makes it active again. You must call endSample()
 			 * when done as if you called beginSample.
 			 */
-			void resumeLastSample();
+			void ResumeLastSample();
 
 			Vector<PreciseProfileSample, StdFrameAlloc<PreciseProfileSample>> samples;
 			TimerPrecise timer;
@@ -167,7 +167,7 @@ namespace bs
 			~ProfiledBlock();
 
 			/**	Attempts to find a child block with the specified name. Returns null if not found. */
-			ProfiledBlock* findChild(const char* name) const;
+			ProfiledBlock* FindChild(const char* name) const;
 
 			char* name;
 			
@@ -207,25 +207,25 @@ namespace bs
 			/**
 			 * Starts profiling on the thread. New primary profiling block is created with the given name.
 			 */
-			void begin(const char* _name);
+			void Begin(const char* _name);
 
 			/**
 			 * Ends profiling on the thread. You should end all samples before calling this, but if you don't they will be
 			 * terminated automatically.
 			 */
-			void end();
+			void End();
 
 			/**
 			 * 	Deletes all internal profiling data and makes the object ready for another iteration. Should be called
 			 * after end in order to delete any existing data.
 			 */
-			void reset();
+			void Reset();
 
 			/**	Gets the primary profiling block used by the thread. */
-			ProfiledBlock* getBlock(const char* name);
+			ProfiledBlock* GetBlock(const char* name);
 			
 			/** Deletes the provided block. */
-			void releaseBlock(ProfiledBlock* block);
+			void ReleaseBlock(ProfiledBlock* block);
 
 			static BS_THREADLOCAL ThreadInfo* activeThread;
 			bool isActive = false;
@@ -247,17 +247,17 @@ namespace bs
 		 *
 		 * @param[in]	name	Name that will allow you to more easily identify the thread.
 		 */
-		void beginThread(const char* name);
+		void BeginThread(const char* name);
 
 		/**	Ends sampling for the current thread. No beginSample* \ endSample* calls after this point. */
-		void endThread();
+		void EndThread();
 
 		/**
 		 * Begins sample measurement. Must be followed by endSample().
 		 *
 		 * @param[in]	name	Unique name for the sample you can later use to find the sampling data.
 		 */
-		void beginSample(const char* name);
+		void BeginSample(const char* name);
 
 		/**
 		 * Ends sample measurement.
@@ -268,7 +268,7 @@ namespace bs
 		 * Unique name is primarily needed to more easily identify mismatched begin/end sample pairs. Otherwise the name in
 		 * beginSample() would be enough.
 		 */
-		void endSample(const char* name);
+		void EndSample(const char* name);
 
 		/**
 		 * Begins precise sample measurement. Must be followed by endSamplePrecise().
@@ -280,7 +280,7 @@ namespace bs
 		 * However due to the way these counters work you should not use this method for larger parts of code. It does not
 		 * consider context switches so if the OS decides to switch context between measurements you will get invalid data.
 		 */
-		void beginSamplePrecise(const char* name);
+		void BeginSamplePrecise(const char* name);
 
 		/**
 		 * Ends precise sample measurement.
@@ -291,10 +291,10 @@ namespace bs
 		 * Unique name is primarily needed to more easily identify mismatched begin/end sample pairs. Otherwise the name
 		 * in beginSamplePrecise() would be enough.
 		 */
-		void endSamplePrecise(const char* name);
+		void EndSamplePrecise(const char* name);
 
 		/** Clears all sampling data, and ends any unfinished sampling blocks. */
-		void reset();
+		void Reset();
 
 		/**
 		 * Generates a report from all previously sampled data.
@@ -302,14 +302,14 @@ namespace bs
 		 * @note	Generating a report will stop all in-progress sampling. You should make sure
 		 * 			you call endSample* manually beforehand so this doesn't have to happen.
 		 */
-		CPUProfilerReport generateReport();
+		CPUProfilerReport GenerateReport();
 
 	private:
 		/**
 		 * Calculates overhead that the timing and sampling methods themselves introduce so we might get more accurate
 		 * measurements when creating reports.
 		 */
-		void estimateTimerOverhead();
+		void EstimateTimerOverhead();
 
 	private:
 		double mBasicTimerOverhead = 0.0;
@@ -395,13 +395,13 @@ namespace bs
 		 * Returns root entry for the basic (time based) sampling data. Root entry always contains the profiling block
 		 * associated with the entire thread.
 		 */
-		const CPUProfilerBasicSamplingEntry& getBasicSamplingData() const { return mBasicSamplingRootEntry; }
+		const CPUProfilerBasicSamplingEntry& GetBasicSamplingData() const { return mBasicSamplingRootEntry; }
 
 		/**
 		 * Returns root entry for the precise (CPU cycle based) sampling data. Root entry always contains the profiling
 		 * block associated with the entire thread.
 		 */
-		const CPUProfilerPreciseSamplingEntry& getPreciseSamplingData() const { return mPreciseSamplingRootEntry; }
+		const CPUProfilerPreciseSamplingEntry& GetPreciseSamplingData() const { return mPreciseSamplingRootEntry; }
 
 	private:
 		friend class ProfilerCPU;

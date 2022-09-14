@@ -18,40 +18,40 @@ namespace bs
 
 	void ScriptRootMotion::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_getPositionCurves", (void*)&ScriptRootMotion::Internal_getPositionCurves);
-		metaData.scriptClass->addInternalCall("Internal_getRotationCurves", (void*)&ScriptRootMotion::Internal_getRotationCurves);
+		metaData.scriptClass->AddInternalCall("Internal_getPositionCurves", (void*)&ScriptRootMotion::InternalGetPositionCurves);
+		metaData.scriptClass->AddInternalCall("Internal_getRotationCurves", (void*)&ScriptRootMotion::InternalGetRotationCurves);
 
 	}
 
-	MonoObject* ScriptRootMotion::create(const SPtr<RootMotion>& value)
+	MonoObject* ScriptRootMotion::Create(const SPtr<RootMotion>& value)
 	{
 		if(value == nullptr) return nullptr; 
 
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptRootMotion>()) ScriptRootMotion(managedInstance, value);
 		return managedInstance;
 	}
-	MonoObject* ScriptRootMotion::Internal_getPositionCurves(ScriptRootMotion* thisPtr)
+	MonoObject* ScriptRootMotion::InternalGetPositionCurves(ScriptRootMotion* thisPtr)
 	{
 		SPtr<TAnimationCurve<Vector3>> tmp__output = bs_shared_ptr_new<TAnimationCurve<Vector3>>();
-		*tmp__output = RootMotionEx::getPositionCurves(thisPtr->getInternal());
+		*tmp__output = RootMotionEx::GetPositionCurves(thisPtr->getInternal());
 
 		MonoObject* __output;
-		__output = ScriptTAnimationCurveVector3::create(tmp__output);
+		__output = ScriptTAnimationCurveVector3::Create(tmp__output);
 
 		return __output;
 	}
 
-	MonoObject* ScriptRootMotion::Internal_getRotationCurves(ScriptRootMotion* thisPtr)
+	MonoObject* ScriptRootMotion::InternalGetRotationCurves(ScriptRootMotion* thisPtr)
 	{
 		SPtr<TAnimationCurve<Quaternion>> tmp__output = bs_shared_ptr_new<TAnimationCurve<Quaternion>>();
 		*tmp__output = RootMotionEx::getRotationCurves(thisPtr->getInternal());
 
 		MonoObject* __output;
-		__output = ScriptTAnimationCurveQuaternion::create(tmp__output);
+		__output = ScriptTAnimationCurveQuaternion::Create(tmp__output);
 
 		return __output;
 	}

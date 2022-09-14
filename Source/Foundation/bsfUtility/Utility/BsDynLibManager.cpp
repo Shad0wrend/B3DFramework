@@ -7,20 +7,20 @@ namespace bs
 {
 	static bool operator<(const UPtr<DynLib>& lhs, const String& rhs)
 	{
-		return lhs->getName() < rhs;
+		return lhs->GetName() < rhs;
 	}
 
 	static bool operator<(const String& lhs, const UPtr<DynLib>& rhs)
 	{
-		return lhs < rhs->getName();
+		return lhs < rhs->GetName();
 	}
 
 	static bool operator<(const UPtr<DynLib>& lhs, const UPtr<DynLib>& rhs)
 	{
-		return lhs->getName() < rhs->getName();
+		return lhs->GetName() < rhs->GetName();
 	}
 
-	DynLib* DynLibManager::load(String filename)
+	DynLib* DynLibManager::Load(String filename)
 	{
 		// Add the extension (.dll, .so, ...) if necessary.
 
@@ -36,7 +36,7 @@ namespace bs
 			filename.insert(0, DynLib::PREFIX);
 
 		const auto& iterFind = mLoadedLibraries.lower_bound(filename);
-		if(iterFind != mLoadedLibraries.end() && (*iterFind)->getName() == filename)
+		if(iterFind != mLoadedLibraries.end() && (*iterFind)->GetName() == filename)
 		{
 			return iterFind->get();
 		}
@@ -49,9 +49,9 @@ namespace bs
 		}
 	}
 
-	void DynLibManager::unload(DynLib* lib)
+	void DynLibManager::Unload(DynLib* lib)
 	{
-		const auto& iterFind = mLoadedLibraries.find(lib->getName());
+		const auto& iterFind = mLoadedLibraries.find(lib->GetName());
 		if(iterFind != mLoadedLibraries.end())
 			mLoadedLibraries.erase(iterFind);
 		else
@@ -60,6 +60,6 @@ namespace bs
 
 	DynLibManager& gDynLibManager()
 	{
-		return DynLibManager::instance();
+		return DynLibManager::Instance();
 	}
 }

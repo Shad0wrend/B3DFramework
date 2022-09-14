@@ -11,18 +11,18 @@ namespace bs
 {
 	VirtualInput::VirtualInput()
 	{
-		mInputConfiguration = createConfiguration();
+		mInputConfiguration = CreateConfiguration();
 
-		Input::instance().onButtonDown.connect(std::bind(&VirtualInput::buttonDown, this, _1));
-		Input::instance().onButtonUp.connect(std::bind(&VirtualInput::buttonUp, this, _1));
+		Input::Instance().onButtonDown.connect(std::bind(&VirtualInput::buttonDown, this, _1));
+		Input::Instance().onButtonUp.connect(std::bind(&VirtualInput::buttonUp, this, _1));
 	}
 
-	SPtr<InputConfiguration> VirtualInput::createConfiguration()
+	SPtr<InputConfiguration> VirtualInput::CreateConfiguration()
 	{
 		return bs_shared_ptr_new<InputConfiguration>();
 	}
 
-	void VirtualInput::setConfiguration(const SPtr<InputConfiguration>& input)
+	void VirtualInput::SetConfiguration(const SPtr<InputConfiguration>& input)
 	{
 		mInputConfiguration = input;
 
@@ -32,7 +32,7 @@ namespace bs
 			deviceData.cachedStates.clear();
 	}
 
-	bool VirtualInput::isButtonDown(const VirtualButton& button, UINT32 deviceIdx) const
+	bool VirtualInput::IsButtonDown(const VirtualButton& button, UINT32 deviceIdx) const
 	{
 		if (deviceIdx >= (UINT32)mDevices.size())
 			return false;
@@ -46,7 +46,7 @@ namespace bs
 		return false;
 	}
 
-	bool VirtualInput::isButtonUp(const VirtualButton& button, UINT32 deviceIdx) const
+	bool VirtualInput::IsButtonUp(const VirtualButton& button, UINT32 deviceIdx) const
 	{
 		if (deviceIdx >= (UINT32)mDevices.size())
 			return false;
@@ -60,7 +60,7 @@ namespace bs
 		return false;
 	}
 
-	bool VirtualInput::isButtonHeld(const VirtualButton& button, UINT32 deviceIdx) const
+	bool VirtualInput::IsButtonHeld(const VirtualButton& button, UINT32 deviceIdx) const
 	{
 		if (deviceIdx >= (UINT32)mDevices.size())
 			return false;
@@ -74,12 +74,12 @@ namespace bs
 		return false;
 	}
 
-	float VirtualInput::getAxisValue(const VirtualAxis& axis, UINT32 deviceIdx) const
+	float VirtualInput::GetAxisValue(const VirtualAxis& axis, UINT32 deviceIdx) const
 	{
 		VIRTUAL_AXIS_DESC axisDesc;
 		if (mInputConfiguration->GetAxisInternal(axis, axisDesc))
 		{
-			float axisValue = gInput().getAxisValue((UINT32)axisDesc.type, deviceIdx);
+			float axisValue = gInput().GetAxisValue((UINT32)axisDesc.type, deviceIdx);
 
 			bool isMouseAxis = (UINT32)axisDesc.type <= (UINT32)InputAxis::MouseZ;
 			bool isNormalized = axisDesc.normalize || !isMouseAxis;
@@ -102,7 +102,7 @@ namespace bs
 					axisValue /= 1.0f;
 				}
 
-				axisValue = Math::clamp(axisValue * axisDesc.sensitivity, -1.0f, 1.0f);
+				axisValue = Math::Clamp(axisValue * axisDesc.sensitivity, -1.0f, 1.0f);
 			}
 			else
 				axisValue *= axisDesc.sensitivity;
@@ -118,7 +118,7 @@ namespace bs
 
 	void VirtualInput::UpdateInternal()
 	{
-		UINT64 frameIdx = gTime().getFrameIdx();
+		UINT64 frameIdx = gTime().GetFrameIdx();
 		for (auto& deviceData : mDevices)
 		{
 			for (auto& state : deviceData.cachedStates)
@@ -135,8 +135,8 @@ namespace bs
 		}
 
 		bool hasEvents = true;
-		UINT64 repeatInternal = mInputConfiguration->getRepeatInterval();
-		UINT64 currentTime = gTime().getTimeMs();
+		UINT64 repeatInternal = mInputConfiguration->GetRepeatInterval();
+		UINT64 currentTime = gTime().GetTimeMs();
 
 		// Trigger all events
 		while(hasEvents)
@@ -147,12 +147,12 @@ namespace bs
 
 				if(event.state == ButtonState::On)
 				{
-					if(!onButtonDown.empty())
+					if(!onButtonDown.Empty())
 						onButtonDown(event.button, event.deviceIdx);
 				}
 				else if(event.state == ButtonState::Off)
 				{
-					if(!onButtonUp.empty())
+					if(!onButtonUp.Empty())
 						onButtonUp(event.button, event.deviceIdx);
 				}
 
@@ -253,7 +253,7 @@ namespace bs
 		}
 	}
 
-	void VirtualInput::buttonUp(const ButtonEvent& event)
+	void VirtualInput::ButtonUp(const ButtonEvent& event)
 	{
 		if(event.buttonCode == BC_LSHIFT || event.buttonCode == BC_RSHIFT)
 			mActiveModifiers &= ~(UINT32)ButtonModifier::Shift;
@@ -303,6 +303,6 @@ namespace bs
 
 	VirtualInput& gVirtualInput()
 	{
-		return VirtualInput::instance();
+		return VirtualInput::Instance();
 	}
 }

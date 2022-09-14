@@ -17,7 +17,7 @@ namespace bs { namespace ct
 
 	}
 
-	void RenderQueue::clear()
+	void RenderQueue::Clear()
 	{
 		mSortableElements.clear();
 		mSortableElementIdx.clear();
@@ -26,15 +26,15 @@ namespace bs { namespace ct
 		mSortedRenderElements.clear();
 	}
 
-	void RenderQueue::add(const RenderElement* element, float distFromCamera, UINT32 techniqueIdx)
+	void RenderQueue::Add(const RenderElement* element, float distFromCamera, UINT32 techniqueIdx)
 	{
 		SPtr<Material> material = element->material;
-		SPtr<Shader> shader = material->getShader();
+		SPtr<Shader> shader = material->GetShader();
 		
-		UINT32 queuePriority = shader->getQueuePriority();
-		QueueSortType sortType = shader->getQueueSortType();
-		UINT32 shaderId = shader->getId();
-		bool separablePasses = shader->getAllowSeparablePasses();
+		UINT32 queuePriority = shader->GetQueuePriority();
+		QueueSortType sortType = shader->GetQueueSortType();
+		UINT32 shaderId = shader->GetId();
+		bool separablePasses = shader->GetAllowSeparablePasses();
 
 		switch (sortType)
 		{
@@ -48,7 +48,7 @@ namespace bs { namespace ct
 			break;
 		}
 
-		UINT32 numPasses = material->getNumPasses(techniqueIdx);
+		UINT32 numPasses = material->GetNumPasses(techniqueIdx);
 		if (!separablePasses)
 			numPasses = std::min(1U, numPasses);
 
@@ -71,20 +71,20 @@ namespace bs { namespace ct
 		}
 	}
 
-	void RenderQueue::sort()
+	void RenderQueue::Sort()
 	{
 		std::function<bool(UINT32, UINT32, const Vector<SortableElement>&)> sortMethod;
 
 		switch (mStateReductionMode)
 		{
 		case StateReduction::None:
-			sortMethod = &elementSorterNoGroup;
+			sortMethod = &ElementSorterNoGroup;
 			break;
 		case StateReduction::Material:
-			sortMethod = &elementSorterPreferGroup;
+			sortMethod = &ElementSorterPreferGroup;
 			break;
 		case StateReduction::Distance:
-			sortMethod = &elementSorterPreferDistance;
+			sortMethod = &ElementSorterPreferDistance;
 			break;
 		}
 
@@ -100,7 +100,7 @@ namespace bs { namespace ct
 			const SortableElement& elem = mSortableElements[idx];
 			const RenderElement* renderElem = mElements[idx];
 
-			const bool separablePasses = renderElem->material->getShader()->getAllowSeparablePasses();
+			const bool separablePasses = renderElem->material->GetShader()->GetAllowSeparablePasses();
 
 			if (separablePasses)
 			{
@@ -123,7 +123,7 @@ namespace bs { namespace ct
 			}
 			else
 			{
-				const UINT32 numPasses = renderElem->material->getNumPasses(elem.techniqueIdx);
+				const UINT32 numPasses = renderElem->material->GetNumPasses(elem.techniqueIdx);
 				for (UINT32 j = 0; j < numPasses; j++)
 				{
 					mSortedRenderElements.push_back(RenderQueueElement());
@@ -147,7 +147,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	bool RenderQueue::elementSorterNoGroup(UINT32 aIdx, UINT32 bIdx, const Vector<SortableElement>& lookup)
+	bool RenderQueue::ElementSorterNoGroup(UINT32 aIdx, UINT32 bIdx, const Vector<SortableElement>& lookup)
 	{
 		const SortableElement& a = lookup[aIdx];
 		const SortableElement& b = lookup[bIdx];
@@ -163,7 +163,7 @@ namespace bs { namespace ct
 		return isHigher > isLower;
 	}
 
-	bool RenderQueue::elementSorterPreferGroup(UINT32 aIdx, UINT32 bIdx, const Vector<SortableElement>& lookup)
+	bool RenderQueue::ElementSorterPreferGroup(UINT32 aIdx, UINT32 bIdx, const Vector<SortableElement>& lookup)
 	{
 		const SortableElement& a = lookup[aIdx];
 		const SortableElement& b = lookup[bIdx];
@@ -185,7 +185,7 @@ namespace bs { namespace ct
 		return isHigher > isLower;
 	}
 
-	bool RenderQueue::elementSorterPreferDistance(UINT32 aIdx, UINT32 bIdx, const Vector<SortableElement>& lookup)
+	bool RenderQueue::ElementSorterPreferDistance(UINT32 aIdx, UINT32 bIdx, const Vector<SortableElement>& lookup)
 	{
 		const SortableElement& a = lookup[aIdx];
 		const SortableElement& b = lookup[bIdx];
@@ -207,7 +207,7 @@ namespace bs { namespace ct
 		return isHigher > isLower;
 	}
 
-	const Vector<RenderQueueElement>& RenderQueue::getSortedElements() const
+	const Vector<RenderQueueElement>& RenderQueue::GetSortedElements() const
 	{
 		return mSortedRenderElements;
 	}

@@ -15,25 +15,25 @@ namespace bs
 
 	void ScriptCBone::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_setBoneName", (void*)&ScriptCBone::Internal_setBoneName);
-		metaData.scriptClass->addInternalCall("Internal_getBoneName", (void*)&ScriptCBone::Internal_getBoneName);
+		metaData.scriptClass->AddInternalCall("Internal_setBoneName", (void*)&ScriptCBone::InternalSetBoneName);
+		metaData.scriptClass->AddInternalCall("Internal_getBoneName", (void*)&ScriptCBone::InternalGetBoneName);
 
 	}
 
-	void ScriptCBone::Internal_setBoneName(ScriptCBone* thisPtr, MonoString* name)
+	void ScriptCBone::InternalSetBoneName(ScriptCBone* thisPtr, MonoString* name)
 	{
 		String tmpname;
-		tmpname = MonoUtil::monoToString(name);
-		thisPtr->getHandle()->setBoneName(tmpname);
+		tmpname = MonoUtil::MonoToString(name);
+		thisPtr->GetHandle()->SetBoneName(tmpname);
 	}
 
-	MonoString* ScriptCBone::Internal_getBoneName(ScriptCBone* thisPtr)
+	MonoString* ScriptCBone::InternalGetBoneName(ScriptCBone* thisPtr)
 	{
 		String tmp__output;
-		tmp__output = thisPtr->getHandle()->getBoneName();
+		tmp__output = thisPtr->GetHandle()->GetBoneName();
 
 		MonoString* __output;
-		__output = MonoUtil::stringToMono(tmp__output);
+		__output = MonoUtil::StringToMono(tmp__output);
 
 		return __output;
 	}

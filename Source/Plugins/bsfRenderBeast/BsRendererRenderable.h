@@ -39,7 +39,7 @@ namespace bs { namespace ct
 	{
 	public:
 		/** Updates the provided buffer with the data from the provided matrices. */
-		static void update(SPtr<GpuParamBlockBuffer>& buffer, const Matrix4& tfrm, const Matrix4& tfrmNoScale,
+		static void Update(SPtr<GpuParamBlockBuffer>& buffer, const Matrix4& tfrm, const Matrix4& tfrmNoScale,
 			const Matrix4& prevTfrm, UINT32 layer);
 	};
 
@@ -92,7 +92,7 @@ namespace bs { namespace ct
 		mutable UINT32 morphShapeVersion;
 
 		/** @copydoc RenderElement::draw */
-		void draw() const override;
+		void Draw() const override;
 	};
 
 	 /** Contains information about a Renderable, used by the Renderer. */
@@ -101,7 +101,7 @@ namespace bs { namespace ct
 		RendererRenderable();
 
 		/** Updates the per-object GPU buffer according to the currently set properties. */
-		void updatePerObjectBuffer();
+		void UpdatePerObjectBuffer();
 
 		/**
 		 * Updates the per-call GPU buffer according to the provided parameters.
@@ -109,7 +109,7 @@ namespace bs { namespace ct
 		 * @param[in]	viewProj	Combined view-projection matrix of the current camera.
 		 * @param[in]	flush		True if the buffer contents should be immediately flushed to the GPU.
 		 */
-		void updatePerCallBuffer(const Matrix4& viewProj, bool flush = true);
+		void UpdatePerCallBuffer(const Matrix4& viewProj, bool flush = true);
 
 		Matrix4 worldTfrm = Matrix4::IDENTITY;
 		Matrix4 prevWorldTfrm = Matrix4::IDENTITY;

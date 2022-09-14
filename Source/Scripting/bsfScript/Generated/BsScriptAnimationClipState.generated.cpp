@@ -14,14 +14,14 @@ namespace bs
 	void ScriptAnimationClipState::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptAnimationClipState::box(const AnimationClipState& value)
+	MonoObject*ScriptAnimationClipState::Box(const AnimationClipState& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	AnimationClipState ScriptAnimationClipState::unbox(MonoObject* value)
+	AnimationClipState ScriptAnimationClipState::Unbox(MonoObject* value)
 	{
-		return *(AnimationClipState*)MonoUtil::unbox(value);
+		return *(AnimationClipState*)MonoUtil::Unbox(value);
 	}
 
 }

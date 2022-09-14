@@ -34,8 +34,8 @@ namespace bs
 		FolderWatchInfo(const Path& folderToMonitor, HANDLE dirHandle, bool monitorSubdirectories, DWORD monitorFlags);
 		~FolderWatchInfo();
 
-		void startMonitor(HANDLE compPortHandle);
-		void stopMonitor(HANDLE compPortHandle);
+		void StartMonitor(HANDLE compPortHandle);
+		void StopMonitor(HANDLE compPortHandle);
 
 		static const UINT32 READ_BUFFER_SIZE = 65536;
 
@@ -66,10 +66,10 @@ namespace bs
 	{
 		assert(mState == MonitorState::Inactive);
 
-		stopMonitor(0);
+		StopMonitor(0);
 	}
 
-	void FolderMonitor::FolderWatchInfo::startMonitor(HANDLE compPortHandle)
+	void FolderMonitor::FolderWatchInfo::StartMonitor(HANDLE compPortHandle)
 	{
 		if(mState != MonitorState::Inactive)
 			return; // Already monitoring
@@ -92,11 +92,11 @@ namespace bs
 			}
 
 			BS_EXCEPT(InternalErrorException, "Failed to start folder monitor on folder \"" +
-				mFolderToMonitor.toString() + "\" because ReadDirectoryChangesW failed.");
+				mFolderToMonitor.ToString() + "\" because ReadDirectoryChangesW failed.");
 		}
 	}
 
-	void FolderMonitor::FolderWatchInfo::stopMonitor(HANDLE compPortHandle)
+	void FolderMonitor::FolderWatchInfo::StopMonitor(HANDLE compPortHandle)
 	{
 		if(mState != MonitorState::Inactive)
 		{
@@ -125,11 +125,11 @@ namespace bs
 			mCurrentRecord = (PFILE_NOTIFY_INFORMATION)mBuffer;
 		}
 
-		bool getNext();
+		bool GetNext();
 	
-		DWORD	getAction() const;
-		WString getFileName() const;
-		WString getFileNameWithPath(const Path& rootPath) const;
+		DWORD	GetAction() const;
+		WString GetFileName() const;
+		WString GetFileNameWithPath(const Path& rootPath) const;
 
 	protected:
 		UINT8* mBuffer;
@@ -137,7 +137,7 @@ namespace bs
 		PFILE_NOTIFY_INFORMATION mCurrentRecord;
 	};
 
-	bool FolderMonitor::FileNotifyInfo::getNext()
+	bool FolderMonitor::FileNotifyInfo::GetNext()
 	{
 		if(mCurrentRecord && mCurrentRecord->NextEntryOffset != 0)
 		{
@@ -158,7 +158,7 @@ namespace bs
 		return false;
 	}
 
-	DWORD FolderMonitor::FileNotifyInfo::getAction() const
+	DWORD FolderMonitor::FileNotifyInfo::GetAction() const
 	{
 		assert(mCurrentRecord != nullptr);
 
@@ -168,7 +168,7 @@ namespace bs
 		return 0;
 	}
 
-	WString FolderMonitor::FileNotifyInfo::getFileName() const
+	WString FolderMonitor::FileNotifyInfo::GetFileName() const
 	{
 		if(mCurrentRecord)
 		{
@@ -183,12 +183,12 @@ namespace bs
 		return WString();
 	}		
 
-	WString FolderMonitor::FileNotifyInfo::getFileNameWithPath(const Path& rootPath) const
+	WString FolderMonitor::FileNotifyInfo::GetFileNameWithPath(const Path& rootPath) const
 	{
 		Path fullPath = rootPath;
-		fullPath.append(UTF8::fromWide(getFileName()));
+		fullPath.Append(UTF8::FromWide(GetFileName()));
 				
-		return UTF8::toWide(fullPath.toString());
+		return UTF8::ToWide(fullPath.ToString());
 	}
 
 	enum class FileActionType
@@ -201,9 +201,9 @@ namespace bs
 
 	struct FileAction
 	{
-		static FileAction* createAdded(const WString& fileName)
+		static FileAction* CreateAdded(const WString& fileName)
 		{
-			String utf8filename = UTF8::fromWide(fileName);
+			String utf8filename = UTF8::FromWide(fileName);
 			UINT8* bytes = (UINT8*)bs_alloc((UINT32)(sizeof(FileAction) + (utf8filename.size() + 1) * sizeof(String::value_type)));
 
 			FileAction* action = (FileAction*)bytes;
@@ -221,9 +221,9 @@ namespace bs
 			return action;
 		}
 
-		static FileAction* createRemoved(const WString& fileName)
+		static FileAction* CreateRemoved(const WString& fileName)
 		{
-			String utf8filename = UTF8::fromWide(fileName);
+			String utf8filename = UTF8::FromWide(fileName);
 			UINT8* bytes = (UINT8*)bs_alloc((UINT32)(sizeof(FileAction) + (utf8filename.size() + 1) * sizeof(String::value_type)));
 
 			FileAction* action = (FileAction*)bytes;
@@ -241,9 +241,9 @@ namespace bs
 			return action;
 		}
 
-		static FileAction* createModified(const WString& fileName)
+		static FileAction* CreateModified(const WString& fileName)
 		{
-			String utf8filename = UTF8::fromWide(fileName);
+			String utf8filename = UTF8::FromWide(fileName);
 			UINT8* bytes = (UINT8*)bs_alloc((UINT32)(sizeof(FileAction) + (utf8filename.size() + 1) * sizeof(String::value_type)));
 
 			FileAction* action = (FileAction*)bytes;
@@ -261,10 +261,10 @@ namespace bs
 			return action;
 		}
 
-		static FileAction* createRenamed(const WString& oldFilename, const WString& newFileName)
+		static FileAction* CreateRenamed(const WString& oldFilename, const WString& newFileName)
 		{
-			String utf8Oldfilename = UTF8::fromWide(oldFilename);
-			String utf8Newfilename = UTF8::fromWide(newFileName);
+			String utf8Oldfilename = UTF8::FromWide(oldFilename);
+			String utf8Newfilename = UTF8::FromWide(newFileName);
 
 			UINT8* bytes = (UINT8*)bs_alloc((UINT32)(sizeof(FileAction) +
 				(utf8Oldfilename.size() + utf8Newfilename.size() + 2) * sizeof(String::value_type)));
@@ -289,7 +289,7 @@ namespace bs
 			return action;
 		}
 
-		static void destroy(FileAction* action)
+		static void Destroy(FileAction* action)
 		{
 			bs_free(action);
 		}
@@ -323,7 +323,7 @@ namespace bs
 
 	FolderMonitor::~FolderMonitor()
 	{
-		stopMonitorAll();
+		StopMonitorAll();
 
 		// No need for mutex since we know worker thread is shut down by now
 		while(!m->mFileActions.empty())
@@ -331,21 +331,21 @@ namespace bs
 			FileAction* action = m->mFileActions.front();
 			m->mFileActions.pop();
 
-			FileAction::destroy(action);
+			FileAction::Destroy(action);
 		}
 
 		bs_delete(m);
 	}
 
-	void FolderMonitor::startMonitor(const Path& folderPath, bool subdirectories, FolderChangeBits changeFilter)
+	void FolderMonitor::StartMonitor(const Path& folderPath, bool subdirectories, FolderChangeBits changeFilter)
 	{
-		if(!FileSystem::isDirectory(folderPath))
+		if(!FileSystem::IsDirectory(folderPath))
 		{
 			BS_LOG(Error, Generic, "Provided path \"{0}\" is not a directory", folderPath);
 			return;
 		}
 
-		WString extendedFolderPath = L"\\\\?\\" + UTF8::toWide(folderPath.toString(Path::PathType::Windows));
+		WString extendedFolderPath = L"\\\\?\\" + UTF8::ToWide(folderPath.toString(Path::PathType::Windows));
 		HANDLE dirHandle = CreateFileW(extendedFolderPath.c_str(), FILE_LIST_DIRECTORY,
 			FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, nullptr, OPEN_EXISTING,
 			FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED, nullptr);
@@ -392,7 +392,7 @@ namespace bs
 
 		if(m->mWorkerThread != nullptr)
 		{
-			watchInfo->startMonitor(m->mCompPortHandle);
+			watchInfo->StartMonitor(m->mCompPortHandle);
 		}
 		else
 		{
@@ -402,7 +402,7 @@ namespace bs
 		}
 	}
 
-	void FolderMonitor::stopMonitor(const Path& folderPath)
+	void FolderMonitor::StopMonitor(const Path& folderPath)
 	{
 		auto findIter = std::find_if(m->mFoldersToWatch.begin(), m->mFoldersToWatch.end(),
 			[&](const FolderWatchInfo* x) { return x->mFolderToMonitor == folderPath; });
@@ -411,7 +411,7 @@ namespace bs
 		{
 			FolderWatchInfo* watchInfo = *findIter;
 
-			watchInfo->stopMonitor(m->mCompPortHandle);
+			watchInfo->StopMonitor(m->mCompPortHandle);
 			bs_delete(watchInfo);
 
 			m->mFoldersToWatch.erase(findIter);
@@ -421,7 +421,7 @@ namespace bs
 			stopMonitorAll();
 	}
 
-	void FolderMonitor::stopMonitorAll()
+	void FolderMonitor::StopMonitorAll()
 	{
 		for(auto& watchInfo : m->mFoldersToWatch)
 		{
@@ -455,7 +455,7 @@ namespace bs
 		}
 	}
 
-	void FolderMonitor::workerThreadMain()
+	void FolderMonitor::WorkerThreadMain()
 	{
 		FolderWatchInfo* watchInfo = nullptr;
 
@@ -572,19 +572,19 @@ namespace bs
 		} while (watchInfo != nullptr);
 	}
 
-	void FolderMonitor::handleNotifications(FileNotifyInfo& notifyInfo, FolderWatchInfo& watchInfo)
+	void FolderMonitor::HandleNotifications(FileNotifyInfo& notifyInfo, FolderWatchInfo& watchInfo)
 	{
 		Vector<FileAction*> mActions;
 
 		do
 		{
-			WString fullPath = notifyInfo.getFileNameWithPath(watchInfo.mFolderToMonitor);
+			WString fullPath = notifyInfo.GetFileNameWithPath(watchInfo.mFolderToMonitor);
 
 			// Ignore notifications about hidden files
 			if ((GetFileAttributesW(fullPath.c_str()) & FILE_ATTRIBUTE_HIDDEN) != 0)
 				continue;
 
-			switch(notifyInfo.getAction())
+			switch(notifyInfo.GetAction())
 			{
 			case FILE_ACTION_ADDED:
 					mActions.push_back(FileAction::createAdded(fullPath));
@@ -603,7 +603,7 @@ namespace bs
 				break;
 			}
 	
-		} while(notifyInfo.getNext());
+		} while(notifyInfo.GetNext());
 
 		{
 			Lock lock(m->mMainMutex);

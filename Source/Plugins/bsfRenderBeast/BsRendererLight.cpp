@@ -18,7 +18,7 @@ namespace bs { namespace ct
 		:internal(light)
 	{ }
 
-	void RendererLight::getParameters(LightData& output) const
+	void RendererLight::GetParameters(LightData& output) const
 	{
 		Radian spotAngle = Math::clamp(internal->getSpotAngle() * 0.5f, Degree(0), Degree(89));
 		Radian spotFalloffAngle = Math::clamp(internal->getSpotFalloffAngle() * 0.5f, Degree(0), (Degree)spotAngle);
@@ -43,7 +43,7 @@ namespace bs { namespace ct
 		output.shiftedLightPosition = getShiftedLightPosition();
 	}
 
-	void RendererLight::getParameters(SPtr<GpuParamBlockBuffer>& buffer) const
+	void RendererLight::GetParameters(SPtr<GpuParamBlockBuffer>& buffer) const
 	{
 		LightData lightData;
 		getParameters(lightData);
@@ -90,7 +90,7 @@ namespace bs { namespace ct
 		gPerLightParamDef.gMatConeTransform.set(buffer, transform);
 	}
 
-	Vector3 RendererLight::getShiftedLightPosition() const
+	Vector3 RendererLight::GetShiftedLightPosition() const
 	{
 		const Transform& tfrm = internal->getTransform();
 		Vector3 direction = -tfrm.getRotation().zAxis();
@@ -127,12 +127,12 @@ namespace bs { namespace ct
 			desc.magFilter = FO_POINT;
 			desc.mipFilter = FO_POINT;
 
-			SPtr<SamplerState> ss = SamplerState::create(desc);
+			SPtr<SamplerState> ss = SamplerState::Create(desc);
 			samplerStateParam.set(ss);
 		}
 	}
 
-	void GBufferParams::bind(const GBufferTextures& gbuffer)
+	void GBufferParams::Bind(const GBufferTextures& gbuffer)
 	{
 		mGBufferA.set(gbuffer.albedo);
 		mGBufferB.set(gbuffer.normals);
@@ -140,7 +140,7 @@ namespace bs { namespace ct
 		mGBufferDepth.set(gbuffer.depth);
 	}
 
-	void ForwardLightingParams::populate(const SPtr<GpuParams>& params, bool clustered)
+	void ForwardLightingParams::Populate(const SPtr<GpuParams>& params, bool clustered)
 	{
 		if (clustered)
 		{
@@ -186,7 +186,7 @@ namespace bs { namespace ct
 		:mNumLights{}, mNumShadowedLights{}
 	{ }
 
-	void VisibleLightData::update(const SceneInfo& sceneInfo, const RendererViewGroup& viewGroup)
+	void VisibleLightData::Update(const SceneInfo& sceneInfo, const RendererViewGroup& viewGroup)
 	{
 		const VisibilityInfo& visibility = viewGroup.getVisibilityInfo();
 
@@ -286,7 +286,7 @@ namespace bs { namespace ct
 				bufferDesc.elementSize = sizeof(LightData);
 				bufferDesc.format = BF_UNKNOWN;
 
-				mLightBuffer = GpuBuffer::create(bufferDesc);
+				mLightBuffer = GpuBuffer::Create(bufferDesc);
 			}
 
 			if (size > 0)
@@ -294,7 +294,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	void VisibleLightData::gatherInfluencingLights(const Bounds& bounds,
+	void VisibleLightData::GatherInfluencingLights(const Bounds& bounds,
 		const LightData* (&output)[STANDARD_FORWARD_MAX_NUM_LIGHTS], Vector3I& counts) const
 	{
 		UINT32 outputIndices[STANDARD_FORWARD_MAX_NUM_LIGHTS];

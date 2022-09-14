@@ -12,17 +12,17 @@ namespace bs
 		mMetaData = bs_shared_ptr_new<ResourceMetaData>();
 	}
 
-	const String& Resource::getName() const
+	const String& Resource::GetName() const
 	{
 		return mMetaData->displayName;
 	}
 
-	void Resource::setName(const String& name)
+	void Resource::SetName(const String& name)
 	{
 		mMetaData->displayName = name;
 	}
 
-	void Resource::getResourceDependencies(FrameVector<HResource>& dependencies) const
+	void Resource::GetResourceDependencies(FrameVector<HResource>& dependencies) const
 	{
 		Lock lock(mDependenciesMutex);
 
@@ -33,7 +33,7 @@ namespace bs
 		}
 	}
 
-	bool Resource::areDependenciesLoaded() const
+	bool Resource::AreDependenciesLoaded() const
 	{
 		Lock lock(mDependenciesMutex);
 		bs_frame_mark();
@@ -54,7 +54,7 @@ namespace bs
 		return areLoaded;
 	}
 
-	void Resource::addResourceDependency(const HResource& resource)
+	void Resource::AddResourceDependency(const HResource& resource)
 	{
 		if(resource == nullptr)
 			return;
@@ -63,20 +63,20 @@ namespace bs
 		mDependencies.push_back(resource.getWeak());
 	}
 
-	void Resource::removeResourceDependency(const HResource& resource)
+	void Resource::RemoveResourceDependency(const HResource& resource)
 	{
 		Lock lock(mDependenciesMutex);
 		mDependencies.erase(std::remove(mDependencies.begin(), mDependencies.end(), resource.getWeak()),
 			mDependencies.end());
 	}
 
-	RTTITypeBase* Resource::getRTTIStatic()
+	RTTITypeBase* Resource::GetRttiStatic()
 	{
-		return ResourceRTTI::instance();
+		return ResourceRTTI::Instance();
 	}
 
-	RTTITypeBase* Resource::getRTTI() const
+	RTTITypeBase* Resource::GetRtti() const
 	{
-		return Resource::getRTTIStatic();
+		return Resource::GetRttiStatic();
 	}
 }

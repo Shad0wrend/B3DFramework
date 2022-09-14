@@ -26,13 +26,13 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 	public:
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "VectorField";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_VectorField;
 		}
@@ -43,7 +43,7 @@ namespace bs
 		}
 
 	protected:
-		void onDeserializationEnded(IReflectable* obj, SerializationContext* context) override
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override
 		{
 			VectorField* vectorField = static_cast<VectorField*>(obj);
 			vectorField->initialize();

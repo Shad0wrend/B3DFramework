@@ -9,7 +9,7 @@
 
 namespace bs
 {
-	Vector2I GUIHelper::calcOptimalContentsSize(const Vector2I& contentSize, const GUIElementStyle& style,
+	Vector2I GUIHelper::CalcOptimalContentsSize(const Vector2I& contentSize, const GUIElementStyle& style,
 		const GUIDimensions& dimensions)
 	{
 		UINT32 contentWidth = style.margins.left + style.margins.right + style.contentOffset.left + style.contentOffset.right;
@@ -18,22 +18,22 @@ namespace bs
 		return Vector2I(std::max((UINT32)contentSize.x, contentWidth), std::max((UINT32)contentSize.y, contentHeight));
 	}
 
-	Vector2I GUIHelper::calcOptimalContentsSize(const GUIContent& content, const GUIElementStyle& style,
+	Vector2I GUIHelper::CalcOptimalContentsSize(const GUIContent& content, const GUIElementStyle& style,
 		const GUIDimensions& dimensions, GUIElementState state)
 	{
-		Vector2I contentBounds = calcOptimalContentsSize((const String&)content.text, style, dimensions);
+		Vector2I contentBounds = CalcOptimalContentsSize((const String&)content.text, style, dimensions);
 
-		const HSpriteTexture& image = content.getImage(state);
-		if (SpriteTexture::checkIsLoaded(image))
+		const HSpriteTexture& image = content.GetImage(state);
+		if (SpriteTexture::CheckIsLoaded(image))
 		{
-			contentBounds.x += image->getWidth() + GUIContent::IMAGE_TEXT_SPACING;
-			contentBounds.y = std::max(image->getHeight(), (UINT32)contentBounds.y);
+			contentBounds.x += image->GetWidth() + GUIContent::IMAGE_TEXT_SPACING;
+			contentBounds.y = std::max(image->GetHeight(), (UINT32)contentBounds.y);
 		}
 
 		return contentBounds;
 	}
 
-	Vector2I GUIHelper::calcOptimalContentsSize(const String& text, const GUIElementStyle& style, const
+	Vector2I GUIHelper::CalcOptimalContentsSize(const String& text, const GUIElementStyle& style, const
 		GUIDimensions& dimensions)
 	{
 		UINT32 wordWrapWidth = 0;
@@ -60,7 +60,7 @@ namespace bs
 		return Vector2I(contentWidth, contentHeight);
 	}
 
-	Vector2I GUIHelper::calcTextSize(const String& text, const HFont& font, UINT32 fontSize)
+	Vector2I GUIHelper::CalcTextSize(const String& text, const HFont& font, UINT32 fontSize)
 	{
 		Vector2I size;
 		if (font != nullptr)

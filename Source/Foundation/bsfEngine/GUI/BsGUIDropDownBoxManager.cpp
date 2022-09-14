@@ -7,15 +7,15 @@ namespace bs
 {
 	GUIDropDownBoxManager::~GUIDropDownBoxManager()
 	{
-		closeDropDownBox();
+		CloseDropDownBox();
 	}
 
-	GameObjectHandle<GUIDropDownMenu> GUIDropDownBoxManager::openDropDownBox(const DROP_DOWN_BOX_DESC& desc,
+	GameObjectHandle<GUIDropDownMenu> GUIDropDownBoxManager::OpenDropDownBox(const DROP_DOWN_BOX_DESC& desc,
 		GUIDropDownType type, std::function<void()> onClosedCallback)
 	{
-		closeDropDownBox();
+		CloseDropDownBox();
 
-		mDropDownSO = SceneObject::create("DropDownBox", SOF_Internal | SOF_Persistent | SOF_DontSave);
+		mDropDownSO = SceneObject::Create("DropDownBox", SOF_Internal | SOF_Persistent | SOF_DontSave);
 		mDropDownBox = mDropDownSO->addComponent<GUIDropDownMenu>(desc, type);
 		mOnClosedCallback = onClosedCallback;
 

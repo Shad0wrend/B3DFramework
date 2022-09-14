@@ -20,7 +20,7 @@ namespace bs
 {
 	BuiltinTypeMappings BuiltinTypeMappings::EMPTY;
 
-	Vector<String> ScriptAssemblyManager::getScriptAssemblies() const
+	Vector<String> ScriptAssemblyManager::GetScriptAssemblies() const
 	{
 		Vector<String> initializedAssemblies;
 		for (auto& assemblyPair : mAssemblyInfos)
@@ -29,27 +29,27 @@ namespace bs
 		return initializedAssemblies;
 	}
 
-	void ScriptAssemblyManager::loadAssemblyInfo(const String& assemblyName, const BuiltinTypeMappings& typeMappings)
+	void ScriptAssemblyManager::LoadAssemblyInfo(const String& assemblyName, const BuiltinTypeMappings& typeMappings)
 	{
 		if(!mBaseTypesInitialized)
-			initializeBaseTypes();
+			InitializeBaseTypes();
 
 		// Process all classes and fields
 		UINT32 mUniqueTypeId = 1;
 
-		MonoAssembly* curAssembly = MonoManager::instance().getAssembly(assemblyName);
+		MonoAssembly* curAssembly = MonoManager::Instance().GetAssembly(assemblyName);
 		if(curAssembly == nullptr)
 			return;
 
-		loadTypeMappings(*curAssembly, typeMappings);
+		LoadTypeMappings(*curAssembly, typeMappings);
 
 		SPtr<ManagedSerializableAssemblyInfo> assemblyInfo = bs_shared_ptr_new<ManagedSerializableAssemblyInfo>();
 		assemblyInfo->mName = assemblyName;
 
 		mAssemblyInfos[assemblyName] = assemblyInfo;
 
-		MonoClass* resourceClass = ScriptResource::getMetaData()->scriptClass;
-		MonoClass* managedResourceClass = ScriptManagedResource::getMetaData()->scriptClass;
+		MonoClass* resourceClass = ScriptResource::GetMetaData()->scriptClass;
+		MonoClass* managedResourceClass = ScriptManagedResource::GetMetaData()->scriptClass;
 
 		// Populate class data
 		const Vector<MonoClass*>& allClasses = curAssembly->getAllClasses();
@@ -311,7 +311,7 @@ namespace bs
 		}
 	}
 
-	void ScriptAssemblyManager::clearAssemblyInfo()
+	void ScriptAssemblyManager::ClearAssemblyInfo()
 	{
 		clearScriptObjects();
 		mAssemblyInfos.clear();
@@ -327,7 +327,7 @@ namespace bs
 		mReflectableTypeInfosByTID.clear();
 	}
 
-	SPtr<ManagedSerializableTypeInfo> ScriptAssemblyManager::getTypeInfo(MonoClass* monoClass)
+	SPtr<ManagedSerializableTypeInfo> ScriptAssemblyManager::GetTypeInfo(MonoClass* monoClass)
 	{
 		if(!mBaseTypesInitialized)
 			BS_EXCEPT(InvalidStateException, "Calling getTypeInfo without previously initializing base types.");
@@ -586,7 +586,7 @@ namespace bs
 				::MonoClass* elementClass = ScriptArray::getElementClass(monoClass->GetInternalClassInternal());
 				if(elementClass != nullptr)
 				{
-					MonoClass* monoElementClass = MonoManager::instance().findClass(elementClass);
+					MonoClass* monoElementClass = MonoManager::Instance().findClass(elementClass);
 					if(monoElementClass != nullptr)
 						typeInfo->mElementType = getTypeInfo(monoElementClass);
 				}
@@ -605,20 +605,20 @@ namespace bs
 		return nullptr;
 	}
 
-	void ScriptAssemblyManager::clearScriptObjects()
+	void ScriptAssemblyManager::ClearScriptObjects()
 	{
 		mBaseTypesInitialized = false;
 		mBuiltin = BuiltinScriptClasses();
 	}
 
-	void ScriptAssemblyManager::initializeBaseTypes()
+	void ScriptAssemblyManager::InitializeBaseTypes()
 	{
 		// Get necessary classes for detecting needed class & field information
-		MonoAssembly* corlib = MonoManager::instance().getAssembly("corlib");
+		MonoAssembly* corlib = MonoManager::Instance().getAssembly("corlib");
 		if(corlib == nullptr)
 			BS_EXCEPT(InvalidStateException, "corlib assembly is not loaded.");
 
-		MonoAssembly* engineAssembly = MonoManager::instance().getAssembly(ENGINE_ASSEMBLY);
+		MonoAssembly* engineAssembly = MonoManager::Instance().getAssembly(ENGINE_ASSEMBLY);
 		if(engineAssembly == nullptr)
 			BS_EXCEPT(InvalidStateException, String(ENGINE_ASSEMBLY) +  " assembly is not loaded.");
 
@@ -741,7 +741,7 @@ namespace bs
 		mBaseTypesInitialized = true;
 	}
 
-	void ScriptAssemblyManager::loadTypeMappings(MonoAssembly& assembly, const BuiltinTypeMappings& mapping)
+	void ScriptAssemblyManager::LoadTypeMappings(MonoAssembly& assembly, const BuiltinTypeMappings& mapping)
 	{
 		for(auto& entry : mapping.components)
 		{
@@ -778,7 +778,7 @@ namespace bs
 		}
 	}
 
-	BuiltinComponentInfo* ScriptAssemblyManager::getBuiltinComponentInfo(::MonoReflectionType* type)
+	BuiltinComponentInfo* ScriptAssemblyManager::GetBuiltinComponentInfo(::MonoReflectionType* type)
 	{
 		auto iterFind = mBuiltinComponentInfos.find(type);
 		if (iterFind == mBuiltinComponentInfos.end())
@@ -787,7 +787,7 @@ namespace bs
 		return &(iterFind->second);
 	}
 
-	BuiltinComponentInfo* ScriptAssemblyManager::getBuiltinComponentInfo(UINT32 rttiTypeId)
+	BuiltinComponentInfo* ScriptAssemblyManager::GetBuiltinComponentInfo(UINT32 rttiTypeId)
 	{
 		auto iterFind = mBuiltinComponentInfosByTID.find(rttiTypeId);
 		if (iterFind == mBuiltinComponentInfosByTID.end())
@@ -796,7 +796,7 @@ namespace bs
 		return &(iterFind->second);
 	}
 
-	BuiltinResourceInfo* ScriptAssemblyManager::getBuiltinResourceInfo(::MonoReflectionType* type)
+	BuiltinResourceInfo* ScriptAssemblyManager::GetBuiltinResourceInfo(::MonoReflectionType* type)
 	{
 		auto iterFind = mBuiltinResourceInfos.find(type);
 		if (iterFind == mBuiltinResourceInfos.end())
@@ -805,7 +805,7 @@ namespace bs
 		return &(iterFind->second);
 	}
 
-	BuiltinResourceInfo* ScriptAssemblyManager::getBuiltinResourceInfo(UINT32 rttiTypeId)
+	BuiltinResourceInfo* ScriptAssemblyManager::GetBuiltinResourceInfo(UINT32 rttiTypeId)
 	{
 		auto iterFind = mBuiltinResourceInfosByTID.find(rttiTypeId);
 		if (iterFind == mBuiltinResourceInfosByTID.end())
@@ -814,7 +814,7 @@ namespace bs
 		return &(iterFind->second);
 	}
 
-	BuiltinResourceInfo* ScriptAssemblyManager::getBuiltinResourceInfo(ScriptResourceType type)
+	BuiltinResourceInfo* ScriptAssemblyManager::GetBuiltinResourceInfo(ScriptResourceType type)
 	{
 		auto iterFind = mBuiltinResourceInfosByType.find((UINT32)type);
 		if (iterFind == mBuiltinResourceInfosByType.end())
@@ -823,7 +823,7 @@ namespace bs
 		return &(iterFind->second);
 	}
 
-	ReflectableTypeInfo* ScriptAssemblyManager::getReflectableTypeInfo(::MonoReflectionType* type)
+	ReflectableTypeInfo* ScriptAssemblyManager::GetReflectableTypeInfo(::MonoReflectionType* type)
 	{
 		auto iterFind = mReflectableTypeInfos.find(type);
 		if (iterFind == mReflectableTypeInfos.end())
@@ -832,7 +832,7 @@ namespace bs
 		return &(iterFind->second);
 	}
 
-	ReflectableTypeInfo* ScriptAssemblyManager::getReflectableTypeInfo(uint32_t rttiTypeId)
+	ReflectableTypeInfo* ScriptAssemblyManager::GetReflectableTypeInfo(uint32_t rttiTypeId)
 	{
 		auto iterFind = mReflectableTypeInfosByTID.find(rttiTypeId);
 		if (iterFind == mReflectableTypeInfosByTID.end())
@@ -841,7 +841,7 @@ namespace bs
 		return &(iterFind->second);
 	}
 
-	bool ScriptAssemblyManager::getSerializableObjectInfo(const String& ns, const String& typeName, SPtr<ManagedSerializableObjectInfo>& outInfo)
+	bool ScriptAssemblyManager::GetSerializableObjectInfo(const String& ns, const String& typeName, SPtr<ManagedSerializableObjectInfo>& outInfo)
 	{
 		String fullName = ns + "." + typeName;
 		for(auto& curAssembly : mAssemblyInfos)
@@ -861,7 +861,7 @@ namespace bs
 		return false;
 	}
 
-	bool ScriptAssemblyManager::hasSerializableObjectInfo(const String& ns, const String& typeName)
+	bool ScriptAssemblyManager::HasSerializableObjectInfo(const String& ns, const String& typeName)
 	{
 		String fullName = ns + "." + typeName;
 		for(auto& curAssembly : mAssemblyInfos)
@@ -874,12 +874,12 @@ namespace bs
 		return false;
 	}
 
-	SPtr<IReflectable> ScriptAssemblyManager::getReflectableFromManagedObject(MonoObject* value)
+	SPtr<IReflectable> ScriptAssemblyManager::GetReflectableFromManagedObject(MonoObject* value)
 	{
 		if (value != nullptr)
 		{
 			::MonoClass* klass = MonoUtil::getClass(value);
-			MonoClass* monoClass = MonoManager::instance().findClass(klass);
+			MonoClass* monoClass = MonoManager::Instance().findClass(klass);
 
 			if (MonoUtil::isEnum(klass))
 			{

@@ -14,32 +14,32 @@ namespace bs
 	void ScriptAnimationEvent::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptAnimationEvent::box(const __AnimationEventInterop& value)
+	MonoObject*ScriptAnimationEvent::Box(const __AnimationEventInterop& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	__AnimationEventInterop ScriptAnimationEvent::unbox(MonoObject* value)
+	__AnimationEventInterop ScriptAnimationEvent::Unbox(MonoObject* value)
 	{
-		return *(__AnimationEventInterop*)MonoUtil::unbox(value);
+		return *(__AnimationEventInterop*)MonoUtil::Unbox(value);
 	}
 
-	AnimationEvent ScriptAnimationEvent::fromInterop(const __AnimationEventInterop& value)
+	AnimationEvent ScriptAnimationEvent::FromInterop(const __AnimationEventInterop& value)
 	{
 		AnimationEvent output;
 		String tmpname;
-		tmpname = MonoUtil::monoToString(value.name);
+		tmpname = MonoUtil::MonoToString(value.name);
 		output.name = tmpname;
 		output.time = value.time;
 
 		return output;
 	}
 
-	__AnimationEventInterop ScriptAnimationEvent::toInterop(const AnimationEvent& value)
+	__AnimationEventInterop ScriptAnimationEvent::ToInterop(const AnimationEvent& value)
 	{
 		__AnimationEventInterop output;
 		MonoString* tmpname;
-		tmpname = MonoUtil::stringToMono(value.name);
+		tmpname = MonoUtil::StringToMono(value.name);
 		output.name = tmpname;
 		output.time = value.time;
 

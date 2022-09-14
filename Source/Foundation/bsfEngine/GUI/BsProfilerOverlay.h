@@ -101,37 +101,37 @@ namespace bs
 		~ProfilerOverlay();
 
 		/**	Changes the camera to display the overlay on. */
-		void setTarget(const SPtr<Camera>& camera);
+		void SetTarget(const SPtr<Camera>& camera);
 
 		/**	Shows the overlay of the specified type. */
-		void show(ProfilerOverlayType type);
+		void Show(ProfilerOverlayType type);
 
 		/**	Hides the overlay. */
-		void hide();
+		void Hide();
 
 		/**	Updates overlay contents. Should be called once per frame. */
-		void update();
+		void Update();
 	private:
 		/**	Called whenever the viewport resizes in order to rearrange the GUI elements. */
-		void targetResized();
+		void TargetResized();
 
 		/** Updates sizes of GUI areas used for displaying CPU sample data. To be called after viewport change or resize. */
-		void updateCPUSampleAreaSizes();
+		void UpdateCpuSampleAreaSizes();
 
 		/** Updates sizes of GUI areas used for displaying GPU sample data. To be called after viewport change or resize. */
-		void updateGPUSampleAreaSizes();
+		void UpdateGpuSampleAreaSizes();
 
 		/**
 		 * Updates CPU GUI elements from the data in the provided profiler reports. To be called whenever a new report is
 		 * received.
 		 */
-		void updateCPUSampleContents(const ProfilerReport& simReport, const ProfilerReport& coreReport);
+		void UpdateCpuSampleContents(const ProfilerReport& simReport, const ProfilerReport& coreReport);
 
 		/**
 		 * Updates GPU GUI elemnts from the data in the provided profiler report. To be called whenever a new report is
 		 * received.
 		 */
-		void updateGPUSampleContents(const GPUProfileSample& gpuReport);
+		void UpdateGpuSampleContents(const GPUProfileSample& gpuReport);
 
 		static constexpr UINT32 GPU_NUM_SAMPLE_COLUMNS = 3;
 

@@ -94,7 +94,7 @@ namespace bs
 		UINT32 buttonIdentifier = 0;
 	private:
 		/** Returns a static map of all virtual button identifiers and their buttons. */
-		static Map<String, UINT32>& getUniqueButtonIds();
+		static Map<String, UINT32>& GetUniqueButtonIds();
 
 		static UINT32 NextButtonId;
 	};
@@ -169,10 +169,10 @@ namespace bs
 		 * @param[in]	repeatable	If true, the virtual button events will be sent continually while the physical button
 		 *							is being held.
 		 */
-		void registerButton(const String& name, ButtonCode buttonCode, ButtonModifier modifiers = ButtonModifier::None, bool repeatable = false);
+		void RegisterButton(const String& name, ButtonCode buttonCode, ButtonModifier modifiers = ButtonModifier::None, bool repeatable = false);
 
 		/**	Unregisters a virtual button with the specified name. Events will no longer be generated for that button. */
-		void unregisterButton(const String& name);
+		void UnregisterButton(const String& name);
 
 		/**
 		 * Registers a new virtual axis.
@@ -180,22 +180,22 @@ namespace bs
 		 * @param[in]	name	Unique name used to access the axis.
 		 * @param[in]	desc	Descriptor structure containing virtual axis creation parameters.
 		 */
-		void registerAxis(const String& name, const VIRTUAL_AXIS_DESC& desc);
+		void RegisterAxis(const String& name, const VIRTUAL_AXIS_DESC& desc);
 
 		/**
 		 * Unregisters a virtual axis with the specified name. You will no longer be able to retrieve valid values for that
 		 * axis.
 		 */
-		void unregisterAxis(const String& name);
+		void UnregisterAxis(const String& name);
 
 		/**
 		 * Sets repeat interval for held virtual buttons. Buttons will be continously triggered in interval increments as
 		 * long as they button is being held.
 		 */
-		void setRepeatInterval(UINT64 milliseconds) { mRepeatInterval = milliseconds; }
+		void SetRepeatInterval(UINT64 milliseconds) { mRepeatInterval = milliseconds; }
 
 		/**	Gets the currently set repeat interval for held virtual buttons. */
-		UINT64 getRepeatInterval() const { return mRepeatInterval; }
+		UINT64 GetRepeatInterval() const { return mRepeatInterval; }
 
 		/** @name Internal
 		 *  @{

@@ -31,10 +31,10 @@ namespace bs
 		~DebugDraw();
 
 		/**	Changes the color of any further draw calls. */
-		void setColor(const Color& color);
+		void SetColor(const Color& color);
 
 		/**	Changes the transform that will be applied to meshes of any further draw calls.  */
-		void setTransform(const Matrix4& transform);
+		void SetTransform(const Matrix4& transform);
 
 		/**
 		 * Draws an axis aligned cuboid.
@@ -42,10 +42,10 @@ namespace bs
 		 * @param[in]	position	Center of the cuboid.
 		 * @param[in]	extents		Radius of the cuboid in each axis.
 		 */
-		void drawCube(const Vector3& position, const Vector3& extents);
+		void DrawCube(const Vector3& position, const Vector3& extents);
 
 		/** Draws a sphere. */
-		void drawSphere(const Vector3& position, float radius);
+		void DrawSphere(const Vector3& position, float radius);
 
 		/**
 		 * Draws a solid cone.
@@ -56,7 +56,7 @@ namespace bs
 		 * @param[in]	radius		Radius of the base of the cone.
 		 * @param[in]	scale		Scale applied to cone's disc width & height. Allows you to create elliptical cones.
 		 */
-		void drawCone(const Vector3& base, const Vector3& normal, float height, float radius,
+		void DrawCone(const Vector3& base, const Vector3& normal, float height, float radius,
 			const Vector2& scale = Vector2::ONE);
 
 		/**
@@ -66,7 +66,7 @@ namespace bs
 		 * @param[in]	normal		Orientation of the disc, pointing in the direction the disc is visible in.
 		 * @param[in]	radius		Radius of the disc.
 		 */
-		void drawDisc(const Vector3& position, const Vector3& normal, float radius);
+		void DrawDisc(const Vector3& position, const Vector3& normal, float radius);
 
 		/**
 		 * Draws a wireframe axis aligned cuboid.
@@ -74,10 +74,10 @@ namespace bs
 		 * @param[in]	position	Center of the cuboid.
 		 * @param[in]	extents		Radius of the cuboid in each axis.
 		 */
-		void drawWireCube(const Vector3& position, const Vector3& extents);
+		void DrawWireCube(const Vector3& position, const Vector3& extents);
 
 		/** Draws a wireframe sphere represented by three discs. */
-		void drawWireSphere(const Vector3& position, float radius);
+		void DrawWireSphere(const Vector3& position, float radius);
 
 		/**
 		 * Draws a wireframe cone.
@@ -88,16 +88,16 @@ namespace bs
 		 * @param[in]	radius		Radius of the base of the cone.
 		 * @param[in]	scale		Scale applied to cone's disc width & height. Allows you to create elliptical cones.
 		 */
-		void drawWireCone(const Vector3& base, const Vector3& normal, float height, float radius,
+		void DrawWireCone(const Vector3& base, const Vector3& normal, float height, float radius,
 			const Vector2& scale = Vector2::ONE);
 
 		/** Draws a line between two points. */
-		void drawLine(const Vector3& start, const Vector3& end);
+		void DrawLine(const Vector3& start, const Vector3& end);
 
 		/**
 		 * Draws a list of lines. Provided array must contain pairs of the line start point followed by an end point.
 		 */
-		void drawLineList(const Vector<Vector3>& linePoints);
+		void DrawLineList(const Vector<Vector3>& linePoints);
 
 		/**
 		 * Draws a wireframe disc.
@@ -106,7 +106,7 @@ namespace bs
 		 * @param[in]	normal		Orientation of the disc, pointing in the direction the disc is visible in.
 		 * @param[in]	radius		Radius of the disc.
 		 */
-		void drawWireDisc(const Vector3& position, const Vector3& normal, float radius);
+		void DrawWireDisc(const Vector3& position, const Vector3& normal, float radius);
 
 		/**
 		 * Draws a wireframe arc.
@@ -117,7 +117,7 @@ namespace bs
 		 * @param[in]	startAngle	Angle at which to start the arc.
 		 * @param[in]	amountAngle	Length of the arc.
 		 */
-		void drawWireArc(const Vector3& position, const Vector3& normal, float radius, Degree startAngle, Degree amountAngle);
+		void DrawWireArc(const Vector3& position, const Vector3& normal, float radius, Degree startAngle, Degree amountAngle);
 
 		/**
 		 * Draws a wireframe mesh.
@@ -125,7 +125,7 @@ namespace bs
 		 * @param[in]	meshData	Object containing mesh vertices and indices. Vertices must be Vertex3 and indices
 		 *							32-bit.
 		 */
-		void drawWireMesh(const SPtr<MeshData>& meshData);
+		void DrawWireMesh(const SPtr<MeshData>& meshData);
 
 		/**
 		 * Draws a wireframe frustum.
@@ -136,12 +136,12 @@ namespace bs
 		 * @param[in]	near		Distance to the near frustum plane.
 		 * @param[in]	far			Distance to the far frustum plane.
 		 */
-		void drawFrustum(const Vector3& position, float aspect, Degree FOV, float near, float far);
+		void DrawFrustum(const Vector3& position, float aspect, Degree FOV, float near, float far);
 
 		/**
 		 * Clears any objects that are currently drawing. All objects must be re-queued.
 		 */
-		void clear();
+		void Clear();
 
 		/** Performs per-frame operations. */
 		void UpdateInternal();
@@ -162,7 +162,7 @@ namespace bs
 		};
 
 		/** Converts mesh data from DrawHelper into mesh data usable by the debug draw renderer. */
-		Vector<MeshRenderData> createMeshProxyData(const Vector<DrawHelper::ShapeMeshData>& meshData);
+		Vector<MeshRenderData> CreateMeshProxyData(const Vector<DrawHelper::ShapeMeshData>& meshData);
 
 		DrawHelper* mDrawHelper = nullptr;
 		Vector<DrawHelper::ShapeMeshData> mActiveMeshes;
@@ -192,7 +192,7 @@ namespace bs
 
 		/** Helper method used for initializing variations of this material. */
 		template<bool solid, bool line, bool wire>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -207,10 +207,10 @@ namespace bs
 		DebugDrawMat();
 
 		/** Executes the material using the provided parameters. */
-		void execute(const SPtr<GpuParamBlockBuffer>& params, const SPtr<Mesh>& mesh, const SubMesh& subMesh);
+		void Execute(const SPtr<GpuParamBlockBuffer>& params, const SPtr<Mesh>& mesh, const SubMesh& subMesh);
 
 		/** Returns the material variation matching the provided parameters. */
-		static DebugDrawMat* getVariation(DebugDrawMaterial drawMat);
+		static DebugDrawMat* GetVariation(DebugDrawMaterial drawMat);
 	};
 
 	/** Performs rendering of meshes provided by DebugDraw. */
@@ -223,13 +223,13 @@ namespace bs
 
 	private:
 		/**	@copydoc RendererExtension::initialize */
-		void initialize(const Any& data) override;
+		void Initialize(const Any& data) override;
 
 		/**	@copydoc RendererExtension::check */
-		RendererExtensionRequest check(const ct::Camera& camera) override;
+		RendererExtensionRequest Check(const ct::Camera& camera) override;
 
 		/**	@copydoc RendererExtension::render */
-		void render(const Camera& camera, const RendererViewContext& viewContext) override;
+		void Render(const Camera& camera, const RendererViewContext& viewContext) override;
 
 		/**
 		 * Updates the internal data that is used for rendering. Normally you would call this after updating the meshes
@@ -237,7 +237,7 @@ namespace bs
 		 *
 		 * @param[in]	meshes			Meshes to render.
 		 */
-		void updateData(const Vector<DebugDraw::MeshRenderData>& meshes);
+		void UpdateData(const Vector<DebugDraw::MeshRenderData>& meshes);
 
 		Vector<DebugDraw::MeshRenderData> mMeshes;
 		SPtr<GpuParamBlockBuffer> mParamBuffer;

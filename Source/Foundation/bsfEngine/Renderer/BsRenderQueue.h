@@ -61,32 +61,32 @@ namespace bs { namespace ct
 		 * @param[in]	techniqueIdx	Index of the technique within @p element's material that's to be used to render the
 		 *								element with.
 		 */
-		void add(const RenderElement* element, float distFromCamera, UINT32 techniqueIdx);
+		void Add(const RenderElement* element, float distFromCamera, UINT32 techniqueIdx);
 
 		/**	Clears all render operations from the queue. */
-		void clear();
+		void Clear();
 		
 		/**	Sorts all the render operations using user-defined rules. */
-		virtual void sort();
+		virtual void Sort();
 
 		/** Returns a list of sorted render elements. Caller must ensure sort() is called before this method. */
-		const Vector<RenderQueueElement>& getSortedElements() const;
+		const Vector<RenderQueueElement>& GetSortedElements() const;
 
 		/**
 		 * Controls if and how a render queue groups renderable objects by material in order to reduce number of state
 		 * changes.
 		 */
-		void setStateReduction(StateReduction mode) { mStateReductionMode = mode; }
+		void SetStateReduction(StateReduction mode) { mStateReductionMode = mode; }
 
 	protected:
 		/**	Callback used for sorting elements with no material grouping. */
-		static bool elementSorterNoGroup(UINT32 aIdx, UINT32 bIdx, const Vector<SortableElement>& lookup);
+		static bool ElementSorterNoGroup(UINT32 aIdx, UINT32 bIdx, const Vector<SortableElement>& lookup);
 
 		/**	Callback used for sorting elements with preferred material grouping. */
-		static bool elementSorterPreferGroup(UINT32 aIdx, UINT32 bIdx, const Vector<SortableElement>& lookup);
+		static bool ElementSorterPreferGroup(UINT32 aIdx, UINT32 bIdx, const Vector<SortableElement>& lookup);
 
 		/**	Callback used for sorting elements with material grouping after sorting. */
-		static bool elementSorterPreferDistance(UINT32 aIdx, UINT32 bIdx, const Vector<SortableElement>& lookup);
+		static bool ElementSorterPreferDistance(UINT32 aIdx, UINT32 bIdx, const Vector<SortableElement>& lookup);
 
 		Vector<SortableElement> mSortableElements;
 		Vector<UINT32> mSortableElementIdx;

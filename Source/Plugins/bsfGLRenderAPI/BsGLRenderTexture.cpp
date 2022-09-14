@@ -40,9 +40,9 @@ namespace bs
 			bs_delete(mFB);
 	}
 
-	void GLRenderTexture::initialize()
+	void GLRenderTexture::Initialize()
 	{
-		RenderTexture::initialize();
+		RenderTexture::Initialize();
 
 		if (mFB != nullptr)
 			bs_delete(mFB);
@@ -55,13 +55,13 @@ namespace bs
 			{
 				GLTexture* glColorSurface = static_cast<GLTexture*>(mDesc.colorSurfaces[i].texture.get());
 				GLSurfaceDesc surfaceDesc;
-				surfaceDesc.numSamples = getProperties().multisampleCount;
+				surfaceDesc.numSamples = GetProperties().multisampleCount;
 
-				if (mColorSurfaces[i]->getNumArraySlices() == 1) // Binding a single texture layer
+				if (mColorSurfaces[i]->GetNumArraySlices() == 1) // Binding a single texture layer
 				{
-					surfaceDesc.allLayers = glColorSurface->getProperties().getNumFaces() == 1;
+					surfaceDesc.allLayers = glColorSurface->GetProperties().GetNumFaces() == 1;
 
-					if (glColorSurface->getProperties().getTextureType() != TEX_TYPE_3D)
+					if (glColorSurface->GetProperties().GetTextureType() != TEX_TYPE_3D)
 					{
 						surfaceDesc.zoffset = 0;
 						surfaceDesc.buffer = glColorSurface->getBuffer(mColorSurfaces[i]->getFirstArraySlice(),
@@ -128,7 +128,7 @@ namespace bs
 		mFB->rebuild();
 	}
 
-	void GLRenderTexture::getCustomAttribute(const String& name, void* data) const
+	void GLRenderTexture::GetCustomAttribute(const String& name, void* data) const
 	{
 		if(name=="FBO")
 		{
@@ -286,7 +286,7 @@ namespace bs
 		return status == GL_FRAMEBUFFER_COMPLETE && !failed;
 	}
 
-	void GLRTTManager::detectFBOFormats()
+	void GLRTTManager::DetectFboFormats()
 	{
 		// Try all formats, and report which ones work as target
 		GLuint fb = 0, tid = 0;
@@ -427,7 +427,7 @@ namespace bs
 		BS_CHECK_GL_ERROR();
 	}
 
-	PixelFormat GLRTTManager::getSupportedAlternative(PixelFormat format)
+	PixelFormat GLRTTManager::GetSupportedAlternative(PixelFormat format)
 	{
 		if (checkFormat(format))
 			return format;

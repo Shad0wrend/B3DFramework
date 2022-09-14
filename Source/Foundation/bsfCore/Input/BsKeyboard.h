@@ -16,16 +16,16 @@ namespace bs
 		~Keyboard();
 
 		/** Returns the name of the device. */
-		String getName() const { return mName; }
+		String GetName() const { return mName; }
 
 		/** Captures the input since the last call and triggers the events on the parent Input. */
-		void capture();
+		void Capture();
 
 	private:
 		friend class Input;
 
 		/** Changes the capture context. Should be called when focus is moved to a new window. */
-		void changeCaptureContext(UINT64 windowHandle);
+		void ChangeCaptureContext(UINT64 windowHandle);
 
 		String mName;
 		Input* mOwner;

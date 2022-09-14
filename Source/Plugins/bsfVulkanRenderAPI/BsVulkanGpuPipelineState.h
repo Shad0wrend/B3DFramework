@@ -24,13 +24,13 @@ namespace bs { namespace ct
 		~VulkanPipeline();
 
 		/** Returns the internal handle to the Vulkan object. */
-		VkPipeline getHandle() const { return mPipeline; }
+		VkPipeline GetHandle() const { return mPipeline; }
 
 		/** Checks is the specified color attachment read-only. Only relevant for graphics pipelines. */
-		bool isColorReadOnly(UINT32 colorIdx) const { return mReadOnlyColor[colorIdx]; }
+		bool IsColorReadOnly(UINT32 colorIdx) const { return mReadOnlyColor[colorIdx]; }
 
 		/** Checks is the depth attachment read-only. Only relevant for graphics pipelines. */
-		bool isDepthReadOnly() const { return mReadOnlyDepth; }
+		bool IsDepthReadOnly() const { return mReadOnlyDepth; }
 	private:
 		VkPipeline mPipeline;
 
@@ -45,10 +45,10 @@ namespace bs { namespace ct
 		~VulkanGraphicsPipelineState();
 
 		/** Checks does the pipeline enable scissor tests. */
-		bool isScissorEnabled() const { return mScissorEnabled; }
+		bool IsScissorEnabled() const { return mScissorEnabled; }
 
 		/** Returns the vertex input declaration from the vertex GPU program bound on the pipeline. */
-		SPtr<VertexDeclaration> getInputDeclaration() const { return mVertexDecl; }
+		SPtr<VertexDeclaration> GetInputDeclaration() const { return mVertexDecl; }
 
 		/**
 		 * Attempts to find an existing pipeline matching the provided parameters, or creates a new one if one cannot be
@@ -64,20 +64,20 @@ namespace bs { namespace ct
 		 *
 		 * @note	Thread safe.
 		 */
-		VulkanPipeline* getPipeline(UINT32 deviceIdx, VulkanRenderPass* renderPass, UINT32 readOnlyFlags,
+		VulkanPipeline* GetPipeline(UINT32 deviceIdx, VulkanRenderPass* renderPass, UINT32 readOnlyFlags,
 			DrawOperationType drawOp, const SPtr<VulkanVertexInput>& vertexInput);
 
 		/**
 		 * Returns a pipeline layout object for the specified device index. If the device index doesn't match a bit in the
 		 * device mask provided on pipeline creation, null is returned.
 		 */
-		VkPipelineLayout getPipelineLayout(UINT32 deviceIdx) const;
+		VkPipelineLayout GetPipelineLayout(UINT32 deviceIdx) const;
 
 		/**
 		 * Registers any resources used by the pipeline with the provided command buffer. This should be called whenever
 		 * a pipeline is bound to a command buffer.
 		 */
-		void registerPipelineResources(VulkanCmdBuffer* cmdBuffer);
+		void RegisterPipelineResources(VulkanCmdBuffer* cmdBuffer);
 
 	protected:
 		friend class VulkanRenderStateManager;
@@ -85,7 +85,7 @@ namespace bs { namespace ct
 		VulkanGraphicsPipelineState(const PIPELINE_STATE_DESC& desc, GpuDeviceFlags deviceMask);
 
 		/**	@copydoc GraphicsPipelineState::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 		/**
 		 * Create a new Vulkan graphics pipeline.
@@ -100,7 +100,7 @@ namespace bs { namespace ct
 		 *
 		 * @note	Thread safe.
 		 */
-		VulkanPipeline* createPipeline(UINT32 deviceIdx, VulkanRenderPass* renderPass, UINT32 readOnlyFlags,
+		VulkanPipeline* CreatePipeline(UINT32 deviceIdx, VulkanRenderPass* renderPass, UINT32 readOnlyFlags,
 			DrawOperationType drawOp, const SPtr<VulkanVertexInput>& vertexInput);
 
 		/**	Key uniquely identifying GPU pipelines. */
@@ -167,19 +167,19 @@ namespace bs { namespace ct
 		 * Returns a pipeline object for the specified device index. If the device index doesn't match a bit in the
 		 * device mask provided on pipeline creation, null is returned.
 		 */
-		VulkanPipeline* getPipeline(UINT32 deviceIdx) const;
+		VulkanPipeline* GetPipeline(UINT32 deviceIdx) const;
 
 		/**
 		 * Returns a pipeline layout object for the specified device index. If the device index doesn't match a bit in the
 		 * device mask provided on pipeline creation, null is returned.
 		 */
-		VkPipelineLayout getPipelineLayout(UINT32 deviceIdx) const;
+		VkPipelineLayout GetPipelineLayout(UINT32 deviceIdx) const;
 
 		/**
 		 * Registers any resources used by the pipeline with the provided command buffer. This should be called whenever
 		 * a pipeline is bound to a command buffer.
 		 */
-		void registerPipelineResources(VulkanCmdBuffer* cmdBuffer);
+		void RegisterPipelineResources(VulkanCmdBuffer* cmdBuffer);
 
 	protected:
 		friend class VulkanRenderStateManager;
@@ -187,7 +187,7 @@ namespace bs { namespace ct
 		VulkanComputePipelineState(const SPtr<GpuProgram>& program, GpuDeviceFlags deviceMask);
 
 		/**	@copydoc ComputePipelineState::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 		/** Contains pipeline data specific to a single Vulkan device. */
 		struct PerDeviceData

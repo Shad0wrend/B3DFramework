@@ -21,34 +21,34 @@ namespace bs
 
 	void ScriptPlainText::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_CreateInstance", (void*)&ScriptPlainText::internal_createInstance);
-		metaData.scriptClass->addInternalCall("Internal_GetText", (void*)&ScriptPlainText::internal_getText);
-		metaData.scriptClass->addInternalCall("Internal_SetText", (void*)&ScriptPlainText::internal_setText);
+		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptPlainText::InternalCreateInstance);
+		metaData.scriptClass->AddInternalCall("Internal_GetText", (void*)&ScriptPlainText::InternalGetText);
+		metaData.scriptClass->AddInternalCall("Internal_SetText", (void*)&ScriptPlainText::InternalSetText);
 	}
 
-	void ScriptPlainText::internal_createInstance(MonoObject* instance, MonoString* text)
+	void ScriptPlainText::InternalCreateInstance(MonoObject* instance, MonoString* text)
 	{
-		WString strText = MonoUtil::monoToWString(text);
-		HPlainText plainText = PlainText::create(strText);
+		WString strText = MonoUtil::MonoToWString(text);
+		HPlainText plainText = PlainText::Create(strText);
 
-		ScriptResourceManager::instance().createBuiltinScriptResource(plainText, instance);
+		ScriptResourceManager::Instance().CreateBuiltinScriptResource(plainText, instance);
 	}
 
-	MonoString* ScriptPlainText::internal_getText(ScriptPlainText* thisPtr)
+	MonoString* ScriptPlainText::InternalGetText(ScriptPlainText* thisPtr)
 	{
-		HPlainText plainText = thisPtr->getHandle();
+		HPlainText plainText = thisPtr->GetHandle();
 
 		return MonoUtil::wstringToMono(plainText->getString());
 	}
 
-	void ScriptPlainText::internal_setText(ScriptPlainText* thisPtr, MonoString* text)
+	void ScriptPlainText::InternalSetText(ScriptPlainText* thisPtr, MonoString* text)
 	{
 		HPlainText plainText = thisPtr->getHandle();
 
 		plainText->setString(MonoUtil::monoToWString(text));
 	}
 
-	MonoObject* ScriptPlainText::createInstance()
+	MonoObject* ScriptPlainText::CreateInstance()
 	{
 		return metaData.scriptClass->createInstance();
 	}

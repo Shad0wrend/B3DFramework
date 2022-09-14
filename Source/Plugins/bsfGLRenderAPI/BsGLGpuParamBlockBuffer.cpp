@@ -17,9 +17,9 @@ namespace bs { namespace ct
 			bs_pool_delete(static_cast<GLHardwareBuffer*>(mBuffer));
 	}
 
-	void GLGpuParamBlockBuffer::initialize()
+	void GLGpuParamBlockBuffer::Initialize()
 	{
 		mBuffer = bs_pool_new<GLHardwareBuffer>(GL_UNIFORM_BUFFER, mSize, mUsage);
-		GpuParamBlockBuffer::initialize();
+		GpuParamBlockBuffer::Initialize();
 	}
 }}

@@ -19,12 +19,12 @@ namespace bs
 	{
 		metaData.scriptClass->addInternalCall("Internal_setOptions", (void*)&ScriptParticleEmitterHemisphereShape::Internal_setOptions);
 		metaData.scriptClass->addInternalCall("Internal_getOptions", (void*)&ScriptParticleEmitterHemisphereShape::Internal_getOptions);
-		metaData.scriptClass->addInternalCall("Internal_create", (void*)&ScriptParticleEmitterHemisphereShape::Internal_create);
+		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptParticleEmitterHemisphereShape::InternalCreate);
 		metaData.scriptClass->addInternalCall("Internal_create0", (void*)&ScriptParticleEmitterHemisphereShape::Internal_create0);
 
 	}
 
-	MonoObject* ScriptParticleEmitterHemisphereShape::create(const SPtr<ParticleEmitterHemisphereShape>& value)
+	MonoObject* ScriptParticleEmitterHemisphereShape::Create(const SPtr<ParticleEmitterHemisphereShape>& value)
 	{
 		if(value == nullptr) return nullptr; 
 
@@ -35,12 +35,12 @@ namespace bs
 		new (bs_alloc<ScriptParticleEmitterHemisphereShape>()) ScriptParticleEmitterHemisphereShape(managedInstance, value);
 		return managedInstance;
 	}
-	void ScriptParticleEmitterHemisphereShape::Internal_setOptions(ScriptParticleEmitterHemisphereShape* thisPtr, PARTICLE_HEMISPHERE_SHAPE_DESC* options)
+	void ScriptParticleEmitterHemisphereShape::InternalSetOptions(ScriptParticleEmitterHemisphereShape* thisPtr, PARTICLE_HEMISPHERE_SHAPE_DESC* options)
 	{
 		thisPtr->getInternal()->setOptions(*options);
 	}
 
-	void ScriptParticleEmitterHemisphereShape::Internal_getOptions(ScriptParticleEmitterHemisphereShape* thisPtr, PARTICLE_HEMISPHERE_SHAPE_DESC* __output)
+	void ScriptParticleEmitterHemisphereShape::InternalGetOptions(ScriptParticleEmitterHemisphereShape* thisPtr, PARTICLE_HEMISPHERE_SHAPE_DESC* __output)
 	{
 		PARTICLE_HEMISPHERE_SHAPE_DESC tmp__output;
 		tmp__output = thisPtr->getInternal()->getOptions();
@@ -48,15 +48,15 @@ namespace bs
 		*__output = tmp__output;
 	}
 
-	void ScriptParticleEmitterHemisphereShape::Internal_create(MonoObject* managedInstance, PARTICLE_HEMISPHERE_SHAPE_DESC* desc)
+	void ScriptParticleEmitterHemisphereShape::InternalCreate(MonoObject* managedInstance, PARTICLE_HEMISPHERE_SHAPE_DESC* desc)
 	{
-		SPtr<ParticleEmitterHemisphereShape> instance = ParticleEmitterHemisphereShape::create(*desc);
+		SPtr<ParticleEmitterHemisphereShape> instance = ParticleEmitterHemisphereShape::Create(*desc);
 		new (bs_alloc<ScriptParticleEmitterHemisphereShape>())ScriptParticleEmitterHemisphereShape(managedInstance, instance);
 	}
 
-	void ScriptParticleEmitterHemisphereShape::Internal_create0(MonoObject* managedInstance)
+	void ScriptParticleEmitterHemisphereShape::InternalCreate0(MonoObject* managedInstance)
 	{
-		SPtr<ParticleEmitterHemisphereShape> instance = ParticleEmitterHemisphereShape::create();
+		SPtr<ParticleEmitterHemisphereShape> instance = ParticleEmitterHemisphereShape::Create();
 		new (bs_alloc<ScriptParticleEmitterHemisphereShape>())ScriptParticleEmitterHemisphereShape(managedInstance, instance);
 	}
 }

@@ -19,94 +19,94 @@ namespace bs
 		virtual ~OAAudioSource();
 
 		/** @copydoc SceneActor::setTransform */
-		void setTransform(const Transform& transform) override;
+		void SetTransform(const Transform& transform) ;
 
 		/** @copydoc AudioSource::setClip */
-		void setClip(const HAudioClip& clip) override;
+		void SetClip(const HAudioClip& clip) ;
 
 		/** @copydoc AudioSource::setVelocity */
-		void setVelocity(const Vector3& velocity) override;
+		void SetVelocity(const Vector3& velocity) ;
 
 		/** @copydoc AudioSource::setVolume */
-		void setVolume(float volume) override;
+		void SetVolume(float volume) ;
 
 		/** @copydoc AudioSource::setPitch */
-		void setPitch(float pitch) override;
+		void SetPitch(float pitch) ;
 
 		/** @copydoc AudioSource::setIsLooping */
-		void setIsLooping(bool loop) override;
+		void SetIsLooping(bool loop) ;
 
 		/** @copydoc AudioSource::setPriority */
-		void setPriority(INT32 priority) override;
+		void SetPriority(INT32 priority) ;
 
 		/** @copydoc AudioSource::setMinDistance */
-		void setMinDistance(float distance) override;
+		void SetMinDistance(float distance) override;
 
 		/** @copydoc AudioSource::setAttenuation */
-		void setAttenuation(float attenuation) override;
+		void SetAttenuation(float attenuation) override;
 
 		/** @copydoc AudioSource::setTime */
-		void setTime(float time) override;
+		void SetTime(float time) override;
 
 		/** @copydoc AudioSource::getTime */
-		float getTime() const override;
+		float GetTime() const override;
 
 		/** @copydoc AudioSource::play */
-		void play() override;
+		void Play() override;
 
 		/** @copydoc AudioSource::pause */
-		void pause() override;
+		void Pause() override;
 
 		/** @copydoc AudioSource::stop */
-		void stop() override;
+		void Stop() override;
 
 		/** @copydoc AudioSource::getState */
-		AudioSourceState getState() const override;
+		AudioSourceState GetState() const override;
 
 	private:
 		friend class OAAudio;
 
 		/** Destroys the internal representation of the audio source. */
-		void clear();
+		void Clear();
 
 		/** Rebuilds the internal representation of an audio source. */
-		void rebuild();
+		void Rebuild();
 
 		/** Streams new data into the source audio buffer, if needed. */
-		void stream();
+		void Stream();
 
 		/** Same as stream(), but without a mutex lock (up to the caller to lock it). */
-		void streamUnlocked();
+		void StreamUnlocked();
 
 		/** Starts data streaming from the currently attached audio clip. */
-		void startStreaming();
+		void StartStreaming();
 
 		/** Stops streaming data from the currently attached audio clip. */
-		void stopStreaming();
+		void StopStreaming();
 
 		/** Pauses or resumes audio playback due to the global pause setting. */
-		void setGlobalPause(bool pause);
+		void SetGlobalPause(bool pause);
 
 		/**
 		 * Returns true if the sound source is three dimensional (volume and pitch varies based on listener distance
 		 * and velocity).
 		 */
-		bool is3D() const;
+		bool Is3D() const;
 
 		/**
 		 * Returns true if the audio source is receiving audio data from a separate thread (as opposed to loading it all
 		 * at once.
 		 */
-		bool requiresStreaming() const;
+		bool RequiresStreaming() const;
 
 		/** Fills the provided buffer with streaming data. */
-		bool fillBuffer(UINT32 buffer, AudioDataInfo& info, UINT32 maxNumSamples);
+		bool FillBuffer(UINT32 buffer, AudioDataInfo& info, UINT32 maxNumSamples);
 
 		/** Makes the current audio clip active. Should be called whenever the audio clip changes. */
-		void applyClip();
+		void ApplyClip();
 
 		/** @copydoc AudioSource::onClipChanged */
-		void onClipChanged() override;
+		void OnClipChanged() override;
 
 		Vector<UINT32> mSourceIDs;
 		float mSavedTime = 0.0f;

@@ -30,7 +30,7 @@ namespace bs { namespace ct
 
 		/** Helper method used for initializing variations of this material. */
 		template<UINT32 quality, bool MSAA>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -45,13 +45,13 @@ namespace bs { namespace ct
 		DownsampleMat();
 
 		/** Renders the post-process effect with the provided parameters. */
-		void execute(const SPtr<Texture>& input, const SPtr<RenderTarget>& output);
+		void Execute(const SPtr<Texture>& input, const SPtr<RenderTarget>& output);
 
 		/** Returns the texture descriptor that can be used for initializing the output render target. */
-		static POOLED_RENDER_TEXTURE_DESC getOutputDesc(const SPtr<Texture>& target);
+		static POOLED_RENDER_TEXTURE_DESC GetOutputDesc(const SPtr<Texture>& target);
 
 		/** Returns the downsample material variation matching the provided parameters. */
-		static DownsampleMat* getVariation(UINT32 quality, bool msaa);
+		static DownsampleMat* GetVariation(UINT32 quality, bool msaa);
 
 	private:
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
@@ -75,19 +75,19 @@ namespace bs { namespace ct
 		EyeAdaptHistogramMat();
 
 		/** Executes the post-process effect with the provided parameters. */
-		void execute(const SPtr<Texture>& input, const SPtr<Texture>& output, const AutoExposureSettings& settings);
+		void Execute(const SPtr<Texture>& input, const SPtr<Texture>& output, const AutoExposureSettings& settings);
 
 		/** Returns the texture descriptor that can be used for initializing the output render target. */
-		static POOLED_RENDER_TEXTURE_DESC getOutputDesc(const SPtr<Texture>& target);
+		static POOLED_RENDER_TEXTURE_DESC GetOutputDesc(const SPtr<Texture>& target);
 
 		/** Calculates the number of thread groups that need to execute to cover the provided texture. */
-		static Vector2I getThreadGroupCount(const SPtr<Texture>& target);
+		static Vector2I GetThreadGroupCount(const SPtr<Texture>& target);
 
 		/**
 		 * Returns a vector containing scale and offset (in that order) that will be applied to luminance values
 		 * to determine their position in the histogram.
 		 */
-		static Vector2 getHistogramScaleOffset(const AutoExposureSettings& settings);
+		static Vector2 GetHistogramScaleOffset(const AutoExposureSettings& settings);
 
 		static const UINT32 THREAD_GROUP_SIZE_X = 8;
 		static const UINT32 THREAD_GROUP_SIZE_Y = 8;
@@ -117,11 +117,11 @@ namespace bs { namespace ct
 		EyeAdaptHistogramReduceMat();
 
 		/** Executes the post-process effect with the provided parameters. */
-		void execute(const SPtr<Texture>& sceneColor, const SPtr<Texture>& histogram, const SPtr<Texture>& prevFrame,
+		void Execute(const SPtr<Texture>& sceneColor, const SPtr<Texture>& histogram, const SPtr<Texture>& prevFrame,
 			const SPtr<RenderTarget>& output);
 
 		/** Returns the texture descriptor that can be used for initializing the output render target. */
-		static POOLED_RENDER_TEXTURE_DESC getOutputDesc();
+		static POOLED_RENDER_TEXTURE_DESC GetOutputDesc();
 	private:
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
 
@@ -144,17 +144,17 @@ namespace bs { namespace ct
 		EyeAdaptationMat();
 
 		/** Executes the post-process effect with the provided parameters. */
-		void execute(const SPtr<Texture>& reducedHistogram, const SPtr<RenderTarget>& output, float frameDelta,
+		void Execute(const SPtr<Texture>& reducedHistogram, const SPtr<RenderTarget>& output, float frameDelta,
 			const AutoExposureSettings& settings, float exposureScale);
 
 		/** Returns the texture descriptor that can be used for initializing the output render target. */
-		static POOLED_RENDER_TEXTURE_DESC getOutputDesc();
+		static POOLED_RENDER_TEXTURE_DESC GetOutputDesc();
 
 		/**
 		 * Populates the provided paramater buffer with eye adaptation parameters. The parameter buffer is expected to be
 		 * created with EyeAdaptationParamDef block definition.
 		 */
-		static void populateParams(const SPtr<GpuParamBlockBuffer>& paramBuffer, float frameDelta,
+		static void PopulateParams(const SPtr<GpuParamBlockBuffer>& paramBuffer, float frameDelta,
 			const AutoExposureSettings& settings, float exposureScale);
 	private:
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
@@ -176,11 +176,11 @@ namespace bs { namespace ct
 		EyeAdaptationBasicSetupMat();
 
 		/** Executes the post-process effect with the provided parameters. */
-		void execute(const SPtr<Texture>& input, const SPtr<RenderTarget>& output, float frameDelta,
+		void Execute(const SPtr<Texture>& input, const SPtr<RenderTarget>& output, float frameDelta,
 			const AutoExposureSettings& settings, float exposureScale);
 
 		/** Returns the texture descriptor that can be used for initializing the output render target. */
-		static POOLED_RENDER_TEXTURE_DESC getOutputDesc(const SPtr<Texture>& input);
+		static POOLED_RENDER_TEXTURE_DESC GetOutputDesc(const SPtr<Texture>& input);
 	private:
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
 		GpuParamTexture mInputTex;
@@ -204,11 +204,11 @@ namespace bs { namespace ct
 		EyeAdaptationBasicMat();
 
 		/** Executes the post-process effect with the provided parameters. */
-		void execute(const SPtr<Texture>& curFrame, const SPtr<Texture>& prevFrame, const SPtr<RenderTarget>& output,
+		void Execute(const SPtr<Texture>& curFrame, const SPtr<Texture>& prevFrame, const SPtr<RenderTarget>& output,
 			float frameDelta, const AutoExposureSettings& settings, float exposureScale);
 
 		/** Returns the texture descriptor that can be used for initializing the output render target. */
-		static POOLED_RENDER_TEXTURE_DESC getOutputDesc();
+		static POOLED_RENDER_TEXTURE_DESC GetOutputDesc();
 	private:
 		SPtr<GpuParamBlockBuffer> mEyeAdaptationParamsBuffer;
 		SPtr<GpuParamBlockBuffer> mParamsBuffer;
@@ -245,7 +245,7 @@ namespace bs { namespace ct
 
 		/** Helper method used for initializing variations of this material. */
 		template<bool is3D>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -262,16 +262,16 @@ namespace bs { namespace ct
 		 * Executes the post-process effect with the provided parameters, generating a 3D LUT using a compute shader.
 		 * Should only be called on the appropriate variation (3D one).
 		 */
-		void execute3D(const SPtr<Texture>& output, const RenderSettings& settings);
+		void Execute3D(const SPtr<Texture>& output, const RenderSettings& settings);
 
 		/**
 		 * Executes the post-process effect with the provided parameters, generating an unwrapped 2D LUT without the use
 		 * of a compute shader. Should only be called on the appropriate variation (non-3D one).
 		 */
-		void execute2D(const SPtr<RenderTexture>& output, const RenderSettings& settings);
+		void Execute2D(const SPtr<RenderTexture>& output, const RenderSettings& settings);
 
 		/** Returns the texture descriptor that can be used for initializing the output render target. */
-		POOLED_RENDER_TEXTURE_DESC getOutputDesc() const;
+		POOLED_RENDER_TEXTURE_DESC GetOutputDesc() const;
 
 		/**
 		 * Returns the material variation matching the provided parameters.
@@ -280,13 +280,13 @@ namespace bs { namespace ct
 		 *						generate an unwrapped 2D LUT withou the use of a compute shader. Depending on this parameter
 		 *						you should call either execute3D() or execute2D() methods to render the material.
 		 */
-		static CreateTonemapLUTMat* getVariation(bool is3D);
+		static CreateTonemapLUTMat* GetVariation(bool is3D);
 
 		/** Size of the 3D color lookup table. */
 		static const UINT32 LUT_SIZE = 32;
 	private:
 		/** Populates the parameter block buffers using the provided settings. */
-		void populateParamBuffers(const RenderSettings& settings);
+		void PopulateParamBuffers(const RenderSettings& settings);
 
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
 		SPtr<GpuParamBlockBuffer> mWhiteBalanceParamBuffer;
@@ -312,7 +312,7 @@ namespace bs { namespace ct
 
 		/** Helper method used for initializing variations of this material. */
 		template<bool volumeLUT, bool gammaOnly, bool autoExposure, bool MSAA>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -328,11 +328,11 @@ namespace bs { namespace ct
 		TonemappingMat();
 
 		/** Executes the post-process effect with the provided parameters. */
-		void execute(const SPtr<Texture>& sceneColor, const SPtr<Texture>& eyeAdaptation, const SPtr<Texture>& bloom,
+		void Execute(const SPtr<Texture>& sceneColor, const SPtr<Texture>& eyeAdaptation, const SPtr<Texture>& bloom,
 			const SPtr<Texture>& colorLUT, const SPtr<RenderTarget>& output, const RenderSettings& settings);
 
 		/** Returns the material variation matching the provided parameters. */
-		static TonemappingMat* getVariation(bool volumeLUT, bool gammaOnly, bool autoExposure, bool MSAA);
+		static TonemappingMat* GetVariation(bool volumeLUT, bool gammaOnly, bool autoExposure, bool MSAA);
 
 	private:
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
@@ -357,7 +357,7 @@ namespace bs { namespace ct
 
 		/** Helper method used for initializing variations of this material. */
 		template<bool AUTO_EXPOSURE>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -380,7 +380,7 @@ namespace bs { namespace ct
 		 * @param[in]	settings		Render settings for the current view.
 		 * @param[in]	output			Render target to write the results to.
 		 */
-		void execute(const SPtr<Texture>& input, float threshold, const SPtr<Texture>& eyeAdaptation,
+		void Execute(const SPtr<Texture>& input, float threshold, const SPtr<Texture>& eyeAdaptation,
 			const RenderSettings& settings, const SPtr<RenderTarget>& output);
 
 		/**
@@ -390,7 +390,7 @@ namespace bs { namespace ct
 		 *								eye adaptation material. Otherwise manual exposure scale from render settings will
 		 *								be used.
 		 */
-		static BloomClipMat* getVariation(bool autoExposure);
+		static BloomClipMat* GetVariation(bool autoExposure);
 
 	private:
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
@@ -419,7 +419,7 @@ namespace bs { namespace ct
 
 		/** Helper method used for initializing variations of this material. */
 		template<UINT32 HALO_MODE, bool CHROMATIC_ABERRATION>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -440,7 +440,7 @@ namespace bs { namespace ct
 		 * @param[in]	settings	Settings used for customizing the effect.
 		 * @param[in]	output		Render target to write the results to.
 		 */
-		void execute(const SPtr<Texture>& input, const ScreenSpaceLensFlareSettings& settings,
+		void Execute(const SPtr<Texture>& input, const ScreenSpaceLensFlareSettings& settings,
 			const SPtr<RenderTarget>& output);
 
 		/**
@@ -453,7 +453,7 @@ namespace bs { namespace ct
 		 *										splitting the red, green and blue channels according to a user-provided
 		 *										offset.
 		 */
-		static ScreenSpaceLensFlareMat* getVariation(bool halo, bool haloAspect, bool chromaticAberration);
+		static ScreenSpaceLensFlareMat* GetVariation(bool halo, bool haloAspect, bool chromaticAberration);
 	private:
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
 
@@ -477,7 +477,7 @@ namespace bs { namespace ct
 
 		/** Helper method used for initializing variations of this material. */
 		template<bool SIMPLE>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 				{
@@ -497,7 +497,7 @@ namespace bs { namespace ct
 		 * @param[in]	settings	Settings used for customizing the effect.
 		 * @param[in]	output		Render target to write the results to.
 		 */
-		void execute(const SPtr<Texture>& input, const ChromaticAberrationSettings& settings,
+		void Execute(const SPtr<Texture>& input, const ChromaticAberrationSettings& settings,
 			const SPtr<RenderTarget>& output);
 
 		/**
@@ -505,7 +505,7 @@ namespace bs { namespace ct
 		 *
 		 * @param[in]	type		Type that determines how is the effect performed.
 		 */
-		static ChromaticAberrationMat* getVariation(ChromaticAberrationType type);
+		static ChromaticAberrationMat* GetVariation(ChromaticAberrationType type);
 	private:
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
 
@@ -537,7 +537,7 @@ namespace bs { namespace ct
 		 * @param[in]	settings	Settings used for customizing the effect.
 		 * @param[in]	output		Render target to write the results to.
 		 */
-		void execute(const SPtr<Texture>& input, float time, const FilmGrainSettings& settings,
+		void Execute(const SPtr<Texture>& input, float time, const FilmGrainSettings& settings,
 			const SPtr<RenderTarget>& output);
 	private:
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
@@ -562,7 +562,7 @@ namespace bs { namespace ct
 
 		/** Helper method used for initializing variations of this material. */
 		template<bool ADDITIVE>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -592,7 +592,7 @@ namespace bs { namespace ct
 		 *							in filtering). Only used if using the variation of this shader that supports additive
 		 *							input.
 		 */
-		void execute(const SPtr<Texture>& source, float filterSize, const SPtr<RenderTexture>& destination,
+		void Execute(const SPtr<Texture>& source, float filterSize, const SPtr<RenderTexture>& destination,
 			const Color& tint = Color::White, const SPtr<Texture>& additive = nullptr);
 
 		/**
@@ -604,7 +604,7 @@ namespace bs { namespace ct
 		 * @param[in]	filterSize	Size of the blurring filter, in percent of the source texture. In range [0, 1].
 		 * @param[in]	tint		Optional tint to apply all filtered pixels.
 		 */
-		static void populateBuffer(const SPtr<GpuParamBlockBuffer>& buffer, Direction direction,
+		static void PopulateBuffer(const SPtr<GpuParamBlockBuffer>& buffer, Direction direction,
 			const SPtr<Texture>& source, float filterSize, const Color& tint = Color::White);
 
 		/**
@@ -613,14 +613,14 @@ namespace bs { namespace ct
 		 * @param[in]	additive	If true the returned variation will support and additional input texture that will be
 		 *							added on top of the filtered output.
 		 */
-		static GaussianBlurMat* getVariation(bool additive);
+		static GaussianBlurMat* GetVariation(bool additive);
 	private:
 		/** Calculates weights and offsets for the standard distribution of the specified filter size. */
-		static UINT32 calcStdDistribution(float filterRadius, std::array<float, MAX_BLUR_SAMPLES>& weights,
+		static UINT32 CalcStdDistribution(float filterRadius, std::array<float, MAX_BLUR_SAMPLES>& weights,
 			std::array<float, MAX_BLUR_SAMPLES>& offsets);
 
 		/** Calculates the radius of the blur kernel depending on the source texture size and provided scale. */
-		static float calcKernelRadius(const SPtr<Texture>& source, float scale, Direction filterDir);
+		static float CalcKernelRadius(const SPtr<Texture>& source, float scale, Direction filterDir);
 
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
 		GpuParamTexture mInputTexture;
@@ -650,7 +650,7 @@ namespace bs { namespace ct
 
 		/** Helper method used for initializing variations of this material. */
 		template<bool near, bool far>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -671,20 +671,20 @@ namespace bs { namespace ct
 		 * @param[in]	view		View through which the depth of field effect is viewed.
 		 * @param[in]	settings	Settings used to control depth of field rendering.
 		 */
-		void execute(const SPtr<Texture>& color, const SPtr<Texture>& depth, const RendererView& view,
+		void Execute(const SPtr<Texture>& color, const SPtr<Texture>& depth, const RendererView& view,
 			const DepthOfFieldSettings& settings);
 
 		/**
 		 * Returns the texture generated after the shader was executed. Only valid to call this in-between calls to
 		 * execute() & release(), with @p idx value 0 or 1.
 		 */
-		SPtr<PooledRenderTexture> getOutput(UINT32 idx);
+		SPtr<PooledRenderTexture> GetOutput(UINT32 idx);
 
 		/**
 		 * Releases the interally allocated output render textures. Must be called after each call to execute(), when the
 		 * caller is done using the textures.
 		 */
-		void release();
+		void Release();
 
 		/**
 		 * Returns the material variation matching the provided parameters.
@@ -693,7 +693,7 @@ namespace bs { namespace ct
 		 * @param	far		If true, far plane pixels are output to the first render target. If @p near is also enabled, the
 		 *					pixels are output to the second render target instead.
 		 */
-		static GaussianDOFSeparateMat* getVariation(bool near, bool far);
+		static GaussianDOFSeparateMat* GetVariation(bool near, bool far);
 
 	private:
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
@@ -714,7 +714,7 @@ namespace bs { namespace ct
 
 		/** Helper method used for initializing variations of this material. */
 		template<bool near, bool far>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -740,7 +740,7 @@ namespace bs { namespace ct
 		 * @param[in]	view		View through which the depth of field effect is viewed.
 		 * @param[in]	settings	Settings used to control depth of field rendering.
 		 */
-		void execute(const SPtr<Texture>& focused, const SPtr<Texture>& near, const SPtr<Texture>& far,
+		void Execute(const SPtr<Texture>& focused, const SPtr<Texture>& near, const SPtr<Texture>& far,
 			const SPtr<Texture>& depth, const SPtr<RenderTarget>& output, const RendererView& view,
 			const DepthOfFieldSettings& settings);
 
@@ -752,7 +752,7 @@ namespace bs { namespace ct
 		 * @param	far		If true, far plane pixels are read from the far plane texture, otherwise far plane is assumed not
 		 *					to exist.
 		 */
-		static GaussianDOFCombineMat* getVariation(bool near, bool far);
+		static GaussianDOFCombineMat* GetVariation(bool near, bool far);
 
 	private:
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
@@ -788,7 +788,7 @@ namespace bs { namespace ct
 
 		/** Helper method used for initializing variations of this material. */
 		template<bool MSAA>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 				{
@@ -809,14 +809,14 @@ namespace bs { namespace ct
 		 * @param[in]	settings	Settings used to control depth of field rendering.
 		 * @param[in]	output		Texture to output the results to.
 		 */
-		void execute(const SPtr<Texture>& input, const SPtr<Texture>& depth, const RendererView& view,
+		void Execute(const SPtr<Texture>& input, const SPtr<Texture>& depth, const RendererView& view,
 			const DepthOfFieldSettings& settings, const SPtr<RenderTarget>& output);
 
 		/** Returns the texture descriptor that can be used for initializing the output render target. */
-		static POOLED_RENDER_TEXTURE_DESC getOutputDesc(const SPtr<Texture>& target);
+		static POOLED_RENDER_TEXTURE_DESC GetOutputDesc(const SPtr<Texture>& target);
 
 		/** Returns the material variation matching the provided parameters. */
-		static BokehDOFPrepareMat* getVariation(bool msaa);
+		static BokehDOFPrepareMat* GetVariation(bool msaa);
 	private:
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
 		SPtr<GpuParamBlockBuffer> mCommonParamBuffer;
@@ -845,7 +845,7 @@ namespace bs { namespace ct
 		
 		/** Helper method used for initializing variations of this material. */
 		template<bool DEPTH_OCCLUSION>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -868,18 +868,18 @@ namespace bs { namespace ct
 		 * @param[in]	settings	Settings used to control depth of field rendering.
 		 * @param[in]	output		Texture to output the results to.
 		 */
-		void execute(const SPtr<Texture>& input, const RendererView& view, const DepthOfFieldSettings& settings,
+		void Execute(const SPtr<Texture>& input, const RendererView& view, const DepthOfFieldSettings& settings,
 			const SPtr<RenderTarget>& output);
 
 		/** Returns the texture descriptor that can be used for initializing the output render target. */
-		static POOLED_RENDER_TEXTURE_DESC getOutputDesc(const SPtr<Texture>& target);
+		static POOLED_RENDER_TEXTURE_DESC GetOutputDesc(const SPtr<Texture>& target);
 
 		/** Populates the common depth of field parameter buffers with values from the provided settings object. */
-		static void populateDOFCommonParams(const SPtr<GpuParamBlockBuffer>& buffer, const DepthOfFieldSettings& settings,
+		static void PopulateDofCommonParams(const SPtr<GpuParamBlockBuffer>& buffer, const DepthOfFieldSettings& settings,
 			const RendererView& view);
 
 		/** Returns the material variation matching the provided parameters. */
-		static BokehDOFMat* getVariation(bool depthOcclusion);
+		static BokehDOFMat* GetVariation(bool depthOcclusion);
 	private:
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
 		SPtr<GpuParamBlockBuffer> mCommonParamBuffer;
@@ -905,7 +905,7 @@ namespace bs { namespace ct
 
 		/** Helper method used for initializing variations of this material. */
 		template<MSAAMode MSAA_MODE>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -928,12 +928,12 @@ namespace bs { namespace ct
 		 * @param[in]	settings	Settings used to control depth of field rendering.
 		 * @param[in]	output		Texture to output the results to.
 		 */
-		void execute(const SPtr<Texture>& unfocused, const SPtr<Texture>& focused, const SPtr<Texture>& depth,
+		void Execute(const SPtr<Texture>& unfocused, const SPtr<Texture>& focused, const SPtr<Texture>& depth,
 			const RendererView& view, const DepthOfFieldSettings& settings, const SPtr<RenderTarget>& output);
 
 
 		/** Returns the material variation matching the provided parameters. */
-		static BokehDOFCombineMat* getVariation(MSAAMode msaaMode);
+		static BokehDOFCombineMat* GetVariation(MSAAMode msaaMode);
 	private:
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
 		SPtr<GpuParamBlockBuffer> mCommonParamBuffer;
@@ -963,7 +963,7 @@ namespace bs { namespace ct
 		 * @param[in]	settings	Settings used to control the motion blur effect.
 		 * @param[in]	output		Texture to output the results to.
 		 */
-		void execute(const SPtr<Texture>& input, const SPtr<Texture>& depth, const RendererView& view,
+		void Execute(const SPtr<Texture>& input, const SPtr<Texture>& depth, const RendererView& view,
 			const MotionBlurSettings& settings, const SPtr<RenderTarget>& output);
 	private:
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
@@ -985,7 +985,7 @@ namespace bs { namespace ct
 
 		/** Helper method used for initializing variations of this material. */
 		template<bool noTextureViews>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -1007,7 +1007,7 @@ namespace bs { namespace ct
 		 * @param[in]	dstRect		Destination rectangle to limit the writes to.
 		 * @param[in]	output		Output target to which to write to results.
 		 */
-		void execute(const SPtr<Texture>& source, UINT32 srcMip, const Rect2& srcRect, const Rect2& dstRect,
+		void Execute(const SPtr<Texture>& source, UINT32 srcMip, const Rect2& srcRect, const Rect2& dstRect,
 			const SPtr<RenderTexture>& output);
 
 		/**
@@ -1016,7 +1016,7 @@ namespace bs { namespace ct
 		 * @param	noTextureViews		Specify as true if the current render backend doesn't support texture views, in
 		 *								which case the implementation falls back on using a simpler version of the shader.
 		 */
-		static BuildHiZMat* getVariation(bool noTextureViews);
+		static BuildHiZMat* GetVariation(bool noTextureViews);
 	private:
 		GpuParamTexture mInputTexture;
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
@@ -1043,7 +1043,7 @@ namespace bs { namespace ct
 		 * @param[in]	source		Input texture to apply FXAA to.
 		 * @param[in]	destination	Output target to which to write the antialiased image to.
 		 */
-		void execute(const SPtr<Texture>& source, const SPtr<RenderTarget>& destination);
+		void Execute(const SPtr<Texture>& source, const SPtr<RenderTarget>& destination);
 
 	private:
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
@@ -1091,7 +1091,7 @@ namespace bs { namespace ct
 
 		/** Helper method used for initializing variations of this material. */
 		template<bool upsample, bool finalPass, int quality>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -1114,7 +1114,7 @@ namespace bs { namespace ct
 		 * @param[in]	destination		Output texture to which to write the ambient occlusion data to.
 		 * @param[in]	settings		Settings used to control the ambient occlusion effect.
 		 */
-		void execute(const RendererView& view, const SSAOTextureInputs& textures, const SPtr<RenderTexture>& destination,
+		void Execute(const RendererView& view, const SSAOTextureInputs& textures, const SPtr<RenderTexture>& destination,
 			const AmbientOcclusionSettings& settings);
 
 		/**
@@ -1127,7 +1127,7 @@ namespace bs { namespace ct
 		 * @param	quality		Integer in range [0, 4] that controls the quality of SSAO sampling. Higher numbers yield
 		 *						better quality at the cost of performance.
 		 */
-		static SSAOMat* getVariation(bool upsample, bool finalPass, int quality);
+		static SSAOMat* GetVariation(bool upsample, bool finalPass, int quality);
 
 	private:
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
@@ -1165,7 +1165,7 @@ namespace bs { namespace ct
 		 * @param[in]	destination		Output texture to which to write the downsampled data to.
 		 * @param[in]	depthRange		Valid depth range (in view space) within which nearby samples will be averaged.
 		 */
-		void execute(const RendererView& view, const SPtr<Texture>& sceneDepth, const SPtr<Texture>& sceneNormals,
+		void Execute(const RendererView& view, const SPtr<Texture>& sceneDepth, const SPtr<Texture>& sceneNormals,
 			const SPtr<RenderTexture>& destination, float depthRange);
 
 	private:
@@ -1191,7 +1191,7 @@ namespace bs { namespace ct
 
 		/** Helper method used for initializing variations of this material. */
 		template<bool horizontal>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -1212,11 +1212,11 @@ namespace bs { namespace ct
 		 * @param[in]	destination		Output texture to which to write the blurred data to.
 		 * @param[in]	depthRange		Valid depth range (in view space) within which nearby samples will be averaged.
 		 */
-		void execute(const RendererView& view, const SPtr<Texture>& ao, const SPtr<Texture>& sceneDepth,
+		void Execute(const RendererView& view, const SPtr<Texture>& ao, const SPtr<Texture>& sceneDepth,
 			const SPtr<RenderTexture>& destination, float depthRange);
 
 		/** Returns the material variation matching the provided parameters. */
-		static SSAOBlurMat* getVariation(bool horizontal);
+		static SSAOBlurMat* GetVariation(bool horizontal);
 
 	private:
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
@@ -1237,7 +1237,7 @@ namespace bs { namespace ct
 
 		/** Helper method used for initializing variations of this material. */
 		template<bool msaa, bool singleSampleMSAA>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -1257,7 +1257,7 @@ namespace bs { namespace ct
 		 * @param[in]	gbuffer			GBuffer textures.
 		 * @param[in]	settings		Parameters used for controling the SSR effect.
 		 */
-		void execute(const RendererView& view, GBufferTextures gbuffer, const ScreenSpaceReflectionsSettings& settings);
+		void Execute(const RendererView& view, GBufferTextures gbuffer, const ScreenSpaceReflectionsSettings& settings);
 
 		/**
 		 * Returns the material variation matching the provided parameters.
@@ -1267,7 +1267,7 @@ namespace bs { namespace ct
 		 *									evaluated. Otherwise all samples will be evaluated.
 		 * @return							Requested variation of the material.
 		 */
-		static SSRStencilMat* getVariation(bool msaa, bool singleSampleMSAA);
+		static SSRStencilMat* GetVariation(bool msaa, bool singleSampleMSAA);
 	private:
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
 		GBufferParams mGBufferParams;
@@ -1292,7 +1292,7 @@ namespace bs { namespace ct
 
 		/** Helper method used for initializing variations of this material. */
 		template<UINT32 quality, bool msaa, bool singleSampleMSAA>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -1316,7 +1316,7 @@ namespace bs { namespace ct
 		 * @param[in]	settings		Parameters used for controling the SSR effect.
 		 * @param[in]	destination		Render target to which to write the results to.
 		 */
-		void execute(const RendererView& view, GBufferTextures gbuffer, const SPtr<Texture>& sceneColor,
+		void Execute(const RendererView& view, GBufferTextures gbuffer, const SPtr<Texture>& sceneColor,
 			const SPtr<Texture>& hiZ, const ScreenSpaceReflectionsSettings& settings,
 			const SPtr<RenderTarget>& destination);
 
@@ -1325,7 +1325,7 @@ namespace bs { namespace ct
 		 * @p maxRoughness will have the fade value of 1. Values above @p maxRoughness is slowly fade out over a range that
 		 * is 1/2 the length of @p maxRoughness.
 		 */
-		static Vector2 calcRoughnessFadeScaleBias(float maxRoughness);
+		static Vector2 CalcRoughnessFadeScaleBias(float maxRoughness);
 
 		/**
 		 * Returns the material variation matching the provided parameters.
@@ -1336,7 +1336,7 @@ namespace bs { namespace ct
 		 *									evaluated. Otherwise all samples will be evaluated.
 		 * @return							Requested variation of the material.
 		 */
-		static SSRTraceMat* getVariation(UINT32 quality, bool msaa, bool singleSampleMSAA = false);
+		static SSRTraceMat* GetVariation(UINT32 quality, bool msaa, bool singleSampleMSAA = false);
 	private:
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
 		GBufferParams mGBufferParams;
@@ -1377,7 +1377,7 @@ namespace bs { namespace ct
 
 		/** Helper method used for initializing variations of this material. */
 		template<TemporalFilteringType TYPE, bool PER_PIXEL_VELOCITY, bool MSAA>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -1403,7 +1403,7 @@ namespace bs { namespace ct
 		 * @param[in]	exposure		Exposure to use when transforming from HDR to LDR image.
 		 * @param[in]	destination		Render target to which to write the results to.
 		 */
-		void execute(const RendererView& view, const SPtr<Texture>& prevFrame, const SPtr<Texture>& curFrame,
+		void Execute(const RendererView& view, const SPtr<Texture>& prevFrame, const SPtr<Texture>& curFrame,
 			const SPtr<Texture>& velocity, const SPtr<Texture>& sceneDepth, const Vector2& jitter,
 			float exposure, const SPtr<RenderTarget>& destination);
 
@@ -1416,7 +1416,7 @@ namespace bs { namespace ct
 		 *							and current frame color textures must be non-MSAA, regardless of this parameter.
 		 * @return					Requested variation of the material.
 		 */
-		static TemporalFilteringMat* getVariation(TemporalFilteringType type, bool velocity, bool msaa);
+		static TemporalFilteringMat* GetVariation(TemporalFilteringType type, bool velocity, bool msaa);
 
 	private:
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
@@ -1458,7 +1458,7 @@ namespace bs { namespace ct
 		 *							be encoded to 0.
 		 * @param[in]	output		Output texture to write the results in. Results will be written in the alpha channel.
 		 */
-		void execute(const SPtr<Texture>& depth, float near, float far, const SPtr<RenderTarget>& output);
+		void Execute(const SPtr<Texture>& depth, float near, float far, const SPtr<RenderTarget>& output);
 
 	private:
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
@@ -1475,7 +1475,7 @@ namespace bs { namespace ct
 
 		/** Helper method used for initializing variations of this material. */
 		template<UINT32 msaa>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -1493,10 +1493,10 @@ namespace bs { namespace ct
 		 * @param[in]	view			Information about the view we're rendering from.
 		 * @param[in]	gbuffer			GBuffer textures.
 		 */
-		void execute(const RendererView& view, GBufferTextures gbuffer);
+		void Execute(const RendererView& view, GBufferTextures gbuffer);
 
 		/** Returns the material variation matching the provided parameters. */
-		static MSAACoverageMat* getVariation(UINT32 msaaCount);
+		static MSAACoverageMat* GetVariation(UINT32 msaaCount);
 	private:
 		GBufferParams mGBufferParams;
 	};
@@ -1519,7 +1519,7 @@ namespace bs { namespace ct
 		 * @param[in]	view		Information about the view we're rendering from.
 		 * @param[in]	coverage	Coverage texture as output by MSAACoverageMat.
 		 */
-		void execute(const RendererView& view, const SPtr<Texture>& coverage);
+		void Execute(const RendererView& view, const SPtr<Texture>& coverage);
 	private:
 		GpuParamTexture mCoverageTexParam;
 	};

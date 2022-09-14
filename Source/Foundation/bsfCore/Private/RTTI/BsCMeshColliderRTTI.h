@@ -21,20 +21,20 @@ namespace bs
 			BS_RTTI_MEMBER_REFL(mMesh, 0)
 		BS_END_RTTI_MEMBERS
 	public:
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "CMeshCollider";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_CMeshCollider;
 		}
 
 		SPtr<IReflectable> newRTTIObject() override
 		{
-			return SceneObject::createEmptyComponent<CMeshCollider>();
+			return SceneObject::CreateEmptyComponent<CMeshCollider>();
 		}
 	};
 

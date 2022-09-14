@@ -22,56 +22,56 @@ namespace bs
 		: RenderWindow(desc, windowId), mProperties(desc)
 	{ }
 
-	void Win32RenderWindow::getCustomAttribute(const String& name, void* pData) const
+	void Win32RenderWindow::GetCustomAttribute(const String& name, void* pData) const
 	{
 		if (name == "WINDOW")
 		{
 			UINT64 *pHwnd = (UINT64*)pData;
-			*pHwnd = (UINT64)getHWnd();
+			*pHwnd = (UINT64)GetHWnd();
 			return;
 		}
 	}
 
-	Vector2I Win32RenderWindow::screenToWindowPos(const Vector2I& screenPos) const
+	Vector2I Win32RenderWindow::ScreenToWindowPos(const Vector2I& screenPos) const
 	{
 		POINT pos;
 		pos.x = screenPos.x;
 		pos.y = screenPos.y;
 
-		ScreenToClient(getHWnd(), &pos);
+		ScreenToClient(GetHWnd(), &pos);
 		return Vector2I(pos.x, pos.y);
 	}
 
-	Vector2I Win32RenderWindow::windowToScreenPos(const Vector2I& windowPos) const
+	Vector2I Win32RenderWindow::WindowToScreenPos(const Vector2I& windowPos) const
 	{
 		POINT pos;
 		pos.x = windowPos.x;
 		pos.y = windowPos.y;
 
-		ClientToScreen(getHWnd(), &pos);
+		ClientToScreen(GetHWnd(), &pos);
 		return Vector2I(pos.x, pos.y);
 	}
 
-	SPtr<ct::Win32RenderWindow> Win32RenderWindow::getCore() const
+	SPtr<ct::Win32RenderWindow> Win32RenderWindow::GetCore() const
 	{
 		return std::static_pointer_cast<ct::Win32RenderWindow>(mCoreSpecific);
 	}
 
-	HWND Win32RenderWindow::getHWnd() const
+	HWND Win32RenderWindow::GetHWnd() const
 	{
 		blockUntilCoreInitialized();
 		return getCore()->GetWindowHandleInternal();
 	}
 
-	void Win32RenderWindow::syncProperties()
+	void Win32RenderWindow::SyncProperties()
 	{
 		ScopedSpinLock lock(getCore()->mLock);
 		mProperties = getCore()->mSyncedProperties;
 	}
 
-	SPtr<ct::CoreObject> Win32RenderWindow::createCore() const
+	SPtr<ct::CoreObject> Win32RenderWindow::CreateCore() const
 	{
-		ct::VulkanRenderAPI& rapi = static_cast<ct::VulkanRenderAPI&>(ct::RenderAPI::instance());
+		ct::VulkanRenderAPI& rapi = static_cast<ct::VulkanRenderAPI&>(ct::RenderAPI::Instance());
 
 		RENDER_WINDOW_DESC desc = mDesc;
 		SPtr<ct::CoreObject> coreObj = bs_shared_ptr_new<ct::Win32RenderWindow>(desc, mWindowId, rapi);
@@ -104,7 +104,7 @@ namespace bs
 		Platform::resetNonClientAreas(*this);
 	}
 
-	void Win32RenderWindow::initialize()
+	void Win32RenderWindow::Initialize()
 	{
 		RenderWindowProperties& props = mProperties;
 
@@ -141,7 +141,7 @@ namespace bs
 		if (opt != mDesc.platformSpecific.end())
 			windowDesc.external = (HWND)parseUINT64(opt->second);
 		
-		const Win32VideoModeInfo& videoModeInfo = static_cast<const Win32VideoModeInfo&>(RenderAPI::instance().getVideoModeInfo());
+		const Win32VideoModeInfo& videoModeInfo = static_cast<const Win32VideoModeInfo&>(RenderAPI::Instance().getVideoModeInfo());
 		UINT32 numOutputs = videoModeInfo.getNumOutputs();
 		if (numOutputs > 0)
 		{
@@ -245,11 +245,11 @@ namespace bs
 			mSyncedProperties = props;
 		}
 
-		bs::RenderWindowManager::instance().notifySyncDataDirty(this);
+		bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
 		RenderWindow::initialize();
 	}
 
-	void Win32RenderWindow::acquireBackBuffer()
+	void Win32RenderWindow::AcquireBackBuffer()
 	{
 		// We haven't presented the current back buffer yet, so just use that one
 		if (!mRequiresNewBackBuffer)
@@ -265,7 +265,7 @@ namespace bs
 		mRequiresNewBackBuffer = false;
 	}
 
-	void Win32RenderWindow::swapBuffers(UINT32 syncMask)
+	void Win32RenderWindow::SwapBuffers(UINT32 syncMask)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -286,7 +286,7 @@ namespace bs
 		syncMask &= ~queueMask;
 
 		UINT32 deviceIdx = presentDevice->getIndex();
-		VulkanCommandBufferManager& cbm = static_cast<VulkanCommandBufferManager&>(CommandBufferManager::instance());
+		VulkanCommandBufferManager& cbm = static_cast<VulkanCommandBufferManager&>(CommandBufferManager::Instance());
 
 		UINT32 numSemaphores;
 		cbm.getSyncSemaphores(deviceIdx, syncMask, mSemaphoresTemp, numSemaphores);
@@ -308,7 +308,7 @@ namespace bs
 		mRequiresNewBackBuffer = true;
 	}
 
-	void Win32RenderWindow::move(INT32 left, INT32 top)
+	void Win32RenderWindow::Move(INT32 left, INT32 top)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -327,11 +327,11 @@ namespace bs
 				mSyncedProperties.left = props.left;
 			}
 
-			bs::RenderWindowManager::instance().notifySyncDataDirty(this);
+			bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
 		}
 	}
 
-	void Win32RenderWindow::resize(UINT32 width, UINT32 height)
+	void Win32RenderWindow::Resize(UINT32 width, UINT32 height)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -350,11 +350,11 @@ namespace bs
 				mSyncedProperties.height = props.height;
 			}
 
-			bs::RenderWindowManager::instance().notifySyncDataDirty(this);
+			bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
 		}
 	}
 
-	void Win32RenderWindow::setActive(bool state)
+	void Win32RenderWindow::SetActive(bool state)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -363,7 +363,7 @@ namespace bs
 		RenderWindow::setActive(state);
 	}
 
-	void Win32RenderWindow::setHidden(bool hidden)
+	void Win32RenderWindow::SetHidden(bool hidden)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -373,35 +373,35 @@ namespace bs
 		RenderWindow::setHidden(hidden);
 	}
 
-	void Win32RenderWindow::minimize()
+	void Win32RenderWindow::Minimize()
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
 		mWindow->minimize();
 	}
 
-	void Win32RenderWindow::maximize()
+	void Win32RenderWindow::Maximize()
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
 		mWindow->maximize();
 	}
 
-	void Win32RenderWindow::restore()
+	void Win32RenderWindow::Restore()
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
 		mWindow->restore();
 	}
 
-	void Win32RenderWindow::setFullscreen(UINT32 width, UINT32 height, float refreshRate, UINT32 monitorIdx)
+	void Win32RenderWindow::SetFullscreen(UINT32 width, UINT32 height, float refreshRate, UINT32 monitorIdx)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
 		if (mIsChild)
 			return;
 
-		const Win32VideoModeInfo& videoModeInfo = static_cast<const Win32VideoModeInfo&>(RenderAPI::instance().getVideoModeInfo());
+		const Win32VideoModeInfo& videoModeInfo = static_cast<const Win32VideoModeInfo&>(RenderAPI::Instance().getVideoModeInfo());
 		UINT32 numOutputs = videoModeInfo.getNumOutputs();
 		if (numOutputs == 0)
 			return;
@@ -447,14 +447,14 @@ namespace bs
 		SetWindowPos(mWindow->getHWnd(), HWND_TOP, props.left, props.top, width, height, SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
 	}
 
-	void Win32RenderWindow::setFullscreen(const VideoMode& mode)
+	void Win32RenderWindow::SetFullscreen(const VideoMode& mode)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
 		setFullscreen(mode.width, mode.height, mode.refreshRate, mode.outputIdx);
 	}
 
-	void Win32RenderWindow::setWindowed(UINT32 width, UINT32 height)
+	void Win32RenderWindow::SetWindowed(UINT32 width, UINT32 height)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -505,10 +505,10 @@ namespace bs
 			mSyncedProperties.height = props.height;
 		}
 
-		bs::RenderWindowManager::instance().notifySyncDataDirty(this);
+		bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
 	}
 
-	void Win32RenderWindow::setVSync(bool enabled, UINT32 interval)
+	void Win32RenderWindow::SetVSync(bool enabled, UINT32 interval)
 	{
 		mProperties.vsync = enabled;
 		mProperties.vsyncInterval = interval;
@@ -521,7 +521,7 @@ namespace bs
 			mSyncedProperties.vsyncInterval = interval;
 		}
 
-		bs::RenderWindowManager::instance().notifySyncDataDirty(this);
+		bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
 	}
 
 	HWND Win32RenderWindow::GetWindowHandleInternal() const
@@ -529,7 +529,7 @@ namespace bs
 		return mWindow->getHWnd();
 	}
 
-	void Win32RenderWindow::getCustomAttribute(const String& name, void* data) const
+	void Win32RenderWindow::GetCustomAttribute(const String& name, void* data) const
 	{
 		if (name == "FB")
 		{
@@ -576,13 +576,13 @@ namespace bs
 		rebuildSwapChain();
 	}
 
-	void Win32RenderWindow::syncProperties()
+	void Win32RenderWindow::SyncProperties()
 	{
 		ScopedSpinLock lock(mLock);
 		mProperties = mSyncedProperties;
 	}
 
-	void Win32RenderWindow::rebuildSwapChain()
+	void Win32RenderWindow::RebuildSwapChain()
 	{
 		//// Need to make sure nothing is using the swap buffer before we re-create it
 		// Note: Optionally I can detect exactly on which queues (if any) are the swap chain images used on, and only wait

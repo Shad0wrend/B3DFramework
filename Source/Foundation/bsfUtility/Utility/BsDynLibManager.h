@@ -25,10 +25,10 @@ namespace bs
 		 *
 		 * @param[in]	name	The name of the library. The extension can be omitted.
 		 */
-		DynLib* load(String name);
+		DynLib* Load(String name);
 
 		/** Unloads the given library. */
-		void unload(DynLib* lib);
+		void Unload(DynLib* lib);
 
 	protected:
 		Set<UPtr<DynLib>, std::less<>> mLoadedLibraries;

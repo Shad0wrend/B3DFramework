@@ -18,19 +18,19 @@ namespace bs { namespace ct
 		 * Registers a dependency on a command buffer. Use getMask() to get the new mask value after registering all
 		 * dependencies.
 		 */
-		void addDependency(const SPtr<CommandBuffer>& buffer);
+		void AddDependency(const SPtr<CommandBuffer>& buffer);
 
 		/** Returns a combined mask that contains all the required dependencies. */
-		UINT32 getMask() const { return mMask; }
+		UINT32 GetMask() const { return mMask; }
 
 		/** Uses the queue type and index to generate a mask with a bit set for that queue's global index. */
-		static UINT32 getGlobalQueueMask(GpuQueueType type, UINT32 queueIdx);
+		static UINT32 GetGlobalQueueMask(GpuQueueType type, UINT32 queueIdx);
 
 		/** Uses the queue type and index to generate a global queue index. */
-		static UINT32 getGlobalQueueIdx(GpuQueueType type, UINT32 queueIdx);
+		static UINT32 GetGlobalQueueIdx(GpuQueueType type, UINT32 queueIdx);
 
 		/** Uses the global queue index to retrieve local queue index and queue type. */
-		static UINT32 getQueueIdxAndType(UINT32 globalQueueIdx, GpuQueueType& type);
+		static UINT32 GetQueueIdxAndType(UINT32 globalQueueIdx, GpuQueueType& type);
 
 	private:
 		UINT32 mMask = 0;
@@ -86,26 +86,26 @@ namespace bs { namespace ct
 		 *							be appended to a primary command buffer.
 		 * @return					New CommandBuffer instance.
 		 */
-		static SPtr<CommandBuffer> create(GpuQueueType type, UINT32 deviceIdx = 0, UINT32 queueIdx = 0,
+		static SPtr<CommandBuffer> Create(GpuQueueType type, UINT32 deviceIdx = 0, UINT32 queueIdx = 0,
 			bool secondary = false);
 
 		/** Returns the type of queue the command buffer will execute on. */
-		GpuQueueType getType() const { return mType; }
+		GpuQueueType GetType() const { return mType; }
 
 		/** Returns the index of the queue the command buffer will execute on. */
-		UINT32 getQueueIdx() const { return mQueueIdx; }
+		UINT32 GetQueueIdx() const { return mQueueIdx; }
 
 		/** Returns the device index this buffer will execute on. */
-		UINT32 getDeviceIdx() const { return mDeviceIdx; }
+		UINT32 GetDeviceIdx() const { return mDeviceIdx; }
 
 		/** Returns the current state of the command buffer. */
-		virtual CommandBufferState getState() const = 0;
+		virtual CommandBufferState GetState() const = 0;
 
 		/**
 		 * Resets the command buffer back into initial state. Must only be used if the command buffer is
 		 * not in the executing state.
 		 */
-		virtual void reset() = 0;
+		virtual void Reset() = 0;
 
 	protected:
 		CommandBuffer(GpuQueueType type, UINT32 deviceIdx, UINT32 queueIdx, bool secondary);

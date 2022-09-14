@@ -18,37 +18,37 @@ namespace bs
 
 		ManagedSerializableObject* orgManSerzObj;
 		SPtr<ManagedSerializableObject> orgDecodedObject;
-		if (orgObj->getTypeId() == TID_SerializedObject)
+		if (orgObj->GetTypeId() == TID_SerializedObject)
 		{
 			auto* orgSerzObj = static_cast<SerializedObject*>(orgObj);
-			orgDecodedObject = std::static_pointer_cast<ManagedSerializableObject>(orgSerzObj->decode(&context));
+			orgDecodedObject = std::static_pointer_cast<ManagedSerializableObject>(orgSerzObj->Decode(&context));
 
 			orgManSerzObj = orgDecodedObject.get();
 		}
 		else
 		{
-			assert(orgObj->getTypeId() == TID_ScriptSerializableObject);
+			assert(orgObj->GetTypeId() == TID_ScriptSerializableObject);
 			orgManSerzObj = static_cast<ManagedSerializableObject*>(orgObj);
 		}
 
 		ManagedSerializableObject* newManSerzObj;
 		SPtr<ManagedSerializableObject> newDecodedObject;
-		if (newObj->getTypeId() == TID_SerializedObject)
+		if (newObj->GetTypeId() == TID_SerializedObject)
 		{
 			auto* newSerzObj = static_cast<SerializedObject*>(newObj);
-			newDecodedObject = std::static_pointer_cast<ManagedSerializableObject>(newSerzObj->decode(&context));
+			newDecodedObject = std::static_pointer_cast<ManagedSerializableObject>(newSerzObj->Decode(&context));
 
 			newManSerzObj = newDecodedObject.get();
 		}
 		else
 		{
-			assert(newObj->getTypeId() == TID_ScriptSerializableObject);
+			assert(newObj->GetTypeId() == TID_ScriptSerializableObject);
 			newManSerzObj = static_cast<ManagedSerializableObject*>(newObj);
 		}
 
-		context.goState->resolve();
+		context.goState->Resolve();
 
-		SPtr<ManagedSerializableDiff> diff = ManagedSerializableDiff::create(orgManSerzObj, newManSerzObj);
+		SPtr<ManagedSerializableDiff> diff = ManagedSerializableDiff::Create(orgManSerzObj, newManSerzObj);
 		if (diff == nullptr)
 			return nullptr;
 
@@ -56,23 +56,23 @@ namespace bs
 		output->subObjects.push_back(SerializedSubObject());
 
 		SerializedSubObject& subObject = output->subObjects.back();
-		subObject.typeId = ManagedSerializableObject::getRTTIStatic()->getRTTIId();
+		subObject.typeId = ManagedSerializableObject::GetRttiStatic()->getRTTIId();
 
 		SerializedEntry entry;
 		entry.fieldId = 0;
-		entry.serialized = SerializedObject::create(*diff);
+		entry.serialized = SerializedObject::Create(*diff);
 
 		subObject.entries[0] = entry;
 
 		return output;
 	}
 
-	void ManagedDiff::applyDiff(const SPtr<IReflectable>& object, const SPtr<SerializedObject>& serzDiff,
+	void ManagedDiff::ApplyDiff(const SPtr<IReflectable>& object, const SPtr<SerializedObject>& serzDiff,
 		FrameAlloc& alloc, DiffObjectMap& objectMap, FrameVector<DiffCommand>& diffCommands, SerializationContext* context)
 	{
 		SPtr<SerializedObject> diffObj = std::static_pointer_cast<SerializedObject>(serzDiff->subObjects[0].entries[0].serialized);
 
-		SPtr<ManagedSerializableDiff> diff = std::static_pointer_cast<ManagedSerializableDiff>(diffObj->decode(context));
+		SPtr<ManagedSerializableDiff> diff = std::static_pointer_cast<ManagedSerializableDiff>(diffObj->Decode(context));
 		
 		if (diff != nullptr)
 		{

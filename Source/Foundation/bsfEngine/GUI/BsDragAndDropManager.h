@@ -49,16 +49,16 @@ namespace bs
 		 * 										Additionally this will determine the cursor displayed (whether or not it
 		 *										can have a "denied" state).
 		 */
-		void startDrag(UINT32 typeId, void* data, std::function<void(bool)> dropCallback, bool needsValidDropTarget = false);
+		void StartDrag(UINT32 typeId, void* data, std::function<void(bool)> dropCallback, bool needsValidDropTarget = false);
 
 		/**	Returns true if drag is currently in progress. */
-		bool isDragInProgress() const { return mIsDragInProgress; }
+		bool IsDragInProgress() const { return mIsDragInProgress; }
 
 		/**	Get type ID of drag currently in progress. Only valid if drag is in progress. */
-		UINT32 getDragTypeId() const { return mDragTypeId; }
+		UINT32 GetDragTypeId() const { return mDragTypeId; }
 
 		/**	Gets drag specific data specified when the drag started. Only valid if drag is in progress. */
-		void* getDragData() const { return mData; }
+		void* GetDragData() const { return mData; }
 
 		/**
 		 * Determines whether the drop operation may happen anywhere or does the GUI element need to specifically accept the
@@ -67,13 +67,13 @@ namespace bs
 		 * 									
 		 * Additionally this will determine the cursor displayed (whether or not it can have a "denied" state).
 		 */
-		bool needsValidDropTarget() const { return mNeedsValidDropTarget; }
+		bool NeedsValidDropTarget() const { return mNeedsValidDropTarget; }
 
 		/**
 		 * Registers a new callback that will be triggered when dragged item is dropped. Provided parameter specifies if
 		 * the drop operation was handled by anyone or not.
 		 */
-		void addDropCallback(std::function<void(bool)> dropCallback);
+		void AddDropCallback(std::function<void(bool)> dropCallback);
 
 		/** Called once per frame. Checks if drag ended or if window loses focus. */
 		void UpdateInternal();
@@ -89,7 +89,7 @@ namespace bs
 	private:
 
 		/**	Triggers any drop callbacks and clears callback data. */
-		void endDrag(bool processed);
+		void EndDrag(bool processed);
 
 		/**
 		 * Called by the core thread whenever mouse capture state changes. This can happen when window loses focus
@@ -97,10 +97,10 @@ namespace bs
 		 *
 		 * @note	Core thread.
 		 */
-		void mouseCaptureChanged();
+		void MouseCaptureChanged();
 
 		/**	Called by the input system when pointer is released. */
-		void cursorReleased(const PointerEvent& event);
+		void CursorReleased(const PointerEvent& event);
 
 	private:
 		UINT32 mDragTypeId = 0;

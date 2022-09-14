@@ -4,7 +4,7 @@
 
 namespace bs
 {
-	void DeferredCallManager::queueDeferredCall(std::function<void()> func)
+	void DeferredCallManager::QueueDeferredCall(std::function<void()> func)
 	{
 		mCallbacks.push_back(func);
 	}
@@ -27,6 +27,6 @@ namespace bs
 	// Declared in BsPrerequisites.h
 	void deferredCall(std::function<void()> callback)
 	{
-		DeferredCallManager::instance().queueDeferredCall(callback);
+		DeferredCallManager::Instance().queueDeferredCall(callback);
 	}
 }

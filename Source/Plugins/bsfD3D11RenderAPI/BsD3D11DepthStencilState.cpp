@@ -19,15 +19,15 @@ namespace bs { namespace ct
 		BS_INC_RENDER_STAT_CAT(ResDestroyed, RenderStatObject_DepthStencilState);
 	}
 
-	void D3D11DepthStencilState::createInternal()
+	void D3D11DepthStencilState::CreateInternal()
 	{
 		D3D11_DEPTH_STENCIL_DESC depthStencilState;
 		ZeroMemory(&depthStencilState, sizeof(D3D11_DEPTH_STENCIL_DESC));
 
-		bool depthEnable = mProperties.getDepthWriteEnable() || mProperties.getDepthReadEnable();
+		bool depthEnable = mProperties.GetDepthWriteEnable() || mProperties.GetDepthReadEnable();
 		CompareFunction compareFunc;
-		if (mProperties.getDepthReadEnable())
-			compareFunc = mProperties.getDepthComparisonFunc();
+		if (mProperties.GetDepthReadEnable())
+			compareFunc = mProperties.GetDepthComparisonFunc();
 		else
 			compareFunc = CMPF_ALWAYS_PASS;
 

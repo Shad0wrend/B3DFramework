@@ -16,16 +16,16 @@ namespace bs
 		:mState(PlayInEditorState::Stopped), mNextState(PlayInEditorState::Stopped),
 		mFrameStepActive(false), mScheduledStateChange(false), mPausableTime(0.0f)
 	{
-		if (!gApplication().isEditor())
+		if (!gApplication().IsEditor())
 			mState = PlayInEditorState::Playing;
 		else
 		{
-			setSystemsPauseState(true);
+			SetSystemsPauseState(true);
 			gSceneManager().setComponentState(ComponentState::Stopped);
 		}
 	}
 
-	void PlayInEditor::setState(PlayInEditorState state)
+	void PlayInEditor::SetState(PlayInEditorState state)
 	{
 		if (!gApplication().isEditor())
 			return;
@@ -36,7 +36,7 @@ namespace bs
 		mNextState = state;
 	}
 
-	void PlayInEditor::setStateImmediate(PlayInEditorState state)
+	void PlayInEditor::SetStateImmediate(PlayInEditorState state)
 	{
 		if (mState == state)
 			return;
@@ -98,7 +98,7 @@ namespace bs
 		}		
 	}
 
-	void PlayInEditor::frameStep()
+	void PlayInEditor::FrameStep()
 	{
 		if (!gApplication().isEditor())
 			return;
@@ -116,7 +116,7 @@ namespace bs
 		mFrameStepActive = true;
 	}
 
-	void PlayInEditor::update()
+	void PlayInEditor::Update()
 	{
 		if (mState == PlayInEditorState::Playing)
 			mPausableTime += gTime().getFrameDelta();
@@ -134,9 +134,9 @@ namespace bs
 		}
 	}
 
-	void PlayInEditor::saveSceneInMemory()
+	void PlayInEditor::SaveSceneInMemory()
 	{
-		mSavedScene = SceneManager::instance().getMainScene()->getRoot()->clone(false, true);
+		mSavedScene = SceneManager::Instance().getMainScene()->getRoot()->clone(false, true);
 
 		// Remove objects with "dont save" flag
 		Stack<HSceneObject> todo;
@@ -158,7 +158,7 @@ namespace bs
 		}
 	}
 
-	void PlayInEditor::setSystemsPauseState(bool paused)
+	void PlayInEditor::SetSystemsPauseState(bool paused)
 	{
 		gPhysics().setPaused(paused);
 		gAudio().setPaused(paused);

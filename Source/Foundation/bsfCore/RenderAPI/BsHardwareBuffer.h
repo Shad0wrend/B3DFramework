@@ -34,10 +34,10 @@ namespace bs
 		 *							the method returns null.							
 		 * @param[in]	queueIdx	Device queue to perform any read/write operations on. See @ref queuesDoc.
 		 */
-		virtual void* lock(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx = 0, UINT32 queueIdx = 0)
+		virtual void* Lock(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx = 0, UINT32 queueIdx = 0)
 		{
-			assert(!isLocked() && "Cannot lock this buffer, it is already locked!");
-			void* ret = map(offset, length, options, deviceIdx, queueIdx);
+			assert(!IsLocked() && "Cannot lock this buffer, it is already locked!");
+			void* ret = Map(offset, length, options, deviceIdx, queueIdx);
 			mIsLocked = true;
 
 			return ret;
@@ -53,17 +53,17 @@ namespace bs
 		 *							the method returns null.
 		 * @param[in]	queueIdx	Device queue to perform any read/write operations on. See @ref queuesDoc.
 		 */
-		void* lock(GpuLockOptions options, UINT32 deviceIdx = 0, UINT32 queueIdx = 0)
+		void* Lock(GpuLockOptions options, UINT32 deviceIdx = 0, UINT32 queueIdx = 0)
 		{
-			return this->lock(0, mSize, options, deviceIdx, queueIdx);
+			return this->Lock(0, mSize, options, deviceIdx, queueIdx);
 		}
 
 		/**	Releases the lock on this buffer. */
-		virtual void unlock()
+		virtual void Unlock()
 		{
-			assert(isLocked() && "Cannot unlock this buffer, it is not locked!");
+			assert(IsLocked() && "Cannot unlock this buffer, it is not locked!");
 
-			unmap();
+			Unmap();
 			mIsLocked = false;
 		}
 
@@ -79,7 +79,7 @@ namespace bs
 		 *							no data will be read.		
 		 * @param[in]	queueIdx	Device queue to perform the read operation on. See @ref queuesDoc.
 		 */
-		virtual void readData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx = 0, UINT32 queueIdx = 0) = 0;
+		virtual void ReadData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx = 0, UINT32 queueIdx = 0) = 0;
 
 		/**
 		 * Writes data into a portion of the buffer from the source memory.
@@ -91,7 +91,7 @@ namespace bs
 		 * @param[in]	writeFlags	Optional write flags that may affect performance.
 		 * @param[in]	queueIdx	Device queue to perform the write operation on. See @ref queuesDoc.
 		 */
-		virtual void writeData(UINT32 offset, UINT32 length, const void* source,
+		virtual void WriteData(UINT32 offset, UINT32 length, const void* source,
 				BufferWriteType writeFlags = BWT_NORMAL, UINT32 queueIdx = 0) = 0;
 
 		/**
@@ -106,7 +106,7 @@ namespace bs
 		 * @param[in]	commandBuffer		Command buffer to queue the copy operation on. If null, main command buffer is
 		 *									used.
 		 */
-		virtual void copyData(HardwareBuffer& srcBuffer, UINT32 srcOffset, UINT32 dstOffset, UINT32 length,
+		virtual void CopyData(HardwareBuffer& srcBuffer, UINT32 srcOffset, UINT32 dstOffset, UINT32 length,
 			bool discardWholeBuffer = false, const SPtr<ct::CommandBuffer>& commandBuffer = nullptr) = 0;
 
 		/**
@@ -116,20 +116,20 @@ namespace bs
 		 * @param[in]	commandBuffer	Command buffer to queue the copy operation on. If null, main command buffer is
 		 *								used.
 		 */
-		virtual void copyData(HardwareBuffer& srcBuffer, const SPtr<ct::CommandBuffer>& commandBuffer = nullptr)
+		virtual void CopyData(HardwareBuffer& srcBuffer, const SPtr<ct::CommandBuffer>& commandBuffer = nullptr)
 		{
-			UINT32 sz = std::min(getSize(), srcBuffer.getSize());
-			copyData(srcBuffer, 0, 0, sz, true, commandBuffer);
+			UINT32 sz = std::min(GetSize(), srcBuffer.GetSize());
+			CopyData(srcBuffer, 0, 0, sz, true, commandBuffer);
 		}
 			
 		/** Returns the size of this buffer in bytes. */
-		UINT32 getSize() const { return mSize; }
+		UINT32 GetSize() const { return mSize; }
 
 		/**	Returns whether or not this buffer is currently locked. */
-		bool isLocked() const { return mIsLocked; }
+		bool IsLocked() const { return mIsLocked; }
 
 		/** Returns a mask signifying on which devices has been this buffer created on. */
-		GpuDeviceFlags getDeviceMask() const { return mDeviceMask; }
+		GpuDeviceFlags GetDeviceMask() const { return mDeviceMask; }
 
 	protected:
 		friend class HardwareBufferManager;
@@ -146,11 +146,11 @@ namespace bs
 		{  }
 
 		/** @copydoc lock */
-		virtual void* map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx,
+		virtual void* Map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx,
 			UINT32 queueIdx) { return nullptr; }
 
 		/** @copydoc unlock */
-		virtual void unmap() { }
+		virtual void Unmap() { }
 
 	protected:
 		UINT32 mSize;

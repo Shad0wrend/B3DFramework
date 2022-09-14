@@ -19,10 +19,10 @@ namespace bs { namespace ct
 		~D3D11GpuParamBlockBuffer();
 
 		/**	Returns internal DX11 buffer object. */
-		ID3D11Buffer* getD3D11Buffer() const;
+		ID3D11Buffer* GetD3D11Buffer() const;
 	protected:
 		/** @copydoc GpuParamBlockBuffer::initialize */
-		void initialize() override;
+		void Initialize() ;
 	};
 
 	/** @} */

@@ -35,7 +35,7 @@ namespace bs
 	}
 
 	template<class T>
-	LookupTable TColorDistribution<T>::toLookupTable(UINT32 numSamples, bool ignoreRange) const
+	LookupTable TColorDistribution<T>::ToLookupTable(UINT32 numSamples, bool ignoreRange) const
 	{
 		numSamples = std::max(1U, numSamples);
 
@@ -95,7 +95,7 @@ namespace bs
 	template struct BS_CORE_EXPORT TColorDistribution<ColorGradientHDR>;
 
 	template <class T>
-	LookupTable TDistribution<T>::toLookupTable(UINT32 numSamples, bool ignoreRange) const
+	LookupTable TDistribution<T>::ToLookupTable(UINT32 numSamples, bool ignoreRange) const
 	{
 		numSamples = std::max(1U, numSamples);
 

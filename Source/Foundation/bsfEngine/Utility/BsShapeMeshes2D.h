@@ -32,7 +32,7 @@ namespace bs
 		 * @note
 		 * Primitives are output in the form of a triangle list.
 		 */
-		static void solidQuad(const Rect2& area, const SPtr<MeshData>& meshData, UINT32 vertexOffset, UINT32 indexOffset);
+		static void SolidQuad(const Rect2& area, const SPtr<MeshData>& meshData, UINT32 vertexOffset, UINT32 indexOffset);
 
 		/**
 		 * Fills the mesh data with vertices representing a per-pixel line.
@@ -51,7 +51,7 @@ namespace bs
 		 * @note
 		 * Primitives are output in the form of a line list.
 		 */
-		static void pixelLine(const Vector2& a, const Vector2& b, const SPtr<MeshData>& meshData, UINT32 vertexOffset,
+		static void PixelLine(const Vector2& a, const Vector2& b, const SPtr<MeshData>& meshData, UINT32 vertexOffset,
 			UINT32 indexOffset);
 
 		/**
@@ -77,7 +77,7 @@ namespace bs
 		 * @note
 		 * Primitives are output in the form of a triangle list.
 		 */
-		static void quadLine(const Vector2& a, const Vector2& b, float width, float border, const Color& color,
+		static void QuadLine(const Vector2& a, const Vector2& b, float width, float border, const Color& color,
 			const SPtr<MeshData>& meshData, UINT32 vertexOffset, UINT32 indexOffset);
 
 		/**
@@ -96,7 +96,7 @@ namespace bs
 		 * @note
 		 * Primitives are output in the form of a line list.
 		 */
-		static void pixelLineList(const Vector<Vector2>& linePoints, const SPtr<MeshData>& meshData, UINT32 vertexOffset,
+		static void PixelLineList(const Vector<Vector2>& linePoints, const SPtr<MeshData>& meshData, UINT32 vertexOffset,
 			UINT32 indexOffset);
 
 		/**
@@ -121,7 +121,7 @@ namespace bs
 		 * @note
 		 * Primitives are output in the form of a triangle list.
 		 */
-		static void quadLineList(const Vector<Vector2>& linePoints, float width, float border,
+		static void QuadLineList(const Vector<Vector2>& linePoints, float width, float border,
 			const Color& color, const SPtr<MeshData>& meshData, UINT32 vertexOffset, UINT32 indexOffset);
 
 		/**
@@ -141,7 +141,7 @@ namespace bs
 		 *								buffer will be used for rendering. If false then (numLines * 6) vertices will be
 		 *								generated.
 		 */
-		static void quadLineList(const Vector2* linePoints, UINT32 numPoints, float width, float border, UINT8* outVertices,
+		static void QuadLineList(const Vector2* linePoints, UINT32 numPoints, float width, float border, UINT8* outVertices,
 			UINT32 vertexStride, bool indexed);
 
 		static const UINT32 NUM_VERTICES_AA_LINE;
@@ -158,7 +158,7 @@ namespace bs
 		 * @param[out]	outIndices		Output buffer that will store the index data. Indices are 32bit.
 		 * @param[in]	indexOffset 	Offset in number of indices from the start of the buffer to start writing at.
 		 */
-		static void pixelLine(const Vector2& a, const Vector2& b, UINT8* outVertices,
+		static void PixelLine(const Vector2& a, const Vector2& b, UINT8* outVertices,
 			UINT32 vertexOffset, UINT32 vertexStride, UINT32* outIndices, UINT32 indexOffset);
 
 		/**
@@ -172,7 +172,7 @@ namespace bs
 		 * @param[out]	outIndices		Output buffer that will store the index data. Indices are 32bit.
 		 * @param[in]	indexOffset 	Offset in number of indices from the start of the buffer to start writing at.
 		 */
-		static void pixelSolidPolygon(const Vector<Vector2>& points, UINT8* outVertices,
+		static void PixelSolidPolygon(const Vector<Vector2>& points, UINT8* outVertices,
 			UINT32 vertexOffset, UINT32 vertexStride, UINT32* outIndices, UINT32 indexOffset);
 	};
 

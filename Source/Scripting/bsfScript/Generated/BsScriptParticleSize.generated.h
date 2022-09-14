@@ -18,12 +18,12 @@ namespace bs
 
 		ScriptParticleSize(MonoObject* managedInstance, const SPtr<ParticleSize>& value);
 
-		static MonoObject* create(const SPtr<ParticleSize>& value);
+		static MonoObject* Create(const SPtr<ParticleSize>& value);
 
 	private:
-		static void Internal_setOptions(ScriptParticleSize* thisPtr, __PARTICLE_SIZE_DESCInterop* options);
-		static void Internal_getOptions(ScriptParticleSize* thisPtr, __PARTICLE_SIZE_DESCInterop* __output);
-		static void Internal_create(MonoObject* managedInstance, __PARTICLE_SIZE_DESCInterop* desc);
-		static void Internal_create0(MonoObject* managedInstance);
+		static void InternalSetOptions(ScriptParticleSize* thisPtr, __PARTICLE_SIZE_DESCInterop* options);
+		static void InternalGetOptions(ScriptParticleSize* thisPtr, __PARTICLE_SIZE_DESCInterop* __output);
+		static void InternalCreate(MonoObject* managedInstance, __PARTICLE_SIZE_DESCInterop* desc);
+		static void InternalCreate0(MonoObject* managedInstance);
 	};
 }

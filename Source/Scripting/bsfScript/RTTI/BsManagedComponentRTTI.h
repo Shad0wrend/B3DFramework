@@ -27,12 +27,12 @@ namespace bs
 			BS_RTTI_MEMBER_PLAIN(mMissingType, 3)
 		BS_END_RTTI_MEMBERS
 
-		SPtr<ManagedSerializableObject> getObjectData(ManagedComponent* obj)
+		SPtr<ManagedSerializableObject> GetObjectData(ManagedComponent* obj)
 		{
 			return mSerializedObjectData;
 		}
 
-		void setObjectData(ManagedComponent* obj, SPtr<ManagedSerializableObject> val)
+		void SetObjectData(ManagedComponent* obj, SPtr<ManagedSerializableObject> val)
 		{
 			obj->mSerializedObjectData = val;
 		}
@@ -43,7 +43,7 @@ namespace bs
 			addReflectablePtrField("mObjectData", 2, &ManagedComponentRTTI::getObjectData, &ManagedComponentRTTI::setObjectData);
 		}
 
-		void onSerializationStarted(IReflectable* obj, SerializationContext* context) override
+		void OnSerializationStarted(IReflectable* obj, SerializationContext* context) override
 		{
 			ManagedComponent* mc = static_cast<ManagedComponent*>(obj);
 			MonoObject* managedInstance = mc->getManagedInstance();
@@ -54,20 +54,20 @@ namespace bs
 				mSerializedObjectData = mc->mSerializedObjectData;
 		}
 
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "ManagedComponent";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_ManagedComponent;
 		}
 
 		SPtr<IReflectable> newRTTIObject() override
 		{
-			return SceneObject::createEmptyComponent<ManagedComponent>();
+			return SceneObject::CreateEmptyComponent<ManagedComponent>();
 		}
 
 	private:

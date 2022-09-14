@@ -26,11 +26,11 @@ namespace bs
 		 * @param[in]	type				Specific type of drop down box to display.
 		 * @param[in]	onClosedCallback	Callback triggered when drop down box is closed.
 		 */
-		GameObjectHandle<GUIDropDownMenu> openDropDownBox(const DROP_DOWN_BOX_DESC& desc,
+		GameObjectHandle<GUIDropDownMenu> OpenDropDownBox(const DROP_DOWN_BOX_DESC& desc,
 			GUIDropDownType type, std::function<void()> onClosedCallback);
 
 		/**	Closes the currently active drop down box (if any). */
-		void closeDropDownBox();
+		void CloseDropDownBox();
 
 	private:
 		HSceneObject mDropDownSO;

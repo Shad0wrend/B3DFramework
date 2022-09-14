@@ -28,20 +28,20 @@ namespace bs
 			BS_RTTI_MEMBER_PLAIN(mAttenuation, 8)
 		BS_END_RTTI_MEMBERS
 	public:
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "CAudioSource";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_CAudioSource;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() override
 		{
-			return SceneObject::createEmptyComponent<CAudioSource>();
+			return SceneObject::CreateEmptyComponent<CAudioSource>();
 		}
 	};
 

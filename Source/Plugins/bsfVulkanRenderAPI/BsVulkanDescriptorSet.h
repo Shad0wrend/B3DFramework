@@ -19,10 +19,10 @@ namespace bs { namespace ct
 		~VulkanDescriptorSet();
 
 		/** Returns a handle to the Vulkan descriptor set object. */
-		VkDescriptorSet getHandle() const { return mSet; }
+		VkDescriptorSet GetHandle() const { return mSet; }
 
 		/** Updates the descriptor set with the provided values. */
-		void write(VkWriteDescriptorSet* entries, UINT32 count);
+		void Write(VkWriteDescriptorSet* entries, UINT32 count);
 
 	protected:
 		VkDescriptorSet mSet;

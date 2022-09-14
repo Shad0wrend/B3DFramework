@@ -21,7 +21,7 @@ namespace bs
 		ScriptGUIFixedSpace(MonoObject* instance, GUIFixedSpace* fixedSpace);
 
 		/** @copydoc ScriptGUIElementBaseTBase::destroy */
-		void destroy() override;
+		void Destroy() ;
 
 		GUIFixedSpace* mFixedSpace;
 		bool mIsDestroyed;
@@ -29,8 +29,8 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static void internal_createInstance(MonoObject* instance, UINT32 size);
-		static void internal_setSize(ScriptGUIFixedSpace* nativeInstance, UINT32 size);
+		static void InternalCreateInstance(MonoObject* instance, UINT32 size);
+		static void InternalSetSize(ScriptGUIFixedSpace* nativeInstance, UINT32 size);
 	};
 
 	/** @} */

@@ -15,15 +15,15 @@ namespace bs
 
 		ScriptSceneInstance(MonoObject* managedInstance, const SPtr<SceneInstance>& value);
 
-		SPtr<SceneInstance> getInternal() const { return mInternal; }
-		static MonoObject* create(const SPtr<SceneInstance>& value);
+		SPtr<SceneInstance> GetInternal() const { return mInternal; }
+		static MonoObject* Create(const SPtr<SceneInstance>& value);
 
 	private:
 		SPtr<SceneInstance> mInternal;
 
-		static MonoString* Internal_getName(ScriptSceneInstance* thisPtr);
-		static MonoObject* Internal_getRoot(ScriptSceneInstance* thisPtr);
-		static bool Internal_isActive(ScriptSceneInstance* thisPtr);
-		static MonoObject* Internal_getPhysicsScene(ScriptSceneInstance* thisPtr);
+		static MonoString* InternalGetName(ScriptSceneInstance* thisPtr);
+		static MonoObject* InternalGetRoot(ScriptSceneInstance* thisPtr);
+		static bool InternalIsActive(ScriptSceneInstance* thisPtr);
+		static MonoObject* InternalGetPhysicsScene(ScriptSceneInstance* thisPtr);
 	};
 }

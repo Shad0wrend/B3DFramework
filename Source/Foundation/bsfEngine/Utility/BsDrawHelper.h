@@ -47,68 +47,68 @@ namespace bs
 		DrawHelper();
 
 		/**	Sets a color that will be used for any shapes recorded after this call. */
-		void setColor(const Color& color);
+		void SetColor(const Color& color);
 
 		/**	Sets a transform matrix that will be used for any shapes recorded after this call. */
-		void setTransform(const Matrix4& transform);
+		void SetTransform(const Matrix4& transform);
 
 		/** Sets the layer bitfield that can be used for filtering which objects are output into the final mesh. */
-		void setLayer(UINT64 layer);
+		void SetLayer(UINT64 layer);
 
 		/**	Records a solid cuboid with the specified properties in the internal draw queue. */
-		void cube(const Vector3& position, const Vector3& extents);
+		void Cube(const Vector3& position, const Vector3& extents);
 
 		/**	Records a solid sphere with the specified properties in the internal draw queue. */
-		void sphere(const Vector3& position, float radius, UINT32 quality = 1);
+		void Sphere(const Vector3& position, float radius, UINT32 quality = 1);
 
 		/**	Records a wireframe cube with the specified properties in the internal draw queue. */
-		void wireCube(const Vector3& position, const Vector3& extents);
+		void WireCube(const Vector3& position, const Vector3& extents);
 
 		/**	Records a wireframe sphere with the specified properties in the internal draw queue. */
-		void wireSphere(const Vector3& position, float radius, UINT32 quality = 10);
+		void WireSphere(const Vector3& position, float radius, UINT32 quality = 10);
 
 		/**	Records a wireframe hemisphere with the specified properties in the internal draw queue. */
-		void wireHemisphere(const Vector3& position, float radius, UINT32 quality = 10);
+		void WireHemisphere(const Vector3& position, float radius, UINT32 quality = 10);
 
 		/**	Records a line with the specified properties in the internal draw queue. */
-		void line(const Vector3& start, const Vector3& end);
+		void Line(const Vector3& start, const Vector3& end);
 
 		/**	
 		 * Records a list of lines in the internal draw queue. The list must contain lines as pair of vertices, starting
 		 * point followed by an end point, and so on.
 		 */
-		void lineList(const Vector<Vector3>& lines);
+		void LineList(const Vector<Vector3>& lines);
 
 		/**	Records a wireframe frustum with the specified properties in the internal draw queue. */
-		void frustum(const Vector3& position, float aspect, Degree FOV, float near, float far);
+		void Frustum(const Vector3& position, float aspect, Degree FOV, float near, float far);
 
 		/**	Records a solid cone with the specified properties in the internal draw queue. */
-		void cone(const Vector3& base, const Vector3& normal, float height, float radius,
+		void Cone(const Vector3& base, const Vector3& normal, float height, float radius,
 			const Vector2& scale = Vector2::ONE, UINT32 quality = 10);
 
 		/**	Records a wire cone with the specified properties in the internal draw queue. */
-		void wireCone(const Vector3& base, const Vector3& normal, float height, float radius,
+		void WireCone(const Vector3& base, const Vector3& normal, float height, float radius,
 			const Vector2& scale = Vector2::ONE, UINT32 quality = 10);
 
 		/**	Records a solid disc with the specified properties in the internal draw queue. */
-		void disc(const Vector3& position, const Vector3& normal, float radius, UINT32 quality = 10);
+		void Disc(const Vector3& position, const Vector3& normal, float radius, UINT32 quality = 10);
 
 		/**	Records a wireframe disc with the specified properties in the internal draw queue. */
-		void wireDisc(const Vector3& position, const Vector3& normal, float radius, UINT32 quality = 10);
+		void WireDisc(const Vector3& position, const Vector3& normal, float radius, UINT32 quality = 10);
 
 		/**	Records a solid arc with the specified properties in the internal draw queue. */
-		void arc(const Vector3& position, const Vector3& normal, float radius, Degree startAngle, Degree amountAngle,
+		void Arc(const Vector3& position, const Vector3& normal, float radius, Degree startAngle, Degree amountAngle,
 			UINT32 quality = 10);
 
 		/**	Records a wireframe arc with the specified properties in the internal draw queue. */
-		void wireArc(const Vector3& position, const Vector3& normal, float radius, Degree startAngle, Degree amountAngle,
+		void WireArc(const Vector3& position, const Vector3& normal, float radius, Degree startAngle, Degree amountAngle,
 			UINT32 quality = 10);
 
 		/** Records a 3D mesh to be drawn as wireframe in the internal draw queue. */
-		void wireMesh(const SPtr<MeshData>& meshData);
+		void WireMesh(const SPtr<MeshData>& meshData);
 
 		/**	Records a solid rectangle with the specified properties in the internal draw queue. */
-		void rectangle(const Rect3& area);
+		void Rectangle(const Rect3& area);
 
 		/**
 		 * Records a mesh representing 2D text with the specified properties in the internal draw queue.
@@ -118,10 +118,10 @@ namespace bs
 		 * @param[in]	font		Font to use for rendering the text's characters.
 		 * @param[in]	size		Size of the characters, in points.
 		 */
-		void text(const Vector3& position, const String& text, const HFont& font, UINT32 size = 10);
+		void Text(const Vector3& position, const String& text, const HFont& font, UINT32 size = 10);
 
 		/**	Clears all recorded shapes. */
-		void clear();
+		void Clear();
 
 		/**
 		 * Generates a set of meshes from all the recorded solid and wireframe shapes. The meshes can be accessed via
@@ -134,7 +134,7 @@ namespace bs
 		 *						in the mesh. This bitfield will be ANDed with the layer specified when recording the shape.
 		 * @return				Generated mesh data.
 		 */
-		Vector<ShapeMeshData> buildMeshes(SortType sorting = SortType::None,
+		Vector<ShapeMeshData> BuildMeshes(SortType sorting = SortType::None,
 			const Camera* camera = nullptr, UINT64 layers = 0xFFFFFFFFFFFFFFFF);
 
 	private:

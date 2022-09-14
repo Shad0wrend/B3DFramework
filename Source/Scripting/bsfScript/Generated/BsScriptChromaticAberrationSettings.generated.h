@@ -17,17 +17,17 @@ namespace bs
 
 		ScriptChromaticAberrationSettings(MonoObject* managedInstance, const SPtr<ChromaticAberrationSettings>& value);
 
-		static MonoObject* create(const SPtr<ChromaticAberrationSettings>& value);
+		static MonoObject* Create(const SPtr<ChromaticAberrationSettings>& value);
 
 	private:
-		static void Internal_ChromaticAberrationSettings(MonoObject* managedInstance);
-		static MonoObject* Internal_getfringeTexture(ScriptChromaticAberrationSettings* thisPtr);
-		static void Internal_setfringeTexture(ScriptChromaticAberrationSettings* thisPtr, MonoObject* value);
-		static bool Internal_getenabled(ScriptChromaticAberrationSettings* thisPtr);
-		static void Internal_setenabled(ScriptChromaticAberrationSettings* thisPtr, bool value);
-		static ChromaticAberrationType Internal_gettype(ScriptChromaticAberrationSettings* thisPtr);
-		static void Internal_settype(ScriptChromaticAberrationSettings* thisPtr, ChromaticAberrationType value);
-		static float Internal_getshiftAmount(ScriptChromaticAberrationSettings* thisPtr);
-		static void Internal_setshiftAmount(ScriptChromaticAberrationSettings* thisPtr, float value);
+		static void InternalChromaticAberrationSettings(MonoObject* managedInstance);
+		static MonoObject* InternalGetfringeTexture(ScriptChromaticAberrationSettings* thisPtr);
+		static void InternalSetfringeTexture(ScriptChromaticAberrationSettings* thisPtr, MonoObject* value);
+		static bool InternalGetenabled(ScriptChromaticAberrationSettings* thisPtr);
+		static void InternalSetenabled(ScriptChromaticAberrationSettings* thisPtr, bool value);
+		static ChromaticAberrationType InternalGettype(ScriptChromaticAberrationSettings* thisPtr);
+		static void InternalSettype(ScriptChromaticAberrationSettings* thisPtr, ChromaticAberrationType value);
+		static float InternalGetshiftAmount(ScriptChromaticAberrationSettings* thisPtr);
+		static void InternalSetshiftAmount(ScriptChromaticAberrationSettings* thisPtr, float value);
 	};
 }

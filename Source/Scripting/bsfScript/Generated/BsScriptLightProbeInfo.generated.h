@@ -20,10 +20,10 @@ namespace bs
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "LightProbeInfo")
 
-		static MonoObject* box(const __LightProbeInfoInterop& value);
-		static __LightProbeInfoInterop unbox(MonoObject* value);
-		static LightProbeInfo fromInterop(const __LightProbeInfoInterop& value);
-		static __LightProbeInfoInterop toInterop(const LightProbeInfo& value);
+		static MonoObject* Box(const __LightProbeInfoInterop& value);
+		static __LightProbeInfoInterop Unbox(MonoObject* value);
+		static LightProbeInfo FromInterop(const __LightProbeInfoInterop& value);
+		static __LightProbeInfoInterop ToInterop(const LightProbeInfo& value);
 
 	private:
 		ScriptLightProbeInfo(MonoObject* managedInstance);

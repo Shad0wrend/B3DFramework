@@ -16,7 +16,7 @@ namespace bs { namespace ct
 	{
 	public:
 		~D3D11RasterizerState();
-		ID3D11RasterizerState* getInternal() const { return mRasterizerState; }
+		ID3D11RasterizerState* GetInternal() const { return mRasterizerState; }
 
 	protected:
 		friend class D3D11RenderStateManager;
@@ -24,7 +24,7 @@ namespace bs { namespace ct
 		D3D11RasterizerState(const RASTERIZER_STATE_DESC& desc, UINT32 id);
 
 		/** @copydoc RasterizerState::createInternal */
-		void createInternal() override;
+		void CreateInternal() ;
 
 		ID3D11RasterizerState* mRasterizerState = nullptr;
 	};

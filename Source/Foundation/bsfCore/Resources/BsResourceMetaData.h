@@ -23,8 +23,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ResourceMetaDataRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** @} */

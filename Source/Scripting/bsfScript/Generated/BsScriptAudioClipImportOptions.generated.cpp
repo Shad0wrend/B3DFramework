@@ -29,7 +29,7 @@ namespace bs
 
 	}
 
-	MonoObject* ScriptAudioClipImportOptions::create(const SPtr<AudioClipImportOptions>& value)
+	MonoObject* ScriptAudioClipImportOptions::Create(const SPtr<AudioClipImportOptions>& value)
 	{
 		if(value == nullptr) return nullptr; 
 
@@ -42,7 +42,7 @@ namespace bs
 	}
 	void ScriptAudioClipImportOptions::Internal_create(MonoObject* managedInstance)
 	{
-		SPtr<AudioClipImportOptions> instance = AudioClipImportOptions::create();
+		SPtr<AudioClipImportOptions> instance = AudioClipImportOptions::Create();
 		new (bs_alloc<ScriptAudioClipImportOptions>())ScriptAudioClipImportOptions(managedInstance, instance);
 	}
 	AudioFormat ScriptAudioClipImportOptions::Internal_getformat(ScriptAudioClipImportOptions* thisPtr)

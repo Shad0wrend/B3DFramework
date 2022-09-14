@@ -14,7 +14,7 @@ namespace bs
 	{
 		PxPlaneGeometry geometry;
 
-		PxShape* shape = physx->createShape(geometry, *gPhysX().getDefaultMaterial(), true);
+		PxShape* shape = physx->createShape(geometry, *gPhysX().GetDefaultMaterial(), true);
 		shape->setLocalPose(toPxTransform(position, rotation));
 		shape->userData = this;
 
@@ -26,7 +26,7 @@ namespace bs
 		bs_delete(mInternal);
 	}
 
-	FPhysXCollider* PhysXPlaneCollider::getInternal() const
+	FPhysXCollider* PhysXPlaneCollider::GetInternal() const
 	{
 		return static_cast<FPhysXCollider*>(mInternal);
 	}

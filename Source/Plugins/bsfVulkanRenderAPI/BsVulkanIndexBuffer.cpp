@@ -20,11 +20,11 @@ namespace bs { namespace ct
 		mBuffer = bs_pool_new<VulkanHardwareBuffer>(VulkanHardwareBuffer::BT_INDEX, BF_UNKNOWN, mUsage, mSize, mDeviceMask);
 		mBufferDeleter = &deleteBuffer;
 
-		IndexBuffer::initialize();
+		initialize();
 	}
 
-	VulkanBuffer* VulkanIndexBuffer::getResource(UINT32 deviceIdx) const
+	VulkanBuffer* VulkanIndexBuffer::GetResource(UINT32 deviceIdx) const
 	{
-		return static_cast<VulkanHardwareBuffer*>(mBuffer)->getResource(deviceIdx);
+		return static_cast<VulkanHardwareBuffer*>(mBuffer)->GetResource(deviceIdx);
 	}
 }}

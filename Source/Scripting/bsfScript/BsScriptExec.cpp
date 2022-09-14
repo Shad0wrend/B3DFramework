@@ -30,19 +30,19 @@ int main(int __argc, char* __argv[])
 	}
 
 	MemStack::beginThread();
-	MonoManager::startUp();
+	MonoManager::StartUp();
 
 	SPtr<EngineScriptLibrary> library = bs_shared_ptr_new<EngineScriptLibrary>();
 	ScriptManager::SetScriptLibraryInternal(library);
 
 	Path engineAssemblyPath = library->getEngineAssemblyPath();
 
-	auto& monoManager = MonoManager::instance();
+	auto& monoManager = MonoManager::Instance();
 	bs::MonoAssembly& bsfAssembly = monoManager.loadAssembly(engineAssemblyPath, ENGINE_ASSEMBLY);
 	bs::MonoAssembly& gameAssembly = monoManager.loadAssembly(Path(__argv[1]), __argv[1]);
 	gameAssembly.invoke("Program::Start");
 
-	MonoManager::shutDown();
+	MonoManager::ShutDown();
 	MemStack::endThread();
 
 	return 0;

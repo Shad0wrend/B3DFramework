@@ -47,19 +47,19 @@ namespace bs
 		 * Returns the type of the GPU buffer. Type determines which kind of views (if any) can be created for the buffer,
 		 * and how is data read or modified in it.
 		 */
-		GpuBufferType getType() const { return mDesc.type; }
+		GpuBufferType GetType() const { return mDesc.type; }
 
 		/** Returns format used by the buffer. Only relevant for standard buffers. */
-		GpuBufferFormat getFormat() const { return mDesc.format; }
+		GpuBufferFormat GetFormat() const { return mDesc.format; }
 
 		/** Returns buffer usage which determines how are planning on updating the buffer contents. */
-		GpuBufferUsage getUsage() const { return mDesc.usage; }
+		GpuBufferUsage GetUsage() const { return mDesc.usage; }
 
 		/**	Returns number of elements in the buffer. */
-		UINT32 getElementCount() const { return mDesc.elementCount; }
+		UINT32 GetElementCount() const { return mDesc.elementCount; }
 
 		/**	Returns size of a single element in the buffer in bytes. */
-		UINT32 getElementSize() const { return mDesc.elementSize; }
+		UINT32 GetElementSize() const { return mDesc.elementSize; }
 
 	protected:
 		friend class GpuBuffer;
@@ -79,16 +79,16 @@ namespace bs
 		virtual ~GpuBuffer() = default;
 
 		/** Returns properties describing the buffer. */
-		const GpuBufferProperties& getProperties() const { return mProperties; }
+		const GpuBufferProperties& GetProperties() const { return mProperties; }
 
 		/** Retrieves a core implementation of a GPU buffer usable only from the core thread. */
-		SPtr<ct::GpuBuffer> getCore() const;
+		SPtr<ct::GpuBuffer> GetCore() const;
 
 		/** Returns the size of a single element in the buffer, of the provided format, in bytes. */
-		static UINT32 getFormatSize(GpuBufferFormat format);
+		static UINT32 GetFormatSize(GpuBufferFormat format);
 
 		/** @copydoc HardwareBufferManager::createGpuBuffer */
-		static SPtr<GpuBuffer> create(const GPU_BUFFER_DESC& desc);
+		static SPtr<GpuBuffer> Create(const GPU_BUFFER_DESC& desc);
 
 	protected:
 		friend class HardwareBufferManager;
@@ -96,7 +96,7 @@ namespace bs
 		GpuBuffer(const GPU_BUFFER_DESC& desc);
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> createCore() const override;
+		SPtr<ct::CoreObject> CreateCore() const ;
 
 		GpuBufferProperties mProperties;
 	};
@@ -120,18 +120,18 @@ namespace bs
 		virtual ~GpuBuffer();
 
 		/** Returns properties describing the buffer. */
-		const GpuBufferProperties& getProperties() const { return mProperties; }
+		const GpuBufferProperties& GetProperties() const { return mProperties; }
 
 		/** @copydoc HardwareBuffer::readData */
-		void readData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx = 0, UINT32 queueIdx = 0) override;
+		void ReadData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx = 0, UINT32 queueIdx = 0) override;
 
 		/** @copydoc HardwareBuffer::writeData */
-		void writeData(UINT32 offset, UINT32 length, const void* source,
+		void WriteData(UINT32 offset, UINT32 length, const void* source,
 			BufferWriteType writeFlags = BWT_NORMAL, UINT32 queueIdx = 0) override;
 
 		/** @copydoc HardwareBuffer::copyData */
-		void copyData(HardwareBuffer& srcBuffer, UINT32 srcOffset, UINT32 dstOffset, UINT32 length,
-			bool discardWholeBuffer = false, const SPtr<CommandBuffer>& commandBuffer = nullptr) override;
+		void CopyData(HardwareBuffer& srcBuffer, UINT32 srcOffset, UINT32 dstOffset, UINT32 length,
+			bool discardWholeBuffer = false, const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
 
 		/**
 		 * Returns a view of this buffer with specified format/type.
@@ -146,17 +146,17 @@ namespace bs
 		 *								deduced from format).
 		 * @return						New view of the buffer, using the provided format and type.
 		 */
-		SPtr<GpuBuffer> getView(GpuBufferType type, GpuBufferFormat format, UINT32 elementSize = 0);
+		SPtr<GpuBuffer> GetView(GpuBufferType type, GpuBufferFormat format, UINT32 elementSize = 0);
 
 		/** @copydoc bs::HardwareBufferManager::createGpuBuffer */
-		static SPtr<GpuBuffer> create(const GPU_BUFFER_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
+		static SPtr<GpuBuffer> Create(const GPU_BUFFER_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
 		/**
 		 * Creates a view of an existing hardware buffer. No internal buffer will be allocated and the provided buffer
 		 * will be used for all internal operations instead. Information provided in @p desc (such as element size and
 		 * count) must match the provided @p underlyingBuffer.
 		 */
-		static SPtr<GpuBuffer> create(const GPU_BUFFER_DESC& desc, SPtr<HardwareBuffer> underlyingBuffer);
+		static SPtr<GpuBuffer> Create(const GPU_BUFFER_DESC& desc, SPtr<HardwareBuffer> underlyingBuffer);
 	protected:
 		friend class HardwareBufferManager;
 
@@ -164,13 +164,13 @@ namespace bs
 		GpuBuffer(const GPU_BUFFER_DESC& desc, SPtr<HardwareBuffer> underlyingBuffer);
 
 		/** @copydoc HardwareBuffer::map */
-		void* map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx = 0, UINT32 queueIdx = 0) override;
+		void* Map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx = 0, UINT32 queueIdx = 0) override;
 
 		/** @copydoc HardwareBuffer::unmap */
-		void unmap() override;
+		void Unmap() override;
 
 		/** @copydoc CoreObject::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 		GpuBufferProperties mProperties;
 

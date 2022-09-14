@@ -12,7 +12,7 @@ namespace bs
 
 	}
 
-	HShaderInclude ShaderInclude::create(const String& includeString)
+	HShaderInclude ShaderInclude::Create(const String& includeString)
 	{
 		return static_resource_cast<ShaderInclude>(gResources().CreateResourceHandleInternal(CreatePtrInternal(includeString)));
 	}
@@ -27,13 +27,13 @@ namespace bs
 		return shaderIncludePtr;
 	}
 
-	RTTITypeBase* ShaderInclude::getRTTIStatic()
+	RTTITypeBase* ShaderInclude::GetRttiStatic()
 	{
-		return ShaderIncludeRTTI::instance();
+		return ShaderIncludeRTTI::Instance();
 	}
 
-	RTTITypeBase* ShaderInclude::getRTTI() const
+	RTTITypeBase* ShaderInclude::GetRtti() const
 	{
-		return ShaderInclude::getRTTIStatic();
+		return ShaderInclude::GetRttiStatic();
 	}
 }

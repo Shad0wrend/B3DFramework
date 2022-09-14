@@ -16,9 +16,9 @@ namespace bs
 
 		ScriptMorphShapes(MonoObject* managedInstance, const SPtr<MorphShapes>& value);
 
-		static MonoObject* create(const SPtr<MorphShapes>& value);
+		static MonoObject* Create(const SPtr<MorphShapes>& value);
 
 	private:
-		static MonoArray* Internal_getChannels(ScriptMorphShapes* thisPtr);
+		static MonoArray* InternalGetChannels(ScriptMorphShapes* thisPtr);
 	};
 }

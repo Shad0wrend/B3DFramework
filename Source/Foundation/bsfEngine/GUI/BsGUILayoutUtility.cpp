@@ -6,20 +6,20 @@
 
 namespace bs
 {
-	Vector2I GUILayoutUtility::calcOptimalSize(const GUIElementBase* elem)
+	Vector2I GUILayoutUtility::CalcOptimalSize(const GUIElementBase* elem)
 	{
 		return elem->CalculateLayoutSizeRangeInternal().optimal;
 	}
 
-	Vector2I GUILayoutUtility::calcActualSize(UINT32 width, UINT32 height, GUILayout* layout, bool updateOptimalSizes)
+	Vector2I GUILayoutUtility::CalcActualSize(UINT32 width, UINT32 height, GUILayout* layout, bool updateOptimalSizes)
 	{
 		if (updateOptimalSizes)
 			layout->UpdateOptimalLayoutSizesInternal();
 
-		return calcActualSizeInternal(width, height, layout);
+		return CalcActualSizeInternal(width, height, layout);
 	}
 
-	Vector2I GUILayoutUtility::calcActualSizeInternal(UINT32 width, UINT32 height, GUILayout* layout)
+	Vector2I GUILayoutUtility::CalcActualSizeInternal(UINT32 width, UINT32 height, GUILayout* layout)
 	{
 		UINT32 numElements = (UINT32)layout->GetNumChildrenInternal();
 		Rect2I* elementAreas = nullptr;
@@ -41,7 +41,7 @@ namespace bs
 
 			if (child->GetTypeInternal() == GUIElementBase::Type::Layout || child->GetTypeInternal() == GUIElementBase::Type::Panel)
 			{
-				Vector2I childActualSize = calcActualSizeInternal(childArea.width, childArea.height, static_cast<GUILayout*>(child));
+				Vector2I childActualSize = CalcActualSizeInternal(childArea.width, childArea.height, static_cast<GUILayout*>(child));
 				actualAreas[i].width = (UINT32)childActualSize.x;
 				actualAreas[i].height = (UINT32)childActualSize.y;
 			}

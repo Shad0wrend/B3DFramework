@@ -19,12 +19,12 @@ namespace bs
 		setName("SphericalJoint");
 	}
 
-	LimitConeRange CSphericalJoint::getLimit() const
+	LimitConeRange CSphericalJoint::GetLimit() const
 	{
 		return mDesc.limit;
 	}
 
-	void CSphericalJoint::setLimit(const LimitConeRange& limit)
+	void CSphericalJoint::SetLimit(const LimitConeRange& limit)
 	{
 		if (limit == mDesc.limit)
 			return;
@@ -35,7 +35,7 @@ namespace bs
 			GetInternalInternal()->setLimit(limit);
 	}
 	
-	void CSphericalJoint::setFlag(SphericalJointFlag flag, bool enabled)
+	void CSphericalJoint::SetFlag(SphericalJointFlag flag, bool enabled)
 	{
 		bool isEnabled = ((UINT32)mDesc.flag & (UINT32)flag) != 0;
 		if (isEnabled == enabled)
@@ -50,27 +50,27 @@ namespace bs
 			GetInternalInternal()->setFlag(flag, enabled);
 	}
 
-	bool CSphericalJoint::hasFlag(SphericalJointFlag flag) const
+	bool CSphericalJoint::HasFlag(SphericalJointFlag flag) const
 	{
 		return ((UINT32)mDesc.flag & (UINT32)flag) != 0;
 	}
 
-	SPtr<Joint> CSphericalJoint::createInternal()
+	SPtr<Joint> CSphericalJoint::CreateInternal()
 	{
 		const SPtr<SceneInstance>& scene = SO()->getScene();
-		SPtr<Joint> joint = SphericalJoint::create(*scene->getPhysicsScene(), mDesc);
+		SPtr<Joint> joint = SphericalJoint::Create(*scene->getPhysicsScene(), mDesc);
 
 		joint->SetOwnerInternal(PhysicsOwnerType::Component, this);
 		return joint;
 	}
 
-	RTTITypeBase* CSphericalJoint::getRTTIStatic()
+	RTTITypeBase* CSphericalJoint::GetRttiStatic()
 	{
-		return CSphericalJointRTTI::instance();
+		return CSphericalJointRTTI::Instance();
 	}
 
-	RTTITypeBase* CSphericalJoint::getRTTI() const
+	RTTITypeBase* CSphericalJoint::GetRtti() const
 	{
-		return CSphericalJoint::getRTTIStatic();
+		return CSphericalJoint::GetRttiStatic();
 	}
 }

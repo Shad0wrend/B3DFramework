@@ -38,7 +38,7 @@ namespace bs { namespace ct
 
 		/** Helper method used for initializing variations of this material. */
 		template<bool msaa, bool singleSampleMSAA>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -59,14 +59,14 @@ namespace bs { namespace ct
 		 * @param[in]	mesh		Mesh to render.
 		 * @param[in]	output		Output texture created using the descriptor returned by getOutputDesc().
 		 */
-		void execute(const RendererView& view, const SPtr<Texture>& sceneDepth, const SPtr<Mesh>& mesh,
+		void Execute(const RendererView& view, const SPtr<Texture>& sceneDepth, const SPtr<Mesh>& mesh,
 			const SPtr<RenderTexture>& output);
 
 		/**
 		 * Returns the descriptors that can be used for creating the output render texture for this material. The render
 		 * texture is expected to have a single color attachment, and a depth attachment.
 		 */
-		static void getOutputDesc(const RendererView& view, POOLED_RENDER_TEXTURE_DESC& colorDesc,
+		static void GetOutputDesc(const RendererView& view, POOLED_RENDER_TEXTURE_DESC& colorDesc,
 			POOLED_RENDER_TEXTURE_DESC& depthDesc);
 
 		/**
@@ -77,7 +77,7 @@ namespace bs { namespace ct
 		 *									evaluated. Otherwise all samples will be evaluated.
 		 * @return							Requested variation of the material.
 		 */
-		static TetrahedraRenderMat* getVariation(bool msaa, bool singleSampleMSAA);
+		static TetrahedraRenderMat* GetVariation(bool msaa, bool singleSampleMSAA);
 	private:
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
 		GpuParamTexture mDepthBufferTex;
@@ -97,7 +97,7 @@ namespace bs { namespace ct
 
 		/** Helper method used for initializing variations of this material. */
 		template<bool msaa, bool singleSampleMSAA, bool skyOnly>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -124,7 +124,7 @@ namespace bs { namespace ct
 		 * @param[in]	output				Output texture to write the radiance to. The evaluated value will be added to
 		 *									existing radiance in the texture, using blending.
 		 */
-		void execute(const RendererView& view, const GBufferTextures& gbuffer, const SPtr<Texture>& lightProbeIndices,
+		void Execute(const RendererView& view, const GBufferTextures& gbuffer, const SPtr<Texture>& lightProbeIndices,
 			const LightProbesInfo& lightProbesInfo, const Skybox* skybox, const SPtr<Texture>& ambientOcclusion,
 			const SPtr<RenderTexture>& output);
 
@@ -138,7 +138,7 @@ namespace bs { namespace ct
 		 *									irradiance will be evaluated.
 		 * @return							Requested variation of the material.
 		 */
-		static IrradianceEvaluateMat* getVariation(bool msaa, bool singleSampleMSAA, bool skyOnly);
+		static IrradianceEvaluateMat* GetVariation(bool msaa, bool singleSampleMSAA, bool skyOnly);
 	private:
 		GBufferParams mGBufferParams;
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
@@ -217,26 +217,26 @@ namespace bs { namespace ct
 		LightProbes();
 
 		/** Notifies sthe manager that the provided light probe volume has been added. */
-		void notifyAdded(LightProbeVolume* volume);
+		void NotifyAdded(LightProbeVolume* volume);
 
 		/** Notifies the manager that the provided light probe volume has some dirty light probes. */
-		void notifyDirty(LightProbeVolume* volume);
+		void NotifyDirty(LightProbeVolume* volume);
 
 		/** Notifies the manager that all the probes in the provided volume have been removed. */
-		void notifyRemoved(LightProbeVolume* volume);
+		void NotifyRemoved(LightProbeVolume* volume);
 
 		/** Updates light probe tetrahedron data after probes changed (added/removed/moved). */
-		void updateProbes();
+		void UpdateProbes();
 
 		/** Returns true if there are any registered light probes. */
-		bool hasAnyProbes() const;
+		bool HasAnyProbes() const;
 
 		/**
 		 * Returns a set of buffers that can be used for rendering the light probes. updateProbes() must be called
 		 * at least once before the buffer is populated. If the probes changed since the last call, call updateProbes()
 		 * to refresh the buffer.
 		 */
-		LightProbesInfo getInfo() const;
+		LightProbesInfo GetInfo() const;
 
 	private:
 		/**
@@ -253,20 +253,20 @@ namespace bs { namespace ct
 		 * @param[in]		generateExtrapolationVolume	If true, the tetrahedron volume will be surrounded with points
 		 *												at "infinity" (technically just far away).
 		 */
-		void generateTetrahedronData(Vector<Vector3>& positions, Vector<TetrahedronData>& tetrahedra,
+		void GenerateTetrahedronData(Vector<Vector3>& positions, Vector<TetrahedronData>& tetrahedra,
 			Vector<TetrahedronFaceData>& faces, bool generateExtrapolationVolume = false);
 
 		/** Resizes the GPU buffer used for holding tetrahedron data, to the specified size (in number of tetraheda). */
-		void resizeTetrahedronBuffer(UINT32 count);
+		void ResizeTetrahedronBuffer(UINT32 count);
 
 		/** Resizes the GPU buffer used for holding tetrahedron face data, to the specified size (in number of faces). */
-		void resizeTetrahedronFaceBuffer(UINT32 count);
+		void ResizeTetrahedronFaceBuffer(UINT32 count);
 
 		/**
 		 * Resized the GPU buffer that stores light probe SH coefficients, to the specified number of rows (each row
 		 * holds 4096 coefficients, and each volume starts in its own row.).
 		 */
-		void resizeCoefficientTexture(UINT32 numRows);
+		void ResizeCoefficientTexture(UINT32 numRows);
 
 		Vector<VolumeInfo> mVolumes;
 		bool mTetrahedronVolumeDirty;

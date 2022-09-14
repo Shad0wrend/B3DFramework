@@ -29,7 +29,7 @@ namespace bs
 	}
 
 	template<class T>
-	void StringID::construct(T const& name)
+	void StringID::Construct(T const& name)
 	{
 		assert(StringIDUtil<T>::size(name) <= STRING_SIZE);
 
@@ -74,7 +74,7 @@ namespace bs
 	}
 
 	template<class T>
-	UINT32 StringID::calcHash(T const& input)
+	UINT32 StringID::CalcHash(T const& input)
 	{
 		UINT32 size = StringIDUtil<T>::size(input);
 
@@ -85,7 +85,7 @@ namespace bs
 		return hash;
 	}
 
-	StringID::InternalData* StringID::allocEntry()
+	StringID::InternalData* StringID::AllocEntry()
 	{
 		UINT32 chunkIdx = mNextId / ELEMENTS_PER_CHUNK;
 
@@ -114,23 +114,23 @@ namespace bs
 	class StringID::StringIDUtil<const char*>
 	{
 	public:
-		static UINT32 size(const char* const& input) { return (UINT32)strlen(input); }
-		static void copy(const char* const& input, char* dest) { memcpy(dest, input, strlen(input) + 1); }
-		static bool compare(const char* const& a, char* b) { return strcmp(a, b) == 0; }
+		static UINT32 Size(const char* const& input) { return (UINT32)strlen(input); }
+		static void Copy(const char* const& input, char* dest) { memcpy(dest, input, strlen(input) + 1); }
+		static bool Compare(const char* const& a, char* b) { return strcmp(a, b) == 0; }
 	};
 
 	template<>
 	class StringID::StringIDUtil <String>
 	{
 	public:
-		static UINT32 size(String const& input) { return (UINT32)input.length(); }
-		static void copy(String const& input, char* dest)
+		static UINT32 Size(String const& input) { return (UINT32)input.length(); }
+		static void Copy(String const& input, char* dest)
 		{
 			UINT32 len = (UINT32)input.length();
 			input.copy(dest, len);
 			dest[len] = '\0';
 		}
-		static bool compare(String const& a, char* b) { return a.compare(b) == 0; }
+		static bool Compare(String const& a, char* b) { return a.compare(b) == 0; }
 	};
 
 	template BS_UTILITY_EXPORT void StringID::construct(const char* const&);

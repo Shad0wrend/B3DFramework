@@ -69,7 +69,7 @@ namespace bs
 				StackData curData = todo.top();
 				todo.pop();
 
-				const Vector<HComponent>& components = curData.so->getComponents();
+				const Vector<HComponent>& components = curData.so->GetComponents();
 				for (auto& component : components)
 				{
 					curData.proxy->components.push_back(ComponentProxy());
@@ -77,27 +77,27 @@ namespace bs
 					ComponentProxy& componentProxy = curData.proxy->components.back();
 					componentProxy.instanceData = component->GetInstanceDataInternal();
 					componentProxy.uuid = component->getUUID();
-					componentProxy.linkId = component->getLinkId();
+					componentProxy.linkId = component->GetLinkId();
 
 					linkedInstanceData[componentProxy.linkId] = { componentProxy.instanceData, componentProxy.uuid };
 				}
 
-				UINT32 numChildren = curData.so->getNumChildren();
+				UINT32 numChildren = curData.so->GetNumChildren();
 				curData.proxy->children.resize(numChildren);
 
 				for (UINT32 i = 0; i < numChildren; i++)
 				{
-					HSceneObject child = curData.so->getChild(i);
+					HSceneObject child = curData.so->GetChild(i);
 
 					SceneObjectProxy& childProxy = curData.proxy->children[i];
 
 					childProxy.instanceData = child->GetInstanceDataInternal();
 					childProxy.uuid = child->getUUID();
-					childProxy.linkId = child->getLinkId();
+					childProxy.linkId = child->GetLinkId();
 
 					linkedInstanceData[childProxy.linkId] = { childProxy.instanceData, childProxy.uuid };
 
-					if (child->GetPrefabLinkUUIDInternal().empty())
+					if (child->GetPrefabLinkUUIDInternal().Empty())
 						todo.push({ child, &curData.proxy->children[i] });
 				}
 			}
@@ -280,7 +280,7 @@ namespace bs
 		}
 	}
 
-	void PrefabUtility::revertToPrefab(const HSceneObject& so)
+	void PrefabUtility::RevertToPrefab(const HSceneObject& so)
 	{
 		UUID prefabLinkUUID = so->getPrefabLink();
 		HPrefab prefabLink = static_resource_cast<Prefab>(gResources().loadFromUUID(prefabLinkUUID, false, ResourceLoadFlag::None));
@@ -308,7 +308,7 @@ namespace bs
 		impl::restoreLinkedInstanceData(newInstance, soProxy, linkedInstanceData);
 	}
 
-	void PrefabUtility::updateFromPrefab(const HSceneObject& so)
+	void PrefabUtility::UpdateFromPrefab(const HSceneObject& so)
 	{
 		HSceneObject topLevelObject = so;
 
@@ -423,7 +423,7 @@ namespace bs
 		gResources().unloadAllUnused();
 	}
 
-	void PrefabUtility::generatePrefabIds(const HSceneObject& sceneObject)
+	void PrefabUtility::GeneratePrefabIds(const HSceneObject& sceneObject)
 	{
 		UINT32 startingId = 0;
 
@@ -494,7 +494,7 @@ namespace bs
 		}
 	}
 
-	void PrefabUtility::clearPrefabIds(const HSceneObject& sceneObject, bool recursive, bool clearRoot)
+	void PrefabUtility::ClearPrefabIds(const HSceneObject& sceneObject, bool recursive, bool clearRoot)
 	{
 		Stack<HSceneObject> todo;
 		todo.push(sceneObject);
@@ -525,7 +525,7 @@ namespace bs
 		}
 	}
 
-	void PrefabUtility::recordPrefabDiff(const HSceneObject& sceneObject)
+	void PrefabUtility::RecordPrefabDiff(const HSceneObject& sceneObject)
 	{
 		HSceneObject topLevelObject = sceneObject;
 
@@ -557,7 +557,7 @@ namespace bs
 
 				HPrefab prefabLink = static_resource_cast<Prefab>(gResources().loadFromUUID(current->mPrefabLinkUUID, false, ResourceLoadFlag::None));
 				if (prefabLink.isLoaded(false))
-					current->mPrefabDiff = PrefabDiff::create(prefabLink->GetRootInternal(), current->getHandle());
+					current->mPrefabDiff = PrefabDiff::Create(prefabLink->GetRootInternal(), current->getHandle());
 			}
 
 			UINT32 childCount = current->getNumChildren();

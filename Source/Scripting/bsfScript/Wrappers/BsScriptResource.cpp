@@ -19,29 +19,29 @@ namespace bs
 		BS_ASSERT(mGCHandle == 0 && "Object being destroyed without its managed instance being freed first.");
 	}
 
-	MonoObject* ScriptResourceBase::getManagedInstance() const
+	MonoObject* ScriptResourceBase::GetManagedInstance() const
 	{
-		return MonoUtil::getObjectFromGCHandle(mGCHandle);
+		return MonoUtil::GetObjectFromGcHandle(mGCHandle);
 	}
 
-	MonoObject* ScriptResourceBase::getRRef(const HResource& resource, UINT32 rttiId)
+	MonoObject* ScriptResourceBase::GetRRef(const HResource& resource, UINT32 rttiId)
 	{
-		::MonoClass* rrefClass = getRRefClass(rttiId);
+		::MonoClass* rrefClass = GetRRefClass(rttiId);
 		if(!rrefClass)
 			return nullptr;
 
-		ScriptRRefBase* rref = ScriptResourceManager::instance().getScriptRRef(resource, rrefClass);
+		ScriptRRefBase* rref = ScriptResourceManager::Instance().GetScriptRRef(resource, rrefClass);
 		if(!rref)
 			return nullptr;
 
-		return rref->getManagedInstance();
+		return rref->GetManagedInstance();
 	}
 
-	void ScriptResourceBase::setManagedInstance(::MonoObject* instance)
+	void ScriptResourceBase::SetManagedInstance(::MonoObject* instance)
 	{
 		BS_ASSERT(mGCHandle == 0 && "Attempting to set a new managed instance without freeing the old one.");
 
-		mGCHandle = MonoUtil::newGCHandle(instance, false);
+		mGCHandle = MonoUtil::NewGcHandle(instance, false);
 	}
 
 	void ScriptResourceBase::freeManagedInstance()
@@ -53,20 +53,20 @@ namespace bs
 		}
 	}
 
-	void ScriptResourceBase::destroy()
+	void ScriptResourceBase::Destroy()
 	{
-		ScriptResourceManager::instance().destroyScriptResource(this);
+		ScriptResourceManager::Instance().destroyScriptResource(this);
 	}
 
-	::MonoClass* ScriptResourceBase::getManagedResourceClass(UINT32 rttiId)
+	::MonoClass* ScriptResourceBase::GetManagedResourceClass(UINT32 rttiId)
 	{
-		if(rttiId == Resource::getRTTIStatic()->getRTTIId())
+		if(rttiId == Resource::GetRttiStatic()->getRTTIId())
 			return ScriptResource::getMetaData()->scriptClass->GetInternalClassInternal();
-		else if(rttiId == ManagedResource::getRTTIStatic()->getRTTIId())
+		else if(rttiId == ManagedResource::GetRttiStatic()->getRTTIId())
 			return ScriptResource::getMetaData()->scriptClass->GetInternalClassInternal();
 		else
 		{
-			BuiltinResourceInfo* info = ScriptAssemblyManager::instance().getBuiltinResourceInfo(rttiId);
+			BuiltinResourceInfo* info = ScriptAssemblyManager::Instance().getBuiltinResourceInfo(rttiId);
 
 			if (info == nullptr)
 				return nullptr;
@@ -75,7 +75,7 @@ namespace bs
 		}
 	}
 
-	::MonoClass* ScriptResourceBase::getRRefClass(UINT32 rttiId)
+	::MonoClass* ScriptResourceBase::GetRRefClass(UINT32 rttiId)
 	{
 		::MonoClass* monoClass = getManagedResourceClass(rttiId);
 		if (!monoClass)
@@ -91,17 +91,17 @@ namespace bs
 		metaData.scriptClass->addInternalCall("Internal_Release", (void*)&ScriptResource::internal_release);
 	}
 
-	MonoString* ScriptResource::internal_getName(ScriptResourceBase* nativeInstance)
+	MonoString* ScriptResource::InternalGetName(ScriptResourceBase* nativeInstance)
 	{
 		return MonoUtil::stringToMono(nativeInstance->getGenericHandle()->getName());
 	}
 
-	void ScriptResource::internal_getUUID(ScriptResourceBase* nativeInstance, UUID* uuid)
+	void ScriptResource::InternalGetUuid(ScriptResourceBase* nativeInstance, UUID* uuid)
 	{
 		*uuid = nativeInstance->getGenericHandle().getUUID();
 	}
 
-	void ScriptResource::internal_release(ScriptResourceBase* nativeInstance)
+	void ScriptResource::InternalRelease(ScriptResourceBase* nativeInstance)
 	{
 		nativeInstance->getGenericHandle().release();
 	}
@@ -113,13 +113,13 @@ namespace bs
 	void ScriptUUID::initRuntimeData()
 	{ }
 
-	MonoObject* ScriptUUID::box(const UUID& value)
+	MonoObject* ScriptUUID::Box(const UUID& value)
 	{
 		// We're casting away const but it's fine since structs are passed by value anyway
 		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	UUID ScriptUUID::unbox(MonoObject* obj)
+	UUID ScriptUUID::Unbox(MonoObject* obj)
 	{
 		return *(UUID*)MonoUtil::unbox(obj);
 	}

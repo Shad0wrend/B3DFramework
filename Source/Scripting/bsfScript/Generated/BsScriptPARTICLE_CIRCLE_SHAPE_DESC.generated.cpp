@@ -16,17 +16,17 @@ namespace bs
 	void ScriptPARTICLE_CIRCLE_SHAPE_DESC::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptPARTICLE_CIRCLE_SHAPE_DESC::box(const __PARTICLE_CIRCLE_SHAPE_DESCInterop& value)
+	MonoObject*ScriptPARTICLE_CIRCLE_SHAPE_DESC::Box(const __PARTICLE_CIRCLE_SHAPE_DESCInterop& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	__PARTICLE_CIRCLE_SHAPE_DESCInterop ScriptPARTICLE_CIRCLE_SHAPE_DESC::unbox(MonoObject* value)
+	__PARTICLE_CIRCLE_SHAPE_DESCInterop ScriptPARTICLE_CIRCLE_SHAPE_DESC::Unbox(MonoObject* value)
 	{
-		return *(__PARTICLE_CIRCLE_SHAPE_DESCInterop*)MonoUtil::unbox(value);
+		return *(__PARTICLE_CIRCLE_SHAPE_DESCInterop*)MonoUtil::Unbox(value);
 	}
 
-	PARTICLE_CIRCLE_SHAPE_DESC ScriptPARTICLE_CIRCLE_SHAPE_DESC::fromInterop(const __PARTICLE_CIRCLE_SHAPE_DESCInterop& value)
+	PARTICLE_CIRCLE_SHAPE_DESC ScriptPARTICLE_CIRCLE_SHAPE_DESC::FromInterop(const __PARTICLE_CIRCLE_SHAPE_DESCInterop& value)
 	{
 		PARTICLE_CIRCLE_SHAPE_DESC output;
 		output.radius = value.radius;
@@ -37,7 +37,7 @@ namespace bs
 		return output;
 	}
 
-	__PARTICLE_CIRCLE_SHAPE_DESCInterop ScriptPARTICLE_CIRCLE_SHAPE_DESC::toInterop(const PARTICLE_CIRCLE_SHAPE_DESC& value)
+	__PARTICLE_CIRCLE_SHAPE_DESCInterop ScriptPARTICLE_CIRCLE_SHAPE_DESC::ToInterop(const PARTICLE_CIRCLE_SHAPE_DESC& value)
 	{
 		__PARTICLE_CIRCLE_SHAPE_DESCInterop output;
 		output.radius = value.radius;

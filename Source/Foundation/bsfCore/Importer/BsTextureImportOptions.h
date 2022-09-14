@@ -59,15 +59,15 @@ namespace bs
 
 		/** Creates a new import options object that allows you to customize how are textures imported. */
 		BS_SCRIPT_EXPORT(ec:T)
-		static SPtr<TextureImportOptions> create();
+		static SPtr<TextureImportOptions> Create();
 
 		/************************************************************************/
 		/* 								SERIALIZATION                      		*/
 		/************************************************************************/
 	public:
 		friend class TextureImportOptionsRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** @} */

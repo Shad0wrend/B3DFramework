@@ -20,7 +20,7 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "ScriptCode")
 
 		/**	Creates an empty, uninitialized managed instance of the resource interop object. */
-		static MonoObject* createInstance();
+		static MonoObject* CreateInstance();
 
 	private:
 		friend class ScriptResourceManager;
@@ -30,17 +30,17 @@ namespace bs
 		ScriptScriptCode(MonoObject* instance, const HScriptCode& scriptCode);
 
 		/** Parses the provided C# code and finds a list of all classes and their namespaces. Nested classes are ignored. */
-		static Vector<FullTypeName> parseTypes(const WString& code);
+		static Vector<FullTypeName> ParseTypes(const WString& code);
 
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static void internal_createInstance(MonoObject* instance, MonoString* text);
-		static MonoString* internal_getText(ScriptScriptCode* thisPtr);
-		static void internal_setText(ScriptScriptCode* thisPtr, MonoString* text);
-		static bool internal_isEditorScript(ScriptScriptCode* thisPtr);
-		static void internal_setEditorScript(ScriptScriptCode* thisPtr, bool value);
-		static MonoArray* internal_getTypes(ScriptScriptCode* thisPtr);
+		static void InternalCreateInstance(MonoObject* instance, MonoString* text);
+		static MonoString* InternalGetText(ScriptScriptCode* thisPtr);
+		static void InternalSetText(ScriptScriptCode* thisPtr, MonoString* text);
+		static bool InternalIsEditorScript(ScriptScriptCode* thisPtr);
+		static void InternalSetEditorScript(ScriptScriptCode* thisPtr, bool value);
+		static MonoArray* InternalGetTypes(ScriptScriptCode* thisPtr);
 	};
 
 	/** @} */

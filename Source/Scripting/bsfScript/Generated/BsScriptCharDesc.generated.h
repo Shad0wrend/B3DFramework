@@ -31,10 +31,10 @@ namespace bs
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "CharDesc")
 
-		static MonoObject* box(const __CharDescInterop& value);
-		static __CharDescInterop unbox(MonoObject* value);
-		static CharDesc fromInterop(const __CharDescInterop& value);
-		static __CharDescInterop toInterop(const CharDesc& value);
+		static MonoObject* Box(const __CharDescInterop& value);
+		static __CharDescInterop Unbox(MonoObject* value);
+		static CharDesc FromInterop(const __CharDescInterop& value);
+		static __CharDescInterop ToInterop(const CharDesc& value);
 
 	private:
 		ScriptCharDesc(MonoObject* managedInstance);

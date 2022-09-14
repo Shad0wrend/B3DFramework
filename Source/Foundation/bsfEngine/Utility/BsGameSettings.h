@@ -32,8 +32,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class GameSettingsRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const ;
 	};
 
 	/** @} */

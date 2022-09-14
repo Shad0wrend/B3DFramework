@@ -19,17 +19,17 @@ namespace bs
 
 	void ScriptResources::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_Load", (void*)&ScriptResources::internal_Load);
-		metaData.scriptClass->addInternalCall("Internal_LoadFromUUID", (void*)&ScriptResources::internal_LoadFromUUID);
-		metaData.scriptClass->addInternalCall("Internal_LoadAsync", (void*)&ScriptResources::internal_LoadAsync);
-		metaData.scriptClass->addInternalCall("Internal_LoadAsyncFromUUID", (void*)&ScriptResources::internal_LoadAsyncFromUUID);
-		metaData.scriptClass->addInternalCall("Internal_UnloadUnused", (void*)&ScriptResources::internal_UnloadUnused);
-		metaData.scriptClass->addInternalCall("Internal_Release", (void*)&ScriptResources::internal_Release);
-		metaData.scriptClass->addInternalCall("Internal_ReleaseRef", (void*)&ScriptResources::internal_ReleaseRef);
-		metaData.scriptClass->addInternalCall("Internal_GetLoadProgress", (void*)&ScriptResources::internal_GetLoadProgress);
+		metaData.scriptClass->AddInternalCall("Internal_Load", (void*)&ScriptResources::InternalLoad);
+		metaData.scriptClass->AddInternalCall("Internal_LoadFromUUID", (void*)&ScriptResources::InternalLoadFromUuid);
+		metaData.scriptClass->AddInternalCall("Internal_LoadAsync", (void*)&ScriptResources::InternalLoadAsync);
+		metaData.scriptClass->AddInternalCall("Internal_LoadAsyncFromUUID", (void*)&ScriptResources::InternalLoadAsyncFromUuid);
+		metaData.scriptClass->AddInternalCall("Internal_UnloadUnused", (void*)&ScriptResources::InternalUnloadUnused);
+		metaData.scriptClass->AddInternalCall("Internal_Release", (void*)&ScriptResources::InternalRelease);
+		metaData.scriptClass->AddInternalCall("Internal_ReleaseRef", (void*)&ScriptResources::InternalReleaseRef);
+		metaData.scriptClass->AddInternalCall("Internal_GetLoadProgress", (void*)&ScriptResources::InternalGetLoadProgress);
 	}
 
-	MonoObject* ScriptResources::internal_Load(MonoString* path, ResourceLoadFlag flags)
+	MonoObject* ScriptResources::InternalLoad(MonoString* path, ResourceLoadFlag flags)
 	{
 		Path nativePath = MonoUtil::monoToString(path);
 
@@ -38,15 +38,15 @@ namespace bs
 		if (gApplication().isEditor())
 			loadFlags |= ResourceLoadFlag::KeepSourceData;
 
-		HResource resource = GameResourceManager::instance().load(nativePath, loadFlags, false);
+		HResource resource = GameResourceManager::Instance().load(nativePath, loadFlags, false);
 		if (!resource.isLoaded(false))
 			return nullptr;
 
-		ScriptResourceBase* scriptResource = ScriptResourceManager::instance().getScriptResource(resource, true);
+		ScriptResourceBase* scriptResource = ScriptResourceManager::Instance().getScriptResource(resource, true);
 		return scriptResource->getManagedInstance();
 	}
 
-	MonoObject* ScriptResources::internal_LoadFromUUID(UUID* uuid, ResourceLoadFlag flags)
+	MonoObject* ScriptResources::InternalLoadFromUuid(UUID* uuid, ResourceLoadFlag flags)
 	{
 		ResourceLoadFlags loadFlags = flags;
 
@@ -57,11 +57,11 @@ namespace bs
 		if (!resource.isLoaded(false))
 			return nullptr;
 
-		ScriptResourceBase* scriptResource = ScriptResourceManager::instance().getScriptResource(resource, true);
+		ScriptResourceBase* scriptResource = ScriptResourceManager::Instance().getScriptResource(resource, true);
 		return scriptResource->getManagedInstance();
 	}
 
-	MonoObject* ScriptResources::internal_LoadAsync(MonoString* path, ResourceLoadFlag flags)
+	MonoObject* ScriptResources::InternalLoadAsync(MonoString* path, ResourceLoadFlag flags)
 	{
 		Path nativePath = MonoUtil::monoToString(path);
 
@@ -70,18 +70,18 @@ namespace bs
 		if (gApplication().isEditor())
 			loadFlags |= ResourceLoadFlag::KeepSourceData;
 
-		HResource resource = GameResourceManager::instance().load(nativePath, loadFlags, true);
+		HResource resource = GameResourceManager::Instance().load(nativePath, loadFlags, true);
 		if (resource == nullptr)
 			return nullptr;
 
-		ScriptRRefBase* scriptResource = ScriptResourceManager::instance().getScriptRRef(resource);
+		ScriptRRefBase* scriptResource = ScriptResourceManager::Instance().getScriptRRef(resource);
 		if(scriptResource != nullptr)
 			return scriptResource->getManagedInstance();
 
 		return nullptr;
 	}
 
-	MonoObject* ScriptResources::internal_LoadAsyncFromUUID(UUID* uuid, ResourceLoadFlag flags)
+	MonoObject* ScriptResources::InternalLoadAsyncFromUuid(UUID* uuid, ResourceLoadFlag flags)
 	{
 		ResourceLoadFlags loadFlags = flags;
 
@@ -92,29 +92,29 @@ namespace bs
 		if (resource == nullptr)
 			return nullptr;
 
-		ScriptRRefBase* scriptResource = ScriptResourceManager::instance().getScriptRRef(resource);
+		ScriptRRefBase* scriptResource = ScriptResourceManager::Instance().getScriptRRef(resource);
 		if(scriptResource != nullptr)
 			return scriptResource->getManagedInstance();
 
 		return nullptr;
 	}
 
-	float ScriptResources::internal_GetLoadProgress(ScriptRRefBase* resource, bool loadDependencies)
+	float ScriptResources::InternalGetLoadProgress(ScriptRRefBase* resource, bool loadDependencies)
 	{
 		return gResources().getLoadProgress(resource->getHandle(), loadDependencies);
 	}
 
-	void ScriptResources::internal_Release(ScriptResourceBase* resource)
+	void ScriptResources::InternalRelease(ScriptResourceBase* resource)
 	{
 		resource->getGenericHandle().release();
 	}
 
-	void ScriptResources::internal_ReleaseRef(ScriptRRefBase* resourceRef)
+	void ScriptResources::InternalReleaseRef(ScriptRRefBase* resourceRef)
 	{
 		resourceRef->getHandle().release();
 	}
 
-	void ScriptResources::internal_UnloadUnused()
+	void ScriptResources::InternalUnloadUnused()
 	{
 		gResources().unloadAllUnused();
 	}

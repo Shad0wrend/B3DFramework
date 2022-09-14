@@ -16,13 +16,13 @@ namespace bs
 	{
 	public:
 		/**	Returns the text contained in the resource. */
-		const WString& getString() const { return mString; }
+		const WString& GetString() const { return mString; }
 
 		/**	Modifies the text contained in the resource. */
-		void setString(const WString& data) { mString = data; }
+		void SetString(const WString& data) { mString = data; }
 
 		/**	Creates a new text file resource with the specified string. */
-		static HPlainText create(const WString& data);
+		static HPlainText Create(const WString& data);
 
 		/** @name Internal
 		 *  @{
@@ -46,7 +46,7 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class PlainTextRTTI;
-		static RTTITypeBase* getRTTIStatic();
+		static RTTITypeBase* GetRttiStatic();
 		virtual RTTITypeBase* getRTTI() const override;
 	};
 

@@ -8,13 +8,13 @@ namespace bs
 	/************************************************************************/
 	/* 								SERIALIZATION                      		*/
 	/************************************************************************/
-	RTTITypeBase* ShaderImportOptions::getRTTIStatic()
+	RTTITypeBase* ShaderImportOptions::GetRttiStatic()
 	{
-		return ShaderImportOptionsRTTI::instance();
+		return ShaderImportOptionsRTTI::Instance();
 	}
 
-	RTTITypeBase* ShaderImportOptions::getRTTI() const
+	RTTITypeBase* ShaderImportOptions::GetRtti() const
 	{
-		return ShaderImportOptions::getRTTIStatic();
+		return ShaderImportOptions::GetRttiStatic();
 	}
 }

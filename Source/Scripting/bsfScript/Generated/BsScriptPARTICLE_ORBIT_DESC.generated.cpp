@@ -18,22 +18,22 @@ namespace bs
 	void ScriptPARTICLE_ORBIT_DESC::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptPARTICLE_ORBIT_DESC::box(const __PARTICLE_ORBIT_DESCInterop& value)
+	MonoObject*ScriptPARTICLE_ORBIT_DESC::Box(const __PARTICLE_ORBIT_DESCInterop& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	__PARTICLE_ORBIT_DESCInterop ScriptPARTICLE_ORBIT_DESC::unbox(MonoObject* value)
+	__PARTICLE_ORBIT_DESCInterop ScriptPARTICLE_ORBIT_DESC::Unbox(MonoObject* value)
 	{
-		return *(__PARTICLE_ORBIT_DESCInterop*)MonoUtil::unbox(value);
+		return *(__PARTICLE_ORBIT_DESCInterop*)MonoUtil::Unbox(value);
 	}
 
-	PARTICLE_ORBIT_DESC ScriptPARTICLE_ORBIT_DESC::fromInterop(const __PARTICLE_ORBIT_DESCInterop& value)
+	PARTICLE_ORBIT_DESC ScriptPARTICLE_ORBIT_DESC::FromInterop(const __PARTICLE_ORBIT_DESCInterop& value)
 	{
 		PARTICLE_ORBIT_DESC output;
 		SPtr<TDistribution<Vector3>> tmpcenter;
 		ScriptTDistributionVector3* scriptcenter;
-		scriptcenter = ScriptTDistributionVector3::toNative(value.center);
+		scriptcenter = ScriptTDistributionVector3::ToNative(value.center);
 		if(scriptcenter != nullptr)
 			tmpcenter = scriptcenter->getInternal();
 		if(tmpcenter != nullptr)
@@ -57,23 +57,23 @@ namespace bs
 		return output;
 	}
 
-	__PARTICLE_ORBIT_DESCInterop ScriptPARTICLE_ORBIT_DESC::toInterop(const PARTICLE_ORBIT_DESC& value)
+	__PARTICLE_ORBIT_DESCInterop ScriptPARTICLE_ORBIT_DESC::ToInterop(const PARTICLE_ORBIT_DESC& value)
 	{
 		__PARTICLE_ORBIT_DESCInterop output;
 		MonoObject* tmpcenter;
 		SPtr<TDistribution<Vector3>> tmpcentercopy;
 		tmpcentercopy = bs_shared_ptr_new<TDistribution<Vector3>>(value.center);
-		tmpcenter = ScriptTDistributionVector3::create(tmpcentercopy);
+		tmpcenter = ScriptTDistributionVector3::Create(tmpcentercopy);
 		output.center = tmpcenter;
 		MonoObject* tmpvelocity;
 		SPtr<TDistribution<Vector3>> tmpvelocitycopy;
 		tmpvelocitycopy = bs_shared_ptr_new<TDistribution<Vector3>>(value.velocity);
-		tmpvelocity = ScriptTDistributionVector3::create(tmpvelocitycopy);
+		tmpvelocity = ScriptTDistributionVector3::Create(tmpvelocitycopy);
 		output.velocity = tmpvelocity;
 		MonoObject* tmpradial;
 		SPtr<TDistribution<float>> tmpradialcopy;
 		tmpradialcopy = bs_shared_ptr_new<TDistribution<float>>(value.radial);
-		tmpradial = ScriptTDistributionfloat::create(tmpradialcopy);
+		tmpradial = ScriptTDistributionfloat::Create(tmpradialcopy);
 		output.radial = tmpradial;
 		output.worldSpace = value.worldSpace;
 

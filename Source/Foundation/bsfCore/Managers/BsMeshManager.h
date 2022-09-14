@@ -17,14 +17,14 @@ namespace bs
 	{
 	public:
 		/** Returns some dummy mesh data with one triangle you may use for initializing a mesh. */
-		SPtr<MeshData> getDummyMeshData() const { return mDummyMeshData; }
+		SPtr<MeshData> GetDummyMeshData() const { return mDummyMeshData; }
 
 		/**	Returns a dummy mesh containing one triangle. */
-		HMesh getDummyMesh() const { return mDummyMesh; }
+		HMesh GetDummyMesh() const { return mDummyMesh; }
 
 	protected:
 		/** @copydoc Module::onStartUp */
-		void onStartUp() override;
+		void OnStartUp() override;
 
 	private:
 		SPtr<MeshData> mDummyMeshData;

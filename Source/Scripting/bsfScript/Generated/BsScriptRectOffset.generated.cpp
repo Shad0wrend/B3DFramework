@@ -14,14 +14,14 @@ namespace bs
 	void ScriptRectOffset::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptRectOffset::box(const RectOffset& value)
+	MonoObject*ScriptRectOffset::Box(const RectOffset& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	RectOffset ScriptRectOffset::unbox(MonoObject* value)
+	RectOffset ScriptRectOffset::Unbox(MonoObject* value)
 	{
-		return *(RectOffset*)MonoUtil::unbox(value);
+		return *(RectOffset*)MonoUtil::Unbox(value);
 	}
 
 }

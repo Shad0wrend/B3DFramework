@@ -13,7 +13,7 @@ namespace bs
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "Category")
 
-		static MonoField* getNameField() { return nameField; }
+		static MonoField* GetNameField() { return nameField; }
 
 	private:
 		ScriptCategory(MonoObject* instance);

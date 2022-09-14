@@ -15,13 +15,13 @@
 
 namespace bs { namespace ct
 {
-	const StringID& NullRenderAPI::getName() const
+	const StringID& NullRenderAPI::GetName() const
 	{
 		static StringID strName("NullRenderAPI");
 		return strName;
 	}
 
-	void NullRenderAPI::initialize()
+	void NullRenderAPI::Initialize()
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -32,43 +32,43 @@ namespace bs { namespace ct
 
 		PlatformUtility::SetGPUInfoInternal(gpuInfo);
 
-		CommandBufferManager::startUp<NullCommandBufferManager>();
+		CommandBufferManager::StartUp<NullCommandBufferManager>();
 
-		bs::TextureManager::startUp<bs::NullTextureManager>();
-		TextureManager::startUp<NullTextureManager>();
+		bs::TextureManager::StartUp<bs::NullTextureManager>();
+		TextureManager::StartUp<NullTextureManager>();
 
 		// Create hardware buffer manager		
-		bs::HardwareBufferManager::startUp();
-		HardwareBufferManager::startUp<NullHardwareBufferManager>();
+		bs::HardwareBufferManager::StartUp();
+		HardwareBufferManager::StartUp<NullHardwareBufferManager>();
 
 		// Create render window manager
-		bs::RenderWindowManager::startUp<bs::NullRenderWindowManager>();
-		RenderWindowManager::startUp();
+		bs::RenderWindowManager::StartUp<bs::NullRenderWindowManager>();
+		RenderWindowManager::StartUp();
 
 		// Create render state manager
-		RenderStateManager::startUp<NullRenderStateManager>();
+		RenderStateManager::StartUp<NullRenderStateManager>();
 
 		// Pretend as if we can parse HLSL
 		mNullProgramFactory = bs_new<NullProgramFactory>();
-		GpuProgramManager::instance().addFactory("hlsl", mNullProgramFactory);
+		GpuProgramManager::Instance().addFactory("hlsl", mNullProgramFactory);
 
 		mNumDevices = 1;
 		mCurrentCapabilities = bs_newN<RenderAPICapabilities>(mNumDevices);
 		mCurrentCapabilities->deviceName = "Null";
-		mCurrentCapabilities->renderAPIName = getName();
+		mCurrentCapabilities->renderAPIName = GetName();
 		mCurrentCapabilities->deviceVendor = GPU_UNKNOWN;
 				
 		RenderAPI::initialize();
 	}
 
-	void NullRenderAPI::initializeWithWindow(const SPtr<RenderWindow>& primaryWindow)
+	void NullRenderAPI::InitializeWithWindow(const SPtr<RenderWindow>& primaryWindow)
 	{
-		QueryManager::startUp<NullQueryManager>();
+		QueryManager::StartUp<NullQueryManager>();
 
 		RenderAPI::initializeWithWindow(primaryWindow);
 	}
 
-	void NullRenderAPI::destroyCore()
+	void NullRenderAPI::DestroyCore()
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -80,25 +80,25 @@ namespace bs { namespace ct
 			mNullProgramFactory = nullptr;
 		}
 
-		QueryManager::shutDown();
-		RenderStateManager::shutDown();
-		RenderWindowManager::shutDown();
-		bs::RenderWindowManager::shutDown();
-		HardwareBufferManager::shutDown();
-		bs::HardwareBufferManager::shutDown();
-		TextureManager::shutDown();
-		bs::TextureManager::shutDown();
-		CommandBufferManager::shutDown();
+		QueryManager::ShutDown();
+		RenderStateManager::ShutDown();
+		RenderWindowManager::ShutDown();
+		bs::RenderWindowManager::ShutDown();
+		HardwareBufferManager::ShutDown();
+		bs::HardwareBufferManager::ShutDown();
+		TextureManager::ShutDown();
+		bs::TextureManager::ShutDown();
+		CommandBufferManager::ShutDown();
 
 		RenderAPI::destroyCore();
 	}
 
-	void NullRenderAPI::convertProjectionMatrix(const Matrix4& matrix, Matrix4& dest)
+	void NullRenderAPI::ConvertProjectionMatrix(const Matrix4& matrix, Matrix4& dest)
 	{
 		dest = matrix;
 	}
 
-	GpuParamBlockDesc NullRenderAPI::generateParamBlockDesc(const String& name, Vector<GpuParamDataDesc>& params)
+	GpuParamBlockDesc NullRenderAPI::GenerateParamBlockDesc(const String& name, Vector<GpuParamDataDesc>& params)
 	{
 		GpuParamBlockDesc block;
 		block.blockSize = 0;

@@ -124,11 +124,11 @@ namespace bs
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P p);
+		void RttiEnumFields(P p);
 	public:
 		friend class ParticleDepthCollisonSettingsRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** @} */
@@ -247,7 +247,7 @@ namespace bs
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P processor);
+		void RttiEnumFields(P processor);
 	};
 
 	/** Common base for both sim and core thread variants of ParticleVectorFieldSettings. */
@@ -319,7 +319,7 @@ namespace bs
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P processor);
+		void RttiEnumFields(P processor);
 	};
 
 	/** @} */
@@ -337,8 +337,8 @@ namespace bs
 
 	public:
 		friend class ParticleVectorFieldSettingsRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	namespace ct
@@ -388,7 +388,7 @@ namespace bs
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P processor);
+		void RttiEnumFields(P processor);
 	};
 
 	/** @} */
@@ -405,8 +405,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ParticleSystemSettingsRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** Settings used for controlling particle system GPU simulation. */
@@ -419,8 +419,8 @@ namespace bs
 
 	public:
 		friend class ParticleGpuSimulationSettingsRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** @} */
@@ -460,58 +460,58 @@ namespace bs
 		~ParticleSystem() final;
 
 		/** Determines general purpose settings that apply to the particle system. */
-		void setSettings(const ParticleSystemSettings& settings);
+		void SetSettings(const ParticleSystemSettings& settings);
 
 		/** @copydoc setSettings */
-		const ParticleSystemSettings& getSettings() const { return mSettings; }
+		const ParticleSystemSettings& GetSettings() const { return mSettings; }
 
 		/** Determines settings that control particle GPU simulation. */
-		void setGpuSimulationSettings(const ParticleGpuSimulationSettings& settings);
+		void SetGpuSimulationSettings(const ParticleGpuSimulationSettings& settings);
 
 		/** @copydoc setGpuSimulationSettings */
-		const ParticleGpuSimulationSettings& getGpuSimulationSettings() const { return mGpuSimulationSettings; }
+		const ParticleGpuSimulationSettings& GetGpuSimulationSettings() const { return mGpuSimulationSettings; }
 
 		/**
 		 * Set of objects that determine initial position, normal and other properties of newly spawned particles. Each
 		 * particle system must have at least one emitter.
 		 */
-		void setEmitters(const Vector<SPtr<ParticleEmitter>>& emitters);
+		void SetEmitters(const Vector<SPtr<ParticleEmitter>>& emitters);
 
 		/** @copydoc setEmitters */
-		const Vector<SPtr<ParticleEmitter>>& getEmitters() const { return mEmitters; }
+		const Vector<SPtr<ParticleEmitter>>& GetEmitters() const { return mEmitters; }
 
 		/**
 		 * Set of objects that determine how particle properties change during their lifetime. Evolvers only affect
 		 * CPU simulated particles.
 		 */
-		void setEvolvers(const Vector<SPtr<ParticleEvolver>>& evolvers);
+		void SetEvolvers(const Vector<SPtr<ParticleEvolver>>& evolvers);
 
 		/** @copydoc setEmitters */
-		const Vector<SPtr<ParticleEvolver>>& getEvolvers() const { return mEvolvers; }
+		const Vector<SPtr<ParticleEvolver>>& GetEvolvers() const { return mEvolvers; }
 
 		/**
 		 * Determines the layer bitfield that controls whether a system is considered visible in a specific camera.
 		 * Layer must match camera layer in order for the camera to render the component.
 		 */
-		void setLayer(UINT64 layer);
+		void SetLayer(UINT64 layer);
 
 		/** @copydoc setLayer() */
-		UINT64 getLayer() const { return mLayer; }
+		UINT64 GetLayer() const { return mLayer; }
 
 		/** Starts the particle system. New particles will be emitted and existing particles will be evolved. */
-		void play();
+		void Play();
 
 		/** Pauses the particle system. New particles will stop being emitted and existing particle state will be frozen. */
-		void pause();
+		void Pause();
 
 		/** Stops the particle system and resets it to initial state, clearing all particles. */
-		void stop();
+		void Stop();
 
 		/**	Retrieves an implementation of the particle system usable only from the core thread. */
-		SPtr<ct::ParticleSystem> getCore() const;
+		SPtr<ct::ParticleSystem> GetCore() const;
 
 		/** Creates a new empty ParticleSystem object. */
-		static SPtr<ParticleSystem> create();
+		static SPtr<ParticleSystem> Create();
 
 		/**
 		 * @name Internal
@@ -573,7 +573,7 @@ namespace bs
 		 *								calculating spacing. Should be in range [0, 1). 0 = beginning of the current
 		 *								time step, 1 = start of next particle.
 		 */
-		void preSimulate(const ParticleSystemState& state, UINT32 startIdx, UINT32 count, bool spacing, float spacingOffset);
+		void PreSimulate(const ParticleSystemState& state, UINT32 startIdx, UINT32 count, bool spacing, float spacingOffset);
 
 		/**
 		 * Integrates particle properties, advancing the simulation.
@@ -588,7 +588,7 @@ namespace bs
 		 *								calculating spacing. Should be in range [0, 1). 0 = beginning of the current
 		 *								time step, 1 = start of next particle.
 		 */
-		void simulate(const ParticleSystemState& state, UINT32 startIdx, UINT32 count, bool spacing, float spacingOffset);
+		void Simulate(const ParticleSystemState& state, UINT32 startIdx, UINT32 count, bool spacing, float spacingOffset);
 
 		/**
 		 * Executes evolvers that need to run after the simulation.
@@ -603,7 +603,7 @@ namespace bs
 		 *								calculating spacing. Should be in range [0, 1). 0 = beginning of the current
 		 *								time step, 1 = start of next particle.
 		 */
-		void postSimulate(const ParticleSystemState& state, UINT32 startIdx, UINT32 count, bool spacing, float spacingOffset);
+		void PostSimulate(const ParticleSystemState& state, UINT32 startIdx, UINT32 count, bool spacing, float spacingOffset);
 
 		/** @copydoc CoreObject::createCore */
 		SPtr<ct::CoreObject> createCore() const override;
@@ -612,13 +612,13 @@ namespace bs
 		void MarkCoreDirtyInternal(ActorDirtyFlag flag = ActorDirtyFlag::Everything) override;
 
 		/** @copydoc CoreObject::syncToCore */
-		CoreSyncData syncToCore(FrameAlloc* allocator) override;
+		CoreSyncData SyncToCore(FrameAlloc* allocator) override;
 
 		/** @copydoc CoreObject::getCoreDependencies */
 		void getCoreDependencies(Vector<CoreObject*>& dependencies) override;
 
 		/**	Creates a new ParticleSystem instance without initializing it. */
-		static SPtr<ParticleSystem> createEmpty();
+		static SPtr<ParticleSystem> CreateEmpty();
 
 		SPtr<SceneInstance> mScene;
 		ParticleSystemSettings mSettings;
@@ -642,8 +642,8 @@ namespace bs
 
 	public:
 		friend class ParticleSystemRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** @} */
@@ -661,34 +661,34 @@ namespace bs
 			~ParticleSystem();
 
 			/** @copydoc bs::ParticleSystem::setSettings */
-			const ParticleSystemSettings& getSettings() const { return mSettings; }
+			const ParticleSystemSettings& GetSettings() const { return mSettings; }
 
 			/** @copydoc bs::ParticleSystem::setGpuSimulationSettings */
-			const ParticleGpuSimulationSettings& getGpuSimulationSettings() const { return mGpuSimulationSettings; }
+			const ParticleGpuSimulationSettings& GetGpuSimulationSettings() const { return mGpuSimulationSettings; }
 
 			/**
 			 * Determines the layer bitfield that controls whether a system is considered visible in a specific camera.
 			 * Layer must match camera layer in order for the camera to render the component.
 			 */
-			void setLayer(UINT64 layer);
+			void SetLayer(UINT64 layer);
 
 			/** @copydoc setLayer() */
-			UINT64 getLayer() const { return mLayer; }
+			UINT64 GetLayer() const { return mLayer; }
 
 			/**	Sets an ID that can be used for uniquely identifying this object by the renderer. */
-			void setRendererId(UINT32 id) { mRendererId = id; }
+			void SetRendererId(UINT32 id) { mRendererId = id; }
 
 			/**	Retrieves an ID that can be used for uniquely identifying this object by the renderer. */
-			UINT32 getRendererId() const { return mRendererId; }
+			UINT32 GetRendererId() const { return mRendererId; }
 
 			/**
 			 * Returns an ID that uniquely identifies the particle system. Can be used for locating evaluated particle
 			 * system render data in the structure output by the ParticlesManager.
 			 */
-			UINT32 getId() const { return mId; }
+			UINT32 GetId() const { return mId; }
 
 			/** @copydoc CoreObject::initialize */
-			void initialize() override;
+			void Initialize() override;
 		private:
 			friend class bs::ParticleSystem;
 
@@ -697,7 +697,7 @@ namespace bs
 			{ }
 
 			/** @copydoc CoreObject::syncToCore */
-			void syncToCore(const CoreSyncData& data) override;
+			void SyncToCore(const CoreSyncData& data) override;
 
 			UINT32 mRendererId = 0;
 			UINT32 mId;

@@ -21,20 +21,20 @@ namespace bs
 	public:
 		CGUIWidgetRTTI() = default;
 
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "CGUIWidget";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_CGUIWidget;
 		}
 
 		SPtr<IReflectable> newRTTIObject() override
 		{
-			return SceneObject::createEmptyComponent<CGUIWidget>();
+			return SceneObject::CreateEmptyComponent<CGUIWidget>();
 		}
 	};
 

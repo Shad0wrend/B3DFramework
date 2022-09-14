@@ -246,7 +246,7 @@ namespace bs
 		constexpr NativePtr(T* p) : mPtr(p) {}
 		constexpr T& operator*() const { return *mPtr; }
 		constexpr T* operator->() const { return mPtr; }
-		constexpr T* get() const { return mPtr; }
+		constexpr T* Get() const { return mPtr; }
 
 	private:
 		T* mPtr = nullptr;

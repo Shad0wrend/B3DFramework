@@ -21,22 +21,22 @@ namespace bs
 		ScriptGUISliderH(MonoObject* instance, GUISliderHorz* slider);
 
 		/**	Triggered when the native slider is moved. */
-		void onChanged(float percent);
+		void OnChanged(float percent);
 
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static void internal_createInstance(MonoObject* instance, MonoString* style, MonoArray* guiOptions);
-		static void internal_setPercent(ScriptGUISliderH* nativeInstance, float percent);
-		static float internal_getPercent(ScriptGUISliderH* nativeInstance);
-		static float internal_getValue(ScriptGUISliderH* nativeInstance);
-		static void internal_setValue(ScriptGUISliderH* nativeInstance, float percent);
-		static void internal_setRange(ScriptGUISliderH* nativeInstance, float min, float max);
-		static float internal_getRangeMaximum(ScriptGUISliderH* nativeInstance);
-		static float internal_getRangeMinimum(ScriptGUISliderH* nativeInstance);
-		static void internal_setStep(ScriptGUISliderH* nativeInstance, float step);
-		static float internal_getStep(ScriptGUISliderH* nativeInstance);
-		static void internal_setTint(ScriptGUISliderH* nativeInstance, Color* color);
+		static void InternalCreateInstance(MonoObject* instance, MonoString* style, MonoArray* guiOptions);
+		static void InternalSetPercent(ScriptGUISliderH* nativeInstance, float percent);
+		static float InternalGetPercent(ScriptGUISliderH* nativeInstance);
+		static float InternalGetValue(ScriptGUISliderH* nativeInstance);
+		static void InternalSetValue(ScriptGUISliderH* nativeInstance, float percent);
+		static void InternalSetRange(ScriptGUISliderH* nativeInstance, float min, float max);
+		static float InternalGetRangeMaximum(ScriptGUISliderH* nativeInstance);
+		static float InternalGetRangeMinimum(ScriptGUISliderH* nativeInstance);
+		static void InternalSetStep(ScriptGUISliderH* nativeInstance, float step);
+		static float InternalGetStep(ScriptGUISliderH* nativeInstance);
+		static void InternalSetTint(ScriptGUISliderH* nativeInstance, Color* color);
 
 		typedef void(BS_THUNKCALL *OnChangedThunkDef) (MonoObject*, float, MonoException**);
 		static OnChangedThunkDef onChangedThunk;
@@ -52,22 +52,22 @@ namespace bs
 		ScriptGUISliderV(MonoObject* instance, GUISliderVert* slider);
 
 		/**	Triggered when the native slider is moved. */
-		void onChanged(float percent);
+		void OnChanged(float percent);
 
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static void internal_createInstance(MonoObject* instance, MonoString* style, MonoArray* guiOptions);
-		static void internal_setPercent(ScriptGUISliderV* nativeInstance, float percent);
-		static float internal_getPercent(ScriptGUISliderV* nativeInstance);
-		static float internal_getValue(ScriptGUISliderV* nativeInstance);
-		static void internal_setValue(ScriptGUISliderV* nativeInstance, float percent);
-		static void internal_setRange(ScriptGUISliderV* nativeInstance, float min, float max);
-		static float internal_getRangeMaximum(ScriptGUISliderV* nativeInstance);
-		static float internal_getRangeMinimum(ScriptGUISliderV* nativeInstance);
-		static void internal_setStep(ScriptGUISliderV* nativeInstance, float step);
-		static float internal_getStep(ScriptGUISliderV* nativeInstance);
-		static void internal_setTint(ScriptGUISliderV* nativeInstance, Color* color);
+		static void InternalCreateInstance(MonoObject* instance, MonoString* style, MonoArray* guiOptions);
+		static void InternalSetPercent(ScriptGUISliderV* nativeInstance, float percent);
+		static float InternalGetPercent(ScriptGUISliderV* nativeInstance);
+		static float InternalGetValue(ScriptGUISliderV* nativeInstance);
+		static void InternalSetValue(ScriptGUISliderV* nativeInstance, float percent);
+		static void InternalSetRange(ScriptGUISliderV* nativeInstance, float min, float max);
+		static float InternalGetRangeMaximum(ScriptGUISliderV* nativeInstance);
+		static float InternalGetRangeMinimum(ScriptGUISliderV* nativeInstance);
+		static void InternalSetStep(ScriptGUISliderV* nativeInstance, float step);
+		static float InternalGetStep(ScriptGUISliderV* nativeInstance);
+		static void InternalSetTint(ScriptGUISliderV* nativeInstance, Color* color);
 
 		typedef void(BS_THUNKCALL *OnChangedThunkDef) (MonoObject*, float, MonoException**);
 		static OnChangedThunkDef onChangedThunk;

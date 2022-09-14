@@ -176,10 +176,10 @@ namespace bs
 			return;
 
 		gPSAPILib = bs_new<DynLib>("PSAPI.dll");
-		gEnumProcessModules = (EnumProcessModulesType)gPSAPILib->getSymbol("EnumProcessModules");
-		gGetModuleBaseName = (GetModuleBaseNameType)gPSAPILib->getSymbol("GetModuleFileNameExA");
-		gGetModuleFileNameEx = (GetModuleFileNameExType)gPSAPILib->getSymbol("GetModuleBaseNameA");
-		gGetModuleInformation = (GetModuleInformationType)gPSAPILib->getSymbol("GetModuleInformation");
+		gEnumProcessModules = (EnumProcessModulesType)gPSAPILib->GetSymbol("EnumProcessModules");
+		gGetModuleBaseName = (GetModuleBaseNameType)gPSAPILib->GetSymbol("GetModuleFileNameExA");
+		gGetModuleFileNameEx = (GetModuleFileNameExType)gPSAPILib->GetSymbol("GetModuleBaseNameA");
+		gGetModuleInformation = (GetModuleInformationType)gPSAPILib->GetSymbol("GetModuleInformation");
 	}
 
 	/**	Unloads the PSAPI.dll if is loaded. */
@@ -188,7 +188,7 @@ namespace bs
 		if (gPSAPILib == nullptr)
 			return;
 
-		gPSAPILib->unload();
+		gPSAPILib->Unload();
 		bs_delete(gPSAPILib);
 		gPSAPILib = nullptr;
 	}
@@ -305,7 +305,7 @@ namespace bs
 					format = "Unhandled exception at 0x{0}. Access violation.";
 
 				String violatedAddressStr = toString((UINT64)violatedAddress, 0, ' ', std::ios::hex);
-				return StringUtil::format(format, exceptionAddress, violatedAddressStr);
+				return StringUtil::Format(format, exceptionAddress, violatedAddressStr);
 			}
 		case EXCEPTION_IN_PAGE_ERROR:
 		{
@@ -465,7 +465,7 @@ namespace bs
 #endif
 
 	}
-	void CrashHandler::reportCrash(const String& type, const String& description, const String& function,
+	void CrashHandler::ReportCrash(const String& type, const String& description, const String& function,
 		const String& file, UINT32 line) const
 	{
 		if(mSettings.onBeforeReportCrash)
@@ -495,7 +495,7 @@ namespace bs
 		// Note: Potentially also log Windows Error Report and/or send crash data to server
 	}
 
-	int CrashHandler::reportCrash(void* exceptionDataPtr) const
+	int CrashHandler::ReportCrash(void* exceptionDataPtr) const
 	{
 		if(mSettings.onBeforeWindowsSEHReportCrash)
 		{
@@ -532,7 +532,7 @@ namespace bs
 		return EXCEPTION_EXECUTE_HANDLER;
 	}
 
-	String CrashHandler::getCrashTimestamp()
+	String CrashHandler::GetCrashTimestamp()
 	{
 		SYSTEMTIME systemTime;
 		GetLocalTime(&systemTime);
@@ -546,7 +546,7 @@ namespace bs
 		return StringUtil::format(timeStamp, strYear, strMonth, strDay, strHour, strMinute);
 	}
 
-	String CrashHandler::getStackTrace()
+	String CrashHandler::GetStackTrace()
 	{
 		CONTEXT context;
 		RtlCaptureContext(&context);

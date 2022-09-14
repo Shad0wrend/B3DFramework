@@ -23,15 +23,15 @@ namespace bs
 		 * Returns a reference to the module instance. Module has to have been started up first otherwise an exception will
 		 * be thrown.
 		 */
-		static T& instance()
+		static T& Instance()
 		{
-			if (!isStartedUp())
+			if (!IsStartedUp())
 			{
 				BS_EXCEPT(InternalErrorException,
 					"Trying to access a module but it hasn't been started up yet.");
 			}
 
-			if (isDestroyed())
+			if (IsDestroyed())
 			{
 				BS_EXCEPT(InternalErrorException,
 					"Trying to access a destroyed module.");
@@ -44,15 +44,15 @@ namespace bs
 		 * Returns a pointer to the module instance. Module has to have been started up first otherwise an exception will
 		 * be thrown.
 		 */
-		static T* instancePtr()
+		static T* InstancePtr()
 		{
-			if (!isStartedUp())
+			if (!IsStartedUp())
 			{
 				BS_EXCEPT(InternalErrorException,
 					"Trying to access a module but it hasn't been started up yet.");
 			}
 
-			if (isDestroyed())
+			if (IsDestroyed())
 			{
 				BS_EXCEPT(InternalErrorException,
 					"Trying to access a destroyed module.");
@@ -63,15 +63,15 @@ namespace bs
 
 		/** Constructs and starts the module using the specified parameters. */
 		template<class ...Args>
-		static void startUp(Args &&...args)
+		static void StartUp(Args &&...args)
 		{
-			if (isStartedUp())
+			if (IsStartedUp())
 				BS_EXCEPT(InternalErrorException, "Trying to start an already started module.");
 
 			InstanceInternal() = bs_new<T>(std::forward<Args>(args)...);
-			isStartedUp() = true;
+			IsStartedUp() = true;
 
-			((Module*)InstanceInternal())->onStartUp();
+			((Module*)InstanceInternal())->OnStartUp();
 		}
 
 		/**
@@ -79,44 +79,44 @@ namespace bs
 		 * initialized with.
 		 */
 		template<class SubType, class ...Args>
-		static void startUp(Args &&...args)
+		static void StartUp(Args &&...args)
 		{
 			static_assert(std::is_base_of<T, SubType>::value, "Provided type is not derived from type the Module is initialized with.");
 
-			if (isStartedUp())
+			if (IsStartedUp())
 				BS_EXCEPT(InternalErrorException, "Trying to start an already started module.");
 
 			InstanceInternal() = bs_new<SubType>(std::forward<Args>(args)...);
-			isStartedUp() = true;
+			IsStartedUp() = true;
 
-			((Module*)InstanceInternal())->onStartUp();
+			((Module*)InstanceInternal())->OnStartUp();
 		}
 
 		/** Shuts down this module and frees any resources it is using. */
-		static void shutDown()
+		static void ShutDown()
 		{
-			if (isDestroyed())
+			if (IsDestroyed())
 			{
 				BS_EXCEPT(InternalErrorException,
 					"Trying to shut down an already shut down module.");
 			}
 
-			if (!isStartedUp())
+			if (!IsStartedUp())
 			{
 				BS_EXCEPT(InternalErrorException,
 					"Trying to shut down a module which was never started.");
 			}
 
-			((Module*)InstanceInternal())->onShutDown();
+			((Module*)InstanceInternal())->OnShutDown();
 
 			bs_delete(InstanceInternal());
-			isDestroyed() = true;
+			IsDestroyed() = true;
 		}
 
 		/** Query if the module has been started. */
-		static bool isStarted()
+		static bool IsStarted()
 		{
-			return isStartedUp() && !isDestroyed();
+			return IsStartedUp() && !IsDestroyed();
 		}
 
 	protected:
@@ -138,7 +138,7 @@ namespace bs
 		 * @note	Useful when your module is polymorphic and you cannot perform some implementation specific
 		 *			initialization in constructor itself.
 		 */
-		virtual void onStartUp() {}
+		virtual void OnStartUp() {}
 
 		/**
 		 * Override if you want your module to be notified just before it is deleted.
@@ -146,7 +146,7 @@ namespace bs
 		 * @note	Useful when your module is polymorphic and you might want to perform some kind of clean up perhaps
 		 *			overriding that of a base class.
 		 */
-		virtual void onShutDown() {}
+		virtual void OnShutDown() {}
 
 		/** Returns a singleton instance of this module. */
 		static T*& InstanceInternal()
@@ -160,14 +160,14 @@ namespace bs
 		 *
 		 * @note	If module was never even started, this will return false.
 		 */
-		static bool& isDestroyed()
+		static bool& IsDestroyed()
 		{
 			static bool inst = false;
 			return inst;
 		}
 
 		/** Checks has the Module been started up. */
-		static bool& isStartedUp()
+		static bool& IsStartedUp()
 		{
 			static bool inst = false;
 			return inst;

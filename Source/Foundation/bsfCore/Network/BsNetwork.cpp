@@ -471,7 +471,7 @@ namespace bs
 
 	NetworkObject::~NetworkObject()
 	{
-		Network::instance().NotifyNetworkObjectDestroyedInternal(this);
+		Network::Instance().NotifyNetworkObjectDestroyedInternal(this);
 	}
 
 	NetworkObjectState NetworkObject::getNetworkState() const
@@ -480,7 +480,7 @@ namespace bs
 		NetworkObject* thisObj = const_cast<NetworkObject*>(this);
 
 		NetworkObjectState state;
-		state.state = SerializedObject::create(*thisObj,
+		state.state = SerializedObject::Create(*thisObj,
 			SerializedObjectEncodeFlag::Shallow | SerializedObjectEncodeFlag::ReplicableOnly);
 
 		return state;
@@ -488,20 +488,20 @@ namespace bs
 
 	void NetworkObject::networkSpawn()
 	{
-		if(mState != NotReplicated || !Network::instance().isHost())
+		if(mState != NotReplicated || !Network::Instance().isHost())
 			return;
 
-		Network::instance().NotifyNetworkObjectSpawnedInternal(this);
+		Network::Instance().NotifyNetworkObjectSpawnedInternal(this);
 		mState = Replicated;
 		// TODO
 	}
 
 	void NetworkObject::networkDespawn()
 	{
-		if(mState != Replicated || !Network::instance().isHost())
+		if(mState != Replicated || !Network::Instance().isHost())
 			return;
 
-		Network::instance().NotifyNetworkObjectDespawnedInternal(this);
+		Network::Instance().NotifyNetworkObjectDespawnedInternal(this);
 		mState = NotReplicated;
 		// TODO
 	}
@@ -866,7 +866,7 @@ namespace bs
 					// TODO - Add a manual overridable method to a NetworkObject that allows the user to determine if
 					// a network object needs sync or not
 
-					SPtr<SerializedObject> newState = SerializedObject::create(*entry.second.obj,
+					SPtr<SerializedObject> newState = SerializedObject::Create(*entry.second.obj,
 						SerializedObjectEncodeFlag::Shallow | SerializedObjectEncodeFlag::ReplicableOnly);
 
 					IDiff& diffHandler = entry.second.obj->getRTTI()->getDiffHandler();

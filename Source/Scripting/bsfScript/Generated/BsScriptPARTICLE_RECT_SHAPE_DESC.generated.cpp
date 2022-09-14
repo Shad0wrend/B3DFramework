@@ -16,17 +16,17 @@ namespace bs
 	void ScriptPARTICLE_RECT_SHAPE_DESC::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptPARTICLE_RECT_SHAPE_DESC::box(const __PARTICLE_RECT_SHAPE_DESCInterop& value)
+	MonoObject*ScriptPARTICLE_RECT_SHAPE_DESC::Box(const __PARTICLE_RECT_SHAPE_DESCInterop& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	__PARTICLE_RECT_SHAPE_DESCInterop ScriptPARTICLE_RECT_SHAPE_DESC::unbox(MonoObject* value)
+	__PARTICLE_RECT_SHAPE_DESCInterop ScriptPARTICLE_RECT_SHAPE_DESC::Unbox(MonoObject* value)
 	{
-		return *(__PARTICLE_RECT_SHAPE_DESCInterop*)MonoUtil::unbox(value);
+		return *(__PARTICLE_RECT_SHAPE_DESCInterop*)MonoUtil::Unbox(value);
 	}
 
-	PARTICLE_RECT_SHAPE_DESC ScriptPARTICLE_RECT_SHAPE_DESC::fromInterop(const __PARTICLE_RECT_SHAPE_DESCInterop& value)
+	PARTICLE_RECT_SHAPE_DESC ScriptPARTICLE_RECT_SHAPE_DESC::FromInterop(const __PARTICLE_RECT_SHAPE_DESCInterop& value)
 	{
 		PARTICLE_RECT_SHAPE_DESC output;
 		output.extents = value.extents;
@@ -34,7 +34,7 @@ namespace bs
 		return output;
 	}
 
-	__PARTICLE_RECT_SHAPE_DESCInterop ScriptPARTICLE_RECT_SHAPE_DESC::toInterop(const PARTICLE_RECT_SHAPE_DESC& value)
+	__PARTICLE_RECT_SHAPE_DESCInterop ScriptPARTICLE_RECT_SHAPE_DESC::ToInterop(const PARTICLE_RECT_SHAPE_DESC& value)
 	{
 		__PARTICLE_RECT_SHAPE_DESCInterop output;
 		output.extents = value.extents;

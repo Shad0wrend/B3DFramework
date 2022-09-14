@@ -54,24 +54,24 @@ namespace bs
 		 *
 		 * @note	Only valid after core thread has initialized the program.
 		 */
-		bool isCompiled() const;
+		bool IsCompiled() const;
 
 		/**
 		 * Returns an error message returned by the compiler, if the compilation failed.
 		 *
 		 * @note	Only valid after core thread has initialized the program.
 		 */
-		String getCompileErrorMessage() const;
+		String GetCompileErrorMessage() const;
 
 		/**
 		 * Returns description of all parameters in this GPU program.
 		 *
 		 * @note	Only valid after core thread has initialized the program.
 		 */
-		SPtr<GpuParamDesc> getParamDesc() const;
+		SPtr<GpuParamDesc> GetParamDesc() const;
 
 		/** Retrieves a core implementation of a gpu program usable only from the core thread. */
-		SPtr<ct::GpuProgram> getCore() const;
+		SPtr<ct::GpuProgram> GetCore() const;
 
 		/**
 		 * Creates a new GPU program using the provided source code. If compilation fails or program is not supported
@@ -79,7 +79,7 @@ namespace bs
 		 *
 		 * @param[in]	desc		Description of the program to create.
 		 */
-		static SPtr<GpuProgram> create(const GPU_PROGRAM_DESC& desc);
+		static SPtr<GpuProgram> Create(const GPU_PROGRAM_DESC& desc);
 
 	protected:
 		friend class GpuProgramManager;
@@ -87,7 +87,7 @@ namespace bs
 		GpuProgram(const GPU_PROGRAM_DESC& desc);
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> createCore() const override;
+		SPtr<ct::CoreObject> CreateCore() const override;
 
 	protected:
 		bool mNeedsAdjacencyInfo;
@@ -103,8 +103,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class GpuProgramRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/**
@@ -138,8 +138,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class GpuProgramBytecodeRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** @} */
@@ -161,51 +161,51 @@ namespace bs
 		virtual ~GpuProgram();
 
 		/** Returns whether this program can be supported on the current renderer and hardware. */
-		virtual bool isSupported() const;
+		virtual bool IsSupported() const;
 
 		/** Returns true if program was successfully compiled. */
-		virtual bool isCompiled() const { return mIsCompiled; }
+		virtual bool IsCompiled() const { return mIsCompiled; }
 
 		/**	Returns an error message returned by the compiler, if the compilation failed. */
-		virtual String getCompileErrorMessage() const { return mCompileMessages; }
+		virtual String GetCompileErrorMessage() const { return mCompileMessages; }
 
 		/**
 		 * Sets whether this geometry program requires adjacency information from the input primitives.
 		 *
 		 * @note	Only relevant for geometry programs.
 		 */
-		virtual void setAdjacencyInfoRequired(bool required) { mNeedsAdjacencyInfo = required; }
+		virtual void SetAdjacencyInfoRequired(bool required) { mNeedsAdjacencyInfo = required; }
 
 		/**
 		 * Returns whether this geometry program requires adjacency information from the input primitives.
 		 *
 		 * @note	Only relevant for geometry programs.
 		 */
-		virtual bool isAdjacencyInfoRequired() const { return mNeedsAdjacencyInfo; }
+		virtual bool IsAdjacencyInfoRequired() const { return mNeedsAdjacencyInfo; }
 
 		/**	Type of GPU program (for example fragment, vertex). */
-		GpuProgramType getType() const { return mType; }
+		GpuProgramType GetType() const { return mType; }
 
 		/** @copydoc bs::GpuProgram::getParamDesc */
-		SPtr<GpuParamDesc> getParamDesc() const { return mParametersDesc; }
+		SPtr<GpuParamDesc> GetParamDesc() const { return mParametersDesc; }
 
 		/**	Returns GPU program input declaration. Only relevant for vertex programs. */
-		SPtr<VertexDeclaration> getInputDeclaration() const { return mInputDeclaration; }
+		SPtr<VertexDeclaration> GetInputDeclaration() const { return mInputDeclaration; }
 
 		/** Returns the compiled bytecode of this program. */
-		SPtr<GpuProgramBytecode> getBytecode() const { return mBytecode; }
+		SPtr<GpuProgramBytecode> GetBytecode() const { return mBytecode; }
 
 		/**
-		 * @copydoc bs::GpuProgram::create(const GPU_PROGRAM_DESC&)
+		 * @copydoc bs::GpuProgram::Create(const GPU_PROGRAM_DESC&)
 		 * @param[in]	deviceMask		Mask that determines on which GPU devices should the object be created on.
 		 */
-		static SPtr<GpuProgram> create(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
+		static SPtr<GpuProgram> Create(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
 		/**
 		 * Compiles the GPU program to an intermediate bytecode format. The bytecode can be cached and used for
 		 * quicker compilation/creation of GPU programs.
 		 */
-		static SPtr<GpuProgramBytecode> compileBytecode(const GPU_PROGRAM_DESC& desc);
+		static SPtr<GpuProgramBytecode> CompileBytecode(const GPU_PROGRAM_DESC& desc);
 
 	protected:
 		friend class GpuProgramRTTI;

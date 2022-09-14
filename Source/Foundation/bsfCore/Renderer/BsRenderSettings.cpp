@@ -8,7 +8,7 @@
 namespace bs
 {
 	template <class Processor>
-	void AutoExposureSettings::rttiEnumFields(Processor p)
+	void AutoExposureSettings::RttiEnumFields(Processor p)
 	{
 		p(histogramLog2Min);
 		p(histogramLog2Max);
@@ -20,18 +20,18 @@ namespace bs
 		p(eyeAdaptationSpeedDown);
 	}
 
-	RTTITypeBase* AutoExposureSettings::getRTTIStatic()
+	RTTITypeBase* AutoExposureSettings::GetRttiStatic()
 	{
-		return AutoExposureSettingsRTTI::instance();
+		return AutoExposureSettingsRTTI::Instance();
 	}
 
-	RTTITypeBase* AutoExposureSettings::getRTTI() const
+	RTTITypeBase* AutoExposureSettings::GetRtti() const
 	{
-		return getRTTIStatic();
+		return GetRttiStatic();
 	}
 
 	template <class Processor>
-	void TonemappingSettings::rttiEnumFields(Processor p)
+	void TonemappingSettings::RttiEnumFields(Processor p)
 	{
 		p(filmicCurveShoulderStrength);
 		p(filmicCurveLinearStrength);
@@ -42,35 +42,35 @@ namespace bs
 		p(filmicCurveLinearWhitePoint);
 	}
 
-	RTTITypeBase* TonemappingSettings::getRTTIStatic()
+	RTTITypeBase* TonemappingSettings::GetRttiStatic()
 	{
-		return TonemappingSettingsRTTI::instance();
+		return TonemappingSettingsRTTI::Instance();
 	}
 
-	RTTITypeBase* TonemappingSettings::getRTTI() const
+	RTTITypeBase* TonemappingSettings::GetRtti() const
 	{
-		return getRTTIStatic();
+		return GetRttiStatic();
 	}
 
 	template <class Processor>
-	void WhiteBalanceSettings::rttiEnumFields(Processor p)
+	void WhiteBalanceSettings::RttiEnumFields(Processor p)
 	{
 		p(temperature);
 		p(tint);
 	}
 
-	RTTITypeBase* WhiteBalanceSettings::getRTTIStatic()
+	RTTITypeBase* WhiteBalanceSettings::GetRttiStatic()
 	{
-		return WhiteBalanceSettingsRTTI::instance();
+		return WhiteBalanceSettingsRTTI::Instance();
 	}
 
-	RTTITypeBase* WhiteBalanceSettings::getRTTI() const
+	RTTITypeBase* WhiteBalanceSettings::GetRtti() const
 	{
-		return getRTTIStatic();
+		return GetRttiStatic();
 	}
 
 	template <class Processor>
-	void ColorGradingSettings::rttiEnumFields(Processor p)
+	void ColorGradingSettings::RttiEnumFields(Processor p)
 	{
 		p(saturation);
 		p(gain);
@@ -78,18 +78,18 @@ namespace bs
 		p(offset);
 	}
 
-	RTTITypeBase* ColorGradingSettings::getRTTIStatic()
+	RTTITypeBase* ColorGradingSettings::GetRttiStatic()
 	{
-		return ColorGradingSettingsRTTI::instance();
+		return ColorGradingSettingsRTTI::Instance();
 	}
 
-	RTTITypeBase* ColorGradingSettings::getRTTI() const
+	RTTITypeBase* ColorGradingSettings::GetRtti() const
 	{
-		return getRTTIStatic();
+		return GetRttiStatic();
 	}
 
 	template <class Processor>
-	void AmbientOcclusionSettings::rttiEnumFields(Processor p)
+	void AmbientOcclusionSettings::RttiEnumFields(Processor p)
 	{
 		p(enabled);
 		p(radius);
@@ -101,19 +101,19 @@ namespace bs
 		p(quality);
 	}
 
-	RTTITypeBase* AmbientOcclusionSettings::getRTTIStatic()
+	RTTITypeBase* AmbientOcclusionSettings::GetRttiStatic()
 	{
-		return AmbientOcclusionSettingsRTTI::instance();
+		return AmbientOcclusionSettingsRTTI::Instance();
 	}
 
-	RTTITypeBase* AmbientOcclusionSettings::getRTTI() const
+	RTTITypeBase* AmbientOcclusionSettings::GetRtti() const
 	{
-		return getRTTIStatic();
+		return GetRttiStatic();
 	}
 
 	template <bool Core>
 	template <class Processor>
-	void TDepthOfFieldSettings<Core>::rttiEnumFields(Processor p)
+	void TDepthOfFieldSettings<Core>::RttiEnumFields(Processor p)
 	{
 		p(enabled);
 		p(focalDistance);
@@ -137,18 +137,18 @@ namespace bs
 	template struct TDepthOfFieldSettings<false>;
 	template struct TDepthOfFieldSettings<true>;
 
-	RTTITypeBase* DepthOfFieldSettings::getRTTIStatic()
+	RTTITypeBase* DepthOfFieldSettings::GetRttiStatic()
 	{
-		return DepthOfFieldSettingsRTTI::instance();
+		return DepthOfFieldSettingsRTTI::Instance();
 	}
 
-	RTTITypeBase* DepthOfFieldSettings::getRTTI() const
+	RTTITypeBase* DepthOfFieldSettings::GetRtti() const
 	{
-		return getRTTIStatic();
+		return GetRttiStatic();
 	}
 
 	template <class Processor>
-	void ScreenSpaceReflectionsSettings::rttiEnumFields(Processor p)
+	void ScreenSpaceReflectionsSettings::RttiEnumFields(Processor p)
 	{
 		p(enabled);
 		p(quality);
@@ -156,18 +156,18 @@ namespace bs
 		p(maxRoughness);
 	}
 
-	RTTITypeBase* ScreenSpaceReflectionsSettings::getRTTIStatic()
+	RTTITypeBase* ScreenSpaceReflectionsSettings::GetRttiStatic()
 	{
-		return ScreenSpaceReflectionsSettingsRTTI::instance();
+		return ScreenSpaceReflectionsSettingsRTTI::Instance();
 	}
 
-	RTTITypeBase* ScreenSpaceReflectionsSettings::getRTTI() const
+	RTTITypeBase* ScreenSpaceReflectionsSettings::GetRtti() const
 	{
-		return getRTTIStatic();
+		return GetRttiStatic();
 	}
 
 	template <class Processor>
-	void BloomSettings::rttiEnumFields(Processor p)
+	void BloomSettings::RttiEnumFields(Processor p)
 	{
 		p(enabled);
 		p(quality);
@@ -177,18 +177,18 @@ namespace bs
 		p(filterSize);
 	}
 
-	RTTITypeBase* BloomSettings::getRTTIStatic()
+	RTTITypeBase* BloomSettings::GetRttiStatic()
 	{
-		return BloomSettingsRTTI::instance();
+		return BloomSettingsRTTI::Instance();
 	}
 
-	RTTITypeBase* BloomSettings::getRTTI() const
+	RTTITypeBase* BloomSettings::GetRtti() const
 	{
-		return getRTTIStatic();
+		return GetRttiStatic();
 	}
 
 	template <class Processor>
-	void ScreenSpaceLensFlareSettings::rttiEnumFields(Processor p)
+	void ScreenSpaceLensFlareSettings::RttiEnumFields(Processor p)
 	{
 		p(enabled);
 		p(downsampleCount);
@@ -207,18 +207,18 @@ namespace bs
 		p(bicubicUpsampling);
 	}
 
-	RTTITypeBase* ScreenSpaceLensFlareSettings::getRTTIStatic()
+	RTTITypeBase* ScreenSpaceLensFlareSettings::GetRttiStatic()
 	{
-		return ScreenSpaceLensFlareSettingsRTTI::instance();
+		return ScreenSpaceLensFlareSettingsRTTI::Instance();
 	}
 
-	RTTITypeBase* ScreenSpaceLensFlareSettings::getRTTI() const
+	RTTITypeBase* ScreenSpaceLensFlareSettings::GetRtti() const
 	{
-		return getRTTIStatic();
+		return GetRttiStatic();
 	}
 
 	template <class Processor>
-	void MotionBlurSettings::rttiEnumFields(Processor p)
+	void MotionBlurSettings::RttiEnumFields(Processor p)
 	{
 		p(enabled);
 		p(domain);
@@ -227,37 +227,37 @@ namespace bs
 		p(maximumRadius);
 	}
 
-	RTTITypeBase* MotionBlurSettings::getRTTIStatic()
+	RTTITypeBase* MotionBlurSettings::GetRttiStatic()
 	{
-		return MotionBlurSettingsRTTI::instance();
+		return MotionBlurSettingsRTTI::Instance();
 	}
 
-	RTTITypeBase* MotionBlurSettings::getRTTI() const
+	RTTITypeBase* MotionBlurSettings::GetRtti() const
 	{
-		return getRTTIStatic();
+		return GetRttiStatic();
 	}
 
 	template <class Processor>
-	void TemporalAASettings::rttiEnumFields(Processor p)
+	void TemporalAASettings::RttiEnumFields(Processor p)
 	{
 		p(enabled);
 		p(jitteredPositionCount);
 		p(sharpness);
 	}
 
-	RTTITypeBase* TemporalAASettings::getRTTIStatic()
+	RTTITypeBase* TemporalAASettings::GetRttiStatic()
 	{
-		return TemporalAASettingsRTTI::instance();
+		return TemporalAASettingsRTTI::Instance();
 	}
 
-	RTTITypeBase* TemporalAASettings::getRTTI() const
+	RTTITypeBase* TemporalAASettings::GetRtti() const
 	{
-		return getRTTIStatic();
+		return GetRttiStatic();
 	}
 
 	template <bool Core>
 	template <class Processor>
-	void TChromaticAberrationSettings<Core>::rttiEnumFields(Processor p)
+	void TChromaticAberrationSettings<Core>::RttiEnumFields(Processor p)
 	{
 		p(enabled);
 		p(type);
@@ -268,36 +268,36 @@ namespace bs
 	template struct TChromaticAberrationSettings<false>;
 	template struct TChromaticAberrationSettings<true>;
 
-	RTTITypeBase* ChromaticAberrationSettings::getRTTIStatic()
+	RTTITypeBase* ChromaticAberrationSettings::GetRttiStatic()
 	{
-		return ChromaticAberrationSettingsRTTI::instance();
+		return ChromaticAberrationSettingsRTTI::Instance();
 	}
 
-	RTTITypeBase* ChromaticAberrationSettings::getRTTI() const
+	RTTITypeBase* ChromaticAberrationSettings::GetRtti() const
 	{
-		return getRTTIStatic();
+		return GetRttiStatic();
 	}
 
 	template <class Processor>
-	void FilmGrainSettings::rttiEnumFields(Processor p)
+	void FilmGrainSettings::RttiEnumFields(Processor p)
 	{
 		p(enabled);
 		p(intensity);
 		p(speed);
 	}
 
-	RTTITypeBase* FilmGrainSettings::getRTTIStatic()
+	RTTITypeBase* FilmGrainSettings::GetRttiStatic()
 	{
-		return FilmGrainSettingsRTTI::instance();
+		return FilmGrainSettingsRTTI::Instance();
 	}
 
-	RTTITypeBase* FilmGrainSettings::getRTTI() const
+	RTTITypeBase* FilmGrainSettings::GetRtti() const
 	{
-		return getRTTIStatic();
+		return GetRttiStatic();
 	}
 
 	template <class Processor>
-	void ShadowSettings::rttiEnumFields(Processor p)
+	void ShadowSettings::RttiEnumFields(Processor p)
 	{
 		p(directionalShadowDistance);
 		p(numCascades);
@@ -305,19 +305,19 @@ namespace bs
 		p(shadowFilteringQuality);
 	}
 
-	RTTITypeBase* ShadowSettings::getRTTIStatic()
+	RTTITypeBase* ShadowSettings::GetRttiStatic()
 	{
-		return ShadowSettingsRTTI::instance();
+		return ShadowSettingsRTTI::Instance();
 	}
 
-	RTTITypeBase* ShadowSettings::getRTTI() const
+	RTTITypeBase* ShadowSettings::GetRtti() const
 	{
-		return getRTTIStatic();
+		return GetRttiStatic();
 	}
 
 	template <bool Core>
 	template <class Processor>
-	void TRenderSettings<Core>::rttiEnumFields(Processor p)
+	void TRenderSettings<Core>::RttiEnumFields(Processor p)
 	{
 		p(enableAutoExposure);
 		p(autoExposure);
@@ -356,13 +356,13 @@ namespace bs
 	template void TRenderSettings<true>::rttiEnumFields(RttiCoreSyncSize);
 	template void TRenderSettings<true>::rttiEnumFields(RttiCoreSyncReader);
 
-	RTTITypeBase* RenderSettings::getRTTIStatic()
+	RTTITypeBase* RenderSettings::GetRttiStatic()
 	{
-		return RenderSettingsRTTI::instance();
+		return RenderSettingsRTTI::Instance();
 	}
 
-	RTTITypeBase* RenderSettings::getRTTI() const
+	RTTITypeBase* RenderSettings::GetRtti() const
 	{
-		return getRTTIStatic();
+		return GetRttiStatic();
 	}
 }

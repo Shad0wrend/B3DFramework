@@ -60,52 +60,52 @@ namespace bs
 		~Win32Window();
 
 		/**	Returns position of the left-most border of the window, relative to the screen. */
-		INT32 getLeft() const;
+		INT32 GetLeft() const;
 
 		/**	Returns position of the top-most border of the window, relative to the screen. */
-		INT32 getTop() const;
+		INT32 GetTop() const;
 
 		/**	Returns width of the window in pixels. */
-		UINT32 getWidth() const;
+		UINT32 GetWidth() const;
 
 		/**	Returns height of the window in pixels. */
-		UINT32 getHeight() const;
+		UINT32 GetHeight() const;
 
 		/**	Returns the native window handle. */
-		HWND getHWnd() const;
+		HWND GetHWnd() const;
 
 		/**	Hide or show the window. */
-		void setHidden(bool hidden);
+		void SetHidden(bool hidden);
 
 		/**	Restores or minimizes the window. */
-		void setActive(bool state);
+		void SetActive(bool state);
 
 		/**	Minimizes the window to the taskbar. */
-		void minimize();
+		void Minimize();
 
 		/**	Maximizes the window over the entire current screen. */
-		void maximize();
+		void Maximize();
 
 		/**	Restores the window to original position and size if it is minimized or maximized. */
-		void restore();
+		void Restore();
 
 		/**	Change the size of the window. */
-		void resize(UINT32 width, UINT32 height);
+		void Resize(UINT32 width, UINT32 height);
 
 		/**	Reposition the window. */
-		void move(INT32 left, INT32 top);
+		void Move(INT32 left, INT32 top);
 
 		/**	Converts screen position into window local position. */
-		Vector2I screenToWindowPos(const Vector2I& screenPos) const;
+		Vector2I ScreenToWindowPos(const Vector2I& screenPos) const;
 
 		/**	Converts window local position to screen position. */
-		Vector2I windowToScreenPos(const Vector2I& windowPos) const;
+		Vector2I WindowToScreenPos(const Vector2I& windowPos) const;
 
 		/**	Returns the window style flags used for creating it. */
-		DWORD getStyle() const;
+		DWORD GetStyle() const;
 
 		/**	Returns the extended window style flags used for creating it. */
-		DWORD getStyleEx() const;
+		DWORD GetStyleEx() const;
 
 		/** Called when window is moved or resized externally. */
 		void WindowMovedOrResizedInternal();

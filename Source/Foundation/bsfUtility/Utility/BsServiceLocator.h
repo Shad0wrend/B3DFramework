@@ -29,7 +29,7 @@ namespace bs
 		 *
 		 * @note	Can return null.
 		 */
-		static T* instance() { return mService; }
+		static T* Instance() { return mService; }
 
 		/** @name Internal
 		 *  @{

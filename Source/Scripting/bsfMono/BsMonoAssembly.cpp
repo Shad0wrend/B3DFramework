@@ -48,27 +48,27 @@ namespace bs
 
 	MonoAssembly::~MonoAssembly()
 	{
-		unload();
+		Unload();
 	}
 
-	void MonoAssembly::load()
+	void MonoAssembly::Load()
 	{
 		if (mIsLoaded)
-			unload();
+			Unload();
 
 		// Load assembly from memory because mono_domain_assembly_open keeps a lock on the file
-		SPtr<DataStream> assemblyStream = FileSystem::openFile(mPath, true);
+		SPtr<DataStream> assemblyStream = FileSystem::OpenFile(mPath, true);
 		if (assemblyStream == nullptr)
 		{
 			BS_LOG(Error, Script, "Cannot load assembly at path \"{0}\" because the file doesn't exist", mPath);
 			return;
 		}
 
-		UINT32 assemblySize = (UINT32)assemblyStream->size();
+		UINT32 assemblySize = (UINT32)assemblyStream->Size();
 		char* assemblyData = (char*)bs_stack_alloc(assemblySize);
-		assemblyStream->read(assemblyData, assemblySize);
+		assemblyStream->Read(assemblyData, assemblySize);
 
-		String imageName = mPath.getFilename();
+		String imageName = mPath.GetFilename();
 
 		MonoImageOpenStatus status = MONO_IMAGE_OK;
 		MonoImage* image = mono_image_open_from_data_with_name(assemblyData, assemblySize, true, &status, false, imageName.c_str());
@@ -83,17 +83,17 @@ namespace bs
 		// Load MDB file
 #if BS_DEBUG_MODE
 		Path mdbPath = mPath;
-		mdbPath.setExtension(mdbPath.getExtension() + ".mdb");
+		mdbPath.SetExtension(mdbPath.GetExtension() + ".mdb");
 
-		if (FileSystem::exists(mdbPath))
+		if (FileSystem::Exists(mdbPath))
 		{
-			SPtr<DataStream> mdbStream = FileSystem::openFile(mdbPath, true);
+			SPtr<DataStream> mdbStream = FileSystem::OpenFile(mdbPath, true);
 
 			if (mdbStream != nullptr)
 			{
-				UINT32 mdbSize = (UINT32)mdbStream->size();
+				UINT32 mdbSize = (UINT32)mdbStream->Size();
 				mDebugData = (UINT8*)bs_alloc(mdbSize);
-				mdbStream->read(mDebugData, mdbSize);
+				mdbStream->Read(mDebugData, mdbSize);
 
 				mono_debug_open_image_from_memory(image, mDebugData, mdbSize);
 			}
@@ -117,7 +117,7 @@ namespace bs
 		mIsDependency = false;
 	}
 
-	void MonoAssembly::loadFromImage(MonoImage* image)
+	void MonoAssembly::LoadFromImage(MonoImage* image)
 	{
 		::MonoAssembly* monoAssembly = mono_image_get_assembly(image);
 		if(monoAssembly == nullptr)
@@ -132,7 +132,7 @@ namespace bs
 		mIsDependency = true;
 	}
 
-	void MonoAssembly::unload()
+	void MonoAssembly::Unload()
 	{
 		if(!mIsLoaded)
 			return;
@@ -168,7 +168,7 @@ namespace bs
 		}
 	}
 
-	void MonoAssembly::invoke(const String& functionName)
+	void MonoAssembly::Invoke(const String& functionName)
 	{
 		MonoMethodDesc* methodDesc = mono_method_desc_new(functionName.c_str(), false);
 
@@ -186,7 +186,7 @@ namespace bs
 		}
 	}
 
-	MonoClass* MonoAssembly::getClass(const String& namespaceName, const String& name) const
+	MonoClass* MonoAssembly::GetClass(const String& namespaceName, const String& name) const
 	{
 		if(!mIsLoaded)
 			BS_EXCEPT(InvalidStateException, "Trying to use an unloaded assembly.");
@@ -208,7 +208,7 @@ namespace bs
 		return newClass;
 	}
 
-	MonoClass* MonoAssembly::getClass(::MonoClass* rawMonoClass) const
+	MonoClass* MonoAssembly::GetClass(::MonoClass* rawMonoClass) const
 	{
 		if(!mIsLoaded)
 			BS_EXCEPT(InvalidStateException, "Trying to use an unloaded assembly.");
@@ -239,7 +239,7 @@ namespace bs
 		return newClass;
 	}
 
-	MonoClass* MonoAssembly::getClass(const String& ns, const String& typeName, ::MonoClass* rawMonoClass) const
+	MonoClass* MonoAssembly::GetClass(const String& ns, const String& typeName, ::MonoClass* rawMonoClass) const
 	{
 		if (!mIsLoaded)
 			BS_EXCEPT(InvalidStateException, "Trying to use an unloaded assembly.");
@@ -266,7 +266,7 @@ namespace bs
 		return newClass;
 	}
 
-	const Vector<MonoClass*>& MonoAssembly::getAllClasses() const
+	const Vector<MonoClass*>& MonoAssembly::GetAllClasses() const
 	{
 		if(mHaveCachedClassList)
 			return mCachedClassList;
@@ -274,7 +274,7 @@ namespace bs
 		mCachedClassList.clear();
 		Stack<MonoClass*> todo;
 
-		MonoAssembly* corlib = MonoManager::instance().getAssembly("corlib");
+		MonoAssembly* corlib = MonoManager::Instance().getAssembly("corlib");
 		MonoClass* compilerGeneratedAttrib = corlib->getClass("System.Runtime.CompilerServices",
 				"CompilerGeneratedAttribute");
 
@@ -334,7 +334,7 @@ namespace bs
 		return mCachedClassList;
 	}
 
-	bool MonoAssembly::isGenericClass(const String& name) const
+	bool MonoAssembly::IsGenericClass(const String& name) const
 	{
 		// By CIL convention generic classes have ` separating their name and
 		// number of generic parameters

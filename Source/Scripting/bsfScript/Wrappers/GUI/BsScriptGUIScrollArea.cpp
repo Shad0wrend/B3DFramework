@@ -24,8 +24,8 @@ namespace bs
 
 	void ScriptGUIScrollArea::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_CreateInstance", (void*)&ScriptGUIScrollArea::internal_createInstance);
-		metaData.scriptClass->addInternalCall("Internal_GetContentBounds", (void*)&ScriptGUIScrollArea::internal_getContentBounds);
+		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIScrollArea::InternalCreateInstance);
+		metaData.scriptClass->AddInternalCall("Internal_GetContentBounds", (void*)&ScriptGUIScrollArea::InternalGetContentBounds);
 		metaData.scriptClass->addInternalCall("Internal_GetHorzScroll", (void*)&ScriptGUIScrollArea::internal_getHorzScroll);
 		metaData.scriptClass->addInternalCall("Internal_SetHorzScroll", (void*)&ScriptGUIScrollArea::internal_setHorzScroll);
 		metaData.scriptClass->addInternalCall("Internal_GetVertScroll", (void*)&ScriptGUIScrollArea::internal_getVertScroll);
@@ -33,18 +33,18 @@ namespace bs
 		metaData.scriptClass->addInternalCall("Internal_GetScrollBarWidth", (void*)&ScriptGUIScrollArea::internal_getScrollBarWidth);
 	}
 
-	void ScriptGUIScrollArea::initialize(ScriptGUIScrollAreaLayout* layout)
+	void ScriptGUIScrollArea::Initialize(ScriptGUIScrollAreaLayout* layout)
 	{
 		mLayout = layout;
 		mLayout->mParentScrollArea = this;
 	}
 
-	void ScriptGUIScrollArea::notifyLayoutDestroyed()
+	void ScriptGUIScrollArea::NotifyLayoutDestroyed()
 	{
 		mLayout = nullptr;
 	}
 
-	void ScriptGUIScrollArea::destroy()
+	void ScriptGUIScrollArea::Destroy()
 	{
 		if (!mIsDestroyed)
 		{
@@ -67,7 +67,7 @@ namespace bs
 		}
 	}
 
-	void ScriptGUIScrollArea::internal_createInstance(MonoObject* instance, ScrollBarType vertBarType, ScrollBarType horzBarType,
+	void ScriptGUIScrollArea::InternalCreateInstance(MonoObject* instance, ScrollBarType vertBarType, ScrollBarType horzBarType,
 		MonoString* scrollBarStyle, MonoString* scrollAreaStyle, MonoArray* guiOptions)
 	{
 		GUIOptions options;
@@ -77,43 +77,43 @@ namespace bs
 		for (UINT32 i = 0; i < arrayLen; i++)
 			options.addOption(scriptArray.get<GUIOption>(i));
 
-		GUIScrollArea* guiScrollArea = GUIScrollArea::create(vertBarType, horzBarType, options,
+		GUIScrollArea* guiScrollArea = GUIScrollArea::Create(vertBarType, horzBarType, options,
 			MonoUtil::monoToString(scrollBarStyle), MonoUtil::monoToString(scrollAreaStyle));
 
 		new (bs_alloc<ScriptGUIScrollArea>()) ScriptGUIScrollArea(instance, guiScrollArea);
 	}
 
-	void ScriptGUIScrollArea::internal_getContentBounds(ScriptGUIScrollArea* nativeInstance, Rect2I* bounds)
+	void ScriptGUIScrollArea::InternalGetContentBounds(ScriptGUIScrollArea* nativeInstance, Rect2I* bounds)
 	{
 		GUIScrollArea* guiScrollArea = static_cast<GUIScrollArea*>(nativeInstance->getGUIElement());
 		*bounds = guiScrollArea->getContentBounds();
 	}
 
-	float ScriptGUIScrollArea::internal_getHorzScroll(ScriptGUIScrollArea* nativeInstance)
+	float ScriptGUIScrollArea::InternalGetHorzScroll(ScriptGUIScrollArea* nativeInstance)
 	{
 		GUIScrollArea* guiScrollArea = static_cast<GUIScrollArea*>(nativeInstance->getGUIElement());
 		return guiScrollArea->getHorizontalScroll();
 	}
 
-	void ScriptGUIScrollArea::internal_setHorzScroll(ScriptGUIScrollArea* nativeInstance, float value)
+	void ScriptGUIScrollArea::InternalSetHorzScroll(ScriptGUIScrollArea* nativeInstance, float value)
 	{
 		GUIScrollArea* guiScrollArea = static_cast<GUIScrollArea*>(nativeInstance->getGUIElement());
 		guiScrollArea->scrollToHorizontal(value);
 	}
 
-	float ScriptGUIScrollArea::internal_getVertScroll(ScriptGUIScrollArea* nativeInstance)
+	float ScriptGUIScrollArea::InternalGetVertScroll(ScriptGUIScrollArea* nativeInstance)
 	{
 		GUIScrollArea* guiScrollArea = static_cast<GUIScrollArea*>(nativeInstance->getGUIElement());
 		return guiScrollArea->getVerticalScroll();
 	}
 
-	void ScriptGUIScrollArea::internal_setVertScroll(ScriptGUIScrollArea* nativeInstance, float value)
+	void ScriptGUIScrollArea::InternalSetVertScroll(ScriptGUIScrollArea* nativeInstance, float value)
 	{
 		GUIScrollArea* guiScrollArea = static_cast<GUIScrollArea*>(nativeInstance->getGUIElement());
 		guiScrollArea->scrollToVertical(value);
 	}
 
-	int ScriptGUIScrollArea::internal_getScrollBarWidth(ScriptGUIScrollArea* nativeInstance)
+	int ScriptGUIScrollArea::InternalGetScrollBarWidth(ScriptGUIScrollArea* nativeInstance)
 	{
 		return GUIScrollArea::ScrollBarWidth;
 	}

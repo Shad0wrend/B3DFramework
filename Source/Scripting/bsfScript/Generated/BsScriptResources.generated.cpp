@@ -51,13 +51,13 @@ namespace bs
 		onResourceModifiedThunk = (onResourceModifiedThunkDef)metaData.scriptClass->getMethodExact("Internal_onResourceModified", "RRefBase")->getThunk();
 	}
 
-	void ScriptResources::startUp()
+	void ScriptResources::StartUp()
 	{
-		onResourceLoadedConn = Resources::instance().onResourceLoaded.connect(&ScriptResources::onResourceLoaded);
-		onResourceDestroyedConn = Resources::instance().onResourceDestroyed.connect(&ScriptResources::onResourceDestroyed);
-		onResourceModifiedConn = Resources::instance().onResourceModified.connect(&ScriptResources::onResourceModified);
+		onResourceLoadedConn = Resources::Instance().onResourceLoaded.connect(&ScriptResources::onResourceLoaded);
+		onResourceDestroyedConn = Resources::Instance().onResourceDestroyed.connect(&ScriptResources::onResourceDestroyed);
+		onResourceModifiedConn = Resources::Instance().onResourceModified.connect(&ScriptResources::onResourceModified);
 	}
-	void ScriptResources::shutDown()
+	void ScriptResources::ShutDown()
 	{
 		onResourceLoadedConn.disconnect();
 		onResourceDestroyedConn.disconnect();
@@ -68,7 +68,7 @@ namespace bs
 	{
 		MonoObject* tmpp0;
 		ScriptRRefBase* scriptp0;
-		scriptp0 = ScriptResourceManager::instance().getScriptRRef(p0);
+		scriptp0 = ScriptResourceManager::Instance().getScriptRRef(p0);
 		if(scriptp0 != nullptr)
 			tmpp0 = scriptp0->getManagedInstance();
 		else
@@ -87,7 +87,7 @@ namespace bs
 	{
 		MonoObject* tmpp0;
 		ScriptRRefBase* scriptp0;
-		scriptp0 = ScriptResourceManager::instance().getScriptRRef(p0);
+		scriptp0 = ScriptResourceManager::Instance().getScriptRRef(p0);
 		if(scriptp0 != nullptr)
 			tmpp0 = scriptp0->getManagedInstance();
 		else
@@ -99,11 +99,11 @@ namespace bs
 		ResourceHandle<Resource> tmp__output;
 		Path tmpfilePath;
 		tmpfilePath = MonoUtil::monoToString(filePath);
-		tmp__output = Resources::instance().load(tmpfilePath, loadFlags);
+		tmp__output = Resources::Instance().load(tmpfilePath, loadFlags);
 
 		MonoObject* __output;
 		ScriptResourceBase* script__output;
-		script__output = ScriptResourceManager::instance().getScriptResource(tmp__output, true);
+		script__output = ScriptResourceManager::Instance().getScriptResource(tmp__output, true);
 		if(script__output != nullptr)
 			__output = script__output->getManagedInstance();
 		else
@@ -117,11 +117,11 @@ namespace bs
 		ResourceHandle<Resource> tmp__output;
 		Path tmpfilePath;
 		tmpfilePath = MonoUtil::monoToString(filePath);
-		tmp__output = Resources::instance().loadAsync(tmpfilePath, loadFlags);
+		tmp__output = Resources::Instance().loadAsync(tmpfilePath, loadFlags);
 
 		MonoObject* __output;
 		ScriptRRefBase* script__output;
-		script__output = ScriptResourceManager::instance().getScriptRRef(tmp__output);
+		script__output = ScriptResourceManager::Instance().getScriptRRef(tmp__output);
 		if(script__output != nullptr)
 			__output = script__output->getManagedInstance();
 		else
@@ -133,11 +133,11 @@ namespace bs
 	MonoObject* ScriptResources::Internal_loadFromUUID(UUID* uuid, bool async, ResourceLoadFlag loadFlags)
 	{
 		ResourceHandle<Resource> tmp__output;
-		tmp__output = Resources::instance().loadFromUUID(*uuid, async, loadFlags);
+		tmp__output = Resources::Instance().loadFromUUID(*uuid, async, loadFlags);
 
 		MonoObject* __output;
 		ScriptRRefBase* script__output;
-		script__output = ScriptResourceManager::instance().getScriptRRef(tmp__output);
+		script__output = ScriptResourceManager::Instance().getScriptRRef(tmp__output);
 		if(script__output != nullptr)
 			__output = script__output->getManagedInstance();
 		else
@@ -153,17 +153,17 @@ namespace bs
 		scriptresource = ScriptRRefBase::toNative(resource);
 		if(scriptresource != nullptr)
 			tmpresource = static_resource_cast<Resource>(scriptresource->getHandle());
-		Resources::instance().release(tmpresource);
+		Resources::Instance().release(tmpresource);
 	}
 
 	void ScriptResources::Internal_unloadAllUnused()
 	{
-		Resources::instance().unloadAllUnused();
+		Resources::Instance().unloadAllUnused();
 	}
 
 	void ScriptResources::Internal_unloadAll()
 	{
-		Resources::instance().unloadAll();
+		Resources::Instance().unloadAll();
 	}
 
 	void ScriptResources::Internal_save(MonoObject* resource, MonoString* filePath, bool overwrite, bool compress)
@@ -175,7 +175,7 @@ namespace bs
 			tmpresource = static_resource_cast<Resource>(scriptresource->getGenericHandle());
 		Path tmpfilePath;
 		tmpfilePath = MonoUtil::monoToString(filePath);
-		Resources::instance().save(tmpresource, tmpfilePath, overwrite, compress);
+		Resources::Instance().save(tmpresource, tmpfilePath, overwrite, compress);
 	}
 
 	void ScriptResources::Internal_save0(MonoObject* resource, bool compress)
@@ -185,7 +185,7 @@ namespace bs
 		scriptresource = ScriptResource::toNative(resource);
 		if(scriptresource != nullptr)
 			tmpresource = static_resource_cast<Resource>(scriptresource->getGenericHandle());
-		Resources::instance().save(tmpresource, compress);
+		Resources::Instance().save(tmpresource, compress);
 	}
 
 	MonoArray* ScriptResources::Internal_getDependencies(MonoString* filePath)
@@ -193,7 +193,7 @@ namespace bs
 		Vector<UUID> vec__output;
 		Path tmpfilePath;
 		tmpfilePath = MonoUtil::monoToString(filePath);
-		vec__output = Resources::instance().getDependencies(tmpfilePath);
+		vec__output = Resources::Instance().getDependencies(tmpfilePath);
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
@@ -210,7 +210,7 @@ namespace bs
 	bool ScriptResources::Internal_isLoaded(UUID* uuid, bool checkInProgress)
 	{
 		bool tmp__output;
-		tmp__output = Resources::instance().isLoaded(*uuid, checkInProgress);
+		tmp__output = Resources::Instance().isLoaded(*uuid, checkInProgress);
 
 		bool __output;
 		__output = tmp__output;
@@ -226,7 +226,7 @@ namespace bs
 		scriptresource = ScriptRRefBase::toNative(resource);
 		if(scriptresource != nullptr)
 			tmpresource = static_resource_cast<Resource>(scriptresource->getHandle());
-		tmp__output = Resources::instance().getLoadProgress(tmpresource, includeDependencies);
+		tmp__output = Resources::Instance().getLoadProgress(tmpresource, includeDependencies);
 
 		float __output;
 		__output = tmp__output;
@@ -241,7 +241,7 @@ namespace bs
 		scriptmanifest = ScriptResourceManifest::toNative(manifest);
 		if(scriptmanifest != nullptr)
 			tmpmanifest = scriptmanifest->getInternal();
-		Resources::instance().registerResourceManifest(tmpmanifest);
+		Resources::Instance().registerResourceManifest(tmpmanifest);
 	}
 
 	void ScriptResources::Internal_unregisterResourceManifest(MonoObject* manifest)
@@ -251,7 +251,7 @@ namespace bs
 		scriptmanifest = ScriptResourceManifest::toNative(manifest);
 		if(scriptmanifest != nullptr)
 			tmpmanifest = scriptmanifest->getInternal();
-		Resources::instance().unregisterResourceManifest(tmpmanifest);
+		Resources::Instance().unregisterResourceManifest(tmpmanifest);
 	}
 
 	MonoObject* ScriptResources::Internal_getResourceManifest(MonoString* name)
@@ -259,10 +259,10 @@ namespace bs
 		SPtr<ResourceManifest> tmp__output;
 		String tmpname;
 		tmpname = MonoUtil::monoToString(name);
-		tmp__output = Resources::instance().getResourceManifest(tmpname);
+		tmp__output = Resources::Instance().getResourceManifest(tmpname);
 
 		MonoObject* __output;
-		__output = ScriptResourceManifest::create(tmp__output);
+		__output = ScriptResourceManifest::Create(tmp__output);
 
 		return __output;
 	}
@@ -271,7 +271,7 @@ namespace bs
 	{
 		bool tmp__output;
 		Path tmpfilePath;
-		tmp__output = Resources::instance().getFilePathFromUUID(*uuid, tmpfilePath);
+		tmp__output = Resources::Instance().getFilePathFromUUID(*uuid, tmpfilePath);
 
 		bool __output;
 		__output = tmp__output;
@@ -285,7 +285,7 @@ namespace bs
 		bool tmp__output;
 		Path tmppath;
 		tmppath = MonoUtil::monoToString(path);
-		tmp__output = Resources::instance().getUUIDFromFilePath(tmppath, *uuid);
+		tmp__output = Resources::Instance().getUUIDFromFilePath(tmppath, *uuid);
 
 		bool __output;
 		__output = tmp__output;

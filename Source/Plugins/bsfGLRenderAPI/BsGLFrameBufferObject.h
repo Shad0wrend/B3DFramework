@@ -45,14 +45,14 @@ namespace bs { namespace ct
 		 * Multisample counts of all surfaces must match.
 		 * 0th attachment must be bound in order for the object to be usable, rest are optional.
 		 */
-		void bindSurface(UINT32 attachment, const GLSurfaceDesc& target);
+		void BindSurface(UINT32 attachment, const GLSurfaceDesc& target);
 
 		/**
 		 * Unbinds the attachment at the specified attachment index. Call rebuild() to apply changes.
 		 *
 		 * @param[in]	attachment	Attachment point index in the range [0, BS_MAX_MULTIPLE_RENDER_TARGETS).
 		 */
-		void unbindSurface(UINT32 attachment);
+		void UnbindSurface(UINT32 attachment);
 
 		/**
 		 * Binds a depth/stencil buffer. Call rebuild() to apply changes.
@@ -61,22 +61,22 @@ namespace bs { namespace ct
 		 * Multisample counts of depth/stencil and color surfaces must match.
 		 * Binding a depth/stencil buffer is optional.
 		 */
-		void bindDepthStencil(SPtr<GLPixelBuffer> depthStencilBuffer, bool allLayers);
+		void BindDepthStencil(SPtr<GLPixelBuffer> depthStencilBuffer, bool allLayers);
 
 		/**	Unbinds a depth stencil buffer. Call rebuild() to apply changes. */
-		void unbindDepthStencil();
+		void UnbindDepthStencil();
 
 		/**	Rebuilds internal frame buffer object. Should be called whenever surfaces changes or is bound/unbound. */
-		void rebuild();
+		void Rebuild();
 
 		/** Binds the frame buffer object to the OpenGL pipeline, making it used for any further rendering operations. */
-		void bind();
+		void Bind();
 
 		/** Checks is the color buffer at the specified index bound. */
-		bool hasColorBuffer(UINT32 idx) const { return mColor[idx].buffer != nullptr; }
+		bool HasColorBuffer(UINT32 idx) const { return mColor[idx].buffer != nullptr; }
 
 		/**	Returns internal OpenGL frame buffer id. */
-		GLuint getGLFBOID() const { return mFB; }
+		GLuint GetGlfboid() const { return mFB; }
 
 	private:
 		GLuint mFB;

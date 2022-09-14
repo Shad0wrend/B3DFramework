@@ -18,26 +18,26 @@ namespace bs
 
 		ScriptRandom(MonoObject* managedInstance, const SPtr<Random>& value);
 
-		SPtr<Random> getInternal() const { return mInternal; }
-		static MonoObject* create(const SPtr<Random>& value);
+		SPtr<Random> GetInternal() const { return mInternal; }
+		static MonoObject* Create(const SPtr<Random>& value);
 
 	private:
 		SPtr<Random> mInternal;
 
-		static void Internal_Random(MonoObject* managedInstance, uint32_t seed);
-		static void Internal_setSeed(ScriptRandom* thisPtr, uint32_t seed);
-		static uint32_t Internal_get(ScriptRandom* thisPtr);
-		static int32_t Internal_getRange(ScriptRandom* thisPtr, int32_t min, int32_t max);
-		static float Internal_getUNorm(ScriptRandom* thisPtr);
-		static float Internal_getSNorm(ScriptRandom* thisPtr);
-		static void Internal_getUnitVector(ScriptRandom* thisPtr, Vector3* __output);
-		static void Internal_getUnitVector2D(ScriptRandom* thisPtr, Vector2* __output);
-		static void Internal_getPointInSphere(ScriptRandom* thisPtr, Vector3* __output);
-		static void Internal_getPointInSphereShell(ScriptRandom* thisPtr, float thickness, Vector3* __output);
-		static void Internal_getPointInCircle(ScriptRandom* thisPtr, Vector2* __output);
-		static void Internal_getPointInCircleShell(ScriptRandom* thisPtr, float thickness, Vector2* __output);
-		static void Internal_getPointInArc(ScriptRandom* thisPtr, Degree* angle, Vector2* __output);
-		static void Internal_getPointInArcShell(ScriptRandom* thisPtr, Degree* angle, float thickness, Vector2* __output);
-		static void Internal_getBarycentric(ScriptRandom* thisPtr, Vector3* __output);
+		static void InternalRandom(MonoObject* managedInstance, uint32_t seed);
+		static void InternalSetSeed(ScriptRandom* thisPtr, uint32_t seed);
+		static uint32_t InternalGet(ScriptRandom* thisPtr);
+		static int32_t InternalGetRange(ScriptRandom* thisPtr, int32_t min, int32_t max);
+		static float InternalGetUNorm(ScriptRandom* thisPtr);
+		static float InternalGetSNorm(ScriptRandom* thisPtr);
+		static void InternalGetUnitVector(ScriptRandom* thisPtr, Vector3* __output);
+		static void InternalGetUnitVector2D(ScriptRandom* thisPtr, Vector2* __output);
+		static void InternalGetPointInSphere(ScriptRandom* thisPtr, Vector3* __output);
+		static void InternalGetPointInSphereShell(ScriptRandom* thisPtr, float thickness, Vector3* __output);
+		static void InternalGetPointInCircle(ScriptRandom* thisPtr, Vector2* __output);
+		static void InternalGetPointInCircleShell(ScriptRandom* thisPtr, float thickness, Vector2* __output);
+		static void InternalGetPointInArc(ScriptRandom* thisPtr, Degree* angle, Vector2* __output);
+		static void InternalGetPointInArcShell(ScriptRandom* thisPtr, Degree* angle, float thickness, Vector2* __output);
+		static void InternalGetBarycentric(ScriptRandom* thisPtr, Vector3* __output);
 	};
 }

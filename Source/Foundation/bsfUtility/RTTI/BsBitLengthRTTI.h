@@ -17,7 +17,7 @@ namespace bs
 	{
 		enum { id = TID_BitLength }; enum { hasDynamicSize = 0 };
 
-		static BitLength toMemory(const BitLength& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const BitLength& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
 			size += rtti_write(data.bytes, stream);
@@ -26,7 +26,7 @@ namespace bs
 			return size;
 		}
 
-		static BitLength fromMemory(BitLength& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(BitLength& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
 			size += rtti_read(data.bytes, stream);
@@ -35,7 +35,7 @@ namespace bs
 			return size;
 		}
 
-		static BitLength getSize(const BitLength& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const BitLength& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return rtti_size(data.bytes) + rtti_size(data.bits);
 		}

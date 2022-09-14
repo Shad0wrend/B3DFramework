@@ -14,14 +14,14 @@ namespace bs
 	void ScriptSpring::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptSpring::box(const Spring& value)
+	MonoObject*ScriptSpring::Box(const Spring& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	Spring ScriptSpring::unbox(MonoObject* value)
+	Spring ScriptSpring::Unbox(MonoObject* value)
 	{
-		return *(Spring*)MonoUtil::unbox(value);
+		return *(Spring*)MonoUtil::Unbox(value);
 	}
 
 }

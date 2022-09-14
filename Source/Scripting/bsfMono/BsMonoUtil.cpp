@@ -14,7 +14,7 @@ namespace bs
 	static bool sGenericHelpersInitialized = false;
 	static MonoProperty* sGenericParamsProp = nullptr;
 
-	WString MonoUtil::monoToWString(MonoString* str)
+	WString MonoUtil::MonoToWString(MonoString* str)
 	{
 		if (str == nullptr)
 			return StringUtil::WBLANK;
@@ -29,14 +29,14 @@ namespace bs
 		return ret;
 	}
 
-	String MonoUtil::monoToString(MonoString* str)
+	String MonoUtil::MonoToString(MonoString* str)
 	{
-		WString wideString = monoToWString(str);
+		WString wideString = MonoToWString(str);
 
-		return UTF8::fromWide(wideString);
+		return UTF8::FromWide(wideString);
 	}
 
-	MonoString* MonoUtil::wstringToMono(const WString& str)
+	MonoString* MonoUtil::WstringToMono(const WString& str)
 	{
 		if (sizeof(wchar_t) == 2) // Assuming UTF-16
 			return mono_string_from_utf16((mono_unichar2*)str.c_str());
@@ -44,21 +44,21 @@ namespace bs
 			return mono_string_from_utf32((mono_unichar4*)str.c_str());
 	}
 
-	MonoString* MonoUtil::stringToMono(const String& str)
+	MonoString* MonoUtil::StringToMono(const String& str)
 	{
 		return wstringToMono(UTF8::toWide(str));
 	}
 
-	void MonoUtil::getClassName(MonoObject* obj, String& ns, String& typeName)
+	void MonoUtil::GetClassName(MonoObject* obj, String& ns, String& typeName)
 	{
 		if (obj == nullptr)
 			return;
 
 		::MonoClass* monoClass = mono_object_get_class(obj);
-		getClassName(monoClass, ns, typeName);
+		GetClassName(monoClass, ns, typeName);
 	}
 
-	void MonoUtil::getClassName(::MonoClass* monoClass, String& ns, String& typeName)
+	void MonoUtil::GetClassName(::MonoClass* monoClass, String& ns, String& typeName)
 	{
 		::MonoClass* nestingClass = mono_class_get_nesting_type(monoClass);
 
@@ -97,95 +97,95 @@ namespace bs
 		}
 	}
 
-	void MonoUtil::getClassName(MonoReflectionType* monoReflType, String& ns, String& typeName)
+	void MonoUtil::GetClassName(MonoReflectionType* monoReflType, String& ns, String& typeName)
 	{
 		MonoType* monoType = mono_reflection_type_get_type(monoReflType);
 		::MonoClass* monoClass = mono_class_from_mono_type(monoType);
 
-		getClassName(monoClass, ns, typeName);
+		GetClassName(monoClass, ns, typeName);
 	}
 
-	::MonoClass* MonoUtil::getClass(MonoObject* object)
+	::MonoClass* MonoUtil::GetClass(MonoObject* object)
 	{
 		return mono_object_get_class(object);
 	}
 
-	::MonoClass* MonoUtil::getClass(MonoReflectionType* type)
+	::MonoClass* MonoUtil::GetClass(MonoReflectionType* type)
 	{
 		MonoType* monoType = mono_reflection_type_get_type(type);
 		return mono_class_from_mono_type(monoType);
 	}
 
-	MonoReflectionType* MonoUtil::getType(MonoObject* object)
+	MonoReflectionType* MonoUtil::GetType(MonoObject* object)
 	{
-		::MonoClass* klass = getClass(object);
-		return getType(klass);
+		::MonoClass* klass = GetClass(object);
+		return GetType(klass);
 	}
 
-	MonoReflectionType* MonoUtil::getType(::MonoClass* klass)
+	MonoReflectionType* MonoUtil::GetType(::MonoClass* klass)
 	{
 		MonoType* monoType = mono_class_get_type(klass);
-		return mono_type_get_object(MonoManager::instance().getDomain(), monoType);
+		return mono_type_get_object(MonoManager::Instance().getDomain(), monoType);
 	}
 
-	UINT32 MonoUtil::newGCHandle(MonoObject* object, bool pinned)
+	UINT32 MonoUtil::NewGcHandle(MonoObject* object, bool pinned)
 	{
 		return mono_gchandle_new(object, pinned);
 	}
 
-	UINT32 MonoUtil::newWeakGCHandle(MonoObject* object)
+	UINT32 MonoUtil::NewWeakGcHandle(MonoObject* object)
 	{
 		return mono_gchandle_new_weakref(object, false);
 	}
 
-	void MonoUtil::freeGCHandle(UINT32 handle)
+	void MonoUtil::FreeGcHandle(UINT32 handle)
 	{
 		assert(handle != 0);
 
 		mono_gchandle_free(handle);
 	}
 
-	MonoObject* MonoUtil::getObjectFromGCHandle(UINT32 handle)
+	MonoObject* MonoUtil::GetObjectFromGcHandle(UINT32 handle)
 	{
 		return mono_gchandle_get_target(handle);
 	}
 
-	MonoObject* MonoUtil::box(::MonoClass* klass, void* value)
+	MonoObject* MonoUtil::Box(::MonoClass* klass, void* value)
 	{
-		return mono_value_box(MonoManager::instance().getDomain(), klass, value);
+		return mono_value_box(MonoManager::Instance().getDomain(), klass, value);
 	}
 
-	void* MonoUtil::unbox(MonoObject* object)
+	void* MonoUtil::Unbox(MonoObject* object)
 	{
 		return mono_object_unbox(object);
 	}
 
-	void MonoUtil::valueCopy(void* dest, void* src, ::MonoClass* klass)
+	void MonoUtil::ValueCopy(void* dest, void* src, ::MonoClass* klass)
 	{
 		mono_value_copy(dest, src, klass);
 	}
 
-	void MonoUtil::referenceCopy(void* dest, MonoObject* object)
+	void MonoUtil::ReferenceCopy(void* dest, MonoObject* object)
 	{
 		mono_gc_wbarrier_generic_store(dest, object);
 	}
 
-	bool MonoUtil::isSubClassOf(::MonoClass* subClass, ::MonoClass* parentClass)
+	bool MonoUtil::IsSubClassOf(::MonoClass* subClass, ::MonoClass* parentClass)
 	{
 		return mono_class_is_subclass_of(subClass, parentClass, true) != 0;
 	}
 
-	bool MonoUtil::isValueType(::MonoClass* klass)
+	bool MonoUtil::IsValueType(::MonoClass* klass)
 	{
 		return mono_class_is_valuetype(klass) != 0;
 	}
 
-	bool MonoUtil::isEnum(::MonoClass* object)
+	bool MonoUtil::IsEnum(::MonoClass* object)
 	{
 		return mono_class_is_enum(object) != 0;
 	}
 
-	MonoPrimitiveType MonoUtil::getEnumPrimitiveType(::MonoClass* enumClass)
+	MonoPrimitiveType MonoUtil::GetEnumPrimitiveType(::MonoClass* enumClass)
 	{
 		MonoType* monoType = mono_class_get_type(enumClass);
 		MonoType* underlyingType = mono_type_get_underlying_type(monoType);
@@ -193,7 +193,7 @@ namespace bs
 		return getPrimitiveType(mono_class_from_mono_type(underlyingType));
 	}
 
-	MonoPrimitiveType MonoUtil::getPrimitiveType(::MonoClass* monoClass)
+	MonoPrimitiveType MonoUtil::GetPrimitiveType(::MonoClass* monoClass)
 	{
 		MonoType* monoType = mono_class_get_type(monoClass);
 		int monoPrimitiveType = mono_type_get_type(monoType);
@@ -242,7 +242,7 @@ namespace bs
 		return MonoPrimitiveType::Unknown;
 	}
 
-	::MonoClass* MonoUtil::bindGenericParameters(::MonoClass* klass, ::MonoClass** params, UINT32 numParams)
+	::MonoClass* MonoUtil::BindGenericParameters(::MonoClass* klass, ::MonoClass** params, UINT32 numParams)
 	{
 		auto buffer = bs_managed_stack_alloc<MonoType*>(numParams);
 
@@ -253,17 +253,17 @@ namespace bs
 		return mono_class_bind_generic_parameters(klass, numParams, types, false);
 	}
 
-	void MonoUtil::getGenericParameters(::MonoClass* klass, ::MonoClass** params, UINT32& numParams)
+	void MonoUtil::GetGenericParameters(::MonoClass* klass, ::MonoClass** params, UINT32& numParams)
 	{
 		MonoType* monoType = mono_class_get_type(klass);
-		getGenericParameters(mono_type_get_object(MonoManager::instance().getDomain(), monoType), params, numParams);
+		getGenericParameters(mono_type_get_object(MonoManager::Instance().getDomain(), monoType), params, numParams);
 	}
 
-	void MonoUtil::getGenericParameters(::MonoReflectionType* type, ::MonoClass** params, UINT32& numParams)
+	void MonoUtil::GetGenericParameters(::MonoReflectionType* type, ::MonoClass** params, UINT32& numParams)
 	{
 		if(!sGenericHelpersInitialized)
 		{
-			MonoAssembly* corlib = MonoManager::instance().getAssembly("corlib");
+			MonoAssembly* corlib = MonoManager::Instance().getAssembly("corlib");
 			MonoClass* type = corlib->getClass("System", "Type");
 			sGenericParamsProp = type->getProperty("GenericTypeArguments");
 
@@ -297,82 +297,82 @@ namespace bs
 		}
 	}
 
-	::MonoClass* MonoUtil::getUINT16Class()
+	::MonoClass* MonoUtil::GetUinT16Class()
 	{
 		return mono_get_uint16_class();
 	}
 
-	::MonoClass* MonoUtil::getINT16Class()
+	::MonoClass* MonoUtil::GetInT16Class()
 	{
 		return mono_get_int16_class();
 	}
 
-	::MonoClass* MonoUtil::getUINT32Class()
+	::MonoClass* MonoUtil::GetUinT32Class()
 	{
 		return mono_get_uint32_class();
 	}
 
-	::MonoClass* MonoUtil::getINT32Class()
+	::MonoClass* MonoUtil::GetInT32Class()
 	{
 		return mono_get_int32_class();
 	}
 
-	::MonoClass* MonoUtil::getUINT64Class()
+	::MonoClass* MonoUtil::GetUinT64Class()
 	{
 		return mono_get_uint64_class();
 	}
 
-	::MonoClass* MonoUtil::getINT64Class()
+	::MonoClass* MonoUtil::GetInT64Class()
 	{
 		return mono_get_int64_class();
 	}
 
-	::MonoClass* MonoUtil::getStringClass()
+	::MonoClass* MonoUtil::GetStringClass()
 	{
 		return mono_get_string_class();
 	}
 
-	::MonoClass* MonoUtil::getFloatClass()
+	::MonoClass* MonoUtil::GetFloatClass()
 	{
 		return mono_get_single_class();
 	}
 
-	::MonoClass* MonoUtil::getDoubleClass()
+	::MonoClass* MonoUtil::GetDoubleClass()
 	{
 		return mono_get_double_class();
 	}
 
-	::MonoClass* MonoUtil::getBoolClass()
+	::MonoClass* MonoUtil::GetBoolClass()
 	{
 		return mono_get_boolean_class();
 	}
 
-	::MonoClass* MonoUtil::getByteClass()
+	::MonoClass* MonoUtil::GetByteClass()
 	{
 		return mono_get_byte_class();
 	}
 
-	::MonoClass* MonoUtil::getSByteClass()
+	::MonoClass* MonoUtil::GetSByteClass()
 	{
 		return mono_get_sbyte_class();
 	}
 
-	::MonoClass* MonoUtil::getCharClass()
+	::MonoClass* MonoUtil::GetCharClass()
 	{
 		return mono_get_char_class();
 	}
 
-	::MonoClass* MonoUtil::getObjectClass()
+	::MonoClass* MonoUtil::GetObjectClass()
 	{
 		return mono_get_object_class();
 	}
 
-	void MonoUtil::throwIfException(MonoException* exception)
+	void MonoUtil::ThrowIfException(MonoException* exception)
 	{
 		throwIfException(reinterpret_cast<MonoObject*>(exception));
 	}
 
-	void MonoUtil::throwIfException(MonoObject* exception)
+	void MonoUtil::ThrowIfException(MonoObject* exception)
 	{
 		if (exception != nullptr)
 		{

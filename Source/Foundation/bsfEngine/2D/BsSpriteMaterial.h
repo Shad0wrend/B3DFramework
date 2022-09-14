@@ -33,7 +33,7 @@ namespace bs
 		virtual ~SpriteMaterialExtraInfo() = default;
 
 		/** Creates a new deep copy of the object. */
-		virtual SPtr<SpriteMaterialExtraInfo> clone() const
+		virtual SPtr<SpriteMaterialExtraInfo> Clone() const
 		{
 			return bs_shared_ptr_new<SpriteMaterialExtraInfo>();
 		}
@@ -48,7 +48,7 @@ namespace bs
 		 * Creates a new deep copy of the object. This is different from standard copy constructor which will just reference
 		 * the original "additionalData" field, while this will copy it.
 		 */
-		SpriteMaterialInfo clone() const
+		SpriteMaterialInfo Clone() const
 		{
 			SpriteMaterialInfo info;
 			info.groupId = groupId;
@@ -58,7 +58,7 @@ namespace bs
 			info.animationStartTime = animationStartTime;
 
 			if(additionalData != nullptr)
-				info.additionalData = additionalData->clone();
+				info.additionalData = additionalData->Clone();
 
 			return info;
 		}
@@ -80,17 +80,17 @@ namespace bs
 		virtual ~SpriteMaterial();
 
 		/** Returns the unique ID of the sprite material. */
-		UINT32 getId() const { return mId; };
+		UINT32 GetId() const { return mId; };
 
 		/** Determines is this material allowed to be batched with other materials with the same merge hash. */
-		bool allowBatching() const { return mAllowBatching; }
+		bool AllowBatching() const { return mAllowBatching; }
 
 		/**
 		 * Generates a hash value that describes the contents of the sprite material info structure. Returned hash doesn't
 		 * guarantee that the two objects with the same hash are identical, but rather that the objects are mergeable via
 		 * merge().
 		 */
-		virtual UINT64 getMergeHash(const SpriteMaterialInfo& info) const;
+		virtual UINT64 GetMergeHash(const SpriteMaterialInfo& info) const;
 
 		/**
 		 * Merges two SpriteMaterialInfo%s into one structure. User must guarantee that the two objects are mergeable
@@ -101,7 +101,7 @@ namespace bs
 		 * @param[in]		mergeFrom	Object that contains the second part of the data to merge, which will be merged into
 		 *								the first object.
 		 */
-		virtual void merge(SpriteMaterialInfo& mergeInto, const SpriteMaterialInfo& mergeFrom) const { }
+		virtual void Merge(SpriteMaterialInfo& mergeInto, const SpriteMaterialInfo& mergeFrom) const { }
 
 		/**
 		 * Renders the provided mesh using the current material.
@@ -117,16 +117,16 @@ namespace bs
 		 *								after which the stencil value will be incremented by one. (i.e. only first element that
 		 *								writes to a pixel stores its alpha value).
 		 */
-		virtual void render(const SPtr<ct::MeshBase>& mesh, const SubMesh& subMesh, const SPtr<ct::Texture>& texture,
+		virtual void Render(const SPtr<ct::MeshBase>& mesh, const SubMesh& subMesh, const SPtr<ct::Texture>& texture,
 			const SPtr<ct::SamplerState>& sampler, const SPtr<ct::GpuParamBlockBuffer>& paramBuffer,
 			const SPtr<SpriteMaterialExtraInfo>& additionalData, bool alphaOnly) const;
 
 	protected:
 		/** Perform initialization of core-thread specific objects. */
-		virtual void initialize();
+		virtual void Initialize();
 
 		/** Destroys the core thread material. */
-		static void destroy(const SPtr<ct::Material>& material, const SPtr<ct::GpuParamsSet>& params, const SPtr<ct::GpuParamsSet>& alphaParams);
+		static void Destroy(const SPtr<ct::Material>& material, const SPtr<ct::GpuParamsSet>& params, const SPtr<ct::GpuParamsSet>& alphaParams);
 
 		UINT32 mId;
 		bool mAllowBatching;

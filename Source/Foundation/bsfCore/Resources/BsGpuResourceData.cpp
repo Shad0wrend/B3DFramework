@@ -13,7 +13,7 @@ namespace
 #if !BS_FORCE_SINGLETHREADED_RENDERING
 		if(data->isLocked())
 		{
-			if(BS_THREAD_CURRENT_ID != CoreThread::instance().getCoreThreadId())
+			if(BS_THREAD_CURRENT_ID != CoreThread::Instance().getCoreThreadId())
 				BS_EXCEPT(InternalErrorException, "You are not allowed to access buffer data from non-core thread when the buffer is locked.");
 		}
 #endif
@@ -43,13 +43,13 @@ namespace bs
 		return *this;
 	}
 
-	UINT8* GpuResourceData::getData() const
+	UINT8* GpuResourceData::GetData() const
 	{
 		verifyLockAndThread(this);
 		return mData;
 	}
 
-	void GpuResourceData::setData(UPtr<UINT8[]> &data)
+	void GpuResourceData::SetData(UPtr<UINT8[]> &data)
 	{
 		verifyLockAndThread(this);
 
@@ -59,12 +59,12 @@ namespace bs
 		mOwnsData = true;
 	}
 
-	void GpuResourceData::allocateInternalBuffer()
+	void GpuResourceData::AllocateInternalBuffer()
 	{
 		allocateInternalBuffer(getInternalBufferSize());
 	}
 
-	void GpuResourceData::allocateInternalBuffer(UINT32 size)
+	void GpuResourceData::AllocateInternalBuffer(UINT32 size)
 	{
 		verifyLockAndThread(this);
 
@@ -74,7 +74,7 @@ namespace bs
 		mOwnsData = true;
 	}
 
-	void GpuResourceData::freeInternalBuffer()
+	void GpuResourceData::FreeInternalBuffer()
 	{
 		if(mData == nullptr || !mOwnsData)
 			return;
@@ -85,7 +85,7 @@ namespace bs
 		mData = nullptr;
 	}
 
-	void GpuResourceData::setExternalBuffer(UINT8* data)
+	void GpuResourceData::SetExternalBuffer(UINT8* data)
 	{
 		verifyLockAndThread(this);
 
@@ -109,13 +109,13 @@ namespace bs
 	/* 								SERIALIZATION                      		*/
 	/************************************************************************/
 
-	RTTITypeBase* GpuResourceData::getRTTIStatic()
+	RTTITypeBase* GpuResourceData::GetRttiStatic()
 	{
-		return GpuResourceDataRTTI::instance();
+		return GpuResourceDataRTTI::Instance();
 	}
 
-	RTTITypeBase* GpuResourceData::getRTTI() const
+	RTTITypeBase* GpuResourceData::GetRtti() const
 	{
-		return GpuResourceData::getRTTIStatic();
+		return GpuResourceData::GetRttiStatic();
 	}
 }

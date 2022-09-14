@@ -28,10 +28,10 @@ namespace bs
 		ShortcutKey(ButtonModifier modifier, ButtonCode code);
 
 		/**	Checks is the shortcut button and modifier combination valid. */
-		bool isValid() const { return button != BC_UNASSIGNED; }
+		bool IsValid() const { return button != BC_UNASSIGNED; }
 
 		/**	Returns a readable name of the shortcut key (for example "Shift + F"). */
-		String getName() const;
+		String GetName() const;
 
 		ButtonModifier modifier = ButtonModifier::None;
 		ButtonCode button = BC_UNASSIGNED;

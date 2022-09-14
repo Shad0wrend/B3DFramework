@@ -39,13 +39,13 @@ namespace bs
 		~ManagedSerializableList();
 
 		/** Returns the internal managed instance of the list. This will return null if the object is in serialized mode. */
-		MonoObject* getManagedInstance() const;
+		MonoObject* GetManagedInstance() const;
 
 		/**	Returns the type information for the internal list. */
-		SPtr<ManagedSerializableTypeInfoList> getTypeInfo() const { return mListTypeInfo; }
+		SPtr<ManagedSerializableTypeInfoList> GetTypeInfo() const { return mListTypeInfo; }
 
 		/** Changes the size of the list. Operates on managed object if in linked state, or on cached data otherwise. */
-		void resize(UINT32 newSize);
+		void Resize(UINT32 newSize);
 
 		/**
 		 * Sets a new element value at the specified list index. Operates on managed object if in linked state, or on cached
@@ -54,7 +54,7 @@ namespace bs
 		 * @param[in]	arrayIdx	Index at which to set the value.
 		 * @param[in]	val			Wrapper around the value to store in the list. Must be of the list element type.
 		 */
-		void setFieldData(UINT32 arrayIdx, const SPtr<ManagedSerializableFieldData>& val);
+		void SetFieldData(UINT32 arrayIdx, const SPtr<ManagedSerializableFieldData>& val);
 
 		/**
 		 * Returns the element value at the specified list index. Operates on managed object if in linked state, or on
@@ -63,17 +63,17 @@ namespace bs
 		 * @param[in]	arrayIdx	Index at which to retrieve the value.
 		 * @return					A wrapper around the element value in the list.
 		 */
-		SPtr<ManagedSerializableFieldData> getFieldData(UINT32 arrayIdx);
+		SPtr<ManagedSerializableFieldData> GetFieldData(UINT32 arrayIdx);
 
 		/** Returns the size of the list. Operates on managed object if in linked state, or on cached data otherwise. */
-		UINT32 getLength() const { return mNumElements; }
+		UINT32 GetLength() const { return mNumElements; }
 
 		/**
 		 * Serializes the internal managed object into a set of cached data that can be saved in memory/disk and can be
 		 * deserialized later. The internal managed object will be freed (if no other references to it). Calling serialize()
 		 * again will have no result.
 		 */
-		void serialize();
+		void Serialize();
 
 		/**
 		 * Deserializes a set of cached data into a managed object. This action may fail in case the cached data contains a
@@ -81,7 +81,7 @@ namespace bs
 		 *
 		 * @return		Newly created object initialized with the cached data.
 		 */
-		MonoObject* deserialize();
+		MonoObject* Deserialize();
 
 		/**
 		 * Creates a managed serializable list that references an existing managed list. Created object will be in linked
@@ -91,7 +91,7 @@ namespace bs
 		 *								the provided type info.
 		 * @param[in]	typeInfo		Type information for the list and its elements.
 		 */
-		static SPtr<ManagedSerializableList> createFromExisting(MonoObject* managedInstance,
+		static SPtr<ManagedSerializableList> CreateFromExisting(MonoObject* managedInstance,
 			const SPtr<ManagedSerializableTypeInfoList>& typeInfo);
 
 		/**
@@ -100,7 +100,7 @@ namespace bs
 		 * @param[in]	typeInfo	Type of the list to create.
 		 * @param[in]	size		Initial size of the list.
 		 */
-		static SPtr<ManagedSerializableList> createNew(const SPtr<ManagedSerializableTypeInfoList>& typeInfo, UINT32 size);
+		static SPtr<ManagedSerializableList> CreateNew(const SPtr<ManagedSerializableTypeInfoList>& typeInfo, UINT32 size);
 
 		/**
 		 * Creates a managed list instance.
@@ -108,17 +108,17 @@ namespace bs
 		 * @param[in]	typeInfo	Type of the list to create.
 		 * @param[in]	size		Initial size of the list.
 		 */
-		static MonoObject* createManagedInstance(const SPtr<ManagedSerializableTypeInfoList>& typeInfo, UINT32 size);
+		static MonoObject* CreateManagedInstance(const SPtr<ManagedSerializableTypeInfoList>& typeInfo, UINT32 size);
 
 	protected:
 		/**
 		 * Retrieves needed Mono types and methods. Should be called before performing any operations with the managed
 		 * object.
 		 */
-		void initMonoObjects(MonoClass* listClass);
+		void InitMonoObjects(MonoClass* listClass);
 
 		/**	Returns the size of the list. Operates on the internal managed object. */
-		UINT32 getLengthInternal() const;
+		UINT32 GetLengthInternal() const;
 
 		/**
 		 * Sets a new element value at the specified array index. Operates on the provided managed instance.
@@ -127,10 +127,10 @@ namespace bs
 		 * @param[in]	arrayIdx	Index at which to set the value.
 		 * @param[in]	val			Wrapper around the value to store in the array. Must be of the array element type.
 		 */
-		void setFieldData(MonoObject* obj, UINT32 arrayIdx, const SPtr<ManagedSerializableFieldData>& val);
+		void SetFieldData(MonoObject* obj, UINT32 arrayIdx, const SPtr<ManagedSerializableFieldData>& val);
 
 		/** Appends data to the end of the list. Operates on the internal managed object. */
-		void addFieldDataInternal(const SPtr<ManagedSerializableFieldData>& val);
+		void AddFieldDataInternal(const SPtr<ManagedSerializableFieldData>& val);
 
 		uint32_t mGCHandle = 0;
 
@@ -150,12 +150,12 @@ namespace bs
 		/************************************************************************/
 		
 		/**	Creates an empty and uninitialized object used for serialization purposes. */
-		static SPtr<ManagedSerializableList> createEmpty();
+		static SPtr<ManagedSerializableList> CreateEmpty();
 
 	public:
 		friend class ManagedSerializableListRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const ;
 	};
 
 	/** @} */

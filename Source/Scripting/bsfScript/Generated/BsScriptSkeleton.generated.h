@@ -19,10 +19,10 @@ namespace bs
 
 		ScriptSkeleton(MonoObject* managedInstance, const SPtr<Skeleton>& value);
 
-		static MonoObject* create(const SPtr<Skeleton>& value);
+		static MonoObject* Create(const SPtr<Skeleton>& value);
 
 	private:
-		static uint32_t Internal_getNumBones(ScriptSkeleton* thisPtr);
-		static void Internal_getBoneInfo(ScriptSkeleton* thisPtr, int32_t boneIdx, __SkeletonBoneInfoExInterop* __output);
+		static uint32_t InternalGetNumBones(ScriptSkeleton* thisPtr);
+		static void InternalGetBoneInfo(ScriptSkeleton* thisPtr, int32_t boneIdx, __SkeletonBoneInfoExInterop* __output);
 	};
 }

@@ -168,8 +168,8 @@ namespace bs
 		{
 			if(count > 0)
 			{
-				realloc(count);
-				reset(value);
+				Realloc(count);
+				Reset(value);
 			}
 		}
 
@@ -184,9 +184,9 @@ namespace bs
 		{
 			if (other.mMaxBits)
 			{
-				realloc(other.mMaxBits);
+				Realloc(other.mMaxBits);
 
-				const uint32_t numBytes = Math::divideAndRoundUp(other.mNumBits, BITS_PER_DWORD) * sizeof(uint32_t);
+				const uint32_t numBytes = Math::DivideAndRoundUp(other.mNumBits, BITS_PER_DWORD) * sizeof(uint32_t);
 				memcpy(mData, other.mData, numBytes);
 			}
 		}
@@ -201,14 +201,14 @@ namespace bs
 		{
 			if(this != &rhs)
 			{
-				clear(true);
+				Clear(true);
 				mNumBits = rhs.mNumBits;
 
 				if (rhs.mMaxBits)
 				{
-					realloc(rhs.mMaxBits);
+					Realloc(rhs.mMaxBits);
 
-					const uint32_t numBytes = Math::divideAndRoundUp(rhs.mNumBits, BITS_PER_DWORD) * sizeof(uint32_t);
+					const uint32_t numBytes = Math::DivideAndRoundUp(rhs.mNumBits, BITS_PER_DWORD) * sizeof(uint32_t);
 					memcpy(mData, rhs.mData, numBytes);
 				}
 			}
@@ -252,13 +252,13 @@ namespace bs
 		}
 
 		/** Adds a new bit value to the end of the bitfield and returns the index of the added bit. */
-		uint32_t add(bool value)
+		uint32_t Add(bool value)
 		{
 			if(mNumBits >= mMaxBits)
 			{
 				// Grow
 				const uint32_t newMaxBits = mMaxBits + 4 * BITS_PER_DWORD + mMaxBits / 2;
-				realloc(newMaxBits);
+				Realloc(newMaxBits);
 			}
 
 			const uint32_t index = mNumBits;
@@ -269,7 +269,7 @@ namespace bs
 		}
 
 		/** Removes a bit at the specified index. */
-		void remove(uint32_t index)
+		void Remove(uint32_t index)
 		{
 			assert(index < mNumBits);
 
@@ -300,10 +300,10 @@ namespace bs
 		}
 
 		/** Attempts to find the first non-zero bit in the field. Returns -1 if all bits are zero or the field is empty. */
-		uint32_t find(bool value) const
+		uint32_t Find(bool value) const
 		{
 			const uint32_t mask = value ? 0 : (uint32_t)-1;
-			const uint32_t numDWords = Math::divideAndRoundUp(mNumBits, BITS_PER_DWORD);
+			const uint32_t numDWords = Math::DivideAndRoundUp(mNumBits, BITS_PER_DWORD);
 
 			for(uint32_t i = 0; i < numDWords; i++)
 			{
@@ -311,7 +311,7 @@ namespace bs
 					continue;
 
 				const uint32_t bits = value ? mData[i] : ~mData[i];
-				const uint32_t bitIndex = i * BITS_PER_DWORD + Bitwise::leastSignificantBit(bits);
+				const uint32_t bitIndex = i * BITS_PER_DWORD + Bitwise::LeastSignificantBit(bits);
 
 				if(bitIndex < mNumBits)
 					return bitIndex;
@@ -321,7 +321,7 @@ namespace bs
 		}
 
 		/** Counts the number of values in the bit field. */
-		uint32_t count(bool value) const
+		uint32_t Count(bool value) const
 		{
 			// Note: Implement this faster via popcnt and similar instructions
 
@@ -336,13 +336,13 @@ namespace bs
 		}
 
 		/** Resets all the bits in the field to the specified value. */
-		void reset(bool value = false)
+		void Reset(bool value = false)
 		{
 			if(mNumBits == 0)
 				return;
 
 			const int32_t mask = value ? 0xFF : 0;
-			const uint32_t numBytes = Math::divideAndRoundUp(mNumBits, BITS_PER_DWORD) * sizeof(uint32_t);
+			const uint32_t numBytes = Math::DivideAndRoundUp(mNumBits, BITS_PER_DWORD) * sizeof(uint32_t);
 			memset(mData, mask, numBytes);
 		}
 
@@ -350,7 +350,7 @@ namespace bs
 		 * Removes all the bits from the field. If @p free is true then the underlying memory buffers will be freed as
 		 * well.
 		 */
-		void clear(bool free = false)
+		void Clear(bool free = false)
 		{
 			mNumBits = 0;
 
@@ -367,19 +367,19 @@ namespace bs
 		}
 
 		/** Returns the number of bits in the bitfield */
-		uint32_t size() const
+		uint32_t Size() const
 		{
 			return mNumBits;
 		}
 
 		/** Returns a non-const iterator pointing to the first bit in the bitfield. */
-		Iterator begin()
+		Iterator Begin()
 		{
 			return Iterator(*this, 0, 0, 1);
 		}
 
 		/** Returns a non-const interator pointing past the last bit in the bitfield. */
-		Iterator end()
+		Iterator End()
 		{
 			uint32_t bitIndex = mNumBits;
 			uint32_t dwordIndex = bitIndex >> BITS_PER_DWORD_LOG2;
@@ -389,13 +389,13 @@ namespace bs
 		}
 
 		/** Returns a const iterator pointing to the first bit in the bitfield. */
-		ConstIterator begin() const
+		ConstIterator Begin() const
 		{
 			return ConstIterator(*this, 0, 0, 1);
 		}
 
 		/** Returns a const interator pointing past the last bit in the bitfield. */
-		ConstIterator end() const
+		ConstIterator End() const
 		{
 			uint32_t bitIndex = mNumBits;
 			uint32_t dwordIndex = bitIndex >> BITS_PER_DWORD_LOG2;
@@ -409,21 +409,21 @@ namespace bs
 		friend class TBitfieldIterator;
 
 		/** Reallocates the internal buffer making enough room for @p numBits (rounded to a multiple of DWORD). */
-		void realloc(uint32_t numBits)
+		void Realloc(uint32_t numBits)
 		{
-			numBits = Math::divideAndRoundUp(numBits, BITS_PER_DWORD) * BITS_PER_DWORD;
+			numBits = Math::DivideAndRoundUp(numBits, BITS_PER_DWORD) * BITS_PER_DWORD;
 
 			if(numBits != mMaxBits)
 			{
 				assert(numBits > mMaxBits);
 
-				const uint32_t numDwords = Math::divideAndRoundUp(numBits, BITS_PER_DWORD);
+				const uint32_t numDwords = Math::DivideAndRoundUp(numBits, BITS_PER_DWORD);
 				
 				// Note: Eventually add support for custom allocators
 				auto buffer = bs_allocN<uint32_t>(numDwords);
 				if(mData)
 				{
-					const uint32_t numBytes = Math::divideAndRoundUp(mMaxBits, BITS_PER_DWORD) * sizeof(uint32_t);
+					const uint32_t numBytes = Math::DivideAndRoundUp(mMaxBits, BITS_PER_DWORD) * sizeof(uint32_t);
 					memcpy(buffer, mData, numBytes);
 					bs_free(mData);
 				}

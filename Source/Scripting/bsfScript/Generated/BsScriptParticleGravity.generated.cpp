@@ -19,12 +19,12 @@ namespace bs
 	{
 		metaData.scriptClass->addInternalCall("Internal_setOptions", (void*)&ScriptParticleGravity::Internal_setOptions);
 		metaData.scriptClass->addInternalCall("Internal_getOptions", (void*)&ScriptParticleGravity::Internal_getOptions);
-		metaData.scriptClass->addInternalCall("Internal_create", (void*)&ScriptParticleGravity::Internal_create);
+		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptParticleGravity::InternalCreate);
 		metaData.scriptClass->addInternalCall("Internal_create0", (void*)&ScriptParticleGravity::Internal_create0);
 
 	}
 
-	MonoObject* ScriptParticleGravity::create(const SPtr<ParticleGravity>& value)
+	MonoObject* ScriptParticleGravity::Create(const SPtr<ParticleGravity>& value)
 	{
 		if(value == nullptr) return nullptr; 
 
@@ -35,12 +35,12 @@ namespace bs
 		new (bs_alloc<ScriptParticleGravity>()) ScriptParticleGravity(managedInstance, value);
 		return managedInstance;
 	}
-	void ScriptParticleGravity::Internal_setOptions(ScriptParticleGravity* thisPtr, PARTICLE_GRAVITY_DESC* options)
+	void ScriptParticleGravity::InternalSetOptions(ScriptParticleGravity* thisPtr, PARTICLE_GRAVITY_DESC* options)
 	{
 		thisPtr->getInternal()->setOptions(*options);
 	}
 
-	void ScriptParticleGravity::Internal_getOptions(ScriptParticleGravity* thisPtr, PARTICLE_GRAVITY_DESC* __output)
+	void ScriptParticleGravity::InternalGetOptions(ScriptParticleGravity* thisPtr, PARTICLE_GRAVITY_DESC* __output)
 	{
 		PARTICLE_GRAVITY_DESC tmp__output;
 		tmp__output = thisPtr->getInternal()->getOptions();
@@ -48,15 +48,15 @@ namespace bs
 		*__output = tmp__output;
 	}
 
-	void ScriptParticleGravity::Internal_create(MonoObject* managedInstance, PARTICLE_GRAVITY_DESC* desc)
+	void ScriptParticleGravity::InternalCreate(MonoObject* managedInstance, PARTICLE_GRAVITY_DESC* desc)
 	{
-		SPtr<ParticleGravity> instance = ParticleGravity::create(*desc);
+		SPtr<ParticleGravity> instance = ParticleGravity::Create(*desc);
 		new (bs_alloc<ScriptParticleGravity>())ScriptParticleGravity(managedInstance, instance);
 	}
 
-	void ScriptParticleGravity::Internal_create0(MonoObject* managedInstance)
+	void ScriptParticleGravity::InternalCreate0(MonoObject* managedInstance)
 	{
-		SPtr<ParticleGravity> instance = ParticleGravity::create();
+		SPtr<ParticleGravity> instance = ParticleGravity::Create();
 		new (bs_alloc<ScriptParticleGravity>())ScriptParticleGravity(managedInstance, instance);
 	}
 }

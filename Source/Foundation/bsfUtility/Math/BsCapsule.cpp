@@ -9,18 +9,18 @@ namespace bs
 		:mSegment(segment), mRadius(radius)
 	{ }
 
-	std::pair<bool, float> Capsule::intersects(const Ray& ray) const
+	std::pair<bool, float> Capsule::Intersects(const Ray& ray) const
 	{
-		const Vector3& org = ray.getOrigin();
-		const Vector3& dir = ray.getDirection();
+		const Vector3& org = ray.GetOrigin();
+		const Vector3& dir = ray.GetDirection();
 
 		Vector3 segDir = mSegment.end - mSegment.start;
-		float segExtent = segDir.normalize() * 0.5f;
+		float segExtent = segDir.Normalize() * 0.5f;
 		Vector3 segCenter = mSegment.start + segDir * segExtent;
 
 		Vector3 basis[3];
 		basis[0] = segDir;
-		basis[0].orthogonalComplement(basis[1], basis[2]);
+		basis[0].OrthogonalComplement(basis[1], basis[2]);
 
 		float rSqr = mRadius * mRadius;
 
@@ -29,7 +29,7 @@ namespace bs
 
 		// Get the z-value, in capsule coordinates, of the incoming line's
 		// unit-length direction.
-		float dz = basis[0].dot(dir);
+		float dz = basis[0].Dot(dir);
 		if (std::abs(dz) == 1.0f)
 		{
 			// The line is parallel to the capsule axis.  Determine whether the

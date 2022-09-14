@@ -15,7 +15,7 @@ namespace bs
 	{
 		PxSphereGeometry geometry(0.01f); // Dummy
 
-		PxShape* shape = physx->createShape(geometry, *gPhysX().getDefaultMaterial(), true);
+		PxShape* shape = physx->createShape(geometry, *gPhysX().GetDefaultMaterial(), true);
 		shape->setLocalPose(toPxTransform(position, rotation));
 		shape->userData = this;
 
@@ -27,22 +27,22 @@ namespace bs
 		bs_delete(mInternal);
 	}
 
-	void PhysXMeshCollider::setScale(const Vector3& scale)
+	void PhysXMeshCollider::SetScale(const Vector3& scale)
 	{
 		MeshCollider::setScale(scale);
-		applyGeometry();
+		ApplyGeometry();
 	}
 
-	void PhysXMeshCollider::onMeshChanged()
+	void PhysXMeshCollider::OnMeshChanged()
 	{
-		applyGeometry();
+		ApplyGeometry();
 	}
 
-	void PhysXMeshCollider::applyGeometry()
+	void PhysXMeshCollider::ApplyGeometry()
 	{
 		if (!mMesh.isLoaded())
 		{
-			setGeometry(PxSphereGeometry(0.01f)); // Dummy
+			SetGeometry(PxSphereGeometry(0.01f)); // Dummy
 			return;
 		}
 
@@ -54,7 +54,7 @@ namespace bs
 			geometry.scale = PxMeshScale(toPxVector(getScale()), PxIdentity);
 			geometry.convexMesh = physxMesh->GetConvexInternal();
 
-			setGeometry(geometry);
+			SetGeometry(geometry);
 		}
 		else // Triangle
 		{
@@ -62,23 +62,23 @@ namespace bs
 			geometry.scale = PxMeshScale(toPxVector(getScale()), PxIdentity);
 			geometry.triangleMesh = physxMesh->GetTriangleInternal();
 
-			setGeometry(geometry);
+			SetGeometry(geometry);
 		}
 	}
 
-	void PhysXMeshCollider::setGeometry(const PxGeometry& geometry)
+	void PhysXMeshCollider::SetGeometry(const PxGeometry& geometry)
 	{
-		PxShape* shape = getInternal()->GetShapeInternal();
+		PxShape* shape = GetInternal()->GetShapeInternal();
 		if (shape->getGeometryType() != geometry.getType())
 		{
-			PxShape* newShape = gPhysX().getPhysX()->createShape(geometry, *gPhysX().getDefaultMaterial(), true);
-			getInternal()->SetShapeInternal(newShape);
+			PxShape* newShape = gPhysX().GetPhysX()->createShape(geometry, *gPhysX().GetDefaultMaterial(), true);
+			GetInternal()->SetShapeInternal(newShape);
 		}
 		else
-			getInternal()->GetShapeInternal()->setGeometry(geometry);
+			GetInternal()->GetShapeInternal()->setGeometry(geometry);
 	}
 
-	FPhysXCollider* PhysXMeshCollider::getInternal() const
+	FPhysXCollider* PhysXMeshCollider::GetInternal() const
 	{
 		return static_cast<FPhysXCollider*>(mInternal);
 	}

@@ -14,14 +14,14 @@ namespace bs
 	void ScriptD6JointDrive::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptD6JointDrive::box(const D6JointDrive& value)
+	MonoObject*ScriptD6JointDrive::Box(const D6JointDrive& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	D6JointDrive ScriptD6JointDrive::unbox(MonoObject* value)
+	D6JointDrive ScriptD6JointDrive::Unbox(MonoObject* value)
 	{
-		return *(D6JointDrive*)MonoUtil::unbox(value);
+		return *(D6JointDrive*)MonoUtil::Unbox(value);
 	}
 
 }

@@ -19,73 +19,73 @@ namespace bs
 		~NullPhysicsCharacterController() = default;
 
 		/** @copydoc CharacterController::move */
-		CharacterCollisionFlags move(const Vector3& displacement) override;
+		CharacterCollisionFlags Move(const Vector3& displacement) override;
 
 		/** @copydoc CharacterController::getPosition */
-		Vector3 getPosition() const override { return mDesc.position; }
+		Vector3 GetPosition() const override { return mDesc.position; }
 
 		/** @copydoc CharacterController::setPosition */
-		void setPosition(const Vector3& position) override { mDesc.position = position; }
+		void SetPosition(const Vector3& position) override { mDesc.position = position; }
 
 		/** @copydoc CharacterController::getFootPosition */
-		Vector3 getFootPosition() const override { return mDesc.position; }
+		Vector3 GetFootPosition() const override { return mDesc.position; }
 
 		/** @copydoc CharacterController::setFootPosition */
-		void setFootPosition(const Vector3& position) override { mDesc.position = position; }
+		void SetFootPosition(const Vector3& position) override { mDesc.position = position; }
 
 		/** @copydoc CharacterController::getRadius */
-		float getRadius() const override { return mDesc.radius; }
+		float GetRadius() const override { return mDesc.radius; }
 
 		/** @copydoc CharacterController::setRadius */
-		void setRadius(float radius) override { mDesc.radius = radius; }
+		void SetRadius(float radius) override { mDesc.radius = radius; }
 
 		/** @copydoc CharacterController::getHeight */
-		float getHeight() const override { return mDesc.height; }
+		float GetHeight() const override { return mDesc.height; }
 
 		/** @copydoc CharacterController::setHeight */
-		void setHeight(float height) override { mDesc.height = height; }
+		void SetHeight(float height) override { mDesc.height = height; }
 
 		/** @copydoc CharacterController::getUp */
-		Vector3 getUp() const override { return mDesc.up; }
+		Vector3 GetUp() const override { return mDesc.up; }
 
 		/** @copydoc CharacterController::setUp */
-		void setUp(const Vector3& up) override { mDesc.up = up; }
+		void SetUp(const Vector3& up) override { mDesc.up = up; }
 
 		/** @copydoc CharacterController::getClimbingMode */
-		CharacterClimbingMode getClimbingMode() const override { return mDesc.climbingMode; }
+		CharacterClimbingMode GetClimbingMode() const override { return mDesc.climbingMode; }
 
 		/** @copydoc CharacterController::setClimbingMode */
-		void setClimbingMode(CharacterClimbingMode mode) override { mDesc.climbingMode = mode; }
+		void SetClimbingMode(CharacterClimbingMode mode) override { mDesc.climbingMode = mode; }
 
 		/** @copydoc CharacterController::getNonWalkableMode */
-		CharacterNonWalkableMode getNonWalkableMode() const override { return mDesc.nonWalkableMode; }
+		CharacterNonWalkableMode GetNonWalkableMode() const override { return mDesc.nonWalkableMode; }
 
 		/** @copydoc CharacterController::setNonWalkableMode */
-		void setNonWalkableMode(CharacterNonWalkableMode mode) override { mDesc.nonWalkableMode = mode; }
+		void SetNonWalkableMode(CharacterNonWalkableMode mode) override { mDesc.nonWalkableMode = mode; }
 
 		/** @copydoc CharacterController::getMinMoveDistance */
-		float getMinMoveDistance() const override { return mDesc.minMoveDistance; }
+		float GetMinMoveDistance() const override { return mDesc.minMoveDistance; }
 
 		/** @copydoc CharacterController::setMinMoveDistance */
-		void setMinMoveDistance(float value) override { mDesc.minMoveDistance = value; }
+		void SetMinMoveDistance(float value) override { mDesc.minMoveDistance = value; }
 
 		/** @copydoc CharacterController::getContactOffset */
-		float getContactOffset() const override { return mDesc.contactOffset; }
+		float GetContactOffset() const override { return mDesc.contactOffset; }
 
 		/** @copydoc CharacterController::setContactOffset */
-		void setContactOffset(float value) override { mDesc.contactOffset = value; }
+		void SetContactOffset(float value) override { mDesc.contactOffset = value; }
 
 		/** @copydoc CharacterController::getStepOffset */
-		float getStepOffset() const override { return mDesc.stepOffset; }
+		float GetStepOffset() const override { return mDesc.stepOffset; }
 
 		/** @copydoc CharacterController::setStepOffset */
-		void setStepOffset(float value) override { mDesc.stepOffset = value; }
+		void SetStepOffset(float value) override { mDesc.stepOffset = value; }
 
 		/** @copydoc CharacterController::getSlopeLimit */
-		Radian getSlopeLimit() const override { return mDesc.slopeLimit; }
+		Radian GetSlopeLimit() const override { return mDesc.slopeLimit; }
 
 		/** @copydoc CharacterController::setSlopeLimit */
-		void setSlopeLimit(Radian value) override { mDesc.slopeLimit = value; }
+		void SetSlopeLimit(Radian value) override { mDesc.slopeLimit = value; }
 
 	private:
 		CHAR_CONTROLLER_DESC mDesc;

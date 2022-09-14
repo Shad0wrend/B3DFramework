@@ -6,23 +6,23 @@ using namespace std::placeholders;
 
 namespace bs
 {
-	void ApplicationEx::startUp(const START_UP_DESC& desc)
+	void ApplicationEx::StartUp(const START_UP_DESC& desc)
 	{
-		Application::startUp(desc);
+		Application::StartUp(desc);
 	}
 
-	void ApplicationEx::startUp(VideoMode videoMode, const String& title, bool fullscreen)
+	void ApplicationEx::StartUp(VideoMode videoMode, const String& title, bool fullscreen)
 	{
-		Application::startUp(videoMode, title, fullscreen);
+		Application::StartUp(videoMode, title, fullscreen);
 	}
 
-	void ApplicationEx::runMainLoop()
+	void ApplicationEx::RunMainLoop()
 	{
-		Application::instance().runMainLoop();
+		Application::Instance().RunMainLoop();
 	}
 
-	void ApplicationEx::shutDown()
+	void ApplicationEx::ShutDown()
 	{
-		Application::shutDown();
+		shutDown();
 	}
 }

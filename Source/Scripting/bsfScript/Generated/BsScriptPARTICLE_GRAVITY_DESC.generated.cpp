@@ -14,14 +14,14 @@ namespace bs
 	void ScriptPARTICLE_GRAVITY_DESC::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptPARTICLE_GRAVITY_DESC::box(const PARTICLE_GRAVITY_DESC& value)
+	MonoObject*ScriptPARTICLE_GRAVITY_DESC::Box(const PARTICLE_GRAVITY_DESC& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	PARTICLE_GRAVITY_DESC ScriptPARTICLE_GRAVITY_DESC::unbox(MonoObject* value)
+	PARTICLE_GRAVITY_DESC ScriptPARTICLE_GRAVITY_DESC::Unbox(MonoObject* value)
 	{
-		return *(PARTICLE_GRAVITY_DESC*)MonoUtil::unbox(value);
+		return *(PARTICLE_GRAVITY_DESC*)MonoUtil::Unbox(value);
 	}
 
 }

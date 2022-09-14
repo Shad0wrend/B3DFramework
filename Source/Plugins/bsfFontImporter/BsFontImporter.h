@@ -20,16 +20,16 @@ namespace bs
 		virtual ~FontImporter() = default;
 
 		/** @copydoc SpecificImporter::isExtensionSupported */
-		bool isExtensionSupported(const String& ext) const override;
+		bool IsExtensionSupported(const String& ext) const ;
 
 		/** @copydoc SpecificImporter::isMagicNumberSupported */
-		bool isMagicNumberSupported(const UINT8* magicNumPtr, UINT32 numBytes) const override;
+		bool IsMagicNumberSupported(const UINT8* magicNumPtr, UINT32 numBytes) const ;
 
 		/** @copydoc SpecificImporter::import */
-		SPtr<Resource> import(const Path& filePath, SPtr<const ImportOptions> importOptions) override;
+		SPtr<Resource> Import(const Path& filePath, SPtr<const ImportOptions> importOptions) ;
 
 		/** @copydoc SpecificImporter::createImportOptions */
-		SPtr<ImportOptions> createImportOptions() const override;
+		SPtr<ImportOptions> CreateImportOptions() const ;
 	private:
 		Vector<String> mExtensions;
 

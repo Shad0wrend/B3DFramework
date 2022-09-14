@@ -54,14 +54,14 @@ namespace bs
 		~CrashHandler();
 
 		/** Constructs and starts the module. */
-		static void startUp(const CrashHandlerSettings& settings = CrashHandlerSettings())
+		static void StartUp(const CrashHandlerSettings& settings = CrashHandlerSettings())
 		{
 			if(InstanceInternal() == nullptr)
 				InstanceInternal() = bs_new<CrashHandler>(settings);
 		}
 
 		/** Shuts down this module and frees any resources it is using. */
-		static void shutDown()
+		static void ShutDown()
 		{
 			if(InstanceInternal() != nullptr)
 			{
@@ -71,7 +71,7 @@ namespace bs
 		}
 
 		/** Returns a reference to the module instance. */
-		static CrashHandler& instance() { return *InstanceInternal(); }
+		static CrashHandler& Instance() { return *InstanceInternal(); }
 
 		/**
 		 * Records a crash with a custom error message.
@@ -82,7 +82,7 @@ namespace bs
 		 * @param[in]	file		Optional name of the source code file in which the code that crashed the program exists.
 		 * @param[in]	line		Optional source code line at which the crash was triggered at.
 		 */
-		void reportCrash(const String& type, const String& description, const String& function = StringUtil::BLANK,
+		void ReportCrash(const String& type, const String& description, const String& function = StringUtil::BLANK,
 			const String& file = StringUtil::BLANK, UINT32 line = 0) const;
 
 #if BS_PLATFORM == BS_PLATFORM_WIN32
@@ -94,7 +94,7 @@ namespace bs
 		 *
 		 * @note	Available in Windows builds only.
 		 */
-		int reportCrash(void* exceptionData) const;
+		int ReportCrash(void* exceptionData) const;
 #endif
 
 		/**
@@ -103,23 +103,23 @@ namespace bs
 		 *
 		 * @return	String containing the call stack with each function on its own line.
 		 */
-		static String getStackTrace();
+		static String GetStackTrace();
 	private:
 		/** Does what it says. Internal utility function used by reportCrash(). */
-		void logErrorAndStackTrace(const String& message, const String& stackTrace) const;
+		void LogErrorAndStackTrace(const String& message, const String& stackTrace) const;
 		/** Does what it says. Internal utility function used by reportCrash(). */
-		void logErrorAndStackTrace(const String& type,
+		void LogErrorAndStackTrace(const String& type,
 		                           const String& description,
 		                           const String& function,
 		                           const String& file,
 		                           UINT32 line) const;
 		/** Does what it says. Internal utility function used by reportCrash(). */
-		void saveCrashLog() const;
+		void SaveCrashLog() const;
 		/** Creates the crash report directory and returns its path. */
-		static const Path& getCrashFolder();
+		static const Path& GetCrashFolder();
 		/** Returns the current time as a string timestamp.  This is used
 		 * to name the crash report directory.. */
-		static String getCrashTimestamp();
+		static String GetCrashTimestamp();
 
 		/** Returns a singleton instance of this module. */
 		static CrashHandler*& InstanceInternal() { static CrashHandler* inst = nullptr; return inst; }

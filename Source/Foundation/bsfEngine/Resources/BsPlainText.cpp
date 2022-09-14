@@ -12,7 +12,7 @@ namespace bs
 
 	}
 
-	HPlainText PlainText::create(const WString& data)
+	HPlainText PlainText::Create(const WString& data)
 	{
 		return static_resource_cast<PlainText>(gResources().CreateResourceHandleInternal(CreatePtrInternal(data)));
 	}
@@ -27,13 +27,13 @@ namespace bs
 		return plainTextPtr;
 	}
 
-	RTTITypeBase* PlainText::getRTTIStatic()
+	RTTITypeBase* PlainText::GetRttiStatic()
 	{
-		return PlainTextRTTI::instance();
+		return PlainTextRTTI::Instance();
 	}
 
 	RTTITypeBase* PlainText::getRTTI() const
 	{
-		return PlainText::getRTTIStatic();
+		return PlainText::GetRttiStatic();
 	}
 }

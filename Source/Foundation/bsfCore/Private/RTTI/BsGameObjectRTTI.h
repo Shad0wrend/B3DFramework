@@ -33,8 +33,8 @@ namespace bs
 			BS_RTTI_MEMBER_PLAIN(mUUID, 3)
 		BS_END_RTTI_MEMBERS
 
-		UINT64& getInstanceID(GameObject* obj) { return obj->mInstanceData->mInstanceId; }
-		void setInstanceID(GameObject* obj, UINT64& instanceId)
+		UINT64& GetInstanceId(GameObject* obj) { return obj->mInstanceData->mInstanceId; }
+		void SetInstanceId(GameObject* obj, UINT64& instanceId)
 		{
 			// We record the ID for later use. Any child RTTI of GameObject must call GameObjectManager::registerObject
 			// with this ID, so we know how to map deserialized GO handles to live objects, otherwise the handle
@@ -48,16 +48,16 @@ namespace bs
 	public:
 		GameObjectRTTI()
 		{
-			addPlainField("mInstanceID", 0, &GameObjectRTTI::getInstanceID, &GameObjectRTTI::setInstanceID);
+			AddPlainField("mInstanceID", 0, &GameObjectRTTI::GetInstanceId, &GameObjectRTTI::SetInstanceId);
 		}
 
-		void onDeserializationStarted(IReflectable* obj, SerializationContext* context) override
+		void OnDeserializationStarted(IReflectable* obj, SerializationContext* context) 
 		{
 			GameObject* gameObject = static_cast<GameObject*>(obj);
 
 			// It's possible we're just accessing the game object fields, in which case the process below is not needed
 			// (it's only required for new game objects).
-			if (gameObject->mRTTIData.empty())
+			if (gameObject->mRTTIData.Empty())
 				return;
 
 			SPtr<GameObject> gameObjectPtr = any_cast<SPtr<GameObject>>(gameObject->mRTTIData);
@@ -70,18 +70,18 @@ namespace bs
 			deserializationData.ptr = gameObjectPtr;
 		}
 
-		const String& getRTTIName() override
+		const String& GetRttiName() 
 		{
 			static String name = "GameObject";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() 
 		{
 			return TID_GameObject;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			BS_EXCEPT(InternalErrorException, "Cannot instantiate an abstract class.");
 			return nullptr;

@@ -49,7 +49,7 @@ namespace bs
 
 	public:
 		/** Returns type name of the GUI element used for finding GUI element styles.  */
-		static const String& getGUITypeName();
+		static const String& GetGuiTypeName();
 
 		/**
 		 * Creates a new handle.
@@ -58,7 +58,7 @@ namespace bs
 		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
 		 *								GUIWidget the element is used on. If not specified default style is used.
 		 */
-		static GUISliderHandle* create(GUISliderHandleFlags flags, const String& styleName = StringUtil::BLANK);
+		static GUISliderHandle* Create(GUISliderHandleFlags flags, const String& styleName = StringUtil::BLANK);
 
 		/**
 		 * Creates a new handle.
@@ -69,35 +69,35 @@ namespace bs
 		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
 		 *								GUIWidget the element is used on. If not specified default style is used.
 		 */
-		static GUISliderHandle* create(GUISliderHandleFlags flags, const GUIOptions& options,
+		static GUISliderHandle* Create(GUISliderHandleFlags flags, const GUIOptions& options,
 			const String& styleName = StringUtil::BLANK);
 
 		/**	Gets the current position of the handle, in percent ranging [0.0f, 1.0f]. */
-		float getHandlePos() const;
+		float GetHandlePos() const;
 
 		/** Gets the minimum percentual variation of the handle position */
-		float getStep() const;
+		float GetStep() const;
 
 		/**	Returns the position of the slider handle, in pixels. Relative to this object. */
-		INT32 getHandlePosPx() const;
+		INT32 GetHandlePosPx() const;
 
 		/**	Returns remaining length of the scrollable area not covered by the handle, in pixels. */
-		UINT32 getScrollableSize() const;
+		UINT32 GetScrollableSize() const;
 
 		/**	Returns the total length of the area the handle can move in, in pixels. */
-		UINT32 getMaxSize() const;
+		UINT32 GetMaxSize() const;
 
 		/**	
 		 * Sets a step that defines the minimal increment the value can be increased/decreased by. Set to zero to have no
 		 * step. In percent.
 		 */
-		void setStep(float step);
+		void SetStep(float step);
 
 		/**
 		 * Moves the slider handle one step forwards or backwards. Step size is determined by step (if set) or handle size
 		 * otherwise. If @p forward is true the handle is moved one step forward, otherwise one step backward.
 		 */
-		void moveOneStep(bool forward);
+		void MoveOneStep(bool forward);
 
 		/** Triggered when the user drags the handle. */
 		Event<void(float pos, float size)> onHandleMovedOrResized;
@@ -134,7 +134,7 @@ namespace bs
 		~GUISliderHandle();
 
 		/** @copydoc GUIElement::FillBufferInternal() */
-		void _fillBuffer(
+		void FillBuffer(
 			UINT8* vertices,
 			UINT32* indices,
 			UINT32 vertexOffset,
@@ -142,13 +142,13 @@ namespace bs
 			const Vector2I& offset,
 			UINT32 maxNumVerts,
 			UINT32 maxNumIndices,
-			UINT32 renderElementIdx) const override;
+			UINT32 renderElementIdx) const ;
 
 		/** @copydoc GUIElement::updateRenderElementsInternal() */
-		void updateRenderElementsInternal() override;
+		void UpdateRenderElementsInternal() ;
 
 		/** @copydoc GUIElement::updateClippedBounds() */
-		void updateClippedBounds() override;
+		void UpdateClippedBounds() ;
 	private:
 		GUISliderHandle(GUISliderHandleFlags flags, const String& styleName, const GUIDimensions& dimensions);
 
@@ -156,19 +156,19 @@ namespace bs
 		bool MouseEventInternal(const GUIMouseEvent& ev) override;
 
 		/** Checks are the specified over the scroll handle. Coordinates are relative to the parent widget. */
-		bool isOnHandle(const Vector2I& pos) const;
+		bool IsOnHandle(const Vector2I& pos) const;
 
 		/**	Sets the position of the slider handle, in pixels. Relative to this object. */
-		void setHandlePosPx(INT32 pos);
+		void SetHandlePosPx(INT32 pos);
 
 		/** Returns the size of the handle button, in pixels. */
-		UINT32 getHandleSize() const;
+		UINT32 GetHandleSize() const;
 
 		/**	Gets the currently active texture, depending on handle state. */
-		const HSpriteTexture& getActiveTexture() const;
+		const HSpriteTexture& GetActiveTexture() const;
 
 		/** @copydoc GUIElement::styleUpdated */
-		void styleUpdated() override;
+		void StyleUpdated() ;
 
 		static const UINT32 RESIZE_HANDLE_SIZE;
 

@@ -8,52 +8,52 @@
 
 namespace bs
 {
-	void Sphere::merge(const Sphere& rhs)
+	void Sphere::Merge(const Sphere& rhs)
 	{
 		Vector3 newCenter = (mCenter + rhs.mCenter) * 0.5f;
 
-		float newRadiusA = newCenter.distance(mCenter) + getRadius();
-		float newRadiusB = newCenter.distance(rhs.mCenter) + rhs.getRadius();
+		float newRadiusA = newCenter.Distance(mCenter) + GetRadius();
+		float newRadiusB = newCenter.Distance(rhs.mCenter) + rhs.GetRadius();
 		
 		mCenter = newCenter;
 		mRadius = std::max(newRadiusA, newRadiusB);
 	}
 
-	void Sphere::merge(const Vector3& point)
+	void Sphere::Merge(const Vector3& point)
 	{
-		float dist = point.distance(mCenter);
+		float dist = point.Distance(mCenter);
 		mRadius = std::max(mRadius, dist);
 	}
 
-	void Sphere::transform(const Matrix4& matrix)
+	void Sphere::Transform(const Matrix4& matrix)
 	{
 		float lengthSqrd[3];
 		for(UINT32 i = 0; i < 3; i++)
 		{
-			Vector3 column = matrix.getColumn(i);
-			lengthSqrd[i] = column.dot(column);
+			Vector3 column = matrix.GetColumn(i);
+			lengthSqrd[i] = column.Dot(column);
 		}
 
 		float maxLengthSqrd = std::max(lengthSqrd[0], std::max(lengthSqrd[1], lengthSqrd[2]));
 
-		mCenter = matrix.multiplyAffine(mCenter);
+		mCenter = matrix.MultiplyAffine(mCenter);
 		mRadius *= sqrt(maxLengthSqrd);
 	}
 
-	bool Sphere::contains(const Vector3& v) const
+	bool Sphere::Contains(const Vector3& v) const
 	{
-		return ((v - mCenter).squaredLength() <= Math::sqr(mRadius));
+		return ((v - mCenter).SquaredLength() <= Math::Sqr(mRadius));
 	}
 
-	bool Sphere::intersects(const Sphere& s) const
+	bool Sphere::Intersects(const Sphere& s) const
 	{
-		return (s.mCenter - mCenter).squaredLength() <=
-			Math::sqr(s.mRadius + mRadius);
+		return (s.mCenter - mCenter).SquaredLength() <=
+			Math::Sqr(s.mRadius + mRadius);
 	}
 
-	std::pair<bool, float> Sphere::intersects(const Ray& ray, bool discardInside) const
+	std::pair<bool, float> Sphere::Intersects(const Ray& ray, bool discardInside) const
 	{
-		const Vector3& raydir = ray.getDirection();
+		const Vector3& raydir = ray.GetDirection();
 		const Vector3& rayorig = ray.getOrigin() - getCenter();
 		float radius = getRadius();
 
@@ -88,12 +88,12 @@ namespace bs
 		}
 	}
 
-	bool Sphere::intersects(const Plane& plane) const
+	bool Sphere::Intersects(const Plane& plane) const
 	{
 		return (Math::abs(plane.getDistance(getCenter())) <= getRadius());
 	}
 
-	bool Sphere::intersects(const AABox& box) const
+	bool Sphere::Intersects(const AABox& box) const
 	{
 		return box.intersects(*this);
 	}

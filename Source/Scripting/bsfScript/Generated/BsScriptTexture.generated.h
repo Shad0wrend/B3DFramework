@@ -20,24 +20,24 @@ namespace bs
 
 		ScriptTexture(MonoObject* managedInstance, const ResourceHandle<Texture>& value);
 
-		static MonoObject* createInstance();
+		static MonoObject* CreateInstance();
 
 	private:
-		static MonoObject* Internal_getRef(ScriptTexture* thisPtr);
+		static MonoObject* InternalGetRef(ScriptTexture* thisPtr);
 
-		static MonoObject* Internal_readData(ScriptTexture* thisPtr, uint32_t face, uint32_t mipLevel);
-		static void Internal_create(MonoObject* managedInstance, PixelFormat format, uint32_t width, uint32_t height, uint32_t depth, TextureType texType, TextureUsage usage, uint32_t numSamples, bool hasMipmaps, bool gammaCorrection);
-		static PixelFormat Internal_getPixelFormat(ScriptTexture* thisPtr);
-		static TextureUsage Internal_getUsage(ScriptTexture* thisPtr);
-		static TextureType Internal_getType(ScriptTexture* thisPtr);
-		static uint32_t Internal_getWidth(ScriptTexture* thisPtr);
-		static uint32_t Internal_getHeight(ScriptTexture* thisPtr);
-		static uint32_t Internal_getDepth(ScriptTexture* thisPtr);
-		static bool Internal_getGammaCorrection(ScriptTexture* thisPtr);
-		static uint32_t Internal_getSampleCount(ScriptTexture* thisPtr);
-		static uint32_t Internal_getMipmapCount(ScriptTexture* thisPtr);
-		static MonoObject* Internal_getPixels(ScriptTexture* thisPtr, uint32_t face, uint32_t mipLevel);
-		static void Internal_setPixels(ScriptTexture* thisPtr, MonoObject* data, uint32_t face, uint32_t mipLevel);
-		static void Internal_setPixelsArray(ScriptTexture* thisPtr, MonoArray* colors, uint32_t face, uint32_t mipLevel);
+		static MonoObject* InternalReadData(ScriptTexture* thisPtr, uint32_t face, uint32_t mipLevel);
+		static void InternalCreate(MonoObject* managedInstance, PixelFormat format, uint32_t width, uint32_t height, uint32_t depth, TextureType texType, TextureUsage usage, uint32_t numSamples, bool hasMipmaps, bool gammaCorrection);
+		static PixelFormat InternalGetPixelFormat(ScriptTexture* thisPtr);
+		static TextureUsage InternalGetUsage(ScriptTexture* thisPtr);
+		static TextureType InternalGetType(ScriptTexture* thisPtr);
+		static uint32_t InternalGetWidth(ScriptTexture* thisPtr);
+		static uint32_t InternalGetHeight(ScriptTexture* thisPtr);
+		static uint32_t InternalGetDepth(ScriptTexture* thisPtr);
+		static bool InternalGetGammaCorrection(ScriptTexture* thisPtr);
+		static uint32_t InternalGetSampleCount(ScriptTexture* thisPtr);
+		static uint32_t InternalGetMipmapCount(ScriptTexture* thisPtr);
+		static MonoObject* InternalGetPixels(ScriptTexture* thisPtr, uint32_t face, uint32_t mipLevel);
+		static void InternalSetPixels(ScriptTexture* thisPtr, MonoObject* data, uint32_t face, uint32_t mipLevel);
+		static void InternalSetPixelsArray(ScriptTexture* thisPtr, MonoArray* colors, uint32_t face, uint32_t mipLevel);
 	};
 }

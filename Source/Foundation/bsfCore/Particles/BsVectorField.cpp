@@ -34,7 +34,7 @@ namespace bs
 
 		const UINT32 valuesToCopy = std::min(count, (UINT32)values.size());
 
-		const SPtr<PixelData> pixelData = PixelData::create(mDesc.countX, mDesc.countY, mDesc.countZ, PF_RGBA16F);
+		const SPtr<PixelData> pixelData = PixelData::Create(mDesc.countX, mDesc.countY, mDesc.countZ, PF_RGBA16F);
 
 		const UINT32 pixelSize = PixelUtil::getNumElemBytes(PF_RGBA16F);
 		UINT8* data = pixelData->getData();
@@ -63,7 +63,7 @@ namespace bs
 		mTexture = Texture::CreatePtrInternal(pixelData);
 	}
 
-	SPtr<ct::CoreObject> VectorField::createCore() const
+	SPtr<ct::CoreObject> VectorField::CreateCore() const
 	{
 		ct::VectorField* vectorField = new (bs_alloc<ct::VectorField>()) ct::VectorField(mDesc, mTexture->getCore());
 
@@ -73,7 +73,7 @@ namespace bs
 		return vectorFieldPtr;
 	}
 
-	SPtr<ct::VectorField> VectorField::getCore() const
+	SPtr<ct::VectorField> VectorField::GetCore() const
 	{
 		return std::static_pointer_cast<ct::VectorField>(mCoreSpecific);
 	}
@@ -82,20 +82,20 @@ namespace bs
 	/* 								SERIALIZATION                      		*/
 	/************************************************************************/
 
-	RTTITypeBase* VectorField::getRTTIStatic()
+	RTTITypeBase* VectorField::GetRttiStatic()
 	{
-		return VectorFieldRTTI::instance();
+		return VectorFieldRTTI::Instance();
 	}
 
-	RTTITypeBase* VectorField::getRTTI() const
+	RTTITypeBase* VectorField::GetRtti() const
 	{
-		return VectorField::getRTTIStatic();
+		return VectorField::GetRttiStatic();
 	}
 
 	/************************************************************************/
 	/* 								STATICS	                      			*/
 	/************************************************************************/
-	HVectorField VectorField::create(const VECTOR_FIELD_DESC& desc, const Vector<Vector3>& values)
+	HVectorField VectorField::Create(const VECTOR_FIELD_DESC& desc, const Vector<Vector3>& values)
 	{
 		SPtr<VectorField> vectorFieldPtr = CreatePtrInternal(desc, values);
 
@@ -132,7 +132,7 @@ namespace bs
 		}
 	}
 
-	bool FGAImporter::isExtensionSupported(const String& ext) const
+	bool FGAImporter::IsExtensionSupported(const String& ext) const
 	{
 		String lowerCaseExt = ext;
 		StringUtil::toLowerCase(lowerCaseExt);
@@ -140,12 +140,12 @@ namespace bs
 		return lowerCaseExt == u8"fga";
 	}
 
-	bool FGAImporter::isMagicNumberSupported(const UINT8* magicNumPtr, UINT32 numBytes) const
+	bool FGAImporter::IsMagicNumberSupported(const UINT8* magicNumPtr, UINT32 numBytes) const
 	{
 		return true; // Plain-text so we don't even check for magic number
 	}
 
-	SPtr<Resource> FGAImporter::import(const Path& filePath, SPtr<const ImportOptions> importOptions)
+	SPtr<Resource> FGAImporter::Import(const Path& filePath, SPtr<const ImportOptions> importOptions)
 	{
 		String data;
 		{

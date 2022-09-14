@@ -17,8 +17,8 @@ namespace bs
 	class BS_CORE_EXPORT CRenderableRTTI : public RTTIType<CRenderable, Component, CRenderableRTTI>
 	{
 	private:
-		SPtr<Renderable> getInternal(CRenderable* obj) { return obj->mInternal; }
-		void setInternal(CRenderable* obj, SPtr<Renderable> val) { obj->mInternal = val; }
+		SPtr<Renderable> GetInternal(CRenderable* obj) { return obj->mInternal; }
+		void SetInternal(CRenderable* obj, SPtr<Renderable> val) { obj->mInternal = val; }
 
 	public:
 		CRenderableRTTI()
@@ -26,20 +26,20 @@ namespace bs
 			addReflectablePtrField("mInternal", 0, &CRenderableRTTI::getInternal, &CRenderableRTTI::setInternal);
 		}
 
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "CRenderable";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_CRenderable;
 		}
 
 		SPtr<IReflectable> newRTTIObject() override
 		{
-			return SceneObject::createEmptyComponent<CRenderable>();
+			return SceneObject::CreateEmptyComponent<CRenderable>();
 		}
 	};
 

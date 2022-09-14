@@ -24,7 +24,7 @@ namespace bs
 
 	}
 
-	MonoObject* ScriptImportedAnimationEvents::create(const SPtr<ImportedAnimationEvents>& value)
+	MonoObject* ScriptImportedAnimationEvents::Create(const SPtr<ImportedAnimationEvents>& value)
 	{
 		if(value == nullptr) return nullptr; 
 

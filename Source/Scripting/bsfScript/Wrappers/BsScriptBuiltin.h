@@ -24,10 +24,10 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static MonoObject* internal_GetWhiteTexture();
-		static MonoObject* internal_GetBuiltinShader(BuiltinShader type);
-		static MonoObject* internal_GetMesh(BuiltinMesh meshType);
-		static MonoObject* internal_GetDefaultFont();
+		static MonoObject* InternalGetWhiteTexture();
+		static MonoObject* InternalGetBuiltinShader(BuiltinShader type);
+		static MonoObject* InternalGetMesh(BuiltinMesh meshType);
+		static MonoObject* InternalGetDefaultFont();
 	};
 
 	/** @} */

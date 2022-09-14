@@ -21,15 +21,15 @@ namespace bs
 
 	void ScriptGUIFlexibleSpace::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_CreateInstance", (void*)&ScriptGUIFlexibleSpace::internal_createInstance);
+		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIFlexibleSpace::InternalCreateInstance);
 	}
 
-	void ScriptGUIFlexibleSpace::destroy()
+	void ScriptGUIFlexibleSpace::Destroy()
 	{
 		if(!mIsDestroyed)
 		{
 			if (mParent != nullptr)
-				mParent->removeChild(this);
+				mParent->RemoveChild(this);
 
 			GUIFlexibleSpace::destroy(mFlexibleSpace);
 
@@ -37,9 +37,9 @@ namespace bs
 		}
 	}
 
-	void ScriptGUIFlexibleSpace::internal_createInstance(MonoObject* instance)
+	void ScriptGUIFlexibleSpace::InternalCreateInstance(MonoObject* instance)
 	{
-		GUIFlexibleSpace* space = GUIFlexibleSpace::create();
+		GUIFlexibleSpace* space = GUIFlexibleSpace::Create();
 
 		new (bs_alloc<ScriptGUIFlexibleSpace>()) ScriptGUIFlexibleSpace(instance, space);
 	}

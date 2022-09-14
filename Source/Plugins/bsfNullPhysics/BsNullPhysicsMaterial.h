@@ -19,22 +19,22 @@ namespace bs
 		~NullPhysicsMaterial() = default;
 
 		/** @copydoc PhysicsMaterial::setStaticFriction */
-		void setStaticFriction(float value) override { mStaticFriction = value; }
+		void SetStaticFriction(float value) override { mStaticFriction = value; }
 
 		/** @copydoc PhysicsMaterial::getStaticFriction */
-		float getStaticFriction() const override { return mStaticFriction; }
+		float GetStaticFriction() const override { return mStaticFriction; }
 
 		/** @copydoc PhysicsMaterial::setDynamicFriction */
-		void setDynamicFriction(float value) override { mDynamicFriction = value; }
+		void SetDynamicFriction(float value) override { mDynamicFriction = value; }
 
 		/** @copydoc PhysicsMaterial::getDynamicFriction */
-		float getDynamicFriction() const override { return mDynamicFriction; }
+		float GetDynamicFriction() const override { return mDynamicFriction; }
 
 		/** @copydoc PhysicsMaterial::setRestitutionCoefficient */
-		void setRestitutionCoefficient(float value) override { mRestitutionCoefficient = value; }
+		void SetRestitutionCoefficient(float value) override { mRestitutionCoefficient = value; }
 
 		/** @copydoc PhysicsMaterial::getRestitutionCoefficient */
-		float getRestitutionCoefficient() const override { return mRestitutionCoefficient; }
+		float GetRestitutionCoefficient() const override { return mRestitutionCoefficient; }
 
 	private:
 		float mStaticFriction;

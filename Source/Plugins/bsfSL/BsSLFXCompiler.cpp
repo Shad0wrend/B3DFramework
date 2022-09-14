@@ -97,7 +97,7 @@ namespace bs
 			}
 		}
 
-		void getMessages(StringStream& output)
+		void GetMessages(StringStream& output)
 		{
 			printAndClearReports(output, mInfos);
 			printAndClearReports(output, mWarnings, (mWarnings.size() == 1 ? "WARNING" : "WARNINGS"));
@@ -111,7 +111,7 @@ namespace bs
 			Xsc::Report      report;
 		};
 
-		static void printMultiLineString(StringStream& output, const std::string& str, const std::string& indent)
+		static void PrintMultiLineString(StringStream& output, const std::string& str, const std::string& indent)
 		{
 			// Determine at which position the actual text begins (excluding the "error (X:Y) : " or the like)
 			auto textStartPos = str.find(" : ");
@@ -150,11 +150,11 @@ namespace bs
 			}
 		}
 
-		void printReport(StringStream& output, const IndentReport& r)
+		void PrintReport(StringStream& output, const IndentReport& r)
 		{
 			// Print optional context description
 			if (!r.report.Context().empty())
-				printMultiLineString(output, r.report.Context(), r.indent);
+				PrintMultiLineString(output, r.report.Context(), r.indent);
 
 			// Print report message
 			const auto& msg = r.report.Message();
@@ -178,7 +178,7 @@ namespace bs
 				output << r.indent << hint << std::endl;
 		}
 
-		void printAndClearReports(StringStream& output, Vector<IndentReport>& reports, const String& headline = "")
+		void PrintAndClearReports(StringStream& output, Vector<IndentReport>& reports, const String& headline = "")
 		{
 			if (!reports.empty())
 			{
@@ -434,7 +434,7 @@ namespace bs
 			break;
 		}
 
-		return SamplerState::create(desc);
+		return SamplerState::Create(desc);
 	}
 
 	void parseParameters(const Xsc::Reflection::ReflectionData& reflData, SHADER_DESC& desc)
@@ -738,7 +738,7 @@ namespace bs
 			if (done)
 			{
 				StringStream logOutput;
-				log.getMessages(logOutput);
+				log.GetMessages(logOutput);
 
 				BS_LOG(Error, BSLCompiler, "Shader cross compilation failed. Log: \n\n{0}", logOutput.str());
 				return "";
@@ -776,7 +776,7 @@ namespace bs
 			if(!compileSuccess && detectedTypes->empty())
 			{
 				StringStream logOutput;
-				log.getMessages(logOutput);
+				log.GetMessages(logOutput);
 
 				BS_LOG(Error, BSLCompiler, "Shader cross compilation failed. Log: \n\n{0}", logOutput.str());
 				return "";
@@ -800,7 +800,7 @@ namespace bs
 		crossCompile(hlsl, GPT_VERTEX_PROGRAM, CrossCompileOutput::GLSL45, true, dummy, &shaderDesc, &entryPoints);
 	}
 
-	BSLFXCompileResult BSLFXCompiler::compile(const String& name, const String& source,
+	BSLFXCompileResult BSLFXCompiler::Compile(const String& name, const String& source,
 		const UnorderedMap<String, String>& defines, ShadingLanguageFlags languages)
 	{
 		// Parse global shader options & shader meta-data
@@ -816,7 +816,7 @@ namespace bs
 		return output;
 	}
 
-	BSLFXCompileResult BSLFXCompiler::parseFX(ParseState* parseState, const char* source, const UnorderedMap<String, String>& defines)
+	BSLFXCompileResult BSLFXCompiler::ParseFx(ParseState* parseState, const char* source, const UnorderedMap<String, String>& defines)
 	{
 		for(auto& define : defines)
 		{
@@ -874,7 +874,7 @@ cleanup:
 		return output;
 	}
 
-	BSLFXCompiler::ShaderMetaData BSLFXCompiler::parseShaderMetaData(ASTFXNode* shader)
+	BSLFXCompiler::ShaderMetaData BSLFXCompiler::ParseShaderMetaData(ASTFXNode* shader)
 	{
 		ShaderMetaData metaData;
 
@@ -895,7 +895,7 @@ cleanup:
 					NodeOption* tagOption = &tagsNode->options->entries[j];
 
 					if (tagOption->type == OT_TagValue)
-						metaData.tags.push_back(removeQuotes(tagOption->value.strValue));
+						metaData.tags.push_back(RemoveQuotes(tagOption->value.strValue));
 				}
 			}
 				break;
@@ -907,7 +907,7 @@ cleanup:
 					NodeOption* variationOption = &variationsNode->options->entries[j];
 
 					if(variationOption->type == OT_Variation)
-						parseVariations(metaData, variationOption->value.nodePtr);
+						ParseVariations(metaData, variationOption->value.nodePtr);
 				}
 			}
 				break;
@@ -925,7 +925,7 @@ cleanup:
 		return metaData;
 	}
 
-	BSLFXCompileResult BSLFXCompiler::parseMetaDataAndOptions(ASTFXNode* rootNode,
+	BSLFXCompileResult BSLFXCompiler::ParseMetaDataAndOptions(ASTFXNode* rootNode,
 		Vector<std::pair<ASTFXNode*, ShaderMetaData>>& shaderMetaData,
 		Vector<SubShaderData>& subShaderData, SHADER_DESC& shaderDesc)
 	{
@@ -949,19 +949,19 @@ cleanup:
 			switch (option->type)
 			{
 			case OT_Options:
-				parseOptions(option->value.nodePtr, shaderDesc);
+				ParseOptions(option->value.nodePtr, shaderDesc);
 				break;
 			case OT_Shader:
 			{
 				// We initially parse only meta-data, so we can handle out-of-order mixin/shader definitions
-				ShaderMetaData metaData = parseShaderMetaData(option->value.nodePtr);
+				ShaderMetaData metaData = ParseShaderMetaData(option->value.nodePtr);
 				shaderMetaData.push_back(std::make_pair(option->value.nodePtr, metaData));
 
 				break;
 			}
 			case OT_SubShader:
 			{
-				SubShaderData data = parseSubShader(option->value.nodePtr);
+				SubShaderData data = ParseSubShader(option->value.nodePtr);
 				subShaderData.push_back(data);
 
 				break;
@@ -975,7 +975,7 @@ cleanup:
 	}
 
 
-	void BSLFXCompiler::parseVariations(ShaderMetaData& metaData, ASTFXNode* variations)
+	void BSLFXCompiler::ParseVariations(ShaderMetaData& metaData, ASTFXNode* variations)
 	{
 		assert(variations->type == NT_Variation);
 
@@ -990,11 +990,11 @@ cleanup:
 				variationData.identifier = option->value.strValue;
 				break;
 			case OT_VariationOption:
-				variationData.values.push_back(parseVariationOption(option->value.nodePtr));
+				variationData.values.push_back(ParseVariationOption(option->value.nodePtr));
 				break;
 			case OT_Attributes:
 				{
-				AttributeData attribs = parseAttributes(option->value.nodePtr);
+				AttributeData attribs = ParseAttributes(option->value.nodePtr);
 
 				for (auto& entry : attribs.attributes)
 				{
@@ -1013,7 +1013,7 @@ cleanup:
 			metaData.variations.push_back(variationData);
 	}
 
-	BSLFXCompiler::VariationOption BSLFXCompiler::parseVariationOption(ASTFXNode* variationOption)
+	BSLFXCompiler::VariationOption BSLFXCompiler::ParseVariationOption(ASTFXNode* variationOption)
 	{
 		assert(variationOption->type == NT_VariationOption);
 
@@ -1029,7 +1029,7 @@ cleanup:
 				break;
 			case OT_Attributes:
 				{
-					AttributeData attribs = parseAttributes(option->value.nodePtr);
+					AttributeData attribs = ParseAttributes(option->value.nodePtr);
 
 					for(auto& entry : attribs.attributes)
 					{
@@ -1045,7 +1045,7 @@ cleanup:
 		return output;
 	}
 
-	BSLFXCompiler::AttributeData BSLFXCompiler::parseAttributes(ASTFXNode* attributes)
+	BSLFXCompiler::AttributeData BSLFXCompiler::ParseAttributes(ASTFXNode* attributes)
 	{
 		assert(attributes->type == NT_Attributes);
 
@@ -1057,7 +1057,7 @@ cleanup:
 			switch (option->type)
 			{
 			case OT_AttrName:
-				attributeData.attributes.push_back(std::pair<INT32, String>(OT_AttrName, removeQuotes(option->value.strValue)));
+				attributeData.attributes.push_back(std::pair<INT32, String>(OT_AttrName, RemoveQuotes(option->value.strValue)));
 				break;
 			case OT_AttrShow:
 				attributeData.attributes.push_back(std::pair<INT32, String>(OT_AttrShow, ""));
@@ -1070,7 +1070,7 @@ cleanup:
 		return attributeData;
 	}
 
-	QueueSortType BSLFXCompiler::parseSortType(CullAndSortModeValue sortType)
+	QueueSortType BSLFXCompiler::ParseSortType(CullAndSortModeValue sortType)
 	{
 		switch (sortType)
 		{
@@ -1087,7 +1087,7 @@ cleanup:
 		return QueueSortType::None;
 	}
 
-	CompareFunction BSLFXCompiler::parseCompFunc(CompFuncValue compFunc)
+	CompareFunction BSLFXCompiler::ParseCompFunc(CompFuncValue compFunc)
 	{
 		switch (compFunc)
 		{
@@ -1112,7 +1112,7 @@ cleanup:
 		return CMPF_ALWAYS_PASS;
 	}
 
-	BlendFactor BSLFXCompiler::parseBlendFactor(OpValue factor)
+	BlendFactor BSLFXCompiler::ParseBlendFactor(OpValue factor)
 	{
 		switch (factor)
 		{
@@ -1143,7 +1143,7 @@ cleanup:
 		return BF_ONE;
 	}
 
-	BlendOperation BSLFXCompiler::parseBlendOp(BlendOpValue op)
+	BlendOperation BSLFXCompiler::ParseBlendOp(BlendOpValue op)
 	{
 		switch (op)
 		{
@@ -1162,7 +1162,7 @@ cleanup:
 		return BO_ADD;
 	}
 
-	StencilOperation BSLFXCompiler::parseStencilOp(OpValue op)
+	StencilOperation BSLFXCompiler::ParseStencilOp(OpValue op)
 	{
 		switch (op)
 		{
@@ -1189,7 +1189,7 @@ cleanup:
 		return SOP_KEEP;
 	}
 
-	CullingMode BSLFXCompiler::parseCullMode(CullAndSortModeValue cm)
+	CullingMode BSLFXCompiler::ParseCullMode(CullAndSortModeValue cm)
 	{
 		switch (cm)
 		{
@@ -1206,7 +1206,7 @@ cleanup:
 		return CULL_COUNTERCLOCKWISE;
 	}
 
-	PolygonMode BSLFXCompiler::parseFillMode(FillModeValue fm)
+	PolygonMode BSLFXCompiler::ParseFillMode(FillModeValue fm)
 	{
 		if (fm == FMV_Wire)
 			return PM_WIREFRAME;
@@ -1214,7 +1214,7 @@ cleanup:
 		return PM_SOLID;
 	}
 
-	void BSLFXCompiler::parseStencilFront(DEPTH_STENCIL_STATE_DESC& desc, ASTFXNode* stencilOpNode)
+	void BSLFXCompiler::ParseStencilFront(DEPTH_STENCIL_STATE_DESC& desc, ASTFXNode* stencilOpNode)
 	{
 		if (stencilOpNode == nullptr || stencilOpNode->type != NT_StencilOp)
 			return;
@@ -1226,16 +1226,16 @@ cleanup:
 			switch (option->type)
 			{
 			case OT_Fail:
-				desc.frontStencilFailOp = parseStencilOp((OpValue)option->value.intValue);
+				desc.frontStencilFailOp = ParseStencilOp((OpValue)option->value.intValue);
 				break;
 			case OT_ZFail:
-				desc.frontStencilZFailOp = parseStencilOp((OpValue)option->value.intValue);
+				desc.frontStencilZFailOp = ParseStencilOp((OpValue)option->value.intValue);
 				break;
 			case OT_PassOp:
-				desc.frontStencilPassOp = parseStencilOp((OpValue)option->value.intValue);
+				desc.frontStencilPassOp = ParseStencilOp((OpValue)option->value.intValue);
 				break;
 			case OT_CompareFunc:
-				desc.frontStencilComparisonFunc = parseCompFunc((CompFuncValue)option->value.intValue);
+				desc.frontStencilComparisonFunc = ParseCompFunc((CompFuncValue)option->value.intValue);
 				break;
 			default:
 				break;
@@ -1243,7 +1243,7 @@ cleanup:
 		}
 	}
 
-	void BSLFXCompiler::parseStencilBack(DEPTH_STENCIL_STATE_DESC& desc, ASTFXNode* stencilOpNode)
+	void BSLFXCompiler::ParseStencilBack(DEPTH_STENCIL_STATE_DESC& desc, ASTFXNode* stencilOpNode)
 	{
 		if (stencilOpNode == nullptr || stencilOpNode->type != NT_StencilOp)
 			return;
@@ -1255,16 +1255,16 @@ cleanup:
 			switch (option->type)
 			{
 			case OT_Fail:
-				desc.backStencilFailOp = parseStencilOp((OpValue)option->value.intValue);
+				desc.backStencilFailOp = ParseStencilOp((OpValue)option->value.intValue);
 				break;
 			case OT_ZFail:
-				desc.backStencilZFailOp = parseStencilOp((OpValue)option->value.intValue);
+				desc.backStencilZFailOp = ParseStencilOp((OpValue)option->value.intValue);
 				break;
 			case OT_PassOp:
-				desc.backStencilPassOp = parseStencilOp((OpValue)option->value.intValue);
+				desc.backStencilPassOp = ParseStencilOp((OpValue)option->value.intValue);
 				break;
 			case OT_CompareFunc:
-				desc.backStencilComparisonFunc = parseCompFunc((CompFuncValue)option->value.intValue);
+				desc.backStencilComparisonFunc = ParseCompFunc((CompFuncValue)option->value.intValue);
 				break;
 			default:
 				break;
@@ -1272,7 +1272,7 @@ cleanup:
 		}
 	}
 
-	void BSLFXCompiler::parseColorBlendDef(RENDER_TARGET_BLEND_STATE_DESC& desc, ASTFXNode* blendDefNode)
+	void BSLFXCompiler::ParseColorBlendDef(RENDER_TARGET_BLEND_STATE_DESC& desc, ASTFXNode* blendDefNode)
 	{
 		if (blendDefNode == nullptr || blendDefNode->type != NT_BlendDef)
 			return;
@@ -1284,13 +1284,13 @@ cleanup:
 			switch (option->type)
 			{
 			case OT_Source:
-				desc.srcBlend = parseBlendFactor((OpValue)option->value.intValue);
+				desc.srcBlend = ParseBlendFactor((OpValue)option->value.intValue);
 				break;
 			case OT_Dest:
-				desc.dstBlend = parseBlendFactor((OpValue)option->value.intValue);
+				desc.dstBlend = ParseBlendFactor((OpValue)option->value.intValue);
 				break;
 			case OT_Op:
-				desc.blendOp = parseBlendOp((BlendOpValue)option->value.intValue);
+				desc.blendOp = ParseBlendOp((BlendOpValue)option->value.intValue);
 				break;
 			default:
 				break;
@@ -1298,7 +1298,7 @@ cleanup:
 		}
 	}
 
-	void BSLFXCompiler::parseAlphaBlendDef(RENDER_TARGET_BLEND_STATE_DESC& desc, ASTFXNode* blendDefNode)
+	void BSLFXCompiler::ParseAlphaBlendDef(RENDER_TARGET_BLEND_STATE_DESC& desc, ASTFXNode* blendDefNode)
 	{
 		if (blendDefNode == nullptr || blendDefNode->type != NT_BlendDef)
 			return;
@@ -1310,13 +1310,13 @@ cleanup:
 			switch (option->type)
 			{
 			case OT_Source:
-				desc.srcBlendAlpha = parseBlendFactor((OpValue)option->value.intValue);
+				desc.srcBlendAlpha = ParseBlendFactor((OpValue)option->value.intValue);
 				break;
 			case OT_Dest:
-				desc.dstBlendAlpha = parseBlendFactor((OpValue)option->value.intValue);
+				desc.dstBlendAlpha = ParseBlendFactor((OpValue)option->value.intValue);
 				break;
 			case OT_Op:
-				desc.blendOpAlpha = parseBlendOp((BlendOpValue)option->value.intValue);
+				desc.blendOpAlpha = ParseBlendOp((BlendOpValue)option->value.intValue);
 				break;
 			default:
 				break;
@@ -1324,7 +1324,7 @@ cleanup:
 		}
 	}
 
-	void BSLFXCompiler::parseRenderTargetBlendState(BLEND_STATE_DESC& desc, ASTFXNode* targetNode, UINT32& index)
+	void BSLFXCompiler::ParseRenderTargetBlendState(BLEND_STATE_DESC& desc, ASTFXNode* targetNode, UINT32& index)
 	{
 		if (targetNode == nullptr || targetNode->type != NT_Target)
 			return;
@@ -1357,10 +1357,10 @@ cleanup:
 				rtDesc.blendEnable = option->value.intValue > 0;
 				break;
 			case OT_Color:
-				parseColorBlendDef(rtDesc, option->value.nodePtr);
+				ParseColorBlendDef(rtDesc, option->value.nodePtr);
 				break;
 			case OT_Alpha:
-				parseAlphaBlendDef(rtDesc, option->value.nodePtr);
+				ParseAlphaBlendDef(rtDesc, option->value.nodePtr);
 				break;
 			case OT_WriteMask:
 				rtDesc.renderTargetWriteMask = option->value.intValue;
@@ -1373,7 +1373,7 @@ cleanup:
 		index++;
 	}
 
-	bool BSLFXCompiler::parseBlendState(PassData& desc, ASTFXNode* blendNode)
+	bool BSLFXCompiler::ParseBlendState(PassData& desc, ASTFXNode* blendNode)
 	{
 		if (blendNode == nullptr || blendNode->type != NT_Blend)
 			return false;
@@ -1413,7 +1413,7 @@ cleanup:
 		return !isDefault;
 	}
 
-	bool BSLFXCompiler::parseRasterizerState(PassData& desc, ASTFXNode* rasterNode)
+	bool BSLFXCompiler::ParseRasterizerState(PassData& desc, ASTFXNode* rasterNode)
 	{
 		if (rasterNode == nullptr || rasterNode->type != NT_Raster)
 			return false;
@@ -1427,11 +1427,11 @@ cleanup:
 			switch (option->type)
 			{
 			case OT_FillMode:
-				desc.rasterizerDesc.polygonMode = parseFillMode((FillModeValue)option->value.intValue);
+				desc.rasterizerDesc.polygonMode = ParseFillMode((FillModeValue)option->value.intValue);
 				isDefault = false;
 				break;
 			case OT_CullMode:
-				desc.rasterizerDesc.cullMode = parseCullMode((CullAndSortModeValue)option->value.intValue);
+				desc.rasterizerDesc.cullMode = ParseCullMode((CullAndSortModeValue)option->value.intValue);
 				isDefault = false;
 				break;
 			case OT_DepthBias:
@@ -1466,7 +1466,7 @@ cleanup:
 		return !isDefault;
 	}
 
-	bool BSLFXCompiler::parseDepthState(PassData& passData, ASTFXNode* depthNode)
+	bool BSLFXCompiler::ParseDepthState(PassData& passData, ASTFXNode* depthNode)
 	{
 		if (depthNode == nullptr || depthNode->type != NT_Depth)
 			return false;
@@ -1488,7 +1488,7 @@ cleanup:
 				isDefault = false;
 				break;
 			case OT_CompareFunc:
-				passData.depthStencilDesc.depthComparisonFunc = parseCompFunc((CompFuncValue)option->value.intValue);
+				passData.depthStencilDesc.depthComparisonFunc = ParseCompFunc((CompFuncValue)option->value.intValue);
 				isDefault = false;
 				break;
 			default:
@@ -1499,7 +1499,7 @@ cleanup:
 		return !isDefault;
 	}
 
-	bool BSLFXCompiler::parseStencilState(PassData& passData, ASTFXNode* stencilNode)
+	bool BSLFXCompiler::ParseStencilState(PassData& passData, ASTFXNode* stencilNode)
 	{
 		if (stencilNode == nullptr || stencilNode->type != NT_Stencil)
 			return false;
@@ -1525,11 +1525,11 @@ cleanup:
 				isDefault = false;
 				break;
 			case OT_StencilOpFront:
-				parseStencilFront(passData.depthStencilDesc, option->value.nodePtr);
+				ParseStencilFront(passData.depthStencilDesc, option->value.nodePtr);
 				isDefault = false;
 				break;
 			case OT_StencilOpBack:
-				parseStencilBack(passData.depthStencilDesc, option->value.nodePtr);
+				ParseStencilBack(passData.depthStencilDesc, option->value.nodePtr);
 				isDefault = false;
 				break;
 			case OT_StencilRef:
@@ -1543,7 +1543,7 @@ cleanup:
 		return !isDefault;
 	}
 
-	void BSLFXCompiler::parseCodeBlock(ASTFXNode* codeNode, const Vector<String>& codeBlocks, PassData& passData)
+	void BSLFXCompiler::ParseCodeBlock(ASTFXNode* codeNode, const Vector<String>& codeBlocks, PassData& passData)
 	{
 		if (codeNode == nullptr || (codeNode->type != NT_Code))
 		{
@@ -1563,7 +1563,7 @@ cleanup:
 		}
 	}
 
-	void BSLFXCompiler::parsePass(ASTFXNode* passNode, const Vector<String>& codeBlocks, PassData& passData)
+	void BSLFXCompiler::ParsePass(ASTFXNode* passNode, const Vector<String>& codeBlocks, PassData& passData)
 	{
 		if (passNode == nullptr || passNode->type != NT_Pass)
 			return;
@@ -1575,16 +1575,16 @@ cleanup:
 			switch (option->type)
 			{
 			case OT_Blend:
-				passData.blendIsDefault &= !parseBlendState(passData, option->value.nodePtr);
+				passData.blendIsDefault &= !ParseBlendState(passData, option->value.nodePtr);
 				break;
 			case OT_Raster:
-				passData.rasterizerIsDefault &= !parseRasterizerState(passData, option->value.nodePtr);
+				passData.rasterizerIsDefault &= !ParseRasterizerState(passData, option->value.nodePtr);
 				break;
 			case OT_Depth:
-				passData.depthStencilIsDefault &= !parseDepthState(passData, option->value.nodePtr);
+				passData.depthStencilIsDefault &= !ParseDepthState(passData, option->value.nodePtr);
 				break;
 			case OT_Stencil:
-				passData.depthStencilIsDefault &= !parseStencilState(passData, option->value.nodePtr);
+				passData.depthStencilIsDefault &= !ParseStencilState(passData, option->value.nodePtr);
 				break;
 			case OT_Code:
 				parseCodeBlock(option->value.nodePtr, codeBlocks, passData);
@@ -1595,7 +1595,7 @@ cleanup:
 		}
 	}
 
-	void BSLFXCompiler::parseShader(ASTFXNode* shaderNode, const Vector<String>& codeBlocks, ShaderData& shaderData)
+	void BSLFXCompiler::ParseShader(ASTFXNode* shaderNode, const Vector<String>& codeBlocks, ShaderData& shaderData)
 	{
 		if (shaderNode == nullptr || (shaderNode->type != NT_Shader && shaderNode->type != NT_Mixin))
 			return;
@@ -1690,7 +1690,7 @@ cleanup:
 		}
 	}
 
-	BSLFXCompiler::SubShaderData BSLFXCompiler::parseSubShader(ASTFXNode* subShader)
+	BSLFXCompiler::SubShaderData BSLFXCompiler::ParseSubShader(ASTFXNode* subShader)
 	{
 		SubShaderData subShaderData;
 
@@ -1714,7 +1714,7 @@ cleanup:
 		return subShaderData;
 	}
 
-	void BSLFXCompiler::parseOptions(ASTFXNode* optionsNode, SHADER_DESC& shaderDesc)
+	void BSLFXCompiler::ParseOptions(ASTFXNode* optionsNode, SHADER_DESC& shaderDesc)
 	{
 		if (optionsNode == nullptr || optionsNode->type != NT_Options)
 			return;
@@ -1729,7 +1729,7 @@ cleanup:
 				shaderDesc.separablePasses = option->value.intValue > 1;
 				break;
 			case OT_Sort:
-				shaderDesc.queueSortType = parseSortType((CullAndSortModeValue)option->value.intValue);
+				shaderDesc.queueSortType = ParseSortType((CullAndSortModeValue)option->value.intValue);
 				break;
 			case OT_Priority:
 				shaderDesc.queuePriority = option->value.intValue;
@@ -1746,7 +1746,7 @@ cleanup:
 		}
 	}
 
-	BSLFXCompileResult BSLFXCompiler::populateVariations(Vector<std::pair<ASTFXNode*, ShaderMetaData>>& shaderMetaData)
+	BSLFXCompileResult BSLFXCompiler::PopulateVariations(Vector<std::pair<ASTFXNode*, ShaderMetaData>>& shaderMetaData)
 	{
 		BSLFXCompileResult output;
 
@@ -1826,7 +1826,7 @@ cleanup:
 		return output;
 	}
 
-	void BSLFXCompiler::populateVariationParamInfos(const ShaderMetaData& shaderMetaData, SHADER_DESC& desc)
+	void BSLFXCompiler::PopulateVariationParamInfos(const ShaderMetaData& shaderMetaData, SHADER_DESC& desc)
 	{
 		for(auto& entry : shaderMetaData.variations)
 		{
@@ -1848,7 +1848,7 @@ cleanup:
 		}
 	}
 
-	BSLFXCompileResult BSLFXCompiler::compileTechniques(
+	BSLFXCompileResult BSLFXCompiler::CompileTechniques(
 		const Vector<std::pair<ASTFXNode*, ShaderMetaData>>& shaderMetaData, const String& source,
 		const UnorderedMap<String, String>& defines, ShadingLanguageFlags languages, SHADER_DESC& shaderDesc,
 		Vector<String>& includes)
@@ -2034,10 +2034,10 @@ cleanup:
 		return output;
 	}
 
-	BSLFXCompileResult BSLFXCompiler::compileShader(String source, const UnorderedMap<String, String>& defines,
+	BSLFXCompileResult BSLFXCompiler::CompileShader(String source, const UnorderedMap<String, String>& defines,
 		ShadingLanguageFlags languages, SHADER_DESC& shaderDesc, Vector<String>& includes)
 	{
-		SPtr<ct::Renderer> renderer = RendererManager::instance().getActive();
+		SPtr<ct::Renderer> renderer = RendererManager::Instance().getActive();
 
 		// Run the lexer/parser and generate the AST
 		ParseState* parseState = parseStateCreate();
@@ -2146,7 +2146,7 @@ cleanup:
 		return output;
 	}
 
-	BSLFXCompileResult BSLFXCompiler::compileTechniques(ParseState* parseState, const String& name,
+	BSLFXCompileResult BSLFXCompiler::CompileTechniques(ParseState* parseState, const String& name,
 		const Vector<String>& codeBlocks, const ShaderVariation& variation, ShadingLanguageFlags languages,
 		UnorderedSet<String>& includes, SHADER_DESC& shaderDesc)
 	{
@@ -2172,7 +2172,7 @@ cleanup:
 			case OT_Shader:
 			{
 				// We initially parse only meta-data, so we can handle out-of-order technique definitions
-				ShaderMetaData metaData = parseShaderMetaData(option->value.nodePtr);
+				ShaderMetaData metaData = ParseShaderMetaData(option->value.nodePtr);
 
 				// Skip all techniques except the one we're parsing
 				if(metaData.name != name && !metaData.isMixin)
@@ -2490,7 +2490,7 @@ cleanup:
 
 				passDesc.stencilRefValue = passData.stencilRefValue;
 
-				SPtr<Pass> pass = Pass::create(passDesc);
+				SPtr<Pass> pass = Pass::Create(passDesc);
 				if (pass != nullptr)
 					passes[passData.seqIdx] = pass;
 			}
@@ -2501,7 +2501,7 @@ cleanup:
 
 			if (!orderedPasses.empty())
 			{
-				SPtr<Technique> technique = Technique::create(metaData.language, metaData.tags, variation, orderedPasses);
+				SPtr<Technique> technique = Technique::Create(metaData.language, metaData.tags, variation, orderedPasses);
 				shaderDesc.techniques.push_back(technique);
 			}
 		}
@@ -2509,7 +2509,7 @@ cleanup:
 		return output;
 	}
 
-	String BSLFXCompiler::removeQuotes(const char* input)
+	String BSLFXCompiler::RemoveQuotes(const char* input)
 	{
 		UINT32 len = (UINT32)strlen(input);
 		String output(len - 2, ' ');

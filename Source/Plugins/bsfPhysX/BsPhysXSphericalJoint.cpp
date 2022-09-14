@@ -46,7 +46,7 @@ namespace bs
 		joint->setSphericalJointFlags(flags);
 
 		// Calls to virtual methods are okay here
-		setLimit(desc.limit);
+		SetLimit(desc.limit);
 	}
 
 	PhysXSphericalJoint::~PhysXSphericalJoint()
@@ -54,9 +54,9 @@ namespace bs
 		bs_delete(mInternal);
 	}
 
-	LimitConeRange PhysXSphericalJoint::getLimit() const
+	LimitConeRange PhysXSphericalJoint::GetLimit() const
 	{
-		PxJointLimitCone pxLimit = getInternal()->getLimitCone();
+		PxJointLimitCone pxLimit = GetInternal()->getLimitCone();
 
 		LimitConeRange limit;
 		limit.yLimitAngle = pxLimit.yAngle;
@@ -69,27 +69,27 @@ namespace bs
 		return limit;
 	}
 
-	void PhysXSphericalJoint::setLimit(const LimitConeRange& limit)
+	void PhysXSphericalJoint::SetLimit(const LimitConeRange& limit)
 	{
 		PxJointLimitCone pxLimit(limit.yLimitAngle.valueRadians(), limit.zLimitAngle.valueRadians(), limit.contactDist);
 		pxLimit.stiffness = limit.spring.stiffness;
 		pxLimit.damping = limit.spring.damping;
 		pxLimit.restitution = limit.restitution;
 
-		getInternal()->setLimitCone(pxLimit);
+		GetInternal()->setLimitCone(pxLimit);
 	}
 
-	void PhysXSphericalJoint::setFlag(SphericalJointFlag flag, bool enabled)
+	void PhysXSphericalJoint::SetFlag(SphericalJointFlag flag, bool enabled)
 	{
-		getInternal()->setSphericalJointFlag(toPxFlag(flag), enabled);
+		GetInternal()->setSphericalJointFlag(toPxFlag(flag), enabled);
 	}
 
-	bool PhysXSphericalJoint::hasFlag(SphericalJointFlag flag) const
+	bool PhysXSphericalJoint::HasFlag(SphericalJointFlag flag) const
 	{
-		return getInternal()->getSphericalJointFlags() & toPxFlag(flag);
+		return GetInternal()->getSphericalJointFlags() & toPxFlag(flag);
 	}
 
-	PxSphericalJoint* PhysXSphericalJoint::getInternal() const
+	PxSphericalJoint* PhysXSphericalJoint::GetInternal() const
 	{
 		FPhysXJoint* internal = static_cast<FPhysXJoint*>(mInternal);
 

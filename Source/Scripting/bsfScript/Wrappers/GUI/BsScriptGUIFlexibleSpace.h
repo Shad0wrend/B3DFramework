@@ -21,7 +21,7 @@ namespace bs
 		ScriptGUIFlexibleSpace(MonoObject* instance, GUIFlexibleSpace* flexibleSpace);
 
 		/** @copydoc ScriptGUIElementBaseTBase::destroy */
-		void destroy() override;
+		void Destroy() ;
 
 		GUIFlexibleSpace* mFlexibleSpace;
 		bool mIsDestroyed;
@@ -29,7 +29,7 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static void internal_createInstance(MonoObject* instance);
+		static void InternalCreateInstance(MonoObject* instance);
 	};
 
 	/** @} */

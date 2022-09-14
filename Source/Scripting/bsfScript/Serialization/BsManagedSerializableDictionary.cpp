@@ -19,14 +19,14 @@ namespace bs
 		
 	}
 
-	RTTITypeBase* ManagedSerializableDictionaryKeyValue::getRTTIStatic()
+	RTTITypeBase* ManagedSerializableDictionaryKeyValue::GetRttiStatic()
 	{
-		return ManagedSerializableDictionaryKeyValueRTTI::instance();
+		return ManagedSerializableDictionaryKeyValueRTTI::Instance();
 	}
 
-	RTTITypeBase* ManagedSerializableDictionaryKeyValue::getRTTI() const
+	RTTITypeBase* ManagedSerializableDictionaryKeyValue::GetRtti() const
 	{
-		return ManagedSerializableDictionaryKeyValue::getRTTIStatic();
+		return ManagedSerializableDictionaryKeyValue::GetRttiStatic();
 	}
 
 	ManagedSerializableDictionary::Enumerator::Enumerator(const ManagedSerializableDictionary* parent)
@@ -130,7 +130,7 @@ namespace bs
 		return *this;
 	}
 
-	SPtr<ManagedSerializableFieldData> ManagedSerializableDictionary::Enumerator::getKey() const
+	SPtr<ManagedSerializableFieldData> ManagedSerializableDictionary::Enumerator::GetKey() const
 	{
 		if (mKeysArrayHandle != 0)
 		{
@@ -150,7 +150,7 @@ namespace bs
 				else
 					obj = *(MonoObject**)val;
 
-				return ManagedSerializableFieldData::create(mParent->mDictionaryTypeInfo->mKeyType, obj);
+				return ManagedSerializableFieldData::Create(mParent->mDictionaryTypeInfo->mKeyType, obj);
 			}
 			else
 				return nullptr;
@@ -161,7 +161,7 @@ namespace bs
 		}
 	}
 
-	SPtr<ManagedSerializableFieldData> ManagedSerializableDictionary::Enumerator::getValue() const
+	SPtr<ManagedSerializableFieldData> ManagedSerializableDictionary::Enumerator::GetValue() const
 	{
 		if (mValuesArrayHandle != 0)
 		{
@@ -181,7 +181,7 @@ namespace bs
 				else
 					obj = *(MonoObject**)val;
 
-				return ManagedSerializableFieldData::create(mParent->mDictionaryTypeInfo->mValueType, obj);
+				return ManagedSerializableFieldData::Create(mParent->mDictionaryTypeInfo->mValueType, obj);
 			}
 			else
 				return nullptr;
@@ -192,7 +192,7 @@ namespace bs
 		}
 	}
 
-	bool ManagedSerializableDictionary::Enumerator::moveNext()
+	bool ManagedSerializableDictionary::Enumerator::MoveNext()
 	{
 		if (mKeysArrayHandle != 0 && mValuesArrayHandle != 0)
 		{
@@ -226,11 +226,11 @@ namespace bs
 	{
 		mGCHandle = MonoUtil::newGCHandle(managedInstance, false);
 
-		MonoClass* dictClass = MonoManager::instance().findClass(MonoUtil::getClass(managedInstance));
+		MonoClass* dictClass = MonoManager::Instance().findClass(MonoUtil::getClass(managedInstance));
 		if (dictClass == nullptr)
 			return;
 
-		initMonoObjects(dictClass);
+		InitMonoObjects(dictClass);
 	}
 
 	ManagedSerializableDictionary::~ManagedSerializableDictionary()
@@ -242,7 +242,7 @@ namespace bs
 		}
 	}
 
-	SPtr<ManagedSerializableDictionary> ManagedSerializableDictionary::createFromExisting(MonoObject* managedInstance,
+	SPtr<ManagedSerializableDictionary> ManagedSerializableDictionary::CreateFromExisting(MonoObject* managedInstance,
 		const SPtr<ManagedSerializableTypeInfoDictionary>& typeInfo)
 	{
 		if(managedInstance == nullptr)
@@ -254,36 +254,36 @@ namespace bs
 
 		String fullName = elementNs + "." + elementTypeName;
 
-		if(ScriptAssemblyManager::instance().getBuiltinClasses().systemGenericDictionaryClass->getFullName() != fullName)
+		if(ScriptAssemblyManager::Instance().getBuiltinClasses().systemGenericDictionaryClass->getFullName() != fullName)
 			return nullptr;
 
 		return bs_shared_ptr_new<ManagedSerializableDictionary>(ConstructPrivately(), typeInfo, managedInstance);
 	}
 
-	SPtr<ManagedSerializableDictionary> ManagedSerializableDictionary::createNew(const SPtr<ManagedSerializableTypeInfoDictionary>& typeInfo)
+	SPtr<ManagedSerializableDictionary> ManagedSerializableDictionary::CreateNew(const SPtr<ManagedSerializableTypeInfoDictionary>& typeInfo)
 	{
 		return bs_shared_ptr_new<ManagedSerializableDictionary>(ConstructPrivately(), typeInfo, createManagedInstance(typeInfo));
 	}
 
-	MonoObject* ManagedSerializableDictionary::createManagedInstance(const SPtr<ManagedSerializableTypeInfoDictionary>& typeInfo)
+	MonoObject* ManagedSerializableDictionary::CreateManagedInstance(const SPtr<ManagedSerializableTypeInfoDictionary>& typeInfo)
 	{
 		if (!typeInfo->isTypeLoaded())
 			return nullptr;
 
 		::MonoClass* dictionaryMonoClass = typeInfo->getMonoClass();
-		MonoClass* dictionaryClass = MonoManager::instance().findClass(dictionaryMonoClass);
+		MonoClass* dictionaryClass = MonoManager::Instance().findClass(dictionaryMonoClass);
 		if (dictionaryClass == nullptr)
 			return nullptr;
 
 		return dictionaryClass->createInstance();
 	}
 
-	SPtr<ManagedSerializableDictionary> ManagedSerializableDictionary::createEmpty()
+	SPtr<ManagedSerializableDictionary> ManagedSerializableDictionary::CreateEmpty()
 	{
 		return bs_shared_ptr_new<ManagedSerializableDictionary>(ConstructPrivately());
 	}
 
-	MonoObject* ManagedSerializableDictionary::getManagedInstance() const
+	MonoObject* ManagedSerializableDictionary::GetManagedInstance() const
 	{
 		if(mGCHandle != 0)
 			return MonoUtil::getObjectFromGCHandle(mGCHandle);
@@ -291,22 +291,22 @@ namespace bs
 		return nullptr;
 	}
 
-	void ManagedSerializableDictionary::serialize()
+	void ManagedSerializableDictionary::Serialize()
 	{
 		if (mGCHandle == 0)
 			return;
 
 		MonoObject* managedInstance = MonoUtil::getObjectFromGCHandle(mGCHandle);
-		MonoClass* dictionaryClass = MonoManager::instance().findClass(MonoUtil::getClass(managedInstance));
+		MonoClass* dictionaryClass = MonoManager::Instance().findClass(MonoUtil::getClass(managedInstance));
 		if (dictionaryClass == nullptr)
 			return;
 
-		initMonoObjects(dictionaryClass);
+		InitMonoObjects(dictionaryClass);
 		mCachedEntries.clear();
 
-		Enumerator enumerator = getEnumerator();
+		Enumerator enumerator = GetEnumerator();
 
-		while (enumerator.moveNext())
+		while (enumerator.MoveNext())
 		{
 			SPtr<ManagedSerializableFieldData> key = enumerator.getKey();
 			mCachedEntries.insert(std::make_pair(key, enumerator.getValue()));
@@ -323,18 +323,18 @@ namespace bs
 		mGCHandle = 0;
 	}
 
-	MonoObject* ManagedSerializableDictionary::deserialize()
+	MonoObject* ManagedSerializableDictionary::Deserialize()
 	{
-		MonoObject* managedInstance = createManagedInstance(mDictionaryTypeInfo);
+		MonoObject* managedInstance = CreateManagedInstance(mDictionaryTypeInfo);
 		if (managedInstance == nullptr)
 			return nullptr;
 
 		::MonoClass* dictionaryMonoClass = mDictionaryTypeInfo->getMonoClass();
-		MonoClass* dictionaryClass = MonoManager::instance().findClass(dictionaryMonoClass);
+		MonoClass* dictionaryClass = MonoManager::Instance().findClass(dictionaryMonoClass);
 		if (dictionaryClass == nullptr)
 			return nullptr;
 
-		initMonoObjects(dictionaryClass);
+		InitMonoObjects(dictionaryClass);
 
 		// Deserialize children
 		for (auto& fieldEntry : mCachedEntries)
@@ -353,7 +353,7 @@ namespace bs
 		return managedInstance;
 	}
 
-	SPtr<ManagedSerializableFieldData> ManagedSerializableDictionary::getFieldData(const SPtr<ManagedSerializableFieldData>& key)
+	SPtr<ManagedSerializableFieldData> ManagedSerializableDictionary::GetFieldData(const SPtr<ManagedSerializableFieldData>& key)
 	{
 		if (mGCHandle != 0)
 		{
@@ -374,7 +374,7 @@ namespace bs
 					boxedValue = MonoUtil::box(valueTypeClass, &value);
 			}
 
-			return ManagedSerializableFieldData::create(mDictionaryTypeInfo->mValueType, boxedValue);
+			return ManagedSerializableFieldData::Create(mDictionaryTypeInfo->mValueType, boxedValue);
 		}
 		else
 		{
@@ -382,7 +382,7 @@ namespace bs
 		}
 	}
 
-	void ManagedSerializableDictionary::setFieldData(const SPtr<ManagedSerializableFieldData>& key, const SPtr<ManagedSerializableFieldData>& val)
+	void ManagedSerializableDictionary::SetFieldData(const SPtr<ManagedSerializableFieldData>& key, const SPtr<ManagedSerializableFieldData>& val)
 	{
 		if (mGCHandle != 0)
 		{
@@ -395,7 +395,7 @@ namespace bs
 		}
 	}
 
-	void ManagedSerializableDictionary::setFieldData(MonoObject* obj, const SPtr<ManagedSerializableFieldData>& key, const SPtr<ManagedSerializableFieldData>& val)
+	void ManagedSerializableDictionary::SetFieldData(MonoObject* obj, const SPtr<ManagedSerializableFieldData>& key, const SPtr<ManagedSerializableFieldData>& val)
 	{
 		void* params[2];
 		params[0] = key->getValue(mDictionaryTypeInfo->mKeyType);
@@ -404,7 +404,7 @@ namespace bs
 		mAddMethod->invoke(obj, params);
 	}
 
-	void ManagedSerializableDictionary::removeFieldData(const SPtr<ManagedSerializableFieldData>& key)
+	void ManagedSerializableDictionary::RemoveFieldData(const SPtr<ManagedSerializableFieldData>& key)
 	{
 		if (mGCHandle != 0)
 		{
@@ -422,7 +422,7 @@ namespace bs
 		}
 	}
 
-	bool ManagedSerializableDictionary::contains(const SPtr<ManagedSerializableFieldData>& key) const
+	bool ManagedSerializableDictionary::Contains(const SPtr<ManagedSerializableFieldData>& key) const
 	{
 		if (mGCHandle != 0)
 		{
@@ -437,12 +437,12 @@ namespace bs
 			return mCachedEntries.find(key) != mCachedEntries.end();
 	}
 
-	ManagedSerializableDictionary::Enumerator ManagedSerializableDictionary::getEnumerator() const
+	ManagedSerializableDictionary::Enumerator ManagedSerializableDictionary::GetEnumerator() const
 	{
 		return Enumerator(this);
 	}
 
-	void ManagedSerializableDictionary::initMonoObjects(MonoClass* dictionaryClass)
+	void ManagedSerializableDictionary::InitMonoObjects(MonoClass* dictionaryClass)
 	{
 		mAddMethod = dictionaryClass->getMethod("Add", 2);
 		mRemoveMethod = dictionaryClass->getMethod("Remove", 1);
@@ -459,13 +459,13 @@ namespace bs
 		mValuesCopyTo = valueCollectionClass->getMethod("CopyTo", 2);
 	}
 
-	RTTITypeBase* ManagedSerializableDictionary::getRTTIStatic()
+	RTTITypeBase* ManagedSerializableDictionary::GetRttiStatic()
 	{
-		return ManagedSerializableDictionaryRTTI::instance();
+		return ManagedSerializableDictionaryRTTI::Instance();
 	}
 
-	RTTITypeBase* ManagedSerializableDictionary::getRTTI() const
+	RTTITypeBase* ManagedSerializableDictionary::GetRtti() const
 	{
-		return ManagedSerializableDictionary::getRTTIStatic();
+		return ManagedSerializableDictionary::GetRttiStatic();
 	}
 }

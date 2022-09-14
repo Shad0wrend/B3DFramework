@@ -77,7 +77,7 @@ namespace bs
 		Vector<SPtr<GpuParamDesc>> allParamDescs;
 
 		// Make sure all gpu programs are fully loaded
-		for (UINT32 i = 0; i < technique->getNumPasses(); i++)
+		for (UINT32 i = 0; i < technique->GetNumPasses(); i++)
 		{
 			SPtr<Pass> curPass = technique->getPass(i);
 
@@ -489,11 +489,11 @@ namespace bs
 
 			SPtr<GraphicsPipelineStateType> gfxPipeline = curPass->getGraphicsPipelineState();
 			if(gfxPipeline != nullptr)
-				mPassParams[i] = GpuParamsType::create(gfxPipeline);
+				mPassParams[i] = GpuParamsType::Create(gfxPipeline);
 			else
 			{
 				SPtr<ComputePipelineStateType> computePipeline = curPass->getComputePipelineState();
-				mPassParams[i] = GpuParamsType::create(computePipeline);
+				mPassParams[i] = GpuParamsType::Create(computePipeline);
 			}
 		}
 
@@ -516,7 +516,7 @@ namespace bs
 		{
 			ParamBlockPtrType newParamBlockBuffer;
 			if (!paramBlock.external)
-				newParamBlockBuffer = ParamBlockType::create(paramBlock.size, paramBlock.usage);
+				newParamBlockBuffer = ParamBlockType::Create(paramBlock.size, paramBlock.usage);
 
 			paramBlock.sequentialIdx = (UINT32)mBlocks.size();
 
@@ -557,7 +557,7 @@ namespace bs
 					UINT32 globalBlockIdx = (UINT32)-1;
 					if (!blockDesc.isShareable)
 					{
-						ParamBlockPtrType newParamBlockBuffer = ParamBlockType::create(blockDesc.blockSize * sizeof(UINT32));
+						ParamBlockPtrType newParamBlockBuffer = ParamBlockType::Create(blockDesc.blockSize * sizeof(UINT32));
 
 						globalBlockIdx = (UINT32)mBlocks.size();
 
@@ -810,7 +810,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	SPtr<typename TGpuParamsSet<Core>::GpuParamsType> TGpuParamsSet<Core>::getGpuParams(UINT32 passIdx)
+	SPtr<typename TGpuParamsSet<Core>::GpuParamsType> TGpuParamsSet<Core>::GetGpuParams(UINT32 passIdx)
 	{
 		if (passIdx >= mPassParams.size())
 			return nullptr;
@@ -819,7 +819,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	UINT32 TGpuParamsSet<Core>::getParamBlockBufferIndex(const String& name) const
+	UINT32 TGpuParamsSet<Core>::GetParamBlockBufferIndex(const String& name) const
 	{
 		for (UINT32 i = 0; i < (UINT32)mBlocks.size(); i++)
 		{
@@ -832,7 +832,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TGpuParamsSet<Core>::setParamBlockBuffer(UINT32 index, const ParamBlockPtrType& paramBlock,
+	void TGpuParamsSet<Core>::SetParamBlockBuffer(UINT32 index, const ParamBlockPtrType& paramBlock,
 												  bool ignoreInUpdate)
 	{
 		BlockInfo& blockInfo = mBlocks[index];
@@ -870,7 +870,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TGpuParamsSet<Core>::setParamBlockBuffer(const String& name, const ParamBlockPtrType& paramBlock,
+	void TGpuParamsSet<Core>::SetParamBlockBuffer(const String& name, const ParamBlockPtrType& paramBlock,
 		bool ignoreInUpdate)
 	{
 		UINT32 bufferIdx = getParamBlockBufferIndex(name);
@@ -885,7 +885,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TGpuParamsSet<Core>::update(const SPtr<MaterialParamsType>& params, float t, bool updateAll)
+	void TGpuParamsSet<Core>::Update(const SPtr<MaterialParamsType>& params, float t, bool updateAll)
 	{
 		// Note: Instead of iterating over every single parameter, it might be more efficient for @p params to keep
 		// a ring buffer and a version number. Then we could just iterate over the ring buffer and only access dirty

@@ -19,7 +19,7 @@ namespace bs { namespace ct
 		glBindBuffer(target, mBufferId);
 		BS_CHECK_GL_ERROR();
 
-		glBufferData(target, size, nullptr, GLHardwareBufferManager::getGLUsage(usage));
+		glBufferData(target, size, nullptr, GLHardwareBufferManager::GetGlUsage(usage));
 		BS_CHECK_GL_ERROR();
 	}
 
@@ -32,7 +32,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	void* GLHardwareBuffer::map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx, UINT32 queueIdx)
+	void* GLHardwareBuffer::Map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx, UINT32 queueIdx)
 	{
 		// If no buffer ID it's assumed this type of buffer is unsupported and we silently fail (it's up to the creator
 		// if the buffer to check for support and potentially print a warning)
@@ -76,7 +76,7 @@ namespace bs { namespace ct
 		return static_cast<void*>(static_cast<unsigned char*>(buffer));
 	}
 
-	void GLHardwareBuffer::unmap()
+	void GLHardwareBuffer::Unmap()
 	{
 		if(mBufferId == 0)
 			return;
@@ -94,7 +94,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	void GLHardwareBuffer::readData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx, UINT32 queueIdx)
+	void GLHardwareBuffer::ReadData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx, UINT32 queueIdx)
 	{
 		if(mBufferId == 0)
 			return;
@@ -104,7 +104,7 @@ namespace bs { namespace ct
 		unlock();
 	}
 
-	void GLHardwareBuffer::writeData(UINT32 offset, UINT32 length, const void* source, BufferWriteType writeFlags, UINT32 queueIdx)
+	void GLHardwareBuffer::WriteData(UINT32 offset, UINT32 length, const void* source, BufferWriteType writeFlags, UINT32 queueIdx)
 	{
 		if(mBufferId == 0)
 			return;
@@ -120,7 +120,7 @@ namespace bs { namespace ct
 		unlock();
 	}
 
-	void GLHardwareBuffer::copyData(HardwareBuffer& srcBuffer, UINT32 srcOffset, UINT32 dstOffset, UINT32 length,
+	void GLHardwareBuffer::CopyData(HardwareBuffer& srcBuffer, UINT32 srcOffset, UINT32 dstOffset, UINT32 length,
 			bool discardWholeBuffer, const SPtr<ct::CommandBuffer>& commandBuffer)
 	{
 		if(mBufferId == 0)

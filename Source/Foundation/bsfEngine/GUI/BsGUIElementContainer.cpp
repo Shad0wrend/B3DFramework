@@ -20,7 +20,7 @@ namespace bs
 		mOptionFlags.set(GUIElementOption::ClickThrough);
 	}
 
-	void GUIElementContainer::_fillBuffer(
+	void GUIElementContainer::FillBuffer(
 		UINT8* vertices,
 		UINT32* indices,
 		UINT32 vertexOffset,
@@ -36,7 +36,7 @@ namespace bs
 		return Vector2I();
 	}
 
-	void GUIElementContainer::setFocus(bool enabled, bool clear)
+	void GUIElementContainer::SetFocus(bool enabled, bool clear)
 	{
 		if(mFocusElement)
 			mFocusElement->setFocus(enabled, clear);

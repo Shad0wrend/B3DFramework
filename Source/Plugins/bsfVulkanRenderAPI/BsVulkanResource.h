@@ -42,7 +42,7 @@ namespace bs { namespace ct
 		 *
 		 * Must eventually be followed by a notifyUsed() or notifyUnbound().
 		 */
-		void notifyBound();
+		void NotifyBound();
 
 		/**
 		 * Notifies the resource that it is currently being used on the provided command buffer. This means the command
@@ -56,7 +56,7 @@ namespace bs { namespace ct
 		 * @param[in]	queueFamily		Family of the queue the resource is being used in.
 		 * @param[in]	useFlags		Flags that determine in what way is the resource being used.
 		 */
-		void notifyUsed(UINT32 globalQueueIdx, UINT32 queueFamily, VulkanAccessFlags useFlags);
+		void NotifyUsed(UINT32 globalQueueIdx, UINT32 queueFamily, VulkanAccessFlags useFlags);
 
 		/**
 		 * Notifies the resource that it is no longer used by on the GPU. This makes the resource usable on other command
@@ -67,7 +67,7 @@ namespace bs { namespace ct
 		 * @param[in]	globalQueueIdx	Global index of the queue that finished using the resource.
 		 * @param[in]	useFlags		Use flags that specify how was the resource being used.
 		 */
-		virtual void notifyDone(UINT32 globalQueueIdx, VulkanAccessFlags useFlags);
+		virtual void NotifyDone(UINT32 globalQueueIdx, VulkanAccessFlags useFlags);
 
 		/**
 		 * Notifies the resource that it is no longer queued on the command buffer. This is similar to notifyDone(), but
@@ -76,7 +76,7 @@ namespace bs { namespace ct
 		 *
 		 * Must follow a notifyBound() if notifyUsed() wasn't called.
 		 */
-		virtual void notifyUnbound();
+		virtual void NotifyUnbound();
 
 		/**
 		 * Checks is the resource currently used on a device.
@@ -85,7 +85,7 @@ namespace bs { namespace ct
 		 *			done on the device but this method may still report true. If you need to know the latest state
 		 *			call VulkanCommandBufferManager::refreshStates() before checking for usage.
 		 */
-		bool isUsed() const { Lock lock(mMutex); return mNumUsedHandles > 0; }
+		bool IsUsed() const { Lock lock(mMutex); return mNumUsedHandles > 0; }
 
 		/**
 		 * Checks is the resource currently bound to any command buffer.
@@ -94,7 +94,7 @@ namespace bs { namespace ct
 		 *			done on the device but this method may still report true. If you need to know the latest state
 		 *			call VulkanCommandBufferManager::refreshStates() before checking for usage.
 		 */
-		bool isBound() const { Lock lock(mMutex); return mNumBoundHandles > 0; }
+		bool IsBound() const { Lock lock(mMutex); return mNumBoundHandles > 0; }
 
 		/**
 		 * Returns the queue family the resource is currently owned by. Returns -1 if owned by no queue.
@@ -102,7 +102,7 @@ namespace bs { namespace ct
 		 * @note	If resource concurrency is enabled, then this value has no meaning as the resource can be used on
 		 *			multiple queue families at once.
 		 */
-		UINT32 getQueueFamily() const { Lock lock(mMutex); return mQueueFamily; }
+		UINT32 GetQueueFamily() const { Lock lock(mMutex); return mQueueFamily; }
 
 		/**
 		 * Returns a mask that has bits set for every queue that the resource is currently used (read or written) by.
@@ -111,25 +111,25 @@ namespace bs { namespace ct
 		 * @return					Bitmask of which queues is the resource used on. This has the same format as sync mask
 		 *							created by CommandSyncMask.
 		 */
-		UINT32 getUseInfo(VulkanAccessFlags useFlags) const;
+		UINT32 GetUseInfo(VulkanAccessFlags useFlags) const;
 
 		/** Returns on how many command buffers is the buffer currently used on. */
-		UINT32 getUseCount() const { return mNumUsedHandles; }
+		UINT32 GetUseCount() const { return mNumUsedHandles; }
 
 		/** Returns on how many command buffers is the buffer currently bound on. */
-		UINT32 getBoundCount() const { return mNumBoundHandles; }
+		UINT32 GetBoundCount() const { return mNumBoundHandles; }
 
 		/** Returns true if the resource is only allowed to be used by a single queue family at once. */
-		bool isExclusive() const { Lock lock(mMutex); return mState != State::Shared; }
+		bool IsExclusive() const { Lock lock(mMutex); return mState != State::Shared; }
 
 		/** Returns the device this resource is created on. */
-		VulkanDevice& getDevice() const;
+		VulkanDevice& GetDevice() const;
 
 		/**
 		 * Destroys the resource and frees its memory. If the resource is currently being used on a device, the
 		 * destruction is delayed until the device is done with it.
 		 */
-		void destroy();
+		void Destroy();
 
 	protected:
 		/** Possible states of this object. */
@@ -171,7 +171,7 @@ namespace bs { namespace ct
 		 * the resource.
 		 */
 		template<class Type, class... Args>
-		Type* create(Args &&...args)
+		Type* Create(Args &&...args)
 		{
 			Type* resource = new (bs_alloc(sizeof(Type))) Type(this, std::forward<Args>(args)...);
 
@@ -184,7 +184,7 @@ namespace bs { namespace ct
 		}
 
 		/** Returns the device that owns this manager. */
-		VulkanDevice& getDevice() const { return mDevice; }
+		VulkanDevice& GetDevice() const { return mDevice; }
 
 	private:
 		friend VulkanResource;
@@ -193,7 +193,7 @@ namespace bs { namespace ct
 		 * Destroys a previously created Vulkan resource. Caller must ensure the resource is not currently being used
 		 * on the device.
 		 */
-		void destroy(VulkanResource* resource);
+		void Destroy(VulkanResource* resource);
 
 		VulkanDevice& mDevice;
 

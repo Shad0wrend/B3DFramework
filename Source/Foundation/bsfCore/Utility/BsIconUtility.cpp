@@ -186,7 +186,7 @@ namespace bs
 		UINT32 clrImportant;
 	};
 
-	void IconUtility::updateIconExe(const Path& path, const Map<UINT32, SPtr<PixelData>>& pixelsPerSize)
+	void IconUtility::UpdateIconExe(const Path& path, const Map<UINT32, SPtr<PixelData>>& pixelsPerSize)
 	{
 		// A PE file is structured as such:
 		//  - MSDOS Header
@@ -201,7 +201,7 @@ namespace bs
 		//    - icon/cursor/etc data
 
 		std::fstream stream;
-		stream.open(path.toPlatformString().c_str(), std::ios::in | std::ios::out | std::ios::binary);
+		stream.open(path.ToPlatformString().c_str(), std::ios::in | std::ios::out | std::ios::binary);
 
 		// First check magic number to ensure file is even an executable
 		UINT16 magicNum;
@@ -288,7 +288,7 @@ namespace bs
 					PEImageResourceEntryData* data = (PEImageResourceEntryData*)(((UINT8*)base) + entries[i].offsetDirectory);
 
 					UINT8* iconData = imageData + (data->offsetData - sectionAddress);
-					updateIconData(iconData, pixelsPerSize);
+					UpdateIconData(iconData, pixelsPerSize);
 				}
 			}
 		};
@@ -321,7 +321,7 @@ namespace bs
 		stream.close();
 	}
 
-	void IconUtility::updateIconData(UINT8* iconData, const Map<UINT32, SPtr<PixelData>>& pixelsPerSize)
+	void IconUtility::UpdateIconData(UINT8* iconData, const Map<UINT32, SPtr<PixelData>>& pixelsPerSize)
 	{
 		IconHeader* iconHeader = (IconHeader*)iconData;
 
@@ -337,8 +337,8 @@ namespace bs
 		UINT32 height = iconHeader->height / 2;
 
 		auto iterFind = pixelsPerSize.find(width);
-		if (iterFind == pixelsPerSize.end() || iterFind->second->getWidth() != width
-			|| iterFind->second->getHeight() != height)
+		if (iterFind == pixelsPerSize.end() || iterFind->second->GetWidth() != width
+			|| iterFind->second->GetHeight() != height)
 		{
 			// No icon of this size provided
 			return;
@@ -369,7 +369,7 @@ namespace bs
 				for (UINT32 pixelIdx = 0; pixelIdx < 8; pixelIdx++)
 				{
 					UINT32 x = packedX * 8 + pixelIdx;
-					Color color = srcPixels->getColorAt(x, y);
+					Color color = srcPixels->GetColorAt(x, y);
 					if (color.a < 0.25f)
 						mask |= 1 << (7 - pixelIdx);
 				}

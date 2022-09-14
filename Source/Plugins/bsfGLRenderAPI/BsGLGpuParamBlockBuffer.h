@@ -20,10 +20,10 @@ namespace bs { namespace ct
 		~GLGpuParamBlockBuffer();
 
 		/**	Returns internal OpenGL uniform buffer handle. */
-		GLuint getGLBufferId() const { return static_cast<GLHardwareBuffer*>(mBuffer)->getGLBufferId(); }
+		GLuint GetGlBufferId() const { return static_cast<GLHardwareBuffer*>(mBuffer)->GetGlBufferId(); }
 	protected:
 		/** @copydoc GpuParamBlockBuffer::initialize */
-		void initialize() override ;
+		void Initialize() ;
 	};
 
 	/** @} */

@@ -18,23 +18,23 @@ namespace bs
 
 	void ScriptStringTableManager::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_setActiveLanguage", (void*)&ScriptStringTableManager::Internal_setActiveLanguage);
-		metaData.scriptClass->addInternalCall("Internal_getActiveLanguage", (void*)&ScriptStringTableManager::Internal_getActiveLanguage);
-		metaData.scriptClass->addInternalCall("Internal_getTable", (void*)&ScriptStringTableManager::Internal_getTable);
-		metaData.scriptClass->addInternalCall("Internal_removeTable", (void*)&ScriptStringTableManager::Internal_removeTable);
-		metaData.scriptClass->addInternalCall("Internal_setTable", (void*)&ScriptStringTableManager::Internal_setTable);
+		metaData.scriptClass->AddInternalCall("Internal_setActiveLanguage", (void*)&ScriptStringTableManager::InternalSetActiveLanguage);
+		metaData.scriptClass->AddInternalCall("Internal_getActiveLanguage", (void*)&ScriptStringTableManager::InternalGetActiveLanguage);
+		metaData.scriptClass->AddInternalCall("Internal_getTable", (void*)&ScriptStringTableManager::InternalGetTable);
+		metaData.scriptClass->AddInternalCall("Internal_removeTable", (void*)&ScriptStringTableManager::InternalRemoveTable);
+		metaData.scriptClass->AddInternalCall("Internal_setTable", (void*)&ScriptStringTableManager::InternalSetTable);
 
 	}
 
-	void ScriptStringTableManager::Internal_setActiveLanguage(Language language)
+	void ScriptStringTableManager::InternalSetActiveLanguage(Language language)
 	{
-		StringTableManager::instance().setActiveLanguage(language);
+		StringTableManager::Instance().SetActiveLanguage(language);
 	}
 
-	Language ScriptStringTableManager::Internal_getActiveLanguage()
+	Language ScriptStringTableManager::InternalGetActiveLanguage()
 	{
 		Language tmp__output;
-		tmp__output = StringTableManager::instance().getActiveLanguage();
+		tmp__output = StringTableManager::Instance().GetActiveLanguage();
 
 		Language __output;
 		__output = tmp__output;
@@ -42,14 +42,14 @@ namespace bs
 		return __output;
 	}
 
-	MonoObject* ScriptStringTableManager::Internal_getTable(uint32_t id)
+	MonoObject* ScriptStringTableManager::InternalGetTable(uint32_t id)
 	{
 		ResourceHandle<StringTable> tmp__output;
-		tmp__output = StringTableManager::instance().getTable(id);
+		tmp__output = StringTableManager::Instance().getTable(id);
 
 		MonoObject* __output;
 		ScriptRRefBase* script__output;
-		script__output = ScriptResourceManager::instance().getScriptRRef(tmp__output);
+		script__output = ScriptResourceManager::Instance().getScriptRRef(tmp__output);
 		if(script__output != nullptr)
 			__output = script__output->getManagedInstance();
 		else
@@ -58,18 +58,18 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptStringTableManager::Internal_removeTable(uint32_t id)
+	void ScriptStringTableManager::InternalRemoveTable(uint32_t id)
 	{
-		StringTableManager::instance().removeTable(id);
+		StringTableManager::Instance().removeTable(id);
 	}
 
-	void ScriptStringTableManager::Internal_setTable(uint32_t id, MonoObject* table)
+	void ScriptStringTableManager::InternalSetTable(uint32_t id, MonoObject* table)
 	{
 		ResourceHandle<StringTable> tmptable;
 		ScriptRRefBase* scripttable;
 		scripttable = ScriptRRefBase::toNative(table);
 		if(scripttable != nullptr)
 			tmptable = static_resource_cast<StringTable>(scripttable->getHandle());
-		StringTableManager::instance().setTable(id, tmptable);
+		StringTableManager::Instance().setTable(id, tmptable);
 	}
 }

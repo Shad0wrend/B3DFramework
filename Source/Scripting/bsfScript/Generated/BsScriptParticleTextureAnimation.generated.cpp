@@ -19,12 +19,12 @@ namespace bs
 	{
 		metaData.scriptClass->addInternalCall("Internal_setOptions", (void*)&ScriptParticleTextureAnimation::Internal_setOptions);
 		metaData.scriptClass->addInternalCall("Internal_getOptions", (void*)&ScriptParticleTextureAnimation::Internal_getOptions);
-		metaData.scriptClass->addInternalCall("Internal_create", (void*)&ScriptParticleTextureAnimation::Internal_create);
+		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptParticleTextureAnimation::InternalCreate);
 		metaData.scriptClass->addInternalCall("Internal_create0", (void*)&ScriptParticleTextureAnimation::Internal_create0);
 
 	}
 
-	MonoObject* ScriptParticleTextureAnimation::create(const SPtr<ParticleTextureAnimation>& value)
+	MonoObject* ScriptParticleTextureAnimation::Create(const SPtr<ParticleTextureAnimation>& value)
 	{
 		if(value == nullptr) return nullptr; 
 
@@ -35,12 +35,12 @@ namespace bs
 		new (bs_alloc<ScriptParticleTextureAnimation>()) ScriptParticleTextureAnimation(managedInstance, value);
 		return managedInstance;
 	}
-	void ScriptParticleTextureAnimation::Internal_setOptions(ScriptParticleTextureAnimation* thisPtr, PARTICLE_TEXTURE_ANIMATION_DESC* options)
+	void ScriptParticleTextureAnimation::InternalSetOptions(ScriptParticleTextureAnimation* thisPtr, PARTICLE_TEXTURE_ANIMATION_DESC* options)
 	{
 		thisPtr->getInternal()->setOptions(*options);
 	}
 
-	void ScriptParticleTextureAnimation::Internal_getOptions(ScriptParticleTextureAnimation* thisPtr, PARTICLE_TEXTURE_ANIMATION_DESC* __output)
+	void ScriptParticleTextureAnimation::InternalGetOptions(ScriptParticleTextureAnimation* thisPtr, PARTICLE_TEXTURE_ANIMATION_DESC* __output)
 	{
 		PARTICLE_TEXTURE_ANIMATION_DESC tmp__output;
 		tmp__output = thisPtr->getInternal()->getOptions();
@@ -48,15 +48,15 @@ namespace bs
 		*__output = tmp__output;
 	}
 
-	void ScriptParticleTextureAnimation::Internal_create(MonoObject* managedInstance, PARTICLE_TEXTURE_ANIMATION_DESC* desc)
+	void ScriptParticleTextureAnimation::InternalCreate(MonoObject* managedInstance, PARTICLE_TEXTURE_ANIMATION_DESC* desc)
 	{
-		SPtr<ParticleTextureAnimation> instance = ParticleTextureAnimation::create(*desc);
+		SPtr<ParticleTextureAnimation> instance = ParticleTextureAnimation::Create(*desc);
 		new (bs_alloc<ScriptParticleTextureAnimation>())ScriptParticleTextureAnimation(managedInstance, instance);
 	}
 
-	void ScriptParticleTextureAnimation::Internal_create0(MonoObject* managedInstance)
+	void ScriptParticleTextureAnimation::InternalCreate0(MonoObject* managedInstance)
 	{
-		SPtr<ParticleTextureAnimation> instance = ParticleTextureAnimation::create();
+		SPtr<ParticleTextureAnimation> instance = ParticleTextureAnimation::Create();
 		new (bs_alloc<ScriptParticleTextureAnimation>())ScriptParticleTextureAnimation(managedInstance, instance);
 	}
 }

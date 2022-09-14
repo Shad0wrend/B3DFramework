@@ -19,10 +19,10 @@ namespace bs { namespace ct
 		static constexpr const char* SystemName = "bsfGLRenderAPI";
 
 		/** @copydoc RenderAPIFactory::create */
-		void create() override;
+		void Create() ;
 
 		/** @copydoc RenderAPIFactory::name */
-		const char* name() const override { return SystemName; }
+		const char* Name() const { return SystemName; }
 
 	private:
 		/**	Registers the factory with the render system manager when constructed. */
@@ -35,7 +35,7 @@ namespace bs { namespace ct
 				if(newFactory == nullptr)
 				{
 					newFactory = bs_shared_ptr_new<GLRenderAPIFactory>();
-					RenderAPIManager::instance().registerFactory(newFactory);
+					RenderAPIManager::Instance().RegisterFactory(newFactory);
 				}
 			}
 		};

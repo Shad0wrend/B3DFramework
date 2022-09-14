@@ -17,8 +17,8 @@ namespace bs
 	class BS_CORE_EXPORT CCameraRTTI : public RTTIType<CCamera, Component, CCameraRTTI>
 	{
 	private:
-		SPtr<Camera> getInternal(CCamera* obj) { return obj->mInternal; }
-		void setInternal(CCamera* obj, SPtr<Camera> val) { obj->mInternal = val; }
+		SPtr<Camera> GetInternal(CCamera* obj) { return obj->mInternal; }
+		void SetInternal(CCamera* obj, SPtr<Camera> val) { obj->mInternal = val; }
 
 	public:
 		CCameraRTTI()
@@ -26,20 +26,20 @@ namespace bs
 			addReflectablePtrField("mInternal", 0, &CCameraRTTI::getInternal, &CCameraRTTI::setInternal);
 		}
 
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "CCamera";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_CCamera;
 		}
 
 		SPtr<IReflectable> newRTTIObject() override
 		{
-			return SceneObject::createEmptyComponent<CCamera>();
+			return SceneObject::CreateEmptyComponent<CCamera>();
 		}
 	};
 

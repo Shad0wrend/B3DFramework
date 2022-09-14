@@ -12,21 +12,21 @@ namespace bs
 		int group = 0;
 		Vector3 normal = Vector3::ZERO;
 
-		void addNormal(int group, const Vector3& normal)
+		void AddNormal(int group, const Vector3& normal)
 		{
 			this->group |= group;
 			this->normal += normal;
 		}
 
-		void addNormal(const SmoothNormal& other)
+		void AddNormal(const SmoothNormal& other)
 		{
 			this->group |= other.group;
 			this->normal += other.normal;
 		}
 
-		void normalize()
+		void Normalize()
 		{
-			normal.normalize();
+			normal.Normalize();
 		}
 	};
 
@@ -34,7 +34,7 @@ namespace bs
 	{
 		Vector<SmoothNormal> normals;
 
-		void addNormal(int group, const Vector3& normal)
+		void AddNormal(int group, const Vector3& normal)
 		{
 			bool found = false;
 
@@ -50,14 +50,14 @@ namespace bs
 						{
 							if ((normals[j].group & group) != 0)
 							{
-								normals[i].addNormal(normals[j]);
+								normals[i].AddNormal(normals[j]);
 								normals.erase(normals.begin() + j);
 								--j;
 							}
 						}
 					}
 
-					normals[i].addNormal(group, normal);
+					normals[i].AddNormal(group, normal);
 
 					found = true;
 					break;;
@@ -67,13 +67,13 @@ namespace bs
 			if (!found)
 			{
 				SmoothNormal smoothNormal;
-				smoothNormal.addNormal(group, normal);
+				smoothNormal.AddNormal(group, normal);
 
 				normals.push_back(smoothNormal);
 			}
 		}
 
-		Vector3 getNormal(int group) const
+		Vector3 GetNormal(int group) const
 		{
 			for (size_t i = 0; i < normals.size(); i++)
 			{
@@ -84,14 +84,14 @@ namespace bs
 			return Vector3::ZERO;
 		}
 
-		void normalize()
+		void Normalize()
 		{
 			for (size_t i = 0; i < normals.size(); ++i)
-				normals[i].normalize();
+				normals[i].Normalize();
 		}
 	};
 
-	void FBXUtility::normalsFromSmoothing(const Vector<Vector3>& positions, const Vector<int>& indices,
+	void FBXUtility::NormalsFromSmoothing(const Vector<Vector3>& positions, const Vector<int>& indices,
 		const Vector<int>& smoothing, Vector<Vector3>& normals)
 	{
 		std::vector<SmoothVertex> smoothNormals;
@@ -116,7 +116,7 @@ namespace bs
 				Vector3 v2 = (Vector3)positions[indices[idx + nextOffset]];
 
 				Vector3 normal = Vector3::cross(v0 - v1, v2 - v1);
-				smoothNormals[current].addNormal(smoothing[idx + j], normal);
+				smoothNormals[current].AddNormal(smoothing[idx + j], normal);
 
 				normals[idx + j] = normal;
 			}
@@ -125,7 +125,7 @@ namespace bs
 		}
 
 		for (size_t i = 0; i < smoothNormals.size(); ++i)
-			smoothNormals[i].normalize();
+			smoothNormals[i].Normalize();
 
 		idx = 0;
 		for (UINT32 i = 0; i < numPolygons; i++)
@@ -136,7 +136,7 @@ namespace bs
 				{
 					int current = indices[idx + j];
 
-					normals[idx + j] = smoothNormals[current].getNormal(smoothing[idx + j]);
+					normals[idx + j] = smoothNormals[current].GetNormal(smoothing[idx + j]);
 				}
 			}
 
@@ -144,7 +144,7 @@ namespace bs
 		}
 	}
 
-	void FBXUtility::splitVertices(const FBXImportMesh& source, FBXImportMesh& dest)
+	void FBXUtility::SplitVertices(const FBXImportMesh& source, FBXImportMesh& dest)
 	{
 		dest.indices = source.indices;
 		dest.materials = source.materials;
@@ -218,7 +218,7 @@ namespace bs
 			Vector<int>& splits = splitsPerVertex[srcVertIdx];
 			for (auto& splitVertIdx : splits)
 			{
-				if (!needsSplitAttributes(source, i, dest, splitVertIdx))
+				if (!NeedsSplitAttributes(source, i, dest, splitVertIdx))
 					dstVertIdx = splitVertIdx;
 			}
 
@@ -229,12 +229,12 @@ namespace bs
 				if (splits.empty())
 				{
 					dstVertIdx = srcVertIdx;
-					copyVertexAttributes(source, i, dest, dstVertIdx);
+					CopyVertexAttributes(source, i, dest, dstVertIdx);
 				}
 				else // Split occurred, add a brand new vertex
 				{
 					dstVertIdx = (int)dest.positions.size();
-					addVertex(source, i, srcVertIdx, dest);
+					AddVertex(source, i, srcVertIdx, dest);
 				}
 
 				splits.push_back(dstVertIdx);
@@ -244,7 +244,7 @@ namespace bs
 		}
 	}
 
-	void FBXUtility::flipWindingOrder(FBXImportMesh& input)
+	void FBXUtility::FlipWindingOrder(FBXImportMesh& input)
 	{
 		for (UINT32 i = 0; i < (UINT32)input.materials.size(); i += 3)
 		{
@@ -257,7 +257,7 @@ namespace bs
 		}
 	}
 
-	void FBXUtility::copyVertexAttributes(const FBXImportMesh& srcMesh, int srcIdx, FBXImportMesh& destMesh, int dstIdx)
+	void FBXUtility::CopyVertexAttributes(const FBXImportMesh& srcMesh, int srcIdx, FBXImportMesh& destMesh, int dstIdx)
 	{
 		if (!srcMesh.normals.empty())
 			destMesh.normals[dstIdx] = srcMesh.normals[srcIdx];
@@ -301,7 +301,7 @@ namespace bs
 		}
 	}
 
-	void FBXUtility::addVertex(const FBXImportMesh& srcMesh, int srcIdx, int srcVertex, FBXImportMesh& destMesh)
+	void FBXUtility::AddVertex(const FBXImportMesh& srcMesh, int srcIdx, int srcVertex, FBXImportMesh& destMesh)
 	{
 		destMesh.positions.push_back(srcMesh.positions[srcVertex]);
 
@@ -352,9 +352,9 @@ namespace bs
 		}
 	}
 
-	bool FBXUtility::needsSplitAttributes(const FBXImportMesh& meshA, int idxA, const FBXImportMesh& meshB, int idxB)
+	bool FBXUtility::NeedsSplitAttributes(const FBXImportMesh& meshA, int idxA, const FBXImportMesh& meshB, int idxB)
 	{
-		static const float SplitAngleCosine = Math::cos(Degree(1.0f));
+		static const float SplitAngleCosine = Math::Cos(Degree(1.0f));
 		static const float UVEpsilon = 0.001f;
 
 		if (!meshA.colors.empty())
@@ -365,21 +365,21 @@ namespace bs
 
 		if (!meshA.normals.empty())
 		{
-			float angleCosine = meshA.normals[idxA].dot(meshB.normals[idxB]);
+			float angleCosine = meshA.normals[idxA].Dot(meshB.normals[idxB]);
 			if (angleCosine < SplitAngleCosine)
 				return true;
 		}
 
 		if (!meshA.tangents.empty())
 		{
-			float angleCosine = meshA.tangents[idxA].dot(meshB.tangents[idxB]);
+			float angleCosine = meshA.tangents[idxA].Dot(meshB.tangents[idxB]);
 			if (angleCosine < SplitAngleCosine)
 				return true;
 		}
 
 		if (!meshA.bitangents.empty())
 		{
-			float angleCosine = meshA.bitangents[idxA].dot(meshB.bitangents[idxB]);
+			float angleCosine = meshA.bitangents[idxA].Dot(meshB.bitangents[idxB]);
 			if (angleCosine < SplitAngleCosine)
 				return true;
 		}
@@ -407,21 +407,21 @@ namespace bs
 
 				if (!frameA.normals.empty())
 				{
-					float angleCosine = frameA.normals[idxA].dot(frameB.normals[idxB]);
+					float angleCosine = frameA.normals[idxA].Dot(frameB.normals[idxB]);
 					if (angleCosine < SplitAngleCosine)
 						return true;
 				}
 
 				if (!frameA.tangents.empty())
 				{
-					float angleCosine = frameA.tangents[idxA].dot(frameB.tangents[idxB]);
+					float angleCosine = frameA.tangents[idxA].Dot(frameB.tangents[idxB]);
 					if (angleCosine < SplitAngleCosine)
 						return true;
 				}
 
 				if (!frameA.bitangents.empty())
 				{
-					float angleCosine = frameA.bitangents[idxA].dot(frameB.bitangents[idxB]);
+					float angleCosine = frameA.bitangents[idxA].Dot(frameB.bitangents[idxB]);
 					if (angleCosine < SplitAngleCosine)
 						return true;
 				}

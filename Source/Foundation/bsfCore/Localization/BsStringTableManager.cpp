@@ -4,44 +4,44 @@
 
 namespace bs
 {
-	void StringTableManager::setActiveLanguage(Language language)
+	void StringTableManager::SetActiveLanguage(Language language)
 	{
 		if (language != mActiveLanguage)
 		{
 			mActiveLanguage = language;
 
 			for (auto& tablePair : mTables)
-				tablePair.second->setActiveLanguage(language);
+				tablePair.second->SetActiveLanguage(language);
 		}
 	}
 
-	HStringTable StringTableManager::getTable(UINT32 id)
+	HStringTable StringTableManager::GetTable(UINT32 id)
 	{
 		auto iterFind = mTables.find(id);
 		if (iterFind != mTables.end())
 			return iterFind->second;
 
-		HStringTable newTable = StringTable::create();
-		setTable(id, newTable);
+		HStringTable newTable = StringTable::Create();
+		SetTable(id, newTable);
 
 		return newTable;
 	}
 
-	void StringTableManager::removeTable(UINT32 id)
+	void StringTableManager::RemoveTable(UINT32 id)
 	{
 		mTables.erase(id);
 	}
 
-	void StringTableManager::setTable(UINT32 id, const HStringTable& table)
+	void StringTableManager::SetTable(UINT32 id, const HStringTable& table)
 	{
 		mTables[id] = table;
 
 		if (table != nullptr)
-			table->setActiveLanguage(mActiveLanguage);
+			table->SetActiveLanguage(mActiveLanguage);
 	}
 
 	StringTableManager& gStringTableManager()
 	{
-		return StringTableManager::instance();
+		return StringTableManager::Instance();
 	}
 }

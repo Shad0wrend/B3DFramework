@@ -34,7 +34,7 @@ namespace bs
 
 	}
 
-	MonoObject* ScriptFontImportOptions::create(const SPtr<FontImportOptions>& value)
+	MonoObject* ScriptFontImportOptions::Create(const SPtr<FontImportOptions>& value)
 	{
 		if(value == nullptr) return nullptr; 
 
@@ -47,7 +47,7 @@ namespace bs
 	}
 	void ScriptFontImportOptions::Internal_create(MonoObject* managedInstance)
 	{
-		SPtr<FontImportOptions> instance = FontImportOptions::create();
+		SPtr<FontImportOptions> instance = FontImportOptions::Create();
 		new (bs_alloc<ScriptFontImportOptions>())ScriptFontImportOptions(managedInstance, instance);
 	}
 	MonoArray* ScriptFontImportOptions::Internal_getfontSizes(ScriptFontImportOptions* thisPtr)

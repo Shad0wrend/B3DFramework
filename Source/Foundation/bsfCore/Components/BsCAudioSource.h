@@ -25,91 +25,91 @@ namespace bs
 		
 		/** @copydoc AudioSource::setClip */
 		BS_SCRIPT_EXPORT(n:Clip,pr:setter)
-		void setClip(const HAudioClip& clip);
+		void SetClip(const HAudioClip& clip);
 
 		/** @copydoc AudioSource::getClip */
 		BS_SCRIPT_EXPORT(n:Clip,pr:getter)
-		HAudioClip getClip() const { return mAudioClip; }
+		HAudioClip GetClip() const { return mAudioClip; }
 
 		/** @copydoc AudioSource::setVolume */
 		BS_SCRIPT_EXPORT(n:Volume,pr:setter,range:[0,1],slider)
-		void setVolume(float volume);
+		void SetVolume(float volume);
 
 		/** @copydoc AudioSource::getVolume */
 		BS_SCRIPT_EXPORT(n:Volume,pr:getter)
-		float getVolume() const { return mVolume; }
+		float GetVolume() const { return mVolume; }
 
 		/** @copydoc AudioSource::setPitch */
 		BS_SCRIPT_EXPORT(n:Pitch,pr:setter)
-		void setPitch(float pitch);
+		void SetPitch(float pitch);
 
 		/** @copydoc AudioSource::getPitch */
 		BS_SCRIPT_EXPORT(n:Pitch,pr:getter)
-		float getPitch() const { return mPitch; }
+		float GetPitch() const { return mPitch; }
 
 		/** @copydoc AudioSource::setIsLooping */
 		BS_SCRIPT_EXPORT(n:Loop,pr:setter)
-		void setIsLooping(bool loop);
+		void SetIsLooping(bool loop);
 
 		/** @copydoc AudioSource::getIsLooping */
 		BS_SCRIPT_EXPORT(n:Loop,pr:getter)
-		bool getIsLooping() const { return mLoop; }
+		bool GetIsLooping() const { return mLoop; }
 
 		/** @copydoc AudioSource::setPriority */
 		BS_SCRIPT_EXPORT(n:Priority,pr:setter)
-		void setPriority(UINT32 priority);
+		void SetPriority(UINT32 priority);
 
 		/** @copydoc AudioSource::getPriority */
 		BS_SCRIPT_EXPORT(n:Priority,pr:getter)
-		UINT32 getPriority() const { return mPriority; }
+		UINT32 GetPriority() const { return mPriority; }
 
 		/** @copydoc AudioSource::setMinDistance */
 		BS_SCRIPT_EXPORT(n:MinDistance,pr:setter)
-		void setMinDistance(float distance);
+		void SetMinDistance(float distance);
 
 		/** @copydoc AudioSource::getMinDistance */
 		BS_SCRIPT_EXPORT(n:MinDistance,pr:getter)
-		float getMinDistance() const { return mMinDistance; }
+		float GetMinDistance() const { return mMinDistance; }
 
 		/** @copydoc AudioSource::setAttenuation */
 		BS_SCRIPT_EXPORT(n:Attenuation,pr:setter)
-		void setAttenuation(float attenuation);
+		void SetAttenuation(float attenuation);
 
 		/** @copydoc AudioSource::getAttenuation */
 		BS_SCRIPT_EXPORT(n:Attenuation,pr:getter)
-		float getAttenuation() const { return mAttenuation; }
+		float GetAttenuation() const { return mAttenuation; }
 
 		/** @copydoc AudioSource::setTime */
 		BS_SCRIPT_EXPORT(n:Time,pr:setter,hide)
-		void setTime(float time);
+		void SetTime(float time);
 
 		/** @copydoc AudioSource::getTime */
 		BS_SCRIPT_EXPORT(n:Time,pr:getter,hide)
-		float getTime() const;
+		float GetTime() const;
 
 		/** Sets whether playback should start as soon as the component is enabled. */
 		BS_SCRIPT_EXPORT(n:PlayOnStart,pr:setter)
-		void setPlayOnStart(bool enable) { mPlayOnStart = enable; }
+		void SetPlayOnStart(bool enable) { mPlayOnStart = enable; }
 
 		/** Determines should playback start as soon as the component is enabled. */
 		BS_SCRIPT_EXPORT(n:PlayOnStart,pr:getter)
-		bool getPlayOnStart() const { return mPlayOnStart; }
+		bool GetPlayOnStart() const { return mPlayOnStart; }
 
 		/** @copydoc AudioSource::play */
 		BS_SCRIPT_EXPORT(n:Play)
-		void play();
+		void Play();
 
 		/** @copydoc AudioSource::pause */
 		BS_SCRIPT_EXPORT(n:Pause)
-		void pause();
+		void Pause();
 
 		/** @copydoc AudioSource::stop */
 		BS_SCRIPT_EXPORT(n:Stop)
-		void stop();
+		void Stop();
 
 		/** @copydoc AudioSource::getState */
 		BS_SCRIPT_EXPORT(n:State,pr:getter)
-		AudioSourceState getState() const;
+		AudioSourceState GetState() const;
 
 		/** @name Internal
 		 *  @{
@@ -127,36 +127,36 @@ namespace bs
 		friend class SceneObject;
 
 		/** @copydoc Component::onInitialized() */
-		void onInitialized() override;
+		void OnInitialized() override;
 
 		/** @copydoc Component::onDestroyed() */
-		void onDestroyed() override;
+		void OnDestroyed() override;
 
 		/** @copydoc Component::onDisabled() */
-		void onDisabled() override;
+		void OnDisabled() override;
 
 		/** @copydoc Component::onEnabled() */
-		void onEnabled() override;
+		void OnEnabled() override;
 
 		/** @copydoc Component::onTransformChanged() */
-		void onTransformChanged(TransformChangedFlags flags) override;
+		void OnTransformChanged(TransformChangedFlags flags) override;
 
 		/** @copydoc Component::update() */
-		void update() override;
+		void Update() override;
 	protected:
-		using Component::destroyInternal;
+		using Component::DestroyInternal;
 
 		/** Creates the internal representation of the AudioSource and restores the values saved by the Component. */
-		void restoreInternal();
+		void RestoreInternal();
 
 		/** Destroys the internal AudioSource representation. */
-		void destroyInternal();
+		void DestroyInternal();
 
 		/**
 		 * Updates the transform of the internal AudioSource representation from the transform of the component's scene
 		 * object.
 		 */
-		void updateTransform();
+		void UpdateTransform();
 
 		SPtr<AudioSource> mInternal;
 		Vector3 mLastPosition = Vector3::ZERO;
@@ -176,8 +176,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class CAudioSourceRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const ;
 
 	protected:
 		CAudioSource(); // Serialization only

@@ -11,7 +11,7 @@
 
 namespace bs
 {
-	const String& GUIViewport::getGUITypeName()
+	const String& GUIViewport::GetGuiTypeName()
 	{
 		static String name = "Viewport";
 		return name;
@@ -25,18 +25,18 @@ namespace bs
 		mVerticalFOV = 2.0f * Math::atan(Math::tan(mFieldOfView.valueRadians() * 0.5f) * (1.0f / mAspectRatio));
 	}
 
-	GUIViewport* GUIViewport::create(const HCamera& camera, float aspectRatio, Degree fieldOfView, const String& styleName)
+	GUIViewport* GUIViewport::Create(const HCamera& camera, float aspectRatio, Degree fieldOfView, const String& styleName)
 	{
-		return new (bs_alloc<GUIViewport>()) GUIViewport(getStyleName<GUIViewport>(styleName), camera, aspectRatio, fieldOfView, GUIDimensions::create());
+		return new (bs_alloc<GUIViewport>()) GUIViewport(getStyleName<GUIViewport>(styleName), camera, aspectRatio, fieldOfView, GUIDimensions::Create());
 	}
 
-	GUIViewport* GUIViewport::create(const GUIOptions& options, const HCamera& camera,
+	GUIViewport* GUIViewport::Create(const GUIOptions& options, const HCamera& camera,
 		float aspectRatio, Degree fieldOfView, const String& styleName)
 	{
-		return new (bs_alloc<GUIViewport>()) GUIViewport(getStyleName<GUIViewport>(styleName), camera, aspectRatio, fieldOfView, GUIDimensions::create(options));
+		return new (bs_alloc<GUIViewport>()) GUIViewport(getStyleName<GUIViewport>(styleName), camera, aspectRatio, fieldOfView, GUIDimensions::Create(options));
 	}
 
-	void GUIViewport::updateClippedBounds()
+	void GUIViewport::UpdateClippedBounds()
 	{
 		mClippedBounds = mLayoutData.area;
 		mClippedBounds.clip(mLayoutData.clipRect);
@@ -47,7 +47,7 @@ namespace bs
 		return Vector2I(0, 0);
 	}
 
-	void GUIViewport::_fillBuffer(
+	void GUIViewport::FillBuffer(
 		UINT8* vertices,
 		UINT32* indices,
 		UINT32 vertexOffset,
@@ -60,7 +60,7 @@ namespace bs
 
 	}
 
-	void GUIViewport::updateRenderElementsInternal()
+	void GUIViewport::UpdateRenderElementsInternal()
 	{
 		// TODO - This doesn't get called if element mesh is dirty!!! and I need to update the viewport when offset changes (in which case mesh is marked as dirty)
 		float currentAspect = mLayoutData.area.width / (float)mLayoutData.area.height;

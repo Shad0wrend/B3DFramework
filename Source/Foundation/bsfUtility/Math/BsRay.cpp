@@ -8,49 +8,49 @@
 
 namespace bs
 {
-	void Ray::transform(const Matrix4& matrix)
+	void Ray::Transform(const Matrix4& matrix)
 	{
-		Vector3 end = getPoint(1.0f);
+		Vector3 end = GetPoint(1.0f);
 
-		mOrigin = matrix.multiply(mOrigin);
-		end = matrix.multiply(end);
+		mOrigin = matrix.Multiply(mOrigin);
+		end = matrix.Multiply(end);
 
 		mDirection = Vector3::normalize(end - mOrigin);
 	}
 
-	void Ray::transformAffine(const Matrix4& matrix)
+	void Ray::TransformAffine(const Matrix4& matrix)
 	{
-		Vector3 end = getPoint(1.0f);
+		Vector3 end = GetPoint(1.0f);
 
-		mOrigin = matrix.multiplyAffine(mOrigin);
-		end = matrix.multiplyAffine(end);
+		mOrigin = matrix.MultiplyAffine(mOrigin);
+		end = matrix.MultiplyAffine(end);
 
 		mDirection = Vector3::normalize(end - mOrigin);
 	}
 
-	std::pair<bool, float> Ray::intersects(const Plane& p) const
+	std::pair<bool, float> Ray::Intersects(const Plane& p) const
 	{
-		return p.intersects(*this);
+		return p.Intersects(*this);
 	}
 
-	std::pair<bool, float> Ray::intersects(const Sphere& s) const
+	std::pair<bool, float> Ray::Intersects(const Sphere& s) const
 	{
-		return s.intersects(*this);
+		return s.Intersects(*this);
 	}
 
-	std::pair<bool, float> Ray::intersects(const AABox& box) const
+	std::pair<bool, float> Ray::Intersects(const AABox& box) const
 	{
-		return box.intersects(*this);
+		return box.Intersects(*this);
 	}
 
-	std::pair<bool, float> Ray::intersects(const Vector3& a,
+	std::pair<bool, float> Ray::Intersects(const Vector3& a,
 		const Vector3& b, const Vector3& c, const Vector3& normal,
 		bool positiveSide, bool negativeSide) const
 	{
 		// Calculate intersection with plane.
 		float t;
 		{
-			float denom = normal.dot(getDirection());
+			float denom = normal.Dot(GetDirection());
 
 			// Check intersect side
 			if (denom > + std::numeric_limits<float>::epsilon())

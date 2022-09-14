@@ -6,7 +6,7 @@
 
 namespace bs
 {
-	bool TextureAtlasLayout::addElement(UINT32 width, UINT32 height, UINT32& x, UINT32& y)
+	bool TextureAtlasLayout::AddElement(UINT32 width, UINT32 height, UINT32& x, UINT32& y)
 	{
 		if(width == 0 || height == 0)
 		{
@@ -16,17 +16,17 @@ namespace bs
 		}
 
 		// Try adding without expanding, if that fails try to expand
-		if(!addToNode(0, width, height, x, y, false))
+		if(!AddToNode(0, width, height, x, y, false))
 		{
-			if (!addToNode(0, width, height, x, y, true))
+			if (!AddToNode(0, width, height, x, y, true))
 				return false;
 		}
 
 		// Update size to cover all nodes
 		if(mPow2)
 		{
-			mWidth = std::max(mWidth, Bitwise::nextPow2(x + width));
-			mHeight = std::max(mHeight, Bitwise::nextPow2(y + height));
+			mWidth = std::max(mWidth, Bitwise::NextPow2(x + width));
+			mHeight = std::max(mHeight, Bitwise::NextPow2(y + height));
 		}
 		else
 		{
@@ -37,7 +37,7 @@ namespace bs
 		return true;
 	}
 
-	void TextureAtlasLayout::clear()
+	void TextureAtlasLayout::Clear()
 	{
 		mNodes.clear();
 		mNodes.push_back(TexAtlasNode(0, 0, mWidth, mHeight));
@@ -46,17 +46,17 @@ namespace bs
 		mHeight = mInitialHeight;
 	}
 
-	bool TextureAtlasLayout::addToNode(UINT32 nodeIdx, UINT32 width, UINT32 height, UINT32& x, UINT32& y, bool allowGrowth)
+	bool TextureAtlasLayout::AddToNode(UINT32 nodeIdx, UINT32 width, UINT32 height, UINT32& x, UINT32& y, bool allowGrowth)
 	{
 		TexAtlasNode* node = &mNodes[nodeIdx];
 		float aspect = node->width / (float)node->height;
 
 		if (node->children[0] != (UINT32)-1)
 		{
-			if (addToNode(node->children[0], width, height, x, y, allowGrowth))
+			if (AddToNode(node->children[0], width, height, x, y, allowGrowth))
 				return true;
 
-			return addToNode(node->children[1], width, height, x, y, allowGrowth);
+			return AddToNode(node->children[1], width, height, x, y, allowGrowth);
 		}
 		else
 		{
@@ -101,11 +101,11 @@ namespace bs
 				mNodes.emplace_back(nodeCopy.x, nodeCopy.y + height, nodeCopy.width, nodeCopy.height - height);
 			}
 
-			return addToNode(nodeCopy.children[0], width, height, x, y, allowGrowth);
+			return AddToNode(nodeCopy.children[0], width, height, x, y, allowGrowth);
 		}
 	}
 
-	Vector<TextureAtlasUtility::Page> TextureAtlasUtility::createAtlasLayout(Vector<Element>& elements, UINT32 width,
+	Vector<TextureAtlasUtility::Page> TextureAtlasUtility::CreateAtlasLayout(Vector<Element>& elements, UINT32 width,
 		UINT32 height, UINT32 maxWidth, UINT32 maxHeight, bool pow2)
 	{
 		for (size_t i = 0; i < elements.size(); i++)
@@ -160,7 +160,7 @@ namespace bs
 					return Vector<Page>();
 				}
 
-				if (curLayout.addElement(element.input.width, element.input.height, element.output.x, element.output.y))
+				if (curLayout.AddElement(element.input.width, element.input.height, element.output.x, element.output.y))
 				{
 					element.output.page = (UINT32)layouts.size() - 1;
 					remainingCount--;
@@ -172,7 +172,7 @@ namespace bs
 
 		Vector<Page> pages;
 		for (auto& layout : layouts)
-			pages.push_back({ layout.getWidth(), layout.getHeight() });
+			pages.push_back({ layout.GetWidth(), layout.GetHeight() });
 
 		return pages;
 	}

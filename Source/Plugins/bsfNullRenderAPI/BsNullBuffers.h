@@ -19,24 +19,24 @@ namespace bs { namespace ct
 	{
 	protected:
 		/** @copydoc HardwareBufferManager::createVertexBufferInternal */
-		SPtr<VertexBuffer> createVertexBufferInternal(const VERTEX_BUFFER_DESC& desc,
-			GpuDeviceFlags deviceMask = GDF_DEFAULT) override;
+		SPtr<VertexBuffer> CreateVertexBufferInternal(const VERTEX_BUFFER_DESC& desc,
+			GpuDeviceFlags deviceMask = GDF_DEFAULT) ;
 
 		/** @copydoc HardwareBufferManager::createIndexBufferInternal */
-		SPtr<IndexBuffer> createIndexBufferInternal(const INDEX_BUFFER_DESC& desc,
-			GpuDeviceFlags deviceMask = GDF_DEFAULT) override;
+		SPtr<IndexBuffer> CreateIndexBufferInternal(const INDEX_BUFFER_DESC& desc,
+			GpuDeviceFlags deviceMask = GDF_DEFAULT) ;
 
 		/** @copydoc HardwareBufferManager::createGpuParamBlockBufferInternal  */
-		SPtr<GpuParamBlockBuffer> createGpuParamBlockBufferInternal(UINT32 size,
-			GpuBufferUsage usage = GBU_DYNAMIC, GpuDeviceFlags deviceMask = GDF_DEFAULT) override;
+		SPtr<GpuParamBlockBuffer> CreateGpuParamBlockBufferInternal(UINT32 size,
+			GpuBufferUsage usage = GBU_DYNAMIC, GpuDeviceFlags deviceMask = GDF_DEFAULT) ;
 
 		/** @copydoc HardwareBufferManager::createGpuBufferInternal(const GPU_BUFFER_DESC&, GpuDeviceFlags) */
-		SPtr<GpuBuffer> createGpuBufferInternal(const GPU_BUFFER_DESC& desc,
-			GpuDeviceFlags deviceMask = GDF_DEFAULT) override;
+		SPtr<GpuBuffer> CreateGpuBufferInternal(const GPU_BUFFER_DESC& desc,
+			GpuDeviceFlags deviceMask = GDF_DEFAULT) ;
 
 		/** @copydoc HardwareBufferManager::createGpuBufferInternal(const GPU_BUFFER_DESC&, SPtr<HardwareBuffer>) */
-		SPtr<GpuBuffer> createGpuBufferInternal(const GPU_BUFFER_DESC& desc,
-			SPtr<HardwareBuffer> underlyingBuffer) override;
+		SPtr<GpuBuffer> CreateGpuBufferInternal(const GPU_BUFFER_DESC& desc,
+			SPtr<HardwareBuffer> underlyingBuffer) ;
 	};
 
 	/**	Class containing common functionality for all Null hardware buffers. */
@@ -46,22 +46,22 @@ namespace bs { namespace ct
 		NullHardwareBuffer(GpuBufferUsage usage, UINT32 elementCount, UINT32 elementSize);
 
 		/** @copydoc HardwareBuffer::readData */
-		void readData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx = 0, UINT32 queueIdx = 0) override { }
+		void ReadData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx = 0, UINT32 queueIdx = 0) override { }
 
 		/** @copydoc HardwareBuffer::writeData */
-		void writeData(UINT32 offset, UINT32 length, const void* source,
+		void WriteData(UINT32 offset, UINT32 length, const void* source,
 			BufferWriteType writeFlags = BWT_NORMAL, UINT32 queueIdx = 0) override { }
 
 		/** @copydoc HardwareBuffer::copyData */
-		void copyData(HardwareBuffer& srcBuffer, UINT32 srcOffset, UINT32 dstOffset, UINT32 length,
-			bool discardWholeBuffer = false, const SPtr<CommandBuffer>& commandBuffer = nullptr) override { }
+		void CopyData(HardwareBuffer& srcBuffer, UINT32 srcOffset, UINT32 dstOffset, UINT32 length,
+			bool discardWholeBuffer = false, const SPtr<CommandBuffer>& commandBuffer = nullptr) { }
 
 	protected:
 		/** @copydoc HardwareBuffer::map */
-		void* map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx, UINT32 queueIdx) override;
+		void* Map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx, UINT32 queueIdx) override;
 
 		/** @copydoc HardwareBuffer::unmap */
-		void unmap() override;
+		void Unmap() override;
 
 		void* mStagingBuffer = nullptr;
 	};
@@ -77,7 +77,7 @@ namespace bs { namespace ct
 		friend class NullHardwareBufferManager;
 
 		/** @copydoc GpuBuffer::initialize */
-		void initialize() override;
+		void Initialize() override;
 	};
 
 	/**	Null implementation of a parameter block buffer (constant buffer in DX11 lingo). */
@@ -88,7 +88,7 @@ namespace bs { namespace ct
 
 	protected:
 		/** @copydoc GpuParamBlockBuffer::initialize */
-		void initialize() override;
+		void Initialize() override;
 	};
 
 	/**	Null implementation of an index buffer. */
@@ -99,7 +99,7 @@ namespace bs { namespace ct
 
 	protected:
 		/** @copydoc IndexBuffer::initialize */
-		void initialize() override;
+		void Initialize() override;
 	};
 
 	/**	Null implementation of a vertex buffer. */
@@ -110,7 +110,7 @@ namespace bs { namespace ct
 
 	protected:
 		/** @copydoc VertexBuffer::initialize */
-		void initialize() override;
+		void Initialize() override;
 	};
 
 	/** @} */

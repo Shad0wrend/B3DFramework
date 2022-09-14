@@ -88,24 +88,24 @@ namespace bs
 
 		for (UINT32 i = 0; i < (UINT32)mPlanes.size(); i++)
 		{
-			float length = mPlanes[i].normal.normalize();
+			float length = mPlanes[i].normal.Normalize();
 			mPlanes[i].d /= -length;
 		}
 	}
 
-	bool ConvexVolume::intersects(const AABox& box) const
+	bool ConvexVolume::Intersects(const AABox& box) const
 	{
-		Vector3 center = box.getCenter();
-		Vector3 extents = box.getHalfSize();
+		Vector3 center = box.GetCenter();
+		Vector3 extents = box.GetHalfSize();
 		Vector3 absExtents(Math::abs(extents.x), Math::abs(extents.y), Math::abs(extents.z));
 
 		for (auto& plane : mPlanes)
 		{
-			float dist = center.dot(plane.normal) - plane.d;
+			float dist = center.Dot(plane.normal) - plane.d;
 
-			float effectiveRadius = absExtents.x * Math::abs(plane.normal.x);
-			effectiveRadius += absExtents.y * Math::abs(plane.normal.y);
-			effectiveRadius += absExtents.z * Math::abs(plane.normal.z);
+			float effectiveRadius = absExtents.x * abs(plane.normal.x);
+			effectiveRadius += absExtents.y * abs(plane.normal.y);
+			effectiveRadius += absExtents.z * abs(plane.normal.z);
 
 			if (dist < -effectiveRadius)
 				return false;
@@ -114,14 +114,14 @@ namespace bs
 		return true;
 	}
 
-	bool ConvexVolume::intersects(const Sphere& sphere) const
+	bool ConvexVolume::Intersects(const Sphere& sphere) const
 	{
-		Vector3 center = sphere.getCenter();
-		float radius = sphere.getRadius();
+		Vector3 center = sphere.GetCenter();
+		float radius = sphere.GetRadius();
 
 		for (auto& plane : mPlanes)
 		{
-			float dist = center.dot(plane.normal) - plane.d;
+			float dist = center.Dot(plane.normal) - plane.d;
 
 			if (dist < -radius)
 				return false;
@@ -130,18 +130,18 @@ namespace bs
 		return true;
 	}
 
-	bool ConvexVolume::contains(const Vector3& p, float expand) const
+	bool ConvexVolume::Contains(const Vector3& p, float expand) const
 	{
 		for(auto& plane : mPlanes)
 		{
-			if (plane.getDistance(p) < -expand)
+			if (plane.GetDistance(p) < -expand)
 				return false;
 		}
 
 		return true;
 	}
 
-	const Plane& ConvexVolume::getPlane(FrustumPlane whichPlane) const
+	const Plane& ConvexVolume::GetPlane(FrustumPlane whichPlane) const
 	{
 		if(whichPlane >= mPlanes.size())
 		{

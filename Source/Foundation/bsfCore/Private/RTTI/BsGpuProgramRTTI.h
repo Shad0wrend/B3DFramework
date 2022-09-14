@@ -31,18 +31,18 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 	public:
-		const String& getRTTIName() override
+		const String& GetRttiName() 
 		{
 			static String name = "GpuProgramBytecode";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() 
 		{
 			return TID_GpuProgramBytecode;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return bs_shared_ptr_new<GpuProgramBytecode>();
 		}
@@ -61,13 +61,13 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 	public:
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "GpuParamDesc";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_GpuParamDesc;
 		}
@@ -90,33 +90,33 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 	public:
-		void onSerializationStarted(IReflectable* obj, SerializationContext* context) override
+		void OnSerializationStarted(IReflectable* obj, SerializationContext* context) override
 		{
 			// Need to ensure the core thread object is initialized
 			GpuProgram* gpuProgram = static_cast<GpuProgram*>(obj);
 			gpuProgram->blockUntilCoreInitialized();
 		}
 
-		void onDeserializationEnded(IReflectable* obj, SerializationContext* context) override
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override
 		{
 			GpuProgram* gpuProgram = static_cast<GpuProgram*>(obj);
 			gpuProgram->initialize();
 		}
 
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "GpuProgram";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_GpuProgram;
 		}
 
 		SPtr<IReflectable> newRTTIObject() override
 		{
-			return GpuProgramManager::instance().createEmpty("", GPT_VERTEX_PROGRAM); // Params don't matter, they'll get overwritten
+			return GpuProgramManager::Instance().createEmpty("", GPT_VERTEX_PROGRAM); // Params don't matter, they'll get overwritten
 		}
 	};
 
@@ -125,7 +125,7 @@ namespace bs
 		enum { id = TID_GpuParamDataDesc }; enum { hasDynamicSize = 1 };
 		static constexpr uint32_t VERSION = 1;
 
-		static BitLength toMemory(const GpuParamDataDesc& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const GpuParamDataDesc& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]()
 			{
@@ -147,7 +147,7 @@ namespace bs
 			});
 		}
 
-		static BitLength fromMemory(GpuParamDataDesc& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(GpuParamDataDesc& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
 			rtti_read_size_header(stream, compress, size);
@@ -170,7 +170,7 @@ namespace bs
 			return size;
 		}
 
-		static BitLength getSize(const GpuParamDataDesc& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const GpuParamDataDesc& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength dataSize = rtti_size(VERSION) + rtti_size(data.name) + rtti_size(data.elementSize) +
 				rtti_size(data.arraySize) + rtti_size(data.arrayElementStride) + rtti_size(data.type) +
@@ -187,7 +187,7 @@ namespace bs
 		enum { id = TID_GpuParamObjectDesc }; enum { hasDynamicSize = 1 };
 		static constexpr uint32_t VERSION = 2;
 
-		static BitLength toMemory(const GpuParamObjectDesc& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const GpuParamObjectDesc& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]
 			{
@@ -203,7 +203,7 @@ namespace bs
 			});
 		}
 
-		static BitLength fromMemory(GpuParamObjectDesc& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(GpuParamObjectDesc& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
 			rtti_read_size_header(stream, compress, size);
@@ -222,7 +222,7 @@ namespace bs
 			return size;
 		}
 
-		static BitLength getSize(const GpuParamObjectDesc& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const GpuParamObjectDesc& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength dataSize = rtti_size(VERSION) + rtti_size(data.name) + rtti_size(data.type) +
 				rtti_size(data.slot) + rtti_size(data.set) + rtti_size(data.elementType);
@@ -237,7 +237,7 @@ namespace bs
 		enum { id = TID_GpuParamBlockDesc }; enum { hasDynamicSize = 1 };
 		static constexpr uint32_t VERSION = 1;
 
-		static BitLength toMemory(const GpuParamBlockDesc& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const GpuParamBlockDesc& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]
 			{
@@ -253,7 +253,7 @@ namespace bs
 			});
 		}
 
-		static BitLength fromMemory(GpuParamBlockDesc& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(GpuParamBlockDesc& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
 			rtti_read_size_header(stream, compress, size);
@@ -271,7 +271,7 @@ namespace bs
 			return size;
 		}
 
-		static BitLength getSize(const GpuParamBlockDesc& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const GpuParamBlockDesc& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength dataSize = rtti_size(VERSION) + rtti_size(data.name) + rtti_size(data.set) +
 				rtti_size(data.slot) + rtti_size(data.blockSize) + rtti_size(data.isShareable);

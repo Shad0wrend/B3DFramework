@@ -9,7 +9,7 @@ namespace bs
 	OAAudioListener::OAAudioListener()
 	{
 		gOAAudio().RegisterListenerInternal(this);
-		rebuild();
+		Rebuild();
 	}
 
 	OAAudioListener::~OAAudioListener()
@@ -17,11 +17,11 @@ namespace bs
 		gOAAudio().UnregisterListenerInternal(this);
 	}
 
-	void OAAudioListener::setTransform(const Transform& transform)
+	void OAAudioListener::SetTransform(const Transform& transform)
 	{
-		AudioListener::setTransform(transform);
+		Transform(transform);
 
-		std::array<float, 6> orientation = getOrientation();
+		std::array<float, 6> orientation = GetOrientation();
 		auto& contexts = gOAAudio().GetContextsInternal();
 
 		if (contexts.size() > 1) // If only one context is available it is guaranteed it is always active, so we can avoid setting it
@@ -30,11 +30,11 @@ namespace bs
 			alcMakeContextCurrent(context);
 		}
 
-		updatePosition();
-		updateOrientation(orientation);
+		UpdatePosition();
+		UpdateOrientation(orientation);
 	}
 
-	void OAAudioListener::setVelocity(const Vector3& velocity)
+	void OAAudioListener::SetVelocity(const Vector3& velocity)
 	{
 		AudioListener::setVelocity(velocity);
 
@@ -45,15 +45,15 @@ namespace bs
 			alcMakeContextCurrent(context);
 		}
 
-		updateVelocity();
+		UpdateVelocity();
 	}
 
-	void OAAudioListener::rebuild()
+	void OAAudioListener::Rebuild()
 	{
 		auto contexts = gOAAudio().GetContextsInternal();
 		
-		float globalVolume = gAudio().getVolume();
-		std::array<float, 6> orientation = getOrientation();
+		float globalVolume = gAudio().GetVolume();
+		std::array<float, 6> orientation = GetOrientation();
 
 		if (contexts.size() > 1)
 		{
@@ -61,13 +61,13 @@ namespace bs
 			alcMakeContextCurrent(context);
 		}
 
-		updatePosition();
+		UpdatePosition();
 		updateOrientation(orientation);
 		updateVelocity();
 		updateVolume(globalVolume);
 	}
 
-	std::array<float, 6> OAAudioListener::getOrientation() const
+	std::array<float, 6> OAAudioListener::GetOrientation() const
 	{
 		Vector3 direction = getTransform().getForward();
 		Vector3 up = getTransform().getUp();
@@ -83,24 +83,24 @@ namespace bs
 		}};
 	}
 
-	void OAAudioListener::updatePosition()
+	void OAAudioListener::UpdatePosition()
 	{
 		Vector3 position = getTransform().getPosition();
 
 		alListener3f(AL_POSITION, position.x, position.y, position.z);
 	}
 
-	void OAAudioListener::updateOrientation(const std::array<float, 6>& orientation)
+	void OAAudioListener::UpdateOrientation(const std::array<float, 6>& orientation)
 	{
 		alListenerfv(AL_ORIENTATION, orientation.data());
 	}
 
-	void OAAudioListener::updateVelocity()
+	void OAAudioListener::UpdateVelocity()
 	{
 		alListener3f(AL_VELOCITY, mVelocity.x, mVelocity.y, mVelocity.z);
 	}
 
-	void OAAudioListener::updateVolume(float volume)
+	void OAAudioListener::UpdateVolume(float volume)
 	{
 		alListenerf(AL_GAIN, volume);
 	}

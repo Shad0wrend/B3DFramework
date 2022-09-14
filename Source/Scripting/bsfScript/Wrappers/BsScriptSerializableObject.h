@@ -18,11 +18,11 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "SerializableObject")
 
 		/**	Creates a new serializable object interop object from the data in the provided property.  */
-		static MonoObject* create(const ScriptSerializableProperty* native, MonoObject* managed,
+		static MonoObject* Create(const ScriptSerializableProperty* native, MonoObject* managed,
 			MonoReflectionType* reflType);
 
 		/**	Creates a new serializable object interop object from the data in the provided property.  */
-		static MonoObject* create(MonoObject* managed, MonoReflectionType* reflType);
+		static MonoObject* Create(MonoObject* managed, MonoReflectionType* reflType);
 
 	private:
 		ScriptSerializableObject(MonoObject* instance, const SPtr<ManagedSerializableObjectInfo>& objInfo);
@@ -34,7 +34,7 @@ namespace bs
 		 * @param[in]	instance	Managed instance the interop object will reference.
 		 * @param[in]	objInfo		Data about the type of the provided managed instance.
 		 */
-		static ScriptSerializableObject* createInternal(MonoObject* instance, const SPtr<ManagedSerializableObjectInfo>& objInfo);
+		static ScriptSerializableObject* CreateInternal(MonoObject* instance, const SPtr<ManagedSerializableObjectInfo>& objInfo);
 
 		SPtr<ManagedSerializableObjectInfo> mObjInfo;
 		static MonoField* FieldsField;
@@ -42,8 +42,8 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static void internal_createInstance(MonoObject* instance, MonoReflectionType* type);
-		static MonoObject* internal_getBaseClass(ScriptSerializableObject* thisPtr, MonoObject* owningObject);
+		static void InternalCreateInstance(MonoObject* instance, MonoReflectionType* type);
+		static MonoObject* InternalGetBaseClass(ScriptSerializableObject* thisPtr, MonoObject* owningObject);
 	};
 
 	/** @} */

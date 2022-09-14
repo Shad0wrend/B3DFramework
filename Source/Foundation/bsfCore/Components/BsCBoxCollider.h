@@ -24,19 +24,19 @@ namespace bs
 
 		/** @copydoc BoxCollider::setExtents */
 		BS_SCRIPT_EXPORT(n:Extents,pr:setter)
-		void setExtents(const Vector3& extents);
+		void SetExtents(const Vector3& extents);
 
 		/** @copydoc BoxCollider::getExtents */
 		BS_SCRIPT_EXPORT(n:Extents,pr:getter)
-		Vector3 getExtents() const { return mExtents; }
+		Vector3 GetExtents() const { return mExtents; }
 
 		/** Determines the position of the box shape, relative to the component's scene object. */
 		BS_SCRIPT_EXPORT(n:Center,pr:setter)
-		void setCenter(const Vector3& center);
+		void SetCenter(const Vector3& center);
 
 		/** @copydoc setCenter() */
 		BS_SCRIPT_EXPORT(n:Center,pr:getter)
-		Vector3 getCenter() const { return mLocalPosition; }
+		Vector3 GetCenter() const { return mLocalPosition; }
 
 		/** @name Internal
 		 *  @{
@@ -54,7 +54,7 @@ namespace bs
 		friend class SceneObject;
 
 		/** @copydoc CCollider::createInternal */
-		SPtr<Collider> createInternal() override;
+		SPtr<Collider> CreateInternal() ;
 
 	protected:
 		Vector3 mExtents = Vector3(0.5f, 0.5f, 0.5f);
@@ -64,8 +64,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class CBoxColliderRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 
 	protected:
 		CBoxCollider(); // Serialization only

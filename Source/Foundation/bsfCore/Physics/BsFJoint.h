@@ -32,43 +32,43 @@ namespace bs
 		virtual ~FJoint() = default;
 
 		/** @copydoc setBody() */
-		virtual Rigidbody* getBody(JointBody body) const = 0;
+		virtual Rigidbody* GetBody(JointBody body) const = 0;
 
 		/** Determines a body managed by the joint. One of the bodies must be movable (non-kinematic). */
-		virtual void setBody(JointBody body, Rigidbody* value) = 0;
+		virtual void SetBody(JointBody body, Rigidbody* value) = 0;
 
 		/** Returns the position relative to the body, at which the body is anchored to the joint. */
-		virtual Vector3 getPosition(JointBody body) const = 0;
+		virtual Vector3 GetPosition(JointBody body) const = 0;
 
 		/** Returns the rotation relative to the body, at which the body is anchored to the joint. */
-		virtual Quaternion getRotation(JointBody body) const = 0;
+		virtual Quaternion GetRotation(JointBody body) const = 0;
 
 		/** Sets the position and rotation relative to the body, at which the body is anchored to the joint.  */
-		virtual void setTransform(JointBody body, const Vector3& position, const Quaternion& rotation) = 0;
+		virtual void SetTransform(JointBody body, const Vector3& position, const Quaternion& rotation) = 0;
 
 		/** @copydoc setBreakForce() */
-		virtual float getBreakForce() const = 0;
+		virtual float GetBreakForce() const = 0;
 
 		/**
 		 * Determines the maximum force the joint can apply before breaking. Broken joints no longer participate in physics
 		 * simulation.
 		 */
-		virtual void setBreakForce(float force) = 0;
+		virtual void SetBreakForce(float force) = 0;
 
 		/** @copydoc setBreakTorque() */
-		virtual float getBreakTorque() const = 0;
+		virtual float GetBreakTorque() const = 0;
 
 		/**
 		 * Determines the maximum torque the joint can apply before breaking. Broken joints no longer participate in physics
 		 * simulation.
 		 */
-		virtual void setBreakTorque(float torque) = 0;
+		virtual void SetBreakTorque(float torque) = 0;
 
 		/** @copydoc setEnableCollision() */
-		virtual bool getEnableCollision() const = 0;
+		virtual bool GetEnableCollision() const = 0;
 
 		/** Determines whether collision between the two bodies managed by the joint are enabled. */
-		virtual void setEnableCollision(bool value) = 0;
+		virtual void SetEnableCollision(bool value) = 0;
 	};
 
 	/** @} */

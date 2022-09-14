@@ -20,7 +20,7 @@ namespace bs
 	{
 	public:
 		/**	Change content displayed by the button. */
-		void setContent(const GUIContent& content);
+		void SetContent(const GUIContent& content);
 
 		/**	Triggered when button is clicked. */
 		Event<void()> onClick;
@@ -67,7 +67,7 @@ namespace bs
 		virtual ~GUIButtonBase();
 
 		/** @copydoc GUIElement::_fillBuffer */
-		void _fillBuffer(
+		void FillBuffer(
 			UINT8* vertices,
 			UINT32* indices,
 			UINT32 vertexOffset,
@@ -75,10 +75,10 @@ namespace bs
 			const Vector2I& offset,
 			UINT32 maxNumVerts,
 			UINT32 maxNumIndices,
-			UINT32 renderElementIdx) const override;
+			UINT32 renderElementIdx) const ;
 
 		/** @copydoc GUIElement::updateRenderElementsInternal */
-		void updateRenderElementsInternal() override;
+		void UpdateRenderElementsInternal() ;
 
 		/** @copydoc GUIElement::_mouseEvent */
 		bool MouseEventInternal(const GUIMouseEvent& ev) override;
@@ -90,22 +90,22 @@ namespace bs
 		String GetTooltipInternal() const override;
 
 		/** @copydoc GUIElement::styleUpdated */
-		void styleUpdated() override;
+		void StyleUpdated() ;
 
 		/** Creates or destroys the content image sprite depending if there is a content image for the active state. */
-		void refreshContentSprite();
+		void RefreshContentSprite();
 
 		/**	Gets the text sprite descriptor used for creating/updating the internal text sprite. */
-		TEXT_SPRITE_DESC getTextDesc() const;
+		TEXT_SPRITE_DESC GetTextDesc() const;
 
 		/**	Retrieves internal button state. */
-		GUIElementState getState() const { return mActiveState; }
+		GUIElementState GetState() const { return mActiveState; }
 
 		/**	Returns the active sprite texture, depending on the current state. */
-		const HSpriteTexture& getActiveTexture() const;
+		const HSpriteTexture& GetActiveTexture() const;
 
 		/**	Returns the active text color, depending on the current state. */
-		Color getActiveTextColor() const;
+		Color GetActiveTextColor() const;
 	private:
 		ImageSprite* mImageSprite;
 		ImageSprite* mContentImageSprite = nullptr;

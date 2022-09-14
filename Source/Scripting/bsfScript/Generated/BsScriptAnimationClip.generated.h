@@ -16,22 +16,22 @@ namespace bs
 
 		ScriptAnimationClip(MonoObject* managedInstance, const ResourceHandle<AnimationClip>& value);
 
-		static MonoObject* createInstance();
+		static MonoObject* CreateInstance();
 
 	private:
-		static MonoObject* Internal_getRef(ScriptAnimationClip* thisPtr);
+		static MonoObject* InternalGetRef(ScriptAnimationClip* thisPtr);
 
-		static MonoObject* Internal_getCurves(ScriptAnimationClip* thisPtr);
-		static void Internal_setCurves(ScriptAnimationClip* thisPtr, MonoObject* curves);
-		static MonoArray* Internal_getEvents(ScriptAnimationClip* thisPtr);
-		static void Internal_setEvents(ScriptAnimationClip* thisPtr, MonoArray* events);
-		static MonoObject* Internal_getRootMotion(ScriptAnimationClip* thisPtr);
-		static bool Internal_hasRootMotion(ScriptAnimationClip* thisPtr);
-		static bool Internal_isAdditive(ScriptAnimationClip* thisPtr);
-		static float Internal_getLength(ScriptAnimationClip* thisPtr);
-		static uint32_t Internal_getSampleRate(ScriptAnimationClip* thisPtr);
-		static void Internal_setSampleRate(ScriptAnimationClip* thisPtr, uint32_t sampleRate);
-		static void Internal_create(MonoObject* managedInstance, bool isAdditive);
-		static void Internal_create0(MonoObject* managedInstance, MonoObject* curves, bool isAdditive, uint32_t sampleRate, MonoObject* rootMotion);
+		static MonoObject* InternalGetCurves(ScriptAnimationClip* thisPtr);
+		static void InternalSetCurves(ScriptAnimationClip* thisPtr, MonoObject* curves);
+		static MonoArray* InternalGetEvents(ScriptAnimationClip* thisPtr);
+		static void InternalSetEvents(ScriptAnimationClip* thisPtr, MonoArray* events);
+		static MonoObject* InternalGetRootMotion(ScriptAnimationClip* thisPtr);
+		static bool InternalHasRootMotion(ScriptAnimationClip* thisPtr);
+		static bool InternalIsAdditive(ScriptAnimationClip* thisPtr);
+		static float InternalGetLength(ScriptAnimationClip* thisPtr);
+		static uint32_t InternalGetSampleRate(ScriptAnimationClip* thisPtr);
+		static void InternalSetSampleRate(ScriptAnimationClip* thisPtr, uint32_t sampleRate);
+		static void InternalCreate(MonoObject* managedInstance, bool isAdditive);
+		static void InternalCreate0(MonoObject* managedInstance, MonoObject* curves, bool isAdditive, uint32_t sampleRate, MonoObject* rootMotion);
 	};
 }

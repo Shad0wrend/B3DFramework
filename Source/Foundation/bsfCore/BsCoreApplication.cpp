@@ -73,7 +73,7 @@ namespace bs
 		, mSimThreadId(BS_THREAD_CURRENT_ID), mRunMainLoop(false)
 	{
 		// Ensure all errors are reported properly
-		CrashHandler::startUp(desc.crashHandling);
+		CrashHandler::StartUp(desc.crashHandling);
 		if(desc.logCallback)
 			gDebug().setLogCallback(desc.logCallback);
 	}
@@ -83,123 +83,123 @@ namespace bs
 		mPrimaryWindow->destroy();
 		mPrimaryWindow = nullptr;
 
-		Importer::shutDown();
-		MeshManager::shutDown();
-		ProfilerGPU::shutDown();
+		Importer::ShutDown();
+		MeshManager::ShutDown();
+		ProfilerGPU::ShutDown();
 
-		SceneManager::shutDown();
+		SceneManager::ShutDown();
 		
-		Input::shutDown();
+		Input::ShutDown();
 
-		ct::ParamBlockManager::shutDown();
-		StringTableManager::shutDown();
-		Resources::shutDown();
-		GameObjectManager::shutDown();
+		ct::ParamBlockManager::ShutDown();
+		StringTableManager::ShutDown();
+		Resources::ShutDown();
+		GameObjectManager::ShutDown();
 
 		// Audio manager must be released before the ResourceListenerManager, as any one-shot audio sources need to be
 		// destroyed since they implement the IResourceListener interface
-		AudioManager::shutDown();
-		ResourceListenerManager::shutDown();
-		RenderStateManager::shutDown();
-		ParticleManager::shutDown();
-		AnimationManager::shutDown();
+		AudioManager::ShutDown();
+		ResourceListenerManager::ShutDown();
+		RenderStateManager::ShutDown();
+		ParticleManager::ShutDown();
+		AnimationManager::ShutDown();
 
 		// This must be done after all resources are released since it will unload the physics plugin, and some resources
 		// might be instances of types from that plugin.
-		PhysicsManager::shutDown();
+		PhysicsManager::ShutDown();
 
-		RendererManager::shutDown();
+		RendererManager::ShutDown();
 
 		// All CoreObject related modules should be shut down now. They have likely queued CoreObjects for destruction, so
 		// we need to wait for those objects to get destroyed before continuing.
-		CoreObjectManager::instance().syncToCore();
+		CoreObjectManager::Instance().syncToCore();
 		gCoreThread().update();
 		gCoreThread().submitAll(true);
 
 		unloadPlugin(mRendererPlugin);
 
-		RenderAPIManager::shutDown();
-		ct::GpuProgramManager::shutDown();
-		GpuProgramManager::shutDown();
+		RenderAPIManager::ShutDown();
+		ct::GpuProgramManager::ShutDown();
+		GpuProgramManager::ShutDown();
 
-		CoreObjectManager::shutDown(); // Must shut down before DynLibManager to ensure all objects are destroyed before unloading their libraries
-		DynLibManager::shutDown();
-		Time::shutDown();
-		DeferredCallManager::shutDown();
+		CoreObjectManager::ShutDown(); // Must shut down before DynLibManager to ensure all objects are destroyed before unloading their libraries
+		DynLibManager::ShutDown();
+		Time::ShutDown();
+		DeferredCallManager::ShutDown();
 
-		CoreThread::shutDown();
-		RenderStats::shutDown();
-		TaskScheduler::shutDown();
-		ThreadPool::shutDown();
-		ProfilingManager::shutDown();
-		ProfilerCPU::shutDown();
-		MessageHandler::shutDown();
-		ShaderManager::shutDown();
+		CoreThread::ShutDown();
+		RenderStats::ShutDown();
+		TaskScheduler::ShutDown();
+		ThreadPool::ShutDown();
+		ProfilingManager::ShutDown();
+		ProfilerCPU::ShutDown();
+		MessageHandler::ShutDown();
+		ShaderManager::ShutDown();
 
 		MemStack::endThread();
 		Platform::ShutDownInternal();
 
-		CrashHandler::shutDown();
+		CrashHandler::ShutDown();
 	}
 
-	void CoreApplication::onStartUp()
+	void CoreApplication::OnStartUp()
 	{
 		UINT32 numWorkerThreads = BS_THREAD_HARDWARE_CONCURRENCY - 1; // Number of cores while excluding current thread.
 
 		Platform::StartUpInternal();
 		MemStack::beginThread();
 
-		ShaderManager::startUp(getShaderIncludeHandler());
-		MessageHandler::startUp();
-		ProfilerCPU::startUp();
-		ProfilingManager::startUp();
-		ThreadPool::startUp<TThreadPool<ThreadDefaultPolicy>>((numWorkerThreads));
-		TaskScheduler::startUp();
-		RenderStats::startUp();
-		CoreThread::startUp();
-		StringTableManager::startUp();
-		DeferredCallManager::startUp();
-		Time::startUp();
-		DynLibManager::startUp();
-		CoreObjectManager::startUp();
-		GameObjectManager::startUp();
-		Resources::startUp();
-		ResourceListenerManager::startUp();
-		GpuProgramManager::startUp();
-		RenderStateManager::startUp();
-		ct::GpuProgramManager::startUp();
-		RenderAPIManager::startUp();
+		ShaderManager::StartUp(getShaderIncludeHandler());
+		MessageHandler::StartUp();
+		ProfilerCPU::StartUp();
+		ProfilingManager::StartUp();
+		ThreadPool::StartUp<TThreadPool<ThreadDefaultPolicy>>((numWorkerThreads));
+		TaskScheduler::StartUp();
+		RenderStats::StartUp();
+		CoreThread::StartUp();
+		StringTableManager::StartUp();
+		DeferredCallManager::StartUp();
+		Time::StartUp();
+		DynLibManager::StartUp();
+		CoreObjectManager::StartUp();
+		GameObjectManager::StartUp();
+		Resources::StartUp();
+		ResourceListenerManager::StartUp();
+		GpuProgramManager::StartUp();
+		RenderStateManager::StartUp();
+		ct::GpuProgramManager::StartUp();
+		RenderAPIManager::StartUp();
 
-		mPrimaryWindow = RenderAPIManager::instance().initialize(mStartUpDesc.renderAPI, mStartUpDesc.primaryWindowDesc);
+		mPrimaryWindow = RenderAPIManager::Instance().initialize(mStartUpDesc.renderAPI, mStartUpDesc.primaryWindowDesc);
 
-		ct::ParamBlockManager::startUp();
-		Input::startUp();
-		RendererManager::startUp();
+		ct::ParamBlockManager::StartUp();
+		Input::StartUp();
+		RendererManager::StartUp();
 
 		loadPlugin(mStartUpDesc.renderer, &mRendererPlugin);
 
 		// Must be initialized before the scene manager, as game scene creation triggers physics scene creation
-		PhysicsManager::startUp(mStartUpDesc.physics, mStartUpDesc.physicsCooking);
-		SceneManager::startUp();
-		RendererManager::instance().setActive(mStartUpDesc.renderer);
+		PhysicsManager::StartUp(mStartUpDesc.physics, mStartUpDesc.physicsCooking);
+		SceneManager::StartUp();
+		RendererManager::Instance().setActive(mStartUpDesc.renderer);
 		startUpRenderer();
 
-		ProfilerGPU::startUp();
-		MeshManager::startUp();
-		Importer::startUp();
-		AudioManager::startUp(mStartUpDesc.audio);
-		AnimationManager::startUp();
-		ParticleManager::startUp();
+		ProfilerGPU::StartUp();
+		MeshManager::StartUp();
+		Importer::StartUp();
+		AudioManager::StartUp(mStartUpDesc.audio);
+		AnimationManager::StartUp();
+		ParticleManager::StartUp();
 
 		for (auto& importerName : mStartUpDesc.importers)
 			loadPlugin(importerName);
 
 		// Built-in importers
 		FGAImporter* fgaImporter = bs_new<FGAImporter>();
-		Importer::instance().RegisterAssetImporterInternal(fgaImporter);
+		Importer::Instance().RegisterAssetImporterInternal(fgaImporter);
 	}
 
-	void CoreApplication::runMainLoop()
+	void CoreApplication::RunMainLoop()
 	{
 		beginMainLoop();
 
@@ -239,29 +239,29 @@ namespace bs
 		endMainLoop();
 	}
 
-	void CoreApplication::beginMainLoop()
+	void CoreApplication::BeginMainLoop()
 	{
 		mRunMainLoop = true;
 	}
 
-	void CoreApplication::endMainLoop()
+	void CoreApplication::EndMainLoop()
 	{
 		waitUntilFrameFinished();
 	}
 
-	void CoreApplication::runMainLoopFrame()
+	void CoreApplication::RunMainLoopFrame()
 	{
 		gProfilerCPU().beginThread("Sim");
 
 		Platform::UpdateInternal();
-		DeferredCallManager::instance().UpdateInternal();
+		DeferredCallManager::Instance().UpdateInternal();
 		gTime().UpdateInternal();
 		gInput().UpdateInternal();
 		// RenderWindowManager::update needs to happen after Input::update and before Input::_triggerCallbacks,
 		// so that all input is properly captured in case there is a focus change, and so that
 		// focus change is registered before input events are sent out (mouse press can result in code
 		// checking if a window is in focus, so it has to be up to date)
-		RenderWindowManager::instance().UpdateInternal();
+		RenderWindowManager::Instance().UpdateInternal();
 		gInput().TriggerCallbacksInternal();
 		gDebug().TriggerCallbacksInternal();
 
@@ -297,18 +297,18 @@ namespace bs
 
 		// Evaluate animation after scene and plugin updates because the renderer will just now be displaying the
 		// animation we sent on the previous frame, and we want the scene information to match to what is displayed.
-		perFrameData.animation = AnimationManager::instance().update(mStartUpDesc.asyncAnimation);
-		perFrameData.particles = ParticleManager::instance().update(*perFrameData.animation);
+		perFrameData.animation = AnimationManager::Instance().update(mStartUpDesc.asyncAnimation);
+		perFrameData.particles = ParticleManager::Instance().update(*perFrameData.animation);
 
 		// Send out resource events in case any were loaded/destroyed/modified
-		ResourceListenerManager::instance().update();
+		ResourceListenerManager::Instance().update();
 
 		// Trigger any renderer task callbacks (should be done before scene object update, or core sync, so objects have
 		// a chance to respond to the callback).
-		RendererManager::instance().getActive()->update();
+		RendererManager::Instance().getActive()->update();
 
 		gSceneManager().UpdateCoreObjectTransformsInternal();
-		PROFILE_CALL(RendererManager::instance().getActive()->renderAll(perFrameData), "Render");
+		PROFILE_CALL(RendererManager::Instance().getActive()->renderAll(perFrameData), "Render");
 
 		// Core and sim thread run in lockstep. This will result in a larger input latency than if I was
 		// running just a single thread. Latency becomes worse if the core thread takes longer than sim
@@ -319,9 +319,9 @@ namespace bs
 
 			while(!mIsFrameRenderingFinished)
 			{
-				TaskScheduler::instance().addWorker();
+				TaskScheduler::Instance().addWorker();
 				mFrameRenderingFinishedCondition.wait(lock);
-				TaskScheduler::instance().removeWorker();
+				TaskScheduler::Instance().removeWorker();
 			}
 
 			mIsFrameRenderingFinished = false;
@@ -343,45 +343,45 @@ namespace bs
 		gProfiler().UpdateInternal();
 	}
 
-	void CoreApplication::waitUntilFrameFinished()
+	void CoreApplication::WaitUntilFrameFinished()
 	{
 		Lock lock(mFrameRenderingFinishedMutex);
 
 		while (!mIsFrameRenderingFinished)
 		{
-			TaskScheduler::instance().addWorker();
+			TaskScheduler::Instance().addWorker();
 			mFrameRenderingFinishedCondition.wait(lock);
-			TaskScheduler::instance().removeWorker();
+			TaskScheduler::Instance().removeWorker();
 		}
 	}
 
-	void CoreApplication::preUpdate()
+	void CoreApplication::PreUpdate()
 	{
 		// Do nothing
 	}
 
-	void CoreApplication::postUpdate()
+	void CoreApplication::PostUpdate()
 	{
 		// Do nothing
 	}
 
-	void CoreApplication::fixedUpdate()
+	void CoreApplication::FixedUpdate()
 	{
 	   // Do nothing
 	}
 
-	void CoreApplication::stopMainLoop()
+	void CoreApplication::StopMainLoop()
 	{
 		mRunMainLoop = false; // No sync primitives needed, in that rare case of
 		// a race condition we might run the loop one extra iteration which is acceptable
 	}
 
-	void CoreApplication::quitRequested()
+	void CoreApplication::QuitRequested()
 	{
 		stopMainLoop();
 	}
 
-	void CoreApplication::setFPSLimit(UINT32 limit)
+	void CoreApplication::SetFpsLimit(UINT32 limit)
 	{
 		if(limit > 0)
 			mFrameStep = (UINT64)1000000 / limit;
@@ -389,7 +389,7 @@ namespace bs
 			mFrameStep = 0;
 	}
 
-	void CoreApplication::frameRenderingFinishedCallback()
+	void CoreApplication::FrameRenderingFinishedCallback()
 	{
 		Lock lock(mFrameRenderingFinishedMutex);
 
@@ -397,21 +397,21 @@ namespace bs
 		mFrameRenderingFinishedCondition.notify_one();
 	}
 
-	void CoreApplication::startUpRenderer()
+	void CoreApplication::StartUpRenderer()
 	{
-		RendererManager::instance().initialize();
+		RendererManager::Instance().initialize();
 	}
 
-	void CoreApplication::beginCoreProfiling()
+	void CoreApplication::BeginCoreProfiling()
 	{
 #if !BS_FORCE_SINGLETHREADED_RENDERING
 		gProfilerCPU().beginThread("Core");
 #endif
 	}
 
-	void CoreApplication::endCoreProfiling()
+	void CoreApplication::EndCoreProfiling()
 	{
-		ProfilerGPU::instance().UpdateInternal();
+		ProfilerGPU::Instance().UpdateInternal();
 
 #if !BS_FORCE_SINGLETHREADED_RENDERING
 		gProfilerCPU().endThread();
@@ -419,9 +419,9 @@ namespace bs
 #endif
 	}
 
-	void* CoreApplication::loadPlugin(const String& pluginName, DynLib** library, void* passThrough)
+	void* CoreApplication::LoadPlugin(const String& pluginName, DynLib** library, void* passThrough)
 	{
-		DynLib* loadedLibrary = gDynLibManager().load(pluginName);
+		DynLib* loadedLibrary = gDynLibManager().Load(pluginName);
 		if(library != nullptr)
 			*library = loadedLibrary;
 
@@ -456,7 +456,7 @@ namespace bs
 		return retVal;
 	}
 
-	void CoreApplication::unloadPlugin(DynLib* library)
+	void CoreApplication::UnloadPlugin(DynLib* library)
 	{
 		typedef void (*UnloadPluginFunc)();
 
@@ -466,16 +466,16 @@ namespace bs
 			unloadPluginFunc();
 
 		mPluginUpdateFunctions.erase(library);
-		gDynLibManager().unload(library);
+		gDynLibManager().Unload(library);
 	}
 
-	SPtr<IShaderIncludeHandler> CoreApplication::getShaderIncludeHandler() const
+	SPtr<IShaderIncludeHandler> CoreApplication::GetShaderIncludeHandler() const
 	{
 		return bs_shared_ptr_new<DefaultShaderIncludeHandler>();
 	}
 
 	CoreApplication& gCoreApplication()
 	{
-		return CoreApplication::instance();
+		return CoreApplication::Instance();
 	}
 }

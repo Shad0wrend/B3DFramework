@@ -21,20 +21,20 @@ namespace bs
 		~PhysXBoxCollider();
 
 		/** @copydoc BoxCollider::setScale */
-		void setScale(const Vector3& scale) override;
+		void SetScale(const Vector3& scale) ;
 
 		/** @copydoc BoxCollider::setExtents */
-		void setExtents(const Vector3& extents) override;
+		void SetExtents(const Vector3& extents) ;
 
 		/** @copydoc BoxCollider::getExtents */
-		Vector3 getExtents() const override;
+		Vector3 GetExtents() const ;
 
 	private:
 		/** Returns the PhysX collider implementation common to all colliders. */
-		FPhysXCollider* getInternal() const;
+		FPhysXCollider* GetInternal() const;
 
 		/** Applies the sphere geometry to the internal object based on set extents and scale. */
-		void applyGeometry();
+		void ApplyGeometry();
 
 		Vector3 mExtents;
 	};

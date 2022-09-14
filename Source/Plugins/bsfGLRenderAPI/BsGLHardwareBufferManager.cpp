@@ -11,7 +11,7 @@
 
 namespace bs { namespace ct
 {
-	SPtr<VertexBuffer> GLHardwareBufferManager::createVertexBufferInternal(const VERTEX_BUFFER_DESC& desc,
+	SPtr<VertexBuffer> GLHardwareBufferManager::CreateVertexBufferInternal(const VERTEX_BUFFER_DESC& desc,
 		GpuDeviceFlags deviceMask)
 	{
 		SPtr<GLVertexBuffer> ret = bs_shared_ptr_new<GLVertexBuffer>(desc, deviceMask);
@@ -20,7 +20,7 @@ namespace bs { namespace ct
 		return ret;
 	}
 
-	SPtr<IndexBuffer> GLHardwareBufferManager::createIndexBufferInternal(const INDEX_BUFFER_DESC& desc,
+	SPtr<IndexBuffer> GLHardwareBufferManager::CreateIndexBufferInternal(const INDEX_BUFFER_DESC& desc,
 		GpuDeviceFlags deviceMask)
 	{
 		SPtr<GLIndexBuffer> ret = bs_shared_ptr_new<GLIndexBuffer>(desc, deviceMask);
@@ -41,7 +41,7 @@ namespace bs { namespace ct
 		return paramBlockBufferPtr;
 	}
 
-	SPtr<GpuBuffer> GLHardwareBufferManager::createGpuBufferInternal(const GPU_BUFFER_DESC& desc,
+	SPtr<GpuBuffer> GLHardwareBufferManager::CreateGpuBufferInternal(const GPU_BUFFER_DESC& desc,
 		GpuDeviceFlags deviceMask)
 	{
 		GLGpuBuffer* buffer = new (bs_alloc<GLGpuBuffer>()) GLGpuBuffer(desc, deviceMask);
@@ -52,7 +52,7 @@ namespace bs { namespace ct
 		return bufferPtr;
 	}
 
-	SPtr<GpuBuffer> GLHardwareBufferManager::createGpuBufferInternal(const GPU_BUFFER_DESC& desc,
+	SPtr<GpuBuffer> GLHardwareBufferManager::CreateGpuBufferInternal(const GPU_BUFFER_DESC& desc,
 		SPtr<HardwareBuffer> underlyingBuffer)
 	{
 		GLGpuBuffer* buffer = new (bs_alloc<GLGpuBuffer>()) GLGpuBuffer(desc, std::move(underlyingBuffer));
@@ -63,7 +63,7 @@ namespace bs { namespace ct
 		return bufferPtr;
 	}
 
-	GLenum GLHardwareBufferManager::getGLUsage(GpuBufferUsage usage)
+	GLenum GLHardwareBufferManager::GetGlUsage(GpuBufferUsage usage)
 	{
 		if((usage & GBU_LOADSTORE) == GBU_LOADSTORE)
 		{
@@ -81,7 +81,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	GLenum GLHardwareBufferManager::getGLType(VertexElementType type)
+	GLenum GLHardwareBufferManager::GetGlType(VertexElementType type)
 	{
 		switch(type)
 		{

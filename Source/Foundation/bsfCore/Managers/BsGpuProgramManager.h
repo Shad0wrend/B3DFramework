@@ -23,13 +23,13 @@ namespace bs
 	{
 	public:
 		/** @copydoc GpuProgram::create */
-		SPtr<GpuProgram> create(const GPU_PROGRAM_DESC& desc);
+		SPtr<GpuProgram> Create(const GPU_PROGRAM_DESC& desc);
 
 		/**
 		 * Creates a completely empty and uninitialized GpuProgram. Should only be used for specific purposes, like
 		 * deserialization, as it requires additional manual initialization that is not required normally.
 		 */
-		SPtr<GpuProgram> createEmpty(const String& language, GpuProgramType type);
+		SPtr<GpuProgram> CreateEmpty(const String& language, GpuProgramType type);
 	};
 
 	namespace ct
@@ -42,13 +42,13 @@ namespace bs
 		virtual ~GpuProgramFactory() = default;
 
 		/** @copydoc GpuProgram::create */
-		virtual SPtr<GpuProgram> create(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT) = 0;
+		virtual SPtr<GpuProgram> Create(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT) = 0;
 
-		/** @copydoc bs::GpuProgramManager::createEmpty */
-		virtual SPtr<GpuProgram> create(GpuProgramType type, GpuDeviceFlags deviceMask = GDF_DEFAULT) = 0;
+		/** @copydoc bs::GpuProgramManager::CreateEmpty */
+		virtual SPtr<GpuProgram> Create(GpuProgramType type, GpuDeviceFlags deviceMask = GDF_DEFAULT) = 0;
 
 		/** @copydoc GpuProgram::compileBytecode */
-		virtual SPtr<GpuProgramBytecode> compileBytecode(const GPU_PROGRAM_DESC& desc) = 0;
+		virtual SPtr<GpuProgramBytecode> CompileBytecode(const GPU_PROGRAM_DESC& desc) = 0;
 	};
 
 	/**
@@ -67,22 +67,22 @@ namespace bs
 		 * Registers a new factory that is able to create GPU programs for a certain language. If any other factory for the
 		 * same language exists, it will overwrite it.
 		 */
-		void addFactory(const String& language, GpuProgramFactory* factory);
+		void AddFactory(const String& language, GpuProgramFactory* factory);
 
 		/**
 		 * Unregisters a GPU program factory, essentially making it not possible to create GPU programs using the language
 		 * the factory supported.
 		 */
-		void removeFactory(const String& language);
+		void RemoveFactory(const String& language);
 
 		/** Query if a GPU program language is supported (for example "hlsl", "glsl"). Thread safe. */
-		bool isLanguageSupported(const String& language);
+		bool IsLanguageSupported(const String& language);
 
 		/** @copydoc GpuProgram::create */
-		SPtr<GpuProgram> create(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
+		SPtr<GpuProgram> Create(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
 		/** @copydoc GpuProgram::compileBytecode */
-		SPtr<GpuProgramBytecode> compileBytecode(const GPU_PROGRAM_DESC& desc);
+		SPtr<GpuProgramBytecode> CompileBytecode(const GPU_PROGRAM_DESC& desc);
 
 	protected:
 		friend class bs::GpuProgram;
@@ -92,10 +92,10 @@ namespace bs
 		 *
 		 * @see		create
 		 */
-		SPtr<GpuProgram> createInternal(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
+		SPtr<GpuProgram> CreateInternal(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
 		/** Attempts to find a factory for the specified language. Returns null if it cannot find one. */
-		GpuProgramFactory* getFactory(const String& language);
+		GpuProgramFactory* GetFactory(const String& language);
 
 	protected:
 		Mutex mMutex;
@@ -111,9 +111,9 @@ namespace bs
 		NullProgramFactory() = default;
 		~NullProgramFactory() = default;
 
-		SPtr<GpuProgram> create(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask) override;
-		SPtr<GpuProgram> create(GpuProgramType type, GpuDeviceFlags deviceMask) override;
-		SPtr<GpuProgramBytecode> compileBytecode(const GPU_PROGRAM_DESC& desc) override;
+		SPtr<GpuProgram> Create(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask) override;
+		SPtr<GpuProgram> Create(GpuProgramType type, GpuDeviceFlags deviceMask) override;
+		SPtr<GpuProgramBytecode> CompileBytecode(const GPU_PROGRAM_DESC& desc) override;
 	};
 	}
 	/** @} */

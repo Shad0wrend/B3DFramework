@@ -10,28 +10,28 @@ namespace bs
 {
 	TextSprite::~TextSprite()
 	{
-		clearMesh();
+		ClearMesh();
 	}
 
-	void TextSprite::update(const TEXT_SPRITE_DESC& desc, UINT64 groupId)
+	void TextSprite::Update(const TEXT_SPRITE_DESC& desc, UINT64 groupId)
 	{
 		bs_frame_mark();
 		{
-			const U32String utf32text = UTF8::toUTF32(desc.text);
+			const U32String utf32text = UTF8::ToUtF32(desc.text);
 			TextData<FrameAlloc> textData(utf32text, desc.font, desc.fontSize, desc.width, desc.height, desc.wordWrap,
 				desc.wordBreak);
 
-			UINT32 numPages = textData.getNumPages();
+			UINT32 numPages = textData.GetNumPages();
 
 			// Free all previous memory
 			for (auto& cachedElem : mCachedRenderElements)
 			{
-				if (cachedElem.vertices != nullptr) mAlloc.free(cachedElem.vertices);
-				if (cachedElem.uvs != nullptr) mAlloc.free(cachedElem.uvs);
-				if (cachedElem.indexes != nullptr) mAlloc.free(cachedElem.indexes);
+				if (cachedElem.vertices != nullptr) mAlloc.Free(cachedElem.vertices);
+				if (cachedElem.uvs != nullptr) mAlloc.Free(cachedElem.uvs);
+				if (cachedElem.indexes != nullptr) mAlloc.Free(cachedElem.indexes);
 			}
 
-			mAlloc.clear();
+			mAlloc.Clear();
 
 			// Resize cached mesh array to needed size
 			if (mCachedRenderElements.size() != numPages)
@@ -56,7 +56,7 @@ namespace bs
 				matInfo.tint = desc.color;
 				matInfo.animationStartTime = 0.0f;
 
-				cachedElem.material = SpriteManager::instance().getTextMaterial();
+				cachedElem.material = SpriteManager::Instance().getTextMaterial();
 
 				texPage++;
 			}
@@ -76,7 +76,7 @@ namespace bs
 		updateBounds();
 	}
 
-	UINT32 TextSprite::genTextQuads(UINT32 page, const TextDataBase& textData, UINT32 width, UINT32 height,
+	UINT32 TextSprite::GenTextQuads(UINT32 page, const TextDataBase& textData, UINT32 width, UINT32 height,
 		TextHorzAlign horzAlign, TextVertAlign vertAlign, SpriteAnchor anchor, Vector2* vertices, Vector2* uv, UINT32* indices, UINT32 bufferSizeQuads)
 	{
 		UINT32 numLines = textData.getNumLines();
@@ -108,7 +108,7 @@ namespace bs
 	}
 
 
-	UINT32 TextSprite::genTextQuads(const TextDataBase& textData, UINT32 width, UINT32 height,
+	UINT32 TextSprite::GenTextQuads(const TextDataBase& textData, UINT32 width, UINT32 height,
 		TextHorzAlign horzAlign, TextVertAlign vertAlign, SpriteAnchor anchor, Vector2* vertices, Vector2* uv, UINT32* indices, UINT32 bufferSizeQuads)
 	{
 		UINT32 numLines = textData.getNumLines();
@@ -144,7 +144,7 @@ namespace bs
 		return quadOffset;
 	}
 
-	void TextSprite::getAlignmentOffsets(const TextDataBase& textData,
+	void TextSprite::GetAlignmentOffsets(const TextDataBase& textData,
 		UINT32 width, UINT32 height, TextHorzAlign horzAlign, TextVertAlign vertAlign, Vector2I* output)
 	{
 		UINT32 numLines = textData.getNumLines();
@@ -196,7 +196,7 @@ namespace bs
 		}
 	}
 
-	void TextSprite::clearMesh()
+	void TextSprite::ClearMesh()
 	{
 		for (auto& renderElem : mCachedRenderElements)
 		{

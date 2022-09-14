@@ -18,12 +18,12 @@ namespace bs
 
 		ScriptParticleForce(MonoObject* managedInstance, const SPtr<ParticleForce>& value);
 
-		static MonoObject* create(const SPtr<ParticleForce>& value);
+		static MonoObject* Create(const SPtr<ParticleForce>& value);
 
 	private:
-		static void Internal_setOptions(ScriptParticleForce* thisPtr, __PARTICLE_FORCE_DESCInterop* options);
-		static void Internal_getOptions(ScriptParticleForce* thisPtr, __PARTICLE_FORCE_DESCInterop* __output);
-		static void Internal_create(MonoObject* managedInstance, __PARTICLE_FORCE_DESCInterop* desc);
-		static void Internal_create0(MonoObject* managedInstance);
+		static void InternalSetOptions(ScriptParticleForce* thisPtr, __PARTICLE_FORCE_DESCInterop* options);
+		static void InternalGetOptions(ScriptParticleForce* thisPtr, __PARTICLE_FORCE_DESCInterop* __output);
+		static void InternalCreate(MonoObject* managedInstance, __PARTICLE_FORCE_DESCInterop* desc);
+		static void InternalCreate0(MonoObject* managedInstance);
 	};
 }

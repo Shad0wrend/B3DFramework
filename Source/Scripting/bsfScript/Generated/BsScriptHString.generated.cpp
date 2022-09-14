@@ -15,40 +15,40 @@ namespace bs
 
 	void ScriptHString::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_HString", (void*)&ScriptHString::Internal_HString);
-		metaData.scriptClass->addInternalCall("Internal_HString0", (void*)&ScriptHString::Internal_HString0);
-		metaData.scriptClass->addInternalCall("Internal_HString1", (void*)&ScriptHString::Internal_HString1);
-		metaData.scriptClass->addInternalCall("Internal_HString2", (void*)&ScriptHString::Internal_HString2);
-		metaData.scriptClass->addInternalCall("Internal_getValue", (void*)&ScriptHString::Internal_getValue);
-		metaData.scriptClass->addInternalCall("Internal_setParameter", (void*)&ScriptHString::Internal_setParameter);
+		metaData.scriptClass->AddInternalCall("Internal_HString", (void*)&ScriptHString::InternalHString);
+		metaData.scriptClass->AddInternalCall("Internal_HString0", (void*)&ScriptHString::InternalHString0);
+		metaData.scriptClass->AddInternalCall("Internal_HString1", (void*)&ScriptHString::InternalHString1);
+		metaData.scriptClass->AddInternalCall("Internal_HString2", (void*)&ScriptHString::InternalHString2);
+		metaData.scriptClass->AddInternalCall("Internal_getValue", (void*)&ScriptHString::InternalGetValue);
+		metaData.scriptClass->AddInternalCall("Internal_setParameter", (void*)&ScriptHString::InternalSetParameter);
 
 	}
 
-	MonoObject* ScriptHString::create(const SPtr<HString>& value)
+	MonoObject* ScriptHString::Create(const SPtr<HString>& value)
 	{
 		if(value == nullptr) return nullptr; 
 
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptHString>()) ScriptHString(managedInstance, value);
 		return managedInstance;
 	}
-	void ScriptHString::Internal_HString(MonoObject* managedInstance, MonoString* identifier, uint32_t stringTableId)
+	void ScriptHString::InternalHString(MonoObject* managedInstance, MonoString* identifier, uint32_t stringTableId)
 	{
 		String tmpidentifier;
-		tmpidentifier = MonoUtil::monoToString(identifier);
+		tmpidentifier = MonoUtil::MonoToString(identifier);
 		SPtr<HString> instance = bs_shared_ptr_new<HString>(tmpidentifier, stringTableId);
 		new (bs_alloc<ScriptHString>())ScriptHString(managedInstance, instance);
 	}
 
-	void ScriptHString::Internal_HString0(MonoObject* managedInstance, MonoString* identifier, MonoString* defaultString, uint32_t stringTableId)
+	void ScriptHString::InternalHString0(MonoObject* managedInstance, MonoString* identifier, MonoString* defaultString, uint32_t stringTableId)
 	{
 		String tmpidentifier;
-		tmpidentifier = MonoUtil::monoToString(identifier);
+		tmpidentifier = MonoUtil::MonoToString(identifier);
 		String tmpdefaultString;
-		tmpdefaultString = MonoUtil::monoToString(defaultString);
+		tmpdefaultString = MonoUtil::MonoToString(defaultString);
 		SPtr<HString> instance = bs_shared_ptr_new<HString>(tmpidentifier, tmpdefaultString, stringTableId);
 		new (bs_alloc<ScriptHString>())ScriptHString(managedInstance, instance);
 	}
@@ -59,13 +59,13 @@ namespace bs
 		new (bs_alloc<ScriptHString>())ScriptHString(managedInstance, instance);
 	}
 
-	void ScriptHString::Internal_HString2(MonoObject* managedInstance)
+	void ScriptHString::InternalHString2(MonoObject* managedInstance)
 	{
 		SPtr<HString> instance = bs_shared_ptr_new<HString>();
 		new (bs_alloc<ScriptHString>())ScriptHString(managedInstance, instance);
 	}
 
-	MonoString* ScriptHString::Internal_getValue(ScriptHString* thisPtr)
+	MonoString* ScriptHString::InternalGetValue(ScriptHString* thisPtr)
 	{
 		String tmp__output;
 		tmp__output = thisPtr->getInternal()->getValue();
@@ -76,7 +76,7 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptHString::Internal_setParameter(ScriptHString* thisPtr, uint32_t idx, MonoString* value)
+	void ScriptHString::InternalSetParameter(ScriptHString* thisPtr, uint32_t idx, MonoString* value)
 	{
 		String tmpvalue;
 		tmpvalue = MonoUtil::monoToString(value);

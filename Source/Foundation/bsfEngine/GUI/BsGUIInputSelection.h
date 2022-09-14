@@ -20,10 +20,10 @@ namespace bs
 		~GUIInputSelection();
 
 		/**	Returns sprites representing the currently selected areas. */
-		const Vector<ImageSprite*>& getSprites() const { return mSprites; }
+		const Vector<ImageSprite*>& GetSprites() const { return mSprites; }
 
 		/** Returns how much to offset the sprite with the specified index, relative to the parent widget. */
-		Vector2I getSelectionSpriteOffset(UINT32 spriteIdx) const;
+		Vector2I GetSelectionSpriteOffset(UINT32 spriteIdx) const;
 
 		/**
 		 * Returns clip rectangle relative to parent GUI element for the sprite with the specified index.
@@ -32,10 +32,10 @@ namespace bs
 		 * @param[in]	parentClipRect	Clip rectangle of the parent GUI element. Selection clip rectangle will
 		 *								additionally be clipped by this area. Relative to parent element.
 		 */
-		Rect2I getSelectionSpriteClipRect(UINT32 spriteIdx, const Rect2I& parentClipRect) const;
+		Rect2I GetSelectionSpriteClipRect(UINT32 spriteIdx, const Rect2I& parentClipRect) const;
 
 		/**	Recreates the selection clip sprites. */
-		void updateSprite();
+		void UpdateSprite();
 
 		/**
 		 * Shows the selection using the specified anchor. By default this will select 0 characters so you must manually
@@ -45,47 +45,47 @@ namespace bs
 		 *								area behavior when the input caret moves (determines whether left or right side of
 		 *								the selection will move with the caret).
 		 */
-		void showSelection(UINT32 anchorCaretPos);
+		void ShowSelection(UINT32 anchorCaretPos);
 
 		/**	
 		 * Clears the currently active selection. Note this does not clear the internal selection range, just the
 		 * selection sprites.
 		 */
-		void clearSelectionVisuals();
+		void ClearSelectionVisuals();
 
 		/**
 		 * Moves the selection to caret. Selected area will be from the anchor provided in showSelection() to the caret
 		 * position provided here.
 		 */
-		void moveSelectionToCaret(UINT32 caretPos);
+		void MoveSelectionToCaret(UINT32 caretPos);
 
 		/**	Checks is anything selected. */
-		bool isSelectionEmpty() const;
+		bool IsSelectionEmpty() const;
 
 		/**	Selects all available text. */
-		void selectAll();
+		void SelectAll();
 
 		/**
 		 * Starts selection drag at the specified caret position. Call selectionDragUpdate() and selectionDragEnd() as the
 		 * drag operation progresses.
 		 */
-		void selectionDragStart(UINT32 caretPos);
+		void SelectionDragStart(UINT32 caretPos);
 
 		/**	Updates selection drag at the specified caret position. */
-		void selectionDragUpdate(UINT32 caretPos);
+		void SelectionDragUpdate(UINT32 caretPos);
 
 		/**	Stops selection drag. */
-		void selectionDragEnd();
+		void SelectionDragEnd();
 
 		/**	Gets caret index of selection start. */
-		UINT32 getSelectionStart() const { return mSelectionStart; }
+		UINT32 GetSelectionStart() const { return mSelectionStart; }
 
 		/**	Gets caret index of selection end. */
-		UINT32 getSelectionEnd() const { return mSelectionEnd; }
+		UINT32 GetSelectionEnd() const { return mSelectionEnd; }
 
 	private:
 		/** Returns rectangles describing the currently selected areas. Rectangles are relative to parent GUI element. */
-		Vector<Rect2I> getSelectionRects() const;
+		Vector<Rect2I> GetSelectionRects() const;
 
 	private:
 		UINT32 mSelectionStart = 0;

@@ -17,13 +17,13 @@ namespace bs
 	class BS_SCR_BE_EXPORT BS_SCRIPT_EXPORT(e:PhysicsMesh) PhysicsMeshEx
 	{
 	public:
-		/** @copydoc PhysicsMesh::create() */
+		/** @copydoc PhysicsMesh::Create() */
 		BS_SCRIPT_EXPORT(ec:PhysicsMesh)
-		static HPhysicsMesh create(const SPtr<RendererMeshData>& meshData, PhysicsMeshType type = PhysicsMeshType::Convex);
+		static HPhysicsMesh Create(const SPtr<RendererMeshData>& meshData, PhysicsMeshType type = PhysicsMeshType::Convex);
 
 		/** @copydoc PhysicsMesh::getMeshData() */
 		BS_SCRIPT_EXPORT(e:PhysicsMesh,n:MeshData,pr:getter)
-		static SPtr<RendererMeshData> getMeshData(const HPhysicsMesh& thisPtr);
+		static SPtr<RendererMeshData> GetMeshData(const HPhysicsMesh& thisPtr);
 	};
 
 	/** @endcond */

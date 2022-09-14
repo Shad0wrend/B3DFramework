@@ -20,19 +20,19 @@ namespace bs
 	class RenderTargetRTTI : public RTTIType<RenderTarget, IReflectable, RenderTargetRTTI>
 	{
 	public:
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			BS_EXCEPT(InvalidStateException, "Unable to instantiate abstract class.");
 			return nullptr;
 		}
 
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "RenderTarget";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_RenderTarget;
 		}
@@ -47,13 +47,13 @@ namespace bs
 			return nullptr;
 		}
 
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "RenderTexture";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_RenderTexture;
 		}
@@ -68,13 +68,13 @@ namespace bs
 			return nullptr;
 		}
 
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "RenderWindow";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_RenderWindow;
 		}

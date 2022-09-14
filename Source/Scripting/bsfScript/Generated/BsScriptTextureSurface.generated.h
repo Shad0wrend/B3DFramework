@@ -13,8 +13,8 @@ namespace bs
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "TextureSurface")
 
-		static MonoObject* box(const TextureSurface& value);
-		static TextureSurface unbox(MonoObject* value);
+		static MonoObject* Box(const TextureSurface& value);
+		static TextureSurface Unbox(MonoObject* value);
 
 	private:
 		ScriptTextureSurface(MonoObject* managedInstance);

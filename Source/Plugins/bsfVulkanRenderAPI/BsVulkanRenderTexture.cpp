@@ -26,12 +26,12 @@ namespace bs
 
 	VulkanRenderTexture::~VulkanRenderTexture()
 	{
-		mFramebuffer->destroy();
+		mFramebuffer->Destroy();
 	}
 
 	void VulkanRenderTexture::initialize()
 	{
-		RenderTexture::initialize();
+		initialize();
 
 		VULKAN_RENDER_PASS_DESC rpDesc;
 		rpDesc.numSamples = mProperties.multisampleCount > 1 ? mProperties.multisampleCount : 1;
@@ -50,12 +50,12 @@ namespace bs
 			const SPtr<TextureView>& view = mColorSurfaces[i];
 			VulkanTexture* texture = static_cast<VulkanTexture*>(mDesc.colorSurfaces[i].texture.get());
 
-			VulkanImage* image = texture->getResource(mDeviceIdx);
+			VulkanImage* image = texture->GetResource(mDeviceIdx);
 			if (image == nullptr)
 				continue;
 
 			TextureSurface surface;
-			surface.mipLevel = view->getMostDetailedMip();
+			surface.mipLevel = view->GetMostDetailedMip();
 			surface.numMipLevels = view->getNumMips();
 
 			if (texture->getProperties().getTextureType() == TEX_TYPE_3D)
@@ -129,14 +129,14 @@ namespace bs
 			}
 		}
 
-		VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::instance());
+		VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
 		SPtr<VulkanDevice> device = rapi.GetDeviceInternal(mDeviceIdx);
 
-		VulkanRenderPass* renderPass = VulkanRenderPasses::instance().get(device->getLogical(), rpDesc);
+		VulkanRenderPass* renderPass = VulkanRenderPasses::Instance().get(device->getLogical(), rpDesc);
 		mFramebuffer = device->getResourceManager().create<VulkanFramebuffer>(renderPass, fbDesc);
 	}
 
-	void VulkanRenderTexture::getCustomAttribute(const String& name, void* data) const
+	void VulkanRenderTexture::GetCustomAttribute(const String& name, void* data) const
 	{
 		if (name == "FB")
 		{

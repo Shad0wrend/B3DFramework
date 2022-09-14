@@ -46,8 +46,8 @@ namespace bs
 
 				if (!row.disabled)
 				{
-					row.labelLayout->setVisible(false);
-					row.contentLayout->setVisible(false);
+					row.labelLayout->SetVisible(false);
+					row.contentLayout->SetVisible(false);
 					row.disabled = true;
 				}
 			}
@@ -55,7 +55,7 @@ namespace bs
 			rows.resize(curIdx);
 		}
 
-		void addData(UINT32 depth, const String& name, float pctOfParent, UINT32 numCalls, UINT64 numAllocs,
+		void AddData(UINT32 depth, const String& name, float pctOfParent, UINT32 numCalls, UINT64 numAllocs,
 			UINT64 numFrees, double avgTime, double totalTime, double avgSelfTime, double totalSelfTime)
 		{
 			if(curIdx >= rows.size())
@@ -75,7 +75,7 @@ namespace bs
 				newRow.avgTimeSelf = HEString(u8"{0}");
 				newRow.totalTimeSelf = HEString(u8"{0}");
 
-				newRow.labelLayout = labelLayout.insertNewElement<GUILayoutX>(labelLayout.getNumChildren() - 1); // Insert before flexible space
+				newRow.labelLayout = labelLayout.InsertNewElement<GUILayoutX>(labelLayout.getNumChildren() - 1); // Insert before flexible space
 				newRow.contentLayout = contentLayout.insertNewElement<GUILayoutX>(contentLayout.getNumChildren() - 1); // Insert before flexible space
 
 				newRow.labelSpace = newRow.labelLayout->addNewElement<GUIFixedSpace>(0);
@@ -156,7 +156,7 @@ namespace bs
 			rows.resize(curIdx);
 		}
 
-		void addData(UINT32 depth, const String& name, float pctOfParent, UINT32 numCalls, UINT64 numAllocs,
+		void AddData(UINT32 depth, const String& name, float pctOfParent, UINT32 numCalls, UINT64 numAllocs,
 			UINT64 numFrees, UINT64 avgCycles, UINT64 totalCycles, UINT64 avgSelfCycles, UINT64 totalSelfCycles)
 		{
 			if(curIdx >= rows.size())
@@ -258,7 +258,7 @@ namespace bs
 			rows.resize(curIdx);
 		}
 
-		void addData(UINT32 depth, const String& name, float timeMs)
+		void AddData(UINT32 depth, const String& name, float timeMs)
 		{
 			if (curIdx >= rows.size())
 			{
@@ -314,7 +314,7 @@ namespace bs
 			mWidgetSO->destroy();
 	}
 
-	void ProfilerOverlay::setTarget(const SPtr<Camera>& camera)
+	void ProfilerOverlay::SetTarget(const SPtr<Camera>& camera)
 	{
 		if(mTarget != nullptr)
 			mTargetResizedConn.disconnect();
@@ -326,10 +326,10 @@ namespace bs
 		if(mWidgetSO)
 			mWidgetSO->destroy();
 
-		mWidgetSO = SceneObject::create("ProfilerOverlay", SOF_Internal | SOF_Persistent | SOF_DontSave);
+		mWidgetSO = SceneObject::Create("ProfilerOverlay", SOF_Internal | SOF_Persistent | SOF_DontSave);
 		mWidget = mWidgetSO->addComponent<CGUIWidget>(camera);
 		mWidget->setDepth(127);
-		mWidget->setSkin(BuiltinResources::instance().getGUISkin());
+		mWidget->setSkin(BuiltinResources::Instance().getGUISkin());
 
 		// Set up CPU sample areas
 		mBasicLayoutLabels = mWidget->getPanel()->addNewElement<GUILayoutY>();
@@ -338,25 +338,25 @@ namespace bs
 		mPreciseLayoutContents = mWidget->getPanel()->addNewElement<GUILayoutY>();
 
 		// Set up CPU sample title bars
-		mTitleBasicName = GUILabel::create(HEString(u8"Name"), GUIOptions(GUIOption::fixedWidth(200)));
-		mTitleBasicPctOfParent = GUILabel::create(HEString(u8"% parent"), GUIOptions(GUIOption::fixedWidth(50)));
-		mTitleBasicNumCalls = GUILabel::create(HEString(u8"# calls"), GUIOptions(GUIOption::fixedWidth(50)));
-		mTitleBasicNumAllocs = GUILabel::create(HEString(u8"# allocs"), GUIOptions(GUIOption::fixedWidth(50)));
-		mTitleBasicNumFrees = GUILabel::create(HEString(u8"# frees"), GUIOptions(GUIOption::fixedWidth(50)));
-		mTitleBasicAvgTime = GUILabel::create(HEString(u8"Avg. time"), GUIOptions(GUIOption::fixedWidth(60)));
-		mTitleBasicTotalTime = GUILabel::create(HEString(u8"Total time"), GUIOptions(GUIOption::fixedWidth(60)));
-		mTitleBasicAvgTitleSelf = GUILabel::create(HEString(u8"Avg. self time"), GUIOptions(GUIOption::fixedWidth(100)));
-		mTitleBasicTotalTimeSelf = GUILabel::create(HEString(u8"Total self time"), GUIOptions(GUIOption::fixedWidth(100)));
+		mTitleBasicName = GUILabel::Create(HEString(u8"Name"), GUIOptions(GUIOption::fixedWidth(200)));
+		mTitleBasicPctOfParent = GUILabel::Create(HEString(u8"% parent"), GUIOptions(GUIOption::fixedWidth(50)));
+		mTitleBasicNumCalls = GUILabel::Create(HEString(u8"# calls"), GUIOptions(GUIOption::fixedWidth(50)));
+		mTitleBasicNumAllocs = GUILabel::Create(HEString(u8"# allocs"), GUIOptions(GUIOption::fixedWidth(50)));
+		mTitleBasicNumFrees = GUILabel::Create(HEString(u8"# frees"), GUIOptions(GUIOption::fixedWidth(50)));
+		mTitleBasicAvgTime = GUILabel::Create(HEString(u8"Avg. time"), GUIOptions(GUIOption::fixedWidth(60)));
+		mTitleBasicTotalTime = GUILabel::Create(HEString(u8"Total time"), GUIOptions(GUIOption::fixedWidth(60)));
+		mTitleBasicAvgTitleSelf = GUILabel::Create(HEString(u8"Avg. self time"), GUIOptions(GUIOption::fixedWidth(100)));
+		mTitleBasicTotalTimeSelf = GUILabel::Create(HEString(u8"Total self time"), GUIOptions(GUIOption::fixedWidth(100)));
 
-		mTitlePreciseName = GUILabel::create(HEString(u8"Name"), GUIOptions(GUIOption::fixedWidth(200)));
-		mTitlePrecisePctOfParent = GUILabel::create(HEString(u8"% parent"), GUIOptions(GUIOption::fixedWidth(50)));
-		mTitlePreciseNumCalls = GUILabel::create(HEString(u8"# calls"), GUIOptions(GUIOption::fixedWidth(50)));
-		mTitlePreciseNumAllocs = GUILabel::create(HEString(u8"# allocs"), GUIOptions(GUIOption::fixedWidth(50)));
-		mTitlePreciseNumFrees = GUILabel::create(HEString(u8"# frees"), GUIOptions(GUIOption::fixedWidth(50)));
-		mTitlePreciseAvgCycles = GUILabel::create(HEString(u8"Avg. cycles"), GUIOptions(GUIOption::fixedWidth(60)));
-		mTitlePreciseTotalCycles = GUILabel::create(HEString(u8"Total cycles"), GUIOptions(GUIOption::fixedWidth(60)));
-		mTitlePreciseAvgCyclesSelf = GUILabel::create(HEString(u8"Avg. self cycles"), GUIOptions(GUIOption::fixedWidth(100)));
-		mTitlePreciseTotalCyclesSelf = GUILabel::create(HEString(u8"Total self cycles"), GUIOptions(GUIOption::fixedWidth(100)));
+		mTitlePreciseName = GUILabel::Create(HEString(u8"Name"), GUIOptions(GUIOption::fixedWidth(200)));
+		mTitlePrecisePctOfParent = GUILabel::Create(HEString(u8"% parent"), GUIOptions(GUIOption::fixedWidth(50)));
+		mTitlePreciseNumCalls = GUILabel::Create(HEString(u8"# calls"), GUIOptions(GUIOption::fixedWidth(50)));
+		mTitlePreciseNumAllocs = GUILabel::Create(HEString(u8"# allocs"), GUIOptions(GUIOption::fixedWidth(50)));
+		mTitlePreciseNumFrees = GUILabel::Create(HEString(u8"# frees"), GUIOptions(GUIOption::fixedWidth(50)));
+		mTitlePreciseAvgCycles = GUILabel::Create(HEString(u8"Avg. cycles"), GUIOptions(GUIOption::fixedWidth(60)));
+		mTitlePreciseTotalCycles = GUILabel::Create(HEString(u8"Total cycles"), GUIOptions(GUIOption::fixedWidth(60)));
+		mTitlePreciseAvgCyclesSelf = GUILabel::Create(HEString(u8"Avg. self cycles"), GUIOptions(GUIOption::fixedWidth(100)));
+		mTitlePreciseTotalCyclesSelf = GUILabel::Create(HEString(u8"Total self cycles"), GUIOptions(GUIOption::fixedWidth(100)));
 
 		GUILayout* basicTitleLabelLayout = mBasicLayoutLabels->addNewElement<GUILayoutX>();
 		GUILayout* preciseTitleLabelLayout = mPreciseLayoutLabels->addNewElement<GUILayoutX>();
@@ -410,8 +410,8 @@ namespace bs
 
 			HString gpuSamplesNameStr(u8"__ProfOvGPUSampName", u8"Name");
 			HString gpuSamplesTimeStr(u8"__ProfOvGPUSampTime", u8"Time");
-			mGPULayoutSampleLabels[i]->addElement(GUILabel::create(gpuSamplesNameStr, GUIOptions(GUIOption::fixedWidth(200))));
-			mGPULayoutSampleContents[i]->addElement(GUILabel::create(gpuSamplesTimeStr, GUIOptions(GUIOption::fixedWidth(100))));
+			mGPULayoutSampleLabels[i]->addElement(GUILabel::Create(gpuSamplesNameStr, GUIOptions(GUIOption::fixedWidth(200))));
+			mGPULayoutSampleContents[i]->addElement(GUILabel::Create(gpuSamplesTimeStr, GUIOptions(GUIOption::fixedWidth(100))));
 
 			mGPULayoutSampleLabels[i]->addNewElement<GUIFlexibleSpace>();
 			mGPULayoutSampleContents[i]->addNewElement<GUIFlexibleSpace>();
@@ -436,24 +436,24 @@ namespace bs
 		mGPUVertexBufferBindsStr = HEString(u8"__ProfOvVBBinds", u8"VB binds: {0}");
 		mGPUIndexBufferBindsStr = HEString(u8"__ProfOvIBBinds", u8"IB binds: {0}");
 
-		mGPUFrameNumLbl = GUILabel::create(mGPUFrameNumStr, GUIOptions(GUIOption::fixedWidth(200)));
-		mGPUTimeLbl = GUILabel::create(mGPUTimeStr, GUIOptions(GUIOption::fixedWidth(200)));
-		mGPUDrawCallsLbl = GUILabel::create(mGPUDrawCallsStr, GUIOptions(GUIOption::fixedWidth(200)));
-		mGPURenTargetChangesLbl = GUILabel::create(mGPURenTargetChangesStr, GUIOptions(GUIOption::fixedWidth(200)));
-		mGPUPresentsLbl = GUILabel::create(mGPUPresentsStr, GUIOptions(GUIOption::fixedWidth(200)));
-		mGPUClearsLbl = GUILabel::create(mGPUClearsStr, GUIOptions(GUIOption::fixedWidth(200)));
-		mGPUVerticesLbl = GUILabel::create(mGPUVerticesStr, GUIOptions(GUIOption::fixedWidth(200)));
-		mGPUPrimitivesLbl = GUILabel::create(mGPUPrimitivesStr, GUIOptions(GUIOption::fixedWidth(200)));
-		mGPUSamplesLbl = GUILabel::create(mGPUSamplesStr, GUIOptions(GUIOption::fixedWidth(200)));
-		mGPUPipelineStateChangesLbl = GUILabel::create(mGPUPipelineStateChangesStr, GUIOptions(GUIOption::fixedWidth(200)));
+		mGPUFrameNumLbl = GUILabel::Create(mGPUFrameNumStr, GUIOptions(GUIOption::fixedWidth(200)));
+		mGPUTimeLbl = GUILabel::Create(mGPUTimeStr, GUIOptions(GUIOption::fixedWidth(200)));
+		mGPUDrawCallsLbl = GUILabel::Create(mGPUDrawCallsStr, GUIOptions(GUIOption::fixedWidth(200)));
+		mGPURenTargetChangesLbl = GUILabel::Create(mGPURenTargetChangesStr, GUIOptions(GUIOption::fixedWidth(200)));
+		mGPUPresentsLbl = GUILabel::Create(mGPUPresentsStr, GUIOptions(GUIOption::fixedWidth(200)));
+		mGPUClearsLbl = GUILabel::Create(mGPUClearsStr, GUIOptions(GUIOption::fixedWidth(200)));
+		mGPUVerticesLbl = GUILabel::Create(mGPUVerticesStr, GUIOptions(GUIOption::fixedWidth(200)));
+		mGPUPrimitivesLbl = GUILabel::Create(mGPUPrimitivesStr, GUIOptions(GUIOption::fixedWidth(200)));
+		mGPUSamplesLbl = GUILabel::Create(mGPUSamplesStr, GUIOptions(GUIOption::fixedWidth(200)));
+		mGPUPipelineStateChangesLbl = GUILabel::Create(mGPUPipelineStateChangesStr, GUIOptions(GUIOption::fixedWidth(200)));
 
-		mGPUObjectsCreatedLbl = GUILabel::create(mGPUObjectsCreatedStr, GUIOptions(GUIOption::fixedWidth(200)));
-		mGPUObjectsDestroyedLbl = GUILabel::create(mGPUObjectsDestroyedStr, GUIOptions(GUIOption::fixedWidth(200)));
-		mGPUResourceWritesLbl = GUILabel::create(mGPUResourceWritesStr, GUIOptions(GUIOption::fixedWidth(200)));
-		mGPUResourceReadsLbl = GUILabel::create(mGPUResourceReadsStr, GUIOptions(GUIOption::fixedWidth(200)));
-		mGPUParamBindsLbl = GUILabel::create(mGPUParamBindsStr, GUIOptions(GUIOption::fixedWidth(200)));
-		mGPUVertexBufferBindsLbl = GUILabel::create(mGPUVertexBufferBindsStr, GUIOptions(GUIOption::fixedWidth(200)));
-		mGPUIndexBufferBindsLbl = GUILabel::create(mGPUIndexBufferBindsStr, GUIOptions(GUIOption::fixedWidth(200)));
+		mGPUObjectsCreatedLbl = GUILabel::Create(mGPUObjectsCreatedStr, GUIOptions(GUIOption::fixedWidth(200)));
+		mGPUObjectsDestroyedLbl = GUILabel::Create(mGPUObjectsDestroyedStr, GUIOptions(GUIOption::fixedWidth(200)));
+		mGPUResourceWritesLbl = GUILabel::Create(mGPUResourceWritesStr, GUIOptions(GUIOption::fixedWidth(200)));
+		mGPUResourceReadsLbl = GUILabel::Create(mGPUResourceReadsStr, GUIOptions(GUIOption::fixedWidth(200)));
+		mGPUParamBindsLbl = GUILabel::Create(mGPUParamBindsStr, GUIOptions(GUIOption::fixedWidth(200)));
+		mGPUVertexBufferBindsLbl = GUILabel::Create(mGPUVertexBufferBindsStr, GUIOptions(GUIOption::fixedWidth(200)));
+		mGPUIndexBufferBindsLbl = GUILabel::Create(mGPUIndexBufferBindsStr, GUIOptions(GUIOption::fixedWidth(200)));
 
 		mGPULayoutFrameContentsLeft->addElement(mGPUFrameNumLbl);
 		mGPULayoutFrameContentsLeft->addElement(mGPUTimeLbl);
@@ -476,21 +476,21 @@ namespace bs
 		mGPULayoutFrameContentsRight->addElement(mGPUIndexBufferBindsLbl);
 		mGPULayoutFrameContentsRight->addNewElement<GUIFlexibleSpace>();
 
-		updateCPUSampleAreaSizes();
-		updateGPUSampleAreaSizes();
+		UpdateCpuSampleAreaSizes();
+		UpdateGpuSampleAreaSizes();
 
 		if (!mIsShown)
-			hide();
+			Hide();
 		else
 		{
 			if (mType == ProfilerOverlayType::CPUSamples)
-				show(ProfilerOverlayType::CPUSamples);
+				Show(ProfilerOverlayType::CPUSamples);
 			else
-				show(ProfilerOverlayType::GPUSamples);
+				Show(ProfilerOverlayType::GPUSamples);
 		}
 	}
 
-	void ProfilerOverlay::show(ProfilerOverlayType type)
+	void ProfilerOverlay::Show(ProfilerOverlayType type)
 	{
 		if (type == ProfilerOverlayType::CPUSamples)
 		{
@@ -515,7 +515,7 @@ namespace bs
 		mIsShown = true;
 	}
 
-	void ProfilerOverlay::hide()
+	void ProfilerOverlay::Hide()
 	{
 		mBasicLayoutLabels->setVisible(false);
 		mPreciseLayoutLabels->setVisible(false);
@@ -526,33 +526,33 @@ namespace bs
 		mIsShown = false;
 	}
 
-	void ProfilerOverlay::update()
+	void ProfilerOverlay::Update()
 	{
-		const ProfilerReport& latestSimReport = ProfilingManager::instance().getReport(ProfiledThread::Sim);
-		const ProfilerReport& latestCoreReport = ProfilingManager::instance().getReport(ProfiledThread::Core);
+		const ProfilerReport& latestSimReport = ProfilingManager::Instance().getReport(ProfiledThread::Sim);
+		const ProfilerReport& latestCoreReport = ProfilingManager::Instance().getReport(ProfiledThread::Core);
 
-		updateCPUSampleContents(latestSimReport, latestCoreReport);
+		UpdateCpuSampleContents(latestSimReport, latestCoreReport);
 
-		while (ProfilerGPU::instance().getNumAvailableReports() > 1)
-			ProfilerGPU::instance().getNextReport(); // Drop any extra reports, we only want the latest
+		while (ProfilerGPU::Instance().getNumAvailableReports() > 1)
+			ProfilerGPU::Instance().getNextReport(); // Drop any extra reports, we only want the latest
 
-		if (ProfilerGPU::instance().getNumAvailableReports() > 0)
+		if (ProfilerGPU::Instance().getNumAvailableReports() > 0)
 		{
-			GPUProfilerReport report = ProfilerGPU::instance().getNextReport();
+			GPUProfilerReport report = ProfilerGPU::Instance().getNextReport();
 
 			// TODO - Currently displaying just the first view. I need to add a way to toggle between views
 			if(!report.viewSamples.empty())
-				updateGPUSampleContents(report.viewSamples[0]);
+				UpdateGpuSampleContents(report.viewSamples[0]);
 		}
 	}
 
-	void ProfilerOverlay::targetResized()
+	void ProfilerOverlay::TargetResized()
 	{
-		updateCPUSampleAreaSizes();
-		updateGPUSampleAreaSizes();
+		UpdateCpuSampleAreaSizes();
+		UpdateGpuSampleAreaSizes();
 	}
 
-	void ProfilerOverlay::updateCPUSampleAreaSizes()
+	void ProfilerOverlay::UpdateCpuSampleAreaSizes()
 	{
 		static const INT32 PADDING = 10;
 		static const float LABELS_CONTENT_RATIO = 0.3f;
@@ -580,7 +580,7 @@ namespace bs
 		mPreciseLayoutContents->setHeight(height);
 	}
 
-	void ProfilerOverlay::updateGPUSampleAreaSizes()
+	void ProfilerOverlay::UpdateGpuSampleAreaSizes()
 	{
 		static const INT32 PADDING = 10;
 		static const float SAMPLES_FRAME_RATIO = 0.25f;
@@ -618,7 +618,7 @@ namespace bs
 		mNumGPUSamplesPerColumn = columnHeight / HEIGHT_PER_ENTRY;
 	}
 
-	void ProfilerOverlay::updateCPUSampleContents(const ProfilerReport& simReport, const ProfilerReport& coreReport)
+	void ProfilerOverlay::UpdateCpuSampleContents(const ProfilerReport& simReport, const ProfilerReport& coreReport)
 	{
 		static const UINT32 NUM_ROOT_ENTRIES = 2;
 
@@ -665,7 +665,7 @@ namespace bs
 				todoBasic.pop();
 
 				const CPUProfilerBasicSamplingEntry::Data& data = curEntry.entry.data;
-				basicRowFiller.addData(curEntry.depth, data.name, data.pctOfParent, data.numCalls, data.memAllocs, data.memFrees,
+				basicRowFiller.AddData(curEntry.depth, data.name, data.pctOfParent, data.numCalls, data.memAllocs, data.memFrees,
 					data.avgTimeMs, data.totalTimeMs, data.avgSelfTimeMs, data.totalSelfTimeMs);
 
 				if(curEntry.depth <= MAX_DEPTH)
@@ -695,7 +695,7 @@ namespace bs
 				todoPrecise.pop();
 
 				const CPUProfilerPreciseSamplingEntry::Data& data = curEntry.entry.data;
-				preciseRowFiller.addData(curEntry.depth, data.name, data.pctOfParent, data.numCalls, data.memAllocs, data.memFrees,
+				preciseRowFiller.AddData(curEntry.depth, data.name, data.pctOfParent, data.numCalls, data.memAllocs, data.memFrees,
 					data.avgCycles, data.totalCycles, data.avgSelfCycles, data.totalSelfCycles);
 
 				if(curEntry.depth <= MAX_DEPTH)
@@ -709,7 +709,7 @@ namespace bs
 		}
 	}
 
-	void ProfilerOverlay::updateGPUSampleContents(const GPUProfileSample& frameSample)
+	void ProfilerOverlay::UpdateGpuSampleContents(const GPUProfileSample& frameSample)
 	{
 		mGPUFrameNumStr.setParameter(0, toString((UINT64)gTime().getFrameIdx()));
 		mGPUTimeStr.setParameter(0, toString(frameSample.timeMs));
@@ -780,7 +780,7 @@ namespace bs
 			const GPUProfileSample& data = curEntry.entry;
 
 			if(column < GPU_NUM_SAMPLE_COLUMNS)
-				sampleRowFillers[column].addData(curEntry.depth, data.name, data.timeMs);
+				sampleRowFillers[column].AddData(curEntry.depth, data.name, data.timeMs);
 
 			currentCount++;
 			if (currentCount % mNumGPUSamplesPerColumn == 0)

@@ -26,20 +26,20 @@ namespace bs
 	{
 	public:	
 		/**	Returns the absolute path where the builtin framework-specific assets are located. */
-		static const Path& getDataPath();
+		static const Path& GetDataPath();
 
 		/** Returns the absolute path where the engine binaries are located in. */
-		static const Path& getBinariesPath();
+		static const Path& GetBinariesPath();
 
 #if BS_INCLUDE_B3D_PATHS
 		/**	Returns the absolute path where the builtin editor-specific assets are located. */
-		static const Path& getEditorDataPath();
+		static const Path& GetEditorDataPath();
 
 		/**	Returns the absolute path to the game settings file used by editor-built executables. */
-		static const Path& getGameSettingsPath();
+		static const Path& GetGameSettingsPath();
 
 		/**	Returns the absolute path to the game resources folder used by editor-built executables. */
-		static const Path& getGameResourcesPath();
+		static const Path& GetGameResourcesPath();
 #endif
 		
 		/**
@@ -50,7 +50,7 @@ namespace bs
 		 * @return				Path at which the relative path was found at. This path will be relative to the working
 		 *						directory.
 		 */
-		static Path findPath(const Path& path);
+		static Path FindPath(const Path& path);
 
 		/** Path to the root data directory. Relative to working directory, or RAW_APP_ROOT. */
 		static const Path FRAMEWORK_DATA_PATH;

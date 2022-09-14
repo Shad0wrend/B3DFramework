@@ -5,24 +5,24 @@
 
 namespace bs
 {
-	void Audio::play(const HAudioClip& clip, const Vector3& position, float volume)
+	void Audio::Play(const HAudioClip& clip, const Vector3& position, float volume)
 	{
 		Transform transform;
-		transform.setPosition(position);
+		transform.SetPosition(position);
 
-		SPtr<AudioSource> source = createSource();
-		source->setClip(clip);
-		source->setTransform(transform);
-		source->setVolume(volume);
-		source->play();
+		SPtr<AudioSource> source = CreateSource();
+		source->SetClip(clip);
+		source->SetTransform(transform);
+		source->SetVolume(volume);
+		source->Play();
 
 		mManualSources.push_back(source);
 	}
 
-	void Audio::stopManualSources()
+	void Audio::StopManualSources()
 	{
 		for (auto& source : mManualSources)
-			source->stop();
+			source->Stop();
 
 		mManualSources.clear();
 	}
@@ -32,7 +32,7 @@ namespace bs
 		const UINT32 numSources = (UINT32)mManualSources.size();
 		for(UINT32 i = 0; i < numSources; i++)
 		{
-			if (mManualSources[i]->getState() != AudioSourceState::Stopped)
+			if (mManualSources[i]->GetState() != AudioSourceState::Stopped)
 				mTempSources.push_back(mManualSources[i]);
 		}
 
@@ -42,6 +42,6 @@ namespace bs
 
 	Audio& gAudio()
 	{
-		return Audio::instance();
+		return Audio::Instance();
 	}
 }

@@ -46,20 +46,20 @@ namespace ct
 		RendererLight(Light* light);
 
 		/** Populates the structure with light parameters. */
-		void getParameters(LightData& output) const;
+		void GetParameters(LightData& output) const;
 
 		/**
 		 * Populates the provided parameter block buffer with information about the light. Provided buffer's structure
 		 * must match PerLightParamDef.
 		 */
-		void getParameters(SPtr<GpuParamBlockBuffer>& buffer) const;
+		void GetParameters(SPtr<GpuParamBlockBuffer>& buffer) const;
 		
 		/**
 		 * Calculates the light position that is shifted in order to account for area spot lights. For non-spot lights
 		 * this method will return normal light position. The position will be shifted back from the light direction,
 		 * magnitude of the shift depending on the source radius.
 		 */
-		Vector3 getShiftedLightPosition() const;
+		Vector3 GetShiftedLightPosition() const;
 
 		Light* internal;
 	};
@@ -80,7 +80,7 @@ namespace ct
 		GBufferParams(GpuProgramType type, const SPtr<GpuParams>& gpuParams);
 
 		/** Binds the GBuffer textures to the pipeline. */
-		void bind(const GBufferTextures& gbuffer);
+		void Bind(const GBufferTextures& gbuffer);
 	private:
 		SPtr<GpuParams> mParams;
 
@@ -100,7 +100,7 @@ namespace ct
 		 * @param[in]	clustered	If true, set up parameters for clustered forward rendering. If false, set up parameters
 		 *							for normal forward rendering.
 		 */
-		void populate(const SPtr<GpuParams>& params, bool clustered);
+		void Populate(const SPtr<GpuParams>& params, bool clustered);
 
 		/** Binding indices representing where should lights param block buffer be bound to. */
 		GpuParamBinding gridParamsBindings[GPT_COUNT];
@@ -149,10 +149,10 @@ namespace ct
 		 * Updates the internal buffers with a new set of lights. Before calling make sure that light visibility has
 		 * been calculated for the provided view group.
 		 */
-		void update(const SceneInfo& sceneInfo, const RendererViewGroup& viewGroup);
+		void Update(const SceneInfo& sceneInfo, const RendererViewGroup& viewGroup);
 
 		/** Returns a GPU bindable buffer containing information about every light. */
-		SPtr<GpuBuffer> getLightBuffer() const { return mLightBuffer; }
+		SPtr<GpuBuffer> GetLightBuffer() const { return mLightBuffer; }
 
 		/**
 		 * Scans the list of lights visible in the view frustum to find the ones influencing the object described by
@@ -165,29 +165,29 @@ namespace ct
 		 *
 		 * update() must have been called with most recent scene/view information before calling this method.
 		 */
-		void gatherInfluencingLights(const Bounds& bounds, const LightData* (&output)[STANDARD_FORWARD_MAX_NUM_LIGHTS],
+		void GatherInfluencingLights(const Bounds& bounds, const LightData* (&output)[STANDARD_FORWARD_MAX_NUM_LIGHTS],
 			Vector3I& counts) const;
 
 		/** Returns the number of directional lights in the lights buffer. */
-		UINT32 getNumDirLights() const { return mNumLights[0]; }
+		UINT32 GetNumDirLights() const { return mNumLights[0]; }
 
 		/** Returns the number of radial point lights in the lights buffer. */
-		UINT32 getNumRadialLights() const { return mNumLights[1]; }
+		UINT32 GetNumRadialLights() const { return mNumLights[1]; }
 
 		/** Returns the number of spot point lights in the lights buffer. */
-		UINT32 getNumSpotLights() const { return mNumLights[2]; }
+		UINT32 GetNumSpotLights() const { return mNumLights[2]; }
 
 		/** Returns the number of visible lights of the specified type. */
-		UINT32 getNumLights(LightType type) const { return mNumLights[(UINT32)type]; }
+		UINT32 GetNumLights(LightType type) const { return mNumLights[(UINT32)type]; }
 
 		/** Returns the number of visible shadowed lights of the specified type. */
-		UINT32 getNumShadowedLights(LightType type) const { return mNumShadowedLights[(UINT32)type]; }
+		UINT32 GetNumShadowedLights(LightType type) const { return mNumShadowedLights[(UINT32)type]; }
 
 		/** Returns the number of visible unshadowed lights of the specified type. */
-		UINT32 getNumUnshadowedLights(LightType type) const { return mNumLights[(UINT32)type] - mNumShadowedLights[(UINT32)type]; }
+		UINT32 GetNumUnshadowedLights(LightType type) const { return mNumLights[(UINT32)type] - mNumShadowedLights[(UINT32)type]; }
 
 		/** Returns a list of all visible lights of the specified type. */
-		const Vector<const RendererLight*>& getLights(LightType type) const { return mVisibleLights[(UINT32)type]; }
+		const Vector<const RendererLight*>& GetLights(LightType type) const { return mVisibleLights[(UINT32)type]; }
 	private:
 		SPtr<GpuBuffer> mLightBuffer;
 

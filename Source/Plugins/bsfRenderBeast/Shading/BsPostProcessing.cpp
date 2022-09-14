@@ -44,7 +44,7 @@ namespace bs { namespace ct
 		mParams->getTextureParam(GPT_FRAGMENT_PROGRAM, "gInputTex", mInputTexture);
 	}
 
-	void DownsampleMat::execute(const SPtr<Texture>& input, const SPtr<RenderTarget>& output)
+	void DownsampleMat::Execute(const SPtr<Texture>& input, const SPtr<RenderTarget>& output)
 	{
 		BS_RENMAT_PROFILE_BLOCK
 
@@ -71,7 +71,7 @@ namespace bs { namespace ct
 			gDownsampleParamDef.gOffsets.set(mParamBuffer, invTextureSize * Vector2(1.0f, 1.0f));
 		}
 
-		RenderAPI& rapi = RenderAPI::instance();
+		RenderAPI& rapi = RenderAPI::Instance();
 		rapi.setRenderTarget(output, FBT_DEPTH | FBT_STENCIL);
 
 		bind();
@@ -84,7 +84,7 @@ namespace bs { namespace ct
 		rapi.setRenderTarget(nullptr);
 	}
 
-	POOLED_RENDER_TEXTURE_DESC DownsampleMat::getOutputDesc(const SPtr<Texture>& target)
+	POOLED_RENDER_TEXTURE_DESC DownsampleMat::GetOutputDesc(const SPtr<Texture>& target)
 	{
 		const TextureProperties& rtProps = target->getProperties();
 		
@@ -94,7 +94,7 @@ namespace bs { namespace ct
 		return POOLED_RENDER_TEXTURE_DESC::create2D(rtProps.getFormat(), width, height, TU_RENDERTARGET);
 	}
 
-	DownsampleMat* DownsampleMat::getVariation(UINT32 quality, bool msaa)
+	DownsampleMat* DownsampleMat::GetVariation(UINT32 quality, bool msaa)
 	{
 		if(quality == 0)
 		{
@@ -131,7 +131,7 @@ namespace bs { namespace ct
 		defines.set("LOOP_COUNT_Y", LOOP_COUNT_Y);
 	}
 
-	void EyeAdaptHistogramMat::execute(const SPtr<Texture>& input, const SPtr<Texture>& output,
+	void EyeAdaptHistogramMat::Execute(const SPtr<Texture>& input, const SPtr<Texture>& output,
 		const AutoExposureSettings& settings)
 	{
 		BS_RENMAT_PROFILE_BLOCK
@@ -153,11 +153,11 @@ namespace bs { namespace ct
 
 		bind();
 
-		RenderAPI& rapi = RenderAPI::instance();
+		RenderAPI& rapi = RenderAPI::Instance();
 		rapi.dispatchCompute(threadGroupCount.x, threadGroupCount.y);
 	}
 
-	POOLED_RENDER_TEXTURE_DESC EyeAdaptHistogramMat::getOutputDesc(const SPtr<Texture>& target)
+	POOLED_RENDER_TEXTURE_DESC EyeAdaptHistogramMat::GetOutputDesc(const SPtr<Texture>& target)
 	{
 		Vector2I threadGroupCount = getThreadGroupCount(target);
 		UINT32 numHistograms = threadGroupCount.x * threadGroupCount.y;
@@ -166,7 +166,7 @@ namespace bs { namespace ct
 			TU_LOADSTORE);
 	}
 
-	Vector2I EyeAdaptHistogramMat::getThreadGroupCount(const SPtr<Texture>& target)
+	Vector2I EyeAdaptHistogramMat::GetThreadGroupCount(const SPtr<Texture>& target)
 	{
 		const UINT32 texelsPerThreadGroupX = THREAD_GROUP_SIZE_X * LOOP_COUNT_X;
 		const UINT32 texelsPerThreadGroupY = THREAD_GROUP_SIZE_Y * LOOP_COUNT_Y;
@@ -180,7 +180,7 @@ namespace bs { namespace ct
 		return threadGroupCount;
 	}
 
-	Vector2 EyeAdaptHistogramMat::getHistogramScaleOffset(const AutoExposureSettings& settings)
+	Vector2 EyeAdaptHistogramMat::GetHistogramScaleOffset(const AutoExposureSettings& settings)
 	{
 		float diff = settings.histogramLog2Max - settings.histogramLog2Min;
 		float scale = 1.0f / diff;
@@ -200,7 +200,7 @@ namespace bs { namespace ct
 		mParams->getTextureParam(GPT_FRAGMENT_PROGRAM, "gEyeAdaptationTex", mEyeAdaptationTex);
 	}
 
-	void EyeAdaptHistogramReduceMat::execute(const SPtr<Texture>& sceneColor, const SPtr<Texture>& histogram,
+	void EyeAdaptHistogramReduceMat::Execute(const SPtr<Texture>& sceneColor, const SPtr<Texture>& histogram,
 		const SPtr<Texture>& prevFrame, const SPtr<RenderTarget>& output)
 	{
 		BS_RENMAT_PROFILE_BLOCK
@@ -221,7 +221,7 @@ namespace bs { namespace ct
 
 		gEyeAdaptHistogramReduceParamDef.gThreadGroupCount.set(mParamBuffer, numHistograms);
 
-		RenderAPI& rapi = RenderAPI::instance();
+		RenderAPI& rapi = RenderAPI::Instance();
 		rapi.setRenderTarget(output, FBT_DEPTH | FBT_STENCIL);
 
 		bind();
@@ -232,7 +232,7 @@ namespace bs { namespace ct
 		rapi.setRenderTarget(nullptr);
 	}
 
-	POOLED_RENDER_TEXTURE_DESC EyeAdaptHistogramReduceMat::getOutputDesc()
+	POOLED_RENDER_TEXTURE_DESC EyeAdaptHistogramReduceMat::GetOutputDesc()
 	{
 		return POOLED_RENDER_TEXTURE_DESC::create2D(PF_RGBA16F, EyeAdaptHistogramMat::HISTOGRAM_NUM_TEXELS, 2,
 			TU_RENDERTARGET);
@@ -254,7 +254,7 @@ namespace bs { namespace ct
 		defines.set("THREADGROUP_SIZE_Y", EyeAdaptHistogramMat::THREAD_GROUP_SIZE_Y);
 	}
 
-	void EyeAdaptationMat::execute(const SPtr<Texture>& reducedHistogram, const SPtr<RenderTarget>& output,
+	void EyeAdaptationMat::Execute(const SPtr<Texture>& reducedHistogram, const SPtr<RenderTarget>& output,
 		float frameDelta, const AutoExposureSettings& settings, float exposureScale)
 	{
 		BS_RENMAT_PROFILE_BLOCK
@@ -265,7 +265,7 @@ namespace bs { namespace ct
 		populateParams(mParamBuffer, frameDelta, settings, exposureScale);
 
 		// Render
-		RenderAPI& rapi = RenderAPI::instance();
+		RenderAPI& rapi = RenderAPI::Instance();
 		rapi.setRenderTarget(output, FBT_DEPTH | FBT_STENCIL);
 
 		bind();
@@ -274,15 +274,15 @@ namespace bs { namespace ct
 		rapi.setRenderTarget(nullptr);
 	}
 
-	POOLED_RENDER_TEXTURE_DESC EyeAdaptationMat::getOutputDesc()
+	POOLED_RENDER_TEXTURE_DESC EyeAdaptationMat::GetOutputDesc()
 	{
 		return POOLED_RENDER_TEXTURE_DESC::create2D(PF_R32F, 1, 1, TU_RENDERTARGET);
 	}
 
-	void EyeAdaptationMat::populateParams(const SPtr<GpuParamBlockBuffer>& paramBuffer, float frameDelta,
+	void EyeAdaptationMat::PopulateParams(const SPtr<GpuParamBlockBuffer>& paramBuffer, float frameDelta,
 		const AutoExposureSettings& settings, float exposureScale)
 	{
-		Vector2 histogramScaleAndOffset = EyeAdaptHistogramMat::getHistogramScaleOffset(settings);
+		Vector2 histogramScaleAndOffset = EyeAdaptHistogramMat::GetHistogramScaleOffset(settings);
 
 		Vector4 eyeAdaptationParams[3];
 		eyeAdaptationParams[0].x = histogramScaleAndOffset.x;
@@ -322,11 +322,11 @@ namespace bs { namespace ct
 		desc.magFilter = FO_POINT;
 		desc.mipFilter = FO_POINT;
 
-		SPtr<SamplerState> samplerState = SamplerState::create(desc);
+		SPtr<SamplerState> samplerState = SamplerState::Create(desc);
 		setSamplerState(mParams, GPT_FRAGMENT_PROGRAM, "gInputSamp", "gInputTex", samplerState);
 	}
 
-	void EyeAdaptationBasicSetupMat::execute(const SPtr<Texture>& input, const SPtr<RenderTarget>& output,
+	void EyeAdaptationBasicSetupMat::Execute(const SPtr<Texture>& input, const SPtr<RenderTarget>& output,
 		float frameDelta, const AutoExposureSettings& settings, float exposureScale)
 	{
 		BS_RENMAT_PROFILE_BLOCK
@@ -337,7 +337,7 @@ namespace bs { namespace ct
 		EyeAdaptationMat::populateParams(mParamBuffer, frameDelta, settings, exposureScale);
 
 		// Render
-		RenderAPI& rapi = RenderAPI::instance();
+		RenderAPI& rapi = RenderAPI::Instance();
 		rapi.setRenderTarget(output);
 
 		bind();
@@ -346,7 +346,7 @@ namespace bs { namespace ct
 		rapi.setRenderTarget(nullptr);
 	}
 
-	POOLED_RENDER_TEXTURE_DESC EyeAdaptationBasicSetupMat::getOutputDesc(const SPtr<Texture>& input)
+	POOLED_RENDER_TEXTURE_DESC EyeAdaptationBasicSetupMat::GetOutputDesc(const SPtr<Texture>& input)
 	{
 		auto& props = input->getProperties();
 		return POOLED_RENDER_TEXTURE_DESC::create2D(PF_RGBA16F, props.getWidth(), props.getHeight(), TU_RENDERTARGET);
@@ -365,7 +365,7 @@ namespace bs { namespace ct
 		mParams->getTextureParam(GPT_FRAGMENT_PROGRAM, "gPrevFrameTex", mPrevFrameTexParam);
 	}
 
-	void EyeAdaptationBasicMat::execute(const SPtr<Texture>& curFrame, const SPtr<Texture>& prevFrame,
+	void EyeAdaptationBasicMat::Execute(const SPtr<Texture>& curFrame, const SPtr<Texture>& prevFrame,
 		const SPtr<RenderTarget>& output, float frameDelta, const AutoExposureSettings& settings, float exposureScale)
 	{
 		BS_RENMAT_PROFILE_BLOCK
@@ -386,7 +386,7 @@ namespace bs { namespace ct
 		gEyeAdaptationBasicParamsMatDef.gInputTexSize.set(mParamsBuffer, texSize);
 
 		// Render
-		RenderAPI& rapi = RenderAPI::instance();
+		RenderAPI& rapi = RenderAPI::Instance();
 		rapi.setRenderTarget(output);
 
 		bind();
@@ -395,7 +395,7 @@ namespace bs { namespace ct
 		rapi.setRenderTarget(nullptr);
 	}
 
-	POOLED_RENDER_TEXTURE_DESC EyeAdaptationBasicMat::getOutputDesc()
+	POOLED_RENDER_TEXTURE_DESC EyeAdaptationBasicMat::GetOutputDesc()
 	{
 		return POOLED_RENDER_TEXTURE_DESC::create2D(PF_R32F, 1, 1, TU_RENDERTARGET);
 	}
@@ -422,31 +422,31 @@ namespace bs { namespace ct
 		defines.set("LUT_SIZE", LUT_SIZE);
 	}
 
-	void CreateTonemapLUTMat::execute3D(const SPtr<Texture>& output, const RenderSettings& settings)
+	void CreateTonemapLUTMat::Execute3D(const SPtr<Texture>& output, const RenderSettings& settings)
 	{
 		assert(mIs3D);
 		BS_RENMAT_PROFILE_BLOCK
 
-		populateParamBuffers(settings);
+		PopulateParamBuffers(settings);
 
 		// Dispatch
 		mOutputTex.set(output);
 
 		bind();
 
-		RenderAPI& rapi = RenderAPI::instance();
+		RenderAPI& rapi = RenderAPI::Instance();
 		rapi.dispatchCompute(LUT_SIZE / 8, LUT_SIZE / 8, LUT_SIZE);
 	}
 
-	void CreateTonemapLUTMat::execute2D(const SPtr<RenderTexture>& output, const RenderSettings& settings)
+	void CreateTonemapLUTMat::Execute2D(const SPtr<RenderTexture>& output, const RenderSettings& settings)
 	{
 		assert(!mIs3D);
 		BS_RENMAT_PROFILE_BLOCK
 
-		populateParamBuffers(settings);
+		PopulateParamBuffers(settings);
 
 		// Render
-		RenderAPI& rapi = RenderAPI::instance();
+		RenderAPI& rapi = RenderAPI::Instance();
 		rapi.setRenderTarget(output);
 
 		bind();
@@ -455,7 +455,7 @@ namespace bs { namespace ct
 		rapi.setRenderTarget(nullptr);
 	}
 
-	void CreateTonemapLUTMat::populateParamBuffers(const RenderSettings& settings)
+	void CreateTonemapLUTMat::PopulateParamBuffers(const RenderSettings& settings)
 	{
 		// Set parameters
 		gCreateTonemapLUTParamDef.gGammaAdjustment.set(mParamBuffer, 2.2f / settings.gamma);
@@ -489,7 +489,7 @@ namespace bs { namespace ct
 		gWhiteBalanceParamDef.gWhiteOffset.set(mWhiteBalanceParamBuffer, settings.whiteBalance.tint);
 	}
 
-	POOLED_RENDER_TEXTURE_DESC CreateTonemapLUTMat::getOutputDesc() const
+	POOLED_RENDER_TEXTURE_DESC CreateTonemapLUTMat::GetOutputDesc() const
 	{
 		if(mIs3D)
 			return POOLED_RENDER_TEXTURE_DESC::create3D(PF_RGBA8, LUT_SIZE, LUT_SIZE, LUT_SIZE, TU_LOADSTORE);
@@ -497,7 +497,7 @@ namespace bs { namespace ct
 		return POOLED_RENDER_TEXTURE_DESC::create2D(PF_RGBA8, LUT_SIZE * LUT_SIZE, LUT_SIZE, TU_RENDERTARGET);
 	}
 
-	CreateTonemapLUTMat* CreateTonemapLUTMat::getVariation(bool is3D)
+	CreateTonemapLUTMat* CreateTonemapLUTMat::GetVariation(bool is3D)
 	{
 		if(is3D)
 			return get(getVariation<true>());
@@ -525,7 +525,7 @@ namespace bs { namespace ct
 		defines.set("LUT_SIZE", CreateTonemapLUTMat::LUT_SIZE);
 	}
 
-	void TonemappingMat::execute(const SPtr<Texture>& sceneColor, const SPtr<Texture>& eyeAdaptation,
+	void TonemappingMat::Execute(const SPtr<Texture>& sceneColor, const SPtr<Texture>& eyeAdaptation,
 		const SPtr<Texture>& bloom, const SPtr<Texture>& colorLUT, const SPtr<RenderTarget>& output,
 		const RenderSettings& settings)
 	{
@@ -546,14 +546,14 @@ namespace bs { namespace ct
 		mBloomTex.set(bloom != nullptr ? bloom : Texture::BLACK);
 
 		// Render
-		RenderAPI& rapi = RenderAPI::instance();
+		RenderAPI& rapi = RenderAPI::Instance();
 		rapi.setRenderTarget(output);
 
 		bind();
 		gRendererUtility().drawScreenQuad();
 	}
 
-	TonemappingMat* TonemappingMat::getVariation(bool volumeLUT, bool gammaOnly, bool autoExposure, bool MSAA)
+	TonemappingMat* TonemappingMat::GetVariation(bool volumeLUT, bool gammaOnly, bool autoExposure, bool MSAA)
 	{
 		if(volumeLUT)
 		{
@@ -642,7 +642,7 @@ namespace bs { namespace ct
 		mParams->getTextureParam(GPT_FRAGMENT_PROGRAM, "gInputTex", mInputTex);
 	}
 
-	void BloomClipMat::execute(const SPtr<Texture>& input, float threshold, const SPtr<Texture>& eyeAdaptation,
+	void BloomClipMat::Execute(const SPtr<Texture>& input, float threshold, const SPtr<Texture>& eyeAdaptation,
 		const RenderSettings& settings, const SPtr<RenderTarget>& output)
 	{
 		BS_RENMAT_PROFILE_BLOCK
@@ -655,7 +655,7 @@ namespace bs { namespace ct
 		mEyeAdaptationTex.set(eyeAdaptation);
 
 		// Render
-		RenderAPI& rapi = RenderAPI::instance();
+		RenderAPI& rapi = RenderAPI::Instance();
 
 		rapi.setRenderTarget(output);
 
@@ -663,7 +663,7 @@ namespace bs { namespace ct
 		gRendererUtility().drawScreenQuad();
 	}
 
-	BloomClipMat* BloomClipMat::getVariation(bool autoExposure)
+	BloomClipMat* BloomClipMat::GetVariation(bool autoExposure)
 	{
 		if (autoExposure)
 			return get(getVariation<true>());
@@ -682,7 +682,7 @@ namespace bs { namespace ct
 		mParams->getTextureParam(GPT_FRAGMENT_PROGRAM, "gGradientTex", mGradientTex);
 	}
 
-	void ScreenSpaceLensFlareMat::execute(const SPtr<Texture>& input, const ScreenSpaceLensFlareSettings& settings,
+	void ScreenSpaceLensFlareMat::Execute(const SPtr<Texture>& input, const ScreenSpaceLensFlareSettings& settings,
 		const SPtr<RenderTarget>& output)
 	{
 		BS_RENMAT_PROFILE_BLOCK
@@ -701,14 +701,14 @@ namespace bs { namespace ct
 		mGradientTex.set(RendererTextures::lensFlareGradient);
 
 		// Render
-		RenderAPI& rapi = RenderAPI::instance();
+		RenderAPI& rapi = RenderAPI::Instance();
 		rapi.setRenderTarget(output);
 
 		bind();
 		gRendererUtility().drawScreenQuad();
 	}
 
-	ScreenSpaceLensFlareMat* ScreenSpaceLensFlareMat::getVariation(bool halo, bool haloAspect, bool chromaticAberration)
+	ScreenSpaceLensFlareMat* ScreenSpaceLensFlareMat::GetVariation(bool halo, bool haloAspect, bool chromaticAberration)
 	{
 		if(halo)
 		{
@@ -749,7 +749,7 @@ namespace bs { namespace ct
 		mParams->getTextureParam(GPT_FRAGMENT_PROGRAM, "gFringeTex", mFringeTex);
 	}
 
-	void ChromaticAberrationMat::execute(const SPtr<Texture>& input, const ChromaticAberrationSettings& settings,
+	void ChromaticAberrationMat::Execute(const SPtr<Texture>& input, const ChromaticAberrationSettings& settings,
 		const SPtr<RenderTarget>& output)
 	{
 		BS_RENMAT_PROFILE_BLOCK
@@ -772,14 +772,14 @@ namespace bs { namespace ct
 		mFringeTex.set(fringeTex);
 
 		// Render
-		RenderAPI& rapi = RenderAPI::instance();
+		RenderAPI& rapi = RenderAPI::Instance();
 		rapi.setRenderTarget(output);
 
 		bind();
 		gRendererUtility().drawScreenQuad();
 	}
 
-	ChromaticAberrationMat* ChromaticAberrationMat::getVariation(ChromaticAberrationType type)
+	ChromaticAberrationMat* ChromaticAberrationMat::GetVariation(ChromaticAberrationType type)
 	{
 		if (type == ChromaticAberrationType::Complex)
 			return get(getVariation<false>());
@@ -802,7 +802,7 @@ namespace bs { namespace ct
 		mParams->getTextureParam(GPT_FRAGMENT_PROGRAM, "gInputTex", mInputTex);
 	}
 
-	void FilmGrainMat::execute(const SPtr<Texture>& input, float time,
+	void FilmGrainMat::Execute(const SPtr<Texture>& input, float time,
 		const FilmGrainSettings& settings, const SPtr<RenderTarget>& output)
 	{
 		BS_RENMAT_PROFILE_BLOCK
@@ -814,7 +814,7 @@ namespace bs { namespace ct
 		mInputTex.set(input);
 
 		// Render
-		RenderAPI& rapi = RenderAPI::instance();
+		RenderAPI& rapi = RenderAPI::Instance();
 		rapi.setRenderTarget(output);
 
 		bind();
@@ -840,7 +840,7 @@ namespace bs { namespace ct
 		defines.set("MAX_NUM_SAMPLES", MAX_BLUR_SAMPLES);
 	}
 
-	void GaussianBlurMat::execute(const SPtr<Texture>& source, float filterSize, const SPtr<RenderTexture>& destination,
+	void GaussianBlurMat::Execute(const SPtr<Texture>& source, float filterSize, const SPtr<RenderTexture>& destination,
 		const Color& tint, const SPtr<Texture>& additive)
 	{
 		BS_RENMAT_PROFILE_BLOCK
@@ -860,7 +860,7 @@ namespace bs { namespace ct
 			if(mIsAdditive)
 				mAdditiveTexture.set(Texture::BLACK);
 
-			RenderAPI& rapi = RenderAPI::instance();
+			RenderAPI& rapi = RenderAPI::Instance();
 			rapi.setRenderTarget(tempTexture->renderTexture);
 
 			bind();
@@ -880,7 +880,7 @@ namespace bs { namespace ct
 					mAdditiveTexture.set(Texture::BLACK);
 			}
 
-			RenderAPI& rapi = RenderAPI::instance();
+			RenderAPI& rapi = RenderAPI::Instance();
 			rapi.setRenderTarget(destination);
 
 			bind();
@@ -888,7 +888,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	UINT32 GaussianBlurMat::calcStdDistribution(float filterRadius, std::array<float, MAX_BLUR_SAMPLES>& weights,
+	UINT32 GaussianBlurMat::CalcStdDistribution(float filterRadius, std::array<float, MAX_BLUR_SAMPLES>& weights,
 		std::array<float, MAX_BLUR_SAMPLES>& offsets)
 	{
 		filterRadius = Math::clamp(filterRadius, 0.00001f, (float)(MAX_BLUR_SAMPLES - 1));
@@ -959,7 +959,7 @@ namespace bs { namespace ct
 		return numSamples;
 	}
 
-	float GaussianBlurMat::calcKernelRadius(const SPtr<Texture>& source, float scale, Direction filterDir)
+	float GaussianBlurMat::CalcKernelRadius(const SPtr<Texture>& source, float scale, Direction filterDir)
 	{
 		scale = Math::clamp01(scale);
 
@@ -973,7 +973,7 @@ namespace bs { namespace ct
 		return std::min(length * scale / 2, (float)MAX_BLUR_SAMPLES - 1);
 	}
 
-	void GaussianBlurMat::populateBuffer(const SPtr<GpuParamBlockBuffer>& buffer, Direction direction,
+	void GaussianBlurMat::PopulateBuffer(const SPtr<GpuParamBlockBuffer>& buffer, Direction direction,
 		const SPtr<Texture>& source, float filterSize, const Color& tint)
 	{
 		const TextureProperties& srcProps = source->getProperties();
@@ -1022,7 +1022,7 @@ namespace bs { namespace ct
 		gGaussianBlurParamDef.gNumSamples.set(buffer, numSamples);
 	}
 
-	GaussianBlurMat* GaussianBlurMat::getVariation(bool additive)
+	GaussianBlurMat* GaussianBlurMat::GetVariation(bool additive)
 	{
 		if(additive)
 			return get(getVariation<true>());
@@ -1048,11 +1048,11 @@ namespace bs { namespace ct
 		desc.addressMode.v = TAM_CLAMP;
 		desc.addressMode.w = TAM_CLAMP;
 
-		SPtr<SamplerState> samplerState = SamplerState::create(desc);
+		SPtr<SamplerState> samplerState = SamplerState::Create(desc);
 		setSamplerState(mParams, GPT_FRAGMENT_PROGRAM, "gColorSamp", "gColorTex", samplerState);
 	}
 
-	void GaussianDOFSeparateMat::execute(const SPtr<Texture>& color, const SPtr<Texture>& depth,
+	void GaussianDOFSeparateMat::Execute(const SPtr<Texture>& color, const SPtr<Texture>& depth,
 		const RendererView& view, const DepthOfFieldSettings& settings)
 	{
 		BS_RENMAT_PROFILE_BLOCK
@@ -1078,7 +1078,7 @@ namespace bs { namespace ct
 			rtDesc.colorSurfaces[0].texture = mOutput0->texture;
 			rtDesc.colorSurfaces[1].texture = mOutput1->texture;
 
-			rt = RenderTexture::create(rtDesc);
+			rt = RenderTexture::Create(rtDesc);
 		}
 		else
 			rt = mOutput0->renderTexture;
@@ -1097,14 +1097,14 @@ namespace bs { namespace ct
 		SPtr<GpuParamBlockBuffer> perView = view.getPerViewBuffer();
 		mParams->setParamBlockBuffer("PerCamera", perView);
 
-		RenderAPI& rapi = RenderAPI::instance();
+		RenderAPI& rapi = RenderAPI::Instance();
 		rapi.setRenderTarget(rt);
 
 		bind();
 		gRendererUtility().drawScreenQuad();
 	}
 
-	SPtr<PooledRenderTexture> GaussianDOFSeparateMat::getOutput(UINT32 idx)
+	SPtr<PooledRenderTexture> GaussianDOFSeparateMat::GetOutput(UINT32 idx)
 	{
 		if (idx == 0)
 			return mOutput0;
@@ -1114,13 +1114,13 @@ namespace bs { namespace ct
 		return nullptr;
 	}
 
-	void GaussianDOFSeparateMat::release()
+	void GaussianDOFSeparateMat::Release()
 	{
 		mOutput0 = nullptr;
 		mOutput1 = nullptr;
 	}
 
-	GaussianDOFSeparateMat* GaussianDOFSeparateMat::getVariation(bool near, bool far)
+	GaussianDOFSeparateMat* GaussianDOFSeparateMat::GetVariation(bool near, bool far)
 	{
 		if (near)
 		{
@@ -1149,7 +1149,7 @@ namespace bs { namespace ct
 			mParams->getTextureParam(GPT_FRAGMENT_PROGRAM, "gFarTex", mFarTexture);
 	}
 
-	void GaussianDOFCombineMat::execute(const SPtr<Texture>& focused, const SPtr<Texture>& near,
+	void GaussianDOFCombineMat::Execute(const SPtr<Texture>& focused, const SPtr<Texture>& near,
 		const SPtr<Texture>& far, const SPtr<Texture>& depth, const SPtr<RenderTarget>& output,
 		const RendererView& view, const DepthOfFieldSettings& settings)
 	{
@@ -1173,14 +1173,14 @@ namespace bs { namespace ct
 		SPtr<GpuParamBlockBuffer> perView = view.getPerViewBuffer();
 		mParams->setParamBlockBuffer("PerCamera", perView);
 
-		RenderAPI& rapi = RenderAPI::instance();
+		RenderAPI& rapi = RenderAPI::Instance();
 		rapi.setRenderTarget(output);
 
 		bind();
 		gRendererUtility().drawScreenQuad();
 	}
 
-	GaussianDOFCombineMat* GaussianDOFCombineMat::getVariation(bool near, bool far)
+	GaussianDOFCombineMat* GaussianDOFCombineMat::GetVariation(bool near, bool far)
 	{
 		if (near)
 		{
@@ -1208,7 +1208,7 @@ namespace bs { namespace ct
 		mParams->getTextureParam(GPT_FRAGMENT_PROGRAM, "gDepthBufferTex", mDepthTexture);
 	}
 
-	void BokehDOFPrepareMat::execute(const SPtr<Texture>& input, const SPtr<Texture>& depth, const RendererView& view,
+	void BokehDOFPrepareMat::Execute(const SPtr<Texture>& input, const SPtr<Texture>& depth, const RendererView& view,
 		const DepthOfFieldSettings& settings, const SPtr<RenderTarget>& output)
 	{
 		BS_RENMAT_PROFILE_BLOCK
@@ -1226,7 +1226,7 @@ namespace bs { namespace ct
 		SPtr<GpuParamBlockBuffer> perView = view.getPerViewBuffer();
 		mParams->setParamBlockBuffer("PerCamera", perView);
 
-		RenderAPI& rapi = RenderAPI::instance();
+		RenderAPI& rapi = RenderAPI::Instance();
 		rapi.setRenderTarget(output);
 
 		bind();
@@ -1238,7 +1238,7 @@ namespace bs { namespace ct
 			gRendererUtility().drawScreenQuad();
 	}
 
-	POOLED_RENDER_TEXTURE_DESC BokehDOFPrepareMat::getOutputDesc(const SPtr<Texture>& target)
+	POOLED_RENDER_TEXTURE_DESC BokehDOFPrepareMat::GetOutputDesc(const SPtr<Texture>& target)
 	{
 		const TextureProperties& rtProps = target->getProperties();
 
@@ -1248,7 +1248,7 @@ namespace bs { namespace ct
 		return POOLED_RENDER_TEXTURE_DESC::create2D(PF_RGBA16F, width, height, TU_RENDERTARGET);
 	}
 
-	BokehDOFPrepareMat* BokehDOFPrepareMat::getVariation(bool msaa)
+	BokehDOFPrepareMat* BokehDOFPrepareMat::GetVariation(bool msaa)
 	{
 		if (msaa)
 			return get(getVariation<true>());
@@ -1276,14 +1276,14 @@ namespace bs { namespace ct
 		SPtr<VertexDataDesc> tileVertexDesc = bs_shared_ptr_new<VertexDataDesc>();
 		tileVertexDesc->addVertElem(VET_FLOAT2, VES_TEXCOORD);
 
-		mTileVertexDecl = VertexDeclaration::create(tileVertexDesc);
+		mTileVertexDecl = VertexDeclaration::Create(tileVertexDesc);
 
 		// Prepare vertex buffer for rendering tiles
 		VERTEX_BUFFER_DESC tileVertexBufferDesc;
 		tileVertexBufferDesc.numVerts = QUADS_PER_TILE * 4;
 		tileVertexBufferDesc.vertexSize = tileVertexDesc->getVertexStride();
 
-		mTileVertexBuffer = VertexBuffer::create(tileVertexBufferDesc);
+		mTileVertexBuffer = VertexBuffer::Create(tileVertexBufferDesc);
 
 		auto* const vertexData = (Vector2*)mTileVertexBuffer->lock(GBL_WRITE_ONLY_DISCARD);
 		for (UINT32 i = 0; i < QUADS_PER_TILE; i++)
@@ -1301,7 +1301,7 @@ namespace bs { namespace ct
 		tileIndexBufferDesc.indexType = IT_16BIT;
 		tileIndexBufferDesc.numIndices = QUADS_PER_TILE * 6;
 
-		mTileIndexBuffer = IndexBuffer::create(tileIndexBufferDesc);
+		mTileIndexBuffer = IndexBuffer::Create(tileIndexBufferDesc);
 
 		auto* const indices = (UINT16*)mTileIndexBuffer->lock(GBL_WRITE_ONLY_DISCARD);
 
@@ -1330,7 +1330,7 @@ namespace bs { namespace ct
 		defines.set("QUADS_PER_TILE", QUADS_PER_TILE);
 	}
 
-	void BokehDOFMat::execute(const SPtr<Texture>& input, const RendererView& view,
+	void BokehDOFMat::Execute(const SPtr<Texture>& input, const RendererView& view,
 		const DepthOfFieldSettings& settings, const SPtr<RenderTarget>& output)
 	{
 		BS_RENMAT_PROFILE_BLOCK
@@ -1369,7 +1369,7 @@ namespace bs { namespace ct
 		SPtr<GpuParamBlockBuffer> perView = view.getPerViewBuffer();
 		mParams->setParamBlockBuffer("PerCamera", perView);
 
-		RenderAPI& rapi = RenderAPI::instance();
+		RenderAPI& rapi = RenderAPI::Instance();
 		rapi.setRenderTarget(output, FBT_DEPTH | FBT_STENCIL, RT_DEPTH_STENCIL);
 		rapi.clearRenderTarget(FBT_COLOR, Color::ZERO);
 		rapi.setVertexDeclaration(mTileVertexDecl);
@@ -1384,7 +1384,7 @@ namespace bs { namespace ct
 		rapi.drawIndexed(0, QUADS_PER_TILE * 6, 0, QUADS_PER_TILE * 4, numInstances);
 	}
 
-	POOLED_RENDER_TEXTURE_DESC BokehDOFMat::getOutputDesc(const SPtr<Texture>& target)
+	POOLED_RENDER_TEXTURE_DESC BokehDOFMat::GetOutputDesc(const SPtr<Texture>& target)
 	{
 		const TextureProperties& rtProps = target->getProperties();
 
@@ -1394,7 +1394,7 @@ namespace bs { namespace ct
 		return POOLED_RENDER_TEXTURE_DESC::create2D(PF_RGBA16F, width, height, TU_RENDERTARGET);
 	}
 
-	void BokehDOFMat::populateDOFCommonParams(const SPtr<GpuParamBlockBuffer>& buffer, const DepthOfFieldSettings& settings,
+	void BokehDOFMat::PopulateDofCommonParams(const SPtr<GpuParamBlockBuffer>& buffer, const DepthOfFieldSettings& settings,
 		const RendererView& view)
 	{
 		gDepthOfFieldCommonParamDef.gFocalPlaneDistance.set(buffer, settings.focalDistance);
@@ -1421,7 +1421,7 @@ namespace bs { namespace ct
 		gDepthOfFieldCommonParamDef.gMaxBokehSize.set(buffer, Math::clamp01(settings.maxBokehSize) * imageSize);
 	}
 
-	BokehDOFMat* BokehDOFMat::getVariation(bool depthOcclusion)
+	BokehDOFMat* BokehDOFMat::GetVariation(bool depthOcclusion)
 	{
 		if (depthOcclusion)
 			return get(getVariation<true>());
@@ -1444,7 +1444,7 @@ namespace bs { namespace ct
 		mParams->getTextureParam(GPT_FRAGMENT_PROGRAM, "gDepthBufferTex", mDepthTexture);
 	}
 
-	void BokehDOFCombineMat::execute(const SPtr<Texture>& unfocused, const SPtr<Texture>& focused,
+	void BokehDOFCombineMat::Execute(const SPtr<Texture>& unfocused, const SPtr<Texture>& focused,
 		const SPtr<Texture>& depth, const RendererView& view, const DepthOfFieldSettings& settings,
 		const SPtr<RenderTarget>& output)
 	{
@@ -1471,14 +1471,14 @@ namespace bs { namespace ct
 		SPtr<GpuParamBlockBuffer> perView = view.getPerViewBuffer();
 		mParams->setParamBlockBuffer("PerCamera", perView);
 
-		RenderAPI& rapi = RenderAPI::instance();
+		RenderAPI& rapi = RenderAPI::Instance();
 		rapi.setRenderTarget(output);
 
 		bind();
 		gRendererUtility().drawScreenQuad();
 	}
 
-	BokehDOFCombineMat* BokehDOFCombineMat::getVariation(MSAAMode msaaMode)
+	BokehDOFCombineMat* BokehDOFCombineMat::GetVariation(MSAAMode msaaMode)
 	{
 		switch(msaaMode)
 		{
@@ -1511,13 +1511,13 @@ namespace bs { namespace ct
 		pointSampDesc.addressMode.v = TAM_CLAMP;
 		pointSampDesc.addressMode.w = TAM_CLAMP;
 
-		SPtr<SamplerState> pointSampState = SamplerState::create(pointSampDesc);
+		SPtr<SamplerState> pointSampState = SamplerState::Create(pointSampDesc);
 
 		if (mParams->hasSamplerState(GPT_FRAGMENT_PROGRAM, "gDepthBufferSamp"))
 			mParams->setSamplerState(GPT_FRAGMENT_PROGRAM, "gDepthBufferSamp", pointSampState);
 	}
 
-	void MotionBlurMat::execute(const SPtr<Texture>& input, const SPtr<Texture>& depth, const RendererView& view,
+	void MotionBlurMat::Execute(const SPtr<Texture>& input, const SPtr<Texture>& depth, const RendererView& view,
 		const MotionBlurSettings& settings, const SPtr<RenderTarget>& output)
 	{
 		BS_RENMAT_PROFILE_BLOCK
@@ -1541,7 +1541,7 @@ namespace bs { namespace ct
 		SPtr<GpuParamBlockBuffer> perView = view.getPerViewBuffer();
 		mParams->setParamBlockBuffer("PerCamera", perView);
 
-		RenderAPI& rapi = RenderAPI::instance();
+		RenderAPI& rapi = RenderAPI::Instance();
 		rapi.setRenderTarget(output);
 
 		bind();
@@ -1567,17 +1567,17 @@ namespace bs { namespace ct
 			inputSampDesc.magFilter = FO_POINT;
 			inputSampDesc.mipFilter = FO_POINT;
 
-			SPtr<SamplerState> inputSampState = SamplerState::create(inputSampDesc);
+			SPtr<SamplerState> inputSampState = SamplerState::Create(inputSampDesc);
 			setSamplerState(mParams, GPT_FRAGMENT_PROGRAM, "gDepthSamp", "gDepthTex", inputSampState);
 		}
 	}
 
-	void BuildHiZMat::execute(const SPtr<Texture>& source, UINT32 srcMip, const Rect2& srcRect, const Rect2& dstRect,
+	void BuildHiZMat::Execute(const SPtr<Texture>& source, UINT32 srcMip, const Rect2& srcRect, const Rect2& dstRect,
 		const SPtr<RenderTexture>& output)
 	{
 		BS_RENMAT_PROFILE_BLOCK
 
-		RenderAPI& rapi = RenderAPI::instance();
+		RenderAPI& rapi = RenderAPI::Instance();
 
 		// If no texture view support, we must manually pick a valid mip level in the shader
 		if(mNoTextureViews)
@@ -1605,7 +1605,7 @@ namespace bs { namespace ct
 		rapi.setViewport(Rect2(0, 0, 1, 1));
 	}
 
-	BuildHiZMat* BuildHiZMat::getVariation(bool noTextureViews)
+	BuildHiZMat* BuildHiZMat::GetVariation(bool noTextureViews)
 	{
 		if (noTextureViews)
 			return get(getVariation<true>());
@@ -1623,7 +1623,7 @@ namespace bs { namespace ct
 		mParams->getTextureParam(GPT_FRAGMENT_PROGRAM, "gInputTex", mInputTexture);
 	}
 
-	void FXAAMat::execute(const SPtr<Texture>& source, const SPtr<RenderTarget>& destination)
+	void FXAAMat::Execute(const SPtr<Texture>& source, const SPtr<RenderTarget>& destination)
 	{
 		BS_RENMAT_PROFILE_BLOCK
 
@@ -1634,7 +1634,7 @@ namespace bs { namespace ct
 
 		mInputTexture.set(source);
 
-		RenderAPI& rapi = RenderAPI::instance();
+		RenderAPI& rapi = RenderAPI::Instance();
 		rapi.setRenderTarget(destination);
 
 		bind();
@@ -1674,7 +1674,7 @@ namespace bs { namespace ct
 		inputSampDesc.addressMode.v = TAM_CLAMP;
 		inputSampDesc.addressMode.w = TAM_CLAMP;
 
-		SPtr<SamplerState> inputSampState = SamplerState::create(inputSampDesc);
+		SPtr<SamplerState> inputSampState = SamplerState::Create(inputSampDesc);
 		if(mParams->hasSamplerState(GPT_FRAGMENT_PROGRAM, "gInputSamp"))
 			mParams->setSamplerState(GPT_FRAGMENT_PROGRAM, "gInputSamp", inputSampState);
 		else
@@ -1700,11 +1700,11 @@ namespace bs { namespace ct
 		randomSampDesc.addressMode.v = TAM_WRAP;
 		randomSampDesc.addressMode.w = TAM_WRAP;
 
-		SPtr<SamplerState> randomSampState = SamplerState::create(randomSampDesc);
+		SPtr<SamplerState> randomSampState = SamplerState::Create(randomSampDesc);
 		setSamplerState(mParams, GPT_FRAGMENT_PROGRAM, "gRandomSamp", "gRandomTex", randomSampState);
 	}
 
-	void SSAOMat::execute(const RendererView& view, const SSAOTextureInputs& textures,
+	void SSAOMat::Execute(const RendererView& view, const SSAOTextureInputs& textures,
 		const SPtr<RenderTexture>& destination, const AmbientOcclusionSettings& settings)
 	{
 		BS_RENMAT_PROFILE_BLOCK
@@ -1792,14 +1792,14 @@ namespace bs { namespace ct
 		SPtr<GpuParamBlockBuffer> perView = view.getPerViewBuffer();
 		mParams->setParamBlockBuffer("PerCamera", perView);
 
-		RenderAPI& rapi = RenderAPI::instance();
+		RenderAPI& rapi = RenderAPI::Instance();
 		rapi.setRenderTarget(destination);
 
 		bind();
 		gRendererUtility().drawScreenQuad();
 	}
 
-	SSAOMat* SSAOMat::getVariation(bool upsample, bool finalPass, int quality)
+	SSAOMat* SSAOMat::GetVariation(bool upsample, bool finalPass, int quality)
 	{
 #define PICK_MATERIAL(QUALITY)															\
 		if(upsample)																	\
@@ -1849,7 +1849,7 @@ namespace bs { namespace ct
 		inputSampDesc.addressMode.v = TAM_CLAMP;
 		inputSampDesc.addressMode.w = TAM_CLAMP;
 
-		SPtr<SamplerState> inputSampState = SamplerState::create(inputSampDesc);
+		SPtr<SamplerState> inputSampState = SamplerState::Create(inputSampDesc);
 
 		if(mParams->hasSamplerState(GPT_FRAGMENT_PROGRAM, "gInputSamp"))
 			mParams->setSamplerState(GPT_FRAGMENT_PROGRAM, "gInputSamp", inputSampState);
@@ -1860,7 +1860,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	void SSAODownsampleMat::execute(const RendererView& view, const SPtr<Texture>& depth, const SPtr<Texture>& normals,
+	void SSAODownsampleMat::Execute(const RendererView& view, const SPtr<Texture>& depth, const SPtr<Texture>& normals,
 		const SPtr<RenderTexture>& destination, float depthRange)
 	{
 		BS_RENMAT_PROFILE_BLOCK
@@ -1883,7 +1883,7 @@ namespace bs { namespace ct
 		SPtr<GpuParamBlockBuffer> perView = view.getPerViewBuffer();
 		mParams->setParamBlockBuffer("PerCamera", perView);
 
-		RenderAPI& rapi = RenderAPI::instance();
+		RenderAPI& rapi = RenderAPI::Instance();
 		rapi.setRenderTarget(destination);
 
 		bind();
@@ -1908,7 +1908,7 @@ namespace bs { namespace ct
 		inputSampDesc.addressMode.v = TAM_CLAMP;
 		inputSampDesc.addressMode.w = TAM_CLAMP;
 
-		SPtr<SamplerState> inputSampState = SamplerState::create(inputSampDesc);
+		SPtr<SamplerState> inputSampState = SamplerState::Create(inputSampDesc);
 		if(mParams->hasSamplerState(GPT_FRAGMENT_PROGRAM, "gInputSamp"))
 			mParams->setSamplerState(GPT_FRAGMENT_PROGRAM, "gInputSamp", inputSampState);
 		else
@@ -1918,7 +1918,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	void SSAOBlurMat::execute(const RendererView& view, const SPtr<Texture>& ao, const SPtr<Texture>& depth,
+	void SSAOBlurMat::Execute(const RendererView& view, const SPtr<Texture>& ao, const SPtr<Texture>& depth,
 		const SPtr<RenderTexture>& destination, float depthRange)
 	{
 		BS_RENMAT_PROFILE_BLOCK
@@ -1948,14 +1948,14 @@ namespace bs { namespace ct
 		SPtr<GpuParamBlockBuffer> perView = view.getPerViewBuffer();
 		mParams->setParamBlockBuffer("PerCamera", perView);
 
-		RenderAPI& rapi = RenderAPI::instance();
+		RenderAPI& rapi = RenderAPI::Instance();
 		rapi.setRenderTarget(destination);
 
 		bind();
 		gRendererUtility().drawScreenQuad();
 	}
 
-	SSAOBlurMat* SSAOBlurMat::getVariation(bool horizontal)
+	SSAOBlurMat* SSAOBlurMat::GetVariation(bool horizontal)
 	{
 		if (horizontal)
 			return get(getVariation<true>());
@@ -1972,14 +1972,14 @@ namespace bs { namespace ct
 		mParams->setParamBlockBuffer("Input", mParamBuffer);
 	}
 
-	void SSRStencilMat::execute(const RendererView& view, GBufferTextures gbuffer,
+	void SSRStencilMat::Execute(const RendererView& view, GBufferTextures gbuffer,
 		const ScreenSpaceReflectionsSettings& settings)
 	{
 		BS_RENMAT_PROFILE_BLOCK
 
 		mGBufferParams.bind(gbuffer);
 
-		Vector2 roughnessScaleBias = SSRTraceMat::calcRoughnessFadeScaleBias(settings.maxRoughness);
+		Vector2 roughnessScaleBias = SSRTraceMat::CalcRoughnessFadeScaleBias(settings.maxRoughness);
 		gSSRStencilParamDef.gRoughnessScaleBias.set(mParamBuffer, roughnessScaleBias);
 
 		SPtr<GpuParamBlockBuffer> perView = view.getPerViewBuffer();
@@ -1995,7 +1995,7 @@ namespace bs { namespace ct
 			gRendererUtility().drawScreenQuad();
 	}
 
-	SSRStencilMat* SSRStencilMat::getVariation(bool msaa, bool singleSampleMSAA)
+	SSRStencilMat* SSRStencilMat::GetVariation(bool msaa, bool singleSampleMSAA)
 	{
 		if (msaa)
 		{
@@ -2029,14 +2029,14 @@ namespace bs { namespace ct
 		desc.addressMode.v = TAM_CLAMP;
 		desc.addressMode.w = TAM_CLAMP;
 
-		SPtr<SamplerState> hiZSamplerState = SamplerState::create(desc);
+		SPtr<SamplerState> hiZSamplerState = SamplerState::Create(desc);
 		if (mParams->hasSamplerState(GPT_FRAGMENT_PROGRAM, "gHiZSamp"))
 			mParams->setSamplerState(GPT_FRAGMENT_PROGRAM, "gHiZSamp", hiZSamplerState);
 		else if(mParams->hasSamplerState(GPT_FRAGMENT_PROGRAM, "gHiZ"))
 			mParams->setSamplerState(GPT_FRAGMENT_PROGRAM, "gHiZ", hiZSamplerState);
 	}
 
-	void SSRTraceMat::execute(const RendererView& view, GBufferTextures gbuffer, const SPtr<Texture>& sceneColor,
+	void SSRTraceMat::Execute(const RendererView& view, GBufferTextures gbuffer, const SPtr<Texture>& sceneColor,
 			const SPtr<Texture>& hiZ, const ScreenSpaceReflectionsSettings& settings,
 			const SPtr<RenderTarget>& destination)
 	{
@@ -2077,7 +2077,7 @@ namespace bs { namespace ct
 		HiZUVToScreenUV.y = hiZProps.getHeight() / (float)viewRect.height;
 
 		// Used for roughness fading
-		Vector2 roughnessScaleBias = calcRoughnessFadeScaleBias(settings.maxRoughness);
+		Vector2 roughnessScaleBias = CalcRoughnessFadeScaleBias(settings.maxRoughness);
 
 		UINT32 temporalJitter = (viewProps.frameIdx % 8) * 1503;
 
@@ -2093,7 +2093,7 @@ namespace bs { namespace ct
 		SPtr<GpuParamBlockBuffer> perView = view.getPerViewBuffer();
 		mParams->setParamBlockBuffer("PerCamera", perView);
 
-		RenderAPI& rapi = RenderAPI::instance();
+		RenderAPI& rapi = RenderAPI::Instance();
 		rapi.setRenderTarget(destination, FBT_DEPTH | FBT_STENCIL, RT_DEPTH_STENCIL);
 
 		bind();
@@ -2104,7 +2104,7 @@ namespace bs { namespace ct
 			gRendererUtility().drawScreenQuad();
 	}
 
-	Vector2 SSRTraceMat::calcRoughnessFadeScaleBias(float maxRoughness)
+	Vector2 SSRTraceMat::CalcRoughnessFadeScaleBias(float maxRoughness)
 	{
 		const static float RANGE_SCALE = 2.0f;
 
@@ -2115,7 +2115,7 @@ namespace bs { namespace ct
 		return scaleBias;
 	}
 
-	SSRTraceMat* SSRTraceMat::getVariation(UINT32 quality, bool msaa, bool singleSampleMSAA)
+	SSRTraceMat* SSRTraceMat::GetVariation(UINT32 quality, bool msaa, bool singleSampleMSAA)
 	{
 #define PICK_MATERIAL(QUALITY)											\
 		if(msaa)														\
@@ -2171,7 +2171,7 @@ namespace bs { namespace ct
 		pointSampDesc.addressMode.v = TAM_CLAMP;
 		pointSampDesc.addressMode.w = TAM_CLAMP;
 
-		SPtr<SamplerState> pointSampState = SamplerState::create(pointSampDesc);
+		SPtr<SamplerState> pointSampState = SamplerState::Create(pointSampDesc);
 
 		if(mParams->hasSamplerState(GPT_FRAGMENT_PROGRAM, "gPointSampler"))
 			mParams->setSamplerState(GPT_FRAGMENT_PROGRAM, "gPointSampler", pointSampState);
@@ -2186,7 +2186,7 @@ namespace bs { namespace ct
 		linearSampDesc.addressMode.v = TAM_CLAMP;
 		linearSampDesc.addressMode.w = TAM_CLAMP;
 
-		SPtr<SamplerState> linearSampState = SamplerState::create(linearSampDesc);
+		SPtr<SamplerState> linearSampState = SamplerState::Create(linearSampDesc);
 		if(mParams->hasSamplerState(GPT_FRAGMENT_PROGRAM, "gLinearSampler"))
 			mParams->setSamplerState(GPT_FRAGMENT_PROGRAM, "gLinearSampler", linearSampState);
 		else
@@ -2196,7 +2196,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	void TemporalFilteringMat::execute(const RendererView& view, const SPtr<Texture>& prevFrame,
+	void TemporalFilteringMat::Execute(const RendererView& view, const SPtr<Texture>& prevFrame,
 		const SPtr<Texture>& curFrame, const SPtr<Texture>& velocity, const SPtr<Texture>& sceneDepth,
 		const Vector2& jitter, float exposure, const SPtr<RenderTarget>& destination)
 	{
@@ -2321,7 +2321,7 @@ namespace bs { namespace ct
 		SPtr<GpuParamBlockBuffer> perView = view.getPerViewBuffer();
 		mParams->setParamBlockBuffer("PerCamera", perView);
 
-		RenderAPI& rapi = RenderAPI::instance();
+		RenderAPI& rapi = RenderAPI::Instance();
 		rapi.setRenderTarget(destination);
 
 		const RendererViewProperties& viewProps = view.getProperties();
@@ -2335,7 +2335,7 @@ namespace bs { namespace ct
 			gRendererUtility().drawScreenQuad();
 	}
 
-	TemporalFilteringMat* TemporalFilteringMat::getVariation(TemporalFilteringType type, bool velocity, bool msaa)
+	TemporalFilteringMat* TemporalFilteringMat::GetVariation(TemporalFilteringType type, bool velocity, bool msaa)
 	{
 		switch(type)
 		{
@@ -2386,11 +2386,11 @@ namespace bs { namespace ct
 		sampDesc.addressMode.v = TAM_CLAMP;
 		sampDesc.addressMode.w = TAM_CLAMP;
 
-		SPtr<SamplerState> samplerState = SamplerState::create(sampDesc);
+		SPtr<SamplerState> samplerState = SamplerState::Create(sampDesc);
 		setSamplerState(mParams, GPT_FRAGMENT_PROGRAM, "gInputSamp", "gInputTex", samplerState);
 	}
 
-	void EncodeDepthMat::execute(const SPtr<Texture>& depth, float near, float far, const SPtr<RenderTarget>& output)
+	void EncodeDepthMat::Execute(const SPtr<Texture>& depth, float near, float far, const SPtr<RenderTarget>& output)
 	{
 		BS_RENMAT_PROFILE_BLOCK
 
@@ -2399,7 +2399,7 @@ namespace bs { namespace ct
 		gEncodeDepthParamDef.gNear.set(mParamBuffer, near);
 		gEncodeDepthParamDef.gFar.set(mParamBuffer, far);
 
-		RenderAPI& rapi = RenderAPI::instance();
+		RenderAPI& rapi = RenderAPI::Instance();
 		rapi.setRenderTarget(output, 0, RT_COLOR0);
 
 		bind();
@@ -2410,7 +2410,7 @@ namespace bs { namespace ct
 		:mGBufferParams(GPT_FRAGMENT_PROGRAM, mParams)
 	{ }
 
-	void MSAACoverageMat::execute(const RendererView& view, GBufferTextures gbuffer)
+	void MSAACoverageMat::Execute(const RendererView& view, GBufferTextures gbuffer)
 	{
 		BS_RENMAT_PROFILE_BLOCK
 
@@ -2424,7 +2424,7 @@ namespace bs { namespace ct
 		gRendererUtility().drawScreenQuad(Rect2(0, 0, (float)viewRect.width, (float)viewRect.height));
 	}
 
-	MSAACoverageMat* MSAACoverageMat::getVariation(UINT32 msaaCount)
+	MSAACoverageMat* MSAACoverageMat::GetVariation(UINT32 msaaCount)
 	{
 		switch(msaaCount)
 		{
@@ -2443,7 +2443,7 @@ namespace bs { namespace ct
 		mParams->getTextureParam(GPT_FRAGMENT_PROGRAM, "gMSAACoverage", mCoverageTexParam);
 	}
 
-	void MSAACoverageStencilMat::execute(const RendererView& view, const SPtr<Texture>& coverage)
+	void MSAACoverageStencilMat::Execute(const RendererView& view, const SPtr<Texture>& coverage)
 	{
 		BS_RENMAT_PROFILE_BLOCK
 

@@ -19,20 +19,20 @@ namespace bs
 	class BS_CORE_EXPORT ResourceHandleRTTI : public RTTIType<TResourceHandleBase<false>, IReflectable, ResourceHandleRTTI>
 	{
 	private:
-		UUID& getUUID(TResourceHandleBase<false>* obj) { return obj->mData != nullptr ? obj->mData->mUUID : UUID::EMPTY; }
-		void setUUID(TResourceHandleBase<false>* obj, UUID& uuid) { obj->mData->mUUID = uuid; }
+		UUID& GetUuid(TResourceHandleBase<false>* obj) { return obj->mData != nullptr ? obj->mData->mUUID : UUID::EMPTY; }
+		void SetUuid(TResourceHandleBase<false>* obj, UUID& uuid) { obj->mData->mUUID = uuid; }
 
 	public:
 		ResourceHandleRTTI()
 		{
-			addPlainField("mUUID", 0, &ResourceHandleRTTI::getUUID, &ResourceHandleRTTI::setUUID);
+			AddPlainField("mUUID", 0, &ResourceHandleRTTI::GetUuid, &ResourceHandleRTTI::SetUuid);
 		}
 
-		void onDeserializationEnded(IReflectable* obj, SerializationContext* context) override
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) 
 		{
 			TResourceHandleBase<false>* resourceHandle = static_cast<TResourceHandleBase<false>*>(obj);
 
-			if(resourceHandle->mData && !resourceHandle->mData->mUUID.empty())
+			if(resourceHandle->mData && !resourceHandle->mData->mUUID.Empty())
 			{
 				HResource loadedResource = gResources().GetResourceHandleInternal(resourceHandle->mData->mUUID);
 
@@ -42,18 +42,18 @@ namespace bs
 			}
 		}
 
-		const String& getRTTIName() override
+		const String& GetRttiName() 
 		{
 			static String name = "ResourceHandleBase";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() 
 		{
 			return TID_ResourceHandle;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			SPtr<TResourceHandleBase<false>> obj = bs_shared_ptr<TResourceHandleBase<false>>
 				(new (bs_alloc<TResourceHandleBase<false>>()) TResourceHandleBase<false>());
@@ -67,16 +67,16 @@ namespace bs
 	class BS_CORE_EXPORT WeakResourceHandleRTTI : public RTTIType<TResourceHandleBase<true>, IReflectable, WeakResourceHandleRTTI>
 	{
 	private:
-		UUID& getUUID(TResourceHandleBase<true>* obj) { return obj->mData != nullptr ? obj->mData->mUUID : UUID::EMPTY; }
-		void setUUID(TResourceHandleBase<true>* obj, UUID& uuid) { obj->mData->mUUID = uuid; }
+		UUID& GetUuid(TResourceHandleBase<true>* obj) { return obj->mData != nullptr ? obj->mData->mUUID : UUID::EMPTY; }
+		void SetUuid(TResourceHandleBase<true>* obj, UUID& uuid) { obj->mData->mUUID = uuid; }
 
 	public:
 		WeakResourceHandleRTTI()
 		{
-			addPlainField("mUUID", 0, &WeakResourceHandleRTTI::getUUID, &WeakResourceHandleRTTI::setUUID);
+			addPlainField("mUUID", 0, &WeakResourceHandleRTTI::GetUuid, &WeakResourceHandleRTTI::SetUuid);
 		}
 
-		void onDeserializationEnded(IReflectable* obj, SerializationContext* context) override
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override
 		{
 			TResourceHandleBase<true>* resourceHandle = static_cast<TResourceHandleBase<true>*>(obj);
 
@@ -87,13 +87,13 @@ namespace bs
 			}
 		}
 
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "WeakResourceHandleBase";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_WeakResourceHandle;
 		}

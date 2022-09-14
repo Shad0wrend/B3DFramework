@@ -14,73 +14,73 @@ namespace bs { namespace ct
 
 		for (auto& query : mEventQueries)
 		{
-			if (query->isActive())
+			if (query->IsActive())
 				query->onTriggered();
 		}
 
 		for (auto& query : mTimerQueries)
 		{
-			if (query->isActive())
-				query->onTriggered(query->getTimeMs());
+			if (query->IsActive())
+				query->onTriggered(query->GetTimeMs());
 		}
 
 		for (auto& query : mOcclusionQueries)
 		{
-			if (query->isActive())
-				query->onComplete(query->getNumSamples());
+			if (query->IsActive())
+				query->onComplete(query->GetNumSamples());
 		}
 
-		processDeletedQueue();
+		ProcessDeletedQueue();
 	}
 
 	void QueryManager::UpdateInternal()
 	{
 		for(auto& query : mEventQueries)
 		{
-			if(query->isActive() && query->isReady())
+			if(query->IsActive() && query->IsReady())
 			{
 				query->onTriggered();
-				query->setActive(false);
+				query->SetActive(false);
 			}
 		}
 
 		for(auto& query : mTimerQueries)
 		{
-			if(query->isActive() && query->isReady())
+			if(query->IsActive() && query->IsReady())
 			{
-				query->onTriggered(query->getTimeMs());
-				query->setActive(false);
+				query->onTriggered(query->GetTimeMs());
+				query->SetActive(false);
 			}
 		}
 
 		for (auto& query : mOcclusionQueries)
 		{
-			if (query->isActive() && query->isReady())
+			if (query->IsActive() && query->IsReady())
 			{
-				query->onComplete(query->getNumSamples());
-				query->setActive(false);
+				query->onComplete(query->GetNumSamples());
+				query->SetActive(false);
 			}
 		}
 
-		processDeletedQueue();
+		ProcessDeletedQueue();
 	}
 
-	void QueryManager::deleteEventQuery(EventQuery* query)
+	void QueryManager::DeleteEventQuery(EventQuery* query)
 	{
-		instance().mDeletedEventQueries.push_back(query);
+		Instance().mDeletedEventQueries.push_back(query);
 	}
 
-	void QueryManager::deleteTimerQuery(TimerQuery* query)
+	void QueryManager::DeleteTimerQuery(TimerQuery* query)
 	{
-		instance().mDeletedTimerQueries.push_back(query);
+		Instance().mDeletedTimerQueries.push_back(query);
 	}
 
-	void QueryManager::deleteOcclusionQuery(OcclusionQuery* query)
+	void QueryManager::DeleteOcclusionQuery(OcclusionQuery* query)
 	{
-		instance().mDeletedOcclusionQueries.push_back(query);
+		Instance().mDeletedOcclusionQueries.push_back(query);
 	}
 
-	void QueryManager::processDeletedQueue()
+	void QueryManager::ProcessDeletedQueue()
 	{
 		for (auto& query : mDeletedEventQueries)
 		{

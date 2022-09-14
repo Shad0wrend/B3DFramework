@@ -21,7 +21,7 @@ namespace bs
 		setName("Camera");
 	}
 
-	ConvexVolume CCamera::getWorldFrustum() const
+	ConvexVolume CCamera::GetWorldFrustum() const
 	{
 		const Vector<Plane>& frustumPlanes = getFrustum().getPlanes();
 		Matrix4 worldMatrix = SO()->getWorldMatrix();
@@ -37,12 +37,12 @@ namespace bs
 		return ConvexVolume(worldPlanes);
 	}
 
-	void CCamera::updateView() const
+	void CCamera::UpdateView() const
 	{
 		mInternal->UpdateStateInternal(*SO());
 	}
 
-	void CCamera::setMain(bool main)
+	void CCamera::SetMain(bool main)
 	{
 		mInternal->setMain(main);
 	}
@@ -54,10 +54,10 @@ namespace bs
 		if (mInternal != nullptr)
 			mInternal->initialize();
 		else
-			mInternal = Camera::create();
+			mInternal = Camera::Create();
 	}
 
-	void CCamera::onInitialized()
+	void CCamera::OnInitialized()
 	{
 		gSceneManager().BindActorInternal(mInternal, SO());
 
@@ -65,20 +65,20 @@ namespace bs
 		gSceneManager().NotifyMainCameraStateChangedInternal(mInternal);
 	}
 
-	void CCamera::onDestroyed()
+	void CCamera::OnDestroyed()
 	{
 		gSceneManager().UnbindActorInternal(mInternal);
 
 		mInternal->destroy();
 	}
 
-	RTTITypeBase* CCamera::getRTTIStatic()
+	RTTITypeBase* CCamera::GetRttiStatic()
 	{
-		return CCameraRTTI::instance();
+		return CCameraRTTI::Instance();
 	}
 
-	RTTITypeBase* CCamera::getRTTI() const
+	RTTITypeBase* CCamera::GetRtti() const
 	{
-		return CCamera::getRTTIStatic();
+		return CCamera::GetRttiStatic();
 	}
 }

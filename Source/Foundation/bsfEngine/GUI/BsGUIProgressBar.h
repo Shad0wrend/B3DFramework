@@ -20,13 +20,13 @@ namespace bs
 	{
 	public:
 		/** Returns type name of the GUI element used for finding GUI element styles.  */
-		static const String& getGUITypeName();
+		static const String& GetGuiTypeName();
 
 		/**	Name of the style for the fill image used by the progress bar. */
-		static const String& getBarStyleType();
+		static const String& GetBarStyleType();
 
 		/**	Name of the style for the background image used by the progress bar. */
-		static const String& getBackgroundStyleType();
+		static const String& GetBackgroundStyleType();
 
 		/**
 		 * Creates a new progress bar.
@@ -34,7 +34,7 @@ namespace bs
 		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
 		 *								GUIWidget the element is used on. If not specified default style is used.
 		 */
-		static GUIProgressBar* create(const String& styleName = StringUtil::BLANK);
+		static GUIProgressBar* Create(const String& styleName = StringUtil::BLANK);
 
 		/**
 		 * Creates a new progress bar.
@@ -44,17 +44,17 @@ namespace bs
 		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
 		 *								GUIWidget the element is used on. If not specified default style is used.
 		 */
-		static GUIProgressBar* create(const GUIOptions& options, const String& styleName = StringUtil::BLANK);
+		static GUIProgressBar* Create(const GUIOptions& options, const String& styleName = StringUtil::BLANK);
 
 		/**
 		 * Fills up the progress bar up to the specified percentage.
 		 *
 		 * @param[in]	pct	How far to extend the fill image, in percent ranging [0.0f, 1.0f]
 		 */
-		void setPercent(float pct);
+		void SetPercent(float pct);
 
 		/**	Gets the percentage of how full is the progress bar currently. */
-		float getPercent() const { return mPercent; }
+		float GetPercent() const { return mPercent; }
 
 		/** @copydoc GUIElement::setTint */
 		virtual void setTint(const Color& color) override;
@@ -75,7 +75,7 @@ namespace bs
 		virtual void UpdateLayoutInternalInternal(const GUILayoutData& data) override;
 
 		/** @copydoc GUIElementContainer::styleUpdated */
-		void styleUpdated() override;
+		void StyleUpdated() override;
 
 	private:
 		GUITexture* mBar;

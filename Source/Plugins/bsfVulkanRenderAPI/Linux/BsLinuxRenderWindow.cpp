@@ -62,7 +62,7 @@ namespace bs
 
 	SPtr<ct::CoreObject> LinuxRenderWindow::createCore() const
 	{
-		ct::VulkanRenderAPI& rapi = static_cast<ct::VulkanRenderAPI&>(ct::RenderAPI::instance());
+		ct::VulkanRenderAPI& rapi = static_cast<ct::VulkanRenderAPI&>(ct::RenderAPI::Instance());
 
 		RENDER_WINDOW_DESC desc = mDesc;
 		SPtr<ct::CoreObject> coreObj = bs_shared_ptr_new<ct::LinuxRenderWindow>(desc, mWindowId, rapi);
@@ -227,7 +227,7 @@ namespace bs
 			mSyncedProperties = props;
 		}
 
-		bs::RenderWindowManager::instance().notifySyncDataDirty(this);
+		bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
 		RenderWindow::initialize();
 	}
 
@@ -310,7 +310,7 @@ namespace bs
 			return;
 
 		const LinuxVideoModeInfo& videoModeInfo =
-				static_cast<const LinuxVideoModeInfo&>(RenderAPI::instance().getVideoModeInfo());
+				static_cast<const LinuxVideoModeInfo&>(RenderAPI::Instance().getVideoModeInfo());
 
 		UINT32 outputIdx = mode.outputIdx;
 		if(outputIdx >= videoModeInfo.getNumOutputs())
@@ -435,8 +435,8 @@ namespace bs
 			mSyncedProperties.height = props.height;
 		}
 
-		bs::RenderWindowManager::instance().notifySyncDataDirty(this);
-		bs::RenderWindowManager::instance().notifyMovedOrResized(this);
+		bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
+		bs::RenderWindowManager::Instance().notifyMovedOrResized(this);
 	}
 
 	void LinuxRenderWindow::setWindowed(UINT32 width, UINT32 height)
@@ -450,7 +450,7 @@ namespace bs
 
 		// Restore old screen config
 		const LinuxVideoModeInfo& videoModeInfo =
-				static_cast<const LinuxVideoModeInfo&>(RenderAPI::instance().getVideoModeInfo());
+				static_cast<const LinuxVideoModeInfo&>(RenderAPI::Instance().getVideoModeInfo());
 
 		UINT32 outputIdx = 0; // 0 is always primary
 		if(outputIdx >= videoModeInfo.getNumOutputs())
@@ -485,8 +485,8 @@ namespace bs
 			mSyncedProperties.height = props.height;
 		}
 
-		bs::RenderWindowManager::instance().notifySyncDataDirty(this);
-		bs::RenderWindowManager::instance().notifyMovedOrResized(this);
+		bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
+		bs::RenderWindowManager::Instance().notifyMovedOrResized(this);
 	}
 
 	void LinuxRenderWindow::move(INT32 left, INT32 top)
@@ -509,7 +509,7 @@ namespace bs
 				mSyncedProperties.left = props.left;
 			}
 
-			bs::RenderWindowManager::instance().notifySyncDataDirty(this);
+			bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
 		}
 	}
 
@@ -533,7 +533,7 @@ namespace bs
 				mSyncedProperties.height = props.height;
 			}
 
-			bs::RenderWindowManager::instance().notifySyncDataDirty(this);
+			bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
 		}
 	}
 
@@ -584,7 +584,7 @@ namespace bs
 			mSyncedProperties.vsyncInterval = interval;
 		}
 
-		bs::RenderWindowManager::instance().notifySyncDataDirty(this);		
+		bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
 	}
 
 	void LinuxRenderWindow::swapBuffers(UINT32 syncMask)
@@ -610,7 +610,7 @@ namespace bs
 		syncMask &= ~queueMask;
 
 		UINT32 deviceIdx = presentDevice->getIndex();
-		VulkanCommandBufferManager& cbm = static_cast<VulkanCommandBufferManager&>(CommandBufferManager::instance());
+		VulkanCommandBufferManager& cbm = static_cast<VulkanCommandBufferManager&>(CommandBufferManager::Instance());
 
 		UINT32 numSemaphores;
 		cbm.getSyncSemaphores(deviceIdx, syncMask, mSemaphoresTemp, numSemaphores);

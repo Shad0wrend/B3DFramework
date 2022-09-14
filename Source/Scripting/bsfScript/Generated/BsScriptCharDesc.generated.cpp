@@ -16,17 +16,17 @@ namespace bs
 	void ScriptCharDesc::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptCharDesc::box(const __CharDescInterop& value)
+	MonoObject*ScriptCharDesc::Box(const __CharDescInterop& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	__CharDescInterop ScriptCharDesc::unbox(MonoObject* value)
+	__CharDescInterop ScriptCharDesc::Unbox(MonoObject* value)
 	{
-		return *(__CharDescInterop*)MonoUtil::unbox(value);
+		return *(__CharDescInterop*)MonoUtil::Unbox(value);
 	}
 
-	CharDesc ScriptCharDesc::fromInterop(const __CharDescInterop& value)
+	CharDesc ScriptCharDesc::FromInterop(const __CharDescInterop& value)
 	{
 		CharDesc output;
 		output.charId = value.charId;
@@ -45,8 +45,8 @@ namespace bs
 		if(value.kerningPairs != nullptr)
 		{
 			ScriptArray arraykerningPairs(value.kerningPairs);
-			veckerningPairs.resize(arraykerningPairs.size());
-			for(int i = 0; i < (int)arraykerningPairs.size(); i++)
+			veckerningPairs.resize(arraykerningPairs.Size());
+			for(int i = 0; i < (int)arraykerningPairs.Size(); i++)
 			{
 				veckerningPairs[i] = arraykerningPairs.get<KerningPair>(i);
 			}
@@ -56,7 +56,7 @@ namespace bs
 		return output;
 	}
 
-	__CharDescInterop ScriptCharDesc::toInterop(const CharDesc& value)
+	__CharDescInterop ScriptCharDesc::ToInterop(const CharDesc& value)
 	{
 		__CharDescInterop output;
 		output.charId = value.charId;
@@ -73,12 +73,12 @@ namespace bs
 		output.yAdvance = value.yAdvance;
 		int arraySizekerningPairs = (int)value.kerningPairs.size();
 		MonoArray* veckerningPairs;
-		ScriptArray arraykerningPairs = ScriptArray::create<ScriptKerningPair>(arraySizekerningPairs);
+		ScriptArray arraykerningPairs = ScriptArray::Create<ScriptKerningPair>(arraySizekerningPairs);
 		for(int i = 0; i < arraySizekerningPairs; i++)
 		{
 			arraykerningPairs.set(i, value.kerningPairs[i]);
 		}
-		veckerningPairs = arraykerningPairs.getInternal();
+		veckerningPairs = arraykerningPairs.GetInternal();
 		output.kerningPairs = veckerningPairs;
 
 		return output;

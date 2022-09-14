@@ -16,7 +16,7 @@ namespace bs
 	{
 	public:
 		/** @copydoc GUIElement::setFocus */
-		void setFocus(bool enabled, bool clear = false) override;
+		void SetFocus(bool enabled, bool clear = false) ;
 
 	protected:
 		GUIElementContainer(const GUIDimensions& dimensions, const char* style,
@@ -26,7 +26,7 @@ namespace bs
 		virtual ~GUIElementContainer() = default;
 
 		/** @copydoc GUIElement::_fillBuffer */
-		void _fillBuffer(
+		void FillBuffer(
 			UINT8* vertices,
 			UINT32* indices,
 			UINT32 vertexOffset,
@@ -34,7 +34,7 @@ namespace bs
 			const Vector2I& offset,
 			UINT32 maxNumVerts,
 			UINT32 maxNumIndices,
-			UINT32 renderElementIdx) const override;
+			UINT32 renderElementIdx) const ;
 
 		/** @copydoc GUIElement::GetOptimalSizeInternal */
 		Vector2I GetOptimalSizeInternal() const override;

@@ -27,17 +27,17 @@ namespace bs
 		:mAlloc(&gFrameAlloc())
 	{ }
 
-	bool BinaryCompare::run(IReflectable& a, IReflectable& b)
+	bool BinaryCompare::Run(IReflectable& a, IReflectable& b)
 	{
-		mAlloc->markFrame();
-		bool output = compare(a, b);
+		mAlloc->MarkFrame();
+		bool output = Compare(a, b);
 		mObjectMap.clear();
-		mAlloc->clear();
+		mAlloc->Clear();
 
 		return output;
 	}
 
-	bool BinaryCompare::compare(IReflectable& a, IReflectable& b)
+	bool BinaryCompare::Compare(IReflectable& a, IReflectable& b)
 	{
 		RTTITypeBase* rtti = a.getRTTI();
 
@@ -56,10 +56,10 @@ namespace bs
 			while (!rttiInstances.empty())
 			{
 				RTTIPair rttiPair = rttiInstances.top();
-				rttiPair.rttiA->onSerializationEnded(&a, mContext);
-				rttiPair.rttiB->onSerializationEnded(&b, mContext);
-				mAlloc->destruct(rttiPair.rttiA);
-				mAlloc->destruct(rttiPair.rttiB);
+				rttiPair.rttiA->OnSerializationEnded(&a, mContext);
+				rttiPair.rttiB->OnSerializationEnded(&b, mContext);
+				mAlloc->Destruct(rttiPair.rttiA);
+				mAlloc->Destruct(rttiPair.rttiB);
 
 				rttiInstances.pop();
 			}
@@ -72,8 +72,8 @@ namespace bs
 			RTTITypeBase* rttiInstanceB = rtti->CloneInternal(*mAlloc);
 			rttiInstances.push({ rttiInstanceA, rttiInstanceB });
 
-			rttiInstanceA->onSerializationStarted(&a, mContext);
-			rttiInstanceB->onSerializationStarted(&b, mContext);
+			rttiInstanceA->OnSerializationStarted(&a, mContext);
+			rttiInstanceB->OnSerializationStarted(&b, mContext);
 
 			const UINT32 numFields = rtti->getNumFields();
 			for (UINT32 i = 0; i < numFields; i++)

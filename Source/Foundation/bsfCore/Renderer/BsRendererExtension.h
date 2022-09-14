@@ -96,7 +96,7 @@ namespace bs
 		 * @note	Sim thread.
 		 */
 		template<class T>
-		static SPtr<T> create(const Any& data)
+		static SPtr<T> Create(const Any& data)
 		{
 			T* ext = new (bs_alloc<T>()) T();
 			InitializerInternal(ext, data);
@@ -105,13 +105,13 @@ namespace bs
 		}
 
 		/** Called when the renderer extension is first initialized. */
-		virtual void initialize(const Any& data) {}
+		virtual void Initialize(const Any& data) {}
 
 		/** Called just before the renderer extension is destroyed. */
-		virtual void destroy() {}
+		virtual void Destroy() {}
 
 		/** Returns true if the render() method should be called for the provided camera. */
-		virtual RendererExtensionRequest check(const ct::Camera& camera) = 0;
+		virtual RendererExtensionRequest Check(const ct::Camera& camera) = 0;
 
 		/**
 		 * Called at the point at which rendering should be performed for the provided camera. Relevant render targets
@@ -121,20 +121,20 @@ namespace bs
 		 * @param[in]	camera			Camera through which the renderer is currently rendering.
 		 * @param[in]	viewContext		Additional information about the currently rendered view.
 		 */
-		virtual void render(const ct::Camera& camera, const ct::RendererViewContext& viewContext) = 0;
+		virtual void Render(const ct::Camera& camera, const ct::RendererViewContext& viewContext) = 0;
 
 		/**
 		 * Determines when will the render() method execute, compared to other plugins using the same RenderLocation.
 		 * Higher number means the extension will execute before extensions with lower numbers. Priorities only matter for
 		 * extensions that share the same RenderLocation.
 		 */
-		UINT32 getPriority() const { return mPriority; }
+		UINT32 GetPriority() const { return mPriority; }
 
 		/**
 		 * Returns a location that determines at which point in rendering should the system call the render() method. See
 		 * RenderLocation.
 		 */
-		RenderLocation getLocation() const { return mLocation; }
+		RenderLocation GetLocation() const { return mLocation; }
 
 	protected:
 		RendererExtension(RenderLocation location, UINT32 priority)

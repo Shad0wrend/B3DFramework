@@ -4,7 +4,7 @@
 
 namespace bs { namespace ct
 {
-	SPtr<CommandBuffer> NullCommandBufferManager::createInternal(GpuQueueType type, UINT32 deviceIdx,
+	SPtr<CommandBuffer> NullCommandBufferManager::CreateInternal(GpuQueueType type, UINT32 deviceIdx,
 		UINT32 queueIdx, bool secondary)
 	{
 		CommandBuffer* buffer = new (bs_alloc<NullCommandBuffer>()) NullCommandBuffer(type, deviceIdx, queueIdx, secondary);

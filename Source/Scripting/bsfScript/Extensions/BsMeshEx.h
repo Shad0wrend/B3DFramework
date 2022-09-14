@@ -33,7 +33,7 @@ namespace bs
 		 *								go over the number of vertices limited by the data type size.
 		 */
 		BS_SCRIPT_EXPORT(ec:Mesh)
-		static HMesh create(int numVertices, int numIndices, DrawOperationType topology = DOT_TRIANGLE_LIST,
+		static HMesh Create(int numVertices, int numIndices, DrawOperationType topology = DOT_TRIANGLE_LIST,
 			MeshUsage usage = MU_STATIC, VertexLayout vertex = VertexLayout::Position, IndexType index = IT_32BIT);
 
 		/**
@@ -51,7 +51,7 @@ namespace bs
 		 *								go over the number of vertices limited by the data type size.
 		 */
 		BS_SCRIPT_EXPORT(ec:Mesh)
-		static HMesh create(int numVertices, int numIndices, const Vector<SubMesh>& subMeshes,
+		static HMesh Create(int numVertices, int numIndices, const Vector<SubMesh>& subMeshes,
 			MeshUsage usage = MU_STATIC, VertexLayout vertex = VertexLayout::Position, IndexType index = IT_32BIT);
 
 		/**
@@ -64,7 +64,7 @@ namespace bs
 		 * @param[in]	usage			Optimizes performance depending on planned usage of the mesh.
 		 */
 		BS_SCRIPT_EXPORT(ec:Mesh)
-		static HMesh create(const SPtr<RendererMeshData>& data, DrawOperationType topology = DOT_TRIANGLE_LIST,
+		static HMesh Create(const SPtr<RendererMeshData>& data, DrawOperationType topology = DOT_TRIANGLE_LIST,
 			MeshUsage usage = MU_STATIC);
 
 		/**
@@ -77,19 +77,19 @@ namespace bs
 		 * @param[in]	usage			Optimizes performance depending on planned usage of the mesh.
 		 */
 		BS_SCRIPT_EXPORT(ec:Mesh)
-		static HMesh create(const SPtr<RendererMeshData>& data, const Vector<SubMesh>& subMeshes,
+		static HMesh Create(const SPtr<RendererMeshData>& data, const Vector<SubMesh>& subMeshes,
 			MeshUsage usage = MU_STATIC);
 
 		/** Returns all sub-meshes contained in the mesh. */
 		BS_SCRIPT_EXPORT(e:Mesh,pr:getter,n:SubMeshes)
-		static Vector<SubMesh> getSubMeshes(const HMesh& thisPtr);
+		static Vector<SubMesh> GetSubMeshes(const HMesh& thisPtr);
 		
 		/** Returns the number of sub-meshes contained in this mesh. */
 		BS_SCRIPT_EXPORT(e:Mesh,pr:getter,n:SubMeshCount)
-		static UINT32 getSubMeshCount(const HMesh& thisPtr);
+		static UINT32 GetSubMeshCount(const HMesh& thisPtr);
 		
 		BS_SCRIPT_EXPORT(e:Mesh,in:true)
-		static void getBounds(const HMesh& thisPtr, AABox* box, Sphere* sphere);
+		static void GetBounds(const HMesh& thisPtr, AABox* box, Sphere* sphere);
 		
 		/**
 		 * Accesses the vertex and index data of the mesh. If reading, mesh must have been created with the
@@ -97,9 +97,9 @@ namespace bs
 		 * layout and index format.
 		 */
 		BS_SCRIPT_EXPORT(e:Mesh,pr:getter,n:MeshData)
-		static SPtr<RendererMeshData> getMeshData(const HMesh& thisPtr);
+		static SPtr<RendererMeshData> GetMeshData(const HMesh& thisPtr);
 		BS_SCRIPT_EXPORT(e:Mesh,pr:setter,n:MeshData)
-		static void setMeshData(const HMesh& thisPtr, const SPtr<RendererMeshData>& value);
+		static void SetMeshData(const HMesh& thisPtr, const SPtr<RendererMeshData>& value);
 	};
 
 	/** @endcond */

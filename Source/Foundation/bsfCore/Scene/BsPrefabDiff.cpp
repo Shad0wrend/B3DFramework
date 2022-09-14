@@ -10,27 +10,27 @@
 
 namespace bs
 {
-	RTTITypeBase* PrefabComponentDiff::getRTTIStatic()
+	RTTITypeBase* PrefabComponentDiff::GetRttiStatic()
 	{
-		return PrefabComponentDiffRTTI::instance();
+		return PrefabComponentDiffRTTI::Instance();
 	}
 
-	RTTITypeBase* PrefabComponentDiff::getRTTI() const
+	RTTITypeBase* PrefabComponentDiff::GetRtti() const
 	{
-		return PrefabComponentDiff::getRTTIStatic();
+		return PrefabComponentDiff::GetRttiStatic();
 	}
 
-	RTTITypeBase* PrefabObjectDiff::getRTTIStatic()
+	RTTITypeBase* PrefabObjectDiff::GetRttiStatic()
 	{
-		return PrefabObjectDiffRTTI::instance();
+		return PrefabObjectDiffRTTI::Instance();
 	}
 
-	RTTITypeBase* PrefabObjectDiff::getRTTI() const
+	RTTITypeBase* PrefabObjectDiff::GetRtti() const
 	{
-		return PrefabObjectDiff::getRTTIStatic();
+		return PrefabObjectDiff::GetRttiStatic();
 	}
 
-	SPtr<PrefabDiff> PrefabDiff::create(const HSceneObject& prefab, const HSceneObject& instance)
+	SPtr<PrefabDiff> PrefabDiff::Create(const HSceneObject& prefab, const HSceneObject& instance)
 	{
 		if (prefab->mPrefabLinkUUID != instance->mPrefabLinkUUID)
 			return nullptr;
@@ -53,7 +53,7 @@ namespace bs
 		return output;
 	}
 
-	void PrefabDiff::apply(const HSceneObject& object)
+	void PrefabDiff::Apply(const HSceneObject& object)
 	{
 		if (mRoot == nullptr)
 			return;
@@ -67,7 +67,7 @@ namespace bs
 		serzContext.goState->resolve();
 	}
 
-	void PrefabDiff::applyDiff(const SPtr<PrefabObjectDiff>& diff, const HSceneObject& object,
+	void PrefabDiff::ApplyDiff(const SPtr<PrefabObjectDiff>& diff, const HSceneObject& object,
 		SerializationContext* context)
 	{
 		if ((diff->soFlags & (UINT32)SceneObjectDiffFlags::Name) != 0)
@@ -159,7 +159,7 @@ namespace bs
 		}
 	}
 
-	SPtr<PrefabObjectDiff> PrefabDiff::generateDiff(const HSceneObject& prefab, const HSceneObject& instance)
+	SPtr<PrefabObjectDiff> PrefabDiff::GenerateDiff(const HSceneObject& prefab, const HSceneObject& instance)
 	{
 		SPtr<PrefabObjectDiff> output;
 
@@ -278,7 +278,7 @@ namespace bs
 
 			if (!foundMatching)
 			{
-				SPtr<SerializedObject> obj = SerializedObject::create(*instanceChild);
+				SPtr<SerializedObject> obj = SerializedObject::Create(*instanceChild);
 
 				if (output == nullptr)
 					output = bs_shared_ptr_new<PrefabObjectDiff>();
@@ -306,8 +306,8 @@ namespace bs
 
 				if (prefabComponent->getLinkId() == instanceComponent->getLinkId())
 				{
-					SPtr<SerializedObject> encodedPrefab = SerializedObject::create(*prefabComponent);
-					SPtr<SerializedObject> encodedInstance = SerializedObject::create(*instanceComponent);
+					SPtr<SerializedObject> encodedPrefab = SerializedObject::Create(*prefabComponent);
+					SPtr<SerializedObject> encodedInstance = SerializedObject::Create(*instanceComponent);
 
 					IDiff& diffHandler = prefabComponent->getRTTI()->getDiffHandler();
 					SPtr<SerializedObject> diff = diffHandler.generateDiff(encodedPrefab, encodedInstance);
@@ -365,7 +365,7 @@ namespace bs
 
 			if (!foundMatching)
 			{
-				SPtr<SerializedObject> obj = SerializedObject::create(*instanceComponent);
+				SPtr<SerializedObject> obj = SerializedObject::Create(*instanceComponent);
 
 				if (output == nullptr)
 					output = bs_shared_ptr_new<PrefabObjectDiff>();
@@ -380,7 +380,7 @@ namespace bs
 		return output;
 	}
 
-	void PrefabDiff::renameInstanceIds(const HSceneObject& prefab, const HSceneObject& instance, Vector<RenamedGameObject>& output)
+	void PrefabDiff::RenameInstanceIds(const HSceneObject& prefab, const HSceneObject& instance, Vector<RenamedGameObject>& output)
 	{
 		UnorderedMap<UUID, UnorderedMap<UINT32, UINT64>> linkToInstanceId;
 
@@ -500,19 +500,19 @@ namespace bs
 		}
 	}
 
-	void PrefabDiff::restoreInstanceIds(const Vector<RenamedGameObject>& renamedObjects)
+	void PrefabDiff::RestoreInstanceIds(const Vector<RenamedGameObject>& renamedObjects)
 	{
 		for (auto& renamedGO : renamedObjects)
 			renamedGO.instanceData->mInstanceId = renamedGO.originalId;
 	}
 
-	RTTITypeBase* PrefabDiff::getRTTIStatic()
+	RTTITypeBase* PrefabDiff::GetRttiStatic()
 	{
-		return PrefabDiffRTTI::instance();
+		return PrefabDiffRTTI::Instance();
 	}
 
-	RTTITypeBase* PrefabDiff::getRTTI() const
+	RTTITypeBase* PrefabDiff::GetRtti() const
 	{
-		return PrefabDiff::getRTTIStatic();
+		return PrefabDiff::GetRttiStatic();
 	}
 }

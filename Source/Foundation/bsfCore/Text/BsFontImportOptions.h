@@ -65,15 +65,15 @@ namespace bs
 
 		/** Creates a new import options object that allows you to customize how are fonts imported. */
 		BS_SCRIPT_EXPORT(ec:T)
-		static SPtr<FontImportOptions> create();
+		static SPtr<FontImportOptions> Create();
 
 		/************************************************************************/
 		/* 								SERIALIZATION                      		*/
 		/************************************************************************/
 	public:
 		friend class FontImportOptionsRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** @} */

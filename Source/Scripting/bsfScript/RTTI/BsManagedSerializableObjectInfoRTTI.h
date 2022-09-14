@@ -19,17 +19,17 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableAssemblyInfoRTTI : public RTTIType<ManagedSerializableAssemblyInfo, IReflectable, ManagedSerializableAssemblyInfoRTTI>
 	{
 	private:
-		String& getName(ManagedSerializableAssemblyInfo* obj)
+		String& GetName(ManagedSerializableAssemblyInfo* obj)
 		{
 			return obj->mName;
 		}
 
-		void setName(ManagedSerializableAssemblyInfo* obj, String& val)
+		void SetName(ManagedSerializableAssemblyInfo* obj, String& val)
 		{
 			obj->mName = val;
 		}
 
-		SPtr<ManagedSerializableObjectInfo> getSerializableObjectInfo(ManagedSerializableAssemblyInfo* obj, UINT32 idx)
+		SPtr<ManagedSerializableObjectInfo> GetSerializableObjectInfo(ManagedSerializableAssemblyInfo* obj, UINT32 idx)
 		{
 			auto iter = obj->mObjectInfos.begin();
 			for(UINT32 i = 0; i < idx; i++)
@@ -38,36 +38,36 @@ namespace bs
 			return iter->second;
 		}
 
-		void setSerializableObjectInfo(ManagedSerializableAssemblyInfo* obj, UINT32 idx, SPtr<ManagedSerializableObjectInfo> val)
+		void SetSerializableObjectInfo(ManagedSerializableAssemblyInfo* obj, UINT32 idx, SPtr<ManagedSerializableObjectInfo> val)
 		{
-			obj->mTypeNameToId[val->getFullTypeName()] = val->mTypeInfo->mTypeId;
+			obj->mTypeNameToId[val->GetFullTypeName()] = val->mTypeInfo->mTypeId;
 			obj->mObjectInfos[val->mTypeInfo->mTypeId] = val;
 		}
 		
-		UINT32 getSerializableObjectInfoArraySize(ManagedSerializableAssemblyInfo* obj) { return (UINT32)obj->mObjectInfos.size(); }
-		void setSerializableObjectInfoArraySize(ManagedSerializableAssemblyInfo* obj, UINT32 size) {  }
+		UINT32 GetSerializableObjectInfoArraySize(ManagedSerializableAssemblyInfo* obj) { return (UINT32)obj->mObjectInfos.size(); }
+		void SetSerializableObjectInfoArraySize(ManagedSerializableAssemblyInfo* obj, UINT32 size) {  }
 
 	public:
 		ManagedSerializableAssemblyInfoRTTI()
 		{
-			addPlainField("mName", 0, &ManagedSerializableAssemblyInfoRTTI::getName, &ManagedSerializableAssemblyInfoRTTI::setName);
-			addReflectablePtrArrayField("mObjectInfos", 1, &ManagedSerializableAssemblyInfoRTTI::getSerializableObjectInfo,
-				&ManagedSerializableAssemblyInfoRTTI::getSerializableObjectInfoArraySize, &ManagedSerializableAssemblyInfoRTTI::setSerializableObjectInfo,
-				&ManagedSerializableAssemblyInfoRTTI::setSerializableObjectInfoArraySize);
+			AddPlainField("mName", 0, &ManagedSerializableAssemblyInfoRTTI::GetName, &ManagedSerializableAssemblyInfoRTTI::SetName);
+			AddReflectablePtrArrayField("mObjectInfos", 1, &ManagedSerializableAssemblyInfoRTTI::GetSerializableObjectInfo,
+				&ManagedSerializableAssemblyInfoRTTI::GetSerializableObjectInfoArraySize, &ManagedSerializableAssemblyInfoRTTI::SetSerializableObjectInfo,
+				&ManagedSerializableAssemblyInfoRTTI::SetSerializableObjectInfoArraySize);
 		}
 
-		const String& getRTTIName() override
+		const String& GetRttiName() 
 		{
 			static String name = "ScriptSerializableAssemblyInfo";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() 
 		{
 			return TID_SerializableAssemblyInfo;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return bs_shared_ptr_new<ManagedSerializableAssemblyInfo>();
 		}
@@ -76,29 +76,29 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableObjectInfoRTTI : public RTTIType<ManagedSerializableObjectInfo, IReflectable, ManagedSerializableObjectInfoRTTI>
 	{
 	private:
-		using RTTIType<ManagedSerializableObjectInfo, IReflectable, ManagedSerializableObjectInfoRTTI>::getBaseClass;
+		using RTTIType<ManagedSerializableObjectInfo, IReflectable, ManagedSerializableObjectInfoRTTI>::GetBaseClass;
 
-		SPtr<ManagedSerializableTypeInfoObject> getTypeInfo(ManagedSerializableObjectInfo* obj)
+		SPtr<ManagedSerializableTypeInfoObject> GetTypeInfo(ManagedSerializableObjectInfo* obj)
 		{
 			return obj->mTypeInfo;
 		}
 
-		void setTypeInfo(ManagedSerializableObjectInfo* obj, SPtr<ManagedSerializableTypeInfoObject> val)
+		void SetTypeInfo(ManagedSerializableObjectInfo* obj, SPtr<ManagedSerializableTypeInfoObject> val)
 		{
 			obj->mTypeInfo = val;
 		}
 
-		SPtr<ManagedSerializableObjectInfo> getBaseClass(ManagedSerializableObjectInfo* obj)
+		SPtr<ManagedSerializableObjectInfo> GetBaseClass(ManagedSerializableObjectInfo* obj)
 		{
 			return obj->mBaseClass;
 		}
 
-		void setBaseClass(ManagedSerializableObjectInfo* obj, SPtr<ManagedSerializableObjectInfo> val)
+		void SetBaseClass(ManagedSerializableObjectInfo* obj, SPtr<ManagedSerializableObjectInfo> val)
 		{
 			obj->mBaseClass = val;
 		}
 
-		SPtr<ManagedSerializableMemberInfo> getSerializableFieldInfo(ManagedSerializableObjectInfo* obj, UINT32 idx)
+		SPtr<ManagedSerializableMemberInfo> GetSerializableFieldInfo(ManagedSerializableObjectInfo* obj, UINT32 idx)
 		{
 			auto iter = obj->mFields.begin();
 			for(UINT32 i = 0; i < idx; i++)
@@ -107,33 +107,33 @@ namespace bs
 			return iter->second;
 		}
 
-		void setSerializableFieldInfo(ManagedSerializableObjectInfo* obj, UINT32 idx, SPtr<ManagedSerializableMemberInfo> val)
+		void SetSerializableFieldInfo(ManagedSerializableObjectInfo* obj, UINT32 idx, SPtr<ManagedSerializableMemberInfo> val)
 		{
 			obj->mFieldNameToId[val->mName] = val->mFieldId;
 			obj->mFields[val->mFieldId] = val;
 		}
 
-		UINT32 getSerializableFieldInfoArraySize(ManagedSerializableObjectInfo* obj) { return (UINT32)obj->mFields.size(); }
-		void setSerializableFieldInfoArraySize(ManagedSerializableObjectInfo* obj, UINT32 size) {  }
+		UINT32 GetSerializableFieldInfoArraySize(ManagedSerializableObjectInfo* obj) { return (UINT32)obj->mFields.size(); }
+		void SetSerializableFieldInfoArraySize(ManagedSerializableObjectInfo* obj, UINT32 size) {  }
 
 	public:
 		ManagedSerializableObjectInfoRTTI()
 		{
-			addReflectablePtrField("mTypeInfo", 0, &ManagedSerializableObjectInfoRTTI::getTypeInfo, &ManagedSerializableObjectInfoRTTI::setTypeInfo);
-			addReflectablePtrField("mBaseClass", 2, &ManagedSerializableObjectInfoRTTI::getBaseClass, &ManagedSerializableObjectInfoRTTI::setBaseClass);
+			addReflectablePtrField("mTypeInfo", 0, &ManagedSerializableObjectInfoRTTI::GetTypeInfo, &ManagedSerializableObjectInfoRTTI::SetTypeInfo);
+			addReflectablePtrField("mBaseClass", 2, &ManagedSerializableObjectInfoRTTI::GetBaseClass, &ManagedSerializableObjectInfoRTTI::SetBaseClass);
 
 			addReflectablePtrArrayField("mFields", 3, &ManagedSerializableObjectInfoRTTI::getSerializableFieldInfo,
 				&ManagedSerializableObjectInfoRTTI::getSerializableFieldInfoArraySize, &ManagedSerializableObjectInfoRTTI::setSerializableFieldInfo,
 				&ManagedSerializableObjectInfoRTTI::setSerializableFieldInfoArraySize);
 		}
 
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "ScriptSerializableObjectInfo";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_SerializableObjectInfo;
 		}
@@ -160,13 +160,13 @@ namespace bs
 			:mInitMembers(this)
 		{ }
 
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "ScriptSerializableMemberInfo";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_SerializableMemberInfo;
 		}
@@ -187,13 +187,13 @@ namespace bs
 		ManagedSerializableFieldInfoRTTI()
 		{ }
 
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "ScriptSerializableFieldInfo";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_SerializableFieldInfo;
 		}
@@ -212,13 +212,13 @@ namespace bs
 		ManagedSerializablePropertyInfoRTTI()
 		{ }
 
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "ScriptSerializablePropertyInfo";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_SerializablePropertyInfo;
 		}
@@ -237,13 +237,13 @@ namespace bs
 		ManagedSerializableTypeInfoRTTI()
 		{ }
 
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "ScriptSerializableTypeInfo";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_SerializableTypeInfo;
 		}
@@ -267,13 +267,13 @@ namespace bs
 			:mInitMembers(this)
 		{ }
 
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "ScriptSerializableTypeInfoPrimitive";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_SerializableTypeInfoPrimitive;
 		}
@@ -298,13 +298,13 @@ namespace bs
 			:mInitMembers(this)
 		{ }
 
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "ScriptSerializableTypeInfoEnum";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_SerializableTypeInfoEnum;
 		}
@@ -330,13 +330,13 @@ namespace bs
 			:mInitMembers(this)
 		{ }
 
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "ScriptSerializableTypeInfoRef";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_SerializableTypeInfoRef;
 		}
@@ -360,13 +360,13 @@ namespace bs
 			:mInitMembers(this)
 		{ }
 
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "ScriptSerializableTypeInfoRRef";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_SerializableTypeInfoRRef;
 		}
@@ -394,13 +394,13 @@ namespace bs
 			:mInitMembers(this)
 		{ }
 
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "ScriptSerializableTypeInfoObject";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_SerializableTypeInfoObject;
 		}
@@ -424,13 +424,13 @@ namespace bs
 			:mInitMembers(this)
 		{ }
 
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "ScriptSerializableTypeInfoArray";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_SerializableTypeInfoArray;
 		}
@@ -453,13 +453,13 @@ namespace bs
 			:mInitMembers(this)
 		{ }
 
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "ScriptSerializableTypeInfoList";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_SerializableTypeInfoList;
 		}
@@ -484,13 +484,13 @@ namespace bs
 			:mInitMembers(this)
 		{ }
 
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "ScriptSerializableTypeInfoDictionary";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_SerializableTypeInfoDictionary;
 		}

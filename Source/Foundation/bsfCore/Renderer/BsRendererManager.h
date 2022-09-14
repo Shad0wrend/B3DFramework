@@ -27,13 +27,13 @@ namespace bs
 		 * the specified name doesn't exist. You must call initialize() after setting the active renderer to properly
 		 * activate it.
 		 */
-		void setActive(const String& name);
+		void SetActive(const String& name);
 
 		/** Initializes the currently active renderer, making it ready to render. */
-		void initialize();
+		void Initialize();
 
 		/**	Returns the currently active renderer. Null if no renderer is active. */
-		SPtr<ct::Renderer> getActive() { return mActiveRenderer; }
+		SPtr<ct::Renderer> GetActive() { return mActiveRenderer; }
 
 		/**
 		 * Registers a new renderer factory. Any renderer you try to make active with setActive() you will need to have

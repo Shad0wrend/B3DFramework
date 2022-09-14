@@ -13,7 +13,7 @@ namespace bs
 #if BS_DEBUG_MODE
 	void throwIfNotSimThread()
 	{
-		if(BS_THREAD_CURRENT_ID != CoreApplication::instance().getSimThreadId())
+		if(BS_THREAD_CURRENT_ID != CoreApplication::Instance().GetSimThreadId())
 			BS_EXCEPT(InternalErrorException, "This method can only be accessed from the simulation thread.");
 	}
 
@@ -24,8 +24,8 @@ namespace bs
 
 	ResourceListenerManager::ResourceListenerManager()
 	{
-		mResourceLoadedConn = gResources().onResourceLoaded.connect(std::bind(&ResourceListenerManager::onResourceLoaded, this, _1));
-		mResourceModifiedConn = gResources().onResourceModified.connect(std::bind(&ResourceListenerManager::onResourceModified, this, _1));
+		mResourceLoadedConn = gResources().onResourceLoaded.Connect(std::bind(&::bs::ResourceListenerManager::OnResourceLoaded, this, _1));
+		mResourceModifiedConn = gResources().onResourceModified.Connect(std::bind(&ResourceListenerManager::onResourceModified, this, _1));
 	}
 
 	ResourceListenerManager::~ResourceListenerManager()
@@ -36,7 +36,7 @@ namespace bs
 		mResourceModifiedConn.disconnect();
 	}
 
-	void ResourceListenerManager::registerListener(IResourceListener* listener)
+	void ResourceListenerManager::RegisterListener(IResourceListener* listener)
 	{
 #if BS_DEBUG_MODE
 		RecursiveLock lock(mMutex);
@@ -44,7 +44,7 @@ namespace bs
 #endif
 	}
 
-	void ResourceListenerManager::unregisterListener(IResourceListener* listener)
+	void ResourceListenerManager::UnregisterListener(IResourceListener* listener)
 	{
 #if BS_DEBUG_MODE
 		{
@@ -61,13 +61,13 @@ namespace bs
 		clearDependencies(listener);
 	}
 
-	void ResourceListenerManager::markListenerDirty(IResourceListener* listener)
+	void ResourceListenerManager::MarkListenerDirty(IResourceListener* listener)
 	{
 		RecursiveLock lock(mMutex);
 		mDirtyListeners.insert(listener);
 	}
 
-	void ResourceListenerManager::update()
+	void ResourceListenerManager::Update()
 	{
 		THROW_IF_NOT_SIM_THREAD
 		updateListeners();
@@ -86,7 +86,7 @@ namespace bs
 		}
 	}
 
-	void ResourceListenerManager::updateListeners()
+	void ResourceListenerManager::UpdateListeners()
 	{
 		{
 			RecursiveLock lock(mMutex);
@@ -107,7 +107,7 @@ namespace bs
 
 	}
 
-	void ResourceListenerManager::notifyListeners(const UUID& resourceUUID)
+	void ResourceListenerManager::NotifyListeners(const UUID& resourceUUID)
 	{
 		THROW_IF_NOT_SIM_THREAD
 		updateListeners();
@@ -143,21 +143,21 @@ namespace bs
 			sendResourceModified(modifiedResource);
 	}
 
-	void ResourceListenerManager::onResourceLoaded(const HResource& resource)
+	void ResourceListenerManager::OnResourceLoaded(const HResource& resource)
 	{
 		RecursiveLock lock(mMutex);
 
 		mLoadedResources[resource.getUUID()] = resource;
 	}
 
-	void ResourceListenerManager::onResourceModified(const HResource& resource)
+	void ResourceListenerManager::OnResourceModified(const HResource& resource)
 	{
 		RecursiveLock lock(mMutex);
 
 		mModifiedResources[resource.getUUID()] = resource;
 	}
 
-	void ResourceListenerManager::sendResourceLoaded(const HResource& resource)
+	void ResourceListenerManager::SendResourceLoaded(const HResource& resource)
 	{
 		UINT64 handleId = (UINT64)resource.getHandleData().get();
 
@@ -176,7 +176,7 @@ namespace bs
 		}
 	}
 
-	void ResourceListenerManager::sendResourceModified(const HResource& resource)
+	void ResourceListenerManager::SendResourceModified(const HResource& resource)
 	{
 		UINT64 handleId = (UINT64)resource.getHandleData().get();
 
@@ -195,7 +195,7 @@ namespace bs
 		}
 	}
 
-	void ResourceListenerManager::clearDependencies(IResourceListener* listener)
+	void ResourceListenerManager::ClearDependencies(IResourceListener* listener)
 	{
 		auto iterFind = mListenerToResourceMap.find(listener);
 		if (iterFind == mListenerToResourceMap.end())
@@ -221,7 +221,7 @@ namespace bs
 		mListenerToResourceMap.erase(iterFind);
 	}
 
-	void ResourceListenerManager::addDependencies(IResourceListener* listener)
+	void ResourceListenerManager::AddDependencies(IResourceListener* listener)
 	{
 		listener->getListenerResources(mTempResourceBuffer);
 

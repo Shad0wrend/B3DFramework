@@ -25,68 +25,68 @@ namespace bs
 
 		/** @copydoc Collider::setIsTrigger */
 		BS_SCRIPT_EXPORT(n:Trigger,pr:setter)
-		void setIsTrigger(bool value);
+		void SetIsTrigger(bool value);
 
 		/** @copydoc Collider::getIsTrigger */
 		BS_SCRIPT_EXPORT(n:Trigger,pr:getter)
-		bool getIsTrigger() const { return mIsTrigger; }
+		bool GetIsTrigger() const { return mIsTrigger; }
 
 		/** @copydoc Collider::setMass */
 		BS_SCRIPT_EXPORT(n:Mass,pr:setter)
-		void setMass(float mass);
+		void SetMass(float mass);
 
 		/** @copydoc Collider::getMass */
 		BS_SCRIPT_EXPORT(n:Mass,pr:getter)
-		float getMass() const { return mMass; }
+		float GetMass() const { return mMass; }
 
 		/** @copydoc Collider::setMaterial */
 		BS_SCRIPT_EXPORT(n:Material,pr:setter)
-		void setMaterial(const HPhysicsMaterial& material);
+		void SetMaterial(const HPhysicsMaterial& material);
 
 		/** @copydoc Collider::getMaterial */
 		BS_SCRIPT_EXPORT(n:Material,pr:getter)
-		HPhysicsMaterial getMaterial() const { return mMaterial; }
+		HPhysicsMaterial GetMaterial() const { return mMaterial; }
 
 		/** @copydoc Collider::setContactOffset */
 		BS_SCRIPT_EXPORT(n:ContactOffset,pr:setter)
-		void setContactOffset(float value);
+		void SetContactOffset(float value);
 
 		/** @copydoc Collider::getContactOffset */
 		BS_SCRIPT_EXPORT(n:ContactOffset,pr:getter)
-		float getContactOffset() const { return mContactOffset; }
+		float GetContactOffset() const { return mContactOffset; }
 
 		/** @copydoc Collider::setRestOffset */
 		BS_SCRIPT_EXPORT(n:RestOffset,pr:setter)
-		void setRestOffset(float value);
+		void SetRestOffset(float value);
 
 		/** @copydoc Collider::getRestOffset */
 		BS_SCRIPT_EXPORT(n:RestOffset,pr:getter)
-		float getRestOffset() const { return mRestOffset; }
+		float GetRestOffset() const { return mRestOffset; }
 
 		/** @copydoc Collider::setLayer */
 		BS_SCRIPT_EXPORT(n:Layer,pr:setter,layerMask)
-		void setLayer(UINT64 layer);
+		void SetLayer(UINT64 layer);
 
 		/** @copydoc Collider::getLayer */
 		BS_SCRIPT_EXPORT(n:Layer,pr:getter,layerMask)
-		UINT64 getLayer() const { return mLayer; }
+		UINT64 GetLayer() const { return mLayer; }
 
 		/** @copydoc Collider::setCollisionReportMode */
 		BS_SCRIPT_EXPORT(n:CollisionReportMode,pr:setter)
-		void setCollisionReportMode(CollisionReportMode mode);
+		void SetCollisionReportMode(CollisionReportMode mode);
 
 		/** @copydoc Collider::getCollisionReportMode */
 		BS_SCRIPT_EXPORT(n:CollisionReportMode,pr:getter)
-		CollisionReportMode getCollisionReportMode() const { return mCollisionReportMode; }
+		CollisionReportMode GetCollisionReportMode() const { return mCollisionReportMode; }
 
 		/** @copydoc Collider::getRigidbody */
-		HRigidbody getRigidbody() const { return mParent; }
+		HRigidbody GetRigidbody() const { return mParent; }
 
 		/** @copydoc Collider::rayCast(const Ray&, PhysicsQueryHit&, float) const */
-		bool rayCast(const Ray& ray, PhysicsQueryHit& hit, float maxDist = FLT_MAX) const;
+		bool RayCast(const Ray& ray, PhysicsQueryHit& hit, float maxDist = FLT_MAX) const;
 
 		/** @copydoc Collider::rayCast(const Vector3&, const Vector3&, PhysicsQueryHit&, float) const */
-		bool rayCast(const Vector3& origin, const Vector3& unitDir, PhysicsQueryHit& hit,
+		bool RayCast(const Vector3& origin, const Vector3& unitDir, PhysicsQueryHit& hit,
 			float maxDist = FLT_MAX) const;
 
 		/** @copydoc Collider::onCollisionBegin */
@@ -118,37 +118,37 @@ namespace bs
 		friend class CRigidbody;
 
 		/** @copydoc Component::onInitialized() */
-		void onInitialized() override;
+		void OnInitialized() override;
 
 		/** @copydoc Component::onDestroyed() */
-		void onDestroyed() override;
+		void OnDestroyed() override;
 
 		/** @copydoc Component::onDisabled() */
-		void onDisabled() override;
+		void OnDisabled() override;
 
 		/** @copydoc Component::onEnabled() */
-		void onEnabled() override;
+		void OnEnabled() override;
 
 		/** @copydoc Component::onTransformChanged() */
-		void onTransformChanged(TransformChangedFlags flags) override;
+		void OnTransformChanged(TransformChangedFlags flags) override;
 
 	protected:
-		using Component::destroyInternal;
+		using Component::DestroyInternal;
 
 		/** Creates the internal representation of the Collider for use by the component. */
-		virtual SPtr<Collider> createInternal() = 0;
+		virtual SPtr<Collider> CreateInternal() = 0;
 
 		/** Creates the internal representation of the Collider and restores the values saved by the Component. */
-		virtual void restoreInternal();
+		virtual void RestoreInternal();
 
 		/** Destroys the internal collider representation. */
-		void destroyInternal();
+		void DestroyInternal();
 
 		/**
 		 * Checks is the provided rigidbody a valid parent for this collider.
 		 *
 		 * @note This is required because certain colliders are limited in how they can be used. */
-		virtual bool isValidParent(const HRigidbody& parent) const { return true; }
+		virtual bool IsValidParent(const HRigidbody& parent) const { return true; }
 
 		/**
 		 * Changes the rigidbody parent of the collider. Meant to be called from the Rigidbody itself.
@@ -157,27 +157,27 @@ namespace bs
 		 * @param[in] internal		If true the rigidbody will just be changed internally, but parent rigidbody will not be
 		 *							notified.
 		 */
-		void setRigidbody(const HRigidbody& rigidbody, bool internal = false);
+		void SetRigidbody(const HRigidbody& rigidbody, bool internal = false);
 
 		/**
 		 * Updates the transform of the internal Collider representation from the transform of the component's scene object.
 		 */
-		void updateTransform();
+		void UpdateTransform();
 
 		/** Applies the collision report mode to the internal collider depending on the current state. */
-		void updateCollisionReportMode();
+		void UpdateCollisionReportMode();
 
 		/** Searches the parent scene object hierarchy to find a parent Rigidbody component. */
-		void updateParentRigidbody();
+		void UpdateParentRigidbody();
 
 		/** Triggered when the internal collider begins touching another object. */
-		void triggerOnCollisionBegin(const CollisionDataRaw& data);
+		void TriggerOnCollisionBegin(const CollisionDataRaw& data);
 
 		/** Triggered when the internal collider continues touching another object. */
-		void triggerOnCollisionStay(const CollisionDataRaw& data);
+		void TriggerOnCollisionStay(const CollisionDataRaw& data);
 
 		/** Triggered when the internal collider ends touching another object. */
-		void triggerOnCollisionEnd(const CollisionDataRaw& data);
+		void TriggerOnCollisionEnd(const CollisionDataRaw& data);
 
 		SPtr<Collider> mInternal;
 
@@ -198,8 +198,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class CColliderRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 
 	protected:
 		CCollider(); // Serialization only

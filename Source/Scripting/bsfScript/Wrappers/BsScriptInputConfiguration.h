@@ -19,22 +19,22 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "InputConfiguration")
 
 		/** Returns the managed version of this object. */
-		MonoObject* getManagedInstance() const;
+		MonoObject* GetManagedInstance() const;
 
 		/**	Returns the internal wrapped InputConfiguration object. */
-		SPtr<InputConfiguration> getInternalValue() const { return mInputConfig; }
+		SPtr<InputConfiguration> GetInternalValue() const { return mInputConfig; }
 
 		/**
 		 * Attempts to find a existing interop object for the provided input configuration. Returns null if one cannot be
 		 * found.
 		 */
-		static ScriptInputConfiguration* getScriptInputConfig(const SPtr<InputConfiguration>& inputConfig);
+		static ScriptInputConfiguration* GetScriptInputConfig(const SPtr<InputConfiguration>& inputConfig);
 
 		/**
 		 * Creates a new interop object for the provided input configuration. Caller should first call
 		 * getScriptInputConfig() to ensure one doesn't already exist.
 		 */
-		static ScriptInputConfiguration* createScriptInputConfig(const SPtr<InputConfiguration>& inputConfig);
+		static ScriptInputConfiguration* CreateScriptInputConfig(const SPtr<InputConfiguration>& inputConfig);
 
 	private:
 		ScriptInputConfiguration(MonoObject* instance, const SPtr<InputConfiguration>& inputConfig);
@@ -49,18 +49,18 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static void internal_CreateInstance(MonoObject* object);
+		static void InternalCreateInstance(MonoObject* object);
 
-		static void internal_RegisterButton(ScriptInputConfiguration* thisPtr, MonoString* name, ButtonCode buttonCode,
+		static void InternalRegisterButton(ScriptInputConfiguration* thisPtr, MonoString* name, ButtonCode buttonCode,
 			ButtonModifier modifiers, bool repeatable);
-		static void internal_UnregisterButton(ScriptInputConfiguration* thisPtr, MonoString* name);
+		static void InternalUnregisterButton(ScriptInputConfiguration* thisPtr, MonoString* name);
 
-		static void internal_RegisterAxis(ScriptInputConfiguration* thisPtr, MonoString* name, InputAxis type, float deadZone,
+		static void InternalRegisterAxis(ScriptInputConfiguration* thisPtr, MonoString* name, InputAxis type, float deadZone,
 			float sensitivity, bool invert);
-		static void internal_UnregisterAxis(ScriptInputConfiguration* thisPtr, MonoString* name);
+		static void InternalUnregisterAxis(ScriptInputConfiguration* thisPtr, MonoString* name);
 
-		static void internal_SetRepeatInterval(ScriptInputConfiguration* thisPtr, UINT64 milliseconds);
-		static UINT64 internal_GetRepeatInterval(ScriptInputConfiguration* thisPtr);
+		static void InternalSetRepeatInterval(ScriptInputConfiguration* thisPtr, UINT64 milliseconds);
+		static UINT64 InternalGetRepeatInterval(ScriptInputConfiguration* thisPtr);
 	};
 
 	/**	Interop class between C++ & CLR for VirtualAxis. */
@@ -75,7 +75,7 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static UINT32 internal_InitVirtualAxis(MonoString* name);
+		static UINT32 InternalInitVirtualAxis(MonoString* name);
 	};
 
 	/** @} */

@@ -17,15 +17,15 @@ namespace bs
 
 	}
 
-	bool TechniqueBase::isSupported() const
+	bool TechniqueBase::IsSupported() const
 	{
-		if (ct::GpuProgramManager::instance().isLanguageSupported(mLanguage) || mLanguage == "Any")
+		if (ct::GpuProgramManager::Instance().isLanguageSupported(mLanguage) || mLanguage == "Any")
 			return true;
 
 		return false;
 	}
 
-	bool TechniqueBase::hasTag(const StringID& tag)
+	bool TechniqueBase::HasTag(const StringID& tag)
 	{
 		for(auto& entry : mTags)
 		{
@@ -48,7 +48,7 @@ namespace bs
 	{ }
 
 	template<bool Core>
-	SPtr<typename TTechnique<Core>::PassType> TTechnique<Core>::getPass(UINT32 idx) const
+	SPtr<typename TTechnique<Core>::PassType> TTechnique<Core>::GetPass(UINT32 idx) const
 	{
 		if (idx < 0 || idx >= (UINT32)mPasses.size())
 			BS_EXCEPT(InvalidParametersException, "Index out of range: " + toString(idx));
@@ -56,7 +56,7 @@ namespace bs
 		return mPasses[idx];
 	}
 	template<bool Core>
-	void TTechnique<Core>::compile()
+	void TTechnique<Core>::Compile()
 	{
 		for(auto& pass : mPasses)
 			pass->compile();
@@ -74,12 +74,12 @@ namespace bs
 		: TTechnique()
 	{ }
 
-	SPtr<ct::Technique> Technique::getCore() const
+	SPtr<ct::Technique> Technique::GetCore() const
 	{
 		return std::static_pointer_cast<ct::Technique>(mCoreSpecific);
 	}
 
-	SPtr<ct::CoreObject> Technique::createCore() const
+	SPtr<ct::CoreObject> Technique::CreateCore() const
 	{
 		Vector<SPtr<ct::Pass>> passes;
 		for (auto& pass : mPasses)
@@ -97,13 +97,13 @@ namespace bs
 		return techniquePtr;
 	}
 
-	void Technique::getCoreDependencies(Vector<CoreObject*>& dependencies)
+	void Technique::GetCoreDependencies(Vector<CoreObject*>& dependencies)
 	{
 		for (auto& pass : mPasses)
 			dependencies.push_back(pass.get());
 	}
 
-	SPtr<Technique> Technique::create(const String& language, const Vector<SPtr<Pass>>& passes)
+	SPtr<Technique> Technique::Create(const String& language, const Vector<SPtr<Pass>>& passes)
 	{
 		Technique* technique = new (bs_alloc<Technique>()) Technique(language, {}, ShaderVariation(), passes);
 		SPtr<Technique> techniquePtr = bs_core_ptr<Technique>(technique);
@@ -113,7 +113,7 @@ namespace bs
 		return techniquePtr;
 	}
 
-	SPtr<Technique> Technique::create(const String& language, const Vector<StringID>& tags,
+	SPtr<Technique> Technique::Create(const String& language, const Vector<StringID>& tags,
 		const ShaderVariation& variation, const Vector<SPtr<Pass>>& passes)
 	{
 		Technique* technique = new (bs_alloc<Technique>()) Technique(language, tags, variation, passes);
@@ -124,7 +124,7 @@ namespace bs
 		return techniquePtr;
 	}
 
-	SPtr<Technique> Technique::createEmpty()
+	SPtr<Technique> Technique::CreateEmpty()
 	{
 		Technique* technique = new (bs_alloc<Technique>()) Technique();
 		SPtr<Technique> techniquePtr = bs_core_ptr<Technique>(technique);
@@ -133,14 +133,14 @@ namespace bs
 		return techniquePtr;
 	}
 
-	RTTITypeBase* Technique::getRTTIStatic()
+	RTTITypeBase* Technique::GetRttiStatic()
 	{
-		return TechniqueRTTI::instance();
+		return TechniqueRTTI::Instance();
 	}
 
-	RTTITypeBase* Technique::getRTTI() const
+	RTTITypeBase* Technique::GetRtti() const
 	{
-		return Technique::getRTTIStatic();
+		return Technique::GetRttiStatic();
 	}
 
 	namespace ct
@@ -150,7 +150,7 @@ namespace bs
 		:TTechnique(language, tags, variation, passes)
 	{ }
 
-	SPtr<Technique> Technique::create(const String& language, const Vector<SPtr<Pass>>& passes)
+	SPtr<Technique> Technique::Create(const String& language, const Vector<SPtr<Pass>>& passes)
 	{
 		Technique* technique = new (bs_alloc<Technique>()) Technique(language, {}, ShaderVariation(), passes);
 		SPtr<Technique> techniquePtr = bs_shared_ptr<Technique>(technique);
@@ -160,7 +160,7 @@ namespace bs
 		return techniquePtr;
 	}
 
-	SPtr<Technique> Technique::create(const String& language, const Vector<StringID>& tags,
+	SPtr<Technique> Technique::Create(const String& language, const Vector<StringID>& tags,
 		const ShaderVariation& variation, const Vector<SPtr<Pass>>& passes)
 	{
 		Technique* technique = new (bs_alloc<Technique>()) Technique(language, tags, variation, passes);

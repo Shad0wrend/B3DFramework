@@ -24,7 +24,7 @@ namespace bs
 		mSubMeshes = subMeshes;
 	}
 
-	const SubMesh& MeshProperties::getSubMesh(UINT32 subMeshIdx) const
+	const SubMesh& MeshProperties::GetSubMesh(UINT32 subMeshIdx) const
 	{
 		if (subMeshIdx >= mSubMeshes.size())
 		{
@@ -35,7 +35,7 @@ namespace bs
 		return mSubMeshes[subMeshIdx];
 	}
 
-	UINT32 MeshProperties::getNumSubMeshes() const
+	UINT32 MeshProperties::GetNumSubMeshes() const
 	{
 		return (UINT32)mSubMeshes.size();
 	}
@@ -51,7 +51,7 @@ namespace bs
 	MeshBase::~MeshBase()
 	{ }
 
-	CoreSyncData MeshBase::syncToCore(FrameAlloc* allocator)
+	CoreSyncData MeshBase::SyncToCore(FrameAlloc* allocator)
 	{
 		UINT32 size = sizeof(Bounds);
 		UINT8* buffer = allocator->alloc(size);
@@ -60,7 +60,7 @@ namespace bs
 		return CoreSyncData(buffer, size);
 	}
 
-	SPtr<ct::MeshBase> MeshBase::getCore() const
+	SPtr<ct::MeshBase> MeshBase::GetCore() const
 	{
 		return std::static_pointer_cast<ct::MeshBase>(mCoreSpecific);
 	}
@@ -69,14 +69,14 @@ namespace bs
 	/* 								SERIALIZATION                      		*/
 	/************************************************************************/
 
-	RTTITypeBase* MeshBase::getRTTIStatic()
+	RTTITypeBase* MeshBase::GetRttiStatic()
 	{
-		return MeshBaseRTTI::instance();
+		return MeshBaseRTTI::Instance();
 	}
 
-	RTTITypeBase* MeshBase::getRTTI() const
+	RTTITypeBase* MeshBase::GetRtti() const
 	{
-		return MeshBase::getRTTIStatic();
+		return MeshBase::GetRttiStatic();
 	}
 
 	namespace ct
@@ -85,7 +85,7 @@ namespace bs
 		:mProperties(numVertices, numIndices, subMeshes)
 	{ }
 
-	void MeshBase::syncToCore(const CoreSyncData& data)
+	void MeshBase::SyncToCore(const CoreSyncData& data)
 	{
 		mProperties.mBounds = data.getData<Bounds>();
 	}

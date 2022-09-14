@@ -42,7 +42,7 @@ namespace bs
 		 * If this object require initialization on core thread destruction is not done immediately, and is
 		 * instead just scheduled on the core thread. Otherwise the object is destroyed immediately.
 		 */
-		virtual void destroy();
+		virtual void Destroy();
 
 		/**
 		 * Initializes all the internal resources of this object. Must be called right after construction. Generally you
@@ -52,13 +52,13 @@ namespace bs
 		 * If this object require initialization on core thread initialization is not done immediately, and is instead just
 		 * scheduled on the core thread. Otherwise the object is initialized immediately.
 		 */
-		virtual void initialize();
+		virtual void Initialize();
 
 		/** Returns true if the object has been initialized. Non-initialized object should not be used. */
-		bool isInitialized() const { return (mFlags & CGO_INITIALIZED) != 0; }
+		bool IsInitialized() const { return (mFlags & CGO_INITIALIZED) != 0; }
 
 		/** Returns true if the object has been destroyed. Destroyed object should not be used. */
-		bool isDestroyed() const { return (mFlags & CGO_DESTROYED) != 0; }
+		bool IsDestroyed() const { return (mFlags & CGO_DESTROYED) != 0; }
 
 		/**
 		 * Blocks the current thread until the resource is fully initialized.
@@ -66,13 +66,13 @@ namespace bs
 		 * @note	
 		 * If you call this without calling initialize first a deadlock will occur. You should not call this from core thread.
 		 */
-		void blockUntilCoreInitialized() const;
+		void BlockUntilCoreInitialized() const;
 
 		/** Returns an unique identifier for this object. */
-		UINT64 getInternalID() const { return mInternalID; }
+		UINT64 GetInternalId() const { return mInternalID; }
 
 		/** Returns a shared_ptr version of "this" pointer. */
-		SPtr<CoreObject> getThisPtr() const { return mThis.lock(); }
+		SPtr<CoreObject> GetThisPtr() const { return mThis.lock(); }
 
 		/**
 		 * Returns an object that contains a core thread specific implementation of this CoreObject. Null is a valid return
@@ -80,7 +80,7 @@ namespace bs
 		 *
 		 * @note	Thread safe to retrieve, but its data is only valid on the core thread.
 		 */
-		SPtr<ct::CoreObject> getCore() const { return mCoreSpecific; }
+		SPtr<ct::CoreObject> GetCore() const { return mCoreSpecific; }
 
 		/**
 		 * Ensures all dirty syncable data is send to the core thread counterpart of this object (if any).
@@ -89,7 +89,7 @@ namespace bs
 		 *			Normally this is done automatically at the end of a frame.
 		 * @note	This is an @ref asyncMethod "asynchronous method".
 		 */
-		void syncToCore();
+		void SyncToCore();
 
 	public: // ***** INTERNAL ******
 		/** @name Internal
@@ -133,7 +133,7 @@ namespace bs
 		 * Requires a shared pointer to the object this function will be executed on, in order to make sure the object is
 		 * not deleted before the command executes. Can be null if the function is static or global.
 		 */
-		static void queueGpuCommand(const SPtr<ct::CoreObject>& obj, std::function<void()> func);
+		static void QueueGpuCommand(const SPtr<ct::CoreObject>& obj, std::function<void()> func);
 
 		/**
 		 * Queues a command to be executed on the core thread, with a return value in the form of AsyncOp.
@@ -144,10 +144,10 @@ namespace bs
 		 * Requires a shared pointer to the object this function will be executed on, in order to make sure the object is
 		 * not deleted before the command executes. Can be null if the function is static or global.
 		 */
-		static AsyncOp queueReturnGpuCommand(const SPtr<ct::CoreObject>& obj, std::function<void(AsyncOp&)> func);
+		static AsyncOp QueueReturnGpuCommand(const SPtr<ct::CoreObject>& obj, std::function<void(AsyncOp&)> func);
 
-		bool requiresInitOnCoreThread() const { return (mFlags & CGO_INIT_ON_CORE_THREAD) != 0; }
-		void setIsDestroyed(bool destroyed) { mFlags = destroyed ? mFlags | CGO_DESTROYED : mFlags & ~CGO_DESTROYED; }
+		bool RequiresInitOnCoreThread() const { return (mFlags & CGO_INIT_ON_CORE_THREAD) != 0; }
+		void SetIsDestroyed(bool destroyed) { mFlags = destroyed ? mFlags | CGO_DESTROYED : mFlags & ~CGO_DESTROYED; }
 	private:
 		friend class CoreObjectManager;
 
@@ -160,7 +160,7 @@ namespace bs
 		 * Queues object initialization command on the core thread. The command is added to the primary core thread queue
 		 * and will be executed as soon as the core thread is ready.
 		 */
-		static void queueInitializeGpuCommand(const SPtr<ct::CoreObject>& obj);
+		static void QueueInitializeGpuCommand(const SPtr<ct::CoreObject>& obj);
 
 		/**
 		 * Queues object destruction command on the core thread. The command is added to the core thread queue of this
@@ -168,13 +168,13 @@ namespace bs
 		 *
 		 * @note	It is up to the caller to ensure no other threads attempt to use this object.
 		 */
-		static void queueDestroyGpuCommand(const SPtr<ct::CoreObject>& obj);
+		static void QueueDestroyGpuCommand(const SPtr<ct::CoreObject>& obj);
 
 		/** Helper wrapper method used for queuing commands with no return value on the core thread. */
-		static void executeGpuCommand(const SPtr<ct::CoreObject>& obj, std::function<void()> func);
+		static void ExecuteGpuCommand(const SPtr<ct::CoreObject>& obj, std::function<void()> func);
 
 		/**	Helper wrapper method used for queuing commands with a return value on the core thread. */
-		static void executeReturnGpuCommand(const SPtr<ct::CoreObject>& obj, std::function<void(AsyncOp&)> func,
+		static void ExecuteReturnGpuCommand(const SPtr<ct::CoreObject>& obj, std::function<void(AsyncOp&)> func,
 			AsyncOp& op);
 
 	protected:
@@ -186,7 +186,7 @@ namespace bs
 		 * Creates an object that contains core thread specific data and methods for this CoreObject. Can be null if such
 		 * object is not required.
 		 */
-		virtual SPtr<ct::CoreObject> createCore() const { return nullptr; }
+		virtual SPtr<ct::CoreObject> CreateCore() const { return nullptr; }
 
 		/**
 		 * Marks the core data as dirty. This causes the syncToCore() method to trigger the next time objects are synced
@@ -196,28 +196,28 @@ namespace bs
 		 *									syncToCore() will be called regardless and it's up to the implementation to read
 		 *									the flags value if needed.
 		 */
-		void markCoreDirty(UINT32 flags = 0xFFFFFFFF);
+		void MarkCoreDirty(UINT32 flags = 0xFFFFFFFF);
 
 		/** Marks the core data as clean. Normally called right after syncToCore() has been called. */
-		void markCoreClean() { mCoreDirtyFlags = 0; }
+		void MarkCoreClean() { mCoreDirtyFlags = 0; }
 
 		/**
 		 * Notifies the core object manager that this object is dependant on some other CoreObject(s), and the dependencies
 		 * changed since the last call to this method. This will trigger a call to getCoreDependencies() to collect the
 		 * new dependencies.
 		 */
-		void markDependenciesDirty();
+		void MarkDependenciesDirty();
 
 		/**
 		 * Checks is the core dirty flag set. This is used by external systems to know when internal data has changed and
 		 * core thread potentially needs to be notified.
 		 */
-		bool isCoreDirty() const { return mCoreDirtyFlags != 0; }
+		bool IsCoreDirty() const { return mCoreDirtyFlags != 0; }
 
 		/**
 		 * Returns the exact value of the internal flag that signals whether an object needs to be synced with the core thread.
 		 */
-		UINT32 getCoreDirtyFlags() const { return mCoreDirtyFlags; }
+		UINT32 GetCoreDirtyFlags() const { return mCoreDirtyFlags; }
 
 		/**
 		 * Copy internal dirty data to a memory buffer that will be used for updating core thread version of that data.
@@ -226,7 +226,7 @@ namespace bs
 		 * This generally happens at the end of every sim thread frame. Synced data becomes available to the core thread
 		 * the start of the next core thread frame.
 		 */
-		virtual CoreSyncData syncToCore(FrameAlloc* allocator) { return CoreSyncData(); }
+		virtual CoreSyncData SyncToCore(FrameAlloc* allocator) { return CoreSyncData(); }
 
 		/**
 		 * Populates the provided array with all core objects that this core object depends upon. Dependencies are required
@@ -234,7 +234,7 @@ namespace bs
 		 * marked as dirty (for example updating a camera's viewport should also trigger an update on camera so it has
 		 * a chance to potentially update its data).
 		 */
-		virtual void getCoreDependencies(Vector<CoreObject*>& dependencies) { }
+		virtual void GetCoreDependencies(Vector<CoreObject*>& dependencies) { }
 
 		/**
 		 * Gets called on an object when one of the dependencies (as returned from getCoreDependencies()) is marked as
@@ -242,7 +242,7 @@ namespace bs
 		 * change. Dirty flags of the dependency object can be examined for more information on what part of the dependency
 		 * was modified.
 		 */
-		virtual void onDependencyDirty(CoreObject* dependency, UINT32 dirtyFlags)
+		virtual void OnDependencyDirty(CoreObject* dependency, UINT32 dirtyFlags)
 		{
 			// By default any changes on a dependency mark the parent dirty as well
 			mCoreDirtyFlags |= DIRTY_DEPENDENCY_MASK;

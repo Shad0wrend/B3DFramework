@@ -60,11 +60,11 @@ namespace bs { namespace ct
 		return true;
 	}
 
-	size_t VulkanPipelineLayoutKey::calculateHash() const
+	size_t VulkanPipelineLayoutKey::CalculateHash() const
 	{
 		size_t hash = 0;
 		for (UINT32 i = 0; i < numLayouts; i++)
-			bs_hash_combine(hash, layouts[i]->getHash());
+			bs_hash_combine(hash, layouts[i]->GetHash());
 
 		return hash;
 	}
@@ -86,14 +86,14 @@ namespace bs { namespace ct
 		for (auto& entry : mPipelineLayouts)
 		{
 			bs_free(entry.first.layouts);
-			vkDestroyPipelineLayout(mDevice.getLogical(), entry.second, gVulkanAllocator);
+			vkDestroyPipelineLayout(mDevice.GetLogical(), entry.second, gVulkanAllocator);
 		}
 
 		for (auto& entry : mPools)
 			bs_delete(entry);
 	}
 
-	VulkanDescriptorLayout* VulkanDescriptorManager::getLayout(VkDescriptorSetLayoutBinding* bindings, UINT32 numBindings)
+	VulkanDescriptorLayout* VulkanDescriptorManager::GetLayout(VkDescriptorSetLayoutBinding* bindings, UINT32 numBindings)
 	{
 		VulkanLayoutKey key(bindings, numBindings);
 
@@ -111,23 +111,23 @@ namespace bs { namespace ct
 		return key.layout;
 	}
 
-	VulkanDescriptorSet* VulkanDescriptorManager::createSet(VulkanDescriptorLayout* layout)
+	VulkanDescriptorSet* VulkanDescriptorManager::CreateSet(VulkanDescriptorLayout* layout)
 	{
 		// Note: We always retrieve the last created pool, even though there could be free room in earlier pools. However
 		// that requires additional tracking. Since the assumption is that the first pool will be large enough for all
 		// descriptors, and the only reason to create a second pool is fragmentation, this approach should not result in
 		// a major resource waste.
-		VkDescriptorSetLayout setLayout = layout->getHandle();
+		VkDescriptorSetLayout setLayout = layout->GetHandle();
 
 		VkDescriptorSetAllocateInfo allocateInfo;
 		allocateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
 		allocateInfo.pNext = nullptr;
-		allocateInfo.descriptorPool = mPools.back()->getHandle();
+		allocateInfo.descriptorPool = mPools.back()->GetHandle();
 		allocateInfo.descriptorSetCount = 1;
 		allocateInfo.pSetLayouts = &setLayout;
 
 		VkDescriptorSet set;
-		VkResult result = vkAllocateDescriptorSets(mDevice.getLogical(), &allocateInfo, &set);
+		VkResult result = vkAllocateDescriptorSets(mDevice.GetLogical(), &allocateInfo, &set);
 		if(result < 0) // Possible fragmentation, try in a new pool
 		{
 			mPools.push_back(bs_new<VulkanDescriptorPool>(mDevice));
@@ -140,7 +140,7 @@ namespace bs { namespace ct
 		return mDevice.getResourceManager().create<VulkanDescriptorSet>(set, allocateInfo.descriptorPool);
 	}
 
-	VkPipelineLayout VulkanDescriptorManager::getPipelineLayout(VulkanDescriptorLayout** layouts, UINT32 numLayouts)
+	VkPipelineLayout VulkanDescriptorManager::GetPipelineLayout(VulkanDescriptorLayout** layouts, UINT32 numLayouts)
 	{
 		VulkanPipelineLayoutKey key(layouts, numLayouts);
 

@@ -14,7 +14,7 @@ namespace bs
 
 	void ScriptScreenSpaceLensFlareSettings::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_ScreenSpaceLensFlareSettings", (void*)&ScriptScreenSpaceLensFlareSettings::Internal_ScreenSpaceLensFlareSettings);
+		metaData.scriptClass->AddInternalCall("Internal_ScreenSpaceLensFlareSettings", (void*)&ScriptScreenSpaceLensFlareSettings::InternalScreenSpaceLensFlareSettings);
 		metaData.scriptClass->addInternalCall("Internal_getenabled", (void*)&ScriptScreenSpaceLensFlareSettings::Internal_getenabled);
 		metaData.scriptClass->addInternalCall("Internal_setenabled", (void*)&ScriptScreenSpaceLensFlareSettings::Internal_setenabled);
 		metaData.scriptClass->addInternalCall("Internal_getdownsampleCount", (void*)&ScriptScreenSpaceLensFlareSettings::Internal_getdownsampleCount);
@@ -48,7 +48,7 @@ namespace bs
 
 	}
 
-	MonoObject* ScriptScreenSpaceLensFlareSettings::create(const SPtr<ScreenSpaceLensFlareSettings>& value)
+	MonoObject* ScriptScreenSpaceLensFlareSettings::Create(const SPtr<ScreenSpaceLensFlareSettings>& value)
 	{
 		if(value == nullptr) return nullptr; 
 
@@ -59,13 +59,13 @@ namespace bs
 		new (bs_alloc<ScriptScreenSpaceLensFlareSettings>()) ScriptScreenSpaceLensFlareSettings(managedInstance, value);
 		return managedInstance;
 	}
-	void ScriptScreenSpaceLensFlareSettings::Internal_ScreenSpaceLensFlareSettings(MonoObject* managedInstance)
+	void ScriptScreenSpaceLensFlareSettings::InternalScreenSpaceLensFlareSettings(MonoObject* managedInstance)
 	{
 		SPtr<ScreenSpaceLensFlareSettings> instance = bs_shared_ptr_new<ScreenSpaceLensFlareSettings>();
 		new (bs_alloc<ScriptScreenSpaceLensFlareSettings>())ScriptScreenSpaceLensFlareSettings(managedInstance, instance);
 	}
 
-	bool ScriptScreenSpaceLensFlareSettings::Internal_getenabled(ScriptScreenSpaceLensFlareSettings* thisPtr)
+	bool ScriptScreenSpaceLensFlareSettings::InternalGetenabled(ScriptScreenSpaceLensFlareSettings* thisPtr)
 	{
 		bool tmp__output;
 		tmp__output = thisPtr->getInternal()->enabled;
@@ -76,12 +76,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptScreenSpaceLensFlareSettings::Internal_setenabled(ScriptScreenSpaceLensFlareSettings* thisPtr, bool value)
+	void ScriptScreenSpaceLensFlareSettings::InternalSetenabled(ScriptScreenSpaceLensFlareSettings* thisPtr, bool value)
 	{
 		thisPtr->getInternal()->enabled = value;
 	}
 
-	uint32_t ScriptScreenSpaceLensFlareSettings::Internal_getdownsampleCount(ScriptScreenSpaceLensFlareSettings* thisPtr)
+	uint32_t ScriptScreenSpaceLensFlareSettings::InternalGetdownsampleCount(ScriptScreenSpaceLensFlareSettings* thisPtr)
 	{
 		uint32_t tmp__output;
 		tmp__output = thisPtr->getInternal()->downsampleCount;
@@ -92,12 +92,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptScreenSpaceLensFlareSettings::Internal_setdownsampleCount(ScriptScreenSpaceLensFlareSettings* thisPtr, uint32_t value)
+	void ScriptScreenSpaceLensFlareSettings::InternalSetdownsampleCount(ScriptScreenSpaceLensFlareSettings* thisPtr, uint32_t value)
 	{
 		thisPtr->getInternal()->downsampleCount = value;
 	}
 
-	float ScriptScreenSpaceLensFlareSettings::Internal_getthreshold(ScriptScreenSpaceLensFlareSettings* thisPtr)
+	float ScriptScreenSpaceLensFlareSettings::InternalGetthreshold(ScriptScreenSpaceLensFlareSettings* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->getInternal()->threshold;
@@ -108,12 +108,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptScreenSpaceLensFlareSettings::Internal_setthreshold(ScriptScreenSpaceLensFlareSettings* thisPtr, float value)
+	void ScriptScreenSpaceLensFlareSettings::InternalSetthreshold(ScriptScreenSpaceLensFlareSettings* thisPtr, float value)
 	{
 		thisPtr->getInternal()->threshold = value;
 	}
 
-	uint32_t ScriptScreenSpaceLensFlareSettings::Internal_getghostCount(ScriptScreenSpaceLensFlareSettings* thisPtr)
+	uint32_t ScriptScreenSpaceLensFlareSettings::InternalGetghostCount(ScriptScreenSpaceLensFlareSettings* thisPtr)
 	{
 		uint32_t tmp__output;
 		tmp__output = thisPtr->getInternal()->ghostCount;
@@ -124,12 +124,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptScreenSpaceLensFlareSettings::Internal_setghostCount(ScriptScreenSpaceLensFlareSettings* thisPtr, uint32_t value)
+	void ScriptScreenSpaceLensFlareSettings::InternalSetghostCount(ScriptScreenSpaceLensFlareSettings* thisPtr, uint32_t value)
 	{
 		thisPtr->getInternal()->ghostCount = value;
 	}
 
-	float ScriptScreenSpaceLensFlareSettings::Internal_getghostSpacing(ScriptScreenSpaceLensFlareSettings* thisPtr)
+	float ScriptScreenSpaceLensFlareSettings::InternalGetghostSpacing(ScriptScreenSpaceLensFlareSettings* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->getInternal()->ghostSpacing;
@@ -140,12 +140,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptScreenSpaceLensFlareSettings::Internal_setghostSpacing(ScriptScreenSpaceLensFlareSettings* thisPtr, float value)
+	void ScriptScreenSpaceLensFlareSettings::InternalSetghostSpacing(ScriptScreenSpaceLensFlareSettings* thisPtr, float value)
 	{
 		thisPtr->getInternal()->ghostSpacing = value;
 	}
 
-	float ScriptScreenSpaceLensFlareSettings::Internal_getbrightness(ScriptScreenSpaceLensFlareSettings* thisPtr)
+	float ScriptScreenSpaceLensFlareSettings::InternalGetbrightness(ScriptScreenSpaceLensFlareSettings* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->getInternal()->brightness;
@@ -156,12 +156,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptScreenSpaceLensFlareSettings::Internal_setbrightness(ScriptScreenSpaceLensFlareSettings* thisPtr, float value)
+	void ScriptScreenSpaceLensFlareSettings::InternalSetbrightness(ScriptScreenSpaceLensFlareSettings* thisPtr, float value)
 	{
 		thisPtr->getInternal()->brightness = value;
 	}
 
-	float ScriptScreenSpaceLensFlareSettings::Internal_getfilterSize(ScriptScreenSpaceLensFlareSettings* thisPtr)
+	float ScriptScreenSpaceLensFlareSettings::InternalGetfilterSize(ScriptScreenSpaceLensFlareSettings* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->getInternal()->filterSize;
@@ -172,12 +172,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptScreenSpaceLensFlareSettings::Internal_setfilterSize(ScriptScreenSpaceLensFlareSettings* thisPtr, float value)
+	void ScriptScreenSpaceLensFlareSettings::InternalSetfilterSize(ScriptScreenSpaceLensFlareSettings* thisPtr, float value)
 	{
 		thisPtr->getInternal()->filterSize = value;
 	}
 
-	bool ScriptScreenSpaceLensFlareSettings::Internal_gethalo(ScriptScreenSpaceLensFlareSettings* thisPtr)
+	bool ScriptScreenSpaceLensFlareSettings::InternalGethalo(ScriptScreenSpaceLensFlareSettings* thisPtr)
 	{
 		bool tmp__output;
 		tmp__output = thisPtr->getInternal()->halo;
@@ -188,12 +188,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptScreenSpaceLensFlareSettings::Internal_sethalo(ScriptScreenSpaceLensFlareSettings* thisPtr, bool value)
+	void ScriptScreenSpaceLensFlareSettings::InternalSethalo(ScriptScreenSpaceLensFlareSettings* thisPtr, bool value)
 	{
 		thisPtr->getInternal()->halo = value;
 	}
 
-	float ScriptScreenSpaceLensFlareSettings::Internal_gethaloRadius(ScriptScreenSpaceLensFlareSettings* thisPtr)
+	float ScriptScreenSpaceLensFlareSettings::InternalGethaloRadius(ScriptScreenSpaceLensFlareSettings* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->getInternal()->haloRadius;
@@ -204,12 +204,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptScreenSpaceLensFlareSettings::Internal_sethaloRadius(ScriptScreenSpaceLensFlareSettings* thisPtr, float value)
+	void ScriptScreenSpaceLensFlareSettings::InternalSethaloRadius(ScriptScreenSpaceLensFlareSettings* thisPtr, float value)
 	{
 		thisPtr->getInternal()->haloRadius = value;
 	}
 
-	float ScriptScreenSpaceLensFlareSettings::Internal_gethaloThickness(ScriptScreenSpaceLensFlareSettings* thisPtr)
+	float ScriptScreenSpaceLensFlareSettings::InternalGethaloThickness(ScriptScreenSpaceLensFlareSettings* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->getInternal()->haloThickness;
@@ -220,12 +220,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptScreenSpaceLensFlareSettings::Internal_sethaloThickness(ScriptScreenSpaceLensFlareSettings* thisPtr, float value)
+	void ScriptScreenSpaceLensFlareSettings::InternalSethaloThickness(ScriptScreenSpaceLensFlareSettings* thisPtr, float value)
 	{
 		thisPtr->getInternal()->haloThickness = value;
 	}
 
-	float ScriptScreenSpaceLensFlareSettings::Internal_gethaloThreshold(ScriptScreenSpaceLensFlareSettings* thisPtr)
+	float ScriptScreenSpaceLensFlareSettings::InternalGethaloThreshold(ScriptScreenSpaceLensFlareSettings* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->getInternal()->haloThreshold;
@@ -236,12 +236,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptScreenSpaceLensFlareSettings::Internal_sethaloThreshold(ScriptScreenSpaceLensFlareSettings* thisPtr, float value)
+	void ScriptScreenSpaceLensFlareSettings::InternalSethaloThreshold(ScriptScreenSpaceLensFlareSettings* thisPtr, float value)
 	{
 		thisPtr->getInternal()->haloThreshold = value;
 	}
 
-	float ScriptScreenSpaceLensFlareSettings::Internal_gethaloAspectRatio(ScriptScreenSpaceLensFlareSettings* thisPtr)
+	float ScriptScreenSpaceLensFlareSettings::InternalGethaloAspectRatio(ScriptScreenSpaceLensFlareSettings* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->getInternal()->haloAspectRatio;
@@ -252,12 +252,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptScreenSpaceLensFlareSettings::Internal_sethaloAspectRatio(ScriptScreenSpaceLensFlareSettings* thisPtr, float value)
+	void ScriptScreenSpaceLensFlareSettings::InternalSethaloAspectRatio(ScriptScreenSpaceLensFlareSettings* thisPtr, float value)
 	{
 		thisPtr->getInternal()->haloAspectRatio = value;
 	}
 
-	bool ScriptScreenSpaceLensFlareSettings::Internal_getchromaticAberration(ScriptScreenSpaceLensFlareSettings* thisPtr)
+	bool ScriptScreenSpaceLensFlareSettings::InternalGetchromaticAberration(ScriptScreenSpaceLensFlareSettings* thisPtr)
 	{
 		bool tmp__output;
 		tmp__output = thisPtr->getInternal()->chromaticAberration;
@@ -268,12 +268,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptScreenSpaceLensFlareSettings::Internal_setchromaticAberration(ScriptScreenSpaceLensFlareSettings* thisPtr, bool value)
+	void ScriptScreenSpaceLensFlareSettings::InternalSetchromaticAberration(ScriptScreenSpaceLensFlareSettings* thisPtr, bool value)
 	{
 		thisPtr->getInternal()->chromaticAberration = value;
 	}
 
-	float ScriptScreenSpaceLensFlareSettings::Internal_getchromaticAberrationOffset(ScriptScreenSpaceLensFlareSettings* thisPtr)
+	float ScriptScreenSpaceLensFlareSettings::InternalGetchromaticAberrationOffset(ScriptScreenSpaceLensFlareSettings* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->getInternal()->chromaticAberrationOffset;
@@ -284,12 +284,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptScreenSpaceLensFlareSettings::Internal_setchromaticAberrationOffset(ScriptScreenSpaceLensFlareSettings* thisPtr, float value)
+	void ScriptScreenSpaceLensFlareSettings::InternalSetchromaticAberrationOffset(ScriptScreenSpaceLensFlareSettings* thisPtr, float value)
 	{
 		thisPtr->getInternal()->chromaticAberrationOffset = value;
 	}
 
-	bool ScriptScreenSpaceLensFlareSettings::Internal_getbicubicUpsampling(ScriptScreenSpaceLensFlareSettings* thisPtr)
+	bool ScriptScreenSpaceLensFlareSettings::InternalGetbicubicUpsampling(ScriptScreenSpaceLensFlareSettings* thisPtr)
 	{
 		bool tmp__output;
 		tmp__output = thisPtr->getInternal()->bicubicUpsampling;
@@ -300,7 +300,7 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptScreenSpaceLensFlareSettings::Internal_setbicubicUpsampling(ScriptScreenSpaceLensFlareSettings* thisPtr, bool value)
+	void ScriptScreenSpaceLensFlareSettings::InternalSetbicubicUpsampling(ScriptScreenSpaceLensFlareSettings* thisPtr, bool value)
 	{
 		thisPtr->getInternal()->bicubicUpsampling = value;
 	}

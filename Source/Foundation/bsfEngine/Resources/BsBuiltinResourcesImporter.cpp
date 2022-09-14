@@ -56,7 +56,7 @@ int main(int argc, char * argv[])
 	desc.primaryWindowDesc.title = "bsf importer";
 	desc.primaryWindowDesc.hidden = true;
 
-	Application::startUp(desc);
+	Application::StartUp(desc);
 
 	sInputFolder = argv[1];
 	sOutputFolder = argv[2];
@@ -72,10 +72,10 @@ int main(int argc, char * argv[])
 			forceImport = true;
 	}
 
-	if (FileSystem::exists(sInputFolder))
+	if (FileSystem::Exists(sInputFolder))
 	{
 		time_t lastUpdateTime;
-		UINT32 modifications = BuiltinResourcesHelper::checkForModifications(
+		UINT32 modifications = BuiltinResourcesHelper::CheckForModifications(
 			sInputFolder,
 			sOutputFolder + TIMESTAMP_NAME,
 			lastUpdateTime);
@@ -84,14 +84,14 @@ int main(int argc, char * argv[])
 			modifications = 2;
 
 		// Check if manifest needs to be rebuilt
-		if (modifications == 0 && !FileSystem::exists(sManifestPath))
+		if (modifications == 0 && !FileSystem::Exists(sManifestPath))
 			modifications = 1;
 
 		if (modifications > 0)
 		{
 			const bool fullReimport = modifications == 2;
 
-			sManifest = ResourceManifest::create("BuiltinResources");
+			sManifest = ResourceManifest::Create("BuiltinResources");
 			gResources().registerResourceManifest(sManifest);
 
 			processAssets(generateGenerated, fullReimport, lastUpdateTime);
@@ -99,12 +99,12 @@ int main(int argc, char * argv[])
 
 			ResourceManifest::save(sManifest, sManifestPath, sOutputFolder);
 
-			Application::shutDown();
+			Application::ShutDown();
 			return 1;
 		}
 	}
 
-	Application::shutDown();
+	Application::ShutDown();
 	return 0;
 }
 
@@ -112,7 +112,7 @@ namespace bs
 {
 	void generateTextures()
 	{
-		SPtr<PixelData> blackPixelData = PixelData::create(2, 2, 1, PF_RGBA8);
+		SPtr<PixelData> blackPixelData = PixelData::Create(2, 2, 1, PF_RGBA8);
 		blackPixelData->setColorAt(Color::Black, 0, 0);
 		blackPixelData->setColorAt(Color::Black, 0, 1);
 		blackPixelData->setColorAt(Color::Black, 1, 0);
@@ -120,7 +120,7 @@ namespace bs
 
 		SPtr<Texture> blackTexture = Texture::CreatePtrInternal(blackPixelData);
 
-		SPtr<PixelData> whitePixelData = PixelData::create(2, 2, 1, PF_RGBA8);
+		SPtr<PixelData> whitePixelData = PixelData::Create(2, 2, 1, PF_RGBA8);
 		whitePixelData->setColorAt(Color::White, 0, 0);
 		whitePixelData->setColorAt(Color::White, 0, 1);
 		whitePixelData->setColorAt(Color::White, 1, 0);
@@ -128,7 +128,7 @@ namespace bs
 
 		SPtr<Texture> whiteTexture = Texture::CreatePtrInternal(whitePixelData);
 
-		SPtr<PixelData> normalPixelData = PixelData::create(2, 2, 1, PF_RGBA8);
+		SPtr<PixelData> normalPixelData = PixelData::Create(2, 2, 1, PF_RGBA8);
 
 		Color encodedNormal(0.5f, 0.5f, 1.0f);
 		normalPixelData->setColorAt(encodedNormal, 0, 0);
@@ -171,7 +171,7 @@ namespace bs
 		UINT32 boxNumVertices = 0;
 		UINT32 boxNumIndices = 0;
 		ShapeMeshes3D::getNumElementsAABox(boxNumVertices, boxNumIndices);
-		SPtr<MeshData> boxMeshData = MeshData::create(boxNumVertices, boxNumIndices, vertexDesc);
+		SPtr<MeshData> boxMeshData = MeshData::Create(boxNumVertices, boxNumIndices, vertexDesc);
 		AABox box(Vector3(-0.5f, -0.5f, -0.5f), Vector3(0.5f, 0.5f, 0.5f));
 
 		ShapeMeshes3D::solidAABox(box, boxMeshData, 0, 0);

@@ -16,17 +16,17 @@ namespace bs
 
 		ScriptScreenSpaceReflectionsSettings(MonoObject* managedInstance, const SPtr<ScreenSpaceReflectionsSettings>& value);
 
-		static MonoObject* create(const SPtr<ScreenSpaceReflectionsSettings>& value);
+		static MonoObject* Create(const SPtr<ScreenSpaceReflectionsSettings>& value);
 
 	private:
-		static void Internal_ScreenSpaceReflectionsSettings(MonoObject* managedInstance);
-		static bool Internal_getenabled(ScriptScreenSpaceReflectionsSettings* thisPtr);
-		static void Internal_setenabled(ScriptScreenSpaceReflectionsSettings* thisPtr, bool value);
-		static uint32_t Internal_getquality(ScriptScreenSpaceReflectionsSettings* thisPtr);
-		static void Internal_setquality(ScriptScreenSpaceReflectionsSettings* thisPtr, uint32_t value);
-		static float Internal_getintensity(ScriptScreenSpaceReflectionsSettings* thisPtr);
-		static void Internal_setintensity(ScriptScreenSpaceReflectionsSettings* thisPtr, float value);
-		static float Internal_getmaxRoughness(ScriptScreenSpaceReflectionsSettings* thisPtr);
-		static void Internal_setmaxRoughness(ScriptScreenSpaceReflectionsSettings* thisPtr, float value);
+		static void InternalScreenSpaceReflectionsSettings(MonoObject* managedInstance);
+		static bool InternalGetenabled(ScriptScreenSpaceReflectionsSettings* thisPtr);
+		static void InternalSetenabled(ScriptScreenSpaceReflectionsSettings* thisPtr, bool value);
+		static uint32_t InternalGetquality(ScriptScreenSpaceReflectionsSettings* thisPtr);
+		static void InternalSetquality(ScriptScreenSpaceReflectionsSettings* thisPtr, uint32_t value);
+		static float InternalGetintensity(ScriptScreenSpaceReflectionsSettings* thisPtr);
+		static void InternalSetintensity(ScriptScreenSpaceReflectionsSettings* thisPtr, float value);
+		static float InternalGetmaxRoughness(ScriptScreenSpaceReflectionsSettings* thisPtr);
+		static void InternalSetmaxRoughness(ScriptScreenSpaceReflectionsSettings* thisPtr, float value);
 	};
 }

@@ -14,37 +14,37 @@ namespace bs
 
 	void ScriptMorphShape::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_getName", (void*)&ScriptMorphShape::Internal_getName);
-		metaData.scriptClass->addInternalCall("Internal_getWeight", (void*)&ScriptMorphShape::Internal_getWeight);
+		metaData.scriptClass->AddInternalCall("Internal_getName", (void*)&ScriptMorphShape::InternalGetName);
+		metaData.scriptClass->AddInternalCall("Internal_getWeight", (void*)&ScriptMorphShape::InternalGetWeight);
 
 	}
 
-	MonoObject* ScriptMorphShape::create(const SPtr<MorphShape>& value)
+	MonoObject* ScriptMorphShape::Create(const SPtr<MorphShape>& value)
 	{
 		if(value == nullptr) return nullptr; 
 
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptMorphShape>()) ScriptMorphShape(managedInstance, value);
 		return managedInstance;
 	}
-	MonoString* ScriptMorphShape::Internal_getName(ScriptMorphShape* thisPtr)
+	MonoString* ScriptMorphShape::InternalGetName(ScriptMorphShape* thisPtr)
 	{
 		String tmp__output;
-		tmp__output = thisPtr->getInternal()->getName();
+		tmp__output = thisPtr->GetInternal()->GetName();
 
 		MonoString* __output;
-		__output = MonoUtil::stringToMono(tmp__output);
+		__output = MonoUtil::StringToMono(tmp__output);
 
 		return __output;
 	}
 
-	float ScriptMorphShape::Internal_getWeight(ScriptMorphShape* thisPtr)
+	float ScriptMorphShape::InternalGetWeight(ScriptMorphShape* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getInternal()->getWeight();
+		tmp__output = thisPtr->GetInternal()->GetWeight();
 
 		float __output;
 		__output = tmp__output;

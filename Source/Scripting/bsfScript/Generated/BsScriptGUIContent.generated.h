@@ -23,10 +23,10 @@ namespace bs
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "GUIContent")
 
-		static MonoObject* box(const __GUIContentInterop& value);
-		static __GUIContentInterop unbox(MonoObject* value);
-		static GUIContent fromInterop(const __GUIContentInterop& value);
-		static __GUIContentInterop toInterop(const GUIContent& value);
+		static MonoObject* Box(const __GUIContentInterop& value);
+		static __GUIContentInterop Unbox(MonoObject* value);
+		static GUIContent FromInterop(const __GUIContentInterop& value);
+		static __GUIContentInterop ToInterop(const GUIContent& value);
 
 	private:
 		ScriptGUIContent(MonoObject* managedInstance);

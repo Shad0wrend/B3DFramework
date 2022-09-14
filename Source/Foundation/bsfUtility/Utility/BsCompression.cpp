@@ -17,10 +17,10 @@ namespace bs
 		DataStreamSource(const SPtr<DataStream>& stream, std::function<void(float)> reportProgress = nullptr)
 			:mStream(stream), mReportProgress(std::move(reportProgress))
 		{
-			mTotal = mStream->size() - mStream->tell();
+			mTotal = mStream->Size() - mStream->Tell();
 			mRemaining = mTotal;
 
-			if (mStream->isFile())
+			if (mStream->IsFile())
 				mReadBuffer = (char*)bs_alloc(32768);
 		}
 
@@ -37,19 +37,19 @@ namespace bs
 
 		const char* Peek(size_t* len) override
 		{
-			if (!mStream->isFile())
+			if (!mStream->IsFile())
 			{
 				SPtr<MemoryDataStream> memStream = std::static_pointer_cast<MemoryDataStream>(mStream);
 
 				*len = Available();
-				return (char*)memStream->data() + mBufferOffset;
+				return (char*)memStream->Data() + mBufferOffset;
 			}
 			else
 			{
 				while (mBufferOffset >= mReadBufferContentSize)
 				{
 					mBufferOffset -= mReadBufferContentSize;
-					mReadBufferContentSize = mStream->read(mReadBuffer, 32768);
+					mReadBufferContentSize = mStream->Read(mReadBuffer, 32768);
 
 					if (mReadBufferContentSize == 0)
 						break;
@@ -163,9 +163,9 @@ namespace bs
 
 			SPtr<MemoryDataStream> ds = bs_shared_ptr_new<MemoryDataStream>(totalSize);
 			for (auto& entry : mBufferPieces)
-				ds->write(entry.buffer, entry.size);
+				ds->Write(entry.buffer, entry.size);
 
-			ds->seek(0);
+			ds->Seek(0);
 			return ds;
 		}
 
@@ -173,19 +173,19 @@ namespace bs
 		Vector<BufferPiece> mBufferPieces;
 	};
 
-	SPtr<MemoryDataStream> Compression::compress(const SPtr<DataStream>& input, std::function<void(float)> reportProgress)
+	SPtr<MemoryDataStream> Compression::Compress(const SPtr<DataStream>& input, std::function<void(float)> reportProgress)
 	{
 		DataStreamSource src(input, std::move(reportProgress));
 		DataStreamSink dst;
 
 		size_t bytesWritten = snappy::Compress(&src, &dst);
 		SPtr<MemoryDataStream> output = dst.GetOutput();
-		assert(output->size() == bytesWritten);
+		assert(output->Size() == bytesWritten);
 
 		return output;
 	}
 
-	SPtr<MemoryDataStream> Compression::decompress(const SPtr<DataStream>& input, std::function<void(float)> reportProgress)
+	SPtr<MemoryDataStream> Compression::Decompress(const SPtr<DataStream>& input, std::function<void(float)> reportProgress)
 	{
 		DataStreamSource src(input, std::move(reportProgress));
 		DataStreamSink dst;

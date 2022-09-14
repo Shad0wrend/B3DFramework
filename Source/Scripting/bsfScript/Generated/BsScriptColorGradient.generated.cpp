@@ -18,19 +18,19 @@ namespace bs
 
 	void ScriptColorGradient::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_ColorGradient", (void*)&ScriptColorGradient::Internal_ColorGradient);
-		metaData.scriptClass->addInternalCall("Internal_ColorGradient0", (void*)&ScriptColorGradient::Internal_ColorGradient0);
-		metaData.scriptClass->addInternalCall("Internal_ColorGradient1", (void*)&ScriptColorGradient::Internal_ColorGradient1);
+		metaData.scriptClass->AddInternalCall("Internal_ColorGradient", (void*)&ScriptColorGradient::InternalColorGradient);
+		metaData.scriptClass->AddInternalCall("Internal_ColorGradient0", (void*)&ScriptColorGradient::InternalColorGradient0);
+		metaData.scriptClass->AddInternalCall("Internal_ColorGradient1", (void*)&ScriptColorGradient::InternalColorGradient1);
 		metaData.scriptClass->addInternalCall("Internal_setKeys", (void*)&ScriptColorGradient::Internal_setKeys);
 		metaData.scriptClass->addInternalCall("Internal_getKeys", (void*)&ScriptColorGradient::Internal_getKeys);
-		metaData.scriptClass->addInternalCall("Internal_getNumKeys", (void*)&ScriptColorGradient::Internal_getNumKeys);
-		metaData.scriptClass->addInternalCall("Internal_getKey", (void*)&ScriptColorGradient::Internal_getKey);
+		metaData.scriptClass->AddInternalCall("Internal_getNumKeys", (void*)&ScriptColorGradient::InternalGetNumKeys);
+		metaData.scriptClass->AddInternalCall("Internal_getKey", (void*)&ScriptColorGradient::InternalGetKey);
 		metaData.scriptClass->addInternalCall("Internal_setConstant", (void*)&ScriptColorGradient::Internal_setConstant);
 		metaData.scriptClass->addInternalCall("Internal_evaluate", (void*)&ScriptColorGradient::Internal_evaluate);
 
 	}
 
-	MonoObject* ScriptColorGradient::create(const SPtr<ColorGradient>& value)
+	MonoObject* ScriptColorGradient::Create(const SPtr<ColorGradient>& value)
 	{
 		if(value == nullptr) return nullptr; 
 
@@ -41,19 +41,19 @@ namespace bs
 		new (bs_alloc<ScriptColorGradient>()) ScriptColorGradient(managedInstance, value);
 		return managedInstance;
 	}
-	void ScriptColorGradient::Internal_ColorGradient(MonoObject* managedInstance)
+	void ScriptColorGradient::InternalColorGradient(MonoObject* managedInstance)
 	{
 		SPtr<ColorGradient> instance = bs_shared_ptr_new<ColorGradient>();
 		new (bs_alloc<ScriptColorGradient>())ScriptColorGradient(managedInstance, instance);
 	}
 
-	void ScriptColorGradient::Internal_ColorGradient0(MonoObject* managedInstance, Color* color)
+	void ScriptColorGradient::InternalColorGradient0(MonoObject* managedInstance, Color* color)
 	{
 		SPtr<ColorGradient> instance = bs_shared_ptr_new<ColorGradient>(*color);
 		new (bs_alloc<ScriptColorGradient>())ScriptColorGradient(managedInstance, instance);
 	}
 
-	void ScriptColorGradient::Internal_ColorGradient1(MonoObject* managedInstance, MonoArray* keys)
+	void ScriptColorGradient::InternalColorGradient1(MonoObject* managedInstance, MonoArray* keys)
 	{
 		Vector<ColorGradientKey> veckeys;
 		if(keys != nullptr)
@@ -69,7 +69,7 @@ namespace bs
 		new (bs_alloc<ScriptColorGradient>())ScriptColorGradient(managedInstance, instance);
 	}
 
-	void ScriptColorGradient::Internal_setKeys(ScriptColorGradient* thisPtr, MonoArray* keys, float duration)
+	void ScriptColorGradient::InternalSetKeys(ScriptColorGradient* thisPtr, MonoArray* keys, float duration)
 	{
 		Vector<ColorGradientKey> veckeys;
 		if(keys != nullptr)
@@ -85,7 +85,7 @@ namespace bs
 		thisPtr->getInternal()->setKeys(veckeys, duration);
 	}
 
-	MonoArray* ScriptColorGradient::Internal_getKeys(ScriptColorGradient* thisPtr)
+	MonoArray* ScriptColorGradient::InternalGetKeys(ScriptColorGradient* thisPtr)
 	{
 		Vector<ColorGradientKey> vec__output;
 		vec__output = thisPtr->getInternal()->getKeys();
@@ -102,7 +102,7 @@ namespace bs
 		return __output;
 	}
 
-	uint32_t ScriptColorGradient::Internal_getNumKeys(ScriptColorGradient* thisPtr)
+	uint32_t ScriptColorGradient::InternalGetNumKeys(ScriptColorGradient* thisPtr)
 	{
 		uint32_t tmp__output;
 		tmp__output = thisPtr->getInternal()->getNumKeys();
@@ -113,7 +113,7 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptColorGradient::Internal_getKey(ScriptColorGradient* thisPtr, uint32_t idx, __ColorGradientKeyInterop* __output)
+	void ScriptColorGradient::InternalGetKey(ScriptColorGradient* thisPtr, uint32_t idx, __ColorGradientKeyInterop* __output)
 	{
 		ColorGradientKey tmp__output;
 		tmp__output = thisPtr->getInternal()->getKey(idx);
@@ -123,12 +123,12 @@ namespace bs
 		MonoUtil::valueCopy(__output, &interop__output, ScriptColorGradientKey::getMetaData()->scriptClass->GetInternalClassInternal());
 	}
 
-	void ScriptColorGradient::Internal_setConstant(ScriptColorGradient* thisPtr, Color* color)
+	void ScriptColorGradient::InternalSetConstant(ScriptColorGradient* thisPtr, Color* color)
 	{
 		thisPtr->getInternal()->setConstant(*color);
 	}
 
-	void ScriptColorGradient::Internal_evaluate(ScriptColorGradient* thisPtr, float t, Color* __output)
+	void ScriptColorGradient::InternalEvaluate(ScriptColorGradient* thisPtr, float t, Color* __output)
 	{
 		Color tmp__output;
 		tmp__output = ColorGradientEx::evaluate(thisPtr->getInternal(), t);

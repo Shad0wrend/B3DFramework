@@ -63,7 +63,7 @@ namespace bs
 		AnimationManager();
 
 		/** Pauses or resumes the animation evaluation. */
-		void setPaused(bool paused);
+		void SetPaused(bool paused);
 
 		/**
 		 * Determines how often to evaluate animations. If rendering is not running at adequate framerate the animation
@@ -71,7 +71,7 @@ namespace bs
 		 *
 		 * @param[in]	fps		Number of frames per second to evaluate the animation. Default is 60.
 		 */
-		void setUpdateRate(UINT32 fps);
+		void SetUpdateRate(UINT32 fps);
 
 		/**
 		 * Evaluates animations for all animated objects, and returns the evaluated skeleton bone poses and morph shape
@@ -87,7 +87,7 @@ namespace bs
 		 *								This is enough to have one buffer be processed by the core thread, one queued
 		 *								for future rendering and one that's being written to.
 		 */
-		const EvaluatedAnimationData* update(bool async = true);
+		const EvaluatedAnimationData* Update(bool async = true);
 
 	private:
 		friend class Animation;
@@ -103,10 +103,10 @@ namespace bs
 		/**
 		 * Registers a new animation and returns a unique ID for it. Must be called whenever an Animation is constructed.
 		 */
-		UINT64 registerAnimation(Animation* anim);
+		UINT64 RegisterAnimation(Animation* anim);
 
 		/** Unregisters an animation with the specified ID. Must be called before an Animation is destroyed. */
-		void unregisterAnimation(UINT64 id);
+		void UnregisterAnimation(UINT64 id);
 
 		/**
 		 * Evaluates animation for a single object and writes the result in the currently active write buffer.
@@ -115,7 +115,7 @@ namespace bs
 		 * @param[in]	boneIdx		Index in the output buffer in which to write evaluated bone information. This will be
 		 *							automatically advanced by the number of written bone transforms.
 		 */
-		void evaluateAnimation(AnimationProxy* anim, UINT32& boneIdx);
+		void EvaluateAnimation(AnimationProxy* anim, UINT32& boneIdx);
 
 		UINT64 mNextId = 1;
 		UnorderedMap<UINT64, Animation*> mAnimations;

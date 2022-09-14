@@ -78,13 +78,13 @@ namespace bs
 	};
 
 	typedef Quadtree<UINT32, DebugQuadtreeOptions> DebugQuadtree;
-	void UtilityTestSuite::startUp()
+	void UtilityTestSuite::StartUp()
 	{
 		SPtr<TestSuite> fileSystemTests = create<FileSystemTestSuite>();
 		add(fileSystemTests);
 	}
 
-	void UtilityTestSuite::shutDown()
+	void UtilityTestSuite::ShutDown()
 	{
 	}
 

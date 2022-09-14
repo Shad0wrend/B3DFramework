@@ -33,7 +33,7 @@ namespace bs
 	}
 
 	template <bool Core>
-	void TRenderable<Core>::setTransform(const Transform& transform)
+	void TRenderable<Core>::SetTransform(const Transform& transform)
 	{
 		if (mMobility != ObjectMobility::Movable)
 			return;
@@ -46,7 +46,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TRenderable<Core>::setMesh(const MeshType& mesh)
+	void TRenderable<Core>::SetMesh(const MeshType& mesh)
 	{
 		mMesh = mesh;
 
@@ -64,7 +64,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TRenderable<Core>::setMaterial(UINT32 idx, const MaterialType& material)
+	void TRenderable<Core>::SetMaterial(UINT32 idx, const MaterialType& material)
 	{
 		if (idx >= (UINT32)mMaterials.size())
 			return;
@@ -77,7 +77,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TRenderable<Core>::setMaterials(const Vector<MaterialType>& materials)
+	void TRenderable<Core>::SetMaterials(const Vector<MaterialType>& materials)
 	{
 		UINT32 numMaterials = (UINT32)mMaterials.size();
 		UINT32 min = std::min(numMaterials, (UINT32)materials.size());
@@ -94,13 +94,13 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TRenderable<Core>::setMaterial(const MaterialType& material)
+	void TRenderable<Core>::SetMaterial(const MaterialType& material)
 	{
 		setMaterial(0, material);
 	}
 
 	template <bool Core>
-	typename TRenderable<Core>::MaterialType TRenderable<Core>::getMaterial(UINT32 idx) const
+	typename TRenderable<Core>::MaterialType TRenderable<Core>::GetMaterial(UINT32 idx) const
 	{
 		if(idx >= (UINT32)mMaterials.size())
 			return nullptr;
@@ -109,7 +109,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TRenderable<Core>::setLayer(UINT64 layer)
+	void TRenderable<Core>::SetLayer(UINT64 layer)
 	{
 		const bool isPow2 = layer && !((layer - 1) & layer);
 
@@ -124,7 +124,7 @@ namespace bs
 	}	
 	
 	template<bool Core>
-	void TRenderable<Core>::setOverrideBounds(const AABox& bounds)
+	void TRenderable<Core>::SetOverrideBounds(const AABox& bounds)
 	{
 		mOverrideBounds = bounds;
 
@@ -133,7 +133,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TRenderable<Core>::setUseOverrideBounds(bool enable)
+	void TRenderable<Core>::SetUseOverrideBounds(bool enable)
 	{
 		if (mUseOverrideBounds == enable)
 			return;
@@ -143,7 +143,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TRenderable<Core>::setWriteVelocity(bool enable)
+	void TRenderable<Core>::SetWriteVelocity(bool enable)
 	{
 		if (mWriteVelocity == enable)
 			return;
@@ -153,7 +153,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TRenderable<Core>::setCullDistanceFactor(float factor)
+	void TRenderable<Core>::SetCullDistanceFactor(float factor)
 	{
 		mCullDistanceFactor = factor;
 
@@ -163,7 +163,7 @@ namespace bs
 	template class TRenderable < false >;
 	template class TRenderable < true >;
 
-	void Renderable::initialize()
+	void Renderable::Initialize()
 	{
 		CoreObject::initialize();		
 
@@ -176,7 +176,7 @@ namespace bs
 	}
 
 
-	void Renderable::setAnimation(const SPtr<Animation>& animation)
+	void Renderable::SetAnimation(const SPtr<Animation>& animation)
 	{
 		mAnimation = animation;
 		refreshAnimation();
@@ -184,7 +184,7 @@ namespace bs
 		MarkCoreDirtyInternal();
 	}
 
-	Bounds Renderable::getBounds() const
+	Bounds Renderable::GetBounds() const
 	{
 		if(mUseOverrideBounds)
 		{
@@ -216,12 +216,12 @@ namespace bs
 		}
 	}
 
-	SPtr<ct::Renderable> Renderable::getCore() const
+	SPtr<ct::Renderable> Renderable::GetCore() const
 	{
 		return std::static_pointer_cast<ct::Renderable>(mCoreSpecific);
 	}
 
-	SPtr<ct::CoreObject> Renderable::createCore() const
+	SPtr<ct::CoreObject> Renderable::CreateCore() const
 	{
 		ct::Renderable* handler = new (bs_alloc<ct::Renderable>()) ct::Renderable();
 		SPtr<ct::Renderable> handlerPtr = bs_shared_ptr<ct::Renderable>(handler);
@@ -230,12 +230,12 @@ namespace bs
 		return handlerPtr;
 	}
 
-	void Renderable::onMeshChanged()
+	void Renderable::OnMeshChanged()
 	{
 		refreshAnimation();
 	}
 
-	void Renderable::refreshAnimation()
+	void Renderable::RefreshAnimation()
 	{
 		if (mAnimation == nullptr)
 		{
@@ -316,7 +316,7 @@ namespace bs
 		markListenerResourcesDirty();
 	}
 
-	CoreSyncData Renderable::syncToCore(FrameAlloc* allocator)
+	CoreSyncData Renderable::SyncToCore(FrameAlloc* allocator)
 	{
 		const UINT32 dirtyFlags = getCoreDirtyFlags();
 		UINT32 size = rtti_size(dirtyFlags).bytes;
@@ -384,7 +384,7 @@ namespace bs
 		return CoreSyncData(data, size);
 	}
 
-	void Renderable::getCoreDependencies(Vector<CoreObject*>& dependencies)
+	void Renderable::GetCoreDependencies(Vector<CoreObject*>& dependencies)
 	{
 		if (mMesh.isLoaded())
 			dependencies.push_back(mMesh.get());
@@ -396,7 +396,7 @@ namespace bs
 		}
 	}
 
-	void Renderable::onDependencyDirty(CoreObject* dependency, UINT32 dirtyFlags)
+	void Renderable::OnDependencyDirty(CoreObject* dependency, UINT32 dirtyFlags)
 	{
 		if(mMesh.isLoaded(false) && mMesh.get() == dependency)
 		{
@@ -408,7 +408,7 @@ namespace bs
 			CoreObject::onDependencyDirty(dependency, dirtyFlags);
 	}
 
-	void Renderable::getListenerResources(Vector<HResource>& resources)
+	void Renderable::GetListenerResources(Vector<HResource>& resources)
 	{
 		if (mMesh != nullptr)
 			resources.push_back(mMesh);
@@ -420,7 +420,7 @@ namespace bs
 		}
 	}
 
-	void Renderable::notifyResourceLoaded(const HResource& resource)
+	void Renderable::NotifyResourceLoaded(const HResource& resource)
 	{
 		if (resource == mMesh)
 			onMeshChanged();
@@ -429,7 +429,7 @@ namespace bs
 		markCoreDirty();
 	}
 
-	void Renderable::notifyResourceChanged(const HResource& resource)
+	void Renderable::NotifyResourceChanged(const HResource& resource)
 	{
 		if(resource == mMesh)
 			onMeshChanged();
@@ -438,7 +438,7 @@ namespace bs
 		markCoreDirty();
 	}
 
-	SPtr<Renderable> Renderable::create()
+	SPtr<Renderable> Renderable::Create()
 	{
 		SPtr<Renderable> handlerPtr = createEmpty();
 		handlerPtr->initialize();
@@ -446,7 +446,7 @@ namespace bs
 		return handlerPtr;
 	}
 
-	SPtr<Renderable> Renderable::createEmpty()
+	SPtr<Renderable> Renderable::CreateEmpty()
 	{
 		Renderable* handler = new (bs_alloc<Renderable>()) Renderable();
 		SPtr<Renderable> handlerPtr = bs_core_ptr<Renderable>(handler);
@@ -455,14 +455,14 @@ namespace bs
 		return handlerPtr;
 	}
 
-	RTTITypeBase* Renderable::getRTTIStatic()
+	RTTITypeBase* Renderable::GetRttiStatic()
 	{
-		return RenderableRTTI::instance();
+		return RenderableRTTI::Instance();
 	}
 
-	RTTITypeBase* Renderable::getRTTI() const
+	RTTITypeBase* Renderable::GetRtti() const
 	{
-		return Renderable::getRTTIStatic();
+		return Renderable::GetRttiStatic();
 	}
 
 	namespace ct
@@ -478,14 +478,14 @@ namespace bs
 			gRenderer()->notifyRenderableRemoved(this);
 	}
 
-	void Renderable::initialize()
+	void Renderable::Initialize()
 	{
 		gRenderer()->notifyRenderableAdded(this);
 
 		CoreObject::initialize();
 	}
 
-	Bounds Renderable::getBounds() const
+	Bounds Renderable::GetBounds() const
 	{
 		if (mUseOverrideBounds)
 		{
@@ -526,7 +526,7 @@ namespace bs
 		desc.format = BF_32X4F;
 		desc.usage = GBU_DYNAMIC;
 
-		SPtr<GpuBuffer> buffer = GpuBuffer::create(desc);
+		SPtr<GpuBuffer> buffer = GpuBuffer::Create(desc);
 		UINT8* dest = (UINT8*)buffer->lock(0, numBones * 3 * sizeof(Vector4), GBL_WRITE_ONLY_DISCARD);
 
 		// Initialize bone transforms to identity, so the object renders properly even if no animation is animating it
@@ -541,7 +541,7 @@ namespace bs
 		return buffer;
 	}
 
-	void Renderable::createAnimationBuffers()
+	void Renderable::CreateAnimationBuffers()
 	{
 		if (mAnimType == RenderableAnimType::Skinned || mAnimType == RenderableAnimType::SkinnedMorph)
 		{
@@ -583,7 +583,7 @@ namespace bs
 			desc.numVerts = numVertices;
 			desc.usage = GBU_DYNAMIC;
 
-			SPtr<VertexBuffer> vertexBuffer = VertexBuffer::create(desc);
+			SPtr<VertexBuffer> vertexBuffer = VertexBuffer::Create(desc);
 
 			UINT32 totalSize = vertexSize * numVertices;
 			UINT8* dest = (UINT8*)vertexBuffer->lock(0, totalSize, GBL_WRITE_ONLY_DISCARD);
@@ -598,7 +598,7 @@ namespace bs
 		mMorphShapeVersion = 0;
 	}
 
-	void Renderable::updateAnimationBuffers(const EvaluatedAnimationData& animData)
+	void Renderable::UpdateAnimationBuffers(const EvaluatedAnimationData& animData)
 	{
 		if (mAnimationId == (UINT64)-1)
 			return;
@@ -648,7 +648,7 @@ namespace bs
 		}
 	}
 
-	void Renderable::updatePrevFrameAnimationBuffers()
+	void Renderable::UpdatePrevFrameAnimationBuffers()
 	{
 		if (!mWriteVelocity)
 			return;
@@ -657,7 +657,7 @@ namespace bs
 			std::swap(mBoneMatrixBuffer, mBonePrevMatrixBuffer);
 	}
 
-	void Renderable::syncToCore(const CoreSyncData& data)
+	void Renderable::SyncToCore(const CoreSyncData& data)
 	{
 		Bitstream stream(data.getBuffer(), data.getBufferSize());
 
@@ -709,13 +709,13 @@ namespace bs
 			// Create special vertex declaration if using morph shapes
 			if (mAnimType == RenderableAnimType::Morph || mAnimType == RenderableAnimType::SkinnedMorph)
 			{
-				SPtr<VertexDataDesc> vertexDesc = VertexDataDesc::create();
+				SPtr<VertexDataDesc> vertexDesc = VertexDataDesc::Create();
 				*vertexDesc = * mMesh->getVertexDesc();
 
 				vertexDesc->addVertElem(VET_FLOAT3, VES_POSITION, 1, 1);
 				vertexDesc->addVertElem(VET_UBYTE4_NORM, VES_NORMAL, 1, 1);
 
-				mMorphVertexDeclaration = VertexDeclaration::create(vertexDesc);
+				mMorphVertexDeclaration = VertexDeclaration::Create(vertexDesc);
 			}
 			else
 				mMorphVertexDeclaration = nullptr;

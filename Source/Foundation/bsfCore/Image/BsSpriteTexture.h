@@ -78,32 +78,32 @@ namespace bs
 		 * in range [0, 1].
 		 */
 		BS_SCRIPT_EXPORT(n:Offset,pr:setter)
-		void setOffset(const Vector2& offset) { mUVOffset = offset; MarkCoreDirtyInternal(); }
+		void SetOffset(const Vector2& offset) { mUVOffset = offset; MarkCoreDirtyInternal(); }
 
 		/** @copydoc setOffset() */
 		BS_SCRIPT_EXPORT(n:Offset,pr:getter)
-		Vector2 getOffset() const { return mUVOffset; }
+		Vector2 GetOffset() const { return mUVOffset; }
 
 		/** Determines the size of the sprite in the referenced texture. Size is in UV coordinates, range [0, 1]. */
 		BS_SCRIPT_EXPORT(n:Scale,pr:setter)
-		void setScale(const Vector2& scale) { mUVScale = scale; MarkCoreDirtyInternal(); }
+		void SetScale(const Vector2& scale) { mUVScale = scale; MarkCoreDirtyInternal(); }
 
 		/** @copydoc setScale() */
 		BS_SCRIPT_EXPORT(n:Scale,pr:getter)
-		Vector2 getScale() const { return mUVScale; }
+		Vector2 GetScale() const { return mUVScale; }
 
 		/** Transforms wanted UV coordinates into coordinates you can use for sampling the internal texture. */
-		Vector2 transformUV(const Vector2& uv) const { return mUVOffset + uv * mUVScale; }
+		Vector2 TransformUv(const Vector2& uv) const { return mUVOffset + uv * mUVScale; }
 
 		/**
 		 * Evaluates the UV coordinate offset and size to use at the specified time. If the sprite texture doesn't
 		 * have animation playback enabled then just the default offset and size will be provided, otherwise the
 		 * animation will be evaluated and appropriate UV returned.
 		 */
-		Rect2 evaluate(float t) const;
+		Rect2 Evaluate(float t) const;
 
 		/** Returns the row and column of the current animation frame for time @p t. */
-		void getAnimationFrame(float t, UINT32& row, UINT32& column) const;
+		void GetAnimationFrame(float t, UINT32& row, UINT32& column) const;
 
 		/**
 		 * Sets properties describing sprite animation. The animation splits the sprite area into a grid of sub-images
@@ -111,19 +111,19 @@ namespace bs
 		 * setAnimationPlayback().
 		 */
 		BS_SCRIPT_EXPORT(n:Animation,pr:setter)
-		void setAnimation(const SpriteSheetGridAnimation& anim) { mAnimation = anim; MarkCoreDirtyInternal(); }
+		void SetAnimation(const SpriteSheetGridAnimation& anim) { mAnimation = anim; MarkCoreDirtyInternal(); }
 
 		/** @copydoc setAnimation */
 		BS_SCRIPT_EXPORT(n:Animation,pr:getter)
-		const SpriteSheetGridAnimation& getAnimation() const { return mAnimation; }
+		const SpriteSheetGridAnimation& GetAnimation() const { return mAnimation; }
 
 		/** Determines if and how should the sprite animation play. */
 		BS_SCRIPT_EXPORT(n:AnimationPlayback,pr:setter)
-		void setAnimationPlayback(SpriteAnimationPlayback playback) { mPlayback = playback; MarkCoreDirtyInternal(); }
+		void SetAnimationPlayback(SpriteAnimationPlayback playback) { mPlayback = playback; MarkCoreDirtyInternal(); }
 
 		/** @copydoc setAnimationPlayback */
 		BS_SCRIPT_EXPORT(n:AnimationPlayback,pr:getter)
-		SpriteAnimationPlayback getAnimationPlayback() const { return mPlayback; };
+		SpriteAnimationPlayback GetAnimationPlayback() const { return mPlayback; };
 
 	protected:
 		/** Marks the contents of the sim thread object as dirty, causing it to sync with its core thread counterpart. */
@@ -151,7 +151,7 @@ namespace bs
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P p);
+		void RttiEnumFields(P p);
 
 	protected:
 		TextureType mAtlasTexture;
@@ -174,50 +174,50 @@ namespace bs
 	public:
 		/**	Determines the internal texture that the sprite texture references. */
 		BS_SCRIPT_EXPORT(n:Texture,pr:setter)
-		void setTexture(const HTexture& texture);
+		void SetTexture(const HTexture& texture);
 
 		/**	@copydoc setTexture() */
 		BS_SCRIPT_EXPORT(n:Texture,pr:getter)
-		const HTexture& getTexture() const { return mAtlasTexture; }
+		const HTexture& GetTexture() const { return mAtlasTexture; }
 
 		/**	Returns width of the sprite texture in pixels. */
 		BS_SCRIPT_EXPORT(n:Width,pr:getter)
-		UINT32 getWidth() const;
+		UINT32 GetWidth() const;
 
 		/**	Returns height of the sprite texture in pixels. */
 		BS_SCRIPT_EXPORT(n:Height,pr:getter)
-		UINT32 getHeight() const;
+		UINT32 GetHeight() const;
 
 		/**	
 		 * Returns width of a single animation frame sprite texture in pixels. If the texture has no animation this
 		 * is the same as getWidth().
 		 */
 		BS_SCRIPT_EXPORT(n:FrameWidth,pr:getter)
-		UINT32 getFrameWidth() const;
+		UINT32 GetFrameWidth() const;
 
 		/**	
 		 * Returns height of a single animation frame sprite texture in pixels. If the texture has no animation this
 		 * is the same as getHeight().
 		 */
 		BS_SCRIPT_EXPORT(n:FrameHeight,pr:getter)
-		UINT32 getFrameHeight() const;
+		UINT32 GetFrameHeight() const;
 
 		/**	Retrieves a core implementation of a sprite texture usable only from the core thread. */
-		SPtr<ct::SpriteTexture> getCore() const;
+		SPtr<ct::SpriteTexture> GetCore() const;
 
 		/**	Creates a new sprite texture that references the entire area of the provided texture. */
 		BS_SCRIPT_EXPORT(ec:SpriteTexture)
-		static HSpriteTexture create(const HTexture& texture);
+		static HSpriteTexture Create(const HTexture& texture);
 
 		/**	Creates a new sprite texture that references a sub-area of the provided	texture. */
 		BS_SCRIPT_EXPORT(ec:SpriteTexture)
-		static HSpriteTexture create(const Vector2& uvOffset, const Vector2& uvScale, const HTexture& texture);
+		static HSpriteTexture Create(const Vector2& uvOffset, const Vector2& uvScale, const HTexture& texture);
 
 		/**	Checks if the sprite texture and its internal texture have been loaded. */
-		static bool checkIsLoaded(const HSpriteTexture& tex);
+		static bool CheckIsLoaded(const HSpriteTexture& tex);
 
 		/**	Returns a dummy sprite texture. */
-		static const HSpriteTexture& dummy();
+		static const HSpriteTexture& Dummy();
 
 		/** @name Internal
 		 *  @{
@@ -240,27 +240,27 @@ namespace bs
 		SpriteTexture(const Vector2& uvOffset, const Vector2& uvScale, const HTexture& texture);
 
 		/** @copydoc CoreObject::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> createCore() const override;
+		SPtr<ct::CoreObject> CreateCore() const override;
 
 		/** @copydoc CoreObject::syncToCore */
-		CoreSyncData syncToCore(FrameAlloc* allocator) override;
+		CoreSyncData SyncToCore(FrameAlloc* allocator) override;
 
 		/** @copydoc CoreObject::getCoreDependencies */
-		void getCoreDependencies(Vector<CoreObject*>& dependencies) override;
+		void GetCoreDependencies(Vector<CoreObject*>& dependencies) ;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
 		/************************************************************************/
 
 		/**	Creates a new empty and uninitialized sprite texture. */
-		static SPtr<SpriteTexture> createEmpty();
+		static SPtr<SpriteTexture> CreateEmpty();
 	public:
 		friend class SpriteTextureRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** @} */
@@ -280,10 +280,10 @@ namespace bs
 		{
 		public:
 			/**	Determines the internal texture that the sprite texture references. */
-			void setTexture(const SPtr<ct::Texture>& texture) { mAtlasTexture = texture; }
+			void SetTexture(const SPtr<ct::Texture>& texture) { mAtlasTexture = texture; }
 
 			/**	@copydoc setTexture() */
-			const SPtr<ct::Texture>& getTexture() const { return mAtlasTexture; }
+			const SPtr<ct::Texture>& GetTexture() const { return mAtlasTexture; }
 
 		private:
 			friend class bs::SpriteTexture;
@@ -292,7 +292,7 @@ namespace bs
 				const SpriteSheetGridAnimation& anim, SpriteAnimationPlayback playback);
 
 			/** @copydoc CoreObject::syncToCore */
-			void syncToCore(const CoreSyncData& data) override;
+			void SyncToCore(const CoreSyncData& data) override;
 		};
 
 		/** @} */

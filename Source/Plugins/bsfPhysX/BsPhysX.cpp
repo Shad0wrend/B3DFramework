@@ -295,14 +295,14 @@ namespace bs
 			//   avoid allocating them constantly.
 
 			auto runTask = [&]() { physxTask.run(); physxTask.release(); };
-			SPtr<Task> task = Task::create("PhysX", runTask);
+			SPtr<Task> task = Task::Create("PhysX", runTask);
 
-			TaskScheduler::instance().addTask(task);
+			TaskScheduler::Instance().addTask(task);
 		}
 
 		PxU32 getWorkerCount() const override
 		{
-			return (PxU32)TaskScheduler::instance().getNumWorkers();
+			return (PxU32)TaskScheduler::Instance().getNumWorkers();
 		}
 	};
 
@@ -522,7 +522,7 @@ namespace bs
 		mFoundation->release();
 	}
 
-	void PhysX::fixedUpdate(float step)
+	void PhysX::FixedUpdate(float step)
 	{
 		if (mPaused)
 			return;
@@ -576,7 +576,7 @@ namespace bs
 		triggerEvents();
 	}
 
-	void PhysX::update()
+	void PhysX::Update()
 	{
 		// Note: Potentially interpolate (would mean a one frame delay needs to be introduced)
 	}
@@ -596,7 +596,7 @@ namespace bs
 		mJointBreakEvents.push_back(event);
 	}
 
-	void PhysX::triggerEvents()
+	void PhysX::TriggerEvents()
 	{
 		CollisionDataRaw data;
 
@@ -698,17 +698,17 @@ namespace bs
 		mJointBreakEvents.clear();
 	}
 
-	SPtr<PhysicsMaterial> PhysX::createMaterial(float staticFriction, float dynamicFriction, float restitution)
+	SPtr<PhysicsMaterial> PhysX::CreateMaterial(float staticFriction, float dynamicFriction, float restitution)
 	{
 		return bs_core_ptr_new<PhysXMaterial>(mPhysics, staticFriction, dynamicFriction, restitution);
 	}
 
-	SPtr<PhysicsMesh> PhysX::createMesh(const SPtr<MeshData>& meshData, PhysicsMeshType type)
+	SPtr<PhysicsMesh> PhysX::CreateMesh(const SPtr<MeshData>& meshData, PhysicsMeshType type)
 	{
 		return bs_core_ptr_new<PhysXMesh>(meshData, type);
 	}
 
-	SPtr<PhysicsScene> PhysX::createPhysicsScene()
+	SPtr<PhysicsScene> PhysX::CreatePhysicsScene()
 	{
 		SPtr<PhysXScene> scene = bs_shared_ptr_new<PhysXScene>(mPhysics, mInitDesc, mScale);
 		mScenes.push_back(scene.get());
@@ -724,7 +724,7 @@ namespace bs
 		mScenes.erase(iterFind);
 	}
 
-	void PhysX::setPaused(bool paused)
+	void PhysX::SetPaused(bool paused)
 	{
 		mPaused = paused;
 	}
@@ -784,74 +784,74 @@ namespace bs
 		gPhysX().NotifySceneDestroyedInternal(this);
 	}
 
-	SPtr<Rigidbody> PhysXScene::createRigidbody(const HSceneObject& linkedSO)
+	SPtr<Rigidbody> PhysXScene::CreateRigidbody(const HSceneObject& linkedSO)
 	{
 		return bs_shared_ptr_new<PhysXRigidbody>(mPhysics, mScene, linkedSO);
 	}
 
-	SPtr<BoxCollider> PhysXScene::createBoxCollider(const Vector3& extents, const Vector3& position,
+	SPtr<BoxCollider> PhysXScene::CreateBoxCollider(const Vector3& extents, const Vector3& position,
 		const Quaternion& rotation)
 	{
 		return bs_shared_ptr_new<PhysXBoxCollider>(mPhysics, mScene, position, rotation, extents);
 	}
 
-	SPtr<SphereCollider> PhysXScene::createSphereCollider(float radius, const Vector3& position, const Quaternion& rotation)
+	SPtr<SphereCollider> PhysXScene::CreateSphereCollider(float radius, const Vector3& position, const Quaternion& rotation)
 	{
 		return bs_shared_ptr_new<PhysXSphereCollider>(mPhysics, mScene, position, rotation, radius);
 	}
 
-	SPtr<PlaneCollider> PhysXScene::createPlaneCollider(const Vector3& position, const Quaternion& rotation)
+	SPtr<PlaneCollider> PhysXScene::CreatePlaneCollider(const Vector3& position, const Quaternion& rotation)
 	{
 		return bs_shared_ptr_new<PhysXPlaneCollider>(mPhysics, mScene, position, rotation);
 	}
 
-	SPtr<CapsuleCollider> PhysXScene::createCapsuleCollider(float radius, float halfHeight, const Vector3& position,
+	SPtr<CapsuleCollider> PhysXScene::CreateCapsuleCollider(float radius, float halfHeight, const Vector3& position,
 		const Quaternion& rotation)
 	{
 		return bs_shared_ptr_new<PhysXCapsuleCollider>(mPhysics, mScene, position, rotation, radius, halfHeight);
 	}
 
-	SPtr<MeshCollider> PhysXScene::createMeshCollider(const Vector3& position, const Quaternion& rotation)
+	SPtr<MeshCollider> PhysXScene::CreateMeshCollider(const Vector3& position, const Quaternion& rotation)
 	{
 		return bs_shared_ptr_new<PhysXMeshCollider>(mPhysics, mScene, position, rotation);
 	}
 
-	SPtr<FixedJoint> PhysXScene::createFixedJoint(const FIXED_JOINT_DESC& desc)
+	SPtr<FixedJoint> PhysXScene::CreateFixedJoint(const FIXED_JOINT_DESC& desc)
 	{
 		return bs_shared_ptr_new<PhysXFixedJoint>(mPhysics, desc);
 	}
 
-	SPtr<DistanceJoint> PhysXScene::createDistanceJoint(const DISTANCE_JOINT_DESC& desc)
+	SPtr<DistanceJoint> PhysXScene::CreateDistanceJoint(const DISTANCE_JOINT_DESC& desc)
 	{
 		return bs_shared_ptr_new<PhysXDistanceJoint>(mPhysics, desc);
 	}
 
-	SPtr<HingeJoint> PhysXScene::createHingeJoint(const HINGE_JOINT_DESC& desc)
+	SPtr<HingeJoint> PhysXScene::CreateHingeJoint(const HINGE_JOINT_DESC& desc)
 	{
 		return bs_shared_ptr_new<PhysXHingeJoint>(mPhysics, desc);
 	}
 
-	SPtr<SphericalJoint> PhysXScene::createSphericalJoint(const SPHERICAL_JOINT_DESC& desc)
+	SPtr<SphericalJoint> PhysXScene::CreateSphericalJoint(const SPHERICAL_JOINT_DESC& desc)
 	{
 		return bs_shared_ptr_new<PhysXSphericalJoint>(mPhysics, desc);
 	}
 
-	SPtr<SliderJoint> PhysXScene::createSliderJoint(const SLIDER_JOINT_DESC& desc)
+	SPtr<SliderJoint> PhysXScene::CreateSliderJoint(const SLIDER_JOINT_DESC& desc)
 	{
 		return bs_shared_ptr_new<PhysXSliderJoint>(mPhysics, desc);
 	}
 
-	SPtr<D6Joint> PhysXScene::createD6Joint(const D6_JOINT_DESC& desc)
+	SPtr<D6Joint> PhysXScene::CreateD6Joint(const D6_JOINT_DESC& desc)
 	{
 		return bs_shared_ptr_new<PhysXD6Joint>(mPhysics, desc);
 	}
 
-	SPtr<CharacterController> PhysXScene::createCharacterController(const CHAR_CONTROLLER_DESC& desc)
+	SPtr<CharacterController> PhysXScene::CreateCharacterController(const CHAR_CONTROLLER_DESC& desc)
 	{
 		return bs_shared_ptr_new<PhysXCharacterController>(mCharManager, desc);
 	}
 
-	Vector<PhysicsQueryHit> PhysXScene::sweepAll(const PxGeometry& geometry, const PxTransform& tfrm, const Vector3& unitDir,
+	Vector<PhysicsQueryHit> PhysXScene::SweepAll(const PxGeometry& geometry, const PxTransform& tfrm, const Vector3& unitDir,
 		UINT64 layer, float maxDist) const
 	{
 		PhysXSweepQueryCallback output;
@@ -865,7 +865,7 @@ namespace bs
 		return output.data;
 	}
 
-	bool PhysXScene::sweepAny(const PxGeometry& geometry, const PxTransform& tfrm, const Vector3& unitDir, UINT64 layer,
+	bool PhysXScene::SweepAny(const PxGeometry& geometry, const PxTransform& tfrm, const Vector3& unitDir, UINT64 layer,
 		float maxDist) const
 	{
 		PxSweepBuffer output;
@@ -878,7 +878,7 @@ namespace bs
 			PxHitFlag::eDEFAULT | PxHitFlag::eUV | PxHitFlag::eMESH_ANY, filterData);
 	}
 
-	bool PhysXScene::rayCast(const Vector3& origin, const Vector3& unitDir, PhysicsQueryHit& hit, UINT64 layer, float max) const
+	bool PhysXScene::RayCast(const Vector3& origin, const Vector3& unitDir, PhysicsQueryHit& hit, UINT64 layer, float max) const
 	{
 		PxRaycastBuffer output;
 
@@ -894,7 +894,7 @@ namespace bs
 		return wasHit;
 	}
 
-	bool PhysXScene::boxCast(const AABox& box, const Quaternion& rotation, const Vector3& unitDir, PhysicsQueryHit& hit,
+	bool PhysXScene::BoxCast(const AABox& box, const Quaternion& rotation, const Vector3& unitDir, PhysicsQueryHit& hit,
 		UINT64 layer, float max) const
 	{
 		PxBoxGeometry geometry(toPxVector(box.getHalfSize()));
@@ -903,7 +903,7 @@ namespace bs
 		return sweep(geometry, transform, unitDir, hit, layer, max);
 	}
 
-	bool PhysXScene::sphereCast(const Sphere& sphere, const Vector3& unitDir, PhysicsQueryHit& hit,
+	bool PhysXScene::SphereCast(const Sphere& sphere, const Vector3& unitDir, PhysicsQueryHit& hit,
 		UINT64 layer, float max) const
 	{
 		PxSphereGeometry geometry(sphere.getRadius());
@@ -912,7 +912,7 @@ namespace bs
 		return sweep(geometry, transform, unitDir, hit, layer, max);
 	}
 
-	bool PhysXScene::capsuleCast(const Capsule& capsule, const Quaternion& rotation, const Vector3& unitDir,
+	bool PhysXScene::CapsuleCast(const Capsule& capsule, const Quaternion& rotation, const Vector3& unitDir,
 		PhysicsQueryHit& hit, UINT64 layer, float max) const
 	{
 		PxCapsuleGeometry geometry(capsule.getRadius(), capsule.getHeight() * 0.5f);
@@ -921,7 +921,7 @@ namespace bs
 		return sweep(geometry, transform, unitDir, hit, layer, max);
 	}
 
-	bool PhysXScene::convexCast(const HPhysicsMesh& mesh, const Vector3& position, const Quaternion& rotation,
+	bool PhysXScene::ConvexCast(const HPhysicsMesh& mesh, const Vector3& position, const Quaternion& rotation,
 		const Vector3& unitDir, PhysicsQueryHit& hit, UINT64 layer, float max) const
 	{
 		if (mesh == nullptr)
@@ -937,7 +937,7 @@ namespace bs
 		return sweep(geometry, transform, unitDir, hit, layer, max);
 	}
 
-	Vector<PhysicsQueryHit> PhysXScene::rayCastAll(const Vector3& origin, const Vector3& unitDir,
+	Vector<PhysicsQueryHit> PhysXScene::RayCastAll(const Vector3& origin, const Vector3& unitDir,
 		UINT64 layer, float max) const
 	{
 		PhysXRaycastQueryCallback output;
@@ -951,7 +951,7 @@ namespace bs
 		return output.data;
 	}
 
-	Vector<PhysicsQueryHit> PhysXScene::boxCastAll(const AABox& box, const Quaternion& rotation,
+	Vector<PhysicsQueryHit> PhysXScene::BoxCastAll(const AABox& box, const Quaternion& rotation,
 		const Vector3& unitDir, UINT64 layer, float max) const
 	{
 		PxBoxGeometry geometry(toPxVector(box.getHalfSize()));
@@ -960,7 +960,7 @@ namespace bs
 		return sweepAll(geometry, transform, unitDir, layer, max);
 	}
 
-	Vector<PhysicsQueryHit> PhysXScene::sphereCastAll(const Sphere& sphere, const Vector3& unitDir,
+	Vector<PhysicsQueryHit> PhysXScene::SphereCastAll(const Sphere& sphere, const Vector3& unitDir,
 		UINT64 layer, float max) const
 	{
 		PxSphereGeometry geometry(sphere.getRadius());
@@ -969,7 +969,7 @@ namespace bs
 		return sweepAll(geometry, transform, unitDir, layer, max);
 	}
 
-	Vector<PhysicsQueryHit> PhysXScene::capsuleCastAll(const Capsule& capsule, const Quaternion& rotation,
+	Vector<PhysicsQueryHit> PhysXScene::CapsuleCastAll(const Capsule& capsule, const Quaternion& rotation,
 		const Vector3& unitDir, UINT64 layer, float max) const
 	{
 		PxCapsuleGeometry geometry(capsule.getRadius(), capsule.getHeight() * 0.5f);
@@ -978,7 +978,7 @@ namespace bs
 		return sweepAll(geometry, transform, unitDir, layer, max);
 	}
 
-	Vector<PhysicsQueryHit> PhysXScene::convexCastAll(const HPhysicsMesh& mesh, const Vector3& position,
+	Vector<PhysicsQueryHit> PhysXScene::ConvexCastAll(const HPhysicsMesh& mesh, const Vector3& position,
 		const Quaternion& rotation, const Vector3& unitDir, UINT64 layer, float max) const
 	{
 		if (mesh == nullptr)
@@ -994,7 +994,7 @@ namespace bs
 		return sweepAll(geometry, transform, unitDir, layer, max);
 	}
 
-	bool PhysXScene::rayCastAny(const Vector3& origin, const Vector3& unitDir,
+	bool PhysXScene::RayCastAny(const Vector3& origin, const Vector3& unitDir,
 		UINT64 layer, float max) const
 	{
 		PxRaycastBuffer output;
@@ -1007,7 +1007,7 @@ namespace bs
 			toPxVector(unitDir), max, output, PxHitFlag::eDEFAULT | PxHitFlag::eUV | PxHitFlag::eMESH_ANY, filterData);
 	}
 
-	bool PhysXScene::boxCastAny(const AABox& box, const Quaternion& rotation, const Vector3& unitDir,
+	bool PhysXScene::BoxCastAny(const AABox& box, const Quaternion& rotation, const Vector3& unitDir,
 		UINT64 layer, float max) const
 	{
 		PxBoxGeometry geometry(toPxVector(box.getHalfSize()));
@@ -1016,7 +1016,7 @@ namespace bs
 		return sweepAny(geometry, transform, unitDir, layer, max);
 	}
 
-	bool PhysXScene::sphereCastAny(const Sphere& sphere, const Vector3& unitDir,
+	bool PhysXScene::SphereCastAny(const Sphere& sphere, const Vector3& unitDir,
 		UINT64 layer, float max) const
 	{
 		PxSphereGeometry geometry(sphere.getRadius());
@@ -1025,7 +1025,7 @@ namespace bs
 		return sweepAny(geometry, transform, unitDir, layer, max);
 	}
 
-	bool PhysXScene::capsuleCastAny(const Capsule& capsule, const Quaternion& rotation, const Vector3& unitDir,
+	bool PhysXScene::CapsuleCastAny(const Capsule& capsule, const Quaternion& rotation, const Vector3& unitDir,
 		UINT64 layer, float max) const
 	{
 		PxCapsuleGeometry geometry(capsule.getRadius(), capsule.getHeight() * 0.5f);
@@ -1034,7 +1034,7 @@ namespace bs
 		return sweepAny(geometry, transform, unitDir, layer, max);
 	}
 
-	bool PhysXScene::convexCastAny(const HPhysicsMesh& mesh, const Vector3& position, const Quaternion& rotation,
+	bool PhysXScene::ConvexCastAny(const HPhysicsMesh& mesh, const Vector3& position, const Quaternion& rotation,
 		const Vector3& unitDir, UINT64 layer, float max) const
 	{
 		if (mesh == nullptr)
@@ -1092,7 +1092,7 @@ namespace bs
 		return overlap(geometry, transform, layer);
 	}
 
-	bool PhysXScene::boxOverlapAny(const AABox& box, const Quaternion& rotation, UINT64 layer) const
+	bool PhysXScene::BoxOverlapAny(const AABox& box, const Quaternion& rotation, UINT64 layer) const
 	{
 		PxBoxGeometry geometry(toPxVector(box.getHalfSize()));
 		PxTransform transform = toPxTransform(box.getCenter(), rotation);
@@ -1100,7 +1100,7 @@ namespace bs
 		return overlapAny(geometry, transform, layer);
 	}
 
-	bool PhysXScene::sphereOverlapAny(const Sphere& sphere, UINT64 layer) const
+	bool PhysXScene::SphereOverlapAny(const Sphere& sphere, UINT64 layer) const
 	{
 		PxSphereGeometry geometry(sphere.getRadius());
 		PxTransform transform = toPxTransform(sphere.getCenter(), Quaternion::IDENTITY);
@@ -1108,7 +1108,7 @@ namespace bs
 		return overlapAny(geometry, transform, layer);
 	}
 
-	bool PhysXScene::capsuleOverlapAny(const Capsule& capsule, const Quaternion& rotation,
+	bool PhysXScene::CapsuleOverlapAny(const Capsule& capsule, const Quaternion& rotation,
 		UINT64 layer) const
 	{
 		PxCapsuleGeometry geometry(capsule.getRadius(), capsule.getHeight() * 0.5f);
@@ -1117,7 +1117,7 @@ namespace bs
 		return overlapAny(geometry, transform, layer);
 	}
 
-	bool PhysXScene::convexOverlapAny(const HPhysicsMesh& mesh, const Vector3& position, const Quaternion& rotation,
+	bool PhysXScene::ConvexOverlapAny(const HPhysicsMesh& mesh, const Vector3& position, const Quaternion& rotation,
 		UINT64 layer) const
 	{
 		if (mesh == nullptr)
@@ -1133,7 +1133,7 @@ namespace bs
 		return overlapAny(geometry, transform, layer);
 	}
 
-	bool PhysXScene::sweep(const PxGeometry& geometry, const PxTransform& tfrm, const Vector3& unitDir,
+	bool PhysXScene::Sweep(const PxGeometry& geometry, const PxTransform& tfrm, const Vector3& unitDir,
 		PhysicsQueryHit& hit, UINT64 layer, float maxDist) const
 	{
 		PxSweepBuffer output;
@@ -1150,7 +1150,7 @@ namespace bs
 		return wasHit;
 	}
 
-	bool PhysXScene::overlapAny(const PxGeometry& geometry, const PxTransform& tfrm, UINT64 layer) const
+	bool PhysXScene::OverlapAny(const PxGeometry& geometry, const PxTransform& tfrm, UINT64 layer) const
 	{
 		PxOverlapBuffer output;
 
@@ -1161,7 +1161,7 @@ namespace bs
 		return mScene->overlap(geometry, tfrm, output, filterData);
 	}
 
-	Vector<Collider*> PhysXScene::overlap(const PxGeometry& geometry, const PxTransform& tfrm, UINT64 layer) const
+	Vector<Collider*> PhysXScene::Overlap(const PxGeometry& geometry, const PxTransform& tfrm, UINT64 layer) const
 	{
 		PhysXOverlapQueryCallback output;
 
@@ -1172,7 +1172,7 @@ namespace bs
 		return output.data;
 	}
 
-	void PhysXScene::setFlag(PhysicsFlags flag, bool enabled)
+	void PhysXScene::SetFlag(PhysicsFlags flag, bool enabled)
 	{
 		PhysicsScene::setFlag(flag, enabled);
 
@@ -1181,24 +1181,24 @@ namespace bs
 		mCharManager->setTessellation(mFlags.isSet(PhysicsFlag::CCT_Tesselation), mTesselationLength);
 	}
 
-	Vector3 PhysXScene::getGravity() const
+	Vector3 PhysXScene::GetGravity() const
 	{
 		return fromPxVector(mScene->getGravity());
 	}
 
-	void PhysXScene::setGravity(const Vector3& gravity)
+	void PhysXScene::SetGravity(const Vector3& gravity)
 	{
 		mScene->setGravity(toPxVector(gravity));
 	}
 
-	void PhysXScene::setMaxTesselationEdgeLength(float length)
+	void PhysXScene::SetMaxTesselationEdgeLength(float length)
 	{
 		mTesselationLength = length;
 
 		mCharManager->setTessellation(mFlags.isSet(PhysicsFlag::CCT_Tesselation), mTesselationLength);
 	}
 
-	UINT32 PhysXScene::addBroadPhaseRegion(const AABox& region)
+	UINT32 PhysXScene::AddBroadPhaseRegion(const AABox& region)
 	{
 		UINT32 id = mNextRegionIdx++;
 
@@ -1212,7 +1212,7 @@ namespace bs
 		return handle;
 	}
 
-	void PhysXScene::removeBroadPhaseRegion(UINT32 regionId)
+	void PhysXScene::RemoveBroadPhaseRegion(UINT32 regionId)
 	{
 		auto iterFind = mBroadPhaseRegionHandles.find(regionId);
 		if (iterFind == mBroadPhaseRegionHandles.end())
@@ -1222,7 +1222,7 @@ namespace bs
 		mBroadPhaseRegionHandles.erase(iterFind);
 	}
 
-	void PhysXScene::clearBroadPhaseRegions()
+	void PhysXScene::ClearBroadPhaseRegions()
 	{
 		for(auto& entry : mBroadPhaseRegionHandles)
 			mScene->removeBroadPhaseRegion(entry.second);
@@ -1232,6 +1232,6 @@ namespace bs
 
 	PhysX& gPhysX()
 	{
-		return static_cast<PhysX&>(PhysX::instance());
+		return static_cast<PhysX&>(PhysX::Instance());
 	}
 }

@@ -16,7 +16,7 @@ namespace bs
 		mName = mono_field_get_name(mField);
 	}
 
-	MonoClass* MonoField::getType()
+	MonoClass* MonoField::GetType()
 	{
 		if(mFieldType != nullptr)
 			return mFieldType;
@@ -26,27 +26,27 @@ namespace bs
 		if(fieldClass == nullptr)
 			return nullptr;	
 		
-		mFieldType = MonoManager::instance().findClass(fieldClass);
+		mFieldType = MonoManager::Instance().FindClass(fieldClass);
 
 		return mFieldType;
 	}
 
-	void MonoField::get(MonoObject* instance, void* outValue)
+	void MonoField::Get(MonoObject* instance, void* outValue)
 	{
 		mono_field_get_value(instance, mField, outValue);
 	}
 
-	MonoObject* MonoField::getBoxed(MonoObject* instance)
+	MonoObject* MonoField::GetBoxed(MonoObject* instance)
 	{
-		return mono_field_get_value_object(MonoManager::instance().getDomain(), mField, instance);
+		return mono_field_get_value_object(MonoManager::Instance().GetDomain(), mField, instance);
 	}
 
-	void MonoField::set(MonoObject* instance, void* value)
+	void MonoField::Set(MonoObject* instance, void* value)
 	{
 		mono_field_set_value(instance, mField, value);
 	}
 
-	bool MonoField::hasAttribute(MonoClass* monoClass)
+	bool MonoField::HasAttribute(MonoClass* monoClass)
 	{
 		// TODO - Consider caching custom attributes or just initializing them all at load
 
@@ -62,7 +62,7 @@ namespace bs
 		return hasAttr;
 	}
 
-	MonoObject* MonoField::getAttribute(MonoClass* monoClass)
+	MonoObject* MonoField::GetAttribute(MonoClass* monoClass)
 	{
 		// TODO - Consider caching custom attributes or just initializing them all at load
 
@@ -79,7 +79,7 @@ namespace bs
 		return foundAttr;
 	}
 
-	MonoMemberVisibility MonoField::getVisibility()
+	MonoMemberVisibility MonoField::GetVisibility()
 	{
 		uint32_t flags = mono_field_get_flags(mField) & MONO_FIELD_ATTR_FIELD_ACCESS_MASK;
 
@@ -98,7 +98,7 @@ namespace bs
 		return MonoMemberVisibility::Private;
 	}
 
-	bool MonoField::isStatic()
+	bool MonoField::IsStatic()
 	{
 		uint32_t flags = mono_field_get_flags(mField);
 

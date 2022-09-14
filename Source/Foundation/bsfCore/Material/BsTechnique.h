@@ -22,16 +22,16 @@ namespace bs
 		virtual ~TechniqueBase() = default;
 
 		/**	Checks if this technique is supported based on current render and other systems. */
-		bool isSupported() const;
+		bool IsSupported() const;
 
 		/** Checks if the technique has the specified tag. */
-		bool hasTag(const StringID& tag);
+		bool HasTag(const StringID& tag);
 
 		/** Checks if the technique has any tags. */
-		UINT32 hasTags() const { return !mTags.empty(); }
+		UINT32 HasTags() const { return !mTags.empty(); }
 
 		/** Returns a set of preprocessor defines used for compiling this particular technique. */
-		const ShaderVariation& getVariation() const { return mVariation; }
+		const ShaderVariation& GetVariation() const { return mVariation; }
 
 	protected:
 		String mLanguage;
@@ -52,13 +52,13 @@ namespace bs
 		virtual ~TTechnique() = default;
 
 		/**	Returns a pass with the specified index. */
-		SPtr<PassType> getPass(UINT32 idx) const;
+		SPtr<PassType> GetPass(UINT32 idx) const;
 
 		/**	Returns total number of passes. */
-		UINT32 getNumPasses() const { return (UINT32)mPasses.size(); }
+		UINT32 GetNumPasses() const { return (UINT32)mPasses.size(); }
 
 		/** Compiles all the passes in a technique. @see Pass::compile. */
-		void compile();
+		void Compile();
 
 	protected:
 		Vector<SPtr<PassType>> mPasses;
@@ -87,7 +87,7 @@ namespace bs
 			const Vector<SPtr<Pass>>& passes);
 
 		/** Retrieves an implementation of a technique usable only from the core thread. */
-		SPtr<ct::Technique> getCore() const;
+		SPtr<ct::Technique> GetCore() const;
 
 		/**
 		 * Creates a new technique.
@@ -97,7 +97,7 @@ namespace bs
 		 * @param[in]	passes		A set of passes that define the technique.
 		 * @return					Newly creted technique.
 		 */
-		static SPtr<Technique> create(const String& language, const Vector<SPtr<Pass>>& passes);
+		static SPtr<Technique> Create(const String& language, const Vector<SPtr<Pass>>& passes);
 
 		/**
 		 * Creates a new technique.
@@ -111,18 +111,18 @@ namespace bs
 		 * @param[in]	passes		A set of passes that define the technique.
 		 * @return					Newly creted technique.
 		 */
-		static SPtr<Technique> create(const String& language, const Vector<StringID>& tags,
+		static SPtr<Technique> Create(const String& language, const Vector<StringID>& tags,
 			const ShaderVariation& variation, const Vector<SPtr<Pass>>& passes);
 
 	protected:
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> createCore() const override;
+		SPtr<ct::CoreObject> CreateCore() const ;
 
 		/** @copydoc CoreObject::getCoreDependencies */
-		void getCoreDependencies(Vector<CoreObject*>& dependencies) override;
+		void GetCoreDependencies(Vector<CoreObject*>& dependencies) ;
 
 		/**	Creates a new technique but doesn't initialize it. */
-		static SPtr<Technique> createEmpty();
+		static SPtr<Technique> CreateEmpty();
 
 	private:
 		/************************************************************************/
@@ -134,8 +134,8 @@ namespace bs
 
 	public:
 		friend class TechniqueRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;	
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;	
 	};
 
 	/** @} */
@@ -153,13 +153,13 @@ namespace bs
 		Technique(const String& language, const Vector<StringID>& tags,
 			const ShaderVariation& variation, const Vector<SPtr<Pass>>& passes);
 
-		/** @copydoc bs::Technique::create(const String&, const Vector<SPtr<Pass>>&) */
-		static SPtr<Technique> create(const String& language, const Vector<SPtr<Pass>>& passes);
+		/** @copydoc bs::Technique::Create(const String&, const Vector<SPtr<Pass>>&) */
+		static SPtr<Technique> Create(const String& language, const Vector<SPtr<Pass>>& passes);
 
 		/**
-		 * @copydoc bs::Technique::create(const String&, const Vector<StringID>&, const ShaderVariation&, const Vector<SPtr<Pass>>&)
+		 * @copydoc bs::Technique::Create(const String&, const Vector<StringID>&, const ShaderVariation&, const Vector<SPtr<Pass>>&)
 		 */
-		static SPtr<Technique> create(const String& language, const Vector<StringID>& tags,
+		static SPtr<Technique> Create(const String& language, const Vector<StringID>& tags,
 			const ShaderVariation& variation, const Vector<SPtr<Pass>>& passes);
 	};
 

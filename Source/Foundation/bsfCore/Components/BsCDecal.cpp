@@ -24,30 +24,30 @@ namespace bs
 		mInternal->destroy();
 	}
 
-	void CDecal::onInitialized()
+	void CDecal::OnInitialized()
 	{
 		// If mInternal already exists this means this object was deserialized,
 		// so all we need to do is initialize it.
 		if (mInternal != nullptr)
 			mInternal->initialize();
 		else
-			mInternal = Decal::create(HMaterial());
+			mInternal = Decal::Create(HMaterial());
 
 		gSceneManager().BindActorInternal(mInternal, sceneObject());
 	}
 
-	void CDecal::onDestroyed()
+	void CDecal::OnDestroyed()
 	{
 		gSceneManager().UnbindActorInternal(mInternal);
 	}
 
-	RTTITypeBase* CDecal::getRTTIStatic()
+	RTTITypeBase* CDecal::GetRttiStatic()
 	{
-		return CDecalRTTI::instance();
+		return CDecalRTTI::Instance();
 	}
 
-	RTTITypeBase* CDecal::getRTTI() const
+	RTTITypeBase* CDecal::GetRtti() const
 	{
-		return CDecal::getRTTIStatic();
+		return CDecal::GetRttiStatic();
 	}
 }

@@ -20,29 +20,29 @@ namespace bs { namespace ct
 		~VulkanGpuPipelineParamInfo() = default;
 
 		/** Returns the number of bindings present at the layout at the specified index. */
-		UINT32 getNumBindings(UINT32 layoutIdx) const { return mLayoutInfos[layoutIdx].numBindings; }
+		UINT32 GetNumBindings(UINT32 layoutIdx) const { return mLayoutInfos[layoutIdx].numBindings; }
 
 		/** Returns a pointer to an array of bindings for the layout at the specified index. */
-		VkDescriptorSetLayoutBinding* getBindings(UINT32 layoutIdx) const { return mLayoutInfos[layoutIdx].bindings; }
+		VkDescriptorSetLayoutBinding* GetBindings(UINT32 layoutIdx) const { return mLayoutInfos[layoutIdx].bindings; }
 
 		/** Returns a pointer to any array of types expected by layout bindings. */
-		GpuParamObjectType* getLayoutTypes(UINT32 layoutIdx) const { return mLayoutInfos[layoutIdx].types; }
+		GpuParamObjectType* GetLayoutTypes(UINT32 layoutIdx) const { return mLayoutInfos[layoutIdx].types; }
 
 		/** Returns a pointer to any array of underlying element types for textures/buffers. */
-		GpuBufferFormat* getLayoutElementTypes(UINT32 layoutIdx) const { return mLayoutInfos[layoutIdx].elementTypes; }
+		GpuBufferFormat* GetLayoutElementTypes(UINT32 layoutIdx) const { return mLayoutInfos[layoutIdx].elementTypes; }
 
 		/** Returns the sequential index of the binding at the specificn set/slot. Returns -1 if slot is not used. */
-		UINT32 getBindingIdx(UINT32 set, UINT32 slot) const { return mSetExtraInfos[set].slotIndices[slot]; }
+		UINT32 GetBindingIdx(UINT32 set, UINT32 slot) const { return mSetExtraInfos[set].slotIndices[slot]; }
 
 		/**
 		 * Returns a layout for the specified device, at the specified index. Returns null if no layout for the specified
 		 * device index.
 		 */
-		VulkanDescriptorLayout* getLayout(UINT32 deviceIdx, UINT32 layoutIdx) const;
+		VulkanDescriptorLayout* GetLayout(UINT32 deviceIdx, UINT32 layoutIdx) const;
 
 	private:
 		/**	@copydoc GpuPipelineParamInfo::initialize */
-		void initialize() override;
+		void Initialize() ;
 
 		/** Data related to a single descriptor set layout. */
 		struct LayoutInfo

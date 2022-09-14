@@ -21,41 +21,41 @@ namespace bs
 		~PhysXDistanceJoint();
 
 		/** @copydoc DistanceJoint::getDistance */
-		float getDistance() const override;
+		float GetDistance() const ;
 
 		/** @copydoc DistanceJoint::getMinDistance */
-		float getMinDistance() const override;
+		float GetMinDistance() const ;
 
 		/** @copydoc DistanceJoint::setMinDistance */
-		void setMinDistance(float value) override;
+		void SetMinDistance(float value) ;
 
 		/** @copydoc DistanceJoint::getMaxDistance */
-		float getMaxDistance() const override;
+		float GetMaxDistance() const ;
 
 		/** @copydoc DistanceJoint::setMaxDistance */
-		void setMaxDistance(float value) override;
+		void SetMaxDistance(float value) ;
 
 		/** @copydoc DistanceJoint::getTolerance */
-		float getTolerance() const override;
+		float GetTolerance() const ;
 
 		/** @copydoc DistanceJoint::setTolerance */
-		void setTolerance(float value) override;
+		void SetTolerance(float value) ;
 
 		/** @copydoc DistanceJoint::getSpring */
-		Spring getSpring() const override;
+		Spring GetSpring() const ;
 
 		/** @copydoc DistanceJoint::setSpring */
-		void setSpring(const Spring& value) override;
+		void SetSpring(const Spring& value) ;
 
 		/** @copydoc DistanceJoint::setFlag */
-		void setFlag(DistanceJointFlag flag, bool enabled) override;
+		void SetFlag(DistanceJointFlag flag, bool enabled) ;
 
 		/** @copydoc DistanceJoint::hasFlag */
-		bool hasFlag(DistanceJointFlag flag) const override;
+		bool HasFlag(DistanceJointFlag flag) const ;
 
 	private:
 		/** Returns the internal PhysX representation of the distance joint. */
-		inline physx::PxDistanceJoint* getInternal() const;
+		inline physx::PxDistanceJoint* GetInternal() const;
 	};
 
 	/** @} */

@@ -16,7 +16,7 @@ namespace bs
 		ScriptRenderTargetBase(MonoObject* instance);
 		virtual ~ScriptRenderTargetBase() {}
 
-		SPtr<RenderTarget> getInternal() const;
+		SPtr<RenderTarget> GetInternal() const;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptRenderTarget : public TScriptReflectable<ScriptRenderTarget, RenderTarget, ScriptRenderTargetBase>
@@ -26,14 +26,14 @@ namespace bs
 
 		ScriptRenderTarget(MonoObject* managedInstance, const SPtr<RenderTarget>& value);
 
-		static MonoObject* create(const SPtr<RenderTarget>& value);
+		static MonoObject* Create(const SPtr<RenderTarget>& value);
 
 	private:
-		static uint32_t Internal_getWidth(ScriptRenderTargetBase* thisPtr);
-		static uint32_t Internal_getHeight(ScriptRenderTargetBase* thisPtr);
-		static bool Internal_getGammaCorrection(ScriptRenderTargetBase* thisPtr);
-		static int32_t Internal_getPriority(ScriptRenderTargetBase* thisPtr);
-		static void Internal_setPriority(ScriptRenderTargetBase* thisPtr, int32_t priority);
-		static uint32_t Internal_getSampleCount(ScriptRenderTargetBase* thisPtr);
+		static uint32_t InternalGetWidth(ScriptRenderTargetBase* thisPtr);
+		static uint32_t InternalGetHeight(ScriptRenderTargetBase* thisPtr);
+		static bool InternalGetGammaCorrection(ScriptRenderTargetBase* thisPtr);
+		static int32_t InternalGetPriority(ScriptRenderTargetBase* thisPtr);
+		static void InternalSetPriority(ScriptRenderTargetBase* thisPtr, int32_t priority);
+		static uint32_t InternalGetSampleCount(ScriptRenderTargetBase* thisPtr);
 	};
 }

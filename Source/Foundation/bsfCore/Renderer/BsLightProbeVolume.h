@@ -94,34 +94,34 @@ namespace bs
 		 * Adds a new probe at the specified position and returns a handle to the probe. The position is relative to
 		 * the volume origin.
 		 */
-		UINT32 addProbe(const Vector3& position);
+		UINT32 AddProbe(const Vector3& position);
 
 		/** Updates the position of the probe with the specified handle. */
-		void setProbePosition(UINT32 handle, const Vector3& position);
+		void SetProbePosition(UINT32 handle, const Vector3& position);
 
 		/** Retrieves the position of the probe with the specified handle. */
-		Vector3 getProbePosition(UINT32 handle) const;
+		Vector3 GetProbePosition(UINT32 handle) const;
 
 		/**
 		 * Removes the probe with the specified handle. Note that if this is one of the last four remaining probes in the
 		 * volume it cannot be removed.
 		 */
-		void removeProbe(UINT32 handle);
+		void RemoveProbe(UINT32 handle);
 
 		/** Returns a list of positions of all light probes in the volume. */
-		Vector<LightProbeInfo> getProbes() const;
+		Vector<LightProbeInfo> GetProbes() const;
 
 		/**
 		 * Causes the information for this specific light probe to be updated. You generally want to call this when the
 		 * probe is moved or the scene around the probe changes.
 		 */
-		void renderProbe(UINT32 handle);
+		void RenderProbe(UINT32 handle);
 
 		/**
 		 * Causes the information for all lights probes to be updated. You generally want to call this if you move the
 		 * entire light volume or the scene around the volume changes.
 		 */
-		void renderProbes();
+		void RenderProbes();
 
 		/**
 		 * Resizes the light probe grid and inserts new light probes, if the new size is larger than previous size.
@@ -138,25 +138,25 @@ namespace bs
 		 *							corner of the volume is represented by a single probe. Higher values subdivide the
 		 *							volume in an uniform way.
 		 */
-		void resize(const AABox& volume, const Vector3I& cellCount = Vector3I(1, 1, 1));
+		void Resize(const AABox& volume, const Vector3I& cellCount = Vector3I(1, 1, 1));
 
 		/** Removes any probes outside of the current grid volume. */
-		void clip();
+		void Clip();
 
 		/**
 		 * Resets all probes to match the original grid pattern. This will reset probe positions, as well as add/remove
 		 * probes as necessary, essentially losing any custom changes to the probes.
 		 */
-		void reset();
+		void Reset();
 
 		/** Returns the volume that's used for adding probes in a uniform grid pattern. */
-		const AABox& getGridVolume() const { return mVolume; }
+		const AABox& GetGridVolume() const { return mVolume; }
 
 		/** Returns the cell count that's used for determining the density of probes within a grid volume. */
-		const Vector3I& getCellCount() const { return mCellCount; }
+		const Vector3I& GetCellCount() const { return mCellCount; }
 
 		/**	Retrieves an implementation of the object usable only from the core thread. */
-		SPtr<ct::LightProbeVolume> getCore() const;
+		SPtr<ct::LightProbeVolume> GetCore() const;
 
 		/**
 		 * Creates a new light volume with probes aligned in a grid pattern.
@@ -166,7 +166,7 @@ namespace bs
 		 *							corner of the volume is represented by a single probe. Higher values subdivide the
 		 *							volume in an uniform way.
 		 */
-		static SPtr<LightProbeVolume> create(const AABox& volume = AABox::UNIT_BOX,
+		static SPtr<LightProbeVolume> Create(const AABox& volume = AABox::UNIT_BOX,
 			const Vector3I& cellCount = Vector3I(1, 1, 1));
 	protected:
 		friend class ct::LightProbeVolume;
@@ -174,25 +174,25 @@ namespace bs
 		LightProbeVolume(const AABox& volume, const Vector3I& cellCount);
 
 		/** Renders the light probe data on the core thread. */
-		void runRenderProbeTask();
+		void RunRenderProbeTask();
 
 		/**
 		 * Fetches latest SH coefficient data from the core thread. Note this method will block the caller thread until
 		 * the data is fetched from the core thread. It will also force any in-progress light probe updates to finish.
 		 */
-		void updateCoefficients();
+		void UpdateCoefficients();
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> createCore() const override;
+		SPtr<ct::CoreObject> CreateCore() const ;
 
 		/** @copydoc SceneActor::_markCoreDirty */
 		void MarkCoreDirtyInternal(ActorDirtyFlag dirtFlags = ActorDirtyFlag::Everything) override;
 
 		/** @copydoc CoreObject::syncToCore */
-		CoreSyncData syncToCore(FrameAlloc* allocator) override;
+		CoreSyncData SyncToCore(FrameAlloc* allocator) ;
 
 		/**	Creates a light volume with without initializing it. Used for serialization. */
-		static SPtr<LightProbeVolume> createEmpty();
+		static SPtr<LightProbeVolume> CreateEmpty();
 
 	private:
 		UnorderedMap<UINT32, ProbeInfo> mProbes;
@@ -207,8 +207,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class LightProbeVolumeRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const ;
 
 	protected:
 		LightProbeVolume() = default; // Serialization only
@@ -236,38 +236,38 @@ namespace bs
 		~LightProbeVolume();
 
 		/**	Sets an ID that can be used for uniquely identifying this object by the renderer. */
-		void setRendererId(UINT32 id) { mRendererId = id; }
+		void SetRendererId(UINT32 id) { mRendererId = id; }
 
 		/**	Retrieves an ID that can be used for uniquely identifying this object by the renderer. */
-		UINT32 getRendererId() const { return mRendererId; }
+		UINT32 GetRendererId() const { return mRendererId; }
 
 		/** Returns the number of light probes that are active. */
-		UINT32 getNumActiveProbes() const { return (UINT32)mProbeMap.size(); }
+		UINT32 GetNumActiveProbes() const { return (UINT32)mProbeMap.size(); }
 
 		/** Returns a list of positions for all light probes. Only the first getNumActiveProbes() entries are active. */
-		const Vector<Vector3>& getLightProbePositions() const { return mProbePositions; }
+		const Vector<Vector3>& GetLightProbePositions() const { return mProbePositions; }
 
 		/**
 		 * Returns non-positional information about all light probes. Only the first getNumActiveProbes() entries are
 		 * active.
 		 */
-		const Vector<LightProbeInfo>& getLightProbeInfos() const { return mProbeInfos; }
+		const Vector<LightProbeInfo>& GetLightProbeInfos() const { return mProbeInfos; }
 
 		/** Populates the vector with SH coefficients for each light probe. Involves reading the GPU buffer. */
-		void getProbeCoefficients(Vector<LightProbeCoefficientInfo>& output) const;
+		void GetProbeCoefficients(Vector<LightProbeCoefficientInfo>& output) const;
 
 		/** Returns the texture containing SH coefficients for all probes in the volume. */
-		SPtr<Texture> getCoefficientsTexture() const { return mCoefficients; }
+		SPtr<Texture> GetCoefficientsTexture() const { return mCoefficients; }
 	protected:
 		friend class bs::LightProbeVolume;
 
 		LightProbeVolume(const UnorderedMap<UINT32, bs::LightProbeVolume::ProbeInfo>& probes);
 
 		/** @copydoc CoreObject::initialize */
-		void initialize() override;
+		void Initialize() ;
 
 		/** @copydoc CoreObject::syncToCore */
-		void syncToCore(const CoreSyncData& data) override;
+		void SyncToCore(const CoreSyncData& data) ;
 
 		/**
 		 * Renders dirty probes and updates their SH coefficients in the local GPU buffer.
@@ -276,13 +276,13 @@ namespace bs
 		 *							number of probes allows the rendering to be distributed over multiple frames.
 		 * @return					True if there are no more dirty probes to process.
 		 */
-		bool renderProbes(UINT32 maxProbes);
+		bool RenderProbes(UINT32 maxProbes);
 
 		/**
 		 * Resizes the internal texture that stores light probe SH coefficients, to the specified size (in the number
 		 * of probes).
 		 */
-		void resizeCoefficientTexture(UINT32 count);
+		void ResizeCoefficientTexture(UINT32 count);
 
 		UINT32 mRendererId = 0;
 		UnorderedMap<UINT32, UINT32> mProbeMap; // Map from static indices to compact list of probes

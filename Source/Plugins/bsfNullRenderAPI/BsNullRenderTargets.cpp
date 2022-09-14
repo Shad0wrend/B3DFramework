@@ -4,13 +4,13 @@
 
 namespace bs
 {
-	SPtr<RenderWindow> NullRenderWindowManager::createImpl(RENDER_WINDOW_DESC& desc, UINT32 windowId,
+	SPtr<RenderWindow> NullRenderWindowManager::CreateImpl(RENDER_WINDOW_DESC& desc, UINT32 windowId,
 		const SPtr<RenderWindow>& parentWindow)
 	{
 		if(parentWindow != nullptr)
 		{
 			UINT64 hWnd;
-			parentWindow->getCustomAttribute("WINDOW", &hWnd);
+			parentWindow->GetCustomAttribute("WINDOW", &hWnd);
 			desc.platformSpecific["parentWindowHandle"] = toString(hWnd);
 		}
 
@@ -23,18 +23,18 @@ namespace bs
 		:RenderWindow(desc, windowId), mProperties(desc)
 	{ }
 
-	SPtr<ct::NullRenderWindow> NullRenderWindow::getCore() const
+	SPtr<ct::NullRenderWindow> NullRenderWindow::GetCore() const
 	{
 		return std::static_pointer_cast<ct::NullRenderWindow>(mCoreSpecific);
 	}
 
-	void NullRenderWindow::syncProperties()
+	void NullRenderWindow::SyncProperties()
 	{
-		ScopedSpinLock lock(getCore()->mLock);
-		mProperties = getCore()->mSyncedProperties;
+		ScopedSpinLock lock(GetCore()->mLock);
+		mProperties = GetCore()->mSyncedProperties;
 	}
 
-	SPtr<ct::CoreObject> NullRenderWindow::createCore() const
+	SPtr<ct::CoreObject> NullRenderWindow::CreateCore() const
 	{
 		RENDER_WINDOW_DESC desc = mDesc;
 		SPtr<ct::CoreObject> coreObj = bs_shared_ptr_new<ct::NullRenderWindow>(desc, mWindowId);
@@ -43,7 +43,7 @@ namespace bs
 		return coreObj;
 	}
 
-	void NullRenderWindow::getCustomAttribute(const String& name, void* pData) const
+	void NullRenderWindow::GetCustomAttribute(const String& name, void* pData) const
 	{
 		if (name == "WINDOW")
 		{
@@ -52,7 +52,7 @@ namespace bs
 			return;
 		}
 
-		RenderWindow::getCustomAttribute(name, pData);
+		RenderWindow::GetCustomAttribute(name, pData);
 	}
 
 	namespace ct
@@ -62,13 +62,13 @@ namespace bs
 		{ }
 
 
-		void NullRenderWindow::syncProperties()
+		void NullRenderWindow::SyncProperties()
 		{
 			ScopedSpinLock lock(mLock);
 			mProperties = mSyncedProperties;
 		}
 
-		void NullRenderWindow::getCustomAttribute(const String& name, void* pData) const
+		void NullRenderWindow::GetCustomAttribute(const String& name, void* pData) const
 		{
 			if(name == "WINDOW")
 			{
@@ -77,7 +77,7 @@ namespace bs
 				return;
 			}
 
-			RenderWindow::getCustomAttribute(name, pData);
+			RenderWindow::GetCustomAttribute(name, pData);
 		}
 	}
 }

@@ -28,17 +28,17 @@ namespace bs { namespace ct
 		glDeleteTextures(1, &mTextureID);
 		BS_CHECK_GL_ERROR();
 
-		clearBufferViews();
+		ClearBufferViews();
 
 		BS_INC_RENDER_STAT_CAT(ResDestroyed, RenderStatObject_Texture);
 	}
 
-	void GLTexture::initialize()
+	void GLTexture::Initialize()
 	{
-		UINT32 width = mProperties.getWidth();
-		UINT32 height = mProperties.getHeight();
-		UINT32 depth = mProperties.getDepth();
-		TextureType texType = mProperties.getTextureType();
+		UINT32 width = mProperties.GetWidth();
+		UINT32 height = mProperties.GetHeight();
+		UINT32 depth = mProperties.GetDepth();
+		TextureType texType = mProperties.GetTextureType();
 		int usage = mProperties.getUsage();
 		UINT32 numMips = mProperties.getNumMipmaps();
 		UINT32 numFaces = mProperties.getNumFaces();
@@ -300,19 +300,19 @@ namespace bs { namespace ct
 		Texture::initialize();
 	}
 
-	GLenum GLTexture::getGLTextureTarget() const
+	GLenum GLTexture::GetGlTextureTarget() const
 	{
 		return getGLTextureTarget(mProperties.getTextureType(), mProperties.getNumSamples(), mProperties.getNumFaces());
 	}
 
-	GLuint GLTexture::getGLID() const
+	GLuint GLTexture::GetGlid() const
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
 		return mTextureID;
 	}
 
-	GLenum GLTexture::getGLTextureTarget(TextureType type, UINT32 numSamples, UINT32 numFaces)
+	GLenum GLTexture::GetGlTextureTarget(TextureType type, UINT32 numSamples, UINT32 numFaces)
 	{
 		switch (type)
 		{
@@ -348,7 +348,7 @@ namespace bs { namespace ct
 		};
 	}
 
-	GLenum GLTexture::getGLTextureTarget(GpuParamObjectType type)
+	GLenum GLTexture::GetGlTextureTarget(GpuParamObjectType type)
 	{
 		switch(type)
 		{
@@ -375,7 +375,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	PixelData GLTexture::lockImpl(GpuLockOptions options, UINT32 mipLevel, UINT32 face, UINT32 deviceIdx,
+	PixelData GLTexture::LockImpl(GpuLockOptions options, UINT32 mipLevel, UINT32 face, UINT32 deviceIdx,
 									  UINT32 queueIdx)
 	{
 		if (mProperties.getNumSamples() > 1)
@@ -396,7 +396,7 @@ namespace bs { namespace ct
 		return lockedArea;
 	}
 
-	void GLTexture::unlockImpl()
+	void GLTexture::UnlockImpl()
 	{
 		if (mLockedBuffer == nullptr)
 		{
@@ -408,7 +408,7 @@ namespace bs { namespace ct
 		mLockedBuffer = nullptr;
 	}
 
-	void GLTexture::readDataImpl(PixelData& dest, UINT32 mipLevel, UINT32 face, UINT32 deviceIdx, UINT32 queueIdx)
+	void GLTexture::ReadDataImpl(PixelData& dest, UINT32 mipLevel, UINT32 face, UINT32 deviceIdx, UINT32 queueIdx)
 	{
 		if (mProperties.getNumSamples() > 1)
 		{
@@ -428,7 +428,7 @@ namespace bs { namespace ct
 			getBuffer(face, mipLevel)->download(dest);
 	}
 
-	void GLTexture::writeDataImpl(const PixelData& src, UINT32 mipLevel, UINT32 face, bool discardWholeBuffer,
+	void GLTexture::WriteDataImpl(const PixelData& src, UINT32 mipLevel, UINT32 face, bool discardWholeBuffer,
 								  UINT32 queueIdx)
 	{
 		if (mProperties.getNumSamples() > 1)
@@ -449,7 +449,7 @@ namespace bs { namespace ct
 			getBuffer(face, mipLevel)->upload(src, src.getExtents());
 	}
 
-	void GLTexture::copyImpl(const SPtr<Texture>& target, const TEXTURE_COPY_DESC& desc,
+	void GLTexture::CopyImpl(const SPtr<Texture>& target, const TEXTURE_COPY_DESC& desc,
 		const SPtr<CommandBuffer>& commandBuffer)
 	{
 		auto executeRef = [this](const SPtr<Texture>& target, const TEXTURE_COPY_DESC& desc)
@@ -500,7 +500,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	void GLTexture::createSurfaceList()
+	void GLTexture::CreateSurfaceList()
 	{
 		mSurfaceList.clear();
 		
@@ -524,7 +524,7 @@ namespace bs { namespace ct
 		}
 	}
 	
-	SPtr<GLPixelBuffer> GLTexture::getBuffer(UINT32 face, UINT32 mipmap)
+	SPtr<GLPixelBuffer> GLTexture::GetBuffer(UINT32 face, UINT32 mipmap)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -539,7 +539,7 @@ namespace bs { namespace ct
 		return mSurfaceList[idx];
 	}
 
-	SPtr<TextureView> GLTexture::createView(const TEXTURE_VIEW_DESC& desc)
+	SPtr<TextureView> GLTexture::CreateView(const TEXTURE_VIEW_DESC& desc)
 	{
 		return bs_shared_ptr<GLTextureView>(new (bs_alloc<GLTextureView>()) GLTextureView(this, desc));
 	}

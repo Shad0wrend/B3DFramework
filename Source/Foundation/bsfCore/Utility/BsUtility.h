@@ -34,7 +34,7 @@ namespace bs
 		 *							children).
 		 * @return					A list of unique, non-null resources.
 		 */
-		static Vector<ResourceDependency> findResourceDependencies(IReflectable& object, bool recursive = true);
+		static Vector<ResourceDependency> FindResourceDependencies(IReflectable& object, bool recursive = true);
 
 		/**
 		 * Finds all components of a specific type on a scene object and any of its children.
@@ -43,10 +43,10 @@ namespace bs
 		 * @param[in]	typeId		RTTI type ID of the component type to search for.
 		 * @return					A list of all components of the specified type.
 		 */
-		static Vector<HComponent> findComponents(const HSceneObject& object, UINT32 typeId);
+		static Vector<HComponent> FindComponents(const HSceneObject& object, UINT32 typeId);
 
 		/** Calculates how deep in the scene object hierarchy is the provided object. Zero means root. */
-		static UINT32 getSceneObjectDepth(const HSceneObject& so);
+		static UINT32 GetSceneObjectDepth(const HSceneObject& so);
 	};
 
 	/** Provides extra information and maintains state during serialization of various RTTI types in the core. */
@@ -55,8 +55,8 @@ namespace bs
 		SPtr<GameObjectDeserializationState> goState;
 		bool goDeserializationActive = false;
 
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const ;
 	};
 
 	/** @} */

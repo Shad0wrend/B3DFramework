@@ -23,11 +23,11 @@ namespace bs
 		/**
 		 * Converts the provided format for the specified texture type and usage into a format that is supported by OpenGL.
 		 */
-		PixelFormat getNativeFormat(TextureType ttype, PixelFormat format, int usage, bool hwGamma) override;
+		PixelFormat GetNativeFormat(TextureType ttype, PixelFormat format, int usage, bool hwGamma) ;
 
 	protected:
 		/** @copydoc TextureManager::createRenderTextureImpl */
-		SPtr<RenderTexture> createRenderTextureImpl(const RENDER_TEXTURE_DESC& desc) override;
+		SPtr<RenderTexture> CreateRenderTextureImpl(const RENDER_TEXTURE_DESC& desc) ;
 
 		ct::GLSupport& mGLSupport;
 	};
@@ -42,12 +42,12 @@ namespace bs
 
 	protected:		
 		/** @copydoc TextureManager::createTextureInternal */
-		SPtr<Texture> createTextureInternal(const TEXTURE_DESC& desc,
-			const SPtr<PixelData>& initialData = nullptr, GpuDeviceFlags deviceMask = GDF_DEFAULT) override;
+		SPtr<Texture> CreateTextureInternal(const TEXTURE_DESC& desc,
+			const SPtr<PixelData>& initialData = nullptr, GpuDeviceFlags deviceMask = GDF_DEFAULT) ;
 
 		/** @copydoc TextureManager::createRenderTextureInternal */
-		SPtr<RenderTexture> createRenderTextureInternal(const RENDER_TEXTURE_DESC& desc,
-			UINT32 deviceIdx = 0) override;
+		SPtr<RenderTexture> CreateRenderTextureInternal(const RENDER_TEXTURE_DESC& desc,
+			UINT32 deviceIdx = 0) ;
 
 		GLSupport& mGLSupport;
 	};

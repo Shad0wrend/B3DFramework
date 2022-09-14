@@ -10,7 +10,7 @@ namespace bs
 	const int SPACE_CHAR = 32;
 	const int TAB_CHAR = 9;
 
-	void TextDataBase::TextWord::init(bool spacer)
+	void TextDataBase::TextWord::Init(bool spacer)
 	{
 		mWidth = mHeight = 0;
 		mSpacer = spacer;
@@ -21,9 +21,9 @@ namespace bs
 	}
 
 	// Assumes charIdx is an index right after last char in the list (if any). All chars need to be sequential.
-	UINT32 TextDataBase::TextWord::addChar(UINT32 charIdx, const CharDesc& desc)
+	UINT32 TextDataBase::TextWord::AddChar(UINT32 charIdx, const CharDesc& desc)
 	{
-		UINT32 charWidth = calcCharWidth(mLastChar, desc);
+		UINT32 charWidth = CalcCharWidth(mLastChar, desc);
 
 		mWidth += charWidth;
 		mHeight = std::max(mHeight, desc.height);
@@ -38,12 +38,12 @@ namespace bs
 		return charWidth;
 	}
 
-	UINT32 TextDataBase::TextWord::calcWidthWithChar(const CharDesc& desc)
+	UINT32 TextDataBase::TextWord::CalcWidthWithChar(const CharDesc& desc)
 	{
-		return mWidth + calcCharWidth(mLastChar, desc);
+		return mWidth + CalcCharWidth(mLastChar, desc);
 	}
 
-	UINT32 TextDataBase::TextWord::calcCharWidth(const CharDesc* prevDesc, const CharDesc& desc)
+	UINT32 TextDataBase::TextWord::CalcCharWidth(const CharDesc* prevDesc, const CharDesc& desc)
 	{
 		UINT32 charWidth = desc.xAdvance;
 		if (prevDesc != nullptr)
@@ -64,14 +64,14 @@ namespace bs
 		return charWidth;
 	}
 
-	void TextDataBase::TextWord::addSpace(UINT32 spaceWidth)
+	void TextDataBase::TextWord::AddSpace(UINT32 spaceWidth)
 	{
 		mSpaceWidth += spaceWidth;
 		mWidth = mSpaceWidth;
 		mHeight = 0;
 	}
 
-	void TextDataBase::TextLine::init(TextDataBase* textData)
+	void TextDataBase::TextLine::Init(TextDataBase* textData)
 	{
 		mWidth = 0;
 		mHeight = 0;
@@ -80,7 +80,7 @@ namespace bs
 		mWordsStart = mWordsEnd = 0;
 	}
 
-	void TextDataBase::TextLine::finalize(bool hasNewlineChar)
+	void TextDataBase::TextLine::Finalize(bool hasNewlineChar)
 	{
 		mHasNewline = hasNewlineChar;
 	}
@@ -106,7 +106,7 @@ namespace bs
 		mHeight = std::max(mHeight, lastWord.getHeight());
 	}
 
-	void TextDataBase::TextLine::addSpace(UINT32 spaceWidth)
+	void TextDataBase::TextLine::AddSpace(UINT32 spaceWidth)
 	{
 		if(mIsEmpty)
 		{
@@ -123,7 +123,7 @@ namespace bs
 	}
 
 	// Assumes wordIdx is an index right after last word in the list (if any). All words need to be sequential.
-	void TextDataBase::TextLine::addWord(UINT32 wordIdx, const TextWord& word)
+	void TextDataBase::TextLine::AddWord(UINT32 wordIdx, const TextWord& word)
 	{
 		if(mIsEmpty)
 		{
@@ -137,7 +137,7 @@ namespace bs
 		mHeight = std::max(mHeight, word.getHeight());
 	}
 
-	UINT32 TextDataBase::TextLine::removeLastWord()
+	UINT32 TextDataBase::TextLine::RemoveLastWord()
 	{
 		if(mIsEmpty)
 		{
@@ -157,7 +157,7 @@ namespace bs
 		return lastWord;
 	}
 
-	UINT32 TextDataBase::TextLine::calcWidthWithChar(const CharDesc& desc)
+	UINT32 TextDataBase::TextLine::CalcWidthWithChar(const CharDesc& desc)
 	{
 		UINT32 charWidth = 0;
 
@@ -177,12 +177,12 @@ namespace bs
 		return mWidth + charWidth;
 	}
 
-	bool TextDataBase::TextLine::isAtWordBoundary() const
+	bool TextDataBase::TextLine::IsAtWordBoundary() const
 	{
 		return mIsEmpty || MemBuffer->WordBuffer[mWordsEnd].isSpacer();
 	}
 
-	UINT32 TextDataBase::TextLine::fillBuffer(UINT32 page, Vector2* vertices, Vector2* uvs, UINT32* indexes, UINT32 offset, UINT32 size) const
+	UINT32 TextDataBase::TextLine::FillBuffer(UINT32 page, Vector2* vertices, Vector2* uvs, UINT32* indexes, UINT32 offset, UINT32 size) const
 	{
 		UINT32 numQuads = 0;
 
@@ -309,7 +309,7 @@ namespace bs
 		return numQuads;
 	}
 
-	UINT32 TextDataBase::TextLine::getNumChars() const
+	UINT32 TextDataBase::TextLine::GetNumChars() const
 	{
 		if(mIsEmpty)
 			return 0;
@@ -328,7 +328,7 @@ namespace bs
 		return numChars;
 	}
 
-	void TextDataBase::TextLine::calculateBounds()
+	void TextDataBase::TextLine::CalculateBounds()
 	{
 		mWidth = 0;
 		mHeight = 0;
@@ -505,7 +505,7 @@ namespace bs
 		mNumPageInfos = MemBuffer->NextFreePageInfo;
 	}
 
-	void TextDataBase::generatePersistentData(const U32String& text, UINT8* buffer, UINT32& size, bool freeTemporary)
+	void TextDataBase::GeneratePersistentData(const U32String& text, UINT8* buffer, UINT32& size, bool freeTemporary)
 	{
 		UINT32 charArraySize = mNumChars * sizeof(const CharDesc*);
 		UINT32 wordArraySize = mNumWords * sizeof(TextWord);
@@ -545,27 +545,27 @@ namespace bs
 			MemBuffer->deallocAll();
 	}
 
-	const HTexture& TextDataBase::getTextureForPage(UINT32 page) const
+	const HTexture& TextDataBase::GetTextureForPage(UINT32 page) const
 	{
 		return mFontData->texturePages[page];
 	}
 
-	INT32 TextDataBase::getBaselineOffset() const
+	INT32 TextDataBase::GetBaselineOffset() const
 	{
 		return mFontData->baselineOffset;
 	}
 
-	UINT32 TextDataBase::getLineHeight() const
+	UINT32 TextDataBase::GetLineHeight() const
 	{
 		return mFontData->lineHeight;
 	}
 
-	UINT32 TextDataBase::getSpaceWidth() const
+	UINT32 TextDataBase::GetSpaceWidth() const
 	{
 		return mFontData->spaceWidth;
 	}
 
-	void TextDataBase::initAlloc()
+	void TextDataBase::InitAlloc()
 	{
 		if (MemBuffer == nullptr)
 			MemBuffer = bs_new<BufferData>();
@@ -595,7 +595,7 @@ namespace bs
 		bs_deleteN(PageBuffer, PageBufferSize);
 	}
 
-	UINT32 TextDataBase::BufferData::allocWord(bool spacer)
+	UINT32 TextDataBase::BufferData::AllocWord(bool spacer)
 	{
 		if(NextFreeWord >= WordBufferSize)
 		{
@@ -613,7 +613,7 @@ namespace bs
 		return NextFreeWord++;
 	}
 
-	UINT32 TextDataBase::BufferData::allocLine(TextDataBase* textData)
+	UINT32 TextDataBase::BufferData::AllocLine(TextDataBase* textData)
 	{
 		if(NextFreeLine >= LineBufferSize)
 		{
@@ -631,14 +631,14 @@ namespace bs
 		return NextFreeLine++;
 	}
 
-	void TextDataBase::BufferData::deallocAll()
+	void TextDataBase::BufferData::DeallocAll()
 	{
 		NextFreeWord = 0;
 		NextFreeLine = 0;
 		NextFreePageInfo = 0;
 	}
 
-	void TextDataBase::BufferData::addCharToPage(UINT32 page, const FontBitmap& fontData)
+	void TextDataBase::BufferData::AddCharToPage(UINT32 page, const FontBitmap& fontData)
 	{
 		if(NextFreePageInfo >= PageBufferSize)
 		{
@@ -661,7 +661,7 @@ namespace bs
 		PageBuffer[page].numQuads++;
 	}
 
-	UINT32 TextDataBase::getWidth() const
+	UINT32 TextDataBase::GetWidth() const
 	{
 		UINT32 width = 0;
 
@@ -671,7 +671,7 @@ namespace bs
 		return width;
 	}
 
-	UINT32 TextDataBase::getHeight() const
+	UINT32 TextDataBase::GetHeight() const
 	{
 		UINT32 height = 0;
 

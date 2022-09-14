@@ -18,10 +18,10 @@ namespace bs
 		~Gamepad();
 
 		/** Returns the name of the device. */
-		String getName() const { return mName; }
+		String GetName() const { return mName; }
 
 		/** Captures the input since the last call and triggers the events on the parent Input. */
-		void capture();
+		void Capture();
 
 		/** Minimum allowed value as reported by the axis movement events. */
 		static constexpr int MIN_AXIS = -32768;
@@ -32,7 +32,7 @@ namespace bs
 		friend class Input;
 
 		/** Changes the capture context. Should be called when focus is moved to a new window. */
-		void changeCaptureContext(UINT64 windowHandle);
+		void ChangeCaptureContext(UINT64 windowHandle);
 
 		String mName;
 		Input* mOwner;

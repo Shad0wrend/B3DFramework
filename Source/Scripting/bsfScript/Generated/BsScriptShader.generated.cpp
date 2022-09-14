@@ -18,22 +18,22 @@ namespace bs
 
 	void ScriptShader::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_GetRef", (void*)&ScriptShader::Internal_getRef);
-		metaData.scriptClass->addInternalCall("Internal_getVariationParams", (void*)&ScriptShader::Internal_getVariationParams);
-		metaData.scriptClass->addInternalCall("Internal_getParameters", (void*)&ScriptShader::Internal_getParameters);
+		metaData.scriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptShader::InternalGetRef);
+		metaData.scriptClass->AddInternalCall("Internal_getVariationParams", (void*)&ScriptShader::InternalGetVariationParams);
+		metaData.scriptClass->AddInternalCall("Internal_getParameters", (void*)&ScriptShader::InternalGetParameters);
 
 	}
 
-	 MonoObject*ScriptShader::createInstance()
+	 MonoObject*ScriptShader::CreateInstance()
 	{
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		return metaData.scriptClass->createInstance("bool", ctorParams);
+		return metaData.scriptClass->CreateInstance("bool", ctorParams);
 	}
-	MonoObject* ScriptShader::Internal_getRef(ScriptShader* thisPtr)
+	MonoObject* ScriptShader::InternalGetRef(ScriptShader* thisPtr)
 	{
-		return thisPtr->getRRef();
+		return thisPtr->GetRRef();
 	}
 
 	MonoArray* ScriptShader::Internal_getVariationParams(ScriptShader* thisPtr)
@@ -53,7 +53,7 @@ namespace bs
 		return __output;
 	}
 
-	MonoArray* ScriptShader::Internal_getParameters(ScriptShader* thisPtr)
+	MonoArray* ScriptShader::InternalGetParameters(ScriptShader* thisPtr)
 	{
 		Vector<ShaderParameter> vec__output;
 		vec__output = ShaderEx::getParameters(thisPtr->getHandle());

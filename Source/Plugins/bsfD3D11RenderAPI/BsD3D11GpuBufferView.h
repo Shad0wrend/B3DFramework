@@ -51,34 +51,34 @@ namespace bs { namespace ct
 		 * Initializes a new buffer view for the specified buffer. Descriptor structure defines which portion of the buffer,
 		 * and how will its contents be represented by the view.
 		 */
-		void initialize(D3D11GpuBuffer* buffer, GPU_BUFFER_VIEW_DESC& desc);
+		void Initialize(D3D11GpuBuffer* buffer, GPU_BUFFER_VIEW_DESC& desc);
 
 		/** Returns a descriptor structure used for creating the view. */
-		const GPU_BUFFER_VIEW_DESC& getDesc() const { return mDesc; }
+		const GPU_BUFFER_VIEW_DESC& GetDesc() const { return mDesc; }
 
 		/**	Returns the buffer this view was created for. */
-		D3D11GpuBuffer* getBuffer() const { return mBuffer; }
+		D3D11GpuBuffer* GetBuffer() const { return mBuffer; }
 
 		/** Returns index of first element in the buffer that this view provides access to. */
-		UINT32 getFirstElement() const { return mDesc.firstElement; }
+		UINT32 GetFirstElement() const { return mDesc.firstElement; }
 
 		/** Returns width of an element in the buffer, in bytes. */
-		UINT32 getElementWidth() const { return mDesc.elementWidth; }
+		UINT32 GetElementWidth() const { return mDesc.elementWidth; }
 
 		/**	Returns the total number of elements this buffer provides access to. */
-		UINT32 getNumElements() const { return mDesc.numElements; }
+		UINT32 GetNumElements() const { return mDesc.numElements; }
 
 		/**	Returns true if this view allows a GPU program to use counters on the bound buffer. */
-		bool getUseCounter() const { return mDesc.useCounter; }
+		bool GetUseCounter() const { return mDesc.useCounter; }
 
 		/** Returns view usage which determines where in the pipeline can the view be bound. */
-		GpuViewUsage getUsage() const { return mDesc.usage; }
+		GpuViewUsage GetUsage() const { return mDesc.usage; }
 
 		/** Returns the DX11 shader resource view object for the buffer. */
-		ID3D11ShaderResourceView* getSRV() const { return mSRV; }
+		ID3D11ShaderResourceView* GetSrv() const { return mSRV; }
 
 		/** Returns the DX11 unordered access view object for the buffer. */
-		ID3D11UnorderedAccessView* getUAV() const { return mUAV; }
+		ID3D11UnorderedAccessView* GetUav() const { return mUAV; }
 
 	private:
 		/**
@@ -95,7 +95,7 @@ namespace bs { namespace ct
 		 *								number of bytes for raw buffers or number of structures for structured buffers.
 		 * @return						Constructed DX11 shader resource view object.
 		 */
-		ID3D11ShaderResourceView* createSRV(D3D11GpuBuffer* buffer, UINT32 firstElement, UINT32 elementWidth, UINT32 numElements);
+		ID3D11ShaderResourceView* CreateSrv(D3D11GpuBuffer* buffer, UINT32 firstElement, UINT32 elementWidth, UINT32 numElements);
 
 		/**
 		 * Creates a DX11 unordered access view that allows a buffer to be bound to a shader for random reading or writing.
@@ -108,7 +108,7 @@ namespace bs { namespace ct
 		 *								number of bytes for raw buffers or number of structures for structured buffers.
 		 * @return						Constructed DX11 unordered access view object.
 		 */
-		ID3D11UnorderedAccessView* createUAV(D3D11GpuBuffer* buffer, UINT32 firstElement, UINT32 numElements, bool useCounter);
+		ID3D11UnorderedAccessView* CreateUav(D3D11GpuBuffer* buffer, UINT32 firstElement, UINT32 numElements, bool useCounter);
 
 		ID3D11ShaderResourceView* mSRV = nullptr;
 		ID3D11UnorderedAccessView* mUAV = nullptr;

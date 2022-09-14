@@ -23,7 +23,7 @@ namespace bs
 		:mThreadId(threadId), mPool(pool)
 	{ }
 
-	void HThread::blockUntilComplete()
+	void HThread::BlockUntilComplete()
 	{
 		PooledThread* parentThread = nullptr;
 
@@ -32,7 +32,7 @@ namespace bs
 
 			for (auto& thread : mPool->mThreads)
 			{
-				if (thread->getId() == mThreadId)
+				if (thread->GetId() == mThreadId)
 				{
 					parentThread = thread;
 					break;
@@ -52,7 +52,7 @@ namespace bs
 		}
 	}
 
-	void PooledThread::initialize()
+	void PooledThread::Initialize()
 	{
 		mThread = bs_new<Thread>(std::bind(&PooledThread::run, this));
 
@@ -62,7 +62,7 @@ namespace bs
 			mStartedCond.wait(lock);
 	}
 
-	void PooledThread::start(std::function<void()> workerMethod, UINT32 id)
+	void PooledThread::Start(std::function<void()> workerMethod, UINT32 id)
 	{
 		{
 			Lock lock(mMutex);
@@ -77,9 +77,9 @@ namespace bs
 		mReadyCond.notify_one();
 	}
 
-	void PooledThread::run()
+	void PooledThread::Run()
 	{
-		onThreadStarted(mName);
+		OnThreadStarted(mName);
 
 		{
 			Lock lock(mMutex);
@@ -104,13 +104,13 @@ namespace bs
 
 				if (worker == nullptr)
 				{
-					onThreadEnded(mName);
+					OnThreadEnded(mName);
 					return;
 				}
 			}
 
 #if BS_PLATFORM == BS_PLATFORM_WIN32
-			runFunctionHelper(worker);
+			RunFunctionHelper(worker);
 #else
 			worker();
 #endif
@@ -129,19 +129,19 @@ namespace bs
 	}
 
 #if BS_PLATFORM == BS_PLATFORM_WIN32
-	void PooledThread::runFunctionHelper(const std::function<void()>& function) const
+	void PooledThread::RunFunctionHelper(const std::function<void()>& function) const
 	{
 		__try {
 			function();
-		} __except(gCrashHandler().reportCrash(GetExceptionInformation())) {
-			PlatformUtility::terminate(true);
+		} __except(gCrashHandler().ReportCrash(GetExceptionInformation())) {
+			PlatformUtility::Terminate(true);
 		}
 	}
 #endif
 
-	void PooledThread::destroy()
+	void PooledThread::Destroy()
 	{
-		blockUntilComplete();
+		BlockUntilComplete();
 
 		{
 			Lock lock(mMutex);
@@ -154,7 +154,7 @@ namespace bs
 		bs_delete(mThread);
 	}
 
-	void PooledThread::blockUntilComplete()
+	void PooledThread::BlockUntilComplete()
 	{
 		Lock lock(mMutex);
 
@@ -162,26 +162,26 @@ namespace bs
 			mWorkerEndedCond.wait(lock);
 	}
 
-	bool PooledThread::isIdle()
+	bool PooledThread::IsIdle()
 	{
 		Lock lock(mMutex);
 
 		return mIdle;
 	}
 
-	time_t PooledThread::idleTime()
+	time_t PooledThread::IdleTime()
 	{
 		Lock lock(mMutex);
 
 		return (time(nullptr) - mIdleTime);
 	}
 
-	void PooledThread::setName(const String& name)
+	void PooledThread::SetName(const String& name)
 	{
 		mName = name;
 	}
 
-	UINT32 PooledThread::getId() const
+	UINT32 PooledThread::GetId() const
 	{
 		Lock lock(mMutex);
 
@@ -199,7 +199,7 @@ namespace bs
 		stopAll();
 	}
 
-	HThread ThreadPool::run(const String& name, std::function<void()> workerMethod)
+	HThread ThreadPool::Run(const String& name, std::function<void()> workerMethod)
 	{
 		PooledThread* thread = getThread(name);
 		thread->start(workerMethod, mUniqueId++);
@@ -207,7 +207,7 @@ namespace bs
 		return HThread(this, thread->getId());
 	}
 
-	void ThreadPool::stopAll()
+	void ThreadPool::StopAll()
 	{
 		Lock lock(mMutex);
 		for(auto& thread : mThreads)
@@ -218,7 +218,7 @@ namespace bs
 		mThreads.clear();
 	}
 
-	void ThreadPool::clearUnused()
+	void ThreadPool::ClearUnused()
 	{
 		Lock lock(mMutex);
 		mAge = 0;
@@ -267,13 +267,13 @@ namespace bs
 		mThreads.insert(mThreads.end(), activeThreads.begin(), activeThreads.end());
 	}
 
-	void ThreadPool::destroyThread(PooledThread* thread)
+	void ThreadPool::DestroyThread(PooledThread* thread)
 	{
 		thread->destroy();
 		bs_delete(thread);
 	}
 
-	PooledThread* ThreadPool::getThread(const String& name)
+	PooledThread* ThreadPool::GetThread(const String& name)
 	{
 		UINT32 age = 0;
 		{
@@ -304,7 +304,7 @@ namespace bs
 		return newThread;
 	}
 
-	UINT32 ThreadPool::getNumAvailable() const
+	UINT32 ThreadPool::GetNumAvailable() const
 	{
 		UINT32 numAvailable = mMaxCapacity;
 
@@ -318,7 +318,7 @@ namespace bs
 		return numAvailable;
 	}
 
-	UINT32 ThreadPool::getNumActive() const
+	UINT32 ThreadPool::GetNumActive() const
 	{
 		UINT32 numActive = 0;
 
@@ -332,7 +332,7 @@ namespace bs
 		return numActive;
 	}
 
-	UINT32 ThreadPool::getNumAllocated() const
+	UINT32 ThreadPool::GetNumAllocated() const
 	{
 		Lock lock(mMutex);
 

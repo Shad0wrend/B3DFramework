@@ -37,10 +37,10 @@ namespace bs
 		 * Brightness multiplier that will be applied to skybox values before they're being used. Allows you to make the
 		 * skybox more or less bright. Equal to one by default.
 		 */
-		void setBrightness(float brightness) { mBrightness = brightness; MarkCoreDirtyInternal(); }
+		void SetBrightness(float brightness) { mBrightness = brightness; MarkCoreDirtyInternal(); }
 
 		/** @copydoc setBrightness */
-		float getBrightness() const { return mBrightness; }
+		float GetBrightness() const { return mBrightness; }
 
 	protected:
 		float mBrightness = 1.0f; /**< Multiplier to apply to evaluated skybox values before using them. */
@@ -59,11 +59,11 @@ namespace bs
 		 * Determines an environment map to use for sampling skybox radiance. Must be a cube-map texture, and should ideally
 		 * contain HDR data.
 		 */
-		TextureType getTexture() const { return mTexture; }
+		TextureType GetTexture() const { return mTexture; }
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
-		void rttiEnumFields(P p);
+		void RttiEnumFields(P p);
 	protected:
 		TextureType mTexture;
 	};
@@ -82,13 +82,13 @@ namespace bs
 		~Skybox();
 
 		/** @copydoc TSkybox::getTexture */
-		void setTexture(const HTexture& texture);
+		void SetTexture(const HTexture& texture);
 
 		/**	Retrieves an implementation of the skybox usable only from the core thread. */
-		SPtr<ct::Skybox> getCore() const;
+		SPtr<ct::Skybox> GetCore() const;
 
 		/** Creates a new skybox. */
-		static SPtr<Skybox> create();
+		static SPtr<Skybox> Create();
 
 	protected:
 		Skybox();
@@ -97,16 +97,16 @@ namespace bs
 		 * Filters the skybox radiance texture, generating filtered radiance (for reflections) and irradiance. Should be
 		 * called any time the skybox texture changes.
 		 */
-		void filterTexture();
+		void FilterTexture();
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> createCore() const override;
+		SPtr<ct::CoreObject> CreateCore() const ;
 
 		/** @copydoc SkyboxBase::_markCoreDirty */
 		void MarkCoreDirtyInternal(ActorDirtyFlag flags = ActorDirtyFlag::Everything) override;
 
 		/** @copydoc CoreObject::syncToCore */
-		CoreSyncData syncToCore(FrameAlloc* allocator) override;
+		CoreSyncData SyncToCore(FrameAlloc* allocator) override;
 
 		SPtr<Texture> mFilteredRadiance;
 		SPtr<Texture> mIrradiance;
@@ -117,11 +117,11 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class SkyboxRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 
 		/**	Creates a new skybox instance without initializing it. */
-		static SPtr<Skybox> createEmpty();
+		static SPtr<Skybox> CreateEmpty();
 	};
 
 	namespace ct
@@ -136,12 +136,12 @@ namespace bs
 			 * Returns a texture containing filtered version of the radiance texture used for reflections. This might not
 			 * be available if it hasn't been generated yet.
 			 */
-			SPtr<Texture> getFilteredRadiance() const { return mFilteredRadiance; }
+			SPtr<Texture> GetFilteredRadiance() const { return mFilteredRadiance; }
 
 			/**
 			 * Returns a texture containing sky irradiance. This might not be available if it hasn't been generated yet.
 			 */
-			SPtr<Texture> getIrradiance() const { return mIrradiance; }
+			SPtr<Texture> GetIrradiance() const { return mIrradiance; }
 
 		protected:
 			friend class bs::Skybox;
@@ -149,10 +149,10 @@ namespace bs
 			Skybox(const SPtr<Texture>& radiance, const SPtr<Texture>& filteredRadiance, const SPtr<Texture>& irradiance);
 
 			/** @copydoc CoreObject::initialize */
-			void initialize() override;
+			void Initialize() override;
 
 			/** @copydoc CoreObject::syncToCore */
-			void syncToCore(const CoreSyncData& data) override;
+			void SyncToCore(const CoreSyncData& data) override;
 
 			SPtr<Texture> mFilteredRadiance;
 			SPtr<Texture> mIrradiance;

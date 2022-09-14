@@ -14,14 +14,14 @@ namespace bs
 	void ScriptColor::initRuntimeData()
 	{ }
 
-	MonoObject* ScriptColor::box(const Color& value)
+	MonoObject* ScriptColor::Box(const Color& value)
 	{
 		// We're casting away const but it's fine since structs are passed by value anyway
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	Color ScriptColor::unbox(MonoObject* obj)
+	Color ScriptColor::Unbox(MonoObject* obj)
 	{
-		return *(Color*)MonoUtil::unbox(obj);
+		return *(Color*)MonoUtil::Unbox(obj);
 	}
 }

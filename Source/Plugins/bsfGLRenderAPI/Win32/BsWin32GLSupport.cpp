@@ -23,15 +23,15 @@ namespace bs { namespace ct
 
 	Win32GLSupport::Win32GLSupport()
 	{
-		initialiseWGL();
+		InitialiseWgl();
 	}
 
-	SPtr<bs::RenderWindow> Win32GLSupport::newWindow(RENDER_WINDOW_DESC& desc, UINT32 windowId, SPtr<bs::RenderWindow> parentWindow)
+	SPtr<bs::RenderWindow> Win32GLSupport::NewWindow(RENDER_WINDOW_DESC& desc, UINT32 windowId, SPtr<bs::RenderWindow> parentWindow)
 	{		
 		if(parentWindow != nullptr)
 		{
 			UINT64 hWnd;
-			parentWindow->getCustomAttribute("WINDOW", &hWnd);
+			parentWindow->GetCustomAttribute("WINDOW", &hWnd);
 			desc.platformSpecific["parentWindowHandle"] = toString(hWnd);
 		}
 
@@ -45,11 +45,11 @@ namespace bs { namespace ct
 			mInitialWindow = window;
 	}
 
-	void Win32GLSupport::start()
+	void Win32GLSupport::Start()
 	{
 	}
 
-	void Win32GLSupport::stop()
+	void Win32GLSupport::Stop()
 	{
 		mInitialWindow = nullptr;
 	}
@@ -78,7 +78,7 @@ namespace bs { namespace ct
 			extensionList.insert(instr);
 	}
 
-	SPtr<Win32Context> Win32GLSupport::createContext(HDC hdc, HGLRC externalGlrc)
+	SPtr<Win32Context> Win32GLSupport::CreateContext(HDC hdc, HGLRC externalGlrc)
 	{
 		GLRenderAPI* rapi = static_cast<GLRenderAPI*>(RenderAPI::instancePtr());
 
@@ -126,12 +126,12 @@ namespace bs { namespace ct
 		return bs_shared_ptr_new<Win32Context>(hdc, glrc, createdNew);
 	}
 
-	void* Win32GLSupport::getProcAddress(const String& procname)
+	void* Win32GLSupport::GetProcAddress(const String& procname)
 	{
 		return (void*)wglGetProcAddress(procname.c_str());
 	}
 
-	void Win32GLSupport::initialiseWGL()
+	void Win32GLSupport::InitialiseWgl()
 	{
 		// We need to create a dummy context in order to get functions that allow us to create a more advanced context.
 		// It seems hacky but that's the only way to do it.
@@ -258,12 +258,12 @@ namespace bs { namespace ct
 		UnregisterClass(dummyText, hinst);
 	}
 
-	LRESULT Win32GLSupport::dummyWndProc(HWND hwnd, UINT umsg, WPARAM wp, LPARAM lp)
+	LRESULT Win32GLSupport::DummyWndProc(HWND hwnd, UINT umsg, WPARAM wp, LPARAM lp)
 	{
 		return DefWindowProc(hwnd, umsg, wp, lp);
 	}
 
-	bool Win32GLSupport::selectPixelFormat(HDC hdc, int colorDepth, int multisample, bool hwGamma, bool depthStencil)
+	bool Win32GLSupport::SelectPixelFormat(HDC hdc, int colorDepth, int multisample, bool hwGamma, bool depthStencil)
 	{
 		PIXELFORMATDESCRIPTOR pfd;
 		memset(&pfd, 0, sizeof(pfd));
@@ -325,7 +325,7 @@ namespace bs { namespace ct
 		return format && SetPixelFormat(hdc, format, &pfd);
 	}
 
-	SPtr<VideoModeInfo> Win32GLSupport::getVideoModeInfo() const
+	SPtr<VideoModeInfo> Win32GLSupport::GetVideoModeInfo() const
 	{
 		return bs_shared_ptr_new<Win32VideoModeInfo>();
 	}

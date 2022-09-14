@@ -17,13 +17,13 @@ namespace bs
 
 		ScriptPhysicsMesh(MonoObject* managedInstance, const ResourceHandle<PhysicsMesh>& value);
 
-		static MonoObject* createInstance();
+		static MonoObject* CreateInstance();
 
 	private:
-		static MonoObject* Internal_getRef(ScriptPhysicsMesh* thisPtr);
+		static MonoObject* InternalGetRef(ScriptPhysicsMesh* thisPtr);
 
-		static PhysicsMeshType Internal_getType(ScriptPhysicsMesh* thisPtr);
-		static void Internal_create(MonoObject* managedInstance, MonoObject* meshData, PhysicsMeshType type);
-		static MonoObject* Internal_getMeshData(ScriptPhysicsMesh* thisPtr);
+		static PhysicsMeshType InternalGetType(ScriptPhysicsMesh* thisPtr);
+		static void InternalCreate(MonoObject* managedInstance, MonoObject* meshData, PhysicsMeshType type);
+		static MonoObject* InternalGetMeshData(ScriptPhysicsMesh* thisPtr);
 	};
 }

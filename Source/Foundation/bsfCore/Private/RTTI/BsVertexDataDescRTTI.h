@@ -17,31 +17,31 @@ namespace bs
 	class BS_CORE_EXPORT VertexDataDescRTTI : public RTTIType<VertexDataDesc, IReflectable, VertexDataDescRTTI>
 	{
 	private:
-		VertexElement& getVertexElementData(VertexDataDesc* obj, UINT32 arrayIdx) { return obj->mVertexElements[arrayIdx]; }
-		void setVertexElementData(VertexDataDesc* obj, UINT32 arrayIdx, VertexElement& value) { obj->mVertexElements[arrayIdx] = value; }
+		VertexElement& GetVertexElementData(VertexDataDesc* obj, UINT32 arrayIdx) { return obj->mVertexElements[arrayIdx]; }
+		void SetVertexElementData(VertexDataDesc* obj, UINT32 arrayIdx, VertexElement& value) { obj->mVertexElements[arrayIdx] = value; }
 
-		UINT32 getNumVertexElementData(VertexDataDesc* obj) { return (UINT32)obj->mVertexElements.size(); }
-		void setNumVertexElementData(VertexDataDesc* obj, UINT32 numElements) { obj->mVertexElements.resize(numElements); }
+		UINT32 GetNumVertexElementData(VertexDataDesc* obj) { return (UINT32)obj->mVertexElements.size(); }
+		void SetNumVertexElementData(VertexDataDesc* obj, UINT32 numElements) { obj->mVertexElements.resize(numElements); }
 
 	public:
 		VertexDataDescRTTI()
 		{
-			addPlainArrayField("mVertexData", 0, &VertexDataDescRTTI::getVertexElementData,
-				&VertexDataDescRTTI::getNumVertexElementData, &VertexDataDescRTTI::setVertexElementData, &VertexDataDescRTTI::setNumVertexElementData);
+			AddPlainArrayField("mVertexData", 0, &VertexDataDescRTTI::GetVertexElementData,
+				&VertexDataDescRTTI::GetNumVertexElementData, &VertexDataDescRTTI::SetVertexElementData, &VertexDataDescRTTI::SetNumVertexElementData);
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return bs_shared_ptr<VertexDataDesc>(new (bs_alloc<VertexDataDesc>()) VertexDataDesc());
 		}
 
-		const String& getRTTIName() override
+		const String& GetRttiName() 
 		{
 			static String name = "VertexDataDesc";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() 
 		{
 			return TID_VertexDataDesc;
 		}

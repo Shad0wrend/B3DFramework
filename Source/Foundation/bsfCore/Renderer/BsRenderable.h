@@ -43,19 +43,19 @@ namespace bs
 		virtual ~TRenderable() = default;
 
 		/** @copydoc bs::SceneActor::setTransform */
-		void setTransform(const Transform& transform) override;
+		void SetTransform(const Transform& transform) override;
 
 		/**
 		 * Determines the mesh to render. All sub-meshes of the mesh will be rendered, and you may set individual materials
 		 * for each sub-mesh.
 		 */
-		void setMesh(const MeshType& mesh);
+		void SetMesh(const MeshType& mesh);
 
 		/**
 		 * Sets a material that will be used for rendering a sub-mesh with the specified index. If a sub-mesh doesn't have
 		 * a specific material set then the primary material will be used.
 		 */
-		void setMaterial(UINT32 idx, const MaterialType& material);
+		void SetMaterial(UINT32 idx, const MaterialType& material);
 
 		/**
 		 * Sets the primary material to use for rendering. Any sub-mesh that doesn't have an explicit material set will use
@@ -63,23 +63,23 @@ namespace bs
 		 *
 		 * @note	This is equivalent to calling setMaterial(0, material).
 		 */
-		void setMaterial(const MaterialType& material);
+		void SetMaterial(const MaterialType& material);
 
 		/** @copydoc setMaterials() */
-		const Vector<MaterialType>& getMaterials() { return mMaterials; }
+		const Vector<MaterialType>& GetMaterials() { return mMaterials; }
 
 		/**
 		 * Determines all materials used for rendering this renderable. Each of the materials is used for rendering a single
 		 * sub-mesh. If number of materials is larger than number of sub-meshes, they will be ignored. If lower, the
 		 * remaining materials will be removed.
 		 */
-		void setMaterials(const Vector<MaterialType>& materials);
+		void SetMaterials(const Vector<MaterialType>& materials);
 
 		/**
 		 * Determines the layer bitfield that controls whether a renderable is considered visible in a specific camera.
 		 * Renderable layer must match camera layer in order for the camera to render the component.
 		 */
-		void setLayer(UINT64 layer);
+		void SetLayer(UINT64 layer);
 
 		/**
 		 * Sets bounds that will be used when determining if object is visible. Only relevant if setUseOverrideBounds() is
@@ -87,47 +87,47 @@ namespace bs
 		 *
 		 * @param[in]	bounds	Bounds in local space.
 		 */
-		void setOverrideBounds(const AABox& bounds);
+		void SetOverrideBounds(const AABox& bounds);
 
 		/**
 		 * Enables or disables override bounds. When enabled the bounds provided to setOverrideBounds() will be used for
 		 * determining object visibility, otherwise the bounds from the object's mesh will be used. Disabled by default.
 		 */
-		void setUseOverrideBounds(bool enable);
+		void SetUseOverrideBounds(bool enable);
 
 		/**
 		 * If enabled this renderable will write per-pixel velocity information when rendered. This is required for effects
 		 * such as temporal anti-aliasing and motion blur, but comes with a minor performance overhead. If you are not using
 		 * those effects you can disable this for a performance gain.
 		 */
-		void setWriteVelocity(bool enable);
+		void SetWriteVelocity(bool enable);
 
 		/** @copydoc setWriteVelocity */
-		bool getWriteVelocity() const { return mWriteVelocity; }
+		bool GetWriteVelocity() const { return mWriteVelocity; }
 		
 		/** Factor to be applied to the cull distance set in the camera's render settings.  */
-		void setCullDistanceFactor(float factor);
+		void SetCullDistanceFactor(float factor);
 
 		/** @copydoc setCullDistanceFactor() */
-		float getCullDistanceFactor() const { return mCullDistanceFactor; }
+		float GetCullDistanceFactor() const { return mCullDistanceFactor; }
 
 		/** @copydoc setLayer() */
-		UINT64 getLayer() const { return mLayer; }
+		UINT64 GetLayer() const { return mLayer; }
 
 		/**	@copydoc setMesh() */
-		MeshType getMesh() const { return mMesh; }
+		MeshType GetMesh() const { return mMesh; }
 
 		/**	Returns the material used for rendering a sub-mesh with the specified index. */
-		MaterialType getMaterial(UINT32 idx) const;
+		MaterialType GetMaterial(UINT32 idx) const;
 
 		/**	Returns the transform matrix that is applied to the object when its being rendered. */
-		Matrix4 getMatrix() const { return mTfrmMatrix; }
+		Matrix4 GetMatrix() const { return mTfrmMatrix; }
 
 		/**
 		 * Returns the transform matrix that is applied to the object when its being rendered. This transform matrix does
 		 * not include scale values.
 		 */
-		Matrix4 getMatrixNoScale() const { return mTfrmMatrixNoScale; }
+		Matrix4 GetMatrixNoScale() const { return mTfrmMatrixNoScale; }
 
 	protected:
 		/**
@@ -141,7 +141,7 @@ namespace bs
 		virtual void MarkResourcesDirtyInternal() { }
 
 		/** Triggered whenever the renderable's mesh changes. */
-		virtual void onMeshChanged() { }
+		virtual void OnMeshChanged() { }
 
 		MeshType mMesh;
 		Vector<MaterialType> mMaterials;
@@ -166,22 +166,22 @@ namespace bs
 	{
 	public:
 		/**	Gets world bounds of the mesh rendered by this object. */
-		Bounds getBounds() const;
+		Bounds GetBounds() const;
 
 		/** Determines the animation that will be used for animating the attached mesh. */
-		void setAnimation(const SPtr<Animation>& animation);
+		void SetAnimation(const SPtr<Animation>& animation);
 
 		/** @copydoc setAnimation */
-		const SPtr<Animation>& getAnimation() const { return mAnimation; }
+		const SPtr<Animation>& GetAnimation() const { return mAnimation; }
 
 		/** Checks is the renderable animated or static. */
-		bool isAnimated() const { return mAnimation != nullptr; }
+		bool IsAnimated() const { return mAnimation != nullptr; }
 
 		/**	Retrieves an implementation of a renderable handler usable only from the core thread. */
-		SPtr<ct::Renderable> getCore() const;
+		SPtr<ct::Renderable> GetCore() const;
 
 		/**	Creates a new renderable handler instance. */
-		static SPtr<Renderable> create();
+		static SPtr<Renderable> Create();
 
 		/**
 		 * @name Internal
@@ -192,18 +192,18 @@ namespace bs
 		void UpdateStateInternal(const SceneObject& so, bool force = false) override;
 
 		/** @copydoc CoreObject::initialize() */
-		void initialize() override;
+		void Initialize() override;
 
 		/** @} */
 	protected:
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> createCore() const override;
+		SPtr<ct::CoreObject> CreateCore() const ;
 
 		/** @copydoc TRenderable::onMeshChanged */
-		void onMeshChanged() override;
+		void OnMeshChanged() override;
 
 		/** Updates animation properties depending on the current mesh. */
-		void refreshAnimation();
+		void RefreshAnimation();
 
 		/** @copydoc TRenderable::_markCoreDirty */
 		void MarkCoreDirtyInternal(ActorDirtyFlag flag = ActorDirtyFlag::Everything) override;
@@ -215,25 +215,25 @@ namespace bs
 		void MarkDependenciesDirtyInternal() override;
 
 		/** @copydoc CoreObject::syncToCore */
-		CoreSyncData syncToCore(FrameAlloc* allocator) override;
+		CoreSyncData SyncToCore(FrameAlloc* allocator) override;
 
 		/** @copydoc CoreObject::getCoreDependencies */
-		void getCoreDependencies(Vector<CoreObject*>& dependencies) override;
+		void GetCoreDependencies(Vector<CoreObject*>& dependencies) ;
 
 		/** @copydoc CoreObject::onDependencyDirty */
-		void onDependencyDirty(CoreObject* dependency, UINT32 dirtyFlags) override;
+		void OnDependencyDirty(CoreObject* dependency, UINT32 dirtyFlags) override;
 
 		/** @copydoc IResourceListener::getListenerResources */
-		void getListenerResources(Vector<HResource>& resources) override;
+		void GetListenerResources(Vector<HResource>& resources) ;
 
 		/** @copydoc IResourceListener::notifyResourceLoaded */
-		void notifyResourceLoaded(const HResource& resource) override;
+		void NotifyResourceLoaded(const HResource& resource) override;
 
 		/** @copydoc IResourceListener::notifyResourceChanged */
-		void notifyResourceChanged(const HResource& resource) override;
+		void NotifyResourceChanged(const HResource& resource) override;
 
 		/**	Creates a new renderable instance without initializing it. */
-		static SPtr<Renderable> createEmpty();
+		static SPtr<Renderable> CreateEmpty();
 
 		SPtr<Animation> mAnimation;
 
@@ -242,8 +242,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class RenderableRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	namespace ct
@@ -255,43 +255,43 @@ namespace bs
 		~Renderable();
 
 		/**	Gets world bounds of the mesh rendered by this object. */
-		Bounds getBounds() const;
+		Bounds GetBounds() const;
 
 		/**	Sets an ID that can be used for uniquely identifying this object by the renderer. */
-		void setRendererId(UINT32 id) { mRendererId = id; }
+		void SetRendererId(UINT32 id) { mRendererId = id; }
 
 		/**	Retrieves an ID that can be used for uniquely identifying this object by the renderer. */
-		UINT32 getRendererId() const { return mRendererId; }
+		UINT32 GetRendererId() const { return mRendererId; }
 
 		/** Returns the type of animation influencing this renderable, if any. */
-		RenderableAnimType getAnimType() const { return mAnimType; }
+		RenderableAnimType GetAnimType() const { return mAnimType; }
 
 		/** Returns the identifier of the animation, if this object is animated using skeleton or blend shape animation. */
-		UINT64 getAnimationId() const { return mAnimationId; }
+		UINT64 GetAnimationId() const { return mAnimationId; }
 
 		/**
 		 * Updates internal animation buffers from the contents of the provided animation data object. Does nothing if
 		 * renderable is not affected by animation.
 		 */
-		void updateAnimationBuffers(const EvaluatedAnimationData& animData);
+		void UpdateAnimationBuffers(const EvaluatedAnimationData& animData);
 
 		/**
 		 * Records information about previous frame's animation buffer data. Should be called once per frame, before the
 		 * call to updateAnimationBuffers().
 		 */
-		void updatePrevFrameAnimationBuffers();
+		void UpdatePrevFrameAnimationBuffers();
 
 		/** Returns the GPU buffer containing element's bone matrices, if it has any. */
-		const SPtr<GpuBuffer>& getBoneMatrixBuffer() const { return mBoneMatrixBuffer; }
+		const SPtr<GpuBuffer>& GetBoneMatrixBuffer() const { return mBoneMatrixBuffer; }
 
 		/** Returns the GPU buffer containing element's bone matrices for the previous frame, if it has any. */
-		const SPtr<GpuBuffer>& getBonePrevMatrixBuffer() const { return mBonePrevMatrixBuffer; }
+		const SPtr<GpuBuffer>& GetBonePrevMatrixBuffer() const { return mBonePrevMatrixBuffer; }
 
 		/** Returns the vertex buffer containing element's morph shape vertices, if it has any. */
-		const SPtr<VertexBuffer>& getMorphShapeBuffer() const { return mMorphShapeBuffer; }
+		const SPtr<VertexBuffer>& GetMorphShapeBuffer() const { return mMorphShapeBuffer; }
 
 		/** Returns vertex declaration used for rendering meshes containing morph shape information. */
-		const SPtr<VertexDeclaration>& getMorphVertexDeclaration() const { return mMorphVertexDeclaration; }
+		const SPtr<VertexDeclaration>& GetMorphVertexDeclaration() const { return mMorphVertexDeclaration; }
 
 	protected:
 		friend class bs::Renderable;
@@ -299,13 +299,13 @@ namespace bs
 		Renderable();
 
 		/** @copydoc CoreObject::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 		/** @copydoc CoreObject::syncToCore */
-		void syncToCore(const CoreSyncData& data) override;
+		void SyncToCore(const CoreSyncData& data) override;
 
 		/** Creates any buffers required for renderable animation. Should be called whenever animation properties change. */
-		void createAnimationBuffers();
+		void CreateAnimationBuffers();
 
 		UINT32 mRendererId;
 		UINT64 mAnimationId;

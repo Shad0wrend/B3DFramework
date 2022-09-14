@@ -55,7 +55,7 @@ namespace bs
 		 * Allocates internal memory as reserved by previous calls to reserve(). Must be called before any calls to
 		 * construct or alloc.
 		 */
-		void init()
+		void Init()
 		{
 			assert(mData == nullptr);
 
@@ -69,7 +69,7 @@ namespace bs
 		 * Reserves the specified amount of bytes to allocate. Multiple calls to reserve() are cumulative. After all needed
 		 * memory is reserved, call init(), followed by actual allocation via construct() or alloc() methods.
 		 */
-		GroupAlloc& reserve(UINT32 amount)
+		GroupAlloc& Reserve(UINT32 amount)
 		{
 			assert(mData == nullptr);
 
@@ -84,7 +84,7 @@ namespace bs
 		 * reserve(), init() and alloc() again.
 		 */
 		template<class T>
-		GroupAlloc& reserve(UINT32 count = 1)
+		GroupAlloc& Reserve(UINT32 count = 1)
 		{
 			assert(mData == nullptr);
 
@@ -97,7 +97,7 @@ namespace bs
 		 *
 		 * @param[in]	amount	Amount of memory to allocate, in bytes.
 		 */
-		UINT8* alloc(UINT32 amount)
+		UINT8* Alloc(UINT32 amount)
 		{
 			assert(mDataPtr + amount <= (mData + mNumBytes));
 
@@ -113,19 +113,19 @@ namespace bs
 		 * @param[in]	count	Number of elements to allocate.
 		 */
 		template<class T>
-		T* alloc(UINT32 count = 1)
+		T* Alloc(UINT32 count = 1)
 		{
 			return (T*)alloc(sizeof(T) * count);
 		}
 
 		/** Deallocates a previously allocated piece of memory. */
-		void free(void* data)
+		void Free(void* data)
 		{
 			// Do nothing
 		}
 
 		/** Frees any internally allocated buffers. All elements must be previously freed by calling free(). */
-		void clear()
+		void Clear()
 		{
 			// Note: A debug check if user actually freed the memory could be helpful
 			if (mData)
@@ -140,7 +140,7 @@ namespace bs
 		 * Allocates enough memory to hold the object(s) of specified type using the static allocator, and constructs them.
 		 */
 		template<class T>
-		T* construct(UINT32 count = 1)
+		T* Construct(UINT32 count = 1)
 		{
 			T* data = (T*)alloc(sizeof(T) * count);
 
@@ -154,7 +154,7 @@ namespace bs
 		 * Allocates enough memory to hold the object(s) of specified type using the static allocator, and constructs them.
 		 */
 		template<class T, class... Args>
-		T* construct(Args &&...args, UINT32 count = 1)
+		T* Construct(Args &&...args, UINT32 count = 1)
 		{
 			T* data = (T*)alloc(sizeof(T) * count);
 
@@ -166,7 +166,7 @@ namespace bs
 
 		/** Destructs and deallocates an object allocated with the static allocator. */
 		template<class T>
-		void destruct(T* data)
+		void Destruct(T* data)
 		{
 			data->~T();
 
@@ -175,7 +175,7 @@ namespace bs
 
 		/** Destructs and deallocates an array of objects allocated with the static frame allocator. */
 		template<class T>
-		void destruct(T* data, UINT32 count)
+		void Destruct(T* data, UINT32 count)
 		{
 			for(unsigned int i = 0; i < count; i++)
 				data[i].~T();

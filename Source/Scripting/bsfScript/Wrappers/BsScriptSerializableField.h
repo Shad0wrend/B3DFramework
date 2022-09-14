@@ -46,7 +46,7 @@ namespace bs
 		 * @param[in]	fieldInfo		Information about the field. Caller must ensure the type matches the type of the
 		 *								provided parent object.
 		 */
-		static MonoObject* create(MonoObject* parentObject, const SPtr<ManagedSerializableMemberInfo>& fieldInfo);
+		static MonoObject* Create(MonoObject* parentObject, const SPtr<ManagedSerializableMemberInfo>& fieldInfo);
 	private:
 		ScriptSerializableField(MonoObject* instance, const SPtr<ManagedSerializableMemberInfo>& fieldInfo);
 
@@ -55,10 +55,10 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static MonoObject* internal_createProperty(ScriptSerializableField* nativeInstance);
-		static MonoObject* internal_getValue(ScriptSerializableField* nativeInstance, MonoObject* instance);
-		static void internal_setValue(ScriptSerializableField* nativeInstance, MonoObject* instance, MonoObject* value);
-		static void internal_getStyle(ScriptSerializableField* nativeInstance, SerializableMemberStyle* style);
+		static MonoObject* InternalCreateProperty(ScriptSerializableField* nativeInstance);
+		static MonoObject* InternalGetValue(ScriptSerializableField* nativeInstance, MonoObject* instance);
+		static void InternalSetValue(ScriptSerializableField* nativeInstance, MonoObject* instance, MonoObject* value);
+		static void InternalGetStyle(ScriptSerializableField* nativeInstance, SerializableMemberStyle* style);
 	};
 
 	/** Interop class between C++ & CLR for SerializableFieldStyle. */

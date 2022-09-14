@@ -67,26 +67,26 @@ namespace bs { namespace ct
 		 * Generates a set of sampler overrides for the specified set of GPU program parameters. Overrides are generates
 		 * according to the provided render options.
 		 */
-		static MaterialSamplerOverrides* generateSamplerOverrides(const SPtr<Shader>& shader,
+		static MaterialSamplerOverrides* GenerateSamplerOverrides(const SPtr<Shader>& shader,
 			const SPtr<MaterialParams>& params,
 			const SPtr<GpuParamsSet>& paramsSet,
 			const SPtr<RenderBeastOptions>& options);
 
 		/**	Destroys sampler overrides previously generated with generateSamplerOverrides(). */
-		static void destroySamplerOverrides(MaterialSamplerOverrides* overrides);
+		static void DestroySamplerOverrides(MaterialSamplerOverrides* overrides);
 
 		/**
 		 * Checks if the provided sampler state requires an override, in case the render options have requirements not
 		 * fulfilled by current sampler state (for example filtering type).
 		 */
-		static bool checkNeedsOverride(const SPtr<SamplerState>& samplerState,
+		static bool CheckNeedsOverride(const SPtr<SamplerState>& samplerState,
 			const SPtr<RenderBeastOptions>& options);
 
 		/**
 		 * Generates a new sampler state override using the provided state as the basis. Overridden properties are taken
 		 * from the provided render options.
 		 */
-		static SPtr<SamplerState> generateSamplerOverride(const SPtr<SamplerState>& samplerState,
+		static SPtr<SamplerState> GenerateSamplerOverride(const SPtr<SamplerState>& samplerState,
 			const SPtr<RenderBeastOptions>& options);
 	};
 

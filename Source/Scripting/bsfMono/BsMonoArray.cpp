@@ -13,39 +13,39 @@ namespace bs
 		template<>
 		String ScriptArray_get<String>(MonoArray* array, UINT32 idx)
 		{
-			return MonoUtil::monoToString(mono_array_get(array, MonoString*, idx));
+			return MonoUtil::MonoToString(mono_array_get(array, MonoString*, idx));
 		}
 
 		template<>
 		WString ScriptArray_get<WString>(MonoArray* array, UINT32 idx)
 		{
-			return MonoUtil::monoToWString(mono_array_get(array, MonoString*, idx));
+			return MonoUtil::MonoToWString(mono_array_get(array, MonoString*, idx));
 		}
 
 		template<>
 		Path ScriptArray_get<Path>(MonoArray* array, UINT32 idx)
 		{
-			return MonoUtil::monoToString(mono_array_get(array, MonoString*, idx));
+			return MonoUtil::MonoToString(mono_array_get(array, MonoString*, idx));
 		}
 
 		template<>
 		void ScriptArray_set<String>(MonoArray* array, UINT32 idx, const String& value)
 		{
-			MonoString* monoString = MonoUtil::stringToMono(value);
+			MonoString* monoString = MonoUtil::StringToMono(value);
 			mono_array_setref(array, idx, monoString);
 		}
 
 		template<>
 		void ScriptArray_set<WString>(MonoArray* array, UINT32 idx, const WString& value)
 		{
-			MonoString* monoString = MonoUtil::wstringToMono(value);
+			MonoString* monoString = MonoUtil::WstringToMono(value);
 			mono_array_setref(array, idx, monoString);
 		}
 
 		template<>
 		void ScriptArray_set<Path>(MonoArray* array, UINT32 idx, const Path& value)
 		{
-			MonoString* monoString = MonoUtil::stringToMono(value.toString());
+			MonoString* monoString = MonoUtil::StringToMono(value.ToString());
 			mono_array_setref(array, idx, monoString);
 		}
 
@@ -65,21 +65,21 @@ namespace bs
 	ScriptArray::ScriptArray(MonoClass& klass, UINT32 size)
 		: mInternal(nullptr)
 	{
-		mInternal = mono_array_new(MonoManager::instance().getDomain(), klass.GetInternalClassInternal(), size);
+		mInternal = mono_array_new(MonoManager::Instance().GetDomain(), klass.GetInternalClassInternal(), size);
 	}
 
 	ScriptArray::ScriptArray(::MonoClass* klass, UINT32 size)
 		: mInternal(nullptr)
 	{
-		mInternal = mono_array_new(MonoManager::instance().getDomain(), klass, size);
+		mInternal = mono_array_new(MonoManager::Instance().GetDomain(), klass, size);
 	}
 
-	UINT32 ScriptArray::size() const
+	UINT32 ScriptArray::Size() const
 	{
 		return (UINT32)mono_array_length(mInternal);
 	}
 
-	UINT32 ScriptArray::elementSize() const
+	UINT32 ScriptArray::ElementSize() const
 	{
 		::MonoClass* arrayClass = mono_object_get_class((MonoObject*)(mInternal));
 		::MonoClass* elementClass = mono_class_get_element_class(arrayClass);
@@ -87,7 +87,7 @@ namespace bs
 		return (UINT32)mono_class_array_element_size(elementClass);
 	}
 
-	void ScriptArray::setRaw(UINT32 idx, const UINT8* value, UINT32 size, UINT32 count)
+	void ScriptArray::SetRaw(UINT32 idx, const UINT8* value, UINT32 size, UINT32 count)
 	{
 		SetArrayValInternal(mInternal, idx, value, size, count);
 	}
@@ -114,17 +114,17 @@ namespace bs
 		}
 	}
 
-	::MonoClass* ScriptArray::getElementClass(::MonoClass* arrayClass)
+	::MonoClass* ScriptArray::GetElementClass(::MonoClass* arrayClass)
 	{
 		return mono_class_get_element_class(arrayClass);
 	}
 
-	UINT32 ScriptArray::getRank(::MonoClass* arrayClass)
+	UINT32 ScriptArray::GetRank(::MonoClass* arrayClass)
 	{
 		return (UINT32)mono_class_get_rank(arrayClass);
 	}
 
-	::MonoClass* ScriptArray::buildArrayClass(::MonoClass* elementClass, UINT32 rank)
+	::MonoClass* ScriptArray::BuildArrayClass(::MonoClass* elementClass, UINT32 rank)
 	{
 		return mono_array_class_get(elementClass, rank);
 	}

@@ -19,8 +19,8 @@ namespace bs
 	{
 	protected:
 		/** @copydoc RenderWindowManager::createImpl */
-		SPtr<RenderWindow> createImpl(RENDER_WINDOW_DESC& desc, UINT32 windowId,
-			const SPtr<RenderWindow>& parentWindow) override;
+		SPtr<RenderWindow> CreateImpl(RENDER_WINDOW_DESC& desc, UINT32 windowId,
+			const SPtr<RenderWindow>& parentWindow) ;
 	};
 
 	/** Null implementation of a render texture. */
@@ -35,7 +35,7 @@ namespace bs
 
 	protected:
 		/** @copydoc RenderTexture::getProperties */
-		const RenderTargetProperties& getPropertiesInternal() const override { return mProperties; }
+		const RenderTargetProperties& GetPropertiesInternal() const { return mProperties; }
 
 		RenderTextureProperties mProperties;	
 	};
@@ -47,16 +47,16 @@ namespace bs
 		~NullRenderWindow() = default;
 
 		/** @copydoc RenderWindow::screenToWindowPos */
-		Vector2I screenToWindowPos(const Vector2I& screenPos) const override { return screenPos; }
+		Vector2I ScreenToWindowPos(const Vector2I& screenPos) const { return screenPos; }
 
 		/** @copydoc RenderWindow::windowToScreenPos */
-		Vector2I windowToScreenPos(const Vector2I& windowPos) const override { return windowPos; }
+		Vector2I WindowToScreenPos(const Vector2I& windowPos) const { return windowPos; }
 
 		/** @copydoc RenderWindow::getCore */
-		SPtr<ct::NullRenderWindow> getCore() const;
+		SPtr<ct::NullRenderWindow> GetCore() const;
 
 		/** @copydoc RenderWindow::getCustomAttribute */
-		void getCustomAttribute(const String& name, void* pData) const override;
+		void GetCustomAttribute(const String& name, void* pData) const ;
 
 
 	protected:
@@ -66,13 +66,13 @@ namespace bs
 		NullRenderWindow(const RENDER_WINDOW_DESC& desc, UINT32 windowId);
 
 		/** @copydoc RenderWindow::getProperties */
-		const RenderTargetProperties& getPropertiesInternal() const override { return mProperties; }
+		const RenderTargetProperties& GetPropertiesInternal() const override { return mProperties; }
 
 		/** @copydoc RenderWindow::syncProperties */
-		void syncProperties() override;
+		void SyncProperties() override;
 
 		/** @copydoc RenderWindow::createCore */
-		SPtr<ct::CoreObject> createCore() const override;
+		SPtr<ct::CoreObject> CreateCore() const ;
 
 	private:
 		RenderWindowProperties mProperties;
@@ -92,7 +92,7 @@ namespace bs
 
 		protected:
 			/** @copydoc RenderTexture::getProperties */
-			const RenderTargetProperties& getPropertiesInternal() const override { return mProperties; }
+			const RenderTargetProperties& GetPropertiesInternal() const override { return mProperties; }
 
 			RenderTextureProperties mProperties;	
 		};
@@ -104,28 +104,28 @@ namespace bs
 			NullRenderWindow(const RENDER_WINDOW_DESC& desc, UINT32 windowId);
 
 			/** @copydoc RenderWindow::move */
-			void move(INT32 left, INT32 top) override { }
+			void Move(INT32 left, INT32 top) override { }
 
 			/** @copydoc RenderWindow::resize */
-			void resize(UINT32 width, UINT32 height) override { }
+			void Resize(UINT32 width, UINT32 height) override { }
 
 			/** @copydoc RenderWindow::setVSync */
-			void setVSync(bool enabled, UINT32 interval = 1) override { }
+			void SetVSync(bool enabled, UINT32 interval = 1) override { }
 
 			/** @copydoc RenderWindow::getCustomAttribute */
-			void getCustomAttribute(const String& name, void* pData) const override;
+			void GetCustomAttribute(const String& name, void* pData) const override;
 
 		protected:
 			friend class bs::NullRenderWindow;
 
 			/** @copydoc RenderWindow::getProperties */
-			const RenderTargetProperties& getPropertiesInternal() const override { return mProperties; }
+			const RenderTargetProperties& GetPropertiesInternal() const override { return mProperties; }
 
 			/** @copydoc RenderWindow::getSyncedProperties */
-			RenderWindowProperties& getSyncedProperties() override { return mSyncedProperties; }
+			RenderWindowProperties& GetSyncedProperties() override { return mSyncedProperties; }
 
 			/** @copydoc RenderWindow::syncProperties */
-			void syncProperties() override;
+			void SyncProperties() override;
 
 		protected:
 			RenderWindowProperties mProperties;

@@ -13,7 +13,7 @@
 
 namespace bs
 {
-	SPtr<IReflectable> BinaryCloner::clone(IReflectable* object, bool shallow)
+	SPtr<IReflectable> BinaryCloner::Clone(IReflectable* object, bool shallow)
 	{
 		if (object == nullptr)
 			return nullptr;
@@ -23,31 +23,31 @@ namespace bs
 		{
 			FrameAlloc& alloc = gFrameAlloc();
 
-			alloc.markFrame();
-			gatherReferences(object, alloc, referenceData);
-			alloc.clear();
+			alloc.MarkFrame();
+			GatherReferences(object, alloc, referenceData);
+			alloc.Clear();
 		}
 
 		SPtr<MemoryDataStream> stream = bs_shared_ptr_new<MemoryDataStream>();
 		BinarySerializer bs;
-		bs.encode(object, stream, shallow ? BinarySerializerFlag::Shallow : BinarySerializerFlag::None);
+		bs.Encode(object, stream, shallow ? BinarySerializerFlag::Shallow : BinarySerializerFlag::None);
 
-		stream->seek(0);
-		SPtr<IReflectable> clonedObj = bs.decode(stream, (UINT32)stream->size());
+		stream->Seek(0);
+		SPtr<IReflectable> clonedObj = bs.Decode(stream, (UINT32)stream->Size());
 
 		if (shallow)
 		{
 			FrameAlloc& alloc = gFrameAlloc();
 
-			alloc.markFrame();
-			restoreReferences(clonedObj.get(), alloc, referenceData);
-			alloc.clear();
+			alloc.MarkFrame();
+			RestoreReferences(clonedObj.get(), alloc, referenceData);
+			alloc.Clear();
 		}
 
 		return clonedObj;
 	}
 
-	void BinaryCloner::gatherReferences(IReflectable* object, FrameAlloc& alloc, ObjectReferenceData& referenceData)
+	void BinaryCloner::GatherReferences(IReflectable* object, FrameAlloc& alloc, ObjectReferenceData& referenceData)
 	{
 		if (object == nullptr)
 			return;
@@ -58,20 +58,20 @@ namespace bs
 		{
 			RTTITypeBase* rttiInstance = rtti->CloneInternal(alloc);
 
-			rttiInstance->onSerializationStarted(object, nullptr);
+			rttiInstance->OnSerializationStarted(object, nullptr);
 			SubObjectReferenceData* subObjectData = nullptr;
 
-			UINT32 numFields = rtti->getNumFields();
+			UINT32 numFields = rtti->GetNumFields();
 			for (UINT32 i = 0; i < numFields; i++)
 			{
-				RTTIField* field = rtti->getField(i);
+				RTTIField* field = rtti->GetField(i);
 				FieldId fieldId;
 				fieldId.field = field;
 				fieldId.arrayIdx = -1;
 
 				if (field->schema.isArray)
 				{
-					const UINT32 numElements = field->getArraySize(rttiInstance, object);
+					const UINT32 numElements = field->GetArraySize(rttiInstance, object);
 
 					for (UINT32 j = 0; j < numElements; j++)
 					{
@@ -113,7 +113,7 @@ namespace bs
 							ObjectReferenceData& childData = subObjectData->children.back();
 							childData.fieldId = fieldId;
 
-							gatherReferences(childObj, alloc, childData);
+							GatherReferences(childObj, alloc, childData);
 						}
 					}
 				}
@@ -155,7 +155,7 @@ namespace bs
 						ObjectReferenceData& childData = subObjectData->children.back();
 						childData.fieldId = fieldId;
 
-						gatherReferences(childObj, alloc, childData);
+						GatherReferences(childObj, alloc, childData);
 					}
 				}
 			}
@@ -174,7 +174,7 @@ namespace bs
 		}
 	}
 
-	void BinaryCloner::restoreReferences(IReflectable* object, FrameAlloc& alloc, const ObjectReferenceData& referenceData)
+	void BinaryCloner::RestoreReferences(IReflectable* object, FrameAlloc& alloc, const ObjectReferenceData& referenceData)
 	{
 		for(auto iter = referenceData.subObjectData.rbegin(); iter != referenceData.subObjectData.rend(); ++iter)
 		{

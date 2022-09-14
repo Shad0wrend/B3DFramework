@@ -15,18 +15,18 @@ namespace bs
 	class BS_UTILITY_EXPORT IReflectableRTTI : public RTTIType <IReflectable, IReflectable, IReflectableRTTI>
 	{
 	public:
-		const String& getRTTIName() override
+		const String& GetRttiName() 
 		{
 			static String name = "IReflectable";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() 
 		{
 			return TID_IReflectable;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return nullptr;
 		}

@@ -27,35 +27,35 @@ namespace bs
 			BS_RTTI_MEMBER_PLAIN_NAMED(mRotationB, mRotations[1], 5)
 		BS_END_RTTI_MEMBERS
 
-		float& getBreakForce(OwnerType* obj) { return obj->mDesc.breakForce; }
-		void setBreakForce(OwnerType* obj, float& val) { obj->mDesc.breakForce = val; }
+		float& GetBreakForce(OwnerType* obj) { return obj->mDesc.breakForce; }
+		void SetBreakForce(OwnerType* obj, float& val) { obj->mDesc.breakForce = val; }
 
-		float& getBreakTorque(OwnerType* obj) { return obj->mDesc.breakTorque; }
-		void setBreakTorque(OwnerType* obj, float& val) { obj->mDesc.breakTorque = val; }
+		float& GetBreakTorque(OwnerType* obj) { return obj->mDesc.breakTorque; }
+		void SetBreakTorque(OwnerType* obj, float& val) { obj->mDesc.breakTorque = val; }
 
-		bool& getEnableCollision(OwnerType* obj) { return obj->mDesc.enableCollision; }
-		void setEnableCollision(OwnerType* obj, bool& val) { obj->mDesc.enableCollision = val; }
+		bool& GetEnableCollision(OwnerType* obj) { return obj->mDesc.enableCollision; }
+		void SetEnableCollision(OwnerType* obj, bool& val) { obj->mDesc.enableCollision = val; }
 
 	public:
 		CJointRTTI()
 		{
-			addPlainField("BreakForce", 6, &CJointRTTI::getBreakForce, &CJointRTTI::setBreakForce);
-			addPlainField("BreakTorque", 7, &CJointRTTI::getBreakTorque, &CJointRTTI::setBreakTorque);
-			addPlainField("EnableCollision", 8, &CJointRTTI::getEnableCollision, &CJointRTTI::setEnableCollision);
+			addPlainField("BreakForce", 6, &CJointRTTI::GetBreakForce, &CJointRTTI::SetBreakForce);
+			addPlainField("BreakTorque", 7, &CJointRTTI::GetBreakTorque, &CJointRTTI::SetBreakTorque);
+			addPlainField("EnableCollision", 8, &CJointRTTI::GetEnableCollision, &CJointRTTI::SetEnableCollision);
 		}
 
-		const String& getRTTIName() override
+		const String& GetRttiName() 
 		{
 			static String name = "CJoint";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() 
 		{
 			return TID_CJoint;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			BS_EXCEPT(InternalErrorException, "Cannot instantiate an abstract class.");
 			return nullptr;

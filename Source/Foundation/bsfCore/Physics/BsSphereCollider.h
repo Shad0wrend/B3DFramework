@@ -22,10 +22,10 @@ namespace bs
 		SphereCollider() = default;
 
 		/** Determines the radius of the sphere geometry. */
-		virtual void setRadius(float radius) = 0;
+		virtual void SetRadius(float radius) = 0;
 
 		/** @copydoc setRadius */
-		virtual float getRadius() const = 0;
+		virtual float GetRadius() const = 0;
 
 		/**
 		 * Creates a new sphere collider.
@@ -35,7 +35,7 @@ namespace bs
 		 * @param[in]	position	Position of the collider.
 		 * @param[in]	rotation	Rotation of the collider.
 		 */
-		static SPtr<SphereCollider> create(PhysicsScene& scene, float radius = 0.0f,
+		static SPtr<SphereCollider> Create(PhysicsScene& scene, float radius = 0.0f,
 			const Vector3& position = Vector3::ZERO, const Quaternion& rotation = Quaternion::IDENTITY);
 	};
 

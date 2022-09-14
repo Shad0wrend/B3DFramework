@@ -25,7 +25,7 @@ namespace bs
 		{ }
 
 		/** Ray/torus intersection, returns boolean result and distance to nearest intersection point. */
-		std::pair<bool, float> intersects(const Ray& ray) const;
+		std::pair<bool, float> Intersects(const Ray& ray) const;
 
 		Vector3 normal{BsZero};
 		float outerRadius = 0.0f;

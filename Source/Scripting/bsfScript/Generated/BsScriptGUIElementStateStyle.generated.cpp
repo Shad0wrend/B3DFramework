@@ -19,38 +19,38 @@ namespace bs
 	void ScriptGUIElementStateStyle::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptGUIElementStateStyle::box(const __GUIElementStateStyleInterop& value)
+	MonoObject*ScriptGUIElementStateStyle::Box(const __GUIElementStateStyleInterop& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	__GUIElementStateStyleInterop ScriptGUIElementStateStyle::unbox(MonoObject* value)
+	__GUIElementStateStyleInterop ScriptGUIElementStateStyle::Unbox(MonoObject* value)
 	{
-		return *(__GUIElementStateStyleInterop*)MonoUtil::unbox(value);
+		return *(__GUIElementStateStyleInterop*)MonoUtil::Unbox(value);
 	}
 
-	GUIElementStateStyle ScriptGUIElementStateStyle::fromInterop(const __GUIElementStateStyleInterop& value)
+	GUIElementStateStyle ScriptGUIElementStateStyle::FromInterop(const __GUIElementStateStyleInterop& value)
 	{
 		GUIElementStateStyle output;
 		ResourceHandle<SpriteTexture> tmptexture;
 		ScriptSpriteTexture* scripttexture;
-		scripttexture = ScriptSpriteTexture::toNative(value.texture);
+		scripttexture = ScriptSpriteTexture::ToNative(value.texture);
 		if(scripttexture != nullptr)
-			tmptexture = scripttexture->getHandle();
+			tmptexture = scripttexture->GetHandle();
 		output.texture = tmptexture;
 		output.textColor = value.textColor;
 
 		return output;
 	}
 
-	__GUIElementStateStyleInterop ScriptGUIElementStateStyle::toInterop(const GUIElementStateStyle& value)
+	__GUIElementStateStyleInterop ScriptGUIElementStateStyle::ToInterop(const GUIElementStateStyle& value)
 	{
 		__GUIElementStateStyleInterop output;
 		ScriptResourceBase* scripttexture;
-		scripttexture = ScriptResourceManager::instance().getScriptResource(value.texture, true);
+		scripttexture = ScriptResourceManager::Instance().GetScriptResource(value.texture, true);
 		MonoObject* tmptexture;
 		if(scripttexture != nullptr)
-			tmptexture = scripttexture->getManagedInstance();
+			tmptexture = scripttexture->GetManagedInstance();
 		else
 			tmptexture = nullptr;
 		output.texture = tmptexture;

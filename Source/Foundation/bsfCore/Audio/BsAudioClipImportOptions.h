@@ -41,15 +41,15 @@ namespace bs
 
 		/** Creates a new import options object that allows you to customize how are audio clips imported. */
 		BS_SCRIPT_EXPORT(ec:T)
-		static SPtr<AudioClipImportOptions> create();
+		static SPtr<AudioClipImportOptions> Create();
 
 		/************************************************************************/
 		/* 								SERIALIZATION                      		*/
 		/************************************************************************/
 	public:
 		friend class AudioClipImportOptionsRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const ;
 	};
 
 	/** @} */

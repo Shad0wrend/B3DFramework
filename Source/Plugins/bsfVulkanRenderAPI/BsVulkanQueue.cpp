@@ -13,32 +13,32 @@ namespace bs { namespace ct
 			mSubmitDstWaitMask[i] = VK_PIPELINE_STAGE_ALL_COMMANDS_BIT;
 	}
 
-	bool VulkanQueue::isExecuting() const
+	bool VulkanQueue::IsExecuting() const
 	{
 		if (mLastCommandBuffer == nullptr)
 			return false;
 
-		return mLastCommandBuffer->isSubmitted();
+		return mLastCommandBuffer->IsSubmitted();
 	}
 
-	void VulkanQueue::submit(VulkanCmdBuffer* cmdBuffer, VulkanSemaphore** waitSemaphores, UINT32 semaphoresCount)
+	void VulkanQueue::Submit(VulkanCmdBuffer* cmdBuffer, VulkanSemaphore** waitSemaphores, UINT32 semaphoresCount)
 	{
 		VkSemaphore signalSemaphores[BS_MAX_VULKAN_CB_DEPENDENCIES + 1];
-		cmdBuffer->allocateSemaphores(signalSemaphores);
+		cmdBuffer->AllocateSemaphores(signalSemaphores);
 
-		VkCommandBuffer vkCmdBuffer = cmdBuffer->getHandle();
+		VkCommandBuffer vkCmdBuffer = cmdBuffer->GetHandle();
 
 		mSemaphoresTemp.resize(semaphoresCount + 1); // +1 for self semaphore
-		prepareSemaphores(waitSemaphores, mSemaphoresTemp.data(), semaphoresCount);
+		PrepareSemaphores(waitSemaphores, mSemaphoresTemp.data(), semaphoresCount);
 		
 		VkSubmitInfo submitInfo;
-		getSubmitInfo(&vkCmdBuffer, signalSemaphores, BS_MAX_VULKAN_CB_DEPENDENCIES + 1,
+		GetSubmitInfo(&vkCmdBuffer, signalSemaphores, BS_MAX_VULKAN_CB_DEPENDENCIES + 1,
 					  mSemaphoresTemp.data(), semaphoresCount, submitInfo);
 
-		VkResult result = vkQueueSubmit(mQueue, 1, &submitInfo, cmdBuffer->getFence());
+		VkResult result = vkQueueSubmit(mQueue, 1, &submitInfo, cmdBuffer->GetFence());
 		assert(result == VK_SUCCESS);
 
-		cmdBuffer->setIsSubmitted();
+		cmdBuffer->SetIsSubmitted();
 		mLastCommandBuffer = cmdBuffer;
 		mLastCBSemaphoreUsed = false;
 
@@ -46,7 +46,7 @@ namespace bs { namespace ct
 		mActiveBuffers.push(cmdBuffer);
 	}
 
-	void VulkanQueue::queueSubmit(VulkanCmdBuffer* cmdBuffer, VulkanSemaphore** waitSemaphores, UINT32 semaphoresCount)
+	void VulkanQueue::QueueSubmit(VulkanCmdBuffer* cmdBuffer, VulkanSemaphore** waitSemaphores, UINT32 semaphoresCount)
 	{
 		mQueuedBuffers.push_back(SubmitInfo(cmdBuffer, 0, semaphoresCount, 1));
 
@@ -54,7 +54,7 @@ namespace bs { namespace ct
 			mQueuedSemaphores.push_back(waitSemaphores[i]);
 	}
 
-	void VulkanQueue::submitQueued()
+	void VulkanQueue::SubmitQueued()
 	{
 		UINT32 numCBs = (UINT32)mQueuedBuffers.size();
 		if (numCBs == 0)
@@ -86,16 +86,16 @@ namespace bs { namespace ct
 		{
 			const SubmitInfo& entry = mQueuedBuffers[i];
 
-			commandBuffers[i] = entry.cmdBuffer->getHandle();
-			entry.cmdBuffer->allocateSemaphores(&signalSemaphores[signalSemaphoreIdx]);
+			commandBuffers[i] = entry.cmdBuffer->GetHandle();
+			entry.cmdBuffer->AllocateSemaphores(&signalSemaphores[signalSemaphoreIdx]);
 
 			UINT32 semaphoresCount = entry.numSemaphores;
-			prepareSemaphores(mQueuedSemaphores.data() + readSemaphoreIdx, &waitSemaphores[writeSemaphoreIdx], semaphoresCount);
+			PrepareSemaphores(mQueuedSemaphores.data() + readSemaphoreIdx, &waitSemaphores[writeSemaphoreIdx], semaphoresCount);
 
-			getSubmitInfo(&commandBuffers[i], &signalSemaphores[signalSemaphoreIdx], signalSemaphoresPerCB,
+			GetSubmitInfo(&commandBuffers[i], &signalSemaphores[signalSemaphoreIdx], signalSemaphoresPerCB,
 						  &waitSemaphores[writeSemaphoreIdx], semaphoresCount, submitInfos[i]);
 
-			entry.cmdBuffer->setIsSubmitted();
+			entry.cmdBuffer->SetIsSubmitted();
 			mLastCommandBuffer = entry.cmdBuffer; // Needs to be set because getSubmitInfo depends on it
 			mLastCBSemaphoreUsed = false;
 
@@ -110,7 +110,7 @@ namespace bs { namespace ct
 		UINT32 totalNumSemaphores = writeSemaphoreIdx;
 		mActiveSubmissions.push_back(SubmitInfo(lastCB, mNextSubmitIdx++, totalNumSemaphores, numCBs));
 
-		VkResult result = vkQueueSubmit(mQueue, numCBs, submitInfos, mLastCommandBuffer->getFence());
+		VkResult result = vkQueueSubmit(mQueue, numCBs, submitInfos, mLastCommandBuffer->GetFence());
 		assert(result == VK_SUCCESS);
 
 		mQueuedBuffers.clear();
@@ -119,7 +119,7 @@ namespace bs { namespace ct
 		bs_stack_free(data);
 	}
 
-	void VulkanQueue::getSubmitInfo(VkCommandBuffer* cmdBuffer, VkSemaphore* signalSemaphores, UINT32 numSignalSemaphores,
+	void VulkanQueue::GetSubmitInfo(VkCommandBuffer* cmdBuffer, VkSemaphore* signalSemaphores, UINT32 numSignalSemaphores,
 									VkSemaphore* waitSemaphores, UINT32 numWaitSemaphores, VkSubmitInfo& submitInfo)
 	{
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -142,16 +142,16 @@ namespace bs { namespace ct
 		}
 	}
 
-	VkResult VulkanQueue::present(VulkanSwapChain* swapChain, VulkanSemaphore** waitSemaphores, UINT32 semaphoresCount)
+	VkResult VulkanQueue::Present(VulkanSwapChain* swapChain, VulkanSemaphore** waitSemaphores, UINT32 semaphoresCount)
 	{
 		UINT32 backBufferIdx;
-		if (!swapChain->prepareForPresent(backBufferIdx))
+		if (!swapChain->PrepareForPresent(backBufferIdx))
 			return VK_SUCCESS; // Nothing to present (back buffer wasn't even acquired)
 
 		mSemaphoresTemp.resize(semaphoresCount + 1); // +1 for self semaphore
-		prepareSemaphores(waitSemaphores, mSemaphoresTemp.data(), semaphoresCount);
+		PrepareSemaphores(waitSemaphores, mSemaphoresTemp.data(), semaphoresCount);
 
-		VkSwapchainKHR vkSwapChain = swapChain->getHandle();
+		VkSwapchainKHR vkSwapChain = swapChain->GetHandle();
 		VkPresentInfoKHR presentInfo;
 		presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 		presentInfo.pNext = nullptr;
@@ -179,13 +179,13 @@ namespace bs { namespace ct
 		return result;
 	}
 
-	void VulkanQueue::waitIdle() const
+	void VulkanQueue::WaitIdle() const
 	{
 		VkResult result = vkQueueWaitIdle(mQueue);
 		assert(result == VK_SUCCESS);
 	}
 
-	void VulkanQueue::refreshStates(bool forceWait, bool queueEmpty)
+	void VulkanQueue::RefreshStates(bool forceWait, bool queueEmpty)
 	{
 		UINT32 lastFinishedSubmission = 0;
 
@@ -199,7 +199,7 @@ namespace bs { namespace ct
 				continue;
 			}
 
-			if (!cmdBuffer->checkFenceStatus(forceWait))
+			if (!cmdBuffer->CheckFenceStatus(forceWait))
 			{
 				assert(!forceWait);
 				break; // No chance of any later CBs of being done either
@@ -241,29 +241,29 @@ namespace bs { namespace ct
 		}
 	}
 
-	void VulkanQueue::prepareSemaphores(VulkanSemaphore** inSemaphores, VkSemaphore* outSemaphores, UINT32& semaphoresCount)
+	void VulkanQueue::PrepareSemaphores(VulkanSemaphore** inSemaphores, VkSemaphore* outSemaphores, UINT32& semaphoresCount)
 	{
 		UINT32 semaphoreIdx = 0;
 		for (UINT32 i = 0; i < semaphoresCount; i++)
 		{
 			VulkanSemaphore* semaphore = inSemaphores[i];
 
-			semaphore->notifyBound();
-			semaphore->notifyUsed(0, 0, VulkanAccessFlag::Read | VulkanAccessFlag::Write);
+			semaphore->NotifyBound();
+			semaphore->NotifyUsed(0, 0, VulkanAccessFlag::Read | VulkanAccessFlag::Write);
 
-			outSemaphores[semaphoreIdx++] = semaphore->getHandle();
+			outSemaphores[semaphoreIdx++] = semaphore->GetHandle();
 			mActiveSemaphores.push(semaphore);
 		}
 
 		// Wait on previous CB, as we want execution to proceed in order
-		if (mLastCommandBuffer != nullptr && mLastCommandBuffer->isSubmitted() && !mLastCBSemaphoreUsed)
+		if (mLastCommandBuffer != nullptr && mLastCommandBuffer->IsSubmitted() && !mLastCBSemaphoreUsed)
 		{
-			VulkanSemaphore* prevSemaphore = mLastCommandBuffer->getIntraQueueSemaphore();
+			VulkanSemaphore* prevSemaphore = mLastCommandBuffer->GetIntraQueueSemaphore();
 
-			prevSemaphore->notifyBound();
-			prevSemaphore->notifyUsed(0, 0, VulkanAccessFlag::Read | VulkanAccessFlag::Write);
+			prevSemaphore->NotifyBound();
+			prevSemaphore->NotifyUsed(0, 0, VulkanAccessFlag::Read | VulkanAccessFlag::Write);
 
-			outSemaphores[semaphoreIdx++] = prevSemaphore->getHandle();
+			outSemaphores[semaphoreIdx++] = prevSemaphore->GetHandle();
 			mActiveSemaphores.push(prevSemaphore);
 
 			// This will prevent command buffers submitted after present() to use the same semaphore. This also means that

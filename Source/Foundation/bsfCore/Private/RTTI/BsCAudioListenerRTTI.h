@@ -20,20 +20,20 @@ namespace bs
 			BS_RTTI_MEMBER_REFLPTR(mInternal, 0)
 		BS_END_RTTI_MEMBERS
 	public:
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "CAudioListener";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_CAudioListener;
 		}
 
 		SPtr<IReflectable> newRTTIObject() override
 		{
-			return SceneObject::createEmptyComponent<CAudioListener>();
+			return SceneObject::CreateEmptyComponent<CAudioListener>();
 		}
 	};
 

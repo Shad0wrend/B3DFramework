@@ -20,12 +20,12 @@ namespace bs
 		setName("MeshCollider");
 	}
 
-	void CMeshCollider::setMesh(const HPhysicsMesh& mesh)
+	void CMeshCollider::SetMesh(const HPhysicsMesh& mesh)
 	{
 		if (mMesh == mesh)
 			return;
 
-		if(getIsTrigger() && mesh->getType() == PhysicsMeshType::Triangle)
+		if(getIsTrigger() && mesh->GetType() == PhysicsMeshType::Triangle)
 		{
 			BS_LOG(Warning, Physics, "Triangle meshes are not supported on Trigger colliders.");
 			return;
@@ -35,13 +35,13 @@ namespace bs
 
 		if (mInternal != nullptr)
 		{
-			GetInternalInternal()->setMesh(mesh);
+			GetInternalInternal()->SetMesh(mesh);
 
 			if (mParent != nullptr)
 			{
 				// If triangle mesh its possible the parent can no longer use this collider (they're not supported for
 				// non-kinematic rigidbodies)
-				if (mMesh.isLoaded() && mMesh->getType() == PhysicsMeshType::Triangle)
+				if (mMesh.isLoaded() && mMesh->GetType() == PhysicsMeshType::Triangle)
 					updateParentRigidbody();
 				else
 					mParent->UpdateMassDistributionInternal();
@@ -49,12 +49,12 @@ namespace bs
 		}
 	}
 
-	SPtr<Collider> CMeshCollider::createInternal()
+	SPtr<Collider> CMeshCollider::CreateInternal()
 	{
 		const SPtr<SceneInstance>& scene = SO()->getScene();
 		const Transform& tfrm = SO()->getTransform();
 
-		SPtr<MeshCollider> collider = MeshCollider::create(*scene->getPhysicsScene(), tfrm.getPosition(),
+		SPtr<MeshCollider> collider = MeshCollider::Create(*scene->getPhysicsScene(), tfrm.getPosition(),
 			tfrm.getRotation());
 		collider->setMesh(mMesh);
 		collider->SetOwnerInternal(PhysicsOwnerType::Component, this);
@@ -62,19 +62,19 @@ namespace bs
 		return collider;
 	}
 
-	bool CMeshCollider::isValidParent(const HRigidbody& parent) const
+	bool CMeshCollider::IsValidParent(const HRigidbody& parent) const
 	{
 		// Triangle mesh colliders cannot be used for non-kinematic rigidbodies
-		return !mMesh.isLoaded() || mMesh->getType() == PhysicsMeshType::Convex || parent->getIsKinematic();
+		return !mMesh.isLoaded() || mMesh->GetType() == PhysicsMeshType::Convex || parent->getIsKinematic();
 	}
 
-	RTTITypeBase* CMeshCollider::getRTTIStatic()
+	RTTITypeBase* CMeshCollider::GetRttiStatic()
 	{
-		return CMeshColliderRTTI::instance();
+		return CMeshColliderRTTI::Instance();
 	}
 
-	RTTITypeBase* CMeshCollider::getRTTI() const
+	RTTITypeBase* CMeshCollider::GetRtti() const
 	{
-		return CMeshCollider::getRTTIStatic();
+		return CMeshCollider::GetRttiStatic();
 	}
 }

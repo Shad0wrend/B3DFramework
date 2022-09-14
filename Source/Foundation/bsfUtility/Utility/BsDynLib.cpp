@@ -20,15 +20,15 @@ namespace bs
 	DynLib::DynLib(String name)
 		:mName(std::move(name))
 	{
-		load();
+		Load();
 	}
 
 	DynLib::~DynLib()
 	{
-		unload();
+		Unload();
 	}
 
-	void DynLib::load()
+	void DynLib::Load()
 	{
 		if (mHandle)
 			return;
@@ -38,11 +38,11 @@ namespace bs
 		if (!mHandle)
 		{
 			BS_EXCEPT(InternalErrorException,
-				"Could not load dynamic library " + mName + ".  System Error: " + dynlibError());
+				"Could not load dynamic library " + mName + ".  System Error: " + DynlibError());
 		}
 	}
 
-	void DynLib::unload()
+	void DynLib::Unload()
 	{
 		if (!mHandle)
 			return;
@@ -50,13 +50,13 @@ namespace bs
 		if (DYNLIB_UNLOAD(mHandle))
 		{
 			BS_EXCEPT(InternalErrorException,
-				"Could not unload dynamic library " + mName + ".  System Error: " + dynlibError());
+				"Could not unload dynamic library " + mName + ".  System Error: " + DynlibError());
 		}
 
 		mHandle = nullptr;
 	}
 
-	void* DynLib::getSymbol(const String& strName) const
+	void* DynLib::GetSymbol(const String& strName) const
 	{
 		if (!mHandle)
 			return nullptr;
@@ -64,7 +64,7 @@ namespace bs
 		return (void*)DYNLIB_GETSYM(mHandle, strName.c_str());
 	}
 
-	String DynLib::dynlibError()
+	String DynLib::DynlibError()
 	{
 #if BS_PLATFORM == BS_PLATFORM_WIN32
 		LPVOID lpMsgBuf;

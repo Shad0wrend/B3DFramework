@@ -24,7 +24,7 @@ namespace bs
 		setFlag(ComponentFlag::AlwaysRun, true);
 	}
 
-	void CRenderable::setMesh(HMesh mesh)
+	void CRenderable::SetMesh(HMesh mesh)
 	{
 		mInternal->setMesh(mesh);
 
@@ -32,14 +32,14 @@ namespace bs
 			mAnimation->UpdateBoundsInternal(false);
 	}
 
-	void CRenderable::onInitialized()
+	void CRenderable::OnInitialized()
 	{
 		// If mInternal already exists this means this object was deserialized,
 		// so all we need to do is initialize it.
 		if (mInternal != nullptr)
 			mInternal->initialize();
 		else
-			mInternal = Renderable::create();
+			mInternal = Renderable::Create();
 
 		gSceneManager().BindActorInternal(mInternal, sceneObject());
 
@@ -51,13 +51,13 @@ namespace bs
 		}
 	}
 
-	Bounds CRenderable::getBounds() const
+	Bounds CRenderable::GetBounds() const
 	{
 		mInternal->UpdateStateInternal(*SO());
 		return mInternal->getBounds();
 	}
 
-	bool CRenderable::calculateBounds(Bounds& bounds)
+	bool CRenderable::CalculateBounds(Bounds& bounds)
 	{
 		bounds = getBounds();
 
@@ -92,12 +92,12 @@ namespace bs
 		}
 	}
 
-	void CRenderable::update()
+	void CRenderable::Update()
 	{
 
 	}
 
-	void CRenderable::onDestroyed()
+	void CRenderable::OnDestroyed()
 	{
 		if (mAnimation != nullptr)
 			mAnimation->UnregisterRenderableInternal();
@@ -106,13 +106,13 @@ namespace bs
 		mInternal->destroy();
 	}
 
-	RTTITypeBase* CRenderable::getRTTIStatic()
+	RTTITypeBase* CRenderable::GetRttiStatic()
 	{
-		return CRenderableRTTI::instance();
+		return CRenderableRTTI::Instance();
 	}
 
-	RTTITypeBase* CRenderable::getRTTI() const
+	RTTITypeBase* CRenderable::GetRtti() const
 	{
-		return CRenderable::getRTTIStatic();
+		return CRenderable::GetRttiStatic();
 	}
 }

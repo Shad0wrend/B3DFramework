@@ -21,7 +21,7 @@ namespace bs
 		 *
 		 * @param[in]	so	Object to revert.
 		 */
-		static void revertToPrefab(const HSceneObject& so);
+		static void RevertToPrefab(const HSceneObject& so);
 
 		/**
 		 * Updates all of the objects belonging to the same prefab instance as the provided object (if any). The update
@@ -29,7 +29,7 @@ namespace bs
 		 *
 		 * @param[in]	so	Object to update.
 		 */
-		static void updateFromPrefab(const HSceneObject& so);
+		static void UpdateFromPrefab(const HSceneObject& so);
 
 		/**
 		 * Generates prefab "link" ID that can be used for tracking which game object in a prefab instance corresponds to
@@ -37,7 +37,7 @@ namespace bs
 		 *
 		 * @note	If any children of the provided object belong to another prefab they will not have IDs generated.
 		 */
-		static void generatePrefabIds(const HSceneObject& sceneObject);
+		static void GeneratePrefabIds(const HSceneObject& sceneObject);
 
 		/**
 		 * Clears all prefab "link" IDs in the provided object and its children.
@@ -50,7 +50,7 @@ namespace bs
 		 *
 		 * @note	If any of its children belong to another prefab they will not be cleared.
 		 */
-		static void clearPrefabIds(const HSceneObject& sceneObject, bool recursive = true, bool clearRoot = true);
+		static void ClearPrefabIds(const HSceneObject& sceneObject, bool recursive = true, bool clearRoot = true);
 
 		/**
 		 * Updates the internal prefab diff data by recording the difference between the current values in the provided
@@ -59,7 +59,7 @@ namespace bs
 		 * @note	
 		 * If the provided object contains any child prefab instances, this will be done recursively for them as well.
 		 */
-		static void recordPrefabDiff(const HSceneObject& sceneObject);
+		static void RecordPrefabDiff(const HSceneObject& sceneObject);
 	};
 
 	/** @} */

@@ -25,20 +25,20 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 	public:
 		/** @copydoc RTTIType::getRTTIName */
-		const String& getRTTIName() override
+		const String& GetRttiName() 
 		{
 			static String name = "AudioClipImportOptions";
 			return name;
 		}
 
 		/** @copydoc RTTIType::getRTTIId */
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() 
 		{
 			return TID_AudioClipImportOptions;
 		}
 
 		/** @copydoc RTTIType::newRTTIObject */
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return bs_shared_ptr_new<AudioClipImportOptions>();
 		}

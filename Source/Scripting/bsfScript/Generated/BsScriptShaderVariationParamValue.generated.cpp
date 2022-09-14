@@ -14,32 +14,32 @@ namespace bs
 	void ScriptShaderVariationParamValue::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptShaderVariationParamValue::box(const __ShaderVariationParamValueInterop& value)
+	MonoObject*ScriptShaderVariationParamValue::Box(const __ShaderVariationParamValueInterop& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	__ShaderVariationParamValueInterop ScriptShaderVariationParamValue::unbox(MonoObject* value)
+	__ShaderVariationParamValueInterop ScriptShaderVariationParamValue::Unbox(MonoObject* value)
 	{
-		return *(__ShaderVariationParamValueInterop*)MonoUtil::unbox(value);
+		return *(__ShaderVariationParamValueInterop*)MonoUtil::Unbox(value);
 	}
 
-	ShaderVariationParamValue ScriptShaderVariationParamValue::fromInterop(const __ShaderVariationParamValueInterop& value)
+	ShaderVariationParamValue ScriptShaderVariationParamValue::FromInterop(const __ShaderVariationParamValueInterop& value)
 	{
 		ShaderVariationParamValue output;
 		String tmpname;
-		tmpname = MonoUtil::monoToString(value.name);
+		tmpname = MonoUtil::MonoToString(value.name);
 		output.name = tmpname;
 		output.value = value.value;
 
 		return output;
 	}
 
-	__ShaderVariationParamValueInterop ScriptShaderVariationParamValue::toInterop(const ShaderVariationParamValue& value)
+	__ShaderVariationParamValueInterop ScriptShaderVariationParamValue::ToInterop(const ShaderVariationParamValue& value)
 	{
 		__ShaderVariationParamValueInterop output;
 		MonoString* tmpname;
-		tmpname = MonoUtil::stringToMono(value.name);
+		tmpname = MonoUtil::StringToMono(value.name);
 		output.name = tmpname;
 		output.value = value.value;
 

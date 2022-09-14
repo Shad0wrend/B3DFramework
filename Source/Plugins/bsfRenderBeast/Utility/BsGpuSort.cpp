@@ -99,7 +99,7 @@ namespace bs { namespace ct
 		desc.usage = GBU_LOADSTORE;
 		desc.type = GBT_STANDARD;
 
-		return GpuBuffer::create(desc);
+		return GpuBuffer::Create(desc);
 	}
 
 	RadixSortClearMat::RadixSortClearMat()
@@ -112,14 +112,14 @@ namespace bs { namespace ct
 		initCommonDefines(defines);
 	}
 
-	void RadixSortClearMat::execute(const SPtr<GpuBuffer>& outputOffsets)
+	void RadixSortClearMat::Execute(const SPtr<GpuBuffer>& outputOffsets)
 	{
 		BS_RENMAT_PROFILE_BLOCK
 
 		mOutputParam.set(outputOffsets);
 
 		bind();
-		RenderAPI::instance().dispatchCompute(1);
+		RenderAPI::Instance().dispatchCompute(1);
 	}
 
 	RadixSortCountMat::RadixSortCountMat()
@@ -133,7 +133,7 @@ namespace bs { namespace ct
 		initCommonDefines(defines);
 	}
 
-	void RadixSortCountMat::execute(UINT32 numGroups, const SPtr<GpuParamBlockBuffer>& params,
+	void RadixSortCountMat::Execute(UINT32 numGroups, const SPtr<GpuParamBlockBuffer>& params,
 		const SPtr<GpuBuffer>& inputKeys, const SPtr<GpuBuffer>& outputOffsets)
 	{
 		BS_RENMAT_PROFILE_BLOCK
@@ -144,7 +144,7 @@ namespace bs { namespace ct
 		mParams->setParamBlockBuffer("Params", params);
 
 		bind();
-		RenderAPI::instance().dispatchCompute(numGroups);
+		RenderAPI::Instance().dispatchCompute(numGroups);
 	}
 
 	RadixSortPrefixScanMat::RadixSortPrefixScanMat()
@@ -158,7 +158,7 @@ namespace bs { namespace ct
 		initCommonDefines(defines);
 	}
 
-	void RadixSortPrefixScanMat::execute(const SPtr<GpuParamBlockBuffer>& params, const SPtr<GpuBuffer>& inputCounts,
+	void RadixSortPrefixScanMat::Execute(const SPtr<GpuParamBlockBuffer>& params, const SPtr<GpuBuffer>& inputCounts,
 		const SPtr<GpuBuffer>& outputOffsets)
 	{
 		BS_RENMAT_PROFILE_BLOCK
@@ -169,7 +169,7 @@ namespace bs { namespace ct
 		mParams->setParamBlockBuffer("Params", params);
 
 		bind();
-		RenderAPI::instance().dispatchCompute(1);
+		RenderAPI::Instance().dispatchCompute(1);
 	}
 
 	RadixSortReorderMat::RadixSortReorderMat()
@@ -186,7 +186,7 @@ namespace bs { namespace ct
 		initCommonDefines(defines);
 	}
 
-	void RadixSortReorderMat::execute(UINT32 numGroups, const SPtr<GpuParamBlockBuffer>& params,
+	void RadixSortReorderMat::Execute(UINT32 numGroups, const SPtr<GpuParamBlockBuffer>& params,
 		const SPtr<GpuBuffer>& inputPrefix, const GpuSortBuffers& buffers, UINT32 inputBufferIdx)
 	{
 		BS_RENMAT_PROFILE_BLOCK
@@ -202,7 +202,7 @@ namespace bs { namespace ct
 		mParams->setParamBlockBuffer("Params", params);
 
 		bind();
-		RenderAPI::instance().dispatchCompute(numGroups);
+		RenderAPI::Instance().dispatchCompute(numGroups);
 	}
 
 	GpuSort::GpuSort()
@@ -211,7 +211,7 @@ namespace bs { namespace ct
 		mHelperBuffers[1] = createHelperBuffer();
 	}
 
-	UINT32 GpuSort::sort(const GpuSortBuffers& buffers, UINT32 numKeys, UINT32 keyMask)
+	UINT32 GpuSort::Sort(const GpuSortBuffers& buffers, UINT32 numKeys, UINT32 keyMask)
 	{
 		// Nothing to do if no input or output key buffers
 		if(buffers.keys[0] == nullptr || buffers.keys[1] == nullptr)
@@ -277,7 +277,7 @@ namespace bs { namespace ct
 		return inputBufferIdx;
 	}
 
-	GpuSortBuffers GpuSort::createSortBuffers(UINT32 numElements, bool values)
+	GpuSortBuffers GpuSort::CreateSortBuffers(UINT32 numElements, bool values)
 	{
 		GpuSortBuffers output;
 
@@ -287,13 +287,13 @@ namespace bs { namespace ct
 		bufferDesc.type = GBT_STANDARD;
 		bufferDesc.usage = GBU_LOADSTORE;
 
-		output.keys[0] = GpuBuffer::create(bufferDesc);
-		output.keys[1] = GpuBuffer::create(bufferDesc);
+		output.keys[0] = GpuBuffer::Create(bufferDesc);
+		output.keys[1] = GpuBuffer::Create(bufferDesc);
 
 		if(values)
 		{
-			output.values[0] = GpuBuffer::create(bufferDesc);
-			output.values[1] = GpuBuffer::create(bufferDesc);
+			output.values[0] = GpuBuffer::Create(bufferDesc);
+			output.values[1] = GpuBuffer::Create(bufferDesc);
 		}
 
 		return output;
@@ -455,7 +455,7 @@ namespace bs { namespace ct
 		// PARALLEL:
 		RadixSortClearMat::get()->execute(helperBuffers[0]);
 		RadixSortCountMat::get()->execute(gpuSortProps.numGroups, params, sortBuffers.keys[0], helperBuffers[0]);
-		RenderAPI::instance().submitCommandBuffer(nullptr);
+		RenderAPI::Instance().submitCommandBuffer(nullptr);
 
 		// Compare with GPU count
 		const UINT32 helperBufferLength = helperBuffers[0]->getProperties().getElementCount();
@@ -552,7 +552,7 @@ namespace bs { namespace ct
 
 		// PARALLEL:
 		RadixSortPrefixScanMat::get()->execute(params, helperBuffers[0], helperBuffers[1]);
-		RenderAPI::instance().submitCommandBuffer(nullptr);
+		RenderAPI::Instance().submitCommandBuffer(nullptr);
 
 		// Compare with GPU offsets
 		Vector<UINT32> bufferOffsets(helperBufferLength);
@@ -783,7 +783,7 @@ namespace bs { namespace ct
 
 		// PARALLEL:
 		RadixSortReorderMat::get()->execute(gpuSortProps.numGroups, params, helperBuffers[1], sortBuffers, 0);
-		RenderAPI::instance().submitCommandBuffer(nullptr);
+		RenderAPI::Instance().submitCommandBuffer(nullptr);
 
 		// Compare with GPU keys
 		Vector<UINT32> bufferSortedKeys(count);

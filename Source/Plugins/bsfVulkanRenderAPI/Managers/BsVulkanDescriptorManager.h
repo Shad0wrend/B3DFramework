@@ -30,7 +30,7 @@ namespace bs { namespace ct
 		bool operator==(const VulkanPipelineLayoutKey& rhs) const;
 
 		/** Calculates a has value for the provided descriptor layouts. */
-		size_t calculateHash() const;
+		size_t CalculateHash() const;
 
 		UINT32 numLayouts;
 		VulkanDescriptorLayout** layouts;
@@ -51,9 +51,9 @@ namespace std
 		size_t operator()(const bs::ct::VulkanLayoutKey& value) const
 		{
 			if (value.layout != nullptr)
-				return value.layout->getHash();
+				return value.layout->GetHash();
 
-			return bs::ct::VulkanDescriptorLayout::calculateHash(value.bindings, value.numBindings);
+			return bs::ct::VulkanDescriptorLayout::CalculateHash(value.bindings, value.numBindings);
 		}
 	};
 
@@ -63,7 +63,7 @@ namespace std
 	{
 		size_t operator()(const bs::ct::VulkanPipelineLayoutKey& value) const
 		{
-			return value.calculateHash();
+			return value.CalculateHash();
 		}
 	};
 }
@@ -85,13 +85,13 @@ namespace bs { namespace ct
 		~VulkanDescriptorManager();
 
 		/** Attempts to find an existing one, or allocates a new descriptor set layout from the provided set of bindings. */
-		VulkanDescriptorLayout* getLayout(VkDescriptorSetLayoutBinding* bindings, UINT32 numBindings);
+		VulkanDescriptorLayout* GetLayout(VkDescriptorSetLayoutBinding* bindings, UINT32 numBindings);
 
 		/** Allocates a new empty descriptor set matching the provided layout. */
-		VulkanDescriptorSet* createSet(VulkanDescriptorLayout* layout);
+		VulkanDescriptorSet* CreateSet(VulkanDescriptorLayout* layout);
 
 		/** Attempts to find an existing one, or allocates a new pipeline layout based on the provided descriptor layouts. */
-		VkPipelineLayout getPipelineLayout(VulkanDescriptorLayout** layouts, UINT32 numLayouts);
+		VkPipelineLayout GetPipelineLayout(VulkanDescriptorLayout** layouts, UINT32 numLayouts);
 
 	protected:
 		VulkanDevice& mDevice;

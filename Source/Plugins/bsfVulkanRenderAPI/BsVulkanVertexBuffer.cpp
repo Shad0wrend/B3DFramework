@@ -15,16 +15,16 @@ namespace bs { namespace ct
 		:VertexBuffer(desc, deviceMask), mDeviceMask(deviceMask)
 	{ }
 
-	void VulkanVertexBuffer::initialize()
+	void VulkanVertexBuffer::Initialize()
 	{
 		mBuffer = bs_pool_new<VulkanHardwareBuffer>(VulkanHardwareBuffer::BT_VERTEX, BF_UNKNOWN, mUsage, mSize, mDeviceMask);
 		mBufferDeleter = &deleteBuffer;
 
-		VertexBuffer::initialize();
+		VertexBuffer::Initialize();
 	}
 
-	VulkanBuffer* VulkanVertexBuffer::getResource(UINT32 deviceIdx) const
+	VulkanBuffer* VulkanVertexBuffer::GetResource(UINT32 deviceIdx) const
 	{
-		return static_cast<VulkanHardwareBuffer*>(mBuffer)->getResource(deviceIdx);
+		return static_cast<VulkanHardwareBuffer*>(mBuffer)->GetResource(deviceIdx);
 	}
 }}

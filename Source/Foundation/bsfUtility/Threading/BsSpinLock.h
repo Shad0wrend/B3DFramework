@@ -26,14 +26,14 @@ namespace bs
 		}
 
 		/** Lock any following operations with the spin lock, not allowing any other thread to access them. */
-		void lock()
+		void Lock()
 		{
 			while(mLock.test_and_set(std::memory_order_acquire))
 			{ }
 		}
 
 		/**	Release the lock and allow other threads to acquire the lock. */
-		void unlock()
+		void Unlock()
 		{
 			mLock.clear(std::memory_order_release);
 		}
@@ -52,12 +52,12 @@ namespace bs
 		ScopedSpinLock(SpinLock& spinLock)
 			:mSpinLock(spinLock)
 		{
-			mSpinLock.lock();
+			mSpinLock.Lock();
 		}
 
 		~ScopedSpinLock()
 		{
-			mSpinLock.unlock();
+			mSpinLock.Unlock();
 		}
 
 	private:

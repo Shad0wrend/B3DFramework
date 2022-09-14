@@ -15,12 +15,12 @@ namespace bs
 	{
 		PxCapsuleGeometry geometry(radius, halfHeight);
 
-		PxShape* shape = physx->createShape(geometry, *gPhysX().getDefaultMaterial(), true);
+		PxShape* shape = physx->createShape(geometry, *gPhysX().GetDefaultMaterial(), true);
 		shape->setLocalPose(toPxTransform(position, rotation));
 		shape->userData = this;
 
 		mInternal = bs_new<FPhysXCollider>(scene, shape);
-		applyGeometry();
+		ApplyGeometry();
 	}
 
 	PhysXCapsuleCollider::~PhysXCapsuleCollider()
@@ -28,43 +28,43 @@ namespace bs
 		bs_delete(mInternal);
 	}
 
-	void PhysXCapsuleCollider::setScale(const Vector3& scale)
+	void PhysXCapsuleCollider::SetScale(const Vector3& scale)
 	{
 		CapsuleCollider::setScale(scale);
-		applyGeometry();
+		ApplyGeometry();
 	}
 
-	void PhysXCapsuleCollider::setHalfHeight(float halfHeight)
+	void PhysXCapsuleCollider::SetHalfHeight(float halfHeight)
 	{
 		mHalfHeight = halfHeight;
-		applyGeometry();
+		ApplyGeometry();
 	}
 
-	float PhysXCapsuleCollider::getHalfHeight() const
+	float PhysXCapsuleCollider::GetHalfHeight() const
 	{
 		return mHalfHeight;
 	}
 
-	void PhysXCapsuleCollider::setRadius(float radius)
+	void PhysXCapsuleCollider::SetRadius(float radius)
 	{
 		mRadius = radius;
-		applyGeometry();
+		ApplyGeometry();
 	}
 
-	float PhysXCapsuleCollider::getRadius() const
+	float PhysXCapsuleCollider::GetRadius() const
 	{
 		return mRadius;
 	}
 
-	void PhysXCapsuleCollider::applyGeometry()
+	void PhysXCapsuleCollider::ApplyGeometry()
 	{
 		PxCapsuleGeometry geometry(std::max(0.01f, mRadius * std::max(mScale.x, mScale.z)),
 			std::max(0.01f, mHalfHeight * mScale.y));
 
-		getInternal()->GetShapeInternal()->setGeometry(geometry);
+		GetInternal()->GetShapeInternal()->setGeometry(geometry);
 	}
 
-	FPhysXCollider* PhysXCapsuleCollider::getInternal() const
+	FPhysXCollider* PhysXCapsuleCollider::GetInternal() const
 	{
 		return static_cast<FPhysXCollider*>(mInternal);
 	}

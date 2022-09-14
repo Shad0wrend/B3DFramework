@@ -18,7 +18,7 @@ namespace bs
 	{
 		setFlag(ComponentFlag::AlwaysRun, true);
 
-		mInternal = GUIWidget::create(camera);
+		mInternal = GUIWidget::Create(camera);
 		mOwnerTargetResizedConn = mInternal->onOwnerTargetResized.connect(
 			std::bind(&CGUIWidget::ownerTargetResized, this));
 		mOwnerWindowFocusChangedConn = mInternal->onOwnerWindowFocusChanged.connect(
@@ -29,62 +29,62 @@ namespace bs
 		:CGUIWidget(parent, camera->GetCameraInternal())
 	{ }
 
-	void CGUIWidget::setSkin(const HGUISkin& skin)
+	void CGUIWidget::SetSkin(const HGUISkin& skin)
 	{
 		mInternal->setSkin(skin);
 	}
 
-	const GUISkin& CGUIWidget::getSkin() const
+	const GUISkin& CGUIWidget::GetSkin() const
 	{
 		return mInternal->getSkin();
 	}
 
-	const HGUISkin& CGUIWidget::getSkinResource() const
+	const HGUISkin& CGUIWidget::GetSkinResource() const
 	{
 		return mInternal->getSkinResource();
 	}
 
-	GUIPanel* CGUIWidget::getPanel() const
+	GUIPanel* CGUIWidget::GetPanel() const
 	{
 		return mInternal->getPanel();
 	}
 
-	UINT8 CGUIWidget::getDepth() const
+	UINT8 CGUIWidget::GetDepth() const
 	{
 		return mInternal->getDepth();
 	}
 
-	void CGUIWidget::setDepth(UINT8 depth)
+	void CGUIWidget::SetDepth(UINT8 depth)
 	{
 		mInternal->setDepth(depth);
 	}
 
-	bool CGUIWidget::inBounds(const Vector2I& position) const
+	bool CGUIWidget::InBounds(const Vector2I& position) const
 	{
 		return mInternal->inBounds(position);
 	}
 
-	const Rect2I& CGUIWidget::getBounds() const
+	const Rect2I& CGUIWidget::GetBounds() const
 	{
 		return mInternal->getBounds();
 	}
 
-	Viewport* CGUIWidget::getTarget() const
+	Viewport* CGUIWidget::GetTarget() const
 	{
 		return mInternal->getTarget();
 	}
 
-	SPtr<Camera> CGUIWidget::getCamera() const
+	SPtr<Camera> CGUIWidget::GetCamera() const
 	{
 		return mInternal->getCamera();
 	}
 
-	const Vector<GUIElement*>& CGUIWidget::getElements() const
+	const Vector<GUIElement*>& CGUIWidget::GetElements() const
 	{
 		return mInternal->getElements();
 	}
 
-	void CGUIWidget::update()
+	void CGUIWidget::Update()
 	{
 		HSceneObject parent = SO();
 
@@ -101,20 +101,20 @@ namespace bs
 		mInternal->UpdateRTInternal();
 	}
 
-	void CGUIWidget::onDestroyed()
+	void CGUIWidget::OnDestroyed()
 	{
 		mOwnerTargetResizedConn.disconnect();
 		mOwnerWindowFocusChangedConn.disconnect();
 		mInternal = nullptr;
 	}
 
-	RTTITypeBase* CGUIWidget::getRTTIStatic()
+	RTTITypeBase* CGUIWidget::GetRttiStatic()
 	{
-		return CGUIWidgetRTTI::instance();
+		return CGUIWidgetRTTI::Instance();
 	}
 
-	RTTITypeBase* CGUIWidget::getRTTI() const
+	RTTITypeBase* CGUIWidget::GetRtti() const
 	{
-		return CGUIWidget::getRTTIStatic();
+		return CGUIWidget::GetRttiStatic();
 	}
 }

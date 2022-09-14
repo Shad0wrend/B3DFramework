@@ -21,19 +21,19 @@ namespace bs
 		virtual ~ScriptComponentBase() = default;
 
 		/** Returns the component wrapped by this object. */
-		HComponent getComponent() const { return static_object_cast<Component>(getNativeHandle()); }
+		HComponent GetComponent() const { return static_object_cast<Component>(GetNativeHandle()); }
 
 	protected:
 		friend class ScriptGameObjectManager;
 
 		/** Destroys the interop object, unless refresh is in progress in which case it is just prepared for re-creation. */
-		void destroy(bool assemblyRefresh);
+		void Destroy(bool assemblyRefresh);
 
 		/**	Triggered by the script game object manager when the handle this object is referencing is destroyed. */
 		virtual void NotifyDestroyedInternal() { }
 
 		/** Checks if the provided game object is destroyed and logs a warning if it is. */
-		static bool checkIfDestroyed(const GameObjectHandleBase& handle);
+		static bool CheckIfDestroyed(const GameObjectHandleBase& handle);
 	};
 
 	/**	Base class for a specific builtin component's interop object. */
@@ -42,13 +42,13 @@ namespace bs
 	{
 	public:
 		/**	Returns a generic handle to the internal wrapped component. */
-		HGameObject getNativeHandle() const override { return static_object_cast<GameObject>(mComponent); }
+		HGameObject GetNativeHandle() const { return static_object_cast<GameObject>(mComponent); }
 
 		/**	Sets the internal component this object wraps. */
-		void setNativeHandle(const HGameObject& gameObject) override { mComponent = static_object_cast<CompType>(gameObject); }
+		void SetNativeHandle(const HGameObject& gameObject) { mComponent = static_object_cast<CompType>(gameObject); }
 
 		/**	Returns a handle to the internal wrapped component. */
-		const GameObjectHandle<CompType>& getHandle() const { return mComponent; }
+		const GameObjectHandle<CompType>& GetHandle() const { return mComponent; }
 
 	protected:
 		friend class ScriptGameObjectManager;
@@ -110,15 +110,15 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static MonoObject* internal_addComponent(MonoObject* parentSceneObject, MonoReflectionType* type);
-		static MonoObject* internal_getComponent(MonoObject* parentSceneObject, MonoReflectionType* type);
-		static MonoArray* internal_getComponents(MonoObject* parentSceneObject);
-		static MonoArray* internal_getComponentsPerType(MonoObject* parentSceneObject, MonoReflectionType* type);
-		static void internal_removeComponent(MonoObject* parentSceneObject, MonoReflectionType* type);
-		static MonoObject* internal_getSceneObject(ScriptComponentBase* nativeInstance);
-		static TransformChangedFlags internal_getNotifyFlags(ScriptComponentBase* nativeInstance);
-		static void internal_setNotifyFlags(ScriptComponentBase* nativeInstance, TransformChangedFlags flags);
-		static void internal_destroy(ScriptComponentBase* nativeInstance, bool immediate);
+		static MonoObject* InternalAddComponent(MonoObject* parentSceneObject, MonoReflectionType* type);
+		static MonoObject* InternalGetComponent(MonoObject* parentSceneObject, MonoReflectionType* type);
+		static MonoArray* InternalGetComponents(MonoObject* parentSceneObject);
+		static MonoArray* InternalGetComponentsPerType(MonoObject* parentSceneObject, MonoReflectionType* type);
+		static void InternalRemoveComponent(MonoObject* parentSceneObject, MonoReflectionType* type);
+		static MonoObject* InternalGetSceneObject(ScriptComponentBase* nativeInstance);
+		static TransformChangedFlags InternalGetNotifyFlags(ScriptComponentBase* nativeInstance);
+		static void InternalSetNotifyFlags(ScriptComponentBase* nativeInstance, TransformChangedFlags flags);
+		static void InternalDestroy(ScriptComponentBase* nativeInstance, bool immediate);
 	};
 
 	/** @} */

@@ -9,7 +9,7 @@
 
 namespace bs
 {
-	const String& GUIListBox::getGUITypeName()
+	const String& GUIListBox::GetGuiTypeName()
 	{
 		static String name = "ListBox";
 		return name;
@@ -30,22 +30,22 @@ namespace bs
 		closeListBox();
 	}
 
-	GUIListBox* GUIListBox::create(const Vector<HString>& elements, bool isMultiselect, const String& styleName)
+	GUIListBox* GUIListBox::Create(const Vector<HString>& elements, bool isMultiselect, const String& styleName)
 	{
-		return new (bs_alloc<GUIListBox>()) GUIListBox(getStyleName<GUIListBox>(styleName), elements, isMultiselect, GUIDimensions::create());
+		return new (bs_alloc<GUIListBox>()) GUIListBox(getStyleName<GUIListBox>(styleName), elements, isMultiselect, GUIDimensions::Create());
 	}
 
-	GUIListBox* GUIListBox::create(const Vector<HString>& elements, bool isMultiselect, const GUIOptions& options, const String& styleName)
+	GUIListBox* GUIListBox::Create(const Vector<HString>& elements, bool isMultiselect, const GUIOptions& options, const String& styleName)
 	{
-		return new (bs_alloc<GUIListBox>()) GUIListBox(getStyleName<GUIListBox>(styleName), elements, isMultiselect, GUIDimensions::create(options));
+		return new (bs_alloc<GUIListBox>()) GUIListBox(getStyleName<GUIListBox>(styleName), elements, isMultiselect, GUIDimensions::Create(options));
 	}
 
-	GUIListBox* GUIListBox::create(const Vector<HString>& elements, const GUIOptions& options, const String& styleName)
+	GUIListBox* GUIListBox::Create(const Vector<HString>& elements, const GUIOptions& options, const String& styleName)
 	{
-		return new (bs_alloc<GUIListBox>()) GUIListBox(getStyleName<GUIListBox>(styleName), elements, false, GUIDimensions::create(options));
+		return new (bs_alloc<GUIListBox>()) GUIListBox(getStyleName<GUIListBox>(styleName), elements, false, GUIDimensions::Create(options));
 	}
 
-	void GUIListBox::setElements(const Vector<HString>& elements)
+	void GUIListBox::SetElements(const Vector<HString>& elements)
 	{
 		bool wasOpen = mDropDownBox != nullptr;
 
@@ -65,7 +65,7 @@ namespace bs
 			openListBox();
 	}
 
-	void GUIListBox::selectElement(UINT32 idx)
+	void GUIListBox::SelectElement(UINT32 idx)
 	{
 		if (idx >= (UINT32)mElements.size())
 			return;
@@ -74,7 +74,7 @@ namespace bs
 			elementSelected(idx);
 	}
 
-	void GUIListBox::deselectElement(UINT32 idx)
+	void GUIListBox::DeselectElement(UINT32 idx)
 	{
 		if (!mIsMultiselect || idx >= (UINT32)mElements.size())
 			return;
@@ -83,7 +83,7 @@ namespace bs
 			elementSelected(idx);
 	}
 
-	void GUIListBox::setElementStates(const Vector<bool>& states)
+	void GUIListBox::SetElementStates(const Vector<bool>& states)
 	{
 		UINT32 numElements = (UINT32)mElementStates.size();
 		UINT32 min = std::min(numElements, (UINT32)states.size());
@@ -168,7 +168,7 @@ namespace bs
 		return processed;
 	}
 
-	void GUIListBox::elementSelected(UINT32 idx)
+	void GUIListBox::ElementSelected(UINT32 idx)
 	{
 		if (idx >= (UINT32)mElements.size())
 			return;
@@ -197,7 +197,7 @@ namespace bs
 		updateContents();
 	}
 
-	void GUIListBox::openListBox()
+	void GUIListBox::OpenListBox()
 	{
 		closeListBox();
 
@@ -225,24 +225,24 @@ namespace bs
 		else
 			type = GUIDropDownType::ListBox;
 
-		mDropDownBox = GUIDropDownBoxManager::instance().openDropDownBox(
+		mDropDownBox = GUIDropDownBoxManager::Instance().openDropDownBox(
 			desc, type, std::bind(&GUIListBox::onListBoxClosed, this));
 
 		SetOnInternal(true);
 	}
 
-	void GUIListBox::closeListBox()
+	void GUIListBox::CloseListBox()
 	{
 		if (mDropDownBox != nullptr)
 		{
-			GUIDropDownBoxManager::instance().closeDropDownBox();
+			GUIDropDownBoxManager::Instance().closeDropDownBox();
 
 			SetOnInternal(false);
 			mDropDownBox = nullptr;
 		}
 	}
 
-	void GUIListBox::updateContents()
+	void GUIListBox::UpdateContents()
 	{
 		UINT32 selectedIdx = 0;
 		UINT32 numSelected = 0;
@@ -273,7 +273,7 @@ namespace bs
 		}
 	}
 
-	void GUIListBox::onListBoxClosed()
+	void GUIListBox::OnListBoxClosed()
 	{
 		SetOnInternal(false);
 		mDropDownBox = nullptr;

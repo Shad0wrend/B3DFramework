@@ -22,10 +22,10 @@ namespace bs
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "ParticleRotationOptions")
 
-		static MonoObject* box(const __PARTICLE_ROTATION_DESCInterop& value);
-		static __PARTICLE_ROTATION_DESCInterop unbox(MonoObject* value);
-		static PARTICLE_ROTATION_DESC fromInterop(const __PARTICLE_ROTATION_DESCInterop& value);
-		static __PARTICLE_ROTATION_DESCInterop toInterop(const PARTICLE_ROTATION_DESC& value);
+		static MonoObject* Box(const __PARTICLE_ROTATION_DESCInterop& value);
+		static __PARTICLE_ROTATION_DESCInterop Unbox(MonoObject* value);
+		static PARTICLE_ROTATION_DESC FromInterop(const __PARTICLE_ROTATION_DESCInterop& value);
+		static __PARTICLE_ROTATION_DESCInterop ToInterop(const PARTICLE_ROTATION_DESC& value);
 
 	private:
 		ScriptPARTICLE_ROTATION_DESC(MonoObject* managedInstance);

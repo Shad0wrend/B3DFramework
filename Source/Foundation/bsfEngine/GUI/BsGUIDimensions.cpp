@@ -6,12 +6,12 @@
 
 namespace bs
 {
-	GUIDimensions GUIDimensions::create()
+	GUIDimensions GUIDimensions::Create()
 	{
 		return GUIDimensions();
 	}
 
-	GUIDimensions GUIDimensions::create(const GUIOptions& options)
+	GUIDimensions GUIDimensions::Create(const GUIOptions& options)
 	{
 		GUIDimensions dimensions;
 
@@ -49,9 +49,9 @@ namespace bs
 		return dimensions;
 	}
 
-	void GUIDimensions::updateWithStyle(const GUIElementStyle* style)
+	void GUIDimensions::UpdateWithStyle(const GUIElementStyle* style)
 	{
-		if(!overridenWidth())
+		if(!OverridenWidth())
 		{
 			if (style->fixedWidth)
 			{
@@ -66,7 +66,7 @@ namespace bs
 			}
 		}
 
-		if(!overridenHeight())
+		if(!OverridenHeight())
 		{
 			if (style->fixedHeight)
 			{
@@ -82,11 +82,11 @@ namespace bs
 		}
 	}
 
-	LayoutSizeRange GUIDimensions::calculateSizeRange(const Vector2I& optimal) const
+	LayoutSizeRange GUIDimensions::CalculateSizeRange(const Vector2I& optimal) const
 	{
 		LayoutSizeRange sizeRange;
 
-		if (fixedHeight())
+		if (FixedHeight())
 		{
 			sizeRange.optimal.y = std::max(0, (INT32)minHeight);
 			sizeRange.min.y = sizeRange.optimal.y;
@@ -109,7 +109,7 @@ namespace bs
 			}
 		}
 
-		if (fixedWidth())
+		if (FixedWidth())
 		{
 			sizeRange.optimal.x = std::max(0, (INT32)minWidth);
 			sizeRange.min.x = sizeRange.optimal.x;

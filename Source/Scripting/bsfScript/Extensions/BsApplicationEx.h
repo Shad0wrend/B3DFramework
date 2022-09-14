@@ -17,16 +17,16 @@ namespace bs
 	{
 	public:
 		BS_SCRIPT_EXPORT()
-		static void startUp(const START_UP_DESC& desc);
+		static void StartUp(const START_UP_DESC& desc);
 
 		BS_SCRIPT_EXPORT()
-		static void startUp(VideoMode videoMode, const String& title, bool fullscreen);
+		static void StartUp(VideoMode videoMode, const String& title, bool fullscreen);
 
 		BS_SCRIPT_EXPORT()
-		static void runMainLoop();
+		static void RunMainLoop();
 
 		BS_SCRIPT_EXPORT()
-		static void shutDown();
+		static void ShutDown();
 	};
 
 	/** @endcond */

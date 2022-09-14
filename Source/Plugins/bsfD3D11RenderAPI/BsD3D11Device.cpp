@@ -21,7 +21,7 @@ namespace bs { namespace ct
 			if (FAILED(hr))
 				BS_EXCEPT(RenderingAPIException, "Unable to query D3D11InfoQueue");
 
-			setExceptionsErrorLevel(D3D11ERR_ERROR);
+			SetExceptionsErrorLevel(D3D11ERR_ERROR);
 #endif
 
 			// If feature level is 11, create class linkage
@@ -41,10 +41,10 @@ namespace bs { namespace ct
 
 	D3D11Device::~D3D11Device()
 	{
-		shutdown();
+		Shutdown();
 	}
 
-	void D3D11Device::shutdown()
+	void D3D11Device::Shutdown()
 	{
 		if (mImmediateContext)
 		{
@@ -58,7 +58,7 @@ namespace bs { namespace ct
 		SAFE_RELEASE(mClassLinkage);
 	}
 
-	String D3D11Device::getErrorDescription(bool doClearErrors)
+	String D3D11Device::GetErrorDescription(bool doClearErrors)
 	{
 		if (mD3D11Device == nullptr)
 			return "Null device.";
@@ -82,12 +82,12 @@ namespace bs { namespace ct
 		}
 
 		if(doClearErrors)
-			clearErrors();
+			ClearErrors();
 
 		return res;
 	}
 
-	bool D3D11Device::hasError() const
+	bool D3D11Device::HasError() const
 	{
 		if (mInfoQueue != nullptr)
 		{
@@ -98,13 +98,13 @@ namespace bs { namespace ct
 			return false;
 	}
 
-	void D3D11Device::clearErrors()
+	void D3D11Device::ClearErrors()
 	{
 		if (mD3D11Device != nullptr && mInfoQueue != nullptr)
 			mInfoQueue->ClearStoredMessages();
 	}
 
-	void D3D11Device::setExceptionsErrorLevel(const BS_D3D11_ERROR_LEVEL exceptionsErrorLevel)
+	void D3D11Device::SetExceptionsErrorLevel(const BS_D3D11_ERROR_LEVEL exceptionsErrorLevel)
 	{
 		if(mInfoQueue == nullptr)
 			return;

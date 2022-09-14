@@ -24,28 +24,28 @@ namespace bs
 		:mParamInfo(paramInfo)
 	{ }
 
-	SPtr<GpuParamDesc> GpuParamsBase::getParamDesc(GpuProgramType type) const
+	SPtr<GpuParamDesc> GpuParamsBase::GetParamDesc(GpuProgramType type) const
 	{
-		return mParamInfo->getParamDesc(type);
+		return mParamInfo->GetParamDesc(type);
 	}
 
-	UINT32 GpuParamsBase::getDataParamSize(GpuProgramType type, const String& name) const
+	UINT32 GpuParamsBase::GetDataParamSize(GpuProgramType type, const String& name) const
 	{
-		GpuParamDataDesc* desc = getParamDesc(type, name);
+		GpuParamDataDesc* desc = GetParamDesc(type, name);
 		if(desc != nullptr)
 			return desc->elementSize * 4;
 
 		return 0;
 	}
 
-	bool GpuParamsBase::hasParam(GpuProgramType type, const String& name) const
+	bool GpuParamsBase::HasParam(GpuProgramType type, const String& name) const
 	{
-		return getParamDesc(type, name) != nullptr;
+		return GetParamDesc(type, name) != nullptr;
 	}
 
-	bool GpuParamsBase::hasTexture(GpuProgramType type, const String& name) const
+	bool GpuParamsBase::HasTexture(GpuProgramType type, const String& name) const
 	{
-		const SPtr<GpuParamDesc>& paramDesc = mParamInfo->getParamDesc(type);
+		const SPtr<GpuParamDesc>& paramDesc = mParamInfo->GetParamDesc(type);
 		if (paramDesc == nullptr)
 			return false;
 
@@ -56,9 +56,9 @@ namespace bs
 		return false;
 	}
 
-	bool GpuParamsBase::hasBuffer(GpuProgramType type, const String& name) const
+	bool GpuParamsBase::HasBuffer(GpuProgramType type, const String& name) const
 	{
-		const SPtr<GpuParamDesc>& paramDesc = mParamInfo->getParamDesc(type);
+		const SPtr<GpuParamDesc>& paramDesc = mParamInfo->GetParamDesc(type);
 		if (paramDesc == nullptr)
 			return false;
 
@@ -69,9 +69,9 @@ namespace bs
 		return false;
 	}
 
-	bool GpuParamsBase::hasLoadStoreTexture(GpuProgramType type, const String& name) const
+	bool GpuParamsBase::HasLoadStoreTexture(GpuProgramType type, const String& name) const
 	{
-		const SPtr<GpuParamDesc>& paramDesc = mParamInfo->getParamDesc(type);
+		const SPtr<GpuParamDesc>& paramDesc = mParamInfo->GetParamDesc(type);
 		if (paramDesc == nullptr)
 			return false;
 
@@ -82,9 +82,9 @@ namespace bs
 		return false;
 	}
 
-	bool GpuParamsBase::hasSamplerState(GpuProgramType type, const String& name) const
+	bool GpuParamsBase::HasSamplerState(GpuProgramType type, const String& name) const
 	{
-		const SPtr<GpuParamDesc>& paramDesc = mParamInfo->getParamDesc(type);
+		const SPtr<GpuParamDesc>& paramDesc = mParamInfo->GetParamDesc(type);
 		if (paramDesc == nullptr)
 			return false;
 
@@ -95,7 +95,7 @@ namespace bs
 		return false;
 	}
 
-	bool GpuParamsBase::hasParamBlock(GpuProgramType type, const String& name) const
+	bool GpuParamsBase::HasParamBlock(GpuProgramType type, const String& name) const
 	{
 		const SPtr<GpuParamDesc>& paramDesc = mParamInfo->getParamDesc(type);
 		if (paramDesc == nullptr)
@@ -108,7 +108,7 @@ namespace bs
 		return false;
 	}
 
-	GpuParamDataDesc* GpuParamsBase::getParamDesc(GpuProgramType type, const String& name) const
+	GpuParamDataDesc* GpuParamsBase::GetParamDesc(GpuProgramType type, const String& name) const
 	{
 		const SPtr<GpuParamDesc>& paramDesc = mParamInfo->getParamDesc(type);
 		if (paramDesc == nullptr)
@@ -121,7 +121,7 @@ namespace bs
 		return nullptr;
 	}
 
-	GpuParamBlockDesc* GpuParamsBase::getParamBlockDesc(GpuProgramType type, const String& name) const
+	GpuParamBlockDesc* GpuParamsBase::GetParamBlockDesc(GpuProgramType type, const String& name) const
 	{
 		const SPtr<GpuParamDesc>& paramDesc = mParamInfo->getParamDesc(type);
 		if (paramDesc == nullptr)
@@ -221,7 +221,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TGpuParams<Core>::setParamBlockBuffer(UINT32 set, UINT32 slot, const ParamsBufferType& paramBlockBuffer)
+	void TGpuParams<Core>::SetParamBlockBuffer(UINT32 set, UINT32 slot, const ParamsBufferType& paramBlockBuffer)
 	{
 		UINT32 globalSlot = mParamInfo->getSequentialSlot(GpuPipelineParamInfo::ParamType::ParamBlock, set, slot);
 		if (globalSlot == (UINT32)-1)
@@ -233,7 +233,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TGpuParams<Core>::setParamBlockBuffer(GpuProgramType type, const String& name, const ParamsBufferType& paramBlockBuffer)
+	void TGpuParams<Core>::SetParamBlockBuffer(GpuProgramType type, const String& name, const ParamsBufferType& paramBlockBuffer)
 	{
 		const SPtr<GpuParamDesc>& paramDescs = mParamInfo->getParamDesc(type);
 		if(paramDescs == nullptr)
@@ -253,7 +253,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TGpuParams<Core>::setParamBlockBuffer(const String& name, const ParamsBufferType& paramBlockBuffer)
+	void TGpuParams<Core>::SetParamBlockBuffer(const String& name, const ParamsBufferType& paramBlockBuffer)
 	{
 		for (UINT32 i = 0; i < 6; i++)
 		{
@@ -271,7 +271,7 @@ namespace bs
 
 	template<bool Core>
 	template<class T>
-	void TGpuParams<Core>::getParam(GpuProgramType type, const String& name, TGpuDataParam<T, Core>& output) const
+	void TGpuParams<Core>::GetParam(GpuProgramType type, const String& name, TGpuDataParam<T, Core>& output) const
 	{
 		const SPtr<GpuParamDesc>& paramDescs = mParamInfo->getParamDesc(type);
 		if (paramDescs == nullptr)
@@ -292,7 +292,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TGpuParams<Core>::getStructParam(GpuProgramType type, const String& name, TGpuParamStruct<Core>& output) const
+	void TGpuParams<Core>::GetStructParam(GpuProgramType type, const String& name, TGpuParamStruct<Core>& output) const
 	{
 		const SPtr<GpuParamDesc>& paramDescs = mParamInfo->getParamDesc(type);
 		if (paramDescs == nullptr)
@@ -313,7 +313,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TGpuParams<Core>::getTextureParam(GpuProgramType type, const String& name, TGpuParamTexture<Core>& output) const
+	void TGpuParams<Core>::GetTextureParam(GpuProgramType type, const String& name, TGpuParamTexture<Core>& output) const
 	{
 		const SPtr<GpuParamDesc>& paramDescs = mParamInfo->getParamDesc(type);
 		if (paramDescs == nullptr)
@@ -334,7 +334,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TGpuParams<Core>::getLoadStoreTextureParam(GpuProgramType type, const String& name, TGpuParamLoadStoreTexture<Core>& output) const
+	void TGpuParams<Core>::GetLoadStoreTextureParam(GpuProgramType type, const String& name, TGpuParamLoadStoreTexture<Core>& output) const
 	{
 		const SPtr<GpuParamDesc>& paramDescs = mParamInfo->getParamDesc(type);
 		if (paramDescs == nullptr)
@@ -355,7 +355,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TGpuParams<Core>::getBufferParam(GpuProgramType type, const String& name, TGpuParamBuffer<Core>& output) const
+	void TGpuParams<Core>::GetBufferParam(GpuProgramType type, const String& name, TGpuParamBuffer<Core>& output) const
 	{
 		const SPtr<GpuParamDesc>& paramDescs = mParamInfo->getParamDesc(type);
 		if (paramDescs == nullptr)
@@ -376,7 +376,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TGpuParams<Core>::getSamplerStateParam(GpuProgramType type, const String& name, TGpuParamSampState<Core>& output) const
+	void TGpuParams<Core>::GetSamplerStateParam(GpuProgramType type, const String& name, TGpuParamSampState<Core>& output) const
 	{
 		const SPtr<GpuParamDesc>& paramDescs = mParamInfo->getParamDesc(type);
 		if (paramDescs == nullptr)
@@ -397,7 +397,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	typename TGpuParams<Core>::ParamsBufferType TGpuParams<Core>::getParamBlockBuffer(UINT32 set, UINT32 slot) const
+	typename TGpuParams<Core>::ParamsBufferType TGpuParams<Core>::GetParamBlockBuffer(UINT32 set, UINT32 slot) const
 	{
 		UINT32 globalSlot = mParamInfo->getSequentialSlot(GpuPipelineParamInfo::ParamType::ParamBlock, set, slot);
 		if (globalSlot == (UINT32)-1)
@@ -407,7 +407,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	typename TGpuParams<Core>::TextureType TGpuParams<Core>::getTexture(UINT32 set, UINT32 slot) const
+	typename TGpuParams<Core>::TextureType TGpuParams<Core>::GetTexture(UINT32 set, UINT32 slot) const
 	{
 		UINT32 globalSlot = mParamInfo->getSequentialSlot(GpuPipelineParamInfo::ParamType::Texture, set, slot);
 		if (globalSlot == (UINT32)-1)
@@ -417,7 +417,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	typename TGpuParams<Core>::TextureType TGpuParams<Core>::getLoadStoreTexture(UINT32 set, UINT32 slot) const
+	typename TGpuParams<Core>::TextureType TGpuParams<Core>::GetLoadStoreTexture(UINT32 set, UINT32 slot) const
 	{
 		UINT32 globalSlot = mParamInfo->getSequentialSlot(GpuPipelineParamInfo::ParamType::LoadStoreTexture, set, slot);
 		if (globalSlot == (UINT32)-1)
@@ -427,7 +427,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	typename TGpuParams<Core>::BufferType TGpuParams<Core>::getBuffer(UINT32 set, UINT32 slot) const
+	typename TGpuParams<Core>::BufferType TGpuParams<Core>::GetBuffer(UINT32 set, UINT32 slot) const
 	{
 		UINT32 globalSlot = mParamInfo->getSequentialSlot(GpuPipelineParamInfo::ParamType::Buffer, set, slot);
 		if (globalSlot == (UINT32)-1)
@@ -437,7 +437,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	typename TGpuParams<Core>::SamplerType TGpuParams<Core>::getSamplerState(UINT32 set, UINT32 slot) const
+	typename TGpuParams<Core>::SamplerType TGpuParams<Core>::GetSamplerState(UINT32 set, UINT32 slot) const
 	{
 		UINT32 globalSlot = mParamInfo->getSequentialSlot(GpuPipelineParamInfo::ParamType::SamplerState, set, slot);
 		if (globalSlot == (UINT32)-1)
@@ -447,7 +447,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	const TextureSurface& TGpuParams<Core>::getTextureSurface(UINT32 set, UINT32 slot) const
+	const TextureSurface& TGpuParams<Core>::GetTextureSurface(UINT32 set, UINT32 slot) const
 	{
 		static TextureSurface emptySurface;
 
@@ -459,7 +459,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	const TextureSurface& TGpuParams<Core>::getLoadStoreSurface(UINT32 set, UINT32 slot) const
+	const TextureSurface& TGpuParams<Core>::GetLoadStoreSurface(UINT32 set, UINT32 slot) const
 	{
 		static TextureSurface emptySurface;
 
@@ -472,7 +472,7 @@ namespace bs
 
 
 	template<bool Core>
-	void TGpuParams<Core>::setTexture(UINT32 set, UINT32 slot, const TextureType& texture, const TextureSurface& surface)
+	void TGpuParams<Core>::SetTexture(UINT32 set, UINT32 slot, const TextureType& texture, const TextureSurface& surface)
 	{
 		UINT32 globalSlot = mParamInfo->getSequentialSlot(GpuPipelineParamInfo::ParamType::Texture, set, slot);
 		if (globalSlot == (UINT32)-1)
@@ -486,7 +486,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TGpuParams<Core>::setLoadStoreTexture(UINT32 set, UINT32 slot, const TextureType& texture, const TextureSurface& surface)
+	void TGpuParams<Core>::SetLoadStoreTexture(UINT32 set, UINT32 slot, const TextureType& texture, const TextureSurface& surface)
 	{
 		UINT32 globalSlot = mParamInfo->getSequentialSlot(GpuPipelineParamInfo::ParamType::LoadStoreTexture, set, slot);
 		if (globalSlot == (UINT32)-1)
@@ -500,7 +500,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TGpuParams<Core>::setBuffer(UINT32 set, UINT32 slot, const BufferType& buffer)
+	void TGpuParams<Core>::SetBuffer(UINT32 set, UINT32 slot, const BufferType& buffer)
 	{
 		UINT32 globalSlot = mParamInfo->getSequentialSlot(GpuPipelineParamInfo::ParamType::Buffer, set, slot);
 		if (globalSlot == (UINT32)-1)
@@ -513,7 +513,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TGpuParams<Core>::setSamplerState(UINT32 set, UINT32 slot, const SamplerType& sampler)
+	void TGpuParams<Core>::SetSamplerState(UINT32 set, UINT32 slot, const SamplerType& sampler)
 	{
 		UINT32 globalSlot = mParamInfo->getSequentialSlot(GpuPipelineParamInfo::ParamType::SamplerState, set, slot);
 		if (globalSlot == (UINT32)-1)
@@ -579,16 +579,16 @@ namespace bs
 		return std::static_pointer_cast<GpuParams>(getThisPtr());
 	}
 
-	SPtr<ct::GpuParams> GpuParams::getCore() const
+	SPtr<ct::GpuParams> GpuParams::GetCore() const
 	{
 		return std::static_pointer_cast<ct::GpuParams>(mCoreSpecific);
 	}
 
-	SPtr<ct::CoreObject> GpuParams::createCore() const
+	SPtr<ct::CoreObject> GpuParams::CreateCore() const
 	{
 		SPtr<GpuPipelineParamInfo> paramInfo = std::static_pointer_cast<GpuPipelineParamInfo>(mParamInfo);
 
-		return ct::HardwareBufferManager::instance().createGpuParams(paramInfo->getCore());
+		return ct::HardwareBufferManager::Instance().createGpuParams(paramInfo->getCore());
 	}
 
 	void GpuParams::MarkCoreDirtyInternal()
@@ -601,22 +601,22 @@ namespace bs
 		markListenerResourcesDirty();
 	}
 
-	SPtr<GpuParams> GpuParams::create(const SPtr<GraphicsPipelineState>& pipelineState)
+	SPtr<GpuParams> GpuParams::Create(const SPtr<GraphicsPipelineState>& pipelineState)
 	{
-		return HardwareBufferManager::instance().createGpuParams(pipelineState->getParamInfo());
+		return HardwareBufferManager::Instance().createGpuParams(pipelineState->getParamInfo());
 	}
 
-	SPtr<GpuParams> GpuParams::create(const SPtr<ComputePipelineState>& pipelineState)
+	SPtr<GpuParams> GpuParams::Create(const SPtr<ComputePipelineState>& pipelineState)
 	{
-		return HardwareBufferManager::instance().createGpuParams(pipelineState->getParamInfo());
+		return HardwareBufferManager::Instance().createGpuParams(pipelineState->getParamInfo());
 	}
 
-	SPtr<GpuParams> GpuParams::create(const SPtr<GpuPipelineParamInfo>& paramInfo)
+	SPtr<GpuParams> GpuParams::Create(const SPtr<GpuPipelineParamInfo>& paramInfo)
 	{
-		return HardwareBufferManager::instance().createGpuParams(paramInfo);
+		return HardwareBufferManager::Instance().createGpuParams(paramInfo);
 	}
 
-	CoreSyncData GpuParams::syncToCore(FrameAlloc* allocator)
+	CoreSyncData GpuParams::SyncToCore(FrameAlloc* allocator)
 	{
 		UINT32 numParamBlocks = mParamInfo->getNumElements(GpuPipelineParamInfo::ParamType::ParamBlock);
 		UINT32 numTextures = mParamInfo->getNumElements(GpuPipelineParamInfo::ParamType::Texture);
@@ -711,7 +711,7 @@ namespace bs
 		return CoreSyncData(data, totalSize);
 	}
 
-	void GpuParams::getListenerResources(Vector<HResource>& resources)
+	void GpuParams::GetListenerResources(Vector<HResource>& resources)
 	{
 		UINT32 numTextures = mParamInfo->getNumElements(GpuPipelineParamInfo::ParamType::Texture);
 		UINT32 numStorageTextures = mParamInfo->getNumElements(GpuPipelineParamInfo::ParamType::LoadStoreTexture);
@@ -742,7 +742,7 @@ namespace bs
 		return std::static_pointer_cast<GpuParams>(getThisPtr());
 	}
 
-	void GpuParams::syncToCore(const CoreSyncData& data)
+	void GpuParams::SyncToCore(const CoreSyncData& data)
 	{
 		UINT32 numParamBlocks = mParamInfo->getNumElements(GpuPipelineParamInfo::ParamType::ParamBlock);
 		UINT32 numTextures = mParamInfo->getNumElements(GpuPipelineParamInfo::ParamType::Texture);
@@ -819,19 +819,19 @@ namespace bs
 		}
 	}
 
-	SPtr<GpuParams> GpuParams::create(const SPtr<GraphicsPipelineState>& pipelineState, GpuDeviceFlags deviceMask)
+	SPtr<GpuParams> GpuParams::Create(const SPtr<GraphicsPipelineState>& pipelineState, GpuDeviceFlags deviceMask)
 	{
-		return HardwareBufferManager::instance().createGpuParams(pipelineState->getParamInfo(), deviceMask);
+		return HardwareBufferManager::Instance().createGpuParams(pipelineState->getParamInfo(), deviceMask);
 	}
 
-	SPtr<GpuParams> GpuParams::create(const SPtr<ComputePipelineState>& pipelineState, GpuDeviceFlags deviceMask)
+	SPtr<GpuParams> GpuParams::Create(const SPtr<ComputePipelineState>& pipelineState, GpuDeviceFlags deviceMask)
 	{
-		return HardwareBufferManager::instance().createGpuParams(pipelineState->getParamInfo(), deviceMask);
+		return HardwareBufferManager::Instance().createGpuParams(pipelineState->getParamInfo(), deviceMask);
 	}
 
-	SPtr<GpuParams> GpuParams::create(const SPtr<GpuPipelineParamInfo>& paramInfo, GpuDeviceFlags deviceMask)
+	SPtr<GpuParams> GpuParams::Create(const SPtr<GpuPipelineParamInfo>& paramInfo, GpuDeviceFlags deviceMask)
 	{
-		return HardwareBufferManager::instance().createGpuParams(paramInfo, deviceMask);
+		return HardwareBufferManager::Instance().createGpuParams(paramInfo, deviceMask);
 	}
 	}
 }

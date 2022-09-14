@@ -26,17 +26,17 @@ namespace bs { namespace ct
 		 *
 		 * @note	Place any commands you want to measure after this call. Call end() when done.
 		 */
-		virtual void begin(const SPtr<CommandBuffer>& cb = nullptr) = 0;
+		virtual void Begin(const SPtr<CommandBuffer>& cb = nullptr) = 0;
 
 		/**
 		 * Stops the query.
 		 *
 		 * @note	Be aware that queries are executed on the GPU and the results will not be immediately available.
 		 */
-		virtual void end(const SPtr<CommandBuffer>& cb = nullptr) = 0;
+		virtual void End(const SPtr<CommandBuffer>& cb = nullptr) = 0;
 
 		/** Check if GPU has processed the query. */
-		virtual bool isReady() const = 0;
+		virtual bool IsReady() const = 0;
 
 		/**
 		 * Returns the number of samples that passed the depth and stencil test between query start and end.
@@ -45,7 +45,7 @@ namespace bs { namespace ct
 		 * If the query is binary, this will return 0 or 1. 1 meaning one or more samples were rendered, but will not give
 		 * you the exact count.
 		 */
-		virtual UINT32 getNumSamples() = 0;
+		virtual UINT32 GetNumSamples() = 0;
 
 		/** Triggered when the query has completed. Argument provided is the number of samples counted by the query. */
 		Event<void(UINT32)> onComplete;
@@ -59,14 +59,14 @@ namespace bs { namespace ct
 		 *							until all of the geometry is rendered.
 		 * @param[in]	deviceIdx	Index of the GPU device to create the query on.
 		 */
-		static SPtr<OcclusionQuery> create(bool binary, UINT32 deviceIdx = 0);
+		static SPtr<OcclusionQuery> Create(bool binary, UINT32 deviceIdx = 0);
 
 	protected:
 		friend class QueryManager;
 
 		/**	Returns true if the has still not been completed by the GPU. */
-		bool isActive() const { return mActive; }
-		void setActive(bool active) { mActive = active; }
+		bool IsActive() const { return mActive; }
+		void SetActive(bool active) { mActive = active; }
 
 	protected:
 		bool mActive;

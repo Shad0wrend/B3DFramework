@@ -11,23 +11,23 @@ namespace bs
 		:mAlloc(&gFrameAlloc())
 	{ }
 
-	SPtr<IReflectable> IntermediateSerializer::decode(const SerializedObject* serializedObject,
+	SPtr<IReflectable> IntermediateSerializer::Decode(const SerializedObject* serializedObject,
 		SerializationContext* context)
 	{
 		mContext = context;
 
-		mAlloc->markFrame();
+		mAlloc->MarkFrame();
 		mObjectMap.clear();
 
 		SPtr<IReflectable> output;
-		RTTITypeBase* type = IReflectable::GetRTTIfromTypeIdInternal(serializedObject->getRootTypeId());
+		RTTITypeBase* type = IReflectable::GetRTTIfromTypeIdInternal(serializedObject->GetRootTypeId());
 		if (type != nullptr)
 		{
-			output = type->newRTTIObject();
+			output = type->NewRttiObject();
 			auto iterNewObj = mObjectMap.insert(std::make_pair(serializedObject, ObjectToDecode(output, serializedObject)));
 
 			iterNewObj.first->second.decodeInProgress = true;
-			decodeEntry(output, serializedObject);
+			DecodeEntry(output, serializedObject);
 			iterNewObj.first->second.decodeInProgress = false;
 			iterNewObj.first->second.isDecoded = true;
 		}
@@ -41,26 +41,26 @@ namespace bs
 				continue;
 
 			objToDecode.decodeInProgress = true;
-			decodeEntry(objToDecode.object, objToDecode.serializedObject);
+			DecodeEntry(objToDecode.object, objToDecode.serializedObject);
 			objToDecode.decodeInProgress = false;
 			objToDecode.isDecoded = true;
 		}
 
 		mObjectMap.clear();
-		mAlloc->clear();
+		mAlloc->Clear();
 
 		return output;
 	}
 
-	SPtr<SerializedObject> IntermediateSerializer::encode(IReflectable* object, SerializedObjectEncodeFlags flags,
+	SPtr<SerializedObject> IntermediateSerializer::Encode(IReflectable* object, SerializedObjectEncodeFlags flags,
 		SerializationContext* context)
 	{
 		mContext = context;
 
-		return encodeEntry(object, flags, context, mAlloc);
+		return EncodeEntry(object, flags, context, mAlloc);
 	}
 
-	void IntermediateSerializer::decodeEntry(const SPtr<IReflectable>& object, const SerializedObject* serializableObject)
+	void IntermediateSerializer::DecodeEntry(const SPtr<IReflectable>& object, const SerializedObject* serializableObject)
 	{
 		UINT32 numSubObjects = (UINT32)serializableObject->subObjects.size();
 		if (numSubObjects == 0)
@@ -76,13 +76,13 @@ namespace bs
 				continue;
 
 			RTTITypeBase* rttiInstance = rtti->CloneInternal(*mAlloc);
-			rttiInstance->onDeserializationStarted(object.get(), mContext);
+			rttiInstance->OnDeserializationStarted(object.get(), mContext);
 			rttiInstances.push(rttiInstance);
 
-			UINT32 numFields = rtti->getNumFields();
+			UINT32 numFields = rtti->GetNumFields();
 			for (UINT32 fieldIdx = 0; fieldIdx < numFields; fieldIdx++)
 			{
-				RTTIField* curGenericField = rtti->getField(fieldIdx);
+				RTTIField* curGenericField = rtti->GetField(fieldIdx);
 
 				auto iterFindFieldData = subObject.entries.find(curGenericField->schema.id);
 				if (iterFindFieldData == subObject.entries.end())
@@ -304,7 +304,7 @@ namespace bs
 		}
 	}
 
-	SPtr<SerializedObject> IntermediateSerializer::encodeEntry(IReflectable* object, SerializedObjectEncodeFlags flags,
+	SPtr<SerializedObject> IntermediateSerializer::EncodeEntry(IReflectable* object, SerializedObjectEncodeFlags flags,
 		SerializationContext* context, FrameAlloc* alloc)
 	{
 		FrameStack<RTTITypeBase*> rttiInstances;

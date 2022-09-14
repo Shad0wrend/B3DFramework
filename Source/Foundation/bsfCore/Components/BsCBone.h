@@ -23,11 +23,11 @@ namespace bs
 		
 		/** Determines the name of the bone the component is referencing. */
 		BS_SCRIPT_EXPORT(n:Name,pr:setter)
-		void setBoneName(const String& name);
+		void SetBoneName(const String& name);
 
 		/** @copydoc setBoneName */
 		BS_SCRIPT_EXPORT(n:Name,pr:getter)
-		const String& getBoneName() const { return mBoneName; }
+		const String& GetBoneName() const { return mBoneName; }
 
 		/** @name Internal
 		 *  @{
@@ -45,7 +45,7 @@ namespace bs
 		/** @} */
 	private:
 		/** Attempts to find the parent Animation component and registers itself with it. */
-		void updateParentAnimation();
+		void UpdateParentAnimation();
 
 		/************************************************************************/
 		/* 						COMPONENT OVERRIDES                      		*/
@@ -54,18 +54,18 @@ namespace bs
 		friend class SceneObject;
 
 		/** @copydoc Component::onDestroyed() */
-		void onDestroyed() override;
+		void OnDestroyed() ;
 
 		/** @copydoc Component::onDisabled() */
-		void onDisabled() override;
+		void OnDisabled() ;
 
 		/** @copydoc Component::onEnabled() */
-		void onEnabled() override;
+		void OnEnabled() ;
 
 		/** @copydoc Component::onTransformChanged() */
-		void onTransformChanged(TransformChangedFlags flags) override;
+		void OnTransformChanged(TransformChangedFlags flags) ;
 	protected:
-		using Component::destroyInternal;
+		using Component::DestroyInternal;
 
 		String mBoneName;
 		HAnimation mParent;
@@ -75,8 +75,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class CBoneRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const ;
 
 	protected:
 		CBone(); // Serialization only

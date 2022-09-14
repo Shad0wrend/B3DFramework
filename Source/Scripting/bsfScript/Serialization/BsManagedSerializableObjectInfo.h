@@ -87,27 +87,27 @@ namespace bs
 		virtual ~ManagedSerializableTypeInfo() = default;
 
 		/**	Checks if the current type matches the provided type. */
-		virtual bool matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const = 0;
+		virtual bool Matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const = 0;
 
 		/**
 		 * Checks does the managed type this object represents still exists.
 		 *
 		 * @note	For example if assemblies get refreshed user could have renamed or removed some types.
 		 */
-		virtual bool isTypeLoaded() const = 0;
+		virtual bool IsTypeLoaded() const = 0;
 
 		/**
 		 * Returns the internal managed class of the type this object represents. Returns null if the type doesn't exist.
 		 */
-		virtual ::MonoClass* getMonoClass() const = 0;
+		virtual ::MonoClass* GetMonoClass() const = 0;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
 		/************************************************************************/
 	public:
 		friend class ManagedSerializableTypeInfoRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/**	Contains information about a type of a managed serializable primitive (for example int, float, etc.). */
@@ -115,13 +115,13 @@ namespace bs
 	{
 	public:
 		/** @copydoc ManagedSerializableTypeInfo::matches */
-		bool matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
+		bool Matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
 
 		/** @copydoc ManagedSerializableTypeInfo::isTypeLoaded */
-		bool isTypeLoaded() const override;
+		bool IsTypeLoaded() const override;
 
 		/** @copydoc ManagedSerializableTypeInfo::getMonoClass */
-		::MonoClass* getMonoClass() const override;
+		::MonoClass* GetMonoClass() const override;
 
 		ScriptPrimitiveType mType;
 
@@ -130,8 +130,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ManagedSerializableTypeInfoPrimitiveRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/**	Contains information about a type of a managed serializable enum. */
@@ -139,13 +139,13 @@ namespace bs
 	{
 	public:
 		/** @copydoc ManagedSerializableTypeInfo::matches */
-		bool matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
+		bool Matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
 
 		/** @copydoc ManagedSerializableTypeInfo::isTypeLoaded */
-		bool isTypeLoaded() const override;
+		bool IsTypeLoaded() const override;
 
 		/** @copydoc ManagedSerializableTypeInfo::getMonoClass */
-		::MonoClass* getMonoClass() const override;
+		::MonoClass* GetMonoClass() const override;
 
 		ScriptPrimitiveType mUnderlyingType;
 		String mTypeNamespace;
@@ -156,8 +156,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ManagedSerializableTypeInfoEnumRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/**	Contains information about a type of a managed serializable game object or resourcee. */
@@ -165,13 +165,13 @@ namespace bs
 	{
 	public:
 		/** @copydoc ManagedSerializableTypeInfo::matches */
-		bool matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
+		bool Matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
 
 		/** @copydoc ManagedSerializableTypeInfo::isTypeLoaded */
-		bool isTypeLoaded() const override;
+		bool IsTypeLoaded() const override;
 
 		/** @copydoc ManagedSerializableTypeInfo::getMonoClass */
-		::MonoClass* getMonoClass() const override;
+		::MonoClass* GetMonoClass() const override;
 
 		ScriptReferenceType mType;
 		UINT32 mRTIITypeId;
@@ -183,8 +183,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ManagedSerializableTypeInfoRefRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/**	Contains information about a type of a reference to a resource. */
@@ -192,13 +192,13 @@ namespace bs
 	{
 	public:
 		/** @copydoc ManagedSerializableTypeInfo::matches */
-		bool matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
+		bool Matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
 
 		/** @copydoc ManagedSerializableTypeInfo::isTypeLoaded */
-		bool isTypeLoaded() const override;
+		bool IsTypeLoaded() const override;
 
 		/** @copydoc ManagedSerializableTypeInfo::getMonoClass */
-		::MonoClass* getMonoClass() const override;
+		::MonoClass* GetMonoClass() const override;
 
 		SPtr<ManagedSerializableTypeInfo> mResourceType;
 
@@ -207,8 +207,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ManagedSerializableTypeInfoRRefRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/**	Contains information about a type of a managed serializable complex object (for example struct or class). */
@@ -216,13 +216,13 @@ namespace bs
 	{
 	public:
 		/** @copydoc ManagedSerializableTypeInfo::matches */
-		bool matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
+		bool Matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
 
 		/** @copydoc ManagedSerializableTypeInfo::isTypeLoaded */
-		bool isTypeLoaded() const override;
+		bool IsTypeLoaded() const override;
 
 		/** @copydoc ManagedSerializableTypeInfo::getMonoClass */
-		::MonoClass* getMonoClass() const override;
+		::MonoClass* GetMonoClass() const override;
 
 		String mTypeNamespace;
 		String mTypeName;
@@ -236,8 +236,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ManagedSerializableTypeInfoObjectRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/**	Contains information about a type of a managed serializable Array. */
@@ -245,13 +245,13 @@ namespace bs
 	{
 	public:
 		/** @copydoc ManagedSerializableTypeInfo::matches */
-		bool matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
+		bool Matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
 
 		/** @copydoc ManagedSerializableTypeInfo::isTypeLoaded */
-		bool isTypeLoaded() const override;
+		bool IsTypeLoaded() const override;
 
 		/** @copydoc ManagedSerializableTypeInfo::getMonoClass */
-		::MonoClass* getMonoClass() const override;
+		::MonoClass* GetMonoClass() const override;
 
 		SPtr<ManagedSerializableTypeInfo> mElementType;
 		UINT32 mRank;
@@ -261,8 +261,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ManagedSerializableTypeInfoArrayRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/**	Contains information about a type of a managed serializable List. */
@@ -270,13 +270,13 @@ namespace bs
 	{
 	public:
 		/** @copydoc ManagedSerializableTypeInfo::matches */
-		bool matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
+		bool Matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
 
 		/** @copydoc ManagedSerializableTypeInfo::isTypeLoaded */
-		bool isTypeLoaded() const override;
+		bool IsTypeLoaded() const override;
 
 		/** @copydoc ManagedSerializableTypeInfo::getMonoClass */
-		::MonoClass* getMonoClass() const override;
+		::MonoClass* GetMonoClass() const override;
 
 		SPtr<ManagedSerializableTypeInfo> mElementType;
 
@@ -285,8 +285,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ManagedSerializableTypeInfoListRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/**	Contains information about a type of a managed serializable Dictionary. */
@@ -294,13 +294,13 @@ namespace bs
 	{
 	public:
 		/** @copydoc ManagedSerializableTypeInfo::matches */
-		bool matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
+		bool Matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
 
 		/** @copydoc ManagedSerializableTypeInfo::isTypeLoaded */
-		bool isTypeLoaded() const override;
+		bool IsTypeLoaded() const override;
 
 		/** @copydoc ManagedSerializableTypeInfo::getMonoClass */
-		::MonoClass* getMonoClass() const override;
+		::MonoClass* GetMonoClass() const override;
 
 		SPtr<ManagedSerializableTypeInfo> mKeyType;
 		SPtr<ManagedSerializableTypeInfo> mValueType;
@@ -310,8 +310,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ManagedSerializableTypeInfoDictionaryRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/**	Contains data about a single member in a managed complex object. */
@@ -322,7 +322,7 @@ namespace bs
 		virtual ~ManagedSerializableMemberInfo() = default;
 
 		/**	Determines should the member be serialized when serializing the parent object. */
-		bool isSerializable() const { return mFlags.isSet(ScriptFieldFlag::Serializable); }
+		bool IsSerializable() const { return mFlags.IsSet(ScriptFieldFlag::Serializable); }
 
 		/**
 		 * Returns a boxed value contained in the member in the specified object instance.
@@ -330,7 +330,7 @@ namespace bs
 		 * @param[in]	instance	Object instance to access the member on.
 		 * @return					A boxed value of the member.
 		 */
-		virtual MonoObject* getValue(MonoObject* instance) const = 0;
+		virtual MonoObject* GetValue(MonoObject* instance) const = 0;
 
 		/**
 		 * Sets a value of the member in the specified object instance.
@@ -339,13 +339,13 @@ namespace bs
 		 * @param[in]	value		Value to set on the property. For value type it should be a pointer to the value and for
 		 *							reference type it should be a pointer to MonoObject.
 		 */
-		virtual void setValue(MonoObject* instance, void* value) const = 0;
+		virtual void SetValue(MonoObject* instance, void* value) const = 0;
 
 		/**
 		 * Checks if the attribute of the provided type exists on the member and returns it, or returns null if the
 		 * attribute is not present.
 		 */
-		virtual MonoObject* getAttribute(MonoClass* monoClass) = 0;
+		virtual MonoObject* GetAttribute(MonoClass* monoClass) = 0;
 
 		String mName;
 		UINT32 mFieldId = 0;
@@ -359,8 +359,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ManagedSerializableMemberInfoRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/**	Contains data about a single field in a managed complex object. */
@@ -370,13 +370,13 @@ namespace bs
 		ManagedSerializableFieldInfo() = default;
 
 		/** @copydoc ManagedSerializableMemberInfo::getAttribute */
-		MonoObject* getAttribute(MonoClass* monoClass) override;
+		MonoObject* GetAttribute(MonoClass* monoClass) override;
 
 		/** @copydoc ManagedSerializableMemberInfo::getValue */
-		MonoObject* getValue(MonoObject* instance) const override;
+		MonoObject* GetValue(MonoObject* instance) const override;
 
 		/** @copydoc ManagedSerializableMemberInfo::setValue */
-		void setValue(MonoObject* instance, void* value) const override;
+		void SetValue(MonoObject* instance, void* value) const override;
 
 		MonoField* mMonoField = nullptr;
 
@@ -385,8 +385,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ManagedSerializableFieldInfoRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/**	Contains data about a single property in a managed complex object. */
@@ -396,13 +396,13 @@ namespace bs
 		ManagedSerializablePropertyInfo() = default;
 
 		/** @copydoc ManagedSerializableMemberInfo::getAttribute */
-		MonoObject* getAttribute(MonoClass* monoClass) override;
+		MonoObject* GetAttribute(MonoClass* monoClass) override;
 
 		/** @copydoc ManagedSerializableMemberInfo::getValue */
-		MonoObject* getValue(MonoObject* instance) const override;
+		MonoObject* GetValue(MonoObject* instance) const override;
 
 		/** @copydoc ManagedSerializableMemberInfo::setValue */
-		void setValue(MonoObject* instance, void* value) const override;
+		void SetValue(MonoObject* instance, void* value) const override;
 
 		MonoProperty* mMonoProperty = nullptr;
 
@@ -411,8 +411,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ManagedSerializablePropertyInfoRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** Contains data about fields of a complex object, and the object's class hierarchy if it belongs to one. */
@@ -422,7 +422,7 @@ namespace bs
 		ManagedSerializableObjectInfo() = default;
 
 		/** Returns the managed type name of the object's type, including the namespace in format "namespace.typename". */
-		String getFullTypeName() const { return mTypeInfo->mTypeNamespace + "." + mTypeInfo->mTypeName; }
+		String GetFullTypeName() const { return mTypeInfo->mTypeNamespace + "." + mTypeInfo->mTypeName; }
 
 		/**
 		 * Attempts to find a field part of this object that matches the provided parameters.
@@ -434,7 +434,7 @@ namespace bs
 		 *								ensure the current object's type matches.
 		 * @return						Found field info within this object, or null if not found.
 		 */
-		SPtr<ManagedSerializableMemberInfo> findMatchingField(const SPtr<ManagedSerializableMemberInfo>& fieldInfo,
+		SPtr<ManagedSerializableMemberInfo> FindMatchingField(const SPtr<ManagedSerializableMemberInfo>& fieldInfo,
 			const SPtr<ManagedSerializableTypeInfo>& fieldTypeInfo) const;
 
 		SPtr<ManagedSerializableTypeInfoObject> mTypeInfo;
@@ -451,8 +451,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ManagedSerializableObjectInfoRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/**	Contains information about all managed serializable objects in a specific managed assembly. */
@@ -469,8 +469,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ManagedSerializableAssemblyInfoRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** @} */

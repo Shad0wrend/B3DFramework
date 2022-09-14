@@ -28,7 +28,7 @@ namespace bs { namespace ct
 		assert(mState == State::Destroyed && "Vulkan resource getting destructed without destroy() called first.");
 	}
 
-	void VulkanResource::notifyBound()
+	void VulkanResource::NotifyBound()
 	{
 		Lock lock(mMutex);
 		assert(mState != State::Destroyed);
@@ -36,7 +36,7 @@ namespace bs { namespace ct
 		mNumBoundHandles++;
 	}
 
-	void VulkanResource::notifyUsed(UINT32 globalQueueIdx, UINT32 queueFamily, VulkanAccessFlags useFlags)
+	void VulkanResource::NotifyUsed(UINT32 globalQueueIdx, UINT32 queueFamily, VulkanAccessFlags useFlags)
 	{
 		Lock lock(mMutex);
 		assert(useFlags != VulkanAccessFlag::None);
@@ -53,20 +53,20 @@ namespace bs { namespace ct
 
 		assert(globalQueueIdx < MAX_UNIQUE_QUEUES);
 		
-		if (useFlags.isSet(VulkanAccessFlag::Read))
+		if (useFlags.IsSet(VulkanAccessFlag::Read))
 		{
 			assert(mReadUses[globalQueueIdx] < 255 && "Resource used in too many command buffers at once.");
 			mReadUses[globalQueueIdx]++;
 		}
 		
-		if(useFlags.isSet(VulkanAccessFlag::Write))
+		if(useFlags.IsSet(VulkanAccessFlag::Write))
 		{
 			assert(mWriteUses[globalQueueIdx] < 255 && "Resource used in too many command buffers at once.");
 			mWriteUses[globalQueueIdx]++;
 		}
 	}
 
-	void VulkanResource::notifyDone(UINT32 globalQueueIdx, VulkanAccessFlags useFlags)
+	void VulkanResource::NotifyDone(UINT32 globalQueueIdx, VulkanAccessFlags useFlags)
 	{
 		bool destroy;
 		{
@@ -74,13 +74,13 @@ namespace bs { namespace ct
 			mNumUsedHandles--;
 			mNumBoundHandles--;
 
-			if (useFlags.isSet(VulkanAccessFlag::Read))
+			if (useFlags.IsSet(VulkanAccessFlag::Read))
 			{
 				assert(mReadUses[globalQueueIdx] > 0);
 				mReadUses[globalQueueIdx]--;
 			}
 
-			if (useFlags.isSet(VulkanAccessFlag::Write))
+			if (useFlags.IsSet(VulkanAccessFlag::Write))
 			{
 				assert(mWriteUses[globalQueueIdx] > 0);
 				mWriteUses[globalQueueIdx]--;
@@ -92,7 +92,7 @@ namespace bs { namespace ct
 
 		// (Safe to check outside of mutex as we guarantee that once queued for destruction, state cannot be changed)
 		if (destroy)
-			mOwner->destroy(this);
+			mOwner->Destroy(this);
 	}
 
 	void VulkanResource::notifyUnbound()
@@ -111,7 +111,7 @@ namespace bs { namespace ct
 			mOwner->destroy(this);
 	}
 
-	UINT32 VulkanResource::getUseInfo(VulkanAccessFlags useFlags) const
+	UINT32 VulkanResource::GetUseInfo(VulkanAccessFlags useFlags) const
 	{
 		UINT32 mask = 0;
 
@@ -136,7 +136,7 @@ namespace bs { namespace ct
 		return mask;
 	}
 
-	void VulkanResource::destroy()
+	void VulkanResource::Destroy()
 	{
 		bool destroy;
 		{
@@ -155,7 +155,7 @@ namespace bs { namespace ct
 			mOwner->destroy(this);
 	}
 
-	VulkanDevice& VulkanResource::getDevice() const
+	VulkanDevice& VulkanResource::GetDevice() const
 	{
 		return mOwner->getDevice();
 	}
@@ -172,7 +172,7 @@ namespace bs { namespace ct
 #endif
 	}
 
-	void VulkanResourceManager::destroy(VulkanResource* resource)
+	void VulkanResourceManager::Destroy(VulkanResource* resource)
 	{
 #if BS_DEBUG_MODE
 		{

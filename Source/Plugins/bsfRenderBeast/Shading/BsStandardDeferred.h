@@ -30,7 +30,7 @@ namespace bs { namespace ct {
 
 		/** Helper method used for initializing variations of this material. */
 		template<bool msaa, bool singleSampleMSAA>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -44,7 +44,7 @@ namespace bs { namespace ct {
 		DeferredDirectionalLightMat();
 
 		/** Binds the material for rendering and sets up any parameters. */
-		void bind(const GBufferTextures& gBufferInput, const SPtr<Texture>& lightOcclusion,
+		void Bind(const GBufferTextures& gBufferInput, const SPtr<Texture>& lightOcclusion,
 			const SPtr<GpuParamBlockBuffer>& perCamera, const SPtr<GpuParamBlockBuffer>& perLight);
 
 		/**
@@ -55,7 +55,7 @@ namespace bs { namespace ct {
 		 *									evaluated. Otherwise all samples will be evaluated.
 		 * @return							Requested variation of the material.
 		 */
-		static DeferredDirectionalLightMat* getVariation(bool msaa, bool singleSampleMSAA = false);
+		static DeferredDirectionalLightMat* GetVariation(bool msaa, bool singleSampleMSAA = false);
 	private:
 		GBufferParams mGBufferParams;
 		GpuParamTexture mLightOcclusionTexParam;
@@ -68,7 +68,7 @@ namespace bs { namespace ct {
 
 		/** Helper method used for initializing variations of this material. */
 		template<bool inside, bool msaa, bool singleSampleMSAA>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -83,7 +83,7 @@ namespace bs { namespace ct {
 		DeferredPointLightMat();
 
 		/** Binds the material for rendering and sets up any parameters. */
-		void bind(const GBufferTextures& gBufferInput, const SPtr<Texture>& lightOcclusion,
+		void Bind(const GBufferTextures& gBufferInput, const SPtr<Texture>& lightOcclusion,
 			const SPtr<GpuParamBlockBuffer>& perCamera, const SPtr<GpuParamBlockBuffer>& perLight);
 
 		/**
@@ -95,7 +95,7 @@ namespace bs { namespace ct {
 		 *									evaluated. Otherwise all samples will be evaluated.
 		 * @return							Requested variation of the material.
 		 */
-		static DeferredPointLightMat* getVariation(bool inside, bool msaa, bool singleSampleMSAA = false);
+		static DeferredPointLightMat* GetVariation(bool inside, bool msaa, bool singleSampleMSAA = false);
 	private:
 		GBufferParams mGBufferParams;
 		GpuParamTexture mLightOcclusionTexParam;
@@ -124,7 +124,7 @@ namespace bs { namespace ct {
 
 		/** Helper method used for initializing variations of this material. */
 		template<bool msaa, bool singleSampleMSAA>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -138,7 +138,7 @@ namespace bs { namespace ct {
 		DeferredIBLSetupMat();
 
 		/** Binds the material for rendering and sets up any parameters. */
-		void bind(const GBufferTextures& gBufferInput, const SPtr<GpuParamBlockBuffer>& perCamera,
+		void Bind(const GBufferTextures& gBufferInput, const SPtr<GpuParamBlockBuffer>& perCamera,
 			const SPtr<Texture>& ssr, const SPtr<Texture>& ao, const SPtr<GpuParamBlockBuffer>& reflProbeParams);
 
 		/**
@@ -149,7 +149,7 @@ namespace bs { namespace ct {
 		 *									evaluated. Otherwise all samples will be evaluated.
 		 * @return							Requested variation of the material.
 		 */
-		static DeferredIBLSetupMat* getVariation(bool msaa, bool singleSampleMSAA = false);
+		static DeferredIBLSetupMat* GetVariation(bool msaa, bool singleSampleMSAA = false);
 	private:
 		GBufferParams mGBufferParams;
 		ImageBasedLightingParams mIBLParams;
@@ -167,7 +167,7 @@ namespace bs { namespace ct {
 
 		/** Helper method used for initializing variations of this material. */
 		template<bool inside, bool msaa, bool singleSampleMSAA>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -182,7 +182,7 @@ namespace bs { namespace ct {
 		DeferredIBLProbeMat();
 
 		/** Binds the material for rendering and sets up any parameters. */
-		void bind(const GBufferTextures& gBufferInput, const SPtr<GpuParamBlockBuffer>& perCamera,
+		void Bind(const GBufferTextures& gBufferInput, const SPtr<GpuParamBlockBuffer>& perCamera,
 			const SceneInfo& sceneInfo, const ReflProbeData& probeData, const SPtr<GpuParamBlockBuffer>& reflProbeParams);
 
 		/**
@@ -194,7 +194,7 @@ namespace bs { namespace ct {
 		 *									evaluated. Otherwise all samples will be evaluated.
 		 * @return							Requested variation of the material.
 		 */
-		static DeferredIBLProbeMat* getVariation(bool inside, bool msaa, bool singleSampleMSAA = false);
+		static DeferredIBLProbeMat* GetVariation(bool inside, bool msaa, bool singleSampleMSAA = false);
 	private:
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
 		GBufferParams mGBufferParams;
@@ -213,7 +213,7 @@ namespace bs { namespace ct {
 
 		/** Helper method used for initializing variations of this material. */
 		template<bool msaa, bool singleSampleMSAA>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -227,7 +227,7 @@ namespace bs { namespace ct {
 		DeferredIBLSkyMat();
 
 		/** Binds the material for rendering and sets up any parameters. */
-		void bind(const GBufferTextures& gBufferInput, const SPtr<GpuParamBlockBuffer>& perCamera,
+		void Bind(const GBufferTextures& gBufferInput, const SPtr<GpuParamBlockBuffer>& perCamera,
 			const Skybox* skybox, const SPtr<GpuParamBlockBuffer>& reflProbeParams);
 
 		/**
@@ -238,7 +238,7 @@ namespace bs { namespace ct {
 		 *									evaluated. Otherwise all samples will be evaluated.
 		 * @return							Requested variation of the material.
 		 */
-		static DeferredIBLSkyMat* getVariation(bool msaa, bool singleSampleMSAA = false);
+		static DeferredIBLSkyMat* GetVariation(bool msaa, bool singleSampleMSAA = false);
 	private:
 		GBufferParams mGBufferParams;
 		ImageBasedLightingParams mIBLParams;
@@ -256,7 +256,7 @@ namespace bs { namespace ct {
 
 		/** Helper method used for initializing variations of this material. */
 		template<bool msaa, bool singleSampleMSAA>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -270,7 +270,7 @@ namespace bs { namespace ct {
 		DeferredIBLFinalizeMat();
 
 		/** Binds the material for rendering and sets up any parameters. */
-		void bind(const GBufferTextures& gBufferInput, const SPtr<GpuParamBlockBuffer>& perCamera,
+		void Bind(const GBufferTextures& gBufferInput, const SPtr<GpuParamBlockBuffer>& perCamera,
 			const SPtr<Texture>& iblRadiance, const SPtr<Texture>& preintegratedBrdf,
 			const SPtr<GpuParamBlockBuffer>& reflProbeParams);
 
@@ -282,7 +282,7 @@ namespace bs { namespace ct {
 		 *									evaluated. Otherwise all samples will be evaluated.
 		 * @return							Requested variation of the material.
 		 */
-		static DeferredIBLFinalizeMat* getVariation(bool msaa, bool singleSampleMSAA = false);
+		static DeferredIBLFinalizeMat* GetVariation(bool msaa, bool singleSampleMSAA = false);
 	private:
 		GBufferParams mGBufferParams;
 		ImageBasedLightingParams mIBLParams;
@@ -296,7 +296,7 @@ namespace bs { namespace ct {
 		StandardDeferred();
 
 		/** Calculates lighting for the specified light, using the standard deferred renderer. */
-		void renderLight(LightType type, const RendererLight& light, const RendererView& view,
+		void RenderLight(LightType type, const RendererLight& light, const RendererView& view,
 			const GBufferTextures& gBufferInput, const SPtr<Texture>& lightOcclusion);
 
 		/**
@@ -304,7 +304,7 @@ namespace bs { namespace ct {
 		 * Alpha value of the render target is used for determining the contribution and will be updated with new
 		 * contibution after blending.
 		 */
-		void renderReflProbe(const ReflProbeData& probeData, const RendererView& view,
+		void RenderReflProbe(const ReflProbeData& probeData, const RendererView& view,
 			const GBufferTextures& gBufferInput, const SceneInfo& sceneInfo,
 			const SPtr<GpuParamBlockBuffer>& reflProbeParams);
 

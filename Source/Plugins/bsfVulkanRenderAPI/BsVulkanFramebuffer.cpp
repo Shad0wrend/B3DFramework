@@ -28,30 +28,30 @@ namespace bs { namespace ct
 
 			mColorAttachments[attachmentIdx].baseLayer = desc.color[i].baseLayer;
 			mColorAttachments[attachmentIdx].image = desc.color[i].image;
-			mColorAttachments[attachmentIdx].finalLayout = renderPass->getColorDesc(attachmentIdx).finalLayout;
+			mColorAttachments[attachmentIdx].finalLayout = renderPass->GetColorDesc(attachmentIdx).finalLayout;
 			mColorAttachments[attachmentIdx].index = i;
 			mColorAttachments[attachmentIdx].surface = desc.color[i].surface;
 
 			if (desc.color[i].surface.numMipLevels == 0)
-				attachmentViews[attachmentIdx] = desc.color[i].image->getView(true);
+				attachmentViews[attachmentIdx] = desc.color[i].image->GetView(true);
 			else
-				attachmentViews[attachmentIdx] = desc.color[i].image->getView(desc.color[i].surface, true);
+				attachmentViews[attachmentIdx] = desc.color[i].image->GetView(desc.color[i].surface, true);
 
 			attachmentIdx++;
 		}
 
-		if (renderPass->hasDepthAttachment())
+		if (renderPass->HasDepthAttachment())
 		{
 			mDepthStencilAttachment.baseLayer = desc.depth.baseLayer;
 			mDepthStencilAttachment.image = desc.depth.image;
-			mDepthStencilAttachment.finalLayout = renderPass->getDepthDesc().finalLayout;
+			mDepthStencilAttachment.finalLayout = renderPass->GetDepthDesc().finalLayout;
 			mDepthStencilAttachment.index = 0;
 			mDepthStencilAttachment.surface = desc.depth.surface;
 
 			if (desc.depth.surface.numMipLevels == 0)
-				attachmentViews[attachmentIdx] = desc.depth.image->getView(true);
+				attachmentViews[attachmentIdx] = desc.depth.image->GetView(true);
 			else
-				attachmentViews[attachmentIdx] = desc.depth.image->getView(desc.depth.surface, true);
+				attachmentViews[attachmentIdx] = desc.depth.image->GetView(desc.depth.surface, true);
 
 			attachmentIdx++;
 		}
@@ -59,7 +59,7 @@ namespace bs { namespace ct
 		framebufferCI.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
 		framebufferCI.pNext = nullptr;
 		framebufferCI.flags = 0;
-		framebufferCI.attachmentCount = renderPass->getNumAttachments();
+		framebufferCI.attachmentCount = renderPass->GetNumAttachments();
 		framebufferCI.pAttachments = attachmentViews;
 		framebufferCI.width = desc.width;
 		framebufferCI.height = desc.height;

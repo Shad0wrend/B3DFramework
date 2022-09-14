@@ -19,12 +19,12 @@ namespace bs
 	{
 		metaData.scriptClass->addInternalCall("Internal_setOptions", (void*)&ScriptParticleVelocity::Internal_setOptions);
 		metaData.scriptClass->addInternalCall("Internal_getOptions", (void*)&ScriptParticleVelocity::Internal_getOptions);
-		metaData.scriptClass->addInternalCall("Internal_create", (void*)&ScriptParticleVelocity::Internal_create);
+		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptParticleVelocity::InternalCreate);
 		metaData.scriptClass->addInternalCall("Internal_create0", (void*)&ScriptParticleVelocity::Internal_create0);
 
 	}
 
-	MonoObject* ScriptParticleVelocity::create(const SPtr<ParticleVelocity>& value)
+	MonoObject* ScriptParticleVelocity::Create(const SPtr<ParticleVelocity>& value)
 	{
 		if(value == nullptr) return nullptr; 
 
@@ -35,14 +35,14 @@ namespace bs
 		new (bs_alloc<ScriptParticleVelocity>()) ScriptParticleVelocity(managedInstance, value);
 		return managedInstance;
 	}
-	void ScriptParticleVelocity::Internal_setOptions(ScriptParticleVelocity* thisPtr, __PARTICLE_VELOCITY_DESCInterop* options)
+	void ScriptParticleVelocity::InternalSetOptions(ScriptParticleVelocity* thisPtr, __PARTICLE_VELOCITY_DESCInterop* options)
 	{
 		PARTICLE_VELOCITY_DESC tmpoptions;
 		tmpoptions = ScriptPARTICLE_VELOCITY_DESC::fromInterop(*options);
 		thisPtr->getInternal()->setOptions(tmpoptions);
 	}
 
-	void ScriptParticleVelocity::Internal_getOptions(ScriptParticleVelocity* thisPtr, __PARTICLE_VELOCITY_DESCInterop* __output)
+	void ScriptParticleVelocity::InternalGetOptions(ScriptParticleVelocity* thisPtr, __PARTICLE_VELOCITY_DESCInterop* __output)
 	{
 		PARTICLE_VELOCITY_DESC tmp__output;
 		tmp__output = thisPtr->getInternal()->getOptions();
@@ -52,17 +52,17 @@ namespace bs
 		MonoUtil::valueCopy(__output, &interop__output, ScriptPARTICLE_VELOCITY_DESC::getMetaData()->scriptClass->GetInternalClassInternal());
 	}
 
-	void ScriptParticleVelocity::Internal_create(MonoObject* managedInstance, __PARTICLE_VELOCITY_DESCInterop* desc)
+	void ScriptParticleVelocity::InternalCreate(MonoObject* managedInstance, __PARTICLE_VELOCITY_DESCInterop* desc)
 	{
 		PARTICLE_VELOCITY_DESC tmpdesc;
 		tmpdesc = ScriptPARTICLE_VELOCITY_DESC::fromInterop(*desc);
-		SPtr<ParticleVelocity> instance = ParticleVelocity::create(tmpdesc);
+		SPtr<ParticleVelocity> instance = ParticleVelocity::Create(tmpdesc);
 		new (bs_alloc<ScriptParticleVelocity>())ScriptParticleVelocity(managedInstance, instance);
 	}
 
-	void ScriptParticleVelocity::Internal_create0(MonoObject* managedInstance)
+	void ScriptParticleVelocity::InternalCreate0(MonoObject* managedInstance)
 	{
-		SPtr<ParticleVelocity> instance = ParticleVelocity::create();
+		SPtr<ParticleVelocity> instance = ParticleVelocity::Create();
 		new (bs_alloc<ScriptParticleVelocity>())ScriptParticleVelocity(managedInstance, instance);
 	}
 }

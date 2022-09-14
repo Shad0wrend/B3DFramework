@@ -19,19 +19,19 @@ namespace bs
 
 		ScriptMotionBlurSettings(MonoObject* managedInstance, const SPtr<MotionBlurSettings>& value);
 
-		static MonoObject* create(const SPtr<MotionBlurSettings>& value);
+		static MonoObject* Create(const SPtr<MotionBlurSettings>& value);
 
 	private:
-		static void Internal_MotionBlurSettings(MonoObject* managedInstance);
-		static bool Internal_getenabled(ScriptMotionBlurSettings* thisPtr);
-		static void Internal_setenabled(ScriptMotionBlurSettings* thisPtr, bool value);
-		static MotionBlurDomain Internal_getdomain(ScriptMotionBlurSettings* thisPtr);
-		static void Internal_setdomain(ScriptMotionBlurSettings* thisPtr, MotionBlurDomain value);
-		static MotionBlurFilter Internal_getfilter(ScriptMotionBlurSettings* thisPtr);
-		static void Internal_setfilter(ScriptMotionBlurSettings* thisPtr, MotionBlurFilter value);
-		static MotionBlurQuality Internal_getquality(ScriptMotionBlurSettings* thisPtr);
-		static void Internal_setquality(ScriptMotionBlurSettings* thisPtr, MotionBlurQuality value);
-		static float Internal_getmaximumRadius(ScriptMotionBlurSettings* thisPtr);
-		static void Internal_setmaximumRadius(ScriptMotionBlurSettings* thisPtr, float value);
+		static void InternalMotionBlurSettings(MonoObject* managedInstance);
+		static bool InternalGetenabled(ScriptMotionBlurSettings* thisPtr);
+		static void InternalSetenabled(ScriptMotionBlurSettings* thisPtr, bool value);
+		static MotionBlurDomain InternalGetdomain(ScriptMotionBlurSettings* thisPtr);
+		static void InternalSetdomain(ScriptMotionBlurSettings* thisPtr, MotionBlurDomain value);
+		static MotionBlurFilter InternalGetfilter(ScriptMotionBlurSettings* thisPtr);
+		static void InternalSetfilter(ScriptMotionBlurSettings* thisPtr, MotionBlurFilter value);
+		static MotionBlurQuality InternalGetquality(ScriptMotionBlurSettings* thisPtr);
+		static void InternalSetquality(ScriptMotionBlurSettings* thisPtr, MotionBlurQuality value);
+		static float InternalGetmaximumRadius(ScriptMotionBlurSettings* thisPtr);
+		static void InternalSetmaximumRadius(ScriptMotionBlurSettings* thisPtr, float value);
 	};
 }

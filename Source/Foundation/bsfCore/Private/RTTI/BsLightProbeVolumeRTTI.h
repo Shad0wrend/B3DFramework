@@ -33,7 +33,7 @@ namespace bs
 		enum { id = TID_SavedLightProbeInfo }; enum { hasDynamicSize = 1 };
 		static constexpr UINT32 VERSION = 0;
 
-		static BitLength toMemory(const SavedLightProbeInfo& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const SavedLightProbeInfo& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]()
 			{
@@ -48,7 +48,7 @@ namespace bs
 			});
 		}
 
-		static BitLength fromMemory(SavedLightProbeInfo& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(SavedLightProbeInfo& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
 			rtti_read_size_header(stream, compress, size);
@@ -70,7 +70,7 @@ namespace bs
 			return size;
 		}
 
-		static BitLength getSize(const SavedLightProbeInfo& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const SavedLightProbeInfo& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength dataSize = rtti_size(data.positions) + rtti_size(data.coefficients) + sizeof(uint32_t);
 
@@ -90,7 +90,7 @@ namespace bs
 			BS_RTTI_MEMBER_PLAIN(mCellCount, 4)
 		BS_END_RTTI_MEMBERS
 
-		SavedLightProbeInfo& getProbeInfo(LightProbeVolume* obj)
+		SavedLightProbeInfo& GetProbeInfo(LightProbeVolume* obj)
 		{
 			obj->updateCoefficients();
 
@@ -110,7 +110,7 @@ namespace bs
 			return mSavedLightProbeInfo;
 		}
 
-		void setProbeInfo(LightProbeVolume* obj, SavedLightProbeInfo& data)
+		void SetProbeInfo(LightProbeVolume* obj, SavedLightProbeInfo& data)
 		{
 			obj->mProbes.clear();
 
@@ -130,11 +130,11 @@ namespace bs
 	public:
 		LightProbeVolumeRTTI()
 		{
-			addPlainField("mProbeInfo", 5, &LightProbeVolumeRTTI::getProbeInfo, &LightProbeVolumeRTTI::setProbeInfo,
+			addPlainField("mProbeInfo", 5, &LightProbeVolumeRTTI::GetProbeInfo, &LightProbeVolumeRTTI::SetProbeInfo,
 				RTTIFieldInfo(RTTIFieldFlag::SkipInReferenceSearch));
 		}
 
-		void onDeserializationEnded(IReflectable* obj, SerializationContext* context) override
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override
 		{
 			// Note: Since this is a CoreObject I should call initialize() right after deserialization,
 			// but since this specific type is used in Components we delay initialization until Component
@@ -142,20 +142,20 @@ namespace bs
 			// purposes (you'll need to call initialize manually).
 		}
 
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "LightProbeVolume";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_LightProbeVolume;
 		}
 
 		SPtr<IReflectable> newRTTIObject() override
 		{
-			return LightProbeVolume::createEmpty();
+			return LightProbeVolume::CreateEmpty();
 		}
 
 	private:

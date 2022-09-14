@@ -21,10 +21,10 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "Vector2")
 
 		/** Unboxes a boxed managed Vector2 struct and returns the native version of the structure. */
-		static Vector2 unbox(MonoObject* obj);
+		static Vector2 Unbox(MonoObject* obj);
 
 		/**	Boxes a native Vector2 struct and returns a managed object containing it. */
-		static MonoObject* box(const Vector2& value);
+		static MonoObject* Box(const Vector2& value);
 
 	private:
 		ScriptVector2(MonoObject* instance);
@@ -37,10 +37,10 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "Vector3")
 
 		/**	Unboxes a boxed managed Vector3 struct and returns the native version of the structure. */
-		static Vector3 unbox(MonoObject* obj);
+		static Vector3 Unbox(MonoObject* obj);
 
 		/**	Boxes a native Vector3 struct and returns a managed object containing it. */
-		static MonoObject* box(const Vector3& value);
+		static MonoObject* Box(const Vector3& value);
 
 	private:
 		ScriptVector3(MonoObject* instance);
@@ -53,10 +53,10 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "Vector4")
 
 		/**	Unboxes a boxed managed Vector4 struct and returns the native version of the structure. */
-		static Vector4 unbox(MonoObject* obj);
+		static Vector4 Unbox(MonoObject* obj);
 
 		/**	Boxes a native Vector4 struct and returns a managed object containing it. */
-		static MonoObject* box(const Vector4& value);
+		static MonoObject* Box(const Vector4& value);
 
 	private:
 		ScriptVector4(MonoObject* instance);

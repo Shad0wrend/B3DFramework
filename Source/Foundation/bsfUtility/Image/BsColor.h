@@ -39,16 +39,16 @@ namespace bs
 		bool operator!=(const Color& rhs) const;
 
 		/** Returns the color as a 32-bit value in RGBA order. */
-		RGBA getAsRGBA() const;
+		RGBA GetAsRgba() const;
 
 		/** Returns the color as a 32-bit value in ARGB order. */
-		ARGB getAsARGB() const;
+		ARGB GetAsArgb() const;
 
 		/** Returns the color as a 32-bit value in BGRA order. */
-		BGRA getAsBGRA() const;
+		BGRA GetAsBgra() const;
 
 		/** Returns the color as a 32-bit value in ABGR order. */
-		ABGR getAsABGR() const;
+		ABGR GetAsAbgr() const;
 
 		/**
 		 * Convert the current color to hue, saturation and brightness values.
@@ -57,16 +57,16 @@ namespace bs
 		 * @param[in] saturation	Output saturation level, [0,1].
 		 * @param[in] brightness	Output brightness level, [0,1].
 		 */
-		void getHSB(float* hue, float* saturation, float* brightness) const;
+		void GetHsb(float* hue, float* saturation, float* brightness) const;
 
 		/** Converts the current color from gamma to linear space and returns the result. */
-		Color getLinear() const;
+		Color GetLinear() const;
 
 		/** Converts the current color from linear to gamma space and returns the result. */
-		Color getGamma() const;
+		Color GetGamma() const;
 
 		/** Clamps color value to the range [0, 1]. */
-		void saturate()
+		void Saturate()
 		{
 			if (r < 0)
 				r = 0;
@@ -90,10 +90,10 @@ namespace bs
 		}
 
 		/** Clamps colour value to the range [0, 1]. Returned saturated color as a copy. */
-		Color saturateCopy() const
+		Color SaturateCopy() const
 		{
 			Color ret = *this;
-			ret.saturate();
+			ret.Saturate();
 			return ret;
 		}
 
@@ -112,13 +112,13 @@ namespace bs
 		}
 
 		/** Pointer accessor for direct copying. */
-		float* ptr()
+		float* Ptr()
 		{
 			return &r;
 		}
 
 		/** Pointer accessor for direct copying. */
-		const float* ptr() const
+		const float* Ptr() const
 		{
 			return &r;
 		}
@@ -206,16 +206,16 @@ namespace bs
 		}
 
 		/** Creates a color value from a 32-bit value that encodes a RGBA color. */
-		static Color fromRGBA(RGBA val);
+		static Color FromRgba(RGBA val);
 
 		/** Creates a color value from a 32-bit value that encodes a ARGB color. */
-		static Color fromARGB(ARGB val);
+		static Color FromArgb(ARGB val);
 
 		/** Creates a color value from a 32-bit value that encodes a BGRA color. */
-		static Color fromBGRA(BGRA val);
+		static Color FromBgra(BGRA val);
 
 		/** Creates a color value from a 32-bit value that encodes a ABGR color. */
-		static Color fromABGR(ABGR val);
+		static Color FromAbgr(ABGR val);
 
 		/**
 		 * Creates a color value from hue, saturation and brightness.
@@ -224,20 +224,20 @@ namespace bs
 		 * @param[in] saturation	Saturation level, [0,1].
 		 * @param[in] brightness	Brightness level, [0,1].
 		 */
-		static Color fromHSB(float hue, float saturation, float brightness);
+		static Color FromHsb(float hue, float saturation, float brightness);
 
 		/**
 		 * Linearly interpolates between the two colors using @p t. t should be in [0, 1] range, where t = 0 corresponds
 		 * to the left color, while t = 1 corresponds to the right color.
 		 */
-		static Color lerp(float t, const Color& a, const Color& b);
+		static Color Lerp(float t, const Color& a, const Color& b);
 
 		/**
 		 * Linearly interpolates between the two colors using @p t. t should be in [0, 255] range, where t = 0 corresponds
 		 * to the left color, while t = 1 corresponds to the right color. Operates directly on 8-bit per channel
 		 * encoded color instead of on floating point values.
 		 */
-		static constexpr RGBA lerp(UINT8 t, RGBA from, RGBA to)
+		static constexpr RGBA Lerp(UINT8 t, RGBA from, RGBA to)
 		{
 			constexpr UINT32 RB_MASK = 0x00FF00FF;
 			constexpr UINT32 GA_MASK = 0xFF00FF00;

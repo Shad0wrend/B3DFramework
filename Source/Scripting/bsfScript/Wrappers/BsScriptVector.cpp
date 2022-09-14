@@ -14,15 +14,15 @@ namespace bs
 	void ScriptVector2::initRuntimeData()
 	{ }
 
-	MonoObject* ScriptVector2::box(const Vector2& value)
+	MonoObject* ScriptVector2::Box(const Vector2& value)
 	{
 		// We're casting away const but it's fine since structs are passed by value anyway
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	Vector2 ScriptVector2::unbox(MonoObject* obj)
+	Vector2 ScriptVector2::Unbox(MonoObject* obj)
 	{
-		return *(Vector2*)MonoUtil::unbox(obj);
+		return *(Vector2*)MonoUtil::Unbox(obj);
 	}
 
 	ScriptVector3::ScriptVector3(MonoObject* instance)
@@ -32,15 +32,15 @@ namespace bs
 	void ScriptVector3::initRuntimeData()
 	{ }
 
-	MonoObject* ScriptVector3::box(const Vector3& value)
+	MonoObject* ScriptVector3::Box(const Vector3& value)
 	{
 		// We're casting away const but it's fine since structs are passed by value anyway
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	Vector3 ScriptVector3::unbox(MonoObject* obj)
+	Vector3 ScriptVector3::Unbox(MonoObject* obj)
 	{
-		return *(Vector3*)MonoUtil::unbox(obj);
+		return *(Vector3*)MonoUtil::Unbox(obj);
 	}
 
 	ScriptVector4::ScriptVector4(MonoObject* instance)
@@ -50,14 +50,14 @@ namespace bs
 	void ScriptVector4::initRuntimeData()
 	{ }
 
-	MonoObject* ScriptVector4::box(const Vector4& value)
+	MonoObject* ScriptVector4::Box(const Vector4& value)
 	{
 		// We're casting away const but it's fine since structs are passed by value anyway
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	Vector4 ScriptVector4::unbox(MonoObject* obj)
+	Vector4 ScriptVector4::Unbox(MonoObject* obj)
 	{
-		return *(Vector4*)MonoUtil::unbox(obj);
+		return *(Vector4*)MonoUtil::Unbox(obj);
 	}
 }

@@ -66,7 +66,7 @@ namespace bs
 		{ }
 
 		/** Returns true if the async operation has completed. */
-		bool hasCompleted() const
+		bool HasCompleted() const
 		{
 			return mData->mIsCompleted.load(std::memory_order_acquire);
 		}
@@ -78,7 +78,7 @@ namespace bs
 		 * Do not call this on the thread that is completing the async op, as it will cause a deadlock. Make sure the
 		 * command you are waiting for is actually queued for execution because a deadlock will occur otherwise.
 		 */
-		void blockUntilComplete() const
+		void BlockUntilComplete() const
 		{
 			if (mSyncData == nullptr)
 			{
@@ -87,7 +87,7 @@ namespace bs
 			}
 
 			Lock lock(mSyncData->mMutex);
-			while (!hasCompleted())
+			while (!HasCompleted())
 				mSyncData->mCondition.wait(lock);
 		}
 
@@ -95,10 +95,10 @@ namespace bs
 		* Retrieves the value returned by the async operation as a generic type. Only valid if hasCompleted() returns
 		* true.
 		*/
-		Any getGenericReturnValue() const
+		Any GetGenericReturnValue() const
 		{
 #if BS_DEBUG_MODE
-			if(!hasCompleted())
+			if(!HasCompleted())
 				BS_LOG(Error, Generic, "Trying to get AsyncOp return value but the operation hasn't completed.");
 #endif
 
@@ -138,7 +138,7 @@ namespace bs
 		{ }
 
 		/** Retrieves the value returned by the async operation. Only valid if hasCompleted() returns true. */
-		ReturnType getReturnValue() const
+		ReturnType GetReturnValue() const
 		{
 #if BS_DEBUG_MODE
 			if(!hasCompleted())

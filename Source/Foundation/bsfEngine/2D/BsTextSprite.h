@@ -65,7 +65,7 @@ namespace bs
 		 *						example you don't want the sprites to share the same group if they use different world
 		 *						transform matrices).
 		 */
-		void update(const TEXT_SPRITE_DESC& desc, UINT64 groupId);
+		void Update(const TEXT_SPRITE_DESC& desc, UINT64 groupId);
 
 		/**
 		 * Calculates and returns offset for each individual text line. The offsets provide information on how much to
@@ -79,7 +79,7 @@ namespace bs
 		 * @param[out]	output		Pre-allocated buffer to output the results in. Buffer must have an element
 		 *							for every line in @p textData.
 		 */
-		static void getAlignmentOffsets(const TextDataBase& textData,
+		static void GetAlignmentOffsets(const TextDataBase& textData,
 			UINT32 width, UINT32 height, TextHorzAlign horzAlign, TextVertAlign vertAlign, Vector2I* output);
 
 		/**
@@ -101,7 +101,7 @@ namespace bs
 		 * @param[in]	bufferSizeQuads	Size of the output buffers, in number of quads.
 		 * @return						Number of generated quads.
 		 */
-		static UINT32 genTextQuads(UINT32 page, const TextDataBase& textData, UINT32 width, UINT32 height,
+		static UINT32 GenTextQuads(UINT32 page, const TextDataBase& textData, UINT32 width, UINT32 height,
 			TextHorzAlign horzAlign, TextVertAlign vertAlign, SpriteAnchor anchor, Vector2* vertices, Vector2* uv, UINT32* indices,
 			UINT32 bufferSizeQuads);
 
@@ -123,7 +123,7 @@ namespace bs
 		 * @param[in]	bufferSizeQuads	Size of the output buffers, in number of quads.
 		 * @return						Number of generated quads.
 		 */
-		static UINT32 genTextQuads(const TextDataBase& textData, UINT32 width, UINT32 height,
+		static UINT32 GenTextQuads(const TextDataBase& textData, UINT32 width, UINT32 height,
 			TextHorzAlign horzAlign, TextVertAlign vertAlign, SpriteAnchor anchor, Vector2* vertices, Vector2* uv, UINT32* indices,
 			UINT32 bufferSizeQuads);
 
@@ -132,7 +132,7 @@ namespace bs
 		static const int STATIC_BUFFER_SIZE = STATIC_CHARS_TO_BUFFER * (4 * (2 * sizeof(Vector2)) + (6 * sizeof(UINT32)));
 
 		/**	Clears internal geometry buffers. */
-		void clearMesh();
+		void ClearMesh();
 
 		mutable StaticAlloc<STATIC_BUFFER_SIZE> mAlloc;
 	};

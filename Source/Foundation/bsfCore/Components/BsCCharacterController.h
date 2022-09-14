@@ -24,95 +24,95 @@ namespace bs
 
 		/** @copydoc CharacterController::move */
 		BS_SCRIPT_EXPORT(n:Move)
-		CharacterCollisionFlags move(const Vector3& displacement);
+		CharacterCollisionFlags Move(const Vector3& displacement);
 
 		/** @copydoc CharacterController::getFootPosition */
 		BS_SCRIPT_EXPORT(n:FootPosition,pr:getter,hide)
-		Vector3 getFootPosition() const;
+		Vector3 GetFootPosition() const;
 
 		/** @copydoc CharacterController::setFootPosition */
 		BS_SCRIPT_EXPORT(n:FootPosition,pr:setter,hide)
-		void setFootPosition(const Vector3& position);
+		void SetFootPosition(const Vector3& position);
 
 		/** @copydoc CharacterController::getRadius */
 		BS_SCRIPT_EXPORT(n:Radius,pr:getter)
-		float getRadius() const { return mDesc.radius; }
+		float GetRadius() const { return mDesc.radius; }
 
 		/** @copydoc CharacterController::setRadius */
 		BS_SCRIPT_EXPORT(n:Radius,pr:setter)
-		void setRadius(float radius);
+		void SetRadius(float radius);
 
 		/** @copydoc CharacterController::getHeight */
 		BS_SCRIPT_EXPORT(n:Height,pr:getter)
-		float getHeight() const { return mDesc.height; }
+		float GetHeight() const { return mDesc.height; }
 
 		/** @copydoc CharacterController::setHeight */
 		BS_SCRIPT_EXPORT(n:Height,pr:setter)
-		void setHeight(float height);
+		void SetHeight(float height);
 
 		/** @copydoc CharacterController::getUp */
 		BS_SCRIPT_EXPORT(n:Up,pr:getter)
-		Vector3 getUp() const { return mDesc.up; }
+		Vector3 GetUp() const { return mDesc.up; }
 
 		/** @copydoc CharacterController::setUp */
 		BS_SCRIPT_EXPORT(n:Up,pr:setter)
-		void setUp(const Vector3& up);
+		void SetUp(const Vector3& up);
 
 		/** @copydoc CharacterController::getClimbingMode */
 		BS_SCRIPT_EXPORT(n:ClimbingMode,pr:getter)
-		CharacterClimbingMode getClimbingMode() const { return mDesc.climbingMode; }
+		CharacterClimbingMode GetClimbingMode() const { return mDesc.climbingMode; }
 
 		/** @copydoc CharacterController::setClimbingMode */
 		BS_SCRIPT_EXPORT(n:ClimbingMode,pr:setter)
-		void setClimbingMode(CharacterClimbingMode mode);
+		void SetClimbingMode(CharacterClimbingMode mode);
 
 		/** @copydoc CharacterController::getNonWalkableMode */
 		BS_SCRIPT_EXPORT(n:NonWalkableMode,pr:getter)
-		CharacterNonWalkableMode getNonWalkableMode() const { return mDesc.nonWalkableMode; }
+		CharacterNonWalkableMode GetNonWalkableMode() const { return mDesc.nonWalkableMode; }
 
 		/** @copydoc CharacterController::setNonWalkableMode */
 		BS_SCRIPT_EXPORT(n:NonWalkableMode,pr:setter)
-		void setNonWalkableMode(CharacterNonWalkableMode mode);
+		void SetNonWalkableMode(CharacterNonWalkableMode mode);
 
 		/** @copydoc CharacterController::getMinMoveDistance */
 		BS_SCRIPT_EXPORT(n:MinMoveDistance,pr:getter)
-		float getMinMoveDistance() const { return mDesc.minMoveDistance; }
+		float GetMinMoveDistance() const { return mDesc.minMoveDistance; }
 
 		/** @copydoc CharacterController::setMinMoveDistance */
 		BS_SCRIPT_EXPORT(n:MinMoveDistance,pr:setter)
-		void setMinMoveDistance(float value);
+		void SetMinMoveDistance(float value);
 
 		/** @copydoc CharacterController::getContactOffset */
 		BS_SCRIPT_EXPORT(n:ContactOffset,pr:getter)
-		float getContactOffset() const { return mDesc.contactOffset; }
+		float GetContactOffset() const { return mDesc.contactOffset; }
 
 		/** @copydoc CharacterController::setContactOffset */
 		BS_SCRIPT_EXPORT(n:ContactOffset,pr:setter)
-		void setContactOffset(float value);
+		void SetContactOffset(float value);
 
 		/** @copydoc CharacterController::getStepOffset */
 		BS_SCRIPT_EXPORT(n:StepOffset,pr:getter)
-		float getStepOffset() const { return mDesc.stepOffset; }
+		float GetStepOffset() const { return mDesc.stepOffset; }
 
 		/** @copydoc CharacterController::setStepOffset */
 		BS_SCRIPT_EXPORT(n:StepOffset,pr:setter)
-		void setStepOffset(float value);
+		void SetStepOffset(float value);
 
 		/** @copydoc CharacterController::getSlopeLimit */
 		BS_SCRIPT_EXPORT(n:SlopeLimit,pr:getter,range:[0,180],slider)
-		Radian getSlopeLimit() const { return mDesc.slopeLimit; }
+		Radian GetSlopeLimit() const { return mDesc.slopeLimit; }
 
 		/** @copydoc CharacterController::setSlopeLimit */
 		BS_SCRIPT_EXPORT(n:SlopeLimit,pr:setter,range:[0,180],slider)
-		void setSlopeLimit(Radian value);
+		void SetSlopeLimit(Radian value);
 
 		/** @copydoc CharacterController::getLayer */
 		BS_SCRIPT_EXPORT(n:Layer,pr:getter,layerMask)
-		UINT64 getLayer() const { return mLayer; }
+		UINT64 GetLayer() const { return mLayer; }
 
 		/** @copydoc CharacterController::setLayer */
 		BS_SCRIPT_EXPORT(n:Layer,pr:setter,layerMask)
-		void setLayer(UINT64 layer);
+		void SetLayer(UINT64 layer);
 
 		/** @copydoc CharacterController::onColliderHit */
 		BS_SCRIPT_EXPORT(n:OnColliderHit)
@@ -136,37 +136,37 @@ namespace bs
 		/************************************************************************/
 	protected:
 		friend class SceneObject;
-		using Component::destroyInternal;
+		using Component::DestroyInternal;
 
 		/** @copydoc Component::onInitialized() */
-		void onInitialized() override;
+		void OnInitialized() override;
 
 		/** @copydoc Component::onDestroyed() */
-		void onDestroyed() override;
+		void OnDestroyed() override;
 
 		/** @copydoc Component::onDisabled() */
-		void onDisabled() override;
+		void OnDisabled() override;
 
 		/** @copydoc Component::onEnabled() */
-		void onEnabled() override;
+		void OnEnabled() override;
 
 		/** @copydoc Component::onTransformChanged() */
-		void onTransformChanged(TransformChangedFlags flags) override;
+		void OnTransformChanged(TransformChangedFlags flags) override;
 
 		/** Updates the position by copying it from the controller to the component's scene object. */
-		void updatePositionFromController();
+		void UpdatePositionFromController();
 
 		/** Updates the dimensions of the controller by taking account scale of the parent scene object. */
-		void updateDimensions();
+		void UpdateDimensions();
 
 		/** Destroys the internal character controller representation. */
-		void destroyInternal();
+		void DestroyInternal();
 
 		/** Triggered when the internal controller hits a collider. */
-		void triggerOnColliderHit(const ControllerColliderCollision& value);
+		void TriggerOnColliderHit(const ControllerColliderCollision& value);
 
 		/** Triggered when the internal controller hits another controller. */
-		void triggerOnControllerHit(const ControllerControllerCollision& value);
+		void TriggerOnControllerHit(const ControllerControllerCollision& value);
 
 		SPtr<CharacterController> mInternal;
 		CHAR_CONTROLLER_DESC mDesc;
@@ -177,8 +177,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class CCharacterControllerRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 
 	protected:
 		CCharacterController(); // Serialization only

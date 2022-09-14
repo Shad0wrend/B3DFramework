@@ -23,11 +23,11 @@ namespace bs
 
 		/** Determines the currently active language. Any newly created strings will use this value. */
 		BS_SCRIPT_EXPORT(n:ActiveLanguage,pr:setter)
-		void setActiveLanguage(Language language);
+		void SetActiveLanguage(Language language);
 
 		/** @copydoc setActiveLanguage() */
 		BS_SCRIPT_EXPORT(n:ActiveLanguage,pr:getter)
-		Language getActiveLanguage() const { return mActiveLanguage; }
+		Language GetActiveLanguage() const { return mActiveLanguage; }
 
 		/**
 		 * Returns the string table with the specified id. If the table doesn't exist new one is created.
@@ -36,7 +36,7 @@ namespace bs
 		 * @return				String table with the specified identifier.
 		 */
 		BS_SCRIPT_EXPORT()
-		HStringTable getTable(UINT32 id);
+		HStringTable GetTable(UINT32 id);
 
 		/**
 		 * Removes the string table with the specified id.
@@ -44,7 +44,7 @@ namespace bs
 		 * @param[in]	id		Identifier of the string table.
 		 */
 		BS_SCRIPT_EXPORT()
-		void removeTable(UINT32 id);
+		void RemoveTable(UINT32 id);
 
 		/**
 		 * Registers a new string table or replaces an old one at the specified id.
@@ -53,7 +53,7 @@ namespace bs
 		 * @param[in]	table	New string table to assign to the specified identifier.
 		 */
 		BS_SCRIPT_EXPORT()
-		void setTable(UINT32 id, const HStringTable& table);
+		void SetTable(UINT32 id, const HStringTable& table);
 
 	private:
 		Language mActiveLanguage = StringTable::DEFAULT_LANGUAGE;

@@ -8,22 +8,22 @@ namespace bs
 {
 	GUITooltipManager::~GUITooltipManager()
 	{
-		hide();
+		Hide();
 	}
 
-	void GUITooltipManager::show(const GUIWidget& widget, const Vector2I& position, const String& text)
+	void GUITooltipManager::Show(const GUIWidget& widget, const Vector2I& position, const String& text)
 	{
-		hide();
+		Hide();
 
-		mTooltipSO = SceneObject::create("Tooltip", SOF_Internal | SOF_Persistent | SOF_DontSave);
+		mTooltipSO = SceneObject::Create("Tooltip", SOF_Internal | SOF_Persistent | SOF_DontSave);
 		GameObjectHandle<GUITooltip> tooltip = mTooltipSO->addComponent<GUITooltip>(widget, position, text);
 	}
 
-	void GUITooltipManager::hide()
+	void GUITooltipManager::Hide()
 	{
 		if (mTooltipSO != nullptr)
 		{
-			mTooltipSO->destroy();
+			mTooltipSO->Destroy();
 			mTooltipSO = nullptr;
 		}
 	}

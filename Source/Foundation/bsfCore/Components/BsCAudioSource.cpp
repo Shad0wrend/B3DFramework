@@ -11,7 +11,7 @@ namespace bs
 {
 	CAudioSource::CAudioSource()
 	{
-		setName("AudioSource");
+		SetName("AudioSource");
 
 		mNotifyFlags = TCF_Transform;
 	}
@@ -19,12 +19,12 @@ namespace bs
 	CAudioSource::CAudioSource(const HSceneObject& parent)
 		: Component(parent)
 	{
-		setName("AudioSource");
+		SetName("AudioSource");
 
 		mNotifyFlags = TCF_Transform;
 	}
 
-	void CAudioSource::setClip(const HAudioClip& clip)
+	void CAudioSource::SetClip(const HAudioClip& clip)
 	{
 		if (mAudioClip == clip)
 			return;
@@ -32,10 +32,10 @@ namespace bs
 		mAudioClip = clip;
 
 		if (mInternal != nullptr)
-			mInternal->setClip(clip);
+			mInternal->SetClip(clip);
 	}
 
-	void CAudioSource::setVolume(float volume)
+	void CAudioSource::SetVolume(float volume)
 	{
 		if (mVolume == volume)
 			return;
@@ -43,10 +43,10 @@ namespace bs
 		mVolume = volume;
 
 		if (mInternal != nullptr)
-			mInternal->setVolume(volume);
+			mInternal->SetVolume(volume);
 	}
 
-	void CAudioSource::setPitch(float pitch)
+	void CAudioSource::SetPitch(float pitch)
 	{
 		if (mPitch == pitch)
 			return;
@@ -54,10 +54,10 @@ namespace bs
 		mPitch = pitch;
 
 		if (mInternal != nullptr)
-			mInternal->setPitch(pitch);
+			mInternal->SetPitch(pitch);
 	}
 
-	void CAudioSource::setIsLooping(bool loop)
+	void CAudioSource::SetIsLooping(bool loop)
 	{
 		if (mLoop == loop)
 			return;
@@ -65,10 +65,10 @@ namespace bs
 		mLoop = loop;
 
 		if (mInternal != nullptr)
-			mInternal->setIsLooping(loop);
+			mInternal->SetIsLooping(loop);
 	}
 
-	void CAudioSource::setPriority(UINT32 priority)
+	void CAudioSource::SetPriority(UINT32 priority)
 	{
 		if (mPriority == priority)
 			return;
@@ -76,10 +76,10 @@ namespace bs
 		mPriority = priority;
 
 		if (mInternal != nullptr)
-			mInternal->setPriority(priority);
+			mInternal->SetPriority(priority);
 	}
 
-	void CAudioSource::setMinDistance(float distance)
+	void CAudioSource::SetMinDistance(float distance)
 	{
 		if (mMinDistance == distance)
 			return;
@@ -87,10 +87,10 @@ namespace bs
 		mMinDistance = distance;
 
 		if (mInternal != nullptr)
-			mInternal->setMinDistance(distance);
+			mInternal->SetMinDistance(distance);
 	}
 
-	void CAudioSource::setAttenuation(float attenuation)
+	void CAudioSource::SetAttenuation(float attenuation)
 	{
 		if (mAttenuation == attenuation)
 			return;
@@ -98,86 +98,86 @@ namespace bs
 		mAttenuation = attenuation;
 
 		if (mInternal != nullptr)
-			mInternal->setAttenuation(attenuation);
+			mInternal->SetAttenuation(attenuation);
 	}
 
-	void CAudioSource::play()
+	void CAudioSource::Play()
 	{
 		if (mInternal != nullptr)
-			mInternal->play();
+			mInternal->Play();
 	}
 
-	void CAudioSource::pause()
+	void CAudioSource::Pause()
 	{
 		if (mInternal != nullptr)
-			mInternal->pause();
+			mInternal->Pause();
 	}
 
-	void CAudioSource::stop()
+	void CAudioSource::Stop()
 	{
 		if (mInternal != nullptr)
-			mInternal->stop();
+			mInternal->Stop();
 	}
 
-	void CAudioSource::setTime(float position)
+	void CAudioSource::SetTime(float position)
 	{
 		if (mInternal != nullptr)
-			mInternal->setTime(position);
+			mInternal->SetTime(position);
 	}
 
-	float CAudioSource::getTime() const
+	float CAudioSource::GetTime() const
 	{
 		if (mInternal != nullptr)
-			return mInternal->getTime();
+			return mInternal->GetTime();
 
 		return 0.0f;
 	}
 
-	AudioSourceState CAudioSource::getState() const
+	AudioSourceState CAudioSource::GetState() const
 	{
 		if (mInternal != nullptr)
-			return mInternal->getState();
+			return mInternal->GetState();
 
 		return AudioSourceState::Stopped;
 	}
 
-	void CAudioSource::onInitialized()
+	void CAudioSource::OnInitialized()
 	{
 
 	}
 
-	void CAudioSource::onDestroyed()
+	void CAudioSource::OnDestroyed()
 	{
-		destroyInternal();
+		DestroyInternal();
 	}
 
-	void CAudioSource::onDisabled()
+	void CAudioSource::OnDisabled()
 	{
-		destroyInternal();
+		DestroyInternal();
 	}
 
-	void CAudioSource::onEnabled()
+	void CAudioSource::OnEnabled()
 	{
-		restoreInternal();
+		RestoreInternal();
 
 		if (mPlayOnStart)
-			play();
+			Play();
 	}
 
-	void CAudioSource::onTransformChanged(TransformChangedFlags flags)
+	void CAudioSource::OnTransformChanged(TransformChangedFlags flags)
 	{
-		if (!SO()->getActive())
+		if (!SO()->GetActive())
 			return;
 
 		if ((flags & (TCF_Parent | TCF_Transform)) != 0)
-			updateTransform();
+			UpdateTransform();
 	}
 
-	void CAudioSource::update()
+	void CAudioSource::Update()
 	{
-		const Vector3 worldPos = SO()->getTransform().getPosition();
+		const Vector3 worldPos = SO()->GetTransform().GetPosition();
 
-		const float frameDelta = gTime().getFrameDelta();
+		const float frameDelta = gTime().GetFrameDelta();
 		if(frameDelta > 0.0f)
 			mVelocity = (worldPos - mLastPosition) / frameDelta;
 		else
@@ -186,42 +186,42 @@ namespace bs
 		mLastPosition = worldPos;
 	}
 
-	void CAudioSource::restoreInternal()
+	void CAudioSource::RestoreInternal()
 	{
 		if (mInternal == nullptr)
-			mInternal = AudioSource::create();
+			mInternal = AudioSource::Create();
 
 		// Note: Merge into one call to avoid many virtual function calls
-		mInternal->setClip(mAudioClip);
-		mInternal->setVolume(mVolume);
-		mInternal->setPitch(mPitch);
-		mInternal->setIsLooping(mLoop);
-		mInternal->setPriority(mPriority);
-		mInternal->setMinDistance(mMinDistance);
-		mInternal->setAttenuation(mAttenuation);
+		mInternal->SetClip(mAudioClip);
+		mInternal->SetVolume(mVolume);
+		mInternal->SetPitch(mPitch);
+		mInternal->SetIsLooping(mLoop);
+		mInternal->SetPriority(mPriority);
+		mInternal->SetMinDistance(mMinDistance);
+		mInternal->SetAttenuation(mAttenuation);
 
-		updateTransform();
+		UpdateTransform();
 	}
 
-	void CAudioSource::destroyInternal()
+	void CAudioSource::DestroyInternal()
 	{
 		// This should release the last reference and destroy the internal listener
 		mInternal = nullptr;
 	}
 
-	void CAudioSource::updateTransform()
+	void CAudioSource::UpdateTransform()
 	{
-		mInternal->setTransform(SO()->getTransform());
-		mInternal->setVelocity(mVelocity);
+		mInternal->SetTransform(SO()->GetTransform());
+		mInternal->SetVelocity(mVelocity);
 	}
 
-	RTTITypeBase* CAudioSource::getRTTIStatic()
+	RTTITypeBase* CAudioSource::GetRttiStatic()
 	{
-		return CAudioSourceRTTI::instance();
+		return CAudioSourceRTTI::Instance();
 	}
 
-	RTTITypeBase* CAudioSource::getRTTI() const
+	RTTITypeBase* CAudioSource::GetRtti() const
 	{
-		return CAudioSource::getRTTIStatic();
+		return CAudioSource::GetRttiStatic();
 	}
 }

@@ -25,7 +25,7 @@ namespace bs
 			assert(!handleLinks && !isActive);
 		}
 
-		virtual void deactivate()
+		virtual void Deactivate()
 		{
 			isActive = false;
 		}
@@ -72,7 +72,7 @@ namespace bs
 		}
 
 		/** Appends a new connection to the active connection array. */
-		void connect(BaseConnectionData* conn)
+		void Connect(BaseConnectionData* conn)
 		{
 			conn->prev = mLastConnection;
 
@@ -91,19 +91,19 @@ namespace bs
 		 *
 		 * @note	Only call this once.
 		 */
-		void disconnect(BaseConnectionData* conn)
+		void Disconnect(BaseConnectionData* conn)
 		{
 			RecursiveLock lock(mMutex);
 
-			conn->deactivate();
+			conn->Deactivate();
 			conn->handleLinks--;
 
 			if (conn->handleLinks == 0)
-				free(conn);
+				Free(conn);
 		}
 
 		/** Disconnects all connections in the event. */
-		void clear()
+		void Clear()
 		{
 			RecursiveLock lock(mMutex);
 
@@ -111,10 +111,10 @@ namespace bs
 			while (conn != nullptr)
 			{
 				BaseConnectionData* next = conn->next;
-				conn->deactivate();
+				conn->Deactivate();
 
 				if (conn->handleLinks == 0)
-					free(conn);
+					Free(conn);
 
 				conn = next;
 			}
@@ -127,18 +127,18 @@ namespace bs
 		 * Called when the event handle no longer keeps a reference to the connection data. This means we might be able to
 		 * free (and reuse) its memory if the event is done with it too.
 		 */
-		void freeHandle(BaseConnectionData* conn)
+		void FreeHandle(BaseConnectionData* conn)
 		{
 			RecursiveLock lock(mMutex);
 
 			conn->handleLinks--;
 
 			if (conn->handleLinks == 0 && !conn->isActive)
-				free(conn);
+				Free(conn);
 		}
 
 		/** Releases connection data and makes it available for re-use when next connection is formed. */
-		void free(BaseConnectionData* conn)
+		void Free(BaseConnectionData* conn)
 		{
 			if (conn->prev != nullptr)
 				conn->prev->next = conn->next;
@@ -194,15 +194,15 @@ namespace bs
 		~HEvent()
 		{
 			if (mConnection != nullptr)
-				mEventData->freeHandle(mConnection);
+				mEventData->FreeHandle(mConnection);
 		}
 
 		/** Disconnect from the event you are subscribed to. */
-		void disconnect()
+		void Disconnect()
 		{
 			if (mConnection != nullptr)
 			{
-				mEventData->disconnect(mConnection);
+				mEventData->Disconnect(mConnection);
 				mConnection = nullptr;
 				mEventData = nullptr;
 			}
@@ -268,11 +268,11 @@ namespace bs
 		struct ConnectionData : BaseConnectionData
 		{
 		public:
-			void deactivate() override
+			void Deactivate() override
 			{
 				func = nullptr;
 
-				BaseConnectionData::deactivate();
+				BaseConnectionData::Deactivate();
 			}
 
 			std::function<RetType(Args...)> func;
@@ -285,11 +285,11 @@ namespace bs
 
 		~TEvent()
 		{
-			clear();
+			Clear();
 		}
 
 		/** Register a new callback that will get notified once the event is triggered. */
-		HEvent connect(std::function<RetType(Args...)> func)
+		HEvent Connect(std::function<RetType(Args...)> func)
 		{
 			RecursiveLock lock(mInternalData->mMutex);
 
@@ -321,7 +321,7 @@ namespace bs
 			}
 			else
 			{
-				mInternalData->connect(connData);
+				mInternalData->Connect(connData);
 			}
 
 			connData->func = func;
@@ -376,9 +376,9 @@ namespace bs
 		}
 
 		/** Clear all callbacks from the event. */
-		void clear()
+		void Clear()
 		{
-			mInternalData->clear();
+			mInternalData->Clear();
 		}
 
 		/**
@@ -386,7 +386,7 @@ namespace bs
 		 *
 		 * @note	It is safe to trigger an event even if no callbacks are registered.
 		 */
-		bool empty() const
+		bool Empty() const
 		{
 			RecursiveLock lock(mInternalData->mMutex);
 

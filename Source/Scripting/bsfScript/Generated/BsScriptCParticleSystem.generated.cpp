@@ -52,7 +52,7 @@ namespace bs
 
 	}
 
-	void ScriptCParticleSystem::Internal_setSettings(ScriptCParticleSystem* thisPtr, MonoObject* settings)
+	void ScriptCParticleSystem::InternalSetSettings(ScriptCParticleSystem* thisPtr, MonoObject* settings)
 	{
 		SPtr<ParticleSystemSettings> tmpsettings;
 		ScriptParticleSystemSettings* scriptsettings;
@@ -62,18 +62,18 @@ namespace bs
 		thisPtr->getHandle()->setSettings(*tmpsettings);
 	}
 
-	MonoObject* ScriptCParticleSystem::Internal_getSettings(ScriptCParticleSystem* thisPtr)
+	MonoObject* ScriptCParticleSystem::InternalGetSettings(ScriptCParticleSystem* thisPtr)
 	{
 		SPtr<ParticleSystemSettings> tmp__output = bs_shared_ptr_new<ParticleSystemSettings>();
 		*tmp__output = thisPtr->getHandle()->getSettings();
 
 		MonoObject* __output;
-		__output = ScriptParticleSystemSettings::create(tmp__output);
+		__output = ScriptParticleSystemSettings::Create(tmp__output);
 
 		return __output;
 	}
 
-	void ScriptCParticleSystem::Internal_setGpuSimulationSettings(ScriptCParticleSystem* thisPtr, MonoObject* settings)
+	void ScriptCParticleSystem::InternalSetGpuSimulationSettings(ScriptCParticleSystem* thisPtr, MonoObject* settings)
 	{
 		SPtr<ParticleGpuSimulationSettings> tmpsettings;
 		ScriptParticleGpuSimulationSettings* scriptsettings;
@@ -83,18 +83,18 @@ namespace bs
 		thisPtr->getHandle()->setGpuSimulationSettings(*tmpsettings);
 	}
 
-	MonoObject* ScriptCParticleSystem::Internal_getGpuSimulationSettings(ScriptCParticleSystem* thisPtr)
+	MonoObject* ScriptCParticleSystem::InternalGetGpuSimulationSettings(ScriptCParticleSystem* thisPtr)
 	{
 		SPtr<ParticleGpuSimulationSettings> tmp__output = bs_shared_ptr_new<ParticleGpuSimulationSettings>();
 		*tmp__output = thisPtr->getHandle()->getGpuSimulationSettings();
 
 		MonoObject* __output;
-		__output = ScriptParticleGpuSimulationSettings::create(tmp__output);
+		__output = ScriptParticleGpuSimulationSettings::Create(tmp__output);
 
 		return __output;
 	}
 
-	void ScriptCParticleSystem::Internal_setEmitters(ScriptCParticleSystem* thisPtr, MonoArray* emitters)
+	void ScriptCParticleSystem::InternalSetEmitters(ScriptCParticleSystem* thisPtr, MonoArray* emitters)
 	{
 		Vector<SPtr<ParticleEmitter>> vecemitters;
 		if(emitters != nullptr)
@@ -115,7 +115,7 @@ namespace bs
 		thisPtr->getHandle()->setEmitters(vecemitters);
 	}
 
-	MonoArray* ScriptCParticleSystem::Internal_getEmitters(ScriptCParticleSystem* thisPtr)
+	MonoArray* ScriptCParticleSystem::InternalGetEmitters(ScriptCParticleSystem* thisPtr)
 	{
 		Vector<SPtr<ParticleEmitter>> vec__output;
 		vec__output = thisPtr->getHandle()->getEmitters();
@@ -127,7 +127,7 @@ namespace bs
 		{
 			SPtr<ParticleEmitter> arrayElemPtr__output = vec__output[i];
 			MonoObject* arrayElem__output;
-			arrayElem__output = ScriptParticleEmitter::create(arrayElemPtr__output);
+			arrayElem__output = ScriptParticleEmitter::Create(arrayElemPtr__output);
 			array__output.set(i, arrayElem__output);
 		}
 		__output = array__output.getInternal();
@@ -135,7 +135,7 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptCParticleSystem::Internal_setEvolvers(ScriptCParticleSystem* thisPtr, MonoArray* evolvers)
+	void ScriptCParticleSystem::InternalSetEvolvers(ScriptCParticleSystem* thisPtr, MonoArray* evolvers)
 	{
 		Vector<SPtr<ParticleEvolver>> vecevolvers;
 		if(evolvers != nullptr)
@@ -156,7 +156,7 @@ namespace bs
 		thisPtr->getHandle()->setEvolvers(vecevolvers);
 	}
 
-	MonoArray* ScriptCParticleSystem::Internal_getEvolvers(ScriptCParticleSystem* thisPtr)
+	MonoArray* ScriptCParticleSystem::InternalGetEvolvers(ScriptCParticleSystem* thisPtr)
 	{
 		Vector<SPtr<ParticleEvolver>> vec__output;
 		vec__output = thisPtr->getHandle()->getEvolvers();
@@ -171,28 +171,28 @@ namespace bs
 			if(arrayElemPtr__output)
 			{
 				if(rtti_is_of_type<ParticleGravity>(arrayElemPtr__output))
-					arrayElem__output = ScriptParticleGravity::create(std::static_pointer_cast<ParticleGravity>(arrayElemPtr__output));
+					arrayElem__output = ScriptParticleGravity::Create(std::static_pointer_cast<ParticleGravity>(arrayElemPtr__output));
 				else if(rtti_is_of_type<ParticleForce>(arrayElemPtr__output))
-					arrayElem__output = ScriptParticleForce::create(std::static_pointer_cast<ParticleForce>(arrayElemPtr__output));
+					arrayElem__output = ScriptParticleForce::Create(std::static_pointer_cast<ParticleForce>(arrayElemPtr__output));
 				else if(rtti_is_of_type<ParticleVelocity>(arrayElemPtr__output))
-					arrayElem__output = ScriptParticleVelocity::create(std::static_pointer_cast<ParticleVelocity>(arrayElemPtr__output));
+					arrayElem__output = ScriptParticleVelocity::Create(std::static_pointer_cast<ParticleVelocity>(arrayElemPtr__output));
 				else if(rtti_is_of_type<ParticleTextureAnimation>(arrayElemPtr__output))
-					arrayElem__output = ScriptParticleTextureAnimation::create(std::static_pointer_cast<ParticleTextureAnimation>(arrayElemPtr__output));
+					arrayElem__output = ScriptParticleTextureAnimation::Create(std::static_pointer_cast<ParticleTextureAnimation>(arrayElemPtr__output));
 				else if(rtti_is_of_type<ParticleOrbit>(arrayElemPtr__output))
-					arrayElem__output = ScriptParticleOrbit::create(std::static_pointer_cast<ParticleOrbit>(arrayElemPtr__output));
+					arrayElem__output = ScriptParticleOrbit::Create(std::static_pointer_cast<ParticleOrbit>(arrayElemPtr__output));
 				else if(rtti_is_of_type<ParticleColor>(arrayElemPtr__output))
-					arrayElem__output = ScriptParticleColor::create(std::static_pointer_cast<ParticleColor>(arrayElemPtr__output));
+					arrayElem__output = ScriptParticleColor::Create(std::static_pointer_cast<ParticleColor>(arrayElemPtr__output));
 				else if(rtti_is_of_type<ParticleSize>(arrayElemPtr__output))
-					arrayElem__output = ScriptParticleSize::create(std::static_pointer_cast<ParticleSize>(arrayElemPtr__output));
+					arrayElem__output = ScriptParticleSize::Create(std::static_pointer_cast<ParticleSize>(arrayElemPtr__output));
 				else if(rtti_is_of_type<ParticleRotation>(arrayElemPtr__output))
-					arrayElem__output = ScriptParticleRotation::create(std::static_pointer_cast<ParticleRotation>(arrayElemPtr__output));
+					arrayElem__output = ScriptParticleRotation::Create(std::static_pointer_cast<ParticleRotation>(arrayElemPtr__output));
 				else if(rtti_is_of_type<ParticleCollisions>(arrayElemPtr__output))
-					arrayElem__output = ScriptParticleCollisions::create(std::static_pointer_cast<ParticleCollisions>(arrayElemPtr__output));
+					arrayElem__output = ScriptParticleCollisions::Create(std::static_pointer_cast<ParticleCollisions>(arrayElemPtr__output));
 				else
-					arrayElem__output = ScriptParticleEvolver::create(arrayElemPtr__output);
+					arrayElem__output = ScriptParticleEvolver::Create(arrayElemPtr__output);
 			}
 			else
-				arrayElem__output = ScriptParticleEvolver::create(arrayElemPtr__output);
+				arrayElem__output = ScriptParticleEvolver::Create(arrayElemPtr__output);
 			array__output.set(i, arrayElem__output);
 		}
 		__output = array__output.getInternal();
@@ -200,12 +200,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptCParticleSystem::Internal_setLayer(ScriptCParticleSystem* thisPtr, uint64_t layer)
+	void ScriptCParticleSystem::InternalSetLayer(ScriptCParticleSystem* thisPtr, uint64_t layer)
 	{
 		thisPtr->getHandle()->setLayer(layer);
 	}
 
-	uint64_t ScriptCParticleSystem::Internal_getLayer(ScriptCParticleSystem* thisPtr)
+	uint64_t ScriptCParticleSystem::InternalGetLayer(ScriptCParticleSystem* thisPtr)
 	{
 		uint64_t tmp__output;
 		tmp__output = thisPtr->getHandle()->getLayer();
@@ -216,7 +216,7 @@ namespace bs
 		return __output;
 	}
 
-	bool ScriptCParticleSystem::Internal__togglePreviewMode(ScriptCParticleSystem* thisPtr, bool enabled)
+	bool ScriptCParticleSystem::InternalTogglePreviewMode(ScriptCParticleSystem* thisPtr, bool enabled)
 	{
 		bool tmp__output;
 		tmp__output = thisPtr->getHandle()->TogglePreviewModeInternal(enabled);

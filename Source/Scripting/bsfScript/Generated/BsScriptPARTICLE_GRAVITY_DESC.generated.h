@@ -13,8 +13,8 @@ namespace bs
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "ParticleGravityOptions")
 
-		static MonoObject* box(const PARTICLE_GRAVITY_DESC& value);
-		static PARTICLE_GRAVITY_DESC unbox(MonoObject* value);
+		static MonoObject* Box(const PARTICLE_GRAVITY_DESC& value);
+		static PARTICLE_GRAVITY_DESC Unbox(MonoObject* value);
 
 	private:
 		ScriptPARTICLE_GRAVITY_DESC(MonoObject* managedInstance);

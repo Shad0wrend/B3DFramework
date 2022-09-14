@@ -87,7 +87,7 @@ namespace bs
 	struct GpuParticle : GpuParticleVertex
 	{
 		/** Gets a version of this object suitable for upload to the injection vertex buffer. */
-		GpuParticleVertex getVertex() const
+		GpuParticleVertex GetVertex() const
 		{
 			GpuParticleVertex output;
 			output.position = position;
@@ -130,23 +130,23 @@ namespace bs
 		 * Advances the simulation for all particle systems using the current frame time delta. Outputs a set of data
 		 * that can be used for rendering & updating every active particle system.
 		 */
-		ParticlePerFrameData* update(const EvaluatedAnimationData& animData);
+		ParticlePerFrameData* Update(const EvaluatedAnimationData& animData);
 
 	private:
 		friend class ParticleSystem;
 
 		/** Must be called by a ParticleSystem upon construction. */
-		UINT32 registerParticleSystem(ParticleSystem* system);
+		UINT32 RegisterParticleSystem(ParticleSystem* system);
 
 		/** Must be called by a ParticleSystem before destruction. */
-		void unregisterParticleSystem(ParticleSystem* system);
+		void UnregisterParticleSystem(ParticleSystem* system);
 
 		/**
 		 * Sorts the particles in the provided @p using the @p sortMode. Sorted particle indices are placed in the
 		 * @p indices array which is expected to be pre-allocated with enough space to hold an index for each particle
 		 * in a set. @p viewPoint is used as a reference point when using the Distance sort mode.
 		 */
-		void sortParticles(const ParticleSet& set, ParticleSortMode sortMode, const Vector3& viewPoint, UINT32* indices);
+		void SortParticles(const ParticleSet& set, ParticleSortMode sortMode, const Vector3& viewPoint, UINT32* indices);
 
 		Members* m;
 

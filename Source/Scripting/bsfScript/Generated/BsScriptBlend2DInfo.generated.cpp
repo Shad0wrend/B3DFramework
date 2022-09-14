@@ -18,36 +18,36 @@ namespace bs
 	void ScriptBlend2DInfo::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptBlend2DInfo::box(const __Blend2DInfoInterop& value)
+	MonoObject*ScriptBlend2DInfo::Box(const __Blend2DInfoInterop& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	__Blend2DInfoInterop ScriptBlend2DInfo::unbox(MonoObject* value)
+	__Blend2DInfoInterop ScriptBlend2DInfo::Unbox(MonoObject* value)
 	{
-		return *(__Blend2DInfoInterop*)MonoUtil::unbox(value);
+		return *(__Blend2DInfoInterop*)MonoUtil::Unbox(value);
 	}
 
-	Blend2DInfo ScriptBlend2DInfo::fromInterop(const __Blend2DInfoInterop& value)
+	Blend2DInfo ScriptBlend2DInfo::FromInterop(const __Blend2DInfoInterop& value)
 	{
 		Blend2DInfo output;
 		ResourceHandle<AnimationClip> tmptopLeftClip;
 		ScriptRRefBase* scripttopLeftClip;
-		scripttopLeftClip = ScriptRRefBase::toNative(value.topLeftClip);
+		scripttopLeftClip = ScriptRRefBase::ToNative(value.topLeftClip);
 		if(scripttopLeftClip != nullptr)
-			tmptopLeftClip = static_resource_cast<AnimationClip>(scripttopLeftClip->getHandle());
+			tmptopLeftClip = static_resource_cast<AnimationClip>(scripttopLeftClip->GetHandle());
 		output.topLeftClip = tmptopLeftClip;
 		ResourceHandle<AnimationClip> tmptopRightClip;
 		ScriptRRefBase* scripttopRightClip;
-		scripttopRightClip = ScriptRRefBase::toNative(value.topRightClip);
+		scripttopRightClip = ScriptRRefBase::ToNative(value.topRightClip);
 		if(scripttopRightClip != nullptr)
-			tmptopRightClip = static_resource_cast<AnimationClip>(scripttopRightClip->getHandle());
+			tmptopRightClip = static_resource_cast<AnimationClip>(scripttopRightClip->GetHandle());
 		output.topRightClip = tmptopRightClip;
 		ResourceHandle<AnimationClip> tmpbotLeftClip;
 		ScriptRRefBase* scriptbotLeftClip;
-		scriptbotLeftClip = ScriptRRefBase::toNative(value.botLeftClip);
+		scriptbotLeftClip = ScriptRRefBase::ToNative(value.botLeftClip);
 		if(scriptbotLeftClip != nullptr)
-			tmpbotLeftClip = static_resource_cast<AnimationClip>(scriptbotLeftClip->getHandle());
+			tmpbotLeftClip = static_resource_cast<AnimationClip>(scriptbotLeftClip->GetHandle());
 		output.botLeftClip = tmpbotLeftClip;
 		ResourceHandle<AnimationClip> tmpbotRightClip;
 		ScriptRRefBase* scriptbotRightClip;
@@ -59,11 +59,11 @@ namespace bs
 		return output;
 	}
 
-	__Blend2DInfoInterop ScriptBlend2DInfo::toInterop(const Blend2DInfo& value)
+	__Blend2DInfoInterop ScriptBlend2DInfo::ToInterop(const Blend2DInfo& value)
 	{
 		__Blend2DInfoInterop output;
 		ScriptRRefBase* scripttopLeftClip;
-		scripttopLeftClip = ScriptResourceManager::instance().getScriptRRef(value.topLeftClip);
+		scripttopLeftClip = ScriptResourceManager::Instance().getScriptRRef(value.topLeftClip);
 		MonoObject* tmptopLeftClip;
 		if(scripttopLeftClip != nullptr)
 			tmptopLeftClip = scripttopLeftClip->getManagedInstance();
@@ -71,7 +71,7 @@ namespace bs
 			tmptopLeftClip = nullptr;
 		output.topLeftClip = tmptopLeftClip;
 		ScriptRRefBase* scripttopRightClip;
-		scripttopRightClip = ScriptResourceManager::instance().getScriptRRef(value.topRightClip);
+		scripttopRightClip = ScriptResourceManager::Instance().getScriptRRef(value.topRightClip);
 		MonoObject* tmptopRightClip;
 		if(scripttopRightClip != nullptr)
 			tmptopRightClip = scripttopRightClip->getManagedInstance();
@@ -79,7 +79,7 @@ namespace bs
 			tmptopRightClip = nullptr;
 		output.topRightClip = tmptopRightClip;
 		ScriptRRefBase* scriptbotLeftClip;
-		scriptbotLeftClip = ScriptResourceManager::instance().getScriptRRef(value.botLeftClip);
+		scriptbotLeftClip = ScriptResourceManager::Instance().getScriptRRef(value.botLeftClip);
 		MonoObject* tmpbotLeftClip;
 		if(scriptbotLeftClip != nullptr)
 			tmpbotLeftClip = scriptbotLeftClip->getManagedInstance();
@@ -87,7 +87,7 @@ namespace bs
 			tmpbotLeftClip = nullptr;
 		output.botLeftClip = tmpbotLeftClip;
 		ScriptRRefBase* scriptbotRightClip;
-		scriptbotRightClip = ScriptResourceManager::instance().getScriptRRef(value.botRightClip);
+		scriptbotRightClip = ScriptResourceManager::Instance().getScriptRRef(value.botRightClip);
 		MonoObject* tmpbotRightClip;
 		if(scriptbotRightClip != nullptr)
 			tmpbotRightClip = scriptbotRightClip->getManagedInstance();

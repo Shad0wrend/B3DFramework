@@ -105,7 +105,7 @@ namespace bs
 		 *
 		 * @see	setMotion
 		 */
-		virtual D6JointMotion getMotion(D6JointAxis axis) const = 0;
+		virtual D6JointMotion GetMotion(D6JointAxis axis) const = 0;
 
 		/**
 		 * Allows you to constrain motion of the specified axis. Be aware that when setting drives for a specific axis
@@ -124,61 +124,61 @@ namespace bs
 		 *    attached at the elbow)
 		 *  - If all angular degrees of freedom are unlocked the result is the same as the spherical joint.
 		 */
-		virtual void setMotion(D6JointAxis axis, D6JointMotion motion) = 0;
+		virtual void SetMotion(D6JointAxis axis, D6JointMotion motion) = 0;
 
 		/** Returns the current rotation of the joint around the X axis. */
-		virtual Radian getTwist() const = 0;
+		virtual Radian GetTwist() const = 0;
 
 		/** Returns the current rotation of the joint around the Y axis. */
-		virtual Radian getSwingY() const = 0;
+		virtual Radian GetSwingY() const = 0;
 
 		/** Returns the current rotation of the joint around the Z axis. */
-		virtual Radian getSwingZ() const = 0;
+		virtual Radian GetSwingZ() const = 0;
 
 		/** @copydoc setLimitLinear() */
-		virtual LimitLinear getLimitLinear() const = 0;
+		virtual LimitLinear GetLimitLinear() const = 0;
 
 		/** Determines the linear limit used for constraining translation degrees of freedom. */
-		virtual void setLimitLinear(const LimitLinear& limit) = 0;
+		virtual void SetLimitLinear(const LimitLinear& limit) = 0;
 		
 		/** @copydoc setLimitTwist() */
-		virtual LimitAngularRange getLimitTwist() const = 0;
+		virtual LimitAngularRange GetLimitTwist() const = 0;
 
 		/** Determines the angular limit used for constraining the twist (rotation around X) degree of freedom. */
-		virtual void setLimitTwist(const LimitAngularRange& limit) = 0;
+		virtual void SetLimitTwist(const LimitAngularRange& limit) = 0;
 
 		/** @copydoc setLimitSwing() */
-		virtual LimitConeRange getLimitSwing() const = 0;
+		virtual LimitConeRange GetLimitSwing() const = 0;
 
 		/** Determines the cone limit used for constraining the swing (rotation around Y and Z) degree of freedom. */
-		virtual void setLimitSwing(const LimitConeRange& limit) = 0;
+		virtual void SetLimitSwing(const LimitConeRange& limit) = 0;
 	
 		/** @copydoc setDrive() */
-		virtual D6JointDrive getDrive(D6JointDriveType type) const = 0;
+		virtual D6JointDrive GetDrive(D6JointDriveType type) const = 0;
 
 		/**
 		 * Determines a drive that will attempt to move the specified degree(s) of freedom to the wanted position and
 		 * velocity.
 		 */
-		virtual void setDrive(D6JointDriveType type, const D6JointDrive& drive) = 0;
+		virtual void SetDrive(D6JointDriveType type, const D6JointDrive& drive) = 0;
 
 		/** Returns the drive's target position relative to the joint's first body. */
-		virtual Vector3 getDrivePosition() const = 0;
+		virtual Vector3 GetDrivePosition() const = 0;
 
 		/** Returns the drive's target rotation relative to the joint's first body. */
-		virtual Quaternion getDriveRotation() const = 0;
+		virtual Quaternion GetDriveRotation() const = 0;
 
 		/** Sets the drive's target position and rotation relative to the joint's first body. */
-		virtual void setDriveTransform(const Vector3& position, const Quaternion& rotation) = 0;
+		virtual void SetDriveTransform(const Vector3& position, const Quaternion& rotation) = 0;
 
 		/** Returns the drive's target linear velocity. */
-		virtual Vector3 getDriveLinearVelocity() const = 0;
+		virtual Vector3 GetDriveLinearVelocity() const = 0;
 
 		/** Returns the drive's target angular velocity. */
-		virtual Vector3 getDriveAngularVelocity() const = 0;
+		virtual Vector3 GetDriveAngularVelocity() const = 0;
 
 		/** Sets the drive's target linear and angular velocities. */
-		virtual void setDriveVelocity(const Vector3& linear, const Vector3& angular) = 0;
+		virtual void SetDriveVelocity(const Vector3& linear, const Vector3& angular) = 0;
 
 		/**
 		 * Creates a new D6 joint.
@@ -186,7 +186,7 @@ namespace bs
 		 * @param[in]	scene		Scene to which to add the joint.
 		 * @param[in]	desc		Settings describing the joint.
 		 */
-		static SPtr<D6Joint> create(PhysicsScene& scene, const D6_JOINT_DESC& desc);
+		static SPtr<D6Joint> Create(PhysicsScene& scene, const D6_JOINT_DESC& desc);
 	};
 
 	/** Structure used for initializing a new D6Joint. */

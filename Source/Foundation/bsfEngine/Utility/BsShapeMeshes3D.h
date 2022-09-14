@@ -33,7 +33,7 @@ namespace bs
 		 * @note
 		 * Primitives are output in the form of a line list.
 		 */
-		static void wireAABox(const AABox& box, const SPtr<MeshData>& meshData, UINT32 vertexOffset, UINT32 indexOffset);
+		static void WireAaBox(const AABox& box, const SPtr<MeshData>& meshData, UINT32 vertexOffset, UINT32 indexOffset);
 
 		/**
 		 * Fills the mesh data with vertices representing a solid axis aligned box.
@@ -55,7 +55,7 @@ namespace bs
 		 * @note
 		 * Primitives are output in the form of a triangle list.
 		 */
-		static void solidAABox(const AABox& box, const SPtr<MeshData>& meshData, UINT32 vertexOffset, UINT32 indexOffset);
+		static void SolidAaBox(const AABox& box, const SPtr<MeshData>& meshData, UINT32 vertexOffset, UINT32 indexOffset);
 
 		/**
 		 * Fills the mesh data with vertices representing an outline of a sphere.
@@ -76,7 +76,7 @@ namespace bs
 		 * @note
 		 * Primitives are output in the form of a line list.
 		 */
-		static void wireSphere(const Sphere& sphere, const SPtr<MeshData>& meshData, UINT32 vertexOffset, UINT32 indexOffset,
+		static void WireSphere(const Sphere& sphere, const SPtr<MeshData>& meshData, UINT32 vertexOffset, UINT32 indexOffset,
 			UINT32 quality = 10);
 
 		/**
@@ -98,7 +98,7 @@ namespace bs
 		 * @note
 		 * Primitives are output in the form of a line list.
 		 */
-		static void wireHemisphere(const Sphere& sphere, const SPtr<MeshData>& meshData, UINT32 vertexOffset,
+		static void WireHemisphere(const Sphere& sphere, const SPtr<MeshData>& meshData, UINT32 vertexOffset,
 			UINT32 indexOffset, UINT32 quality = 10);
 
 		/**
@@ -124,7 +124,7 @@ namespace bs
 		 * @note
 		 * Primitives are output in the form of a triangle list.
 		 */
-		static void solidSphere(const Sphere& sphere, const SPtr<MeshData>& meshData, UINT32 vertexOffset, UINT32 indexOffset,
+		static void SolidSphere(const Sphere& sphere, const SPtr<MeshData>& meshData, UINT32 vertexOffset, UINT32 indexOffset,
 			UINT32 quality = 1);
 
 		/**
@@ -151,7 +151,7 @@ namespace bs
 		 * @note
 		 * Primitives are output in the form of a line list.
 		 */
-		static void wireArc(const Vector3& center, float radius, const Vector3& normal, Degree startAngle, Degree amountAngle,
+		static void WireArc(const Vector3& center, float radius, const Vector3& normal, Degree startAngle, Degree amountAngle,
 			const SPtr<MeshData>& meshData, UINT32 vertexOffset, UINT32 indexOffset, UINT32 quality = 10);
 
 		/**
@@ -182,7 +182,7 @@ namespace bs
 		 * @note
 		 * Primitives are output in the form of a triangle list.
 		 */
-		static void solidArc(const Vector3& center, float radius, const Vector3& normal, Degree startAngle, Degree amountAngle,
+		static void SolidArc(const Vector3& center, float radius, const Vector3& normal, Degree startAngle, Degree amountAngle,
 			const SPtr<MeshData>& meshData, UINT32 vertexOffset, UINT32 indexOffset, UINT32 quality = 10);
 
 		/**
@@ -207,7 +207,7 @@ namespace bs
 		 * @note
 		 * Primitives are output in the form of a line list.
 		 */
-		static void wireDisc(const Vector3& center, float radius, const Vector3& normal, const SPtr<MeshData>& meshData,
+		static void WireDisc(const Vector3& center, float radius, const Vector3& normal, const SPtr<MeshData>& meshData,
 			UINT32 vertexOffset, UINT32 indexOffset, UINT32 quality = 10);
 
 		/**
@@ -233,7 +233,7 @@ namespace bs
 		 * @note
 		 * Primitives are output in the form of a triangle list.
 		 */
-		static void solidDisc(const Vector3& center, float radius, const Vector3& normal, const SPtr<MeshData>& meshData,
+		static void SolidDisc(const Vector3& center, float radius, const Vector3& normal, const SPtr<MeshData>& meshData,
 			UINT32 vertexOffset, UINT32 indexOffset, UINT32 quality = 10);
 
 		/**
@@ -257,7 +257,7 @@ namespace bs
 		 * @note
 		 * Primitives are output in the form of a line list.
 		 */
-		static void wireFrustum(const Vector3& position, float aspect, Degree FOV, float near, float far,
+		static void WireFrustum(const Vector3& position, float aspect, Degree FOV, float near, float far,
 			const SPtr<MeshData>& meshData, UINT32 vertexOffset, UINT32 indexOffset);
 
 		/**
@@ -283,7 +283,7 @@ namespace bs
 		 * @note
 		 * Primitives are output in the form of a line list.
 		 */
-		static void wireCone(const Vector3& base, const Vector3& normal, float height, float radius, Vector2 scale,
+		static void WireCone(const Vector3& base, const Vector3& normal, float height, float radius, Vector2 scale,
 			const SPtr<MeshData>& meshData, UINT32 vertexOffset, UINT32 indexOffset, UINT32 quality = 10);
 
 		/**
@@ -313,7 +313,7 @@ namespace bs
 		 * @note
 		 * Primitives are output in the form of a triangle list.
 		 */
-		static void solidCone(const Vector3& base, const Vector3& normal, float height, float radius, Vector2 scale,
+		static void SolidCone(const Vector3& base, const Vector3& normal, float height, float radius, Vector2 scale,
 			const SPtr<MeshData>& meshData, UINT32 vertexOffset, UINT32 indexOffset, UINT32 quality = 10);
 
 		/**
@@ -339,7 +339,7 @@ namespace bs
 		* @note
 		* Primitives are output in the form of a line list.
 		*/
-		static void wireCylinder(const Vector3& base, const Vector3& normal, float height, float radius, Vector2 scale,
+		static void WireCylinder(const Vector3& base, const Vector3& normal, float height, float radius, Vector2 scale,
 			const SPtr<MeshData>& meshData, UINT32 vertexOffset, UINT32 indexOffset, UINT32 quality = 10);
 
 		/**
@@ -369,7 +369,7 @@ namespace bs
 		* @note
 		* Primitives are output in the form of a triangle list.
 		*/
-		static void solidCylinder(const Vector3& base, const Vector3& normal, float height, float radius, Vector2 scale,
+		static void SolidCylinder(const Vector3& base, const Vector3& normal, float height, float radius, Vector2 scale,
 			const SPtr<MeshData>& meshData, UINT32 vertexOffset, UINT32 indexOffset, UINT32 quality = 10);
 
 		/**
@@ -392,7 +392,7 @@ namespace bs
 		 * @note
 		 * Primitives are output in the form of a triangle list.
 		 */
-		static void solidQuad(const Rect3& area, const SPtr<MeshData>& meshData, UINT32 vertexOffset, UINT32 indexOffset);
+		static void SolidQuad(const Rect3& area, const SPtr<MeshData>& meshData, UINT32 vertexOffset, UINT32 indexOffset);
 
 		/**
 		 * Fills the mesh data with vertices representing a per-pixel line.
@@ -411,7 +411,7 @@ namespace bs
 		 * @note
 		 * Primitives are output in the form of a line list.
 		 */
-		static void pixelLine(const Vector3& a, const Vector3& b, const SPtr<MeshData>& meshData, UINT32 vertexOffset, UINT32 indexOffset);
+		static void PixelLine(const Vector3& a, const Vector3& b, const SPtr<MeshData>& meshData, UINT32 vertexOffset, UINT32 indexOffset);
 
 		/**
 		 * Fills the mesh data with vertices representing an anti-aliased line of specific width. Antialiasing is done
@@ -436,7 +436,7 @@ namespace bs
 		 * @note
 		 * Primitives are output in the form of a triangle list.
 		 */
-		static void antialiasedLine(const Vector3& a, const Vector3& b, const Vector3& up, float width, float borderWidth, const Color& color,
+		static void AntialiasedLine(const Vector3& a, const Vector3& b, const Vector3& up, float width, float borderWidth, const Color& color,
 			const SPtr<MeshData>& meshData, UINT32 vertexOffset, UINT32 indexOffset);
 
 		/**
@@ -455,7 +455,7 @@ namespace bs
 		 * @note
 		 * Primitives are output in the form of a line list.
 		 */
-		static void pixelLineList(const Vector<Vector3>& linePoints, const SPtr<MeshData>& meshData, UINT32 vertexOffset, UINT32 indexOffset);
+		static void PixelLineList(const Vector<Vector3>& linePoints, const SPtr<MeshData>& meshData, UINT32 vertexOffset, UINT32 indexOffset);
 
 		/**
 		 * Fills the mesh data with vertices representing anti-aliased lines of specific width. Antialiasing is done using
@@ -479,7 +479,7 @@ namespace bs
 		 * @note
 		 * Primitives are output in the form of a triangle list.
 		 */
-		static void antialiasedLineList(const Vector<Vector3>& linePoints, const Vector3& up, float width, float borderWidth,
+		static void AntialiasedLineList(const Vector<Vector3>& linePoints, const Vector3& up, float width, float borderWidth,
 			const Color& color, const SPtr<MeshData>& meshData, UINT32 vertexOffset, UINT32 indexOffset);
 
 		/**
@@ -493,7 +493,7 @@ namespace bs
 		 * @param[out]	outIndices		Pre-allocated output buffer that will store the index data. Indices are 32bit.
 		 * @param[in]	indexOffset 	Offset in number of indices from the start of the buffer to start writing at.
 		 */
-		static void wireAABox(const AABox& box, UINT8* outVertices, UINT32 vertexOffset, UINT32 vertexStride,
+		static void WireAaBox(const AABox& box, UINT8* outVertices, UINT32 vertexOffset, UINT32 vertexStride,
 			UINT32* outIndices, UINT32 indexOffset);
 
 		/**
@@ -510,7 +510,7 @@ namespace bs
 		 * @param[out]	outIndices		Pre-allocated output buffer that will store the index data. Indices are 32bit.
 		 * @param[in]	indexOffset 	Offset in number of indices from the start of the buffer to start writing at.
 		 */
-		static void solidAABox(const AABox& box, UINT8* outVertices, UINT8* outNormals, UINT8* outUV, UINT32 vertexOffset,
+		static void SolidAaBox(const AABox& box, UINT8* outVertices, UINT8* outNormals, UINT8* outUV, UINT32 vertexOffset,
 			UINT32 vertexStride, UINT32* outIndices, UINT32 indexOffset);
 
 		/**
@@ -530,7 +530,7 @@ namespace bs
 		 * @param[in]	quality			Represents the level of tessellation the sphere will have. Higher level means higher
 		 *								quality but also more vertices and primitives.
 		 */
-		static void solidSphere(const Sphere& sphere, UINT8* outVertices, UINT8* outNormals, UINT8* outUV,
+		static void SolidSphere(const Sphere& sphere, UINT8* outVertices, UINT8* outNormals, UINT8* outUV,
 			UINT32 vertexOffset, UINT32 vertexStride, UINT32* outIndices, UINT32 indexOffset, UINT32 quality);
 
 		/**
@@ -551,7 +551,7 @@ namespace bs
 		 * @param[in]	quality			Represents the level of tessellation the arc will have. Higher level means higher
 		 *								quality but also more vertices and primitives.
 		 */
-		static void wireArc(const Vector3& center, float radius, const Vector3& normal, Degree startAngle, Degree amountAngle,
+		static void WireArc(const Vector3& center, float radius, const Vector3& normal, Degree startAngle, Degree amountAngle,
 			UINT8* outVertices, UINT32 vertexOffset, UINT32 vertexStride, UINT32* outIndices, UINT32 indexOffset, UINT32 quality);
 
 		/**
@@ -575,7 +575,7 @@ namespace bs
 		 * @param[in]	quality			Represents the level of tessellation the arc will have. Higher level means higher
 		 *								quality but also more vertices and primitives.
 		 */
-		static void solidArc(const Vector3& center, float radius, const Vector3& normal, Degree startAngle,
+		static void SolidArc(const Vector3& center, float radius, const Vector3& normal, Degree startAngle,
 			Degree amountAngle, UINT8* outVertices, UINT8* outNormals, UINT8* outUV, UINT32 vertexOffset,
 			UINT32 vertexStride, UINT32* outIndices, UINT32 indexOffset, UINT32 quality);
 
@@ -594,7 +594,7 @@ namespace bs
 		 * @param[out]	outIndices		Pre-allocated output buffer that will store the index data. Indices are 32bit.
 		 * @param[in]	indexOffset 	Offset in number of indices from the start of the buffer to start writing at.
 		 */
-		static void wireFrustum(const Vector3& position, float aspect, Degree FOV, float near, float far,
+		static void WireFrustum(const Vector3& position, float aspect, Degree FOV, float near, float far,
 			UINT8* outVertices, UINT32 vertexOffset, UINT32 vertexStride, UINT32* outIndices, UINT32 indexOffset);
 
 		/**
@@ -618,7 +618,7 @@ namespace bs
 		 * @param[in]	quality			Represents the level of tessellation the cone will have. Higher level means higher
 		 *								quality but also more vertices and primitives.
 		 */
-		static void solidCone(const Vector3& base, const Vector3& normal, float height, float radius, Vector2 scale,
+		static void SolidCone(const Vector3& base, const Vector3& normal, float height, float radius, Vector2 scale,
 			UINT8* outVertices, UINT8* outNormals, UINT8* outUV, UINT32 vertexOffset, UINT32 vertexStride,
 			UINT32* outIndices, UINT32 indexOffset, UINT32 quality);
 
@@ -639,7 +639,7 @@ namespace bs
 		 * @param[in]	quality			Represents the level of tessellation the cone will have. Higher level means higher
 		 *								quality but also more vertices and primitives.
 		 */
-		static void wireCone(const Vector3& base, const Vector3& normal, float height, float radius, Vector2 scale,
+		static void WireCone(const Vector3& base, const Vector3& normal, float height, float radius, Vector2 scale,
 			UINT8* outVertices, UINT32 vertexOffset, UINT32 vertexStride, UINT32* outIndices, UINT32 indexOffset,
 			UINT32 quality);
 
@@ -664,7 +664,7 @@ namespace bs
 		* @param[in]	quality			Represents the level of tessellation the cylinder will have. Higher level means higher
 		*								quality but also more vertices and primitives.
 		*/
-		static void solidCylinder(const Vector3& base, const Vector3& normal, float height, float radius, Vector2 scale,
+		static void SolidCylinder(const Vector3& base, const Vector3& normal, float height, float radius, Vector2 scale,
 			UINT8* outVertices, UINT8* outNormals, UINT8* outUV, UINT32 vertexOffset, UINT32 vertexStride,
 			UINT32* outIndices, UINT32 indexOffset, UINT32 quality);
 
@@ -685,7 +685,7 @@ namespace bs
 		* @param[in]	quality			Represents the level of tessellation the cylinder will have. Higher level means higher
 		*								quality but also more vertices and primitives.
 		*/
-		static void wireCylinder(const Vector3& base, const Vector3& normal, float height, float radius, Vector2 scale,
+		static void WireCylinder(const Vector3& base, const Vector3& normal, float height, float radius, Vector2 scale,
 			UINT8* outVertices, UINT32 vertexOffset, UINT32 vertexStride, UINT32* outIndices, UINT32 indexOffset,
 			UINT32 quality);
 
@@ -703,53 +703,53 @@ namespace bs
 		 * @param[out]	outIndices		Pre-allocated output buffer that will store the index data. Indices are 32bit.
 		 * @param[in]	indexOffset 	Offset in number of indices from the start of the buffer to start writing at.
 		 */
-		static void solidQuad(const Rect3& area, UINT8* outVertices, UINT8* outNormals, UINT8* outUV, UINT32 vertexOffset,
+		static void SolidQuad(const Rect3& area, UINT8* outVertices, UINT8* outNormals, UINT8* outUV, UINT32 vertexOffset,
 			UINT32 vertexStride, UINT32* outIndices, UINT32 indexOffset);
 
 		/**	Calculates number of vertices and indices required for geometry of a solid axis aligned box. */
-		static void getNumElementsAABox(UINT32& numVertices, UINT32& numIndices);
+		static void GetNumElementsAaBox(UINT32& numVertices, UINT32& numIndices);
 
 		/**	Calculates number of vertices and indices required for geometry of a wireframe axis aligned box. */
-		static void getNumElementsWireAABox(UINT32& numVertices, UINT32& numIndices);
+		static void GetNumElementsWireAaBox(UINT32& numVertices, UINT32& numIndices);
 
 		/**	Calculates number of vertices and indices required for geometry of a solid sphere of the specified quality. */
-		static void getNumElementsSphere(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
+		static void GetNumElementsSphere(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
 
 		/**	Calculates number of vertices and indices required for geometry of a wire sphere of the specified quality. */
-		static void getNumElementsWireSphere(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
+		static void GetNumElementsWireSphere(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
 
 		/**	Calculates number of vertices and indices required for geometry of a wire hemisphere of the specified quality. */
-		static void getNumElementsWireHemisphere(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
+		static void GetNumElementsWireHemisphere(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
 
 		/**	Calculates number of vertices and indices required for geometry of a solid arc of the specified quality. */
-		static void getNumElementsArc(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
+		static void GetNumElementsArc(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
 
 		/**	Calculates number of vertices and indices required for geometry of a wire arc of the specified quality. */
-		static void getNumElementsWireArc(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
+		static void GetNumElementsWireArc(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
 
 		/**	Calculates number of vertices and indices required for geometry of a solid desc	of the specified quality. */
-		static void getNumElementsDisc(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
+		static void GetNumElementsDisc(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
 
 		/**	Calculates number of vertices and indices required for geometry of a wire disc of the specified quality. */
-		static void getNumElementsWireDisc(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
+		static void GetNumElementsWireDisc(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
 
 		/**	Calculates number of vertices and indices required for geometry of a solid cone of the specified quality. */
-		static void getNumElementsCone(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
+		static void GetNumElementsCone(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
 
 		/**	Calculates number of vertices and indices required for geometry of a wireframe cone of the specified quality. */
-		static void getNumElementsWireCone(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
+		static void GetNumElementsWireCone(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
 
 		/**	Calculates number of vertices and indices required for geometry of a solid cylinder of the specified quality. */
-		static void getNumElementsCylinder(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
+		static void GetNumElementsCylinder(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
 
 		/**	Calculates number of vertices and indices required for geometry of a wireframe cylinder of the specified quality. */
-		static void getNumElementsWireCylinder(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
+		static void GetNumElementsWireCylinder(UINT32 quality, UINT32& numVertices, UINT32& numIndices);
 
 		/**	Calculates number of vertices and indices required for geometry of a frustum. */
-		static void getNumElementsFrustum(UINT32& numVertices, UINT32& numIndices);
+		static void GetNumElementsFrustum(UINT32& numVertices, UINT32& numIndices);
 
 		/**	Calculates number of vertices and indices required for geometry of a quadrirateral. */
-		static void getNumElementsQuad(UINT32& numVertices, UINT32& numIndices);
+		static void GetNumElementsQuad(UINT32& numVertices, UINT32& numIndices);
 
 		static const UINT32 NUM_VERTICES_AA_LINE;
 		static const UINT32 NUM_INDICES_AA_LINE;
@@ -766,7 +766,7 @@ namespace bs
 		 * @param[out]	outIndices		Output buffer that will store the index data. Indices are 32bit.
 		 * @param[in]	indexOffset 	Offset in number of indices from the start of the buffer to start writing at.
 		 */
-		static void pixelLine(const Vector3& a, const Vector3& b, UINT8* outVertices,
+		static void PixelLine(const Vector3& a, const Vector3& b, UINT8* outVertices,
 			UINT32 vertexOffset, UINT32 vertexStride, UINT32* outIndices, UINT32 indexOffset);
 
 		/**
@@ -785,7 +785,7 @@ namespace bs
 		 * @param[out]	outIndices		Output buffer that will store the index data. Indices are 32bit.
 		 * @param[in]	indexOffset 	Offset in number of indices from the start of the buffer to start writing at.
 		 */
-		static void antialiasedLine(const Vector3& a, const Vector3& b, const Vector3& up, float width, float borderWidth,
+		static void AntialiasedLine(const Vector3& a, const Vector3& b, const Vector3& up, float width, float borderWidth,
 			const Color& color, UINT8* outVertices, UINT8* outColors, UINT32 vertexOffset, UINT32 vertexStride,
 			UINT32* outIndices, UINT32 indexOffset);
 
@@ -800,7 +800,7 @@ namespace bs
 		 * @param[out]	outIndices		Output buffer that will store the index data. Indices are 32bit.
 		 * @param[in]	indexOffset 	Offset in number of indices from the start of the buffer to start writing at.
 		 */
-		static void pixelSolidPolygon(const Vector<Vector3>& points, UINT8* outVertices,
+		static void PixelSolidPolygon(const Vector<Vector3>& points, UINT8* outVertices,
 			UINT32 vertexOffset, UINT32 vertexStride, UINT32* outIndices, UINT32 indexOffset);
 
 		/**
@@ -813,7 +813,7 @@ namespace bs
 		 * @param[out]	outIndices		Output buffer that will store the index data. Indices are 32bit.
 		 * @param[in]	indexOffset 	Offset in number of indices from the start of the buffer to start writing at.
 		 */
-		static void pixelWirePolygon(const Vector<Vector3>& points, UINT8* outVertices,
+		static void PixelWirePolygon(const Vector<Vector3>& points, UINT8* outVertices,
 			UINT32 vertexOffset, UINT32 vertexStride, UINT32* outIndices, UINT32 indexOffset);
 
 		/**
@@ -830,7 +830,7 @@ namespace bs
 		 * @param[out]	outIndices		Output buffer that will store the index data. Indices are 32bit.
 		 * @param[in]	indexOffset 	Offset in number of indices from the start of the buffer to start writing at.
 		 */
-		static void antialiasedPolygon(const Vector<Vector3>& points, const Vector3& up, float borderWidth, const Color& color, UINT8* outVertices, UINT8* outColors,
+		static void AntialiasedPolygon(const Vector<Vector3>& points, const Vector3& up, float borderWidth, const Color& color, UINT8* outVertices, UINT8* outColors,
 			UINT32 vertexOffset, UINT32 vertexStride, UINT32* outIndices, UINT32 indexOffset);
 
 	private:
@@ -842,7 +842,7 @@ namespace bs
 		 * @param[in]	vertexStride	Number of bytes between two vertices in the buffer.
 		 * @return						Center point of the vertices.
 		 */
-		static Vector3 calcCenter(UINT8* vertices, UINT32 numVertices, UINT32 vertexStride);
+		static Vector3 CalcCenter(UINT8* vertices, UINT32 numVertices, UINT32 vertexStride);
 
 		/**
 		 * Subdivides the provided triangle so it approximates a curved surface of a sphere.
@@ -859,7 +859,7 @@ namespace bs
 		 * @param[in]	vertexStride	Size of a single vertex, in bytes. (Same for both position and color buffer)
 		 * @return						Number of vertices generated (3 * (4 ^ numLevels)).
 		 */
-		static UINT32 subdivideTriangleOnSphere(const Vector3& center, float radius, UINT32 numLevels,
+		static UINT32 SubdivideTriangleOnSphere(const Vector3& center, float radius, UINT32 numLevels,
 			const Vector3& a, const Vector3& b, const Vector3& c,
 			UINT8* outVertices, UINT8* outNormals, UINT32 vertexOffset, UINT32 vertexStride);
 
@@ -879,7 +879,7 @@ namespace bs
 		 * @param[in]	vertexOffset	Offset in number of vertices from the start of the buffer to start writing at.
 		 * @param[in]	vertexStride	Size of a single vertex, in bytes. (Same for both position and color buffer)
 		 */
-		static void generateArcVertices(const Vector3& center, const Vector3& up, float radius, Degree startAngle,
+		static void GenerateArcVertices(const Vector3& center, const Vector3& up, float radius, Degree startAngle,
 			Degree angleAmount, Vector2 scale, UINT32 numVertices, UINT8* outVertices, UINT32 vertexOffset,
 			UINT32 vertexStride);
 
@@ -900,7 +900,7 @@ namespace bs
 		 *								into 4D vector where first three components are the tangent, and 4th is the sign of
 		 *								the bitangent. Must be the same length as the vertex array.
 		 */
-		static void generateTangents(UINT8* positions, UINT8* normals, UINT8* uv, UINT32* indices, UINT32 numVertices,
+		static void GenerateTangents(UINT8* positions, UINT8* normals, UINT8* uv, UINT32* indices, UINT32 numVertices,
 									 UINT32 numIndices, UINT32 vertexOffset, UINT32 indexOffset, UINT32 vertexStride,
 									 UINT8* tangents);
 	};

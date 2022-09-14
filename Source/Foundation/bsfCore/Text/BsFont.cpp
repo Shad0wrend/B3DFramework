@@ -6,7 +6,7 @@
 
 namespace bs
 {
-	const CharDesc& FontBitmap::getCharDesc(UINT32 charId) const
+	const CharDesc& FontBitmap::GetCharDesc(UINT32 charId) const
 	{
 		auto iterFind = characters.find(charId);
 		if(iterFind != characters.end())
@@ -17,21 +17,21 @@ namespace bs
 		return missingGlyph;
 	}
 
-	RTTITypeBase* FontBitmap::getRTTIStatic()
+	RTTITypeBase* FontBitmap::GetRttiStatic()
 	{
-		return FontBitmapRTTI::instance();
+		return FontBitmapRTTI::Instance();
 	}
 
-	RTTITypeBase* FontBitmap::getRTTI() const
+	RTTITypeBase* FontBitmap::GetRtti() const
 	{
-		return FontBitmap::getRTTIStatic();
+		return FontBitmap::GetRttiStatic();
 	}
 
 	Font::Font()
 		:Resource(false)
 	{ }
 
-	void Font::initialize(const Vector<SPtr<FontBitmap>>& fontData)
+	void Font::Initialize(const Vector<SPtr<FontBitmap>>& fontData)
 	{
 		for(auto iter = fontData.begin(); iter != fontData.end(); ++iter)
 		{
@@ -47,7 +47,7 @@ namespace bs
 		Resource::initialize();
 	}
 
-	SPtr<FontBitmap> Font::getBitmap(UINT32 size) const
+	SPtr<FontBitmap> Font::GetBitmap(UINT32 size) const
 	{
 		auto iterFind = mFontDataPerSize.find(size);
 
@@ -57,7 +57,7 @@ namespace bs
 		return iterFind->second;
 	}
 
-	INT32 Font::getClosestSize(UINT32 size) const
+	INT32 Font::GetClosestSize(UINT32 size) const
 	{
 		UINT32 minDiff = std::numeric_limits<UINT32>::max();
 		UINT32 bestSize = size;
@@ -89,7 +89,7 @@ namespace bs
 		return bestSize;
 	}
 
-	void Font::getCoreDependencies(Vector<CoreObject*>& dependencies)
+	void Font::GetCoreDependencies(Vector<CoreObject*>& dependencies)
 	{
 		for (auto& fontDataEntry : mFontDataPerSize)
 		{
@@ -101,7 +101,7 @@ namespace bs
 		}
 	}
 
-	HFont Font::create(const Vector<SPtr<FontBitmap>>& fontData)
+	HFont Font::Create(const Vector<SPtr<FontBitmap>>& fontData)
 	{
 		SPtr<Font> newFont = CreatePtrInternal(fontData);
 
@@ -125,13 +125,13 @@ namespace bs
 		return newFont;
 	}
 
-	RTTITypeBase* Font::getRTTIStatic()
+	RTTITypeBase* Font::GetRttiStatic()
 	{
-		return FontRTTI::instance();
+		return FontRTTI::Instance();
 	}
 
-	RTTITypeBase* Font::getRTTI() const
+	RTTITypeBase* Font::GetRtti() const
 	{
-		return Font::getRTTIStatic();
+		return Font::GetRttiStatic();
 	}
 }

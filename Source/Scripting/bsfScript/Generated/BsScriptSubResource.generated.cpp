@@ -51,7 +51,7 @@ namespace bs
 		tmpname = MonoUtil::stringToMono(value.name);
 		output.name = tmpname;
 		ScriptResourceBase* scriptvalue;
-		scriptvalue = ScriptResourceManager::instance().getScriptResource(value.value, true);
+		scriptvalue = ScriptResourceManager::Instance().getScriptResource(value.value, true);
 		MonoObject* tmpvalue;
 		if(scriptvalue != nullptr)
 			tmpvalue = scriptvalue->getManagedInstance();

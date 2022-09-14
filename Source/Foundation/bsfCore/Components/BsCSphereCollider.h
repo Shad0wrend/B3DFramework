@@ -24,19 +24,19 @@ namespace bs
 
 		/** @copydoc SphereCollider::setRadius */
 		BS_SCRIPT_EXPORT(n:Radius,pr:setter)
-		void setRadius(float radius);
+		void SetRadius(float radius);
 
 		/** @copydoc SphereCollider::getRadius */
 		BS_SCRIPT_EXPORT(n:Radius,pr:getter)
-		float getRadius() const { return mRadius; }
+		float GetRadius() const { return mRadius; }
 
 		/** Determines position of the sphere shape, relative to the component's scene object. */
 		BS_SCRIPT_EXPORT(n:Center,pr:setter)
-		void setCenter(const Vector3& center);
+		void SetCenter(const Vector3& center);
 
 		/** @copydoc setCenter() */
 		BS_SCRIPT_EXPORT(n:Center,pr:getter)
-		Vector3 getCenter() const { return mLocalPosition; }
+		Vector3 GetCenter() const { return mLocalPosition; }
 
 		/** @name Internal
 		 *  @{
@@ -54,7 +54,7 @@ namespace bs
 		friend class SceneObject;
 
 		/** @copydoc CCollider::createInternal */
-		SPtr<Collider> createInternal() override;
+		SPtr<Collider> CreateInternal() ;
 
 	protected:
 		float mRadius = 1.0f;
@@ -64,8 +64,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class CSphereColliderRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 
 	protected:
 		CSphereCollider(); // Serialization only

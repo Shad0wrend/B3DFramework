@@ -25,7 +25,7 @@ namespace bs
 	public:																													\
 		static MonoObject* create##ScriptType(const SPtr<IReflectable>& reflectable)										\
 		{																													\
-			return ScriptType::create(std::static_pointer_cast<ReflectableType>(reflectable));								\
+			return ScriptType::Create(std::static_pointer_cast<ReflectableType>(reflectable));								\
 		}																													\
 																															\
 		struct META_NextEntry_##ScriptType {};																				\
@@ -35,7 +35,7 @@ namespace bs
 																															\
 			ReflectableTypeInfo entry;																						\
 			entry.metaData = ScriptType::getMetaData();																		\
-			entry.typeId = ReflectableType::getRTTIStatic()->getRTTIId();													\
+			entry.typeId = ReflectableType::GetRttiStatic()->getRTTIId();													\
 			entry.monoClass = nullptr;																						\
 			entry.createCallback = &create##ScriptType;																		\
 																															\

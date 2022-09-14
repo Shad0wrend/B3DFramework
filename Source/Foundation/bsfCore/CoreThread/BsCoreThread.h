@@ -75,16 +75,16 @@ namespace bs
 		~CoreThread();
 
 		/** @copydoc Module::onStartUp */
-		void onStartUp() override;
+		void OnStartUp() override;
 
 		/** Returns the id of the core thread.  */
-		ThreadId getCoreThreadId() const { return mCoreThreadId; }
+		ThreadId GetCoreThreadId() const { return mCoreThreadId; }
 
 		/** Submits the commands from all queues and starts executing them on the core thread. */
-		void submitAll(bool blockUntilComplete = false);
+		void SubmitAll(bool blockUntilComplete = false);
 
 		/** Submits the commands from the current thread's queue and starts executing them on the core thread. */
-		void submit(bool blockUntilComplete = false);
+		void Submit(bool blockUntilComplete = false);
 
 		/**
 		 * Queues a new command that will be added to the command queue. Command returns a value.
@@ -97,7 +97,7 @@ namespace bs
 		 * @see		CommandQueue::queueReturn()
 		 * @note	Thread safe
 		 */
-		AsyncOp queueReturnCommand(std::function<void(AsyncOp&)> commandCallback, CoreThreadQueueFlags flags = CTQF_Default);
+		AsyncOp QueueReturnCommand(std::function<void(AsyncOp&)> commandCallback, CoreThreadQueueFlags flags = CTQF_Default);
 
 		/**
 		 * Queues a new command that will be added to the global command queue.
@@ -108,14 +108,14 @@ namespace bs
 		 * @see		CommandQueue::queue()
 		 * @note	Thread safe
 		 */
-		void queueCommand(std::function<void()> commandCallback, CoreThreadQueueFlags flags = CTQF_Default);
+		void QueueCommand(std::function<void()> commandCallback, CoreThreadQueueFlags flags = CTQF_Default);
 
 		/**
 		 * Called once every frame.
 		 * 			
 		 * @note	Must be called before sim thread schedules any core thread operations for the frame.
 		 */
-		void update();
+		void Update();
 
 		/**
 		 * Returns a frame allocator that should be used for allocating temporary data being passed to the core thread. As the
@@ -123,7 +123,7 @@ namespace bs
 		 * 			
 		 * @note	Sim thread only.
 		 */
-		FrameAlloc* getFrameAlloc() const;
+		FrameAlloc* GetFrameAlloc() const;
 
 		/**
 		 * @name Internal
@@ -191,28 +191,28 @@ namespace bs
 		Vector<UINT32> mCommandsCompleted; /**< Completed commands that have notifier callbacks set up */
 
 		/** Starts the core thread worker method. Should only be called once. */
-		void initCoreThread();
+		void InitCoreThread();
 
 		/**	Main worker method of the core thread. Called once thread is started. */
-		void runCoreThread();
+		void RunCoreThread();
 
 		/** Shutdowns the core thread. It will complete all ready commands before shutdown. */
-		void shutdownCoreThread();
+		void ShutdownCoreThread();
 
 		/** Creates or retrieves a queue for the calling thread. */
-		SPtr<CommandQueue<CommandQueueSync>> getQueue();
+		SPtr<CommandQueue<CommandQueueSync>> GetQueue();
 
 		/**
 		 * Submits all the commands from the provided command queue to the internal command queue. Optionally blocks the
 		 * calling thread until all the submitted commands have done executing.
 		 */
-		void submitCommandQueue(CommandQueue<CommandQueueSync>& queue, bool blockUntilComplete);
+		void SubmitCommandQueue(CommandQueue<CommandQueueSync>& queue, bool blockUntilComplete);
 
 		/**
 		 * Blocks the calling thread until the command with the specified ID completes. Make sure that the specified ID
 		 * actually exists, otherwise this will block forever.
 		 */
-		void blockUntilCommandCompleted(UINT32 commandId);
+		void BlockUntilCommandCompleted(UINT32 commandId);
 
 		/**
 		 * Callback called by the command list when a specific command finishes executing. This is only called on commands that
@@ -220,7 +220,7 @@ namespace bs
 		 *
 		 * @param[in]	commandId	Identifier for the command.
 		 */
-		void commandCompletedNotify(UINT32 commandId);
+		void CommandCompletedNotify(UINT32 commandId);
 	};
 
 	/**

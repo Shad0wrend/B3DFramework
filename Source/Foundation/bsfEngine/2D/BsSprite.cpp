@@ -7,12 +7,12 @@
 
 namespace bs
 {
-	Rect2I Sprite::getBounds(const Vector2I& offset, const Rect2I& clipRect) const
+	Rect2I Sprite::GetBounds(const Vector2I& offset, const Rect2I& clipRect) const
 	{
 		Rect2I bounds = mBounds;
 
 		if(clipRect.width > 0 && clipRect.height > 0)
-			bounds.clip(clipRect);
+			bounds.Clip(clipRect);
 
 		bounds.x += offset.x;
 		bounds.y += offset.y;
@@ -20,7 +20,7 @@ namespace bs
 		return bounds;
 	}
 
-	UINT32 Sprite::fillBuffer(UINT8* vertices, UINT8* uv, UINT32* indices, UINT32 vertexOffset, UINT32 indexOffset,
+	UINT32 Sprite::FillBuffer(UINT8* vertices, UINT8* uv, UINT32* indices, UINT32 vertexOffset, UINT32 indexOffset,
 		UINT32 maxNumVerts, UINT32 maxNumIndices, UINT32 vertexStride, UINT32 indexStride, UINT32 renderElementIdx,
 		const Vector2I& offset, const Rect2I& clipRect, bool clip) const
 	{
@@ -72,7 +72,7 @@ namespace bs
 				memcpy(vertDst, &renderElem.vertices[vertIdx + 3], sizeof(Vector2));
 				memcpy(uvDst, &renderElem.uvs[vertIdx + 3], sizeof(Vector2));
 
-				clipQuadsToRect(vecStart, uvStart, 1, vertexStride, clipRect);
+				ClipQuadsToRect(vecStart, uvStart, 1, vertexStride, clipRect);
 
 				vertDst = vecStart;
 				Vector2* curVec = (Vector2*)vertDst;
@@ -149,7 +149,7 @@ namespace bs
 		return renderElem.numQuads;
 	}
 
-	Vector2I Sprite::getAnchorOffset(SpriteAnchor anchor, UINT32 width, UINT32 height)
+	Vector2I Sprite::GetAnchorOffset(SpriteAnchor anchor, UINT32 width, UINT32 height)
 	{
 		switch(anchor)
 		{
@@ -176,7 +176,7 @@ namespace bs
 		return Vector2I();
 	}
 
-	void Sprite::updateBounds() const
+	void Sprite::UpdateBounds() const
 	{
 		Vector2 min;
 		Vector2 max;
@@ -209,8 +209,8 @@ namespace bs
 
 				for(UINT32 i = 0; i < vertexCount; i++)
 				{
-					min = Vector2::min(min, renderElem.vertices[i]);
-					max = Vector2::max(max, renderElem.vertices[i]);
+					min = Vector2::Min(min, renderElem.vertices[i]);
+					max = Vector2::Max(max, renderElem.vertices[i]);
 				}
 			}
 		}
@@ -297,7 +297,7 @@ namespace bs
 		}
 	}
 
-	void Sprite::clipTrianglesToRect(UINT8* vertices, UINT8* uv, UINT32 numTris, UINT32 vertStride, const Rect2I& clipRect,
+	void Sprite::ClipTrianglesToRect(UINT8* vertices, UINT8* uv, UINT32 numTris, UINT32 vertStride, const Rect2I& clipRect,
 		const std::function<void(Vector2*, Vector2*, UINT32)>& writeCallback)
 	{
 		Vector<Plane> clipPlanes =

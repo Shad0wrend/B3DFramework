@@ -20,14 +20,14 @@ namespace bs { namespace ct
 		BS_INC_RENDER_STAT_CAT(ResDestroyed, RenderStatObject_RasterizerState);
 	}
 
-	void D3D11RasterizerState::createInternal()
+	void D3D11RasterizerState::CreateInternal()
 	{
-		INT32 scaledDepthBias = Math::floorToInt(-mProperties.getDepthBias() * float((1 << 24))); // Note: Assumes 24-bit depth buffer
+		INT32 scaledDepthBias = Math::FloorToInt(-mProperties.GetDepthBias() * float((1 << 24))); // Note: Assumes 24-bit depth buffer
 
 		D3D11_RASTERIZER_DESC rasterizerStateDesc;
 		ZeroMemory(&rasterizerStateDesc, sizeof(D3D11_RASTERIZER_DESC));
 
-		rasterizerStateDesc.AntialiasedLineEnable = mProperties.getAntialiasedLineEnable();
+		rasterizerStateDesc.AntialiasedLineEnable = mProperties.GetAntialiasedLineEnable();
 		rasterizerStateDesc.CullMode = D3D11Mappings::get(mProperties.getCullMode());
 		rasterizerStateDesc.DepthBias = scaledDepthBias;
 		rasterizerStateDesc.DepthBiasClamp = mProperties.getDepthBiasClamp();

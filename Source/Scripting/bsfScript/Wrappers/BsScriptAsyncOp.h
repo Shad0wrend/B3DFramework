@@ -39,7 +39,7 @@ namespace bs
 
 		/** Creates a new managed AsyncOp<T> from a native TAsyncOp. */
 		template<class T>
-		static MonoObject* create(const TAsyncOp<T>& op, const std::function<MonoObject*(const Any&)>& convertCallback)
+		static MonoObject* Create(const TAsyncOp<T>& op, const std::function<MonoObject*(const Any&)>& convertCallback)
 		{
 			return detail::async_op_create(op, convertCallback);
 		}
@@ -49,14 +49,14 @@ namespace bs
 		 * To be used when return type T does not implement IReflectable.
 		 */
 		template<class T>
-		static MonoObject* create(const TAsyncOp<T>& op, const std::function<MonoObject*(const Any&)>& convertCallback,
+		static MonoObject* Create(const TAsyncOp<T>& op, const std::function<MonoObject*(const Any&)>& convertCallback,
 			MonoClass* returnTypeClass)
 		{
 			return detail::async_op_create(op, convertCallback, returnTypeClass);
 		}
 
 		/** Creates a AsyncOp type with the provided class bound as its template parameter. */
-		static ::MonoClass* bindGenericParam(::MonoClass* param);
+		static ::MonoClass* BindGenericParam(::MonoClass* param);
 
 		/**
 		 * @name Internal
@@ -86,9 +86,9 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static bool internal_IsComplete(ScriptAsyncOpBase* thisPtr);
-		static void internal_BlockUntilComplete(ScriptAsyncOpBase* thisPtr);
-		static MonoObject* internal_GetValue(ScriptAsyncOpBase* thisPtr);
+		static bool InternalIsComplete(ScriptAsyncOpBase* thisPtr);
+		static void InternalBlockUntilComplete(ScriptAsyncOpBase* thisPtr);
+		static MonoObject* InternalGetValue(ScriptAsyncOpBase* thisPtr);
 	};
 
 	/** @} */
@@ -103,7 +103,7 @@ namespace bs
 		inline MonoObject* async_op_create(const TAsyncOp<T>& op, const std::function<MonoObject*(const Any&)>& convertCallback)
 		{
 			return ScriptAsyncOpBase::_create(op, convertCallback,
-					TAsyncOp<T>::ReturnValueType::getRTTIStatic() ->getRTTIId());
+					TAsyncOp<T>::ReturnValueType::GetRttiStatic() ->getRTTIId());
 		}
 
 		template<>

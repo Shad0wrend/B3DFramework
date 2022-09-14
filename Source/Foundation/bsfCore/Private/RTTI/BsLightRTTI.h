@@ -35,7 +35,7 @@ namespace bs
 			BS_RTTI_MEMBER_PLAIN(mShadowBias, 12)
 		BS_END_RTTI_MEMBERS
 	public:
-		void onDeserializationEnded(IReflectable* obj, SerializationContext* context) override
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override
 		{
 			// Note: Since this is a CoreObject I should call initialize() right after deserialization,
 			// but since this specific type is used in Components we delay initialization until Component
@@ -43,20 +43,20 @@ namespace bs
 			// purposes (you'll need to call initialize manually).
 		}
 
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "Light";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_Light;
 		}
 
 		SPtr<IReflectable> newRTTIObject() override
 		{
-			return Light::createEmpty();
+			return Light::CreateEmpty();
 		}
 	};
 

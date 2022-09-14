@@ -15,12 +15,12 @@ namespace bs
 	{
 		PxSphereGeometry geometry(radius);
 
-		PxShape* shape = physx->createShape(geometry, *gPhysX().getDefaultMaterial(), true);
+		PxShape* shape = physx->createShape(geometry, *gPhysX().GetDefaultMaterial(), true);
 		shape->setLocalPose(toPxTransform(position, rotation));
 		shape->userData = this;
 
 		mInternal = bs_new<FPhysXCollider>(scene, shape);
-		applyGeometry();
+		ApplyGeometry();
 	}
 
 	PhysXSphereCollider::~PhysXSphereCollider()
@@ -28,32 +28,32 @@ namespace bs
 		bs_delete(mInternal);
 	}
 
-	void PhysXSphereCollider::setScale(const Vector3& scale)
+	void PhysXSphereCollider::SetScale(const Vector3& scale)
 	{
 		SphereCollider::setScale(scale);
-		applyGeometry();
+		ApplyGeometry();
 	}
 
-	void PhysXSphereCollider::setRadius(float radius)
+	void PhysXSphereCollider::SetRadius(float radius)
 	{
 		mRadius = radius;
-		applyGeometry();
+		ApplyGeometry();
 	}
 
-	float PhysXSphereCollider::getRadius() const
+	float PhysXSphereCollider::GetRadius() const
 	{
 		return mRadius;
 	}
 
-	void PhysXSphereCollider::applyGeometry()
+	void PhysXSphereCollider::ApplyGeometry()
 	{
 		float radius = std::max(0.01f, mRadius * std::max(std::max(mScale.x, mScale.y), mScale.z));
 		PxSphereGeometry geometry(radius);
 
-		getInternal()->GetShapeInternal()->setGeometry(geometry);
+		GetInternal()->GetShapeInternal()->setGeometry(geometry);
 	}
 
-	FPhysXCollider* PhysXSphereCollider::getInternal() const
+	FPhysXCollider* PhysXSphereCollider::GetInternal() const
 	{
 		return static_cast<FPhysXCollider*>(mInternal);
 	}

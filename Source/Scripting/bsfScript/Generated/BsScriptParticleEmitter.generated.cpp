@@ -73,7 +73,7 @@ namespace bs
 
 	}
 
-	MonoObject* ScriptParticleEmitter::create(const SPtr<ParticleEmitter>& value)
+	MonoObject* ScriptParticleEmitter::Create(const SPtr<ParticleEmitter>& value)
 	{
 		if(value == nullptr) return nullptr; 
 
@@ -84,7 +84,7 @@ namespace bs
 		new (bs_alloc<ScriptParticleEmitter>()) ScriptParticleEmitter(managedInstance, value);
 		return managedInstance;
 	}
-	void ScriptParticleEmitter::Internal_setShape(ScriptParticleEmitter* thisPtr, MonoObject* shape)
+	void ScriptParticleEmitter::InternalSetShape(ScriptParticleEmitter* thisPtr, MonoObject* shape)
 	{
 		SPtr<ParticleEmitterShape> tmpshape;
 		ScriptParticleEmitterShapeBase* scriptshape;
@@ -94,7 +94,7 @@ namespace bs
 		thisPtr->getInternal()->setShape(tmpshape);
 	}
 
-	MonoObject* ScriptParticleEmitter::Internal_getShape(ScriptParticleEmitter* thisPtr)
+	MonoObject* ScriptParticleEmitter::InternalGetShape(ScriptParticleEmitter* thisPtr)
 	{
 		SPtr<ParticleEmitterShape> tmp__output;
 		tmp__output = thisPtr->getInternal()->getShape();
@@ -103,33 +103,33 @@ namespace bs
 		if(tmp__output)
 		{
 			if(rtti_is_of_type<ParticleEmitterStaticMeshShape>(tmp__output))
-				__output = ScriptParticleEmitterStaticMeshShape::create(std::static_pointer_cast<ParticleEmitterStaticMeshShape>(tmp__output));
+				__output = ScriptParticleEmitterStaticMeshShape::Create(std::static_pointer_cast<ParticleEmitterStaticMeshShape>(tmp__output));
 			else if(rtti_is_of_type<ParticleEmitterCircleShape>(tmp__output))
-				__output = ScriptParticleEmitterCircleShape::create(std::static_pointer_cast<ParticleEmitterCircleShape>(tmp__output));
+				__output = ScriptParticleEmitterCircleShape::Create(std::static_pointer_cast<ParticleEmitterCircleShape>(tmp__output));
 			else if(rtti_is_of_type<ParticleEmitterConeShape>(tmp__output))
-				__output = ScriptParticleEmitterConeShape::create(std::static_pointer_cast<ParticleEmitterConeShape>(tmp__output));
+				__output = ScriptParticleEmitterConeShape::Create(std::static_pointer_cast<ParticleEmitterConeShape>(tmp__output));
 			else if(rtti_is_of_type<ParticleEmitterSphereShape>(tmp__output))
-				__output = ScriptParticleEmitterSphereShape::create(std::static_pointer_cast<ParticleEmitterSphereShape>(tmp__output));
+				__output = ScriptParticleEmitterSphereShape::Create(std::static_pointer_cast<ParticleEmitterSphereShape>(tmp__output));
 			else if(rtti_is_of_type<ParticleEmitterHemisphereShape>(tmp__output))
-				__output = ScriptParticleEmitterHemisphereShape::create(std::static_pointer_cast<ParticleEmitterHemisphereShape>(tmp__output));
+				__output = ScriptParticleEmitterHemisphereShape::Create(std::static_pointer_cast<ParticleEmitterHemisphereShape>(tmp__output));
 			else if(rtti_is_of_type<ParticleEmitterBoxShape>(tmp__output))
-				__output = ScriptParticleEmitterBoxShape::create(std::static_pointer_cast<ParticleEmitterBoxShape>(tmp__output));
+				__output = ScriptParticleEmitterBoxShape::Create(std::static_pointer_cast<ParticleEmitterBoxShape>(tmp__output));
 			else if(rtti_is_of_type<ParticleEmitterLineShape>(tmp__output))
-				__output = ScriptParticleEmitterLineShape::create(std::static_pointer_cast<ParticleEmitterLineShape>(tmp__output));
+				__output = ScriptParticleEmitterLineShape::Create(std::static_pointer_cast<ParticleEmitterLineShape>(tmp__output));
 			else if(rtti_is_of_type<ParticleEmitterRectShape>(tmp__output))
-				__output = ScriptParticleEmitterRectShape::create(std::static_pointer_cast<ParticleEmitterRectShape>(tmp__output));
+				__output = ScriptParticleEmitterRectShape::Create(std::static_pointer_cast<ParticleEmitterRectShape>(tmp__output));
 			else if(rtti_is_of_type<ParticleEmitterSkinnedMeshShape>(tmp__output))
-				__output = ScriptParticleEmitterSkinnedMeshShape::create(std::static_pointer_cast<ParticleEmitterSkinnedMeshShape>(tmp__output));
+				__output = ScriptParticleEmitterSkinnedMeshShape::Create(std::static_pointer_cast<ParticleEmitterSkinnedMeshShape>(tmp__output));
 			else
-				__output = ScriptParticleEmitterShape::create(tmp__output);
+				__output = ScriptParticleEmitterShape::Create(tmp__output);
 		}
 		else
-			__output = ScriptParticleEmitterShape::create(tmp__output);
+			__output = ScriptParticleEmitterShape::Create(tmp__output);
 
 		return __output;
 	}
 
-	void ScriptParticleEmitter::Internal_setEmissionRate(ScriptParticleEmitter* thisPtr, MonoObject* value)
+	void ScriptParticleEmitter::InternalSetEmissionRate(ScriptParticleEmitter* thisPtr, MonoObject* value)
 	{
 		SPtr<TDistribution<float>> tmpvalue;
 		ScriptTDistributionfloat* scriptvalue;
@@ -139,18 +139,18 @@ namespace bs
 		thisPtr->getInternal()->setEmissionRate(*tmpvalue);
 	}
 
-	MonoObject* ScriptParticleEmitter::Internal_getEmissionRate(ScriptParticleEmitter* thisPtr)
+	MonoObject* ScriptParticleEmitter::InternalGetEmissionRate(ScriptParticleEmitter* thisPtr)
 	{
 		SPtr<TDistribution<float>> tmp__output = bs_shared_ptr_new<TDistribution<float>>();
 		*tmp__output = thisPtr->getInternal()->getEmissionRate();
 
 		MonoObject* __output;
-		__output = ScriptTDistributionfloat::create(tmp__output);
+		__output = ScriptTDistributionfloat::Create(tmp__output);
 
 		return __output;
 	}
 
-	void ScriptParticleEmitter::Internal_setEmissionBursts(ScriptParticleEmitter* thisPtr, MonoArray* bursts)
+	void ScriptParticleEmitter::InternalSetEmissionBursts(ScriptParticleEmitter* thisPtr, MonoArray* bursts)
 	{
 		Vector<ParticleBurst> vecbursts;
 		if(bursts != nullptr)
@@ -165,7 +165,7 @@ namespace bs
 		thisPtr->getInternal()->setEmissionBursts(vecbursts);
 	}
 
-	MonoArray* ScriptParticleEmitter::Internal_getEmissionBursts(ScriptParticleEmitter* thisPtr)
+	MonoArray* ScriptParticleEmitter::InternalGetEmissionBursts(ScriptParticleEmitter* thisPtr)
 	{
 		Vector<ParticleBurst> vec__output;
 		vec__output = thisPtr->getInternal()->getEmissionBursts();
@@ -182,7 +182,7 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptParticleEmitter::Internal_setInitialLifetime(ScriptParticleEmitter* thisPtr, MonoObject* value)
+	void ScriptParticleEmitter::InternalSetInitialLifetime(ScriptParticleEmitter* thisPtr, MonoObject* value)
 	{
 		SPtr<TDistribution<float>> tmpvalue;
 		ScriptTDistributionfloat* scriptvalue;
@@ -192,18 +192,18 @@ namespace bs
 		thisPtr->getInternal()->setInitialLifetime(*tmpvalue);
 	}
 
-	MonoObject* ScriptParticleEmitter::Internal_getInitialLifetime(ScriptParticleEmitter* thisPtr)
+	MonoObject* ScriptParticleEmitter::InternalGetInitialLifetime(ScriptParticleEmitter* thisPtr)
 	{
 		SPtr<TDistribution<float>> tmp__output = bs_shared_ptr_new<TDistribution<float>>();
 		*tmp__output = thisPtr->getInternal()->getInitialLifetime();
 
 		MonoObject* __output;
-		__output = ScriptTDistributionfloat::create(tmp__output);
+		__output = ScriptTDistributionfloat::Create(tmp__output);
 
 		return __output;
 	}
 
-	void ScriptParticleEmitter::Internal_setInitialSpeed(ScriptParticleEmitter* thisPtr, MonoObject* value)
+	void ScriptParticleEmitter::InternalSetInitialSpeed(ScriptParticleEmitter* thisPtr, MonoObject* value)
 	{
 		SPtr<TDistribution<float>> tmpvalue;
 		ScriptTDistributionfloat* scriptvalue;
@@ -213,18 +213,18 @@ namespace bs
 		thisPtr->getInternal()->setInitialSpeed(*tmpvalue);
 	}
 
-	MonoObject* ScriptParticleEmitter::Internal_getInitialSpeed(ScriptParticleEmitter* thisPtr)
+	MonoObject* ScriptParticleEmitter::InternalGetInitialSpeed(ScriptParticleEmitter* thisPtr)
 	{
 		SPtr<TDistribution<float>> tmp__output = bs_shared_ptr_new<TDistribution<float>>();
 		*tmp__output = thisPtr->getInternal()->getInitialSpeed();
 
 		MonoObject* __output;
-		__output = ScriptTDistributionfloat::create(tmp__output);
+		__output = ScriptTDistributionfloat::Create(tmp__output);
 
 		return __output;
 	}
 
-	void ScriptParticleEmitter::Internal_setInitialSize(ScriptParticleEmitter* thisPtr, MonoObject* value)
+	void ScriptParticleEmitter::InternalSetInitialSize(ScriptParticleEmitter* thisPtr, MonoObject* value)
 	{
 		SPtr<TDistribution<float>> tmpvalue;
 		ScriptTDistributionfloat* scriptvalue;
@@ -234,18 +234,18 @@ namespace bs
 		thisPtr->getInternal()->setInitialSize(*tmpvalue);
 	}
 
-	MonoObject* ScriptParticleEmitter::Internal_getInitialSize(ScriptParticleEmitter* thisPtr)
+	MonoObject* ScriptParticleEmitter::InternalGetInitialSize(ScriptParticleEmitter* thisPtr)
 	{
 		SPtr<TDistribution<float>> tmp__output = bs_shared_ptr_new<TDistribution<float>>();
 		*tmp__output = thisPtr->getInternal()->getInitialSize();
 
 		MonoObject* __output;
-		__output = ScriptTDistributionfloat::create(tmp__output);
+		__output = ScriptTDistributionfloat::Create(tmp__output);
 
 		return __output;
 	}
 
-	void ScriptParticleEmitter::Internal_setInitialSize3D(ScriptParticleEmitter* thisPtr, MonoObject* value)
+	void ScriptParticleEmitter::InternalSetInitialSize3D(ScriptParticleEmitter* thisPtr, MonoObject* value)
 	{
 		SPtr<TDistribution<Vector3>> tmpvalue;
 		ScriptTDistributionVector3* scriptvalue;
@@ -255,23 +255,23 @@ namespace bs
 		thisPtr->getInternal()->setInitialSize3D(*tmpvalue);
 	}
 
-	MonoObject* ScriptParticleEmitter::Internal_getInitialSize3D(ScriptParticleEmitter* thisPtr)
+	MonoObject* ScriptParticleEmitter::InternalGetInitialSize3D(ScriptParticleEmitter* thisPtr)
 	{
 		SPtr<TDistribution<Vector3>> tmp__output = bs_shared_ptr_new<TDistribution<Vector3>>();
 		*tmp__output = thisPtr->getInternal()->getInitialSize3D();
 
 		MonoObject* __output;
-		__output = ScriptTDistributionVector3::create(tmp__output);
+		__output = ScriptTDistributionVector3::Create(tmp__output);
 
 		return __output;
 	}
 
-	void ScriptParticleEmitter::Internal_setUse3DSize(ScriptParticleEmitter* thisPtr, bool value)
+	void ScriptParticleEmitter::InternalSetUse3DSize(ScriptParticleEmitter* thisPtr, bool value)
 	{
 		thisPtr->getInternal()->setUse3DSize(value);
 	}
 
-	bool ScriptParticleEmitter::Internal_getUse3DSize(ScriptParticleEmitter* thisPtr)
+	bool ScriptParticleEmitter::InternalGetUse3DSize(ScriptParticleEmitter* thisPtr)
 	{
 		bool tmp__output;
 		tmp__output = thisPtr->getInternal()->getUse3DSize();
@@ -282,7 +282,7 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptParticleEmitter::Internal_setInitialRotation(ScriptParticleEmitter* thisPtr, MonoObject* value)
+	void ScriptParticleEmitter::InternalSetInitialRotation(ScriptParticleEmitter* thisPtr, MonoObject* value)
 	{
 		SPtr<TDistribution<float>> tmpvalue;
 		ScriptTDistributionfloat* scriptvalue;
@@ -292,18 +292,18 @@ namespace bs
 		thisPtr->getInternal()->setInitialRotation(*tmpvalue);
 	}
 
-	MonoObject* ScriptParticleEmitter::Internal_getInitialRotation(ScriptParticleEmitter* thisPtr)
+	MonoObject* ScriptParticleEmitter::InternalGetInitialRotation(ScriptParticleEmitter* thisPtr)
 	{
 		SPtr<TDistribution<float>> tmp__output = bs_shared_ptr_new<TDistribution<float>>();
 		*tmp__output = thisPtr->getInternal()->getInitialRotation();
 
 		MonoObject* __output;
-		__output = ScriptTDistributionfloat::create(tmp__output);
+		__output = ScriptTDistributionfloat::Create(tmp__output);
 
 		return __output;
 	}
 
-	void ScriptParticleEmitter::Internal_setInitialRotation3D(ScriptParticleEmitter* thisPtr, MonoObject* value)
+	void ScriptParticleEmitter::InternalSetInitialRotation3D(ScriptParticleEmitter* thisPtr, MonoObject* value)
 	{
 		SPtr<TDistribution<Vector3>> tmpvalue;
 		ScriptTDistributionVector3* scriptvalue;
@@ -313,23 +313,23 @@ namespace bs
 		thisPtr->getInternal()->setInitialRotation3D(*tmpvalue);
 	}
 
-	MonoObject* ScriptParticleEmitter::Internal_getInitialRotation3D(ScriptParticleEmitter* thisPtr)
+	MonoObject* ScriptParticleEmitter::InternalGetInitialRotation3D(ScriptParticleEmitter* thisPtr)
 	{
 		SPtr<TDistribution<Vector3>> tmp__output = bs_shared_ptr_new<TDistribution<Vector3>>();
 		*tmp__output = thisPtr->getInternal()->getInitialRotation3D();
 
 		MonoObject* __output;
-		__output = ScriptTDistributionVector3::create(tmp__output);
+		__output = ScriptTDistributionVector3::Create(tmp__output);
 
 		return __output;
 	}
 
-	void ScriptParticleEmitter::Internal_setUse3DRotation(ScriptParticleEmitter* thisPtr, bool value)
+	void ScriptParticleEmitter::InternalSetUse3DRotation(ScriptParticleEmitter* thisPtr, bool value)
 	{
 		thisPtr->getInternal()->setUse3DRotation(value);
 	}
 
-	bool ScriptParticleEmitter::Internal_getUse3DRotation(ScriptParticleEmitter* thisPtr)
+	bool ScriptParticleEmitter::InternalGetUse3DRotation(ScriptParticleEmitter* thisPtr)
 	{
 		bool tmp__output;
 		tmp__output = thisPtr->getInternal()->getUse3DRotation();
@@ -340,7 +340,7 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptParticleEmitter::Internal_setInitialColor(ScriptParticleEmitter* thisPtr, MonoObject* value)
+	void ScriptParticleEmitter::InternalSetInitialColor(ScriptParticleEmitter* thisPtr, MonoObject* value)
 	{
 		SPtr<TColorDistribution<ColorGradient>> tmpvalue;
 		ScriptTColorDistributionColorGradient* scriptvalue;
@@ -350,23 +350,23 @@ namespace bs
 		thisPtr->getInternal()->setInitialColor(*tmpvalue);
 	}
 
-	MonoObject* ScriptParticleEmitter::Internal_getInitialColor(ScriptParticleEmitter* thisPtr)
+	MonoObject* ScriptParticleEmitter::InternalGetInitialColor(ScriptParticleEmitter* thisPtr)
 	{
 		SPtr<TColorDistribution<ColorGradient>> tmp__output = bs_shared_ptr_new<TColorDistribution<ColorGradient>>();
 		*tmp__output = thisPtr->getInternal()->getInitialColor();
 
 		MonoObject* __output;
-		__output = ScriptTColorDistributionColorGradient::create(tmp__output);
+		__output = ScriptTColorDistributionColorGradient::Create(tmp__output);
 
 		return __output;
 	}
 
-	void ScriptParticleEmitter::Internal_setRandomOffset(ScriptParticleEmitter* thisPtr, float value)
+	void ScriptParticleEmitter::InternalSetRandomOffset(ScriptParticleEmitter* thisPtr, float value)
 	{
 		thisPtr->getInternal()->setRandomOffset(value);
 	}
 
-	float ScriptParticleEmitter::Internal_getRandomOffset(ScriptParticleEmitter* thisPtr)
+	float ScriptParticleEmitter::InternalGetRandomOffset(ScriptParticleEmitter* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->getInternal()->getRandomOffset();
@@ -377,12 +377,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptParticleEmitter::Internal_setFlipU(ScriptParticleEmitter* thisPtr, float value)
+	void ScriptParticleEmitter::InternalSetFlipU(ScriptParticleEmitter* thisPtr, float value)
 	{
 		thisPtr->getInternal()->setFlipU(value);
 	}
 
-	float ScriptParticleEmitter::Internal_getFlipU(ScriptParticleEmitter* thisPtr)
+	float ScriptParticleEmitter::InternalGetFlipU(ScriptParticleEmitter* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->getInternal()->getFlipU();
@@ -393,12 +393,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptParticleEmitter::Internal_setFlipV(ScriptParticleEmitter* thisPtr, float value)
+	void ScriptParticleEmitter::InternalSetFlipV(ScriptParticleEmitter* thisPtr, float value)
 	{
 		thisPtr->getInternal()->setFlipV(value);
 	}
 
-	float ScriptParticleEmitter::Internal_getFlipV(ScriptParticleEmitter* thisPtr)
+	float ScriptParticleEmitter::InternalGetFlipV(ScriptParticleEmitter* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->getInternal()->getFlipV();
@@ -409,9 +409,9 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptParticleEmitter::Internal_create(MonoObject* managedInstance)
+	void ScriptParticleEmitter::InternalCreate(MonoObject* managedInstance)
 	{
-		SPtr<ParticleEmitter> instance = ParticleEmitter::create();
+		SPtr<ParticleEmitter> instance = ParticleEmitter::Create();
 		new (bs_alloc<ScriptParticleEmitter>())ScriptParticleEmitter(managedInstance, instance);
 	}
 }

@@ -27,8 +27,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class ManagedSerializableDictionaryKeyValueRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const ;
 	};
 
 	/**
@@ -78,13 +78,13 @@ namespace bs
 			 * Returns the wrapped key data at the current enumerator position. Only valid to call this if enumerator is
 			 * valid (meaning last call to moveNext() returned true).
 			 */
-			SPtr<ManagedSerializableFieldData> getKey() const;
+			SPtr<ManagedSerializableFieldData> GetKey() const;
 
 			/**
 			 * Returns the wrapped value data at the current enumerator position. Only valid to call this if enumerator is
 			 * valid (meaning last call to moveNext() returned true).
 			 */
-			SPtr<ManagedSerializableFieldData> getValue() const;
+			SPtr<ManagedSerializableFieldData> GetValue() const;
 
 			/**
 			 * Moves the enumerator to the next position. Initially enumerator is at an invalid position and must be called
@@ -93,7 +93,7 @@ namespace bs
 			 * @return	Returns if the enumerator is at valid position. When the enumerator returns false it means there are
 			 *			no more elements to enumerate.
 			 */
-			bool moveNext();
+			bool MoveNext();
 
 		private:
 			uint32_t mKeysArrayHandle = 0;
@@ -119,10 +119,10 @@ namespace bs
 		 * Returns the internal managed instance of the dictionary. This will return null if the object is in serialized
 		 * mode.
 		 */
-		MonoObject* getManagedInstance() const;
+		MonoObject* GetManagedInstance() const;
 
 		/**	Returns the type information for the internal dictionary. */
-		SPtr<ManagedSerializableTypeInfoDictionary> getTypeInfo() const { return mDictionaryTypeInfo; }
+		SPtr<ManagedSerializableTypeInfoDictionary> GetTypeInfo() const { return mDictionaryTypeInfo; }
 
 		/**
 		 * Returns the dictionary value at the specified key. If the key doesn't exist the default value for the type is
@@ -131,7 +131,7 @@ namespace bs
 		 * @param[in]	key		Wrapper around the key data at which to retrieve the value.
 		 * @return				A wrapper around the value in the dictionary at the specified key.
 		 */
-		SPtr<ManagedSerializableFieldData> getFieldData(const SPtr<ManagedSerializableFieldData>& key);
+		SPtr<ManagedSerializableFieldData> GetFieldData(const SPtr<ManagedSerializableFieldData>& key);
 
 		/**
 		 * Sets the dictionary value at the specified key. Operates on managed object if in linked state, or on cached data
@@ -140,7 +140,7 @@ namespace bs
 		 * @param[in]	key		Wrapper around the key data at which to set the value.
 		 * @param[in]	val		Wrapper around the value to set at the specified key.
 		 */
-		void setFieldData(const SPtr<ManagedSerializableFieldData>& key, const SPtr<ManagedSerializableFieldData>& val);
+		void SetFieldData(const SPtr<ManagedSerializableFieldData>& key, const SPtr<ManagedSerializableFieldData>& val);
 
 		/**
 		 * Deletes the key/value pair at the specified key. If the key doesn't exist this operation does nothing. Operates
@@ -148,7 +148,7 @@ namespace bs
 		 *
 		 * @param[in]	key		Wrapper around the key data at which to delete the value.
 		 */
-		void removeFieldData(const SPtr<ManagedSerializableFieldData>& key);
+		void RemoveFieldData(const SPtr<ManagedSerializableFieldData>& key);
 
 		/**
 		 * Checks if the dictionary contains the specified key. Operates on managed object if in linked state, or on cached
@@ -156,17 +156,17 @@ namespace bs
 		 *
 		 * @param[in]	key		Wrapper around the key data which to check.
 		 */
-		bool contains(const SPtr<ManagedSerializableFieldData>& key) const;
+		bool Contains(const SPtr<ManagedSerializableFieldData>& key) const;
 
 		/** Returns an enumerator object that allows you to iterate over all key/value pairs in the dictionary. */
-		Enumerator getEnumerator() const;
+		Enumerator GetEnumerator() const;
 
 		/**
 		 * Serializes the internal managed object into a set of cached data that can be saved in memory/disk and can be
 		 * deserialized later. The internal managed object will be freed (if no other references to it). Calling serialize()
 		 * again will have no result.
 		 */
-		void serialize();
+		void Serialize();
 
 		/**
 		 * Deserializes a set of cached data into a managed object. This action may fail in case the cached data contains a
@@ -174,7 +174,7 @@ namespace bs
 		 *
 		 * @return		Newly created object initialized with the cached data.
 		 */
-		MonoObject* deserialize();
+		MonoObject* Deserialize();
 
 		/**
 		 * Creates a managed serializable dictionary that references an existing managed dictionary. Created object will be
@@ -184,7 +184,7 @@ namespace bs
 		 *									correspond with the provided type info.
 		 * @param[in]	typeInfo			Type information for the dictionary and its key/value pair.
 		 */
-		static SPtr<ManagedSerializableDictionary> createFromExisting(MonoObject* managedInstance,
+		static SPtr<ManagedSerializableDictionary> CreateFromExisting(MonoObject* managedInstance,
 			const SPtr<ManagedSerializableTypeInfoDictionary>& typeInfo);
 
 		/**
@@ -192,21 +192,21 @@ namespace bs
 		 *
 		 * @param[in]	typeInfo	Type of the dictionary to create.
 		 */
-		static SPtr<ManagedSerializableDictionary> createNew(const SPtr<ManagedSerializableTypeInfoDictionary>& typeInfo);
+		static SPtr<ManagedSerializableDictionary> CreateNew(const SPtr<ManagedSerializableTypeInfoDictionary>& typeInfo);
 
 		/**
 		 * Creates a managed dictionary instance.
 		 *
 		 * @param[in]	typeInfo	Type of the dictionary to create.
 		 */
-		static MonoObject* createManagedInstance(const SPtr<ManagedSerializableTypeInfoDictionary>& typeInfo);
+		static MonoObject* CreateManagedInstance(const SPtr<ManagedSerializableTypeInfoDictionary>& typeInfo);
 
 	protected:
 		/**
 		 * Retrieves needed Mono types and methods. Should be called before performing any operations with the managed
 		 * object.
 		 */
-		void initMonoObjects(MonoClass* dictionaryClass);
+		void InitMonoObjects(MonoClass* dictionaryClass);
 
 		/**
 		 * Sets the dictionary value at the specified key. Operates on the provided managed object.
@@ -215,7 +215,7 @@ namespace bs
 		 * @param[in]	key		Wrapper around the key data at which to set the value.
 		 * @param[in]	val		Wrapper around the value to set at the specified key.
 		 */
-		void setFieldData(MonoObject* obj, const SPtr<ManagedSerializableFieldData>& key,
+		void SetFieldData(MonoObject* obj, const SPtr<ManagedSerializableFieldData>& key,
 			const SPtr<ManagedSerializableFieldData>& val);
 
 		uint32_t mGCHandle = 0;
@@ -238,12 +238,12 @@ namespace bs
 		/************************************************************************/
 		
 		/**	Creates an empty and uninitialized object used for serialization purposes. */
-		static SPtr<ManagedSerializableDictionary> createEmpty();
+		static SPtr<ManagedSerializableDictionary> CreateEmpty();
 
 	public:
 		friend class ManagedSerializableDictionaryRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const ;
 	};
 
 	/** @} */

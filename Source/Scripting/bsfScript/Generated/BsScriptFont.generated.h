@@ -15,12 +15,12 @@ namespace bs
 
 		ScriptFont(MonoObject* managedInstance, const ResourceHandle<Font>& value);
 
-		static MonoObject* createInstance();
+		static MonoObject* CreateInstance();
 
 	private:
-		static MonoObject* Internal_getRef(ScriptFont* thisPtr);
+		static MonoObject* InternalGetRef(ScriptFont* thisPtr);
 
-		static MonoObject* Internal_getBitmap(ScriptFont* thisPtr, uint32_t size);
-		static int32_t Internal_getClosestSize(ScriptFont* thisPtr, uint32_t size);
+		static MonoObject* InternalGetBitmap(ScriptFont* thisPtr, uint32_t size);
+		static int32_t InternalGetClosestSize(ScriptFont* thisPtr, uint32_t size);
 	};
 }

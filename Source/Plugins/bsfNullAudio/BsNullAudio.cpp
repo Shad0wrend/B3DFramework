@@ -13,18 +13,18 @@ namespace bs
 		mAllDevices.push_back(mActiveDevice);
 	}
 
-	SPtr<AudioClip> NullAudio::createClip(const SPtr<DataStream>& samples, UINT32 streamSize, UINT32 numSamples,
+	SPtr<AudioClip> NullAudio::CreateClip(const SPtr<DataStream>& samples, UINT32 streamSize, UINT32 numSamples,
 		const AUDIO_CLIP_DESC& desc)
 	{
 		return bs_core_ptr_new<NullAudioClip>(samples, streamSize, numSamples, desc);
 	}
 
-	SPtr<AudioListener> NullAudio::createListener()
+	SPtr<AudioListener> NullAudio::CreateListener()
 	{
 		return bs_shared_ptr_new<NullAudioListener>();
 	}
 
-	SPtr<AudioSource> NullAudio::createSource()
+	SPtr<AudioSource> NullAudio::CreateSource()
 	{
 		return bs_shared_ptr_new<NullAudioSource>();
 	}
@@ -33,7 +33,7 @@ namespace bs
 		:AudioClip(samples, streamSize, numSamples, desc)
 	{ }
 
-	void NullAudioClip::initialize()
+	void NullAudioClip::Initialize()
 	{
 		// If we need to keep source data, read everything into memory and keep a copy
 		if (mKeepSourceData)
@@ -50,7 +50,7 @@ namespace bs
 		AudioClip::initialize();
 	}
 
-	SPtr<DataStream> NullAudioClip::getSourceStream(UINT32& size)
+	SPtr<DataStream> NullAudioClip::GetSourceStream(UINT32& size)
 	{
 		size = mSourceStreamSize;
 		mSourceStreamData->seek(0);
@@ -60,6 +60,6 @@ namespace bs
 
 	NullAudio& gNullAudio()
 	{
-		return static_cast<NullAudio&>(NullAudio::instance());
+		return static_cast<NullAudio&>(NullAudio::Instance());
 	}
 }

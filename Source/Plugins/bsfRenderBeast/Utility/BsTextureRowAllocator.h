@@ -33,10 +33,10 @@ namespace bs { namespace ct
 		 * Attempts to allocate a new region of size @p length pixels. Returned allocation will have the same size as the
 		 * requested size if sucessful.
 		 */
-		TextureRowAllocation alloc(uint32_t length);
+		TextureRowAllocation Alloc(uint32_t length);
 
 		/** Frees a previously allocated region. */
-		void free(const TextureRowAllocation& alloc);
+		void Free(const TextureRowAllocation& alloc);
 
 	private:
 		/** Describes a single contigous region of a texture row. */
@@ -76,7 +76,7 @@ namespace bs { namespace ct
 	}
 
 	template<uint32_t WIDTH, uint32_t HEIGHT>
-	TextureRowAllocation TextureRowAllocator<WIDTH, HEIGHT>::alloc(uint32_t length)
+	TextureRowAllocation TextureRowAllocator<WIDTH, HEIGHT>::Alloc(uint32_t length)
 	{
 		TextureRowAllocation output;
 
@@ -119,7 +119,7 @@ namespace bs { namespace ct
 	}
 
 	template <uint32_t WIDTH, uint32_t HEIGHT>
-	void TextureRowAllocator<WIDTH, HEIGHT>::free(const TextureRowAllocation& alloc)
+	void TextureRowAllocator<WIDTH, HEIGHT>::Free(const TextureRowAllocation& alloc)
 	{
 		if(alloc.length == 0)
 			return;

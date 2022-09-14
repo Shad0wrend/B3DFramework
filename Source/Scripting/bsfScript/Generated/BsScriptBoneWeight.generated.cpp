@@ -14,14 +14,14 @@ namespace bs
 	void ScriptBoneWeight::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptBoneWeight::box(const BoneWeight& value)
+	MonoObject*ScriptBoneWeight::Box(const BoneWeight& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	BoneWeight ScriptBoneWeight::unbox(MonoObject* value)
+	BoneWeight ScriptBoneWeight::Unbox(MonoObject* value)
 	{
-		return *(BoneWeight*)MonoUtil::unbox(value);
+		return *(BoneWeight*)MonoUtil::Unbox(value);
 	}
 
 }

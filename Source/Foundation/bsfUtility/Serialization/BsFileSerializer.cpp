@@ -16,30 +16,30 @@ namespace bs
 {
 	FileEncoder::FileEncoder(const Path& fileLocation)
 	{
-		Path parentDir = fileLocation.getDirectory();
-		if (!FileSystem::exists(parentDir))
+		Path parentDir = fileLocation.GetDirectory();
+		if (!FileSystem::Exists(parentDir))
 			FileSystem::createDir(parentDir);
 		
-		mOutputStream = FileSystem::createAndOpenFile(fileLocation);
+		mOutputStream = FileSystem::CreateAndOpenFile(fileLocation);
 	}
 
-	void FileEncoder::encode(IReflectable* object, SerializationContext* context)
+	void FileEncoder::Encode(IReflectable* object, SerializationContext* context)
 	{
 		if (object == nullptr)
 			return;
 
-		size_t startPos = mOutputStream->tell();
-		mOutputStream->skip(sizeof(UINT32));
+		size_t startPos = mOutputStream->Tell();
+		mOutputStream->Skip(sizeof(UINT32));
 
 		BinarySerializer bs;
-		bs.encode(object, mOutputStream, BinarySerializerFlag::None, context);
+		bs.Encode(object, mOutputStream, BinarySerializerFlag::None, context);
 
-		size_t endPos = mOutputStream->tell();
+		size_t endPos = mOutputStream->Tell();
 		auto size = (UINT32)(endPos - startPos - sizeof(UINT32));
 		
-		mOutputStream->seek(startPos);
-		mOutputStream->write((char*)&size, sizeof(size));
-		mOutputStream->skip(size);
+		mOutputStream->Seek(startPos);
+		mOutputStream->Write((char*)&size, sizeof(size));
+		mOutputStream->Skip(size);
 	}
 
 	FileDecoder::FileDecoder(const Path& fileLocation)
@@ -56,7 +56,7 @@ namespace bs
 		}
 	}
 
-	SPtr<IReflectable> FileDecoder::decode(SerializationContext* context)
+	SPtr<IReflectable> FileDecoder::Decode(SerializationContext* context)
 	{
 		if (mInputStream->eof())
 			return nullptr;
@@ -70,7 +70,7 @@ namespace bs
 		return object;
 	}
 
-	UINT32 FileDecoder::getSize() const
+	UINT32 FileDecoder::GetSize() const
 	{
 		if (mInputStream->eof())
 			return 0;
@@ -82,7 +82,7 @@ namespace bs
 		return objectSize;
 	}
 
-	void FileDecoder::skip()
+	void FileDecoder::Skip()
 	{
 		if (mInputStream->eof())
 			return;

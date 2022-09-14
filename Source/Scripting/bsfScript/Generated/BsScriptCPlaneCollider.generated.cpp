@@ -16,35 +16,35 @@ namespace bs
 
 	void ScriptCPlaneCollider::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_setNormal", (void*)&ScriptCPlaneCollider::Internal_setNormal);
-		metaData.scriptClass->addInternalCall("Internal_getNormal", (void*)&ScriptCPlaneCollider::Internal_getNormal);
-		metaData.scriptClass->addInternalCall("Internal_setDistance", (void*)&ScriptCPlaneCollider::Internal_setDistance);
-		metaData.scriptClass->addInternalCall("Internal_getDistance", (void*)&ScriptCPlaneCollider::Internal_getDistance);
+		metaData.scriptClass->AddInternalCall("Internal_setNormal", (void*)&ScriptCPlaneCollider::InternalSetNormal);
+		metaData.scriptClass->AddInternalCall("Internal_getNormal", (void*)&ScriptCPlaneCollider::InternalGetNormal);
+		metaData.scriptClass->AddInternalCall("Internal_setDistance", (void*)&ScriptCPlaneCollider::InternalSetDistance);
+		metaData.scriptClass->AddInternalCall("Internal_getDistance", (void*)&ScriptCPlaneCollider::InternalGetDistance);
 
 	}
 
-	void ScriptCPlaneCollider::Internal_setNormal(ScriptCPlaneCollider* thisPtr, Vector3* normal)
+	void ScriptCPlaneCollider::InternalSetNormal(ScriptCPlaneCollider* thisPtr, Vector3* normal)
 	{
-		thisPtr->getHandle()->setNormal(*normal);
+		thisPtr->GetHandle()->SetNormal(*normal);
 	}
 
-	void ScriptCPlaneCollider::Internal_getNormal(ScriptCPlaneCollider* thisPtr, Vector3* __output)
+	void ScriptCPlaneCollider::InternalGetNormal(ScriptCPlaneCollider* thisPtr, Vector3* __output)
 	{
 		Vector3 tmp__output;
-		tmp__output = thisPtr->getHandle()->getNormal();
+		tmp__output = thisPtr->GetHandle()->GetNormal();
 
 		*__output = tmp__output;
 	}
 
-	void ScriptCPlaneCollider::Internal_setDistance(ScriptCPlaneCollider* thisPtr, float distance)
+	void ScriptCPlaneCollider::InternalSetDistance(ScriptCPlaneCollider* thisPtr, float distance)
 	{
-		thisPtr->getHandle()->setDistance(distance);
+		thisPtr->GetHandle()->SetDistance(distance);
 	}
 
-	float ScriptCPlaneCollider::Internal_getDistance(ScriptCPlaneCollider* thisPtr)
+	float ScriptCPlaneCollider::InternalGetDistance(ScriptCPlaneCollider* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getHandle()->getDistance();
+		tmp__output = thisPtr->GetHandle()->GetDistance();
 
 		float __output;
 		__output = tmp__output;

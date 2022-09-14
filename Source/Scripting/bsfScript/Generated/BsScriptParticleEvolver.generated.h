@@ -15,7 +15,7 @@ namespace bs
 		ScriptParticleEvolverBase(MonoObject* instance);
 		virtual ~ScriptParticleEvolverBase() {}
 
-		SPtr<ParticleEvolver> getInternal() const;
+		SPtr<ParticleEvolver> GetInternal() const;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptParticleEvolver : public TScriptReflectable<ScriptParticleEvolver, ParticleEvolver, ScriptParticleEvolverBase>
@@ -25,7 +25,7 @@ namespace bs
 
 		ScriptParticleEvolver(MonoObject* managedInstance, const SPtr<ParticleEvolver>& value);
 
-		static MonoObject* create(const SPtr<ParticleEvolver>& value);
+		static MonoObject* Create(const SPtr<ParticleEvolver>& value);
 
 	private:
 	};

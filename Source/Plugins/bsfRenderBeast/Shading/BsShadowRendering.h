@@ -39,7 +39,7 @@ namespace bs { namespace ct
 
 		/** Helper method used for initializing variations of this material. */
 		template<bool skinned, bool morph>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -54,10 +54,10 @@ namespace bs { namespace ct
 		ShadowDepthNormalMat() = default;
 
 		/** Binds the material to the pipeline, ready to be used on subsequent draw calls. */
-		void bind(const SPtr<GpuParamBlockBuffer>& shadowParams);
+		void Bind(const SPtr<GpuParamBlockBuffer>& shadowParams);
 
 		/** Sets a new buffer that determines per-object properties. */
-		void setPerObjectBuffer(const SPtr<GpuParamBlockBuffer>& perObjectParams);
+		void SetPerObjectBuffer(const SPtr<GpuParamBlockBuffer>& perObjectParams);
 
 		/**
 		 * Returns the material variation matching the provided parameters.
@@ -65,7 +65,7 @@ namespace bs { namespace ct
 		 * @param[in]	skinned		True if the shadow caster supports bone animation.
 		 * @param[in]	morph		True if the shadow caster supports morph shape animation.
 		 */
-		static ShadowDepthNormalMat* getVariation(bool skinned, bool morph);
+		static ShadowDepthNormalMat* GetVariation(bool skinned, bool morph);
 	};
 
 	/** Material used for rendering a single face of a shadow map, without running the pixel shader. */
@@ -75,7 +75,7 @@ namespace bs { namespace ct
 
 		/** Helper method used for initializing variations of this material. */
 		template<bool skinned, bool morph>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -90,10 +90,10 @@ namespace bs { namespace ct
 		ShadowDepthNormalNoPSMat();
 
 		/** Binds the material to the pipeline, ready to be used on subsequent draw calls. */
-		void bind(const SPtr<GpuParamBlockBuffer>& shadowParams);
+		void Bind(const SPtr<GpuParamBlockBuffer>& shadowParams);
 
 		/** Sets a new buffer that determines per-object properties. */
-		void setPerObjectBuffer(const SPtr<GpuParamBlockBuffer>& perObjectParams);
+		void SetPerObjectBuffer(const SPtr<GpuParamBlockBuffer>& perObjectParams);
 
 		/**
 		 * Returns the material variation matching the provided parameters.
@@ -101,7 +101,7 @@ namespace bs { namespace ct
 		 * @param[in]	skinned		True if the shadow caster supports bone animation.
 		 * @param[in]	morph		True if the shadow caster supports morph shape animation.
 		 */
-		static ShadowDepthNormalNoPSMat* getVariation(bool skinned, bool morph);
+		static ShadowDepthNormalNoPSMat* GetVariation(bool skinned, bool morph);
 	};
 
 	/** Material used for rendering a single face of a shadow map, for a directional light. */
@@ -111,7 +111,7 @@ namespace bs { namespace ct
 
 		/** Helper method used for initializing variations of this material. */
 		template<bool skinned, bool morph>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -125,10 +125,10 @@ namespace bs { namespace ct
 		ShadowDepthDirectionalMat();
 
 		/** Binds the material to the pipeline, ready to be used on subsequent draw calls. */
-		void bind(const SPtr<GpuParamBlockBuffer>& shadowParams);
+		void Bind(const SPtr<GpuParamBlockBuffer>& shadowParams);
 
 		/** Sets a new buffer that determines per-object properties. */
-		void setPerObjectBuffer(const SPtr<GpuParamBlockBuffer>& perObjectParams);
+		void SetPerObjectBuffer(const SPtr<GpuParamBlockBuffer>& perObjectParams);
 
 		/**
 		 * Returns the material variation matching the provided parameters.
@@ -136,7 +136,7 @@ namespace bs { namespace ct
 		 * @param[in]	skinned		True if the shadow caster supports bone animation.
 		 * @param[in]	morph		True if the shadow caster supports morph shape animation.
 		 */
-		static ShadowDepthDirectionalMat* getVariation(bool skinned, bool morph);
+		static ShadowDepthDirectionalMat* GetVariation(bool skinned, bool morph);
 	};
 
 	BS_PARAM_BLOCK_BEGIN(ShadowCubeMatricesDef)
@@ -158,7 +158,7 @@ namespace bs { namespace ct
 
 		/** Helper method used for initializing variations of this material. */
 		template<bool skinned, bool morph>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -172,10 +172,10 @@ namespace bs { namespace ct
 		ShadowDepthCubeMat();
 
 		/** Binds the material to the pipeline, ready to be used on subsequent draw calls. */
-		void bind(const SPtr<GpuParamBlockBuffer>& shadowParams, const SPtr<GpuParamBlockBuffer>& shadowCubeParams);
+		void Bind(const SPtr<GpuParamBlockBuffer>& shadowParams, const SPtr<GpuParamBlockBuffer>& shadowCubeParams);
 
 		/** Sets a new buffer that determines per-object properties. */
-		void setPerObjectBuffer(const SPtr<GpuParamBlockBuffer>& perObjectParams,
+		void SetPerObjectBuffer(const SPtr<GpuParamBlockBuffer>& perObjectParams,
 			const SPtr<GpuParamBlockBuffer>& shadowCubeMasks);
 
 		/**
@@ -184,7 +184,7 @@ namespace bs { namespace ct
 		 * @param[in]	skinned		True if the shadow caster supports bone animation.
 		 * @param[in]	morph		True if the shadow caster supports morph shape animation.
 		 */
-		static ShadowDepthCubeMat* getVariation(bool skinned, bool morph);
+		static ShadowDepthCubeMat* GetVariation(bool skinned, bool morph);
 	};
 
 	BS_PARAM_BLOCK_BEGIN(ShadowProjectVertParamsDef)
@@ -200,7 +200,7 @@ namespace bs { namespace ct
 
 		/** Helper method used for initializing variations of this material. */
 		template<bool directional, bool useZFailStencil>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -214,7 +214,7 @@ namespace bs { namespace ct
 		ShadowProjectStencilMat();
 
 		/** Binds the material and its parameters to the pipeline. */
-		void bind(const SPtr<GpuParamBlockBuffer>& perCamera);
+		void Bind(const SPtr<GpuParamBlockBuffer>& perCamera);
 
 		/** Returns the material variation matching the provided parameters.
 		 *
@@ -224,7 +224,7 @@ namespace bs { namespace ct
 		 *								doesn't disable hi-z optimization, but it cannot handle the case when the viewer is
 		 *								inside the drawn geometry.
 		 */
-		static ShadowProjectStencilMat* getVariation(bool directional, bool useZFailStencil);
+		static ShadowProjectStencilMat* GetVariation(bool directional, bool useZFailStencil);
 	private:
 		SPtr<GpuParamBlockBuffer> mVertParams;
 	};
@@ -274,7 +274,7 @@ namespace bs { namespace ct
 
 		/** Helper method used for initializing variations of this material. */
 		template<UINT32 quality, bool directional, bool MSAA>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -291,7 +291,7 @@ namespace bs { namespace ct
 		ShadowProjectMat();
 
 		/** Binds the material and its parameters to the pipeline. */
-		void bind(const ShadowProjectParams& params);
+		void Bind(const ShadowProjectParams& params);
 
 		/** Returns the material variation matching the provided parameters.
 		 *
@@ -299,7 +299,7 @@ namespace bs { namespace ct
 		 * @param[in]	directional		True if rendering a shadow from a directional light.
 		 * @param[in]	MSAA			True if the GBuffer contains per-sample data.
 		 */
-		static ShadowProjectMat* getVariation(UINT32 quality, bool directional, bool MSAA);
+		static ShadowProjectMat* GetVariation(UINT32 quality, bool directional, bool MSAA);
 	private:
 		SPtr<SamplerState> mSamplerState;
 		SPtr<GpuParamBlockBuffer> mVertParams;
@@ -327,7 +327,7 @@ namespace bs { namespace ct
 
 		/** Helper method used for initializing variations of this material. */
 		template<UINT32 quality, bool inside, bool MSAA>
-		static const ShaderVariation& getVariation()
+		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
@@ -344,7 +344,7 @@ namespace bs { namespace ct
 		ShadowProjectOmniMat();
 
 		/** Binds the material and its parameters to the pipeline. */
-		void bind(const ShadowProjectParams& params);
+		void Bind(const ShadowProjectParams& params);
 
 		/** Returns the material variation matching the provided parameters.
 		 *
@@ -352,7 +352,7 @@ namespace bs { namespace ct
 		 * @param[in]	inside			True if the viewer is inside the light volume.
 		 * @param[in]	MSAA			True if the GBuffer contains per-sample data.
 		 */
-		static ShadowProjectOmniMat* getVariation(UINT32 quality, bool inside, bool MSAA);
+		static ShadowProjectOmniMat* GetVariation(UINT32 quality, bool inside, bool MSAA);
 	private:
 		SPtr<SamplerState> mSamplerState;
 		SPtr<GpuParamBlockBuffer> mVertParams;
@@ -370,7 +370,7 @@ namespace bs { namespace ct
 	struct ShadowInfo
 	{
 		/** Updates normalized area coordinates based on the non-normalized ones and the provided atlas size. */
-		void updateNormArea(UINT32 atlasSize);
+		void UpdateNormArea(UINT32 atlasSize);
 
 		UINT32 lightIdx; /**< Index of the light casting this shadow. */
 		Rect2I area; /**< Area of the shadow map in pixels, relative to its source texture. */
@@ -413,25 +413,25 @@ namespace bs { namespace ct
 		 * Registers a new map in the shadow map atlas. Returns true if the map fits in the atlas, or false otherwise.
 		 * Resets the last used counter to zero.
 		 */
-		bool addMap(UINT32 size, Rect2I& area, UINT32 border = 4);
+		bool AddMap(UINT32 size, Rect2I& area, UINT32 border = 4);
 
 		/** Clears all shadow maps from the atlas. Increments the last used counter.*/
-		void clear();
+		void Clear();
 
 		/** Checks have any maps been added to the atlas. */
-		bool isEmpty() const;
+		bool IsEmpty() const;
 
 		/**
 		 * Returns the value of the last used counter. See addMap() and clear() for information on how the counter is
 		 * incremented/decremented.
 		 */
-		UINT32 getLastUsedCounter() const { return mLastUsedCounter; }
+		UINT32 GetLastUsedCounter() const { return mLastUsedCounter; }
 
 		/** Returns the bindable atlas texture. */
-		SPtr<Texture> getTexture() const;
+		SPtr<Texture> GetTexture() const;
 
 		/** Returns the render target that allows you to render into the atlas. */
-		SPtr<RenderTexture> getTarget() const;
+		SPtr<RenderTexture> GetTarget() const;
 
 	private:
 		SPtr<PooledRenderTexture> mAtlas;
@@ -448,25 +448,25 @@ namespace bs { namespace ct
 		virtual ~ShadowMapBase() {}
 
 		/** Returns the bindable shadow map texture. */
-		SPtr<Texture> getTexture() const;
+		SPtr<Texture> GetTexture() const;
 
 		/** Returns the size of a single face of the shadow map texture, in pixels. */
-		UINT32 getSize() const { return mSize; }
+		UINT32 GetSize() const { return mSize; }
 
 		/** Makes the shadow map available for re-use and increments the counter returned by getLastUsedCounter(). */
-		void clear() { mIsUsed = false; mLastUsedCounter++; }
+		void Clear() { mIsUsed = false; mLastUsedCounter++; }
 
 		/** Marks the shadow map as used and resets the last used counter to zero. */
-		void markAsUsed() { mIsUsed = true; mLastUsedCounter = 0; }
+		void MarkAsUsed() { mIsUsed = true; mLastUsedCounter = 0; }
 
 		/** Returns true if the object is storing a valid shadow map. */
-		bool isUsed() const { return mIsUsed; }
+		bool IsUsed() const { return mIsUsed; }
 
 		/**
 		 * Returns the value of the last used counter. See incrementUseCounter() and markAsUsed() for information on how is
 		 * the counter incremented/decremented.
 		 */
-		UINT32 getLastUsedCounter() const { return mLastUsedCounter; }
+		UINT32 GetLastUsedCounter() const { return mLastUsedCounter; }
 
 	protected:
 		SPtr<PooledRenderTexture> mShadowMap;
@@ -483,7 +483,7 @@ namespace bs { namespace ct
 		ShadowCubemap(UINT32 size);
 
 		/** Returns a render target encompassing all six faces of the shadow cubemap. */
-		SPtr<RenderTexture> getTarget() const;
+		SPtr<RenderTexture> GetTarget() const;
 	};
 
 	/** Contains a texture required for rendering cascaded shadow maps. */
@@ -493,16 +493,16 @@ namespace bs { namespace ct
 		ShadowCascadedMap(UINT32 size, UINT32 numCascades);
 
 		/** Returns the total number of cascades in the cascade shadow map. */
-		UINT32 getNumCascades() const { return mNumCascades; }
+		UINT32 GetNumCascades() const { return mNumCascades; }
 
 		/** Returns a render target that allows rendering into a specific cascade of the cascaded shadow map. */
-		SPtr<RenderTexture> getTarget(UINT32 cascadeIdx) const;
+		SPtr<RenderTexture> GetTarget(UINT32 cascadeIdx) const;
 
 		/** Provides information about a shadow for the specified cascade. */
-		void setShadowInfo(UINT32 cascadeIdx, const ShadowInfo& info) { mShadowInfos[cascadeIdx] = info; }
+		void SetShadowInfo(UINT32 cascadeIdx, const ShadowInfo& info) { mShadowInfos[cascadeIdx] = info; }
 
 		/** @copydoc setShadowInfo */
-		const ShadowInfo& getShadowInfo(UINT32 cascadeIdx) const { return mShadowInfos[cascadeIdx]; }
+		const ShadowInfo& GetShadowInfo(UINT32 cascadeIdx) const { return mShadowInfos[cascadeIdx]; }
 	private:
 		UINT32 mNumCascades;
 		Vector<SPtr<RenderTexture>> mTargets;
@@ -536,27 +536,27 @@ namespace bs { namespace ct
 		ShadowRendering(UINT32 shadowMapSize);
 
 		/** For each visible shadow casting light, renders a shadow map from its point of view. */
-		void renderShadowMaps(RendererScene& scene, const RendererViewGroup& viewGroup, const FrameInfo& frameInfo);
+		void RenderShadowMaps(RendererScene& scene, const RendererViewGroup& viewGroup, const FrameInfo& frameInfo);
 
 		/**
 		 * Renders shadow occlusion values for the specified light, through the provided view, into the currently bound
 		 * render target. The system uses shadow maps rendered by renderShadowMaps().
 		 */
-		void renderShadowOcclusion(const RendererView& view, const RendererLight& light, GBufferTextures gbuffer) const;
+		void RenderShadowOcclusion(const RendererView& view, const RendererLight& light, GBufferTextures gbuffer) const;
 
 		/** Changes the default shadow map size. Will cause all shadow maps to be rebuilt. */
-		void setShadowMapSize(UINT32 size);
+		void SetShadowMapSize(UINT32 size);
 	private:
 		/** Renders cascaded shadow maps for the provided directional light viewed from the provided view. */
-		void renderCascadedShadowMaps(const RendererView& view, UINT32 lightIdx, RendererScene& scene,
+		void RenderCascadedShadowMaps(const RendererView& view, UINT32 lightIdx, RendererScene& scene,
 			const FrameInfo& frameInfo);
 
 		/** Renders shadow maps for the provided spot light. */
-		void renderSpotShadowMap(const RendererLight& light, const ShadowMapOptions& options, RendererScene& scene,
+		void RenderSpotShadowMap(const RendererLight& light, const ShadowMapOptions& options, RendererScene& scene,
 			const FrameInfo& frameInfo);
 
 		/** Renders shadow maps for the provided radial light. */
-		void renderRadialShadowMap(const RendererLight& light, const ShadowMapOptions& options, RendererScene& scene,
+		void RenderRadialShadowMap(const RendererLight& light, const ShadowMapOptions& options, RendererScene& scene,
 			const FrameInfo& frameInfo);
 
 		/**
@@ -571,7 +571,7 @@ namespace bs { namespace ct
 		 *								entry corresponds to a single view.
 		 * @param[out]	maxFadePercent	Maximum value in the @p fadePercents array.
 		 */
-		void calcShadowMapProperties(const RendererLight& light, const RendererViewGroup& viewGroup, UINT32 border,
+		void CalcShadowMapProperties(const RendererLight& light, const RendererViewGroup& viewGroup, UINT32 border,
 			UINT32& size, SmallVector<float, 6>& fadePercents, float& maxFadePercent) const;
 
 		/**
@@ -583,18 +583,18 @@ namespace bs { namespace ct
 		 * @param[in]	far			Location of the far plane, in NDC.
 		 * @param[in]	drawNear	If disabled, only the far plane will be drawn.
 		 */
-		void drawNearFarPlanes(float near, float far, bool drawNear = true) const;
+		void DrawNearFarPlanes(float near, float far, bool drawNear = true) const;
 
 		/**
 		 * Draws a frustum mesh using the provided vertices as its corners. Corners should be in the order specified
 		 * by AABox::Corner enum.
 		 */
-		void drawFrustum(const std::array<Vector3, 8>& corners) const;
+		void DrawFrustum(const std::array<Vector3, 8>& corners) const;
 
 		/**
 		 * Calculates optimal shadow quality based on the quality set in the options and the actual shadow map resolution.
 		 */
-		static UINT32 getShadowQuality(UINT32 requestedQuality, UINT32 shadowMapResolution, UINT32 minAllowedQuality);
+		static UINT32 GetShadowQuality(UINT32 requestedQuality, UINT32 shadowMapResolution, UINT32 minAllowedQuality);
 
 		/**
 		 * Generates a frustum for a single cascade of a cascaded shadow map. Also outputs spherical bounds of the
@@ -607,7 +607,7 @@ namespace bs { namespace ct
 		 * @param[out]	outBounds	Spherical bounds of the split view frustum.
 		 * @return					Convex volume covering the area of the split view frustum visible from the light.
 		 */
-		static ConvexVolume getCSMSplitFrustum(const RendererView& view, const Vector3& lightDir, UINT32 cascade,
+		static ConvexVolume GetCsmSplitFrustum(const RendererView& view, const Vector3& lightDir, UINT32 cascade,
 			UINT32 numCascades, Sphere& outBounds);
 
 		/**
@@ -620,7 +620,7 @@ namespace bs { namespace ct
 		 *										zero and greater or equal to @p index.
 		 * @return								Distance to the split position along the view direction.
 		 */
-		static float getCSMSplitDistance(const RendererView& view, UINT32 index, UINT32 numCascades);
+		static float GetCsmSplitDistance(const RendererView& view, UINT32 index, UINT32 numCascades);
 
 		/**
 		 * Calculates a bias that can be applied when rendering shadow maps, in order to reduce shadow artifacts.
@@ -631,7 +631,7 @@ namespace bs { namespace ct
 		 * @param[in]	mapSize		Size of the shadow map, in pixels.
 		 * @return					Depth bias that can be passed to shadow depth rendering shader.
 		 */
-		static float getDepthBias(const Light& light, float radius, float depthRange, UINT32 mapSize);
+		static float GetDepthBias(const Light& light, float radius, float depthRange, UINT32 mapSize);
 
 		/**
 		 * Calculates a fade transition value that can be used for slowly fading-in the shadow, in order to avoid or reduce
@@ -643,7 +643,7 @@ namespace bs { namespace ct
 		 * @param[in]	mapSize		Size of the shadow map, in pixels.
 		 * @return					Value that determines the size of the fade transition region.
 		 */
-		static float getFadeTransition(const Light& light, float radius, float depthRange, UINT32 mapSize);
+		static float GetFadeTransition(const Light& light, float radius, float depthRange, UINT32 mapSize);
 
 		/** Size of a single shadow map atlas, in pixels. */
 		static const UINT32 MAX_ATLAS_SIZE;

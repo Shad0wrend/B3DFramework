@@ -31,7 +31,7 @@ namespace bs
 			BS_RTTI_MEMBER_PLAIN(mLength, 10)
 		BS_END_RTTI_MEMBERS
 
-		SPtr<DataStream> getData(AudioClip* obj, UINT32& size)
+		SPtr<DataStream> GetData(AudioClip* obj, UINT32& size)
 		{
 			SPtr<DataStream> stream = obj->getSourceStream(size);
 			if (stream != nullptr && stream->isFile())
@@ -43,7 +43,7 @@ namespace bs
 			return stream;
 		}
 
-		void setData(AudioClip* obj, const SPtr<DataStream>& val, UINT32 size)
+		void SetData(AudioClip* obj, const SPtr<DataStream>& val, UINT32 size)
 		{
 			obj->mStreamData = val->clone(); // Making sure that the AudioClip cannot modify the source stream, which is still used by the deserializer
 			obj->mStreamSize = size;
@@ -53,29 +53,29 @@ namespace bs
 	public:
 		AudioClipRTTI()
 		{
-			addDataBlockField("mData", 6, &AudioClipRTTI::getData, &AudioClipRTTI::setData);
+			addDataBlockField("mData", 6, &AudioClipRTTI::GetData, &AudioClipRTTI::SetData);
 		}
 
-		void onDeserializationEnded(IReflectable* obj, SerializationContext* context) override
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) 
 		{
 			AudioClip* clip = static_cast<AudioClip*>(obj);
 			clip->initialize();
 		}
 
-		const String& getRTTIName() override
+		const String& GetRttiName() 
 		{
 			static String name = "AudioClip";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() 
 		{
 			return TID_AudioClip;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
-			return AudioClip::createEmpty();
+			return AudioClip::CreateEmpty();
 		}
 	};
 

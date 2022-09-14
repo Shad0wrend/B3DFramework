@@ -19,10 +19,10 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "Vector2I")
 
 		/**	Unboxes a boxed managed Vector2I struct and returns the native version of the structure. */
-		static Vector2I unbox(MonoObject* obj);
+		static Vector2I Unbox(MonoObject* obj);
 
 		/**	Boxes a native Vector2I struct and returns a managed object containing it. */
-		static MonoObject* box(const Vector2I& value);
+		static MonoObject* Box(const Vector2I& value);
 
 	private:
 		ScriptVector2I(MonoObject* instance);

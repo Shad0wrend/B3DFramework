@@ -19,24 +19,24 @@ namespace bs
 	void ScriptControllerControllerCollision::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptControllerControllerCollision::box(const __ControllerControllerCollisionInterop& value)
+	MonoObject*ScriptControllerControllerCollision::Box(const __ControllerControllerCollisionInterop& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	__ControllerControllerCollisionInterop ScriptControllerControllerCollision::unbox(MonoObject* value)
+	__ControllerControllerCollisionInterop ScriptControllerControllerCollision::Unbox(MonoObject* value)
 	{
-		return *(__ControllerControllerCollisionInterop*)MonoUtil::unbox(value);
+		return *(__ControllerControllerCollisionInterop*)MonoUtil::Unbox(value);
 	}
 
-	ControllerControllerCollision ScriptControllerControllerCollision::fromInterop(const __ControllerControllerCollisionInterop& value)
+	ControllerControllerCollision ScriptControllerControllerCollision::FromInterop(const __ControllerControllerCollisionInterop& value)
 	{
 		ControllerControllerCollision output;
 		GameObjectHandle<CCharacterController> tmpcontroller;
 		ScriptCCharacterController* scriptcontroller;
-		scriptcontroller = ScriptCCharacterController::toNative(value.controller);
+		scriptcontroller = ScriptCCharacterController::ToNative(value.controller);
 		if(scriptcontroller != nullptr)
-			tmpcontroller = scriptcontroller->getHandle();
+			tmpcontroller = scriptcontroller->GetHandle();
 		output.controller = tmpcontroller;
 		output.position = value.position;
 		output.normal = value.normal;
@@ -46,15 +46,15 @@ namespace bs
 		return output;
 	}
 
-	__ControllerControllerCollisionInterop ScriptControllerControllerCollision::toInterop(const ControllerControllerCollision& value)
+	__ControllerControllerCollisionInterop ScriptControllerControllerCollision::ToInterop(const ControllerControllerCollision& value)
 	{
 		__ControllerControllerCollisionInterop output;
 		ScriptComponentBase* scriptcontroller = nullptr;
 		if(value.controller)
-			scriptcontroller = ScriptGameObjectManager::instance().getBuiltinScriptComponent(static_object_cast<Component>(value.controller));
+			scriptcontroller = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(value.controller));
 		MonoObject* tmpcontroller;
 		if(scriptcontroller != nullptr)
-			tmpcontroller = scriptcontroller->getManagedInstance();
+			tmpcontroller = scriptcontroller->GetManagedInstance();
 		else
 			tmpcontroller = nullptr;
 		output.controller = tmpcontroller;

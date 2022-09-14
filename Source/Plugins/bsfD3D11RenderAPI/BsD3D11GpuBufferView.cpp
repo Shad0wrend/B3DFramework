@@ -38,16 +38,16 @@ namespace bs { namespace ct
 		BS_INC_RENDER_STAT_CAT(ResDestroyed, RenderStatObject_ResourceView);
 	}
 
-	void GpuBufferView::initialize(D3D11GpuBuffer* buffer, GPU_BUFFER_VIEW_DESC& desc)
+	void GpuBufferView::Initialize(D3D11GpuBuffer* buffer, GPU_BUFFER_VIEW_DESC& desc)
 	{
 		mBuffer = buffer;
 		mDesc = desc;
 
 		if ((desc.usage & GVU_DEFAULT) != 0)
-			mSRV = createSRV(buffer, desc.firstElement, desc.elementWidth, desc.numElements);
+			mSRV = CreateSrv(buffer, desc.firstElement, desc.elementWidth, desc.numElements);
 
 		if((desc.usage & GVU_RANDOMWRITE) != 0)
-			mUAV = createUAV(buffer, desc.firstElement, desc.numElements, desc.useCounter);
+			mUAV = CreateUav(buffer, desc.firstElement, desc.numElements, desc.useCounter);
 
 		if((desc.usage & GVU_RENDERTARGET) != 0 || (desc.usage & GVU_DEPTHSTENCIL) != 0)
 		{
@@ -57,9 +57,9 @@ namespace bs { namespace ct
 		BS_INC_RENDER_STAT_CAT(ResCreated, RenderStatObject_ResourceView);
 	}
 
-	ID3D11ShaderResourceView* GpuBufferView::createSRV(D3D11GpuBuffer* buffer, UINT32 firstElement, UINT32 elementWidth, UINT32 numElements)
+	ID3D11ShaderResourceView* GpuBufferView::CreateSrv(D3D11GpuBuffer* buffer, UINT32 firstElement, UINT32 elementWidth, UINT32 numElements)
 	{
-		const GpuBufferProperties& props = buffer->getProperties();
+		const GpuBufferProperties& props = buffer->GetProperties();
 
 		D3D11_SHADER_RESOURCE_VIEW_DESC desc;
 		ZeroMemory(&desc, sizeof(desc));
@@ -89,7 +89,7 @@ namespace bs { namespace ct
 		ID3D11ShaderResourceView* srv = nullptr;
 
 		D3D11RenderAPI* d3d11rs = static_cast<D3D11RenderAPI*>(D3D11RenderAPI::instancePtr());
-		HRESULT hr = d3d11rs->getPrimaryDevice().getD3D11Device()->CreateShaderResourceView(buffer->getDX11Buffer(), &desc, &srv);
+		HRESULT hr = d3d11rs->getPrimaryDevice().getD3D11Device()->CreateShaderResourceView(buffer->GetDX11Buffer(), &desc, &srv);
 
 		if (FAILED(hr) || d3d11rs->getPrimaryDevice().hasError())
 		{
@@ -100,7 +100,7 @@ namespace bs { namespace ct
 		return srv;
 	}
 
-	ID3D11UnorderedAccessView* GpuBufferView::createUAV(D3D11GpuBuffer* buffer, UINT32 firstElement, UINT32 numElements,
+	ID3D11UnorderedAccessView* GpuBufferView::CreateUav(D3D11GpuBuffer* buffer, UINT32 firstElement, UINT32 numElements,
 		bool useCounter)
 	{
 		const GpuBufferProperties& props = buffer->getProperties();
@@ -143,7 +143,7 @@ namespace bs { namespace ct
 		ID3D11UnorderedAccessView* uav = nullptr;
 
 		D3D11RenderAPI* d3d11rs = static_cast<D3D11RenderAPI*>(D3D11RenderAPI::instancePtr());
-		HRESULT hr = d3d11rs->getPrimaryDevice().getD3D11Device()->CreateUnorderedAccessView(buffer->getDX11Buffer(), &desc, &uav);
+		HRESULT hr = d3d11rs->getPrimaryDevice().getD3D11Device()->CreateUnorderedAccessView(buffer->GetDX11Buffer(), &desc, &uav);
 
 		if (FAILED(hr) || d3d11rs->getPrimaryDevice().hasError())
 		{

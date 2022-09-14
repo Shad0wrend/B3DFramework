@@ -16,28 +16,28 @@ namespace bs
 		:parentType(parentType), fieldType(fieldType), modification(modification)
 	{ }
 
-	RTTITypeBase* ManagedSerializableDiff::ModifiedField::getRTTIStatic()
+	RTTITypeBase* ManagedSerializableDiff::ModifiedField::GetRttiStatic()
 	{
-		return ModifiedFieldRTTI::instance();
+		return ModifiedFieldRTTI::Instance();
 	}
 
-	RTTITypeBase* ManagedSerializableDiff::ModifiedField::getRTTI() const
+	RTTITypeBase* ManagedSerializableDiff::ModifiedField::GetRtti() const
 	{
-		return getRTTIStatic();
+		return GetRttiStatic();
 	}
 
 	ManagedSerializableDiff::ModifiedArrayEntry::ModifiedArrayEntry(UINT32 idx, const SPtr<Modification>& modification)
 		:idx(idx), modification(modification)
 	{ }
 
-	RTTITypeBase* ManagedSerializableDiff::ModifiedArrayEntry::getRTTIStatic()
+	RTTITypeBase* ManagedSerializableDiff::ModifiedArrayEntry::GetRttiStatic()
 	{
-		return ModifiedArrayEntryRTTI::instance();
+		return ModifiedArrayEntryRTTI::Instance();
 	}
 
-	RTTITypeBase* ManagedSerializableDiff::ModifiedArrayEntry::getRTTI() const
+	RTTITypeBase* ManagedSerializableDiff::ModifiedArrayEntry::GetRtti() const
 	{
-		return getRTTIStatic();
+		return GetRttiStatic();
 	}
 
 	ManagedSerializableDiff::ModifiedDictionaryEntry::ModifiedDictionaryEntry(
@@ -45,97 +45,97 @@ namespace bs
 		:key(key), modification(modification)
 	{ }
 
-	RTTITypeBase* ManagedSerializableDiff::ModifiedDictionaryEntry::getRTTIStatic()
+	RTTITypeBase* ManagedSerializableDiff::ModifiedDictionaryEntry::GetRttiStatic()
 	{
-		return ModifiedDictionaryEntryRTTI::instance();
+		return ModifiedDictionaryEntryRTTI::Instance();
 	}
 
-	RTTITypeBase* ManagedSerializableDiff::ModifiedDictionaryEntry::getRTTI() const
+	RTTITypeBase* ManagedSerializableDiff::ModifiedDictionaryEntry::GetRtti() const
 	{
-		return getRTTIStatic();
+		return GetRttiStatic();
 	}
 
-	RTTITypeBase* ManagedSerializableDiff::Modification::getRTTIStatic()
+	RTTITypeBase* ManagedSerializableDiff::Modification::GetRttiStatic()
 	{
-		return ModificationRTTI::instance();
+		return ModificationRTTI::Instance();
 	}
 
-	RTTITypeBase* ManagedSerializableDiff::Modification::getRTTI() const
+	RTTITypeBase* ManagedSerializableDiff::Modification::GetRtti() const
 	{
-		return getRTTIStatic();
+		return GetRttiStatic();
 	}
 
-	SPtr<ManagedSerializableDiff::ModifiedObject> ManagedSerializableDiff::ModifiedObject::create()
+	SPtr<ManagedSerializableDiff::ModifiedObject> ManagedSerializableDiff::ModifiedObject::Create()
 	{
 		return bs_shared_ptr_new<ModifiedObject>();
 	}
 
-	RTTITypeBase* ManagedSerializableDiff::ModifiedObject::getRTTIStatic()
+	RTTITypeBase* ManagedSerializableDiff::ModifiedObject::GetRttiStatic()
 	{
-		return ModifiedObjectRTTI::instance();
+		return ModifiedObjectRTTI::Instance();
 	}
 
 	RTTITypeBase* ManagedSerializableDiff::ModifiedObject::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRttiStatic();
 	}
 
-	SPtr<ManagedSerializableDiff::ModifiedArray> ManagedSerializableDiff::ModifiedArray::create()
+	SPtr<ManagedSerializableDiff::ModifiedArray> ManagedSerializableDiff::ModifiedArray::Create()
 	{
 		return bs_shared_ptr_new<ModifiedArray>();
 	}
 
-	RTTITypeBase* ManagedSerializableDiff::ModifiedArray::getRTTIStatic()
+	RTTITypeBase* ManagedSerializableDiff::ModifiedArray::GetRttiStatic()
 	{
-		return ModifiedArrayRTTI::instance();
+		return ModifiedArrayRTTI::Instance();
 	}
 
 	RTTITypeBase* ManagedSerializableDiff::ModifiedArray::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRttiStatic();
 	}
 
-	SPtr<ManagedSerializableDiff::ModifiedDictionary> ManagedSerializableDiff::ModifiedDictionary::create()
+	SPtr<ManagedSerializableDiff::ModifiedDictionary> ManagedSerializableDiff::ModifiedDictionary::Create()
 	{
 		return bs_shared_ptr_new<ModifiedDictionary>();
 	}
 
-	RTTITypeBase* ManagedSerializableDiff::ModifiedDictionary::getRTTIStatic()
+	RTTITypeBase* ManagedSerializableDiff::ModifiedDictionary::GetRttiStatic()
 	{
-		return ModifiedDictionaryRTTI::instance();
+		return ModifiedDictionaryRTTI::Instance();
 	}
 
 	RTTITypeBase* ManagedSerializableDiff::ModifiedDictionary::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRttiStatic();
 	}
 
 	ManagedSerializableDiff::ModifiedEntry::ModifiedEntry(const SPtr<ManagedSerializableFieldData>& value)
 		:value(value)
 	{ }
 
-	SPtr<ManagedSerializableDiff::ModifiedEntry> ManagedSerializableDiff::ModifiedEntry::create(const SPtr<ManagedSerializableFieldData>& value)
+	SPtr<ManagedSerializableDiff::ModifiedEntry> ManagedSerializableDiff::ModifiedEntry::Create(const SPtr<ManagedSerializableFieldData>& value)
 	{
 		return bs_shared_ptr_new<ModifiedEntry>(value);
 	}
 
-	RTTITypeBase* ManagedSerializableDiff::ModifiedEntry::getRTTIStatic()
+	RTTITypeBase* ManagedSerializableDiff::ModifiedEntry::GetRttiStatic()
 	{
-		return ModifiedEntryRTTI::instance();
+		return ModifiedEntryRTTI::Instance();
 	}
 
 	RTTITypeBase* ManagedSerializableDiff::ModifiedEntry::getRTTI() const
 	{
-		return getRTTIStatic();
+		return GetRttiStatic();
 	}
 
 	ManagedSerializableDiff::ManagedSerializableDiff()
-		: mModificationRoot(ModifiedObject::create())
+		: mModificationRoot(ModifiedObject::Create())
 	{
 		
 	}
 
-	SPtr<ManagedSerializableDiff> ManagedSerializableDiff::create(const ManagedSerializableObject* oldObj,
+	SPtr<ManagedSerializableDiff> ManagedSerializableDiff::Create(const ManagedSerializableObject* oldObj,
 		const ManagedSerializableObject* newObj)
 	{
 		assert(oldObj != nullptr && newObj != nullptr);
@@ -158,7 +158,7 @@ namespace bs
 		return nullptr;
 	}
 
-	SPtr<ManagedSerializableDiff::ModifiedObject> ManagedSerializableDiff::generateDiff
+	SPtr<ManagedSerializableDiff::ModifiedObject> ManagedSerializableDiff::GenerateDiff
 		(const ManagedSerializableObject* oldObj, const ManagedSerializableObject* newObj)
 	{
 		SPtr<ModifiedObject> output = nullptr;
@@ -180,7 +180,7 @@ namespace bs
 				if (newMod != nullptr)
 				{
 					if (output == nullptr)
-						output = ModifiedObject::create();
+						output = ModifiedObject::Create();
 
 					output->entries.push_back(ModifiedField(curObjInfo->mTypeInfo, field.second, newMod));
 				}
@@ -192,7 +192,7 @@ namespace bs
 		return output;
 	}
 
-	SPtr<ManagedSerializableDiff::Modification> ManagedSerializableDiff::generateDiff(
+	SPtr<ManagedSerializableDiff::Modification> ManagedSerializableDiff::GenerateDiff(
 		const SPtr<ManagedSerializableFieldData>& oldData, const SPtr<ManagedSerializableFieldData>& newData,
 		UINT32 entryTypeId)
 	{
@@ -208,7 +208,7 @@ namespace bs
 			if (newData == nullptr)
 				return nullptr;
 			else
-				return ModifiedEntry::create(newData);
+				return ModifiedEntry::Create(newData);
 		}
 		else
 		{
@@ -220,7 +220,7 @@ namespace bs
 		if (isPrimitive)
 		{
 			if (!oldData->equals(newData))
-				newMod = ModifiedEntry::create(newData);
+				newMod = ModifiedEntry::Create(newData);
 		}
 		else
 		{
@@ -243,7 +243,7 @@ namespace bs
 				}
 				else // We either record null if new value is null, or the entire object if old value is null
 				{
-					newMod = ModifiedEntry::create(newData);
+					newMod = ModifiedEntry::Create(newData);
 				}
 			}
 				break;
@@ -274,13 +274,13 @@ namespace bs
 						}
 						else
 						{
-							arrayElemMod = ModifiedEntry::create(newArrayElem);
+							arrayElemMod = ModifiedEntry::Create(newArrayElem);
 						}
 
 						if (arrayElemMod != nullptr)
 						{
 							if (arrayMods == nullptr)
-								arrayMods = ModifiedArray::create();
+								arrayMods = ModifiedArray::Create();
 
 							arrayMods->entries.push_back(ModifiedArrayEntry(i, arrayElemMod));
 						}
@@ -289,7 +289,7 @@ namespace bs
 					if (oldLength != newLength)
 					{
 						if (arrayMods == nullptr)
-							arrayMods = ModifiedArray::create();
+							arrayMods = ModifiedArray::Create();
 					}
 
 					if (arrayMods != nullptr)
@@ -306,7 +306,7 @@ namespace bs
 				}
 				else // We either record null if new value is null, or the entire array if old value is null
 				{
-					newMod = ModifiedEntry::create(newData);
+					newMod = ModifiedEntry::Create(newData);
 				}
 			}
 				break;
@@ -337,13 +337,13 @@ namespace bs
 						}
 						else
 						{
-							listElemMod = ModifiedEntry::create(newListElem);
+							listElemMod = ModifiedEntry::Create(newListElem);
 						}
 
 						if (listElemMod != nullptr)
 						{
 							if (listMods == nullptr)
-								listMods = ModifiedArray::create();
+								listMods = ModifiedArray::Create();
 
 							listMods->entries.push_back(ModifiedArrayEntry(i, listElemMod));
 						}
@@ -352,7 +352,7 @@ namespace bs
 					if (oldLength != newLength)
 					{
 						if (listMods == nullptr)
-							listMods = ModifiedArray::create();
+							listMods = ModifiedArray::Create();
 					}
 
 					if (listMods != nullptr)
@@ -369,7 +369,7 @@ namespace bs
 				}
 				else // We either record null if new value is null, or the entire list if old value is null
 				{
-					newMod = ModifiedEntry::create(newData);
+					newMod = ModifiedEntry::Create(newData);
 				}
 			}
 				break;
@@ -399,13 +399,13 @@ namespace bs
 						}
 						else
 						{
-							dictElemMod = ModifiedEntry::create(newEnumerator.getValue());
+							dictElemMod = ModifiedEntry::Create(newEnumerator.getValue());
 						}
 
 						if (dictElemMod != nullptr)
 						{
 							if (dictMods == nullptr)
-								dictMods = ModifiedDictionary::create();
+								dictMods = ModifiedDictionary::Create();
 
 							dictMods->entries.push_back(ModifiedDictionaryEntry(key, dictElemMod));
 						}
@@ -418,7 +418,7 @@ namespace bs
 						if (!newDictData->value->contains(oldEnumerator.getKey()))
 						{
 							if (dictMods == nullptr)
-								dictMods = ModifiedDictionary::create();
+								dictMods = ModifiedDictionary::Create();
 
 							dictMods->removed.push_back(key);
 						}
@@ -432,7 +432,7 @@ namespace bs
 				}
 				else // We either record null if new value is null, or the entire dictionary if old value is null
 				{
-					newMod = ModifiedEntry::create(newData);
+					newMod = ModifiedEntry::Create(newData);
 				}
 			}
 				break;
@@ -445,12 +445,12 @@ namespace bs
 		return newMod;
 	}
 
-	void ManagedSerializableDiff::apply(const SPtr<ManagedSerializableObject>& obj)
+	void ManagedSerializableDiff::Apply(const SPtr<ManagedSerializableObject>& obj)
 	{
 		applyDiff(mModificationRoot, obj);
 	}
 
-	SPtr<ManagedSerializableFieldData> ManagedSerializableDiff::applyDiff(const SPtr<ModifiedObject>& mod, const SPtr<ManagedSerializableObject>& obj)
+	SPtr<ManagedSerializableFieldData> ManagedSerializableDiff::ApplyDiff(const SPtr<ModifiedObject>& mod, const SPtr<ManagedSerializableObject>& obj)
 	{
 		SPtr<ManagedSerializableObjectInfo> objInfo = obj->getObjectInfo();
 		for (auto& modEntry : mod->entries)
@@ -472,7 +472,7 @@ namespace bs
 		return nullptr;
 	}
 
-	SPtr<ManagedSerializableFieldData> ManagedSerializableDiff::applyDiff(const SPtr<ModifiedArray>& mod, const SPtr<ManagedSerializableArray>& obj)
+	SPtr<ManagedSerializableFieldData> ManagedSerializableDiff::ApplyDiff(const SPtr<ModifiedArray>& mod, const SPtr<ManagedSerializableArray>& obj)
 	{
 		bool needsResize = false;
 
@@ -489,7 +489,7 @@ namespace bs
 		if (needsResize)
 		{
 			obj->resize(mod->newSizes);
-			newArray = ManagedSerializableFieldData::create(obj->getTypeInfo(), obj->getManagedInstance());
+			newArray = ManagedSerializableFieldData::Create(obj->getTypeInfo(), obj->getManagedInstance());
 		}
 
 		for (auto& modEntry : mod->entries)
@@ -506,7 +506,7 @@ namespace bs
 		return newArray;
 	}
 
-	SPtr<ManagedSerializableFieldData> ManagedSerializableDiff::applyDiff(const SPtr<ModifiedArray>& mod, const SPtr<ManagedSerializableList>& obj)
+	SPtr<ManagedSerializableFieldData> ManagedSerializableDiff::ApplyDiff(const SPtr<ModifiedArray>& mod, const SPtr<ManagedSerializableList>& obj)
 	{
 		bool needsResize = mod->newSizes[0] != obj->getLength();
 
@@ -514,7 +514,7 @@ namespace bs
 		if (needsResize)
 		{
 			obj->resize(mod->newSizes[0]);
-			newList = ManagedSerializableFieldData::create(obj->getTypeInfo(), obj->getManagedInstance());
+			newList = ManagedSerializableFieldData::Create(obj->getTypeInfo(), obj->getManagedInstance());
 		}
 
 		for (auto& modEntry : mod->entries)
@@ -531,7 +531,7 @@ namespace bs
 		return newList;
 	}
 
-	SPtr<ManagedSerializableFieldData> ManagedSerializableDiff::applyDiff(const SPtr<ModifiedDictionary>& mod, const SPtr<ManagedSerializableDictionary>& obj)
+	SPtr<ManagedSerializableFieldData> ManagedSerializableDiff::ApplyDiff(const SPtr<ModifiedDictionary>& mod, const SPtr<ManagedSerializableDictionary>& obj)
 	{
 		for (auto& modEntry : mod->entries)
 		{
@@ -552,7 +552,7 @@ namespace bs
 		return nullptr;
 	}
 
-	SPtr<ManagedSerializableFieldData> ManagedSerializableDiff::applyDiff(const SPtr<Modification>& mod, const SPtr<ManagedSerializableTypeInfo>& fieldType,
+	SPtr<ManagedSerializableFieldData> ManagedSerializableDiff::ApplyDiff(const SPtr<Modification>& mod, const SPtr<ManagedSerializableTypeInfo>& fieldType,
 		const SPtr<ManagedSerializableFieldData>& origData)
 	{
 		SPtr<ManagedSerializableFieldData> newData;
@@ -569,7 +569,7 @@ namespace bs
 			if (childObj == nullptr) // Object was deleted in original but we have modifications for it, so we create it
 			{
 				childObj = ManagedSerializableObject::createNew(objTypeInfo);
-				newData = ManagedSerializableFieldData::create(objTypeInfo, childObj->getManagedInstance());
+				newData = ManagedSerializableFieldData::Create(objTypeInfo, childObj->getManagedInstance());
 			}
 
 			SPtr<ModifiedObject> childMod = std::static_pointer_cast<ModifiedObject>(mod);
@@ -619,7 +619,7 @@ namespace bs
 			if (childDict == nullptr) // Object was deleted in original but we have modifications for it, so we create it
 			{
 				childDict = ManagedSerializableDictionary::createNew(dictTypeInfo);
-				newData = ManagedSerializableFieldData::create(dictTypeInfo, childDict->getManagedInstance());
+				newData = ManagedSerializableFieldData::Create(dictTypeInfo, childDict->getManagedInstance());
 			}
 
 			SPtr<ModifiedDictionary> childMod = std::static_pointer_cast<ModifiedDictionary>(mod);
@@ -637,13 +637,13 @@ namespace bs
 		return newData;
 	}
 
-	RTTITypeBase* ManagedSerializableDiff::getRTTIStatic()
+	RTTITypeBase* ManagedSerializableDiff::GetRttiStatic()
 	{
-		return ManagedSerializableDiffRTTI::instance();
+		return ManagedSerializableDiffRTTI::Instance();
 	}
 
-	RTTITypeBase* ManagedSerializableDiff::getRTTI() const
+	RTTITypeBase* ManagedSerializableDiff::GetRtti() const
 	{
-		return ManagedSerializableDiff::getRTTIStatic();
+		return ManagedSerializableDiff::GetRttiStatic();
 	}
 }

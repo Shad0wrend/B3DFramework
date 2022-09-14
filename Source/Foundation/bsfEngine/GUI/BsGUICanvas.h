@@ -21,7 +21,7 @@ namespace bs
 	{
 	public:
 		/** Returns type name of the GUI element used for finding GUI element styles.  */
-		static const String& getGUITypeName();
+		static const String& GetGuiTypeName();
 
 		/**
 		 * Creates a new GUI canvas element.
@@ -31,7 +31,7 @@ namespace bs
 		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
 		 *								GUIWidget the element is used on. If not specified default style is used.
 		 */
-		static GUICanvas* create(const GUIOptions& options, const String& styleName = StringUtil::BLANK);
+		static GUICanvas* Create(const GUIOptions& options, const String& styleName = StringUtil::BLANK);
 
 		/**
 		 * Creates a new GUI canvas element.
@@ -39,7 +39,7 @@ namespace bs
 		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
 		 *								GUIWidget the element is used on. If not specified default style is used.
 		 */
-		static GUICanvas* create(const String& styleName = StringUtil::BLANK);
+		static GUICanvas* Create(const String& styleName = StringUtil::BLANK);
 		
 		/**
 		 * Draws a line going from @p a to @p b.
@@ -51,7 +51,7 @@ namespace bs
 		 *						Additionally elements of the same type (triangle or line) will be drawn in order they are
 		 *						submitted if they share the same depth.
 		 */
-		void drawLine(const Vector2I& a, const Vector2I& b, const Color& color = Color::White, UINT8 depth = 128);
+		void DrawLine(const Vector2I& a, const Vector2I& b, const Color& color = Color::White, UINT8 depth = 128);
 
 		/**
 		 * Draws multiple lines following the path by the provided vertices. First vertex connects to the second vertex,
@@ -64,7 +64,7 @@ namespace bs
 		 *							others. Additionally elements of the same type (triangle or line) will be drawn in order
 		 *							they are submitted if they share the same depth.
 		 */
-		void drawPolyLine(const Vector<Vector2I>& vertices, const Color& color = Color::White, UINT8 depth = 128);
+		void DrawPolyLine(const Vector<Vector2I>& vertices, const Color& color = Color::White, UINT8 depth = 128);
 
 		/**
 		 * Draws a quad with a the provided texture displayed.
@@ -79,7 +79,7 @@ namespace bs
 		 *							others. Additionally elements of the same type (triangle or line) will be drawn in order
 		 *							they are submitted if they share the same depth.
 		 */
-		void drawTexture(const HSpriteTexture& texture, const Rect2I& area,
+		void DrawTexture(const HSpriteTexture& texture, const Rect2I& area,
 			TextureScaleMode scaleMode = TextureScaleMode::StretchToFit, const Color& color = Color::White, UINT8 depth = 128);
 
 		/**
@@ -93,7 +93,7 @@ namespace bs
 		 *							others. Additionally elements of the same type (triangle or line) will be drawn in order
 		 *							they are submitted if they share the same depth.
 		 */
-		void drawTriangleStrip(const Vector<Vector2I>& vertices, const Color& color = Color::White, UINT8 depth = 128);
+		void DrawTriangleStrip(const Vector<Vector2I>& vertices, const Color& color = Color::White, UINT8 depth = 128);
 
 		/**
 		 * Draws a triangle list. Every three vertices in the list represent a unique triangle.
@@ -105,7 +105,7 @@ namespace bs
 		 *							others. Additionally elements of the same type (triangle or line) will be drawn in order
 		 *							they are submitted if they share the same depth.
 		 */
-		void drawTriangleList(const Vector<Vector2I>& vertices, const Color& color = Color::White, UINT8 depth = 128);
+		void DrawTriangleList(const Vector<Vector2I>& vertices, const Color& color = Color::White, UINT8 depth = 128);
 
 		/**
 		 * Draws a piece of text with the wanted font. The text will be aligned to the top-left corner of the provided
@@ -121,11 +121,11 @@ namespace bs
 		 *							others. Additionally elements of the same type (triangle or line) will be drawn in order
 		 *							they are submitted if they share the same depth.
 		 */
-		void drawText(const String& text, const Vector2I& position, const HFont& font, UINT32 size = 10,
+		void DrawText(const String& text, const Vector2I& position, const HFont& font, UINT32 size = 10,
 			const Color& color = Color::White, UINT8 depth = 128);
 
 		/** Clears the canvas, removing any previously drawn elements. */
-		void clear();
+		void Clear();
 
 	public: // ***** INTERNAL ******
 		/** @name Internal
@@ -208,7 +208,7 @@ namespace bs
 		virtual ~GUICanvas();
 
 		/** @copydoc GUIElement::_fillBuffer */
-		void _fillBuffer(
+		void FillBuffer(
 			UINT8* vertices,
 			UINT32* indices,
 			UINT32 vertexOffset,
@@ -216,28 +216,28 @@ namespace bs
 			const Vector2I& offset,
 			UINT32 maxNumVerts,
 			UINT32 maxNumIndices,
-			UINT32 renderElementIdx) const override;
+			UINT32 renderElementIdx) const ;
 
 		/** @copydoc GUIElement::updateRenderElementsInternal */
-		void updateRenderElementsInternal() override;
+		void UpdateRenderElementsInternal() ;
 
 		/** Build an image sprite from the provided canvas element. */
-		void buildImageElement(const CanvasElement& element);
+		void BuildImageElement(const CanvasElement& element);
 
 		/** Build a text sprite from the provided canvas element. */
-		void buildTextElement(const CanvasElement& element);
+		void BuildTextElement(const CanvasElement& element);
 
 		/** Build a set of clipped triangles from the source triangles provided by the canvas element. */
-		void buildTriangleElement(const CanvasElement& element, const Vector2& offset, const Rect2I& clipRect) const;
+		void BuildTriangleElement(const CanvasElement& element, const Vector2& offset, const Rect2I& clipRect) const;
 
 		/**
 		 * Rebuilds all triangle elements on the canvas, by constructing a set of clipped and offset triangles from the
 		 * triangles provided by the canvas elements.
 		 */
-		void buildAllTriangleElementsIfDirty(const Vector2& offset, const Rect2I& clipRect) const;
+		void BuildAllTriangleElementsIfDirty(const Vector2& offset, const Rect2I& clipRect) const;
 
 		/** Finds the canvas element that contains the render element with the specified index. */
-		const CanvasElement& findElement(UINT32 renderElementIdx) const;
+		const CanvasElement& FindElement(UINT32 renderElementIdx) const;
 
 		Vector<CanvasElement> mElements;
 		UINT8 mDepthRange = 1;

@@ -87,49 +87,49 @@ namespace bs
 		DepthStencilProperties(const DEPTH_STENCIL_STATE_DESC& desc);
 
 		/** @copydoc DEPTH_STENCIL_STATE_DESC::depthReadEnable */
-		bool getDepthReadEnable() const { return mData.depthReadEnable; }
+		bool GetDepthReadEnable() const { return mData.depthReadEnable; }
 
 		/** @copydoc DEPTH_STENCIL_STATE_DESC::depthWriteEnable */
-		bool getDepthWriteEnable() const { return mData.depthWriteEnable; }
+		bool GetDepthWriteEnable() const { return mData.depthWriteEnable; }
 
 		/** @copydoc DEPTH_STENCIL_STATE_DESC::depthComparisonFunc */
-		CompareFunction getDepthComparisonFunc() const { return mData.depthComparisonFunc; }
+		CompareFunction GetDepthComparisonFunc() const { return mData.depthComparisonFunc; }
 
 		/** @copydoc DEPTH_STENCIL_STATE_DESC::stencilEnable */
-		bool getStencilEnable() const { return mData.stencilEnable; }
+		bool GetStencilEnable() const { return mData.stencilEnable; }
 
 		/** @copydoc DEPTH_STENCIL_STATE_DESC::stencilReadMask */
-		UINT8 getStencilReadMask() const { return mData.stencilReadMask; }
+		UINT8 GetStencilReadMask() const { return mData.stencilReadMask; }
 
 		/** @copydoc DEPTH_STENCIL_STATE_DESC::stencilWriteMask */
-		UINT8 getStencilWriteMask() const { return mData.stencilWriteMask; }
+		UINT8 GetStencilWriteMask() const { return mData.stencilWriteMask; }
 
 		/** @copydoc DEPTH_STENCIL_STATE_DESC::frontStencilFailOp */
-		StencilOperation getStencilFrontFailOp() const { return mData.frontStencilFailOp; }
+		StencilOperation GetStencilFrontFailOp() const { return mData.frontStencilFailOp; }
 
 		/** @copydoc DEPTH_STENCIL_STATE_DESC::frontStencilZFailOp */
-		StencilOperation getStencilFrontZFailOp() const { return mData.frontStencilZFailOp; }
+		StencilOperation GetStencilFrontZFailOp() const { return mData.frontStencilZFailOp; }
 
 		/** @copydoc DEPTH_STENCIL_STATE_DESC::frontStencilPassOp */
-		StencilOperation getStencilFrontPassOp() const { return mData.frontStencilPassOp; }
+		StencilOperation GetStencilFrontPassOp() const { return mData.frontStencilPassOp; }
 
 		/** @copydoc DEPTH_STENCIL_STATE_DESC::frontStencilComparisonFunc */
-		CompareFunction getStencilFrontCompFunc() const { return mData.frontStencilComparisonFunc; }
+		CompareFunction GetStencilFrontCompFunc() const { return mData.frontStencilComparisonFunc; }
 
 		/** @copydoc DEPTH_STENCIL_STATE_DESC::backStencilFailOp */
-		StencilOperation getStencilBackFailOp() const { return mData.backStencilFailOp; }
+		StencilOperation GetStencilBackFailOp() const { return mData.backStencilFailOp; }
 
 		/** @copydoc DEPTH_STENCIL_STATE_DESC::backStencilZFailOp */
-		StencilOperation getStencilBackZFailOp() const { return mData.backStencilZFailOp; }
+		StencilOperation GetStencilBackZFailOp() const { return mData.backStencilZFailOp; }
 
 		/** @copydoc DEPTH_STENCIL_STATE_DESC::backStencilPassOp */
-		StencilOperation getStencilBackPassOp() const { return mData.backStencilPassOp; }
+		StencilOperation GetStencilBackPassOp() const { return mData.backStencilPassOp; }
 
 		/** @copydoc DEPTH_STENCIL_STATE_DESC::backStencilComparisonFunc */
-		CompareFunction getStencilBackCompFunc() const { return mData.backStencilComparisonFunc; }
+		CompareFunction GetStencilBackCompFunc() const { return mData.backStencilComparisonFunc; }
 
 		/** Returns the hash value generated from the depth-stencil state properties. */
-		UINT64 getHash() const { return mHash; }
+		UINT64 GetHash() const { return mHash; }
 
 	protected:
 		friend class DepthStencilState;
@@ -152,19 +152,19 @@ namespace bs
 		virtual ~DepthStencilState() = default;
 
 		/**	Returns information about the depth stencil state. */
-		const DepthStencilProperties& getProperties() const;
+		const DepthStencilProperties& GetProperties() const;
 
 		/**	Retrieves a core implementation of a sampler state usable only from the core thread. */
-		SPtr<ct::DepthStencilState> getCore() const;
+		SPtr<ct::DepthStencilState> GetCore() const;
 
 		/**	Creates a new depth stencil state using the specified depth stencil state description structure. */
-		static SPtr<DepthStencilState> create(const DEPTH_STENCIL_STATE_DESC& desc);
+		static SPtr<DepthStencilState> Create(const DEPTH_STENCIL_STATE_DESC& desc);
 
 		/**	Returns the default depth stencil state that you may use when no other is available. */
-		static const SPtr<DepthStencilState>& getDefault();
+		static const SPtr<DepthStencilState>& GetDefault();
 
 		/**	Generates a hash value from a depth-stencil state descriptor. */
-		static UINT64 generateHash(const DEPTH_STENCIL_STATE_DESC& desc);
+		static UINT64 GenerateHash(const DEPTH_STENCIL_STATE_DESC& desc);
 
 	protected:
 		friend class RenderStateManager;
@@ -172,7 +172,7 @@ namespace bs
 		DepthStencilState(const DEPTH_STENCIL_STATE_DESC& desc);
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> createCore() const override;
+		SPtr<ct::CoreObject> CreateCore() const ;
 
 		DepthStencilProperties mProperties;
 		mutable UINT32 mId;
@@ -183,8 +183,8 @@ namespace bs
 
 	public:
 		friend class DepthStencilStateRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;	
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;	
 	};
 
 	/** @} */
@@ -206,16 +206,16 @@ namespace bs
 		virtual ~DepthStencilState();
 
 		/**	Returns information about the depth stencil state. */
-		const DepthStencilProperties& getProperties() const;
+		const DepthStencilProperties& GetProperties() const;
 
 		/**	Returns a unique state ID. Only the lowest 10 bits are used. */
-		UINT32 getId() const { return mId; }
+		UINT32 GetId() const { return mId; }
 
 		/**	Creates a new depth stencil state using the specified depth stencil state description structure. */
-		static SPtr<DepthStencilState> create(const DEPTH_STENCIL_STATE_DESC& desc);
+		static SPtr<DepthStencilState> Create(const DEPTH_STENCIL_STATE_DESC& desc);
 
 		/**	Returns the default depth stencil state that you may use when no other is available. */
-		static const SPtr<DepthStencilState>& getDefault();
+		static const SPtr<DepthStencilState>& GetDefault();
 
 	protected:
 		friend class RenderStateManager;
@@ -223,10 +223,10 @@ namespace bs
 		DepthStencilState(const DEPTH_STENCIL_STATE_DESC& desc, UINT32 id);
 
 		/** @copydoc CoreObject::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 		/**	Creates any API-specific state objects. */
-		virtual void createInternal() { }
+		virtual void CreateInternal() { }
 
 		DepthStencilProperties mProperties;
 		UINT32 mId;
@@ -249,7 +249,7 @@ struct hash<bs::DEPTH_STENCIL_STATE_DESC>
 {
 	size_t operator()(const bs::DEPTH_STENCIL_STATE_DESC& value) const
 	{
-		return (size_t)bs::DepthStencilState::generateHash(value);
+		return (size_t)bs::DepthStencilState::GenerateHash(value);
 	}
 };
 }

@@ -11,35 +11,35 @@ namespace bs
 {
 	DragAndDropManager::DragAndDropManager()
 	{
-		mMouseCaptureChangedConn = Platform::onMouseCaptureChanged.connect(std::bind(&DragAndDropManager::mouseCaptureChanged, this));
-		Input::instance().onPointerReleased.connect(std::bind(&DragAndDropManager::cursorReleased, this, _1));
+		mMouseCaptureChangedConn = Platform::onMouseCaptureChanged.Connect(std::bind(&DragAndDropManager::mCaptureChanged, this));
+		Input::Instance().onPointerReleased.connect(std::bind(&DragAndDropManager::cursorReleased, this, _1));
 	}
 
 	DragAndDropManager::~DragAndDropManager()
 	{
-		mMouseCaptureChangedConn.disconnect();
+		mMouseCaptureChangedConn.Disconnect();
 	}
 
-	void DragAndDropManager::addDropCallback(std::function<void(bool)> dropCallback)
+	void DragAndDropManager::AddDropCallback(std::function<void(bool)> dropCallback)
 	{
 		mDropCallbacks.push_back(dropCallback);
 	}
 
-	void DragAndDropManager::startDrag(UINT32 typeId, void* data, std::function<void(bool)> dropCallback, bool needsValidDropTarget)
+	void DragAndDropManager::StartDrag(UINT32 typeId, void* data, std::function<void(bool)> dropCallback, bool needsValidDropTarget)
 	{
 		if (mIsDragInProgress)
-			endDrag(false);
+			EndDrag(false);
 
 		mDragTypeId = typeId;
 		mData = data;
 		mNeedsValidDropTarget = needsValidDropTarget;
-		addDropCallback(dropCallback);
+		AddDropCallback(dropCallback);
 		mIsDragInProgress = true;
 
 		mCaptureActive.store(false);
 		mCaptureChanged.store(false);
 
-		Platform::captureMouse(*gCoreApplication().getPrimaryWindow());
+		Platform::CaptureMouse(*gCoreApplication().GetPrimaryWindow());
 	}
 
 	void DragAndDropManager::UpdateInternal()
@@ -50,14 +50,14 @@ namespace bs
 		// This generally happens when window loses focus and capture is lost (for example alt+tab)
 		int captureActive = mCaptureActive.load();
 		if (!captureActive && mCaptureChanged.load() &&
-			(gTime().getFrameIdx() > mCaptureChangeFrame.load())) // Wait one frame to ensure input (like mouse up) gets a chance to be processed
+			(gTime().GetFrameIdx() > mCaptureChangeFrame.load())) // Wait one frame to ensure input (like mouse up) gets a chance to be processed
 		{
-			endDrag(false);
+			EndDrag(false);
 			mCaptureChanged.store(false);
 		}
 	}
 
-	void DragAndDropManager::endDrag(bool processed)
+	void DragAndDropManager::EndDrag(bool processed)
 	{
 		for(auto& callback : mDropCallbacks)
 			callback(processed);
@@ -75,7 +75,7 @@ namespace bs
 		mCaptureChangeFrame.store(gTime().getFrameIdx());
 	}
 
-	void DragAndDropManager::cursorReleased(const PointerEvent& event)
+	void DragAndDropManager::CursorReleased(const PointerEvent& event)
 	{
 		if(!mIsDragInProgress)
 			return;

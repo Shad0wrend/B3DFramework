@@ -18,10 +18,10 @@ namespace bs
 		virtual ~PhysicsFactory() = default;
 
 		/** Initializes the physics system. */
-		virtual void startUp(bool cooking) = 0;
+		virtual void StartUp(bool cooking) = 0;
 
 		/** Shuts down the physics system. */
-		virtual void shutDown() = 0;
+		virtual void ShutDown() = 0;
 	};
 
 	/** Takes care of loading, initializing and shutting down of a particular physics implementation. */

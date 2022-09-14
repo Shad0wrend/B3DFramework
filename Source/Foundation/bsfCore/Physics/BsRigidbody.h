@@ -68,113 +68,113 @@ namespace bs
 		 * Moves the rigidbody to a specific position. This method will ensure physically correct movement, meaning the body
 		 * will collide with other objects along the way.
 		 */
-		virtual void move(const Vector3& position) = 0;
+		virtual void Move(const Vector3& position) = 0;
 
 		/**
 		 * Rotates the rigidbody. This method will ensure physically correct rotation, meaning the body will collide with
 		 * other objects along the way.
 		 */
-		virtual void rotate(const Quaternion& rotation) = 0;
+		virtual void Rotate(const Quaternion& rotation) = 0;
 
 		/** Returns the current position of the rigidbody. */
-		virtual Vector3 getPosition() const = 0;
+		virtual Vector3 GetPosition() const = 0;
 
 		/** Returns the current rotation of the rigidbody. */
-		virtual Quaternion getRotation() const = 0;
+		virtual Quaternion GetRotation() const = 0;
 
 		/**
 		 * Moves and rotates the rigidbody to a specific position. Unlike move() and rotate() this will not transform the
 		 * body in a physically correct manner, but will instead "teleport" it immediately to the specified position and
 		 * rotation.
 		 */
-		virtual void setTransform(const Vector3& pos, const Quaternion& rot) = 0;
+		virtual void SetTransform(const Vector3& pos, const Quaternion& rot) = 0;
 
 		/**
 		 * Determines the mass of the object and all of its collider shapes. Only relevant if RigidbodyFlag::AutoMass or
 		 * RigidbodyFlag::AutoTensors is turned off. Value of zero means the object is immovable (but can be rotated).
 		 */
-		virtual void setMass(float mass) = 0;
+		virtual void SetMass(float mass) = 0;
 
 		/** @copydoc setMass() */
-		virtual float getMass() const = 0;
+		virtual float GetMass() const = 0;
 
 		/**
 		 * Determines if the body is kinematic. Kinematic body will not move in response to external forces (for example
 		 * gravity, or another object pushing it), essentially behaving like collider. Unlike a collider though, you can
 		 * still move the object and have other dynamic objects respond correctly (meaning it will push other objects).
 		 */
-		virtual void setIsKinematic(bool kinematic) = 0;
+		virtual void SetIsKinematic(bool kinematic) = 0;
 
 		/** @copydoc setIsKinematic() */
-		virtual bool getIsKinematic() const = 0;
+		virtual bool GetIsKinematic() const = 0;
 
 		/**
 		 * Checks if the body is sleeping. Objects that aren't moved/rotated for a while are put to sleep to reduce load
 		 * on the physics system.
 		 */
-		virtual bool isSleeping() const = 0;
+		virtual bool IsSleeping() const = 0;
 
 		/** Forces the object to sleep. Useful if you know the object will not move in any significant way for a while. */
-		virtual void sleep() = 0;
+		virtual void Sleep() = 0;
 
 		/**
 		 * Wakes an object up. Useful if you modified properties of this object, and potentially surrounding objects which
 		 * might result in the object being moved by physics (although the physics system will automatically wake the
 		 * object up for majority of such cases).
 		 */
-		virtual void wakeUp() = 0;
+		virtual void WakeUp() = 0;
 
 		/** Determines a threshold of force and torque under which the object will be considered to be put to sleep. */
-		virtual void setSleepThreshold(float threshold) = 0;
+		virtual void SetSleepThreshold(float threshold) = 0;
 
 		/** @copydoc setSleepThreshold() */
-		virtual float getSleepThreshold() const = 0;
+		virtual float GetSleepThreshold() const = 0;
 
 		/** Determines whether or not the rigidbody will have the global gravity force applied to it. */
-		virtual void setUseGravity(bool gravity) = 0;
+		virtual void SetUseGravity(bool gravity) = 0;
 
 		/** @copydoc setUseGravity() */
-		virtual bool getUseGravity() const = 0;
+		virtual bool GetUseGravity() const = 0;
 
 		/** Determines the linear velocity of the body. */
-		virtual void setVelocity(const Vector3& velocity) = 0;
+		virtual void SetVelocity(const Vector3& velocity) = 0;
 
 		/** @copydoc setVelocity() */
-		virtual Vector3 getVelocity() const = 0;
+		virtual Vector3 GetVelocity() const = 0;
 
 		/** Determines the angular velocity of the body. */
-		virtual void setAngularVelocity(const Vector3& velocity) = 0;
+		virtual void SetAngularVelocity(const Vector3& velocity) = 0;
 
 		/** @copydoc setAngularVelocity() */
-		virtual Vector3 getAngularVelocity() const = 0;
+		virtual Vector3 GetAngularVelocity() const = 0;
 
 		/** Determines the linear drag of the body. Higher drag values means the object resists linear movement more. */
-		virtual void setDrag(float drag) = 0;
+		virtual void SetDrag(float drag) = 0;
 
 		/** @copydoc setDrag() */
-		virtual float getDrag() const = 0;
+		virtual float GetDrag() const = 0;
 
 		/** Determines the angular drag of the body. Higher drag values means the object resists angular movement more. */
-		virtual void setAngularDrag(float drag) = 0;
+		virtual void SetAngularDrag(float drag) = 0;
 
 		/** @copydoc setAngularDrag() */
-		virtual float getAngularDrag() const = 0;
+		virtual float GetAngularDrag() const = 0;
 
 		/**
 		 * Determines the inertia tensor in local mass space. Inertia tensor determines how difficult is to rotate the
 		 * object. Values of zero in the inertia tensor mean the object will be unable to rotate around a specific axis.
 		 * Only relevant if RigidbodyFlag::AutoTensors is turned off.
 		 */
-		virtual void setInertiaTensor(const Vector3& tensor) = 0;
+		virtual void SetInertiaTensor(const Vector3& tensor) = 0;
 
 		/** @copydoc setInertiaTensor() */
-		virtual Vector3 getInertiaTensor() const = 0;
+		virtual Vector3 GetInertiaTensor() const = 0;
 
 		/** Determines the maximum angular velocity of the rigidbody. Velocity will be clamped to this value. */
-		virtual void setMaxAngularVelocity(float maxVelocity) = 0;
+		virtual void SetMaxAngularVelocity(float maxVelocity) = 0;
 
 		/** @copydoc setMaxAngularVelocity() */
-		virtual float getMaxAngularVelocity() const = 0;
+		virtual float GetMaxAngularVelocity() const = 0;
 
 		/**
 		 * Sets the rigidbody's center of mass transform. Only relevant if RigibodyFlag::AutoTensors is turned off.
@@ -183,37 +183,37 @@ namespace bs
 		 * @param[in]	rotation	Rotation that determines orientation of the inertia tensor (rotation of the center of
 		 *							mass frame).
 		 */
-		virtual void setCenterOfMass(const Vector3& position, const Quaternion& rotation) = 0;
+		virtual void SetCenterOfMass(const Vector3& position, const Quaternion& rotation) = 0;
 
 		/** Returns the position of the center of mass. */
-		virtual Vector3 getCenterOfMassPosition() const = 0;
+		virtual Vector3 GetCenterOfMassPosition() const = 0;
 
 		/** Returns the rotation of the inertia tensor. */
-		virtual Quaternion getCenterOfMassRotation() const = 0;
+		virtual Quaternion GetCenterOfMassRotation() const = 0;
 
 		/**
 		 * Determines the number of iterations to use when solving for position. Higher values can improve precision and
 		 * numerical stability of the simulation.
 		 */
-		virtual void setPositionSolverCount(UINT32 count) = 0;
+		virtual void SetPositionSolverCount(UINT32 count) = 0;
 
 		/** @copydoc setPositionSolverCount() */
-		virtual UINT32 getPositionSolverCount() const = 0;
+		virtual UINT32 GetPositionSolverCount() const = 0;
 
 		/**
 		 * Determines the number of iterations to use when solving for velocity. Higher values can improve precision and
 		 * numerical stability of the simulation.
 		 */
-		virtual void setVelocitySolverCount(UINT32 count) = 0;
+		virtual void SetVelocitySolverCount(UINT32 count) = 0;
 
 		/** @copydoc setVelocitySolverCount() */
-		virtual UINT32 getVelocitySolverCount() const = 0;
+		virtual UINT32 GetVelocitySolverCount() const = 0;
 
 		/** Flags that control the behaviour of the rigidbody. */
-		virtual void setFlags(RigidbodyFlag flags) { mFlags = flags; }
+		virtual void SetFlags(RigidbodyFlag flags) { mFlags = flags; }
 
 		/** @copydoc setFlags() */
-		virtual RigidbodyFlag getFlags() const { return mFlags; }
+		virtual RigidbodyFlag GetFlags() const { return mFlags; }
 
 		/**
 		 * Applies a force to the center of the mass of the rigidbody. This will produce linear momentum.
@@ -221,7 +221,7 @@ namespace bs
 		 * @param[in]	force		Force to apply.
 		 * @param[in]	mode		Determines what is the type of @p force.
 		 */
-		virtual void addForce(const Vector3& force, ForceMode mode = ForceMode::Force) = 0;
+		virtual void AddForce(const Vector3& force, ForceMode mode = ForceMode::Force) = 0;
 
 		/**
 		 * Applies a torque to the rigidbody. This will produce angular momentum.
@@ -229,7 +229,7 @@ namespace bs
 		 * @param[in]	torque		Torque to apply.
 		 * @param[in]	mode		Determines what is the type of @p torque.
 		 */
-		virtual void addTorque(const Vector3& torque, ForceMode mode = ForceMode::Force) = 0;
+		virtual void AddTorque(const Vector3& torque, ForceMode mode = ForceMode::Force) = 0;
 
 		/**
 		 * Applies a force to a specific point on the rigidbody. This will in most cases produce both linear and angular
@@ -239,7 +239,7 @@ namespace bs
 		 * @param[in]	position	World position to apply the force at.
 		 * @param[in]	mode		Determines what is the type of @p force.
 		 */
-		virtual void addForceAtPoint(const Vector3& force, const Vector3& position,
+		virtual void AddForceAtPoint(const Vector3& force, const Vector3& position,
 			PointForceMode mode = PointForceMode::Force) = 0;
 
 		/**
@@ -248,16 +248,16 @@ namespace bs
 		 * @param[in]	point	Point in world space.
 		 * @return				Total velocity of the point.
 		 */
-		virtual Vector3 getVelocityAtPoint(const Vector3& point) const = 0;
+		virtual Vector3 GetVelocityAtPoint(const Vector3& point) const = 0;
 
 		/** Registers a new collider as a child of this rigidbody. */
-		virtual void addCollider(Collider* collider) = 0;
+		virtual void AddCollider(Collider* collider) = 0;
 
 		/** Removes a collider from the child list of this rigidbody. */
-		virtual void removeCollider(Collider* collider) = 0;
+		virtual void RemoveCollider(Collider* collider) = 0;
 
 		/** Removes all colliders from the child list of this rigidbody. */
-		virtual void removeColliders() = 0;
+		virtual void RemoveColliders() = 0;
 
 		/**
 		 * Recalculates rigidbody's mass, inertia tensors and center of mass depending on the currently set child colliders.
@@ -266,7 +266,7 @@ namespace bs
 		 * If automatic tensor calculation is turned off then this will do nothing. If automatic mass calculation is turned
 		 * off then this will use the mass set directly on the body using setMass().
 		 */
-		virtual void updateMassDistribution() { }
+		virtual void UpdateMassDistribution() { }
 
 		/**
 		 * Creates a new rigidbody.
@@ -275,7 +275,7 @@ namespace bs
 		 *							will be transfered to this scene object (the movement/rotation resulting from
 		 *							those updates).
 		 */
-		static SPtr<Rigidbody> create(const HSceneObject& linkedSO);
+		static SPtr<Rigidbody> Create(const HSceneObject& linkedSO);
 
 		/** Triggered when one of the colliders owned by the rigidbody starts colliding with another object. */
 		Event<void(const CollisionDataRaw&)> onCollisionBegin;

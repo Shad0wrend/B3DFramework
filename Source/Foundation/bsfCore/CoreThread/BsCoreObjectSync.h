@@ -149,14 +149,14 @@ namespace bs
 
 	private:
 		template<class T>
-		void writeInternal(T&& value, std::enable_if_t<
+		void WriteInternal(T&& value, std::enable_if_t<
 			!detail::is_shared_ptr<std::decay_t<T>>::value>* = 0)
 		{
 			rtti_write(value, mStream);
 		}
 
 		template<class T>
-		void writeInternal(T&& value, std::enable_if_t<
+		void WriteInternal(T&& value, std::enable_if_t<
 			detail::is_shared_ptr<std::decay_t<T>>::value>* = 0)
 		{
 			using SPtrType = std::decay_t<T>;
@@ -201,14 +201,14 @@ namespace bs
 
 	private:
 		template<class T>
-		void readInternal(T&& value, std::enable_if_t<
+		void ReadInternal(T&& value, std::enable_if_t<
 			!detail::is_shared_ptr<std::decay_t<T>>::value>* = 0)
 		{
 			rtti_read(value, mStream);
 		}
 
 		template<class T>
-		void readInternal(T&& value, std::enable_if_t<
+		void ReadInternal(T&& value, std::enable_if_t<
 			detail::is_shared_ptr<std::decay_t<T>>::value>* = 0)
 		{
 			using SPtrType = std::decay_t<T>;
@@ -256,14 +256,14 @@ namespace bs
 
 	private:
 		template<class T>
-		void getSizeInternal(T&& value, std::enable_if_t<
+		void GetSizeInternal(T&& value, std::enable_if_t<
 			!detail::is_shared_ptr<std::decay_t<T>>::value>* = 0)
 		{
 			mSize += rtti_size(value).bytes;
 		}
 
 		template<class T>
-		void getSizeInternal(T&& value, std::enable_if_t<
+		void GetSizeInternal(T&& value, std::enable_if_t<
 			detail::is_shared_ptr<std::decay_t<T>>::value>* = 0)
 		{
 			using SPtrType = std::decay_t<T>;

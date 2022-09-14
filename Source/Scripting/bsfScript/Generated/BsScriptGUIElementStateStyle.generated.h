@@ -20,10 +20,10 @@ namespace bs
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "GUIElementStateStyle")
 
-		static MonoObject* box(const __GUIElementStateStyleInterop& value);
-		static __GUIElementStateStyleInterop unbox(MonoObject* value);
-		static GUIElementStateStyle fromInterop(const __GUIElementStateStyleInterop& value);
-		static __GUIElementStateStyleInterop toInterop(const GUIElementStateStyle& value);
+		static MonoObject* Box(const __GUIElementStateStyleInterop& value);
+		static __GUIElementStateStyleInterop Unbox(MonoObject* value);
+		static GUIElementStateStyle FromInterop(const __GUIElementStateStyleInterop& value);
+		static __GUIElementStateStyleInterop ToInterop(const GUIElementStateStyle& value);
 
 	private:
 		ScriptGUIElementStateStyle(MonoObject* managedInstance);

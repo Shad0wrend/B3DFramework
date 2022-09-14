@@ -16,7 +16,7 @@ namespace bs { namespace ct
 	{
 	public:
 		~D3D11SamplerState();
-		ID3D11SamplerState* getInternal() const { return mSamplerState; }
+		ID3D11SamplerState* GetInternal() const { return mSamplerState; }
 
 	protected:
 		friend class D3D11RenderStateManager;
@@ -24,7 +24,7 @@ namespace bs { namespace ct
 		D3D11SamplerState(const SAMPLER_STATE_DESC& desc, GpuDeviceFlags deviceMask);
 
 		/** @copydoc SamplerState::createInternal */
-		void createInternal() override;
+		void CreateInternal() ;
 
 		ID3D11SamplerState* mSamplerState = nullptr;
 	};

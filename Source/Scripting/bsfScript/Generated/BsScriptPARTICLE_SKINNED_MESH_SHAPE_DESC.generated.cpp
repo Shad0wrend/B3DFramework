@@ -17,17 +17,17 @@ namespace bs
 	void ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC::box(const __PARTICLE_SKINNED_MESH_SHAPE_DESCInterop& value)
+	MonoObject*ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC::Box(const __PARTICLE_SKINNED_MESH_SHAPE_DESCInterop& value)
 	{
 		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	__PARTICLE_SKINNED_MESH_SHAPE_DESCInterop ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC::unbox(MonoObject* value)
+	__PARTICLE_SKINNED_MESH_SHAPE_DESCInterop ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC::Unbox(MonoObject* value)
 	{
 		return *(__PARTICLE_SKINNED_MESH_SHAPE_DESCInterop*)MonoUtil::unbox(value);
 	}
 
-	PARTICLE_SKINNED_MESH_SHAPE_DESC ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC::fromInterop(const __PARTICLE_SKINNED_MESH_SHAPE_DESCInterop& value)
+	PARTICLE_SKINNED_MESH_SHAPE_DESC ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC::FromInterop(const __PARTICLE_SKINNED_MESH_SHAPE_DESCInterop& value)
 	{
 		PARTICLE_SKINNED_MESH_SHAPE_DESC output;
 		output.type = value.type;
@@ -42,14 +42,14 @@ namespace bs
 		return output;
 	}
 
-	__PARTICLE_SKINNED_MESH_SHAPE_DESCInterop ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC::toInterop(const PARTICLE_SKINNED_MESH_SHAPE_DESC& value)
+	__PARTICLE_SKINNED_MESH_SHAPE_DESCInterop ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC::ToInterop(const PARTICLE_SKINNED_MESH_SHAPE_DESC& value)
 	{
 		__PARTICLE_SKINNED_MESH_SHAPE_DESCInterop output;
 		output.type = value.type;
 		output.sequential = value.sequential;
 		ScriptComponentBase* scriptrenderable = nullptr;
 		if(value.renderable.getComponent())
-			scriptrenderable = ScriptGameObjectManager::instance().getBuiltinScriptComponent(static_object_cast<Component>(value.renderable.getComponent()));
+			scriptrenderable = ScriptGameObjectManager::Instance().getBuiltinScriptComponent(static_object_cast<Component>(value.renderable.getComponent()));
 		MonoObject* tmprenderable;
 		if(scriptrenderable != nullptr)
 			tmprenderable = scriptrenderable->getManagedInstance();

@@ -25,30 +25,30 @@ namespace bs
 		mInternal->destroy();
 	}
 
-	void CSkybox::onInitialized()
+	void CSkybox::OnInitialized()
 	{
 		// If mInternal already exists this means this object was deserialized,
 		// so all we need to do is initialize it.
 		if (mInternal != nullptr)
 			mInternal->initialize();
 		else
-			mInternal = Skybox::create();
+			mInternal = Skybox::Create();
 
 		gSceneManager().BindActorInternal(mInternal, sceneObject());
 	}
 
-	void CSkybox::onDestroyed()
+	void CSkybox::OnDestroyed()
 	{
 		gSceneManager().UnbindActorInternal(mInternal);
 	}
 
-	RTTITypeBase* CSkybox::getRTTIStatic()
+	RTTITypeBase* CSkybox::GetRttiStatic()
 	{
-		return CSkyboxRTTI::instance();
+		return CSkyboxRTTI::Instance();
 	}
 
-	RTTITypeBase* CSkybox::getRTTI() const
+	RTTITypeBase* CSkybox::GetRtti() const
 	{
-		return CSkybox::getRTTIStatic();
+		return CSkybox::GetRttiStatic();
 	}
 }

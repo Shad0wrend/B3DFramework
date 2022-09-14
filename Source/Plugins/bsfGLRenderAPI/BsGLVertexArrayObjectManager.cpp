@@ -22,7 +22,7 @@ namespace bs { namespace ct
 		bs_hash_combine(seed, vao.mVertProgId);
 
 		for (UINT32 i = 0; i < vao.mNumBuffers; i++)
-			bs_hash_combine(seed, vao.mAttachedBuffers[i]->getGLBufferId());
+			bs_hash_combine(seed, vao.mAttachedBuffers[i]->GetGlBufferId());
 
 		return seed;
 	}
@@ -37,7 +37,7 @@ namespace bs { namespace ct
 
 		for (UINT32 i = 0; i < a.mNumBuffers; i++)
 		{
-			if (a.mAttachedBuffers[i]->getGLBufferId() != b.mAttachedBuffers[i]->getGLBufferId())
+			if (a.mAttachedBuffers[i]->GetGlBufferId() != b.mAttachedBuffers[i]->GetGlBufferId())
 				return false;
 		}
 
@@ -54,7 +54,7 @@ namespace bs { namespace ct
 
 		for (UINT32 i = 0; i < mNumBuffers; i++)
 		{
-			if (mAttachedBuffers[i]->getGLBufferId() != obj.mAttachedBuffers[i]->getGLBufferId())
+			if (mAttachedBuffers[i]->GetGlBufferId() != obj.mAttachedBuffers[i]->GetGlBufferId())
 				return false;
 		}
 
@@ -71,13 +71,13 @@ namespace bs { namespace ct
 		assert(mVAObjects.size() == 0 && "VertexArrayObjectManager getting shut down but not all VA objects were released.");
 	}
 
-	const GLVertexArrayObject& GLVertexArrayObjectManager::getVAO(const SPtr<GLSLGpuProgram>& vertexProgram,
+	const GLVertexArrayObject& GLVertexArrayObjectManager::GetVao(const SPtr<GLSLGpuProgram>& vertexProgram,
 		const SPtr<VertexDeclaration>& vertexDecl, const std::array<SPtr<VertexBuffer>, 32>& boundBuffers)
 	{
 		UINT16 maxStreamIdx = 0;
-		const Vector<VertexElement>& decl = vertexDecl->getProperties().getElements();
+		const Vector<VertexElement>& decl = vertexDecl->GetProperties().GetElements();
 		for (auto& elem : decl)
-			maxStreamIdx = std::max(maxStreamIdx, elem.getStreamIdx());
+			maxStreamIdx = std::max(maxStreamIdx, elem.GetStreamIdx());
 
 		UINT32 numStreams = maxStreamIdx + 1;
 		UINT32 numUsedBuffers = 0;
@@ -91,7 +91,7 @@ namespace bs { namespace ct
 
 		for (auto& elem : decl)
 		{
-			UINT16 streamIdx = elem.getStreamIdx();
+			UINT16 streamIdx = elem.GetStreamIdx();
 			if (streamIdx >= (UINT32)boundBuffers.size())
 				continue;
 
@@ -121,7 +121,7 @@ namespace bs { namespace ct
 		}
 
 		// Need to create new VAO
-		const Vector<VertexElement>& inputAttributes = vertexProgram->getInputDeclaration()->getProperties().getElements();
+		const Vector<VertexElement>& inputAttributes = vertexProgram->GetInputDeclaration()->GetProperties().GetElements();
 
 		glGenVertexArrays(1, &wantedVAO.mHandle);
 		BS_CHECK_GL_ERROR();
@@ -131,7 +131,7 @@ namespace bs { namespace ct
 
 		for (auto& elem : decl)
 		{
-			UINT16 streamIdx = elem.getStreamIdx();
+			UINT16 streamIdx = elem.GetStreamIdx();
 			INT32 seqIdx = streamToSeqIdx[streamIdx];
 
 			if (seqIdx == -1)
@@ -217,7 +217,7 @@ namespace bs { namespace ct
 	}
 
 	// Note: This must receieve a copy and not a ref because original will be destroyed
-	void GLVertexArrayObjectManager::notifyBufferDestroyed(GLVertexArrayObject vao)
+	void GLVertexArrayObjectManager::NotifyBufferDestroyed(GLVertexArrayObject vao)
 	{
 		mVAObjects.erase(vao);
 

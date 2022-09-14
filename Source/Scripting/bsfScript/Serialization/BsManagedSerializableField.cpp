@@ -59,13 +59,13 @@ namespace bs
 		:mTypeId(typeId), mFieldId(fieldId)
 	{ }
 
-	SPtr<ManagedSerializableFieldKey> ManagedSerializableFieldKey::create(UINT16 typeId, UINT16 fieldId)
+	SPtr<ManagedSerializableFieldKey> ManagedSerializableFieldKey::Create(UINT16 typeId, UINT16 fieldId)
 	{
 		SPtr<ManagedSerializableFieldKey> fieldKey = bs_shared_ptr_new<ManagedSerializableFieldKey>(typeId, fieldId);
 		return fieldKey;
 	}
 
-	SPtr<ManagedSerializableFieldDataEntry> ManagedSerializableFieldDataEntry::create(const SPtr<ManagedSerializableFieldKey>& key, const SPtr<ManagedSerializableFieldData>& value)
+	SPtr<ManagedSerializableFieldDataEntry> ManagedSerializableFieldDataEntry::Create(const SPtr<ManagedSerializableFieldKey>& key, const SPtr<ManagedSerializableFieldData>& value)
 	{
 		SPtr<ManagedSerializableFieldDataEntry> fieldDataEntry = bs_shared_ptr_new<ManagedSerializableFieldDataEntry>();
 		fieldDataEntry->mKey = key;
@@ -74,17 +74,17 @@ namespace bs
 		return fieldDataEntry;
 	}
 
-	SPtr<ManagedSerializableFieldData> ManagedSerializableFieldData::create(const SPtr<ManagedSerializableTypeInfo>& typeInfo, MonoObject* value)
+	SPtr<ManagedSerializableFieldData> ManagedSerializableFieldData::Create(const SPtr<ManagedSerializableTypeInfo>& typeInfo, MonoObject* value)
 	{
 		return create(typeInfo, value, true);
 	}
 
-	SPtr<ManagedSerializableFieldData> ManagedSerializableFieldData::createDefault(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
+	SPtr<ManagedSerializableFieldData> ManagedSerializableFieldData::CreateDefault(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		return create(typeInfo, nullptr, false);
 	}
 
-	SPtr<ManagedSerializableFieldData> ManagedSerializableFieldData::create(const SPtr<ManagedSerializableTypeInfo>& typeInfo, MonoObject* value, bool allowNull)
+	SPtr<ManagedSerializableFieldData> ManagedSerializableFieldData::Create(const SPtr<ManagedSerializableTypeInfo>& typeInfo, MonoObject* value, bool allowNull)
 	{
 		if(typeInfo->getTypeId() == TID_SerializableTypeInfoPrimitive || typeInfo->getTypeId() == TID_SerializableTypeInfoEnum)
 		{
@@ -242,7 +242,7 @@ namespace bs
 			case ScriptReferenceType::BuiltinComponentBase:
 			case ScriptReferenceType::BuiltinComponent:
 			{
-				BuiltinComponentInfo* info = ScriptAssemblyManager::instance().getBuiltinComponentInfo(refTypeInfo->mRTIITypeId);
+				BuiltinComponentInfo* info = ScriptAssemblyManager::Instance().getBuiltinComponentInfo(refTypeInfo->mRTIITypeId);
 				if (info == nullptr)
 					return nullptr;
 
@@ -272,7 +272,7 @@ namespace bs
 			case ScriptReferenceType::BuiltinResourceBase:
 			case ScriptReferenceType::BuiltinResource:
 			{
-				BuiltinResourceInfo* info = ScriptAssemblyManager::instance().getBuiltinResourceInfo(refTypeInfo->mRTIITypeId);
+				BuiltinResourceInfo* info = ScriptAssemblyManager::Instance().getBuiltinResourceInfo(refTypeInfo->mRTIITypeId);
 				if (info == nullptr)
 					return nullptr;
 
@@ -288,7 +288,7 @@ namespace bs
 			}
 			case ScriptReferenceType::ReflectableObject:
 			{
-				ReflectableTypeInfo* info = ScriptAssemblyManager::instance().getReflectableTypeInfo(refTypeInfo->mRTIITypeId);
+				ReflectableTypeInfo* info = ScriptAssemblyManager::Instance().getReflectableTypeInfo(refTypeInfo->mRTIITypeId);
 				if (info == nullptr)
 					return nullptr;
 
@@ -371,7 +371,7 @@ namespace bs
 		return nullptr;
 	}
 
-	void* ManagedSerializableFieldDataBool::getValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
+	void* ManagedSerializableFieldDataBool::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::Bool))
 			return &value;
@@ -380,7 +380,7 @@ namespace bs
 		return nullptr;
 	}
 
-	void* ManagedSerializableFieldDataChar::getValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
+	void* ManagedSerializableFieldDataChar::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::Char))
 			return &value;
@@ -389,7 +389,7 @@ namespace bs
 		return nullptr;
 	}
 
-	void* ManagedSerializableFieldDataI8::getValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
+	void* ManagedSerializableFieldDataI8::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::I8))
 			return &value;
@@ -398,7 +398,7 @@ namespace bs
 		return nullptr;
 	}
 
-	void* ManagedSerializableFieldDataU8::getValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
+	void* ManagedSerializableFieldDataU8::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::U8))
 			return &value;
@@ -407,7 +407,7 @@ namespace bs
 		return nullptr;
 	}
 
-	void* ManagedSerializableFieldDataI16::getValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
+	void* ManagedSerializableFieldDataI16::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::I16))
 			return &value;
@@ -416,7 +416,7 @@ namespace bs
 		return nullptr;
 	}
 
-	void* ManagedSerializableFieldDataU16::getValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
+	void* ManagedSerializableFieldDataU16::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::U16))
 			return &value;
@@ -425,7 +425,7 @@ namespace bs
 		return nullptr;
 	}
 
-	void* ManagedSerializableFieldDataI32::getValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
+	void* ManagedSerializableFieldDataI32::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::I32))
 			return &value;
@@ -434,7 +434,7 @@ namespace bs
 		return nullptr;
 	}
 
-	void* ManagedSerializableFieldDataU32::getValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
+	void* ManagedSerializableFieldDataU32::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::U32))
 			return &value;
@@ -443,7 +443,7 @@ namespace bs
 		return nullptr;
 	}
 
-	void* ManagedSerializableFieldDataI64::getValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
+	void* ManagedSerializableFieldDataI64::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::I64))
 			return &value;
@@ -452,7 +452,7 @@ namespace bs
 		return nullptr;
 	}
 
-	void* ManagedSerializableFieldDataU64::getValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
+	void* ManagedSerializableFieldDataU64::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::U64))
 			return &value;
@@ -461,7 +461,7 @@ namespace bs
 		return nullptr;
 	}
 
-	void* ManagedSerializableFieldDataFloat::getValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
+	void* ManagedSerializableFieldDataFloat::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(typeInfo->getTypeId() == TID_SerializableTypeInfoPrimitive)
 		{
@@ -474,7 +474,7 @@ namespace bs
 		return nullptr;
 	}
 
-	void* ManagedSerializableFieldDataDouble::getValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
+	void* ManagedSerializableFieldDataDouble::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(typeInfo->getTypeId() == TID_SerializableTypeInfoPrimitive)
 		{
@@ -487,7 +487,7 @@ namespace bs
 		return nullptr;
 	}
 
-	void* ManagedSerializableFieldDataString::getValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
+	void* ManagedSerializableFieldDataString::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(typeInfo->getTypeId() == TID_SerializableTypeInfoPrimitive)
 		{
@@ -505,7 +505,7 @@ namespace bs
 		return nullptr;
 	}
 
-	void* ManagedSerializableFieldDataResourceRef::getValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
+	void* ManagedSerializableFieldDataResourceRef::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(typeInfo->getTypeId() == TID_SerializableTypeInfoRef)
 		{
@@ -517,7 +517,7 @@ namespace bs
 			if (refTypeInfo->mType == ScriptReferenceType::ManagedResourceBase ||
 				refTypeInfo->mType == ScriptReferenceType::ManagedResource)
 			{
-				ScriptResourceBase* scriptResource = ScriptResourceManager::instance().getScriptResource(value, false);
+				ScriptResourceBase* scriptResource = ScriptResourceManager::Instance().getScriptResource(value, false);
 				assert(scriptResource != nullptr);
 
 				return scriptResource->getManagedInstance();
@@ -525,7 +525,7 @@ namespace bs
 			else if (refTypeInfo->mType == ScriptReferenceType::BuiltinResourceBase ||
 					 refTypeInfo->mType == ScriptReferenceType::BuiltinResource)
 			{
-				ScriptResourceBase* scriptResource = ScriptResourceManager::instance().getScriptResource(value, true);
+				ScriptResourceBase* scriptResource = ScriptResourceManager::Instance().getScriptResource(value, true);
 
 				return scriptResource->getManagedInstance();
 			}
@@ -548,14 +548,14 @@ namespace bs
 			// Note: Each reference ref ends up creating its own object instance. Perhaps share the same instance between
 			// all references to the same resource?
 
-			return ScriptRRefBase::create(value, resourceRRefClass);
+			return ScriptRRefBase::Create(value, resourceRRefClass);
 		}
 
 		BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 		return nullptr;
 	}
 
-	void* ManagedSerializableFieldDataGameObjectRef::getValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
+	void* ManagedSerializableFieldDataGameObjectRef::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(typeInfo->getTypeId() == TID_SerializableTypeInfoRef)
 		{
@@ -566,7 +566,7 @@ namespace bs
 				if(value)
 				{
 					ScriptSceneObject* scriptSceneObject =
-						ScriptGameObjectManager::instance().getOrCreateScriptSceneObject(static_object_cast<SceneObject>(value));
+						ScriptGameObjectManager::Instance().getOrCreateScriptSceneObject(static_object_cast<SceneObject>(value));
 					return scriptSceneObject->getManagedInstance();
 				}
 				else
@@ -578,7 +578,7 @@ namespace bs
 				if (value)
 				{
 					ScriptManagedComponent* scriptComponent =
-						ScriptGameObjectManager::instance().getManagedScriptComponent(static_object_cast<ManagedComponent>(value));
+						ScriptGameObjectManager::Instance().getManagedScriptComponent(static_object_cast<ManagedComponent>(value));
 					assert(scriptComponent != nullptr);
 
 					return scriptComponent->getManagedInstance();
@@ -592,7 +592,7 @@ namespace bs
 				if (value)
 				{
 					ScriptComponentBase* scriptComponent =
-						ScriptGameObjectManager::instance().getBuiltinScriptComponent(static_object_cast<Component>(value));
+						ScriptGameObjectManager::Instance().getBuiltinScriptComponent(static_object_cast<Component>(value));
 					assert(scriptComponent != nullptr);
 
 					return scriptComponent->getManagedInstance();
@@ -606,7 +606,7 @@ namespace bs
 		return nullptr;
 	}
 
-	void* ManagedSerializableFieldDataReflectableRef::getValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
+	void* ManagedSerializableFieldDataReflectableRef::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(typeInfo->getTypeId() == TID_SerializableTypeInfoRef)
 		{
@@ -616,7 +616,7 @@ namespace bs
 				return nullptr;
 
 			UINT32 rttiId = refTypeInfo->mRTIITypeId;
-			ReflectableTypeInfo* info = ScriptAssemblyManager::instance().getReflectableTypeInfo(rttiId);
+			ReflectableTypeInfo* info = ScriptAssemblyManager::Instance().getReflectableTypeInfo(rttiId);
 
 			if (info == nullptr)
 				return nullptr;
@@ -628,7 +628,7 @@ namespace bs
 		return nullptr;
 	}
 
-	void* ManagedSerializableFieldDataObject::getValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
+	void* ManagedSerializableFieldDataObject::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(typeInfo->getTypeId() == TID_SerializableTypeInfoObject)
 		{
@@ -654,7 +654,7 @@ namespace bs
 		return nullptr;
 	}
 
-	void* ManagedSerializableFieldDataArray::getValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
+	void* ManagedSerializableFieldDataArray::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(typeInfo->getTypeId() == TID_SerializableTypeInfoArray)
 		{
@@ -670,7 +670,7 @@ namespace bs
 		return nullptr;
 	}
 
-	void* ManagedSerializableFieldDataList::getValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
+	void* ManagedSerializableFieldDataList::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(typeInfo->getTypeId() == TID_SerializableTypeInfoList)
 		{
@@ -686,7 +686,7 @@ namespace bs
 		return nullptr;
 	}
 
-	void* ManagedSerializableFieldDataDictionary::getValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
+	void* ManagedSerializableFieldDataDictionary::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(typeInfo->getTypeId() == TID_SerializableTypeInfoDictionary)
 		{
@@ -702,7 +702,7 @@ namespace bs
 		return nullptr;
 	}
 
-	MonoObject* ManagedSerializableFieldDataBool::getValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
+	MonoObject* ManagedSerializableFieldDataBool::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::Bool))
 			return MonoUtil::box(MonoUtil::getBoolClass(), &value);
@@ -711,7 +711,7 @@ namespace bs
 		return nullptr;
 	}
 
-	MonoObject* ManagedSerializableFieldDataChar::getValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
+	MonoObject* ManagedSerializableFieldDataChar::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::Char))
 			return MonoUtil::box(MonoUtil::getCharClass(), &value);
@@ -720,7 +720,7 @@ namespace bs
 		return nullptr;
 	}
 
-	MonoObject* ManagedSerializableFieldDataI8::getValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
+	MonoObject* ManagedSerializableFieldDataI8::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::I8))
 			return MonoUtil::box(MonoUtil::getSByteClass(), &value);
@@ -729,7 +729,7 @@ namespace bs
 		return nullptr;
 	}
 
-	MonoObject* ManagedSerializableFieldDataU8::getValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
+	MonoObject* ManagedSerializableFieldDataU8::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::U8))
 			return MonoUtil::box(MonoUtil::getByteClass(), &value);
@@ -738,7 +738,7 @@ namespace bs
 		return nullptr;
 	}
 
-	MonoObject* ManagedSerializableFieldDataI16::getValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
+	MonoObject* ManagedSerializableFieldDataI16::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::I16))
 			return MonoUtil::box(MonoUtil::getINT16Class(), &value);
@@ -747,7 +747,7 @@ namespace bs
 		return nullptr;
 	}
 
-	MonoObject* ManagedSerializableFieldDataU16::getValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
+	MonoObject* ManagedSerializableFieldDataU16::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::U16))
 			return MonoUtil::box(MonoUtil::getUINT16Class(), &value);
@@ -756,7 +756,7 @@ namespace bs
 		return nullptr;
 	}
 
-	MonoObject* ManagedSerializableFieldDataI32::getValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
+	MonoObject* ManagedSerializableFieldDataI32::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::I32))
 			return MonoUtil::box(MonoUtil::getINT32Class(), &value);
@@ -765,7 +765,7 @@ namespace bs
 		return nullptr;
 	}
 
-	MonoObject* ManagedSerializableFieldDataU32::getValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
+	MonoObject* ManagedSerializableFieldDataU32::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::U32))
 			return MonoUtil::box(MonoUtil::getUINT32Class(), &value);
@@ -774,7 +774,7 @@ namespace bs
 		return nullptr;
 	}
 
-	MonoObject* ManagedSerializableFieldDataI64::getValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
+	MonoObject* ManagedSerializableFieldDataI64::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::I64))
 			return MonoUtil::box(MonoUtil::getINT64Class(), &value);
@@ -783,7 +783,7 @@ namespace bs
 		return nullptr;
 	}
 
-	MonoObject* ManagedSerializableFieldDataU64::getValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
+	MonoObject* ManagedSerializableFieldDataU64::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::U64))
 			return MonoUtil::box(MonoUtil::getUINT64Class(), &value);
@@ -792,7 +792,7 @@ namespace bs
 		return nullptr;
 	}
 
-	MonoObject* ManagedSerializableFieldDataFloat::getValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
+	MonoObject* ManagedSerializableFieldDataFloat::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if (typeInfo->getTypeId() == TID_SerializableTypeInfoPrimitive)
 		{
@@ -805,7 +805,7 @@ namespace bs
 		return nullptr;
 	}
 
-	MonoObject* ManagedSerializableFieldDataDouble::getValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
+	MonoObject* ManagedSerializableFieldDataDouble::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if (typeInfo->getTypeId() == TID_SerializableTypeInfoPrimitive)
 		{
@@ -818,27 +818,27 @@ namespace bs
 		return nullptr;
 	}
 
-	MonoObject* ManagedSerializableFieldDataString::getValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
+	MonoObject* ManagedSerializableFieldDataString::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		return (MonoObject*)getValue(typeInfo);
 	}
 
-	MonoObject* ManagedSerializableFieldDataResourceRef::getValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
+	MonoObject* ManagedSerializableFieldDataResourceRef::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		return (MonoObject*)getValue(typeInfo);
 	}
 
-	MonoObject* ManagedSerializableFieldDataGameObjectRef::getValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
+	MonoObject* ManagedSerializableFieldDataGameObjectRef::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		return (MonoObject*)getValue(typeInfo);
 	}
 
-	MonoObject* ManagedSerializableFieldDataReflectableRef::getValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
+	MonoObject* ManagedSerializableFieldDataReflectableRef::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		return (MonoObject*)getValue(typeInfo);
 	}
 
-	MonoObject* ManagedSerializableFieldDataObject::getValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
+	MonoObject* ManagedSerializableFieldDataObject::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if (typeInfo->getTypeId() == TID_SerializableTypeInfoObject)
 		{
@@ -854,82 +854,82 @@ namespace bs
 		return nullptr;
 	}
 
-	MonoObject* ManagedSerializableFieldDataArray::getValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
+	MonoObject* ManagedSerializableFieldDataArray::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		return (MonoObject*)getValue(typeInfo);
 	}
 
-	MonoObject* ManagedSerializableFieldDataList::getValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
+	MonoObject* ManagedSerializableFieldDataList::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		return (MonoObject*)getValue(typeInfo);
 	}
 
-	MonoObject* ManagedSerializableFieldDataDictionary::getValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
+	MonoObject* ManagedSerializableFieldDataDictionary::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		return (MonoObject*)getValue(typeInfo);
 	}
 
-	bool ManagedSerializableFieldDataBool::equals(const SPtr<ManagedSerializableFieldData>& other)
+	bool ManagedSerializableFieldDataBool::Equals(const SPtr<ManagedSerializableFieldData>& other)
 	{
 		return compareFieldData(this, other);
 	}
 
-	bool ManagedSerializableFieldDataChar::equals(const SPtr<ManagedSerializableFieldData>& other)
+	bool ManagedSerializableFieldDataChar::Equals(const SPtr<ManagedSerializableFieldData>& other)
 	{
 		return compareFieldData(this, other);
 	}
 
-	bool ManagedSerializableFieldDataI8::equals(const SPtr<ManagedSerializableFieldData>& other)
+	bool ManagedSerializableFieldDataI8::Equals(const SPtr<ManagedSerializableFieldData>& other)
 	{
 		return compareFieldData(this, other);
 	}
 
-	bool ManagedSerializableFieldDataU8::equals(const SPtr<ManagedSerializableFieldData>& other)
+	bool ManagedSerializableFieldDataU8::Equals(const SPtr<ManagedSerializableFieldData>& other)
 	{
 		return compareFieldData(this, other);
 	}
 
-	bool ManagedSerializableFieldDataI16::equals(const SPtr<ManagedSerializableFieldData>& other)
+	bool ManagedSerializableFieldDataI16::Equals(const SPtr<ManagedSerializableFieldData>& other)
 	{
 		return compareFieldData(this, other);
 	}
 
-	bool ManagedSerializableFieldDataU16::equals(const SPtr<ManagedSerializableFieldData>& other)
+	bool ManagedSerializableFieldDataU16::Equals(const SPtr<ManagedSerializableFieldData>& other)
 	{
 		return compareFieldData(this, other);
 	}
 
-	bool ManagedSerializableFieldDataI32::equals(const SPtr<ManagedSerializableFieldData>& other)
+	bool ManagedSerializableFieldDataI32::Equals(const SPtr<ManagedSerializableFieldData>& other)
 	{
 		return compareFieldData(this, other);
 	}
 
-	bool ManagedSerializableFieldDataU32::equals(const SPtr<ManagedSerializableFieldData>& other)
+	bool ManagedSerializableFieldDataU32::Equals(const SPtr<ManagedSerializableFieldData>& other)
 	{
 		return compareFieldData(this, other);
 	}
 
-	bool ManagedSerializableFieldDataI64::equals(const SPtr<ManagedSerializableFieldData>& other)
+	bool ManagedSerializableFieldDataI64::Equals(const SPtr<ManagedSerializableFieldData>& other)
 	{
 		return compareFieldData(this, other);
 	}
 
-	bool ManagedSerializableFieldDataU64::equals(const SPtr<ManagedSerializableFieldData>& other)
+	bool ManagedSerializableFieldDataU64::Equals(const SPtr<ManagedSerializableFieldData>& other)
 	{
 		return compareFieldData(this, other);
 	}
 
-	bool ManagedSerializableFieldDataFloat::equals(const SPtr<ManagedSerializableFieldData>& other)
+	bool ManagedSerializableFieldDataFloat::Equals(const SPtr<ManagedSerializableFieldData>& other)
 	{
 		return compareFieldData(this, other);
 	}
 
-	bool ManagedSerializableFieldDataDouble::equals(const SPtr<ManagedSerializableFieldData>& other)
+	bool ManagedSerializableFieldDataDouble::Equals(const SPtr<ManagedSerializableFieldData>& other)
 	{
 		return compareFieldData(this, other);
 	}
 
-	bool ManagedSerializableFieldDataString::equals(const SPtr<ManagedSerializableFieldData>& other)
+	bool ManagedSerializableFieldDataString::Equals(const SPtr<ManagedSerializableFieldData>& other)
 	{
 		if (rtti_is_of_type<ManagedSerializableFieldDataString>(other))
 		{
@@ -940,22 +940,22 @@ namespace bs
 		return false;
 	}
 
-	bool ManagedSerializableFieldDataResourceRef::equals(const SPtr<ManagedSerializableFieldData>& other)
+	bool ManagedSerializableFieldDataResourceRef::Equals(const SPtr<ManagedSerializableFieldData>& other)
 	{
 		return compareFieldData(this, other);
 	}
 
-	bool ManagedSerializableFieldDataGameObjectRef::equals(const SPtr<ManagedSerializableFieldData>& other)
+	bool ManagedSerializableFieldDataGameObjectRef::Equals(const SPtr<ManagedSerializableFieldData>& other)
 	{
 		return compareFieldData(this, other);
 	}
 
-	bool ManagedSerializableFieldDataReflectableRef::equals(const SPtr<ManagedSerializableFieldData>& other)
+	bool ManagedSerializableFieldDataReflectableRef::Equals(const SPtr<ManagedSerializableFieldData>& other)
 	{
 		return compareFieldData(this, other);
 	}
 
-	bool ManagedSerializableFieldDataObject::equals(const SPtr<ManagedSerializableFieldData>& other)
+	bool ManagedSerializableFieldDataObject::Equals(const SPtr<ManagedSerializableFieldData>& other)
 	{
 		if (auto otherObj = rtti_cast<ManagedSerializableFieldDataObject>(other))
 		{
@@ -972,7 +972,7 @@ namespace bs
 		return false;
 	}
 
-	bool ManagedSerializableFieldDataArray::equals(const SPtr<ManagedSerializableFieldData>& other)
+	bool ManagedSerializableFieldDataArray::Equals(const SPtr<ManagedSerializableFieldData>& other)
 	{
 		if (auto otherObj = rtti_cast<ManagedSerializableFieldDataArray>(other))
 		{
@@ -1003,7 +1003,7 @@ namespace bs
 		return false;
 	}
 
-	bool ManagedSerializableFieldDataList::equals(const SPtr<ManagedSerializableFieldData>& other)
+	bool ManagedSerializableFieldDataList::Equals(const SPtr<ManagedSerializableFieldData>& other)
 	{
 		if (auto otherObj = rtti_cast<ManagedSerializableFieldDataList>(other))
 		{
@@ -1034,7 +1034,7 @@ namespace bs
 		return false;
 	}
 
-	bool ManagedSerializableFieldDataDictionary::equals(const SPtr<ManagedSerializableFieldData>& other)
+	bool ManagedSerializableFieldDataDictionary::Equals(const SPtr<ManagedSerializableFieldData>& other)
 	{
 		if (auto otherObj = rtti_cast<ManagedSerializableFieldDataDictionary>(other))
 		{
@@ -1071,113 +1071,113 @@ namespace bs
 		return false;;
 	}
 
-	size_t ManagedSerializableFieldDataBool::getHash()
+	size_t ManagedSerializableFieldDataBool::GetHash()
 	{
 		return bs_hash(value);
 	}
 
-	size_t ManagedSerializableFieldDataChar::getHash()
+	size_t ManagedSerializableFieldDataChar::GetHash()
 	{
 		return bs_hash(value);
 	}
 
-	size_t ManagedSerializableFieldDataI8::getHash()
+	size_t ManagedSerializableFieldDataI8::GetHash()
 	{
 		return bs_hash(value);
 	}
 
-	size_t ManagedSerializableFieldDataU8::getHash()
+	size_t ManagedSerializableFieldDataU8::GetHash()
 	{
 		return bs_hash(value);
 	}
 
-	size_t ManagedSerializableFieldDataI16::getHash()
+	size_t ManagedSerializableFieldDataI16::GetHash()
 	{
 		return bs_hash(value);
 	}
 
-	size_t ManagedSerializableFieldDataU16::getHash()
+	size_t ManagedSerializableFieldDataU16::GetHash()
 	{
 		return bs_hash(value);
 	}
 
-	size_t ManagedSerializableFieldDataI32::getHash()
+	size_t ManagedSerializableFieldDataI32::GetHash()
 	{
 		return bs_hash(value);
 	}
 
-	size_t ManagedSerializableFieldDataU32::getHash()
+	size_t ManagedSerializableFieldDataU32::GetHash()
 	{
 		return bs_hash(value);
 	}
 
-	size_t ManagedSerializableFieldDataI64::getHash()
+	size_t ManagedSerializableFieldDataI64::GetHash()
 	{
 		return bs_hash(value);
 	}
 
-	size_t ManagedSerializableFieldDataU64::getHash()
+	size_t ManagedSerializableFieldDataU64::GetHash()
 	{
 		return bs_hash(value);
 	}
 
-	size_t ManagedSerializableFieldDataFloat::getHash()
+	size_t ManagedSerializableFieldDataFloat::GetHash()
 	{
 		return bs_hash(value);
 	}
 
-	size_t ManagedSerializableFieldDataDouble::getHash()
+	size_t ManagedSerializableFieldDataDouble::GetHash()
 	{
 		return bs_hash(value);
 	}
 
-	size_t ManagedSerializableFieldDataString::getHash()
+	size_t ManagedSerializableFieldDataString::GetHash()
 	{
 		return bs_hash(value);
 	}
 
-	size_t ManagedSerializableFieldDataResourceRef::getHash()
+	size_t ManagedSerializableFieldDataResourceRef::GetHash()
 	{
 		return bs_hash(value.getUUID());
 	}
 
-	size_t ManagedSerializableFieldDataGameObjectRef::getHash()
+	size_t ManagedSerializableFieldDataGameObjectRef::GetHash()
 	{
 		return bs_hash(value.getInstanceId());
 	}
 
-	size_t ManagedSerializableFieldDataReflectableRef::getHash()
+	size_t ManagedSerializableFieldDataReflectableRef::GetHash()
 	{
 		return bs_hash(value);
 	}
 
-	size_t ManagedSerializableFieldDataObject::getHash()
+	size_t ManagedSerializableFieldDataObject::GetHash()
 	{
 		return bs_hash(value);
 	}
 
-	size_t ManagedSerializableFieldDataArray::getHash()
+	size_t ManagedSerializableFieldDataArray::GetHash()
 	{
 		return bs_hash(value);
 	}
 
-	size_t ManagedSerializableFieldDataList::getHash()
+	size_t ManagedSerializableFieldDataList::GetHash()
 	{
 		return bs_hash(value);
 	}
 
-	size_t ManagedSerializableFieldDataDictionary::getHash()
+	size_t ManagedSerializableFieldDataDictionary::GetHash()
 	{
 		return bs_hash(value);
 	}
 
-	void ManagedSerializableFieldDataObject::serialize()
+	void ManagedSerializableFieldDataObject::Serialize()
 	{
 		if (value != nullptr)
 			value->serialize();
 	}
 
-	void ManagedSerializableFieldDataObject::deserialize()
+	void ManagedSerializableFieldDataObject::Deserialize()
 	{
 		if (value != nullptr)
 		{
@@ -1186,13 +1186,13 @@ namespace bs
 		}
 	}
 
-	void ManagedSerializableFieldDataArray::serialize()
+	void ManagedSerializableFieldDataArray::Serialize()
 	{
 		if (value != nullptr)
 			value->serialize();
 	}
 
-	void ManagedSerializableFieldDataArray::deserialize()
+	void ManagedSerializableFieldDataArray::Deserialize()
 	{
 		if (value != nullptr)
 		{
@@ -1201,13 +1201,13 @@ namespace bs
 		}
 	}
 
-	void ManagedSerializableFieldDataList::serialize()
+	void ManagedSerializableFieldDataList::Serialize()
 	{
 		if (value != nullptr)
 			value->serialize();
 	}
 
-	void ManagedSerializableFieldDataList::deserialize()
+	void ManagedSerializableFieldDataList::Deserialize()
 	{
 		if (value != nullptr)
 		{
@@ -1216,13 +1216,13 @@ namespace bs
 		}
 	}
 
-	void ManagedSerializableFieldDataDictionary::serialize()
+	void ManagedSerializableFieldDataDictionary::Serialize()
 	{
 		if (value != nullptr)
 			value->serialize();
 	}
 
-	void ManagedSerializableFieldDataDictionary::deserialize()
+	void ManagedSerializableFieldDataDictionary::Deserialize()
 	{
 		if (value != nullptr)
 		{
@@ -1231,233 +1231,233 @@ namespace bs
 		}
 	}
 
-	RTTITypeBase* ManagedSerializableFieldKey::getRTTIStatic()
+	RTTITypeBase* ManagedSerializableFieldKey::GetRttiStatic()
 	{
-		return ManagedSerializableFieldKeyRTTI::instance();
+		return ManagedSerializableFieldKeyRTTI::Instance();
 	}
 
-	RTTITypeBase* ManagedSerializableFieldKey::getRTTI() const
+	RTTITypeBase* ManagedSerializableFieldKey::GetRtti() const
 	{
-		return ManagedSerializableFieldKey::getRTTIStatic();
+		return ManagedSerializableFieldKey::GetRttiStatic();
 	}
 
-	RTTITypeBase* ManagedSerializableFieldData::getRTTIStatic()
+	RTTITypeBase* ManagedSerializableFieldData::GetRttiStatic()
 	{
-		return ManagedSerializableFieldDataRTTI::instance();
+		return ManagedSerializableFieldDataRTTI::Instance();
 	}
 
-	RTTITypeBase* ManagedSerializableFieldData::getRTTI() const
+	RTTITypeBase* ManagedSerializableFieldData::GetRtti() const
 	{
-		return ManagedSerializableFieldData::getRTTIStatic();
+		return ManagedSerializableFieldData::GetRttiStatic();
 	}
 
-	RTTITypeBase* ManagedSerializableFieldDataEntry::getRTTIStatic()
+	RTTITypeBase* ManagedSerializableFieldDataEntry::GetRttiStatic()
 	{
-		return ManagedSerializableFieldDataEntryRTTI::instance();
+		return ManagedSerializableFieldDataEntryRTTI::Instance();
 	}
 
-	RTTITypeBase* ManagedSerializableFieldDataEntry::getRTTI() const
+	RTTITypeBase* ManagedSerializableFieldDataEntry::GetRtti() const
 	{
-		return ManagedSerializableFieldDataEntry::getRTTIStatic();
+		return ManagedSerializableFieldDataEntry::GetRttiStatic();
 	}
 
-	RTTITypeBase* ManagedSerializableFieldDataBool::getRTTIStatic()
+	RTTITypeBase* ManagedSerializableFieldDataBool::GetRttiStatic()
 	{
-		return ManagedSerializableFieldDataBoolRTTI::instance();
+		return ManagedSerializableFieldDataBoolRTTI::Instance();
 	}
 
 	RTTITypeBase* ManagedSerializableFieldDataBool::getRTTI() const
 	{
-		return ManagedSerializableFieldDataBool::getRTTIStatic();
+		return ManagedSerializableFieldDataBool::GetRttiStatic();
 	}
 
-	RTTITypeBase* ManagedSerializableFieldDataChar::getRTTIStatic()
+	RTTITypeBase* ManagedSerializableFieldDataChar::GetRttiStatic()
 	{
-		return ManagedSerializableFieldDataCharRTTI::instance();
+		return ManagedSerializableFieldDataCharRTTI::Instance();
 	}
 
 	RTTITypeBase* ManagedSerializableFieldDataChar::getRTTI() const
 	{
-		return ManagedSerializableFieldDataChar::getRTTIStatic();
+		return ManagedSerializableFieldDataChar::GetRttiStatic();
 	}
 
-	RTTITypeBase* ManagedSerializableFieldDataI8::getRTTIStatic()
+	RTTITypeBase* ManagedSerializableFieldDataI8::GetRttiStatic()
 	{
-		return ManagedSerializableFieldDataI8RTTI::instance();
+		return ManagedSerializableFieldDataI8RTTI::Instance();
 	}
 
 	RTTITypeBase* ManagedSerializableFieldDataI8::getRTTI() const
 	{
-		return ManagedSerializableFieldDataI8::getRTTIStatic();
+		return ManagedSerializableFieldDataI8::GetRttiStatic();
 	}
 
-	RTTITypeBase* ManagedSerializableFieldDataU8::getRTTIStatic()
+	RTTITypeBase* ManagedSerializableFieldDataU8::GetRttiStatic()
 	{
-		return ManagedSerializableFieldDataU8RTTI::instance();
+		return ManagedSerializableFieldDataU8RTTI::Instance();
 	}
 
 	RTTITypeBase* ManagedSerializableFieldDataU8::getRTTI() const
 	{
-		return ManagedSerializableFieldDataU8::getRTTIStatic();
+		return ManagedSerializableFieldDataU8::GetRttiStatic();
 	}
 
-	RTTITypeBase* ManagedSerializableFieldDataI16::getRTTIStatic()
+	RTTITypeBase* ManagedSerializableFieldDataI16::GetRttiStatic()
 	{
-		return ManagedSerializableFieldDataI16RTTI::instance();
+		return ManagedSerializableFieldDataI16RTTI::Instance();
 	}
 
 	RTTITypeBase* ManagedSerializableFieldDataI16::getRTTI() const
 	{
-		return ManagedSerializableFieldDataI16::getRTTIStatic();
+		return ManagedSerializableFieldDataI16::GetRttiStatic();
 	}
 
-	RTTITypeBase* ManagedSerializableFieldDataU16::getRTTIStatic()
+	RTTITypeBase* ManagedSerializableFieldDataU16::GetRttiStatic()
 	{
-		return ManagedSerializableFieldDataU16RTTI::instance();
+		return ManagedSerializableFieldDataU16RTTI::Instance();
 	}
 
 	RTTITypeBase* ManagedSerializableFieldDataU16::getRTTI() const
 	{
-		return ManagedSerializableFieldDataU16::getRTTIStatic();
+		return ManagedSerializableFieldDataU16::GetRttiStatic();
 	}
 
-	RTTITypeBase* ManagedSerializableFieldDataI32::getRTTIStatic()
+	RTTITypeBase* ManagedSerializableFieldDataI32::GetRttiStatic()
 	{
-		return ManagedSerializableFieldDataI32RTTI::instance();
+		return ManagedSerializableFieldDataI32RTTI::Instance();
 	}
 
 	RTTITypeBase* ManagedSerializableFieldDataI32::getRTTI() const
 	{
-		return ManagedSerializableFieldDataI32::getRTTIStatic();
+		return ManagedSerializableFieldDataI32::GetRttiStatic();
 	}
 
-	RTTITypeBase* ManagedSerializableFieldDataU32::getRTTIStatic()
+	RTTITypeBase* ManagedSerializableFieldDataU32::GetRttiStatic()
 	{
-		return ManagedSerializableFieldDataU32RTTI::instance();
+		return ManagedSerializableFieldDataU32RTTI::Instance();
 	}
 
 	RTTITypeBase* ManagedSerializableFieldDataU32::getRTTI() const
 	{
-		return ManagedSerializableFieldDataU32::getRTTIStatic();
+		return ManagedSerializableFieldDataU32::GetRttiStatic();
 	}
 
-	RTTITypeBase* ManagedSerializableFieldDataI64::getRTTIStatic()
+	RTTITypeBase* ManagedSerializableFieldDataI64::GetRttiStatic()
 	{
-		return ManagedSerializableFieldDataI64RTTI::instance();
+		return ManagedSerializableFieldDataI64RTTI::Instance();
 	}
 
 	RTTITypeBase* ManagedSerializableFieldDataI64::getRTTI() const
 	{
-		return ManagedSerializableFieldDataI64::getRTTIStatic();
+		return ManagedSerializableFieldDataI64::GetRttiStatic();
 	}
 
-	RTTITypeBase* ManagedSerializableFieldDataU64::getRTTIStatic()
+	RTTITypeBase* ManagedSerializableFieldDataU64::GetRttiStatic()
 	{
-		return ManagedSerializableFieldDataU64RTTI::instance();
+		return ManagedSerializableFieldDataU64RTTI::Instance();
 	}
 
 	RTTITypeBase* ManagedSerializableFieldDataU64::getRTTI() const
 	{
-		return ManagedSerializableFieldDataU64::getRTTIStatic();
+		return ManagedSerializableFieldDataU64::GetRttiStatic();
 	}
 
-	RTTITypeBase* ManagedSerializableFieldDataFloat::getRTTIStatic()
+	RTTITypeBase* ManagedSerializableFieldDataFloat::GetRttiStatic()
 	{
-		return ManagedSerializableFieldDataFloatRTTI::instance();
+		return ManagedSerializableFieldDataFloatRTTI::Instance();
 	}
 
 	RTTITypeBase* ManagedSerializableFieldDataFloat::getRTTI() const
 	{
-		return ManagedSerializableFieldDataFloat::getRTTIStatic();
+		return ManagedSerializableFieldDataFloat::GetRttiStatic();
 	}
 
-	RTTITypeBase* ManagedSerializableFieldDataDouble::getRTTIStatic()
+	RTTITypeBase* ManagedSerializableFieldDataDouble::GetRttiStatic()
 	{
-		return ManagedSerializableFieldDataDoubleRTTI::instance();
+		return ManagedSerializableFieldDataDoubleRTTI::Instance();
 	}
 
 	RTTITypeBase* ManagedSerializableFieldDataDouble::getRTTI() const
 	{
-		return ManagedSerializableFieldDataDouble::getRTTIStatic();
+		return ManagedSerializableFieldDataDouble::GetRttiStatic();
 	}
 
-	RTTITypeBase* ManagedSerializableFieldDataString::getRTTIStatic()
+	RTTITypeBase* ManagedSerializableFieldDataString::GetRttiStatic()
 	{
-		return ManagedSerializableFieldDataStringRTTI::instance();
+		return ManagedSerializableFieldDataStringRTTI::Instance();
 	}
 
 	RTTITypeBase* ManagedSerializableFieldDataString::getRTTI() const
 	{
-		return ManagedSerializableFieldDataString::getRTTIStatic();
+		return ManagedSerializableFieldDataString::GetRttiStatic();
 	}
 
-	RTTITypeBase* ManagedSerializableFieldDataResourceRef::getRTTIStatic()
+	RTTITypeBase* ManagedSerializableFieldDataResourceRef::GetRttiStatic()
 	{
-		return ManagedSerializableFieldDataResourceRefRTTI::instance();
+		return ManagedSerializableFieldDataResourceRefRTTI::Instance();
 	}
 
 	RTTITypeBase* ManagedSerializableFieldDataResourceRef::getRTTI() const
 	{
-		return ManagedSerializableFieldDataResourceRef::getRTTIStatic();
+		return ManagedSerializableFieldDataResourceRef::GetRttiStatic();
 	}
 
-	RTTITypeBase* ManagedSerializableFieldDataGameObjectRef::getRTTIStatic()
+	RTTITypeBase* ManagedSerializableFieldDataGameObjectRef::GetRttiStatic()
 	{
-		return ManagedSerializableFieldDataGameObjectRefRTTI::instance();
+		return ManagedSerializableFieldDataGameObjectRefRTTI::Instance();
 	}
 
 	RTTITypeBase* ManagedSerializableFieldDataGameObjectRef::getRTTI() const
 	{
-		return ManagedSerializableFieldDataGameObjectRef::getRTTIStatic();
+		return ManagedSerializableFieldDataGameObjectRef::GetRttiStatic();
 	}
 
-	RTTITypeBase* ManagedSerializableFieldDataReflectableRef::getRTTIStatic()
+	RTTITypeBase* ManagedSerializableFieldDataReflectableRef::GetRttiStatic()
 	{
-		return ManagedSerializableFieldDataReflectableRefRTTI::instance();
+		return ManagedSerializableFieldDataReflectableRefRTTI::Instance();
 	}
 
 	RTTITypeBase* ManagedSerializableFieldDataReflectableRef::getRTTI() const
 	{
-		return ManagedSerializableFieldDataReflectableRef::getRTTIStatic();
+		return ManagedSerializableFieldDataReflectableRef::GetRttiStatic();
 	}
 
-	RTTITypeBase* ManagedSerializableFieldDataObject::getRTTIStatic()
+	RTTITypeBase* ManagedSerializableFieldDataObject::GetRttiStatic()
 	{
-		return ManagedSerializableFieldDataObjectRTTI::instance();
+		return ManagedSerializableFieldDataObjectRTTI::Instance();
 	}
 
 	RTTITypeBase* ManagedSerializableFieldDataObject::getRTTI() const
 	{
-		return ManagedSerializableFieldDataObject::getRTTIStatic();
+		return ManagedSerializableFieldDataObject::GetRttiStatic();
 	}
 
-	RTTITypeBase* ManagedSerializableFieldDataArray::getRTTIStatic()
+	RTTITypeBase* ManagedSerializableFieldDataArray::GetRttiStatic()
 	{
-		return ManagedSerializableFieldDataArrayRTTI::instance();
+		return ManagedSerializableFieldDataArrayRTTI::Instance();
 	}
 
 	RTTITypeBase* ManagedSerializableFieldDataArray::getRTTI() const
 	{
-		return ManagedSerializableFieldDataArray::getRTTIStatic();
+		return ManagedSerializableFieldDataArray::GetRttiStatic();
 	}
 
-	RTTITypeBase* ManagedSerializableFieldDataList::getRTTIStatic()
+	RTTITypeBase* ManagedSerializableFieldDataList::GetRttiStatic()
 	{
-		return ManagedSerializableFieldDataListRTTI::instance();
+		return ManagedSerializableFieldDataListRTTI::Instance();
 	}
 
 	RTTITypeBase* ManagedSerializableFieldDataList::getRTTI() const
 	{
-		return ManagedSerializableFieldDataList::getRTTIStatic();
+		return ManagedSerializableFieldDataList::GetRttiStatic();
 	}
 
-	RTTITypeBase* ManagedSerializableFieldDataDictionary::getRTTIStatic()
+	RTTITypeBase* ManagedSerializableFieldDataDictionary::GetRttiStatic()
 	{
-		return ManagedSerializableFieldDataDictionaryRTTI::instance();
+		return ManagedSerializableFieldDataDictionaryRTTI::Instance();
 	}
 
 	RTTITypeBase* ManagedSerializableFieldDataDictionary::getRTTI() const
 	{
-		return ManagedSerializableFieldDataDictionary::getRTTIStatic();
+		return ManagedSerializableFieldDataDictionary::GetRttiStatic();
 	}
 }

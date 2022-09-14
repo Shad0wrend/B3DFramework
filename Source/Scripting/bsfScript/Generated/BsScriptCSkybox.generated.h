@@ -16,9 +16,9 @@ namespace bs
 		ScriptCSkybox(MonoObject* managedInstance, const GameObjectHandle<CSkybox>& value);
 
 	private:
-		static MonoObject* Internal_getTexture(ScriptCSkybox* thisPtr);
-		static void Internal_setTexture(ScriptCSkybox* thisPtr, MonoObject* texture);
-		static void Internal_setBrightness(ScriptCSkybox* thisPtr, float brightness);
-		static float Internal_getBrightness(ScriptCSkybox* thisPtr);
+		static MonoObject* InternalGetTexture(ScriptCSkybox* thisPtr);
+		static void InternalSetTexture(ScriptCSkybox* thisPtr, MonoObject* texture);
+		static void InternalSetBrightness(ScriptCSkybox* thisPtr, float brightness);
+		static float InternalGetBrightness(ScriptCSkybox* thisPtr);
 	};
 }

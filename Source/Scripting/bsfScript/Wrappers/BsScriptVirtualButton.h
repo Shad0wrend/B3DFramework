@@ -19,10 +19,10 @@ namespace bs
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "VirtualButton")
 
 		/**	Unboxes a boxed managed VirtualButton struct and returns the native version of the structure. */
-		static VirtualButton unbox(MonoObject* obj);
+		static VirtualButton Unbox(MonoObject* obj);
 
 		/**	Boxes a native VirtualButton struct and returns a managed object containing it. */
-		static MonoObject* box(const VirtualButton& value);
+		static MonoObject* Box(const VirtualButton& value);
 
 	private:
 		ScriptVirtualButton(MonoObject* instance);
@@ -30,7 +30,7 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static UINT32 internal_InitVirtualButton(MonoString* name);
+		static UINT32 InternalInitVirtualButton(MonoString* name);
 	};
 
 	/** @} */

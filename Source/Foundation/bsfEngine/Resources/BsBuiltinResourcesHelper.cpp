@@ -25,7 +25,7 @@ using json = nlohmann::json;
 
 namespace bs
 {
-	void BuiltinResourcesHelper::importAssets(const nlohmann::json& entries, const Vector<bool>& importFlags,
+	void BuiltinResourcesHelper::ImportAssets(const nlohmann::json& entries, const Vector<bool>& importFlags,
 		const Path& inputFolder, const Path& outputFolder, const SPtr<ResourceManifest>& manifest, AssetType mode,
 		nlohmann::json* dependencies, bool compress, bool mipmap)
 	{
@@ -110,7 +110,7 @@ namespace bs
 			SPtr<SpriteTexture> spriteTexPtr = SpriteTexture::CreatePtrInternal(texture);
 			HResource spriteTex = gResources().CreateResourceHandleInternal(spriteTexPtr, UUID);
 
-			Resources::instance().save(spriteTex, outputPath, true, compress);
+			Resources::Instance().save(spriteTex, outputPath, true, compress);
 			manifest->registerResource(spriteTex.getUUID(), outputPath);
 		};
 
@@ -128,7 +128,7 @@ namespace bs
 
 			HResource spriteTex = gResources().CreateResourceHandleInternal(spriteTexPtr, UUID);
 
-			Resources::instance().save(spriteTex, outputPath, true, compress);
+			Resources::Instance().save(spriteTex, outputPath, true, compress);
 			manifest->registerResource(spriteTex.getUUID(), outputPath);
 		};
 
@@ -170,7 +170,7 @@ namespace bs
 				HResource outputRes = importOp.op.getReturnValue();
 				if (outputRes != nullptr)
 				{
-					Resources::instance().save(outputRes, importOp.outputPath, true, compress);
+					Resources::Instance().save(outputRes, importOp.outputPath, true, compress);
 					manifest->registerResource(outputRes.getUUID(), importOp.outputPath);
 
 					const nlohmann::json& entry = importOp.jsonEntry;
@@ -291,7 +291,7 @@ namespace bs
 			SPtr<Texture> texturePtr = Texture::CreatePtrInternal(pixelData);
 			HResource texture = gResources().CreateResourceHandleInternal(texturePtr, UUID(uuid.c_str()));
 
-			Resources::instance().save(texture, path, true, compress);
+			Resources::Instance().save(texture, path, true, compress);
 			manifest->registerResource(texture.getUUID(), path);
 
 			return static_resource_cast<Texture>(texture);
@@ -301,13 +301,13 @@ namespace bs
 		{
 			SPtr<PixelData> src = iconsToGenerate[i].srcData;
 
-			SPtr<PixelData> scaled48 = PixelData::create(48, 48, 1, src->getFormat());
+			SPtr<PixelData> scaled48 = PixelData::Create(48, 48, 1, src->getFormat());
 			PixelUtil::scale(*src, *scaled48);
 
-			SPtr<PixelData> scaled32 = PixelData::create(32, 32, 1, src->getFormat());
+			SPtr<PixelData> scaled32 = PixelData::Create(32, 32, 1, src->getFormat());
 			PixelUtil::scale(*scaled48, *scaled32);
 
-			SPtr<PixelData> scaled16 = PixelData::create(16, 16, 1, src->getFormat());
+			SPtr<PixelData> scaled16 = PixelData::Create(16, 16, 1, src->getFormat());
 			PixelUtil::scale(*scaled32, *scaled16);
 
 			Path outputPath48 = outputFolder + (iconsToGenerate[i].name + "48.asset");
@@ -327,10 +327,10 @@ namespace bs
 		}
 	}
 
-	void BuiltinResourcesHelper::importFont(const Path& inputFile, const String& outputName, const Path& outputFolder,
+	void BuiltinResourcesHelper::ImportFont(const Path& inputFile, const String& outputName, const Path& outputFolder,
 		const Vector<UINT32>& fontSizes, bool antialiasing, const UUID& UUID, const SPtr<ResourceManifest>& manifest)
 	{
-		SPtr<ImportOptions> fontImportOptions = Importer::instance().createImportOptions(inputFile);
+		SPtr<ImportOptions> fontImportOptions = Importer::Instance().createImportOptions(inputFile);
 		if (rtti_is_of_type<FontImportOptions>(fontImportOptions))
 		{
 			FontImportOptions* importOptions = static_cast<FontImportOptions*>(fontImportOptions.get());
@@ -341,13 +341,13 @@ namespace bs
 		else
 			return;
 
-		HFont font = Importer::instance().import<Font>(inputFile, fontImportOptions, UUID);
+		HFont font = Importer::Instance().import<Font>(inputFile, fontImportOptions, UUID);
 
 		String fontName = outputName;
 		Path outputPath = outputFolder + fontName;
 		outputPath.setFilename(outputPath.getFilename() + u8".asset");
 
-		Resources::instance().save(font, outputPath, true);
+		Resources::Instance().save(font, outputPath, true);
 		manifest->registerResource(font.getUUID(), outputPath);
 
 		// Save font texture pages as well. TODO - Later maybe figure out a more automatic way to do this
@@ -363,7 +363,7 @@ namespace bs
 				texPageOutputPath.setFilename(fontName + u8"_" + toString(size) + u8"_texpage_" +
 					toString(pageIdx) + u8".asset");
 
-				Resources::instance().save(tex, texPageOutputPath, true);
+				Resources::Instance().save(tex, texPageOutputPath, true);
 				manifest->registerResource(tex.getUUID(), texPageOutputPath);
 
 				pageIdx++;
@@ -371,7 +371,7 @@ namespace bs
 		}
 	}
 
-	Vector<bool> BuiltinResourcesHelper::generateImportFlags(const nlohmann::json& entries, const Path& inputFolder,
+	Vector<bool> BuiltinResourcesHelper::GenerateImportFlags(const nlohmann::json& entries, const Path& inputFolder,
 		time_t lastUpdateTime, bool forceImport, const nlohmann::json* dependencies, const Path& dependencyFolder)
 	{
 		Vector<bool> output(entries.size());
@@ -422,7 +422,7 @@ namespace bs
 		return output;
 	}
 
-	bool BuiltinResourcesHelper::updateJSON(const Path& folder, AssetType type, nlohmann::json& entries)
+	bool BuiltinResourcesHelper::UpdateJson(const Path& folder, AssetType type, nlohmann::json& entries)
 	{
 		UnorderedSet<Path> existingEntries;
 		for(auto& entry : entries)
@@ -494,7 +494,7 @@ namespace bs
 		return foundChanges;
 	}
 
-	void BuiltinResourcesHelper::updateManifest(const Path& folder, const nlohmann::json& entries,
+	void BuiltinResourcesHelper::UpdateManifest(const Path& folder, const nlohmann::json& entries,
 		const SPtr<ResourceManifest>& manifest, AssetType type)
 	{
 		for (auto& entry : entries)
@@ -580,7 +580,7 @@ namespace bs
 		}
 	}
 
-	void BuiltinResourcesHelper::writeTimestamp(const Path& file)
+	void BuiltinResourcesHelper::WriteTimestamp(const Path& file)
 	{
 		SPtr<DataStream> fileStream = FileSystem::createAndOpenFile(file);
 
@@ -589,7 +589,7 @@ namespace bs
 		fileStream->close();
 	}
 
-	UINT32 BuiltinResourcesHelper::checkForModifications(const Path& folder, const Path& timeStampFile,
+	UINT32 BuiltinResourcesHelper::CheckForModifications(const Path& folder, const Path& timeStampFile,
 		time_t& lastUpdateTime)
 	{
 		lastUpdateTime = 0;
@@ -621,7 +621,7 @@ namespace bs
 		return 0;
 	}
 
-	bool BuiltinResourcesHelper::verifyAndReportShader(const HShader& shader)
+	bool BuiltinResourcesHelper::VerifyAndReportShader(const HShader& shader)
 	{
 		if(!shader.isLoaded(false) || shader->getNumTechniques() == 0)
 		{
@@ -684,7 +684,7 @@ namespace bs
 		return true;
 	}
 
-	void BuiltinResourcesHelper::updateShaderBytecode(const Path& path)
+	void BuiltinResourcesHelper::UpdateShaderBytecode(const Path& path)
 	{
 		HShader shader = gResources().load<Shader>(path, ResourceLoadFlag::KeepSourceData);
 		if (!shader)
@@ -729,7 +729,7 @@ namespace bs
 		gResources().save(shader, path, true, true);
 	}
 
-	GUIElementStyle BuiltinResourcesHelper::loadGUIStyleFromJSON(const nlohmann::json& entry,
+	GUIElementStyle BuiltinResourcesHelper::LoadGuiStyleFromJson(const nlohmann::json& entry,
 		const GUIElementStyleLoader& loader)
 	{
 		GUIElementStyle style;
@@ -882,7 +882,7 @@ namespace bs
 	{ }
 
 
-	HSpriteTexture BuiltinResourceGUIElementStyleLoader::loadTexture(const String& name) const
+	HSpriteTexture BuiltinResourceGUIElementStyleLoader::LoadTexture(const String& name) const
 	{
 		Path texturePath = mTexturePath;
 		texturePath.append(u8"sprite_" + name + u8".asset");
@@ -890,7 +890,7 @@ namespace bs
 		return gResources().load<SpriteTexture>(texturePath);
 	}
 
-	HFont BuiltinResourceGUIElementStyleLoader::loadFont(const String& name) const
+	HFont BuiltinResourceGUIElementStyleLoader::LoadFont(const String& name) const
 	{
 		Path fontPath = mFontPath;
 		fontPath.append(name + u8".asset");

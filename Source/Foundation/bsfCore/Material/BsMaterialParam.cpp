@@ -34,7 +34,7 @@ namespace bs
 	}
 
 	template<class T, bool Core>
-	void TMaterialDataParam<T, Core>::set(const T& value, UINT32 arrayIdx) const
+	void TMaterialDataParam<T, Core>::Set(const T& value, UINT32 arrayIdx) const
 	{
 		if (this->mMaterial == nullptr)
 			return;
@@ -54,7 +54,7 @@ namespace bs
 	}
 
 	template<class T, bool Core>
-	T TMaterialDataParam<T, Core>::get(UINT32 arrayIdx) const
+	T TMaterialDataParam<T, Core>::Get(UINT32 arrayIdx) const
 	{
 		T output{};
 		if (this->mMaterial == nullptr || arrayIdx >= this->mArraySize)
@@ -68,7 +68,7 @@ namespace bs
 	}
 
 	template<class T, bool Core>
-	void TMaterialCurveParam<T, Core>::set(TAnimationCurve<T> value, UINT32 arrayIdx) const
+	void TMaterialCurveParam<T, Core>::Set(TAnimationCurve<T> value, UINT32 arrayIdx) const
 	{
 		if (this->mMaterial == nullptr)
 			return;
@@ -88,7 +88,7 @@ namespace bs
 	}
 
 	template<class T, bool Core>
-	const TAnimationCurve<T>& TMaterialCurveParam<T, Core>::get(UINT32 arrayIdx) const
+	const TAnimationCurve<T>& TMaterialCurveParam<T, Core>::Get(UINT32 arrayIdx) const
 	{
 		static TAnimationCurve<T> EMPTY_CURVE;
 
@@ -102,7 +102,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TMaterialColorGradientParam<Core>::set(const ColorGradientHDR& value, UINT32 arrayIdx) const
+	void TMaterialColorGradientParam<Core>::Set(const ColorGradientHDR& value, UINT32 arrayIdx) const
 	{
 		if (this->mMaterial == nullptr)
 			return;
@@ -122,7 +122,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	const ColorGradientHDR& TMaterialColorGradientParam<Core>::get(UINT32 arrayIdx) const
+	const ColorGradientHDR& TMaterialColorGradientParam<Core>::Get(UINT32 arrayIdx) const
 	{
 		static ColorGradientHDR EMPTY_GRADIENT;
 
@@ -136,7 +136,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TMaterialParamStruct<Core>::set(const void* value, UINT32 sizeBytes, UINT32 arrayIdx) const
+	void TMaterialParamStruct<Core>::Set(const void* value, UINT32 sizeBytes, UINT32 arrayIdx) const
 	{
 		if (this->mMaterial == nullptr)
 			return;
@@ -156,7 +156,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TMaterialParamStruct<Core>::get(void* value, UINT32 sizeBytes, UINT32 arrayIdx) const
+	void TMaterialParamStruct<Core>::Get(void* value, UINT32 sizeBytes, UINT32 arrayIdx) const
 	{
 		if (this->mMaterial == nullptr || arrayIdx >= this->mArraySize)
 			return;
@@ -168,7 +168,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	UINT32 TMaterialParamStruct<Core>::getElementSize() const
+	UINT32 TMaterialParamStruct<Core>::GetElementSize() const
 	{
 		if (this->mMaterial == nullptr)
 			return 0;
@@ -221,7 +221,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	typename TMaterialParamTexture<Core>::TextureType TMaterialParamTexture<Core>::get() const
+	typename TMaterialParamTexture<Core>::TextureType TMaterialParamTexture<Core>::Get() const
 	{
 		TextureType texture;
 		if (mMaterial == nullptr)
@@ -258,7 +258,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TMaterialParamSpriteTexture<Core>::set(const SpriteTextureType& texture) const
+	void TMaterialParamSpriteTexture<Core>::Set(const SpriteTextureType& texture) const
 	{
 		if (mMaterial == nullptr)
 			return;
@@ -282,7 +282,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	typename TMaterialParamSpriteTexture<Core>::SpriteTextureType TMaterialParamSpriteTexture<Core>::get() const
+	typename TMaterialParamSpriteTexture<Core>::SpriteTextureType TMaterialParamSpriteTexture<Core>::Get() const
 	{
 		SpriteTextureType texture;
 		if (mMaterial == nullptr)
@@ -318,7 +318,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TMaterialParamLoadStoreTexture<Core>::set(const TextureType& texture, const TextureSurface& surface) const
+	void TMaterialParamLoadStoreTexture<Core>::Set(const TextureType& texture, const TextureSurface& surface) const
 	{
 		if (mMaterial == nullptr)
 			return;
@@ -333,7 +333,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	typename TMaterialParamLoadStoreTexture<Core>::TextureType TMaterialParamLoadStoreTexture<Core>::get() const
+	typename TMaterialParamLoadStoreTexture<Core>::TextureType TMaterialParamLoadStoreTexture<Core>::Get() const
 	{
 		TextureType texture;
 		if (mMaterial == nullptr)
@@ -371,7 +371,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TMaterialParamBuffer<Core>::set(const BufferType& buffer) const
+	void TMaterialParamBuffer<Core>::Set(const BufferType& buffer) const
 	{
 		if (mMaterial == nullptr)
 			return;
@@ -385,7 +385,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	typename TMaterialParamBuffer<Core>::BufferType TMaterialParamBuffer<Core>::get() const
+	typename TMaterialParamBuffer<Core>::BufferType TMaterialParamBuffer<Core>::Get() const
 	{
 		BufferType buffer;
 		if (mMaterial == nullptr)
@@ -420,7 +420,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TMaterialParamSampState<Core>::set(const SamplerStateType& sampState) const
+	void TMaterialParamSampState<Core>::Set(const SamplerStateType& sampState) const
 	{
 		if (mMaterial == nullptr)
 			return;
@@ -439,7 +439,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	typename TMaterialParamSampState<Core>::SamplerStateType TMaterialParamSampState<Core>::get() const
+	typename TMaterialParamSampState<Core>::SamplerStateType TMaterialParamSampState<Core>::Get() const
 	{
 		SamplerStateType samplerState;
 		if (mMaterial == nullptr)

@@ -14,14 +14,14 @@ namespace bs
 	void ScriptTextureSurface::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptTextureSurface::box(const TextureSurface& value)
+	MonoObject*ScriptTextureSurface::Box(const TextureSurface& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	TextureSurface ScriptTextureSurface::unbox(MonoObject* value)
+	TextureSurface ScriptTextureSurface::Unbox(MonoObject* value)
 	{
-		return *(TextureSurface*)MonoUtil::unbox(value);
+		return *(TextureSurface*)MonoUtil::Unbox(value);
 	}
 
 }

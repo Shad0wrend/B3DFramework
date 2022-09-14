@@ -18,12 +18,12 @@ namespace bs
 
 		ScriptParticleOrbit(MonoObject* managedInstance, const SPtr<ParticleOrbit>& value);
 
-		static MonoObject* create(const SPtr<ParticleOrbit>& value);
+		static MonoObject* Create(const SPtr<ParticleOrbit>& value);
 
 	private:
-		static void Internal_setOptions(ScriptParticleOrbit* thisPtr, __PARTICLE_ORBIT_DESCInterop* options);
-		static void Internal_getOptions(ScriptParticleOrbit* thisPtr, __PARTICLE_ORBIT_DESCInterop* __output);
-		static void Internal_create(MonoObject* managedInstance, __PARTICLE_ORBIT_DESCInterop* desc);
-		static void Internal_create0(MonoObject* managedInstance);
+		static void InternalSetOptions(ScriptParticleOrbit* thisPtr, __PARTICLE_ORBIT_DESCInterop* options);
+		static void InternalGetOptions(ScriptParticleOrbit* thisPtr, __PARTICLE_ORBIT_DESCInterop* __output);
+		static void InternalCreate(MonoObject* managedInstance, __PARTICLE_ORBIT_DESCInterop* desc);
+		static void InternalCreate0(MonoObject* managedInstance);
 	};
 }

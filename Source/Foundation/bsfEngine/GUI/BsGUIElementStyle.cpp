@@ -5,13 +5,13 @@
 
 namespace bs
 {
-	RTTITypeBase* GUIElementStyle::getRTTIStatic()
+	RTTITypeBase* GUIElementStyle::GetRttiStatic()
 	{
-		return GUIElementStyleRTTI::instance();
+		return GUIElementStyleRTTI::Instance();
 	}
 
-	RTTITypeBase* GUIElementStyle::getRTTI() const
+	RTTITypeBase* GUIElementStyle::GetRtti() const
 	{
-		return GUIElementStyle::getRTTIStatic();
+		return GUIElementStyle::GetRttiStatic();
 	}
 }

@@ -22,16 +22,16 @@ namespace bs
 		~GUIFixedSpace();
 
 		/**	Returns the size of the space in pixels. */
-		UINT32 getSize() const { return mSize; }
+		UINT32 GetSize() const { return mSize; }
 
 		/**	Changes the size of the space to the specified value, in pixels. */
-		void setSize(UINT32 size) { if (mSize != size) { mSize = size; MarkLayoutAsDirtyInternal(); } }
+		void SetSize(UINT32 size) { if (mSize != size) { mSize = size; MarkLayoutAsDirtyInternal(); } }
 
 		/**	Creates a new fixed space GUI element. */
-		static GUIFixedSpace* create(UINT32 size);
+		static GUIFixedSpace* Create(UINT32 size);
 
 		/**	Destroys the space and removes it from its parent. */
-		static void destroy(GUIFixedSpace* space);
+		static void Destroy(GUIFixedSpace* space);
 
 	public: // ***** INTERNAL ******
 		/** @name Internal
@@ -42,7 +42,7 @@ namespace bs
 		Type GetTypeInternal() const override { return GUIElementBase::Type::FixedSpace; }
 
 		/** @copydoc GUIElementBase::GetOptimalSizeInternal */
-		Vector2I GetOptimalSizeInternal() const override { return Vector2I(getSize(), getSize()); }
+		Vector2I GetOptimalSizeInternal() const override { return Vector2I(GetSize(), GetSize()); }
 
 		/** @copydoc GUIElementBase::_calculateLayoutSizeRange */
 		LayoutSizeRange CalculateLayoutSizeRangeInternal() const override;
@@ -76,10 +76,10 @@ namespace bs
 		~GUIFlexibleSpace();
 
 		/**	Creates a new flexible space GUI element. */
-		static GUIFlexibleSpace* create();
+		static GUIFlexibleSpace* Create();
 
 		/**	Destroys the space and removes it from its parent. */
-		static void destroy(GUIFlexibleSpace* space);
+		static void Destroy(GUIFlexibleSpace* space);
 
 	public: // ***** INTERNAL ******
 		/** @name Internal

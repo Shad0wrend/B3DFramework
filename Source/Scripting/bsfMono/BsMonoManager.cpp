@@ -90,12 +90,12 @@ namespace bs
 	MonoManager::MonoManager()
 		:mScriptDomain(nullptr), mRootDomain(nullptr), mCorlibAssembly(nullptr)
 	{
-		Path libDir = Paths::findPath(MONO_LIB_DIR);
-		Path etcDir = getMonoEtcFolder();
-		Path assembliesDir = getFrameworkAssembliesFolder();
+		Path libDir = Paths::FindPath(MONO_LIB_DIR);
+		Path etcDir = GetMonoEtcFolder();
+		Path assembliesDir = GetFrameworkAssembliesFolder();
 
-		mono_set_dirs(libDir.toString().c_str(), etcDir.toString().c_str());
-		mono_set_assemblies_path(assembliesDir.toString().c_str());
+		mono_set_dirs(libDir.ToString().c_str(), etcDir.ToString().c_str());
+		mono_set_assemblies_path(assembliesDir.ToString().c_str());
 
 #if BS_DEBUG_MODE
 		// Note: For proper debugging experience make sure to open a console window to display stdout and stderr, as Mono
@@ -146,7 +146,7 @@ namespace bs
 		unloadAll();
 	}
 
-	MonoAssembly& MonoManager::loadAssembly(const Path& path, const String& name)
+	MonoAssembly& MonoManager::LoadAssembly(const Path& path, const String& name)
 	{
 		MonoAssembly* assembly = nullptr;
 
@@ -182,7 +182,7 @@ namespace bs
 		return *assembly;
 	}
 
-	void MonoManager::initializeScriptTypes(MonoAssembly& assembly)
+	void MonoManager::InitializeScriptTypes(MonoAssembly& assembly)
 	{
 		// Fully initialize all types that use this assembly
 		Vector<ScriptMetaInfo>& typeMetas = getScriptMetaData()[assembly.mName];
@@ -207,7 +207,7 @@ namespace bs
 		}
 	}
 
-	void MonoManager::unloadAll()
+	void MonoManager::UnloadAll()
 	{
 		for (auto& entry : mAssemblies)
 			bs_delete(entry.second);
@@ -227,7 +227,7 @@ namespace bs
 		getScriptMetaData().clear();
 	}
 
-	MonoAssembly* MonoManager::getAssembly(const String& name) const
+	MonoAssembly* MonoManager::GetAssembly(const String& name) const
 	{
 		auto iterFind = mAssemblies.find(name);
 
@@ -237,13 +237,13 @@ namespace bs
 		return nullptr;
 	}
 
-	void MonoManager::registerScriptType(ScriptMeta* metaData, const ScriptMeta& localMetaData)
+	void MonoManager::RegisterScriptType(ScriptMeta* metaData, const ScriptMeta& localMetaData)
 	{
 		Vector<ScriptMetaInfo>& mMetas = getScriptMetaData()[localMetaData.assembly];
 		mMetas.push_back({ metaData, localMetaData });
 	}
 
-	MonoClass* MonoManager::findClass(const String& ns, const String& typeName)
+	MonoClass* MonoManager::FindClass(const String& ns, const String& typeName)
 	{
 		MonoClass* monoClass = nullptr;
 		for(auto& assembly : mAssemblies)
@@ -256,7 +256,7 @@ namespace bs
 		return nullptr;
 	}
 
-	MonoClass* MonoManager::findClass(::MonoClass* rawMonoClass)
+	MonoClass* MonoManager::FindClass(::MonoClass* rawMonoClass)
 	{
 		MonoClass* monoClass = nullptr;
 		for(auto& assembly : mAssemblies)
@@ -269,7 +269,7 @@ namespace bs
 		return nullptr;
 	}
 
-	void MonoManager::unloadScriptDomain()
+	void MonoManager::UnloadScriptDomain()
 	{
 		if (mScriptDomain != nullptr)
 		{
@@ -308,24 +308,24 @@ namespace bs
 		mAssemblies["corlib"] = mCorlibAssembly;
 	}
 
-	Path MonoManager::getFrameworkAssembliesFolder() const
+	Path MonoManager::GetFrameworkAssembliesFolder() const
 	{
 		return Paths::findPath(MONO_VERSION_DATA[(int)MONO_VERSION].path);
 	}
 
-	Path MonoManager::getMonoEtcFolder() const
+	Path MonoManager::GetMonoEtcFolder() const
 	{
 		return Paths::findPath(MONO_ETC_DIR);
 	}
 
-	Path MonoManager::getCompilerPath() const
+	Path MonoManager::GetCompilerPath() const
 	{
 		Path compilerPath = Paths::findPath(MONO_COMPILER_DIR);
 		compilerPath.append("mcs.exe");
 		return compilerPath;
 	}
 
-	Path MonoManager::getMonoExecPath() const
+	Path MonoManager::GetMonoExecPath() const
 	{
 		Path path = Paths::getBinariesPath();
 

@@ -33,40 +33,40 @@ namespace bs
 		 * 			
 		 * @note	Field type must not be an array.
 		 */
-		virtual SPtr<IReflectable> getValue(RTTITypeBase* rtti, void* object) = 0;
+		virtual SPtr<IReflectable> GetValue(RTTITypeBase* rtti, void* object) = 0;
 
 		/**
 		 * Retrieves the IReflectable value from an array on the provided instance and index.
 		 * 			
 		 * @note	Field type must be an array.
 		 */
-		virtual SPtr<IReflectable> getArrayValue(RTTITypeBase* rtti, void* object, UINT32 index) = 0;
+		virtual SPtr<IReflectable> GetArrayValue(RTTITypeBase* rtti, void* object, UINT32 index) = 0;
 
 		/**
 		 * Sets the IReflectable value in the provided instance.
 		 * 			
 		 * @note	Field type must not be an array.
 		 */
-		virtual void setValue(RTTITypeBase* rtti, void* object, SPtr<IReflectable> value) = 0;
+		virtual void SetValue(RTTITypeBase* rtti, void* object, SPtr<IReflectable> value) = 0;
 
 		/**
 		 * Sets the IReflectable value in an array on the provided instance and index.
 		 * 			
 		 * @note	Field type must be an array.
 		 */
-		virtual void setArrayValue(RTTITypeBase* rtti, void* object, UINT32 index, SPtr<IReflectable> value) = 0;
+		virtual void SetArrayValue(RTTITypeBase* rtti, void* object, UINT32 index, SPtr<IReflectable> value) = 0;
 
 		/** Creates a new object of the field type. */
-		virtual SPtr<IReflectable> newObject() = 0;
+		virtual SPtr<IReflectable> NewObject() = 0;
 
 		/** Returns the RTTI identifier of the class owning the field. */
-		virtual UINT32 getRTTIId() = 0;
+		virtual UINT32 GetRttiId() = 0;
 
 		/** Returns the name of the class owning the field. */
-		virtual const String& getRTTIName() = 0;
+		virtual const String& GetRttiName() = 0;
 
 		/** Retrieves the RTTI object for the type the field contains. */
-		virtual RTTITypeBase* getType() = 0;
+		virtual RTTITypeBase* GetType() = 0;
 	};
 
 	/** Reflectable field containing a pointer to a specific type with RTTI implemented.  */
@@ -92,7 +92,7 @@ namespace bs
 		 * @param[in]	setter  	The setter method for the field.
 		 * @param[in]	info		Various optional information about the field.
 		 */
-		void initSingle(String name, UINT16 uniqueId, GetterType getter, SetterType setter, const RTTIFieldInfo& info)
+		void InitSingle(String name, UINT16 uniqueId, GetterType getter, SetterType setter, const RTTIFieldInfo& info)
 		{
 			this->getter = getter;
 			this->setter = setter;
@@ -114,7 +114,7 @@ namespace bs
 		 * @param[in]	setSize 	Setter method that allows you to resize an array. Can be null.
 		 * @param[in]	info		Various optional information about the field.
 		 */
-		void initArray(String name, UINT16 uniqueId, ArrayGetterType getter, ArrayGetSizeType getSize,
+		void InitArray(String name, UINT16 uniqueId, ArrayGetterType getter, ArrayGetSizeType getSize,
 			ArraySetterType setter, ArraySetSizeType setSize, const RTTIFieldInfo& info)
 		{
 			arrayGetter = getter;
@@ -127,16 +127,16 @@ namespace bs
 		}
 
 		/** @copydoc RTTIField::initSchema */
-		void initSchema() override
+		void InitSchema() override
 		{
 			// This need to be initialized after the field itself, otherwise we get recursive static constructor
-			// calls due to one type calling getRTTIStatic() on one another
-			schema.fieldTypeSchema = DataType::getRTTIStatic()->getSchema();;
-			schema.fieldTypeId = DataType::getRTTIStatic()->getRTTIId();
+			// calls due to one type calling GetRttiStatic() on one another
+			schema.fieldTypeSchema = DataType::GetRttiStatic()->getSchema();;
+			schema.fieldTypeId = DataType::GetRttiStatic()->getRTTIId();
 		}
 
 		/** @copydoc RTTIReflectablePtrFieldBase::getValue */
-		SPtr<IReflectable> getValue(RTTITypeBase* rtti, void* object) override
+		SPtr<IReflectable> GetValue(RTTITypeBase* rtti, void* object) 
 		{
 			checkIsArray(false);
 
@@ -148,7 +148,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIReflectablePtrFieldBase::getArrayValue */
-		SPtr<IReflectable> getArrayValue(RTTITypeBase* rtti, void* object, UINT32 index) override
+		SPtr<IReflectable> GetArrayValue(RTTITypeBase* rtti, void* object, UINT32 index) 
 		{
 			checkIsArray(true);
 
@@ -160,7 +160,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIReflectablePtrFieldBase::setValue */
-		void setValue(RTTITypeBase* rtti, void* object, SPtr<IReflectable> value) override
+		void SetValue(RTTITypeBase* rtti, void* object, SPtr<IReflectable> value) 
 		{
 			checkIsArray(false);
 
@@ -178,7 +178,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIReflectablePtrFieldBase::setArrayValue */
-		void setArrayValue(RTTITypeBase* rtti, void* object, UINT32 index, SPtr<IReflectable> value) override
+		void SetArrayValue(RTTITypeBase* rtti, void* object, UINT32 index, SPtr<IReflectable> value) 
 		{
 			checkIsArray(true);
 
@@ -196,7 +196,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIField::setArraySize */
-		UINT32 getArraySize(RTTITypeBase* rtti, void* object) override
+		UINT32 GetArraySize(RTTITypeBase* rtti, void* object) override
 		{
 			checkIsArray(true);
 
@@ -207,7 +207,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIField::setArraySize */
-		void setArraySize(RTTITypeBase* rtti, void* object, UINT32 size) override
+		void SetArraySize(RTTITypeBase* rtti, void* object, UINT32 size) override
 		{
 			checkIsArray(true);
 
@@ -224,28 +224,28 @@ namespace bs
 		}
 
 		/** @copydoc RTTIReflectablePtrFieldBase::newObject */
-		SPtr<IReflectable> newObject() override
+		SPtr<IReflectable> NewObject() 
 		{
-			return SPtr<IReflectable>(DataType::getRTTIStatic()->newRTTIObject());
+			return SPtr<IReflectable>(DataType::GetRttiStatic()->newRTTIObject());
 		}
 
 		/** @copydoc RTTIReflectablePtrFieldBase::getRTTIId */
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
-			return DataType::getRTTIStatic()->getRTTIId();
+			return DataType::GetRttiStatic()->getRTTIId();
 		}
 
 		/** @copydoc RTTIReflectablePtrFieldBase::getRTTIName */
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
-			return DataType::getRTTIStatic()->getRTTIName();
+			return DataType::GetRttiStatic()->getRTTIName();
 		}
 
 
 		/** @copydoc RTTIReflectablePtrFieldBase::getType */
-		RTTITypeBase* getType() override
+		RTTITypeBase* GetType() override
 		{
-			return DataType::getRTTIStatic();
+			return DataType::GetRttiStatic();
 		}
 
 	private:

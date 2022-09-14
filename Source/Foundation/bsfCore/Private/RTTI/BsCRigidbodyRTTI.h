@@ -34,20 +34,20 @@ namespace bs
 			BS_RTTI_MEMBER_PLAIN(mCollisionReportMode, 14)
 		BS_END_RTTI_MEMBERS
 	public:
-		const String& getRTTIName() override
+		const String& GetRttiName() override
 		{
 			static String name = "CRigidbody";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() override
 		{
 			return TID_CRigidbody;
 		}
 
 		SPtr<IReflectable> newRTTIObject() override
 		{
-			return SceneObject::createEmptyComponent<CRigidbody>();
+			return SceneObject::CreateEmptyComponent<CRigidbody>();
 		}
 	};
 

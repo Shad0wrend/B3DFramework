@@ -9,17 +9,17 @@ namespace bs
 	class BS_PLUGIN_EXPORT NullPhysicsFactory : public PhysicsFactory
 	{
 	public:
-		void startUp(bool cooking) override
+		void StartUp(bool cooking) 
 		{
 			PHYSICS_INIT_DESC initDesc;
 			initDesc.initCooking = cooking;
 
-			Physics::startUp<NullPhysics>(initDesc);
+			startUp<NullPhysics>(initDesc);
 		}
 
-		void shutDown() override
+		void shutDown() 
 		{
-			Physics::shutDown();
+			shutDown();
 		}
 	};
 

@@ -35,36 +35,36 @@ namespace bs
 		 *			When ray is parallel to the rectangle there are two sets of nearest points but only one the set nearest
 		 *			to the ray origin is returned.
 		 */
-		std::pair<std::array<Vector3, 2>, float> getNearestPoint(const Ray& ray) const;
+		std::pair<std::array<Vector3, 2>, float> GetNearestPoint(const Ray& ray) const;
 
 		/**
 		 * Find the nearest point on the rectangle to the provided point.
 		 *
 		 * @return	Nearest point and distance to nearest point.
 		 */
-		std::pair<Vector3, float> getNearestPoint(const Vector3& point) const;
+		std::pair<Vector3, float> GetNearestPoint(const Vector3& point) const;
 
 		/**
 		 * Ray/rectangle intersection.
 		 *
 		 * @return	Boolean result and distance to intersection point.
 		 */
-		std::pair<bool, float> intersects(const Ray& ray) const;
+		std::pair<bool, float> Intersects(const Ray& ray) const;
 
 		/** Gets the origin of the rectangle. */
-		const Vector3& getCenter() const { return mCenter; }
+		const Vector3& GetCenter() const { return mCenter; }
 
 		/** Returns the rectangle's horizontal axis. */
-		const Vector3& getAxisHorz() const { return mAxisHorz; }
+		const Vector3& GetAxisHorz() const { return mAxisHorz; }
 
 		/** Returns the rectangle's vertical axis. */
-		const Vector3& getAxisVert() const { return mAxisVert; }
+		const Vector3& GetAxisVert() const { return mAxisVert; }
 
 		/** Gets the extent of the rectangle along its horizontal axis. */
-		const float& getExtentHorz() const { return mExtentHorz; }
+		const float& GetExtentHorz() const { return mExtentHorz; }
 
 		/** Gets the extent of the rectangle along its vertical axis. */
-		const float& getExtentVertical() const { return mExtentVert; }
+		const float& GetExtentVertical() const { return mExtentVert; }
 
 	private:
 		Vector3 mCenter{BsZero};

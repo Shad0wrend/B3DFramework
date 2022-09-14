@@ -39,10 +39,10 @@ namespace bs
 		friend class SceneObject;
 
 		/** @copydoc CJoint::createInternal */
-		SPtr<Joint> createInternal() override;
+		SPtr<Joint> CreateInternal() ;
 
 		/** @copydoc CJoint::getLocalTransform */
-		void getLocalTransform(JointBody body, Vector3& position, Quaternion& rotation) override;
+		void GetLocalTransform(JointBody body, Vector3& position, Quaternion& rotation) ;
 
 		FIXED_JOINT_DESC mDesc;
 
@@ -51,8 +51,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class CFixedJointRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const ;
 
 	protected:
 		CFixedJoint(); // Serialization only

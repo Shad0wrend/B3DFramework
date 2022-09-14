@@ -5,7 +5,7 @@
 
 namespace bs { namespace ct
 {
-	INT32 GLSLAttribute::matchesName(const String& name)
+	INT32 GLSLAttribute::MatchesName(const String& name)
 	{
 		if (name.length() >= mName.length())
 		{
@@ -19,7 +19,7 @@ namespace bs { namespace ct
 		return -1;
 	}
 
-	Vector<VertexElement> GLSLParamParser::buildVertexDeclaration(GLuint glProgram)
+	Vector<VertexElement> GLSLParamParser::BuildVertexDeclaration(GLuint glProgram)
 	{
 		GLint numAttributes = 0;
 		glGetProgramiv(glProgram, GL_ACTIVE_ATTRIBUTES, &numAttributes);
@@ -41,9 +41,9 @@ namespace bs { namespace ct
 
 			VertexElementSemantic semantic = VES_POSITION;
 			UINT16 index = 0;
-			if (attribNameToElementSemantic(attributeName, semantic, index))
+			if (AttribNameToElementSemantic(attributeName, semantic, index))
 			{
-				VertexElementType type = glTypeToAttributeType(attribType);
+				VertexElementType type = GlTypeToAttributeType(attribType);
 				UINT32 slot = glGetAttribLocation(glProgram, attributeName);
 				BS_CHECK_GL_ERROR();
 
@@ -65,7 +65,7 @@ namespace bs { namespace ct
 		return elementList;
 	}
 
-	UINT32 GLSLParamParser::calcInterfaceBlockElementSizeAndOffset(GpuParamDataType type, UINT32 arraySize, UINT32& offset)
+	UINT32 GLSLParamParser::CalcInterfaceBlockElementSizeAndOffset(GpuParamDataType type, UINT32 arraySize, UINT32& offset)
 	{
 		const GpuParamDataTypeInfo& typeInfo = bs::GpuParams::PARAM_SIZES.lookup[type];
 		UINT32 size = (typeInfo.baseTypeSize * typeInfo.numColumns * typeInfo.numRows) / 4;
@@ -102,7 +102,7 @@ namespace bs { namespace ct
 			return size;
 	}
 
-	VertexElementType GLSLParamParser::glTypeToAttributeType(GLenum glType)
+	VertexElementType GLSLParamParser::GlTypeToAttributeType(GLenum glType)
 	{
 		switch (glType)
 		{
@@ -137,7 +137,7 @@ namespace bs { namespace ct
 		return VET_FLOAT4;
 	}
 
-	bool GLSLParamParser::attribNameToElementSemantic(const String& name, VertexElementSemantic& semantic, UINT16& index)
+	bool GLSLParamParser::AttribNameToElementSemantic(const String& name, VertexElementSemantic& semantic, UINT16& index)
 	{
 		static GLSLAttribute attributes[] =
 		{
@@ -167,7 +167,7 @@ namespace bs { namespace ct
 			if (attribIndex != -1)
 			{
 				index = attribIndex;
-				semantic = attributes[i].getSemantic();
+				semantic = attributes[i].GetSemantic();
 				return true;
 			}
 		}
@@ -175,7 +175,7 @@ namespace bs { namespace ct
 		return false;
 	}
 
-	void GLSLParamParser::buildUniformDescriptions(GLuint glProgram, GpuProgramType type, GpuParamDesc& returnParamDesc)
+	void GLSLParamParser::BuildUniformDescriptions(GLuint glProgram, GpuProgramType type, GpuParamDesc& returnParamDesc)
 	{
 		// Scan through the active uniform blocks
 		GLint maxBufferSize = 0;
@@ -200,7 +200,7 @@ namespace bs { namespace ct
 
 		GpuParamBlockDesc newGlobalBlockDesc;
 		newGlobalBlockDesc.slot = 0;
-		newGlobalBlockDesc.set = mapParameterToSet(type, ParamType::UniformBlock);
+		newGlobalBlockDesc.set = MapParameterToSet(type, ParamType::UniformBlock);
 		newGlobalBlockDesc.name = "BS_INTERNAL_Globals";
 		newGlobalBlockDesc.blockSize = 0;
 		newGlobalBlockDesc.isShareable = false;
@@ -702,7 +702,7 @@ namespace bs { namespace ct
 		bs_free(uniformName);
 	}
 
-	void GLSLParamParser::determineParamInfo(GpuParamDataDesc& desc, const String& paramName, GLuint programHandle, GLuint uniformIndex)
+	void GLSLParamParser::DetermineParamInfo(GpuParamDataDesc& desc, const String& paramName, GLuint programHandle, GLuint uniformIndex)
 	{
 		GLint arraySize;
 		glGetActiveUniformsiv(programHandle, 1, &uniformIndex, GL_UNIFORM_SIZE, &arraySize);
@@ -814,7 +814,7 @@ namespace bs { namespace ct
 			desc.arrayElementStride = desc.elementSize;
 	}
 
-	UINT32 GLSLParamParser::mapParameterToSet(GpuProgramType progType, ParamType paramType)
+	UINT32 GLSLParamParser::MapParameterToSet(GpuProgramType progType, ParamType paramType)
 	{
 		UINT32 progTypeIdx = (UINT32)progType;
 		UINT32 paramTypeIdx = (UINT32)paramType;

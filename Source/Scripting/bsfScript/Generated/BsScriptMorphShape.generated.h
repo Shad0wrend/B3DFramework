@@ -16,10 +16,10 @@ namespace bs
 
 		ScriptMorphShape(MonoObject* managedInstance, const SPtr<MorphShape>& value);
 
-		static MonoObject* create(const SPtr<MorphShape>& value);
+		static MonoObject* Create(const SPtr<MorphShape>& value);
 
 	private:
-		static MonoString* Internal_getName(ScriptMorphShape* thisPtr);
-		static float Internal_getWeight(ScriptMorphShape* thisPtr);
+		static MonoString* InternalGetName(ScriptMorphShape* thisPtr);
+		static float InternalGetWeight(ScriptMorphShape* thisPtr);
 	};
 }

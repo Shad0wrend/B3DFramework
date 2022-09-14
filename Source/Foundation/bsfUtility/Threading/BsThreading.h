@@ -67,8 +67,8 @@ namespace bs
 	public:
 		LockingPolicy() = default;
 
-		void lock() { };
-		void unlock() { }
+		void Lock() { };
+		void Unlock() { }
 	};
 
 	/** Specialization of LockingPolicy that uses a mutex for locking. */
@@ -80,12 +80,12 @@ namespace bs
 			:mLock(mMutex, std::defer_lock)
 		{ }
 
-		void lock()
+		void Lock()
 		{
 			mLock.lock();
 		};
 
-		void unlock()
+		void Unlock()
 		{
 			mLock.unlock();
 		}
@@ -94,7 +94,7 @@ namespace bs
 		friend class ScopedLock<true>;
 
 		Mutex mMutex;
-		Lock mLock;
+		::bs::Lock mLock;
 	};
 
 	/** Scoped lock that performs no locking internally. Can only be used with a LockingPolicy. */

@@ -22,7 +22,7 @@ namespace bs
 		ParticleSetData(UINT32 capacity)
 			:capacity(capacity)
 		{
-			allocate();
+			Allocate();
 		}
 
 		/**
@@ -32,14 +32,14 @@ namespace bs
 		ParticleSetData(UINT32 capacity, const ParticleSetData& other)
 			:capacity(capacity)
 		{
-			allocate();
-			copy(other);
+			Allocate();
+			Copy(other);
 		}
 
 		/** Moves data from @p other to this set. */
 		ParticleSetData(ParticleSetData&& other) noexcept
 		{
-			move(other);
+			Move(other);
 		}
 
 		/** Moves data from @p other to this set. */
@@ -47,8 +47,8 @@ namespace bs
 		{
 			if(this != &other)
 			{
-				free();
-				move(other);
+				Free();
+				Move(other);
 			}
 			
 			return *this;
@@ -56,7 +56,7 @@ namespace bs
 
 		~ParticleSetData()
 		{
-			free();
+			Free();
 		}
 
 		UINT32 capacity = 0;
@@ -78,10 +78,10 @@ namespace bs
 		 * Allocates a new set of buffers with enough space to store number of particles equal to the current capacity. *
 		 * Called must ensure any previously allocated buffer is freed by calling free().
 		 */
-		void allocate()
+		void Allocate()
 		{
 			alloc.
-				reserve<Vector3>(capacity).
+				Reserve<Vector3>(capacity).
 				reserve<Vector3>(capacity).
 				reserve<Vector3>(capacity).
 				reserve<Vector3>(capacity).
@@ -92,7 +92,7 @@ namespace bs
 				reserve<UINT32>(capacity).
 				reserve<float>(capacity).
 				reserve<UINT32>(capacity).
-				init();
+				Init();
 
 			prevPosition = alloc.alloc<Vector3>(capacity);
 			position = alloc.alloc<Vector3>(capacity);
@@ -108,25 +108,25 @@ namespace bs
 		}
 
 		/** Frees the internal buffers. */
-		void free()
+		void Free()
 		{
-			if(prevPosition) alloc.free(prevPosition);
-			if(position) alloc.free(position);
-			if(velocity) alloc.free(velocity);
-			if(size) alloc.free(size);
-			if(rotation) alloc.free(rotation);
-			if(lifetime) alloc.free(lifetime);
-			if(initialLifetime) alloc.free(initialLifetime);
-			if(color) alloc.free(color);
-			if(seed) alloc.free(seed);
-			if(frame) alloc.free(frame);
-			if(indices) alloc.free(indices);
+			if(prevPosition) alloc.Free(prevPosition);
+			if(position) alloc.Free(position);
+			if(velocity) alloc.Free(velocity);
+			if(size) alloc.Free(size);
+			if(rotation) alloc.Free(rotation);
+			if(lifetime) alloc.Free(lifetime);
+			if(initialLifetime) alloc.Free(initialLifetime);
+			if(color) alloc.Free(color);
+			if(seed) alloc.Free(seed);
+			if(frame) alloc.Free(frame);
+			if(indices) alloc.Free(indices);
 
-			alloc.clear();
+			alloc.Clear();
 		}
 
 		/** Transfers ownership of @p other internal buffers to this object. */
-		void move(ParticleSetData& other)
+		void Move(ParticleSetData& other)
 		{
 			prevPosition = std::exchange(other.prevPosition, nullptr);
 			position = std::exchange(other.position, nullptr);
@@ -145,7 +145,7 @@ namespace bs
 		}
 
 		/** Copies data from @p other buffers to this object. */
-		void copy(const ParticleSetData& other)
+		void Copy(const ParticleSetData& other)
 		{
 			assert(capacity >= other.capacity);
 
@@ -185,7 +185,7 @@ namespace bs
 		 * persistent and can become invalid after a call to freeParticle(). Returns the index to the first allocated
 		 * particle.
 		 */
-		UINT32 allocParticles(UINT32 count)
+		UINT32 AllocParticles(UINT32 count)
 		{
 			const UINT32 particleIdx = mCount;
 			mCount += count;
@@ -208,7 +208,7 @@ namespace bs
 		}
 
 		/** Deallocates a particle. Can invalidate particle indices. */
-		void freeParticle(UINT32 idx)
+		void FreeParticle(UINT32 idx)
 		{
 			// Note: We always keep the active particles sequential. This makes it faster to iterate over all particles, but
 			// increases the cost when removing particles. Considering iteration should happen many times per-particle,
@@ -237,28 +237,28 @@ namespace bs
 		}
 
 		/** Frees all active partices past the provided particle count (0 to clear all particles). */
-		void clear(UINT32 numPartices = 0)
+		void Clear(UINT32 numPartices = 0)
 		{
 			if(mCount > numPartices)
 				mCount = numPartices;
 		}
 
 		/** Returns all data about the particles. Active particles are always sequential at the start of the buffer. */
-		ParticleSetData& getParticles() { return mParticles; }
+		ParticleSetData& GetParticles() { return mParticles; }
 
 		/** Returns all data about the particles. Active particles are always sequential at the start of the buffer. */
-		const ParticleSetData& getParticles() const { return mParticles; }
+		const ParticleSetData& GetParticles() const { return mParticles; }
 
 		/** Returns the number of particles that are currently active. */
-		UINT32 getParticleCount() const { return mCount; }
+		UINT32 GetParticleCount() const { return mCount; }
 
 		/**
 		 * Calculates the size of a texture required for storing the data of this particle set. The texture is assumed
 		 * to be square.
 		 */
-		UINT32 determineTextureSize() const
+		UINT32 DetermineTextureSize() const
 		{
-			const UINT32 count = std::max(2U, getParticleCount());
+			const UINT32 count = std::max(2U, GetParticleCount());
 
 			UINT32 width = Bitwise::nextPow2(count);
 			UINT32 height = 1;

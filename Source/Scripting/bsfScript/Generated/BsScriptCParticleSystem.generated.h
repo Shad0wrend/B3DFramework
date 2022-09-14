@@ -18,16 +18,16 @@ namespace bs
 		ScriptCParticleSystem(MonoObject* managedInstance, const GameObjectHandle<CParticleSystem>& value);
 
 	private:
-		static void Internal_setSettings(ScriptCParticleSystem* thisPtr, MonoObject* settings);
-		static MonoObject* Internal_getSettings(ScriptCParticleSystem* thisPtr);
-		static void Internal_setGpuSimulationSettings(ScriptCParticleSystem* thisPtr, MonoObject* settings);
-		static MonoObject* Internal_getGpuSimulationSettings(ScriptCParticleSystem* thisPtr);
-		static void Internal_setEmitters(ScriptCParticleSystem* thisPtr, MonoArray* emitters);
-		static MonoArray* Internal_getEmitters(ScriptCParticleSystem* thisPtr);
-		static void Internal_setEvolvers(ScriptCParticleSystem* thisPtr, MonoArray* evolvers);
-		static MonoArray* Internal_getEvolvers(ScriptCParticleSystem* thisPtr);
-		static void Internal_setLayer(ScriptCParticleSystem* thisPtr, uint64_t layer);
-		static uint64_t Internal_getLayer(ScriptCParticleSystem* thisPtr);
-		static bool Internal__togglePreviewMode(ScriptCParticleSystem* thisPtr, bool enabled);
+		static void InternalSetSettings(ScriptCParticleSystem* thisPtr, MonoObject* settings);
+		static MonoObject* InternalGetSettings(ScriptCParticleSystem* thisPtr);
+		static void InternalSetGpuSimulationSettings(ScriptCParticleSystem* thisPtr, MonoObject* settings);
+		static MonoObject* InternalGetGpuSimulationSettings(ScriptCParticleSystem* thisPtr);
+		static void InternalSetEmitters(ScriptCParticleSystem* thisPtr, MonoArray* emitters);
+		static MonoArray* InternalGetEmitters(ScriptCParticleSystem* thisPtr);
+		static void InternalSetEvolvers(ScriptCParticleSystem* thisPtr, MonoArray* evolvers);
+		static MonoArray* InternalGetEvolvers(ScriptCParticleSystem* thisPtr);
+		static void InternalSetLayer(ScriptCParticleSystem* thisPtr, uint64_t layer);
+		static uint64_t InternalGetLayer(ScriptCParticleSystem* thisPtr);
+		static bool InternalTogglePreviewMode(ScriptCParticleSystem* thisPtr, bool enabled);
 	};
 }

@@ -23,13 +23,13 @@ namespace bs
 		mTimeScale = 1.0f / timeInterval;
 	}
 
-	void LookupTable::evaluate(float t, const float*& left, const float*& right, float& fraction) const
+	void LookupTable::Evaluate(float t, const float*& left, const float*& right, float& fraction) const
 	{
 		t -= mTimeStart;
 		t *= mTimeScale;
 
 		const auto index = (uint32_t)t;
-		fraction =  Math::frac(t);
+		fraction =  Math::Frac(t);
 
 		const uint32_t leftIdx = std::min(index, mNumSamples - 1);
 		const uint32_t rightIdx = std::min(index + 1, mNumSamples - 1);
@@ -38,7 +38,7 @@ namespace bs
 		right = &mValues[rightIdx * mSampleSize];
 	}
 
-	const float* LookupTable::getSample(uint32_t idx) const
+	const float* LookupTable::GetSample(uint32_t idx) const
 	{
 		if(mNumSamples == 0)
 			return nullptr;

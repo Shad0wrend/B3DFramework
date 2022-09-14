@@ -21,11 +21,11 @@ namespace bs
 		IntermediateSerializer();
 
 		/** Encodes an IReflectable object into an intermediate representation. */
-		SPtr<SerializedObject> encode(IReflectable* object, SerializedObjectEncodeFlags flags,
+		SPtr<SerializedObject> Encode(IReflectable* object, SerializedObjectEncodeFlags flags,
 			SerializationContext* context = nullptr);
 
 		/** Decodes an intermediate representation of a serialized object into the actual object. */
-		SPtr<IReflectable> decode(const SerializedObject* serializedObject,
+		SPtr<IReflectable> Decode(const SerializedObject* serializedObject,
 			SerializationContext* context = nullptr);
 
 		/**
@@ -58,10 +58,10 @@ namespace bs
 		};
 
 		/**	Decodes a single IReflectable object. */
-		void decodeEntry(const SPtr<IReflectable>& object, const SerializedObject* serializableObject);
+		void DecodeEntry(const SPtr<IReflectable>& object, const SerializedObject* serializableObject);
 
 		/** Encodes a single IReflectable object. */
-		static SPtr<SerializedObject> encodeEntry(IReflectable* object, SerializedObjectEncodeFlags flags,
+		static SPtr<SerializedObject> EncodeEntry(IReflectable* object, SerializedObjectEncodeFlags flags,
 			SerializationContext* context, FrameAlloc* alloc);
 
 		UnorderedMap<const SerializedObject*, ObjectToDecode> mObjectMap;

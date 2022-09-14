@@ -22,7 +22,7 @@ namespace bs { namespace ct
 		:mDevice(device), mClearQuadIB(nullptr), mClearQuadVB(nullptr),
 		mClearQuadIL(nullptr), mClearQuadVS(nullptr), mClearQuadPS(nullptr)
 	{
-		initClearQuadResources();
+		InitClearQuadResources();
 	}
 
 	D3D11RenderUtility::~D3D11RenderUtility()
@@ -34,34 +34,34 @@ namespace bs { namespace ct
 		SAFE_RELEASE(mClearQuadVB);
 	}
 
-	void D3D11RenderUtility::drawClearQuad(UINT32 clearBuffers, const Color& color, float depth, UINT16 stencil)
+	void D3D11RenderUtility::DrawClearQuad(UINT32 clearBuffers, const Color& color, float depth, UINT16 stencil)
 	{
 		// Set states
 		if((clearBuffers & FBT_COLOR) != 0)
 		{
 			D3D11BlendState* d3d11BlendState = static_cast<D3D11BlendState*>(const_cast<BlendState*>(mClearQuadBlendStateYesC.get()));
-			mDevice->getImmediateContext()->OMSetBlendState(d3d11BlendState->getInternal(), nullptr, 0xFFFFFFFF);
+			mDevice->GetImmediateContext()->OMSetBlendState(d3d11BlendState->GetInternal(), nullptr, 0xFFFFFFFF);
 		}
 		else
 		{
 			D3D11BlendState* d3d11BlendState = static_cast<D3D11BlendState*>(const_cast<BlendState*>(mClearQuadBlendStateNoC.get()));
-			mDevice->getImmediateContext()->OMSetBlendState(d3d11BlendState->getInternal(), nullptr, 0xFFFFFFFF);
+			mDevice->GetImmediateContext()->OMSetBlendState(d3d11BlendState->GetInternal(), nullptr, 0xFFFFFFFF);
 		}
 
 		D3D11RasterizerState* d3d11RasterizerState = static_cast<D3D11RasterizerState*>(const_cast<RasterizerState*>(mClearQuadRasterizerState.get()));
-		mDevice->getImmediateContext()->RSSetState(d3d11RasterizerState->getInternal());
+		mDevice->GetImmediateContext()->RSSetState(d3d11RasterizerState->GetInternal());
 
 		if((clearBuffers & FBT_DEPTH) != 0)
 		{
 			if((clearBuffers & FBT_STENCIL) != 0)
 			{
 				D3D11DepthStencilState* d3d11DepthStencilState = static_cast<D3D11DepthStencilState*>(const_cast<DepthStencilState*>(mClearQuadDSStateYesD_YesS.get()));
-				mDevice->getImmediateContext()->OMSetDepthStencilState(d3d11DepthStencilState->getInternal(), stencil);
+				mDevice->GetImmediateContext()->OMSetDepthStencilState(d3d11DepthStencilState->GetInternal(), stencil);
 			}
 			else
 			{
 				D3D11DepthStencilState* d3d11DepthStencilState = static_cast<D3D11DepthStencilState*>(const_cast<DepthStencilState*>(mClearQuadDSStateYesD_NoS.get()));
-				mDevice->getImmediateContext()->OMSetDepthStencilState(d3d11DepthStencilState->getInternal(), stencil);
+				mDevice->GetImmediateContext()->OMSetDepthStencilState(d3d11DepthStencilState->GetInternal(), stencil);
 			}
 		}
 		else
@@ -69,12 +69,12 @@ namespace bs { namespace ct
 			if((clearBuffers & FBT_STENCIL) != 0)
 			{
 				D3D11DepthStencilState* d3d11DepthStencilState = static_cast<D3D11DepthStencilState*>(const_cast<DepthStencilState*>(mClearQuadDSStateNoD_YesS.get()));
-				mDevice->getImmediateContext()->OMSetDepthStencilState(d3d11DepthStencilState->getInternal(), stencil);
+				mDevice->GetImmediateContext()->OMSetDepthStencilState(d3d11DepthStencilState->GetInternal(), stencil);
 			}
 			else
 			{
 				D3D11DepthStencilState* d3d11DepthStencilState = static_cast<D3D11DepthStencilState*>(const_cast<DepthStencilState*>(mClearQuadDSStateNoD_NoS.get()));
-				mDevice->getImmediateContext()->OMSetDepthStencilState(d3d11DepthStencilState->getInternal(), stencil);
+				mDevice->GetImmediateContext()->OMSetDepthStencilState(d3d11DepthStencilState->GetInternal(), stencil);
 			}
 		}
 
@@ -109,28 +109,28 @@ namespace bs { namespace ct
 		mDevice->getImmediateContext()->DrawIndexed(6, 0, 0);
 	}
 
-	void D3D11RenderUtility::initClearQuadResources()
+	void D3D11RenderUtility::InitClearQuadResources()
 	{
 		BLEND_STATE_DESC blendStateDescYesC;
-		mClearQuadBlendStateYesC = RenderStateManager::instance().createBlendState(blendStateDescYesC);
+		mClearQuadBlendStateYesC = RenderStateManager::Instance().createBlendState(blendStateDescYesC);
 
 		BLEND_STATE_DESC blendStateDescNoC;
 		for(int i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
 			blendStateDescNoC.renderTargetDesc[i].renderTargetWriteMask = 0;
 
-		mClearQuadBlendStateNoC = RenderStateManager::instance().createBlendState(blendStateDescNoC);
+		mClearQuadBlendStateNoC = RenderStateManager::Instance().createBlendState(blendStateDescNoC);
 
 		DEPTH_STENCIL_STATE_DESC depthStateDescNoD_NoS;
 		depthStateDescNoD_NoS.depthReadEnable = false;
 		depthStateDescNoD_NoS.depthWriteEnable = false;
 		depthStateDescNoD_NoS.depthComparisonFunc = CMPF_ALWAYS_PASS;
-		mClearQuadDSStateNoD_NoS = RenderStateManager::instance().createDepthStencilState(depthStateDescNoD_NoS);
+		mClearQuadDSStateNoD_NoS = RenderStateManager::Instance().createDepthStencilState(depthStateDescNoD_NoS);
 
 		DEPTH_STENCIL_STATE_DESC depthStateDescYesD_NoS;
 		depthStateDescYesD_NoS.depthReadEnable = false;
 		depthStateDescYesD_NoS.depthWriteEnable = true;
 		depthStateDescYesD_NoS.depthComparisonFunc = CMPF_ALWAYS_PASS;
-		mClearQuadDSStateYesD_NoS = RenderStateManager::instance().createDepthStencilState(depthStateDescYesD_NoS);
+		mClearQuadDSStateYesD_NoS = RenderStateManager::Instance().createDepthStencilState(depthStateDescYesD_NoS);
 
 		DEPTH_STENCIL_STATE_DESC depthStateDescYesD_YesS;
 		depthStateDescYesD_YesS.depthReadEnable = false;
@@ -139,7 +139,7 @@ namespace bs { namespace ct
 		depthStateDescYesD_YesS.stencilEnable = true;
 		depthStateDescYesD_YesS.frontStencilComparisonFunc = CMPF_ALWAYS_PASS;
 		depthStateDescYesD_YesS.frontStencilPassOp = SOP_REPLACE;
-		mClearQuadDSStateYesD_YesS = RenderStateManager::instance().createDepthStencilState(depthStateDescYesD_YesS);
+		mClearQuadDSStateYesD_YesS = RenderStateManager::Instance().createDepthStencilState(depthStateDescYesD_YesS);
 
 		DEPTH_STENCIL_STATE_DESC depthStateDescNoD_YesS;
 		depthStateDescNoD_YesS.depthReadEnable = false;
@@ -147,10 +147,10 @@ namespace bs { namespace ct
 		depthStateDescNoD_YesS.depthComparisonFunc = CMPF_ALWAYS_PASS;
 		depthStateDescNoD_YesS.stencilEnable = true;
 		depthStateDescNoD_YesS.frontStencilComparisonFunc = CMPF_ALWAYS_PASS;
-		mClearQuadDSStateNoD_YesS = RenderStateManager::instance().createDepthStencilState(depthStateDescNoD_YesS);
+		mClearQuadDSStateNoD_YesS = RenderStateManager::Instance().createDepthStencilState(depthStateDescNoD_YesS);
 
 		RASTERIZER_STATE_DESC rasterizerStateDesc;
-		mClearQuadRasterizerState = RenderStateManager::instance().createRasterizerState(rasterizerStateDesc);
+		mClearQuadRasterizerState = RenderStateManager::Instance().createRasterizerState(rasterizerStateDesc);
 
 		String vsShaderCode = "										\
 						void main(									\

@@ -197,10 +197,10 @@ namespace bs { namespace ct
 		bool is3D = false;
 
 		/** Checks if the element has all the properties required for rendering. */
-		bool isValid() const { return !is3D || mesh != nullptr; }
+		bool IsValid() const { return !is3D || mesh != nullptr; }
 
 		/** @copydoc RenderElement::draw */
-		void draw() const override;
+		void Draw() const override;
 	};
 
 	/** Contains information about a ParticleSystem, used by the Renderer. */
@@ -240,7 +240,7 @@ namespace bs { namespace ct
 		TextureRowAllocation sizeScaleFrameIdxCurveAlloc;
 
 		/** Updates the per-object GPU buffer according to the currently set properties. */
-		void updatePerObjectBuffer();
+		void UpdatePerObjectBuffer();
 		
 		/**
 		 * Binds all the GPU program inputs required for rendering a particle system that is being simulated by the CPU.
@@ -248,7 +248,7 @@ namespace bs { namespace ct
 		 * @param[in]	renderData		Render data representing the state of a CPU simulated particle system.
 		 * @param[in]	view			View the particle system is being rendered from.
 		 */
-		void bindCPUSimulatedInputs(const ParticleRenderData* renderData, const RendererView& view) const;
+		void BindCpuSimulatedInputs(const ParticleRenderData* renderData, const RendererView& view) const;
 
 		/**
 		 * Binds all the GPU program inputs required for rendering a particle system that is being simulated by the GPU.
@@ -256,7 +256,7 @@ namespace bs { namespace ct
 		 * @param[in]	gpuSimResources	Resources containing global data for all GPU simulated particle systems.
 		 * @param[in]	view			View the particle system is being rendered from.
 		 */
-		void bindGPUSimulatedInputs(const GpuParticleResources& gpuSimResources, const RendererView& view) const;
+		void BindGpuSimulatedInputs(const GpuParticleResources& gpuSimResources, const RendererView& view) const;
 	};
 
 	/** Default material used for rendering particles, when no other is available. */
@@ -311,23 +311,23 @@ namespace bs { namespace ct
 		 * Returns a set of textures used for particle billboard rendering. The textures will contain the pixel data from
 		 * the provided @p simulationData. Returned textures will remain in-use until the next call to clear().
 		 */
-		const ParticleBillboardTextures* alloc(const ParticleBillboardRenderData& simulationData);
+		const ParticleBillboardTextures* Alloc(const ParticleBillboardRenderData& simulationData);
 
 		/**
 		 * Returns a set of textures used for particle mesh rendering. The textures will contain the pixel data from
 		 * the provided @p simulationData. Returned textures will remain in-use until the next call to clear().
 		 */
-		const ParticleMeshTextures* alloc(const ParticleMeshRenderData& simulationData);
+		const ParticleMeshTextures* Alloc(const ParticleMeshRenderData& simulationData);
 
 		/** Frees all allocates textures and makes them available for re-use. */
-		void clear();
+		void Clear();
 
 	private:
 		/** Creates a new set of textures for billboard rendering, with @p size width and height. */
-		ParticleBillboardTextures* createNewBillboardTextures(UINT32 size);
+		ParticleBillboardTextures* CreateNewBillboardTextures(UINT32 size);
 
 		/** Creates a new set of textures for mesh rendering, with @p size width and height. */
-		ParticleMeshTextures* createNewMeshTextures(UINT32 size);
+		ParticleMeshTextures* CreateNewMeshTextures(UINT32 size);
 
 		UnorderedMap<UINT32, BillboardBuffersPerSize> mBillboardBufferList;
 		PoolAlloc<sizeof(ParticleBillboardTextures), 32> mBillboardAlloc;
@@ -348,10 +348,10 @@ namespace bs { namespace ct
 		 * Returns a texture pool object that can be used for allocating textures required for holding particle system
 		 * properties used for billboard particle rendering (position/color/etc).
 		 */
-		ParticleTexturePool& getTexturePool() { return mTexturePool; }
+		ParticleTexturePool& GetTexturePool() { return mTexturePool; }
 
 		/** Draws @p count quads used for billboard rendering, using instanced drawing. */
-		void drawBillboards(UINT32 count);
+		void DrawBillboards(UINT32 count);
 
 		/**
 		 * Updates the provided indices buffer so they particles are sorted from further to nearest with respect to
@@ -365,7 +365,7 @@ namespace bs { namespace ct
 		 * @param[out]	indices			Index buffer that will be sorted according to the particle distance, in descending
 		 *								order.
 		 */
-		static void sortByDistance(const Vector3& refPoint, const PixelData& positions, UINT32 numParticles,
+		static void SortByDistance(const Vector3& refPoint, const PixelData& positions, UINT32 numParticles,
 			UINT32 stride, Vector<UINT32>& indices);
 	private:
 		ParticleTexturePool mTexturePool;

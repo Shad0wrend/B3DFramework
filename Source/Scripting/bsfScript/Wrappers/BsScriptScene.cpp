@@ -37,38 +37,38 @@ namespace bs
 
 	void ScriptScene::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_GetRoot", (void*)&ScriptScene::internal_GetRoot);
-		metaData.scriptClass->addInternalCall("Internal_GetMainCameraSO", (void*)&ScriptScene::internal_GetMainCameraSO);
+		metaData.scriptClass->AddInternalCall("Internal_GetRoot", (void*)&ScriptScene::InternalGetRoot);
+		metaData.scriptClass->AddInternalCall("Internal_GetMainCameraSO", (void*)&ScriptScene::InternalGetMainCameraSo);
 
 #if BS_IS_BANSHEE3D
-		metaData.scriptClass->addInternalCall("Internal_SetActiveScene", (void*)&ScriptScene::internal_SetActiveScene);
-		metaData.scriptClass->addInternalCall("Internal_ClearScene", (void*)&ScriptScene::internal_ClearScene);
+		metaData.scriptClass->AddInternalCall("Internal_SetActiveScene", (void*)&ScriptScene::InternalSetActiveScene);
+		metaData.scriptClass->AddInternalCall("Internal_ClearScene", (void*)&ScriptScene::InternalClearScene);
 
 		MonoMethod* updateMethod = metaData.scriptClass->getMethod("OnUpdate");
 		onUpdateThunk = (OnUpdateThunkDef)updateMethod->getThunk();
 #endif
 	}
 
-	void ScriptScene::startUp()
+	void ScriptScene::StartUp()
 	{
-		OnRefreshStartedConn = ScriptObjectManager::instance().onRefreshStarted.connect(&onRefreshStarted);
-		OnRefreshDomainLoadedConn = ScriptObjectManager::instance().onRefreshDomainLoaded.connect(&onRefreshDomainLoaded);
+		OnRefreshStartedConn = ScriptObjectManager::Instance().onRefreshStarted.connect(&onRefreshStarted);
+		OnRefreshDomainLoadedConn = ScriptObjectManager::Instance().onRefreshDomainLoaded.connect(&onRefreshDomainLoaded);
 	}
 
-	void ScriptScene::shutDown()
+	void ScriptScene::ShutDown()
 	{
 		OnRefreshStartedConn.disconnect();
 		OnRefreshDomainLoadedConn.disconnect();
 	}
 
-	void ScriptScene::update()
+	void ScriptScene::Update()
 	{
 #if BS_IS_BANSHEE3D
 		MonoUtil::invokeThunk(onUpdateThunk);
 #endif
 	}
 
-	void ScriptScene::setActiveScene(const HPrefab& prefab)
+	void ScriptScene::SetActiveScene(const HPrefab& prefab)
 	{
 		if (prefab.isLoaded(false))
 		{
@@ -87,7 +87,7 @@ namespace bs
 		}
 	}
 
-	void ScriptScene::onRefreshStarted()
+	void ScriptScene::OnRefreshStarted()
 	{
 		MonoMethod* uuidMethod = metaData.scriptClass->getMethod("GetSceneUUID");
 		if (uuidMethod != nullptr)
@@ -102,7 +102,7 @@ namespace bs
 			sIsGenericPrefab = *(bool*)MonoUtil::unbox(genericPrefabMethod->invoke(nullptr, nullptr));
 	}
 
-	void ScriptScene::onRefreshDomainLoaded()
+	void ScriptScene::OnRefreshDomainLoaded()
 	{
 		MonoMethod* uuidMethod = metaData.scriptClass->getMethod("SetSceneUUID", 1);
 		if (uuidMethod != nullptr)
@@ -130,33 +130,33 @@ namespace bs
 		}
 	}
 
-	MonoObject* ScriptScene::internal_GetRoot()
+	MonoObject* ScriptScene::InternalGetRoot()
 	{
-		HSceneObject root = SceneManager::instance().getMainScene()->getRoot();
+		HSceneObject root = SceneManager::Instance().getMainScene()->getRoot();
 
-		ScriptSceneObject* scriptRoot = ScriptGameObjectManager::instance().getOrCreateScriptSceneObject(root);
+		ScriptSceneObject* scriptRoot = ScriptGameObjectManager::Instance().getOrCreateScriptSceneObject(root);
 		return scriptRoot->getManagedInstance();
 	}
 
-	MonoObject* ScriptScene::internal_GetMainCameraSO()
+	MonoObject* ScriptScene::InternalGetMainCameraSo()
 	{
 		SPtr<Camera> camera = gSceneManager().getMainCamera();
 		HSceneObject so = gSceneManager().GetActorSOInternal(camera);
 		if (so == nullptr)
 			return nullptr;
 
-		ScriptSceneObject* cameraSo = ScriptGameObjectManager::instance().getOrCreateScriptSceneObject(so);
+		ScriptSceneObject* cameraSo = ScriptGameObjectManager::Instance().getOrCreateScriptSceneObject(so);
 		return cameraSo->getManagedInstance();
 	}
 
 #if BS_IS_BANSHEE3D
-	void ScriptScene::internal_SetActiveScene(ScriptPrefab* scriptPrefab)
+	void ScriptScene::InternalSetActiveScene(ScriptPrefab* scriptPrefab)
 	{
 		HPrefab prefab = scriptPrefab->getHandle();
 		setActiveScene(prefab);
 	}
 
-	void ScriptScene::internal_ClearScene()
+	void ScriptScene::InternalClearScene()
 	{
 		gSceneManager().clearScene();
 	}

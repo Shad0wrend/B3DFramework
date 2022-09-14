@@ -24,47 +24,47 @@ namespace bs
 
 		/** @copydoc DistanceJoint::getDistance */
 		BS_SCRIPT_EXPORT(n:Distance,pr:getter)
-		float getDistance() const;
+		float GetDistance() const;
 
 		/** @copydoc DistanceJoint::getMinDistance */
 		BS_SCRIPT_EXPORT(n:MinDistance,pr:getter)
-		float getMinDistance() const;
+		float GetMinDistance() const;
 
 		/** @copydoc DistanceJoint::setMinDistance */
 		BS_SCRIPT_EXPORT(n:MinDistance,pr:setter)
-		void setMinDistance(float value);
+		void SetMinDistance(float value);
 
 		/** @copydoc DistanceJoint::getMaxDistance */
 		BS_SCRIPT_EXPORT(n:MaxDistance,pr:getter)
-		float getMaxDistance() const;
+		float GetMaxDistance() const;
 
 		/** @copydoc DistanceJoint::setMaxDistance */
 		BS_SCRIPT_EXPORT(n:MaxDistance,pr:setter)
-		void setMaxDistance(float value);
+		void SetMaxDistance(float value);
 
 		/** @copydoc DistanceJoint::getTolerance */
 		BS_SCRIPT_EXPORT(n:Tolerance,pr:getter)
-		float getTolerance() const;
+		float GetTolerance() const;
 
 		/** @copydoc DistanceJoint::setTolerance */
 		BS_SCRIPT_EXPORT(n:Tolerance,pr:setter)
-		void setTolerance(float value);
+		void SetTolerance(float value);
 
 		/** @copydoc DistanceJoint::getSpring */
 		BS_SCRIPT_EXPORT(n:Spring,pr:getter)
-		Spring getSpring() const;
+		Spring GetSpring() const;
 
 		/** @copydoc DistanceJoint::setSpring */
 		BS_SCRIPT_EXPORT(n:Spring,pr:setter)
-		void setSpring(const Spring& value);
+		void SetSpring(const Spring& value);
 
 		/** @copydoc DistanceJoint::setFlag */
 		BS_SCRIPT_EXPORT(n:SetFlag)
-		void setFlag(DistanceJointFlag flag, bool enabled);
+		void SetFlag(DistanceJointFlag flag, bool enabled);
 
 		/** @copydoc DistanceJoint::hasFlag */
 		BS_SCRIPT_EXPORT(n:HasFlag)
-		bool hasFlag(DistanceJointFlag flag) const;
+		bool HasFlag(DistanceJointFlag flag) const;
 
 		/** @name Internal
 		 *  @{
@@ -82,7 +82,7 @@ namespace bs
 		friend class SceneObject;
 
 		/** @copydoc CJoint::createInternal */
-		SPtr<Joint> createInternal() override;
+		SPtr<Joint> CreateInternal() ;
 
 		DISTANCE_JOINT_DESC mDesc;
 
@@ -91,8 +91,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class CDistanceJointRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const ;
 
 	protected:
 		CDistanceJoint(); // Serialization only

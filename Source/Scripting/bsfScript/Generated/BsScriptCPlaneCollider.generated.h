@@ -18,9 +18,9 @@ namespace bs
 		ScriptCPlaneCollider(MonoObject* managedInstance, const GameObjectHandle<CPlaneCollider>& value);
 
 	private:
-		static void Internal_setNormal(ScriptCPlaneCollider* thisPtr, Vector3* normal);
-		static void Internal_getNormal(ScriptCPlaneCollider* thisPtr, Vector3* __output);
-		static void Internal_setDistance(ScriptCPlaneCollider* thisPtr, float distance);
-		static float Internal_getDistance(ScriptCPlaneCollider* thisPtr);
+		static void InternalSetNormal(ScriptCPlaneCollider* thisPtr, Vector3* normal);
+		static void InternalGetNormal(ScriptCPlaneCollider* thisPtr, Vector3* __output);
+		static void InternalSetDistance(ScriptCPlaneCollider* thisPtr, float distance);
+		static float InternalGetDistance(ScriptCPlaneCollider* thisPtr);
 	};
 }

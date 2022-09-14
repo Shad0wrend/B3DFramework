@@ -67,7 +67,7 @@ namespace bs
 		 *
 		 * @return				Clipped sprite bounds.
 		 */
-		Rect2I getBounds(const Vector2I& offset, const Rect2I& clipRect) const;
+		Rect2I GetBounds(const Vector2I& offset, const Rect2I& clipRect) const;
 
 		/**
 		 * Returns the number of separate render elements in the sprite. Normally this is 1, but some sprites may consist
@@ -75,7 +75,7 @@ namespace bs
 		 * 			
 		 * @return	The number render elements.
 		 */
-		UINT32 getNumRenderElements() const { return (UINT32)mCachedRenderElements.size(); }
+		UINT32 GetNumRenderElements() const { return (UINT32)mCachedRenderElements.size(); }
 
 		/**
 		 * Returns information about the number of vertices and indices the required render element requires, as well
@@ -87,7 +87,7 @@ namespace bs
 		 * @param[in]		idx			Index of the render element to return the information for.
 		 * @param[out]		info		Information about the render element.
 		 */
-		void getRenderElementInfo(UINT32 idx, SpriteRenderElement& info) const;
+		void GetRenderElementInfo(UINT32 idx, SpriteRenderElement& info) const;
 
 		/**
 		 * Fill the pre-allocated vertex, uv and index buffers with the mesh data for the specified render element.
@@ -111,7 +111,7 @@ namespace bs
 		 * @see		getNumRenderElements()
 		 * @see		getNumQuads()
 		 */
-		UINT32 fillBuffer(UINT8* vertices, UINT8* uv, UINT32* indices, UINT32 vertexOffset, UINT32 indexOffset,
+		UINT32 FillBuffer(UINT8* vertices, UINT8* uv, UINT32* indices, UINT32 vertexOffset, UINT32 indexOffset,
 			UINT32 maxNumVerts, UINT32 maxNumIndices, UINT32 vertexStride, UINT32 indexStride, UINT32 renderElementIdx,
 			const Vector2I& offset, const Rect2I& clipRect, bool clip = true) const;
 
@@ -126,7 +126,7 @@ namespace bs
 		 *								buffer).
 		 * @param[in]		clipRect	Rectangle to clip the geometry to.
 		 */
-		static void clipQuadsToRect(UINT8* vertices, UINT8* uv, UINT32 numQuads, UINT32 vertStride, const Rect2I& clipRect);
+		static void ClipQuadsToRect(UINT8* vertices, UINT8* uv, UINT32 numQuads, UINT32 vertStride, const Rect2I& clipRect);
 
 		/**
 		 * Clips the provided 2D vertices to the provided clip rectangle. The vertices can be arbitrary triangles.
@@ -143,20 +143,20 @@ namespace bs
 		 *								generated and need to be stored. Vertices are always generate in tuples of three,
 		 *								forming a single triangle.
 		 */
-		static void clipTrianglesToRect(UINT8* vertices, UINT8* uv, UINT32 numTris, UINT32 vertStride,
+		static void ClipTrianglesToRect(UINT8* vertices, UINT8* uv, UINT32 numTris, UINT32 vertStride,
 			const Rect2I& clipRect, const std::function<void(Vector2*, Vector2*, UINT32)>& writeCallback);
 	protected:
 		/**	Returns the offset needed to move the sprite in order for it to respect the provided anchor. */
-		static Vector2I getAnchorOffset(SpriteAnchor anchor, UINT32 width, UINT32 height);
+		static Vector2I GetAnchorOffset(SpriteAnchor anchor, UINT32 width, UINT32 height);
 
 		/**	Calculates the bounds of all sprite vertices. */
-		void updateBounds() const;
+		void UpdateBounds() const;
 
 		mutable Rect2I mBounds;
 		mutable Vector<SpriteRenderElementData> mCachedRenderElements;
 	};
 
-	inline void Sprite::getRenderElementInfo(UINT32 idx, SpriteRenderElement& info) const
+	inline void Sprite::GetRenderElementInfo(UINT32 idx, SpriteRenderElement& info) const
 	{
 		SpriteRenderElementData& renderElement = mCachedRenderElements[idx];
 		

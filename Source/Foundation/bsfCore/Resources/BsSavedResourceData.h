@@ -23,13 +23,13 @@ namespace bs
 		SavedResourceData(const Vector<UUID>& dependencies, bool allowAsync, UINT32 compressionMethod);
 
 		/**	Returns a list of all resource dependencies. */
-		const Vector<UUID>& getDependencies() const { return mDependencies; }
+		const Vector<UUID>& GetDependencies() const { return mDependencies; }
 
 		/**	Returns true if this resource is allow to be asynchronously loaded. */
-		bool allowAsyncLoading() const { return mAllowAsync; }
+		bool AllowAsyncLoading() const { return mAllowAsync; }
 
 		/** Returns the method used for compressing the resource. 0 if none. */
-		UINT32 getCompressionMethod() const { return mCompressionMethod; }
+		UINT32 GetCompressionMethod() const { return mCompressionMethod; }
 
 	private:
 		Vector<UUID> mDependencies;
@@ -41,8 +41,8 @@ namespace bs
 	/************************************************************************/
 	public:
 		friend class SavedResourceDataRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const ;
 	};
 
 	/** @} */

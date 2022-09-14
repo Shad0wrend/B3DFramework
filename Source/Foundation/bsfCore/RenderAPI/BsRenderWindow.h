@@ -145,10 +145,10 @@ namespace bs
 		virtual ~RenderWindow() = default;
 
 		/**	Converts screen position into window local position. */
-		virtual Vector2I screenToWindowPos(const Vector2I& screenPos) const = 0;
+		virtual Vector2I ScreenToWindowPos(const Vector2I& screenPos) const = 0;
 
 		/**	Converts window local position to screen position. */
-		virtual Vector2I windowToScreenPos(const Vector2I& windowPos) const = 0;
+		virtual Vector2I WindowToScreenPos(const Vector2I& windowPos) const = 0;
 
 		/**	
 		 * Resize the window to specified width and height in pixels.
@@ -156,7 +156,7 @@ namespace bs
 		 * @param[in]	width		Width of the window in pixels.
 		 * @param[in]	height		Height of the window in pixels.
 		 */
-		virtual void resize(UINT32 width, UINT32 height);
+		virtual void Resize(UINT32 width, UINT32 height);
 
 		/**	
 		 * Move the window to specified screen coordinates.
@@ -166,78 +166,78 @@ namespace bs
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		virtual void move(INT32 left, INT32 top);
+		virtual void Move(INT32 left, INT32 top);
 
 		/**
 		 * Hides the window.
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		virtual void hide();
+		virtual void Hide();
 
 		/**
 		 * Shows a previously hidden window.
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		virtual void show();
+		virtual void Show();
 
 		/**
 		 * @copydoc ct::RenderWindow::minimize
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		virtual void minimize();
+		virtual void Minimize();
 
 		/**
 		 * @copydoc ct::RenderWindow::maximize
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		virtual void maximize();
+		virtual void Maximize();
 
 		/**
 		 * @copydoc ct::RenderWindow::restore
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		virtual void restore();
+		virtual void Restore();
 
 		/**
 		 * @copydoc ct::RenderWindow::setFullscreen(UINT32, UINT32, float, UINT32)
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		virtual void setFullscreen(UINT32 width, UINT32 height, float refreshRate = 60.0f, UINT32 monitorIdx = 0);
+		virtual void SetFullscreen(UINT32 width, UINT32 height, float refreshRate = 60.0f, UINT32 monitorIdx = 0);
 
 		/**
 		 * @copydoc ct::RenderWindow::setFullscreen(const VideoMode&)
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		virtual void setFullscreen(const VideoMode& videoMode);
+		virtual void SetFullscreen(const VideoMode& videoMode);
 
 		/**
 		 * @copydoc ct::RenderWindow::setWindowed
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		virtual void setWindowed(UINT32 width, UINT32 height);
+		virtual void SetWindowed(UINT32 width, UINT32 height);
 
 		/**	Retrieves a core implementation of a render window usable only from the core thread. */
-		SPtr<ct::RenderWindow> getCore() const;
+		SPtr<ct::RenderWindow> GetCore() const;
 
 		/**	Returns properties that describe the render window. */
-		const RenderWindowProperties& getProperties() const;
+		const RenderWindowProperties& GetProperties() const;
 
 		/** Closes and destroys the window. */
-		void destroy() override;
+		void Destroy() override;
 
 		/**
 		 * Creates a new render window using the specified options. Optionally makes the created window a child of another
 		 * window.
 		 */
-		static SPtr<RenderWindow> create(RENDER_WINDOW_DESC& desc, SPtr<RenderWindow> parentWindow = nullptr);
+		static SPtr<RenderWindow> Create(RENDER_WINDOW_DESC& desc, SPtr<RenderWindow> parentWindow = nullptr);
 
 		/** Triggers when the OS requests that the window is closed (e.g. user clicks on the X button in the title bar). */
 		Event<void()> onCloseRequested;
@@ -267,10 +267,10 @@ namespace bs
 		RenderWindow(const RENDER_WINDOW_DESC& desc, UINT32 windowId);
 
 		/** Returns render window properties that may be edited. */
-		RenderWindowProperties& getMutableProperties();
+		RenderWindowProperties& GetMutableProperties();
 
 		/**	Updates window properties from the synced property data. */
-		virtual void syncProperties() = 0;
+		virtual void SyncProperties() = 0;
 
 	protected:
 		RENDER_WINDOW_DESC mDesc;
@@ -281,8 +281,8 @@ namespace bs
 		/************************************************************************/
 	public:
 		friend class RenderWindowRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** @} */
@@ -310,14 +310,14 @@ namespace bs
 		 *
 		 * @note	If the exact provided mode isn't available, closest one is used instead.
 		 */
-		virtual void setFullscreen(UINT32 width, UINT32 height, float refreshRate = 60.0f, UINT32 monitorIdx = 0) { }
+		virtual void SetFullscreen(UINT32 width, UINT32 height, float refreshRate = 60.0f, UINT32 monitorIdx = 0) { }
 
 		/**
 		 * Switches the window to fullscreen mode. Child windows cannot go into fullscreen mode.
 		 *
 		 * @param[in]	videoMode	Mode retrieved from VideoModeInfo in RenderAPI.
 		 */
-		virtual void setFullscreen(const VideoMode& videoMode) { }
+		virtual void SetFullscreen(const VideoMode& videoMode) { }
 
 		/**
 		 * Switches the window to windowed mode.
@@ -325,31 +325,31 @@ namespace bs
 		 * @param[in]	width	Window width in pixels.
 		 * @param[in]	height	Window height in pixels.
 		 */
-		virtual void setWindowed(UINT32 width, UINT32 height) { }
+		virtual void SetWindowed(UINT32 width, UINT32 height) { }
 
 		/**	Hide or show the window. */
-		virtual void setHidden(bool hidden);
+		virtual void SetHidden(bool hidden);
 
 		/**
 		 * Makes the render target active or inactive. (for example in the case of a window, it will hide or restore the
 		 * window).
 		 */
-		virtual void setActive(bool state);
+		virtual void SetActive(bool state);
 
 		/**	Minimizes the window to the taskbar. */
-		virtual void minimize() { }
+		virtual void Minimize() { }
 
 		/**	Maximizes the window over the entire current screen. */
-		virtual void maximize() { }
+		virtual void Maximize() { }
 
 		/**	Restores the window to original position and size if it is minimized or maximized. */
-		virtual void restore() { }
+		virtual void Restore() { }
 
 		/**	Change the size of the window. */
-		virtual void resize(UINT32 width, UINT32 height) = 0;
+		virtual void Resize(UINT32 width, UINT32 height) = 0;
 
 		/**	Reposition the window. */
-		virtual void move(INT32 left, INT32 top) = 0;
+		virtual void Move(INT32 left, INT32 top) = 0;
 
 		/**
 		 * Enables or disables vertical synchronization. When enabled the system will wait for monitor refresh before
@@ -360,10 +360,10 @@ namespace bs
 		 * 						each monitor refresh, value of two means it will be performs for every second (half the
 		 * 						rate), and so on.
 		 */
-		virtual void setVSync(bool enabled, UINT32 interval = 1) = 0;
+		virtual void SetVSync(bool enabled, UINT32 interval = 1) = 0;
 
 		/**	Returns properties that describe the render window. */
-		const RenderWindowProperties& getProperties() const;
+		const RenderWindowProperties& GetProperties() const;
 
 		/** Notifies the window that a specific event occurred. Usually called by the platform specific main event loop. */
 		void NotifyWindowEventInternal(WindowEventType type);
@@ -380,10 +380,10 @@ namespace bs
 		 *
 		 * @note	Used for keeping up what are the most up to date settings.
 		 */
-		virtual RenderWindowProperties& getSyncedProperties() = 0;
+		virtual RenderWindowProperties& GetSyncedProperties() = 0;
 
 		/** Updates window properties from the synced property data. */
-		virtual void syncProperties() = 0;
+		virtual void SyncProperties() = 0;
 
 		RENDER_WINDOW_DESC mDesc;
 		SpinLock mLock;

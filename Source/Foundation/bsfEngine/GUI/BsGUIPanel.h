@@ -32,7 +32,7 @@ namespace bs
 		 *								depth outside of the range [depth - depthRangeMin, depth + depthRangeMax] it will
 		 *								be clamped to nearest extreme. Value of -1 means infinite range.
 		 */
-		void setDepthRange(INT16 depth = 0, UINT16 depthRangeMin = -1, UINT16 depthRangeMax = -1);
+		void SetDepthRange(INT16 depth = 0, UINT16 depthRangeMin = -1, UINT16 depthRangeMax = -1);
 
 		/**
 		 * Creates a new GUI panel.
@@ -47,14 +47,14 @@ namespace bs
 		 *								depth outside of the range [depth - depthRangeMin, depth + depthRangeMax] it will
 		 *								be clamped to nearest extreme. Value of -1 means infinite range.
 		 */
-		static GUIPanel* create(INT16 depth = 0, UINT16 depthRangeMin = -1, UINT16 depthRangeMax = -1);
+		static GUIPanel* Create(INT16 depth = 0, UINT16 depthRangeMin = -1, UINT16 depthRangeMax = -1);
 
 		/**
 		 * Creates a new GUI panel.
 		 *
 		 * @param[in]	options			Options that allow you to control how is the element positioned and sized.
 		 */
-		static GUIPanel* create(const GUIOptions& options);
+		static GUIPanel* Create(const GUIOptions& options);
 
 		/**
 		 * Creates a new GUI panel.
@@ -70,7 +70,7 @@ namespace bs
 		 *								clamped to nearest extreme. Value of -1 means infinite range.
 		 * @param[in]	options			Options that allow you to control how is the element positioned and sized.
 		 */
-		static GUIPanel* create(INT16 depth, UINT16 depthRangeMin, UINT16 depthRangeMax, const GUIOptions& options);
+		static GUIPanel* Create(INT16 depth, UINT16 depthRangeMin, UINT16 depthRangeMax, const GUIOptions& options);
 
 	public: // ***** INTERNAL ******
 		/** @name Internal

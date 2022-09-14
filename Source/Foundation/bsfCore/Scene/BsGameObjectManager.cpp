@@ -7,10 +7,10 @@ namespace bs
 {
 	GameObjectManager::~GameObjectManager()
 	{
-		destroyQueuedObjects();
+		DestroyQueuedObjects();
 	}
 
-	GameObjectHandleBase GameObjectManager::getObject(UINT64 id) const
+	GameObjectHandleBase GameObjectManager::GetObject(UINT64 id) const
 	{
 		Lock lock(mMutex);
 
@@ -21,7 +21,7 @@ namespace bs
 		return nullptr;
 	}
 
-	bool GameObjectManager::tryGetObject(UINT64 id, GameObjectHandleBase& object) const
+	bool GameObjectManager::TryGetObject(UINT64 id, GameObjectHandleBase& object) const
 	{
 		Lock lock(mMutex);
 
@@ -35,14 +35,14 @@ namespace bs
 		return false;
 	}
 
-	bool GameObjectManager::objectExists(UINT64 id) const
+	bool GameObjectManager::ObjectExists(UINT64 id) const
 	{
 		Lock lock(mMutex);
 
 		return mObjects.find(id) != mObjects.end();
 	}
 
-	void GameObjectManager::remapId(UINT64 oldId, UINT64 newId)
+	void GameObjectManager::RemapId(UINT64 oldId, UINT64 newId)
 	{
 		if (oldId == newId)
 			return;
@@ -52,32 +52,32 @@ namespace bs
 		mObjects.erase(oldId);
 	}
 
-	UINT64 GameObjectManager::reserveId()
+	UINT64 GameObjectManager::ReserveId()
 	{
 		return mNextAvailableID.fetch_add(1, std::memory_order_relaxed);
 	}
 
-	void GameObjectManager::queueForDestroy(const GameObjectHandleBase& object)
+	void GameObjectManager::QueueForDestroy(const GameObjectHandleBase& object)
 	{
-		if (object.isDestroyed())
+		if (object.IsDestroyed())
 			return;
 
-		const UINT64 instanceId = object->getInstanceId();
+		const UINT64 instanceId = object->GetInstanceId();
 		mQueuedForDestroy[instanceId] = object;
 	}
 
-	void GameObjectManager::destroyQueuedObjects()
+	void GameObjectManager::DestroyQueuedObjects()
 	{
 		for (auto& objPair : mQueuedForDestroy)
-			objPair.second->destroyInternal(objPair.second, true);
+			objPair.second->DestroyInternal(objPair.second, true);
 
 		mQueuedForDestroy.clear();
 	}
 
-	GameObjectHandleBase GameObjectManager::registerObject(const SPtr<GameObject>& object)
+	GameObjectHandleBase GameObjectManager::RegisterObject(const SPtr<GameObject>& object)
 	{
 		const UINT64 id = mNextAvailableID.fetch_add(1, std::memory_order_relaxed);
-		object->initialize(object, id);
+		object->Initialize(object, id);
 
 		GameObjectHandleBase handle(object);
 		{
@@ -88,15 +88,15 @@ namespace bs
 		return handle;
 	}
 
-	void GameObjectManager::unregisterObject(GameObjectHandleBase& object)
+	void GameObjectManager::UnregisterObject(GameObjectHandleBase& object)
 	{
 		{
 			Lock lock(mMutex);
-			mObjects.erase(object->getInstanceId());
+			mObjects.erase(object->GetInstanceId());
 		}
 
 		onDestroyed(static_object_cast<GameObject>(object));
-		object.destroy();
+		object.Destroy();
 	}
 
 	GameObjectDeserializationState::GameObjectDeserializationState(UINT32 options)
@@ -109,7 +109,7 @@ namespace bs
 		BS_ASSERT(mDeserializedObjects.empty() && "Deserialization state being destroyed before all objects are resolved.");
 	}
 
-	void GameObjectDeserializationState::resolve()
+	void GameObjectDeserializationState::Resolve()
 	{
 		for (auto& entry : mUnresolvedHandles)
 		{
@@ -141,7 +141,7 @@ namespace bs
 			else if (!isInternalReference && (mOptions & GODM_RestoreExternal) != 0)
 			{
 				HGameObject obj;
-				if(GameObjectManager::instance().tryGetObject(instanceId, obj))
+				if(GameObjectManager::Instance().tryGetObject(instanceId, obj))
 					entry.handle.ResolveInternal(obj);
 				else
 				{
@@ -168,7 +168,7 @@ namespace bs
 		mDeserializedObjects.clear();
 	}
 
-	void GameObjectDeserializationState::registerUnresolvedHandle(UINT64 originalId, GameObjectHandleBase& object)
+	void GameObjectDeserializationState::RegisterUnresolvedHandle(UINT64 originalId, GameObjectHandleBase& object)
 	{
 		// All handles that are deserialized during a single begin/endDeserialization session pointing to the same object
 		// must share the same GameObjectHandleData as that makes certain operations in other systems much simpler.
@@ -226,7 +226,7 @@ namespace bs
 		mDeserializedObjects[newId] = object;
 	}
 
-	void GameObjectDeserializationState::registerOnDeserializationEndCallback(std::function<void()> callback)
+	void GameObjectDeserializationState::RegisterOnDeserializationEndCallback(std::function<void()> callback)
 	{
 		mEndCallbacks.push_back(callback);
 	}

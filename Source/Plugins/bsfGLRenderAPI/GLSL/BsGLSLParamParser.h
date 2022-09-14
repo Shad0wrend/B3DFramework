@@ -27,10 +27,10 @@ namespace bs { namespace ct
 		 * of the two compared strings must match, and the remaining non-matching bit will be assumed to be the semantic
 		 * index. Returns -1 if no match is made.
 		 */
-		INT32 matchesName(const String& name);
+		INT32 MatchesName(const String& name);
 
 		/**	Returns the semantic of this attribute. */
-		VertexElementSemantic getSemantic() const { return mSemantic; }
+		VertexElementSemantic GetSemantic() const { return mSemantic; }
 
 	private:
 		String mName;
@@ -49,7 +49,7 @@ namespace bs { namespace ct
 		 * @param[in]	type			Type of the GPU program we're parsing.
 		 * @param[out]	returnParamDesc	Output structure containing the parsed data.
 		 */
-		void buildUniformDescriptions(GLuint glProgram, GpuProgramType type, GpuParamDesc& returnParamDesc);
+		void BuildUniformDescriptions(GLuint glProgram, GpuProgramType type, GpuParamDesc& returnParamDesc);
 
 		/**
 		 * Parses a compiled OpenGL program and outputs vertex element list that describes input attributes to the program.
@@ -57,7 +57,7 @@ namespace bs { namespace ct
 		 *
 		 * @param[in]	glProgram	OpenGL handle to the GPU program.
 		 */
-		Vector<VertexElement> buildVertexDeclaration(GLuint glProgram);
+		Vector<VertexElement> BuildVertexDeclaration(GLuint glProgram);
 
 		/**
 		 * Calculates the size and alignment of a single element within a shader interface block using the std140 layout.
@@ -69,7 +69,7 @@ namespace bs { namespace ct
 		 *								alignment. In multiples of 4 bytes.
 		 * @return						Size of the element, in multiples of 4 bytes.
 		 */
-		static UINT32 calcInterfaceBlockElementSizeAndOffset(GpuParamDataType type, UINT32 arraySize, UINT32& offset);
+		static UINT32 CalcInterfaceBlockElementSizeAndOffset(GpuParamDataType type, UINT32 arraySize, UINT32& offset);
 	private:
 		/** Types of HLSL parameters. */
 		enum class ParamType
@@ -90,7 +90,7 @@ namespace bs { namespace ct
 		 * @param[in]	programHandle	Internal OpenGL handle to the GPU program.
 		 * @param[in]	uniformIndex	Unique uniform index to retrieve data from. Obtained from OpenGL parsing methods.
 		 */
-		void determineParamInfo(GpuParamDataDesc& desc, const String& paramName, GLuint programHandle, GLuint uniformIndex);
+		void DetermineParamInfo(GpuParamDataDesc& desc, const String& paramName, GLuint programHandle, GLuint uniformIndex);
 
 		/**
 		 * Attempts to find out a vertex element semantic based on input parameter name. GLSL has no concept of semantics,
@@ -110,13 +110,13 @@ namespace bs { namespace ct
 		 *
 		 * @return	True if it succeeds, false if it fails.
 		 */
-		bool attribNameToElementSemantic(const String& name, VertexElementSemantic& semantic, UINT16& index);
+		bool AttribNameToElementSemantic(const String& name, VertexElementSemantic& semantic, UINT16& index);
 
 		/**	Converts an OpenGL type to vertex element type. */
-		VertexElementType glTypeToAttributeType(GLenum glType);
+		VertexElementType GlTypeToAttributeType(GLenum glType);
 
 		/** Maps a parameter in a specific shader stage, of a specific type to a unique set index. */
-		static UINT32 mapParameterToSet(GpuProgramType progType, ParamType paramType);
+		static UINT32 MapParameterToSet(GpuProgramType progType, ParamType paramType);
 	};
 
 	/** @} */

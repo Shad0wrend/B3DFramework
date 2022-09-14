@@ -48,18 +48,18 @@ namespace bs { namespace ct
 		}
 	}
 
-	ID3D11InputLayout* D3D11InputLayoutManager::retrieveInputLayout(const SPtr<VertexDeclaration>& vertexShaderDecl,
+	ID3D11InputLayout* D3D11InputLayoutManager::RetrieveInputLayout(const SPtr<VertexDeclaration>& vertexShaderDecl,
 		const SPtr<VertexDeclaration>& vertexBufferDecl, D3D11GpuProgram& vertexProgram)
 	{
 		VertexDeclarationKey pair;
 		pair.vertxDeclId = vertexBufferDecl->getId();
-		pair.vertexProgramId = vertexProgram.getProgramId();
+		pair.vertexProgramId = vertexProgram.GetProgramId();
 
 		auto iterFind = mInputLayoutMap.find(pair);
 		if(iterFind == mInputLayoutMap.end())
 		{
 			if(mInputLayoutMap.size() >= DECLARATION_BUFFER_SIZE)
-				removeLeastUsed(); // Prune so the buffer doesn't just infinitely grow
+				RemoveLeastUsed(); // Prune so the buffer doesn't just infinitely grow
 
 			addNewInputLayout(vertexShaderDecl, vertexBufferDecl, vertexProgram);
 
@@ -73,7 +73,7 @@ namespace bs { namespace ct
 		return iterFind->second->inputLayout;
 	}
 
-	void D3D11InputLayoutManager::addNewInputLayout(const SPtr<VertexDeclaration>& vertexShaderDecl,
+	void D3D11InputLayoutManager::AddNewInputLayout(const SPtr<VertexDeclaration>& vertexShaderDecl,
 		const SPtr<VertexDeclaration>& vertexBufferDecl, D3D11GpuProgram& vertexProgram)
 	{
 		const VertexDeclarationProperties& bufferDeclProps = vertexBufferDecl->getProperties();
@@ -141,7 +141,7 @@ namespace bs { namespace ct
 		D3D11RenderAPI* d3d11rs = static_cast<D3D11RenderAPI*>(RenderAPI::instancePtr());
 		D3D11Device& device = d3d11rs->getPrimaryDevice();
 
-		const DataBlob& microcode = vertexProgram.getMicroCode();
+		const DataBlob& microcode = vertexProgram.GetMicroCode();
 
 		InputLayoutEntry* newEntry = bs_new<InputLayoutEntry>();
 		newEntry->lastUsedIdx = ++mLastUsedCounter;
@@ -159,14 +159,14 @@ namespace bs { namespace ct
 		// Create key and add to the layout map
 		VertexDeclarationKey pair;
 		pair.vertxDeclId = vertexBufferDecl->getId();
-		pair.vertexProgramId = vertexProgram.getProgramId();
+		pair.vertexProgramId = vertexProgram.GetProgramId();
 
 		mInputLayoutMap[pair] = newEntry;
 
 		BS_INC_RENDER_STAT_CAT(ResCreated, RenderStatObject_InputLayout);
 	}
 
-	void D3D11InputLayoutManager::removeLeastUsed()
+	void D3D11InputLayoutManager::RemoveLeastUsed()
 	{
 		if(!mWarningShown)
 		{

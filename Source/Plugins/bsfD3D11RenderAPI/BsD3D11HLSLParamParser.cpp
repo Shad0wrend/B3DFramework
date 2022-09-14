@@ -9,7 +9,7 @@
 
 namespace bs { namespace ct
 {
-	void D3D11HLSLParamParser::parse(ID3DBlob* microcode, GpuProgramType type, GpuParamDesc& desc,
+	void D3D11HLSLParamParser::Parse(ID3DBlob* microcode, GpuProgramType type, GpuParamDesc& desc,
 		Vector<VertexElement>* inputParams)
 	{
 		const char* commentString = nullptr;
@@ -48,11 +48,11 @@ namespace bs { namespace ct
 					BS_EXCEPT(RenderingAPIException, "Cannot get input param desc with index: " + toString(i));
 
 				// We don't care about system value semantics
-				if (StringUtil::startsWith(String(inputParamDesc.SemanticName), "sv_"))
+				if (StringUtil::StartsWith(String(inputParamDesc.SemanticName), "sv_"))
 					continue;
 
 				inputParams->push_back(VertexElement(inputParamDesc.Stream, inputParamDesc.Register,
-					D3D11Mappings::getInputType(inputParamDesc.ComponentType), D3D11Mappings::get(inputParamDesc.SemanticName), inputParamDesc.SemanticIndex));
+					D3D11Mappings::GetInputType(inputParamDesc.ComponentType), D3D11Mappings::Get(inputParamDesc.SemanticName), inputParamDesc.SemanticIndex));
 			}
 		}
 
@@ -64,7 +64,7 @@ namespace bs { namespace ct
 			if (FAILED(hr))
 				BS_EXCEPT(RenderingAPIException, "Cannot get resource binding desc with index: " + toString(i));
 
-			parseResource(bindingDesc, type, desc);
+			ParseResource(bindingDesc, type, desc);
 		}
 
 		for(UINT32 i = 0; i < shaderDesc.ConstantBuffers; i++)
@@ -72,13 +72,13 @@ namespace bs { namespace ct
 			ID3D11ShaderReflectionConstantBuffer* shaderReflectionConstantBuffer;
 			shaderReflectionConstantBuffer = shaderReflection->GetConstantBufferByIndex(i);
 			
-			parseBuffer(shaderReflectionConstantBuffer, desc);
+			ParseBuffer(shaderReflectionConstantBuffer, desc);
 		}
 
 		shaderReflection->Release();
 	}
 
-	void D3D11HLSLParamParser::parseResource(D3D11_SHADER_INPUT_BIND_DESC& resourceDesc, GpuProgramType type,
+	void D3D11HLSLParamParser::ParseResource(D3D11_SHADER_INPUT_BIND_DESC& resourceDesc, GpuProgramType type,
 		GpuParamDesc& desc)
 	{
 		for(UINT32 i = 0; i < resourceDesc.BindCount; i++)
@@ -88,7 +88,7 @@ namespace bs { namespace ct
 				GpuParamBlockDesc blockDesc;
 				blockDesc.name = resourceDesc.Name;
 				blockDesc.slot = resourceDesc.BindPoint + i;
-				blockDesc.set = mapParameterToSet(type, ParamType::ConstantBuffer);
+				blockDesc.set = MapParameterToSet(type, ParamType::ConstantBuffer);
 				blockDesc.blockSize = 0; // Calculated manually as we add parameters
 
 				if(strcmp(resourceDesc.Name, "$Globals") == 0 || strcmp(resourceDesc.Name, "$Param") == 0) // Special buffers, as defined by DX11 docs
@@ -109,7 +109,7 @@ namespace bs { namespace ct
 				{
 				case D3D_SIT_SAMPLER:
 					memberDesc.type = GPOT_SAMPLER2D; // Actual dimension of the sampler doesn't matter
-					memberDesc.set = mapParameterToSet(type, ParamType::Sampler);
+					memberDesc.set = MapParameterToSet(type, ParamType::Sampler);
 
 					desc.samplers.insert(std::make_pair(memberDesc.name, memberDesc));
 					break;
@@ -156,7 +156,7 @@ namespace bs { namespace ct
 
 					if (memberDesc.type != GPOT_UNKNOWN)
 					{
-						memberDesc.set = mapParameterToSet(type, ParamType::Texture);
+						memberDesc.set = MapParameterToSet(type, ParamType::Texture);
 
 						if (isTexture)
 							desc.textures.insert(std::make_pair(memberDesc.name, memberDesc));
@@ -167,19 +167,19 @@ namespace bs { namespace ct
 					break;
 				case D3D_SIT_STRUCTURED:
 					memberDesc.type = GPOT_STRUCTURED_BUFFER;
-					memberDesc.set = mapParameterToSet(type, ParamType::Texture);
+					memberDesc.set = MapParameterToSet(type, ParamType::Texture);
 
 					desc.buffers.insert(std::make_pair(memberDesc.name, memberDesc));
 					break;
 				case D3D_SIT_BYTEADDRESS:
 					memberDesc.type = GPOT_BYTE_BUFFER;
-					memberDesc.set = mapParameterToSet(type, ParamType::Texture);
+					memberDesc.set = MapParameterToSet(type, ParamType::Texture);
 
 					desc.buffers.insert(std::make_pair(memberDesc.name, memberDesc));
 					break;
 				case D3D11_SIT_UAV_RWTYPED:
 				{
-					memberDesc.set = mapParameterToSet(type, ParamType::UAV);
+					memberDesc.set = MapParameterToSet(type, ParamType::UAV);
 
 					switch (resourceDesc.Dimension)
 					{
@@ -224,31 +224,31 @@ namespace bs { namespace ct
 				}
 				case D3D11_SIT_UAV_RWSTRUCTURED:
 					memberDesc.type = GPOT_RWSTRUCTURED_BUFFER;
-					memberDesc.set = mapParameterToSet(type, ParamType::UAV);
+					memberDesc.set = MapParameterToSet(type, ParamType::UAV);
 
 					desc.buffers.insert(std::make_pair(memberDesc.name, memberDesc));
 					break;
 				case D3D11_SIT_UAV_RWBYTEADDRESS:
 					memberDesc.type = GPOT_RWBYTE_BUFFER;
-					memberDesc.set = mapParameterToSet(type, ParamType::UAV);
+					memberDesc.set = MapParameterToSet(type, ParamType::UAV);
 
 					desc.buffers.insert(std::make_pair(memberDesc.name, memberDesc));
 					break;
 				case D3D_SIT_UAV_APPEND_STRUCTURED:
 					memberDesc.type = GPOT_RWAPPEND_BUFFER;
-					memberDesc.set = mapParameterToSet(type, ParamType::UAV);
+					memberDesc.set = MapParameterToSet(type, ParamType::UAV);
 
 					desc.buffers.insert(std::make_pair(memberDesc.name, memberDesc));
 					break;
 				case D3D_SIT_UAV_CONSUME_STRUCTURED:
 					memberDesc.type = GPOT_RWCONSUME_BUFFER;
-					memberDesc.set = mapParameterToSet(type, ParamType::UAV);
+					memberDesc.set = MapParameterToSet(type, ParamType::UAV);
 
 					desc.buffers.insert(std::make_pair(memberDesc.name, memberDesc));
 					break;
 				case D3D_SIT_UAV_RWSTRUCTURED_WITH_COUNTER:
 					memberDesc.type = GPOT_RWSTRUCTURED_BUFFER_WITH_COUNTER;
-					memberDesc.set = mapParameterToSet(type, ParamType::UAV);
+					memberDesc.set = MapParameterToSet(type, ParamType::UAV);
 
 					desc.buffers.insert(std::make_pair(memberDesc.name, memberDesc));
 					break;
@@ -260,7 +260,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	void D3D11HLSLParamParser::parseBuffer(ID3D11ShaderReflectionConstantBuffer* bufferReflection,
+	void D3D11HLSLParamParser::ParseBuffer(ID3D11ShaderReflectionConstantBuffer* bufferReflection,
 		GpuParamDesc& desc)
 	{
 		D3D11_SHADER_BUFFER_DESC constantBufferDesc;
@@ -289,13 +289,13 @@ namespace bs { namespace ct
 			D3D11_SHADER_TYPE_DESC varTypeDesc;
 			varRefType->GetDesc(&varTypeDesc);
 
-			parseVariable(varTypeDesc, varDesc, desc, blockDesc);
+			ParseVariable(varTypeDesc, varDesc, desc, blockDesc);
 		}
 
 		blockDesc.blockSize = constantBufferDesc.Size / 4;
 	}
 
-	void D3D11HLSLParamParser::parseVariable(D3D11_SHADER_TYPE_DESC& varTypeDesc, D3D11_SHADER_VARIABLE_DESC& varDesc,
+	void D3D11HLSLParamParser::ParseVariable(D3D11_SHADER_TYPE_DESC& varTypeDesc, D3D11_SHADER_VARIABLE_DESC& varDesc,
 		GpuParamDesc& desc, GpuParamBlockDesc& paramBlock)
 	{
 		GpuParamDataDesc memberDesc;
@@ -452,7 +452,7 @@ namespace bs { namespace ct
 		desc.params.insert(std::make_pair(memberDesc.name, memberDesc));
 	}
 
-	UINT32 D3D11HLSLParamParser::mapParameterToSet(GpuProgramType progType, ParamType paramType)
+	UINT32 D3D11HLSLParamParser::MapParameterToSet(GpuProgramType progType, ParamType paramType)
 	{
 		UINT32 progTypeIdx = (UINT32)progType;
 		UINT32 paramTypeIdx = (UINT32)paramType;

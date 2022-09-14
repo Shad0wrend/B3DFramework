@@ -23,40 +23,40 @@ namespace bs
 		mTransform = Matrix4::IDENTITY;
 
 		mSolidVertexDesc = bs_shared_ptr_new<VertexDataDesc>();
-		mSolidVertexDesc->addVertElem(VET_FLOAT3, VES_POSITION);
-		mSolidVertexDesc->addVertElem(VET_FLOAT3, VES_NORMAL);
-		mSolidVertexDesc->addVertElem(VET_COLOR, VES_COLOR);
+		mSolidVertexDesc->AddVertElem(VET_FLOAT3, VES_POSITION);
+		mSolidVertexDesc->AddVertElem(VET_FLOAT3, VES_NORMAL);
+		mSolidVertexDesc->AddVertElem(VET_COLOR, VES_COLOR);
 
 		mWireVertexDesc = bs_shared_ptr_new<VertexDataDesc>();
-		mWireVertexDesc->addVertElem(VET_FLOAT3, VES_POSITION);
-		mWireVertexDesc->addVertElem(VET_COLOR, VES_COLOR);
+		mWireVertexDesc->AddVertElem(VET_FLOAT3, VES_POSITION);
+		mWireVertexDesc->AddVertElem(VET_COLOR, VES_COLOR);
 
 		mLineVertexDesc = bs_shared_ptr_new<VertexDataDesc>();
-		mLineVertexDesc->addVertElem(VET_FLOAT3, VES_POSITION);
-		mLineVertexDesc->addVertElem(VET_COLOR, VES_COLOR);
+		mLineVertexDesc->AddVertElem(VET_FLOAT3, VES_POSITION);
+		mLineVertexDesc->AddVertElem(VET_COLOR, VES_COLOR);
 
 		mTextVertexDesc = bs_shared_ptr_new<VertexDataDesc>();
-		mTextVertexDesc->addVertElem(VET_FLOAT3, VES_POSITION);
+		mTextVertexDesc->AddVertElem(VET_FLOAT3, VES_POSITION);
 		mTextVertexDesc->addVertElem(VET_FLOAT2, VES_TEXCOORD);
 		mTextVertexDesc->addVertElem(VET_COLOR, VES_COLOR);
 	}
 
-	void DrawHelper::setColor(const Color& color)
+	void DrawHelper::SetColor(const Color& color)
 	{
 		mColor = color;
 	}
 
-	void DrawHelper::setTransform(const Matrix4& transform)
+	void DrawHelper::SetTransform(const Matrix4& transform)
 	{
 		mTransform = transform;
 	}
 
-	void DrawHelper::setLayer(UINT64 layer)
+	void DrawHelper::SetLayer(UINT64 layer)
 	{
 		mLayer = layer;
 	}
 
-	void DrawHelper::cube(const Vector3& position, const Vector3& extents)
+	void DrawHelper::Cube(const Vector3& position, const Vector3& extents)
 	{
 		mSolidCubeData.push_back(CubeData());
 		CubeData& cubeData = mSolidCubeData.back();
@@ -69,7 +69,7 @@ namespace bs
 		cubeData.center = mTransform.multiplyAffine(position);
 	}
 
-	void DrawHelper::sphere(const Vector3& position, float radius, UINT32 quality)
+	void DrawHelper::Sphere(const Vector3& position, float radius, UINT32 quality)
 	{
 		mSolidSphereData.push_back(SphereData());
 		SphereData& sphereData = mSolidSphereData.back();
@@ -83,7 +83,7 @@ namespace bs
 		sphereData.center = mTransform.multiplyAffine(position);
 	}
 
-	void DrawHelper::wireCube(const Vector3& position, const Vector3& extents)
+	void DrawHelper::WireCube(const Vector3& position, const Vector3& extents)
 	{
 		mWireCubeData.push_back(CubeData());
 		CubeData& cubeData = mWireCubeData.back();
@@ -96,7 +96,7 @@ namespace bs
 		cubeData.center = mTransform.multiplyAffine(position);
 	}
 
-	void DrawHelper::wireSphere(const Vector3& position, float radius, UINT32 quality)
+	void DrawHelper::WireSphere(const Vector3& position, float radius, UINT32 quality)
 	{
 		mWireSphereData.push_back(SphereData());
 		SphereData& sphereData = mWireSphereData.back();
@@ -110,7 +110,7 @@ namespace bs
 		sphereData.center = mTransform.multiplyAffine(position);
 	}
 
-	void DrawHelper::wireHemisphere(const Vector3& position, float radius, UINT32 quality)
+	void DrawHelper::WireHemisphere(const Vector3& position, float radius, UINT32 quality)
 	{
 		mWireHemisphereData.push_back(SphereData());
 		SphereData& sphereData = mWireHemisphereData.back();
@@ -124,7 +124,7 @@ namespace bs
 		sphereData.center = mTransform.multiplyAffine(position);
 	}
 
-	void DrawHelper::line(const Vector3& start, const Vector3& end)
+	void DrawHelper::Line(const Vector3& start, const Vector3& end)
 	{
 		mLineData.push_back(LineData());
 		LineData& lineData = mLineData.back();
@@ -137,7 +137,7 @@ namespace bs
 		lineData.center = mTransform.multiplyAffine((start + end) * 0.5f);
 	}
 
-	void DrawHelper::lineList(const Vector<Vector3>& lines)
+	void DrawHelper::LineList(const Vector<Vector3>& lines)
 	{
 		if (lines.size() < 2)
 			return;
@@ -156,7 +156,7 @@ namespace bs
 		lineListData.center = center / (float)lines.size();;
 	}
 
-	void DrawHelper::frustum(const Vector3& position, float aspect, Degree FOV, float near, float far)
+	void DrawHelper::Frustum(const Vector3& position, float aspect, Degree FOV, float near, float far)
 	{
 		mFrustumData.push_back(FrustumData());
 		FrustumData& frustumData = mFrustumData.back();
@@ -172,7 +172,7 @@ namespace bs
 		frustumData.center = mTransform.multiplyAffine(position);
 	}
 
-	void DrawHelper::cone(const Vector3& base, const Vector3& normal, float height, float radius, const Vector2& scale,
+	void DrawHelper::Cone(const Vector3& base, const Vector3& normal, float height, float radius, const Vector2& scale,
 		UINT32 quality)
 	{
 		mConeData.push_back(ConeData());
@@ -190,7 +190,7 @@ namespace bs
 		coneData.center = mTransform.multiplyAffine(base + normal * height * 0.5f);
 	}
 
-	void DrawHelper::wireCone(const Vector3& base, const Vector3& normal, float height, float radius, const Vector2& scale,
+	void DrawHelper::WireCone(const Vector3& base, const Vector3& normal, float height, float radius, const Vector2& scale,
 		UINT32 quality)
 	{
 		mWireConeData.push_back(ConeData());
@@ -208,7 +208,7 @@ namespace bs
 		coneData.center = mTransform.multiplyAffine(base + normal * height * 0.5f);
 	}
 
-	void DrawHelper::disc(const Vector3& position, const Vector3& normal, float radius, UINT32 quality)
+	void DrawHelper::Disc(const Vector3& position, const Vector3& normal, float radius, UINT32 quality)
 	{
 		mDiscData.push_back(DiscData());
 		DiscData& discData = mDiscData.back();
@@ -223,7 +223,7 @@ namespace bs
 		discData.center = mTransform.multiplyAffine(position);
 	}
 
-	void DrawHelper::wireDisc(const Vector3& position, const Vector3& normal, float radius, UINT32 quality)
+	void DrawHelper::WireDisc(const Vector3& position, const Vector3& normal, float radius, UINT32 quality)
 	{
 		mWireDiscData.push_back(DiscData());
 		DiscData& discData = mWireDiscData.back();
@@ -238,7 +238,7 @@ namespace bs
 		discData.center = mTransform.multiplyAffine(position);
 	}
 
-	void DrawHelper::arc(const Vector3& position, const Vector3& normal, float radius,
+	void DrawHelper::Arc(const Vector3& position, const Vector3& normal, float radius,
 		Degree startAngle, Degree amountAngle, UINT32 quality)
 	{
 		mArcData.push_back(ArcData());
@@ -256,7 +256,7 @@ namespace bs
 		arcData.center = mTransform.multiplyAffine(position);
 	}
 
-	void DrawHelper::wireArc(const Vector3& position, const Vector3& normal, float radius,
+	void DrawHelper::WireArc(const Vector3& position, const Vector3& normal, float radius,
 		Degree startAngle, Degree amountAngle, UINT32 quality)
 	{
 		mWireArcData.push_back(ArcData());
@@ -274,7 +274,7 @@ namespace bs
 		arcData.center = mTransform.multiplyAffine(position);
 	}
 
-	void DrawHelper::rectangle(const Rect3& area)
+	void DrawHelper::Rectangle(const Rect3& area)
 	{
 		mRect3Data.push_back(Rect3Data());
 		Rect3Data& rectData = mRect3Data.back();
@@ -286,7 +286,7 @@ namespace bs
 		rectData.center = mTransform.multiplyAffine(area.getCenter());
 	}
 
-	void DrawHelper::text(const Vector3& position, const String& text, const HFont& font, UINT32 size)
+	void DrawHelper::Text(const Vector3& position, const String& text, const HFont& font, UINT32 size)
 	{
 		if (!font.isLoaded() || text.empty())
 			return;
@@ -304,7 +304,7 @@ namespace bs
 		textData.size = size;
 	}
 
-	void DrawHelper::wireMesh(const SPtr<MeshData>& meshData)
+	void DrawHelper::WireMesh(const SPtr<MeshData>& meshData)
 	{
 		if (meshData == nullptr)
 			return;
@@ -319,7 +319,7 @@ namespace bs
 		wireMeshData.center = mTransform.multiplyAffine(Vector3::ZERO);
 	}
 
-	void DrawHelper::clear()
+	void DrawHelper::Clear()
 	{
 		mSolidCubeData.clear();
 		mWireCubeData.clear();
@@ -340,7 +340,7 @@ namespace bs
 		mWireMeshData.clear();
 	}
 
-	Vector<DrawHelper::ShapeMeshData> DrawHelper::buildMeshes(SortType sorting, const Camera* camera, UINT64 layers)
+	Vector<DrawHelper::ShapeMeshData> DrawHelper::BuildMeshes(SortType sorting, const Camera* camera, UINT64 layers)
 	{
 		Vector<ShapeMeshData> meshInfos;
 
@@ -872,7 +872,7 @@ namespace bs
 		for(UINT32 i = 0; i < 4; i++)
 		{
 			if(vertexCount[i] > 0 && indexCount[i] > 0)
-				meshData[i] = MeshData::create(vertexCount[i], indexCount[i], vertexDesc[i]);
+				meshData[i] = MeshData::Create(vertexCount[i], indexCount[i], vertexDesc[i]);
 		}
 
 		/************************************************************************/

@@ -8,17 +8,17 @@
 
 namespace bs
 {
-	HShaderInclude EngineShaderIncludeHandler::findInclude(const String& name) const
+	HShaderInclude EngineShaderIncludeHandler::FindInclude(const String& name) const
 	{
-		Path path = toResourcePath(name);
+		Path path = ToResourcePath(name);
 
-		if (path.isEmpty())
+		if (path.IsEmpty())
 			return HShaderInclude();
 
 		if (name.size() >= 8)
 		{
 			if (name.substr(0, 8) == "$ENGINE$" || name.substr(0, 8) == "$EDITOR$")
-				return static_resource_cast<ShaderInclude>(Resources::instance().load(path));
+				return static_resource_cast<ShaderInclude>(Resources::Instance().Load(path));
 		}
 
 		for(auto& folder : mSearchPaths)
@@ -34,10 +34,10 @@ namespace bs
 		}
 
 		path = Paths::findPath(path);
-		return Importer::instance().import<ShaderInclude>(path);
+		return Importer::Instance().import<ShaderInclude>(path);
 	}
 
-	Path EngineShaderIncludeHandler::toResourcePath(const String& name)
+	Path EngineShaderIncludeHandler::ToResourcePath(const String& name)
 	{
 		if (name.substr(0, 8) == "$ENGINE$")
 		{

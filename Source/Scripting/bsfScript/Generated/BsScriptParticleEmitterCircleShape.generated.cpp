@@ -17,52 +17,52 @@ namespace bs
 
 	void ScriptParticleEmitterCircleShape::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_setOptions", (void*)&ScriptParticleEmitterCircleShape::Internal_setOptions);
-		metaData.scriptClass->addInternalCall("Internal_getOptions", (void*)&ScriptParticleEmitterCircleShape::Internal_getOptions);
-		metaData.scriptClass->addInternalCall("Internal_create", (void*)&ScriptParticleEmitterCircleShape::Internal_create);
-		metaData.scriptClass->addInternalCall("Internal_create0", (void*)&ScriptParticleEmitterCircleShape::Internal_create0);
+		metaData.scriptClass->AddInternalCall("Internal_setOptions", (void*)&ScriptParticleEmitterCircleShape::InternalSetOptions);
+		metaData.scriptClass->AddInternalCall("Internal_getOptions", (void*)&ScriptParticleEmitterCircleShape::InternalGetOptions);
+		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptParticleEmitterCircleShape::InternalCreate);
+		metaData.scriptClass->AddInternalCall("Internal_create0", (void*)&ScriptParticleEmitterCircleShape::InternalCreate0);
 
 	}
 
-	MonoObject* ScriptParticleEmitterCircleShape::create(const SPtr<ParticleEmitterCircleShape>& value)
+	MonoObject* ScriptParticleEmitterCircleShape::Create(const SPtr<ParticleEmitterCircleShape>& value)
 	{
 		if(value == nullptr) return nullptr; 
 
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptParticleEmitterCircleShape>()) ScriptParticleEmitterCircleShape(managedInstance, value);
 		return managedInstance;
 	}
-	void ScriptParticleEmitterCircleShape::Internal_setOptions(ScriptParticleEmitterCircleShape* thisPtr, __PARTICLE_CIRCLE_SHAPE_DESCInterop* options)
+	void ScriptParticleEmitterCircleShape::InternalSetOptions(ScriptParticleEmitterCircleShape* thisPtr, __PARTICLE_CIRCLE_SHAPE_DESCInterop* options)
 	{
 		PARTICLE_CIRCLE_SHAPE_DESC tmpoptions;
-		tmpoptions = ScriptPARTICLE_CIRCLE_SHAPE_DESC::fromInterop(*options);
-		thisPtr->getInternal()->setOptions(tmpoptions);
+		tmpoptions = ScriptPARTICLE_CIRCLE_SHAPE_DESC::FromInterop(*options);
+		thisPtr->GetInternal()->setOptions(tmpoptions);
 	}
 
-	void ScriptParticleEmitterCircleShape::Internal_getOptions(ScriptParticleEmitterCircleShape* thisPtr, __PARTICLE_CIRCLE_SHAPE_DESCInterop* __output)
+	void ScriptParticleEmitterCircleShape::InternalGetOptions(ScriptParticleEmitterCircleShape* thisPtr, __PARTICLE_CIRCLE_SHAPE_DESCInterop* __output)
 	{
 		PARTICLE_CIRCLE_SHAPE_DESC tmp__output;
 		tmp__output = thisPtr->getInternal()->getOptions();
 
 		__PARTICLE_CIRCLE_SHAPE_DESCInterop interop__output;
-		interop__output = ScriptPARTICLE_CIRCLE_SHAPE_DESC::toInterop(tmp__output);
+		interop__output = ScriptPARTICLE_CIRCLE_SHAPE_DESC::ToInterop(tmp__output);
 		MonoUtil::valueCopy(__output, &interop__output, ScriptPARTICLE_CIRCLE_SHAPE_DESC::getMetaData()->scriptClass->GetInternalClassInternal());
 	}
 
-	void ScriptParticleEmitterCircleShape::Internal_create(MonoObject* managedInstance, __PARTICLE_CIRCLE_SHAPE_DESCInterop* desc)
+	void ScriptParticleEmitterCircleShape::InternalCreate(MonoObject* managedInstance, __PARTICLE_CIRCLE_SHAPE_DESCInterop* desc)
 	{
 		PARTICLE_CIRCLE_SHAPE_DESC tmpdesc;
-		tmpdesc = ScriptPARTICLE_CIRCLE_SHAPE_DESC::fromInterop(*desc);
-		SPtr<ParticleEmitterCircleShape> instance = ParticleEmitterCircleShape::create(tmpdesc);
+		tmpdesc = ScriptPARTICLE_CIRCLE_SHAPE_DESC::FromInterop(*desc);
+		SPtr<ParticleEmitterCircleShape> instance = ParticleEmitterCircleShape::Create(tmpdesc);
 		new (bs_alloc<ScriptParticleEmitterCircleShape>())ScriptParticleEmitterCircleShape(managedInstance, instance);
 	}
 
-	void ScriptParticleEmitterCircleShape::Internal_create0(MonoObject* managedInstance)
+	void ScriptParticleEmitterCircleShape::InternalCreate0(MonoObject* managedInstance)
 	{
-		SPtr<ParticleEmitterCircleShape> instance = ParticleEmitterCircleShape::create();
+		SPtr<ParticleEmitterCircleShape> instance = ParticleEmitterCircleShape::Create();
 		new (bs_alloc<ScriptParticleEmitterCircleShape>())ScriptParticleEmitterCircleShape(managedInstance, instance);
 	}
 }

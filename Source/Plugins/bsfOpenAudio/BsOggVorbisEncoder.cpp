@@ -21,10 +21,10 @@ namespace bs
 
 	OggVorbisEncoder::~OggVorbisEncoder()
 	{
-		close();
+		Close();
 	}
 
-	bool OggVorbisEncoder::open(std::function<void(UINT8*, UINT32)> writeCallback, UINT32 sampleRate, UINT32 bitDepth,
+	bool OggVorbisEncoder::Open(std::function<void(UINT8*, UINT32)> writeCallback, UINT32 sampleRate, UINT32 bitDepth,
 		UINT32 numChannels)
 	{
 		mNumChannels = numChannels;
@@ -40,7 +40,7 @@ namespace bs
 		if (status != 0)
 		{
 			BS_LOG(Error, Audio, "Failed to write Ogg Vorbis file.");
-			close();
+			Close();
 			return false;
 		}
 
@@ -58,7 +58,7 @@ namespace bs
 		if (status != 0)
 		{
 			BS_LOG(Error, Audio, "Failed to write Ogg Vorbis file.");
-			close();
+			Close();
 			return false;
 		}
 
@@ -77,7 +77,7 @@ namespace bs
 		return true;
 	}
 
-	void OggVorbisEncoder::write(UINT8* samples, UINT32 numSamples)
+	void OggVorbisEncoder::Write(UINT8* samples, UINT32 numSamples)
 	{
 		static const UINT32 WRITE_LENGTH = 1024;
 
@@ -121,7 +121,7 @@ namespace bs
 				{
 					for (UINT32 j = 0; j < mNumChannels; j++)
 					{
-						INT32 sample = AudioUtility::convert24To32Bits(samples);
+						INT32 sample = AudioUtility::Convert24To32Bits(samples);
 						float encodedSample = sample / 2147483647.0f;
 						buffer[j][i] = encodedSample;
 
@@ -148,13 +148,13 @@ namespace bs
 
 			// Signal how many frames were written
 			vorbis_analysis_wrote(&mVorbisState, numFramesToWrite);
-			writeBlocks();
+			WriteBlocks();
 
 			numFrames -= numFramesToWrite;
 		}
 	}
 
-	void OggVorbisEncoder::writeBlocks()
+	void OggVorbisEncoder::WriteBlocks()
 	{
 		while (vorbis_analysis_blockout(&mVorbisState, &mVorbisBlock) == 1)
 		{
@@ -179,7 +179,7 @@ namespace bs
 		}
 	}
 
-	void OggVorbisEncoder::flush()
+	void OggVorbisEncoder::Flush()
 	{
 		if (mBufferOffset > 0 && mWriteCallback != nullptr)
 			mWriteCallback(mBuffer, mBufferOffset);
@@ -187,15 +187,15 @@ namespace bs
 		mBufferOffset = 0;
 	}
 
-	void OggVorbisEncoder::close()
+	void OggVorbisEncoder::Close()
 	{
 		if (mClosed)
 			return;
 
 		// Mark end of data and flush any remaining data in the buffers
 		vorbis_analysis_wrote(&mVorbisState, 0);
-		writeBlocks();
-		flush();
+		WriteBlocks();
+		Flush();
 
 		ogg_stream_clear(&mOggState);
 		vorbis_block_clear(&mVorbisBlock);
@@ -229,16 +229,16 @@ namespace bs
 		bs_frame_mark();
 
 		OggVorbisEncoder writer;
-		writer.open(writeCallback, info.sampleRate, info.bitDepth, info.numChannels);
+		writer.Open(writeCallback, info.sampleRate, info.bitDepth, info.numChannels);
 
-		writer.write(samples, info.numSamples);
-		writer.close();
+		writer.Write(samples, info.numSamples);
+		writer.Close();
 
 		auto output = bs_shared_ptr_new<MemoryDataStream>(totalEncodedSize);
 		UINT32 offset = 0;
 		for (auto& block : blocks)
 		{
-			memcpy(output->data() + offset, block.data, block.size);
+			memcpy(output->Data() + offset, block.data, block.size);
 			offset += block.size;
 
 			bs_frame_free(block.data);

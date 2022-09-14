@@ -19,13 +19,13 @@ namespace bs
 		virtual ~ScriptGameObjectBase();
 
 		/**	Returns the internal native GameObject handle. */
-		virtual HGameObject getNativeHandle() const = 0;
+		virtual HGameObject GetNativeHandle() const = 0;
 
 		/**	Sets the internal native GameObject handle. */
-		virtual void setNativeHandle(const HGameObject& gameObject) = 0;
+		virtual void SetNativeHandle(const HGameObject& gameObject) = 0;
 
 		/** Returns the managed version of this game object. */
-		MonoObject* getManagedInstance() const;
+		MonoObject* GetManagedInstance() const;
 
 	protected:
 		/**
@@ -35,13 +35,13 @@ namespace bs
 		 * creates a strong reference to the managed instance, and you need to make sure to release it with
 		 * freeManagedInstance() when no longer required.
 		 */
-		void setManagedInstance(MonoObject* instance);
+		void SetManagedInstance(MonoObject* instance);
 
 		/**
 		 * Frees a managed instace assigned with setManagedInstance(). Should be called before the object is destroyed or
 		 * when you changing the managed instance it points to (in order to release the previous instance).
 		 */
-		void freeManagedInstance();
+		void FreeManagedInstance();
 
 		UINT32 mGCHandle = 0;
 	};
@@ -58,9 +58,9 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static UINT64 internal_getInstanceId(ScriptGameObject* nativeInstance);
-		static void internal_getUUID(ScriptGameObject* nativeInstance, UUID* uuid);
-		static bool internal_getIsDestroyed(ScriptGameObject* nativeInstance);
+		static UINT64 InternalGetInstanceId(ScriptGameObject* nativeInstance);
+		static void InternalGetUuid(ScriptGameObject* nativeInstance, UUID* uuid);
+		static bool InternalGetIsDestroyed(ScriptGameObject* nativeInstance);
 	};
 
 	/** @} */

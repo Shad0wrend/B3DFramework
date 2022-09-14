@@ -90,7 +90,7 @@ namespace bs
 		DriverVersion() = default;
 
 		/**	Returns the driver version as a single string. */
-		String toString() const
+		String ToString() const
 		{
 			StringStream str;
 			str << major << "." << minor << "." << release << "." << build;
@@ -98,9 +98,9 @@ namespace bs
 		}
 
 		/** Parses a string in the major.minor.release.build format and stores the version numbers. */
-		void fromString(const String& versionString)
+		void FromString(const String& versionString)
 		{
-			Vector<bs::String> tokens = StringUtil::split(versionString, ".");
+			Vector<bs::String> tokens = StringUtil::Split(versionString, ".");
 			if(!tokens.empty())
 			{
 				major = parseINT32(tokens[0]);
@@ -192,21 +192,21 @@ namespace bs
 		VertexElementType vertexColorType = VET_COLOR_ABGR;
 
 		/**	Sets a capability flag indicating this capability is supported. */
-		void setCapability(const Capabilities c)
+		void SetCapability(const Capabilities c)
 		{
 			UINT64 index = (CAPS_CATEGORY_MASK & c) >> BS_CAPS_BITSHIFT;
 			mCapabilities[index] |= (c & ~CAPS_CATEGORY_MASK);
 		}
 
 		/**	Remove a capability flag indicating this capability is not supported (default). */
-		void unsetCapability(const Capabilities c)
+		void UnsetCapability(const Capabilities c)
 		{
 			UINT64 index = (CAPS_CATEGORY_MASK & c) >> BS_CAPS_BITSHIFT;
 			mCapabilities[index] &= (~c | CAPS_CATEGORY_MASK);
 		}
 
 		/**	Checks is the specified capability supported. */
-		bool hasCapability(const Capabilities c) const
+		bool HasCapability(const Capabilities c) const
 		{
 			UINT64 index = (CAPS_CATEGORY_MASK & c) >> BS_CAPS_BITSHIFT;
 
@@ -214,28 +214,28 @@ namespace bs
 		}
 
 		/**	Adds a shader profile to the list of render-system specific supported profiles. */
-		void addShaderProfile(const String& profile)
+		void AddShaderProfile(const String& profile)
 		{
 			mSupportedShaderProfiles.insert(profile);
 		}
 
 		/**	Returns true if the provided profile is supported. */
-		bool isShaderProfileSupported(const String& profile) const
+		bool IsShaderProfileSupported(const String& profile) const
 		{
 			return (mSupportedShaderProfiles.end() != mSupportedShaderProfiles.find(profile));
 		}
 
 		/**	Returns a set of all supported shader profiles. */
-		const UnorderedSet<String>& getSupportedShaderProfiles() const
+		const UnorderedSet<String>& GetSupportedShaderProfiles() const
 		{
 			return mSupportedShaderProfiles;
 		}
 
 		/** Parses a vendor string and returns an enum with the vendor if parsed succesfully. */
-		static GPUVendor vendorFromString(const String& vendorString);
+		static GPUVendor VendorFromString(const String& vendorString);
 
 		/** Converts a vendor enum to a string. */
-		static String vendorToString(GPUVendor vendor);
+		static String VendorToString(GPUVendor vendor);
 
 	private:
 		static char const * const GPU_VENDOR_STRINGS[GPU_VENDOR_COUNT];

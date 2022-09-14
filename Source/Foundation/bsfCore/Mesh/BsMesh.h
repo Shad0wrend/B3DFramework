@@ -67,7 +67,7 @@ namespace bs
 		virtual ~Mesh() = default;
 
 		/** @copydoc MeshBase::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 		/**
 		 * Updates the mesh with new data. Provided data buffer will be locked until the operation completes.
@@ -81,7 +81,7 @@ namespace bs
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		AsyncOp writeData(const SPtr<MeshData>& data, bool discardEntireBuffer);
+		AsyncOp WriteData(const SPtr<MeshData>& data, bool discardEntireBuffer);
 
 		/**
 		 * Reads internal mesh data to the provided previously allocated buffer. Provided data buffer will be locked until
@@ -93,7 +93,7 @@ namespace bs
 		 *
 		 * @note	This is an @ref asyncMethod "asynchronous method".
 		 */
-		AsyncOp readData(const SPtr<MeshData>& data);
+		AsyncOp ReadData(const SPtr<MeshData>& data);
 
 		/**
 		 * Allocates a buffer that exactly matches the size of this mesh. This is a helper function, primarily meant for
@@ -101,7 +101,7 @@ namespace bs
 		 * 			
 		 * @note	Thread safe.
 		 */
-		SPtr<MeshData> allocBuffer() const;
+		SPtr<MeshData> AllocBuffer() const;
 
 		/**
 		 * Returns mesh data cached in the system memory. If the mesh wasn't created with CPU cached usage flag this
@@ -111,21 +111,21 @@ namespace bs
 		 * The data read is the cached mesh data. Any data written to the mesh from the GPU or core thread will not be
 		 * reflected in this data. Use readData() if you require those changes.
 		 */
-		SPtr<MeshData> getCachedData() const { return mCPUData; }
+		SPtr<MeshData> GetCachedData() const { return mCPUData; }
 
 		/** Gets the skeleton required for animation of this mesh, if any is available. */
 		BS_SCRIPT_EXPORT(pr:getter,n:Skeleton)
-		SPtr<Skeleton> getSkeleton() const { return mSkeleton; }
+		SPtr<Skeleton> GetSkeleton() const { return mSkeleton; }
 
 		/** Returns an object containing all shapes used for morph animation, if any are available. */
 		BS_SCRIPT_EXPORT(pr:getter,n:MorphShapes)
-		SPtr<MorphShapes> getMorphShapes() const { return mMorphShapes; }
+		SPtr<MorphShapes> GetMorphShapes() const { return mMorphShapes; }
 
 		/** Retrieves a core implementation of a mesh usable only from the core thread. */
-		SPtr<ct::Mesh> getCore() const;
+		SPtr<ct::Mesh> GetCore() const;
 
 		/**	Returns a dummy mesh, containing just one triangle. Don't modify the returned mesh. */
-		static HMesh dummy();
+		static HMesh Dummy();
 
 	protected:
 		friend class MeshManager;
@@ -134,20 +134,20 @@ namespace bs
 		Mesh(const SPtr<MeshData>& initialMeshData, const MESH_DESC& desc);
 
 		/**	Updates bounds by calculating them from the vertices in the provided mesh data object. */
-		void updateBounds(const MeshData& meshData);
+		void UpdateBounds(const MeshData& meshData);
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> createCore() const override;
+		SPtr<ct::CoreObject> CreateCore() const ;
 
 		/**
 		 * Creates buffers used for caching of CPU mesh data.
 		 *
 		 * @note	Make sure to initialize all mesh properties before calling this.
 		 */
-		void createCPUBuffer();
+		void CreateCpuBuffer();
 
 		/**	Updates the cached CPU buffers with new data. */
-		void updateCPUBuffer(UINT32 subresourceIdx, const MeshData& data);
+		void UpdateCpuBuffer(UINT32 subresourceIdx, const MeshData& data);
 
 		mutable SPtr<MeshData> mCPUData;
 
@@ -165,8 +165,8 @@ namespace bs
 
 	public:
 		friend class MeshRTTI;
-		static RTTITypeBase* getRTTIStatic();
-		RTTITypeBase* getRTTI() const override;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 
 		/************************************************************************/
 		/* 								STATICS		                     		*/
@@ -188,7 +188,7 @@ namespace bs
 		 * @param[in]	indexType		Size of indices, use smaller size for better performance, however be careful not to
 		 *								go over the number of vertices limited by the size.
 		 */
-		static HMesh create(UINT32 numVertices, UINT32 numIndices, const SPtr<VertexDataDesc>& vertexDesc,
+		static HMesh Create(UINT32 numVertices, UINT32 numIndices, const SPtr<VertexDataDesc>& vertexDesc,
 			int usage = MU_STATIC, DrawOperationType drawOp = DOT_TRIANGLE_LIST, IndexType indexType = IT_32BIT);
 
 		/**
@@ -196,7 +196,7 @@ namespace bs
 		 *
 		 * @param[in]	desc	Descriptor containing the properties of the mesh to create.
 		 */
-		static HMesh create(const MESH_DESC& desc);
+		static HMesh Create(const MESH_DESC& desc);
 
 		/**
 		 * Creates a new mesh from an existing mesh data. Created mesh will match the vertex and index buffers described
@@ -207,7 +207,7 @@ namespace bs
 		 *								vertex descriptor and index type properties are ignored and are read from provided
 		 *								mesh data instead.
 		 */
-		static HMesh create(const SPtr<MeshData>& initialData, const MESH_DESC& desc);
+		static HMesh Create(const SPtr<MeshData>& initialData, const MESH_DESC& desc);
 
 		/**
 		 * Creates a new mesh from an existing mesh data. Created mesh will match the vertex and index buffers described
@@ -218,7 +218,7 @@ namespace bs
 		 * @param[in]	drawOp			Determines how should the provided indices be interpreted by the pipeline. Default
 		 *								option is a triangle strip, where three indices represent a single triangle.
 		 */
-		static HMesh create(const SPtr<MeshData>& initialData, int usage = MU_STATIC,
+		static HMesh Create(const SPtr<MeshData>& initialData, int usage = MU_STATIC,
 			DrawOperationType drawOp = DOT_TRIANGLE_LIST);
 
 		/** @name Internal
@@ -252,7 +252,7 @@ namespace bs
 		 *	
 		 * @note	This should only be used for special cases like serialization and is not meant for normal use.
 		 */
-		static SPtr<Mesh> createEmpty();
+		static SPtr<Mesh> CreateEmpty();
 
 		/** @} */
 	};
@@ -278,22 +278,22 @@ namespace bs
 		~Mesh();
 
 		/** @copydoc CoreObject::initialize */
-		void initialize() override;
+		void Initialize() override;
 
 		/** @copydoc MeshBase::getVertexData */
-		SPtr<VertexData> getVertexData() const override;
+		SPtr<VertexData> GetVertexData() const ;
 
 		/** @copydoc MeshBase::getIndexBuffer */
-		SPtr<IndexBuffer> getIndexBuffer() const override;
+		SPtr<IndexBuffer> GetIndexBuffer() const ;
 
 		/** @copydoc MeshBase::getVertexDesc */
-		SPtr<VertexDataDesc> getVertexDesc() const override;
+		SPtr<VertexDataDesc> GetVertexDesc() const ;
 
 		/** Returns a skeleton that can be used for animating the mesh. */
-		SPtr<Skeleton> getSkeleton() const { return mSkeleton; }
+		SPtr<Skeleton> GetSkeleton() const { return mSkeleton; }
 
 		/** Returns an object containing all shapes used for morph animation, if any are available. */
-		SPtr<MorphShapes> getMorphShapes() const { return mMorphShapes; }
+		SPtr<MorphShapes> GetMorphShapes() const { return mMorphShapes; }
 
 		/**
 		 * Updates the current mesh with the provided data.
@@ -307,7 +307,7 @@ namespace bs
 		 *									provided data.
 		 * @param[in]	queueIdx			Device queue to perform the write operation on. See @ref queuesDoc.
 		 */
-		virtual void writeData(const MeshData& data, bool discardEntireBuffer, bool updateBounds = true,
+		virtual void WriteData(const MeshData& data, bool discardEntireBuffer, bool updateBounds = true,
 			UINT32 queueIdx = 0);
 
 		/**
@@ -320,7 +320,7 @@ namespace bs
 		 *									device, no data will be read.
 		 * @param[in]	queueIdx			Device queue to perform the read operation on. See @ref queuesDoc.
 		 */
-		virtual void readData(MeshData& data, UINT32 deviceIdx = 0, UINT32 queueIdx = 0);
+		virtual void ReadData(MeshData& data, UINT32 deviceIdx = 0, UINT32 queueIdx = 0);
 
 		/**
 		 * Creates a new empty mesh. Created mesh will have no sub-meshes.
@@ -338,7 +338,7 @@ namespace bs
 		 *								go over the number of vertices limited by the size.
 		 * @param[in]	deviceMask		Mask that determines on which GPU devices should the object be created on.
 		 */
-		static SPtr<Mesh> create(UINT32 numVertices, UINT32 numIndices, const SPtr<VertexDataDesc>& vertexDesc,
+		static SPtr<Mesh> Create(UINT32 numVertices, UINT32 numIndices, const SPtr<VertexDataDesc>& vertexDesc,
 			int usage = MU_STATIC, DrawOperationType drawOp = DOT_TRIANGLE_LIST, IndexType indexType = IT_32BIT,
 			GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
@@ -348,7 +348,7 @@ namespace bs
 		 * @param[in]	desc			Descriptor containing the properties of the mesh to create.
 		 * @param[in]	deviceMask		Mask that determines on which GPU devices should the object be created on.
 		 */
-		static SPtr<Mesh> create(const MESH_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
+		static SPtr<Mesh> Create(const MESH_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
 		/**
 		 * Creates a new mesh from an existing mesh data. Created mesh will match the vertex and index buffers described
@@ -360,7 +360,7 @@ namespace bs
 		 *								mesh data instead.
 		 * @param[in]	deviceMask		Mask that determines on which GPU devices should the object be created on.
 		 */
-		static SPtr<Mesh> create(const SPtr<MeshData>& initialData, const MESH_DESC& desc,
+		static SPtr<Mesh> Create(const SPtr<MeshData>& initialData, const MESH_DESC& desc,
 			GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
 		/**
@@ -373,14 +373,14 @@ namespace bs
 		 *								option is a triangle strip, where three indices represent a single triangle.
 		 * @param[in]	deviceMask		Mask that determines on which GPU devices should the object be created on.
 		 */
-		static SPtr<Mesh> create(const SPtr<MeshData>& initialData, int usage = MU_STATIC,
+		static SPtr<Mesh> Create(const SPtr<MeshData>& initialData, int usage = MU_STATIC,
 			DrawOperationType drawOp = DOT_TRIANGLE_LIST, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
 	protected:
 		friend class bs::Mesh;
 
 		/** Updates bounds by calculating them from the vertices in the provided mesh data object. */
-		void updateBounds(const MeshData& meshData);
+		void UpdateBounds(const MeshData& meshData);
 
 		SPtr<VertexData> mVertexData;
 		SPtr<IndexBuffer> mIndexBuffer;

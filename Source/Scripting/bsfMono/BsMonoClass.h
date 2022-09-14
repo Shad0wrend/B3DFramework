@@ -40,13 +40,13 @@ namespace bs
 		~MonoClass();
 
 		/**	Returns the namespace of this class. */
-		const String& getNamespace() const { return mNamespace; }
+		const String& GetNamespace() const { return mNamespace; }
 
 		/**	Returns the type name of this class. */
-		const String& getTypeName() const { return mTypeName; }
+		const String& GetTypeName() const { return mTypeName; }
 
 		/**	Returns the full name (Namespace::TypeName) of this class. */
-		const String& getFullName() const { return mFullName; }
+		const String& GetFullName() const { return mFullName; }
 
 		/**
 		 * Returns an object referencing a method with the specified name and number of parameters.
@@ -56,7 +56,7 @@ namespace bs
 		 * Does not query base class methods.
 		 * Returns null if method cannot be found.
 		 */
-		MonoMethod* getMethod(const String& name, UINT32 numParams = 0) const;
+		MonoMethod* GetMethod(const String& name, UINT32 numParams = 0) const;
 
 		/**
 		 * Returns an object referencing a field with the specified name.
@@ -65,7 +65,7 @@ namespace bs
 		 * Does not query base class fields.
 		 * Returns null if field cannot be found.
 		 */
-		MonoField* getField(const String& name) const;
+		MonoField* GetField(const String& name) const;
 
 		/**
 		 * Returns an object referencing a property with the specified name.
@@ -74,16 +74,16 @@ namespace bs
 		 * Does not query base class properties.
 		 * Returns null if property cannot be found.
 		 */
-		MonoProperty* getProperty(const String& name) const;
+		MonoProperty* GetProperty(const String& name) const;
 
 		/**
 		 * Returns an instance of an attribute of the specified @p monoClass that is part of this class. Returns null if
 		 * this class type does not have that type of attribute.
 		 */
-		MonoObject* getAttribute(MonoClass* monoClass) const;
+		MonoObject* GetAttribute(MonoClass* monoClass) const;
 
 		/**	Returns the base class of this class. Null if this class has no base. */
-		MonoClass* getBaseClass() const;
+		MonoClass* GetBaseClass() const;
 
 		/**
 		 * Returns an object referencing a method, expects exact method name with parameters.
@@ -93,46 +93,46 @@ namespace bs
 		 * Returns null if method cannot be found.
 		 * Example: name = "CreateInstance", signature = "Vector2,int[]"
 		 */
-		MonoMethod* getMethodExact(const String& name, const String& signature) const;
+		MonoMethod* GetMethodExact(const String& name, const String& signature) const;
 
 		/**
 		 * Returns all fields belonging to this class.
 		 *
 		 * @note	Be aware this will not include the fields of any base classes.
 		 */
-		const Vector<MonoField*>& getAllFields() const;
+		const Vector<MonoField*>& GetAllFields() const;
 
 		/**
 		 * Returns all properties belonging to this class.
 		 *
 		 * @note	Be aware this will not include the properties of any base classes.
 		 */
-		const Vector<MonoProperty*>& getAllProperties() const;
+		const Vector<MonoProperty*>& GetAllProperties() const;
 
 		/**
 		 * Returns all methods belonging to this class.
 		 *
 		 * @note	Be aware this will not include the methods of any base classes.
 		 */
-		const Vector<MonoMethod*>& getAllMethods() const;
+		const Vector<MonoMethod*>& GetAllMethods() const;
 
 		/**	Gets all attributes applied to this class. */
-		Vector<MonoClass*> getAllAttributes() const;
+		Vector<MonoClass*> GetAllAttributes() const;
 
 		/**	Check if this class has an attribute of the type @p monoClass. */
-		bool hasAttribute(MonoClass* monoClass) const;
+		bool HasAttribute(MonoClass* monoClass) const;
 
 		/**	Check if this class has a field with the specified name. Does not check base classes. */
-		bool hasField(const String& name) const;
+		bool HasField(const String& name) const;
 
 		/**	Checks if this class is a sub class of the specified class. */
-		bool isSubClassOf(const MonoClass* monoClass) const;
+		bool IsSubClassOf(const MonoClass* monoClass) const;
 
 		/**	Checks is the provided object instance of this class' type. */
-		bool isInstanceOfType(MonoObject* object) const;
+		bool IsInstanceOfType(MonoObject* object) const;
 
 		/** Returns the size of an instance of this class, in bytes. */
-		UINT32 getInstanceSize() const;
+		UINT32 GetInstanceSize() const;
 
 		/**
 		 * Shortcut for invoking a method on a class. Invokes a method with the provided name and number of parameters.
@@ -148,19 +148,19 @@ namespace bs
 		 * You cannot use this to call overloaded methods that have the same number of parameters. Use getMethodExact() and
 		 * then invoke the method from the returned method object.
 		 */
-		MonoObject* invokeMethod(const String& name, MonoObject* instance = nullptr, void** params = nullptr, UINT32 numParams = 0);
+		MonoObject* InvokeMethod(const String& name, MonoObject* instance = nullptr, void** params = nullptr, UINT32 numParams = 0);
 
 		/**
 		 * Hooks up an internal call that will trigger the provided method callback when the managed method with the
 		 * specified name is called. If name is not valid this will silently fail.
 		 */
-		void addInternalCall(const String& name, const void* method);
+		void AddInternalCall(const String& name, const void* method);
 
 		/**
 		 * Creates a new instance of this class and optionally constructs it. If you don't construct the instance then you
 		 * should invoke the ".ctor" method manually afterwards.
 		 */
-		MonoObject* createInstance(bool construct = true) const;
+		MonoObject* CreateInstance(bool construct = true) const;
 
 		/**
 		 * Creates a new instance of this class and then constructs it using the constructor with the specified number of
@@ -173,7 +173,7 @@ namespace bs
 		 * @note	If the class have multiple constructors with the same number of parameters use the other
 		 *			createInstance(const String&, void**) overload that allows you to provide exact signature.
 		 */
-		MonoObject* createInstance(void** params, UINT32 numParams);
+		MonoObject* CreateInstance(void** params, UINT32 numParams);
 
 		/**
 		 * Creates a new instance of this class and then constructs it using the constructor with the specified signature.
@@ -182,13 +182,13 @@ namespace bs
 		 * @param[in]	params			Array containing pointers to constructor parameters. Array length must be equal to
 		 *								number of parameters.
 		 */
-		MonoObject* createInstance(const String& ctorSignature, void** params);
+		MonoObject* CreateInstance(const String& ctorSignature, void** params);
 
 		/**	Returns the internal mono representation of the class. */
 		::MonoClass* GetInternalClassInternal() const { return mClass; }
 
 		/** Invokes the parameterless constructor on the provided object. */
-		static void construct(MonoObject* object);
+		static void Construct(MonoObject* object);
 	private:
 		friend class MonoAssembly;
 

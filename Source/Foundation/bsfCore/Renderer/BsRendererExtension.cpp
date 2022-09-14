@@ -11,18 +11,18 @@ namespace bs
 	{
 		auto coreInitializer = [=]()
 		{
-			RendererManager::instance().getActive()->addPlugin(obj);
-			obj->initialize(data);
+			RendererManager::Instance().GetActive()->AddPlugin(obj);
+			obj->Initialize(data);
 		};
 
-		gCoreThread().queueCommand(coreInitializer);
+		gCoreThread().QueueCommand(coreInitializer);
 	}
 
 	void RendererExtension::DeleterInternal(RendererExtension* obj)
 	{
 		auto deleteObj = [=]()
 		{
-			RendererManager::instance().getActive()->removePlugin(obj);
+			RendererManager::Instance().GetActive()->removePlugin(obj);
 
 			obj->destroy();
 			obj->~RendererExtension();

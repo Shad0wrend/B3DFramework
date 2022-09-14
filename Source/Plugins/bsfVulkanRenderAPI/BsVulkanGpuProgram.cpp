@@ -25,7 +25,7 @@ namespace bs { namespace ct
 
 	VulkanShaderModule::~VulkanShaderModule()
 	{
-		vkDestroyShaderModule(mOwner->getDevice().getLogical(), mModule, gVulkanAllocator);
+		vkDestroyShaderModule(mOwner->GetDevice().GetLogical(), mModule, gVulkanAllocator);
 	}
 
 	VulkanGpuProgram::VulkanGpuProgram(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask)
@@ -39,15 +39,15 @@ namespace bs { namespace ct
 		for (UINT32 i = 0; i < BS_MAX_DEVICES; i++)
 		{
 			if (mModules[i] != nullptr)
-				mModules[i]->destroy();
+				mModules[i]->Destroy();
 		}
 
 		BS_INC_RENDER_STAT_CAT(ResDestroyed, RenderStatObject_GpuProgram);
 	}
 
-	void VulkanGpuProgram::initialize()
+	void VulkanGpuProgram::Initialize()
 	{
-		if (!isSupported())
+		if (!IsSupported())
 		{
 			mIsCompiled = false;
 			mCompileMessages = "Specified program is not supported by the current render system.";
@@ -81,7 +81,7 @@ namespace bs { namespace ct
 
 		if(mIsCompiled)
 		{
-			VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::instance());
+			VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
 			VulkanDevice* devices[BS_MAX_DEVICES];
 
 			UINT32 codeSize = mBytecode->instructions.size;
@@ -132,7 +132,7 @@ namespace bs { namespace ct
 
 			if (mType == GPT_VERTEX_PROGRAM)
 			{
-				mInputDeclaration = HardwareBufferManager::instance().createVertexDeclaration(
+				mInputDeclaration = HardwareBufferManager::Instance().createVertexDeclaration(
 					mBytecode->vertexInput, mDeviceMask);
 			}
 		}

@@ -17,45 +17,45 @@ namespace bs
 	class FPhysXMeshRTTI : public RTTIType<FPhysXMesh, FPhysicsMesh, FPhysXMeshRTTI>
 	{
 	private:
-		SPtr<DataStream> getCookedData(FPhysXMesh* obj, UINT32& size)
+		SPtr<DataStream> GetCookedData(FPhysXMesh* obj, UINT32& size)
 		{
 			size = obj->mCookedDataSize;
 
 			return bs_shared_ptr_new<MemoryDataStream>(obj->mCookedData, obj->mCookedDataSize);
 		}
 
-		void setCookedData(FPhysXMesh* obj, const SPtr<DataStream>& value, UINT32 size)
+		void SetCookedData(FPhysXMesh* obj, const SPtr<DataStream>& value, UINT32 size)
 		{
 			obj->mCookedData = (UINT8*)bs_alloc(size);
 			obj->mCookedDataSize = size;
 
-			value->read(obj->mCookedData, size);
+			value->Read(obj->mCookedData, size);
 		}
 
 	public:
 		FPhysXMeshRTTI()
 		{
-			addDataBlockField("mCookedData", 0, &FPhysXMeshRTTI::getCookedData, &FPhysXMeshRTTI::setCookedData);
+			AddDataBlockField("mCookedData", 0, &FPhysXMeshRTTI::GetCookedData, &FPhysXMeshRTTI::SetCookedData);
 		}
 
-		void onDeserializationEnded(IReflectable* obj, SerializationContext* context) override
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) 
 		{
 			FPhysXMesh* mesh = static_cast<FPhysXMesh*>(obj);
-			mesh->initialize();
+			mesh->Initialize();
 		}
 
-		const String& getRTTIName() override
+		const String& GetRttiName() 
 		{
 			static String name = "FPhysXMesh";
 			return name;
 		}
 
-		UINT32 getRTTIId() override
+		UINT32 GetRttiId() 
 		{
 			return TID_FPhysXMesh;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return bs_shared_ptr_new<FPhysXMesh>();
 		}

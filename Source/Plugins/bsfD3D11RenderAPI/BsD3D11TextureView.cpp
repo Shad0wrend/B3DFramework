@@ -16,20 +16,20 @@ namespace bs { namespace ct
 		if ((mDesc.usage & GVU_RANDOMWRITE) != 0)
 			mUAV = createUAV(texture, mDesc.mostDetailMip, mDesc.firstArraySlice, mDesc.numArraySlices);
 		else if ((mDesc.usage & GVU_RENDERTARGET) != 0)
-			mRTV = createRTV(texture, mDesc.mostDetailMip, mDesc.firstArraySlice, mDesc.numArraySlices);
+			mRTV = CreateRtv(texture, mDesc.mostDetailMip, mDesc.firstArraySlice, mDesc.numArraySlices);
 		else if ((mDesc.usage & GVU_DEPTHSTENCIL) != 0)
 		{
-			mWDepthWStencilView = createDSV(texture, mDesc.mostDetailMip, mDesc.firstArraySlice, mDesc.numArraySlices,
+			mWDepthWStencilView = CreateDsv(texture, mDesc.mostDetailMip, mDesc.firstArraySlice, mDesc.numArraySlices,
 				false, false);
-			mRODepthWStencilView = createDSV(texture, mDesc.mostDetailMip, mDesc.firstArraySlice, mDesc.numArraySlices,
+			mRODepthWStencilView = CreateDsv(texture, mDesc.mostDetailMip, mDesc.firstArraySlice, mDesc.numArraySlices,
 				true, false);
-			mRODepthROStencilView = createDSV(texture, mDesc.mostDetailMip, mDesc.firstArraySlice, mDesc.numArraySlices,
+			mRODepthROStencilView = CreateDsv(texture, mDesc.mostDetailMip, mDesc.firstArraySlice, mDesc.numArraySlices,
 				true, true);
-			mWDepthROStencilView = createDSV(texture, mDesc.mostDetailMip, mDesc.firstArraySlice, mDesc.numArraySlices,
+			mWDepthROStencilView = CreateDsv(texture, mDesc.mostDetailMip, mDesc.firstArraySlice, mDesc.numArraySlices,
 				false, true);
 		}
 		else
-			mSRV = createSRV(texture, mDesc.mostDetailMip, mDesc.numMips, mDesc.firstArraySlice, mDesc.numArraySlices);
+			mSRV = CreateSrv(texture, mDesc.mostDetailMip, mDesc.numMips, mDesc.firstArraySlice, mDesc.numArraySlices);
 	}
 
 	D3D11TextureView::~D3D11TextureView()
@@ -43,7 +43,7 @@ namespace bs { namespace ct
 		SAFE_RELEASE(mRODepthROStencilView);
 	}
 
-	ID3D11DepthStencilView* D3D11TextureView::getDSV(bool readOnlyDepth, bool readOnlyStencil) const
+	ID3D11DepthStencilView* D3D11TextureView::GetDsv(bool readOnlyDepth, bool readOnlyStencil) const
 	{
 		if(readOnlyDepth)
 		{
@@ -173,7 +173,7 @@ namespace bs { namespace ct
 		return srv;
 	}
 
-	ID3D11RenderTargetView* D3D11TextureView::createRTV(const D3D11Texture* texture,
+	ID3D11RenderTargetView* D3D11TextureView::CreateRtv(const D3D11Texture* texture,
 		UINT32 mipSlice, UINT32 firstArraySlice, UINT32 numArraySlices)
 	{
 		D3D11_RENDER_TARGET_VIEW_DESC desc;
@@ -260,7 +260,7 @@ namespace bs { namespace ct
 		return rtv;
 	}
 
-	ID3D11UnorderedAccessView* D3D11TextureView::createUAV(const D3D11Texture* texture,
+	ID3D11UnorderedAccessView* D3D11TextureView::CreateUav(const D3D11Texture* texture,
 		UINT32 mipSlice, UINT32 firstArraySlice, UINT32 numArraySlices)
 	{
 		D3D11_UNORDERED_ACCESS_VIEW_DESC desc;
@@ -331,7 +331,7 @@ namespace bs { namespace ct
 		return uav;
 	}
 
-	ID3D11DepthStencilView* D3D11TextureView::createDSV(const D3D11Texture* texture,
+	ID3D11DepthStencilView* D3D11TextureView::CreateDsv(const D3D11Texture* texture,
 		UINT32 mipSlice, UINT32 firstArraySlice, UINT32 numArraySlices, bool readOnlyDepth, bool readOnlyStencil)
 	{
 		D3D11_DEPTH_STENCIL_VIEW_DESC desc;

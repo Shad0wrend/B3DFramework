@@ -20,7 +20,7 @@ namespace bs { namespace ct
 		~VulkanSampler();
 
 		/** Returns the internal handle to the Vulkan object. */
-		VkSampler getHandle() const { return mSampler; }
+		VkSampler GetHandle() const { return mSampler; }
 
 	private:
 		VkSampler mSampler;
@@ -36,7 +36,7 @@ namespace bs { namespace ct
 		 * Gets the resource wrapping the sampler object, on the specified device. If sampler state device mask doesn't
 		 * include the provided device, null is returned.
 		 */
-		VulkanSampler* getResource(UINT32 deviceIdx) const { return mSamplers[deviceIdx]; }
+		VulkanSampler* GetResource(UINT32 deviceIdx) const { return mSamplers[deviceIdx]; }
 
 	protected:
 		friend class VulkanRenderStateManager;
@@ -44,7 +44,7 @@ namespace bs { namespace ct
 		VulkanSamplerState(const SAMPLER_STATE_DESC& desc, GpuDeviceFlags deviceMask);
 
 		/** @copydoc SamplerState::createInternal */
-		void createInternal() override;
+		void CreateInternal() ;
 
 		VulkanSampler* mSamplers[BS_MAX_DEVICES];
 		GpuDeviceFlags mDeviceMask;

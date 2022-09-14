@@ -27,14 +27,14 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static MonoObject* internal_Load(MonoString* path, ResourceLoadFlag flags);
-		static MonoObject* internal_LoadFromUUID(UUID* uuid, ResourceLoadFlag flags);
-		static MonoObject* internal_LoadAsync(MonoString* path, ResourceLoadFlag flags);
-		static MonoObject* internal_LoadAsyncFromUUID(UUID* uuid, ResourceLoadFlag flags);
-		static void internal_Release(ScriptResourceBase* resource);
-		static void internal_ReleaseRef(ScriptRRefBase* resource);
-		static void internal_UnloadUnused();
-		static float internal_GetLoadProgress(ScriptRRefBase* resource, bool loadDependencies);
+		static MonoObject* InternalLoad(MonoString* path, ResourceLoadFlag flags);
+		static MonoObject* InternalLoadFromUuid(UUID* uuid, ResourceLoadFlag flags);
+		static MonoObject* InternalLoadAsync(MonoString* path, ResourceLoadFlag flags);
+		static MonoObject* InternalLoadAsyncFromUuid(UUID* uuid, ResourceLoadFlag flags);
+		static void InternalRelease(ScriptResourceBase* resource);
+		static void InternalReleaseRef(ScriptRRefBase* resource);
+		static void InternalUnloadUnused();
+		static float InternalGetLoadProgress(ScriptRRefBase* resource, bool loadDependencies);
 	};
 
 	/** @} */

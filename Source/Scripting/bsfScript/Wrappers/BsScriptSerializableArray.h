@@ -21,7 +21,7 @@ namespace bs
 		 * Creates a new serializable array interop object from the data in the provided property. Caller must ensure the
 		 * property references an array.
 		 */
-		static MonoObject* create(const ScriptSerializableProperty* native, MonoObject* managed);
+		static MonoObject* Create(const ScriptSerializableProperty* native, MonoObject* managed);
 
 	private:
 		ScriptSerializableArray(MonoObject* instance, const SPtr<ManagedSerializableTypeInfoArray>& typeInfo);
@@ -31,7 +31,7 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static MonoObject* internal_createProperty(ScriptSerializableArray* nativeInstance);
+		static MonoObject* InternalCreateProperty(ScriptSerializableArray* nativeInstance);
 	};
 
 	/** @} */

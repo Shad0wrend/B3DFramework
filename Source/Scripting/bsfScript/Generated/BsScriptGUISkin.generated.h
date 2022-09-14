@@ -16,16 +16,16 @@ namespace bs
 
 		ScriptGUISkin(MonoObject* managedInstance, const ResourceHandle<GUISkin>& value);
 
-		static MonoObject* createInstance();
+		static MonoObject* CreateInstance();
 
 	private:
-		static MonoObject* Internal_getRef(ScriptGUISkin* thisPtr);
+		static MonoObject* InternalGetRef(ScriptGUISkin* thisPtr);
 
-		static bool Internal_hasStyle(ScriptGUISkin* thisPtr, MonoString* name);
-		static MonoObject* Internal_getStyle(ScriptGUISkin* thisPtr, MonoString* guiElemType);
-		static void Internal_setStyle(ScriptGUISkin* thisPtr, MonoString* guiElemType, MonoObject* style);
-		static void Internal_removeStyle(ScriptGUISkin* thisPtr, MonoString* guiElemType);
-		static MonoArray* Internal_getStyleNames(ScriptGUISkin* thisPtr);
-		static void Internal_create(MonoObject* managedInstance);
+		static bool InternalHasStyle(ScriptGUISkin* thisPtr, MonoString* name);
+		static MonoObject* InternalGetStyle(ScriptGUISkin* thisPtr, MonoString* guiElemType);
+		static void InternalSetStyle(ScriptGUISkin* thisPtr, MonoString* guiElemType, MonoObject* style);
+		static void InternalRemoveStyle(ScriptGUISkin* thisPtr, MonoString* guiElemType);
+		static MonoArray* InternalGetStyleNames(ScriptGUISkin* thisPtr);
+		static void InternalCreate(MonoObject* managedInstance);
 	};
 }

@@ -37,7 +37,7 @@ namespace bs
 			minSize.y = std::max((UINT32)minSize.y, sizeRange.min.y + paddingY);
 		}
 
-		LayoutSizeRange sizeRange = GetDimensionsInternal().calculateSizeRange(optimalSize);
+		LayoutSizeRange sizeRange = GetDimensionsInternal().CalculateSizeRange(optimalSize);
 		sizeRange.min.x = std::max(sizeRange.min.x, minSize.x);
 		sizeRange.min.y = std::max(sizeRange.min.y, minSize.y);
 
@@ -84,7 +84,7 @@ namespace bs
 			childIdx++;
 		}
 
-		mSizeRange = GetDimensionsInternal().calculateSizeRange(optimalSize);
+		mSizeRange = GetDimensionsInternal().CalculateSizeRange(optimalSize);
 		mSizeRange.min.x = std::max(mSizeRange.min.x, minSize.x);
 		mSizeRange.min.y = std::max(mSizeRange.min.y, minSize.y);
 	}
@@ -135,7 +135,7 @@ namespace bs
 			{
 				const GUIDimensions& dimensions = child->GetDimensionsInternal();
 
-				if (dimensions.fixedWidth())
+				if (dimensions.FixedWidth())
 					processedElements[childIdx] = true;
 				else
 				{
@@ -172,7 +172,7 @@ namespace bs
 						continue;
 					}
 
-					UINT32 extraWidth = std::min((UINT32)Math::ceilToInt(avgSize), remainingSize);
+					UINT32 extraWidth = std::min((UINT32)Math::CeilToInt(avgSize), remainingSize);
 					UINT32 elementWidth = elementAreas[childIdx].width + extraWidth;
 
 					// Clamp if needed
@@ -233,7 +233,7 @@ namespace bs
 
 					float avgSize = totalRemainingSize * elementScaleWeights[childIdx];
 
-					UINT32 extraWidth = std::min((UINT32)Math::ceilToInt(avgSize), remainingSize);
+					UINT32 extraWidth = std::min((UINT32)Math::CeilToInt(avgSize), remainingSize);
 					UINT32 elementWidth = (UINT32)std::max(0, (INT32)elementAreas[childIdx].width - (INT32)extraWidth);
 
 					// Clamp if needed
@@ -297,7 +297,7 @@ namespace bs
 					}
 
 					float avgSize = totalRemainingSize * elementScaleWeights[childIdx];
-					UINT32 extraWidth = std::min((UINT32)Math::ceilToInt(avgSize), remainingSize);
+					UINT32 extraWidth = std::min((UINT32)Math::CeilToInt(avgSize), remainingSize);
 					UINT32 elementWidth = elementAreas[childIdx].width + extraWidth;
 
 					// Clamp if needed
@@ -352,7 +352,7 @@ namespace bs
 			const LayoutSizeRange& sizeRange = sizeRanges[childIdx];
 			UINT32 elemHeight = (UINT32)sizeRange.optimal.y;
 			const GUIDimensions& dimensions = child->GetDimensionsInternal();
-			if (!dimensions.fixedHeight())
+			if (!dimensions.FixedHeight())
 			{
 				elemHeight = layoutArea.height;
 				if (sizeRange.min.y > 0 && elemHeight < (UINT32)sizeRange.min.y)
@@ -368,7 +368,7 @@ namespace bs
 				GUIElement* element = static_cast<GUIElement*>(child);
 
 				UINT32 yPadding = element->GetPaddingInternal().top + element->GetPaddingInternal().bottom;
-				INT32 yOffset = Math::ceilToInt(((INT32)layoutArea.height - (INT32)(elemHeight + yPadding)) * 0.5f);
+				INT32 yOffset = Math::CeilToInt(((INT32)layoutArea.height - (INT32)(elemHeight + yPadding)) * 0.5f);
 				yOffset = std::max(0, yOffset);
 
 				elementAreas[childIdx].x = layoutArea.x + xOffset;
@@ -411,7 +411,7 @@ namespace bs
 			{
 				childData.area = elementAreas[childIdx];
 				childData.clipRect = childData.area;
-				childData.clipRect.clip(data.clipRect);
+				childData.clipRect.Clip(data.clipRect);
 
 				child->SetLayoutDataInternal(childData);
 				child->UpdateLayoutInternalInternal(childData);
@@ -424,13 +424,13 @@ namespace bs
 			bs_stack_free(elementAreas);
 	}
 
-	GUILayoutX* GUILayoutX::create()
+	GUILayoutX* GUILayoutX::Create()
 	{
 		return bs_new<GUILayoutX>();
 	}
 
-	GUILayoutX* GUILayoutX::create(const GUIOptions& options)
+	GUILayoutX* GUILayoutX::Create(const GUIOptions& options)
 	{
-		return bs_new<GUILayoutX>(GUIDimensions::create(options));
+		return bs_new<GUILayoutX>(GUIDimensions::Create(options));
 	}
 }

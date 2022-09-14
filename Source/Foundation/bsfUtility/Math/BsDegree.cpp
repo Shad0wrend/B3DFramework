@@ -6,10 +6,10 @@
 namespace bs
 {
 	Degree::Degree(const Radian& r)
-		:mDeg(r.valueDegrees())
+		:mDeg(r.ValueDegrees())
 	{ }
 
-	Degree Degree::wrap()
+	Degree Degree::Wrap()
 	{
 		mDeg = fmod(mDeg, 360.0f);
 
@@ -21,30 +21,30 @@ namespace bs
 
 	Degree& Degree::operator= (const Radian& r)
 	{
-		mDeg = r.valueDegrees(); return *this;
+		mDeg = r.ValueDegrees(); return *this;
 	}
 
 	Degree Degree::operator+ (const Radian& r) const
 	{
-		return Degree (mDeg + r.valueDegrees());
+		return Degree (mDeg + r.ValueDegrees());
 	}
 
 	Degree& Degree::operator+= (const Radian& r)
 	{
-		mDeg += r.valueDegrees(); return *this;
+		mDeg += r.ValueDegrees(); return *this;
 	}
 
 	Degree Degree::operator- (const Radian& r) const
 	{
-		return Degree (mDeg - r.valueDegrees());
+		return Degree (mDeg - r.ValueDegrees());
 	}
 
 	Degree& Degree::operator-= (const Radian& r)
 	{
-		mDeg -= r.valueDegrees(); return *this;
+		mDeg -= r.ValueDegrees(); return *this;
 	}
 
-	float Degree::valueRadians() const
+	float Degree::ValueRadians() const
 	{
 		return mDeg * Math::DEG2RAD;
 	}

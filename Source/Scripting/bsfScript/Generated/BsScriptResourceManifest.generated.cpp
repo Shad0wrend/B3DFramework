@@ -29,7 +29,7 @@ namespace bs
 
 	}
 
-	MonoObject* ScriptResourceManifest::create(const SPtr<ResourceManifest>& value)
+	MonoObject* ScriptResourceManifest::Create(const SPtr<ResourceManifest>& value)
 	{
 		if(value == nullptr) return nullptr; 
 
@@ -137,7 +137,7 @@ namespace bs
 		tmp__output = ResourceManifest::load(tmppath, tmprelativePath);
 
 		MonoObject* __output;
-		__output = ScriptResourceManifest::create(tmp__output);
+		__output = ScriptResourceManifest::Create(tmp__output);
 
 		return __output;
 	}
@@ -146,7 +146,7 @@ namespace bs
 	{
 		String tmpname;
 		tmpname = MonoUtil::monoToString(name);
-		SPtr<ResourceManifest> instance = ResourceManifest::create(tmpname);
+		SPtr<ResourceManifest> instance = ResourceManifest::Create(tmpname);
 		new (bs_alloc<ScriptResourceManifest>())ScriptResourceManifest(managedInstance, instance);
 	}
 #endif

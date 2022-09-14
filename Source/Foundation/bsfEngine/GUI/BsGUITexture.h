@@ -17,7 +17,7 @@ namespace bs
 	{
 	public:
 		/** Returns type name of the GUI element used for finding GUI element styles.  */
-		static const String& getGUITypeName();
+		static const String& GetGuiTypeName();
 
 		/**
 		 * Creates a new GUI texture element.
@@ -31,7 +31,7 @@ namespace bs
 		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
 		 *								GUIWidget the element is used on. If not specified default style is used.
 		 */
-		static GUITexture* create(const HSpriteTexture& texture, TextureScaleMode scale, bool transparent,
+		static GUITexture* Create(const HSpriteTexture& texture, TextureScaleMode scale, bool transparent,
 			const GUIOptions& options, const String& styleName = StringUtil::BLANK);
 
 		/**
@@ -44,7 +44,7 @@ namespace bs
 		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
 		 *								GUIWidget the element is used on. If not specified default style is used.
 		 */
-		static GUITexture* create(const HSpriteTexture& texture, TextureScaleMode scale, bool transparent,
+		static GUITexture* Create(const HSpriteTexture& texture, TextureScaleMode scale, bool transparent,
 			const String& styleName = StringUtil::BLANK);
 
 		/**
@@ -58,7 +58,7 @@ namespace bs
 		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
 		 *								GUIWidget the element is used on. If not specified default style is used.
 		 */
-		static GUITexture* create(const HSpriteTexture& texture, TextureScaleMode scale,
+		static GUITexture* Create(const HSpriteTexture& texture, TextureScaleMode scale,
 			const GUIOptions& options, const String& styleName = StringUtil::BLANK);
 
 		/**
@@ -70,7 +70,7 @@ namespace bs
 		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
 		 *								GUIWidget the element is used on. If not specified default style is used.
 		 */
-		static GUITexture* create(const HSpriteTexture& texture, TextureScaleMode scale,
+		static GUITexture* Create(const HSpriteTexture& texture, TextureScaleMode scale,
 			const String& styleName = StringUtil::BLANK);
 
 		/**
@@ -83,7 +83,7 @@ namespace bs
 		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
 		 *								GUIWidget the element is used on. If not specified default style is used.
 		 */
-		static GUITexture* create(const HSpriteTexture& texture,
+		static GUITexture* Create(const HSpriteTexture& texture,
 			const GUIOptions& options, const String& styleName = StringUtil::BLANK);
 
 		/**
@@ -94,7 +94,7 @@ namespace bs
 		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
 		 *								GUIWidget the element is used on. If not specified default style is used.
 		 */
-		static GUITexture* create(const HSpriteTexture& texture, const String& styleName = StringUtil::BLANK);
+		static GUITexture* Create(const HSpriteTexture& texture, const String& styleName = StringUtil::BLANK);
 
 		/**
 		 * Creates a new GUI texture element. Uses the "normal" texture from the active GUI element style.
@@ -105,7 +105,7 @@ namespace bs
 		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
 		 *								GUIWidget the element is used on. If not specified default style is used.
 		 */
-		static GUITexture* create(TextureScaleMode scale, const GUIOptions& options,
+		static GUITexture* Create(TextureScaleMode scale, const GUIOptions& options,
 			const String& styleName = StringUtil::BLANK);
 
 		/**
@@ -115,7 +115,7 @@ namespace bs
 		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
 		 *								GUIWidget the element is used on. If not specified default style is used.
 		 */
-		static GUITexture* create(TextureScaleMode scale, const String& styleName = StringUtil::BLANK);
+		static GUITexture* Create(TextureScaleMode scale, const String& styleName = StringUtil::BLANK);
 
 		/**
 		 * Creates a new GUI texture element. Uses the "normal" texture from the active GUI element style.
@@ -126,7 +126,7 @@ namespace bs
 		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
 		 *								GUIWidget the element is used on. If not specified default style is used.
 		 */
-		static GUITexture* create(const GUIOptions& options, const String& styleName = StringUtil::BLANK);
+		static GUITexture* Create(const GUIOptions& options, const String& styleName = StringUtil::BLANK);
 
 		/**
 		 * Creates a new GUI texture element. Uses the "normal" texture from the active GUI element style.
@@ -135,12 +135,12 @@ namespace bs
 		 * @param[in]	styleName		Optional style to use for the element. Style will be retrieved from GUISkin of the
 		 *								GUIWidget the element is used on. If not specified default style is used.
 		 */
-		static GUITexture* create(const String& styleName = StringUtil::BLANK);
+		static GUITexture* Create(const String& styleName = StringUtil::BLANK);
 
 		/**
 		 * Changes the active texture. If the provided texture is null then the texture specified by the style will be used.
 		 */
-		void setTexture(const HSpriteTexture& texture);
+		void SetTexture(const HSpriteTexture& texture);
 
 	public: // ***** INTERNAL ******
 		/** @name Internal
@@ -160,7 +160,7 @@ namespace bs
 		virtual ~GUITexture();
 
 		/** @copydoc GUIElement::_fillBuffer */
-		void _fillBuffer(
+		void FillBuffer(
 			UINT8* vertices,
 			UINT32* indices,
 			UINT32 vertexOffset,
@@ -168,13 +168,13 @@ namespace bs
 			const Vector2I& offset,
 			UINT32 maxNumVerts,
 			UINT32 maxNumIndices,
-			UINT32 renderElementIdx) const override;
+			UINT32 renderElementIdx) const ;
 
 		/** @copydoc GUIElement::updateRenderElementsInternal */
-		void updateRenderElementsInternal() override;
+		void UpdateRenderElementsInternal() ;
 
 		/** @copydoc GUIElement::styleUpdated */
-		void styleUpdated() override;
+		void StyleUpdated() override;
 
 		ImageSprite* mImageSprite;
 		Vector2I mImageSpriteOffset;

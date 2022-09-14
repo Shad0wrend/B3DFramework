@@ -14,14 +14,14 @@ namespace bs
 	void ScriptParticleEmissionMode::initRuntimeData()
 	{ }
 
-	MonoObject*ScriptParticleEmissionMode::box(const ParticleEmissionMode& value)
+	MonoObject*ScriptParticleEmissionMode::Box(const ParticleEmissionMode& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	ParticleEmissionMode ScriptParticleEmissionMode::unbox(MonoObject* value)
+	ParticleEmissionMode ScriptParticleEmissionMode::Unbox(MonoObject* value)
 	{
-		return *(ParticleEmissionMode*)MonoUtil::unbox(value);
+		return *(ParticleEmissionMode*)MonoUtil::Unbox(value);
 	}
 
 }

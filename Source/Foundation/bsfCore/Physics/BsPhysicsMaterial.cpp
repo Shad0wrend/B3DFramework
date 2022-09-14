@@ -7,7 +7,7 @@
 
 namespace bs
 {
-	HPhysicsMaterial PhysicsMaterial::create(float staticFriction, float dynamicFriction, float restitution)
+	HPhysicsMaterial PhysicsMaterial::Create(float staticFriction, float dynamicFriction, float restitution)
 	{
 		SPtr<PhysicsMaterial> newMaterial = CreatePtrInternal(staticFriction, dynamicFriction, restitution);
 
@@ -23,13 +23,13 @@ namespace bs
 		return newMaterial;
 	}
 
-	RTTITypeBase* PhysicsMaterial::getRTTIStatic()
+	RTTITypeBase* PhysicsMaterial::GetRttiStatic()
 	{
-		return PhysicsMaterialRTTI::instance();
+		return PhysicsMaterialRTTI::Instance();
 	}
 
-	RTTITypeBase* PhysicsMaterial::getRTTI() const
+	RTTITypeBase* PhysicsMaterial::GetRtti() const
 	{
-		return getRTTIStatic();
+		return GetRttiStatic();
 	}
 }

@@ -30,7 +30,7 @@ namespace bs
 
 		MonoUtil::getClassName(managedInstance, metaData->typeNamespace, metaData->typeName);
 
-		MonoClass* managedClass = MonoManager::instance().findClass(metaData->typeNamespace, metaData->typeName);
+		MonoClass* managedClass = MonoManager::Instance().findClass(metaData->typeNamespace, metaData->typeName);
 		if (managedClass == nullptr)
 		{
 			BS_LOG(Warning, Script, "Cannot create managed component: {0}.{1} because that type doesn't exist.",
@@ -39,7 +39,7 @@ namespace bs
 		}
 	}
 
-	MonoObject* ManagedResource::getManagedInstance() const
+	MonoObject* ManagedResource::GetManagedInstance() const
 	{
 		if(mOwner)
 			return mOwner->getManagedInstance();
@@ -47,7 +47,7 @@ namespace bs
 		return nullptr;
 	}
 
-	ResourceBackupData ManagedResource::backup()
+	ResourceBackupData ManagedResource::Backup()
 	{
 		MonoObject* instance = mOwner->getManagedInstance();
 		SPtr<ManagedSerializableObject> serializableObject = ManagedSerializableObject::createFromExisting(instance);
@@ -72,7 +72,7 @@ namespace bs
 		return backupData;
 	}
 
-	void ManagedResource::restore(const ResourceBackupData& data)
+	void ManagedResource::Restore(const ResourceBackupData& data)
 	{
 		MonoObject* instance = mOwner->getManagedInstance();
 		if (instance != nullptr)
@@ -86,18 +86,18 @@ namespace bs
 				SPtr<ManagedResourceMetaData> managedResMetaData = std::static_pointer_cast<ManagedResourceMetaData>(mMetaData);
 				SPtr<ManagedSerializableObjectInfo> currentObjInfo = nullptr;
 
-				if (ScriptAssemblyManager::instance().getSerializableObjectInfo(managedResMetaData->typeNamespace, managedResMetaData->typeName, currentObjInfo))
+				if (ScriptAssemblyManager::Instance().getSerializableObjectInfo(managedResMetaData->typeNamespace, managedResMetaData->typeName, currentObjInfo))
 					serializableObject->deserialize(instance, currentObjInfo);
 			}
 		}
 		else
 		{
 			// Could not restore resource
-			ManagedResourceManager::instance().unregisterManagedResource(mMyHandle);
+			ManagedResourceManager::Instance().unregisterManagedResource(mMyHandle);
 		}
 	}
 
-	HManagedResource ManagedResource::create(MonoObject* managedResource)
+	HManagedResource ManagedResource::Create(MonoObject* managedResource)
 	{
 		SPtr<ManagedResource> newRes = bs_core_ptr<ManagedResource>(new (bs_alloc<ManagedResource>()) ManagedResource(managedResource));
 		newRes->SetThisPtrInternal(newRes);
@@ -109,7 +109,7 @@ namespace bs
 		return handle;
 	}
 
-	SPtr<ManagedResource> ManagedResource::createEmpty()
+	SPtr<ManagedResource> ManagedResource::CreateEmpty()
 	{
 		SPtr<ManagedResource> newRes = bs_core_ptr<ManagedResource>(new (bs_alloc<ManagedResource>()) ManagedResource());
 		newRes->SetThisPtrInternal(newRes);
@@ -118,29 +118,29 @@ namespace bs
 		return newRes;
 	}
 
-	void ManagedResource::setHandle(MonoObject* object, const HManagedResource& myHandle)
+	void ManagedResource::SetHandle(MonoObject* object, const HManagedResource& myHandle)
 	{
 		mMyHandle = myHandle.getWeak();
 
-		mOwner = ScriptResourceManager::instance().createManagedScriptResource(myHandle, object);
-		ManagedResourceManager::instance().registerManagedResource(mMyHandle);
+		mOwner = ScriptResourceManager::Instance().createManagedScriptResource(myHandle, object);
+		ManagedResourceManager::Instance().registerManagedResource(mMyHandle);
 	}
 
-	void ManagedResource::destroy()
+	void ManagedResource::Destroy()
 	{
 		Resource::destroy();
 
 		mOwner->NotifyDestroyedInternal();
-		ManagedResourceManager::instance().unregisterManagedResource(mMyHandle);
+		ManagedResourceManager::Instance().unregisterManagedResource(mMyHandle);
 	}
 
-	RTTITypeBase* ManagedResource::getRTTIStatic()
+	RTTITypeBase* ManagedResource::GetRttiStatic()
 	{
-		return ManagedResourceRTTI::instance();
+		return ManagedResourceRTTI::Instance();
 	}
 
-	RTTITypeBase* ManagedResource::getRTTI() const
+	RTTITypeBase* ManagedResource::GetRtti() const
 	{
-		return ManagedResource::getRTTIStatic();
+		return ManagedResource::GetRttiStatic();
 	}
 }

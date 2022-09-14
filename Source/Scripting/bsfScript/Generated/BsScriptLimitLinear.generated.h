@@ -22,10 +22,10 @@ namespace bs
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "LimitLinear")
 
-		static MonoObject* box(const __LimitLinearInterop& value);
-		static __LimitLinearInterop unbox(MonoObject* value);
-		static LimitLinear fromInterop(const __LimitLinearInterop& value);
-		static __LimitLinearInterop toInterop(const LimitLinear& value);
+		static MonoObject* Box(const __LimitLinearInterop& value);
+		static __LimitLinearInterop Unbox(MonoObject* value);
+		static LimitLinear FromInterop(const __LimitLinearInterop& value);
+		static __LimitLinearInterop ToInterop(const LimitLinear& value);
 
 	private:
 		ScriptLimitLinear(MonoObject* managedInstance);

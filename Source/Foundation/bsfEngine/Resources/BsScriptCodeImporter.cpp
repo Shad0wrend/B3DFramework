@@ -8,7 +8,7 @@
 
 namespace bs
 {
-	bool ScriptCodeImporter::isExtensionSupported(const String& ext) const
+	bool ScriptCodeImporter::IsExtensionSupported(const String& ext) const
 	{
 		String lowerCaseExt = ext;
 		StringUtil::toLowerCase(lowerCaseExt);
@@ -16,19 +16,19 @@ namespace bs
 		return lowerCaseExt == u8"cs";
 	}
 
-	bool ScriptCodeImporter::isMagicNumberSupported(const UINT8* magicNumPtr, UINT32 numBytes) const
+	bool ScriptCodeImporter::IsMagicNumberSupported(const UINT8* magicNumPtr, UINT32 numBytes) const
 	{
 		return true; // Plain-text so we don't even check for magic number
 	}
 
-	SPtr<Resource> ScriptCodeImporter::import(const Path& filePath, SPtr<const ImportOptions> importOptions)
+	SPtr<Resource> ScriptCodeImporter::Import(const Path& filePath, SPtr<const ImportOptions> importOptions)
 	{
 		WString textData;
 		{
-			Lock fileLock = FileScheduler::getLock(filePath);
+			Lock fileLock = FileScheduler::GetLock(filePath);
 
-			SPtr<DataStream> stream = FileSystem::openFile(filePath);
-			textData = stream->getAsWString();
+			SPtr<DataStream> stream = FileSystem::OpenFile(filePath);
+			textData = stream->GetAsWString();
 		}
 
 		bool editorScript = false;
@@ -40,13 +40,13 @@ namespace bs
 			
 		SPtr<ScriptCode> scriptCode = ScriptCode::CreatePtrInternal(textData, editorScript);
 
-		const String fileName = filePath.getFilename(false);
-		scriptCode->setName(fileName);
+		const String fileName = filePath.GetFilename(false);
+		scriptCode->SetName(fileName);
 
 		return scriptCode;
 	}
 
-	SPtr<ImportOptions> ScriptCodeImporter::createImportOptions() const
+	SPtr<ImportOptions> ScriptCodeImporter::CreateImportOptions() const
 	{
 		return bs_shared_ptr_new<ScriptCodeImportOptions>();
 	}

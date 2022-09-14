@@ -16,13 +16,13 @@ namespace bs
 		: mType(type), mRadius(radius), mExtents(extents)
 	{ }
 
-	float ReflectionProbeBase::getRadius() const
+	float ReflectionProbeBase::GetRadius() const
 	{
 		Vector3 scale = mTransform.getScale();
 		return mRadius * std::max(std::max(scale.x, scale.y), scale.z);
 	}
 
-	void ReflectionProbeBase::updateBounds()
+	void ReflectionProbeBase::UpdateBounds()
 	{
 		Vector3 position = mTransform.getPosition();
 		Vector3 scale = mTransform.getScale();
@@ -40,7 +40,7 @@ namespace bs
 
 	template <bool Core>
 	template <class P>
-	void TReflectionProbe<Core>::rttiEnumFields(P p)
+	void TReflectionProbe<Core>::RttiEnumFields(P p)
 	{
 		p(mType);
 		p(mRadius);
@@ -63,7 +63,7 @@ namespace bs
 			mRendererTask->cancel();
 	}
 
-	void ReflectionProbe::capture()
+	void ReflectionProbe::Capture()
 	{
 		if (mCustomTexture != nullptr)
 			return;
@@ -71,7 +71,7 @@ namespace bs
 		captureAndFilter();
 	}
 
-	void ReflectionProbe::filter()
+	void ReflectionProbe::Filter()
 	{
 		if (mCustomTexture == nullptr)
 			return;
@@ -79,7 +79,7 @@ namespace bs
 		captureAndFilter();
 	}
 
-	void ReflectionProbe::captureAndFilter()
+	void ReflectionProbe::CaptureAndFilter()
 	{
 		// If previous rendering task exists, cancel it
 		if (mRendererTask != nullptr)
@@ -124,7 +124,7 @@ namespace bs
 				return true;
 			};
 
-			mRendererTask = ct::RendererTask::create("ReflProbeRender", renderReflProbe);
+			mRendererTask = ct::RendererTask::Create("ReflProbeRender", renderReflProbe);
 		}
 		else
 		{
@@ -140,19 +140,19 @@ namespace bs
 				return true;
 			};
 
-			mRendererTask = ct::RendererTask::create("ReflProbeRender", filterReflProbe);
+			mRendererTask = ct::RendererTask::Create("ReflProbeRender", filterReflProbe);
 		}
 
 		mRendererTask->onComplete.connect(renderComplete);
 		ct::gRenderer()->addTask(mRendererTask);
 	}
 
-	SPtr<ct::ReflectionProbe> ReflectionProbe::getCore() const
+	SPtr<ct::ReflectionProbe> ReflectionProbe::GetCore() const
 	{
 		return std::static_pointer_cast<ct::ReflectionProbe>(mCoreSpecific);
 	}
 
-	SPtr<ReflectionProbe> ReflectionProbe::createSphere(float radius)
+	SPtr<ReflectionProbe> ReflectionProbe::CreateSphere(float radius)
 	{
 		ReflectionProbe* probe = new (bs_alloc<ReflectionProbe>()) ReflectionProbe(ReflectionProbeType::Sphere, radius, Vector3::ZERO);
 		SPtr<ReflectionProbe> probePtr = bs_core_ptr<ReflectionProbe>(probe);
@@ -162,7 +162,7 @@ namespace bs
 		return probePtr;
 	}
 
-	SPtr<ReflectionProbe> ReflectionProbe::createBox(const Vector3& extents)
+	SPtr<ReflectionProbe> ReflectionProbe::CreateBox(const Vector3& extents)
 	{
 		ReflectionProbe* probe = new (bs_alloc<ReflectionProbe>()) ReflectionProbe(ReflectionProbeType::Box, 1.0f, extents);
 		SPtr<ReflectionProbe> probePtr = bs_core_ptr<ReflectionProbe>(probe);
@@ -172,7 +172,7 @@ namespace bs
 		return probePtr;
 	}
 
-	SPtr<ReflectionProbe> ReflectionProbe::createEmpty()
+	SPtr<ReflectionProbe> ReflectionProbe::CreateEmpty()
 	{
 		ReflectionProbe* probe = new (bs_alloc<ReflectionProbe>()) ReflectionProbe();
 		SPtr<ReflectionProbe> probePtr = bs_core_ptr<ReflectionProbe>(probe);
@@ -181,7 +181,7 @@ namespace bs
 		return probePtr;
 	}
 
-	SPtr<ct::CoreObject> ReflectionProbe::createCore() const
+	SPtr<ct::CoreObject> ReflectionProbe::CreateCore() const
 	{
 		SPtr<ct::Texture> filteredTexture;
 		if (mFilteredTexture != nullptr)
@@ -195,7 +195,7 @@ namespace bs
 		return probePtr;
 	}
 
-	CoreSyncData ReflectionProbe::syncToCore(FrameAlloc* allocator)
+	CoreSyncData ReflectionProbe::SyncToCore(FrameAlloc* allocator)
 	{
 		UINT32 size = 0;
 		size += rtti_size(getCoreDirtyFlags()).bytes;
@@ -217,14 +217,14 @@ namespace bs
 		markCoreDirty((UINT32)flags);
 	}
 
-	RTTITypeBase* ReflectionProbe::getRTTIStatic()
+	RTTITypeBase* ReflectionProbe::GetRttiStatic()
 	{
-		return ReflectionProbeRTTI::instance();
+		return ReflectionProbeRTTI::Instance();
 	}
 
-	RTTITypeBase* ReflectionProbe::getRTTI() const
+	RTTITypeBase* ReflectionProbe::GetRtti() const
 	{
-		return ReflectionProbe::getRTTIStatic();
+		return ReflectionProbe::GetRttiStatic();
 	}
 
 	template class TReflectionProbe<true>;
@@ -244,7 +244,7 @@ namespace bs
 		gRenderer()->notifyReflectionProbeRemoved(this);
 	}
 
-	void ReflectionProbe::initialize()
+	void ReflectionProbe::Initialize()
 	{
 		updateBounds();
 		gRenderer()->notifyReflectionProbeAdded(this);
@@ -252,7 +252,7 @@ namespace bs
 		CoreObject::initialize();
 	}
 
-	void ReflectionProbe::syncToCore(const CoreSyncData& data)
+	void ReflectionProbe::SyncToCore(const CoreSyncData& data)
 	{
 		Bitstream stream(data.getBuffer(), data.getBufferSize());
 

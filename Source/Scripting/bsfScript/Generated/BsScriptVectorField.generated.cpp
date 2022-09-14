@@ -20,38 +20,38 @@ namespace bs
 
 	void ScriptVectorField::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_GetRef", (void*)&ScriptVectorField::Internal_getRef);
-		metaData.scriptClass->addInternalCall("Internal_create", (void*)&ScriptVectorField::Internal_create);
+		metaData.scriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptVectorField::InternalGetRef);
+		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptVectorField::InternalCreate);
 
 	}
 
-	 MonoObject*ScriptVectorField::createInstance()
+	 MonoObject*ScriptVectorField::CreateInstance()
 	{
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		return metaData.scriptClass->createInstance("bool", ctorParams);
+		return metaData.scriptClass->CreateInstance("bool", ctorParams);
 	}
-	MonoObject* ScriptVectorField::Internal_getRef(ScriptVectorField* thisPtr)
+	MonoObject* ScriptVectorField::InternalGetRef(ScriptVectorField* thisPtr)
 	{
-		return thisPtr->getRRef();
+		return thisPtr->GetRRef();
 	}
 
-	void ScriptVectorField::Internal_create(MonoObject* managedInstance, __VECTOR_FIELD_DESCInterop* desc, MonoArray* values)
+	void ScriptVectorField::InternalCreate(MonoObject* managedInstance, __VECTOR_FIELD_DESCInterop* desc, MonoArray* values)
 	{
 		VECTOR_FIELD_DESC tmpdesc;
-		tmpdesc = ScriptVECTOR_FIELD_DESC::fromInterop(*desc);
+		tmpdesc = ScriptVECTOR_FIELD_DESC::FromInterop(*desc);
 		Vector<Vector3> vecvalues;
 		if(values != nullptr)
 		{
 			ScriptArray arrayvalues(values);
-			vecvalues.resize(arrayvalues.size());
-			for(int i = 0; i < (int)arrayvalues.size(); i++)
+			vecvalues.resize(arrayvalues.Size());
+			for(int i = 0; i < (int)arrayvalues.Size(); i++)
 			{
 				vecvalues[i] = arrayvalues.get<Vector3>(i);
 			}
 		}
-		ResourceHandle<VectorField> instance = VectorField::create(tmpdesc, vecvalues);
-		ScriptResourceManager::instance().createBuiltinScriptResource(instance, managedInstance);
+		ResourceHandle<VectorField> instance = VectorField::Create(tmpdesc, vecvalues);
+		ScriptResourceManager::Instance().createBuiltinScriptResource(instance, managedInstance);
 	}
 }

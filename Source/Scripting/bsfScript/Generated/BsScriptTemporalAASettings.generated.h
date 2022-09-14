@@ -16,11 +16,11 @@ namespace bs
 
 		ScriptTemporalAASettings(MonoObject* managedInstance, const SPtr<TemporalAASettings>& value);
 
-		static MonoObject* create(const SPtr<TemporalAASettings>& value);
+		static MonoObject* Create(const SPtr<TemporalAASettings>& value);
 
 	private:
-		static void Internal_TemporalAASettings(MonoObject* managedInstance);
-		static bool Internal_getenabled(ScriptTemporalAASettings* thisPtr);
-		static void Internal_setenabled(ScriptTemporalAASettings* thisPtr, bool value);
+		static void InternalTemporalAaSettings(MonoObject* managedInstance);
+		static bool InternalGetenabled(ScriptTemporalAASettings* thisPtr);
+		static void InternalSetenabled(ScriptTemporalAASettings* thisPtr, bool value);
 	};
 }

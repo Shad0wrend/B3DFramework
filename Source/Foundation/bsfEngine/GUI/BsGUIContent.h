@@ -89,7 +89,7 @@ namespace bs
 		{ }
 
 		/**	Returns image content (if any). */
-		const HSpriteTexture& getImage(GUIElementState state = GUIElementState::Normal) const;
+		const HSpriteTexture& GetImage(GUIElementState state = GUIElementState::Normal) const;
 
 		/**	Determines the spacing between text and image content in pixels. */
 		static const UINT32 IMAGE_TEXT_SPACING;

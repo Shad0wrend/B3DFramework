@@ -172,7 +172,7 @@ namespace bs { namespace ct
 			UINT32 numQueues = (UINT32)mQueueInfos[i].queues.size();
 			for (UINT32 j = 0; j < numQueues; j++)
 			{
-				mQueueInfos[i].queues[j]->refreshStates(true, true);
+				mQueueInfos[i].queues[j]->RefreshStates(true, true);
 				bs_delete(mQueueInfos[i].queues[j]);
 			}
 		}
@@ -188,28 +188,28 @@ namespace bs { namespace ct
 		vkDestroyDevice(mLogicalDevice, gVulkanAllocator);
 	}
 
-	void VulkanDevice::waitIdle()
+	void VulkanDevice::WaitIdle()
 	{
 		VkResult result = vkDeviceWaitIdle(mLogicalDevice);
 		assert(result == VK_SUCCESS);
 
-		refreshStates(true);
+		RefreshStates(true);
 	}
 
-	void VulkanDevice::refreshStates(bool forceWait)
+	void VulkanDevice::RefreshStates(bool forceWait)
 	{
 		for (UINT32 i = 0; i < GQT_COUNT; i++)
 		{
-			UINT32 numQueues = getNumQueues((GpuQueueType)i);
+			UINT32 numQueues = GetNumQueues((GpuQueueType)i);
 			for (UINT32 j = 0; j < numQueues; j++)
 			{
-				VulkanQueue* queue = getQueue((GpuQueueType)i, j);
-				queue->refreshStates(forceWait, false);
+				VulkanQueue* queue = GetQueue((GpuQueueType)i, j);
+				queue->RefreshStates(forceWait, false);
 			}
 		}
 	}
 
-	UINT32 VulkanDevice::getQueueMask(GpuQueueType type, UINT32 queueIdx) const
+	UINT32 VulkanDevice::GetQueueMask(GpuQueueType type, UINT32 queueIdx) const
 	{
 		UINT32 numQueues = getNumQueues(type);
 		if (numQueues == 0)
@@ -226,7 +226,7 @@ namespace bs { namespace ct
 		return idMask;
 	}
 
-	SurfaceFormat VulkanDevice::getSurfaceFormat(const VkSurfaceKHR& surface, bool gamma) const
+	SurfaceFormat VulkanDevice::GetSurfaceFormat(const VkSurfaceKHR& surface, bool gamma) const
 	{
 		uint32_t numFormats;
 		VkResult result = vkGetPhysicalDeviceSurfaceFormatsKHR(mPhysicalDevice, surface, &numFormats, nullptr);
@@ -329,7 +329,7 @@ namespace bs { namespace ct
 		return output;
 	}
 
-	VmaAllocation VulkanDevice::allocateMemory(VkImage image, VkMemoryPropertyFlags flags)
+	VmaAllocation VulkanDevice::AllocateMemory(VkImage image, VkMemoryPropertyFlags flags)
 	{
 		VmaAllocationCreateInfo allocCI = {};
 		allocCI.requiredFlags = flags;
@@ -345,7 +345,7 @@ namespace bs { namespace ct
 		return allocation;
 	}
 
-	VmaAllocation VulkanDevice::allocateMemory(VkBuffer buffer, VkMemoryPropertyFlags flags)
+	VmaAllocation VulkanDevice::AllocateMemory(VkBuffer buffer, VkMemoryPropertyFlags flags)
 	{
 		VmaAllocationCreateInfo allocCI = {};
 		allocCI.requiredFlags = flags;
@@ -361,12 +361,12 @@ namespace bs { namespace ct
 		return memory;
 	}
 
-	void VulkanDevice::freeMemory(VmaAllocation allocation)
+	void VulkanDevice::FreeMemory(VmaAllocation allocation)
 	{
 		vmaFreeMemory(mAllocator, allocation);
 	}
 
-	void VulkanDevice::getAllocationInfo(VmaAllocation allocation, VkDeviceMemory& memory, VkDeviceSize& offset)
+	void VulkanDevice::GetAllocationInfo(VmaAllocation allocation, VkDeviceMemory& memory, VkDeviceSize& offset)
 	{
 		VmaAllocationInfo allocInfo;
 		vmaGetAllocationInfo(mAllocator, allocation, &allocInfo);
@@ -375,7 +375,7 @@ namespace bs { namespace ct
 		offset = allocInfo.offset;
 	}
 
-	uint32_t VulkanDevice::findMemoryType(uint32_t requirementBits, VkMemoryPropertyFlags wantedFlags)
+	uint32_t VulkanDevice::FindMemoryType(uint32_t requirementBits, VkMemoryPropertyFlags wantedFlags)
 	{
 		for (uint32_t i = 0; i < mMemoryProperties.memoryTypeCount; i++)
 		{
