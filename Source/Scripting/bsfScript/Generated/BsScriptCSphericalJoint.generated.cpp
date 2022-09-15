@@ -42,13 +42,13 @@ namespace bs
 
 	void ScriptCSphericalJoint::InternalSetFlag(ScriptCSphericalJoint* thisPtr, SphericalJointFlag flag, bool enabled)
 	{
-		thisPtr->getHandle()->setFlag(flag, enabled);
+		thisPtr->GetHandle()->SetFlag(flag, enabled);
 	}
 
 	bool ScriptCSphericalJoint::InternalHasFlag(ScriptCSphericalJoint* thisPtr, SphericalJointFlag flag)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->getHandle()->hasFlag(flag);
+		tmp__output = thisPtr->GetHandle()->hasFlag(flag);
 
 		bool __output;
 		__output = tmp__output;

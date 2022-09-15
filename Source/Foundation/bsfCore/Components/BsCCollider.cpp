@@ -193,22 +193,22 @@ namespace bs
 		}
 
 		// Note: Merge into one call to avoid many virtual function calls
-		mInternal->setIsTrigger(mIsTrigger);
-		mInternal->setMass(mMass);
-		mInternal->setMaterial(mMaterial);
-		mInternal->setContactOffset(mContactOffset);
-		mInternal->setRestOffset(mRestOffset);
-		mInternal->setLayer(mLayer);
+		mInternal->SetIsTrigger(mIsTrigger);
+		mInternal->SetMass(mMass);
+		mInternal->SetMaterial(mMaterial);
+		mInternal->SetContactOffset(mContactOffset);
+		mInternal->SetRestOffset(mRestOffset);
+		mInternal->SetLayer(mLayer);
 
-		updateParentRigidbody();
-		updateTransform();
-		updateCollisionReportMode();
+		UpdateParentRigidbody();
+		UpdateTransform();
+		UpdateCollisionReportMode();
 	}
 
 	void CCollider::DestroyInternal()
 	{
 		if (mParent != nullptr)
-			mParent->removeCollider(static_object_cast<CCollider>(mThisHandle));
+			mParent->RemoveCollider(static_object_cast<CCollider>(mThisHandle));
 
 		mParent = nullptr;
 
@@ -224,76 +224,76 @@ namespace bs
 	{
 		if (mIsTrigger)
 		{
-			setRigidbody(HRigidbody());
+			SetRigidbody(HRigidbody());
 			return;
 		}
 
 		HSceneObject currentSO = SO();
 		while (currentSO != nullptr)
 		{
-			HRigidbody parent = currentSO->getComponent<CRigidbody>();
+			HRigidbody parent = currentSO->GetComponent<CRigidbody>();
 			if (parent != nullptr)
 			{
-				if(currentSO->getActive() && isValidParent(parent))
-					setRigidbody(parent);
+				if(currentSO->GetActive() && IsValidParent(parent))
+					SetRigidbody(parent);
 				else
-					setRigidbody(HRigidbody());
+					SetRigidbody(HRigidbody());
 
 				return;
 			}
 
-			currentSO = currentSO->getParent();
+			currentSO = currentSO->GetParent();
 		}
 
 		// Not found
-		setRigidbody(HRigidbody());
+		SetRigidbody(HRigidbody());
 	}
 
 	void CCollider::UpdateTransform()
 	{
-		const Transform& tfrm = SO()->getTransform();
-		Vector3 myScale = tfrm.getScale();
+		const Transform& tfrm = SO()->GetTransform();
+		Vector3 myScale = tfrm.GetScale();
 
 		if (mParent != nullptr)
 		{
-			const Transform& parentTfrm = mParent->SO()->getTransform();
-			Vector3 parentPos = parentTfrm.getPosition();
-			Quaternion parentRot = parentTfrm.getRotation();
+			const Transform& parentTfrm = mParent->SO()->GetTransform();
+			Vector3 parentPos = parentTfrm.GetPosition();
+			Quaternion parentRot = parentTfrm.GetRotation();
 
-			Vector3 myPos = tfrm.getPosition();
-			Quaternion myRot = tfrm.getRotation();
+			Vector3 myPos = tfrm.GetPosition();
+			Quaternion myRot = tfrm.GetRotation();
 
-			Vector3 scale = parentTfrm.getScale();
+			Vector3 scale = parentTfrm.GetScale();
 			Vector3 invScale = scale;
 			if (invScale.x != 0) invScale.x = 1.0f / invScale.x;
 			if (invScale.y != 0) invScale.y = 1.0f / invScale.y;
 			if (invScale.z != 0) invScale.z = 1.0f / invScale.z;
 
-			Quaternion invRotation = parentRot.inverse();
+			Quaternion invRotation = parentRot.Inverse();
 
-			Vector3 relativePos = invRotation.rotate(myPos - parentPos) *  invScale;
+			Vector3 relativePos = invRotation.Rotate(myPos - parentPos) *  invScale;
 			Quaternion relativeRot = invRotation * myRot;
 
-			relativePos = relativePos + relativeRot.rotate(mLocalPosition * scale);
+			relativePos = relativePos + relativeRot.Rotate(mLocalPosition * scale);
 			relativeRot = relativeRot * mLocalRotation;
 
 			if(mInternal)
-				mInternal->setTransform(relativePos, relativeRot);
+				mInternal->SetTransform(relativePos, relativeRot);
 
 			mParent->UpdateMassDistributionInternal();
 		}
 		else
 		{
-			Quaternion myRot = tfrm.getRotation();
-			Vector3 myPos = tfrm.getPosition() + myRot.rotate(mLocalPosition * myScale);
+			Quaternion myRot = tfrm.GetRotation();
+			Vector3 myPos = tfrm.GetPosition() + myRot.Rotate(mLocalPosition * myScale);
 			myRot = myRot * mLocalRotation;
 
 			if(mInternal)
-				mInternal->setTransform(myPos, myRot);
+				mInternal->SetTransform(myPos, myRot);
 		}
 
 		if (mInternal)
-			mInternal->setScale(myScale);
+			mInternal->SetScale(myScale);
 	}
 
 	void CCollider::UpdateCollisionReportMode()
@@ -301,10 +301,10 @@ namespace bs
 		CollisionReportMode mode = mCollisionReportMode;
 
 		if (mParent != nullptr)
-			mode = mParent->getCollisionReportMode();
+			mode = mParent->GetCollisionReportMode();
 
 		if(mInternal != nullptr)
-			mInternal->setCollisionReportMode(mode);
+			mInternal->SetCollisionReportMode(mode);
 	}
 
 	void CCollider::TriggerOnCollisionBegin(const CollisionDataRaw& data)
@@ -316,7 +316,7 @@ namespace bs
 		if(data.colliders[1] != nullptr)
 		{
 			CCollider* other = (CCollider*)data.colliders[1]->GetOwnerInternal(PhysicsOwnerType::Component);
-			hit.collider[1] = static_object_cast<CCollider>(other->getHandle());
+			hit.collider[1] = static_object_cast<CCollider>(other->GetHandle());
 		}
 
 		onCollisionBegin(hit);
@@ -331,7 +331,7 @@ namespace bs
 		if (data.colliders[1] != nullptr)
 		{
 			CCollider* other = (CCollider*)data.colliders[1]->GetOwnerInternal(PhysicsOwnerType::Component);
-			hit.collider[1] = static_object_cast<CCollider>(other->getHandle());
+			hit.collider[1] = static_object_cast<CCollider>(other->GetHandle());
 		}
 
 		onCollisionStay(hit);
@@ -346,7 +346,7 @@ namespace bs
 		if (data.colliders[1] != nullptr)
 		{
 			CCollider* other = (CCollider*)data.colliders[1]->GetOwnerInternal(PhysicsOwnerType::Component);
-			hit.collider[1] = static_object_cast<CCollider>(other->getHandle());
+			hit.collider[1] = static_object_cast<CCollider>(other->GetHandle());
 		}
 
 		onCollisionEnd(hit);

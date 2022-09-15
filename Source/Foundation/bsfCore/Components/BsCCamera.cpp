@@ -10,27 +10,27 @@ namespace bs
 {
 	CCamera::CCamera()
 	{
-		setFlag(ComponentFlag::AlwaysRun, true);
-		setName("Camera");
+		SetFlag(ComponentFlag::AlwaysRun, true);
+		SetName("Camera");
 	}
 
 	CCamera::CCamera(const HSceneObject& parent)
 		: Component(parent)
 	{
-		setFlag(ComponentFlag::AlwaysRun, true);
-		setName("Camera");
+		SetFlag(ComponentFlag::AlwaysRun, true);
+		SetName("Camera");
 	}
 
 	ConvexVolume CCamera::GetWorldFrustum() const
 	{
-		const Vector<Plane>& frustumPlanes = getFrustum().getPlanes();
-		Matrix4 worldMatrix = SO()->getWorldMatrix();
+		const Vector<Plane>& frustumPlanes = GetFrustum().GetPlanes();
+		Matrix4 worldMatrix = SO()->GetWorldMatrix();
 
 		Vector<Plane> worldPlanes(frustumPlanes.size());
 		UINT32 i = 0;
 		for (auto& plane : frustumPlanes)
 		{
-			worldPlanes[i] = worldMatrix.multiplyAffine(plane);
+			worldPlanes[i] = worldMatrix.MultiplyAffine(plane);
 			i++;
 		}
 
@@ -44,7 +44,7 @@ namespace bs
 
 	void CCamera::SetMain(bool main)
 	{
-		mInternal->setMain(main);
+		mInternal->SetMain(main);
 	}
 
 	void CCamera::InstantiateInternal()
@@ -52,7 +52,7 @@ namespace bs
 		// If mInternal already exists this means this object was deserialized,
 		// so all we need to do is initialize it.
 		if (mInternal != nullptr)
-			mInternal->initialize();
+			mInternal->Initialize();
 		else
 			mInternal = Camera::Create();
 	}
@@ -69,7 +69,7 @@ namespace bs
 	{
 		gSceneManager().UnbindActorInternal(mInternal);
 
-		mInternal->destroy();
+		mInternal->Destroy();
 	}
 
 	RTTITypeBase* CCamera::GetRttiStatic()

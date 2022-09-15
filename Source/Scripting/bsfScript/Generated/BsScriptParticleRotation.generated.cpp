@@ -39,13 +39,13 @@ namespace bs
 	{
 		PARTICLE_ROTATION_DESC tmpoptions;
 		tmpoptions = ScriptPARTICLE_ROTATION_DESC::FromInterop(*options);
-		thisPtr->GetInternal()->setOptions(tmpoptions);
+		thisPtr->GetInternal()->SetOptions(tmpoptions);
 	}
 
 	void ScriptParticleRotation::InternalGetOptions(ScriptParticleRotation* thisPtr, __PARTICLE_ROTATION_DESCInterop* __output)
 	{
 		PARTICLE_ROTATION_DESC tmp__output;
-		tmp__output = thisPtr->getInternal()->getOptions();
+		tmp__output = thisPtr->GetInternal()->GetOptions();
 
 		__PARTICLE_ROTATION_DESCInterop interop__output;
 		interop__output = ScriptPARTICLE_ROTATION_DESC::ToInterop(tmp__output);

@@ -66,7 +66,7 @@ namespace bs
 		ScriptArray arrayvalues = ScriptArray::Create<ScriptShaderVariationParamValue>(arraySizevalues);
 		for(int i = 0; i < arraySizevalues; i++)
 		{
-			arrayvalues.set(i, ScriptShaderVariationParamValue::ToInterop(value.values[i]));
+			arrayvalues.Set(i, ScriptShaderVariationParamValue::ToInterop(value.values[i]));
 		}
 		vecvalues = arrayvalues.GetInternal();
 		output.values = vecvalues;

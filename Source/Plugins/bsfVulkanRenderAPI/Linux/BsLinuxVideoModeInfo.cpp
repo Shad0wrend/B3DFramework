@@ -149,7 +149,7 @@ namespace bs { namespace ct
 
 			float refreshRate;
 			if(modeInfo.hTotal != 0 && modeInfo.vTotal != 0)
-				refreshRate = (float)(modeInfo.dotClock / (double)(modeInfo.hTotal * modeInfo.vTotal));
+				refreshRate = (float)(modeInfo.DotClock / (double)(modeInfo.hTotal * modeInfo.vTotal));
 			else
 				refreshRate = 0.0f;
 

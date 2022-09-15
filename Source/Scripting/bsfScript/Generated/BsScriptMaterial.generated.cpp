@@ -72,7 +72,7 @@ namespace bs
 	}
 	MonoObject* ScriptMaterial::InternalGetRef(ScriptMaterial* thisPtr)
 	{
-		return thisPtr->getRRef();
+		return thisPtr->GetRRef();
 	}
 
 	void ScriptMaterial::InternalSetShader(ScriptMaterial* thisPtr, MonoObject* shader)
@@ -81,8 +81,8 @@ namespace bs
 		ScriptRRefBase* scriptshader;
 		scriptshader = ScriptRRefBase::toNative(shader);
 		if(scriptshader != nullptr)
-			tmpshader = static_resource_cast<Shader>(scriptshader->getHandle());
-		thisPtr->getHandle()->setShader(tmpshader);
+			tmpshader = static_resource_cast<Shader>(scriptshader->GetHandle());
+		thisPtr->GetHandle()->SetShader(tmpshader);
 	}
 
 	void ScriptMaterial::InternalSetVariation(ScriptMaterial* thisPtr, MonoObject* variation)
@@ -91,20 +91,20 @@ namespace bs
 		ScriptShaderVariation* scriptvariation;
 		scriptvariation = ScriptShaderVariation::toNative(variation);
 		if(scriptvariation != nullptr)
-			tmpvariation = scriptvariation->getInternal();
-		thisPtr->getHandle()->setVariation(*tmpvariation);
+			tmpvariation = scriptvariation->GetInternal();
+		thisPtr->GetHandle()->SetVariation(*tmpvariation);
 	}
 
 	MonoObject* ScriptMaterial::InternalClone(ScriptMaterial* thisPtr)
 	{
 		ResourceHandle<Material> tmp__output;
-		tmp__output = thisPtr->getHandle()->clone();
+		tmp__output = thisPtr->GetHandle()->clone();
 
 		MonoObject* __output;
 		ScriptRRefBase* script__output;
 		script__output = ScriptResourceManager::Instance().getScriptRRef(tmp__output);
 		if(script__output != nullptr)
-			__output = script__output->getManagedInstance();
+			__output = script__output->GetManagedInstance();
 		else
 			__output = nullptr;
 
@@ -114,13 +114,13 @@ namespace bs
 	MonoObject* ScriptMaterial::InternalGetShader(ScriptMaterial* thisPtr)
 	{
 		ResourceHandle<Shader> tmp__output;
-		tmp__output = thisPtr->getHandle()->getShader();
+		tmp__output = thisPtr->GetHandle()->GetShader();
 
 		MonoObject* __output;
 		ScriptRRefBase* script__output;
 		script__output = ScriptResourceManager::Instance().getScriptRRef(tmp__output);
 		if(script__output != nullptr)
-			__output = script__output->getManagedInstance();
+			__output = script__output->GetManagedInstance();
 		else
 			__output = nullptr;
 
@@ -130,7 +130,7 @@ namespace bs
 	MonoObject* ScriptMaterial::InternalGetVariation(ScriptMaterial* thisPtr)
 	{
 		SPtr<ShaderVariation> tmp__output = bs_shared_ptr_new<ShaderVariation>();
-		*tmp__output = thisPtr->getHandle()->getVariation();
+		*tmp__output = thisPtr->GetHandle()->GetVariation();
 
 		MonoObject* __output;
 		__output = ScriptShaderVariation::Create(tmp__output);
@@ -142,7 +142,7 @@ namespace bs
 	{
 		String tmpname;
 		tmpname = MonoUtil::monoToString(name);
-		thisPtr->getHandle()->setFloat(tmpname, value, arrayIdx);
+		thisPtr->GetHandle()->SetFloat(tmpname, value, arrayIdx);
 	}
 
 	void ScriptMaterial::InternalSetFloatCurve(ScriptMaterial* thisPtr, MonoString* name, MonoObject* value, uint32_t arrayIdx)
@@ -153,15 +153,15 @@ namespace bs
 		ScriptTAnimationCurvefloat* scriptvalue;
 		scriptvalue = ScriptTAnimationCurvefloat::toNative(value);
 		if(scriptvalue != nullptr)
-			tmpvalue = scriptvalue->getInternal();
-		thisPtr->getHandle()->setFloatCurve(tmpname, *tmpvalue, arrayIdx);
+			tmpvalue = scriptvalue->GetInternal();
+		thisPtr->GetHandle()->SetFloatCurve(tmpname, *tmpvalue, arrayIdx);
 	}
 
 	void ScriptMaterial::InternalSetColor(ScriptMaterial* thisPtr, MonoString* name, Color* value, uint32_t arrayIdx)
 	{
 		String tmpname;
 		tmpname = MonoUtil::monoToString(name);
-		thisPtr->getHandle()->setColor(tmpname, *value, arrayIdx);
+		thisPtr->GetHandle()->SetColor(tmpname, *value, arrayIdx);
 	}
 
 	void ScriptMaterial::InternalSetColorGradient(ScriptMaterial* thisPtr, MonoString* name, MonoObject* value, uint32_t arrayIdx)
@@ -172,43 +172,43 @@ namespace bs
 		ScriptColorGradientHDR* scriptvalue;
 		scriptvalue = ScriptColorGradientHDR::toNative(value);
 		if(scriptvalue != nullptr)
-			tmpvalue = scriptvalue->getInternal();
-		thisPtr->getHandle()->setColorGradient(tmpname, *tmpvalue, arrayIdx);
+			tmpvalue = scriptvalue->GetInternal();
+		thisPtr->GetHandle()->SetColorGradient(tmpname, *tmpvalue, arrayIdx);
 	}
 
 	void ScriptMaterial::InternalSetVec2(ScriptMaterial* thisPtr, MonoString* name, Vector2* value, uint32_t arrayIdx)
 	{
 		String tmpname;
 		tmpname = MonoUtil::monoToString(name);
-		thisPtr->getHandle()->setVec2(tmpname, *value, arrayIdx);
+		thisPtr->GetHandle()->SetVec2(tmpname, *value, arrayIdx);
 	}
 
 	void ScriptMaterial::InternalSetVec3(ScriptMaterial* thisPtr, MonoString* name, Vector3* value, uint32_t arrayIdx)
 	{
 		String tmpname;
 		tmpname = MonoUtil::monoToString(name);
-		thisPtr->getHandle()->setVec3(tmpname, *value, arrayIdx);
+		thisPtr->GetHandle()->SetVec3(tmpname, *value, arrayIdx);
 	}
 
 	void ScriptMaterial::InternalSetVec4(ScriptMaterial* thisPtr, MonoString* name, Vector4* value, uint32_t arrayIdx)
 	{
 		String tmpname;
 		tmpname = MonoUtil::monoToString(name);
-		thisPtr->getHandle()->setVec4(tmpname, *value, arrayIdx);
+		thisPtr->GetHandle()->SetVec4(tmpname, *value, arrayIdx);
 	}
 
 	void ScriptMaterial::InternalSetMat3(ScriptMaterial* thisPtr, MonoString* name, Matrix3* value, uint32_t arrayIdx)
 	{
 		String tmpname;
 		tmpname = MonoUtil::monoToString(name);
-		thisPtr->getHandle()->setMat3(tmpname, *value, arrayIdx);
+		thisPtr->GetHandle()->SetMat3(tmpname, *value, arrayIdx);
 	}
 
 	void ScriptMaterial::InternalSetMat4(ScriptMaterial* thisPtr, MonoString* name, Matrix4* value, uint32_t arrayIdx)
 	{
 		String tmpname;
 		tmpname = MonoUtil::monoToString(name);
-		thisPtr->getHandle()->setMat4(tmpname, *value, arrayIdx);
+		thisPtr->GetHandle()->SetMat4(tmpname, *value, arrayIdx);
 	}
 
 	float ScriptMaterial::InternalGetFloat(ScriptMaterial* thisPtr, MonoString* name, uint32_t arrayIdx)
@@ -216,7 +216,7 @@ namespace bs
 		float tmp__output;
 		String tmpname;
 		tmpname = MonoUtil::monoToString(name);
-		tmp__output = thisPtr->getHandle()->getFloat(tmpname, arrayIdx);
+		tmp__output = thisPtr->GetHandle()->GetFloat(tmpname, arrayIdx);
 
 		float __output;
 		__output = tmp__output;
@@ -229,7 +229,7 @@ namespace bs
 		SPtr<TAnimationCurve<float>> tmp__output = bs_shared_ptr_new<TAnimationCurve<float>>();
 		String tmpname;
 		tmpname = MonoUtil::monoToString(name);
-		*tmp__output = thisPtr->getHandle()->getFloatCurve(tmpname, arrayIdx);
+		*tmp__output = thisPtr->GetHandle()->GetFloatCurve(tmpname, arrayIdx);
 
 		MonoObject* __output;
 		__output = ScriptTAnimationCurvefloat::Create(tmp__output);
@@ -242,7 +242,7 @@ namespace bs
 		String tmpname;
 		tmpname = MonoUtil::monoToString(name);
 		Color tmp__output;
-		tmp__output = thisPtr->getHandle()->getColor(tmpname, arrayIdx);
+		tmp__output = thisPtr->GetHandle()->GetColor(tmpname, arrayIdx);
 
 		*__output = tmp__output;
 	}
@@ -252,7 +252,7 @@ namespace bs
 		SPtr<ColorGradientHDR> tmp__output = bs_shared_ptr_new<ColorGradientHDR>();
 		String tmpname;
 		tmpname = MonoUtil::monoToString(name);
-		*tmp__output = thisPtr->getHandle()->getColorGradient(tmpname, arrayIdx);
+		*tmp__output = thisPtr->GetHandle()->GetColorGradient(tmpname, arrayIdx);
 
 		MonoObject* __output;
 		__output = ScriptColorGradientHDR::Create(tmp__output);
@@ -265,7 +265,7 @@ namespace bs
 		String tmpname;
 		tmpname = MonoUtil::monoToString(name);
 		Vector2 tmp__output;
-		tmp__output = thisPtr->getHandle()->getVec2(tmpname, arrayIdx);
+		tmp__output = thisPtr->GetHandle()->GetVec2(tmpname, arrayIdx);
 
 		*__output = tmp__output;
 	}
@@ -275,7 +275,7 @@ namespace bs
 		String tmpname;
 		tmpname = MonoUtil::monoToString(name);
 		Vector3 tmp__output;
-		tmp__output = thisPtr->getHandle()->getVec3(tmpname, arrayIdx);
+		tmp__output = thisPtr->GetHandle()->GetVec3(tmpname, arrayIdx);
 
 		*__output = tmp__output;
 	}
@@ -285,7 +285,7 @@ namespace bs
 		String tmpname;
 		tmpname = MonoUtil::monoToString(name);
 		Vector4 tmp__output;
-		tmp__output = thisPtr->getHandle()->getVec4(tmpname, arrayIdx);
+		tmp__output = thisPtr->GetHandle()->GetVec4(tmpname, arrayIdx);
 
 		*__output = tmp__output;
 	}
@@ -295,7 +295,7 @@ namespace bs
 		String tmpname;
 		tmpname = MonoUtil::monoToString(name);
 		Matrix3 tmp__output;
-		tmp__output = thisPtr->getHandle()->getMat3(tmpname, arrayIdx);
+		tmp__output = thisPtr->GetHandle()->GetMat3(tmpname, arrayIdx);
 
 		*__output = tmp__output;
 	}
@@ -305,7 +305,7 @@ namespace bs
 		String tmpname;
 		tmpname = MonoUtil::monoToString(name);
 		Matrix4 tmp__output;
-		tmp__output = thisPtr->getHandle()->getMat4(tmpname, arrayIdx);
+		tmp__output = thisPtr->GetHandle()->GetMat4(tmpname, arrayIdx);
 
 		*__output = tmp__output;
 	}
@@ -315,7 +315,7 @@ namespace bs
 		bool tmp__output;
 		String tmpname;
 		tmpname = MonoUtil::monoToString(name);
-		tmp__output = thisPtr->getHandle()->isAnimated(tmpname, arrayIdx);
+		tmp__output = thisPtr->GetHandle()->isAnimated(tmpname, arrayIdx);
 
 		bool __output;
 		__output = tmp__output;
@@ -335,7 +335,7 @@ namespace bs
 		ScriptRRefBase* scriptshader;
 		scriptshader = ScriptRRefBase::toNative(shader);
 		if(scriptshader != nullptr)
-			tmpshader = static_resource_cast<Shader>(scriptshader->getHandle());
+			tmpshader = static_resource_cast<Shader>(scriptshader->GetHandle());
 		ResourceHandle<Material> instance = Material::Create(tmpshader);
 		ScriptResourceManager::Instance().createBuiltinScriptResource(instance, managedInstance);
 	}
@@ -348,8 +348,8 @@ namespace bs
 		ScriptRRefBase* scriptvalue;
 		scriptvalue = ScriptRRefBase::toNative(value);
 		if(scriptvalue != nullptr)
-			tmpvalue = static_resource_cast<Texture>(scriptvalue->getHandle());
-		MaterialEx::setTexture(thisPtr->getHandle(), tmpname, tmpvalue, mipLevel, numMipLevels, arraySlice, numArraySlices);
+			tmpvalue = static_resource_cast<Texture>(scriptvalue->GetHandle());
+		MaterialEx::setTexture(thisPtr->GetHandle(), tmpname, tmpvalue, mipLevel, numMipLevels, arraySlice, numArraySlices);
 	}
 
 	MonoObject* ScriptMaterial::InternalGetTexture(ScriptMaterial* thisPtr, MonoString* name)
@@ -357,13 +357,13 @@ namespace bs
 		ResourceHandle<Texture> tmp__output;
 		String tmpname;
 		tmpname = MonoUtil::monoToString(name);
-		tmp__output = MaterialEx::getTexture(thisPtr->getHandle(), tmpname);
+		tmp__output = MaterialEx::getTexture(thisPtr->GetHandle(), tmpname);
 
 		MonoObject* __output;
 		ScriptRRefBase* script__output;
 		script__output = ScriptResourceManager::Instance().getScriptRRef(tmp__output);
 		if(script__output != nullptr)
-			__output = script__output->getManagedInstance();
+			__output = script__output->GetManagedInstance();
 		else
 			__output = nullptr;
 
@@ -378,8 +378,8 @@ namespace bs
 		ScriptRRefBase* scriptvalue;
 		scriptvalue = ScriptRRefBase::toNative(value);
 		if(scriptvalue != nullptr)
-			tmpvalue = static_resource_cast<SpriteTexture>(scriptvalue->getHandle());
-		MaterialEx::setSpriteTexture(thisPtr->getHandle(), tmpname, tmpvalue);
+			tmpvalue = static_resource_cast<SpriteTexture>(scriptvalue->GetHandle());
+		MaterialEx::setSpriteTexture(thisPtr->GetHandle(), tmpname, tmpvalue);
 	}
 
 	MonoObject* ScriptMaterial::InternalGetSpriteTexture(ScriptMaterial* thisPtr, MonoString* name)
@@ -387,13 +387,13 @@ namespace bs
 		ResourceHandle<SpriteTexture> tmp__output;
 		String tmpname;
 		tmpname = MonoUtil::monoToString(name);
-		tmp__output = MaterialEx::getSpriteTexture(thisPtr->getHandle(), tmpname);
+		tmp__output = MaterialEx::getSpriteTexture(thisPtr->GetHandle(), tmpname);
 
 		MonoObject* __output;
 		ScriptRRefBase* script__output;
 		script__output = ScriptResourceManager::Instance().getScriptRRef(tmp__output);
 		if(script__output != nullptr)
-			__output = script__output->getManagedInstance();
+			__output = script__output->GetManagedInstance();
 		else
 			__output = nullptr;
 

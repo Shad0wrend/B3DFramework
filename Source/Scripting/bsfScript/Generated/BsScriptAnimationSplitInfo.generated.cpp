@@ -56,7 +56,7 @@ namespace bs
 	MonoString* ScriptAnimationSplitInfo::Internal_getname(ScriptAnimationSplitInfo* thisPtr)
 	{
 		String tmp__output;
-		tmp__output = thisPtr->getInternal()->name;
+		tmp__output = thisPtr->GetInternal()->name;
 
 		MonoString* __output;
 		__output = MonoUtil::stringToMono(tmp__output);
@@ -68,13 +68,13 @@ namespace bs
 	{
 		String tmpvalue;
 		tmpvalue = MonoUtil::monoToString(value);
-		thisPtr->getInternal()->name = tmpvalue;
+		thisPtr->GetInternal()->name = tmpvalue;
 	}
 
 	uint32_t ScriptAnimationSplitInfo::Internal_getstartFrame(ScriptAnimationSplitInfo* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->getInternal()->startFrame;
+		tmp__output = thisPtr->GetInternal()->startFrame;
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -84,13 +84,13 @@ namespace bs
 
 	void ScriptAnimationSplitInfo::Internal_setstartFrame(ScriptAnimationSplitInfo* thisPtr, uint32_t value)
 	{
-		thisPtr->getInternal()->startFrame = value;
+		thisPtr->GetInternal()->startFrame = value;
 	}
 
 	uint32_t ScriptAnimationSplitInfo::Internal_getendFrame(ScriptAnimationSplitInfo* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->getInternal()->endFrame;
+		tmp__output = thisPtr->GetInternal()->endFrame;
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -100,13 +100,13 @@ namespace bs
 
 	void ScriptAnimationSplitInfo::Internal_setendFrame(ScriptAnimationSplitInfo* thisPtr, uint32_t value)
 	{
-		thisPtr->getInternal()->endFrame = value;
+		thisPtr->GetInternal()->endFrame = value;
 	}
 
 	bool ScriptAnimationSplitInfo::Internal_getisAdditive(ScriptAnimationSplitInfo* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->getInternal()->isAdditive;
+		tmp__output = thisPtr->GetInternal()->isAdditive;
 
 		bool __output;
 		__output = tmp__output;
@@ -116,7 +116,7 @@ namespace bs
 
 	void ScriptAnimationSplitInfo::Internal_setisAdditive(ScriptAnimationSplitInfo* thisPtr, bool value)
 	{
-		thisPtr->getInternal()->isAdditive = value;
+		thisPtr->GetInternal()->isAdditive = value;
 	}
 #endif
 }

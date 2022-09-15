@@ -56,7 +56,7 @@ namespace bs
 		/** @} */
 
 	protected:
-		/** @copydoc Resource::initialize() */
+		/** @copydoc Resource::Initialize() */
 		void Initialize() override;
 
 		SPtr<FPhysicsMesh> mInternal;

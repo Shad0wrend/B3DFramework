@@ -46,7 +46,7 @@ namespace bs
 	float ScriptShadowSettings::InternalGetdirectionalShadowDistance(ScriptShadowSettings* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getInternal()->directionalShadowDistance;
+		tmp__output = thisPtr->GetInternal()->directionalShadowDistance;
 
 		float __output;
 		__output = tmp__output;
@@ -56,13 +56,13 @@ namespace bs
 
 	void ScriptShadowSettings::InternalSetdirectionalShadowDistance(ScriptShadowSettings* thisPtr, float value)
 	{
-		thisPtr->getInternal()->directionalShadowDistance = value;
+		thisPtr->GetInternal()->directionalShadowDistance = value;
 	}
 
 	uint32_t ScriptShadowSettings::InternalGetnumCascades(ScriptShadowSettings* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->getInternal()->numCascades;
+		tmp__output = thisPtr->GetInternal()->numCascades;
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -72,13 +72,13 @@ namespace bs
 
 	void ScriptShadowSettings::InternalSetnumCascades(ScriptShadowSettings* thisPtr, uint32_t value)
 	{
-		thisPtr->getInternal()->numCascades = value;
+		thisPtr->GetInternal()->numCascades = value;
 	}
 
 	float ScriptShadowSettings::InternalGetcascadeDistributionExponent(ScriptShadowSettings* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getInternal()->cascadeDistributionExponent;
+		tmp__output = thisPtr->GetInternal()->cascadeDistributionExponent;
 
 		float __output;
 		__output = tmp__output;
@@ -88,13 +88,13 @@ namespace bs
 
 	void ScriptShadowSettings::InternalSetcascadeDistributionExponent(ScriptShadowSettings* thisPtr, float value)
 	{
-		thisPtr->getInternal()->cascadeDistributionExponent = value;
+		thisPtr->GetInternal()->cascadeDistributionExponent = value;
 	}
 
 	uint32_t ScriptShadowSettings::InternalGetshadowFilteringQuality(ScriptShadowSettings* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->getInternal()->shadowFilteringQuality;
+		tmp__output = thisPtr->GetInternal()->shadowFilteringQuality;
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -104,6 +104,6 @@ namespace bs
 
 	void ScriptShadowSettings::InternalSetshadowFilteringQuality(ScriptShadowSettings* thisPtr, uint32_t value)
 	{
-		thisPtr->getInternal()->shadowFilteringQuality = value;
+		thisPtr->GetInternal()->shadowFilteringQuality = value;
 	}
 }

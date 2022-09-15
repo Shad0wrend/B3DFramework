@@ -44,16 +44,16 @@ namespace bs
 
 	void ScriptContextMenu::internal_Open(ScriptContextMenu* instance, Vector2I* position, ScriptGUILayout* layoutPtr)
 	{
-		GUIElementBase* layout = layoutPtr->getGUIElement();
+		GUIElementBase* layout = layoutPtr->GetGUIElement();
 
 		GUIWidget* widget = layout->GetParentWidgetInternal();
 		if (widget == nullptr)
 			return;
 
-		Rect2I bounds = layout->getGlobalBounds();
+		Rect2I bounds = layout->GetGlobalBounds();
 		Vector2I windowPosition = *position + Vector2I(bounds.x, bounds.y);
 
-		SPtr<GUIContextMenu> contextMenu = instance->getInternal();
+		SPtr<GUIContextMenu> contextMenu = instance->GetInternal();
 		contextMenu->open(windowPosition, *widget);
 	}
 
@@ -62,7 +62,7 @@ namespace bs
 	{
 		String nativePath = MonoUtil::monoToString(path);
 
-		SPtr<GUIContextMenu> contextMenu = instance->getInternal();
+		SPtr<GUIContextMenu> contextMenu = instance->GetInternal();
 		contextMenu->addMenuItem(nativePath, std::bind(&ScriptContextMenu::onContextMenuItemTriggered,
 			instance, callbackIdx), 0, *shortcut);
 	}
@@ -71,7 +71,7 @@ namespace bs
 	{
 		String nativePath = MonoUtil::monoToString(path);
 
-		SPtr<GUIContextMenu> contextMenu = instance->getInternal();
+		SPtr<GUIContextMenu> contextMenu = instance->GetInternal();
 		contextMenu->addSeparator(nativePath, 0);
 	}
 
@@ -81,8 +81,8 @@ namespace bs
 			return;
 
 		String nativeLabel = MonoUtil::monoToString(label);
-		SPtr<GUIContextMenu> contextMenu = instance->getInternal();
-		contextMenu->setLocalizedName(nativeLabel, *name->getInternal());
+		SPtr<GUIContextMenu> contextMenu = instance->GetInternal();
+		contextMenu->SetLocalizedName(nativeLabel, *name->GetInternal());
 	}
 
 	void ScriptContextMenu::OnContextMenuItemTriggered(UINT32 idx)

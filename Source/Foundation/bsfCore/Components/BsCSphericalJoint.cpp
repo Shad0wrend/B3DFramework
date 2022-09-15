@@ -10,13 +10,13 @@ namespace bs
 	CSphericalJoint::CSphericalJoint()
 		: CJoint(mDesc)
 	{
-		setName("SphericalJoint");
+		SetName("SphericalJoint");
 	}
 
 	CSphericalJoint::CSphericalJoint(const HSceneObject& parent)
 		: CJoint(parent, mDesc)
 	{
-		setName("SphericalJoint");
+		SetName("SphericalJoint");
 	}
 
 	LimitConeRange CSphericalJoint::GetLimit() const
@@ -32,7 +32,7 @@ namespace bs
 		mDesc.limit = limit;
 
 		if (mInternal != nullptr)
-			GetInternalInternal()->setLimit(limit);
+			GetInternalInternal()->SetLimit(limit);
 	}
 	
 	void CSphericalJoint::SetFlag(SphericalJointFlag flag, bool enabled)
@@ -47,7 +47,7 @@ namespace bs
 			mDesc.flag = (SphericalJointFlag)((UINT32)mDesc.flag & ~(UINT32)flag);
 
 		if (mInternal != nullptr)
-			GetInternalInternal()->setFlag(flag, enabled);
+			GetInternalInternal()->SetFlag(flag, enabled);
 	}
 
 	bool CSphericalJoint::HasFlag(SphericalJointFlag flag) const
@@ -57,8 +57,8 @@ namespace bs
 
 	SPtr<Joint> CSphericalJoint::CreateInternal()
 	{
-		const SPtr<SceneInstance>& scene = SO()->getScene();
-		SPtr<Joint> joint = SphericalJoint::Create(*scene->getPhysicsScene(), mDesc);
+		const SPtr<SceneInstance>& scene = SO()->GetScene();
+		SPtr<Joint> joint = SphericalJoint::Create(*scene->GetPhysicsScene(), mDesc);
 
 		joint->SetOwnerInternal(PhysicsOwnerType::Component, this);
 		return joint;

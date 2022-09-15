@@ -96,7 +96,7 @@ namespace bs
 	{
 		ScriptInputConfiguration* inputConfig = ScriptInputConfiguration::toNative(keyConfig);
 
-		VirtualInput::Instance().setConfiguration(inputConfig->getInternalValue());
+		VirtualInput::Instance().setConfiguration(inputConfig->GetInternalValue());
 	}
 
 	bool ScriptVirtualInput::InternalIsButtonHeld(VirtualButton* btn, UINT32 deviceIdx)

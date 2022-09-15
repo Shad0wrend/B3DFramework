@@ -10,17 +10,17 @@ namespace bs
 {
 	CCapsuleCollider::CCapsuleCollider()
 	{
-		setName("CapsuleCollider");
+		SetName("CapsuleCollider");
 
-		mLocalRotation = Quaternion::getRotationFromTo(Vector3::UNIT_X, mNormal);
+		mLocalRotation = Quaternion::GetRotationFromTo(Vector3::UNIT_X, mNormal);
 	}
 
 	CCapsuleCollider::CCapsuleCollider(const HSceneObject& parent, float radius, float halfHeight)
 		: CCollider(parent), mRadius(radius), mHalfHeight(halfHeight)
 	{
-		setName("CapsuleCollider");
+		SetName("CapsuleCollider");
 
-		mLocalRotation = Quaternion::getRotationFromTo(Vector3::UNIT_X, mNormal);
+		mLocalRotation = Quaternion::GetRotationFromTo(Vector3::UNIT_X, mNormal);
 	}
 
 	void CCapsuleCollider::SetNormal(const Vector3& normal)
@@ -28,11 +28,11 @@ namespace bs
 		if (mNormal == normal)
 			return;
 
-		mNormal = bs::Vector3::normalize(normal);
-		mLocalRotation = Quaternion::getRotationFromTo(Vector3::UNIT_X, mNormal);
+		mNormal = bs::Vector3::Normalize(normal);
+		mLocalRotation = Quaternion::GetRotationFromTo(Vector3::UNIT_X, mNormal);
 
 		if (mInternal != nullptr)
-			updateTransform();
+			UpdateTransform();
 	}
 
 	void CCapsuleCollider::SetCenter(const Vector3& center)
@@ -43,7 +43,7 @@ namespace bs
 		mLocalPosition = center;
 
 		if (mInternal != nullptr)
-			updateTransform();
+			UpdateTransform();
 	}
 
 	void CCapsuleCollider::SetHalfHeight(float halfHeight)
@@ -82,11 +82,11 @@ namespace bs
 
 	SPtr<Collider> CCapsuleCollider::CreateInternal()
 	{
-		const SPtr<SceneInstance>& scene = SO()->getScene();
-		const Transform& tfrm = SO()->getTransform();
+		const SPtr<SceneInstance>& scene = SO()->GetScene();
+		const Transform& tfrm = SO()->GetTransform();
 
-		SPtr<Collider> collider = CapsuleCollider::Create(*scene->getPhysicsScene(), mRadius, mHalfHeight,
-			tfrm.getPosition(), tfrm.getRotation());
+		SPtr<Collider> collider = CapsuleCollider::Create(*scene->GetPhysicsScene(), mRadius, mHalfHeight,
+			tfrm.GetPosition(), tfrm.GetRotation());
 
 		collider->SetOwnerInternal(PhysicsOwnerType::Component, this);
 		return collider;

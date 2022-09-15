@@ -149,10 +149,10 @@ namespace bs
 		if(!data->cursorClipEnabled || data->cursorClipWindow != window)
 			return;
 
-		data->cursorClipRect.x = window->getLeft();
-		data->cursorClipRect.y = window->getTop();
-		data->cursorClipRect.width = window->getWidth();
-		data->cursorClipRect.height = window->getHeight();
+		data->cursorClipRect.x = window->GetLeft();
+		data->cursorClipRect.y = window->GetTop();
+		data->cursorClipRect.width = window->GetWidth();
+		data->cursorClipRect.height = window->GetHeight();
 	}
 
 	bool clipCursor(Platform::Pimpl* data, Vector2I& pos)
@@ -381,17 +381,17 @@ namespace bs
 
 	void Platform::setCursor(PixelData& pixelData, const Vector2I& hotSpot)
 	{
-		SPtr<PixelData> bgraData = PixelData::Create(pixelData.getWidth(), pixelData.getHeight(), 1, PF_BGRA8);
+		SPtr<PixelData> bgraData = PixelData::Create(pixelData.GetWidth(), pixelData.GetHeight(), 1, PF_BGRA8);
 		PixelUtil::bulkPixelConversion(pixelData, *bgraData);
 
 		Lock lock(mData->lock);
 
-		XcursorImage* image = XcursorImageCreate((int)bgraData->getWidth(), (int)bgraData->getHeight());
+		XcursorImage* image = XcursorImageCreate((int)bgraData->GetWidth(), (int)bgraData->GetHeight());
 		image->xhot = (XcursorDim)hotSpot.x;
 		image->yhot = (XcursorDim)hotSpot.y;
 		image->delay = 0;
 
-		memcpy(image->pixels, bgraData->getData(), bgraData->getSize());
+		memcpy(image->pixels, bgraData->GetData(), bgraData->GetSize());
 
 		::Cursor cursor = XcursorImageLoadCursor(mData->xDisplay, image);
 		XcursorImageDestroy(image);
@@ -411,7 +411,7 @@ namespace bs
 		LinuxWindow* mainLinuxWindow = iterFind->second;
 
 		Lock lock(mData->lock);
-		mainLinuxWindow->setIcon(pixelData);
+		mainLinuxWindow->SetIcon(pixelData);
 	}
 
 	void Platform::setCaptionNonClientAreas(const ct::RenderWindow& window, const Vector<Rect2I>& nonClientAreas)
@@ -1124,7 +1124,7 @@ namespace bs
 				// Not a render window, so it doesn't care about these events
 				if (renderWindow != nullptr)
 				{
-					if (!renderWindow->getProperties().hasFocus)
+					if (!renderWindow->GetProperties().hasFocus)
 						renderWindow->NotifyWindowEventInternal(WindowEventType::FocusReceived);
 				}
 			}
@@ -1140,7 +1140,7 @@ namespace bs
 				// Not a render window, so it doesn't care about these events
 				if (renderWindow != nullptr)
 				{
-					if (renderWindow->getProperties().hasFocus)
+					if (renderWindow->GetProperties().hasFocus)
 						renderWindow->NotifyWindowEventInternal(WindowEventType::FocusLost);
 				}
 			}
@@ -1472,18 +1472,18 @@ namespace bs
 		}
 
 		// Convert to BGRA
-		SPtr<PixelData> bgraData = PixelData::Create(data.getWidth(), data.getHeight(), 1, PF_BGRA8);
-		bgraData->setColors(colors);
+		SPtr<PixelData> bgraData = PixelData::Create(data.GetWidth(), data.GetHeight(), 1, PF_BGRA8);
+		bgraData->SetColors(colors);
 
 		XImage* image = XCreateImage(mData->xDisplay, CopyFromParent, depth, ZPixmap, 0,
-				(char*)bgraData->getData(), data.getWidth(), data.getHeight(), 32, 0);
+				(char*)bgraData->GetData(), data.GetWidth(), data.GetHeight(), 32, 0);
 
 		Pixmap pixmap = XCreatePixmap(mData->xDisplay, XDefaultRootWindow(mData->xDisplay),
-				data.getWidth(), data.getHeight(), depth);
+				data.GetWidth(), data.GetHeight(), depth);
 
 		XGCValues gcValues;
 		GC gc = XCreateGC(mData->xDisplay, pixmap, 0, &gcValues);
-		XPutImage(mData->xDisplay, pixmap, gc, image, 0, 0, 0, 0, data.getWidth(), data.getHeight());
+		XPutImage(mData->xDisplay, pixmap, gc, image, 0, 0, 0, 0, data.GetWidth(), data.GetHeight());
 		XFreeGC(mData->xDisplay, gc);
 
 		// Make sure XDestroyImage doesn't free the data pointed to by 'data.bytes'

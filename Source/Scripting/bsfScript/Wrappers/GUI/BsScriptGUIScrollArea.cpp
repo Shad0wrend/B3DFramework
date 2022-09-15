@@ -53,13 +53,13 @@ namespace bs
 
 			if (mLayout != nullptr)
 			{
-				mLayout->destroy();
+				mLayout->Destroy();
 				mLayout = nullptr;
 			}
 
 			if (mElement->GetTypeInternal() == GUIElementBase::Type::Element)
 			{
-				GUIElement::destroy((GUIElement*)mElement);
+				GUIElement::Destroy((GUIElement*)mElement);
 				mElement = nullptr;
 
 				mIsDestroyed = true;
@@ -85,31 +85,31 @@ namespace bs
 
 	void ScriptGUIScrollArea::InternalGetContentBounds(ScriptGUIScrollArea* nativeInstance, Rect2I* bounds)
 	{
-		GUIScrollArea* guiScrollArea = static_cast<GUIScrollArea*>(nativeInstance->getGUIElement());
-		*bounds = guiScrollArea->getContentBounds();
+		GUIScrollArea* guiScrollArea = static_cast<GUIScrollArea*>(nativeInstance->GetGUIElement());
+		*bounds = guiScrollArea->GetContentBounds();
 	}
 
 	float ScriptGUIScrollArea::InternalGetHorzScroll(ScriptGUIScrollArea* nativeInstance)
 	{
-		GUIScrollArea* guiScrollArea = static_cast<GUIScrollArea*>(nativeInstance->getGUIElement());
-		return guiScrollArea->getHorizontalScroll();
+		GUIScrollArea* guiScrollArea = static_cast<GUIScrollArea*>(nativeInstance->GetGUIElement());
+		return guiScrollArea->GetHorizontalScroll();
 	}
 
 	void ScriptGUIScrollArea::InternalSetHorzScroll(ScriptGUIScrollArea* nativeInstance, float value)
 	{
-		GUIScrollArea* guiScrollArea = static_cast<GUIScrollArea*>(nativeInstance->getGUIElement());
+		GUIScrollArea* guiScrollArea = static_cast<GUIScrollArea*>(nativeInstance->GetGUIElement());
 		guiScrollArea->scrollToHorizontal(value);
 	}
 
 	float ScriptGUIScrollArea::InternalGetVertScroll(ScriptGUIScrollArea* nativeInstance)
 	{
-		GUIScrollArea* guiScrollArea = static_cast<GUIScrollArea*>(nativeInstance->getGUIElement());
-		return guiScrollArea->getVerticalScroll();
+		GUIScrollArea* guiScrollArea = static_cast<GUIScrollArea*>(nativeInstance->GetGUIElement());
+		return guiScrollArea->GetVerticalScroll();
 	}
 
 	void ScriptGUIScrollArea::InternalSetVertScroll(ScriptGUIScrollArea* nativeInstance, float value)
 	{
-		GUIScrollArea* guiScrollArea = static_cast<GUIScrollArea*>(nativeInstance->getGUIElement());
+		GUIScrollArea* guiScrollArea = static_cast<GUIScrollArea*>(nativeInstance->GetGUIElement());
 		guiScrollArea->scrollToVertical(value);
 	}
 

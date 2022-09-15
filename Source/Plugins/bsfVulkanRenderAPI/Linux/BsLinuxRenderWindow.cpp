@@ -28,7 +28,7 @@ namespace bs
 		if (name == "WINDOW" || name == "LINUX_WINDOW")
 		{
 			blockUntilCoreInitialized();
-			getCore()->getCustomAttribute(name, data);
+			getCore()->GetCustomAttribute(name, data);
 			return;
 		}
 	}
@@ -105,11 +105,11 @@ namespace bs
 			LinuxPlatform::unlockX();
 		}
 
-		mSwapChain->destroy();
+		mSwapChain->Destroy();
 		vkDestroySurfaceKHR(mRenderAPI.GetInstanceInternal(), mSurface, gVulkanAllocator);
 	}
 
-	void LinuxRenderWindow::initialize()
+	void LinuxRenderWindow::Initialize()
 	{
 		LinuxPlatform::lockX();
 
@@ -163,10 +163,10 @@ namespace bs
 		mWindow = bs_new<LinuxWindow>(windowDesc);
 		mWindow->SetUserDataInternal(this);
 
-		props.width = mWindow->getWidth();
-		props.height = mWindow->getHeight();
-		props.top = mWindow->getTop();
-		props.left = mWindow->getLeft();
+		props.width = mWindow->GetWidth();
+		props.height = mWindow->GetHeight();
+		props.top = mWindow->GetTop();
+		props.left = mWindow->GetLeft();
 
 		props.hwGamma = mDesc.gamma;
 		props.multisampleCount = mDesc.multisampleCount;
@@ -190,9 +190,9 @@ namespace bs
 		assert(result == VK_SUCCESS);
 
 		SPtr<VulkanDevice> presentDevice = mRenderAPI.GetPresentDeviceInternal();
-		VkPhysicalDevice physicalDevice = presentDevice->getPhysical();
+		VkPhysicalDevice physicalDevice = presentDevice->GetPhysical();
 
-		mPresentQueueFamily = presentDevice->getQueueFamily(GQT_GRAPHICS);
+		mPresentQueueFamily = presentDevice->GetQueueFamily(GQT_GRAPHICS);
 
 		VkBool32 supportsPresent;
 		vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, mPresentQueueFamily, mSurface, &supportsPresent);
@@ -205,13 +205,13 @@ namespace bs
 			BS_EXCEPT(RenderingAPIException, "Cannot find a graphics queue that also supports present operations.");
 		}
 
-		SurfaceFormat format = presentDevice->getSurfaceFormat(mSurface, mDesc.gamma);
+		SurfaceFormat format = presentDevice->GetSurfaceFormat(mSurface, mDesc.gamma);
 		mColorFormat = format.colorFormat;
 		mColorSpace = format.colorSpace;
 		mDepthFormat = format.depthFormat;
 
 		// Create swap chain
-		mSwapChain = presentDevice->getResourceManager().create<VulkanSwapChain>(mSurface, props.width, props.height,
+		mSwapChain = presentDevice->GetResourceManager().create<VulkanSwapChain>(mSurface, props.width, props.height,
 				props.vsync, mColorFormat, mColorSpace, mDesc.depthBuffer, mDepthFormat);
 
 		LinuxPlatform::unlockX(); // Calls below have their own locking mechanisms
@@ -228,7 +228,7 @@ namespace bs
 		}
 
 		bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
-		RenderWindow::initialize();
+		RenderWindow::Initialize();
 	}
 
 	void LinuxRenderWindow::acquireBackBuffer()
@@ -385,7 +385,7 @@ namespace bs
 
 				float refreshRate;
 				if (modeInfo.hTotal != 0 && modeInfo.vTotal != 0)
-					refreshRate = (float) (modeInfo.dotClock / (double) (modeInfo.hTotal * modeInfo.vTotal));
+					refreshRate = (float) (modeInfo.DotClock / (double) (modeInfo.hTotal * modeInfo.vTotal));
 				else
 					refreshRate = 0.0f;
 
@@ -394,7 +394,7 @@ namespace bs
 					modeID = modeInfo.id;
 					foundMode = true;
 
-					if (Math::approxEquals(refreshRate, mode.refreshRate))
+					if (Math::ApproxEquals(refreshRate, mode.refreshRate))
 						break;
 				}
 			}
@@ -500,8 +500,8 @@ namespace bs
 			mWindow->move(left, top);
 			LinuxPlatform::unlockX();
 
-			props.top = mWindow->getTop();
-			props.left = mWindow->getLeft();
+			props.top = mWindow->GetTop();
+			props.left = mWindow->GetLeft();
 
 			{
 				ScopedSpinLock lock(mLock);
@@ -524,8 +524,8 @@ namespace bs
 			mWindow->resize(width, height);
 			LinuxPlatform::unlockX();
 
-			props.width = mWindow->getWidth();
-			props.height = mWindow->getHeight();
+			props.width = mWindow->GetWidth();
+			props.height = mWindow->GetHeight();
 
 			{
 				ScopedSpinLock lock(mLock);
@@ -600,26 +600,26 @@ namespace bs
 		SPtr<VulkanDevice> presentDevice = mRenderAPI.GetPresentDeviceInternal();
 
 		// Assuming present queue is always graphics
-		assert(presentDevice->getQueueFamily(GQT_GRAPHICS) == mPresentQueueFamily);
+		assert(presentDevice->GetQueueFamily(GQT_GRAPHICS) == mPresentQueueFamily);
 
 		// Find an appropriate queue to execute on
-		VulkanQueue* queue = presentDevice->getQueue(GQT_GRAPHICS, 0);
-		UINT32 queueMask = presentDevice->getQueueMask(GQT_GRAPHICS, 0);
+		VulkanQueue* queue = presentDevice->GetQueue(GQT_GRAPHICS, 0);
+		UINT32 queueMask = presentDevice->GetQueueMask(GQT_GRAPHICS, 0);
 
 		// Ignore myself
 		syncMask &= ~queueMask;
 
-		UINT32 deviceIdx = presentDevice->getIndex();
+		UINT32 deviceIdx = presentDevice->GetIndex();
 		VulkanCommandBufferManager& cbm = static_cast<VulkanCommandBufferManager&>(CommandBufferManager::Instance());
 
 		UINT32 numSemaphores;
 		cbm.getSyncSemaphores(deviceIdx, syncMask, mSemaphoresTemp, numSemaphores);
 
 		// Wait on present (i.e. until the back buffer becomes available), if we haven't already done so
-		const SwapChainSurface& surface = mSwapChain->getBackBuffer();
+		const SwapChainSurface& surface = mSwapChain->GetBackBuffer();
 		if(surface.needsWait)
 		{
-			mSemaphoresTemp[numSemaphores] = mSwapChain->getBackBuffer().sync;
+			mSemaphoresTemp[numSemaphores] = mSwapChain->GetBackBuffer().sync;
 			numSemaphores++;
 
 			mSwapChain->notifyBackBufferWaitIssued();
@@ -646,7 +646,7 @@ namespace bs
 		if (name == "FB")
 		{
 			VulkanFramebuffer** fb = (VulkanFramebuffer**)data;
-			*fb = mSwapChain->getBackBuffer().framebuffer;
+			*fb = mSwapChain->GetBackBuffer().framebuffer;
 			return;
 		}
 
@@ -715,10 +715,10 @@ namespace bs
 		RenderWindowProperties& props = mProperties;
 		if (!props.isFullScreen) // Fullscreen is handled directly by this object
 		{
-			props.top = mWindow->getTop();
-			props.left = mWindow->getLeft();
-			props.width = mWindow->getWidth();
-			props.height = mWindow->getHeight();
+			props.top = mWindow->GetTop();
+			props.left = mWindow->GetLeft();
+			props.width = mWindow->GetWidth();
+			props.height = mWindow->GetHeight();
 		}
 
 		// Note: This assumes that this method was called from the main message loop, which already acquires X locks,
@@ -742,11 +742,11 @@ namespace bs
 
 		VulkanSwapChain* oldSwapChain = mSwapChain;
 
-		mSwapChain = presentDevice->getResourceManager().create<VulkanSwapChain>(
+		mSwapChain = presentDevice->GetResourceManager().create<VulkanSwapChain>(
 				mSurface, mProperties.width, mProperties.height, mProperties.vsync, mColorFormat, mColorSpace,
 				mDesc.depthBuffer, mDepthFormat, oldSwapChain);
 
-		oldSwapChain->destroy();
+		oldSwapChain->Destroy();
 	}
 }}
 

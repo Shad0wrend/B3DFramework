@@ -9,20 +9,20 @@ namespace bs
 {
 	CSkybox::CSkybox()
 	{
-		setFlag(ComponentFlag::AlwaysRun, true);
-		setName("Skybox");
+		SetFlag(ComponentFlag::AlwaysRun, true);
+		SetName("Skybox");
 	}
 
 	CSkybox::CSkybox(const HSceneObject& parent)
 		: Component(parent)
 	{
-		setFlag(ComponentFlag::AlwaysRun, true);
-		setName("Skybox");
+		SetFlag(ComponentFlag::AlwaysRun, true);
+		SetName("Skybox");
 	}
 
 	CSkybox::~CSkybox()
 	{
-		mInternal->destroy();
+		mInternal->Destroy();
 	}
 
 	void CSkybox::OnInitialized()
@@ -30,11 +30,11 @@ namespace bs
 		// If mInternal already exists this means this object was deserialized,
 		// so all we need to do is initialize it.
 		if (mInternal != nullptr)
-			mInternal->initialize();
+			mInternal->Initialize();
 		else
 			mInternal = Skybox::Create();
 
-		gSceneManager().BindActorInternal(mInternal, sceneObject());
+		gSceneManager().BindActorInternal(mInternal, SceneObject());
 	}
 
 	void CSkybox::OnDestroyed()

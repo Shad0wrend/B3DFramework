@@ -68,13 +68,13 @@ namespace bs
 	MonoObject* ScriptParticleSystemSettings::InternalGetmaterial(ScriptParticleSystemSettings* thisPtr)
 	{
 		ResourceHandle<Material> tmp__output;
-		tmp__output = thisPtr->getInternal()->material;
+		tmp__output = thisPtr->GetInternal()->material;
 
 		MonoObject* __output;
 		ScriptRRefBase* script__output;
 		script__output = ScriptResourceManager::Instance().getScriptRRef(tmp__output);
 		if(script__output != nullptr)
-			__output = script__output->getManagedInstance();
+			__output = script__output->GetManagedInstance();
 		else
 			__output = nullptr;
 
@@ -87,20 +87,20 @@ namespace bs
 		ScriptRRefBase* scriptvalue;
 		scriptvalue = ScriptRRefBase::toNative(value);
 		if(scriptvalue != nullptr)
-			tmpvalue = static_resource_cast<Material>(scriptvalue->getHandle());
-		thisPtr->getInternal()->material = tmpvalue;
+			tmpvalue = static_resource_cast<Material>(scriptvalue->GetHandle());
+		thisPtr->GetInternal()->material = tmpvalue;
 	}
 
 	MonoObject* ScriptParticleSystemSettings::InternalGetmesh(ScriptParticleSystemSettings* thisPtr)
 	{
 		ResourceHandle<Mesh> tmp__output;
-		tmp__output = thisPtr->getInternal()->mesh;
+		tmp__output = thisPtr->GetInternal()->mesh;
 
 		MonoObject* __output;
 		ScriptRRefBase* script__output;
 		script__output = ScriptResourceManager::Instance().getScriptRRef(tmp__output);
 		if(script__output != nullptr)
-			__output = script__output->getManagedInstance();
+			__output = script__output->GetManagedInstance();
 		else
 			__output = nullptr;
 
@@ -113,14 +113,14 @@ namespace bs
 		ScriptRRefBase* scriptvalue;
 		scriptvalue = ScriptRRefBase::toNative(value);
 		if(scriptvalue != nullptr)
-			tmpvalue = static_resource_cast<Mesh>(scriptvalue->getHandle());
-		thisPtr->getInternal()->mesh = tmpvalue;
+			tmpvalue = static_resource_cast<Mesh>(scriptvalue->GetHandle());
+		thisPtr->GetInternal()->mesh = tmpvalue;
 	}
 
 	ParticleSimulationSpace ScriptParticleSystemSettings::InternalGetsimulationSpace(ScriptParticleSystemSettings* thisPtr)
 	{
 		ParticleSimulationSpace tmp__output;
-		tmp__output = thisPtr->getInternal()->simulationSpace;
+		tmp__output = thisPtr->GetInternal()->simulationSpace;
 
 		ParticleSimulationSpace __output;
 		__output = tmp__output;
@@ -130,13 +130,13 @@ namespace bs
 
 	void ScriptParticleSystemSettings::InternalSetsimulationSpace(ScriptParticleSystemSettings* thisPtr, ParticleSimulationSpace value)
 	{
-		thisPtr->getInternal()->simulationSpace = value;
+		thisPtr->GetInternal()->simulationSpace = value;
 	}
 
 	ParticleOrientation ScriptParticleSystemSettings::InternalGetorientation(ScriptParticleSystemSettings* thisPtr)
 	{
 		ParticleOrientation tmp__output;
-		tmp__output = thisPtr->getInternal()->orientation;
+		tmp__output = thisPtr->GetInternal()->orientation;
 
 		ParticleOrientation __output;
 		__output = tmp__output;
@@ -146,13 +146,13 @@ namespace bs
 
 	void ScriptParticleSystemSettings::InternalSetorientation(ScriptParticleSystemSettings* thisPtr, ParticleOrientation value)
 	{
-		thisPtr->getInternal()->orientation = value;
+		thisPtr->GetInternal()->orientation = value;
 	}
 
 	float ScriptParticleSystemSettings::InternalGetduration(ScriptParticleSystemSettings* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getInternal()->duration;
+		tmp__output = thisPtr->GetInternal()->duration;
 
 		float __output;
 		__output = tmp__output;
@@ -162,13 +162,13 @@ namespace bs
 
 	void ScriptParticleSystemSettings::InternalSetduration(ScriptParticleSystemSettings* thisPtr, float value)
 	{
-		thisPtr->getInternal()->duration = value;
+		thisPtr->GetInternal()->duration = value;
 	}
 
 	bool ScriptParticleSystemSettings::InternalGetisLooping(ScriptParticleSystemSettings* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->getInternal()->isLooping;
+		tmp__output = thisPtr->GetInternal()->isLooping;
 
 		bool __output;
 		__output = tmp__output;
@@ -178,13 +178,13 @@ namespace bs
 
 	void ScriptParticleSystemSettings::InternalSetisLooping(ScriptParticleSystemSettings* thisPtr, bool value)
 	{
-		thisPtr->getInternal()->isLooping = value;
+		thisPtr->GetInternal()->isLooping = value;
 	}
 
 	uint32_t ScriptParticleSystemSettings::InternalGetmaxParticles(ScriptParticleSystemSettings* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->getInternal()->maxParticles;
+		tmp__output = thisPtr->GetInternal()->maxParticles;
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -194,13 +194,13 @@ namespace bs
 
 	void ScriptParticleSystemSettings::InternalSetmaxParticles(ScriptParticleSystemSettings* thisPtr, uint32_t value)
 	{
-		thisPtr->getInternal()->maxParticles = value;
+		thisPtr->GetInternal()->maxParticles = value;
 	}
 
 	bool ScriptParticleSystemSettings::InternalGetgpuSimulation(ScriptParticleSystemSettings* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->getInternal()->gpuSimulation;
+		tmp__output = thisPtr->GetInternal()->gpuSimulation;
 
 		bool __output;
 		__output = tmp__output;
@@ -210,13 +210,13 @@ namespace bs
 
 	void ScriptParticleSystemSettings::InternalSetgpuSimulation(ScriptParticleSystemSettings* thisPtr, bool value)
 	{
-		thisPtr->getInternal()->gpuSimulation = value;
+		thisPtr->GetInternal()->gpuSimulation = value;
 	}
 
 	ParticleRenderMode ScriptParticleSystemSettings::InternalGetrenderMode(ScriptParticleSystemSettings* thisPtr)
 	{
 		ParticleRenderMode tmp__output;
-		tmp__output = thisPtr->getInternal()->renderMode;
+		tmp__output = thisPtr->GetInternal()->renderMode;
 
 		ParticleRenderMode __output;
 		__output = tmp__output;
@@ -226,13 +226,13 @@ namespace bs
 
 	void ScriptParticleSystemSettings::InternalSetrenderMode(ScriptParticleSystemSettings* thisPtr, ParticleRenderMode value)
 	{
-		thisPtr->getInternal()->renderMode = value;
+		thisPtr->GetInternal()->renderMode = value;
 	}
 
 	bool ScriptParticleSystemSettings::InternalGetorientationLockY(ScriptParticleSystemSettings* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->getInternal()->orientationLockY;
+		tmp__output = thisPtr->GetInternal()->orientationLockY;
 
 		bool __output;
 		__output = tmp__output;
@@ -242,13 +242,13 @@ namespace bs
 
 	void ScriptParticleSystemSettings::InternalSetorientationLockY(ScriptParticleSystemSettings* thisPtr, bool value)
 	{
-		thisPtr->getInternal()->orientationLockY = value;
+		thisPtr->GetInternal()->orientationLockY = value;
 	}
 
 	void ScriptParticleSystemSettings::InternalGetorientationPlaneNormal(ScriptParticleSystemSettings* thisPtr, Vector3* __output)
 	{
 		Vector3 tmp__output;
-		tmp__output = thisPtr->getInternal()->orientationPlaneNormal;
+		tmp__output = thisPtr->GetInternal()->orientationPlaneNormal;
 
 		*__output = tmp__output;
 
@@ -257,13 +257,13 @@ namespace bs
 
 	void ScriptParticleSystemSettings::InternalSetorientationPlaneNormal(ScriptParticleSystemSettings* thisPtr, Vector3* value)
 	{
-		thisPtr->getInternal()->orientationPlaneNormal = *value;
+		thisPtr->GetInternal()->orientationPlaneNormal = *value;
 	}
 
 	ParticleSortMode ScriptParticleSystemSettings::InternalGetsortMode(ScriptParticleSystemSettings* thisPtr)
 	{
 		ParticleSortMode tmp__output;
-		tmp__output = thisPtr->getInternal()->sortMode;
+		tmp__output = thisPtr->GetInternal()->sortMode;
 
 		ParticleSortMode __output;
 		__output = tmp__output;
@@ -273,13 +273,13 @@ namespace bs
 
 	void ScriptParticleSystemSettings::InternalSetsortMode(ScriptParticleSystemSettings* thisPtr, ParticleSortMode value)
 	{
-		thisPtr->getInternal()->sortMode = value;
+		thisPtr->GetInternal()->sortMode = value;
 	}
 
 	bool ScriptParticleSystemSettings::InternalGetuseAutomaticSeed(ScriptParticleSystemSettings* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->getInternal()->useAutomaticSeed;
+		tmp__output = thisPtr->GetInternal()->useAutomaticSeed;
 
 		bool __output;
 		__output = tmp__output;
@@ -289,13 +289,13 @@ namespace bs
 
 	void ScriptParticleSystemSettings::InternalSetuseAutomaticSeed(ScriptParticleSystemSettings* thisPtr, bool value)
 	{
-		thisPtr->getInternal()->useAutomaticSeed = value;
+		thisPtr->GetInternal()->useAutomaticSeed = value;
 	}
 
 	uint32_t ScriptParticleSystemSettings::InternalGetmanualSeed(ScriptParticleSystemSettings* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->getInternal()->manualSeed;
+		tmp__output = thisPtr->GetInternal()->manualSeed;
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -305,13 +305,13 @@ namespace bs
 
 	void ScriptParticleSystemSettings::InternalSetmanualSeed(ScriptParticleSystemSettings* thisPtr, uint32_t value)
 	{
-		thisPtr->getInternal()->manualSeed = value;
+		thisPtr->GetInternal()->manualSeed = value;
 	}
 
 	bool ScriptParticleSystemSettings::InternalGetuseAutomaticBounds(ScriptParticleSystemSettings* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->getInternal()->useAutomaticBounds;
+		tmp__output = thisPtr->GetInternal()->useAutomaticBounds;
 
 		bool __output;
 		__output = tmp__output;
@@ -321,13 +321,13 @@ namespace bs
 
 	void ScriptParticleSystemSettings::InternalSetuseAutomaticBounds(ScriptParticleSystemSettings* thisPtr, bool value)
 	{
-		thisPtr->getInternal()->useAutomaticBounds = value;
+		thisPtr->GetInternal()->useAutomaticBounds = value;
 	}
 
 	void ScriptParticleSystemSettings::InternalGetcustomBounds(ScriptParticleSystemSettings* thisPtr, AABox* __output)
 	{
 		AABox tmp__output;
-		tmp__output = thisPtr->getInternal()->customBounds;
+		tmp__output = thisPtr->GetInternal()->customBounds;
 
 		*__output = tmp__output;
 
@@ -336,6 +336,6 @@ namespace bs
 
 	void ScriptParticleSystemSettings::InternalSetcustomBounds(ScriptParticleSystemSettings* thisPtr, AABox* value)
 	{
-		thisPtr->getInternal()->customBounds = *value;
+		thisPtr->GetInternal()->customBounds = *value;
 	}
 }

@@ -69,10 +69,10 @@ namespace bs { namespace ct
 			glBindTexture(GL_TEXTURE_BUFFER, mTextureID);
 			BS_CHECK_GL_ERROR();
 
-			glTexBuffer(GL_TEXTURE_BUFFER, mFormat, static_cast<GLHardwareBuffer*>(mBuffer)->getGLBufferId());
+			glTexBuffer(GL_TEXTURE_BUFFER, mFormat, static_cast<GLHardwareBuffer*>(mBuffer)->GetGLBufferId());
 			BS_CHECK_GL_ERROR();
 		}
 
-		GpuBuffer::initialize();
+		GpuBuffer::Initialize();
 	}
 }}

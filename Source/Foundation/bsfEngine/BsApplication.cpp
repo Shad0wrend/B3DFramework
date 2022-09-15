@@ -57,7 +57,7 @@ namespace bs
 		VirtualInput::StartUp();
 		BuiltinResources::StartUp();
 		RendererMaterialManager::StartUp();
-		RendererManager::Instance().initialize();
+		RendererManager::Instance().Initialize();
 		SpriteManager::StartUp();
 		GUIManager::StartUp();
 		ShortcutManager::StartUp();
@@ -118,7 +118,7 @@ namespace bs
 		if(!mProfilerOverlay)
 			mProfilerOverlay = bs_shared_ptr_new<ProfilerOverlay>(overlayCamera);
 		else
-			mProfilerOverlay->setTarget(overlayCamera);
+			mProfilerOverlay->SetTarget(overlayCamera);
 
 		mProfilerOverlay->show(type);
 	}

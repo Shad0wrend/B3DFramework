@@ -37,8 +37,8 @@ namespace bs
 
 		mTextVertexDesc = bs_shared_ptr_new<VertexDataDesc>();
 		mTextVertexDesc->AddVertElem(VET_FLOAT3, VES_POSITION);
-		mTextVertexDesc->addVertElem(VET_FLOAT2, VES_TEXCOORD);
-		mTextVertexDesc->addVertElem(VET_COLOR, VES_COLOR);
+		mTextVertexDesc->AddVertElem(VET_FLOAT2, VES_TEXCOORD);
+		mTextVertexDesc->AddVertElem(VET_COLOR, VES_COLOR);
 	}
 
 	void DrawHelper::SetColor(const Color& color)
@@ -66,7 +66,7 @@ namespace bs
 		cubeData.color = mColor;
 		cubeData.transform = mTransform;
 		cubeData.layer = mLayer;
-		cubeData.center = mTransform.multiplyAffine(position);
+		cubeData.center = mTransform.MultiplyAffine(position);
 	}
 
 	void DrawHelper::Sphere(const Vector3& position, float radius, UINT32 quality)
@@ -80,7 +80,7 @@ namespace bs
 		sphereData.color = mColor;
 		sphereData.transform = mTransform;
 		sphereData.layer = mLayer;
-		sphereData.center = mTransform.multiplyAffine(position);
+		sphereData.center = mTransform.MultiplyAffine(position);
 	}
 
 	void DrawHelper::WireCube(const Vector3& position, const Vector3& extents)
@@ -93,7 +93,7 @@ namespace bs
 		cubeData.color = mColor;
 		cubeData.transform = mTransform;
 		cubeData.layer = mLayer;
-		cubeData.center = mTransform.multiplyAffine(position);
+		cubeData.center = mTransform.MultiplyAffine(position);
 	}
 
 	void DrawHelper::WireSphere(const Vector3& position, float radius, UINT32 quality)
@@ -107,7 +107,7 @@ namespace bs
 		sphereData.color = mColor;
 		sphereData.transform = mTransform;
 		sphereData.layer = mLayer;
-		sphereData.center = mTransform.multiplyAffine(position);
+		sphereData.center = mTransform.MultiplyAffine(position);
 	}
 
 	void DrawHelper::WireHemisphere(const Vector3& position, float radius, UINT32 quality)
@@ -121,7 +121,7 @@ namespace bs
 		sphereData.color = mColor;
 		sphereData.transform = mTransform;
 		sphereData.layer = mLayer;
-		sphereData.center = mTransform.multiplyAffine(position);
+		sphereData.center = mTransform.MultiplyAffine(position);
 	}
 
 	void DrawHelper::Line(const Vector3& start, const Vector3& end)
@@ -134,7 +134,7 @@ namespace bs
 		lineData.color = mColor;
 		lineData.transform = mTransform;
 		lineData.layer = mLayer;
-		lineData.center = mTransform.multiplyAffine((start + end) * 0.5f);
+		lineData.center = mTransform.MultiplyAffine((start + end) * 0.5f);
 	}
 
 	void DrawHelper::LineList(const Vector<Vector3>& lines)
@@ -169,7 +169,7 @@ namespace bs
 		frustumData.color = mColor;
 		frustumData.transform = mTransform;
 		frustumData.layer = mLayer;
-		frustumData.center = mTransform.multiplyAffine(position);
+		frustumData.center = mTransform.MultiplyAffine(position);
 	}
 
 	void DrawHelper::Cone(const Vector3& base, const Vector3& normal, float height, float radius, const Vector2& scale,
@@ -187,7 +187,7 @@ namespace bs
 		coneData.color = mColor;
 		coneData.transform = mTransform;
 		coneData.layer = mLayer;
-		coneData.center = mTransform.multiplyAffine(base + normal * height * 0.5f);
+		coneData.center = mTransform.MultiplyAffine(base + normal * height * 0.5f);
 	}
 
 	void DrawHelper::WireCone(const Vector3& base, const Vector3& normal, float height, float radius, const Vector2& scale,
@@ -205,7 +205,7 @@ namespace bs
 		coneData.color = mColor;
 		coneData.transform = mTransform;
 		coneData.layer = mLayer;
-		coneData.center = mTransform.multiplyAffine(base + normal * height * 0.5f);
+		coneData.center = mTransform.MultiplyAffine(base + normal * height * 0.5f);
 	}
 
 	void DrawHelper::Disc(const Vector3& position, const Vector3& normal, float radius, UINT32 quality)
@@ -220,7 +220,7 @@ namespace bs
 		discData.color = mColor;
 		discData.transform = mTransform;
 		discData.layer = mLayer;
-		discData.center = mTransform.multiplyAffine(position);
+		discData.center = mTransform.MultiplyAffine(position);
 	}
 
 	void DrawHelper::WireDisc(const Vector3& position, const Vector3& normal, float radius, UINT32 quality)
@@ -235,7 +235,7 @@ namespace bs
 		discData.color = mColor;
 		discData.transform = mTransform;
 		discData.layer = mLayer;
-		discData.center = mTransform.multiplyAffine(position);
+		discData.center = mTransform.MultiplyAffine(position);
 	}
 
 	void DrawHelper::Arc(const Vector3& position, const Vector3& normal, float radius,
@@ -253,7 +253,7 @@ namespace bs
 		arcData.color = mColor;
 		arcData.transform = mTransform;
 		arcData.layer = mLayer;
-		arcData.center = mTransform.multiplyAffine(position);
+		arcData.center = mTransform.MultiplyAffine(position);
 	}
 
 	void DrawHelper::WireArc(const Vector3& position, const Vector3& normal, float radius,
@@ -271,7 +271,7 @@ namespace bs
 		arcData.color = mColor;
 		arcData.transform = mTransform;
 		arcData.layer = mLayer;
-		arcData.center = mTransform.multiplyAffine(position);
+		arcData.center = mTransform.MultiplyAffine(position);
 	}
 
 	void DrawHelper::Rectangle(const Rect3& area)
@@ -283,12 +283,12 @@ namespace bs
 		rectData.color = mColor;
 		rectData.transform = mTransform;
 		rectData.layer = mLayer;
-		rectData.center = mTransform.multiplyAffine(area.getCenter());
+		rectData.center = mTransform.MultiplyAffine(area.getCenter());
 	}
 
 	void DrawHelper::Text(const Vector3& position, const String& text, const HFont& font, UINT32 size)
 	{
-		if (!font.isLoaded() || text.empty())
+		if (!font.IsLoaded() || text.empty())
 			return;
 
 		mText2DData.push_back(Text2DData());
@@ -298,7 +298,7 @@ namespace bs
 		textData.color = mColor;
 		textData.transform = mTransform;
 		textData.layer = mLayer;
-		textData.center = mTransform.multiplyAffine(position);
+		textData.center = mTransform.MultiplyAffine(position);
 		textData.text = text;
 		textData.font = font;
 		textData.size = size;
@@ -316,7 +316,7 @@ namespace bs
 		wireMeshData.color = mColor;
 		wireMeshData.transform = mTransform;
 		wireMeshData.layer = mLayer;
-		wireMeshData.center = mTransform.multiplyAffine(Vector3::ZERO);
+		wireMeshData.center = mTransform.MultiplyAffine(Vector3::ZERO);
 	}
 
 	void DrawHelper::Clear()
@@ -370,7 +370,7 @@ namespace bs
 		Vector3 reference = Vector3::ZERO;
 		
 		if(camera)
-			reference = camera->getTransform().getPosition();
+			reference = camera->GetTransform().GetPosition();
 
 		UINT32 localIdx = 0;
 		for (auto& shapeData : mSolidCubeData)
@@ -714,8 +714,8 @@ namespace bs
 			rawData.meshType = MeshType::Wire;
 			rawData.shapeType = ShapeType::WireMesh;
 			rawData.distance = shapeData.center.distance(reference);
-			rawData.numVertices = shapeData.meshData->getNumVertices();
-			rawData.numIndices = shapeData.meshData->getNumIndices();
+			rawData.numVertices = shapeData.meshData->GetNumVertices();
+			rawData.numIndices = shapeData.meshData->GetNumIndices();
 		}
 
 		struct TextRenderData
@@ -739,10 +739,10 @@ namespace bs
 			U32String utf32text = UTF8::toUTF32(shapeData.text);
 			SPtr<TextData<>> textData = bs_shared_ptr_new<TextData<>>(utf32text, shapeData.font, shapeData.size);
 
-			UINT32 numPages = textData->getNumPages();
+			UINT32 numPages = textData->GetNumPages();
 			for (UINT32 j = 0; j < numPages; j++)
 			{
-				UINT32 numQuads = textData->getNumQuadsForPage(j);
+				UINT32 numQuads = textData->GetNumQuadsForPage(j);
 
 				allShapes.push_back(RawData());
 				RawData& rawData = allShapes.back();
@@ -813,7 +813,7 @@ namespace bs
 				if (allShapes[0].meshType == MeshType::Text)
 				{
 					TextRenderData& renderData = textRenderData[allShapes[0].textIdx];
-					currentBatch.texture = renderData.textData->getTextureForPage(renderData.page);
+					currentBatch.texture = renderData.textData->GetTextureForPage(renderData.page);
 				}
 			}
 
@@ -825,7 +825,7 @@ namespace bs
 				if (allShapes[i].meshType == MeshType::Text)
 				{
 					TextRenderData& renderData = textRenderData[allShapes[i].textIdx];
-					texture = renderData.textData->getTextureForPage(renderData.page);
+					texture = renderData.textData->GetTextureForPage(renderData.page);
 				}
 
 				bool startNewBatch = allShapes[i].meshType != currentBatch.type || texture != currentBatch.texture;
@@ -889,18 +889,18 @@ namespace bs
 			if(!meshData[i])
 				continue;
 
-			positionIter[i] = meshData[i]->getVec3DataIter(VES_POSITION);
-			colorIter[i] = meshData[i]->getDWORDDataIter(VES_COLOR);
+			positionIter[i] = meshData[i]->GetVec3DataIter(VES_POSITION);
+			colorIter[i] = meshData[i]->GetDWORDDataIter(VES_COLOR);
 		}
 
 		VertexElemIter<Vector3> solidNormalIter;
 		if(meshData[0])
-			solidNormalIter = meshData[0]->getVec3DataIter(VES_NORMAL);
+			solidNormalIter = meshData[0]->GetVec3DataIter(VES_NORMAL);
 
 		VertexElemIter<Vector2> textUVIter;
 		
 		if(meshData[3])
-			textUVIter = meshData[3]->getVec2DataIter(VES_TEXCOORD);
+			textUVIter = meshData[3]->GetVec2DataIter(VES_TEXCOORD);
 
 		for (auto& batch : batches)
 		{
@@ -993,8 +993,8 @@ namespace bs
 					Matrix4 transformIT = transform->inverseAffine().transpose();
 					for (UINT32 i = 0; i < shapeData.numVertices; i++)
 					{
-						Vector3 worldPos = transform->multiplyAffine(positionIter[typeIdx].getValue());
-						Vector3 worldNormal = transformIT.multiplyAffine(solidNormalIter.getValue());
+						Vector3 worldPos = transform->MultiplyAffine(positionIter[typeIdx].getValue());
+						Vector3 worldNormal = transformIT.MultiplyAffine(solidNormalIter.getValue());
 
 						positionIter[typeIdx].addValue(worldPos);
 						solidNormalIter.addValue(worldNormal);
@@ -1030,10 +1030,10 @@ namespace bs
 						transform = &wireMeshData.transform;
 						color = wireMeshData.color.getAsRGBA();
 
-						auto vertIterRead = wireMeshData.meshData->getVec3DataIter(VES_POSITION);
+						auto vertIterRead = wireMeshData.meshData->GetVec3DataIter(VES_POSITION);
 						for (UINT32 j = 0; j < vertIterRead.getNumElements(); j++)
 						{
-							Vector3 worldPos = transform->multiplyAffine(vertIterRead.getValue());
+							Vector3 worldPos = transform->MultiplyAffine(vertIterRead.getValue());
 
 							positionIter[typeIdx].addValue(worldPos);
 							colorIter[typeIdx].addValue(color);
@@ -1041,8 +1041,8 @@ namespace bs
 							vertIterRead.moveNext();
 						}
 
-						UINT32* srcIndexData = wireMeshData.meshData->getIndices32();
-						UINT32* destIndexData = meshData[typeIdx]->getIndices32() + indexOffset[typeIdx];
+						UINT32* srcIndexData = wireMeshData.meshData->GetIndices32();
+						UINT32* destIndexData = meshData[typeIdx]->GetIndices32() + indexOffset[typeIdx];
 
 						for(UINT32 j = 0; j < shapeData.numIndices; j++)
 							destIndexData[j] = srcIndexData[j] + vertexOffset[typeIdx];
@@ -1182,7 +1182,7 @@ namespace bs
 
 					for (UINT32 i = 0; i < shapeData.numVertices; i++)
 					{
-						Vector3 worldPos = transform->multiplyAffine(positionIter[typeIdx].getValue());
+						Vector3 worldPos = transform->MultiplyAffine(positionIter[typeIdx].getValue());
 
 						positionIter[typeIdx].addValue(worldPos);
 						colorIter[typeIdx].addValue(color);
@@ -1212,20 +1212,20 @@ namespace bs
 					Text2DData& text2DData = mText2DData[shapeData.idx];
 
 					TextRenderData& renderData = textRenderData[shapeData.textIdx];
-					UINT32 numQuads = renderData.textData->getNumQuadsForPage(renderData.page);
+					UINT32 numQuads = renderData.textData->GetNumQuadsForPage(renderData.page);
 
-					UINT32* indices = meshData[typeIdx]->getIndices32() + indexOffset[typeIdx];
+					UINT32* indices = meshData[typeIdx]->GetIndices32() + indexOffset[typeIdx];
 
 					// Note: Need temporary buffers because TextLine doesn't support arbitrary vertex stride. Eventually
 					// that should be supported (should be almost trivial to implement)
 					Vector2* tempVertices = bs_stack_alloc<Vector2>(shapeData.numVertices);
 					Vector2* tempUVs = bs_stack_alloc<Vector2>(shapeData.numVertices);
 
-					UINT32 numLines = renderData.textData->getNumLines();
+					UINT32 numLines = renderData.textData->GetNumLines();
 					UINT32 quadOffset = 0;
 					for (UINT32 j = 0; j < numLines; j++)
 					{
-						const TextDataBase::TextLine& line = renderData.textData->getLine(j);
+						const TextDataBase::TextLine& line = renderData.textData->GetLine(j);
 						UINT32 writtenQuads = line.fillBuffer(renderData.page, tempVertices, tempUVs, indices, quadOffset, numQuads);
 
 						quadOffset += writtenQuads;
@@ -1234,10 +1234,10 @@ namespace bs
 					for(UINT32 j = 0; j < shapeData.numIndices; j++)
 						indices[j] += vertexOffset[typeIdx];
 
-					Vector3 worldSpacePos = text2DData.transform.multiplyAffine(text2DData.position);
+					Vector3 worldSpacePos = text2DData.transform.MultiplyAffine(text2DData.position);
 					Vector2I screenPos = camera->worldToScreenPoint(worldSpacePos);
-					screenPos.x -= renderData.textData->getWidth() / 2;
-					screenPos.y -= renderData.textData->getHeight() / 2;
+					screenPos.x -= renderData.textData->GetWidth() / 2;
+					screenPos.y -= renderData.textData->GetHeight() / 2;
 
 					float z = camera->projectPoint(camera->worldToViewPoint(worldSpacePos)).z;
 

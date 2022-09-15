@@ -124,9 +124,9 @@ namespace bs
 			float UdD0 = basis[1].Dot(mAxisHorz);
 			float UdD1 = basis[1].Dot(mAxisVert);
 			float UdPmC = basis[1].Dot(diff);
-			float VdD0 = basis[2].dot(mAxisHorz);
-			float VdD1 = basis[2].dot(mAxisVert);
-			float VdPmC = basis[2].dot(diff);
+			float VdD0 = basis[2].Dot(mAxisHorz);
+			float VdD1 = basis[2].Dot(mAxisVert);
+			float VdPmC = basis[2].Dot(diff);
 			float invDet = 1.0f / (UdD0*VdD1 - UdD1*VdD0);
 
 			float s0 = (VdD1*UdPmC - UdD1*VdPmC)*invDet;
@@ -134,9 +134,9 @@ namespace bs
 
 			if (fabs(s0) <= mExtentHorz && fabs(s1) <= mExtentVert)
 			{
-				float DdD0 = dir.dot(mAxisHorz);
-				float DdD1 = dir.dot(mAxisVert);
-				float DdDiff = dir.dot(diff);
+				float DdD0 = dir.Dot(mAxisHorz);
+				float DdD1 = dir.Dot(mAxisVert);
+				float DdDiff = dir.Dot(diff);
 
 				float t = s0 * DdD0 + s1 * DdD1 - DdDiff;
 

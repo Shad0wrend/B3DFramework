@@ -52,7 +52,7 @@ namespace bs { namespace ct
 			mIsCompiled = false;
 			mCompileMessages = "Specified program is not supported by the current render system.";
 
-			GpuProgram::initialize();
+			GpuProgram::Initialize();
 			return;
 		}
 
@@ -113,8 +113,8 @@ namespace bs { namespace ct
 			{
 				if (devices[i] != nullptr)
 				{
-					VkDevice vkDevice = devices[i]->getLogical();
-					VulkanResourceManager& rescManager = devices[i]->getResourceManager();
+					VkDevice vkDevice = devices[i]->GetLogical();
+					VulkanResourceManager& rescManager = devices[i]->GetResourceManager();
 
 					VkShaderModule shaderModule;
 					VkResult result = vkCreateShaderModule(vkDevice, &moduleCI, gVulkanAllocator, &shaderModule);
@@ -139,6 +139,6 @@ namespace bs { namespace ct
 
 		BS_INC_RENDER_STAT_CAT(ResCreated, RenderStatObject_GpuProgram);
 
-		GpuProgram::initialize();
+		GpuProgram::Initialize();
 	}
 }}

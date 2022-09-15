@@ -76,7 +76,7 @@ namespace bs
 		ScriptArray arraykerningPairs = ScriptArray::Create<ScriptKerningPair>(arraySizekerningPairs);
 		for(int i = 0; i < arraySizekerningPairs; i++)
 		{
-			arraykerningPairs.set(i, value.kerningPairs[i]);
+			arraykerningPairs.Set(i, value.kerningPairs[i]);
 		}
 		veckerningPairs = arraykerningPairs.GetInternal();
 		output.kerningPairs = veckerningPairs;

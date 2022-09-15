@@ -42,7 +42,7 @@ namespace bs
 	bool ScriptScriptCodeImportOptions::Internal_geteditorScript(ScriptScriptCodeImportOptions* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->getInternal()->editorScript;
+		tmp__output = thisPtr->GetInternal()->editorScript;
 
 		bool __output;
 		__output = tmp__output;
@@ -52,7 +52,7 @@ namespace bs
 
 	void ScriptScriptCodeImportOptions::Internal_seteditorScript(ScriptScriptCodeImportOptions* thisPtr, bool value)
 	{
-		thisPtr->getInternal()->editorScript = value;
+		thisPtr->GetInternal()->editorScript = value;
 	}
 #endif
 }

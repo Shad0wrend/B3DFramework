@@ -8,19 +8,19 @@ namespace bs
 {
 	GUIContextMenu::~GUIContextMenu()
 	{
-		close();
+		Close();
 	}
 
 	void GUIContextMenu::Open(const Vector2I& position, GUIWidget& widget)
 	{
 		DROP_DOWN_BOX_DESC desc;
-		desc.camera = widget.getCamera();
-		desc.skin = widget.getSkinResource();
-		desc.placement = DropDownAreaPlacement::aroundPosition(position);
-		desc.dropDownData = getDropDownData();
+		desc.camera = widget.GetCamera();
+		desc.skin = widget.GetSkinResource();
+		desc.placement = DropDownAreaPlacement::AroundPosition(position);
+		desc.dropDownData = GetDropDownData();
 
-		GameObjectHandle<GUIDropDownMenu> dropDownBox = GUIDropDownBoxManager::Instance().openDropDownBox(
-			desc, GUIDropDownType::ContextMenu, std::bind(&GUIContextMenu::onMenuClosed, this));
+		GameObjectHandle<GUIDropDownMenu> dropDownBox = GUIDropDownBoxManager::Instance().OpenDropDownBox(
+			desc, GUIDropDownType::ContextMenu, std::bind(&GUIContextMenu::OnMenuClosed, this));
 
 		mContextMenuOpen = true;
 	}
@@ -29,7 +29,7 @@ namespace bs
 	{
 		if(mContextMenuOpen)
 		{
-			GUIDropDownBoxManager::Instance().closeDropDownBox();
+			GUIDropDownBoxManager::Instance().CloseDropDownBox();
 			mContextMenuOpen = false;
 		}
 	}

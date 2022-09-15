@@ -45,7 +45,7 @@ namespace bs
 			return TID_ParticleEmitterConeShape;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return bs_shared_ptr_new<ParticleEmitterConeShape>();
 		}
@@ -72,7 +72,7 @@ namespace bs
 			return TID_ParticleEmitterSphereShape;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return bs_shared_ptr_new<ParticleEmitterSphereShape>();
 		}
@@ -99,7 +99,7 @@ namespace bs
 			return TID_ParticleEmitterHemisphereShape;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return bs_shared_ptr_new<ParticleEmitterHemisphereShape>();
 		}
@@ -126,7 +126,7 @@ namespace bs
 			return TID_ParticleEmitterBoxShape;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return bs_shared_ptr_new<ParticleEmitterBoxShape>();
 		}
@@ -155,7 +155,7 @@ namespace bs
 			return TID_ParticleEmitterLineShape;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return bs_shared_ptr_new<ParticleEmitterLineShape>();
 		}
@@ -186,7 +186,7 @@ namespace bs
 			return TID_ParticleEmitterCircleShape;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return bs_shared_ptr_new<ParticleEmitterCircleShape>();
 		}
@@ -212,7 +212,7 @@ namespace bs
 			return TID_ParticleEmitterRectShape;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return bs_shared_ptr_new<ParticleEmitterRectShape>();
 		}
@@ -240,7 +240,7 @@ namespace bs
 			return TID_ParticleEmitterStaticMeshShape;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return bs_shared_ptr_new<ParticleEmitterStaticMeshShape>();
 		}
@@ -267,7 +267,7 @@ namespace bs
 			return TID_ParticleEmitterSkinnedMeshShape;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return bs_shared_ptr_new<ParticleEmitterSkinnedMeshShape>();
 		}
@@ -367,7 +367,7 @@ namespace bs
 			return TID_ParticleEmitter;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return bs_shared_ptr_new<ParticleEmitter>();
 		}
@@ -394,7 +394,7 @@ namespace bs
 			return TID_ParticleTextureAnimation;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return bs_shared_ptr_new<ParticleTextureAnimation>();
 		}
@@ -422,7 +422,7 @@ namespace bs
 			return TID_ParticleOrbit;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return bs_shared_ptr_new<ParticleOrbit>();
 		}
@@ -448,7 +448,7 @@ namespace bs
 			return TID_ParticleVelocity;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() override
 		{
 			return bs_shared_ptr_new<ParticleVelocity>();
 		}
@@ -474,7 +474,7 @@ namespace bs
 			return TID_ParticleForce;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return bs_shared_ptr_new<ParticleForce>();
 		}
@@ -499,7 +499,7 @@ namespace bs
 			return TID_ParticleGravity;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return bs_shared_ptr_new<ParticleGravity>();
 		}
@@ -524,7 +524,7 @@ namespace bs
 			return TID_ParticleColor;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return bs_shared_ptr_new<ParticleColor>();
 		}
@@ -551,7 +551,7 @@ namespace bs
 			return TID_ParticleSize;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return bs_shared_ptr_new<ParticleSize>();
 		}
@@ -578,7 +578,7 @@ namespace bs
 			return TID_ParticleRotation;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return bs_shared_ptr_new<ParticleRotation>();
 		}
@@ -609,7 +609,7 @@ namespace bs
 			return TID_ParticleCollisions;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return bs_shared_ptr_new<ParticleCollisions>();
 		}
@@ -643,7 +643,7 @@ namespace bs
 			return TID_ParticleVectorFieldSettings;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return bs_shared_ptr_new<ParticleVectorFieldSettings>();
 		}
@@ -672,7 +672,7 @@ namespace bs
 			return TID_ParticleDepthCollisionSettings;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return bs_shared_ptr_new<ParticleDepthCollisionSettings>();
 		}
@@ -703,7 +703,7 @@ namespace bs
 			return TID_ParticleGpuSimulationSettings;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return bs_shared_ptr_new<ParticleGpuSimulationSettings>();
 		}
@@ -744,7 +744,7 @@ namespace bs
 			return TID_ParticleSystemSettings;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return bs_shared_ptr_new<ParticleSystemSettings>();
 		}
@@ -764,7 +764,7 @@ namespace bs
 	public:
 		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override
 		{
-			// Note: Since this is a CoreObject I should call initialize() right after deserialization,
+			// Note: Since this is a CoreObject I should call Initialize() right after deserialization,
 			// but since this specific type is used in Components we delay initialization until Component
 			// itself does it. Keep this is mind in case this ever needs to be deserialized for non-Component
 			// purposes (you'll need to call initialize manually).
@@ -781,7 +781,7 @@ namespace bs
 			return TID_ParticleSystem;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return ParticleSystem::CreateEmpty();
 		}

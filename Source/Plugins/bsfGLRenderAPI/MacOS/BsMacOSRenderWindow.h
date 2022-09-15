@@ -91,11 +91,11 @@ namespace bs
 		/** @copydoc RenderWindow::syncProperties */
 		void syncProperties() override;
 
-		/** @copydoc CoreObject::initialize() */
-		void initialize() override;
+		/** @copydoc CoreObject::Initialize() */
+		void Initialize() override;
 
-		/** @copydoc CoreObject::destroy() */
-		void destroy() override;
+		/** @copydoc CoreObject::Destroy() */
+		void Destroy() override;
 
 		/** @copydoc RenderTarget::createCore */
 		SPtr<ct::CoreObject> createCore() const override;
@@ -162,7 +162,7 @@ namespace bs
 			void syncProperties() override;
 
 			/** @copydoc RenderWindow::initialize */
-			void initialize() override;
+			void Initialize() override;
 
 		protected:
 			friend class bs::MacOSRenderWindow;

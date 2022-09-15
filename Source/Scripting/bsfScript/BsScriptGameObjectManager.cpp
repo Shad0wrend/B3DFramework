@@ -75,7 +75,7 @@ namespace bs
 		ScriptManagedComponent* nativeInstance = new (bs_alloc<ScriptManagedComponent>())
 			ScriptManagedComponent(existingInstance, component);
 
-		UINT64 instanceId = component->getInstanceId();
+		UINT64 instanceId = component->GetInstanceId();
 		mScriptComponents[instanceId] = nativeInstance;
 
 		return nativeInstance;
@@ -83,16 +83,16 @@ namespace bs
 
 	ScriptComponentBase* ScriptGameObjectManager::CreateBuiltinScriptComponent(const HComponent& component)
 	{
-		UINT32 rttiId = component->getRTTI()->getRTTIId();
+		UINT32 rttiId = component->GetRtti()->GetRttiId();
 		BuiltinComponentInfo* info = ScriptAssemblyManager::Instance().getBuiltinComponentInfo(rttiId);
 
 		if (info == nullptr)
 			return nullptr;
 
 		ScriptComponentBase* nativeInstance = info->createCallback(component);
-		nativeInstance->setNativeHandle(static_object_cast<GameObject>(component));
+		nativeInstance->SetNativeHandle(static_object_cast<GameObject>(component));
 
-		UINT64 instanceId = component->getInstanceId();
+		UINT64 instanceId = component->GetInstanceId();
 		mScriptComponents[instanceId] = nativeInstance;
 
 		return nativeInstance;
@@ -161,7 +161,7 @@ namespace bs
 
 	void ScriptGameObjectManager::DestroyScriptSceneObject(ScriptSceneObject* sceneObject)
 	{
-		UINT64 instanceId = sceneObject->getNativeHandle().getInstanceId();
+		UINT64 instanceId = sceneObject->GetNativeHandle().getInstanceId();
 		mScriptSceneObjects.erase(instanceId);
 
 		bs_delete(sceneObject);
@@ -169,7 +169,7 @@ namespace bs
 
 	void ScriptGameObjectManager::DestroyScriptComponent(ScriptComponentBase* component)
 	{
-		UINT64 instanceId = component->getNativeHandle().getInstanceId();
+		UINT64 instanceId = component->GetNativeHandle().getInstanceId();
 		mScriptComponents.erase(instanceId);
 
 		bs_delete(component);
@@ -180,9 +180,9 @@ namespace bs
 		for (auto& scriptObjectEntry : mScriptComponents)
 		{
 			ScriptComponentBase* scriptComponent = scriptObjectEntry.second;
-			HComponent component = scriptComponent->getComponent();
+			HComponent component = scriptComponent->GetComponent();
 
-			if (component->getRTTI()->getRTTIId() == TID_ManagedComponent)
+			if (component->GetRtti()->GetRttiId() == TID_ManagedComponent)
 			{
 				HManagedComponent managedComponent = static_object_cast<ManagedComponent>(component);
 				if (!managedComponent.isDestroyed())

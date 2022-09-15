@@ -177,7 +177,7 @@ namespace bs
 		 * @param[in]	immediate	If true, the object will be deallocated and become unusable right away. Otherwise the
 		 *							deallocation will be delayed to the end of frame (preferred method).
 		 *
-		 * @note	Unlike destroy(), does not remove the object from its parent.
+		 * @note	Unlike Destroy(), does not remove the object from its parent.
 		 */
 		void DestroyInternal(GameObjectHandleBase& handle, bool immediate = false) override;
 
@@ -528,7 +528,7 @@ namespace bs
 			static_assert((std::is_base_of<bs::Component, T>::value),
 				"Specified type is not a valid Component.");
 
-			return static_object_cast<T>(getComponent(T::GetRttiStatic()));
+			return static_object_cast<T>(GetComponent(T::GetRttiStatic()));
 		}
 
 		/**
@@ -551,7 +551,7 @@ namespace bs
 
 			for (auto entry : mComponents)
 			{
-				if (entry->getRTTI()->isDerivedFrom(T::GetRttiStatic()))
+				if (entry->GetRtti()->isDerivedFrom(T::GetRttiStatic()))
 					output.push_back(static_object_cast<T>(entry));
 			}
 
@@ -574,7 +574,7 @@ namespace bs
 
 			for (auto entry : mComponents)
 			{
-				if (entry->getRTTI()->isDerivedFrom(T::GetRttiStatic()))
+				if (entry->GetRtti()->isDerivedFrom(T::GetRttiStatic()))
 					return true;
 			}
 

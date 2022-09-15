@@ -231,7 +231,7 @@ namespace bs
 
 		mRendererTask = ct::RendererTask::Create("RenderLightProbes", renderProbes);
 
-		mRendererTask->onComplete.connect(renderComplete);
+		mRendererTask->onComplete.Connect(renderComplete);
 		ct::gRenderer()->addTask(mRendererTask);
 	}
 
@@ -246,10 +246,10 @@ namespace bs
 		Vector<LightProbeCoefficientInfo> coeffInfo;
 		auto getSaveData = [coreVolume, &coeffInfo]()
 		{
-			coreVolume->getProbeCoefficients(coeffInfo);
+			coreVolume->GetProbeCoefficients(coeffInfo);
 		};
 
-		gCoreThread().queueCommand(getSaveData);
+		gCoreThread().QueueCommand(getSaveData);
 		gCoreThread().submit(true);
 
 		for(auto& entry : coeffInfo)
@@ -272,7 +272,7 @@ namespace bs
 		LightProbeVolume* probeVolume = new (bs_alloc<LightProbeVolume>()) LightProbeVolume(volume, cellCount);
 		SPtr<LightProbeVolume> probeVolumePtr = bs_core_ptr<LightProbeVolume>(probeVolume);
 		probeVolumePtr->SetThisPtrInternal(probeVolumePtr);
-		probeVolumePtr->initialize();
+		probeVolumePtr->Initialize();
 
 		return probeVolumePtr;
 	}
@@ -406,12 +406,12 @@ namespace bs
 
 		resizeCoefficientTexture(std::max(32U, numCoefficients));
 
-		SPtr<PixelData> coeffData = mCoefficients->getProperties().allocBuffer(0, 0);
-		coeffData->setColors(Color::ZERO);
+		SPtr<PixelData> coeffData = mCoefficients->GetProperties().allocBuffer(0, 0);
+		coeffData->SetColors(Color::ZERO);
 
-		UINT32 probesPerRow = coeffData->getWidth() / 9;
+		UINT32 probesPerRow = coeffData->GetWidth() / 9;
 		UINT32 probeIdx = 0;
-		for(UINT32 y = 0; y < coeffData->getHeight(); ++y)
+		for(UINT32 y = 0; y < coeffData->GetHeight(); ++y)
 		{
 			for(UINT32 x = 0; x < probesPerRow; ++x)
 			{
@@ -425,7 +425,7 @@ namespace bs
 					value.g = mInitCoefficients[probeIdx].coeffsG[i];
 					value.b = mInitCoefficients[probeIdx].coeffsB[i];
 
-					coeffData->setColorAt(value, x * 9, y);
+					coeffData->SetColorAt(value, x * 9, y);
 				}
 
 				probeIdx++;
@@ -436,7 +436,7 @@ namespace bs
 		mInitCoefficients.clear();
 
 		gRenderer()->notifyLightProbeVolumeAdded(this);
-		CoreObject::initialize();
+		CoreObject::Initialize();
 	}
 
 	bool LightProbeVolume::RenderProbes(UINT32 maxProbes)
@@ -465,9 +465,9 @@ namespace bs
 				Vector3 localPos = mProbePositions[mFirstDirtyProbe];
 
 				const Transform& tfrm = getTransform();
-				const Vector3& position = tfrm.getPosition();
-				const Quaternion& rotation = tfrm.getRotation();
-				Vector3 transformedPos = rotation.rotate(localPos) + position;
+				const Vector3& position = tfrm.GetPosition();
+				const Quaternion& rotation = tfrm.GetRotation();
+				Vector3 transformedPos = rotation.Rotate(localPos) + position;
 
 				gRenderer()->captureSceneCubeMap(cubemap, transformedPos, CaptureSettings());
 				gIBLUtility().filterCubemapForIrradiance(cubemap, mCoefficients, probeInfo.bufferIdx);
@@ -618,12 +618,12 @@ namespace bs
 
 		LightProbeSHCoefficients* coefficients = bs_stack_alloc<LightProbeSHCoefficients>(numActiveProbes);
 
-		SPtr<PixelData> coeffData = mCoefficients->getProperties().allocBuffer(0, 0);
+		SPtr<PixelData> coeffData = mCoefficients->GetProperties().allocBuffer(0, 0);
 		mCoefficients->readData(*coeffData);
 
-		UINT32 probesPerRow = coeffData->getWidth() / 9;
+		UINT32 probesPerRow = coeffData->GetWidth() / 9;
 		UINT32 probeIdx = 0;
-		for(UINT32 y = 0; y < coeffData->getHeight(); ++y)
+		for(UINT32 y = 0; y < coeffData->GetHeight(); ++y)
 		{
 			for(UINT32 x = 0; x < probesPerRow; ++x)
 			{
@@ -632,7 +632,7 @@ namespace bs
 
 				for(UINT32 i = 0; i < 9; i++)
 				{
-					Color value = coeffData->getColorAt(x * 9, y);
+					Color value = coeffData->GetColorAt(x * 9, y);
 
 					coefficients[probeIdx].coeffsR[i] = value.r;
 					coefficients[probeIdx].coeffsG[i] = value.g;

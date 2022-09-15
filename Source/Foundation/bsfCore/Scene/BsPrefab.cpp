@@ -18,7 +18,7 @@ namespace bs
 	Prefab::~Prefab()
 	{
 		if (mRoot != nullptr)
-			mRoot->destroy(true);
+			mRoot->Destroy(true);
 	}
 
 	HPrefab Prefab::Create(const HSceneObject& sceneObject, bool isScene)
@@ -59,10 +59,10 @@ namespace bs
 			HSceneObject current = todo.top();
 			todo.pop();
 
-			UINT32 childCount = current->getNumChildren();
+			UINT32 childCount = current->GetNumChildren();
 			for (UINT32 i = 0; i < childCount; i++)
 			{
-				HSceneObject child = current->getChild(i);
+				HSceneObject child = current->GetChild(i);
 
 				if (!child->mPrefabLinkUUID.empty())
 					PrefabUtility::recordPrefabDiff(child);
@@ -73,7 +73,7 @@ namespace bs
 
 		// Clone the hierarchy for internal storage
 		if (mRoot != nullptr)
-			mRoot->destroy(true);
+			mRoot->Destroy(true);
 
 		mRoot = sceneObject->clone(false, true);
 		mRoot->mParent = nullptr;
@@ -88,12 +88,12 @@ namespace bs
 			todo.pop();
 
 			if (current->hasFlag(SOF_DontSave))
-				current->destroy();
+				current->Destroy();
 			else
 			{
-				UINT32 numChildren = current->getNumChildren();
+				UINT32 numChildren = current->GetNumChildren();
 				for (UINT32 i = 0; i < numChildren; i++)
-					todo.push(current->getChild(i));
+					todo.push(current->GetChild(i));
 			}
 		}
 	}
@@ -117,10 +117,10 @@ namespace bs
 			HSceneObject current = todo.top();
 			todo.pop();
 
-			UINT32 childCount = current->getNumChildren();
+			UINT32 childCount = current->GetNumChildren();
 			for (UINT32 i = 0; i < childCount; i++)
 			{
-				HSceneObject child = current->getChild(i);
+				HSceneObject child = current->GetChild(i);
 
 				if (!child->mPrefabLinkUUID.empty())
 					PrefabUtility::updateFromPrefab(child);

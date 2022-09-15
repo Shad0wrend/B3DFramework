@@ -12,15 +12,15 @@ namespace bs
 {
 	CParticleSystem::CParticleSystem()
 	{
-		setName("ParticleSystem");
-		setFlag(ComponentFlag::AlwaysRun, true);
+		SetName("ParticleSystem");
+		SetFlag(ComponentFlag::AlwaysRun, true);
 	}
 
 	CParticleSystem::CParticleSystem(const HSceneObject& parent)
 		: Component(parent)
 	{
-		setName("ParticleSystem");
-		setFlag(ComponentFlag::AlwaysRun, true);
+		SetName("ParticleSystem");
+		SetFlag(ComponentFlag::AlwaysRun, true);
 	}
 
 	void CParticleSystem::SetSettings(const ParticleSystemSettings& settings)
@@ -28,7 +28,7 @@ namespace bs
 		mSettings = settings;
 
 		if(mInternal)
-			mInternal->setSettings(settings);
+			mInternal->SetSettings(settings);
 	}
 
 	void CParticleSystem::SetGpuSimulationSettings(const ParticleGpuSimulationSettings& settings)
@@ -36,7 +36,7 @@ namespace bs
 		mGpuSimulationSettings = settings;
 
 		if(mInternal)
-			mInternal->setGpuSimulationSettings(settings);
+			mInternal->SetGpuSimulationSettings(settings);
 	}
 
 	void CParticleSystem::SetEvolvers(const Vector<SPtr<ParticleEvolver>>& evolvers)
@@ -44,7 +44,7 @@ namespace bs
 		mEvolvers = evolvers;
 
 		if(mInternal)
-			mInternal->setEvolvers(evolvers);
+			mInternal->SetEvolvers(evolvers);
 	}
 
 	void CParticleSystem::SetEmitters(const Vector<SPtr<ParticleEmitter>>& emitters)
@@ -52,7 +52,7 @@ namespace bs
 		mEmitters = emitters;
 
 		if(mInternal)
-			mInternal->setEmitters(emitters);
+			mInternal->SetEmitters(emitters);
 	}
 
 	void CParticleSystem::SetLayer(UINT64 layer)
@@ -60,31 +60,31 @@ namespace bs
 		mLayer = layer;
 
 		if(mInternal)
-			mInternal->setLayer(layer);
+			mInternal->SetLayer(layer);
 	}
 
 	void CParticleSystem::OnDestroyed()
 	{
-		destroyInternal();
+		DestroyInternal();
 	}
 
 	void CParticleSystem::OnDisabled()
 	{
-		destroyInternal();
+		DestroyInternal();
 	}
 
 	void CParticleSystem::OnEnabled()
 	{
 		if(mPreviewMode)
 		{
-			destroyInternal();
+			DestroyInternal();
 			mPreviewMode = false;
 		}
 		
-		if(SceneManager::Instance().isRunning())
+		if(SceneManager::Instance().IsRunning())
 		{
-			restoreInternal();
-			mInternal->play();
+			RestoreInternal();
+			mInternal->Play();
 		}
 	}
 
@@ -93,22 +93,22 @@ namespace bs
 		if (mInternal == nullptr)
 		{
 			mInternal = ParticleSystem::Create();
-			gSceneManager().BindActorInternal(mInternal, sceneObject());
+			gSceneManager().BindActorInternal(mInternal, SceneObject());
 		}
 
-		mInternal->setSettings(mSettings);
-		mInternal->setGpuSimulationSettings(mGpuSimulationSettings);
-		mInternal->setEmitters(mEmitters);
-		mInternal->setEvolvers(mEvolvers);
-		mInternal->setLayer(mLayer);
+		mInternal->SetSettings(mSettings);
+		mInternal->SetGpuSimulationSettings(mGpuSimulationSettings);
+		mInternal->SetEmitters(mEmitters);
+		mInternal->SetEvolvers(mEvolvers);
+		mInternal->SetLayer(mLayer);
 	}
 
 	void CParticleSystem::DestroyInternal()
 	{
 		if(mInternal)
 		{
-			mEmitters = mInternal->getEmitters();
-			mEvolvers = mInternal->getEvolvers();
+			mEmitters = mInternal->GetEmitters();
+			mEvolvers = mInternal->GetEvolvers();
 
 			gSceneManager().UnbindActorInternal(mInternal);
 		}
@@ -119,7 +119,7 @@ namespace bs
 
 	bool CParticleSystem::TogglePreviewModeInternal(bool enabled)
 	{
-		bool isRunning = SceneManager::Instance().isRunning();
+		bool isRunning = SceneManager::Instance().IsRunning();
 
 		if(enabled)
 		{
@@ -129,8 +129,8 @@ namespace bs
 
 			if(!mPreviewMode)
 			{
-				restoreInternal();
-				mInternal->play();
+				RestoreInternal();
+				mInternal->Play();
 				mPreviewMode = true;
 			}
 
@@ -139,7 +139,7 @@ namespace bs
 		else
 		{
 			if (!isRunning)
-				destroyInternal();
+				DestroyInternal();
 
 			mPreviewMode = false;
 			return false;

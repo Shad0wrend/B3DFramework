@@ -51,32 +51,32 @@ namespace bs
 		// Note: Hidden dependency. GUI must receive input events before other systems, in order so it can mark them as used
 		// if required. e.g. clicking on a context menu should mark the event as used so that other non-GUI systems know
 		// that they probably should not process such event themselves.
-		mOnPointerMovedConn = gInput().onPointerMoved.connect(std::bind(&GUIManager::onPointerMoved, this, _1));
-		mOnPointerPressedConn = gInput().onPointerPressed.connect(std::bind(&GUIManager::onPointerPressed, this, _1));
-		mOnPointerReleasedConn = gInput().onPointerReleased.connect(std::bind(&GUIManager::onPointerReleased, this, _1));
-		mOnPointerDoubleClick = gInput().onPointerDoubleClick.connect(std::bind(&GUIManager::onPointerDoubleClick, this, _1));
-		mOnTextInputConn = gInput().onCharInput.connect(std::bind(&GUIManager::onTextInput, this, _1));
-		mOnInputCommandConn = gInput().onInputCommand.connect(std::bind(&GUIManager::onInputCommandEntered, this, _1));
-		mOnVirtualButtonDown = VirtualInput::Instance().onButtonDown.connect(std::bind(&GUIManager::onVirtualButtonDown, this, _1, _2));
+		mOnPointerMovedConn = gInput().onPointerMoved.Connect(std::bind(&GUIManager::OnPointerMoved, this, _1));
+		mOnPointerPressedConn = gInput().onPointerPressed.Connect(std::bind(&GUIManager::OnPointerPressed, this, _1));
+		mOnPointerReleasedConn = gInput().onPointerReleased.Connect(std::bind(&GUIManager::OnPointerReleased, this, _1));
+		mOnPointerDoubleClick = gInput().onPointerDoubleClick.Connect(std::bind(&GUIManager::OnPointerDoubleClick, this, _1));
+		mOnTextInputConn = gInput().onCharInput.Connect(std::bind(&GUIManager::OnTextInput, this, _1));
+		mOnInputCommandConn = gInput().onInputCommand.Connect(std::bind(&GUIManager::OnInputCommandEntered, this, _1));
+		mOnVirtualButtonDown = VirtualInput::Instance().onButtonDown.Connect(std::bind(&GUIManager::OnVirtualButtonDown, this, _1, _2));
 
-		mWindowGainedFocusConn = RenderWindowManager::Instance().onFocusGained.connect(std::bind(&GUIManager::onWindowFocusGained, this, _1));
-		mWindowLostFocusConn = RenderWindowManager::Instance().onFocusLost.connect(std::bind(&GUIManager::onWindowFocusLost, this, _1));
-		mMouseLeftWindowConn = RenderWindowManager::Instance().onMouseLeftWindow.connect(std::bind(&GUIManager::onMouseLeftWindow, this, _1));
+		mWindowGainedFocusConn = RenderWindowManager::Instance().onFocusGained.Connect(std::bind(&GUIManager::OnWindowFocusGained, this, _1));
+		mWindowLostFocusConn = RenderWindowManager::Instance().onFocusLost.Connect(std::bind(&GUIManager::OnWindowFocusLost, this, _1));
+		mMouseLeftWindowConn = RenderWindowManager::Instance().onMouseLeftWindow.Connect(std::bind(&GUIManager::OnMouseLeftWindow, this, _1));
 
 		mInputCaret = bs_new<GUIInputCaret>();
 		mInputSelection = bs_new<GUIInputSelection>();
 
 		DragAndDropManager::StartUp();
-		mDragEndedConn = DragAndDropManager::Instance().onDragEnded.connect(std::bind(&GUIManager::onMouseDragEnded, this, _1, _2));
+		mDragEndedConn = DragAndDropManager::Instance().onDragEnded.Connect(std::bind(&GUIManager::OnMouseDragEnded, this, _1, _2));
 
 		GUIDropDownBoxManager::StartUp();
 		GUITooltipManager::StartUp();
 
 		// Need to defer this call because I want to make sure all managers are initialized first
-		deferredCall(std::bind(&GUIManager::updateCaretTexture, this));
-		deferredCall(std::bind(&GUIManager::updateTextSelectionTexture, this));
+		deferredCall(std::bind(&GUIManager::UpdateCaretTexture, this));
+		deferredCall(std::bind(&GUIManager::UpdateTextSelectionTexture, this));
 
-		mRenderer = RendererExtension::create<ct::GUIRenderer>(nullptr);
+		mRenderer = RendererExtension::Create<ct::GUIRenderer>(nullptr);
 	}
 
 	GUIManager::~GUIManager()
@@ -92,22 +92,22 @@ namespace bs
 			widget.widget->DestroyInternal();
 
 		// Ensure everything queued get destroyed
-		processDestroyQueue();
+		ProcessDestroyQueue();
 
-		mOnPointerPressedConn.disconnect();
-		mOnPointerReleasedConn.disconnect();
-		mOnPointerMovedConn.disconnect();
-		mOnPointerDoubleClick.disconnect();
-		mOnTextInputConn.disconnect();
-		mOnInputCommandConn.disconnect();
-		mOnVirtualButtonDown.disconnect();
+		mOnPointerPressedConn.Disconnect();
+		mOnPointerReleasedConn.Disconnect();
+		mOnPointerMovedConn.Disconnect();
+		mOnPointerDoubleClick.Disconnect();
+		mOnTextInputConn.Disconnect();
+		mOnInputCommandConn.Disconnect();
+		mOnVirtualButtonDown.Disconnect();
 
-		mDragEndedConn.disconnect();
+		mDragEndedConn.Disconnect();
 
-		mWindowGainedFocusConn.disconnect();
-		mWindowLostFocusConn.disconnect();
+		mWindowGainedFocusConn.Disconnect();
+		mWindowLostFocusConn.Disconnect();
 
-		mMouseLeftWindowConn.disconnect();
+		mMouseLeftWindowConn.Disconnect();
 
 		bs_delete(mInputCaret);
 		bs_delete(mInputSelection);
@@ -120,7 +120,7 @@ namespace bs
 
 	void GUIManager::RegisterWidget(GUIWidget* widget)
 	{
-		const Viewport* renderTarget = widget->getTarget();
+		const Viewport* renderTarget = widget->GetTarget();
 		if (renderTarget == nullptr)
 			return;
 
@@ -163,16 +163,16 @@ namespace bs
 				entry.widget = nullptr;
 		}
 
-		SPtr<Camera> camera = widget->getCamera();
+		SPtr<Camera> camera = widget->GetCamera();
 		if(camera != nullptr)
 		{
 			auto widgetId = (UINT64)widget;
-			gCoreThread().queueCommand([
+			gCoreThread().QueueCommand([
 				renderer = mRenderer.get(),
-				camera = camera->getCore(),
+				camera = camera->GetCore(),
 				widgetId]()
 			{
-				renderer->clearDrawGroups(camera, widgetId);
+				renderer->ClearDrawGroups(camera, widgetId);
 			});
 		}
 	}
@@ -184,8 +184,8 @@ namespace bs
 		// Show tooltip if needed
 		if (mShowTooltip)
 		{
-			float diff = gTime().getTime() - mTooltipElementHoverStart;
-			if (diff >= TOOLTIP_HOVER_TIME || gInput().isButtonHeld(BC_LCONTROL) || gInput().isButtonHeld(BC_RCONTROL))
+			float diff = gTime().GetTime() - mTooltipElementHoverStart;
+			if (diff >= TOOLTIP_HOVER_TIME || gInput().IsButtonHeld(BC_LCONTROL) || gInput().IsButtonHeld(BC_RCONTROL))
 			{
 				for(auto& entry : mElementsUnderPointer)
 				{
@@ -194,12 +194,12 @@ namespace bs
 
 					if (!tooltipText.empty() && parentWidget != nullptr)
 					{
-						const RenderWindow* window = getWidgetWindow(*parentWidget);
+						const RenderWindow* window = GetWidgetWindow(*parentWidget);
 						if (window != nullptr)
 						{
-							Vector2I windowPos = window->screenToWindowPos(gInput().getPointerPosition());
+							Vector2I windowPos = window->ScreenToWindowPos(gInput().GetPointerPosition());
 
-							GUITooltipManager::Instance().show(*parentWidget, windowPos, tooltipText);
+							GUITooltipManager::Instance().Show(*parentWidget, windowPos, tooltipText);
 							break;
 						}
 					}
@@ -263,7 +263,7 @@ namespace bs
 			if(mForcedClearFocus)
 			{
 				// Clear focus on all elements that aren't part of the forced focus list (in case they are already in focus)
-				mCommandEvent.setType(GUICommandEventType::FocusLost);
+				mCommandEvent.SetType(GUICommandEventType::FocusLost);
 
 				for (auto iter = mElementsInFocus.begin(); iter != mElementsInFocus.end();)
 				{
@@ -277,7 +277,7 @@ namespace bs
 
 					if (iterFind == mForcedFocusElements.end())
 					{
-						sendCommandEvent(elementInfo.element, mCommandEvent);
+						SendCommandEvent(elementInfo.element, mCommandEvent);
 						iter = mElementsInFocus.erase(iter);
 					}
 					else
@@ -304,9 +304,9 @@ namespace bs
 							focusElementInfo.element->GetParentWidgetInternal(), false));
 
 						mCommandEvent = GUICommandEvent();
-						mCommandEvent.setType(GUICommandEventType::FocusGained);
+						mCommandEvent.SetType(GUICommandEventType::FocusGained);
 
-						sendCommandEvent(focusElementInfo.element, mCommandEvent);
+						SendCommandEvent(focusElementInfo.element, mCommandEvent);
 					}
 				}
 				else
@@ -315,9 +315,9 @@ namespace bs
 					if(iterFind != mElementsInFocus.end())
 					{
 						mCommandEvent = GUICommandEvent();
-						mCommandEvent.setType(GUICommandEventType::FocusLost);
+						mCommandEvent.SetType(GUICommandEventType::FocusLost);
 
-						sendCommandEvent(iterFind->element, mCommandEvent);
+						SendCommandEvent(iterFind->element, mCommandEvent);
 						bs_swap_and_erase(mElementsInFocus, iterFind);
 					}
 				}
@@ -325,10 +325,10 @@ namespace bs
 
 			mForcedFocusElements.clear();
 
-		} while (processDestroyQueueIteration());
+		} while (ProcessDestroyQueueIteration());
 
 		// Blink caret
-		float curTime = gTime().getTime();
+		float curTime = gTime().GetTime();
 
 		if ((curTime - mCaretLastBlinkTime) >= mCaretBlinkInterval)
 		{
@@ -336,11 +336,11 @@ namespace bs
 			mIsCaretOn = !mIsCaretOn;
 
 			mCommandEvent = GUICommandEvent();
-			mCommandEvent.setType(GUICommandEventType::Redraw);
+			mCommandEvent.SetType(GUICommandEventType::Redraw);
 
 			for (auto& elementInfo : mElementsInFocus)
 			{
-				sendCommandEvent(elementInfo.element, mCommandEvent);
+				SendCommandEvent(elementInfo.element, mCommandEvent);
 			}
 		}
 
@@ -348,33 +348,33 @@ namespace bs
 		for(auto& entry : mWidgets)
 		{
 			GUIWidget* widget = entry.widget;
-			GUIDrawGroupRenderDataUpdate updateData = widget->rebuildDirtyRenderData();
+			GUIDrawGroupRenderDataUpdate updateData = widget->RebuildDirtyRenderData();
 
 			SPtr<Camera> camera;
-			camera = widget->getCamera();
+			camera = widget->GetCamera();
 			if (camera == nullptr)
 				continue;
 			
 			auto widgetId = (UINT64)widget;
-			gCoreThread().queueCommand([
+			gCoreThread().QueueCommand([
 				renderer = mRenderer.get(),
 				updateData = std::move(updateData),
-				camera = camera->getCore(),
+				camera = camera->GetCore(),
 				widgetId,
-				widgetDepth = widget->getDepth(),
-				worldTransform = widget->getWorldTfrm()]()
+				widgetDepth = widget->GetDepth(),
+				worldTransform = widget->GetWorldTfrm()]()
 			{
-				renderer->updateDrawGroups(camera, widgetId, widgetDepth, worldTransform, updateData);
+				renderer->UpdateDrawGroups(camera, widgetId, widgetDepth, worldTransform, updateData);
 			});
 		}
 
-		gCoreThread().queueCommand([renderer = mRenderer.get(), time = gTime().getTime()](){ renderer->update(time); });
+		gCoreThread().QueueCommand([renderer = mRenderer.get(), time = gTime().GetTime()](){ renderer->Update(time); });
 	}
 
 	void GUIManager::ProcessDestroyQueue()
 	{
 		// Loop until everything empties
-		while (processDestroyQueueIteration())
+		while (ProcessDestroyQueueIteration())
 		{ }
 	}
 
@@ -388,11 +388,11 @@ namespace bs
 			mCaretTexture = SpriteTexture::Create(newTex);
 		}
 
-		const HTexture& tex = mCaretTexture->getTexture();
-		SPtr<PixelData> data = tex->getProperties().allocBuffer(0, 0);
+		const HTexture& tex = mCaretTexture->GetTexture();
+		SPtr<PixelData> data = tex->GetProperties().AllocBuffer(0, 0);
 
-		data->setColorAt(mCaretColor, 0, 0);
-		tex->writeData(data);
+		data->SetColorAt(mCaretColor, 0, 0);
+		tex->WriteData(data);
 	}
 
 	void GUIManager::UpdateTextSelectionTexture()
@@ -405,36 +405,36 @@ namespace bs
 			mTextSelectionTexture = SpriteTexture::Create(newTex);
 		}
 
-		const HTexture& tex = mTextSelectionTexture->getTexture();
-		SPtr<PixelData> data = tex->getProperties().allocBuffer(0, 0);
+		const HTexture& tex = mTextSelectionTexture->GetTexture();
+		SPtr<PixelData> data = tex->GetProperties().AllocBuffer(0, 0);
 
-		data->setColorAt(mTextSelectionColor, 0, 0);
-		tex->writeData(data);
+		data->SetColorAt(mTextSelectionColor, 0, 0);
+		tex->WriteData(data);
 	}
 
 	void GUIManager::OnMouseDragEnded(const PointerEvent& event, DragCallbackInfo& dragInfo)
 	{
-		GUIMouseButton guiButton = buttonToGUIButton(event.button);
+		GUIMouseButton guiButton = ButtonToGuiButton(event.button);
 
-		if(DragAndDropManager::Instance().isDragInProgress() && guiButton == GUIMouseButton::Left)
+		if(DragAndDropManager::Instance().IsDragInProgress() && guiButton == GUIMouseButton::Left)
 		{
 			for(auto& elementInfo : mElementsUnderPointer)
 			{
 				Vector2I localPos;
 
 				if(elementInfo.widget != nullptr)
-					localPos = getWidgetRelativePos(elementInfo.widget, event.screenPos);
+					localPos = GetWidgetRelativePos(elementInfo.widget, event.screenPos);
 
 				bool acceptDrop = true;
-				if(DragAndDropManager::Instance().needsValidDropTarget())
+				if(DragAndDropManager::Instance().NeedsValidDropTarget())
 				{
-					acceptDrop = elementInfo.element->AcceptDragAndDropInternal(localPos, DragAndDropManager::Instance().getDragTypeId());
+					acceptDrop = elementInfo.element->AcceptDragAndDropInternal(localPos, DragAndDropManager::Instance().GetDragTypeId());
 				}
 
 				if(acceptDrop)
 				{
-					mMouseEvent.setDragAndDropDroppedData(localPos, DragAndDropManager::Instance().getDragTypeId(), DragAndDropManager::Instance().getDragData());
-					dragInfo.processed = sendMouseEvent(elementInfo.element, mMouseEvent);
+					mMouseEvent.SetDragAndDropDroppedData(localPos, DragAndDropManager::Instance().GetDragTypeId(), DragAndDropManager::Instance().GetDragData());
+					dragInfo.processed = SendMouseEvent(elementInfo.element, mMouseEvent);
 
 					if(dragInfo.processed)
 						return;
@@ -447,7 +447,7 @@ namespace bs
 
 	void GUIManager::OnPointerMoved(const PointerEvent& event)
 	{
-		if(event.isUsed())
+		if(event.IsUsed())
 			return;
 
 		bool buttonStates[(int)GUIMouseButton::Count];
@@ -455,23 +455,23 @@ namespace bs
 		buttonStates[1] = event.buttonStates[1];
 		buttonStates[2] = event.buttonStates[2];
 
-		if(findElementUnderPointer(event.screenPos, buttonStates, event.shift, event.control, event.alt))
-			event.markAsUsed();
+		if(FindElementUnderPointer(event.screenPos, buttonStates, event.shift, event.control, event.alt))
+			event.MarkAsUsed();
 
 		if(mDragState == DragState::HeldWithoutDrag)
 		{
-			UINT32 dist = mLastPointerClickPos.manhattanDist(event.screenPos);
+			UINT32 dist = mLastPointerClickPos.ManhattanDist(event.screenPos);
 
 			if(dist > DRAG_DISTANCE)
 			{
 				for(auto& activeElement : mActiveElements)
 				{
-					Vector2I localPos = getWidgetRelativePos(activeElement.widget, event.screenPos);
-					Vector2I localDragStartPos = getWidgetRelativePos(activeElement.widget, mLastPointerClickPos);
+					Vector2I localPos = GetWidgetRelativePos(activeElement.widget, event.screenPos);
+					Vector2I localDragStartPos = GetWidgetRelativePos(activeElement.widget, mLastPointerClickPos);
 
-					mMouseEvent.setMouseDragStartData(localPos, localDragStartPos);
-					if(sendMouseEvent(activeElement.element, mMouseEvent))
-						event.markAsUsed();
+					mMouseEvent.SetMouseDragStartData(localPos, localDragStartPos);
+					if(SendMouseEvent(activeElement.element, mMouseEvent))
+						event.MarkAsUsed();
 				}
 
 				mDragState = DragState::Dragging;
@@ -486,36 +486,36 @@ namespace bs
 			{
 				if(mLastPointerScreenPos != event.screenPos)
 				{
-					Vector2I localPos = getWidgetRelativePos(activeElement.widget, event.screenPos);
+					Vector2I localPos = GetWidgetRelativePos(activeElement.widget, event.screenPos);
 
-					mMouseEvent.setMouseDragData(localPos, event.screenPos - mDragStartPos);
-					if(sendMouseEvent(activeElement.element, mMouseEvent))
-						event.markAsUsed();
+					mMouseEvent.SetMouseDragData(localPos, event.screenPos - mDragStartPos);
+					if(SendMouseEvent(activeElement.element, mMouseEvent))
+						event.MarkAsUsed();
 				}
 			}
 
 			mLastPointerScreenPos = event.screenPos;
 
 			// Also if drag is in progress send DragAndDrop events
-			if(DragAndDropManager::Instance().isDragInProgress())
+			if(DragAndDropManager::Instance().IsDragInProgress())
 			{
 				bool acceptDrop = true;
 				for(auto& elementInfo : mElementsUnderPointer)
 				{
-					Vector2I localPos = getWidgetRelativePos(elementInfo.widget, event.screenPos);
+					Vector2I localPos = GetWidgetRelativePos(elementInfo.widget, event.screenPos);
 
 					acceptDrop = true;
-					if(DragAndDropManager::Instance().needsValidDropTarget())
+					if(DragAndDropManager::Instance().NeedsValidDropTarget())
 					{
-						acceptDrop = elementInfo.element->AcceptDragAndDropInternal(localPos, DragAndDropManager::Instance().getDragTypeId());
+						acceptDrop = elementInfo.element->AcceptDragAndDropInternal(localPos, DragAndDropManager::Instance().GetDragTypeId());
 					}
 
 					if(acceptDrop)
 					{
-						mMouseEvent.setDragAndDropDraggedData(localPos, DragAndDropManager::Instance().getDragTypeId(), DragAndDropManager::Instance().getDragData());
-						if(sendMouseEvent(elementInfo.element, mMouseEvent))
+						mMouseEvent.SetDragAndDropDraggedData(localPos, DragAndDropManager::Instance().GetDragTypeId(), DragAndDropManager::Instance().GetDragData());
+						if(SendMouseEvent(elementInfo.element, mMouseEvent))
 						{
-							event.markAsUsed();
+							event.MarkAsUsed();
 							break;
 						}
 					}
@@ -525,7 +525,7 @@ namespace bs
 				{
 					if(mActiveCursor != CursorType::ArrowDrag)
 					{
-						Cursor::Instance().setCursor(CursorType::ArrowDrag);
+						Cursor::Instance().SetCursor(CursorType::ArrowDrag);
 						mActiveCursor = CursorType::ArrowDrag;
 					}
 				}
@@ -533,7 +533,7 @@ namespace bs
 				{
 					if(mActiveCursor != CursorType::Deny)
 					{
-						Cursor::Instance().setCursor(CursorType::Deny);
+						Cursor::Instance().SetCursor(CursorType::Deny);
 						mActiveCursor = CursorType::Deny;
 					}
 				}				
@@ -547,16 +547,16 @@ namespace bs
 				bool hasCustomCursor = false;
 				for(auto& elementInfo : mElementsUnderPointer)
 				{
-					Vector2I localPos = getWidgetRelativePos(elementInfo.widget, event.screenPos);
+					Vector2I localPos = GetWidgetRelativePos(elementInfo.widget, event.screenPos);
 
 					if(!moveProcessed)
 					{
 						// Send MouseMove event
-						mMouseEvent.setMouseMoveData(localPos);
-						moveProcessed = sendMouseEvent(elementInfo.element, mMouseEvent);
+						mMouseEvent.SetMouseMoveData(localPos);
+						moveProcessed = SendMouseEvent(elementInfo.element, mMouseEvent);
 
 						if(moveProcessed)
-							event.markAsUsed();
+							event.MarkAsUsed();
 					}
 
 					if (mDragState == DragState::NoDrag)
@@ -566,7 +566,7 @@ namespace bs
 						{
 							if(newCursor != mActiveCursor)
 							{
-								Cursor::Instance().setCursor(newCursor);
+								Cursor::Instance().SetCursor(newCursor);
 								mActiveCursor = newCursor;
 							}
 
@@ -585,7 +585,7 @@ namespace bs
 					{
 						if (mActiveCursor != CursorType::Arrow)
 						{
-							Cursor::Instance().setCursor(CursorType::Arrow);
+							Cursor::Instance().SetCursor(CursorType::Arrow);
 							mActiveCursor = CursorType::Arrow;
 						}
 					}
@@ -594,14 +594,14 @@ namespace bs
 
 			mLastPointerScreenPos = event.screenPos;
 
-			if(Math::abs(event.mouseWheelScrollAmount) > 0.00001f)
+			if(Math::Abs(event.mouseWheelScrollAmount) > 0.00001f)
 			{
 				for(auto& elementInfo : mElementsUnderPointer)
 				{
-					mMouseEvent.setMouseWheelScrollData(event.mouseWheelScrollAmount);
-					if(sendMouseEvent(elementInfo.element, mMouseEvent))
+					mMouseEvent.SetMouseWheelScrollData(event.mouseWheelScrollAmount);
+					if(SendMouseEvent(elementInfo.element, mMouseEvent))
 					{
-						event.markAsUsed();
+						event.MarkAsUsed();
 						break;
 					}
 				}
@@ -611,7 +611,7 @@ namespace bs
 
 	void GUIManager::OnPointerReleased(const PointerEvent& event)
 	{
-		if(event.isUsed())
+		if(event.IsUsed())
 			return;
 
 		bool buttonStates[(int)GUIMouseButton::Count];
@@ -619,12 +619,12 @@ namespace bs
 		buttonStates[1] = event.buttonStates[1];
 		buttonStates[2] = event.buttonStates[2];
 
-		if(findElementUnderPointer(event.screenPos, buttonStates, event.shift, event.control, event.alt))
-			event.markAsUsed();
+		if(FindElementUnderPointer(event.screenPos, buttonStates, event.shift, event.control, event.alt))
+			event.MarkAsUsed();
 
 		mMouseEvent = GUIMouseEvent(buttonStates, event.shift, event.control, event.alt);
 
-		GUIMouseButton guiButton = buttonToGUIButton(event.button);
+		GUIMouseButton guiButton = ButtonToGuiButton(event.button);
 
 		// Send MouseUp event only if we are over the active element (we don't want to accidentally trigger other elements).
 		// And only activate when a button that originally caused the active state is released, otherwise ignore it.
@@ -637,12 +637,12 @@ namespace bs
 
 				if(iterFind2 != mActiveElements.end())
 				{
-					Vector2I localPos = getWidgetRelativePos(elementInfo.widget, event.screenPos);
-					mMouseEvent.setMouseUpData(localPos, guiButton);
+					Vector2I localPos = GetWidgetRelativePos(elementInfo.widget, event.screenPos);
+					mMouseEvent.SetMouseUpData(localPos, guiButton);
 
-					if(sendMouseEvent(elementInfo.element, mMouseEvent))
+					if(SendMouseEvent(elementInfo.element, mMouseEvent))
 					{
-						event.markAsUsed();
+						event.MarkAsUsed();
 						break;
 					}
 				}
@@ -659,11 +659,11 @@ namespace bs
 			{
 				for(auto& activeElement : mActiveElements)
 				{
-					Vector2I localPos = getWidgetRelativePos(activeElement.widget, event.screenPos);
+					Vector2I localPos = GetWidgetRelativePos(activeElement.widget, event.screenPos);
 
-					mMouseEvent.setMouseDragEndData(localPos);
-					if(sendMouseEvent(activeElement.element, mMouseEvent))
-						event.markAsUsed();
+					mMouseEvent.SetMouseDragEndData(localPos);
+					if(SendMouseEvent(activeElement.element, mMouseEvent))
+						event.MarkAsUsed();
 				}
 			}
 
@@ -678,14 +678,14 @@ namespace bs
 
 		if(mActiveCursor != CursorType::Arrow)
 		{
-			Cursor::Instance().setCursor(CursorType::Arrow);
+			Cursor::Instance().SetCursor(CursorType::Arrow);
 			mActiveCursor = CursorType::Arrow;
 		}
 	}
 
 	void GUIManager::OnPointerPressed(const PointerEvent& event)
 	{
-		if(event.isUsed())
+		if(event.IsUsed())
 			return;
 
 		bool buttonStates[(int)GUIMouseButton::Count];
@@ -693,8 +693,8 @@ namespace bs
 		buttonStates[1] = event.buttonStates[1];
 		buttonStates[2] = event.buttonStates[2];
 
-		if(findElementUnderPointer(event.screenPos, buttonStates, event.shift, event.control, event.alt))
-			event.markAsUsed();
+		if(FindElementUnderPointer(event.screenPos, buttonStates, event.shift, event.control, event.alt))
+			event.MarkAsUsed();
 
 		// Determine elements that gained focus
 		mNewElementsInFocus.clear();
@@ -709,7 +709,7 @@ namespace bs
 
 			if (iterFind == mElementsInFocus.end())
 			{
-				bool processed = !elementInfo.element->getOptionFlags().isSet(GUIElementOption::ClickThrough);
+				bool processed = !elementInfo.element->GetOptionFlags().IsSet(GUIElementOption::ClickThrough);
 				mNewElementsInFocus.push_back(ElementFocusInfo(elementInfo.element, elementInfo.widget, processed));
 
 				if (processed)
@@ -728,7 +728,7 @@ namespace bs
 		// Note: Focus loss must trigger before mouse press because things like input boxes often only confirm changes
 		// made to them when focus is lost. So if the user is confirming some input via a press of the button focus loss
 		// must trigger on the input box first to make sure its contents get saved.
-		mCommandEvent.setType(GUICommandEventType::FocusLost);
+		mCommandEvent.SetType(GUICommandEventType::FocusLost);
 
 		for (auto& elementInfo : mElementsInFocus)
 		{
@@ -736,11 +736,11 @@ namespace bs
 				[=](const ElementFocusInfo& x) { return x.element == elementInfo.element; });
 
 			if (iterFind == mNewElementsInFocus.end())
-				sendCommandEvent(elementInfo.element, mCommandEvent);
+				SendCommandEvent(elementInfo.element, mCommandEvent);
 		}
 
 		// Send focus gain events
-		mCommandEvent.setType(GUICommandEventType::FocusGained);
+		mCommandEvent.SetType(GUICommandEventType::FocusGained);
 
 		for(auto& elementInfo : mNewElementsInFocus)
 		{
@@ -748,14 +748,14 @@ namespace bs
 				[=](const ElementFocusInfo& x) { return x.element == elementInfo.element; });
 
 			if (iterFind == mElementsInFocus.end())
-				sendCommandEvent(elementInfo.element, mCommandEvent);
+				SendCommandEvent(elementInfo.element, mCommandEvent);
 		}
 
 		mElementsInFocus.swap(mNewElementsInFocus);
 
 		// Send mouse press event
 		mMouseEvent = GUIMouseEvent(buttonStates, event.shift, event.control, event.alt);
-		GUIMouseButton guiButton = buttonToGUIButton(event.button);
+		GUIMouseButton guiButton = ButtonToGuiButton(event.button);
 
 		// We only check for mouse down if mouse isn't already being held down, and we are hovering over an element
 		if(mActiveElements.size() == 0)
@@ -763,10 +763,10 @@ namespace bs
 			mNewActiveElements.clear();
 			for(auto& elementInfo : mElementsUnderPointer)
 			{
-				Vector2I localPos = getWidgetRelativePos(elementInfo.widget, event.screenPos);
-				mMouseEvent.setMouseDownData(localPos, guiButton);
+				Vector2I localPos = GetWidgetRelativePos(elementInfo.widget, event.screenPos);
+				mMouseEvent.SetMouseDownData(localPos, guiButton);
 
-				bool processed = sendMouseEvent(elementInfo.element, mMouseEvent);
+				bool processed = SendMouseEvent(elementInfo.element, mMouseEvent);
 
 				if(guiButton == GUIMouseButton::Left)
 				{
@@ -779,7 +779,7 @@ namespace bs
 
 				if(processed)
 				{
-					event.markAsUsed();
+					event.MarkAsUsed();
 					break;
 				}
 			}
@@ -796,13 +796,13 @@ namespace bs
 
 				if(menu != nullptr && elementInfo.widget != nullptr)
 				{
-					const RenderWindow* window = getWidgetWindow(*elementInfo.widget);
+					const RenderWindow* window = GetWidgetWindow(*elementInfo.widget);
 					if (window != nullptr)
 					{
-						Vector2I windowPos = window->screenToWindowPos(event.screenPos);
+						Vector2I windowPos = window->ScreenToWindowPos(event.screenPos);
 
-						menu->open(windowPos, *elementInfo.widget);
-						event.markAsUsed();
+						menu->Open(windowPos, *elementInfo.widget);
+						event.MarkAsUsed();
 						break;
 					}
 				}
@@ -812,7 +812,7 @@ namespace bs
 
 	void GUIManager::OnPointerDoubleClick(const PointerEvent& event)
 	{
-		if(event.isUsed())
+		if(event.IsUsed())
 			return;
 
 		bool buttonStates[(int)GUIMouseButton::Count];
@@ -820,22 +820,22 @@ namespace bs
 		buttonStates[1] = event.buttonStates[1];
 		buttonStates[2] = event.buttonStates[2];
 
-		if(findElementUnderPointer(event.screenPos, buttonStates, event.shift, event.control, event.alt))
-			event.markAsUsed();
+		if(FindElementUnderPointer(event.screenPos, buttonStates, event.shift, event.control, event.alt))
+			event.MarkAsUsed();
 
 		mMouseEvent = GUIMouseEvent(buttonStates, event.shift, event.control, event.alt);
 
-		GUIMouseButton guiButton = buttonToGUIButton(event.button);
+		GUIMouseButton guiButton = ButtonToGuiButton(event.button);
 
 		// We only check for mouse down if we are hovering over an element
 		for(auto& elementInfo : mElementsUnderPointer)
 		{
-			Vector2I localPos = getWidgetRelativePos(elementInfo.widget, event.screenPos);
+			Vector2I localPos = GetWidgetRelativePos(elementInfo.widget, event.screenPos);
 
-			mMouseEvent.setMouseDoubleClickData(localPos, guiButton);
-			if(sendMouseEvent(elementInfo.element, mMouseEvent))
+			mMouseEvent.SetMouseDoubleClickData(localPos, guiButton);
+			if(SendMouseEvent(elementInfo.element, mMouseEvent))
 			{
-				event.markAsUsed();
+				event.MarkAsUsed();
 				break;
 			}
 		}
@@ -846,12 +846,12 @@ namespace bs
 		if(mElementsInFocus.empty())
 			return;
 
-		hideTooltip();
+		HideTooltip();
 
 		// Tabs are handled by the GUI manager itself, while other events are passed to GUI elements
 		if(commandType == InputCommandType::Tab)
 		{
-			tabFocusNext();
+			TabFocusNext();
 			return;
 		}
 
@@ -860,60 +860,60 @@ namespace bs
 		switch(commandType)
 		{
 		case InputCommandType::Backspace:
-			mCommandEvent.setType(GUICommandEventType::Backspace);
+			mCommandEvent.SetType(GUICommandEventType::Backspace);
 			break;
 		case InputCommandType::Delete:
-			mCommandEvent.setType(GUICommandEventType::Delete);
+			mCommandEvent.SetType(GUICommandEventType::Delete);
 			break;
 		case InputCommandType::Return:
-			mCommandEvent.setType(GUICommandEventType::Return);
+			mCommandEvent.SetType(GUICommandEventType::Return);
 			break;
 		case InputCommandType::Confirm:
-			mCommandEvent.setType(GUICommandEventType::Confirm);
+			mCommandEvent.SetType(GUICommandEventType::Confirm);
 			break;
 		case InputCommandType::Escape:
-			mCommandEvent.setType(GUICommandEventType::Escape);
+			mCommandEvent.SetType(GUICommandEventType::Escape);
 			break;
 		case InputCommandType::CursorMoveLeft:
-			mCommandEvent.setType(GUICommandEventType::MoveLeft);
+			mCommandEvent.SetType(GUICommandEventType::MoveLeft);
 			break;
 		case InputCommandType::CursorMoveRight:
-			mCommandEvent.setType(GUICommandEventType::MoveRight);
+			mCommandEvent.SetType(GUICommandEventType::MoveRight);
 			break;
 		case InputCommandType::CursorMoveUp:
-			mCommandEvent.setType(GUICommandEventType::MoveUp);
+			mCommandEvent.SetType(GUICommandEventType::MoveUp);
 			break;
 		case InputCommandType::CursorMoveDown:
-			mCommandEvent.setType(GUICommandEventType::MoveDown);
+			mCommandEvent.SetType(GUICommandEventType::MoveDown);
 			break;
 		case InputCommandType::SelectLeft:
-			mCommandEvent.setType(GUICommandEventType::SelectLeft);
+			mCommandEvent.SetType(GUICommandEventType::SelectLeft);
 			break;
 		case InputCommandType::SelectRight:
-			mCommandEvent.setType(GUICommandEventType::SelectRight);
+			mCommandEvent.SetType(GUICommandEventType::SelectRight);
 			break;
 		case InputCommandType::SelectUp:
-			mCommandEvent.setType(GUICommandEventType::SelectUp);
+			mCommandEvent.SetType(GUICommandEventType::SelectUp);
 			break;
 		case InputCommandType::SelectDown:
-			mCommandEvent.setType(GUICommandEventType::SelectDown);
+			mCommandEvent.SetType(GUICommandEventType::SelectDown);
 			break;
 		default:
 			break;
 		}
 
 		for(auto& elementInfo : mElementsInFocus)
-			sendCommandEvent(elementInfo.element, mCommandEvent);
+			SendCommandEvent(elementInfo.element, mCommandEvent);
 	}
 
 	void GUIManager::OnVirtualButtonDown(const VirtualButton& button, UINT32 deviceIdx)
 	{
-		hideTooltip();
-		mVirtualButtonEvent.setButton(button);
+		HideTooltip();
+		mVirtualButtonEvent.SetButton(button);
 		
 		for(auto& elementInFocus : mElementsInFocus)
 		{
-			bool processed = sendVirtualButtonEvent(elementInFocus.element, mVirtualButtonEvent);
+			bool processed = SendVirtualButtonEvent(elementInFocus.element, mVirtualButtonEvent);
 
 			if(processed)
 				break;
@@ -924,11 +924,11 @@ namespace bs
 	{
 		Vector<const RenderWindow*> widgetWindows;
 		for(auto& widgetInfo : mWidgets)
-			widgetWindows.push_back(getWidgetWindow(*widgetInfo.widget));
+			widgetWindows.push_back(GetWidgetWindow(*widgetInfo.widget));
 
 #if BS_DEBUG_MODE
 		// Checks if all referenced windows actually exist
-		Vector<RenderWindow*> activeWindows = RenderWindowManager::Instance().getRenderWindows();
+		Vector<RenderWindow*> activeWindows = RenderWindowManager::Instance().GetRenderWindows();
 		for(auto& window : widgetWindows)
 		{
 			if(window == nullptr)
@@ -957,10 +957,10 @@ namespace bs
 			uniqueWindows.insert(window);
 		}
 
-		RenderWindow* topMostModal = RenderWindowManager::Instance().getTopMostModal();
+		RenderWindow* topMostModal = RenderWindowManager::Instance().GetTopMostModal();
 		for(auto& window : uniqueWindows)
 		{
-			if(Platform::isPointOverWindow(*window, pointerScreenPos))
+			if(Platform::IsPointOverWindow(*window, pointerScreenPos))
 			{
 				// If there's a top most modal window, it needs to be this one, otherwise we ignore input to that window
 				if(topMostModal == nullptr || window == topMostModal)
@@ -972,7 +972,7 @@ namespace bs
 
 		if(windowUnderPointer != nullptr)
 		{
-			Vector2I windowPos = windowUnderPointer->screenToWindowPos(pointerScreenPos);
+			Vector2I windowPos = windowUnderPointer->ScreenToWindowPos(pointerScreenPos);
 
 			UINT32 widgetIdx = 0;
 			for(auto& widgetInfo : mWidgets)
@@ -985,10 +985,10 @@ namespace bs
 
 				GUIWidget* widget = widgetInfo.widget;
 				if(widgetWindows[widgetIdx] == windowUnderPointer
-					&& widget->inBounds(windowToBridgedCoords(widget->getTarget()->getTarget(), windowPos)))
+					&& widget->InBounds(WindowToBridgedCoords(widget->GetTarget()->GetTarget(), windowPos)))
 				{
-					const Vector<GUIElement*>& elements = widget->getElements();
-					Vector2I localPos = getWidgetRelativePos(widget, pointerScreenPos);
+					const Vector<GUIElement*>& elements = widget->GetElements();
+					Vector2I localPos = GetWidgetRelativePos(widget, pointerScreenPos);
 
 					// Elements with lowest depth (most to the front) get handled first
 					for(auto iter = elements.begin(); iter != elements.end(); ++iter)
@@ -1046,14 +1046,14 @@ namespace bs
 			// Send MouseOver event
 			if (mActiveElements.size() == 0 || iterFind != mActiveElements.end())
 			{
-				Vector2I localPos = getWidgetRelativePos(widget, pointerScreenPos);
+				Vector2I localPos = GetWidgetRelativePos(widget, pointerScreenPos);
 
 				mMouseEvent = GUIMouseEvent(buttonStates, shift, control, alt);
 
-				mMouseEvent.setMouseOverData(localPos);
+				mMouseEvent.SetMouseOverData(localPos);
 				elementInfo.receivedMouseOver = true;
 				elementInfo.isHovering = true;
-				if (sendMouseEvent(element, mMouseEvent))
+				if (SendMouseEvent(element, mMouseEvent))
 				{
 					eventProcessed = true;
 					elementInfo.usesMouseOver = true;
@@ -1064,7 +1064,7 @@ namespace bs
 
 		// Send DragAndDropLeft event - It is similar to MouseOut events but we send it to all
 		// elements a user might hover over, while we send mouse over/out events only to active elements while dragging
-		if (DragAndDropManager::Instance().isDragInProgress())
+		if (DragAndDropManager::Instance().IsDragInProgress())
 		{
 			for (auto& elementInfo : mElementsUnderPointer)
 			{
@@ -1073,10 +1073,10 @@ namespace bs
 
 				if (iterFind == mNewElementsUnderPointer.end())
 				{
-					Vector2I localPos = getWidgetRelativePos(elementInfo.widget, pointerScreenPos);
+					Vector2I localPos = GetWidgetRelativePos(elementInfo.widget, pointerScreenPos);
 
-					mMouseEvent.setDragAndDropLeftData(localPos, DragAndDropManager::Instance().getDragTypeId(), DragAndDropManager::Instance().getDragData());
-					if (sendMouseEvent(elementInfo.element, mMouseEvent))
+					mMouseEvent.SetDragAndDropLeftData(localPos, DragAndDropManager::Instance().GetDragTypeId(), DragAndDropManager::Instance().GetDragData());
+					if (SendMouseEvent(elementInfo.element, mMouseEvent))
 					{
 						eventProcessed = true;
 						break;
@@ -1104,10 +1104,10 @@ namespace bs
 				// Send MouseOut event
 				if(mActiveElements.size() == 0 || iterFind2 != mActiveElements.end())
 				{
-					Vector2I localPos = getWidgetRelativePos(widget, pointerScreenPos);
+					Vector2I localPos = GetWidgetRelativePos(widget, pointerScreenPos);
 
-					mMouseEvent.setMouseOutData(localPos);
-					if (sendMouseEvent(element, mMouseEvent))
+					mMouseEvent.SetMouseOutData(localPos);
+					if (SendMouseEvent(element, mMouseEvent))
 					{
 						eventProcessed = true;
 						break;
@@ -1119,11 +1119,11 @@ namespace bs
 		mElementsUnderPointer.swap(mNewElementsUnderPointer);
 
 		// Tooltip
-		hideTooltip();
+		HideTooltip();
 		if (mElementsUnderPointer.size() > 0)
 			mShowTooltip = true;
 
-		mTooltipElementHoverStart = gTime().getTime();
+		mTooltipElementHoverStart = gTime().GetTime();
 
 		return eventProcessed;
 	}
@@ -1131,12 +1131,12 @@ namespace bs
 	void GUIManager::OnTextInput(const TextInputEvent& event)
 	{
 		mTextInputEvent = GUITextInputEvent();
-		mTextInputEvent.setData(event.textChar);
+		mTextInputEvent.SetData(event.textChar);
 
 		for(auto& elementInFocus : mElementsInFocus)
 		{
-			if(sendTextInputEvent(elementInFocus.element, mTextInputEvent))
-				event.markAsUsed();
+			if(SendTextInputEvent(elementInFocus.element, mTextInputEvent))
+				event.MarkAsUsed();
 		}
 	}
 
@@ -1145,8 +1145,8 @@ namespace bs
 		for(auto& widgetInfo : mWidgets)
 		{
 			GUIWidget* widget = widgetInfo.widget;
-			if(getWidgetWindow(*widget) == &win)
-				widget->ownerWindowFocusChanged();
+			if(GetWidgetWindow(*widget) == &win)
+				widget->OwnerWindowFocusChanged();
 		}
 
 		auto iterFind = mSavedFocusElements.find(&win);
@@ -1169,9 +1169,9 @@ namespace bs
 				if(iterFind2 == savedFocusedElements.end())
 				{
 					mCommandEvent = GUICommandEvent();
-					mCommandEvent.setType(GUICommandEventType::FocusLost);
+					mCommandEvent.SetType(GUICommandEventType::FocusLost);
 
-					sendCommandEvent(focusedElement.element, mCommandEvent);
+					SendCommandEvent(focusedElement.element, mCommandEvent);
 					savedFocusedElements.push_back(focusedElement);
 				}
 				else
@@ -1194,9 +1194,9 @@ namespace bs
 				if (iterFind2 == mElementsInFocus.end())
 				{
 					mCommandEvent = GUICommandEvent();
-					mCommandEvent.setType(GUICommandEventType::FocusGained);
+					mCommandEvent.SetType(GUICommandEventType::FocusGained);
 
-					sendCommandEvent(entry.element, mCommandEvent);
+					SendCommandEvent(entry.element, mCommandEvent);
 					mElementsInFocus.push_back(entry);
 				}
 			}
@@ -1210,8 +1210,8 @@ namespace bs
 		for(auto& widgetInfo : mWidgets)
 		{
 			GUIWidget* widget = widgetInfo.widget;
-			if(getWidgetWindow(*widget) == &win)
-				widget->ownerWindowFocusChanged();
+			if(GetWidgetWindow(*widget) == &win)
+				widget->OwnerWindowFocusChanged();
 		}
 
 		Vector<ElementFocusInfo>& savedFocusedElements = mSavedFocusElements[&win];
@@ -1223,12 +1223,12 @@ namespace bs
 			if (focusedElement.element->IsDestroyedInternal())
 				continue;
 
-			if (focusedElement.widget != nullptr && getWidgetWindow(*focusedElement.widget) == &win)
+			if (focusedElement.widget != nullptr && GetWidgetWindow(*focusedElement.widget) == &win)
 			{
 				mCommandEvent = GUICommandEvent();
-				mCommandEvent.setType(GUICommandEventType::FocusLost);
+				mCommandEvent.SetType(GUICommandEventType::FocusLost);
 
-				sendCommandEvent(focusedElement.element, mCommandEvent);
+				SendCommandEvent(focusedElement.element, mCommandEvent);
 				savedFocusedElements.push_back(focusedElement);
 			}
 			else
@@ -1249,7 +1249,7 @@ namespace bs
 			GUIElement* element = elementInfo.element;
 			GUIWidget* widget = elementInfo.widget;
 
-			if (widget != nullptr && widget->getTarget()->getTarget().get() != &win)
+			if (widget != nullptr && widget->GetTarget()->GetTarget().get() != &win)
 			{
 				mNewElementsUnderPointer.push_back(elementInfo);
 				continue;
@@ -1261,21 +1261,21 @@ namespace bs
 			// Send MouseOut event
 			if(mActiveElements.size() == 0 || iterFind != mActiveElements.end())
 			{
-				Vector2I localPos = getWidgetRelativePos(widget, Vector2I());
+				Vector2I localPos = GetWidgetRelativePos(widget, Vector2I());
 
-				mMouseEvent.setMouseOutData(localPos);
-				sendMouseEvent(element, mMouseEvent);
+				mMouseEvent.SetMouseOutData(localPos);
+				SendMouseEvent(element, mMouseEvent);
 			}
 		}
 
 		mElementsUnderPointer.swap(mNewElementsUnderPointer);
 
-		hideTooltip();
+		HideTooltip();
 		if(mDragState != DragState::Dragging)
 		{
 			if(mActiveCursor != CursorType::Arrow)
 			{
-				Cursor::Instance().setCursor(CursorType::Arrow);
+				Cursor::Instance().SetCursor(CursorType::Arrow);
 				mActiveCursor = CursorType::Arrow;
 			}
 		}
@@ -1283,7 +1283,7 @@ namespace bs
 	
 	void GUIManager::HideTooltip()
 	{
-		GUITooltipManager::Instance().hide();
+		GUITooltipManager::Instance().Hide();
 		mShowTooltip = false;
 	}
 
@@ -1347,17 +1347,17 @@ namespace bs
 		if (widget == nullptr)
 			return screenPos;
 
-		const RenderWindow* window = getWidgetWindow(*widget);
+		const RenderWindow* window = GetWidgetWindow(*widget);
 		if(window == nullptr)
 			return Vector2I();
 
-		Vector2I windowPos = window->screenToWindowPos(screenPos);
-		windowPos = windowToBridgedCoords(widget->getTarget()->getTarget(), windowPos);
+		Vector2I windowPos = window->ScreenToWindowPos(screenPos);
+		windowPos = WindowToBridgedCoords(widget->GetTarget()->GetTarget(), windowPos);
 
-		const Matrix4& worldTfrm = widget->getWorldTfrm();
+		const Matrix4& worldTfrm = widget->GetWorldTfrm();
 
-		Vector4 vecLocalPos = worldTfrm.inverse().multiplyAffine(Vector4((float)windowPos.x, (float)windowPos.y, 0.0f, 1.0f));
-		Vector2I curLocalPos(Math::roundToInt(vecLocalPos.x), Math::roundToInt(vecLocalPos.y));
+		Vector4 vecLocalPos = worldTfrm.Inverse().MultiplyAffine(Vector4((float)windowPos.x, (float)windowPos.y, 0.0f, 1.0f));
+		Vector2I curLocalPos(Math::RoundToInt(vecLocalPos.x), Math::RoundToInt(vecLocalPos.y));
 
 		return curLocalPos;
 	}
@@ -1368,7 +1368,7 @@ namespace bs
 		// so that mInputBridge map allows us to search through it - we don't access anything unless the target is bridged
 		// (in which case we know it is a RenderTexture)
 		SPtr<const RenderTexture> renderTexture = std::static_pointer_cast<const RenderTexture>(target);
-		const RenderTargetProperties& rtProps = renderTexture->getProperties();
+		const RenderTargetProperties& rtProps = renderTexture->GetProperties();
 
 		auto iterFind = mInputBridge.find(renderTexture);
 		if(iterFind != mInputBridge.end()) // Widget input is bridged, which means we need to transform the coordinates
@@ -1378,9 +1378,9 @@ namespace bs
 			if (parentWidget == nullptr)
 				return windowPos;
 
-			const Matrix4& worldTfrm = parentWidget->getWorldTfrm();
+			const Matrix4& worldTfrm = parentWidget->GetWorldTfrm();
 
-			Vector4 vecLocalPos = worldTfrm.inverse().multiplyAffine(Vector4((float)windowPos.x, (float)windowPos.y, 0.0f, 1.0f));
+			Vector4 vecLocalPos = worldTfrm.Inverse().MultiplyAffine(Vector4((float)windowPos.x, (float)windowPos.y, 0.0f, 1.0f));
 			Rect2I bridgeBounds = bridgeElement->GetLayoutDataInternal().area;
 
 			// Find coordinates relative to the bridge element
@@ -1390,7 +1390,7 @@ namespace bs
 			float scaleX = bridgeBounds.width > 0 ? rtProps.width / (float)bridgeBounds.width : 0.0f;
 			float scaleY = bridgeBounds.height > 0 ? rtProps.height / (float)bridgeBounds.height : 0.0f;
 
-			return Vector2I(Math::roundToInt(x * scaleX), Math::roundToInt(y * scaleY));
+			return Vector2I(Math::RoundToInt(x * scaleX), Math::RoundToInt(y * scaleY));
 		}
 
 		return windowPos;
@@ -1398,11 +1398,11 @@ namespace bs
 
 	const RenderWindow* GUIManager::GetWidgetWindow(const GUIWidget& widget) const
 	{
-		const Viewport* viewport = widget.getTarget();
+		const Viewport* viewport = widget.GetTarget();
 		if (viewport == nullptr)
 			return nullptr;
 
-		SPtr<RenderTarget> target = viewport->getTarget();
+		SPtr<RenderTarget> target = viewport->GetTarget();
 		if (target == nullptr)
 			return nullptr;
 
@@ -1419,10 +1419,10 @@ namespace bs
 				return nullptr;
 
 			if(parentWidget != &widget)
-				return getWidgetWindow(*parentWidget);
+				return GetWidgetWindow(*parentWidget);
 		}
 
-		Vector<RenderWindow*> renderWindows = RenderWindowManager::Instance().getRenderWindows();
+		Vector<RenderWindow*> renderWindows = RenderWindowManager::Instance().GetRenderWindows();
 
 		auto iterFindWin = std::find(renderWindows.begin(), renderWindows.end(), target.get());
 		if(iterFindWin != renderWindows.end())
@@ -1446,14 +1446,14 @@ namespace bs
 			if (parentWidget == nullptr)
 				return nullptr;
 
-			SPtr<RenderTarget> curTarget = parentWidget->getTarget()->getTarget();
+			SPtr<RenderTarget> curTarget = parentWidget->GetTarget()->GetTarget();
 			if (curTarget == nullptr)
 				return nullptr;
 
 			if (curTarget == target)
 				return nullptr;
 
-			if (curTarget->getProperties().isWindow)
+			if (curTarget->GetProperties().isWindow)
 				return std::static_pointer_cast<RenderWindow>(curTarget);
 		}
 
@@ -1471,7 +1471,7 @@ namespace bs
 			const GUIElement* element = entry.second;
 			GUIWidget* parentWidget = element->GetParentWidgetInternal();
 			if (parentWidget == widget)
-				elements.add(std::make_pair(element, entry.first));
+				elements.Add(std::make_pair(element, entry.first));
 		}
 	}
 
@@ -1483,12 +1483,12 @@ namespace bs
 		// Find to top-left most element
 		for (auto& widgetInfo : mWidgets)
 		{
-			const RenderWindow* window = getWidgetWindow(*widgetInfo.widget);
+			const RenderWindow* window = GetWidgetWindow(*widgetInfo.widget);
 
-			const Vector<GUIElement*>& elements = widgetInfo.widget->getElements();
+			const Vector<GUIElement*>& elements = widgetInfo.widget->GetElements();
 			for (auto& element : elements)
 			{
-				const bool acceptsKeyFocus = element->getOptionFlags().isSet(GUIElementOption::AcceptsKeyFocus);
+				const bool acceptsKeyFocus = element->GetOptionFlags().IsSet(GUIElementOption::AcceptsKeyFocus);
 				if (!acceptsKeyFocus || element->IsDisabledInternal() || !element->IsVisibleInternal())
 					continue;
 
@@ -1500,9 +1500,9 @@ namespace bs
 					continue;
 
 				Vector2I elementPos(elemBounds.x, elemBounds.y);
-				Vector2I screenPos = window->windowToScreenPos(elementPos);
+				Vector2I screenPos = window->WindowToScreenPos(elementPos);
 
-				const UINT32 dist = screenPos.squaredLength();
+				const UINT32 dist = screenPos.SquaredLength();
 				if (dist < nearestDist)
 				{
 					nearestDist = dist;
@@ -1516,7 +1516,7 @@ namespace bs
 
 		// Don't use the element directly though, since its tab group could have explicit ordering
 		const SPtr<GUINavGroup>& navGroup = closestElement->GetNavGroupInternal();
-		navGroup->focusFirst();
+		navGroup->FocusFirst();
 	}
 
 	void GUIManager::TabFocusNext()
@@ -1524,16 +1524,16 @@ namespace bs
 		for(auto& entry : mElementsInFocus)
 		{
 			const SPtr<GUINavGroup>& navGroup = entry.element->GetNavGroupInternal();
-			GUIElementOptions elementOptions = entry.element->getOptionFlags();
-			if(elementOptions.isSet(GUIElementOption::AcceptsKeyFocus) && navGroup != nullptr)
+			GUIElementOptions elementOptions = entry.element->GetOptionFlags();
+			if(elementOptions.IsSet(GUIElementOption::AcceptsKeyFocus) && navGroup != nullptr)
 			{
-				navGroup->focusNext(entry.element);
+				navGroup->FocusNext(entry.element);
 				return;
 			}
 		}
 
 		// Nothing currently in focus
-		tabFocusFirst();
+		TabFocusFirst();
 	}
 
 	bool GUIManager::SendMouseEvent(GUIElement* element, const GUIMouseEvent& event)
@@ -1588,7 +1588,7 @@ namespace bs
 		ssDesc.minFilter = FO_POINT;
 		ssDesc.mipFilter = FO_POINT;
 
-		mSamplerState = RenderStateManager::Instance().createSamplerState(ssDesc);
+		mSamplerState = RenderStateManager::Instance().CreateSamplerState(ssDesc);
 	}
 
 	RendererExtensionRequest GUIRenderer::Check(const Camera& camera)
@@ -1611,7 +1611,7 @@ namespace bs
 
 				for(auto& renderTargetElem : drawGroup.renderTargetElements)
 				{
-					if(renderTargetElem.lastUpdateCount != renderTargetElem.target->getUpdateCount())
+					if(renderTargetElem.lastUpdateCount != renderTargetElem.target->GetUpdateCount())
 					{
 						needsRedraw = true;
 						break;
@@ -1627,8 +1627,8 @@ namespace bs
 	{
 		Vector<GUIWidgetRenderData>& widgetRenderData = mPerCameraData[&camera];
 
-		float invViewportWidth = 1.0f / (camera.getViewport()->getPixelArea().width * 0.5f);
-		float invViewportHeight = 1.0f / (camera.getViewport()->getPixelArea().height * 0.5f);
+		float invViewportWidth = 1.0f / (camera.GetViewport()->GetPixelArea().width * 0.5f);
+		float invViewportHeight = 1.0f / (camera.GetViewport()->GetPixelArea().height * 0.5f);
 		bool viewflipYFlip = gCaps().conventions.ndcYAxis == Conventions::Axis::Down;
 
 		RenderAPI& rapi = RenderAPI::Instance();
@@ -1639,15 +1639,15 @@ namespace bs
 				for (auto& entry : drawGroup.nonCachedElements)
 				{
 					const SPtr<GpuParamBlockBuffer>& buffer = widget.paramBlocks[entry.bufferIdx];
-					updateParamBlockBuffer(buffer, invViewportWidth, invViewportHeight,
+					UpdateParamBlockBuffer(buffer, invViewportWidth, invViewportHeight,
 						viewflipYFlip, widget.worldTransform, entry);
 				}
 
 				for(auto& renderTargetElem : drawGroup.renderTargetElements)
 				{
-					if(renderTargetElem.lastUpdateCount != renderTargetElem.target->getUpdateCount())
+					if(renderTargetElem.lastUpdateCount != renderTargetElem.target->GetUpdateCount())
 					{
-						renderTargetElem.lastUpdateCount = renderTargetElem.target->getUpdateCount();
+						renderTargetElem.lastUpdateCount = renderTargetElem.target->GetUpdateCount();
 						drawGroup.requiresRedraw = true;
 					}
 				}
@@ -1661,7 +1661,7 @@ namespace bs
 				for(auto& entry : drawGroup.cachedElements)
 				{
 					const SPtr<GpuParamBlockBuffer>& buffer = widget.paramBlocks[entry.bufferIdx];
-					updateParamBlockBuffer(buffer, invDrawGroupWidth, invDrawGroupHeight,
+					UpdateParamBlockBuffer(buffer, invDrawGroupWidth, invDrawGroupHeight,
 						viewflipYFlip, Matrix4::IDENTITY, entry);
 				}
 
@@ -1669,14 +1669,14 @@ namespace bs
 				{
 					const SPtr<GpuParamBlockBuffer>& buffer = widget.paramBlocks[drawGroup.bufferIdx];
 
-					gGUISpriteParamBlockDef.gTint.set(buffer, Color::White);
-					gGUISpriteParamBlockDef.gWorldTransform.set(buffer, widget.worldTransform);
-					gGUISpriteParamBlockDef.gInvViewportWidth.set(buffer, invViewportWidth);
-					gGUISpriteParamBlockDef.gInvViewportHeight.set(buffer, invViewportHeight);
-					gGUISpriteParamBlockDef.gViewportYFlip.set(buffer, viewflipYFlip ? -1.0f : 1.0f);
-					gGUISpriteParamBlockDef.gUVSizeOffset.set(buffer, Vector4(1.0f, 1.0f, 0.0f, 0.0f));
+					gGUISpriteParamBlockDef.gTint.Set(buffer, Color::White);
+					gGUISpriteParamBlockDef.gWorldTransform.Set(buffer, widget.worldTransform);
+					gGUISpriteParamBlockDef.gInvViewportWidth.Set(buffer, invViewportWidth);
+					gGUISpriteParamBlockDef.gInvViewportHeight.Set(buffer, invViewportHeight);
+					gGUISpriteParamBlockDef.gViewportYFlip.Set(buffer, viewflipYFlip ? -1.0f : 1.0f);
+					gGUISpriteParamBlockDef.gUVSizeOffset.Set(buffer, Vector4(1.0f, 1.0f, 0.0f, 0.0f));
 
-					buffer->flushToGPU();
+					buffer->FlushToGpu();
 				}
 
 				// We need to write the alpha of the first (deepest) element for each pixel
@@ -1684,12 +1684,12 @@ namespace bs
 				// Note: We should cache/pool the stencil buffer texture (ideally just re-use a single one)
 				//  - If pooling we probably need to round draw group sizes to certain pow-2 sizes and then
 				//    use viewport to render to relevant bits
-				SPtr<Texture> colorTex = drawGroup.destination->getColorTexture(0);
-				const TextureProperties& colorProps = colorTex->getProperties();
+				SPtr<Texture> colorTex = drawGroup.destination->GetColorTexture(0);
+				const TextureProperties& colorProps = colorTex->GetProperties();
 				
 				TEXTURE_DESC texDesc;
-				texDesc.width = colorProps.getWidth();
-				texDesc.height = colorProps.getHeight();
+				texDesc.width = colorProps.GetWidth();
+				texDesc.height = colorProps.GetHeight();
 				texDesc.format = PF_D24S8; // TODO: Can we create a stencil only texture here?
 				texDesc.usage = TU_DEPTHSTENCIL;
 
@@ -1702,8 +1702,8 @@ namespace bs
 				// Draw the alpha only first
 				// Note: Can we avoid drawing each element twice?
 				SPtr<RenderTexture> alphaRenderTexture = RenderTexture::Create(rtDesc);
-				rapi.setRenderTarget(alphaRenderTexture);
-				rapi.clearRenderTarget(FBT_COLOR | FBT_STENCIL, Color::ZERO, 1.0f, 0);
+				rapi.SetRenderTarget(alphaRenderTexture);
+				rapi.ClearRenderTarget(FBT_COLOR | FBT_STENCIL, Color::ZERO, 1.0f, 0);
 
 				for (auto& entry : drawGroup.cachedElements)
 				{
@@ -1711,12 +1711,12 @@ namespace bs
 					// changed, and apply only those + the modified constant buffers and/or texture.
 
 					const SPtr<GpuParamBlockBuffer>& buffer = widget.paramBlocks[entry.bufferIdx];
-					entry.material->render(entry.isLine ? widget.lineMesh : widget.triangleMesh, entry.subMesh, entry.texture,
+					entry.material->Render(entry.isLine ? widget.lineMesh : widget.triangleMesh, entry.subMesh, entry.texture,
 						mSamplerState, buffer, entry.additionalData, true);
 				}
 
 				// Draw the color values
-				rapi.setRenderTarget(drawGroup.destination);
+				rapi.SetRenderTarget(drawGroup.destination);
 
 				for (auto& entry : drawGroup.cachedElements)
 				{
@@ -1724,7 +1724,7 @@ namespace bs
 					// changed, and apply only those + the modified constant buffers and/or texture.
 
 					const SPtr<GpuParamBlockBuffer>& buffer = widget.paramBlocks[entry.bufferIdx];
-					entry.material->render(entry.isLine ? widget.lineMesh : widget.triangleMesh, entry.subMesh, entry.texture,
+					entry.material->Render(entry.isLine ? widget.lineMesh : widget.triangleMesh, entry.subMesh, entry.texture,
 						mSamplerState, buffer, entry.additionalData, false);
 				}
 
@@ -1733,7 +1733,7 @@ namespace bs
 		}
 
 		// Restore original render target
-		rapi.setRenderTarget(viewContext.currentTarget);
+		rapi.SetRenderTarget(viewContext.currentTarget);
 
 		for (auto& widget : widgetRenderData)
 		{
@@ -1746,15 +1746,15 @@ namespace bs
 					// changed, and apply only those + the modified constant buffers and/or texture.
 
 					const SPtr<GpuParamBlockBuffer>& buffer = widget.paramBlocks[entry.bufferIdx];
-					entry.material->render(entry.isLine ? widget.lineMesh : widget.triangleMesh, entry.subMesh, entry.texture,
+					entry.material->Render(entry.isLine ? widget.lineMesh : widget.triangleMesh, entry.subMesh, entry.texture,
 						mSamplerState, buffer, entry.additionalData, false);
 				}
 
 				// Draw the group itself
 				const SPtr<GpuParamBlockBuffer>& buffer = widget.paramBlocks[drawGroup.bufferIdx];
 
-				SpriteMaterial* batchedMat = SpriteManager::Instance().getImageMaterial(SpriteMaterialTransparency::Premultiplied, false);
-				batchedMat->render(widget.drawGroupMesh, drawGroup.subMesh, drawGroup.destination->getColorTexture(0),
+				SpriteMaterial* batchedMat = SpriteManager::Instance().GetImageMaterial(SpriteMaterialTransparency::Premultiplied, false);
+				batchedMat->Render(widget.drawGroupMesh, drawGroup.subMesh, drawGroup.destination->GetColorTexture(0),
 					mSamplerState, buffer, nullptr, false);
 			}
 		}
@@ -1801,7 +1801,7 @@ namespace bs
 				widget->paramBlocks.resize(numBuffers);
 
 				for (UINT32 i = numAllocatedBuffers; i < numBuffers; i++)
-					widget->paramBlocks[i] = gGUISpriteParamBlockDef.createBuffer();
+					widget->paramBlocks[i] = gGUISpriteParamBlockDef.CreateBuffer();
 			}
 
 			UINT32 curBufferIdx = 0;
@@ -1828,13 +1828,13 @@ namespace bs
 				UINT32 numIndices = numQuads * 6;
 
 				SPtr<VertexDataDesc> vertexDesc = bs_shared_ptr_new<VertexDataDesc>();
-				vertexDesc->addVertElem(VET_FLOAT2, VES_POSITION);
-				vertexDesc->addVertElem(VET_FLOAT2, VES_TEXCOORD);
+				vertexDesc->AddVertElem(VET_FLOAT2, VES_POSITION);
+				vertexDesc->AddVertElem(VET_FLOAT2, VES_TEXCOORD);
 
 				SPtr<MeshData> meshData = MeshData::Create(numVertices, numIndices, vertexDesc);
 
-				auto vertexData = (Vector2*)meshData->getElementData(VES_POSITION);
-				UINT32* indices = meshData->getIndices32();
+				auto vertexData = (Vector2*)meshData->GetElementData(VES_POSITION);
+				UINT32* indices = meshData->GetIndices32();
 
 				UINT32 quadIdx = 0;
 				for (auto& drawGroup : widget->drawGroups)
@@ -1931,29 +1931,29 @@ namespace bs
 	void GUIRenderer::UpdateParamBlockBuffer(const SPtr<GpuParamBlockBuffer>& buffer, float invViewportWidth,
 		float invViewportHeight, bool flipY, const Matrix4& tfrm, GUIMeshRenderData& renderData) const
 	{
-		gGUISpriteParamBlockDef.gTint.set(buffer, renderData.tint);
-		gGUISpriteParamBlockDef.gWorldTransform.set(buffer, tfrm);
-		gGUISpriteParamBlockDef.gInvViewportWidth.set(buffer, invViewportWidth);
-		gGUISpriteParamBlockDef.gInvViewportHeight.set(buffer, invViewportHeight);
-		gGUISpriteParamBlockDef.gViewportYFlip.set(buffer, flipY ? -1.0f : 1.0f);
+		gGUISpriteParamBlockDef.gTint.Set(buffer, renderData.tint);
+		gGUISpriteParamBlockDef.gWorldTransform.Set(buffer, tfrm);
+		gGUISpriteParamBlockDef.gInvViewportWidth.Set(buffer, invViewportWidth);
+		gGUISpriteParamBlockDef.gInvViewportHeight.Set(buffer, invViewportHeight);
+		gGUISpriteParamBlockDef.gViewportYFlip.Set(buffer, flipY ? -1.0f : 1.0f);
 
 		float t = std::max(0.0f, mTime - renderData.animationStartTime);
 		if(renderData.spriteTexture)
 		{
 			UINT32 row;
 			UINT32 column;
-			renderData.spriteTexture->getAnimationFrame(t, row, column);
+			renderData.spriteTexture->GetAnimationFrame(t, row, column);
 
-			float invWidth = 1.0f / renderData.spriteTexture->getAnimation().numColumns;
-			float invHeight = 1.0f / renderData.spriteTexture->getAnimation().numRows;
+			float invWidth = 1.0f / renderData.spriteTexture->GetAnimation().numColumns;
+			float invHeight = 1.0f / renderData.spriteTexture->GetAnimation().numRows;
 
 			Vector4 sizeOffset(invWidth, invHeight, column * invWidth, row * invHeight);
-			gGUISpriteParamBlockDef.gUVSizeOffset.set(buffer, sizeOffset);
+			gGUISpriteParamBlockDef.gUVSizeOffset.Set(buffer, sizeOffset);
 		}
 		else
-			gGUISpriteParamBlockDef.gUVSizeOffset.set(buffer, Vector4(1.0f, 1.0f, 0.0f, 0.0f));
+			gGUISpriteParamBlockDef.gUVSizeOffset.Set(buffer, Vector4(1.0f, 1.0f, 0.0f, 0.0f));
 
-		buffer->flushToGPU();
+		buffer->FlushToGpu();
 	}
 	}
 }

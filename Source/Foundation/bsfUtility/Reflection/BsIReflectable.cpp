@@ -9,18 +9,18 @@ namespace bs
 {
 	void IReflectable::RegisterRTTITypeInternal(RTTITypeBase* rttiType)
 	{
-		if(IsTypeIdDuplicateInternal(rttiType->getRTTIId()))
+		if(IsTypeIdDuplicateInternal(rttiType->GetRttiId()))
 		{
-			BS_EXCEPT(InternalErrorException, "RTTI type \"" + rttiType->getRTTIName() +
-				"\" has a duplicate ID: " + toString(rttiType->getRTTIId()));
+			BS_EXCEPT(InternalErrorException, "RTTI type \"" + rttiType->GetRttiName() +
+				"\" has a duplicate ID: " + toString(rttiType->GetRttiId()));
 		}
 
-		GetAllRttiTypes()[rttiType->getRTTIId()] = rttiType;
+		GetAllRttiTypes()[rttiType->GetRttiId()] = rttiType;
 	}
 
 	SPtr<IReflectable> IReflectable::CreateInstanceFromTypeId(UINT32 rttiTypeId)
 	{
-		RTTITypeBase* type = GetRTTIfromTypeIdInternal(rttiTypeId);
+		RTTITypeBase* type = GetRttifromTypeIdInternal(rttiTypeId);
 
 		SPtr<IReflectable> output;
 		if(type != nullptr)
@@ -29,10 +29,10 @@ namespace bs
 		return output;
 	}
 
-	RTTITypeBase* IReflectable::GetRTTIfromTypeIdInternal(UINT32 rttiTypeId)
+	RTTITypeBase* IReflectable::GetRttifromTypeIdInternal(UINT32 rttiTypeId)
 	{
 		const auto iterFind = GetAllRttiTypes().find(rttiTypeId);
-		if(iterFind != getAllRTTITypes().end())
+		if(iterFind != GetAllRttiTypes().end())
 			return iterFind->second;
 
 		return nullptr;
@@ -43,50 +43,50 @@ namespace bs
 		if(typeId == TID_Abstract)
 			return false;
 
-		return IReflectable::GetRTTIfromTypeIdInternal(typeId) != nullptr;
+		return IReflectable::GetRttifromTypeIdInternal(typeId) != nullptr;
 	}
 
 	bool IReflectable::IsDerivedFrom(RTTITypeBase* base)
 	{
-		return getRTTI()->isDerivedFrom(base);
+		return GetRtti()->IsDerivedFrom(base);
 	}
 
 	void IReflectable::CheckForCircularReferencesInternal()
 	{
 		Stack<RTTITypeBase*> todo;
 
-		const UnorderedMap<UINT32, RTTITypeBase*>& allTypes = getAllRTTITypes();
+		const UnorderedMap<UINT32, RTTITypeBase*>& allTypes = GetAllRttiTypes();
 		for(auto& entry : allTypes)
 		{
 			RTTITypeBase* myType = entry.second;
 
-			UINT32 myNumFields = myType->getNumFields();
+			UINT32 myNumFields = myType->GetNumFields();
 			for (UINT32 i = 0; i < myNumFields; i++)
 			{
-				RTTIField* myField = myType->getField(i);
+				RTTIField* myField = myType->GetField(i);
 
 				if (myField->schema.type != SerializableFT_ReflectablePtr)
 					continue;
 
 				auto* myReflectablePtrField = static_cast<RTTIReflectablePtrFieldBase*>(myField);
 				
-				RTTITypeBase* otherType = myReflectablePtrField->getType();
-				UINT32 otherNumFields = otherType->getNumFields();
+				RTTITypeBase* otherType = myReflectablePtrField->GetType();
+				UINT32 otherNumFields = otherType->GetNumFields();
 				for (UINT32 j = 0; j < otherNumFields; j++)
 				{
-					RTTIField* otherField = otherType->getField(j);
+					RTTIField* otherField = otherType->GetField(j);
 
 					if (otherField->schema.type != SerializableFT_ReflectablePtr)
 						continue;
 
 					auto* otherReflectablePtrField = static_cast<RTTIReflectablePtrFieldBase*>(otherField);
 
-					if (myType->getRTTIId() == otherReflectablePtrField->getType()->getRTTIId() &&
-						(!myReflectablePtrField->schema.info.flags.isSet(RTTIFieldFlag::WeakRef) &&
-						!otherReflectablePtrField->schema.info.flags.isSet(RTTIFieldFlag::WeakRef)))
+					if (myType->GetRttiId() == otherReflectablePtrField->GetType()->GetRttiId() &&
+						(!myReflectablePtrField->schema.info.flags.IsSet(RTTIFieldFlag::WeakRef) &&
+						!otherReflectablePtrField->schema.info.flags.IsSet(RTTIFieldFlag::WeakRef)))
 					{
-						BS_EXCEPT(InternalErrorException, "Found circular reference on RTTI type: " + myType->getRTTIName()
-							+ " to type: " + otherType->getRTTIName() + ". Either remove one of the references or mark it"
+						BS_EXCEPT(InternalErrorException, "Found circular reference on RTTI type: " + myType->GetRttiName()
+							+ " to type: " + otherType->GetRttiName() + ". Either remove one of the references or mark it"
 							+ " as a weak reference when defining the RTTI field.");
 					}
 				}
@@ -96,12 +96,12 @@ namespace bs
 
 	UINT32 IReflectable::GetTypeId() const
 	{
-		return getRTTI()->getRTTIId();
+		return GetRtti()->GetRttiId();
 	}
 
 	const String& IReflectable::GetTypeName() const
 	{
-		return getRTTI()->getRTTIName();
+		return GetRtti()->GetRttiName();
 	}
 
 	RTTITypeBase* IReflectable::GetRttiStatic()

@@ -38,7 +38,7 @@ namespace bs
 		ScriptResource* scriptvalue;
 		scriptvalue = ScriptResource::toNative(value.value);
 		if(scriptvalue != nullptr)
-			tmpvalue = static_resource_cast<Resource>(scriptvalue->getGenericHandle());
+			tmpvalue = static_resource_cast<Resource>(scriptvalue->GetGenericHandle());
 		output.value = tmpvalue;
 
 		return output;
@@ -54,7 +54,7 @@ namespace bs
 		scriptvalue = ScriptResourceManager::Instance().getScriptResource(value.value, true);
 		MonoObject* tmpvalue;
 		if(scriptvalue != nullptr)
-			tmpvalue = scriptvalue->getManagedInstance();
+			tmpvalue = scriptvalue->GetManagedInstance();
 		else
 			tmpvalue = nullptr;
 		output.value = tmpvalue;

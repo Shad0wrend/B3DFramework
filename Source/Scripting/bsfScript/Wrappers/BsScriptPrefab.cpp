@@ -30,17 +30,17 @@ namespace bs
 
 	MonoObject* ScriptPrefab::InternalInstantiate(ScriptPrefab* thisPtr)
 	{
-		HPrefab prefab = thisPtr->getHandle();
+		HPrefab prefab = thisPtr->GetHandle();
 
 		HSceneObject instance = prefab->instantiate();
 		ScriptSceneObject* scriptInstance = ScriptGameObjectManager::Instance().getOrCreateScriptSceneObject(instance);
 
-		return scriptInstance->getManagedInstance();
+		return scriptInstance->GetManagedInstance();
 	}
 
 	bool ScriptPrefab::InternalIsScene(ScriptPrefab* thisPtr)
 	{
-		HPrefab prefab = thisPtr->getHandle();
+		HPrefab prefab = thisPtr->GetHandle();
 		return prefab->isScene();
 	}
 

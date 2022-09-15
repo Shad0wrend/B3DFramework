@@ -31,19 +31,19 @@ namespace bs { namespace ct
 			for(auto& samplerParam : samplerParams)
 			{
 				UINT32 paramIdx;
-				auto result = params->getParamIndex(samplerParam.first, MaterialParams::ParamType::Sampler, GPDT_UNKNOWN,
+				auto result = params->GetParamIndex(samplerParam.first, MaterialParams::ParamType::Sampler, GPDT_UNKNOWN,
 					0, paramIdx);
 
 				// Parameter shouldn't be in the valid parameter list if it cannot be found
 				assert(result == MaterialParams::GetParamResult::Success);
-				const MaterialParamsBase::ParamData* materialParamData = params->getParamData(paramIdx);
+				const MaterialParamsBase::ParamData* materialParamData = params->GetParamData(paramIdx);
 
 				UINT32 overrideIdx = (UINT32)overrides.size();
 				overrides.push_back(SamplerOverride());
 				SamplerOverride& override = overrides.back();
 
 				SPtr<SamplerState> samplerState;
-				params->getSamplerState(*materialParamData, samplerState);
+				params->GetSamplerState(*materialParamData, samplerState);
 
 				if (samplerState == nullptr)
 					samplerState = SamplerState::GetDefault();
@@ -76,7 +76,7 @@ namespace bs { namespace ct
 				for (UINT32 j = 0; j < GpuParamsSet::NUM_STAGES; j++)
 				{
 					GpuProgramType progType = (GpuProgramType)j;
-					SPtr<GpuParamDesc> paramDesc = paramsPtr->getParamDesc(progType);
+					SPtr<GpuParamDesc> paramDesc = paramsPtr->GetParamDesc(progType);
 					if (paramDesc == nullptr)
 						continue;
 
@@ -98,11 +98,11 @@ namespace bs { namespace ct
 			UINT32* slotsPerSetIter = slotsPerSet;
 			for (UINT32 i = 0; i < numPasses; i++)
 			{
-				SPtr<GpuParams> paramsPtr = paramsSet->getGpuParams(i);
+				SPtr<GpuParams> paramsPtr = paramsSet->GetGpuParams(i);
 				for (UINT32 j = 0; j < GpuParamsSet::NUM_STAGES; j++)
 				{
 					GpuProgramType progType = (GpuProgramType)j;
-					SPtr<GpuParamDesc> paramDesc = paramsPtr->getParamDesc(progType);
+					SPtr<GpuParamDesc> paramDesc = paramsPtr->GetParamDesc(progType);
 					if (paramDesc == nullptr)
 						continue;
 
@@ -139,7 +139,7 @@ namespace bs { namespace ct
 			slotsPerSetIter = slotsPerSet;
 			for (UINT32 i = 0; i < numPasses; i++)
 			{
-				SPtr<GpuParams> paramsPtr = paramsSet->getGpuParams(i);
+				SPtr<GpuParams> paramsPtr = paramsSet->GetGpuParams(i);
 
 				PassSamplerOverrides& passOverrides = output->passes[i];
 				passOverrides.numSets = numSetsPerPass[i];
@@ -155,7 +155,7 @@ namespace bs { namespace ct
 				for (UINT32 j = 0; j < GpuParamsSet::NUM_STAGES; j++)
 				{
 					GpuProgramType progType = (GpuProgramType)j;
-					SPtr<GpuParamDesc> paramDesc = paramsPtr->getParamDesc(progType);
+					SPtr<GpuParamDesc> paramDesc = paramsPtr->GetParamDesc(progType);
 					if (paramDesc == nullptr)
 						continue;
 
@@ -214,7 +214,7 @@ namespace bs { namespace ct
 
 	bool SamplerOverrideUtility::CheckNeedsOverride(const SPtr<SamplerState>& samplerState, const SPtr<RenderBeastOptions>& options)
 	{
-		const SamplerProperties& props = samplerState->getProperties();
+		const SamplerProperties& props = samplerState->GetProperties();
 
 		switch (options->filtering)
 		{
@@ -264,7 +264,7 @@ namespace bs { namespace ct
 
 	SPtr<SamplerState> SamplerOverrideUtility::GenerateSamplerOverride(const SPtr<SamplerState>& samplerState, const SPtr<RenderBeastOptions>& options)
 	{
-		const SamplerProperties& props = samplerState->getProperties();
+		const SamplerProperties& props = samplerState->GetProperties();
 		SAMPLER_STATE_DESC desc = props.getDesc();
 
 		switch (options->filtering)

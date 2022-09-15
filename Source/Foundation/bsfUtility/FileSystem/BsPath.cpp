@@ -93,9 +93,9 @@ namespace bs
 	}
 
 #if BS_PLATFORM == BS_PLATFORM_WIN32
-	WString Path::toPlatformString() const
+	WString Path::ToPlatformString() const
 	{
-		return UTF8::toWide(toString());
+		return UTF8::ToWide(ToString());
 	}
 #endif
 
@@ -104,12 +104,12 @@ namespace bs
 		switch (type)
 		{
 		case PathType::Windows:
-			return buildWindows();
+			return BuildWindows();
 		case PathType::Unix:
-			return buildUnix();
+			return BuildUnix();
 		default:
 #if BS_PLATFORM == BS_PLATFORM_WIN32
-			return buildWindows();
+			return BuildWindows();
 #elif BS_PLATFORM == BS_PLATFORM_OSX || BS_PLATFORM == BS_PLATFORM_LINUX
 			return buildUnix();
 #else
@@ -122,7 +122,7 @@ namespace bs
 	Path Path::GetParent() const
 	{
 		Path copy = *this;
-		copy.makeParent();
+		copy.MakeParent();
 
 		return copy;
 	}
@@ -130,7 +130,7 @@ namespace bs
 	Path Path::GetAbsolute(const Path& base) const
 	{
 		Path copy = *this;
-		copy.makeAbsolute(base);
+		copy.MakeAbsolute(base);
 
 		return copy;
 	}
@@ -138,7 +138,7 @@ namespace bs
 	Path Path::GetRelative(const Path& base) const
 	{
 		Path copy = *this;
-		copy.makeRelative(base);
+		copy.MakeRelative(base);
 
 		return copy;
 	}
@@ -181,14 +181,14 @@ namespace bs
 		if (mIsAbsolute)
 			return *this;
 
-		Path absDir = base.getDirectory();
-		if (base.isFile())
-			absDir.pushDirectory(base.mFilename);
+		Path absDir = base.GetDirectory();
+		if (base.IsFile())
+			absDir.PushDirectory(base.mFilename);
 
 		for (auto& dir : mDirectories)
-			absDir.pushDirectory(dir);
+			absDir.PushDirectory(dir);
 
-		absDir.setFilename(mFilename);
+		absDir.SetFilename(mFilename);
 		*this = absDir;
 
 		return *this;
@@ -196,14 +196,14 @@ namespace bs
 
 	Path& Path::MakeRelative(const Path& base)
 	{
-		if (!base.includes(*this))
+		if (!base.Includes(*this))
 			return *this;
 
 		mDirectories.erase(mDirectories.begin(), mDirectories.begin() + base.mDirectories.size());
 
 		// Sometimes a directory name can be interpreted as a file and we're okay with that. Check for that
 		// special case.
-		if (base.isFile())
+		if (base.IsFile())
 		{
 			if (mDirectories.size() > 0)
 				mDirectories.erase(mDirectories.begin());
@@ -234,7 +234,7 @@ namespace bs
 			if (iterChild == child.mDirectories.end())
 				return false;
 
-			if (!comparePathElem(*iterChild, *iterParent))
+			if (!ComparePathElem(*iterChild, *iterParent))
 				return false;
 		}
 
@@ -245,12 +245,12 @@ namespace bs
 				if (child.mFilename.empty())
 					return false;
 
-				if (!comparePathElem(child.mFilename, mFilename))
+				if (!ComparePathElem(child.mFilename, mFilename))
 					return false;
 			}
 			else
 			{
-				if (!comparePathElem(*iterChild, mFilename))
+				if (!ComparePathElem(*iterChild, mFilename))
 					return false;
 			}			
 		}
@@ -265,11 +265,11 @@ namespace bs
 
 		if (mIsAbsolute)
 		{
-			if (!comparePathElem(mDevice, other.mDevice))
+			if (!ComparePathElem(mDevice, other.mDevice))
 				return false;
 		}
 
-		if (!comparePathElem(mNode, other.mNode))
+		if (!ComparePathElem(mNode, other.mNode))
 			return false;
 
 		UINT32 myNumElements = (UINT32)mDirectories.size();
@@ -291,7 +291,7 @@ namespace bs
 
 			for(UINT32 i = 0; i < (myNumElements - 1); i++, ++iterMe, ++iterOther)
 			{
-				if (!comparePathElem(*iterMe, *iterOther))
+				if (!ComparePathElem(*iterMe, *iterOther))
 					return false;
 			}
 
@@ -299,12 +299,12 @@ namespace bs
 			{
 				if (!other.mFilename.empty())
 				{
-					if (!comparePathElem(mFilename, other.mFilename))
+					if (!ComparePathElem(mFilename, other.mFilename))
 						return false;
 				}
 				else
 				{
-					if (!comparePathElem(mFilename, *iterOther))
+					if (!ComparePathElem(mFilename, *iterOther))
 						return false;
 				}
 			}
@@ -312,12 +312,12 @@ namespace bs
 			{
 				if (!other.mFilename.empty())
 				{
-					if (!comparePathElem(*iterMe, other.mFilename))
+					if (!ComparePathElem(*iterMe, other.mFilename))
 						return false;
 				}
 				else
 				{
-					if (!comparePathElem(*iterMe, *iterOther))
+					if (!ComparePathElem(*iterMe, *iterOther))
 						return false;
 				}
 			}
@@ -329,10 +329,10 @@ namespace bs
 	Path& Path::Append(const Path& path)
 	{
 		if (!mFilename.empty())
-			pushDirectory(mFilename);
+			PushDirectory(mFilename);
 
 		for (auto& dir : path.mDirectories)
-			pushDirectory(dir);
+			PushDirectory(dir);
 
 		mFilename = path.mFilename;
 
@@ -341,13 +341,13 @@ namespace bs
 
 	void Path::SetBasename(const String& basename)
 	{
-		mFilename = basename + getExtension();
+		mFilename = basename + GetExtension();
 	}
 
 	void Path::SetExtension(const String& extension)
 	{
 		StringStream stream;
-		stream << getFilename(false);
+		stream << GetFilename(false);
 		stream << extension;
 
 		mFilename = stream.str();
@@ -389,7 +389,7 @@ namespace bs
 
 	const String& Path::GetTail() const
 	{
-		if (isFile())
+		if (IsFile())
 			return mFilename;
 		else if (mDirectories.size() > 0)
 			return mDirectories.back();
@@ -474,12 +474,12 @@ namespace bs
 
 	Path Path::operator+ (const Path& rhs) const
 	{
-		return Path::combine(*this, rhs);
+		return Path::Combine(*this, rhs);
 	}
 
 	Path& Path::operator+= (const Path& rhs)
 	{
-		return append(rhs);
+		return Append(rhs);
 	}
 
 	bool Path::ComparePathElem(const String& left, const String& right)
@@ -488,13 +488,13 @@ namespace bs
 		// fails. Instead of this way where we're allocating two temporary strings with dynamic memory. Although that
 		// approach is problematic as well because UTF8 case conversion requires external library calls which might not
 		// support single character conversion, so it might end up being less efficient.
-		return UTF8::toLower(left) == UTF8::toLower(right);
+		return UTF8::ToLower(left) == UTF8::ToLower(right);
 	}
 
 	Path Path::Combine(const Path& left, const Path& right)
 	{
 		Path output = left;
-		return output.append(right);
+		return output.Append(right);
 	}
 
 	void Path::StripInvalid(String& path)

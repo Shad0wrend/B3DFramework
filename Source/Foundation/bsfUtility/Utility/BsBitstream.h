@@ -585,14 +585,14 @@ namespace bs
 	template <class T>
 	uint64_t Bitstream::Write(const T& value)
 	{
-		return writeBits((QuantType*)&value, sizeof(value) * 8);
+		return WriteBits((QuantType*)&value, sizeof(value) * 8);
 	}
 
 	template <class T>
 	uint64_t Bitstream::Read(T& value)
 	{
 		QuantType* temp = (QuantType*)&value;
-		return readBits(temp, sizeof(value) * 8);
+		return ReadBits(temp, sizeof(value) * 8);
 	}
 
 	inline uint64_t Bitstream::Write(const bool& value)
@@ -651,7 +651,7 @@ namespace bs
 	template <class T>
 	uint32_t Bitstream::WriteBytes(const T& value)
 	{
-		uint64_t numBits = writeBits((QuantType*)& value, sizeof(value) * 8);
+		uint64_t numBits = WriteBits((QuantType*)& value, sizeof(value) * 8);
 		assert((numBits % 8) == 0);
 		
 		return (uint32_t)(numBits / 8);
@@ -661,7 +661,7 @@ namespace bs
 	uint32_t Bitstream::ReadBytes(T& value)
 	{
 		QuantType* temp = (QuantType*)& value;
-		uint64_t numBits = readBits(temp, sizeof(value) * 8);
+		uint64_t numBits = ReadBits(temp, sizeof(value) * 8);
 		assert((numBits % 8) == 0);
 
 		return (uint32_t)(numBits / 8);
@@ -681,16 +681,16 @@ namespace bs
 	uint64_t Bitstream::WriteDelta(const T& value, const T& lastValue)
 	{
 		if (value == lastValue)
-			return write(true);
+			return Write(true);
 		else
-			return write(false) + write(value);
+			return Write(false) + write(value);
 	}
 
 	template <class T>
 	uint64_t Bitstream::ReadDelta(T& value, const T& lastValue)
 	{
 		bool clean;
-		read(clean);
+		Read(clean);
 
 		if (clean)
 		{
@@ -808,12 +808,12 @@ namespace bs
 	{
 		if (value == lastValue)
 		{
-			write(true);
+			Write(true);
 			return 1;
 		}
 		else
 		{
-			write(false);
+			Write(false);
 			return writeVarInt(value) + 1;
 		}
 	}
@@ -822,7 +822,7 @@ namespace bs
 	uint32_t Bitstream::ReadVarIntDelta(T& value, const T& lastValue)
 	{
 		bool clean;
-		read(clean);
+		Read(clean);
 
 		if (clean)
 		{
@@ -880,11 +880,11 @@ namespace bs
 	void Bitstream::WriteNormDelta(const T& value, const T& lastValue, uint32_t bits)
 	{
 		if(value == lastValue)
-			write(true);
+			Write(true);
 		else
 		{
-			write(false);
-			writeNorm(value, bits);
+			Write(false);
+			WriteNorm(value, bits);
 		}
 	}
 
@@ -892,12 +892,12 @@ namespace bs
 	void Bitstream::ReadNormDelta(T& value, const T& lastValue, uint32_t bits)
 	{
 		bool clean;
-		read(clean);
+		Read(clean);
 
 		if(clean)
 			value = lastValue;
 		else
-			readNorm(value, bits);
+			ReadNorm(value, bits);
 	}
 
 
@@ -905,10 +905,10 @@ namespace bs
 	uint32_t Bitstream::WriteRange(const T& value, const T& min, const T& max)
 	{
 		T range = max - min;
-		uint32_t bits = Bitwise::mostSignificantBit(range) + 1;
+		uint32_t bits = Bitwise::MostSignificantBit(range) + 1;
 
 		T rangeVal = value - min;
-		writeBits((QuantType*)&rangeVal, bits);
+		WriteBits((QuantType*)&rangeVal, bits);
 
 		return bits;
 	}
@@ -917,10 +917,10 @@ namespace bs
 	uint32_t Bitstream::ReadRange(T& value, const T& min, const T& max)
 	{
 		T range = max - min;
-		uint32_t bits = Bitwise::mostSignificantBit(range) + 1;
+		uint32_t bits = Bitwise::MostSignificantBit(range) + 1;
 
 		value = 0;
-		readBits((QuantType*)&value, bits);
+		ReadBits((QuantType*)&value, bits);
 		value += min;
 
 		return bits;
@@ -931,13 +931,13 @@ namespace bs
 	{
 		if (value == lastValue)
 		{
-			write(true);
+			Write(true);
 			return 1;
 		}
 		else
 		{
-			write(false);
-			return writeRange(value, min, max) + 1;
+			Write(false);
+			return WriteRange(value, min, max) + 1;
 		}
 	}
 
@@ -945,7 +945,7 @@ namespace bs
 	uint32_t Bitstream::ReadRangeDelta(T& value, const T& lastValue, const T& min, const T& max)
 	{
 		bool clean;
-		read(clean);
+		Read(clean);
 
 		if (clean)
 		{
@@ -953,7 +953,7 @@ namespace bs
 			return 1;
 		}
 		else
-			return readRange(value, min, max) + 1;
+			return ReadRange(value, min, max) + 1;
 	}
 
 	inline void Bitstream::WriteRange(float value, float min, float max, uint32_t bits)

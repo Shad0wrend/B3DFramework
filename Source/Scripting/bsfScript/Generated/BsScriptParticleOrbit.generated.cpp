@@ -39,13 +39,13 @@ namespace bs
 	{
 		PARTICLE_ORBIT_DESC tmpoptions;
 		tmpoptions = ScriptPARTICLE_ORBIT_DESC::FromInterop(*options);
-		thisPtr->GetInternal()->setOptions(tmpoptions);
+		thisPtr->GetInternal()->SetOptions(tmpoptions);
 	}
 
 	void ScriptParticleOrbit::InternalGetOptions(ScriptParticleOrbit* thisPtr, __PARTICLE_ORBIT_DESCInterop* __output)
 	{
 		PARTICLE_ORBIT_DESC tmp__output;
-		tmp__output = thisPtr->getInternal()->getOptions();
+		tmp__output = thisPtr->GetInternal()->GetOptions();
 
 		__PARTICLE_ORBIT_DESCInterop interop__output;
 		interop__output = ScriptPARTICLE_ORBIT_DESC::ToInterop(tmp__output);

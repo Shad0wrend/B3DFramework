@@ -32,7 +32,7 @@ namespace bs
 			if (mParent != nullptr)
 				mParent->RemoveChild(this);
 
-			GUIFixedSpace::destroy(mFixedSpace);
+			GUIFixedSpace::Destroy(mFixedSpace);
 
 			mIsDestroyed = true;
 		}

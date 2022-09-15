@@ -43,7 +43,7 @@ namespace bs
 
 			if (Is3D())
 			{
-				Vector3 position = transform.getPosition();
+				Vector3 position = transform.GetPosition();
 				alSource3f(mSourceIDs[i], AL_POSITION, position.x, position.y, position.z);
 			}
 			else
@@ -256,7 +256,7 @@ namespace bs
 
 	void OAAudioSource::SetTime(float time)
 	{
-		if (!mAudioClip.isLoaded())
+		if (!mAudioClip.IsLoaded())
 			return;
 
 		AudioSourceState state = getState();
@@ -271,8 +271,8 @@ namespace bs
 				clipTime = time;
 			else
 			{
-				if (mAudioClip.isLoaded())
-					mStreamProcessedPosition = (UINT32)(time * mAudioClip->getFrequency() * mAudioClip->getNumChannels());
+				if (mAudioClip.IsLoaded())
+					mStreamProcessedPosition = (UINT32)(time * mAudioClip->GetFrequency() * mAudioClip->GetNumChannels());
 				else
 					mStreamProcessedPosition = 0;
 
@@ -317,8 +317,8 @@ namespace bs
 		else
 		{
 			float timeOffset = 0.0f;
-			if (mAudioClip.isLoaded())
-				timeOffset = (float)mStreamProcessedPosition / mAudioClip->getFrequency() / mAudioClip->getNumChannels();
+			if (mAudioClip.IsLoaded())
+				timeOffset = (float)mStreamProcessedPosition / mAudioClip->GetFrequency() / mAudioClip->GetNumChannels();
 
 			// When streaming, the returned offset is relative to the last queued buffer
 			alGetSourcef(mSourceIDs[0], AL_SEC_OFFSET, &time);
@@ -402,7 +402,7 @@ namespace bs
 
 			if (is3D())
 			{
-				Vector3 position = mTransform.getPosition();
+				Vector3 position = mTransform.GetPosition();
 
 				alSourcei(mSourceIDs[i], AL_SOURCE_RELATIVE, false);
 				alSource3f(mSourceIDs[i], AL_POSITION, position.x, position.y, position.z);
@@ -421,7 +421,7 @@ namespace bs
 				if (!mIsStreaming)
 				{
 					UINT32 oaBuffer = 0;
-					if (mAudioClip.isLoaded())
+					if (mAudioClip.IsLoaded())
 					{
 						OAAudioClip* oaClip = static_cast<OAAudioClip*>(mAudioClip.get());
 						oaBuffer = oaClip->GetOpenALBufferInternal();
@@ -487,12 +487,12 @@ namespace bs
 	void OAAudioSource::StreamUnlocked()
 	{
 		AudioDataInfo info;
-		info.bitDepth = mAudioClip->getBitDepth();
-		info.numChannels = mAudioClip->getNumChannels();
-		info.sampleRate = mAudioClip->getFrequency();
+		info.bitDepth = mAudioClip->GetBitDepth();
+		info.numChannels = mAudioClip->GetNumChannels();
+		info.sampleRate = mAudioClip->GetFrequency();
 		info.numSamples = 0;
 
-		UINT32 totalNumSamples = mAudioClip->getNumSamples();
+		UINT32 totalNumSamples = mAudioClip->GetNumSamples();
 
 		// Note: It is safe to access contexts here only because it is guaranteed by the OAAudio manager that it will always
 		// stop all streaming before changing contexts. Otherwise a mutex lock would be needed for every context access.
@@ -600,7 +600,7 @@ namespace bs
 
 		OAAudioClip* audioClip = static_cast<OAAudioClip*>(mAudioClip.get());
 
-		audioClip->getSamples(samples, mStreamQueuedPosition, numSamples);
+		audioClip->GetSamples(samples, mStreamQueuedPosition, numSamples);
 		mStreamQueuedPosition += numSamples;
 
 		info.numSamples = numSamples;
@@ -625,7 +625,7 @@ namespace bs
 			if (!requiresStreaming())
 			{
 				UINT32 oaBuffer = 0;
-				if (mAudioClip.isLoaded())
+				if (mAudioClip.IsLoaded())
 				{
 					OAAudioClip* oaClip = static_cast<OAAudioClip*>(mAudioClip.get());
 					oaBuffer = oaClip->GetOpenALBufferInternal();
@@ -662,7 +662,7 @@ namespace bs
 
 	bool OAAudioSource::Is3D() const
 	{
-		if (!mAudioClip.isLoaded())
+		if (!mAudioClip.IsLoaded())
 			return true;
 
 		return mAudioClip->is3D();
@@ -670,11 +670,11 @@ namespace bs
 
 	bool OAAudioSource::RequiresStreaming() const
 	{
-		if (!mAudioClip.isLoaded())
+		if (!mAudioClip.IsLoaded())
 			return false;
 
-		AudioReadMode readMode = mAudioClip->getReadMode();
-		bool isCompressed = readMode == AudioReadMode::LoadCompressed && mAudioClip->getFormat() != AudioFormat::PCM;
+		AudioReadMode readMode = mAudioClip->GetReadMode();
+		bool isCompressed = readMode == AudioReadMode::LoadCompressed && mAudioClip->GetFormat() != AudioFormat::PCM;
 
 		return (readMode == AudioReadMode::Stream) || isCompressed;
 	}

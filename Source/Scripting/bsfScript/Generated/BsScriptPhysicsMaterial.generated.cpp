@@ -38,18 +38,18 @@ namespace bs
 	}
 	MonoObject* ScriptPhysicsMaterial::InternalGetRef(ScriptPhysicsMaterial* thisPtr)
 	{
-		return thisPtr->getRRef();
+		return thisPtr->GetRRef();
 	}
 
 	void ScriptPhysicsMaterial::InternalSetStaticFriction(ScriptPhysicsMaterial* thisPtr, float value)
 	{
-		thisPtr->getHandle()->setStaticFriction(value);
+		thisPtr->GetHandle()->SetStaticFriction(value);
 	}
 
 	float ScriptPhysicsMaterial::InternalGetStaticFriction(ScriptPhysicsMaterial* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getHandle()->getStaticFriction();
+		tmp__output = thisPtr->GetHandle()->GetStaticFriction();
 
 		float __output;
 		__output = tmp__output;
@@ -59,13 +59,13 @@ namespace bs
 
 	void ScriptPhysicsMaterial::InternalSetDynamicFriction(ScriptPhysicsMaterial* thisPtr, float value)
 	{
-		thisPtr->getHandle()->setDynamicFriction(value);
+		thisPtr->GetHandle()->SetDynamicFriction(value);
 	}
 
 	float ScriptPhysicsMaterial::InternalGetDynamicFriction(ScriptPhysicsMaterial* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getHandle()->getDynamicFriction();
+		tmp__output = thisPtr->GetHandle()->GetDynamicFriction();
 
 		float __output;
 		__output = tmp__output;
@@ -75,13 +75,13 @@ namespace bs
 
 	void ScriptPhysicsMaterial::InternalSetRestitutionCoefficient(ScriptPhysicsMaterial* thisPtr, float value)
 	{
-		thisPtr->getHandle()->setRestitutionCoefficient(value);
+		thisPtr->GetHandle()->SetRestitutionCoefficient(value);
 	}
 
 	float ScriptPhysicsMaterial::InternalGetRestitutionCoefficient(ScriptPhysicsMaterial* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getHandle()->getRestitutionCoefficient();
+		tmp__output = thisPtr->GetHandle()->GetRestitutionCoefficient();
 
 		float __output;
 		__output = tmp__output;

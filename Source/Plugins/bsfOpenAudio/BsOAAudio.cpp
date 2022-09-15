@@ -79,7 +79,7 @@ namespace bs
 
 	void OAAudio::SetVolume(float volume)
 	{
-		mVolume = Math::clamp01(volume);
+		mVolume = Math::Clamp01(volume);
 		
 		for (auto& listener : mListeners)
 			listener->rebuild();
@@ -98,7 +98,7 @@ namespace bs
 		mIsPaused = paused;
 
 		for (auto& source : mSources)
-			source->setGlobalPause(paused);
+			source->SetGlobalPause(paused);
 	}
 
 	void OAAudio::UpdateInternal()

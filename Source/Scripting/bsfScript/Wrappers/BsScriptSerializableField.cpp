@@ -34,7 +34,7 @@ namespace bs
 	MonoObject* ScriptSerializableField::Create(MonoObject* parentObject, const SPtr<ManagedSerializableMemberInfo>& fieldInfo)
 	{
 		MonoString* monoStrName = MonoUtil::WstringToMono(toWString(fieldInfo->mName));
-		MonoReflectionType* internalType = MonoUtil::getType(fieldInfo->mTypeInfo->getMonoClass());
+		MonoReflectionType* internalType = MonoUtil::getType(fieldInfo->mTypeInfo->GetMonoClass());
 		UINT32 fieldFlags = (UINT32)fieldInfo->mFlags;
 
 		void* params[4] = { parentObject, monoStrName, &fieldFlags, internalType };
@@ -89,7 +89,7 @@ namespace bs
 			MonoClass* step = ScriptAssemblyManager::Instance().getBuiltinClasses().stepAttribute;
 			if (step != nullptr)
 			{
-				MonoObject* attrib = fieldInfo->getAttribute(step);
+				MonoObject* attrib = fieldInfo->GetAttribute(step);
 				ScriptStep::getStepField()->get(attrib, &interopStyle.stepIncrement);
 			}
 		}
@@ -99,7 +99,7 @@ namespace bs
 			MonoClass* category = ScriptAssemblyManager::Instance().getBuiltinClasses().categoryAttribute;
 			if (category != nullptr)
 			{
-				MonoObject* attrib = fieldInfo->getAttribute(category);
+				MonoObject* attrib = fieldInfo->GetAttribute(category);
 				ScriptCategory::GetNameField()->get(attrib, &interopStyle.categoryName);
 			}
 		}
@@ -109,7 +109,7 @@ namespace bs
 			MonoClass* order = ScriptAssemblyManager::Instance().getBuiltinClasses().orderAttribute;
 			if (order != nullptr)
 			{
-				MonoObject* attrib = fieldInfo->getAttribute(order);
+				MonoObject* attrib = fieldInfo->GetAttribute(order);
 				ScriptOrder::getIndexField()->get(attrib, &interopStyle.order);
 			}
 		}

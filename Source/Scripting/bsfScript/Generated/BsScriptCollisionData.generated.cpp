@@ -77,9 +77,9 @@ namespace bs
 			if(value.collider[i])
 				scriptcollider = ScriptGameObjectManager::Instance().getBuiltinScriptComponent(static_object_cast<Component>(value.collider[i]));
 				if(scriptcollider != nullptr)
-				arraycollider.set(i, scriptcollider->getManagedInstance());
+				arraycollider.Set(i, scriptcollider->GetManagedInstance());
 			else
-				arraycollider.set(i, nullptr);
+				arraycollider.Set(i, nullptr);
 		}
 		veccollider = arraycollider.getInternal();
 		output.collider = veccollider;
@@ -88,7 +88,7 @@ namespace bs
 		ScriptArray arraycontactPoints = ScriptArray::create<ScriptContactPoint>(arraySizecontactPoints);
 		for(int i = 0; i < arraySizecontactPoints; i++)
 		{
-			arraycontactPoints.set(i, ScriptContactPoint::toInterop(value.contactPoints[i]));
+			arraycontactPoints.Set(i, ScriptContactPoint::toInterop(value.contactPoints[i]));
 		}
 		veccontactPoints = arraycontactPoints.getInternal();
 		output.contactPoints = veccontactPoints;

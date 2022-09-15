@@ -114,7 +114,7 @@ namespace bs
 		{
 			if (mParameters != nullptr)
 			{
-				mStringData->concatenateString(mCachedString, mParameters, mStringData->numParameters);
+				mStringData->ConcatenateString(mCachedString, mParameters, mStringData->numParameters);
 				mStringPtr = &mCachedString;
 			}
 			else

@@ -51,11 +51,11 @@ namespace bs
 
 	bool Joint::GetEnableCollision() const
 	{
-		return mInternal->getEnableCollision();
+		return mInternal->GetEnableCollision();
 	}
 
 	void Joint::SetEnableCollision(bool value)
 	{
-		mInternal->setEnableCollision(value);
+		mInternal->SetEnableCollision(value);
 	}		
 }

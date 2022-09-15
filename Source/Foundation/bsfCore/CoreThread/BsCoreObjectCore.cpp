@@ -40,12 +40,12 @@ namespace bs
 				BS_EXCEPT(InternalErrorException, "You cannot call this method on the core thread. It will cause a deadlock!");
 #endif
 
-			gCoreThread().submitAll(true);
+			gCoreThread().SubmitAll(true);
 
 			Lock lock(mCoreGpuObjectLoadedMutex);
-			while (!isInitialized())
+			while (!IsInitialized())
 			{
-				if (!isScheduledToBeInitialized())
+				if (!IsScheduledToBeInitialized())
 					BS_EXCEPT(InternalErrorException, "Attempting to wait until initialization finishes but object is not scheduled to be initialized.");
 
 				mCoreGpuObjectLoadedCondition.wait(lock);

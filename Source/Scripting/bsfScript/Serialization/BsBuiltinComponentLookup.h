@@ -39,7 +39,7 @@ namespace bs
 																															\
 			BuiltinComponentInfo entry;																						\
 			entry.metaData = ScriptType::getMetaData();																		\
-			entry.typeId = ComponentType::GetRttiStatic()->getRTTIId();														\
+			entry.typeId = ComponentType::GetRttiStatic()->GetRttiId();														\
 			entry.monoClass = nullptr;																						\
 			entry.createCallback = &create##ScriptType;																		\
 																															\

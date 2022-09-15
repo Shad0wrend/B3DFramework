@@ -375,9 +375,9 @@ namespace bs
 		template<bool SAFE = true>
 		static Vector3 Normalize(const Vector3& v, float tolerance = 1e-04f)
 		{
-			float sqrdLen = dot(v, v);
+			float sqrdLen = Dot(v, v);
 			if (!SAFE || sqrdLen > tolerance)
-				return v * Math::invSqrt(sqrdLen);
+				return v * Math::InvSqrt(sqrdLen);
 
 			return v;
 		}

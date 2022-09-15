@@ -42,11 +42,11 @@ namespace bs
 			while (mChildren.size() > 0)
 			{
 				ChildInfo childInfo = mChildren[0];
-				childInfo.element->destroy();
+				childInfo.element->Destroy();
 			}
 
 			if (mOwnsNative)
-				GUILayout::destroy(mLayout);
+				GUILayout::Destroy(mLayout);
 
 			mLayout = nullptr;
 			mIsDestroyed = true;
@@ -58,7 +58,7 @@ namespace bs
 		ChildInfo childInfo;
 
 		childInfo.element = element;
-		childInfo.gcHandle = MonoUtil::newGCHandle(element->getManagedInstance(), false);
+		childInfo.gcHandle = MonoUtil::newGCHandle(element->GetManagedInstance(), false);
 
 		mChildren.push_back(childInfo);
 	}
@@ -68,7 +68,7 @@ namespace bs
 		ChildInfo childInfo;
 
 		childInfo.element = element;
-		childInfo.gcHandle = MonoUtil::newGCHandle(element->getManagedInstance(), false);
+		childInfo.gcHandle = MonoUtil::newGCHandle(element->GetManagedInstance(), false);
 
 		mChildren.insert(mChildren.begin() + idx, childInfo);
 	}
@@ -137,9 +137,9 @@ namespace bs
 	void ScriptGUILayout::InternalCreateInstanceYFromScrollArea(MonoObject* instance, MonoObject* parentScrollArea)
 	{
 		ScriptGUIScrollArea* scriptScrollArea = ScriptGUIScrollArea::toNative(parentScrollArea);
-		GUIScrollArea* scrollArea = (GUIScrollArea*)scriptScrollArea->getGUIElement();
+		GUIScrollArea* scrollArea = (GUIScrollArea*)scriptScrollArea->GetGUIElement();
 
-		GUILayout* nativeLayout = &scrollArea->getLayout();
+		GUILayout* nativeLayout = &scrollArea->GetLayout();
 
 		ScriptGUIScrollAreaLayout* nativeInstance = new (bs_alloc<ScriptGUIScrollAreaLayout>())
 			ScriptGUIScrollAreaLayout(instance, nativeLayout);
@@ -153,12 +153,12 @@ namespace bs
 		if (instance->isDestroyed() || element->isDestroyed())
 			return;
 
-		instance->getInternalValue()->addElement(element->getGUIElement());
+		instance->GetInternalValue()->AddElement(element->GetGUIElement());
 
-		if (element->getParent() != nullptr)
-			element->getParent()->removeChild(element);
+		if (element->GetParent() != nullptr)
+			element->GetParent()->removeChild(element);
 
-		element->setParent(instance);
+		element->SetParent(instance);
 		instance->addChild(element);
 	}
 
@@ -167,12 +167,12 @@ namespace bs
 		if (instance->isDestroyed() || element->isDestroyed())
 			return;
 
-		instance->getInternalValue()->insertElement(index, element->getGUIElement());
+		instance->GetInternalValue()->insertElement(index, element->GetGUIElement());
 
-		if (element->getParent() != nullptr)
-			element->getParent()->removeChild(element);
+		if (element->GetParent() != nullptr)
+			element->GetParent()->removeChild(element);
 
-		element->setParent(instance);
+		element->SetParent(instance);
 		instance->insertChild(index, element);
 	}
 
@@ -181,7 +181,7 @@ namespace bs
 		if (instance->isDestroyed())
 			return 0;
 
-		return instance->mLayout->getNumChildren();
+		return instance->mLayout->GetNumChildren();
 	}
 
 	MonoObject* ScriptGUILayout::InternalGetChild(ScriptGUILayout* instance, UINT32 index)
@@ -189,7 +189,7 @@ namespace bs
 		if (instance->isDestroyed() || index >= instance->mChildren.size())
 			return nullptr;
 
-		return instance->mChildren[index].element->getManagedInstance();
+		return instance->mChildren[index].element->GetManagedInstance();
 	}
 
 	void ScriptGUILayout::InternalClear(ScriptGUILayout* instance)
@@ -199,14 +199,14 @@ namespace bs
 
 		for (auto& child : instance->mChildren)
 		{
-			instance->getInternalValue()->removeElement(child.element->getGUIElement());
+			instance->GetInternalValue()->removeElement(child.element->GetGUIElement());
 
 			assert(child.gcHandle != 0);
 
 			MonoUtil::freeGCHandle(child.gcHandle);
 			child.gcHandle = 0;
 
-			child.element->setParent(nullptr);
+			child.element->SetParent(nullptr);
 		}
 
 		instance->mChildren.clear();
@@ -233,7 +233,7 @@ namespace bs
 		
 	}
 
-	void ScriptGUIScrollAreaLayout::destroy()
+	void ScriptGUIScrollAreaLayout::Destroy()
 	{
 		if (!mIsDestroyed)
 		{
@@ -243,7 +243,7 @@ namespace bs
 			while (mChildren.size() > 0)
 			{
 				ChildInfo childInfo = mChildren[0];
-				childInfo.element->destroy();
+				childInfo.element->Destroy();
 			}
 
 			mLayout = nullptr;

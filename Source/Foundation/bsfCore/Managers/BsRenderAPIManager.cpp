@@ -37,9 +37,9 @@ namespace bs
 		{
 			if(strcmp((*iter)->Name(), name) == 0)
 			{
-				(*iter)->create();		
+				(*iter)->Create();		
 				mRenderAPIInitialized = true;
-				return ct::RenderAPI::Instance().initialize(primaryWindowDesc);
+				return ct::RenderAPI::Instance().Initialize(primaryWindowDesc);
 			}
 		}
 

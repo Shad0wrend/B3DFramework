@@ -460,14 +460,14 @@ namespace bs
 	 * returns a null.
 	 */
 	template<typename Type>
-	struct GetRTTIType
+	struct GetRttiType
 	{
 		RTTITypeBase* operator()() { return Type::GetRttiStatic(); }
 	};
 
 	/** Specialization for root class of RTTI hierarchy - IReflectable. */
 	template<>
-	struct GetRTTIType<IReflectable>
+	struct GetRttiType<IReflectable>
 	{
 		RTTITypeBase* operator()() { return nullptr; }
 	};
@@ -526,7 +526,7 @@ namespace bs
 		/** @copydoc RTTITypeBase::getBaseClass */
 		RTTITypeBase* GetBaseClass() override
 		{
-			return GetRTTIType<BaseType>()();
+			return GetRttiType<BaseType>()();
 		}
 
 		/** @copydoc RTTITypeBase::isDerivedFrom */
@@ -582,8 +582,8 @@ namespace bs
 				"Data type derives from IReflectable but it is being added as a plain field.");
 
 			auto newField = bs_new<RTTIPlainField<InterfaceType, DataType, ObjectType>>();
-			newField->initSingle(name, uniqueId, getter, setter, info);
-			addNewField(newField);
+			newField->InitSingle(name, uniqueId, getter, setter, info);
+			AddNewField(newField);
 		}
 
 		/** Registers a field referencing an IReflectable type passed by value. */
@@ -597,8 +597,8 @@ namespace bs
 				"Invalid data type for complex field. It needs to derive from bs::IReflectable.");
 
 			auto newField = bs_new<RTTIReflectableField<InterfaceType, DataType, ObjectType>>();
-			newField->initSingle(name, uniqueId, getter, setter, info);
-			addNewField(newField);
+			newField->InitSingle(name, uniqueId, getter, setter, info);
+			AddNewField(newField);
 		}
 
 		/** Registers a field referencing an IReflectable type passed by pointer. */
@@ -612,8 +612,8 @@ namespace bs
 				"Invalid data type for complex field. It needs to derive from bs::IReflectable.");
 
 			auto newField = bs_new<RTTIReflectablePtrField<InterfaceType, DataType, ObjectType>>();
-			newField->initSingle(name, uniqueId, getter, setter, info);
-			addNewField(newField);
+			newField->InitSingle(name, uniqueId, getter, setter, info);
+			AddNewField(newField);
 		}
 
 		/** Registers a field referencing an array of plain types. */
@@ -632,8 +632,8 @@ namespace bs
 				"Data type derives from IReflectable but it is being added as a plain field.");
 
 			auto newField = bs_new<RTTIPlainField<InterfaceType, DataType, ObjectType>>();
-			newField->initArray(name, uniqueId, getter, getSize, setter, setSize, info);
-			addNewField(newField);
+			newField->InitArray(name, uniqueId, getter, getSize, setter, setSize, info);
+			AddNewField(newField);
 		}	
 
 		/** Registers a field referencing an array of IReflectable objects. */
@@ -649,8 +649,8 @@ namespace bs
 				"Invalid data type for complex field. It needs to derive from bs::IReflectable.");
 
 			auto newField = bs_new<RTTIReflectableField<InterfaceType, DataType, ObjectType>>();
-			newField->initArray(name, uniqueId, getter, getSize, setter, setSize, info);
-			addNewField(newField);
+			newField->InitArray(name, uniqueId, getter, getSize, setter, setSize, info);
+			AddNewField(newField);
 		}
 
 		/** Registers a field referencing an array of IReflectable pointers. */
@@ -666,8 +666,8 @@ namespace bs
 				"Invalid data type for complex field. It needs to derive from bs::IReflectable.");
 
 			auto newField = bs_new<RTTIReflectablePtrField<InterfaceType, DataType, ObjectType>>();
-			newField->initArray(name, uniqueId, getter, getSize, setter, setSize, info);
-			addNewField(newField);
+			newField->InitArray(name, uniqueId, getter, getSize, setter, setSize, info);
+			AddNewField(newField);
 		}
 
 		/** Registers a field referencing a blob of memory. */
@@ -677,8 +677,8 @@ namespace bs
 			const RTTIFieldInfo& info = RTTIFieldInfo::DEFAULT)
 		{
 			auto newField = bs_new<RTTIManagedDataBlockField<InterfaceType, UINT8*, ObjectType>>();
-			newField->initSingle(name, uniqueId, getter, setter, info);
-			addNewField(newField);
+			newField->InitSingle(name, uniqueId, getter, setter, info);
+			AddNewField(newField);
 		}	
 	};
 
@@ -701,7 +701,7 @@ namespace bs
 		static_assert((std::is_base_of<bs::IReflectable, T>::value),
 			"Invalid data type for type checking. It needs to derive from bs::IReflectable.");
 
-		return object->GetTypeId() == T::GetRttiStatic()->getRTTIId();
+		return object->GetTypeId() == T::GetRttiStatic()->GetRttiId();
 	}
 
 	/** Returns true if the provided object can be safely cast into type T. */
@@ -711,7 +711,7 @@ namespace bs
 		static_assert((std::is_base_of<bs::IReflectable, T>::value),
 			"Invalid data type for type checking. It needs to derive from bs::IReflectable.");
 
-		return object->GetTypeId() == T::GetRttiStatic()->getRTTIId();
+		return object->GetTypeId() == T::GetRttiStatic()->GetRttiId();
 	}
 
 	/** Creates a new object just from its type ID. */

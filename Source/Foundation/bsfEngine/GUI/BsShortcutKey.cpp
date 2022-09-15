@@ -82,7 +82,7 @@ namespace bs
 		else
 		{
 			charStr = Platform::KeyCodeToUnicode((UINT32)button);
-			StringUtil::toUpperCase(charStr);
+			StringUtil::ToUpperCase(charStr);
 		}
 
 		return MODIFIER_TO_NAME[(UINT32)modifier] + charStr;

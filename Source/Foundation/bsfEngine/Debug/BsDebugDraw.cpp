@@ -25,7 +25,7 @@ namespace bs
 	DebugDraw::DebugDraw()
 	{
 		mDrawHelper = bs_new<DrawHelper>();
-		mRenderer = RendererExtension::create<ct::DebugDrawRenderer>(nullptr);
+		mRenderer = RendererExtension::Create<ct::DebugDrawRenderer>(nullptr);
 	}
 
 	DebugDraw::~DebugDraw()
@@ -35,78 +35,78 @@ namespace bs
 
 	void DebugDraw::SetColor(const Color& color)
 	{
-		mDrawHelper->setColor(color);
+		mDrawHelper->SetColor(color);
 	}
 
 	void DebugDraw::SetTransform(const Matrix4& transform)
 	{
-		mDrawHelper->setTransform(transform);
+		mDrawHelper->SetTransform(transform);
 	}
 
 	void DebugDraw::DrawCube(const Vector3& position, const Vector3& extents)
 	{
-		mDrawHelper->cube(position, extents);
+		mDrawHelper->Cube(position, extents);
 	}
 
 	void DebugDraw::DrawSphere(const Vector3& position, float radius)
 	{
-		mDrawHelper->sphere(position, radius);
+		mDrawHelper->Sphere(position, radius);
 	}
 
 	void DebugDraw::DrawCone(const Vector3& base, const Vector3& normal, float height, float radius, const Vector2& scale)
 	{
-		mDrawHelper->cone(base, normal, height, radius, scale);
+		mDrawHelper->Cone(base, normal, height, radius, scale);
 	}
 
 	void DebugDraw::DrawDisc(const Vector3& position, const Vector3& normal, float radius)
 	{
-		mDrawHelper->disc(position, normal, radius);
+		mDrawHelper->Disc(position, normal, radius);
 	}
 
 	void DebugDraw::DrawWireCube(const Vector3& position, const Vector3& extents)
 	{
-		mDrawHelper->wireCube(position, extents);
+		mDrawHelper->WireCube(position, extents);
 	}
 
 	void DebugDraw::DrawWireSphere(const Vector3& position, float radius)
 	{
-		mDrawHelper->wireSphere(position, radius);
+		mDrawHelper->WireSphere(position, radius);
 	}
 
 	void DebugDraw::DrawWireCone(const Vector3& base, const Vector3& normal, float height, float radius, const Vector2& scale)
 	{
-		mDrawHelper->wireCone(base, normal, height, radius, scale);
+		mDrawHelper->WireCone(base, normal, height, radius, scale);
 	}
 
 	void DebugDraw::DrawLine(const Vector3& start, const Vector3& end)
 	{
-		mDrawHelper->line(start, end);
+		mDrawHelper->Line(start, end);
 	}
 
 	void DebugDraw::DrawLineList(const Vector<Vector3>& linePoints)
 	{
-		mDrawHelper->lineList(linePoints);
+		mDrawHelper->LineList(linePoints);
 	}
 
 	void DebugDraw::DrawWireDisc(const Vector3& position, const Vector3& normal, float radius)
 	{
-		mDrawHelper->wireDisc(position, normal, radius);
+		mDrawHelper->WireDisc(position, normal, radius);
 	}
 
 	void DebugDraw::DrawWireArc(const Vector3& position, const Vector3& normal, float radius,
 		Degree startAngle, Degree amountAngle)
 	{
-		mDrawHelper->wireArc(position, normal, radius, startAngle, amountAngle);
+		mDrawHelper->WireArc(position, normal, radius, startAngle, amountAngle);
 	}
 
 	void DebugDraw::DrawWireMesh(const SPtr<MeshData>& meshData)
 	{
-		mDrawHelper->wireMesh(meshData);
+		mDrawHelper->WireMesh(meshData);
 	}
 
 	void DebugDraw::DrawFrustum(const Vector3& position, float aspect, Degree FOV, float near, float far)
 	{
-		mDrawHelper->frustum(position, aspect, FOV, near, far);
+		mDrawHelper->Frustum(position, aspect, FOV, near, far);
 	}
 
 	Vector<DebugDraw::MeshRenderData> DebugDraw::CreateMeshProxyData(const Vector<DrawHelper::ShapeMeshData>& meshData)
@@ -115,11 +115,11 @@ namespace bs
 		for (auto& entry : meshData)
 		{
 			if (entry.type == DrawHelper::MeshType::Solid)
-				proxyData.push_back(MeshRenderData(entry.mesh->getCore(), entry.subMesh, DebugDrawMaterial::Solid));
+				proxyData.push_back(MeshRenderData(entry.mesh->GetCore(), entry.subMesh, DebugDrawMaterial::Solid));
 			else if (entry.type == DrawHelper::MeshType::Wire)
-				proxyData.push_back(MeshRenderData(entry.mesh->getCore(), entry.subMesh, DebugDrawMaterial::Wire));
+				proxyData.push_back(MeshRenderData(entry.mesh->GetCore(), entry.subMesh, DebugDrawMaterial::Wire));
 			else if (entry.type == DrawHelper::MeshType::Line)
-				proxyData.push_back(MeshRenderData(entry.mesh->getCore(), entry.subMesh, DebugDrawMaterial::Line));
+				proxyData.push_back(MeshRenderData(entry.mesh->GetCore(), entry.subMesh, DebugDrawMaterial::Line));
 		}
 
 		return proxyData;
@@ -127,18 +127,18 @@ namespace bs
 
 	void DebugDraw::Clear()
 	{
-		mDrawHelper->clear();
+		mDrawHelper->Clear();
 	}
 
 	void DebugDraw::UpdateInternal()
 	{
 		mActiveMeshes.clear();
-		mActiveMeshes = mDrawHelper->buildMeshes(DrawHelper::SortType::None);
+		mActiveMeshes = mDrawHelper->BuildMeshes(DrawHelper::SortType::None);
 
-		Vector<MeshRenderData> proxyData = createMeshProxyData(mActiveMeshes);
+		Vector<MeshRenderData> proxyData = CreateMeshProxyData(mActiveMeshes);
 
 		ct::DebugDrawRenderer* renderer = mRenderer.get();
-		gCoreThread().queueCommand(std::bind(&ct::DebugDrawRenderer::updateData, renderer, proxyData));
+		gCoreThread().QueueCommand(std::bind(&ct::DebugDrawRenderer::UpdateData, renderer, proxyData));
 	}
 
 	namespace ct
@@ -155,21 +155,21 @@ namespace bs
 	{
 		BS_RENMAT_PROFILE_BLOCK
 
-		mParams->setParamBlockBuffer("Params", params);
+		mParams->SetParamBlockBuffer("Params", params);
 
-		bind();
-		gRendererUtility().draw(mesh, subMesh);
+		Bind();
+		gRendererUtility().Draw(mesh, subMesh);
 	}
 
 	DebugDrawMat* DebugDrawMat::GetVariation(DebugDrawMaterial mat)
 	{
 		if (mat == DebugDrawMaterial::Solid)
-			return get(getVariation<true, false, false>());
+			return Get(GetVariation<true, false, false>());
 		
 		if (mat == DebugDrawMaterial::Wire)
-			return get(getVariation<false, false, true>());
+			return Get(GetVariation<false, false, true>());
 
-		return get(getVariation<false, true, false>());
+		return Get(GetVariation<false, true, false>());
 	}
 
 	DebugDrawRenderer::DebugDrawRenderer()
@@ -196,21 +196,21 @@ namespace bs
 
 	void DebugDrawRenderer::Render(const Camera& camera, const RendererViewContext& viewContext)
 	{
-		SPtr<RenderTarget> renderTarget = camera.getViewport()->getTarget();
+		SPtr<RenderTarget> renderTarget = camera.GetViewport()->GetTarget();
 		if (renderTarget == nullptr)
 			return;
 
-		Matrix4 viewMatrix = camera.getViewMatrix();
-		Matrix4 projMatrix = camera.getProjectionMatrixRS();
+		Matrix4 viewMatrix = camera.GetViewMatrix();
+		Matrix4 projMatrix = camera.GetProjectionMatrixRs();
 		Matrix4 viewProjMat = projMatrix * viewMatrix;
 
-		gDebugDrawParamsDef.gMatViewProj.set(mParamBuffer, viewProjMat);
-		gDebugDrawParamsDef.gViewDir.set(mParamBuffer, (Vector4)camera.getTransform().getForward());
+		gDebugDrawParamsDef.gMatViewProj.Set(mParamBuffer, viewProjMat);
+		gDebugDrawParamsDef.gViewDir.Set(mParamBuffer, (Vector4)camera.GetTransform().GetForward());
 
 		for (auto& entry : mMeshes)
 		{
-			DebugDrawMat* mat = DebugDrawMat::getVariation(entry.type);
-			mat->execute(mParamBuffer, entry.mesh, entry.subMesh);
+			DebugDrawMat* mat = DebugDrawMat::GetVariation(entry.type);
+			mat->Execute(mParamBuffer, entry.mesh, entry.subMesh);
 		}
 	}
 	}

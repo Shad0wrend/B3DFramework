@@ -108,23 +108,23 @@ namespace bs
 		memAllocs = MemoryCounter::GetNumAllocs();
 		memFrees = MemoryCounter::GetNumFrees();
 
-		timer.reset();
-		timer.start();
+		timer.Reset();
+		timer.Start();
 	}
 
-	void ProfilerCPU::ProfileData::endSample()
+	void ProfilerCPU::ProfileData::EndSample()
 	{
-		timer.stop();
+		timer.Stop();
 
-		UINT64 numAllocs = MemoryCounter::getNumAllocs() - memAllocs;
-		UINT64 numFrees = MemoryCounter::getNumFrees() - memFrees;
+		UINT64 numAllocs = MemoryCounter::GetNumAllocs() - memAllocs;
+		UINT64 numFrees = MemoryCounter::GetNumFrees() - memFrees;
 
 		samples.push_back(ProfileSample(timer.time, numAllocs, numFrees));
 	}
 
 	void ProfilerCPU::ProfileData::ResumeLastSample()
 	{
-		timer.start();
+		timer.Start();
 		samples.erase(samples.end() - 1);
 	}
 
@@ -134,26 +134,26 @@ namespace bs
 
 	void ProfilerCPU::PreciseProfileData::BeginSample()
 	{
-		memAllocs = MemoryCounter::getNumAllocs();
-		memFrees = MemoryCounter::getNumFrees();
+		memAllocs = MemoryCounter::GetNumAllocs();
+		memFrees = MemoryCounter::GetNumFrees();
 
-		timer.reset();
-		timer.start();
+		timer.Reset();
+		timer.Start();
 	}
 
 	void ProfilerCPU::PreciseProfileData::EndSample()
 	{
-		timer.stop();
+		timer.Stop();
 
-		UINT64 numAllocs = MemoryCounter::getNumAllocs() - memAllocs;
-		UINT64 numFrees = MemoryCounter::getNumFrees() - memFrees;
+		UINT64 numAllocs = MemoryCounter::GetNumAllocs() - memAllocs;
+		UINT64 numFrees = MemoryCounter::GetNumFrees() - memFrees;
 
 		samples.push_back(PreciseProfileSample(timer.cycles, numAllocs, numFrees));
 	}
 
 	void ProfilerCPU::PreciseProfileData::ResumeLastSample()
 	{
-		timer.start();
+		timer.Start();
 		samples.erase(samples.end() - 1);
 	}
 
@@ -174,25 +174,25 @@ namespace bs
 		}
 
 		if(rootBlock == nullptr)
-			rootBlock = getBlock(_name);
+			rootBlock = GetBlock(_name);
 
 		activeBlock = ActiveBlock(ActiveSamplingType::Basic, rootBlock);
 		if (activeBlocks == nullptr)
-			activeBlocks = frameAlloc.construct<Stack<ActiveBlock, StdFrameAlloc<ActiveBlock>>>
+			activeBlocks = frameAlloc.Construct<Stack<ActiveBlock, StdFrameAlloc<ActiveBlock>>>
 					(StdFrameAlloc<ActiveBlock>(&frameAlloc));
 
 		activeBlocks->push(activeBlock);
 		
-		rootBlock->basic.beginSample();
+		rootBlock->basic.BeginSample();
 		isActive = true;
 	}
 
 	void ProfilerCPU::ThreadInfo::End()
 	{
 		if(activeBlock.type == ActiveSamplingType::Basic)
-			activeBlock.block->basic.endSample();
+			activeBlock.block->basic.EndSample();
 		else
-			activeBlock.block->precise.endSample();
+			activeBlock.block->precise.EndSample();
 
 		activeBlocks->pop();
 
@@ -208,9 +208,9 @@ namespace bs
 			{
 				ActiveBlock& curBlock = activeBlocks->top();
 				if(curBlock.type == ActiveSamplingType::Basic)
-					curBlock.block->basic.endSample();
+					curBlock.block->basic.EndSample();
 				else
-					curBlock.block->precise.endSample();
+					curBlock.block->precise.EndSample();
 
 				activeBlocks->pop();
 			}
@@ -219,26 +219,26 @@ namespace bs
 		isActive = false;
 		activeBlock = ActiveBlock();
 
-		frameAlloc.free(activeBlocks);
+		frameAlloc.Free(activeBlocks);
 		activeBlocks = nullptr;
 	}
 
 	void ProfilerCPU::ThreadInfo::Reset()
 	{
 		if(isActive)
-			end();
+			End();
 
 		if(rootBlock != nullptr)
-			releaseBlock(rootBlock);
+			ReleaseBlock(rootBlock);
 
 		rootBlock = nullptr;
-		frameAlloc.clear(); // Note: This never actually frees memory
+		frameAlloc.Clear(); // Note: This never actually frees memory
 	}
 
 	ProfilerCPU::ProfiledBlock* ProfilerCPU::ThreadInfo::GetBlock(const char* name)
 	{
-		ProfiledBlock* block = frameAlloc.construct<ProfiledBlock>(&frameAlloc);
-		block->name = (char*)frameAlloc.alloc(((UINT32)strlen(name) + 1) * sizeof(char));
+		ProfiledBlock* block = frameAlloc.Construct<ProfiledBlock>(&frameAlloc);
+		block->name = (char*)frameAlloc.Alloc(((UINT32)strlen(name) + 1) * sizeof(char));
 		strcpy(block->name, name);
 
 		return block;
@@ -246,8 +246,8 @@ namespace bs
 
 	void ProfilerCPU::ThreadInfo::ReleaseBlock(ProfiledBlock* block)
 	{
-		frameAlloc.free((UINT8*)block->name);
-		frameAlloc.free(block);
+		frameAlloc.Free((UINT8*)block->name);
+		frameAlloc.Free(block);
 	}
 
 	ProfilerCPU::ProfiledBlock::ProfiledBlock(FrameAlloc* alloc)
@@ -259,7 +259,7 @@ namespace bs
 		ThreadInfo* thread = ThreadInfo::activeThread;
 
 		for(auto& child : children)
-			thread->releaseBlock(child);
+			thread->ReleaseBlock(child);
 
 		children.clear();
 	}
@@ -279,12 +279,12 @@ namespace bs
 	{
 		// TODO - We only estimate overhead on program start. It might be better to estimate it each time beginThread is called,
 		// and keep separate values per thread.
-		estimateTimerOverhead();
+		EstimateTimerOverhead();
 	}
 
 	ProfilerCPU::~ProfilerCPU()
 	{
-		reset();
+		Reset();
 
 		Lock lock(mThreadSync);
 
@@ -307,13 +307,13 @@ namespace bs
 			}
 		}
 
-		thread->begin(name);
+		thread->Begin(name);
 	}
 
 	void ProfilerCPU::EndThread()
 	{
 		// I don't do a nullcheck where on purpose, so endSample can be called ASAP
-		ThreadInfo::activeThread->end();
+		ThreadInfo::activeThread->End();
 	}
 
 	void ProfilerCPU::BeginSample(const char* name)
@@ -321,7 +321,7 @@ namespace bs
 		ThreadInfo* thread = ThreadInfo::activeThread;
 		if(thread == nullptr || !thread->isActive)
 		{
-			beginThread("Unknown");
+			BeginThread("Unknown");
 			thread = ThreadInfo::activeThread;
 		}
 
@@ -329,11 +329,11 @@ namespace bs
 		ProfiledBlock* block = nullptr;
 		
 		if(parent != nullptr)
-			block = parent->findChild(name);
+			block = parent->FindChild(name);
 
 		if(block == nullptr)
 		{
-			block = thread->getBlock(name);
+			block = thread->GetBlock(name);
 
 			if(parent != nullptr)
 				parent->children.push_back(block);
@@ -344,7 +344,7 @@ namespace bs
 		thread->activeBlock = ActiveBlock(ActiveSamplingType::Basic, block);
 		thread->activeBlocks->push(thread->activeBlock);
 
-		block->basic.beginSample();
+		block->basic.BeginSample();
 	}
 
 	void ProfilerCPU::EndSample(const char* name)
@@ -373,7 +373,7 @@ namespace bs
 		}
 #endif
 
-		block->basic.endSample();
+		block->basic.EndSample();
 
 		thread->activeBlocks->pop();
 
@@ -390,17 +390,17 @@ namespace bs
 		
 		ThreadInfo* thread = ThreadInfo::activeThread;
 		if(thread == nullptr || !thread->isActive)
-			beginThread("Unknown");
+			BeginThread("Unknown");
 
 		ProfiledBlock* parent = thread->activeBlock.block;
 		ProfiledBlock* block = nullptr;
 		
 		if(parent != nullptr)
-			block = parent->findChild(name);
+			block = parent->FindChild(name);
 
 		if(block == nullptr)
 		{
-			block = thread->getBlock(name);
+			block = thread->GetBlock(name);
 
 			if(parent != nullptr)
 				parent->children.push_back(block);
@@ -411,7 +411,7 @@ namespace bs
 		thread->activeBlock = ActiveBlock(ActiveSamplingType::Precise, block);
 		thread->activeBlocks->push(thread->activeBlock);
 
-		block->precise.beginSample();
+		block->precise.BeginSample();
 	}
 
 	void ProfilerCPU::EndSamplePrecise(const char* name)
@@ -440,7 +440,7 @@ namespace bs
 		}
 #endif
 
-		block->precise.endSample();
+		block->precise.EndSample();
 
 		thread->activeBlocks->pop();
 
@@ -455,7 +455,7 @@ namespace bs
 		ThreadInfo* thread = ThreadInfo::activeThread;
 
 		if(thread != nullptr)
-			thread->reset();
+			thread->Reset();
 	}
 
 	CPUProfilerReport ProfilerCPU::GenerateReport()
@@ -467,7 +467,7 @@ namespace bs
 			return report;
 
 		if(thread->isActive)
-			thread->end();
+			thread->End();
 
 		// We need to separate out basic and precise data and form two separate hierarchies
 		if(thread->rootBlock == nullptr)
@@ -770,8 +770,8 @@ namespace bs
 			Timer timer;
 			for (UINT32 i = 0; i < reps; i++)
 			{
-				timer.start();
-				timer.stop();
+				timer.Start();
+				timer.Stop();
 			}
 
 			double avgTime = double(timer.time)/double(reps);
@@ -781,8 +781,8 @@ namespace bs
 			TimerPrecise timerPrecise;
 			for (UINT32 i = 0; i < reps; i++)
 			{
-				timerPrecise.start();
-				timerPrecise.stop();
+				timerPrecise.Start();
+				timerPrecise.Stop();
 			}
 
 			UINT64 avgCycles = timerPrecise.cycles/reps;
@@ -801,47 +801,47 @@ namespace bs
 			/************************************************************************/
 
 			Timer timerA;
-			timerA.start();
+			timerA.Start();
 
-			beginThread("Main");
+			BeginThread("Main");
 
 			// Two different cases that can effect performance, one where
 			// sample already exists and other where new one needs to be created
 			for (UINT32 i = 0; i < sampleReps; i++)
 			{
-				beginSample("TestAvg1");
-				endSample("TestAvg1");
-				beginSample("TestAvg2");
-				endSample("TestAvg2");
-				beginSample("TestAvg3");
-				endSample("TestAvg3");
-				beginSample("TestAvg4");
-				endSample("TestAvg4");
-				beginSample("TestAvg5");
-				endSample("TestAvg5");
-				beginSample("TestAvg6");
-				endSample("TestAvg6");
-				beginSample("TestAvg7");
-				endSample("TestAvg7");
-				beginSample("TestAvg8");
-				endSample("TestAvg8");
-				beginSample("TestAvg9");
-				endSample("TestAvg9");
-				beginSample("TestAvg10");
-				endSample("TestAvg10");
+				BeginSample("TestAvg1");
+				EndSample("TestAvg1");
+				BeginSample("TestAvg2");
+				EndSample("TestAvg2");
+				BeginSample("TestAvg3");
+				EndSample("TestAvg3");
+				BeginSample("TestAvg4");
+				EndSample("TestAvg4");
+				BeginSample("TestAvg5");
+				EndSample("TestAvg5");
+				BeginSample("TestAvg6");
+				EndSample("TestAvg6");
+				BeginSample("TestAvg7");
+				EndSample("TestAvg7");
+				BeginSample("TestAvg8");
+				EndSample("TestAvg8");
+				BeginSample("TestAvg9");
+				EndSample("TestAvg9");
+				BeginSample("TestAvg10");
+				EndSample("TestAvg10");
 			}
 
 			for (UINT32 i = 0; i < sampleReps * 5; i++)
 			{
-				beginSample(("TestAvg#" + toString(i)).c_str());
-				endSample(("TestAvg#" + toString(i)).c_str());
+				BeginSample(("TestAvg#" + toString(i)).c_str());
+				EndSample(("TestAvg#" + toString(i)).c_str());
 			}
 
-			endThread();
+			EndThread();
 
-			timerA.stop();
+			timerA.Stop();
 
-			reset();
+			Reset();
 
 			double avgTimeBasic = double(timerA.time)/double(sampleReps * 10 + sampleReps * 5) - mBasicTimerOverhead;
 			if (avgTimeBasic < mBasicSamplingOverheadMs)
@@ -852,46 +852,46 @@ namespace bs
 			/************************************************************************/
 
 			TimerPrecise timerPreciseA;
-			timerPreciseA.start();
+			timerPreciseA.Start();
 
-			beginThread("Main");
+			BeginThread("Main");
 
 			// Two different cases that can effect performance, one where
 			// sample already exists and other where new one needs to be created
 			for (UINT32 i = 0; i < sampleReps; i++)
 			{
-				beginSample("TestAvg1");
-				endSample("TestAvg1");
-				beginSample("TestAvg2");
-				endSample("TestAvg2");
-				beginSample("TestAvg3");
-				endSample("TestAvg3");
-				beginSample("TestAvg4");
-				endSample("TestAvg4");
-				beginSample("TestAvg5");
-				endSample("TestAvg5");
-				beginSample("TestAvg6");
-				endSample("TestAvg6");
-				beginSample("TestAvg7");
-				endSample("TestAvg7");
-				beginSample("TestAvg8");
-				endSample("TestAvg8");
-				beginSample("TestAvg9");
-				endSample("TestAvg9");
-				beginSample("TestAvg10");
-				endSample("TestAvg10");
+				BeginSample("TestAvg1");
+				EndSample("TestAvg1");
+				BeginSample("TestAvg2");
+				EndSample("TestAvg2");
+				BeginSample("TestAvg3");
+				EndSample("TestAvg3");
+				BeginSample("TestAvg4");
+				EndSample("TestAvg4");
+				BeginSample("TestAvg5");
+				EndSample("TestAvg5");
+				BeginSample("TestAvg6");
+				EndSample("TestAvg6");
+				BeginSample("TestAvg7");
+				EndSample("TestAvg7");
+				BeginSample("TestAvg8");
+				EndSample("TestAvg8");
+				BeginSample("TestAvg9");
+				EndSample("TestAvg9");
+				BeginSample("TestAvg10");
+				EndSample("TestAvg10");
 			}
 
 			for (UINT32 i = 0; i < sampleReps * 5; i++)
 			{
-				beginSample(("TestAvg#" + toString(i)).c_str());
-				endSample(("TestAvg#" + toString(i)).c_str());
+				BeginSample(("TestAvg#" + toString(i)).c_str());
+				EndSample(("TestAvg#" + toString(i)).c_str());
 			}
 
-			endThread();
-			timerPreciseA.stop();
+			EndThread();
+			timerPreciseA.Stop();
 
-			reset();
+			Reset();
 
 			UINT64 avgCyclesBasic = timerPreciseA.cycles/(sampleReps * 10 + sampleReps * 5) - mPreciseTimerOverhead;
 			if (avgCyclesBasic < mBasicSamplingOverheadCycles)
@@ -902,45 +902,45 @@ namespace bs
 			/************************************************************************/
 
 			Timer timerB;
-			timerB.start();
-			beginThread("Main");
+			timerB.Start();
+			BeginThread("Main");
 
 			// Two different cases that can effect performance, one where
 			// sample already exists and other where new one needs to be created
 			for (UINT32 i = 0; i < sampleReps; i++)
 			{
-				beginSamplePrecise("TestAvg1");
-				endSamplePrecise("TestAvg1");
-				beginSamplePrecise("TestAvg2");
-				endSamplePrecise("TestAvg2");
-				beginSamplePrecise("TestAvg3");
-				endSamplePrecise("TestAvg3");
-				beginSamplePrecise("TestAvg4");
-				endSamplePrecise("TestAvg4");
-				beginSamplePrecise("TestAvg5");
-				endSamplePrecise("TestAvg5");
-				beginSamplePrecise("TestAvg6");
-				endSamplePrecise("TestAvg6");
-				beginSamplePrecise("TestAvg7");
-				endSamplePrecise("TestAvg7");
-				beginSamplePrecise("TestAvg8");
-				endSamplePrecise("TestAvg8");
-				beginSamplePrecise("TestAvg9");
-				endSamplePrecise("TestAvg9");
-				beginSamplePrecise("TestAvg10");
-				endSamplePrecise("TestAvg10");
+				BeginSamplePrecise("TestAvg1");
+				EndSamplePrecise("TestAvg1");
+				BeginSamplePrecise("TestAvg2");
+				EndSamplePrecise("TestAvg2");
+				BeginSamplePrecise("TestAvg3");
+				EndSamplePrecise("TestAvg3");
+				BeginSamplePrecise("TestAvg4");
+				EndSamplePrecise("TestAvg4");
+				BeginSamplePrecise("TestAvg5");
+				EndSamplePrecise("TestAvg5");
+				BeginSamplePrecise("TestAvg6");
+				EndSamplePrecise("TestAvg6");
+				BeginSamplePrecise("TestAvg7");
+				EndSamplePrecise("TestAvg7");
+				BeginSamplePrecise("TestAvg8");
+				EndSamplePrecise("TestAvg8");
+				BeginSamplePrecise("TestAvg9");
+				EndSamplePrecise("TestAvg9");
+				BeginSamplePrecise("TestAvg10");
+				EndSamplePrecise("TestAvg10");
 			}
 
 			for (UINT32 i = 0; i < sampleReps * 5; i++)
 			{
-				beginSamplePrecise(("TestAvg#" + toString(i)).c_str());
-				endSamplePrecise(("TestAvg#" + toString(i)).c_str());
+				BeginSamplePrecise(("TestAvg#" + toString(i)).c_str());
+				EndSamplePrecise(("TestAvg#" + toString(i)).c_str());
 			}
 
-			endThread();
-			timerB.stop();
+			EndThread();
+			timerB.Stop();
 
-			reset();
+			Reset();
 
 			double avgTimesPrecise = timerB.time/(sampleReps * 10 + sampleReps * 5);
 			if (avgTimesPrecise < mPreciseSamplingOverheadMs)
@@ -951,45 +951,45 @@ namespace bs
 			/************************************************************************/
 
 			TimerPrecise timerPreciseB;
-			timerPreciseB.start();
-			beginThread("Main");
+			timerPreciseB.Start();
+			BeginThread("Main");
 
 			// Two different cases that can effect performance, one where
 			// sample already exists and other where new one needs to be created
 			for (UINT32 i = 0; i < sampleReps; i++)
 			{
-				beginSamplePrecise("TestAvg1");
-				endSamplePrecise("TestAvg1");
-				beginSamplePrecise("TestAvg2");
-				endSamplePrecise("TestAvg2");
-				beginSamplePrecise("TestAvg3");
-				endSamplePrecise("TestAvg3");
-				beginSamplePrecise("TestAvg4");
-				endSamplePrecise("TestAvg4");
-				beginSamplePrecise("TestAvg5");
-				endSamplePrecise("TestAvg5");
-				beginSamplePrecise("TestAvg6");
-				endSamplePrecise("TestAvg6");
-				beginSamplePrecise("TestAvg7");
-				endSamplePrecise("TestAvg7");
-				beginSamplePrecise("TestAvg8");
-				endSamplePrecise("TestAvg8");
-				beginSamplePrecise("TestAvg9");
-				endSamplePrecise("TestAvg9");
-				beginSamplePrecise("TestAvg10");
-				endSamplePrecise("TestAvg10");
+				BeginSamplePrecise("TestAvg1");
+				EndSamplePrecise("TestAvg1");
+				BeginSamplePrecise("TestAvg2");
+				EndSamplePrecise("TestAvg2");
+				BeginSamplePrecise("TestAvg3");
+				EndSamplePrecise("TestAvg3");
+				BeginSamplePrecise("TestAvg4");
+				EndSamplePrecise("TestAvg4");
+				BeginSamplePrecise("TestAvg5");
+				EndSamplePrecise("TestAvg5");
+				BeginSamplePrecise("TestAvg6");
+				EndSamplePrecise("TestAvg6");
+				BeginSamplePrecise("TestAvg7");
+				EndSamplePrecise("TestAvg7");
+				BeginSamplePrecise("TestAvg8");
+				EndSamplePrecise("TestAvg8");
+				BeginSamplePrecise("TestAvg9");
+				EndSamplePrecise("TestAvg9");
+				BeginSamplePrecise("TestAvg10");
+				EndSamplePrecise("TestAvg10");
 			}
 
 			for (UINT32 i = 0; i < sampleReps * 5; i++)
 			{
-				beginSamplePrecise(("TestAvg#" + toString(i)).c_str());
-				endSamplePrecise(("TestAvg#" + toString(i)).c_str());
+				BeginSamplePrecise(("TestAvg#" + toString(i)).c_str());
+				EndSamplePrecise(("TestAvg#" + toString(i)).c_str());
 			}
 
-			endThread();
-			timerPreciseB.stop();
+			EndThread();
+			timerPreciseB.Stop();
 
-			reset();
+			Reset();
 
 			UINT64 avgCyclesPrecise = timerPreciseB.cycles/(sampleReps * 10 + sampleReps * 5);
 			if (avgCyclesPrecise < mPreciseSamplingOverheadCycles)

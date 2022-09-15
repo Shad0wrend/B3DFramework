@@ -25,7 +25,7 @@ namespace bs
 	{
 		mInternal = nullptr;
 
-		PhysicsMesh::destroy();
+		PhysicsMesh::Destroy();
 	}
 
 	FNullPhysicsMesh::FNullPhysicsMesh()
@@ -39,7 +39,7 @@ namespace bs
 	SPtr<MeshData> FNullPhysicsMesh::GetMeshData() const
 	{
 		SPtr<VertexDataDesc> vertexDesc = VertexDataDesc::Create();
-		vertexDesc->addVertElem(VET_FLOAT3, VES_POSITION);
+		vertexDesc->AddVertElem(VET_FLOAT3, VES_POSITION);
 
 		return MeshData::Create(0, 0, vertexDesc);
 	}

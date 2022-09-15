@@ -68,7 +68,7 @@ namespace bs
 	MonoString* ScriptHString::InternalGetValue(ScriptHString* thisPtr)
 	{
 		String tmp__output;
-		tmp__output = thisPtr->getInternal()->getValue();
+		tmp__output = thisPtr->GetInternal()->GetValue();
 
 		MonoString* __output;
 		__output = MonoUtil::stringToMono(tmp__output);
@@ -80,6 +80,6 @@ namespace bs
 	{
 		String tmpvalue;
 		tmpvalue = MonoUtil::monoToString(value);
-		thisPtr->getInternal()->setParameter(idx, tmpvalue);
+		thisPtr->GetInternal()->SetParameter(idx, tmpvalue);
 	}
 }

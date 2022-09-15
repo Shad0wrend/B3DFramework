@@ -173,7 +173,7 @@ namespace bs
 		 * Recreates the internal render elements. Must be called before fillBuffer if element is dirty. Marks the element
 		 * as non dirty.
 		 */
-		void UpdateRenderElementsInternal();
+		virtual void UpdateRenderElementsInternal();
 
 		/** Gets internal element style representing the exact type of GUI element in this object. */
 		virtual ElementType GetElementTypeInternal() const { return ElementType::Undefined; }
@@ -277,8 +277,6 @@ namespace bs
 		/** @} */
 
 	protected:
-		/**	Called whenever render elements are dirty and need to be rebuilt. */
-		virtual void UpdateRenderElementsInternal();
 
 		/**
 		 * Called whenever element clipped bounds need to be recalculated. (for example when width, height or clip 
@@ -371,7 +369,7 @@ namespace bs
 			{
 				UINT32 totalCount = 0;
 				for (UINT32 i = 0; i < N; i++)
-					totalCount += spriteInfos[i].sprite ? spriteInfos[i].sprite->getNumRenderElements() : 0;
+					totalCount += spriteInfos[i].sprite ? spriteInfos[i].sprite->GetNumRenderElements() : 0;
 
 				output.resize(totalCount);
 
@@ -380,11 +378,11 @@ namespace bs
 				{
 					const SpriteInfo& spriteInfo = spriteInfos[i];
 					
-					UINT32 count = spriteInfo.sprite ? spriteInfo.sprite->getNumRenderElements() : 0;
+					UINT32 count = spriteInfo.sprite ? spriteInfo.sprite->GetNumRenderElements() : 0;
 					for(UINT32 j = 0; j < count; j++)
 					{
 						GUIRenderElement& renderElem = output[globalIdx];
-						spriteInfo.sprite->getRenderElementInfo(j, renderElem);
+						spriteInfo.sprite->GetRenderElementInfo(j, renderElem);
 
 						renderElem.depth = spriteInfo.depth;
 						renderElem.type = spriteInfo.meshType;

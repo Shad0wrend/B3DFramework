@@ -25,7 +25,7 @@ namespace bs
 		if (name == "WINDOW" || name == "LINUX_WINDOW")
 		{
 			blockUntilCoreInitialized();
-			getCore()->getCustomAttribute(name, data);
+			getCore()->GetCustomAttribute(name, data);
 			return;
 		}
 	}
@@ -98,7 +98,7 @@ namespace bs
 		}
 	}
 
-	void LinuxRenderWindow::initialize()
+	void LinuxRenderWindow::Initialize()
 	{
 		LinuxPlatform::lockX();
 
@@ -146,10 +146,10 @@ namespace bs
 		mWindow = bs_new<LinuxWindow>(windowDesc);
 		mWindow->SetUserDataInternal(this);
 
-		props.width = mWindow->getWidth();
-		props.height = mWindow->getHeight();
-		props.top = mWindow->getTop();
-		props.left = mWindow->getLeft();
+		props.width = mWindow->GetWidth();
+		props.height = mWindow->GetHeight();
+		props.top = mWindow->GetTop();
+		props.left = mWindow->GetLeft();
 
 		props.hwGamma = visualConfig.caps.srgb;
 		props.multisampleCount = visualConfig.caps.numSamples;
@@ -177,7 +177,7 @@ namespace bs
 		}
 
 		bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
-		RenderWindow::initialize();
+		RenderWindow::Initialize();
 	}
 
 	void LinuxRenderWindow::setFullscreen(UINT32 width, UINT32 height, float refreshRate, UINT32 monitorIdx)
@@ -315,7 +315,7 @@ namespace bs
 
 				float refreshRate;
 				if (modeInfo.hTotal != 0 && modeInfo.vTotal != 0)
-					refreshRate = (float) (modeInfo.dotClock / (double) (modeInfo.hTotal * modeInfo.vTotal));
+					refreshRate = (float) (modeInfo.DotClock / (double) (modeInfo.hTotal * modeInfo.vTotal));
 				else
 					refreshRate = 0.0f;
 
@@ -324,7 +324,7 @@ namespace bs
 					modeID = modeInfo.id;
 					foundMode = true;
 
-					if (Math::approxEquals(refreshRate, mode.refreshRate))
+					if (Math::ApproxEquals(refreshRate, mode.refreshRate))
 						break;
 				}
 			}
@@ -430,8 +430,8 @@ namespace bs
 			mWindow->move(left, top);
 			LinuxPlatform::unlockX();
 
-			props.top = mWindow->getTop();
-			props.left = mWindow->getLeft();
+			props.top = mWindow->GetTop();
+			props.left = mWindow->GetLeft();
 
 			{
 				ScopedSpinLock lock(mLock);
@@ -454,8 +454,8 @@ namespace bs
 			mWindow->resize(width, height);
 			LinuxPlatform::unlockX();
 
-			props.width = mWindow->getWidth();
-			props.height = mWindow->getHeight();
+			props.width = mWindow->GetWidth();
+			props.height = mWindow->GetHeight();
 
 			{
 				ScopedSpinLock lock(mLock);
@@ -542,7 +542,7 @@ namespace bs
 
 		if ((dst.getRight() > getProperties().width) ||
 			(dst.getBottom() > getProperties().height) ||
-			(dst.getFront() != 0) || (dst.getBack() != 1))
+			(dst.GetFront() != 0) || (dst.getBack() != 1))
 		{
 			BS_EXCEPT(InvalidParametersException, "Invalid box.");
 		}
@@ -552,8 +552,8 @@ namespace bs
 			buffer = mProperties.isFullScreen ? FB_FRONT : FB_BACK;
 		}
 
-		GLenum format = GLPixelUtil::getGLOriginFormat(dst.getFormat());
-		GLenum type = GLPixelUtil::getGLOriginDataType(dst.getFormat());
+		GLenum format = GLPixelUtil::getGLOriginFormat(dst.GetFormat());
+		GLenum type = GLPixelUtil::getGLOriginDataType(dst.GetFormat());
 
 		if ((format == GL_NONE) || (type == 0))
 		{
@@ -565,18 +565,18 @@ namespace bs
 
 		glReadBuffer((buffer == FB_FRONT)? GL_FRONT : GL_BACK);
 		glReadPixels((GLint)dst.getLeft(), (GLint)dst.getTop(),
-				(GLsizei)dst.getWidth(), (GLsizei)dst.getHeight(),
-				format, type, dst.getData());
+				(GLsizei)dst.GetWidth(), (GLsizei)dst.GetHeight(),
+				format, type, dst.GetData());
 
 		// restore default alignment
 		glPixelStorei(GL_PACK_ALIGNMENT, 4);
 
 		//vertical flip
 		{
-			size_t rowSpan = dst.getWidth() * PixelUtil::getNumElemBytes(dst.getFormat());
-			size_t height = dst.getHeight();
+			size_t rowSpan = dst.GetWidth() * PixelUtil::getNumElemBytes(dst.GetFormat());
+			size_t height = dst.GetHeight();
 			UINT8* tmpData = (UINT8*)bs_alloc((UINT32)(rowSpan * height));
-			UINT8* srcRow = (UINT8 *)dst.getData(), *tmpRow = tmpData + (height - 1) * rowSpan;
+			UINT8* srcRow = (UINT8 *)dst.GetData(), *tmpRow = tmpData + (height - 1) * rowSpan;
 
 			while (tmpRow >= tmpData)
 			{
@@ -584,7 +584,7 @@ namespace bs
 				srcRow += rowSpan;
 				tmpRow -= rowSpan;
 			}
-			memcpy(dst.getData(), tmpData, rowSpan * height);
+			memcpy(dst.GetData(), tmpData, rowSpan * height);
 
 			bs_free(tmpData);
 		}
@@ -655,10 +655,10 @@ namespace bs
 		RenderWindowProperties& props = mProperties;
 		if (!props.isFullScreen) // Fullscreen is handled directly by this object
 		{
-			props.top = mWindow->getTop();
-			props.left = mWindow->getLeft();
-			props.width = mWindow->getWidth();
-			props.height = mWindow->getHeight();
+			props.top = mWindow->GetTop();
+			props.left = mWindow->GetLeft();
+			props.width = mWindow->GetWidth();
+			props.height = mWindow->GetHeight();
 		}
 	}
 

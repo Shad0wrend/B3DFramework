@@ -83,8 +83,8 @@ namespace bs
 			else
 			{
 				// Note: Consider using the simpler conversion I / PI to match with the area-light conversion
-				float cosTotalAngle = Math::cos(mSpotAngle);
-				float cosFalloffAngle = Math::cos(mSpotFalloffAngle);
+				float cosTotalAngle = Math::Cos(mSpotAngle);
+				float cosFalloffAngle = Math::Cos(mSpotFalloffAngle);
 
 				// Luminous flux -> luminous intensity
 				return mIntensity / (Math::TWO_PI * (1.0f - (cosFalloffAngle + cosTotalAngle) * 0.5f));
@@ -139,10 +139,10 @@ namespace bs
 		switch (mType)
 		{
 		case LightType::Directional:
-			mBounds = Sphere(tfrm.getPosition(), std::numeric_limits<float>::infinity());
+			mBounds = Sphere(tfrm.GetPosition(), std::numeric_limits<float>::infinity());
 			break;
 		case LightType::Radial:
-			mBounds = Sphere(tfrm.getPosition(), mAttRadius);
+			mBounds = Sphere(tfrm.GetPosition(), mAttRadius);
 			break;
 		case LightType::Spot:
 		{
@@ -152,14 +152,14 @@ namespace bs
 			Vector3 offset(0, 0, mAttRadius * 0.5f);
 
 			// Direction along the edge of the cone, on the YZ plane (doesn't matter if we used XZ instead)
-			Degree angle = Math::clamp(mSpotAngle * 0.5f, Degree(-89), Degree(89));
-			Vector3 coneDir(0, Math::tan(angle)*mAttRadius, mAttRadius);
+			Degree angle = Math::Clamp(mSpotAngle * 0.5f, Degree(-89), Degree(89));
+			Vector3 coneDir(0, Math::Tan(angle)*mAttRadius, mAttRadius);
 
 			// Distance between the "corner" of the cone and our center, must be the radius (provided the center is at
 			// the middle of the range)
 			float radius = (offset - coneDir).length();
 
-			Vector3 center = tfrm.getPosition() - tfrm.getRotation().rotate(offset);
+			Vector3 center = tfrm.GetPosition() - tfrm.GetRotation().Rotate(offset);
 			mBounds = Sphere(center, radius);
 		}
 			break;
@@ -213,7 +213,7 @@ namespace bs
 			Light(type, color, intensity, attRadius, 0.0f, castsShadows, spotAngle, spotFalloffAngle);
 		SPtr<Light> handlerPtr = bs_core_ptr<Light>(handler);
 		handlerPtr->SetThisPtrInternal(handlerPtr);
-		handlerPtr->initialize();
+		handlerPtr->Initialize();
 
 		return handlerPtr;
 	}
@@ -291,7 +291,7 @@ namespace bs
 		updateBounds();
 		gRenderer()->notifyLightAdded(this);
 
-		CoreObject::initialize();
+		CoreObject::Initialize();
 	}
 
 	void Light::SyncToCore(const CoreSyncData& data)

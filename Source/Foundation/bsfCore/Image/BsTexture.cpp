@@ -22,34 +22,34 @@ namespace bs
 
 	bool TextureProperties::HasAlpha() const
 	{
-		return PixelUtil::hasAlpha(mDesc.format);
+		return PixelUtil::HasAlpha(mDesc.format);
 	}
 
 	UINT32 TextureProperties::GetNumFaces() const
 	{
-		UINT32 facesPerSlice = getTextureType() == TEX_TYPE_CUBE_MAP ? 6 : 1;
+		UINT32 facesPerSlice = GetTextureType() == TEX_TYPE_CUBE_MAP ? 6 : 1;
 
 		return facesPerSlice * mDesc.numArraySlices;
 	}
 
 	void TextureProperties::MapFromSubresourceIdx(UINT32 subresourceIdx, UINT32& face, UINT32& mip) const
 	{
-		UINT32 numMipmaps = getNumMipmaps() + 1;
+		UINT32 numMipmaps = GetNumMipmaps() + 1;
 
-		face = Math::floorToInt((subresourceIdx) / (float)numMipmaps);
+		face = Math::FloorToInt((subresourceIdx) / (float)numMipmaps);
 		mip = subresourceIdx % numMipmaps;
 	}
 
 	UINT32 TextureProperties::MapToSubresourceIdx(UINT32 face, UINT32 mip) const
 	{
-		return face * (getNumMipmaps() + 1) + mip;
+		return face * (GetNumMipmaps() + 1) + mip;
 	}
 
 	SPtr<PixelData> TextureProperties::AllocBuffer(UINT32 face, UINT32 mipLevel) const
 	{
-		UINT32 width = getWidth();
-		UINT32 height = getHeight();
-		UINT32 depth = getDepth();
+		UINT32 width = GetWidth();
+		UINT32 height = GetHeight();
+		UINT32 depth = GetDepth();
 
 		for (UINT32 j = 0; j < mipLevel; j++)
 		{
@@ -58,8 +58,8 @@ namespace bs
 			if (depth != 1) depth /= 2;
 		}
 
-		SPtr<PixelData> dst = bs_shared_ptr_new<PixelData>(width, height, depth, getFormat());
-		dst->allocateInternalBuffer();
+		SPtr<PixelData> dst = bs_shared_ptr_new<PixelData>(width, height, depth, GetFormat());
+		dst->AllocateInternalBuffer();
 
 		return dst;
 	}
@@ -79,27 +79,27 @@ namespace bs
 
 	void Texture::Initialize()
 	{
-		mSize = calculateSize();
+		mSize = CalculateSize();
 
 		// Allocate CPU buffers if needed
-		if ((mProperties.getUsage() & TU_CPUCACHED) != 0)
+		if ((mProperties.GetUsage() & TU_CPUCACHED) != 0)
 		{
-			createCPUBuffers();
+			CreateCpuBuffers();
 
 			if (mInitData != nullptr)
-				updateCPUBuffers(0, *mInitData);
+				UpdateCpuBuffers(0, *mInitData);
 		}
 
-		Resource::initialize();
+		Resource::Initialize();
 	}
 
 	SPtr<ct::CoreObject> Texture::CreateCore() const
 	{
-		const TextureProperties& props = getProperties();
+		const TextureProperties& props = GetProperties();
 
-		SPtr<ct::CoreObject> coreObj = ct::TextureManager::Instance().createTextureInternal(props.mDesc, mInitData);
+		SPtr<ct::CoreObject> coreObj = ct::TextureManager::Instance().CreateTextureInternal(props.mDesc, mInitData);
 
-		if ((mProperties.getUsage() & TU_CPUCACHED) == 0)
+		if ((mProperties.GetUsage() & TU_CPUCACHED) == 0)
 			mInitData = nullptr;
 
 		return coreObj;
@@ -107,8 +107,8 @@ namespace bs
 
 	AsyncOp Texture::WriteData(const SPtr<PixelData>& data, UINT32 face, UINT32 mipLevel, bool discardEntireBuffer)
 	{
-		UINT32 subresourceIdx = mProperties.mapToSubresourceIdx(face, mipLevel);
-		updateCPUBuffers(subresourceIdx, *data);
+		UINT32 subresourceIdx = mProperties.MapToSubresourceIdx(face, mipLevel);
+		UpdateCpuBuffers(subresourceIdx, *data);
 
 		data->LockInternal();
 
@@ -116,13 +116,13 @@ namespace bs
 			[&](const SPtr<ct::Texture>& texture, UINT32 _face, UINT32 _mipLevel, const SPtr<PixelData>& _pixData,
 				bool _discardEntireBuffer, AsyncOp& asyncOp)
 		{
-			texture->writeData(*_pixData, _mipLevel, _face, _discardEntireBuffer);
+			texture->WriteData(*_pixData, _mipLevel, _face, _discardEntireBuffer);
 			_pixData->UnlockInternal();
 			asyncOp.CompleteOperationInternal();
 
 		};
 
-		return gCoreThread().queueReturnCommand(std::bind(func, getCore(), face, mipLevel,
+		return gCoreThread().QueueReturnCommand(std::bind(func, GetCore(), face, mipLevel,
 			data, discardEntireBuffer, std::placeholders::_1));
 	}
 
@@ -135,15 +135,15 @@ namespace bs
 				AsyncOp& asyncOp)
 		{
 			// Make sure any queued command start executing before reading
-			ct::RenderAPI::Instance().submitCommandBuffer(nullptr);
+			ct::RenderAPI::Instance().SubmitCommandBuffer(nullptr);
 
-			texture->readData(*_pixData, _mipLevel, _face);
+			texture->ReadData(*_pixData, _mipLevel, _face);
 			_pixData->UnlockInternal();
 			asyncOp.CompleteOperationInternal();
 
 		};
 
-		return gCoreThread().queueReturnCommand(std::bind(func, getCore(), face, mipLevel,
+		return gCoreThread().QueueReturnCommand(std::bind(func, GetCore(), face, mipLevel,
 			data, std::placeholders::_1));
 	}
 
@@ -151,31 +151,31 @@ namespace bs
 	{
 		TAsyncOp<SPtr<PixelData>> op;
 
-		auto func = [texture = getCore(), face, mipLevel, op]() mutable
+		auto func = [texture = GetCore(), face, mipLevel, op]() mutable
 		{
 			// Make sure any queued command start executing before reading
-			ct::RenderAPI::Instance().submitCommandBuffer(nullptr);
+			ct::RenderAPI::Instance().SubmitCommandBuffer(nullptr);
 
-			SPtr<PixelData> output = texture->getProperties().allocBuffer(face, mipLevel);
-			texture->readData(*output, mipLevel, face);
+			SPtr<PixelData> output = texture->GetProperties().AllocBuffer(face, mipLevel);
+			texture->ReadData(*output, mipLevel, face);
 
 			op.CompleteOperationInternal(output);
 
 		};
 
-		gCoreThread().queueCommand(func);
+		gCoreThread().QueueCommand(func);
 		return op;
 	}
 
 	UINT32 Texture::CalculateSize() const
 	{
-		return mProperties.getNumFaces() * PixelUtil::getMemorySize(mProperties.getWidth(),
-			mProperties.getHeight(), mProperties.getDepth(), mProperties.getFormat());
+		return mProperties.GetNumFaces() * PixelUtil::GetMemorySize(mProperties.GetWidth(),
+			mProperties.GetHeight(), mProperties.GetDepth(), mProperties.GetFormat());
 	}
 
 	void Texture::UpdateCpuBuffers(UINT32 subresourceIdx, const PixelData& pixelData)
 	{
-		if ((mProperties.getUsage() & TU_CPUCACHED) == 0)
+		if ((mProperties.GetUsage() & TU_CPUCACHED) == 0)
 			return;
 
 		if (subresourceIdx >= (UINT32)mCPUSubresourceData.size())
@@ -187,48 +187,48 @@ namespace bs
 
 		UINT32 mipLevel;
 		UINT32 face;
-		mProperties.mapFromSubresourceIdx(subresourceIdx, face, mipLevel);
+		mProperties.MapFromSubresourceIdx(subresourceIdx, face, mipLevel);
 
 		UINT32 mipWidth, mipHeight, mipDepth;
-		PixelUtil::getSizeForMipLevel(mProperties.getWidth(), mProperties.getHeight(), mProperties.getDepth(),
+		PixelUtil::GetSizeForMipLevel(mProperties.GetWidth(), mProperties.GetHeight(), mProperties.GetDepth(),
 			mipLevel, mipWidth, mipHeight, mipDepth);
 
-		if (pixelData.getWidth() != mipWidth || pixelData.getHeight() != mipHeight ||
-			pixelData.getDepth() != mipDepth || pixelData.getFormat() != mProperties.getFormat())
+		if (pixelData.GetWidth() != mipWidth || pixelData.GetHeight() != mipHeight ||
+			pixelData.GetDepth() != mipDepth || pixelData.GetFormat() != mProperties.GetFormat())
 		{
 			BS_LOG(Error, Texture, "Provided buffer is not of valid dimensions or format in order to update this texture.");
 			return;
 		}
 
-		if (mCPUSubresourceData[subresourceIdx]->getSize() != pixelData.getSize())
+		if (mCPUSubresourceData[subresourceIdx]->GetSize() != pixelData.GetSize())
 			BS_EXCEPT(InternalErrorException, "Buffer sizes don't match.");
 
-		UINT8* dest = mCPUSubresourceData[subresourceIdx]->getData();
-		UINT8* src = pixelData.getData();
+		UINT8* dest = mCPUSubresourceData[subresourceIdx]->GetData();
+		UINT8* src = pixelData.GetData();
 
-		memcpy(dest, src, pixelData.getSize());
+		memcpy(dest, src, pixelData.GetSize());
 	}
 
 	void Texture::ReadCachedData(PixelData& dest, UINT32 face, UINT32 mipLevel)
 	{
-		if ((mProperties.getUsage() & TU_CPUCACHED) == 0)
+		if ((mProperties.GetUsage() & TU_CPUCACHED) == 0)
 		{
 			BS_LOG(Error, Texture, "Attempting to read CPU data from a texture that is created without CPU caching.");
 			return;
 		}
 
 		UINT32 mipWidth, mipHeight, mipDepth;
-		PixelUtil::getSizeForMipLevel(mProperties.getWidth(), mProperties.getHeight(), mProperties.getDepth(),
+		PixelUtil::GetSizeForMipLevel(mProperties.GetWidth(), mProperties.GetHeight(), mProperties.GetDepth(),
 			mipLevel, mipWidth, mipHeight, mipDepth);
 
-		if (dest.getWidth() != mipWidth || dest.getHeight() != mipHeight ||
-			dest.getDepth() != mipDepth || dest.getFormat() != mProperties.getFormat())
+		if (dest.GetWidth() != mipWidth || dest.GetHeight() != mipHeight ||
+			dest.GetDepth() != mipDepth || dest.GetFormat() != mProperties.GetFormat())
 		{
 			BS_LOG(Error, Texture, "Provided buffer is not of valid dimensions or format in order to read from this texture.");
 			return;
 		}
 
-		UINT32 subresourceIdx = mProperties.mapToSubresourceIdx(face, mipLevel);
+		UINT32 subresourceIdx = mProperties.MapToSubresourceIdx(face, mipLevel);
 		if (subresourceIdx >= (UINT32)mCPUSubresourceData.size())
 		{
 			BS_LOG(Error, Texture, "Invalid subresource index: {0}. Supported range: 0 .. {1}",
@@ -236,35 +236,35 @@ namespace bs
 			return;
 		}
 
-		if (mCPUSubresourceData[subresourceIdx]->getSize() != dest.getSize())
+		if (mCPUSubresourceData[subresourceIdx]->GetSize() != dest.GetSize())
 			BS_EXCEPT(InternalErrorException, "Buffer sizes don't match.");
 
-		UINT8* srcPtr = mCPUSubresourceData[subresourceIdx]->getData();
-		UINT8* destPtr = dest.getData();
+		UINT8* srcPtr = mCPUSubresourceData[subresourceIdx]->GetData();
+		UINT8* destPtr = dest.GetData();
 
-		memcpy(destPtr, srcPtr, dest.getSize());
+		memcpy(destPtr, srcPtr, dest.GetSize());
 	}
 
 	void Texture::CreateCpuBuffers()
 	{
-		UINT32 numFaces = mProperties.getNumFaces();
-		UINT32 numMips = mProperties.getNumMipmaps() + 1;
+		UINT32 numFaces = mProperties.GetNumFaces();
+		UINT32 numMips = mProperties.GetNumMipmaps() + 1;
 
 		UINT32 numSubresources = numFaces * numMips;
 		mCPUSubresourceData.resize(numSubresources);
 
 		for (UINT32 i = 0; i < numFaces; i++)
 		{
-			UINT32 curWidth = mProperties.getWidth();
-			UINT32 curHeight = mProperties.getHeight();
-			UINT32 curDepth = mProperties.getDepth();
+			UINT32 curWidth = mProperties.GetWidth();
+			UINT32 curHeight = mProperties.GetHeight();
+			UINT32 curDepth = mProperties.GetDepth();
 
 			for (UINT32 j = 0; j < numMips; j++)
 			{
-				UINT32 subresourceIdx = mProperties.mapToSubresourceIdx(i, j);
+				UINT32 subresourceIdx = mProperties.MapToSubresourceIdx(i, j);
 
-				mCPUSubresourceData[subresourceIdx] = bs_shared_ptr_new<PixelData>(curWidth, curHeight, curDepth, mProperties.getFormat());
-				mCPUSubresourceData[subresourceIdx]->allocateInternalBuffer();
+				mCPUSubresourceData[subresourceIdx] = bs_shared_ptr_new<PixelData>(curWidth, curHeight, curDepth, mProperties.GetFormat());
+				mCPUSubresourceData[subresourceIdx]->AllocateInternalBuffer();
 
 				if (curWidth > 1)
 					curWidth = curWidth / 2;
@@ -316,21 +316,21 @@ namespace bs
 
 	SPtr<Texture> Texture::CreatePtrInternal(const TEXTURE_DESC& desc)
 	{
-		return TextureManager::Instance().createTexture(desc);
+		return TextureManager::Instance().CreateTexture(desc);
 	}
 
 	SPtr<Texture> Texture::CreatePtrInternal(const SPtr<PixelData>& pixelData, int usage, bool hwGammaCorrection)
 	{
 		TEXTURE_DESC desc;
-		desc.type = pixelData->getDepth() > 1 ? TEX_TYPE_3D : TEX_TYPE_2D;
-		desc.width = pixelData->getWidth();
-		desc.height = pixelData->getHeight();
-		desc.depth = pixelData->getDepth();
-		desc.format = pixelData->getFormat();
+		desc.type = pixelData->GetDepth() > 1 ? TEX_TYPE_3D : TEX_TYPE_2D;
+		desc.width = pixelData->GetWidth();
+		desc.height = pixelData->GetHeight();
+		desc.depth = pixelData->GetDepth();
+		desc.format = pixelData->GetFormat();
 		desc.usage = usage;
 		desc.hwGamma = hwGammaCorrection;
 
-		return TextureManager::Instance().createTexture(desc, pixelData);
+		return TextureManager::Instance().CreateTexture(desc, pixelData);
 	}
 
 	namespace ct
@@ -347,12 +347,12 @@ namespace bs
 	{
 		if (mInitData != nullptr)
 		{
-			writeData(*mInitData, 0, 0, true);
+			WriteData(*mInitData, 0, 0, true);
 			mInitData->UnlockInternal();
 			mInitData = nullptr;
 		}
 
-		CoreObject::initialize();
+		CoreObject::Initialize();
 	}
 
 	void Texture::WriteData(const PixelData& src, UINT32 mipLevel, UINT32 face, bool discardEntireBuffer,
@@ -362,14 +362,14 @@ namespace bs
 
 		if(discardEntireBuffer)
 		{
-			if((mProperties.getUsage() & TU_DYNAMIC) == 0)
+			if((mProperties.GetUsage() & TU_DYNAMIC) == 0)
 			{
 				// Buffer discard is enabled but buffer was not created as dynamic. Disabling discard.
 				discardEntireBuffer = false;
 			}
 		}
 
-		writeDataImpl(src, mipLevel, face, discardEntireBuffer, queueIdx);
+		WriteDataImpl(src, mipLevel, face, discardEntireBuffer, queueIdx);
 	}
 
 	void Texture::ReadData(PixelData& dest, UINT32 mipLevel, UINT32 face, UINT32 deviceIdx, UINT32 queueIdx)
@@ -379,109 +379,109 @@ namespace bs
 		PixelData& pixelData = static_cast<PixelData&>(dest);
 
 		UINT32 mipWidth, mipHeight, mipDepth;
-		PixelUtil::getSizeForMipLevel(mProperties.getWidth(), mProperties.getHeight(), mProperties.getDepth(),
+		PixelUtil::GetSizeForMipLevel(mProperties.GetWidth(), mProperties.GetHeight(), mProperties.GetDepth(),
 			mipLevel, mipWidth, mipHeight, mipDepth);
 
-		if (pixelData.getWidth() != mipWidth || pixelData.getHeight() != mipHeight ||
-			pixelData.getDepth() != mipDepth || pixelData.getFormat() != mProperties.getFormat())
+		if (pixelData.GetWidth() != mipWidth || pixelData.GetHeight() != mipHeight ||
+			pixelData.GetDepth() != mipDepth || pixelData.GetFormat() != mProperties.GetFormat())
 		{
 			BS_LOG(Error, Texture,
 				"Provided buffer is not of valid dimensions or format in order to read from this texture.");
 			return;
 		}
 
-		readDataImpl(pixelData, mipLevel, face, deviceIdx, queueIdx);
+		ReadDataImpl(pixelData, mipLevel, face, deviceIdx, queueIdx);
 	}
 
 	PixelData Texture::Lock(GpuLockOptions options, UINT32 mipLevel, UINT32 face, UINT32 deviceIdx, UINT32 queueIdx)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
-		if (mipLevel > mProperties.getNumMipmaps())
+		if (mipLevel > mProperties.GetNumMipmaps())
 		{
-			BS_LOG(Error, Texture, "Invalid mip level: {0}. Min is 0, max is {1}", mipLevel, mProperties.getNumMipmaps());
+			BS_LOG(Error, Texture, "Invalid mip level: {0}. Min is 0, max is {1}", mipLevel, mProperties.GetNumMipmaps());
 			return PixelData(0, 0, 0, PF_UNKNOWN);
 		}
 
-		if (face >= mProperties.getNumFaces())
+		if (face >= mProperties.GetNumFaces())
 		{
-			BS_LOG(Error, Texture, "Invalid face index: {0}. Min is 0, max is {1}", face, mProperties.getNumFaces());
+			BS_LOG(Error, Texture, "Invalid face index: {0}. Min is 0, max is {1}", face, mProperties.GetNumFaces());
 			return PixelData(0, 0, 0, PF_UNKNOWN);
 		}
 
-		return lockImpl(options, mipLevel, face, deviceIdx, queueIdx);
+		return LockImpl(options, mipLevel, face, deviceIdx, queueIdx);
 	}
 
 	void Texture::Unlock()
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
-		unlockImpl();
+		UnlockImpl();
 	}
 
 	void Texture::Copy(const SPtr<Texture>& target, const TEXTURE_COPY_DESC& desc, const SPtr<CommandBuffer>& commandBuffer)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
-		if (target->mProperties.getTextureType() != mProperties.getTextureType())
+		if (target->mProperties.GetTextureType() != mProperties.GetTextureType())
 		{
 			BS_LOG(Error, Texture, "Source and destination textures must be of same type.");
 			return;
 		}
 
-		if (mProperties.getFormat() != target->mProperties.getFormat()) // Note: It might be okay to use different formats of the same size
+		if (mProperties.GetFormat() != target->mProperties.GetFormat()) // Note: It might be okay to use different formats of the same size
 		{
 			BS_LOG(Error, Texture, "Source and destination texture formats must match.");
 			return;
 		}
 
-		if (target->mProperties.getNumSamples() > 1 && mProperties.getNumSamples() != target->mProperties.getNumSamples())
+		if (target->mProperties.GetNumSamples() > 1 && mProperties.GetNumSamples() != target->mProperties.GetNumSamples())
 		{
 			BS_LOG(Error, Texture,
 				"When copying to a multisampled texture, source texture must have the same number of samples.");
 			return;
 		}
 
-		if (desc.srcFace >= mProperties.getNumFaces())
+		if (desc.srcFace >= mProperties.GetNumFaces())
 		{
 			BS_LOG(Error, Texture, "Invalid source face index.");
 			return;
 		}
 
-		if (desc.dstFace >= target->mProperties.getNumFaces())
+		if (desc.dstFace >= target->mProperties.GetNumFaces())
 		{
 			BS_LOG(Error, Texture, "Invalid destination face index.");
 			return;
 		}
 
-		if (desc.srcMip > mProperties.getNumMipmaps())
+		if (desc.srcMip > mProperties.GetNumMipmaps())
 		{
-			BS_LOG(Error, Texture, "Source mip level out of range. Valid range is [0, {0}].", mProperties.getNumMipmaps());
+			BS_LOG(Error, Texture, "Source mip level out of range. Valid range is [0, {0}].", mProperties.GetNumMipmaps());
 			return;
 		}
 
-		if (desc.dstMip > target->mProperties.getNumMipmaps())
+		if (desc.dstMip > target->mProperties.GetNumMipmaps())
 		{
 			BS_LOG(Error, Texture, "Destination mip level out of range. Valid range is [0, {0}].",
-				target->mProperties.getNumMipmaps());
+				target->mProperties.GetNumMipmaps());
 			return;
 		}
 
 		UINT32 srcWidth, srcHeight, srcDepth;
-		PixelUtil::getSizeForMipLevel(
-			mProperties.getWidth(),
-			mProperties.getHeight(),
-			mProperties.getDepth(),
+		PixelUtil::GetSizeForMipLevel(
+			mProperties.GetWidth(),
+			mProperties.GetHeight(),
+			mProperties.GetDepth(),
 			desc.srcMip,
 			srcWidth,
 			srcHeight,
 			srcDepth);
 
 		UINT32 dstWidth, dstHeight, dstDepth;
-		PixelUtil::getSizeForMipLevel(
-			target->mProperties.getWidth(),
-			target->mProperties.getHeight(),
-			target->mProperties.getDepth(),
+		PixelUtil::GetSizeForMipLevel(
+			target->mProperties.GetWidth(),
+			target->mProperties.GetHeight(),
+			target->mProperties.GetDepth(),
 			desc.dstMip,
 			dstWidth,
 			dstHeight,
@@ -495,9 +495,9 @@ namespace bs
 			return;
 		}
 
-		bool entireSurface = desc.srcVolume.getWidth() == 0 ||
-			desc.srcVolume.getHeight() == 0 ||
-			desc.srcVolume.getDepth() == 0;
+		bool entireSurface = desc.srcVolume.GetWidth() == 0 ||
+			desc.srcVolume.GetHeight() == 0 ||
+			desc.srcVolume.GetDepth() == 0;
 
 		UINT32 dstRight = (UINT32)desc.dstPosition.x;
 		UINT32 dstBottom = (UINT32)desc.dstPosition.y;
@@ -512,9 +512,9 @@ namespace bs
 				return;
 			}
 
-			dstRight += desc.srcVolume.getWidth();
-			dstBottom += desc.srcVolume.getHeight();
-			dstBack += desc.srcVolume.getDepth();
+			dstRight += desc.srcVolume.GetWidth();
+			dstBottom += desc.srcVolume.GetHeight();
+			dstBack += desc.srcVolume.GetDepth();
 		}
 		else
 		{
@@ -529,34 +529,34 @@ namespace bs
 			return;
 		}
 
-		copyImpl(target, desc, commandBuffer);
+		CopyImpl(target, desc, commandBuffer);
 	}
 
 	void Texture::Clear(const Color& value, UINT32 mipLevel, UINT32 face, UINT32 queueIdx)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
-		if (face >= mProperties.getNumFaces())
+		if (face >= mProperties.GetNumFaces())
 		{
 			BS_LOG(Error, Texture, "Invalid face index.");
 			return;
 		}
 
-		if (mipLevel > mProperties.getNumMipmaps())
+		if (mipLevel > mProperties.GetNumMipmaps())
 		{
-			BS_LOG(Error, Texture, "Mip level out of range. Valid range is [0, {0}].", mProperties.getNumMipmaps());
+			BS_LOG(Error, Texture, "Mip level out of range. Valid range is [0, {0}].", mProperties.GetNumMipmaps());
 			return;
 		}
 
-		clearImpl(value, mipLevel, face, queueIdx);
+		ClearImpl(value, mipLevel, face, queueIdx);
 	}
 
 	void Texture::ClearImpl(const Color& value, UINT32 mipLevel, UINT32 face, UINT32 queueIdx)
 	{
-		SPtr<PixelData> data = mProperties.allocBuffer(face, mipLevel);
-		data->setColors(value);
+		SPtr<PixelData> data = mProperties.AllocBuffer(face, mipLevel);
+		data->SetColors(value);
 		
-		writeData(*data, mipLevel, face, true, queueIdx);
+		WriteData(*data, mipLevel, face, true, queueIdx);
 	}
 
 	/************************************************************************/
@@ -578,19 +578,19 @@ namespace bs
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
-		const TextureProperties& texProps = getProperties();
+		const TextureProperties& texProps = GetProperties();
 
 		TEXTURE_VIEW_DESC key;
 		key.mostDetailMip = mostDetailMip;
-		key.numMips = numMips == 0 ? (texProps.getNumMipmaps() + 1) : numMips;
+		key.numMips = numMips == 0 ? (texProps.GetNumMipmaps() + 1) : numMips;
 		key.firstArraySlice = firstArraySlice;
-		key.numArraySlices = numArraySlices == 0 ? texProps.getNumFaces() : numArraySlices;
+		key.numArraySlices = numArraySlices == 0 ? texProps.GetNumFaces() : numArraySlices;
 		key.usage = usage;
 
 		auto iterFind = mTextureViews.find(key);
 		if (iterFind == mTextureViews.end())
 		{
-			mTextureViews[key] = createView(key);
+			mTextureViews[key] = CreateView(key);
 
 			iterFind = mTextureViews.find(key);
 		}
@@ -603,23 +603,23 @@ namespace bs
 	/************************************************************************/
 	SPtr<Texture> Texture::Create(const TEXTURE_DESC& desc, GpuDeviceFlags deviceMask)
 	{
-		return TextureManager::Instance().createTexture(desc, deviceMask);
+		return TextureManager::Instance().CreateTexture(desc, deviceMask);
 	}
 
 	SPtr<Texture> Texture::Create(const SPtr<PixelData>& pixelData, int usage, bool hwGammaCorrection,
 		GpuDeviceFlags deviceMask)
 	{
 		TEXTURE_DESC desc;
-		desc.type = pixelData->getDepth() > 1 ? TEX_TYPE_3D : TEX_TYPE_2D;
-		desc.width = pixelData->getWidth();
-		desc.height = pixelData->getHeight();
-		desc.depth = pixelData->getDepth();
-		desc.format = pixelData->getFormat();
+		desc.type = pixelData->GetDepth() > 1 ? TEX_TYPE_3D : TEX_TYPE_2D;
+		desc.width = pixelData->GetWidth();
+		desc.height = pixelData->GetHeight();
+		desc.depth = pixelData->GetDepth();
+		desc.format = pixelData->GetFormat();
 		desc.usage = usage;
 		desc.hwGamma = hwGammaCorrection;
 
-		SPtr<Texture> newTex = TextureManager::Instance().createTextureInternal(desc, pixelData, deviceMask);
-		newTex->initialize();
+		SPtr<Texture> newTex = TextureManager::Instance().CreateTextureInternal(desc, pixelData, deviceMask);
+		newTex->Initialize();
 
 		return newTex;
 	}

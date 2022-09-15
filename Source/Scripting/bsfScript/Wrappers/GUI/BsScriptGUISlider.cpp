@@ -43,7 +43,7 @@ namespace bs
 		metaData.scriptClass->addInternalCall("Internal_SetStep", (void*)&ScriptGUISliderH::InternalSetStep);
 		metaData.scriptClass->addInternalCall("Internal_GetStep", (void*)&ScriptGUISliderH::InternalGetStep);
 
-		onChangedThunk = (OnChangedThunkDef)metaData.scriptClass->getMethod("DoOnChanged", 1)->getThunk();
+		onChangedThunk = (OnChangedThunkDef)metaData.scriptClass->GetMethod("DoOnChanged", 1)->GetThunk();
 	}
 
 	void ScriptGUISliderH::InternalCreateInstance(MonoObject* instance, MonoString* style, MonoArray* guiOptions)
@@ -58,67 +58,67 @@ namespace bs
 		GUISliderHorz* guiSlider = GUISliderHorz::Create(options, MonoUtil::monoToString(style));
 
 		auto nativeInstance = new (bs_alloc<ScriptGUISliderH>()) ScriptGUISliderH(instance, guiSlider);
-		guiSlider->onChanged.connect(std::bind(&ScriptGUISliderH::onChanged, nativeInstance, _1));
+		guiSlider->onChanged.Connect(std::bind(&ScriptGUISliderH::onChanged, nativeInstance, _1));
 	}
 
 	void ScriptGUISliderH::InternalSetPercent(ScriptGUISliderH* nativeInstance, float percent)
 	{
-		GUISliderHorz* slider = (GUISliderHorz*)nativeInstance->getGUIElement();
-		slider->setPercent(percent);
+		GUISliderHorz* slider = (GUISliderHorz*)nativeInstance->GetGUIElement();
+		slider->SetPercent(percent);
 	}
 
 	float ScriptGUISliderH::InternalGetPercent(ScriptGUISliderH* nativeInstance)
 	{
-		GUISliderHorz* slider = (GUISliderHorz*)nativeInstance->getGUIElement();
-		return slider->getPercent();
+		GUISliderHorz* slider = (GUISliderHorz*)nativeInstance->GetGUIElement();
+		return slider->GetPercent();
 	}
 
 	float ScriptGUISliderH::InternalGetValue(ScriptGUISliderH* nativeInstance)
 	{
-		GUISliderHorz* slider = (GUISliderHorz*)nativeInstance->getGUIElement();
-		return slider->getValue();
+		GUISliderHorz* slider = (GUISliderHorz*)nativeInstance->GetGUIElement();
+		return slider->GetValue();
 	}
 
 	void ScriptGUISliderH::InternalSetValue(ScriptGUISliderH* nativeInstance, float percent)
 	{
-		GUISliderHorz* slider = (GUISliderHorz*)nativeInstance->getGUIElement();
-		return slider->setValue(percent);
+		GUISliderHorz* slider = (GUISliderHorz*)nativeInstance->GetGUIElement();
+		return slider->SetValue(percent);
 	}
 
 	void ScriptGUISliderH::InternalSetRange(ScriptGUISliderH* nativeInstance, float min, float max)
 	{
-		GUISliderHorz* slider = (GUISliderHorz*)nativeInstance->getGUIElement();
-		return slider->setRange(min, max);
+		GUISliderHorz* slider = (GUISliderHorz*)nativeInstance->GetGUIElement();
+		return slider->SetRange(min, max);
 	}
 
 	float ScriptGUISliderH::InternalGetRangeMaximum(ScriptGUISliderH* nativeInstance)
 	{
-		GUISliderHorz* slider = (GUISliderHorz*)nativeInstance->getGUIElement();
-		return slider->getRangeMaximum();
+		GUISliderHorz* slider = (GUISliderHorz*)nativeInstance->GetGUIElement();
+		return slider->GetRangeMaximum();
 	}
 
 	float ScriptGUISliderH::InternalGetRangeMinimum(ScriptGUISliderH* nativeInstance)
 	{
-		GUISliderHorz* slider = (GUISliderHorz*)nativeInstance->getGUIElement();
-		return slider->getRangeMinimum();
+		GUISliderHorz* slider = (GUISliderHorz*)nativeInstance->GetGUIElement();
+		return slider->GetRangeMinimum();
 	}
 
 	void ScriptGUISliderH::InternalSetStep(ScriptGUISliderH* nativeInstance, float step)
 	{
-		GUISliderHorz* slider = (GUISliderHorz*)nativeInstance->getGUIElement();
-		return slider->setStep(step);
+		GUISliderHorz* slider = (GUISliderHorz*)nativeInstance->GetGUIElement();
+		return slider->SetStep(step);
 	}
 
 	float ScriptGUISliderH::InternalGetStep(ScriptGUISliderH* nativeInstance)
 	{
-		GUISliderHorz* slider = (GUISliderHorz*)nativeInstance->getGUIElement();
-		return slider->getStep();
+		GUISliderHorz* slider = (GUISliderHorz*)nativeInstance->GetGUIElement();
+		return slider->GetStep();
 	}
 
 	void ScriptGUISliderH::InternalSetTint(ScriptGUISliderH* nativeInstance, Color* color)
 	{
-		GUISliderHorz* slider = (GUISliderHorz*)nativeInstance->getGUIElement();
-		slider->setTint(*color);
+		GUISliderHorz* slider = (GUISliderHorz*)nativeInstance->GetGUIElement();
+		slider->SetTint(*color);
 	}
 
 	void ScriptGUISliderH::OnChanged(float percent)
@@ -148,7 +148,7 @@ namespace bs
 		metaData.scriptClass->addInternalCall("Internal_SetStep", (void*)&ScriptGUISliderV::InternalSetStep);
 		metaData.scriptClass->addInternalCall("Internal_GetStep", (void*)&ScriptGUISliderV::InternalGetStep);
 
-		onChangedThunk = (OnChangedThunkDef)metaData.scriptClass->getMethod("DoOnChanged", 1)->getThunk();
+		onChangedThunk = (OnChangedThunkDef)metaData.scriptClass->GetMethod("DoOnChanged", 1)->GetThunk();
 	}
 
 	void ScriptGUISliderV::InternalCreateInstance(MonoObject* instance, MonoString* style, MonoArray* guiOptions)
@@ -163,67 +163,67 @@ namespace bs
 		GUISliderVert* guiSlider = GUISliderVert::Create(options, MonoUtil::monoToString(style));
 
 		auto nativeInstance = new (bs_alloc<ScriptGUISliderV>()) ScriptGUISliderV(instance, guiSlider);
-		guiSlider->onChanged.connect(std::bind(&ScriptGUISliderV::onChanged, nativeInstance, _1));
+		guiSlider->onChanged.Connect(std::bind(&ScriptGUISliderV::onChanged, nativeInstance, _1));
 	}
 
 	void ScriptGUISliderV::InternalSetPercent(ScriptGUISliderV* nativeInstance, float percent)
 	{
-		GUISliderVert* slider = (GUISliderVert*)nativeInstance->getGUIElement();
-		slider->setPercent(percent);
+		GUISliderVert* slider = (GUISliderVert*)nativeInstance->GetGUIElement();
+		slider->SetPercent(percent);
 	}
 
 	float ScriptGUISliderV::InternalGetPercent(ScriptGUISliderV* nativeInstance)
 	{
-		GUISliderVert* slider = (GUISliderVert*)nativeInstance->getGUIElement();
-		return slider->getPercent();
+		GUISliderVert* slider = (GUISliderVert*)nativeInstance->GetGUIElement();
+		return slider->GetPercent();
 	}
 
 	float ScriptGUISliderV::InternalGetValue(ScriptGUISliderV* nativeInstance)
 	{
-		GUISliderVert* slider = (GUISliderVert*)nativeInstance->getGUIElement();
-		return slider->getValue();
+		GUISliderVert* slider = (GUISliderVert*)nativeInstance->GetGUIElement();
+		return slider->GetValue();
 	}
 
 	void ScriptGUISliderV::InternalSetValue(ScriptGUISliderV* nativeInstance, float percent)
 	{
-		GUISliderVert* slider = (GUISliderVert*)nativeInstance->getGUIElement();
-		return slider->setValue(percent);
+		GUISliderVert* slider = (GUISliderVert*)nativeInstance->GetGUIElement();
+		return slider->SetValue(percent);
 	}
 
 	void ScriptGUISliderV::InternalSetRange(ScriptGUISliderV* nativeInstance, float min, float max)
 	{
-		GUISliderVert* slider = (GUISliderVert*)nativeInstance->getGUIElement();
-		return slider->setRange(min, max);
+		GUISliderVert* slider = (GUISliderVert*)nativeInstance->GetGUIElement();
+		return slider->SetRange(min, max);
 	}
 
 	float ScriptGUISliderV::InternalGetRangeMaximum(ScriptGUISliderV* nativeInstance)
 	{
-		GUISliderVert* slider = (GUISliderVert*)nativeInstance->getGUIElement();
-		return slider->getRangeMaximum();
+		GUISliderVert* slider = (GUISliderVert*)nativeInstance->GetGUIElement();
+		return slider->GetRangeMaximum();
 	}
 
 	float ScriptGUISliderV::InternalGetRangeMinimum(ScriptGUISliderV* nativeInstance)
 	{
-		GUISliderVert* slider = (GUISliderVert*)nativeInstance->getGUIElement();
-		return slider->getRangeMinimum();
+		GUISliderVert* slider = (GUISliderVert*)nativeInstance->GetGUIElement();
+		return slider->GetRangeMinimum();
 	}
 
 	void ScriptGUISliderV::InternalSetStep(ScriptGUISliderV* nativeInstance, float step)
 	{
-		GUISliderVert* slider = (GUISliderVert*)nativeInstance->getGUIElement();
-		return slider->setStep(step);
+		GUISliderVert* slider = (GUISliderVert*)nativeInstance->GetGUIElement();
+		return slider->SetStep(step);
 	}
 
 	float ScriptGUISliderV::InternalGetStep(ScriptGUISliderV* nativeInstance)
 	{
-		GUISliderVert* slider = (GUISliderVert*)nativeInstance->getGUIElement();
-		return slider->getStep();
+		GUISliderVert* slider = (GUISliderVert*)nativeInstance->GetGUIElement();
+		return slider->GetStep();
 	}
 
 	void ScriptGUISliderV::InternalSetTint(ScriptGUISliderV* nativeInstance, Color* color)
 	{
-		GUISliderVert* slider = (GUISliderVert*)nativeInstance->getGUIElement();
-		slider->setTint(*color);
+		GUISliderVert* slider = (GUISliderVert*)nativeInstance->GetGUIElement();
+		slider->SetTint(*color);
 	}
 
 	void ScriptGUISliderV::OnChanged(float percent)

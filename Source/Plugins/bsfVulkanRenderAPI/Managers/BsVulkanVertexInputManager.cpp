@@ -120,7 +120,7 @@ namespace bs { namespace ct
 			VkVertexInputBindingDescription& binding = newEntry.bindings[i];
 			binding.binding = i;
 			binding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-			binding.stride = vbDecl->getProperties().getVertexSize(i);
+			binding.stride = vbDecl->GetProperties().getVertexSize(i);
 		}
 
 		UINT32 attribIdx = 0;
@@ -182,8 +182,8 @@ namespace bs { namespace ct
 
 		// Create key and add to the layout map
 		VertexDeclarationKey pair;
-		pair.bufferDeclId = vbDecl->getId();
-		pair.shaderDeclId = shaderInputDecl->getId();
+		pair.bufferDeclId = vbDecl->GetId();
+		pair.shaderDeclId = shaderInputDecl->GetId();
 
 		newEntry.vertexInput = bs_shared_ptr_new<VulkanVertexInput>(mNextId++, vertexInputCI);
 		newEntry.lastUsedIdx = ++mLastUsedCounter;

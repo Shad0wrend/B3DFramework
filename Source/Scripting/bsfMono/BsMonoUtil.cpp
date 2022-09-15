@@ -264,8 +264,8 @@ namespace bs
 		if(!sGenericHelpersInitialized)
 		{
 			MonoAssembly* corlib = MonoManager::Instance().getAssembly("corlib");
-			MonoClass* type = corlib->getClass("System", "Type");
-			sGenericParamsProp = type->getProperty("GenericTypeArguments");
+			MonoClass* type = corlib->GetClass("System", "Type");
+			sGenericParamsProp = type->GetProperty("GenericTypeArguments");
 
 			sGenericHelpersInitialized = true;
 		}

@@ -80,7 +80,7 @@ namespace bs
 			assemblies.push_back(AssemblyRefreshInfo(ENGINE_ASSEMBLY, &engineAssemblyPath, &mEngineTypeMappings));
 
 			Path gameAssemblyPath = getGameAssemblyPath();
-			if (FileSystem::exists(gameAssemblyPath))
+			if (FileSystem::Exists(gameAssemblyPath))
 				assemblies.push_back(AssemblyRefreshInfo(SCRIPT_GAME_ASSEMBLY, &gameAssemblyPath, &BuiltinTypeMappings::EMPTY));
 
 			ScriptObjectManager::Instance().refreshAssemblies(assemblies);
@@ -88,7 +88,7 @@ namespace bs
 		else // Otherwise just additively load them
 		{
 			Path gameAssemblyPath = getGameAssemblyPath();
-			if (FileSystem::exists(gameAssemblyPath))
+			if (FileSystem::Exists(gameAssemblyPath))
 			{
 				MonoManager::Instance().loadAssembly(gameAssemblyPath.toString(), SCRIPT_GAME_ASSEMBLY);
 				ScriptAssemblyManager::Instance().loadAssemblyInfo(SCRIPT_GAME_ASSEMBLY, BuiltinTypeMappings());
@@ -162,12 +162,12 @@ namespace bs
 		Path debugAssemblyFolder = getDebugAssemblyPath();
 
 #if BS_DEBUG_MODE == 0
-		if (FileSystem::exists(releaseAssemblyFolder))
+		if (FileSystem::Exists(releaseAssemblyFolder))
 			return releaseAssemblyFolder;
 
 		return debugAssemblyFolder;
 #else
-		if (FileSystem::exists(debugAssemblyFolder))
+		if (FileSystem::Exists(debugAssemblyFolder))
 			return debugAssemblyFolder;
 
 		return releaseAssemblyFolder;

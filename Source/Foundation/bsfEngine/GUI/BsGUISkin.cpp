@@ -70,7 +70,7 @@ namespace bs
 	{
 		SPtr<GUISkin> newSkin = bs_core_ptr<GUISkin>(new (bs_alloc<GUISkin>()) GUISkin());
 		newSkin->SetThisPtrInternal(newSkin);
-		newSkin->initialize();
+		newSkin->Initialize();
 
 		return newSkin;
 	}

@@ -221,7 +221,7 @@ namespace bs
 		const bool writeMeta = !flags.isSet(BinarySerializerFlag::NoMeta);
 		const bool compress = flags.isSet(BinarySerializerFlag::Compress);
 
-		RTTITypeBase* rtti = object->getRTTI();
+		RTTITypeBase* rtti = object->GetRtti();
 		bool isBaseClass = false;
 
 		FrameStack<RTTITypeBase*> rttiInstances;
@@ -249,7 +249,7 @@ namespace bs
 			if (writeMeta)
 			{
 				// Encode object ID & type
-				ObjectMetaData objectMetaData = encodeObjectMetaData(objectId, rtti->getRTTIId(), isBaseClass);
+				ObjectMetaData objectMetaData = encodeObjectMetaData(objectId, rtti->GetRttiId(), isBaseClass);
 				stream.writeBytes(objectMetaData);
 			}
 			else
@@ -263,10 +263,10 @@ namespace bs
 					stream.writeBytes(objectMetaData);
 			}
 
-			const UINT32 numFields = rtti->getNumFields();
+			const UINT32 numFields = rtti->GetNumFields();
 			for(UINT32 i = 0; i < numFields; i++)
 			{
-				RTTIField* curGenericField = rtti->getField(i);
+				RTTIField* curGenericField = rtti->GetField(i);
 
 				if (writeMeta)
 				{
@@ -278,7 +278,7 @@ namespace bs
 
 				if(curGenericField->schema.isArray)
 				{
-					UINT32 arrayNumElems = curGenericField->getArraySize(rttiInstance, object);
+					UINT32 arrayNumElems = curGenericField->GetArraySize(rttiInstance, object);
 
 					// Copy num vector elements
 					if (compress)
@@ -297,7 +297,7 @@ namespace bs
 								SPtr<IReflectable> childObject;
 								
 								if (!flags.isSet(BinarySerializerFlag::Shallow))
-									childObject = curField->getArrayValue(rttiInstance, object, arrIdx);
+									childObject = curField->GetArrayValue(rttiInstance, object, arrIdx);
 
 								UINT32 objId = registerObjectPtr(childObject);
 								if (compress)
@@ -314,7 +314,7 @@ namespace bs
 
 							for(UINT32 arrIdx = 0; arrIdx < arrayNumElems; arrIdx++)
 							{
-								IReflectable& childObject = curField->getArrayValue(rttiInstance, object, arrIdx);
+								IReflectable& childObject = curField->GetArrayValue(rttiInstance, object, arrIdx);
 
 								if(!complexTypeToStream(&childObject, stream, flags))
 								{
@@ -350,7 +350,7 @@ namespace bs
 							SPtr<IReflectable> childObject;
 							
 							if (!flags.isSet(BinarySerializerFlag::Shallow))
-								childObject = curField->getValue(rttiInstance, object);
+								childObject = curField->GetValue(rttiInstance, object);
 
 							UINT32 objId = registerObjectPtr(childObject);
 							if (compress)
@@ -363,7 +363,7 @@ namespace bs
 					case SerializableFT_Reflectable:
 						{
 							auto* curField = static_cast<RTTIReflectableFieldBase*>(curGenericField);
-							IReflectable& childObject = curField->getValue(rttiInstance, object);
+							IReflectable& childObject = curField->GetValue(rttiInstance, object);
 
 							if(!complexTypeToStream(&childObject, stream, flags))
 							{
@@ -385,7 +385,7 @@ namespace bs
 							auto* curField = static_cast<RTTIManagedDataBlockFieldBase*>(curGenericField);
 
 							UINT32 dataBlockSize = 0;
-							SPtr<DataStream> blockStream = curField->getValue(rttiInstance, object, dataBlockSize);
+							SPtr<DataStream> blockStream = curField->GetValue(rttiInstance, object, dataBlockSize);
 
 							// Data block size
 							if (compress)
@@ -413,7 +413,7 @@ namespace bs
 				stream.Flush(false);
 			}
 
-			rtti = rtti->getBaseClass();
+			rtti = rtti->GetBaseClass();
 			isBaseClass = true;
 
 		} while(rtti != nullptr); // Repeat until we reach the top of the inheritance hierarchy
@@ -446,7 +446,7 @@ namespace bs
 
 		RTTITypeBase* rtti = nullptr;
 		if(output)
-			rtti = output->getRTTI();
+			rtti = output->GetRtti();
 
 		FrameVector<RTTITypeBase*> rttiInstances;
 
@@ -471,7 +471,7 @@ namespace bs
 			RTTITypeBase* rttiInstance = curRTTI->CloneInternal(*mAlloc);
 			rttiInstances.push_back(rttiInstance);
 
-			curRTTI = curRTTI->getBaseClass();
+			curRTTI = curRTTI->GetBaseClass();
 		}
 
 		// Iterate in reverse to notify base classes before derived classes
@@ -558,10 +558,10 @@ namespace bs
 			if (objIsBaseClass)
 			{
 				if (rtti != nullptr)
-					rtti = rtti->getBaseClass();
+					rtti = rtti->GetBaseClass();
 
 				// Saved and current base classes don't match, so just skip over all that data
-				if (rtti == nullptr || rtti->getRTTIId() != baseObjTypeId)
+				if (rtti == nullptr || rtti->GetRttiId() != baseObjTypeId)
 					rtti = nullptr;
 
 				rttiInstance = nullptr;
@@ -620,7 +620,7 @@ namespace bs
 					stream.readBytes(arrayNumElems);
 
 				if(curGenericField != nullptr)
-					curGenericField->setArraySize(rttiInstance, output.get(), arrayNumElems);
+					curGenericField->SetArraySize(rttiInstance, output.get(), arrayNumElems);
 
 				switch (fieldSchema.type)
 				{
@@ -658,7 +658,7 @@ namespace bs
 										"object was contained in the file.", childObjectId);
 								}
 
-								curField->setArrayValue(rttiInstance, output.get(), i, nullptr);
+								curField->SetArrayValue(rttiInstance, output.get(), i, nullptr);
 							}
 							else
 							{
@@ -689,7 +689,7 @@ namespace bs
 									}
 								}
 
-								curField->setArrayValue(rttiInstance, output.get(), i, objToDecode.object);
+								curField->SetArrayValue(rttiInstance, output.get(), i, objToDecode.object);
 							}
 						}
 					}
@@ -711,7 +711,7 @@ namespace bs
 						if (curField != nullptr)
 						{
 							// Note: Would be nice to avoid this copy by value and decode directly into the field
-							curField->setArrayValue(rttiInstance, output.get(), i, *childObj);
+							curField->SetArrayValue(rttiInstance, output.get(), i, *childObj);
 						}
 					}
 					break;
@@ -745,7 +745,7 @@ namespace bs
 
 						if (curField != nullptr)
 						{
-							stream.preload((uint32_t)Math::divideAndRoundUp(typeSizeBits, (uint64_t)8));
+							stream.preload((uint32_t)Math::DivideAndRoundUp(typeSizeBits, (uint64_t)8));
 							curField->arrayElemFromBuffer(rttiInstance, output.get(), i, stream.getBitstream(), compressed);
 
 							stream.Skip(typeSizeBits);
@@ -803,7 +803,7 @@ namespace bs
 									"was contained in the file.", childObjectId);
 							}
 
-							curField->setValue(rttiInstance, output.get(), nullptr);
+							curField->SetValue(rttiInstance, output.get(), nullptr);
 						}
 						else
 						{
@@ -834,7 +834,7 @@ namespace bs
 								}
 							}
 
-							curField->setValue(rttiInstance, output.get(), objToDecode.object);
+							curField->SetValue(rttiInstance, output.get(), objToDecode.object);
 						}
 					}
 
@@ -854,7 +854,7 @@ namespace bs
 					if (curField != nullptr)
 					{
 						// Note: Would be nice to avoid this copy by value and decode directly into the field
-						curField->setValue(rttiInstance, output.get(), *childObj);
+						curField->SetValue(rttiInstance, output.get(), *childObj);
 					}
 
 					break;
@@ -886,7 +886,7 @@ namespace bs
 
 					if (curField != nullptr)
 					{
-						stream.preload((uint32_t)Math::divideAndRoundUp(typeSizeBits, (uint64_t)8));
+						stream.preload((uint32_t)Math::DivideAndRoundUp(typeSizeBits, (uint64_t)8));
 						curField->fromBuffer(rttiInstance, output.get(), stream.getBitstream(), compressed);
 
 						stream.Skip(typeSizeBits);
@@ -928,7 +928,7 @@ namespace bs
 							curOffset /= 8;
 							
 							dataStream->seek(curOffset);
-							curField->setValue(rttiInstance, output.get(), dataStream, dataBlockSize);
+							curField->SetValue(rttiInstance, output.get(), dataStream, dataBlockSize);
 
 							stream.SkipBytes(dataBlockSize);
 						}
@@ -937,7 +937,7 @@ namespace bs
 							SPtr<MemoryDataStream> dataBlockStream = bs_shared_ptr_new<MemoryDataStream>(dataBlockSize);
 							stream.readBytes(dataBlockStream->data(), dataBlockSize);
 
-							curField->setValue(rttiInstance, output.get(), dataBlockStream, dataBlockSize);
+							curField->SetValue(rttiInstance, output.get(), dataBlockStream, dataBlockSize);
 						}
 					}
 					else
@@ -954,7 +954,7 @@ namespace bs
 				stream.ClearBuffered(false);
 			}
 
-			UINT32 bytesRead = (UINT32)Math::divideAndRoundUp(stream.tell(), (uint64_t)8);
+			UINT32 bytesRead = (UINT32)Math::DivideAndRoundUp(stream.tell(), (uint64_t)8);
 			if (mReportProgress && (bytesRead >= mNextProgressReport))
 			{
 				UINT32 lastReport = (bytesRead / REPORT_AFTER_BYTES) * REPORT_AFTER_BYTES;

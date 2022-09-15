@@ -47,7 +47,7 @@ namespace bs
 		String methodName = MonoUtil::monoToString(name);
 		while (compClass != nullptr)
 		{
-			MonoMethod* method = compClass->getMethod(methodName);
+			MonoMethod* method = compClass->GetMethod(methodName);
 			if (method != nullptr)
 			{
 				method->invoke(compObj, nullptr);
@@ -56,7 +56,7 @@ namespace bs
 			}
 
 			// Search for methods on base class if there is one
-			MonoClass* baseClass = compClass->getBaseClass();
+			MonoClass* baseClass = compClass->GetBaseClass();
 			if (baseClass != metaData.scriptClass)
 				compClass = baseClass;
 			else
@@ -66,7 +66,7 @@ namespace bs
 		if (!found)
 		{
 			BS_LOG(Warning, Script, "Method invoke failed. Cannot find method \"{0}\" on component of type \"{1}\".",
-				methodName, compClass->getTypeName());
+				methodName, compClass->GetTypeName());
 		}
 	}
 

@@ -51,7 +51,7 @@ namespace bs
 	bool ScriptBloomSettings::InternalGetenabled(ScriptBloomSettings* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->getInternal()->enabled;
+		tmp__output = thisPtr->GetInternal()->enabled;
 
 		bool __output;
 		__output = tmp__output;
@@ -61,13 +61,13 @@ namespace bs
 
 	void ScriptBloomSettings::InternalSetenabled(ScriptBloomSettings* thisPtr, bool value)
 	{
-		thisPtr->getInternal()->enabled = value;
+		thisPtr->GetInternal()->enabled = value;
 	}
 
 	uint32_t ScriptBloomSettings::InternalGetquality(ScriptBloomSettings* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->getInternal()->quality;
+		tmp__output = thisPtr->GetInternal()->quality;
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -77,13 +77,13 @@ namespace bs
 
 	void ScriptBloomSettings::InternalSetquality(ScriptBloomSettings* thisPtr, uint32_t value)
 	{
-		thisPtr->getInternal()->quality = value;
+		thisPtr->GetInternal()->quality = value;
 	}
 
 	float ScriptBloomSettings::InternalGetthreshold(ScriptBloomSettings* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getInternal()->threshold;
+		tmp__output = thisPtr->GetInternal()->threshold;
 
 		float __output;
 		__output = tmp__output;
@@ -93,13 +93,13 @@ namespace bs
 
 	void ScriptBloomSettings::InternalSetthreshold(ScriptBloomSettings* thisPtr, float value)
 	{
-		thisPtr->getInternal()->threshold = value;
+		thisPtr->GetInternal()->threshold = value;
 	}
 
 	float ScriptBloomSettings::InternalGetintensity(ScriptBloomSettings* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getInternal()->intensity;
+		tmp__output = thisPtr->GetInternal()->intensity;
 
 		float __output;
 		__output = tmp__output;
@@ -109,13 +109,13 @@ namespace bs
 
 	void ScriptBloomSettings::InternalSetintensity(ScriptBloomSettings* thisPtr, float value)
 	{
-		thisPtr->getInternal()->intensity = value;
+		thisPtr->GetInternal()->intensity = value;
 	}
 
 	void ScriptBloomSettings::InternalGettint(ScriptBloomSettings* thisPtr, Color* __output)
 	{
 		Color tmp__output;
-		tmp__output = thisPtr->getInternal()->tint;
+		tmp__output = thisPtr->GetInternal()->tint;
 
 		*__output = tmp__output;
 
@@ -124,13 +124,13 @@ namespace bs
 
 	void ScriptBloomSettings::InternalSettint(ScriptBloomSettings* thisPtr, Color* value)
 	{
-		thisPtr->getInternal()->tint = *value;
+		thisPtr->GetInternal()->tint = *value;
 	}
 
 	float ScriptBloomSettings::InternalGetfilterSize(ScriptBloomSettings* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getInternal()->filterSize;
+		tmp__output = thisPtr->GetInternal()->filterSize;
 
 		float __output;
 		__output = tmp__output;
@@ -140,6 +140,6 @@ namespace bs
 
 	void ScriptBloomSettings::InternalSetfilterSize(ScriptBloomSettings* thisPtr, float value)
 	{
-		thisPtr->getInternal()->filterSize = value;
+		thisPtr->GetInternal()->filterSize = value;
 	}
 }

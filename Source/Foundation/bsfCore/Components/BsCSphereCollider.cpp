@@ -10,13 +10,13 @@ namespace bs
 {
 	CSphereCollider::CSphereCollider()
 	{
-		setName("SphereCollider");
+		SetName("SphereCollider");
 	}
 
 	CSphereCollider::CSphereCollider(const HSceneObject& parent, float radius)
 		: CCollider(parent), mRadius(radius)
 	{
-		setName("SphereCollider");
+		SetName("SphereCollider");
 	}
 
 	void CSphereCollider::SetRadius(float radius)
@@ -29,7 +29,7 @@ namespace bs
 
 		if (mInternal != nullptr)
 		{
-			GetInternalInternal()->setRadius(clampedRadius);
+			GetInternalInternal()->SetRadius(clampedRadius);
 
 			if (mParent != nullptr)
 				mParent->UpdateMassDistributionInternal();
@@ -44,16 +44,16 @@ namespace bs
 		mLocalPosition = center;
 		
 		if (mInternal != nullptr)
-			updateTransform();
+			UpdateTransform();
 	}
 
 	SPtr<Collider> CSphereCollider::CreateInternal()
 	{
-		const SPtr<SceneInstance>& scene = SO()->getScene();
-		const Transform& tfrm = SO()->getTransform();
+		const SPtr<SceneInstance>& scene = SO()->GetScene();
+		const Transform& tfrm = SO()->GetTransform();
 
-		SPtr<Collider> collider = SphereCollider::Create(*scene->getPhysicsScene(), mRadius, tfrm.getPosition(),
-			tfrm.getRotation());
+		SPtr<Collider> collider = SphereCollider::Create(*scene->GetPhysicsScene(), mRadius, tfrm.GetPosition(),
+			tfrm.GetRotation());
 
 		collider->SetOwnerInternal(PhysicsOwnerType::Component, this);
 		return collider;

@@ -213,7 +213,7 @@ namespace bs
 		}
 
 		mIdentifiers.insert(identifier);
-		stringData->updateString(value);
+		stringData->UpdateString(value);
 	}
 
 	String StringTable::GetString(const String& identifier, Language language)
@@ -239,7 +239,7 @@ namespace bs
 
 	SPtr<LocalizedStringData> StringTable::GetStringData(const String& identifier, bool insertIfNonExisting)
 	{
-		return getStringData(identifier, mActiveLanguage, insertIfNonExisting);
+		return GetStringData(identifier, mActiveLanguage, insertIfNonExisting);
 	}
 
 	SPtr<LocalizedStringData> StringTable::GetStringData(const String& identifier, Language language, bool insertIfNonExisting)
@@ -256,7 +256,7 @@ namespace bs
 
 		if(insertIfNonExisting)
 		{
-			setString(identifier, DEFAULT_LANGUAGE, identifier);
+			SetString(identifier, DEFAULT_LANGUAGE, identifier);
 
 			auto defaultIterFind = mDefaultLanguageData->strings.find(identifier);
 			if(defaultIterFind != mDefaultLanguageData->strings.end())
@@ -277,7 +277,7 @@ namespace bs
 		SPtr<StringTable> scriptCodePtr = bs_core_ptr<StringTable>(
 			new (bs_alloc<StringTable>()) StringTable());
 		scriptCodePtr->SetThisPtrInternal(scriptCodePtr);
-		scriptCodePtr->initialize();
+		scriptCodePtr->Initialize();
 
 		return scriptCodePtr;
 	}

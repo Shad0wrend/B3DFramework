@@ -39,13 +39,13 @@ namespace bs
 	{
 		PARTICLE_CONE_SHAPE_DESC tmpoptions;
 		tmpoptions = ScriptPARTICLE_CONE_SHAPE_DESC::FromInterop(*options);
-		thisPtr->GetInternal()->setOptions(tmpoptions);
+		thisPtr->GetInternal()->SetOptions(tmpoptions);
 	}
 
 	void ScriptParticleEmitterConeShape::InternalGetOptions(ScriptParticleEmitterConeShape* thisPtr, __PARTICLE_CONE_SHAPE_DESCInterop* __output)
 	{
 		PARTICLE_CONE_SHAPE_DESC tmp__output;
-		tmp__output = thisPtr->getInternal()->getOptions();
+		tmp__output = thisPtr->GetInternal()->GetOptions();
 
 		__PARTICLE_CONE_SHAPE_DESCInterop interop__output;
 		interop__output = ScriptPARTICLE_CONE_SHAPE_DESC::ToInterop(tmp__output);

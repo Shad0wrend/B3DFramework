@@ -80,7 +80,7 @@ namespace bs { namespace ct
 
 	SPtr<Win32Context> Win32GLSupport::CreateContext(HDC hdc, HGLRC externalGlrc)
 	{
-		GLRenderAPI* rapi = static_cast<GLRenderAPI*>(RenderAPI::instancePtr());
+		GLRenderAPI* rapi = static_cast<GLRenderAPI*>(RenderAPI::InstancePtr());
 
 		// If RenderAPI has initialized a context use that, otherwise we create our own
 		HGLRC glrc = externalGlrc;

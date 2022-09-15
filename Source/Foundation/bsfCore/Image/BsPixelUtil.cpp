@@ -19,26 +19,26 @@ namespace bs
 	{
 		static void Scale(const PixelData& source, const PixelData& dest)
 		{
-			UINT8* sourceData = source.getData();
-			UINT8* destPtr = dest.getData();
+			UINT8* sourceData = source.GetData();
+			UINT8* destPtr = dest.GetData();
 
 			// Get steps for traversing source data in 16/48 fixed point format
-			UINT64 stepX = ((UINT64)source.getWidth() << 48) / dest.getWidth();
-			UINT64 stepY = ((UINT64)source.getHeight() << 48) / dest.getHeight();
-			UINT64 stepZ = ((UINT64)source.getDepth() << 48) / dest.getDepth();
+			UINT64 stepX = ((UINT64)source.GetWidth() << 48) / dest.GetWidth();
+			UINT64 stepY = ((UINT64)source.GetHeight() << 48) / dest.GetHeight();
+			UINT64 stepZ = ((UINT64)source.GetDepth() << 48) / dest.GetDepth();
 
 			UINT64 curZ = (stepZ >> 1) - 1; // Offset half a pixel to start at pixel center
-			for (UINT32 z = dest.getFront(); z < dest.getBack(); z++, curZ += stepZ)
+			for (UINT32 z = dest.GetFront(); z < dest.GetBack(); z++, curZ += stepZ)
 			{
-				UINT32 offsetZ = (UINT32)(curZ >> 48) * source.getSlicePitch();
+				UINT32 offsetZ = (UINT32)(curZ >> 48) * source.GetSlicePitch();
 
 				UINT64 curY = (stepY >> 1) - 1; // Offset half a pixel to start at pixel center
-				for (UINT32 y = dest.getTop(); y < dest.getBottom(); y++, curY += stepY)
+				for (UINT32 y = dest.GetTop(); y < dest.GetBottom(); y++, curY += stepY)
 				{
-					UINT32 offsetY = (UINT32)(curY >> 48) * source.getRowPitch();
+					UINT32 offsetY = (UINT32)(curY >> 48) * source.GetRowPitch();
 
 					UINT64 curX = (stepX >> 1) - 1; // Offset half a pixel to start at pixel center
-					for (UINT32 x = dest.getLeft(); x < dest.getRight(); x++, curX += stepX)
+					for (UINT32 x = dest.GetLeft(); x < dest.GetRight(); x++, curX += stepX)
 					{
 						UINT32 offsetX = (UINT32)(curX >> 48);
 						UINT32 offsetBytes = elementSize*offsetX + offsetY + offsetZ;
@@ -49,10 +49,10 @@ namespace bs
 						destPtr += elementSize;
 					}
 
-					destPtr += dest.getRowSkip();
+					destPtr += dest.GetRowSkip();
 				}
 
-				destPtr += dest.getSliceSkip();
+				destPtr += dest.GetSliceSkip();
 			}
 		}
 	};
@@ -89,36 +89,36 @@ namespace bs
 				float sampleWeightZ = (temp & 0xFFFF) / 65536.0f;
 
 				UINT64 curY = (stepY >> 1) - 1; // Offset half a pixel to start at pixel center
-				for (UINT32 y = dest.getTop(); y < dest.getBottom(); y++, curY += stepY)
+				for (UINT32 y = dest.GetTop(); y < dest.GetBottom(); y++, curY += stepY)
 				{
 					temp = (UINT32)(curY >> 32);
 					temp = (temp > 0x8000)? temp - 0x8000 : 0;
 					UINT32 sampleCoordY1 = temp >> 16;
-					UINT32 sampleCoordY2 = std::min(sampleCoordY1 + 1, (UINT32)source.getHeight() - 1);
+					UINT32 sampleCoordY2 = std::min(sampleCoordY1 + 1, (UINT32)source.GetHeight() - 1);
 					float sampleWeightY = (temp & 0xFFFF) / 65536.0f;
 
 					UINT64 curX = (stepX >> 1) - 1; // Offset half a pixel to start at pixel center
-					for (UINT32 x = dest.getLeft(); x < dest.getRight(); x++, curX += stepX)
+					for (UINT32 x = dest.GetLeft(); x < dest.GetRight(); x++, curX += stepX)
 					{
 						temp = (UINT32)(curX >> 32);
 						temp = (temp > 0x8000)? temp - 0x8000 : 0;
 						UINT32 sampleCoordX1 = temp >> 16;
-						UINT32 sampleCoordX2 = std::min(sampleCoordX1 + 1, (UINT32)source.getWidth() - 1);
+						UINT32 sampleCoordX2 = std::min(sampleCoordX1 + 1, (UINT32)source.GetWidth() - 1);
 						float sampleWeightX = (temp & 0xFFFF) / 65536.0f;
 
 						Color x1y1z1, x2y1z1, x1y2z1, x2y2z1;
 						Color x1y1z2, x2y1z2, x1y2z2, x2y2z2;
 
-#define GETSOURCEDATA(x, y, z) sourceData + sourceElemSize*(x)+(y)*source.getRowPitch() + (z)*source.getSlicePitch()
+#define GETSOURCEDATA(x, y, z) sourceData + sourceElemSize*(x)+(y)*source.GetRowPitch() + (z)*source.GetSlicePitch()
 
-						PixelUtil::unpackColor(&x1y1z1, source.getFormat(), GETSOURCEDATA(sampleCoordX1, sampleCoordY1, sampleCoordZ1));
-						PixelUtil::unpackColor(&x2y1z1, source.getFormat(), GETSOURCEDATA(sampleCoordX2, sampleCoordY1, sampleCoordZ1));
-						PixelUtil::unpackColor(&x1y2z1, source.getFormat(), GETSOURCEDATA(sampleCoordX1, sampleCoordY2, sampleCoordZ1));
-						PixelUtil::unpackColor(&x2y2z1, source.getFormat(), GETSOURCEDATA(sampleCoordX2, sampleCoordY2, sampleCoordZ1));
-						PixelUtil::unpackColor(&x1y1z2, source.getFormat(), GETSOURCEDATA(sampleCoordX1, sampleCoordY1, sampleCoordZ2));
-						PixelUtil::unpackColor(&x2y1z2, source.getFormat(), GETSOURCEDATA(sampleCoordX2, sampleCoordY1, sampleCoordZ2));
-						PixelUtil::unpackColor(&x1y2z2, source.getFormat(), GETSOURCEDATA(sampleCoordX1, sampleCoordY2, sampleCoordZ2));
-						PixelUtil::unpackColor(&x2y2z2, source.getFormat(), GETSOURCEDATA(sampleCoordX2, sampleCoordY2, sampleCoordZ2));
+						PixelUtil::UnpackColor(&x1y1z1, source.GetFormat(), GETSOURCEDATA(sampleCoordX1, sampleCoordY1, sampleCoordZ1));
+						PixelUtil::UnpackColor(&x2y1z1, source.GetFormat(), GETSOURCEDATA(sampleCoordX2, sampleCoordY1, sampleCoordZ1));
+						PixelUtil::UnpackColor(&x1y2z1, source.GetFormat(), GETSOURCEDATA(sampleCoordX1, sampleCoordY2, sampleCoordZ1));
+						PixelUtil::UnpackColor(&x2y2z1, source.GetFormat(), GETSOURCEDATA(sampleCoordX2, sampleCoordY2, sampleCoordZ1));
+						PixelUtil::UnpackColor(&x1y1z2, source.GetFormat(), GETSOURCEDATA(sampleCoordX1, sampleCoordY1, sampleCoordZ2));
+						PixelUtil::UnpackColor(&x2y1z2, source.GetFormat(), GETSOURCEDATA(sampleCoordX2, sampleCoordY1, sampleCoordZ2));
+						PixelUtil::UnpackColor(&x1y2z2, source.GetFormat(), GETSOURCEDATA(sampleCoordX1, sampleCoordY2, sampleCoordZ2));
+						PixelUtil::UnpackColor(&x2y2z2, source.GetFormat(), GETSOURCEDATA(sampleCoordX2, sampleCoordY2, sampleCoordZ2));
 #undef GETSOURCEDATA
 
 						Color accum =
@@ -131,15 +131,15 @@ namespace bs
 							x1y2z2 * ((1.0f - sampleWeightX)*        sampleWeightY *        sampleWeightZ ) +
 							x2y2z2 * (        sampleWeightX *        sampleWeightY *        sampleWeightZ );
 
-						PixelUtil::packColor(accum, dest.getFormat(), destPtr);
+						PixelUtil::PackColor(accum, dest.GetFormat(), destPtr);
 
 						destPtr += destElemSize;
 					}
 
-					destPtr += dest.getRowSkip();
+					destPtr += dest.GetRowSkip();
 				}
 
-				destPtr += dest.getSliceSkip();
+				destPtr += dest.GetSliceSkip();
 			}
 		}
 	};
@@ -153,22 +153,22 @@ namespace bs
 	{
 		static void Scale(const PixelData& source, const PixelData& dest)
 		{
-			UINT32 sourcePixelSize = PixelUtil::getNumElemBytes(source.getFormat());
-			UINT32 destPixelSize = PixelUtil::getNumElemBytes(dest.getFormat());
+			UINT32 sourcePixelSize = PixelUtil::GetNumElemBytes(source.GetFormat());
+			UINT32 destPixelSize = PixelUtil::GetNumElemBytes(dest.GetFormat());
 
 			UINT32 numSourceChannels = sourcePixelSize / sizeof(float);
 			UINT32 numDestChannels = destPixelSize / sizeof(float);
 
-			float* sourceData = (float*)source.getData();
-			float* destPtr = (float*)dest.getData();
+			float* sourceData = (float*)source.GetData();
+			float* destPtr = (float*)dest.GetData();
 
 			// Get steps for traversing source data in 16/48 fixed point precision format
-			UINT64 stepX = ((UINT64)source.getWidth() << 48) / dest.getWidth();
-			UINT64 stepY = ((UINT64)source.getHeight() << 48) / dest.getHeight();
-			UINT64 stepZ = ((UINT64)source.getDepth() << 48) / dest.getDepth();
+			UINT64 stepX = ((UINT64)source.GetWidth() << 48) / dest.GetWidth();
+			UINT64 stepY = ((UINT64)source.GetHeight() << 48) / dest.GetHeight();
+			UINT64 stepZ = ((UINT64)source.GetDepth() << 48) / dest.GetDepth();
 
-			UINT32 sourceRowPitch = source.getRowPitch() / sourcePixelSize;
-			UINT32 sourceSlicePitch = source.getSlicePitch() / sourcePixelSize;
+			UINT32 sourceRowPitch = source.GetRowPitch() / sourcePixelSize;
+			UINT32 sourceSlicePitch = source.GetSlicePitch() / sourcePixelSize;
 
 			// Contains 16/16 fixed point precision format. Most significant
 			// 16 bits will contain the coordinate in the source image, and the
@@ -177,30 +177,30 @@ namespace bs
 			UINT32 temp = 0;
 
 			UINT64 curZ = (stepZ >> 1) - 1; // Offset half a pixel to start at pixel center
-			for (UINT32 z = dest.getFront(); z < dest.getBack(); z++, curZ += stepZ)
+			for (UINT32 z = dest.GetFront(); z < dest.GetBack(); z++, curZ += stepZ)
 			{
 				temp = (UINT32)(curZ >> 32);
 				temp = (temp > 0x8000)? temp - 0x8000 : 0;
 				UINT32 sampleCoordZ1 = temp >> 16;
-				UINT32 sampleCoordZ2 = std::min(sampleCoordZ1 + 1, (UINT32)source.getDepth() - 1);
+				UINT32 sampleCoordZ2 = std::min(sampleCoordZ1 + 1, (UINT32)source.GetDepth() - 1);
 				float sampleWeightZ = (temp & 0xFFFF) / 65536.0f;
 
 				UINT64 curY = (stepY >> 1) - 1; // Offset half a pixel to start at pixel center
-				for (UINT32 y = dest.getTop(); y < dest.getBottom(); y++, curY += stepY)
+				for (UINT32 y = dest.GetTop(); y < dest.GetBottom(); y++, curY += stepY)
 				{
 					temp = (UINT32)(curY >> 32);
 					temp = (temp > 0x8000)? temp - 0x8000 : 0;
 					UINT32 sampleCoordY1 = temp >> 16;
-					UINT32 sampleCoordY2 = std::min(sampleCoordY1 + 1, (UINT32)source.getHeight() - 1);
+					UINT32 sampleCoordY2 = std::min(sampleCoordY1 + 1, (UINT32)source.GetHeight() - 1);
 					float sampleWeightY = (temp & 0xFFFF) / 65536.0f;
 
 					UINT64 curX = (stepX >> 1) - 1; // Offset half a pixel to start at pixel center
-					for (UINT32 x = dest.getLeft(); x < dest.getRight(); x++, curX += stepX)
+					for (UINT32 x = dest.GetLeft(); x < dest.GetRight(); x++, curX += stepX)
 					{
 						temp = (UINT32)(curX >> 32);
 						temp = (temp > 0x8000)? temp - 0x8000 : 0;
 						UINT32 sampleCoordX1 = temp >> 16;
-						UINT32 sampleCoordX2 = std::min(sampleCoordX1 + 1, (UINT32)source.getWidth() - 1);
+						UINT32 sampleCoordX2 = std::min(sampleCoordX1 + 1, (UINT32)source.GetWidth() - 1);
 						float sampleWeightX = (temp & 0xFFFF) / 65536.0f;
 
 						// process R,G,B,A simultaneously for cache coherence?
@@ -253,10 +253,10 @@ namespace bs
 						destPtr += numDestChannels;
 					}
 
-					destPtr += dest.getRowSkip() / sizeof(float);
+					destPtr += dest.GetRowSkip() / sizeof(float);
 				}
 
-				destPtr += dest.getSliceSkip() / sizeof(float);
+				destPtr += dest.GetSliceSkip() / sizeof(float);
 			}
 		}
 	};
@@ -286,12 +286,12 @@ namespace bs
 				return;
 			}
 
-			UINT8* sourceData = (UINT8*)source.getData();
-			UINT8* destPtr = (UINT8*)dest.getData();
+			UINT8* sourceData = (UINT8*)source.GetData();
+			UINT8* destPtr = (UINT8*)dest.GetData();
 
 			// Get steps for traversing source data in 16/48 fixed point precision format
-			UINT64 stepX = ((UINT64)source.getWidth() << 48) / dest.getWidth();
-			UINT64 stepY = ((UINT64)source.getHeight() << 48) / dest.getHeight();
+			UINT64 stepX = ((UINT64)source.GetWidth() << 48) / dest.GetWidth();
+			UINT64 stepY = ((UINT64)source.GetHeight() << 48) / dest.GetHeight();
 
 			// Contains 16/16 fixed point precision format. Most significant
 			// 16 bits will contain the coordinate in the source image, and the
@@ -1228,12 +1228,12 @@ namespace bs
 		void beginImage(int size, int width, int height, int depth, int face, int miplevel) override
 		{
 			assert(miplevel >= 0 && miplevel < (int)buffers.size());
-			assert((UINT32)size == buffers[miplevel]->getConsecutiveSize());
+			assert((UINT32)size == buffers[miplevel]->GetConsecutiveSize());
 
 			activeBuffer = buffers[miplevel];
 
-			bufferWritePos = activeBuffer->getData();
-			bufferEnd = bufferWritePos + activeBuffer->getConsecutiveSize();
+			bufferWritePos = activeBuffer->GetData();
+			bufferEnd = bufferWritePos + activeBuffer->GetConsecutiveSize();
 		}
 
 		bool writeData(const void* data, int size) override
@@ -1350,7 +1350,7 @@ namespace bs
 		case PF_BC7:
 			return 16;
 		default:
-			return getNumElemBytes(format);
+			return GetNumElemBytes(format);
 		}
 
 	}
@@ -1375,7 +1375,7 @@ namespace bs
 
 	UINT32 PixelUtil::GetMemorySize(UINT32 width, UINT32 height, UINT32 depth, PixelFormat format)
 	{
-		if(isCompressed(format))
+		if(IsCompressed(format))
 		{
 			switch(format)
 			{
@@ -1388,23 +1388,23 @@ namespace bs
 				case PF_BC5:
 				case PF_BC6H:
 				case PF_BC7:
-					width = Math::divideAndRoundUp(width, 4U);
-					height = Math::divideAndRoundUp(height, 4U);
+					width = Math::DivideAndRoundUp(width, 4U);
+					height = Math::DivideAndRoundUp(height, 4U);
 					break;
 				default:
 					break;
 			}
 		}
 
-		return width*height*depth*getBlockSize(format);
+		return width*height*depth*GetBlockSize(format);
 	}
 
 	void PixelUtil::GetPitch(UINT32 width, UINT32 height, UINT32 depth, PixelFormat format,
 						 UINT32& rowPitch, UINT32& depthPitch)
 	{
-		UINT32 blockSize = getBlockSize(format);
+		UINT32 blockSize = GetBlockSize(format);
 
-		if (isCompressed(format))
+		if (IsCompressed(format))
 		{
 			switch (format)
 			{
@@ -1417,8 +1417,8 @@ namespace bs
 			case PF_BC5:
 			case PF_BC6H:
 			case PF_BC7:
-				width = Math::divideAndRoundUp(width, 4U);
-				height = Math::divideAndRoundUp(height, 4U);
+				width = Math::DivideAndRoundUp(width, 4U);
+				height = Math::DivideAndRoundUp(height, 4U);
 				break;
 			default:
 				break;
@@ -1456,27 +1456,27 @@ namespace bs
 
 	bool PixelUtil::HasAlpha(PixelFormat format)
 	{
-		return (PixelUtil::getFlags(format) & PFF_HASALPHA) > 0;
+		return (PixelUtil::GetFlags(format) & PFF_HASALPHA) > 0;
 	}
 
 	bool PixelUtil::IsFloatingPoint(PixelFormat format)
 	{
-		return (PixelUtil::getFlags(format) & PFF_FLOAT) > 0;
+		return (PixelUtil::GetFlags(format) & PFF_FLOAT) > 0;
 	}
 
 	bool PixelUtil::IsCompressed(PixelFormat format)
 	{
-		return (PixelUtil::getFlags(format) & PFF_COMPRESSED) > 0;
+		return (PixelUtil::GetFlags(format) & PFF_COMPRESSED) > 0;
 	}
 
 	bool PixelUtil::IsNormalized(PixelFormat format)
 	{
-		return (PixelUtil::getFlags(format) & PFF_NORMALIZED) > 0;
+		return (PixelUtil::GetFlags(format) & PFF_NORMALIZED) > 0;
 	}
 
 	bool PixelUtil::IsDepth(PixelFormat format)
 	{
-		return (PixelUtil::getFlags(format) & PFF_DEPTH) > 0;
+		return (PixelUtil::GetFlags(format) & PFF_DEPTH) > 0;
 	}
 
 	bool PixelUtil::CheckFormat(PixelFormat& format, TextureType texType, int usage)
@@ -1486,7 +1486,7 @@ namespace bs
 		//// Depth-stencil only supports depth formats
 		if ((usage & TU_DEPTHSTENCIL) != 0)
 		{
-			if (isDepth(format))
+			if (IsDepth(format))
 				return true;
 
 			format = PF_D32_S8X24;
@@ -1496,7 +1496,7 @@ namespace bs
 		//// Render targets support everything but compressed & depth-stencil formats
 		if ((usage & TU_RENDERTARGET) != 0)
 		{
-			if (!isDepth(format) && !isCompressed(format))
+			if (!IsDepth(format) && !IsCompressed(format))
 				return true;
 
 			format = PF_RGBA8;
@@ -1506,7 +1506,7 @@ namespace bs
 		//// Load-store textures support everything but compressed & depth-stencil formats
 		if ((usage & TU_LOADSTORE) != 0)
 		{
-			if (!isDepth(format) && !isCompressed(format))
+			if (!IsDepth(format) && !IsCompressed(format))
 				return true;
 
 			format = PF_RGBA8;
@@ -1519,7 +1519,7 @@ namespace bs
 		case TEX_TYPE_1D:
 		{
 			// 1D textures support anything but depth & compressed formats
-			if (!isDepth(format) && !isCompressed(format))
+			if (!IsDepth(format) && !IsCompressed(format))
 				return true;
 
 			format = PF_RGBA8;
@@ -1528,7 +1528,7 @@ namespace bs
 		case TEX_TYPE_3D:
 		{
 			// 3D textures support anything but depth & compressed formats
-			if (!isDepth(format))
+			if (!IsDepth(format))
 				return true;
 
 			format = PF_RGBA8;
@@ -1537,7 +1537,7 @@ namespace bs
 		default: // 2D & cube
 		{
 			// 2D/cube textures support anything but depth formats
-			if (!isDepth(format))
+			if (!IsDepth(format))
 				return true;
 
 			format = PF_RGBA8;
@@ -1548,7 +1548,7 @@ namespace bs
 
 	bool PixelUtil::IsValidExtent(UINT32 width, UINT32 height, UINT32 depth, PixelFormat format)
 	{
-		if(isCompressed(format))
+		if(IsCompressed(format))
 		{
 			switch(format)
 			{
@@ -1608,7 +1608,7 @@ namespace bs
 		if (srcformat == PF_UNKNOWN)
 			return false;
 
-		UINT32 flags = getFlags(srcformat);
+		UINT32 flags = GetFlags(srcformat);
 		return !((flags & PFF_COMPRESSED) || (flags & PFF_DEPTH));
 	}
 
@@ -1644,7 +1644,7 @@ namespace bs
 
 	void PixelUtil::PackColor(const Color& color, PixelFormat format, void* dest)
 	{
-		packColor(color.r, color.g, color.b, color.a, format, dest);
+		PackColor(color.r, color.g, color.b, color.a, format, dest);
 	}
 
 	void PixelUtil::PackColor(UINT8 r, UINT8 g, UINT8 b, UINT8 a, PixelFormat format, void* dest)
@@ -1654,18 +1654,18 @@ namespace bs
 		if (des.flags & PFF_INTEGER)
 		{
 			// Shortcut for integer formats packing
-			UINT32 value = ((Bitwise::fixedToFixed(r, 8, des.rbits) << des.rshift) & des.rmask) |
-				((Bitwise::fixedToFixed(g, 8, des.gbits) << des.gshift) & des.gmask) |
-				((Bitwise::fixedToFixed(b, 8, des.bbits) << des.bshift) & des.bmask) |
-				((Bitwise::fixedToFixed(a, 8, des.abits) << des.ashift) & des.amask);
+			UINT32 value = ((Bitwise::FixedToFixed(r, 8, des.rbits) << des.rshift) & des.rmask) |
+				((Bitwise::FixedToFixed(g, 8, des.gbits) << des.gshift) & des.gmask) |
+				((Bitwise::FixedToFixed(b, 8, des.bbits) << des.bshift) & des.bmask) |
+				((Bitwise::FixedToFixed(a, 8, des.abits) << des.ashift) & des.amask);
 
 			// And write to memory
-			Bitwise::intWrite(dest, des.elemBytes, value);
+			Bitwise::IntWrite(dest, des.elemBytes, value);
 		}
 		else
 		{
 			// Convert to float
-			packColor((float)r / 255.0f, (float)g / 255.0f, (float)b / 255.0f, (float)a / 255.0f, format, dest);
+			PackColor((float)r / 255.0f, (float)g / 255.0f, (float)b / 255.0f, (float)a / 255.0f, format, dest);
 		}
 	}
 
@@ -1675,9 +1675,9 @@ namespace bs
 		if (format == PF_RG11B10F)
 		{
 			UINT32 value;
-			value = Bitwise::floatToFloat11(r);
-			value |= Bitwise::floatToFloat11(g) << 11;
-			value |= Bitwise::floatToFloat10(b) << 22;
+			value = Bitwise::FloatToFloat11(r);
+			value |= Bitwise::FloatToFloat11(g) << 11;
+			value |= Bitwise::FloatToFloat10(b) << 22;
 
 			((UINT32*)dest)[0] = value;
 			return;
@@ -1685,7 +1685,7 @@ namespace bs
 
 		if (format == PF_RGB10A2)
 		{
-			BS_LOG(Error, PixelUtility, "packColor() not implemented for format \"{0}\".", getFormatName(PF_RGB10A2));
+			BS_LOG(Error, PixelUtility, "packColor() not implemented for format \"{0}\".", GetFormatName(PF_RGB10A2));
 			return;
 		}
 
@@ -1711,7 +1711,7 @@ namespace bs
 			if(curDword > prevDword)
 			{
 				UINT32* curDst = ((UINT32*)dest) + prevDword;
-				Bitwise::intWrite(curDst, 4, dwordValue);
+				Bitwise::IntWrite(curDst, 4, dwordValue);
 
 				dwordValue = 0;
 				prevDword = curDword;
@@ -1722,9 +1722,9 @@ namespace bs
 				if (des.flags & PFF_NORMALIZED)
 				{
 					if (des.flags & PFF_SIGNED)
-						dwordValue |= (Bitwise::snormToUint(inputs[i], bits[i]) << shifts[i]) & masks[i];
+						dwordValue |= (Bitwise::SnormToUint(inputs[i], bits[i]) << shifts[i]) & masks[i];
 					else
-						dwordValue |= (Bitwise::unormToUint(inputs[i], bits[i]) << shifts[i]) & masks[i];
+						dwordValue |= (Bitwise::UnormToUint(inputs[i], bits[i]) << shifts[i]) & masks[i];
 				}
 				else
 				{
@@ -1738,13 +1738,13 @@ namespace bs
 				// Note: Not handling unsigned floats
 
 				if (des.componentType == PCT_FLOAT16)
-					dwordValue |= (Bitwise::floatToHalf(inputs[i]) << shifts[i]) & masks[i];
+					dwordValue |= (Bitwise::FloatToHalf(inputs[i]) << shifts[i]) & masks[i];
 				else
 					dwordValue |= *(UINT32*)&inputs[i];
 			}
 			else
 			{
-				BS_LOG(Error, PixelUtility, "packColor() not implemented for format \"{0}\".", getFormatName(format));
+				BS_LOG(Error, PixelUtility, "packColor() not implemented for format \"{0}\".", GetFormatName(format));
 				return;
 			}
 
@@ -1754,12 +1754,12 @@ namespace bs
 		// Write last dword
 		UINT32 numBytes = std::min((prevDword + 1) * 4, (UINT32)des.elemBytes) - (prevDword * 4);
 		UINT32* curDst = ((UINT32*)dest) + prevDword;
-		Bitwise::intWrite(curDst, numBytes, dwordValue);
+		Bitwise::IntWrite(curDst, numBytes, dwordValue);
 	}
 
 	void PixelUtil::UnpackColor(Color* color, PixelFormat format, const void* src)
 	{
-		unpackColor(&color->r, &color->g, &color->b, &color->a, format, src);
+		UnpackColor(&color->r, &color->g, &color->b, &color->a, format, src);
 	}
 
 	void PixelUtil::UnpackColor(UINT8* r, UINT8* g, UINT8* b, UINT8* a, PixelFormat format, const void* src)
@@ -1769,15 +1769,15 @@ namespace bs
 		if (des.flags & PFF_INTEGER)
 		{
 			// Shortcut for integer formats unpacking
-			const UINT32 value = Bitwise::intRead(src, des.elemBytes);
+			const UINT32 value = Bitwise::IntRead(src, des.elemBytes);
 
-			*r = (UINT8)Bitwise::fixedToFixed((value & des.rmask) >> des.rshift, des.rbits, 8);
-			*g = (UINT8)Bitwise::fixedToFixed((value & des.gmask) >> des.gshift, des.gbits, 8);
-			*b = (UINT8)Bitwise::fixedToFixed((value & des.bmask) >> des.bshift, des.bbits, 8);
+			*r = (UINT8)Bitwise::FixedToFixed((value & des.rmask) >> des.rshift, des.rbits, 8);
+			*g = (UINT8)Bitwise::FixedToFixed((value & des.gmask) >> des.gshift, des.gbits, 8);
+			*b = (UINT8)Bitwise::FixedToFixed((value & des.bmask) >> des.bshift, des.bbits, 8);
 
 			if (des.flags & PFF_HASALPHA)
 			{
-				*a = (UINT8)Bitwise::fixedToFixed((value & des.amask) >> des.ashift, des.abits, 8);
+				*a = (UINT8)Bitwise::FixedToFixed((value & des.amask) >> des.ashift, des.abits, 8);
 			}
 			else
 			{
@@ -1788,12 +1788,12 @@ namespace bs
 		{
 			// Do the operation with the more generic floating point
 			float rr, gg, bb, aa;
-			unpackColor(&rr, &gg, &bb, &aa, format, src);
+			UnpackColor(&rr, &gg, &bb, &aa, format, src);
 
-			*r = (UINT8)Bitwise::unormToUint(rr, 8);
-			*g = (UINT8)Bitwise::unormToUint(gg, 8);
-			*b = (UINT8)Bitwise::unormToUint(bb, 8);
-			*a = (UINT8)Bitwise::unormToUint(aa, 8);
+			*r = (UINT8)Bitwise::UnormToUint(rr, 8);
+			*g = (UINT8)Bitwise::UnormToUint(gg, 8);
+			*b = (UINT8)Bitwise::UnormToUint(bb, 8);
+			*a = (UINT8)Bitwise::UnormToUint(aa, 8);
 		}
 	}
 
@@ -1803,16 +1803,16 @@ namespace bs
 		if(format == PF_RG11B10F)
 		{
 			UINT32 value = ((UINT32*)src)[0];
-			*r = Bitwise::float11ToFloat(value);
-			*g = Bitwise::float11ToFloat(value >> 11);
-			*b = Bitwise::float10ToFloat(value >> 22);
+			*r = Bitwise::Float11ToFloat(value);
+			*g = Bitwise::Float11ToFloat(value >> 11);
+			*b = Bitwise::Float10ToFloat(value >> 22);
 
 			return;
 		}
 
 		if(format == PF_RGB10A2)
 		{
-			BS_LOG(Error, PixelUtility,"unpackColor() not implemented for format \"{0}\".", getFormatName(PF_RGB10A2));
+			BS_LOG(Error, PixelUtility,"unpackColor() not implemented for format \"{0}\".", GetFormatName(PF_RGB10A2));
 			return;
 		}
 
@@ -1832,15 +1832,15 @@ namespace bs
 			UINT32 numBytes = std::min((curDword + 1) * 4, (UINT32)des.elemBytes) - (curDword * 4);
 
 			UINT32* curSrc = ((UINT32*)src) + curDword;
-			UINT32 value = Bitwise::intRead(curSrc, numBytes);
+			UINT32 value = Bitwise::IntRead(curSrc, numBytes);
 			if(des.flags & PFF_INTEGER)
 			{
 				if(des.flags & PFF_NORMALIZED)
 				{
 					if (des.flags & PFF_SIGNED)
-						*outputs[i] = Bitwise::uintToSnorm((value & masks[i]) >> shifts[i], bits[i]);
+						*outputs[i] = Bitwise::UintToSnorm((value & masks[i]) >> shifts[i], bits[i]);
 					else
-						*outputs[i] = Bitwise::uintToUnorm((value & masks[i]) >> shifts[i], bits[i]);
+						*outputs[i] = Bitwise::UintToUnorm((value & masks[i]) >> shifts[i], bits[i]);
 				}
 				else
 				{
@@ -1854,13 +1854,13 @@ namespace bs
 				// Note: Not handling unsigned floats
 
 				if (des.componentType == PCT_FLOAT16)
-					*outputs[i] = Bitwise::halfToFloat((UINT16)((value & masks[i]) >> shifts[i]));
+					*outputs[i] = Bitwise::HalfToFloat((UINT16)((value & masks[i]) >> shifts[i]));
 				else
 					*outputs[i] = *(float*)&value;
 			}
 			else
 			{
-				BS_LOG(Error, PixelUtility, "unpackColor() not implemented for format \"{0}\".", getFormatName(format));
+				BS_LOG(Error, PixelUtility, "unpackColor() not implemented for format \"{0}\".", GetFormatName(format));
 				return;
 			}
 
@@ -1877,9 +1877,9 @@ namespace bs
 
 	void PixelUtil::PackDepth(float depth, const PixelFormat format, void* dest)
 	{
-		if (!isDepth(format))
+		if (!IsDepth(format))
 		{
-			BS_LOG(Error, PixelUtility, "Cannot convert depth to {0}: it is not a depth format", getFormatName(format));
+			BS_LOG(Error, PixelUtility, "Cannot convert depth to {0}: it is not a depth format", GetFormatName(format));
 			return;
 		}
 
@@ -1889,9 +1889,9 @@ namespace bs
 
 	float PixelUtil::UnpackDepth(PixelFormat format, void* src)
 	{
-		if (!isDepth(format))
+		if (!IsDepth(format))
 		{
-			BS_LOG(Error, PixelUtility, "Cannot unpack from {0}: it is not a depth format", getFormatName(format));
+			BS_LOG(Error, PixelUtility, "Cannot unpack from {0}: it is not a depth format", GetFormatName(format));
 			return 0;
 		}
 
@@ -1914,7 +1914,7 @@ namespace bs
 			return *( (float*) &masked );
 			break;
 		default:
-			BS_LOG(Error, PixelUtility, "Cannot unpack from {0}", getFormatName(format));
+			BS_LOG(Error, PixelUtility, "Cannot unpack from {0}", GetFormatName(format));
 			return 0;
 			break;
 		}
@@ -1922,61 +1922,61 @@ namespace bs
 
 	void PixelUtil::BulkPixelConversion(const PixelData &src, PixelData &dst)
 	{
-		if(src.getWidth() != dst.getWidth() || src.getHeight() != dst.getHeight() || src.getDepth() != dst.getDepth())
+		if(src.GetWidth() != dst.GetWidth() || src.GetHeight() != dst.GetHeight() || src.GetDepth() != dst.GetDepth())
 		{
 			BS_LOG(Error, PixelUtility, "Cannot convert pixels between buffers of different sizes.");
 			return;
 		}
 
 		// The easy case
-		if (src.getFormat() == dst.getFormat())
+		if (src.GetFormat() == dst.GetFormat())
 		{
 			// Everything consecutive?
-			if (src.isConsecutive() && dst.isConsecutive())
+			if (src.IsConsecutive() && dst.IsConsecutive())
 			{
-				memcpy(dst.getData(), src.getData(), src.getConsecutiveSize());
+				memcpy(dst.GetData(), src.GetData(), src.GetConsecutiveSize());
 				return;
 			}
 
-			PixelFormat format = src.getFormat();
-			UINT32 pixelSize = getNumElemBytes(format);
+			PixelFormat format = src.GetFormat();
+			UINT32 pixelSize = GetNumElemBytes(format);
 
-			Vector2I blockDim = getBlockDimensions(format);
-			if(isCompressed(format))
+			Vector2I blockDim = GetBlockDimensions(format);
+			if(IsCompressed(format))
 			{
-				UINT32 blockSize = getBlockSize(format);
+				UINT32 blockSize = GetBlockSize(format);
 				pixelSize = blockSize / blockDim.x;
 
-				if(src.getLeft() % blockDim.x != 0 || src.getTop() % blockDim.y != 0)
+				if(src.GetLeft() % blockDim.x != 0 || src.GetTop() % blockDim.y != 0)
 				{
 					BS_LOG(Error, PixelUtility,
 						"Source offset must be a multiple of block size for compressed formats.");
 				}
 
-				if(dst.getLeft() % blockDim.x != 0 || dst.getTop() % blockDim.y != 0)
+				if(dst.GetLeft() % blockDim.x != 0 || dst.GetTop() % blockDim.y != 0)
 				{
 					BS_LOG(Error, PixelUtility,
 						"Destination offset must be a multiple of block size for compressed formats.");
 				}
 			}
 
-			UINT8* srcPtr = static_cast<UINT8*>(src.getData())
-				+ src.getLeft() * pixelSize + src.getTop() * src.getRowPitch() + src.getFront() * src.getSlicePitch();
-			UINT8* dstPtr = static_cast<UINT8*>(dst.getData())
-				+ dst.getLeft() * pixelSize + dst.getTop() * dst.getRowPitch() + dst.getFront() * dst.getSlicePitch();
+			UINT8* srcPtr = static_cast<UINT8*>(src.GetData())
+				+ src.GetLeft() * pixelSize + src.GetTop() * src.GetRowPitch() + src.GetFront() * src.GetSlicePitch();
+			UINT8* dstPtr = static_cast<UINT8*>(dst.GetData())
+				+ dst.GetLeft() * pixelSize + dst.GetTop() * dst.GetRowPitch() + dst.GetFront() * dst.GetSlicePitch();
 
 			// Get pitches+skips in bytes
-			const UINT32 srcRowPitchBytes = src.getRowPitch();
-			const UINT32 srcSliceSkipBytes = src.getSliceSkip();
+			const UINT32 srcRowPitchBytes = src.GetRowPitch();
+			const UINT32 srcSliceSkipBytes = src.GetSliceSkip();
 
-			const UINT32 dstRowPitchBytes = dst.getRowPitch();
-			const UINT32 dstSliceSkipBytes = dst.getSliceSkip();
+			const UINT32 dstRowPitchBytes = dst.GetRowPitch();
+			const UINT32 dstSliceSkipBytes = dst.GetSliceSkip();
 
 			// Otherwise, copy per row
-			const UINT32 rowSize = src.getWidth()*pixelSize;
-			for (UINT32 z = src.getFront(); z < src.getBack(); z++)
+			const UINT32 rowSize = src.GetWidth()*pixelSize;
+			for (UINT32 z = src.GetFront(); z < src.GetBack(); z++)
 			{
-				for (UINT32 y = src.getTop(); y < src.getBottom(); y += blockDim.y)
+				for (UINT32 y = src.GetTop(); y < src.GetBottom(); y += blockDim.y)
 				{
 					memcpy(dstPtr, srcPtr, rowSize);
 
@@ -1992,9 +1992,9 @@ namespace bs
 		}
 
 		// Check for compressed formats, we don't support decompression
-		if (isCompressed(src.getFormat()))
+		if (IsCompressed(src.GetFormat()))
 		{
-			if (src.getFormat() != dst.getFormat())
+			if (src.GetFormat() != dst.GetFormat())
 			{
 				BS_LOG(Error, PixelUtility, "Cannot convert from a compressed format to another format.");
 				return;
@@ -2002,41 +2002,41 @@ namespace bs
 		}
 
 		// Check for compression
-		if (isCompressed(dst.getFormat()))
+		if (IsCompressed(dst.GetFormat()))
 		{
-			if (src.getFormat() != dst.getFormat())
+			if (src.GetFormat() != dst.GetFormat())
 			{
 				CompressionOptions co;
-				co.format = dst.getFormat();
-				compress(src, dst, co);
+				co.format = dst.GetFormat();
+				Compress(src, dst, co);
 
 				return;
 			}
 		}
 
-		UINT32 srcPixelSize = getNumElemBytes(src.getFormat());
-		UINT32 dstPixelSize = getNumElemBytes(dst.getFormat());
-		UINT8 *srcptr = static_cast<UINT8*>(src.getData())
-			+ src.getLeft() * srcPixelSize + src.getTop() * src.getRowPitch() + src.getFront() * src.getSlicePitch();
-		UINT8 *dstptr = static_cast<UINT8*>(dst.getData())
-			+ dst.getLeft() * dstPixelSize + dst.getTop() * dst.getRowPitch() + dst.getFront() * dst.getSlicePitch();
+		UINT32 srcPixelSize = GetNumElemBytes(src.GetFormat());
+		UINT32 dstPixelSize = GetNumElemBytes(dst.GetFormat());
+		UINT8 *srcptr = static_cast<UINT8*>(src.GetData())
+			+ src.GetLeft() * srcPixelSize + src.GetTop() * src.GetRowPitch() + src.GetFront() * src.GetSlicePitch();
+		UINT8 *dstptr = static_cast<UINT8*>(dst.GetData())
+			+ dst.GetLeft() * dstPixelSize + dst.GetTop() * dst.GetRowPitch() + dst.GetFront() * dst.GetSlicePitch();
 
 		// Get pitches+skips in bytes
-		UINT32 srcRowSkipBytes = src.getRowSkip();
-		UINT32 srcSliceSkipBytes = src.getSliceSkip();
-		UINT32 dstRowSkipBytes = dst.getRowSkip();
-		UINT32 dstSliceSkipBytes = dst.getSliceSkip();
+		UINT32 srcRowSkipBytes = src.GetRowSkip();
+		UINT32 srcSliceSkipBytes = src.GetSliceSkip();
+		UINT32 dstRowSkipBytes = dst.GetRowSkip();
+		UINT32 dstSliceSkipBytes = dst.GetSliceSkip();
 
 		// The brute force fallback
 		float r, g, b, a;
-		for (UINT32 z = src.getFront(); z < src.getBack(); z++)
+		for (UINT32 z = src.GetFront(); z < src.GetBack(); z++)
 		{
-			for (UINT32 y = src.getTop(); y < src.getBottom(); y++)
+			for (UINT32 y = src.GetTop(); y < src.GetBottom(); y++)
 			{
-				for (UINT32 x = src.getLeft(); x < src.getRight(); x++)
+				for (UINT32 x = src.GetLeft(); x < src.GetRight(); x++)
 				{
-					unpackColor(&r, &g, &b, &a, src.getFormat(), srcptr);
-					packColor(r, g, b, a, dst.getFormat(), dstptr);
+					UnpackColor(&r, &g, &b, &a, src.GetFormat(), srcptr);
+					PackColor(r, g, b, a, dst.GetFormat(), dstptr);
 
 					srcptr += srcPixelSize;
 					dstptr += dstPixelSize;
@@ -2053,13 +2053,13 @@ namespace bs
 
 	void PixelUtil::FlipComponentOrder(PixelData& data)
 	{
-		if (isCompressed(data.getFormat()))
+		if (IsCompressed(data.GetFormat()))
 		{
 			BS_LOG(Error, PixelUtility, "flipComponentOrder() not supported on compressed images.");
 			return;
 		}
 
-		const PixelFormatDescription& pfd = getDescriptionFor(data.getFormat());
+		const PixelFormatDescription& pfd = getDescriptionFor(data.GetFormat());
 		if(pfd.elemBytes > 4)
 		{
 			BS_LOG(Error, PixelUtility, "flipComponentOrder() only supported on 4 byte or smaller pixel formats.");
@@ -2111,17 +2111,17 @@ namespace bs
 			[&](const CompData& lhs, const CompData& rhs) { return lhs.shift < rhs.shift; }
 		);
 
-		UINT8* dataPtr = data.getData();
+		UINT8* dataPtr = data.GetData();
 
 		UINT32 pixelSize = pfd.elemBytes;
-		UINT32 rowSkipBytes = data.getRowSkip();
-		UINT32 sliceSkipBytes = data.getSliceSkip();
+		UINT32 rowSkipBytes = data.GetRowSkip();
+		UINT32 sliceSkipBytes = data.GetSliceSkip();
 
-		for (UINT32 z = 0; z < data.getDepth(); z++)
+		for (UINT32 z = 0; z < data.GetDepth(); z++)
 		{
-			for (UINT32 y = 0; y < data.getHeight(); y++)
+			for (UINT32 y = 0; y < data.GetHeight(); y++)
 			{
-				for (UINT32 x = 0; x < data.getWidth(); x++)
+				for (UINT32 x = 0; x < data.GetWidth(); x++)
 				{
 					if(pfd.componentCount == 2)
 					{
@@ -2172,15 +2172,15 @@ namespace bs
 
 	void PixelUtil::Scale(const PixelData& src, PixelData& scaled, Filter filter)
 	{
-		assert(PixelUtil::isAccessible(src.getFormat()));
-		assert(PixelUtil::isAccessible(scaled.getFormat()));
+		assert(PixelUtil::IsAccessible(src.GetFormat()));
+		assert(PixelUtil::IsAccessible(scaled.GetFormat()));
 
 		PixelData temp;
 		switch (filter)
 		{
 		default:
 		case FILTER_NEAREST:
-			if(src.getFormat() == scaled.getFormat())
+			if(src.GetFormat() == scaled.GetFormat())
 			{
 				// No intermediate buffer needed
 				temp = scaled;
@@ -2188,43 +2188,43 @@ namespace bs
 			else
 			{
 				// Allocate temporary buffer of destination size in source format
-				temp = PixelData(scaled.getWidth(), scaled.getHeight(), scaled.getDepth(), src.getFormat());
-				temp.allocateInternalBuffer();
+				temp = PixelData(scaled.GetWidth(), scaled.GetHeight(), scaled.GetDepth(), src.GetFormat());
+				temp.AllocateInternalBuffer();
 			}
 
 			// No conversion
-			switch (PixelUtil::getNumElemBytes(src.getFormat()))
+			switch (PixelUtil::GetNumElemBytes(src.GetFormat()))
 			{
-			case 1: NearestResampler<1>::scale(src, temp); break;
-			case 2: NearestResampler<2>::scale(src, temp); break;
-			case 3: NearestResampler<3>::scale(src, temp); break;
-			case 4: NearestResampler<4>::scale(src, temp); break;
-			case 6: NearestResampler<6>::scale(src, temp); break;
-			case 8: NearestResampler<8>::scale(src, temp); break;
-			case 12: NearestResampler<12>::scale(src, temp); break;
-			case 16: NearestResampler<16>::scale(src, temp); break;
+			case 1: NearestResampler<1>::Scale(src, temp); break;
+			case 2: NearestResampler<2>::Scale(src, temp); break;
+			case 3: NearestResampler<3>::Scale(src, temp); break;
+			case 4: NearestResampler<4>::Scale(src, temp); break;
+			case 6: NearestResampler<6>::Scale(src, temp); break;
+			case 8: NearestResampler<8>::Scale(src, temp); break;
+			case 12: NearestResampler<12>::Scale(src, temp); break;
+			case 16: NearestResampler<16>::Scale(src, temp); break;
 			default:
 				// Never reached
 				assert(false);
 			}
 
-			if(temp.getData() != scaled.getData())
+			if(temp.GetData() != scaled.GetData())
 			{
 				// Blit temp buffer
-				PixelUtil::bulkPixelConversion(temp, scaled);
+				PixelUtil::BulkPixelConversion(temp, scaled);
 
-				temp.freeInternalBuffer();
+				temp.FreeInternalBuffer();
 			}
 
 			break;
 
 		case FILTER_LINEAR:
-			switch (src.getFormat())
+			switch (src.GetFormat())
 			{
 			case PF_RG8:
 			case PF_RGB8: case PF_BGR8:
 			case PF_RGBA8: case PF_BGRA8:
-				if(src.getFormat() == scaled.getFormat())
+				if(src.GetFormat() == scaled.GetFormat())
 				{
 					// No intermediate buffer needed
 					temp = scaled;
@@ -2232,33 +2232,33 @@ namespace bs
 				else
 				{
 					// Allocate temp buffer of destination size in source format
-					temp = PixelData(scaled.getWidth(), scaled.getHeight(), scaled.getDepth(), src.getFormat());
-					temp.allocateInternalBuffer();
+					temp = PixelData(scaled.GetWidth(), scaled.GetHeight(), scaled.GetDepth(), src.GetFormat());
+					temp.AllocateInternalBuffer();
 				}
 
 				// No conversion
-				switch (PixelUtil::getNumElemBytes(src.getFormat()))
+				switch (PixelUtil::GetNumElemBytes(src.GetFormat()))
 				{
-				case 1: LinearResampler_Byte<1>::scale(src, temp); break;
-				case 2: LinearResampler_Byte<2>::scale(src, temp); break;
-				case 3: LinearResampler_Byte<3>::scale(src, temp); break;
-				case 4: LinearResampler_Byte<4>::scale(src, temp); break;
+				case 1: LinearResampler_Byte<1>::Scale(src, temp); break;
+				case 2: LinearResampler_Byte<2>::Scale(src, temp); break;
+				case 3: LinearResampler_Byte<3>::Scale(src, temp); break;
+				case 4: LinearResampler_Byte<4>::Scale(src, temp); break;
 				default:
 					// Never reached
 					assert(false);
 				}
 
-				if(temp.getData() != scaled.getData())
+				if(temp.GetData() != scaled.GetData())
 				{
 					// Blit temp buffer
-					PixelUtil::bulkPixelConversion(temp, scaled);
-					temp.freeInternalBuffer();
+					PixelUtil::BulkPixelConversion(temp, scaled);
+					temp.FreeInternalBuffer();
 				}
 
 				break;
 			case PF_RGB32F:
 			case PF_RGBA32F:
-				if (scaled.getFormat() == PF_RGB32F || scaled.getFormat() == PF_RGBA32F)
+				if (scaled.GetFormat() == PF_RGB32F || scaled.GetFormat() == PF_RGBA32F)
 				{
 					// float32 to float32, avoid unpack/repack overhead
 					LinearResampler_Float32::Scale(src, scaled);
@@ -2275,62 +2275,62 @@ namespace bs
 
 	void PixelUtil::Copy(const PixelData& src, PixelData& dst, UINT32 offsetX, UINT32 offsetY, UINT32 offsetZ)
 	{
-		if(src.getFormat() != dst.getFormat())
+		if(src.GetFormat() != dst.GetFormat())
 		{
 			BS_LOG(Error, PixelUtility, "Source format is different from destination format for copy(). This operation "
 				"cannot be used for a format conversion. Aborting copy.");
 			return;
 		}
 
-		UINT32 right = offsetX + dst.getWidth();
-		UINT32 bottom = offsetY + dst.getHeight();
-		UINT32 back = offsetZ + dst.getDepth();
+		UINT32 right = offsetX + dst.GetWidth();
+		UINT32 bottom = offsetY + dst.GetHeight();
+		UINT32 back = offsetZ + dst.GetDepth();
 
-		if(right > src.getWidth() || bottom > src.getHeight() || back > src.getDepth())
+		if(right > src.GetWidth() || bottom > src.GetHeight() || back > src.GetDepth())
 		{
 			BS_LOG(Error, PixelUtility, "Provided offset or destination size is too large and is referencing pixels that "
 				"are out of bounds on the source texture. Aborting copy().");
 			return;
 		}
 
-		UINT8* srcPtr = (UINT8*)src.getData() + offsetZ * src.getSlicePitch();
-		UINT8* dstPtr = (UINT8*)dst.getData();
+		UINT8* srcPtr = (UINT8*)src.GetData() + offsetZ * src.GetSlicePitch();
+		UINT8* dstPtr = (UINT8*)dst.GetData();
 
-		UINT32 elemSize = getNumElemBytes(dst.getFormat());
-		UINT32 rowSize = dst.getWidth() * elemSize;
+		UINT32 elemSize = GetNumElemBytes(dst.GetFormat());
+		UINT32 rowSize = dst.GetWidth() * elemSize;
 
-		for(UINT32 z = 0; z < dst.getDepth(); z++)
+		for(UINT32 z = 0; z < dst.GetDepth(); z++)
 		{
-			UINT8* srcRowPtr = srcPtr + offsetY * src.getRowPitch();
+			UINT8* srcRowPtr = srcPtr + offsetY * src.GetRowPitch();
 			UINT8* dstRowPtr = dstPtr;
 
-			for(UINT32 y = 0; y < dst.getHeight(); y++)
+			for(UINT32 y = 0; y < dst.GetHeight(); y++)
 			{
 				memcpy(dstRowPtr, srcRowPtr + offsetX * elemSize, rowSize);
 
-				srcRowPtr += src.getRowPitch();
-				dstRowPtr += dst.getRowPitch();
+				srcRowPtr += src.GetRowPitch();
+				dstRowPtr += dst.GetRowPitch();
 			}
 
-			srcPtr += src.getSlicePitch();
-			dstPtr += dst.getSlicePitch();
+			srcPtr += src.GetSlicePitch();
+			dstPtr += dst.GetSlicePitch();
 		}
 	}
 
 	void PixelUtil::Mirror(PixelData& pixelData, MirrorMode mode)
 	{
-		UINT32 width = pixelData.getWidth();
-		UINT32 height = pixelData.getHeight();
-		UINT32 depth = pixelData.getDepth();
+		UINT32 width = pixelData.GetWidth();
+		UINT32 height = pixelData.GetHeight();
+		UINT32 depth = pixelData.GetDepth();
 
-		UINT32 elemSize = getNumElemBytes(pixelData.getFormat());
+		UINT32 elemSize = GetNumElemBytes(pixelData.GetFormat());
 
-		if (mode.isSet(MirrorModeBits::Z))
+		if (mode.IsSet(MirrorModeBits::Z))
 		{
 			UINT32 sliceSize = width * height * elemSize;
 			UINT8* sliceTemp = bs_stack_alloc<UINT8>(sliceSize);
 
-			UINT8* dataPtr = pixelData.getData();
+			UINT8* dataPtr = pixelData.GetData();
 			UINT32 halfDepth = depth / 2;
 			for (UINT32 z = 0; z < halfDepth; z++)
 			{
@@ -2347,12 +2347,12 @@ namespace bs
 			bs_stack_free(sliceTemp);
 		}
 
-		if(mode.isSet(MirrorModeBits::Y))
+		if(mode.IsSet(MirrorModeBits::Y))
 		{
 			UINT32 rowSize = width * elemSize;
 			UINT8* rowTemp = bs_stack_alloc<UINT8>(rowSize);
 
-			UINT8* slicePtr = pixelData.getData();
+			UINT8* slicePtr = pixelData.GetData();
 			for (UINT32 z = 0; z < depth; z++)
 			{
 				UINT32 halfHeight = height / 2;
@@ -2368,17 +2368,17 @@ namespace bs
 
 				// Note: If flipping X as well I could do it here without an extra set of memcpys
 
-				slicePtr += pixelData.getSlicePitch();
+				slicePtr += pixelData.GetSlicePitch();
 			}
 
 			bs_stack_free(rowTemp);
 		}
 
-		if (mode.isSet(MirrorModeBits::X))
+		if (mode.IsSet(MirrorModeBits::X))
 		{
 			UINT8* elemTemp = bs_stack_alloc<UINT8>(elemSize);
 
-			UINT8* slicePtr = pixelData.getData();
+			UINT8* slicePtr = pixelData.GetData();
 			for (UINT32 z = 0; z < depth; z++)
 			{
 				UINT8* rowPtr = slicePtr;
@@ -2395,10 +2395,10 @@ namespace bs
 						memcpy(&rowPtr[srcX], elemTemp, elemSize);
 					}
 
-					rowPtr += pixelData.getRowPitch();
+					rowPtr += pixelData.GetRowPitch();
 				}
 
-				slicePtr += pixelData.getSlicePitch();
+				slicePtr += pixelData.GetSlicePitch();
 			}
 
 			bs_stack_free(elemTemp);
@@ -2407,20 +2407,20 @@ namespace bs
 
 	void PixelUtil::LinearToSrgb(PixelData& pixelData)
 	{
-		UINT32 depth = pixelData.getDepth();
-		UINT32 height = pixelData.getHeight();
-		UINT32 width = pixelData.getWidth();
+		UINT32 depth = pixelData.GetDepth();
+		UINT32 height = pixelData.GetHeight();
+		UINT32 width = pixelData.GetWidth();
 
-		UINT32 pixelSize = PixelUtil::getNumElemBytes(pixelData.getFormat());
-		UINT8* data = pixelData.getData();
+		UINT32 pixelSize = PixelUtil::GetNumElemBytes(pixelData.GetFormat());
+		UINT8* data = pixelData.GetData();
 
 		for (UINT32 z = 0; z < depth; z++)
 		{
-			UINT32 zDataIdx = z * pixelData.getSlicePitch();
+			UINT32 zDataIdx = z * pixelData.GetSlicePitch();
 
 			for (UINT32 y = 0; y < height; y++)
 			{
-				UINT32 yDataIdx = y * pixelData.getRowPitch();
+				UINT32 yDataIdx = y * pixelData.GetRowPitch();
 
 				for (UINT32 x = 0; x < width; x++)
 				{
@@ -2429,9 +2429,9 @@ namespace bs
 
 					Color color;
 
-					PixelUtil::unpackColor(&color, pixelData.getFormat(), dest);
-					color = color.getGamma();
-					PixelUtil::packColor(color, pixelData.getFormat(), dest);
+					PixelUtil::UnpackColor(&color, pixelData.GetFormat(), dest);
+					color = color.GetGamma();
+					PixelUtil::PackColor(color, pixelData.GetFormat(), dest);
 				}
 			}
 		}
@@ -2439,20 +2439,20 @@ namespace bs
 
 	void PixelUtil::SRGBToLinear(PixelData& pixelData)
 	{
-		UINT32 depth = pixelData.getDepth();
-		UINT32 height = pixelData.getHeight();
-		UINT32 width = pixelData.getWidth();
+		UINT32 depth = pixelData.GetDepth();
+		UINT32 height = pixelData.GetHeight();
+		UINT32 width = pixelData.GetWidth();
 
-		UINT32 pixelSize = PixelUtil::getNumElemBytes(pixelData.getFormat());
-		UINT8* data = pixelData.getData();
+		UINT32 pixelSize = PixelUtil::GetNumElemBytes(pixelData.GetFormat());
+		UINT8* data = pixelData.GetData();
 
 		for (UINT32 z = 0; z < depth; z++)
 		{
-			UINT32 zDataIdx = z * pixelData.getSlicePitch();
+			UINT32 zDataIdx = z * pixelData.GetSlicePitch();
 
 			for (UINT32 y = 0; y < height; y++)
 			{
-				UINT32 yDataIdx = y * pixelData.getRowPitch();
+				UINT32 yDataIdx = y * pixelData.GetRowPitch();
 
 				for (UINT32 x = 0; x < width; x++)
 				{
@@ -2461,9 +2461,9 @@ namespace bs
 
 					Color color;
 
-					PixelUtil::unpackColor(&color, pixelData.getFormat(), dest);
-					color = color.getLinear();
-					PixelUtil::packColor(color, pixelData.getFormat(), dest);
+					PixelUtil::UnpackColor(&color, pixelData.GetFormat(), dest);
+					color = color.GetLinear();
+					PixelUtil::PackColor(color, pixelData.GetFormat(), dest);
 				}
 			}
 		}
@@ -2471,19 +2471,19 @@ namespace bs
 
 	void PixelUtil::Compress(const PixelData& src, PixelData& dst, const CompressionOptions& options)
 	{
-		if (!isCompressed(options.format))
+		if (!IsCompressed(options.format))
 		{
 			BS_LOG(Error, PixelUtility, "Compression failed. Destination format is not a valid compressed format.");
 			return;
 		}
 
-		if (src.getDepth() != 1)
+		if (src.GetDepth() != 1)
 		{
 			BS_LOG(Error, PixelUtility, "Compression failed. 3D texture compression not supported.");
 			return;
 		}
 
-		if (isCompressed(src.getFormat()))
+		if (IsCompressed(src.GetFormat()))
 		{
 			BS_LOG(Error, PixelUtility, "Compression failed. Source data cannot be compressed.");
 			return;
@@ -2491,12 +2491,12 @@ namespace bs
 
 		PixelFormat interimFormat = options.format == PF_BC6H ? PF_RGBA32F : PF_BGRA8;
 
-		PixelData interimData(src.getWidth(), src.getHeight(), 1, interimFormat);
-		interimData.allocateInternalBuffer();
-		bulkPixelConversion(src, interimData);
+		PixelData interimData(src.GetWidth(), src.GetHeight(), 1, interimFormat);
+		interimData.AllocateInternalBuffer();
+		BulkPixelConversion(src, interimData);
 
 		nvtt::InputOptions io;
-		io.setTextureLayout(nvtt::TextureType_2D, src.getWidth(), src.getHeight());
+		io.setTextureLayout(nvtt::TextureType_2D, src.GetWidth(), src.GetHeight());
 		io.setMipmapGeneration(false);
 		io.setAlphaMode(toNVTTAlphaMode(options.alphaMode));
 		io.setNormalMap(options.isNormalMap);
@@ -2511,13 +2511,13 @@ namespace bs
 		else
 			io.setGamma(1.0f, 1.0f);
 
-		io.setMipmapData(interimData.getData(), src.getWidth(), src.getHeight());
+		io.setMipmapData(interimData.GetData(), src.GetWidth(), src.GetHeight());
 
 		nvtt::CompressionOptions co;
 		co.setFormat(toNVTTFormat(options.format));
 		co.setQuality(toNVTTQuality(options.quality));
 
-		NVTTCompressOutputHandler outputHandler(dst.getData(), dst.getConsecutiveSize());
+		NVTTCompressOutputHandler outputHandler(dst.GetData(), dst.GetConsecutiveSize());
 
 		nvtt::OutputOptions oo;
 		oo.setOutputHeader(false);
@@ -2535,35 +2535,35 @@ namespace bs
 	{
 		Vector<SPtr<PixelData>> outputMipBuffers;
 
-		if (src.getDepth() != 1)
+		if (src.GetDepth() != 1)
 		{
 			BS_LOG(Error, PixelUtility, "Mipmap generation failed. 3D texture formats not supported.");
 			return outputMipBuffers;
 		}
 
-		if (isCompressed(src.getFormat()))
+		if (IsCompressed(src.GetFormat()))
 		{
 			BS_LOG(Error, PixelUtility, "Mipmap generation failed. Source data cannot be compressed.");
 			return outputMipBuffers;
 		}
 
-		if (!Bitwise::isPow2(src.getWidth()) || !Bitwise::isPow2(src.getHeight()))
+		if (!Bitwise::IsPow2(src.GetWidth()) || !Bitwise::IsPow2(src.GetHeight()))
 		{
 			BS_LOG(Error, PixelUtility, "Mipmap generation failed. Texture width & height must be powers of 2.");
 			return outputMipBuffers;
 		}
 
-		PixelFormat interimFormat = isFloatingPoint(src.getFormat()) ? PF_RGBA32F : PF_BGRA8;
+		PixelFormat interimFormat = IsFloatingPoint(src.GetFormat()) ? PF_RGBA32F : PF_BGRA8;
 
-		PixelData interimData(src.getWidth(), src.getHeight(), 1, interimFormat);
-		interimData.allocateInternalBuffer();
-		bulkPixelConversion(src, interimData);
+		PixelData interimData(src.GetWidth(), src.GetHeight(), 1, interimFormat);
+		interimData.AllocateInternalBuffer();
+		BulkPixelConversion(src, interimData);
 
 		if (interimFormat != PF_RGBA32F)
-			flipComponentOrder(interimData);
+			FlipComponentOrder(interimData);
 
 		nvtt::InputOptions io;
-		io.setTextureLayout(nvtt::TextureType_2D, src.getWidth(), src.getHeight());
+		io.setTextureLayout(nvtt::TextureType_2D, src.GetWidth(), src.GetHeight());
 		io.setMipmapGeneration(true);
 		io.setNormalMap(options.isNormalMap);
 		io.setNormalizeMipmaps(options.normalizeMipmaps);
@@ -2579,7 +2579,7 @@ namespace bs
 		else
 			io.setGamma(1.0f, 1.0f);
 
-		io.setMipmapData(interimData.getData(), src.getWidth(), src.getHeight());
+		io.setMipmapData(interimData.GetData(), src.GetWidth(), src.GetHeight());
 
 		nvtt::CompressionOptions co;
 		co.setFormat(nvtt::Format_RGBA);
@@ -2595,19 +2595,19 @@ namespace bs
 			co.setPixelFormat(32, 0x0000FF00, 0x00FF0000, 0xFF000000, 0x000000FF);
 		}
 
-		UINT32 numMips = getMaxMipmaps(src.getWidth(), src.getHeight(), 1, src.getFormat());
+		UINT32 numMips = GetMaxMipmaps(src.GetWidth(), src.GetHeight(), 1, src.GetFormat());
 
 		Vector<SPtr<PixelData>> rgbaMipBuffers;
 
 		// Note: This can be done more effectively without creating so many temp buffers
 		// and working with the original formats directly, but it would complicate the code
 		// too much at the moment.
-		UINT32 curWidth = src.getWidth();
-		UINT32 curHeight = src.getHeight();
+		UINT32 curWidth = src.GetWidth();
+		UINT32 curHeight = src.GetHeight();
 		for (UINT32 i = 0; i < numMips; i++)
 		{
 			rgbaMipBuffers.push_back(bs_shared_ptr_new<PixelData>(curWidth, curHeight, 1, interimFormat));
-			rgbaMipBuffers.back()->allocateInternalBuffer();
+			rgbaMipBuffers.back()->AllocateInternalBuffer();
 
 			if (curWidth > 1)
 				curWidth = curWidth / 2;
@@ -2617,7 +2617,7 @@ namespace bs
 		}
 
 		rgbaMipBuffers.push_back(bs_shared_ptr_new<PixelData>(curWidth, curHeight, 1, interimFormat));
-		rgbaMipBuffers.back()->allocateInternalBuffer();
+		rgbaMipBuffers.back()->AllocateInternalBuffer();
 
 		NVTTMipmapOutputHandler outputHandler(rgbaMipBuffers);
 
@@ -2632,16 +2632,16 @@ namespace bs
 			return outputMipBuffers;
 		}
 
-		interimData.freeInternalBuffer();
+		interimData.FreeInternalBuffer();
 
 		for (UINT32 i = 0; i < (UINT32)rgbaMipBuffers.size(); i++)
 		{
 			SPtr<PixelData> argbBuffer = rgbaMipBuffers[i];
-			SPtr<PixelData> outputBuffer = bs_shared_ptr_new<PixelData>(argbBuffer->getWidth(), argbBuffer->getHeight(), 1, src.getFormat());
-			outputBuffer->allocateInternalBuffer();
+			SPtr<PixelData> outputBuffer = bs_shared_ptr_new<PixelData>(argbBuffer->GetWidth(), argbBuffer->GetHeight(), 1, src.GetFormat());
+			outputBuffer->AllocateInternalBuffer();
 
-			bulkPixelConversion(*argbBuffer, *outputBuffer);
-			argbBuffer->freeInternalBuffer();
+			BulkPixelConversion(*argbBuffer, *outputBuffer);
+			argbBuffer->FreeInternalBuffer();
 
 			outputMipBuffers.push_back(outputBuffer);
 		}

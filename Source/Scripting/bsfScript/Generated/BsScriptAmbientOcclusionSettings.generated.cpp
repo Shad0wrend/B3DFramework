@@ -54,7 +54,7 @@ namespace bs
 	bool ScriptAmbientOcclusionSettings::InternalGetenabled(ScriptAmbientOcclusionSettings* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->getInternal()->enabled;
+		tmp__output = thisPtr->GetInternal()->enabled;
 
 		bool __output;
 		__output = tmp__output;
@@ -64,13 +64,13 @@ namespace bs
 
 	void ScriptAmbientOcclusionSettings::InternalSetenabled(ScriptAmbientOcclusionSettings* thisPtr, bool value)
 	{
-		thisPtr->getInternal()->enabled = value;
+		thisPtr->GetInternal()->enabled = value;
 	}
 
 	float ScriptAmbientOcclusionSettings::InternalGetradius(ScriptAmbientOcclusionSettings* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getInternal()->radius;
+		tmp__output = thisPtr->GetInternal()->radius;
 
 		float __output;
 		__output = tmp__output;
@@ -80,13 +80,13 @@ namespace bs
 
 	void ScriptAmbientOcclusionSettings::InternalSetradius(ScriptAmbientOcclusionSettings* thisPtr, float value)
 	{
-		thisPtr->getInternal()->radius = value;
+		thisPtr->GetInternal()->radius = value;
 	}
 
 	float ScriptAmbientOcclusionSettings::InternalGetbias(ScriptAmbientOcclusionSettings* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getInternal()->bias;
+		tmp__output = thisPtr->GetInternal()->bias;
 
 		float __output;
 		__output = tmp__output;
@@ -96,13 +96,13 @@ namespace bs
 
 	void ScriptAmbientOcclusionSettings::InternalSetbias(ScriptAmbientOcclusionSettings* thisPtr, float value)
 	{
-		thisPtr->getInternal()->bias = value;
+		thisPtr->GetInternal()->bias = value;
 	}
 
 	float ScriptAmbientOcclusionSettings::InternalGetfadeDistance(ScriptAmbientOcclusionSettings* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getInternal()->fadeDistance;
+		tmp__output = thisPtr->GetInternal()->fadeDistance;
 
 		float __output;
 		__output = tmp__output;
@@ -112,13 +112,13 @@ namespace bs
 
 	void ScriptAmbientOcclusionSettings::InternalSetfadeDistance(ScriptAmbientOcclusionSettings* thisPtr, float value)
 	{
-		thisPtr->getInternal()->fadeDistance = value;
+		thisPtr->GetInternal()->fadeDistance = value;
 	}
 
 	float ScriptAmbientOcclusionSettings::InternalGetfadeRange(ScriptAmbientOcclusionSettings* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getInternal()->fadeRange;
+		tmp__output = thisPtr->GetInternal()->fadeRange;
 
 		float __output;
 		__output = tmp__output;
@@ -128,13 +128,13 @@ namespace bs
 
 	void ScriptAmbientOcclusionSettings::InternalSetfadeRange(ScriptAmbientOcclusionSettings* thisPtr, float value)
 	{
-		thisPtr->getInternal()->fadeRange = value;
+		thisPtr->GetInternal()->fadeRange = value;
 	}
 
 	float ScriptAmbientOcclusionSettings::InternalGetintensity(ScriptAmbientOcclusionSettings* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getInternal()->intensity;
+		tmp__output = thisPtr->GetInternal()->intensity;
 
 		float __output;
 		__output = tmp__output;
@@ -144,13 +144,13 @@ namespace bs
 
 	void ScriptAmbientOcclusionSettings::InternalSetintensity(ScriptAmbientOcclusionSettings* thisPtr, float value)
 	{
-		thisPtr->getInternal()->intensity = value;
+		thisPtr->GetInternal()->intensity = value;
 	}
 
 	float ScriptAmbientOcclusionSettings::InternalGetpower(ScriptAmbientOcclusionSettings* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getInternal()->power;
+		tmp__output = thisPtr->GetInternal()->power;
 
 		float __output;
 		__output = tmp__output;
@@ -160,13 +160,13 @@ namespace bs
 
 	void ScriptAmbientOcclusionSettings::InternalSetpower(ScriptAmbientOcclusionSettings* thisPtr, float value)
 	{
-		thisPtr->getInternal()->power = value;
+		thisPtr->GetInternal()->power = value;
 	}
 
 	uint32_t ScriptAmbientOcclusionSettings::InternalGetquality(ScriptAmbientOcclusionSettings* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->getInternal()->quality;
+		tmp__output = thisPtr->GetInternal()->quality;
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -176,6 +176,6 @@ namespace bs
 
 	void ScriptAmbientOcclusionSettings::InternalSetquality(ScriptAmbientOcclusionSettings* thisPtr, uint32_t value)
 	{
-		thisPtr->getInternal()->quality = value;
+		thisPtr->GetInternal()->quality = value;
 	}
 }

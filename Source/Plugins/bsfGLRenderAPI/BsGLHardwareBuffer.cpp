@@ -147,7 +147,7 @@ namespace bs { namespace ct
 			auto execute = [&]() { executeRef(srcBuffer, srcOffset, dstOffset, length); };
 
 			SPtr<GLCommandBuffer> cb = std::static_pointer_cast<GLCommandBuffer>(commandBuffer);
-			cb->queueCommand(execute);
+			cb->QueueCommand(execute);
 		}
 
 	}

@@ -53,7 +53,7 @@ namespace bs { namespace ct
 	void GLFrameBufferObject::rebuild()
 	{
 		// Store basic stats
-		UINT16 maxSupportedMRTs = RenderAPI::instancePtr()->getCapabilities(0).numMultiRenderTargets;
+		UINT16 maxSupportedMRTs = RenderAPI::InstancePtr()->GetCapabilities(0).numMultiRenderTargets;
 
 		// Bind simple buffer to add color attachments
 		glBindFramebuffer(GL_FRAMEBUFFER, mFB);
@@ -79,7 +79,7 @@ namespace bs { namespace ct
 
 		if (mDepthStencilBuffer != nullptr)
 		{
-			GLenum depthStencilFormat = GLPixelUtil::getDepthStencilFormatFromPF(mDepthStencilBuffer->getFormat());
+			GLenum depthStencilFormat = GLPixelUtil::getDepthStencilFormatFromPF(mDepthStencilBuffer->GetFormat());
 
 			GLenum attachmentPoint;
 			if (depthStencilFormat == GL_DEPTH_STENCIL)

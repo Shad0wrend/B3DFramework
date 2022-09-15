@@ -37,7 +37,7 @@ namespace bs
 			return TID_CAnimation;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return SceneObject::CreateEmptyComponent<CAnimation>();
 		}

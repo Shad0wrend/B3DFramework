@@ -59,7 +59,7 @@ namespace bs
 		if (typeInfo == nullptr)
 		{
 			BS_LOG(Warning, Script, "Cannot create an instance of type \"{0}\", it is not marked as serializable.",
-				engineClass->getFullName());
+				engineClass->GetFullName());
 			return;
 		}
 

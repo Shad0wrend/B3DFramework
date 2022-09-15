@@ -22,7 +22,7 @@ namespace bs
 		SPtr<PlainText> plainTextPtr = bs_core_ptr<PlainText>(
 			new (bs_alloc<PlainText>()) PlainText(data));
 		plainTextPtr->SetThisPtrInternal(plainTextPtr);
-		plainTextPtr->initialize();
+		plainTextPtr->Initialize();
 
 		return plainTextPtr;
 	}

@@ -24,13 +24,13 @@ namespace bs
 	public:
 		BlendStateRTTI()
 		{
-			addPlainField("mData", 0, &BlendStateRTTI::GetData, &BlendStateRTTI::SetData);
+			AddPlainField("mData", 0, &BlendStateRTTI::GetData, &BlendStateRTTI::SetData);
 		}
 
 		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override
 		{
 			BlendState* blendState = static_cast<BlendState*>(obj);
-			blendState->initialize();
+			blendState->Initialize();
 		}
 
 		const String& GetRttiName() override

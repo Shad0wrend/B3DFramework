@@ -62,57 +62,57 @@ namespace bs
 
 	void Collider::SetMaterial(const HPhysicsMaterial& material)
 	{
-		mInternal->setMaterial(material);
+		mInternal->SetMaterial(material);
 	}
 
 	HPhysicsMaterial Collider::GetMaterial() const
 	{
-		return mInternal->getMaterial();
+		return mInternal->GetMaterial();
 	}
 
 	void Collider::SetContactOffset(float value)
 	{
-		mInternal->setContactOffset(value);
+		mInternal->SetContactOffset(value);
 	}
 
 	float Collider::GetContactOffset()
 	{
-		return mInternal->getContactOffset();
+		return mInternal->GetContactOffset();
 	}
 
 	void Collider::SetRestOffset(float value)
 	{
-		mInternal->setRestOffset(value);
+		mInternal->SetRestOffset(value);
 	}
 
 	float Collider::GetRestOffset()
 	{
-		return mInternal->getRestOffset();
+		return mInternal->GetRestOffset();
 	}
 
 	void Collider::SetLayer(UINT64 layer)
 	{
-		mInternal->setLayer(layer);
+		mInternal->SetLayer(layer);
 	}
 
 	UINT64 Collider::GetLayer() const
 	{
-		return mInternal->getLayer();
+		return mInternal->GetLayer();
 	}
 
 	void Collider::SetCollisionReportMode(CollisionReportMode mode)
 	{
-		mInternal->setCollisionReportMode(mode);
+		mInternal->SetCollisionReportMode(mode);
 	}
 
 	CollisionReportMode Collider::GetCollisionReportMode() const
 	{
-		return mInternal->getCollisionReportMode();
+		return mInternal->GetCollisionReportMode();
 	}
 
 	bool Collider::RayCast(const Ray& ray, PhysicsQueryHit& hit, float maxDist) const
 	{
-		return gPhysics().RayCastInternal(ray.getOrigin(), ray.getDirection(), *this, hit, maxDist);
+		return gPhysics().RayCastInternal(ray.GetOrigin(), ray.GetDirection(), *this, hit, maxDist);
 	}
 
 	bool Collider::RayCast(const Vector3& origin, const Vector3& unitDir, PhysicsQueryHit& hit, float maxDist) const

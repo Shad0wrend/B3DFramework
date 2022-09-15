@@ -11,13 +11,13 @@ namespace bs
 	CSliderJoint::CSliderJoint()
 		: CJoint(mDesc)
 	{
-		setName("SliderJoint");
+		SetName("SliderJoint");
 	}
 
 	CSliderJoint::CSliderJoint(const HSceneObject& parent)
 		: CJoint(parent, mDesc)
 	{
-		setName("SliderJoint");
+		SetName("SliderJoint");
 	}
 
 	float CSliderJoint::GetPosition() const
@@ -25,7 +25,7 @@ namespace bs
 		if (mInternal == nullptr)
 			return 0.0f;
 
-		return GetInternalInternal()->getPosition();
+		return GetInternalInternal()->GetPosition();
 	}
 
 	float CSliderJoint::GetSpeed() const
@@ -33,7 +33,7 @@ namespace bs
 		if (mInternal == nullptr)
 			return 0.0f;
 
-		return GetInternalInternal()->getSpeed();
+		return GetInternalInternal()->GetSpeed();
 	}
 
 	LimitLinearRange CSliderJoint::GetLimit() const
@@ -49,7 +49,7 @@ namespace bs
 		mDesc.limit = limit;
 
 		if (mInternal != nullptr)
-			GetInternalInternal()->setLimit(limit);
+			GetInternalInternal()->SetLimit(limit);
 	}
 
 	void CSliderJoint::SetFlag(SliderJointFlag flag, bool enabled)
@@ -64,7 +64,7 @@ namespace bs
 			mDesc.flag = (SliderJointFlag)((UINT32)mDesc.flag & ~(UINT32)flag);
 
 		if (mInternal != nullptr)
-			GetInternalInternal()->setFlag(flag, enabled);
+			GetInternalInternal()->SetFlag(flag, enabled);
 	}
 
 	bool CSliderJoint::HasFlag(SliderJointFlag flag) const
@@ -74,8 +74,8 @@ namespace bs
 
 	SPtr<Joint> CSliderJoint::CreateInternal()
 	{
-		const SPtr<SceneInstance>& scene = SO()->getScene();
-		SPtr<Joint> joint = SliderJoint::Create(*scene->getPhysicsScene(), mDesc);
+		const SPtr<SceneInstance>& scene = SO()->GetScene();
+		SPtr<Joint> joint = SliderJoint::Create(*scene->GetPhysicsScene(), mDesc);
 
 		joint->SetOwnerInternal(PhysicsOwnerType::Component, this);
 		return joint;
@@ -87,23 +87,23 @@ namespace bs
 		rotation = mRotations[(UINT32)body];
 
 		HRigidbody rigidbody = mBodies[(UINT32)body];
-		const Transform& tfrm = SO()->getTransform();
+		const Transform& tfrm = SO()->GetTransform();
 		if (rigidbody == nullptr) // Get world space transform if no relative to any body
 		{
-			Quaternion worldRot = tfrm.getRotation();
+			Quaternion worldRot = tfrm.GetRotation();
 
 			rotation = worldRot*rotation;
-			position = worldRot.rotate(position) + tfrm.getPosition();
+			position = worldRot.Rotate(position) + tfrm.GetPosition();
 		}
 		else
 		{
-			const Transform& rigidbodyTfrm = rigidbody->SO()->getTransform();
+			const Transform& rigidbodyTfrm = rigidbody->SO()->GetTransform();
 
 			// Use only the offset for positioning, but for rotation use both the offset and target SO rotation.
 			// (Needed because we need to rotate the joint SO in order to orient the slider direction, so we need an
 			// additional transform that allows us to orient the object)
-			position = rotation.rotate(position);
-			rotation = (rigidbodyTfrm.getRotation()*rotation).inverse()*tfrm.getRotation();
+			position = rotation.Rotate(position);
+			rotation = (rigidbodyTfrm.GetRotation()*rotation).Inverse()*tfrm.GetRotation();
 		}
 	}
 

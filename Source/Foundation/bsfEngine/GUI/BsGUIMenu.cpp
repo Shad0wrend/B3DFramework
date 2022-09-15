@@ -105,7 +105,7 @@ namespace bs
 				continue;
 
 			const String& pathElem = *(pathElements.begin() + i);
-			GUIMenuItem* existingItem = curSubMenu->findChild(pathElem);
+			GUIMenuItem* existingItem = curSubMenu->FindChild(pathElem);
 
 			if(existingItem == nullptr)
 			{
@@ -119,7 +119,7 @@ namespace bs
 					existingItem = new (existingItem) GUIMenuItem(curSubMenu, pathElem, nullptr, priority, mNextIdx++, ShortcutKey::NONE);
 				}
 
-				curSubMenu->addChild(existingItem);
+				curSubMenu->AddChild(existingItem);
 			}
 
 			curSubMenu = existingItem;
@@ -128,7 +128,7 @@ namespace bs
 		if(isSeparator)
 		{
 			GUIMenuItem* separatorItem = bs_new<GUIMenuItem>(curSubMenu, priority, mNextIdx++);
-			curSubMenu->addChild(separatorItem);
+			curSubMenu->AddChild(separatorItem);
 
 			return separatorItem;
 		}
@@ -138,15 +138,15 @@ namespace bs
 
 	GUIMenuItem* GUIMenu::GetMenuItem(const String& path)
 	{
-		Vector<String> pathElements = StringUtil::split(path, "/");
+		Vector<String> pathElements = StringUtil::Split(path, "/");
 
 		GUIMenuItem* curSubMenu = &mRootElement;
 		for(UINT32 i = 0; i < (UINT32)pathElements.size(); i++)
 		{
 			const String& pathElem = *(pathElements.begin() + i);
-			GUIMenuItem* existingItem = curSubMenu->findChild(pathElem);
+			GUIMenuItem* existingItem = curSubMenu->FindChild(pathElem);
 
-			if(existingItem == nullptr || existingItem->isSeparator())
+			if(existingItem == nullptr || existingItem->IsSeparator())
 				return nullptr;
 
 			curSubMenu = existingItem;
@@ -160,12 +160,12 @@ namespace bs
 		GUIMenuItem* parent = item->mParent;
 		assert(parent != nullptr);
 
-		parent->removeChild(item->getName());
+		parent->RemoveChild(item->GetName());
 	}
 
 	GUIDropDownData GUIMenu::GetDropDownData() const
 	{
-		return getDropDownDataInternal(mRootElement);
+		return GetDropDownDataInternal(mRootElement);
 	}
 
 	void GUIMenu::SetLocalizedName(const String& menuItemLabel, const HString& localizedName)
@@ -179,21 +179,21 @@ namespace bs
 
 		for(auto& menuItem : menu.mChildren)
 		{
-			if(menuItem->isSeparator())
+			if(menuItem->IsSeparator())
 			{
-				dropDownData.entries.push_back(GUIDropDownDataEntry::separator());
+				dropDownData.entries.push_back(GUIDropDownDataEntry::Separator());
 			}
 			else
 			{
-				if(menuItem->getNumChildren() == 0)
+				if(menuItem->GetNumChildren() == 0)
 				{
-					dropDownData.entries.push_back(GUIDropDownDataEntry::button(menuItem->getName(),
-						menuItem->getCallback(), menuItem->getShortcut().getName()));
+					dropDownData.entries.push_back(GUIDropDownDataEntry::Button(menuItem->GetName(),
+						menuItem->GetCallback(), menuItem->GetShortcut().GetName()));
 				}
 				else
 				{
-					dropDownData.entries.push_back(GUIDropDownDataEntry::subMenu(menuItem->getName(),
-						getDropDownDataInternal(*menuItem)));
+					dropDownData.entries.push_back(GUIDropDownDataEntry::SubMenu(menuItem->GetName(),
+						GetDropDownDataInternal(*menuItem)));
 				}
 			}
 		}

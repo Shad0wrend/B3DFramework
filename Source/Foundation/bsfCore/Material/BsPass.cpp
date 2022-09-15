@@ -141,16 +141,16 @@ namespace bs
 		// Note: It's possible (and quite likely) the pass has already been compiled on the core thread, so this will
 		// unnecessarily recompile it. However syncing them in a clean way is not trivial hard and this method is currently
 		// not being used much (at all) to warrant a complex solution. Something to keep in mind for later though.
-		createPipelineState();
+		CreatePipelineState();
 
-		markCoreDirty();
-		CoreObject::syncToCore();
+		MarkCoreDirty();
+		CoreObject::SyncToCore();
 	}
 
 	CoreSyncData Pass::SyncToCore(FrameAlloc* allocator)
 	{
 		UINT32 size = csync_size(*this);
-		UINT8* data = allocator->alloc(size);
+		UINT8* data = allocator->Alloc(size);
 
 		Bitstream stream(data, size);
 		csync_write(*this, stream);
@@ -163,7 +163,7 @@ namespace bs
 		Pass* newPass = new (bs_alloc<Pass>()) Pass(desc);
 		SPtr<Pass> newPassPtr = bs_core_ptr<Pass>(newPass);
 		newPassPtr->SetThisPtrInternal(newPassPtr);
-		newPassPtr->initialize();
+		newPassPtr->Initialize();
 
 		return newPassPtr;
 	}
@@ -198,12 +198,12 @@ namespace bs
 		if(mComputePipelineState || mGraphicsPipelineState)
 			return; // Already compiled
 
-		createPipelineState();
+		CreatePipelineState();
 	}
 
 	void Pass::SyncToCore(const CoreSyncData& data)
 	{
-		Bitstream stream(data.getBuffer(), data.getBufferSize());
+		Bitstream stream(data.GetBuffer(), data.GetBufferSize());
 		csync_read(*this, stream);
 	}
 
@@ -212,7 +212,7 @@ namespace bs
 		Pass* newPass = new (bs_alloc<Pass>()) Pass(desc);
 		SPtr<Pass> newPassPtr = bs_shared_ptr<Pass>(newPass);
 		newPassPtr->SetThisPtrInternal(newPassPtr);
-		newPassPtr->initialize();
+		newPassPtr->Initialize();
 
 		return newPassPtr;
 	}

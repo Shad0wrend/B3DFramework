@@ -18,15 +18,15 @@ namespace bs
 		SPtr<ct::Texture> getSpriteTextureAtlas(const SPtr<ct::SpriteTexture>& spriteTexture)
 		{
 			if(spriteTexture)
-				return spriteTexture->getTexture();
+				return spriteTexture->GetTexture();
 
 			return nullptr;
 		}
 
 		HTexture getSpriteTextureAtlas(const HSpriteTexture& spriteTexture)
 		{
-			if(spriteTexture.isLoaded())
-				return spriteTexture->getTexture();
+			if(spriteTexture.IsLoaded())
+				return spriteTexture->GetTexture();
 
 			return HTexture();
 		}
@@ -65,10 +65,10 @@ namespace bs
 		mNumBufferParams = (UINT32)bufferParams.size();
 		mNumSamplerParams = (UINT32)samplerParams.size();
 
-		mDataParamsBuffer = mAlloc.alloc(mDataSize);
+		mDataParamsBuffer = mAlloc.Alloc(mDataSize);
 		memset(mDataParamsBuffer, 0, mDataSize);
 
-		mDataParams = (DataParamInfo*)mAlloc.alloc(mNumDataParams * sizeof(DataParamInfo));
+		mDataParams = (DataParamInfo*)mAlloc.Alloc(mNumDataParams * sizeof(DataParamInfo));
 		memset(mDataParams, 0, mNumDataParams * sizeof(DataParamInfo));
 
 		UINT32 dataParamIdx = 0;
@@ -188,10 +188,10 @@ namespace bs
 			}
 		}
 
-		mAlloc.free(mDataParamsBuffer);
-		mAlloc.free(mDataParams);
+		mAlloc.Free(mDataParamsBuffer);
+		mAlloc.Free(mDataParams);
 		
-		mAlloc.clear();
+		mAlloc.Clear();
 	}
 
 	const ColorGradientHDR& MaterialParamsBase::GetColorGradientParam(const String& name, UINT32 arrayIdx) const
@@ -199,21 +199,21 @@ namespace bs
 		static ColorGradientHDR EMPTY_GRADIENT;
 
 		const ParamData* param = nullptr;
-		auto result = getParamData(name, ParamType::Data, GPDT_COLOR, arrayIdx, &param);
+		auto result = GetParamData(name, ParamType::Data, GPDT_COLOR, arrayIdx, &param);
 		if (result != GetParamResult::Success)
 			return EMPTY_GRADIENT;
 
-		return getColorGradientParam(*param, arrayIdx);
+		return GetColorGradientParam(*param, arrayIdx);
 	}
 
 	void MaterialParamsBase::SetColorGradientParam(const String& name, UINT32 arrayIdx, const ColorGradientHDR& input) const
 	{
 		const ParamData* param = nullptr;
-		auto result = getParamData(name, ParamType::Data, GPDT_COLOR, arrayIdx, &param);
+		auto result = GetParamData(name, ParamType::Data, GPDT_COLOR, arrayIdx, &param);
 		if (result != GetParamResult::Success)
 			return;
 
-		setColorGradientParam(*param, arrayIdx, input);
+		SetColorGradientParam(*param, arrayIdx, input);
 	}
 
 	const ColorGradientHDR& MaterialParamsBase::GetColorGradientParam(const ParamData& param, UINT32 arrayIdx) const
@@ -327,10 +327,10 @@ namespace bs
 	template<bool Core>
 	TMaterialParams<Core>::TMaterialParams(const ShaderType& shader, UINT64 initialParamVersion)
 		:MaterialParamsBase(
-			shader->getDataParams(),
-			shader->getTextureParams(),
-			shader->getBufferParams(),
-			shader->getSamplerParams(),
+			shader->GetDataParams(),
+			shader->GetTextureParams(),
+			shader->GetBufferParams(),
+			shader->GetSamplerParams(),
 			initialParamVersion
 		)
 	{
@@ -341,7 +341,7 @@ namespace bs
 		mDefaultTextureParams = mAlloc.construct<TextureType>(mNumTextureParams);
 		mDefaultSamplerStateParams = mAlloc.construct<SamplerType>(mNumSamplerParams);
 
-		auto& textureParams = shader->getTextureParams();
+		auto& textureParams = shader->GetTextureParams();
 		UINT32 textureIdx = 0;
 		for (auto& entry : textureParams)
 		{
@@ -349,24 +349,24 @@ namespace bs
 			param.isLoadStore = false;
 
 			if (entry.second.defaultValueIdx != (UINT32)-1)
-				mDefaultTextureParams[textureIdx] = shader->getDefaultTexture(entry.second.defaultValueIdx);
+				mDefaultTextureParams[textureIdx] = shader->GetDefaultTexture(entry.second.defaultValueIdx);
 
 			textureIdx++;
 		}
 
-		auto& samplerParams = shader->getSamplerParams();
+		auto& samplerParams = shader->GetSamplerParams();
 		UINT32 samplerIdx = 0;
 		for (auto& entry : samplerParams)
 		{
 			if (entry.second.defaultValueIdx != (UINT32)-1)
-				mDefaultSamplerStateParams[samplerIdx] = shader->getDefaultSampler(entry.second.defaultValueIdx);
+				mDefaultSamplerStateParams[samplerIdx] = shader->GetDefaultSampler(entry.second.defaultValueIdx);
 
 			samplerIdx++;
 		}
 
 		// Note: Make sure to process data parameters after textures, in order to handle SpriteUV data parameters
-		auto& dataParams = shader->getDataParams();
-		auto& paramAttributes = shader->getParamAttributes();
+		auto& dataParams = shader->GetDataParams();
+		auto& paramAttributes = shader->GetParamAttributes();
 		UINT32 structIdx = 0;
 		for (auto& entry : dataParams)
 		{
@@ -1014,11 +1014,11 @@ namespace bs
 				coreTexData->isLoadStore = textureData.isLoadStore;
 				coreTexData->surface = textureData.surface;
 
-				if (textureData.texture.isLoaded())
-					coreTexData->texture = textureData.texture->getCore();
+				if (textureData.texture.IsLoaded())
+					coreTexData->texture = textureData.texture->GetCore();
 
-				if (textureData.spriteTexture.isLoaded())
-					coreTexData->spriteTexture = textureData.spriteTexture->getCore();
+				if (textureData.spriteTexture.IsLoaded())
+					coreTexData->spriteTexture = textureData.spriteTexture->GetCore();
 
 				dirtyTextureParamIdx++;
 			}
@@ -1033,7 +1033,7 @@ namespace bs
 				new (coreBufferData) MaterialParamBufferDataCore();
 
 				if(bufferData.value != nullptr)
-					coreBufferData->value = bufferData.value->getCore();
+					coreBufferData->value = bufferData.value->GetCore();
 
 				dirtyBufferParamIdx++;
 			}
@@ -1048,7 +1048,7 @@ namespace bs
 				new (coreSamplerData) MaterialParamSamplerStateDataCore();
 
 				if (samplerData.value != nullptr)
-					coreSamplerData->value = samplerData.value->getCore();
+					coreSamplerData->value = samplerData.value->GetCore();
 
 				dirtySamplerParamIdx++;
 			}
@@ -1088,10 +1088,10 @@ namespace bs
 			{
 				const MaterialParamTextureData& textureData = mTextureParams[param.index];
 
-				if (textureData.texture.isLoaded())
+				if (textureData.texture.IsLoaded())
 					coreObjects.push_back(textureData.texture.get());
 
-				if (textureData.spriteTexture.isLoaded())
+				if (textureData.spriteTexture.IsLoaded())
 					coreObjects.push_back(textureData.spriteTexture.get());
 			}
 			break;
@@ -1177,15 +1177,15 @@ namespace bs
 			{
 				HTexture texture = params->mTextureParams[param.index].texture;
 				SPtr<Texture> textureCore;
-				if (texture.isLoaded())
-					textureCore = texture->getCore();
+				if (texture.IsLoaded())
+					textureCore = texture->GetCore();
 
 				mTextureParams[param.index].texture = textureCore;
 
 				HSpriteTexture spriteTexture = params->mTextureParams[param.index].spriteTexture;
 				SPtr<SpriteTexture> spriteTextureCore;
-				if (spriteTexture.isLoaded())
-					spriteTextureCore = spriteTexture->getCore();
+				if (spriteTexture.IsLoaded())
+					spriteTextureCore = spriteTexture->GetCore();
 
 				mTextureParams[param.index].spriteTexture = spriteTextureCore;
 
@@ -1198,7 +1198,7 @@ namespace bs
 				SPtr<bs::GpuBuffer> buffer = params->mBufferParams[param.index].value;
 				SPtr<GpuBuffer> bufferCore;
 				if (buffer != nullptr)
-					bufferCore = buffer->getCore();
+					bufferCore = buffer->GetCore();
 
 				mBufferParams[param.index].value = bufferCore;
 			}
@@ -1208,7 +1208,7 @@ namespace bs
 				SPtr<bs::SamplerState> sampState = params->mSamplerStateParams[param.index].value;
 				SPtr<SamplerState> sampStateCore;
 				if (sampState != nullptr)
-					sampStateCore = sampState->getCore();
+					sampStateCore = sampState->GetCore();
 
 				mSamplerStateParams[param.index].value = sampStateCore;
 			}

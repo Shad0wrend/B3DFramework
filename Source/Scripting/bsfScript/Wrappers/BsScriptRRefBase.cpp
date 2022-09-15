@@ -88,19 +88,19 @@ namespace bs
 
 	bool ScriptRRefBase::InternalIsLoaded(ScriptRRefBase* thisPtr)
 	{
-		return thisPtr->mResource.isLoaded(false);
+		return thisPtr->mResource.IsLoaded(false);
 	}
 
 	MonoObject* ScriptRRefBase::InternalGetResource(ScriptRRefBase* thisPtr)
 	{
 		if(thisPtr->mScriptResource)
-			return thisPtr->mScriptResource->getManagedInstance();
+			return thisPtr->mScriptResource->GetManagedInstance();
 
-		const HResource resource = thisPtr->getHandle();
+		const HResource resource = thisPtr->GetHandle();
 		if(resource == nullptr)
 			return nullptr;
 
-		if(resource.isLoaded(false))
+		if(resource.IsLoaded(false))
 			thisPtr->mScriptResource = ScriptResourceManager::Instance().getScriptResource(resource, true);
 		else
 		{
@@ -109,19 +109,19 @@ namespace bs
 			if (gApplication().isEditor())
 				loadFlags |= ResourceLoadFlag::KeepSourceData;
 
-			const HResource loadedResource = gResources().loadFromUUID(thisPtr->getHandle().getUUID(), false, loadFlags);
+			const HResource loadedResource = gResources().loadFromUUID(thisPtr->GetHandle().getUUID(), false, loadFlags);
 			thisPtr->mScriptResource = ScriptResourceManager::Instance().getScriptResource(loadedResource, true);
 		}
 
 		if(thisPtr->mScriptResource)
-			return thisPtr->mScriptResource->getManagedInstance();
+			return thisPtr->mScriptResource->GetManagedInstance();
 
 		return nullptr;
 	}
 
 	void ScriptRRefBase::InternalGetUuid(ScriptRRefBase* thisPtr, UUID* uuid)
 	{
-		*uuid = thisPtr->getHandle().getUUID();
+		*uuid = thisPtr->GetHandle().getUUID();
 	}
 
 	MonoObject* ScriptRRefBase::InternalCastAs(ScriptRRefBase* thisPtr, MonoReflectionType* type)
@@ -139,7 +139,7 @@ namespace bs
 
 		ScriptRRefBase* castRRefBase = create(thisPtr->mResource, rrefType);
 		if(castRRefBase)
-			return castRRefBase->getManagedInstance();
+			return castRRefBase->GetManagedInstance();
 
 		return nullptr;
 	}

@@ -90,10 +90,10 @@ namespace bs { namespace ct
 		vertexData[2].col = color.getAsRGBA();
 		vertexData[3].col = color.getAsRGBA();
 
-		mDevice->getImmediateContext()->UpdateSubresource(mClearQuadVB, 0, nullptr, vertexData, 0, sizeof(ClearVertex) * 4);
+		mDevice->GetImmediateContext()->UpdateSubresource(mClearQuadVB, 0, nullptr, vertexData, 0, sizeof(ClearVertex) * 4);
 
-		mDevice->getImmediateContext()->VSSetShader(mClearQuadVS, nullptr, 0);
-		mDevice->getImmediateContext()->PSSetShader(mClearQuadPS, nullptr, 0);
+		mDevice->GetImmediateContext()->VSSetShader(mClearQuadVS, nullptr, 0);
+		mDevice->GetImmediateContext()->PSSetShader(mClearQuadPS, nullptr, 0);
 
 		ID3D11Buffer* buffers[1];
 		buffers[0] = mClearQuadVB;
@@ -101,12 +101,12 @@ namespace bs { namespace ct
 		UINT32 strides[1] = { sizeof(ClearVertex) };
 		UINT32 offsets[1] = { 0 };
 
-		mDevice->getImmediateContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		mDevice->getImmediateContext()->IASetIndexBuffer(mClearQuadIB, DXGI_FORMAT_R16_UINT, 0);
-		mDevice->getImmediateContext()->IASetVertexBuffers(0, 1, buffers, strides, offsets);
-		mDevice->getImmediateContext()->IASetInputLayout(mClearQuadIL);
+		mDevice->GetImmediateContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		mDevice->GetImmediateContext()->IASetIndexBuffer(mClearQuadIB, DXGI_FORMAT_R16_UINT, 0);
+		mDevice->GetImmediateContext()->IASetVertexBuffers(0, 1, buffers, strides, offsets);
+		mDevice->GetImmediateContext()->IASetInputLayout(mClearQuadIL);
 
-		mDevice->getImmediateContext()->DrawIndexed(6, 0, 0);
+		mDevice->GetImmediateContext()->DrawIndexed(6, 0, 0);
 	}
 
 	void D3D11RenderUtility::InitClearQuadResources()
@@ -186,8 +186,8 @@ namespace bs { namespace ct
 
 		SAFE_RELEASE(errors);
 
-		hr = mDevice->getD3D11Device()->CreatePixelShader(static_cast<DWORD*>(microcode->GetBufferPointer()),
-			microcode->GetBufferSize(), mDevice->getClassLinkage(), &mClearQuadPS);
+		hr = mDevice->GetD3D11Device()->CreatePixelShader(static_cast<DWORD*>(microcode->GetBufferPointer()),
+			microcode->GetBufferSize(), mDevice->GetClassLinkage(), &mClearQuadPS);
 
 		if (FAILED(hr))
 		{
@@ -210,8 +210,8 @@ namespace bs { namespace ct
 
 		SAFE_RELEASE(errors);
 
-		hr = mDevice->getD3D11Device()->CreateVertexShader(static_cast<DWORD*>(microcode->GetBufferPointer()),
-			microcode->GetBufferSize(), mDevice->getClassLinkage(), &mClearQuadVS);
+		hr = mDevice->GetD3D11Device()->CreateVertexShader(static_cast<DWORD*>(microcode->GetBufferPointer()),
+			microcode->GetBufferSize(), mDevice->GetClassLinkage(), &mClearQuadVS);
 
 		if (FAILED(hr))
 		{
@@ -239,7 +239,7 @@ namespace bs { namespace ct
 		declElements[1].InputSlotClass			= D3D11_INPUT_PER_VERTEX_DATA;
 		declElements[1].InstanceDataStepRate	= 0;
 
-		hr = mDevice->getD3D11Device()->CreateInputLayout(declElements, 2, microcode->GetBufferPointer(),
+		hr = mDevice->GetD3D11Device()->CreateInputLayout(declElements, 2, microcode->GetBufferPointer(),
 			microcode->GetBufferSize(), &mClearQuadIL);
 
 		bs_deleteN(declElements, 2);
@@ -274,10 +274,10 @@ namespace bs { namespace ct
 		D3D11_SUBRESOURCE_DATA vertexSubresourceData;
 		vertexSubresourceData.pSysMem = vertexData;
 
-		hr = mDevice->getD3D11Device()->CreateBuffer(&mVBDesc, &vertexSubresourceData, &mClearQuadVB);
+		hr = mDevice->GetD3D11Device()->CreateBuffer(&mVBDesc, &vertexSubresourceData, &mClearQuadVB);
 		if (FAILED(hr) || mDevice->hasError())
 		{
-			String msg = mDevice->getErrorDescription();
+			String msg = mDevice->GetErrorDescription();
 			BS_EXCEPT(RenderingAPIException, "Cannot create D3D11 buffer: " + msg);
 		}
 
@@ -303,10 +303,10 @@ namespace bs { namespace ct
 		D3D11_SUBRESOURCE_DATA indexSubresourceData;
 		indexSubresourceData.pSysMem = indexData;
 
-		hr = mDevice->getD3D11Device()->CreateBuffer(&mIBDesc, &indexSubresourceData, &mClearQuadIB);
+		hr = mDevice->GetD3D11Device()->CreateBuffer(&mIBDesc, &indexSubresourceData, &mClearQuadIB);
 		if (FAILED(hr) || mDevice->hasError())
 		{
-			String msg = mDevice->getErrorDescription();
+			String msg = mDevice->GetErrorDescription();
 			BS_EXCEPT(RenderingAPIException, "Cannot create D3D11 buffer: " + msg);
 		}
 	}

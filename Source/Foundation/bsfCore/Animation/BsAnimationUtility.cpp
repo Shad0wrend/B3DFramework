@@ -283,17 +283,17 @@ namespace bs
 				{
 					const TKeyframe<float>& prevKey = keyFrames[j].back();
 
-					bool isEqual = Math::approxEquals(prevKey.value, TCurveProperties<T>::getComponent(key.value, j)) &&
-						Math::approxEquals(prevKey.outTangent, TCurveProperties<T>::getComponent(key.inTangent, j));
+					bool isEqual = Math::ApproxEquals(prevKey.value, TCurveProperties<T>::GetComponent(key.value, j)) &&
+						Math::ApproxEquals(prevKey.outTangent, TCurveProperties<T>::GetComponent(key.inTangent, j));
 
 					addNew = !isEqual;
 				}
 
 				if (addNew)
 				{
-					newKey.value = TCurveProperties<T>::getComponent(key.value, j);
-					newKey.inTangent = TCurveProperties<T>::getComponent(key.inTangent, j);
-					newKey.outTangent = TCurveProperties<T>::getComponent(key.outTangent, j);
+					newKey.value = TCurveProperties<T>::GetComponent(key.value, j);
+					newKey.inTangent = TCurveProperties<T>::GetComponent(key.inTangent, j);
+					newKey.outTangent = TCurveProperties<T>::GetComponent(key.outTangent, j);
 
 					keyFrames[j].push_back(newKey);
 				}
@@ -312,10 +312,10 @@ namespace bs
 		Map<float, TKeyframe<T>> keyFrames;
 		for(UINT32 i = 0; i < NUM_COMPONENTS; i++)
 		{
-			UINT32 numKeyFrames = curveComponents[i]->getNumKeyFrames();
+			UINT32 numKeyFrames = curveComponents[i]->GetNumKeyFrames();
 			for (UINT32 j = 0; j < numKeyFrames; j++)
 			{
-				const TKeyframe<float>& keyFrame = curveComponents[i]->getKeyFrame(j);
+				const TKeyframe<float>& keyFrame = curveComponents[i]->GetKeyFrame(j);
 
 				auto iterFind = keyFrames.find(keyFrame.time);
 				if (iterFind == keyFrames.end())
@@ -553,7 +553,7 @@ namespace bs
 		{
 			float diff = right.time - left.time;
 
-			if (!Math::approxEquals(diff, 0.0f))
+			if (!Math::ApproxEquals(diff, 0.0f))
 				return (right.value - left.value) / diff;
 
 			return std::numeric_limits<T>::infinity();

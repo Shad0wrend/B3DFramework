@@ -33,15 +33,15 @@ namespace bs
 		StringTableRTTI()
 		{
 			AddPlainField("mActiveLanguage", 0, &StringTableRTTI::GetActiveLanguage, &StringTableRTTI::SetActiveLanguage);
-			addPlainArrayField("mLanguageData", 1, &StringTableRTTI::GetLanguageData, &StringTableRTTI::GetNumLanguages,
+			AddPlainArrayField("mLanguageData", 1, &StringTableRTTI::GetLanguageData, &StringTableRTTI::GetNumLanguages,
 				&StringTableRTTI::SetLanguageData, &StringTableRTTI::SetNumLanguages);
-			addPlainField("mIdentifiers", 2, &StringTableRTTI::GetIdentifiers, &StringTableRTTI::SetIdentifiers);
+			AddPlainField("mIdentifiers", 2, &StringTableRTTI::GetIdentifiers, &StringTableRTTI::SetIdentifiers);
 		}
 
 		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) 
 		{
 			StringTable* stringTable = static_cast<StringTable*>(obj);
-			stringTable->setActiveLanguage(stringTable->mActiveLanguage);
+			stringTable->SetActiveLanguage(stringTable->mActiveLanguage);
 		}
 
 		const String& GetRttiName() 

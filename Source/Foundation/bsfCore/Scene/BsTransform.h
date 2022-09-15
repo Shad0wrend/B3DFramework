@@ -29,7 +29,7 @@ namespace bs
 		/**	Gets the local position of the object. */
 		const Vector3& GetPosition() const { return mPosition; }
 
-		/** Shorthand for getPosition(). */
+		/** Shorthand for GetPosition(). */
 		const Vector3& Pos() const { return mPosition; }
 
 		/**	Sets the local rotation of the object. */
@@ -38,7 +38,7 @@ namespace bs
 		/**	Gets the local rotation of the object. */
 		const Quaternion& GetRotation() const { return mRotation; }
 
-		/** Shorthand for getRotation(). */
+		/** Shorthand for GetRotation(). */
 		const Quaternion& Rot() const { return mRotation; }
 
 		/**	Sets the local scale of the object. */
@@ -47,7 +47,7 @@ namespace bs
 		/**	Gets the local scale of the object. */
 		const Vector3& GetScale() const { return mScale; }
 
-		/** Shorthand for getScale(). */
+		/** Shorthand for GetScale(). */
 		const Vector3& Scl() const { return mScale; }
 
 		/**

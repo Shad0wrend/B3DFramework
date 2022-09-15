@@ -115,7 +115,7 @@ namespace bs
 		template<class T>
 		T* Alloc(UINT32 count = 1)
 		{
-			return (T*)alloc(sizeof(T) * count);
+			return (T*)Alloc(sizeof(T) * count);
 		}
 
 		/** Deallocates a previously allocated piece of memory. */

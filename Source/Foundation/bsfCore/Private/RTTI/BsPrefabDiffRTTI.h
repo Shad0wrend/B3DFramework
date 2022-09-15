@@ -185,11 +185,11 @@ namespace bs
 		{
 			for (auto& subObject : serializedObject->subObjects)
 			{
-				RTTITypeBase* rtti = IReflectable::GetRTTIfromTypeIdInternal(subObject.typeId);
+				RTTITypeBase* rtti = IReflectable::GetRttifromTypeIdInternal(subObject.typeId);
 				if (rtti == nullptr)
 					continue;
 
-				if (rtti->getRTTIId() == TID_GameObjectHandleBase)
+				if (rtti->GetRttiId() == TID_GameObjectHandleBase)
 				{
 					handleObjects.insert(serializedObject);
 					return;

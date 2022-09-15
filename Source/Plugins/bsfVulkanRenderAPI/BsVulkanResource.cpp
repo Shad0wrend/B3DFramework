@@ -25,7 +25,7 @@ namespace bs { namespace ct
 		THROW_IF_NOT_CORE_THREAD
 
 		Lock lock(mMutex);
-		assert(mState == State::Destroyed && "Vulkan resource getting destructed without destroy() called first.");
+		assert(mState == State::Destroyed && "Vulkan resource getting destructed without Destroy() called first.");
 	}
 
 	void VulkanResource::NotifyBound()
@@ -108,7 +108,7 @@ namespace bs { namespace ct
 
 		// (Safe to check outside of mutex as we guarantee that once queued for destruction, state cannot be changed)
 		if (destroy)
-			mOwner->destroy(this);
+			mOwner->Destroy(this);
 	}
 
 	UINT32 VulkanResource::GetUseInfo(VulkanAccessFlags useFlags) const
@@ -141,7 +141,7 @@ namespace bs { namespace ct
 		bool destroy;
 		{
 			Lock lock(mMutex);
-			assert(mState != State::Destroyed && "Vulkan resource destroy() called more than once.");
+			assert(mState != State::Destroyed && "Vulkan resource Destroy() called more than once.");
 
 			mState = State::Destroyed;
 
@@ -152,12 +152,12 @@ namespace bs { namespace ct
 
 		// (Safe to check outside of mutex as we guarantee that once queued for destruction, state cannot be changed)
 		if (destroy)
-			mOwner->destroy(this);
+			mOwner->Destroy(this);
 	}
 
 	VulkanDevice& VulkanResource::GetDevice() const
 	{
-		return mOwner->getDevice();
+		return mOwner->GetDevice();
 	}
 
 	VulkanResourceManager::VulkanResourceManager(VulkanDevice& device)

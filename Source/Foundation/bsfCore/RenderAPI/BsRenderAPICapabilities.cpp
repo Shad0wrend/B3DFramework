@@ -16,7 +16,7 @@ namespace bs
 	{
 		GPUVendor ret = GPU_UNKNOWN;
 		String cmpString = vendorString;
-		StringUtil::toLowerCase(cmpString);
+		StringUtil::ToLowerCase(cmpString);
 		for (int i = 0; i < GPU_VENDOR_COUNT; ++i)
 		{
 			if (GPU_VENDOR_STRINGS[i] == cmpString)

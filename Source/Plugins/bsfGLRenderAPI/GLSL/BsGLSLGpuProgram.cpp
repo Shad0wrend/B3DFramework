@@ -68,7 +68,7 @@ namespace bs { namespace ct
 		BS_INC_RENDER_STAT_CAT(ResDestroyed, RenderStatObject_GpuProgram);
 	}
 
-	void GLSLGpuProgram::initialize()
+	void GLSLGpuProgram::Initialize()
 	{
 
 #if BS_OPENGL_4_5
@@ -88,7 +88,7 @@ namespace bs { namespace ct
 			mIsCompiled = false;
 			mCompileMessages = "Specified GPU program type is not supported by the current render system.";
 
-			initialize();
+			Initialize();
 			return;
 		}
 
@@ -264,13 +264,13 @@ namespace bs { namespace ct
 		}
 
 		BS_INC_RENDER_STAT_CAT(ResCreated, RenderStatObject_GpuProgram);
-		GpuProgram::initialize();
+		GpuProgram::Initialize();
 	}
 
 	bool GLSLGpuProgram::IsSupported() const
 	{
-		RenderAPI* rapi = RenderAPI::instancePtr();
-		const RenderAPICapabilities& caps = rapi->getCapabilities(0);
+		RenderAPI* rapi = RenderAPI::InstancePtr();
+		const RenderAPICapabilities& caps = rapi->GetCapabilities(0);
 
 		switch (mType)
 		{

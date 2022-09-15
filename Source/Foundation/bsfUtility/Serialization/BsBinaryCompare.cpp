@@ -75,14 +75,14 @@ namespace bs
 			rttiInstanceA->OnSerializationStarted(&a, mContext);
 			rttiInstanceB->OnSerializationStarted(&b, mContext);
 
-			const UINT32 numFields = rtti->getNumFields();
+			const UINT32 numFields = rtti->GetNumFields();
 			for (UINT32 i = 0; i < numFields; i++)
 			{
-				RTTIField* curGenericField = rtti->getField(i);
+				RTTIField* curGenericField = rtti->GetField(i);
 				if (curGenericField->schema.isArray)
 				{
-					const UINT32 arrayNumElemsA = curGenericField->getArraySize(rttiInstanceA, &a);
-					const UINT32 arrayNumElemsB = curGenericField->getArraySize(rttiInstanceB, &b);
+					const UINT32 arrayNumElemsA = curGenericField->GetArraySize(rttiInstanceA, &a);
+					const UINT32 arrayNumElemsB = curGenericField->GetArraySize(rttiInstanceB, &b);
 
 					if(arrayNumElemsA != arrayNumElemsB)
 						return false;
@@ -95,8 +95,8 @@ namespace bs
 
 						for (UINT32 arrIdx = 0; arrIdx < arrayNumElemsA; arrIdx++)
 						{
-							SPtr<IReflectable> childObjectA = curField->getArrayValue(rttiInstanceA, &a, arrIdx);
-							SPtr<IReflectable> childObjectB = curField->getArrayValue(rttiInstanceB, &b, arrIdx);
+							SPtr<IReflectable> childObjectA = curField->GetArrayValue(rttiInstanceA, &a, arrIdx);
+							SPtr<IReflectable> childObjectB = curField->GetArrayValue(rttiInstanceB, &b, arrIdx);
 
 							if (childObjectA != childObjectB)
 							{
@@ -104,12 +104,12 @@ namespace bs
 									return false;
 
 								RTTITypeBase* childRtti = nullptr;
-								if (childObjectA->getRTTI() == childObjectB->getRTTI())
-									childRtti = childObjectA->getRTTI();
+								if (childObjectA->GetRtti() == childObjectB->GetRtti())
+									childRtti = childObjectA->GetRtti();
 
 								if (childRtti != nullptr)
 								{
-									ICompare& handler = childRtti->getCompareHandler();
+									ICompare& handler = childRtti->GetCompareHandler();
 									if (!handler.run(*childObjectA, *childObjectB))
 										return false;
 								}
@@ -126,8 +126,8 @@ namespace bs
 
 						for (UINT32 arrIdx = 0; arrIdx < arrayNumElemsA; arrIdx++)
 						{
-							IReflectable& childObjectA = curField->getArrayValue(rttiInstanceA, &a, arrIdx);
-							IReflectable& childObjectB = curField->getArrayValue(rttiInstanceB, &b, arrIdx);
+							IReflectable& childObjectA = curField->GetArrayValue(rttiInstanceA, &a, arrIdx);
+							IReflectable& childObjectB = curField->GetArrayValue(rttiInstanceB, &b, arrIdx);
 
 							RTTITypeBase* childRtti = nullptr;
 							if (childObjectA.getRTTI() == childObjectB.getRTTI())
@@ -135,7 +135,7 @@ namespace bs
 
 							if (childRtti != nullptr)
 							{
-								ICompare& handler = childRtti->getCompareHandler();
+								ICompare& handler = childRtti->GetCompareHandler();
 								if (!handler.run(childObjectA, childObjectB))
 									return false;
 							}
@@ -155,8 +155,8 @@ namespace bs
 							UINT32 typeSizeB = 0;
 							if (curField->schema.hasDynamicSize)
 							{
-								typeSizeA = curField->getArrayElemDynamicSize(rttiInstanceA, &a, arrIdx, false).bytes;
-								typeSizeB = curField->getArrayElemDynamicSize(rttiInstanceB, &b, arrIdx, false).bytes;
+								typeSizeA = curField->GetArrayElemDynamicSize(rttiInstanceA, &a, arrIdx, false).bytes;
+								typeSizeB = curField->GetArrayElemDynamicSize(rttiInstanceB, &b, arrIdx, false).bytes;
 							}
 							else
 								typeSizeA = typeSizeB = curField->schema.size.bytes;
@@ -194,8 +194,8 @@ namespace bs
 					{
 						auto curField = static_cast<RTTIReflectablePtrFieldBase*>(curGenericField);
 
-						SPtr<IReflectable> childObjectA = curField->getValue(rttiInstanceA, &a);
-						SPtr<IReflectable> childObjectB = curField->getValue(rttiInstanceB, &b);
+						SPtr<IReflectable> childObjectA = curField->GetValue(rttiInstanceA, &a);
+						SPtr<IReflectable> childObjectB = curField->GetValue(rttiInstanceB, &b);
 
 						if (childObjectA != childObjectB)
 						{
@@ -203,12 +203,12 @@ namespace bs
 								return false;
 
 							RTTITypeBase* childRtti = nullptr;
-							if (childObjectA->getRTTI() == childObjectB->getRTTI())
-								childRtti = childObjectA->getRTTI();
+							if (childObjectA->GetRtti() == childObjectB->GetRtti())
+								childRtti = childObjectA->GetRtti();
 
 							if (childRtti != nullptr)
 							{
-								ICompare& handler = childRtti->getCompareHandler();
+								ICompare& handler = childRtti->GetCompareHandler();
 								if (!handler.run(*childObjectA, *childObjectB))
 									return false;
 							}
@@ -222,8 +222,8 @@ namespace bs
 					{
 						auto curField = static_cast<RTTIReflectableFieldBase*>(curGenericField);
 
-						IReflectable& childObjectA = curField->getValue(rttiInstanceA, &a);
-						IReflectable& childObjectB = curField->getValue(rttiInstanceB, &b);
+						IReflectable& childObjectA = curField->GetValue(rttiInstanceA, &a);
+						IReflectable& childObjectB = curField->GetValue(rttiInstanceB, &b);
 
 						RTTITypeBase* childRtti = nullptr;
 						if (childObjectA.getRTTI() == childObjectB.getRTTI())
@@ -231,7 +231,7 @@ namespace bs
 
 						if (childRtti != nullptr)
 						{
-							ICompare& handler = childRtti->getCompareHandler();
+							ICompare& handler = childRtti->GetCompareHandler();
 							if(!handler.run(childObjectA, childObjectB))
 								return false;
 						}
@@ -248,8 +248,8 @@ namespace bs
 						UINT32 typeSizeB = 0;
 						if (curField->schema.hasDynamicSize)
 						{
-							typeSizeA = curField->getDynamicSize(rttiInstanceA, &a, false).bytes;
-							typeSizeB = curField->getDynamicSize(rttiInstanceB, &b, false).bytes;
+							typeSizeA = curField->GetDynamicSize(rttiInstanceA, &a, false).bytes;
+							typeSizeB = curField->GetDynamicSize(rttiInstanceB, &b, false).bytes;
 						}
 						else
 							typeSizeA = typeSizeB = curField->schema.size.bytes;
@@ -277,8 +277,8 @@ namespace bs
 						auto curField = static_cast<RTTIManagedDataBlockFieldBase*>(curGenericField);
 
 						UINT32 dataBlockSizeA = 0, dataBlockSizeB = 0;
-						SPtr<DataStream> blockStreamA = curField->getValue(rttiInstanceA, &a, dataBlockSizeA);
-						SPtr<DataStream> blockStreamB = curField->getValue(rttiInstanceB, &b, dataBlockSizeB);
+						SPtr<DataStream> blockStreamA = curField->GetValue(rttiInstanceA, &a, dataBlockSizeA);
+						SPtr<DataStream> blockStreamB = curField->GetValue(rttiInstanceB, &b, dataBlockSizeB);
 
 						if(dataBlockSizeA != dataBlockSizeB)
 							return false;
@@ -302,7 +302,7 @@ namespace bs
 				}
 			}
 
-			rtti = rtti->getBaseClass();
+			rtti = rtti->GetBaseClass();
 
 		} while (rtti != nullptr); // Repeat until we reach the top of the inheritance hierarchy
 

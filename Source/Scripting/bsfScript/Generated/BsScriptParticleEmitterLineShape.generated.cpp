@@ -39,13 +39,13 @@ namespace bs
 	{
 		PARTICLE_LINE_SHAPE_DESC tmpoptions;
 		tmpoptions = ScriptPARTICLE_LINE_SHAPE_DESC::FromInterop(*options);
-		thisPtr->getInternal()->setOptions(tmpoptions);
+		thisPtr->GetInternal()->SetOptions(tmpoptions);
 	}
 
 	void ScriptParticleEmitterLineShape::InternalGetOptions(ScriptParticleEmitterLineShape* thisPtr, __PARTICLE_LINE_SHAPE_DESCInterop* __output)
 	{
 		PARTICLE_LINE_SHAPE_DESC tmp__output;
-		tmp__output = thisPtr->getInternal()->getOptions();
+		tmp__output = thisPtr->GetInternal()->GetOptions();
 
 		__PARTICLE_LINE_SHAPE_DESCInterop interop__output;
 		interop__output = ScriptPARTICLE_LINE_SHAPE_DESC::toInterop(tmp__output);

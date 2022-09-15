@@ -83,7 +83,7 @@ namespace bs
 		if(!currentObjInfo->mTypeInfo->mFlags.isSet(ScriptTypeFlag::Serializable))
 			return nullptr;
 
-		const bool construct = currentObjInfo->mMonoClass->getMethod(".ctor", 0) != nullptr;
+		const bool construct = currentObjInfo->mMonoClass->GetMethod(".ctor", 0) != nullptr;
 		return currentObjInfo->mMonoClass->createInstance(construct);
 	}
 
@@ -171,7 +171,7 @@ namespace bs
 
 					SPtr<ManagedSerializableMemberInfo> matchingFieldInfo = objInfo->findMatchingField(field.second, curType->mTypeInfo);
 					if (matchingFieldInfo != nullptr)
-						matchingFieldInfo->setValue(instance, mCachedData[key]->getValue(matchingFieldInfo->mTypeInfo));
+						matchingFieldInfo->SetValue(instance, mCachedData[key]->GetValue(matchingFieldInfo->mTypeInfo));
 
 					i++;
 				}
@@ -222,7 +222,7 @@ namespace bs
 		if (mGCHandle != 0)
 		{
 			MonoObject* managedInstance = MonoUtil::getObjectFromGCHandle(mGCHandle);
-			fieldInfo->setValue(managedInstance, val->getValue(fieldInfo->mTypeInfo));
+			fieldInfo->SetValue(managedInstance, val->GetValue(fieldInfo->mTypeInfo));
 		}
 		else
 		{
@@ -236,7 +236,7 @@ namespace bs
 		if (mGCHandle != 0)
 		{
 			MonoObject* managedInstance = MonoUtil::getObjectFromGCHandle(mGCHandle);
-			MonoObject* fieldValue = fieldInfo->getValue(managedInstance);
+			MonoObject* fieldValue = fieldInfo->GetValue(managedInstance);
 
 			return ManagedSerializableFieldData::Create(fieldInfo->mTypeInfo, fieldValue);
 		}

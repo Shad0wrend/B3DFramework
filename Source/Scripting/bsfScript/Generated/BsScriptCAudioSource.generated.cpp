@@ -49,20 +49,20 @@ namespace bs
 		ScriptRRefBase* scriptclip;
 		scriptclip = ScriptRRefBase::toNative(clip);
 		if(scriptclip != nullptr)
-			tmpclip = static_resource_cast<AudioClip>(scriptclip->getHandle());
-		thisPtr->getHandle()->setClip(tmpclip);
+			tmpclip = static_resource_cast<AudioClip>(scriptclip->GetHandle());
+		thisPtr->GetHandle()->SetClip(tmpclip);
 	}
 
 	MonoObject* ScriptCAudioSource::InternalGetClip(ScriptCAudioSource* thisPtr)
 	{
 		ResourceHandle<AudioClip> tmp__output;
-		tmp__output = thisPtr->getHandle()->getClip();
+		tmp__output = thisPtr->GetHandle()->GetClip();
 
 		MonoObject* __output;
 		ScriptRRefBase* script__output;
 		script__output = ScriptResourceManager::Instance().getScriptRRef(tmp__output);
 		if(script__output != nullptr)
-			__output = script__output->getManagedInstance();
+			__output = script__output->GetManagedInstance();
 		else
 			__output = nullptr;
 
@@ -71,13 +71,13 @@ namespace bs
 
 	void ScriptCAudioSource::InternalSetVolume(ScriptCAudioSource* thisPtr, float volume)
 	{
-		thisPtr->getHandle()->setVolume(volume);
+		thisPtr->GetHandle()->SetVolume(volume);
 	}
 
 	float ScriptCAudioSource::InternalGetVolume(ScriptCAudioSource* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getHandle()->getVolume();
+		tmp__output = thisPtr->GetHandle()->GetVolume();
 
 		float __output;
 		__output = tmp__output;
@@ -87,13 +87,13 @@ namespace bs
 
 	void ScriptCAudioSource::InternalSetPitch(ScriptCAudioSource* thisPtr, float pitch)
 	{
-		thisPtr->getHandle()->setPitch(pitch);
+		thisPtr->GetHandle()->SetPitch(pitch);
 	}
 
 	float ScriptCAudioSource::InternalGetPitch(ScriptCAudioSource* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getHandle()->getPitch();
+		tmp__output = thisPtr->GetHandle()->GetPitch();
 
 		float __output;
 		__output = tmp__output;
@@ -103,13 +103,13 @@ namespace bs
 
 	void ScriptCAudioSource::InternalSetIsLooping(ScriptCAudioSource* thisPtr, bool loop)
 	{
-		thisPtr->getHandle()->setIsLooping(loop);
+		thisPtr->GetHandle()->SetIsLooping(loop);
 	}
 
 	bool ScriptCAudioSource::InternalGetIsLooping(ScriptCAudioSource* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->getHandle()->getIsLooping();
+		tmp__output = thisPtr->GetHandle()->GetIsLooping();
 
 		bool __output;
 		__output = tmp__output;
@@ -119,13 +119,13 @@ namespace bs
 
 	void ScriptCAudioSource::InternalSetPriority(ScriptCAudioSource* thisPtr, uint32_t priority)
 	{
-		thisPtr->getHandle()->setPriority(priority);
+		thisPtr->GetHandle()->SetPriority(priority);
 	}
 
 	uint32_t ScriptCAudioSource::InternalGetPriority(ScriptCAudioSource* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->getHandle()->getPriority();
+		tmp__output = thisPtr->GetHandle()->GetPriority();
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -135,13 +135,13 @@ namespace bs
 
 	void ScriptCAudioSource::InternalSetMinDistance(ScriptCAudioSource* thisPtr, float distance)
 	{
-		thisPtr->getHandle()->setMinDistance(distance);
+		thisPtr->GetHandle()->SetMinDistance(distance);
 	}
 
 	float ScriptCAudioSource::InternalGetMinDistance(ScriptCAudioSource* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getHandle()->getMinDistance();
+		tmp__output = thisPtr->GetHandle()->GetMinDistance();
 
 		float __output;
 		__output = tmp__output;
@@ -151,13 +151,13 @@ namespace bs
 
 	void ScriptCAudioSource::InternalSetAttenuation(ScriptCAudioSource* thisPtr, float attenuation)
 	{
-		thisPtr->getHandle()->setAttenuation(attenuation);
+		thisPtr->GetHandle()->SetAttenuation(attenuation);
 	}
 
 	float ScriptCAudioSource::InternalGetAttenuation(ScriptCAudioSource* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getHandle()->getAttenuation();
+		tmp__output = thisPtr->GetHandle()->GetAttenuation();
 
 		float __output;
 		__output = tmp__output;
@@ -167,13 +167,13 @@ namespace bs
 
 	void ScriptCAudioSource::InternalSetTime(ScriptCAudioSource* thisPtr, float time)
 	{
-		thisPtr->getHandle()->setTime(time);
+		thisPtr->GetHandle()->SetTime(time);
 	}
 
 	float ScriptCAudioSource::InternalGetTime(ScriptCAudioSource* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getHandle()->getTime();
+		tmp__output = thisPtr->GetHandle()->GetTime();
 
 		float __output;
 		__output = tmp__output;
@@ -183,13 +183,13 @@ namespace bs
 
 	void ScriptCAudioSource::InternalSetPlayOnStart(ScriptCAudioSource* thisPtr, bool enable)
 	{
-		thisPtr->getHandle()->setPlayOnStart(enable);
+		thisPtr->GetHandle()->SetPlayOnStart(enable);
 	}
 
 	bool ScriptCAudioSource::InternalGetPlayOnStart(ScriptCAudioSource* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->getHandle()->getPlayOnStart();
+		tmp__output = thisPtr->GetHandle()->GetPlayOnStart();
 
 		bool __output;
 		__output = tmp__output;
@@ -199,23 +199,23 @@ namespace bs
 
 	void ScriptCAudioSource::InternalPlay(ScriptCAudioSource* thisPtr)
 	{
-		thisPtr->getHandle()->play();
+		thisPtr->GetHandle()->play();
 	}
 
 	void ScriptCAudioSource::InternalPause(ScriptCAudioSource* thisPtr)
 	{
-		thisPtr->getHandle()->pause();
+		thisPtr->GetHandle()->pause();
 	}
 
 	void ScriptCAudioSource::InternalStop(ScriptCAudioSource* thisPtr)
 	{
-		thisPtr->getHandle()->stop();
+		thisPtr->GetHandle()->stop();
 	}
 
 	AudioSourceState ScriptCAudioSource::InternalGetState(ScriptCAudioSource* thisPtr)
 	{
 		AudioSourceState tmp__output;
-		tmp__output = thisPtr->getHandle()->getState();
+		tmp__output = thisPtr->GetHandle()->GetState();
 
 		AudioSourceState __output;
 		__output = tmp__output;

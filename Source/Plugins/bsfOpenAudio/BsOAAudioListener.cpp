@@ -85,7 +85,7 @@ namespace bs
 
 	void OAAudioListener::UpdatePosition()
 	{
-		Vector3 position = getTransform().getPosition();
+		Vector3 position = getTransform().GetPosition();
 
 		alListener3f(AL_POSITION, position.x, position.y, position.z);
 	}

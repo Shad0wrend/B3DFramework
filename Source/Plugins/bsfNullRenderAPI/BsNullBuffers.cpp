@@ -111,7 +111,7 @@ namespace bs { namespace ct
 		mBuffer = bs_pool_new<NullHardwareBuffer>(mUsage, 1, mSize);
 		mBufferDeleter = &deleteBuffer;
 
-		IndexBuffer::initialize();
+		IndexBuffer::Initialize();
 	}
 
 	NullVertexBuffer::NullVertexBuffer(const VERTEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask)
@@ -123,6 +123,6 @@ namespace bs { namespace ct
 		mBuffer = bs_pool_new<NullHardwareBuffer>(mUsage, 1, mSize);
 		mBufferDeleter = &deleteBuffer;
 
-		VertexBuffer::initialize();
+		VertexBuffer::Initialize();
 	}
 }}

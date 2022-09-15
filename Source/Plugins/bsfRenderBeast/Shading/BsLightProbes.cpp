@@ -18,7 +18,7 @@ namespace bs { namespace ct
 
 	TetrahedraRenderMat::TetrahedraRenderMat()
 	{
-		mParams->getTextureParam(GPT_FRAGMENT_PROGRAM, "gDepthBufferTex", mDepthBufferTex);
+		mParams->GetTextureParam(GPT_FRAGMENT_PROGRAM, "gDepthBufferTex", mDepthBufferTex);
 
 		SAMPLER_STATE_DESC pointSampDesc;
 		pointSampDesc.minFilter = FO_POINT;
@@ -31,12 +31,12 @@ namespace bs { namespace ct
 		SPtr<SamplerState> pointSampState = SamplerState::Create(pointSampDesc);
 
 		if(mParams->hasSamplerState(GPT_FRAGMENT_PROGRAM, "gDepthBufferSamp"))
-			mParams->setSamplerState(GPT_FRAGMENT_PROGRAM, "gDepthBufferSamp", pointSampState);
+			mParams->SetSamplerState(GPT_FRAGMENT_PROGRAM, "gDepthBufferSamp", pointSampState);
 		else if(mParams->hasSamplerState(GPT_FRAGMENT_PROGRAM, "gDepthBufferTex"))
-			mParams->setSamplerState(GPT_FRAGMENT_PROGRAM, "gDepthBufferTex", pointSampState);
+			mParams->SetSamplerState(GPT_FRAGMENT_PROGRAM, "gDepthBufferTex", pointSampState);
 
 		mParamBuffer = gTetrahedraRenderParamDef.createBuffer();
-		mParams->setParamBlockBuffer("Params", mParamBuffer);
+		mParams->SetParamBlockBuffer("Params", mParamBuffer);
 	}
 
 	void TetrahedraRenderMat::Execute(const RendererView& view, const SPtr<Texture>& sceneDepth, const SPtr<Mesh>& mesh,
@@ -44,13 +44,13 @@ namespace bs { namespace ct
 	{
 		BS_RENMAT_PROFILE_BLOCK
 
-		const TextureProperties& texProps = sceneDepth->getProperties();
+		const TextureProperties& texProps = sceneDepth->GetProperties();
 
-		Vector2I texSize(texProps.getWidth(), texProps.getHeight());
-		gTetrahedraRenderParamDef.gDepthTexSize.set(mParamBuffer, texSize);
+		Vector2I texSize(texProps.GetWidth(), texProps.GetHeight());
+		gTetrahedraRenderParamDef.gDepthTexSize.Set(mParamBuffer, texSize);
 
-		mDepthBufferTex.set(sceneDepth);
-		mParams->setParamBlockBuffer("PerCamera", view.getPerViewBuffer());
+		mDepthBufferTex.Set(sceneDepth);
+		mParams->SetParamBlockBuffer("PerCamera", view.getPerViewBuffer());
 
 		RenderAPI& rapi = RenderAPI::Instance();
 		rapi.setRenderTarget(output);
@@ -91,19 +91,19 @@ namespace bs { namespace ct
 	{
 		mSkyOnly = mVariation.getBool("SKY_ONLY");
 
-		mParams->getTextureParam(GPT_FRAGMENT_PROGRAM, "gSkyIrradianceTex", mParamSkyIrradianceTex);
-		mParams->getTextureParam(GPT_FRAGMENT_PROGRAM, "gAmbientOcclusionTex", mParamAmbientOcclusionTex);
+		mParams->GetTextureParam(GPT_FRAGMENT_PROGRAM, "gSkyIrradianceTex", mParamSkyIrradianceTex);
+		mParams->GetTextureParam(GPT_FRAGMENT_PROGRAM, "gAmbientOcclusionTex", mParamAmbientOcclusionTex);
 
 		if(!mSkyOnly)
 		{
-			mParams->getTextureParam(GPT_FRAGMENT_PROGRAM, "gInputTex", mParamInputTex);
-			mParams->getTextureParam(GPT_FRAGMENT_PROGRAM, "gSHCoeffs", mParamSHCoeffsTexture);
-			mParams->getBufferParam(GPT_FRAGMENT_PROGRAM, "gTetrahedra", mParamTetrahedraBuffer);
-			mParams->getBufferParam(GPT_FRAGMENT_PROGRAM, "gTetFaces", mParamTetFacesBuffer);
+			mParams->GetTextureParam(GPT_FRAGMENT_PROGRAM, "gInputTex", mParamInputTex);
+			mParams->GetTextureParam(GPT_FRAGMENT_PROGRAM, "gSHCoeffs", mParamSHCoeffsTexture);
+			mParams->GetBufferParam(GPT_FRAGMENT_PROGRAM, "gTetrahedra", mParamTetrahedraBuffer);
+			mParams->GetBufferParam(GPT_FRAGMENT_PROGRAM, "gTetFaces", mParamTetFacesBuffer);
 		}
 
 		mParamBuffer = gIrradianceEvaluateParamDef.createBuffer();
-		mParams->setParamBlockBuffer("Params", mParamBuffer);
+		mParams->SetParamBlockBuffer("Params", mParamBuffer);
 	}
 
 	void IrradianceEvaluateMat::Execute(const RendererView& view, const GBufferTextures& gbuffer,
@@ -120,23 +120,23 @@ namespace bs { namespace ct
 		SPtr<Texture> skyIrradiance;
 		if (skybox != nullptr)
 		{
-			skyIrradiance = skybox->getIrradiance();
-			skyBrightness = skybox->getBrightness();
+			skyIrradiance = skybox->GetIrradiance();
+			skyBrightness = skybox->GetBrightness();
 		}
 
 		if(skyIrradiance == nullptr)
 			skyIrradiance = RendererTextures::defaultIndirect;
 
-		mParamSkyIrradianceTex.set(skyIrradiance);
-		mParamAmbientOcclusionTex.set(ambientOcclusion);
+		mParamSkyIrradianceTex.Set(skyIrradiance);
+		mParamAmbientOcclusionTex.Set(ambientOcclusion);
 
 		RenderSurfaceMask loadMask = RT_COLOR0;
 		if(!mSkyOnly)
 		{
-			mParamInputTex.set(lightProbeIndices);
-			mParamSHCoeffsTexture.set(lightProbesInfo.shCoefficients);
-			mParamTetrahedraBuffer.set(lightProbesInfo.tetrahedra);
-			mParamTetFacesBuffer.set(lightProbesInfo.faces);
+			mParamInputTex.Set(lightProbeIndices);
+			mParamSHCoeffsTexture.Set(lightProbesInfo.shCoefficients);
+			mParamTetrahedraBuffer.Set(lightProbesInfo.tetrahedra);
+			mParamTetFacesBuffer.Set(lightProbesInfo.faces);
 		}
 		else
 		{
@@ -145,11 +145,11 @@ namespace bs { namespace ct
 			loadMask |= RT_DEPTH_STENCIL;
 		}
 
-		gIrradianceEvaluateParamDef.gSkyBrightness.set(mParamBuffer, skyBrightness);
-		gIrradianceEvaluateParamDef.gNumTetrahedra.set(mParamBuffer, lightProbesInfo.numTetrahedra);
+		gIrradianceEvaluateParamDef.gSkyBrightness.Set(mParamBuffer, skyBrightness);
+		gIrradianceEvaluateParamDef.gNumTetrahedra.Set(mParamBuffer, lightProbesInfo.numTetrahedra);
 		mParamBuffer->flushToGPU();
 
-		mParams->setParamBlockBuffer("PerCamera", view.getPerViewBuffer());
+		mParams->SetParamBlockBuffer("PerCamera", view.getPerViewBuffer());
 
 		// Render
 		RenderAPI& rapi = RenderAPI::Instance();
@@ -234,14 +234,14 @@ namespace bs { namespace ct
 		info.isDirty = true;
 
 		mVolumes.push_back(info);
-		volume->setRendererId(handle);
+		volume->SetRendererId(handle);
 
 		notifyDirty(volume);
 	}
 
 	void LightProbes::NotifyDirty(LightProbeVolume* volume)
 	{
-		UINT32 handle = volume->getRendererId();
+		UINT32 handle = volume->GetRendererId();
 		mVolumes[handle].isDirty = true;
 
 		mTetrahedronVolumeDirty = true;
@@ -249,16 +249,16 @@ namespace bs { namespace ct
 
 	void LightProbes::NotifyRemoved(LightProbeVolume* volume)
 	{
-		UINT32 handle = volume->getRendererId();
+		UINT32 handle = volume->GetRendererId();
 
 		LightProbeVolume* lastVolume = mVolumes.back().volume;
-		UINT32 lastHandle = lastVolume->getRendererId();
+		UINT32 lastHandle = lastVolume->GetRendererId();
 		
 		if (handle != lastHandle)
 		{
 			// Swap current last element with the one we want to erase
 			std::swap(mVolumes[handle], mVolumes[lastHandle]);
-			lastVolume->setRendererId(handle);
+			lastVolume->SetRendererId(handle);
 		}
 		
 		// Erase last (empty) element
@@ -276,8 +276,8 @@ namespace bs { namespace ct
 		UINT32 numRows = 0;
 		for(auto& entry : mVolumes)
 		{
-			SPtr<Texture> localTexture = entry.volume->getCoefficientsTexture();
-			numRows += localTexture->getProperties().getHeight();
+			SPtr<Texture> localTexture = entry.volume->GetCoefficientsTexture();
+			numRows += localTexture->GetProperties().GetHeight();
 		}
 
 		if(numRows > mMaxCoefficientRows)
@@ -289,10 +289,10 @@ namespace bs { namespace ct
 			TEXTURE_COPY_DESC copyDesc;
 			copyDesc.dstPosition = Vector3I(0, rowIdx, 0);
 
-			SPtr<Texture> localTexture = entry.volume->getCoefficientsTexture();
+			SPtr<Texture> localTexture = entry.volume->GetCoefficientsTexture();
 			localTexture->copy(mProbeCoefficientsGPU, copyDesc);
 			
-			rowIdx += localTexture->getProperties().getHeight();
+			rowIdx += localTexture->GetProperties().GetHeight();
 		}
 
 		// Gather all positions
@@ -300,22 +300,22 @@ namespace bs { namespace ct
 		rowIdx = 0;
 		for(auto& entry : mVolumes)
 		{
-			const Vector<LightProbeInfo>& infos = entry.volume->getLightProbeInfos();
-			const Vector<Vector3>& positions = entry.volume->getLightProbePositions();
+			const Vector<LightProbeInfo>& infos = entry.volume->GetLightProbeInfos();
+			const Vector<Vector3>& positions = entry.volume->GetLightProbePositions();
 
-			UINT32 numProbes = entry.volume->getNumActiveProbes();
+			UINT32 numProbes = entry.volume->GetNumActiveProbes();
 
 			if (numProbes == 0)
 				continue;
 
-			const Transform& tfrm = entry.volume->getTransform();
-			Vector3 offset = tfrm.getPosition();
-			Quaternion rotation = tfrm.getRotation();
+			const Transform& tfrm = entry.volume->GetTransform();
+			Vector3 offset = tfrm.GetPosition();
+			Quaternion rotation = tfrm.GetRotation();
 
 			for (UINT32 i = 0; i < numProbes; i++)
 			{
 				Vector3 localPos = positions[i];
-				Vector3 transformedPos = rotation.rotate(localPos) + offset;
+				Vector3 transformedPos = rotation.Rotate(localPos) + offset;
 				mTempTetrahedronPositions.push_back(transformedPos);
 
 				mTempTetrahedronBufferIndices.push_back(bufferOffset + infos[i].bufferIdx);
@@ -324,8 +324,8 @@ namespace bs { namespace ct
 				mTempTetrahedronBufferOffsets.push_back(offset);
 			}
 
-			SPtr<Texture> localTexture = entry.volume->getCoefficientsTexture();
-			rowIdx += localTexture->getProperties().getHeight();
+			SPtr<Texture> localTexture = entry.volume->GetCoefficientsTexture();
+			rowIdx += localTexture->GetProperties().GetHeight();
 			bufferOffset += (UINT32)positions.size();
 		}
 
@@ -355,7 +355,7 @@ namespace bs { namespace ct
 			// If tetrahedron is co-planar just ignore it, shader will use some other nearby one instead. We can't
 			// handle coplanar tetrahedrons because the matrix is not invertible, and for nearly co-planar ones the
 			// math breaks down because of precision issues.
-			validTets[i] = fabs(Vector3::dot(Vector3::normalize(Vector3::cross(E1, E2)), E3)) > 0.0001f;
+			validTets[i] = fabs(Vector3::dot(Vector3::Normalize(Vector3::Cross(E1, E2)), E3)) > 0.0001f;
 
 			if (validTets[i])
 				mNumValidTetrahedra++;
@@ -375,13 +375,13 @@ namespace bs { namespace ct
 		UINT32 numVertices = mNumValidTetrahedra * 4 * 3 + numValidFaces * 9 * 3;
 
 		SPtr<VertexDataDesc> vertexDesc = bs_shared_ptr_new<VertexDataDesc>();
-		vertexDesc->addVertElem(VET_FLOAT3, VES_POSITION);
-		vertexDesc->addVertElem(VET_UINT1, VES_TEXCOORD);
+		vertexDesc->AddVertElem(VET_FLOAT3, VES_POSITION);
+		vertexDesc->AddVertElem(VET_UINT1, VES_TEXCOORD);
 
 		SPtr<MeshData> meshData = MeshData::Create(numVertices, numVertices, vertexDesc);
-		auto posIter = meshData->getVec3DataIter(VES_POSITION);
-		auto idIter = meshData->getDWORDDataIter(VES_TEXCOORD);
-		UINT32* indices = meshData->getIndices32();
+		auto posIter = meshData->GetVec3DataIter(VES_POSITION);
+		auto idIter = meshData->GetDWORDDataIter(VES_TEXCOORD);
+		UINT32* indices = meshData->GetIndices32();
 
 		// Insert inner tetrahedron triangles
 		UINT32 tetIdx = 0;
@@ -417,7 +417,7 @@ namespace bs { namespace ct
 				Vector3 e1 = B - C;
 
 				Vector3 normal = e0.cross(e1);
-				if (normal.dot(A - center) > 0.0f)
+				if (normal.Dot(A - center) > 0.0f)
 					std::swap(B, C);
 
 				posIter.addValue(A);
@@ -520,7 +520,7 @@ namespace bs { namespace ct
 				Vector3 e1 = B - C;
 
 				Vector3 normal = e0.cross(e1);
-				if (normal.dot(A - center) > 0.0f)
+				if (normal.Dot(A - center) > 0.0f)
 					std::swap(A, B);
 
 				posIter.addValue(A);
@@ -580,7 +580,7 @@ namespace bs { namespace ct
 					Vector3 e1 = B - C;
 
 					Vector3 normal = e0.cross(e1);
-					if (normal.dot(A - center) > 0.0f)
+					if (normal.Dot(A - center) > 0.0f)
 						std::swap(A, B);
 
 					posIter.addValue(A);
@@ -628,7 +628,7 @@ namespace bs { namespace ct
 			Vector3 e1 = B - C;
 
 			Vector3 normal = e0.cross(e1);
-			if (normal.dot(A - center) < 0.0f)
+			if (normal.Dot(A - center) < 0.0f)
 				std::swap(B, C);
 
 			posIter.addValue(A);
@@ -652,11 +652,11 @@ namespace bs { namespace ct
 		// Map vertices to actual SH coefficient indices, and write GPU buffer with tetrahedron information
 		if ((mNumValidTetrahedra + numValidFaces) > mMaxTetrahedra)
 		{
-			UINT32 newSize = Math::divideAndRoundUp(mNumValidTetrahedra + numValidFaces, 64U) * 64U;
+			UINT32 newSize = Math::DivideAndRoundUp(mNumValidTetrahedra + numValidFaces, 64U) * 64U;
 			resizeTetrahedronBuffer(newSize);
 		}
 
-		TetrahedronDataGPU* dst = (TetrahedronDataGPU*)mTetrahedronInfosGPU->lock(0, mTetrahedronInfosGPU->getSize(),
+		TetrahedronDataGPU* dst = (TetrahedronDataGPU*)mTetrahedronInfosGPU->lock(0, mTetrahedronInfosGPU->GetSize(),
 			GBL_WRITE_ONLY_DISCARD);
 
 		// Write inner tetrahedron data
@@ -711,12 +711,12 @@ namespace bs { namespace ct
 		// Write data specific to faces
 		if (numValidFaces > mMaxFaces)
 		{
-			UINT32 newSize = Math::divideAndRoundUp(numValidFaces, 64U) * 64U;
+			UINT32 newSize = Math::DivideAndRoundUp(numValidFaces, 64U) * 64U;
 			resizeTetrahedronFaceBuffer(newSize);
 		}
 
 		TetrahedronFaceDataGPU* faceDst = (TetrahedronFaceDataGPU*)mTetrahedronFaceInfosGPU->lock(0,
-			mTetrahedronFaceInfosGPU->getSize(), GBL_WRITE_ONLY_DISCARD);
+			mTetrahedronFaceInfosGPU->GetSize(), GBL_WRITE_ONLY_DISCARD);
 
 		for (UINT32 i = 0; i < (UINT32)outerFaces.size(); i++)
 		{
@@ -748,7 +748,7 @@ namespace bs { namespace ct
 	{
 		for(auto& entry : mVolumes)
 		{
-			UINT32 numProbes = entry.volume->getNumActiveProbes();
+			UINT32 numProbes = entry.volume->GetNumActiveProbes();
 			if (numProbes > 0)
 				return true;
 		}
@@ -770,7 +770,7 @@ namespace bs { namespace ct
 
 	void LightProbes::ResizeTetrahedronBuffer(UINT32 count)
 	{
-		static constexpr UINT32 ELEMENT_SIZE = Math::divideAndRoundUp((UINT32)sizeof(TetrahedronDataGPU), 4U);
+		static constexpr UINT32 ELEMENT_SIZE = Math::DivideAndRoundUp((UINT32)sizeof(TetrahedronDataGPU), 4U);
 
 		GPU_BUFFER_DESC desc;
 		desc.type = GBT_STANDARD;
@@ -785,7 +785,7 @@ namespace bs { namespace ct
 
 	void LightProbes::ResizeTetrahedronFaceBuffer(UINT32 count)
 	{
-		static constexpr UINT32 ELEMENT_SIZE = Math::divideAndRoundUp((UINT32)sizeof(TetrahedronFaceDataGPU), 4U);
+		static constexpr UINT32 ELEMENT_SIZE = Math::DivideAndRoundUp((UINT32)sizeof(TetrahedronFaceDataGPU), 4U);
 
 		GPU_BUFFER_DESC desc;
 		desc.type = GBT_STANDARD;
@@ -890,8 +890,8 @@ namespace bs { namespace ct
 
 					center /= 4.0f;
 
-					Vector3 normal = Vector3::normalize(e0.cross(e1));
-					if (normal.dot(v0 - center) < 0.0f)
+					Vector3 normal = Vector3::Normalize(e0.cross(e1));
+					if (normal.Dot(v0 - center) < 0.0f)
 						normal = -normal;
 
 					faceNormals[i] = normal;
@@ -919,10 +919,10 @@ namespace bs { namespace ct
 							const Vector3& v2 = positions[face.vertices[v2LocIdx]];
 
 							// Weight the contribution to the normal based on the angle spanned by the triangle
-							Vector3 e0 = Vector3::normalize(v1 - v0);
-							Vector3 e1 = Vector3::normalize(v2 - v0);
+							Vector3 e0 = Vector3::Normalize(v1 - v0);
+							Vector3 e1 = Vector3::Normalize(v2 - v0);
 
-							float weight = acos(e0.dot(e1));
+							float weight = acos(e0.Dot(e1));
 							accum.normal += weight * faceNormals[faceIdx];
 						};
 
@@ -1190,7 +1190,7 @@ namespace bs { namespace ct
 				mat.setColumn(2, Vector4(E3, 0.0f));
 				mat.setColumn(3, Vector4(P4, 1.0f));
 
-				entry.transform = mat.inverse();
+				entry.transform = mat.Inverse();
 
 				tetrahedra.push_back(entry);
 			}

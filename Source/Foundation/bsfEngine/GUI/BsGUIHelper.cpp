@@ -48,11 +48,11 @@ namespace bs
 		{
 			bs_frame_mark();
 
-			const U32String utf32text = UTF8::toUTF32(text);
+			const U32String utf32text = UTF8::ToUtF32(text);
 			TextData<FrameAlloc> textData(utf32text, style.font, style.fontSize, wordWrapWidth, 0, style.wordWrap);
 
-			contentWidth += textData.getWidth();
-			contentHeight += textData.getNumLines() * textData.getLineHeight();
+			contentWidth += textData.GetWidth();
+			contentHeight += textData.GetNumLines() * textData.GetLineHeight();
 
 			bs_frame_clear();
 		}
@@ -67,11 +67,11 @@ namespace bs
 		{
 			bs_frame_mark();
 
-			const U32String utf32text = UTF8::toUTF32(text);
+			const U32String utf32text = UTF8::ToUtF32(text);
 			TextData<FrameAlloc> textData(utf32text, font, fontSize, 0, 0, false);
 
-			size.x = textData.getWidth();
-			size.y = textData.getNumLines() * textData.getLineHeight();
+			size.x = textData.GetWidth();
+			size.y = textData.GetNumLines() * textData.GetLineHeight();
 
 			bs_frame_clear();
 		}

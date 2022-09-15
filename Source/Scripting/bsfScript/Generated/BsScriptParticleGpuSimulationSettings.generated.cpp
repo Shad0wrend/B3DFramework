@@ -48,7 +48,7 @@ namespace bs
 	MonoObject* ScriptParticleGpuSimulationSettings::InternalGetvectorField(ScriptParticleGpuSimulationSettings* thisPtr)
 	{
 		SPtr<ParticleVectorFieldSettings> tmp__output = bs_shared_ptr_new<ParticleVectorFieldSettings>();
-		*tmp__output = thisPtr->getInternal()->vectorField;
+		*tmp__output = thisPtr->GetInternal()->vectorField;
 
 		MonoObject* __output;
 		__output = ScriptParticleVectorFieldSettings::Create(tmp__output);
@@ -62,14 +62,14 @@ namespace bs
 		ScriptParticleVectorFieldSettings* scriptvalue;
 		scriptvalue = ScriptParticleVectorFieldSettings::toNative(value);
 		if(scriptvalue != nullptr)
-			tmpvalue = scriptvalue->getInternal();
-		thisPtr->getInternal()->vectorField = *tmpvalue;
+			tmpvalue = scriptvalue->GetInternal();
+		thisPtr->GetInternal()->vectorField = *tmpvalue;
 	}
 
 	MonoObject* ScriptParticleGpuSimulationSettings::InternalGetcolorOverLifetime(ScriptParticleGpuSimulationSettings* thisPtr)
 	{
 		SPtr<TColorDistribution<ColorGradient>> tmp__output = bs_shared_ptr_new<TColorDistribution<ColorGradient>>();
-		*tmp__output = thisPtr->getInternal()->colorOverLifetime;
+		*tmp__output = thisPtr->GetInternal()->colorOverLifetime;
 
 		MonoObject* __output;
 		__output = ScriptTColorDistributionColorGradient::Create(tmp__output);
@@ -83,14 +83,14 @@ namespace bs
 		ScriptTColorDistributionColorGradient* scriptvalue;
 		scriptvalue = ScriptTColorDistributionColorGradient::toNative(value);
 		if(scriptvalue != nullptr)
-			tmpvalue = scriptvalue->getInternal();
-		thisPtr->getInternal()->colorOverLifetime = *tmpvalue;
+			tmpvalue = scriptvalue->GetInternal();
+		thisPtr->GetInternal()->colorOverLifetime = *tmpvalue;
 	}
 
 	MonoObject* ScriptParticleGpuSimulationSettings::InternalGetsizeScaleOverLifetime(ScriptParticleGpuSimulationSettings* thisPtr)
 	{
 		SPtr<TDistribution<Vector2>> tmp__output = bs_shared_ptr_new<TDistribution<Vector2>>();
-		*tmp__output = thisPtr->getInternal()->sizeScaleOverLifetime;
+		*tmp__output = thisPtr->GetInternal()->sizeScaleOverLifetime;
 
 		MonoObject* __output;
 		__output = ScriptTDistributionVector2::Create(tmp__output);
@@ -104,14 +104,14 @@ namespace bs
 		ScriptTDistributionVector2* scriptvalue;
 		scriptvalue = ScriptTDistributionVector2::toNative(value);
 		if(scriptvalue != nullptr)
-			tmpvalue = scriptvalue->getInternal();
-		thisPtr->getInternal()->sizeScaleOverLifetime = *tmpvalue;
+			tmpvalue = scriptvalue->GetInternal();
+		thisPtr->GetInternal()->sizeScaleOverLifetime = *tmpvalue;
 	}
 
 	void ScriptParticleGpuSimulationSettings::InternalGetacceleration(ScriptParticleGpuSimulationSettings* thisPtr, Vector3* __output)
 	{
 		Vector3 tmp__output;
-		tmp__output = thisPtr->getInternal()->acceleration;
+		tmp__output = thisPtr->GetInternal()->acceleration;
 
 		*__output = tmp__output;
 
@@ -120,13 +120,13 @@ namespace bs
 
 	void ScriptParticleGpuSimulationSettings::InternalSetacceleration(ScriptParticleGpuSimulationSettings* thisPtr, Vector3* value)
 	{
-		thisPtr->getInternal()->acceleration = *value;
+		thisPtr->GetInternal()->acceleration = *value;
 	}
 
 	float ScriptParticleGpuSimulationSettings::InternalGetdrag(ScriptParticleGpuSimulationSettings* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getInternal()->drag;
+		tmp__output = thisPtr->GetInternal()->drag;
 
 		float __output;
 		__output = tmp__output;
@@ -136,13 +136,13 @@ namespace bs
 
 	void ScriptParticleGpuSimulationSettings::InternalSetdrag(ScriptParticleGpuSimulationSettings* thisPtr, float value)
 	{
-		thisPtr->getInternal()->drag = value;
+		thisPtr->GetInternal()->drag = value;
 	}
 
 	MonoObject* ScriptParticleGpuSimulationSettings::InternalGetdepthCollision(ScriptParticleGpuSimulationSettings* thisPtr)
 	{
 		SPtr<ParticleDepthCollisionSettings> tmp__output = bs_shared_ptr_new<ParticleDepthCollisionSettings>();
-		*tmp__output = thisPtr->getInternal()->depthCollision;
+		*tmp__output = thisPtr->GetInternal()->depthCollision;
 
 		MonoObject* __output;
 		__output = ScriptParticleDepthCollisionSettings::Create(tmp__output);
@@ -156,7 +156,7 @@ namespace bs
 		ScriptParticleDepthCollisionSettings* scriptvalue;
 		scriptvalue = ScriptParticleDepthCollisionSettings::toNative(value);
 		if(scriptvalue != nullptr)
-			tmpvalue = scriptvalue->getInternal();
-		thisPtr->getInternal()->depthCollision = *tmpvalue;
+			tmpvalue = scriptvalue->GetInternal();
+		thisPtr->GetInternal()->depthCollision = *tmpvalue;
 	}
 }

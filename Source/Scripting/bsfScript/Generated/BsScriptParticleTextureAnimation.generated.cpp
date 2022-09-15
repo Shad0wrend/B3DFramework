@@ -37,13 +37,13 @@ namespace bs
 	}
 	void ScriptParticleTextureAnimation::InternalSetOptions(ScriptParticleTextureAnimation* thisPtr, PARTICLE_TEXTURE_ANIMATION_DESC* options)
 	{
-		thisPtr->getInternal()->setOptions(*options);
+		thisPtr->GetInternal()->SetOptions(*options);
 	}
 
 	void ScriptParticleTextureAnimation::InternalGetOptions(ScriptParticleTextureAnimation* thisPtr, PARTICLE_TEXTURE_ANIMATION_DESC* __output)
 	{
 		PARTICLE_TEXTURE_ANIMATION_DESC tmp__output;
-		tmp__output = thisPtr->getInternal()->getOptions();
+		tmp__output = thisPtr->GetInternal()->GetOptions();
 
 		*__output = tmp__output;
 	}

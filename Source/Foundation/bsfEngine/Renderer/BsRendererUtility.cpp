@@ -20,8 +20,8 @@ namespace bs { namespace ct
 	{
 		{
 			mFullscreenQuadVDesc = bs_shared_ptr_new<VertexDataDesc>();
-			mFullscreenQuadVDesc->addVertElem(VET_FLOAT3, VES_POSITION);
-			mFullscreenQuadVDesc->addVertElem(VET_FLOAT2, VES_TEXCOORD);
+			mFullscreenQuadVDesc->AddVertElem(VET_FLOAT3, VES_POSITION);
+			mFullscreenQuadVDesc->AddVertElem(VET_FLOAT2, VES_TEXCOORD);
 
 			INDEX_BUFFER_DESC ibDesc;
 			ibDesc.indexType = IT_32BIT;
@@ -32,7 +32,7 @@ namespace bs { namespace ct
 			mFullscreenQuadVDecl = VertexDeclaration::Create(mFullscreenQuadVDesc);
 
 			VERTEX_BUFFER_DESC vbDesc;
-			vbDesc.vertexSize = mFullscreenQuadVDecl->getProperties().getVertexSize(0);
+			vbDesc.vertexSize = mFullscreenQuadVDecl->GetProperties().getVertexSize(0);
 			vbDesc.numVerts = 4 * NUM_QUAD_VB_SLOTS;
 			vbDesc.usage = GBU_DYNAMIC;
 
@@ -44,7 +44,7 @@ namespace bs { namespace ct
 
 		{
 			SPtr<VertexDataDesc> vertexDesc = bs_shared_ptr_new<VertexDataDesc>();
-			vertexDesc->addVertElem(VET_FLOAT3, VES_POSITION);
+			vertexDesc->AddVertElem(VET_FLOAT3, VES_POSITION);
 
 			UINT32 numVertices = 0;
 			UINT32 numIndices = 0;
@@ -52,19 +52,19 @@ namespace bs { namespace ct
 			ShapeMeshes3D::getNumElementsSphere(3, numVertices, numIndices);
 			SPtr<MeshData> meshData = bs_shared_ptr_new<MeshData>(numVertices, numIndices, vertexDesc);
 
-			UINT32* indexData = meshData->getIndices32();
-			UINT8* positionData = meshData->getElementData(VES_POSITION);
+			UINT32* indexData = meshData->GetIndices32();
+			UINT8* positionData = meshData->GetElementData(VES_POSITION);
 
 			Sphere localSphere(Vector3::ZERO, 1.0f);
 			ShapeMeshes3D::solidSphere(localSphere, positionData, nullptr, nullptr, 0,
-				vertexDesc->getVertexStride(), indexData, 0, 3);
+				vertexDesc->GetVertexStride(), indexData, 0, 3);
 
 			mUnitSphereStencilMesh = Mesh::Create(meshData);
 		}
 
 		{
 			SPtr<VertexDataDesc> vertexDesc = bs_shared_ptr_new<VertexDataDesc>();
-			vertexDesc->addVertElem(VET_FLOAT3, VES_POSITION);
+			vertexDesc->AddVertElem(VET_FLOAT3, VES_POSITION);
 
 			UINT32 numVertices = 0;
 			UINT32 numIndices = 0;
@@ -72,12 +72,12 @@ namespace bs { namespace ct
 			ShapeMeshes3D::getNumElementsAABox(numVertices, numIndices);
 			SPtr<MeshData> meshData = bs_shared_ptr_new<MeshData>(numVertices, numIndices, vertexDesc);
 
-			UINT32* indexData = meshData->getIndices32();
-			UINT8* positionData = meshData->getElementData(VES_POSITION);
+			UINT32* indexData = meshData->GetIndices32();
+			UINT8* positionData = meshData->GetElementData(VES_POSITION);
 
 			AABox localBox(-Vector3::ONE, Vector3::ONE);
 			ShapeMeshes3D::solidAABox(localBox, positionData, nullptr, nullptr, 0,
-				vertexDesc->getVertexStride(), indexData, 0);
+				vertexDesc->GetVertexStride(), indexData, 0);
 
 			mUnitBoxStencilMesh = Mesh::Create(meshData);
 		}
@@ -87,16 +87,16 @@ namespace bs { namespace ct
 			UINT32 numSlices = Light::LIGHT_CONE_NUM_SLICES;
 
 			SPtr<VertexDataDesc> vertexDesc = bs_shared_ptr_new<VertexDataDesc>();
-			vertexDesc->addVertElem(VET_FLOAT3, VES_POSITION);
+			vertexDesc->AddVertElem(VET_FLOAT3, VES_POSITION);
 
 			UINT32 numVertices = numSides * numSlices * 2;
 			UINT32 numIndices = ((numSides * 2) * (numSlices - 1) * 2) * 3;
 
 			SPtr<MeshData> meshData = bs_shared_ptr_new<MeshData>(numVertices, numIndices, vertexDesc);
 
-			UINT32* indexData = meshData->getIndices32();
-			UINT8* positionData = meshData->getElementData(VES_POSITION);
-			UINT32 stride = vertexDesc->getVertexStride();
+			UINT32* indexData = meshData->GetIndices32();
+			UINT8* positionData = meshData->GetElementData(VES_POSITION);
+			UINT32 stride = vertexDesc->GetVertexStride();
 
 			// Dummy vertex positions, actual ones generated in shader
 			for (UINT32 i = 0; i < numVertices; i++)
@@ -142,7 +142,7 @@ namespace bs { namespace ct
 
 		{
 			SPtr<VertexDataDesc> vertexDesc = bs_shared_ptr_new<VertexDataDesc>();
-			vertexDesc->addVertElem(VET_FLOAT3, VES_POSITION);
+			vertexDesc->AddVertElem(VET_FLOAT3, VES_POSITION);
 
 			UINT32 numVertices = 0;
 			UINT32 numIndices = 0;
@@ -150,12 +150,12 @@ namespace bs { namespace ct
 			ShapeMeshes3D::getNumElementsAABox(numVertices, numIndices);
 			SPtr<MeshData> meshData = bs_shared_ptr_new<MeshData>(numVertices, numIndices, vertexDesc);
 
-			UINT32* indexData = meshData->getIndices32();
-			UINT8* positionData = meshData->getElementData(VES_POSITION);
+			UINT32* indexData = meshData->GetIndices32();
+			UINT8* positionData = meshData->GetElementData(VES_POSITION);
 
 			AABox localBox(-Vector3::ONE * 1500.0f, Vector3::ONE * 1500.0f);
 			ShapeMeshes3D::solidAABox(localBox, positionData, nullptr, nullptr, 0,
-									   vertexDesc->getVertexStride(), indexData, 0);
+									   vertexDesc->GetVertexStride(), indexData, 0);
 
 			mSkyBoxMesh = Mesh::Create(meshData);
 		}
@@ -165,22 +165,22 @@ namespace bs { namespace ct
 	{
 		RenderAPI& rapi = RenderAPI::Instance();
 
-		SPtr<Pass> pass = material->getPass(passIdx, techniqueIdx);
-		rapi.setGraphicsPipeline(pass->getGraphicsPipelineState());
-		rapi.setStencilRef(pass->getStencilRefValue());
+		SPtr<Pass> pass = material->GetPass(passIdx, techniqueIdx);
+		rapi.setGraphicsPipeline(pass->GetGraphicsPipelineState());
+		rapi.setStencilRef(pass->GetStencilRefValue());
 	}
 
 	void RendererUtility::SetComputePass(const SPtr<Material>& material, UINT32 passIdx)
 	{
 		RenderAPI& rapi = RenderAPI::Instance();
 
-		SPtr<Pass> pass = material->getPass(passIdx);
-		rapi.setComputePipeline(pass->getComputePipelineState());
+		SPtr<Pass> pass = material->GetPass(passIdx);
+		rapi.setComputePipeline(pass->GetComputePipelineState());
 	}
 
 	void RendererUtility::SetPassParams(const SPtr<GpuParamsSet>& params, UINT32 passIdx)
 	{
-		SPtr<GpuParams> gpuParams = params->getGpuParams(passIdx);
+		SPtr<GpuParams> gpuParams = params->GetGpuParams(passIdx);
 		if (gpuParams == nullptr)
 			return;
 
@@ -190,17 +190,17 @@ namespace bs { namespace ct
 
 	void RendererUtility::Draw(const SPtr<MeshBase>& mesh, UINT32 numInstances)
 	{
-		draw(mesh, mesh->getProperties().getSubMesh(0), numInstances);
+		draw(mesh, mesh->GetProperties().getSubMesh(0), numInstances);
 	}
 
 	void RendererUtility::Draw(const SPtr<MeshBase>& mesh, const SubMesh& subMesh, UINT32 numInstances)
 	{
 		RenderAPI& rapi = RenderAPI::Instance();
-		SPtr<VertexData> vertexData = mesh->getVertexData();
+		SPtr<VertexData> vertexData = mesh->GetVertexData();
 
-		rapi.setVertexDeclaration(mesh->getVertexData()->vertexDeclaration);
+		rapi.setVertexDeclaration(mesh->GetVertexData()->vertexDeclaration);
 
-		auto& vertexBuffers = vertexData->getBuffers();
+		auto& vertexBuffers = vertexData->GetBuffers();
 		if (vertexBuffers.size() > 0)
 		{
 			SPtr<VertexBuffer> buffers[BS_MAX_BOUND_VERTEX_BUFFERS];
@@ -224,13 +224,13 @@ namespace bs { namespace ct
 			rapi.setVertexBuffers(startSlot, buffers, endSlot - startSlot + 1);
 		}
 
-		SPtr<IndexBuffer> indexBuffer = mesh->getIndexBuffer();
+		SPtr<IndexBuffer> indexBuffer = mesh->GetIndexBuffer();
 		rapi.setIndexBuffer(indexBuffer);
 
 		rapi.setDrawOperation(subMesh.drawOp);
 
 		UINT32 indexCount = subMesh.indexCount;
-		rapi.drawIndexed(subMesh.indexOffset + mesh->getIndexOffset(), indexCount, mesh->getVertexOffset(),
+		rapi.drawIndexed(subMesh.indexOffset + mesh->GetIndexOffset(), indexCount, mesh->GetVertexOffset(),
 			vertexData->vertexCount, numInstances);
 
 		mesh->NotifyUsedOnGPUInternal();
@@ -242,10 +242,10 @@ namespace bs { namespace ct
 		// Bind buffers and draw
 		RenderAPI& rapi = RenderAPI::Instance();
 
-		SPtr<VertexData> vertexData = mesh->getVertexData();
+		SPtr<VertexData> vertexData = mesh->GetVertexData();
 		rapi.setVertexDeclaration(morphVertexDeclaration);
 
-		auto& meshBuffers = vertexData->getBuffers();
+		auto& meshBuffers = vertexData->GetBuffers();
 		SPtr<VertexBuffer> allBuffers[BS_MAX_BOUND_VERTEX_BUFFERS];
 
 		UINT32 endSlot = 0;
@@ -268,13 +268,13 @@ namespace bs { namespace ct
 		allBuffers[1] = morphVertices;
 		rapi.setVertexBuffers(startSlot, allBuffers, endSlot - startSlot + 1);
 
-		SPtr<IndexBuffer> indexBuffer = mesh->getIndexBuffer();
+		SPtr<IndexBuffer> indexBuffer = mesh->GetIndexBuffer();
 		rapi.setIndexBuffer(indexBuffer);
 
 		rapi.setDrawOperation(subMesh.drawOp);
 
 		UINT32 indexCount = subMesh.indexCount;
-		rapi.drawIndexed(subMesh.indexOffset + mesh->getIndexOffset(), indexCount, mesh->getVertexOffset(),
+		rapi.drawIndexed(subMesh.indexOffset + mesh->GetIndexOffset(), indexCount, mesh->GetVertexOffset(),
 			vertexData->vertexCount, 1);
 
 		mesh->NotifyUsedOnGPUInternal();
@@ -282,15 +282,15 @@ namespace bs { namespace ct
 
 	void RendererUtility::Blit(const SPtr<Texture>& texture, const Rect2I& area, bool flipUV, bool isDepth, bool isFiltered)
 	{
-		auto& texProps = texture->getProperties();
+		auto& texProps = texture->GetProperties();
 
 		Rect2 fArea((float)area.x, (float)area.y, (float)area.width, (float)area.height);
 		if (area.width == 0 || area.height == 0)
 		{
 			fArea.x = 0.0f;
 			fArea.y = 0.0f;
-			fArea.width = (float)texProps.getWidth();
-			fArea.height = (float)texProps.getHeight();
+			fArea.width = (float)texProps.GetWidth();
+			fArea.height = (float)texProps.GetHeight();
 		}
 
 		BlitMat* blitMat = BlitMat::getVariation(texProps.getNumSamples(), !isDepth, isFiltered);
@@ -344,16 +344,16 @@ namespace bs { namespace ct
 
 		SPtr<MeshData> meshData = bs_shared_ptr_new<MeshData>(4, 6, mFullscreenQuadVDesc);
 
-		auto vecIter = meshData->getVec3DataIter(VES_POSITION);
+		auto vecIter = meshData->GetVec3DataIter(VES_POSITION);
 		for (UINT32 i = 0; i < 4; i++)
 			vecIter.addValue(vertices[i]);
 
-		auto uvIter = meshData->getVec2DataIter(VES_TEXCOORD);
+		auto uvIter = meshData->GetVec2DataIter(VES_TEXCOORD);
 		for (UINT32 i = 0; i < 4; i++)
 			uvIter.addValue(uvs[i]);
 
-		UINT32 bufferSize = meshData->getStreamSize(0);
-		UINT8* srcVertBufferData = meshData->getStreamData(0);
+		UINT32 bufferSize = meshData->GetStreamSize(0);
+		UINT8* srcVertBufferData = meshData->GetStreamData(0);
 
 		void* dstData = mFullScreenQuadVB->lock(mNextQuadVBSlot * bufferSize, bufferSize, GBL_WRITE_ONLY_NO_OVERWRITE);
 		memcpy(dstData, srcVertBufferData, bufferSize);
@@ -383,7 +383,7 @@ namespace bs { namespace ct
 
 	BlitMat::BlitMat()
 	{
-		mParams->getTextureParam(GPT_FRAGMENT_PROGRAM, "gSource", mSource);
+		mParams->GetTextureParam(GPT_FRAGMENT_PROGRAM, "gSource", mSource);
 		mIsFiltered = mVariation.getInt("MODE") == 1;
 	}
 
@@ -391,7 +391,7 @@ namespace bs { namespace ct
 	{
 		BS_RENMAT_PROFILE_BLOCK
 
-		mSource.set(source);
+		mSource.Set(source);
 		bind();
 
 		if(!mIsFiltered)
@@ -445,14 +445,14 @@ namespace bs { namespace ct
 	ClearMat::ClearMat()
 	{
 		mParamBuffer = gClearParamDef.createBuffer();
-		mParams->setParamBlockBuffer("Params", mParamBuffer);
+		mParams->SetParamBlockBuffer("Params", mParamBuffer);
 	}
 
 	void ClearMat::Execute(UINT32 value)
 	{
 		BS_RENMAT_PROFILE_BLOCK
 
-		gClearParamDef.gClearValue.set(mParamBuffer, value);
+		gClearParamDef.gClearValue.Set(mParamBuffer, value);
 
 		bind();
 		gRendererUtility().drawScreenQuad();
@@ -463,9 +463,9 @@ namespace bs { namespace ct
 	CompositeMat::CompositeMat()
 	{
 		mParamBuffer = gCompositeParamDef.createBuffer();
-		mParams->setParamBlockBuffer("Input", mParamBuffer);
+		mParams->SetParamBlockBuffer("Input", mParamBuffer);
 
-		mParams->getTextureParam(GPT_FRAGMENT_PROGRAM, "gSource", mSourceTex);
+		mParams->GetTextureParam(GPT_FRAGMENT_PROGRAM, "gSource", mSourceTex);
 	}
 
 	void CompositeMat::Execute(const SPtr<Texture>& source, const SPtr<RenderTarget>& target, const Color& tint)
@@ -473,9 +473,9 @@ namespace bs { namespace ct
 		BS_RENMAT_PROFILE_BLOCK
 
 		// Set parameters
-		mSourceTex.set(source);
+		mSourceTex.Set(source);
 
-		gCompositeParamDef.gTint.set(mParamBuffer, tint);
+		gCompositeParamDef.gTint.Set(mParamBuffer, tint);
 
 		// Render
 		RenderAPI& rapi = RenderAPI::Instance();
@@ -490,9 +490,9 @@ namespace bs { namespace ct
 	BicubicUpsampleMat::BicubicUpsampleMat()
 	{
 		mParamBuffer = gBicubicUpsampleParamDef.createBuffer();
-		mParams->setParamBlockBuffer("Input", mParamBuffer);
+		mParams->SetParamBlockBuffer("Input", mParamBuffer);
 
-		mParams->getTextureParam(GPT_FRAGMENT_PROGRAM, "gSource", mSourceTex);
+		mParams->GetTextureParam(GPT_FRAGMENT_PROGRAM, "gSource", mSourceTex);
 	}
 
 	void BicubicUpsampleMat::Execute(const SPtr<Texture>& source, const SPtr<RenderTarget>& target, const Color& tint)
@@ -500,18 +500,18 @@ namespace bs { namespace ct
 		BS_RENMAT_PROFILE_BLOCK
 
 		// Set parameters
-		mSourceTex.set(source);
+		mSourceTex.Set(source);
 
-		const TextureProperties& sourceProps = source->getProperties();
+		const TextureProperties& sourceProps = source->GetProperties();
 
-		Vector2I texSize(sourceProps.getWidth(), sourceProps.getHeight());
+		Vector2I texSize(sourceProps.GetWidth(), sourceProps.GetHeight());
 		Vector2 invPixelSize(1.0f / texSize.x, 1.0f / texSize.y);
 		Vector2 invTwoPixelSize(2.0f / texSize.x, 2.0f / texSize.y);
 
-		gBicubicUpsampleParamDef.gTint.set(mParamBuffer, tint);
-		gBicubicUpsampleParamDef.gTextureSize.set(mParamBuffer, texSize);
-		gBicubicUpsampleParamDef.gInvPixel.set(mParamBuffer, invPixelSize);
-		gBicubicUpsampleParamDef.gInvTwoPixels.set(mParamBuffer, invTwoPixelSize);
+		gBicubicUpsampleParamDef.gTint.Set(mParamBuffer, tint);
+		gBicubicUpsampleParamDef.gTextureSize.Set(mParamBuffer, texSize);
+		gBicubicUpsampleParamDef.gInvPixel.Set(mParamBuffer, invPixelSize);
+		gBicubicUpsampleParamDef.gInvTwoPixels.Set(mParamBuffer, invTwoPixelSize);
 
 		// Render
 		RenderAPI& rapi = RenderAPI::Instance();

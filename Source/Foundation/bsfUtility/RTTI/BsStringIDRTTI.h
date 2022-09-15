@@ -28,8 +28,8 @@ namespace bs
 
 				if (!isEmpty)
 				{
-					auto length = (uint32_t)strlen(data.c_str());
-					size += stream.SkipBytes((uint8_t*)data.c_str(), length * sizeof(char));
+					auto length = (uint32_t)strlen(data.CStr());
+					size += stream.WriteBytes((uint8_t*)data.CStr(), length * sizeof(char));
 				}
 
 				return size;
@@ -49,7 +49,7 @@ namespace bs
 				UINT32 length = (size.bytes - sizeof(UINT32) - sizeof(bool)) / sizeof(char);
 
 				auto name = (uint8_t*)bs_stack_alloc(length + 1);
-				stream.readBytes(name, length);
+				stream.ReadBytes(name, length);
 				name[length] = '\0';
 
 				data = StringID((char*)name);
@@ -66,7 +66,7 @@ namespace bs
 			bool isEmpty = data.Empty();
 			if (!isEmpty)
 			{
-				auto length = (uint32_t)strlen(data.c_str());
+				auto length = (uint32_t)strlen(data.CStr());
 				dataSize += length * sizeof(char);
 			}
 

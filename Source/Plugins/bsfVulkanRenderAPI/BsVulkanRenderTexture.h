@@ -50,7 +50,7 @@ namespace bs
 		void GetCustomAttribute(const String& name, void* data) const ;
 
 	protected:
-		/** @copydoc CoreObject::initialize() */
+		/** @copydoc CoreObject::Initialize() */
 		void Initialize() ;
 
 		/** @copydoc RenderTexture::getProperties */

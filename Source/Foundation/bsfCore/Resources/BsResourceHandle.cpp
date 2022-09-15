@@ -48,7 +48,7 @@ namespace bs
 
 			{
 				FrameVector<HResource> dependencies;
-				mData->mPtr->getResourceDependencies(dependencies);
+				mData->mPtr->GetResourceDependencies(dependencies);
 
 				for (auto& dependency : dependencies)
 					dependency.blockUntilLoaded(waitForDependencies);
@@ -66,7 +66,7 @@ namespace bs
 	void ResourceHandleBase::Destroy()
 	{
 		if(mData->mPtr)
-			gResources().destroy(*this);
+			gResources().Destroy(*this);
 	}
 
 	void ResourceHandleBase::SetHandleData(const SPtr<Resource>& ptr, const UUID& uuid)
@@ -111,7 +111,7 @@ namespace bs
 	void ResourceHandleBase::ThrowIfNotLoaded() const
 	{
 #if BS_DEBUG_MODE
-		if (!isLoaded(false))
+		if (!IsLoaded(false))
 		{
 			BS_EXCEPT(InternalErrorException, "Trying to access a resource that hasn't been loaded yet.");
 		}

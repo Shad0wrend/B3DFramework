@@ -49,7 +49,7 @@ namespace bs
 	uint32_t ScriptPixelData::InternalGetRowPitch(ScriptPixelData* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->getInternal()->getRowPitch();
+		tmp__output = thisPtr->GetInternal()->GetRowPitch();
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -60,7 +60,7 @@ namespace bs
 	uint32_t ScriptPixelData::InternalGetSlicePitch(ScriptPixelData* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->getInternal()->getSlicePitch();
+		tmp__output = thisPtr->GetInternal()->GetSlicePitch();
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -71,7 +71,7 @@ namespace bs
 	PixelFormat ScriptPixelData::InternalGetFormat(ScriptPixelData* thisPtr)
 	{
 		PixelFormat tmp__output;
-		tmp__output = thisPtr->getInternal()->getFormat();
+		tmp__output = thisPtr->GetInternal()->GetFormat();
 
 		PixelFormat __output;
 		__output = tmp__output;
@@ -82,7 +82,7 @@ namespace bs
 	void ScriptPixelData::InternalGetExtents(ScriptPixelData* thisPtr, PixelVolume* __output)
 	{
 		PixelVolume tmp__output;
-		tmp__output = thisPtr->getInternal()->getExtents();
+		tmp__output = thisPtr->GetInternal()->GetExtents();
 
 		*__output = tmp__output;
 	}
@@ -90,7 +90,7 @@ namespace bs
 	bool ScriptPixelData::InternalIsConsecutive(ScriptPixelData* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->getInternal()->isConsecutive();
+		tmp__output = thisPtr->GetInternal()->isConsecutive();
 
 		bool __output;
 		__output = tmp__output;
@@ -101,7 +101,7 @@ namespace bs
 	uint32_t ScriptPixelData::InternalGetSize(ScriptPixelData* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->getInternal()->getSize();
+		tmp__output = thisPtr->GetInternal()->GetSize();
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -124,27 +124,27 @@ namespace bs
 	void ScriptPixelData::InternalGetPixel(ScriptPixelData* thisPtr, int32_t x, int32_t y, int32_t z, Color* __output)
 	{
 		Color tmp__output;
-		tmp__output = PixelDataEx::getPixel(thisPtr->getInternal(), x, y, z);
+		tmp__output = PixelDataEx::getPixel(thisPtr->GetInternal(), x, y, z);
 
 		*__output = tmp__output;
 	}
 
 	void ScriptPixelData::InternalSetPixel(ScriptPixelData* thisPtr, Color* value, int32_t x, int32_t y, int32_t z)
 	{
-		PixelDataEx::setPixel(thisPtr->getInternal(), *value, x, y, z);
+		PixelDataEx::setPixel(thisPtr->GetInternal(), *value, x, y, z);
 	}
 
 	MonoArray* ScriptPixelData::InternalGetPixels(ScriptPixelData* thisPtr)
 	{
 		Vector<Color> vec__output;
-		vec__output = PixelDataEx::getPixels(thisPtr->getInternal());
+		vec__output = PixelDataEx::getPixels(thisPtr->GetInternal());
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
 		ScriptArray array__output = ScriptArray::create<ScriptColor>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
-			array__output.set(i, vec__output[i]);
+			array__output.Set(i, vec__output[i]);
 		}
 		__output = array__output.getInternal();
 
@@ -163,20 +163,20 @@ namespace bs
 				vecvalue[i] = arrayvalue.get<Color>(i);
 			}
 		}
-		PixelDataEx::setPixels(thisPtr->getInternal(), vecvalue);
+		PixelDataEx::setPixels(thisPtr->GetInternal(), vecvalue);
 	}
 
 	MonoArray* ScriptPixelData::InternalGetRawPixels(ScriptPixelData* thisPtr)
 	{
 		Vector<char> vec__output;
-		vec__output = PixelDataEx::getRawPixels(thisPtr->getInternal());
+		vec__output = PixelDataEx::getRawPixels(thisPtr->GetInternal());
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
 		ScriptArray array__output = ScriptArray::create<char>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
-			array__output.set(i, vec__output[i]);
+			array__output.Set(i, vec__output[i]);
 		}
 		__output = array__output.getInternal();
 
@@ -195,6 +195,6 @@ namespace bs
 				vecvalue[i] = arrayvalue.get<char>(i);
 			}
 		}
-		PixelDataEx::setRawPixels(thisPtr->getInternal(), vecvalue);
+		PixelDataEx::setRawPixels(thisPtr->GetInternal(), vecvalue);
 	}
 }

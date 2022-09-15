@@ -66,7 +66,7 @@ namespace bs { namespace ct
 
 		if (props.getType() == GBT_STANDARD)
 		{
-			desc.Format = D3D11Mappings::getBF(props.getFormat());
+			desc.Format = D3D11Mappings::getBF(props.GetFormat());
 			desc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
 			desc.Buffer.FirstElement = firstElement;
 			desc.Buffer.NumElements = numElements;
@@ -88,12 +88,12 @@ namespace bs { namespace ct
 
 		ID3D11ShaderResourceView* srv = nullptr;
 
-		D3D11RenderAPI* d3d11rs = static_cast<D3D11RenderAPI*>(D3D11RenderAPI::instancePtr());
-		HRESULT hr = d3d11rs->getPrimaryDevice().getD3D11Device()->CreateShaderResourceView(buffer->GetDX11Buffer(), &desc, &srv);
+		D3D11RenderAPI* d3d11rs = static_cast<D3D11RenderAPI*>(D3D11RenderAPI::InstancePtr());
+		HRESULT hr = d3d11rs->GetPrimaryDevice().getD3D11Device()->CreateShaderResourceView(buffer->GetDX11Buffer(), &desc, &srv);
 
-		if (FAILED(hr) || d3d11rs->getPrimaryDevice().hasError())
+		if (FAILED(hr) || d3d11rs->GetPrimaryDevice().hasError())
 		{
-			String msg = d3d11rs->getPrimaryDevice().getErrorDescription();
+			String msg = d3d11rs->GetPrimaryDevice().getErrorDescription();
 			BS_EXCEPT(RenderingAPIException, "Cannot create ShaderResourceView: " + msg);
 		}
 
@@ -103,7 +103,7 @@ namespace bs { namespace ct
 	ID3D11UnorderedAccessView* GpuBufferView::CreateUav(D3D11GpuBuffer* buffer, UINT32 firstElement, UINT32 numElements,
 		bool useCounter)
 	{
-		const GpuBufferProperties& props = buffer->getProperties();
+		const GpuBufferProperties& props = buffer->GetProperties();
 
 		D3D11_UNORDERED_ACCESS_VIEW_DESC desc;
 		ZeroMemory(&desc, sizeof(desc));
@@ -112,7 +112,7 @@ namespace bs { namespace ct
 
 		if (props.getType() == GBT_STANDARD)
 		{
-			desc.Format = D3D11Mappings::getBF(props.getFormat());
+			desc.Format = D3D11Mappings::getBF(props.GetFormat());
 			desc.Buffer.FirstElement = firstElement;
 			desc.Buffer.NumElements = numElements;
 
@@ -142,12 +142,12 @@ namespace bs { namespace ct
 
 		ID3D11UnorderedAccessView* uav = nullptr;
 
-		D3D11RenderAPI* d3d11rs = static_cast<D3D11RenderAPI*>(D3D11RenderAPI::instancePtr());
-		HRESULT hr = d3d11rs->getPrimaryDevice().getD3D11Device()->CreateUnorderedAccessView(buffer->GetDX11Buffer(), &desc, &uav);
+		D3D11RenderAPI* d3d11rs = static_cast<D3D11RenderAPI*>(D3D11RenderAPI::InstancePtr());
+		HRESULT hr = d3d11rs->GetPrimaryDevice().getD3D11Device()->CreateUnorderedAccessView(buffer->GetDX11Buffer(), &desc, &uav);
 
-		if (FAILED(hr) || d3d11rs->getPrimaryDevice().hasError())
+		if (FAILED(hr) || d3d11rs->GetPrimaryDevice().hasError())
 		{
-			String msg = d3d11rs->getPrimaryDevice().getErrorDescription();
+			String msg = d3d11rs->GetPrimaryDevice().getErrorDescription();
 			BS_EXCEPT(RenderingAPIException, "Cannot create UnorderedAccessView: " + msg);
 		}
 

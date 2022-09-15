@@ -811,7 +811,7 @@ namespace bs
 
 		// Generate a shader from the parsed information
 		output.shader = Shader::CreatePtrInternal(name, shaderDesc);
-		output.shader->setIncludeFiles(includes);
+		output.shader->SetIncludeFiles(includes);
 
 		return output;
 	}
@@ -869,7 +869,7 @@ namespace bs
 
 cleanup:
 		yy_delete_buffer(state, scanner);
-		yylex_destroy(scanner);
+		yylex_Destroy(scanner);
 
 		return output;
 	}
@@ -1987,12 +1987,12 @@ cleanup:
 			if(!technique->isSupported())
 				continue;
 
-			UINT32 numPasses = technique->getNumPasses();
-			technique->compile();
+			UINT32 numPasses = technique->GetNumPasses();
+			technique->Compile();
 
 			for (UINT32 i = 0; i < numPasses; i++)
 			{
-				SPtr<Pass> pass = technique->getPass(i);
+				SPtr<Pass> pass = technique->GetPass(i);
 
 				auto checkCompileStatus = [&](const String& prefix, const SPtr<GpuProgram>& prog)
 				{
@@ -2003,24 +2003,24 @@ cleanup:
 						if (!prog->isCompiled())
 						{
 							hasError = true;
-							gpuProgError << prefix << ": " << prog->getCompileErrorMessage() << std::endl;
+							gpuProgError << prefix << ": " << prog->GetCompileErrorMessage() << std::endl;
 						}
 					}
 				};
 
-				const SPtr<GraphicsPipelineState>& graphicsPipeline = pass->getGraphicsPipelineState();
+				const SPtr<GraphicsPipelineState>& graphicsPipeline = pass->GetGraphicsPipelineState();
 				if (graphicsPipeline)
 				{
-					checkCompileStatus("Vertex program", graphicsPipeline->getVertexProgram());
-					checkCompileStatus("Fragment program", graphicsPipeline->getFragmentProgram());
-					checkCompileStatus("Geometry program", graphicsPipeline->getGeometryProgram());
-					checkCompileStatus("Hull program", graphicsPipeline->getHullProgram());
-					checkCompileStatus("Domain program", graphicsPipeline->getDomainProgram());
+					checkCompileStatus("Vertex program", graphicsPipeline->GetVertexProgram());
+					checkCompileStatus("Fragment program", graphicsPipeline->GetFragmentProgram());
+					checkCompileStatus("Geometry program", graphicsPipeline->GetGeometryProgram());
+					checkCompileStatus("Hull program", graphicsPipeline->GetHullProgram());
+					checkCompileStatus("Domain program", graphicsPipeline->GetDomainProgram());
 				}
 
-				const SPtr<ComputePipelineState>& computePipeline = pass->getComputePipelineState();
+				const SPtr<ComputePipelineState>& computePipeline = pass->GetComputePipelineState();
 				if (computePipeline)
-					checkCompileStatus("Compute program", computePipeline->getProgram());
+					checkCompileStatus("Compute program", computePipeline->GetProgram());
 			}
 		}
 
@@ -2102,7 +2102,7 @@ cleanup:
 
 			const String& subShaderCode = subShaderCodeBlocks[entry.codeBlockIndex];
 
-			ct::ShaderExtensionPointInfo extPointInfo = renderer->getShaderExtensionPointInfo(entry.name);
+			ct::ShaderExtensionPointInfo extPointInfo = renderer->GetShaderExtensionPointInfo(entry.name);
 			for (auto& extPointShader : extPointInfo.shaders)
 			{
 				Path path = gBuiltinResources().getRawShaderFolder();
@@ -2114,9 +2114,9 @@ cleanup:
 				{
 					Lock fileLock = FileScheduler::getLock(path);
 
-					SPtr<DataStream> stream = FileSystem::openFile(path);
+					SPtr<DataStream> stream = FileSystem::OpenFile(path);
 					if(stream)
-						subShaderSource << stream->getAsString();
+						subShaderSource << stream->GetAsString();
 				}
 
 				subShaderSource << "\n";

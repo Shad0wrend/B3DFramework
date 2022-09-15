@@ -109,7 +109,7 @@ namespace bs { namespace ct
 			numUsedBuffers++;
 		}
 		
-		GLVertexArrayObject wantedVAO(0, vertexProgram->getGLHandle(), usedBuffers, numUsedBuffers);
+		GLVertexArrayObject wantedVAO(0, vertexProgram->GetGLHandle(), usedBuffers, numUsedBuffers);
 
 		auto findIter = mVAObjects.find(wantedVAO);
 		if (findIter != mVAObjects.end())
@@ -141,10 +141,10 @@ namespace bs { namespace ct
 			GLint attribLocation = 0;
 			for (auto iter = inputAttributes.begin(); iter != inputAttributes.end(); ++iter)
 			{
-				if (iter->getSemantic() == elem.getSemantic() && iter->getSemanticIdx() == elem.getSemanticIdx())
+				if (iter->GetSemantic() == elem.getSemantic() && iter->GetSemanticIdx() == elem.getSemanticIdx())
 				{
 					foundSemantic = true;
-					attribLocation = iter->getOffset();
+					attribLocation = iter->GetOffset();
 					break;
 				}
 			}
@@ -155,9 +155,9 @@ namespace bs { namespace ct
 			// TODO - We might also want to check the size of input and buffer, and make sure they match? Or does OpenGL handle that internally?
 
 			GLVertexBuffer* vertexBuffer = usedBuffers[seqIdx];
-			const VertexBufferProperties& vbProps = vertexBuffer->getProperties();
+			const VertexBufferProperties& vbProps = vertexBuffer->GetProperties();
 
-			glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer->getGLBufferId());
+			glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer->GetGLBufferId());
 			BS_CHECK_GL_ERROR();
 
 			void* bufferData = VBO_BUFFER_OFFSET(elem.getOffset());

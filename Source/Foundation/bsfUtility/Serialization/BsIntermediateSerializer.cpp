@@ -20,7 +20,7 @@ namespace bs
 		mObjectMap.clear();
 
 		SPtr<IReflectable> output;
-		RTTITypeBase* type = IReflectable::GetRTTIfromTypeIdInternal(serializedObject->GetRootTypeId());
+		RTTITypeBase* type = IReflectable::GetRttifromTypeIdInternal(serializedObject->GetRootTypeId());
 		if (type != nullptr)
 		{
 			output = type->NewRttiObject();
@@ -71,7 +71,7 @@ namespace bs
 		{
 			const SerializedSubObject& subObject = serializableObject->subObjects[subObjectIdx];
 
-			RTTITypeBase* rtti = IReflectable::GetRTTIfromTypeIdInternal(subObject.typeId);
+			RTTITypeBase* rtti = IReflectable::GetRttifromTypeIdInternal(subObject.typeId);
 			if (rtti == nullptr)
 				continue;
 
@@ -94,7 +94,7 @@ namespace bs
 					SPtr<SerializedArray> arrayData = std::static_pointer_cast<SerializedArray>(entryData);
 
 					UINT32 arrayNumElems = (UINT32)arrayData->numElements;
-					curGenericField->setArraySize(rttiInstance, object.get(), arrayNumElems);
+					curGenericField->SetArraySize(rttiInstance, object.get(), arrayNumElems);
 
 					switch (curGenericField->schema.type)
 					{
@@ -108,7 +108,7 @@ namespace bs
 							RTTITypeBase* childRtti = nullptr;
 
 							if (arrayElemData != nullptr)
-								childRtti = IReflectable::GetRTTIfromTypeIdInternal(arrayElemData->getRootTypeId());
+								childRtti = IReflectable::GetRttifromTypeIdInternal(arrayElemData->GetRootTypeId());
 
 							if (childRtti != nullptr)
 							{
@@ -143,11 +143,11 @@ namespace bs
 									}
 								}
 
-								curField->setArrayValue(rttiInstance, object.get(), arrayElem.first, objToDecode.object);
+								curField->SetArrayValue(rttiInstance, object.get(), arrayElem.first, objToDecode.object);
 							}
 							else
 							{
-								curField->setArrayValue(rttiInstance, object.get(), arrayElem.first, nullptr);
+								curField->SetArrayValue(rttiInstance, object.get(), arrayElem.first, nullptr);
 							}
 						}
 					}
@@ -162,13 +162,13 @@ namespace bs
 							RTTITypeBase* childRtti = nullptr;
 
 							if (arrayElemData != nullptr)
-								childRtti = IReflectable::GetRTTIfromTypeIdInternal(arrayElemData->getRootTypeId());
+								childRtti = IReflectable::GetRttifromTypeIdInternal(arrayElemData->GetRootTypeId());
 
 							if (childRtti != nullptr)
 							{
 								SPtr<IReflectable> newObject = childRtti->newRTTIObject();
 								decodeEntry(newObject, arrayElemData.get());
-								curField->setArrayValue(rttiInstance, object.get(), arrayElem.first, *newObject);
+								curField->SetArrayValue(rttiInstance, object.get(), arrayElem.first, *newObject);
 							}
 						}
 						break;
@@ -204,7 +204,7 @@ namespace bs
 						RTTITypeBase* childRtti = nullptr;
 
 						if (fieldObjectData != nullptr)
-							childRtti = IReflectable::GetRTTIfromTypeIdInternal(fieldObjectData->getRootTypeId());
+							childRtti = IReflectable::GetRttifromTypeIdInternal(fieldObjectData->GetRootTypeId());
 
 						if (childRtti != nullptr)
 						{
@@ -238,11 +238,11 @@ namespace bs
 								}
 							}
 
-							curField->setValue(rttiInstance, object.get(), objToDecode.object);
+							curField->SetValue(rttiInstance, object.get(), objToDecode.object);
 						}
 						else
 						{
-							curField->setValue(rttiInstance, object.get(), nullptr);
+							curField->SetValue(rttiInstance, object.get(), nullptr);
 						}
 					}
 					break;
@@ -254,13 +254,13 @@ namespace bs
 						RTTITypeBase* childRtti = nullptr;
 
 						if (fieldObjectData != nullptr)
-							childRtti = IReflectable::GetRTTIfromTypeIdInternal(fieldObjectData->getRootTypeId());
+							childRtti = IReflectable::GetRttifromTypeIdInternal(fieldObjectData->GetRootTypeId());
 
 						if (childRtti != nullptr)
 						{
 							SPtr<IReflectable> newObject = childRtti->newRTTIObject();
 							decodeEntry(newObject, fieldObjectData.get());
-							curField->setValue(rttiInstance, object.get(), *newObject);
+							curField->SetValue(rttiInstance, object.get(), *newObject);
 						}
 						break;
 					}
@@ -284,7 +284,7 @@ namespace bs
 						if (fieldData != nullptr)
 						{
 							fieldData->stream->seek(fieldData->offset);
-							curField->setValue(rttiInstance, object.get(), fieldData->stream, fieldData->size);
+							curField->SetValue(rttiInstance, object.get(), fieldData->stream, fieldData->size);
 						}
 
 						break;
@@ -308,7 +308,7 @@ namespace bs
 		SerializationContext* context, FrameAlloc* alloc)
 	{
 		FrameStack<RTTITypeBase*> rttiInstances;
-		RTTITypeBase* rtti = object->getRTTI();
+		RTTITypeBase* rtti = object->GetRtti();
 
 		const auto cleanup = [&]()
 		{
@@ -335,12 +335,12 @@ namespace bs
 
 			output->subObjects.push_back(SerializedSubObject());
 			SerializedSubObject& subObject = output->subObjects.back();
-			subObject.typeId = rtti->getRTTIId();
+			subObject.typeId = rtti->GetRttiId();
 
-			const UINT32 numFields = rtti->getNumFields();
+			const UINT32 numFields = rtti->GetNumFields();
 			for (UINT32 i = 0; i < numFields; i++)
 			{
-				RTTIField* curGenericField = rtti->getField(i);
+				RTTIField* curGenericField = rtti->GetField(i);
 
 				if(replicableOnly)
 				{
@@ -358,7 +358,7 @@ namespace bs
 				subObject.entries.insert(std::make_pair(curGenericField->schema.id, entry));
 			}
 
-			rtti = rtti->getBaseClass();
+			rtti = rtti->GetBaseClass();
 
 		} while (rtti != nullptr); // Repeat until we reach the top of the inheritance hierarchy
 
@@ -375,7 +375,7 @@ namespace bs
 		SPtr<SerializedInstance> output;
 		if (field->schema.isArray)
 		{
-			const UINT32 arrayNumElems = field->getArraySize(rtti, object);
+			const UINT32 arrayNumElems = field->GetArraySize(rtti, object);
 			bool wholeArray = arrayIdx == (UINT32)-1;
 
 			UINT32 arrayEndIdx;
@@ -408,7 +408,7 @@ namespace bs
 
 					if (!shallow)
 					{
-						SPtr<IReflectable> childObject = curField->getArrayValue(rtti, object, arrIdx);
+						SPtr<IReflectable> childObject = curField->GetArrayValue(rtti, object, arrIdx);
 
 						if (childObject)
 							serializedChildObj = encodeEntry(childObject.get(), flags, context, alloc);
@@ -434,7 +434,7 @@ namespace bs
 
 				for (UINT32 arrIdx = 0; arrIdx < arrayNumElems; arrIdx++)
 				{
-					IReflectable& childObject = curField->getArrayValue(rtti, object, arrIdx);
+					IReflectable& childObject = curField->GetArrayValue(rtti, object, arrIdx);
 
 					const SPtr<SerializedObject> serializedChildObj = encodeEntry(&childObject, flags, context, alloc);
 
@@ -460,7 +460,7 @@ namespace bs
 				{
 					UINT32 typeSize = 0;
 					if (curField->schema.hasDynamicSize)
-						typeSize = curField->getArrayElemDynamicSize(rtti, object, arrIdx, false).bytes;
+						typeSize = curField->GetArrayElemDynamicSize(rtti, object, arrIdx, false).bytes;
 					else
 						typeSize = curField->schema.size.bytes;
 
@@ -502,7 +502,7 @@ namespace bs
 
 				if (!shallow)
 				{
-					SPtr<IReflectable> childObject = curField->getValue(rtti, object);
+					SPtr<IReflectable> childObject = curField->GetValue(rtti, object);
 
 					if (childObject)
 						output = encodeEntry(childObject.get(), flags, context, alloc);
@@ -513,7 +513,7 @@ namespace bs
 			case SerializableFT_Reflectable:
 			{
 				auto curField = static_cast<RTTIReflectableFieldBase*>(field);
-				IReflectable& childObject = curField->getValue(rtti, object);
+				IReflectable& childObject = curField->GetValue(rtti, object);
 
 				output = encodeEntry(&childObject, flags, context, alloc);
 
@@ -525,7 +525,7 @@ namespace bs
 
 				UINT32 typeSize = 0;
 				if (curField->schema.hasDynamicSize)
-					typeSize = curField->getDynamicSize(rtti, object, false).bytes;
+					typeSize = curField->GetDynamicSize(rtti, object, false).bytes;
 				else
 					typeSize = curField->schema.size.bytes;
 
@@ -546,7 +546,7 @@ namespace bs
 				auto curField = static_cast<RTTIManagedDataBlockFieldBase*>(field);
 
 				UINT32 dataBlockSize = 0;
-				SPtr<DataStream> blockStream = curField->getValue(rtti, object, dataBlockSize);
+				SPtr<DataStream> blockStream = curField->GetValue(rtti, object, dataBlockSize);
 
 				SPtr<MemoryDataStream> stream = bs_shared_ptr_new<MemoryDataStream>(dataBlockSize);
 				blockStream->read(stream->data(), dataBlockSize);

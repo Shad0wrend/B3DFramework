@@ -51,17 +51,17 @@ namespace bs { namespace ct
 
 		mDriverList = bs_new<D3D11DriverList>(mDXGIFactory);
 		mActiveD3DDriver = mDriverList->item(0); // TODO: Always get first driver, for now
-		mVideoModeInfo = mActiveD3DDriver->getVideoModeInfo();
+		mVideoModeInfo = mActiveD3DDriver->GetVideoModeInfo();
 
 		GPUInfo gpuInfo;
 		gpuInfo.numGPUs = std::min(5U, mDriverList->count());
 
 		for(UINT32 i = 0; i < gpuInfo.numGPUs; i++)
-			gpuInfo.names[i] = mDriverList->item(i)->getDriverName();
+			gpuInfo.names[i] = mDriverList->item(i)->GetDriverName();
 
 		PlatformUtility::SetGPUInfoInternal(gpuInfo);
 
-		IDXGIAdapter* selectedAdapter = mActiveD3DDriver->getDeviceAdapter();
+		IDXGIAdapter* selectedAdapter = mActiveD3DDriver->GetDeviceAdapter();
 
 		D3D_FEATURE_LEVEL requestedLevels[] = {
 			D3D_FEATURE_LEVEL_11_1,
@@ -127,7 +127,7 @@ namespace bs { namespace ct
 
 		mIAManager = bs_new<D3D11InputLayoutManager>();
 
-		RenderAPI::initialize();
+		RenderAPI::Initialize();
 	}
 
 	void D3D11RenderAPI::InitializeWithWindow(const SPtr<RenderWindow>& primaryWindow)
@@ -145,7 +145,7 @@ namespace bs { namespace ct
 
 		// Ensure that all GPU commands finish executing before shutting down the device. If we don't do this a crash
 		// on shutdown may occurr as the driver is still executing the commands, and we unload this library.
-		mDevice->getImmediateContext()->Flush();
+		mDevice->GetImmediateContext()->Flush();
 		SPtr<EventQuery> query = EventQuery::Create();
 		query->begin();
 		while(!query->isReady())
@@ -220,15 +220,15 @@ namespace bs { namespace ct
 
 			if(pipelineState != nullptr)
 			{
-				d3d11BlendState = static_cast<D3D11BlendState*>(pipelineState->getBlendState().get());
-				d3d11RasterizerState = static_cast<D3D11RasterizerState*>(pipelineState->getRasterizerState().get());
-				mActiveDepthStencilState = std::static_pointer_cast<D3D11DepthStencilState>(pipelineState->getDepthStencilState());
+				d3d11BlendState = static_cast<D3D11BlendState*>(pipelineState->GetBlendState().get());
+				d3d11RasterizerState = static_cast<D3D11RasterizerState*>(pipelineState->GetRasterizerState().get());
+				mActiveDepthStencilState = std::static_pointer_cast<D3D11DepthStencilState>(pipelineState->GetDepthStencilState());
 
-				mActiveVertexShader = std::static_pointer_cast<D3D11GpuVertexProgram>(pipelineState->getVertexProgram());
-				d3d11FragmentProgram = static_cast<D3D11GpuFragmentProgram*>(pipelineState->getFragmentProgram().get());
-				d3d11GeometryProgram = static_cast<D3D11GpuGeometryProgram*>(pipelineState->getGeometryProgram().get());
-				d3d11DomainProgram = static_cast<D3D11GpuDomainProgram*>(pipelineState->getDomainProgram().get());
-				d3d11HullProgram = static_cast<D3D11GpuHullProgram*>(pipelineState->getHullProgram().get());
+				mActiveVertexShader = std::static_pointer_cast<D3D11GpuVertexProgram>(pipelineState->GetVertexProgram());
+				d3d11FragmentProgram = static_cast<D3D11GpuFragmentProgram*>(pipelineState->GetFragmentProgram().get());
+				d3d11GeometryProgram = static_cast<D3D11GpuGeometryProgram*>(pipelineState->GetGeometryProgram().get());
+				d3d11DomainProgram = static_cast<D3D11GpuDomainProgram*>(pipelineState->GetDomainProgram().get());
+				d3d11HullProgram = static_cast<D3D11GpuHullProgram*>(pipelineState->GetHullProgram().get());
 
 				if (d3d11BlendState == nullptr)
 					d3d11BlendState = static_cast<D3D11BlendState*>(BlendState::getDefault().get());
@@ -252,36 +252,36 @@ namespace bs { namespace ct
 				d3d11HullProgram = nullptr;
 			}
 
-			ID3D11DeviceContext* d3d11Context = mDevice->getImmediateContext();
-			d3d11Context->OMSetBlendState(d3d11BlendState->getInternal(), nullptr, 0xFFFFFFFF);
-			d3d11Context->RSSetState(d3d11RasterizerState->getInternal());
-			d3d11Context->OMSetDepthStencilState(mActiveDepthStencilState->getInternal(), mStencilRef);
+			ID3D11DeviceContext* d3d11Context = mDevice->GetImmediateContext();
+			d3d11Context->OMSetBlendState(d3d11BlendState->GetInternal(), nullptr, 0xFFFFFFFF);
+			d3d11Context->RSSetState(d3d11RasterizerState->GetInternal());
+			d3d11Context->OMSetDepthStencilState(mActiveDepthStencilState->GetInternal(), mStencilRef);
 
 			if (mActiveVertexShader != nullptr)
 			{
 				D3D11GpuVertexProgram* vertexProgram = static_cast<D3D11GpuVertexProgram*>(mActiveVertexShader.get());
-				d3d11Context->VSSetShader(vertexProgram->getVertexShader(), nullptr, 0);
+				d3d11Context->VSSetShader(vertexProgram->GetVertexShader(), nullptr, 0);
 			}
 			else
 				d3d11Context->VSSetShader(nullptr, nullptr, 0);
 
 			if(d3d11FragmentProgram != nullptr)
-				d3d11Context->PSSetShader(d3d11FragmentProgram->getPixelShader(), nullptr, 0);
+				d3d11Context->PSSetShader(d3d11FragmentProgram->GetPixelShader(), nullptr, 0);
 			else
 				d3d11Context->PSSetShader(nullptr, nullptr, 0);
 
 			if (d3d11GeometryProgram != nullptr)
-				d3d11Context->GSSetShader(d3d11GeometryProgram->getGeometryShader(), nullptr, 0);
+				d3d11Context->GSSetShader(d3d11GeometryProgram->GetGeometryShader(), nullptr, 0);
 			else
 				d3d11Context->GSSetShader(nullptr, nullptr, 0);
 
 			if (d3d11DomainProgram != nullptr)
-				d3d11Context->DSSetShader(d3d11DomainProgram->getDomainShader(), nullptr, 0);
+				d3d11Context->DSSetShader(d3d11DomainProgram->GetDomainShader(), nullptr, 0);
 			else
 				d3d11Context->DSSetShader(nullptr, nullptr, 0);
 
 			if (d3d11HullProgram != nullptr)
-				d3d11Context->HSSetShader(d3d11HullProgram->getHullShader(), nullptr, 0);
+				d3d11Context->HSSetShader(d3d11HullProgram->GetHullShader(), nullptr, 0);
 			else
 				d3d11Context->HSSetShader(nullptr, nullptr, 0);
 			
@@ -290,7 +290,7 @@ namespace bs { namespace ct
 		auto execute = [=]() { executeRef(pipelineState); };
 
 		SPtr<D3D11CommandBuffer> cb = getCB(commandBuffer);
-		cb->queueCommand(execute);
+		cb->QueueCommand(execute);
 
 		BS_INC_RENDER_STAT(NumPipelineStateChanges);
 	}
@@ -304,21 +304,21 @@ namespace bs { namespace ct
 
 			SPtr<GpuProgram> program;
 			if (pipelineState != nullptr)
-				program = pipelineState->getProgram();
+				program = pipelineState->GetProgram();
 
-			if (program != nullptr && program->getType() == GPT_COMPUTE_PROGRAM)
+			if (program != nullptr && program->GetType() == GPT_COMPUTE_PROGRAM)
 			{
 				D3D11GpuComputeProgram *d3d11ComputeProgram = static_cast<D3D11GpuComputeProgram*>(program.get());
-				mDevice->getImmediateContext()->CSSetShader(d3d11ComputeProgram->getComputeShader(), nullptr, 0);
+				mDevice->GetImmediateContext()->CSSetShader(d3d11ComputeProgram->GetComputeShader(), nullptr, 0);
 			}
 			else
-				mDevice->getImmediateContext()->CSSetShader(nullptr, nullptr, 0);
+				mDevice->GetImmediateContext()->CSSetShader(nullptr, nullptr, 0);
 		};
 
 		auto execute = [=]() { executeRef(pipelineState); };
 
 		SPtr<D3D11CommandBuffer> cb = getCB(commandBuffer);
-		cb->queueCommand(execute);
+		cb->QueueCommand(execute);
 
 		BS_INC_RENDER_STAT(NumPipelineStateChanges);
 	}
@@ -329,7 +329,7 @@ namespace bs { namespace ct
 		{
 			THROW_IF_NOT_CORE_THREAD;
 
-			ID3D11DeviceContext* context = mDevice->getImmediateContext();
+			ID3D11DeviceContext* context = mDevice->GetImmediateContext();
 
 			// Clear any previously bound UAVs (otherwise shaders attempting to read resources viewed by those views will
 			// be unable to)
@@ -369,7 +369,7 @@ namespace bs { namespace ct
 					constBuffers.clear();
 					samplers.clear();
 
-					SPtr<GpuParamDesc> paramDesc = gpuParams->getParamDesc(type);
+					SPtr<GpuParamDesc> paramDesc = gpuParams->GetParamDesc(type);
 					if (paramDesc == nullptr)
 						return;
 
@@ -377,8 +377,8 @@ namespace bs { namespace ct
 					{
 						UINT32 slot = iter->second.slot;
 
-						SPtr<Texture> texture = gpuParams->getTexture(iter->second.set, slot);
-						const TextureSurface& surface = gpuParams->getTextureSurface(iter->second.set, slot);
+						SPtr<Texture> texture = gpuParams->GetTexture(iter->second.set, slot);
+						const TextureSurface& surface = gpuParams->GetTextureSurface(iter->second.set, slot);
 
 						while (slot >= (UINT32)srvs.size())
 							srvs.push_back(nullptr);
@@ -389,14 +389,14 @@ namespace bs { namespace ct
 															surface.face, surface.numFaces, GVU_DEFAULT);
 
 							D3D11TextureView* d3d11texView = static_cast<D3D11TextureView*>(texView.get());
-							srvs[slot] = d3d11texView->getSRV();
+							srvs[slot] = d3d11texView->GetSRV();
 						}
 					}
 
 					for (auto iter = paramDesc->buffers.begin(); iter != paramDesc->buffers.end(); ++iter)
 					{
 						UINT32 slot = iter->second.slot;
-						SPtr<GpuBuffer> buffer = gpuParams->getBuffer(iter->second.set, slot);
+						SPtr<GpuBuffer> buffer = gpuParams->GetBuffer(iter->second.set, slot);
 
 						bool isLoadStore = iter->second.type != GPOT_BYTE_BUFFER &&
 							iter->second.type != GPOT_STRUCTURED_BUFFER;
@@ -409,7 +409,7 @@ namespace bs { namespace ct
 							if (buffer != nullptr)
 							{
 								D3D11GpuBuffer* d3d11buffer = static_cast<D3D11GpuBuffer*>(buffer.get());
-								srvs[slot] = d3d11buffer->getSRV();
+								srvs[slot] = d3d11buffer->GetSRV();
 							}
 						}
 						else
@@ -420,7 +420,7 @@ namespace bs { namespace ct
 							if (buffer != nullptr)
 							{
 								D3D11GpuBuffer* d3d11buffer = static_cast<D3D11GpuBuffer*>(buffer.get());
-								uavs[slot] = d3d11buffer->getUAV();
+								uavs[slot] = d3d11buffer->GetUAV();
 							}
 						}
 					}
@@ -429,8 +429,8 @@ namespace bs { namespace ct
 					{
 						UINT32 slot = iter->second.slot;
 
-						SPtr<Texture> texture = gpuParams->getLoadStoreTexture(iter->second.set, slot);
-						const TextureSurface& surface = gpuParams->getLoadStoreSurface(iter->second.set, slot);
+						SPtr<Texture> texture = gpuParams->GetLoadStoreTexture(iter->second.set, slot);
+						const TextureSurface& surface = gpuParams->GetLoadStoreSurface(iter->second.set, slot);
 
 						while (slot >= (UINT32)uavs.size())
 							uavs.push_back(nullptr);
@@ -441,7 +441,7 @@ namespace bs { namespace ct
 								surface.face, surface.numFaces, GVU_RANDOMWRITE);
 
 							D3D11TextureView* d3d11texView = static_cast<D3D11TextureView*>(texView.get());
-							uavs[slot] = d3d11texView->getUAV();
+							uavs[slot] = d3d11texView->GetUAV();
 						}
 						else
 						{
@@ -452,7 +452,7 @@ namespace bs { namespace ct
 					for (auto iter = paramDesc->samplers.begin(); iter != paramDesc->samplers.end(); ++iter)
 					{
 						UINT32 slot = iter->second.slot;
-						SPtr<SamplerState> samplerState = gpuParams->getSamplerState(iter->second.set, slot);
+						SPtr<SamplerState> samplerState = gpuParams->GetSamplerState(iter->second.set, slot);
 
 						while (slot >= (UINT32)samplers.size())
 							samplers.push_back(nullptr);
@@ -462,13 +462,13 @@ namespace bs { namespace ct
 
 						D3D11SamplerState* d3d11SamplerState =
 							static_cast<D3D11SamplerState*>(const_cast<SamplerState*>(samplerState.get()));
-						samplers[slot] = d3d11SamplerState->getInternal();
+						samplers[slot] = d3d11SamplerState->GetInternal();
 					}
 
 					for (auto iter = paramDesc->paramBlocks.begin(); iter != paramDesc->paramBlocks.end(); ++iter)
 					{
 						UINT32 slot = iter->second.slot;
-						SPtr<GpuParamBlockBuffer> buffer = gpuParams->getParamBlockBuffer(iter->second.set, slot);
+						SPtr<GpuParamBlockBuffer> buffer = gpuParams->GetParamBlockBuffer(iter->second.set, slot);
 
 						while (slot >= (UINT32)constBuffers.size())
 							constBuffers.push_back(nullptr);
@@ -479,7 +479,7 @@ namespace bs { namespace ct
 
 							const D3D11GpuParamBlockBuffer* d3d11paramBlockBuffer =
 								static_cast<const D3D11GpuParamBlockBuffer*>(buffer.get());
-							constBuffers[slot] = d3d11paramBlockBuffer->getD3D11Buffer();
+							constBuffers[slot] = d3d11paramBlockBuffer->GetD3D11Buffer();
 						}
 					}
 				};
@@ -592,13 +592,13 @@ namespace bs { namespace ct
 			bs_frame_clear();
 
 			if (mDevice->hasError())
-				BS_EXCEPT(RenderingAPIException, "Failed to set GPU parameters: " + mDevice->getErrorDescription());
+				BS_EXCEPT(RenderingAPIException, "Failed to set GPU parameters: " + mDevice->GetErrorDescription());
 		};
 
 		auto execute = [=]() { executeRef(gpuParams); };
 
 		SPtr<D3D11CommandBuffer> cb = getCB(commandBuffer);
-		cb->queueCommand(execute);
+		cb->QueueCommand(execute);
 
 		BS_INC_RENDER_STAT(NumGpuParamBinds);
 	}
@@ -616,7 +616,7 @@ namespace bs { namespace ct
 		auto execute = [=]() { executeRef(vp); };
 
 		SPtr<D3D11CommandBuffer> cb = getCB(commandBuffer);
-		cb->queueCommand(execute);
+		cb->QueueCommand(execute);
 	}
 
 	void D3D11RenderAPI::SetVertexBuffers(UINT32 index, SPtr<VertexBuffer>* buffers, UINT32 numBuffers,
@@ -640,15 +640,15 @@ namespace bs { namespace ct
 			for (UINT32 i = 0; i < numBuffers; i++)
 			{
 				SPtr<D3D11VertexBuffer> vertexBuffer = std::static_pointer_cast<D3D11VertexBuffer>(buffers[i]);
-				const VertexBufferProperties& vbProps = vertexBuffer->getProperties();
+				const VertexBufferProperties& vbProps = vertexBuffer->GetProperties();
 
-				dx11buffers[i] = vertexBuffer->getD3DVertexBuffer();
+				dx11buffers[i] = vertexBuffer->GetD3DVertexBuffer();
 
 				strides[i] = vbProps.getVertexSize();
 				offsets[i] = 0;
 			}
 
-			mDevice->getImmediateContext()->IASetVertexBuffers(index, numBuffers, dx11buffers, strides, offsets);
+			mDevice->GetImmediateContext()->IASetVertexBuffers(index, numBuffers, dx11buffers, strides, offsets);
 		};
 
 		SmallVector<SPtr<VertexBuffer>, 8> _buffers;
@@ -659,7 +659,7 @@ namespace bs { namespace ct
 			{ executeRef(index, buffers, numBuffers); };
 
 		SPtr<D3D11CommandBuffer> cb = getCB(commandBuffer);
-		cb->queueCommand(execute);
+		cb->QueueCommand(execute);
 
 		BS_INC_RENDER_STAT(NumVertexBufferBinds);
 	}
@@ -673,20 +673,20 @@ namespace bs { namespace ct
 			SPtr<D3D11IndexBuffer> indexBuffer = std::static_pointer_cast<D3D11IndexBuffer>(buffer);
 
 			DXGI_FORMAT indexFormat = DXGI_FORMAT_R16_UINT;
-			if (indexBuffer->getProperties().getType() == IT_16BIT)
+			if (indexBuffer->GetProperties().getType() == IT_16BIT)
 				indexFormat = DXGI_FORMAT_R16_UINT;
-			else if (indexBuffer->getProperties().getType() == IT_32BIT)
+			else if (indexBuffer->GetProperties().getType() == IT_32BIT)
 				indexFormat = DXGI_FORMAT_R32_UINT;
 			else
-				BS_EXCEPT(InternalErrorException, "Unsupported index format: " + toString(indexBuffer->getProperties().getType()));
+				BS_EXCEPT(InternalErrorException, "Unsupported index format: " + toString(indexBuffer->GetProperties().getType()));
 
-			mDevice->getImmediateContext()->IASetIndexBuffer(indexBuffer->getD3DIndexBuffer(), indexFormat, 0);
+			mDevice->GetImmediateContext()->IASetIndexBuffer(indexBuffer->GetD3DIndexBuffer(), indexFormat, 0);
 		};
 
 		auto execute = [=]() { executeRef(buffer); };
 
 		SPtr<D3D11CommandBuffer> cb = getCB(commandBuffer);
-		cb->queueCommand(execute);
+		cb->QueueCommand(execute);
 
 		BS_INC_RENDER_STAT(NumIndexBufferBinds);
 	}
@@ -704,7 +704,7 @@ namespace bs { namespace ct
 		auto execute = [=]() { executeRef(vertexDeclaration); };
 
 		SPtr<D3D11CommandBuffer> cb = getCB(commandBuffer);
-		cb->queueCommand(execute);
+		cb->QueueCommand(execute);
 	}
 
 	void D3D11RenderAPI::SetDrawOperation(DrawOperationType op, const SPtr<CommandBuffer>& commandBuffer)
@@ -713,14 +713,14 @@ namespace bs { namespace ct
 		{
 			THROW_IF_NOT_CORE_THREAD;
 
-			mDevice->getImmediateContext()->IASetPrimitiveTopology(D3D11Mappings::getPrimitiveType(op));
+			mDevice->GetImmediateContext()->IASetPrimitiveTopology(D3D11Mappings::getPrimitiveType(op));
 			mActiveDrawOp = op;
 		};
 
 		auto execute = [=]() { executeRef(op); };
 
 		SPtr<D3D11CommandBuffer> cb = getCB(commandBuffer);
-		cb->queueCommand(execute);
+		cb->QueueCommand(execute);
 	}
 
 	void D3D11RenderAPI::Draw(UINT32 vertexOffset, UINT32 vertexCount, UINT32 instanceCount,
@@ -733,22 +733,22 @@ namespace bs { namespace ct
 			applyInputLayout();
 
 			if (instanceCount <= 1)
-				mDevice->getImmediateContext()->Draw(vertexCount, vertexOffset);
+				mDevice->GetImmediateContext()->Draw(vertexCount, vertexOffset);
 			else
-				mDevice->getImmediateContext()->DrawInstanced(vertexCount, instanceCount, vertexOffset, 0);
+				mDevice->GetImmediateContext()->DrawInstanced(vertexCount, instanceCount, vertexOffset, 0);
 
 			notifyRenderTargetModified();
 			
 #if BS_DEBUG_MODE
 			if (mDevice->hasError())
-				BS_LOG(Warning, RenderBackend, mDevice->getErrorDescription());
+				BS_LOG(Warning, RenderBackend, mDevice->GetErrorDescription());
 #endif
 		};
 
 		auto execute = [=]() { executeRef(vertexOffset, vertexCount, instanceCount); };
 
 		SPtr<D3D11CommandBuffer> cb = getCB(commandBuffer);
-		cb->queueCommand(execute);
+		cb->QueueCommand(execute);
 
 		UINT32 primCount = vertexCountToPrimCount(mActiveDrawOp, vertexCount);
 
@@ -768,22 +768,22 @@ namespace bs { namespace ct
 			applyInputLayout();
 
 			if (instanceCount <= 1)
-				mDevice->getImmediateContext()->DrawIndexed(indexCount, startIndex, vertexOffset);
+				mDevice->GetImmediateContext()->DrawIndexed(indexCount, startIndex, vertexOffset);
 			else
-				mDevice->getImmediateContext()->DrawIndexedInstanced(indexCount, instanceCount, startIndex, vertexOffset, 0);
+				mDevice->GetImmediateContext()->DrawIndexedInstanced(indexCount, instanceCount, startIndex, vertexOffset, 0);
 
 			notifyRenderTargetModified();
 
 #if BS_DEBUG_MODE
 			if (mDevice->hasError())
-				BS_LOG(Warning, RenderBackend, mDevice->getErrorDescription());
+				BS_LOG(Warning, RenderBackend, mDevice->GetErrorDescription());
 #endif
 		};
 
 		auto execute = [=]() { executeRef(startIndex, indexCount, vertexOffset, vertexCount, instanceCount); };
 
 		SPtr<D3D11CommandBuffer> cb = getCB(commandBuffer);
-		cb->queueCommand(execute);
+		cb->QueueCommand(execute);
 
 		UINT32 primCount = vertexCountToPrimCount(mActiveDrawOp, indexCount);
 
@@ -799,18 +799,18 @@ namespace bs { namespace ct
 		{
 			THROW_IF_NOT_CORE_THREAD;
 
-			mDevice->getImmediateContext()->Dispatch(numGroupsX, numGroupsY, numGroupsZ);
+			mDevice->GetImmediateContext()->Dispatch(numGroupsX, numGroupsY, numGroupsZ);
 
 #if BS_DEBUG_MODE
 			if (mDevice->hasError())
-				BS_LOG(Warning, RenderBackend, mDevice->getErrorDescription());
+				BS_LOG(Warning, RenderBackend, mDevice->GetErrorDescription());
 #endif
 		};
 
 		auto execute = [=]() { executeRef(numGroupsX, numGroupsY, numGroupsZ); };
 
 		SPtr<D3D11CommandBuffer> cb = getCB(commandBuffer);
-		cb->queueCommand(execute);
+		cb->QueueCommand(execute);
 
 		BS_INC_RENDER_STAT(NumComputeCalls);
 	}
@@ -827,13 +827,13 @@ namespace bs { namespace ct
 			mScissorRect.bottom = static_cast<LONG>(bottom);
 			mScissorRect.right = static_cast<LONG>(right);
 
-			mDevice->getImmediateContext()->RSSetScissorRects(1, &mScissorRect);
+			mDevice->GetImmediateContext()->RSSetScissorRects(1, &mScissorRect);
 		};
 
 		auto execute = [=]() { executeRef(left, top, right, bottom); };
 
 		SPtr<D3D11CommandBuffer> cb = getCB(commandBuffer);
-		cb->queueCommand(execute);
+		cb->QueueCommand(execute);
 	}
 
 	void D3D11RenderAPI::SetStencilRef(UINT32 value, const SPtr<CommandBuffer>& commandBuffer)
@@ -845,15 +845,15 @@ namespace bs { namespace ct
 			mStencilRef = value;
 
 			if(mActiveDepthStencilState != nullptr)
-				mDevice->getImmediateContext()->OMSetDepthStencilState(mActiveDepthStencilState->getInternal(), mStencilRef);
+				mDevice->GetImmediateContext()->OMSetDepthStencilState(mActiveDepthStencilState->GetInternal(), mStencilRef);
 			else
-				mDevice->getImmediateContext()->OMSetDepthStencilState(nullptr, mStencilRef);
+				mDevice->GetImmediateContext()->OMSetDepthStencilState(nullptr, mStencilRef);
 		};
 
 		auto execute = [=]() { executeRef(value); };
 
 		SPtr<D3D11CommandBuffer> cb = getCB(commandBuffer);
-		cb->queueCommand(execute);
+		cb->QueueCommand(execute);
 	}
 
 	void D3D11RenderAPI::ClearViewport(UINT32 buffers, const Color& color, float depth, UINT16 stencil, UINT8 targetMask,
@@ -866,7 +866,7 @@ namespace bs { namespace ct
 			if (mActiveRenderTarget == nullptr)
 				return;
 
-			const RenderTargetProperties& rtProps = mActiveRenderTarget->getProperties();
+			const RenderTargetProperties& rtProps = mActiveRenderTarget->GetProperties();
 
 			Rect2I clearArea((int)mViewport.TopLeftX, (int)mViewport.TopLeftY, (int)mViewport.Width, (int)mViewport.Height);
 
@@ -889,7 +889,7 @@ namespace bs { namespace ct
 		auto execute = [=]() { executeRef(buffers, color, depth, stencil, targetMask); };
 
 		SPtr<D3D11CommandBuffer> cb = getCB(commandBuffer);
-		cb->queueCommand(execute);
+		cb->QueueCommand(execute);
 	}
 
 	void D3D11RenderAPI::ClearRenderTarget(UINT32 buffers, const Color& color, float depth, UINT16 stencil,
@@ -910,7 +910,7 @@ namespace bs { namespace ct
 				ID3D11RenderTargetView** views = bs_newN<ID3D11RenderTargetView*>(maxRenderTargets);
 				memset(views, 0, sizeof(ID3D11RenderTargetView*) * maxRenderTargets);
 
-				mActiveRenderTarget->getCustomAttribute("RTV", views);
+				mActiveRenderTarget->GetCustomAttribute("RTV", views);
 				if (!views[0])
 				{
 					bs_deleteN(views, maxRenderTargets);
@@ -926,7 +926,7 @@ namespace bs { namespace ct
 				for (UINT32 i = 0; i < maxRenderTargets; i++)
 				{
 					if (views[i] != nullptr && ((1 << i) & targetMask) != 0)
-						mDevice->getImmediateContext()->ClearRenderTargetView(views[i], clearColor);
+						mDevice->GetImmediateContext()->ClearRenderTargetView(views[i], clearColor);
 				}
 
 				bs_deleteN(views, maxRenderTargets);
@@ -936,7 +936,7 @@ namespace bs { namespace ct
 			if ((buffers & FBT_DEPTH) != 0 || (buffers & FBT_STENCIL) != 0)
 			{
 				ID3D11DepthStencilView* depthStencilView = nullptr;
-				mActiveRenderTarget->getCustomAttribute("DSV", &depthStencilView);
+				mActiveRenderTarget->GetCustomAttribute("DSV", &depthStencilView);
 
 				D3D11_CLEAR_FLAG clearFlag;
 
@@ -948,7 +948,7 @@ namespace bs { namespace ct
 					clearFlag = D3D11_CLEAR_DEPTH;
 
 				if (depthStencilView != nullptr)
-					mDevice->getImmediateContext()->ClearDepthStencilView(depthStencilView, clearFlag, depth, (UINT8)stencil);
+					mDevice->GetImmediateContext()->ClearDepthStencilView(depthStencilView, clearFlag, depth, (UINT8)stencil);
 			}
 
 			notifyRenderTargetModified();
@@ -957,7 +957,7 @@ namespace bs { namespace ct
 		auto execute = [=]() { executeRef(buffers, color, depth, stencil, targetMask); };
 
 		SPtr<D3D11CommandBuffer> cb = getCB(commandBuffer);
-		cb->queueCommand(execute);
+		cb->QueueCommand(execute);
 
 		BS_INC_RENDER_STAT(NumClears);
 	}
@@ -980,28 +980,28 @@ namespace bs { namespace ct
 
 			if (target != nullptr)
 			{
-				target->getCustomAttribute("RTV", views);
+				target->GetCustomAttribute("RTV", views);
 
 				if((readOnlyFlags & FBT_DEPTH) == 0)
 				{
 					if((readOnlyFlags & FBT_STENCIL) == 0)
-						target->getCustomAttribute("DSV", &depthStencilView);
+						target->GetCustomAttribute("DSV", &depthStencilView);
 					else
-						target->getCustomAttribute("WDROSV", &depthStencilView);
+						target->GetCustomAttribute("WDROSV", &depthStencilView);
 				}
 				else
 				{
 					if((readOnlyFlags & FBT_STENCIL) == 0)
-						target->getCustomAttribute("RODWSV", &depthStencilView);
+						target->GetCustomAttribute("RODWSV", &depthStencilView);
 					else
-						target->getCustomAttribute("RODSV", &depthStencilView);
+						target->GetCustomAttribute("RODSV", &depthStencilView);
 				}
 			}
 
 			// Bind render targets
-			mDevice->getImmediateContext()->OMSetRenderTargets(maxRenderTargets, views, depthStencilView);
+			mDevice->GetImmediateContext()->OMSetRenderTargets(maxRenderTargets, views, depthStencilView);
 			if (mDevice->hasError())
-				BS_EXCEPT(RenderingAPIException, "Failed to setRenderTarget : " + mDevice->getErrorDescription());
+				BS_EXCEPT(RenderingAPIException, "Failed to setRenderTarget : " + mDevice->GetErrorDescription());
 
 			bs_deleteN(views, maxRenderTargets);
 			applyViewport();
@@ -1010,7 +1010,7 @@ namespace bs { namespace ct
 		auto execute = [=]() { executeRef(target, readOnlyFlags); };
 
 		SPtr<D3D11CommandBuffer> cb = getCB(commandBuffer);
-		cb->queueCommand(execute);
+		cb->QueueCommand(execute);
 
 		BS_INC_RENDER_STAT(NumRenderTargetChanges);
 	}
@@ -1059,7 +1059,7 @@ namespace bs { namespace ct
 		if (mActiveRenderTarget == nullptr)
 			return;
 
-		const RenderTargetProperties& rtProps = mActiveRenderTarget->getProperties();
+		const RenderTargetProperties& rtProps = mActiveRenderTarget->GetProperties();
 
 		// Set viewport dimensions
 		mViewport.TopLeftX = (FLOAT)(rtProps.width * mViewportNorm.x);
@@ -1076,7 +1076,7 @@ namespace bs { namespace ct
 		mViewport.MinDepth = 0.0f;
 		mViewport.MaxDepth = 1.0f;
 
-		mDevice->getImmediateContext()->RSSetViewports(1, &mViewport);
+		mDevice->GetImmediateContext()->RSSetViewports(1, &mViewport);
 	}
 
 	void D3D11RenderAPI::NotifyRenderTargetModified()
@@ -1104,7 +1104,7 @@ namespace bs { namespace ct
 		}
 
 		caps.driverVersion = driverVersion;
-		caps.deviceName = mActiveD3DDriver->getDriverDescription();
+		caps.deviceName = mActiveD3DDriver->GetDriverDescription();
 		caps.renderAPIName = getName();
 
 		caps.setCapability(RSC_TEXTURE_COMPRESSION_BC);
@@ -1181,7 +1181,7 @@ namespace bs { namespace ct
 		}
 
 		// Adapter details
-		const DXGI_ADAPTER_DESC& adapterID = mActiveD3DDriver->getAdapterIdentifier();
+		const DXGI_ADAPTER_DESC& adapterID = mActiveD3DDriver->GetAdapterIdentifier();
 
 		// Determine vendor
 		switch(adapterID.VendorId)
@@ -1262,7 +1262,7 @@ namespace bs { namespace ct
 
 			HRESULT hr;
 			UINT outQuality;
-			hr = mDevice->getD3D11Device()->CheckMultisampleQualityLevels(format, outputSampleDesc->Count, &outQuality);
+			hr = mDevice->GetD3D11Device()->CheckMultisampleQualityLevels(format, outputSampleDesc->Count, &outQuality);
 
 			if (SUCCEEDED(hr) && (!tryCSAA || outQuality > outputSampleDesc->Quality))
 			{
@@ -1334,11 +1334,11 @@ namespace bs { namespace ct
 				// Arrays perform no packing and their elements are always padded and aligned to four component vectors
 				UINT32 size;
 				if(param.type == GPDT_STRUCT)
-					size = Math::divideAndRoundUp(param.elementSize, 16U) * 4;
+					size = Math::DivideAndRoundUp(param.elementSize, 16U) * 4;
 				else
-					size = Math::divideAndRoundUp(typeInfo.size, 16U) * 4;
+					size = Math::DivideAndRoundUp(typeInfo.size, 16U) * 4;
 
-				block.blockSize = Math::divideAndRoundUp(block.blockSize, 4U) * 4;
+				block.blockSize = Math::DivideAndRoundUp(block.blockSize, 4U) * 4;
 
 				param.elementSize = size;
 				param.arrayElementStride = size;
@@ -1360,8 +1360,8 @@ namespace bs { namespace ct
 				if(param.type == GPDT_STRUCT)
 				{
 					// Structs are always aligned and arounded up to 4 component vectors
-					size = Math::divideAndRoundUp(param.elementSize, 16U) * 4;
-					block.blockSize = Math::divideAndRoundUp(block.blockSize, 4U) * 4;
+					size = Math::DivideAndRoundUp(param.elementSize, 16U) * 4;
+					block.blockSize = Math::DivideAndRoundUp(block.blockSize, 4U) * 4;
 				}
 				else
 				{
@@ -1415,7 +1415,7 @@ namespace bs { namespace ct
 			return;
 		}
 
-		ID3D11InputLayout* ia = mIAManager->retrieveInputLayout(mActiveVertexShader->getInputDeclaration(), mActiveVertexDeclaration, *mActiveVertexShader);
-		mDevice->getImmediateContext()->IASetInputLayout(ia);
+		ID3D11InputLayout* ia = mIAManager->retrieveInputLayout(mActiveVertexShader->GetInputDeclaration(), mActiveVertexDeclaration, *mActiveVertexShader);
+		mDevice->GetImmediateContext()->IASetInputLayout(ia);
 	}
 }}

@@ -52,7 +52,7 @@ namespace bs
 		ScriptArray arrayclips = ScriptArray::Create<ScriptBlendClipInfo>(arraySizeclips);
 		for(int i = 0; i < arraySizeclips; i++)
 		{
-			arrayclips.set(i, ScriptBlendClipInfo::ToInterop(value.clips[i]));
+			arrayclips.Set(i, ScriptBlendClipInfo::ToInterop(value.clips[i]));
 		}
 		vecclips = arrayclips.GetInternal();
 		output.clips = vecclips;

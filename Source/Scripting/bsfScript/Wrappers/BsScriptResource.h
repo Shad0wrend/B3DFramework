@@ -94,7 +94,7 @@ namespace bs
 		/** Returns a reference wrapper for this resource. */
 		MonoObject* GetRRef() const
 		{
-			return ScriptResourceBase::getRRef(mResource, ResType::GetRttiStatic()->getRTTIId());
+			return ScriptResourceBase::getRRef(mResource, ResType::GetRttiStatic()->GetRttiId());
 		}
 
 	protected:
@@ -103,7 +103,7 @@ namespace bs
 		TScriptResource(MonoObject* instance, const ResourceHandle<ResType>& resource)
 			:ScriptObject<ScriptClass, BaseType>(instance), mResource(resource)
 		{
-			this->setManagedInstance(instance);
+			this->SetManagedInstance(instance);
 		}
 
 		virtual ~TScriptResource() {}
@@ -112,7 +112,7 @@ namespace bs
 		MonoObject* CreateManagedInstanceInternal(bool construct) override
 		{
 			MonoObject* managedInstance = ScriptClass::metaData.scriptClass->createInstance(construct);
-			this->setManagedInstance(managedInstance);
+			this->SetManagedInstance(managedInstance);
 
 			return managedInstance;
 		}
@@ -135,7 +135,7 @@ namespace bs
 		void OnManagedInstanceDeletedInternal(bool assemblyRefresh) override
 		{
 			this->freeManagedInstance();
-			this->destroy();
+			this->Destroy();
 		}
 
 		ResourceHandle<ResType> mResource;

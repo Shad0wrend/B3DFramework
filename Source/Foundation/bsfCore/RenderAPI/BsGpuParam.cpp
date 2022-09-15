@@ -27,7 +27,7 @@ namespace bs
 		if (mParent == nullptr)
 			return;
 
-		GpuParamBufferType paramBlock = mParent->getParamBlockBuffer(mParamDesc->paramBlockSet, mParamDesc->paramBlockSlot);
+		GpuParamBufferType paramBlock = mParent->GetParamBlockBuffer(mParamDesc->paramBlockSet, mParamDesc->paramBlockSlot);
 		if (paramBlock == nullptr)
 			return;
 
@@ -67,7 +67,7 @@ namespace bs
 		if (mParent == nullptr)
 			return T();
 
-		GpuParamBufferType paramBlock = mParent->getParamBlockBuffer(mParamDesc->paramBlockSet, mParamDesc->paramBlockSlot);
+		GpuParamBufferType paramBlock = mParent->GetParamBlockBuffer(mParamDesc->paramBlockSet, mParamDesc->paramBlockSlot);
 		if (paramBlock == nullptr)
 			return T();
 
@@ -104,7 +104,7 @@ namespace bs
 		if (mParent == nullptr)
 			return;
 
-		GpuParamBufferType paramBlock = mParent->getParamBlockBuffer(mParamDesc->paramBlockSet, mParamDesc->paramBlockSlot);
+		GpuParamBufferType paramBlock = mParent->GetParamBlockBuffer(mParamDesc->paramBlockSet, mParamDesc->paramBlockSlot);
 		if (paramBlock == nullptr)
 			return;
 
@@ -144,7 +144,7 @@ namespace bs
 		if (mParent == nullptr)
 			return;
 
-		GpuParamBufferType paramBlock = mParent->getParamBlockBuffer(mParamDesc->paramBlockSet, mParamDesc->paramBlockSlot);
+		GpuParamBufferType paramBlock = mParent->GetParamBlockBuffer(mParamDesc->paramBlockSet, mParamDesc->paramBlockSlot);
 		if (paramBlock == nullptr)
 			return;
 
@@ -193,7 +193,7 @@ namespace bs
 		if (mParent == nullptr)
 			return;
 
-		mParent->setTexture(mParamDesc->set, mParamDesc->slot, texture, surface);
+		mParent->SetTexture(mParamDesc->set, mParamDesc->slot, texture, surface);
 
 		mParent->MarkResourcesDirtyInternal();
 		mParent->MarkCoreDirtyInternal();
@@ -205,7 +205,7 @@ namespace bs
 		if (mParent == nullptr)
 			return TextureType();
 
-		return mParent->getTexture(mParamDesc->set, mParamDesc->slot);
+		return mParent->GetTexture(mParamDesc->set, mParamDesc->slot);
 	}
 
 	template<bool Core>
@@ -219,12 +219,12 @@ namespace bs
 	{ }
 
 	template<bool Core>
-	void TGpuParamBuffer<Core>::set(const BufferType& buffer) const
+	void TGpuParamBuffer<Core>::Set(const BufferType& buffer) const
 	{
 		if (mParent == nullptr)
 			return;
 
-		mParent->setBuffer(mParamDesc->set, mParamDesc->slot, buffer);
+		mParent->SetBuffer(mParamDesc->set, mParamDesc->slot, buffer);
 
 		mParent->MarkResourcesDirtyInternal();
 		mParent->MarkCoreDirtyInternal();
@@ -236,7 +236,7 @@ namespace bs
 		if (mParent == nullptr)
 			return BufferType();
 
-		return mParent->getBuffer(mParamDesc->set, mParamDesc->slot);
+		return mParent->GetBuffer(mParamDesc->set, mParamDesc->slot);
 	}
 
 	template<bool Core>
@@ -255,7 +255,7 @@ namespace bs
 		if (mParent == nullptr)
 			return;
 
-		mParent->setLoadStoreTexture(mParamDesc->set, mParamDesc->slot, texture, surface);
+		mParent->SetLoadStoreTexture(mParamDesc->set, mParamDesc->slot, texture, surface);
 
 		mParent->MarkResourcesDirtyInternal();
 		mParent->MarkCoreDirtyInternal();
@@ -267,7 +267,7 @@ namespace bs
 		if (mParent == nullptr)
 			return TextureType();
 
-		return mParent->getTexture(mParamDesc->set, mParamDesc->slot);
+		return mParent->GetTexture(mParamDesc->set, mParamDesc->slot);
 	}
 
 	template<bool Core>
@@ -286,7 +286,7 @@ namespace bs
 		if (mParent == nullptr)
 			return;
 
-		mParent->setSamplerState(mParamDesc->set, mParamDesc->slot, samplerState);
+		mParent->SetSamplerState(mParamDesc->set, mParamDesc->slot, samplerState);
 
 		mParent->MarkResourcesDirtyInternal();
 		mParent->MarkCoreDirtyInternal();
@@ -298,7 +298,7 @@ namespace bs
 		if (mParent == nullptr)
 			return SamplerStateType();
 
-		return mParent->getSamplerState(mParamDesc->set, mParamDesc->slot);
+		return mParent->GetSamplerState(mParamDesc->set, mParamDesc->slot);
 	}
 
 	template class TGpuDataParam < float, false > ;

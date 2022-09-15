@@ -39,7 +39,7 @@ namespace bs
 	MonoString* ScriptSceneInstance::InternalGetName(ScriptSceneInstance* thisPtr)
 	{
 		String tmp__output;
-		tmp__output = thisPtr->getInternal()->getName();
+		tmp__output = thisPtr->GetInternal()->GetName();
 
 		MonoString* __output;
 		__output = MonoUtil::stringToMono(tmp__output);
@@ -50,14 +50,14 @@ namespace bs
 	MonoObject* ScriptSceneInstance::InternalGetRoot(ScriptSceneInstance* thisPtr)
 	{
 		GameObjectHandle<SceneObject> tmp__output;
-		tmp__output = thisPtr->getInternal()->getRoot();
+		tmp__output = thisPtr->GetInternal()->GetRoot();
 
 		MonoObject* __output;
 		ScriptSceneObject* script__output = nullptr;
 		if(tmp__output)
 		script__output = ScriptGameObjectManager::Instance().getOrCreateScriptSceneObject(tmp__output);
 		if(script__output != nullptr)
-			__output = script__output->getManagedInstance();
+			__output = script__output->GetManagedInstance();
 		else
 			__output = nullptr;
 
@@ -67,7 +67,7 @@ namespace bs
 	bool ScriptSceneInstance::InternalIsActive(ScriptSceneInstance* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->getInternal()->isActive();
+		tmp__output = thisPtr->GetInternal()->isActive();
 
 		bool __output;
 		__output = tmp__output;
@@ -78,7 +78,7 @@ namespace bs
 	MonoObject* ScriptSceneInstance::InternalGetPhysicsScene(ScriptSceneInstance* thisPtr)
 	{
 		SPtr<PhysicsScene> tmp__output;
-		tmp__output = thisPtr->getInternal()->getPhysicsScene();
+		tmp__output = thisPtr->GetInternal()->GetPhysicsScene();
 
 		MonoObject* __output;
 		__output = ScriptPhysicsScene::Create(tmp__output);

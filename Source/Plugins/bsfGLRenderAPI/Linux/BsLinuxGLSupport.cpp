@@ -87,7 +87,7 @@ namespace bs { namespace ct
 		if(parentWindow != nullptr)
 		{
 			::Window x11window;
-			parentWindow->getCustomAttribute("WINDOW", &x11window);
+			parentWindow->GetCustomAttribute("WINDOW", &x11window);
 			desc.platformSpecific["parentWindowHandle"] = toString((UINT64)x11window);
 		}
 
@@ -150,7 +150,7 @@ namespace bs { namespace ct
 
 	SPtr<LinuxContext> LinuxGLSupport::createContext(::Display* x11display, XVisualInfo& visualInfo)
 	{
-		GLRenderAPI* rapi = static_cast<GLRenderAPI*>(RenderAPI::instancePtr());
+		GLRenderAPI* rapi = static_cast<GLRenderAPI*>(RenderAPI::InstancePtr());
 
 		// If RenderAPI has initialized a context use that, otherwise we create our own
 		if (!rapi->IsContextInitializedInternal())

@@ -20,12 +20,12 @@ namespace bs
 		auto iterStart = mOrderedElements.begin();
 		if(iterStart->first != 0)
 		{
-			iterStart->second->setFocus(true, true);
+			iterStart->second->SetFocus(true, true);
 			return;
 		}
 
 		// Otherwise look for top-left element without an explicit index
-		focusTopLeft();
+		FocusTopLeft();
 	}
 
 	void GUINavGroup::FocusNext(GUIElement* anchor)
@@ -33,7 +33,7 @@ namespace bs
 		// Nothing currently in focus
 		if(!anchor)
 		{
-			focusFirst();
+			FocusFirst();
 			return;
 		}
 
@@ -50,17 +50,17 @@ namespace bs
 
 			// Reached the end, wrap around
 			if(iterFind == mOrderedElements.end())
-				return focusFirst();
+				return FocusFirst();
 
 			// If a next element with an explicit index exists, select it
 			if(iterFind->first != 0)
 			{
-				iterFind->second->setFocus(true, true);
+				iterFind->second->SetFocus(true, true);
 				return;
 			}
 
 			// Select top-left element with no tab index
-			focusTopLeft();
+			FocusTopLeft();
 			return;
 		}
 
@@ -96,7 +96,7 @@ namespace bs
 				for (auto iter = unindexedRange.first; iter != unindexedRange.second; ++iter)
 				{
 					GUIElement* element = iter->second;
-					const bool acceptsKeyFocus = element->getOptionFlags().isSet(GUIElementOption::AcceptsKeyFocus);
+					const bool acceptsKeyFocus = element->GetOptionFlags().IsSet(GUIElementOption::AcceptsKeyFocus);
 					if (!acceptsKeyFocus || !element->IsVisibleInternal() || element->IsDisabledInternal())
 						continue;
 
@@ -204,7 +204,7 @@ namespace bs
 
 				if (nextElement)
 				{
-					nextElement->setFocus(true, true);
+					nextElement->SetFocus(true, true);
 					return;
 				}
 
@@ -215,12 +215,12 @@ namespace bs
 			const auto iterAfterUnindexed = unindexedRange.second;
 			if(iterAfterUnindexed != mOrderedElements.end())
 			{
-				iterAfterUnindexed->second->setFocus(true, true);
+				iterAfterUnindexed->second->SetFocus(true, true);
 				return;
 			}
 
 			// Reached the end, wrap around
-			focusFirst();
+			FocusFirst();
 		}
 	}
 
@@ -236,7 +236,7 @@ namespace bs
 			GUIElement* element = iter->second;
 
 			// Ignore elements that are hidden, disabled or just don't accept input focus
-			const bool acceptsKeyFocus = element->getOptionFlags().isSet(GUIElementOption::AcceptsKeyFocus);
+			const bool acceptsKeyFocus = element->GetOptionFlags().IsSet(GUIElementOption::AcceptsKeyFocus);
 			if(!acceptsKeyFocus || !element->IsVisibleInternal() || element->IsDisabledInternal())
 				continue;
 
@@ -247,7 +247,7 @@ namespace bs
 
 			Vector2I elementPos(elemBounds.x, elemBounds.y);
 
-			const UINT32 dist = elementPos.squaredLength();
+			const UINT32 dist = elementPos.SquaredLength();
 			if (dist < lowestDist)
 			{
 				lowestDist = dist;
@@ -256,7 +256,7 @@ namespace bs
 		}
 
 		if (topLeftElement)
-			topLeftElement->setFocus(true, true);
+			topLeftElement->SetFocus(true, true);
 	}
 	
 	void GUINavGroup::RegisterElement(GUIElement* element, INT32 tabIdx)

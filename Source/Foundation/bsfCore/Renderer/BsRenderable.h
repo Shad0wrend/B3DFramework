@@ -191,7 +191,7 @@ namespace bs
 		/** @copydoc SceneActor::_updateState */
 		void UpdateStateInternal(const SceneObject& so, bool force = false) override;
 
-		/** @copydoc CoreObject::initialize() */
+		/** @copydoc CoreObject::Initialize() */
 		void Initialize() override;
 
 		/** @} */

@@ -37,7 +37,7 @@ namespace bs
 	}
 
 	BlendProperties::BlendProperties(const BLEND_STATE_DESC& desc)
-		:mData(desc), mHash(BlendState::generateHash(desc))
+		:mData(desc), mHash(BlendState::GenerateHash(desc))
 	{ }
 
 	bool BlendProperties::GetBlendEnabled(UINT32 renderTargetIdx) const
@@ -113,7 +113,7 @@ namespace bs
 	SPtr<ct::CoreObject> BlendState::CreateCore() const
 	{
 		SPtr<ct::BlendState> core = ct::RenderStateManager::Instance().CreateBlendStateInternal(mProperties.mData);
-		mId = core->getId(); // Accessing core from sim thread is okay here since core ID is immutable
+		mId = core->GetId(); // Accessing core from sim thread is okay here since core ID is immutable
 
 		return core;
 	}
@@ -125,12 +125,12 @@ namespace bs
 
 	const SPtr<BlendState>& BlendState::GetDefault()
 	{
-		return RenderStateManager::Instance().getDefaultBlendState();
+		return RenderStateManager::Instance().GetDefaultBlendState();
 	}
 
 	SPtr<BlendState> BlendState::Create(const BLEND_STATE_DESC& desc)
 	{
-		return RenderStateManager::Instance().createBlendState(desc);
+		return RenderStateManager::Instance().CreateBlendState(desc);
 	}
 
 	UINT64 BlendState::GenerateHash(const BLEND_STATE_DESC& desc)
@@ -185,11 +185,11 @@ namespace bs
 	{
 		// Since we cache states it's possible this object was already initialized
 		// (i.e. multiple sim-states can share a single core-state)
-		if (isInitialized())
+		if (IsInitialized())
 			return;
 
-		createInternal();
-		CoreObject::initialize();
+		CreateInternal();
+		CoreObject::Initialize();
 	}
 
 	const BlendProperties& BlendState::GetProperties() const
@@ -199,12 +199,12 @@ namespace bs
 
 	SPtr<BlendState> BlendState::Create(const BLEND_STATE_DESC& desc)
 	{
-		return RenderStateManager::Instance().createBlendState(desc);
+		return RenderStateManager::Instance().CreateBlendState(desc);
 	}
 
 	const SPtr<BlendState>& BlendState::GetDefault()
 	{
-		return RenderStateManager::Instance().getDefaultBlendState();
+		return RenderStateManager::Instance().GetDefaultBlendState();
 	}
 	}
 }

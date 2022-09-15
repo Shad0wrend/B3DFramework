@@ -52,7 +52,7 @@ namespace bs { namespace ct
 		const SPtr<VertexDeclaration>& vertexBufferDecl, D3D11GpuProgram& vertexProgram)
 	{
 		VertexDeclarationKey pair;
-		pair.vertxDeclId = vertexBufferDecl->getId();
+		pair.vertxDeclId = vertexBufferDecl->GetId();
 		pair.vertexProgramId = vertexProgram.GetProgramId();
 
 		auto iterFind = mInputLayoutMap.find(pair);
@@ -76,8 +76,8 @@ namespace bs { namespace ct
 	void D3D11InputLayoutManager::AddNewInputLayout(const SPtr<VertexDeclaration>& vertexShaderDecl,
 		const SPtr<VertexDeclaration>& vertexBufferDecl, D3D11GpuProgram& vertexProgram)
 	{
-		const VertexDeclarationProperties& bufferDeclProps = vertexBufferDecl->getProperties();
-		const VertexDeclarationProperties& shaderDeclProps = vertexShaderDecl->getProperties();
+		const VertexDeclarationProperties& bufferDeclProps = vertexBufferDecl->GetProperties();
+		const VertexDeclarationProperties& shaderDeclProps = vertexShaderDecl->GetProperties();
 
 		Vector<D3D11_INPUT_ELEMENT_DESC> declElements;
 
@@ -90,13 +90,13 @@ namespace bs { namespace ct
 			declElements.push_back(D3D11_INPUT_ELEMENT_DESC());
 			D3D11_INPUT_ELEMENT_DESC& elementDesc = declElements.back();
 
-			elementDesc.SemanticName = D3D11Mappings::get(iter->getSemantic());
-			elementDesc.SemanticIndex = iter->getSemanticIdx();
-			elementDesc.Format = D3D11Mappings::get(iter->getType());
-			elementDesc.InputSlot = iter->getStreamIdx();
-			elementDesc.AlignedByteOffset = static_cast<WORD>(iter->getOffset());
+			elementDesc.SemanticName = D3D11Mappings::get(iter->GetSemantic());
+			elementDesc.SemanticIndex = iter->GetSemanticIdx();
+			elementDesc.Format = D3D11Mappings::get(iter->GetType());
+			elementDesc.InputSlot = iter->GetStreamIdx();
+			elementDesc.AlignedByteOffset = static_cast<WORD>(iter->GetOffset());
 
-			if (iter->getInstanceStepRate() == 0)
+			if (iter->GetInstanceStepRate() == 0)
 			{
 				elementDesc.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 				elementDesc.InstanceDataStepRate = 0;
@@ -104,10 +104,10 @@ namespace bs { namespace ct
 			else
 			{
 				elementDesc.InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
-				elementDesc.InstanceDataStepRate = iter->getInstanceStepRate();
+				elementDesc.InstanceDataStepRate = iter->GetInstanceStepRate();
 			}
 
-			maxStreamIdx = std::max(maxStreamIdx, (INT32)iter->getStreamIdx());
+			maxStreamIdx = std::max(maxStreamIdx, (INT32)iter->GetStreamIdx());
 		}
 
 		// Find elements missing in buffer and add a dummy stream for them
@@ -116,7 +116,7 @@ namespace bs { namespace ct
 			bool foundElement = false;
 			for (auto bufferIter = bufferElems.begin(); bufferIter != bufferElems.end(); ++bufferIter)
 			{
-				if (shaderIter->getSemantic() == bufferIter->getSemantic() && shaderIter->getSemanticIdx() == bufferIter->getSemanticIdx())
+				if (shaderIter->GetSemantic() == bufferIter->GetSemantic() && shaderIter->GetSemanticIdx() == bufferIter->GetSemanticIdx())
 				{
 					foundElement = true;
 					break;
@@ -128,9 +128,9 @@ namespace bs { namespace ct
 				declElements.push_back(D3D11_INPUT_ELEMENT_DESC());
 				D3D11_INPUT_ELEMENT_DESC& elementDesc = declElements.back();
 
-				elementDesc.SemanticName = D3D11Mappings::get(shaderIter->getSemantic());
-				elementDesc.SemanticIndex = shaderIter->getSemanticIdx();
-				elementDesc.Format = D3D11Mappings::get(shaderIter->getType());
+				elementDesc.SemanticName = D3D11Mappings::get(shaderIter->GetSemantic());
+				elementDesc.SemanticIndex = shaderIter->GetSemanticIdx();
+				elementDesc.Format = D3D11Mappings::get(shaderIter->GetType());
 				elementDesc.InputSlot = (UINT32)(maxStreamIdx + 1);
 				elementDesc.AlignedByteOffset = 0;
 				elementDesc.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
@@ -138,8 +138,8 @@ namespace bs { namespace ct
 			}
 		}
 
-		D3D11RenderAPI* d3d11rs = static_cast<D3D11RenderAPI*>(RenderAPI::instancePtr());
-		D3D11Device& device = d3d11rs->getPrimaryDevice();
+		D3D11RenderAPI* d3d11rs = static_cast<D3D11RenderAPI*>(RenderAPI::InstancePtr());
+		D3D11Device& device = d3d11rs->GetPrimaryDevice();
 
 		const DataBlob& microcode = vertexProgram.GetMicroCode();
 
@@ -158,7 +158,7 @@ namespace bs { namespace ct
 
 		// Create key and add to the layout map
 		VertexDeclarationKey pair;
-		pair.vertxDeclId = vertexBufferDecl->getId();
+		pair.vertxDeclId = vertexBufferDecl->GetId();
 		pair.vertexProgramId = vertexProgram.GetProgramId();
 
 		mInputLayoutMap[pair] = newEntry;

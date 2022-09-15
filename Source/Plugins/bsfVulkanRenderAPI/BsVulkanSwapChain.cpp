@@ -14,7 +14,7 @@ namespace bs { namespace ct
 		VulkanSwapChain* oldSwapChain)
 		: VulkanResource(owner, false)
 	{
-		VulkanDevice& device = owner->getDevice();
+		VulkanDevice& device = owner->GetDevice();
 		mDevice = device.GetLogical();
 
 		VkResult result;
@@ -29,8 +29,8 @@ namespace bs { namespace ct
 		// If width/height is 0xFFFFFFFF, we can manually specify width, height
 		if (surfaceCaps.currentExtent.width == (uint32_t)-1 || surfaceCaps.currentExtent.height == (uint32_t)-1)
 		{
-			swapchainExtent.width = Math::clamp(width, surfaceCaps.minImageExtent.width, surfaceCaps.maxImageExtent.width);
-			swapchainExtent.height = Math::clamp(height, surfaceCaps.minImageExtent.height, surfaceCaps.maxImageExtent.height);
+			swapchainExtent.width = Math::Clamp(width, surfaceCaps.minImageExtent.width, surfaceCaps.maxImageExtent.width);
+			swapchainExtent.height = Math::Clamp(height, surfaceCaps.minImageExtent.height, surfaceCaps.maxImageExtent.height);
 		}
 		else // Otherwise we must use the size we're given
 			swapchainExtent = surfaceCaps.currentExtent;
@@ -222,13 +222,13 @@ namespace bs { namespace ct
 				assert(!surface.image->isBound());
 				assert(!surface.framebuffer->isBound());
 
-				surface.framebuffer->destroy();
+				surface.framebuffer->Destroy();
 				surface.framebuffer = nullptr;
 
-				surface.image->destroy();
+				surface.image->Destroy();
 				surface.image = nullptr;
 
-				surface.sync->destroy();
+				surface.sync->Destroy();
 				surface.sync = nullptr;
 			}
 
@@ -237,7 +237,7 @@ namespace bs { namespace ct
 
 		if (mDepthStencilImage != nullptr)
 		{
-			mDepthStencilImage->destroy();
+			mDepthStencilImage->Destroy();
 			mDepthStencilImage = nullptr;
 		}
 	}
@@ -247,7 +247,7 @@ namespace bs { namespace ct
 		uint32_t imageIndex;
 
 		VkResult result = vkAcquireNextImageKHR(mDevice, mSwapChain, UINT64_MAX,
-			mSurfaces[mCurrentSemaphoreIdx].sync->getHandle(), VK_NULL_HANDLE, &imageIndex);
+			mSurfaces[mCurrentSemaphoreIdx].sync->GetHandle(), VK_NULL_HANDLE, &imageIndex);
 
 		if(result != VK_SUCCESS)
 			return result;

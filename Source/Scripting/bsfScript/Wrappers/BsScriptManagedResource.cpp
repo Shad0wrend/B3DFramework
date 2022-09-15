@@ -83,7 +83,7 @@ namespace bs
 			// instance which is only freed on unload().
 			// Note: During domain unload this could get called even if not all instances are released, but ManagedResourceManager
 			// should make sure all instances are unloaded before that happens.
-			BS_ASSERT(mResource == nullptr || !mResource.isLoaded());
+			BS_ASSERT(mResource == nullptr || !mResource.IsLoaded());
 
 			ScriptResourceManager::Instance().destroyScriptResource(this);
 		}

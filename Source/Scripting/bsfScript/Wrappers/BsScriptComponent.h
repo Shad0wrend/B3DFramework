@@ -56,7 +56,7 @@ namespace bs
 		TScriptComponent(MonoObject* instance, const GameObjectHandle<CompType>& component)
 			:ScriptObject<ScriptClass, BaseType>(instance), mComponent(component)
 		{
-			this->setManagedInstance(instance);
+			this->SetManagedInstance(instance);
 		}
 
 		virtual ~TScriptComponent() {}
@@ -65,7 +65,7 @@ namespace bs
 		MonoObject* CreateManagedInstanceInternal(bool construct) override
 		{
 			MonoObject* managedInstance = ScriptClass::metaData.scriptClass->createInstance(construct);
-			this->setManagedInstance(managedInstance);
+			this->SetManagedInstance(managedInstance);
 
 			return managedInstance;
 		}
@@ -90,7 +90,7 @@ namespace bs
 		{
 			this->freeManagedInstance();
 
-			this->destroy(assemblyRefresh);
+			this->Destroy(assemblyRefresh);
 		}
 
 		GameObjectHandle<CompType> mComponent;

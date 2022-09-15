@@ -66,13 +66,13 @@ namespace bs
 			potentialRightStart = GetBounds().x + GetBounds().width;
 			potentialLeftStart = GetBounds().x;
 			potentialBottomStart = GetBounds().y;
-			potentialTopStart = GetBounds().y + getBounds().height;
+			potentialTopStart = GetBounds().y + GetBounds().height;
 			break;
 		case DropDownAreaPlacement::Type::BoundsAll:
-			potentialRightStart = getBounds().x + getBounds().width;
-			potentialLeftStart = getBounds().x;
-			potentialBottomStart = getBounds().y + getBounds().height;
-			potentialTopStart = getBounds().y;
+			potentialRightStart = GetBounds().x + GetBounds().width;
+			potentialLeftStart = GetBounds().x;
+			potentialBottomStart = GetBounds().y + GetBounds().height;
+			potentialTopStart = GetBounds().y;
 			break;
 		}
 

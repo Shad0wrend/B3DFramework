@@ -83,7 +83,7 @@ namespace bs
 	public:
 		friend class GUISkinRTTI;
 		static RTTITypeBase* GetRttiStatic();
-		virtual RTTITypeBase* getRTTI() const override;
+		virtual RTTITypeBase* GetRtti() const override;
 	};
 
 	/** @} */

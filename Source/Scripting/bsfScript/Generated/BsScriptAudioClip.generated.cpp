@@ -36,13 +36,13 @@ namespace bs
 	}
 	MonoObject* ScriptAudioClip::InternalGetRef(ScriptAudioClip* thisPtr)
 	{
-		return thisPtr->getRRef();
+		return thisPtr->GetRRef();
 	}
 
 	uint32_t ScriptAudioClip::InternalGetBitDepth(ScriptAudioClip* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->getHandle()->getBitDepth();
+		tmp__output = thisPtr->GetHandle()->GetBitDepth();
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -53,7 +53,7 @@ namespace bs
 	uint32_t ScriptAudioClip::InternalGetFrequency(ScriptAudioClip* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->getHandle()->getFrequency();
+		tmp__output = thisPtr->GetHandle()->GetFrequency();
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -64,7 +64,7 @@ namespace bs
 	uint32_t ScriptAudioClip::InternalGetNumChannels(ScriptAudioClip* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->getHandle()->getNumChannels();
+		tmp__output = thisPtr->GetHandle()->GetNumChannels();
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -75,7 +75,7 @@ namespace bs
 	AudioFormat ScriptAudioClip::InternalGetFormat(ScriptAudioClip* thisPtr)
 	{
 		AudioFormat tmp__output;
-		tmp__output = thisPtr->getHandle()->getFormat();
+		tmp__output = thisPtr->GetHandle()->GetFormat();
 
 		AudioFormat __output;
 		__output = tmp__output;
@@ -86,7 +86,7 @@ namespace bs
 	AudioReadMode ScriptAudioClip::InternalGetReadMode(ScriptAudioClip* thisPtr)
 	{
 		AudioReadMode tmp__output;
-		tmp__output = thisPtr->getHandle()->getReadMode();
+		tmp__output = thisPtr->GetHandle()->GetReadMode();
 
 		AudioReadMode __output;
 		__output = tmp__output;
@@ -97,7 +97,7 @@ namespace bs
 	float ScriptAudioClip::InternalGetLength(ScriptAudioClip* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getHandle()->getLength();
+		tmp__output = thisPtr->GetHandle()->GetLength();
 
 		float __output;
 		__output = tmp__output;
@@ -108,7 +108,7 @@ namespace bs
 	uint32_t ScriptAudioClip::InternalGetNumSamples(ScriptAudioClip* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->getHandle()->getNumSamples();
+		tmp__output = thisPtr->GetHandle()->GetNumSamples();
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -119,7 +119,7 @@ namespace bs
 	bool ScriptAudioClip::InternalIs3D(ScriptAudioClip* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->getHandle()->is3D();
+		tmp__output = thisPtr->GetHandle()->is3D();
 
 		bool __output;
 		__output = tmp__output;

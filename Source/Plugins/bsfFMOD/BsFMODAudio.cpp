@@ -29,14 +29,14 @@ namespace bs
 	{
 		FMODAudioSource* source = nullptr;
 		FMOD::ChannelControl* channel = (FMOD::ChannelControl*)channelControl;
-		channel->getUserData((void**)&source);
+		channel->GetUserData((void**)&source);
 
 		if (source == nullptr)
 			return 1.0f;
 
 		// Calculate standard inverse rolloff, but use different attenuation per source (also ignore max distance)
-		float minDistance = source->getMinDistance();
-		float attenuation = source->getAttenuation();
+		float minDistance = source->GetMinDistance();
+		float attenuation = source->GetAttenuation();
 		
 		distance = std::max(distance, minDistance);
 		return minDistance / (minDistance + attenuation * (distance - minDistance));
@@ -52,26 +52,26 @@ namespace bs
 		advancedSettings.cbSize = sizeof(advancedSettings);
 		advancedSettings.vol0virtualvol = 0.001f;
 
-		mFMOD->setAdvancedSettings(&advancedSettings);
+		mFMOD->SetAdvancedSettings(&advancedSettings);
 		mFMOD->init(512, FMOD_INIT_3D_RIGHTHANDED | FMOD_INIT_VOL0_BECOMES_VIRTUAL, nullptr);
-		mFMOD->setStreamBufferSize(65536, FMOD_TIMEUNIT_RAWBYTES);
-		mFMOD->set3DRolloffCallback(&FMOD3DRolloff);
+		mFMOD->SetStreamBufferSize(65536, FMOD_TIMEUNIT_RAWBYTES);
+		mFMOD->Set3DRolloffCallback(&FMOD3DRolloff);
 
-		mFMOD->getMasterChannelGroup(&mMasterChannelGroup);
+		mFMOD->GetMasterChannelGroup(&mMasterChannelGroup);
 
 		INT32 numDevices;
-		mFMOD->getNumDrivers(&numDevices);
+		mFMOD->GetNumDrivers(&numDevices);
 
 		mAllDevices.resize(numDevices);
 		char nameBuffer[256];
 		for(INT32 i = 0; i < numDevices; i++)
 		{
-			mFMOD->getDriverInfo(i, nameBuffer, sizeof(nameBuffer), nullptr, nullptr, nullptr, nullptr);
+			mFMOD->GetDriverInfo(i, nameBuffer, sizeof(nameBuffer), nullptr, nullptr, nullptr, nullptr);
 			mAllDevices[i].name = String(nameBuffer);
 		}
 
 		INT32 defaultDevice = 0;
-		mFMOD->getDriver(&defaultDevice);
+		mFMOD->GetDriver(&defaultDevice);
 		if(defaultDevice < numDevices)
 		{
 			mDefaultDevice.name = mAllDevices[defaultDevice].name;
@@ -89,8 +89,8 @@ namespace bs
 
 	void FMODAudio::setVolume(float volume)
 	{
-		mVolume = Math::clamp01(volume);
-		mMasterChannelGroup->setVolume(mVolume);
+		mVolume = Math::Clamp01(volume);
+		mMasterChannelGroup->SetVolume(mVolume);
 	}
 
 	float FMODAudio::getVolume() const
@@ -106,7 +106,7 @@ namespace bs
 		mIsPaused = paused;
 
 		for (auto& source : mSources)
-			source->setGlobalPause(paused);
+			source->SetGlobalPause(paused);
 	}
 
 	void FMODAudio::UpdateInternal()
@@ -122,7 +122,7 @@ namespace bs
 		{
 			if(device.name == mAllDevices[i].name)
 			{
-				mFMOD->setDriver(i);
+				mFMOD->SetDriver(i);
 				return;
 			}
 		}
@@ -167,18 +167,18 @@ namespace bs
 		INT32 numListeners = (INT32)mListeners.size();
 		if (numListeners > 0)
 		{
-			mFMOD->set3DNumListeners(numListeners);
+			mFMOD->Set3DNumListeners(numListeners);
 			for (INT32 i = 0; i < numListeners; i++)
 				mListeners[i]->rebuild(i);
 		}
 		else // Always keep at least one listener
 		{
-			mFMOD->set3DNumListeners(1);
+			mFMOD->Set3DNumListeners(1);
 			FMOD_VECTOR zero = { 0.0f, 0.0f, 0.0f };
 			FMOD_VECTOR forward = { 0.0f, 0.0f, -1.0f };
 			FMOD_VECTOR up = { 0.0f, 1.0f, 0.0f };
 
-			mFMOD->set3DListenerAttributes(0, &zero, &zero, &forward, &up);
+			mFMOD->Set3DListenerAttributes(0, &zero, &zero, &forward, &up);
 		}
 	}
 

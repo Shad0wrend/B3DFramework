@@ -24,7 +24,7 @@ char* includePush(ParseState* state, const char* filename, int line, int column,
 		include.blockUntilLoaded();
 
 	int filenameLen = (int)strlen(filenameNoQuote);
-	if (include.isLoaded())
+	if (include.IsLoaded())
 	{
 		String includeSource = include->GetString();
 

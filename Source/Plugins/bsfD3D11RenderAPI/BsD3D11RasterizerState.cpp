@@ -30,25 +30,25 @@ namespace bs { namespace ct
 		rasterizerStateDesc.AntialiasedLineEnable = mProperties.GetAntialiasedLineEnable();
 		rasterizerStateDesc.CullMode = D3D11Mappings::get(mProperties.getCullMode());
 		rasterizerStateDesc.DepthBias = scaledDepthBias;
-		rasterizerStateDesc.DepthBiasClamp = mProperties.getDepthBiasClamp();
-		rasterizerStateDesc.DepthClipEnable = mProperties.getDepthClipEnable();
+		rasterizerStateDesc.DepthBiasClamp = mProperties.GetDepthBiasClamp();
+		rasterizerStateDesc.DepthClipEnable = mProperties.GetDepthClipEnable();
 		rasterizerStateDesc.FillMode = D3D11Mappings::get(mProperties.getPolygonMode());
-		rasterizerStateDesc.MultisampleEnable = mProperties.getMultisampleEnable();
-		rasterizerStateDesc.ScissorEnable = mProperties.getScissorEnable();
-		rasterizerStateDesc.SlopeScaledDepthBias = mProperties.getSlopeScaledDepthBias();
+		rasterizerStateDesc.MultisampleEnable = mProperties.GetMultisampleEnable();
+		rasterizerStateDesc.ScissorEnable = mProperties.GetScissorEnable();
+		rasterizerStateDesc.SlopeScaledDepthBias = mProperties.GetSlopeScaledDepthBias();
 		rasterizerStateDesc.FrontCounterClockwise = false;
 
-		D3D11RenderAPI* rs = static_cast<D3D11RenderAPI*>(RenderAPI::instancePtr());
-		D3D11Device& device = rs->getPrimaryDevice();
-		HRESULT hr = device.getD3D11Device()->CreateRasterizerState(&rasterizerStateDesc, &mRasterizerState);
+		D3D11RenderAPI* rs = static_cast<D3D11RenderAPI*>(RenderAPI::InstancePtr());
+		D3D11Device& device = rs->GetPrimaryDevice();
+		HRESULT hr = device.GetD3D11Device()->CreateRasterizerState(&rasterizerStateDesc, &mRasterizerState);
 
-		if(FAILED(hr) || device.hasError())
+		if(FAILED(hr) || device.HasError())
 		{
-			String errorDescription = device.getErrorDescription();
+			String errorDescription = device.GetErrorDescription();
 			BS_EXCEPT(RenderingAPIException, "Cannot create rasterizer state.\nError Description:" + errorDescription);
 		}
 
 		BS_INC_RENDER_STAT_CAT(ResCreated, RenderStatObject_RasterizerState);
-		RasterizerState::createInternal();
+		RasterizerState::CreateInternal();
 	}
 }}

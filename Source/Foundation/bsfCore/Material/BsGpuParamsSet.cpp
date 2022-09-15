@@ -79,55 +79,55 @@ namespace bs
 		// Make sure all gpu programs are fully loaded
 		for (UINT32 i = 0; i < technique->GetNumPasses(); i++)
 		{
-			SPtr<Pass> curPass = technique->getPass(i);
+			SPtr<Pass> curPass = technique->GetPass(i);
 
-			const SPtr<GraphicsPipelineState>& graphicsPipeline = curPass->getGraphicsPipelineState();
+			const SPtr<GraphicsPipelineState>& graphicsPipeline = curPass->GetGraphicsPipelineState();
 			if(graphicsPipeline)
 			{
-				SPtr<GpuProgram> vertProgram = graphicsPipeline->getVertexProgram();
+				SPtr<GpuProgram> vertProgram = graphicsPipeline->GetVertexProgram();
 				if (vertProgram)
 				{
-					vertProgram->blockUntilCoreInitialized();
-					allParamDescs.push_back(vertProgram->getParamDesc());
+					vertProgram->BlockUntilCoreInitialized();
+					allParamDescs.push_back(vertProgram->GetParamDesc());
 				}
 
-				SPtr<GpuProgram> fragProgram = graphicsPipeline->getFragmentProgram();
+				SPtr<GpuProgram> fragProgram = graphicsPipeline->GetFragmentProgram();
 				if (fragProgram)
 				{
-					fragProgram->blockUntilCoreInitialized();
-					allParamDescs.push_back(fragProgram->getParamDesc());
+					fragProgram->BlockUntilCoreInitialized();
+					allParamDescs.push_back(fragProgram->GetParamDesc());
 				}
 
-				SPtr<GpuProgram> geomProgram = graphicsPipeline->getGeometryProgram();
+				SPtr<GpuProgram> geomProgram = graphicsPipeline->GetGeometryProgram();
 				if (geomProgram)
 				{
-					geomProgram->blockUntilCoreInitialized();
-					allParamDescs.push_back(geomProgram->getParamDesc());
+					geomProgram->BlockUntilCoreInitialized();
+					allParamDescs.push_back(geomProgram->GetParamDesc());
 				}
 
-				SPtr<GpuProgram> hullProgram = graphicsPipeline->getHullProgram();
+				SPtr<GpuProgram> hullProgram = graphicsPipeline->GetHullProgram();
 				if (hullProgram)
 				{
-					hullProgram->blockUntilCoreInitialized();
-					allParamDescs.push_back(hullProgram->getParamDesc());
+					hullProgram->BlockUntilCoreInitialized();
+					allParamDescs.push_back(hullProgram->GetParamDesc());
 				}
 
-				SPtr<GpuProgram> domainProgram = graphicsPipeline->getDomainProgram();
+				SPtr<GpuProgram> domainProgram = graphicsPipeline->GetDomainProgram();
 				if (domainProgram)
 				{
-					domainProgram->blockUntilCoreInitialized();
-					allParamDescs.push_back(domainProgram->getParamDesc());
+					domainProgram->BlockUntilCoreInitialized();
+					allParamDescs.push_back(domainProgram->GetParamDesc());
 				}
 			}
 
-			const SPtr<ComputePipelineState>& computePipeline = curPass->getComputePipelineState();
+			const SPtr<ComputePipelineState>& computePipeline = curPass->GetComputePipelineState();
 			if(computePipeline)
 			{
-				SPtr<GpuProgram> computeProgram = computePipeline->getProgram();
+				SPtr<GpuProgram> computeProgram = computePipeline->GetProgram();
 				if (computeProgram)
 				{
-					computeProgram->blockUntilCoreInitialized();
-					allParamDescs.push_back(computeProgram->getParamDesc());
+					computeProgram->BlockUntilCoreInitialized();
+					allParamDescs.push_back(computeProgram->GetParamDesc());
 				}
 				
 			}
@@ -141,40 +141,40 @@ namespace bs
 		Vector<SPtr<GpuParamDesc>> allParamDescs;
 
 		// Make sure all gpu programs are fully loaded
-		for (UINT32 i = 0; i < technique->getNumPasses(); i++)
+		for (UINT32 i = 0; i < technique->GetNumPasses(); i++)
 		{
-			SPtr<ct::Pass> curPass = technique->getPass(i);
+			SPtr<ct::Pass> curPass = technique->GetPass(i);
 
-			const SPtr<ct::GraphicsPipelineState>& graphicsPipeline = curPass->getGraphicsPipelineState();
+			const SPtr<ct::GraphicsPipelineState>& graphicsPipeline = curPass->GetGraphicsPipelineState();
 			if(graphicsPipeline)
 			{
-				SPtr<ct::GpuProgram> vertProgram = graphicsPipeline->getVertexProgram();
+				SPtr<ct::GpuProgram> vertProgram = graphicsPipeline->GetVertexProgram();
 				if (vertProgram)
-					allParamDescs.push_back(vertProgram->getParamDesc());
+					allParamDescs.push_back(vertProgram->GetParamDesc());
 
-				SPtr<ct::GpuProgram> fragProgram = graphicsPipeline->getFragmentProgram();
+				SPtr<ct::GpuProgram> fragProgram = graphicsPipeline->GetFragmentProgram();
 				if (fragProgram)
-					allParamDescs.push_back(fragProgram->getParamDesc());
+					allParamDescs.push_back(fragProgram->GetParamDesc());
 
-				SPtr<ct::GpuProgram> geomProgram = graphicsPipeline->getGeometryProgram();
+				SPtr<ct::GpuProgram> geomProgram = graphicsPipeline->GetGeometryProgram();
 				if (geomProgram)
-					allParamDescs.push_back(geomProgram->getParamDesc());
+					allParamDescs.push_back(geomProgram->GetParamDesc());
 
-				SPtr<ct::GpuProgram> hullProgram = graphicsPipeline->getHullProgram();
+				SPtr<ct::GpuProgram> hullProgram = graphicsPipeline->GetHullProgram();
 				if (hullProgram)
-					allParamDescs.push_back(hullProgram->getParamDesc());
+					allParamDescs.push_back(hullProgram->GetParamDesc());
 
-				SPtr<ct::GpuProgram> domainProgram = graphicsPipeline->getDomainProgram();
+				SPtr<ct::GpuProgram> domainProgram = graphicsPipeline->GetDomainProgram();
 				if (domainProgram)
-					allParamDescs.push_back(domainProgram->getParamDesc());
+					allParamDescs.push_back(domainProgram->GetParamDesc());
 			}
 
-			const SPtr<ct::ComputePipelineState>& computePipeline = curPass->getComputePipelineState();
+			const SPtr<ct::ComputePipelineState>& computePipeline = curPass->GetComputePipelineState();
 			if(computePipeline)
 			{
-				SPtr<ct::GpuProgram> computeProgram = computePipeline->getProgram();
+				SPtr<ct::GpuProgram> computeProgram = computePipeline->GetProgram();
 				if (computeProgram)
-					allParamDescs.push_back(computeProgram->getParamDesc());
+					allParamDescs.push_back(computeProgram->GetParamDesc());
 				
 			}
 		}
@@ -478,21 +478,21 @@ namespace bs
 	template<bool Core>
 	TGpuParamsSet<Core>::TGpuParamsSet(const SPtr<TechniqueType>& technique, const ShaderType& shader,
 		const SPtr<MaterialParamsType>& params)
-		:mPassParams(technique->getNumPasses()), mParamVersion(0)
+		:mPassParams(technique->GetNumPasses()), mParamVersion(0)
 	{
-		UINT32 numPasses = technique->getNumPasses();
+		UINT32 numPasses = technique->GetNumPasses();
 
 		// Create GpuParams for each pass and shader stage
 		for (UINT32 i = 0; i < numPasses; i++)
 		{
-			SPtr<PassType> curPass = technique->getPass(i);
+			SPtr<PassType> curPass = technique->GetPass(i);
 
-			SPtr<GraphicsPipelineStateType> gfxPipeline = curPass->getGraphicsPipelineState();
+			SPtr<GraphicsPipelineStateType> gfxPipeline = curPass->GetGraphicsPipelineState();
 			if(gfxPipeline != nullptr)
 				mPassParams[i] = GpuParamsType::Create(gfxPipeline);
 			else
 			{
-				SPtr<ComputePipelineStateType> computePipeline = curPass->getComputePipelineState();
+				SPtr<ComputePipelineStateType> computePipeline = curPass->GetComputePipelineState();
 				mPassParams[i] = GpuParamsType::Create(computePipeline);
 			}
 		}
@@ -501,13 +501,13 @@ namespace bs
 		Vector<SPtr<GpuParamDesc>> allParamDescs = getAllParamDescs(technique);
 
 		//// Fill out various helper structures
-		Vector<ShaderBlockDesc> paramBlockData = determineValidShareableParamBlocks(allParamDescs, shader->getParamBlocks());
+		Vector<ShaderBlockDesc> paramBlockData = determineValidShareableParamBlocks(allParamDescs, shader->GetParamBlocks());
 		UnorderedMap<ValidParamKey, String> validParams = determineValidParameters(
 			allParamDescs,
-			shader->getDataParams(),
-			shader->getTextureParams(),
-			shader->getBufferParams(),
-			shader->getSamplerParams());
+			shader->GetDataParams(),
+			shader->GetTextureParams(),
+			shader->GetBufferParams(),
+			shader->GetSamplerParams());
 
 		Map<String, ParamBlockPtrType> paramBlockBuffers;
 
@@ -541,12 +541,12 @@ namespace bs
 					{
 						ParamBlockPtrType blockBuffer = paramBlockBuffers[paramBlockName];
 
-						paramPtr->setParamBlockBuffer(progType, paramBlockName, blockBuffer);
+						paramPtr->SetParamBlockBuffer(progType, paramBlockName, blockBuffer);
 					}
 				}
 
 				// Create non-shareable ones (these are buffers defined by default by the RHI usually)
-				SPtr<GpuParamDesc> desc = paramPtr->getParamDesc(progType);
+				SPtr<GpuParamDesc> desc = paramPtr->GetParamDesc(progType);
 				if (desc == nullptr)
 					continue;
 
@@ -561,7 +561,7 @@ namespace bs
 
 						globalBlockIdx = (UINT32)mBlocks.size();
 
-						paramPtr->setParamBlockBuffer(progType, iterBlockDesc->first, newParamBlockBuffer);
+						paramPtr->SetParamBlockBuffer(progType, iterBlockDesc->first, newParamBlockBuffer);
 						mBlocks.emplace_back(iterBlockDesc->first, iterBlockDesc->second.set,
 							iterBlockDesc->second.slot, newParamBlockBuffer, false);
 					}
@@ -591,7 +591,7 @@ namespace bs
 						if (iterFind == validParams.end())
 							continue;
 
-						UINT32 paramIdx = params->getParamIndex(iterFind->second);
+						UINT32 paramIdx = params->GetParamIndex(iterFind->second);
 
 						// Parameter shouldn't be in the valid parameter list if it cannot be found
 						assert(paramIdx != (UINT32)-1);
@@ -609,7 +609,7 @@ namespace bs
 
 		// Add buffers defined in shader but not actually used by GPU programs (so we can check if user is providing a
 		// valid buffer name)
-		auto& allParamBlocks = shader->getParamBlocks();
+		auto& allParamBlocks = shader->GetParamBlocks();
 		for (auto& entry : allParamBlocks)
 		{
 			auto iterFind = std::find_if(mBlocks.begin(), mBlocks.end(),
@@ -656,7 +656,7 @@ namespace bs
 								continue;
 
 							UINT32 paramIdx;
-							auto result = params->getParamIndex(iterFind->second, paramType, GPDT_UNKNOWN, 0, paramIdx);
+							auto result = params->GetParamIndex(iterFind->second, paramType, GPDT_UNKNOWN, 0, paramIdx);
 
 							// Parameter shouldn't be in the valid parameter list if it cannot be found
 							assert(result == MaterialParams::GetParamResult::Success);
@@ -672,7 +672,7 @@ namespace bs
 						}
 					};
 
-					SPtr<GpuParamDesc> desc = paramPtr->getParamDesc(progType);
+					SPtr<GpuParamDesc> desc = paramPtr->GetParamDesc(progType);
 					if(desc == nullptr)
 					{
 						stageOffsets += 4;
@@ -773,7 +773,7 @@ namespace bs
 					{
 						GpuProgramType progType = (GpuProgramType)j;
 
-						SPtr<GpuParamDesc> curDesc = paramPtr->getParamDesc(progType);
+						SPtr<GpuParamDesc> curDesc = paramPtr->GetParamDesc(progType);
 						if (curDesc == nullptr)
 						{
 							block.passData[i].bindings[j].set = -1;
@@ -863,7 +863,7 @@ namespace bs
 					const BlockBinding& binding = blockInfo.passData[j].bindings[progType];
 
 					if (binding.slot != (UINT32)-1)
-						paramPtr->setParamBlockBuffer(binding.set, binding.slot, paramBlock);
+						paramPtr->SetParamBlockBuffer(binding.set, binding.slot, paramBlock);
 				}
 			}
 		}
@@ -873,7 +873,7 @@ namespace bs
 	void TGpuParamsSet<Core>::SetParamBlockBuffer(const String& name, const ParamBlockPtrType& paramBlock,
 		bool ignoreInUpdate)
 	{
-		UINT32 bufferIdx = getParamBlockBufferIndex(name);
+		UINT32 bufferIdx = GetParamBlockBufferIndex(name);
 		if(bufferIdx == (UINT32)-1)
 		{
 			BS_LOG(Error, RenderBackend, "Cannot set parameter block buffer with the name \"{0}\". Buffer name not found. ",
@@ -898,7 +898,7 @@ namespace bs
 			if (paramBlock == nullptr || !mBlocks[paramInfo.blockIdx].allowUpdate)
 				continue;
 
-			const MaterialParams::ParamData* materialParamInfo = params->getParamData(paramInfo.paramIdx);
+			const MaterialParams::ParamData* materialParamInfo = params->GetParamData(paramInfo.paramIdx);
 			UINT32 arraySize = materialParamInfo->arraySize == 0 ? 1 : materialParamInfo->arraySize;
 			
 			bool isAnimated = false;
@@ -922,7 +922,7 @@ namespace bs
 				else
 					paramSize = paramInfo.arrayStride * typeInfo.baseTypeSize;
 
-				UINT8* data = params->getData(materialParamInfo->index);
+				UINT8* data = params->GetData(materialParamInfo->index);
 				if (!isAnimated)
 				{
 					const bool transposeMatrices = ct::gCaps().conventions.matrixOrder == Conventions::MatrixOrder::ColumnMajor;
@@ -1048,7 +1048,7 @@ namespace bs
 						assert(paramSize == sizeof(Rect2));
 
 						CoreVariantHandleType<SpriteTexture, Core> spriteTexture =
-							params->getOwningSpriteTexture(*materialParamInfo);
+							params->GetOwningSpriteTexture(*materialParamInfo);
 
 						UINT32 writeOffset = paramInfo.offset * sizeof(UINT32);
 						Rect2 uv = Rect2(0.0f, 0.0f, 1.0f, 1.0f);
@@ -1078,9 +1078,9 @@ namespace bs
 							Color value;
 							if (params->isAnimated(*materialParamInfo, i))
 							{
-								const ColorGradientHDR& gradient = params->getColorGradientParam(*materialParamInfo, i);
+								const ColorGradientHDR& gradient = params->GetColorGradientParam(*materialParamInfo, i);
 
-								const float wrappedT = Math::repeat(t, gradient.getDuration());
+								const float wrappedT = Math::Repeat(t, gradient.getDuration());
 								value = gradient.evaluate(wrappedT);
 							}
 							else
@@ -1093,11 +1093,11 @@ namespace bs
 			}
 			else
 			{
-				UINT32 paramSize = params->getStructSize(*materialParamInfo);
+				UINT32 paramSize = params->GetStructSize(*materialParamInfo);
 				void* paramData = bs_stack_alloc(paramSize);
 				for (UINT32 i = 0; i < arraySize; i++)
 				{
-					params->getStructData(*materialParamInfo, paramData, paramSize, i);
+					params->GetStructData(*materialParamInfo, paramData, paramSize, i);
 
 					UINT32 writeOffset = (paramInfo.offset + paramInfo.arrayStride * i) * sizeof(UINT32);
 					paramBlock->write(writeOffset, paramData, paramSize);
@@ -1121,65 +1121,65 @@ namespace bs
 				{
 					const ObjectParamInfo& paramInfo = stageInfo.textures[k];
 
-					const MaterialParams::ParamData* materialParamInfo = params->getParamData(paramInfo.paramIdx);
+					const MaterialParams::ParamData* materialParamInfo = params->GetParamData(paramInfo.paramIdx);
 					if (materialParamInfo->version <= mParamVersion && !updateAll)
 						continue;
 
 					TextureSurface surface;
 					TextureType texture;
-					params->getTexture(*materialParamInfo, texture, surface);
+					params->GetTexture(*materialParamInfo, texture, surface);
 
-					paramPtr->setTexture(paramInfo.setIdx, paramInfo.slotIdx, texture, surface);
+					paramPtr->SetTexture(paramInfo.setIdx, paramInfo.slotIdx, texture, surface);
 				}
 
 				for (UINT32 k = 0; k < stageInfo.numLoadStoreTextures; k++)
 				{
 					const ObjectParamInfo& paramInfo = stageInfo.loadStoreTextures[k];
 
-					const MaterialParams::ParamData* materialParamInfo = params->getParamData(paramInfo.paramIdx);
+					const MaterialParams::ParamData* materialParamInfo = params->GetParamData(paramInfo.paramIdx);
 					if (materialParamInfo->version <= mParamVersion && !updateAll)
 						continue;
 
 					TextureSurface surface;
 					TextureType texture;
-					params->getLoadStoreTexture(*materialParamInfo, texture, surface);
+					params->GetLoadStoreTexture(*materialParamInfo, texture, surface);
 
-					paramPtr->setLoadStoreTexture(paramInfo.setIdx, paramInfo.slotIdx, texture, surface);
+					paramPtr->SetLoadStoreTexture(paramInfo.setIdx, paramInfo.slotIdx, texture, surface);
 				}
 
 				for (UINT32 k = 0; k < stageInfo.numBuffers; k++)
 				{
 					const ObjectParamInfo& paramInfo = stageInfo.buffers[k];
 
-					const MaterialParams::ParamData* materialParamInfo = params->getParamData(paramInfo.paramIdx);
+					const MaterialParams::ParamData* materialParamInfo = params->GetParamData(paramInfo.paramIdx);
 					if (materialParamInfo->version <= mParamVersion && !updateAll)
 						continue;
 
 					BufferType buffer;
-					params->getBuffer(*materialParamInfo, buffer);
+					params->GetBuffer(*materialParamInfo, buffer);
 
-					paramPtr->setBuffer(paramInfo.setIdx, paramInfo.slotIdx, buffer);
+					paramPtr->SetBuffer(paramInfo.setIdx, paramInfo.slotIdx, buffer);
 				}
 
 				for (UINT32 k = 0; k < stageInfo.numSamplerStates; k++)
 				{
 					const ObjectParamInfo& paramInfo = stageInfo.samplerStates[k];
 
-					const MaterialParams::ParamData* materialParamInfo = params->getParamData(paramInfo.paramIdx);
+					const MaterialParams::ParamData* materialParamInfo = params->GetParamData(paramInfo.paramIdx);
 					if (materialParamInfo->version <= mParamVersion && !updateAll)
 						continue;
 
 					SamplerStateType samplerState;
-					params->getSamplerState(*materialParamInfo, samplerState);
+					params->GetSamplerState(*materialParamInfo, samplerState);
 
-					paramPtr->setSamplerState(paramInfo.setIdx, paramInfo.slotIdx, samplerState);
+					paramPtr->SetSamplerState(paramInfo.setIdx, paramInfo.slotIdx, samplerState);
 				}
 			}
 
 			paramPtr->MarkCoreDirtyInternal();
 		}
 
-		mParamVersion = params->getParamVersion();
+		mParamVersion = params->GetParamVersion();
 	}
 
 	template class TGpuParamsSet <false>;

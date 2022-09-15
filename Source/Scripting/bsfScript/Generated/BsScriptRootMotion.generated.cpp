@@ -37,7 +37,7 @@ namespace bs
 	MonoObject* ScriptRootMotion::InternalGetPositionCurves(ScriptRootMotion* thisPtr)
 	{
 		SPtr<TAnimationCurve<Vector3>> tmp__output = bs_shared_ptr_new<TAnimationCurve<Vector3>>();
-		*tmp__output = RootMotionEx::GetPositionCurves(thisPtr->getInternal());
+		*tmp__output = RootMotionEx::GetPositionCurves(thisPtr->GetInternal());
 
 		MonoObject* __output;
 		__output = ScriptTAnimationCurveVector3::Create(tmp__output);
@@ -48,7 +48,7 @@ namespace bs
 	MonoObject* ScriptRootMotion::InternalGetRotationCurves(ScriptRootMotion* thisPtr)
 	{
 		SPtr<TAnimationCurve<Quaternion>> tmp__output = bs_shared_ptr_new<TAnimationCurve<Quaternion>>();
-		*tmp__output = RootMotionEx::getRotationCurves(thisPtr->getInternal());
+		*tmp__output = RootMotionEx::getRotationCurves(thisPtr->GetInternal());
 
 		MonoObject* __output;
 		__output = ScriptTAnimationCurveQuaternion::Create(tmp__output);

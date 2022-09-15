@@ -107,7 +107,7 @@ namespace bs { namespace ct
 		VulkanQuery* query = getQuery(VK_QUERY_TYPE_TIMESTAMP);
 		query->mFree = false;
 
-		VkCommandBuffer vkCmdBuf = cb->getHandle();
+		VkCommandBuffer vkCmdBuf = cb->GetHandle();
 		cb->resetQuery(query);
 		vkCmdWriteTimestamp(vkCmdBuf, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, query->mPool, query->mQueryIdx);
 
@@ -124,7 +124,7 @@ namespace bs { namespace ct
 		VulkanQuery* query = getQuery(VK_QUERY_TYPE_OCCLUSION);
 		query->mFree = false;
 
-		VkCommandBuffer vkCmdBuf = cb->getHandle();
+		VkCommandBuffer vkCmdBuf = cb->GetHandle();
 		cb->resetQuery(query);
 		vkCmdBeginQuery(vkCmdBuf, query->mPool, query->mQueryIdx, precise ? VK_QUERY_CONTROL_PRECISE_BIT : 0);
 
@@ -138,7 +138,7 @@ namespace bs { namespace ct
 	{
 		Lock lock(mMutex);
 
-		VkCommandBuffer vkCmdBuf = cb->getHandle();
+		VkCommandBuffer vkCmdBuf = cb->GetHandle();
 		vkCmdEndQuery(vkCmdBuf, query->mPool, query->mQueryIdx);
 	}
 
@@ -197,7 +197,7 @@ namespace bs { namespace ct
 		// to a command buffer upon use. Then when CB finishes executing we perform vkGetQueryPoolResults on all queries
 		// in the pool at once.
 
-		VkDevice vkDevice = mOwner->getDevice().getLogical();
+		VkDevice vkDevice = mOwner->GetDevice().getLogical();
 		VkResult vkResult = vkGetQueryPoolResults(vkDevice, mPool, mQueryIdx, 1, sizeof(result), &result, sizeof(result),
 												  VK_QUERY_RESULT_64_BIT);
 		assert(vkResult == VK_SUCCESS || vkResult == VK_NOT_READY);

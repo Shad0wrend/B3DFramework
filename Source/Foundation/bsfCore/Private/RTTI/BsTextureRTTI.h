@@ -52,13 +52,13 @@ namespace bs
 
 		SPtr<PixelData> GetPixelData(Texture* obj, UINT32 idx)
 		{
-			UINT32 face = (size_t)Math::floor(idx / (float)(obj->mProperties.getNumMipmaps() + 1));
-			UINT32 mipmap = idx % (obj->mProperties.getNumMipmaps() + 1);
+			UINT32 face = (size_t)Math::Floor(idx / (float)(obj->mProperties.GetNumMipmaps() + 1));
+			UINT32 mipmap = idx % (obj->mProperties.GetNumMipmaps() + 1);
 
-			SPtr<PixelData> pixelData = obj->mProperties.allocBuffer(face, mipmap);
+			SPtr<PixelData> pixelData = obj->mProperties.AllocBuffer(face, mipmap);
 
-			obj->readData(pixelData, face, mipmap);
-			gCoreThread().submitAll(true);
+			obj->ReadData(pixelData, face, mipmap);
+			gCoreThread().SubmitAll(true);
 
 			return pixelData;
 		}
@@ -70,7 +70,7 @@ namespace bs
 
 		UINT32 GetPixelDataArraySize(Texture* obj)
 		{
-			return obj->mProperties.getNumFaces() * (obj->mProperties.getNumMipmaps() + 1);
+			return obj->mProperties.GetNumFaces() * (obj->mProperties.GetNumMipmaps() + 1);
 		}
 
 		void SetPixelDataArraySize(Texture* obj, UINT32 size)
@@ -81,7 +81,7 @@ namespace bs
 	public:
 		TextureRTTI()
 		{
-			addPlainField("mUsage", 11, &TextureRTTI::GetUsage, &TextureRTTI::SetUsage);
+			AddPlainField("mUsage", 11, &TextureRTTI::GetUsage, &TextureRTTI::SetUsage);
 
 			addReflectablePtrArrayField("mPixelData", 12, &TextureRTTI::getPixelData, &TextureRTTI::getPixelDataArraySize,
 				&TextureRTTI::setPixelData, &TextureRTTI::setPixelDataArraySize, RTTIFieldInfo(RTTIFieldFlag::SkipInReferenceSearch));
@@ -94,9 +94,9 @@ namespace bs
 
 			// Update pixel format if needed as it's possible the original texture was saved using some other render API
 			// that has an unsupported format.
-			PixelFormat originalFormat = texProps.getFormat();
-			PixelFormat validFormat = TextureManager::Instance().getNativeFormat(
-				texProps.getTextureType(), texProps.getFormat(), texProps.getUsage(), texProps.isHardwareGammaEnabled());
+			PixelFormat originalFormat = texProps.GetFormat();
+			PixelFormat validFormat = TextureManager::Instance().GetNativeFormat(
+				texProps.GetTextureType(), texProps.GetFormat(), texProps.GetUsage(), texProps.IsHardwareGammaEnabled());
 
 			if (originalFormat != validFormat)
 			{
@@ -105,23 +105,23 @@ namespace bs
 				for (size_t i = 0; i < mPixelData.size(); i++)
 				{
 					SPtr<PixelData> origData = mPixelData[i];
-					SPtr<PixelData> newData = PixelData::Create(origData->getWidth(), origData->getHeight(), origData->getDepth(), validFormat);
+					SPtr<PixelData> newData = PixelData::Create(origData->GetWidth(), origData->GetHeight(), origData->GetDepth(), validFormat);
 
-					PixelUtil::bulkPixelConversion(*origData, *newData);
+					PixelUtil::BulkPixelConversion(*origData, *newData);
 					mPixelData[i] = newData;
 				}
 			}
 
 			// A bit clumsy initializing with already set values, but I feel its better than complicating things and storing the values
 			// in mRTTIData.
-			texture->initialize();
+			texture->Initialize();
 
 			for(size_t i = 0; i < mPixelData.size(); i++)
 			{
-				UINT32 face = (size_t)Math::floor(i / (float)(texProps.getNumMipmaps() + 1));
-				UINT32 mipmap = i % (texProps.getNumMipmaps() + 1);
+				UINT32 face = (size_t)Math::Floor(i / (float)(texProps.GetNumMipmaps() + 1));
+				UINT32 mipmap = i % (texProps.GetNumMipmaps() + 1);
 
-				texture->writeData(mPixelData[i], face, mipmap, false);
+				texture->WriteData(mPixelData[i], face, mipmap, false);
 			}
 		}
 
@@ -136,7 +136,7 @@ namespace bs
 			return TID_Texture;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return TextureManager::Instance().CreateEmptyInternal();
 		}

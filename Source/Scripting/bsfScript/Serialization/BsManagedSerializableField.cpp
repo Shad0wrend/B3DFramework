@@ -86,7 +86,7 @@ namespace bs
 
 	SPtr<ManagedSerializableFieldData> ManagedSerializableFieldData::Create(const SPtr<ManagedSerializableTypeInfo>& typeInfo, MonoObject* value, bool allowNull)
 	{
-		if(typeInfo->getTypeId() == TID_SerializableTypeInfoPrimitive || typeInfo->getTypeId() == TID_SerializableTypeInfoEnum)
+		if(typeInfo->GetTypeId() == TID_SerializableTypeInfoPrimitive || typeInfo->GetTypeId() == TID_SerializableTypeInfoEnum)
 		{
 			ScriptPrimitiveType primitiveType = ScriptPrimitiveType::I32;
 
@@ -209,7 +209,7 @@ namespace bs
 				break;
 			}
 		}
-		else if (typeInfo->getTypeId() == TID_SerializableTypeInfoRef)
+		else if (typeInfo->GetTypeId() == TID_SerializableTypeInfoRef)
 		{
 			auto refTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoRef>(typeInfo);
 			switch (refTypeInfo->mType)
@@ -221,7 +221,7 @@ namespace bs
 				if (value != nullptr)
 				{
 					ScriptSceneObject* scriptSceneObject = ScriptSceneObject::toNative(value);
-					fieldData->value = scriptSceneObject->getNativeHandle();
+					fieldData->value = scriptSceneObject->GetNativeHandle();
 				}
 
 				return fieldData;
@@ -234,7 +234,7 @@ namespace bs
 				if (value != nullptr)
 				{
 					ScriptManagedComponent* scriptComponent = ScriptManagedComponent::toNative(value);
-					fieldData->value = scriptComponent->getNativeHandle();
+					fieldData->value = scriptComponent->GetNativeHandle();
 				}
 
 				return fieldData;
@@ -251,7 +251,7 @@ namespace bs
 				if (value != nullptr)
 				{
 					ScriptComponentBase* scriptComponent = ScriptComponent::toNative(value);
-					fieldData->value = static_object_cast<GameObject>(scriptComponent->getComponent());
+					fieldData->value = static_object_cast<GameObject>(scriptComponent->GetComponent());
 				}
 
 				return fieldData;
@@ -264,7 +264,7 @@ namespace bs
 				if (value != nullptr)
 				{
 					ScriptResourceBase* scriptResource = ScriptManagedResource::toNative(value);
-					fieldData->value = scriptResource->getGenericHandle();
+					fieldData->value = scriptResource->GetGenericHandle();
 				}
 
 				return fieldData;
@@ -281,7 +281,7 @@ namespace bs
 				if (value != nullptr)
 				{
 					ScriptResourceBase* scriptResource = ScriptResource::toNative(value);
-					fieldData->value = scriptResource->getGenericHandle();
+					fieldData->value = scriptResource->GetGenericHandle();
 				}
 
 				return fieldData;
@@ -297,7 +297,7 @@ namespace bs
 				if (value != nullptr)
 				{
 					ScriptReflectableBase* scriptReflectable = (ScriptReflectableBase*)ScriptObjectImpl::toNative(value);
-					fieldData->value = scriptReflectable->getReflectable();
+					fieldData->value = scriptReflectable->GetReflectable();
 				}
 
 				return fieldData;
@@ -306,19 +306,19 @@ namespace bs
 				break;
 			}
 		}
-		else if(typeInfo->getTypeId() == TID_SerializableTypeInfoRRef)
+		else if(typeInfo->GetTypeId() == TID_SerializableTypeInfoRRef)
 		{
 			auto fieldData = bs_shared_ptr_new<ManagedSerializableFieldDataResourceRef>();
 
 			if(value != nullptr)
 			{
 				ScriptRRefBase* scriptRRefBase = ScriptRRefBase::toNative(value);
-				fieldData->value = scriptRRefBase->getHandle();
+				fieldData->value = scriptRRefBase->GetHandle();
 			}
 
 			return fieldData;
 		}
-		else if(typeInfo->getTypeId() == TID_SerializableTypeInfoObject)
+		else if(typeInfo->GetTypeId() == TID_SerializableTypeInfoObject)
 		{
 			auto fieldData = bs_shared_ptr_new<ManagedSerializableFieldDataObject>();
 			if (value != nullptr)
@@ -328,7 +328,7 @@ namespace bs
 
 			return fieldData;
 		}
-		else if(typeInfo->getTypeId() == TID_SerializableTypeInfoArray)
+		else if(typeInfo->GetTypeId() == TID_SerializableTypeInfoArray)
 		{
 			SPtr<ManagedSerializableTypeInfoArray> arrayTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoArray>(typeInfo);
 
@@ -343,7 +343,7 @@ namespace bs
 
 			return fieldData;
 		}
-		else if(typeInfo->getTypeId() == TID_SerializableTypeInfoList)
+		else if(typeInfo->GetTypeId() == TID_SerializableTypeInfoList)
 		{
 			SPtr<ManagedSerializableTypeInfoList> listTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoList>(typeInfo);
 
@@ -355,7 +355,7 @@ namespace bs
 
 			return fieldData;
 		}
-		else if(typeInfo->getTypeId() == TID_SerializableTypeInfoDictionary)
+		else if(typeInfo->GetTypeId() == TID_SerializableTypeInfoDictionary)
 		{
 			SPtr<ManagedSerializableTypeInfoDictionary> dictTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoDictionary>(typeInfo);
 
@@ -463,7 +463,7 @@ namespace bs
 
 	void* ManagedSerializableFieldDataFloat::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
-		if(typeInfo->getTypeId() == TID_SerializableTypeInfoPrimitive)
+		if(typeInfo->GetTypeId() == TID_SerializableTypeInfoPrimitive)
 		{
 			auto primitiveTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoPrimitive>(typeInfo);
 			if(primitiveTypeInfo->mType == ScriptPrimitiveType::Float)
@@ -476,7 +476,7 @@ namespace bs
 
 	void* ManagedSerializableFieldDataDouble::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
-		if(typeInfo->getTypeId() == TID_SerializableTypeInfoPrimitive)
+		if(typeInfo->GetTypeId() == TID_SerializableTypeInfoPrimitive)
 		{
 			auto primitiveTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoPrimitive>(typeInfo);
 			if(primitiveTypeInfo->mType == ScriptPrimitiveType::Double)
@@ -489,7 +489,7 @@ namespace bs
 
 	void* ManagedSerializableFieldDataString::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
-		if(typeInfo->getTypeId() == TID_SerializableTypeInfoPrimitive)
+		if(typeInfo->GetTypeId() == TID_SerializableTypeInfoPrimitive)
 		{
 			auto primitiveTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoPrimitive>(typeInfo);
 			if(primitiveTypeInfo->mType == ScriptPrimitiveType::String)
@@ -507,11 +507,11 @@ namespace bs
 
 	void* ManagedSerializableFieldDataResourceRef::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
-		if(typeInfo->getTypeId() == TID_SerializableTypeInfoRef)
+		if(typeInfo->GetTypeId() == TID_SerializableTypeInfoRef)
 		{
 			const auto refTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoRef>(typeInfo);
 
-			if (!value.isLoaded())
+			if (!value.IsLoaded())
 				return nullptr;
 
 			if (refTypeInfo->mType == ScriptReferenceType::ManagedResourceBase ||
@@ -520,17 +520,17 @@ namespace bs
 				ScriptResourceBase* scriptResource = ScriptResourceManager::Instance().getScriptResource(value, false);
 				assert(scriptResource != nullptr);
 
-				return scriptResource->getManagedInstance();
+				return scriptResource->GetManagedInstance();
 			}
 			else if (refTypeInfo->mType == ScriptReferenceType::BuiltinResourceBase ||
 					 refTypeInfo->mType == ScriptReferenceType::BuiltinResource)
 			{
 				ScriptResourceBase* scriptResource = ScriptResourceManager::Instance().getScriptResource(value, true);
 
-				return scriptResource->getManagedInstance();
+				return scriptResource->GetManagedInstance();
 			}
 		}
-		else if(typeInfo->getTypeId() == TID_SerializableTypeInfoRRef)
+		else if(typeInfo->GetTypeId() == TID_SerializableTypeInfoRRef)
 		{
 			const auto refTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoRRef>(typeInfo);
 
@@ -540,7 +540,7 @@ namespace bs
 				if (!typeInfo->isTypeLoaded())
 					return nullptr;
 
-				resourceRRefClass = typeInfo->getMonoClass();
+				resourceRRefClass = typeInfo->GetMonoClass();
 				if (resourceRRefClass == nullptr)
 					return nullptr;
 			}
@@ -557,7 +557,7 @@ namespace bs
 
 	void* ManagedSerializableFieldDataGameObjectRef::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
-		if(typeInfo->getTypeId() == TID_SerializableTypeInfoRef)
+		if(typeInfo->GetTypeId() == TID_SerializableTypeInfoRef)
 		{
 			auto refTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoRef>(typeInfo);
 
@@ -567,7 +567,7 @@ namespace bs
 				{
 					ScriptSceneObject* scriptSceneObject =
 						ScriptGameObjectManager::Instance().getOrCreateScriptSceneObject(static_object_cast<SceneObject>(value));
-					return scriptSceneObject->getManagedInstance();
+					return scriptSceneObject->GetManagedInstance();
 				}
 				else
 					return nullptr;
@@ -581,7 +581,7 @@ namespace bs
 						ScriptGameObjectManager::Instance().getManagedScriptComponent(static_object_cast<ManagedComponent>(value));
 					assert(scriptComponent != nullptr);
 
-					return scriptComponent->getManagedInstance();
+					return scriptComponent->GetManagedInstance();
 				}
 				else
 					return nullptr;
@@ -595,7 +595,7 @@ namespace bs
 						ScriptGameObjectManager::Instance().getBuiltinScriptComponent(static_object_cast<Component>(value));
 					assert(scriptComponent != nullptr);
 
-					return scriptComponent->getManagedInstance();
+					return scriptComponent->GetManagedInstance();
 				}
 				else
 					return nullptr;
@@ -608,7 +608,7 @@ namespace bs
 
 	void* ManagedSerializableFieldDataReflectableRef::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
-		if(typeInfo->getTypeId() == TID_SerializableTypeInfoRef)
+		if(typeInfo->GetTypeId() == TID_SerializableTypeInfoRef)
 		{
 			const auto refTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoRef>(typeInfo);
 
@@ -630,7 +630,7 @@ namespace bs
 
 	void* ManagedSerializableFieldDataObject::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
-		if(typeInfo->getTypeId() == TID_SerializableTypeInfoObject)
+		if(typeInfo->GetTypeId() == TID_SerializableTypeInfoObject)
 		{
 			auto objectTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoObject>(typeInfo);
 
@@ -638,13 +638,13 @@ namespace bs
 			{
 				if(objectTypeInfo->mValueType)
 				{
-					MonoObject* managedInstance = value->getManagedInstance();
+					MonoObject* managedInstance = value->GetManagedInstance();
 					
 					if(managedInstance != nullptr)
 						return MonoUtil::unbox(managedInstance); // Structs are passed as raw types because mono expects them as such
 				}
 				else
-					return value->getManagedInstance();
+					return value->GetManagedInstance();
 			}
 
 			return nullptr;
@@ -656,12 +656,12 @@ namespace bs
 
 	void* ManagedSerializableFieldDataArray::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
-		if(typeInfo->getTypeId() == TID_SerializableTypeInfoArray)
+		if(typeInfo->GetTypeId() == TID_SerializableTypeInfoArray)
 		{
 			auto objectTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoArray>(typeInfo);
 
 			if(value != nullptr)
-				return value->getManagedInstance();
+				return value->GetManagedInstance();
 
 			return nullptr;
 		}
@@ -672,12 +672,12 @@ namespace bs
 
 	void* ManagedSerializableFieldDataList::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
-		if(typeInfo->getTypeId() == TID_SerializableTypeInfoList)
+		if(typeInfo->GetTypeId() == TID_SerializableTypeInfoList)
 		{
 			auto listTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoList>(typeInfo);
 
 			if(value != nullptr)
-				return value->getManagedInstance();
+				return value->GetManagedInstance();
 
 			return nullptr;
 		}
@@ -688,12 +688,12 @@ namespace bs
 
 	void* ManagedSerializableFieldDataDictionary::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
-		if(typeInfo->getTypeId() == TID_SerializableTypeInfoDictionary)
+		if(typeInfo->GetTypeId() == TID_SerializableTypeInfoDictionary)
 		{
 			auto dictionaryTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoDictionary>(typeInfo);
 
 			if(value != nullptr)
-				return value->getManagedInstance();
+				return value->GetManagedInstance();
 
 			return nullptr;
 		}
@@ -794,7 +794,7 @@ namespace bs
 
 	MonoObject* ManagedSerializableFieldDataFloat::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
-		if (typeInfo->getTypeId() == TID_SerializableTypeInfoPrimitive)
+		if (typeInfo->GetTypeId() == TID_SerializableTypeInfoPrimitive)
 		{
 			auto primitiveTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoPrimitive>(typeInfo);
 			if (primitiveTypeInfo->mType == ScriptPrimitiveType::Float)
@@ -807,7 +807,7 @@ namespace bs
 
 	MonoObject* ManagedSerializableFieldDataDouble::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
-		if (typeInfo->getTypeId() == TID_SerializableTypeInfoPrimitive)
+		if (typeInfo->GetTypeId() == TID_SerializableTypeInfoPrimitive)
 		{
 			auto primitiveTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoPrimitive>(typeInfo);
 			if (primitiveTypeInfo->mType == ScriptPrimitiveType::Double)
@@ -840,12 +840,12 @@ namespace bs
 
 	MonoObject* ManagedSerializableFieldDataObject::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
-		if (typeInfo->getTypeId() == TID_SerializableTypeInfoObject)
+		if (typeInfo->GetTypeId() == TID_SerializableTypeInfoObject)
 		{
 			auto objectTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoObject>(typeInfo);
 
 			if (value != nullptr)
-				return value->getManagedInstance();
+				return value->GetManagedInstance();
 
 			return nullptr;
 		}
@@ -982,16 +982,16 @@ namespace bs
 			if((!value && otherObj->value) || (value && !otherObj->value))
 				return false;
 
-			UINT32 oldLength = value->getTotalLength();
-			UINT32 newLength = otherObj->value->getTotalLength();
+			UINT32 oldLength = value->GetTotalLength();
+			UINT32 newLength = otherObj->value->GetTotalLength();
 
 			if(oldLength != newLength)
 				return false;
 
 			for (UINT32 i = 0; i < newLength; i++)
 			{
-				SPtr<ManagedSerializableFieldData> oldData = value->getFieldData(i);
-				SPtr<ManagedSerializableFieldData> newData = otherObj->value->getFieldData(i);
+				SPtr<ManagedSerializableFieldData> oldData = value->GetFieldData(i);
+				SPtr<ManagedSerializableFieldData> newData = otherObj->value->GetFieldData(i);
 
 				if (compareFieldData(oldData, newData))
 					return false;
@@ -1013,16 +1013,16 @@ namespace bs
 			if((!value && otherObj->value) || (value && !otherObj->value))
 				return false;
 
-			UINT32 oldLength = value->getLength();
-			UINT32 newLength = otherObj->value->getLength();
+			UINT32 oldLength = value->GetLength();
+			UINT32 newLength = otherObj->value->GetLength();
 
 			if(oldLength != newLength)
 				return false;
 
 			for (UINT32 i = 0; i < newLength; i++)
 			{
-				SPtr<ManagedSerializableFieldData> oldData = value->getFieldData(i);
-				SPtr<ManagedSerializableFieldData> newData = otherObj->value->getFieldData(i);
+				SPtr<ManagedSerializableFieldData> oldData = value->GetFieldData(i);
+				SPtr<ManagedSerializableFieldData> newData = otherObj->value->GetFieldData(i);
 
 				if (compareFieldData(oldData, newData))
 					return false;
@@ -1044,20 +1044,20 @@ namespace bs
 			if((!value && otherObj->value) || (value && !otherObj->value))
 				return false;
 
-			auto newEnumerator = otherObj->value->getEnumerator();
+			auto newEnumerator = otherObj->value->GetEnumerator();
 			while (newEnumerator.moveNext())
 			{
 				SPtr<ManagedSerializableFieldData> key = newEnumerator.getKey();
 				if (value->contains(key))
 				{
-					if(!compareFieldData(value->getFieldData(key), newEnumerator.getValue()))
+					if(!compareFieldData(value->GetFieldData(key), newEnumerator.getValue()))
 						return false;
 				}
 				else
 					return false;
 			}
 
-			auto oldEnumerator = value->getEnumerator();
+			auto oldEnumerator = value->GetEnumerator();
 			while (oldEnumerator.moveNext())
 			{
 				SPtr<ManagedSerializableFieldData> key = oldEnumerator.getKey();
@@ -1197,7 +1197,7 @@ namespace bs
 		if (value != nullptr)
 		{
 			MonoObject* managedInstance = value->deserialize();
-			value = ManagedSerializableArray::createFromExisting(managedInstance, value->getTypeInfo());
+			value = ManagedSerializableArray::createFromExisting(managedInstance, value->GetTypeInfo());
 		}
 	}
 
@@ -1212,7 +1212,7 @@ namespace bs
 		if (value != nullptr)
 		{
 			MonoObject* managedInstance = value->deserialize();
-			value = ManagedSerializableList::createFromExisting(managedInstance, value->getTypeInfo());
+			value = ManagedSerializableList::createFromExisting(managedInstance, value->GetTypeInfo());
 		}
 	}
 
@@ -1227,7 +1227,7 @@ namespace bs
 		if (value != nullptr)
 		{
 			MonoObject* managedInstance = value->deserialize();
-			value = ManagedSerializableDictionary::createFromExisting(managedInstance, value->getTypeInfo());
+			value = ManagedSerializableDictionary::createFromExisting(managedInstance, value->GetTypeInfo());
 		}
 	}
 

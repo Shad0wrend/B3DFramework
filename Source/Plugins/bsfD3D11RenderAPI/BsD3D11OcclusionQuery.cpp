@@ -55,7 +55,7 @@ namespace bs { namespace ct
 		else
 		{
 			SPtr<D3D11CommandBuffer> d3d11CB = std::static_pointer_cast<D3D11CommandBuffer>(cb);
-			d3d11CB->queueCommand(execute);
+			d3d11CB->QueueCommand(execute);
 		}
 	}
 
@@ -74,7 +74,7 @@ namespace bs { namespace ct
 		else
 		{
 			SPtr<D3D11CommandBuffer> d3d11CB = std::static_pointer_cast<D3D11CommandBuffer>(cb);
-			d3d11CB->queueCommand(execute);
+			d3d11CB->QueueCommand(execute);
 		}
 	}
 

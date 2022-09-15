@@ -405,7 +405,7 @@ namespace bs
 		 * w component of the vector is assumed to be 1. After transformation all components
 		 * are projected back so that w remains 1.
 		 * @note
-		 * If your matrix doesn't contain projection components use multiplyAffine() method as it is faster.
+		 * If your matrix doesn't contain projection components use MultiplyAffine() method as it is faster.
 		 */
 		Vector3 Multiply(const Vector3& v) const
 		{
@@ -423,7 +423,7 @@ namespace bs
 		/**
 		 * Transform a 4D vector by this matrix.
 		 *
-		 * @note	If your matrix doesn't contain projection components use multiplyAffine() method as it is faster.
+		 * @note	If your matrix doesn't contain projection components use MultiplyAffine() method as it is faster.
 		 */
 		Vector4 Multiply(const Vector4& v) const
 		{

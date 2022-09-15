@@ -24,7 +24,7 @@ namespace bs
 		if (renderWindow->GetProperties().isModal)
 			mModalWindowStack.push_back(renderWindow.get());
 
-		renderWindow->initialize();
+		renderWindow->Initialize();
 		
 		return renderWindow;
 	}
@@ -96,7 +96,7 @@ namespace bs
 	{
 		Lock lock(mWindowMutex);
 
-		RenderWindow* window = getNonCore(coreWindow);
+		RenderWindow* window = GetNonCore(coreWindow);
 		auto iterFind = std::find(begin(mCloseRequestedWindows), end(mCloseRequestedWindows), window);
 
 		if (iterFind == end(mCloseRequestedWindows))
@@ -107,7 +107,7 @@ namespace bs
 	{
 		Lock lock(mWindowMutex);
 
-		RenderWindow* window = getNonCore(coreWindow);
+		RenderWindow* window = GetNonCore(coreWindow);
 
 		if (window != nullptr)
 			mDirtyProperties.insert(window);
@@ -128,7 +128,7 @@ namespace bs
 			std::swap(mMouseLeftWindows, mouseLeftWindows);
 
 			for (auto& dirtyPropertyWindow : mDirtyProperties)
-				dirtyPropertyWindow->syncProperties();
+				dirtyPropertyWindow->SyncProperties();
 
 			mDirtyProperties.clear();
 
@@ -149,19 +149,19 @@ namespace bs
 		for (auto& window : movedOrResizedWindows)
 			window->onResized();
 
-		if (!onMouseLeftWindow.empty())
+		if (!onMouseLeftWindow.Empty())
 		{
 			for (auto& window : mouseLeftWindows)
 				onMouseLeftWindow(*window);
 		}
 
-		SPtr<RenderWindow> primaryWindow = gCoreApplication().getPrimaryWindow();
+		SPtr<RenderWindow> primaryWindow = gCoreApplication().GetPrimaryWindow();
 		for(auto& entry : closeRequestedWindows)
 		{
 			// Default behaviour for primary window is to quit the app on close
-			if(entry == primaryWindow.get() && entry->onCloseRequested.empty())
+			if(entry == primaryWindow.get() && entry->onCloseRequested.Empty())
 			{
-				gCoreApplication().quitRequested();
+				gCoreApplication().QuitRequested();
 				continue;
 			}
 
@@ -211,7 +211,7 @@ namespace bs
 		Lock lock(mWindowMutex);
 
 		for (auto& dirtyPropertyWindow : mDirtyProperties)
-			dirtyPropertyWindow->syncProperties();
+			dirtyPropertyWindow->SyncProperties();
 
 		mDirtyProperties.clear();
 	}

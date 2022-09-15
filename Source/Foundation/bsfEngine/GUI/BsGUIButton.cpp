@@ -33,14 +33,14 @@ namespace bs
 
 	GUIButton* GUIButton::Create(const GUIContent& content, const GUIOptions& options, const String& styleName)
 	{
-		return new (bs_alloc<GUIButton>()) GUIButton(getStyleName<GUIButton>(styleName), content, GUIDimensions::Create(options));
+		return new (bs_alloc<GUIButton>()) GUIButton(GetStyleName<GUIButton>(styleName), content, GUIDimensions::Create(options));
 	}
 
 	bool GUIButton::CommandEventInternal(const GUICommandEvent& ev)
 	{
 		const bool processed = GUIButtonBase::CommandEventInternal(ev);
 
-		if(ev.getType() == GUICommandEventType::Confirm)
+		if(ev.GetType() == GUICommandEventType::Confirm)
 		{
 			if(!IsDisabledInternal())
 			{

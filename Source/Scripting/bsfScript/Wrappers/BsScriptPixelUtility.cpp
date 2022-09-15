@@ -65,9 +65,9 @@ namespace bs
 		if (sourceScriptPixelData == nullptr)
 			return nullptr;
 
-		SPtr<PixelData> sourcePixelData = sourceScriptPixelData->getInternal();
-		SPtr<PixelData> outputData = bs_shared_ptr_new<PixelData>(sourcePixelData->getWidth(), sourcePixelData->getHeight(),
-			sourcePixelData->getDepth(), newFormat);
+		SPtr<PixelData> sourcePixelData = sourceScriptPixelData->GetInternal();
+		SPtr<PixelData> outputData = bs_shared_ptr_new<PixelData>(sourcePixelData->GetWidth(), sourcePixelData->GetHeight(),
+			sourcePixelData->GetDepth(), newFormat);
 		outputData->allocateInternalBuffer();
 
 		PixelUtil::bulkPixelConversion(*sourcePixelData, *outputData);
@@ -81,9 +81,9 @@ namespace bs
 		if (sourceScriptPixelData == nullptr)
 			return nullptr;
 
-		SPtr<PixelData> sourcePixelData = sourceScriptPixelData->getInternal();
-		SPtr<PixelData> outputData = bs_shared_ptr_new<PixelData>(sourcePixelData->getWidth(), sourcePixelData->getHeight(),
-			sourcePixelData->getDepth(), options->format);
+		SPtr<PixelData> sourcePixelData = sourceScriptPixelData->GetInternal();
+		SPtr<PixelData> outputData = bs_shared_ptr_new<PixelData>(sourcePixelData->GetWidth(), sourcePixelData->GetHeight(),
+			sourcePixelData->GetDepth(), options->format);
 		outputData->allocateInternalBuffer();
 
 		PixelUtil::compress(*sourcePixelData, *outputData, *options);
@@ -97,7 +97,7 @@ namespace bs
 		if (sourceScriptPixelData == nullptr)
 			return nullptr;
 
-		SPtr<PixelData> sourcePixelData = sourceScriptPixelData->getInternal();
+		SPtr<PixelData> sourcePixelData = sourceScriptPixelData->GetInternal();
 		Vector<SPtr<PixelData>> mipmaps = PixelUtil::genMipmaps(*sourcePixelData, *options);
 
 		UINT32 numElements = (UINT32)mipmaps.size();
@@ -106,7 +106,7 @@ namespace bs
 		for (UINT32 i = 0; i < numElements; i++)
 		{
 			MonoObject* managedPixelData = ScriptPixelData::Create(mipmaps[i]);
-			scriptArray.set(i, managedPixelData);
+			scriptArray.Set(i, managedPixelData);
 		}
 
 		return scriptArray.getInternal();
@@ -118,9 +118,9 @@ namespace bs
 		if (sourceScriptPixelData == nullptr)
 			return nullptr;
 
-		SPtr<PixelData> sourcePixelData = sourceScriptPixelData->getInternal();
-		SPtr<PixelData> outputData = bs_shared_ptr_new<PixelData>(newSize->getWidth(), newSize->getHeight(),
-			newSize->getDepth(), sourcePixelData->getFormat());
+		SPtr<PixelData> sourcePixelData = sourceScriptPixelData->GetInternal();
+		SPtr<PixelData> outputData = bs_shared_ptr_new<PixelData>(newSize->GetWidth(), newSize->GetHeight(),
+			newSize->GetDepth(), sourcePixelData->GetFormat());
 		outputData->allocateInternalBuffer();
 
 		PixelUtil::scale(*sourcePixelData, *outputData, filter);
@@ -134,7 +134,7 @@ namespace bs
 		if (sourceScriptPixelData == nullptr)
 			return;
 
-		SPtr<PixelData> pixelData = sourceScriptPixelData->getInternal();
+		SPtr<PixelData> pixelData = sourceScriptPixelData->GetInternal();
 		PixelUtil::linearToSRGB(*pixelData);
 	}
 
@@ -144,7 +144,7 @@ namespace bs
 		if (sourceScriptPixelData == nullptr)
 			return;
 
-		SPtr<PixelData> pixelData = sourceScriptPixelData->getInternal();
+		SPtr<PixelData> pixelData = sourceScriptPixelData->GetInternal();
 		PixelUtil::SRGBToLinear(*pixelData);
 	}
 }

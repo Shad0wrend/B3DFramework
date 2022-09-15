@@ -43,7 +43,7 @@ namespace bs
 	MonoString* ScriptResourceManifest::Internal_getName(ScriptResourceManifest* thisPtr)
 	{
 		String tmp__output;
-		tmp__output = thisPtr->getInternal()->getName();
+		tmp__output = thisPtr->GetInternal()->GetName();
 
 		MonoString* __output;
 		__output = MonoUtil::stringToMono(tmp__output);
@@ -55,19 +55,19 @@ namespace bs
 	{
 		Path tmpfilePath;
 		tmpfilePath = MonoUtil::monoToString(filePath);
-		thisPtr->getInternal()->registerResource(*uuid, tmpfilePath);
+		thisPtr->GetInternal()->registerResource(*uuid, tmpfilePath);
 	}
 
 	void ScriptResourceManifest::Internal_unregisterResource(ScriptResourceManifest* thisPtr, UUID* uuid)
 	{
-		thisPtr->getInternal()->unregisterResource(*uuid);
+		thisPtr->GetInternal()->unregisterResource(*uuid);
 	}
 
 	bool ScriptResourceManifest::Internal_uuidToFilePath(ScriptResourceManifest* thisPtr, UUID* uuid, MonoString** filePath)
 	{
 		bool tmp__output;
 		Path tmpfilePath;
-		tmp__output = thisPtr->getInternal()->uuidToFilePath(*uuid, tmpfilePath);
+		tmp__output = thisPtr->GetInternal()->uuidToFilePath(*uuid, tmpfilePath);
 
 		bool __output;
 		__output = tmp__output;
@@ -81,7 +81,7 @@ namespace bs
 		bool tmp__output;
 		Path tmpfilePath;
 		tmpfilePath = MonoUtil::monoToString(filePath);
-		tmp__output = thisPtr->getInternal()->filePathToUUID(tmpfilePath, *outUUID);
+		tmp__output = thisPtr->GetInternal()->filePathToUUID(tmpfilePath, *outUUID);
 
 		bool __output;
 		__output = tmp__output;
@@ -92,7 +92,7 @@ namespace bs
 	bool ScriptResourceManifest::Internal_uuidExists(ScriptResourceManifest* thisPtr, UUID* uuid)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->getInternal()->uuidExists(*uuid);
+		tmp__output = thisPtr->GetInternal()->uuidExists(*uuid);
 
 		bool __output;
 		__output = tmp__output;
@@ -105,7 +105,7 @@ namespace bs
 		bool tmp__output;
 		Path tmpfilePath;
 		tmpfilePath = MonoUtil::monoToString(filePath);
-		tmp__output = thisPtr->getInternal()->filePathExists(tmpfilePath);
+		tmp__output = thisPtr->GetInternal()->filePathExists(tmpfilePath);
 
 		bool __output;
 		__output = tmp__output;
@@ -119,7 +119,7 @@ namespace bs
 		ScriptResourceManifest* scriptmanifest;
 		scriptmanifest = ScriptResourceManifest::toNative(manifest);
 		if(scriptmanifest != nullptr)
-			tmpmanifest = scriptmanifest->getInternal();
+			tmpmanifest = scriptmanifest->GetInternal();
 		Path tmppath;
 		tmppath = MonoUtil::monoToString(path);
 		Path tmprelativePath;

@@ -16,7 +16,7 @@ namespace bs
 
 		UINT32 row;
 		UINT32 column;
-		getAnimationFrame(t, row, column);
+		GetAnimationFrame(t, row, column);
 
 		Rect2 output;
 
@@ -49,13 +49,13 @@ namespace bs
 		{
 		default:
 		case SpriteAnimationPlayback::Normal:
-			t = Math::clamp(t, 0.0f, duration);
+			t = Math::Clamp(t, 0.0f, duration);
 			break;
 		case SpriteAnimationPlayback::Loop:
-			t = Math::repeat(t, duration);
+			t = Math::Repeat(t, duration);
 			break;
 		case SpriteAnimationPlayback::PingPong:
-			t = Math::pingPong(t, duration);
+			t = Math::PingPong(t, duration);
 			break;
 		}
 
@@ -63,7 +63,7 @@ namespace bs
 		UINT32 frame = 0;
 		
 		if(mAnimation.count > 0)
-			frame = Math::clamp(Math::floorToPosInt(pct * mAnimation.count), 0U, mAnimation.count - 1);
+			frame = Math::Clamp(Math::FloorToPosInt(pct * mAnimation.count), 0U, mAnimation.count - 1);
 
 		row = frame / mAnimation.numColumns;
 		column = frame % mAnimation.numColumns;
@@ -86,60 +86,60 @@ namespace bs
 
 	const HSpriteTexture& SpriteTexture::Dummy()
 	{
-		return BuiltinResources::Instance().getDummySpriteTexture();
+		return BuiltinResources::Instance().GetDummySpriteTexture();
 	}
 
 	bool SpriteTexture::CheckIsLoaded(const HSpriteTexture& tex)
 	{
-		return tex != nullptr && tex.isLoaded(false) && tex->getTexture() != nullptr && tex->getTexture().isLoaded(false);
+		return tex != nullptr && tex.IsLoaded(false) && tex->GetTexture() != nullptr && tex->GetTexture().IsLoaded(false);
 	}
 
 	void SpriteTexture::SetTexture(const HTexture& texture)
 	{
-		removeResourceDependency(mAtlasTexture);
+		RemoveResourceDependency(mAtlasTexture);
 		mAtlasTexture = texture;
-		addResourceDependency(mAtlasTexture);
+		AddResourceDependency(mAtlasTexture);
 
-		markDependenciesDirty();
+		MarkDependenciesDirty();
 	}
 
 	UINT32 SpriteTexture::GetWidth() const
 	{
-		return Math::roundToInt(mAtlasTexture->getProperties().getWidth() * mUVScale.x);
+		return Math::RoundToInt(mAtlasTexture->GetProperties().GetWidth() * mUVScale.x);
 	}
 
 	UINT32 SpriteTexture::GetHeight() const
 	{
-		return Math::roundToInt(mAtlasTexture->getProperties().getHeight() * mUVScale.y);
+		return Math::RoundToInt(mAtlasTexture->GetProperties().GetHeight() * mUVScale.y);
 	}
 
 	UINT32 SpriteTexture::GetFrameWidth() const
 	{
-		return getWidth() / std::max(1U, mAnimation.numColumns);
+		return GetWidth() / std::max(1U, mAnimation.numColumns);
 	}
 
 	UINT32 SpriteTexture::GetFrameHeight() const
 	{
-		return getHeight() / std::max(1U, mAnimation.numRows);
+		return GetHeight() / std::max(1U, mAnimation.numRows);
 	}
 
 	void SpriteTexture::MarkCoreDirtyInternal()
 	{
-		markCoreDirty();
+		MarkCoreDirty();
 	}
 
 	void SpriteTexture::Initialize()
 	{
-		addResourceDependency(mAtlasTexture);
+		AddResourceDependency(mAtlasTexture);
 
-		Resource::initialize();
+		Resource::Initialize();
 	}
 
 	SPtr<ct::CoreObject> SpriteTexture::CreateCore() const
 	{
 		SPtr<ct::Texture> texturePtr;
-		if(mAtlasTexture.isLoaded())
-			texturePtr = mAtlasTexture->getCore();
+		if(mAtlasTexture.IsLoaded())
+			texturePtr = mAtlasTexture->GetCore();
 
 		ct::SpriteTexture* spriteTexture = new (bs_alloc<ct::SpriteTexture>()) ct::SpriteTexture(mUVOffset, mUVScale,
 			std::move(texturePtr), mAnimation, mPlayback);
@@ -154,7 +154,7 @@ namespace bs
 	{
 		UINT32 size = csync_size(*this);
 
-		UINT8* buffer = allocator->alloc(size);
+		UINT8* buffer = allocator->Alloc(size);
 		Bitstream stream(buffer, size);
 		csync_write(*this, stream);
 
@@ -163,8 +163,8 @@ namespace bs
 
 	void SpriteTexture::GetCoreDependencies(Vector<CoreObject*>& dependencies)
 	{
-		if (mAtlasTexture.isLoaded())
-			dependencies.push_back(mAtlasTexture.get());
+		if (mAtlasTexture.IsLoaded())
+			dependencies.push_back(mAtlasTexture.Get());
 	}
 
 	SPtr<ct::SpriteTexture> SpriteTexture::GetCore() const
@@ -192,7 +192,7 @@ namespace bs
 			(new (bs_alloc<SpriteTexture>()) SpriteTexture(Vector2(0.0f, 0.0f), Vector2(1.0f, 1.0f), texture));
 
 		texturePtr->SetThisPtrInternal(texturePtr);
-		texturePtr->initialize();
+		texturePtr->Initialize();
 
 		return texturePtr;
 	}
@@ -203,7 +203,7 @@ namespace bs
 			(new (bs_alloc<SpriteTexture>()) SpriteTexture(uvOffset, uvScale, texture));
 
 		texturePtr->SetThisPtrInternal(texturePtr);
-		texturePtr->initialize();
+		texturePtr->Initialize();
 
 		return texturePtr;
 	}
@@ -240,7 +240,7 @@ namespace bs
 
 		void SpriteTexture::SyncToCore(const CoreSyncData& data)
 		{
-			Bitstream stream(data.getBuffer(), data.getBufferSize());
+			Bitstream stream(data.GetBuffer(), data.GetBufferSize());
 			csync_read(*this, stream);
 		}
 	}

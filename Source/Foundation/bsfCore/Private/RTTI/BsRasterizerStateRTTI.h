@@ -26,13 +26,13 @@ namespace bs
 	public:
 		RasterizerStateRTTI()
 		{
-			addPlainField("mData", 0, &RasterizerStateRTTI::GetData, &RasterizerStateRTTI::SetData);
+			AddPlainField("mData", 0, &RasterizerStateRTTI::GetData, &RasterizerStateRTTI::SetData);
 		}
 
 		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override
 		{
 			RasterizerState* rasterizerState = static_cast<RasterizerState*>(obj);
-			rasterizerState->initialize();
+			rasterizerState->Initialize();
 		}
 
 		const String& GetRttiName() override
@@ -46,7 +46,7 @@ namespace bs
 			return TID_RasterizerState;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return RenderStateManager::Instance().CreateRasterizerStatePtrInternal(RASTERIZER_STATE_DESC());
 		}

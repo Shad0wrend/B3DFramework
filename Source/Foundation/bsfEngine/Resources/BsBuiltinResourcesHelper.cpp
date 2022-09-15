@@ -29,16 +29,16 @@ namespace bs
 		const Path& inputFolder, const Path& outputFolder, const SPtr<ResourceManifest>& manifest, AssetType mode,
 		nlohmann::json* dependencies, bool compress, bool mipmap)
 	{
-		if (!FileSystem::exists(inputFolder))
+		if (!FileSystem::Exists(inputFolder))
 			return;
 
-		bool outputExists = FileSystem::exists(outputFolder);
+		bool outputExists = FileSystem::Exists(outputFolder);
 		if(!outputExists)
-			FileSystem::createDir(outputFolder);
+			FileSystem::CreateDir(outputFolder);
 
 		Path spriteOutputFolder = outputFolder + "/Sprites/";
 		if(mode == AssetType::Sprite)
-			FileSystem::createDir(spriteOutputFolder);
+			FileSystem::CreateDir(spriteOutputFolder);
 
 		struct QueuedImportOp
 		{
@@ -90,7 +90,7 @@ namespace bs
 
 					UnorderedMap<String, String> allDefines = defines.getAll();
 					for(auto& define : allDefines)
-						shaderImportOptions->setDefine(define.first, define.second);
+						shaderImportOptions->SetDefine(define.first, define.second);
 				}
 			}
 
@@ -123,8 +123,8 @@ namespace bs
 			outputPath.setFilename("sprite_" + fileName + ".asset");
 
 			SPtr<SpriteTexture> spriteTexPtr = SpriteTexture::CreatePtrInternal(texture);
-			spriteTexPtr->setAnimation(animation);
-			spriteTexPtr->setAnimationPlayback(playback);
+			spriteTexPtr->SetAnimation(animation);
+			spriteTexPtr->SetAnimationPlayback(playback);
 
 			HResource spriteTex = gResources().CreateResourceHandleInternal(spriteTexPtr, UUID);
 
@@ -194,7 +194,7 @@ namespace bs
 
 						if (dependencies != nullptr)
 						{
-							SPtr<ShaderMetaData> shaderMetaData = std::static_pointer_cast<ShaderMetaData>(shader->getMetaData());
+							SPtr<ShaderMetaData> shaderMetaData = std::static_pointer_cast<ShaderMetaData>(shader->GetMetaData());
 
 							nlohmann::json dependencyEntries;
 							if (shaderMetaData != nullptr && shaderMetaData->includes.size() > 0)
@@ -280,7 +280,7 @@ namespace bs
 		{
 			IconData& data = iconsToGenerate[i];
 
-			data.srcData = data.source->getProperties().allocBuffer(0, 0);
+			data.srcData = data.source->GetProperties().allocBuffer(0, 0);
 			data.source->readData(data.srcData);
 		}
 
@@ -301,13 +301,13 @@ namespace bs
 		{
 			SPtr<PixelData> src = iconsToGenerate[i].srcData;
 
-			SPtr<PixelData> scaled48 = PixelData::Create(48, 48, 1, src->getFormat());
+			SPtr<PixelData> scaled48 = PixelData::Create(48, 48, 1, src->GetFormat());
 			PixelUtil::scale(*src, *scaled48);
 
-			SPtr<PixelData> scaled32 = PixelData::Create(32, 32, 1, src->getFormat());
+			SPtr<PixelData> scaled32 = PixelData::Create(32, 32, 1, src->GetFormat());
 			PixelUtil::scale(*scaled48, *scaled32);
 
-			SPtr<PixelData> scaled16 = PixelData::Create(16, 16, 1, src->getFormat());
+			SPtr<PixelData> scaled16 = PixelData::Create(16, 16, 1, src->GetFormat());
 			PixelUtil::scale(*scaled32, *scaled16);
 
 			Path outputPath48 = outputFolder + (iconsToGenerate[i].name + "48.asset");
@@ -353,7 +353,7 @@ namespace bs
 		// Save font texture pages as well. TODO - Later maybe figure out a more automatic way to do this
 		for (auto& size : fontSizes)
 		{
-			SPtr<const FontBitmap> fontData = font->getBitmap(size);
+			SPtr<const FontBitmap> fontData = font->GetBitmap(size);
 
 			Path texPageOutputPath = outputFolder;
 
@@ -387,7 +387,7 @@ namespace bs
 				Path filePath = inputFolder + Path(name.c_str());
 
 				// Check timestamp
-				time_t lastModifiedSrc = FileSystem::getLastModifiedTime(filePath);
+				time_t lastModifiedSrc = FileSystem::GetLastModifiedTime(filePath);
 				if (lastModifiedSrc > lastUpdateTime)
 					output[idx] = true;
 				else if (dependencies != nullptr) // Check dependencies
@@ -401,7 +401,7 @@ namespace bs
 							std::string dependencyName = dependency["Path"];
 							Path dependencyPath = dependencyFolder + Path(dependencyName.c_str());
 
-							time_t lastModifiedDep = FileSystem::getLastModifiedTime(dependencyPath);
+							time_t lastModifiedDep = FileSystem::GetLastModifiedTime(dependencyPath);
 							if(lastModifiedDep > lastUpdateTime)
 							{
 								anyDepModified = true;
@@ -472,7 +472,7 @@ namespace bs
 			return true;
 		};
 
-		FileSystem::iterate(folder, checkForChanges, nullptr, false);
+		FileSystem::Iterate(folder, checkForChanges, nullptr, false);
 
 		// Prune deleted entries
 		auto iter = entries.begin();
@@ -482,7 +482,7 @@ namespace bs
 			Path path = strPath.c_str();
 			path = path.getAbsolute(folder);
 
-			if (!FileSystem::exists(path))
+			if (!FileSystem::Exists(path))
 			{
 				iter = entries.erase(iter);
 				foundChanges = true;
@@ -582,7 +582,7 @@ namespace bs
 
 	void BuiltinResourcesHelper::WriteTimestamp(const Path& file)
 	{
-		SPtr<DataStream> fileStream = FileSystem::createAndOpenFile(file);
+		SPtr<DataStream> fileStream = FileSystem::CreateAndOpenFile(file);
 
 		time_t currentTime = std::time(nullptr);
 		fileStream->write(&currentTime, sizeof(currentTime));
@@ -594,15 +594,15 @@ namespace bs
 	{
 		lastUpdateTime = 0;
 
-		if (!FileSystem::exists(timeStampFile))
+		if (!FileSystem::Exists(timeStampFile))
 			return 2;
 
-		lastUpdateTime = FileSystem::getLastModifiedTime(timeStampFile);
+		lastUpdateTime = FileSystem::GetLastModifiedTime(timeStampFile);
 
 		bool upToDate = true;
 		auto checkUpToDate = [&](const Path& filePath)
 		{
-			time_t fileLastModified = FileSystem::getLastModifiedTime(filePath);
+			time_t fileLastModified = FileSystem::GetLastModifiedTime(filePath);
 
 			if (fileLastModified > lastUpdateTime)
 			{
@@ -613,7 +613,7 @@ namespace bs
 			return true;
 		};
 
-		FileSystem::iterate(folder, checkUpToDate, nullptr);
+		FileSystem::Iterate(folder, checkUpToDate, nullptr);
 		
 		if (!upToDate)
 			return 1;
@@ -623,7 +623,7 @@ namespace bs
 
 	bool BuiltinResourcesHelper::VerifyAndReportShader(const HShader& shader)
 	{
-		if(!shader.isLoaded(false) || shader->getNumTechniques() == 0)
+		if(!shader.IsLoaded(false) || shader->GetNumTechniques() == 0)
 		{
 #if BS_DEBUG_MODE
 			BS_EXCEPT(InvalidStateException, "Error occured while compiling a shader. Check earlier log messages for exact error.");
@@ -633,31 +633,31 @@ namespace bs
 			return false;
 		}
 
-		Vector<SPtr<Technique>> techniques = shader->getCompatibleTechniques();
+		Vector<SPtr<Technique>> techniques = shader->GetCompatibleTechniques();
 		for(auto& technique : techniques)
 		{
-			technique->compile();
+			technique->Compile();
 
-			UINT32 numPasses = technique->getNumPasses();
+			UINT32 numPasses = technique->GetNumPasses();
 			for(UINT32 i = 0; i < numPasses; i++)
 			{
-				SPtr<Pass> pass = technique->getPass(i);
+				SPtr<Pass> pass = technique->GetPass(i);
 
 				std::array<SPtr<GpuProgram>, 6> gpuPrograms;
 
-				const SPtr<GraphicsPipelineState>& graphicsPipeline = pass->getGraphicsPipelineState();
+				const SPtr<GraphicsPipelineState>& graphicsPipeline = pass->GetGraphicsPipelineState();
 				if (graphicsPipeline)
 				{
-					gpuPrograms[0] = graphicsPipeline->getVertexProgram();
-					gpuPrograms[1] = graphicsPipeline->getFragmentProgram();
-					gpuPrograms[2] = graphicsPipeline->getGeometryProgram();
-					gpuPrograms[3] = graphicsPipeline->getHullProgram();
-					gpuPrograms[4] = graphicsPipeline->getDomainProgram();
+					gpuPrograms[0] = graphicsPipeline->GetVertexProgram();
+					gpuPrograms[1] = graphicsPipeline->GetFragmentProgram();
+					gpuPrograms[2] = graphicsPipeline->GetGeometryProgram();
+					gpuPrograms[3] = graphicsPipeline->GetHullProgram();
+					gpuPrograms[4] = graphicsPipeline->GetDomainProgram();
 				}
 
-				const SPtr<ComputePipelineState>& computePipeline = pass->getComputePipelineState();
+				const SPtr<ComputePipelineState>& computePipeline = pass->GetComputePipelineState();
 				if (computePipeline)
-					gpuPrograms[5] = computePipeline->getProgram();
+					gpuPrograms[5] = computePipeline->GetProgram();
 
 				for(auto& program : gpuPrograms)
 				{
@@ -667,8 +667,8 @@ namespace bs
 					program->blockUntilCoreInitialized();
 					if(!program->isCompiled())
 					{
-						String errMsg = "Error occured while compiling a shader \"" + shader->getName()
-							+ "\". Error message: " + program->getCompileErrorMessage();
+						String errMsg = "Error occured while compiling a shader \"" + shader->GetName()
+							+ "\". Error message: " + program->GetCompileErrorMessage();
 
 #if BS_DEBUG_MODE
 						BS_EXCEPT(InvalidStateException, errMsg);
@@ -690,18 +690,18 @@ namespace bs
 		if (!shader)
 			return;
 
-		Vector<SPtr<Technique>> techniques = shader->getCompatibleTechniques();
+		Vector<SPtr<Technique>> techniques = shader->GetCompatibleTechniques();
 		bool hasBytecode = true;
 		for (auto& technique : techniques)
 		{
-			UINT32 numPasses = technique->getNumPasses();
+			UINT32 numPasses = technique->GetNumPasses();
 			for (UINT32 i = 0; i < numPasses; i++)
 			{
-				SPtr<Pass> pass = technique->getPass(i);
+				SPtr<Pass> pass = technique->GetPass(i);
 
 				for (UINT32 j = 0; j < GPT_COUNT; j++)
 				{
-					const GPU_PROGRAM_DESC& desc = pass->getProgramDesc((GpuProgramType)j);
+					const GPU_PROGRAM_DESC& desc = pass->GetProgramDesc((GpuProgramType)j);
 					if (desc.source.empty())
 						continue;
 
@@ -724,7 +724,7 @@ namespace bs
 			return;
 
 		for (auto& technique : techniques)
-			technique->compile();
+			technique->Compile();
 
 		gResources().save(shader, path, true, true);
 	}

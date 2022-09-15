@@ -114,14 +114,14 @@ namespace bs
 
 	SPtr<Resource> Importer::ImportInternal(const Path& inputFilePath, SPtr<const ImportOptions> importOptions)
 	{
-		SpecificImporter* importer = prepareForImport(inputFilePath, importOptions);
+		SpecificImporter* importer = PrepareForImport(inputFilePath, importOptions);
 		if(importer == nullptr)
 			return nullptr;
 
-		const UINT64 taskId = waitForAsync(importer);
-		SPtr<Resource> output = importer->import(inputFilePath, importOptions);
+		const UINT64 taskId = WaitForAsync(importer);
+		SPtr<Resource> output = importer->Import(inputFilePath, importOptions);
 		
-		if(importer->getAsyncMode() == ImporterAsyncMode::Single)
+		if(importer->GetAsyncMode() == ImporterAsyncMode::Single)
 		{
 			Lock lock(mLastTaskMutex);
 			auto iterFind = mLastQueuedTask.find(importer);
@@ -139,14 +139,14 @@ namespace bs
 
 	Vector<SubResourceRaw> Importer::ImportAllInternal(const Path& inputFilePath, SPtr<const ImportOptions> importOptions)
 	{
-		SpecificImporter* importer = prepareForImport(inputFilePath, importOptions);
+		SpecificImporter* importer = PrepareForImport(inputFilePath, importOptions);
 		if(!importer)
 			return Vector<SubResourceRaw>();
 
-		const UINT64 taskId = waitForAsync(importer);
-		Vector<SubResourceRaw> output = importer->importAll(inputFilePath, importOptions);
+		const UINT64 taskId = WaitForAsync(importer);
+		Vector<SubResourceRaw> output = importer->ImportAll(inputFilePath, importOptions);
 
-		if(importer->getAsyncMode() == ImporterAsyncMode::Single)
+		if(importer->GetAsyncMode() == ImporterAsyncMode::Single)
 		{
 			Lock lock(mLastTaskMutex);
 			auto iterFind = mLastQueuedTask.find(importer);
@@ -163,25 +163,25 @@ namespace bs
 
 	SpecificImporter* Importer::PrepareForImport(const Path& filePath, SPtr<const ImportOptions>& importOptions) const
 	{
-		if (!FileSystem::isFile(filePath))
+		if (!FileSystem::IsFile(filePath))
 		{
 			BS_LOG(Warning, Importer, "Trying to import asset that doesn't exists. Asset path: {0}", filePath);
 			return nullptr;
 		}
 
-		SpecificImporter* importer = getImporterForFile(filePath);
+		SpecificImporter* importer = GetImporterForFile(filePath);
 		if (importer == nullptr)
 			return nullptr;
 
 		if (importOptions == nullptr)
-			importOptions = importer->getDefaultImportOptions();
+			importOptions = importer->GetDefaultImportOptions();
 		else
 		{
-			SPtr<const ImportOptions> defaultImportOptions = importer->getDefaultImportOptions();
-			if (importOptions->getTypeId() != defaultImportOptions->getTypeId())
+			SPtr<const ImportOptions> defaultImportOptions = importer->GetDefaultImportOptions();
+			if (importOptions->GetTypeId() != defaultImportOptions->GetTypeId())
 			{
 				BS_EXCEPT(InvalidParametersException, "Provided import options is not of valid type. " \
-					"Expected: " + defaultImportOptions->getTypeName() + ". Got: " + importOptions->getTypeName() + ".");
+					"Expected: " + defaultImportOptions->GetTypeName() + ". Got: " + importOptions->GetTypeName() + ".");
 			}
 		}
 
@@ -192,7 +192,7 @@ namespace bs
 	{
 		UINT64 taskId = 0;
 
-		const ImporterAsyncMode asyncMode = importer->getAsyncMode();
+		const ImporterAsyncMode asyncMode = importer->GetAsyncMode();
 		if(asyncMode == ImporterAsyncMode::Single)
 		{
 			Lock lock(mLastTaskMutex);
@@ -226,10 +226,10 @@ namespace bs
 	void doImport(TAsyncOp<HResource> op, SpecificImporter* importer, const Path& filePath, const UUID& uuid,
 		const SPtr<const ImportOptions>& importOptions)
 	{
-		SPtr<Resource> resourcePtr = importer->import(filePath, importOptions);
+		SPtr<Resource> resourcePtr = importer->Import(filePath, importOptions);
 
 		HResource resource;
-		if (uuid.empty())
+		if (uuid.Empty())
 			resource = gResources().CreateResourceHandleInternal(resourcePtr);
 		else
 			resource = gResources().CreateResourceHandleInternal(resourcePtr, uuid);
@@ -241,7 +241,7 @@ namespace bs
 	void doImport(TAsyncOp<SPtr<MultiResource>> op, SpecificImporter* importer, const Path& filePath, const UUID& uuid,
 		const SPtr<const ImportOptions>& importOptions)
 	{
-		Vector<SubResourceRaw> rawSubresources = importer->importAll(filePath, importOptions);
+		Vector<SubResourceRaw> rawSubresources = importer->ImportAll(filePath, importOptions);
 
 		Vector<SubResource> subresources;
 		for (auto& entry : rawSubresources)
@@ -257,7 +257,7 @@ namespace bs
 	void Importer::QueueForImport(SpecificImporter* importer, const Path& inputFilePath,
 		const SPtr<const ImportOptions>& importOptions, const UUID& uuid, TAsyncOp<ReturnType>& op)
 	{
-		ImporterAsyncMode asyncMode = importer->getAsyncMode();
+		ImporterAsyncMode asyncMode = importer->GetAsyncMode();
 
 		// If the importer only supports single thread import, the tasks need to be chained using dependencies so they get
 		// executed in sequence
@@ -301,25 +301,25 @@ namespace bs
 		TaskScheduler::Instance().addTask(task);
 	}
 
-	template void Importer::queueForImport(SpecificImporter*, const Path&, const SPtr<const ImportOptions>&, const UUID&,
+	template void Importer::QueueForImport(SpecificImporter*, const Path&, const SPtr<const ImportOptions>&, const UUID&,
 		TAsyncOp<HResource>&);
 
-	template void Importer::queueForImport(SpecificImporter*, const Path&, const SPtr<const ImportOptions>&, const UUID&,
+	template void Importer::QueueForImport(SpecificImporter*, const Path&, const SPtr<const ImportOptions>&, const UUID&,
 		TAsyncOp<SPtr<MultiResource>>&);
 
 	SPtr<ImportOptions> Importer::CreateImportOptions(const Path& inputFilePath)
 	{
-		if(!FileSystem::isFile(inputFilePath))
+		if(!FileSystem::IsFile(inputFilePath))
 		{
 			BS_LOG(Warning, Importer, "Trying to import asset that doesn't exists. Asset path: {0}", inputFilePath);
 			return nullptr;
 		}
 
-		SpecificImporter* importer = getImporterForFile(inputFilePath);
+		SpecificImporter* importer = GetImporterForFile(inputFilePath);
 		if(importer == nullptr)
 			return nullptr;
 
-		return importer->createImportOptions();
+		return importer->CreateImportOptions();
 	}
 
 	void Importer::RegisterAssetImporterInternal(SpecificImporter* importer)
@@ -335,12 +335,12 @@ namespace bs
 
 	SpecificImporter* Importer::GetImporterForFile(const Path& inputFilePath) const
 	{
-		String ext = inputFilePath.getExtension();
+		String ext = inputFilePath.GetExtension();
 		if (ext.empty())
 			return nullptr;
 
 		ext = ext.substr(1, ext.size() - 1); // Remove the .
-		if(!supportsFileType(ext))
+		if(!SupportsFileType(ext))
 		{
 			BS_LOG(Warning, Importer, "There is no importer for the provided file type. ({0})", inputFilePath);
 			return nullptr;
@@ -348,7 +348,7 @@ namespace bs
 
 		for(auto iter = mAssetImporters.begin(); iter != mAssetImporters.end(); ++iter)
 		{
-			if(*iter != nullptr && (*iter)->isExtensionSupported(ext))
+			if(*iter != nullptr && (*iter)->IsExtensionSupported(ext))
 			{
 				return *iter;
 			}

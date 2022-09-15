@@ -211,7 +211,7 @@ namespace bs
 		 */
 		T* Get() const
 		{
-			throwIfDestroyed();
+			ThrowIfDestroyed();
 
 			return reinterpret_cast<T*>(mData->mPtr->object.get());
 		}
@@ -223,7 +223,7 @@ namespace bs
 		 */
 		SPtr<T> GetInternalPtr() const
 		{
-			throwIfDestroyed();
+			ThrowIfDestroyed();
 
 			return std::static_pointer_cast<T>(mData->mPtr->object);
 		}
@@ -233,14 +233,14 @@ namespace bs
 		 *
 		 * @note	Throws exception if the GameObject was destroyed.
 		 */
-		T* operator->() const { return get(); }
+		T* operator->() const { return Get(); }
 
 		/**
 		 * Returns reference to the referenced GameObject.
 		 *
 		 * @note	Throws exception if the GameObject was destroyed.
 		 */
-		T& operator*() const { return *get(); }
+		T& operator*() const { return *Get(); }
 
 	public: // ***** INTERNAL ******
 		/** @name Internal

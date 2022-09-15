@@ -248,7 +248,7 @@ namespace bs
 #endif
 
 	/** Flags that describe an animation curve. */
-	enum BS_SCRIPT_EXPORT(n:AnimationCurveFlags) class AnimationCurveFlag
+	enum class BS_SCRIPT_EXPORT(n:AnimationCurveFlags) AnimationCurveFlag
 	{
 		/**
 		 * If enabled, the curve was imported from an external file and not created within the engine. This will affect

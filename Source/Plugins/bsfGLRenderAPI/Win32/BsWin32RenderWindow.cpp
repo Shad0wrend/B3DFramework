@@ -105,7 +105,7 @@ namespace bs
 
 		if (mWindow != nullptr)
 		{
-			ReleaseDC(mWindow->getHWnd(), mHDC);
+			ReleaseDC(mWindow->GetHWnd(), mHDC);
 
 			bs_delete(mWindow);
 			mWindow = nullptr;
@@ -128,7 +128,7 @@ namespace bs
 
 		props.isFullScreen = mDesc.fullscreen;
 		mIsChild = false;
-		mDisplayFrequency = Math::roundToInt(mDesc.videoMode.refreshRate);
+		mDisplayFrequency = Math::RoundToInt(mDesc.videoMode.refreshRate);
 
 		WINDOW_DESC windowDesc;
 		windowDesc.showTitleBar = mDesc.showTitleBar;
@@ -182,10 +182,10 @@ namespace bs
 
 		mWindow = bs_new<Win32Window>(windowDesc);
 
-		props.width = mWindow->getWidth();
-		props.height = mWindow->getHeight();
-		props.top = mWindow->getTop();
-		props.left = mWindow->getLeft();
+		props.width = mWindow->GetWidth();
+		props.height = mWindow->GetHeight();
+		props.top = mWindow->GetTop();
+		props.left = mWindow->GetLeft();
 		
 		if (!windowDesc.external)
 		{
@@ -218,7 +218,7 @@ namespace bs
 			}
 		}
 
-		mHDC = GetDC(mWindow->getHWnd());
+		mHDC = GetDC(mWindow->GetHWnd());
 
 		int testMultisample = props.multisampleCount;
 		bool testHwGamma = mDesc.gamma;
@@ -269,7 +269,7 @@ namespace bs
 		}
 
 		bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
-		RenderWindow::initialize();
+		RenderWindow::Initialize();
 	}
 
 	void Win32RenderWindow::SetFullscreen(UINT32 width, UINT32 height, float refreshRate, UINT32 monitorIdx)
@@ -289,7 +289,7 @@ namespace bs
 		UINT32 actualMonitorIdx = std::min(monitorIdx, numOutputs - 1);
 		const Win32VideoOutputInfo& outputInfo = static_cast<const Win32VideoOutputInfo&>(videoModeInfo.getOutputInfo(actualMonitorIdx));
 
-		mDisplayFrequency = Math::roundToInt(refreshRate);
+		mDisplayFrequency = Math::RoundToInt(refreshRate);
 		props.isFullScreen = true;
 
 		DEVMODE displayDeviceMode;
@@ -319,10 +319,10 @@ namespace bs
 		props.width = width;
 		props.height = height;
 
-		SetWindowLong(mWindow->getHWnd(), GWL_STYLE, WS_POPUP | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
-		SetWindowLong(mWindow->getHWnd(), GWL_EXSTYLE, 0);
+		SetWindowLong(mWindow->GetHWnd(), GWL_STYLE, WS_POPUP | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
+		SetWindowLong(mWindow->GetHWnd(), GWL_EXSTYLE, 0);
 
-		SetWindowPos(mWindow->getHWnd(), HWND_TOP, props.left, props.top, width, height, SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
+		SetWindowPos(mWindow->GetHWnd(), HWND_TOP, props.left, props.top, width, height, SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
 
 		WindowMovedOrResizedInternal();
 
@@ -367,12 +367,12 @@ namespace bs
 		RECT rect;
 		SetRect(&rect, 0, 0, winWidth, winHeight);
 
-		AdjustWindowRect(&rect, mWindow->getStyle(), false);
+		AdjustWindowRect(&rect, mWindow->GetStyle(), false);
 		winWidth = rect.right - rect.left;
 		winHeight = rect.bottom - rect.top;
 
 		// Deal with centering when switching down to smaller resolution
-		HMONITOR hMonitor = MonitorFromWindow(mWindow->getHWnd(), MONITOR_DEFAULTTONEAREST);
+		HMONITOR hMonitor = MonitorFromWindow(mWindow->GetHWnd(), MONITOR_DEFAULTTONEAREST);
 		MONITORINFO monitorInfo;
 		memset(&monitorInfo, 0, sizeof(MONITORINFO));
 		monitorInfo.cbSize = sizeof(MONITORINFO);
@@ -384,9 +384,9 @@ namespace bs
 		INT32 left = screenw > INT32(winWidth) ? ((screenw - INT32(winWidth)) / 2) : 0;
 		INT32 top = screenh > INT32(winHeight) ? ((screenh - INT32(winHeight)) / 2) : 0;
 
-		SetWindowLong(mWindow->getHWnd(), GWL_STYLE, mWindow->getStyle() | WS_VISIBLE);
-		SetWindowLong(mWindow->getHWnd(), GWL_EXSTYLE, mWindow->getStyleEx());
-		SetWindowPos(mWindow->getHWnd(), HWND_NOTOPMOST, left, top, winWidth, winHeight,
+		SetWindowLong(mWindow->GetHWnd(), GWL_STYLE, mWindow->GetStyle() | WS_VISIBLE);
+		SetWindowLong(mWindow->GetHWnd(), GWL_EXSTYLE, mWindow->GetStyleEx());
+		SetWindowPos(mWindow->GetHWnd(), HWND_NOTOPMOST, left, top, winWidth, winHeight,
 			SWP_DRAWFRAME | SWP_FRAMECHANGED | SWP_NOACTIVATE);
 
 		WindowMovedOrResizedInternal();
@@ -412,8 +412,8 @@ namespace bs
 		{
 			mWindow->move(left, top);
 
-			props.top = mWindow->getTop();
-			props.left = mWindow->getLeft();
+			props.top = mWindow->GetTop();
+			props.left = mWindow->GetLeft();
 
 			{
 				ScopedSpinLock lock(mLock);
@@ -434,8 +434,8 @@ namespace bs
 		{
 			mWindow->resize(width, height);
 
-			props.width = mWindow->getWidth();
-			props.height = mWindow->getHeight();
+			props.width = mWindow->GetWidth();
+			props.height = mWindow->GetHeight();
 			
 			{
 				ScopedSpinLock lock(mLock);
@@ -501,7 +501,7 @@ namespace bs
 
 		if ((dst.getRight() > getProperties().width) ||
 			(dst.getBottom() > getProperties().height) ||
-			(dst.getFront() != 0) || (dst.getBack() != 1))
+			(dst.GetFront() != 0) || (dst.getBack() != 1))
 		{
 			BS_EXCEPT(InvalidParametersException, "Invalid box.");
 		}
@@ -511,8 +511,8 @@ namespace bs
 			buffer = mProperties.isFullScreen ? FB_FRONT : FB_BACK;
 		}
 
-		GLenum format = GLPixelUtil::GetGlOriginFormat(dst.getFormat());
-		GLenum type = GLPixelUtil::GetGlOriginDataType(dst.getFormat());
+		GLenum format = GLPixelUtil::GetGlOriginFormat(dst.GetFormat());
+		GLenum type = GLPixelUtil::GetGlOriginDataType(dst.GetFormat());
 
 		if ((format == GL_NONE) || (type == 0))
 		{
@@ -527,8 +527,8 @@ namespace bs
 		BS_CHECK_GL_ERROR();
 
 		glReadPixels((GLint)dst.getLeft(), (GLint)dst.getTop(),
-					 (GLsizei)dst.getWidth(), (GLsizei)dst.getHeight(),
-					 format, type, dst.getData());
+					 (GLsizei)dst.GetWidth(), (GLsizei)dst.GetHeight(),
+					 format, type, dst.GetData());
 		BS_CHECK_GL_ERROR();
 
 		// restore default alignment
@@ -537,10 +537,10 @@ namespace bs
 
 		//vertical flip
 		{
-			size_t rowSpan = dst.getWidth() * PixelUtil::getNumElemBytes(dst.getFormat());
-			size_t height = dst.getHeight();
+			size_t rowSpan = dst.GetWidth() * PixelUtil::getNumElemBytes(dst.GetFormat());
+			size_t height = dst.GetHeight();
 			UINT8* tmpData = (UINT8*)bs_alloc((UINT32)(rowSpan * height));
-			UINT8* srcRow = (UINT8 *)dst.getData(), *tmpRow = tmpData + (height - 1) * rowSpan;
+			UINT8* srcRow = (UINT8 *)dst.GetData(), *tmpRow = tmpData + (height - 1) * rowSpan;
 
 			while (tmpRow >= tmpData)
 			{
@@ -548,7 +548,7 @@ namespace bs
 				srcRow += rowSpan;
 				tmpRow -= rowSpan;
 			}
-			memcpy(dst.getData(), tmpData, rowSpan * height);
+			memcpy(dst.GetData(), tmpData, rowSpan * height);
 
 			bs_free(tmpData);
 		}
@@ -574,7 +574,7 @@ namespace bs
 	{	
 		THROW_IF_NOT_CORE_THREAD;
 
-		mWindow->setActive(state);
+		mWindow->SetActive(state);
 
 		RenderWindow::setActive(state);
 	}
@@ -584,7 +584,7 @@ namespace bs
 		THROW_IF_NOT_CORE_THREAD;
 
 		mShowOnSwap = false;
-		mWindow->setHidden(hidden);
+		mWindow->SetHidden(hidden);
 
 		RenderWindow::setHidden(hidden);
 	}
@@ -599,16 +599,16 @@ namespace bs
 		RenderWindowProperties& props = mProperties;
 		if (!props.isFullScreen) // Fullscreen is handled directly by this object
 		{
-			props.top = mWindow->getTop();
-			props.left = mWindow->getLeft();
-			props.width = mWindow->getWidth();
-			props.height = mWindow->getHeight();
+			props.top = mWindow->GetTop();
+			props.left = mWindow->GetLeft();
+			props.width = mWindow->GetWidth();
+			props.height = mWindow->GetHeight();
 		}
 	}
 
 	HWND Win32RenderWindow::GetHWndInternal() const
 	{
-		return mWindow->getHWnd();
+		return mWindow->GetHWnd();
 	}
 
 	void Win32RenderWindow::SyncProperties()

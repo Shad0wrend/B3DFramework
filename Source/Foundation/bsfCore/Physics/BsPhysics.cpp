@@ -37,17 +37,17 @@ namespace bs
 
 	bool PhysicsScene::RayCast(const Ray& ray, PhysicsQueryHit& hit, UINT64 layer, float max) const
 	{
-		return rayCast(ray.getOrigin(), ray.getDirection(), hit, layer, max);
+		return RayCast(ray.GetOrigin(), ray.GetDirection(), hit, layer, max);
 	}
 
 	Vector<PhysicsQueryHit> PhysicsScene::RayCastAll(const Ray& ray, UINT64 layer, float max) const
 	{
-		return rayCastAll(ray.getOrigin(), ray.getDirection(), layer, max);
+		return RayCastAll(ray.GetOrigin(), ray.GetDirection(), layer, max);
 	}
 
 	bool PhysicsScene::RayCastAny(const Ray& ray, UINT64 layer, float max) const
 	{
-		return rayCastAny(ray.getOrigin(), ray.getDirection(), layer, max);
+		return RayCastAny(ray.GetOrigin(), ray.GetDirection(), layer, max);
 	}
 
 	Vector<HCollider> rawToComponent(const Vector<Collider*>& raw)

@@ -144,7 +144,7 @@ namespace bs
 					const auto minColor = mMinGradient.evaluate(0.0f);
 					const auto maxColor = mMaxGradient.evaluate(0.0f);
 
-					return Color::lerp(lerpFactor, minColor, maxColor);
+					return Color::Lerp(lerpFactor, minColor, maxColor);
 				}
 			case PDT_Curve:
 				return mMinGradient.evaluate(t);
@@ -153,7 +153,7 @@ namespace bs
 					const auto minColor = mMinGradient.evaluate(t);
 					const auto maxColor = mMaxGradient.evaluate(t);
 
-					return Color::lerp(lerpFactor, minColor, maxColor);
+					return Color::Lerp(lerpFactor, minColor, maxColor);
 				}
 			}
 		}
@@ -174,24 +174,24 @@ namespace bs
 			{
 			default:
 			case PDT_Constant:
-				return mMinGradient.evaluate(0.0f);
+				return mMinGradient.Evaluate(0.0f);
 			case PDT_RandomRange:
 			{
-				const auto minColor = mMinGradient.evaluate(0.0f);
-				const auto maxColor = mMaxGradient.evaluate(0.0f);
+				const auto minColor = mMinGradient.Evaluate(0.0f);
+				const auto maxColor = mMaxGradient.Evaluate(0.0f);
 
-				const auto lerpFactor = impl::TGradientHelper<typename T::ColorType>::toLerpFactor(factor.getUNorm());
-				return Color::lerp(lerpFactor, minColor, maxColor);
+				const auto lerpFactor = impl::TGradientHelper<typename T::ColorType>::ToLerpFactor(factor.GetUNorm());
+				return Color::Lerp(lerpFactor, minColor, maxColor);
 			}
 			case PDT_Curve:
-				return mMinGradient.evaluate(t);
+				return mMinGradient.Evaluate(t);
 			case PDT_RandomCurveRange:
 				{
-					const auto minColor = mMinGradient.evaluate(t);
-					const auto maxColor = mMaxGradient.evaluate(t);
+					const auto minColor = mMinGradient.Evaluate(t);
+					const auto maxColor = mMaxGradient.Evaluate(t);
 
-					const auto lerpFactor = impl::TGradientHelper<typename T::ColorType>::toLerpFactor(factor.getUNorm());
-					return Color::lerp(lerpFactor, minColor, maxColor);
+					const auto lerpFactor = impl::TGradientHelper<typename T::ColorType>::ToLerpFactor(factor.GetUNorm());
+					return Color::Lerp(lerpFactor, minColor, maxColor);
 				}
 			}
 		}
@@ -246,23 +246,23 @@ namespace bs
 		BS_SCRIPT_EXPORT()
 		TDistribution()
 			: mType(PDT_Constant)
-			, mMinCurve({ TKeyframe<T>{ T(), TCurveProperties<T>::getZero(), TCurveProperties<T>::getZero(), 0.0f} })
-			, mMaxCurve({ TKeyframe<T>{ T(), TCurveProperties<T>::getZero(), TCurveProperties<T>::getZero(), 0.0f} })
+			, mMinCurve({ TKeyframe<T>{ T(), TCurveProperties<T>::GetZero(), TCurveProperties<T>::GetZero(), 0.0f} })
+			, mMaxCurve({ TKeyframe<T>{ T(), TCurveProperties<T>::GetZero(), TCurveProperties<T>::GetZero(), 0.0f} })
 		{ }
 		/** Creates a new distribution that returns a constant value. */
 		BS_SCRIPT_EXPORT()
 		TDistribution(T value)
 			: mType(PDT_Constant)
-			, mMinCurve({ TKeyframe<T>{ value, TCurveProperties<T>::getZero(), TCurveProperties<T>::getZero(), 0.0f} })
-			, mMaxCurve({ TKeyframe<T>{ value, TCurveProperties<T>::getZero(), TCurveProperties<T>::getZero(), 0.0f} })
+			, mMinCurve({ TKeyframe<T>{ value, TCurveProperties<T>::GetZero(), TCurveProperties<T>::GetZero(), 0.0f} })
+			, mMaxCurve({ TKeyframe<T>{ value, TCurveProperties<T>::GetZero(), TCurveProperties<T>::GetZero(), 0.0f} })
 		{ }
 
 		/** Creates a new distribution that returns a random value in the specified range. */
 		BS_SCRIPT_EXPORT()
 		TDistribution(T minValue, T maxValue)
 			: mType(PDT_RandomRange)
-			, mMinCurve({ TKeyframe<T>{ minValue, TCurveProperties<T>::getZero(), TCurveProperties<T>::getZero(), 0.0f} })
-			, mMaxCurve({ TKeyframe<T>{ maxValue, TCurveProperties<T>::getZero(), TCurveProperties<T>::getZero(), 0.0f} })
+			, mMinCurve({ TKeyframe<T>{ minValue, TCurveProperties<T>::GetZero(), TCurveProperties<T>::GetZero(), 0.0f} })
+			, mMaxCurve({ TKeyframe<T>{ maxValue, TCurveProperties<T>::GetZero(), TCurveProperties<T>::GetZero(), 0.0f} })
 		{ }
 
 		/** Creates a new distribution that evaluates a curve. */
@@ -271,10 +271,10 @@ namespace bs
 			: mType(PDT_Curve), mMinCurve(curve), mMaxCurve(curve)
 		{
 			if(mMinCurve.GetKeyFrames().empty())
-				mMinCurve = TAnimationCurve<T>({ TKeyframe<T>{ T(), TCurveProperties<T>::getZero(), TCurveProperties<T>::getZero(), 0.0f} });
+				mMinCurve = TAnimationCurve<T>({ TKeyframe<T>{ T(), TCurveProperties<T>::GetZero(), TCurveProperties<T>::GetZero(), 0.0f} });
 
 			if(mMaxCurve.GetKeyFrames().empty())
-				mMaxCurve = TAnimationCurve<T>({ TKeyframe<T>{ T(), TCurveProperties<T>::getZero(), TCurveProperties<T>::getZero(), 0.0f} });
+				mMaxCurve = TAnimationCurve<T>({ TKeyframe<T>{ T(), TCurveProperties<T>::GetZero(), TCurveProperties<T>::GetZero(), 0.0f} });
 		}
 
 		/** Creates a new distribution that returns a random value in a range determined by two curves. */
@@ -283,10 +283,10 @@ namespace bs
 			: mType(PDT_RandomCurveRange), mMinCurve(minCurve), mMaxCurve(maxCurve)
 		{
 			if(mMinCurve.GetKeyFrames().empty())
-				mMinCurve = TAnimationCurve<T>({ TKeyframe<T>{ T(), TCurveProperties<T>::getZero(), TCurveProperties<T>::getZero(), 0.0f} });
+				mMinCurve = TAnimationCurve<T>({ TKeyframe<T>{ T(), TCurveProperties<T>::GetZero(), TCurveProperties<T>::GetZero(), 0.0f} });
 
 			if(mMaxCurve.GetKeyFrames().empty())
-				mMaxCurve = TAnimationCurve<T>({ TKeyframe<T>{ T(), TCurveProperties<T>::getZero(), TCurveProperties<T>::getZero(), 0.0f} });
+				mMaxCurve = TAnimationCurve<T>({ TKeyframe<T>{ T(), TCurveProperties<T>::GetZero(), TCurveProperties<T>::GetZero(), 0.0f} });
 		}
 
 		/** Returns the type of the represented distribution. */
@@ -338,9 +338,9 @@ namespace bs
 			{
 			default:
 			case PDT_Constant:
-				return getMinConstant();
+				return GetMinConstant();
 			case PDT_RandomRange:
-				return Math::lerp(factor, getMinConstant(), getMaxConstant());
+				return Math::Lerp(factor, GetMinConstant(), GetMaxConstant());
 			case PDT_Curve:
 				return mMinCurve.evaluate(t);
 			case PDT_RandomCurveRange:
@@ -348,7 +348,7 @@ namespace bs
 					const T minValue = mMinCurve.evaluate(t);
 					const T maxValue = mMaxCurve.evaluate(t);
 
-					return Math::lerp(factor, minValue, maxValue);
+					return Math::Lerp(factor, minValue, maxValue);
 				}
 			}
 		}
@@ -370,17 +370,17 @@ namespace bs
 			{
 			default:
 			case PDT_Constant:
-				return getMinConstant();
+				return GetMinConstant();
 			case PDT_RandomRange:
-				return Math::lerp(factor.getUNorm(), getMinConstant(), getMaxConstant());
+				return Math::Lerp(factor.GetUNorm(), GetMinConstant(), GetMaxConstant());
 			case PDT_Curve:
-				return mMinCurve.evaluate(t);
+				return mMinCurve.Evaluate(t);
 			case PDT_RandomCurveRange:
 				{
-					const T minValue = mMinCurve.evaluate(t);
-					const T maxValue = mMaxCurve.evaluate(t);
+					const T minValue = mMinCurve.Evaluate(t);
+					const T maxValue = mMaxCurve.Evaluate(t);
 
-					return Math::lerp(factor.getUNorm(), minValue, maxValue);
+					return Math::Lerp(factor.GetUNorm(), minValue, maxValue);
 				}
 			}
 		}

@@ -75,13 +75,13 @@ namespace bs
 
 	SPtr<ct::CoreObject> D3D11RenderWindow::CreateCore() const
 	{
-		ct::RenderAPI* rs = ct::RenderAPI::instancePtr();
+		ct::RenderAPI* rs = ct::RenderAPI::InstancePtr();
 		auto d3d11rs = static_cast<ct::D3D11RenderAPI*>(rs);
 
 		// Create the window
 		RENDER_WINDOW_DESC desc = mDesc;
 		SPtr<ct::CoreObject> coreObj = bs_shared_ptr_new<ct::D3D11RenderWindow>(desc, mWindowId,
-			d3d11rs->getPrimaryDevice(), d3d11rs->getDXGIFactory());
+			d3d11rs->GetPrimaryDevice(), d3d11rs->GetDXGIFactory());
 		coreObj->SetThisPtrInternal(coreObj);
 
 		return coreObj;
@@ -160,7 +160,7 @@ namespace bs
 
 		if (mDesc.videoMode.isCustom)
 		{
-			mRefreshRateNumerator = Math::roundToInt(mDesc.videoMode.refreshRate);
+			mRefreshRateNumerator = Math::RoundToInt(mDesc.videoMode.refreshRate);
 			mRefreshRateDenominator = 1;
 		}
 		else
@@ -193,10 +193,10 @@ namespace bs
 
 		mWindow = bs_new<Win32Window>(windowDesc);
 
-		props.width = mWindow->getWidth();
-		props.height = mWindow->getHeight();
-		props.top = mWindow->getTop();
-		props.left = mWindow->getLeft();
+		props.width = mWindow->GetWidth();
+		props.height = mWindow->GetHeight();
+		props.top = mWindow->GetTop();
+		props.left = mWindow->GetLeft();
 
 		CreateSwapChain();
 
@@ -209,7 +209,7 @@ namespace bs
 		}
 
 		CreateSizeDependedD3DResources();
-		mDXGIFactory->MakeWindowAssociation(mWindow->getHWnd(), NULL);
+		mDXGIFactory->MakeWindowAssociation(mWindow->GetHWnd(), NULL);
 
 		{
 			ScopedSpinLock lock(mLock);
@@ -217,7 +217,7 @@ namespace bs
 		}
 
 		bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
-		RenderWindow::initialize();
+		RenderWindow::Initialize();
 	}
 
 	void D3D11RenderWindow::SwapBuffers(UINT32 syncMask)
@@ -246,8 +246,8 @@ namespace bs
 		{
 			mWindow->move(left, top);
 
-			props.top = mWindow->getTop();
-			props.left = mWindow->getLeft();
+			props.top = mWindow->GetTop();
+			props.left = mWindow->GetLeft();
 
 			{
 				ScopedSpinLock lock(mLock);
@@ -269,8 +269,8 @@ namespace bs
 		{
 			mWindow->resize(width, height);
 
-			props.width = mWindow->getWidth();
-			props.height = mWindow->getHeight();
+			props.width = mWindow->GetWidth();
+			props.height = mWindow->GetHeight();
 
 			{
 				ScopedSpinLock lock(mLock);
@@ -287,7 +287,7 @@ namespace bs
 		THROW_IF_NOT_CORE_THREAD;
 
 		RenderWindowProperties& props = mProperties;
-		mWindow->setActive(state);
+		mWindow->SetActive(state);
 
 		if (mSwapChain)
 		{
@@ -305,7 +305,7 @@ namespace bs
 		THROW_IF_NOT_CORE_THREAD;
 
 		mShowOnSwap = false;
-		mWindow->setHidden(hidden);
+		mWindow->SetHidden(hidden);
 
 		RenderWindow::setHidden(hidden);
 	}
@@ -351,7 +351,7 @@ namespace bs
 
 		modeDesc.Width = width;
 		modeDesc.Height = height;
-		modeDesc.RefreshRate.Numerator = Math::roundToInt(refreshRate);
+		modeDesc.RefreshRate.Numerator = Math::RoundToInt(refreshRate);
 		modeDesc.RefreshRate.Denominator = 1;
 		modeDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 		modeDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
@@ -477,7 +477,7 @@ namespace bs
 
 	HWND D3D11RenderWindow::GetWindowHandleInternal() const
 	{
-		return mWindow->getHWnd();
+		return mWindow->GetHWnd();
 	}
 
 	void D3D11RenderWindow::GetCustomAttribute(const String& name, void* pData) const
@@ -485,7 +485,7 @@ namespace bs
 		if(name == "WINDOW")
 		{
 			UINT64 *pWnd = (UINT64*)pData;
-			*pWnd = (UINT64)mWindow->getHWnd();
+			*pWnd = (UINT64)mWindow->GetHWnd();
 			return;
 		}
 
@@ -641,11 +641,11 @@ namespace bs
 		}
 		else
 		{
-			ResizeSwapChainBuffers(mWindow->getWidth(), mWindow->getHeight());
-			props.width = mWindow->getWidth();
-			props.height = mWindow->getHeight();
-			props.top = mWindow->getTop();
-			props.left = mWindow->getLeft();
+			ResizeSwapChainBuffers(mWindow->GetWidth(), mWindow->GetHeight());
+			props.width = mWindow->GetWidth();
+			props.height = mWindow->GetHeight();
+			props.top = mWindow->GetTop();
+			props.left = mWindow->GetLeft();
 		}
 	}
 
@@ -658,7 +658,7 @@ namespace bs
 
 		ZeroMemory(&mSwapChainDesc, sizeof(DXGI_SWAP_CHAIN_DESC));
 		DXGI_FORMAT format = DXGI_FORMAT_R8G8B8A8_UNORM;
-		mSwapChainDesc.OutputWindow = mWindow->getHWnd();
+		mSwapChainDesc.OutputWindow = mWindow->GetHWnd();
 		mSwapChainDesc.BufferDesc.Width = props.width;
 		mSwapChainDesc.BufferDesc.Height = props.height;
 		mSwapChainDesc.BufferDesc.Format = format;
@@ -684,7 +684,7 @@ namespace bs
 
 		mSwapChainDesc.Windowed	= true;
 
-		D3D11RenderAPI* rs = static_cast<D3D11RenderAPI*>(RenderAPI::instancePtr());
+		D3D11RenderAPI* rs = static_cast<D3D11RenderAPI*>(RenderAPI::InstancePtr());
 		rs->determineMultisampleSettings(props.multisampleCount, format, &mMultisampleType);
 		mSwapChainDesc.SampleDesc.Count = mMultisampleType.Count;
 		mSwapChainDesc.SampleDesc.Quality = mMultisampleType.Quality;

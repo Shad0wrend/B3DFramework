@@ -96,7 +96,7 @@ namespace bs
 		void OnEnabled() override;
 
 	protected:
-		using Component::destroyInternal;
+		using Component::DestroyInternal;
 
 		/** Creates the internal representation of the ParticleSystem and restores the values saved by the Component. */
 		void RestoreInternal();

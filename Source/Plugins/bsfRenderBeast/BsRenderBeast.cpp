@@ -52,21 +52,21 @@ namespace bs { namespace ct
 
 	void RenderBeast::Initialize()
 	{
-		Renderer::initialize();
+		Renderer::Initialize();
 
 		LoadedRendererTextures textures;
 		HTexture bokehFlare = gBuiltinResources().getTexture(BuiltinTexture::BokehFlare);
-		if(bokehFlare.isLoaded(false))
-			textures.bokehFlare = bokehFlare->getCore();
+		if(bokehFlare.IsLoaded(false))
+			textures.bokehFlare = bokehFlare->GetCore();
 
-		gCoreThread().queueCommand([this, textures]() { initializeCore(textures); }, CTQF_InternalQueue);
+		gCoreThread().QueueCommand([this, textures]() { initializeCore(textures); }, CTQF_InternalQueue);
 	}
 
 	void RenderBeast::Destroy()
 	{
-		Renderer::destroy();
+		Renderer::Destroy();
 
-		gCoreThread().queueCommand(std::bind(&RenderBeast::destroyCore, this));
+		gCoreThread().QueueCommand(std::bind(&RenderBeast::destroyCore, this));
 		gCoreThread().submit(true);
 	}
 
@@ -293,9 +293,9 @@ namespace bs { namespace ct
 
 		*mCoreOptions = options;
 
-		mScene->setOptions(mCoreOptions);
+		mScene->SetOptions(mCoreOptions);
 
-		ShadowRendering& shadowRenderer = mMainViewGroup->getShadowRenderer();
+		ShadowRendering& shadowRenderer = mMainViewGroup->GetShadowRenderer();
 		shadowRenderer.setShadowMapSize(mCoreOptions->shadowMapSize);
 	}
 
@@ -333,7 +333,7 @@ namespace bs { namespace ct
 	{
 		SPtr<ct::Shader> shaderCore;
 		if(shader)
-			shaderCore = shader->getCore();
+			shaderCore = shader->GetCore();
 
 		auto setShaderOverride = [name, shaderCore]()
 		{
@@ -345,7 +345,7 @@ namespace bs { namespace ct
 				DeferredDirectionalLightMat::setOverride(shaderCore);
 		};
 	
-		gCoreThread().queueCommand(setShaderOverride);
+		gCoreThread().QueueCommand(setShaderOverride);
 	}
 
 	void RenderBeast::RenderAll(PerFrameData perFrameData)
@@ -355,7 +355,7 @@ namespace bs { namespace ct
 
 		if (mOptionsDirty)
 		{
-			gCoreThread().queueCommand(std::bind(&RenderBeast::syncOptions, this, *mOptions));
+			gCoreThread().QueueCommand(std::bind(&RenderBeast::syncOptions, this, *mOptions));
 			mOptionsDirty = false;
 		}
 
@@ -364,7 +364,7 @@ namespace bs { namespace ct
 		timings.timeDelta = gTime().getFrameDelta();
 		timings.frameIdx = gTime().getFrameIdx();
 		
-		gCoreThread().queueCommand(std::bind(&RenderBeast::renderAllCore, this, timings, perFrameData));
+		gCoreThread().QueueCommand(std::bind(&RenderBeast::renderAllCore, this, timings, perFrameData));
 	}
 
 	void RenderBeast::RenderAllCore(FrameTimings timings, PerFrameData perFrameData)
@@ -374,7 +374,7 @@ namespace bs { namespace ct
 		gProfilerGPU().beginFrame();
 		gProfilerCPU().beginSample("Render");
 
-		const SceneInfo& sceneInfo = mScene->getSceneInfo();
+		const SceneInfo& sceneInfo = mScene->GetSceneInfo();
 
 		// Note: I'm iterating over all sampler states every frame. If this ends up being a performance
 		// issue consider handling this internally in ct::Material which can only do it when sampler states
@@ -382,7 +382,7 @@ namespace bs { namespace ct
 		mScene->refreshSamplerOverrides();
 
 		// Update global per-frame hardware buffers
-		mScene->setParamFrameParams(timings.time);
+		mScene->SetParamFrameParams(timings.time);
 
 		// Update bounds for all particle systems
 		if(perFrameData.particles)
@@ -424,13 +424,13 @@ namespace bs { namespace ct
 				views.push_back(viewInfo);
 			}
 
-			mMainViewGroup->setViews(views.data(), (UINT32)views.size());
+			mMainViewGroup->SetViews(views.data(), (UINT32)views.size());
 			PROFILE_CALL(mMainViewGroup->determineVisibility(sceneInfo), "Determine visibility")
 
 			// Render everything
 			bool anythingDrawn = renderViews(*mMainViewGroup, frameInfo);
 
-			if(rtInfo.target->getProperties().isWindow && anythingDrawn)
+			if(rtInfo.target->GetProperties().isWindow && anythingDrawn)
 				PROFILE_CALL(RenderAPI::Instance().swapBuffers(rtInfo.target), "Swap buffers");
 		}
 
@@ -458,7 +458,7 @@ namespace bs { namespace ct
 		
 		if (needs3DRender)
 		{
-			const SceneInfo& sceneInfo = mScene->getSceneInfo();
+			const SceneInfo& sceneInfo = mScene->GetSceneInfo();
 			const VisibilityInfo& visibility = viewGroup.getVisibilityInfo();
 
 			// Render shadow maps
@@ -483,7 +483,7 @@ namespace bs { namespace ct
 			view->updateAsyncOperations();
 			
 			auto viewId = (UINT64)view;
-			const RendererViewTargetData& viewTarget = view->getProperties().target;
+			const RendererViewTargetData& viewTarget = view->GetProperties().target;
 			String title = StringUtil::format("({0} x {1})", viewTarget.targetWidth, viewTarget.targetHeight);
 			gProfilerGPU().beginView(viewId, ProfilerString(title.data(), title.size()));
 			
@@ -493,7 +493,7 @@ namespace bs { namespace ct
 				continue;
 			}
 			
-			const RenderSettings& settings = view->getRenderSettings();
+			const RenderSettings& settings = view->GetRenderSettings();
 			if (settings.overlayOnly)
 			{
 				if (renderOverlay(*view, frameInfo))
@@ -515,7 +515,7 @@ namespace bs { namespace ct
 	{
 		gProfilerCPU().beginSample("Render view");
 
-		const SceneInfo& sceneInfo = mScene->getSceneInfo();
+		const SceneInfo& sceneInfo = mScene->GetSceneInfo();
 		auto& viewProps = view.getProperties();
 
 		SPtr<GpuParamBlockBuffer> perCameraBuffer = view.getPerViewBuffer();
@@ -535,7 +535,7 @@ namespace bs { namespace ct
 			const Camera* camera = view.getSceneCamera();
 			for (auto& extension : mCallbacks)
 			{
-				RenderLocation location = extension->getLocation();
+				RenderLocation location = extension->GetLocation();
 				RendererExtensionRequest request = extension->check(*camera);
 
 				if (request == RendererExtensionRequest::DontRender)
@@ -582,9 +582,9 @@ namespace bs { namespace ct
 		auto& viewProps = view.getProperties();
 		const Camera* camera = view.getSceneCamera();
 		SPtr<RenderTarget> target = viewProps.target.target;
-		SPtr<Viewport> viewport = camera->getViewport();
+		SPtr<Viewport> viewport = camera->GetViewport();
 
-		ClearFlags clearFlags = viewport->getClearFlags();
+		ClearFlags clearFlags = viewport->GetClearFlags();
 		UINT32 clearBuffers = 0;
 		if (clearFlags.isSet(ClearFlagBits::Color))
 			clearBuffers |= FBT_COLOR;
@@ -599,13 +599,13 @@ namespace bs { namespace ct
 		if (clearBuffers != 0)
 		{
 			rapi.setRenderTarget(target);
-			rapi.clearViewport(clearBuffers, viewport->getClearColorValue(),
-				viewport->getClearDepthValue(), viewport->getClearStencilValue());
+			rapi.clearViewport(clearBuffers, viewport->GetClearColorValue(),
+				viewport->GetClearDepthValue(), viewport->GetClearStencilValue());
 		}
 		else
 			rapi.setRenderTarget(target, 0, RT_COLOR0);
 
-		rapi.setViewport(viewport->getArea());
+		rapi.setViewport(viewport->GetArea());
 
 		// Trigger overlay callbacks
 		bool needsRedraw = false;
@@ -617,7 +617,7 @@ namespace bs { namespace ct
 
 			for(auto& entry : mCallbacks)
 			{
-				if (entry->getLocation() != RenderLocation::Overlay)
+				if (entry->GetLocation() != RenderLocation::Overlay)
 					continue;
 
 				RendererExtensionRequest request = entry->check(*camera);
@@ -653,7 +653,7 @@ namespace bs { namespace ct
 			UINT32 currentCubeArraySize = 0;
 
 			if(sceneInfo.reflProbeCubemapsTex != nullptr)
-				currentCubeArraySize = sceneInfo.reflProbeCubemapsTex->getProperties().getNumArraySlices();
+				currentCubeArraySize = sceneInfo.reflProbeCubemapsTex->GetProperties().getNumArraySlices();
 
 			bool forceArrayUpdate = false;
 			if(sceneInfo.reflProbeCubemapsTex == nullptr || (currentCubeArraySize < numProbes && currentCubeArraySize != MaxReflectionCubemaps))
@@ -671,7 +671,7 @@ namespace bs { namespace ct
 				forceArrayUpdate = true;
 			}
 
-			auto& cubemapArrayProps = sceneInfo.reflProbeCubemapsTex->getProperties();
+			auto& cubemapArrayProps = sceneInfo.reflProbeCubemapsTex->GetProperties();
 
 			FrameQueue<UINT32> emptySlots;
 			for (UINT32 i = 0; i < numProbes; i++)
@@ -683,13 +683,13 @@ namespace bs { namespace ct
 
 				if(probeInfo.arrayDirty || forceArrayUpdate)
 				{
-					SPtr<Texture> texture = probeInfo.probe->getFilteredTexture();
+					SPtr<Texture> texture = probeInfo.probe->GetFilteredTexture();
 					if (texture == nullptr)
 						continue;
 
-					auto& srcProps = texture->getProperties();
-					bool isValid = srcProps.getWidth() == IBLUtility::REFLECTION_CUBEMAP_SIZE &&
-						srcProps.getHeight() == IBLUtility::REFLECTION_CUBEMAP_SIZE &&
+					auto& srcProps = texture->GetProperties();
+					bool isValid = srcProps.GetWidth() == IBLUtility::REFLECTION_CUBEMAP_SIZE &&
+						srcProps.GetHeight() == IBLUtility::REFLECTION_CUBEMAP_SIZE &&
 						srcProps.getNumMipmaps() == cubemapArrayProps.getNumMipmaps() &&
 						srcProps.getTextureType() == TEX_TYPE_CUBE_MAP;
 
@@ -721,7 +721,7 @@ namespace bs { namespace ct
 						}
 					}
 
-					mScene->setReflectionProbeArrayIndex(i, probeInfo.arrayIdx, true);
+					mScene->SetReflectionProbeArrayIndex(i, probeInfo.arrayIdx, true);
 				}
 
 				// Note: Consider pruning the reflection cubemap array if empty slot count becomes too high
@@ -733,8 +733,8 @@ namespace bs { namespace ct
 	void RenderBeast::CaptureSceneCubeMap(const SPtr<Texture>& cubemap, const Vector3& position,
 		const CaptureSettings& settings)
 	{
-		const SceneInfo& sceneInfo = mScene->getSceneInfo();
-		auto& texProps = cubemap->getProperties();
+		const SceneInfo& sceneInfo = mScene->GetSceneInfo();
+		auto& texProps = cubemap->GetProperties();
 
 		Matrix4 projTransform = Matrix4::projectionPerspective(Degree(90.0f), 1.0f, 0.05f, 1000.0f);
 		ConvexVolume localFrustum(projTransform);
@@ -747,9 +747,9 @@ namespace bs { namespace ct
 		viewDesc.target.clearStencilValue = 0;
 
 		viewDesc.target.nrmViewRect = Rect2(0, 0, 1.0f, 1.0f);
-		viewDesc.target.viewRect = Rect2I(0, 0, texProps.getWidth(), texProps.getHeight());
-		viewDesc.target.targetWidth = texProps.getWidth();
-		viewDesc.target.targetHeight = texProps.getHeight();
+		viewDesc.target.viewRect = Rect2I(0, 0, texProps.GetWidth(), texProps.GetHeight());
+		viewDesc.target.targetWidth = texProps.GetWidth();
+		viewDesc.target.targetHeight = texProps.GetHeight();
 		viewDesc.target.numSamples = 1;
 
 		viewDesc.mainView = false;
@@ -820,7 +820,7 @@ namespace bs { namespace ct
 				break;
 			}
 
-			Vector3 right = Vector3::cross(up, forward);
+			Vector3 right = Vector3::Cross(up, forward);
 			Matrix3 viewRotationMat = Matrix3(right, up, forward);
 
 			viewDesc.viewDirection = -forward;
@@ -834,7 +834,7 @@ namespace bs { namespace ct
 			UINT32 j = 0;
 			for (auto& plane : frustumPlanes)
 			{
-				worldPlanes[j] = worldMatrix.multiplyAffine(plane);
+				worldPlanes[j] = worldMatrix.MultiplyAffine(plane);
 				j++;
 			}
 

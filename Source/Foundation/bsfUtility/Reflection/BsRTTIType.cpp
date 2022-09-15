@@ -58,15 +58,15 @@ namespace bs
 	void RTTITypeBase::InitSchemaInternal()
 	{
 		mSchema = bs_shared_ptr_new<RTTISchema>();
-		mSchema->typeId = getRTTIId();
+		mSchema->typeId = GetRttiId();
 		
-		RTTITypeBase* baseType = getBaseClass();
+		RTTITypeBase* baseType = GetBaseClass();
 		if (baseType)
-			mSchema->baseTypeSchema = baseType->getSchema();
+			mSchema->baseTypeSchema = baseType->GetSchema();
 		
 		for (auto& entry : mFields)
 		{
-			entry->initSchema();
+			entry->InitSchema();
 			mSchema->fieldSchemas.push_back(entry->schema);
 		}
 	}
@@ -94,7 +94,7 @@ namespace bs
 			return TID_SerializationContext;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			BS_EXCEPT(InternalErrorException, "Cannot instantiate an abstract class.");
 			return nullptr;
@@ -113,6 +113,6 @@ namespace bs
 
 	SPtr<IReflectable> rtti_create(UINT32 rttiId)
 	{
-		return IReflectable::createInstanceFromTypeId(rttiId);
+		return IReflectable::CreateInstanceFromTypeId(rttiId);
 	}
 }

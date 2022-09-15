@@ -103,7 +103,7 @@ namespace bs
 		charWidth = lastWord.addChar(charIdx, charDesc);
 
 		mWidth += charWidth;
-		mHeight = std::max(mHeight, lastWord.getHeight());
+		mHeight = std::max(mHeight, lastWord.GetHeight());
 	}
 
 	void TextDataBase::TextLine::AddSpace(UINT32 spaceWidth)
@@ -133,8 +133,8 @@ namespace bs
 		else
 			mWordsEnd = wordIdx;
 
-		mWidth += word.getWidth();
-		mHeight = std::max(mHeight, word.getHeight());
+		mWidth += word.GetWidth();
+		mHeight = std::max(mHeight, word.GetHeight());
 	}
 
 	UINT32 TextDataBase::TextLine::RemoveLastWord()
@@ -167,7 +167,7 @@ namespace bs
 			if (lastWord.isSpacer())
 				charWidth = TextWord::calcCharWidth(nullptr, desc);
 			else
-				charWidth = lastWord.calcWidthWithChar(desc) - lastWord.getWidth();
+				charWidth = lastWord.calcWidthWithChar(desc) - lastWord.GetWidth();
 		}
 		else
 		{
@@ -193,7 +193,7 @@ namespace bs
 		UINT32 penNegativeXOffset = 0;
 		for(UINT32 i = mWordsStart; i <= mWordsEnd; i++)
 		{
-			const TextWord& word = mTextData->getWord(i);
+			const TextWord& word = mTextData->GetWord(i);
 
 			if(word.isSpacer())
 			{
@@ -209,9 +209,9 @@ namespace bs
 					UINT32 curIndex = offset * 6;
 
 					vertices[curVert + 0] = Vector2((float)curX, (float)curY);
-					vertices[curVert + 1] = Vector2((float)(curX + word.getWidth()), (float)curY);
-					vertices[curVert + 2] = Vector2((float)curX, (float)curY + (float)mTextData->getLineHeight());
-					vertices[curVert + 3] = Vector2((float)(curX + word.getWidth()), (float)curY + (float)mTextData->getLineHeight());
+					vertices[curVert + 1] = Vector2((float)(curX + word.GetWidth()), (float)curY);
+					vertices[curVert + 2] = Vector2((float)curX, (float)curY + (float)mTextData->GetLineHeight());
+					vertices[curVert + 3] = Vector2((float)(curX + word.GetWidth()), (float)curY + (float)mTextData->GetLineHeight());
 
 					if(uvs != nullptr)
 					{
@@ -239,17 +239,17 @@ namespace bs
 						BS_EXCEPT(InternalErrorException, "Out of buffer bounds. Buffer size: " + toString(size));
 				}
 
-				penX += word.getWidth();
+				penX += word.GetWidth();
 			}
 			else
 			{
 				UINT32 kerning = 0;
 				for(UINT32 j = word.getCharsStart(); j <= word.getCharsEnd(); j++)
 				{
-					const CharDesc& curChar = mTextData->getChar(j);
+					const CharDesc& curChar = mTextData->GetChar(j);
 
 					INT32 curX = penX + curChar.xOffset;
-					INT32 curY = ((INT32) mTextData->getBaselineOffset() - curChar.yOffset);
+					INT32 curY = ((INT32) mTextData->GetBaselineOffset() - curChar.yOffset);
 
 					curX += penNegativeXOffset;
 					penX += curChar.xAdvance + kerning;
@@ -257,7 +257,7 @@ namespace bs
 					kerning = 0;
 					if((j + 1) <= word.getCharsEnd())
 					{
-						const CharDesc& nextChar = mTextData->getChar(j + 1);
+						const CharDesc& nextChar = mTextData->GetChar(j + 1);
 						for(size_t j = 0; j < curChar.kerningPairs.size(); j++)
 						{
 							if(curChar.kerningPairs[j].otherCharId == nextChar.charId)
@@ -340,8 +340,8 @@ namespace bs
 		{
 			TextWord& word = MemBuffer->WordBuffer[i];
 
-			mWidth += word.getWidth();
-			mHeight = std::max(mHeight, word.getHeight());
+			mWidth += word.GetWidth();
+			mHeight = std::max(mHeight, word.GetHeight());
 		}
 	}
 
@@ -355,8 +355,8 @@ namespace bs
 
 		if(font != nullptr)
 		{
-			UINT32 nearestSize = font->getClosestSize(fontSize);
-			mFontData = font->getBitmap(nearestSize);
+			UINT32 nearestSize = font->GetClosestSize(fontSize);
+			mFontData = font->GetBitmap(nearestSize);
 		}
 
 		if(mFontData == nullptr || mFontData->texturePages.size() == 0)
@@ -381,7 +381,7 @@ namespace bs
 				break;
 
 			UINT32 charId = text[charIdx];
-			const CharDesc& charDesc = mFontData->getCharDesc(charId);
+			const CharDesc& charDesc = mFontData->GetCharDesc(charId);
 
 			TextLine* curLine = &MemBuffer->LineBuffer[curLineIdx];
 
@@ -410,9 +410,9 @@ namespace bs
 			{
 				UINT32 widthWithChar = 0;
 				if (charIdx == SPACE_CHAR)
-					widthWithChar = curLine->getWidth() + getSpaceWidth();
+					widthWithChar = curLine->GetWidth() + getSpaceWidth();
 				else if (charIdx == TAB_CHAR)
-					widthWithChar = curLine->getWidth() + getSpaceWidth() * 4;
+					widthWithChar = curLine->GetWidth() + getSpaceWidth() * 4;
 				else
 					widthWithChar = curLine->calcWidthWithChar(charDesc);
 
@@ -524,7 +524,7 @@ namespace bs
 		for (UINT32 i = 0; i < mNumChars; i++)
 		{
 			UINT32 charId = text[i];
-			const CharDesc& charDesc = mFontData->getCharDesc(charId);
+			const CharDesc& charDesc = mFontData->GetCharDesc(charId);
 
 			mChars[i] = &charDesc;
 		}
@@ -666,7 +666,7 @@ namespace bs
 		UINT32 width = 0;
 
 		for(UINT32 i = 0; i < mNumLines; i++)
-			width = std::max(width, mLines[i].getWidth());
+			width = std::max(width, mLines[i].GetWidth());
 
 		return width;
 	}
@@ -676,7 +676,7 @@ namespace bs
 		UINT32 height = 0;
 
 		for(UINT32 i = 0; i < mNumLines; i++)
-			height += mLines[i].getHeight();
+			height += mLines[i].GetHeight();
 
 		return height;
 	}

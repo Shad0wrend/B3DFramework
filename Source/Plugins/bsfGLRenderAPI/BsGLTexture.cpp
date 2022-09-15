@@ -47,7 +47,7 @@ namespace bs { namespace ct
 		width = std::max(width, 1U);
 		height = std::max(height, 1U);
 
-		PixelFormat pixFormat = mProperties.getFormat();
+		PixelFormat pixFormat = mProperties.GetFormat();
 		mInternalFormat = GLPixelUtil::getClosestSupportedPF(pixFormat, texType, usage);
 
 		if (pixFormat != mInternalFormat)
@@ -57,7 +57,7 @@ namespace bs { namespace ct
 		}
 
 		// Check requested number of mipmaps
-		UINT32 maxMips = PixelUtil::getMaxMipmaps(width, height, depth, mProperties.getFormat());
+		UINT32 maxMips = PixelUtil::getMaxMipmaps(width, height, depth, mProperties.GetFormat());
 		if (numMips > maxMips)
 		{
 			BS_LOG(Error, RenderBackend, "Invalid number of mipmaps. Maximum allowed is: {0}", maxMips);
@@ -297,7 +297,7 @@ namespace bs { namespace ct
 		createSurfaceList();
 
 		BS_INC_RENDER_STAT_CAT(ResCreated, RenderStatObject_Texture);
-		Texture::initialize();
+		Texture::Initialize();
 	}
 
 	GLenum GLTexture::GetGlTextureTarget() const
@@ -384,11 +384,11 @@ namespace bs { namespace ct
 		if(mLockedBuffer != nullptr)
 			BS_EXCEPT(InternalErrorException, "Trying to lock a buffer that's already locked.");
 
-		UINT32 mipWidth = std::max(1u, mProperties.getWidth() >> mipLevel);
-		UINT32 mipHeight = std::max(1u, mProperties.getHeight() >> mipLevel);
+		UINT32 mipWidth = std::max(1u, mProperties.GetWidth() >> mipLevel);
+		UINT32 mipHeight = std::max(1u, mProperties.GetHeight() >> mipLevel);
 		UINT32 mipDepth = std::max(1u, mProperties.getDepth() >> mipLevel);
 
-		PixelData lockedArea(mipWidth, mipHeight, mipDepth, mProperties.getFormat());
+		PixelData lockedArea(mipWidth, mipHeight, mipDepth, mProperties.GetFormat());
 
 		mLockedBuffer = getBuffer(face, mipLevel);
 		lockedArea.setExternalBuffer((UINT8*)mLockedBuffer->lock(options));
@@ -416,7 +416,7 @@ namespace bs { namespace ct
 			return;
 		}
 
-		if(dest.getFormat() != mInternalFormat)
+		if(dest.GetFormat() != mInternalFormat)
 		{
 			PixelData temp(dest.getExtents(), mInternalFormat);
 			temp.allocateInternalBuffer();
@@ -437,7 +437,7 @@ namespace bs { namespace ct
 			return;
 		}
 
-		if (src.getFormat() != mInternalFormat)
+		if (src.GetFormat() != mInternalFormat)
 		{
 			PixelData temp(src.getExtents(), mInternalFormat);
 			temp.allocateInternalBuffer();
@@ -455,11 +455,11 @@ namespace bs { namespace ct
 		auto executeRef = [this](const SPtr<Texture>& target, const TEXTURE_COPY_DESC& desc)
 		{
 			GLTexture* destTex = static_cast<GLTexture*>(target.get());
-			GLTextureBuffer* dest = static_cast<GLTextureBuffer*>(destTex->getBuffer(desc.dstFace, desc.dstMip).get());
+			GLTextureBuffer* dest = static_cast<GLTextureBuffer*>(destTex->GetBuffer(desc.dstFace, desc.dstMip).get());
 			GLTextureBuffer* src = static_cast<GLTextureBuffer*>(getBuffer(desc.srcFace, desc.srcMip).get());
 
-			bool copyEntireSurface = desc.srcVolume.getWidth() == 0 ||
-				desc.srcVolume.getHeight() == 0 ||
+			bool copyEntireSurface = desc.srcVolume.GetWidth() == 0 ||
+				desc.srcVolume.GetHeight() == 0 ||
 				desc.srcVolume.getDepth() == 0;
 
 			PixelVolume srcVolume = desc.srcVolume;
@@ -471,18 +471,18 @@ namespace bs { namespace ct
 
 			if(copyEntireSurface)
 			{
-				srcVolume.right = srcVolume.left + src->getWidth();
-				srcVolume.bottom = srcVolume.top + src->getHeight();
-				srcVolume.back = srcVolume.front + src->getDepth();
+				srcVolume.right = srcVolume.left + src->GetWidth();
+				srcVolume.bottom = srcVolume.top + src->GetHeight();
+				srcVolume.back = srcVolume.front + src->GetDepth();
 
-				dstVolume.right = dstVolume.left + src->getWidth();
-				dstVolume.bottom = dstVolume.top + src->getHeight();
-				dstVolume.back = dstVolume.front + src->getDepth();
+				dstVolume.right = dstVolume.left + src->GetWidth();
+				dstVolume.bottom = dstVolume.top + src->GetHeight();
+				dstVolume.back = dstVolume.front + src->GetDepth();
 			}
 			else
 			{
-				dstVolume.right = dstVolume.left + desc.srcVolume.getWidth();
-				dstVolume.bottom = dstVolume.top + desc.srcVolume.getHeight();
+				dstVolume.right = dstVolume.left + desc.srcVolume.GetWidth();
+				dstVolume.bottom = dstVolume.top + desc.srcVolume.GetHeight();
 				dstVolume.back = dstVolume.front + desc.srcVolume.getDepth();
 			}
 
@@ -496,7 +496,7 @@ namespace bs { namespace ct
 			auto execute = [=]() { executeRef(target, desc); };
 
 			SPtr<GLCommandBuffer> cb = std::static_pointer_cast<GLCommandBuffer>(commandBuffer);
-			cb->queueCommand(execute);
+			cb->QueueCommand(execute);
 		}
 	}
 
@@ -514,7 +514,7 @@ namespace bs { namespace ct
 					mProperties.getNumSamples());
 
 				mSurfaceList.push_back(bs_shared_ptr<GLPixelBuffer>(buf));
-				if(buf->getWidth() == 0 || buf->getHeight() == 0 || buf->getDepth() == 0)
+				if(buf->GetWidth() == 0 || buf->GetHeight() == 0 || buf->GetDepth() == 0)
 				{
 					BS_EXCEPT(RenderingAPIException,
 						"Zero sized texture surface on texture face " + toString(face) + " mipmap " + toString(mip)

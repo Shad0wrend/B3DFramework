@@ -221,7 +221,7 @@ namespace bs
 	// This will only properly clip an array of quads
 	// Vertices in the quad must be in a specific order: top left, top right, bottom left, bottom right
 	// (0, 0) represents top left of the screen
-	void Sprite::clipQuadsToRect(UINT8* vertices, UINT8* uv, UINT32 numQuads, UINT32 vertStride, const Rect2I& clipRect)
+	void Sprite::ClipQuadsToRect(UINT8* vertices, UINT8* uv, UINT32 numQuads, UINT32 vertStride, const Rect2I& clipRect)
 	{
 		float left = (float)clipRect.x;
 		float right = (float)clipRect.x + clipRect.width;
@@ -259,19 +259,19 @@ namespace bs
 				std::swap(bottom, top);
 
 			// Clip left
-			float newLeft = Math::clamp(vecA->x, left, right);
+			float newLeft = Math::Clamp(vecA->x, left, right);
 			float uvLeftOffset = (newLeft - vecA->x) * du;
 
 			// Clip right
-			float newRight = Math::clamp(vecB->x, left, right);
+			float newRight = Math::Clamp(vecB->x, left, right);
 			float uvRightOffset = (vecB->x - newRight) * du;
 
 			// Clip top
-			float newTop = Math::clamp(vecA->y, top, bottom);
+			float newTop = Math::Clamp(vecA->y, top, bottom);
 			float uvTopOffset = (newTop - vecA->y) * dv;
 
 			// Clip bottom
-			float newBottom = Math::clamp(vecC->y, top, bottom);
+			float newBottom = Math::Clamp(vecC->y, top, bottom);
 			float uvBottomOffset = (vecC->y - newBottom) * dv;
 
 			vecA->x = newLeft;
@@ -308,6 +308,6 @@ namespace bs
 			Plane(Vector3(0.0f, -1.0f, 0.0f), (float)-(clipRect.y + (INT32)clipRect.height))
 		};
 
-		MeshUtility::clip2D(vertices, uv, numTris, vertStride, clipPlanes, writeCallback);
+		MeshUtility::Clip2D(vertices, uv, numTris, vertStride, clipPlanes, writeCallback);
 	}
 }

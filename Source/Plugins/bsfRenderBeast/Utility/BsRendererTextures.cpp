@@ -254,11 +254,11 @@ namespace bs { namespace ct
 
 		SPtr<PixelData> pixels = PixelData::Create(32, 1, 1, PF_RGBA8);
 		for(UINT32 i = 0; i < 16; i++)
-			pixels->setColorAt(Color::fromRGBA(gradient.evaluate(i/16.0f)), i, 0);
+			pixels->SetColorAt(Color::fromRGBA(gradient.evaluate(i/16.0f)), i, 0);
 
 		// We keep the second half of the texture empty, to avoid a mul in shader
 		for(UINT32 i = 16; i < 32; i++)
-			pixels->setColorAt(Color::Black, i, 0);
+			pixels->SetColorAt(Color::Black, i, 0);
 
 		return Texture::Create(pixels);
 	}
@@ -266,9 +266,9 @@ namespace bs { namespace ct
 	SPtr<Texture> generateChromaticAberrationFringe()
 	{
 		SPtr<PixelData> pixels = PixelData::Create(3, 1, 1, PF_RGBA8);
-		pixels->setColorAt(Color(1.0f, 0.0f, 0.0f, 1.0f), 0, 0);
-		pixels->setColorAt(Color(0.0f, 1.0f, 0.0f, 1.0f), 1, 0);
-		pixels->setColorAt(Color(0.0f, 0.0f, 1.0f, 1.0f), 2, 0);
+		pixels->SetColorAt(Color(1.0f, 0.0f, 0.0f, 1.0f), 0, 0);
+		pixels->SetColorAt(Color(0.0f, 1.0f, 0.0f, 1.0f), 1, 0);
+		pixels->SetColorAt(Color(0.0f, 0.0f, 1.0f, 1.0f), 2, 0);
 
 		return Texture::Create(pixels);
 	}

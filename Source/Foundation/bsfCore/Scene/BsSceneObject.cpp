@@ -18,7 +18,7 @@ namespace bs
 	SceneObject::SceneObject(const String& name, UINT32 flags)
 		: GameObject(), mFlags(flags)
 	{
-		setName(name);
+		SetName(name);
 	}
 
 	SceneObject::~SceneObject()
@@ -26,7 +26,7 @@ namespace bs
 		if(!mThisHandle.isDestroyed())
 		{
 			BS_LOG(Warning, Scene, "Object is being deleted without being destroyed first? {0}", mName);
-			destroyInternal(mThisHandle, true);
+			DestroyInternal(mThisHandle, true);
 		}
 	}
 
@@ -74,7 +74,7 @@ namespace bs
 			mParent = nullptr;
 		}
 
-		destroyInternal(mThisHandle, immediate);
+		DestroyInternal(mThisHandle, immediate);
 	}
 
 	void SceneObject::DestroyInternal(GameObjectHandleBase& handle, bool immediate)
@@ -82,7 +82,7 @@ namespace bs
 		if (immediate)
 		{
 			for (auto iter = mChildren.begin(); iter != mChildren.end(); ++iter)
-				(*iter)->destroyInternal(*iter, true);
+				(*iter)->DestroyInternal(*iter, true);
 
 			mChildren.clear();
 
@@ -96,7 +96,7 @@ namespace bs
 				if (isInstantiated())
 					gSceneManager().NotifyComponentDestroyedInternal(component, immediate);
 
-				component->destroyInternal(component, true);
+				component->DestroyInternal(component, true);
 				mComponents.erase(mComponents.end() - 1);
 			}
 
@@ -170,7 +170,7 @@ namespace bs
 		{
 			rootObj->mPrefabLinkUUID = UUID::EMPTY;
 			rootObj->mPrefabDiff = nullptr;
-			PrefabUtility::clearPrefabIds(rootObj->getHandle(), true, false);
+			PrefabUtility::clearPrefabIds(rootObj->GetHandle(), true, false);
 		}
 	}
 
@@ -217,7 +217,7 @@ namespace bs
 		std::function<void(SceneObject*)> triggerEventsRecursive = [&](SceneObject* obj)
 		{
 			for (auto& component : obj->mComponents)
-				gSceneManager().NotifyComponentCreatedInternal(component, obj->getActive());
+				gSceneManager().NotifyComponentCreatedInternal(component, obj->GetActive());
 
 			for (auto& child : obj->mChildren)
 			{
@@ -238,7 +238,7 @@ namespace bs
 	{
 		if (mMobility == ObjectMobility::Movable)
 		{
-			mLocalTfrm.setPosition(position);
+			mLocalTfrm.SetPosition(position);
 			notifyTransformChanged(TCF_Transform);
 		}
 	}
@@ -247,7 +247,7 @@ namespace bs
 	{
 		if (mMobility == ObjectMobility::Movable)
 		{
-			mLocalTfrm.setRotation(rotation);
+			mLocalTfrm.SetRotation(rotation);
 			notifyTransformChanged(TCF_Transform);
 		}
 	}
@@ -267,9 +267,9 @@ namespace bs
 			return;
 
 		if (mParent != nullptr)
-			mLocalTfrm.setWorldPosition(position, mParent->getTransform());
+			mLocalTfrm.setWorldPosition(position, mParent->GetTransform());
 		else
-			mLocalTfrm.setPosition(position);
+			mLocalTfrm.SetPosition(position);
 
 		notifyTransformChanged(TCF_Transform);
 	}
@@ -280,9 +280,9 @@ namespace bs
 			return;
 
 		if (mParent != nullptr)
-			mLocalTfrm.setWorldRotation(rotation, mParent->getTransform());
+			mLocalTfrm.setWorldRotation(rotation, mParent->GetTransform());
 		else
-			mLocalTfrm.setRotation(rotation);
+			mLocalTfrm.SetRotation(rotation);
 
 		notifyTransformChanged(TCF_Transform);
 	}
@@ -293,7 +293,7 @@ namespace bs
 			return;
 
 		if (mParent != nullptr)
-			mLocalTfrm.setWorldScale(scale, mParent->getTransform());
+			mLocalTfrm.setWorldScale(scale, mParent->GetTransform());
 		else
 			mLocalTfrm.setScale(scale);
 
@@ -312,9 +312,9 @@ namespace bs
 	{
 		const Transform& worldTfrm = getTransform();
 
-		Vector3 forward = location - worldTfrm.getPosition();
+		Vector3 forward = location - worldTfrm.GetPosition();
 		
-		Quaternion rotation = worldTfrm.getRotation();
+		Quaternion rotation = worldTfrm.GetRotation();
 		rotation.lookRotation(forward, up);
 		setWorldRotation(rotation);
 	}
@@ -366,7 +366,7 @@ namespace bs
 	{
 		if (mMobility == ObjectMobility::Movable)
 		{
-			mLocalTfrm.rotate(axis, angle);
+			mLocalTfrm.Rotate(axis, angle);
 			notifyTransformChanged(TCF_Transform);
 		}
 	}
@@ -375,7 +375,7 @@ namespace bs
 	{
 		if (mMobility == ObjectMobility::Movable)
 		{
-			mLocalTfrm.rotate(q);
+			mLocalTfrm.Rotate(q);
 			notifyTransformChanged(TCF_Transform);
 		}
 	}
@@ -411,7 +411,7 @@ namespace bs
 	{
 		const Transform& worldTfrm = getTransform();
 
-		Quaternion currentRotation = worldTfrm.getRotation();
+		Quaternion currentRotation = worldTfrm.GetRotation();
 		currentRotation.lookRotation(forwardDir);
 		setWorldRotation(currentRotation);
 	}
@@ -467,9 +467,9 @@ namespace bs
 		// Don't allow movement from parent when not movable
 		if (mParent != nullptr && mMobility == ObjectMobility::Movable)
 		{
-			mWorldTfrm.makeWorld(mParent->getTransform());
+			mWorldTfrm.makeWorld(mParent->GetTransform());
 
-			mCachedWorldTfrm = mWorldTfrm.getMatrix();
+			mCachedWorldTfrm = mWorldTfrm.GetMatrix();
 		}
 		else
 		{
@@ -481,7 +481,7 @@ namespace bs
 
 	void SceneObject::UpdateLocalTfrm() const
 	{
-		mCachedLocalTfrm = mLocalTfrm.getMatrix();
+		mCachedLocalTfrm = mLocalTfrm.GetMatrix();
 		mDirtyFlags &= ~DirtyFlags::LocalTfrmDirty;
 	}
 
@@ -544,7 +544,7 @@ namespace bs
 				mLocalTfrm = worldTfrm;
 
 				if (mParent != nullptr)
-					mLocalTfrm.makeLocal(mParent->getTransform());
+					mLocalTfrm.makeLocal(mParent->GetTransform());
 			}
 
 			bool isInstantiated = (mFlags & SOF_DontInstantiate) == 0;
@@ -572,7 +572,7 @@ namespace bs
 		mParentScene = scene;
 
 		for(auto& child : mChildren)
-			child->setScene(scene);
+			child->SetScene(scene);
 	}
 
 	HSceneObject SceneObject::GetChild(UINT32 idx) const
@@ -627,7 +627,7 @@ namespace bs
 		Vector<String> entries = StringUtil::split(trimmedPath, "/");
 
 		// Find scene object referenced by the path
-		HSceneObject so = getHandle();
+		HSceneObject so = GetHandle();
 		UINT32 pathIdx = 0;
 		for (; pathIdx < (UINT32)entries.size(); pathIdx++)
 		{
@@ -656,7 +656,7 @@ namespace bs
 	{
 		for (auto& child : mChildren)
 		{
-			if (child->getName() == name)
+			if (child->GetName() == name)
 				return child;
 		}
 
@@ -680,7 +680,7 @@ namespace bs
 		{
 			for (auto& child : so->mChildren)
 			{
-				if (child->getName() == name)
+				if (child->GetName() == name)
 					output.push_back(child);
 			}
 
@@ -728,7 +728,7 @@ namespace bs
 		
 		for (auto child : mChildren)
 		{
-			child->setActiveHierarchy(mActiveHierarchy, triggerEvents);
+			child->SetActiveHierarchy(mActiveHierarchy, triggerEvents);
 		}
 	}
 
@@ -792,7 +792,7 @@ namespace bs
 		{
 			for (auto& entry : mComponents)
 			{
-				if (entry->getRTTI()->isDerivedFrom(type))
+				if (entry->GetRtti()->isDerivedFrom(type))
 					return entry;
 			}
 		}
@@ -817,7 +817,7 @@ namespace bs
 			if (isInstantiated())
 				gSceneManager().NotifyComponentDestroyedInternal(*iter, immediate);
 			
-			(*iter)->destroyInternal(*iter, immediate);
+			(*iter)->DestroyInternal(*iter, immediate);
 			mComponents.erase(iter);
 		}
 		else
@@ -866,7 +866,7 @@ namespace bs
 	void SceneObject::AddComponentInternal(const SPtr<Component>& component)
 	{
 		HComponent newComponent = static_object_cast<Component>(
-			GameObjectManager::Instance().getObject(component->getInstanceId()));
+			GameObjectManager::Instance().getObject(component->GetInstanceId()));
 		newComponent->mParent = mThisHandle;
 		newComponent->mThisHandle = newComponent;
 
@@ -893,7 +893,7 @@ namespace bs
 	void SceneObject::AddAndInitializeComponent(const SPtr<Component>& component)
 	{
 		HComponent newComponent = static_object_cast<Component>(
-			GameObjectManager::Instance().getObject(component->getInstanceId()));
+			GameObjectManager::Instance().getObject(component->GetInstanceId()));
 		newComponent->mParent = mThisHandle;
 
 		addAndInitializeComponent(newComponent);

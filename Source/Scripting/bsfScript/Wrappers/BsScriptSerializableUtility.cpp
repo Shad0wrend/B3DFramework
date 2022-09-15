@@ -34,7 +34,7 @@ namespace bs
 		if (typeInfo == nullptr)
 		{
 			BS_LOG(Warning, Script, "Cannot clone an instance of type \"{0}\", it is not marked as serializable.",
-				engineClass->getFullName());
+				engineClass->GetFullName());
 			return nullptr;
 		}
 
@@ -50,7 +50,7 @@ namespace bs
 		SPtr<ManagedSerializableFieldData> clonedData = std::static_pointer_cast<ManagedSerializableFieldData>(bs.decode(stream, (UINT32)stream->size()));
 		clonedData->deserialize();
 
-		return clonedData->getValueBoxed(typeInfo);
+		return clonedData->GetValueBoxed(typeInfo);
 	}
 
 	MonoObject* ScriptSerializableUtility::InternalCreate(MonoReflectionType* reflType)
@@ -65,7 +65,7 @@ namespace bs
 		if (typeInfo == nullptr)
 		{
 			BS_LOG(Warning, Script, "Cannot create an instance of type \"{0}\", it is not marked as serializable.",
-				engineClass->getFullName());
+				engineClass->GetFullName());
 			return nullptr;
 		}
 			
@@ -81,6 +81,6 @@ namespace bs
 		SPtr<ManagedSerializableFieldData> createdData = std::static_pointer_cast<ManagedSerializableFieldData>(bs.decode(stream, (UINT32)stream->size()));
 		createdData->deserialize();
 
-		return createdData->getValueBoxed(typeInfo);
+		return createdData->GetValueBoxed(typeInfo);
 	}
 }

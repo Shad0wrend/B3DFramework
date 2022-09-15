@@ -40,13 +40,13 @@ namespace bs
 
 		DynArray(const DynArray<ValueType>& other)
 		{
-			if (!other.empty())
+			if (!other.Empty())
 				*this = other;
 		}
 
 		DynArray(DynArray<ValueType>&& other)
 		{
-			if (!other.empty())
+			if (!other.Empty())
 				*this = std::move(other);
 		}
 
@@ -221,6 +221,24 @@ namespace bs
 
 		ConstReverseIterator Crbegin() const { return ReverseIterator(end()); }
 		ConstReverseIterator Crend() const { return ReverseIterator(begin()); }
+
+		Iterator begin() { return Begin(); } // NOLINT
+		Iterator end() { return End(); } // NOLINT
+
+		ConstIterator begin() const { return Begin(); } // NOLINT
+		ConstIterator end() const { return End(); } // NOLINT
+
+		ConstIterator cbegin() const { return Cbegin(); } // NOLINT
+		ConstIterator cend() const { return cend(); } // NOLINT
+
+		ReverseIterator rbegin() { return Rbegin(); } // NOLINT
+		ReverseIterator rend() { return Rend(); } // NOLINT
+
+		ConstReverseIterator rbegin() const { return Rbegin(); } // NOLINT
+		ConstReverseIterator rend() const { return Rend(); } // NOLINT
+
+		ConstReverseIterator crbegin() const { return Crbegin(); } // NOLINT
+		ConstReverseIterator crend() const { return Crend(); } // NOLINT
 
 		UINT32 Size() const { return mSize; }
 		UINT32 Capacity() const { return mCapacity; }

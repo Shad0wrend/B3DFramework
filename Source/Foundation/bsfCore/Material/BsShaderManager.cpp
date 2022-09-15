@@ -8,7 +8,7 @@ namespace bs
 {
 	HShaderInclude DefaultShaderIncludeHandler::FindInclude(const String& name) const
 	{
-		return Importer::Instance().import<ShaderInclude>(name);
+		return Importer::Instance().Import<ShaderInclude>(name);
 	}
 
 	HShaderInclude ShaderManager::FindInclude(const String& name) const

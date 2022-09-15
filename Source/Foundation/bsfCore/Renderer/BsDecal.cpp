@@ -41,8 +41,8 @@ namespace bs
 			return;
 
 		mTransform = transform;
-		mTfrmMatrix = transform.getMatrix();
-		mTfrmMatrixNoScale = Matrix4::TRS(transform.getPosition(), transform.getRotation(), Vector3::ONE);
+		mTfrmMatrix = transform.GetMatrix();
+		mTfrmMatrixNoScale = Matrix4::TRS(transform.GetPosition(), transform.GetRotation(), Vector3::ONE);
 
 		MarkCoreDirtyInternal(ActorDirtyFlag::Transform);
 	}
@@ -90,7 +90,7 @@ namespace bs
 		Decal* decal = new (bs_alloc<Decal>()) Decal(material, size, maxDistance);
 		SPtr<Decal> decalPtr = bs_core_ptr<Decal>(decal);
 		decalPtr->SetThisPtrInternal(decalPtr);
-		decalPtr->initialize();
+		decalPtr->Initialize();
 
 		return decalPtr;
 	}
@@ -107,8 +107,8 @@ namespace bs
 	SPtr<ct::CoreObject> Decal::CreateCore() const
 	{
 		SPtr<ct::Material> material;
-		if(mMaterial.isLoaded(false))
-			material = mMaterial->getCore();
+		if(mMaterial.IsLoaded(false))
+			material = mMaterial->GetCore();
 
 		ct::Decal* decal = new (bs_alloc<ct::Decal>()) ct::Decal(material, mSize, mMaxDistance);
 		SPtr<ct::Decal> decalPtr = bs_shared_ptr<ct::Decal>(decal);
@@ -119,7 +119,7 @@ namespace bs
 
 	void Decal::GetCoreDependencies(Vector<CoreObject*>& dependencies)
 	{
-		if (mMaterial.isLoaded())
+		if (mMaterial.IsLoaded())
 			dependencies.push_back(mMaterial.get());
 	}
 
@@ -174,7 +174,7 @@ namespace bs
 		updateBounds();
 		gRenderer()->notifyDecalAdded(this);
 
-		CoreObject::initialize();
+		CoreObject::Initialize();
 	}
 
 	void Decal::SyncToCore(const CoreSyncData& data)
@@ -188,8 +188,8 @@ namespace bs
 		csync_read((SceneActor&)*this, stream);
 		csync_read(*this, stream);
 
-		mTfrmMatrix = mTransform.getMatrix();
-		mTfrmMatrixNoScale = Matrix4::TRS(mTransform.getPosition(), mTransform.getRotation(), Vector3::ONE);
+		mTfrmMatrix = mTransform.GetMatrix();
+		mTfrmMatrixNoScale = Matrix4::TRS(mTransform.GetPosition(), mTransform.GetRotation(), Vector3::ONE);
 
 		updateBounds();
 

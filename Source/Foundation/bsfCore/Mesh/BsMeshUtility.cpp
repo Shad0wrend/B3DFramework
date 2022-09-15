@@ -202,7 +202,7 @@ namespace bs
 
 			UINT32 verts[] = { idx0, idx1, idx2, idx0 };
 			for (UINT32 j = 0; j < 3; j++)
-				clipFace.normal += Vector3::cross(mesh.verts[verts[j]].point, mesh.verts[verts[j + 1]].point);
+				clipFace.normal += Vector3::Cross(mesh.verts[verts[j]].point, mesh.verts[verts[j + 1]].point);
 
 			clipFace.normal.Normalize();
 		}
@@ -235,7 +235,7 @@ namespace bs
 
 			if (vertex.visible)
 			{
-				vertex.distance = Vector3::dot(plane.normal, vertex.point) - plane.d;
+				vertex.distance = Vector3::Dot(plane.normal, vertex.point) - plane.d;
 				if (vertex.distance >= EPSILON)
 				{
 					positive++;
@@ -452,7 +452,7 @@ namespace bs
 				// face. If you need the opposite convention, switch the
 				// inequality in the if-else statement.
 				Vector3 normal = GetNormal(sortedVerts, numSortedVerts);
-				if (Vector3::dot(mesh.faces[i].normal, normal) < 0)
+				if (Vector3::Dot(mesh.faces[i].normal, normal) < 0)
 				{
 					// Clockwise, need to swap
 					for (INT32 j = (INT32)numSortedVerts - 2; j >= 0; j--)
@@ -519,7 +519,7 @@ namespace bs
 	{
 		Vector3 normal(BsZero);
 		for (UINT32 i = 0; i <= numVertices - 2; i++)
-			normal += Vector3::cross(mesh.verts[sortedVertices[i]].point, mesh.verts[sortedVertices[i + 1]].point);
+			normal += Vector3::Cross(mesh.verts[sortedVertices[i]].point, mesh.verts[sortedVertices[i + 1]].point);
 
 		normal.Normalize();
 		return normal;
@@ -739,7 +739,7 @@ namespace bs
 
 			Vector3 edgeA = vertices[triangle[1]] - vertices[triangle[0]];
 			Vector3 edgeB = vertices[triangle[2]] - vertices[triangle[0]];
-			faceNormals[i] = Vector3::normalize(Vector3::cross(edgeA, edgeB));
+			faceNormals[i] = Vector3::Normalize(Vector3::Cross(edgeA, edgeB));
 
 			// Note: Potentially don't normalize here in order to weigh the normals
 			// by triangle size
@@ -840,7 +840,7 @@ namespace bs
 			float dot1 = tangents[i].Dot(bitangents[i]);
 			dot0 = normal.Dot(bitangents[i]);
 			bitangents[i] -= dot0*normal + dot1*tangents[i];
-			bitangents[i].normalize();
+			bitangents[i].Normalize();
 		}
 
 		bs_deleteN(faceTangents, numFaces);
@@ -852,22 +852,22 @@ namespace bs
 	void MeshUtility::CalculateTangentSpace(Vector3* vertices, Vector2* uv, UINT8* indices, UINT32 numVertices,
 		UINT32 numIndices, Vector3* normals, Vector3* tangents, Vector3* bitangents, UINT32 indexSize)
 	{
-		calculateNormals(vertices, indices, numVertices, numIndices, normals, indexSize);
-		calculateTangents(vertices, normals, uv, indices, numVertices, numIndices, tangents, bitangents, indexSize);
+		CalculateNormals(vertices, indices, numVertices, numIndices, normals, indexSize);
+		CalculateTangents(vertices, normals, uv, indices, numVertices, numIndices, tangents, bitangents, indexSize);
 	}
 
 	void MeshUtility::Clip2D(UINT8* vertices, UINT8* uvs, UINT32 numTris, UINT32 vertexStride, const Vector<Plane>& clipPlanes,
 		const std::function<void(Vector2*, Vector2*, UINT32)>& writeCallback)
 	{
 		TriangleClipper2D clipper;
-		clipper.clip(vertices, uvs, numTris, vertexStride, clipPlanes, writeCallback);
+		clipper.Clip(vertices, uvs, numTris, vertexStride, clipPlanes, writeCallback);
 	}
 
 	void MeshUtility::Clip3D(UINT8* vertices, UINT8* uvs, UINT32 numTris, UINT32 vertexStride, const Vector<Plane>& clipPlanes,
 		const std::function<void(Vector3*, Vector2*, UINT32)>& writeCallback)
 	{
 		TriangleClipper3D clipper;
-		clipper.clip(vertices, uvs, numTris, vertexStride, clipPlanes, writeCallback);
+		clipper.Clip(vertices, uvs, numTris, vertexStride, clipPlanes, writeCallback);
 	}
 
 	void MeshUtility::PackNormals(Vector3* source, UINT8* destination, UINT32 count, UINT32 inStride, UINT32 outStride)
@@ -879,9 +879,9 @@ namespace bs
 			Vector3 src = *(Vector3*)srcPtr;
 
 			PackedNormal& packed = *(PackedNormal*)dstPtr;
-			packed.x = Math::clamp((int)(src.x * 127.5f + 127.5f), 0, 255);
-			packed.y = Math::clamp((int)(src.y * 127.5f + 127.5f), 0, 255);
-			packed.z = Math::clamp((int)(src.z * 127.5f + 127.5f), 0, 255);
+			packed.x = Math::Clamp((int)(src.x * 127.5f + 127.5f), 0, 255);
+			packed.y = Math::Clamp((int)(src.y * 127.5f + 127.5f), 0, 255);
+			packed.z = Math::Clamp((int)(src.z * 127.5f + 127.5f), 0, 255);
 			packed.w = 128;
 
 			srcPtr += inStride;
@@ -898,10 +898,10 @@ namespace bs
 			Vector4 src = *(Vector4*)srcPtr;
 			PackedNormal& packed = *(PackedNormal*)dstPtr;
 
-			packed.x = Math::clamp((int)(src.x * 127.5f + 127.5f), 0, 255);
-			packed.y = Math::clamp((int)(src.y * 127.5f + 127.5f), 0, 255);
-			packed.z = Math::clamp((int)(src.z * 127.5f + 127.5f), 0, 255);
-			packed.w = Math::clamp((int)(src.w * 127.5f + 127.5f), 0, 255);
+			packed.x = Math::Clamp((int)(src.x * 127.5f + 127.5f), 0, 255);
+			packed.y = Math::Clamp((int)(src.y * 127.5f + 127.5f), 0, 255);
+			packed.z = Math::Clamp((int)(src.z * 127.5f + 127.5f), 0, 255);
+			packed.w = Math::Clamp((int)(src.w * 127.5f + 127.5f), 0, 255);
 
 			srcPtr += inStride;
 			dstPtr += outStride;
@@ -913,7 +913,7 @@ namespace bs
 		UINT8* ptr = source;
 		for (UINT32 i = 0; i < count; i++)
 		{
-			destination[i] = unpackNormal(ptr);
+			destination[i] = UnpackNormal(ptr);
 
 			ptr += stride;
 		}

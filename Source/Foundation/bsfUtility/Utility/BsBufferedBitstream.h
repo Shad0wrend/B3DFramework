@@ -233,7 +233,7 @@ namespace bs
 		uint64_t bufferedLength = mBufferedRangeEnd - mBufferedRangeStart;
 		uint64_t newBufferedLength = bufferedLength + numBytesToPreload * 8;
 		if (mBitstream->Capacity() < newBufferedLength)
-			mBitstream->resize((uint32_t)Math::divideAndRoundUp(newBufferedLength, (uint64_t)Bitstream::BITS_PER_QUANT));
+			mBitstream->resize((uint32_t)Math::DivideAndRoundUp(newBufferedLength, (uint64_t)Bitstream::BITS_PER_QUANT));
 
 		// Read the data from data stream into the bitstream
 		uint64_t orgPos = mBitstream->tell();

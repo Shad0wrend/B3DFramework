@@ -31,7 +31,7 @@ namespace bs
 		std::sort(mShapes.begin(), mShapes.end(),
 			[](auto& x, auto& y)
 		{
-			return x->getWeight() < y->getWeight();
+			return x->GetWeight() < y->GetWeight();
 		});
 	}
 

@@ -39,13 +39,13 @@ namespace bs
 	{
 		PARTICLE_FORCE_DESC tmpoptions;
 		tmpoptions = ScriptPARTICLE_FORCE_DESC::fromInterop(*options);
-		thisPtr->getInternal()->setOptions(tmpoptions);
+		thisPtr->GetInternal()->SetOptions(tmpoptions);
 	}
 
 	void ScriptParticleForce::InternalGetOptions(ScriptParticleForce* thisPtr, __PARTICLE_FORCE_DESCInterop* __output)
 	{
 		PARTICLE_FORCE_DESC tmp__output;
-		tmp__output = thisPtr->getInternal()->getOptions();
+		tmp__output = thisPtr->GetInternal()->GetOptions();
 
 		__PARTICLE_FORCE_DESCInterop interop__output;
 		interop__output = ScriptPARTICLE_FORCE_DESC::toInterop(tmp__output);

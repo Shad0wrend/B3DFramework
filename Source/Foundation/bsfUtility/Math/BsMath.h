@@ -14,56 +14,56 @@ namespace bs
 
 	namespace impl
 	{
-		/** Helper method for implementing variable-parameter Math::min. */
+		/** Helper method for implementing variable-parameter Math::Min. */
 		template<typename T>
 		const T& min(const T& in)
 		{
 			return in;
 		}
 
-		/** Helper method for implementing variable-parameter Math::min. */
+		/** Helper method for implementing variable-parameter Math::Min. */
 		template<typename A, typename B>
 		std::common_type_t<A, B> min(const A& a, const B& b)
 		{
 			return a < b ? a : b;
 		}
 
-		/** Helper method for implementing variable-parameter Math::min. */
+		/** Helper method for implementing variable-parameter Math::Min. */
 		template<typename A, typename B, typename ...Args>
 		std::common_type_t<A, B, Args...> min(const A& a, const B& b, const Args& ...args)
 		{
 			return min(min(a, b), min(args...));
 		}
 
-		/** Helper method for implementing variable-parameter Math::max. */
+		/** Helper method for implementing variable-parameter Math::Max. */
 		template<typename T>
 		const T& max(const T& in)
 		{
 			return in;
 		}
 
-		/** Helper method for implementing variable-parameter Math::max. */
+		/** Helper method for implementing variable-parameter Math::Max. */
 		template<typename A, typename B>
 		std::common_type_t<A, B> max(const A& a, const B& b)
 		{
 			return a > b ? a : b;
 		}
 
-		/** Helper method for implementing variable-parameter Math::max. */
+		/** Helper method for implementing variable-parameter Math::Max. */
 		template<typename A, typename B, typename ...Args>
 		std::common_type_t<A, B, Args...> max(const A& a, const B& b, const Args& ...args)
 		{
 			return max(max(a, b), max(args...));
 		}
 
-		/** Helper method for implementing Math::gcd. */
+		/** Helper method for implementing Math::Gcd. */
 		template <typename A, typename B>
 		std::common_type_t<A, B> gcd(const A& a, const B& b)
 		{
 			return (b == 0) ? a : gcd(b, a % b);
 		}
 
-		/** Helper method for implementing Math::lcm. */
+		/** Helper method for implementing Math::Lcm. */
 		template <typename A, typename B>
 		std::common_type_t<A, B> lcm(const A& a, const B& b)
 		{
@@ -1014,14 +1014,14 @@ namespace bs
 			T r[order + 1][order + 1];
 
 			for (int i = 1; i < order + 1; ++i)
-				h[i] = (b - a) / Math::pow(2, i - 1);
+				h[i] = (b - a) / Math::Pow(2, i - 1);
 
 			r[1][1] = h[1] / 2 * (integrand(a) + integrand(b));
 
 			for (int i = 2; i < order + 1; ++i)
 			{
 				T coeff = 0;
-				for (int k = 1; k <= Math::pow(2, i - 2); ++k)
+				for (int k = 1; k <= Math::Pow(2, i - 2); ++k)
 					coeff += integrand(a + (2 * k - 1) * h[i]);
 
 				r[i][1] = 0.5 * (r[i - 1][1] + h[i - 1] * coeff);
@@ -1030,7 +1030,7 @@ namespace bs
 			for (int i = 2; i < order + 1; ++i)
 			{
 				for (int j = 2; j <= i; ++j)
-					r[i][j] = r[i][j - 1] + (r[i][j - 1] - r[i - 1][j - 1]) / (Math::pow(4, j - 1) - 1);
+					r[i][j] = r[i][j - 1] + (r[i][j - 1] - r[i - 1][j - 1]) / (Math::Pow(4, j - 1) - 1);
 			}
 
 			return r[order][order];

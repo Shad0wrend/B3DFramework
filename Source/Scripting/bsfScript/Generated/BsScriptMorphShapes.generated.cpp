@@ -43,7 +43,7 @@ namespace bs
 			SPtr<MorphChannel> arrayElemPtr__output = vec__output[i];
 			MonoObject* arrayElem__output;
 			arrayElem__output = ScriptMorphChannel::Create(arrayElemPtr__output);
-			array__output.set(i, arrayElem__output);
+			array__output.Set(i, arrayElem__output);
 		}
 		__output = array__output.GetInternal();
 

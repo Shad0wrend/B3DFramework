@@ -18,22 +18,22 @@ namespace bs { namespace ct
 	{
 		mSampleCount = mVariation.getUInt("MSAA_COUNT");
 
-		mParams->getBufferParam(GPT_COMPUTE_PROGRAM, "gLights", mLightBufferParam);
-		mParams->getTextureParam(GPT_COMPUTE_PROGRAM, "gInColor", mInColorTextureParam);
+		mParams->GetBufferParam(GPT_COMPUTE_PROGRAM, "gLights", mLightBufferParam);
+		mParams->GetTextureParam(GPT_COMPUTE_PROGRAM, "gInColor", mInColorTextureParam);
 
 		if (mParams->hasLoadStoreTexture(GPT_COMPUTE_PROGRAM, "gOutput"))
-			mParams->getLoadStoreTextureParam(GPT_COMPUTE_PROGRAM, "gOutput", mOutputTextureParam);
+			mParams->GetLoadStoreTextureParam(GPT_COMPUTE_PROGRAM, "gOutput", mOutputTextureParam);
 
 		if (mSampleCount > 1)
-			mParams->getTextureParam(GPT_COMPUTE_PROGRAM, "gMSAACoverage", mMSAACoverageTexParam);
+			mParams->GetTextureParam(GPT_COMPUTE_PROGRAM, "gMSAACoverage", mMSAACoverageTexParam);
 
 		mParamBuffer = gTiledLightingParamDef.createBuffer();
-		mParams->setParamBlockBuffer("Params", mParamBuffer);
+		mParams->SetParamBlockBuffer("Params", mParamBuffer);
 	}
 
 	void TiledDeferredLightingMat::InitDefinesInternal(ShaderDefines& defines)
 	{
-		defines.set("TILE_SIZE", TILE_SIZE);
+		defines.Set("TILE_SIZE", TILE_SIZE);
 	}
 
 	void TiledDeferredLightingMat::Execute(const RendererView& view, const VisibleLightData& lightData,
@@ -45,7 +45,7 @@ namespace bs { namespace ct
 		const RendererViewProperties& viewProps = view.getProperties();
 		const RenderSettings& settings = view.getRenderSettings();
 
-		mLightBufferParam.set(lightData.getLightBuffer());
+		mLightBufferParam.Set(lightData.getLightBuffer());
 
 		UINT32 width = viewProps.target.viewRect.width;
 		UINT32 height = viewProps.target.viewRect.height;
@@ -53,7 +53,7 @@ namespace bs { namespace ct
 		Vector2I framebufferSize;
 		framebufferSize[0] = width;
 		framebufferSize[1] = height;
-		gTiledLightingParamDef.gFramebufferSize.set(mParamBuffer, framebufferSize);
+		gTiledLightingParamDef.gFramebufferSize.Set(mParamBuffer, framebufferSize);
 
 		if (!settings.enableLighting)
 		{
@@ -67,8 +67,8 @@ namespace bs { namespace ct
 			lightStrides[0] = 0;
 			lightStrides[1] = 0;
 
-			gTiledLightingParamDef.gLightCounts.set(mParamBuffer, lightCounts);
-			gTiledLightingParamDef.gLightStrides.set(mParamBuffer, lightStrides);
+			gTiledLightingParamDef.gLightCounts.Set(mParamBuffer, lightCounts);
+			gTiledLightingParamDef.gLightStrides.Set(mParamBuffer, lightStrides);
 		}
 		else
 		{
@@ -89,29 +89,29 @@ namespace bs { namespace ct
 			lightStrides[1] = lightStrides[0] + lightCounts[1];
 
 			if(!settings.enableShadows)
-				gTiledLightingParamDef.gLightCounts.set(mParamBuffer, lightCounts);
+				gTiledLightingParamDef.gLightCounts.Set(mParamBuffer, lightCounts);
 			else
-				gTiledLightingParamDef.gLightCounts.set(mParamBuffer, unshadowedLightCounts);
+				gTiledLightingParamDef.gLightCounts.Set(mParamBuffer, unshadowedLightCounts);
 
-			gTiledLightingParamDef.gLightStrides.set(mParamBuffer, lightStrides);
+			gTiledLightingParamDef.gLightStrides.Set(mParamBuffer, lightStrides);
 		}
 
 		mParamBuffer->flushToGPU();
 
 		mGBufferParams.bind(gbuffer);
-		mParams->setParamBlockBuffer("PerCamera", view.getPerViewBuffer());
-		mInColorTextureParam.set(inputTexture);
+		mParams->SetParamBlockBuffer("PerCamera", view.getPerViewBuffer());
+		mInColorTextureParam.Set(inputTexture);
 
 		if (mSampleCount > 1)
 		{
-			mOutputTextureParam.set(lightAccumTexArray, TextureSurface::COMPLETE);
-			mMSAACoverageTexParam.set(msaaCoverage);
+			mOutputTextureParam.Set(lightAccumTexArray, TextureSurface::COMPLETE);
+			mMSAACoverageTexParam.Set(msaaCoverage);
 		}
 		else
-			mOutputTextureParam.set(lightAccumTex);
+			mOutputTextureParam.Set(lightAccumTex);
 
-		UINT32 numTilesX = (UINT32)Math::ceilToInt(width / (float)TILE_SIZE);
-		UINT32 numTilesY = (UINT32)Math::ceilToInt(height / (float)TILE_SIZE);
+		UINT32 numTilesX = (UINT32)Math::CeilToInt(width / (float)TILE_SIZE);
+		UINT32 numTilesY = (UINT32)Math::CeilToInt(height / (float)TILE_SIZE);
 
 		bind();
 		RenderAPI::Instance().dispatchCompute(numTilesX, numTilesY);
@@ -135,25 +135,25 @@ namespace bs { namespace ct
 
 	TextureArrayToMSAATexture::TextureArrayToMSAATexture()
 	{
-		mParams->getTextureParam(GPT_FRAGMENT_PROGRAM, "gInput", mInputParam);
+		mParams->GetTextureParam(GPT_FRAGMENT_PROGRAM, "gInput", mInputParam);
 	}
 
 	void TextureArrayToMSAATexture::Execute(const SPtr<Texture>& inputArray, const SPtr<Texture>& target)
 	{
 		BS_RENMAT_PROFILE_BLOCK
 
-		const TextureProperties& inputProps = inputArray->getProperties();
-		const TextureProperties& targetProps = target->getProperties();
+		const TextureProperties& inputProps = inputArray->GetProperties();
+		const TextureProperties& targetProps = target->GetProperties();
 
 		assert(inputProps.getNumArraySlices() == targetProps.getNumSamples());
-		assert(inputProps.getWidth() == targetProps.getWidth());
-		assert(inputProps.getHeight() == targetProps.getHeight());
+		assert(inputProps.GetWidth() == targetProps.GetWidth());
+		assert(inputProps.GetHeight() == targetProps.GetHeight());
 
-		mInputParam.set(inputArray);
+		mInputParam.Set(inputArray);
 
 		bind();
 
-		Rect2 area(0.0f, 0.0f, (float)targetProps.getWidth(), (float)targetProps.getHeight());
+		Rect2 area(0.0f, 0.0f, (float)targetProps.GetWidth(), (float)targetProps.GetHeight());
 		gRendererUtility().drawScreenQuad(area);
 	}
 
@@ -164,18 +164,18 @@ namespace bs { namespace ct
 		INT32 objType = mVariation.getInt("OBJ_TYPE");
 
 		if(objType == 0 || objType == 1)
-			mParams->getLoadStoreTextureParam(GPT_COMPUTE_PROGRAM, "gOutput", mOutputTextureParam);
+			mParams->GetLoadStoreTextureParam(GPT_COMPUTE_PROGRAM, "gOutput", mOutputTextureParam);
 		else
-			mParams->getBufferParam(GPT_COMPUTE_PROGRAM, "gOutput", mOutputBufferParam);
+			mParams->GetBufferParam(GPT_COMPUTE_PROGRAM, "gOutput", mOutputBufferParam);
 
 		mParamBuffer = gClearLoadStoreParamDef.createBuffer();
-		mParams->setParamBlockBuffer(GPT_COMPUTE_PROGRAM, "Params", mParamBuffer);
+		mParams->SetParamBlockBuffer(GPT_COMPUTE_PROGRAM, "Params", mParamBuffer);
 	}
 
 	void ClearLoadStoreMat::InitDefinesInternal(ShaderDefines& defines)
 	{
-		defines.set("TILE_SIZE", TILE_SIZE);
-		defines.set("NUM_THREADS", NUM_THREADS);
+		defines.Set("TILE_SIZE", TILE_SIZE);
+		defines.Set("NUM_THREADS", NUM_THREADS);
 	}
 
 	void ClearLoadStoreMat::Execute(const SPtr<Texture>& target, const Color& clearValue,
@@ -183,25 +183,25 @@ namespace bs { namespace ct
 	{
 		BS_RENMAT_PROFILE_BLOCK
 
-		const TextureProperties& props = target->getProperties();
-		PixelFormat pf = props.getFormat();
+		const TextureProperties& props = target->GetProperties();
+		PixelFormat pf = props.GetFormat();
 
 		assert(!PixelUtil::isCompressed(pf));
 
-		mOutputTextureParam.set(target, surface);
+		mOutputTextureParam.Set(target, surface);
 
-		UINT32 width = props.getWidth();
-		UINT32 height = props.getHeight();
-		gClearLoadStoreParamDef.gSize.set(mParamBuffer, Vector2I((INT32)width, (INT32)height));
-		gClearLoadStoreParamDef.gFloatClearVal.set(mParamBuffer,
+		UINT32 width = props.GetWidth();
+		UINT32 height = props.GetHeight();
+		gClearLoadStoreParamDef.gSize.Set(mParamBuffer, Vector2I((INT32)width, (INT32)height));
+		gClearLoadStoreParamDef.gFloatClearVal.Set(mParamBuffer,
 			Vector4(clearValue.r, clearValue.g, clearValue.a, clearValue.a));
-		gClearLoadStoreParamDef.gIntClearVal.set(mParamBuffer,
+		gClearLoadStoreParamDef.gIntClearVal.Set(mParamBuffer,
 			Vector4I(*(INT32*)&clearValue.r, *(INT32*)&clearValue.g, *(INT32*)&clearValue.a, *(INT32*)&clearValue.a));
 
 		bind();
 
-		UINT32 numGroupsX = Math::divideAndRoundUp(width, NUM_THREADS * TILE_SIZE);
-		UINT32 numGroupsY = Math::divideAndRoundUp(height, NUM_THREADS * TILE_SIZE);
+		UINT32 numGroupsX = Math::DivideAndRoundUp(width, NUM_THREADS * TILE_SIZE);
+		UINT32 numGroupsY = Math::DivideAndRoundUp(height, NUM_THREADS * TILE_SIZE);
 		
 		RenderAPI::Instance().dispatchCompute(numGroupsX, numGroupsY);
 	}
@@ -210,19 +210,19 @@ namespace bs { namespace ct
 	{
 		BS_RENMAT_PROFILE_BLOCK
 
-		mOutputBufferParam.set(target);
+		mOutputBufferParam.Set(target);
 
-		UINT32 width = target->getProperties().getElementCount();
+		UINT32 width = target->GetProperties().getElementCount();
 		UINT32 height = 1;
-		gClearLoadStoreParamDef.gSize.set(mParamBuffer, Vector2I((INT32)width, (INT32)height));
-		gClearLoadStoreParamDef.gFloatClearVal.set(mParamBuffer,
+		gClearLoadStoreParamDef.gSize.Set(mParamBuffer, Vector2I((INT32)width, (INT32)height));
+		gClearLoadStoreParamDef.gFloatClearVal.Set(mParamBuffer,
 			Vector4(clearValue.r, clearValue.g, clearValue.a, clearValue.a));
-		gClearLoadStoreParamDef.gIntClearVal.set(mParamBuffer,
+		gClearLoadStoreParamDef.gIntClearVal.Set(mParamBuffer,
 			Vector4I(*(INT32*)&clearValue.r, *(INT32*)&clearValue.g, *(INT32*)&clearValue.a, *(INT32*)&clearValue.a));
 
 		bind();
 
-		UINT32 numGroupsX = Math::divideAndRoundUp(width, NUM_THREADS * (TILE_SIZE * TILE_SIZE));
+		UINT32 numGroupsX = Math::DivideAndRoundUp(width, NUM_THREADS * (TILE_SIZE * TILE_SIZE));
 		RenderAPI::Instance().dispatchCompute(numGroupsX, 1);
 	}
 
@@ -300,28 +300,28 @@ namespace bs { namespace ct
 	{
 		mSampleCount = mVariation.getUInt("MSAA_COUNT");
 
-		mParams->getTextureParam(GPT_COMPUTE_PROGRAM, "gGBufferATex", mGBufferA);
-		mParams->getTextureParam(GPT_COMPUTE_PROGRAM, "gGBufferBTex", mGBufferB);
-		mParams->getTextureParam(GPT_COMPUTE_PROGRAM, "gGBufferCTex", mGBufferC);
-		mParams->getTextureParam(GPT_COMPUTE_PROGRAM, "gDepthBufferTex", mGBufferDepth);
+		mParams->GetTextureParam(GPT_COMPUTE_PROGRAM, "gGBufferATex", mGBufferA);
+		mParams->GetTextureParam(GPT_COMPUTE_PROGRAM, "gGBufferBTex", mGBufferB);
+		mParams->GetTextureParam(GPT_COMPUTE_PROGRAM, "gGBufferCTex", mGBufferC);
+		mParams->GetTextureParam(GPT_COMPUTE_PROGRAM, "gDepthBufferTex", mGBufferDepth);
 
-		mParams->getTextureParam(GPT_COMPUTE_PROGRAM, "gInColor", mInColorTextureParam);
-		mParams->getLoadStoreTextureParam(GPT_COMPUTE_PROGRAM, "gOutput", mOutputTextureParam);
+		mParams->GetTextureParam(GPT_COMPUTE_PROGRAM, "gInColor", mInColorTextureParam);
+		mParams->GetLoadStoreTextureParam(GPT_COMPUTE_PROGRAM, "gOutput", mOutputTextureParam);
 
 		if (mSampleCount > 1)
-			mParams->getTextureParam(GPT_COMPUTE_PROGRAM, "gMSAACoverage", mMSAACoverageTexParam);
+			mParams->GetTextureParam(GPT_COMPUTE_PROGRAM, "gMSAACoverage", mMSAACoverageTexParam);
 
 		mParamBuffer = gTiledImageBasedLightingParamDef.createBuffer();
-		mParams->setParamBlockBuffer("Params", mParamBuffer);
+		mParams->SetParamBlockBuffer("Params", mParamBuffer);
 
 		mImageBasedParams.populate(mParams, GPT_COMPUTE_PROGRAM, false, false, true);
 
-		mParams->setParamBlockBuffer("ReflProbeParams", mReflProbeParamBuffer.buffer);
+		mParams->SetParamBlockBuffer("ReflProbeParams", mReflProbeParamBuffer.buffer);
 	}
 
 	void TiledDeferredImageBasedLightingMat::InitDefinesInternal(ShaderDefines& defines)
 	{
-		defines.set("TILE_SIZE", TILE_SIZE);
+		defines.Set("TILE_SIZE", TILE_SIZE);
 	}
 
 	void TiledDeferredImageBasedLightingMat::Execute(const RendererView& view, const SceneInfo& sceneInfo,
@@ -336,7 +336,7 @@ namespace bs { namespace ct
 		Vector2I framebufferSize;
 		framebufferSize[0] = width;
 		framebufferSize[1] = height;
-		gTiledImageBasedLightingParamDef.gFramebufferSize.set(mParamBuffer, framebufferSize);
+		gTiledImageBasedLightingParamDef.gFramebufferSize.Set(mParamBuffer, framebufferSize);
 
 		Skybox* skybox = nullptr;
 		if(view.getRenderSettings().enableSkybox)
@@ -348,35 +348,35 @@ namespace bs { namespace ct
 		mParamBuffer->flushToGPU();
 		mReflProbeParamBuffer.buffer->flushToGPU();
 
-		mGBufferA.set(inputs.gbuffer.albedo);
-		mGBufferB.set(inputs.gbuffer.normals);
-		mGBufferC.set(inputs.gbuffer.roughMetal);
-		mGBufferDepth.set(inputs.gbuffer.depth);
+		mGBufferA.Set(inputs.gbuffer.albedo);
+		mGBufferB.Set(inputs.gbuffer.normals);
+		mGBufferC.Set(inputs.gbuffer.roughMetal);
+		mGBufferDepth.Set(inputs.gbuffer.depth);
 
 		SPtr<Texture> skyFilteredRadiance;
 		if(skybox)
-			skyFilteredRadiance = skybox->getFilteredRadiance();
+			skyFilteredRadiance = skybox->GetFilteredRadiance();
 
-		mImageBasedParams.preintegratedEnvBRDFParam.set(inputs.preIntegratedGF);
-		mImageBasedParams.reflectionProbesParam.set(probeData.getProbeBuffer());
-		mImageBasedParams.reflectionProbeCubemapsTexParam.set(sceneInfo.reflProbeCubemapsTex);
-		mImageBasedParams.skyReflectionsTexParam.set(skyFilteredRadiance);
-		mImageBasedParams.ambientOcclusionTexParam.set(inputs.ambientOcclusion);
-		mImageBasedParams.ssrTexParam.set(inputs.ssr);
+		mImageBasedParams.preintegratedEnvBRDFParam.Set(inputs.preIntegratedGF);
+		mImageBasedParams.reflectionProbesParam.Set(probeData.getProbeBuffer());
+		mImageBasedParams.reflectionProbeCubemapsTexParam.Set(sceneInfo.reflProbeCubemapsTex);
+		mImageBasedParams.skyReflectionsTexParam.Set(skyFilteredRadiance);
+		mImageBasedParams.ambientOcclusionTexParam.Set(inputs.ambientOcclusion);
+		mImageBasedParams.ssrTexParam.Set(inputs.ssr);
 
-		mParams->setParamBlockBuffer("PerCamera", view.getPerViewBuffer());
+		mParams->SetParamBlockBuffer("PerCamera", view.getPerViewBuffer());
 
-		mInColorTextureParam.set(inputs.lightAccumulation);
+		mInColorTextureParam.Set(inputs.lightAccumulation);
 		if (mSampleCount > 1)
 		{
-			mOutputTextureParam.set(inputs.sceneColorTexArray, TextureSurface::COMPLETE);
-			mMSAACoverageTexParam.set(inputs.msaaCoverage);
+			mOutputTextureParam.Set(inputs.sceneColorTexArray, TextureSurface::COMPLETE);
+			mMSAACoverageTexParam.Set(inputs.msaaCoverage);
 		}
 		else
-			mOutputTextureParam.set(inputs.sceneColorTex);
+			mOutputTextureParam.Set(inputs.sceneColorTex);
 
-		UINT32 numTilesX = (UINT32)Math::ceilToInt(width / (float)TILE_SIZE);
-		UINT32 numTilesY = (UINT32)Math::ceilToInt(height / (float)TILE_SIZE);
+		UINT32 numTilesX = (UINT32)Math::CeilToInt(width / (float)TILE_SIZE);
+		UINT32 numTilesY = (UINT32)Math::CeilToInt(height / (float)TILE_SIZE);
 
 		bind();
 		RenderAPI::Instance().dispatchCompute(numTilesX, numTilesY);

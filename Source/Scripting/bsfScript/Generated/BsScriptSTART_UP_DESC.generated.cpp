@@ -93,7 +93,7 @@ namespace bs
 		ScriptArray arrayimporters = ScriptArray::create<String>(arraySizeimporters);
 		for(int i = 0; i < arraySizeimporters; i++)
 		{
-			arrayimporters.set(i, value.importers[i]);
+			arrayimporters.Set(i, value.importers[i]);
 		}
 		vecimporters = arrayimporters.getInternal();
 		output.importers = vecimporters;

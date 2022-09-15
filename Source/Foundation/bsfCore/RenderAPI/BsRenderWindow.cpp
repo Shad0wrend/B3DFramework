@@ -28,9 +28,9 @@ namespace bs
 
 	void RenderWindow::Destroy()
 	{
-		RenderWindowManager::Instance().notifyWindowDestroyed(this);
+		RenderWindowManager::Instance().NotifyWindowDestroyed(this);
 
-		RenderTarget::destroy();
+		RenderTarget::Destroy();
 	}
 
 	RenderWindow::RenderWindow(const RENDER_WINDOW_DESC& desc, UINT32 windowId)
@@ -44,16 +44,16 @@ namespace bs
 		std::function<void(SPtr<ct::RenderWindow>, UINT32, UINT32)> resizeFunc =
 			[](SPtr<ct::RenderWindow> renderWindow, UINT32 width, UINT32 height)
 		{
-			renderWindow->resize(width, height);
+			renderWindow->Resize(width, height);
 		};
 
-		gCoreThread().queueCommand(std::bind(resizeFunc, getCore(), width, height));
-		gCoreThread().submit(true);
+		gCoreThread().QueueCommand(std::bind(resizeFunc, GetCore(), width, height));
+		gCoreThread().Submit(true);
 
 		{
-			ScopedSpinLock lock(getCore()->mLock);
-			const RenderWindowProperties& syncedProps = getCore()->getSyncedProperties();
-			RenderWindowProperties& mutableProps = getMutableProperties();
+			ScopedSpinLock lock(GetCore()->mLock);
+			const RenderWindowProperties& syncedProps = GetCore()->GetSyncedProperties();
+			RenderWindowProperties& mutableProps = GetMutableProperties();
 
 			mutableProps.width = syncedProps.width;
 			mutableProps.height = syncedProps.height;
@@ -65,16 +65,16 @@ namespace bs
 		std::function<void(SPtr<ct::RenderWindow>, INT32, INT32)> moveFunc =
 			[](SPtr<ct::RenderWindow> renderWindow, INT32 left, INT32 top)
 		{
-			renderWindow->move(left, top);
+			renderWindow->Move(left, top);
 		};
 
-		gCoreThread().queueCommand(std::bind(moveFunc, getCore(), left, top));
-		gCoreThread().submit(true);
+		gCoreThread().QueueCommand(std::bind(moveFunc, GetCore(), left, top));
+		gCoreThread().Submit(true);
 
 		{
-			ScopedSpinLock lock(getCore()->mLock);
-			const RenderWindowProperties& syncedProps = getCore()->getSyncedProperties();
-			RenderWindowProperties& mutableProps = getMutableProperties();
+			ScopedSpinLock lock(GetCore()->mLock);
+			const RenderWindowProperties& syncedProps = GetCore()->GetSyncedProperties();
+			RenderWindowProperties& mutableProps = GetMutableProperties();
 
 			mutableProps.left = syncedProps.left;
 			mutableProps.top = syncedProps.top;
@@ -86,12 +86,12 @@ namespace bs
 		std::function<void(SPtr<ct::RenderWindow>)> hideFunc =
 			[](SPtr<ct::RenderWindow> renderWindow)
 		{
-			renderWindow->setHidden(true);
+			renderWindow->SetHidden(true);
 		};
 
-		getMutableProperties().isHidden = true;
+		GetMutableProperties().isHidden = true;
 
-		gCoreThread().queueCommand(std::bind(hideFunc, getCore()));
+		gCoreThread().QueueCommand(std::bind(hideFunc, GetCore()));
 	}
 
 	void RenderWindow::Show()
@@ -99,12 +99,12 @@ namespace bs
 		std::function<void(SPtr<ct::RenderWindow>)> showFunc =
 			[](SPtr<ct::RenderWindow> renderWindow)
 		{
-			renderWindow->setHidden(false);
+			renderWindow->SetHidden(false);
 		};
 
-		getMutableProperties().isHidden = false;
+		GetMutableProperties().isHidden = false;
 
-		gCoreThread().queueCommand(std::bind(showFunc, getCore()));
+		gCoreThread().QueueCommand(std::bind(showFunc, GetCore()));
 	}
 
 	void RenderWindow::Minimize()
@@ -112,12 +112,12 @@ namespace bs
 		std::function<void(SPtr<ct::RenderWindow>)> minimizeFunc =
 			[](SPtr<ct::RenderWindow> renderWindow)
 		{
-			renderWindow->minimize();
+			renderWindow->Minimize();
 		};
 
-		getMutableProperties().isMaximized = false;
+		GetMutableProperties().isMaximized = false;
 
-		gCoreThread().queueCommand(std::bind(minimizeFunc, getCore()));
+		gCoreThread().QueueCommand(std::bind(minimizeFunc, GetCore()));
 	}
 
 	void RenderWindow::Maximize()
@@ -125,18 +125,18 @@ namespace bs
 		std::function<void(SPtr<ct::RenderWindow>)> maximizeFunc =
 			[](SPtr<ct::RenderWindow> renderWindow)
 		{
-			renderWindow->maximize();
+			renderWindow->Maximize();
 		};
 
-		getMutableProperties().isMaximized = true;
+		GetMutableProperties().isMaximized = true;
 
-		gCoreThread().queueCommand(std::bind(maximizeFunc, getCore()));
-		gCoreThread().submit(true);
+		gCoreThread().QueueCommand(std::bind(maximizeFunc, GetCore()));
+		gCoreThread().Submit(true);
 
 		{
-			ScopedSpinLock lock(getCore()->mLock);
-			const RenderWindowProperties& syncedProps = getCore()->getSyncedProperties();
-			RenderWindowProperties& mutableProps = getMutableProperties();
+			ScopedSpinLock lock(GetCore()->mLock);
+			const RenderWindowProperties& syncedProps = GetCore()->GetSyncedProperties();
+			RenderWindowProperties& mutableProps = GetMutableProperties();
 
 			mutableProps.width = syncedProps.width;
 			mutableProps.height = syncedProps.height;
@@ -148,18 +148,18 @@ namespace bs
 		std::function<void(SPtr<ct::RenderWindow>)> restoreFunc =
 			[](SPtr<ct::RenderWindow> renderWindow)
 		{
-			renderWindow->restore();
+			renderWindow->Restore();
 		};
 
-		getMutableProperties().isMaximized = false;
+		GetMutableProperties().isMaximized = false;
 
-		gCoreThread().queueCommand(std::bind(restoreFunc, getCore()));
-		gCoreThread().submit(true);
+		gCoreThread().QueueCommand(std::bind(restoreFunc, GetCore()));
+		gCoreThread().Submit(true);
 
 		{
-			ScopedSpinLock lock(getCore()->mLock);
-			const RenderWindowProperties& syncedProps = getCore()->getSyncedProperties();
-			RenderWindowProperties& mutableProps = getMutableProperties();
+			ScopedSpinLock lock(GetCore()->mLock);
+			const RenderWindowProperties& syncedProps = GetCore()->GetSyncedProperties();
+			RenderWindowProperties& mutableProps = GetMutableProperties();
 
 			mutableProps.width = syncedProps.width;
 			mutableProps.height = syncedProps.height;
@@ -171,16 +171,16 @@ namespace bs
 		std::function<void(SPtr<ct::RenderWindow>, UINT32, UINT32, float, UINT32)> fullscreenFunc =
 			[](SPtr<ct::RenderWindow> renderWindow, UINT32 width, UINT32 height, float refreshRate, UINT32 monitorIdx)
 		{
-			renderWindow->setFullscreen(width, height, refreshRate, monitorIdx);
+			renderWindow->SetFullscreen(width, height, refreshRate, monitorIdx);
 		};
 
-		gCoreThread().queueCommand(std::bind(fullscreenFunc, getCore(), width, height, refreshRate, monitorIdx));
-		gCoreThread().submit(true);
+		gCoreThread().QueueCommand(std::bind(fullscreenFunc, GetCore(), width, height, refreshRate, monitorIdx));
+		gCoreThread().Submit(true);
 
 		{
-			ScopedSpinLock lock(getCore()->mLock);
-			const RenderWindowProperties& syncedProps = getCore()->getSyncedProperties();
-			RenderWindowProperties& mutableProps = getMutableProperties();
+			ScopedSpinLock lock(GetCore()->mLock);
+			const RenderWindowProperties& syncedProps = GetCore()->GetSyncedProperties();
+			RenderWindowProperties& mutableProps = GetMutableProperties();
 
 			mutableProps.width = syncedProps.width;
 			mutableProps.height = syncedProps.height;
@@ -192,16 +192,16 @@ namespace bs
 		std::function<void(SPtr<ct::RenderWindow>, const VideoMode&)> fullscreenFunc =
 			[](SPtr<ct::RenderWindow> renderWindow, const VideoMode& mode)
 		{
-			renderWindow->setFullscreen(mode);
+			renderWindow->SetFullscreen(mode);
 		};
 
-		gCoreThread().queueCommand(std::bind(fullscreenFunc, getCore(), std::cref(mode)));
-		gCoreThread().submit(true);
+		gCoreThread().QueueCommand(std::bind(fullscreenFunc, GetCore(), std::cref(mode)));
+		gCoreThread().Submit(true);
 
 		{
-			ScopedSpinLock lock(getCore()->mLock);
-			const RenderWindowProperties& syncedProps = getCore()->getSyncedProperties();
-			RenderWindowProperties& mutableProps = getMutableProperties();
+			ScopedSpinLock lock(GetCore()->mLock);
+			const RenderWindowProperties& syncedProps = GetCore()->GetSyncedProperties();
+			RenderWindowProperties& mutableProps = GetMutableProperties();
 
 			mutableProps.width = syncedProps.width;
 			mutableProps.height = syncedProps.height;
@@ -213,16 +213,16 @@ namespace bs
 		std::function<void(SPtr<ct::RenderWindow>, UINT32, UINT32)> windowedFunc =
 			[](SPtr<ct::RenderWindow> renderWindow, UINT32 width, UINT32 height)
 		{
-			renderWindow->setWindowed(width, height);
+			renderWindow->SetWindowed(width, height);
 		};
 
-		gCoreThread().queueCommand(std::bind(windowedFunc, getCore(), width, height));
-		gCoreThread().submit(true);
+		gCoreThread().QueueCommand(std::bind(windowedFunc, GetCore(), width, height));
+		gCoreThread().Submit(true);
 
 		{
-			ScopedSpinLock lock(getCore()->mLock);
-			const RenderWindowProperties& syncedProps = getCore()->getSyncedProperties();
-			RenderWindowProperties& mutableProps = getMutableProperties();
+			ScopedSpinLock lock(GetCore()->mLock);
+			const RenderWindowProperties& syncedProps = GetCore()->GetSyncedProperties();
+			RenderWindowProperties& mutableProps = GetMutableProperties();
 
 			mutableProps.width = syncedProps.width;
 			mutableProps.height = syncedProps.height;
@@ -236,26 +236,26 @@ namespace bs
 
 	SPtr<RenderWindow> RenderWindow::Create(RENDER_WINDOW_DESC& desc, SPtr<RenderWindow> parentWindow)
 	{
-		return RenderWindowManager::Instance().create(desc, parentWindow);
+		return RenderWindowManager::Instance().Create(desc, parentWindow);
 	}
 
 	RenderWindowProperties& RenderWindow::GetMutableProperties()
 	{
-		return const_cast<RenderWindowProperties&>(getProperties());
+		return const_cast<RenderWindowProperties&>(GetProperties());
 	}
 
 	const RenderWindowProperties& RenderWindow::GetProperties() const
 	{
-		return static_cast<const RenderWindowProperties&>(getPropertiesInternal());
+		return static_cast<const RenderWindowProperties&>(GetPropertiesInternal());
 	}
 
 	void RenderWindow::NotifyWindowEventInternal(WindowEventType type)
 	{
 		THROW_IF_CORE_THREAD;
 
-		ct::RenderWindow* coreWindow = getCore().get();
-		RenderWindowProperties& syncProps = coreWindow->getSyncedProperties();
-		RenderWindowProperties& props = const_cast<RenderWindowProperties&>(getProperties());
+		ct::RenderWindow* coreWindow = GetCore().get();
+		RenderWindowProperties& syncProps = coreWindow->GetSyncedProperties();
+		RenderWindowProperties& props = const_cast<RenderWindowProperties&>(GetProperties());
 
 		switch(type)
 		{
@@ -269,8 +269,8 @@ namespace bs
 					syncProps.height = props.height;
 				}
 
-				ct::RenderWindowManager::Instance().notifySyncDataDirty(coreWindow);
-				RenderWindowManager::Instance().notifyMovedOrResized(coreWindow);
+				ct::RenderWindowManager::Instance().NotifySyncDataDirty(coreWindow);
+				RenderWindowManager::Instance().NotifyMovedOrResized(coreWindow);
 
 				break;
 			}
@@ -284,8 +284,8 @@ namespace bs
 					syncProps.left = props.left;
 				}
 
-				ct::RenderWindowManager::Instance().notifySyncDataDirty(coreWindow);
-				RenderWindowManager::Instance().notifyMovedOrResized(coreWindow);
+				ct::RenderWindowManager::Instance().NotifySyncDataDirty(coreWindow);
+				RenderWindowManager::Instance().NotifyMovedOrResized(coreWindow);
 
 				break;
 			}
@@ -298,8 +298,8 @@ namespace bs
 
 				props.hasFocus = true;
 
-				ct::RenderWindowManager::Instance().notifySyncDataDirty(coreWindow);
-				RenderWindowManager::Instance().notifyFocusReceived(coreWindow);
+				ct::RenderWindowManager::Instance().NotifySyncDataDirty(coreWindow);
+				RenderWindowManager::Instance().NotifyFocusReceived(coreWindow);
 				break;
 			}
 			case WindowEventType::FocusLost:
@@ -311,8 +311,8 @@ namespace bs
 
 				props.hasFocus = false;
 
-				ct::RenderWindowManager::Instance().notifySyncDataDirty(coreWindow);
-				RenderWindowManager::Instance().notifyFocusLost(coreWindow);
+				ct::RenderWindowManager::Instance().NotifySyncDataDirty(coreWindow);
+				RenderWindowManager::Instance().NotifyFocusLost(coreWindow);
 				break;
 			}
 			case WindowEventType::Minimized:
@@ -324,7 +324,7 @@ namespace bs
 
 				props.isMaximized = false;
 
-				ct::RenderWindowManager::Instance().notifySyncDataDirty(coreWindow);
+				ct::RenderWindowManager::Instance().NotifySyncDataDirty(coreWindow);
 				break;
 			}
 			case WindowEventType::Maximized:
@@ -336,7 +336,7 @@ namespace bs
 
 				props.isMaximized = true;
 
-				ct::RenderWindowManager::Instance().notifySyncDataDirty(coreWindow);
+				ct::RenderWindowManager::Instance().NotifySyncDataDirty(coreWindow);
 				break;
 			}
 			case WindowEventType::Restored:
@@ -348,17 +348,17 @@ namespace bs
 
 				props.isMaximized = false;
 
-				ct::RenderWindowManager::Instance().notifySyncDataDirty(coreWindow);
+				ct::RenderWindowManager::Instance().NotifySyncDataDirty(coreWindow);
 				break;
 			}
 			case WindowEventType::MouseLeft:
 			{
-				RenderWindowManager::Instance().notifyMouseLeft(coreWindow);
+				RenderWindowManager::Instance().NotifyMouseLeft(coreWindow);
 				break;
 			}
 			case WindowEventType::CloseRequested:
 			{
-				RenderWindowManager::Instance().notifyCloseRequested(coreWindow);
+				RenderWindowManager::Instance().NotifyCloseRequested(coreWindow);
 				break;
 			}
 		}
@@ -366,7 +366,7 @@ namespace bs
 
 	void RenderWindow::OnExternalResizeInternal(UINT32 width, UINT32 height)
 	{
-		RenderWindowProperties& props = getMutableProperties();
+		RenderWindowProperties& props = GetMutableProperties();
 		props.width = width;
 		props.height = height;
 		NotifyWindowEventInternal(WindowEventType::Resized);
@@ -374,7 +374,7 @@ namespace bs
 
 	void RenderWindow::OnExternalMoveInternal(INT32 top, INT32 left)
 	{
-		RenderWindowProperties& props = getMutableProperties();
+		RenderWindowProperties& props = GetMutableProperties();
 		props.top = top;
 		props.left = left;
 		NotifyWindowEventInternal(WindowEventType::Moved);
@@ -423,27 +423,27 @@ namespace bs
 	RenderWindow::RenderWindow(const RENDER_WINDOW_DESC& desc, UINT32 windowId)
 		:mDesc(desc), mWindowId(windowId)
 	{
-		RenderWindowManager::Instance().windowCreated(this);
+		RenderWindowManager::Instance().WindowCreated(this);
 	}
 
 	RenderWindow::~RenderWindow()
 	{
-		RenderWindowManager::Instance().windowDestroyed(this);
+		RenderWindowManager::Instance().WindowDestroyed(this);
 	}
 
 	void RenderWindow::SetHidden(bool hidden)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
-		RenderWindowProperties& props = const_cast<RenderWindowProperties&>(getProperties());
+		RenderWindowProperties& props = const_cast<RenderWindowProperties&>(GetProperties());
 
 		props.isHidden = hidden;
 		{
 			ScopedSpinLock lock(mLock);
-			getSyncedProperties().isHidden = hidden;
+			GetSyncedProperties().isHidden = hidden;
 		}
 
-		bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
+		bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
 	}
 
 	void RenderWindow::SetActive(bool state)
@@ -455,8 +455,8 @@ namespace bs
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
-		RenderWindowProperties& syncProps = getSyncedProperties();
-		RenderWindowProperties& props = const_cast<RenderWindowProperties&>(getProperties());
+		RenderWindowProperties& syncProps = GetSyncedProperties();
+		RenderWindowProperties& props = const_cast<RenderWindowProperties&>(GetProperties());
 
 		switch(type)
 		{
@@ -470,8 +470,8 @@ namespace bs
 					syncProps.height = props.height;
 				}
 
-				bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
-				bs::RenderWindowManager::Instance().notifyMovedOrResized(this);
+				bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
+				bs::RenderWindowManager::Instance().NotifyMovedOrResized(this);
 
 				break;
 			}
@@ -485,8 +485,8 @@ namespace bs
 					syncProps.left = props.left;
 				}
 
-				bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
-				bs::RenderWindowManager::Instance().notifyMovedOrResized(this);
+				bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
+				bs::RenderWindowManager::Instance().NotifyMovedOrResized(this);
 
 				break;
 			}
@@ -499,8 +499,8 @@ namespace bs
 
 				props.hasFocus = true;
 
-				bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
-				bs::RenderWindowManager::Instance().notifyFocusReceived(this);
+				bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
+				bs::RenderWindowManager::Instance().NotifyFocusReceived(this);
 				break;
 			}
 			case WindowEventType::FocusLost:
@@ -512,8 +512,8 @@ namespace bs
 
 				props.hasFocus = false;
 
-				bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
-				bs::RenderWindowManager::Instance().notifyFocusLost(this);
+				bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
+				bs::RenderWindowManager::Instance().NotifyFocusLost(this);
 				break;
 			}
 			case WindowEventType::Minimized:
@@ -525,7 +525,7 @@ namespace bs
 
 				props.isMaximized = false;
 
-				bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
+				bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
 				break;
 			}
 			case WindowEventType::Maximized:
@@ -537,7 +537,7 @@ namespace bs
 
 				props.isMaximized = true;
 
-				bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
+				bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
 				break;
 			}
 			case WindowEventType::Restored:
@@ -549,17 +549,17 @@ namespace bs
 
 				props.isMaximized = false;
 
-				bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
+				bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
 				break;
 			}
 			case WindowEventType::MouseLeft:
 			{
-				bs::RenderWindowManager::Instance().notifyMouseLeft(this);
+				bs::RenderWindowManager::Instance().NotifyMouseLeft(this);
 				break;
 			}
 			case WindowEventType::CloseRequested:
 			{
-				bs::RenderWindowManager::Instance().notifyCloseRequested(this);
+				bs::RenderWindowManager::Instance().NotifyCloseRequested(this);
 				break;
 			}
 		}
@@ -567,7 +567,7 @@ namespace bs
 
 	const RenderWindowProperties& RenderWindow::GetProperties() const
 	{
-		return static_cast<const RenderWindowProperties&>(getPropertiesInternal());
+		return static_cast<const RenderWindowProperties&>(GetPropertiesInternal());
 	}
 	}
 }

@@ -15,12 +15,12 @@ namespace bs { namespace ct
 		:IndexBuffer(desc, deviceMask),  mDeviceMask(deviceMask)
 	{ }
 
-	void VulkanIndexBuffer::initialize()
+	void VulkanIndexBuffer::Initialize()
 	{
 		mBuffer = bs_pool_new<VulkanHardwareBuffer>(VulkanHardwareBuffer::BT_INDEX, BF_UNKNOWN, mUsage, mSize, mDeviceMask);
 		mBufferDeleter = &deleteBuffer;
 
-		initialize();
+		Initialize();
 	}
 
 	VulkanBuffer* VulkanIndexBuffer::GetResource(UINT32 deviceIdx) const

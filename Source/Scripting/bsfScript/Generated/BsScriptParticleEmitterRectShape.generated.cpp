@@ -39,13 +39,13 @@ namespace bs
 	{
 		PARTICLE_RECT_SHAPE_DESC tmpoptions;
 		tmpoptions = ScriptPARTICLE_RECT_SHAPE_DESC::FromInterop(*options);
-		thisPtr->getInternal()->setOptions(tmpoptions);
+		thisPtr->GetInternal()->SetOptions(tmpoptions);
 	}
 
 	void ScriptParticleEmitterRectShape::InternalGetOptions(ScriptParticleEmitterRectShape* thisPtr, __PARTICLE_RECT_SHAPE_DESCInterop* __output)
 	{
 		PARTICLE_RECT_SHAPE_DESC tmp__output;
-		tmp__output = thisPtr->getInternal()->getOptions();
+		tmp__output = thisPtr->GetInternal()->GetOptions();
 
 		__PARTICLE_RECT_SHAPE_DESCInterop interop__output;
 		interop__output = ScriptPARTICLE_RECT_SHAPE_DESC::toInterop(tmp__output);

@@ -38,8 +38,8 @@ namespace bs
 
 		onClickThunk = (OnClickThunkDef)metaData.scriptClass->GetMethod("DoOnClick")->GetThunk();
 		onDoubleClickThunk = (OnDoubleClickThunkDef)metaData.scriptClass->GetMethod("DoOnDoubleClick")->GetThunk();
-		onHoverThunk = (OnHoverThunkDef)metaData.scriptClass->getMethod("DoOnHover")->getThunk();
-		onOutThunk = (OnOutThunkDef)metaData.scriptClass->getMethod("DoOnOut")->getThunk();
+		onHoverThunk = (OnHoverThunkDef)metaData.scriptClass->GetMethod("DoOnHover")->GetThunk();
+		onOutThunk = (OnOutThunkDef)metaData.scriptClass->GetMethod("DoOnOut")->GetThunk();
 	}
 
 	void ScriptGUIButton::InternalCreateInstance(MonoObject* instance, __GUIContentInterop* content,
@@ -57,24 +57,24 @@ namespace bs
 
 		auto nativeInstance = new (bs_alloc<ScriptGUIButton>()) ScriptGUIButton(instance, guiButton);
 
-		guiButton->onClick.connect(std::bind(&ScriptGUIButton::onClick, nativeInstance));
-		guiButton->onDoubleClick.connect(std::bind(&ScriptGUIButton::onDoubleClick, nativeInstance));
-		guiButton->onHover.connect(std::bind(&ScriptGUIButton::onHover, nativeInstance));
-		guiButton->onOut.connect(std::bind(&ScriptGUIButton::onOut, nativeInstance));
+		guiButton->onClick.Connect(std::bind(&ScriptGUIButton::onClick, nativeInstance));
+		guiButton->onDoubleClick.Connect(std::bind(&ScriptGUIButton::onDoubleClick, nativeInstance));
+		guiButton->onHover.Connect(std::bind(&ScriptGUIButton::onHover, nativeInstance));
+		guiButton->onOut.Connect(std::bind(&ScriptGUIButton::onOut, nativeInstance));
 	}
 
 	void ScriptGUIButton::InternalSetContent(ScriptGUIButton* nativeInstance, __GUIContentInterop* content)
 	{
 		GUIContent nativeContent = ScriptGUIContent::fromInterop(*content);
 
-		GUIButton* button = (GUIButton*)nativeInstance->getGUIElement();
-		button->setContent(nativeContent);
+		GUIButton* button = (GUIButton*)nativeInstance->GetGUIElement();
+		button->SetContent(nativeContent);
 	}
 
 	void ScriptGUIButton::InternalSetTint(ScriptGUIButton* nativeInstance, Color* color)
 	{
-		GUIButton* button = (GUIButton*)nativeInstance->getGUIElement();
-		button->setTint(*color);
+		GUIButton* button = (GUIButton*)nativeInstance->GetGUIElement();
+		button->SetTint(*color);
 	}
 
 	void ScriptGUIButton::OnClick()

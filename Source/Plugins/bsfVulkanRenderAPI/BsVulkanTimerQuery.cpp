@@ -57,7 +57,7 @@ namespace bs { namespace ct
 		else
 			vulkanCB = static_cast<VulkanCommandBuffer*>(gVulkanRenderAPI().GetMainCommandBufferInternal());
 
-		VulkanCmdBuffer* internalCB = vulkanCB->getInternal();
+		VulkanCmdBuffer* internalCB = vulkanCB->GetInternal();
 		VulkanQuery* beginQuery = queryPool.BeginTimerQuery(internalCB);
 		internalCB->registerQuery(this);
 
@@ -84,7 +84,7 @@ namespace bs { namespace ct
 			vulkanCB = static_cast<VulkanCommandBuffer*>(gVulkanRenderAPI().GetMainCommandBufferInternal());
 
 		VulkanQueryPool& queryPool = mDevice.getQueryPool();
-		VulkanCmdBuffer* internalCB = vulkanCB->getInternal();
+		VulkanCmdBuffer* internalCB = vulkanCB->GetInternal();
 		VulkanQuery* endQuery = queryPool.BeginTimerQuery(internalCB);
 		internalCB->registerQuery(this);
 
@@ -122,8 +122,8 @@ namespace bs { namespace ct
 		bool ready = true;
 		for (auto& entry : mQueries)
 		{
-			ready &= !entry.first->isBound() && entry.first->getResult(timeBegin);
-			ready &= !entry.second->isBound() && entry.second->getResult(timeEnd);
+			ready &= !entry.first->isBound() && entry.first->GetResult(timeBegin);
+			ready &= !entry.second->isBound() && entry.second->GetResult(timeEnd);
 		}
 
 		return ready;
@@ -139,8 +139,8 @@ namespace bs { namespace ct
 			{
 				UINT64 timeBegin = 0;
 				UINT64 timeEnd = 0;
-				ready &= !entry.first->isBound() && entry.first->getResult(timeBegin);
-				ready &= !entry.second->isBound() && entry.second->getResult(timeEnd);
+				ready &= !entry.first->isBound() && entry.first->GetResult(timeBegin);
+				ready &= !entry.second->isBound() && entry.second->GetResult(timeEnd);
 
 				totalTimeDiff += (timeEnd - timeBegin);
 			}

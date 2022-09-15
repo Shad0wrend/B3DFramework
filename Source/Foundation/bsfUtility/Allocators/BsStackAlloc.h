@@ -273,7 +273,7 @@ namespace bs
 	template<class T>
 	T* bs_stack_alloc()
 	{
-		return (T*)MemStack::alloc(sizeof(T));
+		return (T*)MemStack::Alloc(sizeof(T));
 	}
 
 	/**
@@ -286,7 +286,7 @@ namespace bs
 	template<class T>
 	T* bs_stack_alloc(UINT32 amount)
 	{
-		return (T*)MemStack::alloc(sizeof(T) * amount);
+		return (T*)MemStack::Alloc(sizeof(T) * amount);
 	}
 
 	/**
@@ -331,7 +331,7 @@ namespace bs
 	{
 		data->~T();
 
-		MemStack::deallocLast((UINT8*)data);
+		MemStack::DeallocLast((UINT8*)data);
 	}
 
 	/**
@@ -345,7 +345,7 @@ namespace bs
 		for(unsigned int i = 0; i < count; i++)
 			data[i].~T();
 
-		MemStack::deallocLast((UINT8*)data);
+		MemStack::DeallocLast((UINT8*)data);
 	}
 
 	inline void bs_stack_delete(void* data, UINT32 count)

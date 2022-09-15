@@ -67,10 +67,10 @@ namespace bs
 		BS_INC_RENDER_STAT_CAT(ResDestroyed, RenderStatObject_VertexBuffer);
 	}
 
-	void VertexBuffer::initialize()
+	void VertexBuffer::Initialize()
 	{
 		BS_INC_RENDER_STAT_CAT(ResCreated, RenderStatObject_VertexBuffer);
-		CoreObject::initialize();
+		CoreObject::Initialize();
 	}
 
 	void* VertexBuffer::Map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx, UINT32 queueIdx)
@@ -122,10 +122,10 @@ namespace bs
 
 		for(const auto& entry : mLoadStoreViews)
 		{
-			const GpuBufferProperties& props = entry->getProperties();
+			const GpuBufferProperties& props = entry->GetProperties();
 			if(props.getType() == type)
 			{
-				if(type == GBT_STANDARD && props.getFormat() == format)
+				if(type == GBT_STANDARD && props.GetFormat() == format)
 					return entry;
 
 				if(type == GBT_STRUCTURED && props.getElementSize() == elementSize)
@@ -134,7 +134,7 @@ namespace bs
 		}
 
 		UINT32 elemSize = type == GBT_STANDARD ? bs::GpuBuffer::getFormatSize(format) : elementSize;
-		if((mBuffer->getSize() % elemSize) != 0)
+		if((mBuffer->GetSize() % elemSize) != 0)
 		{
 			BS_LOG(Error, RenderBackend,
 				"Size of the buffer isn't divisible by individual element size provided for the buffer view.");
@@ -146,7 +146,7 @@ namespace bs
 		desc.format = format;
 		desc.usage = mUsage;
 		desc.elementSize = elementSize;
-		desc.elementCount = mBuffer->getSize() / elemSize;
+		desc.elementCount = mBuffer->GetSize() / elemSize;
 
 		if(!mSharedBuffer)
 			mSharedBuffer = bs_shared_ptr(mBuffer, mBufferDeleter);

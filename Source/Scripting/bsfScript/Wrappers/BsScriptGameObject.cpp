@@ -8,7 +8,7 @@ namespace bs
 {
 	bool checkIfDestroyed(ScriptGameObject* nativeInstance)
 	{
-		HGameObject go = nativeInstance->getNativeHandle();
+		HGameObject go = nativeInstance->GetNativeHandle();
 		if (go.IsDestroyed())
 		{
 			BS_LOG(Warning, Scene, "Trying to access a destroyed GameObject with instance ID: {0}", go.getInstanceId());
@@ -63,7 +63,7 @@ namespace bs
 
 	UINT64 ScriptGameObject::InternalGetInstanceId(ScriptGameObject* nativeInstance)
 	{
-		return nativeInstance->getNativeHandle().getInstanceId();
+		return nativeInstance->GetNativeHandle().getInstanceId();
 	}
 
 	void ScriptGameObject::InternalGetUuid(ScriptGameObject* nativeInstance, UUID* uuid)
@@ -74,11 +74,11 @@ namespace bs
 			return;
 		}
 
-		*uuid = nativeInstance->getNativeHandle()->getUUID();
+		*uuid = nativeInstance->GetNativeHandle()->GetUUID();
 	}
 
 	bool ScriptGameObject::InternalGetIsDestroyed(ScriptGameObject* nativeInstance)
 	{
-		return nativeInstance->getNativeHandle().isDestroyed(true);
+		return nativeInstance->GetNativeHandle().isDestroyed(true);
 	}
 }

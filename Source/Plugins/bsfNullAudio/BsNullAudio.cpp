@@ -47,7 +47,7 @@ namespace bs
 			mSourceStreamSize = mStreamSize;
 		}
 
-		AudioClip::initialize();
+		AudioClip::Initialize();
 	}
 
 	SPtr<DataStream> NullAudioClip::GetSourceStream(UINT32& size)

@@ -16,7 +16,7 @@ namespace bs
 		PxSphereGeometry geometry(radius);
 
 		PxShape* shape = physx->createShape(geometry, *gPhysX().GetDefaultMaterial(), true);
-		shape->setLocalPose(toPxTransform(position, rotation));
+		shape->SetLocalPose(toPxTransform(position, rotation));
 		shape->userData = this;
 
 		mInternal = bs_new<FPhysXCollider>(scene, shape);
@@ -50,7 +50,7 @@ namespace bs
 		float radius = std::max(0.01f, mRadius * std::max(std::max(mScale.x, mScale.y), mScale.z));
 		PxSphereGeometry geometry(radius);
 
-		GetInternal()->GetShapeInternal()->setGeometry(geometry);
+		GetInternal()->GetShapeInternal()->SetGeometry(geometry);
 	}
 
 	FPhysXCollider* PhysXSphereCollider::GetInternal() const

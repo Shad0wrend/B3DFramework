@@ -138,7 +138,7 @@ namespace bs
 			void setVideoMode(INT32 screen, RROutput output, RRMode mode);
 
 			/** @copydoc CoreObject::initialize */
-			void initialize() override;
+			void Initialize() override;
 
 			/** @copydoc RenderWindow::getProperties */
 			const RenderTargetProperties& getPropertiesInternal() const override { return mProperties; }

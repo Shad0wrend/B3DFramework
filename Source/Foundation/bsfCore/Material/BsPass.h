@@ -69,7 +69,7 @@ namespace bs
 
 		/**
 		 * Returns the graphics pipeline state describing this pass, or null if its a compute pass.
-		 * Only valid after compile() has been called.
+		 * Only valid after Compile() has been called.
 		 */
 		const SPtr<GraphicsPipelineStateType>& GetGraphicsPipelineState() const { return mGraphicsPipelineState; }
 
@@ -110,7 +110,7 @@ namespace bs
 	/**
 	 * Class defining a single pass of a technique (of a material). Pass may contain multiple GPU programs (vertex,
 	 * fragment, geometry, etc.), and a set of pipeline states (blend, rasterizer, etc.). When initially created the pass
-	 * is in its uncompiled state. It needs to be explicitly compiled by calling compile() before use.
+	 * is in its uncompiled state. It needs to be explicitly compiled by calling Compile() before use.
 	 *
 	 * @note	Sim thread.
 	 */

@@ -172,7 +172,7 @@ namespace bs
 		RTTITypeBase* GetRtti() const ;
 
 		/**
-		 * Creates an AudioClip with no samples. You must populate its data manually followed by a call to initialize().
+		 * Creates an AudioClip with no samples. You must populate its data manually followed by a call to Initialize().
 		 *
 		 * @note	For serialization use only.
 		 */

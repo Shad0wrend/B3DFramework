@@ -187,7 +187,7 @@ namespace bs
 			/** Maps a global element index to a set of element groups and an index within those groups. */
 			UINT32 mapToGroup(UINT32 elementIdx, ElementGroup** elements, ElementBoundGroup** bounds)
 			{
-				UINT32 numGroups = Math::divideAndRoundUp(mElements.count, (UINT32)Options::MaxElementsPerNode);
+				UINT32 numGroups = Math::DivideAndRoundUp(mElements.count, (UINT32)Options::MaxElementsPerNode);
 				UINT32 groupIdx = numGroups - elementIdx / Options::MaxElementsPerNode - 1;
 
 				*elements = mElements.values;
@@ -412,7 +412,7 @@ namespace bs
 			/** Inserts a child of the current node to be iterated over. */
 			void pushChild(const HChildNode& child)
 			{
-				Node* childNode = mCurrentNode.getNode()->getChild(child);
+				Node* childNode = mCurrentNode.getNode()->GetChild(child);
 				NodeBounds childBounds = mCurrentNode.getBounds().getChild(child);
 
 				mNodeStack.emplace_back(childNode, childBounds);
@@ -436,7 +436,7 @@ namespace bs
 				, mCurrentElemGroup(node->mElements.values)
 				, mCurrentBoundGroup(node->mElements.bounds)
 			{
-				UINT32 numGroups = Math::divideAndRoundUp(node->mElements.count, (UINT32)Options::MaxElementsPerNode);
+				UINT32 numGroups = Math::DivideAndRoundUp(node->mElements.count, (UINT32)Options::MaxElementsPerNode);
 				mElemsInGroup = node->mElements.count - (numGroups - 1) * Options::MaxElementsPerNode;
 			}
 
@@ -569,9 +569,9 @@ namespace bs
 		}
 
 		/** Adds a new element to the quadtree. */
-		void addElement(const ElemType& elem)
+		void AddElement(const ElemType& elem)
 		{
-			addElementToNode(elem, &mRoot, mRootBounds);
+			AddElementToNode(elem, &mRoot, mRootBounds);
 		}
 
 		/** Removes an existing element from the quadtree. */
@@ -611,7 +611,7 @@ namespace bs
 						{
 							if (curNode->hasChild(i))
 							{
-								Node* childNode = curNode->getChild(i);
+								Node* childNode = curNode->GetChild(i);
 
 								ElementIterator elemIter(childNode);
 								while (elemIter.moveNext())
@@ -642,7 +642,7 @@ namespace bs
 
 	private:
 		/** Adds a new element to the specified node. Potentially also subdivides the node. */
-		void addElementToNode(const ElemType& elem, Node* node, const NodeBounds& nodeBounds)
+		void AddElementToNode(const ElemType& elem, Node* node, const NodeBounds& nodeBounds)
 		{
 			simd::Rect2 elemBounds = Options::getBounds(elem, mContext);
 
@@ -666,13 +666,13 @@ namespace bs
 
 					// Re-insert all previous elements into this node (likely creating child nodes)
 					while (elemIter.moveNext())
-						addElementToNode(elemIter.getCurrentElem(), node, nodeBounds);
+						AddElementToNode(elemIter.getCurrentElem(), node, nodeBounds);
 
 					// Free the element and bound groups from this node
 					freeElements(elements);
 
 					// Insert the current element
-					addElementToNode(elem, node, nodeBounds);
+					AddElementToNode(elem, node, nodeBounds);
 				}
 				else
 				{
@@ -696,7 +696,7 @@ namespace bs
 					if (!node->mChildren[child.index])
 						node->mChildren[child.index] = mNodeAlloc.template construct<Node>(node);
 
-					addElementToNode(elem, node->mChildren[child.index], nodeBounds.getChild(child));
+					AddElementToNode(elem, node->mChildren[child.index], nodeBounds.getChild(child));
 				}
 			}
 		}

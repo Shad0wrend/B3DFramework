@@ -30,7 +30,7 @@ namespace bs
 					continue;
 
 				D3D11TextureView* textureView = static_cast<D3D11TextureView*>(mColorSurfaces[i].get());
-				rtvs[i] = textureView->getRTV();
+				rtvs[i] = textureView->GetRTV();
 			}
 		}
 		else if(name == "DSV")
@@ -41,7 +41,7 @@ namespace bs
 			ID3D11DepthStencilView** dsv = (ID3D11DepthStencilView**)data;
 			D3D11TextureView* depthStencilView = static_cast<D3D11TextureView*>(mDepthStencilSurface.get());
 
-			*dsv = depthStencilView->getDSV(false, false);
+			*dsv = depthStencilView->GetDSV(false, false);
 		}
 		else if (name == "RODSV")
 		{
@@ -51,7 +51,7 @@ namespace bs
 			ID3D11DepthStencilView** dsv = (ID3D11DepthStencilView**)data;
 			D3D11TextureView* depthStencilView = static_cast<D3D11TextureView*>(mDepthStencilSurface.get());
 
-			*dsv = depthStencilView->getDSV(true, true);
+			*dsv = depthStencilView->GetDSV(true, true);
 		}
 		else if (name == "RODWSV")
 		{
@@ -61,7 +61,7 @@ namespace bs
 			ID3D11DepthStencilView** dsv = (ID3D11DepthStencilView**)data;
 			D3D11TextureView* depthStencilView = static_cast<D3D11TextureView*>(mDepthStencilSurface.get());
 
-			*dsv = depthStencilView->getDSV(true, false);
+			*dsv = depthStencilView->GetDSV(true, false);
 		}
 		else if (name == "WDROSV")
 		{
@@ -71,7 +71,7 @@ namespace bs
 			ID3D11DepthStencilView** dsv = (ID3D11DepthStencilView**)data;
 			D3D11TextureView* depthStencilView = static_cast<D3D11TextureView*>(mDepthStencilSurface.get());
 
-			*dsv = depthStencilView->getDSV(false, true);
+			*dsv = depthStencilView->GetDSV(false, true);
 		}
 	}
 }}

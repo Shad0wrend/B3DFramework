@@ -28,7 +28,7 @@ namespace bs
 				if (FileSystem::IsFile(destinationPath))
 				{
 					if (overwriteExisting)
-						FileSystem::remove(destinationPath);
+						FileSystem::Remove(destinationPath);
 					else
 					{
 						BS_LOG(Warning, FileSystem, "Copy operation failed because another file already exists at the new "
@@ -45,7 +45,7 @@ namespace bs
 			else
 			{
 				if (!destExists)
-					FileSystem::createDir(destinationPath);
+					FileSystem::CreateDir(destinationPath);
 
 				Vector<Path> files;
 				Vector<Path> directories;
@@ -83,21 +83,21 @@ namespace bs
 			GetChildren(path, files, directories);
 
 			for (auto& file : files)
-				remove(file, false);
+				Remove(file, false);
 
 			for (auto& dir : directories)
-				remove(dir, true);
+				Remove(dir, true);
 		}
 
-		FileSystem::removeFile(path);
+		FileSystem::RemoveFile(path);
 	}
 
 	void FileSystem::Move(const Path& oldPath, const Path& newPath, bool overwriteExisting)
 	{
-		if (FileSystem::exists(newPath))
+		if (FileSystem::Exists(newPath))
 		{
 			if (overwriteExisting)
-				FileSystem::remove(newPath);
+				FileSystem::Remove(newPath);
 			else
 			{
 				BS_LOG(Warning, FileSystem, "Move operation failed because another file already exists at the new "
@@ -106,7 +106,7 @@ namespace bs
 			}
 		}
 
-		FileSystem::moveFile(oldPath, newPath);
+		FileSystem::MoveFile(oldPath, newPath);
 	}
 
 	Mutex FileScheduler::mMutex;

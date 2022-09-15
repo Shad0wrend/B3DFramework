@@ -36,13 +36,13 @@ namespace bs
 	MonoObject* ScriptCMeshCollider::Internal_getMesh(ScriptCMeshCollider* thisPtr)
 	{
 		ResourceHandle<PhysicsMesh> tmp__output;
-		tmp__output = thisPtr->getHandle()->getMesh();
+		tmp__output = thisPtr->GetHandle()->GetMesh();
 
 		MonoObject* __output;
 		ScriptRRefBase* script__output;
 		script__output = ScriptResourceManager::Instance().getScriptRRef(tmp__output);
 		if(script__output != nullptr)
-			__output = script__output->getManagedInstance();
+			__output = script__output->GetManagedInstance();
 		else
 			__output = nullptr;
 

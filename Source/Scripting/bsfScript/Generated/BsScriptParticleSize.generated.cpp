@@ -39,13 +39,13 @@ namespace bs
 	{
 		PARTICLE_SIZE_DESC tmpoptions;
 		tmpoptions = ScriptPARTICLE_SIZE_DESC::FromInterop(*options);
-		thisPtr->getInternal()->setOptions(tmpoptions);
+		thisPtr->GetInternal()->SetOptions(tmpoptions);
 	}
 
 	void ScriptParticleSize::InternalGetOptions(ScriptParticleSize* thisPtr, __PARTICLE_SIZE_DESCInterop* __output)
 	{
 		PARTICLE_SIZE_DESC tmp__output;
-		tmp__output = thisPtr->getInternal()->getOptions();
+		tmp__output = thisPtr->GetInternal()->GetOptions();
 
 		__PARTICLE_SIZE_DESCInterop interop__output;
 		interop__output = ScriptPARTICLE_SIZE_DESC::ToInterop(tmp__output);

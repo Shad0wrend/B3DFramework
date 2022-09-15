@@ -45,7 +45,7 @@ namespace bs { namespace ct
 		else
 			vulkanCB = static_cast<VulkanCommandBuffer*>(gVulkanRenderAPI().GetMainCommandBufferInternal());
 
-		VulkanCmdBuffer* internalCB = vulkanCB->getInternal();
+		VulkanCmdBuffer* internalCB = vulkanCB->GetInternal();
 		mQueries.push_back(queryPool.beginOcclusionQuery(internalCB, !mBinary));
 		internalCB->registerQuery(this);
 
@@ -74,7 +74,7 @@ namespace bs { namespace ct
 			vulkanCB = static_cast<VulkanCommandBuffer*>(gVulkanRenderAPI().GetMainCommandBufferInternal());
 
 		VulkanQueryPool& queryPool = mDevice.getQueryPool();
-		VulkanCmdBuffer* internalCB = vulkanCB->getInternal();
+		VulkanCmdBuffer* internalCB = vulkanCB->GetInternal();
 		queryPool.endOcclusionQuery(mQueries.back(), internalCB);
 	}
 
@@ -105,7 +105,7 @@ namespace bs { namespace ct
 		UINT64 numSamples;
 		bool ready = true;
 		for (auto& query : mQueries)
-			ready &= !query->isBound() && query->getResult(numSamples);
+			ready &= !query->isBound() && query->GetResult(numSamples);
 
 		return ready;
 	}
@@ -119,7 +119,7 @@ namespace bs { namespace ct
 			for (auto& query : mQueries)
 			{
 				UINT64 numSamples = 0;
-				ready &= !query->isBound() && query->getResult(numSamples);
+				ready &= !query->isBound() && query->GetResult(numSamples);
 
 				totalNumSamples += numSamples;
 			}

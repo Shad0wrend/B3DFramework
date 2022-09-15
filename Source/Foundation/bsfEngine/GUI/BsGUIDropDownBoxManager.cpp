@@ -16,17 +16,17 @@ namespace bs
 		CloseDropDownBox();
 
 		mDropDownSO = SceneObject::Create("DropDownBox", SOF_Internal | SOF_Persistent | SOF_DontSave);
-		mDropDownBox = mDropDownSO->addComponent<GUIDropDownMenu>(desc, type);
+		mDropDownBox = mDropDownSO->AddComponent<GUIDropDownMenu>(desc, type);
 		mOnClosedCallback = onClosedCallback;
 
 		return mDropDownBox;
 	}
 
-	void GUIDropDownBoxManager::closeDropDownBox()
+	void GUIDropDownBoxManager::CloseDropDownBox()
 	{
 		if(mDropDownSO != nullptr)
 		{
-			mDropDownSO->destroy();
+			mDropDownSO->Destroy();
 			mDropDownSO = nullptr;
 
 			if(mOnClosedCallback != nullptr)

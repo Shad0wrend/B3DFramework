@@ -48,7 +48,7 @@ namespace bs
 		static void Internal_save(MonoObject* resource, MonoString* filePath, bool overwrite, bool compress);
 		static void Internal_save0(MonoObject* resource, bool compress);
 		static MonoArray* Internal_getDependencies(MonoString* filePath);
-		static bool Internal_isLoaded(UUID* uuid, bool checkInProgress);
+		static bool Internal_IsLoaded(UUID* uuid, bool checkInProgress);
 		static float Internal_getLoadProgress(MonoObject* resource, bool includeDependencies);
 		static void Internal_registerResourceManifest(MonoObject* manifest);
 		static void Internal_unregisterResourceManifest(MonoObject* manifest);

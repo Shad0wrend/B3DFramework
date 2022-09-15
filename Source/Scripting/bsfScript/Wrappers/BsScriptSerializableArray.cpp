@@ -28,7 +28,7 @@ namespace bs
 		SPtr<ManagedSerializableTypeInfoArray> arrayTypeInfo =
 			std::static_pointer_cast<ManagedSerializableTypeInfoArray>(native->GetTypeInfo());
 
-		MonoReflectionType* internalElementType = MonoUtil::getType(arrayTypeInfo->mElementType->getMonoClass());
+		MonoReflectionType* internalElementType = MonoUtil::getType(arrayTypeInfo->mElementType->GetMonoClass());
 
 		void* params[2] = { internalElementType, managed };
 		MonoObject* managedInstance = metaData.scriptClass->CreateInstance(params, 2);

@@ -23,7 +23,7 @@ namespace bs
 		float f = Dot(dest) / lenProduct;
 
 		f = Math::Clamp(f, -1.0f, 1.0f);
-		return Math::acos(f);
+		return Math::Acos(f);
 	}
 
 	bool Vector3::IsNaN() const

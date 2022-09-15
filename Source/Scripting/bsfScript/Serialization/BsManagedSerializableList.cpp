@@ -53,7 +53,7 @@ namespace bs
 
 		String fullName = elementNs + "." + elementTypeName;
 
-		if(ScriptAssemblyManager::Instance().getBuiltinClasses().systemGenericListClass->getFullName() != fullName)
+		if(ScriptAssemblyManager::Instance().getBuiltinClasses().systemGenericListClass->GetFullName() != fullName)
 			return nullptr;
 
 		return bs_shared_ptr_new<ManagedSerializableList>(ConstructPrivately(), typeInfo, managedInstance);
@@ -69,7 +69,7 @@ namespace bs
 		if (!typeInfo->isTypeLoaded())
 			return nullptr;
 
-		::MonoClass* listMonoClass = typeInfo->getMonoClass();
+		::MonoClass* listMonoClass = typeInfo->GetMonoClass();
 		MonoClass* listClass = MonoManager::Instance().findClass(listMonoClass);
 		if (listClass == nullptr)
 			return nullptr;
@@ -77,10 +77,10 @@ namespace bs
 		void* params[1] = { &size };
 		MonoObject* instance = listClass->createInstance("int", params);
 		
-		ScriptArray tempArray(typeInfo->mElementType->getMonoClass(), size);
+		ScriptArray tempArray(typeInfo->mElementType->GetMonoClass(), size);
 		params[0] = tempArray.getInternal();
 
-		MonoMethod* addRangeMethod = listClass->getMethod("AddRange", 1);
+		MonoMethod* addRangeMethod = listClass->GetMethod("AddRange", 1);
 		addRangeMethod->invoke(instance, params);
 
 		return instance;
@@ -112,7 +112,7 @@ namespace bs
 
 	void ManagedSerializableList::SetFieldData(MonoObject* obj, UINT32 arrayIdx, const SPtr<ManagedSerializableFieldData>& val)
 	{
-		mItemProp->setIndexed(obj, arrayIdx, val->getValue(mListTypeInfo->mElementType));
+		mItemProp->SetIndexed(obj, arrayIdx, val->GetValue(mListTypeInfo->mElementType));
 	}
 
 	void ManagedSerializableList::AddFieldDataInternal(const SPtr<ManagedSerializableFieldData>& val)
@@ -120,7 +120,7 @@ namespace bs
 		MonoObject* managedInstance = MonoUtil::getObjectFromGCHandle(mGCHandle);
 
 		void* params[1];
-		params[0] = val->getValue(mListTypeInfo->mElementType);
+		params[0] = val->GetValue(mListTypeInfo->mElementType);
 		mAddMethod->invoke(managedInstance, params);
 	}
 
@@ -129,7 +129,7 @@ namespace bs
 		if (mGCHandle != 0)
 		{
 			MonoObject* managedInstance = MonoUtil::getObjectFromGCHandle(mGCHandle);
-			MonoObject* obj = mItemProp->getIndexed(managedInstance, arrayIdx);
+			MonoObject* obj = mItemProp->GetIndexed(managedInstance, arrayIdx);
 
 			return ManagedSerializableFieldData::Create(mListTypeInfo->mElementType, obj);
 		}
@@ -141,7 +141,7 @@ namespace bs
 	{
 		if (mGCHandle != 0)
 		{
-			ScriptArray tempArray(mListTypeInfo->mElementType->getMonoClass(), newSize);
+			ScriptArray tempArray(mListTypeInfo->mElementType->GetMonoClass(), newSize);
 
 			UINT32 minSize = std::min(mNumElements, newSize);
 			UINT32 dummy = 0;
@@ -192,7 +192,7 @@ namespace bs
 		if (managedInstance == nullptr)
 			return nullptr;
 
-		MonoClass* listClass = MonoManager::Instance().findClass(mListTypeInfo->getMonoClass());
+		MonoClass* listClass = MonoManager::Instance().findClass(mListTypeInfo->GetMonoClass());
 		initMonoObjects(listClass);
 
 		// Deserialize children
@@ -222,12 +222,12 @@ namespace bs
 
 	void ManagedSerializableList::InitMonoObjects(MonoClass* listClass)
 	{
-		mItemProp = listClass->getProperty("Item");
-		mCountProp = listClass->getProperty("Count");
-		mAddMethod = listClass->getMethod("Add", 1);
-		mAddRangeMethod = listClass->getMethod("AddRange", 1);
-		mClearMethod = listClass->getMethod("Clear");
-		mCopyToMethod = listClass->getMethod("CopyTo", 4);
+		mItemProp = listClass->GetProperty("Item");
+		mCountProp = listClass->GetProperty("Count");
+		mAddMethod = listClass->GetMethod("Add", 1);
+		mAddRangeMethod = listClass->GetMethod("AddRange", 1);
+		mClearMethod = listClass->GetMethod("Clear");
+		mCopyToMethod = listClass->GetMethod("CopyTo", 4);
 	}
 
 	RTTITypeBase* ManagedSerializableList::GetRttiStatic()

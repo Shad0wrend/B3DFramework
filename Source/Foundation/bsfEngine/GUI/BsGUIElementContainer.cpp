@@ -10,14 +10,14 @@ namespace bs
 		GUIElementOptions options)
 		:GUIElement(style, dimensions, options)
 	{
-		mOptionFlags.set(GUIElementOption::ClickThrough);
+		mOptionFlags.Set(GUIElementOption::ClickThrough);
 	}
 
 	GUIElementContainer::GUIElementContainer(const GUIDimensions& dimensions, const String& style, 
 		GUIElementOptions options)
 		:GUIElement(style, dimensions, options)
 	{
-		mOptionFlags.set(GUIElementOption::ClickThrough);
+		mOptionFlags.Set(GUIElementOption::ClickThrough);
 	}
 
 	void GUIElementContainer::FillBuffer(
@@ -39,17 +39,17 @@ namespace bs
 	void GUIElementContainer::SetFocus(bool enabled, bool clear)
 	{
 		if(mFocusElement)
-			mFocusElement->setFocus(enabled, clear);
+			mFocusElement->SetFocus(enabled, clear);
 		else
-			GUIElement::setFocus(enabled, clear);
+			GUIElement::SetFocus(enabled, clear);
 	}
 
 	bool GUIElementContainer::CommandEventInternal(const GUICommandEvent& ev)
 	{
 		// Make sure to pass through focus events to elements below
-		if (ev.getType() == GUICommandEventType::FocusGained)
+		if (ev.GetType() == GUICommandEventType::FocusGained)
 			return false;
-		else if (ev.getType() == GUICommandEventType::FocusLost)
+		else if (ev.GetType() == GUICommandEventType::FocusLost)
 			return false;
 
 		return GUIElement::CommandEventInternal(ev);

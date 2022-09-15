@@ -42,20 +42,20 @@ namespace bs
 
 		void SetData(MeshData* obj, const SPtr<DataStream>& value, UINT32 size)
 		{
-			obj->allocateInternalBuffer(size);
-			value->read(obj->getData(), size);
+			obj->AllocateInternalBuffer(size);
+			value->Read(obj->GetData(), size);
 		}
 
 	public:
 		MeshDataRTTI()
 		{
-			addReflectablePtrField("mVertexData", 0, &MeshDataRTTI::GetVertexData, &MeshDataRTTI::SetVertexData);
+			AddReflectablePtrField("mVertexData", 0, &MeshDataRTTI::GetVertexData, &MeshDataRTTI::SetVertexData);
 
-			addPlainField("mIndexType", 1, &MeshDataRTTI::GetIndexType, &MeshDataRTTI::SetIndexType);
-			addPlainField("mNumVertices", 2, &MeshDataRTTI::GetNumVertices, &MeshDataRTTI::SetNumVertices);
-			addPlainField("mNumIndices", 3, &MeshDataRTTI::GetNumIndices, &MeshDataRTTI::SetNumIndices);
+			AddPlainField("mIndexType", 1, &MeshDataRTTI::GetIndexType, &MeshDataRTTI::SetIndexType);
+			AddPlainField("mNumVertices", 2, &MeshDataRTTI::GetNumVertices, &MeshDataRTTI::SetNumVertices);
+			AddPlainField("mNumIndices", 3, &MeshDataRTTI::GetNumIndices, &MeshDataRTTI::SetNumIndices);
 
-			addDataBlockField("data", 4, &MeshDataRTTI::GetData, &MeshDataRTTI::SetData);
+			AddDataBlockField("data", 4, &MeshDataRTTI::GetData, &MeshDataRTTI::SetData);
 		}
 
 		SPtr<IReflectable> NewRttiObject() 

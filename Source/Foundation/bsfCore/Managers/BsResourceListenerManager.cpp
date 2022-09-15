@@ -25,15 +25,15 @@ namespace bs
 	ResourceListenerManager::ResourceListenerManager()
 	{
 		mResourceLoadedConn = gResources().onResourceLoaded.Connect(std::bind(&::bs::ResourceListenerManager::OnResourceLoaded, this, _1));
-		mResourceModifiedConn = gResources().onResourceModified.Connect(std::bind(&ResourceListenerManager::onResourceModified, this, _1));
+		mResourceModifiedConn = gResources().onResourceModified.Connect(std::bind(&::bs::ResourceListenerManager::OnResourceModified, this, _1));
 	}
 
 	ResourceListenerManager::~ResourceListenerManager()
 	{
 		assert(mResourceToListenerMap.empty() && "Not all resource listeners had their resources unregistered properly.");
 
-		mResourceLoadedConn.disconnect();
-		mResourceModifiedConn.disconnect();
+		mResourceLoadedConn.Disconnect();
+		mResourceModifiedConn.Disconnect();
 	}
 
 	void ResourceListenerManager::RegisterListener(IResourceListener* listener)
@@ -58,7 +58,7 @@ namespace bs
 			mDirtyListeners.erase(listener);
 		}
 
-		clearDependencies(listener);
+		ClearDependencies(listener);
 	}
 
 	void ResourceListenerManager::MarkListenerDirty(IResourceListener* listener)
@@ -70,16 +70,16 @@ namespace bs
 	void ResourceListenerManager::Update()
 	{
 		THROW_IF_NOT_SIM_THREAD
-		updateListeners();
+		UpdateListeners();
 
 		{
 			RecursiveLock lock(mMutex);
 
 			for (auto& entry : mLoadedResources)
-				sendResourceLoaded(entry.second);
+				SendResourceLoaded(entry.second);
 
 			for (auto& entry : mModifiedResources)
-				sendResourceModified(entry.second);
+				SendResourceModified(entry.second);
 
 			mLoadedResources.clear();
 			mModifiedResources.clear();
@@ -99,8 +99,8 @@ namespace bs
 
 		for (auto& listener : mTempListenerBuffer)
 		{
-			clearDependencies(listener);
-			addDependencies(listener);
+			ClearDependencies(listener);
+			AddDependencies(listener);
 		}
 
 		mTempListenerBuffer.clear();
@@ -110,7 +110,7 @@ namespace bs
 	void ResourceListenerManager::NotifyListeners(const UUID& resourceUUID)
 	{
 		THROW_IF_NOT_SIM_THREAD
-		updateListeners();
+		UpdateListeners();
 
 		HResource loadedResource;
 		{
@@ -125,7 +125,7 @@ namespace bs
 		}
 
 		if(loadedResource)
-			sendResourceLoaded(loadedResource);
+			SendResourceLoaded(loadedResource);
 
 		HResource modifiedResource;
 		{
@@ -140,26 +140,26 @@ namespace bs
 		}
 
 		if(modifiedResource)
-			sendResourceModified(modifiedResource);
+			SendResourceModified(modifiedResource);
 	}
 
 	void ResourceListenerManager::OnResourceLoaded(const HResource& resource)
 	{
 		RecursiveLock lock(mMutex);
 
-		mLoadedResources[resource.getUUID()] = resource;
+		mLoadedResources[resource.GetUuid()] = resource;
 	}
 
 	void ResourceListenerManager::OnResourceModified(const HResource& resource)
 	{
 		RecursiveLock lock(mMutex);
 
-		mModifiedResources[resource.getUUID()] = resource;
+		mModifiedResources[resource.GetUuid()] = resource;
 	}
 
 	void ResourceListenerManager::SendResourceLoaded(const HResource& resource)
 	{
-		UINT64 handleId = (UINT64)resource.getHandleData().get();
+		UINT64 handleId = (UINT64)resource.GetHandleData().get();
 
 		auto iterFind = mResourceToListenerMap.find(handleId);
 		if (iterFind == mResourceToListenerMap.end())
@@ -172,13 +172,13 @@ namespace bs
 			assert(mActiveListeners.find(listener) != mActiveListeners.end() && "Attempting to notify a destroyed IResourceListener");
 #endif
 
-			listener->notifyResourceLoaded(resource);
+			listener->NotifyResourceLoaded(resource);
 		}
 	}
 
 	void ResourceListenerManager::SendResourceModified(const HResource& resource)
 	{
-		UINT64 handleId = (UINT64)resource.getHandleData().get();
+		UINT64 handleId = (UINT64)resource.GetHandleData().get();
 
 		auto iterFind = mResourceToListenerMap.find(handleId);
 		if (iterFind == mResourceToListenerMap.end())
@@ -191,7 +191,7 @@ namespace bs
 			assert(mActiveListeners.find(listener) != mActiveListeners.end() && "Attempting to notify a destroyed IResourceListener");
 #endif
 
-			listener->notifyResourceChanged(resource);
+			listener->NotifyResourceChanged(resource);
 		}
 	}
 
@@ -223,7 +223,7 @@ namespace bs
 
 	void ResourceListenerManager::AddDependencies(IResourceListener* listener)
 	{
-		listener->getListenerResources(mTempResourceBuffer);
+		listener->GetListenerResources(mTempResourceBuffer);
 
 		if (mTempResourceBuffer.size() > 0)
 		{
@@ -231,7 +231,7 @@ namespace bs
 			UINT32 idx = 0;
 			for (auto& resource : mTempResourceBuffer)
 			{
-				UINT64 handleId = (UINT64)resource.getHandleData().get();
+				UINT64 handleId = (UINT64)resource.GetHandleData().get();
 				resourceHandleIds[idx] = handleId;
 				mResourceToListenerMap[handleId].push_back(listener);
 

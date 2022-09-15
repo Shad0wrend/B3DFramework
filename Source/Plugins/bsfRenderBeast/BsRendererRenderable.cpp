@@ -13,13 +13,13 @@ namespace bs { namespace ct
 	void PerObjectBuffer::Update(SPtr<GpuParamBlockBuffer>& buffer, const Matrix4& tfrm, const Matrix4& tfrmNoScale,
 		const Matrix4& prevTfrm, UINT32 layer)
 	{
-		gPerObjectParamDef.gMatWorld.set(buffer, tfrm);
-		gPerObjectParamDef.gMatInvWorld.set(buffer, tfrm.inverseAffine());
-		gPerObjectParamDef.gMatWorldNoScale.set(buffer, tfrmNoScale);
-		gPerObjectParamDef.gMatInvWorldNoScale.set(buffer, tfrmNoScale.inverseAffine());
-		gPerObjectParamDef.gMatPrevWorld.set(buffer, prevTfrm);
-		gPerObjectParamDef.gWorldDeterminantSign.set(buffer, tfrm.determinant3x3() >= 0.0f ? 1.0f : -1.0f);
-		gPerObjectParamDef.gLayer.set(buffer, (INT32)layer);
+		gPerObjectParamDef.gMatWorld.Set(buffer, tfrm);
+		gPerObjectParamDef.gMatInvWorld.Set(buffer, tfrm.inverseAffine());
+		gPerObjectParamDef.gMatWorldNoScale.Set(buffer, tfrmNoScale);
+		gPerObjectParamDef.gMatInvWorldNoScale.Set(buffer, tfrmNoScale.inverseAffine());
+		gPerObjectParamDef.gMatPrevWorld.Set(buffer, prevTfrm);
+		gPerObjectParamDef.gWorldDeterminantSign.Set(buffer, tfrm.determinant3x3() >= 0.0f ? 1.0f : -1.0f);
+		gPerObjectParamDef.gLayer.Set(buffer, (INT32)layer);
 	}
 
 	void RenderableElement::Draw() const
@@ -38,17 +38,17 @@ namespace bs { namespace ct
 
 	void RendererRenderable::UpdatePerObjectBuffer()
 	{
-		const Matrix4 worldNoScaleTransform = renderable->getMatrixNoScale();
-		const UINT32 layer = Bitwise::mostSignificantBit(renderable->getLayer());
+		const Matrix4 worldNoScaleTransform = renderable->GetMatrixNoScale();
+		const UINT32 layer = Bitwise::mostSignificantBit(renderable->GetLayer());
 
 		PerObjectBuffer::update(perObjectParamBuffer, worldTfrm, worldNoScaleTransform, prevWorldTfrm, layer);
 	}
 
 	void RendererRenderable::UpdatePerCallBuffer(const Matrix4& viewProj, bool flush)
 	{
-		const Matrix4 worldViewProjMatrix = viewProj * renderable->getMatrix();
+		const Matrix4 worldViewProjMatrix = viewProj * renderable->GetMatrix();
 
-		gPerCallParamDef.gMatWorldViewProj.set(perCallParamBuffer, worldViewProjMatrix);
+		gPerCallParamDef.gMatWorldViewProj.Set(perCallParamBuffer, worldViewProjMatrix);
 
 		if(flush)
 			perCallParamBuffer->flushToGPU();

@@ -30,7 +30,7 @@ namespace bs
 	SPtr<ct::CoreObject> TransientMesh::CreateCore() const
 	{
 		ct::TransientMesh* core = new (bs_alloc<ct::TransientMesh>()) ct::TransientMesh(
-			mParentHeap->getCore(), mId, mProperties.mNumVertices, mProperties.mNumIndices, mProperties.mSubMeshes);
+			mParentHeap->GetCore(), mId, mProperties.mNumVertices, mProperties.mNumIndices, mProperties.mSubMeshes);
 
 		SPtr<ct::CoreObject> meshCore = bs_shared_ptr<ct::TransientMesh>(core);
 		meshCore->SetThisPtrInternal(meshCore);

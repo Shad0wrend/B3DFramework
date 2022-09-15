@@ -73,12 +73,12 @@ namespace bs
 		pxDesc.height = pxDesc.height <= 0 ? 0.01f : pxDesc.height;
 
 		mController = static_cast<PxCapsuleController*>(manager->createController(pxDesc));
-		mController->setUserData(this);
+		mController->SetUserData(this);
 	}
 
 	PhysXCharacterController::~PhysXCharacterController()
 	{
-		mController->setUserData(nullptr);
+		mController->SetUserData(nullptr);
 		mController->release();
 	}
 
@@ -110,72 +110,72 @@ namespace bs
 
 	Vector3 PhysXCharacterController::GetPosition() const
 	{
-		return fromPxExtVector(mController->getPosition());
+		return fromPxExtVector(mController->GetPosition());
 	}
 
 	void PhysXCharacterController::SetPosition(const Vector3& position)
 	{
-		mController->setPosition(toPxExtVector(position));
+		mController->SetPosition(toPxExtVector(position));
 	}
 
 	Vector3 PhysXCharacterController::GetFootPosition() const
 	{
-		return fromPxExtVector(mController->getFootPosition());
+		return fromPxExtVector(mController->GetFootPosition());
 	}
 
 	void PhysXCharacterController::SetFootPosition(const Vector3& position)
 	{
-		mController->setFootPosition(toPxExtVector(position));
+		mController->SetFootPosition(toPxExtVector(position));
 	}
 
 	float PhysXCharacterController::GetRadius() const
 	{
-		return mController->getRadius();
+		return mController->GetRadius();
 	}
 
 	void PhysXCharacterController::SetRadius(float radius)
 	{
-		mController->setRadius(radius);
+		mController->SetRadius(radius);
 	}
 
 	float PhysXCharacterController::GetHeight() const
 	{
-		return mController->getHeight();
+		return mController->GetHeight();
 	}
 
 	void PhysXCharacterController::SetHeight(float height)
 	{
-		mController->setHeight(height);
+		mController->SetHeight(height);
 	}
 
 	Vector3 PhysXCharacterController::GetUp() const
 	{
-		return fromPxVector(mController->getUpDirection());
+		return fromPxVector(mController->GetUpDirection());
 	}
 
 	void PhysXCharacterController::SetUp(const Vector3& up)
 	{
-		mController->setUpDirection(toPxVector(up));
+		mController->SetUpDirection(toPxVector(up));
 	}
 
 	CharacterClimbingMode PhysXCharacterController::GetClimbingMode() const
 	{
-		return fromPxEnum(mController->getClimbingMode());
+		return fromPxEnum(mController->GetClimbingMode());
 	}
 
 	void PhysXCharacterController::SetClimbingMode(CharacterClimbingMode mode)
 	{
-		mController->setClimbingMode(toPxEnum(mode));
+		mController->SetClimbingMode(toPxEnum(mode));
 	}
 
 	CharacterNonWalkableMode PhysXCharacterController::getNonWalkableMode() const
 	{
-		return fromPxEnum(mController->getNonWalkableMode());
+		return fromPxEnum(mController->GetNonWalkableMode());
 	}
 
 	void PhysXCharacterController::SetNonWalkableMode(CharacterNonWalkableMode mode)
 	{
-		mController->setNonWalkableMode(toPxEnum(mode));
+		mController->SetNonWalkableMode(toPxEnum(mode));
 	}
 
 	float PhysXCharacterController::GetMinMoveDistance() const
@@ -190,32 +190,32 @@ namespace bs
 
 	float PhysXCharacterController::GetContactOffset() const
 	{
-		return mController->getContactOffset();
+		return mController->GetContactOffset();
 	}
 
 	void PhysXCharacterController::SetContactOffset(float value)
 	{
-		mController->setContactOffset(value);
+		mController->SetContactOffset(value);
 	}
 
 	float PhysXCharacterController::GetStepOffset() const
 	{
-		return mController->getStepOffset();
+		return mController->GetStepOffset();
 	}
 
 	void PhysXCharacterController::SetStepOffset(float value)
 	{
-		mController->setStepOffset(value);
+		mController->SetStepOffset(value);
 	}
 
 	Radian PhysXCharacterController::GetSlopeLimit() const
 	{
-		return Radian(mController->getSlopeLimit());
+		return Radian(mController->GetSlopeLimit());
 	}
 
 	void PhysXCharacterController::SetSlopeLimit(Radian value)
 	{
-		mController->setSlopeLimit(value.valueRadians());
+		mController->SetSlopeLimit(value.valueRadians());
 	}
 
 	void PhysXCharacterController::onShapeHit(const PxControllerShapeHit& hit)
@@ -244,7 +244,7 @@ namespace bs
 		collision.normal = fromPxVector(hit.worldNormal);
 		collision.motionDir = fromPxVector(hit.dir);
 		collision.motionAmount = hit.length;
-		collision.controllerRaw = (CharacterController*)hit.controller->getUserData();
+		collision.controllerRaw = (CharacterController*)hit.controller->GetUserData();
 
 		CharacterController::onControllerHit(collision);
 	}
@@ -252,7 +252,7 @@ namespace bs
 	PxQueryHitType::Enum PhysXCharacterController::preFilter(const PxFilterData& filterData, const PxShape* shape,
 		const PxRigidActor* actor, PxHitFlags& queryFlags)
 	{
-		PxFilterData colliderFilterData = shape->getSimulationFilterData();
+		PxFilterData colliderFilterData = shape->GetSimulationFilterData();
 		UINT64 colliderLayer = *(UINT64*)&colliderFilterData.word0;
 
 		bool canCollide = gPhysics().isCollisionEnabled(colliderLayer, getLayer());
@@ -274,7 +274,7 @@ namespace bs
 		CharacterController* controllerA = (CharacterController*)a.getUserData();
 		CharacterController* controllerB = (CharacterController*)b.getUserData();
 
-		bool canCollide = gPhysics().isCollisionEnabled(controllerA->getLayer(), controllerB->getLayer());
+		bool canCollide = gPhysics().isCollisionEnabled(controllerA->GetLayer(), controllerB->GetLayer());
 		return canCollide;
 	}
 }

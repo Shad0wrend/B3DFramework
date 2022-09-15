@@ -93,7 +93,7 @@ namespace bs
 			return TID_RTTISchema;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return bs_shared_ptr_new<RTTISchema>();
 		}

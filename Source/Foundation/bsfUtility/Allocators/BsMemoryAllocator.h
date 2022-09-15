@@ -309,7 +309,7 @@ namespace bs
 	template<class T>
 	T* bs_alloc()
 	{
-		return (T*)MemoryAllocator<GenAlloc>::allocate(sizeof(T));
+		return (T*)MemoryAllocator<GenAlloc>::Allocate(sizeof(T));
 	}
 
 	/**
@@ -339,7 +339,7 @@ namespace bs
 	template<class T>
 	T* bs_newN(size_t count)
 	{
-		T* ptr = (T*)MemoryAllocator<GenAlloc>::allocate(count * sizeof(T));
+		T* ptr = (T*)MemoryAllocator<GenAlloc>::Allocate(count * sizeof(T));
 
 		for(size_t i = 0; i < count; ++i)
 			new (&ptr[i]) T;
@@ -395,6 +395,7 @@ namespace bs
 	 *  @{
 	 */
 
+	//NOLINTBEGIN(readability-identifier-naming)
 	/** Allocator for the standard library that internally uses bsf memory allocator. */
 	template <class T, class Alloc = GenAlloc>
 	class StdAlloc
@@ -440,11 +441,12 @@ namespace bs
 		}
 
 		static constexpr size_t max_size() { return std::numeric_limits<size_type>::max() / sizeof(T); }
-		static constexpr void destroy(pointer p) { p->~T(); }
+		static constexpr void Destroy(pointer p) { p->~T(); }
 
 		template<class... Args>
 		static void construct(pointer p, Args&&... args) { new(p) T(std::forward<Args>(args)...); }
 	};
+	//NOLINTEND(readability-identifier-naming)
 
 	/** @} */
 	/** @} */

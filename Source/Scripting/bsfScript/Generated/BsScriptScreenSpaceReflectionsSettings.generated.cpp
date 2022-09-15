@@ -46,7 +46,7 @@ namespace bs
 	bool ScriptScreenSpaceReflectionsSettings::InternalGetenabled(ScriptScreenSpaceReflectionsSettings* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->getInternal()->enabled;
+		tmp__output = thisPtr->GetInternal()->enabled;
 
 		bool __output;
 		__output = tmp__output;
@@ -56,13 +56,13 @@ namespace bs
 
 	void ScriptScreenSpaceReflectionsSettings::InternalSetenabled(ScriptScreenSpaceReflectionsSettings* thisPtr, bool value)
 	{
-		thisPtr->getInternal()->enabled = value;
+		thisPtr->GetInternal()->enabled = value;
 	}
 
 	uint32_t ScriptScreenSpaceReflectionsSettings::InternalGetquality(ScriptScreenSpaceReflectionsSettings* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->getInternal()->quality;
+		tmp__output = thisPtr->GetInternal()->quality;
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -72,13 +72,13 @@ namespace bs
 
 	void ScriptScreenSpaceReflectionsSettings::InternalSetquality(ScriptScreenSpaceReflectionsSettings* thisPtr, uint32_t value)
 	{
-		thisPtr->getInternal()->quality = value;
+		thisPtr->GetInternal()->quality = value;
 	}
 
 	float ScriptScreenSpaceReflectionsSettings::InternalGetintensity(ScriptScreenSpaceReflectionsSettings* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getInternal()->intensity;
+		tmp__output = thisPtr->GetInternal()->intensity;
 
 		float __output;
 		__output = tmp__output;
@@ -88,13 +88,13 @@ namespace bs
 
 	void ScriptScreenSpaceReflectionsSettings::InternalSetintensity(ScriptScreenSpaceReflectionsSettings* thisPtr, float value)
 	{
-		thisPtr->getInternal()->intensity = value;
+		thisPtr->GetInternal()->intensity = value;
 	}
 
 	float ScriptScreenSpaceReflectionsSettings::InternalGetmaxRoughness(ScriptScreenSpaceReflectionsSettings* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getInternal()->maxRoughness;
+		tmp__output = thisPtr->GetInternal()->maxRoughness;
 
 		float __output;
 		__output = tmp__output;
@@ -104,6 +104,6 @@ namespace bs
 
 	void ScriptScreenSpaceReflectionsSettings::InternalSetmaxRoughness(ScriptScreenSpaceReflectionsSettings* thisPtr, float value)
 	{
-		thisPtr->getInternal()->maxRoughness = value;
+		thisPtr->GetInternal()->maxRoughness = value;
 	}
 }

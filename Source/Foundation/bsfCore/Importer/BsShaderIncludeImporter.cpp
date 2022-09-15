@@ -10,7 +10,7 @@ namespace bs
 	bool ShaderIncludeImporter::IsExtensionSupported(const String& ext) const
 	{
 		String lowerCaseExt = ext;
-		StringUtil::toLowerCase(lowerCaseExt);
+		StringUtil::ToLowerCase(lowerCaseExt);
 
 		return lowerCaseExt == u8"bslinc";
 	}

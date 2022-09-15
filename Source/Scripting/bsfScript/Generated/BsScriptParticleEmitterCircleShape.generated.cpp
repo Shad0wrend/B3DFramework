@@ -39,13 +39,13 @@ namespace bs
 	{
 		PARTICLE_CIRCLE_SHAPE_DESC tmpoptions;
 		tmpoptions = ScriptPARTICLE_CIRCLE_SHAPE_DESC::FromInterop(*options);
-		thisPtr->GetInternal()->setOptions(tmpoptions);
+		thisPtr->GetInternal()->SetOptions(tmpoptions);
 	}
 
 	void ScriptParticleEmitterCircleShape::InternalGetOptions(ScriptParticleEmitterCircleShape* thisPtr, __PARTICLE_CIRCLE_SHAPE_DESCInterop* __output)
 	{
 		PARTICLE_CIRCLE_SHAPE_DESC tmp__output;
-		tmp__output = thisPtr->getInternal()->getOptions();
+		tmp__output = thisPtr->GetInternal()->GetOptions();
 
 		__PARTICLE_CIRCLE_SHAPE_DESCInterop interop__output;
 		interop__output = ScriptPARTICLE_CIRCLE_SHAPE_DESC::ToInterop(tmp__output);

@@ -110,10 +110,10 @@ namespace bs
 		default:
 		case PDT_Constant:
 		case PDT_RandomRange:
-			addToVector(getMinConstant(), values);
+			addToVector(GetMinConstant(), values);
 
 			if(useRange)
-				addToVector(getMaxConstant(), values);
+				addToVector(GetMaxConstant(), values);
 			break;
 		case PDT_Curve:
 		case PDT_RandomCurveRange:

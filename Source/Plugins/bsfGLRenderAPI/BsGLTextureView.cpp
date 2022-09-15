@@ -7,7 +7,7 @@ namespace bs { namespace ct {
 	GLTextureView::GLTextureView(const GLTexture* texture, const TEXTURE_VIEW_DESC& desc)
 		:TextureView(desc)
 	{
-		const TextureProperties& props = texture->getProperties();
+		const TextureProperties& props = texture->GetProperties();
 
 		GLenum target;
 		switch (props.getTextureType())

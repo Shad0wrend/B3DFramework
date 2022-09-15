@@ -276,7 +276,7 @@ namespace bs
 	template<class T>
 	Vector<GameObjectHandle<T>> SceneManager::FindComponents(bool activeOnly)
 	{
-		UINT32 rttiId = T::GetRttiStatic()->getRTTIId();
+		UINT32 rttiId = T::GetRttiStatic()->GetRttiId();
 
 		Vector<GameObjectHandle<T>> output;
 		for(auto& entry : mActiveComponents)

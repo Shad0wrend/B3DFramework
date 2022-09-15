@@ -127,7 +127,7 @@ namespace bs
 		const TextureImportOptions* textureImportOptions = static_cast<const TextureImportOptions*>(importOptions.get());
 
 		SPtr<PixelData> imgData = importRawImage(filePath);
-		if(imgData == nullptr || imgData->getData() == nullptr)
+		if(imgData == nullptr || imgData->GetData() == nullptr)
 			return nullptr;
 
 		Vector<SPtr<PixelData>> faceData;
@@ -156,10 +156,10 @@ namespace bs
 
 		UINT32 numMips = 0;
 		if (textureImportOptions->generateMips &&
-			Bitwise::isPow2(faceData[0]->getWidth()) && Bitwise::isPow2(faceData[0]->getHeight()))
+			Bitwise::isPow2(faceData[0]->GetWidth()) && Bitwise::isPow2(faceData[0]->GetHeight()))
 		{
-			UINT32 maxPossibleMip = PixelUtil::getMaxMipmaps(faceData[0]->getWidth(), faceData[0]->getHeight(),
-				faceData[0]->getDepth(), faceData[0]->getFormat());
+			UINT32 maxPossibleMip = PixelUtil::getMaxMipmaps(faceData[0]->GetWidth(), faceData[0]->GetHeight(),
+				faceData[0]->GetDepth(), faceData[0]->GetFormat());
 
 			if (textureImportOptions->maxMip == 0)
 				numMips = maxPossibleMip;
@@ -175,8 +175,8 @@ namespace bs
 
 		TEXTURE_DESC texDesc;
 		texDesc.type = texType;
-		texDesc.width = faceData[0]->getWidth();
-		texDesc.height = faceData[0]->getHeight();
+		texDesc.width = faceData[0]->GetWidth();
+		texDesc.height = faceData[0]->GetHeight();
 		texDesc.numMips = numMips;
 		texDesc.format = textureImportOptions->format;
 		texDesc.usage = usage;
@@ -200,7 +200,7 @@ namespace bs
 
 			for (UINT32 mip = 0; mip < (UINT32)mipLevels.size(); ++mip)
 			{
-				SPtr<PixelData> dst = newTexture->getProperties().allocBuffer(0, mip);
+				SPtr<PixelData> dst = newTexture->GetProperties().allocBuffer(0, mip);
 
 				PixelUtil::bulkPixelConversion(*mipLevels[mip], *dst);
 				newTexture->writeData(dst, i, mip);
@@ -208,7 +208,7 @@ namespace bs
 		}
 
 		const String fileName = filePath.getFilename(false);
-		newTexture->setName(fileName);
+		newTexture->SetName(fileName);
 
 		return newTexture;
 	}
@@ -220,7 +220,7 @@ namespace bs
 		{
 			Lock lock = FileScheduler::getLock(filePath);
 
-			SPtr<DataStream> fileData = FileSystem::openFile(filePath, true);
+			SPtr<DataStream> fileData = FileSystem::OpenFile(filePath, true);
 			if (fileData->size() > std::numeric_limits<UINT32>::max())
 			{
 				BS_EXCEPT(InternalErrorException, "File size larger than supported!");
@@ -392,7 +392,7 @@ namespace bs
 		// Bind output buffer
 		SPtr<PixelData> texData = bs_shared_ptr_new<PixelData>(width, height, 1, format);
 		texData->allocateInternalBuffer();
-		UINT8* output = texData->getData();
+		UINT8* output = texData->GetData();
 
 		UINT8* pSrc;
 		UINT8* pDst = output;
@@ -439,7 +439,7 @@ namespace bs
 		Vector2I faceStart;
 		for(UINT32 i = 0; i < 6; i++)
 		{
-			output[i] = PixelData::Create(faceSize, faceSize, 1, source->getFormat());
+			output[i] = PixelData::Create(faceSize, faceSize, 1, source->GetFormat());
 
 			PixelVolume volume(faceStart.x, faceStart.y, faceStart.x + faceSize, faceStart.y + faceSize);
 			PixelUtil::copy(*source, *output[i], faceStart.x, faceStart.y);
@@ -481,7 +481,7 @@ namespace bs
 
 		for (UINT32 i = 0; i < 6; i++)
 		{
-			output[i] = PixelData::Create(faceSize, faceSize, 1, source->getFormat());
+			output[i] = PixelData::Create(faceSize, faceSize, 1, source->GetFormat());
 
 			UINT32 faceX = (faceIndices[i] % numFacesInRow) * faceSize;
 			UINT32 faceY = (faceIndices[i] / numFacesInRow) * faceSize;
@@ -499,7 +499,7 @@ namespace bs
 	Vector2 mapCubemapDirToSpherical(const Vector3& dir)
 	{
 		// Using the OpenGL spherical mapping formula
-		Vector3 nrmDir = Vector3::normalize(dir);
+		Vector3 nrmDir = Vector3::Normalize(dir);
 		nrmDir.z += 1.0f;
 
 		float m = 2 * nrmDir.length();
@@ -516,7 +516,7 @@ namespace bs
 	 */
 	Vector2 mapCubemapDirToCylindrical(const Vector3& dir)
 	{
-		Vector3 nrmDir = Vector3::normalize(dir);
+		Vector3 nrmDir = Vector3::Normalize(dir);
 
 		float u = (atan2(nrmDir.x, nrmDir.z) + Math::PI) / Math::TWO_PI;
 		float v = acos(nrmDir.y) / Math::PI;
@@ -529,7 +529,7 @@ namespace bs
 	{
 		for(UINT32 i = 0; i < 6; i++)
 		{
-			output[i] = PixelData::Create(size, size, 1, input[i]->getFormat());
+			output[i] = PixelData::Create(size, size, 1, input[i]->GetFormat());
 			PixelUtil::scale(*input[i], *output[i]);
 		}
 	}
@@ -566,7 +566,7 @@ namespace bs
 		float invSize = 1.0f / faceSize;
 		for (UINT32 faceIdx = 0; faceIdx < 6; faceIdx++)
 		{
-			output[faceIdx] = PixelData::Create(faceSize, faceSize, 1, source->getFormat());
+			output[faceIdx] = PixelData::Create(faceSize, faceSize, 1, source->GetFormat());
 
 			const RemapInfo& remapInfo = remapLookup[faceIdx];
 			for (UINT32 y = 0; y < faceSize; y++)
@@ -590,7 +590,7 @@ namespace bs
 					Color color = source->sampleColorAt(sourceUV);
 
 					// Write the sampled color
-					output[faceIdx]->setColorAt(color, x, y);
+					output[faceIdx]->SetColorAt(color, x, y);
 				}
 			}
 		}
@@ -610,29 +610,29 @@ namespace bs
 		{
 		case CubemapSourceType::Faces:
 			{
-				float aspect = source->getWidth() / (float)source->getHeight();
+				float aspect = source->GetWidth() / (float)source->GetHeight();
 				
-				if(Math::approxEquals(aspect, 6.0f)) // Horizontal list
+				if(Math::ApproxEquals(aspect, 6.0f)) // Horizontal list
 				{
-					faceSize.x = source->getWidth() / 6;
-					faceSize.y = source->getHeight();
+					faceSize.x = source->GetWidth() / 6;
+					faceSize.y = source->GetHeight();
 				}
-				else if(Math::approxEquals(aspect, 1.0f / 6.0f)) // Vertical list
+				else if(Math::ApproxEquals(aspect, 1.0f / 6.0f)) // Vertical list
 				{
-					faceSize.x = source->getWidth();
-					faceSize.y = source->getHeight() / 6;
+					faceSize.x = source->GetWidth();
+					faceSize.y = source->GetHeight() / 6;
 					vertical = true;
 				}
-				else if(Math::approxEquals(aspect, 4.0f / 3.0f)) // Horizontal cross
+				else if(Math::ApproxEquals(aspect, 4.0f / 3.0f)) // Horizontal cross
 				{
-					faceSize.x = source->getWidth() / 4;
-					faceSize.y = source->getHeight() / 3;
+					faceSize.x = source->GetWidth() / 4;
+					faceSize.y = source->GetHeight() / 3;
 					cross = true;
 				}
-				else if(Math::approxEquals(aspect, 3.0f / 4.0f)) // Vertical cross
+				else if(Math::ApproxEquals(aspect, 3.0f / 4.0f)) // Vertical cross
 				{
-					faceSize.x = source->getWidth() / 3;
-					faceSize.y = source->getHeight() / 4;
+					faceSize.x = source->GetWidth() / 3;
+					faceSize.y = source->GetHeight() / 4;
 					cross = true;
 					vertical = true;
 				}
@@ -646,7 +646,7 @@ namespace bs
 		case CubemapSourceType::Cylindrical:
 		case CubemapSourceType::Spherical:
 			// Half of the source size will be used for each cube face, which should yield good enough quality
-			faceSize.x = std::max(source->getWidth(), source->getHeight()) / 2;
+			faceSize.x = std::max(source->GetWidth(), source->GetHeight()) / 2;
 			faceSize.x = Bitwise::closestPow2(faceSize.x);
 
 			// Don't allow sizes larger than 4096
@@ -656,8 +656,8 @@ namespace bs
 
 			break;
 		default: // Assuming single-image
-			faceSize.x = source->getWidth();
-			faceSize.y = source->getHeight();
+			faceSize.x = source->GetWidth();
+			faceSize.y = source->GetHeight();
 			break;
 		}
 

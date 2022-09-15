@@ -13,20 +13,20 @@ namespace bs
 {
 	CRenderable::CRenderable()
 	{
-		setName("Renderable");
-		setFlag(ComponentFlag::AlwaysRun, true);
+		SetName("Renderable");
+		SetFlag(ComponentFlag::AlwaysRun, true);
 	}
 
 	CRenderable::CRenderable(const HSceneObject& parent)
 		:Component(parent)
 	{
-		setName("Renderable");
-		setFlag(ComponentFlag::AlwaysRun, true);
+		SetName("Renderable");
+		SetFlag(ComponentFlag::AlwaysRun, true);
 	}
 
 	void CRenderable::SetMesh(HMesh mesh)
 	{
-		mInternal->setMesh(mesh);
+		mInternal->SetMesh(mesh);
 
 		if (mAnimation != nullptr)
 			mAnimation->UpdateBoundsInternal(false);
@@ -37,13 +37,13 @@ namespace bs
 		// If mInternal already exists this means this object was deserialized,
 		// so all we need to do is initialize it.
 		if (mInternal != nullptr)
-			mInternal->initialize();
+			mInternal->Initialize();
 		else
 			mInternal = Renderable::Create();
 
-		gSceneManager().BindActorInternal(mInternal, sceneObject());
+		gSceneManager().BindActorInternal(mInternal, SceneObject());
 
-		mAnimation = SO()->getComponent<CAnimation>();
+		mAnimation = SO()->GetComponent<CAnimation>();
 		if (mAnimation != nullptr)
 		{
 			RegisterAnimationInternal(mAnimation);
@@ -54,12 +54,12 @@ namespace bs
 	Bounds CRenderable::GetBounds() const
 	{
 		mInternal->UpdateStateInternal(*SO());
-		return mInternal->getBounds();
+		return mInternal->GetBounds();
 	}
 
 	bool CRenderable::CalculateBounds(Bounds& bounds)
 	{
-		bounds = getBounds();
+		bounds = GetBounds();
 
 		return true;
 	}
@@ -70,7 +70,7 @@ namespace bs
 
 		if (mInternal != nullptr)
 		{
-			mInternal->setAnimation(animation->GetInternalInternal());
+			mInternal->SetAnimation(animation->GetInternalInternal());
 
 			// Need to update transform because animated renderables handle local transforms through bones, so it
 			// shouldn't be included in the renderable's transform.
@@ -84,7 +84,7 @@ namespace bs
 
 		if(mInternal != nullptr)
 		{
-			mInternal->setAnimation(nullptr);
+			mInternal->SetAnimation(nullptr);
 
 			// Need to update transform because animated renderables handle local transforms through bones, so it
 			// shouldn't be included in the renderable's transform.
@@ -103,7 +103,7 @@ namespace bs
 			mAnimation->UnregisterRenderableInternal();
 
 		gSceneManager().UnbindActorInternal(mInternal);
-		mInternal->destroy();
+		mInternal->Destroy();
 	}
 
 	RTTITypeBase* CRenderable::GetRttiStatic()

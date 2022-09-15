@@ -44,7 +44,7 @@ namespace bs
 			}
 		}
 
-		Resource::initialize();
+		Resource::Initialize();
 	}
 
 	SPtr<FontBitmap> Font::GetBitmap(UINT32 size) const
@@ -95,7 +95,7 @@ namespace bs
 		{
 			for (auto& texture : fontDataEntry.second->texturePages)
 			{
-				if (texture.isLoaded())
+				if (texture.IsLoaded())
 					dependencies.push_back(texture.get());
 			}
 		}

@@ -289,7 +289,7 @@ namespace bs
 		template<bool SAFE = true>
 		float Normalize(float tolerance = 1e-04f)
 		{
-			float len = Math::sqrt(dot(*this, *this));
+			float len = Math::Sqrt(dot(*this, *this));
 			if(!SAFE || len > (tolerance * tolerance))
 				*this = *this * (1.0f / len);
 
@@ -343,7 +343,7 @@ namespace bs
 		{
 			float sqrdLen = Dot(q, q);
 			if(!SAFE || sqrdLen > tolerance)
-				return q * Math::invSqrt(sqrdLen);
+				return q * Math::InvSqrt(sqrdLen);
 
 			return q;
 		}

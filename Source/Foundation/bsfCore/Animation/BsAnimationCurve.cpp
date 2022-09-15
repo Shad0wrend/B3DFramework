@@ -222,28 +222,28 @@ namespace bs
 		constexpr UINT32 getNumComponents<Quaternion>() { return 4; }
 
 		template <class T>
-		float& getComponent(T& val, UINT32 idx) { return val; }
+		float& GetComponent(T& val, UINT32 idx) { return val; }
 
 		template<>
-		float& getComponent(Vector3& val, UINT32 idx) { return val[idx]; }
+		float& GetComponent(Vector3& val, UINT32 idx) { return val[idx]; }
 
 		template<>
-		float& getComponent(Vector2& val, UINT32 idx) { return val[idx]; }
+		float& GetComponent(Vector2& val, UINT32 idx) { return val[idx]; }
 
 		template<>
-		float& getComponent(Quaternion& val, UINT32 idx) { return val[idx]; }
+		float& GetComponent(Quaternion& val, UINT32 idx) { return val[idx]; }
 
 		template <class T>
-		float getComponent(const T& val, UINT32 idx) { return val; }
+		float GetComponent(const T& val, UINT32 idx) { return val; }
 
 		template<>
-		float getComponent(const Vector3& val, UINT32 idx) { return val[idx]; }
+		float GetComponent(const Vector3& val, UINT32 idx) { return val[idx]; }
 
 		template<>
-		float getComponent(const Vector2& val, UINT32 idx) { return val[idx]; }
+		float GetComponent(const Vector2& val, UINT32 idx) { return val[idx]; }
 
 		template<>
-		float getComponent(const Quaternion& val, UINT32 idx) { return val[idx]; }
+		float GetComponent(const Quaternion& val, UINT32 idx) { return val[idx]; }
 
 		template <class T>
 		void getMinMax(std::pair<T, T>& minmax, const T& value)
@@ -278,7 +278,7 @@ namespace bs
 		{
 			float length = rhs.time - lhs.time;
 
-			if (Math::approxEquals(length, 0.0f))
+			if (Math::ApproxEquals(length, 0.0f))
 				return lhs;
 
 			// Resize tangents since we're not evaluating the curve over unit range
@@ -289,8 +289,8 @@ namespace bs
 
 			TKeyframe<T> output;
 			output.time = time;
-			output.value = Math::cubicHermite(t, lhs.value, rhs.value, leftTangent, rightTangent);
-			output.inTangent = Math::cubicHermiteD1(t, lhs.value, rhs.value, leftTangent, rightTangent) * invLength;
+			output.value = Math::CubicHermite(t, lhs.value, rhs.value, leftTangent, rightTangent);
+			output.inTangent = Math::CubicHermiteD1(t, lhs.value, rhs.value, leftTangent, rightTangent) * invLength;
 
 			setStepValue(lhs, rhs, output.value);
 			setStepTangent(lhs, rhs, output.inTangent);
@@ -337,7 +337,7 @@ namespace bs
 				coeffs[3] = lhs.value;
 			}
 			else
-				Math::cubicHermiteCoefficients(lhs.value, rhs.value, lhs.outTangent, rhs.inTangent, length, coeffs);
+				Math::CubicHermiteCoefficients(lhs.value, rhs.value, lhs.outTangent, rhs.inTangent, length, coeffs);
 
 			setStepCoefficients(lhs, rhs, coeffs);
 		}
@@ -377,7 +377,7 @@ namespace bs
 			T leftTangent;
 			T rightTangent;
 
-			if (Math::approxEquals(length, 0.0f))
+			if (Math::ApproxEquals(length, 0.0f))
 			{
 				t = 0.0f;
 				leftTangent = impl::getZero<T>();
@@ -391,7 +391,7 @@ namespace bs
 				rightTangent = rhs.inTangent * length;
 			}
 
-			T output = Math::cubicHermite(t, lhs.value, rhs.value, leftTangent, rightTangent);
+			T output = Math::CubicHermite(t, lhs.value, rhs.value, leftTangent, rightTangent);
 			setStepValue(lhs, rhs, output);
 
 			return output;
@@ -424,10 +424,10 @@ namespace bs
 			for (UINT32 i = 0; i < numComponents; i++)
 			{
 				float roots[2];
-				const UINT32 numRoots = Math::solveQuadratic(
-					getComponent(a, i),
-					getComponent(b, i),
-					getComponent(c, i),
+				const UINT32 numRoots = Math::SolveQuadratic(
+					GetComponent(a, i),
+					GetComponent(b, i),
+					GetComponent(c, i),
 					roots);
 
 				for (UINT32 j = 0; j < numRoots; j++)
@@ -436,16 +436,16 @@ namespace bs
 					{
 						float fltCoeffs[4] =
 						{
-							getComponent(coeffs[0], i),
-							getComponent(coeffs[1], i),
-							getComponent(coeffs[2], i),
-							getComponent(coeffs[3], i)
+							GetComponent(coeffs[0], i),
+							GetComponent(coeffs[1], i),
+							GetComponent(coeffs[2], i),
+							GetComponent(coeffs[3], i)
 						};
 
 						float value = evaluateCubic(roots[j], 0.0f, 0.0f, fltCoeffs);
 
-						getComponent(minmax.first, i) = std::min(getComponent(minmax.first, i), value);
-						getComponent(minmax.second, i) = std::max(getComponent(minmax.second, i), value);
+						GetComponent(minmax.first, i) = std::min(GetComponent(minmax.first, i), value);
+						GetComponent(minmax.second, i) = std::max(GetComponent(minmax.second, i), value);
 					}
 				}
 			}
@@ -472,11 +472,11 @@ namespace bs
 			for (UINT32 i = 0; i < numComponents; i++)
 			{
 				float roots[3];
-				const UINT32 numRoots = Math::solveCubic(
-					getComponent(a, i),
-					getComponent(b, i),
-					getComponent(c, i),
-					getComponent(d, i),
+				const UINT32 numRoots = Math::SolveCubic(
+					GetComponent(a, i),
+					GetComponent(b, i),
+					GetComponent(c, i),
+					GetComponent(d, i),
 					roots);
 
 				for (UINT32 j = 0; j < numRoots; j++)
@@ -485,16 +485,16 @@ namespace bs
 					{
 						float fltCoeffs[4] =
 						{
-							getComponent(coeffs[0], i),
-							getComponent(coeffs[1], i),
-							getComponent(coeffs[2], i),
-							getComponent(coeffs[3], i)
+							GetComponent(coeffs[0], i),
+							GetComponent(coeffs[1], i),
+							GetComponent(coeffs[2], i),
+							GetComponent(coeffs[3], i)
 						};
 
-						float value = getComponent(sum, i) + evaluateCubic(roots[j], 0.0f, 0.0f, fltCoeffs) * roots[j];
+						float value = GetComponent(sum, i) + evaluateCubic(roots[j], 0.0f, 0.0f, fltCoeffs) * roots[j];
 
-						getComponent(minmax.first, i) = std::min(getComponent(minmax.first, i), value);
-						getComponent(minmax.second, i) = std::max(getComponent(minmax.second, i), value);
+						GetComponent(minmax.first, i) = std::min(GetComponent(minmax.first, i), value);
+						GetComponent(minmax.second, i) = std::max(GetComponent(minmax.second, i), value);
 					}
 				}
 			}
@@ -522,11 +522,11 @@ namespace bs
 			for (UINT32 i = 0; i < numComponents; i++)
 			{
 				float roots[4];
-				const UINT32 numRoots = Math::solveQuartic(
-					getComponent(a, i),
-					getComponent(b, i),
-					getComponent(c, i),
-					getComponent(d, i),
+				const UINT32 numRoots = Math::SolveQuartic(
+					GetComponent(a, i),
+					GetComponent(b, i),
+					GetComponent(c, i),
+					GetComponent(d, i),
 					0.0f,
 					roots);
 
@@ -536,18 +536,18 @@ namespace bs
 					{
 						float fltCoeffs[4] =
 						{
-							getComponent(coeffs[0], i),
-							getComponent(coeffs[1], i),
-							getComponent(coeffs[2], i),
-							getComponent(coeffs[3], i)
+							GetComponent(coeffs[0], i),
+							GetComponent(coeffs[1], i),
+							GetComponent(coeffs[2], i),
+							GetComponent(coeffs[3], i)
 						};
 
 						float root = roots[j];
-						float value = getComponent(doubleSum, i) + getComponent(sum, i) * root +
+						float value = GetComponent(doubleSum, i) + GetComponent(sum, i) * root +
 							evaluateCubic(root, 0.0f, 0.0f, fltCoeffs) * root * root;
 
-						getComponent(minmax.first, i) = std::min(getComponent(minmax.first, i), value);
-						getComponent(minmax.second, i) = std::max(getComponent(minmax.second, i), value);
+						GetComponent(minmax.first, i) = std::min(GetComponent(minmax.first, i), value);
+						GetComponent(minmax.second, i) = std::max(GetComponent(minmax.second, i), value);
 					}
 				}
 			}
@@ -596,7 +596,7 @@ namespace bs
 		if (mKeyframes.empty())
 			return impl::getZero<T>();
 
-		if (Math::approxEquals(mLength, 0.0f))
+		if (Math::ApproxEquals(mLength, 0.0f))
 			time = 0.0f;
 
 		// Wrap time if looping
@@ -855,7 +855,7 @@ namespace bs
 		const KeyFrame& leftKey = mKeyframes[leftKeyIdx];
 		const KeyFrame& rightKey = mKeyframes[rightKeyIdx];
 
-		if (Math::abs(leftKey.time - time) <= Math::abs(rightKey.time - time))
+		if (Math::Abs(leftKey.time - time) <= Math::Abs(rightKey.time - time))
 			return leftKeyIdx;
 		
 		return rightKeyIdx;
@@ -872,8 +872,8 @@ namespace bs
 	{
 		Vector<TKeyframe<T>> keyFrames;
 
-		start = Math::clamp(start, mStart, mEnd);
-		end = Math::clamp(end, mStart, mEnd);
+		start = Math::Clamp(start, mStart, mEnd);
+		end = Math::Clamp(end, mStart, mEnd);
 
 		UINT32 startKeyIdx = findKey(start);
 		UINT32 endKeyIdx = findKey(end);
@@ -882,7 +882,7 @@ namespace bs
 
 		const KeyFrame& startKey = mKeyframes[startKeyIdx];
 
-		if (!Math::approxEquals(startKey.time, start))
+		if (!Math::ApproxEquals(startKey.time, start))
 		{
 			if(start > startKey.time)
 			{
@@ -918,10 +918,10 @@ namespace bs
 			startKeyIdx++;
 		}
 
-		if (!Math::approxEquals(end - start, 0.0f))
+		if (!Math::ApproxEquals(end - start, 0.0f))
 		{
 			const KeyFrame& endKey = mKeyframes[endKeyIdx];
-			if(!Math::approxEquals(endKey.time, end))
+			if(!Math::ApproxEquals(endKey.time, end))
 			{
 				if(end > endKey.time)
 				{

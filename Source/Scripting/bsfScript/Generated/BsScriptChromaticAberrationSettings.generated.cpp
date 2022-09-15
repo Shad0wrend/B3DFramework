@@ -49,13 +49,13 @@ namespace bs
 	MonoObject* ScriptChromaticAberrationSettings::InternalGetfringeTexture(ScriptChromaticAberrationSettings* thisPtr)
 	{
 		ResourceHandle<Texture> tmp__output;
-		tmp__output = thisPtr->getInternal()->fringeTexture;
+		tmp__output = thisPtr->GetInternal()->fringeTexture;
 
 		MonoObject* __output;
 		ScriptRRefBase* script__output;
 		script__output = ScriptResourceManager::Instance().getScriptRRef(tmp__output);
 		if(script__output != nullptr)
-			__output = script__output->getManagedInstance();
+			__output = script__output->GetManagedInstance();
 		else
 			__output = nullptr;
 
@@ -68,14 +68,14 @@ namespace bs
 		ScriptRRefBase* scriptvalue;
 		scriptvalue = ScriptRRefBase::toNative(value);
 		if(scriptvalue != nullptr)
-			tmpvalue = static_resource_cast<Texture>(scriptvalue->getHandle());
-		thisPtr->getInternal()->fringeTexture = tmpvalue;
+			tmpvalue = static_resource_cast<Texture>(scriptvalue->GetHandle());
+		thisPtr->GetInternal()->fringeTexture = tmpvalue;
 	}
 
 	bool ScriptChromaticAberrationSettings::InternalGetenabled(ScriptChromaticAberrationSettings* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->getInternal()->enabled;
+		tmp__output = thisPtr->GetInternal()->enabled;
 
 		bool __output;
 		__output = tmp__output;
@@ -85,13 +85,13 @@ namespace bs
 
 	void ScriptChromaticAberrationSettings::InternalSetenabled(ScriptChromaticAberrationSettings* thisPtr, bool value)
 	{
-		thisPtr->getInternal()->enabled = value;
+		thisPtr->GetInternal()->enabled = value;
 	}
 
 	ChromaticAberrationType ScriptChromaticAberrationSettings::InternalGettype(ScriptChromaticAberrationSettings* thisPtr)
 	{
 		ChromaticAberrationType tmp__output;
-		tmp__output = thisPtr->getInternal()->type;
+		tmp__output = thisPtr->GetInternal()->type;
 
 		ChromaticAberrationType __output;
 		__output = tmp__output;
@@ -101,13 +101,13 @@ namespace bs
 
 	void ScriptChromaticAberrationSettings::InternalSettype(ScriptChromaticAberrationSettings* thisPtr, ChromaticAberrationType value)
 	{
-		thisPtr->getInternal()->type = value;
+		thisPtr->GetInternal()->type = value;
 	}
 
 	float ScriptChromaticAberrationSettings::InternalGetshiftAmount(ScriptChromaticAberrationSettings* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getInternal()->shiftAmount;
+		tmp__output = thisPtr->GetInternal()->shiftAmount;
 
 		float __output;
 		__output = tmp__output;
@@ -117,6 +117,6 @@ namespace bs
 
 	void ScriptChromaticAberrationSettings::InternalSetshiftAmount(ScriptChromaticAberrationSettings* thisPtr, float value)
 	{
-		thisPtr->getInternal()->shiftAmount = value;
+		thisPtr->GetInternal()->shiftAmount = value;
 	}
 }

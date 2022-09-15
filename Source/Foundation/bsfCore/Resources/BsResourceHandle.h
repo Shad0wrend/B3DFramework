@@ -274,7 +274,7 @@ namespace bs
 		 */
 		T* Get() const
 		{
-			this->throwIfNotLoaded();
+			this->ThrowIfNotLoaded();
 
 			return reinterpret_cast<T*>(this->mData->mPtr.get());
 		}
@@ -358,7 +358,7 @@ namespace bs
 		TResourceHandle<T, false> Lock() const
 		{
 			TResourceHandle<Resource, false> handle;
-			handle.SetHandleData(this->getHandleData());
+			handle.SetHandleData(this->GetHandleData());
 
 			return handle;
 		}

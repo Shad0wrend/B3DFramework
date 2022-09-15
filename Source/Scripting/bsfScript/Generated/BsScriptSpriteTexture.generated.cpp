@@ -50,7 +50,7 @@ namespace bs
 	}
 	MonoObject* ScriptSpriteTexture::InternalGetRef(ScriptSpriteTexture* thisPtr)
 	{
-		return thisPtr->getRRef();
+		return thisPtr->GetRRef();
 	}
 
 	void ScriptSpriteTexture::InternalSetTexture(ScriptSpriteTexture* thisPtr, MonoObject* texture)
@@ -59,20 +59,20 @@ namespace bs
 		ScriptRRefBase* scripttexture;
 		scripttexture = ScriptRRefBase::toNative(texture);
 		if(scripttexture != nullptr)
-			tmptexture = static_resource_cast<Texture>(scripttexture->getHandle());
-		thisPtr->getHandle()->setTexture(tmptexture);
+			tmptexture = static_resource_cast<Texture>(scripttexture->GetHandle());
+		thisPtr->GetHandle()->SetTexture(tmptexture);
 	}
 
 	MonoObject* ScriptSpriteTexture::InternalGetTexture(ScriptSpriteTexture* thisPtr)
 	{
 		ResourceHandle<Texture> tmp__output;
-		tmp__output = thisPtr->getHandle()->getTexture();
+		tmp__output = thisPtr->GetHandle()->GetTexture();
 
 		MonoObject* __output;
 		ScriptRRefBase* script__output;
 		script__output = ScriptResourceManager::Instance().getScriptRRef(tmp__output);
 		if(script__output != nullptr)
-			__output = script__output->getManagedInstance();
+			__output = script__output->GetManagedInstance();
 		else
 			__output = nullptr;
 
@@ -82,7 +82,7 @@ namespace bs
 	uint32_t ScriptSpriteTexture::InternalGetWidth(ScriptSpriteTexture* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->getHandle()->getWidth();
+		tmp__output = thisPtr->GetHandle()->GetWidth();
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -93,7 +93,7 @@ namespace bs
 	uint32_t ScriptSpriteTexture::InternalGetHeight(ScriptSpriteTexture* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->getHandle()->getHeight();
+		tmp__output = thisPtr->GetHandle()->GetHeight();
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -104,7 +104,7 @@ namespace bs
 	uint32_t ScriptSpriteTexture::InternalGetFrameWidth(ScriptSpriteTexture* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->getHandle()->getFrameWidth();
+		tmp__output = thisPtr->GetHandle()->GetFrameWidth();
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -115,7 +115,7 @@ namespace bs
 	uint32_t ScriptSpriteTexture::InternalGetFrameHeight(ScriptSpriteTexture* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->getHandle()->getFrameHeight();
+		tmp__output = thisPtr->GetHandle()->GetFrameHeight();
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -125,52 +125,52 @@ namespace bs
 
 	void ScriptSpriteTexture::InternalSetOffset(ScriptSpriteTexture* thisPtr, Vector2* offset)
 	{
-		thisPtr->getHandle()->setOffset(*offset);
+		thisPtr->GetHandle()->SetOffset(*offset);
 	}
 
 	void ScriptSpriteTexture::InternalGetOffset(ScriptSpriteTexture* thisPtr, Vector2* __output)
 	{
 		Vector2 tmp__output;
-		tmp__output = thisPtr->getHandle()->getOffset();
+		tmp__output = thisPtr->GetHandle()->GetOffset();
 
 		*__output = tmp__output;
 	}
 
 	void ScriptSpriteTexture::InternalSetScale(ScriptSpriteTexture* thisPtr, Vector2* scale)
 	{
-		thisPtr->getHandle()->setScale(*scale);
+		thisPtr->GetHandle()->SetScale(*scale);
 	}
 
 	void ScriptSpriteTexture::InternalGetScale(ScriptSpriteTexture* thisPtr, Vector2* __output)
 	{
 		Vector2 tmp__output;
-		tmp__output = thisPtr->getHandle()->getScale();
+		tmp__output = thisPtr->GetHandle()->GetScale();
 
 		*__output = tmp__output;
 	}
 
 	void ScriptSpriteTexture::InternalSetAnimation(ScriptSpriteTexture* thisPtr, SpriteSheetGridAnimation* anim)
 	{
-		thisPtr->getHandle()->setAnimation(*anim);
+		thisPtr->GetHandle()->SetAnimation(*anim);
 	}
 
 	void ScriptSpriteTexture::InternalGetAnimation(ScriptSpriteTexture* thisPtr, SpriteSheetGridAnimation* __output)
 	{
 		SpriteSheetGridAnimation tmp__output;
-		tmp__output = thisPtr->getHandle()->getAnimation();
+		tmp__output = thisPtr->GetHandle()->GetAnimation();
 
 		*__output = tmp__output;
 	}
 
 	void ScriptSpriteTexture::InternalSetAnimationPlayback(ScriptSpriteTexture* thisPtr, SpriteAnimationPlayback playback)
 	{
-		thisPtr->getHandle()->setAnimationPlayback(playback);
+		thisPtr->GetHandle()->SetAnimationPlayback(playback);
 	}
 
 	SpriteAnimationPlayback ScriptSpriteTexture::InternalGetAnimationPlayback(ScriptSpriteTexture* thisPtr)
 	{
 		SpriteAnimationPlayback tmp__output;
-		tmp__output = thisPtr->getHandle()->getAnimationPlayback();
+		tmp__output = thisPtr->GetHandle()->GetAnimationPlayback();
 
 		SpriteAnimationPlayback __output;
 		__output = tmp__output;
@@ -184,7 +184,7 @@ namespace bs
 		ScriptRRefBase* scripttexture;
 		scripttexture = ScriptRRefBase::toNative(texture);
 		if(scripttexture != nullptr)
-			tmptexture = static_resource_cast<Texture>(scripttexture->getHandle());
+			tmptexture = static_resource_cast<Texture>(scripttexture->GetHandle());
 		ResourceHandle<SpriteTexture> instance = SpriteTexture::Create(tmptexture);
 		ScriptResourceManager::Instance().createBuiltinScriptResource(instance, managedInstance);
 	}
@@ -195,7 +195,7 @@ namespace bs
 		ScriptRRefBase* scripttexture;
 		scripttexture = ScriptRRefBase::toNative(texture);
 		if(scripttexture != nullptr)
-			tmptexture = static_resource_cast<Texture>(scripttexture->getHandle());
+			tmptexture = static_resource_cast<Texture>(scripttexture->GetHandle());
 		ResourceHandle<SpriteTexture> instance = SpriteTexture::Create(*uvOffset, *uvScale, tmptexture);
 		ScriptResourceManager::Instance().createBuiltinScriptResource(instance, managedInstance);
 	}

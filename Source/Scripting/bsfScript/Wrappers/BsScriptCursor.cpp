@@ -78,7 +78,7 @@ namespace bs
 
 		if (scriptPixelData != nullptr)
 		{
-			SPtr<PixelData> pixelData = scriptPixelData->getInternal();
+			SPtr<PixelData> pixelData = scriptPixelData->GetInternal();
 			Cursor::Instance().setCursorIcon(nameStr, *pixelData, *hotspot);
 		}
 		else
@@ -91,7 +91,7 @@ namespace bs
 
 		if (scriptPixelData != nullptr)
 		{
-			SPtr<PixelData> pixelData = scriptPixelData->getInternal();
+			SPtr<PixelData> pixelData = scriptPixelData->GetInternal();
 			Cursor::Instance().setCursorIcon(cursor, *pixelData, *hotspot);
 		}
 		else

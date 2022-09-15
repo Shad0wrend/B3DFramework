@@ -48,13 +48,13 @@ namespace bs { namespace ct
 	void VulkanTransferBuffer::SetLayout(VkImage image, VkAccessFlags srcAccessFlags, VkAccessFlags dstAccessFlags,
 		VkImageLayout oldLayout, VkImageLayout newLayout, const VkImageSubresourceRange& range)
 	{
-		mCB->setLayout(image, srcAccessFlags, dstAccessFlags, oldLayout, newLayout, range);
+		mCB->SetLayout(image, srcAccessFlags, dstAccessFlags, oldLayout, newLayout, range);
 	}
 
 	void VulkanTransferBuffer::SetLayout(VulkanImage* image, const VkImageSubresourceRange& range,
 										 VkAccessFlags newAccessMask, VkImageLayout newLayout)
 	{
-		image->getBarriers(range, mBarriersTemp);
+		image->GetBarriers(range, mBarriersTemp);
 
 		if (mBarriersTemp.size() == 0)
 			return;
@@ -82,7 +82,7 @@ namespace bs { namespace ct
 			entry.newLayout = newLayout;
 		}
 
-		vkCmdPipelineBarrier(mCB->getHandle(),
+		vkCmdPipelineBarrier(mCB->GetHandle(),
 							 VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 							 VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 							 0, 0, nullptr,
@@ -167,18 +167,18 @@ namespace bs { namespace ct
 		{
 			GpuQueueType queueType = (GpuQueueType)i;
 
-			UINT32 numQueues = device->getNumQueues(queueType);
+			UINT32 numQueues = device->GetNumQueues(queueType);
 			for (UINT32 j = 0; j < numQueues; j++)
 			{
-				VulkanQueue* queue = device->getQueue(queueType, j);
-				VulkanCmdBuffer* lastCB = queue->getLastCommandBuffer();
+				VulkanQueue* queue = device->GetQueue(queueType, j);
+				VulkanCmdBuffer* lastCB = queue->GetLastCommandBuffer();
 
 				// Check if a buffer is currently executing on the queue
 				if (lastCB == nullptr || !lastCB->isSubmitted())
 					continue;
 
 				// Check if we care about this specific queue
-				UINT32 queueMask = device->getQueueMask(queueType, j);
+				UINT32 queueMask = device->GetQueueMask(queueType, j);
 				if ((syncMask & queueMask) == 0)
 					continue;
 

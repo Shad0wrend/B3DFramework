@@ -26,7 +26,7 @@ namespace bs
 			Path entry = folder;
 			entry.append(name);
 
-			if(FileSystem::exists(entry))
+			if(FileSystem::Exists(entry))
 			{
 				path = entry;
 				break;

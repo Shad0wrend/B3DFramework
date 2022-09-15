@@ -97,8 +97,7 @@ namespace bs
 			this->getter = getter;
 			this->setter = setter;
 
-			init(std::move(name), RTTIFieldSchema(uniqueId, false, true, 0, SerializableFT_ReflectablePtr,
-				0, nullptr, info));
+			Init(std::move(name), RTTIFieldSchema(uniqueId, false, true, 0, SerializableFT_ReflectablePtr, 0, nullptr, info));
 		}
 
 		/**
@@ -122,8 +121,7 @@ namespace bs
 			arrayGetSize = getSize;
 			arraySetSize = setSize;
 
-			init(std::move(name), RTTIFieldSchema(uniqueId, true, true, 0, SerializableFT_ReflectablePtr,
-				0, nullptr, info));
+			Init(std::move(name), RTTIFieldSchema(uniqueId, true, true, 0, SerializableFT_ReflectablePtr, 0, nullptr, info));
 		}
 
 		/** @copydoc RTTIField::initSchema */
@@ -131,14 +129,14 @@ namespace bs
 		{
 			// This need to be initialized after the field itself, otherwise we get recursive static constructor
 			// calls due to one type calling GetRttiStatic() on one another
-			schema.fieldTypeSchema = DataType::GetRttiStatic()->getSchema();;
-			schema.fieldTypeId = DataType::GetRttiStatic()->getRTTIId();
+			schema.fieldTypeSchema = DataType::GetRttiStatic()->GetSchema();;
+			schema.fieldTypeId = DataType::GetRttiStatic()->GetRttiId();
 		}
 
 		/** @copydoc RTTIReflectablePtrFieldBase::getValue */
 		SPtr<IReflectable> GetValue(RTTITypeBase* rtti, void* object) 
 		{
-			checkIsArray(false);
+			CheckIsArray(false);
 
 			InterfaceType* rttiObject = static_cast<InterfaceType*>(rtti);
 			ObjectType* castObjType = static_cast<ObjectType*>(object);
@@ -150,7 +148,7 @@ namespace bs
 		/** @copydoc RTTIReflectablePtrFieldBase::getArrayValue */
 		SPtr<IReflectable> GetArrayValue(RTTITypeBase* rtti, void* object, UINT32 index) 
 		{
-			checkIsArray(true);
+			CheckIsArray(true);
 
 			InterfaceType* rttiObject = static_cast<InterfaceType*>(rtti);
 			ObjectType* castObjType = static_cast<ObjectType*>(object);
@@ -162,7 +160,7 @@ namespace bs
 		/** @copydoc RTTIReflectablePtrFieldBase::setValue */
 		void SetValue(RTTITypeBase* rtti, void* object, SPtr<IReflectable> value) 
 		{
-			checkIsArray(false);
+			CheckIsArray(false);
 
 			if(!setter)
 			{
@@ -180,7 +178,7 @@ namespace bs
 		/** @copydoc RTTIReflectablePtrFieldBase::setArrayValue */
 		void SetArrayValue(RTTITypeBase* rtti, void* object, UINT32 index, SPtr<IReflectable> value) 
 		{
-			checkIsArray(true);
+			CheckIsArray(true);
 
 			if(!arraySetter)
 			{
@@ -198,7 +196,7 @@ namespace bs
 		/** @copydoc RTTIField::setArraySize */
 		UINT32 GetArraySize(RTTITypeBase* rtti, void* object) override
 		{
-			checkIsArray(true);
+			CheckIsArray(true);
 
 			InterfaceType* rttiObject = static_cast<InterfaceType*>(rtti);
 			ObjectType* castObject = static_cast<ObjectType*>(object);
@@ -209,7 +207,7 @@ namespace bs
 		/** @copydoc RTTIField::setArraySize */
 		void SetArraySize(RTTITypeBase* rtti, void* object, UINT32 size) override
 		{
-			checkIsArray(true);
+			CheckIsArray(true);
 
 			if(!arraySetSize)
 			{
@@ -226,19 +224,19 @@ namespace bs
 		/** @copydoc RTTIReflectablePtrFieldBase::newObject */
 		SPtr<IReflectable> NewObject() 
 		{
-			return SPtr<IReflectable>(DataType::GetRttiStatic()->newRTTIObject());
+			return SPtr<IReflectable>(DataType::GetRttiStatic()->NewRttiObject());
 		}
 
 		/** @copydoc RTTIReflectablePtrFieldBase::getRTTIId */
 		UINT32 GetRttiId() override
 		{
-			return DataType::GetRttiStatic()->getRTTIId();
+			return DataType::GetRttiStatic()->GetRttiId();
 		}
 
 		/** @copydoc RTTIReflectablePtrFieldBase::getRTTIName */
 		const String& GetRttiName() override
 		{
-			return DataType::GetRttiStatic()->getRTTIName();
+			return DataType::GetRttiStatic()->GetRttiName();
 		}
 
 

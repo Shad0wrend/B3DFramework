@@ -70,13 +70,13 @@ namespace bs
 
 	void ScriptCCamera::InternalSetFlags(ScriptCCamera* thisPtr, CameraFlag flags)
 	{
-		thisPtr->getHandle()->setFlags(flags);
+		thisPtr->GetHandle()->SetFlags(flags);
 	}
 
 	CameraFlag ScriptCCamera::InternalGetFlags(ScriptCCamera* thisPtr)
 	{
 		Flags<CameraFlag> tmp__output;
-		tmp__output = thisPtr->getHandle()->getFlags();
+		tmp__output = thisPtr->GetHandle()->GetFlags();
 
 		CameraFlag __output;
 		__output = (CameraFlag)(uint32_t)tmp__output;
@@ -87,7 +87,7 @@ namespace bs
 	MonoObject* ScriptCCamera::InternalGetViewport(ScriptCCamera* thisPtr)
 	{
 		SPtr<Viewport> tmp__output;
-		tmp__output = thisPtr->getHandle()->getViewport();
+		tmp__output = thisPtr->GetHandle()->GetViewport();
 
 		MonoObject* __output;
 		__output = ScriptViewport::Create(tmp__output);
@@ -97,26 +97,26 @@ namespace bs
 
 	void ScriptCCamera::InternalSetHorzFov(ScriptCCamera* thisPtr, Radian* fovy)
 	{
-		thisPtr->getHandle()->setHorzFOV(*fovy);
+		thisPtr->GetHandle()->SetHorzFOV(*fovy);
 	}
 
 	void ScriptCCamera::InternalGetHorzFov(ScriptCCamera* thisPtr, Radian* __output)
 	{
 		Radian tmp__output;
-		tmp__output = thisPtr->getHandle()->getHorzFOV();
+		tmp__output = thisPtr->GetHandle()->GetHorzFOV();
 
 		*__output = tmp__output;
 	}
 
 	void ScriptCCamera::InternalSetNearClipDistance(ScriptCCamera* thisPtr, float nearDist)
 	{
-		thisPtr->getHandle()->setNearClipDistance(nearDist);
+		thisPtr->GetHandle()->SetNearClipDistance(nearDist);
 	}
 
 	float ScriptCCamera::InternalGetNearClipDistance(ScriptCCamera* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getHandle()->getNearClipDistance();
+		tmp__output = thisPtr->GetHandle()->GetNearClipDistance();
 
 		float __output;
 		__output = tmp__output;
@@ -126,13 +126,13 @@ namespace bs
 
 	void ScriptCCamera::InternalSetFarClipDistance(ScriptCCamera* thisPtr, float farDist)
 	{
-		thisPtr->getHandle()->setFarClipDistance(farDist);
+		thisPtr->GetHandle()->SetFarClipDistance(farDist);
 	}
 
 	float ScriptCCamera::InternalGetFarClipDistance(ScriptCCamera* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getHandle()->getFarClipDistance();
+		tmp__output = thisPtr->GetHandle()->GetFarClipDistance();
 
 		float __output;
 		__output = tmp__output;
@@ -142,13 +142,13 @@ namespace bs
 
 	void ScriptCCamera::InternalSetAspectRatio(ScriptCCamera* thisPtr, float ratio)
 	{
-		thisPtr->getHandle()->setAspectRatio(ratio);
+		thisPtr->GetHandle()->SetAspectRatio(ratio);
 	}
 
 	float ScriptCCamera::InternalGetAspectRatio(ScriptCCamera* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getHandle()->getAspectRatio();
+		tmp__output = thisPtr->GetHandle()->GetAspectRatio();
 
 		float __output;
 		__output = tmp__output;
@@ -159,7 +159,7 @@ namespace bs
 	void ScriptCCamera::InternalGetProjectionMatrixRs(ScriptCCamera* thisPtr, Matrix4* __output)
 	{
 		Matrix4 tmp__output;
-		tmp__output = thisPtr->getHandle()->getProjectionMatrixRS();
+		tmp__output = thisPtr->GetHandle()->GetProjectionMatrixRS();
 
 		*__output = tmp__output;
 	}
@@ -167,20 +167,20 @@ namespace bs
 	void ScriptCCamera::InternalGetViewMatrix(ScriptCCamera* thisPtr, Matrix4* __output)
 	{
 		Matrix4 tmp__output;
-		tmp__output = thisPtr->getHandle()->getViewMatrix();
+		tmp__output = thisPtr->GetHandle()->GetViewMatrix();
 
 		*__output = tmp__output;
 	}
 
 	void ScriptCCamera::InternalSetProjectionType(ScriptCCamera* thisPtr, ProjectionType pt)
 	{
-		thisPtr->getHandle()->setProjectionType(pt);
+		thisPtr->GetHandle()->SetProjectionType(pt);
 	}
 
 	ProjectionType ScriptCCamera::InternalGetProjectionType(ScriptCCamera* thisPtr)
 	{
 		ProjectionType tmp__output;
-		tmp__output = thisPtr->getHandle()->getProjectionType();
+		tmp__output = thisPtr->GetHandle()->GetProjectionType();
 
 		ProjectionType __output;
 		__output = tmp__output;
@@ -190,13 +190,13 @@ namespace bs
 
 	void ScriptCCamera::InternalSetOrthoWindowHeight(ScriptCCamera* thisPtr, float h)
 	{
-		thisPtr->getHandle()->setOrthoWindowHeight(h);
+		thisPtr->GetHandle()->SetOrthoWindowHeight(h);
 	}
 
 	float ScriptCCamera::InternalGetOrthoWindowHeight(ScriptCCamera* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getHandle()->getOrthoWindowHeight();
+		tmp__output = thisPtr->GetHandle()->GetOrthoWindowHeight();
 
 		float __output;
 		__output = tmp__output;
@@ -206,13 +206,13 @@ namespace bs
 
 	void ScriptCCamera::InternalSetOrthoWindowWidth(ScriptCCamera* thisPtr, float w)
 	{
-		thisPtr->getHandle()->setOrthoWindowWidth(w);
+		thisPtr->GetHandle()->SetOrthoWindowWidth(w);
 	}
 
 	float ScriptCCamera::InternalGetOrthoWindowWidth(ScriptCCamera* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getHandle()->getOrthoWindowWidth();
+		tmp__output = thisPtr->GetHandle()->GetOrthoWindowWidth();
 
 		float __output;
 		__output = tmp__output;
@@ -222,13 +222,13 @@ namespace bs
 
 	void ScriptCCamera::InternalSetPriority(ScriptCCamera* thisPtr, int32_t priority)
 	{
-		thisPtr->getHandle()->setPriority(priority);
+		thisPtr->GetHandle()->SetPriority(priority);
 	}
 
 	int32_t ScriptCCamera::InternalGetPriority(ScriptCCamera* thisPtr)
 	{
 		int32_t tmp__output;
-		tmp__output = thisPtr->getHandle()->getPriority();
+		tmp__output = thisPtr->GetHandle()->GetPriority();
 
 		int32_t __output;
 		__output = tmp__output;
@@ -238,13 +238,13 @@ namespace bs
 
 	void ScriptCCamera::InternalSetLayers(ScriptCCamera* thisPtr, uint64_t layers)
 	{
-		thisPtr->getHandle()->setLayers(layers);
+		thisPtr->GetHandle()->SetLayers(layers);
 	}
 
 	uint64_t ScriptCCamera::InternalGetLayers(ScriptCCamera* thisPtr)
 	{
 		uint64_t tmp__output;
-		tmp__output = thisPtr->getHandle()->getLayers();
+		tmp__output = thisPtr->GetHandle()->GetLayers();
 
 		uint64_t __output;
 		__output = tmp__output;
@@ -254,13 +254,13 @@ namespace bs
 
 	void ScriptCCamera::InternalSetMsaaCount(ScriptCCamera* thisPtr, uint32_t count)
 	{
-		thisPtr->getHandle()->setMSAACount(count);
+		thisPtr->GetHandle()->SetMSAACount(count);
 	}
 
 	uint32_t ScriptCCamera::InternalGetMsaaCount(ScriptCCamera* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->getHandle()->getMSAACount();
+		tmp__output = thisPtr->GetHandle()->GetMSAACount();
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -274,14 +274,14 @@ namespace bs
 		ScriptRenderSettings* scriptsettings;
 		scriptsettings = ScriptRenderSettings::toNative(settings);
 		if(scriptsettings != nullptr)
-			tmpsettings = scriptsettings->getInternal();
-		thisPtr->getHandle()->setRenderSettings(tmpsettings);
+			tmpsettings = scriptsettings->GetInternal();
+		thisPtr->GetHandle()->SetRenderSettings(tmpsettings);
 	}
 
 	MonoObject* ScriptCCamera::InternalGetRenderSettings(ScriptCCamera* thisPtr)
 	{
 		SPtr<RenderSettings> tmp__output;
-		tmp__output = thisPtr->getHandle()->getRenderSettings();
+		tmp__output = thisPtr->GetHandle()->GetRenderSettings();
 
 		MonoObject* __output;
 		__output = ScriptRenderSettings::Create(tmp__output);
@@ -291,13 +291,13 @@ namespace bs
 
 	void ScriptCCamera::InternalNotifyNeedsRedraw(ScriptCCamera* thisPtr)
 	{
-		thisPtr->getHandle()->notifyNeedsRedraw();
+		thisPtr->GetHandle()->notifyNeedsRedraw();
 	}
 
 	void ScriptCCamera::InternalWorldToScreenPoint(ScriptCCamera* thisPtr, Vector3* worldPoint, Vector2I* __output)
 	{
 		Vector2I tmp__output;
-		tmp__output = thisPtr->getHandle()->worldToScreenPoint(*worldPoint);
+		tmp__output = thisPtr->GetHandle()->worldToScreenPoint(*worldPoint);
 
 		*__output = tmp__output;
 	}
@@ -305,7 +305,7 @@ namespace bs
 	void ScriptCCamera::InternalWorldToNdcPoint(ScriptCCamera* thisPtr, Vector3* worldPoint, Vector2* __output)
 	{
 		Vector2 tmp__output;
-		tmp__output = thisPtr->getHandle()->worldToNdcPoint(*worldPoint);
+		tmp__output = thisPtr->GetHandle()->worldToNdcPoint(*worldPoint);
 
 		*__output = tmp__output;
 	}
@@ -313,7 +313,7 @@ namespace bs
 	void ScriptCCamera::InternalWorldToViewPoint(ScriptCCamera* thisPtr, Vector3* worldPoint, Vector3* __output)
 	{
 		Vector3 tmp__output;
-		tmp__output = thisPtr->getHandle()->worldToViewPoint(*worldPoint);
+		tmp__output = thisPtr->GetHandle()->worldToViewPoint(*worldPoint);
 
 		*__output = tmp__output;
 	}
@@ -321,7 +321,7 @@ namespace bs
 	void ScriptCCamera::InternalScreenToWorldPoint(ScriptCCamera* thisPtr, Vector2I* screenPoint, float depth, Vector3* __output)
 	{
 		Vector3 tmp__output;
-		tmp__output = thisPtr->getHandle()->screenToWorldPoint(*screenPoint, depth);
+		tmp__output = thisPtr->GetHandle()->screenToWorldPoint(*screenPoint, depth);
 
 		*__output = tmp__output;
 	}
@@ -329,7 +329,7 @@ namespace bs
 	void ScriptCCamera::InternalScreenToViewPoint(ScriptCCamera* thisPtr, Vector2I* screenPoint, float depth, Vector3* __output)
 	{
 		Vector3 tmp__output;
-		tmp__output = thisPtr->getHandle()->screenToViewPoint(*screenPoint, depth);
+		tmp__output = thisPtr->GetHandle()->screenToViewPoint(*screenPoint, depth);
 
 		*__output = tmp__output;
 	}
@@ -337,7 +337,7 @@ namespace bs
 	void ScriptCCamera::InternalScreenToNdcPoint(ScriptCCamera* thisPtr, Vector2I* screenPoint, Vector2* __output)
 	{
 		Vector2 tmp__output;
-		tmp__output = thisPtr->getHandle()->screenToNdcPoint(*screenPoint);
+		tmp__output = thisPtr->GetHandle()->screenToNdcPoint(*screenPoint);
 
 		*__output = tmp__output;
 	}
@@ -345,7 +345,7 @@ namespace bs
 	void ScriptCCamera::InternalViewToWorldPoint(ScriptCCamera* thisPtr, Vector3* viewPoint, Vector3* __output)
 	{
 		Vector3 tmp__output;
-		tmp__output = thisPtr->getHandle()->viewToWorldPoint(*viewPoint);
+		tmp__output = thisPtr->GetHandle()->viewToWorldPoint(*viewPoint);
 
 		*__output = tmp__output;
 	}
@@ -353,7 +353,7 @@ namespace bs
 	void ScriptCCamera::InternalViewToScreenPoint(ScriptCCamera* thisPtr, Vector3* viewPoint, Vector2I* __output)
 	{
 		Vector2I tmp__output;
-		tmp__output = thisPtr->getHandle()->viewToScreenPoint(*viewPoint);
+		tmp__output = thisPtr->GetHandle()->viewToScreenPoint(*viewPoint);
 
 		*__output = tmp__output;
 	}
@@ -361,7 +361,7 @@ namespace bs
 	void ScriptCCamera::InternalViewToNdcPoint(ScriptCCamera* thisPtr, Vector3* viewPoint, Vector2* __output)
 	{
 		Vector2 tmp__output;
-		tmp__output = thisPtr->getHandle()->viewToNdcPoint(*viewPoint);
+		tmp__output = thisPtr->GetHandle()->viewToNdcPoint(*viewPoint);
 
 		*__output = tmp__output;
 	}
@@ -369,7 +369,7 @@ namespace bs
 	void ScriptCCamera::InternalNdcToWorldPoint(ScriptCCamera* thisPtr, Vector2* ndcPoint, float depth, Vector3* __output)
 	{
 		Vector3 tmp__output;
-		tmp__output = thisPtr->getHandle()->ndcToWorldPoint(*ndcPoint, depth);
+		tmp__output = thisPtr->GetHandle()->ndcToWorldPoint(*ndcPoint, depth);
 
 		*__output = tmp__output;
 	}
@@ -377,7 +377,7 @@ namespace bs
 	void ScriptCCamera::InternalNdcToViewPoint(ScriptCCamera* thisPtr, Vector2* ndcPoint, float depth, Vector3* __output)
 	{
 		Vector3 tmp__output;
-		tmp__output = thisPtr->getHandle()->ndcToViewPoint(*ndcPoint, depth);
+		tmp__output = thisPtr->GetHandle()->ndcToViewPoint(*ndcPoint, depth);
 
 		*__output = tmp__output;
 	}
@@ -385,7 +385,7 @@ namespace bs
 	void ScriptCCamera::InternalNdcToScreenPoint(ScriptCCamera* thisPtr, Vector2* ndcPoint, Vector2I* __output)
 	{
 		Vector2I tmp__output;
-		tmp__output = thisPtr->getHandle()->ndcToScreenPoint(*ndcPoint);
+		tmp__output = thisPtr->GetHandle()->ndcToScreenPoint(*ndcPoint);
 
 		*__output = tmp__output;
 	}
@@ -393,7 +393,7 @@ namespace bs
 	void ScriptCCamera::InternalScreenPointToRay(ScriptCCamera* thisPtr, Vector2I* screenPoint, Ray* __output)
 	{
 		Ray tmp__output;
-		tmp__output = thisPtr->getHandle()->screenPointToRay(*screenPoint);
+		tmp__output = thisPtr->GetHandle()->screenPointToRay(*screenPoint);
 
 		*__output = tmp__output;
 	}
@@ -401,7 +401,7 @@ namespace bs
 	void ScriptCCamera::InternalProjectPoint(ScriptCCamera* thisPtr, Vector3* point, Vector3* __output)
 	{
 		Vector3 tmp__output;
-		tmp__output = thisPtr->getHandle()->projectPoint(*point);
+		tmp__output = thisPtr->GetHandle()->projectPoint(*point);
 
 		*__output = tmp__output;
 	}
@@ -409,20 +409,20 @@ namespace bs
 	void ScriptCCamera::InternalUnprojectPoint(ScriptCCamera* thisPtr, Vector3* point, Vector3* __output)
 	{
 		Vector3 tmp__output;
-		tmp__output = thisPtr->getHandle()->unprojectPoint(*point);
+		tmp__output = thisPtr->GetHandle()->unprojectPoint(*point);
 
 		*__output = tmp__output;
 	}
 
 	void ScriptCCamera::InternalSetMain(ScriptCCamera* thisPtr, bool main)
 	{
-		thisPtr->getHandle()->setMain(main);
+		thisPtr->GetHandle()->SetMain(main);
 	}
 
 	bool ScriptCCamera::InternalIsMain(ScriptCCamera* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->getHandle()->isMain();
+		tmp__output = thisPtr->GetHandle()->isMain();
 
 		bool __output;
 		__output = tmp__output;

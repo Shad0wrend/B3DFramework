@@ -22,21 +22,21 @@ namespace bs { namespace ct
 	SkyboxMat::SkyboxMat()
 	{
 		if(mParams->hasTexture(GPT_FRAGMENT_PROGRAM, "gSkyTex"))
-			mParams->getTextureParam(GPT_FRAGMENT_PROGRAM, "gSkyTex", mSkyTextureParam);
+			mParams->GetTextureParam(GPT_FRAGMENT_PROGRAM, "gSkyTex", mSkyTextureParam);
 
 		mParamBuffer = gSkyboxParamDef.createBuffer();
 
 		if(mParams->hasParamBlock(GPT_FRAGMENT_PROGRAM, "Params"))
-			mParams->setParamBlockBuffer("Params", mParamBuffer);
+			mParams->SetParamBlockBuffer("Params", mParamBuffer);
 	}
 
 	void SkyboxMat::Bind(const SPtr<GpuParamBlockBuffer>& perCamera, const SPtr<Texture>& texture, const Color& solidColor)
 	{
-		mParams->setParamBlockBuffer("PerCamera", perCamera);
+		mParams->SetParamBlockBuffer("PerCamera", perCamera);
 
-		mSkyTextureParam.set(texture);
+		mSkyTextureParam.Set(texture);
 
-		gSkyboxParamDef.gClearColor.set(mParamBuffer, solidColor);
+		gSkyboxParamDef.gClearColor.Set(mParamBuffer, solidColor);
 		mParamBuffer->flushToGPU();
 
 		RendererMaterial::bind();
@@ -141,21 +141,21 @@ namespace bs { namespace ct
 		bool perViewBufferDirty = false;
 		if(mCamera)
 		{
-			const SPtr<Viewport>& viewport = mCamera->getViewport();
+			const SPtr<Viewport>& viewport = mCamera->GetViewport();
 			if(viewport)
 			{
 				UINT32 newTargetWidth = 0;
 				UINT32 newTargetHeight = 0;
 				if (mProperties.target.target != nullptr)
 				{
-					newTargetWidth = mProperties.target.target->getProperties().width;
-					newTargetHeight = mProperties.target.target->getProperties().height;
+					newTargetWidth = mProperties.target.target->GetProperties().width;
+					newTargetHeight = mProperties.target.target->GetProperties().height;
 				}
 
 				if(newTargetWidth != mProperties.target.targetWidth ||
 					newTargetHeight != mProperties.target.targetHeight)
 				{
-					mProperties.target.viewRect = viewport->getPixelArea();
+					mProperties.target.viewRect = viewport->GetPixelArea();
 					mProperties.target.targetWidth = newTargetWidth;
 					mProperties.target.targetHeight = newTargetHeight;
 					
@@ -168,7 +168,7 @@ namespace bs { namespace ct
 		if(mRenderSettings->temporalAA.enabled)
 		{
 			UINT32 positionCount = mRenderSettings->temporalAA.jitteredPositionCount;
-			positionCount = Math::clamp(positionCount, 4U, 128U);
+			positionCount = Math::Clamp(positionCount, 4U, 128U);
 			
 			UINT32 positionIndex = mTemporalPositionIdx % positionCount;
 			
@@ -189,15 +189,15 @@ namespace bs { namespace ct
 			{
 				constexpr float EPSILON = 1e-6f;
 				
-				float u1 = Math::haltonSequence<float>(positionIndex + 1, 2);
-				float u2 = Math::haltonSequence<float>(positionIndex + 1, 3);
+				float u1 = Math::HaltonSequence<float>(positionIndex + 1, 2);
+				float u2 = Math::HaltonSequence<float>(positionIndex + 1, 3);
 
 				float scale = (2.0f - mRenderSettings->temporalAA.sharpness) * 0.3f;
 
 				float angle = 2.0f * Math::PI * u2;
-				float radius = scale * Math::sqrt(-2.0f * Math::log(Math::max(u1, EPSILON)));
+				float radius = scale * Math::Sqrt(-2.0f * Math::Log(Math::Max(u1, EPSILON)));
 
-				mProperties.temporalJitter = Vector2(radius * Math::cos(angle), radius * Math::sin(angle));
+				mProperties.temporalJitter = Vector2(radius * Math::Cos(angle), radius * Math::Sin(angle));
 			}
 
 			Vector2 viewSize = Vector2((float)mProperties.target.targetWidth, (float)mProperties.target.targetHeight);
@@ -216,10 +216,10 @@ namespace bs { namespace ct
 
 		// Note: inverse view-projection can be cached, it doesn't change every frame
 		Matrix4 viewProj = mProperties.projTransform * mProperties.viewTransform;
-		Matrix4 invViewProj = viewProj.inverse();
+		Matrix4 invViewProj = viewProj.Inverse();
 		Matrix4 NDCToPrevNDC = mProperties.prevViewProjTransform * invViewProj;
 		
-		gPerCameraParamDef.gNDCToPrevNDC.set(mParamBuffer, NDCToPrevNDC);
+		gPerCameraParamDef.gNDCToPrevNDC.Set(mParamBuffer, NDCToPrevNDC);
 
 		mFrameTimings = frameInfo.timings;
 		mAsyncAnim = frameInfo.perFrameData.animation ? frameInfo.perFrameData.animation->async : false;
@@ -284,7 +284,7 @@ namespace bs { namespace ct
 				return true;
 			
 			// Need to render until the auto-exposure reaches the target exposure
-			float eyeAdaptationDiff = Math::abs(mCurrentEyeAdaptation - mPreviousEyeAdaptation);
+			float eyeAdaptationDiff = Math::Abs(mCurrentEyeAdaptation - mPreviousEyeAdaptation);
 			if (eyeAdaptationDiff > AUTO_EXPOSURE_TOLERANCE)
 				return true;
 		}
@@ -303,7 +303,7 @@ namespace bs { namespace ct
 		auto lastFinishedIter = mLuminanceUpdates.end();
 		for(auto iter = mLuminanceUpdates.begin(); iter != mLuminanceUpdates.end(); ++iter)
 		{
-			if (iter->commandBuffer->getState() == CommandBufferState::Executing)
+			if (iter->commandBuffer->GetState() == CommandBufferState::Executing)
 				break;
 
 			lastFinishedIter = iter;
@@ -344,7 +344,7 @@ namespace bs { namespace ct
 		if (mRenderSettings->enableAutoExposure)
 			return mPreviousEyeAdaptation;
 
-		return Math::pow(2.0f, mRenderSettings->exposureScale);
+		return Math::Pow(2.0f, mRenderSettings->exposureScale);
 	}
 
 	void RendererView::NotifyLuminanceUpdatedInternal(UINT64 frameIdx, SPtr<CommandBuffer> cb, SPtr<PooledRenderTexture> texture) const
@@ -545,7 +545,7 @@ namespace bs { namespace ct
 				else
 					techniqueIdx = renderElem.defaultTechniqueIdx;
 
-				ShaderFlags shaderFlags = renderElem.material->getShader()->getFlags();
+				ShaderFlags shaderFlags = renderElem.material->GetShader()->GetFlags();
 
 				// Note: I could keep renderables in multiple separate arrays, so I don't need to do the check here
 				if (shaderFlags.isSet(ShaderFlag::Transparent))
@@ -570,7 +570,7 @@ namespace bs { namespace ct
 			const AABox& boundingBox = sceneInfo.particleSystemCullInfos[i].bounds.getBox();
 			const float distanceToCamera = (mProperties.viewOrigin - boundingBox.getCenter()).length();
 
-			ShaderFlags shaderFlags = renderElem.material->getShader()->getFlags();
+			ShaderFlags shaderFlags = renderElem.material->GetShader()->GetFlags();
 
 			if (shaderFlags.isSet(ShaderFlag::Transparent))
 				mTransparentQueue->add(&renderElem, distanceToCamera, renderElem.defaultTechniqueIdx);
@@ -590,7 +590,7 @@ namespace bs { namespace ct
 			const DecalRenderElement& renderElem = sceneInfo.decals[i].renderElement;
 
 			// Note: I could keep renderables in multiple separate arrays, so I don't need to do the check here
-			ShaderFlags shaderFlags = renderElem.material->getShader()->getFlags();
+			ShaderFlags shaderFlags = renderElem.material->GetShader()->GetFlags();
 
 			// Decals are only supported using deferred rendering
 			if (shaderFlags.isSetAny(ShaderFlag::Transparent | ShaderFlag::Forward))
@@ -740,7 +740,7 @@ namespace bs { namespace ct
 		}
 		else
 		{
-			return mat.inverse();
+			return mat.Inverse();
 		}
 	}
 
@@ -751,12 +751,12 @@ namespace bs { namespace ct
 		Matrix4 invView = mProperties.viewTransform.inverseAffine();
 		Matrix4 invViewProj = invView * invProj;
 
-		gPerCameraParamDef.gMatProj.set(mParamBuffer, mProperties.projTransform);
-		gPerCameraParamDef.gMatView.set(mParamBuffer, mProperties.viewTransform);
-		gPerCameraParamDef.gMatViewProj.set(mParamBuffer, viewProj);
-		gPerCameraParamDef.gMatInvViewProj.set(mParamBuffer, invViewProj);
-		gPerCameraParamDef.gMatInvProj.set(mParamBuffer, invProj);
-		gPerCameraParamDef.gMatPrevViewProj.set(mParamBuffer, mProperties.prevViewProjTransform);
+		gPerCameraParamDef.gMatProj.Set(mParamBuffer, mProperties.projTransform);
+		gPerCameraParamDef.gMatView.Set(mParamBuffer, mProperties.viewTransform);
+		gPerCameraParamDef.gMatViewProj.Set(mParamBuffer, viewProj);
+		gPerCameraParamDef.gMatInvViewProj.Set(mParamBuffer, invViewProj);
+		gPerCameraParamDef.gMatInvProj.Set(mParamBuffer, invProj);
+		gPerCameraParamDef.gMatPrevViewProj.Set(mParamBuffer, mProperties.prevViewProjTransform);
 
 		// Construct a special inverse view-projection matrix that had projection entries that effect z and w eliminated.
 		// Used to transform a vector(clip_x, clip_y, view_z, view_w), where clip_x/clip_y are in clip space, and
@@ -771,16 +771,16 @@ namespace bs { namespace ct
 
 		Matrix4 NDCToPrevNDC = mProperties.prevViewProjTransform * invViewProj;
 		
-		gPerCameraParamDef.gMatScreenToWorld.set(mParamBuffer, invViewProj * projZ);
-		gPerCameraParamDef.gNDCToPrevNDC.set(mParamBuffer, NDCToPrevNDC);
-		gPerCameraParamDef.gViewDir.set(mParamBuffer, mProperties.viewDirection);
-		gPerCameraParamDef.gViewOrigin.set(mParamBuffer, mProperties.viewOrigin);
-		gPerCameraParamDef.gDeviceZToWorldZ.set(mParamBuffer, getDeviceZToViewZ(mProperties.projTransform));
-		gPerCameraParamDef.gNDCZToWorldZ.set(mParamBuffer, getNDCZToViewZ(mProperties.projTransform));
-		gPerCameraParamDef.gNDCZToDeviceZ.set(mParamBuffer, getNDCZToDeviceZ());
+		gPerCameraParamDef.gMatScreenToWorld.Set(mParamBuffer, invViewProj * projZ);
+		gPerCameraParamDef.gNDCToPrevNDC.Set(mParamBuffer, NDCToPrevNDC);
+		gPerCameraParamDef.gViewDir.Set(mParamBuffer, mProperties.viewDirection);
+		gPerCameraParamDef.gViewOrigin.Set(mParamBuffer, mProperties.viewOrigin);
+		gPerCameraParamDef.gDeviceZToWorldZ.Set(mParamBuffer, getDeviceZToViewZ(mProperties.projTransform));
+		gPerCameraParamDef.gNDCZToWorldZ.Set(mParamBuffer, getNDCZToViewZ(mProperties.projTransform));
+		gPerCameraParamDef.gNDCZToDeviceZ.Set(mParamBuffer, getNDCZToDeviceZ());
 
 		Vector2 nearFar(mProperties.nearPlane, mProperties.farPlane);
-		gPerCameraParamDef.gNearFar.set(mParamBuffer, nearFar);
+		gPerCameraParamDef.gNearFar.Set(mParamBuffer, nearFar);
 
 		const Rect2I& viewRect = mProperties.target.viewRect;
 
@@ -790,22 +790,22 @@ namespace bs { namespace ct
 		viewportRect[2] = viewRect.width;
 		viewportRect[3] = viewRect.height;
 
-		gPerCameraParamDef.gViewportRectangle.set(mParamBuffer, viewportRect);
+		gPerCameraParamDef.gViewportRectangle.Set(mParamBuffer, viewportRect);
 
 		Vector4 ndcToUV = getNDCToUV();
-		gPerCameraParamDef.gClipToUVScaleOffset.set(mParamBuffer, ndcToUV);
+		gPerCameraParamDef.gClipToUVScaleOffset.Set(mParamBuffer, ndcToUV);
 
 		Vector4 uvToNDC(
 			1.0f / ndcToUV.x,
 			1.0f / ndcToUV.y,
 			-ndcToUV.z / ndcToUV.x,
 			-ndcToUV.w / ndcToUV.y);
-		gPerCameraParamDef.gUVToClipScaleOffset.set(mParamBuffer, uvToNDC);
+		gPerCameraParamDef.gUVToClipScaleOffset.Set(mParamBuffer, uvToNDC);
 
 		if (!mRenderSettings->enableLighting)
-			gPerCameraParamDef.gAmbientFactor.set(mParamBuffer, 100.0f);
+			gPerCameraParamDef.gAmbientFactor.Set(mParamBuffer, 100.0f);
 		else
-			gPerCameraParamDef.gAmbientFactor.set(mParamBuffer, 0.0f);
+			gPerCameraParamDef.gAmbientFactor.Set(mParamBuffer, 0.0f);
 	}
 
 	Vector4 RendererView::GetNdcToUv() const
@@ -926,7 +926,7 @@ namespace bs { namespace ct
 		// Note: Per-view visibility for refl. probes currently isn't calculated
 		for (UINT32 i = 0; i < numViews; i++)
 		{
-			const auto& viewProps = mViews[i]->getProperties();
+			const auto& viewProps = mViews[i]->GetProperties();
 
 			// Don't recursively render reflection probes when generating reflection probe maps
 			if (viewProps.capturingReflections)
@@ -943,7 +943,7 @@ namespace bs { namespace ct
 		mVisibleLightData.update(sceneInfo, *this);
 		mVisibleReflProbeData.update(sceneInfo, *this);
 
-		const bool supportsClusteredForward = gRenderBeast()->getFeatureSet() == RenderBeastFeatureSet::Desktop;
+		const bool supportsClusteredForward = gRenderBeast()->GetFeatureSet() == RenderBeastFeatureSet::Desktop;
 		if(supportsClusteredForward)
 		{
 			for (UINT32 i = 0; i < numViews; i++)

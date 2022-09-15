@@ -90,7 +90,7 @@ namespace bs
 			MonoString* message = MonoUtil::stringToMono(entries[i].getMessage());
 
 			ScriptLogEntryData scriptEntry = { message, entries[i].getVerbosity(), entries[i].getCategory() };
-			output.set(i, scriptEntry);
+			output.Set(i, scriptEntry);
 		}
 
 		return output.getInternal();

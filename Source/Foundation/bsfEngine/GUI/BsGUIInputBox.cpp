@@ -46,17 +46,17 @@ namespace bs
 
 	GUIInputBox* GUIInputBox::Create(bool multiline, const String& styleName)
 	{
-		return new (bs_alloc<GUIInputBox>()) GUIInputBox(getStyleName<GUIInputBox>(styleName), GUIDimensions::Create(), multiline);
+		return new (bs_alloc<GUIInputBox>()) GUIInputBox(GetStyleName<GUIInputBox>(styleName), GUIDimensions::Create(), multiline);
 	}
 
 	GUIInputBox* GUIInputBox::Create(bool multiline, const GUIOptions& options, const String& styleName)
 	{
-		return new (bs_alloc<GUIInputBox>()) GUIInputBox(getStyleName<GUIInputBox>(styleName), GUIDimensions::Create(options), multiline);
+		return new (bs_alloc<GUIInputBox>()) GUIInputBox(GetStyleName<GUIInputBox>(styleName), GUIDimensions::Create(options), multiline);
 	}
 
 	GUIInputBox* GUIInputBox::Create(const GUIOptions& options, const String& styleName)
 	{
-		return new (bs_alloc<GUIInputBox>()) GUIInputBox(getStyleName<GUIInputBox>(styleName), GUIDimensions::Create(options), false);
+		return new (bs_alloc<GUIInputBox>()) GUIInputBox(GetStyleName<GUIInputBox>(styleName), GUIDimensions::Create(options), false);
 	}
 
 	void GUIInputBox::SetText(const String& text)
@@ -72,30 +72,30 @@ namespace bs
 
 		if(filterOkay)
 		{
-			Vector2I origSize = mDimensions.calculateSizeRange(GetOptimalSizeInternal()).optimal;
+			Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
 
 			mText = text;
-			mNumChars = UTF8::count(mText);
+			mNumChars = UTF8::Count(mText);
 
 			if (mHasFocus)
 			{
-				TEXT_SPRITE_DESC textDesc = getTextDesc();
+				TEXT_SPRITE_DESC textDesc = GetTextDesc();
 
-				gGUIManager().getInputCaretTool()->updateText(this, textDesc);
-				gGUIManager().getInputSelectionTool()->updateText(this, textDesc);
+				gGUIManager().GetInputCaretTool()->UpdateText(this, textDesc);
+				gGUIManager().GetInputSelectionTool()->UpdateText(this, textDesc);
 
 				if (mNumChars > 0)
-					gGUIManager().getInputCaretTool()->moveCaretToChar(mNumChars - 1, CARET_AFTER);
+					gGUIManager().GetInputCaretTool()->MoveCaretToChar(mNumChars - 1, CARET_AFTER);
 				else
-					gGUIManager().getInputCaretTool()->moveCaretToChar(0, CARET_BEFORE);
+					gGUIManager().GetInputCaretTool()->MoveCaretToChar(0, CARET_BEFORE);
 
 				if (mSelectionShown)
-					gGUIManager().getInputSelectionTool()->selectAll();
+					gGUIManager().GetInputSelectionTool()->SelectAll();
 
-				scrollTextToCaret();
+				ScrollTextToCaret();
 			}
 
-			Vector2I newSize = mDimensions.calculateSizeRange(GetOptimalSizeInternal()).optimal;
+			Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
 			if (origSize != newSize)
 				MarkLayoutAsDirtyInternal();
 			else
@@ -111,53 +111,53 @@ namespace bs
 		mImageDesc.borderRight = GetStyleInternal()->border.right;
 		mImageDesc.borderTop = GetStyleInternal()->border.top;
 		mImageDesc.borderBottom = GetStyleInternal()->border.bottom;
-		mImageDesc.color = getTint();
+		mImageDesc.color = GetTint();
 
-		const HSpriteTexture& activeTex = getActiveTexture();
-		if(SpriteTexture::checkIsLoaded(activeTex))
+		const HSpriteTexture& activeTex = GetActiveTexture();
+		if(SpriteTexture::CheckIsLoaded(activeTex))
 			mImageDesc.texture = activeTex;
 
-		mImageSprite->update(mImageDesc, (UINT64)GetParentWidgetInternal());
+		mImageSprite->Update(mImageDesc, (UINT64)GetParentWidgetInternal());
 
-		TEXT_SPRITE_DESC textDesc = getTextDesc();
-		mTextSprite->update(textDesc, (UINT64)GetParentWidgetInternal());
+		TEXT_SPRITE_DESC textDesc = GetTextDesc();
+		mTextSprite->Update(textDesc, (UINT64)GetParentWidgetInternal());
 
 		ImageSprite* caretSprite = nullptr;
-		if(mCaretShown && gGUIManager().getCaretBlinkState())
+		if(mCaretShown && gGUIManager().GetCaretBlinkState())
 		{
-			gGUIManager().getInputCaretTool()->updateText(this, textDesc); // TODO - These shouldn't be here. Only call this when one of these parameters changes.
-			gGUIManager().getInputCaretTool()->updateSprite();
+			gGUIManager().GetInputCaretTool()->UpdateText(this, textDesc); // TODO - These shouldn't be here. Only call this when one of these parameters changes.
+			gGUIManager().GetInputCaretTool()->UpdateSprite();
 
-			caretSprite = gGUIManager().getInputCaretTool()->getSprite();
+			caretSprite = gGUIManager().GetInputCaretTool()->GetSprite();
 		}
 
 		if(mSelectionShown)
 		{
-			gGUIManager().getInputSelectionTool()->updateText(this, textDesc); // TODO - These shouldn't be here. Only call this when one of these parameters changes.
-			gGUIManager().getInputSelectionTool()->updateSprite();
+			gGUIManager().GetInputSelectionTool()->UpdateText(this, textDesc); // TODO - These shouldn't be here. Only call this when one of these parameters changes.
+			gGUIManager().GetInputSelectionTool()->UpdateSprite();
 		}
 
 		// When text bounds are reduced the scroll needs to be adjusted so that
 		// input box isn't filled with mostly empty space.
 		Vector2I offset(mLayoutData.area.x, mLayoutData.area.y);
-		clampScrollToBounds(mTextSprite->getBounds(offset, Rect2I()));
+		ClampScrollToBounds(mTextSprite->GetBounds(offset, Rect2I()));
 
 		// Populate GUI render elements from the sprites
 		{
 			using T = impl::GUIRenderElementHelper;
-			T::populate({ T::SpriteInfo(mTextSprite, 1), T::SpriteInfo(mImageSprite, 3), T::SpriteInfo(caretSprite) }, mRenderElements);
+			T::Populate({ T::SpriteInfo(mTextSprite, 1), T::SpriteInfo(mImageSprite, 3), T::SpriteInfo(caretSprite) }, mRenderElements);
 
 			if (mSelectionShown)
 			{
-				const Vector<ImageSprite*>& sprites = gGUIManager().getInputSelectionTool()->getSprites();
+				const Vector<ImageSprite*>& sprites = gGUIManager().GetInputSelectionTool()->GetSprites();
 				for (auto& entry : sprites)
 				{
-					for (UINT32 i = 0; i < entry->getNumRenderElements(); i++)
+					for (UINT32 i = 0; i < entry->GetNumRenderElements(); i++)
 					{
-						mRenderElements.add(GUIRenderElement());
-						GUIRenderElement& renderElement = mRenderElements.back();
+						mRenderElements.Add(GUIRenderElement());
+						GUIRenderElement& renderElement = mRenderElements.Back();
 
-						entry->getRenderElementInfo(i, renderElement);
+						entry->GetRenderElementInfo(i, renderElement);
 
 						renderElement.depth = 2;
 						renderElement.type = GUIMeshType::Triangle;
@@ -166,19 +166,19 @@ namespace bs
 			}
 		}
 
-		GUIElement::updateRenderElementsInternal();
+		GUIElement::UpdateRenderElementsInternal();
 	}
 
 	void GUIInputBox::UpdateClippedBounds()
 	{
 		Vector2I offset(mLayoutData.area.x, mLayoutData.area.y);
-		mClippedBounds = mImageSprite->getBounds(offset, mLayoutData.getLocalClipRect());
+		mClippedBounds = mImageSprite->GetBounds(offset, mLayoutData.GetLocalClipRect());
 	}
 
 	Sprite* GUIInputBox::RenderElemToSprite(UINT32 renderElemIdx, UINT32& localRenderElemIdx) const
 	{
 		UINT32 oldNumElements = 0;
-		UINT32 newNumElements = oldNumElements + mTextSprite->getNumRenderElements();
+		UINT32 newNumElements = oldNumElements + mTextSprite->GetNumRenderElements();
 		if(renderElemIdx < newNumElements)
 		{
 			localRenderElemIdx = renderElemIdx - oldNumElements;
@@ -186,7 +186,7 @@ namespace bs
 		}
 
 		oldNumElements = newNumElements;
-		newNumElements += mImageSprite->getNumRenderElements();
+		newNumElements += mImageSprite->GetNumRenderElements();
 
 		if(renderElemIdx < newNumElements)
 		{
@@ -194,25 +194,25 @@ namespace bs
 			return mImageSprite;
 		}
 
-		if(mCaretShown && gGUIManager().getCaretBlinkState())
+		if(mCaretShown && gGUIManager().GetCaretBlinkState())
 		{
 			oldNumElements = newNumElements;
-			newNumElements += gGUIManager().getInputCaretTool()->getSprite()->getNumRenderElements();
+			newNumElements += gGUIManager().GetInputCaretTool()->GetSprite()->GetNumRenderElements();
 
 			if(renderElemIdx < newNumElements)
 			{
 				localRenderElemIdx = renderElemIdx - oldNumElements;
-				return gGUIManager().getInputCaretTool()->getSprite();
+				return gGUIManager().GetInputCaretTool()->GetSprite();
 			}
 		}
 
 		if(mSelectionShown)
 		{
-			const Vector<ImageSprite*>& sprites = gGUIManager().getInputSelectionTool()->getSprites();
+			const Vector<ImageSprite*>& sprites = gGUIManager().GetInputSelectionTool()->GetSprites();
 			for(auto& selectionSprite : sprites)
 			{
 				oldNumElements = newNumElements;
-				newNumElements += selectionSprite->getNumRenderElements();
+				newNumElements += selectionSprite->GetNumRenderElements();
 
 				if(renderElemIdx < newNumElements)
 				{
@@ -229,36 +229,36 @@ namespace bs
 	Vector2I GUIInputBox::RenderElemToOffset(UINT32 renderElemIdx) const
 	{
 		UINT32 oldNumElements = 0;
-		UINT32 newNumElements = oldNumElements + mTextSprite->getNumRenderElements();
+		UINT32 newNumElements = oldNumElements + mTextSprite->GetNumRenderElements();
 		if(renderElemIdx < newNumElements)
-			return getTextOffset();
+			return GetTextOffset();
 
 		oldNumElements = newNumElements;
-		newNumElements += mImageSprite->getNumRenderElements();
+		newNumElements += mImageSprite->GetNumRenderElements();
 
 		if(renderElemIdx < newNumElements)
 			return Vector2I(mLayoutData.area.x, mLayoutData.area.y);;
 
-		if(mCaretShown && gGUIManager().getCaretBlinkState())
+		if(mCaretShown && gGUIManager().GetCaretBlinkState())
 		{
 			oldNumElements = newNumElements;
-			newNumElements += gGUIManager().getInputCaretTool()->getSprite()->getNumRenderElements();
+			newNumElements += gGUIManager().GetInputCaretTool()->GetSprite()->GetNumRenderElements();
 
 			if(renderElemIdx < newNumElements)
-				return gGUIManager().getInputCaretTool()->getSpriteOffset();
+				return gGUIManager().GetInputCaretTool()->GetSpriteOffset();
 		}
 
 		if(mSelectionShown)
 		{
 			UINT32 spriteIdx = 0;
-			const Vector<ImageSprite*>& sprites = gGUIManager().getInputSelectionTool()->getSprites();
+			const Vector<ImageSprite*>& sprites = gGUIManager().GetInputSelectionTool()->GetSprites();
 			for(auto& selectionSprite : sprites)
 			{
 				oldNumElements = newNumElements;
-				newNumElements += selectionSprite->getNumRenderElements();
+				newNumElements += selectionSprite->GetNumRenderElements();
 
 				if(renderElemIdx < newNumElements)
-					return gGUIManager().getInputSelectionTool()->getSelectionSpriteOffset(spriteIdx);
+					return gGUIManager().GetInputSelectionTool()->GetSelectionSpriteOffset(spriteIdx);
 
 				spriteIdx++;
 			}
@@ -270,38 +270,38 @@ namespace bs
 	Rect2I GUIInputBox::RenderElemToClipRect(UINT32 renderElemIdx) const
 	{
 		UINT32 oldNumElements = 0;
-		UINT32 newNumElements = oldNumElements + mTextSprite->getNumRenderElements();
+		UINT32 newNumElements = oldNumElements + mTextSprite->GetNumRenderElements();
 		if(renderElemIdx < newNumElements)
-			return getTextClipRect();
+			return GetTextClipRect();
 
 		oldNumElements = newNumElements;
-		newNumElements += mImageSprite->getNumRenderElements();
+		newNumElements += mImageSprite->GetNumRenderElements();
 
 		if(renderElemIdx < newNumElements)
-			return mLayoutData.getLocalClipRect();
+			return mLayoutData.GetLocalClipRect();
 
-		if(mCaretShown && gGUIManager().getCaretBlinkState())
+		if(mCaretShown && gGUIManager().GetCaretBlinkState())
 		{
 			oldNumElements = newNumElements;
-			newNumElements += gGUIManager().getInputCaretTool()->getSprite()->getNumRenderElements();
+			newNumElements += gGUIManager().GetInputCaretTool()->GetSprite()->GetNumRenderElements();
 
 			if(renderElemIdx < newNumElements)
 			{
-				return gGUIManager().getInputCaretTool()->getSpriteClipRect(getTextClipRect());
+				return gGUIManager().GetInputCaretTool()->GetSpriteClipRect(GetTextClipRect());
 			}
 		}
 
 		if(mSelectionShown)
 		{
 			UINT32 spriteIdx = 0;
-			const Vector<ImageSprite*>& sprites = gGUIManager().getInputSelectionTool()->getSprites();
+			const Vector<ImageSprite*>& sprites = gGUIManager().GetInputSelectionTool()->GetSprites();
 			for(auto& selectionSprite : sprites)
 			{
 				oldNumElements = newNumElements;
-				newNumElements += selectionSprite->getNumRenderElements();
+				newNumElements += selectionSprite->GetNumRenderElements();
 
 				if(renderElemIdx < newNumElements)
-					return gGUIManager().getInputSelectionTool()->getSelectionSpriteClipRect(spriteIdx, getTextClipRect());
+					return gGUIManager().GetInputSelectionTool()->GetSelectionSpriteClipRect(spriteIdx, GetTextClipRect());
 
 				spriteIdx++;
 			}
@@ -315,14 +315,14 @@ namespace bs
 		UINT32 imageWidth = 0;
 		UINT32 imageHeight = 0;
 
-		const HSpriteTexture& activeTex = getActiveTexture();
-		if(SpriteTexture::checkIsLoaded(activeTex))
+		const HSpriteTexture& activeTex = GetActiveTexture();
+		if(SpriteTexture::CheckIsLoaded(activeTex))
 		{
-			imageWidth = activeTex->getWidth();
-			imageHeight = activeTex->getHeight();
+			imageWidth = activeTex->GetWidth();
+			imageHeight = activeTex->GetHeight();
 		}
 
-		Vector2I contentSize = GUIHelper::calcOptimalContentsSize(mText, *GetStyleInternal(), GetDimensionsInternal());
+		Vector2I contentSize = GUIHelper::CalcOptimalContentsSize(mText, *GetStyleInternal(), GetDimensionsInternal());
 		UINT32 contentWidth = std::max(imageWidth, (UINT32)contentSize.x);
 		UINT32 contentHeight = std::max(imageHeight, (UINT32)contentSize.y);
 
@@ -336,7 +336,7 @@ namespace bs
 
 	Rect2I GUIInputBox::GetTextInputRectInternal() const
 	{
-		Rect2I textBounds = getCachedContentBounds();
+		Rect2I textBounds = GetCachedContentBounds();
 		textBounds.x -= mLayoutData.area.x;
 		textBounds.y -= mLayoutData.area.y;
 
@@ -374,25 +374,25 @@ namespace bs
 		UINT32 indexStride = sizeof(UINT32);
 
 		UINT32 localRenderElementIdx;
-		Sprite* sprite = renderElemToSprite(renderElementIdx, localRenderElementIdx);
-		Vector2I layoutOffset = renderElemToOffset(renderElementIdx) + offset;
-		Rect2I clipRect = renderElemToClipRect(renderElementIdx);
+		Sprite* sprite = RenderElemToSprite(renderElementIdx, localRenderElementIdx);
+		Vector2I layoutOffset = RenderElemToOffset(renderElementIdx) + offset;
+		Rect2I clipRect = RenderElemToClipRect(renderElementIdx);
 
-		sprite->fillBuffer(vertices, uvs, indices, vertexOffset, indexOffset, maxNumVerts, maxNumIndices, vertexStride,
+		sprite->FillBuffer(vertices, uvs, indices, vertexOffset, indexOffset, maxNumVerts, maxNumIndices, vertexStride,
 			indexStride, localRenderElementIdx, layoutOffset, clipRect);
 	}
 
 	bool GUIInputBox::MouseEventInternal(const GUIMouseEvent& ev)
 	{
-		if(ev.getType() == GUIMouseEventType::MouseOver)
+		if(ev.GetType() == GUIMouseEventType::MouseOver)
 		{
 			if (!IsDisabledInternal())
 			{
 				if (!mHasFocus)
 				{
-					Vector2I origSize = mDimensions.calculateSizeRange(GetOptimalSizeInternal()).optimal;
+					Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
 					mState = State::Hover;
-					Vector2I newSize = mDimensions.calculateSizeRange(GetOptimalSizeInternal()).optimal;
+					Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
 
 					if (origSize != newSize)
 						MarkLayoutAsDirtyInternal();
@@ -405,15 +405,15 @@ namespace bs
 
 			return true;
 		}
-		else if(ev.getType() == GUIMouseEventType::MouseOut)
+		else if(ev.GetType() == GUIMouseEventType::MouseOut)
 		{
 			if (!IsDisabledInternal())
 			{
 				if (!mHasFocus)
 				{
-					Vector2I origSize = mDimensions.calculateSizeRange(GetOptimalSizeInternal()).optimal;
+					Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
 					mState = State::Normal;
-					Vector2I newSize = mDimensions.calculateSizeRange(GetOptimalSizeInternal()).optimal;
+					Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
 
 					if (origSize != newSize)
 						MarkLayoutAsDirtyInternal();
@@ -426,97 +426,97 @@ namespace bs
 
 			return true;
 		}
-		else if(ev.getType() == GUIMouseEventType::MouseDoubleClick && ev.getButton() == GUIMouseButton::Left)
+		else if(ev.GetType() == GUIMouseEventType::MouseDoubleClick && ev.GetButton() == GUIMouseButton::Left)
 		{
 			if (!IsDisabledInternal())
 			{
-				showSelection(0);
-				gGUIManager().getInputSelectionTool()->selectAll();
+				ShowSelection(0);
+				gGUIManager().GetInputSelectionTool()->SelectAll();
 
 				MarkContentAsDirtyInternal();
 			}
 
 			return true;
 		}
-		else if(ev.getType() == GUIMouseEventType::MouseDown && ev.getButton() == GUIMouseButton::Left)
+		else if(ev.GetType() == GUIMouseEventType::MouseDown && ev.GetButton() == GUIMouseButton::Left)
 		{
 			if (!IsDisabledInternal())
 			{
-				if (ev.isShiftDown())
+				if (ev.IsShiftDown())
 				{
 					if (!mSelectionShown)
-						showSelection(gGUIManager().getInputCaretTool()->getCaretPos());
+						ShowSelection(gGUIManager().GetInputCaretTool()->GetCaretPos());
 				}
 				else
 				{
-					bool focusGainedThisFrame = mHasFocus && mFocusGainedFrame == gTime().getFrameIdx();
+					bool focusGainedThisFrame = mHasFocus && mFocusGainedFrame == gTime().GetFrameIdx();
 
 					// We want to select all on focus gain, so don't override that
 					if(!focusGainedThisFrame)
-						clearSelection();
+						ClearSelection();
 
-					showCaret();
+					ShowCaret();
 				}
 
 				if (mNumChars > 0)
-					gGUIManager().getInputCaretTool()->moveCaretToPos(ev.getPosition());
+					gGUIManager().GetInputCaretTool()->MoveCaretToPos(ev.GetPosition());
 				else
-					gGUIManager().getInputCaretTool()->moveCaretToStart();
+					gGUIManager().GetInputCaretTool()->MoveCaretToStart();
 
-				if (ev.isShiftDown())
-					gGUIManager().getInputSelectionTool()->moveSelectionToCaret(gGUIManager().getInputCaretTool()->getCaretPos());
+				if (ev.IsShiftDown())
+					gGUIManager().GetInputSelectionTool()->MoveSelectionToCaret(gGUIManager().GetInputCaretTool()->GetCaretPos());
 
-				scrollTextToCaret();
+				ScrollTextToCaret();
 				MarkContentAsDirtyInternal();
 			}
 
 			return true;
 		}
-		else if(ev.getType() == GUIMouseEventType::MouseDragStart)
+		else if(ev.GetType() == GUIMouseEventType::MouseDragStart)
 		{
 			if (!IsDisabledInternal())
 			{
-				if (!ev.isShiftDown())
+				if (!ev.IsShiftDown())
 				{
 					mDragInProgress = true;
 
-					UINT32 caretPos = gGUIManager().getInputCaretTool()->getCaretPos();
-					showSelection(caretPos);
-					gGUIManager().getInputSelectionTool()->selectionDragStart(caretPos);
+					UINT32 caretPos = gGUIManager().GetInputCaretTool()->GetCaretPos();
+					ShowSelection(caretPos);
+					gGUIManager().GetInputSelectionTool()->SelectionDragStart(caretPos);
 					MarkContentAsDirtyInternal();
 
 					return true;
 				}
 			}
 		}
-		else if(ev.getType() == GUIMouseEventType::MouseDragEnd)
+		else if(ev.GetType() == GUIMouseEventType::MouseDragEnd)
 		{
 			if (!IsDisabledInternal())
 			{
-				if (!ev.isShiftDown())
+				if (!ev.IsShiftDown())
 				{
 					mDragInProgress = false;
 
-					gGUIManager().getInputSelectionTool()->selectionDragEnd();
+					gGUIManager().GetInputSelectionTool()->SelectionDragEnd();
 					MarkContentAsDirtyInternal();
 					return true;
 				}
 			}
 		}
-		else if(ev.getType() == GUIMouseEventType::MouseDrag)
+		else if(ev.GetType() == GUIMouseEventType::MouseDrag)
 		{
 			if (!IsDisabledInternal())
 			{
-				if (!ev.isShiftDown())
+				if (!ev.IsShiftDown())
 				{
 					if (mNumChars > 0)
-						gGUIManager().getInputCaretTool()->moveCaretToPos(ev.getPosition());
+						gGUIManager().GetInputCaretTool()->MoveCaretToPos(ev.GetPosition());
 					else
-						gGUIManager().getInputCaretTool()->moveCaretToStart();
+						gGUIManager().GetInputCaretTool()->MoveCaretToStart();
 
-					gGUIManager().getInputSelectionTool()->selectionDragUpdate(gGUIManager().getInputCaretTool()->getCaretPos());
+					gGUIManager().GetInputSelectionTool()->SelectionDragUpdate(gGUIManager().GetInputCaretTool()->GetCaretPos());
 
-					scrollTextToCaret();
+					ScrollTextToCaret();
 					MarkContentAsDirtyInternal();
 					return true;
 				}
@@ -531,19 +531,19 @@ namespace bs
 		if (IsDisabledInternal())
 			return false;
 
-		Vector2I origSize = mDimensions.calculateSizeRange(GetOptimalSizeInternal()).optimal;
+		Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
 
 		if(mSelectionShown)
-			deleteSelectedText(true);
+			DeleteSelectedText(true);
 
-		UINT32 charIdx = gGUIManager().getInputCaretTool()->getCharIdxAtCaretPos();
+		UINT32 charIdx = gGUIManager().GetInputCaretTool()->GetCharIdxAtCaretPos();
 
 		bool filterOkay = true;
 		if(mFilter != nullptr)
 		{
 			String newText = mText;
-			UINT32 byteIdx = UTF8::charToByteIndex(mText, charIdx);
-			String utf8chars = UTF8::fromUTF32(U32String(1, ev.getInputChar()));
+			UINT32 byteIdx = UTF8::CharToByteIndex(mText, charIdx);
+			String utf8chars = UTF8::FromUtF32(U32String(1, ev.GetInputChar()));
 			newText.insert(newText.begin() + byteIdx, utf8chars.begin(), utf8chars.end());
 
 			filterOkay = mFilter(newText);
@@ -551,16 +551,16 @@ namespace bs
 
 		if(filterOkay)
 		{
-			insertChar(charIdx, ev.getInputChar());
+			InsertChar(charIdx, ev.GetInputChar());
 
-			gGUIManager().getInputCaretTool()->moveCaretToChar(charIdx, CARET_AFTER);
-			scrollTextToCaret();
+			gGUIManager().GetInputCaretTool()->MoveCaretToChar(charIdx, CARET_AFTER);
+			ScrollTextToCaret();
 
-			if(!onValueChanged.empty())
+			if(!onValueChanged.Empty())
 				onValueChanged(mText);
 		}
 
-		Vector2I newSize = mDimensions.calculateSizeRange(GetOptimalSizeInternal()).optimal;
+		Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
 		if (origSize != newSize)
 			MarkLayoutAsDirtyInternal();
 		else
@@ -576,24 +576,24 @@ namespace bs
 
 		bool baseReturn = GUIElement::CommandEventInternal(ev);
 
-		if(ev.getType() == GUICommandEventType::Redraw)
+		if(ev.GetType() == GUICommandEventType::Redraw)
 		{
 			MarkContentAsDirtyInternal();
 			return true;
 		}
 
-		if(ev.getType() == GUICommandEventType::FocusGained)
+		if(ev.GetType() == GUICommandEventType::FocusGained)
 		{
-			Vector2I origSize = mDimensions.calculateSizeRange(GetOptimalSizeInternal()).optimal;
+			Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
 			mState = State::Focused;
 
-			showSelection(0);
-			gGUIManager().getInputSelectionTool()->selectAll();
+			ShowSelection(0);
+			gGUIManager().GetInputSelectionTool()->SelectAll();
 
 			mHasFocus = true;
-			mFocusGainedFrame = gTime().getFrameIdx();
+			mFocusGainedFrame = gTime().GetFrameIdx();
 
-			Vector2I newSize = mDimensions.calculateSizeRange(GetOptimalSizeInternal()).optimal;
+			Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
 			if (origSize != newSize)
 				MarkLayoutAsDirtyInternal();
 			else
@@ -602,17 +602,17 @@ namespace bs
 			return true;
 		}
 		
-		if(ev.getType() == GUICommandEventType::FocusLost)
+		if(ev.GetType() == GUICommandEventType::FocusLost)
 		{
-			Vector2I origSize = mDimensions.calculateSizeRange(GetOptimalSizeInternal()).optimal;
+			Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
 			mState = State::Normal;
 
-			hideCaret();
-			clearSelection();
+			HideCaret();
+			ClearSelection();
 
 			mHasFocus = false;
 
-			Vector2I newSize = mDimensions.calculateSizeRange(GetOptimalSizeInternal()).optimal;
+			Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
 			if (origSize != newSize)
 				MarkLayoutAsDirtyInternal();
 			else
@@ -621,18 +621,18 @@ namespace bs
 			return true;
 		}
 		
-		if(ev.getType() == GUICommandEventType::Backspace)
+		if(ev.GetType() == GUICommandEventType::Backspace)
 		{
 			if(mNumChars > 0)
 			{
-				Vector2I origSize = mDimensions.calculateSizeRange(GetOptimalSizeInternal()).optimal;
+				Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
 				if(mSelectionShown)
 				{
-					deleteSelectedText();
+					DeleteSelectedText();
 				}
 				else
 				{
-					UINT32 charIdx = gGUIManager().getInputCaretTool()->getCharIdxAtCaretPos() - 1;
+					UINT32 charIdx = gGUIManager().GetInputCaretTool()->GetCharIdxAtCaretPos() - 1;
 
 					if(charIdx < mNumChars)
 					{
@@ -640,8 +640,8 @@ namespace bs
 						if(mFilter != nullptr)
 						{
 							String newText = mText;
-							UINT32 byteIdx = UTF8::charToByteIndex(mText, charIdx);
-							UINT32 byteCount = UTF8::charByteCount(mText, charIdx);
+							UINT32 byteIdx = UTF8::CharToByteIndex(mText, charIdx);
+							UINT32 byteCount = UTF8::CharByteCount(mText, charIdx);
 							newText.erase(byteIdx, byteCount);
 
 							filterOkay = mFilter(newText);
@@ -649,26 +649,26 @@ namespace bs
 
 						if(filterOkay)
 						{
-							eraseChar(charIdx);
+							EraseChar(charIdx);
 
 							if (charIdx > 0)
 							{
 								charIdx--;
 
-								gGUIManager().getInputCaretTool()->moveCaretToChar(charIdx, CARET_AFTER);
+								gGUIManager().GetInputCaretTool()->MoveCaretToChar(charIdx, CARET_AFTER);
 							}
 							else
-								gGUIManager().getInputCaretTool()->moveCaretToChar(charIdx, CARET_BEFORE);
+								gGUIManager().GetInputCaretTool()->MoveCaretToChar(charIdx, CARET_BEFORE);
 
-							scrollTextToCaret();
+							ScrollTextToCaret();
 
-							if(!onValueChanged.empty())
+							if(!onValueChanged.Empty())
 								onValueChanged(mText);
 						}
 					}
 				}
 
-				Vector2I newSize = mDimensions.calculateSizeRange(GetOptimalSizeInternal()).optimal;
+				Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
 				if (origSize != newSize)
 					MarkLayoutAsDirtyInternal();
 				else
@@ -678,26 +678,26 @@ namespace bs
 			return true;
 		}
 
-		if(ev.getType() == GUICommandEventType::Delete)
+		if(ev.GetType() == GUICommandEventType::Delete)
 		{
 			if(mNumChars > 0)
 			{
-				Vector2I origSize = mDimensions.calculateSizeRange(GetOptimalSizeInternal()).optimal;
+				Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
 				if(mSelectionShown)
 				{
-					deleteSelectedText();
+					DeleteSelectedText();
 				}
 				else
 				{
-					UINT32 charIdx = gGUIManager().getInputCaretTool()->getCharIdxAtCaretPos();
+					UINT32 charIdx = gGUIManager().GetInputCaretTool()->GetCharIdxAtCaretPos();
 					if(charIdx < mNumChars)
 					{
 						bool filterOkay = true;
 						if(mFilter != nullptr)
 						{
 							String newText = mText;
-							UINT32 byteIdx = UTF8::charToByteIndex(mText, charIdx);
-							UINT32 byteCount = UTF8::charByteCount(mText, charIdx);
+							UINT32 byteIdx = UTF8::CharToByteIndex(mText, charIdx);
+							UINT32 byteCount = UTF8::CharByteCount(mText, charIdx);
 							newText.erase(byteIdx, byteCount);
 
 							filterOkay = mFilter(newText);
@@ -705,22 +705,22 @@ namespace bs
 
 						if(filterOkay)
 						{
-							eraseChar(charIdx);
+							EraseChar(charIdx);
 
 							if(charIdx > 0)
 								charIdx--;
 
-							gGUIManager().getInputCaretTool()->moveCaretToChar(charIdx, CARET_AFTER);
+							gGUIManager().GetInputCaretTool()->MoveCaretToChar(charIdx, CARET_AFTER);
 
-							scrollTextToCaret();
+							ScrollTextToCaret();
 
-							if(!onValueChanged.empty())
+							if(!onValueChanged.Empty())
 								onValueChanged(mText);
 						}
 					}
 				}
 
-				Vector2I newSize = mDimensions.calculateSizeRange(GetOptimalSizeInternal()).optimal;
+				Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
 				if (origSize != newSize)
 					MarkLayoutAsDirtyInternal();
 				else
@@ -730,150 +730,150 @@ namespace bs
 			return true;
 		}
 
-		if(ev.getType() == GUICommandEventType::MoveLeft)
+		if(ev.GetType() == GUICommandEventType::MoveLeft)
 		{
 			if(mSelectionShown)
 			{
-				UINT32 selStart = gGUIManager().getInputSelectionTool()->getSelectionStart();
-				clearSelection();
+				UINT32 selStart = gGUIManager().GetInputSelectionTool()->GetSelectionStart();
+				ClearSelection();
 
 				if (!mCaretShown)
-					showCaret();
+					ShowCaret();
 
 				if(selStart > 0)
-					gGUIManager().getInputCaretTool()->moveCaretToChar(selStart - 1, CARET_AFTER);
+					gGUIManager().GetInputCaretTool()->MoveCaretToChar(selStart - 1, CARET_AFTER);
 				else
-					gGUIManager().getInputCaretTool()->moveCaretToChar(0, CARET_BEFORE);
+					gGUIManager().GetInputCaretTool()->MoveCaretToChar(0, CARET_BEFORE);
 			}
 			else
-				gGUIManager().getInputCaretTool()->moveCaretLeft();
+				gGUIManager().GetInputCaretTool()->MoveCaretLeft();
 
-			scrollTextToCaret();
+			ScrollTextToCaret();
 			MarkContentAsDirtyInternal();
 			return true;
 		}
 
-		if(ev.getType() == GUICommandEventType::SelectLeft)
+		if(ev.GetType() == GUICommandEventType::SelectLeft)
 		{
 			if(!mSelectionShown)
-				showSelection(gGUIManager().getInputCaretTool()->getCaretPos());
+				ShowSelection(gGUIManager().GetInputCaretTool()->GetCaretPos());
 
-			gGUIManager().getInputCaretTool()->moveCaretLeft();
-			gGUIManager().getInputSelectionTool()->moveSelectionToCaret(gGUIManager().getInputCaretTool()->getCaretPos());
+			gGUIManager().GetInputCaretTool()->MoveCaretLeft();
+			gGUIManager().GetInputSelectionTool()->MoveSelectionToCaret(gGUIManager().GetInputCaretTool()->GetCaretPos());
 
-			scrollTextToCaret();
+			ScrollTextToCaret();
 			MarkContentAsDirtyInternal();
 			return true;
 		}
 
-		if(ev.getType() == GUICommandEventType::MoveRight)
+		if(ev.GetType() == GUICommandEventType::MoveRight)
 		{
 			if(mSelectionShown)
 			{
-				UINT32 selEnd = gGUIManager().getInputSelectionTool()->getSelectionEnd();
-				clearSelection();
+				UINT32 selEnd = gGUIManager().GetInputSelectionTool()->GetSelectionEnd();
+				ClearSelection();
 
 				if (!mCaretShown)
-					showCaret();
+					ShowCaret();
 
 				if(selEnd > 0)
-					gGUIManager().getInputCaretTool()->moveCaretToChar(selEnd - 1, CARET_AFTER);
+					gGUIManager().GetInputCaretTool()->MoveCaretToChar(selEnd - 1, CARET_AFTER);
 				else
-					gGUIManager().getInputCaretTool()->moveCaretToChar(0, CARET_BEFORE);
+					gGUIManager().GetInputCaretTool()->MoveCaretToChar(0, CARET_BEFORE);
 			}
 			else
-				gGUIManager().getInputCaretTool()->moveCaretRight();
+				gGUIManager().GetInputCaretTool()->MoveCaretRight();
 
-			scrollTextToCaret();
+			ScrollTextToCaret();
 			MarkContentAsDirtyInternal();
 			return true;
 		}
 
-		if(ev.getType() == GUICommandEventType::SelectRight)
+		if(ev.GetType() == GUICommandEventType::SelectRight)
 		{
 			if(!mSelectionShown)
-				showSelection(gGUIManager().getInputCaretTool()->getCaretPos());
+				ShowSelection(gGUIManager().GetInputCaretTool()->GetCaretPos());
 
-			gGUIManager().getInputCaretTool()->moveCaretRight();
-			gGUIManager().getInputSelectionTool()->moveSelectionToCaret(gGUIManager().getInputCaretTool()->getCaretPos());
+			gGUIManager().GetInputCaretTool()->MoveCaretRight();
+			gGUIManager().GetInputSelectionTool()->MoveSelectionToCaret(gGUIManager().GetInputCaretTool()->GetCaretPos());
 
-			scrollTextToCaret();
+			ScrollTextToCaret();
 			MarkContentAsDirtyInternal();
 			return true;
 		}
 
-		if(ev.getType() == GUICommandEventType::MoveUp)
+		if(ev.GetType() == GUICommandEventType::MoveUp)
 		{
 			if (mSelectionShown)
-				clearSelection();
+				ClearSelection();
 
 			if (!mCaretShown)
-				showCaret();
+				ShowCaret();
 
-			gGUIManager().getInputCaretTool()->moveCaretUp();
+			gGUIManager().GetInputCaretTool()->MoveCaretUp();
 
-			scrollTextToCaret();
+			ScrollTextToCaret();
 			MarkContentAsDirtyInternal();
 			return true;
 		}
 
-		if(ev.getType() == GUICommandEventType::SelectUp)
+		if(ev.GetType() == GUICommandEventType::SelectUp)
 		{
 			if(!mSelectionShown)
-				showSelection(gGUIManager().getInputCaretTool()->getCaretPos());;
+				ShowSelection(gGUIManager().GetInputCaretTool()->GetCaretPos());;
 
-			gGUIManager().getInputCaretTool()->moveCaretUp();
-			gGUIManager().getInputSelectionTool()->moveSelectionToCaret(gGUIManager().getInputCaretTool()->getCaretPos());
+			gGUIManager().GetInputCaretTool()->MoveCaretUp();
+			gGUIManager().GetInputSelectionTool()->MoveSelectionToCaret(gGUIManager().GetInputCaretTool()->GetCaretPos());
 
-			scrollTextToCaret();
+			ScrollTextToCaret();
 			MarkContentAsDirtyInternal();
 			return true;
 		}
 
-		if(ev.getType() == GUICommandEventType::MoveDown)
+		if(ev.GetType() == GUICommandEventType::MoveDown)
 		{
 			if (mSelectionShown)
-				clearSelection();
+				ClearSelection();
 
 			if (!mCaretShown)
-				showCaret();
+				ShowCaret();
 
-			gGUIManager().getInputCaretTool()->moveCaretDown();
+			gGUIManager().GetInputCaretTool()->MoveCaretDown();
 
-			scrollTextToCaret();
+			ScrollTextToCaret();
 			MarkContentAsDirtyInternal();
 			return true;
 		}
 
-		if(ev.getType() == GUICommandEventType::SelectDown)
+		if(ev.GetType() == GUICommandEventType::SelectDown)
 		{
 			if(!mSelectionShown)
-				showSelection(gGUIManager().getInputCaretTool()->getCaretPos());
+				ShowSelection(gGUIManager().GetInputCaretTool()->GetCaretPos());
 
-			gGUIManager().getInputCaretTool()->moveCaretDown();
-			gGUIManager().getInputSelectionTool()->moveSelectionToCaret(gGUIManager().getInputCaretTool()->getCaretPos());
+			gGUIManager().GetInputCaretTool()->MoveCaretDown();
+			gGUIManager().GetInputSelectionTool()->MoveSelectionToCaret(gGUIManager().GetInputCaretTool()->GetCaretPos());
 
-			scrollTextToCaret();
+			ScrollTextToCaret();
 			MarkContentAsDirtyInternal();
 			return true;
 		}
 
-		if(ev.getType() == GUICommandEventType::Return)
+		if(ev.GetType() == GUICommandEventType::Return)
 		{
 			if (mIsMultiline)
 			{
-				Vector2I origSize = mDimensions.calculateSizeRange(GetOptimalSizeInternal()).optimal;
+				Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
 
 				if (mSelectionShown)
-					deleteSelectedText();
+					DeleteSelectedText();
 
-				UINT32 charIdx = gGUIManager().getInputCaretTool()->getCharIdxAtCaretPos();
+				UINT32 charIdx = gGUIManager().GetInputCaretTool()->GetCharIdxAtCaretPos();
 
 				bool filterOkay = true;
 				if (mFilter != nullptr)
 				{
 					String newText = mText;
-					UINT32 byteIdx = UTF8::charToByteIndex(mText, charIdx);
+					UINT32 byteIdx = UTF8::CharToByteIndex(mText, charIdx);
 					newText.insert(newText.begin() + byteIdx, '\n');
 
 					filterOkay = mFilter(newText);
@@ -881,16 +881,16 @@ namespace bs
 
 				if (filterOkay)
 				{
-					insertChar(charIdx, '\n');
+					InsertChar(charIdx, '\n');
 
-					gGUIManager().getInputCaretTool()->moveCaretRight();
-					scrollTextToCaret();
+					gGUIManager().GetInputCaretTool()->MoveCaretRight();
+					ScrollTextToCaret();
 
-					if (!onValueChanged.empty())
+					if (!onValueChanged.Empty())
 						onValueChanged(mText);
 				}
 
-				Vector2I newSize = mDimensions.calculateSizeRange(GetOptimalSizeInternal()).optimal;
+				Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
 				if (origSize != newSize)
 					MarkLayoutAsDirtyInternal();
 				else
@@ -900,7 +900,7 @@ namespace bs
 			}
 		}
 
-		if (ev.getType() == GUICommandEventType::Confirm)
+		if (ev.GetType() == GUICommandEventType::Confirm)
 		{
 			onConfirm();
 			return true;
@@ -914,27 +914,27 @@ namespace bs
 		if (IsDisabledInternal())
 			return false;
 
-		if(ev.getButton() == mCutVB)
+		if(ev.GetButton() == mCutVB)
 		{
-			cutText();
+			CutText();
 
 			return true;
 		}
-		else if(ev.getButton() == mCopyVB)
+		else if(ev.GetButton() == mCopyVB)
 		{
-			copyText();
+			CopyText();
 
 			return true;
 		}
-		else if(ev.getButton() == mPasteVB)
+		else if(ev.GetButton() == mPasteVB)
 		{
-			pasteText();
+			PasteText();
 			return true;
 		}
-		else if(ev.getButton() == mSelectAllVB)
+		else if(ev.GetButton() == mSelectAllVB)
 		{
-			showSelection(0);
-			gGUIManager().getInputSelectionTool()->selectAll();
+			ShowSelection(0);
+			gGUIManager().GetInputSelectionTool()->SelectAll();
 			MarkContentAsDirtyInternal();
 
 			return true;
@@ -947,8 +947,8 @@ namespace bs
 	{
 		mCaretShown = true;
 
-		TEXT_SPRITE_DESC textDesc = getTextDesc();
-		gGUIManager().getInputCaretTool()->updateText(this, textDesc);
+		TEXT_SPRITE_DESC textDesc = GetTextDesc();
+		gGUIManager().GetInputCaretTool()->UpdateText(this, textDesc);
 	}
 
 	void GUIInputBox::HideCaret()
@@ -958,26 +958,26 @@ namespace bs
 
 	void GUIInputBox::ShowSelection(UINT32 anchorCaretPos)
 	{
-		TEXT_SPRITE_DESC textDesc = getTextDesc();
-		gGUIManager().getInputSelectionTool()->updateText(this, textDesc);
+		TEXT_SPRITE_DESC textDesc = GetTextDesc();
+		gGUIManager().GetInputSelectionTool()->UpdateText(this, textDesc);
 
-		gGUIManager().getInputSelectionTool()->showSelection(anchorCaretPos);
+		gGUIManager().GetInputSelectionTool()->ShowSelection(anchorCaretPos);
 		mSelectionShown = true;
 	}
 
 	void GUIInputBox::ClearSelection()
 	{
-		gGUIManager().getInputSelectionTool()->clearSelectionVisuals();
+		gGUIManager().GetInputSelectionTool()->ClearSelectionVisuals();
 		mSelectionShown = false;
 	}
 
 	void GUIInputBox::ScrollTextToCaret()
 	{
-		TEXT_SPRITE_DESC textDesc = getTextDesc();
+		TEXT_SPRITE_DESC textDesc = GetTextDesc();
 
-		Vector2I textOffset = getTextOffset();
-		Vector2I caretPos = gGUIManager().getInputCaretTool()->getCaretPosition(textOffset);
-		UINT32 caretHeight = gGUIManager().getInputCaretTool()->getCaretHeight();
+		Vector2I textOffset = GetTextOffset();
+		Vector2I caretPos = gGUIManager().GetInputCaretTool()->GetCaretPosition(textOffset);
+		UINT32 caretHeight = gGUIManager().GetInputCaretTool()->GetCaretHeight();
 		UINT32 caretWidth = 1;
 
 		INT32 left = textOffset.x - mTextOffset.x;
@@ -1013,77 +1013,77 @@ namespace bs
 
 		mTextOffset += offset;
 
-		gGUIManager().getInputCaretTool()->updateText(this, textDesc);
-		gGUIManager().getInputSelectionTool()->updateText(this, textDesc);
+		gGUIManager().GetInputCaretTool()->UpdateText(this, textDesc);
+		gGUIManager().GetInputSelectionTool()->UpdateText(this, textDesc);
 	}
 
 	void GUIInputBox::ClampScrollToBounds(Rect2I unclippedTextBounds)
 	{
-		TEXT_SPRITE_DESC textDesc = getTextDesc();
+		TEXT_SPRITE_DESC textDesc = GetTextDesc();
 
 		Vector2I newTextOffset;
 		INT32 maxScrollableWidth = std::max(0, (INT32)unclippedTextBounds.width - (INT32)textDesc.width);
 		INT32 maxScrollableHeight = std::max(0, (INT32)unclippedTextBounds.height - (INT32)textDesc.height);
-		newTextOffset.x = Math::clamp(mTextOffset.x, -maxScrollableWidth, 0);
-		newTextOffset.y = Math::clamp(mTextOffset.y, -maxScrollableHeight, 0);
+		newTextOffset.x = Math::Clamp(mTextOffset.x, -maxScrollableWidth, 0);
+		newTextOffset.y = Math::Clamp(mTextOffset.y, -maxScrollableHeight, 0);
 
 		if(newTextOffset != mTextOffset)
 		{
 			mTextOffset = newTextOffset;
 
-			gGUIManager().getInputCaretTool()->updateText(this, textDesc);
-			gGUIManager().getInputSelectionTool()->updateText(this, textDesc);
+			gGUIManager().GetInputCaretTool()->UpdateText(this, textDesc);
+			gGUIManager().GetInputSelectionTool()->UpdateText(this, textDesc);
 		}
 	}
 
 	void GUIInputBox::InsertString(UINT32 charIdx, const String& string)
 	{
-		UINT32 byteIdx = UTF8::charToByteIndex(mText, charIdx);
+		UINT32 byteIdx = UTF8::CharToByteIndex(mText, charIdx);
 
 		mText.insert(mText.begin() + byteIdx, string.begin(), string.end());
-		mNumChars = UTF8::count(mText);
+		mNumChars = UTF8::Count(mText);
 
-		TEXT_SPRITE_DESC textDesc = getTextDesc();
+		TEXT_SPRITE_DESC textDesc = GetTextDesc();
 
-		gGUIManager().getInputCaretTool()->updateText(this, textDesc);
-		gGUIManager().getInputSelectionTool()->updateText(this, textDesc);
+		gGUIManager().GetInputCaretTool()->UpdateText(this, textDesc);
+		gGUIManager().GetInputSelectionTool()->UpdateText(this, textDesc);
 	}
 
 	void GUIInputBox::InsertChar(UINT32 charIdx, UINT32 charCode)
 	{
-		UINT32 byteIdx = UTF8::charToByteIndex(mText, charIdx);
-		String utf8chars = UTF8::fromUTF32(U32String(1, (char32_t)charCode));
+		UINT32 byteIdx = UTF8::CharToByteIndex(mText, charIdx);
+		String utf8chars = UTF8::FromUtF32(U32String(1, (char32_t)charCode));
 
 		mText.insert(mText.begin() + byteIdx, utf8chars.begin(), utf8chars.end());
-		mNumChars = UTF8::count(mText);
+		mNumChars = UTF8::Count(mText);
 
-		TEXT_SPRITE_DESC textDesc = getTextDesc();
+		TEXT_SPRITE_DESC textDesc = GetTextDesc();
 
-		gGUIManager().getInputCaretTool()->updateText(this, textDesc);
-		gGUIManager().getInputSelectionTool()->updateText(this, textDesc);
+		gGUIManager().GetInputCaretTool()->UpdateText(this, textDesc);
+		gGUIManager().GetInputSelectionTool()->UpdateText(this, textDesc);
 	}
 
 	void GUIInputBox::EraseChar(UINT32 charIdx)
 	{
-		UINT32 byteIdx = UTF8::charToByteIndex(mText, charIdx);
-		UINT32 byteCount = UTF8::charByteCount(mText, charIdx);
+		UINT32 byteIdx = UTF8::CharToByteIndex(mText, charIdx);
+		UINT32 byteCount = UTF8::CharByteCount(mText, charIdx);
 
 		mText.erase(byteIdx, byteCount);
-		mNumChars = UTF8::count(mText);
+		mNumChars = UTF8::Count(mText);
 
-		TEXT_SPRITE_DESC textDesc = getTextDesc();
+		TEXT_SPRITE_DESC textDesc = GetTextDesc();
 
-		gGUIManager().getInputCaretTool()->updateText(this, textDesc);
-		gGUIManager().getInputSelectionTool()->updateText(this, textDesc);
+		gGUIManager().GetInputCaretTool()->UpdateText(this, textDesc);
+		gGUIManager().GetInputSelectionTool()->UpdateText(this, textDesc);
 	}
 
 	void GUIInputBox::DeleteSelectedText(bool internal)
 	{
-		UINT32 selStart = gGUIManager().getInputSelectionTool()->getSelectionStart();
-		UINT32 selEnd = gGUIManager().getInputSelectionTool()->getSelectionEnd();
+		UINT32 selStart = gGUIManager().GetInputSelectionTool()->GetSelectionStart();
+		UINT32 selEnd = gGUIManager().GetInputSelectionTool()->GetSelectionEnd();
 
-		UINT32 byteStart = UTF8::charToByteIndex(mText, selStart);
-		UINT32 byteEnd = UTF8::charToByteIndex(mText, selEnd);
+		UINT32 byteStart = UTF8::CharToByteIndex(mText, selStart);
+		UINT32 byteEnd = UTF8::CharToByteIndex(mText, selEnd);
 
 		bool filterOkay = true;
 		if (!internal && mFilter != nullptr)
@@ -1095,56 +1095,56 @@ namespace bs
 		}
 
 		if (!mCaretShown)
-			showCaret();
+			ShowCaret();
 
 		if(filterOkay)
 		{
 			mText.erase(mText.begin() + byteStart, mText.begin() + byteEnd);
-			mNumChars = UTF8::count(mText);
+			mNumChars = UTF8::Count(mText);
 
-			TEXT_SPRITE_DESC textDesc = getTextDesc();
-			gGUIManager().getInputCaretTool()->updateText(this, textDesc);
-			gGUIManager().getInputSelectionTool()->updateText(this, textDesc);
+			TEXT_SPRITE_DESC textDesc = GetTextDesc();
+			gGUIManager().GetInputCaretTool()->UpdateText(this, textDesc);
+			gGUIManager().GetInputSelectionTool()->UpdateText(this, textDesc);
 
 			if(selStart > 0)
 			{
 				UINT32 newCaretPos = selStart - 1;
-				gGUIManager().getInputCaretTool()->moveCaretToChar(newCaretPos, CARET_AFTER);
+				gGUIManager().GetInputCaretTool()->MoveCaretToChar(newCaretPos, CARET_AFTER);
 			}
 			else
 			{
-				gGUIManager().getInputCaretTool()->moveCaretToChar(0, CARET_BEFORE);
+				gGUIManager().GetInputCaretTool()->MoveCaretToChar(0, CARET_BEFORE);
 			}
 
-			scrollTextToCaret();
+			ScrollTextToCaret();
 
 			if (!internal)
 				onValueChanged(mText);
 		}
 
-		clearSelection();
+		ClearSelection();
 	}
 
 	String GUIInputBox::GetSelectedText()
 	{
-		UINT32 selStart = gGUIManager().getInputSelectionTool()->getSelectionStart();
-		UINT32 selEnd = gGUIManager().getInputSelectionTool()->getSelectionEnd();
+		UINT32 selStart = gGUIManager().GetInputSelectionTool()->GetSelectionStart();
+		UINT32 selEnd = gGUIManager().GetInputSelectionTool()->GetSelectionEnd();
 
-		UINT32 byteStart = UTF8::charToByteIndex(mText, selStart);
-		UINT32 byteEnd = UTF8::charToByteIndex(mText, selEnd);
+		UINT32 byteStart = UTF8::CharToByteIndex(mText, selStart);
+		UINT32 byteEnd = UTF8::CharToByteIndex(mText, selEnd);
 
 		return mText.substr(byteStart, byteEnd - byteStart);
 	}
 
 	Vector2I GUIInputBox::GetTextOffset() const
 	{
-		Rect2I textBounds = getCachedContentBounds();
+		Rect2I textBounds = GetCachedContentBounds();
 		return Vector2I(textBounds.x, textBounds.y) + mTextOffset;
 	}
 
 	Rect2I GUIInputBox::GetTextClipRect() const
 	{
-		Rect2I contentClipRect = getCachedContentClipRect();
+		Rect2I contentClipRect = GetCachedContentClipRect();
 		return Rect2I(contentClipRect.x - mTextOffset.x, contentClipRect.y - mTextOffset.y, contentClipRect.width, contentClipRect.height);
 	}
 
@@ -1154,9 +1154,9 @@ namespace bs
 		textDesc.text = mText;
 		textDesc.font = GetStyleInternal()->font;
 		textDesc.fontSize = GetStyleInternal()->fontSize;
-		textDesc.color = getTint() * getActiveTextColor();
+		textDesc.color = GetTint() * GetActiveTextColor();
 
-		Rect2I textBounds = getCachedContentBounds();
+		Rect2I textBounds = GetCachedContentBounds();
 		textDesc.width = textBounds.width;
 		textDesc.height = textBounds.height;
 		textDesc.horzAlign = GetStyleInternal()->textHorzAlign;
@@ -1204,13 +1204,13 @@ namespace bs
 		{
 			contextMenu = bs_shared_ptr_new<GUIContextMenu>();
 
-			contextMenu->addMenuItem("Cut", std::bind(&GUIInputBox::cutText, const_cast<GUIInputBox*>(this)), 0);
-			contextMenu->addMenuItem("Copy", std::bind(&GUIInputBox::copyText, const_cast<GUIInputBox*>(this)), 0);
-			contextMenu->addMenuItem("Paste", std::bind(&GUIInputBox::pasteText, const_cast<GUIInputBox*>(this)), 0);
+			contextMenu->AddMenuItem("Cut", std::bind(&GUIInputBox::mText, const_cast<GUIInputBox*>(this)), 0);
+			contextMenu->AddMenuItem("Copy", std::bind(&GUIInputBox::CopyText, const_cast<GUIInputBox*>(this)), 0);
+			contextMenu->AddMenuItem("Paste", std::bind(&GUIInputBox::PasteText, const_cast<GUIInputBox*>(this)), 0);
 
-			contextMenu->setLocalizedName("Cut", HString("Cut"));
-			contextMenu->setLocalizedName("Copy", HString("Copy"));
-			contextMenu->setLocalizedName("Paste", HString("Paste"));
+			contextMenu->SetLocalizedName("Cut", HString("Cut"));
+			contextMenu->SetLocalizedName("Copy", HString("Copy"));
+			contextMenu->SetLocalizedName("Paste", HString("Paste"));
 		}
 
 		if (!IsDisabledInternal())
@@ -1221,12 +1221,12 @@ namespace bs
 
 	void GUIInputBox::CutText()
 	{
-		Vector2I origSize = mDimensions.calculateSizeRange(GetOptimalSizeInternal()).optimal;
+		Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
 
-		copyText();
-		deleteSelectedText();
+		CopyText();
+		DeleteSelectedText();
 
-		Vector2I newSize = mDimensions.calculateSizeRange(GetOptimalSizeInternal()).optimal;
+		Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
 		if (origSize != newSize)
 			MarkLayoutAsDirtyInternal();
 		else
@@ -1235,22 +1235,22 @@ namespace bs
 
 	void GUIInputBox::CopyText()
 	{
-		Platform::copyToClipboard(getSelectedText());
+		Platform::CopyToClipboard(GetSelectedText());
 	}
 
 	void GUIInputBox::PasteText()
 	{
-		deleteSelectedText(true);
+		DeleteSelectedText(true);
 
-		String textInClipboard = Platform::copyFromClipboard();
-		UINT32 charIdx = gGUIManager().getInputCaretTool()->getCharIdxAtCaretPos();
+		String textInClipboard = Platform::CopyFromClipboard();
+		UINT32 charIdx = gGUIManager().GetInputCaretTool()->GetCharIdxAtCaretPos();
 
 		bool filterOkay = true;
 		if(mFilter != nullptr)
 		{
 			String newText = mText;
 
-			UINT32 byteIdx = UTF8::charToByteIndex(newText, charIdx);
+			UINT32 byteIdx = UTF8::CharToByteIndex(newText, charIdx);
 			newText.insert(newText.begin() + byteIdx, textInClipboard.begin(), textInClipboard.end());
 
 			filterOkay = mFilter(newText);
@@ -1258,22 +1258,22 @@ namespace bs
 
 		if(filterOkay)
 		{
-			Vector2I origSize = mDimensions.calculateSizeRange(GetOptimalSizeInternal()).optimal;
-			insertString(charIdx, textInClipboard);
+			Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
+			InsertString(charIdx, textInClipboard);
 
-			UINT32 numChars = UTF8::count(textInClipboard);
+			UINT32 numChars = UTF8::Count(textInClipboard);
 			if(numChars > 0)
-				gGUIManager().getInputCaretTool()->moveCaretToChar(charIdx + (numChars - 1), CARET_AFTER);
+				gGUIManager().GetInputCaretTool()->MoveCaretToChar(charIdx + (numChars - 1), CARET_AFTER);
 
-			scrollTextToCaret();
+			ScrollTextToCaret();
 
-			Vector2I newSize = mDimensions.calculateSizeRange(GetOptimalSizeInternal()).optimal;
+			Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
 			if (origSize != newSize)
 				MarkLayoutAsDirtyInternal();
 			else
 				MarkContentAsDirtyInternal();
 
-			if(!onValueChanged.empty())
+			if(!onValueChanged.Empty())
 				onValueChanged(mText);
 		}
 	}

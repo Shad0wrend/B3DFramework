@@ -80,7 +80,7 @@ namespace bs
 
 	CoreApplication::~CoreApplication()
 	{
-		mPrimaryWindow->destroy();
+		mPrimaryWindow->Destroy();
 		mPrimaryWindow = nullptr;
 
 		Importer::ShutDown();
@@ -327,17 +327,17 @@ namespace bs
 			mIsFrameRenderingFinished = false;
 		}
 
-		gCoreThread().queueCommand(std::bind(&CoreApplication::beginCoreProfiling, this), CTQF_InternalQueue);
-		gCoreThread().queueCommand(&Platform::CoreUpdateInternal, CTQF_InternalQueue);
-		gCoreThread().queueCommand(std::bind(&ct::RenderWindowManager::UpdateInternal, ct::RenderWindowManager::instancePtr()), CTQF_InternalQueue);
+		gCoreThread().QueueCommand(std::bind(&CoreApplication::beginCoreProfiling, this), CTQF_InternalQueue);
+		gCoreThread().QueueCommand(&Platform::CoreUpdateInternal, CTQF_InternalQueue);
+		gCoreThread().QueueCommand(std::bind(&ct::RenderWindowManager::UpdateInternal, ct::RenderWindowManager::InstancePtr()), CTQF_InternalQueue);
 
 		gCoreThread().update();
 		gCoreThread().submitAll();
 
-		gCoreThread().queueCommand(std::bind(&CoreApplication::frameRenderingFinishedCallback, this), CTQF_InternalQueue);
+		gCoreThread().QueueCommand(std::bind(&CoreApplication::frameRenderingFinishedCallback, this), CTQF_InternalQueue);
 
-		gCoreThread().queueCommand(std::bind(&ct::QueryManager::UpdateInternal, ct::QueryManager::instancePtr()), CTQF_InternalQueue);
-		gCoreThread().queueCommand(std::bind(&CoreApplication::endCoreProfiling, this), CTQF_InternalQueue);
+		gCoreThread().QueueCommand(std::bind(&ct::QueryManager::UpdateInternal, ct::QueryManager::InstancePtr()), CTQF_InternalQueue);
+		gCoreThread().QueueCommand(std::bind(&CoreApplication::endCoreProfiling, this), CTQF_InternalQueue);
 
 		gProfilerCPU().endThread();
 		gProfiler().UpdateInternal();
@@ -399,7 +399,7 @@ namespace bs
 
 	void CoreApplication::StartUpRenderer()
 	{
-		RendererManager::Instance().initialize();
+		RendererManager::Instance().Initialize();
 	}
 
 	void CoreApplication::BeginCoreProfiling()
@@ -432,7 +432,7 @@ namespace bs
 			{
 				typedef void* (*LoadPluginFunc)();
 
-				LoadPluginFunc loadPluginFunc = (LoadPluginFunc)loadedLibrary->getSymbol("loadPlugin");
+				LoadPluginFunc loadPluginFunc = (LoadPluginFunc)loadedLibrary->GetSymbol("loadPlugin");
 
 				if (loadPluginFunc != nullptr)
 					retVal = loadPluginFunc();
@@ -441,13 +441,13 @@ namespace bs
 			{
 				typedef void* (*LoadPluginFunc)(void*);
 
-				LoadPluginFunc loadPluginFunc = (LoadPluginFunc)loadedLibrary->getSymbol("loadPlugin");
+				LoadPluginFunc loadPluginFunc = (LoadPluginFunc)loadedLibrary->GetSymbol("loadPlugin");
 
 				if (loadPluginFunc != nullptr)
 					retVal = loadPluginFunc(passThrough);
 			}
 
-			UpdatePluginFunc loadPluginFunc = (UpdatePluginFunc)loadedLibrary->getSymbol("updatePlugin");
+			UpdatePluginFunc loadPluginFunc = (UpdatePluginFunc)loadedLibrary->GetSymbol("updatePlugin");
 
 			if (loadPluginFunc != nullptr)
 				mPluginUpdateFunctions[loadedLibrary] = loadPluginFunc;
@@ -460,7 +460,7 @@ namespace bs
 	{
 		typedef void (*UnloadPluginFunc)();
 
-		UnloadPluginFunc unloadPluginFunc = (UnloadPluginFunc)library->getSymbol("unloadPlugin");
+		UnloadPluginFunc unloadPluginFunc = (UnloadPluginFunc)library->GetSymbol("unloadPlugin");
 
 		if(unloadPluginFunc != nullptr)
 			unloadPluginFunc();

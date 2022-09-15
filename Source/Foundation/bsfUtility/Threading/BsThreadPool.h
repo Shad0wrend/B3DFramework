@@ -259,7 +259,7 @@ namespace bs
 		PooledThread* CreateThread(const String& name) override
 		{
 			PooledThread* newThread = bs_new<TPooledThread<ThreadPolicy>>(name);
-			newThread->initialize();
+			newThread->Initialize();
 
 			return newThread;
 		}

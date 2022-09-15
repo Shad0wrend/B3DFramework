@@ -123,7 +123,7 @@ namespace bs
 		/**
 		 * Assign a parameter block buffer with the specified index to all the relevant child GpuParams.
 		 *
-		 * @param[in]	index			Index of the buffer, as retrieved from getParamBlockBufferIndex().
+		 * @param[in]	index			Index of the buffer, as retrieved from GetParamBlockBufferIndex().
 		 * @param[in]	paramBlock		Parameter block to assign.
 		 * @param[in]	ignoreInUpdate	If true the buffer will not be updated during the update() call. This is useful
 		 *								if the caller wishes to manually update the buffer contents externally, to prevent

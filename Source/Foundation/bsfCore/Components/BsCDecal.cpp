@@ -8,20 +8,20 @@ namespace bs
 {
 	CDecal::CDecal()
 	{
-		setFlag(ComponentFlag::AlwaysRun, true);
-		setName("Decal");
+		SetFlag(ComponentFlag::AlwaysRun, true);
+		SetName("Decal");
 	}
 
 	CDecal::CDecal(const HSceneObject& parent)
 		: Component(parent)
 	{
-		setFlag(ComponentFlag::AlwaysRun, true);
-		setName("Decal");
+		SetFlag(ComponentFlag::AlwaysRun, true);
+		SetName("Decal");
 	}
 
 	CDecal::~CDecal()
 	{
-		mInternal->destroy();
+		mInternal->Destroy();
 	}
 
 	void CDecal::OnInitialized()
@@ -29,11 +29,11 @@ namespace bs
 		// If mInternal already exists this means this object was deserialized,
 		// so all we need to do is initialize it.
 		if (mInternal != nullptr)
-			mInternal->initialize();
+			mInternal->Initialize();
 		else
 			mInternal = Decal::Create(HMaterial());
 
-		gSceneManager().BindActorInternal(mInternal, sceneObject());
+		gSceneManager().BindActorInternal(mInternal, SceneObject());
 	}
 
 	void CDecal::OnDestroyed()

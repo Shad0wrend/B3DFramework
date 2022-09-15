@@ -96,7 +96,7 @@ namespace bs
 		ScriptArray array__output = ScriptArray::create<ScriptAudioDevice>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
-			array__output.set(i, ScriptAudioDevice::toInterop(vec__output[i]));
+			array__output.Set(i, ScriptAudioDevice::toInterop(vec__output[i]));
 		}
 		__output = array__output.getInternal();
 

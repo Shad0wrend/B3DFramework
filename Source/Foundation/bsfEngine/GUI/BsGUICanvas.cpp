@@ -37,12 +37,12 @@ namespace bs
 
 	GUICanvas* GUICanvas::Create(const String& styleName)
 	{
-		return new (bs_alloc<GUICanvas>()) GUICanvas(getStyleName<GUICanvas>(styleName), GUIDimensions::Create());
+		return new (bs_alloc<GUICanvas>()) GUICanvas(GetStyleName<GUICanvas>(styleName), GUIDimensions::Create());
 	}
 
 	void GUICanvas::DrawLine(const Vector2I& a, const Vector2I& b, const Color& color, UINT8 depth)
 	{
-		drawPolyLine({ a, b }, color, depth);
+		DrawPolyLine({ a, b }, color, depth);
 	}
 
 	void GUICanvas::DrawPolyLine(const Vector<Vector2I>& vertices, const Color& color, UINT8 depth)
@@ -207,7 +207,7 @@ namespace bs
 		}
 
 		mElements.clear();
-		mRenderElements.clear();
+		mRenderElements.Clear();
 		mDepthRange = 1;
 
 		mVertexData.clear();
@@ -222,25 +222,25 @@ namespace bs
 	void GUICanvas::UpdateRenderElementsInternal()
 	{
 		Vector2 offset((float)mLayoutData.area.x, (float)mLayoutData.area.y);
-		Rect2I clipRect = mLayoutData.getLocalClipRect();
-		buildAllTriangleElementsIfDirty(offset, clipRect);
+		Rect2I clipRect = mLayoutData.GetLocalClipRect();
+		BuildAllTriangleElementsIfDirty(offset, clipRect);
 
-		mRenderElements.clear();
+		mRenderElements.Clear();
 		for(auto& element : mElements)
 		{
-			element.renderElemStart = mRenderElements.size();
+			element.renderElemStart = mRenderElements.Size();
 			
 			switch(element.type)
 			{
 			case CanvasElementType::Image:
-				buildImageElement(element);
+				BuildImageElement(element);
 
-				for(UINT32 i = 0; i < element.imageSprite->getNumRenderElements(); i++)
+				for(UINT32 i = 0; i < element.imageSprite->GetNumRenderElements(); i++)
 				{
-					mRenderElements.add(GUIRenderElement());
-					GUIRenderElement& renderElement = mRenderElements.back();
+					mRenderElements.Add(GUIRenderElement());
+					GUIRenderElement& renderElement = mRenderElements.Back();
 
-					element.imageSprite->getRenderElementInfo(i, renderElement);
+					element.imageSprite->GetRenderElementInfo(i, renderElement);
 
 					renderElement.depth = element.depth;
 					renderElement.type = GUIMeshType::Triangle;
@@ -248,14 +248,14 @@ namespace bs
 				
 				break;
 			case CanvasElementType::Text:
-				buildTextElement(element);
+				BuildTextElement(element);
 
-				for(UINT32 i = 0; i < element.textSprite->getNumRenderElements(); i++)
+				for(UINT32 i = 0; i < element.textSprite->GetNumRenderElements(); i++)
 				{
-					mRenderElements.add(GUIRenderElement());
-					GUIRenderElement& renderElement = mRenderElements.back();
+					mRenderElements.Add(GUIRenderElement());
+					GUIRenderElement& renderElement = mRenderElements.Back();
 
-					element.textSprite->getRenderElementInfo(i, renderElement);
+					element.textSprite->GetRenderElementInfo(i, renderElement);
 
 					renderElement.depth = element.depth;
 					renderElement.type = GUIMeshType::Triangle;
@@ -263,13 +263,13 @@ namespace bs
 				break;
 			case CanvasElementType::Line:
 				{
-					mRenderElements.add(GUIRenderElement());
-					GUIRenderElement& renderElement = mRenderElements.back();
+					mRenderElements.Add(GUIRenderElement());
+					GUIRenderElement& renderElement = mRenderElements.Back();
 
 					renderElement.numVertices = element.clippedNumVertices;
 					renderElement.numIndices = element.clippedNumVertices;
 
-					renderElement.material = SpriteManager::Instance().getLineMaterial();
+					renderElement.material = SpriteManager::Instance().GetLineMaterial();
 					renderElement.matInfo = &mTriangleElementData[element.dataId].matInfo;
 					
 					renderElement.depth = element.depth;
@@ -283,13 +283,13 @@ namespace bs
 
 			case CanvasElementType::Triangle:
 				{
-					mRenderElements.add(GUIRenderElement());
-					GUIRenderElement& renderElement = mRenderElements.back();
+					mRenderElements.Add(GUIRenderElement());
+					GUIRenderElement& renderElement = mRenderElements.Back();
 
 					renderElement.numVertices = element.clippedNumVertices;
 					renderElement.numIndices = element.clippedNumVertices;
 
-					renderElement.material = SpriteManager::Instance().getImageMaterial(SpriteMaterialTransparency::Alpha);
+					renderElement.material = SpriteManager::Instance().GetImageMaterial(SpriteMaterialTransparency::Alpha);
 					renderElement.matInfo = &mTriangleElementData[element.dataId].matInfo;
 
 					renderElement.depth = element.depth;
@@ -302,10 +302,10 @@ namespace bs
 				}
 			}
 
-			element.renderElemEnd = mRenderElements.size();
+			element.renderElemEnd = mRenderElements.Size();
 		}
 
-		GUIElement::updateRenderElementsInternal();
+		GUIElement::UpdateRenderElementsInternal();
 	}
 
 	Vector2I GUICanvas::GetOptimalSizeInternal() const
@@ -327,12 +327,12 @@ namespace bs
 		UINT32 indexStride = sizeof(UINT32);
 
 		Vector2I layoutOffset = Vector2I(mLayoutData.area.x, mLayoutData.area.y) + offset;
-		Rect2I clipRect = mLayoutData.getLocalClipRect();
+		Rect2I clipRect = mLayoutData.GetLocalClipRect();
 
 		Vector2 floatOffset((float)layoutOffset.x, (float)layoutOffset.y);
-		buildAllTriangleElementsIfDirty(floatOffset, clipRect);
+		BuildAllTriangleElementsIfDirty(floatOffset, clipRect);
 
-		const CanvasElement& element = findElement(renderElementIdx);
+		const CanvasElement& element = FindElement(renderElementIdx);
 		renderElementIdx -= element.renderElemStart;
 
 		switch(element.type)
@@ -347,7 +347,7 @@ namespace bs
 			clipRect.x -= area.x;
 			clipRect.y -= area.y;
 
-			element.imageSprite->fillBuffer(vertices, uvs, indices, vertexOffset, indexOffset, maxNumVerts, maxNumIndices,
+			element.imageSprite->FillBuffer(vertices, uvs, indices, vertexOffset, indexOffset, maxNumVerts, maxNumIndices,
 				vertexStride, indexStride, renderElementIdx, layoutOffset, clipRect);
 		}
 			break;
@@ -359,7 +359,7 @@ namespace bs
 			clipRect.x -= position.x;
 			clipRect.y -= position.y;
 
-			element.textSprite->fillBuffer(vertices, uvs, indices, vertexOffset, indexOffset, maxNumVerts, maxNumIndices,
+			element.textSprite->FillBuffer(vertices, uvs, indices, vertexOffset, indexOffset, maxNumVerts, maxNumIndices,
 				vertexStride, indexStride, renderElementIdx, layoutOffset, clipRect);
 		}
 			break;
@@ -442,17 +442,17 @@ namespace bs
 		desc.color = element.color;
 
 		Vector2I textureSize;
-		if (SpriteTexture::checkIsLoaded(imageData.texture))
+		if (SpriteTexture::CheckIsLoaded(imageData.texture))
 		{
 			desc.texture = imageData.texture;
-			textureSize.x = desc.texture->getWidth();
-			textureSize.y = desc.texture->getHeight();
+			textureSize.x = desc.texture->GetWidth();
+			textureSize.y = desc.texture->GetHeight();
 		}
 
 		Vector2I destSize(mLayoutData.area.width, mLayoutData.area.height);
-		desc.uvScale = ImageSprite::getTextureUVScale(textureSize, destSize, element.scaleMode);
+		desc.uvScale = ImageSprite::GetTextureUvScale(textureSize, destSize, element.scaleMode);
 
-		element.imageSprite->update(desc, (UINT64)GetParentWidgetInternal());
+		element.imageSprite->Update(desc, (UINT64)GetParentWidgetInternal());
 	}
 
 	void GUICanvas::BuildTextElement(const CanvasElement& element)
@@ -467,7 +467,7 @@ namespace bs
 		desc.text = textData.string;
 		desc.color = element.color;
 
-		element.textSprite->update(desc, (UINT64)GetParentWidgetInternal());
+		element.textSprite->Update(desc, (UINT64)GetParentWidgetInternal());
 	}
 
 	void GUICanvas::BuildTriangleElement(const CanvasElement& element, const Vector2& offset, const Rect2I& clipRect) const
@@ -490,7 +490,7 @@ namespace bs
 			element.clippedVertexStart = (UINT32)mClippedVertices.size();
 			element.clippedNumVertices = 0;
 
-			ImageSprite::clipTrianglesToRect(verticesToClip, nullptr, trianglesToClip, sizeof(Vector2), clipRect,
+			ImageSprite::ClipTrianglesToRect(verticesToClip, nullptr, trianglesToClip, sizeof(Vector2), clipRect,
 				writeCallback);
 		}
 		else
@@ -528,8 +528,8 @@ namespace bs
 				for(UINT32 j = 0; j < (UINT32)clipPlanes.size(); j++)
 				{
 					const Plane2D& plane = clipPlanes[j];
-					float d0 = plane.normal.dot(a) - plane.d;
-					float d1 = plane.normal.dot(b) - plane.d;
+					float d0 = plane.normal.Dot(a) - plane.d;
+					float d1 = plane.normal.Dot(b) - plane.d;
 
 					// Line not visible
 					if (d0 <= 0 && d1 <= 0)
@@ -577,7 +577,7 @@ namespace bs
 			if (element.type != CanvasElementType::Triangle && element.type != CanvasElementType::Line)
 				continue;
 
-			buildTriangleElement(element, offset, clipRect);
+			BuildTriangleElement(element, offset, clipRect);
 		}
 
 		mLastOffset = offset;

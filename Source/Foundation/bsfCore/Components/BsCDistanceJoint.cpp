@@ -10,13 +10,13 @@ namespace bs
 	CDistanceJoint::CDistanceJoint()
 		: CJoint(mDesc)
 	{
-		setName("DistanceJoint");
+		SetName("DistanceJoint");
 	}
 
 	CDistanceJoint::CDistanceJoint(const HSceneObject& parent)
 		: CJoint(parent, mDesc)
 	{
-		setName("DistanceJoint");
+		SetName("DistanceJoint");
 	}
 
 	float CDistanceJoint::GetDistance() const
@@ -24,7 +24,7 @@ namespace bs
 		if (mInternal == nullptr)
 			return 0.0f;
 
-		return GetInternalInternal()->getDistance();
+		return GetInternalInternal()->GetDistance();
 	}
 
 	float CDistanceJoint::GetMinDistance() const
@@ -40,7 +40,7 @@ namespace bs
 		mDesc.minDistance = value;
 
 		if (mInternal != nullptr)
-			GetInternalInternal()->setMinDistance(value);
+			GetInternalInternal()->SetMinDistance(value);
 	}
 
 	float CDistanceJoint::GetMaxDistance() const
@@ -56,7 +56,7 @@ namespace bs
 		mDesc.maxDistance = value;
 
 		if (mInternal != nullptr)
-			GetInternalInternal()->setMaxDistance(value);
+			GetInternalInternal()->SetMaxDistance(value);
 	}
 
 	float CDistanceJoint::GetTolerance() const
@@ -72,7 +72,7 @@ namespace bs
 		mDesc.tolerance = value;
 
 		if (mInternal != nullptr)
-			GetInternalInternal()->setTolerance(value);
+			GetInternalInternal()->SetTolerance(value);
 	}
 
 	Spring CDistanceJoint::GetSpring() const
@@ -88,7 +88,7 @@ namespace bs
 		mDesc.spring = value;
 
 		if(mInternal != nullptr)
-			GetInternalInternal()->setSpring(value);
+			GetInternalInternal()->SetSpring(value);
 	}
 
 	void CDistanceJoint::SetFlag(DistanceJointFlag flag, bool enabled)
@@ -103,7 +103,7 @@ namespace bs
 			mDesc.flag = (DistanceJointFlag)((UINT32)mDesc.flag & ~(UINT32)flag);
 
 		if (mInternal != nullptr)
-			GetInternalInternal()->setFlag(flag, enabled);
+			GetInternalInternal()->SetFlag(flag, enabled);
 	}
 
 	bool CDistanceJoint::HasFlag(DistanceJointFlag flag) const
@@ -113,8 +113,8 @@ namespace bs
 
 	SPtr<Joint> CDistanceJoint::CreateInternal()
 	{
-		const SPtr<SceneInstance>& scene = SO()->getScene();
-		SPtr<Joint> joint = DistanceJoint::Create(*scene->getPhysicsScene(), mDesc);
+		const SPtr<SceneInstance>& scene = SO()->GetScene();
+		SPtr<Joint> joint = DistanceJoint::Create(*scene->GetPhysicsScene(), mDesc);
 
 		joint->SetOwnerInternal(PhysicsOwnerType::Component, this);
 		return joint;

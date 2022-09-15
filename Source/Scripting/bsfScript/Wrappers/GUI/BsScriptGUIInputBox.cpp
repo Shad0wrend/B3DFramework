@@ -30,7 +30,7 @@ namespace bs
 		metaData.scriptClass->AddInternalCall("Internal_SetTint", (void*)&ScriptGUIInputBox::InternalSetTint);
 
 		onChangedThunk = (OnChangedThunkDef)metaData.scriptClass->GetMethod("Internal_DoOnChanged", 1)->GetThunk();
-		onConfirmedThunk = (OnConfirmedThunkDef)metaData.scriptClass->GetMethod("Internal_DoOnConfirmed", 0)->getThunk();
+		onConfirmedThunk = (OnConfirmedThunkDef)metaData.scriptClass->GetMethod("Internal_DoOnConfirmed", 0)->GetThunk();
 	}
 
 	void ScriptGUIInputBox::InternalCreateInstance(MonoObject* instance, bool multiline, MonoString* style, MonoArray* guiOptions)
@@ -46,25 +46,25 @@ namespace bs
 
 		auto nativeInstance = new (bs_alloc<ScriptGUIInputBox>()) ScriptGUIInputBox(instance, guiInputBox);
 
-		guiInputBox->onValueChanged.connect(std::bind(&ScriptGUIInputBox::onChanged, nativeInstance, _1));
+		guiInputBox->onValueChanged.Connect(std::bind(&ScriptGUIInputBox::onChanged, nativeInstance, _1));
 	}
 
 	void ScriptGUIInputBox::InternalGetText(ScriptGUIInputBox* nativeInstance, MonoString** text)
 	{
-		GUIInputBox* inputBox = (GUIInputBox*)nativeInstance->getGUIElement();
-		MonoUtil::referenceCopy(text, (MonoObject*)MonoUtil::stringToMono(inputBox->getText()));
+		GUIInputBox* inputBox = (GUIInputBox*)nativeInstance->GetGUIElement();
+		MonoUtil::referenceCopy(text, (MonoObject*)MonoUtil::stringToMono(inputBox->GetText()));
 	}
 
 	void ScriptGUIInputBox::InternalSetText(ScriptGUIInputBox* nativeInstance, MonoString* text)
 	{
-		GUIInputBox* inputBox = (GUIInputBox*)nativeInstance->getGUIElement();
-		inputBox->setText(MonoUtil::monoToString(text));
+		GUIInputBox* inputBox = (GUIInputBox*)nativeInstance->GetGUIElement();
+		inputBox->SetText(MonoUtil::monoToString(text));
 	}
 
 	void ScriptGUIInputBox::InternalSetTint(ScriptGUIInputBox* nativeInstance, Color* color)
 	{
-		GUIInputBox* inputBox = (GUIInputBox*)nativeInstance->getGUIElement();
-		inputBox->setTint(*color);
+		GUIInputBox* inputBox = (GUIInputBox*)nativeInstance->GetGUIElement();
+		inputBox->SetTint(*color);
 	}
 
 	void ScriptGUIInputBox::OnChanged(const String& newValue)

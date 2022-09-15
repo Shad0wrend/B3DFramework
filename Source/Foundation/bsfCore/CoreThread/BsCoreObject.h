@@ -31,7 +31,7 @@ namespace bs
 		{
 			CGO_DESTROYED = 0x01, /**< Object has been destroyed and shouldn't be used. */
 			CGO_INIT_ON_CORE_THREAD = 0x02, /**< Object requires initialization on core thread. */
-			CGO_INITIALIZED = 0x04 /**< Object's initialize() method has been called. */
+			CGO_INITIALIZED = 0x04 /**< Object's Initialize() method has been called. */
 		};
 
 	public:
@@ -98,7 +98,7 @@ namespace bs
 
 		/**
 		 * Sets a shared this pointer to this object. This must be called immediately after construction, but before
-		 * initialize().
+		 * Initialize().
 		 *
 		 * @note	This should be called by the factory creation methods so user doesn't have to call it manually.
 		 */
@@ -109,7 +109,7 @@ namespace bs
 		static void DeleteInternal(CoreObject* obj)
 		{
 			if (!obj->isDestroyed())
-				obj->destroy();
+				obj->Destroy();
 
 			bs_delete<T, MemAlloc>((T*)obj);
 		}

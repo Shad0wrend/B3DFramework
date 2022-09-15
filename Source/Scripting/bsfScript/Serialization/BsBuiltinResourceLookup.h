@@ -83,7 +83,7 @@ namespace bs
 																															\
 			BuiltinResourceInfo entry;																						\
 			entry.metaData = ScriptType::getMetaData();																		\
-			entry.typeId = ResourceType::GetRttiStatic()->getRTTIId();														\
+			entry.typeId = ResourceType::GetRttiStatic()->GetRttiId();														\
 			entry.monoClass = nullptr;																						\
 			entry.resType = ResourceTypeEnum;																				\
 			entry.createCallback = &create##ScriptType;																		\

@@ -81,12 +81,12 @@ namespace bs
 			T::Populate({ T::SpriteInfo(mTextSprite), T::SpriteInfo(mImageSprite, 1) }, mRenderElements);
 		}
 
-		GUIElement::updateRenderElementsInternal();
+		GUIElement::UpdateRenderElementsInternal();
 	}
 
 	Vector2I GUILabel::GetOptimalSizeInternal() const
 	{
-		return GUIHelper::calcOptimalContentsSize(mContent, *GetStyleInternal(), GetDimensionsInternal());
+		return GUIHelper::CalcOptimalContentsSize(mContent, *GetStyleInternal(), GetDimensionsInternal());
 	}
 
 	void GUILabel::FillBuffer(
@@ -104,25 +104,25 @@ namespace bs
 		UINT32 indexStride = sizeof(UINT32);
 		Vector2I layoutOffset = Vector2I(mLayoutData.area.x, mLayoutData.area.y) + offset;
 
-		UINT32 imageSpriteIdx = mTextSprite->getNumRenderElements();
+		UINT32 imageSpriteIdx = mTextSprite->GetNumRenderElements();
 
 		if (renderElementIdx < imageSpriteIdx)
 		{
-			mTextSprite->fillBuffer(vertices, uvs, indices, vertexOffset, indexOffset, maxNumVerts, maxNumIndices, vertexStride,
-				indexStride, renderElementIdx, layoutOffset, mLayoutData.getLocalClipRect());
+			mTextSprite->FillBuffer(vertices, uvs, indices, vertexOffset, indexOffset, maxNumVerts, maxNumIndices, vertexStride,
+				indexStride, renderElementIdx, layoutOffset, mLayoutData.GetLocalClipRect());
 
 			return;
 		}
 
-		mImageSprite->fillBuffer(vertices, uvs, indices, vertexOffset, indexOffset, maxNumVerts, maxNumIndices,
-			vertexStride, indexStride, imageSpriteIdx - renderElementIdx, layoutOffset, mLayoutData.getLocalClipRect());
+		mImageSprite->FillBuffer(vertices, uvs, indices, vertexOffset, indexOffset, maxNumVerts, maxNumIndices,
+			vertexStride, indexStride, imageSpriteIdx - renderElementIdx, layoutOffset, mLayoutData.GetLocalClipRect());
 	}
 
 	void GUILabel::SetContent(const GUIContent& content)
 	{
-		Vector2I origSize = mDimensions.calculateSizeRange(GetOptimalSizeInternal()).optimal;
+		Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
 		mContent = content;
-		Vector2I newSize = mDimensions.calculateSizeRange(GetOptimalSizeInternal()).optimal;
+		Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
 
 		if (origSize != newSize)
 			MarkLayoutAsDirtyInternal();
@@ -132,22 +132,22 @@ namespace bs
 
 	GUILabel* GUILabel::Create(const HString& text, const String& styleName)
 	{
-		return create(GUIContent(text), styleName);
+		return Create(GUIContent(text), styleName);
 	}
 
 	GUILabel* GUILabel::Create(const HString& text, const GUIOptions& options, const String& styleName)
 	{
-		return create(GUIContent(text), options, styleName);
+		return Create(GUIContent(text), options, styleName);
 	}
 
 	GUILabel* GUILabel::Create(const GUIContent& content, const String& styleName)
 	{
-		return new (bs_alloc<GUILabel>()) GUILabel(getStyleName<GUILabel>(styleName), content, GUIDimensions::Create());
+		return new (bs_alloc<GUILabel>()) GUILabel(GetStyleName<GUILabel>(styleName), content, GUIDimensions::Create());
 	}
 
 	GUILabel* GUILabel::Create(const GUIContent& content, const GUIOptions& options, const String& styleName)
 	{
-		return new (bs_alloc<GUILabel>()) GUILabel(getStyleName<GUILabel>(styleName), content, GUIDimensions::Create(options));
+		return new (bs_alloc<GUILabel>()) GUILabel(GetStyleName<GUILabel>(styleName), content, GUIDimensions::Create(options));
 	}
 
 	const String& GUILabel::GetGuiTypeName()

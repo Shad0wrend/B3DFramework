@@ -303,7 +303,7 @@ namespace bs
 	public:
 		friend class MeshDataRTTI;
 		static RTTITypeBase* GetRttiStatic();
-		virtual RTTITypeBase* getRTTI() const override;
+		virtual RTTITypeBase* GetRtti() const override;
 	};
 
 	/** @} */

@@ -78,7 +78,7 @@ namespace bs
 		{
 			addReflectablePtrArrayField("mChildren", 0, &SceneObjectRTTI::getChild,
 				&SceneObjectRTTI::getNumChildren, &SceneObjectRTTI::setChild, &SceneObjectRTTI::setNumChildren);
-			addReflectablePtrArrayField("mComponents", 1, &SceneObjectRTTI::getComponent,
+			addReflectablePtrArrayField("mComponents", 1, &SceneObjectRTTI::GetComponent,
 				&SceneObjectRTTI::getNumComponents, &SceneObjectRTTI::setComponent, &SceneObjectRTTI::setNumComponents);
 			addPlainField("mPrefabLink", 2, &SceneObjectRTTI::GetPrefabLink, &SceneObjectRTTI::SetPrefabLink);
 			addPlainField("mFlags", 3, &SceneObjectRTTI::GetFlags, &SceneObjectRTTI::SetFlags);
@@ -140,7 +140,7 @@ namespace bs
 			// We stored all components and children in a temporary structure because they rely on the SceneObject being
 			// initialized with the GameObjectManager. Now that it is, we add them.
 			for (auto& component : mComponents)
-				so->addComponentInternal(component);
+				so->AddComponentInternal(component);
 
 			for (auto& child : mChildren)
 			{
@@ -148,7 +148,7 @@ namespace bs
 					child->SetParentInternal(so->mThisHandle, false);
 			}
 
-			if(so->mUUID.empty() || coreContext->goState->getUseNewUUIDs())
+			if(so->mUUID.empty() || coreContext->goState->GetUseNewUUIDs())
 				so->mUUID = UUIDGenerator::generateRandom();
 
 			// If this is the deserialization parent, end deserialization (which resolves all game object handles, if we
@@ -159,10 +159,10 @@ namespace bs
 				coreContext->goDeserializationActive = false;
 
 				bool parentActive = true;
-				if (so->getParent() != nullptr)
-					parentActive = so->getParent()->getActive();
+				if (so->GetParent() != nullptr)
+					parentActive = so->GetParent()->GetActive();
 
-				so->setActiveHierarchy(parentActive, false);
+				so->SetActiveHierarchy(parentActive, false);
 
 				if ((so->mFlags & SOF_DontInstantiate) == 0)
 					so->InstantiateInternal();

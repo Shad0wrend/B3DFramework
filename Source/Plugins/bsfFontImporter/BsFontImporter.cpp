@@ -100,12 +100,12 @@ namespace bs
 		{
 			// Note: Disabled as its not working and I have bigger issues to handle than to figure this out atm
 			//FT_Matrix m;
-			//if (fontImportOptions->getBold())
+			//if (fontImportOptions->GetBold())
 			//	m.xx = (long)(1.25f * (1 << 16));
 			//else
 			//	m.xx = (long)(1 * (1 << 16));
 
-			//if (fontImportOptions->getItalic())
+			//if (fontImportOptions->GetItalic())
 			//	m.xy = (long)(0.25f * (1 << 16));
 			//else
 			//	m.xy = (long)(0 * (1 << 16));
@@ -187,7 +187,7 @@ namespace bs
 				SPtr<PixelData> pixelData = bs_shared_ptr_new<PixelData>(pageIter->width, pageIter->height, 1, PF_RG8);
 
 				pixelData->allocateInternalBuffer();
-				UINT8* pixelBuffer = pixelData->getData();
+				UINT8* pixelBuffer = pixelData->GetData();
 				memset(pixelBuffer, 0, bufferSize);
 
 				for(size_t i = 0; i < atlasElements.size(); i++)
@@ -330,9 +330,9 @@ namespace bs
 				HTexture newTex = Texture::Create(texDesc);
 
 				// It's possible the formats no longer match
-				if (newTex->getProperties().getFormat() != pixelData->getFormat())
+				if (newTex->GetProperties().GetFormat() != pixelData->GetFormat())
 				{
-					SPtr<PixelData> temp = newTex->getProperties().allocBuffer(0, 0);
+					SPtr<PixelData> temp = newTex->GetProperties().allocBuffer(0, 0);
 					PixelUtil::bulkPixelConversion(*pixelData, *temp);
 
 					newTex->writeData(temp);
@@ -342,7 +342,7 @@ namespace bs
 					newTex->writeData(pixelData);
 				}
 
-				newTex->setName(u8"FontPage" + toString((UINT32)fontData->texturePages.size()));
+				newTex->SetName(u8"FontPage" + toString((UINT32)fontData->texturePages.size()));
 
 				fontData->texturePages.push_back(newTex);
 				pageIdx++;
@@ -368,7 +368,7 @@ namespace bs
 		FT_Done_FreeType(library);
 
 		const String fileName = filePath.getFilename(false);
-		newFont->setName(fileName);
+		newFont->SetName(fileName);
 
 		return newFont;
 	}

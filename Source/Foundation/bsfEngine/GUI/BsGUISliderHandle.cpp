@@ -40,12 +40,12 @@ namespace bs
 	GUISliderHandle* GUISliderHandle::Create(GUISliderHandleFlags flags, const GUIOptions& options, const String& styleName)
 	{
 		return new (bs_alloc<GUISliderHandle>()) GUISliderHandle(flags,
-			getStyleName<GUISliderHandle>(styleName), GUIDimensions::Create(options));
+			GetStyleName<GUISliderHandle>(styleName), GUIDimensions::Create(options));
 	}
 
 	void GUISliderHandle::SetHandleSizeInternal(float pct)
 	{
-		mPctHandleSize = Math::clamp01(pct);
+		mPctHandleSize = Math::Clamp01(pct);
 	}
 
 	void GUISliderHandle::SetHandlePosInternal(float pct)
@@ -54,10 +54,10 @@ namespace bs
 		if (mStep > 0.0f && pct < maxPct)
 		{
 			pct = (pct + mStep * 0.5f) - fmod(pct + mStep * 0.5f, mStep);
-			maxPct = Math::floor(1.0f / mStep) * mStep;
+			maxPct = Math::Floor(1.0f / mStep) * mStep;
 		}
 
-		mPctHandlePos = Math::clamp(pct, 0.0f, maxPct);
+		mPctHandlePos = Math::Clamp(pct, 0.0f, maxPct);
 	}
 
 	float GUISliderHandle::GetHandlePos() const
@@ -72,29 +72,29 @@ namespace bs
 
 	void GUISliderHandle::SetStep(float step)
 	{
-		mStep = Math::clamp01(step);
+		mStep = Math::Clamp01(step);
 	}
 
 	UINT32 GUISliderHandle::GetScrollableSize() const
 	{
-		return getMaxSize() - getHandleSize();
+		return GetMaxSize() - GetHandleSize();
 	}
 
 	void GUISliderHandle::UpdateRenderElementsInternal()
 	{		
 		IMAGE_SPRITE_DESC desc;
 
-		HSpriteTexture activeTex = getActiveTexture();
-		if(SpriteTexture::checkIsLoaded(activeTex))
+		HSpriteTexture activeTex = GetActiveTexture();
+		if(SpriteTexture::CheckIsLoaded(activeTex))
 			desc.texture = activeTex;
 
-		UINT32 handleSize = getHandleSize();
-		if (mFlags.isSet(GUISliderHandleFlag::Horizontal))
+		UINT32 handleSize = GetHandleSize();
+		if (mFlags.IsSet(GUISliderHandleFlag::Horizontal))
 		{
 			if (handleSize == 0 && desc.texture != nullptr)
 			{
-				handleSize = desc.texture->getWidth();
-				mPctHandleSize = handleSize / (float)getMaxSize();
+				handleSize = desc.texture->GetWidth();
+				mPctHandleSize = handleSize / (float)GetMaxSize();
 			}
 
 			desc.width = handleSize;
@@ -104,8 +104,8 @@ namespace bs
 		{
 			if (handleSize == 0 && desc.texture != nullptr)
 			{
-				handleSize = desc.texture->getHeight();
-				mPctHandleSize = handleSize / (float)getMaxSize();
+				handleSize = desc.texture->GetHeight();
+				mPctHandleSize = handleSize / (float)GetMaxSize();
 			}
 
 			desc.width = mLayoutData.area.width;
@@ -116,30 +116,30 @@ namespace bs
 		desc.borderRight = GetStyleInternal()->border.right;
 		desc.borderTop = GetStyleInternal()->border.top;
 		desc.borderBottom = GetStyleInternal()->border.bottom;
-		desc.color = getTint();
-		mImageSprite->update(desc, (UINT64)GetParentWidgetInternal());
+		desc.color = GetTint();
+		mImageSprite->Update(desc, (UINT64)GetParentWidgetInternal());
 		
 		// Populate GUI render elements from the sprites
 		{
 			using T = impl::GUIRenderElementHelper;
-			T::populate({ T::SpriteInfo(mImageSprite) }, mRenderElements);
+			T::Populate({ T::SpriteInfo(mImageSprite) }, mRenderElements);
 		}
 
-		GUIElement::updateRenderElementsInternal();
+		GUIElement::UpdateRenderElementsInternal();
 	}
 
 	void GUISliderHandle::UpdateClippedBounds()
 	{
 		mClippedBounds = mLayoutData.area;
-		mClippedBounds.clip(mLayoutData.clipRect);
+		mClippedBounds.Clip(mLayoutData.clipRect);
 	}
 
 	Vector2I GUISliderHandle::GetOptimalSizeInternal() const
 	{
-		HSpriteTexture activeTex = getActiveTexture();
+		HSpriteTexture activeTex = GetActiveTexture();
 
-		if(SpriteTexture::checkIsLoaded(activeTex))
-			return Vector2I(activeTex->getWidth(), activeTex->getHeight());
+		if(SpriteTexture::CheckIsLoaded(activeTex))
+			return Vector2I(activeTex->GetWidth(), activeTex->GetHeight());
 
 		return Vector2I();
 	}
@@ -159,34 +159,34 @@ namespace bs
 		UINT32 indexStride = sizeof(UINT32);
 
 		Vector2I layoutOffset = Vector2I(mLayoutData.area.x, mLayoutData.area.y) + offset;
-		Rect2I clipRect = mLayoutData.getLocalClipRect();
+		Rect2I clipRect = mLayoutData.GetLocalClipRect();
 
-		if (mFlags.isSet(GUISliderHandleFlag::Horizontal))
+		if (mFlags.IsSet(GUISliderHandleFlag::Horizontal))
 		{
-			layoutOffset.x += getHandlePosPx();
-			clipRect.x -= getHandlePosPx();
+			layoutOffset.x += GetHandlePosPx();
+			clipRect.x -= GetHandlePosPx();
 		}
 		else
 		{
-			layoutOffset.y += getHandlePosPx();
-			clipRect.y -= getHandlePosPx();
+			layoutOffset.y += GetHandlePosPx();
+			clipRect.y -= GetHandlePosPx();
 		}
 
-		mImageSprite->fillBuffer(vertices, uvs, indices, vertexOffset, indexOffset, maxNumVerts, maxNumIndices,
+		mImageSprite->FillBuffer(vertices, uvs, indices, vertexOffset, indexOffset, maxNumVerts, maxNumIndices,
 			vertexStride, indexStride, renderElementIdx, layoutOffset, clipRect);
 	}
 
 	bool GUISliderHandle::MouseEventInternal(const GUIMouseEvent& ev)
 	{
-		UINT32 handleSize = getHandleSize();
+		UINT32 handleSize = GetHandleSize();
 
-		if(ev.getType() == GUIMouseEventType::MouseMove)
+		if(ev.GetType() == GUIMouseEventType::MouseMove)
 		{
 			if (!IsDisabledInternal())
 			{
 				if (mMouseOverHandle)
 				{
-					if (!isOnHandle(ev.getPosition()))
+					if (!IsOnHandle(ev.GetPosition()))
 					{
 						mMouseOverHandle = false;
 
@@ -198,7 +198,7 @@ namespace bs
 				}
 				else
 				{
-					if (isOnHandle(ev.getPosition()))
+					if (IsOnHandle(ev.GetPosition()))
 					{
 						mMouseOverHandle = true;
 
@@ -211,8 +211,8 @@ namespace bs
 			}
 		}
 
-		bool jumpOnClick = mFlags.isSet(GUISliderHandleFlag::JumpOnClick);
-		if(ev.getType() == GUIMouseEventType::MouseDown && (mMouseOverHandle || jumpOnClick))
+		bool jumpOnClick = mFlags.IsSet(GUISliderHandleFlag::JumpOnClick);
+		if(ev.GetType() == GUIMouseEventType::MouseDown && (mMouseOverHandle || jumpOnClick))
 		{
 			if (!IsDisabledInternal())
 			{
@@ -223,25 +223,25 @@ namespace bs
 				{
 					float handlePosPx = 0.0f;
 
-					if (mFlags.isSet(GUISliderHandleFlag::Horizontal))
-						handlePosPx = (float)(ev.getPosition().x - (INT32)mLayoutData.area.x - handleSize * 0.5f);
+					if (mFlags.IsSet(GUISliderHandleFlag::Horizontal))
+						handlePosPx = (float)(ev.GetPosition().x - (INT32)mLayoutData.area.x - handleSize * 0.5f);
 					else
-						handlePosPx = (float)(ev.getPosition().y - (INT32)mLayoutData.area.y - handleSize * 0.5f);
+						handlePosPx = (float)(ev.GetPosition().y - (INT32)mLayoutData.area.y - handleSize * 0.5f);
 
-					setHandlePosPx((INT32)handlePosPx);
+					SetHandlePosPx((INT32)handlePosPx);
 					onHandleMovedOrResized(mPctHandlePos, GetHandleSizePctInternal());
 				}
 
-				bool isResizeable = mFlags.isSet(GUISliderHandleFlag::Resizeable);
-				if (mFlags.isSet(GUISliderHandleFlag::Horizontal))
+				bool isResizeable = mFlags.IsSet(GUISliderHandleFlag::Resizeable);
+				if (mFlags.IsSet(GUISliderHandleFlag::Horizontal))
 				{
-					INT32 left = (INT32)mLayoutData.area.x + getHandlePosPx();
+					INT32 left = (INT32)mLayoutData.area.x + GetHandlePosPx();
 
 					if(isResizeable)
 					{
 						INT32 right = left + handleSize;
 
-						INT32 clickPos = ev.getPosition().x;
+						INT32 clickPos = ev.GetPosition().x;
 						if (clickPos >= left && clickPos < (left + (INT32)RESIZE_HANDLE_SIZE))
 							mDragState = DragState::LeftResize;
 						else if (clickPos >= (right - (INT32)RESIZE_HANDLE_SIZE) && clickPos < right)
@@ -252,17 +252,17 @@ namespace bs
 					else
 						mDragState = DragState::Normal;
 
-					mDragStartPos = ev.getPosition().x - left;
+					mDragStartPos = ev.GetPosition().x - left;
 				}
 				else
 				{
-					INT32 top = (INT32)mLayoutData.area.y + getHandlePosPx();
+					INT32 top = (INT32)mLayoutData.area.y + GetHandlePosPx();
 
 					if(isResizeable)
 					{
 						INT32 bottom = top + handleSize;
 
-						INT32 clickPos = ev.getPosition().y;
+						INT32 clickPos = ev.GetPosition().y;
 						if (clickPos >= top && clickPos < (top + (INT32)RESIZE_HANDLE_SIZE))
 							mDragState = DragState::LeftResize;
 						else if (clickPos >= (bottom - (INT32)RESIZE_HANDLE_SIZE) && clickPos < bottom)
@@ -273,7 +273,7 @@ namespace bs
 					else
 						mDragState = DragState::Normal;
 
-					mDragStartPos = ev.getPosition().y - top;
+					mDragStartPos = ev.GetPosition().y - top;
 				}
 				
 				mHandleDragged = true;
@@ -282,31 +282,31 @@ namespace bs
 			return true;
 		}
 
-		if(ev.getType() == GUIMouseEventType::MouseDrag && mHandleDragged)
+		if(ev.GetType() == GUIMouseEventType::MouseDrag && mHandleDragged)
 		{
 			if (!IsDisabledInternal())
 			{
 				if (mDragState == DragState::Normal)
 				{
 					INT32 handlePosPx;
-					if (mFlags.isSet(GUISliderHandleFlag::Horizontal))
-						handlePosPx = ev.getPosition().x - mDragStartPos - mLayoutData.area.x;
+					if (mFlags.IsSet(GUISliderHandleFlag::Horizontal))
+						handlePosPx = ev.GetPosition().x - mDragStartPos - mLayoutData.area.x;
 					else
-						handlePosPx = ev.getPosition().y - mDragStartPos - mLayoutData.area.y;
+						handlePosPx = ev.GetPosition().y - mDragStartPos - mLayoutData.area.y;
 
-					setHandlePosPx(handlePosPx);
+					SetHandlePosPx(handlePosPx);
 					onHandleMovedOrResized(mPctHandlePos, GetHandleSizePctInternal());
 				}
 				else // Resizing
 				{
 					INT32 clickPosPx;
-					if (mFlags.isSet(GUISliderHandleFlag::Horizontal))
-						clickPosPx = ev.getPosition().x - mLayoutData.area.x;
+					if (mFlags.IsSet(GUISliderHandleFlag::Horizontal))
+						clickPosPx = ev.GetPosition().x - mLayoutData.area.x;
 					else
-						clickPosPx = ev.getPosition().y - mLayoutData.area.y;
+						clickPosPx = ev.GetPosition().y - mLayoutData.area.y;
 
-					INT32 left = getHandlePosPx();
-					UINT32 maxSize = getMaxSize();
+					INT32 left = GetHandlePosPx();
+					UINT32 maxSize = GetMaxSize();
 
 					INT32 newHandleSize;
 					float newHandlePos;
@@ -314,7 +314,7 @@ namespace bs
 					{
 						INT32 newLeft = clickPosPx - mDragStartPos;
 						INT32 right = left + handleSize;
-						newLeft = Math::clamp(newLeft, 0, right);
+						newLeft = Math::Clamp(newLeft, 0, right);
 
 						newHandleSize = std::max((INT32)mMinHandleSize, right - newLeft);
 						newLeft = right - newHandleSize;
@@ -349,7 +349,7 @@ namespace bs
 			return true;
 		}
 
-		if(ev.getType() == GUIMouseEventType::MouseOut)
+		if(ev.GetType() == GUIMouseEventType::MouseOut)
 		{
 			if (!IsDisabledInternal())
 			{
@@ -365,7 +365,7 @@ namespace bs
 			return true;
 		}
 
-		if(ev.getType() == GUIMouseEventType::MouseUp)
+		if(ev.GetType() == GUIMouseEventType::MouseUp)
 		{
 			if (!IsDisabledInternal())
 			{
@@ -377,28 +377,28 @@ namespace bs
 				if (!mHandleDragged)
 				{
 					// If we clicked above or below the scroll handle, scroll by one page
-					INT32 handlePosPx = getHandlePosPx();
-					if (!mFlags.isSet(GUISliderHandleFlag::JumpOnClick))
+					INT32 handlePosPx = GetHandlePosPx();
+					if (!mFlags.IsSet(GUISliderHandleFlag::JumpOnClick))
 					{
-						if (mFlags.isSet(GUISliderHandleFlag::Horizontal))
+						if (mFlags.IsSet(GUISliderHandleFlag::Horizontal))
 						{
 							INT32 handleLeft = (INT32)mLayoutData.area.x + handlePosPx;
 							INT32 handleRight = handleLeft + handleSize;
 
-							if (ev.getPosition().x < handleLeft)
-								moveOneStep(false);
-							else if (ev.getPosition().x > handleRight)
-								moveOneStep(true);
+							if (ev.GetPosition().x < handleLeft)
+								MoveOneStep(false);
+							else if (ev.GetPosition().x > handleRight)
+								MoveOneStep(true);
 						}
 						else
 						{
 							INT32 handleTop = (INT32)mLayoutData.area.y + handlePosPx;
 							INT32 handleBottom = handleTop + handleSize;
 
-							if (ev.getPosition().y < handleTop)
-								moveOneStep(false);
-							else if (ev.getPosition().y > handleBottom)
-								moveOneStep(true);
+							if (ev.GetPosition().y < handleTop)
+								MoveOneStep(false);
+							else if (ev.GetPosition().y > handleBottom)
+								MoveOneStep(true);
 						}
 					}
 				}
@@ -409,7 +409,7 @@ namespace bs
 			return true;
 		}
 
-		if(ev.getType() == GUIMouseEventType::MouseDragEnd)
+		if(ev.GetType() == GUIMouseEventType::MouseDragEnd)
 		{
 			if (!IsDisabledInternal())
 			{
@@ -430,18 +430,18 @@ namespace bs
 
 	void GUISliderHandle::MoveOneStep(bool forward)
 	{
-		const UINT32 handleSize = getHandleSize();
-		INT32 handlePosPx = getHandlePosPx();
+		const UINT32 handleSize = GetHandleSize();
+		INT32 handlePosPx = GetHandlePosPx();
 
 		INT32 stepSizePx;
 		if (mStep > 0.0f)
-			stepSizePx = (INT32)(mStep * getMaxSize());
+			stepSizePx = (INT32)(mStep * GetMaxSize());
 		else
 			stepSizePx = (INT32)handleSize;
 
 		handlePosPx += forward ? stepSizePx : -stepSizePx;
 
-		setHandlePosPx(handlePosPx);
+		SetHandlePosPx(handlePosPx);
 		onHandleMovedOrResized(mPctHandlePos, GetHandleSizePctInternal());
 
 		MarkLayoutAsDirtyInternal();
@@ -449,10 +449,10 @@ namespace bs
 
 	bool GUISliderHandle::IsOnHandle(const Vector2I& pos) const
 	{
-		UINT32 handleSize = getHandleSize();
-		if(mFlags.isSet(GUISliderHandleFlag::Horizontal))
+		UINT32 handleSize = GetHandleSize();
+		if(mFlags.IsSet(GUISliderHandleFlag::Horizontal))
 		{
-			INT32 left = (INT32)mLayoutData.area.x + getHandlePosPx();
+			INT32 left = (INT32)mLayoutData.area.x + GetHandlePosPx();
 			INT32 right = left + handleSize;
 
 			if(pos.x >= left && pos.x < right)
@@ -460,7 +460,7 @@ namespace bs
 		}
 		else
 		{
-			INT32 top = (INT32)mLayoutData.area.y + getHandlePosPx();
+			INT32 top = (INT32)mLayoutData.area.y + GetHandlePosPx();
 			INT32 bottom = top + handleSize;
 
 			if(pos.y >= top && pos.y < bottom)
@@ -472,13 +472,13 @@ namespace bs
 
 	INT32 GUISliderHandle::GetHandlePosPx() const
 	{
-		INT32 maxScrollAmount = std::max(0, (INT32)getMaxSize() - (INT32)getHandleSize());
-		return Math::floorToInt(mPctHandlePos * maxScrollAmount);
+		INT32 maxScrollAmount = std::max(0, (INT32)GetMaxSize() - (INT32)GetHandleSize());
+		return Math::FloorToInt(mPctHandlePos * maxScrollAmount);
 	}
 
 	UINT32 GUISliderHandle::GetHandleSize() const
 	{
-		return std::max(mMinHandleSize, (UINT32)(getMaxSize() * mPctHandleSize));
+		return std::max(mMinHandleSize, (UINT32)(GetMaxSize() * mPctHandleSize));
 	}
 
 	float GUISliderHandle::GetHandleSizePctInternal() const
@@ -491,7 +491,7 @@ namespace bs
 		const GUIElementStyle* style = GetStyleInternal();
 		if (style != nullptr)
 		{
-			if (mFlags.isSet(GUISliderHandleFlag::Horizontal))
+			if (mFlags.IsSet(GUISliderHandleFlag::Horizontal))
 				mMinHandleSize = style->fixedWidth ? style->width : style->minWidth;
 			else
 				mMinHandleSize = style->fixedHeight ? style->height : style->minHeight;
@@ -500,7 +500,7 @@ namespace bs
 
 	void GUISliderHandle::SetHandlePosPx(INT32 pos)
 	{
-		float scrollableSize = (float)getMaxSize() - getHandleSize();
+		float scrollableSize = (float)GetMaxSize() - GetHandleSize();
 
 		if (scrollableSize > 0.0f)
 			SetHandlePosInternal(pos / scrollableSize);
@@ -511,7 +511,7 @@ namespace bs
 	UINT32 GUISliderHandle::GetMaxSize() const
 	{
 		UINT32 maxSize = mLayoutData.area.height;
-		if(mFlags.isSet(GUISliderHandleFlag::Horizontal))
+		if(mFlags.IsSet(GUISliderHandleFlag::Horizontal))
 			maxSize = mLayoutData.area.width;
 
 		return maxSize;

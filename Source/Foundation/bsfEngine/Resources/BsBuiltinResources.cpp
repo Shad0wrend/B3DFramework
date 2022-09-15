@@ -100,7 +100,7 @@ namespace bs
 		ResourceManifestPath = mBuiltinDataFolder + "ResourceManifest.asset";
 
 		// Load manifest
-		if (FileSystem::exists(ResourceManifestPath))
+		if (FileSystem::Exists(ResourceManifestPath))
 			mResourceManifest = ResourceManifest::load(ResourceManifestPath, mBuiltinDataFolder);
 
 		if (mResourceManifest == nullptr)
@@ -121,10 +121,10 @@ namespace bs
 
 		SPtr<PixelData> dummyPixelData = PixelData::Create(2, 2, 1, PF_RGBA8);
 
-		dummyPixelData->setColorAt(Color::Red, 0, 0);
-		dummyPixelData->setColorAt(Color::Red, 0, 1);
-		dummyPixelData->setColorAt(Color::Red, 1, 0);
-		dummyPixelData->setColorAt(Color::Red, 1, 1);
+		dummyPixelData->SetColorAt(Color::Red, 0, 0);
+		dummyPixelData->SetColorAt(Color::Red, 0, 1);
+		dummyPixelData->SetColorAt(Color::Red, 1, 0);
+		dummyPixelData->SetColorAt(Color::Red, 1, 1);
 
 		mDummyTexture = Texture::Create(dummyPixelData);
 
@@ -150,34 +150,34 @@ namespace bs
 		HTexture cursorSizeNWSETex = getCursorTexture(CursorSizeNWSETex);
 		HTexture cursorSizeWETex = getCursorTexture(CursorSizeWETex);
 
-		mCursorArrow = cursorArrowTex->getProperties().allocBuffer(0, 0);
+		mCursorArrow = cursorArrowTex->GetProperties().allocBuffer(0, 0);
 		cursorArrowTex->readData(mCursorArrow);
 
-		mCursorArrowDrag = cursorArrowDragTex->getProperties().allocBuffer(0, 0);
+		mCursorArrowDrag = cursorArrowDragTex->GetProperties().allocBuffer(0, 0);
 		cursorArrowDragTex->readData(mCursorArrowDrag);
 
-		mCursorArrowLeftRight = cursorArrowLeftRightTex->getProperties().allocBuffer(0, 0);
+		mCursorArrowLeftRight = cursorArrowLeftRightTex->GetProperties().allocBuffer(0, 0);
 		cursorArrowLeftRightTex->readData(mCursorArrowLeftRight);
 
-		mCursorIBeam = cursorIBeamTex->getProperties().allocBuffer(0, 0);
+		mCursorIBeam = cursorIBeamTex->GetProperties().allocBuffer(0, 0);
 		cursorIBeamTex->readData(mCursorIBeam);
 
-		mCursorDeny = cursorDenyTex->getProperties().allocBuffer(0, 0);
+		mCursorDeny = cursorDenyTex->GetProperties().allocBuffer(0, 0);
 		cursorDenyTex->readData(mCursorDeny);
 
-		mCursorWait = cursorWaitTex->getProperties().allocBuffer(0, 0);
+		mCursorWait = cursorWaitTex->GetProperties().allocBuffer(0, 0);
 		cursorWaitTex->readData(mCursorWait);
 
-		mCursorSizeNESW = cursorSizeNESWTex->getProperties().allocBuffer(0, 0);
+		mCursorSizeNESW = cursorSizeNESWTex->GetProperties().allocBuffer(0, 0);
 		cursorSizeNESWTex->readData(mCursorSizeNESW);
 
-		mCursorSizeNS = cursorSizeNSTex->getProperties().allocBuffer(0, 0);
+		mCursorSizeNS = cursorSizeNSTex->GetProperties().allocBuffer(0, 0);
 		cursorSizeNSTex->readData(mCursorSizeNS);
 
-		mCursorSizeNWSE = cursorSizeNWSETex->getProperties().allocBuffer(0, 0);
+		mCursorSizeNWSE = cursorSizeNWSETex->GetProperties().allocBuffer(0, 0);
 		cursorSizeNWSETex->readData(mCursorSizeNWSE);
 
-		mCursorSizeWE = cursorSizeWETex->getProperties().allocBuffer(0, 0);
+		mCursorSizeWE = cursorSizeWETex->GetProperties().allocBuffer(0, 0);
 		cursorSizeWETex->readData(mCursorSizeWE);
 
 		/************************************************************************/
@@ -189,7 +189,7 @@ namespace bs
 
 		HTexture iconTex = gResources().load<Texture>(iconPath);
 
-		mFrameworkIcon = iconTex->getProperties().allocBuffer(0, 0);
+		mFrameworkIcon = iconTex->GetProperties().allocBuffer(0, 0);
 		iconTex->readData(mFrameworkIcon);
 
 		gCoreThread().submit(true);

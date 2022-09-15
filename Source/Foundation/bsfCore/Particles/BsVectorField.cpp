@@ -36,17 +36,17 @@ namespace bs
 
 		const SPtr<PixelData> pixelData = PixelData::Create(mDesc.countX, mDesc.countY, mDesc.countZ, PF_RGBA16F);
 
-		const UINT32 pixelSize = PixelUtil::getNumElemBytes(PF_RGBA16F);
-		UINT8* data = pixelData->getData();
+		const UINT32 pixelSize = PixelUtil::GetNumElemBytes(PF_RGBA16F);
+		UINT8* data = pixelData->GetData();
 		for(UINT32 z = 0; z < (UINT32)mDesc.countZ; z++)
 		{
 			const UINT32 zArrayIdx = z * mDesc.countY * mDesc.countX;
-			const UINT32 zDataIdx = z * pixelData->getSlicePitch();
+			const UINT32 zDataIdx = z * pixelData->GetSlicePitch();
 
 			for(UINT32 y = 0; y < (UINT32)mDesc.countY; y++)
 			{
 				const UINT32 yArrayIdx = y * mDesc.countX;
-				const UINT32 yDataIdx = y * pixelData->getRowPitch();
+				const UINT32 yDataIdx = y * pixelData->GetRowPitch();
 
 				for(UINT32 x = 0; x < (UINT32)mDesc.countX; x++)
 				{
@@ -55,7 +55,7 @@ namespace bs
 
 					const Vector3& source = arrayIdx < valuesToCopy ? values[arrayIdx] : Vector3::ZERO;
 					UINT8* dest = data + dataIdx;
-					PixelUtil::packColor(source.x, source.y, source.z, 1.0f, PF_RGBA16F, dest);
+					PixelUtil::PackColor(source.x, source.y, source.z, 1.0f, PF_RGBA16F, dest);
 				}
 			}
 		}
@@ -65,7 +65,7 @@ namespace bs
 
 	SPtr<ct::CoreObject> VectorField::CreateCore() const
 	{
-		ct::VectorField* vectorField = new (bs_alloc<ct::VectorField>()) ct::VectorField(mDesc, mTexture->getCore());
+		ct::VectorField* vectorField = new (bs_alloc<ct::VectorField>()) ct::VectorField(mDesc, mTexture->GetCore());
 
 		SPtr<ct::VectorField> vectorFieldPtr = bs_shared_ptr<ct::VectorField>(vectorField);
 		vectorFieldPtr->SetThisPtrInternal(vectorFieldPtr);
@@ -108,7 +108,7 @@ namespace bs
 
 		SPtr<VectorField> vectorFieldPtr = bs_shared_ptr<VectorField>(vectorField);
 		vectorFieldPtr->SetThisPtrInternal(vectorFieldPtr);
-		vectorFieldPtr->initialize();
+		vectorFieldPtr->Initialize();
 
 		return vectorFieldPtr;
 	}
@@ -135,7 +135,7 @@ namespace bs
 	bool FGAImporter::IsExtensionSupported(const String& ext) const
 	{
 		String lowerCaseExt = ext;
-		StringUtil::toLowerCase(lowerCaseExt);
+		StringUtil::ToLowerCase(lowerCaseExt);
 
 		return lowerCaseExt == u8"fga";
 	}
@@ -149,10 +149,10 @@ namespace bs
 	{
 		String data;
 		{
-			Lock fileLock = FileScheduler::getLock(filePath);
+			Lock fileLock = FileScheduler::GetLock(filePath);
 
-			SPtr<DataStream> stream = FileSystem::openFile(filePath);
-			data = stream->getAsString();
+			SPtr<DataStream> stream = FileSystem::OpenFile(filePath);
+			data = stream->GetAsString();
 		}
 
 		auto chars = bs_managed_stack_alloc<char>((UINT32)data.size() + 1);
@@ -261,9 +261,9 @@ namespace bs
 				"Unexpected excess data. This might indicate corrupt data. Remaining data will be truncated.");
 		}
 
-		const String fileName = filePath.getFilename(false);
+		const String fileName = filePath.GetFilename(false);
 		SPtr<VectorField> vectorField = VectorField::CreatePtrInternal(desc, values);
-		vectorField->setName(fileName);
+		vectorField->SetName(fileName);
 
 		return vectorField;
 	}

@@ -42,7 +42,7 @@ namespace bs
 		if(amount > freeMem)
 			AllocBlock(amount);
 
-		UINT8* data = mFreeBlock->alloc(amount);
+		UINT8* data = mFreeBlock->Alloc(amount);
 
 #if BS_DEBUG_MODE
 		mTotalAllocBytes += amount;
@@ -94,7 +94,7 @@ namespace bs
 		}
 
 		amount += alignOffset;
-		UINT8* data = mFreeBlock->alloc(amount);
+		UINT8* data = mFreeBlock->Alloc(amount);
 
 #if BS_DEBUG_MODE
 		mTotalAllocBytes += amount;
@@ -125,7 +125,7 @@ namespace bs
 
 	void FrameAlloc::MarkFrame()
 	{
-		void** framePtr = (void**)alloc(sizeof(void*));
+		void** framePtr = (void**)Alloc(sizeof(void*));
 		*framePtr = mLastFrame;
 		mLastFrame = framePtr;
 	}
@@ -228,7 +228,7 @@ namespace bs
 		}
 	}
 
-	FrameAlloc::MemBlock* FrameAlloc::allocBlock(UINT32 wantedSize)
+	FrameAlloc::MemBlock* FrameAlloc::AllocBlock(UINT32 wantedSize)
 	{
 		UINT32 blockSize = mBlockSize;
 		if(wantedSize > blockSize)
@@ -247,7 +247,7 @@ namespace bs
 			else
 			{
 				// Found an empty block that doesn't fit our data, delete it
-				deallocBlock(curBlock);
+				DeallocBlock(curBlock);
 				mBlocks.erase(mBlocks.begin() + mNextBlockIdx);
 			}
 		}
@@ -296,31 +296,31 @@ namespace bs
 
 	BS_UTILITY_EXPORT UINT8* bs_frame_alloc(UINT32 numBytes)
 	{
-		return gFrameAlloc().alloc(numBytes);
+		return gFrameAlloc().Alloc(numBytes);
 	}
 
 	BS_UTILITY_EXPORT UINT8* bs_frame_alloc_aligned(UINT32 count, UINT32 align)
 	{
-		return gFrameAlloc().allocAligned(count, align);
+		return gFrameAlloc().AllocAligned(count, align);
 	}
 
 	BS_UTILITY_EXPORT void bs_frame_free(void* data)
 	{
-		gFrameAlloc().free((UINT8*)data);
+		gFrameAlloc().Free((UINT8*)data);
 	}
 
 	BS_UTILITY_EXPORT void bs_frame_free_aligned(void* data)
 	{
-		gFrameAlloc().free((UINT8*)data);
+		gFrameAlloc().Free((UINT8*)data);
 	}
 
 	BS_UTILITY_EXPORT void bs_frame_mark()
 	{
-		gFrameAlloc().markFrame();
+		gFrameAlloc().MarkFrame();
 	}
 
 	BS_UTILITY_EXPORT void bs_frame_clear()
 	{
-		gFrameAlloc().clear();
+		gFrameAlloc().Clear();
 	}
 }

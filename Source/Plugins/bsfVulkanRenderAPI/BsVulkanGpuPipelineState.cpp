@@ -163,9 +163,9 @@ namespace bs { namespace ct
 		if (depthStencilState == nullptr)
 			depthStencilState = DepthStencilState::getDefault().get();
 
-		const RasterizerProperties& rstProps = rasterizerState->getProperties();
-		const BlendProperties& blendProps = blendState->getProperties();
-		const DepthStencilProperties dsProps = depthStencilState->getProperties();
+		const RasterizerProperties& rstProps = rasterizerState->GetProperties();
+		const BlendProperties& blendProps = blendState->GetProperties();
+		const DepthStencilProperties dsProps = depthStencilState->GetProperties();
 
 		mRasterizationInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
 		mRasterizationInfo.pNext = nullptr;
@@ -287,7 +287,7 @@ namespace bs { namespace ct
 		mScissorEnabled = rstProps.getScissorEnable();
 
 		if(mData.vertexProgram != nullptr)
-			mVertexDecl = mData.vertexProgram->getInputDeclaration();
+			mVertexDecl = mData.vertexProgram->GetInputDeclaration();
 
 		VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
 
@@ -301,7 +301,7 @@ namespace bs { namespace ct
 
 			mPerDeviceData[i].device = devices[i];
 
-			VulkanDescriptorManager& descManager = mPerDeviceData[i].device->getDescriptorManager();
+			VulkanDescriptorManager& descManager = mPerDeviceData[i].device->GetDescriptorManager();
 			VulkanGpuPipelineParamInfo& vkParamInfo = static_cast<VulkanGpuPipelineParamInfo&>(*mParamInfo);
 
 			UINT32 numLayouts = vkParamInfo.getNumSets();
@@ -328,7 +328,7 @@ namespace bs { namespace ct
 			return nullptr;
 
 		readOnlyFlags &= ~FBT_COLOR; // Ignore the color
-		GpuPipelineKey key(renderPass->getId(), vertexInput->getId(), readOnlyFlags, drawOp);
+		GpuPipelineKey key(renderPass->GetId(), vertexInput->GetId(), readOnlyFlags, drawOp);
 
 		PerDeviceData& perDeviceData = mPerDeviceData[deviceIdx];
 		auto iterFind = perDeviceData.pipelines.find(key);
@@ -348,7 +348,7 @@ namespace bs { namespace ct
 
 	void VulkanGraphicsPipelineState::RegisterPipelineResources(VulkanCmdBuffer* cmdBuffer)
 	{
-		UINT32 deviceIdx = cmdBuffer->getDeviceIdx();
+		UINT32 deviceIdx = cmdBuffer->GetDeviceIdx();
 
 		std::array<VulkanGpuProgram*, 5> programs = {
 			static_cast<VulkanGpuProgram*>(mData.vertexProgram.get()),
@@ -362,7 +362,7 @@ namespace bs { namespace ct
 		{
 			if (entry != nullptr)
 			{
-				VulkanShaderModule* module = entry->getShaderModule(deviceIdx);
+				VulkanShaderModule* module = entry->GetShaderModule(deviceIdx);
 
 				if(module != nullptr)
 					cmdBuffer->registerResource(module, VulkanAccessFlag::Read);
@@ -375,14 +375,14 @@ namespace bs { namespace ct
 	{
 		mInputAssemblyInfo.topology = VulkanUtility::getDrawOp(drawOp);
 		mTesselationInfo.patchControlPoints = 3; // Not provided by our shaders for now
-		mMultiSampleInfo.rasterizationSamples = renderPass->getSampleFlags();
-		mColorBlendStateInfo.attachmentCount = renderPass->getNumColorAttachments();
+		mMultiSampleInfo.rasterizationSamples = renderPass->GetSampleFlags();
+		mColorBlendStateInfo.attachmentCount = renderPass->GetNumColorAttachments();
 
 		DepthStencilState* dsState = getDepthStencilState().get();
 		if (dsState == nullptr)
 			dsState = DepthStencilState::getDefault().get();
 
-		const DepthStencilProperties dsProps = dsState->getProperties();
+		const DepthStencilProperties dsProps = dsState->GetProperties();
 		bool enableDepthWrites = dsProps.getDepthWriteEnable() && (readOnlyFlags & FBT_DEPTH) == 0;
 
 		mDepthStencilInfo.depthWriteEnable = enableDepthWrites; // If depth stencil attachment is read only, depthWriteEnable must be VK_FALSE
@@ -411,9 +411,9 @@ namespace bs { namespace ct
 		// Note: We can use the default render pass here (default clear/load/read flags), even though that might not be the
 		// exact one currently bound. This is because load/store operations and layout transitions are allowed to differ
 		// (as per spec 7.2., such render passes are considered compatible).
-		mPipelineInfo.renderPass = renderPass->getVkRenderPass(RT_NONE, RT_NONE, CLEAR_NONE);
+		mPipelineInfo.renderPass = renderPass->GetVkRenderPass(RT_NONE, RT_NONE, CLEAR_NONE);
 		mPipelineInfo.layout = mPerDeviceData[deviceIdx].pipelineLayout;
-		mPipelineInfo.pVertexInputState = vertexInput->getCreateInfo();
+		mPipelineInfo.pVertexInputState = vertexInput->GetCreateInfo();
 
 		bool depthReadOnly;
 		if (renderPass->hasDepthAttachment())
@@ -428,7 +428,7 @@ namespace bs { namespace ct
 		}
 
 		std::array<bool, BS_MAX_MULTIPLE_RENDER_TARGETS> colorReadOnly;
-		if (renderPass->getNumColorAttachments() > 0)
+		if (renderPass->GetNumColorAttachments() > 0)
 		{
 			mPipelineInfo.pColorBlendState = &mColorBlendStateInfo;
 
@@ -465,10 +465,10 @@ namespace bs { namespace ct
 
 			VkPipelineShaderStageCreateInfo& stageCI = mShaderStageInfos[stageOutputIdx];
 
-			VulkanShaderModule* module = program->getShaderModule(deviceIdx);
+			VulkanShaderModule* module = program->GetShaderModule(deviceIdx);
 
 			if (module != nullptr)
-				stageCI.module = module->getHandle();
+				stageCI.module = module->GetHandle();
 			else
 				stageCI.module = VK_NULL_HANDLE;
 
@@ -476,7 +476,7 @@ namespace bs { namespace ct
 		}
 
 		VulkanDevice* device = mPerDeviceData[deviceIdx].device;
-		VkDevice vkDevice = mPerDeviceData[deviceIdx].device->getLogical();
+		VkDevice vkDevice = mPerDeviceData[deviceIdx].device->GetLogical();
 
 		VkPipeline pipeline;
 		VkResult result = vkCreateGraphicsPipelines(vkDevice, VK_NULL_HANDLE, 1, &mPipelineInfo, gVulkanAllocator, &pipeline);
@@ -491,7 +491,7 @@ namespace bs { namespace ct
 		mDepthStencilInfo.back.failOp = oldBackFailOp;
 		mDepthStencilInfo.back.depthFailOp = oldBackZFailOp;
 
-		return device->getResourceManager().create<VulkanPipeline>(pipeline, colorReadOnly, depthReadOnly);
+		return device->GetResourceManager().create<VulkanPipeline>(pipeline, colorReadOnly, depthReadOnly);
 	}
 
 	VulkanComputePipelineState::VulkanComputePipelineState(const SPtr<GpuProgram>& program,
@@ -508,13 +508,13 @@ namespace bs { namespace ct
 			if (mPerDeviceData[i].device == nullptr)
 				continue;
 
-			mPerDeviceData[i].pipeline->destroy();
+			mPerDeviceData[i].pipeline->Destroy();
 		}
 	}
 
 	void VulkanComputePipelineState::Initialize()
 	{
-		ComputePipelineState::initialize();
+		ComputePipelineState::Initialize();
 
 		// This might happen fairly often if shaders with unsupported languages are loaded, in which case the pipeline
 		// will never get used, and its fine not to initialize it.
@@ -529,7 +529,7 @@ namespace bs { namespace ct
 		stageCI.flags = 0;
 		stageCI.stage = VK_SHADER_STAGE_COMPUTE_BIT;
 		stageCI.module = VK_NULL_HANDLE;
-		stageCI.pName = vkProgram->getEntryPoint().c_str();
+		stageCI.pName = vkProgram->GetEntryPoint().c_str();
 		stageCI.pSpecializationInfo = nullptr;
 
 		VkComputePipelineCreateInfo pipelineCI;
@@ -552,8 +552,8 @@ namespace bs { namespace ct
 
 			mPerDeviceData[i].device = devices[i];
 
-			VulkanDescriptorManager& descManager = devices[i]->getDescriptorManager();
-			VulkanResourceManager& rescManager = devices[i]->getResourceManager();
+			VulkanDescriptorManager& descManager = devices[i]->GetDescriptorManager();
+			VulkanResourceManager& rescManager = devices[i]->GetResourceManager();
 			VulkanGpuPipelineParamInfo& vkParamInfo = static_cast<VulkanGpuPipelineParamInfo&>(*mParamInfo);
 
 			UINT32 numLayouts = vkParamInfo.getNumSets();
@@ -562,17 +562,17 @@ namespace bs { namespace ct
 			for (UINT32 j = 0; j < numLayouts; j++)
 				layouts[j] = vkParamInfo.getLayout(i, j);
 
-			VulkanShaderModule* module = vkProgram->getShaderModule(i);
+			VulkanShaderModule* module = vkProgram->GetShaderModule(i);
 
 			if (module != nullptr)
-				pipelineCI.stage.module = module->getHandle();
+				pipelineCI.stage.module = module->GetHandle();
 			else
 				pipelineCI.stage.module = VK_NULL_HANDLE;
 
 			pipelineCI.layout = descManager.getPipelineLayout(layouts, numLayouts);
 
 			VkPipeline pipeline;
-			VkResult result = vkCreateComputePipelines(devices[i]->getLogical(), VK_NULL_HANDLE, 1, &pipelineCI,
+			VkResult result = vkCreateComputePipelines(devices[i]->GetLogical(), VK_NULL_HANDLE, 1, &pipelineCI,
 														gVulkanAllocator, &pipeline);
 			assert(result == VK_SUCCESS);
 
@@ -597,12 +597,12 @@ namespace bs { namespace ct
 
 	void VulkanComputePipelineState::RegisterPipelineResources(VulkanCmdBuffer* cmdBuffer)
 	{
-		UINT32 deviceIdx = cmdBuffer->getDeviceIdx();
+		UINT32 deviceIdx = cmdBuffer->GetDeviceIdx();
 
 		VulkanGpuProgram* program = static_cast<VulkanGpuProgram*>(mProgram.get());
 		if(program != nullptr)
 		{
-			VulkanShaderModule* module = program->getShaderModule(deviceIdx);
+			VulkanShaderModule* module = program->GetShaderModule(deviceIdx);
 
 			if (module != nullptr)
 				cmdBuffer->registerResource(module, VulkanAccessFlag::Read);

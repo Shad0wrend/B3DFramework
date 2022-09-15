@@ -39,7 +39,7 @@ namespace bs
 	void CocoaDragAndDrop::registerDropTarget(DropTarget* target)
 	{
 		Lock lock(sMutex);
-		sQueuedAreaOperations.push_back(DropAreaOp(target, DropAreaOpType::Register, target->getArea()));
+		sQueuedAreaOperations.push_back(DropAreaOp(target, DropAreaOpType::Register, target->GetArea()));
 	}
 
 	void CocoaDragAndDrop::unregisterDropTarget(DropTarget* target)
@@ -51,7 +51,7 @@ namespace bs
 	void CocoaDragAndDrop::updateDropTarget(DropTarget* target)
 	{
 		Lock lock(sMutex);
-		sQueuedAreaOperations.push_back(DropAreaOp(target, DropAreaOpType::Update, target->getArea()));
+		sQueuedAreaOperations.push_back(DropAreaOp(target, DropAreaOpType::Update, target->GetArea()));
 	}
 
 	void CocoaDragAndDrop::update()
@@ -65,7 +65,7 @@ namespace bs
 			for(auto& entry : sQueuedAreaOperations)
 			{
 				CocoaWindow* areaWindow;
-				entry.target->GetOwnerWindowInternal()->getCustomAttribute("COCOA_WINDOW", &areaWindow);
+				entry.target->GetOwnerWindowInternal()->GetCustomAttribute("COCOA_WINDOW", &areaWindow);
 
 				switch(entry.type)
 				{
@@ -151,7 +151,7 @@ namespace bs
 		for(auto& entry : sDropAreas)
 		{
 			UINT32 areaWindowId = 0;
-			entry.target->GetOwnerWindowInternal()->getCustomAttribute("WINDOW_ID", &areaWindowId);
+			entry.target->GetOwnerWindowInternal()->GetCustomAttribute("WINDOW_ID", &areaWindowId);
 			if(areaWindowId != windowId)
 				continue;
 
@@ -181,7 +181,7 @@ namespace bs
 		for(auto& entry : sDropAreas)
 		{
 			UINT32 areaWindowId = 0;
-			entry.target->GetOwnerWindowInternal()->getCustomAttribute("WINDOW_ID", &areaWindowId);
+			entry.target->GetOwnerWindowInternal()->GetCustomAttribute("WINDOW_ID", &areaWindowId);
 			if(areaWindowId != windowId)
 				continue;
 
@@ -225,7 +225,7 @@ namespace bs
 		for(auto& entry : sDropAreas)
 		{
 			UINT32 areaWindowId = 0;
-			entry.target->GetOwnerWindowInternal()->getCustomAttribute("WINDOW_ID", &areaWindowId);
+			entry.target->GetOwnerWindowInternal()->GetCustomAttribute("WINDOW_ID", &areaWindowId);
 			if(areaWindowId != windowId)
 				continue;
 
@@ -249,7 +249,7 @@ namespace bs
 		for(auto& entry : sDropAreas)
 		{
 			UINT32 areaWindowId = 0;
-			entry.target->GetOwnerWindowInternal()->getCustomAttribute("WINDOW_ID", &areaWindowId);
+			entry.target->GetOwnerWindowInternal()->GetCustomAttribute("WINDOW_ID", &areaWindowId);
 			if(areaWindowId != windowId)
 				continue;
 

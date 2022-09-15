@@ -99,7 +99,7 @@ namespace bs
 		{
 			MonoObject* fieldManagedInstance = ScriptSerializableField::Create(instance, field);
 
-			scriptArray.set(i, fieldManagedInstance);
+			scriptArray.Set(i, fieldManagedInstance);
 			i++;
 		}
 

@@ -82,29 +82,29 @@ namespace bs
 		{
 			alloc.
 				Reserve<Vector3>(capacity).
-				reserve<Vector3>(capacity).
-				reserve<Vector3>(capacity).
-				reserve<Vector3>(capacity).
-				reserve<Vector3>(capacity).
-				reserve<float>(capacity).
-				reserve<float>(capacity).
-				reserve<RGBA>(capacity).
-				reserve<UINT32>(capacity).
-				reserve<float>(capacity).
-				reserve<UINT32>(capacity).
+				Reserve<Vector3>(capacity).
+				Reserve<Vector3>(capacity).
+				Reserve<Vector3>(capacity).
+				Reserve<Vector3>(capacity).
+				Reserve<float>(capacity).
+				Reserve<float>(capacity).
+				Reserve<RGBA>(capacity).
+				Reserve<UINT32>(capacity).
+				Reserve<float>(capacity).
+				Reserve<UINT32>(capacity).
 				Init();
 
-			prevPosition = alloc.alloc<Vector3>(capacity);
-			position = alloc.alloc<Vector3>(capacity);
-			velocity = alloc.alloc<Vector3>(capacity);
-			size = alloc.alloc<Vector3>(capacity);
-			rotation = alloc.alloc<Vector3>(capacity);
-			lifetime = alloc.alloc<float>(capacity);
-			initialLifetime = alloc.alloc<float>(capacity);
-			color = alloc.alloc<RGBA>(capacity);
-			seed = alloc.alloc<UINT32>(capacity);
-			frame = alloc.alloc<float>(capacity);
-			indices = alloc.alloc<UINT32>(capacity);
+			prevPosition = alloc.Alloc<Vector3>(capacity);
+			position = alloc.Alloc<Vector3>(capacity);
+			velocity = alloc.Alloc<Vector3>(capacity);
+			size = alloc.Alloc<Vector3>(capacity);
+			rotation = alloc.Alloc<Vector3>(capacity);
+			lifetime = alloc.Alloc<float>(capacity);
+			initialLifetime = alloc.Alloc<float>(capacity);
+			color = alloc.Alloc<RGBA>(capacity);
+			seed = alloc.Alloc<UINT32>(capacity);
+			frame = alloc.Alloc<float>(capacity);
+			indices = alloc.Alloc<UINT32>(capacity);
 		}
 
 		/** Frees the internal buffers. */
@@ -260,7 +260,7 @@ namespace bs
 		{
 			const UINT32 count = std::max(2U, GetParticleCount());
 
-			UINT32 width = Bitwise::nextPow2(count);
+			UINT32 width = Bitwise::NextPow2(count);
 			UINT32 height = 1;
 
 			while (width > height)

@@ -49,7 +49,7 @@ namespace bs
 		
 		CameraFlags& GetCameraFlags(Camera* obj)
 		{
-			mFlags = obj->getFlags();
+			mFlags = obj->GetFlags();
 
 			// OnDemand flag is transient and shouldn't be saved
 			// (Primarily because we set it in editor on user's cameras and we don't want that to persist)
@@ -66,7 +66,7 @@ namespace bs
 
 		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override
 		{
-			// Note: Since this is a CoreObject I should call initialize() right after deserialization,
+			// Note: Since this is a CoreObject I should call Initialize() right after deserialization,
 			// but since this specific type is used in Components we delay initialization until Component
 			// itself does it. Keep this is mind in case this ever needs to be deserialized for non-Component
 			// purposes (you'll need to call initialize manually).

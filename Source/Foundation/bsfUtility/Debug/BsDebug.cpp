@@ -16,6 +16,8 @@
 #include <windows.h>
 #include <iostream>
 
+#undef GetMessage
+
 void logToIDEConsole(const bs::String& message, const char* channel)
 {
 	static bs::Mutex mutex;
@@ -89,7 +91,7 @@ namespace bs
 		if(FileSystem::IsFile(filePath))
 		{
 			if(overwrite)
-				FileSystem::remove(filePath);
+				FileSystem::Remove(filePath);
 			else
 				BS_EXCEPT(FileNotFoundException, "File already exists at specified location: " + filePath.ToString());
 		}
@@ -137,7 +139,7 @@ namespace bs
 		}
 	}
 	
-	void Debug::saveHtmlLog(const Path& path) const
+	void Debug::SaveHtmlLog(const Path& path) const
 	{
 		static const char* style =
 			R"(html {
@@ -281,10 +283,10 @@ table td
 		// Write header information
 		stream << "<p>bs::framework version: " << BS_VERSION_MAJOR << "." << BS_VERSION_MINOR <<"." << BS_VERSION_PATCH << "</p>\n";
 
-		if(Time::isStarted())
-			stream << "<p>Started on: " << gTime().getAppStartUpDateString(false) << "</p>\n";
+		if(Time::IsStarted())
+			stream << "<p>Started on: " << gTime().GetAppStartUpDateString(false) << "</p>\n";
 
-		SystemInfo systemInfo = PlatformUtility::getSystemInfo();
+		SystemInfo systemInfo = PlatformUtility::GetSystemInfo();
 		stream << "<p>OS version: " << systemInfo.osName << " " << (systemInfo.osIs64Bit ? "64-bit" : "32-bit") << "</p>\n";
 		stream << "<h3>CPU information:</h3>\n";
 		stream << "<p>CPU vendor: " << systemInfo.cpuManufacturer << "</p>\n";
@@ -306,12 +308,12 @@ table td
 		stream << htmlEntriesTableHeader;
 
 		bool alternate = false;
-		Vector<LogEntry> entries = mLog.getAllEntries();
+		Vector<LogEntry> entries = mLog.GetAllEntries();
 		for (auto& entry : entries)
 		{
 			String channelName;
 
-			LogVerbosity verbosity = entry.getVerbosity();
+			LogVerbosity verbosity = entry.GetVerbosity();
 			switch(verbosity)
 			{
 			case LogVerbosity::Fatal:
@@ -340,14 +342,14 @@ table td
 			}
 			stream << R"(			<td>)" << toString(verbosity)<< R"(</td>)" << std::endl;
 
-			stream << R"(			<td>)" << toString(entry.getLocalTime(), false, false, TimeToStringConversionType::Time)
+			stream << R"(			<td>)" << toString(entry.GetLocalTime(), false, false, TimeToStringConversionType::Time)
 			       << "</td>" << std::endl;
 
 			String categoryName;
-			mLog.getCategoryName(entry.getCategory(), categoryName);
+			mLog.GetCategoryName(entry.GetCategory(), categoryName);
 			stream << R"(			<td>)" << categoryName << "</td>" << std::endl;
 
-			String parsedMessage = StringUtil::replaceAll(entry.getMessage(), "\n", "<br>\n");
+			String parsedMessage = StringUtil::ReplaceAll(entry.GetMessage(), "\n", "<br>\n");
 
 			stream << R"(			<td>)" << parsedMessage << "</td>" << std::endl;
 			stream << R"(		</tr>)" << std::endl;
@@ -357,8 +359,8 @@ table td
 
 		stream << htmlFooter;
 
-		SPtr<DataStream> fileStream = FileSystem::createAndOpenFile(path);
-		fileStream->writeString(stream.str());
+		SPtr<DataStream> fileStream = FileSystem::CreateAndOpenFile(path);
+		fileStream->WriteString(stream.str());
 	}
 	
 	/* Internal function to get the given number of spaces, so that the log looks properly indented */
@@ -386,14 +388,14 @@ table td
 		#else
 		stream << bsfOnlyHeader << BS_VERSION_MAJOR << "." << BS_VERSION_MINOR <<"." << BS_VERSION_PATCH << "\n";
 		#endif
-		if (Time::isStarted())
-			stream << "Started on: " << gTime().getAppStartUpDateString(false) << "\n";
+		if (Time::IsStarted())
+			stream << "Started on: " << gTime().GetAppStartUpDateString(false) << "\n";
 		
 		stream << "\n";
 		stream << "System information:\n" <<
 				  "================================================================================\n";
 		
-		SystemInfo systemInfo = PlatformUtility::getSystemInfo();
+		SystemInfo systemInfo = PlatformUtility::GetSystemInfo();
 		stream << "OS version: " << systemInfo.osName << " " << (systemInfo.osIs64Bit ? "64-bit" : "32-bit") << "\n";
 		stream << "CPU information:\n";
 		stream << "CPU vendor: " << systemInfo.cpuManufacturer << "\n";
@@ -417,14 +419,14 @@ table td
 		stream << "Log entries:\n" <<
 				  "================================================================================\n";
 		
-		Vector<LogEntry> entries = mLog.getAllEntries();
+		Vector<LogEntry> entries = mLog.GetAllEntries();
 		for (auto& entry : entries)
 		{
 			String builtMsg;
-			builtMsg.append(toString(entry.getLocalTime(), false, true, TimeToStringConversionType::Full));
+			builtMsg.append(toString(entry.GetLocalTime(), false, true, TimeToStringConversionType::Full));
 			builtMsg.append(" ");
 			
-			switch(entry.getVerbosity())
+			switch(entry.GetVerbosity())
 			{
 			case LogVerbosity::Fatal:
 				builtMsg.append("[FATAL]");
@@ -450,21 +452,21 @@ table td
 			}
 			
 			String categoryName;
-			mLog.getCategoryName(entry.getCategory(), categoryName);
+			mLog.GetCategoryName(entry.GetCategory(), categoryName);
 			builtMsg.append(" <" + categoryName + ">");
 
 			builtMsg.append(" | ");
 			
 			String tmpSpaces = GetSpacesIndentationInternal(builtMsg.length());
 			
-			String parsedMessage = StringUtil::replaceAll(entry.getMessage(), "\n\t\t", "\n" + tmpSpaces);
+			String parsedMessage = StringUtil::ReplaceAll(entry.GetMessage(), "\n\t\t", "\n" + tmpSpaces);
 			builtMsg.append(parsedMessage);
 			
 			stream << builtMsg << "\n";
 		}
 		
-		SPtr<DataStream> fileStream = FileSystem::createAndOpenFile(path);
-		fileStream->writeString(stream.str());
+		SPtr<DataStream> fileStream = FileSystem::CreateAndOpenFile(path);
+		fileStream->WriteString(stream.str());
 		
 	}
 	

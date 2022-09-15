@@ -18,8 +18,8 @@ namespace bs
 {
 	ScriptResourceManager::ScriptResourceManager()
 	{
-		mResourceDestroyedConn = gResources().onResourceDestroyed.connect(std::bind(&ScriptResourceManager::onResourceDestroyed, this, _1));
-		mDomainUnloadedConn = MonoManager::Instance().onDomainUnload.connect(std::bind(&ScriptResourceManager::clearRRefs, this));
+		mResourceDestroyedConn = gResources().onResourceDestroyed.Connect(std::bind(&ScriptResourceManager::onResourceDestroyed, this, _1));
+		mDomainUnloadedConn = MonoManager::Instance().onDomainUnload.Connect(std::bind(&ScriptResourceManager::clearRRefs, this));
 	}
 
 	ScriptResourceManager::~ScriptResourceManager()
@@ -48,10 +48,10 @@ namespace bs
 		ThrowExceptionIfInvalidOrDuplicateInternal(uuid);
 #endif
 
-		if (!resource.isLoaded(false))
+		if (!resource.IsLoaded(false))
 			return nullptr;
 
-		UINT32 rttiId = resource->getRTTI()->getRTTIId();
+		UINT32 rttiId = resource->GetRtti()->GetRttiId();
 		BuiltinResourceInfo* info = ScriptAssemblyManager::Instance().getBuiltinResourceInfo(rttiId);
 
 		if (info == nullptr)
@@ -105,7 +105,7 @@ namespace bs
 
 	void ScriptResourceManager::DestroyScriptResource(ScriptResourceBase* resource)
 	{
-		HResource resourceHandle = resource->getGenericHandle();
+		HResource resourceHandle = resource->GetGenericHandle();
 		const UUID& uuid = resourceHandle.getUUID();
 
 		if(uuid.empty())

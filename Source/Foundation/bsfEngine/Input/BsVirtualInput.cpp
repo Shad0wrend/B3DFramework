@@ -13,8 +13,8 @@ namespace bs
 	{
 		mInputConfiguration = CreateConfiguration();
 
-		Input::Instance().onButtonDown.connect(std::bind(&VirtualInput::buttonDown, this, _1));
-		Input::Instance().onButtonUp.connect(std::bind(&VirtualInput::buttonUp, this, _1));
+		Input::Instance().onButtonDown.Connect(std::bind(&VirtualInput::ButtonDown, this, _1));
+		Input::Instance().onButtonUp.Connect(std::bind(&VirtualInput::ButtonUp, this, _1));
 	}
 
 	SPtr<InputConfiguration> VirtualInput::CreateConfiguration()
@@ -208,7 +208,7 @@ namespace bs
 
 	}
 
-	void VirtualInput::buttonDown(const ButtonEvent& event)
+	void VirtualInput::ButtonDown(const ButtonEvent& event)
 	{
 		if(event.buttonCode == BC_LSHIFT || event.buttonCode == BC_RSHIFT)
 			mActiveModifiers |= (UINT32)ButtonModifier::Shift;
@@ -239,7 +239,7 @@ namespace bs
 				data.button = btn;
 				data.state = ButtonState::ToggledOn;
 				data.timestamp = event.timestamp;
-				data.updateFrameIdx = gTime().getFrameIdx();
+				data.updateFrameIdx = gTime().GetFrameIdx();
 				data.allowRepeat = btnDesc.repeatable;
 
 				VirtualButtonEvent virtualEvent;
@@ -248,7 +248,7 @@ namespace bs
 				virtualEvent.deviceIdx = event.deviceIdx;
 
 				mEvents.push(virtualEvent);
-				heldButtons.add(btn.buttonIdentifier);
+				heldButtons.Add(btn.buttonIdentifier);
 			}
 		}
 	}
@@ -284,7 +284,7 @@ namespace bs
 				data.button = btn;
 				data.state = ButtonState::ToggledOff;
 				data.timestamp = event.timestamp;
-				data.updateFrameIdx = gTime().getFrameIdx();
+				data.updateFrameIdx = gTime().GetFrameIdx();
 				data.allowRepeat = btnDesc.repeatable;
 
 				VirtualButtonEvent virtualEvent;
@@ -296,7 +296,7 @@ namespace bs
 
 				auto iterFind = std::find(heldButtons.begin(), heldButtons.end(), btn.buttonIdentifier);
 				if(iterFind != heldButtons.end())
-					heldButtons.swapAndErase(iterFind);
+					heldButtons.SwapAndErase(iterFind);
 			}
 		}
 	}

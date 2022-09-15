@@ -18,7 +18,7 @@ namespace bs
 	{
 		Path parentDir = fileLocation.GetDirectory();
 		if (!FileSystem::Exists(parentDir))
-			FileSystem::createDir(parentDir);
+			FileSystem::CreateDir(parentDir);
 		
 		mOutputStream = FileSystem::CreateAndOpenFile(fileLocation);
 	}
@@ -44,7 +44,7 @@ namespace bs
 
 	FileDecoder::FileDecoder(const Path& fileLocation)
 	{
-		mInputStream = FileSystem::openFile(fileLocation, true);
+		mInputStream = FileSystem::OpenFile(fileLocation, true);
 
 		if (mInputStream == nullptr)
 			return;

@@ -31,17 +31,17 @@ namespace bs
 		primaryWindow->GetCustomAttribute("WINDOW", &mWindowHandle);
 
 		// Subscribe to events
-		mCharInputConn = Platform::onCharInput.connect(std::bind(&Input::charInput, this, _1));
-		mCursorMovedConn = Platform::onCursorMoved.connect(std::bind(&Input::cursorMoved, this, _1, _2));
-		mCursorPressedConn = Platform::onCursorButtonPressed.connect(std::bind(&Input::cursorPressed, this, _1, _2, _3));
-		mCursorReleasedConn = Platform::onCursorButtonReleased.connect(std::bind(&Input::cursorReleased, this, _1, _2, _3));
-		mCursorDoubleClickConn = Platform::onCursorDoubleClick.connect(std::bind(&Input::cursorDoubleClick, this, _1, _2));
-		mInputCommandConn = Platform::onInputCommand.connect(std::bind(&Input::inputCommandEntered, this, _1));
+		mCharInputConn = Platform::onCharInput.Connect(std::bind(&Input::CharInput, this, _1));
+		mCursorMovedConn = Platform::onCursorMoved.Connect(std::bind(&Input::CursorMoved, this, _1, _2));
+		mCursorPressedConn = Platform::onCursorButtonPressed.Connect(std::bind(&Input::CursorPressed, this, _1, _2, _3));
+		mCursorReleasedConn = Platform::onCursorButtonReleased.Connect(std::bind(&Input::CursorReleased, this, _1, _2, _3));
+		mCursorDoubleClickConn = Platform::onCursorDoubleClick.Connect(std::bind(&Input::CursorDoubleClick, this, _1, _2));
+		mInputCommandConn = Platform::onInputCommand.Connect(std::bind(&Input::InputCommandEntered, this, _1));
 
-		mMouseWheelScrolledConn  = Platform::onMouseWheelScrolled.connect(std::bind(&Input::mouseWheelScrolled, this, _1));
+		mMouseWheelScrolledConn  = Platform::onMouseWheelScrolled.Connect(std::bind(&Input::MouseWheelScrolled, this, _1));
 
-		RenderWindowManager::Instance().onFocusGained.connect(std::bind(&Input::inputWindowChanged, this, _1));
-		RenderWindowManager::Instance().onFocusLost.connect(std::bind(&Input::inputFocusLost, this));
+		RenderWindowManager::Instance().onFocusGained.Connect(std::bind(&Input::InputWindowChanged, this, _1));
+		RenderWindowManager::Instance().onFocusLost.Connect(std::bind(&Input::InputFocusLost, this));
 
 		for (int i = 0; i < 3; i++)
 			mPointerButtonStates[i] = ButtonState::Off;
@@ -59,20 +59,20 @@ namespace bs
 		mMouseZeroTime[1] = 0.0f;
 
 		// Raw input
-		initRawInput();
+		InitRawInput();
 	}
 
 	Input::~Input()
 	{
-		cleanUpRawInput();
+		CleanUpRawInput();
 
-		mCharInputConn.disconnect();
-		mCursorMovedConn.disconnect();
-		mCursorPressedConn.disconnect();
-		mCursorReleasedConn.disconnect();
-		mCursorDoubleClickConn.disconnect();
-		mInputCommandConn.disconnect();
-		mMouseWheelScrolledConn.disconnect();
+		mCharInputConn.Disconnect();
+		mCursorMovedConn.Disconnect();
+		mCursorPressedConn.Disconnect();
+		mCursorReleasedConn.Disconnect();
+		mCursorDoubleClickConn.Disconnect();
+		mInputCommandConn.Disconnect();
+		mMouseWheelScrolledConn.Disconnect();
 	}
 
 	void Input::UpdateInternal()
@@ -108,13 +108,13 @@ namespace bs
 
 		// Capture raw input
 		if (mMouse != nullptr)
-			mMouse->capture();
+			mMouse->Capture();
 
 		if (mKeyboard != nullptr)
-			mKeyboard->capture();
+			mKeyboard->Capture();
 
 		for (auto& gamepad : mGamepads)
-			gamepad->capture();
+			gamepad->Capture();
 
 		float rawXValue = 0.0f;
 		float rawYValue = 0.0f;
@@ -122,8 +122,8 @@ namespace bs
 		// Smooth mouse axes if needed
 		if (mMouseSmoothingEnabled)
 		{
-			rawXValue = smoothMouse((float)mMouseSampleAccumulator[0], 0);
-			rawYValue = smoothMouse((float)mMouseSampleAccumulator[1], 1);
+			rawXValue = SmoothMouse((float)mMouseSampleAccumulator[0], 0);
+			rawYValue = SmoothMouse((float)mMouseSampleAccumulator[1], 1);
 		}
 		else
 		{
@@ -137,8 +137,8 @@ namespace bs
 		mMouseSampleAccumulator[0] = 0;
 		mMouseSampleAccumulator[1] = 0;
 
-		axisMoved(0, -rawXValue, (UINT32)InputAxis::MouseX);
-		axisMoved(0, -rawYValue, (UINT32)InputAxis::MouseY);
+		AxisMoved(0, -rawXValue, (UINT32)InputAxis::MouseX);
+		AxisMoved(0, -rawYValue, (UINT32)InputAxis::MouseY);
 	}
 
 	void Input::TriggerCallbacksInternal()
@@ -269,28 +269,28 @@ namespace bs
 	void Input::InputWindowChanged(RenderWindow& win)
 	{
 		UINT64 hWnd = 0;
-		win.getCustomAttribute("WINDOW", &hWnd);
+		win.GetCustomAttribute("WINDOW", &hWnd);
 
 		if(mKeyboard != nullptr)
-			mKeyboard->changeCaptureContext(hWnd);
+			mKeyboard->ChangeCaptureContext(hWnd);
 
 		if(mMouse != nullptr)
-			mMouse->changeCaptureContext(hWnd);
+			mMouse->ChangeCaptureContext(hWnd);
 
 		for (auto& gamepad : mGamepads)
-			gamepad->changeCaptureContext(hWnd);
+			gamepad->ChangeCaptureContext(hWnd);
 	}
 
 	void Input::InputFocusLost()
 	{
 		if(mKeyboard != nullptr)
-			mKeyboard->changeCaptureContext((UINT64)-1);
+			mKeyboard->ChangeCaptureContext((UINT64)-1);
 
 		if(mMouse != nullptr)
-			mMouse->changeCaptureContext((UINT64)-1);
+			mMouse->ChangeCaptureContext((UINT64)-1);
 
 		for (auto& gamepad : mGamepads)
-			gamepad->changeCaptureContext((UINT64)-1);
+			gamepad->ChangeCaptureContext((UINT64)-1);
 	}
 
 	void Input::NotifyMouseMovedInternal(INT32 relX, INT32 relY, INT32 relZ)
@@ -298,42 +298,42 @@ namespace bs
 		mMouseSampleAccumulator[0] += relX;
 		mMouseSampleAccumulator[1] += relY;
 
-		mTotalMouseNumSamples[0] += Math::roundToInt(Math::abs((float)relX));
-		mTotalMouseNumSamples[1] += Math::roundToInt(Math::abs((float)relY));
+		mTotalMouseNumSamples[0] += Math::RoundToInt(Math::Abs((float)relX));
+		mTotalMouseNumSamples[1] += Math::RoundToInt(Math::Abs((float)relY));
 
 		// Update sample times used for determining sampling rate. But only if something was
 		// actually sampled, and only if this isn't the first non-zero sample.
-		if (mLastMouseUpdateFrame != gTime().getFrameIdx())
+		if (mLastMouseUpdateFrame != gTime().GetFrameIdx())
 		{
-			if (relX != 0 && !Math::approxEquals(mMouseSmoothedAxis[0], 0.0f))
-				mTotalMouseSamplingTime[0] += gTime().getFrameDelta();
+			if (relX != 0 && !Math::ApproxEquals(mMouseSmoothedAxis[0], 0.0f))
+				mTotalMouseSamplingTime[0] += gTime().GetFrameDelta();
 
-			if (relY != 0 && !Math::approxEquals(mMouseSmoothedAxis[1], 0.0f))
-				mTotalMouseSamplingTime[1] += gTime().getFrameDelta();
+			if (relY != 0 && !Math::ApproxEquals(mMouseSmoothedAxis[1], 0.0f))
+				mTotalMouseSamplingTime[1] += gTime().GetFrameDelta();
 
-			mLastMouseUpdateFrame = gTime().getFrameIdx();
+			mLastMouseUpdateFrame = gTime().GetFrameIdx();
 		}
 
-		axisMoved(0, (float)relZ, (UINT32)InputAxis::MouseZ);
+		AxisMoved(0, (float)relZ, (UINT32)InputAxis::MouseZ);
 	}
 
 	void Input::NotifyAxisMovedInternal(UINT32 gamepadIdx, UINT32 axisIdx, INT32 value)
 	{
 		// Move axis values into [-1.0f, 1.0f] range
-		float axisRange = Math::abs((float)Gamepad::MAX_AXIS) + Math::abs((float)Gamepad::MIN_AXIS);
+		float axisRange = Math::Abs((float)Gamepad::MAX_AXIS) + Math::Abs((float)Gamepad::MIN_AXIS);
 
-		float axisValue = ((value + Math::abs((float)Gamepad::MIN_AXIS)) / axisRange) * 2.0f - 1.0f;
-		axisMoved(gamepadIdx, axisValue, axisIdx);
+		float axisValue = ((value + Math::Abs((float)Gamepad::MIN_AXIS)) / axisRange) * 2.0f - 1.0f;
+		AxisMoved(gamepadIdx, axisValue, axisIdx);
 	}
 
 	void Input::NotifyButtonPressedInternal(UINT32 deviceIdx, ButtonCode code, UINT64 timestamp)
 	{
-		buttonDown(deviceIdx, code, timestamp - mTimestampClockOffset);
+		ButtonDown(deviceIdx, code, timestamp - mTimestampClockOffset);
 	}
 
 	void Input::NotifyButtonReleasedInternal(UINT32 deviceIdx, ButtonCode code, UINT64 timestamp)
 	{
-		buttonUp(deviceIdx, code, timestamp - mTimestampClockOffset);
+		ButtonUp(deviceIdx, code, timestamp - mTimestampClockOffset);
 	}
 
 	void Input::ButtonDown(UINT32 deviceIdx, ButtonCode code, UINT64 timestamp)
@@ -574,17 +574,17 @@ namespace bs
 		{
 		case InputDevice::Keyboard:
 			if (mKeyboard != nullptr && idx == 0)
-				return mKeyboard->getName();
+				return mKeyboard->GetName();
 
 			return StringUtil::BLANK;
 		case InputDevice::Mouse:
 			if (mMouse != nullptr && idx == 0)
-				return mMouse->getName();
+				return mMouse->GetName();
 
 			return StringUtil::BLANK;
 		case InputDevice::Gamepad:
 			if (idx < (UINT32)mGamepads.size())
-				return mGamepads[idx]->getName();
+				return mGamepads[idx]->GetName();
 			
 			return StringUtil::BLANK;
 		default:
@@ -601,7 +601,7 @@ namespace bs
 	{
 		UINT32 sampleCount = 1;
 
-		float deltaTime = gTime().getFrameDelta();
+		float deltaTime = gTime().GetFrameDelta();
 		if (deltaTime < 0.25f)
 		{
 			float secondsPerSample = mTotalMouseSamplingTime[idx] / mTotalMouseNumSamples[idx];
@@ -622,7 +622,7 @@ namespace bs
 					if (deltaTime < secondsPerSample * (sampleCount + 1))
 						value = value * deltaTime / (secondsPerSample * sampleCount);
 					else
-						sampleCount = Math::roundToInt(deltaTime / secondsPerSample);
+						sampleCount = Math::RoundToInt(deltaTime / secondsPerSample);
 				}
 
 				mMouseSmoothedAxis[idx] = value / sampleCount;

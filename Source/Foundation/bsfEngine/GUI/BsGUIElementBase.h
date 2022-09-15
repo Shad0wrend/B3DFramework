@@ -110,7 +110,7 @@ namespace bs
 		Rect2I GetBounds(GUIPanel* relativeTo = nullptr);
 
 		/**
-		 * Sets the bounds of the GUI element. Relative to a parent GUI panel. Equivalent to calling setPosition(),
+		 * Sets the bounds of the GUI element. Relative to a parent GUI panel. Equivalent to calling SetPosition(),
 		 * setWidth() and setHeight().
 		 */
 		void SetBounds(const Rect2I& bounds);

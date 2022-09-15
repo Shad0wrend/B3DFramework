@@ -13,7 +13,7 @@ namespace bs
 {
 	CCharacterController::CCharacterController()
 	{
-		setName("CharacterController");
+		SetName("CharacterController");
 
 		mNotifyFlags = TCF_Transform;
 	}
@@ -21,7 +21,7 @@ namespace bs
 	CCharacterController::CCharacterController(const HSceneObject& parent)
 		: Component(parent)
 	{
-		setName("CharacterController");
+		SetName("CharacterController");
 
 		mNotifyFlags = TCF_Transform;
 	}
@@ -33,8 +33,8 @@ namespace bs
 		if (mInternal == nullptr)
 			return output;
 
-		output = mInternal->move(displacement);
-		updatePositionFromController();
+		output = mInternal->Move(displacement);
+		UpdatePositionFromController();
 
 		return output;
 	}
@@ -44,7 +44,7 @@ namespace bs
 		if (mInternal == nullptr)
 			return Vector3::ZERO;
 
-		return mInternal->getFootPosition();
+		return mInternal->GetFootPosition();
 	}
 
 	void CCharacterController::SetFootPosition(const Vector3& position)
@@ -52,8 +52,8 @@ namespace bs
 		if (mInternal == nullptr)
 			return;
 
-		mInternal->setFootPosition(position);
-		updatePositionFromController();
+		mInternal->SetFootPosition(position);
+		UpdatePositionFromController();
 	}
 
 	void CCharacterController::SetRadius(float radius)
@@ -61,7 +61,7 @@ namespace bs
 		mDesc.radius = radius;
 
 		if (mInternal != nullptr)
-			updateDimensions();
+			UpdateDimensions();
 	}
 
 	void CCharacterController::SetHeight(float height)
@@ -69,7 +69,7 @@ namespace bs
 		mDesc.height = height;
 
 		if (mInternal != nullptr)
-			updateDimensions();
+			UpdateDimensions();
 	}
 
 	void CCharacterController::SetUp(const Vector3& up)
@@ -77,7 +77,7 @@ namespace bs
 		mDesc.up = up;
 
 		if (mInternal != nullptr)
-			mInternal->setUp(up);
+			mInternal->SetUp(up);
 	}
 
 	void CCharacterController::SetClimbingMode(CharacterClimbingMode mode)
@@ -85,7 +85,7 @@ namespace bs
 		mDesc.climbingMode = mode;
 
 		if (mInternal != nullptr)
-			mInternal->setClimbingMode(mode);
+			mInternal->SetClimbingMode(mode);
 	}
 
 	void CCharacterController::SetNonWalkableMode(CharacterNonWalkableMode mode)
@@ -93,7 +93,7 @@ namespace bs
 		mDesc.nonWalkableMode = mode;
 
 		if (mInternal != nullptr)
-			mInternal->setNonWalkableMode(mode);
+			mInternal->SetNonWalkableMode(mode);
 	}
 
 	void CCharacterController::SetMinMoveDistance(float value)
@@ -101,7 +101,7 @@ namespace bs
 		mDesc.minMoveDistance = value;
 
 		if (mInternal != nullptr)
-			mInternal->setMinMoveDistance(value);
+			mInternal->SetMinMoveDistance(value);
 	}
 
 	void CCharacterController::SetContactOffset(float value)
@@ -109,7 +109,7 @@ namespace bs
 		mDesc.contactOffset = value;
 
 		if (mInternal != nullptr)
-			mInternal->setContactOffset(value);
+			mInternal->SetContactOffset(value);
 	}
 
 	void CCharacterController::SetStepOffset(float value)
@@ -117,7 +117,7 @@ namespace bs
 		mDesc.stepOffset = value;
 
 		if (mInternal != nullptr)
-			mInternal->setStepOffset(value);
+			mInternal->SetStepOffset(value);
 	}
 
 	void CCharacterController::SetSlopeLimit(Radian value)
@@ -125,7 +125,7 @@ namespace bs
 		mDesc.slopeLimit = value;
 
 		if (mInternal != nullptr)
-			mInternal->setSlopeLimit(value);
+			mInternal->SetSlopeLimit(value);
 	}
 
 	void CCharacterController::SetLayer(UINT64 layer)
@@ -133,7 +133,7 @@ namespace bs
 		mLayer = layer;
 
 		if (mInternal != nullptr)
-			mInternal->setLayer(layer);
+			mInternal->SetLayer(layer);
 	}
 
 	void CCharacterController::OnInitialized()
@@ -143,52 +143,52 @@ namespace bs
 
 	void CCharacterController::OnDestroyed()
 	{
-		destroyInternal();
+		DestroyInternal();
 	}
 
 	void CCharacterController::OnDisabled()
 	{
-		destroyInternal();
+		DestroyInternal();
 	}
 
 	void CCharacterController::OnEnabled()
 	{
-		const SPtr<SceneInstance>& scene = SO()->getScene();
+		const SPtr<SceneInstance>& scene = SO()->GetScene();
 
-		mDesc.position = SO()->getTransform().getPosition();
-		mInternal = CharacterController::Create(*scene->getPhysicsScene(), mDesc);
+		mDesc.position = SO()->GetTransform().GetPosition();
+		mInternal = CharacterController::Create(*scene->GetPhysicsScene(), mDesc);
 		mInternal->SetOwnerInternal(PhysicsOwnerType::Component, this);
 
-		mInternal->onColliderHit.connect(std::bind(&CCharacterController::triggerOnColliderHit, this, _1));
-		mInternal->onControllerHit.connect(std::bind(&CCharacterController::triggerOnControllerHit, this, _1));
+		mInternal->onColliderHit.Connect(std::bind(&CCharacterController::TriggerOnColliderHit, this, _1));
+		mInternal->onControllerHit.Connect(std::bind(&CCharacterController::TriggerOnControllerHit, this, _1));
 
-		mInternal->setLayer(mLayer);
-		updateDimensions();
+		mInternal->SetLayer(mLayer);
+		UpdateDimensions();
 	}
 
 	void CCharacterController::OnTransformChanged(TransformChangedFlags flags)
 	{
-		if (!SO()->getActive() || mInternal == nullptr)
+		if (!SO()->GetActive() || mInternal == nullptr)
 			return;
 
-		mInternal->setPosition(SO()->getTransform().getPosition());
+		mInternal->SetPosition(SO()->GetTransform().GetPosition());
 	}
 
 	void CCharacterController::UpdatePositionFromController()
 	{
 		mNotifyFlags = (TransformChangedFlags)0;
-		SO()->setWorldPosition(mInternal->getPosition());
+		SO()->SetWorldPosition(mInternal->GetPosition());
 		mNotifyFlags = TCF_Transform;
 	}
 
 	void CCharacterController::UpdateDimensions()
 	{
-		Vector3 scale = SO()->getTransform().getScale();
-		float height = mDesc.height * Math::abs(scale.y);
-		float radius = mDesc.radius * Math::abs(std::max(scale.x, scale.z));
+		Vector3 scale = SO()->GetTransform().GetScale();
+		float height = mDesc.height * Math::Abs(scale.y);
+		float radius = mDesc.radius * Math::Abs(std::max(scale.x, scale.z));
 
-		mInternal->setHeight(height);
-		mInternal->setRadius(radius);
+		mInternal->SetHeight(height);
+		mInternal->SetRadius(radius);
 	}
 
 	void CCharacterController::DestroyInternal()
@@ -209,7 +209,7 @@ namespace bs
 		if(hit.colliderRaw)
 		{
 			const auto collider = (CCollider*)hit.colliderRaw->GetOwnerInternal(PhysicsOwnerType::Component);
-			hit.collider = static_object_cast<CCollider>(collider->getHandle());
+			hit.collider = static_object_cast<CCollider>(collider->GetHandle());
 		}
 
 		onColliderHit(hit);
@@ -223,7 +223,7 @@ namespace bs
 		if(hit.controllerRaw)
 		{
 			const auto controller = (CCharacterController*)hit.controllerRaw->GetOwnerInternal(PhysicsOwnerType::Component);
-			hit.controller = static_object_cast<CCharacterController>(controller->getHandle());
+			hit.controller = static_object_cast<CCharacterController>(controller->GetHandle());
 		}
 
 		onControllerHit(hit);

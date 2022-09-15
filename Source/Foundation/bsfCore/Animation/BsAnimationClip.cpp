@@ -97,8 +97,8 @@ namespace bs
 		if (mRootMotion == nullptr)
 			mRootMotion = bs_shared_ptr_new<RootMotion>();
 
-		buildNameMapping();
-		calculateLength();
+		BuildNameMapping();
+		CalculateLength();
 	}
 
 	HAnimationClip AnimationClip::Create(bool isAdditive)
@@ -131,7 +131,7 @@ namespace bs
 
 		SPtr<AnimationClip> newClip = bs_core_ptr<AnimationClip>(rawPtr);
 		newClip->SetThisPtrInternal(newClip);
-		newClip->initialize();
+		newClip->Initialize();
 
 		return newClip;
 	}
@@ -140,15 +140,15 @@ namespace bs
 	{
 		*mCurves = curves;
 
-		buildNameMapping();
-		calculateLength();
+		BuildNameMapping();
+		CalculateLength();
 		mVersion++;
 	}
 
 	bool AnimationClip::HasRootMotion() const
 	{
 		return mRootMotion != nullptr &&
-			(mRootMotion->position.getNumKeyFrames() > 0 || mRootMotion->rotation.getNumKeyFrames() > 0);
+			(mRootMotion->position.GetNumKeyFrames() > 0 || mRootMotion->rotation.GetNumKeyFrames() > 0);
 	}
 
 	void AnimationClip::CalculateLength()
@@ -156,16 +156,16 @@ namespace bs
 		mLength = 0.0f;
 
 		for (auto& entry : mCurves->position)
-			mLength = std::max(mLength, entry.curve.getLength());
+			mLength = std::max(mLength, entry.curve.GetLength());
 
 		for (auto& entry : mCurves->rotation)
-			mLength = std::max(mLength, entry.curve.getLength());
+			mLength = std::max(mLength, entry.curve.GetLength());
 
 		for (auto& entry : mCurves->scale)
-			mLength = std::max(mLength, entry.curve.getLength());
+			mLength = std::max(mLength, entry.curve.GetLength());
 
 		for (auto& entry : mCurves->generic)
-			mLength = std::max(mLength, entry.curve.getLength());
+			mLength = std::max(mLength, entry.curve.GetLength());
 	}
 
 	void AnimationClip::BuildNameMapping()
@@ -205,9 +205,9 @@ namespace bs
 				auto& entry = curve[i];
 
 				UINT32 typeIdx;
-				if (entry.flags.isSet(AnimationCurveFlag::MorphFrame))
+				if (entry.flags.IsSet(AnimationCurveFlag::MorphFrame))
 					typeIdx = (UINT32)CurveType::MorphFrame;
-				else if (entry.flags.isSet(AnimationCurveFlag::MorphWeight))
+				else if (entry.flags.IsSet(AnimationCurveFlag::MorphWeight))
 					typeIdx = (UINT32)CurveType::MorphWeight;
 				else
 					typeIdx = (UINT32)CurveType::Generic;
@@ -228,19 +228,19 @@ namespace bs
 
 	void AnimationClip::Initialize()
 	{
-		buildNameMapping();
+		BuildNameMapping();
 
-		Resource::initialize();
+		Resource::Initialize();
 	}
 
 	void AnimationClip::GetBoneMapping(const Skeleton& skeleton, AnimationCurveMapping* mapping) const
 	{
-		UINT32 numBones = skeleton.getNumBones();
+		UINT32 numBones = skeleton.GetNumBones();
 		for(UINT32 i = 0; i < numBones; i++)
 		{
-			const SkeletonBoneInfo& boneInfo = skeleton.getBoneInfo(i);
+			const SkeletonBoneInfo& boneInfo = skeleton.GetBoneInfo(i);
 
-			getCurveMapping(boneInfo.name, mapping[i]);
+			GetCurveMapping(boneInfo.name, mapping[i]);
 		}
 	}
 

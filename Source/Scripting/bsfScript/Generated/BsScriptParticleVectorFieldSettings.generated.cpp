@@ -57,13 +57,13 @@ namespace bs
 	MonoObject* ScriptParticleVectorFieldSettings::InternalGetvectorField(ScriptParticleVectorFieldSettings* thisPtr)
 	{
 		ResourceHandle<VectorField> tmp__output;
-		tmp__output = thisPtr->getInternal()->vectorField;
+		tmp__output = thisPtr->GetInternal()->vectorField;
 
 		MonoObject* __output;
 		ScriptRRefBase* script__output;
 		script__output = ScriptResourceManager::Instance().getScriptRRef(tmp__output);
 		if(script__output != nullptr)
-			__output = script__output->getManagedInstance();
+			__output = script__output->GetManagedInstance();
 		else
 			__output = nullptr;
 
@@ -76,14 +76,14 @@ namespace bs
 		ScriptRRefBase* scriptvalue;
 		scriptvalue = ScriptRRefBase::toNative(value);
 		if(scriptvalue != nullptr)
-			tmpvalue = static_resource_cast<VectorField>(scriptvalue->getHandle());
-		thisPtr->getInternal()->vectorField = tmpvalue;
+			tmpvalue = static_resource_cast<VectorField>(scriptvalue->GetHandle());
+		thisPtr->GetInternal()->vectorField = tmpvalue;
 	}
 
 	float ScriptParticleVectorFieldSettings::InternalGetintensity(ScriptParticleVectorFieldSettings* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getInternal()->intensity;
+		tmp__output = thisPtr->GetInternal()->intensity;
 
 		float __output;
 		__output = tmp__output;
@@ -93,13 +93,13 @@ namespace bs
 
 	void ScriptParticleVectorFieldSettings::InternalSetintensity(ScriptParticleVectorFieldSettings* thisPtr, float value)
 	{
-		thisPtr->getInternal()->intensity = value;
+		thisPtr->GetInternal()->intensity = value;
 	}
 
 	float ScriptParticleVectorFieldSettings::InternalGettightness(ScriptParticleVectorFieldSettings* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getInternal()->tightness;
+		tmp__output = thisPtr->GetInternal()->tightness;
 
 		float __output;
 		__output = tmp__output;
@@ -109,13 +109,13 @@ namespace bs
 
 	void ScriptParticleVectorFieldSettings::InternalSettightness(ScriptParticleVectorFieldSettings* thisPtr, float value)
 	{
-		thisPtr->getInternal()->tightness = value;
+		thisPtr->GetInternal()->tightness = value;
 	}
 
 	void ScriptParticleVectorFieldSettings::InternalGetscale(ScriptParticleVectorFieldSettings* thisPtr, Vector3* __output)
 	{
 		Vector3 tmp__output;
-		tmp__output = thisPtr->getInternal()->scale;
+		tmp__output = thisPtr->GetInternal()->scale;
 
 		*__output = tmp__output;
 
@@ -124,13 +124,13 @@ namespace bs
 
 	void ScriptParticleVectorFieldSettings::InternalSetscale(ScriptParticleVectorFieldSettings* thisPtr, Vector3* value)
 	{
-		thisPtr->getInternal()->scale = *value;
+		thisPtr->GetInternal()->scale = *value;
 	}
 
 	void ScriptParticleVectorFieldSettings::InternalGetoffset(ScriptParticleVectorFieldSettings* thisPtr, Vector3* __output)
 	{
 		Vector3 tmp__output;
-		tmp__output = thisPtr->getInternal()->offset;
+		tmp__output = thisPtr->GetInternal()->offset;
 
 		*__output = tmp__output;
 
@@ -139,13 +139,13 @@ namespace bs
 
 	void ScriptParticleVectorFieldSettings::InternalSetoffset(ScriptParticleVectorFieldSettings* thisPtr, Vector3* value)
 	{
-		thisPtr->getInternal()->offset = *value;
+		thisPtr->GetInternal()->offset = *value;
 	}
 
 	void ScriptParticleVectorFieldSettings::InternalGetrotation(ScriptParticleVectorFieldSettings* thisPtr, Quaternion* __output)
 	{
 		Quaternion tmp__output;
-		tmp__output = thisPtr->getInternal()->rotation;
+		tmp__output = thisPtr->GetInternal()->rotation;
 
 		*__output = tmp__output;
 
@@ -154,13 +154,13 @@ namespace bs
 
 	void ScriptParticleVectorFieldSettings::InternalSetrotation(ScriptParticleVectorFieldSettings* thisPtr, Quaternion* value)
 	{
-		thisPtr->getInternal()->rotation = *value;
+		thisPtr->GetInternal()->rotation = *value;
 	}
 
 	MonoObject* ScriptParticleVectorFieldSettings::InternalGetrotationRate(ScriptParticleVectorFieldSettings* thisPtr)
 	{
 		SPtr<TDistribution<Vector3>> tmp__output = bs_shared_ptr_new<TDistribution<Vector3>>();
-		*tmp__output = thisPtr->getInternal()->rotationRate;
+		*tmp__output = thisPtr->GetInternal()->rotationRate;
 
 		MonoObject* __output;
 		__output = ScriptTDistributionVector3::Create(tmp__output);
@@ -174,14 +174,14 @@ namespace bs
 		ScriptTDistributionVector3* scriptvalue;
 		scriptvalue = ScriptTDistributionVector3::toNative(value);
 		if(scriptvalue != nullptr)
-			tmpvalue = scriptvalue->getInternal();
-		thisPtr->getInternal()->rotationRate = *tmpvalue;
+			tmpvalue = scriptvalue->GetInternal();
+		thisPtr->GetInternal()->rotationRate = *tmpvalue;
 	}
 
 	bool ScriptParticleVectorFieldSettings::InternalGettilingX(ScriptParticleVectorFieldSettings* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->getInternal()->tilingX;
+		tmp__output = thisPtr->GetInternal()->tilingX;
 
 		bool __output;
 		__output = tmp__output;
@@ -191,13 +191,13 @@ namespace bs
 
 	void ScriptParticleVectorFieldSettings::InternalSettilingX(ScriptParticleVectorFieldSettings* thisPtr, bool value)
 	{
-		thisPtr->getInternal()->tilingX = value;
+		thisPtr->GetInternal()->tilingX = value;
 	}
 
 	bool ScriptParticleVectorFieldSettings::InternalGettilingY(ScriptParticleVectorFieldSettings* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->getInternal()->tilingY;
+		tmp__output = thisPtr->GetInternal()->tilingY;
 
 		bool __output;
 		__output = tmp__output;
@@ -207,13 +207,13 @@ namespace bs
 
 	void ScriptParticleVectorFieldSettings::InternalSettilingY(ScriptParticleVectorFieldSettings* thisPtr, bool value)
 	{
-		thisPtr->getInternal()->tilingY = value;
+		thisPtr->GetInternal()->tilingY = value;
 	}
 
 	bool ScriptParticleVectorFieldSettings::InternalGettilingZ(ScriptParticleVectorFieldSettings* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->getInternal()->tilingZ;
+		tmp__output = thisPtr->GetInternal()->tilingZ;
 
 		bool __output;
 		__output = tmp__output;
@@ -223,6 +223,6 @@ namespace bs
 
 	void ScriptParticleVectorFieldSettings::InternalSettilingZ(ScriptParticleVectorFieldSettings* thisPtr, bool value)
 	{
-		thisPtr->getInternal()->tilingZ = value;
+		thisPtr->GetInternal()->tilingZ = value;
 	}
 }

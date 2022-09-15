@@ -80,12 +80,12 @@ namespace bs
 			return;
 		}
 
-		auto sample = mViewSamplePool.construct<ProfiledViewSample>();
+		auto sample = mViewSamplePool.Construct<ProfiledViewSample>();
 		sample->viewId = id;
 
 		mActiveFrame.viewSamples.push_back(sample);
 
-		beginSampleInternal(*sample, true);
+		BeginSampleInternal(*sample, true);
 		mIsViewActive = true;
 	}
 
@@ -100,7 +100,7 @@ namespace bs
 		if (!mIsViewActive)
 			return;
 
-		endSampleInternal(*mActiveFrame.viewSamples.back());
+		EndSampleInternal(*mActiveFrame.viewSamples.back());
 		mIsViewActive = false;
 	}
 
@@ -112,9 +112,9 @@ namespace bs
 			return;
 		}
 
-		auto sample = mSamplePool.construct<ProfiledSample>();
+		auto sample = mSamplePool.Construct<ProfiledSample>();
 		sample->name = std::move(name);
-		beginSampleInternal(*sample, false);
+		BeginSampleInternal(*sample, false);
 
 		if (mActiveSamples.empty())
 		{
@@ -145,7 +145,7 @@ namespace bs
 			return;
 		}
 
-		endSampleInternal(*lastSample);
+		EndSampleInternal(*lastSample);
 		mActiveSamples.pop();
 	}
 
@@ -185,7 +185,7 @@ namespace bs
 			bool isReady = true;
 			for(auto& entry : frame.viewSamples)
 			{
-				if (!entry->activeTimeQuery->isReady())
+				if (!entry->activeTimeQuery->IsReady())
 				{
 					isReady = false;
 					break;
@@ -194,7 +194,7 @@ namespace bs
 
 			for(auto& entry : frame.uncategorizedSamples)
 			{
-				if (!entry->activeTimeQuery->isReady())
+				if (!entry->activeTimeQuery->IsReady())
 				{
 					isReady = false;
 					break;
@@ -209,12 +209,12 @@ namespace bs
 			report.uncategorizedSamples.resize(frame.uncategorizedSamples.size());
 			
 			for (size_t i = 0; i < frame.viewSamples.size(); i++)
-				resolveSample(*frame.viewSamples[i], report.viewSamples[i]);
+				ResolveSample(*frame.viewSamples[i], report.viewSamples[i]);
 				
 			for (size_t i = 0; i < frame.uncategorizedSamples.size(); i++)
-				resolveSample(*frame.uncategorizedSamples[i], report.uncategorizedSamples[i]);
+				ResolveSample(*frame.uncategorizedSamples[i], report.uncategorizedSamples[i]);
 				
-			freeFrame(frame);
+			FreeFrame(frame);
 			mUnresolvedFrames.pop();
 
 			{
@@ -232,8 +232,8 @@ namespace bs
 	{
 		for(auto& entry : sample.children)
 		{
-			freeSample(*entry);
-			mSamplePool.destruct(entry);
+			FreeSample(*entry);
+			mSamplePool.Destruct(entry);
 		}
 
 		sample.children.clear();
@@ -248,14 +248,14 @@ namespace bs
 	{
 		for (size_t i = 0; i < frame.viewSamples.size(); i++)
 		{
-			freeSample(*frame.viewSamples[i]);
-			mViewSamplePool.destruct(frame.viewSamples[i]);
+			FreeSample(*frame.viewSamples[i]);
+			mViewSamplePool.Destruct(frame.viewSamples[i]);
 		}
 			
 		for (size_t i = 0; i < frame.uncategorizedSamples.size(); i++)
 		{
-			freeSample(*frame.uncategorizedSamples[i]);
-			mSamplePool.destruct(frame.uncategorizedSamples[i]);
+			FreeSample(*frame.uncategorizedSamples[i]);
+			mSamplePool.Destruct(frame.uncategorizedSamples[i]);
 		}
 
 		frame.viewSamples.clear();
@@ -265,10 +265,10 @@ namespace bs
 	void ProfilerGPU::ResolveSample(const ProfiledSample& sample, GPUProfileSample& reportSample)
 	{
 		reportSample.name.assign(sample.name.data(), sample.name.size());
-		reportSample.timeMs = sample.activeTimeQuery->getTimeMs();
+		reportSample.timeMs = sample.activeTimeQuery->GetTimeMs();
 
 		if(sample.activeOcclusionQuery)
-			reportSample.numDrawnSamples = sample.activeOcclusionQuery->getNumSamples();
+			reportSample.numDrawnSamples = sample.activeOcclusionQuery->GetNumSamples();
 		else
 			reportSample.numDrawnSamples = 0;
 
@@ -295,31 +295,31 @@ namespace bs
 		for(auto& entry : sample.children)
 		{
 			reportSample.children.push_back(GPUProfileSample());
-			resolveSample(*entry, reportSample.children.back());
+			ResolveSample(*entry, reportSample.children.back());
 		}
 	}
 
 	void ProfilerGPU::BeginSampleInternal(ProfiledSample& sample, bool issueOcclusion)
 	{
-		sample.startStats = RenderStats::Instance().getData();
-		sample.activeTimeQuery = getTimerQuery();
-		sample.activeTimeQuery->begin();
+		sample.startStats = RenderStats::Instance().GetData();
+		sample.activeTimeQuery = GetTimerQuery();
+		sample.activeTimeQuery->Begin();
 
 		if(issueOcclusion)
 		{
-			sample.activeOcclusionQuery = getOcclusionQuery();
-			sample.activeOcclusionQuery->begin();
+			sample.activeOcclusionQuery = GetOcclusionQuery();
+			sample.activeOcclusionQuery->Begin();
 		}
 	}
 
 	void ProfilerGPU::EndSampleInternal(ProfiledSample& sample)
 	{
-		sample.endStats = RenderStats::Instance().getData();
+		sample.endStats = RenderStats::Instance().GetData();
 
 		if(sample.activeOcclusionQuery)
-			sample.activeOcclusionQuery->end();
+			sample.activeOcclusionQuery->End();
 
-		sample.activeTimeQuery->end();
+		sample.activeTimeQuery->End();
 	}
 
 	SPtr<ct::TimerQuery> ProfilerGPU::GetTimerQuery() const

@@ -67,9 +67,9 @@ namespace bs
 		metaData.scriptClass->addInternalCall("Internal_addForceAtPoint", (void*)&ScriptCRigidbody::InternalAddForceAtPoint);
 		metaData.scriptClass->addInternalCall("Internal_getVelocityAtPoint", (void*)&ScriptCRigidbody::InternalGetVelocityAtPoint);
 
-		onCollisionBeginThunk = (onCollisionBeginThunkDef)metaData.scriptClass->getMethodExact("Internal_onCollisionBegin", "CollisionData&")->getThunk();
-		onCollisionStayThunk = (onCollisionStayThunkDef)metaData.scriptClass->getMethodExact("Internal_onCollisionStay", "CollisionData&")->getThunk();
-		onCollisionEndThunk = (onCollisionEndThunkDef)metaData.scriptClass->getMethodExact("Internal_onCollisionEnd", "CollisionData&")->getThunk();
+		onCollisionBeginThunk = (onCollisionBeginThunkDef)metaData.scriptClass->GetMethodExact("Internal_onCollisionBegin", "CollisionData&")->GetThunk();
+		onCollisionStayThunk = (onCollisionStayThunkDef)metaData.scriptClass->GetMethodExact("Internal_onCollisionStay", "CollisionData&")->GetThunk();
+		onCollisionEndThunk = (onCollisionEndThunkDef)metaData.scriptClass->GetMethodExact("Internal_onCollisionEnd", "CollisionData&")->GetThunk();
 	}
 
 	void ScriptCRigidbody::OnCollisionBegin(const CollisionData& p0)
@@ -100,23 +100,23 @@ namespace bs
 	}
 	void ScriptCRigidbody::InternalMove(ScriptCRigidbody* thisPtr, Vector3* position)
 	{
-		thisPtr->getHandle()->move(*position);
+		thisPtr->GetHandle()->move(*position);
 	}
 
 	void ScriptCRigidbody::InternalRotate(ScriptCRigidbody* thisPtr, Quaternion* rotation)
 	{
-		thisPtr->getHandle()->rotate(*rotation);
+		thisPtr->GetHandle()->rotate(*rotation);
 	}
 
 	void ScriptCRigidbody::InternalSetMass(ScriptCRigidbody* thisPtr, float mass)
 	{
-		thisPtr->getHandle()->setMass(mass);
+		thisPtr->GetHandle()->SetMass(mass);
 	}
 
 	float ScriptCRigidbody::InternalGetMass(ScriptCRigidbody* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getHandle()->getMass();
+		tmp__output = thisPtr->GetHandle()->GetMass();
 
 		float __output;
 		__output = tmp__output;
@@ -126,13 +126,13 @@ namespace bs
 
 	void ScriptCRigidbody::InternalSetIsKinematic(ScriptCRigidbody* thisPtr, bool kinematic)
 	{
-		thisPtr->getHandle()->setIsKinematic(kinematic);
+		thisPtr->GetHandle()->SetIsKinematic(kinematic);
 	}
 
 	bool ScriptCRigidbody::InternalGetIsKinematic(ScriptCRigidbody* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->getHandle()->getIsKinematic();
+		tmp__output = thisPtr->GetHandle()->GetIsKinematic();
 
 		bool __output;
 		__output = tmp__output;
@@ -143,7 +143,7 @@ namespace bs
 	bool ScriptCRigidbody::InternalIsSleeping(ScriptCRigidbody* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->getHandle()->isSleeping();
+		tmp__output = thisPtr->GetHandle()->isSleeping();
 
 		bool __output;
 		__output = tmp__output;
@@ -153,23 +153,23 @@ namespace bs
 
 	void ScriptCRigidbody::InternalSleep(ScriptCRigidbody* thisPtr)
 	{
-		thisPtr->getHandle()->sleep();
+		thisPtr->GetHandle()->sleep();
 	}
 
 	void ScriptCRigidbody::InternalWakeUp(ScriptCRigidbody* thisPtr)
 	{
-		thisPtr->getHandle()->wakeUp();
+		thisPtr->GetHandle()->wakeUp();
 	}
 
 	void ScriptCRigidbody::InternalSetSleepThreshold(ScriptCRigidbody* thisPtr, float threshold)
 	{
-		thisPtr->getHandle()->setSleepThreshold(threshold);
+		thisPtr->GetHandle()->SetSleepThreshold(threshold);
 	}
 
 	float ScriptCRigidbody::InternalGetSleepThreshold(ScriptCRigidbody* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getHandle()->getSleepThreshold();
+		tmp__output = thisPtr->GetHandle()->GetSleepThreshold();
 
 		float __output;
 		__output = tmp__output;
@@ -179,13 +179,13 @@ namespace bs
 
 	void ScriptCRigidbody::InternalSetUseGravity(ScriptCRigidbody* thisPtr, bool gravity)
 	{
-		thisPtr->getHandle()->setUseGravity(gravity);
+		thisPtr->GetHandle()->SetUseGravity(gravity);
 	}
 
 	bool ScriptCRigidbody::InternalGetUseGravity(ScriptCRigidbody* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->getHandle()->getUseGravity();
+		tmp__output = thisPtr->GetHandle()->GetUseGravity();
 
 		bool __output;
 		__output = tmp__output;
@@ -195,39 +195,39 @@ namespace bs
 
 	void ScriptCRigidbody::InternalSetVelocity(ScriptCRigidbody* thisPtr, Vector3* velocity)
 	{
-		thisPtr->getHandle()->setVelocity(*velocity);
+		thisPtr->GetHandle()->SetVelocity(*velocity);
 	}
 
 	void ScriptCRigidbody::InternalGetVelocity(ScriptCRigidbody* thisPtr, Vector3* __output)
 	{
 		Vector3 tmp__output;
-		tmp__output = thisPtr->getHandle()->getVelocity();
+		tmp__output = thisPtr->GetHandle()->GetVelocity();
 
 		*__output = tmp__output;
 	}
 
 	void ScriptCRigidbody::InternalSetAngularVelocity(ScriptCRigidbody* thisPtr, Vector3* velocity)
 	{
-		thisPtr->getHandle()->setAngularVelocity(*velocity);
+		thisPtr->GetHandle()->SetAngularVelocity(*velocity);
 	}
 
 	void ScriptCRigidbody::InternalGetAngularVelocity(ScriptCRigidbody* thisPtr, Vector3* __output)
 	{
 		Vector3 tmp__output;
-		tmp__output = thisPtr->getHandle()->getAngularVelocity();
+		tmp__output = thisPtr->GetHandle()->GetAngularVelocity();
 
 		*__output = tmp__output;
 	}
 
 	void ScriptCRigidbody::InternalSetDrag(ScriptCRigidbody* thisPtr, float drag)
 	{
-		thisPtr->getHandle()->setDrag(drag);
+		thisPtr->GetHandle()->SetDrag(drag);
 	}
 
 	float ScriptCRigidbody::InternalGetDrag(ScriptCRigidbody* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getHandle()->getDrag();
+		tmp__output = thisPtr->GetHandle()->GetDrag();
 
 		float __output;
 		__output = tmp__output;
@@ -237,13 +237,13 @@ namespace bs
 
 	void ScriptCRigidbody::InternalSetAngularDrag(ScriptCRigidbody* thisPtr, float drag)
 	{
-		thisPtr->getHandle()->setAngularDrag(drag);
+		thisPtr->GetHandle()->SetAngularDrag(drag);
 	}
 
 	float ScriptCRigidbody::InternalGetAngularDrag(ScriptCRigidbody* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getHandle()->getAngularDrag();
+		tmp__output = thisPtr->GetHandle()->GetAngularDrag();
 
 		float __output;
 		__output = tmp__output;
@@ -253,26 +253,26 @@ namespace bs
 
 	void ScriptCRigidbody::InternalSetInertiaTensor(ScriptCRigidbody* thisPtr, Vector3* tensor)
 	{
-		thisPtr->getHandle()->setInertiaTensor(*tensor);
+		thisPtr->GetHandle()->SetInertiaTensor(*tensor);
 	}
 
 	void ScriptCRigidbody::InternalGetInertiaTensor(ScriptCRigidbody* thisPtr, Vector3* __output)
 	{
 		Vector3 tmp__output;
-		tmp__output = thisPtr->getHandle()->getInertiaTensor();
+		tmp__output = thisPtr->GetHandle()->GetInertiaTensor();
 
 		*__output = tmp__output;
 	}
 
 	void ScriptCRigidbody::InternalSetMaxAngularVelocity(ScriptCRigidbody* thisPtr, float maxVelocity)
 	{
-		thisPtr->getHandle()->setMaxAngularVelocity(maxVelocity);
+		thisPtr->GetHandle()->SetMaxAngularVelocity(maxVelocity);
 	}
 
 	float ScriptCRigidbody::InternalGetMaxAngularVelocity(ScriptCRigidbody* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getHandle()->getMaxAngularVelocity();
+		tmp__output = thisPtr->GetHandle()->GetMaxAngularVelocity();
 
 		float __output;
 		__output = tmp__output;
@@ -282,39 +282,39 @@ namespace bs
 
 	void ScriptCRigidbody::InternalSetCenterOfMassPosition(ScriptCRigidbody* thisPtr, Vector3* position)
 	{
-		thisPtr->getHandle()->setCenterOfMassPosition(*position);
+		thisPtr->GetHandle()->SetCenterOfMassPosition(*position);
 	}
 
 	void ScriptCRigidbody::InternalGetCenterOfMassPosition(ScriptCRigidbody* thisPtr, Vector3* __output)
 	{
 		Vector3 tmp__output;
-		tmp__output = thisPtr->getHandle()->getCenterOfMassPosition();
+		tmp__output = thisPtr->GetHandle()->GetCenterOfMassPosition();
 
 		*__output = tmp__output;
 	}
 
 	void ScriptCRigidbody::InternalSetCenterOfMassRotation(ScriptCRigidbody* thisPtr, Quaternion* rotation)
 	{
-		thisPtr->getHandle()->setCenterOfMassRotation(*rotation);
+		thisPtr->GetHandle()->SetCenterOfMassRotation(*rotation);
 	}
 
 	void ScriptCRigidbody::InternalGetCenterOfMassRotation(ScriptCRigidbody* thisPtr, Quaternion* __output)
 	{
 		Quaternion tmp__output;
-		tmp__output = thisPtr->getHandle()->getCenterOfMassRotation();
+		tmp__output = thisPtr->GetHandle()->GetCenterOfMassRotation();
 
 		*__output = tmp__output;
 	}
 
 	void ScriptCRigidbody::InternalSetPositionSolverCount(ScriptCRigidbody* thisPtr, uint32_t count)
 	{
-		thisPtr->getHandle()->setPositionSolverCount(count);
+		thisPtr->GetHandle()->SetPositionSolverCount(count);
 	}
 
 	uint32_t ScriptCRigidbody::InternalGetPositionSolverCount(ScriptCRigidbody* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->getHandle()->getPositionSolverCount();
+		tmp__output = thisPtr->GetHandle()->GetPositionSolverCount();
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -324,13 +324,13 @@ namespace bs
 
 	void ScriptCRigidbody::InternalSetVelocitySolverCount(ScriptCRigidbody* thisPtr, uint32_t count)
 	{
-		thisPtr->getHandle()->setVelocitySolverCount(count);
+		thisPtr->GetHandle()->SetVelocitySolverCount(count);
 	}
 
 	uint32_t ScriptCRigidbody::InternalGetVelocitySolverCount(ScriptCRigidbody* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->getHandle()->getVelocitySolverCount();
+		tmp__output = thisPtr->GetHandle()->GetVelocitySolverCount();
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -340,13 +340,13 @@ namespace bs
 
 	void ScriptCRigidbody::InternalSetCollisionReportMode(ScriptCRigidbody* thisPtr, CollisionReportMode mode)
 	{
-		thisPtr->getHandle()->setCollisionReportMode(mode);
+		thisPtr->GetHandle()->SetCollisionReportMode(mode);
 	}
 
 	CollisionReportMode ScriptCRigidbody::InternalGetCollisionReportMode(ScriptCRigidbody* thisPtr)
 	{
 		CollisionReportMode tmp__output;
-		tmp__output = thisPtr->getHandle()->getCollisionReportMode();
+		tmp__output = thisPtr->GetHandle()->GetCollisionReportMode();
 
 		CollisionReportMode __output;
 		__output = tmp__output;
@@ -356,13 +356,13 @@ namespace bs
 
 	void ScriptCRigidbody::InternalSetFlags(ScriptCRigidbody* thisPtr, RigidbodyFlag flags)
 	{
-		thisPtr->getHandle()->setFlags(flags);
+		thisPtr->GetHandle()->SetFlags(flags);
 	}
 
 	RigidbodyFlag ScriptCRigidbody::InternalGetFlags(ScriptCRigidbody* thisPtr)
 	{
 		RigidbodyFlag tmp__output;
-		tmp__output = thisPtr->getHandle()->getFlags();
+		tmp__output = thisPtr->GetHandle()->GetFlags();
 
 		RigidbodyFlag __output;
 		__output = tmp__output;
@@ -372,23 +372,23 @@ namespace bs
 
 	void ScriptCRigidbody::InternalAddForce(ScriptCRigidbody* thisPtr, Vector3* force, ForceMode mode)
 	{
-		thisPtr->getHandle()->addForce(*force, mode);
+		thisPtr->GetHandle()->addForce(*force, mode);
 	}
 
 	void ScriptCRigidbody::InternalAddTorque(ScriptCRigidbody* thisPtr, Vector3* torque, ForceMode mode)
 	{
-		thisPtr->getHandle()->addTorque(*torque, mode);
+		thisPtr->GetHandle()->addTorque(*torque, mode);
 	}
 
 	void ScriptCRigidbody::InternalAddForceAtPoint(ScriptCRigidbody* thisPtr, Vector3* force, Vector3* position, PointForceMode mode)
 	{
-		thisPtr->getHandle()->addForceAtPoint(*force, *position, mode);
+		thisPtr->GetHandle()->addForceAtPoint(*force, *position, mode);
 	}
 
 	void ScriptCRigidbody::InternalGetVelocityAtPoint(ScriptCRigidbody* thisPtr, Vector3* point, Vector3* __output)
 	{
 		Vector3 tmp__output;
-		tmp__output = thisPtr->getHandle()->getVelocityAtPoint(*point);
+		tmp__output = thisPtr->GetHandle()->GetVelocityAtPoint(*point);
 
 		*__output = tmp__output;
 	}

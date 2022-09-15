@@ -16,7 +16,7 @@ namespace bs
 		Hide();
 
 		mTooltipSO = SceneObject::Create("Tooltip", SOF_Internal | SOF_Persistent | SOF_DontSave);
-		GameObjectHandle<GUITooltip> tooltip = mTooltipSO->addComponent<GUITooltip>(widget, position, text);
+		GameObjectHandle<GUITooltip> tooltip = mTooltipSO->AddComponent<GUITooltip>(widget, position, text);
 	}
 
 	void GUITooltipManager::Hide()

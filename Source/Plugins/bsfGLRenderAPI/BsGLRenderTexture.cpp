@@ -64,34 +64,34 @@ namespace bs
 					if (glColorSurface->GetProperties().GetTextureType() != TEX_TYPE_3D)
 					{
 						surfaceDesc.zoffset = 0;
-						surfaceDesc.buffer = glColorSurface->getBuffer(mColorSurfaces[i]->getFirstArraySlice(),
-							mColorSurfaces[i]->getMostDetailedMip());
+						surfaceDesc.buffer = glColorSurface->GetBuffer(mColorSurfaces[i]->GetFirstArraySlice(),
+							mColorSurfaces[i]->GetMostDetailedMip());
 					}
 					else
 					{
 						surfaceDesc.zoffset = 0;
-						surfaceDesc.buffer = glColorSurface->getBuffer(0, mColorSurfaces[i]->getMostDetailedMip());
+						surfaceDesc.buffer = glColorSurface->GetBuffer(0, mColorSurfaces[i]->GetMostDetailedMip());
 					}
 				}
 				else // Binding an array of textures or a range of 3D texture slices
 				{
 					surfaceDesc.allLayers = true;
 
-					if (glColorSurface->getProperties().getTextureType() != TEX_TYPE_3D)
+					if (glColorSurface->GetProperties().getTextureType() != TEX_TYPE_3D)
 					{
-						if (mColorSurfaces[i]->getNumArraySlices() != glColorSurface->getProperties().getNumFaces())
+						if (mColorSurfaces[i]->GetNumArraySlices() != glColorSurface->GetProperties().getNumFaces())
 						{
 							BS_LOG(Warning, RenderBackend, "OpenGL doesn't support binding of arbitrary ranges for array "
 								"textures. The entire range will be bound instead.");
 						}
 
 						surfaceDesc.zoffset = 0;
-						surfaceDesc.buffer = glColorSurface->getBuffer(0, mColorSurfaces[i]->getMostDetailedMip());
+						surfaceDesc.buffer = glColorSurface->GetBuffer(0, mColorSurfaces[i]->GetMostDetailedMip());
 					}
 					else
 					{
 						surfaceDesc.zoffset = 0;
-						surfaceDesc.buffer = glColorSurface->getBuffer(0, mColorSurfaces[i]->getMostDetailedMip());
+						surfaceDesc.buffer = glColorSurface->GetBuffer(0, mColorSurfaces[i]->GetMostDetailedMip());
 					}
 				}
 
@@ -109,17 +109,17 @@ namespace bs
 			SPtr<GLPixelBuffer> depthStencilBuffer = nullptr;
 
 			bool allLayers = true;
-			if (mDepthStencilSurface->getNumArraySlices() == 1) // Binding a single texture layer
-				allLayers = glDepthStencilTexture->getProperties().getNumFaces() == 1;
+			if (mDepthStencilSurface->GetNumArraySlices() == 1) // Binding a single texture layer
+				allLayers = glDepthStencilTexture->GetProperties().getNumFaces() == 1;
 
-			if (glDepthStencilTexture->getProperties().getTextureType() != TEX_TYPE_3D)
+			if (glDepthStencilTexture->GetProperties().getTextureType() != TEX_TYPE_3D)
 			{
 				UINT32 firstSlice = 0;
 				if (!allLayers)
-					firstSlice = mDepthStencilSurface->getFirstArraySlice();
+					firstSlice = mDepthStencilSurface->GetFirstArraySlice();
 
-				depthStencilBuffer = glDepthStencilTexture->getBuffer(firstSlice,
-					mDepthStencilSurface->getMostDetailedMip());
+				depthStencilBuffer = glDepthStencilTexture->GetBuffer(firstSlice,
+					mDepthStencilSurface->GetMostDetailedMip());
 			}
 
 			mFB->bindDepthStencil(depthStencilBuffer, allLayers);
@@ -136,7 +136,7 @@ namespace bs
 		}
 		else if (name == "GL_FBOID" || name == "GL_MULTISAMPLEFBOID")
 		{
-			*static_cast<GLuint*>(data) = mFB->getGLFBOID();
+			*static_cast<GLuint*>(data) = mFB->GetGLFBOID();
 		}
 	}
 

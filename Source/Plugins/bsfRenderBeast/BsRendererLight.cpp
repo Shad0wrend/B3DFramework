@@ -20,24 +20,24 @@ namespace bs { namespace ct
 
 	void RendererLight::GetParameters(LightData& output) const
 	{
-		Radian spotAngle = Math::clamp(internal->getSpotAngle() * 0.5f, Degree(0), Degree(89));
-		Radian spotFalloffAngle = Math::clamp(internal->getSpotFalloffAngle() * 0.5f, Degree(0), (Degree)spotAngle);
-		Color color = internal->getColor();
+		Radian spotAngle = Math::Clamp(internal->GetSpotAngle() * 0.5f, Degree(0), Degree(89));
+		Radian spotFalloffAngle = Math::Clamp(internal->GetSpotFalloffAngle() * 0.5f, Degree(0), (Degree)spotAngle);
+		Color color = internal->GetColor();
 
-		const Transform& tfrm = internal->getTransform();
-		output.position = tfrm.getPosition();
-		output.boundsRadius = internal->getBounds().getRadius();
-		output.srcRadius = internal->getSourceRadius();
-		output.direction = -tfrm.getRotation().zAxis();
-		output.luminance = internal->getLuminance();
+		const Transform& tfrm = internal->GetTransform();
+		output.position = tfrm.GetPosition();
+		output.boundsRadius = internal->GetBounds().getRadius();
+		output.srcRadius = internal->GetSourceRadius();
+		output.direction = -tfrm.GetRotation().zAxis();
+		output.luminance = internal->GetLuminance();
 		output.spotAngles.x = spotAngle.valueRadians();
-		output.spotAngles.y = Math::cos(output.spotAngles.x);
-		output.spotAngles.z = 1.0f / std::max(Math::cos(spotFalloffAngle) - output.spotAngles.y, 0.001f);
-		output.attRadiusSqrdInv = 1.0f / (internal->getAttenuationRadius() * internal->getAttenuationRadius());
+		output.spotAngles.y = Math::Cos(output.spotAngles.x);
+		output.spotAngles.z = 1.0f / std::max(Math::Cos(spotFalloffAngle) - output.spotAngles.y, 0.001f);
+		output.attRadiusSqrdInv = 1.0f / (internal->GetAttenuationRadius() * internal->GetAttenuationRadius());
 		output.color = Vector3(color.r, color.g, color.b);
 
 		// If directional lights, convert angular radius in degrees to radians
-		if (internal->getType() == LightType::Directional)
+		if (internal->GetType() == LightType::Directional)
 			output.srcRadius *= Math::DEG2RAD;
 
 		output.shiftedLightPosition = getShiftedLightPosition();
@@ -49,7 +49,7 @@ namespace bs { namespace ct
 		getParameters(lightData);
 
 		float type = 0.0f;
-		switch (internal->getType())
+		switch (internal->GetType())
 		{
 		case LightType::Directional:
 			type = 0;
@@ -64,63 +64,63 @@ namespace bs { namespace ct
 			break;
 		}
 
-		gPerLightParamDef.gLightPositionAndSrcRadius.set(buffer, Vector4(lightData.position, lightData.srcRadius));
-		gPerLightParamDef.gLightColorAndLuminance.set(buffer, Vector4(lightData.color, lightData.luminance));
-		gPerLightParamDef.gLightSpotAnglesAndSqrdInvAttRadius.set(buffer, Vector4(lightData.spotAngles, lightData.attRadiusSqrdInv));
-		gPerLightParamDef.gLightDirectionAndBoundRadius.set(buffer, Vector4(lightData.direction, lightData.boundsRadius));
-		gPerLightParamDef.gShiftedLightPositionAndType.set(buffer, Vector4(lightData.shiftedLightPosition, type));
+		gPerLightParamDef.gLightPositionAndSrcRadius.Set(buffer, Vector4(lightData.position, lightData.srcRadius));
+		gPerLightParamDef.gLightColorAndLuminance.Set(buffer, Vector4(lightData.color, lightData.luminance));
+		gPerLightParamDef.gLightSpotAnglesAndSqrdInvAttRadius.Set(buffer, Vector4(lightData.spotAngles, lightData.attRadiusSqrdInv));
+		gPerLightParamDef.gLightDirectionAndBoundRadius.Set(buffer, Vector4(lightData.direction, lightData.boundsRadius));
+		gPerLightParamDef.gShiftedLightPositionAndType.Set(buffer, Vector4(lightData.shiftedLightPosition, type));
 
 		Vector4 lightGeometry;
-		lightGeometry.x = internal->getType() == LightType::Spot ? (float)Light::LIGHT_CONE_NUM_SIDES : 0;
+		lightGeometry.x = internal->GetType() == LightType::Spot ? (float)Light::LIGHT_CONE_NUM_SIDES : 0;
 		lightGeometry.y = (float)Light::LIGHT_CONE_NUM_SLICES;
-		lightGeometry.z = internal->getBounds().getRadius();
+		lightGeometry.z = internal->GetBounds().getRadius();
 
-		float extraRadius = lightData.srcRadius / Math::tan(lightData.spotAngles.x * 0.5f);
-		float coneRadius = Math::sin(lightData.spotAngles.x) * (internal->getAttenuationRadius() + extraRadius);
+		float extraRadius = lightData.srcRadius / Math::Tan(lightData.spotAngles.x * 0.5f);
+		float coneRadius = Math::Sin(lightData.spotAngles.x) * (internal->GetAttenuationRadius() + extraRadius);
 		lightGeometry.w = coneRadius;
 
-		gPerLightParamDef.gLightGeometry.set(buffer, lightGeometry);
+		gPerLightParamDef.gLightGeometry.Set(buffer, lightGeometry);
 
-		const Transform& tfrm = internal->getTransform();
+		const Transform& tfrm = internal->GetTransform();
 
 		Quaternion lightRotation(BsIdentity);
-		lightRotation.lookRotation(-tfrm.getRotation().zAxis());
+		lightRotation.lookRotation(-tfrm.GetRotation().zAxis());
 
 		Matrix4 transform = Matrix4::TRS(lightData.shiftedLightPosition, lightRotation, Vector3::ONE);
-		gPerLightParamDef.gMatConeTransform.set(buffer, transform);
+		gPerLightParamDef.gMatConeTransform.Set(buffer, transform);
 	}
 
 	Vector3 RendererLight::GetShiftedLightPosition() const
 	{
-		const Transform& tfrm = internal->getTransform();
-		Vector3 direction = -tfrm.getRotation().zAxis();
+		const Transform& tfrm = internal->GetTransform();
+		Vector3 direction = -tfrm.GetRotation().zAxis();
 
 		// Create position for fake attenuation for area spot lights (with disc center)
-		if (internal->getType() == LightType::Spot)
-			return tfrm.getPosition() - direction * (internal->getSourceRadius() / Math::tan(internal->getSpotAngle() * 0.5f));
+		if (internal->GetType() == LightType::Spot)
+			return tfrm.GetPosition() - direction * (internal->GetSourceRadius() / Math::Tan(internal->GetSpotAngle() * 0.5f));
 		else
-			return tfrm.getPosition();
+			return tfrm.GetPosition();
 	}
 
 	GBufferParams::GBufferParams(GpuProgramType type, const SPtr<GpuParams>& gpuParams)
 		: mParams(gpuParams)
 	{
 		if(mParams->hasTexture(type, "gGBufferATex"))
-			mParams->getTextureParam(type, "gGBufferATex", mGBufferA);
+			mParams->GetTextureParam(type, "gGBufferATex", mGBufferA);
 
 		if(mParams->hasTexture(type, "gGBufferBTex"))
-			mParams->getTextureParam(type, "gGBufferBTex", mGBufferB);
+			mParams->GetTextureParam(type, "gGBufferBTex", mGBufferB);
 
 		if(mParams->hasTexture(type, "gGBufferCTex"))
-			mParams->getTextureParam(type, "gGBufferCTex", mGBufferC);
+			mParams->GetTextureParam(type, "gGBufferCTex", mGBufferC);
 
 		if(mParams->hasTexture(type, "gDepthBufferTex"))
-			mParams->getTextureParam(type, "gDepthBufferTex", mGBufferDepth);
+			mParams->GetTextureParam(type, "gDepthBufferTex", mGBufferDepth);
 
 		if(mParams->hasSamplerState(type, "gDepthBufferSamp"))
 		{
 			GpuParamSampState samplerStateParam;
-			mParams->getSamplerStateParam(type, "gDepthBufferSamp", samplerStateParam);
+			mParams->GetSamplerStateParam(type, "gDepthBufferSamp", samplerStateParam);
 
 			SAMPLER_STATE_DESC desc;
 			desc.minFilter = FO_POINT;
@@ -128,52 +128,52 @@ namespace bs { namespace ct
 			desc.mipFilter = FO_POINT;
 
 			SPtr<SamplerState> ss = SamplerState::Create(desc);
-			samplerStateParam.set(ss);
+			samplerStateParam.Set(ss);
 		}
 	}
 
 	void GBufferParams::Bind(const GBufferTextures& gbuffer)
 	{
-		mGBufferA.set(gbuffer.albedo);
-		mGBufferB.set(gbuffer.normals);
-		mGBufferC.set(gbuffer.roughMetal);
-		mGBufferDepth.set(gbuffer.depth);
+		mGBufferA.Set(gbuffer.albedo);
+		mGBufferB.Set(gbuffer.normals);
+		mGBufferC.Set(gbuffer.roughMetal);
+		mGBufferDepth.Set(gbuffer.depth);
 	}
 
 	void ForwardLightingParams::Populate(const SPtr<GpuParams>& params, bool clustered)
 	{
 		if (clustered)
 		{
-			params->getParamInfo()->getBindings(
+			params->GetParamInfo()->GetBindings(
 				GpuPipelineParamInfoBase::ParamType::ParamBlock,
 				"GridParams",
 				gridParamsBindings
 			);
 
 			if (params->hasBuffer(GPT_FRAGMENT_PROGRAM, "gLights"))
-				params->getBufferParam(GPT_FRAGMENT_PROGRAM, "gLights", lightsBufferParam);
+				params->GetBufferParam(GPT_FRAGMENT_PROGRAM, "gLights", lightsBufferParam);
 
 			if (params->hasBuffer(GPT_FRAGMENT_PROGRAM, "gGridLightOffsetsAndSize"))
-				params->getBufferParam(GPT_FRAGMENT_PROGRAM, "gGridLightOffsetsAndSize",
+				params->GetBufferParam(GPT_FRAGMENT_PROGRAM, "gGridLightOffsetsAndSize",
 					gridLightOffsetsAndSizeParam);
 
 			if (params->hasBuffer(GPT_FRAGMENT_PROGRAM, "gLightIndices"))
-				params->getBufferParam(GPT_FRAGMENT_PROGRAM, "gLightIndices", gridLightIndicesParam);
+				params->GetBufferParam(GPT_FRAGMENT_PROGRAM, "gLightIndices", gridLightIndicesParam);
 
 			if (params->hasBuffer(GPT_FRAGMENT_PROGRAM, "gGridProbeOffsetsAndSize"))
-				params->getBufferParam(GPT_FRAGMENT_PROGRAM, "gGridProbeOffsetsAndSize",
+				params->GetBufferParam(GPT_FRAGMENT_PROGRAM, "gGridProbeOffsetsAndSize",
 					gridProbeOffsetsAndSizeParam);
 		}
 		else
 		{
-			params->getParamInfo()->getBinding(
+			params->GetParamInfo()->GetBinding(
 				GPT_FRAGMENT_PROGRAM,
 				GpuPipelineParamInfoBase::ParamType::ParamBlock,
 				"Lights",
 				lightsParamBlockBinding
 			);
 
-			params->getParamInfo()->getBinding(
+			params->GetParamInfo()->GetBinding(
 				GPT_FRAGMENT_PROGRAM,
 				GpuPipelineParamInfoBase::ParamType::ParamBlock,
 				"LightAndReflProbeParams",
@@ -226,7 +226,7 @@ namespace bs { namespace ct
 			int first = -1;
 			for (UINT32 i = 0; i < (UINT32)entries.size(); ++i)
 			{
-				if(entries[i]->internal->getCastsShadow())
+				if(entries[i]->internal->GetCastsShadow())
 				{
 					first = i;
 					break;
@@ -239,7 +239,7 @@ namespace bs { namespace ct
 			{
 				for(UINT32 i = first + 1; i < (UINT32)entries.size(); ++i)
 				{
-					if(!entries[i]->internal->getCastsShadow())
+					if(!entries[i]->internal->GetCastsShadow())
 					{
 						std::swap(entries[i], entries[first]);
 						++numUnshadowed;
@@ -260,25 +260,25 @@ namespace bs { namespace ct
 			for(auto& entry : lightsPerType)
 			{
 				mVisibleLightData.push_back(LightData());
-				entry->getParameters(mVisibleLightData.back());
+				entry->GetParameters(mVisibleLightData.back());
 			}
 		}
 
-		bool supportsStructuredBuffers = gRenderBeast()->getFeatureSet() == RenderBeastFeatureSet::Desktop;
+		bool supportsStructuredBuffers = gRenderBeast()->GetFeatureSet() == RenderBeastFeatureSet::Desktop;
 		if(supportsStructuredBuffers)
 		{
 			UINT32 size = (UINT32) mVisibleLightData.size() * sizeof(LightData);
 			UINT32 curBufferSize;
 
 			if (mLightBuffer != nullptr)
-				curBufferSize = mLightBuffer->getSize();
+				curBufferSize = mLightBuffer->GetSize();
 			else
 				curBufferSize = 0;
 
 			if (size > curBufferSize || curBufferSize == 0)
 			{
 				// Allocate at least one block even if no lights, to avoid issues with null buffers
-				UINT32 bufferSize = std::max(1, Math::ceilToInt(size / (float) LIGHT_DATA_BUFFER_INCREMENT)) * LIGHT_DATA_BUFFER_INCREMENT;
+				UINT32 bufferSize = std::max(1, Math::CeilToInt(size / (float) LIGHT_DATA_BUFFER_INCREMENT)) * LIGHT_DATA_BUFFER_INCREMENT;
 
 				GPU_BUFFER_DESC bufferDesc;
 				bufferDesc.type = GBT_STRUCTURED;

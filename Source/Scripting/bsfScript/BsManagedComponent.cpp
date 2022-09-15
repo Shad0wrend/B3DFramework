@@ -22,13 +22,13 @@ namespace bs
 		: Component(parent), mRuntimeType(runtimeType)
 	{
 		MonoUtil::getClassName(mRuntimeType, mNamespace, mTypeName);
-		setName(mTypeName);
+		SetName(mTypeName);
 	}
 
 	MonoObject* ManagedComponent::GetManagedInstance() const
 	{
 		if(mOwner)
-			return mOwner->getManagedInstance();
+			return mOwner->GetManagedInstance();
 
 		return nullptr;
 	}
@@ -41,7 +41,7 @@ namespace bs
 		// return the data we backed up before the type was lost
 		if (!mMissingType)
 		{
-			MonoObject* instance = mOwner->getManagedInstance();
+			MonoObject* instance = mOwner->GetManagedInstance();
 			SPtr<ManagedSerializableObject> serializableObject = ManagedSerializableObject::createFromExisting(instance);
 
 			// Serialize the object information and its fields. We cannot just serialize the entire object because
@@ -100,7 +100,7 @@ namespace bs
 		initialize(mOwner);
 		mObjInfo = nullptr;
 
-		MonoObject* instance = mOwner->getManagedInstance();
+		MonoObject* instance = mOwner->GetManagedInstance();
 		if (instance != nullptr && data.data != nullptr)
 		{
 			BinarySerializer bs;
@@ -136,7 +136,7 @@ namespace bs
 		mOwner = owner;
 		mFullTypeName = mNamespace + "." + mTypeName;
 		
-		MonoObject* instance = owner->getManagedInstance();
+		MonoObject* instance = owner->GetManagedInstance();
 		mManagedClass = nullptr;
 		if (instance != nullptr)
 		{
@@ -160,65 +160,65 @@ namespace bs
 		{
 			if (mOnCreatedThunk == nullptr)
 			{
-				MonoMethod* onCreatedMethod = mManagedClass->getMethod("OnCreate", 0);
+				MonoMethod* onCreatedMethod = mManagedClass->GetMethod("OnCreate", 0);
 				if (onCreatedMethod != nullptr)
-					mOnCreatedThunk = (OnInitializedThunkDef)onCreatedMethod->getThunk();
+					mOnCreatedThunk = (OnInitializedThunkDef)onCreatedMethod->GetThunk();
 			}
 
 			if (mOnInitializedThunk == nullptr)
 			{
-				MonoMethod* onInitializedMethod = mManagedClass->getMethod("OnInitialize", 0);
+				MonoMethod* onInitializedMethod = mManagedClass->GetMethod("OnInitialize", 0);
 				if (onInitializedMethod != nullptr)
-					mOnInitializedThunk = (OnInitializedThunkDef)onInitializedMethod->getThunk();
+					mOnInitializedThunk = (OnInitializedThunkDef)onInitializedMethod->GetThunk();
 			}
 
 			if (mOnUpdateThunk == nullptr)
 			{
-				MonoMethod* onUpdateMethod = mManagedClass->getMethod("OnUpdate", 0);
+				MonoMethod* onUpdateMethod = mManagedClass->GetMethod("OnUpdate", 0);
 				if (onUpdateMethod != nullptr)
-					mOnUpdateThunk = (OnUpdateThunkDef)onUpdateMethod->getThunk();
+					mOnUpdateThunk = (OnUpdateThunkDef)onUpdateMethod->GetThunk();
 			}
 
 			if (mOnResetThunk == nullptr)
 			{
-				MonoMethod* onResetMethod = mManagedClass->getMethod("OnReset", 0);
+				MonoMethod* onResetMethod = mManagedClass->GetMethod("OnReset", 0);
 				if (onResetMethod != nullptr)
-					mOnResetThunk = (OnResetThunkDef)onResetMethod->getThunk();
+					mOnResetThunk = (OnResetThunkDef)onResetMethod->GetThunk();
 			}
 
 			if (mOnDestroyThunk == nullptr)
 			{
-				MonoMethod* onDestroyMethod = mManagedClass->getMethod("OnDestroy", 0);
+				MonoMethod* onDestroyMethod = mManagedClass->GetMethod("OnDestroy", 0);
 				if (onDestroyMethod != nullptr)
-					mOnDestroyThunk = (OnDestroyedThunkDef)onDestroyMethod->getThunk();
+					mOnDestroyThunk = (OnDestroyedThunkDef)onDestroyMethod->GetThunk();
 			}
 
 			if (mOnDisabledThunk == nullptr)
 			{
-				MonoMethod* onDisableMethod = mManagedClass->getMethod("OnDisable", 0);
+				MonoMethod* onDisableMethod = mManagedClass->GetMethod("OnDisable", 0);
 				if (onDisableMethod != nullptr)
-					mOnDisabledThunk = (OnDisabledThunkDef)onDisableMethod->getThunk();
+					mOnDisabledThunk = (OnDisabledThunkDef)onDisableMethod->GetThunk();
 			}
 
 			if (mOnEnabledThunk == nullptr)
 			{
-				MonoMethod* onEnableMethod = mManagedClass->getMethod("OnEnable", 0);
+				MonoMethod* onEnableMethod = mManagedClass->GetMethod("OnEnable", 0);
 				if (onEnableMethod != nullptr)
-					mOnEnabledThunk = (OnInitializedThunkDef)onEnableMethod->getThunk();
+					mOnEnabledThunk = (OnInitializedThunkDef)onEnableMethod->GetThunk();
 			}
 
 			if (mOnTransformChangedThunk == nullptr)
 			{
-				MonoMethod* onTransformChangedMethod = mManagedClass->getMethod("OnTransformChanged", 1);
+				MonoMethod* onTransformChangedMethod = mManagedClass->GetMethod("OnTransformChanged", 1);
 				if (onTransformChangedMethod != nullptr)
-					mOnTransformChangedThunk = (OnTransformChangedThunkDef)onTransformChangedMethod->getThunk();
+					mOnTransformChangedThunk = (OnTransformChangedThunkDef)onTransformChangedMethod->GetThunk();
 			}
 
 			if(mCalculateBoundsMethod == nullptr)
-				mCalculateBoundsMethod = mManagedClass->getMethod("CalculateBounds", 2);
+				mCalculateBoundsMethod = mManagedClass->GetMethod("CalculateBounds", 2);
 
 			// Search for methods on base class if there is one
-			MonoClass* baseClass = mManagedClass->getBaseClass();
+			MonoClass* baseClass = mManagedClass->GetBaseClass();
 			if (baseClass != ScriptManagedComponent::getMetaData()->scriptClass)
 				mManagedClass = baseClass;
 			else
@@ -231,13 +231,13 @@ namespace bs
 			if (engineAssembly == nullptr)
 				BS_EXCEPT(InvalidStateException, String(ENGINE_ASSEMBLY) + " assembly is not loaded.");
 
-			MonoClass* runInEditorAttrib = engineAssembly->getClass(ENGINE_NS, "RunInEditor");
+			MonoClass* runInEditorAttrib = engineAssembly->GetClass(ENGINE_NS, "RunInEditor");
 			if (runInEditorAttrib == nullptr)
 				BS_EXCEPT(InvalidStateException, "Cannot find RunInEditor managed class.");
 
-			bool runInEditor = mManagedClass->getAttribute(runInEditorAttrib) != nullptr;
+			bool runInEditor = mManagedClass->GetAttribute(runInEditorAttrib) != nullptr;
 			if (runInEditor)
-				setFlag(ComponentFlag::AlwaysRun, true);
+				SetFlag(ComponentFlag::AlwaysRun, true);
 		}
 	}
 
@@ -259,7 +259,7 @@ namespace bs
 		MonoObject* instance = nullptr;
 		
 		if(mOwner)
-			instance = mOwner->getManagedInstance();
+			instance = mOwner->GetManagedInstance();
 
 		if (instance != nullptr && mCalculateBoundsMethod != nullptr)
 		{
@@ -286,7 +286,7 @@ namespace bs
 	{
 		if (mOnUpdateThunk != nullptr)
 		{
-			MonoObject* instance = mOwner->getManagedInstance();
+			MonoObject* instance = mOwner->GetManagedInstance();
 
 			// Note: Not calling virtual methods. Can be easily done if needed but for now doing this
 			// for some extra speed.
@@ -298,7 +298,7 @@ namespace bs
 	{
 		if (mRequiresReset && mOnResetThunk != nullptr)
 		{
-			MonoObject* instance = mOwner->getManagedInstance();
+			MonoObject* instance = mOwner->GetManagedInstance();
 
 			// Note: Not calling virtual methods. Can be easily done if needed but for now doing this
 			// for some extra speed.
@@ -328,7 +328,7 @@ namespace bs
 		HManagedComponent componentHandle;
 		if (SO() != nullptr)
 		{
-			const Vector<HComponent>& components = SO()->getComponents();
+			const Vector<HComponent>& components = SO()->GetComponents();
 			for (auto& component : components)
 			{
 				if (component.get() == this)
@@ -345,7 +345,7 @@ namespace bs
 
 	void ManagedComponent::OnCreated()
 	{
-		MonoObject* instance = mOwner->getManagedInstance();
+		MonoObject* instance = mOwner->GetManagedInstance();
 
 		if (mSerializedObjectData != nullptr && !mMissingType)
 		{
@@ -367,7 +367,7 @@ namespace bs
 	{
 		if (mOnInitializedThunk != nullptr)
 		{
-			MonoObject* instance = mOwner->getManagedInstance();
+			MonoObject* instance = mOwner->GetManagedInstance();
 
 			// Note: Not calling virtual methods. Can be easily done if needed but for now doing this
 			// for some extra speed.
@@ -381,7 +381,7 @@ namespace bs
 	{
 		if (mOnDestroyThunk != nullptr)
 		{
-			MonoObject* instance = mOwner->getManagedInstance();
+			MonoObject* instance = mOwner->GetManagedInstance();
 
 			// Note: Not calling virtual methods. Can be easily done if needed but for now doing this
 			// for some extra speed.
@@ -393,7 +393,7 @@ namespace bs
 	{
 		if (mOnEnabledThunk != nullptr)
 		{
-			MonoObject* instance = mOwner->getManagedInstance();
+			MonoObject* instance = mOwner->GetManagedInstance();
 
 			// Note: Not calling virtual methods. Can be easily done if needed but for now doing this
 			// for some extra speed.
@@ -405,7 +405,7 @@ namespace bs
 	{
 		if (mOnDisabledThunk != nullptr)
 		{
-			MonoObject* instance = mOwner->getManagedInstance();
+			MonoObject* instance = mOwner->GetManagedInstance();
 
 			// Note: Not calling virtual methods. Can be easily done if needed but for now doing this
 			// for some extra speed.
@@ -417,7 +417,7 @@ namespace bs
 	{
 		if(mOnTransformChangedThunk != nullptr)
 		{
-			MonoObject* instance = mOwner->getManagedInstance();
+			MonoObject* instance = mOwner->GetManagedInstance();
 
 			// Note: Not calling virtual methods. Can be easily done if needed but for now doing this
 			// for some extra speed.

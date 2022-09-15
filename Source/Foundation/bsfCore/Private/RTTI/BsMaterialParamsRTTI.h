@@ -42,7 +42,7 @@ namespace bs
 			return TID_TextureParamData;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return bs_shared_ptr_new<MaterialParamTextureData>();
 		}
@@ -61,14 +61,14 @@ namespace bs
 		void SetDataBuffer(MaterialParamStructData* obj, const SPtr<DataStream>& value, UINT32 size)
 		{
 			obj->data = (UINT8*)bs_alloc(size);
-			value->read(obj->data, size);
+			value->Read(obj->data, size);
 
 			obj->dataSize = size;
 		}
 
 		MaterialParamStructDataRTTI()
 		{
-			addDataBlockField("dataBuffer", 0, &MaterialParamStructDataRTTI::getDataBuffer, &MaterialParamStructDataRTTI::setDataBuffer);
+			AddDataBlockField("dataBuffer", 0, &MaterialParamStructDataRTTI::GetDataBuffer, &MaterialParamStructDataRTTI::SetDataBuffer);
 		}
 
 		const String& GetRttiName() override
@@ -82,7 +82,7 @@ namespace bs
 			return TID_StructParamData;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return bs_shared_ptr_new<MaterialParamStructData>();
 		}
@@ -137,8 +137,8 @@ namespace bs
 
 		void SetDataBuffer(MaterialParams* obj, const SPtr<DataStream>& value, UINT32 size)
 		{
-			obj->mDataParamsBuffer = obj->mAlloc.alloc(size);
-			value->read(obj->mDataParamsBuffer, size);
+			obj->mDataParamsBuffer = obj->mAlloc.Alloc(size);
+			value->Read(obj->mDataParamsBuffer, size);
 
 			obj->mDataSize = size;
 		}
@@ -147,7 +147,7 @@ namespace bs
 		void SetStructParam(MaterialParams* obj, UINT32 idx, MaterialParamStructData& param)
 		{
 			MaterialParamStructData& newStructParam = obj->mStructParams[idx];
-			newStructParam.data = (UINT8*)obj->mAlloc.alloc(param.dataSize);
+			newStructParam.data = (UINT8*)obj->mAlloc.Alloc(param.dataSize);
 			memcpy(newStructParam.data, param.data, param.dataSize);
 			newStructParam.dataSize = param.dataSize;
 
@@ -158,7 +158,7 @@ namespace bs
 		void SetStructArraySize(MaterialParams* obj, UINT32 size)
 		{
 			obj->mNumStructParams = size;
-			obj->mStructParams = obj->mAlloc.construct<MaterialParamStructData>(size);
+			obj->mStructParams = obj->mAlloc.Construct<MaterialParamStructData>(size);
 		}
 
 		MaterialParamTextureData& GetTextureParam(MaterialParams* obj, UINT32 idx) { return obj->mTextureParams[idx]; }
@@ -167,7 +167,7 @@ namespace bs
 		void SetTextureArraySize(MaterialParams* obj, UINT32 size)
 		{
 			obj->mNumTextureParams = size;
-			obj->mTextureParams = obj->mAlloc.construct<MaterialParamTextureData>(size);
+			obj->mTextureParams = obj->mAlloc.Construct<MaterialParamTextureData>(size);
 		}
 
 		SPtr<SamplerState> GetSamplerStateParam(MaterialParams* obj, UINT32 idx) { return obj->mSamplerStateParams[idx].value; }
@@ -176,7 +176,7 @@ namespace bs
 		void SetSamplerStateArraySize(MaterialParams* obj, UINT32 size)
 		{
 			obj->mNumSamplerParams = size;
-			obj->mSamplerStateParams = obj->mAlloc.construct<MaterialParamSamplerStateData>(size);
+			obj->mSamplerStateParams = obj->mAlloc.Construct<MaterialParamSamplerStateData>(size);
 		}
 
 		UINT32& GetNumBufferParams(MaterialParams* obj)
@@ -187,7 +187,7 @@ namespace bs
 		void SetNumBufferParams(MaterialParams* obj, UINT32& value)
 		{
 			obj->mNumBufferParams = value;
-			obj->mBufferParams = obj->mAlloc.construct<MaterialParamBufferData>(value);
+			obj->mBufferParams = obj->mAlloc.Construct<MaterialParamBufferData>(value);
 		}
 
 		MaterialParamsBase::DataParamInfo& GetDataParam(MaterialParams* obj, UINT32 idx) { return obj->mDataParams[idx]; }
@@ -196,29 +196,18 @@ namespace bs
 		void SetDataParamArraySize(MaterialParams* obj, UINT32 size)
 		{
 			obj->mNumDataParams = size;
-			obj->mDataParams = obj->mAlloc.construct<MaterialParamsBase::DataParamInfo>(size);
+			obj->mDataParams = obj->mAlloc.Construct<MaterialParamsBase::DataParamInfo>(size);
 		}
 
 		MaterialParamsRTTI()
 		{
-			addPlainArrayField("paramData", 0, &MaterialParamsRTTI::GetParamData, &MaterialParamsRTTI::GetParamDataArraySize,
-				&MaterialParamsRTTI::SetParamData, &MaterialParamsRTTI::SetParamDataArraySize);
-
-			addDataBlockField("dataBuffer", 1, &MaterialParamsRTTI::getDataBuffer, &MaterialParamsRTTI::setDataBuffer);
-
-			addReflectableArrayField("structParams", 2, &MaterialParamsRTTI::GetStructParam,
-				&MaterialParamsRTTI::GetStructArraySize, &MaterialParamsRTTI::SetStructParam, &MaterialParamsRTTI::SetStructArraySize);
-
-			addReflectableArrayField("textureParams", 3, &MaterialParamsRTTI::GetTextureParam,
-				&MaterialParamsRTTI::GetTextureArraySize, &MaterialParamsRTTI::SetTextureParam, &MaterialParamsRTTI::SetTextureArraySize);
-
-			addReflectablePtrArrayField("samplerStateParams", 4, &MaterialParamsRTTI::getSamplerStateParam,
-				&MaterialParamsRTTI::getSamplerStateArraySize, &MaterialParamsRTTI::setSamplerStateParam, &MaterialParamsRTTI::setSamplerStateArraySize);
-
-			addPlainField("numBufferParams", 5, &MaterialParamsRTTI::GetNumBufferParams, &MaterialParamsRTTI::SetNumBufferParams);
-
-			addPlainArrayField("dataParams", 6, &MaterialParamsRTTI::GetDataParam,
-				&MaterialParamsRTTI::GetDataParamArraySize, &MaterialParamsRTTI::SetDataParam, &MaterialParamsRTTI::SetDataParamArraySize);
+			AddPlainArrayField("paramData", 0, &MaterialParamsRTTI::GetParamData, &MaterialParamsRTTI::GetParamDataArraySize, &MaterialParamsRTTI::SetParamData, &MaterialParamsRTTI::SetParamDataArraySize);
+			AddDataBlockField("dataBuffer", 1, &MaterialParamsRTTI::GetDataBuffer, &MaterialParamsRTTI::SetDataBuffer);
+			AddReflectableArrayField("structParams", 2, &MaterialParamsRTTI::GetStructParam, &MaterialParamsRTTI::GetStructArraySize, &MaterialParamsRTTI::SetStructParam, &MaterialParamsRTTI::SetStructArraySize);
+			AddReflectableArrayField("textureParams", 3, &MaterialParamsRTTI::GetTextureParam, &MaterialParamsRTTI::GetTextureArraySize, &MaterialParamsRTTI::SetTextureParam, &MaterialParamsRTTI::SetTextureArraySize);
+			AddReflectablePtrArrayField("samplerStateParams", 4, &MaterialParamsRTTI::GetSamplerStateParam, &MaterialParamsRTTI::GetSamplerStateArraySize, &MaterialParamsRTTI::SetSamplerStateParam, &MaterialParamsRTTI::SetSamplerStateArraySize);
+			AddPlainField("numBufferParams", 5, &MaterialParamsRTTI::GetNumBufferParams, &MaterialParamsRTTI::SetNumBufferParams);
+			AddPlainArrayField("dataParams", 6, &MaterialParamsRTTI::GetDataParam, &MaterialParamsRTTI::GetDataParamArraySize, &MaterialParamsRTTI::SetDataParam, &MaterialParamsRTTI::SetDataParamArraySize);
 		}
 
 		void OnSerializationStarted(IReflectable* obj, SerializationContext* context) override
@@ -249,7 +238,7 @@ namespace bs
 					paramsObj->mNumDataParams++;
 				}
 
-				paramsObj->mDataParams = (MaterialParams::DataParamInfo*)paramsObj->mAlloc.alloc(
+				paramsObj->mDataParams = (MaterialParams::DataParamInfo*)paramsObj->mAlloc.Alloc(
 					paramsObj->mNumDataParams * sizeof(MaterialParams::DataParamInfo));
 				memset(paramsObj->mDataParams, 0, paramsObj->mNumDataParams * sizeof(MaterialParams::DataParamInfo));
 
@@ -286,7 +275,7 @@ namespace bs
 			return TID_MaterialParams;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return bs_shared_ptr_new<MaterialParams>();
 		}
@@ -400,7 +389,7 @@ namespace bs
 						ColorGradient temp;
 						rtti_read(temp, stream);
 
-						data.colorGradient = bs_pool_new<ColorGradientHDR>(temp.getKeys());
+						data.colorGradient = bs_pool_new<ColorGradientHDR>(temp.GetKeys());
 					}
 					else
 					{

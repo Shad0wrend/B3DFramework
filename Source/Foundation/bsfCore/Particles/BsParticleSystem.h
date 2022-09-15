@@ -606,7 +606,7 @@ namespace bs
 		void PostSimulate(const ParticleSystemState& state, UINT32 startIdx, UINT32 count, bool spacing, float spacingOffset);
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> createCore() const override;
+		SPtr<ct::CoreObject> CreateCore() const ;
 
 		/** @copydoc SceneActor::_markCoreDirty */
 		void MarkCoreDirtyInternal(ActorDirtyFlag flag = ActorDirtyFlag::Everything) override;
@@ -615,7 +615,7 @@ namespace bs
 		CoreSyncData SyncToCore(FrameAlloc* allocator) override;
 
 		/** @copydoc CoreObject::getCoreDependencies */
-		void getCoreDependencies(Vector<CoreObject*>& dependencies) override;
+		void GetCoreDependencies(Vector<CoreObject*>& dependencies) ;
 
 		/**	Creates a new ParticleSystem instance without initializing it. */
 		static SPtr<ParticleSystem> CreateEmpty();

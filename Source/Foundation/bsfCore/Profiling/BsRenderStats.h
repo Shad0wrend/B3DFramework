@@ -146,9 +146,9 @@ namespace bs
 	};
 
 #if BS_PROFILING_ENABLED
-	#define BS_INC_RENDER_STAT_CAT(Stat, Category) RenderStats::Instance().inc##Stat((UINT32)Category)
-	#define BS_INC_RENDER_STAT(Stat) RenderStats::Instance().inc##Stat()
-	#define BS_ADD_RENDER_STAT(Stat, Count) RenderStats::Instance().add##Stat(Count)
+	#define BS_INC_RENDER_STAT_CAT(Stat, Category) RenderStats::Instance().Inc##Stat((UINT32)Category)
+	#define BS_INC_RENDER_STAT(Stat) RenderStats::Instance().Inc##Stat()
+	#define BS_ADD_RENDER_STAT(Stat, Count) RenderStats::Instance().Add##Stat(Count)
 #else
 	#define BS_INC_RENDER_STAT_CAT(Stat, Category)
 	#define BS_INC_RENDER_STAT(Stat)

@@ -22,27 +22,27 @@ namespace bs
 		if (!mIsMultiselect && mElementStates.size() > 0)
 			mElementStates[0] = true;
 
-		updateContents();
+		UpdateContents();
 	}
 
 	GUIListBox::~GUIListBox()
 	{
-		closeListBox();
+		CloseListBox();
 	}
 
 	GUIListBox* GUIListBox::Create(const Vector<HString>& elements, bool isMultiselect, const String& styleName)
 	{
-		return new (bs_alloc<GUIListBox>()) GUIListBox(getStyleName<GUIListBox>(styleName), elements, isMultiselect, GUIDimensions::Create());
+		return new (bs_alloc<GUIListBox>()) GUIListBox(GetStyleName<GUIListBox>(styleName), elements, isMultiselect, GUIDimensions::Create());
 	}
 
 	GUIListBox* GUIListBox::Create(const Vector<HString>& elements, bool isMultiselect, const GUIOptions& options, const String& styleName)
 	{
-		return new (bs_alloc<GUIListBox>()) GUIListBox(getStyleName<GUIListBox>(styleName), elements, isMultiselect, GUIDimensions::Create(options));
+		return new (bs_alloc<GUIListBox>()) GUIListBox(GetStyleName<GUIListBox>(styleName), elements, isMultiselect, GUIDimensions::Create(options));
 	}
 
 	GUIListBox* GUIListBox::Create(const Vector<HString>& elements, const GUIOptions& options, const String& styleName)
 	{
-		return new (bs_alloc<GUIListBox>()) GUIListBox(getStyleName<GUIListBox>(styleName), elements, false, GUIDimensions::Create(options));
+		return new (bs_alloc<GUIListBox>()) GUIListBox(GetStyleName<GUIListBox>(styleName), elements, false, GUIDimensions::Create(options));
 	}
 
 	void GUIListBox::SetElements(const Vector<HString>& elements)
@@ -50,7 +50,7 @@ namespace bs
 		bool wasOpen = mDropDownBox != nullptr;
 
 		if(wasOpen)
-			closeListBox();
+			CloseListBox();
 
 		mElements = elements;
 
@@ -59,10 +59,10 @@ namespace bs
 		if (!mIsMultiselect && mElementStates.size() > 0)
 			mElementStates[0] = true;
 
-		updateContents();
+		UpdateContents();
 
 		if(wasOpen)
-			openListBox();
+			OpenListBox();
 	}
 
 	void GUIListBox::SelectElement(UINT32 idx)
@@ -71,7 +71,7 @@ namespace bs
 			return;
 
 		if (mElementStates[idx] != true)
-			elementSelected(idx);
+			ElementSelected(idx);
 	}
 
 	void GUIListBox::DeselectElement(UINT32 idx)
@@ -80,7 +80,7 @@ namespace bs
 			return;
 
 		if (mElementStates[idx] != false)
-			elementSelected(idx);
+			ElementSelected(idx);
 	}
 
 	void GUIListBox::SetElementStates(const Vector<bool>& states)
@@ -107,7 +107,7 @@ namespace bs
 		bool wasOpen = mDropDownBox != nullptr;
 
 		if (wasOpen)
-			closeListBox();
+			CloseListBox();
 
 		for (UINT32 i = 0; i < min; i++)
 		{
@@ -122,24 +122,24 @@ namespace bs
 			}
 		}
 
-		updateContents();
+		UpdateContents();
 
 		if (wasOpen)
-			openListBox();
+			OpenListBox();
 	}
 
 	bool GUIListBox::MouseEventInternal(const GUIMouseEvent& ev)
 	{
 		bool processed = GUIButtonBase::MouseEventInternal(ev);
 
-		if(ev.getType() == GUIMouseEventType::MouseDown)
+		if(ev.GetType() == GUIMouseEventType::MouseDown)
 		{
 			if (!IsDisabledInternal())
 			{
 				if (mDropDownBox == nullptr)
-					openListBox();
+					OpenListBox();
 				else
-					closeListBox();
+					CloseListBox();
 			}
 
 			processed = true;
@@ -152,14 +152,14 @@ namespace bs
 	{
 		const bool processed = GUIButtonBase::CommandEventInternal(ev);
 
-		if(ev.getType() == GUICommandEventType::Confirm)
+		if(ev.GetType() == GUICommandEventType::Confirm)
 		{
 			if(!IsDisabledInternal())
 			{
 				if (mDropDownBox == nullptr)
-					openListBox();
+					OpenListBox();
 				else
-					closeListBox();
+					CloseListBox();
 			}
 
 			return true;
@@ -178,7 +178,7 @@ namespace bs
 			bool selected = mElementStates[idx];
 			mElementStates[idx] = !selected;
 
-			if (!onSelectionToggled.empty())
+			if (!onSelectionToggled.Empty())
 				onSelectionToggled(idx, !selected);
 		}
 		else
@@ -188,18 +188,18 @@ namespace bs
 
 			mElementStates[idx] = true;
 
-			if (!onSelectionToggled.empty())
+			if (!onSelectionToggled.Empty())
 				onSelectionToggled(idx, true);
 
-			closeListBox();
+			CloseListBox();
 		}
 
-		updateContents();
+		UpdateContents();
 	}
 
 	void GUIListBox::OpenListBox()
 	{
-		closeListBox();
+		CloseListBox();
 
 		DROP_DOWN_BOX_DESC desc;
 
@@ -207,16 +207,16 @@ namespace bs
 		for(auto& elem : mElements)
 		{
 			String identifier = toString(i);
-			desc.dropDownData.entries.push_back(GUIDropDownDataEntry::button(identifier, std::bind(&GUIListBox::elementSelected, this, i)));
+			desc.dropDownData.entries.push_back(GUIDropDownDataEntry::Button(identifier, std::bind(&GUIListBox::ElementSelected, this, i)));
 			desc.dropDownData.localizedNames[identifier] = elem;
 			i++;
 		}
 
 		GUIWidget* widget = GetParentWidgetInternal();
 
-		desc.camera = widget->getCamera();
-		desc.skin = widget->getSkinResource();
-		desc.placement = DropDownAreaPlacement::aroundBoundsHorz(mClippedBounds);
+		desc.camera = widget->GetCamera();
+		desc.skin = widget->GetSkinResource();
+		desc.placement = DropDownAreaPlacement::AroundBoundsHorz(mClippedBounds);
 		desc.dropDownData.states = mElementStates;
 
 		GUIDropDownType type;
@@ -225,8 +225,8 @@ namespace bs
 		else
 			type = GUIDropDownType::ListBox;
 
-		mDropDownBox = GUIDropDownBoxManager::Instance().openDropDownBox(
-			desc, type, std::bind(&GUIListBox::onListBoxClosed, this));
+		mDropDownBox = GUIDropDownBoxManager::Instance().OpenDropDownBox(
+			desc, type, std::bind(&GUIListBox::OnListBoxClosed, this));
 
 		SetOnInternal(true);
 	}
@@ -235,7 +235,7 @@ namespace bs
 	{
 		if (mDropDownBox != nullptr)
 		{
-			GUIDropDownBoxManager::Instance().closeDropDownBox();
+			GUIDropDownBoxManager::Instance().CloseDropDownBox();
 
 			SetOnInternal(false);
 			mDropDownBox = nullptr;
@@ -258,18 +258,18 @@ namespace bs
 		if (mIsMultiselect)
 		{
 			if (numSelected == 1)
-				setContent(GUIContent(mElements[selectedIdx]));
+				SetContent(GUIContent(mElements[selectedIdx]));
 			else if (numSelected == 0)
-				setContent(GUIContent(HEString("None")));
+				SetContent(GUIContent(HEString("None")));
 			else
-				setContent(GUIContent(HEString("Multiple")));
+				SetContent(GUIContent(HEString("Multiple")));
 		}
 		else
 		{
 			if(!mElements.empty())
-				setContent(GUIContent(mElements[selectedIdx]));
+				SetContent(GUIContent(mElements[selectedIdx]));
 			else
-				setContent(GUIContent(HEString("None")));
+				SetContent(GUIContent(HEString("None")));
 		}
 	}
 

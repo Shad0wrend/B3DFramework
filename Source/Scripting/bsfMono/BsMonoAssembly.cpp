@@ -275,7 +275,7 @@ namespace bs
 		Stack<MonoClass*> todo;
 
 		MonoAssembly* corlib = MonoManager::Instance().getAssembly("corlib");
-		MonoClass* compilerGeneratedAttrib = corlib->getClass("System.Runtime.CompilerServices",
+		MonoClass* compilerGeneratedAttrib = corlib->GetClass("System.Runtime.CompilerServices",
 				"CompilerGeneratedAttribute");
 
 		int numRows = mono_image_get_table_rows (mMonoImage, MONO_TABLE_TYPEDEF);
@@ -309,7 +309,7 @@ namespace bs
 						if (rawNestedClass == nullptr)
 							break;
 
-						String nestedType = curNestedClass->getTypeName() + "+" + mono_class_get_name(rawNestedClass);
+						String nestedType = curNestedClass->GetTypeName() + "+" + mono_class_get_name(rawNestedClass);
 
 						MonoClass* nestedClass = getClass(ns, nestedType, rawNestedClass);
 						if (nestedClass != nullptr)

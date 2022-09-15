@@ -18,10 +18,10 @@ namespace bs
 		NullPhysicsMesh(const SPtr<MeshData>& meshData, PhysicsMeshType type);
 
 	private:
-		/** @copydoc PhysicsMesh::initialize() */
+		/** @copydoc PhysicsMesh::Initialize() */
 		void Initialize() override;
 
-		/** @copydoc PhysicsMesh::initialize() */
+		/** @copydoc PhysicsMesh::Initialize() */
 		void Destroy() override;
 
 		// Note: Must not have its own RTTI type, it's important it shares the same type ID as PhysicsMesh so the

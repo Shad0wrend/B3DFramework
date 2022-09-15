@@ -67,14 +67,14 @@ namespace bs
 	{
 		String nameStr = MonoUtil::monoToString(name);
 
-		thisPtr->getInternalValue()->registerButton(nameStr, buttonCode, modifiers, repeatable);
+		thisPtr->GetInternalValue()->registerButton(nameStr, buttonCode, modifiers, repeatable);
 	}
 
 	void ScriptInputConfiguration::InternalUnregisterButton(ScriptInputConfiguration* thisPtr, MonoString* name)
 	{
 		String nameStr = MonoUtil::monoToString(name);
 
-		thisPtr->getInternalValue()->unregisterButton(nameStr);
+		thisPtr->GetInternalValue()->unregisterButton(nameStr);
 	}
 
 	void ScriptInputConfiguration::InternalRegisterAxis(ScriptInputConfiguration* thisPtr, MonoString* name, InputAxis type, float deadZone,
@@ -88,24 +88,24 @@ namespace bs
 		axisDesc.invert = invert;
 		axisDesc.sensitivity = sensitivity;
 
-		thisPtr->getInternalValue()->registerAxis(nameStr, axisDesc);
+		thisPtr->GetInternalValue()->registerAxis(nameStr, axisDesc);
 	}
 
 	void ScriptInputConfiguration::InternalUnregisterAxis(ScriptInputConfiguration* thisPtr, MonoString* name)
 	{
 		String nameStr = MonoUtil::monoToString(name);
 
-		thisPtr->getInternalValue()->unregisterAxis(nameStr);
+		thisPtr->GetInternalValue()->unregisterAxis(nameStr);
 	}
 
 	void ScriptInputConfiguration::InternalSetRepeatInterval(ScriptInputConfiguration* thisPtr, UINT64 milliseconds)
 	{
-		thisPtr->getInternalValue()->setRepeatInterval(milliseconds);
+		thisPtr->GetInternalValue()->SetRepeatInterval(milliseconds);
 	}
 
 	UINT64 ScriptInputConfiguration::InternalGetRepeatInterval(ScriptInputConfiguration* thisPtr)
 	{
-		return thisPtr->getInternalValue()->getRepeatInterval();
+		return thisPtr->GetInternalValue()->GetRepeatInterval();
 	}
 
 	void ScriptInputConfiguration::OnManagedInstanceDeletedInternal(bool assemblyRefresh)

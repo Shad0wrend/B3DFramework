@@ -127,7 +127,7 @@ namespace bs
 		SPtr<AudioClip> clip = AudioClip::CreatePtrInternal(sampleStream, bufferSize, info.numSamples, clipDesc);
 
 		const String fileName = filePath.getFilename(false);
-		clip->setName(fileName);
+		clip->SetName(fileName);
 
 		return clip;
 	}

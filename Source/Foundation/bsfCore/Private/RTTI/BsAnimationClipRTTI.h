@@ -85,7 +85,7 @@ namespace bs
 		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) 
 		{
 			AnimationClip* clip = static_cast<AnimationClip*>(obj);
-			clip->initialize();
+			clip->Initialize();
 		}
 
 		const String& GetRttiName() 

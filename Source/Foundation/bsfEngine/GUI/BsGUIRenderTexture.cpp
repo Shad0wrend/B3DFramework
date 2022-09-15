@@ -17,13 +17,13 @@ namespace bs
 		const GUIDimensions& dimensions)
 		:GUITexture(styleName, HSpriteTexture(), TextureScaleMode::StretchToFit, false, dimensions), mTransparent(transparent)
 	{
-		setRenderTexture(texture);
+		SetRenderTexture(texture);
 	}
 
 	GUIRenderTexture::~GUIRenderTexture()
 	{
 		if (mSourceTexture != nullptr)
-			GUIManager::Instance().setInputBridge(mSourceTexture, nullptr);
+			GUIManager::Instance().SetInputBridge(mSourceTexture, nullptr);
 	}
 
 	GUIRenderTexture* GUIRenderTexture::Create(const SPtr<RenderTexture>& texture, bool transparent, const String& styleName)
@@ -50,25 +50,25 @@ namespace bs
 	void GUIRenderTexture::SetRenderTexture(const SPtr<RenderTexture>& texture)
 	{
 		if (mSourceTexture != nullptr)
-			GUIManager::Instance().setInputBridge(mSourceTexture, nullptr);
+			GUIManager::Instance().SetInputBridge(mSourceTexture, nullptr);
 
 		mSourceTexture = texture;
 
 		if (mSourceTexture != nullptr)
 		{
-			if (mSourceTexture->getProperties().requiresTextureFlipping)
+			if (mSourceTexture->GetProperties().requiresTextureFlipping)
 			{
 				mDesc.uvOffset = Vector2(0.0f, 1.0f);
 				mDesc.uvScale = Vector2(1.0f, -1.0f);
 			}
 
-			setTexture(SpriteTexture::Create(texture->getColorTexture(0)));
+			SetTexture(SpriteTexture::Create(texture->GetColorTexture(0)));
 
-			GUIManager::Instance().setInputBridge(mSourceTexture, this);
+			GUIManager::Instance().SetInputBridge(mSourceTexture, this);
 		}
 		else
 		{
-			setTexture(SpriteTexture::Create(HTexture()));
+			SetTexture(SpriteTexture::Create(HTexture()));
 		}
 
 		MarkLayoutAsDirtyInternal();
@@ -76,22 +76,22 @@ namespace bs
 
 	void GUIRenderTexture::UpdateRenderElementsInternal()
 	{		
-		if(mActiveTexture != nullptr && mActiveTexture.isLoaded())
+		if(mActiveTexture != nullptr && mActiveTexture.IsLoaded())
 			mDesc.texture = mActiveTexture;
 
 		mDesc.width = mLayoutData.area.width;
 		mDesc.height = mLayoutData.area.height;
 		mDesc.transparent = mTransparent;
-		mDesc.color = getTint();
+		mDesc.color = GetTint();
 
-		mImageSprite->update(mDesc, (UINT64)GetParentWidgetInternal());
+		mImageSprite->Update(mDesc, (UINT64)GetParentWidgetInternal());
 
 		// Populate GUI render elements from the sprites
 		{
 			using T = impl::GUIRenderElementHelper;
-			T::populate({ T::SpriteInfo(mImageSprite) }, mRenderElements);
+			T::Populate({ T::SpriteInfo(mImageSprite) }, mRenderElements);
 		}
 
-		GUIElement::updateRenderElementsInternal();
+		GUIElement::UpdateRenderElementsInternal();
 	}
 }

@@ -20,7 +20,7 @@ namespace bs
 	{
 		if(!IsDestroyed())
 		{
-			// Object must be released with destroy() otherwise engine can still try to use it, even if it was destructed
+			// Object must be released with Destroy() otherwise engine can still try to use it, even if it was destructed
 			// (e.g. if an object has one of its methods queued in a command queue, and is destructed, you will be accessing invalid memory)
 			BS_EXCEPT(InternalErrorException, "Destructor called but object is not destroyed. This will result in nasty issues.");
 		}
@@ -37,16 +37,16 @@ namespace bs
 	void CoreObject::Destroy()
 	{
 		CoreObjectManager::Instance().UnregisterObject(this);
-		setIsDestroyed(true);
+		SetIsDestroyed(true);
 
-		if(requiresInitOnCoreThread())
+		if(RequiresInitOnCoreThread())
 		{
 #if !BS_FORCE_SINGLETHREADED_RENDERING
-			assert(BS_THREAD_CURRENT_ID != CoreThread::Instance().getCoreThreadId() && "Cannot destroy sim thead object from core thread.");
+			assert(BS_THREAD_CURRENT_ID != CoreThread::Instance().GetCoreThreadId() && "Cannot destroy sim thead object from core thread.");
 #endif
 
 			// This will only destroy the ct::CoreObject if this was the last reference
-			queueDestroyGpuCommand(mCoreSpecific);
+			QueueDestroyGpuCommand(mCoreSpecific);
 		}
 
 		mCoreSpecific = nullptr;
@@ -54,24 +54,24 @@ namespace bs
 
 	void CoreObject::Initialize()
 	{
-		CoreObjectManager::Instance().registerObject(this);
-		mCoreSpecific = createCore();
+		CoreObjectManager::Instance().RegisterObject(this);
+		mCoreSpecific = CreateCore();
 
 		if (mCoreSpecific != nullptr)
 		{
-			if (requiresInitOnCoreThread())
+			if (RequiresInitOnCoreThread())
 			{
-				mCoreSpecific->setScheduledToBeInitialized(true);
+				mCoreSpecific->SetScheduledToBeInitialized(true);
 
 #if !BS_FORCE_SINGLETHREADED_RENDERING
-				assert(BS_THREAD_CURRENT_ID != CoreThread::Instance().getCoreThreadId() && "Cannot initialize sim thread object from core thread.");
+				assert(BS_THREAD_CURRENT_ID != CoreThread::Instance().GetCoreThreadId() && "Cannot initialize sim thread object from core thread.");
 #endif
 
-				queueInitializeGpuCommand(mCoreSpecific);
+				QueueInitializeGpuCommand(mCoreSpecific);
 			}
 			else
 			{
-				mCoreSpecific->initialize();
+				mCoreSpecific->Initialize();
 
 				// Even though this object might not require initialization on the core thread, it will be used on it, therefore
 				// do a memory barrier to ensure any stores are finished before continuing (When it requires init on core thread
@@ -82,33 +82,33 @@ namespace bs
 		}
 
 		mFlags |= CGO_INITIALIZED;
-		markDependenciesDirty();
+		MarkDependenciesDirty();
 	}
 
 	void CoreObject::BlockUntilCoreInitialized() const
 	{
 		if (mCoreSpecific != nullptr)
-			mCoreSpecific->synchronize();
+			mCoreSpecific->Synchronize();
 	}
 
 	void CoreObject::SyncToCore()
 	{
-		CoreObjectManager::Instance().syncToCore(this);
+		CoreObjectManager::Instance().SyncToCore(this);
 	}
 
 	void CoreObject::MarkCoreDirty(UINT32 flags)
 	{
-		bool wasDirty = isCoreDirty();
+		bool wasDirty = IsCoreDirty();
 
 		mCoreDirtyFlags |= flags;
 
-		if (!wasDirty && isCoreDirty())
-			CoreObjectManager::Instance().notifyCoreDirty(this);
+		if (!wasDirty && IsCoreDirty())
+			CoreObjectManager::Instance().NotifyCoreDirty(this);
 	}
 
 	void CoreObject::MarkDependenciesDirty()
 	{
-		CoreObjectManager::Instance().notifyDependenciesDirty(this);
+		CoreObjectManager::Instance().NotifyDependenciesDirty(this);
 	}
 
 	void CoreObject::SetThisPtrInternal(SPtr<CoreObject> ptrThis)
@@ -122,27 +122,27 @@ namespace bs
 		// reference to the obj (saved in the bound function).
 		// We could have called the function directly using "this" pointer but then we couldn't have used a shared_ptr for the object,
 		// in which case there is a possibility that the object would be released and deleted while still being in the command queue.
-		gCoreThread().queueCommand(std::bind(&CoreObject::executeGpuCommand, obj, func));
+		gCoreThread().QueueCommand(std::bind(&CoreObject::ExecuteGpuCommand, obj, func));
 	}
 
 	AsyncOp CoreObject::QueueReturnGpuCommand(const SPtr<ct::CoreObject>& obj, std::function<void(AsyncOp&)> func)
 	{
 		// See queueGpuCommand
-		return gCoreThread().queueReturnCommand(std::bind(&CoreObject::executeReturnGpuCommand, obj, func, _1));
+		return gCoreThread().QueueReturnCommand(std::bind(&CoreObject::ExecuteReturnGpuCommand, obj, func, _1));
 	}
 
 	void CoreObject::QueueInitializeGpuCommand(const SPtr<ct::CoreObject>& obj)
 	{
-		std::function<void()> func = std::bind(&ct::CoreObject::initialize, obj.get());
+		std::function<void()> func = std::bind(&ct::CoreObject::Initialize, obj.get());
 
-		CoreThread::Instance().queueCommand(std::bind(&CoreObject::executeGpuCommand, obj, func));
+		CoreThread::Instance().QueueCommand(std::bind(&CoreObject::ExecuteGpuCommand, obj, func));
 	}
 
 	void CoreObject::QueueDestroyGpuCommand(const SPtr<ct::CoreObject>& obj)
 	{
 		std::function<void()> func = [&](){}; // Do nothing function. We just need the shared pointer to stay alive until it reaches the core thread
 
-		gCoreThread().queueCommand(std::bind(&CoreObject::executeGpuCommand, obj, func));
+		gCoreThread().QueueCommand(std::bind(&CoreObject::ExecuteGpuCommand, obj, func));
 	}
 
 	void CoreObject::ExecuteGpuCommand(const SPtr<ct::CoreObject>& obj, std::function<void()> func)

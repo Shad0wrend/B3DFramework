@@ -139,7 +139,7 @@ namespace bs
 				
 				PhysX::ContactEventType type;
 				bool ignoreContact = false;
-				PhysXObjectFilterFlags flags = PhysXObjectFilterFlags(pair.triggerShape->getSimulationFilterData().word2);
+				PhysXObjectFilterFlags flags = PhysXObjectFilterFlags(pair.triggerShape->GetSimulationFilterData().word2);
 
 				if (flags.isSet(PhysXObjectFilterFlag::ReportAll))
 				{
@@ -360,14 +360,14 @@ namespace bs
 
 		PxShape* shape = shapeHint ? shapeHint : input.shape;
 
-		if (shape != nullptr && shape->getGeometryType() == PxGeometryType::eTRIANGLEMESH)
+		if (shape != nullptr && shape->GetGeometryType() == PxGeometryType::eTRIANGLEMESH)
 		{
 			PxTriangleMeshGeometry triMeshGeometry;
-			shape->getTriangleMeshGeometry(triMeshGeometry);
+			shape->GetTriangleMeshGeometry(triMeshGeometry);
 
-			if (triMeshGeometry.isValid() && triMeshGeometry.triangleMesh->getTrianglesRemap() != nullptr)
+			if (triMeshGeometry.isValid() && triMeshGeometry.triangleMesh->GetTrianglesRemap() != nullptr)
 			{
-				output.unmappedTriangleIdx = triMeshGeometry.triangleMesh->getTrianglesRemap()[input.faceIndex];
+				output.unmappedTriangleIdx = triMeshGeometry.triangleMesh->GetTrianglesRemap()[input.faceIndex];
 				return;
 			}
 		}
@@ -391,7 +391,7 @@ namespace bs
 		{
 			CCollider* component = (CCollider*)output.colliderRaw->GetOwnerInternal(PhysicsOwnerType::Component);
 			if (component != nullptr)
-				output.collider = static_object_cast<CCollider>(component->getHandle());
+				output.collider = static_object_cast<CCollider>(component->GetHandle());
 		}
 	}
 
@@ -409,7 +409,7 @@ namespace bs
 		{
 			CCollider* component = (CCollider*)output.colliderRaw->GetOwnerInternal(PhysicsOwnerType::Component);
 			if (component != nullptr)
-				output.collider = static_object_cast<CCollider>(component->getHandle());
+				output.collider = static_object_cast<CCollider>(component->GetHandle());
 		}
 	}
 
@@ -550,7 +550,7 @@ namespace bs
 		for(auto& scene : mScenes)
 		{
 			PxU32 numActiveTransforms;
-			const PxActiveTransform* activeTransforms = scene->mScene->getActiveTransforms(numActiveTransforms);
+			const PxActiveTransform* activeTransforms = scene->mScene->GetActiveTransforms(numActiveTransforms);
 
 			for (PxU32 i = 0; i < numActiveTransforms; i++)
 			{
@@ -632,7 +632,7 @@ namespace bs
 					point.normal = -point.normal;
 			}
 
-			Rigidbody* rigidbody = obj->getRigidbody();
+			Rigidbody* rigidbody = obj->GetRigidbody();
 			if(rigidbody != nullptr)
 			{
 				switch (type)
@@ -669,7 +669,7 @@ namespace bs
 		{
 			if (entry.colliderA != nullptr)
 			{
-				CollisionReportMode reportModeA = entry.colliderA->getCollisionReportMode();
+				CollisionReportMode reportModeA = entry.colliderA->GetCollisionReportMode();
 
 				if (reportModeA == CollisionReportMode::ReportPersistent)
 					notifyContact(entry.colliderA, entry.colliderB, entry.type, entry.points, true);
@@ -679,7 +679,7 @@ namespace bs
 
 			if (entry.colliderB != nullptr)
 			{
-				CollisionReportMode reportModeB = entry.colliderB->getCollisionReportMode();
+				CollisionReportMode reportModeB = entry.colliderB->GetCollisionReportMode();
 
 				if (reportModeB == CollisionReportMode::ReportPersistent)
 					notifyContact(entry.colliderB, entry.colliderA, entry.type, entry.points, false);
@@ -735,14 +735,14 @@ namespace bs
 		FPhysXCollider* physxCollider = static_cast<FPhysXCollider*>(collider.GetInternalInternal());
 		PxShape* shape = physxCollider->GetShapeInternal();
 
-		PxTransform transform = toPxTransform(collider.getPosition(), collider.getRotation());
+		PxTransform transform = toPxTransform(collider.GetPosition(), collider.GetRotation());
 
 		PxRaycastHit hitInfo;
 		PxU32 maxHits = 1;
 		bool anyHit = false;
 		PxHitFlags hitFlags = PxHitFlag::eDEFAULT | PxHitFlag::eUV;
 		PxU32 hitCount = PxGeometryQuery::raycast(toPxVector(origin), toPxVector(unitDir),
-			shape->getGeometry().any(), transform,
+			shape->GetGeometry().any(), transform,
 			maxDist, hitFlags, maxHits, &hitInfo, anyHit);
 
 		if(hitCount > 0)
@@ -915,7 +915,7 @@ namespace bs
 	bool PhysXScene::CapsuleCast(const Capsule& capsule, const Quaternion& rotation, const Vector3& unitDir,
 		PhysicsQueryHit& hit, UINT64 layer, float max) const
 	{
-		PxCapsuleGeometry geometry(capsule.getRadius(), capsule.getHeight() * 0.5f);
+		PxCapsuleGeometry geometry(capsule.getRadius(), capsule.GetHeight() * 0.5f);
 		PxTransform transform = toPxTransform(capsule.getCenter(), Quaternion::IDENTITY);
 
 		return sweep(geometry, transform, unitDir, hit, layer, max);
@@ -927,7 +927,7 @@ namespace bs
 		if (mesh == nullptr)
 			return false;
 
-		if (mesh->getType() != PhysicsMeshType::Convex)
+		if (mesh->GetType() != PhysicsMeshType::Convex)
 			return false;
 
 		FPhysXMesh* physxMesh = static_cast<FPhysXMesh*>(mesh->GetInternalInternal());
@@ -972,7 +972,7 @@ namespace bs
 	Vector<PhysicsQueryHit> PhysXScene::CapsuleCastAll(const Capsule& capsule, const Quaternion& rotation,
 		const Vector3& unitDir, UINT64 layer, float max) const
 	{
-		PxCapsuleGeometry geometry(capsule.getRadius(), capsule.getHeight() * 0.5f);
+		PxCapsuleGeometry geometry(capsule.getRadius(), capsule.GetHeight() * 0.5f);
 		PxTransform transform = toPxTransform(capsule.getCenter(), Quaternion::IDENTITY);
 
 		return sweepAll(geometry, transform, unitDir, layer, max);
@@ -984,7 +984,7 @@ namespace bs
 		if (mesh == nullptr)
 			return Vector<PhysicsQueryHit>(0);
 
-		if (mesh->getType() != PhysicsMeshType::Convex)
+		if (mesh->GetType() != PhysicsMeshType::Convex)
 			return Vector<PhysicsQueryHit>(0);
 
 		FPhysXMesh* physxMesh = static_cast<FPhysXMesh*>(mesh->GetInternalInternal());
@@ -1028,7 +1028,7 @@ namespace bs
 	bool PhysXScene::CapsuleCastAny(const Capsule& capsule, const Quaternion& rotation, const Vector3& unitDir,
 		UINT64 layer, float max) const
 	{
-		PxCapsuleGeometry geometry(capsule.getRadius(), capsule.getHeight() * 0.5f);
+		PxCapsuleGeometry geometry(capsule.getRadius(), capsule.GetHeight() * 0.5f);
 		PxTransform transform = toPxTransform(capsule.getCenter(), Quaternion::IDENTITY);
 
 		return sweepAny(geometry, transform, unitDir, layer, max);
@@ -1040,7 +1040,7 @@ namespace bs
 		if (mesh == nullptr)
 			return false;
 
-		if (mesh->getType() != PhysicsMeshType::Convex)
+		if (mesh->GetType() != PhysicsMeshType::Convex)
 			return false;
 
 		FPhysXMesh* physxMesh = static_cast<FPhysXMesh*>(mesh->GetInternalInternal());
@@ -1070,7 +1070,7 @@ namespace bs
 	Vector<Collider*> PhysXScene::CapsuleOverlapInternal(const Capsule& capsule, const Quaternion& rotation,
 		UINT64 layer) const
 	{
-		PxCapsuleGeometry geometry(capsule.getRadius(), capsule.getHeight() * 0.5f);
+		PxCapsuleGeometry geometry(capsule.getRadius(), capsule.GetHeight() * 0.5f);
 		PxTransform transform = toPxTransform(capsule.getCenter(), Quaternion::IDENTITY);
 
 		return overlap(geometry, transform, layer);
@@ -1082,7 +1082,7 @@ namespace bs
 		if (mesh == nullptr)
 			return Vector<Collider*>(0);
 
-		if (mesh->getType() != PhysicsMeshType::Convex)
+		if (mesh->GetType() != PhysicsMeshType::Convex)
 			return Vector<Collider*>(0);
 
 		FPhysXMesh* physxMesh = static_cast<FPhysXMesh*>(mesh->GetInternalInternal());
@@ -1111,7 +1111,7 @@ namespace bs
 	bool PhysXScene::CapsuleOverlapAny(const Capsule& capsule, const Quaternion& rotation,
 		UINT64 layer) const
 	{
-		PxCapsuleGeometry geometry(capsule.getRadius(), capsule.getHeight() * 0.5f);
+		PxCapsuleGeometry geometry(capsule.getRadius(), capsule.GetHeight() * 0.5f);
 		PxTransform transform = toPxTransform(capsule.getCenter(), Quaternion::IDENTITY);
 
 		return overlapAny(geometry, transform, layer);
@@ -1123,7 +1123,7 @@ namespace bs
 		if (mesh == nullptr)
 			return false;
 
-		if (mesh->getType() != PhysicsMeshType::Convex)
+		if (mesh->GetType() != PhysicsMeshType::Convex)
 			return false;
 
 		FPhysXMesh* physxMesh = static_cast<FPhysXMesh*>(mesh->GetInternalInternal());
@@ -1174,28 +1174,28 @@ namespace bs
 
 	void PhysXScene::SetFlag(PhysicsFlags flag, bool enabled)
 	{
-		PhysicsScene::setFlag(flag, enabled);
+		PhysicsScene::SetFlag(flag, enabled);
 
-		mCharManager->setOverlapRecoveryModule(mFlags.isSet(PhysicsFlag::CCT_OverlapRecovery));
-		mCharManager->setPreciseSweeps(mFlags.isSet(PhysicsFlag::CCT_PreciseSweeps));
-		mCharManager->setTessellation(mFlags.isSet(PhysicsFlag::CCT_Tesselation), mTesselationLength);
+		mCharManager->SetOverlapRecoveryModule(mFlags.isSet(PhysicsFlag::CCT_OverlapRecovery));
+		mCharManager->SetPreciseSweeps(mFlags.isSet(PhysicsFlag::CCT_PreciseSweeps));
+		mCharManager->SetTessellation(mFlags.isSet(PhysicsFlag::CCT_Tesselation), mTesselationLength);
 	}
 
 	Vector3 PhysXScene::GetGravity() const
 	{
-		return fromPxVector(mScene->getGravity());
+		return fromPxVector(mScene->GetGravity());
 	}
 
 	void PhysXScene::SetGravity(const Vector3& gravity)
 	{
-		mScene->setGravity(toPxVector(gravity));
+		mScene->SetGravity(toPxVector(gravity));
 	}
 
 	void PhysXScene::SetMaxTesselationEdgeLength(float length)
 	{
 		mTesselationLength = length;
 
-		mCharManager->setTessellation(mFlags.isSet(PhysicsFlag::CCT_Tesselation), mTesselationLength);
+		mCharManager->SetTessellation(mFlags.isSet(PhysicsFlag::CCT_Tesselation), mTesselationLength);
 	}
 
 	UINT32 PhysXScene::AddBroadPhaseRegion(const AABox& region)

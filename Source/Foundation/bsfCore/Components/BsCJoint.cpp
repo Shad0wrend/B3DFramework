@@ -23,7 +23,7 @@ namespace bs
 	CJoint::CJoint(const HSceneObject& parent, JOINT_DESC& desc)
 		: Component(parent), mDesc(desc)
 	{
-		setName("Joint");
+		SetName("Joint");
 
 		mPositions[0] = Vector3::ZERO;
 		mPositions[1] = Vector3::ZERO;
@@ -63,14 +63,14 @@ namespace bs
 				if (value != nullptr)
 					rigidbody = value->GetInternalInternal();
 
-				mInternal->setBody(body, rigidbody);
+				mInternal->SetBody(body, rigidbody);
 				UpdateTransform(body);
 			}
 		}
 		else // If joint doesn't exist, check if we can create it
 		{
 			// Must be an active component and at least one of the bodies must be non-null
-			if (SO()->getActive() && (IsBodyValid(mBodies[0]) || IsBodyValid(mBodies[1])))
+			if (SO()->GetActive() && (IsBodyValid(mBodies[0]) || IsBodyValid(mBodies[1])))
 			{
 				RestoreInternal();
 			}
@@ -112,7 +112,7 @@ namespace bs
 		mDesc.breakForce = force;
 
 		if (mInternal != nullptr)
-			mInternal->setBreakForce(force);
+			mInternal->SetBreakForce(force);
 	}
 
 	float CJoint::GetBreakTorque() const
@@ -128,7 +128,7 @@ namespace bs
 		mDesc.breakTorque = torque;
 
 		if (mInternal != nullptr)
-			mInternal->setBreakTorque(torque);
+			mInternal->SetBreakTorque(torque);
 	}
 
 	bool CJoint::GetEnableCollision() const
@@ -144,7 +144,7 @@ namespace bs
 		mDesc.enableCollision = value;
 
 		if (mInternal != nullptr)
-			mInternal->setEnableCollision(value);
+			mInternal->SetEnableCollision(value);
 	}
 
 	void CJoint::OnInitialized()
@@ -211,7 +211,7 @@ namespace bs
 
 		mInternal = CreateInternal();
 
-		mInternal->onJointBreak.connect(std::bind(&CJoint::triggerOnJointBroken, this));
+		mInternal->onJointBreak.Connect(std::bind(&CJoint::TriggerOnJointBroken, this));
 	}
 
 	void CJoint::DestroyInternal()
@@ -258,7 +258,7 @@ namespace bs
 		Quaternion localRot;
 		GetLocalTransform(body, localPos, localRot);
 
-		mInternal->setTransform(body, localPos, localRot);
+		mInternal->SetTransform(body, localPos, localRot);
 	}
 
 	void CJoint::GetLocalTransform(JointBody body, Vector3& position, Quaternion& rotation)
@@ -269,15 +269,15 @@ namespace bs
 		HRigidbody rigidbody = mBodies[(UINT32)body];
 		if (rigidbody == nullptr) // Get world space transform if no relative to any body
 		{
-			const Transform& tfrm = SO()->getTransform();
-			Quaternion worldRot = tfrm.getRotation();
+			const Transform& tfrm = SO()->GetTransform();
+			Quaternion worldRot = tfrm.GetRotation();
 
 			rotation = worldRot*rotation;
-			position = worldRot.rotate(position) + tfrm.getPosition();
+			position = worldRot.Rotate(position) + tfrm.GetPosition();
 		}
 		else
 		{
-			position = rotation.rotate(position);
+			position = rotation.Rotate(position);
 		}
 	}
 	

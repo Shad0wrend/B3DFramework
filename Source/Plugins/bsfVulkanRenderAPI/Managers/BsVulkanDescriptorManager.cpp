@@ -131,7 +131,7 @@ namespace bs { namespace ct
 		if(result < 0) // Possible fragmentation, try in a new pool
 		{
 			mPools.push_back(bs_new<VulkanDescriptorPool>(mDevice));
-			allocateInfo.descriptorPool = mPools.back()->getHandle();
+			allocateInfo.descriptorPool = mPools.back()->GetHandle();
 
 			result = vkAllocateDescriptorSets(mDevice.getLogical(), &allocateInfo, &set);
 			assert(result == VK_SUCCESS);
@@ -151,7 +151,7 @@ namespace bs { namespace ct
 		// Create new
 		VkDescriptorSetLayout* setLayouts = (VkDescriptorSetLayout*)bs_stack_alloc(sizeof(VkDescriptorSetLayout) * numLayouts);
 		for(UINT32 i = 0; i < numLayouts; i++)
-			setLayouts[i] = layouts[i]->getHandle();
+			setLayouts[i] = layouts[i]->GetHandle();
 
 		VkPipelineLayoutCreateInfo layoutCI;
 		layoutCI.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;

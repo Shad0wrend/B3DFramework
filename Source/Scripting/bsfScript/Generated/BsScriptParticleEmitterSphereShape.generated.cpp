@@ -37,13 +37,13 @@ namespace bs
 	}
 	void ScriptParticleEmitterSphereShape::InternalSetOptions(ScriptParticleEmitterSphereShape* thisPtr, PARTICLE_SPHERE_SHAPE_DESC* options)
 	{
-		thisPtr->GetInternal()->setOptions(*options);
+		thisPtr->GetInternal()->SetOptions(*options);
 	}
 
 	void ScriptParticleEmitterSphereShape::InternalGetOptions(ScriptParticleEmitterSphereShape* thisPtr, PARTICLE_SPHERE_SHAPE_DESC* __output)
 	{
 		PARTICLE_SPHERE_SHAPE_DESC tmp__output;
-		tmp__output = thisPtr->getInternal()->getOptions();
+		tmp__output = thisPtr->GetInternal()->GetOptions();
 
 		*__output = tmp__output;
 	}

@@ -8,27 +8,27 @@ namespace bs
 {
 	CReflectionProbe::CReflectionProbe()
 	{
-		setFlag(ComponentFlag::AlwaysRun, true);
-		setName("ReflectionProbe");
+		SetFlag(ComponentFlag::AlwaysRun, true);
+		SetName("ReflectionProbe");
 	}
 
 	CReflectionProbe::CReflectionProbe(const HSceneObject& parent)
 		: Component(parent)
 	{
-		setFlag(ComponentFlag::AlwaysRun, true);
-		setName("ReflectionProbe");
+		SetFlag(ComponentFlag::AlwaysRun, true);
+		SetName("ReflectionProbe");
 	}
 
 	CReflectionProbe::~CReflectionProbe()
 	{
-		mInternal->destroy();
+		mInternal->Destroy();
 	}
 
 	Sphere CReflectionProbe::GetBounds() const
 	{
 		mInternal->UpdateStateInternal(*SO());
 
-		return mInternal->getBounds();
+		return mInternal->GetBounds();
 	}
 
 	void CReflectionProbe::OnInitialized()
@@ -36,20 +36,20 @@ namespace bs
 		// If mInternal already exists this means this object was deserialized,
 		// so all we need to do is initialize it.
 		if (mInternal != nullptr)
-			mInternal->initialize();
+			mInternal->Initialize();
 		else
 			mInternal = ReflectionProbe::CreateBox(Vector3::ONE);
 
-		gSceneManager().BindActorInternal(mInternal, sceneObject());
+		gSceneManager().BindActorInternal(mInternal, SceneObject());
 
 		// If filtered texture doesn't exist, ensure it is generated
-		SPtr<Texture> filteredTexture = mInternal->getFilteredTexture();
+		SPtr<Texture> filteredTexture = mInternal->GetFilteredTexture();
 		if(filteredTexture == nullptr)
 		{
-			if (mInternal->getCustomTexture())
-				mInternal->filter();
+			if (mInternal->GetCustomTexture())
+				mInternal->Filter();
 			else
-				mInternal->capture();
+				mInternal->Capture();
 		}
 	}
 

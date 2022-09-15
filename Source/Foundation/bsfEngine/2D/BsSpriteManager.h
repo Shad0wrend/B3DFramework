@@ -91,7 +91,7 @@ namespace bs
 		{
 			SpriteMaterial* newMaterial = bs_new<T>(std::forward<Args>(args)...);
 			
-			UINT32 id = newMaterial->getId();
+			UINT32 id = newMaterial->GetId();
 			auto iterFind = mMaterials.find(id);
 			if (iterFind != mMaterials.end())
 			{

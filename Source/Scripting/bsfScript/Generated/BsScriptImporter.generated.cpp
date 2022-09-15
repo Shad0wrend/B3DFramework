@@ -52,14 +52,14 @@ namespace bs
 		ScriptImportOptionsBase* scriptimportOptions;
 		scriptimportOptions = (ScriptImportOptionsBase*)ScriptImportOptions::toNative(importOptions);
 		if(scriptimportOptions != nullptr)
-			tmpimportOptions = scriptimportOptions->getInternal();
+			tmpimportOptions = scriptimportOptions->GetInternal();
 		tmp__output = Importer::Instance().import(tmpinputFilePath, tmpimportOptions, *UUID);
 
 		MonoObject* __output;
 		ScriptResourceBase* script__output;
 		script__output = ScriptResourceManager::Instance().getScriptResource(tmp__output, true);
 		if(script__output != nullptr)
-			__output = script__output->getManagedInstance();
+			__output = script__output->GetManagedInstance();
 		else
 			__output = nullptr;
 
@@ -75,7 +75,7 @@ namespace bs
 		ScriptImportOptionsBase* scriptimportOptions;
 		scriptimportOptions = (ScriptImportOptionsBase*)ScriptImportOptions::toNative(importOptions);
 		if(scriptimportOptions != nullptr)
-			tmpimportOptions = scriptimportOptions->getInternal();
+			tmpimportOptions = scriptimportOptions->GetInternal();
 		tmp__output = Importer::Instance().importAsync(tmpinputFilePath, tmpimportOptions, *UUID);
 
 		MonoObject* __output;
@@ -86,7 +86,7 @@ namespace bs
 			ScriptRRefBase* scriptObj;
 			scriptObj = ScriptResourceManager::Instance().getScriptRRef(nativeObj);
 			if(scriptObj != nullptr)
-				monoObj = scriptObj->getManagedInstance();
+				monoObj = scriptObj->GetManagedInstance();
 			else
 				monoObj = nullptr;
 			return monoObj;
@@ -106,7 +106,7 @@ namespace bs
 		ScriptImportOptionsBase* scriptimportOptions;
 		scriptimportOptions = (ScriptImportOptionsBase*)ScriptImportOptions::toNative(importOptions);
 		if(scriptimportOptions != nullptr)
-			tmpimportOptions = scriptimportOptions->getInternal();
+			tmpimportOptions = scriptimportOptions->GetInternal();
 		tmp__output = Importer::Instance().importAll(tmpinputFilePath, tmpimportOptions);
 
 		MonoObject* __output;
@@ -124,7 +124,7 @@ namespace bs
 		ScriptImportOptionsBase* scriptimportOptions;
 		scriptimportOptions = (ScriptImportOptionsBase*)ScriptImportOptions::toNative(importOptions);
 		if(scriptimportOptions != nullptr)
-			tmpimportOptions = scriptimportOptions->getInternal();
+			tmpimportOptions = scriptimportOptions->GetInternal();
 		tmp__output = Importer::Instance().importAllAsync(tmpinputFilePath, tmpimportOptions);
 
 		MonoObject* __output;

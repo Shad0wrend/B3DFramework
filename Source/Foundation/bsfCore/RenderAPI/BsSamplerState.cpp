@@ -21,7 +21,7 @@ namespace bs
 	}
 
 	SamplerProperties::SamplerProperties(const SAMPLER_STATE_DESC& desc)
-		:mData(desc), mHash(SamplerState::generateHash(desc))
+		:mData(desc), mHash(SamplerState::GenerateHash(desc))
 	{ }
 
 	FilterOptions SamplerProperties::GetTextureFiltering(FilterType ft) const
@@ -62,12 +62,12 @@ namespace bs
 
 	SPtr<SamplerState> SamplerState::Create(const SAMPLER_STATE_DESC& desc)
 	{
-		return RenderStateManager::Instance().createSamplerState(desc);
+		return RenderStateManager::Instance().CreateSamplerState(desc);
 	}
 
 	const SPtr<SamplerState>& SamplerState::GetDefault()
 	{
-		return RenderStateManager::Instance().getDefaultSamplerState();
+		return RenderStateManager::Instance().GetDefaultSamplerState();
 	}
 
 	UINT64 SamplerState::GenerateHash(const SAMPLER_STATE_DESC& desc)
@@ -119,18 +119,18 @@ namespace bs
 
 	SamplerState::~SamplerState()
 	{
-		RenderStateManager::Instance().notifySamplerStateDestroyed(mProperties.mData);
+		RenderStateManager::Instance().NotifySamplerStateDestroyed(mProperties.mData);
 	}
 
 	void SamplerState::Initialize()
 	{
 		// Since we cache states it's possible this object was already initialized
 		// (i.e. multiple sim-states can share a single core-state)
-		if (isInitialized())
+		if (IsInitialized())
 			return;
 
-		createInternal();
-		CoreObject::initialize();
+		CreateInternal();
+		CoreObject::Initialize();
 	}
 
 	const SamplerProperties& SamplerState::GetProperties() const
@@ -140,12 +140,12 @@ namespace bs
 
 	SPtr<SamplerState> SamplerState::Create(const SAMPLER_STATE_DESC& desc, GpuDeviceFlags deviceMask)
 	{
-		return RenderStateManager::Instance().createSamplerState(desc, deviceMask);
+		return RenderStateManager::Instance().CreateSamplerState(desc, deviceMask);
 	}
 
 	const SPtr<SamplerState>& SamplerState::GetDefault()
 	{
-		return RenderStateManager::Instance().getDefaultSamplerState();
+		return RenderStateManager::Instance().GetDefaultSamplerState();
 	}
 
 	}

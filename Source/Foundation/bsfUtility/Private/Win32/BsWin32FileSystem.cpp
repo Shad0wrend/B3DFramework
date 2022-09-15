@@ -252,7 +252,7 @@ namespace bs
 		}
 	}
 
-	void FileSystem::copyFile(const Path& from, const Path& to)
+	void FileSystem::CopyFile(const Path& from, const Path& to)
 	{
 		WString fromStr = UTF8::toWide(from.toString());
 		WString toStr = UTF8::toWide(to.toString());
@@ -261,7 +261,7 @@ namespace bs
 			win32_handleError(GetLastError(), fromStr);
 	}
 
-	void FileSystem::moveFile(const Path& oldPath, const Path& newPath)
+	void FileSystem::MoveFile(const Path& oldPath, const Path& newPath)
 	{
 		WString oldPathStr = UTF8::toWide(oldPath.toString());
 		WString newPathStr = UTF8::toWide(newPath.toString());

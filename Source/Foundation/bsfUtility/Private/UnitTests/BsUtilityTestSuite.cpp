@@ -219,7 +219,7 @@ namespace bs
 
 				UINT32 elemIdx = (UINT32)octreeData.elements.size();
 				octreeData.elements.push_back(elem);
-				octree.addElement(elemIdx);
+				octree.AddElement(elemIdx);
 			}
 		}
 
@@ -233,7 +233,7 @@ namespace bs
 		{
 			UINT32 elemIdx = (UINT32)octreeData.elements.size();
 			octreeData.elements.push_back(manualElems[i]);
-			octree.addElement(elemIdx);
+			octree.AddElement(elemIdx);
 		}
 
 		AABox queryBounds = manualElems[0].box;
@@ -630,7 +630,7 @@ namespace bs
 
 				UINT32 elemIdx = (UINT32)quadtreeData.elements.size();
 				quadtreeData.elements.push_back(elem);
-				quadtree.addElement(elemIdx);
+				quadtree.AddElement(elemIdx);
 			}
 		}
 
@@ -644,7 +644,7 @@ namespace bs
 		{
 			UINT32 elemIdx = (UINT32)quadtreeData.elements.size();
 			quadtreeData.elements.push_back(manualElems[i]);
-			quadtree.addElement(elemIdx);
+			quadtree.AddElement(elemIdx);
 		}
 
 		Rect2 queryBounds = manualElems[0].box;
@@ -832,10 +832,10 @@ namespace bs
 		BS_TEST_ASSERT(ulv == v8);
 
 		bs.readNorm(fv);
-		BS_TEST_ASSERT(Math::approxEquals(fv, v9, 0.01f));
+		BS_TEST_ASSERT(Math::ApproxEquals(fv, v9, 0.01f));
 
 		bs.readRange(fv, 5.0f, 15.0f);
-		BS_TEST_ASSERT(Math::approxEquals(fv, v10, 0.01f));
+		BS_TEST_ASSERT(Math::ApproxEquals(fv, v10, 0.01f));
 
 		bs.readRange(uv, 500U, 1000U);
 		BS_TEST_ASSERT(uv == v5);

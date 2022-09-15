@@ -167,7 +167,7 @@ namespace bs { namespace ct
 		~VulkanResourceManager();
 
 		/**
-		 * Creates a new Vulkan resource of the specified type. User must call VulkanResource::destroy() when done using
+		 * Creates a new Vulkan resource of the specified type. User must call VulkanResource::Destroy() when done using
 		 * the resource.
 		 */
 		template<class Type, class... Args>

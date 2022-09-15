@@ -24,7 +24,7 @@ namespace bs
 
 		/**
 		 * Attempts to find a renderer with the specified name and makes it active. Exception is thrown if renderer with
-		 * the specified name doesn't exist. You must call initialize() after setting the active renderer to properly
+		 * the specified name doesn't exist. You must call Initialize() after setting the active renderer to properly
 		 * activate it.
 		 */
 		void SetActive(const String& name);

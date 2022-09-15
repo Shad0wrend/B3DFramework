@@ -72,7 +72,7 @@ namespace bs
 	GpuProgramManager::GpuProgramManager()
 	{
 		mNullFactory = bs_new<NullProgramFactory>();
-		addFactory(sNullLang, mNullFactory);
+		AddFactory(sNullLang, mNullFactory);
 	}
 
 	GpuProgramManager::~GpuProgramManager()
@@ -115,24 +115,24 @@ namespace bs
 
 	SPtr<GpuProgram> GpuProgramManager::Create(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask)
 	{
-		SPtr<GpuProgram> ret = createInternal(desc, deviceMask);
-		ret->initialize();
+		SPtr<GpuProgram> ret = CreateInternal(desc, deviceMask);
+		ret->Initialize();
 
 		return ret;
 	}
 
 	SPtr<GpuProgram> GpuProgramManager::CreateInternal(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask)
 	{
-		GpuProgramFactory* factory = getFactory(desc.language);
-		SPtr<GpuProgram> ret = factory->create(desc, deviceMask);
+		GpuProgramFactory* factory = GetFactory(desc.language);
+		SPtr<GpuProgram> ret = factory->Create(desc, deviceMask);
 
 		return ret;
 	}
 
 	SPtr<GpuProgramBytecode> GpuProgramManager::CompileBytecode(const GPU_PROGRAM_DESC& desc)
 	{
-		GpuProgramFactory* factory = getFactory(desc.language);
-		return factory->compileBytecode(desc);
+		GpuProgramFactory* factory = GetFactory(desc.language);
+		return factory->CompileBytecode(desc);
 	}
 	}
 }

@@ -60,14 +60,14 @@ namespace bs
 	MonoArray* ScriptMultiResource::Internal_getentries(ScriptMultiResource* thisPtr)
 	{
 		Vector<SubResource> vec__output;
-		vec__output = thisPtr->getInternal()->entries;
+		vec__output = thisPtr->GetInternal()->entries;
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
 		ScriptArray array__output = ScriptArray::create<ScriptSubResource>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
-			array__output.set(i, ScriptSubResource::toInterop(vec__output[i]));
+			array__output.Set(i, ScriptSubResource::toInterop(vec__output[i]));
 		}
 		__output = array__output.getInternal();
 
@@ -87,7 +87,7 @@ namespace bs
 			}
 
 		}
-		thisPtr->getInternal()->entries = vecvalue;
+		thisPtr->GetInternal()->entries = vecvalue;
 	}
 #endif
 }

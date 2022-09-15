@@ -128,7 +128,7 @@ namespace bs
 			}
 		}
 
-		AudioClip::initialize();
+		AudioClip::Initialize();
 	}
 
 	void OAAudioClip::GetSamples(UINT8* samples, UINT32 offset, UINT32 count) const

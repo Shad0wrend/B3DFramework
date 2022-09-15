@@ -326,7 +326,7 @@ namespace bs
 		{
 			float sqrdLen = v.x * v.x + v.y * v.y;
 			if (!SAFE || sqrdLen > tolerance)
-				return v * Math::invSqrt(sqrdLen);
+				return v * Math::InvSqrt(sqrdLen);
 
 			return v;
 		}

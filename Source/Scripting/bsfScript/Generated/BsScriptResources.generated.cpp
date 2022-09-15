@@ -46,22 +46,22 @@ namespace bs
 		metaData.scriptClass->addInternalCall("Internal_getFilePathFromUUID", (void*)&ScriptResources::Internal_getFilePathFromUUID);
 		metaData.scriptClass->addInternalCall("Internal_getUUIDFromFilePath", (void*)&ScriptResources::Internal_getUUIDFromFilePath);
 
-		onResourceLoadedThunk = (onResourceLoadedThunkDef)metaData.scriptClass->getMethodExact("Internal_onResourceLoaded", "RRefBase")->getThunk();
-		onResourceDestroyedThunk = (onResourceDestroyedThunkDef)metaData.scriptClass->getMethodExact("Internal_onResourceDestroyed", "UUID&")->getThunk();
-		onResourceModifiedThunk = (onResourceModifiedThunkDef)metaData.scriptClass->getMethodExact("Internal_onResourceModified", "RRefBase")->getThunk();
+		onResourceLoadedThunk = (onResourceLoadedThunkDef)metaData.scriptClass->GetMethodExact("Internal_onResourceLoaded", "RRefBase")->GetThunk();
+		onResourceDestroyedThunk = (onResourceDestroyedThunkDef)metaData.scriptClass->GetMethodExact("Internal_onResourceDestroyed", "UUID&")->GetThunk();
+		onResourceModifiedThunk = (onResourceModifiedThunkDef)metaData.scriptClass->GetMethodExact("Internal_onResourceModified", "RRefBase")->GetThunk();
 	}
 
 	void ScriptResources::StartUp()
 	{
-		onResourceLoadedConn = Resources::Instance().onResourceLoaded.connect(&ScriptResources::onResourceLoaded);
-		onResourceDestroyedConn = Resources::Instance().onResourceDestroyed.connect(&ScriptResources::onResourceDestroyed);
-		onResourceModifiedConn = Resources::Instance().onResourceModified.connect(&ScriptResources::onResourceModified);
+		onResourceLoadedConn = Resources::Instance().onResourceLoaded.Connect(&ScriptResources::onResourceLoaded);
+		onResourceDestroyedConn = Resources::Instance().onResourceDestroyed.Connect(&ScriptResources::onResourceDestroyed);
+		onResourceModifiedConn = Resources::Instance().onResourceModified.Connect(&ScriptResources::onResourceModified);
 	}
 	void ScriptResources::ShutDown()
 	{
-		onResourceLoadedConn.disconnect();
-		onResourceDestroyedConn.disconnect();
-		onResourceModifiedConn.disconnect();
+		onResourceLoadedConn.Disconnect();
+		onResourceDestroyedConn.Disconnect();
+		onResourceModifiedConn.Disconnect();
 	}
 
 	void ScriptResources::onResourceLoaded(const ResourceHandle<Resource>& p0)
@@ -70,7 +70,7 @@ namespace bs
 		ScriptRRefBase* scriptp0;
 		scriptp0 = ScriptResourceManager::Instance().getScriptRRef(p0);
 		if(scriptp0 != nullptr)
-			tmpp0 = scriptp0->getManagedInstance();
+			tmpp0 = scriptp0->GetManagedInstance();
 		else
 			tmpp0 = nullptr;
 		MonoUtil::invokeThunk(onResourceLoadedThunk, tmpp0);
@@ -89,7 +89,7 @@ namespace bs
 		ScriptRRefBase* scriptp0;
 		scriptp0 = ScriptResourceManager::Instance().getScriptRRef(p0);
 		if(scriptp0 != nullptr)
-			tmpp0 = scriptp0->getManagedInstance();
+			tmpp0 = scriptp0->GetManagedInstance();
 		else
 			tmpp0 = nullptr;
 		MonoUtil::invokeThunk(onResourceModifiedThunk, tmpp0);
@@ -105,7 +105,7 @@ namespace bs
 		ScriptResourceBase* script__output;
 		script__output = ScriptResourceManager::Instance().getScriptResource(tmp__output, true);
 		if(script__output != nullptr)
-			__output = script__output->getManagedInstance();
+			__output = script__output->GetManagedInstance();
 		else
 			__output = nullptr;
 
@@ -123,7 +123,7 @@ namespace bs
 		ScriptRRefBase* script__output;
 		script__output = ScriptResourceManager::Instance().getScriptRRef(tmp__output);
 		if(script__output != nullptr)
-			__output = script__output->getManagedInstance();
+			__output = script__output->GetManagedInstance();
 		else
 			__output = nullptr;
 
@@ -139,7 +139,7 @@ namespace bs
 		ScriptRRefBase* script__output;
 		script__output = ScriptResourceManager::Instance().getScriptRRef(tmp__output);
 		if(script__output != nullptr)
-			__output = script__output->getManagedInstance();
+			__output = script__output->GetManagedInstance();
 		else
 			__output = nullptr;
 
@@ -152,7 +152,7 @@ namespace bs
 		ScriptRRefBase* scriptresource;
 		scriptresource = ScriptRRefBase::toNative(resource);
 		if(scriptresource != nullptr)
-			tmpresource = static_resource_cast<Resource>(scriptresource->getHandle());
+			tmpresource = static_resource_cast<Resource>(scriptresource->GetHandle());
 		Resources::Instance().release(tmpresource);
 	}
 
@@ -172,7 +172,7 @@ namespace bs
 		ScriptResource* scriptresource;
 		scriptresource = ScriptResource::toNative(resource);
 		if(scriptresource != nullptr)
-			tmpresource = static_resource_cast<Resource>(scriptresource->getGenericHandle());
+			tmpresource = static_resource_cast<Resource>(scriptresource->GetGenericHandle());
 		Path tmpfilePath;
 		tmpfilePath = MonoUtil::monoToString(filePath);
 		Resources::Instance().save(tmpresource, tmpfilePath, overwrite, compress);
@@ -184,7 +184,7 @@ namespace bs
 		ScriptResource* scriptresource;
 		scriptresource = ScriptResource::toNative(resource);
 		if(scriptresource != nullptr)
-			tmpresource = static_resource_cast<Resource>(scriptresource->getGenericHandle());
+			tmpresource = static_resource_cast<Resource>(scriptresource->GetGenericHandle());
 		Resources::Instance().save(tmpresource, compress);
 	}
 
@@ -200,17 +200,17 @@ namespace bs
 		ScriptArray array__output = ScriptArray::create<ScriptUUID>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
-			array__output.set(i, vec__output[i]);
+			array__output.Set(i, vec__output[i]);
 		}
 		__output = array__output.getInternal();
 
 		return __output;
 	}
 
-	bool ScriptResources::Internal_isLoaded(UUID* uuid, bool checkInProgress)
+	bool ScriptResources::Internal_IsLoaded(UUID* uuid, bool checkInProgress)
 	{
 		bool tmp__output;
-		tmp__output = Resources::Instance().isLoaded(*uuid, checkInProgress);
+		tmp__output = Resources::Instance().IsLoaded(*uuid, checkInProgress);
 
 		bool __output;
 		__output = tmp__output;
@@ -225,7 +225,7 @@ namespace bs
 		ScriptRRefBase* scriptresource;
 		scriptresource = ScriptRRefBase::toNative(resource);
 		if(scriptresource != nullptr)
-			tmpresource = static_resource_cast<Resource>(scriptresource->getHandle());
+			tmpresource = static_resource_cast<Resource>(scriptresource->GetHandle());
 		tmp__output = Resources::Instance().getLoadProgress(tmpresource, includeDependencies);
 
 		float __output;
@@ -240,7 +240,7 @@ namespace bs
 		ScriptResourceManifest* scriptmanifest;
 		scriptmanifest = ScriptResourceManifest::toNative(manifest);
 		if(scriptmanifest != nullptr)
-			tmpmanifest = scriptmanifest->getInternal();
+			tmpmanifest = scriptmanifest->GetInternal();
 		Resources::Instance().registerResourceManifest(tmpmanifest);
 	}
 
@@ -250,7 +250,7 @@ namespace bs
 		ScriptResourceManifest* scriptmanifest;
 		scriptmanifest = ScriptResourceManifest::toNative(manifest);
 		if(scriptmanifest != nullptr)
-			tmpmanifest = scriptmanifest->getInternal();
+			tmpmanifest = scriptmanifest->GetInternal();
 		Resources::Instance().unregisterResourceManifest(tmpmanifest);
 	}
 

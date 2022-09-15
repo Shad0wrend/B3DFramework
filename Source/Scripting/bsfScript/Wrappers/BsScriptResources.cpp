@@ -39,11 +39,11 @@ namespace bs
 			loadFlags |= ResourceLoadFlag::KeepSourceData;
 
 		HResource resource = GameResourceManager::Instance().load(nativePath, loadFlags, false);
-		if (!resource.isLoaded(false))
+		if (!resource.IsLoaded(false))
 			return nullptr;
 
 		ScriptResourceBase* scriptResource = ScriptResourceManager::Instance().getScriptResource(resource, true);
-		return scriptResource->getManagedInstance();
+		return scriptResource->GetManagedInstance();
 	}
 
 	MonoObject* ScriptResources::InternalLoadFromUuid(UUID* uuid, ResourceLoadFlag flags)
@@ -54,11 +54,11 @@ namespace bs
 			loadFlags |= ResourceLoadFlag::KeepSourceData;
 
 		HResource resource = gResources().loadFromUUID(*uuid, false, loadFlags);
-		if (!resource.isLoaded(false))
+		if (!resource.IsLoaded(false))
 			return nullptr;
 
 		ScriptResourceBase* scriptResource = ScriptResourceManager::Instance().getScriptResource(resource, true);
-		return scriptResource->getManagedInstance();
+		return scriptResource->GetManagedInstance();
 	}
 
 	MonoObject* ScriptResources::InternalLoadAsync(MonoString* path, ResourceLoadFlag flags)
@@ -76,7 +76,7 @@ namespace bs
 
 		ScriptRRefBase* scriptResource = ScriptResourceManager::Instance().getScriptRRef(resource);
 		if(scriptResource != nullptr)
-			return scriptResource->getManagedInstance();
+			return scriptResource->GetManagedInstance();
 
 		return nullptr;
 	}
@@ -94,24 +94,24 @@ namespace bs
 
 		ScriptRRefBase* scriptResource = ScriptResourceManager::Instance().getScriptRRef(resource);
 		if(scriptResource != nullptr)
-			return scriptResource->getManagedInstance();
+			return scriptResource->GetManagedInstance();
 
 		return nullptr;
 	}
 
 	float ScriptResources::InternalGetLoadProgress(ScriptRRefBase* resource, bool loadDependencies)
 	{
-		return gResources().getLoadProgress(resource->getHandle(), loadDependencies);
+		return gResources().getLoadProgress(resource->GetHandle(), loadDependencies);
 	}
 
 	void ScriptResources::InternalRelease(ScriptResourceBase* resource)
 	{
-		resource->getGenericHandle().release();
+		resource->GetGenericHandle().release();
 	}
 
 	void ScriptResources::InternalReleaseRef(ScriptRRefBase* resourceRef)
 	{
-		resourceRef->getHandle().release();
+		resourceRef->GetHandle().release();
 	}
 
 	void ScriptResources::InternalUnloadUnused()

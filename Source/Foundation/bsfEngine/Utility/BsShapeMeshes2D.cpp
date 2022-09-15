@@ -58,13 +58,13 @@ namespace bs
 		UINT32 curVertOffset = vertexOffset;
 		UINT32 curIdxOffset = indexOffset;
 
-		UINT32* indexData = meshData->getIndices32();
-		UINT8* positionData = meshData->getElementData(VES_POSITION);
+		UINT32* indexData = meshData->GetIndices32();
+		UINT8* positionData = meshData->GetElementData(VES_POSITION);
 
 		UINT32 numPoints = (UINT32)linePoints.size();
 		for(UINT32 i = 0; i < numPoints; i += 2)
 		{
-			pixelLine(linePoints[i], linePoints[i + 1], positionData, curVertOffset, meshData->getVertexDesc()->getVertexStride(), indexData, curIdxOffset);
+			pixelLine(linePoints[i], linePoints[i + 1], positionData, curVertOffset, meshData->GetVertexDesc()->GetVertexStride(), indexData, curIdxOffset);
 
 			curVertOffset += 2;
 			curIdxOffset += 2;
@@ -78,14 +78,14 @@ namespace bs
 		assert(numPoints >= 2);
 
 		UINT32 numLines = (UINT32)linePoints.size() - 1;
-		assert((vertexOffset + (numLines * 2 + 2)) <= meshData->getNumVertices());
-		assert((indexOffset + (numLines * 6)) <= meshData->getNumIndices());
+		assert((vertexOffset + (numLines * 2 + 2)) <= meshData->GetNumVertices());
+		assert((indexOffset + (numLines * 6)) <= meshData->GetNumIndices());
 
-		UINT32* outIndices = indexOffset + meshData->getIndices32();
-		UINT8* outVertices = vertexOffset + meshData->getElementData(VES_POSITION);
-		UINT8* outColors = vertexOffset + meshData->getElementData(VES_COLOR);
+		UINT32* outIndices = indexOffset + meshData->GetIndices32();
+		UINT8* outVertices = vertexOffset + meshData->GetElementData(VES_POSITION);
+		UINT8* outColors = vertexOffset + meshData->GetElementData(VES_COLOR);
 
-		UINT32 vertexStride = meshData->getVertexDesc()->getVertexStride();
+		UINT32 vertexStride = meshData->GetVertexDesc()->GetVertexStride();
 		quadLineList(&linePoints[0], numPoints, width, border, outVertices, vertexStride, true);
 
 		RGBA colorValue = color.getAsRGBA();

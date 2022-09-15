@@ -58,7 +58,7 @@ namespace bs { namespace ct
 			}
 
 			mBuffer = bs_pool_new<D3D11HardwareBuffer>(bufferType, props.getUsage(), props.getElementCount(),
-				props.getElementSize(), rapi->getPrimaryDevice(), false, false);
+				props.getElementSize(), rapi->GetPrimaryDevice(), false, false);
 		}
 
 		UINT32 usage = GVU_DEFAULT;
@@ -70,25 +70,25 @@ namespace bs { namespace ct
 
 		BS_INC_RENDER_STAT_CAT(ResCreated, RenderStatObject_GpuBuffer);
 
-		GpuBuffer::initialize();
+		GpuBuffer::Initialize();
 	}
 
 	ID3D11Buffer* D3D11GpuBuffer::GetDX11Buffer() const
 	{
-		return static_cast<D3D11HardwareBuffer*>(mBuffer)->getD3DBuffer();
+		return static_cast<D3D11HardwareBuffer*>(mBuffer)->GetD3DBuffer();
 	}
 
 	GpuBufferView* D3D11GpuBuffer::RequestView(D3D11GpuBuffer* buffer, UINT32 firstElement, UINT32 numElements,
 		GpuViewUsage usage)
 	{
-		const auto& props = buffer->getProperties();
+		const auto& props = buffer->GetProperties();
 
 		GPU_BUFFER_VIEW_DESC key;
 		key.firstElement = firstElement;
 		key.elementWidth = props.getElementSize();
 		key.numElements = numElements;
 		key.usage = usage;
-		key.format = props.getFormat();
+		key.format = props.GetFormat();
 		key.useCounter = false;
 
 		auto iterFind = buffer->mBufferViews.find(key);
@@ -107,9 +107,9 @@ namespace bs { namespace ct
 
 	void D3D11GpuBuffer::ReleaseView(GpuBufferView* view)
 	{
-		D3D11GpuBuffer* buffer = view->getBuffer();
+		D3D11GpuBuffer* buffer = view->GetBuffer();
 
-		auto iterFind = buffer->mBufferViews.find(view->getDesc());
+		auto iterFind = buffer->mBufferViews.find(view->GetDesc());
 		if (iterFind == buffer->mBufferViews.end())
 		{
 			BS_EXCEPT(InternalErrorException, "Trying to release a buffer view that doesn't exist!");
@@ -145,11 +145,11 @@ namespace bs { namespace ct
 
 	ID3D11ShaderResourceView* D3D11GpuBuffer::GetSrv() const
 	{
-		return mBufferView->getSRV();
+		return mBufferView->GetSRV();
 	}
 
 	ID3D11UnorderedAccessView* D3D11GpuBuffer::GetUav() const
 	{
-		return mBufferView->getUAV();
+		return mBufferView->GetUAV();
 	}
 }}

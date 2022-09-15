@@ -44,7 +44,7 @@ namespace bs
 
 		SPtr<RenderTexture> renderTexture;
 		if (texture != nullptr)
-			renderTexture = texture->getInternal();
+			renderTexture = texture->GetInternal();
 
 		GUIRenderTexture* guiTexture = GUIRenderTexture::Create(renderTexture, transparent, options, MonoUtil::monoToString(style));
 
@@ -55,15 +55,15 @@ namespace bs
 	{
 		SPtr<RenderTexture> renderTexture;
 		if (texture != nullptr)
-			renderTexture = texture->getInternal();
+			renderTexture = texture->GetInternal();
 
-		GUIRenderTexture* guiTexture = (GUIRenderTexture*)nativeInstance->getGUIElement();
-		guiTexture->setRenderTexture(renderTexture);
+		GUIRenderTexture* guiTexture = (GUIRenderTexture*)nativeInstance->GetGUIElement();
+		guiTexture->SetRenderTexture(renderTexture);
 	}
 
 	void ScriptGUIRenderTexture::InternalSetTint(ScriptGUIRenderTexture* nativeInstance, Color* color)
 	{
-		GUIRenderTexture* guiTexture = (GUIRenderTexture*)nativeInstance->getGUIElement();
-		guiTexture->setTint(*color);
+		GUIRenderTexture* guiTexture = (GUIRenderTexture*)nativeInstance->GetGUIElement();
+		guiTexture->SetTint(*color);
 	}
 }

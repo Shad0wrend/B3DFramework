@@ -49,7 +49,7 @@ namespace bs
 		scriptclip = ScriptResourceManager::Instance().getScriptRRef(value.clip);
 		MonoObject* tmpclip;
 		if(scriptclip != nullptr)
-			tmpclip = scriptclip->getManagedInstance();
+			tmpclip = scriptclip->GetManagedInstance();
 		else
 			tmpclip = nullptr;
 		output.clip = tmpclip;

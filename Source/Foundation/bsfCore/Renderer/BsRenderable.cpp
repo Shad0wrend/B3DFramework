@@ -21,7 +21,7 @@ namespace bs
 	bool isMeshValid(const T& mesh) { return false; }
 
 	template<>
-	bool isMeshValid(const HMesh& mesh) { return mesh.isLoaded(); }
+	bool isMeshValid(const HMesh& mesh) { return mesh.IsLoaded(); }
 
 	template<>
 	bool isMeshValid(const SPtr<ct::Mesh>& mesh) { return mesh != nullptr; }
@@ -39,8 +39,8 @@ namespace bs
 			return;
 
 		mTransform = transform;
-		mTfrmMatrix = transform.getMatrix();
-		mTfrmMatrixNoScale = Matrix4::TRS(transform.getPosition(), transform.getRotation(), Vector3::ONE);
+		mTfrmMatrix = transform.GetMatrix();
+		mTfrmMatrixNoScale = Matrix4::TRS(transform.GetPosition(), transform.GetRotation(), Vector3::ONE);
 
 		MarkCoreDirtyInternal(ActorDirtyFlag::Transform);
 	}
@@ -52,7 +52,7 @@ namespace bs
 
 		int numSubMeshes = 0;
 		if (isMeshValid(mesh))
-			numSubMeshes = mesh->getProperties().getNumSubMeshes();
+			numSubMeshes = mesh->GetProperties().getNumSubMeshes();
 
 		mMaterials.resize(numSubMeshes);
 
@@ -165,7 +165,7 @@ namespace bs
 
 	void Renderable::Initialize()
 	{
-		CoreObject::initialize();		
+		CoreObject::Initialize();
 
 		// Since we don't pass any information along to the core thread object on its construction, make sure the data
 		// sync executes
@@ -198,18 +198,18 @@ namespace bs
 
 		HMesh mesh = getMesh();
 
-		if (!mesh.isLoaded())
+		if (!mesh.IsLoaded())
 		{
 			const Transform& tfrm = getTransform();
 
-			AABox box(tfrm.getPosition(), tfrm.getPosition());
-			Sphere sphere(tfrm.getPosition(), 0.0f);
+			AABox box(tfrm.GetPosition(), tfrm.GetPosition());
+			Sphere sphere(tfrm.GetPosition(), 0.0f);
 
 			return Bounds(box, sphere);
 		}
 		else
 		{
-			Bounds bounds = mesh->getProperties().getBounds();
+			Bounds bounds = mesh->GetProperties().getBounds();
 			bounds.transformAffine(mTfrmMatrix);
 
 			return bounds;
@@ -243,10 +243,10 @@ namespace bs
 			return;
 		}
 
-		if (mMesh.isLoaded(false))
+		if (mMesh.IsLoaded(false))
 		{
-			SPtr<Skeleton> skeleton = mMesh->getSkeleton();
-			SPtr<MorphShapes> morphShapes = mMesh->getMorphShapes();
+			SPtr<Skeleton> skeleton = mMesh->GetSkeleton();
+			SPtr<MorphShapes> morphShapes = mMesh->GetMorphShapes();
 
 			if (skeleton != nullptr && morphShapes != nullptr)
 				mAnimType = RenderableAnimType::SkinnedMorph;
@@ -257,15 +257,15 @@ namespace bs
 			else
 				mAnimType = RenderableAnimType::None;
 
-			mAnimation->setSkeleton(mMesh->getSkeleton());
-			mAnimation->setMorphShapes(mMesh->getMorphShapes());
+			mAnimation->SetSkeleton(mMesh->GetSkeleton());
+			mAnimation->SetMorphShapes(mMesh->GetMorphShapes());
 		}
 		else
 		{
 			mAnimType = RenderableAnimType::None;
 
-			mAnimation->setSkeleton(nullptr);
-			mAnimation->setMorphShapes(nullptr);
+			mAnimation->SetSkeleton(nullptr);
+			mAnimation->SetMorphShapes(nullptr);
 		}
 	}
 
@@ -287,7 +287,7 @@ namespace bs
 				// hash to reduce the number of required updates.
 				HSceneObject parentSO = so.getParent();
 				if (parentSO != nullptr)
-					setTransform(parentSO->getTransform());
+					setTransform(parentSO->GetTransform());
 				else
 					setTransform(Transform());
 			}
@@ -366,16 +366,16 @@ namespace bs
 			rtti_write(mCullDistanceFactor, stream);
 
 			SPtr<ct::Mesh>* mesh = new (stream.cursor()) SPtr<ct::Mesh>();
-			if (mMesh.isLoaded())
-				*mesh = mMesh->getCore();
+			if (mMesh.IsLoaded())
+				*mesh = mMesh->GetCore();
 
 			stream.skipBytes(sizeof(SPtr<ct::Mesh>));
 
 			for (UINT32 i = 0; i < numMaterials; i++)
 			{
 				SPtr<ct::Material>* material = new (stream.cursor())SPtr<ct::Material>();
-				if (mMaterials[i].isLoaded())
-					*material = mMaterials[i]->getCore();
+				if (mMaterials[i].IsLoaded())
+					*material = mMaterials[i]->GetCore();
 
 				stream.skipBytes(sizeof(SPtr<ct::Material>));
 			}
@@ -386,19 +386,19 @@ namespace bs
 
 	void Renderable::GetCoreDependencies(Vector<CoreObject*>& dependencies)
 	{
-		if (mMesh.isLoaded())
+		if (mMesh.IsLoaded())
 			dependencies.push_back(mMesh.get());
 
 		for (auto& material : mMaterials)
 		{
-			if (material.isLoaded())
+			if (material.IsLoaded())
 				dependencies.push_back(material.get());
 		}
 	}
 
 	void Renderable::OnDependencyDirty(CoreObject* dependency, UINT32 dirtyFlags)
 	{
-		if(mMesh.isLoaded(false) && mMesh.get() == dependency)
+		if(mMesh.IsLoaded(false) && mMesh.get() == dependency)
 		{
 			CoreObject::onDependencyDirty(dependency, dirtyFlags);
 			return;
@@ -441,7 +441,7 @@ namespace bs
 	SPtr<Renderable> Renderable::Create()
 	{
 		SPtr<Renderable> handlerPtr = createEmpty();
-		handlerPtr->initialize();
+		handlerPtr->Initialize();
 
 		return handlerPtr;
 	}
@@ -482,7 +482,7 @@ namespace bs
 	{
 		gRenderer()->notifyRenderableAdded(this);
 
-		CoreObject::initialize();
+		CoreObject::Initialize();
 	}
 
 	Bounds Renderable::GetBounds() const
@@ -503,14 +503,14 @@ namespace bs
 		{
 			const Transform& tfrm = getTransform();
 
-			AABox box(tfrm.getPosition(), tfrm.getPosition());
-			Sphere sphere(tfrm.getPosition(), 0.0f);
+			AABox box(tfrm.GetPosition(), tfrm.GetPosition());
+			Sphere sphere(tfrm.GetPosition(), 0.0f);
 
 			return Bounds(box, sphere);
 		}
 		else
 		{
-			Bounds bounds = mesh->getProperties().getBounds();
+			Bounds bounds = mesh->GetProperties().getBounds();
 			bounds.transformAffine(mTfrmMatrix);
 
 			return bounds;
@@ -545,8 +545,8 @@ namespace bs
 	{
 		if (mAnimType == RenderableAnimType::Skinned || mAnimType == RenderableAnimType::SkinnedMorph)
 		{
-			SPtr<Skeleton> skeleton = mMesh->getSkeleton();
-			UINT32 numBones = skeleton != nullptr ? skeleton->getNumBones() : 0;
+			SPtr<Skeleton> skeleton = mMesh->GetSkeleton();
+			UINT32 numBones = skeleton != nullptr ? skeleton->GetNumBones() : 0;
 
 			if (numBones > 0)
 			{
@@ -573,10 +573,10 @@ namespace bs
 		{
 			// Note: Not handling velocity writing for morph animations
 			
-			SPtr<MorphShapes> morphShapes = mMesh->getMorphShapes();
+			SPtr<MorphShapes> morphShapes = mMesh->GetMorphShapes();
 
 			UINT32 vertexSize = sizeof(Vector3) + sizeof(UINT32);
-			UINT32 numVertices = morphShapes->getNumVertices();
+			UINT32 numVertices = morphShapes->GetNumVertices();
 
 			VERTEX_BUFFER_DESC desc;
 			desc.vertexSize = vertexSize;
@@ -639,8 +639,8 @@ namespace bs
 			{
 				SPtr<MeshData> meshData = animInfo->morphShapeInfo.meshData;
 
-				UINT32 bufferSize = meshData->getSize();
-				UINT8* data = meshData->getData();
+				UINT32 bufferSize = meshData->GetSize();
+				UINT8* data = meshData->GetData();
 
 				mMorphShapeBuffer->writeData(0, bufferSize, data, BWT_DISCARD);
 				mMorphShapeVersion = animInfo->morphShapeInfo.version;
@@ -670,8 +670,8 @@ namespace bs
 		rtti_read(dirtyFlags, stream);
 		SceneActor::rttiEnumFields(RttiCoreSyncReader(stream), (ActorDirtyFlags)dirtyFlags);
 
-		mTfrmMatrix = mTransform.getMatrix();
-		mTfrmMatrixNoScale = Matrix4::TRS(mTransform.getPosition(), mTransform.getRotation(), Vector3::ONE);
+		mTfrmMatrix = mTransform.GetMatrix();
+		mTfrmMatrixNoScale = Matrix4::TRS(mTransform.GetPosition(), mTransform.GetRotation(), Vector3::ONE);
 
 		if(dirtyFlags != (UINT32)ActorDirtyFlag::Transform)
 		{
@@ -710,10 +710,10 @@ namespace bs
 			if (mAnimType == RenderableAnimType::Morph || mAnimType == RenderableAnimType::SkinnedMorph)
 			{
 				SPtr<VertexDataDesc> vertexDesc = VertexDataDesc::Create();
-				*vertexDesc = * mMesh->getVertexDesc();
+				*vertexDesc = * mMesh->GetVertexDesc();
 
-				vertexDesc->addVertElem(VET_FLOAT3, VES_POSITION, 1, 1);
-				vertexDesc->addVertElem(VET_UBYTE4_NORM, VES_NORMAL, 1, 1);
+				vertexDesc->AddVertElem(VET_FLOAT3, VES_POSITION, 1, 1);
+				vertexDesc->AddVertElem(VET_UBYTE4_NORM, VES_NORMAL, 1, 1);
 
 				mMorphVertexDeclaration = VertexDeclaration::Create(vertexDesc);
 			}

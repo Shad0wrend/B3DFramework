@@ -121,7 +121,7 @@ namespace bs
 		{
 			static_assert(sizeof(RTTIPlainType<DataType>::id) > 0, "Type has no RTTI ID."); // Just making sure provided type has a type ID
 
-			BitLength size = RTTIPlainType<DataType>::getSize(DataType(), info, false);
+			BitLength size = RTTIPlainType<DataType>::GetSize(DataType(), info, false);
 			if (RTTIPlainType<DataType>::hasDynamicSize == 0 && size.bytes > 255)
 			{
 				assert(false);
@@ -132,7 +132,7 @@ namespace bs
 			this->getter = getter;
 			this->setter = setter;
 
-			init(std::move(name), RTTIFieldSchema(uniqueId, false, RTTIPlainType<DataType>::hasDynamicSize, size,
+			Init(std::move(name), RTTIFieldSchema(uniqueId, false, RTTIPlainType<DataType>::hasDynamicSize, size,
 				SerializableFT_Plain, RTTIPlainType<DataType>::id, nullptr, info));
 		}
 
@@ -154,7 +154,7 @@ namespace bs
 		{
 			static_assert((RTTIPlainType<DataType>::id != 0) || true, ""); // Just making sure provided type has a type ID
 
-			BitLength size = RTTIPlainType<DataType>::getSize(DataType(), info, false);
+			BitLength size = RTTIPlainType<DataType>::GetSize(DataType(), info, false);
 			if (RTTIPlainType<DataType>::hasDynamicSize == 0 && size.bytes > 255)
 			{
 				assert(false);
@@ -167,7 +167,7 @@ namespace bs
 			arrayGetSize = getSize;
 			arraySetSize = setSize;
 
-			init(std::move(name), RTTIFieldSchema(uniqueId, true, RTTIPlainType<DataType>::hasDynamicSize, size,
+			Init(std::move(name), RTTIFieldSchema(uniqueId, true, RTTIPlainType<DataType>::hasDynamicSize, size,
 				SerializableFT_Plain, RTTIPlainType<DataType>::id, nullptr, info));
 		}
 
@@ -180,33 +180,33 @@ namespace bs
 		/** @copydoc RTTIPlainFieldBase::getDynamicSize */
 		BitLength GetDynamicSize(RTTITypeBase* rtti, void* object, bool compress) override
 		{
-			checkIsArray(false);
-			checkType<DataType>();
+			CheckIsArray(false);
+			CheckType<DataType>();
 
 			InterfaceType* rttiObject = static_cast<InterfaceType*>(rtti);
 			ObjectType* castObject = static_cast<ObjectType*>(object);
 			DataType value = (rttiObject->*getter)(castObject);
 
-			return RTTIPlainType<DataType>::getSize(value, schema.info, compress);
+			return RTTIPlainType<DataType>::GetSize(value, schema.info, compress);
 		}
 
 		/** @copydoc RTTIPlainFieldBase::getArrayElemDynamicSize */
 		BitLength GetArrayElemDynamicSize(RTTITypeBase* rtti, void* object, int index, bool compress) override
 		{
-			checkIsArray(true);
-			checkType<DataType>();
+			CheckIsArray(true);
+			CheckType<DataType>();
 
 			InterfaceType* rttiObject = static_cast<InterfaceType*>(rtti);
 			ObjectType* castObject = static_cast<ObjectType*>(object);
 			DataType value = (rttiObject->*arrayGetter)(castObject, index);
 
-			return RTTIPlainType<DataType>::getSize(value, schema.info, compress);
+			return RTTIPlainType<DataType>::GetSize(value, schema.info, compress);
 		}
 
 		/** Returns the size of the array managed by the field. */
 		UINT32 GetArraySize(RTTITypeBase* rtti, void* object) override
 		{
-			checkIsArray(true);
+			CheckIsArray(true);
 
 			InterfaceType* rttiObject = static_cast<InterfaceType*>(rtti);
 			ObjectType* castObject = static_cast<ObjectType*>(object);
@@ -216,7 +216,7 @@ namespace bs
 		/** Changes the size of the array managed by the field. Array must be re-populated after. */
 		void SetArraySize(RTTITypeBase* rtti, void* object, UINT32 size) override
 		{
-			checkIsArray(true);
+			CheckIsArray(true);
 
 			if(!arraySetSize)
 			{
@@ -231,40 +231,40 @@ namespace bs
 		/** @copydoc RTTIPlainFieldBase::toBuffer */
 		void ToStream(RTTITypeBase* rtti, void* object, Bitstream& stream, bool compress) override
 		{
-			checkIsArray(false);
-			checkType<DataType>();
+			CheckIsArray(false);
+			CheckType<DataType>();
 
 			InterfaceType* rttiObject = static_cast<InterfaceType*>(rtti);
 			ObjectType* castObject = static_cast<ObjectType*>(object);
 			DataType value = (rttiObject->*getter)(castObject);
 
-			RTTIPlainType<DataType>::toMemory(value, stream, schema.info, compress);
+			RTTIPlainType<DataType>::ToMemory(value, stream, schema.info, compress);
 		}
 
 		/** @copydoc RTTIPlainFieldBase::arrayElemToBuffer */
 		void ArrayElemToStream(RTTITypeBase* rtti, void* object, int index, Bitstream& stream, bool compress) override
 		{
-			checkIsArray(true);
-			checkType<DataType>();
+			CheckIsArray(true);
+			CheckType<DataType>();
 
 			InterfaceType* rttiObject = static_cast<InterfaceType*>(rtti);
 			ObjectType* castObject = static_cast<ObjectType*>(object);
 			DataType value = (rttiObject->*arrayGetter)(castObject, index);
 
-			RTTIPlainType<DataType>::toMemory(value, stream, schema.info, compress);
+			RTTIPlainType<DataType>::ToMemory(value, stream, schema.info, compress);
 		}
 
 		/** @copydoc RTTIPlainFieldBase::fromBuffer */
 		void FromBuffer(RTTITypeBase* rtti, void* object, Bitstream& stream, bool compress) override
 		{
-			checkIsArray(false);
-			checkType<DataType>();
+			CheckIsArray(false);
+			CheckType<DataType>();
 
 			InterfaceType* rttiObject = static_cast<InterfaceType*>(rtti);
 			ObjectType* castObject = static_cast<ObjectType*>(object);
 
 			DataType value;
-			RTTIPlainType<DataType>::fromMemory(value, stream, schema.info, compress);
+			RTTIPlainType<DataType>::FromMemory(value, stream, schema.info, compress);
 
 			if(!setter)
 			{
@@ -278,14 +278,14 @@ namespace bs
 		/** @copydoc RTTIPlainFieldBase::arrayElemFromBuffer */
 		void ArrayElemFromBuffer(RTTITypeBase* rtti, void* object, int index, Bitstream& stream, bool compress) override
 		{
-			checkIsArray(true);
-			checkType<DataType>();
+			CheckIsArray(true);
+			CheckType<DataType>();
 
 			InterfaceType* rttiObject = static_cast<InterfaceType*>(rtti);
 			ObjectType* castObject = static_cast<ObjectType*>(object);
 
 			DataType value;
-			RTTIPlainType<DataType>::fromMemory(value, stream, schema.info, compress);
+			RTTIPlainType<DataType>::FromMemory(value, stream, schema.info, compress);
 
 			if(!arraySetter)
 			{

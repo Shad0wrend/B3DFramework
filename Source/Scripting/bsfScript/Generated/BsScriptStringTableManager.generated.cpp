@@ -51,7 +51,7 @@ namespace bs
 		ScriptRRefBase* script__output;
 		script__output = ScriptResourceManager::Instance().getScriptRRef(tmp__output);
 		if(script__output != nullptr)
-			__output = script__output->getManagedInstance();
+			__output = script__output->GetManagedInstance();
 		else
 			__output = nullptr;
 
@@ -69,7 +69,7 @@ namespace bs
 		ScriptRRefBase* scripttable;
 		scripttable = ScriptRRefBase::toNative(table);
 		if(scripttable != nullptr)
-			tmptable = static_resource_cast<StringTable>(scripttable->getHandle());
+			tmptable = static_resource_cast<StringTable>(scripttable->GetHandle());
 		StringTableManager::Instance().setTable(id, tmptable);
 	}
 }

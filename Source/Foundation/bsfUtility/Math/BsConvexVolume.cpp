@@ -97,7 +97,7 @@ namespace bs
 	{
 		Vector3 center = box.GetCenter();
 		Vector3 extents = box.GetHalfSize();
-		Vector3 absExtents(Math::abs(extents.x), Math::abs(extents.y), Math::abs(extents.z));
+		Vector3 absExtents(Math::Abs(extents.x), Math::Abs(extents.y), Math::Abs(extents.z));
 
 		for (auto& plane : mPlanes)
 		{

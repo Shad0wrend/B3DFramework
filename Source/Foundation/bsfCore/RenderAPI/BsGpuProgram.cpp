@@ -35,17 +35,17 @@ namespace bs
 
 	bool GpuProgram::IsCompiled() const
 	{
-		return getCore()->isCompiled();
+		return GetCore()->IsCompiled();
 	}
 
 	String GpuProgram::GetCompileErrorMessage() const
 	{
-		return getCore()->getCompileErrorMessage();
+		return GetCore()->GetCompileErrorMessage();
 	}
 
 	SPtr<GpuParamDesc> GpuProgram::GetParamDesc() const
 	{
-		return getCore()->getParamDesc();
+		return GetCore()->GetParamDesc();
 	}
 
 	SPtr<ct::GpuProgram> GpuProgram::GetCore() const
@@ -63,12 +63,12 @@ namespace bs
 		desc.requiresAdjacency = mNeedsAdjacencyInfo;
 		desc.bytecode = mBytecode;
 
-		return ct::GpuProgramManager::Instance().createInternal(desc);
+		return ct::GpuProgramManager::Instance().CreateInternal(desc);
 	}
 
 	SPtr<GpuProgram> GpuProgram::Create(const GPU_PROGRAM_DESC& desc)
 	{
-		return GpuProgramManager::Instance().create(desc);
+		return GpuProgramManager::Instance().Create(desc);
 	}
 
 	/************************************************************************/
@@ -103,12 +103,12 @@ namespace bs
 
 	SPtr<GpuProgram> GpuProgram::Create(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask)
 	{
-		return GpuProgramManager::Instance().create(desc, deviceMask);
+		return GpuProgramManager::Instance().Create(desc, deviceMask);
 	}
 
 	SPtr<GpuProgramBytecode> GpuProgram::CompileBytecode(const GPU_PROGRAM_DESC& desc)
 	{
-		return GpuProgramManager::Instance().compileBytecode(desc);
+		return GpuProgramManager::Instance().CompileBytecode(desc);
 	}
 	}
 }

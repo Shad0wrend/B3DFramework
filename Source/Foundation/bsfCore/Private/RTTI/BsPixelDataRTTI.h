@@ -36,22 +36,22 @@ namespace bs
 
 		SPtr<DataStream> GetData(PixelData* obj, UINT32& size)
 		{
-			size = obj->getConsecutiveSize();
+			size = obj->GetConsecutiveSize();
 
-			return bs_shared_ptr_new<MemoryDataStream>(obj->getData(), size);
+			return bs_shared_ptr_new<MemoryDataStream>(obj->GetData(), size);
 		}
 
 		void SetData(PixelData* obj, const SPtr<DataStream>& value, UINT32 size)
 		{
-			obj->allocateInternalBuffer(size);
-			value->read(obj->getData(), size);
+			obj->AllocateInternalBuffer(size);
+			value->Read(obj->GetData(), size);
 		}
 		
 	public:
 		PixelDataRTTI()
 		{
-			addDataBlockField("data", 9, &PixelDataRTTI::GetData, &PixelDataRTTI::SetData);
-			addPlainField("version", 10, &PixelDataRTTI::GetVersion, &PixelDataRTTI::SetVersion);
+			AddDataBlockField("data", 9, &PixelDataRTTI::GetData, &PixelDataRTTI::SetData);
+			AddPlainField("version", 10, &PixelDataRTTI::GetVersion, &PixelDataRTTI::SetVersion);
 		}
 
 		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) 
@@ -61,7 +61,7 @@ namespace bs
 			// Convert row & slice pitch from pixels to bytes, in case pixel data was stored with an older version
 			if(mVersion == 0)
 			{
-				UINT32 pixelSize = PixelUtil::getNumElemBytes(pixelData->getFormat());
+				UINT32 pixelSize = PixelUtil::GetNumElemBytes(pixelData->GetFormat());
 				pixelData->mRowPitch *= pixelSize;
 				pixelData->mSlicePitch *= pixelSize;
 			}

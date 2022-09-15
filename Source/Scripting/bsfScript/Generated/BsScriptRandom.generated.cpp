@@ -54,13 +54,13 @@ namespace bs
 
 	void ScriptRandom::InternalSetSeed(ScriptRandom* thisPtr, uint32_t seed)
 	{
-		thisPtr->getInternal()->setSeed(seed);
+		thisPtr->GetInternal()->SetSeed(seed);
 	}
 
 	uint32_t ScriptRandom::InternalGet(ScriptRandom* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->getInternal()->get();
+		tmp__output = thisPtr->GetInternal()->get();
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -71,7 +71,7 @@ namespace bs
 	int32_t ScriptRandom::InternalGetRange(ScriptRandom* thisPtr, int32_t min, int32_t max)
 	{
 		int32_t tmp__output;
-		tmp__output = thisPtr->getInternal()->getRange(min, max);
+		tmp__output = thisPtr->GetInternal()->GetRange(min, max);
 
 		int32_t __output;
 		__output = tmp__output;
@@ -82,7 +82,7 @@ namespace bs
 	float ScriptRandom::InternalGetUNorm(ScriptRandom* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getInternal()->getUNorm();
+		tmp__output = thisPtr->GetInternal()->GetUNorm();
 
 		float __output;
 		__output = tmp__output;
@@ -93,7 +93,7 @@ namespace bs
 	float ScriptRandom::InternalGetSNorm(ScriptRandom* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getInternal()->getSNorm();
+		tmp__output = thisPtr->GetInternal()->GetSNorm();
 
 		float __output;
 		__output = tmp__output;
@@ -104,7 +104,7 @@ namespace bs
 	void ScriptRandom::InternalGetUnitVector(ScriptRandom* thisPtr, Vector3* __output)
 	{
 		Vector3 tmp__output;
-		tmp__output = thisPtr->getInternal()->getUnitVector();
+		tmp__output = thisPtr->GetInternal()->GetUnitVector();
 
 		*__output = tmp__output;
 	}
@@ -112,7 +112,7 @@ namespace bs
 	void ScriptRandom::InternalGetUnitVector2D(ScriptRandom* thisPtr, Vector2* __output)
 	{
 		Vector2 tmp__output;
-		tmp__output = thisPtr->getInternal()->getUnitVector2D();
+		tmp__output = thisPtr->GetInternal()->GetUnitVector2D();
 
 		*__output = tmp__output;
 	}
@@ -120,7 +120,7 @@ namespace bs
 	void ScriptRandom::InternalGetPointInSphere(ScriptRandom* thisPtr, Vector3* __output)
 	{
 		Vector3 tmp__output;
-		tmp__output = thisPtr->getInternal()->getPointInSphere();
+		tmp__output = thisPtr->GetInternal()->GetPointInSphere();
 
 		*__output = tmp__output;
 	}
@@ -128,7 +128,7 @@ namespace bs
 	void ScriptRandom::InternalGetPointInSphereShell(ScriptRandom* thisPtr, float thickness, Vector3* __output)
 	{
 		Vector3 tmp__output;
-		tmp__output = thisPtr->getInternal()->getPointInSphereShell(thickness);
+		tmp__output = thisPtr->GetInternal()->GetPointInSphereShell(thickness);
 
 		*__output = tmp__output;
 	}
@@ -136,7 +136,7 @@ namespace bs
 	void ScriptRandom::InternalGetPointInCircle(ScriptRandom* thisPtr, Vector2* __output)
 	{
 		Vector2 tmp__output;
-		tmp__output = thisPtr->getInternal()->getPointInCircle();
+		tmp__output = thisPtr->GetInternal()->GetPointInCircle();
 
 		*__output = tmp__output;
 	}
@@ -144,7 +144,7 @@ namespace bs
 	void ScriptRandom::InternalGetPointInCircleShell(ScriptRandom* thisPtr, float thickness, Vector2* __output)
 	{
 		Vector2 tmp__output;
-		tmp__output = thisPtr->getInternal()->getPointInCircleShell(thickness);
+		tmp__output = thisPtr->GetInternal()->GetPointInCircleShell(thickness);
 
 		*__output = tmp__output;
 	}
@@ -152,7 +152,7 @@ namespace bs
 	void ScriptRandom::InternalGetPointInArc(ScriptRandom* thisPtr, Degree* angle, Vector2* __output)
 	{
 		Vector2 tmp__output;
-		tmp__output = thisPtr->getInternal()->getPointInArc(*angle);
+		tmp__output = thisPtr->GetInternal()->GetPointInArc(*angle);
 
 		*__output = tmp__output;
 	}
@@ -160,7 +160,7 @@ namespace bs
 	void ScriptRandom::InternalGetPointInArcShell(ScriptRandom* thisPtr, Degree* angle, float thickness, Vector2* __output)
 	{
 		Vector2 tmp__output;
-		tmp__output = thisPtr->getInternal()->getPointInArcShell(*angle, thickness);
+		tmp__output = thisPtr->GetInternal()->GetPointInArcShell(*angle, thickness);
 
 		*__output = tmp__output;
 	}
@@ -168,7 +168,7 @@ namespace bs
 	void ScriptRandom::InternalGetBarycentric(ScriptRandom* thisPtr, Vector3* __output)
 	{
 		Vector3 tmp__output;
-		tmp__output = thisPtr->getInternal()->getBarycentric();
+		tmp__output = thisPtr->GetInternal()->GetBarycentric();
 
 		*__output = tmp__output;
 	}

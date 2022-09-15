@@ -51,13 +51,13 @@ namespace bs
 	{
 		GUIContent nativeContent = ScriptGUIContent::fromInterop(*content);
 
-		GUILabel* label = (GUILabel*)nativeInstance->getGUIElement();
-		label->setContent(nativeContent);
+		GUILabel* label = (GUILabel*)nativeInstance->GetGUIElement();
+		label->SetContent(nativeContent);
 	}
 
 	void ScriptGUILabel::InternalSetTint(ScriptGUILabel* nativeInstance, Color* color)
 	{
-		GUILabel* label = (GUILabel*)nativeInstance->getGUIElement();
-		label->setTint(*color);
+		GUILabel* label = (GUILabel*)nativeInstance->GetGUIElement();
+		label->SetTint(*color);
 	}
 }

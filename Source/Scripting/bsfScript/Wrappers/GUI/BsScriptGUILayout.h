@@ -54,7 +54,7 @@ namespace bs
 		 * @param[in]	instance	Managed GUILayout instance.
 		 * @param[in]	layout  	Native GUILayout instance.
 		 * @param[in]	ownsNative	Does this object own the native instance. If it does it will destroy the
-		 * 							object when destroy() is called, otherwise it is up to the caller to destroy it.
+		 * 							object when Destroy() is called, otherwise it is up to the caller to destroy it.
 		 */
 		ScriptGUILayout(MonoObject* instance, GUILayout* layout, bool ownsNative = true);
 

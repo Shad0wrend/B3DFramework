@@ -31,7 +31,7 @@ namespace bs
 			if (mParent != nullptr)
 				mParent->RemoveChild(this);
 
-			GUIFlexibleSpace::destroy(mFlexibleSpace);
+			GUIFlexibleSpace::Destroy(mFlexibleSpace);
 
 			mIsDestroyed = true;
 		}

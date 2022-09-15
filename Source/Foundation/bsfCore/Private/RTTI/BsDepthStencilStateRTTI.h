@@ -26,13 +26,13 @@ namespace bs
 	public:
 		DepthStencilStateRTTI()
 		{
-			addPlainField("mData", 0, &DepthStencilStateRTTI::GetData, &DepthStencilStateRTTI::SetData);
+			AddPlainField("mData", 0, &DepthStencilStateRTTI::GetData, &DepthStencilStateRTTI::SetData);
 		}
 
 		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override
 		{
 			DepthStencilState* depthStencilState = static_cast<DepthStencilState*>(obj);
-			depthStencilState->initialize();
+			depthStencilState->Initialize();
 		}
 
 		const String& GetRttiName() override
@@ -46,7 +46,7 @@ namespace bs
 			return TID_DepthStencilState;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return RenderStateManager::Instance().CreateDepthStencilStatePtrInternal(DEPTH_STENCIL_STATE_DESC());
 		}

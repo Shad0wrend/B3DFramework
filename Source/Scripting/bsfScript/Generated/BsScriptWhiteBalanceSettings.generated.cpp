@@ -52,13 +52,13 @@ namespace bs
 
 	void ScriptWhiteBalanceSettings::Internal_settemperature(ScriptWhiteBalanceSettings* thisPtr, float value)
 	{
-		thisPtr->getInternal()->temperature = value;
+		thisPtr->GetInternal()->temperature = value;
 	}
 
 	float ScriptWhiteBalanceSettings::InternalGettint(ScriptWhiteBalanceSettings* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getInternal()->tint;
+		tmp__output = thisPtr->GetInternal()->tint;
 
 		float __output;
 		__output = tmp__output;
@@ -68,6 +68,6 @@ namespace bs
 
 	void ScriptWhiteBalanceSettings::InternalSettint(ScriptWhiteBalanceSettings* thisPtr, float value)
 	{
-		thisPtr->getInternal()->tint = value;
+		thisPtr->GetInternal()->tint = value;
 	}
 }

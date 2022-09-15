@@ -79,9 +79,9 @@ namespace bs
 		static void InternalSetminHeight(ScriptGUIElementStyle* thisPtr, uint32_t value);
 		static uint32_t InternalGetmaxHeight(ScriptGUIElementStyle* thisPtr);
 		static void InternalSetmaxHeight(ScriptGUIElementStyle* thisPtr, uint32_t value);
-		static bool InternalGetfixedWidth(ScriptGUIElementStyle* thisPtr);
-		static void InternalSetfixedWidth(ScriptGUIElementStyle* thisPtr, bool value);
-		static bool InternalGetfixedHeight(ScriptGUIElementStyle* thisPtr);
-		static void InternalSetfixedHeight(ScriptGUIElementStyle* thisPtr, bool value);
+		static bool InternalGetFixedWidth(ScriptGUIElementStyle* thisPtr);
+		static void InternalSetFixedWidth(ScriptGUIElementStyle* thisPtr, bool value);
+		static bool InternalGetFixedHeight(ScriptGUIElementStyle* thisPtr);
+		static void InternalSetFixedHeight(ScriptGUIElementStyle* thisPtr, bool value);
 	};
 }

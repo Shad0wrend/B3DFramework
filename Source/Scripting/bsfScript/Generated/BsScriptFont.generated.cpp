@@ -31,13 +31,13 @@ namespace bs
 	}
 	MonoObject* ScriptFont::InternalGetRef(ScriptFont* thisPtr)
 	{
-		return thisPtr->getRRef();
+		return thisPtr->GetRRef();
 	}
 
 	MonoObject* ScriptFont::InternalGetBitmap(ScriptFont* thisPtr, uint32_t size)
 	{
 		SPtr<FontBitmap> tmp__output;
-		tmp__output = thisPtr->getHandle()->getBitmap(size);
+		tmp__output = thisPtr->GetHandle()->GetBitmap(size);
 
 		MonoObject* __output;
 		__output = ScriptFontBitmap::Create(tmp__output);
@@ -48,7 +48,7 @@ namespace bs
 	int32_t ScriptFont::InternalGetClosestSize(ScriptFont* thisPtr, uint32_t size)
 	{
 		int32_t tmp__output;
-		tmp__output = thisPtr->getHandle()->getClosestSize(size);
+		tmp__output = thisPtr->GetHandle()->GetClosestSize(size);
 
 		int32_t __output;
 		__output = tmp__output;

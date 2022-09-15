@@ -352,7 +352,7 @@ namespace bs
 		for (INT32 y = (INT32)height - 1; y >= 0; y--)
 		{
 			for (UINT32 x = 0; x < width; x++)
-				colorData[idx++] = srcPixels->getColorAt(x, y).getAsBGRA();
+				colorData[idx++] = srcPixels->GetColorAt(x, y).getAsBGRA();
 		}
 
 		// Write AND mask

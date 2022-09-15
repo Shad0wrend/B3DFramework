@@ -37,13 +37,13 @@ namespace bs
 	}
 	void ScriptParticleGravity::InternalSetOptions(ScriptParticleGravity* thisPtr, PARTICLE_GRAVITY_DESC* options)
 	{
-		thisPtr->getInternal()->setOptions(*options);
+		thisPtr->GetInternal()->SetOptions(*options);
 	}
 
 	void ScriptParticleGravity::InternalGetOptions(ScriptParticleGravity* thisPtr, PARTICLE_GRAVITY_DESC* __output)
 	{
 		PARTICLE_GRAVITY_DESC tmp__output;
-		tmp__output = thisPtr->getInternal()->getOptions();
+		tmp__output = thisPtr->GetInternal()->GetOptions();
 
 		*__output = tmp__output;
 	}

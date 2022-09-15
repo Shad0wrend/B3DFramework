@@ -402,7 +402,7 @@ namespace bs
 
 	void NetworkPeer::disconnect(const NetworkId& id, bool silent)
 	{
-		const RakNetGUID* guid = m->getGUID(id);
+		const RakNetGUID* guid = m->GetGUID(id);
 		if(!guid)
 		{
 			BS_LOG(Error, Network, "Cannot disconnect from {0}, invalid network ID provided.", id.id);
@@ -442,7 +442,7 @@ namespace bs
 
 	void NetworkPeer::send(const PacketData& data, const NetworkId& id, const PacketChannel& channel)
 	{
-		const RakNetGUID* guid = m->getGUID(id);
+		const RakNetGUID* guid = m->GetGUID(id);
 		if(!guid)
 		{
 			BS_LOG(Error, Network, "Cannot send to {0}, invalid network ID provided.", id.id);
@@ -667,7 +667,7 @@ namespace bs
 		if (mInputStream->eof())
 			return nullptr;
 
-		char* data = (char*)mInputStream->getCurrentPtr();
+		char* data = (char*)mInputStream->GetCurrentPtr();
 		UINT32 offset = 0;
 		data = rtti_read(type, data, offset);
 		data = rtti_read(uuid, data, offset);
@@ -698,7 +698,7 @@ namespace bs
 
 		ObjectInfo objInfo;
 		objInfo.obj = object;
-		objInfo.state = object->getNetworkState();
+		objInfo.state = object->GetNetworkState();
 
 		mNetworkObjects[object->mNetworkUUID] = objInfo;
 
@@ -869,7 +869,7 @@ namespace bs
 					SPtr<SerializedObject> newState = SerializedObject::Create(*entry.second.obj,
 						SerializedObjectEncodeFlag::Shallow | SerializedObjectEncodeFlag::ReplicableOnly);
 
-					IDiff& diffHandler = entry.second.obj->getRTTI()->getDiffHandler();
+					IDiff& diffHandler = entry.second.obj->GetRtti()->GetDiffHandler();
 					SPtr<SerializedObject> diff = diffHandler.generateDiff(entry.second.state.state, newState);
 					if (diff == nullptr)
 						continue;
@@ -894,7 +894,7 @@ namespace bs
 				mEncoder.clear();
 
 				float tickLength = 1.0f / mTickRate;
-				mTimeAccumulator = Math::repeat(mTimeAccumulator, tickLength) - tickLength;
+				mTimeAccumulator = Math::Repeat(mTimeAccumulator, tickLength) - tickLength;
 			}
 
 			mTimeAccumulator += dt;

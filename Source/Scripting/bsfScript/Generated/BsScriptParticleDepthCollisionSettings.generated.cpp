@@ -46,7 +46,7 @@ namespace bs
 	bool ScriptParticleDepthCollisionSettings::InternalGetenabled(ScriptParticleDepthCollisionSettings* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->getInternal()->enabled;
+		tmp__output = thisPtr->GetInternal()->enabled;
 
 		bool __output;
 		__output = tmp__output;
@@ -56,13 +56,13 @@ namespace bs
 
 	void ScriptParticleDepthCollisionSettings::InternalSetenabled(ScriptParticleDepthCollisionSettings* thisPtr, bool value)
 	{
-		thisPtr->getInternal()->enabled = value;
+		thisPtr->GetInternal()->enabled = value;
 	}
 
 	float ScriptParticleDepthCollisionSettings::InternalGetrestitution(ScriptParticleDepthCollisionSettings* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getInternal()->restitution;
+		tmp__output = thisPtr->GetInternal()->restitution;
 
 		float __output;
 		__output = tmp__output;
@@ -72,13 +72,13 @@ namespace bs
 
 	void ScriptParticleDepthCollisionSettings::InternalSetrestitution(ScriptParticleDepthCollisionSettings* thisPtr, float value)
 	{
-		thisPtr->getInternal()->restitution = value;
+		thisPtr->GetInternal()->restitution = value;
 	}
 
 	float ScriptParticleDepthCollisionSettings::InternalGetdampening(ScriptParticleDepthCollisionSettings* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getInternal()->dampening;
+		tmp__output = thisPtr->GetInternal()->dampening;
 
 		float __output;
 		__output = tmp__output;
@@ -88,13 +88,13 @@ namespace bs
 
 	void ScriptParticleDepthCollisionSettings::InternalSetdampening(ScriptParticleDepthCollisionSettings* thisPtr, float value)
 	{
-		thisPtr->getInternal()->dampening = value;
+		thisPtr->GetInternal()->dampening = value;
 	}
 
 	float ScriptParticleDepthCollisionSettings::InternalGetradiusScale(ScriptParticleDepthCollisionSettings* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getInternal()->radiusScale;
+		tmp__output = thisPtr->GetInternal()->radiusScale;
 
 		float __output;
 		__output = tmp__output;
@@ -104,6 +104,6 @@ namespace bs
 
 	void ScriptParticleDepthCollisionSettings::InternalSetradiusScale(ScriptParticleDepthCollisionSettings* thisPtr, float value)
 	{
-		thisPtr->getInternal()->radiusScale = value;
+		thisPtr->GetInternal()->radiusScale = value;
 	}
 }

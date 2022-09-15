@@ -47,14 +47,14 @@ namespace bs
 	void ScriptGUICanvas::InternalDrawLine(ScriptGUICanvas* nativeInstance, Vector2I* a, Vector2I* b, Color* color,
 		UINT8 depth)
 	{
-		GUICanvas* canvas = (GUICanvas*)nativeInstance->getGUIElement();
+		GUICanvas* canvas = (GUICanvas*)nativeInstance->GetGUIElement();
 		canvas->drawLine(*a, *b, *color, depth);
 	}
 
 	void ScriptGUICanvas::InternalDrawPolyLine(ScriptGUICanvas* nativeInstance, MonoArray* vertices, Color* color,
 		UINT8 depth)
 	{
-		GUICanvas* canvas = (GUICanvas*)nativeInstance->getGUIElement();
+		GUICanvas* canvas = (GUICanvas*)nativeInstance->GetGUIElement();
 
 		ScriptArray verticesArray(vertices);
 		UINT32 size = verticesArray.size();
@@ -68,11 +68,11 @@ namespace bs
 	void ScriptGUICanvas::InternalDrawTexture(ScriptGUICanvas* nativeInstance, ScriptSpriteTexture* texture, Rect2I* area,
 		TextureScaleMode scaleMode, Color* color, UINT8 depth)
 	{
-		GUICanvas* canvas = (GUICanvas*)nativeInstance->getGUIElement();
+		GUICanvas* canvas = (GUICanvas*)nativeInstance->GetGUIElement();
 
 		HSpriteTexture nativeTexture;
 		if (texture != nullptr)
-			nativeTexture = texture->getHandle();
+			nativeTexture = texture->GetHandle();
 
 		canvas->drawTexture(nativeTexture, *area, scaleMode, *color, depth);
 	}
@@ -80,7 +80,7 @@ namespace bs
 	void ScriptGUICanvas::InternalDrawTriangleStrip(ScriptGUICanvas* nativeInstance, MonoArray* vertices, Color* color,
 		UINT8 depth)
 	{
-		GUICanvas* canvas = (GUICanvas*)nativeInstance->getGUIElement();
+		GUICanvas* canvas = (GUICanvas*)nativeInstance->GetGUIElement();
 
 		ScriptArray verticesArray(vertices);
 		UINT32 size = verticesArray.size();
@@ -94,7 +94,7 @@ namespace bs
 	void ScriptGUICanvas::InternalDrawTriangleList(ScriptGUICanvas* nativeInstance, MonoArray* vertices, Color* color,
 		UINT8 depth)
 	{
-		GUICanvas* canvas = (GUICanvas*)nativeInstance->getGUIElement();
+		GUICanvas* canvas = (GUICanvas*)nativeInstance->GetGUIElement();
 
 		ScriptArray verticesArray(vertices);
 		UINT32 size = verticesArray.size();
@@ -108,19 +108,19 @@ namespace bs
 	void ScriptGUICanvas::InternalDrawText(ScriptGUICanvas* nativeInstance, MonoString* text, Vector2I* position,
 		ScriptFont* font, UINT32 size, Color* color, UINT8 depth)
 	{
-		GUICanvas* canvas = (GUICanvas*)nativeInstance->getGUIElement();
+		GUICanvas* canvas = (GUICanvas*)nativeInstance->GetGUIElement();
 		String nativeText = MonoUtil::monoToString(text);
 
 		HFont nativeFont;
 		if (font != nullptr)
-			nativeFont = font->getHandle();
+			nativeFont = font->GetHandle();
 
 		canvas->drawText(nativeText, *position, nativeFont, size, *color, depth);
 	}
 
 	void ScriptGUICanvas::InternalClear(ScriptGUICanvas* nativeInstance)
 	{
-		GUICanvas* canvas = (GUICanvas*)nativeInstance->getGUIElement();
+		GUICanvas* canvas = (GUICanvas*)nativeInstance->GetGUIElement();
 		canvas->clear();
 	}
 }

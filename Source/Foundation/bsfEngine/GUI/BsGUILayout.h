@@ -28,7 +28,7 @@ namespace bs
 		Type* AddNewElement(Args &&...args)
 		{
 			Type* elem = Type::Create(std::forward<Args>(args)...);
-			addElement(elem);
+			AddElement(elem);
 			return elem;
 		}
 

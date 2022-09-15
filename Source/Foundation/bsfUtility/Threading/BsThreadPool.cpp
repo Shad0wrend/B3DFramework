@@ -204,7 +204,7 @@ namespace bs
 		PooledThread* thread = getThread(name);
 		thread->start(workerMethod, mUniqueId++);
 
-		return HThread(this, thread->getId());
+		return HThread(this, thread->GetId());
 	}
 
 	void ThreadPool::StopAll()
@@ -269,7 +269,7 @@ namespace bs
 
 	void ThreadPool::DestroyThread(PooledThread* thread)
 	{
-		thread->destroy();
+		thread->Destroy();
 		bs_delete(thread);
 	}
 
@@ -290,7 +290,7 @@ namespace bs
 		{
 			if(thread->isIdle())
 			{
-				thread->setName(name);
+				thread->SetName(name);
 				return thread;
 			}
 		}

@@ -42,17 +42,17 @@ namespace bs
 		PhysicsMaterialRTTI()
 		{
 			AddPlainField("staticFriction", 0, &PhysicsMaterialRTTI::GetStaticFriction, &PhysicsMaterialRTTI::SetStaticFriction);
-			addPlainField("dynamicFriction", 1, &PhysicsMaterialRTTI::GetDynamicFriction, &PhysicsMaterialRTTI::SetDynamicFriction);
-			addPlainField("restitutionCoefficient", 2, &PhysicsMaterialRTTI::GetRestitutionCoefficient, &PhysicsMaterialRTTI::SetRestitutionCoefficient);
+			AddPlainField("dynamicFriction", 1, &PhysicsMaterialRTTI::GetDynamicFriction, &PhysicsMaterialRTTI::SetDynamicFriction);
+			AddPlainField("restitutionCoefficient", 2, &PhysicsMaterialRTTI::GetRestitutionCoefficient, &PhysicsMaterialRTTI::SetRestitutionCoefficient);
 		}
 
 		void OnSerializationStarted(IReflectable* obj, SerializationContext* context) 
 		{
 			PhysicsMaterial* material = static_cast<PhysicsMaterial*>(obj);
 
-			mStaticFriction = material->getStaticFriction();
-			mDynamicFriction = material->getDynamicFriction();
-			mRestitutionCoefficient = material->getRestitutionCoefficient();
+			mStaticFriction = material->GetStaticFriction();
+			mDynamicFriction = material->GetDynamicFriction();
+			mRestitutionCoefficient = material->GetRestitutionCoefficient();
 		}
 
 		const String& GetRttiName() 

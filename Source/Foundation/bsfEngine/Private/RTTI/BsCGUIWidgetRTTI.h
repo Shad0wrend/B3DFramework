@@ -32,7 +32,7 @@ namespace bs
 			return TID_CGUIWidget;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return SceneObject::CreateEmptyComponent<CGUIWidget>();
 		}

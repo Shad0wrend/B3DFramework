@@ -40,7 +40,7 @@ namespace bs
 	void ScriptColorGradingSettings::InternalGetsaturation(ScriptColorGradingSettings* thisPtr, Vector3* __output)
 	{
 		Vector3 tmp__output;
-		tmp__output = thisPtr->getInternal()->saturation;
+		tmp__output = thisPtr->GetInternal()->saturation;
 
 		*__output = tmp__output;
 
@@ -49,13 +49,13 @@ namespace bs
 
 	void ScriptColorGradingSettings::InternalSetsaturation(ScriptColorGradingSettings* thisPtr, Vector3* value)
 	{
-		thisPtr->getInternal()->saturation = *value;
+		thisPtr->GetInternal()->saturation = *value;
 	}
 
 	void ScriptColorGradingSettings::InternalGetcontrast(ScriptColorGradingSettings* thisPtr, Vector3* __output)
 	{
 		Vector3 tmp__output;
-		tmp__output = thisPtr->getInternal()->contrast;
+		tmp__output = thisPtr->GetInternal()->contrast;
 
 		*__output = tmp__output;
 
@@ -64,13 +64,13 @@ namespace bs
 
 	void ScriptColorGradingSettings::InternalSetcontrast(ScriptColorGradingSettings* thisPtr, Vector3* value)
 	{
-		thisPtr->getInternal()->contrast = *value;
+		thisPtr->GetInternal()->contrast = *value;
 	}
 
 	void ScriptColorGradingSettings::InternalGetgain(ScriptColorGradingSettings* thisPtr, Vector3* __output)
 	{
 		Vector3 tmp__output;
-		tmp__output = thisPtr->getInternal()->gain;
+		tmp__output = thisPtr->GetInternal()->gain;
 
 		*__output = tmp__output;
 
@@ -79,13 +79,13 @@ namespace bs
 
 	void ScriptColorGradingSettings::InternalSetgain(ScriptColorGradingSettings* thisPtr, Vector3* value)
 	{
-		thisPtr->getInternal()->gain = *value;
+		thisPtr->GetInternal()->gain = *value;
 	}
 
 	void ScriptColorGradingSettings::InternalGetoffset(ScriptColorGradingSettings* thisPtr, Vector3* __output)
 	{
 		Vector3 tmp__output;
-		tmp__output = thisPtr->getInternal()->offset;
+		tmp__output = thisPtr->GetInternal()->offset;
 
 		*__output = tmp__output;
 
@@ -94,6 +94,6 @@ namespace bs
 
 	void ScriptColorGradingSettings::InternalSetoffset(ScriptColorGradingSettings* thisPtr, Vector3* value)
 	{
-		thisPtr->getInternal()->offset = *value;
+		thisPtr->GetInternal()->offset = *value;
 	}
 }

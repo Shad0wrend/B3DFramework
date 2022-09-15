@@ -220,7 +220,7 @@ namespace bs
 		GraphicsPipelineState(const PIPELINE_STATE_DESC& desc, GpuDeviceFlags deviceMask);
 		virtual ~GraphicsPipelineState() = default;
 
-		/** @copydoc CoreObject::initialize() */
+		/** @copydoc CoreObject::Initialize() */
 		void Initialize() override;
 
 		/** @copydoc RenderStateManager::createGraphicsPipelineState */
@@ -238,7 +238,7 @@ namespace bs
 		ComputePipelineState(const SPtr<GpuProgram>& program, GpuDeviceFlags deviceMask);
 		virtual ~ComputePipelineState() = default;
 
-		/** @copydoc CoreObject::initialize() */
+		/** @copydoc CoreObject::Initialize() */
 		void Initialize() override;
 
 		/** @copydoc RenderStateManager::createComputePipelineState */

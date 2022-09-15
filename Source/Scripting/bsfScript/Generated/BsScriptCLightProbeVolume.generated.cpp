@@ -36,7 +36,7 @@ namespace bs
 	uint32_t ScriptCLightProbeVolume::InternalAddProbe(ScriptCLightProbeVolume* thisPtr, Vector3* position)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->getHandle()->addProbe(*position);
+		tmp__output = thisPtr->GetHandle()->addProbe(*position);
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -46,33 +46,33 @@ namespace bs
 
 	void ScriptCLightProbeVolume::InternalSetProbePosition(ScriptCLightProbeVolume* thisPtr, uint32_t handle, Vector3* position)
 	{
-		thisPtr->getHandle()->setProbePosition(handle, *position);
+		thisPtr->GetHandle()->SetProbePosition(handle, *position);
 	}
 
 	void ScriptCLightProbeVolume::InternalGetProbePosition(ScriptCLightProbeVolume* thisPtr, uint32_t handle, Vector3* __output)
 	{
 		Vector3 tmp__output;
-		tmp__output = thisPtr->getHandle()->getProbePosition(handle);
+		tmp__output = thisPtr->GetHandle()->GetProbePosition(handle);
 
 		*__output = tmp__output;
 	}
 
 	void ScriptCLightProbeVolume::InternalRemoveProbe(ScriptCLightProbeVolume* thisPtr, uint32_t handle)
 	{
-		thisPtr->getHandle()->removeProbe(handle);
+		thisPtr->GetHandle()->removeProbe(handle);
 	}
 
 	MonoArray* ScriptCLightProbeVolume::InternalGetProbes(ScriptCLightProbeVolume* thisPtr)
 	{
 		Vector<LightProbeInfo> vec__output;
-		vec__output = thisPtr->getHandle()->getProbes();
+		vec__output = thisPtr->GetHandle()->GetProbes();
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
 		ScriptArray array__output = ScriptArray::create<ScriptLightProbeInfo>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
-			array__output.set(i, ScriptLightProbeInfo::toInterop(vec__output[i]));
+			array__output.Set(i, ScriptLightProbeInfo::toInterop(vec__output[i]));
 		}
 		__output = array__output.getInternal();
 
@@ -81,33 +81,33 @@ namespace bs
 
 	void ScriptCLightProbeVolume::InternalRenderProbe(ScriptCLightProbeVolume* thisPtr, uint32_t handle)
 	{
-		thisPtr->getHandle()->renderProbe(handle);
+		thisPtr->GetHandle()->renderProbe(handle);
 	}
 
 	void ScriptCLightProbeVolume::InternalRenderProbes(ScriptCLightProbeVolume* thisPtr)
 	{
-		thisPtr->getHandle()->renderProbes();
+		thisPtr->GetHandle()->renderProbes();
 	}
 
 	void ScriptCLightProbeVolume::InternalResize(ScriptCLightProbeVolume* thisPtr, AABox* volume, Vector3I* cellCount)
 	{
-		thisPtr->getHandle()->resize(*volume, *cellCount);
+		thisPtr->GetHandle()->resize(*volume, *cellCount);
 	}
 
 	void ScriptCLightProbeVolume::InternalClip(ScriptCLightProbeVolume* thisPtr)
 	{
-		thisPtr->getHandle()->clip();
+		thisPtr->GetHandle()->clip();
 	}
 
 	void ScriptCLightProbeVolume::InternalReset(ScriptCLightProbeVolume* thisPtr)
 	{
-		thisPtr->getHandle()->reset();
+		thisPtr->GetHandle()->reset();
 	}
 
 	void ScriptCLightProbeVolume::InternalGetGridVolume(ScriptCLightProbeVolume* thisPtr, AABox* __output)
 	{
 		AABox tmp__output;
-		tmp__output = thisPtr->getHandle()->getGridVolume();
+		tmp__output = thisPtr->GetHandle()->GetGridVolume();
 
 		*__output = tmp__output;
 	}
@@ -115,7 +115,7 @@ namespace bs
 	void ScriptCLightProbeVolume::InternalGetCellCount(ScriptCLightProbeVolume* thisPtr, Vector3I* __output)
 	{
 		Vector3I tmp__output;
-		tmp__output = thisPtr->getHandle()->getCellCount();
+		tmp__output = thisPtr->GetHandle()->GetCellCount();
 
 		*__output = tmp__output;
 	}

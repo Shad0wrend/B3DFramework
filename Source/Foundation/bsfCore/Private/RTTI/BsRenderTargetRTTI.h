@@ -41,7 +41,7 @@ namespace bs
 	class RenderTextureRTTI : public RTTIType<RenderTexture, RenderTarget, RenderTextureRTTI>
 	{
 	public:
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			BS_EXCEPT(InvalidStateException, "This object cannot be instantiated using reflection.");
 			return nullptr;
@@ -62,7 +62,7 @@ namespace bs
 	class RenderWindowRTTI : public RTTIType<RenderWindow, RenderTarget, RenderWindowRTTI>
 	{
 	public:
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			BS_EXCEPT(InvalidStateException, "This object cannot be instantiated using reflection.");
 			return nullptr;

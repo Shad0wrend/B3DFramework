@@ -64,7 +64,7 @@ namespace bs
 	{
 #if !BS_FORCE_SINGLETHREADED_RENDERING
 #if !BS_CORE_THREAD_IS_MAIN
-		mCoreThread = ThreadPool::Instance().run("Core", std::bind(&CoreThread::runCoreThread, this));
+		mCoreThread = ThreadPool::Instance().Run("Core", std::bind(&::bs::CoreThread::RunCoreThread, this));
 #else
 		{
 			Lock lock(sAppStartedMutex);
@@ -102,7 +102,7 @@ namespace bs
 	void CoreThread::RunCoreThread()
 	{
 #if !BS_FORCE_SINGLETHREADED_RENDERING
-		TaskScheduler::Instance().removeWorker(); // One less worker because we are reserving one core for this thread
+		TaskScheduler::Instance().RemoveWorker(); // One less worker because we are reserving one core for this thread
 
 		{
 			Lock lock(mThreadStartedMutex);
@@ -120,24 +120,24 @@ namespace bs
 			{
 				Lock lock(mCommandQueueMutex);
 
-				while(mCommandQueue->isEmpty())
+				while(mCommandQueue->IsEmpty())
 				{
 					if(mCoreThreadShutdown)
 					{
-						TaskScheduler::Instance().addWorker();
+						TaskScheduler::Instance().AddWorker();
 						return;
 					}
 
-					TaskScheduler::Instance().addWorker(); // Do something else while we wait, otherwise this core will be unused
+					TaskScheduler::Instance().AddWorker(); // Do something else while we wait, otherwise this core will be unused
 					mCommandReadyCondition.wait(lock);
-					TaskScheduler::Instance().removeWorker();
+					TaskScheduler::Instance().RemoveWorker();
 				}
 
-				commands = mCommandQueue->flush();
+				commands = mCommandQueue->Flush();
 			}
 
 			// Play commands
-			mCommandQueue->playbackWithNotify(commands, std::bind(&CoreThread::commandCompletedNotify, this, _1));
+			mCommandQueue->PlaybackWithNotify(commands, std::bind(&::bs::CoreThread::CommandCompletedNotify, this, _1));
 		}
 #endif
 	}
@@ -157,7 +157,7 @@ namespace bs
 		mCoreThreadId = BS_THREAD_CURRENT_ID;
 
 #if !BS_CORE_THREAD_IS_MAIN
-		mCoreThread.blockUntilComplete();
+		mCoreThread.BlockUntilComplete();
 #endif
 #endif
 	}
@@ -180,14 +180,14 @@ namespace bs
 
 	void CoreThread::SubmitCommandQueue(CommandQueue<CommandQueueSync>& queue, bool blockUntilComplete)
 	{
-		Queue<QueuedCommand>* commands = queue.flush();
+		Queue<QueuedCommand>* commands = queue.Flush();
 
 		CoreThreadQueueFlags flags = CTQF_InternalQueue;
 
 		if(blockUntilComplete)
 			flags |= CTQF_BlockUntilComplete;
 
-		queueCommand(std::bind(&CommandQueueBase::playback, &queue, commands), flags);
+		QueueCommand(std::bind(&::bs::CommandQueueBase::Playback, &queue, commands), flags);
 	}
 
 	void CoreThread::SubmitAll(bool blockUntilComplete)
@@ -204,28 +204,28 @@ namespace bs
 			for (auto& queue : mAllQueues)
 			{
 				if (!queue->isMain)
-					submitCommandQueue(*queue->queue, false);
+					SubmitCommandQueue(*queue->queue, false);
 				else
 					mainQueue = queue;
 			}
 
 			// Then main
 			if (mainQueue != nullptr)
-				submitCommandQueue(*mainQueue->queue, false);
+				SubmitCommandQueue(*mainQueue->queue, false);
 
 			if(blockUntilComplete)
 			{
 				Lock lock2(mCommandQueueMutex);
 
 				blockCommandId = mMaxCommandNotifyId++;
-				mCommandQueue->queue([](){}, true, blockCommandId);
+				mCommandQueue->Queue([](){}, true, blockCommandId);
 			}
 		}
 
 		if(blockUntilComplete)
 		{
 			mCommandReadyCondition.notify_all();
-			blockUntilCommandCompleted(blockCommandId);
+			BlockUntilCommandCompleted(blockCommandId);
 		}
 	}
 
@@ -233,8 +233,8 @@ namespace bs
 	{
 		Lock lock(mSubmitMutex);
 
-		CommandQueue<CommandQueueSync>& queue = *getQueue();
-		Queue<QueuedCommand>* commands = queue.flush();
+		CommandQueue<CommandQueueSync>& queue = *GetQueue();
+		Queue<QueuedCommand>* commands = queue.Flush();
 
 		UINT32 commandId = -1;
 		{
@@ -244,29 +244,29 @@ namespace bs
 			{
 				commandId = mMaxCommandNotifyId++;
 
-				mCommandQueue->queue([commands, &queue]() { queue.playback(commands); }, true, commandId);
+				mCommandQueue->Queue([commands, &queue]() { queue.Playback(commands); }, true, commandId);
 			}
 			else
-				mCommandQueue->queue([commands, &queue]() { queue.playback(commands); });
+				mCommandQueue->Queue([commands, &queue]() { queue.Playback(commands); });
 		}
 
 		mCommandReadyCondition.notify_all();
 
 		if (blockUntilComplete)
-			blockUntilCommandCompleted(commandId);
+			BlockUntilCommandCompleted(commandId);
 	}
 
 	AsyncOp CoreThread::QueueReturnCommand(std::function<void(AsyncOp&)> commandCallback, CoreThreadQueueFlags flags)
 	{
 #if !BS_FORCE_SINGLETHREADED_RENDERING
-		assert(BS_THREAD_CURRENT_ID != getCoreThreadId() && "Cannot queue commands on the core thread for the core thread");
+		assert(BS_THREAD_CURRENT_ID != GetCoreThreadId() && "Cannot queue commands on the core thread for the core thread");
 #endif
 
-		if (!flags.isSet(CTQF_InternalQueue))
-			return getQueue()->queueReturn(commandCallback);
+		if (!flags.IsSet(CTQF_InternalQueue))
+			return GetQueue()->QueueReturn(commandCallback);
 		else
 		{
-			bool blockUntilComplete = flags.isSet(CTQF_BlockUntilComplete);
+			bool blockUntilComplete = flags.IsSet(CTQF_BlockUntilComplete);
 
 			AsyncOp op;
 			UINT32 commandId = -1;
@@ -276,16 +276,16 @@ namespace bs
 				if (blockUntilComplete)
 				{
 					commandId = mMaxCommandNotifyId++;
-					op = mCommandQueue->queueReturn(commandCallback, true, commandId);
+					op = mCommandQueue->QueueReturn(commandCallback, true, commandId);
 				}
 				else
-					op = mCommandQueue->queueReturn(commandCallback);
+					op = mCommandQueue->QueueReturn(commandCallback);
 			}
 
 			mCommandReadyCondition.notify_all();
 
 			if (blockUntilComplete)
-				blockUntilCommandCompleted(commandId);
+				BlockUntilCommandCompleted(commandId);
 
 			return op;
 		}
@@ -294,14 +294,14 @@ namespace bs
 	void CoreThread::QueueCommand(std::function<void()> commandCallback, CoreThreadQueueFlags flags)
 	{
 #if !BS_FORCE_SINGLETHREADED_RENDERING
-		assert(BS_THREAD_CURRENT_ID != getCoreThreadId() && "Cannot queue commands on the core thread for the core thread");
+		assert(BS_THREAD_CURRENT_ID != GetCoreThreadId() && "Cannot queue commands on the core thread for the core thread");
 #endif
 
-		if (!flags.isSet(CTQF_InternalQueue))
-			getQueue()->queue(commandCallback);
+		if (!flags.IsSet(CTQF_InternalQueue))
+			GetQueue()->Queue(commandCallback);
 		else
 		{
-			bool blockUntilComplete = flags.isSet(CTQF_BlockUntilComplete);
+			bool blockUntilComplete = flags.IsSet(CTQF_BlockUntilComplete);
 
 			UINT32 commandId = -1;
 			{
@@ -310,27 +310,27 @@ namespace bs
 				if (blockUntilComplete)
 				{
 					commandId = mMaxCommandNotifyId++;
-					mCommandQueue->queue(commandCallback, true, commandId);
+					mCommandQueue->Queue(commandCallback, true, commandId);
 				}
 				else
-					mCommandQueue->queue(commandCallback);
+					mCommandQueue->Queue(commandCallback);
 			}
 
 			mCommandReadyCondition.notify_all();
 
 			if (blockUntilComplete)
-				blockUntilCommandCompleted(commandId);
+				BlockUntilCommandCompleted(commandId);
 		}
 	}
 
 	void CoreThread::Update()
 	{
 		for (UINT32 i = 0; i < NUM_SYNC_BUFFERS; i++)
-			mFrameAllocs[i]->setOwnerThread(mCoreThreadId);
+			mFrameAllocs[i]->SetOwnerThread(mCoreThreadId);
 
 		mActiveFrameAlloc = (mActiveFrameAlloc + 1) % 2;
-		mFrameAllocs[mActiveFrameAlloc]->setOwnerThread(BS_THREAD_CURRENT_ID); // Sim thread
-		mFrameAllocs[mActiveFrameAlloc]->clear();
+		mFrameAllocs[mActiveFrameAlloc]->SetOwnerThread(BS_THREAD_CURRENT_ID); // Sim thread
+		mFrameAllocs[mActiveFrameAlloc]->Clear();
 	}
 
 	FrameAlloc* CoreThread::GetFrameAlloc() const
@@ -380,7 +380,7 @@ namespace bs
 	void throwIfNotCoreThread()
 	{
 #if !BS_FORCE_SINGLETHREADED_RENDERING
-		if(BS_THREAD_CURRENT_ID != CoreThread::Instance().getCoreThreadId())
+		if(BS_THREAD_CURRENT_ID != CoreThread::Instance().GetCoreThreadId())
 			BS_EXCEPT(InternalErrorException, "This method can only be accessed from the core thread.");
 #endif
 	}
@@ -388,7 +388,7 @@ namespace bs
 	void throwIfCoreThread()
 	{
 #if !BS_FORCE_SINGLETHREADED_RENDERING
-		if(BS_THREAD_CURRENT_ID == CoreThread::Instance().getCoreThreadId())
+		if(BS_THREAD_CURRENT_ID == CoreThread::Instance().GetCoreThreadId())
 			BS_EXCEPT(InternalErrorException, "This method cannot be accessed from the core thread.");
 #endif
 	}

@@ -76,8 +76,8 @@ namespace bs
 			// Asset tool always runs relative to the 'bsf' directory
 			Path editorDataPath = Path("../../") + FRAMEWORK_DATA_PATH;
 
-			if (FileSystem::exists(editorDataPath))
-				path = FileSystem::getWorkingDirectoryPath() + editorDataPath;
+			if (FileSystem::Exists(editorDataPath))
+				path = FileSystem::GetWorkingDirectoryPath() + editorDataPath;
 #else
 			// Otherwise, look for the folder in the direct descendant of the working directory
 			if (FileSystem::Exists(EDITOR_DATA_PATH))
@@ -117,15 +117,15 @@ namespace bs
 
 		// First, look for the direct descendant of the working directory
 		Path output = path;
-		if (FileSystem::exists(path))
+		if (FileSystem::Exists(path))
 		{
-			output.makeAbsolute(FileSystem::getWorkingDirectoryPath());
+			output.makeAbsolute(FileSystem::GetWorkingDirectoryPath());
 			return output;
 		}
 
 		// Then, check the build directory itself, in case we're running directly from it (during development)
 		output.makeAbsolute(BUILD_APP_ROOT);
-		if (FileSystem::exists(output))
+		if (FileSystem::Exists(output))
 			return output;
 
 		// No path found, but return the initial value by default

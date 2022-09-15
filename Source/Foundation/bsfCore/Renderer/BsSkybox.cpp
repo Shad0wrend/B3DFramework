@@ -23,7 +23,7 @@ namespace bs
 	{
 		// This shouldn't normally happen, as filtered textures are generated when a radiance texture is assigned, but
 		// we check for it anyway (something could have gone wrong).
-		if(mTexture.isLoaded())
+		if(mTexture.IsLoaded())
 		{
 			if (mFilteredRadiance == nullptr || mIrradiance == nullptr)
 				filterTexture();
@@ -72,19 +72,19 @@ namespace bs
 		};
 
 		SPtr<ct::Skybox> coreSkybox = getCore();
-		SPtr<ct::Texture> coreFilteredRadiance = mFilteredRadiance->getCore();
-		SPtr<ct::Texture> coreIrradiance = mIrradiance->getCore();
+		SPtr<ct::Texture> coreFilteredRadiance = mFilteredRadiance->GetCore();
+		SPtr<ct::Texture> coreIrradiance = mIrradiance->GetCore();
 
 		auto filterSkybox = [coreFilteredRadiance, coreIrradiance, coreSkybox]()
 		{
 			// Filter radiance
-			ct::gIBLUtility().scaleCubemap(coreSkybox->getTexture(), 0, coreFilteredRadiance, 0);
+			ct::gIBLUtility().scaleCubemap(coreSkybox->GetTexture(), 0, coreFilteredRadiance, 0);
 			ct::gIBLUtility().filterCubemapForSpecular(coreFilteredRadiance, nullptr);
 
 			coreSkybox->mFilteredRadiance = coreFilteredRadiance;
 
 			// Generate irradiance
-			ct::gIBLUtility().filterCubemapForIrradiance(coreSkybox->getTexture(), coreIrradiance);
+			ct::gIBLUtility().filterCubemapForIrradiance(coreSkybox->GetTexture(), coreIrradiance);
 			coreSkybox->mIrradiance = coreIrradiance;
 
 			return true;
@@ -92,7 +92,7 @@ namespace bs
 
 		mRendererTask = ct::RendererTask::Create("SkyboxFilter", filterSkybox);
 
-		mRendererTask->onComplete.connect(renderComplete);
+		mRendererTask->onComplete.Connect(renderComplete);
 		ct::gRenderer()->addTask(mRendererTask);
 	}
 
@@ -103,7 +103,7 @@ namespace bs
 		mFilteredRadiance = nullptr;
 		mIrradiance = nullptr;
 
-		if(mTexture.isLoaded())
+		if(mTexture.IsLoaded())
 			filterTexture();
 
 		MarkCoreDirtyInternal((ActorDirtyFlag)SkyboxDirtyFlag::Texture);
@@ -126,7 +126,7 @@ namespace bs
 	SPtr<Skybox> Skybox::Create()
 	{
 		SPtr<Skybox> skyboxPtr = createEmpty();
-		skyboxPtr->initialize();
+		skyboxPtr->Initialize();
 
 		return skyboxPtr;
 	}
@@ -134,16 +134,16 @@ namespace bs
 	SPtr<ct::CoreObject> Skybox::CreateCore() const
 	{
 		SPtr<ct::Texture> radiance;
-		if (mTexture.isLoaded(false))
-			radiance = mTexture->getCore();
+		if (mTexture.IsLoaded(false))
+			radiance = mTexture->GetCore();
 
 		SPtr<ct::Texture> filteredRadiance;
 		if (mFilteredRadiance)
-			filteredRadiance = mFilteredRadiance->getCore();
+			filteredRadiance = mFilteredRadiance->GetCore();
 
 		SPtr<ct::Texture> irradiance;
 		if (mIrradiance)
-			irradiance = mIrradiance->getCore();
+			irradiance = mIrradiance->GetCore();
 
 		ct::Skybox* skybox = new (bs_alloc<ct::Skybox>()) ct::Skybox(radiance, filteredRadiance, irradiance);
 		SPtr<ct::Skybox> skyboxPtr = bs_shared_ptr<ct::Skybox>(skybox);
@@ -201,7 +201,7 @@ namespace bs
 		{
 			gRenderer()->notifySkyboxAdded(this);
 
-			CoreObject::initialize();
+			CoreObject::Initialize();
 		}
 
 		void Skybox::SyncToCore(const CoreSyncData& data)

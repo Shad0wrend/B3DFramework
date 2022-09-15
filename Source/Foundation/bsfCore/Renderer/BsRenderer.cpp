@@ -42,15 +42,15 @@ namespace bs { namespace ct
 	bool Renderer::CompareCallback(const RendererExtension* a, const RendererExtension* b)
 	{
 		// Sort by alpha setting first, then by cull mode, then by index
-		if (a->getLocation() == b->getLocation())
+		if (a->GetLocation() == b->GetLocation())
 		{
-			if (a->getPriority() == b->getPriority())
+			if (a->GetPriority() == b->GetPriority())
 				return a > b; // Use address, at this point it doesn't matter, but std::set requires us to differentiate
 			else
-				return a->getPriority() > b->getPriority();
+				return a->GetPriority() > b->GetPriority();
 		}
 		else
-			return (UINT32)a->getLocation() < (UINT32)b->getLocation();
+			return (UINT32)a->GetLocation() < (UINT32)b->GetLocation();
 	}
 
 	void Renderer::Update()
@@ -202,7 +202,7 @@ namespace bs { namespace ct
 			gRenderer()->processTask(*this, true);
 		};
 
-		gCoreThread().queueCommand(worker);
+		gCoreThread().QueueCommand(worker);
 		gCoreThread().submit(true);
 
 		// Note: Tigger on complete callback and clear it from Renderer?

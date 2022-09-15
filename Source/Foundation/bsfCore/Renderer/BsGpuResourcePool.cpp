@@ -169,12 +169,12 @@ namespace bs { namespace ct
 
 	bool GpuResourcePool::Matches(const SPtr<Texture>& texture, const POOLED_RENDER_TEXTURE_DESC& desc)
 	{
-		const TextureProperties& texProps = texture->getProperties();
+		const TextureProperties& texProps = texture->GetProperties();
 
 		bool match = texProps.getTextureType() == desc.type
-			&& texProps.getFormat() == desc.format
-			&& texProps.getWidth() == desc.width
-			&& texProps.getHeight() == desc.height
+			&& texProps.GetFormat() == desc.format
+			&& texProps.GetWidth() == desc.width
+			&& texProps.GetHeight() == desc.height
 			&& (texProps.getUsage() & desc.flag) == desc.flag
 			&& (
 				(desc.type == TEX_TYPE_2D
@@ -193,13 +193,13 @@ namespace bs { namespace ct
 
 	bool GpuResourcePool::Matches(const SPtr<GpuBuffer>& buffer, const POOLED_STORAGE_BUFFER_DESC& desc)
 	{
-		const GpuBufferProperties& props = buffer->getProperties();
+		const GpuBufferProperties& props = buffer->GetProperties();
 
 		bool match = props.getType() == desc.type && props.getElementCount() == desc.numElements;
 		if(match)
 		{
 			if (desc.type == GBT_STANDARD)
-				match = props.getFormat() == desc.format;
+				match = props.GetFormat() == desc.format;
 			else // Structured
 				match = props.getElementSize() == desc.elementSize;
 

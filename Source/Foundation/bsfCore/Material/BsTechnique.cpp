@@ -19,7 +19,7 @@ namespace bs
 
 	bool TechniqueBase::IsSupported() const
 	{
-		if (ct::GpuProgramManager::Instance().isLanguageSupported(mLanguage) || mLanguage == "Any")
+		if (ct::GpuProgramManager::Instance().IsLanguageSupported(mLanguage) || mLanguage == "Any")
 			return true;
 
 		return false;
@@ -59,7 +59,7 @@ namespace bs
 	void TTechnique<Core>::Compile()
 	{
 		for(auto& pass : mPasses)
-			pass->compile();
+			pass->Compile();
 	}
 
 	template class TTechnique < false > ;
@@ -83,7 +83,7 @@ namespace bs
 	{
 		Vector<SPtr<ct::Pass>> passes;
 		for (auto& pass : mPasses)
-			passes.push_back(pass->getCore());
+			passes.push_back(pass->GetCore());
 
 		ct::Technique* technique = new(bs_alloc<ct::Technique>()) ct::Technique(
 			mLanguage,
@@ -108,7 +108,7 @@ namespace bs
 		Technique* technique = new (bs_alloc<Technique>()) Technique(language, {}, ShaderVariation(), passes);
 		SPtr<Technique> techniquePtr = bs_core_ptr<Technique>(technique);
 		techniquePtr->SetThisPtrInternal(techniquePtr);
-		techniquePtr->initialize();
+		techniquePtr->Initialize();
 
 		return techniquePtr;
 	}
@@ -119,7 +119,7 @@ namespace bs
 		Technique* technique = new (bs_alloc<Technique>()) Technique(language, tags, variation, passes);
 		SPtr<Technique> techniquePtr = bs_core_ptr<Technique>(technique);
 		techniquePtr->SetThisPtrInternal(techniquePtr);
-		techniquePtr->initialize();
+		techniquePtr->Initialize();
 
 		return techniquePtr;
 	}
@@ -155,7 +155,7 @@ namespace bs
 		Technique* technique = new (bs_alloc<Technique>()) Technique(language, {}, ShaderVariation(), passes);
 		SPtr<Technique> techniquePtr = bs_shared_ptr<Technique>(technique);
 		techniquePtr->SetThisPtrInternal(techniquePtr);
-		techniquePtr->initialize();
+		techniquePtr->Initialize();
 
 		return techniquePtr;
 	}
@@ -166,7 +166,7 @@ namespace bs
 		Technique* technique = new (bs_alloc<Technique>()) Technique(language, tags, variation, passes);
 		SPtr<Technique> techniquePtr = bs_shared_ptr<Technique>(technique);
 		techniquePtr->SetThisPtrInternal(techniquePtr);
-		techniquePtr->initialize();
+		techniquePtr->Initialize();
 
 		return techniquePtr;
 	}

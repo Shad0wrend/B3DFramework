@@ -56,7 +56,7 @@ namespace bs
 		output->subObjects.push_back(SerializedSubObject());
 
 		SerializedSubObject& subObject = output->subObjects.back();
-		subObject.typeId = ManagedSerializableObject::GetRttiStatic()->getRTTIId();
+		subObject.typeId = ManagedSerializableObject::GetRttiStatic()->GetRttiId();
 
 		SerializedEntry entry;
 		entry.fieldId = 0;

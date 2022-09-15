@@ -243,7 +243,7 @@ namespace bs
 	void LinuxDragAndDrop::registerDropTarget(DropTarget* target)
 	{
 		Lock lock(sMutex);
-		sQueuedAreaOperations.push_back(DropAreaOp(target, DropAreaOpType::Register, target->getArea()));
+		sQueuedAreaOperations.push_back(DropAreaOp(target, DropAreaOpType::Register, target->GetArea()));
 	}
 
 	void LinuxDragAndDrop::unregisterDropTarget(DropTarget* target)
@@ -255,7 +255,7 @@ namespace bs
 	void LinuxDragAndDrop::updateDropTarget(DropTarget* target)
 	{
 		Lock lock(sMutex);
-		sQueuedAreaOperations.push_back(DropAreaOp(target, DropAreaOpType::Update, target->getArea()));
+		sQueuedAreaOperations.push_back(DropAreaOp(target, DropAreaOpType::Update, target->GetArea()));
 	}
 
 	bool LinuxDragAndDrop::handleClientMessage(XClientMessageEvent& event)
@@ -395,7 +395,7 @@ namespace bs
 				for(auto& dropArea : sDropAreas)
 				{
 					LinuxWindow* linuxWindow;
-					dropArea.target->GetOwnerWindowInternal()->getCustomAttribute("LINUX_WINDOW", &linuxWindow);
+					dropArea.target->GetOwnerWindowInternal()->GetCustomAttribute("LINUX_WINDOW", &linuxWindow);
 					::Window xWindow = linuxWindow->GetXWindowInternal();
 
 					if(xWindow == event.window)
@@ -545,7 +545,7 @@ namespace bs
 					continue;
 
 				LinuxWindow* linuxWindow;
-				dropArea.target->GetOwnerWindowInternal()->getCustomAttribute("LINUX_WINDOW", &linuxWindow);
+				dropArea.target->GetOwnerWindowInternal()->GetCustomAttribute("LINUX_WINDOW", &linuxWindow);
 
 				Vector2I windowPos = linuxWindow->screenToWindowPos(sDragPosition);
 

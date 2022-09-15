@@ -30,7 +30,7 @@ namespace bs
 		HSpriteTexture whiteTexture = BuiltinResources::Instance().GetWhiteSpriteTexture();
 
 		ScriptResourceBase* scriptSpriteTex = ScriptResourceManager::Instance().getScriptResource(whiteTexture, true);
-		return scriptSpriteTex->getManagedInstance();
+		return scriptSpriteTex->GetManagedInstance();
 	}
 
 	MonoObject* ScriptBuiltin::InternalGetBuiltinShader(BuiltinShader type)
@@ -38,7 +38,7 @@ namespace bs
 		HShader diffuseShader = BuiltinResources::Instance().getBuiltinShader(type);
 
 		ScriptResourceBase* scriptShader = ScriptResourceManager::Instance().getScriptResource(diffuseShader, true);
-		return scriptShader->getManagedInstance();
+		return scriptShader->GetManagedInstance();
 	}
 
 	MonoObject* ScriptBuiltin::InternalGetMesh(BuiltinMesh meshType)
@@ -46,7 +46,7 @@ namespace bs
 		HMesh mesh = BuiltinResources::Instance().getMesh(meshType);
 
 		ScriptResourceBase* scriptMesh = ScriptResourceManager::Instance().getScriptResource(mesh, true);
-		return scriptMesh->getManagedInstance();
+		return scriptMesh->GetManagedInstance();
 	}
 
 	MonoObject* ScriptBuiltin::InternalGetDefaultFont()
@@ -54,6 +54,6 @@ namespace bs
 		HFont font = BuiltinResources::Instance().getDefaultFont();
 
 		ScriptResourceBase* scriptFont = ScriptResourceManager::Instance().getScriptResource(font, true);
-		return scriptFont->getManagedInstance();
+		return scriptFont->GetManagedInstance();
 	}
 }

@@ -61,7 +61,7 @@ namespace bs
 	float ScriptCCapsuleCollider::InternalGetHalfHeight(ScriptCCapsuleCollider* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->GetHandle()->getHalfHeight();
+		tmp__output = thisPtr->GetHandle()->GetHalfHeight();
 
 		float __output;
 		__output = tmp__output;
@@ -71,13 +71,13 @@ namespace bs
 
 	void ScriptCCapsuleCollider::InternalSetRadius(ScriptCCapsuleCollider* thisPtr, float radius)
 	{
-		thisPtr->getHandle()->setRadius(radius);
+		thisPtr->GetHandle()->SetRadius(radius);
 	}
 
 	float ScriptCCapsuleCollider::InternalGetRadius(ScriptCCapsuleCollider* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getHandle()->getRadius();
+		tmp__output = thisPtr->GetHandle()->GetRadius();
 
 		float __output;
 		__output = tmp__output;

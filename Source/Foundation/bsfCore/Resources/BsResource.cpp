@@ -42,7 +42,7 @@ namespace bs
 		{
 			for (auto& dependency : mDependencies)
 			{
-				if (dependency != nullptr && !dependency.isLoaded())
+				if (dependency != nullptr && !dependency.IsLoaded())
 				{
 					areLoaded = false;
 					break;

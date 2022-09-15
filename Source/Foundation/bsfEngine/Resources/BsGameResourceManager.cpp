@@ -45,7 +45,7 @@ namespace bs
 
 	void StandaloneResourceLoader::SetMapping(const SPtr<ResourceMapping>& mapping)
 	{
-		mMapping = mapping->getMap();
+		mMapping = mapping->GetMap();
 	}
 
 	GameResourceManager::GameResourceManager()
@@ -61,7 +61,7 @@ namespace bs
 
 	void GameResourceManager::SetMapping(const SPtr<ResourceMapping>& mapping)
 	{
-		mLoader->setMapping(mapping);
+		mLoader->SetMapping(mapping);
 	}
 
 	void GameResourceManager::SetLoader(const SPtr<IGameResourceLoader>& loader)

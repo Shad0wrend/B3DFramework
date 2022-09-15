@@ -476,7 +476,7 @@ namespace bs
 		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override
 		{
 			Shader* shader = static_cast<Shader*>(obj);
-			shader->initialize();
+			shader->Initialize();
 		}
 
 		const String& GetRttiName() override

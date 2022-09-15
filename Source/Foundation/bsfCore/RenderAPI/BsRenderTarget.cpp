@@ -12,7 +12,7 @@ namespace bs
 	RenderTarget::RenderTarget()
 	{
 		// We never sync from sim to core, so mark it clean to avoid overwriting core thread changes
-		markCoreClean();
+		MarkCoreClean();
 	}
 
 	void RenderTarget::SetPriority(INT32 priority)
@@ -20,10 +20,10 @@ namespace bs
 		std::function<void(SPtr<ct::RenderTarget>, INT32)> windowedFunc =
 			[](SPtr<ct::RenderTarget> renderTarget, INT32 priority)
 		{
-			renderTarget->setPriority(priority);
+			renderTarget->SetPriority(priority);
 		};
 
-		gCoreThread().queueCommand(std::bind(windowedFunc, getCore(), priority));
+		gCoreThread().QueueCommand(std::bind(windowedFunc, GetCore(), priority));
 	}
 
 	SPtr<ct::RenderTarget> RenderTarget::GetCore() const
@@ -35,7 +35,7 @@ namespace bs
 	{
 		THROW_IF_CORE_THREAD;
 
-		return getPropertiesInternal();
+		return GetPropertiesInternal();
 	}
 
 	void RenderTarget::GetCustomAttribute(const String& name, void* pData) const
@@ -66,14 +66,14 @@ namespace bs
 
 		void RenderTarget::SetPriority(INT32 priority)
 		{
-			RenderTargetProperties& props = const_cast<RenderTargetProperties&>(getProperties());
+			RenderTargetProperties& props = const_cast<RenderTargetProperties&>(GetProperties());
 
 			props.priority = priority;
 		}
 
 		const RenderTargetProperties& RenderTarget::GetProperties() const
 		{
-			return getPropertiesInternal();
+			return GetPropertiesInternal();
 		}
 
 		void RenderTarget::GetCustomAttribute(const String& name, void* pData) const

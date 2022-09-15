@@ -44,21 +44,21 @@ namespace bs
 		metaData.scriptClass->AddInternalCall("Internal_SetActiveScene", (void*)&ScriptScene::InternalSetActiveScene);
 		metaData.scriptClass->AddInternalCall("Internal_ClearScene", (void*)&ScriptScene::InternalClearScene);
 
-		MonoMethod* updateMethod = metaData.scriptClass->getMethod("OnUpdate");
-		onUpdateThunk = (OnUpdateThunkDef)updateMethod->getThunk();
+		MonoMethod* updateMethod = metaData.scriptClass->GetMethod("OnUpdate");
+		onUpdateThunk = (OnUpdateThunkDef)updateMethod->GetThunk();
 #endif
 	}
 
 	void ScriptScene::StartUp()
 	{
-		OnRefreshStartedConn = ScriptObjectManager::Instance().onRefreshStarted.connect(&onRefreshStarted);
-		OnRefreshDomainLoadedConn = ScriptObjectManager::Instance().onRefreshDomainLoaded.connect(&onRefreshDomainLoaded);
+		OnRefreshStartedConn = ScriptObjectManager::Instance().onRefreshStarted.Connect(&onRefreshStarted);
+		OnRefreshDomainLoadedConn = ScriptObjectManager::Instance().onRefreshDomainLoaded.Connect(&onRefreshDomainLoaded);
 	}
 
 	void ScriptScene::ShutDown()
 	{
-		OnRefreshStartedConn.disconnect();
-		OnRefreshDomainLoadedConn.disconnect();
+		OnRefreshStartedConn.Disconnect();
+		OnRefreshDomainLoadedConn.Disconnect();
 	}
 
 	void ScriptScene::Update()
@@ -70,7 +70,7 @@ namespace bs
 
 	void ScriptScene::SetActiveScene(const HPrefab& prefab)
 	{
-		if (prefab.isLoaded(false))
+		if (prefab.IsLoaded(false))
 		{
 			// If scene replace current root node, otherwise just append to the current root node
 			if (prefab->isScene())
@@ -89,22 +89,22 @@ namespace bs
 
 	void ScriptScene::OnRefreshStarted()
 	{
-		MonoMethod* uuidMethod = metaData.scriptClass->getMethod("GetSceneUUID");
+		MonoMethod* uuidMethod = metaData.scriptClass->GetMethod("GetSceneUUID");
 		if (uuidMethod != nullptr)
 			sActiveSceneUUID = ScriptUUID::unbox(uuidMethod->invoke(nullptr, nullptr));
 
-		MonoMethod* nameMethod = metaData.scriptClass->getMethod("GetSceneName");
+		MonoMethod* nameMethod = metaData.scriptClass->GetMethod("GetSceneName");
 		if (nameMethod != nullptr)
 			sActiveSceneName = MonoUtil::monoToString((MonoString*)nameMethod->invoke(nullptr, nullptr));
 
-		MonoMethod* genericPrefabMethod = metaData.scriptClass->getMethod("GetIsGenericPrefab");
+		MonoMethod* genericPrefabMethod = metaData.scriptClass->GetMethod("GetIsGenericPrefab");
 		if (genericPrefabMethod != nullptr)
 			sIsGenericPrefab = *(bool*)MonoUtil::unbox(genericPrefabMethod->invoke(nullptr, nullptr));
 	}
 
 	void ScriptScene::OnRefreshDomainLoaded()
 	{
-		MonoMethod* uuidMethod = metaData.scriptClass->getMethod("SetSceneUUID", 1);
+		MonoMethod* uuidMethod = metaData.scriptClass->GetMethod("SetSceneUUID", 1);
 		if (uuidMethod != nullptr)
 		{
 			void* params[1];
@@ -113,7 +113,7 @@ namespace bs
 			uuidMethod->invoke(nullptr, params);
 		}
 			
-		MonoMethod* nameMethod = metaData.scriptClass->getMethod("SetSceneName", 1);
+		MonoMethod* nameMethod = metaData.scriptClass->GetMethod("SetSceneName", 1);
 		if (nameMethod != nullptr)
 		{
 			void* params[1];
@@ -122,7 +122,7 @@ namespace bs
 			nameMethod->invoke(nullptr, params);
 		}
 
-		MonoMethod* genericPrefabMethod = metaData.scriptClass->getMethod("SetIsGenericPrefab", 1);
+		MonoMethod* genericPrefabMethod = metaData.scriptClass->GetMethod("SetIsGenericPrefab", 1);
 		if (genericPrefabMethod != nullptr)
 		{
 			void* params[1] = { &sIsGenericPrefab };
@@ -132,10 +132,10 @@ namespace bs
 
 	MonoObject* ScriptScene::InternalGetRoot()
 	{
-		HSceneObject root = SceneManager::Instance().getMainScene()->getRoot();
+		HSceneObject root = SceneManager::Instance().getMainScene()->GetRoot();
 
 		ScriptSceneObject* scriptRoot = ScriptGameObjectManager::Instance().getOrCreateScriptSceneObject(root);
-		return scriptRoot->getManagedInstance();
+		return scriptRoot->GetManagedInstance();
 	}
 
 	MonoObject* ScriptScene::InternalGetMainCameraSo()
@@ -146,13 +146,13 @@ namespace bs
 			return nullptr;
 
 		ScriptSceneObject* cameraSo = ScriptGameObjectManager::Instance().getOrCreateScriptSceneObject(so);
-		return cameraSo->getManagedInstance();
+		return cameraSo->GetManagedInstance();
 	}
 
 #if BS_IS_BANSHEE3D
 	void ScriptScene::InternalSetActiveScene(ScriptPrefab* scriptPrefab)
 	{
-		HPrefab prefab = scriptPrefab->getHandle();
+		HPrefab prefab = scriptPrefab->GetHandle();
 		setActiveScene(prefab);
 	}
 

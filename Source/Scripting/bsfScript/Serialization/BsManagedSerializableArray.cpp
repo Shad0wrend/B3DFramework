@@ -71,13 +71,13 @@ namespace bs
 
 		MonoClass* arrayClass = ScriptAssemblyManager::Instance().getBuiltinClasses().systemArrayClass;
 
-		MonoMethod* createInstance = arrayClass->getMethodExact("CreateInstance", "Type,int[]");
+		MonoMethod* createInstance = arrayClass->GetMethodExact("CreateInstance", "Type,int[]");
 
 		ScriptArray lengthArray(MonoUtil::getINT32Class(), (UINT32)sizes.size());
 		for (UINT32 i = 0; i < (UINT32)sizes.size(); i++)
-			lengthArray.set(i, sizes[i]);
+			lengthArray.Set(i, sizes[i]);
 
-		void* params[2] = { MonoUtil::getType(typeInfo->mElementType->getMonoClass()), lengthArray.getInternal() };
+		void* params[2] = { MonoUtil::getType(typeInfo->mElementType->GetMonoClass()), lengthArray.getInternal() };
 		return createInstance->invoke(nullptr, params);
 	}
 
@@ -105,10 +105,10 @@ namespace bs
 	void ManagedSerializableArray::SetFieldData(MonoArray* obj, UINT32 arrayIdx, const SPtr<ManagedSerializableFieldData>& val)
 	{
 		if (MonoUtil::isValueType(mElementMonoClass))
-			setValueInternal(obj, arrayIdx, val->getValue(mArrayTypeInfo->mElementType));
+			setValueInternal(obj, arrayIdx, val->GetValue(mArrayTypeInfo->mElementType));
 		else
 		{
-			MonoObject* ptrToObj = (MonoObject*)val->getValue(mArrayTypeInfo->mElementType);
+			MonoObject* ptrToObj = (MonoObject*)val->GetValue(mArrayTypeInfo->mElementType);
 			setValueInternal(obj, arrayIdx, &ptrToObj);
 		}
 	}
@@ -201,10 +201,10 @@ namespace bs
 
 	void ManagedSerializableArray::InitMonoObjects()
 	{
-		mElementMonoClass = mArrayTypeInfo->mElementType->getMonoClass();
+		mElementMonoClass = mArrayTypeInfo->mElementType->GetMonoClass();
 
 		MonoClass* arrayClass = ScriptAssemblyManager::Instance().getBuiltinClasses().systemArrayClass;
-		mCopyMethod = arrayClass->getMethodExact("Copy", "Array,Array,int");
+		mCopyMethod = arrayClass->GetMethodExact("Copy", "Array,Array,int");
 	}
 
 	UINT32 ManagedSerializableArray::ToSequentialIdx(const Vector<UINT32>& idx) const
@@ -272,7 +272,7 @@ namespace bs
 		MonoObject* managedInstace = MonoUtil::getObjectFromGCHandle(mGCHandle);
 
 		MonoClass* systemArray = ScriptAssemblyManager::Instance().getBuiltinClasses().systemArrayClass;
-		MonoMethod* getLength = systemArray->getMethod("GetLength", 1);
+		MonoMethod* getLength = systemArray->GetMethod("GetLength", 1);
 
 		void* params[1] = { &dimension };
 		MonoObject* returnObj = getLength->invoke(managedInstace, params);

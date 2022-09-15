@@ -46,13 +46,13 @@ namespace bs
 	}
 	MonoObject* ScriptAnimationClip::InternalGetRef(ScriptAnimationClip* thisPtr)
 	{
-		return thisPtr->getRRef();
+		return thisPtr->GetRRef();
 	}
 
 	MonoObject* ScriptAnimationClip::InternalGetCurves(ScriptAnimationClip* thisPtr)
 	{
 		SPtr<AnimationCurves> tmp__output;
-		tmp__output = thisPtr->getHandle()->getCurves();
+		tmp__output = thisPtr->GetHandle()->GetCurves();
 
 		MonoObject* __output;
 		__output = ScriptAnimationCurves::Create(tmp__output);
@@ -66,21 +66,21 @@ namespace bs
 		ScriptAnimationCurves* scriptcurves;
 		scriptcurves = ScriptAnimationCurves::toNative(curves);
 		if(scriptcurves != nullptr)
-			tmpcurves = scriptcurves->getInternal();
-		thisPtr->getHandle()->setCurves(*tmpcurves);
+			tmpcurves = scriptcurves->GetInternal();
+		thisPtr->GetHandle()->SetCurves(*tmpcurves);
 	}
 
 	MonoArray* ScriptAnimationClip::InternalGetEvents(ScriptAnimationClip* thisPtr)
 	{
 		Vector<AnimationEvent> vec__output;
-		vec__output = thisPtr->getHandle()->getEvents();
+		vec__output = thisPtr->GetHandle()->GetEvents();
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
 		ScriptArray array__output = ScriptArray::create<ScriptAnimationEvent>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
-			array__output.set(i, ScriptAnimationEvent::toInterop(vec__output[i]));
+			array__output.Set(i, ScriptAnimationEvent::toInterop(vec__output[i]));
 		}
 		__output = array__output.getInternal();
 
@@ -99,13 +99,13 @@ namespace bs
 				vecevents[i] = ScriptAnimationEvent::fromInterop(arrayevents.get<__AnimationEventInterop>(i));
 			}
 		}
-		thisPtr->getHandle()->setEvents(vecevents);
+		thisPtr->GetHandle()->SetEvents(vecevents);
 	}
 
 	MonoObject* ScriptAnimationClip::InternalGetRootMotion(ScriptAnimationClip* thisPtr)
 	{
 		SPtr<RootMotion> tmp__output;
-		tmp__output = thisPtr->getHandle()->getRootMotion();
+		tmp__output = thisPtr->GetHandle()->GetRootMotion();
 
 		MonoObject* __output;
 		__output = ScriptRootMotion::Create(tmp__output);
@@ -116,7 +116,7 @@ namespace bs
 	bool ScriptAnimationClip::InternalHasRootMotion(ScriptAnimationClip* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->getHandle()->hasRootMotion();
+		tmp__output = thisPtr->GetHandle()->hasRootMotion();
 
 		bool __output;
 		__output = tmp__output;
@@ -127,7 +127,7 @@ namespace bs
 	bool ScriptAnimationClip::InternalIsAdditive(ScriptAnimationClip* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->getHandle()->isAdditive();
+		tmp__output = thisPtr->GetHandle()->isAdditive();
 
 		bool __output;
 		__output = tmp__output;
@@ -138,7 +138,7 @@ namespace bs
 	float ScriptAnimationClip::InternalGetLength(ScriptAnimationClip* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getHandle()->getLength();
+		tmp__output = thisPtr->GetHandle()->GetLength();
 
 		float __output;
 		__output = tmp__output;
@@ -149,7 +149,7 @@ namespace bs
 	uint32_t ScriptAnimationClip::InternalGetSampleRate(ScriptAnimationClip* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->getHandle()->getSampleRate();
+		tmp__output = thisPtr->GetHandle()->GetSampleRate();
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -159,7 +159,7 @@ namespace bs
 
 	void ScriptAnimationClip::InternalSetSampleRate(ScriptAnimationClip* thisPtr, uint32_t sampleRate)
 	{
-		thisPtr->getHandle()->setSampleRate(sampleRate);
+		thisPtr->GetHandle()->SetSampleRate(sampleRate);
 	}
 
 	void ScriptAnimationClip::InternalCreate(MonoObject* managedInstance, bool isAdditive)
@@ -174,12 +174,12 @@ namespace bs
 		ScriptAnimationCurves* scriptcurves;
 		scriptcurves = ScriptAnimationCurves::toNative(curves);
 		if(scriptcurves != nullptr)
-			tmpcurves = scriptcurves->getInternal();
+			tmpcurves = scriptcurves->GetInternal();
 		SPtr<RootMotion> tmprootMotion;
 		ScriptRootMotion* scriptrootMotion;
 		scriptrootMotion = ScriptRootMotion::toNative(rootMotion);
 		if(scriptrootMotion != nullptr)
-			tmprootMotion = scriptrootMotion->getInternal();
+			tmprootMotion = scriptrootMotion->GetInternal();
 		ResourceHandle<AnimationClip> instance = AnimationClip::Create(tmpcurves, isAdditive, sampleRate, tmprootMotion);
 		ScriptResourceManager::Instance().createBuiltinScriptResource(instance, managedInstance);
 	}

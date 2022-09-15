@@ -54,7 +54,7 @@ namespace bs
 				{
 					auto reflectableField = static_cast<RTTIReflectableFieldBase*>(field);
 
-					if (reflectableField->getType()->getRTTIId() == TID_ResourceHandle)
+					if (reflectableField->GetType()->GetRttiId() == TID_ResourceHandle)
 					{
 						if (reflectableField->schema.isArray)
 						{
@@ -72,7 +72,7 @@ namespace bs
 						}
 						else
 						{
-							HResource resource = (HResource&)reflectableField->getValue(rttiInstance, &obj);
+							HResource resource = (HResource&)reflectableField->GetValue(rttiInstance, &obj);
 							if (!resource.getUUID().empty())
 							{
 								ResourceDependency& dependency = dependencies[resource.getUUID()];
@@ -85,20 +85,20 @@ namespace bs
 					{
 						// Optimization, no need to retrieve its value and go deeper if it has no
 						// reflectable children that may hold the reference.
-						if (hasReflectableChildren(reflectableField->getType()))
+						if (hasReflectableChildren(reflectableField->GetType()))
 						{
 							if (reflectableField->schema.isArray)
 							{
-								const UINT32 numElements = reflectableField->getArraySize(rttiInstance, &obj);
+								const UINT32 numElements = reflectableField->GetArraySize(rttiInstance, &obj);
 								for (UINT32 j = 0; j < numElements; j++)
 								{
-									IReflectable& childObj = reflectableField->getArrayValue(rttiInstance, &obj, j);
+									IReflectable& childObj = reflectableField->GetArrayValue(rttiInstance, &obj, j);
 									findResourceDependenciesInternal(childObj, alloc, true, dependencies);
 								}
 							}
 							else
 							{
-								IReflectable& childObj = reflectableField->getValue(rttiInstance, &obj);
+								IReflectable& childObj = reflectableField->GetValue(rttiInstance, &obj);
 								findResourceDependenciesInternal(childObj, alloc, true, dependencies);
 							}
 						}
@@ -110,15 +110,15 @@ namespace bs
 
 					// Optimization, no need to retrieve its value and go deeper if it has no
 					// reflectable children that may hold the reference.
-					if (hasReflectableChildren(reflectablePtrField->getType()))
+					if (hasReflectableChildren(reflectablePtrField->GetType()))
 					{
 						if (reflectablePtrField->schema.isArray)
 						{
-							const UINT32 numElements = reflectablePtrField->getArraySize(rttiInstance, &obj);
+							const UINT32 numElements = reflectablePtrField->GetArraySize(rttiInstance, &obj);
 							for (UINT32 j = 0; j < numElements; j++)
 							{
 								const SPtr<IReflectable>& childObj =
-									reflectablePtrField->getArrayValue(rttiInstance, &obj, j);
+									reflectablePtrField->GetArrayValue(rttiInstance, &obj, j);
 
 								if (childObj != nullptr)
 									findResourceDependenciesInternal(*childObj, alloc, true, dependencies);
@@ -126,7 +126,7 @@ namespace bs
 						}
 						else
 						{
-							const SPtr<IReflectable>& childObj = reflectablePtrField->getValue(rttiInstance, &obj);
+							const SPtr<IReflectable>& childObj = reflectablePtrField->GetValue(rttiInstance, &obj);
 
 							if (childObj != nullptr)
 								findResourceDependenciesInternal(*childObj, alloc, true, dependencies);
@@ -138,7 +138,7 @@ namespace bs
 			rttiInstance->onSerializationEnded(&obj, nullptr);
 			alloc.destruct(rttiInstance);
 
-			rtti = rtti->getBaseClass();
+			rtti = rtti->GetBaseClass();
 		} while(rtti != nullptr);
 	}
 
@@ -164,13 +164,13 @@ namespace bs
 
 	UINT32 Utility::GetSceneObjectDepth(const HSceneObject& so)
 	{
-		HSceneObject parent = so->getParent();
+		HSceneObject parent = so->GetParent();
 		
 		UINT32 depth = 0;
 		while (parent != nullptr)
 		{
 			depth++;
-			parent = parent->getParent();
+			parent = parent->GetParent();
 		}
 
 		return depth;
@@ -188,16 +188,16 @@ namespace bs
 			HSceneObject curSO = todo.top();
 			todo.pop();
 
-			const Vector<HComponent>& components = curSO->getComponents();
+			const Vector<HComponent>& components = curSO->GetComponents();
 			for(auto& entry : components)
 			{
-				if (entry->getRTTI()->getRTTIId() == typeId)
+				if (entry->GetRtti()->GetRttiId() == typeId)
 					output.push_back(entry);
 			}
 
-			UINT32 numChildren = curSO->getNumChildren();
+			UINT32 numChildren = curSO->GetNumChildren();
 			for (UINT32 i = 0; i < numChildren; i++)
-				todo.push(curSO->getChild(i));
+				todo.push(curSO->GetChild(i));
 		}
 
 		return output;

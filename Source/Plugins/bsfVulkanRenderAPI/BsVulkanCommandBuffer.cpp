@@ -39,13 +39,13 @@ namespace bs { namespace ct
 		semaphoreCI.pNext = nullptr;
 		semaphoreCI.flags = 0;
 
-		VkResult result = vkCreateSemaphore(owner->getDevice().getLogical(), &semaphoreCI, gVulkanAllocator, &mSemaphore);
+		VkResult result = vkCreateSemaphore(owner->GetDevice().getLogical(), &semaphoreCI, gVulkanAllocator, &mSemaphore);
 		assert(result == VK_SUCCESS);
 	}
 
 	VulkanSemaphore::~VulkanSemaphore()
 	{
-		vkDestroySemaphore(mOwner->getDevice().getLogical(), mSemaphore, gVulkanAllocator);
+		vkDestroySemaphore(mOwner->GetDevice().getLogical(), mSemaphore, gVulkanAllocator);
 	}
 
 	VulkanCmdBufferPool::VulkanCmdBufferPool(VulkanDevice& device)
@@ -283,12 +283,12 @@ namespace bs { namespace ct
 		}
 
 		if (mIntraQueueSemaphore != nullptr)
-			mIntraQueueSemaphore->destroy();
+			mIntraQueueSemaphore->Destroy();
 		
 		for(UINT32 i = 0; i < BS_MAX_VULKAN_CB_DEPENDENCIES; i++)
 		{
 			if (mInterQueueSemaphores[i] != nullptr)
-				mInterQueueSemaphores[i]->destroy();
+				mInterQueueSemaphores[i]->Destroy();
 		}
 
 		vkDestroyFence(device, mFence, gVulkanAllocator);
@@ -348,7 +348,7 @@ namespace bs { namespace ct
 		{
 			// If a previous clear is queued, but it doesn't match the rendered area, need to execute a separate pass
 			// just for it
-			Rect2I rtArea(0, 0, mFramebuffer->getWidth(), mFramebuffer->getHeight());
+			Rect2I rtArea(0, 0, mFramebuffer->GetWidth(), mFramebuffer->GetHeight());
 			if (mClearArea != rtArea)
 				executeClearPass();
 		}
@@ -357,18 +357,18 @@ namespace bs { namespace ct
 		executeLayoutTransitions();
 
 		RenderSurfaceMask readMask = getFBReadMask();
-		VulkanRenderPass* renderPass = mFramebuffer->getRenderPass();
+		VulkanRenderPass* renderPass = mFramebuffer->GetRenderPass();
 
 		VkRenderPassBeginInfo renderPassBeginInfo;
 		renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 		renderPassBeginInfo.pNext = nullptr;
-		renderPassBeginInfo.framebuffer = mFramebuffer->getVkFramebuffer();
-		renderPassBeginInfo.renderPass = renderPass->getVkRenderPass(mRenderTargetLoadMask, readMask, mClearMask);
+		renderPassBeginInfo.framebuffer = mFramebuffer->GetVkFramebuffer();
+		renderPassBeginInfo.renderPass = renderPass->GetVkRenderPass(mRenderTargetLoadMask, readMask, mClearMask);
 		renderPassBeginInfo.renderArea.offset.x = 0;
 		renderPassBeginInfo.renderArea.offset.y = 0;
-		renderPassBeginInfo.renderArea.extent.width = mFramebuffer->getWidth();
-		renderPassBeginInfo.renderArea.extent.height = mFramebuffer->getHeight();
-		renderPassBeginInfo.clearValueCount = renderPass->getNumClearEntries(mClearMask);
+		renderPassBeginInfo.renderArea.extent.width = mFramebuffer->GetWidth();
+		renderPassBeginInfo.renderArea.extent.height = mFramebuffer->GetHeight();
+		renderPassBeginInfo.clearValueCount = renderPass->GetNumClearEntries(mClearMask);
 		renderPassBeginInfo.pClearValues = mClearValues.data();
 
 		vkCmdBeginRenderPass(mCmdBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
@@ -385,7 +385,7 @@ namespace bs { namespace ct
 
 		// Execute any queued events
 		for(auto& entry : mQueuedEvents)
-			vkCmdSetEvent(mCmdBuffer, entry->getHandle(), VK_PIPELINE_STAGE_ALL_COMMANDS_BIT);
+			vkCmdSetEvent(mCmdBuffer, entry->GetHandle(), VK_PIPELINE_STAGE_ALL_COMMANDS_BIT);
 
 		mQueuedEvents.clear();
 
@@ -413,18 +413,18 @@ namespace bs { namespace ct
 	void VulkanCmdBuffer::AllocateSemaphores(VkSemaphore* semaphores)
 	{
 		if (mIntraQueueSemaphore != nullptr)
-			mIntraQueueSemaphore->destroy();
+			mIntraQueueSemaphore->Destroy();
 
 		mIntraQueueSemaphore = mDevice.getResourceManager().create<VulkanSemaphore>();
-		semaphores[0] = mIntraQueueSemaphore->getHandle();
+		semaphores[0] = mIntraQueueSemaphore->GetHandle();
 
 		for (UINT32 i = 0; i < BS_MAX_VULKAN_CB_DEPENDENCIES; i++)
 		{
 			if (mInterQueueSemaphores[i] != nullptr)
-				mInterQueueSemaphores[i]->destroy();
+				mInterQueueSemaphores[i]->Destroy();
 
 			mInterQueueSemaphores[i] = mDevice.getResourceManager().create<VulkanSemaphore>();
-			semaphores[i + 1] = mInterQueueSemaphores[i]->getHandle();
+			semaphores[i + 1] = mInterQueueSemaphores[i]->GetHandle();
 		}
 
 		mNumUsedInterQueueSemaphores = 0;
@@ -447,11 +447,11 @@ namespace bs { namespace ct
 		assert(result == VK_SUCCESS);
 
 		// If there are any query resets needed, execute those first
-		VulkanDevice& device = queue->getDevice();
+		VulkanDevice& device = queue->GetDevice();
 		if(!mQueuedQueryResets.empty())
 		{
 			VulkanCmdBuffer* cmdBuffer = device.getCmdBufferPool().getBuffer(mQueueFamily, false);
-			VkCommandBuffer vkCmdBuffer = cmdBuffer->getHandle();
+			VkCommandBuffer vkCmdBuffer = cmdBuffer->GetHandle();
 
 			for (auto& entry : mQueuedQueryResets)
 				entry->reset(vkCmdBuffer);
@@ -470,7 +470,7 @@ namespace bs { namespace ct
 			if (!resource->isExclusive())
 				continue;
 
-			UINT32 currentQueueFamily = resource->getQueueFamily();
+			UINT32 currentQueueFamily = resource->GetQueueFamily();
 			if (currentQueueFamily != (UINT32)-1 && currentQueueFamily != mQueueFamily)
 			{
 				Vector<VkBufferMemoryBarrier>& barriers = mTransitionInfoTemp[currentQueueFamily].bufferBarriers;
@@ -483,7 +483,7 @@ namespace bs { namespace ct
 				barrier.dstAccessMask = 0;
 				barrier.srcQueueFamilyIndex = currentQueueFamily;
 				barrier.dstQueueFamilyIndex = mQueueFamily;
-				barrier.buffer = resource->getHandle();
+				barrier.buffer = resource->GetHandle();
 				barrier.offset = 0;
 				barrier.size = VK_WHOLE_SIZE;
 			}
@@ -496,7 +496,7 @@ namespace bs { namespace ct
 			VulkanImage* resource = static_cast<VulkanImage*>(entry.first);
 			ImageInfo& imageInfo = mImageInfos[entry.second];
 
-			UINT32 currentQueueFamily = resource->getQueueFamily();
+			UINT32 currentQueueFamily = resource->GetQueueFamily();
 			bool queueMismatch = resource->isExclusive() && currentQueueFamily != (UINT32)-1
 				&& currentQueueFamily != mQueueFamily;
 
@@ -510,7 +510,7 @@ namespace bs { namespace ct
 					ImageSubresourceInfo& subresourceInfo = subresourceInfos[i];
 
 					UINT32 startIdx = (UINT32)barriers.size();
-					resource->getBarriers(subresourceInfo.range, barriers);
+					resource->GetBarriers(subresourceInfo.range, barriers);
 
 					for(UINT32 j = startIdx; j < (UINT32)barriers.size(); j++)
 					{
@@ -540,8 +540,8 @@ namespace bs { namespace ct
 					{
 						for (UINT32 face = range.baseArrayLayer; face < faceEnd; face++)
 						{
-							VulkanImageSubresource* subresource = resource->getSubresource(face, mip);
-							if (subresource->getLayout() != initialLayout)
+							VulkanImageSubresource* subresource = resource->GetSubresource(face, mip);
+							if (subresource->GetLayout() != initialLayout)
 							{
 								layoutMismatch = true;
 								break;
@@ -555,13 +555,13 @@ namespace bs { namespace ct
 					if (layoutMismatch)
 					{
 						UINT32 startIdx = (UINT32)localBarriers.size();
-						resource->getBarriers(subresourceInfo.range, localBarriers);
+						resource->GetBarriers(subresourceInfo.range, localBarriers);
 
 						for (UINT32 j = startIdx; j < (UINT32)localBarriers.size(); j++)
 						{
 							VkImageMemoryBarrier& barrier = localBarriers[j];
 
-							barrier.dstAccessMask = resource->getAccessFlags(initialLayout, subresourceInfo.initialReadOnly);
+							barrier.dstAccessMask = resource->GetAccessFlags(initialLayout, subresourceInfo.initialReadOnly);
 							barrier.newLayout = initialLayout;
 						}
 					}
@@ -571,8 +571,8 @@ namespace bs { namespace ct
 				{
 					for (UINT32 face = range.baseArrayLayer; face < faceEnd; face++)
 					{
-						VulkanImageSubresource* subresource = resource->getSubresource(face, mip);
-						subresource->setLayout(subresourceInfo.currentLayout);
+						VulkanImageSubresource* subresource = resource->GetSubresource(face, mip);
+						subresource->SetLayout(subresourceInfo.currentLayout);
 					}
 				}
 			}
@@ -591,7 +591,7 @@ namespace bs { namespace ct
 				continue;
 
 			VulkanCmdBuffer* cmdBuffer = device.getCmdBufferPool().getBuffer(entryQueueFamily, false);
-			VkCommandBuffer vkCmdBuffer = cmdBuffer->getHandle();
+			VkCommandBuffer vkCmdBuffer = cmdBuffer->GetHandle();
 
 			TransitionInfo& barriers = entry.second;
 			UINT32 numImgBarriers = (UINT32)barriers.imageBarriers.size();
@@ -656,10 +656,10 @@ namespace bs { namespace ct
 		// Wait on present (i.e. until the back buffer becomes available) for any swap chains
 		for(auto& entry : mActiveSwapChains)
 		{
-			const SwapChainSurface& surface = entry->getBackBuffer();
+			const SwapChainSurface& surface = entry->GetBackBuffer();
 			if (surface.needsWait)
 			{
-				VulkanSemaphore* semaphore = entry->getBackBuffer().sync;
+				VulkanSemaphore* semaphore = entry->GetBackBuffer().sync;
 
 				if (numSemaphores >= (UINT32)mSemaphoresTemp.size())
 					mSemaphoresTemp.push_back(semaphore);
@@ -680,7 +680,7 @@ namespace bs { namespace ct
 				continue;
 
 			VulkanCmdBuffer* cmdBuffer = device.getCmdBufferPool().getBuffer(mQueueFamily, false);
-			VkCommandBuffer vkCmdBuffer = cmdBuffer->getHandle();
+			VkCommandBuffer vkCmdBuffer = cmdBuffer->GetHandle();
 
 			TransitionInfo& barriers = entry.second;
 			UINT32 numImgBarriers = (UINT32)barriers.imageBarriers.size();
@@ -705,7 +705,7 @@ namespace bs { namespace ct
 		queue->queueSubmit(this, mSemaphoresTemp.data(), numSemaphores);
 		queue->submitQueued();
 
-		mGlobalQueueIdx = CommandSyncMask::getGlobalQueueIdx(queue->getType(), queueIdx);
+		mGlobalQueueIdx = CommandSyncMask::getGlobalQueueIdx(queue->GetType(), queueIdx);
 		for (auto& entry : mResources)
 		{
 			ResourceUseHandle& useHandle = entry.second;
@@ -746,7 +746,7 @@ namespace bs { namespace ct
 		}
 
 		// Note: Uncomment for debugging only, prevents any device concurrency issues.
-		// vkQueueWaitIdle(queue->getHandle());
+		// vkQueueWaitIdle(queue->GetHandle());
 
 		// Clear vectors but don't clear the actual map, as we want to re-use the memory since we expect queue family
 		// indices to be the same
@@ -864,7 +864,7 @@ namespace bs { namespace ct
 		VulkanSwapChain* swapChain = nullptr;
 		if(rt != nullptr)
 		{
-			if (rt->getProperties().isWindow)
+			if (rt->GetProperties().isWindow)
 			{
 #if BS_PLATFORM == BS_PLATFORM_WIN32
 				Win32RenderWindow* window = static_cast<Win32RenderWindow*>(rt.get());
@@ -875,11 +875,11 @@ namespace bs { namespace ct
 #endif
 				window->acquireBackBuffer();
 
-				rt->getCustomAttribute("SC", &swapChain);
+				rt->GetCustomAttribute("SC", &swapChain);
 				mActiveSwapChains.insert(swapChain);
 			}
 
-			rt->getCustomAttribute("FB", &newFB);
+			rt->GetCustomAttribute("FB", &newFB);
 		}
 		else
 		{
@@ -895,7 +895,7 @@ namespace bs { namespace ct
 			BS_LOG(Warning, RenderBackend, "setRenderTarget() invalid load mask, depth enabled but stencil disabled. "
 				"This is not supported. Both will be loaded.");
 
-			loadMask.set(RT_STENCIL);
+			loadMask.Set(RT_STENCIL);
 		}
 
 		if (!loadMask.isSet(RT_DEPTH) && loadMask.isSet(RT_STENCIL))
@@ -903,7 +903,7 @@ namespace bs { namespace ct
 			BS_LOG(Warning, RenderBackend, "setRenderTarget() invalid load mask, stencil enabled but depth disabled. "
 				"This is not supported. Both will be loaded.");
 
-			loadMask.set(RT_DEPTH);
+			loadMask.Set(RT_DEPTH);
 		}
 
 		if (mFramebuffer == newFB && mRenderTargetReadOnlyFlags == readOnlyFlags && mRenderTargetLoadMask == loadMask)
@@ -921,11 +921,11 @@ namespace bs { namespace ct
 		// Reset isFBAttachment flags for subresources from the old framebuffer
 		if(mFramebuffer != nullptr)
 		{
-			VulkanRenderPass* renderPass = mFramebuffer->getRenderPass();
-			UINT32 numColorAttachments = renderPass->getNumColorAttachments();
+			VulkanRenderPass* renderPass = mFramebuffer->GetRenderPass();
+			UINT32 numColorAttachments = renderPass->GetNumColorAttachments();
 			for(UINT32 i = 0; i < numColorAttachments; i++)
 			{
-				const VulkanFramebufferAttachment& fbAttachment = mFramebuffer->getColorAttachment(i);
+				const VulkanFramebufferAttachment& fbAttachment = mFramebuffer->GetColorAttachment(i);
 				UINT32 imageInfoIdx = mImages[fbAttachment.image];
 				ImageInfo& imageInfo = mImageInfos[imageInfoIdx];
 
@@ -941,7 +941,7 @@ namespace bs { namespace ct
 
 			if(renderPass->hasDepthAttachment())
 			{
-				const VulkanFramebufferAttachment& fbAttachment = mFramebuffer->getDepthStencilAttachment();
+				const VulkanFramebufferAttachment& fbAttachment = mFramebuffer->GetDepthStencilAttachment();
 				UINT32 imageInfoIdx = mImages[fbAttachment.image];
 				ImageInfo& imageInfo = mImageInfos[imageInfoIdx];
 
@@ -989,7 +989,7 @@ namespace bs { namespace ct
 		if (buffers == 0 || mFramebuffer == nullptr)
 			return;
 
-		VulkanRenderPass* renderPass = mFramebuffer->getRenderPass();
+		VulkanRenderPass* renderPass = mFramebuffer->GetRenderPass();
 
 		// Add clear command if currently in render pass
 		if (isInRenderPass())
@@ -1000,10 +1000,10 @@ namespace bs { namespace ct
 			UINT32 attachmentIdx = 0;
 			if ((buffers & FBT_COLOR) != 0)
 			{
-				UINT32 numColorAttachments = renderPass->getNumColorAttachments();
+				UINT32 numColorAttachments = renderPass->GetNumColorAttachments();
 				for (UINT32 i = 0; i < numColorAttachments; i++)
 				{
-					const VulkanFramebufferAttachment& attachment = mFramebuffer->getColorAttachment(i);
+					const VulkanFramebufferAttachment& attachment = mFramebuffer->GetColorAttachment(i);
 
 					if (((1 << attachment.index) & targetMask) == 0)
 						continue;
@@ -1055,7 +1055,7 @@ namespace bs { namespace ct
 
 					attachments[attachmentIdx].colorAttachment = 0;
 
-					UINT32 curBaseLayer = mFramebuffer->getDepthStencilAttachment().baseLayer;
+					UINT32 curBaseLayer = mFramebuffer->GetDepthStencilAttachment().baseLayer;
 					if (attachmentIdx == 0)
 						baseLayer = curBaseLayer;
 					else
@@ -1079,7 +1079,7 @@ namespace bs { namespace ct
 
 			VkClearRect clearRect;
 			clearRect.baseArrayLayer = baseLayer;
-			clearRect.layerCount = mFramebuffer->getNumLayers();
+			clearRect.layerCount = mFramebuffer->GetNumLayers();
 			clearRect.rect.offset.x = area.x;
 			clearRect.rect.offset.y = area.y;
 			clearRect.rect.extent.width = area.width;
@@ -1093,12 +1093,12 @@ namespace bs { namespace ct
 			ClearMask clearMask;
 			std::array<VkClearValue, BS_MAX_MULTIPLE_RENDER_TARGETS + 1> clearValues = mClearValues;
 
-			UINT32 numColorAttachments = renderPass->getNumColorAttachments();
+			UINT32 numColorAttachments = renderPass->GetNumColorAttachments();
 			if ((buffers & FBT_COLOR) != 0)
 			{
 				for (UINT32 i = 0; i < numColorAttachments; i++)
 				{
-					const VulkanFramebufferAttachment& attachment = mFramebuffer->getColorAttachment(i);
+					const VulkanFramebufferAttachment& attachment = mFramebuffer->GetColorAttachment(i);
 
 					if (((1 << attachment.index) & targetMask) == 0)
 						continue;
@@ -1152,17 +1152,17 @@ namespace bs { namespace ct
 
 	void VulkanCmdBuffer::ClearRenderTarget(UINT32 buffers, const Color& color, float depth, UINT16 stencil, UINT8 targetMask)
 	{
-		Rect2I area(0, 0, mFramebuffer->getWidth(), mFramebuffer->getHeight());
+		Rect2I area(0, 0, mFramebuffer->GetWidth(), mFramebuffer->GetHeight());
 		clearViewport(area, buffers, color, depth, stencil, targetMask);
 	}
 
 	void VulkanCmdBuffer::ClearViewport(UINT32 buffers, const Color& color, float depth, UINT16 stencil, UINT8 targetMask)
 	{
 		Rect2I area;
-		area.x = (UINT32)(mViewport.x * mFramebuffer->getWidth());
-		area.y = (UINT32)(mViewport.y * mFramebuffer->getHeight());
-		area.width = (UINT32)(mViewport.width * mFramebuffer->getWidth());
-		area.height = (UINT32)(mViewport.height * mFramebuffer->getHeight());
+		area.x = (UINT32)(mViewport.x * mFramebuffer->GetWidth());
+		area.y = (UINT32)(mViewport.y * mFramebuffer->GetHeight());
+		area.width = (UINT32)(mViewport.width * mFramebuffer->GetWidth());
+		area.height = (UINT32)(mViewport.height * mFramebuffer->GetHeight());
 
 		clearViewport(area, buffers, color, depth, stencil, targetMask);
 	}
@@ -1276,7 +1276,7 @@ namespace bs { namespace ct
 		if (mGraphicsPipeline == nullptr)
 			return false;
 
-		SPtr<VertexDeclaration> inputDecl = mGraphicsPipeline->getInputDeclaration();
+		SPtr<VertexDeclaration> inputDecl = mGraphicsPipeline->GetInputDeclaration();
 		if (inputDecl == nullptr)
 			return false;
 
@@ -1285,21 +1285,21 @@ namespace bs { namespace ct
 
 	bool VulkanCmdBuffer::BindGraphicsPipeline()
 	{
-		SPtr<VertexDeclaration> inputDecl = mGraphicsPipeline->getInputDeclaration();
+		SPtr<VertexDeclaration> inputDecl = mGraphicsPipeline->GetInputDeclaration();
 		SPtr<VulkanVertexInput> vertexInput = VulkanVertexInputManager::Instance().getVertexInfo(mVertexDecl, inputDecl);
 
-		VulkanRenderPass* renderPass = mFramebuffer->getRenderPass();
-		VulkanPipeline* pipeline = mGraphicsPipeline->getPipeline(mDevice.getIndex(), renderPass,
+		VulkanRenderPass* renderPass = mFramebuffer->GetRenderPass();
+		VulkanPipeline* pipeline = mGraphicsPipeline->GetPipeline(mDevice.getIndex(), renderPass,
 			mRenderTargetReadOnlyFlags, mDrawOp, vertexInput);
 
 		if (pipeline == nullptr)
 			return false;
 
 		// Check that pipeline matches the read-only state of any framebuffer attachments
-		UINT32 numColorAttachments = renderPass->getNumColorAttachments();
+		UINT32 numColorAttachments = renderPass->GetNumColorAttachments();
 		for (UINT32 i = 0; i < numColorAttachments; i++)
 		{
-			const VulkanFramebufferAttachment& fbAttachment = mFramebuffer->getColorAttachment(i);
+			const VulkanFramebufferAttachment& fbAttachment = mFramebuffer->GetColorAttachment(i);
 			ImageSubresourceInfo& subresourceInfo = findSubresourceInfo(fbAttachment.image, fbAttachment.surface.face,
 				fbAttachment.surface.mipLevel);
 
@@ -1312,7 +1312,7 @@ namespace bs { namespace ct
 
 		if (renderPass->hasDepthAttachment())
 		{
-			const VulkanFramebufferAttachment& fbAttachment = mFramebuffer->getDepthStencilAttachment();
+			const VulkanFramebufferAttachment& fbAttachment = mFramebuffer->GetDepthStencilAttachment();
 			ImageSubresourceInfo& subresourceInfo = findSubresourceInfo(fbAttachment.image, fbAttachment.surface.face,
 				fbAttachment.surface.mipLevel);
 
@@ -1326,7 +1326,7 @@ namespace bs { namespace ct
 		mGraphicsPipeline->registerPipelineResources(this);
 		registerResource(pipeline, VulkanAccessFlag::Read);
 
-		vkCmdBindPipeline(mCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->getHandle());
+		vkCmdBindPipeline(mCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->GetHandle());
 		bindDynamicStates(true);
 
 		mGfxPipelineRequiresBind = false;
@@ -1338,10 +1338,10 @@ namespace bs { namespace ct
 		if (mViewportRequiresBind || forceAll)
 		{
 			VkViewport viewport;
-			viewport.x = mViewport.x * mFramebuffer->getWidth();
-			viewport.y = mViewport.y * mFramebuffer->getHeight();
-			viewport.width = mViewport.width * mFramebuffer->getWidth();
-			viewport.height = mViewport.height * mFramebuffer->getHeight();
+			viewport.x = mViewport.x * mFramebuffer->GetWidth();
+			viewport.y = mViewport.y * mFramebuffer->GetHeight();
+			viewport.width = mViewport.width * mFramebuffer->GetWidth();
+			viewport.height = mViewport.height * mFramebuffer->GetHeight();
 			viewport.minDepth = 0.0f;
 			viewport.maxDepth = 1.0f;
 
@@ -1369,8 +1369,8 @@ namespace bs { namespace ct
 			{
 				scissorRect.offset.x = 0;
 				scissorRect.offset.y = 0;
-				scissorRect.extent.width = mFramebuffer->getWidth();
-				scissorRect.extent.height = mFramebuffer->getHeight();
+				scissorRect.extent.width = mFramebuffer->GetWidth();
+				scissorRect.extent.height = mFramebuffer->GetHeight();
 			}
 
 			vkCmdSetScissor(mCmdBuffer, 0, 1, &scissorRect);
@@ -1390,10 +1390,10 @@ namespace bs { namespace ct
 				bool validBuffer = false;
 				if (vertexBuffer != nullptr)
 				{
-					VulkanBuffer* resource = vertexBuffer->getResource(mDevice.getIndex());
+					VulkanBuffer* resource = vertexBuffer->GetResource(mDevice.getIndex());
 					if (resource != nullptr)
 					{
-						mVertexBuffersTemp[curIdx] = resource->getHandle();
+						mVertexBuffersTemp[curIdx] = resource->GetHandle();
 
 						registerBuffer(resource, BufferUseFlagBits::Vertex, VulkanAccessFlag::Read);
 
@@ -1434,11 +1434,11 @@ namespace bs { namespace ct
 		VkIndexType indexType = VK_INDEX_TYPE_UINT32;
 		if (mIndexBuffer != nullptr)
 		{
-			VulkanBuffer* resource = mIndexBuffer->getResource(mDevice.getIndex());
+			VulkanBuffer* resource = mIndexBuffer->GetResource(mDevice.getIndex());
 			if (resource != nullptr)
 			{
-				vkBuffer = resource->getHandle();
-				indexType = VulkanUtility::getIndexType(mIndexBuffer->getProperties().getType());
+				vkBuffer = resource->GetHandle();
+				indexType = VulkanUtility::getIndexType(mIndexBuffer->GetProperties().getType());
 
 				registerBuffer(resource, BufferUseFlagBits::Index, VulkanAccessFlag::Read);
 			}
@@ -1453,7 +1453,7 @@ namespace bs { namespace ct
 		{
 			if (mBoundParams != nullptr)
 			{
-				mNumBoundDescriptorSets = mBoundParams->getNumSets();
+				mNumBoundDescriptorSets = mBoundParams->GetNumSets();
 				mBoundParams->prepareForBind(*this, mDescriptorSetsTemp);
 			}
 			else
@@ -1489,12 +1489,12 @@ namespace bs { namespace ct
 				barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
 				barrier.pNext = nullptr;
 				barrier.srcAccessMask = 0; // Not relevant for layout transition
-				barrier.dstAccessMask = image->getAccessFlags(subresourceInfo.requiredLayout, isReadOnly);
+				barrier.dstAccessMask = image->GetAccessFlags(subresourceInfo.requiredLayout, isReadOnly);
 				barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 				barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 				barrier.oldLayout = subresourceInfo.currentLayout;
 				barrier.newLayout = subresourceInfo.requiredLayout;
-				barrier.image = image->getHandle();
+				barrier.image = image->GetHandle();
 				barrier.subresourceRange = subresourceInfo.range;
 
 				subresourceInfo.currentLayout = subresourceInfo.requiredLayout;
@@ -1545,7 +1545,7 @@ namespace bs { namespace ct
 			barrier.srcAccessMask = mMemoryBarrierSrcAccess;
 			barrier.dstAccessMask = mMemoryBarrierDstAccess;
 
-			vkCmdPipelineBarrier(getHandle(),
+			vkCmdPipelineBarrier(GetHandle(),
 				mMemoryBarrierSrcStages,
 				mMemoryBarrierDstStages,
 				0, 1, &barrier,
@@ -1554,7 +1554,7 @@ namespace bs { namespace ct
 		}
 		else
 		{
-			vkCmdPipelineBarrier(getHandle(),
+			vkCmdPipelineBarrier(GetHandle(),
 				mMemoryBarrierSrcStages,
 				mMemoryBarrierDstStages,
 				0, 0, nullptr,
@@ -1590,11 +1590,11 @@ namespace bs { namespace ct
 		if (mFramebuffer == nullptr)
 			return;
 
-		VulkanRenderPass* renderPass = mFramebuffer->getRenderPass();
-		UINT32 numColorAttachments = renderPass->getNumColorAttachments();
+		VulkanRenderPass* renderPass = mFramebuffer->GetRenderPass();
+		UINT32 numColorAttachments = renderPass->GetNumColorAttachments();
 		for (UINT32 i = 0; i < numColorAttachments; i++)
 		{
-			const VulkanFramebufferAttachment& fbAttachment = mFramebuffer->getColorAttachment(i);
+			const VulkanFramebufferAttachment& fbAttachment = mFramebuffer->GetColorAttachment(i);
 			ImageSubresourceInfo& subresourceInfo = findSubresourceInfo(fbAttachment.image, fbAttachment.surface.face,
 																		fbAttachment.surface.mipLevel);
 
@@ -1604,7 +1604,7 @@ namespace bs { namespace ct
 
 		if (renderPass->hasDepthAttachment())
 		{
-			const VulkanFramebufferAttachment& fbAttachment = mFramebuffer->getDepthStencilAttachment();
+			const VulkanFramebufferAttachment& fbAttachment = mFramebuffer->GetDepthStencilAttachment();
 			ImageSubresourceInfo& subresourceInfo = findSubresourceInfo(fbAttachment.image, fbAttachment.surface.face,
 																		fbAttachment.surface.mipLevel);
 
@@ -1620,18 +1620,18 @@ namespace bs { namespace ct
 		executeWriteHazardBarrier();
 		executeLayoutTransitions();
 
-		VulkanRenderPass* renderPass = mFramebuffer->getRenderPass();
+		VulkanRenderPass* renderPass = mFramebuffer->GetRenderPass();
 
 		VkRenderPassBeginInfo renderPassBeginInfo;
 		renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 		renderPassBeginInfo.pNext = nullptr;
-		renderPassBeginInfo.framebuffer = mFramebuffer->getVkFramebuffer();
-		renderPassBeginInfo.renderPass = renderPass->getVkRenderPass(mRenderTargetLoadMask, RT_NONE, mClearMask);
+		renderPassBeginInfo.framebuffer = mFramebuffer->GetVkFramebuffer();
+		renderPassBeginInfo.renderPass = renderPass->GetVkRenderPass(mRenderTargetLoadMask, RT_NONE, mClearMask);
 		renderPassBeginInfo.renderArea.offset.x = mClearArea.x;
 		renderPassBeginInfo.renderArea.offset.y = mClearArea.y;
 		renderPassBeginInfo.renderArea.extent.width = mClearArea.width;
 		renderPassBeginInfo.renderArea.extent.height = mClearArea.height;
-		renderPassBeginInfo.clearValueCount = renderPass->getNumClearEntries(mClearMask);
+		renderPassBeginInfo.clearValueCount = renderPass->GetNumClearEntries(mClearMask);
 		renderPassBeginInfo.pClearValues = mClearValues.data();
 
 		vkCmdBeginRenderPass(mCmdBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
@@ -1672,7 +1672,7 @@ namespace bs { namespace ct
 			if (mNumBoundDescriptorSets > 0)
 			{
 				UINT32 deviceIdx = mDevice.getIndex();
-				VkPipelineLayout pipelineLayout = mGraphicsPipeline->getPipelineLayout(deviceIdx);
+				VkPipelineLayout pipelineLayout = mGraphicsPipeline->GetPipelineLayout(deviceIdx);
 
 				vkCmdBindDescriptorSets(mCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0,
 										mNumBoundDescriptorSets, mDescriptorSetsTemp, 0, nullptr);
@@ -1718,7 +1718,7 @@ namespace bs { namespace ct
 			if (mNumBoundDescriptorSets > 0)
 			{
 				UINT32 deviceIdx = mDevice.getIndex();
-				VkPipelineLayout pipelineLayout = mGraphicsPipeline->getPipelineLayout(deviceIdx);
+				VkPipelineLayout pipelineLayout = mGraphicsPipeline->GetPipelineLayout(deviceIdx);
 
 				vkCmdBindDescriptorSets(mCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0,
 										mNumBoundDescriptorSets, mDescriptorSetsTemp, 0, nullptr);
@@ -1754,14 +1754,14 @@ namespace bs { namespace ct
 		UINT32 deviceIdx = mDevice.getIndex();
 		if(mCmpPipelineRequiresBind)
 		{
-			VulkanPipeline* pipeline = mComputePipeline->getPipeline(deviceIdx);
+			VulkanPipeline* pipeline = mComputePipeline->GetPipeline(deviceIdx);
 			if (pipeline == nullptr)
 				return;
 
 			registerResource(pipeline, VulkanAccessFlag::Read);
 			mComputePipeline->registerPipelineResources(this);
 
-			vkCmdBindPipeline(mCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline->getHandle());
+			vkCmdBindPipeline(mCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline->GetHandle());
 			mCmpPipelineRequiresBind = false;
 		}
 
@@ -1769,7 +1769,7 @@ namespace bs { namespace ct
 		{
 			if (mNumBoundDescriptorSets > 0)
 			{
-				VkPipelineLayout pipelineLayout = mComputePipeline->getPipelineLayout(deviceIdx);
+				VkPipelineLayout pipelineLayout = mComputePipeline->GetPipelineLayout(deviceIdx);
 				vkCmdBindDescriptorSets(mCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipelineLayout, 0,
 										mNumBoundDescriptorSets, mDescriptorSetsTemp, 0, nullptr);
 			}
@@ -1823,7 +1823,7 @@ namespace bs { namespace ct
 		barrier.offset = 0;
 		barrier.size = VK_WHOLE_SIZE;
 
-		vkCmdPipelineBarrier(getHandle(),
+		vkCmdPipelineBarrier(GetHandle(),
 							 srcStage,
 							 dstStage,
 							 0, 0, nullptr,
@@ -1849,7 +1849,7 @@ namespace bs { namespace ct
 		VkPipelineStageFlags srcStage = getPipelineStageFlags(srcAccessFlags);
 		VkPipelineStageFlags dstStage = getPipelineStageFlags(dstAccessFlags);
 		
-		vkCmdPipelineBarrier(getHandle(),
+		vkCmdPipelineBarrier(GetHandle(),
 							 srcStage,
 							 dstStage,
 							 0, 0, nullptr,
@@ -1865,18 +1865,18 @@ namespace bs { namespace ct
 
 		// The assumption is that all the subresources in the range will have the same layout, as this should be handled
 		// by registerResource(), or by external code (in the case of transfers). So we only check the first subresource.
-		VulkanImageSubresource* subresource = image->getSubresource(face, mip);
+		VulkanImageSubresource* subresource = image->GetSubresource(face, mip);
 
 		auto iterFind = mImages.find(image);
 		if (iterFind == mImages.end())
-			return subresource->getLayout();
+			return subresource->GetLayout();
 
 		UINT32 imageInfoIdx = iterFind->second;
 		ImageInfo& imageInfo = mImageInfos[imageInfoIdx];
 
 		VulkanRenderPass* renderPass = nullptr;
 		if(mFramebuffer)
-			renderPass = mFramebuffer->getRenderPass();
+			renderPass = mFramebuffer->GetRenderPass();
 
 		ImageSubresourceInfo* subresourceInfos = &mSubresourceInfoStorage[imageInfo.subresourceInfoIdx];
 		for(UINT32 i = 0; i < imageInfo.numSubresourceInfos; i++)
@@ -1891,7 +1891,7 @@ namespace bs { namespace ct
 					RenderSurfaceMask readMask = getFBReadMask();
 
 					// Is it a depth-stencil attachment?
-					if(renderPass->hasDepthAttachment() && mFramebuffer->getDepthStencilAttachment().image == image)
+					if(renderPass->hasDepthAttachment() && mFramebuffer->GetDepthStencilAttachment().image == image)
 					{
 						if (readMask.isSet(RT_DEPTH))
 						{
@@ -1911,10 +1911,10 @@ namespace bs { namespace ct
 					}
 					else // It is a color attachment
 					{
-						UINT32 numColorAttachments = renderPass->getNumColorAttachments();
+						UINT32 numColorAttachments = renderPass->GetNumColorAttachments();
 						for (UINT32 j = 0; j < numColorAttachments; j++)
 						{
-							const VulkanFramebufferAttachment& attachment = mFramebuffer->getColorAttachment(j);
+							const VulkanFramebufferAttachment& attachment = mFramebuffer->GetColorAttachment(j);
 
 							if (attachment.image == image)
 							{
@@ -1931,7 +1931,7 @@ namespace bs { namespace ct
 			}
 		}
 
-		return subresource->getLayout();
+		return subresource->GetLayout();
 	}
 
 	void VulkanCmdBuffer::RegisterResource(VulkanResource* res, VulkanAccessFlags flags)
@@ -2206,7 +2206,7 @@ namespace bs { namespace ct
 				UINT32 layer = range.baseArrayLayer + i;
 				UINT32 mipLevel = range.baseMipLevel + j;
 
-				registerResource(image->getSubresource(layer, mipLevel), access);
+				registerResource(image->GetSubresource(layer, mipLevel), access);
 			}
 		}
 	}
@@ -2335,11 +2335,11 @@ namespace bs { namespace ct
 		}
 
 		// Register any sub-resources
-		VulkanRenderPass* renderPass = res->getRenderPass();
-		UINT32 numColorAttachments = renderPass->getNumColorAttachments();
+		VulkanRenderPass* renderPass = res->GetRenderPass();
+		UINT32 numColorAttachments = renderPass->GetNumColorAttachments();
 		for (UINT32 i = 0; i < numColorAttachments; i++)
 		{
-			const VulkanFramebufferAttachment& attachment = res->getColorAttachment(i);
+			const VulkanFramebufferAttachment& attachment = res->GetColorAttachment(i);
 
 			// If image is being loaded, we need to transfer it to correct layout, otherwise it doesn't matter. We're using
 			// these values because that's what VulkanFramebuffer expects as initialLayout.
@@ -2351,14 +2351,14 @@ namespace bs { namespace ct
 
 			VulkanAccessFlag access = ((readMask & FBT_COLOR) != 0) ? VulkanAccessFlag::Read : VulkanAccessFlag::Write;
 
-			VkImageSubresourceRange range = attachment.image->getRange(attachment.surface);
+			VkImageSubresourceRange range = attachment.image->GetRange(attachment.surface);
 			registerImageFramebuffer(attachment.image, range, layout, attachment.finalLayout, access,
 				VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
 		}
 
 		if(renderPass->hasDepthAttachment())
 		{
-			const VulkanFramebufferAttachment& attachment = res->getDepthStencilAttachment();
+			const VulkanFramebufferAttachment& attachment = res->GetDepthStencilAttachment();
 
 			// If image is being loaded, we need to transfer it to correct layout, otherwise it doesn't matter. We're using
 			// these values because that's what VulkanFramebuffer expects as initialLayout.
@@ -2371,7 +2371,7 @@ namespace bs { namespace ct
 			VulkanAccessFlag access = (((readMask & FBT_DEPTH) != 0) && ((readMask & FBT_STENCIL) != 0)) ?
 				VulkanAccessFlag::Read : VulkanAccessFlag::Write;
 
-			VkImageSubresourceRange range = attachment.image->getRange(attachment.surface);
+			VkImageSubresourceRange range = attachment.image->GetRange(attachment.surface);
 			registerImageFramebuffer(attachment.image, range, layout, attachment.finalLayout, access,
 				VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT);
 		}
@@ -2652,38 +2652,38 @@ namespace bs { namespace ct
 	RenderSurfaceMask VulkanCmdBuffer::GetFbReadMask()
 	{
 		// Check if any frame-buffer attachments are also used as shader inputs, in which case we make them read-only
-		VulkanRenderPass* renderPass = mFramebuffer->getRenderPass();
+		VulkanRenderPass* renderPass = mFramebuffer->GetRenderPass();
 		RenderSurfaceMask readMask = RT_NONE;
 
-		UINT32 numColorAttachments = renderPass->getNumColorAttachments();
+		UINT32 numColorAttachments = renderPass->GetNumColorAttachments();
 		for(UINT32 i = 0; i < numColorAttachments; i++)
 		{
-			const VulkanFramebufferAttachment& fbAttachment = mFramebuffer->getColorAttachment(i);
+			const VulkanFramebufferAttachment& fbAttachment = mFramebuffer->GetColorAttachment(i);
 			ImageSubresourceInfo& subresourceInfo = findSubresourceInfo(fbAttachment.image, fbAttachment.surface.face,
 				fbAttachment.surface.mipLevel);
 
 			bool readOnly = subresourceInfo.useFlags.isSet(ImageUseFlagBits::Shader);
 
 			if(readOnly)
-				readMask.set((RenderSurfaceMaskBits)(1 << i));
+				readMask.Set((RenderSurfaceMaskBits)(1 << i));
 		}
 
 		if (renderPass->hasDepthAttachment())
 		{
-			const VulkanFramebufferAttachment& fbAttachment = mFramebuffer->getDepthStencilAttachment();
+			const VulkanFramebufferAttachment& fbAttachment = mFramebuffer->GetDepthStencilAttachment();
 			ImageSubresourceInfo& subresourceInfo = findSubresourceInfo(fbAttachment.image, fbAttachment.surface.face,
 				fbAttachment.surface.mipLevel);
 
 			bool readOnly = subresourceInfo.useFlags.isSet(ImageUseFlagBits::Shader);
 
 			if (readOnly)
-				readMask.set(RT_DEPTH);
+				readMask.Set(RT_DEPTH);
 
 			if ((mRenderTargetReadOnlyFlags & FBT_DEPTH) != 0)
-				readMask.set(RT_DEPTH);
+				readMask.Set(RT_DEPTH);
 
 			if ((mRenderTargetReadOnlyFlags & FBT_STENCIL) != 0)
-				readMask.set(RT_STENCIL);
+				readMask.Set(RT_STENCIL);
 		}
 
 		return readMask;
@@ -2720,7 +2720,7 @@ namespace bs { namespace ct
 		// Interrupt any in-progress queries (no in-progress queries allowed during command buffer submit)
 		Vector<VulkanTimerQuery*> timerQueries;
 		Vector<VulkanOcclusionQuery*> occlusionQueries;
-		mBuffer->getInProgressQueries(timerQueries, occlusionQueries);
+		mBuffer->GetInProgressQueries(timerQueries, occlusionQueries);
 
 		if(!timerQueries.empty() || !occlusionQueries.empty())
 		{

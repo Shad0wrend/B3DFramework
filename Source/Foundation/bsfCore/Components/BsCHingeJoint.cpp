@@ -10,13 +10,13 @@ namespace bs
 	CHingeJoint::CHingeJoint()
 		: CJoint(mDesc)
 	{
-		setName("HingeJoint");
+		SetName("HingeJoint");
 	}
 
 	CHingeJoint::CHingeJoint(const HSceneObject& parent)
 		: CJoint(parent, mDesc)
 	{
-		setName("HingeJoint");
+		SetName("HingeJoint");
 	}
 
 	Radian CHingeJoint::GetAngle() const
@@ -89,8 +89,8 @@ namespace bs
 
 	SPtr<Joint> CHingeJoint::CreateInternal()
 	{
-		const SPtr<SceneInstance>& scene = SO()->getScene();
-		SPtr<Joint> joint = HingeJoint::Create(*scene->getPhysicsScene(), mDesc);
+		const SPtr<SceneInstance>& scene = SO()->GetScene();
+		SPtr<Joint> joint = HingeJoint::Create(*scene->GetPhysicsScene(), mDesc);
 
 		joint->SetOwnerInternal(PhysicsOwnerType::Component, this);
 		return joint;

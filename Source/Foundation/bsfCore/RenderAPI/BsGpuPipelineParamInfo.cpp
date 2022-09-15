@@ -87,9 +87,9 @@ namespace bs
 			totalNumSlots += numSlotsPerSet[i];
 
 		mAlloc.Reserve<SetInfo>(mNumSets)
-			.reserve<UINT32>(totalNumSlots)
-			.reserve<ParamType>(totalNumSlots)
-			.reserve<UINT32>(totalNumSlots);
+			.Reserve<UINT32>(totalNumSlots)
+			.Reserve<ParamType>(totalNumSlots)
+			.Reserve<UINT32>(totalNumSlots);
 
 		for (UINT32 i = 0; i < (UINT32)ParamType::Count; i++)
 			mAlloc.Reserve<ResourceInfo>(mNumElementsPerType[i]);
@@ -108,18 +108,18 @@ namespace bs
 
 		for(UINT32 i = 0; i < mNumSets; i++)
 		{
-			mSetInfos[i].slotIndices = mAlloc.alloc<UINT32>(mSetInfos[i].numSlots);
+			mSetInfos[i].slotIndices = mAlloc.Alloc<UINT32>(mSetInfos[i].numSlots);
 			memset(mSetInfos[i].slotIndices, -1, sizeof(UINT32) * mSetInfos[i].numSlots);
 
-			mSetInfos[i].slotTypes = mAlloc.alloc<ParamType>(mSetInfos[i].numSlots);
+			mSetInfos[i].slotTypes = mAlloc.Alloc<ParamType>(mSetInfos[i].numSlots);
 
-			mSetInfos[i].slotSamplers = mAlloc.alloc<UINT32>(mSetInfos[i].numSlots);
+			mSetInfos[i].slotSamplers = mAlloc.Alloc<UINT32>(mSetInfos[i].numSlots);
 			memset(mSetInfos[i].slotSamplers, -1, sizeof(UINT32) * mSetInfos[i].numSlots);
 		}
 
 		for (UINT32 i = 0; i < (UINT32)ParamType::Count; i++)
 		{
-			mResourceInfos[i] = mAlloc.alloc<ResourceInfo>(mNumElementsPerType[i]);
+			mResourceInfos[i] = mAlloc.Alloc<ResourceInfo>(mNumElementsPerType[i]);
 			mNumElementsPerType[i] = 0;
 		}
 
@@ -248,7 +248,7 @@ namespace bs
 		);
 
 		for (UINT32 i = 0; i < numParamDescs; i++)
-			getBinding((GpuProgramType)i, type, name, bindings[i]);
+			GetBinding((GpuProgramType)i, type, name, bindings[i]);
 	}
 
 	void GpuPipelineParamInfoBase::GetBinding(GpuProgramType progType, ParamType type, const String& name,
@@ -304,7 +304,7 @@ namespace bs
 		SPtr<GpuPipelineParamInfo> paramInfo =
 			bs_core_ptr<GpuPipelineParamInfo>(new (bs_alloc<GpuPipelineParamInfo>()) GpuPipelineParamInfo(desc));
 		paramInfo->SetThisPtrInternal(paramInfo);
-		paramInfo->initialize();
+		paramInfo->Initialize();
 
 		return paramInfo;
 	}
@@ -336,7 +336,7 @@ namespace bs
 	SPtr<GpuPipelineParamInfo> GpuPipelineParamInfo::Create(const GPU_PIPELINE_PARAMS_DESC& desc,
 		GpuDeviceFlags deviceMask)
 	{
-		return RenderStateManager::Instance().createPipelineParamInfo(desc, deviceMask);
+		return RenderStateManager::Instance().CreatePipelineParamInfo(desc, deviceMask);
 	}
 	}
 }

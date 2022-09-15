@@ -27,12 +27,12 @@ namespace bs
 
 	void RenderTargetEx::setPriority(const SPtr<RenderTarget>& thisPtr, INT32 priority)
 	{
-		thisPtr->setPriority(priority);
+		thisPtr->SetPriority(priority);
 	}
 
 	UINT32 RenderTargetEx::GetSampleCount(const SPtr<RenderTarget>& thisPtr)
 	{
-		return thisPtr->getProperties().multisampleCount;
+		return thisPtr->GetProperties().multisampleCount;
 	}
 
 	SPtr<RenderTexture> RenderTextureEx::Create(PixelFormat format, int width, int height, int numSamples, bool gammaCorrection, bool createDepth, PixelFormat depthStencilFormat)
@@ -72,7 +72,7 @@ namespace bs
 			depthStencilSurfaceDesc.mipLevel = 0;
 			depthStencilSurfaceDesc.numFaces = 1;
 
-			if (!depthStencilSurface.isLoaded())
+			if (!depthStencilSurface.IsLoaded())
 				BS_LOG(Error, RenderBackend, "Render texture must be created using a fully loaded texture.");
 			else
 				depthStencilSurfaceDesc.texture = depthStencilSurface;
@@ -88,7 +88,7 @@ namespace bs
 			surfaceDesc.mipLevel = 0;
 			surfaceDesc.numFaces = 1;
 
-			if (!colorSurfaces[i].isLoaded())
+			if (!colorSurfaces[i].IsLoaded())
 				BS_LOG(Error, RenderBackend, "Render texture must be created using a fully loaded texture.");
 			else
 				surfaceDesc.texture = colorSurfaces[i];
@@ -110,7 +110,7 @@ namespace bs
 
 		for (UINT32 i = 0; i < numColorSurfaces; i++)
 		{
-			HTexture colorTex = thisPtr->getColorTexture(i);
+			HTexture colorTex = thisPtr->GetColorTexture(i);
 
 			if (colorTex != nullptr)
 				output.push_back(colorTex);
@@ -121,11 +121,11 @@ namespace bs
 
 	HTexture RenderTextureEx::GetColorSurface(const SPtr<RenderTexture>& thisPtr)
 	{
-		return thisPtr->getColorTexture(0);
+		return thisPtr->GetColorTexture(0);
 	}
 
 	HTexture RenderTextureEx::GetDepthStencilSurface(const SPtr<RenderTexture>& thisPtr)
 	{
-		return thisPtr->getDepthStencilTexture();
+		return thisPtr->GetDepthStencilTexture();
 	}
 }

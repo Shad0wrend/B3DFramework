@@ -50,19 +50,19 @@ namespace bs
 
 	void ScriptGUIProgressBar::InternalSetPercent(ScriptGUIProgressBar* nativeInstance, float percent)
 	{
-		GUIProgressBar* progressBar = (GUIProgressBar*)nativeInstance->getGUIElement();
-		progressBar->setPercent(percent);
+		GUIProgressBar* progressBar = (GUIProgressBar*)nativeInstance->GetGUIElement();
+		progressBar->SetPercent(percent);
 	}
 
 	float ScriptGUIProgressBar::InternalGetPercent(ScriptGUIProgressBar* nativeInstance)
 	{
-		GUIProgressBar* progressBar = (GUIProgressBar*)nativeInstance->getGUIElement();
-		return progressBar->getPercent();
+		GUIProgressBar* progressBar = (GUIProgressBar*)nativeInstance->GetGUIElement();
+		return progressBar->GetPercent();
 	}
 
 	void ScriptGUIProgressBar::InternalSetTint(ScriptGUIProgressBar* nativeInstance, Color* color)
 	{
-		GUIProgressBar* progressBar = (GUIProgressBar*)nativeInstance->getGUIElement();
-		progressBar->setTint(*color);
+		GUIProgressBar* progressBar = (GUIProgressBar*)nativeInstance->GetGUIElement();
+		progressBar->SetTint(*color);
 	}
 }

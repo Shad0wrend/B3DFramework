@@ -29,7 +29,7 @@ namespace bs { namespace ct
 
 		const UINT32 count;
 		const UINT32 numTiles = count / TILE_SIZE;
-		const UINT32 numGroups = Math::clamp(numTiles, 1U, MAX_NUM_GROUPS);
+		const UINT32 numGroups = Math::Clamp(numTiles, 1U, MAX_NUM_GROUPS);
 
 		const UINT32 tilesPerGroup = numTiles / numGroups;
 		const UINT32 extraTiles = numTiles % numGroups;
@@ -39,10 +39,10 @@ namespace bs { namespace ct
 	/** Set up common defines required by all radix sort shaders. */
 	void initCommonDefines(ShaderDefines& defines)
 	{
-		defines.set("RADIX_NUM_BITS", RADIX_NUM_BITS);
-		defines.set("NUM_THREADS", NUM_THREADS);
-		defines.set("KEYS_PER_LOOP", KEYS_PER_LOOP);
-		defines.set("MAX_NUM_GROUPS", MAX_NUM_GROUPS);
+		defines.Set("RADIX_NUM_BITS", RADIX_NUM_BITS);
+		defines.Set("NUM_THREADS", NUM_THREADS);
+		defines.Set("KEYS_PER_LOOP", KEYS_PER_LOOP);
+		defines.Set("MAX_NUM_GROUPS", MAX_NUM_GROUPS);
 	}
 
 	void runSortTest();
@@ -55,11 +55,11 @@ namespace bs { namespace ct
 	{
 		SPtr<GpuParamBlockBuffer> buffer = gRadixSortParamsDef.createBuffer();
 
-		gRadixSortParamsDef.gTilesPerGroup.set(buffer, props.tilesPerGroup);
-		gRadixSortParamsDef.gNumGroups.set(buffer, props.numGroups);
-		gRadixSortParamsDef.gNumExtraTiles.set(buffer, props.extraTiles);
-		gRadixSortParamsDef.gNumExtraKeys.set(buffer, props.extraKeys);
-		gRadixSortParamsDef.gBitOffset.set(buffer, 0);
+		gRadixSortParamsDef.gTilesPerGroup.Set(buffer, props.tilesPerGroup);
+		gRadixSortParamsDef.gNumGroups.Set(buffer, props.numGroups);
+		gRadixSortParamsDef.gNumExtraTiles.Set(buffer, props.extraTiles);
+		gRadixSortParamsDef.gNumExtraKeys.Set(buffer, props.extraKeys);
+		gRadixSortParamsDef.gBitOffset.Set(buffer, 0);
 
 		return buffer;
 	}
@@ -84,7 +84,7 @@ namespace bs { namespace ct
 		if(bufferProps.getType() != GBT_STANDARD)
 			return INVALID_TYPE_MSG;
 
-		if(bufferProps.getFormat() != BF_32X1U)
+		if(bufferProps.GetFormat() != BF_32X1U)
 			return INVALID_FORMAT_MSG;
 
 		return nullptr;
@@ -104,7 +104,7 @@ namespace bs { namespace ct
 
 	RadixSortClearMat::RadixSortClearMat()
 	{
-		mParams->getBufferParam(GPT_COMPUTE_PROGRAM, "gOutput", mOutputParam);
+		mParams->GetBufferParam(GPT_COMPUTE_PROGRAM, "gOutput", mOutputParam);
 	}
 
 	void RadixSortClearMat::InitDefinesInternal(ShaderDefines& defines)
@@ -116,7 +116,7 @@ namespace bs { namespace ct
 	{
 		BS_RENMAT_PROFILE_BLOCK
 
-		mOutputParam.set(outputOffsets);
+		mOutputParam.Set(outputOffsets);
 
 		bind();
 		RenderAPI::Instance().dispatchCompute(1);
@@ -124,8 +124,8 @@ namespace bs { namespace ct
 
 	RadixSortCountMat::RadixSortCountMat()
 	{
-		mParams->getBufferParam(GPT_COMPUTE_PROGRAM, "gInputKeys", mInputKeysParam);
-		mParams->getBufferParam(GPT_COMPUTE_PROGRAM, "gOutputCounts", mOutputCountsParam);
+		mParams->GetBufferParam(GPT_COMPUTE_PROGRAM, "gInputKeys", mInputKeysParam);
+		mParams->GetBufferParam(GPT_COMPUTE_PROGRAM, "gOutputCounts", mOutputCountsParam);
 	}
 
 	void RadixSortCountMat::InitDefinesInternal(ShaderDefines& defines)
@@ -138,10 +138,10 @@ namespace bs { namespace ct
 	{
 		BS_RENMAT_PROFILE_BLOCK
 
-		mInputKeysParam.set(inputKeys);
-		mOutputCountsParam.set(outputOffsets);
+		mInputKeysParam.Set(inputKeys);
+		mOutputCountsParam.Set(outputOffsets);
 
-		mParams->setParamBlockBuffer("Params", params);
+		mParams->SetParamBlockBuffer("Params", params);
 
 		bind();
 		RenderAPI::Instance().dispatchCompute(numGroups);
@@ -149,8 +149,8 @@ namespace bs { namespace ct
 
 	RadixSortPrefixScanMat::RadixSortPrefixScanMat()
 	{
-		mParams->getBufferParam(GPT_COMPUTE_PROGRAM, "gInputCounts", mInputCountsParam);
-		mParams->getBufferParam(GPT_COMPUTE_PROGRAM, "gOutputOffsets", mOutputOffsetsParam);
+		mParams->GetBufferParam(GPT_COMPUTE_PROGRAM, "gInputCounts", mInputCountsParam);
+		mParams->GetBufferParam(GPT_COMPUTE_PROGRAM, "gOutputOffsets", mOutputOffsetsParam);
 	}
 
 	void RadixSortPrefixScanMat::InitDefinesInternal(ShaderDefines& defines)
@@ -163,10 +163,10 @@ namespace bs { namespace ct
 	{
 		BS_RENMAT_PROFILE_BLOCK
 
-		mInputCountsParam.set(inputCounts);
-		mOutputOffsetsParam.set(outputOffsets);
+		mInputCountsParam.Set(inputCounts);
+		mOutputOffsetsParam.Set(outputOffsets);
 
-		mParams->setParamBlockBuffer("Params", params);
+		mParams->SetParamBlockBuffer("Params", params);
 
 		bind();
 		RenderAPI::Instance().dispatchCompute(1);
@@ -174,11 +174,11 @@ namespace bs { namespace ct
 
 	RadixSortReorderMat::RadixSortReorderMat()
 	{
-		mParams->getBufferParam(GPT_COMPUTE_PROGRAM, "gInputOffsets", mInputOffsetsBufferParam);
-		mParams->getBufferParam(GPT_COMPUTE_PROGRAM, "gInputKeys", mInputKeysBufferParam);
-		mParams->getBufferParam(GPT_COMPUTE_PROGRAM, "gInputValues", mInputValuesBufferParam);
-		mParams->getBufferParam(GPT_COMPUTE_PROGRAM, "gOutputKeys", mOutputKeysBufferParam);
-		mParams->getBufferParam(GPT_COMPUTE_PROGRAM, "gOutputValues", mOutputValuesBufferParam);
+		mParams->GetBufferParam(GPT_COMPUTE_PROGRAM, "gInputOffsets", mInputOffsetsBufferParam);
+		mParams->GetBufferParam(GPT_COMPUTE_PROGRAM, "gInputKeys", mInputKeysBufferParam);
+		mParams->GetBufferParam(GPT_COMPUTE_PROGRAM, "gInputValues", mInputValuesBufferParam);
+		mParams->GetBufferParam(GPT_COMPUTE_PROGRAM, "gOutputKeys", mOutputKeysBufferParam);
+		mParams->GetBufferParam(GPT_COMPUTE_PROGRAM, "gOutputValues", mOutputValuesBufferParam);
 	}
 
 	void RadixSortReorderMat::InitDefinesInternal(ShaderDefines& defines)
@@ -193,13 +193,13 @@ namespace bs { namespace ct
 
 		const UINT32 outputBufferIdx = (inputBufferIdx + 1) % 2;
 
-		mInputOffsetsBufferParam.set(inputPrefix);
-		mInputKeysBufferParam.set(buffers.keys[inputBufferIdx]);
-		mInputValuesBufferParam.set(buffers.values[inputBufferIdx]);
-		mOutputKeysBufferParam.set(buffers.keys[outputBufferIdx]);
-		mOutputValuesBufferParam.set(buffers.values[outputBufferIdx]);
+		mInputOffsetsBufferParam.Set(inputPrefix);
+		mInputKeysBufferParam.Set(buffers.keys[inputBufferIdx]);
+		mInputValuesBufferParam.Set(buffers.values[inputBufferIdx]);
+		mOutputKeysBufferParam.Set(buffers.keys[outputBufferIdx]);
+		mOutputValuesBufferParam.Set(buffers.values[outputBufferIdx]);
 		
-		mParams->setParamBlockBuffer("Params", params);
+		mParams->SetParamBlockBuffer("Params", params);
 
 		bind();
 		RenderAPI::Instance().dispatchCompute(numGroups);
@@ -238,11 +238,11 @@ namespace bs { namespace ct
 		}
 
 		// Check if all buffers have the same size
-		bool validSize = buffers.keys[0]->getSize() == buffers.keys[1]->getSize();
+		bool validSize = buffers.keys[0]->GetSize() == buffers.keys[1]->GetSize();
 		if(buffers.values[0] && buffers.values[1])
 		{
-			validSize = buffers.keys[0]->getSize() == buffers.values[0]->getSize() &&
-				buffers.keys[0]->getSize() == buffers.values[1]->getSize();
+			validSize = buffers.keys[0]->GetSize() == buffers.values[0]->GetSize() &&
+				buffers.keys[0]->GetSize() == buffers.values[1]->GetSize();
 
 		}
 
@@ -261,7 +261,7 @@ namespace bs { namespace ct
 		{
 			if(((KEY_MASK << bitOffset) & keyMask) != 0)
 			{
-				gRadixSortParamsDef.gBitOffset.set(params, bitOffset);
+				gRadixSortParamsDef.gBitOffset.Set(params, bitOffset);
 
 				RadixSortClearMat::get()->execute(mHelperBuffers[0]);
 				RadixSortCountMat::get()->execute(gpuSortProps.numGroups, params, buffers.keys[inputBufferIdx], mHelperBuffers[0]);
@@ -321,10 +321,10 @@ namespace bs { namespace ct
 		const GpuSortProperties gpuSortProps(count);
 		SPtr<GpuParamBlockBuffer> params = createGpuSortParams(gpuSortProps);
 
-		gRadixSortParamsDef.gBitOffset.set(params, bitOffset);
+		gRadixSortParamsDef.gBitOffset.Set(params, bitOffset);
 
 		GpuSortBuffers sortBuffers = GpuSort::createSortBuffers(count);
-		sortBuffers.keys[0]->writeData(0, sortBuffers.keys[0]->getSize(), inputKeys.data(), BWT_DISCARD);
+		sortBuffers.keys[0]->writeData(0, sortBuffers.keys[0]->GetSize(), inputKeys.data(), BWT_DISCARD);
 
 		SPtr<GpuBuffer> helperBuffers[2];
 		helperBuffers[0] = createHelperBuffer();
@@ -458,7 +458,7 @@ namespace bs { namespace ct
 		RenderAPI::Instance().submitCommandBuffer(nullptr);
 
 		// Compare with GPU count
-		const UINT32 helperBufferLength = helperBuffers[0]->getProperties().getElementCount();
+		const UINT32 helperBufferLength = helperBuffers[0]->GetProperties().getElementCount();
 		Vector<UINT32> bufferCounts(helperBufferLength);
 		helperBuffers[0]->readData(0, helperBufferLength * sizeof(UINT32), bufferCounts.data());
 

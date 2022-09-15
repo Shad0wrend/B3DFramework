@@ -66,7 +66,7 @@ namespace bs
 			return TID_SerializedGpuProgramData;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return bs_shared_ptr_new<SerializedGpuProgramData>();
 		}
@@ -179,29 +179,29 @@ namespace bs
 				if (prog)
 				{
 					prog->blockUntilCoreInitialized();
-					desc.bytecode = prog->getCore()->getBytecode();
+					desc.bytecode = prog->GetCore()->GetBytecode();
 				}
 			};
 
-			const SPtr<GraphicsPipelineState>& graphicsPipeline = pass->getGraphicsPipelineState();
+			const SPtr<GraphicsPipelineState>& graphicsPipeline = pass->GetGraphicsPipelineState();
 			if(graphicsPipeline)
 			{
-				initBytecode(graphicsPipeline->getVertexProgram(), mVertexProgramDesc);
-				initBytecode(graphicsPipeline->getFragmentProgram(), mFragmentProgramDesc);
-				initBytecode(graphicsPipeline->getGeometryProgram(), mGeometryProgramDesc);
-				initBytecode(graphicsPipeline->getHullProgram(), mHullProgramDesc);
-				initBytecode(graphicsPipeline->getDomainProgram(), mDomainProgramDesc);
+				initBytecode(graphicsPipeline->GetVertexProgram(), mVertexProgramDesc);
+				initBytecode(graphicsPipeline->GetFragmentProgram(), mFragmentProgramDesc);
+				initBytecode(graphicsPipeline->GetGeometryProgram(), mGeometryProgramDesc);
+				initBytecode(graphicsPipeline->GetHullProgram(), mHullProgramDesc);
+				initBytecode(graphicsPipeline->GetDomainProgram(), mDomainProgramDesc);
 			}
 			
-			const SPtr<ComputePipelineState>& computePipeline = pass->getComputePipelineState();
+			const SPtr<ComputePipelineState>& computePipeline = pass->GetComputePipelineState();
 			if(computePipeline)
-				initBytecode(computePipeline->getProgram(), mComputeProgramDesc);
+				initBytecode(computePipeline->GetProgram(), mComputeProgramDesc);
 		}
 
 		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override
 		{
 			Pass* pass = static_cast<Pass*>(obj);
-			pass->initialize();
+			pass->Initialize();
 		}
 
 		const String& GetRttiName() override
@@ -215,7 +215,7 @@ namespace bs
 			return TID_Pass;
 		}
 
-		SPtr<IReflectable> newRTTIObject() override
+		SPtr<IReflectable> NewRttiObject() 
 		{
 			return Pass::CreateEmpty();
 		}

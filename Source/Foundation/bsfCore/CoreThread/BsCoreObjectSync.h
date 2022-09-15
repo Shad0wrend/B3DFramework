@@ -55,10 +55,10 @@ namespace bs
 
 		/** Convert a resource handle to the underlying resource SPtr. */
 		template <class T>
-		decltype(((std::decay_t<T>*)nullptr)->getInternalPtr()) remove_handle(T&& handle, std::enable_if_t<
+		decltype(((std::decay_t<T>*)nullptr)->GetInternalPtr()) remove_handle(T&& handle, std::enable_if_t<
 			is_resource_handle<std::decay_t<T>>::value>* = 0)
 		{
-			if(handle.isLoaded(false))
+			if(handle.IsLoaded(false))
 				return handle.getInternalPtr();
 
 			return nullptr;
@@ -96,14 +96,14 @@ namespace bs
 
 		/** Convert shared-pointers with classes that derive from CoreObject to their core thread variants. */
 		template <class T>
-		decltype(((std::decay_t<typename std::decay_t<T>::element_type>*)nullptr)->getCore())
+		decltype(((std::decay_t<typename std::decay_t<T>::element_type>*)nullptr)->GetCore())
 		get_core_object(T&& value, std::enable_if_t<
 			is_shared_ptr<std::decay_t<T>>::value &&
 			(std::is_class<std::decay_t<typename std::decay_t<T>::element_type>>::value &&
 				std::is_base_of<CoreObject, std::decay_t<typename std::decay_t<T>::element_type>>::value)>* = 0)
 		{
 			if(value)
-				return value->getCore();
+				return value->GetCore();
 
 			return nullptr;
 		}

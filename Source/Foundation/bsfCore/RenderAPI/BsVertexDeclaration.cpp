@@ -117,7 +117,7 @@ namespace bs
 	VertexElementType VertexElement::GetBestColorVertexElementType()
 	{
 		// Use the current render system to determine if possible
-		if (ct::RenderAPI::instancePtr() != nullptr)
+		if (ct::RenderAPI::InstancePtr() != nullptr)
 		{
 			return ct::RenderAPI::Instance().getCapabilities(0).vertexColorType;
 		}
@@ -326,7 +326,7 @@ namespace bs
 	void VertexDeclaration::Initialize()
 	{
 		mId = NextFreeId++;
-		CoreObject::initialize();
+		CoreObject::Initialize();
 	}
 
 	SPtr<VertexDeclaration> VertexDeclaration::Create(const SPtr<VertexDataDesc>& desc, GpuDeviceFlags deviceMask)
@@ -336,7 +336,7 @@ namespace bs
 
 	bool VertexDeclaration::IsCompatible(const SPtr<VertexDeclaration>& shaderDecl)
 	{
-		const Vector<VertexElement>& shaderElems = shaderDecl->getProperties().getElements();
+		const Vector<VertexElement>& shaderElems = shaderDecl->GetProperties().getElements();
 		const Vector<VertexElement>& bufferElems = getProperties().getElements();
 
 		for (auto shaderIter = shaderElems.begin(); shaderIter != shaderElems.end(); ++shaderIter)
@@ -344,7 +344,7 @@ namespace bs
 			const VertexElement* foundElement = nullptr;
 			for (auto bufferIter = bufferElems.begin(); bufferIter != bufferElems.end(); ++bufferIter)
 			{
-				if (shaderIter->getSemantic() == bufferIter->getSemantic() && shaderIter->getSemanticIdx() == bufferIter->getSemanticIdx())
+				if (shaderIter->GetSemantic() == bufferIter->GetSemantic() && shaderIter->GetSemanticIdx() == bufferIter->GetSemanticIdx())
 				{
 					foundElement = &(*bufferIter);
 					break;
@@ -362,7 +362,7 @@ namespace bs
 	{
 		Vector<VertexElement> missingElements;
 
-		const Vector<VertexElement>& shaderElems = shaderDecl->getProperties().getElements();
+		const Vector<VertexElement>& shaderElems = shaderDecl->GetProperties().getElements();
 		const Vector<VertexElement>& bufferElems = getProperties().getElements();
 
 		for (auto shaderIter = shaderElems.begin(); shaderIter != shaderElems.end(); ++shaderIter)
@@ -370,7 +370,7 @@ namespace bs
 			const VertexElement* foundElement = nullptr;
 			for (auto bufferIter = bufferElems.begin(); bufferIter != bufferElems.end(); ++bufferIter)
 			{
-				if (shaderIter->getSemantic() == bufferIter->getSemantic() && shaderIter->getSemanticIdx() == bufferIter->getSemanticIdx())
+				if (shaderIter->GetSemantic() == bufferIter->GetSemantic() && shaderIter->GetSemanticIdx() == bufferIter->GetSemanticIdx())
 				{
 					foundElement = &(*bufferIter);
 					break;

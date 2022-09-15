@@ -295,7 +295,7 @@ namespace bs { namespace ct
 			auto execute = [&]() { executeRef(srcBuffer, srcOffset, dstOffset, length); };
 
 			SPtr<D3D11CommandBuffer> cb = std::static_pointer_cast<D3D11CommandBuffer>(commandBuffer);
-			cb->queueCommand(execute);
+			cb->QueueCommand(execute);
 		}
 	}
 

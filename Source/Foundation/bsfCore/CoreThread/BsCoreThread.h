@@ -42,7 +42,7 @@ namespace bs
 	 * Manager for the core thread. Takes care of starting, running, queuing commands and shutting down the core thread.
 	 * 				
 	 * How threading works:
-	 *  - Commands from various threads can be queued for execution on the core thread by calling queueCommand() or
+	 *  - Commands from various threads can be queued for execution on the core thread by calling QueueCommand() or
 	 *    queueReturnCommand().
 	 *   - Internally each thread maintains its own separate queue of commands, so you cannot interleave commands from
 	 *     different threads.

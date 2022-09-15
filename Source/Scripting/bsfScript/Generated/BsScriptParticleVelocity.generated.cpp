@@ -39,13 +39,13 @@ namespace bs
 	{
 		PARTICLE_VELOCITY_DESC tmpoptions;
 		tmpoptions = ScriptPARTICLE_VELOCITY_DESC::fromInterop(*options);
-		thisPtr->getInternal()->setOptions(tmpoptions);
+		thisPtr->GetInternal()->SetOptions(tmpoptions);
 	}
 
 	void ScriptParticleVelocity::InternalGetOptions(ScriptParticleVelocity* thisPtr, __PARTICLE_VELOCITY_DESCInterop* __output)
 	{
 		PARTICLE_VELOCITY_DESC tmp__output;
-		tmp__output = thisPtr->getInternal()->getOptions();
+		tmp__output = thisPtr->GetInternal()->GetOptions();
 
 		__PARTICLE_VELOCITY_DESCInterop interop__output;
 		interop__output = ScriptPARTICLE_VELOCITY_DESC::toInterop(tmp__output);

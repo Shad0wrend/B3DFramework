@@ -56,12 +56,12 @@ namespace bs { namespace ct
 				bufferType = VulkanHardwareBuffer::BT_GENERIC;
 
 			UINT32 size = props.getElementCount() * props.getElementSize();
-			mBuffer = bs_pool_new<VulkanHardwareBuffer>(bufferType, props.getFormat(), props.getUsage(), size, mDeviceMask);
+			mBuffer = bs_pool_new<VulkanHardwareBuffer>(bufferType, props.GetFormat(), props.getUsage(), size, mDeviceMask);
 		}
 
 		UpdateViews();
 
-		GpuBuffer::initialize();
+		GpuBuffer::Initialize();
 	}
 
 	void* VulkanGpuBuffer::Map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx, UINT32 queueIdx)
@@ -93,7 +93,7 @@ namespace bs { namespace ct
 
 	VulkanBuffer* VulkanGpuBuffer::GetResource(UINT32 deviceIdx) const
 	{
-		return static_cast<VulkanHardwareBuffer*>(mBuffer)->getResource(deviceIdx);
+		return static_cast<VulkanHardwareBuffer*>(mBuffer)->GetResource(deviceIdx);
 	}
 
 	VkBufferView VulkanGpuBuffer::GetView(UINT32 deviceIdx) const
@@ -108,17 +108,17 @@ namespace bs { namespace ct
 
 		for (UINT32 i = 0; i < BS_MAX_DEVICES; i++)
 		{
-			VulkanBuffer* buffer = static_cast<VulkanHardwareBuffer*>(mBuffer)->getResource(i);
+			VulkanBuffer* buffer = static_cast<VulkanHardwareBuffer*>(mBuffer)->GetResource(i);
 
 			VkBuffer newBufferHandle = VK_NULL_HANDLE;
 
 			if(buffer)
-				newBufferHandle = buffer->getHandle();
+				newBufferHandle = buffer->GetHandle();
 
 			if (mCachedBuffers[i] != newBufferHandle)
 			{
 				if(newBufferHandle != VK_NULL_HANDLE)
-					mBufferViews[i] = buffer->getView(VulkanUtility::getBufferFormat(mProperties.getFormat()));
+					mBufferViews[i] = buffer->GetView(VulkanUtility::getBufferFormat(mProperties.GetFormat()));
 				else
 					mBufferViews[i] = VK_NULL_HANDLE;
 

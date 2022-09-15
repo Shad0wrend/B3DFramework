@@ -106,8 +106,8 @@ namespace bs
 	SPtr<IndexBuffer> HardwareBufferManager::CreateIndexBuffer(const INDEX_BUFFER_DESC& desc,
 		GpuDeviceFlags deviceMask)
 	{
-		SPtr<IndexBuffer> ibuf = createIndexBufferInternal(desc, deviceMask);
-		ibuf->initialize();
+		SPtr<IndexBuffer> ibuf = CreateIndexBufferInternal(desc, deviceMask);
+		ibuf->Initialize();
 		return ibuf;
 
 	}
@@ -115,24 +115,24 @@ namespace bs
 	SPtr<VertexBuffer> HardwareBufferManager::CreateVertexBuffer(const VERTEX_BUFFER_DESC& desc,
 		GpuDeviceFlags deviceMask)
 	{
-		SPtr<VertexBuffer> vbuf = createVertexBufferInternal(desc, deviceMask);
-		vbuf->initialize();
+		SPtr<VertexBuffer> vbuf = CreateVertexBufferInternal(desc, deviceMask);
+		vbuf->Initialize();
 		return vbuf;
 	}
 
 	SPtr<VertexDeclaration> HardwareBufferManager::CreateVertexDeclaration(const SPtr<VertexDataDesc>& desc,
 		GpuDeviceFlags deviceMask)
 	{
-		Vector<VertexElement> elements = desc->createElements();
+		Vector<VertexElement> elements = desc->CreateElements();
 
-		return createVertexDeclaration(elements, deviceMask);
+		return CreateVertexDeclaration(elements, deviceMask);
 	}
 
 	SPtr<GpuParams> HardwareBufferManager::CreateGpuParams(const SPtr<GpuPipelineParamInfo>& paramInfo,
 																   GpuDeviceFlags deviceMask)
 	{
-		SPtr<GpuParams> params = createGpuParamsInternal(paramInfo, deviceMask);
-		params->initialize();
+		SPtr<GpuParams> params = CreateGpuParamsInternal(paramInfo, deviceMask);
+		params->Initialize();
 
 		return params;
 	}
@@ -146,8 +146,8 @@ namespace bs
 		if (iterFind != mCachedDeclarations.end())
 			return iterFind->second;
 
-		SPtr<VertexDeclaration> declPtr = createVertexDeclarationInternal(elements, deviceMask);
-		declPtr->initialize();
+		SPtr<VertexDeclaration> declPtr = CreateVertexDeclarationInternal(elements, deviceMask);
+		declPtr->Initialize();
 
 		mCachedDeclarations[key] = declPtr;
 		return declPtr;
@@ -156,8 +156,8 @@ namespace bs
 	SPtr<GpuParamBlockBuffer> HardwareBufferManager::CreateGpuParamBlockBuffer(UINT32 size,
 		GpuBufferUsage usage, GpuDeviceFlags deviceMask)
 	{
-		SPtr<GpuParamBlockBuffer> paramBlockPtr = createGpuParamBlockBufferInternal(size, usage, deviceMask);
-		paramBlockPtr->initialize();
+		SPtr<GpuParamBlockBuffer> paramBlockPtr = CreateGpuParamBlockBufferInternal(size, usage, deviceMask);
+		paramBlockPtr->Initialize();
 
 		return paramBlockPtr;
 	}
@@ -165,8 +165,8 @@ namespace bs
 	SPtr<GpuBuffer> HardwareBufferManager::CreateGpuBuffer(const GPU_BUFFER_DESC& desc,
 		GpuDeviceFlags deviceMask)
 	{
-		SPtr<GpuBuffer> gbuf = createGpuBufferInternal(desc, deviceMask);
-		gbuf->initialize();
+		SPtr<GpuBuffer> gbuf = CreateGpuBufferInternal(desc, deviceMask);
+		gbuf->Initialize();
 
 		return gbuf;
 	}
@@ -174,8 +174,8 @@ namespace bs
 	SPtr<GpuBuffer> HardwareBufferManager::CreateGpuBuffer(const GPU_BUFFER_DESC& desc,
 		SPtr<HardwareBuffer> underlyingBuffer)
 	{
-		SPtr<GpuBuffer> gbuf = createGpuBufferInternal(desc, std::move(underlyingBuffer));
-		gbuf->initialize();
+		SPtr<GpuBuffer> gbuf = CreateGpuBufferInternal(desc, std::move(underlyingBuffer));
+		gbuf->Initialize();
 
 		return gbuf;
 	}

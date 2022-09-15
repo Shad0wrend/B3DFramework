@@ -12,6 +12,6 @@ namespace bs
 
 	SPtr<RendererMeshData> PhysicsMeshEx::GetMeshData(const HPhysicsMesh& thisPtr)
 	{
-		return RendererMeshData::Create(thisPtr->getMeshData());
+		return RendererMeshData::Create(thisPtr->GetMeshData());
 	}
 }

@@ -10,17 +10,17 @@ namespace bs
 {
 	CPlaneCollider::CPlaneCollider()
 	{
-		setName("PlaneCollider");
+		SetName("PlaneCollider");
 
-		mLocalRotation = Quaternion::getRotationFromTo(Vector3::UNIT_X, mNormal);
+		mLocalRotation = Quaternion::GetRotationFromTo(Vector3::UNIT_X, mNormal);
 	}
 
 	CPlaneCollider::CPlaneCollider(const HSceneObject& parent)
 		: CCollider(parent)
 	{
-		setName("PlaneCollider");
+		SetName("PlaneCollider");
 
-		mLocalRotation = Quaternion::getRotationFromTo(Vector3::UNIT_X, mNormal);
+		mLocalRotation = Quaternion::GetRotationFromTo(Vector3::UNIT_X, mNormal);
 	}
 
 	void CPlaneCollider::SetNormal(const Vector3& normal)
@@ -29,13 +29,13 @@ namespace bs
 			return;
 
 		mNormal = normal;
-		mNormal.normalize();
+		mNormal.Normalize();
 		
-		mLocalRotation = Quaternion::getRotationFromTo(Vector3::UNIT_X, normal);
+		mLocalRotation = Quaternion::GetRotationFromTo(Vector3::UNIT_X, normal);
 		mLocalPosition = mNormal * mDistance;
 
 		if(mInternal != nullptr)
-			updateTransform();
+			UpdateTransform();
 	}
 
 	void CPlaneCollider::SetDistance(float distance)
@@ -47,15 +47,15 @@ namespace bs
 		mLocalPosition = mNormal * distance;
 
 		if (mInternal != nullptr)
-			updateTransform();
+			UpdateTransform();
 	}
 
 	SPtr<Collider> CPlaneCollider::CreateInternal()
 	{
-		const SPtr<SceneInstance>& scene = SO()->getScene();
-		const Transform& tfrm = SO()->getTransform();
+		const SPtr<SceneInstance>& scene = SO()->GetScene();
+		const Transform& tfrm = SO()->GetTransform();
 
-		SPtr<Collider> collider = PlaneCollider::Create(*scene->getPhysicsScene(), tfrm.getPosition(), tfrm.getRotation());
+		SPtr<Collider> collider = PlaneCollider::Create(*scene->GetPhysicsScene(), tfrm.GetPosition(), tfrm.GetRotation());
 
 		collider->SetOwnerInternal(PhysicsOwnerType::Component, this);
 		return collider;
@@ -64,7 +64,7 @@ namespace bs
 	bool CPlaneCollider::IsValidParent(const HRigidbody& parent) const
 	{
 		// Planes cannot be added to non-kinematic rigidbodies
-		return parent->getIsKinematic();
+		return parent->GetIsKinematic();
 	}
 
 	RTTITypeBase* CPlaneCollider::GetRttiStatic()

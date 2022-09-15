@@ -82,20 +82,20 @@ namespace bs
 			}
 
 		}
-		thisPtr->getInternal()->setKeys(veckeys, duration);
+		thisPtr->GetInternal()->SetKeys(veckeys, duration);
 	}
 
 	MonoArray* ScriptColorGradient::InternalGetKeys(ScriptColorGradient* thisPtr)
 	{
 		Vector<ColorGradientKey> vec__output;
-		vec__output = thisPtr->getInternal()->getKeys();
+		vec__output = thisPtr->GetInternal()->GetKeys();
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
 		ScriptArray array__output = ScriptArray::create<ScriptColorGradientKey>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
-			array__output.set(i, ScriptColorGradientKey::toInterop(vec__output[i]));
+			array__output.Set(i, ScriptColorGradientKey::toInterop(vec__output[i]));
 		}
 		__output = array__output.getInternal();
 
@@ -105,7 +105,7 @@ namespace bs
 	uint32_t ScriptColorGradient::InternalGetNumKeys(ScriptColorGradient* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->getInternal()->getNumKeys();
+		tmp__output = thisPtr->GetInternal()->GetNumKeys();
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -116,7 +116,7 @@ namespace bs
 	void ScriptColorGradient::InternalGetKey(ScriptColorGradient* thisPtr, uint32_t idx, __ColorGradientKeyInterop* __output)
 	{
 		ColorGradientKey tmp__output;
-		tmp__output = thisPtr->getInternal()->getKey(idx);
+		tmp__output = thisPtr->GetInternal()->GetKey(idx);
 
 		__ColorGradientKeyInterop interop__output;
 		interop__output = ScriptColorGradientKey::toInterop(tmp__output);
@@ -125,13 +125,13 @@ namespace bs
 
 	void ScriptColorGradient::InternalSetConstant(ScriptColorGradient* thisPtr, Color* color)
 	{
-		thisPtr->getInternal()->setConstant(*color);
+		thisPtr->GetInternal()->SetConstant(*color);
 	}
 
 	void ScriptColorGradient::InternalEvaluate(ScriptColorGradient* thisPtr, float t, Color* __output)
 	{
 		Color tmp__output;
-		tmp__output = ColorGradientEx::evaluate(thisPtr->getInternal(), t);
+		tmp__output = ColorGradientEx::evaluate(thisPtr->GetInternal(), t);
 
 		*__output = tmp__output;
 	}

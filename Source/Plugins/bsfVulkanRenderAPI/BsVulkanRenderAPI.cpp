@@ -225,18 +225,18 @@ namespace bs { namespace ct
 		// Note: MULTIGPU - Detect multiple similar devices here if supporting multi-GPU
 		for (uint32_t i = 0; i < mNumDevices; i++)
 		{
-			bool isPrimary = mDevices[i]->getDeviceProperties().deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU;
+			bool isPrimary = mDevices[i]->GetDeviceProperties().deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU;
 
 			if (isPrimary)
 			{
-				mDevices[i]->setIsPrimary();
+				mDevices[i]->SetIsPrimary();
 				mPrimaryDevices.push_back(mDevices[i]);
 
 				// Make sure the primary device is first in the list
 				if(i != 0)
 				{
-					mDevices[0]->setIndex(i);
-					mDevices[i]->setIndex(0);
+					mDevices[0]->SetIndex(i);
+					mDevices[i]->SetIndex(0);
 
 					std::swap(mDevices[0], mDevices[i]);
 				}
@@ -247,7 +247,7 @@ namespace bs { namespace ct
 
 		if (mPrimaryDevices.size() == 0)
 		{
-			mDevices[0]->setIsPrimary();
+			mDevices[0]->SetIsPrimary();
 			mPrimaryDevices.push_back(mDevices[0]);
 		}
 
@@ -265,7 +265,7 @@ namespace bs { namespace ct
 		gpuInfo.numGPUs = std::min(5U, mNumDevices);
 
 		for(UINT32 i = 0; i < gpuInfo.numGPUs; i++)
-			gpuInfo.names[i] = mDevices[i]->getDeviceProperties().deviceName;
+			gpuInfo.names[i] = mDevices[i]->GetDeviceProperties().deviceName;
 
 		PlatformUtility::SetGPUInfoInternal(gpuInfo);
 
@@ -275,7 +275,7 @@ namespace bs { namespace ct
 		GET_INSTANCE_PROC_ADDR(mInstance, GetPhysicalDeviceSurfaceCapabilitiesKHR);
 		GET_INSTANCE_PROC_ADDR(mInstance, GetPhysicalDeviceSurfacePresentModesKHR);
 
-		VkDevice presentDevice = GetPresentDeviceInternal()->getLogical();
+		VkDevice presentDevice = GetPresentDeviceInternal()->GetLogical();
 		GET_DEVICE_PROC_ADDR(presentDevice, CreateSwapchainKHR);
 		GET_DEVICE_PROC_ADDR(presentDevice, DestroySwapchainKHR);
 		GET_DEVICE_PROC_ADDR(presentDevice, GetSwapchainImagesKHR);
@@ -323,7 +323,7 @@ namespace bs { namespace ct
 
 		initCapabilites();
 		
-		RenderAPI::initialize();
+		RenderAPI::Initialize();
 	}
 
 	void VulkanRenderAPI::DestroyCore()
@@ -372,9 +372,9 @@ namespace bs { namespace ct
 		const SPtr<CommandBuffer>& commandBuffer)
 	{
 		VulkanCommandBuffer* cb = getCB(commandBuffer);
-		VulkanCmdBuffer* vkCB = cb->getInternal();
+		VulkanCmdBuffer* vkCB = cb->GetInternal();
 
-		vkCB->setPipelineState(pipelineState);
+		vkCB->SetPipelineState(pipelineState);
 
 		BS_INC_RENDER_STAT(NumPipelineStateChanges);
 	}
@@ -383,9 +383,9 @@ namespace bs { namespace ct
 		const SPtr<CommandBuffer>& commandBuffer)
 	{
 		VulkanCommandBuffer* cb = getCB(commandBuffer);
-		VulkanCmdBuffer* vkCB = cb->getInternal();
+		VulkanCmdBuffer* vkCB = cb->GetInternal();
 
-		vkCB->setPipelineState(pipelineState);
+		vkCB->SetPipelineState(pipelineState);
 
 		BS_INC_RENDER_STAT(NumPipelineStateChanges);
 	}
@@ -393,27 +393,27 @@ namespace bs { namespace ct
 	void VulkanRenderAPI::SetGpuParams(const SPtr<GpuParams>& gpuParams, const SPtr<CommandBuffer>& commandBuffer)
 	{
 		VulkanCommandBuffer* cb = getCB(commandBuffer);
-		VulkanCmdBuffer* vkCB = cb->getInternal();
+		VulkanCmdBuffer* vkCB = cb->GetInternal();
 
-		UINT32 globalQueueIdx = CommandSyncMask::getGlobalQueueIdx(cb->getType(), cb->getQueueIdx());
+		UINT32 globalQueueIdx = CommandSyncMask::getGlobalQueueIdx(cb->GetType(), cb->GetQueueIdx());
 
 		for (UINT32 i = 0; i < GPT_COUNT; i++)
 		{
-			SPtr<GpuParamDesc> paramDesc = gpuParams->getParamDesc((GpuProgramType)i);
+			SPtr<GpuParamDesc> paramDesc = gpuParams->GetParamDesc((GpuProgramType)i);
 			if (paramDesc == nullptr)
 				continue;
 
 			// Flush all param block buffers
 			for (auto iter = paramDesc->paramBlocks.begin(); iter != paramDesc->paramBlocks.end(); ++iter)
 			{
-				SPtr<GpuParamBlockBuffer> buffer = gpuParams->getParamBlockBuffer(iter->second.set, iter->second.slot);
+				SPtr<GpuParamBlockBuffer> buffer = gpuParams->GetParamBlockBuffer(iter->second.set, iter->second.slot);
 
 				if (buffer != nullptr)
 					buffer->flushToGPU(globalQueueIdx);
 			}
 		}
 
-		vkCB->setGpuParams(gpuParams);
+		vkCB->SetGpuParams(gpuParams);
 
 		BS_INC_RENDER_STAT(NumGpuParamBinds);
 	}
@@ -421,18 +421,18 @@ namespace bs { namespace ct
 	void VulkanRenderAPI::SetViewport(const Rect2& vp, const SPtr<CommandBuffer>& commandBuffer)
 	{
 		VulkanCommandBuffer* cb = getCB(commandBuffer);
-		VulkanCmdBuffer* vkCB = cb->getInternal();
+		VulkanCmdBuffer* vkCB = cb->GetInternal();
 
-		vkCB->setViewport(vp);
+		vkCB->SetViewport(vp);
 	}
 
 	void VulkanRenderAPI::SetVertexBuffers(UINT32 index, SPtr<VertexBuffer>* buffers, UINT32 numBuffers,
 		const SPtr<CommandBuffer>& commandBuffer)
 	{
 		VulkanCommandBuffer* cb = getCB(commandBuffer);
-		VulkanCmdBuffer* vkCB = cb->getInternal();
+		VulkanCmdBuffer* vkCB = cb->GetInternal();
 
-		vkCB->setVertexBuffers(index, buffers, numBuffers);
+		vkCB->SetVertexBuffers(index, buffers, numBuffers);
 
 		BS_INC_RENDER_STAT(NumVertexBufferBinds);
 	}
@@ -440,9 +440,9 @@ namespace bs { namespace ct
 	void VulkanRenderAPI::SetIndexBuffer(const SPtr<IndexBuffer>& buffer, const SPtr<CommandBuffer>& commandBuffer)
 	{
 		VulkanCommandBuffer* cb = getCB(commandBuffer);
-		VulkanCmdBuffer* vkCB = cb->getInternal();
+		VulkanCmdBuffer* vkCB = cb->GetInternal();
 
-		vkCB->setIndexBuffer(buffer);
+		vkCB->SetIndexBuffer(buffer);
 
 		BS_INC_RENDER_STAT(NumIndexBufferBinds);
 	}
@@ -451,17 +451,17 @@ namespace bs { namespace ct
 		const SPtr<CommandBuffer>& commandBuffer)
 	{
 		VulkanCommandBuffer* cb = getCB(commandBuffer);
-		VulkanCmdBuffer* vkCB = cb->getInternal();
+		VulkanCmdBuffer* vkCB = cb->GetInternal();
 
-		vkCB->setVertexDeclaration(vertexDeclaration);
+		vkCB->SetVertexDeclaration(vertexDeclaration);
 	}
 
 	void VulkanRenderAPI::SetDrawOperation(DrawOperationType op, const SPtr<CommandBuffer>& commandBuffer)
 	{
 		VulkanCommandBuffer* cb = getCB(commandBuffer);
-		VulkanCmdBuffer* vkCB = cb->getInternal();
+		VulkanCmdBuffer* vkCB = cb->GetInternal();
 
-		vkCB->setDrawOp(op);
+		vkCB->SetDrawOp(op);
 	}
 
 	void VulkanRenderAPI::Draw(UINT32 vertexOffset, UINT32 vertexCount, UINT32 instanceCount,
@@ -470,7 +470,7 @@ namespace bs { namespace ct
 		UINT32 primCount = 0;
 
 		VulkanCommandBuffer* cb = getCB(commandBuffer);
-		VulkanCmdBuffer* vkCB = cb->getInternal();
+		VulkanCmdBuffer* vkCB = cb->GetInternal();
 
 		vkCB->draw(vertexOffset, vertexCount, instanceCount);
 
@@ -485,7 +485,7 @@ namespace bs { namespace ct
 		UINT32 primCount = 0;
 
 		VulkanCommandBuffer* cb = getCB(commandBuffer);
-		VulkanCmdBuffer* vkCB = cb->getInternal();
+		VulkanCmdBuffer* vkCB = cb->GetInternal();
 
 		vkCB->drawIndexed(startIndex, indexCount, vertexOffset, instanceCount);
 
@@ -498,7 +498,7 @@ namespace bs { namespace ct
 		const SPtr<CommandBuffer>& commandBuffer)
 	{
 		VulkanCommandBuffer* cb = getCB(commandBuffer);
-		VulkanCmdBuffer* vkCB = cb->getInternal();
+		VulkanCmdBuffer* vkCB = cb->GetInternal();
 
 		vkCB->dispatch(numGroupsX, numGroupsY, numGroupsZ);
 
@@ -509,25 +509,25 @@ namespace bs { namespace ct
 		const SPtr<CommandBuffer>& commandBuffer)
 	{
 		VulkanCommandBuffer* cb = getCB(commandBuffer);
-		VulkanCmdBuffer* vkCB = cb->getInternal();
+		VulkanCmdBuffer* vkCB = cb->GetInternal();
 
 		Rect2I area(left, top, right - left, bottom - top);
-		vkCB->setScissorRect(area);
+		vkCB->SetScissorRect(area);
 	}
 
 	void VulkanRenderAPI::SetStencilRef(UINT32 value, const SPtr<CommandBuffer>& commandBuffer)
 	{
 		VulkanCommandBuffer* cb = getCB(commandBuffer);
-		VulkanCmdBuffer* vkCB = cb->getInternal();
+		VulkanCmdBuffer* vkCB = cb->GetInternal();
 
-		vkCB->setStencilRef(value);
+		vkCB->SetStencilRef(value);
 	}
 
 	void VulkanRenderAPI::ClearViewport(UINT32 buffers, const Color& color, float depth, UINT16 stencil, UINT8 targetMask,
 		const SPtr<CommandBuffer>& commandBuffer)
 	{
 		VulkanCommandBuffer* cb = getCB(commandBuffer);
-		VulkanCmdBuffer* vkCB = cb->getInternal();
+		VulkanCmdBuffer* vkCB = cb->GetInternal();
 
 		vkCB->clearViewport(buffers, color, depth, stencil, targetMask);
 
@@ -538,7 +538,7 @@ namespace bs { namespace ct
 		UINT8 targetMask, const SPtr<CommandBuffer>& commandBuffer)
 	{
 		VulkanCommandBuffer* cb = getCB(commandBuffer);
-		VulkanCmdBuffer* vkCB = cb->getInternal();
+		VulkanCmdBuffer* vkCB = cb->GetInternal();
 
 		vkCB->clearRenderTarget(buffers, color, depth, stencil, targetMask);
 
@@ -549,9 +549,9 @@ namespace bs { namespace ct
 		RenderSurfaceMask loadMask, const SPtr<CommandBuffer>& commandBuffer)
 	{
 		VulkanCommandBuffer* cb = getCB(commandBuffer);
-		VulkanCmdBuffer* vkCB = cb->getInternal();
+		VulkanCmdBuffer* vkCB = cb->GetInternal();
 
-		vkCB->setRenderTarget(target, readOnlyFlags, loadMask);
+		vkCB->SetRenderTarget(target, readOnlyFlags, loadMask);
 		
 		BS_INC_RENDER_STAT(NumRenderTargetChanges);
 	}
@@ -583,7 +583,7 @@ namespace bs { namespace ct
 
 		// Submit all transfer buffers first
 		VulkanCommandBufferManager& cbm = static_cast<VulkanCommandBufferManager&>(CommandBufferManager::Instance());
-		cbm.flushTransferBuffers(cmdBuffer->getDeviceIdx());
+		cbm.flushTransferBuffers(cmdBuffer->GetDeviceIdx());
 
 		cmdBuffer->submit(syncMask);
 
@@ -625,8 +625,8 @@ namespace bs { namespace ct
 			if(param.type == GPDT_STRUCT)
 			{
 				// Structs are always aligned and rounded up to vec4
-				size = Math::divideAndRoundUp(param.elementSize, 16U) * 4;
-				block.blockSize = Math::divideAndRoundUp(block.blockSize, 4U) * 4;
+				size = Math::DivideAndRoundUp(param.elementSize, 16U) * 4;
+				block.blockSize = Math::DivideAndRoundUp(block.blockSize, 4U) * 4;
 			}
 			else
 				size = VulkanUtility::calcInterfaceBlockElementSizeAndOffset(param.type, param.arraySize, block.blockSize);
@@ -657,8 +657,8 @@ namespace bs { namespace ct
 		{
 			RenderAPICapabilities& caps = mCurrentCapabilities[deviceIdx];
 
-			const VkPhysicalDeviceProperties& deviceProps = device->getDeviceProperties();
-			const VkPhysicalDeviceFeatures& deviceFeatures = device->getDeviceFeatures();
+			const VkPhysicalDeviceProperties& deviceProps = device->GetDeviceProperties();
+			const VkPhysicalDeviceFeatures& deviceFeatures = device->GetDeviceFeatures();
 			const VkPhysicalDeviceLimits& deviceLimits = deviceProps.limits;
 
 			DriverVersion driverVersion;

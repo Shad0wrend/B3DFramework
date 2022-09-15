@@ -35,7 +35,7 @@ namespace bs { namespace ct
 
 	void VulkanEvent::reset()
 	{
-		VkDevice vkDevice = mOwner->getDevice().getLogical();
+		VkDevice vkDevice = mOwner->GetDevice().getLogical();
 
 		VkResult result = vkResetEvent(vkDevice, mEvent);
 		assert(result == VK_SUCCESS);
@@ -50,7 +50,7 @@ namespace bs { namespace ct
 	VulkanEventQuery::~VulkanEventQuery()
 	{
 		if (mEvent != nullptr)
-			mEvent->destroy();
+			mEvent->Destroy();
 
 		BS_INC_RENDER_STAT_CAT(ResDestroyed, RenderStatObject_Query);
 	}
@@ -62,7 +62,7 @@ namespace bs { namespace ct
 			if (mEvent->isBound())
 			{
 				// Clear current event and create a new one
-				mEvent->destroy();
+				mEvent->Destroy();
 				mEvent = mDevice.getResourceManager().create<VulkanEvent>();
 			}
 			else
@@ -80,10 +80,10 @@ namespace bs { namespace ct
 		else
 			vulkanCB = static_cast<VulkanCommandBuffer*>(gVulkanRenderAPI().GetMainCommandBufferInternal());
 
-		VulkanCmdBuffer* internalCB = vulkanCB->getInternal();
+		VulkanCmdBuffer* internalCB = vulkanCB->GetInternal();
 		internalCB->registerResource(mEvent, VulkanAccessFlag::Read);
 
-		internalCB->setEvent(mEvent);
+		internalCB->SetEvent(mEvent);
 
 		setActive(true);
 	}

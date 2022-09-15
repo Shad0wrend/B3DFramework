@@ -9,17 +9,17 @@ namespace bs
 	Component::Component(HSceneObject parent)
 		:mParent(std::move(parent))
 	{
-		setName("Component");
+		SetName("Component");
 	}
 
 	bool Component::TypeEquals(const Component& other)
 	{
-		return getRTTI()->getRTTIId() == other.getRTTI()->getRTTIId();
+		return getRTTI()->GetRttiId() == other.getRTTI()->GetRttiId();
 	}
 
 	bool Component::CalculateBounds(Bounds& bounds)
 	{
-		Vector3 position = SO()->getTransform().getPosition();
+		Vector3 position = SO()->GetTransform().GetPosition();
 
 		bounds = Bounds(AABox(position, position), Sphere(position, 0.0f));
 		return false;

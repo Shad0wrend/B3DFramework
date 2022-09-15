@@ -62,7 +62,7 @@ namespace bs
 
 	HResource Resources::LoadAsync(const Path& filePath, ResourceLoadFlags loadFlags)
 	{
-		if (!FileSystem::isFile(filePath))
+		if (!FileSystem::IsFile(filePath))
 		{
 			BS_LOG(Warning, Resources, "Cannot load resource. Specified file: '{0}' doesn't exist.", filePath);
 			return HResource();
@@ -166,7 +166,7 @@ namespace bs
 					loadFailed = true;
 				}
 			}
-			else if (!FileSystem::isFile(filePath))
+			else if (!FileSystem::IsFile(filePath))
 			{
 				BS_LOG(Verbose, Resources, "Cannot load resource. Specified file: '{0}' doesn't exist.", filePath);
 				loadFailed = true;
@@ -210,7 +210,7 @@ namespace bs
 					// Register dependencies and count them so we know when the resource is fully loaded
 					if (loadDependencies && savedResourceData != nullptr)
 					{
-						for (auto& dependency : savedResourceData->getDependencies())
+						for (auto& dependency : savedResourceData->GetDependencies())
 						{
 							if (dependency != uuid)
 							{
@@ -224,7 +224,7 @@ namespace bs
 				// The resource is already being loaded, or is loaded, but we might still need to load some dependencies
 				else if(loadDependencies && savedResourceData != nullptr)
 				{
-					const Vector<UUID>& dependencies = savedResourceData->getDependencies();
+					const Vector<UUID>& dependencies = savedResourceData->GetDependencies();
 					if (!dependencies.empty())
 					{
 						ResourceLoadData* loadData = nullptr;
@@ -428,7 +428,7 @@ namespace bs
 	{
 		Lock fileLock = FileScheduler::getLock(filePath);
 
-		SPtr<DataStream> stream = FileSystem::openFile(filePath, true);
+		SPtr<DataStream> stream = FileSystem::OpenFile(filePath, true);
 		if (stream == nullptr)
 			return nullptr;
 
@@ -462,7 +462,7 @@ namespace bs
 				UINT32 objectSize = 0;
 				stream->read(&objectSize, sizeof(objectSize));
 
-				if (metaData->getCompressionMethod() != 0)
+				if (metaData->GetCompressionMethod() != 0)
 				{
 					stream = Compression::decompress(stream, [&progress](float val)
 					{
@@ -539,7 +539,7 @@ namespace bs
 			}
 
 			if(lostLastRef)
-				destroy(resource);
+				Destroy(resource);
 		}
 	}
 
@@ -581,7 +581,7 @@ namespace bs
 		}
 
 		for (auto& loadedResourcePair : loadedResourcesCopy)
-			destroy(loadedResourcePair.second.resource);
+			Destroy(loadedResourcePair.second.resource);
 	}
 
 	void Resources::Destroy(ResourceHandleBase& resource)
@@ -593,7 +593,7 @@ namespace bs
 
 		// If load in progress, first wait until it completes
 		const UUID& uuid = resource.getUUID();
-		if (!resource.isLoaded(false))
+		if (!resource.IsLoaded(false))
 		{
 			bool loadInProgress = false;
 			{
@@ -614,7 +614,7 @@ namespace bs
 
 		// Notify external systems before we actually destroy it
 		onResourceDestroyed(uuid);
-		resource.mData->mPtr->destroy();
+		resource.mData->mPtr->Destroy();
 
 		{
 			Lock lock(mLoadedResourceMutex);
@@ -644,7 +644,7 @@ namespace bs
 		if (resource == nullptr)
 			return;
 
-		if (!resource.isLoaded(false))
+		if (!resource.IsLoaded(false))
 		{
 			bool loadInProgress = false;
 			{
@@ -660,7 +660,7 @@ namespace bs
 				return; // Nothing to save
 		}
 
-		const bool fileExists = FileSystem::isFile(filePath);
+		const bool fileExists = FileSystem::IsFile(filePath);
 		if(fileExists && !overwrite)
 		{
 			BS_LOG(Error, Resources, "Another file exists at the specified location. Not saving.");
@@ -703,11 +703,11 @@ namespace bs
 			resource->allowAsyncLoading(), compressionMethod);
 
 		Path parentDir = filePath.getDirectory();
-		if (!FileSystem::exists(parentDir))
-			FileSystem::createDir(parentDir);
+		if (!FileSystem::Exists(parentDir))
+			FileSystem::CreateDir(parentDir);
 
 		Path savePath;
-		const bool fileExists = FileSystem::isFile(filePath);
+		const bool fileExists = FileSystem::IsFile(filePath);
 		if(fileExists)
 		{
 			// If a file exists, save to a temporary location, then copy over only after a save was successful. This guards
@@ -715,11 +715,11 @@ namespace bs
 
 			// TODO: Temp directory should always be on this drive, as files moved from one drive to another will in fact
 			// be copied
-			savePath = FileSystem::getTempDirectoryPath();
+			savePath = FileSystem::GetTempDirectoryPath();
 			savePath.setFilename(UUIDGenerator::generateRandom().toString());
 
 			UINT32 safetyCounter = 0;
-			while(FileSystem::exists(savePath))
+			while(FileSystem::Exists(savePath))
 			{
 				if(safetyCounter > 10)
 				{
@@ -738,7 +738,7 @@ namespace bs
 		
 		Lock fileLock = FileScheduler::getLock(filePath);
 
-		SPtr<DataStream> stream = FileSystem::createAndOpenFile(savePath);
+		SPtr<DataStream> stream = FileSystem::CreateAndOpenFile(savePath);
 	
 		// Write meta-data
 		{
@@ -794,8 +794,8 @@ namespace bs
 
 		if (fileExists)
 		{
-			FileSystem::remove(filePath);
-			FileSystem::move(savePath, filePath);
+			FileSystem::Remove(filePath);
+			FileSystem::Move(savePath, filePath);
 		}
 	}
 
@@ -831,7 +831,7 @@ namespace bs
 			savedResourceData = std::static_pointer_cast<SavedResourceData>(fs.decode());
 		}
 
-		return savedResourceData->getDependencies();
+		return savedResourceData->GetDependencies();
 	}
 
 	void Resources::RegisterResourceManifest(const SPtr<ResourceManifest>& manifest)
@@ -845,7 +845,7 @@ namespace bs
 
 	void Resources::UnregisterResourceManifest(const SPtr<ResourceManifest>& manifest)
 	{
-		if (manifest->getName() == "Default")
+		if (manifest->GetName() == "Default")
 			return;
 
 		auto findIter = std::find(mResourceManifests.begin(), mResourceManifests.end(), manifest);
@@ -857,7 +857,7 @@ namespace bs
 	{
 		for(auto iter = mResourceManifests.rbegin(); iter != mResourceManifests.rend(); ++iter)
 		{
-			if(name == (*iter)->getName())
+			if(name == (*iter)->GetName())
 				return (*iter);
 		}
 
@@ -992,7 +992,7 @@ namespace bs
 	{
 		Path manifestPath = path;
 		if (!manifestPath.isAbsolute())
-			manifestPath.makeAbsolute(FileSystem::getWorkingDirectoryPath());
+			manifestPath.makeAbsolute(FileSystem::GetWorkingDirectoryPath());
 
 		for(auto iter = mResourceManifests.rbegin(); iter != mResourceManifests.rend(); ++iter)
 		{

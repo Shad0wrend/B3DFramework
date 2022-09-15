@@ -67,25 +67,25 @@ namespace bs
 	void ScriptCHingeJoint::InternalGetDrive(ScriptCHingeJoint* thisPtr, HingeJointDrive* __output)
 	{
 		HingeJointDrive tmp__output;
-		tmp__output = thisPtr->GetHandle()->getDrive();
+		tmp__output = thisPtr->GetHandle()->GetDrive();
 
 		*__output = tmp__output;
 	}
 
 	void ScriptCHingeJoint::InternalSetDrive(ScriptCHingeJoint* thisPtr, HingeJointDrive* drive)
 	{
-		thisPtr->getHandle()->setDrive(*drive);
+		thisPtr->GetHandle()->SetDrive(*drive);
 	}
 
 	void ScriptCHingeJoint::InternalSetFlag(ScriptCHingeJoint* thisPtr, HingeJointFlag flag, bool enabled)
 	{
-		thisPtr->getHandle()->setFlag(flag, enabled);
+		thisPtr->GetHandle()->SetFlag(flag, enabled);
 	}
 
 	bool ScriptCHingeJoint::InternalHasFlag(ScriptCHingeJoint* thisPtr, HingeJointFlag flag)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->getHandle()->hasFlag(flag);
+		tmp__output = thisPtr->GetHandle()->hasFlag(flag);
 
 		bool __output;
 		__output = tmp__output;

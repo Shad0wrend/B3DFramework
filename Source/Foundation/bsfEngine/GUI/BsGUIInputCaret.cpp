@@ -21,14 +21,14 @@ namespace bs
 
 	Vector2I GUIInputCaret::GetSpriteOffset() const
 	{
-		return getCaretPosition(getTextOffset());
+		return GetCaretPosition(GetTextOffset());
 	}
 
 	Rect2I GUIInputCaret::GetSpriteClipRect(const Rect2I& parentClipRect) const
 	{
 		Vector2I offset(mElement->GetLayoutDataInternal().area.x, mElement->GetLayoutDataInternal().area.y);
 
-		Vector2I clipOffset = getSpriteOffset() - offset -
+		Vector2I clipOffset = GetSpriteOffset() - offset -
 			Vector2I(mElement->GetTextInputRectInternal().x, mElement->GetTextInputRectInternal().y);
 
 		Rect2I clipRect(-clipOffset.x, -clipOffset.y, mTextDesc.width, mTextDesc.height);
@@ -40,7 +40,7 @@ namespace bs
 		localParentCliprect.y += mElement->GetTextInputOffsetInternal().y + clipRect.y;
 
 		// Clip our rectangle so its not larger then the parent
-		clipRect.clip(localParentCliprect);
+		clipRect.Clip(localParentCliprect);
 
 		// Increase clip size by 1, so we can fit the caret in case it is fully at the end of the text
 		clipRect.width += 1;
@@ -52,14 +52,14 @@ namespace bs
 	{
 		IMAGE_SPRITE_DESC mCaretDesc;
 		mCaretDesc.width = 1;
-		mCaretDesc.height = getCaretHeight();
-		mCaretDesc.texture = GUIManager::Instance().getCaretTexture();
+		mCaretDesc.height = GetCaretHeight();
+		mCaretDesc.texture = GUIManager::Instance().GetCaretTexture();
 
 		GUIWidget* widget = nullptr;
 		if (mElement != nullptr)
 			widget = mElement->GetParentWidgetInternal();
 
-		mCaretSprite->update(mCaretDesc, (UINT64)widget);
+		mCaretSprite->Update(mCaretDesc, (UINT64)widget);
 	}
 
 	void GUIInputCaret::MoveCaretToStart()
@@ -69,7 +69,7 @@ namespace bs
 
 	void GUIInputCaret::MoveCaretToEnd()
 	{
-		mCaretPos = getMaxCaretPos();
+		mCaretPos = GetMaxCaretPos();
 	}
 
 	void GUIInputCaret::MoveCaretLeft()
@@ -79,78 +79,78 @@ namespace bs
 
 	void GUIInputCaret::MoveCaretRight()
 	{
-		UINT32 maxCaretPos = getMaxCaretPos();
+		UINT32 maxCaretPos = GetMaxCaretPos();
 
 		mCaretPos = std::min(maxCaretPos, mCaretPos + 1);
 	}
 
 	void GUIInputCaret::MoveCaretUp()
 	{
-		UINT32 charIdx = getCharIdxAtCaretPos();
+		UINT32 charIdx = GetCharIdxAtCaretPos();
 		if(charIdx > 0)
 			charIdx -= 1;	
 
-		UINT32 lineIdx = getLineForChar(charIdx);
-		const GUIInputLineDesc& desc = getLineDesc(lineIdx);
+		UINT32 lineIdx = GetLineForChar(charIdx);
+		const GUIInputLineDesc& desc = GetLineDesc(lineIdx);
 		// If char is a newline, I want that to count as being on the next line because that's
 		// how user sees it
-		if(desc.isNewline(charIdx))
+		if(desc.IsNewline(charIdx))
 			lineIdx++;	
 
 		if(lineIdx == 0)
 		{
-			moveCaretToStart();
+			MoveCaretToStart();
 			return;
 		}
 
-		Vector2I caretCoords = getCaretPosition(mElement->GetTextInputOffsetInternal());
-		caretCoords.y -= getCaretHeight();
+		Vector2I caretCoords = GetCaretPosition(mElement->GetTextInputOffsetInternal());
+		caretCoords.y -= GetCaretHeight();
 
-		moveCaretToPos(caretCoords);
+		MoveCaretToPos(caretCoords);
 	}
 
 	void GUIInputCaret::MoveCaretDown()
 	{
-		UINT32 charIdx = getCharIdxAtCaretPos();
+		UINT32 charIdx = GetCharIdxAtCaretPos();
 		if(charIdx > 0)
 			charIdx -= 1;	
 
-		UINT32 lineIdx = getLineForChar(charIdx);
-		const GUIInputLineDesc& desc = getLineDesc(lineIdx);
+		UINT32 lineIdx = GetLineForChar(charIdx);
+		const GUIInputLineDesc& desc = GetLineDesc(lineIdx);
 		// If char is a newline, I want that to count as being on the next line because that's
 		// how user sees it
-		if(desc.isNewline(charIdx))
+		if(desc.IsNewline(charIdx))
 			lineIdx++;					
 
-		if(lineIdx == (getNumLines() - 1))
+		if(lineIdx == (GetNumLines() - 1))
 		{
-			moveCaretToEnd();
+			MoveCaretToEnd();
 			return;
 		}
 
-		Vector2I caretCoords = getCaretPosition(mElement->GetTextInputOffsetInternal());
-		caretCoords.y += getCaretHeight();
+		Vector2I caretCoords = GetCaretPosition(mElement->GetTextInputOffsetInternal());
+		caretCoords.y += GetCaretHeight();
 
-		moveCaretToPos(caretCoords);
+		MoveCaretToPos(caretCoords);
 	}
 
 	void GUIInputCaret::MoveCaretToPos(const Vector2I& pos)
 	{
-		INT32 charIdx = getCharIdxAtPos(pos);
+		INT32 charIdx = GetCharIdxAtPos(pos);
 
 		if(charIdx != -1)
 		{
-			Rect2I charRect = getCharRect(charIdx);
+			Rect2I charRect = GetCharRect(charIdx);
 
 			float xCenter = charRect.x + charRect.width * 0.5f;
 			if(pos.x <= xCenter)
-				moveCaretToChar(charIdx, CARET_BEFORE);
+				MoveCaretToChar(charIdx, CARET_BEFORE);
 			else
-				moveCaretToChar(charIdx, CARET_AFTER);
+				MoveCaretToChar(charIdx, CARET_AFTER);
 		}
 		else
 		{
-			UINT32 numLines = getNumLines();
+			UINT32 numLines = GetNumLines();
 
 			if(numLines == 0)
 			{
@@ -161,22 +161,22 @@ namespace bs
 			UINT32 curPos = 0;
 			for(UINT32 i = 0; i < numLines; i++)
 			{
-				const GUIInputLineDesc& line = getLineDesc(i);
+				const GUIInputLineDesc& line = GetLineDesc(i);
 
-				INT32 lineStart = line.getLineYStart() + getTextOffset().y;
-				if(pos.y >= lineStart && pos.y < (lineStart + (INT32)line.getLineHeight()))
+				INT32 lineStart = line.GetLineYStart() + GetTextOffset().y;
+				if(pos.y >= lineStart && pos.y < (lineStart + (INT32)line.GetLineHeight()))
 				{
 					mCaretPos = curPos;
 					return;
 				}
 
-				UINT32 numChars = line.getEndChar(false) - line.getStartChar() + 1; // +1 For extra line start position
+				UINT32 numChars = line.GetEndChar(false) - line.GetStartChar() + 1; // +1 For extra line start position
 				curPos += numChars;
 			}
 
 			{
-				const GUIInputLineDesc& firstLine = getLineDesc(0);
-				INT32 lineStart = firstLine.getLineYStart() + getTextOffset().y;
+				const GUIInputLineDesc& firstLine = GetLineDesc(0);
+				INT32 lineStart = firstLine.GetLineYStart() + GetTextOffset().y;
 
 				if(pos.y < lineStart) // Before first line
 					mCaretPos = 0;
@@ -194,17 +194,17 @@ namespace bs
 			return;
 		}
 
-		UINT32 numLines = getNumLines();
+		UINT32 numLines = GetNumLines();
 		UINT32 curPos = 0;
 		UINT32 curCharIdx = 0;
 		for(UINT32 i = 0; i < numLines; i++)
 		{
-			const GUIInputLineDesc& lineDesc = getLineDesc(i);
+			const GUIInputLineDesc& lineDesc = GetLineDesc(i);
 		
 			curPos++; // Move past line start position
 
-			UINT32 numChars = lineDesc.getEndChar() - lineDesc.getStartChar();
-			UINT32 numCaretPositions = lineDesc.getEndChar(false) - lineDesc.getStartChar();
+			UINT32 numChars = lineDesc.GetEndChar() - lineDesc.GetStartChar();
+			UINT32 numCaretPositions = lineDesc.GetEndChar(false) - lineDesc.GetStartChar();
 			if(charIdx >= (curCharIdx + numChars))
 			{
 				curCharIdx += numChars;
@@ -227,38 +227,38 @@ namespace bs
 
 	UINT32 GUIInputCaret::GetCharIdxAtCaretPos() const
 	{
-		return getCharIdxAtInputIdx(mCaretPos);
+		return GetCharIdxAtInputIdx(mCaretPos);
 	}
 
 	Vector2I GUIInputCaret::GetCaretPosition(const Vector2I& offset) const
 	{
-		if(mNumChars > 0 && isDescValid())
+		if(mNumChars > 0 && IsDescValid())
 		{
 			UINT32 curPos = 0;
-			UINT32 numLines = getNumLines();
+			UINT32 numLines = GetNumLines();
 
 			for(UINT32 i = 0; i < numLines; i++)
 			{
-				const GUIInputLineDesc& lineDesc = getLineDesc(i);
+				const GUIInputLineDesc& lineDesc = GetLineDesc(i);
 
 				if(mCaretPos == curPos)
 				{
 					// Caret is on line start
-					return Vector2I(offset.x, lineDesc.getLineYStart() + getTextOffset().y);
+					return Vector2I(offset.x, lineDesc.GetLineYStart() + GetTextOffset().y);
 				}
 
-				curPos += lineDesc.getEndChar(false) - lineDesc.getStartChar() + 1; // + 1 for special line start position
+				curPos += lineDesc.GetEndChar(false) - lineDesc.GetStartChar() + 1; // + 1 for special line start position
 			}
 
-			UINT32 charIdx = getCharIdxAtCaretPos();
+			UINT32 charIdx = GetCharIdxAtCaretPos();
 			if(charIdx > 0)
 				charIdx -= 1;			
 
 			charIdx = std::min((UINT32)(mNumChars - 1), charIdx);
 
-			Rect2I charRect = getCharRect(charIdx);
-			UINT32 lineIdx = getLineForChar(charIdx);
-			UINT32 yOffset = getLineDesc(lineIdx).getLineYStart() + getTextOffset().y;
+			Rect2I charRect = GetCharRect(charIdx);
+			UINT32 lineIdx = GetLineForChar(charIdx);
+			UINT32 yOffset = GetLineDesc(lineIdx).GetLineYStart() + GetTextOffset().y;
 
 			return Vector2I(charRect.x + charRect.width, yOffset);
 		}
@@ -268,21 +268,21 @@ namespace bs
 
 	UINT32 GUIInputCaret::GetCaretHeight() const
 	{
-		UINT32 charIdx = getCharIdxAtCaretPos();
+		UINT32 charIdx = GetCharIdxAtCaretPos();
 		if(charIdx > 0)
 			charIdx -= 1;	
 
-		if(charIdx < mNumChars && isDescValid())
+		if(charIdx < mNumChars && IsDescValid())
 		{
-			UINT32 lineIdx = getLineForChar(charIdx);
-			return getLineDesc(lineIdx).getLineHeight();
+			UINT32 lineIdx = GetLineForChar(charIdx);
+			return GetLineDesc(lineIdx).GetLineHeight();
 		}
 		else
 		{
 			if(mTextDesc.font != nullptr)
 			{
-				UINT32 nearestSize = mTextDesc.font->getClosestSize(mTextDesc.fontSize);
-				SPtr<const FontBitmap> fontData = mTextDesc.font->getBitmap(nearestSize);
+				UINT32 nearestSize = mTextDesc.font->GetClosestSize(mTextDesc.fontSize);
+				SPtr<const FontBitmap> fontData = mTextDesc.font->GetBitmap(nearestSize);
 
 				if(fontData != nullptr)
 					return fontData->lineHeight;
@@ -294,7 +294,7 @@ namespace bs
 
 	bool GUIInputCaret::IsCaretAtNewline() const
 	{
-		return isNewline(mCaretPos);
+		return IsNewline(mCaretPos);
 	}
 
 	UINT32 GUIInputCaret::GetMaxCaretPos() const
@@ -302,13 +302,13 @@ namespace bs
 		if(mNumChars == 0)
 			return 0;
 
-		UINT32 numLines = getNumLines();
+		UINT32 numLines = GetNumLines();
 		UINT32 maxPos = 0;
 		for(UINT32 i = 0; i < numLines; i++)
 		{
-			const GUIInputLineDesc& lineDesc = getLineDesc(i);
+			const GUIInputLineDesc& lineDesc = GetLineDesc(i);
 
-			UINT32 numChars = lineDesc.getEndChar(false) - lineDesc.getStartChar() + 1; // + 1 for special line start position
+			UINT32 numChars = lineDesc.GetEndChar(false) - lineDesc.GetStartChar() + 1; // + 1 for special line start position
 			maxPos += numChars;
 		}
 

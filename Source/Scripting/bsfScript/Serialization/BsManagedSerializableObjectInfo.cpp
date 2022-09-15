@@ -82,12 +82,12 @@ namespace bs
 
 	::MonoObject* ManagedSerializableFieldInfo::GetAttribute(MonoClass* monoClass)
 	{
-		return mMonoField->getAttribute(monoClass);
+		return mMonoField->GetAttribute(monoClass);
 	}
 
 	MonoObject* ManagedSerializableFieldInfo::GetValue(MonoObject* instance) const
 	{
-		return mMonoField->getBoxed(instance);
+		return mMonoField->GetBoxed(instance);
 	}
 
 	void ManagedSerializableFieldInfo::SetValue(MonoObject* instance, void* value) const
@@ -107,7 +107,7 @@ namespace bs
 
 	::MonoObject* ManagedSerializablePropertyInfo::GetAttribute(MonoClass* monoClass)
 	{
-		return mMonoProperty->getAttribute(monoClass);
+		return mMonoProperty->GetAttribute(monoClass);
 	}
 
 	MonoObject* ManagedSerializablePropertyInfo::GetValue(MonoObject* instance) const
@@ -330,7 +330,7 @@ namespace bs
 		// If non-null, this is a templated (i.e. C# generic) RRef type
 		if(mResourceType)
 		{
-			::MonoClass* resourceTypeClass = mResourceType->getMonoClass();
+			::MonoClass* resourceTypeClass = mResourceType->GetMonoClass();
 			if (resourceTypeClass == nullptr)
 				return nullptr;
 
@@ -403,11 +403,11 @@ namespace bs
 
 	::MonoClass* ManagedSerializableTypeInfoArray::GetMonoClass() const
 	{
-		::MonoClass* elementClass = mElementType->getMonoClass();
+		::MonoClass* elementClass = mElementType->GetMonoClass();
 		if(elementClass == nullptr)
 			return nullptr;
 
-		return ScriptArray::buildArrayClass(mElementType->getMonoClass(), mRank);
+		return ScriptArray::buildArrayClass(mElementType->GetMonoClass(), mRank);
 	}
 
 	RTTITypeBase* ManagedSerializableTypeInfoArray::GetRttiStatic()
@@ -437,7 +437,7 @@ namespace bs
 
 	::MonoClass* ManagedSerializableTypeInfoList::GetMonoClass() const
 	{
-		::MonoClass* elementClass = mElementType->getMonoClass();
+		::MonoClass* elementClass = mElementType->GetMonoClass();
 		if(elementClass == nullptr)
 			return nullptr;
 
@@ -474,8 +474,8 @@ namespace bs
 
 	::MonoClass* ManagedSerializableTypeInfoDictionary::GetMonoClass() const
 	{
-		::MonoClass* keyClass = mKeyType->getMonoClass();
-		::MonoClass* valueClass = mValueType->getMonoClass();
+		::MonoClass* keyClass = mKeyType->GetMonoClass();
+		::MonoClass* valueClass = mValueType->GetMonoClass();
 		if(keyClass == nullptr || valueClass == nullptr)
 			return nullptr;
 

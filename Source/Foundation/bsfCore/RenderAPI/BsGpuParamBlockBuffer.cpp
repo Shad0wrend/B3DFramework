@@ -77,17 +77,17 @@ namespace bs
 		return ct::HardwareBufferManager::Instance().CreateGpuParamBlockBufferInternal(mSize, mUsage);
 	}
 
-	CoreSyncData GpuParamBlockBuffer::syncToCore(FrameAlloc* allocator)
+	CoreSyncData GpuParamBlockBuffer::SyncToCore(FrameAlloc* allocator)
 	{
-		UINT8* buffer = allocator->alloc(mSize);
-		read(0, buffer, mSize);
+		UINT8* buffer = allocator->Alloc(mSize);
+		Read(0, buffer, mSize);
 
 		return CoreSyncData(buffer, mSize);
 	}
 
 	SPtr<GpuParamBlockBuffer> GpuParamBlockBuffer::Create(UINT32 size, GpuBufferUsage usage)
 	{
-		return HardwareBufferManager::Instance().createGpuParamBlockBuffer(size, usage);
+		return HardwareBufferManager::Instance().CreateGpuParamBlockBuffer(size, usage);
 	}
 
 	namespace ct
@@ -114,7 +114,7 @@ namespace bs
 	{
 		BS_INC_RENDER_STAT_CAT(ResCreated, RenderStatObject_GpuParamBuffer);
 
-		CoreObject::initialize();
+		CoreObject::Initialize();
 	}
 
 	void GpuParamBlockBuffer::Write(UINT32 offset, const void* data, UINT32 size)
@@ -165,28 +165,28 @@ namespace bs
 	{
 		if (mGPUBufferDirty)
 		{
-			writeToGPU(mCachedData, queueIdx);
+			WriteToGpu(mCachedData, queueIdx);
 			mGPUBufferDirty = false;
 		}
 	}
 
 	void GpuParamBlockBuffer::WriteToGpu(const UINT8* data, UINT32 queueIdx)
 	{
-		mBuffer->writeData(0, mSize, data, BWT_DISCARD, queueIdx);
+		mBuffer->WriteData(0, mSize, data, BWT_DISCARD, queueIdx);
 
 		BS_INC_RENDER_STAT_CAT(ResWrite, RenderStatObject_GpuParamBuffer);
 	}
 
 	void GpuParamBlockBuffer::SyncToCore(const CoreSyncData& data)
 	{
-		assert(mSize == data.getBufferSize());
+		assert(mSize == data.GetBufferSize());
 
-		write(0, data.getBuffer(), data.getBufferSize());
+		Write(0, data.GetBuffer(), data.GetBufferSize());
 	}
 
 	SPtr<GpuParamBlockBuffer> GpuParamBlockBuffer::Create(UINT32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
 	{
-		return HardwareBufferManager::Instance().createGpuParamBlockBuffer(size, usage, deviceMask);
+		return HardwareBufferManager::Instance().CreateGpuParamBlockBuffer(size, usage, deviceMask);
 	}
 	}
 }

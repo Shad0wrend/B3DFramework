@@ -42,13 +42,13 @@ namespace bs
 
 	void ScriptCLight::InternalSetType(ScriptCLight* thisPtr, LightType type)
 	{
-		thisPtr->getHandle()->setType(type);
+		thisPtr->GetHandle()->SetType(type);
 	}
 
 	LightType ScriptCLight::InternalGetType(ScriptCLight* thisPtr)
 	{
 		LightType tmp__output;
-		tmp__output = thisPtr->getHandle()->getType();
+		tmp__output = thisPtr->GetHandle()->GetType();
 
 		LightType __output;
 		__output = tmp__output;
@@ -58,26 +58,26 @@ namespace bs
 
 	void ScriptCLight::InternalSetColor(ScriptCLight* thisPtr, Color* color)
 	{
-		thisPtr->getHandle()->setColor(*color);
+		thisPtr->GetHandle()->SetColor(*color);
 	}
 
 	void ScriptCLight::InternalGetColor(ScriptCLight* thisPtr, Color* __output)
 	{
 		Color tmp__output;
-		tmp__output = thisPtr->getHandle()->getColor();
+		tmp__output = thisPtr->GetHandle()->GetColor();
 
 		*__output = tmp__output;
 	}
 
 	void ScriptCLight::InternalSetIntensity(ScriptCLight* thisPtr, float intensity)
 	{
-		thisPtr->getHandle()->setIntensity(intensity);
+		thisPtr->GetHandle()->SetIntensity(intensity);
 	}
 
 	float ScriptCLight::InternalGetIntensity(ScriptCLight* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getHandle()->getIntensity();
+		tmp__output = thisPtr->GetHandle()->GetIntensity();
 
 		float __output;
 		__output = tmp__output;
@@ -87,13 +87,13 @@ namespace bs
 
 	void ScriptCLight::InternalSetUseAutoAttenuation(ScriptCLight* thisPtr, bool enabled)
 	{
-		thisPtr->getHandle()->setUseAutoAttenuation(enabled);
+		thisPtr->GetHandle()->SetUseAutoAttenuation(enabled);
 	}
 
 	bool ScriptCLight::InternalGetUseAutoAttenuation(ScriptCLight* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->getHandle()->getUseAutoAttenuation();
+		tmp__output = thisPtr->GetHandle()->GetUseAutoAttenuation();
 
 		bool __output;
 		__output = tmp__output;
@@ -103,13 +103,13 @@ namespace bs
 
 	void ScriptCLight::InternalSetAttenuationRadius(ScriptCLight* thisPtr, float radius)
 	{
-		thisPtr->getHandle()->setAttenuationRadius(radius);
+		thisPtr->GetHandle()->SetAttenuationRadius(radius);
 	}
 
 	float ScriptCLight::InternalGetAttenuationRadius(ScriptCLight* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getHandle()->getAttenuationRadius();
+		tmp__output = thisPtr->GetHandle()->GetAttenuationRadius();
 
 		float __output;
 		__output = tmp__output;
@@ -119,13 +119,13 @@ namespace bs
 
 	void ScriptCLight::InternalSetSourceRadius(ScriptCLight* thisPtr, float radius)
 	{
-		thisPtr->getHandle()->setSourceRadius(radius);
+		thisPtr->GetHandle()->SetSourceRadius(radius);
 	}
 
 	float ScriptCLight::InternalGetSourceRadius(ScriptCLight* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getHandle()->getSourceRadius();
+		tmp__output = thisPtr->GetHandle()->GetSourceRadius();
 
 		float __output;
 		__output = tmp__output;
@@ -135,39 +135,39 @@ namespace bs
 
 	void ScriptCLight::InternalSetSpotAngle(ScriptCLight* thisPtr, Degree* spotAngle)
 	{
-		thisPtr->getHandle()->setSpotAngle(*spotAngle);
+		thisPtr->GetHandle()->SetSpotAngle(*spotAngle);
 	}
 
 	void ScriptCLight::InternalGetSpotAngle(ScriptCLight* thisPtr, Degree* __output)
 	{
 		Degree tmp__output;
-		tmp__output = thisPtr->getHandle()->getSpotAngle();
+		tmp__output = thisPtr->GetHandle()->GetSpotAngle();
 
 		*__output = tmp__output;
 	}
 
 	void ScriptCLight::InternalSetSpotFalloffAngle(ScriptCLight* thisPtr, Degree* spotAngle)
 	{
-		thisPtr->getHandle()->setSpotFalloffAngle(*spotAngle);
+		thisPtr->GetHandle()->SetSpotFalloffAngle(*spotAngle);
 	}
 
 	void ScriptCLight::InternalGetSpotFalloffAngle(ScriptCLight* thisPtr, Degree* __output)
 	{
 		Degree tmp__output;
-		tmp__output = thisPtr->getHandle()->getSpotFalloffAngle();
+		tmp__output = thisPtr->GetHandle()->GetSpotFalloffAngle();
 
 		*__output = tmp__output;
 	}
 
 	void ScriptCLight::InternalSetCastsShadow(ScriptCLight* thisPtr, bool castsShadow)
 	{
-		thisPtr->getHandle()->setCastsShadow(castsShadow);
+		thisPtr->GetHandle()->SetCastsShadow(castsShadow);
 	}
 
 	bool ScriptCLight::InternalGetCastsShadow(ScriptCLight* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->getHandle()->getCastsShadow();
+		tmp__output = thisPtr->GetHandle()->GetCastsShadow();
 
 		bool __output;
 		__output = tmp__output;
@@ -177,13 +177,13 @@ namespace bs
 
 	void ScriptCLight::InternalSetShadowBias(ScriptCLight* thisPtr, float bias)
 	{
-		thisPtr->getHandle()->setShadowBias(bias);
+		thisPtr->GetHandle()->SetShadowBias(bias);
 	}
 
 	float ScriptCLight::InternalGetShadowBias(ScriptCLight* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getHandle()->getShadowBias();
+		tmp__output = thisPtr->GetHandle()->GetShadowBias();
 
 		float __output;
 		__output = tmp__output;
@@ -194,7 +194,7 @@ namespace bs
 	void ScriptCLight::InternalGetBounds(ScriptCLight* thisPtr, Sphere* __output)
 	{
 		Sphere tmp__output;
-		tmp__output = thisPtr->getHandle()->getBounds();
+		tmp__output = thisPtr->GetHandle()->GetBounds();
 
 		*__output = tmp__output;
 	}

@@ -37,7 +37,7 @@ namespace bs
 		while(!mEmptyCommandQueues.empty())
 		{
 			bs_delete(mEmptyCommandQueues.top());
-			mEmptyCommandQueueMutex.pop();
+			mEmptyCommandQueues.pop();
 		}
 	}
 
@@ -79,7 +79,7 @@ namespace bs
 #endif
 	}
 
-	bs::Queue<QueuedCommand>* CommandQueueBase::flush()
+	bs::Queue<QueuedCommand>* CommandQueueBase::Flush()
 	{
 		bs::Queue<QueuedCommand>* oldCommands = mCommands;
 
@@ -113,7 +113,7 @@ namespace bs
 				AsyncOp& op = command.asyncOp;
 				command.callbackWithReturnValue(op);
 
-				if(!command.asyncOp.hasCompleted())
+				if(!command.asyncOp.HasCompleted())
 				{
 					BS_LOG(Warning, CoreThread,
 						"Async operation return value wasn't resolved properly. Resolving automatically to nullptr. " \
@@ -140,12 +140,12 @@ namespace bs
 
 	void CommandQueueBase::Playback(bs::Queue<QueuedCommand>* commands)
 	{
-		playbackWithNotify(commands, std::function<void(UINT32)>());
+		PlaybackWithNotify(commands, std::function<void(UINT32)>());
 	}
 
 	void CommandQueueBase::CancelAll()
 	{
-		bs::Queue<QueuedCommand>* commands = flush();
+		bs::Queue<QueuedCommand>* commands = Flush();
 
 		while(!commands->empty())
 			commands->pop();

@@ -48,33 +48,33 @@ namespace bs
 		OnButtonReleasedThunk = (OnButtonEventThunkDef)metaData.scriptClass->GetMethodExact("Internal_TriggerButtonUp", "ButtonCode,int,bool")->GetThunk();
 		OnCharInputThunk = (OnCharInputEventThunkDef)metaData.scriptClass->GetMethodExact("Internal_TriggerCharInput", "int,bool")->GetThunk();
 		OnPointerPressedThunk = (OnPointerEventThunkDef)metaData.scriptClass->GetMethodExact("Internal_TriggerPointerPressed", "Vector2I,Vector2I,PointerButton,bool,bool,bool,single,bool")->GetThunk();
-		OnPointerReleasedThunk = (OnPointerEventThunkDef)metaData.scriptClass->GetMethodExact("Internal_TriggerPointerReleased", "Vector2I,Vector2I,PointerButton,bool,bool,bool,single,bool")->getThunk();
-		OnPointerMovedThunk = (OnPointerEventThunkDef)metaData.scriptClass->getMethodExact("Internal_TriggerPointerMove", "Vector2I,Vector2I,PointerButton,bool,bool,bool,single,bool")->getThunk();
-		OnPointerDoubleClickThunk = (OnPointerEventThunkDef)metaData.scriptClass->getMethodExact("Internal_TriggerPointerDoubleClick", "Vector2I,Vector2I,PointerButton,bool,bool,bool,single,bool")->getThunk();
+		OnPointerReleasedThunk = (OnPointerEventThunkDef)metaData.scriptClass->GetMethodExact("Internal_TriggerPointerReleased", "Vector2I,Vector2I,PointerButton,bool,bool,bool,single,bool")->GetThunk();
+		OnPointerMovedThunk = (OnPointerEventThunkDef)metaData.scriptClass->GetMethodExact("Internal_TriggerPointerMove", "Vector2I,Vector2I,PointerButton,bool,bool,bool,single,bool")->GetThunk();
+		OnPointerDoubleClickThunk = (OnPointerEventThunkDef)metaData.scriptClass->GetMethodExact("Internal_TriggerPointerDoubleClick", "Vector2I,Vector2I,PointerButton,bool,bool,bool,single,bool")->GetThunk();
 	}
 
 	void ScriptInput::StartUp()
 	{
 		Input& input = Input::Instance();
 
-		OnButtonPressedConn = input.onButtonDown.connect(&ScriptInput::OnButtonDown);
-		OnButtonReleasedConn = input.onButtonUp.connect(&ScriptInput::OnButtonUp);
-		OnCharInputConn = input.onCharInput.connect(&ScriptInput::OnCharInput);
-		OnPointerPressedConn = input.onPointerPressed.connect(&ScriptInput::OnPointerPressed);
-		OnPointerReleasedConn = input.onPointerReleased.connect(&ScriptInput::OnPointerReleased);
-		OnPointerMovedConn = input.onPointerMoved.connect(&ScriptInput::OnPointerMoved);
-		OnPointerDoubleClickConn = input.onPointerDoubleClick.connect(&ScriptInput::OnPointerDoubleClick);
+		OnButtonPressedConn = input.onButtonDown.Connect(&ScriptInput::OnButtonDown);
+		OnButtonReleasedConn = input.onButtonUp.Connect(&ScriptInput::OnButtonUp);
+		OnCharInputConn = input.onCharInput.Connect(&ScriptInput::OnCharInput);
+		OnPointerPressedConn = input.onPointerPressed.Connect(&ScriptInput::OnPointerPressed);
+		OnPointerReleasedConn = input.onPointerReleased.Connect(&ScriptInput::OnPointerReleased);
+		OnPointerMovedConn = input.onPointerMoved.Connect(&ScriptInput::OnPointerMoved);
+		OnPointerDoubleClickConn = input.onPointerDoubleClick.Connect(&ScriptInput::OnPointerDoubleClick);
 	}
 
 	void ScriptInput::ShutDown()
 	{
-		OnButtonPressedConn.disconnect();
-		OnButtonReleasedConn.disconnect();
-		OnCharInputConn.disconnect();
-		OnPointerPressedConn.disconnect();
-		OnPointerReleasedConn.disconnect();
-		OnPointerMovedConn.disconnect();
-		OnPointerDoubleClickConn.disconnect();
+		OnButtonPressedConn.Disconnect();
+		OnButtonReleasedConn.Disconnect();
+		OnCharInputConn.Disconnect();
+		OnPointerPressedConn.Disconnect();
+		OnPointerReleasedConn.Disconnect();
+		OnPointerMovedConn.Disconnect();
+		OnPointerDoubleClickConn.Disconnect();
 	}
 
 	void ScriptInput::OnButtonDown(const ButtonEvent& ev)

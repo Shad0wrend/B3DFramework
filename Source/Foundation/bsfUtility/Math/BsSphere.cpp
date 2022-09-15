@@ -54,19 +54,19 @@ namespace bs
 	std::pair<bool, float> Sphere::Intersects(const Ray& ray, bool discardInside) const
 	{
 		const Vector3& raydir = ray.GetDirection();
-		const Vector3& rayorig = ray.getOrigin() - getCenter();
-		float radius = getRadius();
+		const Vector3& rayorig = ray.GetOrigin() - GetCenter();
+		float radius = GetRadius();
 
 		// Check origin inside first
-		if (rayorig.squaredLength() <= radius*radius && discardInside)
+		if (rayorig.SquaredLength() <= radius*radius && discardInside)
 		{
 			return std::pair<bool, float>(true, 0.0f);
 		}
 
 		// t = (-b +/- sqrt(b*b + 4ac)) / 2a
-		float a = raydir.dot(raydir);
-		float b = 2 * rayorig.dot(raydir);
-		float c = rayorig.dot(rayorig) - radius*radius;
+		float a = raydir.Dot(raydir);
+		float b = 2 * rayorig.Dot(raydir);
+		float c = rayorig.Dot(rayorig) - radius*radius;
 
 		// Determinant
 		float d = (b*b) - (4 * a * c);
@@ -80,9 +80,9 @@ namespace bs
 			// If d == 0 there is one intersection, if d > 0 there are 2.
 			// We only return the first one.
 			
-			float t = ( -b - Math::sqrt(d) ) / (2 * a);
+			float t = ( -b - Math::Sqrt(d) ) / (2 * a);
 			if (t < 0)
-				t = ( -b + Math::sqrt(d) ) / (2 * a);
+				t = ( -b + Math::Sqrt(d) ) / (2 * a);
 
 			return std::pair<bool, float>(true, t);
 		}
@@ -90,11 +90,11 @@ namespace bs
 
 	bool Sphere::Intersects(const Plane& plane) const
 	{
-		return (Math::abs(plane.getDistance(getCenter())) <= getRadius());
+		return (Math::Abs(plane.GetDistance(GetCenter())) <= GetRadius());
 	}
 
 	bool Sphere::Intersects(const AABox& box) const
 	{
-		return box.intersects(*this);
+		return box.Intersects(*this);
 	}
 }

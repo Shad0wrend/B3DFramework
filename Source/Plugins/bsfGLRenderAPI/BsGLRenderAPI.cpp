@@ -121,14 +121,14 @@ namespace bs { namespace ct
 		// Create main command buffer
 		mMainCommandBuffer = std::static_pointer_cast<GLCommandBuffer>(CommandBuffer::Create(GQT_GRAPHICS));
 
-		RenderAPI::initialize();
+		RenderAPI::Initialize();
 	}
 
 	void GLRenderAPI::InitializeWithWindow(const SPtr<RenderWindow>& primaryWindow)
 	{
 		// Get the context from the window and finish initialization
 		SPtr<GLContext> context;
-		primaryWindow->getCustomAttribute("GLCONTEXT", &context);
+		primaryWindow->GetCustomAttribute("GLCONTEXT", &context);
 
 		// Set main and current context
 		mMainContext = context;
@@ -136,7 +136,7 @@ namespace bs { namespace ct
 
 		// Set primary context as active
 		if (mCurrentContext)
-			mCurrentContext->setCurrent(*primaryWindow);
+			mCurrentContext->SetCurrent(*primaryWindow);
 
 		// Setup GLSupport
 		mGLSupport->initializeExtensions();
@@ -249,15 +249,15 @@ namespace bs { namespace ct
 			DepthStencilState* depthStencilState;
 			if (pipelineState != nullptr)
 			{
-				mCurrentVertexProgram = std::static_pointer_cast<GLSLGpuProgram>(pipelineState->getVertexProgram());
-				mCurrentFragmentProgram = std::static_pointer_cast<GLSLGpuProgram>(pipelineState->getFragmentProgram());
-				mCurrentGeometryProgram = std::static_pointer_cast<GLSLGpuProgram>(pipelineState->getGeometryProgram());
-				mCurrentDomainProgram = std::static_pointer_cast<GLSLGpuProgram>(pipelineState->getDomainProgram());
-				mCurrentHullProgram = std::static_pointer_cast<GLSLGpuProgram>(pipelineState->getHullProgram());
+				mCurrentVertexProgram = std::static_pointer_cast<GLSLGpuProgram>(pipelineState->GetVertexProgram());
+				mCurrentFragmentProgram = std::static_pointer_cast<GLSLGpuProgram>(pipelineState->GetFragmentProgram());
+				mCurrentGeometryProgram = std::static_pointer_cast<GLSLGpuProgram>(pipelineState->GetGeometryProgram());
+				mCurrentDomainProgram = std::static_pointer_cast<GLSLGpuProgram>(pipelineState->GetDomainProgram());
+				mCurrentHullProgram = std::static_pointer_cast<GLSLGpuProgram>(pipelineState->GetHullProgram());
 
-				blendState = pipelineState->getBlendState().get();
-				rasterizerState = pipelineState->getRasterizerState().get();
-				depthStencilState = pipelineState->getDepthStencilState().get();
+				blendState = pipelineState->GetBlendState().get();
+				rasterizerState = pipelineState->GetRasterizerState().get();
+				depthStencilState = pipelineState->GetDepthStencilState().get();
 
 				if (blendState == nullptr)
 					blendState = BlendState::getDefault().get();
@@ -283,7 +283,7 @@ namespace bs { namespace ct
 
 			// Blend state
 			{
-				const BlendProperties& stateProps = blendState->getProperties();
+				const BlendProperties& stateProps = blendState->GetProperties();
 
 				// Alpha to coverage
 				setAlphaToCoverage(stateProps.getAlphaToCoverageEnabled());
@@ -317,7 +317,7 @@ namespace bs { namespace ct
 
 			// Rasterizer state
 			{
-				const RasterizerProperties& stateProps = rasterizerState->getProperties();
+				const RasterizerProperties& stateProps = rasterizerState->GetProperties();
 
 				setDepthBias(stateProps.getDepthBias(), stateProps.getSlopeScaledDepthBias());
 				setCullingMode(stateProps.getCullMode());
@@ -330,7 +330,7 @@ namespace bs { namespace ct
 
 			// Depth stencil state
 			{
-				const DepthStencilProperties& stateProps = depthStencilState->getProperties();
+				const DepthStencilProperties& stateProps = depthStencilState->GetProperties();
 
 				// Set stencil buffer options
 				setStencilCheckEnabled(stateProps.getStencilEnable());
@@ -355,7 +355,7 @@ namespace bs { namespace ct
 		auto execute = [=]() { executeRef(pipelineState); };
 
 		SPtr<GLCommandBuffer> cb = getCB(commandBuffer);
-		cb->queueCommand(execute);
+		cb->QueueCommand(execute);
 
 		BS_INC_RENDER_STAT(NumPipelineStateChanges);
 	}
@@ -369,9 +369,9 @@ namespace bs { namespace ct
 
 			SPtr<GpuProgram> program;
 			if (pipelineState != nullptr)
-				program = pipelineState->getProgram();
+				program = pipelineState->GetProgram();
 
-			if (program != nullptr && program->getType() == GPT_COMPUTE_PROGRAM)
+			if (program != nullptr && program->GetType() == GPT_COMPUTE_PROGRAM)
 				mCurrentComputeProgram = std::static_pointer_cast<GLSLGpuProgram>(program);
 			else
 				mCurrentComputeProgram = nullptr;
@@ -380,7 +380,7 @@ namespace bs { namespace ct
 		auto execute = [=]() { executeRef(pipelineState); };
 
 		SPtr<GLCommandBuffer> cb = getCB(commandBuffer);
-		cb->queueCommand(execute);
+		cb->QueueCommand(execute);
 
 		BS_INC_RENDER_STAT(NumPipelineStateChanges);
 	}
@@ -448,15 +448,15 @@ namespace bs { namespace ct
 
 					GpuProgramType type = (GpuProgramType)i;
 
-					SPtr<GpuParamDesc> paramDesc = gpuParams->getParamDesc(type);
+					SPtr<GpuParamDesc> paramDesc = gpuParams->GetParamDesc(type);
 					if (paramDesc == nullptr)
 						continue;
 
 					for (auto& entry : paramDesc->textures)
 					{
 						UINT32 binding = entry.second.slot;
-						SPtr<Texture> texture = gpuParams->getTexture(entry.second.set, binding);
-						const TextureSurface& surface = gpuParams->getTextureSurface(entry.second.set, binding);
+						SPtr<Texture> texture = gpuParams->GetTexture(entry.second.set, binding);
+						const TextureSurface& surface = gpuParams->GetTextureSurface(entry.second.set, binding);
 
 						UINT32 unit = getTexUnit(binding);
 						if (!activateGLTextureUnit(unit))
@@ -479,12 +479,12 @@ namespace bs { namespace ct
 
 							GLTextureView* glTexView = static_cast<GLTextureView*>(texView.get());
 
-							newTextureType = glTexView->getGLTextureTarget();
-							texId = glTexView->getGLID();
+							newTextureType = glTexView->GetGLTextureTarget();
+							texId = glTexView->GetGLID();
 #else
 							// Texture views are not supported, so if user requested a part of the texture surface report
 							// a warning
-							auto& props = texture->getProperties();
+							auto& props = texture->GetProperties();
 							if (surface.mipLevel != 0 || surface.face != 0 ||
 								(surface.numMipLevels != 0 && surface.numMipLevels != props.getNumMipmaps()) ||
 								(surface.numFaces != 0 && surface.numFaces != props.getNumFaces()))
@@ -494,8 +494,8 @@ namespace bs { namespace ct
 									"Entire texture will be bound instead.");
 							}
 
-							newTextureType = glTex->getGLTextureTarget();
-							texId = glTex->getGLID();
+							newTextureType = glTex->GetGLTextureTarget();
+							texId = glTex->GetGLID();
 #endif
 						}
 						else
@@ -519,7 +519,7 @@ namespace bs { namespace ct
 						SPtr<GLSLGpuProgram> activeProgram = getActiveProgram(type);
 						if (activeProgram != nullptr)
 						{
-							GLuint glProgram = activeProgram->getGLHandle();
+							GLuint glProgram = activeProgram->GetGLHandle();
 
 							glProgramUniform1i(glProgram, binding, unit);
 							BS_CHECK_GL_ERROR();
@@ -529,7 +529,7 @@ namespace bs { namespace ct
 					for(auto& entry : paramDesc->samplers)
 					{
 						UINT32 binding = entry.second.slot;
-						SPtr<SamplerState> samplerState = gpuParams->getSamplerState(entry.second.set, binding);
+						SPtr<SamplerState> samplerState = gpuParams->GetSamplerState(entry.second.set, binding);
 
 						if (samplerState == nullptr)
 							samplerState = SamplerState::getDefault();
@@ -545,7 +545,7 @@ namespace bs { namespace ct
 
 						if (supportsSampler)
 						{
-							const SamplerProperties& stateProps = samplerState->getProperties();
+							const SamplerProperties& stateProps = samplerState->GetProperties();
 
 							setTextureFiltering(unit, FT_MIN, stateProps.getTextureFiltering(FT_MIN));
 							setTextureFiltering(unit, FT_MAG, stateProps.getTextureFiltering(FT_MAG));
@@ -567,7 +567,7 @@ namespace bs { namespace ct
 					for(auto& entry : paramDesc->buffers)
 					{
 						UINT32 binding = entry.second.slot;
-						SPtr<GpuBuffer> buffer = gpuParams->getBuffer(entry.second.set, binding);
+						SPtr<GpuBuffer> buffer = gpuParams->GetBuffer(entry.second.set, binding);
 
 						GLGpuBuffer* glBuffer = static_cast<GLGpuBuffer*>(buffer.get());
 
@@ -581,7 +581,7 @@ namespace bs { namespace ct
 
 								GLuint texId = 0;
 								if (glBuffer != nullptr)
-									texId = glBuffer->getGLTextureId();
+									texId = glBuffer->GetGLTextureId();
 
 								if (mTextureInfos[unit].type != GL_TEXTURE_BUFFER)
 								{
@@ -597,7 +597,7 @@ namespace bs { namespace ct
 								SPtr<GLSLGpuProgram> activeProgram = getActiveProgram(type);
 								if (activeProgram != nullptr)
 								{
-									GLuint glProgram = activeProgram->getGLHandle();
+									GLuint glProgram = activeProgram->GetGLHandle();
 
 									glProgramUniform1i(glProgram, binding, unit);
 									BS_CHECK_GL_ERROR();
@@ -613,8 +613,8 @@ namespace bs { namespace ct
 								GLuint format = GL_R32F;
 								if (glBuffer != nullptr)
 								{
-									texId = glBuffer->getGLTextureId();
-									format = glBuffer->getGLFormat();
+									texId = glBuffer->GetGLTextureId();
+									format = glBuffer->GetGLFormat();
 								}
 
 								glBindImageTexture(unit, texId, 0, false, 0, GL_READ_WRITE, format);
@@ -623,7 +623,7 @@ namespace bs { namespace ct
 								SPtr<GLSLGpuProgram> activeProgram = getActiveProgram(type);
 								if (activeProgram != nullptr)
 								{
-									GLuint glProgram = activeProgram->getGLHandle();
+									GLuint glProgram = activeProgram->GetGLHandle();
 
 									glProgramUniform1i(glProgram, binding, unit);
 									BS_CHECK_GL_ERROR();
@@ -638,7 +638,7 @@ namespace bs { namespace ct
 
 								GLuint bufferId = 0;
 								if (glBuffer != nullptr)
-									bufferId = glBuffer->getGLBufferId();
+									bufferId = glBuffer->GetGLBufferId();
 
 								glBindBufferBase(GL_SHADER_STORAGE_BUFFER, unit, bufferId);
 								BS_CHECK_GL_ERROR();
@@ -646,7 +646,7 @@ namespace bs { namespace ct
 								SPtr<GLSLGpuProgram> activeProgram = getActiveProgram(type);
 								if (activeProgram != nullptr)
 								{
-									GLuint glProgram = activeProgram->getGLHandle();
+									GLuint glProgram = activeProgram->GetGLHandle();
 
 									glShaderStorageBlockBinding(glProgram, binding, unit);
 									BS_CHECK_GL_ERROR();
@@ -664,8 +664,8 @@ namespace bs { namespace ct
 					{
 						UINT32 binding = entry.second.slot;
 
-						SPtr<Texture> texture = gpuParams->getLoadStoreTexture(entry.second.set, binding);
-						const TextureSurface& surface = gpuParams->getLoadStoreSurface(entry.second.set, binding);
+						SPtr<Texture> texture = gpuParams->GetLoadStoreTexture(entry.second.set, binding);
+						const TextureSurface& surface = gpuParams->GetLoadStoreSurface(entry.second.set, binding);
 
 						UINT32 unit = getImageUnit(binding);
 						GLuint texId = 0;
@@ -677,7 +677,7 @@ namespace bs { namespace ct
 						if (texture != nullptr)
 						{
 							GLTexture* tex = static_cast<GLTexture*>(texture.get());
-							auto& texProps = tex->getProperties();
+							auto& texProps = tex->GetProperties();
 
 							bindAllLayers = texProps.getNumFaces() == surface.numFaces || surface.numFaces == 0;
 
@@ -694,8 +694,8 @@ namespace bs { namespace ct
 									"texture. This is not supported and only the first provided level will be bound.");
 							}
 
-							texId = tex->getGLID();
-							format = tex->getGLFormat();
+							texId = tex->GetGLID();
+							format = tex->GetGLFormat();
 							mipLevel = surface.mipLevel;
 							face = surface.face;
 						}
@@ -706,7 +706,7 @@ namespace bs { namespace ct
 						SPtr<GLSLGpuProgram> activeProgram = getActiveProgram(type);
 						if (activeProgram != nullptr)
 						{
-							GLuint glProgram = activeProgram->getGLHandle();
+							GLuint glProgram = activeProgram->GetGLHandle();
 
 							glProgramUniform1i(glProgram, binding, unit);
 							BS_CHECK_GL_ERROR();
@@ -717,7 +717,7 @@ namespace bs { namespace ct
 					for (auto& entry : paramDesc->paramBlocks)
 					{
 						UINT32 binding = entry.second.slot;
-						SPtr<GpuParamBlockBuffer> buffer = gpuParams->getParamBlockBuffer(entry.second.set, binding);
+						SPtr<GpuParamBlockBuffer> buffer = gpuParams->GetParamBlockBuffer(entry.second.set, binding);
 						
 						if (buffer == nullptr)
 							continue;
@@ -725,13 +725,13 @@ namespace bs { namespace ct
 						buffer->flushToGPU();
 
 						SPtr<GLSLGpuProgram> activeProgram = getActiveProgram(type);
-						GLuint glProgram = activeProgram->getGLHandle();
+						GLuint glProgram = activeProgram->GetGLHandle();
 
 						// 0 means uniforms are not in block, in which case we handle it specially
 						if (binding == 0)
 						{
-							UINT8* uniformBufferData = (UINT8*)bs_stack_alloc(buffer->getSize());
-							buffer->read(0, uniformBufferData, buffer->getSize());
+							UINT8* uniformBufferData = (UINT8*)bs_stack_alloc(buffer->GetSize());
+							buffer->read(0, uniformBufferData, buffer->GetSize());
 
 							for (auto iter = paramDesc->params.begin(); iter != paramDesc->params.end(); ++iter)
 							{
@@ -880,7 +880,7 @@ namespace bs { namespace ct
 							glUniformBlockBinding(glProgram, binding - 1, unit);
 							BS_CHECK_GL_ERROR();
 
-							glBindBufferBase(GL_UNIFORM_BUFFER, unit, glParamBlockBuffer->getGLBufferId());
+							glBindBufferBase(GL_UNIFORM_BUFFER, unit, glParamBlockBuffer->GetGLBufferId());
 							BS_CHECK_GL_ERROR();
 						}
 					}
@@ -894,7 +894,7 @@ namespace bs { namespace ct
 		auto execute = [=]() { executeRef(gpuParams); };
 
 		SPtr<GLCommandBuffer> cb = getCB(commandBuffer);
-		cb->queueCommand(execute);
+		cb->QueueCommand(execute);
 
 		BS_INC_RENDER_STAT(NumGpuParamBinds);
 	}
@@ -911,7 +911,7 @@ namespace bs { namespace ct
 		auto execute = [=]() { executeRef(stencilRefValue); };
 
 		SPtr<GLCommandBuffer> cb = getCB(commandBuffer);
-		cb->queueCommand(execute);
+		cb->QueueCommand(execute);
 	}
 
 	void GLRenderAPI::SetViewport(const Rect2& area,
@@ -928,7 +928,7 @@ namespace bs { namespace ct
 		auto execute = [=]() { executeRef(area); };
 
 		SPtr<GLCommandBuffer> cb = getCB(commandBuffer);
-		cb->queueCommand(execute);
+		cb->QueueCommand(execute);
 	}
 
 	void GLRenderAPI::SetRenderTarget(const SPtr<RenderTarget>& target, UINT32 readOnlyFlags,
@@ -939,16 +939,16 @@ namespace bs { namespace ct
 			THROW_IF_NOT_CORE_THREAD;
 
 			// Switch context if different from current one
-			if (target != nullptr && target->getProperties().isWindow)
+			if (target != nullptr && target->GetProperties().isWindow)
 			{
 				RenderWindow* window = static_cast<RenderWindow*>(target.get());
 
 				SPtr<GLContext> newContext;
-				target->getCustomAttribute("GLCONTEXT", &newContext);
+				target->GetCustomAttribute("GLCONTEXT", &newContext);
 				if (newContext && mCurrentContext != newContext)
 					switchContext(newContext, *window);
 				else
-					mCurrentContext->setCurrent(*window);
+					mCurrentContext->SetCurrent(*window);
 			}
 
 			// This must happen after context switch to ensure previous context is still alive
@@ -958,14 +958,14 @@ namespace bs { namespace ct
 			GLFrameBufferObject* fbo = nullptr;
 
 			if (target != nullptr)
-				target->getCustomAttribute("FBO", &fbo);
+				target->GetCustomAttribute("FBO", &fbo);
 
 			if (fbo != nullptr)
 			{
 				fbo->bind();
 
 				// Enable / disable sRGB states
-				if (target->getProperties().hwGamma)
+				if (target->GetProperties().hwGamma)
 				{
 					glEnable(GL_FRAMEBUFFER_SRGB);
 					BS_CHECK_GL_ERROR();
@@ -988,7 +988,7 @@ namespace bs { namespace ct
 		auto execute = [=]() { executeRef(target, readOnlyFlags); };
 
 		SPtr<GLCommandBuffer> cb = getCB(commandBuffer);
-		cb->queueCommand(execute);
+		cb->QueueCommand(execute);
 
 		BS_INC_RENDER_STAT(NumRenderTargetChanges);
 	}
@@ -1022,7 +1022,7 @@ namespace bs { namespace ct
 		{ executeRef(index, buffers, numBuffers); };
 
 		SPtr<GLCommandBuffer> cb = getCB(commandBuffer);
-		cb->queueCommand(execute);
+		cb->QueueCommand(execute);
 	}
 
 	void GLRenderAPI::SetVertexDeclaration(const SPtr<VertexDeclaration>& vertexDeclaration,
@@ -1038,7 +1038,7 @@ namespace bs { namespace ct
 		auto execute = [=]() { executeRef(vertexDeclaration); };
 
 		SPtr<GLCommandBuffer> cb = getCB(commandBuffer);
-		cb->queueCommand(execute);
+		cb->QueueCommand(execute);
 	}
 
 	void GLRenderAPI::SetDrawOperation(DrawOperationType op, const SPtr<CommandBuffer>& commandBuffer)
@@ -1053,7 +1053,7 @@ namespace bs { namespace ct
 		auto execute = [=]() { executeRef(op); };
 
 		SPtr<GLCommandBuffer> cb = getCB(commandBuffer);
-		cb->queueCommand(execute);
+		cb->QueueCommand(execute);
 	}
 
 	void GLRenderAPI::SetIndexBuffer(const SPtr<IndexBuffer>& buffer, const SPtr<CommandBuffer>& commandBuffer)
@@ -1068,7 +1068,7 @@ namespace bs { namespace ct
 		auto execute = [=]() { executeRef(buffer); };
 
 		SPtr<GLCommandBuffer> cb = getCB(commandBuffer);
-		cb->queueCommand(execute);
+		cb->QueueCommand(execute);
 	}
 
 	void GLRenderAPI::Draw(UINT32 vertexOffset, UINT32 vertexCount, UINT32 instanceCount,
@@ -1099,7 +1099,7 @@ namespace bs { namespace ct
 		auto execute = [=]() { executeRef(vertexOffset, vertexCount, instanceCount); };
 
 		SPtr<GLCommandBuffer> cb = getCB(commandBuffer);
-		cb->queueCommand(execute);
+		cb->QueueCommand(execute);
 
 		UINT32 primCount = vertexCountToPrimCount(mCurrentDrawOperation, vertexCount);
 
@@ -1128,8 +1128,8 @@ namespace bs { namespace ct
 			beginDraw();
 
 			SPtr<GLIndexBuffer> indexBuffer = std::static_pointer_cast<GLIndexBuffer>(mBoundIndexBuffer);
-			const IndexBufferProperties& ibProps = indexBuffer->getProperties();
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer->getGLBufferId());
+			const IndexBufferProperties& ibProps = indexBuffer->GetProperties();
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer->GetGLBufferId());
 			BS_CHECK_GL_ERROR();
 
 			GLenum indexType = (ibProps.getType() == IT_16BIT) ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT;
@@ -1162,7 +1162,7 @@ namespace bs { namespace ct
 		auto execute = [=]() { executeRef(startIndex, indexCount, vertexOffset, vertexCount, instanceCount); };
 
 		SPtr<GLCommandBuffer> cb = getCB(commandBuffer);
-		cb->queueCommand(execute);
+		cb->QueueCommand(execute);
 
 		UINT32 primCount = vertexCountToPrimCount(mCurrentDrawOperation, vertexCount);
 
@@ -1187,7 +1187,7 @@ namespace bs { namespace ct
 			}
 
 #if BS_OPENGL_4_3 || BS_OPENGLES_3_1
-			glUseProgram(mCurrentComputeProgram->getGLHandle());
+			glUseProgram(mCurrentComputeProgram->GetGLHandle());
 			BS_CHECK_GL_ERROR();
 
 			glDispatchCompute(numGroupsX, numGroupsY, numGroupsZ);
@@ -1202,7 +1202,7 @@ namespace bs { namespace ct
 		auto execute = [=]() { executeRef(numGroupsX, numGroupsY, numGroupsZ); };
 
 		SPtr<GLCommandBuffer> cb = getCB(commandBuffer);
-		cb->queueCommand(execute);
+		cb->QueueCommand(execute);
 
 		BS_INC_RENDER_STAT(NumComputeCalls);
 	}
@@ -1226,7 +1226,7 @@ namespace bs { namespace ct
 		auto execute = [=]() { executeRef(left, top, right, bottom); };
 
 		SPtr<GLCommandBuffer> cb = getCB(commandBuffer);
-		cb->queueCommand(execute);
+		cb->QueueCommand(execute);
 	}
 
 	void GLRenderAPI::ClearRenderTarget(UINT32 buffers, const Color& color, float depth, UINT16 stencil, UINT8 targetMask,
@@ -1237,7 +1237,7 @@ namespace bs { namespace ct
 			if (mActiveRenderTarget == nullptr)
 				return;
 
-			const RenderTargetProperties& rtProps = mActiveRenderTarget->getProperties();
+			const RenderTargetProperties& rtProps = mActiveRenderTarget->GetProperties();
 			Rect2I clearRect(0, 0, rtProps.width, rtProps.height);
 
 			clearArea(buffers, color, depth, stencil, clearRect, targetMask);
@@ -1246,7 +1246,7 @@ namespace bs { namespace ct
 		auto execute = [=]() { executeRef(buffers, color, depth, stencil, targetMask); };
 
 		SPtr<GLCommandBuffer> cb = getCB(commandBuffer);
-		cb->queueCommand(execute);
+		cb->QueueCommand(execute);
 	}
 
 	void GLRenderAPI::ClearViewport(UINT32 buffers, const Color& color, float depth, UINT16 stencil, UINT8 targetMask,
@@ -1262,7 +1262,7 @@ namespace bs { namespace ct
 		auto execute = [=]() { executeRef(buffers, color, depth, stencil, targetMask); };
 
 		SPtr<GLCommandBuffer> cb = getCB(commandBuffer);
-		cb->queueCommand(execute);
+		cb->QueueCommand(execute);
 	}
 
 	void GLRenderAPI::SwapBuffers(const SPtr<RenderTarget>& target, UINT32 syncMask)
@@ -1270,7 +1270,7 @@ namespace bs { namespace ct
 		THROW_IF_NOT_CORE_THREAD;
 
 		// Switch context if different from current one
-		if(!target->getProperties().isWindow)
+		if(!target->GetProperties().isWindow)
 			return;
 
 		submitCommandBuffer(mMainCommandBuffer, syncMask);
@@ -1278,11 +1278,11 @@ namespace bs { namespace ct
 		RenderWindow* window = static_cast<RenderWindow*>(target.get());
 
 		SPtr<GLContext> newContext;
-		target->getCustomAttribute("GLCONTEXT", &newContext);
+		target->GetCustomAttribute("GLCONTEXT", &newContext);
 		if (newContext && mCurrentContext != newContext)
 			switchContext(newContext, *window);
 		else
-			mCurrentContext->setCurrent(*window);
+			mCurrentContext->SetCurrent(*window);
 
 		target->swapBuffers();
 	
@@ -1328,13 +1328,13 @@ namespace bs { namespace ct
 
 		UINT32 numColorBuffers = 1;
 		bool colorMasks[BS_MAX_MULTIPLE_RENDER_TARGETS] = { 0 };
-		if(!mActiveRenderTarget->getProperties().isWindow)
+		if(!mActiveRenderTarget->GetProperties().isWindow)
 		{
 			RenderTexture* renderTexture = static_cast<RenderTexture*>(mActiveRenderTarget.get());
 
 			for(UINT32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
 			{
-				SPtr<Texture> texture = renderTexture->getColorTexture(i);
+				SPtr<Texture> texture = renderTexture->GetColorTexture(i);
 				if(texture)
 					colorMasks[i] = !mColorWrite[i][0] || !mColorWrite[i][1] || !mColorWrite[i][2] || !mColorWrite[i][3];
 			}
@@ -1355,7 +1355,7 @@ namespace bs { namespace ct
 			BS_CHECK_GL_ERROR();
 		}
 
-		const RenderTargetProperties& rtProps = mActiveRenderTarget->getProperties();
+		const RenderTargetProperties& rtProps = mActiveRenderTarget->GetProperties();
 
 		bool clearEntireTarget = clearRect.width == 0 || clearRect.height == 0;
 		clearEntireTarget |= (clearRect.x == 0 && clearRect.y == 0 && clearRect.width == rtProps.width && clearRect.height == rtProps.height);
@@ -1428,7 +1428,7 @@ namespace bs { namespace ct
 		else
 		{
 			GLFrameBufferObject* fbo = nullptr;
-			mActiveRenderTarget->getCustomAttribute("FBO", &fbo);
+			mActiveRenderTarget->GetCustomAttribute("FBO", &fbo);
 
 			if (buffers & FBT_COLOR)
 			{
@@ -1681,7 +1681,7 @@ namespace bs { namespace ct
 		if (mActiveRenderTarget == nullptr)
 			return;
 
-		const RenderTargetProperties& rtProps = mActiveRenderTarget->getProperties();
+		const RenderTargetProperties& rtProps = mActiveRenderTarget->GetProperties();
 		GLsizei x, y, w, h;
 		if (enable)
 		{
@@ -2078,7 +2078,7 @@ namespace bs { namespace ct
 			setScissorTestEnable(true);
 		}
 
-		const GLSLProgramPipeline* pipeline = mProgramPipelineManager->getPipeline(mCurrentVertexProgram.get(),
+		const GLSLProgramPipeline* pipeline = mProgramPipelineManager->GetPipeline(mCurrentVertexProgram.get(),
 			mCurrentFragmentProgram.get(), mCurrentGeometryProgram.get(), mCurrentHullProgram.get(), mCurrentDomainProgram.get());
 
 		glUseProgram(0);
@@ -2368,7 +2368,7 @@ namespace bs { namespace ct
 			mCurrentContext->endCurrent();
 
 		mCurrentContext = context;
-		mCurrentContext->setCurrent(window);
+		mCurrentContext->SetCurrent(window);
 
 		// Must reset depth/colour write mask to according with user desired, otherwise, clearFrameBuffer would be wrong
 		// because the value we recorded may be different from the real state stored in GL context.
@@ -2385,7 +2385,7 @@ namespace bs { namespace ct
 
 	void GLRenderAPI::InitCapabilities(RenderAPICapabilities& caps) const
 	{
-		Vector<String> tokens = StringUtil::split(mGLSupport->getGLVersion(), ".");
+		Vector<String> tokens = StringUtil::split(mGLSupport->GetGLVersion(), ".");
 
 		DriverVersion driverVersion;
 		if (!tokens.empty())
@@ -2624,7 +2624,7 @@ namespace bs { namespace ct
 		if (mActiveRenderTarget == nullptr)
 			return;
 
-		const RenderTargetProperties& rtProps = mActiveRenderTarget->getProperties();
+		const RenderTargetProperties& rtProps = mActiveRenderTarget->GetProperties();
 
 		// Calculate the "lower-left" corner of the viewport
 		mViewportLeft = (UINT32)(rtProps.width * mViewportNorm.x);
@@ -2680,8 +2680,8 @@ namespace bs { namespace ct
 			if(param.type == GPDT_STRUCT)
 			{
 				// Structs are always aligned and rounded up to vec4
-				size = Math::divideAndRoundUp(param.elementSize, 16U) * 4;
-				block.blockSize = Math::divideAndRoundUp(block.blockSize, 4U) * 4;
+				size = Math::DivideAndRoundUp(param.elementSize, 16U) * 4;
+				block.blockSize = Math::DivideAndRoundUp(block.blockSize, 4U) * 4;
 			}
 			else
 				size = GLSLParamParser::calcInterfaceBlockElementSizeAndOffset(param.type, param.arraySize, block.blockSize);

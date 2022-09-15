@@ -71,22 +71,22 @@ namespace bs
 
 	void ShaderVariation::SetInt(const StringID& name, INT32 value)
 	{
-		addParam(Param(name, value));
+		AddParam(Param(name, value));
 	}
 
 	void ShaderVariation::SetUInt(const StringID& name, UINT32 value)
 	{
-		addParam(Param(name, value));
+		AddParam(Param(name, value));
 	}
 
 	void ShaderVariation::SetFloat(const StringID& name, float value)
 	{
-		addParam(Param(name, value));
+		AddParam(Param(name, value));
 	}
 
 	void ShaderVariation::SetBool(const StringID& name, bool value)
 	{
-		addParam(Param(name, value));
+		AddParam(Param(name, value));
 	}
 
 	Vector<String> ShaderVariation::GetParamNames() const
@@ -109,13 +109,13 @@ namespace bs
 			{
 			case Int:
 			case Bool:
-				defines.set(entry.first.c_str(), entry.second.i);
+				defines.Set(entry.first.CStr(), entry.second.i);
 				break;
 			case UInt:
-				defines.set(entry.first.c_str(), entry.second.ui);
+				defines.Set(entry.first.CStr(), entry.second.ui);
 				break;
 			case Float:
-				defines.set(entry.first.c_str(), entry.second.f);
+				defines.Set(entry.first.CStr(), entry.second.f);
 				break;
 			}
 		}
@@ -153,14 +153,14 @@ namespace bs
 
 	bool ShaderVariation::operator==(const ShaderVariation& rhs) const
 	{
-		return matches(rhs, true);
+		return Matches(rhs, true);
 	}
 
 	void ShaderVariations::Add(const ShaderVariation& variation)
 	{
 		variation.mIdx = mNextIdx++;
 
-		mVariations.add(variation);
+		mVariations.Add(variation);
 	}
 	
 	UINT32 ShaderVariations::Find(const ShaderVariation& variation) const

@@ -397,7 +397,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	void D3D11Mappings::get(const Color& inColor, float* outColor)
+	void D3D11Mappings::Get(const Color& inColor, float* outColor)
 	{
 		outColor[0] = inColor.r;
 		outColor[1] = inColor.g;
@@ -820,7 +820,7 @@ namespace bs { namespace ct
 	PixelFormat D3D11Mappings::GetClosestSupportedPf(PixelFormat pf, TextureType texType, int usage)
 	{
 		// Check for any obvious issues first
-		PixelUtil::checkFormat(pf, texType, usage);
+		PixelUtil::CheckFormat(pf, texType, usage);
 
 		// Check for formats that are not supported at all by DX11
 		switch(pf)
@@ -850,7 +850,7 @@ namespace bs { namespace ct
 
 	D3D11_USAGE D3D11Mappings::GetUsage(GpuBufferUsage usage)
 	{
-		if (isDynamic(usage))
+		if (IsDynamic(usage))
 			return D3D11_USAGE_DYNAMIC;
 		else
 			return D3D11_USAGE_DEFAULT;
@@ -879,7 +879,7 @@ namespace bs { namespace ct
 
 	UINT D3D11Mappings::GetAccessFlags(GpuBufferUsage usage)
 	{
-		if(isDynamic(usage))
+		if(IsDynamic(usage))
 			return D3D11_CPU_ACCESS_WRITE;
 		else
 			return 0;
@@ -910,8 +910,8 @@ namespace bs { namespace ct
 	{
 		if(PixelUtil::isCompressed(pf))
 		{
-			UINT32 blockWidth = Math::divideAndRoundUp(width, 4U);
-			UINT32 blockHeight = Math::divideAndRoundUp(height, 4U);
+			UINT32 blockWidth = Math::DivideAndRoundUp(width, 4U);
+			UINT32 blockHeight = Math::DivideAndRoundUp(height, 4U);
 
 			// D3D wants the width of one row of cells in bytes
 			if (pf == PF_BC1 || pf == PF_BC4)

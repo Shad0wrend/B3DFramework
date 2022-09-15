@@ -17,7 +17,7 @@ namespace bs
 	MeshData::MeshData(UINT32 numVertices, UINT32 numIndexes, const SPtr<VertexDataDesc>& vertexData, IndexType indexType)
 	   :mNumVertices(numVertices), mNumIndices(numIndexes), mIndexType(indexType), mVertexData(vertexData)
 	{
-		allocateInternalBuffer();
+		AllocateInternalBuffer();
 	}
 
 	MeshData::MeshData()
@@ -37,9 +37,9 @@ namespace bs
 		if(mIndexType != IT_16BIT)
 			BS_EXCEPT(InternalErrorException, "Attempting to get 16bit index buffer, but internally allocated buffer is 32 bit.");
 
-		UINT32 indexBufferOffset = getIndexBufferOffset();
+		UINT32 indexBufferOffset = GetIndexBufferOffset();
 
-		return (UINT16*)(getData() + indexBufferOffset);
+		return (UINT16*)(GetData() + indexBufferOffset);
 	}
 
 	UINT32* MeshData::GetIndices32() const
@@ -47,14 +47,14 @@ namespace bs
 		if(mIndexType != IT_32BIT)
 			BS_EXCEPT(InternalErrorException, "Attempting to get 32bit index buffer, but internally allocated buffer is 16 bit.");
 
-		UINT32 indexBufferOffset = getIndexBufferOffset();
+		UINT32 indexBufferOffset = GetIndexBufferOffset();
 
-		return (UINT32*)(getData() + indexBufferOffset);
+		return (UINT32*)(GetData() + indexBufferOffset);
 	}
 
 	UINT32 MeshData::GetInternalBufferSize() const
 	{
-		return getIndexBufferSize() + getStreamSize();
+		return GetIndexBufferSize() + GetStreamSize();
 	}
 
 	// TODO - This doesn't handle the case where multiple elements in same slot have different data types
@@ -65,8 +65,8 @@ namespace bs
 		UINT32 totalIndexCount = 0;
 		for(auto& meshData : meshes)
 		{
-			totalVertexCount += meshData->getNumVertices();
-			totalIndexCount += meshData->getNumIndices();
+			totalVertexCount += meshData->GetNumVertices();
+			totalIndexCount += meshData->GetNumIndices();
 		}
 
 		SPtr<VertexDataDesc> vertexData = bs_shared_ptr_new<VertexDataDesc>();
@@ -74,19 +74,19 @@ namespace bs
 		Vector<VertexElement> combinedVertexElements;
 		for(auto& meshData : meshes)
 		{
-			for(UINT32 i = 0; i < meshData->getVertexDesc()->getNumElements(); i++)
+			for(UINT32 i = 0; i < meshData->GetVertexDesc()->GetNumElements(); i++)
 			{
-				const VertexElement& newElement = meshData->getVertexDesc()->getElement(i);
+				const VertexElement& newElement = meshData->GetVertexDesc()->GetElement(i);
 
 				INT32 alreadyExistsIdx = -1;
 				UINT32 idx = 0;
 
 				for(auto& existingElement : combinedVertexElements)
 				{
-					if(newElement.getSemantic() == existingElement.getSemantic() && newElement.getSemanticIdx() == existingElement.getSemanticIdx()
-						&& newElement.getStreamIdx() == existingElement.getStreamIdx())
+					if(newElement.GetSemantic() == existingElement.GetSemantic() && newElement.GetSemanticIdx() == existingElement.GetSemanticIdx()
+						&& newElement.GetStreamIdx() == existingElement.GetStreamIdx())
 					{
-						if(newElement.getType() != existingElement.getType())
+						if(newElement.GetType() != existingElement.GetType())
 						{
 							BS_EXCEPT(NotImplementedException, "Two elements have same semantics but different types. This is not supported.");
 						}
@@ -101,7 +101,7 @@ namespace bs
 				if(alreadyExistsIdx == -1)
 				{
 					combinedVertexElements.push_back(newElement);
-					vertexData->addVertElem(newElement.getType(), newElement.getSemantic(), newElement.getSemanticIdx(), newElement.getStreamIdx());
+					vertexData->AddVertElem(newElement.GetType(), newElement.GetSemantic(), newElement.GetSemanticIdx(), newElement.GetStreamIdx());
 				}
 			}
 		}
@@ -111,18 +111,18 @@ namespace bs
 		// Copy indices
 		UINT32 vertexOffset = 0;
 		UINT32 indexOffset = 0;
-		UINT32* idxPtr = combinedMeshData->getIndices32();
+		UINT32* idxPtr = combinedMeshData->GetIndices32();
 		for(auto& meshData : meshes)
 		{
-			UINT32 numIndices = meshData->getNumIndices();
-			UINT32* srcData = meshData->getIndices32();
+			UINT32 numIndices = meshData->GetNumIndices();
+			UINT32* srcData = meshData->GetIndices32();
 
 			for(UINT32 j = 0; j < numIndices; j++)
 				idxPtr[j] = srcData[j] + vertexOffset;
 
 			indexOffset += numIndices;
 			idxPtr += numIndices;
-			vertexOffset += meshData->getNumVertices();
+			vertexOffset += meshData->GetNumVertices();
 		}
 
 		// Copy sub-meshes
@@ -130,7 +130,7 @@ namespace bs
 		indexOffset = 0;
 		for(auto& meshData : meshes)
 		{
-			UINT32 numIndices = meshData->getNumIndices();
+			UINT32 numIndices = meshData->GetNumIndices();
 			const Vector<SubMesh> curSubMeshes = allSubMeshes[meshIdx];
 
 			for(auto& subMesh : curSubMeshes)
@@ -148,17 +148,17 @@ namespace bs
 		{
 			for(auto& element : combinedVertexElements)
 			{
-				UINT32 dstVertexStride = vertexData->getVertexStride(element.getStreamIdx());
-				UINT8* dstData = combinedMeshData->getElementData(element.getSemantic(), element.getSemanticIdx(), element.getStreamIdx());
+				UINT32 dstVertexStride = vertexData->GetVertexStride(element.GetStreamIdx());
+				UINT8* dstData = combinedMeshData->GetElementData(element.GetSemantic(), element.GetSemanticIdx(), element.GetStreamIdx());
 				dstData += vertexOffset * dstVertexStride;
 
-				UINT32 numSrcVertices = meshData->getNumVertices();
-				UINT32 vertexSize = vertexData->getElementSize(element.getSemantic(), element.getSemanticIdx(), element.getStreamIdx());
+				UINT32 numSrcVertices = meshData->GetNumVertices();
+				UINT32 vertexSize = vertexData->GetElementSize(element.GetSemantic(), element.GetSemanticIdx(), element.GetStreamIdx());
 
-				if(meshData->getVertexDesc()->hasElement(element.getSemantic(), element.getSemanticIdx(), element.getStreamIdx()))
+				if(meshData->GetVertexDesc()->HasElement(element.GetSemantic(), element.GetSemanticIdx(), element.GetStreamIdx()))
 				{
-					UINT32 srcVertexStride = meshData->getVertexDesc()->getVertexStride(element.getStreamIdx());
-					UINT8* srcData = meshData->getElementData(element.getSemantic(), element.getSemanticIdx(), element.getStreamIdx());
+					UINT32 srcVertexStride = meshData->GetVertexDesc()->GetVertexStride(element.GetStreamIdx());
+					UINT8* srcData = meshData->GetElementData(element.GetSemantic(), element.GetSemanticIdx(), element.GetStreamIdx());
 
 					for(UINT32 i = 0; i < numSrcVertices; i++)
 					{
@@ -177,7 +177,7 @@ namespace bs
 				}
 			}
 
-			vertexOffset += meshData->getNumVertices();
+			vertexOffset += meshData->GetNumVertices();
 		}
 
 		return combinedMeshData;
@@ -187,14 +187,14 @@ namespace bs
 	{
 		assert(data != nullptr);
 
-		if(!mVertexData->hasElement(semantic, semanticIdx, streamIdx))
+		if(!mVertexData->HasElement(semantic, semanticIdx, streamIdx))
 		{
 			BS_LOG(Warning, Mesh, "MeshData doesn't contain an element of specified type: Semantic: {0}, "
 				"Semantic index: {1}, Stream index: {2}", semantic, semanticIdx, streamIdx);
 			return;
 		}
 
-		UINT32 elementSize = mVertexData->getElementSize(semantic, semanticIdx, streamIdx);
+		UINT32 elementSize = mVertexData->GetElementSize(semantic, semanticIdx, streamIdx);
 		UINT32 totalSize = elementSize * mNumVertices;
 
 		if(totalSize != size)
@@ -202,12 +202,12 @@ namespace bs
 			BS_EXCEPT(InvalidParametersException, "Buffer sizes don't match. Expected: " + toString(totalSize) + ". Got: " + toString(size));
 		}
 
-		UINT32 indexBufferOffset = getIndexBufferSize();
+		UINT32 indexBufferOffset = GetIndexBufferSize();
 
-		UINT32 elementOffset = getElementOffset(semantic, semanticIdx, streamIdx);
-		UINT32 vertexStride = mVertexData->getVertexStride(streamIdx);
+		UINT32 elementOffset = GetElementOffset(semantic, semanticIdx, streamIdx);
+		UINT32 vertexStride = mVertexData->GetVertexStride(streamIdx);
 
-		UINT8* dst = getData() + indexBufferOffset + elementOffset;
+		UINT8* dst = GetData() + indexBufferOffset + elementOffset;
 		UINT8* src = (UINT8*)data;
 		for(UINT32 i = 0; i < mNumVertices; i++)
 		{
@@ -221,14 +221,14 @@ namespace bs
 	{
 		assert(data != nullptr);
 
-		if (!mVertexData->hasElement(semantic, semanticIdx, streamIdx))
+		if (!mVertexData->HasElement(semantic, semanticIdx, streamIdx))
 		{
 			BS_LOG(Warning, Mesh, "MeshData doesn't contain an element of specified type: Semantic: {0}, "
 				"Semantic index: {1}, Stream index: {2}", semantic, semanticIdx, streamIdx);
 			return;
 		}
 
-		UINT32 elementSize = mVertexData->getElementSize(semantic, semanticIdx, streamIdx);
+		UINT32 elementSize = mVertexData->GetElementSize(semantic, semanticIdx, streamIdx);
 		UINT32 totalSize = elementSize * mNumVertices;
 
 		if (totalSize != size)
@@ -236,12 +236,12 @@ namespace bs
 			BS_EXCEPT(InvalidParametersException, "Buffer sizes don't match. Expected: " + toString(totalSize) + ". Got: " + toString(size));
 		}
 
-		UINT32 indexBufferOffset = getIndexBufferSize();
+		UINT32 indexBufferOffset = GetIndexBufferSize();
 
-		UINT32 elementOffset = getElementOffset(semantic, semanticIdx, streamIdx);
-		UINT32 vertexStride = mVertexData->getVertexStride(streamIdx);
+		UINT32 elementOffset = GetElementOffset(semantic, semanticIdx, streamIdx);
+		UINT32 vertexStride = mVertexData->GetVertexStride(streamIdx);
 
-		UINT8* src = getData() + indexBufferOffset + elementOffset;
+		UINT8* src = GetData() + indexBufferOffset + elementOffset;
 		UINT8* dst = (UINT8*)data;
 		for (UINT32 i = 0; i < mNumVertices; i++)
 		{
@@ -255,7 +255,7 @@ namespace bs
 	{
 		UINT8* data;
 		UINT32 vertexStride;
-		getDataForIterator(semantic, semanticIdx, streamIdx, data, vertexStride);
+		GetDataForIterator(semantic, semanticIdx, streamIdx, data, vertexStride);
 
 		return VertexElemIter<Vector2>(data, vertexStride, mNumVertices);
 	}
@@ -264,7 +264,7 @@ namespace bs
 	{
 		UINT8* data;
 		UINT32 vertexStride;
-		getDataForIterator(semantic, semanticIdx, streamIdx, data, vertexStride);
+		GetDataForIterator(semantic, semanticIdx, streamIdx, data, vertexStride);
 
 		return VertexElemIter<Vector3>(data, vertexStride, mNumVertices);
 	}
@@ -273,7 +273,7 @@ namespace bs
 	{
 		UINT8* data;
 		UINT32 vertexStride;
-		getDataForIterator(semantic, semanticIdx, streamIdx, data, vertexStride);
+		GetDataForIterator(semantic, semanticIdx, streamIdx, data, vertexStride);
 
 		return VertexElemIter<Vector4>(data, vertexStride, mNumVertices);
 	}
@@ -282,25 +282,25 @@ namespace bs
 	{
 		UINT8* data;
 		UINT32 vertexStride;
-		getDataForIterator(semantic, semanticIdx, streamIdx, data, vertexStride);
+		GetDataForIterator(semantic, semanticIdx, streamIdx, data, vertexStride);
 
 		return VertexElemIter<UINT32>(data, vertexStride, mNumVertices);
 	}
 
 	void MeshData::GetDataForIterator(VertexElementSemantic semantic, UINT32 semanticIdx, UINT32 streamIdx, UINT8*& data, UINT32& stride) const
 	{
-		if(!mVertexData->hasElement(semantic, semanticIdx, streamIdx))
+		if(!mVertexData->HasElement(semantic, semanticIdx, streamIdx))
 		{
 			BS_EXCEPT(InvalidParametersException, "MeshData doesn't contain an element of specified type: Semantic: " + toString(semantic) + ", Semantic index: "
 				+ toString(semanticIdx) + ", Stream index: " + toString(streamIdx));
 		}
 
-		UINT32 indexBufferOffset = getIndexBufferSize();
+		UINT32 indexBufferOffset = GetIndexBufferSize();
 
-		UINT32 elementOffset = getElementOffset(semantic, semanticIdx, streamIdx);
+		UINT32 elementOffset = GetElementOffset(semantic, semanticIdx, streamIdx);
 
-		data = getData() + indexBufferOffset + elementOffset;
-		stride = mVertexData->getVertexStride(streamIdx);
+		data = GetData() + indexBufferOffset + elementOffset;
+		stride = mVertexData->GetVertexStride(streamIdx);
 	}
 
 	UINT32 MeshData::GetIndexBufferOffset() const
@@ -310,19 +310,19 @@ namespace bs
 
 	UINT32 MeshData::GetStreamOffset(UINT32 streamIdx) const
 	{
-		UINT32 streamOffset = mVertexData->getStreamOffset(streamIdx);
+		UINT32 streamOffset = mVertexData->GetStreamOffset(streamIdx);
 
 		return streamOffset * mNumVertices;
 	}
 
 	UINT8* MeshData::GetElementData(VertexElementSemantic semantic, UINT32 semanticIdx, UINT32 streamIdx) const
 	{
-		return getData() + getIndexBufferSize() + getElementOffset(semantic, semanticIdx, streamIdx);
+		return GetData() + GetIndexBufferSize() + GetElementOffset(semantic, semanticIdx, streamIdx);
 	}
 
 	UINT8* MeshData::GetStreamData(UINT32 streamIdx) const
 	{
-		return getData() + getIndexBufferSize() + getStreamOffset(streamIdx);
+		return GetData() + GetIndexBufferSize() + GetStreamOffset(streamIdx);
 	}
 
 	UINT32 MeshData::GetIndexElementSize() const
@@ -332,67 +332,67 @@ namespace bs
 
 	UINT32 MeshData::GetElementOffset(VertexElementSemantic semantic, UINT32 semanticIdx, UINT32 streamIdx) const
 	{
-		return getStreamOffset(streamIdx) + mVertexData->getElementOffsetFromStream(semantic, semanticIdx, streamIdx);
+		return GetStreamOffset(streamIdx) + mVertexData->GetElementOffsetFromStream(semantic, semanticIdx, streamIdx);
 	}
 
 	UINT32 MeshData::GetIndexBufferSize() const
 	{
-		return mNumIndices * getIndexElementSize();
+		return mNumIndices * GetIndexElementSize();
 	}
 
 	UINT32 MeshData::GetStreamSize(UINT32 streamIdx) const
 	{
-		return mVertexData->getVertexStride(streamIdx) * mNumVertices;
+		return mVertexData->GetVertexStride(streamIdx) * mNumVertices;
 	}
 
 	UINT32 MeshData::GetStreamSize() const
 	{
-		return mVertexData->getVertexStride() * mNumVertices;
+		return mVertexData->GetVertexStride() * mNumVertices;
 	}
 
 	Bounds MeshData::CalculateBounds() const
 	{
 		Bounds bounds;
 
-		SPtr<VertexDataDesc> vertexDesc = getVertexDesc();
-		for (UINT32 i = 0; i < vertexDesc->getNumElements(); i++)
+		SPtr<VertexDataDesc> vertexDesc = GetVertexDesc();
+		for (UINT32 i = 0; i < vertexDesc->GetNumElements(); i++)
 		{
-			const VertexElement& curElement = vertexDesc->getElement(i);
+			const VertexElement& curElement = vertexDesc->GetElement(i);
 
-			if (curElement.getSemantic() != VES_POSITION || (curElement.getType() != VET_FLOAT3 && curElement.getType() != VET_FLOAT4))
+			if (curElement.GetSemantic() != VES_POSITION || (curElement.GetType() != VET_FLOAT3 && curElement.GetType() != VET_FLOAT4))
 				continue;
 
-			UINT8* data = getElementData(curElement.getSemantic(), curElement.getSemanticIdx(), curElement.getStreamIdx());
-			UINT32 stride = vertexDesc->getVertexStride(curElement.getStreamIdx());
+			UINT8* data = GetElementData(curElement.GetSemantic(), curElement.GetSemanticIdx(), curElement.GetStreamIdx());
+			UINT32 stride = vertexDesc->GetVertexStride(curElement.GetStreamIdx());
 
-			if (getNumVertices() > 0)
+			if (GetNumVertices() > 0)
 			{
 				Vector3 curPosition = *(Vector3*)data;
 				Vector3 accum = curPosition;
 				Vector3 min = curPosition;
 				Vector3 max = curPosition;
 
-				for (UINT32 i = 1; i < getNumVertices(); i++)
+				for (UINT32 i = 1; i < GetNumVertices(); i++)
 				{
 					curPosition = *(Vector3*)(data + stride * i);
 					accum += curPosition;
-					min = Vector3::min(min, curPosition);
-					max = Vector3::max(max, curPosition);
+					min = Vector3::Min(min, curPosition);
+					max = Vector3::Max(max, curPosition);
 				}
 
-				Vector3 center = accum / (float)getNumVertices();
+				Vector3 center = accum / (float)GetNumVertices();
 				float radiusSqrd = 0.0f;
 
-				for (UINT32 i = 0; i < getNumVertices(); i++)
+				for (UINT32 i = 0; i < GetNumVertices(); i++)
 				{
 					curPosition = *(Vector3*)(data + stride * i);
-					float dist = center.squaredDistance(curPosition);
+					float dist = center.SquaredDistance(curPosition);
 
 					if (dist > radiusSqrd)
 						radiusSqrd = dist;
 				}
 
-				float radius = Math::sqrt(radiusSqrd);
+				float radius = Math::Sqrt(radiusSqrd);
 
 				bounds = Bounds(AABox(min, max), Sphere(center, radius));
 				break;
@@ -411,7 +411,7 @@ namespace bs
 		return MeshDataRTTI::Instance();
 	}
 
-	RTTITypeBase* MeshData::getRTTI() const
+	RTTITypeBase* MeshData::GetRtti() const
 	{
 		return MeshData::GetRttiStatic();
 	}

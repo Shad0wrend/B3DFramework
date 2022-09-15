@@ -12,7 +12,7 @@ namespace bs
 	DragAndDropManager::DragAndDropManager()
 	{
 		mMouseCaptureChangedConn = Platform::onMouseCaptureChanged.Connect(std::bind(&DragAndDropManager::mCaptureChanged, this));
-		Input::Instance().onPointerReleased.connect(std::bind(&DragAndDropManager::cursorReleased, this, _1));
+		Input::Instance().onPointerReleased.Connect(std::bind(&DragAndDropManager::CursorReleased, this, _1));
 	}
 
 	DragAndDropManager::~DragAndDropManager()
@@ -68,11 +68,11 @@ namespace bs
 		mIsDragInProgress = false;
 	}
 
-	void DragAndDropManager::mouseCaptureChanged()
+	void DragAndDropManager::MouseCaptureChanged()
 	{
 		mCaptureActive.fetch_xor(1); // mCaptureActive = !mCaptureActive;
 		mCaptureChanged.store(true);
-		mCaptureChangeFrame.store(gTime().getFrameIdx());
+		mCaptureChangeFrame.store(gTime().GetFrameIdx());
 	}
 
 	void DragAndDropManager::CursorReleased(const PointerEvent& event)
@@ -80,16 +80,16 @@ namespace bs
 		if(!mIsDragInProgress)
 			return;
 
-		if(!onDragEnded.empty())
+		if(!onDragEnded.Empty())
 		{
 			DragCallbackInfo info;
 			onDragEnded(event, info);
 
-			endDrag(info.processed);
+			EndDrag(info.processed);
 		}
 		else
-			endDrag(false);
+			EndDrag(false);
 
-		Platform::releaseMouseCapture();
+		Platform::ReleaseMouseCapture();
 	}
 }

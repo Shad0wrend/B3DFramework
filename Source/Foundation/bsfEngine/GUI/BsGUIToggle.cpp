@@ -47,34 +47,34 @@ namespace bs
 	GUIToggle* GUIToggle::Create(const HString& text, SPtr<GUIToggleGroup> toggleGroup,
 		const GUIOptions& options, const String& styleName)
 	{
-		return create(GUIContent(text), toggleGroup, options, styleName);
+		return Create(GUIContent(text), toggleGroup, options, styleName);
 	}
 
 	GUIToggle* GUIToggle::Create(const GUIContent& content, const String& styleName)
 	{
-		return new (bs_alloc<GUIToggle>()) GUIToggle(getStyleName<GUIToggle>(styleName), content, nullptr, GUIDimensions::Create());
+		return new (bs_alloc<GUIToggle>()) GUIToggle(GetStyleName<GUIToggle>(styleName), content, nullptr, GUIDimensions::Create());
 	}
 
 	GUIToggle* GUIToggle::Create(const GUIContent& content, const GUIOptions& options, const String& styleName)
 	{
-		return new (bs_alloc<GUIToggle>()) GUIToggle(getStyleName<GUIToggle>(styleName), content, nullptr, GUIDimensions::Create(options));
+		return new (bs_alloc<GUIToggle>()) GUIToggle(GetStyleName<GUIToggle>(styleName), content, nullptr, GUIDimensions::Create(options));
 	}
 
 	GUIToggle* GUIToggle::Create(const GUIContent& content, SPtr<GUIToggleGroup> toggleGroup, const String& styleName)
 	{
-		return new (bs_alloc<GUIToggle>()) GUIToggle(getStyleName<GUIToggle>(styleName), content, toggleGroup, GUIDimensions::Create());
+		return new (bs_alloc<GUIToggle>()) GUIToggle(GetStyleName<GUIToggle>(styleName), content, toggleGroup, GUIDimensions::Create());
 	}
 
 	GUIToggle* GUIToggle::Create(const GUIContent& content, SPtr<GUIToggleGroup> toggleGroup,
 		const GUIOptions& options, const String& styleName)
 	{
-		return new (bs_alloc<GUIToggle>()) GUIToggle(getStyleName<GUIToggle>(styleName), content, toggleGroup, GUIDimensions::Create(options));
+		return new (bs_alloc<GUIToggle>()) GUIToggle(GetStyleName<GUIToggle>(styleName), content, toggleGroup, GUIDimensions::Create(options));
 	}
 
 	SPtr<GUIToggleGroup> GUIToggle::CreateToggleGroup(bool allowAllOff)
 	{
 		SPtr<GUIToggleGroup> toggleGroup = bs_shared_ptr<GUIToggleGroup>(new (bs_alloc<GUIToggleGroup>()) GUIToggleGroup(allowAllOff));
-		toggleGroup->initialize(toggleGroup);
+		toggleGroup->Initialize(toggleGroup);
 
 		return toggleGroup;
 	}
@@ -91,7 +91,7 @@ namespace bs
 				if(isToggled)
 				{
 					if(toggleElem->mIsToggled)
-						toggleElem->toggleOff();
+						toggleElem->ToggleOff();
 				}
 				else
 				{
@@ -102,7 +102,7 @@ namespace bs
 			}
 
 			if(!isToggled && !toggleGroup->mAllowAllOff)
-				toggleOn();
+				ToggleOn();
 		}
 	}
 
@@ -115,7 +115,7 @@ namespace bs
 
 		if(triggerEvent)
 		{
-			if (!onToggled.empty())
+			if (!onToggled.Empty())
 				onToggled(mIsToggled);
 		}
 
@@ -161,7 +161,7 @@ namespace bs
 
 			if(triggerEvent)
 			{
-				if (!onToggled.empty())
+				if (!onToggled.Empty())
 					onToggled(mIsToggled);
 			}
 
@@ -173,7 +173,7 @@ namespace bs
 	{
 		bool processed = GUIButtonBase::MouseEventInternal(ev);
 
-		if(ev.getType() == GUIMouseEventType::MouseUp)
+		if(ev.GetType() == GUIMouseEventType::MouseUp)
 		{
 			if (!IsDisabledInternal())
 			{
@@ -193,7 +193,7 @@ namespace bs
 	{
 		const bool processed = GUIButtonBase::CommandEventInternal(ev);
 
-		if(ev.getType() == GUICommandEventType::Confirm)
+		if(ev.GetType() == GUICommandEventType::Confirm)
 		{
 			if(!IsDisabledInternal())
 			{

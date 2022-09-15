@@ -39,13 +39,13 @@ namespace bs
 	{
 		PARTICLE_COLOR_DESC tmpoptions;
 		tmpoptions = ScriptPARTICLE_COLOR_DESC::FromInterop(*options);
-		thisPtr->GetInternal()->setOptions(tmpoptions);
+		thisPtr->GetInternal()->SetOptions(tmpoptions);
 	}
 
 	void ScriptParticleColor::InternalGetOptions(ScriptParticleColor* thisPtr, __PARTICLE_COLOR_DESCInterop* __output)
 	{
 		PARTICLE_COLOR_DESC tmp__output;
-		tmp__output = thisPtr->GetInternal()->getOptions();
+		tmp__output = thisPtr->GetInternal()->GetOptions();
 
 		__PARTICLE_COLOR_DESCInterop interop__output;
 		interop__output = ScriptPARTICLE_COLOR_DESC::ToInterop(tmp__output);

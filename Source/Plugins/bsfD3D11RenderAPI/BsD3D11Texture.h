@@ -37,7 +37,7 @@ namespace bs { namespace ct
 
 		D3D11Texture(const TEXTURE_DESC& desc, const SPtr<PixelData>& initialData, GpuDeviceFlags deviceMask);
 
-		/** @copydoc CoreObject::initialize() */
+		/** @copydoc CoreObject::Initialize() */
 		void Initialize() ;
 
 		/** @copydoc Texture::lockImpl */

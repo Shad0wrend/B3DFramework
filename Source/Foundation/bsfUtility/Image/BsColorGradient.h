@@ -26,12 +26,12 @@ namespace bs
 		public:
 			using INNER_TIME_TYPE = uint32_t;
 
-			static uint32_t GetInternalTime(float t) { return Bitwise::unormToUint<16>(t); }
-			static float FromInternalTime(uint16_t t) { return Bitwise::uintToUnorm<16>(t); }
-			static RGBA ToInternalColor(const Color& color) { return color.getAsRGBA(); }
-			static Color FromInternalColor(RGBA color) { return Color::fromRGBA(color); }
+			static uint32_t GetInternalTime(float t) { return Bitwise::UnormToUint<16>(t); }
+			static float FromInternalTime(uint16_t t) { return Bitwise::UintToUnorm<16>(t); }
+			static RGBA ToInternalColor(const Color& color) { return color.GetAsRgba(); }
+			static Color FromInternalColor(RGBA color) { return Color::FromRgba(color); }
 			static uint32_t InvLerp(uint32_t from, uint32_t to, uint32_t val) { return Bitwise::InvLerpWord(from, to, val) >> 8; }
-			static uint32_t ToLerpFactor(float factor) { return Bitwise::unormToUint<8>(factor); }
+			static uint32_t ToLerpFactor(float factor) { return Bitwise::UnormToUint<8>(factor); }
 		};
 
 		template<>

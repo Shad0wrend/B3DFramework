@@ -25,7 +25,7 @@ namespace bs
 		static bool first = true;
 		if (first)
 		{
-			FileSystem::createDir(path);
+			FileSystem::CreateDir(path);
 			first = false;
 		}
 

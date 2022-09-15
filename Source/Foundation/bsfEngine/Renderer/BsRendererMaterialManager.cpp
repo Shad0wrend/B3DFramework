@@ -18,18 +18,18 @@ namespace bs
 		for (auto& material : materials)
 		{
 			HShader shader = br.getShader(material.shaderPath);
-			if (shader.isLoaded())
-				shaders.push_back(shader->getCore());
+			if (shader.IsLoaded())
+				shaders.push_back(shader->GetCore());
 			else
 				shaders.push_back(nullptr);
 		}
 
-		gCoreThread().queueCommand(std::bind(&RendererMaterialManager::initOnCore, shaders), CTQF_InternalQueue);
+		gCoreThread().QueueCommand(std::bind(&RendererMaterialManager::initOnCore, shaders), CTQF_InternalQueue);
 	}
 
 	RendererMaterialManager::~RendererMaterialManager()
 	{
-		gCoreThread().queueCommand(std::bind(&RendererMaterialManager::destroyOnCore));
+		gCoreThread().QueueCommand(std::bind(&RendererMaterialManager::destroyOnCore));
 	}
 
 	void RendererMaterialManager::RegisterMaterialInternal(ct::RendererMaterialMetaData* metaData, const char* shaderPath)
@@ -57,11 +57,11 @@ namespace bs
 			}
 
 			// Note: Making the assumption here that all the techniques are generated due to shader variations
-			Vector<SPtr<ct::Technique>> techniques = shaders[i]->getCompatibleTechniques();
+			Vector<SPtr<ct::Technique>> techniques = shaders[i]->GetCompatibleTechniques();
 			materials[i].metaData->instances.resize((UINT32)techniques.size());
 
 			for(auto& entry : techniques)
-				materials[i].metaData->variations.add(entry->getVariation());
+				materials[i].metaData->variations.add(entry->GetVariation());
 
 #if BS_PROFILING_ENABLED
 			const String& filename = materials[i].shaderPath.getFilename(false);

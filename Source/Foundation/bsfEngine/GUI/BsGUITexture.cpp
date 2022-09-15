@@ -45,82 +45,82 @@ namespace bs
 	GUITexture* GUITexture::Create(const HSpriteTexture& texture, TextureScaleMode scale, bool transparent,
 		const GUIOptions& options, const String& styleName)
 	{
-		return new (bs_alloc<GUITexture>()) GUITexture(getStyleName<GUITexture>(styleName),
+		return new (bs_alloc<GUITexture>()) GUITexture(GetStyleName<GUITexture>(styleName),
 			texture, scale, transparent, GUIDimensions::Create(options));
 	}
 
 	GUITexture* GUITexture::Create(const HSpriteTexture& texture, TextureScaleMode scale, bool transparent,
 		const String& styleName)
 	{
-		return new (bs_alloc<GUITexture>()) GUITexture(getStyleName<GUITexture>(styleName),
+		return new (bs_alloc<GUITexture>()) GUITexture(GetStyleName<GUITexture>(styleName),
 			texture, scale, transparent, GUIDimensions::Create());
 	}
 
 	GUITexture* GUITexture::Create(const HSpriteTexture& texture, TextureScaleMode scale,
 		const GUIOptions& options, const String& styleName)
 	{
-		return new (bs_alloc<GUITexture>()) GUITexture(getStyleName<GUITexture>(styleName),
+		return new (bs_alloc<GUITexture>()) GUITexture(GetStyleName<GUITexture>(styleName),
 			texture, scale, true, GUIDimensions::Create(options));
 	}
 
 	GUITexture* GUITexture::Create(const HSpriteTexture& texture, TextureScaleMode scale,
 		const String& styleName)
 	{
-		return new (bs_alloc<GUITexture>()) GUITexture(getStyleName<GUITexture>(styleName),
+		return new (bs_alloc<GUITexture>()) GUITexture(GetStyleName<GUITexture>(styleName),
 			texture, scale, true, GUIDimensions::Create());
 	}
 
 	GUITexture* GUITexture::Create(const HSpriteTexture& texture,
 		const GUIOptions& options, const String& styleName)
 	{
-		return new (bs_alloc<GUITexture>()) GUITexture(getStyleName<GUITexture>(styleName),
+		return new (bs_alloc<GUITexture>()) GUITexture(GetStyleName<GUITexture>(styleName),
 			texture, TextureScaleMode::StretchToFit, true, GUIDimensions::Create(options));
 	}
 
 	GUITexture* GUITexture::Create(const HSpriteTexture& texture, const String& styleName)
 	{
-		return new (bs_alloc<GUITexture>()) GUITexture(getStyleName<GUITexture>(styleName),
+		return new (bs_alloc<GUITexture>()) GUITexture(GetStyleName<GUITexture>(styleName),
 			texture, TextureScaleMode::StretchToFit, true, GUIDimensions::Create());
 	}
 
 	GUITexture* GUITexture::Create(TextureScaleMode scale, const GUIOptions& options, const String& styleName)
 	{
-		return new (bs_alloc<GUITexture>()) GUITexture(getStyleName<GUITexture>(styleName),
+		return new (bs_alloc<GUITexture>()) GUITexture(GetStyleName<GUITexture>(styleName),
 			HSpriteTexture(), scale, true, GUIDimensions::Create(options));
 	}
 
 	GUITexture* GUITexture::Create(TextureScaleMode scale, const String& styleName)
 	{
-		return new (bs_alloc<GUITexture>()) GUITexture(getStyleName<GUITexture>(styleName),
+		return new (bs_alloc<GUITexture>()) GUITexture(GetStyleName<GUITexture>(styleName),
 			HSpriteTexture(), scale, true, GUIDimensions::Create());
 	}
 
 	GUITexture* GUITexture::Create(const GUIOptions& options, const String& styleName)
 	{
-		return new (bs_alloc<GUITexture>()) GUITexture(getStyleName<GUITexture>(styleName),
+		return new (bs_alloc<GUITexture>()) GUITexture(GetStyleName<GUITexture>(styleName),
 			HSpriteTexture(), TextureScaleMode::StretchToFit, true, GUIDimensions::Create(options));
 	}
 
 	GUITexture* GUITexture::Create(const String& styleName)
 	{
-		return new (bs_alloc<GUITexture>()) GUITexture(getStyleName<GUITexture>(styleName),
+		return new (bs_alloc<GUITexture>()) GUITexture(GetStyleName<GUITexture>(styleName),
 			HSpriteTexture(), TextureScaleMode::StretchToFit, true, GUIDimensions::Create());
 	}
 
 	void GUITexture::SetTexture(const HSpriteTexture& texture)
 	{
-		Vector2I origSize = mDimensions.calculateSizeRange(GetOptimalSizeInternal()).optimal;
+		Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
 
 		mActiveTexture = texture;
 
-		bool isTexLoaded = SpriteTexture::checkIsLoaded(mActiveTexture);
-		mActiveTextureWidth = isTexLoaded ? mActiveTexture->getFrameWidth() : 0;
-		mActiveTextureHeight = isTexLoaded ? mActiveTexture->getFrameHeight() : 0;
+		bool isTexLoaded = SpriteTexture::CheckIsLoaded(mActiveTexture);
+		mActiveTextureWidth = isTexLoaded ? mActiveTexture->GetFrameWidth() : 0;
+		mActiveTextureHeight = isTexLoaded ? mActiveTexture->GetFrameHeight() : 0;
 
 		mUsingStyleTexture = false;
-		mDesc.animationStartTime = gTime().getTime();
+		mDesc.animationStartTime = gTime().GetTime();
 
-		Vector2I newSize = mDimensions.calculateSizeRange(GetOptimalSizeInternal()).optimal;
+		Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
 		if (origSize != newSize)
 			MarkLayoutAsDirtyInternal();
 		else
@@ -130,11 +130,11 @@ namespace bs
 	void GUITexture::UpdateRenderElementsInternal()
 	{
 		Vector2I textureSize;
-		if (SpriteTexture::checkIsLoaded(mActiveTexture))
+		if (SpriteTexture::CheckIsLoaded(mActiveTexture))
 		{
 			mDesc.texture = mActiveTexture;
-			textureSize.x = mDesc.texture->getFrameWidth();
-			textureSize.y = mDesc.texture->getFrameHeight();
+			textureSize.x = mDesc.texture->GetFrameWidth();
+			textureSize.y = mDesc.texture->GetFrameHeight();
 		}
 		Vector2I destSize(mLayoutData.area.width, mLayoutData.area.height);
 
@@ -149,13 +149,13 @@ namespace bs
 
 				if (aspectY > aspectX)
 				{
-					destSize.x = Math::roundToPosInt(textureSize.x / aspectY);
-					destSize.y = Math::roundToPosInt(textureSize.y / aspectY);
+					destSize.x = Math::RoundToPosInt(textureSize.x / aspectY);
+					destSize.y = Math::RoundToPosInt(textureSize.y / aspectY);
 				}
 				else
 				{
-					destSize.x = Math::roundToPosInt(textureSize.x / aspectX);
-					destSize.y = Math::roundToPosInt(textureSize.y / aspectX);
+					destSize.x = Math::RoundToPosInt(textureSize.x / aspectX);
+					destSize.y = Math::RoundToPosInt(textureSize.y / aspectX);
 				}
 			}
 
@@ -175,22 +175,22 @@ namespace bs
 		mDesc.borderTop = GetStyleInternal()->border.top;
 		mDesc.borderBottom = GetStyleInternal()->border.bottom;
 		mDesc.transparent = mTransparent;
-		mDesc.color = getTint();
+		mDesc.color = GetTint();
 
 		if(mScaleMode != TextureScaleMode::ScaleToFit)
-			mDesc.uvScale = ImageSprite::getTextureUVScale(textureSize, destSize, mScaleMode);
+			mDesc.uvScale = ImageSprite::GetTextureUvScale(textureSize, destSize, mScaleMode);
 		else
 			mDesc.uvScale = Vector2::ONE;
 		
-		mImageSprite->update(mDesc, (UINT64)GetParentWidgetInternal());
+		mImageSprite->Update(mDesc, (UINT64)GetParentWidgetInternal());
 
 		// Populate GUI render elements from the sprites
 		{
 			using T = impl::GUIRenderElementHelper;
-			T::populate({ T::SpriteInfo(mImageSprite) }, mRenderElements);
+			T::Populate({ T::SpriteInfo(mImageSprite) }, mRenderElements);
 		}
 		
-		GUIElement::updateRenderElementsInternal();
+		GUIElement::UpdateRenderElementsInternal();
 	}
 
 	void GUITexture::StyleUpdated()
@@ -198,11 +198,11 @@ namespace bs
 		if (mUsingStyleTexture)
 		{
 			mActiveTexture = GetStyleInternal()->normal.texture;
-			mDesc.animationStartTime = gTime().getTime();
+			mDesc.animationStartTime = gTime().GetTime();
 
-			bool isTexLoaded = SpriteTexture::checkIsLoaded(mActiveTexture);
-			mActiveTextureWidth = isTexLoaded ? mActiveTexture->getFrameWidth() : 0;
-			mActiveTextureHeight = isTexLoaded ? mActiveTexture->getFrameHeight() : 0;
+			bool isTexLoaded = SpriteTexture::CheckIsLoaded(mActiveTexture);
+			mActiveTextureWidth = isTexLoaded ? mActiveTexture->GetFrameWidth() : 0;
+			mActiveTextureHeight = isTexLoaded ? mActiveTexture->GetFrameHeight() : 0;
 		}
 	}
 
@@ -215,21 +215,21 @@ namespace bs
 		// needed (size change is detected). Sprite texture could change without us knowing and by storing the size we can
 		// safely detect this. (In short, don't do mActiveTexture->getFrameWidth/Height() here)
 		
-		if(GetDimensionsInternal().fixedWidth())
+		if(GetDimensionsInternal().FixedWidth())
 			optimalSize.x = GetDimensionsInternal().minWidth;
 		else
 		{
-			if (SpriteTexture::checkIsLoaded(mActiveTexture))
+			if (SpriteTexture::CheckIsLoaded(mActiveTexture))
 				optimalSize.x = mActiveTextureWidth;
 			else
 				optimalSize.x = GetDimensionsInternal().maxWidth;
 		}
 
-		if(GetDimensionsInternal().fixedHeight())
+		if(GetDimensionsInternal().FixedHeight())
 			optimalSize.y = GetDimensionsInternal().minHeight;
 		else
 		{
-			if (SpriteTexture::checkIsLoaded(mActiveTexture))
+			if (SpriteTexture::CheckIsLoaded(mActiveTexture))
 				optimalSize.y = mActiveTextureHeight;
 			else
 				optimalSize.y = GetDimensionsInternal().maxHeight;
@@ -253,7 +253,7 @@ namespace bs
 		UINT32 indexStride = sizeof(UINT32);
 
 		Vector2I layoutOffset = Vector2I(mLayoutData.area.x, mLayoutData.area.y) + mImageSpriteOffset + offset;
-		mImageSprite->fillBuffer(vertices, uvs, indices, vertexOffset, indexOffset, maxNumVerts, maxNumIndices,
-			vertexStride, indexStride, renderElementIdx, layoutOffset, mLayoutData.getLocalClipRect());
+		mImageSprite->FillBuffer(vertices, uvs, indices, vertexOffset, indexOffset, maxNumVerts, maxNumIndices,
+			vertexStride, indexStride, renderElementIdx, layoutOffset, mLayoutData.GetLocalClipRect());
 	}
 }

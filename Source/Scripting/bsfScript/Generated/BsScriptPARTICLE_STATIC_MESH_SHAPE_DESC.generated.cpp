@@ -37,7 +37,7 @@ namespace bs
 		ScriptRRefBase* scriptmesh;
 		scriptmesh = ScriptRRefBase::toNative(value.mesh);
 		if(scriptmesh != nullptr)
-			tmpmesh = static_resource_cast<Mesh>(scriptmesh->getHandle());
+			tmpmesh = static_resource_cast<Mesh>(scriptmesh->GetHandle());
 		output.mesh = tmpmesh;
 
 		return output;
@@ -52,7 +52,7 @@ namespace bs
 		scriptmesh = ScriptResourceManager::Instance().getScriptRRef(value.mesh);
 		MonoObject* tmpmesh;
 		if(scriptmesh != nullptr)
-			tmpmesh = scriptmesh->getManagedInstance();
+			tmpmesh = scriptmesh->GetManagedInstance();
 		else
 			tmpmesh = nullptr;
 		output.mesh = tmpmesh;

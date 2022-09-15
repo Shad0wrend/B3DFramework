@@ -18,14 +18,14 @@ namespace bs
 
 	float ReflectionProbeBase::GetRadius() const
 	{
-		Vector3 scale = mTransform.getScale();
+		Vector3 scale = mTransform.GetScale();
 		return mRadius * std::max(std::max(scale.x, scale.y), scale.z);
 	}
 
 	void ReflectionProbeBase::UpdateBounds()
 	{
-		Vector3 position = mTransform.getPosition();
-		Vector3 scale = mTransform.getScale();
+		Vector3 position = mTransform.GetPosition();
+		Vector3 scale = mTransform.GetScale();
 
 		switch (mType)
 		{
@@ -101,7 +101,7 @@ namespace bs
 		};
 
 		SPtr<ct::ReflectionProbe> coreProbe = getCore();
-		SPtr<ct::Texture> coreTexture = mFilteredTexture->getCore();
+		SPtr<ct::Texture> coreTexture = mFilteredTexture->GetCore();
 
 		if (mCustomTexture == nullptr)
 		{
@@ -115,7 +115,7 @@ namespace bs
 				settings.depthEncodeNear = radius;
 				settings.depthEncodeFar = radius + 1; // + 1 arbitrary, make it a customizable value?
 
-				ct::gRenderer()->captureSceneCubeMap(coreTexture, coreProbe->getTransform().getPosition(), settings);
+				ct::gRenderer()->captureSceneCubeMap(coreTexture, coreProbe->GetTransform().GetPosition(), settings);
 				ct::gIBLUtility().filterCubemapForSpecular(coreTexture, nullptr);
 
 				coreProbe->mFilteredTexture = coreTexture;
@@ -128,7 +128,7 @@ namespace bs
 		}
 		else
 		{
-			SPtr<ct::Texture> coreCustomTex = mCustomTexture->getCore();
+			SPtr<ct::Texture> coreCustomTex = mCustomTexture->GetCore();
 			auto filterReflProbe = [coreCustomTex, coreTexture, coreProbe]()
 			{
 				ct::gIBLUtility().scaleCubemap(coreCustomTex, 0, coreTexture, 0);
@@ -143,7 +143,7 @@ namespace bs
 			mRendererTask = ct::RendererTask::Create("ReflProbeRender", filterReflProbe);
 		}
 
-		mRendererTask->onComplete.connect(renderComplete);
+		mRendererTask->onComplete.Connect(renderComplete);
 		ct::gRenderer()->addTask(mRendererTask);
 	}
 
@@ -157,7 +157,7 @@ namespace bs
 		ReflectionProbe* probe = new (bs_alloc<ReflectionProbe>()) ReflectionProbe(ReflectionProbeType::Sphere, radius, Vector3::ZERO);
 		SPtr<ReflectionProbe> probePtr = bs_core_ptr<ReflectionProbe>(probe);
 		probePtr->SetThisPtrInternal(probePtr);
-		probePtr->initialize();
+		probePtr->Initialize();
 
 		return probePtr;
 	}
@@ -167,7 +167,7 @@ namespace bs
 		ReflectionProbe* probe = new (bs_alloc<ReflectionProbe>()) ReflectionProbe(ReflectionProbeType::Box, 1.0f, extents);
 		SPtr<ReflectionProbe> probePtr = bs_core_ptr<ReflectionProbe>(probe);
 		probePtr->SetThisPtrInternal(probePtr);
-		probePtr->initialize();
+		probePtr->Initialize();
 
 		return probePtr;
 	}
@@ -185,7 +185,7 @@ namespace bs
 	{
 		SPtr<ct::Texture> filteredTexture;
 		if (mFilteredTexture != nullptr)
-			filteredTexture = mFilteredTexture->getCore();
+			filteredTexture = mFilteredTexture->GetCore();
 
 		ct::ReflectionProbe* probe = new (bs_alloc<ct::ReflectionProbe>()) ct::ReflectionProbe(mType, mRadius, mExtents,
 			filteredTexture);
@@ -249,7 +249,7 @@ namespace bs
 		updateBounds();
 		gRenderer()->notifyReflectionProbeAdded(this);
 
-		CoreObject::initialize();
+		CoreObject::Initialize();
 	}
 
 	void ReflectionProbe::SyncToCore(const CoreSyncData& data)

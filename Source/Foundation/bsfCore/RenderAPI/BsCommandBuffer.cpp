@@ -10,7 +10,7 @@ namespace bs { namespace ct
 		if (buffer == nullptr)
 			return;
 
-		mMask |= getGlobalQueueMask(buffer->getType(), buffer->getQueueIdx());
+		mMask |= GetGlobalQueueMask(buffer->GetType(), buffer->GetQueueIdx());
 	}
 
 	UINT32 CommandSyncMask::GetGlobalQueueMask(GpuQueueType type, UINT32 queueIdx)

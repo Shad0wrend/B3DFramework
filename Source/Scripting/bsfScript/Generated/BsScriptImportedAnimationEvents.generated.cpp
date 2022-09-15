@@ -44,7 +44,7 @@ namespace bs
 	MonoString* ScriptImportedAnimationEvents::Internal_getname(ScriptImportedAnimationEvents* thisPtr)
 	{
 		String tmp__output;
-		tmp__output = thisPtr->getInternal()->name;
+		tmp__output = thisPtr->GetInternal()->name;
 
 		MonoString* __output;
 		__output = MonoUtil::stringToMono(tmp__output);
@@ -56,20 +56,20 @@ namespace bs
 	{
 		String tmpvalue;
 		tmpvalue = MonoUtil::monoToString(value);
-		thisPtr->getInternal()->name = tmpvalue;
+		thisPtr->GetInternal()->name = tmpvalue;
 	}
 
 	MonoArray* ScriptImportedAnimationEvents::Internal_getevents(ScriptImportedAnimationEvents* thisPtr)
 	{
 		Vector<AnimationEvent> vec__output;
-		vec__output = thisPtr->getInternal()->events;
+		vec__output = thisPtr->GetInternal()->events;
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
 		ScriptArray array__output = ScriptArray::create<ScriptAnimationEvent>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
-			array__output.set(i, ScriptAnimationEvent::toInterop(vec__output[i]));
+			array__output.Set(i, ScriptAnimationEvent::toInterop(vec__output[i]));
 		}
 		__output = array__output.getInternal();
 
@@ -89,7 +89,7 @@ namespace bs
 			}
 
 		}
-		thisPtr->getInternal()->events = vecvalue;
+		thisPtr->GetInternal()->events = vecvalue;
 	}
 #endif
 }

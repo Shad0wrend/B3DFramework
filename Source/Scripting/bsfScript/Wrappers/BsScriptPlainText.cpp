@@ -38,14 +38,14 @@ namespace bs
 	{
 		HPlainText plainText = thisPtr->GetHandle();
 
-		return MonoUtil::wstringToMono(plainText->getString());
+		return MonoUtil::wstringToMono(plainText->GetString());
 	}
 
 	void ScriptPlainText::InternalSetText(ScriptPlainText* thisPtr, MonoString* text)
 	{
-		HPlainText plainText = thisPtr->getHandle();
+		HPlainText plainText = thisPtr->GetHandle();
 
-		plainText->setString(MonoUtil::monoToWString(text));
+		plainText->SetString(MonoUtil::monoToWString(text));
 	}
 
 	MonoObject* ScriptPlainText::CreateInstance()

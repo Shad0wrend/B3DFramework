@@ -19,7 +19,7 @@ namespace bs { namespace ct
 
 	void ShadowDepthNormalMat::Bind(const SPtr<GpuParamBlockBuffer>& shadowParams)
 	{
-		mParams->setParamBlockBuffer("ShadowParams", shadowParams);
+		mParams->SetParamBlockBuffer("ShadowParams", shadowParams);
 
 		RenderAPI::Instance().setGraphicsPipeline(mGfxPipeline);
 		RenderAPI::Instance().setStencilRef(mStencilRef);
@@ -27,7 +27,7 @@ namespace bs { namespace ct
 	
 	void ShadowDepthNormalMat::SetPerObjectBuffer(const SPtr<GpuParamBlockBuffer>& perObjectParams)
 	{
-		mParams->setParamBlockBuffer("PerObject", perObjectParams);
+		mParams->SetParamBlockBuffer("PerObject", perObjectParams);
 
 		RenderAPI::Instance().setGpuParams(mParams);
 	}
@@ -55,7 +55,7 @@ namespace bs { namespace ct
 
 	void ShadowDepthNormalNoPSMat::Bind(const SPtr<GpuParamBlockBuffer>& shadowParams)
 	{
-		mParams->setParamBlockBuffer("ShadowParams", shadowParams);
+		mParams->SetParamBlockBuffer("ShadowParams", shadowParams);
 
 		RenderAPI::Instance().setGraphicsPipeline(mGfxPipeline);
 		RenderAPI::Instance().setStencilRef(mStencilRef);
@@ -63,7 +63,7 @@ namespace bs { namespace ct
 
 	void ShadowDepthNormalNoPSMat::SetPerObjectBuffer(const SPtr<GpuParamBlockBuffer>& perObjectParams)
 	{
-		mParams->setParamBlockBuffer("PerObject", perObjectParams);
+		mParams->SetParamBlockBuffer("PerObject", perObjectParams);
 
 		RenderAPI::Instance().setGpuParams(mParams);
 	}
@@ -91,7 +91,7 @@ namespace bs { namespace ct
 
 	void ShadowDepthDirectionalMat::Bind(const SPtr<GpuParamBlockBuffer>& shadowParams)
 	{
-		mParams->setParamBlockBuffer("ShadowParams", shadowParams);
+		mParams->SetParamBlockBuffer("ShadowParams", shadowParams);
 
 		RenderAPI::Instance().setGraphicsPipeline(mGfxPipeline);
 		RenderAPI::Instance().setStencilRef(mStencilRef);
@@ -99,7 +99,7 @@ namespace bs { namespace ct
 	
 	void ShadowDepthDirectionalMat::SetPerObjectBuffer(const SPtr<GpuParamBlockBuffer>& perObjectParams)
 	{
-		mParams->setParamBlockBuffer("PerObject", perObjectParams);
+		mParams->SetParamBlockBuffer("PerObject", perObjectParams);
 		RenderAPI::Instance().setGpuParams(mParams);
 	}
 	
@@ -130,8 +130,8 @@ namespace bs { namespace ct
 	void ShadowDepthCubeMat::Bind(const SPtr<GpuParamBlockBuffer>& shadowParams,
 		const SPtr<GpuParamBlockBuffer>& shadowCubeMatrices)
 	{
-		mParams->setParamBlockBuffer("ShadowParams", shadowParams);
-		mParams->setParamBlockBuffer("ShadowCubeMatrices", shadowCubeMatrices);
+		mParams->SetParamBlockBuffer("ShadowParams", shadowParams);
+		mParams->SetParamBlockBuffer("ShadowCubeMatrices", shadowCubeMatrices);
 
 		RenderAPI::Instance().setGraphicsPipeline(mGfxPipeline);
 		RenderAPI::Instance().setStencilRef(mStencilRef);
@@ -140,8 +140,8 @@ namespace bs { namespace ct
 	void ShadowDepthCubeMat::SetPerObjectBuffer(const SPtr<GpuParamBlockBuffer>& perObjectParams,
 		const SPtr<GpuParamBlockBuffer>& shadowCubeMasks)
 	{
-		mParams->setParamBlockBuffer("PerObject", perObjectParams);
-		mParams->setParamBlockBuffer("ShadowCubeMasks", shadowCubeMasks);
+		mParams->SetParamBlockBuffer("PerObject", perObjectParams);
+		mParams->SetParamBlockBuffer("ShadowCubeMasks", shadowCubeMasks);
 
 		RenderAPI::Instance().setGpuParams(mParams);
 	}
@@ -171,15 +171,15 @@ namespace bs { namespace ct
 	{
 		mVertParams = gShadowProjectVertParamsDef.createBuffer();
 		if(mParams->hasParamBlock(GPT_VERTEX_PROGRAM, "VertParams"))
-			mParams->setParamBlockBuffer(GPT_VERTEX_PROGRAM, "VertParams", mVertParams);
+			mParams->SetParamBlockBuffer(GPT_VERTEX_PROGRAM, "VertParams", mVertParams);
 	}
 
 	void ShadowProjectStencilMat::Bind(const SPtr<GpuParamBlockBuffer>& perCamera)
 	{
 		Vector4 lightPosAndScale(0, 0, 0, 1);
-		gShadowProjectVertParamsDef.gPositionAndScale.set(mVertParams, lightPosAndScale);
+		gShadowProjectVertParamsDef.gPositionAndScale.Set(mVertParams, lightPosAndScale);
 
-		mParams->setParamBlockBuffer("PerCamera", perCamera);
+		mParams->SetParamBlockBuffer("PerCamera", perCamera);
 
 		RendererMaterial::bind();
 	}
@@ -200,11 +200,11 @@ namespace bs { namespace ct
 	ShadowProjectMat::ShadowProjectMat()
 		: mGBufferParams(GPT_FRAGMENT_PROGRAM, mParams)
 	{
-		mParams->getTextureParam(GPT_FRAGMENT_PROGRAM, "gShadowTex", mShadowMapParam);
+		mParams->GetTextureParam(GPT_FRAGMENT_PROGRAM, "gShadowTex", mShadowMapParam);
 		if(mParams->hasSamplerState(GPT_FRAGMENT_PROGRAM, "gShadowSampler"))
-			mParams->getSamplerStateParam(GPT_FRAGMENT_PROGRAM, "gShadowSampler", mShadowSamplerParam);
+			mParams->GetSamplerStateParam(GPT_FRAGMENT_PROGRAM, "gShadowSampler", mShadowSamplerParam);
 		else
-			mParams->getSamplerStateParam(GPT_FRAGMENT_PROGRAM, "gShadowTex", mShadowSamplerParam);
+			mParams->GetSamplerStateParam(GPT_FRAGMENT_PROGRAM, "gShadowTex", mShadowSamplerParam);
 
 		SAMPLER_STATE_DESC desc;
 		desc.minFilter = FO_POINT;
@@ -218,21 +218,21 @@ namespace bs { namespace ct
 
 		mVertParams = gShadowProjectVertParamsDef.createBuffer();
 		if(mParams->hasParamBlock(GPT_VERTEX_PROGRAM, "VertParams"))
-			mParams->setParamBlockBuffer(GPT_VERTEX_PROGRAM, "VertParams", mVertParams);
+			mParams->SetParamBlockBuffer(GPT_VERTEX_PROGRAM, "VertParams", mVertParams);
 	}
 
 	void ShadowProjectMat::Bind(const ShadowProjectParams& params)
 	{
 		Vector4 lightPosAndScale(Vector3(0.0f, 0.0f, 0.0f), 1.0f);
-		gShadowProjectVertParamsDef.gPositionAndScale.set(mVertParams, lightPosAndScale);
+		gShadowProjectVertParamsDef.gPositionAndScale.Set(mVertParams, lightPosAndScale);
 
 		mGBufferParams.bind(params.gbuffer);
 
-		mShadowMapParam.set(params.shadowMap);
-		mShadowSamplerParam.set(mSamplerState);
+		mShadowMapParam.Set(params.shadowMap);
+		mShadowSamplerParam.Set(mSamplerState);
 
-		mParams->setParamBlockBuffer("Params", params.shadowParams);
-		mParams->setParamBlockBuffer("PerCamera", params.perCamera);
+		mParams->SetParamBlockBuffer("Params", params.shadowParams);
+		mParams->SetParamBlockBuffer("PerCamera", params.perCamera);
 
 		RendererMaterial::bind();
 	}
@@ -270,12 +270,12 @@ namespace bs { namespace ct
 	ShadowProjectOmniMat::ShadowProjectOmniMat()
 		: mGBufferParams(GPT_FRAGMENT_PROGRAM, mParams)
 	{
-		mParams->getTextureParam(GPT_FRAGMENT_PROGRAM, "gShadowCubeTex", mShadowMapParam);
+		mParams->GetTextureParam(GPT_FRAGMENT_PROGRAM, "gShadowCubeTex", mShadowMapParam);
 
 		if(mParams->hasSamplerState(GPT_FRAGMENT_PROGRAM, "gShadowCubeSampler"))
-			mParams->getSamplerStateParam(GPT_FRAGMENT_PROGRAM, "gShadowCubeSampler", mShadowSamplerParam);
+			mParams->GetSamplerStateParam(GPT_FRAGMENT_PROGRAM, "gShadowCubeSampler", mShadowSamplerParam);
 		else
-			mParams->getSamplerStateParam(GPT_FRAGMENT_PROGRAM, "gShadowCubeTex", mShadowSamplerParam);
+			mParams->GetSamplerStateParam(GPT_FRAGMENT_PROGRAM, "gShadowCubeTex", mShadowSamplerParam);
 
 		SAMPLER_STATE_DESC desc;
 		desc.minFilter = FO_LINEAR;
@@ -290,21 +290,21 @@ namespace bs { namespace ct
 
 		mVertParams = gShadowProjectVertParamsDef.createBuffer();
 		if(mParams->hasParamBlock(GPT_VERTEX_PROGRAM, "VertParams"))
-			mParams->setParamBlockBuffer(GPT_VERTEX_PROGRAM, "VertParams", mVertParams);
+			mParams->SetParamBlockBuffer(GPT_VERTEX_PROGRAM, "VertParams", mVertParams);
 	}
 
 	void ShadowProjectOmniMat::Bind(const ShadowProjectParams& params)
 	{
-		Vector4 lightPosAndScale(params.light.getTransform().getPosition(), params.light.getAttenuationRadius());
-		gShadowProjectVertParamsDef.gPositionAndScale.set(mVertParams, lightPosAndScale);
+		Vector4 lightPosAndScale(params.light.getTransform().GetPosition(), params.light.getAttenuationRadius());
+		gShadowProjectVertParamsDef.gPositionAndScale.Set(mVertParams, lightPosAndScale);
 
 		mGBufferParams.bind(params.gbuffer);
 
-		mShadowMapParam.set(params.shadowMap);
-		mShadowSamplerParam.set(mSamplerState);
+		mShadowMapParam.Set(params.shadowMap);
+		mShadowSamplerParam.Set(mSamplerState);
 
-		mParams->setParamBlockBuffer("Params", params.shadowParams);
-		mParams->setParamBlockBuffer("PerCamera", params.perCamera);
+		mParams->SetParamBlockBuffer("Params", params.shadowParams);
+		mParams->SetParamBlockBuffer("PerCamera", params.perCamera);
 
 		RendererMaterial::bind();
 	}
@@ -357,7 +357,7 @@ namespace bs { namespace ct
 		UINT32 sizeWithBorder = size + border * 2;
 
 		UINT32 x, y;
-		if (!mLayout.addElement(sizeWithBorder, sizeWithBorder, x, y))
+		if (!mLayout.AddElement(sizeWithBorder, sizeWithBorder, x, y))
 			return false;
 
 		area.width = area.height = size;
@@ -572,9 +572,9 @@ namespace bs { namespace ct
 			RendererRenderable* renderable = command.renderable;
 
 			for (UINT32 j = 0; j < 6; j++)
-				gShadowCubeMasksDef.gFaceMasks.set(shadowCubeMasksBuffer, (command.mask & (1 << j)), j);
+				gShadowCubeMasksDef.gFaceMasks.Set(shadowCubeMasksBuffer, (command.mask & (1 << j)), j);
 
-			material->setPerObjectBuffer(renderable->perObjectParamBuffer, shadowCubeMasksBuffer);
+			material->SetPerObjectBuffer(renderable->perObjectParamBuffer, shadowCubeMasksBuffer);
 		}
 		
 		const ConvexVolume (&frustums)[6];
@@ -614,7 +614,7 @@ namespace bs { namespace ct
 		{
 			RendererRenderable* renderable = command.renderable;
 
-			material->setPerObjectBuffer(renderable->perObjectParamBuffer);
+			material->SetPerObjectBuffer(renderable->perObjectParamBuffer);
 		}
 
 		const ConvexVolume& boundingVolume;
@@ -651,7 +651,7 @@ namespace bs { namespace ct
 		{
 			RendererRenderable* renderable = command.renderable;
 
-			material->setPerObjectBuffer(renderable->perObjectParamBuffer);
+			material->SetPerObjectBuffer(renderable->perObjectParamBuffer);
 		}
 		
 		const ConvexVolume& boundingVolume;
@@ -688,7 +688,7 @@ namespace bs { namespace ct
 		{
 			RendererRenderable* renderable = command.renderable;
 
-			material->setPerObjectBuffer(renderable->perObjectParamBuffer);
+			material->SetPerObjectBuffer(renderable->perObjectParamBuffer);
 		}
 		
 		const ConvexVolume& boundingVolume;
@@ -708,7 +708,7 @@ namespace bs { namespace ct
 		: mShadowMapSize(shadowMapSize)
 	{
 		SPtr<VertexDataDesc> vertexDesc = VertexDataDesc::Create();
-		vertexDesc->addVertElem(VET_FLOAT3, VES_POSITION);
+		vertexDesc->AddVertElem(VET_FLOAT3, VES_POSITION);
 
 		mPositionOnlyVD = VertexDeclaration::Create(vertexDesc);
 
@@ -717,7 +717,7 @@ namespace bs { namespace ct
 			VERTEX_BUFFER_DESC vbDesc;
 			vbDesc.numVerts = 8;
 			vbDesc.usage = GBU_DYNAMIC;
-			vbDesc.vertexSize = mPositionOnlyVD->getProperties().getVertexSize(0);
+			vbDesc.vertexSize = mPositionOnlyVD->GetProperties().getVertexSize(0);
 
 			mPlaneVB = VertexBuffer::Create(vbDesc);
 
@@ -746,7 +746,7 @@ namespace bs { namespace ct
 			VERTEX_BUFFER_DESC vbDesc;
 			vbDesc.numVerts = 8;
 			vbDesc.usage = GBU_DYNAMIC;
-			vbDesc.vertexSize = mPositionOnlyVD->getProperties().getVertexSize(0);
+			vbDesc.vertexSize = mPositionOnlyVD->GetProperties().getVertexSize(0);
 
 			mFrustumVB = VertexBuffer::Create(vbDesc);
 
@@ -815,7 +815,7 @@ namespace bs { namespace ct
 
 			// Note: I'm using visibility across all views, while I could be using visibility for every view individually,
 			// if I kept that information somewhere
-			if (!light.internal->getCastsShadow() || !visibility.spotLights[i])
+			if (!light.internal->GetCastsShadow() || !visibility.spotLights[i])
 				continue;
 
 			ShadowMapOptions options;
@@ -840,7 +840,7 @@ namespace bs { namespace ct
 
 			// Note: I'm using visibility across all views, while I could be using visibility for every view individually,
 			// if I kept that information somewhere
-			if (!light.internal->getCastsShadow() || !visibility.radialLights[i])
+			if (!light.internal->GetCastsShadow() || !visibility.radialLights[i])
 				continue;
 
 			ShadowMapOptions options;
@@ -868,7 +868,7 @@ namespace bs { namespace ct
 		// Deallocate unused textures (must be done before rendering shadows, in order to ensure indices don't change)
 		for(auto iter = mDynamicShadowMaps.begin(); iter != mDynamicShadowMaps.end(); ++iter)
 		{
-			if(iter->getLastUsedCounter() >= MAX_UNUSED_FRAMES)
+			if(iter->GetLastUsedCounter() >= MAX_UNUSED_FRAMES)
 			{
 				// These are always populated in order, so we can assume all following atlases are also empty
 				mDynamicShadowMaps.erase(iter, mDynamicShadowMaps.end());
@@ -878,7 +878,7 @@ namespace bs { namespace ct
 
 		for(auto iter = mCascadedShadowMaps.begin(); iter != mCascadedShadowMaps.end();)
 		{
-			if (iter->getLastUsedCounter() >= MAX_UNUSED_FRAMES)
+			if (iter->GetLastUsedCounter() >= MAX_UNUSED_FRAMES)
 				iter = mCascadedShadowMaps.erase(iter);
 			else
 				++iter;
@@ -886,7 +886,7 @@ namespace bs { namespace ct
 		
 		for(auto iter = mShadowCubemaps.begin(); iter != mShadowCubemaps.end();)
 		{
-			if (iter->getLastUsedCounter() >= MAX_UNUSED_FRAMES)
+			if (iter->GetLastUsedCounter() >= MAX_UNUSED_FRAMES)
 				iter = mShadowCubemaps.erase(iter);
 			else
 				++iter;
@@ -897,7 +897,7 @@ namespace bs { namespace ct
 		{
 			const RendererLight& light = sceneInfo.directionalLights[i];
 
-			if (!light.internal->getCastsShadow())
+			if (!light.internal->GetCastsShadow())
 				return;
 
 			UINT32 numViews = viewGroup.getNumViews();
@@ -1007,12 +1007,12 @@ namespace bs { namespace ct
 		UINT32 shadowQuality = view.getRenderSettings().shadowSettings.shadowFilteringQuality;
 
 		const Light* light = rendererLight.internal;
-		UINT32 lightIdx = light->getRendererId();
+		UINT32 lightIdx = light->GetRendererId();
 
 		auto viewProps = view.getProperties();
 
 		const Matrix4& viewP = viewProps.projTransform;
-		Matrix4 viewInvVP = viewProps.viewProjTransform.inverse();
+		Matrix4 viewInvVP = viewProps.viewProjTransform.Inverse();
 
 		SPtr<GpuParamBlockBuffer> perViewBuffer = view.getPerViewBuffer();
 
@@ -1027,7 +1027,7 @@ namespace bs { namespace ct
 		UINT32 viewIdx = view.getViewIdx();
 		Vector<const ShadowInfo*> shadowInfos;
 
-		if(light->getType() == LightType::Radial)
+		if(light->GetType() == LightType::Radial)
 		{
 			const LightShadows& shadows = mRadialLightShadows[lightIdx];
 
@@ -1040,23 +1040,23 @@ namespace bs { namespace ct
 					continue;
 
 				for(UINT32 j = 0; j < 6; j++)
-					gShadowProjectOmniParamsDef.gFaceVPMatrices.set(shadowOmniParamBuffer, shadowInfo.shadowVPTransforms[j], j);
+					gShadowProjectOmniParamsDef.gFaceVPMatrices.Set(shadowOmniParamBuffer, shadowInfo.shadowVPTransforms[j], j);
 
-				gShadowProjectOmniParamsDef.gDepthBias.set(shadowOmniParamBuffer, shadowInfo.depthBias);
-				gShadowProjectOmniParamsDef.gFadePercent.set(shadowOmniParamBuffer, shadowInfo.fadePerView[viewIdx]);
-				gShadowProjectOmniParamsDef.gInvResolution.set(shadowOmniParamBuffer, 1.0f / shadowInfo.area.width);
+				gShadowProjectOmniParamsDef.gDepthBias.Set(shadowOmniParamBuffer, shadowInfo.depthBias);
+				gShadowProjectOmniParamsDef.gFadePercent.Set(shadowOmniParamBuffer, shadowInfo.fadePerView[viewIdx]);
+				gShadowProjectOmniParamsDef.gInvResolution.Set(shadowOmniParamBuffer, 1.0f / shadowInfo.area.width);
 
-				const Transform& tfrm = light->getTransform();
-				Vector4 lightPosAndRadius(tfrm.getPosition(), light->getAttenuationRadius());
-				gShadowProjectOmniParamsDef.gLightPosAndRadius.set(shadowOmniParamBuffer, lightPosAndRadius);
+				const Transform& tfrm = light->GetTransform();
+				Vector4 lightPosAndRadius(tfrm.GetPosition(), light->GetAttenuationRadius());
+				gShadowProjectOmniParamsDef.gLightPosAndRadius.Set(shadowOmniParamBuffer, lightPosAndRadius);
 
 				// Reduce shadow quality based on shadow map resolution for spot lights
 				UINT32 effectiveShadowQuality = getShadowQuality(shadowQuality, shadowInfo.area.width, 2);
 
 				// Check if viewer is inside the light bounds
 				//// Expand the light bounds slightly to handle the case when the near plane is intersecting the light volume
-				float lightRadius = light->getAttenuationRadius() + viewProps.nearPlane * 3.0f;
-				bool viewerInsideVolume = (tfrm.getPosition() - viewProps.viewOrigin).length() < lightRadius;
+				float lightRadius = light->GetAttenuationRadius() + viewProps.nearPlane * 3.0f;
+				bool viewerInsideVolume = (tfrm.GetPosition() - viewProps.viewOrigin).length() < lightRadius;
 
 				SPtr<Texture> shadowMap = mShadowCubemaps[shadowInfo.textureIdx].getTexture();
 				ShadowProjectParams shadowParams(*light, shadowMap, shadowOmniParamBuffer, perViewBuffer, gbuffer);
@@ -1072,7 +1072,7 @@ namespace bs { namespace ct
 		{
 			shadowInfos.clear();
 
-			bool isCSM = light->getType() == LightType::Directional;
+			bool isCSM = light->GetType() == LightType::Directional;
 			if(!isCSM)
 			{
 				const LightShadows& shadows = mSpotLightShadows[lightIdx];
@@ -1132,27 +1132,27 @@ namespace bs { namespace ct
 				Matrix4 mixedToShadowUV = createMixedToShadowUVMatrix(viewP, viewInvVP, shadowInfo->normArea,
 					depthScale, depthOffset, shadowInfo->shadowVPTransform);
 
-				auto shadowMapProps = shadowMap->getProperties();
+				auto shadowMapProps = shadowMap->GetProperties();
 
-				Vector2 shadowMapSize((float)shadowMapProps.getWidth(), (float)shadowMapProps.getHeight());
+				Vector2 shadowMapSize((float)shadowMapProps.GetWidth(), (float)shadowMapProps.GetHeight());
 				float transitionScale = getFadeTransition(*light, shadowInfo->subjectBounds.getRadius(),
 					shadowInfo->depthRange, shadowInfo->area.width);
 
-				gShadowProjectParamsDef.gFadePlaneDepth.set(shadowParamBuffer, shadowInfo->depthFade);
-				gShadowProjectParamsDef.gMixedToShadowSpace.set(shadowParamBuffer, mixedToShadowUV);
-				gShadowProjectParamsDef.gShadowMapSize.set(shadowParamBuffer, shadowMapSize);
-				gShadowProjectParamsDef.gShadowMapSizeInv.set(shadowParamBuffer, 1.0f / shadowMapSize);
-				gShadowProjectParamsDef.gSoftTransitionScale.set(shadowParamBuffer, transitionScale);
+				gShadowProjectParamsDef.gFadePlaneDepth.Set(shadowParamBuffer, shadowInfo->depthFade);
+				gShadowProjectParamsDef.gMixedToShadowSpace.Set(shadowParamBuffer, mixedToShadowUV);
+				gShadowProjectParamsDef.gShadowMapSize.Set(shadowParamBuffer, shadowMapSize);
+				gShadowProjectParamsDef.gShadowMapSizeInv.Set(shadowParamBuffer, 1.0f / shadowMapSize);
+				gShadowProjectParamsDef.gSoftTransitionScale.Set(shadowParamBuffer, transitionScale);
 
 				if(isCSM)
-					gShadowProjectParamsDef.gFadePercent.set(shadowParamBuffer, 1.0f);
+					gShadowProjectParamsDef.gFadePercent.Set(shadowParamBuffer, 1.0f);
 				else
-					gShadowProjectParamsDef.gFadePercent.set(shadowParamBuffer, shadowInfo->fadePerView[viewIdx]);
+					gShadowProjectParamsDef.gFadePercent.Set(shadowParamBuffer, shadowInfo->fadePerView[viewIdx]);
 
 				if(shadowInfo->fadeRange == 0.0f)
-					gShadowProjectParamsDef.gInvFadePlaneRange.set(shadowParamBuffer, 0.0f);
+					gShadowProjectParamsDef.gInvFadePlaneRange.Set(shadowParamBuffer, 0.0f);
 				else
-					gShadowProjectParamsDef.gInvFadePlaneRange.set(shadowParamBuffer, 1.0f / shadowInfo->fadeRange);
+					gShadowProjectParamsDef.gInvFadePlaneRange.Set(shadowParamBuffer, 1.0f / shadowInfo->fadeRange);
 
 				// Generate a stencil buffer to avoid evaluating pixels without any receiver geometry in the shadow area
 				std::array<Vector3, 8> frustumVertices;
@@ -1160,7 +1160,7 @@ namespace bs { namespace ct
 				if(!isCSM)
 				{
 					ConvexVolume shadowFrustum;
-					frustumVertices = getFrustum(shadowInfo->shadowVPTransform.inverse(), shadowFrustum);
+					frustumVertices = getFrustum(shadowInfo->shadowVPTransform.Inverse(), shadowFrustum);
 
 					// Check if viewer is inside the frustum. Frustum is slightly expanded so that if the near plane is
 					// intersecting the shadow frustum, it is counted as inside. This needs to be conservative as the code
@@ -1188,7 +1188,7 @@ namespace bs { namespace ct
 					drawNearFarPlanes(near.z, far.z, shadowInfo->cascadeIdx != 0);
 				}
 
-				gShadowProjectParamsDef.gFace.set(shadowParamBuffer, (float)shadowMapFace);
+				gShadowProjectParamsDef.gFace.Set(shadowParamBuffer, (float)shadowMapFace);
 				ShadowProjectParams shadowParams(*light, shadowMap, shadowParamBuffer, perViewBuffer, gbuffer);
 
 				ShadowProjectMat* mat = ShadowProjectMat::getVariation(effectiveShadowQuality, isCSM,
@@ -1228,8 +1228,8 @@ namespace bs { namespace ct
 
 		RenderAPI& rapi = RenderAPI::Instance();
 
-		const Transform& tfrm = light->getTransform();
-		Vector3 lightDir = -tfrm.getRotation().zAxis();
+		const Transform& tfrm = light->GetTransform();
+		Vector3 lightDir = -tfrm.GetRotation().zAxis();
 		SPtr<GpuParamBlockBuffer> shadowParamsBuffer = gShadowParamsDef.createBuffer();
 
 		ShadowInfo shadowInfo;
@@ -1284,14 +1284,14 @@ namespace bs { namespace ct
 			// Snap caster origin to the shadow map pixel grid, to ensure shadow map stability
 			Vector3 casterOrigin = frustumBounds.getCenter();
 			Matrix4 shadowView = Matrix4::view(Vector3::ZERO, lightRotation);
-			Vector3 shadowSpaceOrigin = shadowView.multiplyAffine(casterOrigin);
+			Vector3 shadowSpaceOrigin = shadowView.MultiplyAffine(casterOrigin);
 
 			Vector2 snapOffset(fmod(shadowSpaceOrigin.x, worldUnitsPerTexel), fmod(shadowSpaceOrigin.y, worldUnitsPerTexel));
 			shadowSpaceOrigin.x -= snapOffset.x;
 			shadowSpaceOrigin.y -= snapOffset.y;
 
 			Matrix4 shadowViewInv = shadowView.inverseAffine();
-			casterOrigin = shadowViewInv.multiplyAffine(shadowSpaceOrigin);
+			casterOrigin = shadowViewInv.MultiplyAffine(shadowSpaceOrigin);
 
 			// Move the light so it is centered at the subject frustum, with depth range covering the frustum bounds
 			shadowInfo.depthRange = frustumBounds.getRadius() * 2.0f;
@@ -1323,10 +1323,10 @@ namespace bs { namespace ct
 			shadowInfo.depthFar = shadowInfo.depthFade + shadowInfo.fadeRange;
 			shadowInfo.depthBias = getDepthBias(*light, frustumBounds.getRadius(), shadowInfo.depthRange, mapSize);
 
-			gShadowParamsDef.gDepthBias.set(shadowParamsBuffer, shadowInfo.depthBias);
-			gShadowParamsDef.gInvDepthRange.set(shadowParamsBuffer, 1.0f / shadowInfo.depthRange);
-			gShadowParamsDef.gMatViewProj.set(shadowParamsBuffer, shadowInfo.shadowVPTransform);
-			gShadowParamsDef.gNDCZToDeviceZ.set(shadowParamsBuffer, RendererView::getNDCZToDeviceZ());
+			gShadowParamsDef.gDepthBias.Set(shadowParamsBuffer, shadowInfo.depthBias);
+			gShadowParamsDef.gInvDepthRange.Set(shadowParamsBuffer, 1.0f / shadowInfo.depthRange);
+			gShadowParamsDef.gMatViewProj.Set(shadowParamsBuffer, shadowInfo.shadowVPTransform);
+			gShadowParamsDef.gNDCZToDeviceZ.Set(shadowParamsBuffer, RendererView::getNDCZToDeviceZ());
 
 			rapi.setRenderTarget(shadowMap.getTarget(i));
 			rapi.clearRenderTarget(FBT_DEPTH);
@@ -1394,27 +1394,27 @@ namespace bs { namespace ct
 		rapi.clearViewport(FBT_DEPTH);
 
 		mapInfo.depthNear = 0.05f;
-		mapInfo.depthFar = light->getAttenuationRadius();
+		mapInfo.depthFar = light->GetAttenuationRadius();
 		mapInfo.depthFade = mapInfo.depthFar;
 		mapInfo.fadeRange = 0.0f;
 		mapInfo.depthRange = mapInfo.depthFar - mapInfo.depthNear;
-		mapInfo.depthBias = getDepthBias(*light, light->getBounds().getRadius(), mapInfo.depthRange, options.mapSize);
-		mapInfo.subjectBounds = light->getBounds();
+		mapInfo.depthBias = getDepthBias(*light, light->GetBounds().getRadius(), mapInfo.depthRange, options.mapSize);
+		mapInfo.subjectBounds = light->GetBounds();
 
-		Quaternion lightRotation = light->getTransform().getRotation();
+		Quaternion lightRotation = light->GetTransform().GetRotation();
 
 		Matrix4 view = Matrix4::view(rendererLight.getShiftedLightPosition(), lightRotation);
-		Matrix4 proj = Matrix4::projectionPerspective(light->getSpotAngle(), 1.0f, 0.05f, light->getAttenuationRadius());
+		Matrix4 proj = Matrix4::projectionPerspective(light->GetSpotAngle(), 1.0f, 0.05f, light->GetAttenuationRadius());
 
 		ConvexVolume localFrustum = ConvexVolume(proj);
 		RenderAPI::Instance().convertProjectionMatrix(proj, proj);
 
 		mapInfo.shadowVPTransform = proj * view;
 
-		gShadowParamsDef.gDepthBias.set(shadowParamsBuffer, mapInfo.depthBias);
-		gShadowParamsDef.gInvDepthRange.set(shadowParamsBuffer, 1.0f / mapInfo.depthRange);
-		gShadowParamsDef.gMatViewProj.set(shadowParamsBuffer, mapInfo.shadowVPTransform);
-		gShadowParamsDef.gNDCZToDeviceZ.set(shadowParamsBuffer, RendererView::getNDCZToDeviceZ());
+		gShadowParamsDef.gDepthBias.Set(shadowParamsBuffer, mapInfo.depthBias);
+		gShadowParamsDef.gInvDepthRange.Set(shadowParamsBuffer, 1.0f / mapInfo.depthRange);
+		gShadowParamsDef.gMatViewProj.Set(shadowParamsBuffer, mapInfo.shadowVPTransform);
+		gShadowParamsDef.gNDCZToDeviceZ.Set(shadowParamsBuffer, RendererView::getNDCZToDeviceZ());
 
 		const Vector<Plane>& frustumPlanes = localFrustum.getPlanes();
 		Matrix4 worldMatrix = view.inverseAffine();
@@ -1423,7 +1423,7 @@ namespace bs { namespace ct
 		UINT32 j = 0;
 		for (auto& plane : frustumPlanes)
 		{
-			worldPlanes[j] = worldMatrix.multiplyAffine(plane);
+			worldPlanes[j] = worldMatrix.MultiplyAffine(plane);
 			j++;
 		}
 
@@ -1485,15 +1485,15 @@ namespace bs { namespace ct
 		ShadowCubemap& cubemap = mShadowCubemaps[mapInfo.textureIdx];
 
 		mapInfo.depthNear = 0.05f;
-		mapInfo.depthFar = light->getAttenuationRadius();
+		mapInfo.depthFar = light->GetAttenuationRadius();
 		mapInfo.depthFade = mapInfo.depthFar;
 		mapInfo.fadeRange = 0.0f;
 		mapInfo.depthRange = mapInfo.depthFar - mapInfo.depthNear;
-		mapInfo.depthBias = getDepthBias(*light, light->getBounds().getRadius(), mapInfo.depthRange, options.mapSize);
-		mapInfo.subjectBounds = light->getBounds();
+		mapInfo.depthBias = getDepthBias(*light, light->GetBounds().getRadius(), mapInfo.depthRange, options.mapSize);
+		mapInfo.subjectBounds = light->GetBounds();
 
 		// Note: Projecting on positive Z axis, because cubemaps use a left-handed coordinate system
-		Matrix4 proj = Matrix4::projectionPerspective(Degree(90.0f), 1.0f, 0.05f, light->getAttenuationRadius(), true);
+		Matrix4 proj = Matrix4::projectionPerspective(Degree(90.0f), 1.0f, 0.05f, light->GetAttenuationRadius(), true);
 		ConvexVolume localFrustum(proj);
 
 		ProfileGPUBlock profileSample("Project radial light shadows");
@@ -1527,10 +1527,10 @@ namespace bs { namespace ct
 			shadowCubeMasksBuffer = gShadowCubeMasksDef.createBuffer();
 		}
 
-		gShadowParamsDef.gDepthBias.set(shadowParamsBuffer, mapInfo.depthBias);
-		gShadowParamsDef.gInvDepthRange.set(shadowParamsBuffer, 1.0f / mapInfo.depthRange);
-		gShadowParamsDef.gMatViewProj.set(shadowParamsBuffer, Matrix4::IDENTITY);
-		gShadowParamsDef.gNDCZToDeviceZ.set(shadowParamsBuffer, RendererView::getNDCZToDeviceZ());
+		gShadowParamsDef.gDepthBias.Set(shadowParamsBuffer, mapInfo.depthBias);
+		gShadowParamsDef.gInvDepthRange.Set(shadowParamsBuffer, 1.0f / mapInfo.depthRange);
+		gShadowParamsDef.gMatViewProj.Set(shadowParamsBuffer, Matrix4::IDENTITY);
+		gShadowParamsDef.gNDCZToDeviceZ.Set(shadowParamsBuffer, RendererView::getNDCZToDeviceZ());
 
 		ConvexVolume frustums[6];
 		Vector<Plane> boundingPlanes;
@@ -1564,10 +1564,10 @@ namespace bs { namespace ct
 				break;
 			}
 
-			Vector3 right = Vector3::cross(up, forward);
+			Vector3 right = Vector3::Cross(up, forward);
 			Matrix3 viewRotationMat = Matrix3(right, up, forward);
 
-			Vector3 lightPos = light->getTransform().getPosition();
+			Vector3 lightPos = light->GetTransform().GetPosition();
 			Matrix4 viewOffsetMat = Matrix4::translation(-lightPos);
 
 			Matrix4 view = Matrix4(viewRotationMat.transpose()) * viewOffsetMat;
@@ -1584,7 +1584,7 @@ namespace bs { namespace ct
 			UINT32 j = 0;
 			for (auto& plane : frustumPlanes)
 			{
-				worldPlanes[j] = worldMatrix.multiplyAffine(plane);
+				worldPlanes[j] = worldMatrix.MultiplyAffine(plane);
 				j++;
 			}
 
@@ -1596,11 +1596,11 @@ namespace bs { namespace ct
 
 				// Register far plane of all frustums
 				boundingPlanes.push_back(worldPlanes[FRUSTUM_PLANE_FAR]);
-				gShadowCubeMatricesDef.gFaceVPMatrices.set(shadowCubeMatricesBuffer, shadowViewProj, i);
+				gShadowCubeMatricesDef.gFaceVPMatrices.Set(shadowCubeMatricesBuffer, shadowViewProj, i);
 			}
 			else
 			{
-				gShadowParamsDef.gMatViewProj.set(shadowParamsBuffer, shadowViewProj);
+				gShadowParamsDef.gMatViewProj.Set(shadowParamsBuffer, shadowViewProj);
 
 				RENDER_TEXTURE_DESC rtDesc;
 				rtDesc.depthStencilSurface.texture = cubemap.getTexture();
@@ -1669,7 +1669,7 @@ namespace bs { namespace ct
 				// largest one
 				//// First get sphere depth
 				const Matrix4& viewVP = viewProps.viewProjTransform;
-				float depth = viewVP.multiply(Vector4(light.internal->getTransform().getPosition(), 1.0f)).w;
+				float depth = viewVP.multiply(Vector4(light.internal->GetTransform().GetPosition(), 1.0f)).w;
 
 				// This is just 1/tan(fov), for both horz. and vert. FOV
 				float viewScaleX = viewProps.projTransform[0][0];
@@ -1681,7 +1681,7 @@ namespace bs { namespace ct
 				float screenScale = std::max(screenScaleX, screenScaleY);
 
 				//// Calc radius (clamp if too close to avoid massive numbers)
-				float radiusNDC = light.internal->getBounds().getRadius() / std::max(depth, 1.0f);
+				float radiusNDC = light.internal->GetBounds().getRadius() / std::max(depth, 1.0f);
 
 				//// Radius of light bounds in percent of the view surface, multiplied by screen size in pixels
 				float radiusScreen = radiusNDC * screenScale;
@@ -1690,7 +1690,7 @@ namespace bs { namespace ct
 				maxMapSize = std::max(maxMapSize, optimalMapSize);
 
 				// Determine if the shadow should fade out
-				float fadePercent = Math::invLerp(optimalMapSize, (float)MIN_SHADOW_MAP_SIZE, (float)SHADOW_MAP_FADE_SIZE);
+				float fadePercent = Math::InvLerp(optimalMapSize, (float)MIN_SHADOW_MAP_SIZE, (float)SHADOW_MAP_FADE_SIZE);
 				fadePercents.add(fadePercent);
 				maxFadePercent = std::max(maxFadePercent, fadePercent);
 			}
@@ -1699,7 +1699,7 @@ namespace bs { namespace ct
 		// If light fully (or nearly fully) covers the screen, use full shadow map resolution, otherwise
 		// scale it down to smaller power of two, while clamping to minimal allowed resolution
 		UINT32 effectiveMapSize = Bitwise::nextPow2((UINT32)maxMapSize);
-		effectiveMapSize = Math::clamp(effectiveMapSize, MIN_SHADOW_MAP_SIZE, mShadowMapSize);
+		effectiveMapSize = Math::Clamp(effectiveMapSize, MIN_SHADOW_MAP_SIZE, mShadowMapSize);
 
 		// Leave room for border
 		size = std::max(effectiveMapSize - 2 * border, 1u);
@@ -1832,7 +1832,7 @@ namespace bs { namespace ct
 
 		float length = splitFar - splitNear;
 		float offset = (diagonalNearSq - diagonalFarSq) / (2 * length) + length * 0.5f;
-		float distToCenter = Math::clamp(splitFar - offset, splitNear, splitFar);
+		float distToCenter = Math::Clamp(splitFar - offset, splitNear, splitFar);
 
 		Vector3 center = viewOrigin + viewDir * distToCenter;
 
@@ -1856,7 +1856,7 @@ namespace bs { namespace ct
 		Vector<Plane> lightVolume;
 		for(auto& entry : viewPlanes)
 		{
-			if (entry.normal.dot(lightDir) < 0.0f)
+			if (entry.normal.Dot(lightDir) < 0.0f)
 				lightVolume.push_back(entry);
 		}
 
@@ -1893,8 +1893,8 @@ namespace bs { namespace ct
 			const Plane& planeA = viewPlanes[adjacentPlanes[i][0]];
 			const Plane& planeB = viewPlanes[adjacentPlanes[i][1]];
 
-			float dotA = planeA.normal.dot(lightDir);
-			float dotB = planeB.normal.dot(lightDir);
+			float dotA = planeA.normal.Dot(lightDir);
+			float dotB = planeB.normal.Dot(lightDir);
 
 			if((dotA * dotB) < 0.0f)
 			{
@@ -1940,7 +1940,7 @@ namespace bs { namespace ct
 		// Calculate split distance in Z
 		auto& viewProps = view.getProperties();
 		float near = viewProps.nearPlane;
-		float far = Math::clamp(shadowSettings.directionalShadowDistance, viewProps.nearPlane, viewProps.farPlane);
+		float far = Math::Clamp(shadowSettings.directionalShadowDistance, viewProps.nearPlane, viewProps.farPlane);
 
 		return near + (far - near) * scale;
 	}

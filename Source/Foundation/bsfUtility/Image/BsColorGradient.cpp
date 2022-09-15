@@ -34,7 +34,7 @@ namespace bs
 		if(mDuration > 0.0f)
 			t = t / mDuration;
 
-		const auto time = impl::TGradientHelper<COLOR>::getInternalTime(Math::clamp01(t));
+		const auto time = impl::TGradientHelper<COLOR>::getInternalTime(Math::Clamp01(t));
 
 		if(time < mTimes[0])
 			return mColors[0];
@@ -85,14 +85,14 @@ namespace bs
 				break;
 
 			mColors[mNumKeys] = impl::TGradientHelper<COLOR>::toInternalColor(key.color);
-			mTimes[mNumKeys] = impl::TGradientHelper<COLOR>::getInternalTime(Math::clamp01(key.time));
+			mTimes[mNumKeys] = impl::TGradientHelper<COLOR>::getInternalTime(Math::Clamp01(key.time));
 
 			mNumKeys++;
 		}
 	}
 
 	template<class COLOR, class TIME>
-	Vector<ColorGradientKey> TColorGradient<COLOR, TIME>::getKeys() const
+	Vector<ColorGradientKey> TColorGradient<COLOR, TIME>::GetKeys() const
 	{
 		Vector<ColorGradientKey> output(mNumKeys);
 		for(UINT32 i = 0; i < mNumKeys; i++)

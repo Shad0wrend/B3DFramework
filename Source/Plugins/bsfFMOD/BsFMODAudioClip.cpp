@@ -9,10 +9,10 @@ namespace bs
 	FMOD_RESULT F_CALLBACK pcmReadCallback(FMOD_SOUND* sound, void *data, unsigned int dataLen)
 	{
 		FMODOggDecompressorData* decompressor = nullptr;
-		((FMOD::Sound*)sound)->getUserData((void**)&decompressor);
+		((FMOD::Sound*)sound)->GetUserData((void**)&decompressor);
 
 		const FMODAudioClip* clip = decompressor->clip;
-		UINT32 bytesPerSample = (clip->getBitDepth() / 8);
+		UINT32 bytesPerSample = (clip->GetBitDepth() / 8);
 
 		assert(dataLen % bytesPerSample == 0);
 		UINT32 numSamples = dataLen / bytesPerSample;
@@ -32,7 +32,7 @@ namespace bs
 		assert(readSamples == numSamples);
 
 		decompressor->readPos += readSamples;
-		decompressor->readPos %= clip->getNumSamples();
+		decompressor->readPos %= clip->GetNumSamples();
 
 		return FMOD_OK;
 	}
@@ -40,18 +40,18 @@ namespace bs
 	FMOD_RESULT F_CALLBACK pcmSetPosCallback(FMOD_SOUND* sound, int subsound, unsigned int position, FMOD_TIMEUNIT posType)
 	{
 		FMODOggDecompressorData* decompressor = nullptr;
-		((FMOD::Sound*)sound)->getUserData((void**)&decompressor);
+		((FMOD::Sound*)sound)->GetUserData((void**)&decompressor);
 
 		const FMODAudioClip* clip = decompressor->clip;
-		UINT32 bytesPerSample = (clip->getBitDepth() / 8);
+		UINT32 bytesPerSample = (clip->GetBitDepth() / 8);
 
 		switch(posType)
 		{
 		case FMOD_TIMEUNIT_MS:
-			decompressor->readPos = (UINT32)((clip->getFrequency() * clip->getNumChannels()) * (position / 1000.0f));
+			decompressor->readPos = (UINT32)((clip->GetFrequency() * clip->GetNumChannels()) * (position / 1000.0f));
 			break;
 		case FMOD_TIMEUNIT_PCM:
-			decompressor->readPos = clip->getNumChannels() * position;
+			decompressor->readPos = clip->GetNumChannels() * position;
 			break;
 		case FMOD_TIMEUNIT_PCMBYTES:
 			assert(position % bytesPerSample == 0);
@@ -62,7 +62,7 @@ namespace bs
 			break;
 		}
 
-		decompressor->readPos %= clip->getNumSamples();
+		decompressor->readPos %= clip->GetNumSamples();
 		decompressor->vorbisReader.seek(decompressor->readPos);
 		return FMOD_OK;
 	}
@@ -77,7 +77,7 @@ namespace bs
 			mSound->release();
 	}
 
-	void FMODAudioClip::initialize()
+	void FMODAudioClip::Initialize()
 	{
 		AudioDataInfo info;
 		info.bitDepth = mDesc.bitDepth;
@@ -162,7 +162,7 @@ namespace bs
 			}
 			else
 			{
-				mSound->setMode(FMOD_LOOP_OFF);
+				mSound->SetMode(FMOD_LOOP_OFF);
 			}
 
 			mStreamData = nullptr;
@@ -192,7 +192,7 @@ namespace bs
 			}
 		}
 
-		AudioClip::initialize();
+		AudioClip::Initialize();
 	}
 
 	FMOD::Sound* FMODAudioClip::createStreamingSound() const
@@ -213,14 +213,14 @@ namespace bs
 		String pathStr;
 		if (mStreamData->isFile())
 		{
-			// initialize() guarantees the data was loaded in memory if it's not streaming
+			// Initialize() guarantees the data was loaded in memory if it's not streaming
 			assert(mDesc.readMode == AudioReadMode::Stream);
 
 			exInfo.length = mStreamSize;
 			exInfo.fileoffset = mStreamOffset;
 
 			SPtr<FileDataStream> fileStream = std::static_pointer_cast<FileDataStream>(mStreamData);
-			pathStr = fileStream->getPath().toString();
+			pathStr = fileStream->GetPath().toString();
 
 			streamData = pathStr.c_str();
 		}
@@ -236,7 +236,7 @@ namespace bs
 				flags |= FMOD_OPENMEMORY;
 
 				memStream->seek(mStreamOffset);
-				streamData = (const char*)memStream->getCurrentPtr();
+				streamData = (const char*)memStream->GetCurrentPtr();
 
 				exInfo.length = mStreamSize;
 			}
@@ -311,14 +311,14 @@ namespace bs
 			return nullptr;
 		}
 
-		sound->setMode(FMOD_LOOP_OFF);
+		sound->SetMode(FMOD_LOOP_OFF);
 		return sound;
 	}
 
 	void FMODAudioClip::releaseStreamingSound(FMOD::Sound* sound)
 	{
 		FMODOggDecompressorData* decompressorData = nullptr;
-		((FMOD::Sound*)sound)->getUserData((void**)&decompressorData);
+		((FMOD::Sound*)sound)->GetUserData((void**)&decompressorData);
 
 		if (decompressorData != nullptr)
 			bs_delete(decompressorData);

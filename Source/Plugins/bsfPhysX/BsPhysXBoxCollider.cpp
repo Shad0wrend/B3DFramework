@@ -16,7 +16,7 @@ namespace bs
 		PxBoxGeometry geometry(extents.x, extents.y, extents.z);
 
 		PxShape* shape = physx->createShape(geometry, *gPhysX().GetDefaultMaterial(), true);
-		shape->setLocalPose(toPxTransform(position, rotation));
+		shape->SetLocalPose(toPxTransform(position, rotation));
 		shape->userData = this;
 
 		mInternal = bs_new<FPhysXCollider>(scene, shape);
@@ -50,7 +50,7 @@ namespace bs
 		PxBoxGeometry geometry(std::max(0.01f, mExtents.x * mScale.x),
 			std::max(0.01f, mExtents.y * mScale.y), std::max(0.01f, mExtents.z * mScale.z));
 
-		GetInternal()->GetShapeInternal()->setGeometry(geometry);
+		GetInternal()->GetShapeInternal()->SetGeometry(geometry);
 	}
 
 	FPhysXCollider* PhysXBoxCollider::GetInternal() const

@@ -199,7 +199,7 @@ namespace bs
 			}
 
 			if (meta->scriptClass->hasField("mCachedPtr"))
-				meta->thisPtrField = meta->scriptClass->getField("mCachedPtr");
+				meta->thisPtrField = meta->scriptClass->GetField("mCachedPtr");
 			else
 				meta->thisPtrField = nullptr;
 
@@ -248,7 +248,7 @@ namespace bs
 		MonoClass* monoClass = nullptr;
 		for(auto& assembly : mAssemblies)
 		{
-			monoClass = assembly.second->getClass(ns, typeName);
+			monoClass = assembly.second->GetClass(ns, typeName);
 			if(monoClass != nullptr)
 				return monoClass;
 		}
@@ -261,7 +261,7 @@ namespace bs
 		MonoClass* monoClass = nullptr;
 		for(auto& assembly : mAssemblies)
 		{
-			monoClass = assembly.second->getClass(rawMonoClass);
+			monoClass = assembly.second->GetClass(rawMonoClass);
 			if(monoClass != nullptr)
 				return monoClass;
 		}

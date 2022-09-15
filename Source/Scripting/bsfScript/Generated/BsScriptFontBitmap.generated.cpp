@@ -48,7 +48,7 @@ namespace bs
 	void ScriptFontBitmap::InternalGetCharDesc(ScriptFontBitmap* thisPtr, uint32_t charId, __CharDescInterop* __output)
 	{
 		CharDesc tmp__output;
-		tmp__output = thisPtr->getInternal()->getCharDesc(charId);
+		tmp__output = thisPtr->GetInternal()->GetCharDesc(charId);
 
 		__CharDescInterop interop__output;
 		interop__output = ScriptCharDesc::toInterop(tmp__output);
@@ -58,7 +58,7 @@ namespace bs
 	uint32_t ScriptFontBitmap::InternalGetsize(ScriptFontBitmap* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->getInternal()->size;
+		tmp__output = thisPtr->GetInternal()->size;
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -68,13 +68,13 @@ namespace bs
 
 	void ScriptFontBitmap::InternalSetsize(ScriptFontBitmap* thisPtr, uint32_t value)
 	{
-		thisPtr->getInternal()->size = value;
+		thisPtr->GetInternal()->size = value;
 	}
 
 	int32_t ScriptFontBitmap::InternalGetbaselineOffset(ScriptFontBitmap* thisPtr)
 	{
 		int32_t tmp__output;
-		tmp__output = thisPtr->getInternal()->baselineOffset;
+		tmp__output = thisPtr->GetInternal()->baselineOffset;
 
 		int32_t __output;
 		__output = tmp__output;
@@ -84,13 +84,13 @@ namespace bs
 
 	void ScriptFontBitmap::InternalSetbaselineOffset(ScriptFontBitmap* thisPtr, int32_t value)
 	{
-		thisPtr->getInternal()->baselineOffset = value;
+		thisPtr->GetInternal()->baselineOffset = value;
 	}
 
 	uint32_t ScriptFontBitmap::InternalGetlineHeight(ScriptFontBitmap* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->getInternal()->lineHeight;
+		tmp__output = thisPtr->GetInternal()->lineHeight;
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -100,13 +100,13 @@ namespace bs
 
 	void ScriptFontBitmap::InternalSetlineHeight(ScriptFontBitmap* thisPtr, uint32_t value)
 	{
-		thisPtr->getInternal()->lineHeight = value;
+		thisPtr->GetInternal()->lineHeight = value;
 	}
 
 	void ScriptFontBitmap::InternalGetmissingGlyph(ScriptFontBitmap* thisPtr, __CharDescInterop* __output)
 	{
 		CharDesc tmp__output;
-		tmp__output = thisPtr->getInternal()->missingGlyph;
+		tmp__output = thisPtr->GetInternal()->missingGlyph;
 
 		__CharDescInterop interop__output;
 		interop__output = ScriptCharDesc::toInterop(tmp__output);
@@ -119,13 +119,13 @@ namespace bs
 	{
 		CharDesc tmpvalue;
 		tmpvalue = ScriptCharDesc::fromInterop(*value);
-		thisPtr->getInternal()->missingGlyph = tmpvalue;
+		thisPtr->GetInternal()->missingGlyph = tmpvalue;
 	}
 
 	uint32_t ScriptFontBitmap::InternalGetspaceWidth(ScriptFontBitmap* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->getInternal()->spaceWidth;
+		tmp__output = thisPtr->GetInternal()->spaceWidth;
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -135,13 +135,13 @@ namespace bs
 
 	void ScriptFontBitmap::InternalSetspaceWidth(ScriptFontBitmap* thisPtr, uint32_t value)
 	{
-		thisPtr->getInternal()->spaceWidth = value;
+		thisPtr->GetInternal()->spaceWidth = value;
 	}
 
 	MonoArray* ScriptFontBitmap::InternalGettexturePages(ScriptFontBitmap* thisPtr)
 	{
 		Vector<ResourceHandle<Texture>> vec__output;
-		vec__output = thisPtr->getInternal()->texturePages;
+		vec__output = thisPtr->GetInternal()->texturePages;
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
@@ -151,9 +151,9 @@ namespace bs
 			ScriptRRefBase* script__output;
 			script__output = ScriptResourceManager::Instance().getScriptRRef(vec__output[i]);
 			if(script__output != nullptr)
-				array__output.set(i, script__output->getManagedInstance());
+				array__output.Set(i, script__output->GetManagedInstance());
 			else
-				array__output.set(i, nullptr);
+				array__output.Set(i, nullptr);
 		}
 		__output = array__output.getInternal();
 
@@ -173,12 +173,12 @@ namespace bs
 				scriptvalue = ScriptRRefBase::toNative(arrayvalue.get<MonoObject*>(i));
 				if(scriptvalue != nullptr)
 				{
-					ResourceHandle<Texture> arrayElemPtrvalue = static_resource_cast<Texture>(scriptvalue->getHandle());
+					ResourceHandle<Texture> arrayElemPtrvalue = static_resource_cast<Texture>(scriptvalue->GetHandle());
 					vecvalue[i] = arrayElemPtrvalue;
 				}
 			}
 
 		}
-		thisPtr->getInternal()->texturePages = vecvalue;
+		thisPtr->GetInternal()->texturePages = vecvalue;
 	}
 }

@@ -22,24 +22,24 @@ namespace bs
 		:GUIElement(styleName, dimensions), mCamera(camera), mAspectRatio(aspectRatio),
 		mFieldOfView(fieldOfView)
 	{
-		mVerticalFOV = 2.0f * Math::atan(Math::tan(mFieldOfView.valueRadians() * 0.5f) * (1.0f / mAspectRatio));
+		mVerticalFOV = 2.0f * Math::Atan(Math::Tan(mFieldOfView.ValueRadians() * 0.5f) * (1.0f / mAspectRatio));
 	}
 
 	GUIViewport* GUIViewport::Create(const HCamera& camera, float aspectRatio, Degree fieldOfView, const String& styleName)
 	{
-		return new (bs_alloc<GUIViewport>()) GUIViewport(getStyleName<GUIViewport>(styleName), camera, aspectRatio, fieldOfView, GUIDimensions::Create());
+		return new (bs_alloc<GUIViewport>()) GUIViewport(GetStyleName<GUIViewport>(styleName), camera, aspectRatio, fieldOfView, GUIDimensions::Create());
 	}
 
 	GUIViewport* GUIViewport::Create(const GUIOptions& options, const HCamera& camera,
 		float aspectRatio, Degree fieldOfView, const String& styleName)
 	{
-		return new (bs_alloc<GUIViewport>()) GUIViewport(getStyleName<GUIViewport>(styleName), camera, aspectRatio, fieldOfView, GUIDimensions::Create(options));
+		return new (bs_alloc<GUIViewport>()) GUIViewport(GetStyleName<GUIViewport>(styleName), camera, aspectRatio, fieldOfView, GUIDimensions::Create(options));
 	}
 
 	void GUIViewport::UpdateClippedBounds()
 	{
 		mClippedBounds = mLayoutData.area;
-		mClippedBounds.clip(mLayoutData.clipRect);
+		mClippedBounds.Clip(mLayoutData.clipRect);
 	}
 
 	Vector2I GUIViewport::GetOptimalSizeInternal() const
@@ -64,20 +64,20 @@ namespace bs
 	{
 		// TODO - This doesn't get called if element mesh is dirty!!! and I need to update the viewport when offset changes (in which case mesh is marked as dirty)
 		float currentAspect = mLayoutData.area.width / (float)mLayoutData.area.height;
-		Radian currentFOV = 2.0f * Math::atan(Math::tan(mVerticalFOV * 0.5f) * currentAspect);
+		Radian currentFOV = 2.0f * Math::Atan(Math::Tan(mVerticalFOV * 0.5f) * currentAspect);
 
-		mCamera->setHorzFOV(currentFOV);
+		mCamera->SetHorzFov(currentFOV);
 
-		SPtr<Viewport> viewport = mCamera->getViewport();
-		SPtr<RenderTarget> renderTarget = viewport->getTarget();
-		const RenderTargetProperties& rtProps = renderTarget->getProperties();
+		SPtr<Viewport> viewport = mCamera->GetViewport();
+		SPtr<RenderTarget> renderTarget = viewport->GetTarget();
+		const RenderTargetProperties& rtProps = renderTarget->GetProperties();
 
 		float x = mLayoutData.area.x / (float)rtProps.width;
 		float y = mLayoutData.area.y / (float)rtProps.height;
 		float width = mLayoutData.area.width / (float)rtProps.width;
 		float height = mLayoutData.area.height / (float)rtProps.height;
 
-		viewport->setArea(Rect2(x, y, width, height));
+		viewport->SetArea(Rect2(x, y, width, height));
 	}
 
 	void GUIViewport::ChangeParentWidgetInternal(GUIWidget* widget)
@@ -86,8 +86,8 @@ namespace bs
 
 		if(widget != nullptr)
 		{
-			SPtr<RenderTarget> guiRenderTarget = widget->getTarget()->getTarget();
-			SPtr<RenderTarget> cameraRenderTarget = mCamera->getViewport()->getTarget();
+			SPtr<RenderTarget> guiRenderTarget = widget->GetTarget()->GetTarget();
+			SPtr<RenderTarget> cameraRenderTarget = mCamera->GetViewport()->GetTarget();
 
 			if(guiRenderTarget != cameraRenderTarget)
 				BS_EXCEPT(InvalidParametersException, "Camera provided to GUIViewport must use the same render target as the GUIWidget this element is located on.")

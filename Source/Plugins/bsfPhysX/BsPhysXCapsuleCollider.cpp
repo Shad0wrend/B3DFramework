@@ -16,7 +16,7 @@ namespace bs
 		PxCapsuleGeometry geometry(radius, halfHeight);
 
 		PxShape* shape = physx->createShape(geometry, *gPhysX().GetDefaultMaterial(), true);
-		shape->setLocalPose(toPxTransform(position, rotation));
+		shape->SetLocalPose(toPxTransform(position, rotation));
 		shape->userData = this;
 
 		mInternal = bs_new<FPhysXCollider>(scene, shape);
@@ -61,7 +61,7 @@ namespace bs
 		PxCapsuleGeometry geometry(std::max(0.01f, mRadius * std::max(mScale.x, mScale.z)),
 			std::max(0.01f, mHalfHeight * mScale.y));
 
-		GetInternal()->GetShapeInternal()->setGeometry(geometry);
+		GetInternal()->GetShapeInternal()->SetGeometry(geometry);
 	}
 
 	FPhysXCollider* PhysXCapsuleCollider::GetInternal() const

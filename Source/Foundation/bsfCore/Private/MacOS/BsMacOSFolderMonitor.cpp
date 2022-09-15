@@ -103,7 +103,7 @@ namespace bs
 			return action;
 		}
 
-		static void destroy(FileAction* action)
+		static void Destroy(FileAction* action)
 		{
 			bs_free(action);
 		}
@@ -263,7 +263,7 @@ namespace bs
 
 			if(wasRenamed)
 			{
-				if(FileSystem::exists(path))
+				if(FileSystem::Exists(path))
 					folderData->fileActions.push_back(FileAction::createAdded(path.toString()));
 				else
 					folderData->fileActions.push_back(FileAction::createRemoved(path.toString()));
@@ -285,7 +285,7 @@ namespace bs
 						watcher->createdFiles.push_back(CreatedFileInfo());
 						CreatedFileInfo& createdFileInfo = watcher->createdFiles.back();
 						createdFileInfo.path = path;
-						createdFileInfo.lastSize = FileSystem::getFileSize(path);
+						createdFileInfo.lastSize = FileSystem::GetFileSize(path);
 						createdFileInfo.timer.reset();
 					}
 				}
@@ -339,14 +339,14 @@ namespace bs
 
 		// No need for mutex since we know worker thread is shut down by now
 		for(auto& action : m->fileActions)
-			FileAction::destroy(action);
+			FileAction::Destroy(action);
 
 		bs_delete(m);
 	}
 
 	void FolderMonitor::startMonitor(const Path& folderPath, bool subdirectories, FolderChangeBits changeFilter)
 	{
-		if(!FileSystem::isDirectory(folderPath))
+		if(!FileSystem::IsDirectory(folderPath))
 		{
 			BS_LOG(Error, Platform, "Provided path \"{0}\" is not a directory.", folderPath);
 			return;
@@ -484,7 +484,7 @@ namespace bs
 					{
 						CreatedFileInfo& entry = *iter;
 
-						UINT64 fileSize = FileSystem::getFileSize(entry.path);
+						UINT64 fileSize = FileSystem::GetFileSize(entry.path);
 						if(fileSize != entry.lastSize)
 						{
 							entry.lastSize = fileSize;
@@ -552,7 +552,7 @@ namespace bs
 				break;
 			}
 
-			FileAction::destroy(action);
+			FileAction::Destroy(action);
 		}
 
 		m->activeFileActions.clear();

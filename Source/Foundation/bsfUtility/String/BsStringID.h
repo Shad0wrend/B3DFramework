@@ -68,7 +68,7 @@ namespace bs
 		template<int N>
 		StringID(const char name[N])
 		{
-			construct((const char*)name);
+			Construct((const char*)name);
 		}
 
 		/**	Compare to string ids for equality. Uses fast integer comparison. */

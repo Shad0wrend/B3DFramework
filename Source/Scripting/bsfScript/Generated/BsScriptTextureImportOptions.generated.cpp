@@ -54,7 +54,7 @@ namespace bs
 	PixelFormat ScriptTextureImportOptions::Internal_getformat(ScriptTextureImportOptions* thisPtr)
 	{
 		PixelFormat tmp__output;
-		tmp__output = thisPtr->getInternal()->format;
+		tmp__output = thisPtr->GetInternal()->format;
 
 		PixelFormat __output;
 		__output = tmp__output;
@@ -64,13 +64,13 @@ namespace bs
 
 	void ScriptTextureImportOptions::Internal_setformat(ScriptTextureImportOptions* thisPtr, PixelFormat value)
 	{
-		thisPtr->getInternal()->format = value;
+		thisPtr->GetInternal()->format = value;
 	}
 
 	bool ScriptTextureImportOptions::Internal_getgenerateMips(ScriptTextureImportOptions* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->getInternal()->generateMips;
+		tmp__output = thisPtr->GetInternal()->generateMips;
 
 		bool __output;
 		__output = tmp__output;
@@ -80,13 +80,13 @@ namespace bs
 
 	void ScriptTextureImportOptions::Internal_setgenerateMips(ScriptTextureImportOptions* thisPtr, bool value)
 	{
-		thisPtr->getInternal()->generateMips = value;
+		thisPtr->GetInternal()->generateMips = value;
 	}
 
 	uint32_t ScriptTextureImportOptions::Internal_getmaxMip(ScriptTextureImportOptions* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->getInternal()->maxMip;
+		tmp__output = thisPtr->GetInternal()->maxMip;
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -96,13 +96,13 @@ namespace bs
 
 	void ScriptTextureImportOptions::Internal_setmaxMip(ScriptTextureImportOptions* thisPtr, uint32_t value)
 	{
-		thisPtr->getInternal()->maxMip = value;
+		thisPtr->GetInternal()->maxMip = value;
 	}
 
 	bool ScriptTextureImportOptions::Internal_getcpuCached(ScriptTextureImportOptions* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->getInternal()->cpuCached;
+		tmp__output = thisPtr->GetInternal()->cpuCached;
 
 		bool __output;
 		__output = tmp__output;
@@ -112,13 +112,13 @@ namespace bs
 
 	void ScriptTextureImportOptions::Internal_setcpuCached(ScriptTextureImportOptions* thisPtr, bool value)
 	{
-		thisPtr->getInternal()->cpuCached = value;
+		thisPtr->GetInternal()->cpuCached = value;
 	}
 
 	bool ScriptTextureImportOptions::Internal_getsRGB(ScriptTextureImportOptions* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->getInternal()->sRGB;
+		tmp__output = thisPtr->GetInternal()->sRGB;
 
 		bool __output;
 		__output = tmp__output;
@@ -128,13 +128,13 @@ namespace bs
 
 	void ScriptTextureImportOptions::Internal_setsRGB(ScriptTextureImportOptions* thisPtr, bool value)
 	{
-		thisPtr->getInternal()->sRGB = value;
+		thisPtr->GetInternal()->sRGB = value;
 	}
 
 	bool ScriptTextureImportOptions::Internal_getcubemap(ScriptTextureImportOptions* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->getInternal()->cubemap;
+		tmp__output = thisPtr->GetInternal()->cubemap;
 
 		bool __output;
 		__output = tmp__output;
@@ -144,13 +144,13 @@ namespace bs
 
 	void ScriptTextureImportOptions::Internal_setcubemap(ScriptTextureImportOptions* thisPtr, bool value)
 	{
-		thisPtr->getInternal()->cubemap = value;
+		thisPtr->GetInternal()->cubemap = value;
 	}
 
 	CubemapSourceType ScriptTextureImportOptions::Internal_getcubemapSourceType(ScriptTextureImportOptions* thisPtr)
 	{
 		CubemapSourceType tmp__output;
-		tmp__output = thisPtr->getInternal()->cubemapSourceType;
+		tmp__output = thisPtr->GetInternal()->cubemapSourceType;
 
 		CubemapSourceType __output;
 		__output = tmp__output;
@@ -160,7 +160,7 @@ namespace bs
 
 	void ScriptTextureImportOptions::Internal_setcubemapSourceType(ScriptTextureImportOptions* thisPtr, CubemapSourceType value)
 	{
-		thisPtr->getInternal()->cubemapSourceType = value;
+		thisPtr->GetInternal()->cubemapSourceType = value;
 	}
 #endif
 }

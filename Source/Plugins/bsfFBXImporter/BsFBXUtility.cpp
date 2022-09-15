@@ -115,7 +115,7 @@ namespace bs
 				Vector3 v1 = (Vector3)positions[current];
 				Vector3 v2 = (Vector3)positions[indices[idx + nextOffset]];
 
-				Vector3 normal = Vector3::cross(v0 - v1, v2 - v1);
+				Vector3 normal = Vector3::Cross(v0 - v1, v2 - v1);
 				smoothNormals[current].AddNormal(smoothing[idx + j], normal);
 
 				normals[idx + j] = normal;
@@ -388,7 +388,7 @@ namespace bs
 		{
 			if (!meshA.UV[i].empty())
 			{
-				if (!Math::approxEquals(meshA.UV[i][idxA], meshB.UV[i][idxB], UVEpsilon))
+				if (!Math::ApproxEquals(meshA.UV[i][idxA], meshB.UV[i][idxB], UVEpsilon))
 					return true;
 			}
 		}

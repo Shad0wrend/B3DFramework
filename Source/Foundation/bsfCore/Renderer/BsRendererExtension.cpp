@@ -24,13 +24,13 @@ namespace bs
 		{
 			RendererManager::Instance().GetActive()->removePlugin(obj);
 
-			obj->destroy();
+			obj->Destroy();
 			obj->~RendererExtension();
 
 			bs_free(obj);
 		};
 
 		// Queue deletion on the core thread
-		gCoreThread().queueCommand(deleteObj);
+		gCoreThread().QueueCommand(deleteObj);
 	}
 }

@@ -345,25 +345,25 @@ namespace bs
 			return;
 		}
 
-		WString extendedFolderPath = L"\\\\?\\" + UTF8::ToWide(folderPath.toString(Path::PathType::Windows));
+		WString extendedFolderPath = L"\\\\?\\" + UTF8::ToWide(folderPath.ToString(Path::PathType::Windows));
 		HANDLE dirHandle = CreateFileW(extendedFolderPath.c_str(), FILE_LIST_DIRECTORY,
 			FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, nullptr, OPEN_EXISTING,
 			FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED, nullptr);
 
 		if(dirHandle == INVALID_HANDLE_VALUE)
 		{
-			BS_EXCEPT(InternalErrorException, "Failed to open folder \"" + folderPath.toString() + "\" for monitoring. Error code: " + toString((UINT64)GetLastError()));
+			BS_EXCEPT(InternalErrorException, "Failed to open folder \"" + folderPath.ToString() + "\" for monitoring. Error code: " + toString((UINT64)GetLastError()));
 		}
 
 		DWORD filterFlags = 0;
 
-		if(changeFilter.isSet(FolderChangeBit::FileName))
+		if(changeFilter.IsSet(FolderChangeBit::FileName))
 			filterFlags |= FILE_NOTIFY_CHANGE_FILE_NAME;
 
-		if(changeFilter.isSet(FolderChangeBit::DirName))
+		if(changeFilter.IsSet(FolderChangeBit::DirName))
 			filterFlags |= FILE_NOTIFY_CHANGE_DIR_NAME;
 
-		if(changeFilter.isSet(FolderChangeBit::FileWrite))
+		if(changeFilter.IsSet(FolderChangeBit::FileWrite))
 			filterFlags |= FILE_NOTIFY_CHANGE_LAST_WRITE;
 
 		m->mFoldersToWatch.push_back(bs_new<FolderWatchInfo>(folderPath, dirHandle, subdirectories, filterFlags));
@@ -380,7 +380,7 @@ namespace bs
 
 		if(m->mWorkerThread == nullptr)
 		{
-			m->mWorkerThread = bs_new<Thread>(std::bind(&FolderMonitor::workerThreadMain, this));
+			m->mWorkerThread = bs_new<Thread>(std::bind(&FolderMonitor::WorkerThreadMain, this));
 
 			if(m->mWorkerThread == nullptr)
 			{
@@ -418,14 +418,14 @@ namespace bs
 		}
 
 		if(m->mFoldersToWatch.size() == 0)
-			stopMonitorAll();
+			StopMonitorAll();
 	}
 
 	void FolderMonitor::StopMonitorAll()
 	{
 		for(auto& watchInfo : m->mFoldersToWatch)
 		{
-			watchInfo->stopMonitor(m->mCompPortHandle);
+			watchInfo->StopMonitor(m->mCompPortHandle);
 
 			{
 				// Note: Need this mutex to ensure worker thread is done with watchInfo.
@@ -504,7 +504,7 @@ namespace bs
 				case MonitorState::Monitoring:
 					{
 						FileNotifyInfo info(watchInfo->mBuffer, FolderWatchInfo::READ_BUFFER_SIZE);
-						handleNotifications(info, *watchInfo);
+						HandleNotifications(info, *watchInfo);
 
 						if(!ReadDirectoryChangesW(watchInfo->mDirHandle, watchInfo->mBuffer, FolderWatchInfo::READ_BUFFER_SIZE,
 							watchInfo->mMonitorSubdirectories, watchInfo->mMonitorFlags, &watchInfo->mBufferSize, &watchInfo->mOverlapped, nullptr))
@@ -587,19 +587,19 @@ namespace bs
 			switch(notifyInfo.GetAction())
 			{
 			case FILE_ACTION_ADDED:
-					mActions.push_back(FileAction::createAdded(fullPath));
+					mActions.push_back(FileAction::CreateAdded(fullPath));
 				break;
 			case FILE_ACTION_REMOVED:
-					mActions.push_back(FileAction::createRemoved(fullPath));
+					mActions.push_back(FileAction::CreateRemoved(fullPath));
 				break;
 			case FILE_ACTION_MODIFIED:
-					mActions.push_back(FileAction::createModified(fullPath));
+					mActions.push_back(FileAction::CreateModified(fullPath));
 				break;
 			case FILE_ACTION_RENAMED_OLD_NAME:
 					watchInfo.mCachedOldFileName = fullPath;
 				break;
 			case FILE_ACTION_RENAMED_NEW_NAME:
-					mActions.push_back(FileAction::createRenamed(watchInfo.mCachedOldFileName, fullPath));
+					mActions.push_back(FileAction::CreateRenamed(watchInfo.mCachedOldFileName, fullPath));
 				break;
 			}
 	
@@ -635,9 +635,9 @@ namespace bs
 			// Sadly there doesn't seem to be a way to properly determine when those files are done being written, so instead
 			// we check for at least a couple of frames if the file's size hasn't changed before reporting a file action.
 			// This takes care of most of the issues and avoids reporting partially written files in almost all cases.
-			if (FileSystem::exists(action->newName))
+			if (FileSystem::Exists(action->newName))
 			{
-				UINT64 size = FileSystem::getFileSize(action->newName);
+				UINT64 size = FileSystem::GetFileSize(action->newName);
 				if (!action->checkForWriteStarted)
 				{
 					action->checkForWriteStarted = true;
@@ -660,25 +660,25 @@ namespace bs
 			switch (action->type)
 			{
 			case FileActionType::Added:
-				if (!onAdded.empty())
+				if (!onAdded.Empty())
 					onAdded(Path(action->newName));
 				break;
 			case FileActionType::Removed:
-				if (!onRemoved.empty())
+				if (!onRemoved.Empty())
 					onRemoved(Path(action->newName));
 				break;
 			case FileActionType::Modified:
-				if (!onModified.empty())
+				if (!onModified.Empty())
 					onModified(Path(action->newName));
 				break;
 			case FileActionType::Renamed:
-				if (!onRenamed.empty())
+				if (!onRenamed.Empty())
 					onRenamed(Path(action->oldName), Path(action->newName));
 				break;
 			}
 
 			m->mActiveFileActions.erase(iter++);
-			FileAction::destroy(action);
+			FileAction::Destroy(action);
 		}
 	}
 }

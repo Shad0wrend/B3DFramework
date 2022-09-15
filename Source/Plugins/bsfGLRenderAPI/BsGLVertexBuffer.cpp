@@ -30,7 +30,7 @@ namespace bs { namespace ct
 		mBuffer = bs_pool_new<GLHardwareBuffer>(GL_ARRAY_BUFFER, mSize, mUsage);
 		mBufferDeleter = &deleteBuffer;
 		
-		VertexBuffer::initialize();
+		VertexBuffer::Initialize();
 	}
 
 	void GLVertexBuffer::RegisterVao(const GLVertexArrayObject& vao)

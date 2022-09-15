@@ -41,14 +41,14 @@ namespace bs
 			UINT32 texPage = 0;
 			for (auto& cachedElem : mCachedRenderElements)
 			{
-				UINT32 newNumQuads = textData.getNumQuadsForPage(texPage);
+				UINT32 newNumQuads = textData.GetNumQuadsForPage(texPage);
 
-				cachedElem.vertices = (Vector2*)mAlloc.alloc(sizeof(Vector2) * newNumQuads * 4);
-				cachedElem.uvs = (Vector2*)mAlloc.alloc(sizeof(Vector2) * newNumQuads * 4);
-				cachedElem.indexes = (UINT32*)mAlloc.alloc(sizeof(UINT32) * newNumQuads * 6);
+				cachedElem.vertices = (Vector2*)mAlloc.Alloc(sizeof(Vector2) * newNumQuads * 4);
+				cachedElem.uvs = (Vector2*)mAlloc.Alloc(sizeof(Vector2) * newNumQuads * 4);
+				cachedElem.indexes = (UINT32*)mAlloc.Alloc(sizeof(UINT32) * newNumQuads * 6);
 				cachedElem.numQuads = newNumQuads;
 
-				const HTexture& tex = textData.getTextureForPage(texPage);
+				const HTexture& tex = textData.GetTextureForPage(texPage);
 
 				SpriteMaterialInfo& matInfo = cachedElem.matInfo;
 				matInfo.groupId = groupId;
@@ -56,7 +56,7 @@ namespace bs
 				matInfo.tint = desc.color;
 				matInfo.animationStartTime = 0.0f;
 
-				cachedElem.material = SpriteManager::Instance().getTextMaterial();
+				cachedElem.material = SpriteManager::Instance().GetTextMaterial();
 
 				texPage++;
 			}
@@ -66,31 +66,31 @@ namespace bs
 			{
 				SpriteRenderElementData& renderElem = mCachedRenderElements[j];
 
-				genTextQuads(j, textData, desc.width, desc.height, desc.horzAlign, desc.vertAlign, desc.anchor,
+				GenTextQuads(j, textData, desc.width, desc.height, desc.horzAlign, desc.vertAlign, desc.anchor,
 					renderElem.vertices, renderElem.uvs, renderElem.indexes, renderElem.numQuads);
 			}
 		}
 
 		bs_frame_clear();
 
-		updateBounds();
+		UpdateBounds();
 	}
 
 	UINT32 TextSprite::GenTextQuads(UINT32 page, const TextDataBase& textData, UINT32 width, UINT32 height,
 		TextHorzAlign horzAlign, TextVertAlign vertAlign, SpriteAnchor anchor, Vector2* vertices, Vector2* uv, UINT32* indices, UINT32 bufferSizeQuads)
 	{
-		UINT32 numLines = textData.getNumLines();
-		UINT32 newNumQuads = textData.getNumQuadsForPage(page);
+		UINT32 numLines = textData.GetNumLines();
+		UINT32 newNumQuads = textData.GetNumQuadsForPage(page);
 
 		Vector2I* alignmentOffsets = bs_stack_new<Vector2I>(numLines);
-		getAlignmentOffsets(textData, width, height, horzAlign, vertAlign, alignmentOffsets);
-		Vector2I offset = getAnchorOffset(anchor, width, height);
+		GetAlignmentOffsets(textData, width, height, horzAlign, vertAlign, alignmentOffsets);
+		Vector2I offset = GetAnchorOffset(anchor, width, height);
 
 		UINT32 quadOffset = 0;
 		for(UINT32 i = 0; i < numLines; i++)
 		{
-			const TextDataBase::TextLine& line = textData.getLine(i);
-			UINT32 writtenQuads = line.fillBuffer(page, vertices, uv, indices, quadOffset, bufferSizeQuads);
+			const TextDataBase::TextLine& line = textData.GetLine(i);
+			UINT32 writtenQuads = line.FillBuffer(page, vertices, uv, indices, quadOffset, bufferSizeQuads);
 
 			Vector2I position = offset + alignmentOffsets[i];
 			UINT32 numVertices = writtenQuads * 4;
@@ -111,21 +111,21 @@ namespace bs
 	UINT32 TextSprite::GenTextQuads(const TextDataBase& textData, UINT32 width, UINT32 height,
 		TextHorzAlign horzAlign, TextVertAlign vertAlign, SpriteAnchor anchor, Vector2* vertices, Vector2* uv, UINT32* indices, UINT32 bufferSizeQuads)
 	{
-		UINT32 numLines = textData.getNumLines();
-		UINT32 numPages = textData.getNumPages();
+		UINT32 numLines = textData.GetNumLines();
+		UINT32 numPages = textData.GetNumPages();
 
 		Vector2I* alignmentOffsets = bs_stack_new<Vector2I>(numLines);
-		getAlignmentOffsets(textData, width, height, horzAlign, vertAlign, alignmentOffsets);
-		Vector2I offset = getAnchorOffset(anchor, width, height);
+		GetAlignmentOffsets(textData, width, height, horzAlign, vertAlign, alignmentOffsets);
+		Vector2I offset = GetAnchorOffset(anchor, width, height);
 
 		UINT32 quadOffset = 0;
 		
 		for(UINT32 i = 0; i < numLines; i++)
 		{
-			const TextDataBase::TextLine& line = textData.getLine(i);
+			const TextDataBase::TextLine& line = textData.GetLine(i);
 			for(UINT32 j = 0; j < numPages; j++)
 			{
-				UINT32 writtenQuads = line.fillBuffer(j, vertices, uv, indices, quadOffset, bufferSizeQuads);
+				UINT32 writtenQuads = line.FillBuffer(j, vertices, uv, indices, quadOffset, bufferSizeQuads);
 
 				Vector2I position = offset + alignmentOffsets[i];
 
@@ -147,12 +147,12 @@ namespace bs
 	void TextSprite::GetAlignmentOffsets(const TextDataBase& textData,
 		UINT32 width, UINT32 height, TextHorzAlign horzAlign, TextVertAlign vertAlign, Vector2I* output)
 	{
-		UINT32 numLines = textData.getNumLines();
+		UINT32 numLines = textData.GetNumLines();
 		UINT32 curHeight = 0;
 		for(UINT32 i = 0; i < numLines; i++)
 		{
-			const TextDataBase::TextLine& line = textData.getLine(i);
-			curHeight += line.getYOffset();
+			const TextDataBase::TextLine& line = textData.GetLine(i);
+			curHeight += line.GetYOffset();
 		}
 
 		// Calc vertical alignment offset
@@ -175,7 +175,7 @@ namespace bs
 		UINT32 curY = 0;
 		for(UINT32 i = 0; i < numLines; i++)
 		{
-			const TextDataBase::TextLine& line = textData.getLine(i);
+			const TextDataBase::TextLine& line = textData.GetLine(i);
 
 			UINT32 horzOffset = 0;
 			switch(horzAlign)
@@ -184,15 +184,15 @@ namespace bs
 				horzOffset = 0;
 				break;
 			case THA_Right:
-				horzOffset = (UINT32)std::max(0, (INT32)(width - line.getWidth()));
+				horzOffset = (UINT32)std::max(0, (INT32)(width - line.GetWidth()));
 				break;
 			case THA_Center:
-				horzOffset = (UINT32)std::max(0, (INT32)(width - line.getWidth())) / 2;
+				horzOffset = (UINT32)std::max(0, (INT32)(width - line.GetWidth())) / 2;
 				break;
 			}
 
 			output[i] = Vector2I(horzOffset, vertOffset + curY);
-			curY += line.getYOffset();
+			curY += line.GetYOffset();
 		}
 	}
 
@@ -202,26 +202,26 @@ namespace bs
 		{
 			if (renderElem.vertices != nullptr)
 			{
-				mAlloc.free(renderElem.vertices);
+				mAlloc.Free(renderElem.vertices);
 				renderElem.vertices = nullptr;
 			}
 
 			if (renderElem.uvs != nullptr)
 			{
-				mAlloc.free(renderElem.uvs);
+				mAlloc.Free(renderElem.uvs);
 				renderElem.uvs = nullptr;
 			}
 
 			if (renderElem.indexes != nullptr)
 			{
-				mAlloc.free(renderElem.indexes);
+				mAlloc.Free(renderElem.indexes);
 				renderElem.indexes = nullptr;
 			}
 		}
 
 		mCachedRenderElements.clear();
-		mAlloc.clear();
+		mAlloc.Clear();
 
-		updateBounds();
+		UpdateBounds();
 	}
 }

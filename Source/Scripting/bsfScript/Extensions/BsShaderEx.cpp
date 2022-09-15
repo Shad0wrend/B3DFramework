@@ -7,13 +7,13 @@ namespace bs
 {
 	Vector<ShaderParameter> ShaderEx::GetParameters(const HShader& thisPtr)
 	{
-		if (!thisPtr.isLoaded())
+		if (!thisPtr.IsLoaded())
 			return Vector<ShaderParameter>();
 
 		const Map<String, SHADER_DATA_PARAM_DESC>& dataParams = thisPtr->GetDataParams();
-		const Map<String, SHADER_OBJECT_PARAM_DESC>& textureParams = thisPtr->getTextureParams();
-		const Map<String, SHADER_OBJECT_PARAM_DESC>& samplerParams = thisPtr->getSamplerParams();
-		const Vector<SHADER_PARAM_ATTRIBUTE> attributes = thisPtr->getParamAttributes();
+		const Map<String, SHADER_OBJECT_PARAM_DESC>& textureParams = thisPtr->GetTextureParams();
+		const Map<String, SHADER_OBJECT_PARAM_DESC>& samplerParams = thisPtr->GetSamplerParams();
+		const Vector<SHADER_PARAM_ATTRIBUTE> attributes = thisPtr->GetParamAttributes();
 
 		Vector<ShaderParameter> paramInfos;
 		auto parseParam = [&paramInfos, &attributes](const String& identifier, ShaderParameterType type, bool isInternal,

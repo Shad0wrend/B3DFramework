@@ -251,7 +251,7 @@ namespace bs
 	template<class ElemType>
 	BitLength rtti_size(const ElemType& data, bool compress = false)
 	{
-		return RTTIPlainType<ElemType>::getSize(data, RTTIFieldInfo(), compress);
+		return RTTIPlainType<ElemType>::GetSize(data, RTTIFieldInfo(), compress);
 	}
 
 	/**
@@ -261,7 +261,7 @@ namespace bs
 	template<class ElemType>
 	BitLength rtti_write(const ElemType& data, Bitstream& stream, bool compress = false)
 	{
-		return RTTIPlainType<ElemType>::toMemory(data, stream, RTTIFieldInfo(), compress);
+		return RTTIPlainType<ElemType>::ToMemory(data, stream, RTTIFieldInfo(), compress);
 	}
 
 	/**
@@ -271,7 +271,7 @@ namespace bs
 	template<class ElemType>
 	BitLength rtti_read(ElemType& data, Bitstream& stream, bool compress = false)
 	{
-		return RTTIPlainType<ElemType>::fromMemory(data, stream, RTTIFieldInfo(), compress);
+		return RTTIPlainType<ElemType>::FromMemory(data, stream, RTTIFieldInfo(), compress);
 	}
 
 	/**
@@ -323,9 +323,9 @@ namespace bs
 	{
 		if(compress)
 		{
-			uint64_t headerSizeBits = stream.readVarInt(size.bytes);
+			uint64_t headerSizeBits = stream.ReadVarInt(size.bytes);
 			size.bits = 0;
-			headerSizeBits += stream.readBits(&size.bits, 3);
+			headerSizeBits += stream.ReadBits(&size.bits, 3);
 
 			BitLength headerSize = BitLength::FromBits(headerSizeBits);
 			size += headerSize;
@@ -334,7 +334,7 @@ namespace bs
 		}
 		else
 		{
-			uint32_t sizeBytes = stream.readBytes(size.bytes);
+			uint32_t sizeBytes = stream.ReadBytes(size.bytes);
 			size.bits = 0;
 			
 			return sizeBytes;

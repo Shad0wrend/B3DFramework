@@ -35,7 +35,7 @@ int main(int __argc, char* __argv[])
 	SPtr<EngineScriptLibrary> library = bs_shared_ptr_new<EngineScriptLibrary>();
 	ScriptManager::SetScriptLibraryInternal(library);
 
-	Path engineAssemblyPath = library->getEngineAssemblyPath();
+	Path engineAssemblyPath = library->GetEngineAssemblyPath();
 
 	auto& monoManager = MonoManager::Instance();
 	bs::MonoAssembly& bsfAssembly = monoManager.loadAssembly(engineAssemblyPath, ENGINE_ASSEMBLY);

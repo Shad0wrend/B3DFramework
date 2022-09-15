@@ -126,23 +126,23 @@ namespace bs { namespace ct
 	{																														\
 		Name()																												\
 		{																													\
-			ParamBlockManager::registerBlock(this);																			\
+			ParamBlockManager::RegisterBlock(this);																			\
 		}																													\
 																															\
-		SPtr<GpuParamBlockBuffer> createBuffer() const { return GpuParamBlockBuffer::Create(mBlockSize); }					\
+		SPtr<GpuParamBlockBuffer> CreateBuffer() const { return GpuParamBlockBuffer::Create(mBlockSize); }					\
 																															\
 	private:																												\
 		friend class ParamBlockManager;																						\
 																															\
-		void initialize() override																							\
+		void Initialize() override																							\
 		{																													\
-			mParams = getEntries();																							\
+			mParams = GetEntries();																							\
 			RenderAPI& rapi = RenderAPI::Instance();																		\
 																															\
-			GpuParamBlockDesc blockDesc = rapi.generateParamBlockDesc(#Name, mParams);										\
+			GpuParamBlockDesc blockDesc = rapi.GenerateParamBlockDesc(#Name, mParams);										\
 			mBlockSize = blockDesc.blockSize * sizeof(UINT32);																\
 																															\
-			initEntries();																									\
+			InitEntries();																									\
 		}																													\
 																															\
 		struct META_FirstEntry {};																							\
@@ -191,14 +191,14 @@ namespace bs { namespace ct
 #define BS_PARAM_BLOCK_END																									\
 		META_LastEntry;																										\
 																															\
-		static Vector<GpuParamDataDesc> getEntries()																		\
+		static Vector<GpuParamDataDesc> GetEntries()																		\
 		{																													\
 			Vector<GpuParamDataDesc> entries;																				\
 			META_GetPrevEntries(entries, META_LastEntry());																	\
 			return entries;																									\
 		}																													\
 																															\
-		void initEntries()																									\
+		void InitEntries()																									\
 		{																													\
 			META_InitPrevEntry(mParams, (UINT32)mParams.size() - 1, META_LastEntry());										\
 		}																													\

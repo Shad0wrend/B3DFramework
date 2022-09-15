@@ -39,13 +39,13 @@ namespace bs
 	{
 		PARTICLE_STATIC_MESH_SHAPE_DESC tmpoptions;
 		tmpoptions = ScriptPARTICLE_STATIC_MESH_SHAPE_DESC::FromInterop(*options);
-		thisPtr->GetInternal()->setOptions(tmpoptions);
+		thisPtr->GetInternal()->SetOptions(tmpoptions);
 	}
 
 	void ScriptParticleEmitterStaticMeshShape::InternalGetOptions(ScriptParticleEmitterStaticMeshShape* thisPtr, __PARTICLE_STATIC_MESH_SHAPE_DESCInterop* __output)
 	{
 		PARTICLE_STATIC_MESH_SHAPE_DESC tmp__output;
-		tmp__output = thisPtr->GetInternal()->getOptions();
+		tmp__output = thisPtr->GetInternal()->GetOptions();
 
 		__PARTICLE_STATIC_MESH_SHAPE_DESCInterop interop__output;
 		interop__output = ScriptPARTICLE_STATIC_MESH_SHAPE_DESC::ToInterop(tmp__output);

@@ -38,8 +38,8 @@ namespace bs
 
 	void FileSystemTestSuite::StartUp()
 	{
-		mTestDirectory = FileSystem::getWorkingDirectoryPath() + testDirectoryName;
-		if (FileSystem::exists(mTestDirectory))
+		mTestDirectory = FileSystem::GetWorkingDirectoryPath() + testDirectoryName;
+		if (FileSystem::Exists(mTestDirectory))
 		{
 			BS_EXCEPT(InternalErrorException,
 			          String("Directory '") + testDirectoryName
@@ -47,15 +47,15 @@ namespace bs
 		}
 		else
 		{
-			FileSystem::createDir(mTestDirectory);
-			BS_TEST_ASSERT_MSG(FileSystem::exists(mTestDirectory), "FileSystemTestSuite::StartUp(): test directory creation failed");
+			FileSystem::CreateDir(mTestDirectory);
+			BS_TEST_ASSERT_MSG(FileSystem::Exists(mTestDirectory), "FileSystemTestSuite::StartUp(): test directory creation failed");
 		}
 	}
 
 	void FileSystemTestSuite::ShutDown()
 	{
-		FileSystem::remove(mTestDirectory, true);
-		if (FileSystem::exists(mTestDirectory))
+		FileSystem::Remove(mTestDirectory, true);
+		if (FileSystem::Exists(mTestDirectory))
 		{
 			LOGERR("FileSystemTestSuite failed to delete '" + mTestDirectory.toString()
 				   + "', you should remove it manually.");
@@ -90,83 +90,83 @@ namespace bs
 	{
 		Path path = mTestDirectory + "plop";
 		createEmptyFile(path);
-		BS_TEST_ASSERT(FileSystem::exists(path));
-		FileSystem::remove(path);
+		BS_TEST_ASSERT(FileSystem::Exists(path));
+		FileSystem::Remove(path);
 	}
 
 	void FileSystemTestSuite::testExists_yes_dir()
 	{
 		Path path = mTestDirectory + "plop/";
-		FileSystem::createDir(path);
-		BS_TEST_ASSERT(FileSystem::exists(path));
-		FileSystem::remove(path);
+		FileSystem::CreateDir(path);
+		BS_TEST_ASSERT(FileSystem::Exists(path));
+		FileSystem::Remove(path);
 	}
 
 	void FileSystemTestSuite::testExists_no()
 	{
-		BS_TEST_ASSERT(!FileSystem::exists(Path("this-file-does-not-exist")));
+		BS_TEST_ASSERT(!FileSystem::Exists(Path("this-file-does-not-exist")));
 	}
 
 	void FileSystemTestSuite::testGetFileSize_zero()
 	{
 		Path path = mTestDirectory + "file-size-test-1";
 		createEmptyFile(path);
-		BS_TEST_ASSERT(FileSystem::getFileSize(path) == 0);
-		FileSystem::remove(path);
+		BS_TEST_ASSERT(FileSystem::GetFileSize(path) == 0);
+		FileSystem::Remove(path);
 	}
 
 	void FileSystemTestSuite::testGetFileSize_not_zero()
 	{
 		Path path = mTestDirectory + "file-size-test-2";
 		createFile(path, "0123456789");
-		BS_TEST_ASSERT(FileSystem::getFileSize(path) == 10);
-		FileSystem::remove(path);
+		BS_TEST_ASSERT(FileSystem::GetFileSize(path) == 10);
+		FileSystem::Remove(path);
 	}
 
 	void FileSystemTestSuite::testIsFile_yes()
 	{
 		Path path = mTestDirectory + "some-file-1";
 		createEmptyFile(path);
-		BS_TEST_ASSERT(FileSystem::isFile(path));
+		BS_TEST_ASSERT(FileSystem::IsFile(path));
 	}
 
 	void FileSystemTestSuite::testIsFile_no()
 	{
 		Path path = mTestDirectory + "some-directory-1/";
-		FileSystem::createDir(path);
-		BS_TEST_ASSERT(!FileSystem::isFile(path));
+		FileSystem::CreateDir(path);
+		BS_TEST_ASSERT(!FileSystem::IsFile(path));
 	}
 
 	void FileSystemTestSuite::testIsDirectory_yes()
 	{
 		Path path = mTestDirectory + "some-directory-2/";
-		FileSystem::createDir(path);
-		BS_TEST_ASSERT(FileSystem::isDirectory(path));
+		FileSystem::CreateDir(path);
+		BS_TEST_ASSERT(FileSystem::IsDirectory(path));
 	}
 
 	void FileSystemTestSuite::testIsDirectory_no()
 	{
 		Path path = mTestDirectory + "some-file-2";
 		createEmptyFile(path);
-		BS_TEST_ASSERT(!FileSystem::isDirectory(path));
+		BS_TEST_ASSERT(!FileSystem::IsDirectory(path));
 	}
 
 	void FileSystemTestSuite::testRemove_file()
 	{
 		Path path = mTestDirectory + "file-to-remove";
 		createEmptyFile(path);
-		BS_TEST_ASSERT(FileSystem::exists(path));
-		FileSystem::remove(path);
-		BS_TEST_ASSERT(!FileSystem::exists(path));
+		BS_TEST_ASSERT(FileSystem::Exists(path));
+		FileSystem::Remove(path);
+		BS_TEST_ASSERT(!FileSystem::Exists(path));
 	}
 
 	void FileSystemTestSuite::testRemove_directory()
 	{
 		Path path = mTestDirectory + "directory-to-remove/";
-		FileSystem::createDir(path);
-		BS_TEST_ASSERT(FileSystem::exists(path));
-		FileSystem::remove(path, true);
-		BS_TEST_ASSERT(!FileSystem::exists(path));
+		FileSystem::CreateDir(path);
+		BS_TEST_ASSERT(FileSystem::Exists(path));
+		FileSystem::Remove(path, true);
+		BS_TEST_ASSERT(!FileSystem::Exists(path));
 	}
 
 	void FileSystemTestSuite::testMove()
@@ -174,11 +174,11 @@ namespace bs
 		Path source = mTestDirectory + "move-source-1";
 		Path destination = mTestDirectory + "move-destination-1";
 		createFile(source, "move-data-source-1");
-		BS_TEST_ASSERT(FileSystem::exists(source));
-		BS_TEST_ASSERT(!FileSystem::exists(destination));
-		FileSystem::move(source, destination);
-		BS_TEST_ASSERT(!FileSystem::exists(source));
-		BS_TEST_ASSERT(FileSystem::exists(destination));
+		BS_TEST_ASSERT(FileSystem::Exists(source));
+		BS_TEST_ASSERT(!FileSystem::Exists(destination));
+		FileSystem::Move(source, destination);
+		BS_TEST_ASSERT(!FileSystem::Exists(source));
+		BS_TEST_ASSERT(FileSystem::Exists(destination));
 		BS_TEST_ASSERT(readFile(destination) == "move-data-source-1");
 	}
 
@@ -188,11 +188,11 @@ namespace bs
 		Path destination = mTestDirectory + "move-destination-2";
 		createFile(source, "move-data-source-2");
 		createFile(destination, "move-data-destination-2");
-		BS_TEST_ASSERT(FileSystem::exists(source));
-		BS_TEST_ASSERT(FileSystem::exists(destination));
-		FileSystem::move(source, destination, true);
-		BS_TEST_ASSERT(!FileSystem::exists(source));
-		BS_TEST_ASSERT(FileSystem::exists(destination));
+		BS_TEST_ASSERT(FileSystem::Exists(source));
+		BS_TEST_ASSERT(FileSystem::Exists(destination));
+		FileSystem::Move(source, destination, true);
+		BS_TEST_ASSERT(!FileSystem::Exists(source));
+		BS_TEST_ASSERT(FileSystem::Exists(destination));
 		BS_TEST_ASSERT(readFile(destination) == "move-data-source-2");
 	}
 
@@ -202,11 +202,11 @@ namespace bs
 		Path destination = mTestDirectory + "move-destination-3";
 		createFile(source, "move-data-source-3");
 		createFile(destination, "move-data-destination-3");
-		BS_TEST_ASSERT(FileSystem::exists(source));
-		BS_TEST_ASSERT(FileSystem::exists(destination));
-		FileSystem::move(source, destination, false);
-		BS_TEST_ASSERT(FileSystem::exists(source));
-		BS_TEST_ASSERT(FileSystem::exists(destination));
+		BS_TEST_ASSERT(FileSystem::Exists(source));
+		BS_TEST_ASSERT(FileSystem::Exists(destination));
+		FileSystem::Move(source, destination, false);
+		BS_TEST_ASSERT(FileSystem::Exists(source));
+		BS_TEST_ASSERT(FileSystem::Exists(destination));
 		BS_TEST_ASSERT(readFile(destination) == "move-data-destination-3");
 	}
 
@@ -215,11 +215,11 @@ namespace bs
 		Path source = mTestDirectory + "copy-source-1";
 		Path destination = mTestDirectory + "copy-destination-1";
 		createFile(source, "copy-data-source-1");
-		BS_TEST_ASSERT(FileSystem::exists(source));
-		BS_TEST_ASSERT(!FileSystem::exists(destination));
-		FileSystem::copy(source, destination);
-		BS_TEST_ASSERT(FileSystem::exists(source));
-		BS_TEST_ASSERT(FileSystem::exists(destination));
+		BS_TEST_ASSERT(FileSystem::Exists(source));
+		BS_TEST_ASSERT(!FileSystem::Exists(destination));
+		FileSystem::Copy(source, destination);
+		BS_TEST_ASSERT(FileSystem::Exists(source));
+		BS_TEST_ASSERT(FileSystem::Exists(destination));
 		BS_TEST_ASSERT(readFile(source) == "copy-data-source-1");
 		BS_TEST_ASSERT(readFile(destination) == "copy-data-source-1");
 	}
@@ -230,11 +230,11 @@ namespace bs
 		Path destination = mTestDirectory + "copy-destination-2";
 		createFile(source, "copy-data-source-2");
 		createFile(destination, "copy-data-destination-2");
-		BS_TEST_ASSERT(FileSystem::exists(source));
-		BS_TEST_ASSERT(FileSystem::exists(destination));
-		FileSystem::copy(source, destination, true);
-		BS_TEST_ASSERT(FileSystem::exists(source));
-		BS_TEST_ASSERT(FileSystem::exists(destination));
+		BS_TEST_ASSERT(FileSystem::Exists(source));
+		BS_TEST_ASSERT(FileSystem::Exists(destination));
+		FileSystem::Copy(source, destination, true);
+		BS_TEST_ASSERT(FileSystem::Exists(source));
+		BS_TEST_ASSERT(FileSystem::Exists(destination));
 		BS_TEST_ASSERT(readFile(source) == "copy-data-source-2");
 		BS_TEST_ASSERT(readFile(destination) == "copy-data-source-2");
 	}
@@ -245,11 +245,11 @@ namespace bs
 		Path destination = mTestDirectory + "copy-destination-3";
 		createFile(source, "copy-data-source-3");
 		createFile(destination, "copy-data-destination-3");
-		BS_TEST_ASSERT(FileSystem::exists(source));
-		BS_TEST_ASSERT(FileSystem::exists(destination));
-		FileSystem::copy(source, destination, false);
-		BS_TEST_ASSERT(FileSystem::exists(source));
-		BS_TEST_ASSERT(FileSystem::exists(destination));
+		BS_TEST_ASSERT(FileSystem::Exists(source));
+		BS_TEST_ASSERT(FileSystem::Exists(destination));
+		FileSystem::Copy(source, destination, false);
+		BS_TEST_ASSERT(FileSystem::Exists(source));
+		BS_TEST_ASSERT(FileSystem::Exists(destination));
 		BS_TEST_ASSERT(readFile(source) == "copy-data-source-3");
 		BS_TEST_ASSERT(readFile(destination) == "copy-data-destination-3");
 	}
@@ -260,16 +260,16 @@ namespace bs
 	void FileSystemTestSuite::testGetChildren()
 	{
 		Path path = mTestDirectory + "get-children-test/";
-		FileSystem::createDir(path);
-		FileSystem::createDir(path + "foo/");
-		FileSystem::createDir(path + "bar/");
-		FileSystem::createDir(path + "baz/");
+		FileSystem::CreateDir(path);
+		FileSystem::CreateDir(path + "foo/");
+		FileSystem::CreateDir(path + "bar/");
+		FileSystem::CreateDir(path + "baz/");
 		createEmptyFile(path + "ga");
 		createEmptyFile(path + "bu");
 		createEmptyFile(path + "zo");
 		createEmptyFile(path + "meu");
 		Vector<Path> files, directories;
-		FileSystem::getChildren(path, files, directories);
+		FileSystem::GetChildren(path, files, directories);
 		BS_TEST_ASSERT(files.size() == 4);
 		BS_TEST_ASSERT(CONTAINS(files, path + "ga"));
 		BS_TEST_ASSERT(CONTAINS(files, path + "bu"));
@@ -288,14 +288,14 @@ namespace bs
 
 		Path path = mTestDirectory + "blah1234";
 		createFile(path, "blah");
-		std::time_t mtime = FileSystem::getLastModifiedTime(path);
+		std::time_t mtime = FileSystem::GetLastModifiedTime(path);
 		BS_TEST_ASSERT(mtime >= beforeTime);
 		BS_TEST_ASSERT(mtime <= beforeTime + 10);
 	}
 
 	void FileSystemTestSuite::testGetTempDirectoryPath()
 	{
-		Path path = FileSystem::getTempDirectoryPath();
+		Path path = FileSystem::GetTempDirectoryPath();
 		/* No judging. */
 		BS_TEST_ASSERT(!path.toString().empty());
 	}

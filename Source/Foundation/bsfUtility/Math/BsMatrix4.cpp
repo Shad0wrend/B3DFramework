@@ -295,7 +295,7 @@ namespace bs
 		return mat;
 	}
 
-	Matrix4 Matrix4::scaling(const Vector3& scale)
+	Matrix4 Matrix4::Scaling(const Vector3& scale)
 	{
 		Matrix4 mat;
 
@@ -322,7 +322,7 @@ namespace bs
 	Matrix4 Matrix4::Rotation(const Quaternion& rotation)
 	{
 		Matrix3 mat;
-		rotation.toRotationMatrix(mat);
+		rotation.ToRotationMatrix(mat);
 
 		return Matrix4(mat);
 	}
@@ -333,7 +333,7 @@ namespace bs
 		static constexpr float INFINITE_FAR_PLANE_ADJUST = 0.00001f;
 
 		Radian thetaX(horzFOV * 0.5f);
-		float tanThetaX = Math::tan(thetaX);
+		float tanThetaX = Math::Tan(thetaX);
 		float tanThetaY = tanThetaX / aspect;
 
 		float half_w = tanThetaX * near;
@@ -379,7 +379,7 @@ namespace bs
 	Matrix4 Matrix4::ProjectionOrthographic(float left, float right, float top, float bottom, float near, float far)
 	{
 		Matrix4 output;
-		output.makeProjectionOrtho(left, right, top, bottom, near, far);
+		output.MakeProjectionOrtho(left, right, top, bottom, near, far);
 
 		return output;
 	}
@@ -387,7 +387,7 @@ namespace bs
 	Matrix4 Matrix4::View(const Vector3& position, const Quaternion& orientation)
 	{
 		Matrix4 mat;
-		mat.makeView(position, orientation);
+		mat.MakeView(position, orientation);
 
 		return mat;
 	}
@@ -395,7 +395,7 @@ namespace bs
 	Matrix4 Matrix4::TRS(const Vector3& translation, const Quaternion& rotation, const Vector3& scale)
 	{
 		Matrix4 mat;
-		mat.setTRS(translation, rotation, scale);
+		mat.SetTrs(translation, rotation, scale);
 
 		return mat;
 	}
@@ -403,7 +403,7 @@ namespace bs
 	Matrix4 Matrix4::InverseTrs(const Vector3& translation, const Quaternion& rotation, const Vector3& scale)
 	{
 		Matrix4 mat;
-		mat.setInverseTRS(translation, rotation, scale);
+		mat.SetInverseTrs(translation, rotation, scale);
 
 		return mat;
 	}

@@ -113,28 +113,28 @@ namespace bs
 	void generateTextures()
 	{
 		SPtr<PixelData> blackPixelData = PixelData::Create(2, 2, 1, PF_RGBA8);
-		blackPixelData->setColorAt(Color::Black, 0, 0);
-		blackPixelData->setColorAt(Color::Black, 0, 1);
-		blackPixelData->setColorAt(Color::Black, 1, 0);
-		blackPixelData->setColorAt(Color::Black, 1, 1);
+		blackPixelData->SetColorAt(Color::Black, 0, 0);
+		blackPixelData->SetColorAt(Color::Black, 0, 1);
+		blackPixelData->SetColorAt(Color::Black, 1, 0);
+		blackPixelData->SetColorAt(Color::Black, 1, 1);
 
 		SPtr<Texture> blackTexture = Texture::CreatePtrInternal(blackPixelData);
 
 		SPtr<PixelData> whitePixelData = PixelData::Create(2, 2, 1, PF_RGBA8);
-		whitePixelData->setColorAt(Color::White, 0, 0);
-		whitePixelData->setColorAt(Color::White, 0, 1);
-		whitePixelData->setColorAt(Color::White, 1, 0);
-		whitePixelData->setColorAt(Color::White, 1, 1);
+		whitePixelData->SetColorAt(Color::White, 0, 0);
+		whitePixelData->SetColorAt(Color::White, 0, 1);
+		whitePixelData->SetColorAt(Color::White, 1, 0);
+		whitePixelData->SetColorAt(Color::White, 1, 1);
 
 		SPtr<Texture> whiteTexture = Texture::CreatePtrInternal(whitePixelData);
 
 		SPtr<PixelData> normalPixelData = PixelData::Create(2, 2, 1, PF_RGBA8);
 
 		Color encodedNormal(0.5f, 0.5f, 1.0f);
-		normalPixelData->setColorAt(encodedNormal, 0, 0);
-		normalPixelData->setColorAt(encodedNormal, 0, 1);
-		normalPixelData->setColorAt(encodedNormal, 1, 0);
-		normalPixelData->setColorAt(encodedNormal, 1, 1);
+		normalPixelData->SetColorAt(encodedNormal, 0, 0);
+		normalPixelData->SetColorAt(encodedNormal, 0, 1);
+		normalPixelData->SetColorAt(encodedNormal, 1, 0);
+		normalPixelData->SetColorAt(encodedNormal, 1, 1);
 
 		SPtr<Texture> normalTexture = Texture::CreatePtrInternal(normalPixelData);
 
@@ -162,11 +162,11 @@ namespace bs
 	void generateMeshes()
 	{
 		SPtr<VertexDataDesc> vertexDesc = bs_shared_ptr_new<VertexDataDesc>();
-		vertexDesc->addVertElem(VET_FLOAT3, VES_POSITION);
-		vertexDesc->addVertElem(VET_FLOAT2, VES_TEXCOORD);
-		vertexDesc->addVertElem(VET_FLOAT3, VES_NORMAL);
-		vertexDesc->addVertElem(VET_FLOAT4, VES_TANGENT);
-		vertexDesc->addVertElem(VET_COLOR, VES_COLOR);
+		vertexDesc->AddVertElem(VET_FLOAT3, VES_POSITION);
+		vertexDesc->AddVertElem(VET_FLOAT2, VES_TEXCOORD);
+		vertexDesc->AddVertElem(VET_FLOAT3, VES_NORMAL);
+		vertexDesc->AddVertElem(VET_FLOAT4, VES_TANGENT);
+		vertexDesc->AddVertElem(VET_COLOR, VES_COLOR);
 
 		UINT32 boxNumVertices = 0;
 		UINT32 boxNumIndices = 0;
@@ -258,8 +258,8 @@ namespace bs
 		BuiltinResourceGUIElementStyleLoader loader(sOutputFolder, skinFolder);
 
 		Path guiSkinPath = sInputFolder + GUI_SKIN_JSON;
-		SPtr<DataStream> guiSkinStream = FileSystem::openFile(guiSkinPath);
-		json guiSkinJSON = json::parse(guiSkinStream->getAsString().c_str());
+		SPtr<DataStream> guiSkinStream = FileSystem::OpenFile(guiSkinPath);
+		json guiSkinJSON = json::parse(guiSkinStream->GetAsString().c_str());
 
 		SPtr<GUISkin> skin = GUISkin::CreatePtrInternal();
 
@@ -268,7 +268,7 @@ namespace bs
 			std::string name = entry["name"];
 
 			GUIElementStyle style = BuiltinResourcesHelper::loadGUIStyleFromJSON(entry, loader);
-			skin->setStyle(name.c_str(), style);
+			skin->SetStyle(name.c_str(), style);
 		}
 
 		return skin;
@@ -286,8 +286,8 @@ namespace bs
 		}
 
 		const Path dataListsFilePath = sInputFolder + DATA_LIST_JSON;
-		SPtr<DataStream> dataListStream = FileSystem::openFile(dataListsFilePath);
-		json dataListJSON = json::parse(dataListStream->getAsString().c_str());
+		SPtr<DataStream> dataListStream = FileSystem::OpenFile(dataListsFilePath);
+		json dataListJSON = json::parse(dataListStream->GetAsString().c_str());
 
 		json skinJSON = dataListJSON["Skin"];
 		json animatedSpritesJSON = dataListJSON["AnimatedSprites"];
@@ -382,7 +382,7 @@ namespace bs
 
 		if(updatedDataLists)
 		{
-			FileSystem::remove(dataListsFilePath);
+			FileSystem::Remove(dataListsFilePath);
 
 			if(!skinJSON.is_null())
 				dataListJSON["Skin"] = skinJSON;
@@ -421,7 +421,7 @@ namespace bs
 				dataListJSON["Textures"] = texturesJSON;
 
 			String jsonString = dataListJSON.dump(4).c_str();
-			dataListStream = FileSystem::createAndOpenFile(dataListsFilePath);
+			dataListStream = FileSystem::CreateAndOpenFile(dataListsFilePath);
 			dataListStream->writeString(jsonString);
 			dataListStream->close();
 		}
@@ -439,36 +439,36 @@ namespace bs
 		// If forcing import, clear all data folders since everything will be recreated anyway
 		if(forceImport)
 		{
-			if(FileSystem::exists(cursorFolder))
-				FileSystem::remove(cursorFolder);
+			if(FileSystem::Exists(cursorFolder))
+				FileSystem::Remove(cursorFolder);
 
-			if(FileSystem::exists(iconFolder))
-				FileSystem::remove(iconFolder);
+			if(FileSystem::Exists(iconFolder))
+				FileSystem::Remove(iconFolder);
 
-			if(FileSystem::exists(icon3DFolder))
-				FileSystem::remove(icon3DFolder);
+			if(FileSystem::Exists(icon3DFolder))
+				FileSystem::Remove(icon3DFolder);
 
-			if(FileSystem::exists(shaderIncludeFolder))
-				FileSystem::remove(shaderIncludeFolder);
+			if(FileSystem::Exists(shaderIncludeFolder))
+				FileSystem::Remove(shaderIncludeFolder);
 
-			if(FileSystem::exists(shaderFolder))
-				FileSystem::remove(shaderFolder);
+			if(FileSystem::Exists(shaderFolder))
+				FileSystem::Remove(shaderFolder);
 
-			if(FileSystem::exists(skinFolder))
-				FileSystem::remove(skinFolder);
+			if(FileSystem::Exists(skinFolder))
+				FileSystem::Remove(skinFolder);
 
-			if(FileSystem::exists(animatedSpriteFolder))
-				FileSystem::remove(animatedSpriteFolder);
+			if(FileSystem::Exists(animatedSpriteFolder))
+				FileSystem::Remove(animatedSpriteFolder);
 			
-			FileSystem::remove(shaderDependenciesFile);
+			FileSystem::Remove(shaderDependenciesFile);
 		}
 
 		// Read shader dependencies JSON
 		json shaderDependenciesJSON;
-		if(FileSystem::exists(shaderDependenciesFile))
+		if(FileSystem::Exists(shaderDependenciesFile))
 		{
-			SPtr<DataStream> stream = FileSystem::openFile(shaderDependenciesFile);
-			shaderDependenciesJSON = json::parse(stream->getAsString().c_str());
+			SPtr<DataStream> stream = FileSystem::OpenFile(shaderDependenciesFile);
+			shaderDependenciesJSON = json::parse(stream->GetAsString().c_str());
 			stream->close();
 		}
 
@@ -699,7 +699,7 @@ namespace bs
 		{
 			String jsonString = shaderDependenciesJSON.dump(4).c_str();
 
-			dataListStream = FileSystem::createAndOpenFile(shaderDependenciesFile);
+			dataListStream = FileSystem::CreateAndOpenFile(shaderDependenciesFile);
 			dataListStream->writeString(jsonString);
 			dataListStream->close();
 		}
@@ -762,7 +762,7 @@ namespace bs
 			textureIO->generateMips = false;
 			HTexture splashTexture = gImporter().import<Texture>(inputPath, textureIO);
 
-			SPtr<PixelData> splashPixelData = splashTexture->getProperties().allocBuffer(0, 0);
+			SPtr<PixelData> splashPixelData = splashTexture->GetProperties().allocBuffer(0, 0);
 			splashTexture->readCachedData(*splashPixelData);
 
 			FileEncoder fe(outputPath);

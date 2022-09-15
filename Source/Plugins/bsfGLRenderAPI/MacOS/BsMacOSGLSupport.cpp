@@ -30,7 +30,7 @@ namespace bs::ct
 
 	SPtr<MacOSContext> MacOSGLSupport::createContext(bool depthStencil, UINT32 msaaCount)
 	{
-		GLRenderAPI* rapi = static_cast<GLRenderAPI*>(RenderAPI::instancePtr());
+		GLRenderAPI* rapi = static_cast<GLRenderAPI*>(RenderAPI::InstancePtr());
 
 		// If RenderAPI has initialized a context use that, otherwise we create our own
 		if (!rapi->IsContextInitializedInternal())

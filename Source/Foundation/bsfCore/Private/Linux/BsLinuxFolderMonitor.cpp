@@ -45,7 +45,7 @@ namespace bs
 
 		if(monitorSubdirectories)
 		{
-			FileSystem::iterate(folderToMonitor, nullptr, [this](const Path& path)
+			FileSystem::Iterate(folderToMonitor, nullptr, [this](const Path& path)
 			{
 				addPath(path);
 				return true;
@@ -193,7 +193,7 @@ namespace bs
 			return action;
 		}
 
-		static void destroy(FileAction* action)
+		static void Destroy(FileAction* action)
 		{
 			bs_free(action);
 		}
@@ -233,14 +233,14 @@ namespace bs
 
 		// No need for mutex since we know worker thread is shut down by now
 		for(auto& action : m->fileActions)
-			FileAction::destroy(action);
+			FileAction::Destroy(action);
 
 		bs_delete(m);
 	}
 
 	void FolderMonitor::startMonitor(const Path& folderPath, bool subdirectories, FolderChangeBits changeFilter)
 	{
-		if(!FileSystem::isDirectory(folderPath))
+		if(!FileSystem::IsDirectory(folderPath))
 		{
 			BS_LOG(Error, Platform, "Provided path \"{0}\" is not a directory", folderPath);
 			return;
@@ -403,7 +403,7 @@ namespace bs
 						FolderWatchInfo* monitor = nullptr;
 						for (auto& entry : m->monitors)
 						{
-							path = entry->getPath(event->wd);
+							path = entry->GetPath(event->wd);
 							if (!path.isEmpty())
 							{
 								path.append(event->name);
@@ -516,7 +516,7 @@ namespace bs
 				break;
 			}
 
-			FileAction::destroy(action);
+			FileAction::Destroy(action);
 		}
 
 		m->activeFileActions.clear();

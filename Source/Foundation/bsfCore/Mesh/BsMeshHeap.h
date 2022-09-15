@@ -135,7 +135,7 @@ namespace bs
 		MeshHeap(UINT32 numVertices, UINT32 numIndices,
 			const SPtr<VertexDataDesc>& vertexDesc, IndexType indexType, GpuDeviceFlags deviceMask);
 
-		/** @copydoc CoreObject::initialize() */
+		/** @copydoc CoreObject::Initialize() */
 		void Initialize() ;
 
 		/**

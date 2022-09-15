@@ -67,7 +67,7 @@ namespace bs { namespace ct
 		D3D11_SHADER_RESOURCE_VIEW_DESC desc;
 		ZeroMemory(&desc, sizeof(desc));
 
-		const TextureProperties& texProps = texture->getProperties();
+		const TextureProperties& texProps = texture->GetProperties();
 		UINT32 numFaces = texProps.getNumFaces();
 
 		switch (texProps.getTextureType())
@@ -157,16 +157,16 @@ namespace bs { namespace ct
 			BS_EXCEPT(InvalidParametersException, "Invalid texture type for this view type.");
 		}
 
-		desc.Format = texture->getColorFormat();
+		desc.Format = texture->GetColorFormat();
 
 		ID3D11ShaderResourceView* srv = nullptr;
 
-		D3D11RenderAPI* d3d11rs = static_cast<D3D11RenderAPI*>(D3D11RenderAPI::instancePtr());
-		HRESULT hr = d3d11rs->getPrimaryDevice().getD3D11Device()->CreateShaderResourceView(texture->getDX11Resource(), &desc, &srv);
+		D3D11RenderAPI* d3d11rs = static_cast<D3D11RenderAPI*>(D3D11RenderAPI::InstancePtr());
+		HRESULT hr = d3d11rs->GetPrimaryDevice().getD3D11Device()->CreateShaderResourceView(texture->GetDX11Resource(), &desc, &srv);
 
-		if (FAILED(hr) || d3d11rs->getPrimaryDevice().hasError())
+		if (FAILED(hr) || d3d11rs->GetPrimaryDevice().hasError())
 		{
-			String msg = d3d11rs->getPrimaryDevice().getErrorDescription();
+			String msg = d3d11rs->GetPrimaryDevice().getErrorDescription();
 			BS_EXCEPT(RenderingAPIException, "Cannot create ShaderResourceView: " + msg);
 		}
 
@@ -179,7 +179,7 @@ namespace bs { namespace ct
 		D3D11_RENDER_TARGET_VIEW_DESC desc;
 		ZeroMemory(&desc, sizeof(desc));
 
-		const TextureProperties& texProps = texture->getProperties();
+		const TextureProperties& texProps = texture->GetProperties();
 		UINT32 numFaces = texProps.getNumFaces();
 
 		switch (texProps.getTextureType())
@@ -244,16 +244,16 @@ namespace bs { namespace ct
 			BS_EXCEPT(InvalidParametersException, "Invalid texture type for this view type.");
 		}
 
-		desc.Format = texture->getColorFormat();
+		desc.Format = texture->GetColorFormat();
 
 		ID3D11RenderTargetView* rtv = nullptr;
 
-		D3D11RenderAPI* d3d11rs = static_cast<D3D11RenderAPI*>(D3D11RenderAPI::instancePtr());
-		HRESULT hr = d3d11rs->getPrimaryDevice().getD3D11Device()->CreateRenderTargetView(texture->getDX11Resource(), &desc, &rtv);
+		D3D11RenderAPI* d3d11rs = static_cast<D3D11RenderAPI*>(D3D11RenderAPI::InstancePtr());
+		HRESULT hr = d3d11rs->GetPrimaryDevice().getD3D11Device()->CreateRenderTargetView(texture->GetDX11Resource(), &desc, &rtv);
 
-		if (FAILED(hr) || d3d11rs->getPrimaryDevice().hasError())
+		if (FAILED(hr) || d3d11rs->GetPrimaryDevice().hasError())
 		{
-			String msg = d3d11rs->getPrimaryDevice().getErrorDescription();
+			String msg = d3d11rs->GetPrimaryDevice().getErrorDescription();
 			BS_EXCEPT(RenderingAPIException, "Cannot create RenderTargetView: " + msg);
 		}
 
@@ -266,7 +266,7 @@ namespace bs { namespace ct
 		D3D11_UNORDERED_ACCESS_VIEW_DESC desc;
 		ZeroMemory(&desc, sizeof(desc));
 
-		const TextureProperties& texProps = texture->getProperties();
+		const TextureProperties& texProps = texture->GetProperties();
 		UINT32 numFaces = texProps.getNumFaces();
 
 		switch (texProps.getTextureType())
@@ -315,16 +315,16 @@ namespace bs { namespace ct
 			BS_EXCEPT(InvalidParametersException, "Invalid texture type for this view type.");
 		}
 
-		desc.Format = texture->getDXGIFormat();
+		desc.Format = texture->GetDXGIFormat();
 
 		ID3D11UnorderedAccessView* uav = nullptr;
 
-		D3D11RenderAPI* d3d11rs = static_cast<D3D11RenderAPI*>(D3D11RenderAPI::instancePtr());
-		HRESULT hr = d3d11rs->getPrimaryDevice().getD3D11Device()->CreateUnorderedAccessView(texture->getDX11Resource(), &desc, &uav);
+		D3D11RenderAPI* d3d11rs = static_cast<D3D11RenderAPI*>(D3D11RenderAPI::InstancePtr());
+		HRESULT hr = d3d11rs->GetPrimaryDevice().getD3D11Device()->CreateUnorderedAccessView(texture->GetDX11Resource(), &desc, &uav);
 
-		if (FAILED(hr) || d3d11rs->getPrimaryDevice().hasError())
+		if (FAILED(hr) || d3d11rs->GetPrimaryDevice().hasError())
 		{
-			String msg = d3d11rs->getPrimaryDevice().getErrorDescription();
+			String msg = d3d11rs->GetPrimaryDevice().getErrorDescription();
 			BS_EXCEPT(RenderingAPIException, "Cannot create UnorderedAccessView: " + msg);
 		}
 
@@ -337,7 +337,7 @@ namespace bs { namespace ct
 		D3D11_DEPTH_STENCIL_VIEW_DESC desc;
 		ZeroMemory(&desc, sizeof(desc));
 
-		const TextureProperties& texProps = texture->getProperties();
+		const TextureProperties& texProps = texture->GetProperties();
 		UINT32 numFaces = texProps.getNumFaces();
 
 		switch (texProps.getTextureType())
@@ -402,7 +402,7 @@ namespace bs { namespace ct
 			BS_EXCEPT(InvalidParametersException, "Invalid texture type for this view type.");
 		}
 
-		desc.Format = texture->getDepthStencilFormat();
+		desc.Format = texture->GetDepthStencilFormat();
 
 		if (readOnlyDepth)
 			desc.Flags = D3D11_DSV_READ_ONLY_DEPTH;
@@ -415,12 +415,12 @@ namespace bs { namespace ct
 
 		ID3D11DepthStencilView* dsv = nullptr;
 
-		D3D11RenderAPI* d3d11rs = static_cast<D3D11RenderAPI*>(D3D11RenderAPI::instancePtr());
-		HRESULT hr = d3d11rs->getPrimaryDevice().getD3D11Device()->CreateDepthStencilView(texture->getDX11Resource(), &desc, &dsv);
+		D3D11RenderAPI* d3d11rs = static_cast<D3D11RenderAPI*>(D3D11RenderAPI::InstancePtr());
+		HRESULT hr = d3d11rs->GetPrimaryDevice().getD3D11Device()->CreateDepthStencilView(texture->GetDX11Resource(), &desc, &dsv);
 
-		if (FAILED(hr) || d3d11rs->getPrimaryDevice().hasError())
+		if (FAILED(hr) || d3d11rs->GetPrimaryDevice().hasError())
 		{
-			String msg = d3d11rs->getPrimaryDevice().getErrorDescription();
+			String msg = d3d11rs->GetPrimaryDevice().getErrorDescription();
 			BS_EXCEPT(RenderingAPIException, "Cannot create DepthStencilView: " + msg);
 		}
 

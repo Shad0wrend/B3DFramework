@@ -174,7 +174,7 @@ namespace bs
 		 */
 		static ::bs::Lock GetLock(const Path& path)
 		{
-			return Lock(mMutex);
+			return bs::Lock(mMutex);
 		}
 
 	private:

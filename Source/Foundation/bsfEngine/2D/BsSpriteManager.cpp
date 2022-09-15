@@ -8,12 +8,12 @@ namespace bs
 	SpriteManager::SpriteManager()
 	{
 #ifndef BS_IS_ASSET_TOOL
-		SpriteMaterial* imageOpaqueMat = registerMaterial<SpriteImageMaterial>(SpriteMaterialTransparency::Opaque, false);
-		SpriteMaterial* imageAlphaMat = registerMaterial<SpriteImageMaterial>(SpriteMaterialTransparency::Alpha, false);
-		SpriteMaterial* imagePremultipliedMat = registerMaterial<SpriteImageMaterial>(SpriteMaterialTransparency::Premultiplied, false);
-		SpriteMaterial* imageOpaqueAnimMat = registerMaterial<SpriteImageMaterial>(SpriteMaterialTransparency::Opaque, true);
-		SpriteMaterial* imageAlphaAnimMat = registerMaterial<SpriteImageMaterial>(SpriteMaterialTransparency::Alpha, true);
-		SpriteMaterial* imagePremultipliedAnimMat = registerMaterial<SpriteImageMaterial>(SpriteMaterialTransparency::Premultiplied, true);
+		SpriteMaterial* imageOpaqueMat = RegisterMaterial<SpriteImageMaterial>(SpriteMaterialTransparency::Opaque, false);
+		SpriteMaterial* imageAlphaMat = RegisterMaterial<SpriteImageMaterial>(SpriteMaterialTransparency::Alpha, false);
+		SpriteMaterial* imagePremultipliedMat = RegisterMaterial<SpriteImageMaterial>(SpriteMaterialTransparency::Premultiplied, false);
+		SpriteMaterial* imageOpaqueAnimMat = RegisterMaterial<SpriteImageMaterial>(SpriteMaterialTransparency::Opaque, true);
+		SpriteMaterial* imageAlphaAnimMat = RegisterMaterial<SpriteImageMaterial>(SpriteMaterialTransparency::Alpha, true);
+		SpriteMaterial* imagePremultipliedAnimMat = RegisterMaterial<SpriteImageMaterial>(SpriteMaterialTransparency::Premultiplied, true);
 		SpriteMaterial* textMat = RegisterMaterial<SpriteTextMaterial>();
 		SpriteMaterial* lineMat = RegisterMaterial<SpriteLineMaterial>();
 
@@ -21,10 +21,10 @@ namespace bs
 		builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::ImageTransparentAlpha] = imageAlphaMat->GetId();
 		builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::ImageTransparentPremultiplied] = imagePremultipliedMat->GetId();
 		builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::ImageOpaqueAnimated] = imageOpaqueAnimMat->GetId();
-		builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::ImageTransparentAlphaAnimated] = imageAlphaAnimMat->getId();
-		builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::ImageTransparentPremultipliedAnimated] = imagePremultipliedAnimMat->getId();
-		builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::Text] = textMat->getId();
-		builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::Line] = lineMat->getId();
+		builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::ImageTransparentAlphaAnimated] = imageAlphaAnimMat->GetId();
+		builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::ImageTransparentPremultipliedAnimated] = imagePremultipliedAnimMat->GetId();
+		builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::Text] = textMat->GetId();
+		builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::Line] = lineMat->GetId();
 #endif
 	}
 

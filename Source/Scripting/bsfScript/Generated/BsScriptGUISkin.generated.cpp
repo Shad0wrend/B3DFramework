@@ -38,7 +38,7 @@ namespace bs
 	}
 	MonoObject* ScriptGUISkin::InternalGetRef(ScriptGUISkin* thisPtr)
 	{
-		return thisPtr->getRRef();
+		return thisPtr->GetRRef();
 	}
 
 	bool ScriptGUISkin::InternalHasStyle(ScriptGUISkin* thisPtr, MonoString* name)
@@ -46,7 +46,7 @@ namespace bs
 		bool tmp__output;
 		String tmpname;
 		tmpname = MonoUtil::monoToString(name);
-		tmp__output = thisPtr->getHandle()->hasStyle(tmpname);
+		tmp__output = thisPtr->GetHandle()->hasStyle(tmpname);
 
 		bool __output;
 		__output = tmp__output;
@@ -59,7 +59,7 @@ namespace bs
 		SPtr<GUIElementStyle> tmp__output = bs_shared_ptr_new<GUIElementStyle>();
 		String tmpguiElemType;
 		tmpguiElemType = MonoUtil::monoToString(guiElemType);
-		*tmp__output = *thisPtr->getHandle()->getStyle(tmpguiElemType);
+		*tmp__output = *thisPtr->GetHandle()->GetStyle(tmpguiElemType);
 
 		MonoObject* __output;
 		__output = ScriptGUIElementStyle::Create(tmp__output);
@@ -75,28 +75,28 @@ namespace bs
 		ScriptGUIElementStyle* scriptstyle;
 		scriptstyle = ScriptGUIElementStyle::toNative(style);
 		if(scriptstyle != nullptr)
-			tmpstyle = scriptstyle->getInternal();
-		thisPtr->getHandle()->setStyle(tmpguiElemType, *tmpstyle);
+			tmpstyle = scriptstyle->GetInternal();
+		thisPtr->GetHandle()->SetStyle(tmpguiElemType, *tmpstyle);
 	}
 
 	void ScriptGUISkin::InternalRemoveStyle(ScriptGUISkin* thisPtr, MonoString* guiElemType)
 	{
 		String tmpguiElemType;
 		tmpguiElemType = MonoUtil::monoToString(guiElemType);
-		thisPtr->getHandle()->removeStyle(tmpguiElemType);
+		thisPtr->GetHandle()->removeStyle(tmpguiElemType);
 	}
 
 	MonoArray* ScriptGUISkin::InternalGetStyleNames(ScriptGUISkin* thisPtr)
 	{
 		Vector<String> vec__output;
-		vec__output = thisPtr->getHandle()->getStyleNames();
+		vec__output = thisPtr->GetHandle()->GetStyleNames();
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
 		ScriptArray array__output = ScriptArray::create<String>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
-			array__output.set(i, vec__output[i]);
+			array__output.Set(i, vec__output[i]);
 		}
 		__output = array__output.getInternal();
 

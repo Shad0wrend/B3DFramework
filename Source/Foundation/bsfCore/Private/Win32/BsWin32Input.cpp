@@ -190,7 +190,7 @@ namespace bs
 		if (GetDeviceCount(InputDevice::Mouse) > 0)
 			mMouse = bs_new<Mouse>("Mouse", this);
 
-		UINT32 numGamepads = getDeviceCount(InputDevice::Gamepad);
+		UINT32 numGamepads = GetDeviceCount(InputDevice::Gamepad);
 		for (UINT32 i = 0; i < numGamepads; i++)
 			mGamepads.push_back(bs_new<Gamepad>(mPlatformData->gamepadInfos[i].name, mPlatformData->gamepadInfos[i], this));
 	}

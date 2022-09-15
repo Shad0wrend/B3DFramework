@@ -42,14 +42,14 @@ namespace bs
 	MonoObject* ManagedResource::GetManagedInstance() const
 	{
 		if(mOwner)
-			return mOwner->getManagedInstance();
+			return mOwner->GetManagedInstance();
 		
 		return nullptr;
 	}
 
 	ResourceBackupData ManagedResource::Backup()
 	{
-		MonoObject* instance = mOwner->getManagedInstance();
+		MonoObject* instance = mOwner->GetManagedInstance();
 		SPtr<ManagedSerializableObject> serializableObject = ManagedSerializableObject::createFromExisting(instance);
 
 		ResourceBackupData backupData;
@@ -74,7 +74,7 @@ namespace bs
 
 	void ManagedResource::Restore(const ResourceBackupData& data)
 	{
-		MonoObject* instance = mOwner->getManagedInstance();
+		MonoObject* instance = mOwner->GetManagedInstance();
 		if (instance != nullptr)
 		{
 			if (data.data != nullptr)
@@ -101,10 +101,10 @@ namespace bs
 	{
 		SPtr<ManagedResource> newRes = bs_core_ptr<ManagedResource>(new (bs_alloc<ManagedResource>()) ManagedResource(managedResource));
 		newRes->SetThisPtrInternal(newRes);
-		newRes->initialize();
+		newRes->Initialize();
 
 		HManagedResource handle = static_resource_cast<ManagedResource>(gResources().CreateResourceHandleInternal(newRes));
-		newRes->setHandle(managedResource, handle);
+		newRes->SetHandle(managedResource, handle);
 
 		return handle;
 	}
@@ -113,7 +113,7 @@ namespace bs
 	{
 		SPtr<ManagedResource> newRes = bs_core_ptr<ManagedResource>(new (bs_alloc<ManagedResource>()) ManagedResource());
 		newRes->SetThisPtrInternal(newRes);
-		newRes->initialize();
+		newRes->Initialize();
 
 		return newRes;
 	}
@@ -128,7 +128,7 @@ namespace bs
 
 	void ManagedResource::Destroy()
 	{
-		Resource::destroy();
+		Resource::Destroy();
 
 		mOwner->NotifyDestroyedInternal();
 		ManagedResourceManager::Instance().unregisterManagedResource(mMyHandle);

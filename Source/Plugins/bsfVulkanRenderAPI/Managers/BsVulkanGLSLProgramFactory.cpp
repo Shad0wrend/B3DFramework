@@ -222,7 +222,7 @@ namespace bs { namespace ct
 		glslOptions.vertex.flip_vert_y = true;
 
 		compiler.set_common_options(glslOptions);
-		std::string source = compiler.compile();
+		std::string source = compiler.Compile();
 
 		// Parse workgroup size for compute shaders
 		UINT32 workgroupSize[3] = { 1, 1, 1 };
@@ -258,7 +258,7 @@ namespace bs { namespace ct
 		if(desc.type == GPT_COMPUTE_PROGRAM)
 			size += sizeof(workgroupSize);
 
-		UINT32 wordSize = Math::divideAndRoundUp(size, 4U);
+		UINT32 wordSize = Math::DivideAndRoundUp(size, 4U);
 
 		UINT8* buffer = (UINT8*)bs_alloc(wordSize * 4);
 		UINT8* dst = buffer;

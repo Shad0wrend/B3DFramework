@@ -8,45 +8,45 @@ namespace bs
 {
 	CLightProbeVolume::CLightProbeVolume()
 	{
-		setFlag(ComponentFlag::AlwaysRun, true);
-		setName("LightProbeVolume");
+		SetFlag(ComponentFlag::AlwaysRun, true);
+		SetName("LightProbeVolume");
 	}
 
 	CLightProbeVolume::CLightProbeVolume(const HSceneObject& parent, const AABox& volume, const Vector3I& cellCount)
 		:Component(parent), mVolume(volume), mCellCount(cellCount)
 	{
-		setFlag(ComponentFlag::AlwaysRun, true);
-		setName("LightProbeVolume");
+		SetFlag(ComponentFlag::AlwaysRun, true);
+		SetName("LightProbeVolume");
 	}
 
 	CLightProbeVolume::~CLightProbeVolume()
 	{
 		if(mInternal != nullptr)
-			mInternal->destroy();
+			mInternal->Destroy();
 	}
 
 	void CLightProbeVolume::RenderProbe(UINT32 handle)
 	{
-		if (mInternal != nullptr && SO()->getActive())
+		if (mInternal != nullptr && SO()->GetActive())
 		{
 			mInternal->UpdateStateInternal(*SO());
-			mInternal->renderProbe(handle);
+			mInternal->RenderProbe(handle);
 		}
 	}
 
 	void CLightProbeVolume::RenderProbes()
 	{
-		if (mInternal != nullptr && SO()->getActive())
+		if (mInternal != nullptr && SO()->GetActive())
 		{
 			mInternal->UpdateStateInternal(*SO());
-			mInternal->renderProbes();
+			mInternal->RenderProbes();
 		}
 	}
 
 	Vector<LightProbeInfo> CLightProbeVolume::GetProbes() const
 	{
 		if (mInternal != nullptr)
-			return mInternal->getProbes();
+			return mInternal->GetProbes();
 
 		return Vector<LightProbeInfo>();
 	}
@@ -56,11 +56,11 @@ namespace bs
 		// If mInternal already exists this means this object was deserialized,
 		// so all we need to do is initialize it.
 		if (mInternal != nullptr)
-			mInternal->initialize();
+			mInternal->Initialize();
 		else
 			mInternal = LightProbeVolume::Create(mVolume, mCellCount);
 
-		gSceneManager().BindActorInternal(mInternal, sceneObject());
+		gSceneManager().BindActorInternal(mInternal, SceneObject());
 	}
 
 	void CLightProbeVolume::OnDestroyed()

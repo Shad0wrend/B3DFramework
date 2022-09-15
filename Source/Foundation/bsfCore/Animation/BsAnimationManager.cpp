@@ -16,8 +16,8 @@ namespace bs
 	AnimationManager::AnimationManager()
 	{
 		mBlendShapeVertexDesc = VertexDataDesc::Create();
-		mBlendShapeVertexDesc->addVertElem(VET_FLOAT3, VES_POSITION, 1, 1);
-		mBlendShapeVertexDesc->addVertElem(VET_UBYTE4_NORM, VES_NORMAL, 1, 1);
+		mBlendShapeVertexDesc->AddVertElem(VET_FLOAT3, VES_POSITION, 1, 1);
+		mBlendShapeVertexDesc->AddVertElem(VET_UBYTE4_NORM, VES_NORMAL, 1, 1);
 	}
 
 	void AnimationManager::SetPaused(bool paused)
@@ -55,11 +55,11 @@ namespace bs
 		if(mPaused)
 			return &mAnimData[mPoseReadBufferIdx];
 
-		mAnimationTime += gTime().getFrameDelta();
+		mAnimationTime += gTime().GetFrameDelta();
 		if (mAnimationTime < mNextAnimationUpdateTime)
 			return &mAnimData[mPoseReadBufferIdx];
 
-		mNextAnimationUpdateTime = Math::floor(mAnimationTime / mUpdateRate) * mUpdateRate + mUpdateRate;
+		mNextAnimationUpdateTime = Math::Floor(mAnimationTime / mUpdateRate) * mUpdateRate + mUpdateRate;
 
 		float timeDelta = mAnimationTime - mLastAnimationUpdateTime;
 		mLastAnimationUpdateTime = mAnimationTime;
@@ -69,8 +69,8 @@ namespace bs
 		{
 			for (auto& anim : mAnimations)
 			{
-				anim.second->updateFromProxy();
-				anim.second->triggerEvents(mLastAnimationDeltaTime);
+				anim.second->UpdateFromProxy();
+				anim.second->TriggerEvents(mLastAnimationDeltaTime);
 			}
 		}
 
@@ -80,24 +80,24 @@ namespace bs
 		mProxies.clear();
 		for (auto& anim : mAnimations)
 		{
-			anim.second->updateAnimProxy(timeDelta);
+			anim.second->UpdateAnimProxy(timeDelta);
 			mProxies.push_back(anim.second->mAnimProxy);
 		}
 
 		// Build frustums for culling
 		mCullFrustums.clear();
 
-		auto& allCameras = gSceneManager().getAllCameras();
+		auto& allCameras = gSceneManager().GetAllCameras();
 		for(auto& entry : allCameras)
 		{
 			// Note: This should also check on-demand cameras as there's no point in updating them if they wont render this frame
-			bool isOverlayCamera = entry.second->getRenderSettings()->overlayOnly;
+			bool isOverlayCamera = entry.second->GetRenderSettings()->overlayOnly;
 			if (isOverlayCamera)
 				continue;
 
 			// TODO: Not checking if camera and animation renderable's layers match. If we checked more animations could
 			// be culled.
-			mCullFrustums.push_back(entry.second->getWorldFrustum());
+			mCullFrustums.push_back(entry.second->GetWorldFrustum());
 		}
 
 		// Prepare the write buffer
@@ -105,7 +105,7 @@ namespace bs
 		for (auto& anim : mProxies)
 		{
 			if (anim->skeleton != nullptr)
-				totalNumBones += anim->skeleton->getNumBones();
+				totalNumBones += anim->skeleton->GetNumBones();
 		}
 
 		// Prepare the write buffer
@@ -125,7 +125,7 @@ namespace bs
 			auto evaluateAnimWorker = [this, anim, curBoneIdx]()
 			{
 				UINT32 boneIdx = curBoneIdx;
-				evaluateAnimation(anim.get(), boneIdx);
+				EvaluateAnimation(anim.get(), boneIdx);
 
 				Lock lock(mMutex);
 				{
@@ -137,10 +137,10 @@ namespace bs
 			};
 
 			SPtr<Task> task = Task::Create("AnimWorker", evaluateAnimWorker);
-			TaskScheduler::Instance().addTask(task);
+			TaskScheduler::Instance().AddTask(task);
 
 			if (anim->skeleton != nullptr)
-				curBoneIdx += anim->skeleton->getNumBones();
+				curBoneIdx += anim->skeleton->GetNumBones();
 		}
 
 		// Wait for tasks to complete
@@ -156,8 +156,8 @@ namespace bs
 			// Trigger events and update attachments (for the data we just evaluated)
 			for (auto& anim : mAnimations)
 			{
-				anim.second->updateFromProxy();
-				anim.second->triggerEvents(timeDelta);
+				anim.second->UpdateFromProxy();
+				anim.second->TriggerEvents(timeDelta);
 			}
 		}
 
@@ -181,7 +181,7 @@ namespace bs
 			bool isVisible = false;
 			for (auto& frustum : mCullFrustums)
 			{
-				if (frustum.intersects(anim->mBounds))
+				if (frustum.Intersects(anim->mBounds))
 				{
 					isVisible = true;
 					break;
@@ -209,7 +209,7 @@ namespace bs
 		// Evaluate skeletal animation
 		if (anim->skeleton != nullptr)
 		{
-			UINT32 numBones = anim->skeleton->getNumBones();
+			UINT32 numBones = anim->skeleton->GetNumBones();
 
 			EvaluatedAnimationData::PoseInfo& poseInfo = animInfo.poseInfo;
 			poseInfo.animId = anim->id;
@@ -234,7 +234,7 @@ namespace bs
 			}
 
 			// Animate bones
-			anim->skeleton->getPose(boneDst, anim->skeletonPose, anim->skeletonMask, anim->layers, anim->numLayers);
+			anim->skeleton->GetPose(boneDst, anim->skeletonPose, anim->skeletonMask, anim->layers, anim->numLayers);
 
 			curBoneIdx += numBones;
 			hasAnimInfo = true;
@@ -279,7 +279,7 @@ namespace bs
 				if (curveIdx != (UINT32)-1)
 				{
 					const TAnimationCurve<Vector3>& curve = state.curves->position[curveIdx].curve;
-					anim->sceneObjectPose.positions[curveIdx] = curve.evaluate(state.time, state.positionCaches[curveIdx], false);
+					anim->sceneObjectPose.positions[curveIdx] = curve.Evaluate(state.time, state.positionCaches[curveIdx], false);
 					anim->sceneObjectPose.hasOverride[i * 3 + 0] = false;
 				}
 			}
@@ -289,8 +289,8 @@ namespace bs
 				if (curveIdx != (UINT32)-1)
 				{
 					const TAnimationCurve<Quaternion>& curve = state.curves->rotation[curveIdx].curve;
-					anim->sceneObjectPose.rotations[curveIdx] = curve.evaluate(state.time, state.rotationCaches[curveIdx], false);
-					anim->sceneObjectPose.rotations[curveIdx].normalize();
+					anim->sceneObjectPose.rotations[curveIdx] = curve.Evaluate(state.time, state.rotationCaches[curveIdx], false);
+					anim->sceneObjectPose.rotations[curveIdx].Normalize();
 					anim->sceneObjectPose.hasOverride[i * 3 + 1] = false;
 				}
 			}
@@ -300,7 +300,7 @@ namespace bs
 				if (curveIdx != (UINT32)-1)
 				{
 					const TAnimationCurve<Vector3>& curve = state.curves->scale[curveIdx].curve;
-					anim->sceneObjectPose.scales[curveIdx] = curve.evaluate(state.time, state.scaleCaches[curveIdx], false);
+					anim->sceneObjectPose.scales[curveIdx] = curve.Evaluate(state.time, state.scaleCaches[curveIdx], false);
 					anim->sceneObjectPose.hasOverride[i * 3 + 2] = false;
 				}
 			}
@@ -317,7 +317,7 @@ namespace bs
 				for (UINT32 i = 0; i < numCurves; i++)
 				{
 					const TAnimationCurve<float>& curve = state.curves->generic[i].curve;
-					anim->genericCurveOutputs[i] = curve.evaluate(state.time, state.genericCaches[i], false);
+					anim->genericCurveOutputs[i] = curve.Evaluate(state.time, state.genericCaches[i], false);
 				}
 			}
 		}
@@ -338,14 +338,14 @@ namespace bs
 				MorphChannelInfo& channelInfo = anim->morphChannelInfos[i];
 				if (channelInfo.weightCurveIdx != (UINT32)-1)
 				{
-					channelInfo.weight = Math::clamp01(anim->genericCurveOutputs[channelInfo.weightCurveIdx]);
+					channelInfo.weight = Math::Clamp01(anim->genericCurveOutputs[channelInfo.weightCurveIdx]);
 					hasMorphCurves = true;
 				}
 
 				float frameWeight;
 				if (channelInfo.frameCurveIdx != (UINT32)-1)
 				{
-					frameWeight = Math::clamp01(anim->genericCurveOutputs[channelInfo.frameCurveIdx]);
+					frameWeight = Math::Clamp01(anim->genericCurveOutputs[channelInfo.frameCurveIdx]);
 					hasMorphCurves = true;
 				}
 				else
@@ -444,8 +444,8 @@ namespace bs
 			{
 				SPtr<MeshData> meshData = bs_shared_ptr_new<MeshData>(anim->numMorphVertices, 0, mBlendShapeVertexDesc);
 
-				UINT8* bufferData = meshData->getData();
-				memset(bufferData, 0, meshData->getSize());
+				UINT8* bufferData = meshData->GetData();
+				memset(bufferData, 0, meshData->GetSize());
 
 				UINT32 tempDataSize = (sizeof(Vector3) + sizeof(float)) * anim->numMorphVertices;
 				UINT8* tempData = (UINT8*)bs_stack_alloc(tempDataSize);
@@ -454,20 +454,20 @@ namespace bs
 				Vector3* tempNormals = (Vector3*)tempData;
 				float* accumulatedWeight = (float*)(tempData + sizeof(Vector3) * anim->numMorphVertices);
 
-				UINT8* positions = meshData->getElementData(VES_POSITION, 1, 1);
-				UINT8* normals = meshData->getElementData(VES_NORMAL, 1, 1);
+				UINT8* positions = meshData->GetElementData(VES_POSITION, 1, 1);
+				UINT8* normals = meshData->GetElementData(VES_NORMAL, 1, 1);
 
-				UINT32 stride = mBlendShapeVertexDesc->getVertexStride(1);
+				UINT32 stride = mBlendShapeVertexDesc->GetVertexStride(1);
 
 				for (UINT32 i = 0; i < anim->numMorphShapes; i++)
 				{
 					const MorphShapeInfo& info = anim->morphShapeInfos[i];
-					float absWeight = Math::abs(info.finalWeight);
+					float absWeight = Math::Abs(info.finalWeight);
 
 					if (absWeight < 0.0001f)
 						continue;
 
-					const Vector<MorphVertex>& morphVertices = info.shape->getVertices();
+					const Vector<MorphVertex>& morphVertices = info.shape->GetVertices();
 					UINT32 numVertices = (UINT32)morphVertices.size();
 					for (UINT32 j = 0; j < numVertices; j++)
 					{
@@ -490,7 +490,7 @@ namespace bs
 						Vector3 normal = tempNormals[i] / accumulatedWeight[i];
 						normal /= 2.0f; // Accumulated normal is in range [-2, 2] but our normal packing method assumes [-1, 1] range
 
-						MeshUtility::packNormals(&normal, (UINT8*)destNrm, 1, sizeof(Vector3), stride);
+						MeshUtility::PackNormals(&normal, (UINT8*)destNrm, 1, sizeof(Vector3), stride);
 						destNrm->w = (UINT8)(std::min(1.0f, accumulatedWeight[i]) * 255.999f);
 					}
 					else

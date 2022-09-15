@@ -44,7 +44,7 @@ namespace bs
 		tmpdefine = MonoUtil::monoToString(define);
 		String tmpvalue;
 		tmpvalue = MonoUtil::monoToString(value);
-		thisPtr->getInternal()->setDefine(tmpdefine, tmpvalue);
+		thisPtr->GetInternal()->SetDefine(tmpdefine, tmpvalue);
 	}
 
 	bool ScriptShaderImportOptions::Internal_getDefine(ScriptShaderImportOptions* thisPtr, MonoString* define, MonoString** value)
@@ -53,7 +53,7 @@ namespace bs
 		String tmpdefine;
 		tmpdefine = MonoUtil::monoToString(define);
 		String tmpvalue;
-		tmp__output = thisPtr->getInternal()->getDefine(tmpdefine, tmpvalue);
+		tmp__output = thisPtr->GetInternal()->GetDefine(tmpdefine, tmpvalue);
 
 		bool __output;
 		__output = tmp__output;
@@ -67,7 +67,7 @@ namespace bs
 		bool tmp__output;
 		String tmpdefine;
 		tmpdefine = MonoUtil::monoToString(define);
-		tmp__output = thisPtr->getInternal()->hasDefine(tmpdefine);
+		tmp__output = thisPtr->GetInternal()->hasDefine(tmpdefine);
 
 		bool __output;
 		__output = tmp__output;
@@ -79,7 +79,7 @@ namespace bs
 	{
 		String tmpdefine;
 		tmpdefine = MonoUtil::monoToString(define);
-		thisPtr->getInternal()->removeDefine(tmpdefine);
+		thisPtr->GetInternal()->removeDefine(tmpdefine);
 	}
 
 	void ScriptShaderImportOptions::Internal_create(MonoObject* managedInstance)
@@ -90,7 +90,7 @@ namespace bs
 	ShadingLanguageFlag ScriptShaderImportOptions::Internal_getlanguages(ScriptShaderImportOptions* thisPtr)
 	{
 		Flags<ShadingLanguageFlag> tmp__output;
-		tmp__output = thisPtr->getInternal()->languages;
+		tmp__output = thisPtr->GetInternal()->languages;
 
 		ShadingLanguageFlag __output;
 		__output = (ShadingLanguageFlag)(uint32_t)tmp__output;
@@ -100,7 +100,7 @@ namespace bs
 
 	void ScriptShaderImportOptions::Internal_setlanguages(ScriptShaderImportOptions* thisPtr, ShadingLanguageFlag value)
 	{
-		thisPtr->getInternal()->languages = value;
+		thisPtr->GetInternal()->languages = value;
 	}
 #endif
 }

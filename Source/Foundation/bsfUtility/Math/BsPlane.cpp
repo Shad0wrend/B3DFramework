@@ -51,7 +51,7 @@ namespace bs
 	Plane::Side Plane::GetSide(const AABox& box) const
 	{
 		// Calculate the distance between box centre and the plane
-		float dist = getDistance(box.getCenter());
+		float dist = GetDistance(box.GetCenter());
 
 		// Calculate the maximize allows absolute distance for
 		// the distance between box centre and plane
@@ -70,7 +70,7 @@ namespace bs
 	Plane::Side Plane::GetSide(const Sphere& sphere) const
 	{
 		// Calculate the distance between box centre and the plane
-		float dist = getDistance(sphere.getCenter());
+		float dist = GetDistance(sphere.GetCenter());
 		float radius = sphere.GetRadius();
 
 		if (dist < -radius)
@@ -99,9 +99,9 @@ namespace bs
 
 	}
 
-	float Plane::normalize()
+	float Plane::Normalize()
 	{
-		float fLength = normal.length();
+		float fLength = normal.Length();
 
 		// Will also work for zero-sized vectors, but will change nothing
 		if (fLength > 1e-08f)
@@ -116,25 +116,25 @@ namespace bs
 
 	bool Plane::Intersects(const AABox& box) const
 	{
-		return box.intersects(*this);
+		return box.Intersects(*this);
 	}
 
 	bool Plane::Intersects(const Sphere& sphere) const
 	{
-		return sphere.intersects(*this);
+		return sphere.Intersects(*this);
 	}
 
 	std::pair<bool, float> Plane::Intersects(const Ray& ray) const
 	{
-		float denom = normal.dot(ray.getDirection());
-		if (Math::abs(denom) < std::numeric_limits<float>::epsilon())
+		float denom = normal.Dot(ray.GetDirection());
+		if (abs(denom) < std::numeric_limits<float>::epsilon())
 		{
 			// Parallel
 			return std::pair<bool, float>(false, 0.0f);
 		}
 		else
 		{
-			float nom = normal.dot(ray.getOrigin()) - d;
+			float nom = normal.Dot(ray.GetOrigin()) - d;
 			float t = -(nom/denom);
 			return std::pair<bool, float>(t >= 0.0f, t);
 		}

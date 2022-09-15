@@ -101,7 +101,7 @@ namespace bs
 				
 			} while (sqrdSize > 1.0f || sqrdSize < 0.001f);
 
-			return Vector3::normalize(output);
+			return Vector3::Normalize(output);
 		}
 
 		/** Returns a random unit vector in two dimensions. */
@@ -122,7 +122,7 @@ namespace bs
 				
 			} while (sqrdSize > 1.0f || sqrdSize < 0.001f);
 
-			return Vector2::normalize(output);
+			return Vector2::Normalize(output);
 		}
 
 		/** Returns a random point inside a unit sphere. */
@@ -176,7 +176,7 @@ namespace bs
 		Vector2 GetPointInArc(Degree angle) const
 		{
 			float val = GetUNorm() * angle.ValueRadians();
-			return Vector2(Math::cos(val), Math::sin(val));
+			return Vector2(Math::Cos(val), Math::Sin(val));
 		}
 
 		/**
@@ -191,7 +191,7 @@ namespace bs
 			const float minRadius = 1.0f - thickness;
 
 			const float val = GetUNorm() * angle.ValueRadians();
-			const Vector2 dir(Math::cos(val), Math::sin(val));
+			const Vector2 dir(Math::Cos(val), Math::Sin(val));
 
 			return dir * (minRadius + thickness * std::pow(GetUNorm(), 1.0f / 2.0f));
 		}

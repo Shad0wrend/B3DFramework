@@ -63,7 +63,7 @@ namespace bs
 		static void RegisterRTTITypeInternal(RTTITypeBase* rttiType);
 
 		/** Returns class' RTTI type from type id. */
-		static RTTITypeBase* GetRTTIfromTypeIdInternal(UINT32 rttiTypeId);
+		static RTTITypeBase* GetRttifromTypeIdInternal(UINT32 rttiTypeId);
 
 		/** Checks if the provided type id is unique. */
 		static bool IsTypeIdDuplicateInternal(UINT32 typeId);

@@ -149,7 +149,7 @@ namespace bs
 		ScriptTAnimationCurveVector2* scriptcurve;
 		scriptcurve = ScriptTAnimationCurveVector2::ToNative(value.curve);
 		if(scriptcurve != nullptr)
-			tmpcurve = scriptcurve->getInternal();
+			tmpcurve = scriptcurve->GetInternal();
 		if(tmpcurve != nullptr)
 		output.curve = *tmpcurve;
 
@@ -201,7 +201,7 @@ namespace bs
 		ScriptTAnimationCurveQuaternion* scriptcurve;
 		scriptcurve = ScriptTAnimationCurveQuaternion::toNative(value.curve);
 		if(scriptcurve != nullptr)
-			tmpcurve = scriptcurve->getInternal();
+			tmpcurve = scriptcurve->GetInternal();
 		if(tmpcurve != nullptr)
 		output.curve = *tmpcurve;
 
@@ -253,7 +253,7 @@ namespace bs
 		ScriptTAnimationCurveint32_t* scriptcurve;
 		scriptcurve = ScriptTAnimationCurveint32_t::toNative(value.curve);
 		if(scriptcurve != nullptr)
-			tmpcurve = scriptcurve->getInternal();
+			tmpcurve = scriptcurve->GetInternal();
 		if(tmpcurve != nullptr)
 		output.curve = *tmpcurve;
 

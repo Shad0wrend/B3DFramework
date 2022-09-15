@@ -34,7 +34,7 @@ namespace bs
 		ScriptRRefBase* script__output;
 		script__output = ScriptResourceManager::Instance().getScriptRRef(tmp__output);
 		if(script__output != nullptr)
-			__output = script__output->getManagedInstance();
+			__output = script__output->GetManagedInstance();
 		else
 			__output = nullptr;
 
@@ -47,19 +47,19 @@ namespace bs
 		ScriptRRefBase* scripttexture;
 		scripttexture = ScriptRRefBase::toNative(texture);
 		if(scripttexture != nullptr)
-			tmptexture = static_resource_cast<Texture>(scripttexture->getHandle());
-		thisPtr->getHandle()->setTexture(tmptexture);
+			tmptexture = static_resource_cast<Texture>(scripttexture->GetHandle());
+		thisPtr->GetHandle()->SetTexture(tmptexture);
 	}
 
 	void ScriptCSkybox::InternalSetBrightness(ScriptCSkybox* thisPtr, float brightness)
 	{
-		thisPtr->getHandle()->setBrightness(brightness);
+		thisPtr->GetHandle()->SetBrightness(brightness);
 	}
 
 	float ScriptCSkybox::InternalGetBrightness(ScriptCSkybox* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->getHandle()->getBrightness();
+		tmp__output = thisPtr->GetHandle()->GetBrightness();
 
 		float __output;
 		__output = tmp__output;

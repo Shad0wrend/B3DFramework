@@ -221,7 +221,7 @@ namespace bs
 			object.SetHandleDataInternal(ptr);
 		}
 
-		const UINT64 newId = object->getInstanceId();
+		const UINT64 newId = object->GetInstanceId();
 		mIdMapping[originalId] = newId;
 		mDeserializedObjects[newId] = object;
 	}

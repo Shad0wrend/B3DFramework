@@ -35,7 +35,7 @@ namespace bs
 		{
 			assert(sPanel == nullptr);
 
-			MonoObject* guiPanel = ScriptGUIPanel::createFromExisting(sGUIWidget->getPanel());
+			MonoObject* guiPanel = ScriptGUIPanel::createFromExisting(sGUIWidget->GetPanel());
 			sPanel = ScriptGUILayout::toNative(guiPanel);
 
 			void* params[1];
@@ -51,8 +51,8 @@ namespace bs
 
 		createPanel();
 
-		sDomainLoadConn = ScriptObjectManager::Instance().onRefreshDomainLoaded.connect(createPanel);
-		sDomainUnloadConn = MonoManager::Instance().onDomainUnload.connect(clearPanel);
+		sDomainLoadConn = ScriptObjectManager::Instance().onRefreshDomainLoaded.Connect(createPanel);
+		sDomainUnloadConn = MonoManager::Instance().onDomainUnload.Connect(clearPanel);
 	}
 
 	void ScriptGUI::Update()
@@ -61,20 +61,20 @@ namespace bs
 			return;
 
 		SPtr<Camera> mainCamera = gSceneManager().getMainCamera();
-		if (mainCamera != sGUIWidget->getCamera())
-			sGUIWidget->setCamera(mainCamera);
+		if (mainCamera != sGUIWidget->GetCamera())
+			sGUIWidget->SetCamera(mainCamera);
 
 		sGUIWidget->UpdateRTInternal();
 	}
 
 	void ScriptGUI::ShutDown()
 	{
-		sDomainLoadConn.disconnect();
-		sDomainUnloadConn.disconnect();
+		sDomainLoadConn.Disconnect();
+		sDomainUnloadConn.Disconnect();
 
 		if (sPanel != nullptr)
 		{
-			sPanel->destroy();
+			sPanel->Destroy();
 			sPanel = nullptr;
 		}
 
@@ -87,7 +87,7 @@ namespace bs
 
 	void ScriptGUI::initRuntimeData()
 	{
-		sGUIPanelMethod = metaData.scriptClass->getMethod("SetPanel", 1);
+		sGUIPanelMethod = metaData.scriptClass->GetMethod("SetPanel", 1);
 
 		metaData.scriptClass->addInternalCall("Internal_SetSkin", (void*)&ScriptGUI::internal_SetSkin);
 	}
@@ -96,12 +96,12 @@ namespace bs
 	{
 		HGUISkin guiSkin;
 		if (skin != nullptr)
-			guiSkin = skin->getHandle();
+			guiSkin = skin->GetHandle();
 
-		if (!guiSkin.isLoaded())
+		if (!guiSkin.IsLoaded())
 			guiSkin = BuiltinResources::Instance().getGUISkin();
 
 		if(sGUIWidget != nullptr)
-			sGUIWidget->setSkin(guiSkin);
+			sGUIWidget->SetSkin(guiSkin);
 	}
 }

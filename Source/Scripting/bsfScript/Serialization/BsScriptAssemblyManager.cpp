@@ -52,7 +52,7 @@ namespace bs
 		MonoClass* managedResourceClass = ScriptManagedResource::GetMetaData()->scriptClass;
 
 		// Populate class data
-		const Vector<MonoClass*>& allClasses = curAssembly->getAllClasses();
+		const Vector<MonoClass*>& allClasses = curAssembly->GetAllClasses();
 		for(auto& curClass : allClasses)
 		{
 			const bool isSerializable =
@@ -68,8 +68,8 @@ namespace bs
 				curClass != mBuiltin.managedComponentClass && curClass != managedResourceClass)
 			{
 				SPtr<ManagedSerializableTypeInfoObject> typeInfo = bs_shared_ptr_new<ManagedSerializableTypeInfoObject>();
-				typeInfo->mTypeNamespace = curClass->getNamespace();
-				typeInfo->mTypeName = curClass->getTypeName();
+				typeInfo->mTypeNamespace = curClass->GetNamespace();
+				typeInfo->mTypeName = curClass->GetTypeName();
 				typeInfo->mTypeId = mUniqueTypeId++;
 
 				if(isSerializable)
@@ -99,7 +99,7 @@ namespace bs
 				objInfo->mTypeInfo = typeInfo;
 				objInfo->mMonoClass = curClass;
 
-				assemblyInfo->mTypeNameToId[objInfo->getFullTypeName()] = typeInfo->mTypeId;
+				assemblyInfo->mTypeNameToId[objInfo->GetFullTypeName()] = typeInfo->mTypeId;
 				assemblyInfo->mObjectInfos[typeInfo->mTypeId] = objInfo;
 			}
 		}
@@ -111,13 +111,13 @@ namespace bs
 
 			UINT32 mUniqueFieldId = 1;
 
-			const Vector<MonoField*>& fields = objInfo->mMonoClass->getAllFields();
+			const Vector<MonoField*>& fields = objInfo->mMonoClass->GetAllFields();
 			for(auto& field : fields)
 			{
 				if(field->isStatic())
 					continue;
 
-				SPtr<ManagedSerializableTypeInfo> typeInfo = getTypeInfo(field->getType());
+				SPtr<ManagedSerializableTypeInfo> typeInfo = getTypeInfo(field->GetType());
 				if (typeInfo == nullptr)
 					continue;
 
@@ -132,12 +132,12 @@ namespace bs
 
 				SPtr<ManagedSerializableFieldInfo> fieldInfo = bs_shared_ptr_new<ManagedSerializableFieldInfo>();
 				fieldInfo->mFieldId = mUniqueFieldId++;
-				fieldInfo->mName = field->getName();
+				fieldInfo->mName = field->GetName();
 				fieldInfo->mMonoField = field;
 				fieldInfo->mTypeInfo = typeInfo;
 				fieldInfo->mParentTypeId = objInfo->mTypeInfo->mTypeId;
 				
-				MonoMemberVisibility visibility = field->getVisibility();
+				MonoMemberVisibility visibility = field->GetVisibility();
 				if (visibility == MonoMemberVisibility::Public)
 				{
 					if (typeIsSerializable && !field->hasAttribute(mBuiltin.dontSerializeFieldAttribute))
@@ -201,10 +201,10 @@ namespace bs
 				objInfo->mFields[fieldInfo->mFieldId] = fieldInfo;
 			}
 
-			const Vector<MonoProperty*>& properties = objInfo->mMonoClass->getAllProperties();
+			const Vector<MonoProperty*>& properties = objInfo->mMonoClass->GetAllProperties();
 			for (auto& property : properties)
 			{
-				SPtr<ManagedSerializableTypeInfo> typeInfo = getTypeInfo(property->getReturnType());
+				SPtr<ManagedSerializableTypeInfo> typeInfo = getTypeInfo(property->GetReturnType());
 				if (typeInfo == nullptr)
 					continue;
 
@@ -219,14 +219,14 @@ namespace bs
 
 				SPtr<ManagedSerializablePropertyInfo> propertyInfo = bs_shared_ptr_new<ManagedSerializablePropertyInfo>();
 				propertyInfo->mFieldId = mUniqueFieldId++;
-				propertyInfo->mName = property->getName();
+				propertyInfo->mName = property->GetName();
 				propertyInfo->mMonoProperty = property;
 				propertyInfo->mTypeInfo = typeInfo;
 				propertyInfo->mParentTypeId = objInfo->mTypeInfo->mTypeId;
 
 				if (!property->isIndexed())
 				{
-					MonoMemberVisibility visibility = property->getVisibility();
+					MonoMemberVisibility visibility = property->GetVisibility();
 					if (visibility == MonoMemberVisibility::Public)
 						propertyInfo->mFlags |= ScriptFieldFlag::Animable;
 
@@ -294,11 +294,11 @@ namespace bs
 		// Form parent/child connections
 		for(auto& curClass : assemblyInfo->mObjectInfos)
 		{
-			MonoClass* base = curClass.second->mMonoClass->getBaseClass();
+			MonoClass* base = curClass.second->mMonoClass->GetBaseClass();
 			while(base != nullptr)
 			{
 				SPtr<ManagedSerializableObjectInfo> baseObjInfo;
-				if(getSerializableObjectInfo(base->getNamespace(), base->getTypeName(), baseObjInfo))
+				if(getSerializableObjectInfo(base->GetNamespace(), base->GetTypeName(), baseObjInfo))
 				{
 					curClass.second->mBaseClass = baseObjInfo;
 					baseObjInfo->mDerivedClasses.push_back(curClass.second);
@@ -306,7 +306,7 @@ namespace bs
 					break;
 				}
 
-				base = base->getBaseClass();
+				base = base->GetBaseClass();
 			}
 		}
 	}
@@ -413,8 +413,8 @@ namespace bs
 			{
 				SPtr<ManagedSerializableTypeInfoEnum> typeInfo = bs_shared_ptr_new<ManagedSerializableTypeInfoEnum>();
 				typeInfo->mUnderlyingType = scriptPrimitiveType;
-				typeInfo->mTypeNamespace = monoClass->getNamespace();
-				typeInfo->mTypeName = monoClass->getTypeName();
+				typeInfo->mTypeNamespace = monoClass->GetNamespace();
+				typeInfo->mTypeName = monoClass->GetTypeName();
 				return typeInfo;
 			}
 		}
@@ -426,8 +426,8 @@ namespace bs
 			if(monoClass->isSubClassOf(ScriptResource::getMetaData()->scriptClass)) // Resource
 			{
 				SPtr<ManagedSerializableTypeInfoRef> typeInfo = bs_shared_ptr_new<ManagedSerializableTypeInfoRef>();
-				typeInfo->mTypeNamespace = monoClass->getNamespace();
-				typeInfo->mTypeName = monoClass->getTypeName();
+				typeInfo->mTypeNamespace = monoClass->GetNamespace();
+				typeInfo->mTypeName = monoClass->GetTypeName();
 				typeInfo->mRTIITypeId = 0;
 
 				if(monoClass == ScriptResource::getMetaData()->scriptClass)
@@ -458,8 +458,8 @@ namespace bs
 			else if (monoClass->isSubClassOf(mBuiltin.sceneObjectClass) || monoClass->isSubClassOf(mBuiltin.componentClass)) // Game object
 			{
 				SPtr<ManagedSerializableTypeInfoRef> typeInfo = bs_shared_ptr_new<ManagedSerializableTypeInfoRef>();
-				typeInfo->mTypeNamespace = monoClass->getNamespace();
-				typeInfo->mTypeName = monoClass->getTypeName();
+				typeInfo->mTypeNamespace = monoClass->GetNamespace();
+				typeInfo->mTypeName = monoClass->GetTypeName();
 				typeInfo->mRTIITypeId = 0;
 
 				if (monoClass == mBuiltin.componentClass)
@@ -496,8 +496,8 @@ namespace bs
 				if(reflTypeInfo != nullptr)
 				{
 					SPtr<ManagedSerializableTypeInfoRef> typeInfo = bs_shared_ptr_new<ManagedSerializableTypeInfoRef>();
-					typeInfo->mTypeNamespace = monoClass->getNamespace();
-					typeInfo->mTypeName = monoClass->getTypeName();
+					typeInfo->mTypeNamespace = monoClass->GetNamespace();
+					typeInfo->mTypeName = monoClass->GetTypeName();
 					typeInfo->mRTIITypeId = reflTypeInfo->typeId;
 					typeInfo->mType = ScriptReferenceType::ReflectableObject;
 
@@ -507,7 +507,7 @@ namespace bs
 				{
 					// Finally, it's either a normal managed object, or a non-reflectable type wrapper
 					SPtr<ManagedSerializableObjectInfo> objInfo;
-					if (getSerializableObjectInfo(monoClass->getNamespace(), monoClass->getTypeName(), objInfo))
+					if (getSerializableObjectInfo(monoClass->GetNamespace(), monoClass->GetTypeName(), objInfo))
 						return objInfo->mTypeInfo;
 				}
 			}
@@ -516,18 +516,18 @@ namespace bs
 		case MonoPrimitiveType::ValueType:
 			{
 				SPtr<ManagedSerializableObjectInfo> objInfo;
-				if (getSerializableObjectInfo(monoClass->getNamespace(), monoClass->getTypeName(), objInfo))
+				if (getSerializableObjectInfo(monoClass->GetNamespace(), monoClass->GetTypeName(), objInfo))
 					return objInfo->mTypeInfo;
 			}
 
 			break;
 		case MonoPrimitiveType::Generic:
-			if(monoClass->getFullName() == mBuiltin.systemGenericListClass->getFullName()) // Full name is part of CIL spec, so it is just fine to compare like this
+			if(monoClass->GetFullName() == mBuiltin.systemGenericListClass->GetFullName()) // Full name is part of CIL spec, so it is just fine to compare like this
 			{
 				SPtr<ManagedSerializableTypeInfoList> typeInfo = bs_shared_ptr_new<ManagedSerializableTypeInfoList>();
 
-				MonoProperty* itemProperty = monoClass->getProperty("Item");
-				MonoClass* itemClass = itemProperty->getReturnType();
+				MonoProperty* itemProperty = monoClass->GetProperty("Item");
+				MonoClass* itemClass = itemProperty->GetReturnType();
 
 				if (itemClass != nullptr)
 					typeInfo->mElementType = getTypeInfo(itemClass);
@@ -537,24 +537,24 @@ namespace bs
 
 				return typeInfo;
 			}
-			else if(monoClass->getFullName() == mBuiltin.systemGenericDictionaryClass->getFullName())
+			else if(monoClass->GetFullName() == mBuiltin.systemGenericDictionaryClass->GetFullName())
 			{
 				SPtr<ManagedSerializableTypeInfoDictionary> typeInfo = bs_shared_ptr_new<ManagedSerializableTypeInfoDictionary>();
 
-				MonoMethod* getEnumerator = monoClass->getMethod("GetEnumerator");
-				MonoClass* enumClass = getEnumerator->getReturnType();
+				MonoMethod* getEnumerator = monoClass->GetMethod("GetEnumerator");
+				MonoClass* enumClass = getEnumerator->GetReturnType();
 
-				MonoProperty* currentProp = enumClass->getProperty("Current");
-				MonoClass* keyValuePair = currentProp->getReturnType();
+				MonoProperty* currentProp = enumClass->GetProperty("Current");
+				MonoClass* keyValuePair = currentProp->GetReturnType();
 
-				MonoProperty* keyProperty = keyValuePair->getProperty("Key");
-				MonoProperty* valueProperty = keyValuePair->getProperty("Value");
+				MonoProperty* keyProperty = keyValuePair->GetProperty("Key");
+				MonoProperty* valueProperty = keyValuePair->GetProperty("Value");
 
-				MonoClass* keyClass = keyProperty->getReturnType();
+				MonoClass* keyClass = keyProperty->GetReturnType();
 				if(keyClass != nullptr)
 					typeInfo->mKeyType = getTypeInfo(keyClass);
 
-				MonoClass* valueClass = valueProperty->getReturnType();
+				MonoClass* valueClass = valueProperty->GetReturnType();
 				if(valueClass != nullptr)
 					typeInfo->mValueType = getTypeInfo(valueClass);
 
@@ -563,12 +563,12 @@ namespace bs
 
 				return typeInfo;
 			}
-			else if(monoClass->getFullName() == mBuiltin.genericRRefClass->getFullName())
+			else if(monoClass->GetFullName() == mBuiltin.genericRRefClass->GetFullName())
 			{
 				SPtr<ManagedSerializableTypeInfoRRef> typeInfo = bs_shared_ptr_new<ManagedSerializableTypeInfoRRef>();
 				
-				MonoProperty* itemProperty = monoClass->getProperty("Value");
-				MonoClass* itemClass = itemProperty->getReturnType();
+				MonoProperty* itemProperty = monoClass->GetProperty("Value");
+				MonoClass* itemClass = itemProperty->GetReturnType();
 
 				if (itemClass != nullptr)
 					typeInfo->mResourceType = getTypeInfo(itemClass);
@@ -622,119 +622,119 @@ namespace bs
 		if(engineAssembly == nullptr)
 			BS_EXCEPT(InvalidStateException, String(ENGINE_ASSEMBLY) +  " assembly is not loaded.");
 
-		mBuiltin.systemArrayClass = corlib->getClass("System", "Array");
+		mBuiltin.systemArrayClass = corlib->GetClass("System", "Array");
 		if(mBuiltin.systemArrayClass == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find System.Array managed class.");
 
-		mBuiltin.systemGenericListClass = corlib->getClass("System.Collections.Generic", "List`1");
+		mBuiltin.systemGenericListClass = corlib->GetClass("System.Collections.Generic", "List`1");
 		if(mBuiltin.systemGenericListClass == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find List<T> managed class.");
 
-		mBuiltin.systemGenericDictionaryClass = corlib->getClass("System.Collections.Generic", "Dictionary`2");
+		mBuiltin.systemGenericDictionaryClass = corlib->GetClass("System.Collections.Generic", "Dictionary`2");
 		if(mBuiltin.systemGenericDictionaryClass == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find Dictionary<TKey, TValue> managed class.");
 
-		mBuiltin.systemTypeClass = corlib->getClass("System", "Type");
+		mBuiltin.systemTypeClass = corlib->GetClass("System", "Type");
 		if (mBuiltin.systemTypeClass == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find Type managed class.");
 
-		mBuiltin.serializeObjectAttribute = engineAssembly->getClass(ENGINE_NS, "SerializeObject");
+		mBuiltin.serializeObjectAttribute = engineAssembly->GetClass(ENGINE_NS, "SerializeObject");
 		if(mBuiltin.serializeObjectAttribute == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find SerializableObject managed class.");
 
-		mBuiltin.dontSerializeFieldAttribute = engineAssembly->getClass(ENGINE_NS, "DontSerializeField");
+		mBuiltin.dontSerializeFieldAttribute = engineAssembly->GetClass(ENGINE_NS, "DontSerializeField");
 		if(mBuiltin.dontSerializeFieldAttribute == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find DontSerializeField managed class.");
 
-		mBuiltin.rangeAttribute = engineAssembly->getClass(ENGINE_NS, "Range");
+		mBuiltin.rangeAttribute = engineAssembly->GetClass(ENGINE_NS, "Range");
 		if (mBuiltin.rangeAttribute == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find Range managed class.");
 
-		mBuiltin.stepAttribute = engineAssembly->getClass(ENGINE_NS, "Step");
+		mBuiltin.stepAttribute = engineAssembly->GetClass(ENGINE_NS, "Step");
 		if (mBuiltin.stepAttribute == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find Step managed class.");
 
-		mBuiltin.layerMaskAttribute = engineAssembly->getClass(ENGINE_NS, "LayerMask");
+		mBuiltin.layerMaskAttribute = engineAssembly->GetClass(ENGINE_NS, "LayerMask");
 		if (mBuiltin.layerMaskAttribute == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find LayerMask managed class.");
 
-		mBuiltin.asQuaternionAttribute = engineAssembly->getClass(ENGINE_NS, "AsQuaternion");
+		mBuiltin.asQuaternionAttribute = engineAssembly->GetClass(ENGINE_NS, "AsQuaternion");
 		if (mBuiltin.asQuaternionAttribute == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find AsQuaternion managed class.");
 
-		mBuiltin.nativeWrapperAttribute = engineAssembly->getClass(ENGINE_NS, "NativeWrapper");
+		mBuiltin.nativeWrapperAttribute = engineAssembly->GetClass(ENGINE_NS, "NativeWrapper");
 		if (mBuiltin.nativeWrapperAttribute == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find NativeWrapper managed class.");
 
-		mBuiltin.notNullAttribute = engineAssembly->getClass(ENGINE_NS, "NotNull");
+		mBuiltin.notNullAttribute = engineAssembly->GetClass(ENGINE_NS, "NotNull");
 		if (mBuiltin.notNullAttribute == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find NotNull managed class.");
 
-		mBuiltin.passByCopyAttribute = engineAssembly->getClass(ENGINE_NS, "PassByCopy");
+		mBuiltin.passByCopyAttribute = engineAssembly->GetClass(ENGINE_NS, "PassByCopy");
 		if (mBuiltin.passByCopyAttribute == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find PassByCopy managed class.");
 
-		mBuiltin.applyOnDirtyAttribute = engineAssembly->getClass(ENGINE_NS, "ApplyOnDirty");
+		mBuiltin.applyOnDirtyAttribute = engineAssembly->GetClass(ENGINE_NS, "ApplyOnDirty");
 		if (mBuiltin.applyOnDirtyAttribute == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find ApplyOnDirty managed class.");
 
-		mBuiltin.componentClass = engineAssembly->getClass(ENGINE_NS, "Component");
+		mBuiltin.componentClass = engineAssembly->GetClass(ENGINE_NS, "Component");
 		if(mBuiltin.componentClass == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find Component managed class.");
 
-		mBuiltin.managedComponentClass = engineAssembly->getClass(ENGINE_NS, "ManagedComponent");
+		mBuiltin.managedComponentClass = engineAssembly->GetClass(ENGINE_NS, "ManagedComponent");
 		if (mBuiltin.managedComponentClass == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find ManagedComponent managed class.");
 
-		mBuiltin.missingComponentClass = engineAssembly->getClass(ENGINE_NS, "MissingComponent");
+		mBuiltin.missingComponentClass = engineAssembly->GetClass(ENGINE_NS, "MissingComponent");
 		if (mBuiltin.missingComponentClass == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find MissingComponent managed class.");
 
-		mBuiltin.sceneObjectClass = engineAssembly->getClass(ENGINE_NS, "SceneObject");
+		mBuiltin.sceneObjectClass = engineAssembly->GetClass(ENGINE_NS, "SceneObject");
 		if(mBuiltin.sceneObjectClass == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find SceneObject managed class.");
 
-		mBuiltin.rrefBaseClass = engineAssembly->getClass(ENGINE_NS, "RRefBase");
+		mBuiltin.rrefBaseClass = engineAssembly->GetClass(ENGINE_NS, "RRefBase");
 		if(mBuiltin.rrefBaseClass == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find RRefBase managed class.");
 
-		mBuiltin.genericRRefClass = engineAssembly->getClass(ENGINE_NS, "RRef`1");
+		mBuiltin.genericRRefClass = engineAssembly->GetClass(ENGINE_NS, "RRef`1");
 		if(mBuiltin.genericRRefClass == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find RRef<T> managed class.");
 
-		mBuiltin.genericAsyncOpClass = engineAssembly->getClass(ENGINE_NS, "AsyncOp`1");
+		mBuiltin.genericAsyncOpClass = engineAssembly->GetClass(ENGINE_NS, "AsyncOp`1");
 		if(mBuiltin.genericAsyncOpClass == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find AsyncOp<T> managed class.");
 
-		mBuiltin.serializeFieldAttribute = engineAssembly->getClass(ENGINE_NS, "SerializeField");
+		mBuiltin.serializeFieldAttribute = engineAssembly->GetClass(ENGINE_NS, "SerializeField");
 		if(mBuiltin.serializeFieldAttribute == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find SerializeField managed class.");
 
-		mBuiltin.hideInInspectorAttribute = engineAssembly->getClass(ENGINE_NS, "HideInInspector");
+		mBuiltin.hideInInspectorAttribute = engineAssembly->GetClass(ENGINE_NS, "HideInInspector");
 		if(mBuiltin.hideInInspectorAttribute == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find HideInInspector managed class.");
 
-		mBuiltin.showInInspectorAttribute = engineAssembly->getClass(ENGINE_NS, "ShowInInspector");
+		mBuiltin.showInInspectorAttribute = engineAssembly->GetClass(ENGINE_NS, "ShowInInspector");
 		if (mBuiltin.showInInspectorAttribute == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find ShowInInspector managed class.");
 
-		mBuiltin.categoryAttribute = engineAssembly->getClass(ENGINE_NS, "Category");
+		mBuiltin.categoryAttribute = engineAssembly->GetClass(ENGINE_NS, "Category");
 		if (mBuiltin.categoryAttribute == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find Category managed class.");
 
-		mBuiltin.orderAttribute = engineAssembly->getClass(ENGINE_NS, "Order");
+		mBuiltin.orderAttribute = engineAssembly->GetClass(ENGINE_NS, "Order");
 		if (mBuiltin.orderAttribute == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find Order managed class.");
 
-		mBuiltin.inlineAttribute = engineAssembly->getClass(ENGINE_NS, "Inline");
+		mBuiltin.inlineAttribute = engineAssembly->GetClass(ENGINE_NS, "Inline");
 		if (mBuiltin.inlineAttribute == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find Inline managed class.");
 
-		mBuiltin.loadOnAssignAttribute = engineAssembly->getClass(ENGINE_NS, "LoadOnAssign");
+		mBuiltin.loadOnAssignAttribute = engineAssembly->GetClass(ENGINE_NS, "LoadOnAssign");
 		if (mBuiltin.loadOnAssignAttribute == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find LoadOnAssign managed class.");
 
-		mBuiltin.hdrAttribute = engineAssembly->getClass(ENGINE_NS, "HDR");
+		mBuiltin.hdrAttribute = engineAssembly->GetClass(ENGINE_NS, "HDR");
 		if (mBuiltin.hdrAttribute == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find HDR managed class.");
 
@@ -911,11 +911,11 @@ namespace bs
 					ScriptManagedResource* scriptResource = nullptr;
 					managedResourceMeta->thisPtrField->get(value, &scriptResource);
 
-					HManagedResource resource = scriptResource->getHandle();
-					if (!resource.isLoaded(false))
+					HManagedResource resource = scriptResource->GetHandle();
+					if (!resource.IsLoaded(false))
 						return nullptr;
 
-					MonoObject* managedInstance = resource->getManagedInstance();
+					MonoObject* managedInstance = resource->GetManagedInstance();
 					SPtr<ManagedSerializableObject> serializedObject = ManagedSerializableObject::createFromExisting(managedInstance);
 					if (serializedObject == nullptr)
 						return nullptr;
@@ -936,8 +936,8 @@ namespace bs
 					ScriptResourceBase* scriptResource = nullptr;
 					builtinInfo->metaData->thisPtrField->get(value, &scriptResource);
 
-					HResource handle = scriptResource->getGenericHandle();
-					if (!handle.isLoaded(false))
+					HResource handle = scriptResource->GetGenericHandle();
+					if (!handle.IsLoaded(false))
 						return nullptr;
 
 					return handle.getInternalPtr();
@@ -956,11 +956,11 @@ namespace bs
 					ScriptManagedComponent* scriptComponent = nullptr;
 					managedComponentMeta->thisPtrField->get(value, &scriptComponent);
 
-					HManagedComponent component = scriptComponent->getHandle();
+					HManagedComponent component = scriptComponent->GetHandle();
 					if (component.isDestroyed())
 						return nullptr;
 
-					MonoObject* managedInstance = component->getManagedInstance();
+					MonoObject* managedInstance = component->GetManagedInstance();
 					SPtr<ManagedSerializableObject> serializedObject = ManagedSerializableObject::createFromExisting(managedInstance);
 					if (serializedObject == nullptr)
 						return nullptr;
@@ -981,7 +981,7 @@ namespace bs
 					ScriptComponentBase* scriptComponent = nullptr;
 					builtinInfo->metaData->thisPtrField->get(value, &scriptComponent);
 
-					HComponent handle = scriptComponent->getComponent();
+					HComponent handle = scriptComponent->GetComponent();
 					if (handle.isDestroyed())
 						return nullptr;
 
@@ -1014,7 +1014,7 @@ namespace bs
 				if (reflTypeInfo->metaData->thisPtrField != nullptr)
 					reflTypeInfo->metaData->thisPtrField->get(value, &scriptReflectable);
 
-				return scriptReflectable->getReflectable();
+				return scriptReflectable->GetReflectable();
 			}
 			else
 			{

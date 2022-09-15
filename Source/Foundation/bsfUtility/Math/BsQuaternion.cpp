@@ -22,7 +22,7 @@ namespace bs
 		if (trace > 0.0f)
 		{
 			// |w| > 1/2, may as well choose w > 1/2
-			root = Math::sqrt(trace + 1.0f);  // 2w
+			root = Math::Sqrt(trace + 1.0f);  // 2w
 			w = 0.5f*root;
 			root = 0.5f/root;  // 1/(4w)
 			x = (mat[2][1]-mat[1][2])*root;
@@ -44,7 +44,7 @@ namespace bs
 			UINT32 j = nextLookup[i];
 			UINT32 k = nextLookup[j];
 
-			root = Math::sqrt(mat[i][i]-mat[j][j]-mat[k][k] + 1.0f);
+			root = Math::Sqrt(mat[i][i]-mat[j][j]-mat[k][k] + 1.0f);
 
 			float* cmpntLookup[3] = { &x, &y, &z };
 			*cmpntLookup[i] = 0.5f*root;
@@ -121,13 +121,13 @@ namespace bs
 		Radian halfZAngle = zAngle * 0.5f;
 
 		float cx = Math::Cos(halfXAngle);
-		float sx = Math::sin(halfXAngle);
+		float sx = Math::Sin(halfXAngle);
 
-		float cy = Math::cos(halfYAngle);
-		float sy = Math::sin(halfYAngle);
+		float cy = Math::Cos(halfYAngle);
+		float sy = Math::Sin(halfYAngle);
 
-		float cz = Math::cos(halfZAngle);
-		float sz = Math::sin(halfZAngle);
+		float cz = Math::Cos(halfZAngle);
+		float sz = Math::Sin(halfZAngle);
 
 		Quaternion quats[3];
 		quats[0] = Quaternion(cx, sx, 0.0f, 0.0f);
@@ -168,8 +168,8 @@ namespace bs
 		float sqrLength = x*x+y*y+z*z;
 		if ( sqrLength > 0.0 )
 		{
-			angle = 2.0*Math::acos(w);
-			float invLength = Math::invSqrt(sqrLength);
+			angle = 2.0*Math::Acos(w);
+			float invLength = Math::InvSqrt(sqrLength);
 			axis.x = x*invLength;
 			axis.y = y*invLength;
 			axis.z = z*invLength;
@@ -187,7 +187,7 @@ namespace bs
 	void Quaternion::ToAxes(Vector3& xaxis, Vector3& yaxis, Vector3& zaxis) const
 	{
 		Matrix3 matRot;
-		toRotationMatrix(matRot);
+		ToRotationMatrix(matRot);
 
 		xaxis.x = matRot[0][0];
 		xaxis.y = matRot[1][0];
@@ -205,8 +205,8 @@ namespace bs
 	bool Quaternion::ToEulerAngles(Radian& xAngle, Radian& yAngle, Radian& zAngle) const
 	{
 		Matrix3 matRot;
-		toRotationMatrix(matRot);
-		return matRot.toEulerAngles(xAngle, yAngle, zAngle);
+		ToRotationMatrix(matRot);
+		return matRot.ToEulerAngles(xAngle, yAngle, zAngle);
 	}
 
 	Vector3 Quaternion::XAxis() const
@@ -273,8 +273,8 @@ namespace bs
 		// Note: Does compiler generate fast code here? Perhaps its better to pull all code locally without constructing
 		//       an intermediate matrix.
 		Matrix3 rot;
-		toRotationMatrix(rot);
-		return rot.multiply(v);
+		ToRotationMatrix(rot);
+		return rot.Multiply(v);
 	}
 
 	void Quaternion::LookRotation(const Vector3& forwardDir)
@@ -282,10 +282,10 @@ namespace bs
 		if (forwardDir == Vector3::ZERO)
 			return;
 
-		Vector3 nrmForwardDir = Vector3::normalize(forwardDir);
-		Vector3 currentForwardDir = -zAxis();
+		Vector3 nrmForwardDir = Vector3::Normalize(forwardDir);
+		Vector3 currentForwardDir = -ZAxis();
 
-		if ((nrmForwardDir + currentForwardDir).squaredLength() < 0.00005f)
+		if ((nrmForwardDir + currentForwardDir).SquaredLength() < 0.00005f)
 		{
 			// Oops, a 180 degree turn (infinite possible rotation axes)
 			// Default to yaw i.e. use current UP
@@ -294,34 +294,34 @@ namespace bs
 		else
 		{
 			// Derive shortest arc to new direction
-			Quaternion rotQuat = getRotationFromTo(currentForwardDir, nrmForwardDir);
+			Quaternion rotQuat = GetRotationFromTo(currentForwardDir, nrmForwardDir);
 			*this = rotQuat * *this;
 		}
 	}
 
 	void Quaternion::LookRotation(const Vector3& forwardDir, const Vector3& upDir)
 	{
-		Vector3 forward = Vector3::normalize(forwardDir);
-		Vector3 up = Vector3::normalize(upDir);
+		Vector3 forward = Vector3::Normalize(forwardDir);
+		Vector3 up = Vector3::Normalize(upDir);
 
-		if (Math::approxEquals(Vector3::dot(forward, up), 1.0f))
+		if (Math::ApproxEquals(Vector3::Dot(forward, up), 1.0f))
 		{
-			lookRotation(forward);
+			LookRotation(forward);
 			return;
 		}
 
-		Vector3 x = Vector3::cross(forward, up);
-		Vector3 y = Vector3::cross(x, forward);
+		Vector3 x = Vector3::Cross(forward, up);
+		Vector3 y = Vector3::Cross(x, forward);
 
-		x.normalize();
-		y.normalize();
+		x.Normalize();
+		y.Normalize();
 
 		*this = Quaternion(x, y, -forward);
 	}
 
 	Quaternion Quaternion::Slerp(float t, const Quaternion& p, const Quaternion& q, bool shortestPath)
 	{
-		float cos = p.dot(q);
+		float cos = p.Dot(q);
 		Quaternion quat;
 
 		if (cos < 0.0f && shortestPath)
@@ -334,14 +334,14 @@ namespace bs
 			quat = q;
 		}
 
-		if (Math::abs(cos) < 1 - EPSILON)
+		if (abs(cos) < 1 - EPSILON)
 		{
 			// Standard case (slerp)
-			float sin = Math::sqrt(1 - Math::sqr(cos));
-			Radian angle = Math::atan2(sin, cos);
+			float sin = Math::Sqrt(1 - Math::Sqr(cos));
+			Radian angle = Math::Atan2(sin, cos);
 			float invSin = 1.0f / sin;
-			float coeff0 = Math::sin((1.0f - t) * angle) * invSin;
-			float coeff1 = Math::sin(t * angle) * invSin;
+			float coeff0 = Math::Sin((1.0f - t) * angle) * invSin;
+			float coeff1 = Math::Sin(t * angle) * invSin;
 			return coeff0 * p + coeff1 * quat;
 		}
 		else
@@ -355,7 +355,7 @@ namespace bs
 			Quaternion ret = (1.0f - t) * p + t * quat;
 
 			// Taking the complement requires renormalization
-			ret.normalize();
+			ret.Normalize();
 			return ret;
 		}
 	}
@@ -367,10 +367,10 @@ namespace bs
 
 		Vector3 v0 = from;
 		Vector3 v1 = dest;
-		v0.normalize();
-		v1.normalize();
+		v0.Normalize();
+		v1.Normalize();
 
-		float d = v0.dot(v1);
+		float d = v0.Dot(v1);
 
 		// If dot == 1, vectors are the same
 		if (d >= 1.0f)
@@ -381,30 +381,30 @@ namespace bs
 			if (fallbackAxis != Vector3::ZERO)
 			{
 				// Rotate 180 degrees about the fallback axis
-				q.fromAxisAngle(fallbackAxis, Radian(Math::PI));
+				q.FromAxisAngle(fallbackAxis, Radian(Math::PI));
 			}
 			else
 			{
 				// Generate an axis
-				Vector3 axis = Vector3::UNIT_X.cross(from);
-				if (axis.isZeroLength()) // Pick another if colinear
-					axis = Vector3::UNIT_Y.cross(from);
-				axis.normalize();
-				q.fromAxisAngle(axis, Radian(Math::PI));
+				Vector3 axis = Vector3::UNIT_X.Cross(from);
+				if (axis.IsZeroLength()) // Pick another if colinear
+					axis = Vector3::UNIT_Y.Cross(from);
+				axis.Normalize();
+				q.FromAxisAngle(axis, Radian(Math::PI));
 			}
 		}
 		else
 		{
-			float s = Math::sqrt( (1+d)*2 );
+			float s = Math::Sqrt( (1+d)*2 );
 			float invs = 1 / s;
 
-			Vector3 c = v0.cross(v1);
+			Vector3 c = v0.Cross(v1);
 
 			q.x = c.x * invs;
 			q.y = c.y * invs;
 			q.z = c.z * invs;
 			q.w = s * 0.5f;
-			q.normalize();
+			q.Normalize();
 		}
 
 		return q;

@@ -30,22 +30,22 @@ namespace bs
 		:CGUIWidget(parent, overlaidWidget.GetCamera())
 	{
 		SetDepth(0); // Needs to be in front of everything
-		setSkin(overlaidWidget.getSkinResource());
+		SetSkin(overlaidWidget.GetSkinResource());
 		
 		SPtr<Camera> camera = overlaidWidget.GetCamera();
-		SPtr<Viewport> viewport = camera->getViewport();
+		SPtr<Viewport> viewport = camera->GetViewport();
 
-		Rect2I availableBounds = viewport->getPixelArea();
+		Rect2I availableBounds = viewport->GetPixelArea();
 		
-		const GUISkin& skin = getSkin();
-		const GUIElementStyle* multiLineLabelStyle = skin.getStyle(BuiltinResources::MultiLineLabelStyle);
-		const GUIElementStyle* backgroundStyle = skin.getStyle(getFrameStyleName());
+		const GUISkin& skin = GetSkin();
+		const GUIElementStyle* multiLineLabelStyle = skin.GetStyle(BuiltinResources::MultiLineLabelStyle);
+		const GUIElementStyle* backgroundStyle = skin.GetStyle(GetFrameStyleName());
 
 		Vector2I size(TOOLTIP_WIDTH, 25);
 		if (multiLineLabelStyle != nullptr)
 		{
-			GUIDimensions dimensions = GUIDimensions::Create(GUIOptions(GUIOption::fixedWidth(TOOLTIP_WIDTH)));
-			size = GUIHelper::calcOptimalContentsSize(text, *multiLineLabelStyle, dimensions);
+			GUIDimensions dimensions = GUIDimensions::Create(GUIOptions(GUIOption::FixedWidth(TOOLTIP_WIDTH)));
+			size = GUIHelper::CalcOptimalContentsSize(text, *multiLineLabelStyle, dimensions);
 		}
 
 		INT32 contentOffsetX = 0;
@@ -60,25 +60,25 @@ namespace bs
 		}
 
 		// Content area
-		GUIPanel* contentPanel = getPanel()->addNewElement<GUIPanel>();
-		contentPanel->setWidth((UINT32)size.x);
-		contentPanel->setHeight((UINT32)size.y);
-		contentPanel->setDepthRange(-1);
+		GUIPanel* contentPanel = GetPanel()->AddNewElement<GUIPanel>();
+		contentPanel->SetWidth((UINT32)size.x);
+		contentPanel->SetHeight((UINT32)size.y);
+		contentPanel->SetDepthRange(-1);
 
 		// Background frame
-		GUIPanel* backgroundPanel = getPanel()->addNewElement<GUIPanel>();
-		backgroundPanel->setWidth((UINT32)size.x);
-		backgroundPanel->setHeight((UINT32)size.y);
-		backgroundPanel->setDepthRange(0);
+		GUIPanel* backgroundPanel = GetPanel()->AddNewElement<GUIPanel>();
+		backgroundPanel->SetWidth((UINT32)size.x);
+		backgroundPanel->SetHeight((UINT32)size.y);
+		backgroundPanel->SetDepthRange(0);
 
-		GUILayout* backgroundLayout = backgroundPanel->addNewElement<GUILayoutX>();
+		GUILayout* backgroundLayout = backgroundPanel->AddNewElement<GUILayoutX>();
 
-		GUITexture* backgroundFrame = GUITexture::Create(TextureScaleMode::StretchToFit, getFrameStyleName());
-		backgroundLayout->addElement(backgroundFrame);
+		GUITexture* backgroundFrame = GUITexture::Create(TextureScaleMode::StretchToFit, GetFrameStyleName());
+		backgroundLayout->AddElement(backgroundFrame);
 
-		GUILayout* contentLayout = contentPanel->addNewElement<GUILayoutY>();
-		contentLayout->addNewElement<GUILabel>(HString(text),
-			GUIOptions(GUIOption::fixedWidth(TOOLTIP_WIDTH), GUIOption::flexibleHeight()),
+		GUILayout* contentLayout = contentPanel->AddNewElement<GUILayoutY>();
+		contentLayout->AddNewElement<GUILabel>(HString(text),
+			GUIOptions(GUIOption::FixedWidth(TOOLTIP_WIDTH), GUIOption::FlexibleHeight()),
 			BuiltinResources::MultiLineLabelStyle);
 
 		Rect2I positionBounds;
@@ -89,10 +89,10 @@ namespace bs
 
 		DropDownAreaPlacement::HorzDir horzDir;
 		DropDownAreaPlacement::VertDir vertDir;
-		DropDownAreaPlacement placement = DropDownAreaPlacement::aroundBounds(positionBounds);
-		Rect2I placementBounds = placement.getOptimalBounds((UINT32)size.x, (UINT32)size.y, availableBounds, horzDir, vertDir);
+		DropDownAreaPlacement placement = DropDownAreaPlacement::AroundBounds(positionBounds);
+		Rect2I placementBounds = placement.GetOptimalBounds((UINT32)size.x, (UINT32)size.y, availableBounds, horzDir, vertDir);
 
-		backgroundPanel->setPosition(placementBounds.x, placementBounds.y);
-		contentPanel->setPosition(placementBounds.x + contentOffsetX, placementBounds.y + contentOffsetY);
+		backgroundPanel->SetPosition(placementBounds.x, placementBounds.y);
+		contentPanel->SetPosition(placementBounds.x + contentOffsetX, placementBounds.y + contentOffsetY);
 	}
 }

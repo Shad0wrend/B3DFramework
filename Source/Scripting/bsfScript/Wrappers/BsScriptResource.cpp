@@ -60,9 +60,9 @@ namespace bs
 
 	::MonoClass* ScriptResourceBase::GetManagedResourceClass(UINT32 rttiId)
 	{
-		if(rttiId == Resource::GetRttiStatic()->getRTTIId())
+		if(rttiId == Resource::GetRttiStatic()->GetRttiId())
 			return ScriptResource::getMetaData()->scriptClass->GetInternalClassInternal();
-		else if(rttiId == ManagedResource::GetRttiStatic()->getRTTIId())
+		else if(rttiId == ManagedResource::GetRttiStatic()->GetRttiId())
 			return ScriptResource::getMetaData()->scriptClass->GetInternalClassInternal();
 		else
 		{
@@ -93,17 +93,17 @@ namespace bs
 
 	MonoString* ScriptResource::InternalGetName(ScriptResourceBase* nativeInstance)
 	{
-		return MonoUtil::stringToMono(nativeInstance->getGenericHandle()->getName());
+		return MonoUtil::stringToMono(nativeInstance->GetGenericHandle()->GetName());
 	}
 
 	void ScriptResource::InternalGetUuid(ScriptResourceBase* nativeInstance, UUID* uuid)
 	{
-		*uuid = nativeInstance->getGenericHandle().getUUID();
+		*uuid = nativeInstance->GetGenericHandle().getUUID();
 	}
 
 	void ScriptResource::InternalRelease(ScriptResourceBase* nativeInstance)
 	{
-		nativeInstance->getGenericHandle().release();
+		nativeInstance->GetGenericHandle().release();
 	}
 
 	ScriptUUID::ScriptUUID(MonoObject* instance)

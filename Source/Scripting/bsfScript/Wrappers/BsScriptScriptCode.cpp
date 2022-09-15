@@ -41,54 +41,54 @@ namespace bs
 
 	MonoString* ScriptScriptCode::InternalGetText(ScriptScriptCode* thisPtr)
 	{
-		HScriptCode scriptCode = thisPtr->getHandle();
-		if (!scriptCode.isLoaded())
+		HScriptCode scriptCode = thisPtr->GetHandle();
+		if (!scriptCode.IsLoaded())
 			MonoUtil::wstringToMono(L"");
 
-		return MonoUtil::wstringToMono(scriptCode->getString());
+		return MonoUtil::wstringToMono(scriptCode->GetString());
 	}
 
 	void ScriptScriptCode::InternalSetText(ScriptScriptCode* thisPtr, MonoString* text)
 	{
-		HScriptCode scriptCode = thisPtr->getHandle();
-		if (!scriptCode.isLoaded())
+		HScriptCode scriptCode = thisPtr->GetHandle();
+		if (!scriptCode.IsLoaded())
 			return;
 
-		scriptCode->setString(MonoUtil::monoToWString(text));
+		scriptCode->SetString(MonoUtil::monoToWString(text));
 	}
 
 	bool ScriptScriptCode::InternalIsEditorScript(ScriptScriptCode* thisPtr)
 	{
-		HScriptCode scriptCode = thisPtr->getHandle();
-		if (!scriptCode.isLoaded())
+		HScriptCode scriptCode = thisPtr->GetHandle();
+		if (!scriptCode.IsLoaded())
 			return false;
 
-		return scriptCode->getIsEditorScript();
+		return scriptCode->GetIsEditorScript();
 	}
 
 	void ScriptScriptCode::InternalSetEditorScript(ScriptScriptCode* thisPtr, bool value)
 	{
-		HScriptCode scriptCode = thisPtr->getHandle();
-		if (!scriptCode.isLoaded())
+		HScriptCode scriptCode = thisPtr->GetHandle();
+		if (!scriptCode.IsLoaded())
 			return;
 
-		scriptCode->setIsEditorScript(value);
+		scriptCode->SetIsEditorScript(value);
 	}
 	
 	MonoArray* ScriptScriptCode::InternalGetTypes(ScriptScriptCode* thisPtr)
 	{
-		HScriptCode scriptCode = thisPtr->getHandle();
+		HScriptCode scriptCode = thisPtr->GetHandle();
 
 		Vector<FullTypeName> types;
-		if (scriptCode.isLoaded())
-			types = parseTypes(scriptCode->getString());
+		if (scriptCode.IsLoaded())
+			types = parseTypes(scriptCode->GetString());
 
 		Vector<MonoReflectionType*> validTypes;
 		for (auto& type : types)
 		{
 			SPtr<ManagedSerializableObjectInfo> objInfo;
 			if (ScriptAssemblyManager::Instance().getSerializableObjectInfo(toString(type.first), toString(type.second), objInfo))
-				validTypes.push_back(MonoUtil::getType(objInfo->mTypeInfo->getMonoClass()));
+				validTypes.push_back(MonoUtil::getType(objInfo->mTypeInfo->GetMonoClass()));
 		}
 
 		UINT32 numValidTypes = (UINT32)validTypes.size();
@@ -96,7 +96,7 @@ namespace bs
 
 		ScriptArray scriptArray(typeClass->GetInternalClassInternal(), numValidTypes);
 		for (UINT32 i = 0; i < numValidTypes; i++)
-			scriptArray.set(i, validTypes[i]);
+			scriptArray.Set(i, validTypes[i]);
 
 		return scriptArray.getInternal();
 	}

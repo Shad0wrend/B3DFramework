@@ -50,7 +50,7 @@ namespace bs
 	void ScriptCSliderJoint::InternalGetLimit(ScriptCSliderJoint* thisPtr, __LimitLinearRangeInterop* __output)
 	{
 		LimitLinearRange tmp__output;
-		tmp__output = thisPtr->getHandle()->getLimit();
+		tmp__output = thisPtr->GetHandle()->GetLimit();
 
 		__LimitLinearRangeInterop interop__output;
 		interop__output = ScriptLimitLinearRange::toInterop(tmp__output);
@@ -61,18 +61,18 @@ namespace bs
 	{
 		LimitLinearRange tmplimit;
 		tmplimit = ScriptLimitLinearRange::fromInterop(*limit);
-		thisPtr->getHandle()->setLimit(tmplimit);
+		thisPtr->GetHandle()->SetLimit(tmplimit);
 	}
 
 	void ScriptCSliderJoint::InternalSetFlag(ScriptCSliderJoint* thisPtr, SliderJointFlag flag, bool enabled)
 	{
-		thisPtr->getHandle()->setFlag(flag, enabled);
+		thisPtr->GetHandle()->SetFlag(flag, enabled);
 	}
 
 	bool ScriptCSliderJoint::InternalHasFlag(ScriptCSliderJoint* thisPtr, SliderJointFlag flag)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->getHandle()->hasFlag(flag);
+		tmp__output = thisPtr->GetHandle()->hasFlag(flag);
 
 		bool __output;
 		__output = tmp__output;

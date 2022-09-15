@@ -59,7 +59,7 @@ namespace bs { namespace ct
 			mParametersDesc = mBytecode->paramDesc;
 
 			D3D11RenderAPI* rapi = static_cast<D3D11RenderAPI*>(RenderAPI::InstancePtr());
-			loadFromMicrocode(rapi->getPrimaryDevice(), mBytecode->instructions);
+			loadFromMicrocode(rapi->GetPrimaryDevice(), mBytecode->instructions);
 
 			if(mType == GPT_VERTEX_PROGRAM)
 				mInputDeclaration = HardwareBufferManager::Instance().createVertexDeclaration(mBytecode->vertexInput);
@@ -70,7 +70,7 @@ namespace bs { namespace ct
 
 		BS_INC_RENDER_STAT_CAT(ResCreated, RenderStatObject_GpuProgram);
 
-		GpuProgram::initialize();
+		GpuProgram::Initialize();
 	}
 
 	D3D11GpuVertexProgram::D3D11GpuVertexProgram(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask)

@@ -28,7 +28,7 @@ namespace bs
 	}
 
 	DepthStencilProperties::DepthStencilProperties(const DEPTH_STENCIL_STATE_DESC& desc)
-		:mData(desc), mHash(DepthStencilState::generateHash(desc))
+		:mData(desc), mHash(DepthStencilState::GenerateHash(desc))
 	{
 
 	}
@@ -47,14 +47,14 @@ namespace bs
 	SPtr<ct::CoreObject> DepthStencilState::CreateCore() const
 	{
 		SPtr<ct::DepthStencilState> core = ct::RenderStateManager::Instance().CreateDepthStencilStateInternal(mProperties.mData);
-		mId = core->getId(); // Accessing core from sim thread is okay here since core ID is immutable
+		mId = core->GetId(); // Accessing core from sim thread is okay here since core ID is immutable
 
 		return core;
 	}
 
 	const SPtr<DepthStencilState>& DepthStencilState::GetDefault()
 	{
-		return RenderStateManager::Instance().getDefaultDepthStencilState();
+		return RenderStateManager::Instance().GetDefaultDepthStencilState();
 	}
 
 	const DepthStencilProperties& DepthStencilState::GetProperties() const
@@ -64,7 +64,7 @@ namespace bs
 
 	SPtr<DepthStencilState> DepthStencilState::Create(const DEPTH_STENCIL_STATE_DESC& desc)
 	{
-		return RenderStateManager::Instance().createDepthStencilState(desc);
+		return RenderStateManager::Instance().CreateDepthStencilState(desc);
 	}
 
 	UINT64 DepthStencilState::GenerateHash(const DEPTH_STENCIL_STATE_DESC& desc)
@@ -119,11 +119,11 @@ namespace bs
 	{
 		// Since we cache states it's possible this object was already initialized
 		// (i.e. multiple sim-states can share a single core-state)
-		if (isInitialized())
+		if (IsInitialized())
 			return;
 
-		createInternal();
-		CoreObject::initialize();
+		CreateInternal();
+		CoreObject::Initialize();
 	}
 
 	const DepthStencilProperties& DepthStencilState::GetProperties() const
@@ -133,12 +133,12 @@ namespace bs
 
 	SPtr<DepthStencilState> DepthStencilState::Create(const DEPTH_STENCIL_STATE_DESC& desc)
 	{
-		return RenderStateManager::Instance().createDepthStencilState(desc);
+		return RenderStateManager::Instance().CreateDepthStencilState(desc);
 	}
 
 	const SPtr<DepthStencilState>& DepthStencilState::GetDefault()
 	{
-		return RenderStateManager::Instance().getDefaultDepthStencilState();
+		return RenderStateManager::Instance().GetDefaultDepthStencilState();
 	}
 	}
 }

@@ -59,7 +59,7 @@ namespace bs
 		UINT32 maxProgressBarWidth = std::max((UINT32)0, (UINT32)(data.area.width - style->margins.left - style->margins.right));
 		UINT32 progressBarHeight = std::max((UINT32)0, (UINT32)(data.area.height - style->margins.top - style->margins.bottom));
 
-		barLayoutData.area.width = (UINT32)Math::floorToInt(maxProgressBarWidth * mPercent);
+		barLayoutData.area.width = (UINT32)Math::FloorToInt(maxProgressBarWidth * mPercent);
 		barLayoutData.area.height = progressBarHeight;
 
 		mBar->SetLayoutDataInternal(barLayoutData);
@@ -67,8 +67,8 @@ namespace bs
 
 	void GUIProgressBar::StyleUpdated()
 	{
-		mBar->setStyle(getSubStyleName(getBarStyleType()));
-		mBackground->setStyle(getSubStyleName(getBackgroundStyleType()));
+		mBar->SetStyle(GetSubStyleName(GetBarStyleType()));
+		mBackground->SetStyle(GetSubStyleName(GetBackgroundStyleType()));
 	}
 
 	void GUIProgressBar::SetPercent(float pct)
@@ -79,18 +79,18 @@ namespace bs
 
 	void GUIProgressBar::setTint(const Color& color)
 	{
-		mBar->setTint(color);
-		mBackground->setTint(color);
+		mBar->SetTint(color);
+		mBackground->SetTint(color);
 	}
 
 	GUIProgressBar* GUIProgressBar::Create(const String& styleName)
 	{
-		return new (bs_alloc<GUIProgressBar>()) GUIProgressBar(getStyleName<GUIProgressBar>(styleName), GUIDimensions::Create());
+		return new (bs_alloc<GUIProgressBar>()) GUIProgressBar(GetStyleName<GUIProgressBar>(styleName), GUIDimensions::Create());
 	}
 
 	GUIProgressBar* GUIProgressBar::Create(const GUIOptions& options, const String& styleName)
 	{
-		return new (bs_alloc<GUIProgressBar>()) GUIProgressBar(getStyleName<GUIProgressBar>(styleName), GUIDimensions::Create(options));
+		return new (bs_alloc<GUIProgressBar>()) GUIProgressBar(GetStyleName<GUIProgressBar>(styleName), GUIDimensions::Create(options));
 	}
 
 	const String& GUIProgressBar::GetGuiTypeName()

@@ -157,7 +157,7 @@ namespace bs
 			tempPieces[bufferIdx].clear();
 
 			for (auto& rect : tempPieces[currentBufferIdx])
-				rect.cut(cutRect, tempPieces[bufferIdx]);
+				rect.Cut(cutRect, tempPieces[bufferIdx]);
 		}
 
 		pieces = tempPieces[bufferIdx];

@@ -15,8 +15,8 @@ namespace bs
 
 		material->InitializeTechniques();
 
-		if (material->getNumTechniques() > 0)
-			material->setParams(mMatParams);
+		if (material->GetNumTechniques() > 0)
+			material->SetParams(mMatParams);
 	}
 
 	SPtr<IReflectable> MaterialRTTI::NewRttiObject()

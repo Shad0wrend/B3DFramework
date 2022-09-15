@@ -111,10 +111,10 @@ namespace bs
 		if (meshImportOptions->cpuCached)
 			desc.usage |= MU_CPUCACHED;
 
-		SPtr<Mesh> mesh = Mesh::CreatePtrInternal(rendererMeshData->getData(), desc);
+		SPtr<Mesh> mesh = Mesh::CreatePtrInternal(rendererMeshData->GetData(), desc);
 
 		const String fileName = filePath.getFilename(false);
-		mesh->setName(fileName);
+		mesh->SetName(fileName);
 
 		return mesh;
 	}
@@ -133,10 +133,10 @@ namespace bs
 		if (meshImportOptions->cpuCached)
 			desc.usage |= MU_CPUCACHED;
 
-		SPtr<Mesh> mesh = Mesh::CreatePtrInternal(rendererMeshData->getData(), desc);
+		SPtr<Mesh> mesh = Mesh::CreatePtrInternal(rendererMeshData->GetData(), desc);
 
 		const String fileName = filePath.getFilename(false);
-		mesh->setName(fileName);
+		mesh->SetName(fileName);
 
 		Vector<SubResourceRaw> output;
 		if(mesh != nullptr)
@@ -151,7 +151,7 @@ namespace bs
 					PhysicsMeshType type = collisionMeshType == CollisionMeshType::Convex ?
 						PhysicsMeshType::Convex : PhysicsMeshType::Triangle;
 
-					SPtr<PhysicsMesh> physicsMesh = PhysicsMesh::CreatePtrInternal(rendererMeshData->getData(), type);
+					SPtr<PhysicsMesh> physicsMesh = PhysicsMesh::CreatePtrInternal(rendererMeshData->GetData(), type);
 
 					output.push_back({ u8"collision", physicsMesh });
 				}
@@ -166,13 +166,13 @@ namespace bs
 			{
 				SPtr<AnimationClip> clip = AnimationClip::CreatePtrInternal(entry.curves, entry.isAdditive, entry.sampleRate,
 					entry.rootMotion);
-				clip->setName(entry.name);
+				clip->SetName(entry.name);
 				
 				for(auto& eventsEntry : events)
 				{
 					if(entry.name == eventsEntry.name)
 					{
-						clip->setEvents(eventsEntry.events);
+						clip->SetEvents(eventsEntry.events);
 						break;
 					}
 				}
@@ -366,7 +366,7 @@ namespace bs
 			for (auto& node : mesh->referencedBy)
 			{
 				Matrix4 worldTransform = node->worldTransform * node->geomTransform;
-				Matrix4 worldTransformIT = worldTransform.inverse();
+				Matrix4 worldTransformIT = worldTransform.Inverse();
 				worldTransformIT = worldTransformIT.transpose();
 
 				// Copy & transform positions
@@ -385,18 +385,18 @@ namespace bs
 						{
 							for (UINT32 i = 0; i < numVertices; i++)
 							{
-								Vector3 meshPosition = worldTransform.multiplyAffine(mesh->positions[i]);
-								Vector3 blendPosition = worldTransform.multiplyAffine(blendFrame.positions[i]);
+								Vector3 meshPosition = worldTransform.MultiplyAffine(mesh->positions[i]);
+								Vector3 blendPosition = worldTransform.MultiplyAffine(blendFrame.positions[i]);
 
 								Vector3 positionDelta = blendPosition - meshPosition;
 								Vector3 normalDelta;
 								if (hasNormals)
 								{
 									Vector3 blendNormal = worldTransformIT.multiplyDirection(blendFrame.normals[i]);
-									blendNormal = Vector3::normalize(blendNormal);
+									blendNormal = Vector3::Normalize(blendNormal);
 
 									Vector3 meshNormal = worldTransformIT.multiplyDirection(mesh->normals[i]);
-									meshNormal = Vector3::normalize(meshNormal);
+									meshNormal = Vector3::Normalize(meshNormal);
 
 									normalDelta = blendNormal - meshNormal;
 								}
@@ -619,12 +619,12 @@ namespace bs
 
 		if (parent != nullptr)
 		{
-			node->worldTransform = parent->worldTransform * node->localTransform.getMatrix();
+			node->worldTransform = parent->worldTransform * node->localTransform.GetMatrix();
 
 			parent->children.push_back(node);
 		}
 		else
-			node->worldTransform = node->localTransform.getMatrix();
+			node->worldTransform = node->localTransform.GetMatrix();
 
 		// Geometry transform is applied to geometry (mesh data) only, it is not inherited by children, so we store it
 		// separately
@@ -683,11 +683,11 @@ namespace bs
 			importRootMotion = false;
 		else
 		{
-			UINT32 rootBoneIdx = skeleton->getRootBoneIndex();
+			UINT32 rootBoneIdx = skeleton->GetRootBoneIndex();
 			if (rootBoneIdx == (UINT32)-1)
 				importRootMotion = false;
 			else
-				rootBoneName = skeleton->getBoneInfo(rootBoneIdx).name;
+				rootBoneName = skeleton->GetBoneInfo(rootBoneIdx).name;
 		}
 
 		bool isFirstClip = true;
@@ -950,14 +950,14 @@ namespace bs
 			for (auto& node : mesh->referencedBy)
 			{
 				Matrix4 worldTransform = node->worldTransform * node->geomTransform;
-				Matrix4 worldTransformIT = worldTransform.inverse();
+				Matrix4 worldTransformIT = worldTransform.Inverse();
 				worldTransformIT = worldTransformIT.transpose();
 
 				SPtr<RendererMeshData> meshData = RendererMeshData::Create((UINT32)numVertices, numIndices, (VertexLayout)vertexLayout);
 
 				// Copy indices
 				if(!node->flipWinding)
-					meshData->setIndices(orderedIndices, numIndices * sizeof(UINT32));
+					meshData->SetIndices(orderedIndices, numIndices * sizeof(UINT32));
 				else
 				{
 					UINT32* flippedIndices = bs_stack_alloc<UINT32>(numIndices);
@@ -969,7 +969,7 @@ namespace bs
 						flippedIndices[i + 2] = orderedIndices[i + 1];
 					}
 
-					meshData->setIndices(flippedIndices, numIndices * sizeof(UINT32));
+					meshData->SetIndices(flippedIndices, numIndices * sizeof(UINT32));
 					bs_stack_free(flippedIndices);
 				}
 
@@ -978,9 +978,9 @@ namespace bs
 				Vector3* transformedPositions = (Vector3*)bs_stack_alloc(positionsSize);
 
 				for (UINT32 i = 0; i < (UINT32)numVertices; i++)
-					transformedPositions[i] = worldTransform.multiplyAffine((Vector3)mesh->positions[i]);
+					transformedPositions[i] = worldTransform.MultiplyAffine((Vector3)mesh->positions[i]);
 
-				meshData->setPositions(transformedPositions, positionsSize);
+				meshData->SetPositions(transformedPositions, positionsSize);
 				bs_stack_free(transformedPositions);
 
 				// Copy & transform normals
@@ -999,37 +999,37 @@ namespace bs
 						{
 							Vector3 normal = (Vector3)mesh->normals[i];
 							normal = worldTransformIT.multiplyDirection(normal);
-							transformedNormals[i] = Vector3::normalize(normal);
+							transformedNormals[i] = Vector3::Normalize(normal);
 
 							Vector3 tangent = (Vector3)mesh->tangents[i];
-							tangent = Vector3::normalize(worldTransformIT.multiplyDirection(tangent));
+							tangent = Vector3::Normalize(worldTransformIT.multiplyDirection(tangent));
 
 							Vector3 bitangent = (Vector3)mesh->bitangents[i];
 							bitangent = worldTransformIT.multiplyDirection(bitangent);
 
-							Vector3 engineBitangent = Vector3::cross(normal, tangent);
+							Vector3 engineBitangent = Vector3::Cross(normal, tangent);
 							float sign = Vector3::dot(engineBitangent, bitangent);
 
 							transformedTangents[i] = Vector4(tangent.x, tangent.y, tangent.z, sign > 0 ? 1.0f : -1.0f);
 						}
 
-						meshData->setTangents(transformedTangents, tangentsSize);
+						meshData->SetTangents(transformedTangents, tangentsSize);
 						bs_stack_free(transformedTangents);
 					}
 					else // Just normals
 					{
 						for (UINT32 i = 0; i < (UINT32)numVertices; i++)
-							transformedNormals[i] = Vector3::normalize(worldTransformIT.multiplyDirection((Vector3)mesh->normals[i]));
+							transformedNormals[i] = Vector3::Normalize(worldTransformIT.multiplyDirection((Vector3)mesh->normals[i]));
 					}
 
-					meshData->setNormals(transformedNormals, normalsSize);
+					meshData->SetNormals(transformedNormals, normalsSize);
 					bs_stack_free(transformedNormals);
 				}
 
 				// Copy colors
 				if (hasColors)
 				{
-					meshData->setColors(mesh->colors.data(), sizeof(UINT32) * (UINT32)numVertices);
+					meshData->SetColors(mesh->colors.data(), sizeof(UINT32) * (UINT32)numVertices);
 				}
 
 				// Copy UV
@@ -1051,9 +1051,9 @@ namespace bs
 						}
 
 						if (writeUVIDx == 0)
-							meshData->setUV0(transformedUV, size);
+							meshData->SetUV0(transformedUV, size);
 						else if (writeUVIDx == 1)
-							meshData->setUV1(transformedUV, size);
+							meshData->SetUV1(transformedUV, size);
 
 						bs_stack_free(transformedUV);
 
@@ -1091,11 +1091,11 @@ namespace bs
 						}
 					}
 
-					meshData->setBoneWeights(weights, bufferSize);
+					meshData->SetBoneWeights(weights, bufferSize);
 					bs_stack_free(weights);
 				}
 
-				allMeshData.push_back(meshData->getData());
+				allMeshData.push_back(meshData->GetData());
 				allSubMeshes.push_back(subMeshes);
 			}
 
@@ -2003,8 +2003,8 @@ namespace bs
 			{
 				TKeyframe<Vector3>& prevKey = newKeyframes.back();
 
-				isEqual = Math::approxEquals(prevKey.value, curKey.value) &&
-					Math::approxEquals(prevKey.outTangent, curKey.inTangent) && isEqual;
+				isEqual = Math::ApproxEquals(prevKey.value, curKey.value) &&
+					Math::ApproxEquals(prevKey.outTangent, curKey.inTangent) && isEqual;
 			}
 			else
 				isEqual = false;
@@ -2132,7 +2132,7 @@ namespace bs
 					fbxTime = fbxCurve[j]->KeyGetTime(i);
 					float otherTime = (float)fbxTime.GetSecondDouble();
 
-					if (!Math::approxEquals(time, otherTime))
+					if (!Math::ApproxEquals(time, otherTime))
 					{
 						foundMismatch = true;
 						break;
@@ -2194,7 +2194,7 @@ namespace bs
 		curveEnd = std::max(curveEnd, clipEnd);
 
 		float curveLength = curveEnd - curveStart;
-		INT32 numSamples = Math::ceilToInt(curveLength / importOptions.animSampleRate) + 1;
+		INT32 numSamples = Math::CeilToInt(curveLength / importOptions.animSampleRate) + 1;
 
 		// We don't use the exact provided sample rate but instead modify it slightly so it
 		// completely covers the curve range including start/end points while maintaining

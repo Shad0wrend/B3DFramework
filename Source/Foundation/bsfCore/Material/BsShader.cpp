@@ -416,7 +416,7 @@ namespace bs
 		Vector<SPtr<TechniqueType>> output;
 		for (auto& technique : mDesc.techniques)
 		{
-			if (technique->isSupported() && technique->getVariation().matches(variation, exact))
+			if (technique->isSupported() && technique->GetVariation().matches(variation, exact))
 				output.push_back(technique);
 		}
 
@@ -443,7 +443,7 @@ namespace bs
 
 	void Shader::SetIncludeFiles(const Vector<String>& includes)
 	{
-		SPtr<ShaderMetaData> meta = std::static_pointer_cast<ShaderMetaData>(getMetaData());
+		SPtr<ShaderMetaData> meta = std::static_pointer_cast<ShaderMetaData>(GetMetaData());
 		meta->includes = includes;
 	}
 
@@ -451,9 +451,9 @@ namespace bs
 	{
 		Vector<SPtr<ct::Technique>> techniques;
 		for (auto& technique : mDesc.techniques)
-			techniques.push_back(technique->getCore());
+			techniques.push_back(technique->GetCore());
 
-		ct::Shader* shaderCore = new (bs_alloc<ct::Shader>()) ct::Shader(mName, convertDesc(mDesc), mId);
+		ct::Shader* shaderCore = new (bs_alloc<ct::Shader>()) ct::Shader(mName, ConvertDesc(mDesc), mId);
 		SPtr<ct::Shader> shaderCorePtr = bs_shared_ptr<ct::Shader>(shaderCore);
 		shaderCorePtr->SetThisPtrInternal(shaderCorePtr);
 
@@ -476,7 +476,7 @@ namespace bs
 		for (UINT32 i = 0; i < (UINT32)desc.samplerDefaultValues.size(); i++)
 		{
 			if (desc.samplerDefaultValues[i] != nullptr)
-				output.samplerDefaultValues[i] = desc.samplerDefaultValues[i]->getCore();
+				output.samplerDefaultValues[i] = desc.samplerDefaultValues[i]->GetCore();
 			else
 				output.samplerDefaultValues[i] = nullptr;
 		}
@@ -484,8 +484,8 @@ namespace bs
 		output.textureDefaultValues.resize(desc.textureDefaultValues.size());
 		for (UINT32 i = 0; i < (UINT32)desc.textureDefaultValues.size(); i++)
 		{
-			if (desc.textureDefaultValues[i].isLoaded())
-				output.textureDefaultValues[i] = desc.textureDefaultValues[i]->getCore();
+			if (desc.textureDefaultValues[i].IsLoaded())
+				output.textureDefaultValues[i] = desc.textureDefaultValues[i]->GetCore();
 			else
 				output.textureDefaultValues[i] = nullptr;
 		}
@@ -498,7 +498,7 @@ namespace bs
 		for(auto& entry : desc.techniques)
 		{
 			if(entry)
-				output.techniques.push_back(entry->getCore());
+				output.techniques.push_back(entry->GetCore());
 		}
 
 		for(auto& entry : desc.subShaders)
@@ -507,7 +507,7 @@ namespace bs
 			subShader.name = entry.name;
 			
 			if(entry.shader)
-				subShader.shader = entry.shader->getCore();
+				subShader.shader = entry.shader->GetCore();
 
 			output.subShaders.push_back(subShader);
 		}
@@ -619,7 +619,7 @@ namespace bs
 
 		SPtr<Shader> newShader = bs_core_ptr<Shader>(new (bs_alloc<Shader>()) Shader(name, desc, id));
 		newShader->SetThisPtrInternal(newShader);
-		newShader->initialize();
+		newShader->Initialize();
 
 		return newShader;
 	}
@@ -673,7 +673,7 @@ namespace bs
 		Shader* shaderCore = new (bs_alloc<Shader>()) Shader(name, desc, id);
 		SPtr<Shader> shaderCorePtr = bs_shared_ptr<Shader>(shaderCore);
 		shaderCorePtr->SetThisPtrInternal(shaderCorePtr);
-		shaderCorePtr->initialize();
+		shaderCorePtr->Initialize();
 
 		return shaderCorePtr;
 	}

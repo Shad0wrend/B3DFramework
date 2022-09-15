@@ -15,16 +15,16 @@ namespace bs { namespace ct {
 	DeferredDirectionalLightMat::DeferredDirectionalLightMat()
 		:mGBufferParams(GPT_FRAGMENT_PROGRAM, mParams)
 	{
-		mParams->getTextureParam(GPT_FRAGMENT_PROGRAM, "gLightOcclusionTex", mLightOcclusionTexParam);
+		mParams->GetTextureParam(GPT_FRAGMENT_PROGRAM, "gLightOcclusionTex", mLightOcclusionTexParam);
 	}
 
 	void DeferredDirectionalLightMat::Bind(const GBufferTextures& gBufferInput, const SPtr<Texture>& lightOcclusion,
 		const SPtr<GpuParamBlockBuffer>& perCamera, const SPtr<GpuParamBlockBuffer>& perLight)
 	{
 		mGBufferParams.Bind(gBufferInput);
-		mLightOcclusionTexParam.set(lightOcclusion);
-		mParams->setParamBlockBuffer("PerCamera", perCamera);
-		mParams->setParamBlockBuffer("PerLight", perLight);
+		mLightOcclusionTexParam.Set(lightOcclusion);
+		mParams->SetParamBlockBuffer("PerCamera", perCamera);
+		mParams->SetParamBlockBuffer("PerLight", perLight);
 
 		RendererMaterial::bind();
 	}
@@ -45,16 +45,16 @@ namespace bs { namespace ct {
 	DeferredPointLightMat::DeferredPointLightMat()
 		:mGBufferParams(GPT_FRAGMENT_PROGRAM, mParams)
 	{
-		mParams->getTextureParam(GPT_FRAGMENT_PROGRAM, "gLightOcclusionTex", mLightOcclusionTexParam);
+		mParams->GetTextureParam(GPT_FRAGMENT_PROGRAM, "gLightOcclusionTex", mLightOcclusionTexParam);
 	}
 
 	void DeferredPointLightMat::Bind(const GBufferTextures& gBufferInput, const SPtr<Texture>& lightOcclusion,
 		const SPtr<GpuParamBlockBuffer>& perCamera, const SPtr<GpuParamBlockBuffer>& perLight)
 	{
 		mGBufferParams.Bind(gBufferInput);
-		mLightOcclusionTexParam.set(lightOcclusion);
-		mParams->setParamBlockBuffer("PerCamera", perCamera);
-		mParams->setParamBlockBuffer("PerLight", perLight);
+		mLightOcclusionTexParam.Set(lightOcclusion);
+		mParams->SetParamBlockBuffer("PerCamera", perCamera);
+		mParams->SetParamBlockBuffer("PerLight", perLight);
 
 		RendererMaterial::bind();
 	}
@@ -100,11 +100,11 @@ namespace bs { namespace ct {
 	{
 		mGBufferParams.Bind(gBufferInput);
 
-		mParams->setParamBlockBuffer("PerCamera", perCamera);
-		mParams->setParamBlockBuffer("ReflProbeParams", reflProbeParams);
+		mParams->SetParamBlockBuffer("PerCamera", perCamera);
+		mParams->SetParamBlockBuffer("ReflProbeParams", reflProbeParams);
 
-		mIBLParams.ambientOcclusionTexParam.set(ao);
-		mIBLParams.ssrTexParam.set(ssr);
+		mIBLParams.ambientOcclusionTexParam.Set(ao);
+		mIBLParams.ssrTexParam.Set(ssr);
 
 		RendererMaterial::bind();
 	}
@@ -130,7 +130,7 @@ namespace bs { namespace ct {
 		mIBLParams.populate(mParams, GPT_FRAGMENT_PROGRAM, true, false, false);
 
 		mParamBuffer = gPerProbeParamDef.createBuffer();
-		mParams->setParamBlockBuffer("PerProbe", mParamBuffer);
+		mParams->SetParamBlockBuffer("PerProbe", mParamBuffer);
 	}
 
 	void DeferredIBLProbeMat::Bind(const GBufferTextures& gBufferInput, const SPtr<GpuParamBlockBuffer>& perCamera,
@@ -138,25 +138,25 @@ namespace bs { namespace ct {
 	{
 		mGBufferParams.Bind(gBufferInput);
 
-		mParams->setParamBlockBuffer("PerCamera", perCamera);
-		mParams->setParamBlockBuffer("ReflProbeParams", reflProbeParams);
+		mParams->SetParamBlockBuffer("PerCamera", perCamera);
+		mParams->SetParamBlockBuffer("ReflProbeParams", reflProbeParams);
 
-		gPerProbeParamDef.gPosition.set(mParamBuffer, probeData.position);
+		gPerProbeParamDef.gPosition.Set(mParamBuffer, probeData.position);
 
 		if(probeData.type == 1)
-			gPerProbeParamDef.gExtents.set(mParamBuffer, probeData.boxExtents);
+			gPerProbeParamDef.gExtents.Set(mParamBuffer, probeData.boxExtents);
 		else
 		{
 			Vector3 extents(probeData.radius, probeData.radius, probeData.radius);
-			gPerProbeParamDef.gExtents.set(mParamBuffer, extents);
+			gPerProbeParamDef.gExtents.Set(mParamBuffer, extents);
 		}
 
-		gPerProbeParamDef.gTransitionDistance.set(mParamBuffer, probeData.transitionDistance);
-		gPerProbeParamDef.gInvBoxTransform.set(mParamBuffer, probeData.invBoxTransform);
-		gPerProbeParamDef.gCubemapIdx.set(mParamBuffer, probeData.cubemapIdx);
-		gPerProbeParamDef.gType.set(mParamBuffer, probeData.type);
+		gPerProbeParamDef.gTransitionDistance.Set(mParamBuffer, probeData.transitionDistance);
+		gPerProbeParamDef.gInvBoxTransform.Set(mParamBuffer, probeData.invBoxTransform);
+		gPerProbeParamDef.gCubemapIdx.Set(mParamBuffer, probeData.cubemapIdx);
+		gPerProbeParamDef.gType.Set(mParamBuffer, probeData.type);
 
-		mIBLParams.reflectionProbeCubemapsTexParam.set(sceneInfo.reflProbeCubemapsTex);
+		mIBLParams.reflectionProbeCubemapsTexParam.Set(sceneInfo.reflProbeCubemapsTex);
 
 		RendererMaterial::bind();
 	}
@@ -200,11 +200,11 @@ namespace bs { namespace ct {
 	{
 		mGBufferParams.Bind(gBufferInput);
 
-		mParams->setParamBlockBuffer("PerCamera", perCamera);
-		mParams->setParamBlockBuffer("ReflProbeParams", reflProbeParams);
+		mParams->SetParamBlockBuffer("PerCamera", perCamera);
+		mParams->SetParamBlockBuffer("ReflProbeParams", reflProbeParams);
 
 		if(skybox != nullptr)
-			mIBLParams.skyReflectionsTexParam.set(skybox->getFilteredRadiance());
+			mIBLParams.skyReflectionsTexParam.Set(skybox->GetFilteredRadiance());
 
 		RendererMaterial::bind();
 	}
@@ -227,7 +227,7 @@ namespace bs { namespace ct {
 	DeferredIBLFinalizeMat::DeferredIBLFinalizeMat()
 		:mGBufferParams(GPT_FRAGMENT_PROGRAM, mParams)
 	{
-		mParams->getTextureParam(GPT_FRAGMENT_PROGRAM, "gIBLRadianceTex", mIBLRadiance);
+		mParams->GetTextureParam(GPT_FRAGMENT_PROGRAM, "gIBLRadianceTex", mIBLRadiance);
 
 		mIBLParams.populate(mParams, GPT_FRAGMENT_PROGRAM, true, false, false);
 	}
@@ -238,12 +238,12 @@ namespace bs { namespace ct {
 	{
 		mGBufferParams.Bind(gBufferInput);
 
-		mParams->setParamBlockBuffer("PerCamera", perCamera);
-		mParams->setParamBlockBuffer("ReflProbeParams", reflProbeParams);
+		mParams->SetParamBlockBuffer("PerCamera", perCamera);
+		mParams->SetParamBlockBuffer("ReflProbeParams", reflProbeParams);
 
-		mIBLParams.preintegratedEnvBRDFParam.set(preintegratedBrdf);
+		mIBLParams.preintegratedEnvBRDFParam.Set(preintegratedBrdf);
 
-		mIBLRadiance.set(iblRadiance);
+		mIBLRadiance.Set(iblRadiance);
 
 		RendererMaterial::bind();
 	}
@@ -297,12 +297,12 @@ namespace bs { namespace ct {
 		else // Radial or spot
 		{
 			// Check if viewer is inside the light volume
-			float distSqrd = (light.internal->getBounds().getCenter() - viewProps.viewOrigin).squaredLength();
+			float distSqrd = (light.internal->GetBounds().getCenter() - viewProps.viewOrigin).squaredLength();
 
 			// Extend the bounds slighty to cover the case when the viewer is outside, but the near plane is intersecting
 			// the light bounds. We need to be conservative since the material for rendering outside will not properly
 			// render the inside of the light volume.
-			float boundRadius = light.internal->getBounds().getRadius() + viewProps.nearPlane * 3.0f;
+			float boundRadius = light.internal->GetBounds().getRadius() + viewProps.nearPlane * 3.0f;
 
 			bool isInside = distSqrd < (boundRadius * boundRadius);
 

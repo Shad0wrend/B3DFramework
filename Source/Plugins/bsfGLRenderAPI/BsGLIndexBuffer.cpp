@@ -24,6 +24,6 @@ namespace bs { namespace ct
 		mBuffer = bs_pool_new<GLHardwareBuffer>(GL_ELEMENT_ARRAY_BUFFER, mSize, mUsage);
 		mBufferDeleter = &deleteBuffer;
 
-		IndexBuffer::initialize();
+		IndexBuffer::Initialize();
 	}
 }}

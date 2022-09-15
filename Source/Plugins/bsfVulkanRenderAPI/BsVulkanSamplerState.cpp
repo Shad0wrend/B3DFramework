@@ -73,10 +73,10 @@ namespace bs { namespace ct
 				break;
 
 			VkSampler sampler;
-			VkResult result = vkCreateSampler(devices[i]->getLogical(), &samplerInfo, gVulkanAllocator, &sampler);
+			VkResult result = vkCreateSampler(devices[i]->GetLogical(), &samplerInfo, gVulkanAllocator, &sampler);
 			assert(result == VK_SUCCESS);
 
-			mSamplers[i] = devices[i]->getResourceManager().create<VulkanSampler>(sampler);
+			mSamplers[i] = devices[i]->GetResourceManager().create<VulkanSampler>(sampler);
 		}
 	}
 }}

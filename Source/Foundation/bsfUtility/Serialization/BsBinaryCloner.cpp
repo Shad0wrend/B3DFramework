@@ -52,7 +52,7 @@ namespace bs
 		if (object == nullptr)
 			return;
 
-		RTTITypeBase* rtti = object->getRTTI();
+		RTTITypeBase* rtti = object->GetRtti();
 		Stack<RTTITypeBase*> rttiInstances;
 		while (rtti != nullptr)
 		{
@@ -80,7 +80,7 @@ namespace bs
 						if (field->schema.type == SerializableFT_ReflectablePtr)
 						{
 							auto* curField = static_cast<RTTIReflectablePtrFieldBase*>(field);
-							SPtr<IReflectable> childObj = curField->getArrayValue(rttiInstance, object, j);
+							SPtr<IReflectable> childObj = curField->GetArrayValue(rttiInstance, object, j);
 
 							if (childObj != nullptr)
 							{
@@ -100,7 +100,7 @@ namespace bs
 						else if (field->schema.type == SerializableFT_Reflectable)
 						{
 							auto* curField = static_cast<RTTIReflectableFieldBase*>(field);
-							IReflectable* childObj = &curField->getArrayValue(rttiInstance, object, j);
+							IReflectable* childObj = &curField->GetArrayValue(rttiInstance, object, j);
 							
 							if (subObjectData == nullptr)
 							{
@@ -122,7 +122,7 @@ namespace bs
 					if (field->schema.type == SerializableFT_ReflectablePtr)
 					{
 						auto* curField = static_cast<RTTIReflectablePtrFieldBase*>(field);
-						SPtr<IReflectable> childObj = curField->getValue(rttiInstance, object);
+						SPtr<IReflectable> childObj = curField->GetValue(rttiInstance, object);
 
 						if (childObj != nullptr)
 						{
@@ -142,7 +142,7 @@ namespace bs
 					else if (field->schema.type == SerializableFT_Reflectable)
 					{
 						auto* curField = static_cast<RTTIReflectableFieldBase*>(field);
-						IReflectable* childObj = &curField->getValue(rttiInstance, object);
+						IReflectable* childObj = &curField->GetValue(rttiInstance, object);
 
 						if (subObjectData == nullptr)
 						{
@@ -161,7 +161,7 @@ namespace bs
 			}
 
 			rttiInstances.push(rttiInstance);
-			rtti = rtti->getBaseClass();
+			rtti = rtti->GetBaseClass();
 		}
 
 		while (!rttiInstances.empty())
@@ -190,9 +190,9 @@ namespace bs
 					auto* curField = static_cast<RTTIReflectablePtrFieldBase*>(reference.fieldId.field);
 
 					if (curField->schema.isArray)
-						curField->setArrayValue(rttiInstance, object, reference.fieldId.arrayIdx, reference.object);
+						curField->SetArrayValue(rttiInstance, object, reference.fieldId.arrayIdx, reference.object);
 					else
-						curField->setValue(rttiInstance, object, reference.object);
+						curField->SetValue(rttiInstance, object, reference.object);
 				}
 
 				rttiInstance->onDeserializationEnded(object, nullptr);
@@ -213,9 +213,9 @@ namespace bs
 
 					IReflectable* childObj = nullptr;
 					if (curField->schema.isArray)
-						childObj = &curField->getArrayValue(rttiInstance, object, childObjectData.fieldId.arrayIdx);
+						childObj = &curField->GetArrayValue(rttiInstance, object, childObjectData.fieldId.arrayIdx);
 					else
-						childObj = &curField->getValue(rttiInstance, object);
+						childObj = &curField->GetValue(rttiInstance, object);
 
 					restoreReferences(childObj, alloc, childObjectData);
 				}

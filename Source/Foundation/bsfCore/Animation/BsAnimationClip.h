@@ -279,7 +279,7 @@ namespace bs
 		AnimationClip(const SPtr<AnimationCurves>& curves, bool isAdditive, UINT32 sampleRate,
 			const SPtr<RootMotion>& rootMotion);
 
-		/** @copydoc Resource::initialize() */
+		/** @copydoc Resource::Initialize() */
 		void Initialize() override;
 
 		/** Creates a name -> curve index mapping for quicker curve lookup by name. */
@@ -323,7 +323,7 @@ namespace bs
 		RTTITypeBase* GetRtti() const override;
 
 		/**
-		 * Creates an AnimationClip with no data. You must populate its data manually followed by a call to initialize().
+		 * Creates an AnimationClip with no data. You must populate its data manually followed by a call to Initialize().
 		 *
 		 * @note	For serialization use only.
 		 */

@@ -54,7 +54,7 @@ namespace bs
 	CoreSyncData MeshBase::SyncToCore(FrameAlloc* allocator)
 	{
 		UINT32 size = sizeof(Bounds);
-		UINT8* buffer = allocator->alloc(size);
+		UINT8* buffer = allocator->Alloc(size);
 
 		memcpy(buffer, &mProperties.mBounds, size);
 		return CoreSyncData(buffer, size);
@@ -87,7 +87,7 @@ namespace bs
 
 	void MeshBase::SyncToCore(const CoreSyncData& data)
 	{
-		mProperties.mBounds = data.getData<Bounds>();
+		mProperties.mBounds = data.GetData<Bounds>();
 	}
 	}
 }

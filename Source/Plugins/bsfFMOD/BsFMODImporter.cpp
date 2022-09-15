@@ -59,7 +59,7 @@ namespace bs
 		INT32 numChannels = 0;
 		INT32 numBits = 0;
 
-		sound->getFormat(nullptr, &format, &numChannels, &numBits);
+		sound->GetFormat(nullptr, &format, &numChannels, &numBits);
 
 		if(format != FMOD_SOUND_FORMAT_PCM8 && format != FMOD_SOUND_FORMAT_PCM16 && format != FMOD_SOUND_FORMAT_PCM24
 			&& format != FMOD_SOUND_FORMAT_PCM32 && format != FMOD_SOUND_FORMAT_PCMFLOAT)
@@ -69,10 +69,10 @@ namespace bs
 		}
 
 		float frequency = 0.0f;
-		sound->getDefaults(&frequency, nullptr);
+		sound->GetDefaults(&frequency, nullptr);
 
 		UINT32 size;
-		sound->getLength(&size, FMOD_TIMEUNIT_PCMBYTES);
+		sound->GetLength(&size, FMOD_TIMEUNIT_PCMBYTES);
 		
 		info.bitDepth = numBits;
 		info.numChannels = numChannels;
@@ -172,7 +172,7 @@ namespace bs
 		SPtr<AudioClip> clip = AudioClip::CreatePtrInternal(sampleStream, bufferSize, info.numSamples, clipDesc);
 
 		const String fileName = filePath.getFilename(false);
-		clip->setName(fileName);
+		clip->SetName(fileName);
 
 		return clip;
 	}

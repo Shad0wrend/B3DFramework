@@ -136,7 +136,7 @@ namespace bs
 
 	void PlayInEditor::SaveSceneInMemory()
 	{
-		mSavedScene = SceneManager::Instance().getMainScene()->getRoot()->clone(false, true);
+		mSavedScene = SceneManager::Instance().getMainScene()->GetRoot()->clone(false, true);
 
 		// Remove objects with "dont save" flag
 		Stack<HSceneObject> todo;
@@ -148,12 +148,12 @@ namespace bs
 			todo.pop();
 
 			if (current->hasFlag(SOF_DontSave))
-				current->destroy();
+				current->Destroy();
 			else
 			{
-				UINT32 numChildren = current->getNumChildren();
+				UINT32 numChildren = current->GetNumChildren();
 				for (UINT32 i = 0; i < numChildren; i++)
-					todo.push(current->getChild(i));
+					todo.push(current->GetChild(i));
 			}
 		}
 	}

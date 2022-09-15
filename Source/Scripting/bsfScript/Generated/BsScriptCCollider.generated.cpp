@@ -45,9 +45,9 @@ namespace bs
 		metaData.scriptClass->addInternalCall("Internal_setCollisionReportMode", (void*)&ScriptCCollider::Internal_setCollisionReportMode);
 		metaData.scriptClass->addInternalCall("Internal_getCollisionReportMode", (void*)&ScriptCCollider::Internal_getCollisionReportMode);
 
-		onCollisionBeginThunk = (onCollisionBeginThunkDef)metaData.scriptClass->getMethodExact("Internal_onCollisionBegin", "CollisionData&")->getThunk();
-		onCollisionStayThunk = (onCollisionStayThunkDef)metaData.scriptClass->getMethodExact("Internal_onCollisionStay", "CollisionData&")->getThunk();
-		onCollisionEndThunk = (onCollisionEndThunkDef)metaData.scriptClass->getMethodExact("Internal_onCollisionEnd", "CollisionData&")->getThunk();
+		onCollisionBeginThunk = (onCollisionBeginThunkDef)metaData.scriptClass->GetMethodExact("Internal_onCollisionBegin", "CollisionData&")->GetThunk();
+		onCollisionStayThunk = (onCollisionStayThunkDef)metaData.scriptClass->GetMethodExact("Internal_onCollisionStay", "CollisionData&")->GetThunk();
+		onCollisionEndThunk = (onCollisionEndThunkDef)metaData.scriptClass->GetMethodExact("Internal_onCollisionEnd", "CollisionData&")->GetThunk();
 	}
 
 	void ScriptCCollider::OnCollisionBegin(const CollisionData& p0)
@@ -78,13 +78,13 @@ namespace bs
 	}
 	void ScriptCCollider::InternalSetIsTrigger(ScriptCColliderBase* thisPtr, bool value)
 	{
-		static_object_cast<CCollider>(thisPtr->getComponent())->setIsTrigger(value);
+		static_object_cast<CCollider>(thisPtr->GetComponent())->SetIsTrigger(value);
 	}
 
 	bool ScriptCCollider::InternalGetIsTrigger(ScriptCColliderBase* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = static_object_cast<CCollider>(thisPtr->getComponent())->getIsTrigger();
+		tmp__output = static_object_cast<CCollider>(thisPtr->GetComponent())->GetIsTrigger();
 
 		bool __output;
 		__output = tmp__output;
@@ -94,13 +94,13 @@ namespace bs
 
 	void ScriptCCollider::InternalSetMass(ScriptCColliderBase* thisPtr, float mass)
 	{
-		static_object_cast<CCollider>(thisPtr->getComponent())->setMass(mass);
+		static_object_cast<CCollider>(thisPtr->GetComponent())->SetMass(mass);
 	}
 
 	float ScriptCCollider::InternalGetMass(ScriptCColliderBase* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = static_object_cast<CCollider>(thisPtr->getComponent())->getMass();
+		tmp__output = static_object_cast<CCollider>(thisPtr->GetComponent())->GetMass();
 
 		float __output;
 		__output = tmp__output;
@@ -114,20 +114,20 @@ namespace bs
 		ScriptRRefBase* scriptmaterial;
 		scriptmaterial = ScriptRRefBase::toNative(material);
 		if(scriptmaterial != nullptr)
-			tmpmaterial = static_resource_cast<PhysicsMaterial>(scriptmaterial->getHandle());
-		static_object_cast<CCollider>(thisPtr->getComponent())->setMaterial(tmpmaterial);
+			tmpmaterial = static_resource_cast<PhysicsMaterial>(scriptmaterial->GetHandle());
+		static_object_cast<CCollider>(thisPtr->GetComponent())->SetMaterial(tmpmaterial);
 	}
 
 	MonoObject* ScriptCCollider::InternalGetMaterial(ScriptCColliderBase* thisPtr)
 	{
 		ResourceHandle<PhysicsMaterial> tmp__output;
-		tmp__output = static_object_cast<CCollider>(thisPtr->getComponent())->getMaterial();
+		tmp__output = static_object_cast<CCollider>(thisPtr->GetComponent())->GetMaterial();
 
 		MonoObject* __output;
 		ScriptRRefBase* script__output;
 		script__output = ScriptResourceManager::Instance().getScriptRRef(tmp__output);
 		if(script__output != nullptr)
-			__output = script__output->getManagedInstance();
+			__output = script__output->GetManagedInstance();
 		else
 			__output = nullptr;
 
@@ -136,13 +136,13 @@ namespace bs
 
 	void ScriptCCollider::InternalSetContactOffset(ScriptCColliderBase* thisPtr, float value)
 	{
-		static_object_cast<CCollider>(thisPtr->getComponent())->setContactOffset(value);
+		static_object_cast<CCollider>(thisPtr->GetComponent())->SetContactOffset(value);
 	}
 
 	float ScriptCCollider::InternalGetContactOffset(ScriptCColliderBase* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = static_object_cast<CCollider>(thisPtr->getComponent())->getContactOffset();
+		tmp__output = static_object_cast<CCollider>(thisPtr->GetComponent())->GetContactOffset();
 
 		float __output;
 		__output = tmp__output;
@@ -152,13 +152,13 @@ namespace bs
 
 	void ScriptCCollider::InternalSetRestOffset(ScriptCColliderBase* thisPtr, float value)
 	{
-		static_object_cast<CCollider>(thisPtr->getComponent())->setRestOffset(value);
+		static_object_cast<CCollider>(thisPtr->GetComponent())->SetRestOffset(value);
 	}
 
 	float ScriptCCollider::InternalGetRestOffset(ScriptCColliderBase* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = static_object_cast<CCollider>(thisPtr->getComponent())->getRestOffset();
+		tmp__output = static_object_cast<CCollider>(thisPtr->GetComponent())->GetRestOffset();
 
 		float __output;
 		__output = tmp__output;
@@ -168,13 +168,13 @@ namespace bs
 
 	void ScriptCCollider::InternalSetLayer(ScriptCColliderBase* thisPtr, uint64_t layer)
 	{
-		static_object_cast<CCollider>(thisPtr->getComponent())->setLayer(layer);
+		static_object_cast<CCollider>(thisPtr->GetComponent())->SetLayer(layer);
 	}
 
 	uint64_t ScriptCCollider::InternalGetLayer(ScriptCColliderBase* thisPtr)
 	{
 		uint64_t tmp__output;
-		tmp__output = static_object_cast<CCollider>(thisPtr->getComponent())->getLayer();
+		tmp__output = static_object_cast<CCollider>(thisPtr->GetComponent())->GetLayer();
 
 		uint64_t __output;
 		__output = tmp__output;
@@ -184,13 +184,13 @@ namespace bs
 
 	void ScriptCCollider::InternalSetCollisionReportMode(ScriptCColliderBase* thisPtr, CollisionReportMode mode)
 	{
-		static_object_cast<CCollider>(thisPtr->getComponent())->setCollisionReportMode(mode);
+		static_object_cast<CCollider>(thisPtr->GetComponent())->SetCollisionReportMode(mode);
 	}
 
 	CollisionReportMode ScriptCCollider::InternalGetCollisionReportMode(ScriptCColliderBase* thisPtr)
 	{
 		CollisionReportMode tmp__output;
-		tmp__output = static_object_cast<CCollider>(thisPtr->getComponent())->getCollisionReportMode();
+		tmp__output = static_object_cast<CCollider>(thisPtr->GetComponent())->GetCollisionReportMode();
 
 		CollisionReportMode __output;
 		__output = tmp__output;
