@@ -15,22 +15,22 @@ namespace bs
 	void ScriptAmbientOcclusionSettings::initRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_AmbientOcclusionSettings", (void*)&ScriptAmbientOcclusionSettings::InternalAmbientOcclusionSettings);
-		metaData.scriptClass->addInternalCall("Internal_getenabled", (void*)&ScriptAmbientOcclusionSettings::Internal_getenabled);
-		metaData.scriptClass->addInternalCall("Internal_setenabled", (void*)&ScriptAmbientOcclusionSettings::Internal_setenabled);
-		metaData.scriptClass->addInternalCall("Internal_getradius", (void*)&ScriptAmbientOcclusionSettings::Internal_getradius);
-		metaData.scriptClass->addInternalCall("Internal_setradius", (void*)&ScriptAmbientOcclusionSettings::Internal_setradius);
-		metaData.scriptClass->addInternalCall("Internal_getbias", (void*)&ScriptAmbientOcclusionSettings::Internal_getbias);
-		metaData.scriptClass->addInternalCall("Internal_setbias", (void*)&ScriptAmbientOcclusionSettings::Internal_setbias);
-		metaData.scriptClass->addInternalCall("Internal_getfadeDistance", (void*)&ScriptAmbientOcclusionSettings::Internal_getfadeDistance);
-		metaData.scriptClass->addInternalCall("Internal_setfadeDistance", (void*)&ScriptAmbientOcclusionSettings::Internal_setfadeDistance);
-		metaData.scriptClass->addInternalCall("Internal_getfadeRange", (void*)&ScriptAmbientOcclusionSettings::Internal_getfadeRange);
-		metaData.scriptClass->addInternalCall("Internal_setfadeRange", (void*)&ScriptAmbientOcclusionSettings::Internal_setfadeRange);
-		metaData.scriptClass->addInternalCall("Internal_getintensity", (void*)&ScriptAmbientOcclusionSettings::Internal_getintensity);
-		metaData.scriptClass->addInternalCall("Internal_setintensity", (void*)&ScriptAmbientOcclusionSettings::Internal_setintensity);
-		metaData.scriptClass->addInternalCall("Internal_getpower", (void*)&ScriptAmbientOcclusionSettings::Internal_getpower);
-		metaData.scriptClass->addInternalCall("Internal_setpower", (void*)&ScriptAmbientOcclusionSettings::Internal_setpower);
-		metaData.scriptClass->addInternalCall("Internal_getquality", (void*)&ScriptAmbientOcclusionSettings::Internal_getquality);
-		metaData.scriptClass->addInternalCall("Internal_setquality", (void*)&ScriptAmbientOcclusionSettings::Internal_setquality);
+		metaData.scriptClass->AddInternalCall("Internal_getenabled", (void*)&ScriptAmbientOcclusionSettings::InternalGetenabled);
+		metaData.scriptClass->AddInternalCall("Internal_setenabled", (void*)&ScriptAmbientOcclusionSettings::InternalSetenabled);
+		metaData.scriptClass->AddInternalCall("Internal_getradius", (void*)&ScriptAmbientOcclusionSettings::InternalGetradius);
+		metaData.scriptClass->AddInternalCall("Internal_setradius", (void*)&ScriptAmbientOcclusionSettings::InternalSetradius);
+		metaData.scriptClass->AddInternalCall("Internal_getbias", (void*)&ScriptAmbientOcclusionSettings::InternalGetbias);
+		metaData.scriptClass->AddInternalCall("Internal_setbias", (void*)&ScriptAmbientOcclusionSettings::InternalSetbias);
+		metaData.scriptClass->AddInternalCall("Internal_getfadeDistance", (void*)&ScriptAmbientOcclusionSettings::InternalGetfadeDistance);
+		metaData.scriptClass->AddInternalCall("Internal_setfadeDistance", (void*)&ScriptAmbientOcclusionSettings::InternalSetfadeDistance);
+		metaData.scriptClass->AddInternalCall("Internal_getfadeRange", (void*)&ScriptAmbientOcclusionSettings::InternalGetfadeRange);
+		metaData.scriptClass->AddInternalCall("Internal_setfadeRange", (void*)&ScriptAmbientOcclusionSettings::InternalSetfadeRange);
+		metaData.scriptClass->AddInternalCall("Internal_getintensity", (void*)&ScriptAmbientOcclusionSettings::InternalGetintensity);
+		metaData.scriptClass->AddInternalCall("Internal_setintensity", (void*)&ScriptAmbientOcclusionSettings::InternalSetintensity);
+		metaData.scriptClass->AddInternalCall("Internal_getpower", (void*)&ScriptAmbientOcclusionSettings::InternalGetpower);
+		metaData.scriptClass->AddInternalCall("Internal_setpower", (void*)&ScriptAmbientOcclusionSettings::InternalSetpower);
+		metaData.scriptClass->AddInternalCall("Internal_getquality", (void*)&ScriptAmbientOcclusionSettings::InternalGetquality);
+		metaData.scriptClass->AddInternalCall("Internal_setquality", (void*)&ScriptAmbientOcclusionSettings::InternalSetquality);
 
 	}
 

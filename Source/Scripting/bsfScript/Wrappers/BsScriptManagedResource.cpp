@@ -42,30 +42,30 @@ namespace bs
 			return nullptr;
 
 		MonoObject* instance = currentObjInfo->mMonoClass->CreateInstance(construct);
-		mGCHandle = MonoUtil::newGCHandle(instance, false);
+		mGCHandle = MonoUtil::NewGcHandle(instance, false);
 
 		return instance;
 	}
 
 	void ScriptManagedResource::ClearManagedInstanceInternal()
 	{
-		freeManagedInstance();
+		FreeManagedInstance();
 	}
 
 	ScriptObjectBackup ScriptManagedResource::BeginRefresh()
 	{
 		ScriptObjectBackup backupData;
-		backupData.data = mResource->backup();
+		backupData.data = mResource->Backup();
 
 		return backupData;
 	}
 
 	void ScriptManagedResource::EndRefresh(const ScriptObjectBackup& backupData)
 	{
-		MonoObject* instance = MonoUtil::getObjectFromGCHandle(mGCHandle);
+		MonoObject* instance = MonoUtil::GetObjectFromGcHandle(mGCHandle);
 
 		ResourceBackupData resourceBackup = any_cast<ResourceBackupData>(backupData.data);
-		mResource->restore(resourceBackup);
+		mResource->Restore(resourceBackup);
 
 		// If we could not find resource type after refresh, treat it as if it was destroyed
 		if (instance == nullptr)
@@ -76,7 +76,7 @@ namespace bs
 	{
 		mGCHandle = 0;
 		
-		if (!assemblyRefresh || mResource->isDestroyed())
+		if (!assemblyRefresh || mResource->IsDestroyed())
 		{
 			// The only way this method should be reachable is when Resource::unload is called, which means the resource
 			// has had to been already freed. Even if all managed instances are released ManagedResource itself holds the last
@@ -85,13 +85,13 @@ namespace bs
 			// should make sure all instances are unloaded before that happens.
 			BS_ASSERT(mResource == nullptr || !mResource.IsLoaded());
 
-			ScriptResourceManager::Instance().destroyScriptResource(this);
+			ScriptResourceManager::Instance().DestroyScriptResource(this);
 		}
 	}
 
 	void ScriptManagedResource::NotifyDestroyedInternal()
 	{
-		freeManagedInstance();
+		FreeManagedInstance();
 	}
 
 	void ScriptManagedResource::SetResource(const HResource& resource)

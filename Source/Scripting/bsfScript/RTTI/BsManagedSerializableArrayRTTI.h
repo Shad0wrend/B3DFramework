@@ -105,7 +105,7 @@ namespace bs
 
 		SPtr<IReflectable> NewRttiObject() 
 		{
-			return ManagedSerializableArray::createNew();
+			return ManagedSerializableArray::CreateNew();
 		}
 	};
 

@@ -23,7 +23,7 @@ namespace bs
 		META_Entry_##ScriptType;																							\
 																															\
 	public:																													\
-		static MonoObject* create##ScriptType(const SPtr<IReflectable>& reflectable)										\
+		static MonoObject* Create##ScriptType(const SPtr<IReflectable>& reflectable)										\
 		{																													\
 			return ScriptType::Create(std::static_pointer_cast<ReflectableType>(reflectable));								\
 		}																													\
@@ -34,10 +34,10 @@ namespace bs
 			META_GetPrevEntries(entries, META_Entry_##ScriptType());														\
 																															\
 			ReflectableTypeInfo entry;																						\
-			entry.metaData = ScriptType::getMetaData();																		\
+			entry.metaData = ScriptType::GetMetaData();																		\
 			entry.typeId = ReflectableType::GetRttiStatic()->GetRttiId();													\
 			entry.monoClass = nullptr;																						\
-			entry.createCallback = &create##ScriptType;																		\
+			entry.createCallback = &Create##ScriptType;																		\
 																															\
 			entries.push_back(entry);																						\
 		}																													\
@@ -49,7 +49,7 @@ namespace bs
 		META_LastEntry;																										\
 																															\
 	public:																													\
-		static Vector<ReflectableTypeInfo> getEntries()																		\
+		static Vector<ReflectableTypeInfo> GetEntries()																		\
 		{																													\
 			Vector<ReflectableTypeInfo> entries;																			\
 			META_GetPrevEntries(entries, META_LastEntry());																	\

@@ -39,25 +39,25 @@ namespace bs
 		ScriptArray scriptArray(guiOptions);
 		UINT32 arrayLen = scriptArray.Size();
 		for (UINT32 i = 0; i < arrayLen; i++)
-			options.AddOption(scriptArray.get<GUIOption>(i));
+			options.AddOption(scriptArray.Get<GUIOption>(i));
 
-		GUIContent nativeContent = ScriptGUIContent::fromInterop(*content);
-		GUILabel* guiLabel = GUILabel::Create(nativeContent, options, MonoUtil::monoToString(style));
+		GUIContent nativeContent = ScriptGUIContent::FromInterop(*content);
+		GUILabel* guiLabel = GUILabel::Create(nativeContent, options, MonoUtil::MonoToString(style));
 
 		new (bs_alloc<ScriptGUILabel>()) ScriptGUILabel(instance, guiLabel);
 	}
 
 	void ScriptGUILabel::InternalSetContent(ScriptGUILabel* nativeInstance, __GUIContentInterop* content)
 	{
-		GUIContent nativeContent = ScriptGUIContent::fromInterop(*content);
+		GUIContent nativeContent = ScriptGUIContent::FromInterop(*content);
 
-		GUILabel* label = (GUILabel*)nativeInstance->GetGUIElement();
+		GUILabel* label = (GUILabel*)nativeInstance->GetGuiElement();
 		label->SetContent(nativeContent);
 	}
 
 	void ScriptGUILabel::InternalSetTint(ScriptGUILabel* nativeInstance, Color* color)
 	{
-		GUILabel* label = (GUILabel*)nativeInstance->GetGUIElement();
+		GUILabel* label = (GUILabel*)nativeInstance->GetGuiElement();
 		label->SetTint(*color);
 	}
 }

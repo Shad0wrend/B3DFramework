@@ -26,24 +26,24 @@ namespace bs
 
 	void ScriptCJoint::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_getBody", (void*)&ScriptCJoint::Internal_getBody);
-		metaData.scriptClass->addInternalCall("Internal_setBody", (void*)&ScriptCJoint::Internal_setBody);
+		metaData.scriptClass->AddInternalCall("Internal_getBody", (void*)&ScriptCJoint::InternalGetBody);
+		metaData.scriptClass->AddInternalCall("Internal_setBody", (void*)&ScriptCJoint::InternalSetBody);
 		metaData.scriptClass->AddInternalCall("Internal_getPosition", (void*)&ScriptCJoint::InternalGetPosition);
 		metaData.scriptClass->AddInternalCall("Internal_getRotation", (void*)&ScriptCJoint::InternalGetRotation);
 		metaData.scriptClass->AddInternalCall("Internal_setTransform", (void*)&ScriptCJoint::InternalSetTransform);
-		metaData.scriptClass->addInternalCall("Internal_getBreakForce", (void*)&ScriptCJoint::Internal_getBreakForce);
-		metaData.scriptClass->addInternalCall("Internal_setBreakForce", (void*)&ScriptCJoint::Internal_setBreakForce);
-		metaData.scriptClass->addInternalCall("Internal_getBreakTorque", (void*)&ScriptCJoint::Internal_getBreakTorque);
-		metaData.scriptClass->addInternalCall("Internal_setBreakTorque", (void*)&ScriptCJoint::Internal_setBreakTorque);
-		metaData.scriptClass->addInternalCall("Internal_getEnableCollision", (void*)&ScriptCJoint::Internal_getEnableCollision);
-		metaData.scriptClass->addInternalCall("Internal_setEnableCollision", (void*)&ScriptCJoint::Internal_setEnableCollision);
+		metaData.scriptClass->AddInternalCall("Internal_getBreakForce", (void*)&ScriptCJoint::InternalGetBreakForce);
+		metaData.scriptClass->AddInternalCall("Internal_setBreakForce", (void*)&ScriptCJoint::InternalSetBreakForce);
+		metaData.scriptClass->AddInternalCall("Internal_getBreakTorque", (void*)&ScriptCJoint::InternalGetBreakTorque);
+		metaData.scriptClass->AddInternalCall("Internal_setBreakTorque", (void*)&ScriptCJoint::InternalSetBreakTorque);
+		metaData.scriptClass->AddInternalCall("Internal_getEnableCollision", (void*)&ScriptCJoint::InternalGetEnableCollision);
+		metaData.scriptClass->AddInternalCall("Internal_setEnableCollision", (void*)&ScriptCJoint::InternalSetEnableCollision);
 
 		onJointBreakThunk = (onJointBreakThunkDef)metaData.scriptClass->GetMethodExact("Internal_onJointBreak", "")->GetThunk();
 	}
 
 	void ScriptCJoint::OnJointBreak()
 	{
-		MonoUtil::invokeThunk(onJointBreakThunk, getManagedInstance());
+		MonoUtil::InvokeThunk(onJointBreakThunk, GetManagedInstance());
 	}
 	MonoObject* ScriptCJoint::InternalGetBody(ScriptCJointBase* thisPtr, JointBody body)
 	{

@@ -17,21 +17,21 @@ namespace bs
 
 	void ScriptTextureImportOptions::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_getformat", (void*)&ScriptTextureImportOptions::Internal_getformat);
-		metaData.scriptClass->addInternalCall("Internal_setformat", (void*)&ScriptTextureImportOptions::Internal_setformat);
-		metaData.scriptClass->addInternalCall("Internal_getgenerateMips", (void*)&ScriptTextureImportOptions::Internal_getgenerateMips);
-		metaData.scriptClass->addInternalCall("Internal_setgenerateMips", (void*)&ScriptTextureImportOptions::Internal_setgenerateMips);
-		metaData.scriptClass->addInternalCall("Internal_getmaxMip", (void*)&ScriptTextureImportOptions::Internal_getmaxMip);
-		metaData.scriptClass->addInternalCall("Internal_setmaxMip", (void*)&ScriptTextureImportOptions::Internal_setmaxMip);
-		metaData.scriptClass->addInternalCall("Internal_getcpuCached", (void*)&ScriptTextureImportOptions::Internal_getcpuCached);
-		metaData.scriptClass->addInternalCall("Internal_setcpuCached", (void*)&ScriptTextureImportOptions::Internal_setcpuCached);
-		metaData.scriptClass->addInternalCall("Internal_getsRGB", (void*)&ScriptTextureImportOptions::Internal_getsRGB);
-		metaData.scriptClass->addInternalCall("Internal_setsRGB", (void*)&ScriptTextureImportOptions::Internal_setsRGB);
-		metaData.scriptClass->addInternalCall("Internal_getcubemap", (void*)&ScriptTextureImportOptions::Internal_getcubemap);
-		metaData.scriptClass->addInternalCall("Internal_setcubemap", (void*)&ScriptTextureImportOptions::Internal_setcubemap);
-		metaData.scriptClass->addInternalCall("Internal_getcubemapSourceType", (void*)&ScriptTextureImportOptions::Internal_getcubemapSourceType);
-		metaData.scriptClass->addInternalCall("Internal_setcubemapSourceType", (void*)&ScriptTextureImportOptions::Internal_setcubemapSourceType);
-		metaData.scriptClass->addInternalCall("Internal_create", (void*)&ScriptTextureImportOptions::Internal_create);
+		metaData.scriptClass->AddInternalCall("Internal_getformat", (void*)&ScriptTextureImportOptions::InternalGetformat);
+		metaData.scriptClass->AddInternalCall("Internal_setformat", (void*)&ScriptTextureImportOptions::InternalSetformat);
+		metaData.scriptClass->AddInternalCall("Internal_getgenerateMips", (void*)&ScriptTextureImportOptions::InternalGetgenerateMips);
+		metaData.scriptClass->AddInternalCall("Internal_setgenerateMips", (void*)&ScriptTextureImportOptions::InternalSetgenerateMips);
+		metaData.scriptClass->AddInternalCall("Internal_getmaxMip", (void*)&ScriptTextureImportOptions::InternalGetmaxMip);
+		metaData.scriptClass->AddInternalCall("Internal_setmaxMip", (void*)&ScriptTextureImportOptions::InternalSetmaxMip);
+		metaData.scriptClass->AddInternalCall("Internal_getcpuCached", (void*)&ScriptTextureImportOptions::InternalGetcpuCached);
+		metaData.scriptClass->AddInternalCall("Internal_setcpuCached", (void*)&ScriptTextureImportOptions::InternalSetcpuCached);
+		metaData.scriptClass->AddInternalCall("Internal_getsRGB", (void*)&ScriptTextureImportOptions::InternalGetsRGB);
+		metaData.scriptClass->AddInternalCall("Internal_setsRGB", (void*)&ScriptTextureImportOptions::InternalSetsRGB);
+		metaData.scriptClass->AddInternalCall("Internal_getcubemap", (void*)&ScriptTextureImportOptions::InternalGetcubemap);
+		metaData.scriptClass->AddInternalCall("Internal_setcubemap", (void*)&ScriptTextureImportOptions::InternalSetcubemap);
+		metaData.scriptClass->AddInternalCall("Internal_getcubemapSourceType", (void*)&ScriptTextureImportOptions::InternalGetcubemapSourceType);
+		metaData.scriptClass->AddInternalCall("Internal_setcubemapSourceType", (void*)&ScriptTextureImportOptions::InternalSetcubemapSourceType);
+		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptTextureImportOptions::InternalCreate);
 
 	}
 
@@ -46,12 +46,12 @@ namespace bs
 		new (bs_alloc<ScriptTextureImportOptions>()) ScriptTextureImportOptions(managedInstance, value);
 		return managedInstance;
 	}
-	void ScriptTextureImportOptions::Internal_create(MonoObject* managedInstance)
+	void ScriptTextureImportOptions::InternalCreate(MonoObject* managedInstance)
 	{
 		SPtr<TextureImportOptions> instance = TextureImportOptions::Create();
 		new (bs_alloc<ScriptTextureImportOptions>())ScriptTextureImportOptions(managedInstance, instance);
 	}
-	PixelFormat ScriptTextureImportOptions::Internal_getformat(ScriptTextureImportOptions* thisPtr)
+	PixelFormat ScriptTextureImportOptions::InternalGetformat(ScriptTextureImportOptions* thisPtr)
 	{
 		PixelFormat tmp__output;
 		tmp__output = thisPtr->GetInternal()->format;
@@ -62,12 +62,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptTextureImportOptions::Internal_setformat(ScriptTextureImportOptions* thisPtr, PixelFormat value)
+	void ScriptTextureImportOptions::InternalSetformat(ScriptTextureImportOptions* thisPtr, PixelFormat value)
 	{
 		thisPtr->GetInternal()->format = value;
 	}
 
-	bool ScriptTextureImportOptions::Internal_getgenerateMips(ScriptTextureImportOptions* thisPtr)
+	bool ScriptTextureImportOptions::InternalGetgenerateMips(ScriptTextureImportOptions* thisPtr)
 	{
 		bool tmp__output;
 		tmp__output = thisPtr->GetInternal()->generateMips;
@@ -78,12 +78,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptTextureImportOptions::Internal_setgenerateMips(ScriptTextureImportOptions* thisPtr, bool value)
+	void ScriptTextureImportOptions::InternalSetgenerateMips(ScriptTextureImportOptions* thisPtr, bool value)
 	{
 		thisPtr->GetInternal()->generateMips = value;
 	}
 
-	uint32_t ScriptTextureImportOptions::Internal_getmaxMip(ScriptTextureImportOptions* thisPtr)
+	uint32_t ScriptTextureImportOptions::InternalGetmaxMip(ScriptTextureImportOptions* thisPtr)
 	{
 		uint32_t tmp__output;
 		tmp__output = thisPtr->GetInternal()->maxMip;
@@ -94,12 +94,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptTextureImportOptions::Internal_setmaxMip(ScriptTextureImportOptions* thisPtr, uint32_t value)
+	void ScriptTextureImportOptions::InternalSetmaxMip(ScriptTextureImportOptions* thisPtr, uint32_t value)
 	{
 		thisPtr->GetInternal()->maxMip = value;
 	}
 
-	bool ScriptTextureImportOptions::Internal_getcpuCached(ScriptTextureImportOptions* thisPtr)
+	bool ScriptTextureImportOptions::InternalGetcpuCached(ScriptTextureImportOptions* thisPtr)
 	{
 		bool tmp__output;
 		tmp__output = thisPtr->GetInternal()->cpuCached;
@@ -110,12 +110,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptTextureImportOptions::Internal_setcpuCached(ScriptTextureImportOptions* thisPtr, bool value)
+	void ScriptTextureImportOptions::InternalSetcpuCached(ScriptTextureImportOptions* thisPtr, bool value)
 	{
 		thisPtr->GetInternal()->cpuCached = value;
 	}
 
-	bool ScriptTextureImportOptions::Internal_getsRGB(ScriptTextureImportOptions* thisPtr)
+	bool ScriptTextureImportOptions::InternalGetsRGB(ScriptTextureImportOptions* thisPtr)
 	{
 		bool tmp__output;
 		tmp__output = thisPtr->GetInternal()->sRGB;
@@ -126,12 +126,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptTextureImportOptions::Internal_setsRGB(ScriptTextureImportOptions* thisPtr, bool value)
+	void ScriptTextureImportOptions::InternalSetsRGB(ScriptTextureImportOptions* thisPtr, bool value)
 	{
 		thisPtr->GetInternal()->sRGB = value;
 	}
 
-	bool ScriptTextureImportOptions::Internal_getcubemap(ScriptTextureImportOptions* thisPtr)
+	bool ScriptTextureImportOptions::InternalGetcubemap(ScriptTextureImportOptions* thisPtr)
 	{
 		bool tmp__output;
 		tmp__output = thisPtr->GetInternal()->cubemap;
@@ -142,12 +142,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptTextureImportOptions::Internal_setcubemap(ScriptTextureImportOptions* thisPtr, bool value)
+	void ScriptTextureImportOptions::InternalSetcubemap(ScriptTextureImportOptions* thisPtr, bool value)
 	{
 		thisPtr->GetInternal()->cubemap = value;
 	}
 
-	CubemapSourceType ScriptTextureImportOptions::Internal_getcubemapSourceType(ScriptTextureImportOptions* thisPtr)
+	CubemapSourceType ScriptTextureImportOptions::InternalGetcubemapSourceType(ScriptTextureImportOptions* thisPtr)
 	{
 		CubemapSourceType tmp__output;
 		tmp__output = thisPtr->GetInternal()->cubemapSourceType;
@@ -158,7 +158,7 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptTextureImportOptions::Internal_setcubemapSourceType(ScriptTextureImportOptions* thisPtr, CubemapSourceType value)
+	void ScriptTextureImportOptions::InternalSetcubemapSourceType(ScriptTextureImportOptions* thisPtr, CubemapSourceType value)
 	{
 		thisPtr->GetInternal()->cubemapSourceType = value;
 	}

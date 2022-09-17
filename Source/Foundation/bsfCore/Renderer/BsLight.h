@@ -46,7 +46,7 @@ namespace bs
 		/**	Determines the type of the light. */
 		LightType GetType() const { return mType; }
 
-		/** @copydoc getType() */
+		/** @copydoc GetType() */
 		void SetType(LightType type) { mType = type; MarkCoreDirtyInternal(); UpdateBounds(); }
 
 		/**	Determines does this light cast shadows when rendered. */

@@ -17,10 +17,10 @@ namespace bs
 
 	void ScriptParticleForce::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_setOptions", (void*)&ScriptParticleForce::Internal_setOptions);
-		metaData.scriptClass->addInternalCall("Internal_getOptions", (void*)&ScriptParticleForce::Internal_getOptions);
+		metaData.scriptClass->AddInternalCall("Internal_setOptions", (void*)&ScriptParticleForce::InternalSetOptions);
+		metaData.scriptClass->AddInternalCall("Internal_getOptions", (void*)&ScriptParticleForce::InternalGetOptions);
 		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptParticleForce::InternalCreate);
-		metaData.scriptClass->addInternalCall("Internal_create0", (void*)&ScriptParticleForce::Internal_create0);
+		metaData.scriptClass->AddInternalCall("Internal_create0", (void*)&ScriptParticleForce::InternalCreate0);
 
 	}
 

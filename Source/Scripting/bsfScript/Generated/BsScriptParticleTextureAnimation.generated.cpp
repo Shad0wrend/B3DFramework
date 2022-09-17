@@ -17,10 +17,10 @@ namespace bs
 
 	void ScriptParticleTextureAnimation::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_setOptions", (void*)&ScriptParticleTextureAnimation::Internal_setOptions);
-		metaData.scriptClass->addInternalCall("Internal_getOptions", (void*)&ScriptParticleTextureAnimation::Internal_getOptions);
+		metaData.scriptClass->AddInternalCall("Internal_setOptions", (void*)&ScriptParticleTextureAnimation::InternalSetOptions);
+		metaData.scriptClass->AddInternalCall("Internal_getOptions", (void*)&ScriptParticleTextureAnimation::InternalGetOptions);
 		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptParticleTextureAnimation::InternalCreate);
-		metaData.scriptClass->addInternalCall("Internal_create0", (void*)&ScriptParticleTextureAnimation::Internal_create0);
+		metaData.scriptClass->AddInternalCall("Internal_create0", (void*)&ScriptParticleTextureAnimation::InternalCreate0);
 
 	}
 

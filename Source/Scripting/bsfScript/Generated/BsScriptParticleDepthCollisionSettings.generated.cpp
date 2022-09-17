@@ -14,15 +14,15 @@ namespace bs
 
 	void ScriptParticleDepthCollisionSettings::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_ParticleDepthCollisionSettings", (void*)&ScriptParticleDepthCollisionSettings::Internal_ParticleDepthCollisionSettings);
-		metaData.scriptClass->addInternalCall("Internal_getenabled", (void*)&ScriptParticleDepthCollisionSettings::Internal_getenabled);
-		metaData.scriptClass->addInternalCall("Internal_setenabled", (void*)&ScriptParticleDepthCollisionSettings::Internal_setenabled);
-		metaData.scriptClass->addInternalCall("Internal_getrestitution", (void*)&ScriptParticleDepthCollisionSettings::Internal_getrestitution);
-		metaData.scriptClass->addInternalCall("Internal_setrestitution", (void*)&ScriptParticleDepthCollisionSettings::Internal_setrestitution);
-		metaData.scriptClass->addInternalCall("Internal_getdampening", (void*)&ScriptParticleDepthCollisionSettings::Internal_getdampening);
-		metaData.scriptClass->addInternalCall("Internal_setdampening", (void*)&ScriptParticleDepthCollisionSettings::Internal_setdampening);
-		metaData.scriptClass->addInternalCall("Internal_getradiusScale", (void*)&ScriptParticleDepthCollisionSettings::Internal_getradiusScale);
-		metaData.scriptClass->addInternalCall("Internal_setradiusScale", (void*)&ScriptParticleDepthCollisionSettings::Internal_setradiusScale);
+		metaData.scriptClass->AddInternalCall("Internal_ParticleDepthCollisionSettings", (void*)&ScriptParticleDepthCollisionSettings::InternalParticleDepthCollisionSettings);
+		metaData.scriptClass->AddInternalCall("Internal_getenabled", (void*)&ScriptParticleDepthCollisionSettings::InternalGetenabled);
+		metaData.scriptClass->AddInternalCall("Internal_setenabled", (void*)&ScriptParticleDepthCollisionSettings::InternalSetenabled);
+		metaData.scriptClass->AddInternalCall("Internal_getrestitution", (void*)&ScriptParticleDepthCollisionSettings::InternalGetrestitution);
+		metaData.scriptClass->AddInternalCall("Internal_setrestitution", (void*)&ScriptParticleDepthCollisionSettings::InternalSetrestitution);
+		metaData.scriptClass->AddInternalCall("Internal_getdampening", (void*)&ScriptParticleDepthCollisionSettings::InternalGetdampening);
+		metaData.scriptClass->AddInternalCall("Internal_setdampening", (void*)&ScriptParticleDepthCollisionSettings::InternalSetdampening);
+		metaData.scriptClass->AddInternalCall("Internal_getradiusScale", (void*)&ScriptParticleDepthCollisionSettings::InternalGetradiusScale);
+		metaData.scriptClass->AddInternalCall("Internal_setradiusScale", (void*)&ScriptParticleDepthCollisionSettings::InternalSetradiusScale);
 
 	}
 

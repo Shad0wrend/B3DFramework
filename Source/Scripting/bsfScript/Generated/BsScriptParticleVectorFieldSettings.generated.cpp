@@ -20,26 +20,26 @@ namespace bs
 
 	void ScriptParticleVectorFieldSettings::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_getvectorField", (void*)&ScriptParticleVectorFieldSettings::Internal_getvectorField);
-		metaData.scriptClass->addInternalCall("Internal_setvectorField", (void*)&ScriptParticleVectorFieldSettings::Internal_setvectorField);
-		metaData.scriptClass->addInternalCall("Internal_getintensity", (void*)&ScriptParticleVectorFieldSettings::Internal_getintensity);
-		metaData.scriptClass->addInternalCall("Internal_setintensity", (void*)&ScriptParticleVectorFieldSettings::Internal_setintensity);
-		metaData.scriptClass->addInternalCall("Internal_gettightness", (void*)&ScriptParticleVectorFieldSettings::Internal_gettightness);
-		metaData.scriptClass->addInternalCall("Internal_settightness", (void*)&ScriptParticleVectorFieldSettings::Internal_settightness);
-		metaData.scriptClass->addInternalCall("Internal_getscale", (void*)&ScriptParticleVectorFieldSettings::Internal_getscale);
-		metaData.scriptClass->addInternalCall("Internal_setscale", (void*)&ScriptParticleVectorFieldSettings::Internal_setscale);
-		metaData.scriptClass->addInternalCall("Internal_getoffset", (void*)&ScriptParticleVectorFieldSettings::Internal_getoffset);
-		metaData.scriptClass->addInternalCall("Internal_setoffset", (void*)&ScriptParticleVectorFieldSettings::Internal_setoffset);
-		metaData.scriptClass->addInternalCall("Internal_getrotation", (void*)&ScriptParticleVectorFieldSettings::Internal_getrotation);
-		metaData.scriptClass->addInternalCall("Internal_setrotation", (void*)&ScriptParticleVectorFieldSettings::Internal_setrotation);
-		metaData.scriptClass->addInternalCall("Internal_getrotationRate", (void*)&ScriptParticleVectorFieldSettings::Internal_getrotationRate);
-		metaData.scriptClass->addInternalCall("Internal_setrotationRate", (void*)&ScriptParticleVectorFieldSettings::Internal_setrotationRate);
-		metaData.scriptClass->addInternalCall("Internal_gettilingX", (void*)&ScriptParticleVectorFieldSettings::Internal_gettilingX);
-		metaData.scriptClass->addInternalCall("Internal_settilingX", (void*)&ScriptParticleVectorFieldSettings::Internal_settilingX);
-		metaData.scriptClass->addInternalCall("Internal_gettilingY", (void*)&ScriptParticleVectorFieldSettings::Internal_gettilingY);
-		metaData.scriptClass->addInternalCall("Internal_settilingY", (void*)&ScriptParticleVectorFieldSettings::Internal_settilingY);
-		metaData.scriptClass->addInternalCall("Internal_gettilingZ", (void*)&ScriptParticleVectorFieldSettings::Internal_gettilingZ);
-		metaData.scriptClass->addInternalCall("Internal_settilingZ", (void*)&ScriptParticleVectorFieldSettings::Internal_settilingZ);
+		metaData.scriptClass->AddInternalCall("Internal_getvectorField", (void*)&ScriptParticleVectorFieldSettings::InternalGetvectorField);
+		metaData.scriptClass->AddInternalCall("Internal_setvectorField", (void*)&ScriptParticleVectorFieldSettings::InternalSetvectorField);
+		metaData.scriptClass->AddInternalCall("Internal_getintensity", (void*)&ScriptParticleVectorFieldSettings::InternalGetintensity);
+		metaData.scriptClass->AddInternalCall("Internal_setintensity", (void*)&ScriptParticleVectorFieldSettings::InternalSetintensity);
+		metaData.scriptClass->AddInternalCall("Internal_gettightness", (void*)&ScriptParticleVectorFieldSettings::InternalGettightness);
+		metaData.scriptClass->AddInternalCall("Internal_settightness", (void*)&ScriptParticleVectorFieldSettings::InternalSettightness);
+		metaData.scriptClass->AddInternalCall("Internal_getscale", (void*)&ScriptParticleVectorFieldSettings::InternalGetscale);
+		metaData.scriptClass->AddInternalCall("Internal_setscale", (void*)&ScriptParticleVectorFieldSettings::InternalSetscale);
+		metaData.scriptClass->AddInternalCall("Internal_getoffset", (void*)&ScriptParticleVectorFieldSettings::InternalGetoffset);
+		metaData.scriptClass->AddInternalCall("Internal_setoffset", (void*)&ScriptParticleVectorFieldSettings::InternalSetoffset);
+		metaData.scriptClass->AddInternalCall("Internal_getrotation", (void*)&ScriptParticleVectorFieldSettings::InternalGetrotation);
+		metaData.scriptClass->AddInternalCall("Internal_setrotation", (void*)&ScriptParticleVectorFieldSettings::InternalSetrotation);
+		metaData.scriptClass->AddInternalCall("Internal_getrotationRate", (void*)&ScriptParticleVectorFieldSettings::InternalGetrotationRate);
+		metaData.scriptClass->AddInternalCall("Internal_setrotationRate", (void*)&ScriptParticleVectorFieldSettings::InternalSetrotationRate);
+		metaData.scriptClass->AddInternalCall("Internal_gettilingX", (void*)&ScriptParticleVectorFieldSettings::InternalGettilingX);
+		metaData.scriptClass->AddInternalCall("Internal_settilingX", (void*)&ScriptParticleVectorFieldSettings::InternalSettilingX);
+		metaData.scriptClass->AddInternalCall("Internal_gettilingY", (void*)&ScriptParticleVectorFieldSettings::InternalGettilingY);
+		metaData.scriptClass->AddInternalCall("Internal_settilingY", (void*)&ScriptParticleVectorFieldSettings::InternalSettilingY);
+		metaData.scriptClass->AddInternalCall("Internal_gettilingZ", (void*)&ScriptParticleVectorFieldSettings::InternalGettilingZ);
+		metaData.scriptClass->AddInternalCall("Internal_settilingZ", (void*)&ScriptParticleVectorFieldSettings::InternalSettilingZ);
 
 	}
 

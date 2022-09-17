@@ -61,28 +61,28 @@ namespace bs
 
 	UINT32 TextureEx::GetDepth(const HTexture& thisPtr)
 	{
-		return thisPtr->GetProperties().getDepth();
+		return thisPtr->GetProperties().GetDepth();
 	}
 
 	bool TextureEx::GetGammaCorrection(const HTexture& thisPtr)
 	{
-		return thisPtr->GetProperties().isHardwareGammaEnabled();
+		return thisPtr->GetProperties().IsHardwareGammaEnabled();
 	}
 
 	UINT32 TextureEx::GetSampleCount(const HTexture& thisPtr)
 	{
-		return thisPtr->GetProperties().getNumSamples();
+		return thisPtr->GetProperties().GetNumSamples();
 	}
 
 	UINT32 TextureEx::GetMipmapCount(const HTexture& thisPtr)
 	{
-		return thisPtr->GetProperties().getNumMipmaps();
+		return thisPtr->GetProperties().GetNumMipmaps();
 	}
 
 	SPtr<PixelData> TextureEx::GetPixels(const HTexture& thisPtr, UINT32 face, UINT32 mipLevel)
 	{
-		SPtr<PixelData> pixelData = thisPtr->GetProperties().allocBuffer(face, mipLevel);
-		thisPtr->readCachedData(*pixelData, face, mipLevel);
+		SPtr<PixelData> pixelData = thisPtr->GetProperties().AllocBuffer(face, mipLevel);
+		thisPtr->ReadCachedData(*pixelData, face, mipLevel);
 
 		return pixelData;
 	}
@@ -90,7 +90,7 @@ namespace bs
 	void TextureEx::SetPixels(const HTexture& thisPtr, const SPtr<PixelData>& data, UINT32 face, UINT32 mipLevel)
 	{
 		if (data != nullptr)
-			thisPtr->writeData(data, face, mipLevel, false);
+			thisPtr->WriteData(data, face, mipLevel, false);
 	}
 
 	void TextureEx::SetPixelsArray(const HTexture& thisPtr, const Vector<Color>& colors, UINT32 face, UINT32 mipLevel)
@@ -98,7 +98,7 @@ namespace bs
 		UINT32 numElements = (UINT32)colors.size();
 
 		const TextureProperties& props = thisPtr->GetProperties();
-		UINT32 texNumElements = props.GetWidth() * props.GetHeight() * props.getDepth();
+		UINT32 texNumElements = props.GetWidth() * props.GetHeight() * props.GetDepth();
 
 		if (texNumElements != numElements)
 		{
@@ -106,11 +106,11 @@ namespace bs
 			return;
 		}		
 
-		SPtr<PixelData> pixelData = bs_shared_ptr_new<PixelData>(props.GetWidth(), props.GetHeight(), props.getDepth(),
+		SPtr<PixelData> pixelData = bs_shared_ptr_new<PixelData>(props.GetWidth(), props.GetHeight(), props.GetDepth(),
 			props.GetFormat());
-		pixelData->allocateInternalBuffer();
+		pixelData->AllocateInternalBuffer();
 		pixelData->SetColors(colors);
 
-		thisPtr->writeData(pixelData, face, mipLevel, false);
+		thisPtr->WriteData(pixelData, face, mipLevel, false);
 	}
 }

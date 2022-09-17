@@ -66,33 +66,33 @@ namespace bs
 
 	void ScriptDebug::InternalLogError(MonoString* message, UINT32 category)
 	{
-		gDebug().log(MonoUtil::monoToString(message), LogVerbosity::Error, category);
+		gDebug().Log(MonoUtil::MonoToString(message), LogVerbosity::Error, category);
 	}
 
 	void ScriptDebug::InternalLogMessage(MonoString* message, LogVerbosity type, UINT32 category)
 	{
-		gDebug().log(MonoUtil::monoToString(message), type, category);
+		gDebug().Log(MonoUtil::MonoToString(message), type, category);
 	}
 
 	void ScriptDebug::InternalClear(LogVerbosity verbosity, UINT32 category)
 	{
-		gDebug().getLog().clear(verbosity, category);
+		gDebug().GetLog().Clear(verbosity, category);
 	}
 
 	MonoArray* ScriptDebug::InternalGetMessages()
 	{
-		Vector<LogEntry> entries = gDebug().getLog().getEntries();
+		Vector<LogEntry> entries = gDebug().GetLog().GetEntries();
 
 		UINT32 numEntries = (UINT32)entries.size();
-		ScriptArray output = ScriptArray::create<ScriptLogEntry>(numEntries);
+		ScriptArray output = ScriptArray::Create<ScriptLogEntry>(numEntries);
 		for (UINT32 i = 0; i < numEntries; i++)
 		{
-			MonoString* message = MonoUtil::stringToMono(entries[i].getMessage());
+			MonoString* message = MonoUtil::StringToMono(entries[i].GetMessage());
 
-			ScriptLogEntryData scriptEntry = { message, entries[i].getVerbosity(), entries[i].getCategory() };
+			ScriptLogEntryData scriptEntry = { message, entries[i].GetVerbosity(), entries[i].GetCategory() };
 			output.Set(i, scriptEntry);
 		}
 
-		return output.getInternal();
+		return output.GetInternal();
 	}
 }

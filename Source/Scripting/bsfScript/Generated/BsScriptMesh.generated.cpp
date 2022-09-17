@@ -31,10 +31,10 @@ namespace bs
 		metaData.scriptClass->AddInternalCall("Internal_create1", (void*)&ScriptMesh::InternalCreate1);
 		metaData.scriptClass->AddInternalCall("Internal_create2", (void*)&ScriptMesh::InternalCreate2);
 		metaData.scriptClass->AddInternalCall("Internal_getSubMeshes", (void*)&ScriptMesh::InternalGetSubMeshes);
-		metaData.scriptClass->addInternalCall("Internal_getSubMeshCount", (void*)&ScriptMesh::InternalGetSubMeshCount);
-		metaData.scriptClass->addInternalCall("Internal_getBounds", (void*)&ScriptMesh::InternalGetBounds);
-		metaData.scriptClass->addInternalCall("Internal_getMeshData", (void*)&ScriptMesh::InternalGetMeshData);
-		metaData.scriptClass->addInternalCall("Internal_setMeshData", (void*)&ScriptMesh::InternalSetMeshData);
+		metaData.scriptClass->AddInternalCall("Internal_getSubMeshCount", (void*)&ScriptMesh::InternalGetSubMeshCount);
+		metaData.scriptClass->AddInternalCall("Internal_getBounds", (void*)&ScriptMesh::InternalGetBounds);
+		metaData.scriptClass->AddInternalCall("Internal_getMeshData", (void*)&ScriptMesh::InternalGetMeshData);
+		metaData.scriptClass->AddInternalCall("Internal_setMeshData", (void*)&ScriptMesh::InternalSetMeshData);
 
 	}
 

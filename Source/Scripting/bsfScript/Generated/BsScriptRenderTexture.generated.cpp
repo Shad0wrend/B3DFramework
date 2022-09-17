@@ -23,10 +23,10 @@ namespace bs
 		metaData.scriptClass->AddInternalCall("Internal_create0", (void*)&ScriptRenderTexture::InternalCreate0);
 		metaData.scriptClass->AddInternalCall("Internal_create1", (void*)&ScriptRenderTexture::InternalCreate1);
 		metaData.scriptClass->AddInternalCall("Internal_create2", (void*)&ScriptRenderTexture::InternalCreate2);
-		metaData.scriptClass->addInternalCall("Internal_create3", (void*)&ScriptRenderTexture::Internal_create3);
-		metaData.scriptClass->addInternalCall("Internal_getColorSurface", (void*)&ScriptRenderTexture::Internal_getColorSurface);
-		metaData.scriptClass->addInternalCall("Internal_getColorSurfaces", (void*)&ScriptRenderTexture::Internal_getColorSurfaces);
-		metaData.scriptClass->addInternalCall("Internal_getDepthStencilSurface", (void*)&ScriptRenderTexture::Internal_getDepthStencilSurface);
+		metaData.scriptClass->AddInternalCall("Internal_create3", (void*)&ScriptRenderTexture::InternalCreate3);
+		metaData.scriptClass->AddInternalCall("Internal_getColorSurface", (void*)&ScriptRenderTexture::InternalGetColorSurface);
+		metaData.scriptClass->AddInternalCall("Internal_getColorSurfaces", (void*)&ScriptRenderTexture::InternalGetColorSurfaces);
+		metaData.scriptClass->AddInternalCall("Internal_getDepthStencilSurface", (void*)&ScriptRenderTexture::InternalGetDepthStencilSurface);
 
 	}
 

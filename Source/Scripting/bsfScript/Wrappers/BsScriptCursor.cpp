@@ -46,66 +46,66 @@ namespace bs
 
 	void ScriptCursor::InternalShow()
 	{
-		Cursor::Instance().show();
+		Cursor::Instance().Show();
 	}
 
 	void ScriptCursor::InternalClipToRect(Rect2I* value)
 	{
-		Cursor::Instance().clipToRect(*value);
+		Cursor::Instance().ClipToRect(*value);
 	}
 
 	void ScriptCursor::InternalClipDisable()
 	{
-		Cursor::Instance().clipDisable();
+		Cursor::Instance().ClipDisable();
 	}
 
 	void ScriptCursor::InternalSetCursorStr(MonoString* name)
 	{
-		String nameStr = MonoUtil::monoToString(name);
-		Cursor::Instance().setCursor(nameStr);
+		String nameStr = MonoUtil::MonoToString(name);
+		Cursor::Instance().SetCursor(nameStr);
 	}
 
 	void ScriptCursor::InternalSetCursor(CursorType cursor)
 	{
-		Cursor::Instance().setCursor(cursor);
+		Cursor::Instance().SetCursor(cursor);
 	}
 
 	void ScriptCursor::InternalSetCursorIconStr(MonoString* name, MonoObject* iconData, Vector2I* hotspot)
 	{
-		String nameStr = MonoUtil::monoToString(name);
+		String nameStr = MonoUtil::MonoToString(name);
 
-		ScriptPixelData* scriptPixelData = ScriptPixelData::toNative(iconData);
+		ScriptPixelData* scriptPixelData = ScriptPixelData::ToNative(iconData);
 
 		if (scriptPixelData != nullptr)
 		{
 			SPtr<PixelData> pixelData = scriptPixelData->GetInternal();
-			Cursor::Instance().setCursorIcon(nameStr, *pixelData, *hotspot);
+			Cursor::Instance().SetCursorIcon(nameStr, *pixelData, *hotspot);
 		}
 		else
-			Cursor::Instance().clearCursorIcon(nameStr);
+			Cursor::Instance().ClearCursorIcon(nameStr);
 	}
 
 	void ScriptCursor::InternalSetCursorIcon(CursorType cursor, MonoObject* iconData, Vector2I* hotspot)
 	{
-		ScriptPixelData* scriptPixelData = ScriptPixelData::toNative(iconData);
+		ScriptPixelData* scriptPixelData = ScriptPixelData::ToNative(iconData);
 
 		if (scriptPixelData != nullptr)
 		{
 			SPtr<PixelData> pixelData = scriptPixelData->GetInternal();
-			Cursor::Instance().setCursorIcon(cursor, *pixelData, *hotspot);
+			Cursor::Instance().SetCursorIcon(cursor, *pixelData, *hotspot);
 		}
 		else
-			Cursor::Instance().clearCursorIcon(cursor);
+			Cursor::Instance().ClearCursorIcon(cursor);
 	}
 
 	void ScriptCursor::InternalClearCursorIconStr(MonoString* name)
 	{
-		String nameStr = MonoUtil::monoToString(name);
-		Cursor::Instance().clearCursorIcon(nameStr);
+		String nameStr = MonoUtil::MonoToString(name);
+		Cursor::Instance().ClearCursorIcon(nameStr);
 	}
 
 	void ScriptCursor::InternalClearCursorIcon(CursorType cursor)
 	{
-		Cursor::Instance().clearCursorIcon(cursor);
+		Cursor::Instance().ClearCursorIcon(cursor);
 	}
 }

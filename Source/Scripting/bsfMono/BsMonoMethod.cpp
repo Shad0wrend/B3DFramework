@@ -28,7 +28,7 @@ namespace bs
 		MonoObject* exception = nullptr;
 		MonoObject* retVal = mono_runtime_invoke(mMethod, instance, params, &exception);
 
-		MonoUtil::throwIfException(exception);
+		MonoUtil::ThrowIfException(exception);
 		return retVal;
 	}		
 
@@ -39,7 +39,7 @@ namespace bs
 		MonoObject* exception = nullptr;
 		MonoObject* retVal = mono_runtime_invoke(virtualMethod, instance, params, &exception);
 
-		MonoUtil::throwIfException(exception);
+		MonoUtil::ThrowIfException(exception);
 		return retVal;
 	}		
 
@@ -138,7 +138,7 @@ namespace bs
 		return MonoMemberVisibility::Private;
 	}
 
-	void MonoMethod::cacheSignature() const
+	void MonoMethod::CacheSignature() const
 	{
 		MonoMethodSignature* methodSignature = mono_method_signature(mMethod);
 
@@ -147,7 +147,7 @@ namespace bs
 		{
 			::MonoClass* returnClass = mono_class_from_mono_type(returnType);
 			if (returnClass != nullptr)
-				mCachedReturnType = MonoManager::Instance().findClass(returnClass);
+				mCachedReturnType = MonoManager::Instance().FindClass(returnClass);
 		}
 
 		mCachedNumParameters = (UINT32)mono_signature_get_param_count(methodSignature);
@@ -166,7 +166,7 @@ namespace bs
 			{
 				MonoType* curParamType = mono_signature_get_params(methodSignature, &iter);
 				::MonoClass* rawClass = mono_class_from_mono_type(curParamType);
-				mCachedParameters[i] = MonoManager::Instance().findClass(rawClass);
+				mCachedParameters[i] = MonoManager::Instance().FindClass(rawClass);
 			}
 		}
 

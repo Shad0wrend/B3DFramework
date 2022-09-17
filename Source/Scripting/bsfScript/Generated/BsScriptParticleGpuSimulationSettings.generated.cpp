@@ -19,18 +19,18 @@ namespace bs
 
 	void ScriptParticleGpuSimulationSettings::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_getvectorField", (void*)&ScriptParticleGpuSimulationSettings::Internal_getvectorField);
-		metaData.scriptClass->addInternalCall("Internal_setvectorField", (void*)&ScriptParticleGpuSimulationSettings::Internal_setvectorField);
-		metaData.scriptClass->addInternalCall("Internal_getcolorOverLifetime", (void*)&ScriptParticleGpuSimulationSettings::Internal_getcolorOverLifetime);
-		metaData.scriptClass->addInternalCall("Internal_setcolorOverLifetime", (void*)&ScriptParticleGpuSimulationSettings::Internal_setcolorOverLifetime);
-		metaData.scriptClass->addInternalCall("Internal_getsizeScaleOverLifetime", (void*)&ScriptParticleGpuSimulationSettings::Internal_getsizeScaleOverLifetime);
-		metaData.scriptClass->addInternalCall("Internal_setsizeScaleOverLifetime", (void*)&ScriptParticleGpuSimulationSettings::Internal_setsizeScaleOverLifetime);
-		metaData.scriptClass->addInternalCall("Internal_getacceleration", (void*)&ScriptParticleGpuSimulationSettings::Internal_getacceleration);
-		metaData.scriptClass->addInternalCall("Internal_setacceleration", (void*)&ScriptParticleGpuSimulationSettings::Internal_setacceleration);
-		metaData.scriptClass->addInternalCall("Internal_getdrag", (void*)&ScriptParticleGpuSimulationSettings::Internal_getdrag);
-		metaData.scriptClass->addInternalCall("Internal_setdrag", (void*)&ScriptParticleGpuSimulationSettings::Internal_setdrag);
-		metaData.scriptClass->addInternalCall("Internal_getdepthCollision", (void*)&ScriptParticleGpuSimulationSettings::Internal_getdepthCollision);
-		metaData.scriptClass->addInternalCall("Internal_setdepthCollision", (void*)&ScriptParticleGpuSimulationSettings::Internal_setdepthCollision);
+		metaData.scriptClass->AddInternalCall("Internal_getvectorField", (void*)&ScriptParticleGpuSimulationSettings::InternalGetvectorField);
+		metaData.scriptClass->AddInternalCall("Internal_setvectorField", (void*)&ScriptParticleGpuSimulationSettings::InternalSetvectorField);
+		metaData.scriptClass->AddInternalCall("Internal_getcolorOverLifetime", (void*)&ScriptParticleGpuSimulationSettings::InternalGetcolorOverLifetime);
+		metaData.scriptClass->AddInternalCall("Internal_setcolorOverLifetime", (void*)&ScriptParticleGpuSimulationSettings::InternalSetcolorOverLifetime);
+		metaData.scriptClass->AddInternalCall("Internal_getsizeScaleOverLifetime", (void*)&ScriptParticleGpuSimulationSettings::InternalGetsizeScaleOverLifetime);
+		metaData.scriptClass->AddInternalCall("Internal_setsizeScaleOverLifetime", (void*)&ScriptParticleGpuSimulationSettings::InternalSetsizeScaleOverLifetime);
+		metaData.scriptClass->AddInternalCall("Internal_getacceleration", (void*)&ScriptParticleGpuSimulationSettings::InternalGetacceleration);
+		metaData.scriptClass->AddInternalCall("Internal_setacceleration", (void*)&ScriptParticleGpuSimulationSettings::InternalSetacceleration);
+		metaData.scriptClass->AddInternalCall("Internal_getdrag", (void*)&ScriptParticleGpuSimulationSettings::InternalGetdrag);
+		metaData.scriptClass->AddInternalCall("Internal_setdrag", (void*)&ScriptParticleGpuSimulationSettings::InternalSetdrag);
+		metaData.scriptClass->AddInternalCall("Internal_getdepthCollision", (void*)&ScriptParticleGpuSimulationSettings::InternalGetdepthCollision);
+		metaData.scriptClass->AddInternalCall("Internal_setdepthCollision", (void*)&ScriptParticleGpuSimulationSettings::InternalSetdepthCollision);
 
 	}
 

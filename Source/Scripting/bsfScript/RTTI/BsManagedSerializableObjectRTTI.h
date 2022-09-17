@@ -72,7 +72,7 @@ namespace bs
 			{
 				for (auto& field : curType->mFields)
 				{
-					if (field.second->isSerializable())
+					if (field.second->IsSerializable())
 						mSequentialFields.push_back(field.second);
 				}
 

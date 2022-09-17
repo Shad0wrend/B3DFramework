@@ -33,14 +33,14 @@ namespace bs
 	ManagedSerializableObject::ManagedSerializableObject(const ConstructPrivately& dummy, SPtr<ManagedSerializableObjectInfo> objInfo, MonoObject* managedInstance)
 		:mObjInfo(objInfo)
 	{
-		mGCHandle = MonoUtil::newGCHandle(managedInstance, false);
+		mGCHandle = MonoUtil::NewGcHandle(managedInstance, false);
 	}
 
 	ManagedSerializableObject::~ManagedSerializableObject()
 	{
 		if(mGCHandle != 0)
 		{
-			MonoUtil::freeGCHandle(mGCHandle);
+			MonoUtil::FreeGcHandle(mGCHandle);
 			mGCHandle = 0;
 		}		
 	}
@@ -52,10 +52,10 @@ namespace bs
 
 		String elementNs;
 		String elementTypeName;
-		MonoUtil::getClassName(managedInstance, elementNs, elementTypeName);
+		MonoUtil::GetClassName(managedInstance, elementNs, elementTypeName);
 
 		SPtr<ManagedSerializableObjectInfo> objInfo;
-		if(!ScriptAssemblyManager::Instance().getSerializableObjectInfo(elementNs, elementTypeName, objInfo))
+		if(!ScriptAssemblyManager::Instance().GetSerializableObjectInfo(elementNs, elementTypeName, objInfo))
 			return nullptr;
 
 		return bs_shared_ptr_new<ManagedSerializableObject>(ConstructPrivately(), objInfo, managedInstance);
@@ -66,10 +66,10 @@ namespace bs
 		SPtr<ManagedSerializableObjectInfo> currentObjInfo = nullptr;
 
 		// See if this type even still exists
-		if (!ScriptAssemblyManager::Instance().getSerializableObjectInfo(type->mTypeNamespace, type->mTypeName, currentObjInfo))
+		if (!ScriptAssemblyManager::Instance().GetSerializableObjectInfo(type->mTypeNamespace, type->mTypeName, currentObjInfo))
 			return nullptr;
 
-		return bs_shared_ptr_new<ManagedSerializableObject>(ConstructPrivately(), currentObjInfo, createManagedInstance(type));
+		return bs_shared_ptr_new<ManagedSerializableObject>(ConstructPrivately(), currentObjInfo, CreateManagedInstance(type));
 	}
 
 	MonoObject* ManagedSerializableObject::CreateManagedInstance(const SPtr<ManagedSerializableTypeInfoObject>& type)
@@ -77,14 +77,14 @@ namespace bs
 		SPtr<ManagedSerializableObjectInfo> currentObjInfo = nullptr;
 
 		// See if this type even still exists
-		if (!ScriptAssemblyManager::Instance().getSerializableObjectInfo(type->mTypeNamespace, type->mTypeName, currentObjInfo))
+		if (!ScriptAssemblyManager::Instance().GetSerializableObjectInfo(type->mTypeNamespace, type->mTypeName, currentObjInfo))
 			return nullptr;
 
 		if(!currentObjInfo->mTypeInfo->mFlags.IsSet(ScriptTypeFlag::Serializable))
 			return nullptr;
 
 		const bool construct = currentObjInfo->mMonoClass->GetMethod(".ctor", 0) != nullptr;
-		return currentObjInfo->mMonoClass->createInstance(construct);
+		return currentObjInfo->mMonoClass->CreateInstance(construct);
 	}
 
 	SPtr<ManagedSerializableObject> ManagedSerializableObject::CreateEmpty()
@@ -95,7 +95,7 @@ namespace bs
 	MonoObject* ManagedSerializableObject::GetManagedInstance() const
 	{
 		if(mGCHandle != 0)
-			return MonoUtil::getObjectFromGCHandle(mGCHandle);
+			return MonoUtil::GetObjectFromGcHandle(mGCHandle);
 
 		return nullptr;
 	}
@@ -112,10 +112,10 @@ namespace bs
 		{
 			for (auto& field : curType->mFields)
 			{
-				if (field.second->isSerializable())
+				if (field.second->IsSerializable())
 				{
 					ManagedSerializableFieldKey key(field.second->mParentTypeId, field.second->mFieldId);
-					mCachedData[key] = getFieldData(field.second);
+					mCachedData[key] = GetFieldData(field.second);
 				}
 			}
 
@@ -124,9 +124,9 @@ namespace bs
 
 		// Serialize children
 		for (auto& fieldEntry : mCachedData)
-			fieldEntry.second->serialize();
+			fieldEntry.second->Serialize();
 
-		MonoUtil::freeGCHandle(mGCHandle);
+		MonoUtil::FreeGcHandle(mGCHandle);
 		mGCHandle = 0;
 	}
 
@@ -134,14 +134,14 @@ namespace bs
 	{
 		// See if this type even still exists
 		SPtr<ManagedSerializableObjectInfo> currentObjInfo = nullptr;
-		if (!ScriptAssemblyManager::Instance().getSerializableObjectInfo(mObjInfo->mTypeInfo->mTypeNamespace,
+		if (!ScriptAssemblyManager::Instance().GetSerializableObjectInfo(mObjInfo->mTypeInfo->mTypeNamespace,
 			mObjInfo->mTypeInfo->mTypeName, currentObjInfo))
 		{
 			return nullptr;
 		}
 
-		MonoObject* managedInstance = createManagedInstance(currentObjInfo->mTypeInfo);
-		deserialize(managedInstance, currentObjInfo);
+		MonoObject* managedInstance = CreateManagedInstance(currentObjInfo->mTypeInfo);
+		Deserialize(managedInstance, currentObjInfo);
 
 		return managedInstance;
 	}
@@ -153,7 +153,7 @@ namespace bs
 
 		// Deserialize children
 		for (auto& fieldEntry : mCachedData)
-			fieldEntry.second->deserialize();
+			fieldEntry.second->Deserialize();
 
 		// Scan all fields and ensure the fields still exist
 		UINT32 i = 0;
@@ -162,14 +162,14 @@ namespace bs
 		{
 			for (auto& field : curType->mFields)
 			{
-				if (field.second->isSerializable())
+				if (field.second->IsSerializable())
 				{
 					UINT32 fieldId = field.second->mFieldId;
 					UINT32 typeID = field.second->mParentTypeId;
 
 					ManagedSerializableFieldKey key(typeID, fieldId);
 
-					SPtr<ManagedSerializableMemberInfo> matchingFieldInfo = objInfo->findMatchingField(field.second, curType->mTypeInfo);
+					SPtr<ManagedSerializableMemberInfo> matchingFieldInfo = objInfo->FindMatchingField(field.second, curType->mTypeInfo);
 					if (matchingFieldInfo != nullptr)
 						matchingFieldInfo->SetValue(instance, mCachedData[key]->GetValue(matchingFieldInfo->mTypeInfo));
 
@@ -183,9 +183,9 @@ namespace bs
 
 	bool ManagedSerializableObject::Equals(ManagedSerializableObject& other)
 	{
-		SPtr<ManagedSerializableObjectInfo> otherObjInfo = other.getObjectInfo();
+		SPtr<ManagedSerializableObjectInfo> otherObjInfo = other.GetObjectInfo();
 
-		if (!mObjInfo->mTypeInfo->matches(otherObjInfo->mTypeInfo))
+		if (!mObjInfo->mTypeInfo->Matches(otherObjInfo->mTypeInfo))
 			return false;
 
 		SPtr<ManagedSerializableObjectInfo> curObjInfo = mObjInfo;
@@ -193,11 +193,11 @@ namespace bs
 		{
 			for (auto& field : curObjInfo->mFields)
 			{
-				if (!field.second->isSerializable())
+				if (!field.second->IsSerializable())
 					continue;
 
-				SPtr<ManagedSerializableFieldData> oldData = getFieldData(field.second);
-				SPtr<ManagedSerializableFieldData> newData = other.getFieldData(field.second);
+				SPtr<ManagedSerializableFieldData> oldData = GetFieldData(field.second);
+				SPtr<ManagedSerializableFieldData> newData = other.GetFieldData(field.second);
 
 				if (!oldData)
 					return !newData;
@@ -207,7 +207,7 @@ namespace bs
 						return false;
 				}
 
-				if(!oldData->equals(newData))
+				if(!oldData->Equals(newData))
 					return false;
 			}
 
@@ -221,7 +221,7 @@ namespace bs
 	{
 		if (mGCHandle != 0)
 		{
-			MonoObject* managedInstance = MonoUtil::getObjectFromGCHandle(mGCHandle);
+			MonoObject* managedInstance = MonoUtil::GetObjectFromGcHandle(mGCHandle);
 			fieldInfo->SetValue(managedInstance, val->GetValue(fieldInfo->mTypeInfo));
 		}
 		else
@@ -235,7 +235,7 @@ namespace bs
 	{
 		if (mGCHandle != 0)
 		{
-			MonoObject* managedInstance = MonoUtil::getObjectFromGCHandle(mGCHandle);
+			MonoObject* managedInstance = MonoUtil::GetObjectFromGcHandle(mGCHandle);
 			MonoObject* fieldValue = fieldInfo->GetValue(managedInstance);
 
 			return ManagedSerializableFieldData::Create(fieldInfo->mTypeInfo, fieldValue);

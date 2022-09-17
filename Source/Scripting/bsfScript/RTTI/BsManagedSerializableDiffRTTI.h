@@ -145,8 +145,8 @@ namespace bs
 	public:
 		ModifiedDictionaryEntryRTTI()
 		{
-			AddReflectablePtrField("key", 0, &ModifiedDictionaryEntryRTTI::getKey, &ModifiedDictionaryEntryRTTI::setKey);
-			AddReflectablePtrField("modification", 1, &ModifiedDictionaryEntryRTTI::getModification, &ModifiedDictionaryEntryRTTI::setModification);
+			AddReflectablePtrField("key", 0, &ModifiedDictionaryEntryRTTI::GetKey, &ModifiedDictionaryEntryRTTI::SetKey);
+			AddReflectablePtrField("modification", 1, &ModifiedDictionaryEntryRTTI::GetModification, &ModifiedDictionaryEntryRTTI::SetModification);
 		}
 
 		const String& GetRttiName() override
@@ -217,7 +217,7 @@ namespace bs
 	public:
 		ModifiedObjectRTTI()
 		{
-			addReflectableArrayField("entries", 0, &ModifiedObjectRTTI::GetFieldEntry, &ModifiedObjectRTTI::GetNumFieldEntries,
+			AddReflectableArrayField("entries", 0, &ModifiedObjectRTTI::GetFieldEntry, &ModifiedObjectRTTI::GetNumFieldEntries,
 				&ModifiedObjectRTTI::SetFieldEntry, &ModifiedObjectRTTI::SetNumFieldEntries);
 		}
 
@@ -285,9 +285,9 @@ namespace bs
 	public:
 		ModifiedArrayRTTI()
 		{
-			AddPlainField("origSizes", 0, &ModifiedArrayRTTI::getOrigSizes, &ModifiedArrayRTTI::setOrigSizes);
-			AddPlainField("newSizes", 1, &ModifiedArrayRTTI::getNewSizes, &ModifiedArrayRTTI::setNewSizes);
-			addReflectableArrayField("entries", 2, &ModifiedArrayRTTI::GetFieldEntry, &ModifiedArrayRTTI::GetNumFieldEntries,
+			AddPlainField("origSizes", 0, &ModifiedArrayRTTI::GetOrigSizes, &ModifiedArrayRTTI::SetOrigSizes);
+			AddPlainField("newSizes", 1, &ModifiedArrayRTTI::GetNewSizes, &ModifiedArrayRTTI::SetNewSizes);
+			AddReflectableArrayField("entries", 2, &ModifiedArrayRTTI::GetFieldEntry, &ModifiedArrayRTTI::GetNumFieldEntries,
 				&ModifiedArrayRTTI::SetFieldEntry, &ModifiedArrayRTTI::SetNumFieldEntries);
 		}
 
@@ -355,9 +355,9 @@ namespace bs
 	public:
 		ModifiedDictionaryRTTI()
 		{
-			addReflectablePtrArrayField("removed", 0, &ModifiedDictionaryRTTI::getRemovedEntry, &ModifiedDictionaryRTTI::getNumRemovedEntries,
-				&ModifiedDictionaryRTTI::setRemovedEntry, &ModifiedDictionaryRTTI::setNumRemovedEntries);
-			addReflectableArrayField("entries", 1, &ModifiedDictionaryRTTI::GetFieldEntry, &ModifiedDictionaryRTTI::GetNumFieldEntries,
+			AddReflectablePtrArrayField("removed", 0, &ModifiedDictionaryRTTI::GetRemovedEntry, &ModifiedDictionaryRTTI::GetNumRemovedEntries,
+				&ModifiedDictionaryRTTI::SetRemovedEntry, &ModifiedDictionaryRTTI::SetNumRemovedEntries);
+			AddReflectableArrayField("entries", 1, &ModifiedDictionaryRTTI::GetFieldEntry, &ModifiedDictionaryRTTI::GetNumFieldEntries,
 				&ModifiedDictionaryRTTI::SetFieldEntry, &ModifiedDictionaryRTTI::SetNumFieldEntries);
 		}
 
@@ -395,7 +395,7 @@ namespace bs
 	public:
 		ModifiedEntryRTTI()
 		{
-			AddReflectablePtrField("value", 0, &ModifiedEntryRTTI::getValue, &ModifiedEntryRTTI::setValue);
+			AddReflectablePtrField("value", 0, &ModifiedEntryRTTI::GetValue, &ModifiedEntryRTTI::SetValue);
 		}
 
 		const String& GetRttiName() override
@@ -431,8 +431,8 @@ namespace bs
 	public:
 		ManagedSerializableDiffRTTI()
 		{
-			AddReflectablePtrField("mModificationRoot", 0, &ManagedSerializableDiffRTTI::getModificationRoot,
-				&ManagedSerializableDiffRTTI::setModificationRoot);
+			AddReflectablePtrField("mModificationRoot", 0, &ManagedSerializableDiffRTTI::GetModificationRoot,
+				&ManagedSerializableDiffRTTI::SetModificationRoot);
 
 		}
 

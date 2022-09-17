@@ -53,7 +53,7 @@ namespace bs
 
 		/**
 		 * Makes the object reference the specific managed instance. Internally this allocates a GC handle that keeps a
-		 * reference to the object and allows getManagedInstance to retrieve the managed instance when requested. Should
+		 * reference to the object and allows GetManagedInstance to retrieve the managed instance when requested. Should
 		 * be called on initial creation and whenever the managed instance changes (e.g. after assembly refresh). This
 		 * creates a strong reference to the managed instance, and you need to make sure to release it with
 		 * freeManagedInstance() when no longer required.

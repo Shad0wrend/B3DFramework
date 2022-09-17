@@ -56,66 +56,66 @@ namespace bs
 
 	void ScriptVirtualInput::OnButtonDown(const VirtualButton& btn, UINT32 deviceIdx)
 	{
-		if (PlayInEditor::Instance().getState() != PlayInEditorState::Playing)
+		if (PlayInEditor::Instance().GetState() != PlayInEditorState::Playing)
 			return;
 
-		MonoObject* virtualButton = ScriptVirtualButton::box(btn);
-		MonoUtil::invokeThunk(OnButtonDownThunk, virtualButton, deviceIdx);
+		MonoObject* virtualButton = ScriptVirtualButton::Box(btn);
+		MonoUtil::InvokeThunk(OnButtonDownThunk, virtualButton, deviceIdx);
 	}
 
 	void ScriptVirtualInput::OnButtonUp(const VirtualButton& btn, UINT32 deviceIdx)
 	{
-		if (PlayInEditor::Instance().getState() != PlayInEditorState::Playing)
+		if (PlayInEditor::Instance().GetState() != PlayInEditorState::Playing)
 			return;
 
-		MonoObject* virtualButton = ScriptVirtualButton::box(btn);
-		MonoUtil::invokeThunk(OnButtonUpThunk, virtualButton, deviceIdx);
+		MonoObject* virtualButton = ScriptVirtualButton::Box(btn);
+		MonoUtil::InvokeThunk(OnButtonUpThunk, virtualButton, deviceIdx);
 	}
 
 	void ScriptVirtualInput::OnButtonHeld(const VirtualButton& btn, UINT32 deviceIdx)
 	{
-		if (PlayInEditor::Instance().getState() != PlayInEditorState::Playing)
+		if (PlayInEditor::Instance().GetState() != PlayInEditorState::Playing)
 			return;
 
-		MonoObject* virtualButton = ScriptVirtualButton::box(btn);
-		MonoUtil::invokeThunk(OnButtonHeldThunk, virtualButton, deviceIdx);
+		MonoObject* virtualButton = ScriptVirtualButton::Box(btn);
+		MonoUtil::InvokeThunk(OnButtonHeldThunk, virtualButton, deviceIdx);
 	}
 
 	MonoObject* ScriptVirtualInput::InternalGetKeyConfig()
 	{
-		SPtr<InputConfiguration> inputConfig = VirtualInput::Instance().getConfiguration();
+		SPtr<InputConfiguration> inputConfig = VirtualInput::Instance().GetConfiguration();
 
-		ScriptInputConfiguration* scriptInputConfig = ScriptInputConfiguration::getScriptInputConfig(inputConfig);
+		ScriptInputConfiguration* scriptInputConfig = ScriptInputConfiguration::GetScriptInputConfig(inputConfig);
 		if (scriptInputConfig == nullptr)
-			scriptInputConfig = ScriptInputConfiguration::createScriptInputConfig(inputConfig);
+			scriptInputConfig = ScriptInputConfiguration::CreateScriptInputConfig(inputConfig);
 
 		return scriptInputConfig->GetManagedInstance();
 	}
 
 	void ScriptVirtualInput::InternalSetKeyConfig(MonoObject* keyConfig)
 	{
-		ScriptInputConfiguration* inputConfig = ScriptInputConfiguration::toNative(keyConfig);
+		ScriptInputConfiguration* inputConfig = ScriptInputConfiguration::ToNative(keyConfig);
 
-		VirtualInput::Instance().setConfiguration(inputConfig->GetInternalValue());
+		VirtualInput::Instance().SetConfiguration(inputConfig->GetInternalValue());
 	}
 
 	bool ScriptVirtualInput::InternalIsButtonHeld(VirtualButton* btn, UINT32 deviceIdx)
 	{
-		return VirtualInput::Instance().isButtonHeld(*btn, deviceIdx);
+		return VirtualInput::Instance().IsButtonHeld(*btn, deviceIdx);
 	}
 
 	bool ScriptVirtualInput::InternalIsButtonDown(VirtualButton* btn, UINT32 deviceIdx)
 	{
-		return VirtualInput::Instance().isButtonDown(*btn, deviceIdx);
+		return VirtualInput::Instance().IsButtonDown(*btn, deviceIdx);
 	}
 
 	bool ScriptVirtualInput::InternalIsButtonUp(VirtualButton* btn, UINT32 deviceIdx)
 	{
-		return VirtualInput::Instance().isButtonUp(*btn, deviceIdx);
+		return VirtualInput::Instance().IsButtonUp(*btn, deviceIdx);
 	}
 
 	float ScriptVirtualInput::InternalGetAxisValue(VirtualAxis* axis, UINT32 deviceIdx)
 	{
-		return VirtualInput::Instance().getAxisValue(*axis, deviceIdx);
+		return VirtualInput::Instance().GetAxisValue(*axis, deviceIdx);
 	}
 }

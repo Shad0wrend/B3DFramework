@@ -56,8 +56,8 @@ namespace bs
 		for(auto& curClass : allClasses)
 		{
 			const bool isSerializable =
-				curClass->isSubClassOf(mBuiltin.componentClass) ||
-				curClass->isSubClassOf(resourceClass) ||
+				curClass->IsSubClassOf(mBuiltin.componentClass) ||
+				curClass->IsSubClassOf(resourceClass) ||
 				curClass->HasAttribute(mBuiltin.serializeObjectAttribute);
 
 			const bool isInspectable =
@@ -78,17 +78,17 @@ namespace bs
 				if(isSerializable || isInspectable)
 					typeInfo->mFlags |= ScriptTypeFlag::Inspectable;
 
-				MonoPrimitiveType monoPrimitiveType = MonoUtil::getPrimitiveType(curClass->GetInternalClassInternal());
+				MonoPrimitiveType monoPrimitiveType = MonoUtil::GetPrimitiveType(curClass->GetInternalClassInternal());
 
 				if(monoPrimitiveType == MonoPrimitiveType::ValueType)
 					typeInfo->mValueType = true;
 				else
 					typeInfo->mValueType = false;
 
-				::MonoReflectionType* type = MonoUtil::getType(curClass->GetInternalClassInternal());
+				::MonoReflectionType* type = MonoUtil::GetType(curClass->GetInternalClassInternal());
 
 				// Is this a wrapper for some reflectable type?
-				ReflectableTypeInfo* reflTypeInfo = getReflectableTypeInfo(type);
+				ReflectableTypeInfo* reflTypeInfo = GetReflectableTypeInfo(type);
 				if(reflTypeInfo != nullptr)
 					typeInfo->mRTIITypeId = reflTypeInfo->typeId;
 				else
@@ -114,10 +114,10 @@ namespace bs
 			const Vector<MonoField*>& fields = objInfo->mMonoClass->GetAllFields();
 			for(auto& field : fields)
 			{
-				if(field->isStatic())
+				if(field->IsStatic())
 					continue;
 
-				SPtr<ManagedSerializableTypeInfo> typeInfo = getTypeInfo(field->GetType());
+				SPtr<ManagedSerializableTypeInfo> typeInfo = GetTypeInfo(field->GetType());
 				if (typeInfo == nullptr)
 					continue;
 
@@ -204,7 +204,7 @@ namespace bs
 			const Vector<MonoProperty*>& properties = objInfo->mMonoClass->GetAllProperties();
 			for (auto& property : properties)
 			{
-				SPtr<ManagedSerializableTypeInfo> typeInfo = getTypeInfo(property->GetReturnType());
+				SPtr<ManagedSerializableTypeInfo> typeInfo = GetTypeInfo(property->GetReturnType());
 				if (typeInfo == nullptr)
 					continue;
 
@@ -224,7 +224,7 @@ namespace bs
 				propertyInfo->mTypeInfo = typeInfo;
 				propertyInfo->mParentTypeId = objInfo->mTypeInfo->mTypeId;
 
-				if (!property->isIndexed())
+				if (!property->IsIndexed())
 				{
 					MonoMemberVisibility visibility = property->GetVisibility();
 					if (visibility == MonoMemberVisibility::Public)
@@ -298,7 +298,7 @@ namespace bs
 			while(base != nullptr)
 			{
 				SPtr<ManagedSerializableObjectInfo> baseObjInfo;
-				if(getSerializableObjectInfo(base->GetNamespace(), base->GetTypeName(), baseObjInfo))
+				if(GetSerializableObjectInfo(base->GetNamespace(), base->GetTypeName(), baseObjInfo))
 				{
 					curClass.second->mBaseClass = baseObjInfo;
 					baseObjInfo->mDerivedClasses.push_back(curClass.second);
@@ -313,7 +313,7 @@ namespace bs
 
 	void ScriptAssemblyManager::ClearAssemblyInfo()
 	{
-		clearScriptObjects();
+		ClearScriptObjects();
 		mAssemblyInfos.clear();
 
 		mBuiltinComponentInfos.clear();
@@ -332,12 +332,12 @@ namespace bs
 		if(!mBaseTypesInitialized)
 			BS_EXCEPT(InvalidStateException, "Calling getTypeInfo without previously initializing base types.");
 
-		MonoPrimitiveType monoPrimitiveType = MonoUtil::getPrimitiveType(monoClass->GetInternalClassInternal());
+		MonoPrimitiveType monoPrimitiveType = MonoUtil::GetPrimitiveType(monoClass->GetInternalClassInternal());
 		
 		// If enum get the enum base data type
-		bool isEnum = MonoUtil::isEnum(monoClass->GetInternalClassInternal());
+		bool isEnum = MonoUtil::IsEnum(monoClass->GetInternalClassInternal());
 		if (isEnum)
-			monoPrimitiveType = MonoUtil::getEnumPrimitiveType(monoClass->GetInternalClassInternal());
+			monoPrimitiveType = MonoUtil::GetEnumPrimitiveType(monoClass->GetInternalClassInternal());
 
 		//  Determine field type
 		//// Check for simple types or enums first
@@ -423,25 +423,25 @@ namespace bs
 		switch(monoPrimitiveType)
 		{
 		case MonoPrimitiveType::Class:
-			if(monoClass->isSubClassOf(ScriptResource::getMetaData()->scriptClass)) // Resource
+			if(monoClass->IsSubClassOf(ScriptResource::GetMetaData()->scriptClass)) // Resource
 			{
 				SPtr<ManagedSerializableTypeInfoRef> typeInfo = bs_shared_ptr_new<ManagedSerializableTypeInfoRef>();
 				typeInfo->mTypeNamespace = monoClass->GetNamespace();
 				typeInfo->mTypeName = monoClass->GetTypeName();
 				typeInfo->mRTIITypeId = 0;
 
-				if(monoClass == ScriptResource::getMetaData()->scriptClass)
+				if(monoClass == ScriptResource::GetMetaData()->scriptClass)
 					typeInfo->mType = ScriptReferenceType::BuiltinResourceBase;
-				else if (monoClass == ScriptManagedResource::getMetaData()->scriptClass)
+				else if (monoClass == ScriptManagedResource::GetMetaData()->scriptClass)
 					typeInfo->mType = ScriptReferenceType::ManagedResourceBase;
-				else if (monoClass->isSubClassOf(ScriptManagedResource::getMetaData()->scriptClass))
+				else if (monoClass->IsSubClassOf(ScriptManagedResource::GetMetaData()->scriptClass))
 					typeInfo->mType = ScriptReferenceType::ManagedResource;
-				else if (monoClass->isSubClassOf(ScriptResource::getMetaData()->scriptClass))
+				else if (monoClass->IsSubClassOf(ScriptResource::GetMetaData()->scriptClass))
 				{
 					typeInfo->mType = ScriptReferenceType::BuiltinResource;
 
-					::MonoReflectionType* type = MonoUtil::getType(monoClass->GetInternalClassInternal());
-					BuiltinResourceInfo* builtinInfo = getBuiltinResourceInfo(type);
+					::MonoReflectionType* type = MonoUtil::GetType(monoClass->GetInternalClassInternal());
+					BuiltinResourceInfo* builtinInfo = GetBuiltinResourceInfo(type);
 					if (builtinInfo == nullptr)
 					{
 						assert(false && "Unable to find information about a built-in resource. Did you update BuiltinResourceTypes list?");
@@ -453,9 +453,9 @@ namespace bs
 
 				return typeInfo;
 			}
-			else if(monoClass == ScriptRRefBase::getMetaData()->scriptClass) // Resource reference
+			else if(monoClass == ScriptRRefBase::GetMetaData()->scriptClass) // Resource reference
 				return bs_shared_ptr_new<ManagedSerializableTypeInfoRRef>();
-			else if (monoClass->isSubClassOf(mBuiltin.sceneObjectClass) || monoClass->isSubClassOf(mBuiltin.componentClass)) // Game object
+			else if (monoClass->IsSubClassOf(mBuiltin.sceneObjectClass) || monoClass->IsSubClassOf(mBuiltin.componentClass)) // Game object
 			{
 				SPtr<ManagedSerializableTypeInfoRef> typeInfo = bs_shared_ptr_new<ManagedSerializableTypeInfoRef>();
 				typeInfo->mTypeNamespace = monoClass->GetNamespace();
@@ -466,16 +466,16 @@ namespace bs
 					typeInfo->mType = ScriptReferenceType::BuiltinComponentBase;
 				else if (monoClass == mBuiltin.managedComponentClass)
 					typeInfo->mType = ScriptReferenceType::ManagedComponentBase;
-				else if (monoClass->isSubClassOf(mBuiltin.sceneObjectClass))
+				else if (monoClass->IsSubClassOf(mBuiltin.sceneObjectClass))
 					typeInfo->mType = ScriptReferenceType::SceneObject;
-				else if (monoClass->isSubClassOf(mBuiltin.managedComponentClass))
+				else if (monoClass->IsSubClassOf(mBuiltin.managedComponentClass))
 					typeInfo->mType = ScriptReferenceType::ManagedComponent;
-				else if (monoClass->isSubClassOf(mBuiltin.componentClass))
+				else if (monoClass->IsSubClassOf(mBuiltin.componentClass))
 				{
 					typeInfo->mType = ScriptReferenceType::BuiltinComponent;
 
-					::MonoReflectionType* type = MonoUtil::getType(monoClass->GetInternalClassInternal());
-					BuiltinComponentInfo* builtinInfo = getBuiltinComponentInfo(type);
+					::MonoReflectionType* type = MonoUtil::GetType(monoClass->GetInternalClassInternal());
+					BuiltinComponentInfo* builtinInfo = GetBuiltinComponentInfo(type);
 					if(builtinInfo == nullptr)
 					{
 						assert(false && "Unable to find information about a built-in component. Did you update BuiltinComponents list?");
@@ -489,10 +489,10 @@ namespace bs
 			}
 			else
 			{
-				::MonoReflectionType* type = MonoUtil::getType(monoClass->GetInternalClassInternal());
+				::MonoReflectionType* type = MonoUtil::GetType(monoClass->GetInternalClassInternal());
 
 				// Is this a wrapper for some reflectable type?
-				ReflectableTypeInfo* reflTypeInfo = getReflectableTypeInfo(type);
+				ReflectableTypeInfo* reflTypeInfo = GetReflectableTypeInfo(type);
 				if(reflTypeInfo != nullptr)
 				{
 					SPtr<ManagedSerializableTypeInfoRef> typeInfo = bs_shared_ptr_new<ManagedSerializableTypeInfoRef>();
@@ -507,7 +507,7 @@ namespace bs
 				{
 					// Finally, it's either a normal managed object, or a non-reflectable type wrapper
 					SPtr<ManagedSerializableObjectInfo> objInfo;
-					if (getSerializableObjectInfo(monoClass->GetNamespace(), monoClass->GetTypeName(), objInfo))
+					if (GetSerializableObjectInfo(monoClass->GetNamespace(), monoClass->GetTypeName(), objInfo))
 						return objInfo->mTypeInfo;
 				}
 			}
@@ -516,7 +516,7 @@ namespace bs
 		case MonoPrimitiveType::ValueType:
 			{
 				SPtr<ManagedSerializableObjectInfo> objInfo;
-				if (getSerializableObjectInfo(monoClass->GetNamespace(), monoClass->GetTypeName(), objInfo))
+				if (GetSerializableObjectInfo(monoClass->GetNamespace(), monoClass->GetTypeName(), objInfo))
 					return objInfo->mTypeInfo;
 			}
 
@@ -530,7 +530,7 @@ namespace bs
 				MonoClass* itemClass = itemProperty->GetReturnType();
 
 				if (itemClass != nullptr)
-					typeInfo->mElementType = getTypeInfo(itemClass);
+					typeInfo->mElementType = GetTypeInfo(itemClass);
 				
 				if (typeInfo->mElementType == nullptr)
 					return nullptr;
@@ -552,11 +552,11 @@ namespace bs
 
 				MonoClass* keyClass = keyProperty->GetReturnType();
 				if(keyClass != nullptr)
-					typeInfo->mKeyType = getTypeInfo(keyClass);
+					typeInfo->mKeyType = GetTypeInfo(keyClass);
 
 				MonoClass* valueClass = valueProperty->GetReturnType();
 				if(valueClass != nullptr)
-					typeInfo->mValueType = getTypeInfo(valueClass);
+					typeInfo->mValueType = GetTypeInfo(valueClass);
 
 				if (typeInfo->mKeyType == nullptr || typeInfo->mValueType == nullptr)
 					return nullptr;
@@ -571,7 +571,7 @@ namespace bs
 				MonoClass* itemClass = itemProperty->GetReturnType();
 
 				if (itemClass != nullptr)
-					typeInfo->mResourceType = getTypeInfo(itemClass);
+					typeInfo->mResourceType = GetTypeInfo(itemClass);
 				
 				if (typeInfo->mResourceType == nullptr)
 					return nullptr;
@@ -583,18 +583,18 @@ namespace bs
 			{
 				SPtr<ManagedSerializableTypeInfoArray> typeInfo = bs_shared_ptr_new<ManagedSerializableTypeInfoArray>();
 
-				::MonoClass* elementClass = ScriptArray::getElementClass(monoClass->GetInternalClassInternal());
+				::MonoClass* elementClass = ScriptArray::GetElementClass(monoClass->GetInternalClassInternal());
 				if(elementClass != nullptr)
 				{
-					MonoClass* monoElementClass = MonoManager::Instance().findClass(elementClass);
+					MonoClass* monoElementClass = MonoManager::Instance().FindClass(elementClass);
 					if(monoElementClass != nullptr)
-						typeInfo->mElementType = getTypeInfo(monoElementClass);
+						typeInfo->mElementType = GetTypeInfo(monoElementClass);
 				}
 
 				if (typeInfo->mElementType == nullptr)
 					return nullptr;
 
-				typeInfo->mRank = ScriptArray::getRank(monoClass->GetInternalClassInternal());
+				typeInfo->mRank = ScriptArray::GetRank(monoClass->GetInternalClassInternal());
 
 				return typeInfo;
 			}
@@ -614,11 +614,11 @@ namespace bs
 	void ScriptAssemblyManager::InitializeBaseTypes()
 	{
 		// Get necessary classes for detecting needed class & field information
-		MonoAssembly* corlib = MonoManager::Instance().getAssembly("corlib");
+		MonoAssembly* corlib = MonoManager::Instance().GetAssembly("corlib");
 		if(corlib == nullptr)
 			BS_EXCEPT(InvalidStateException, "corlib assembly is not loaded.");
 
-		MonoAssembly* engineAssembly = MonoManager::Instance().getAssembly(ENGINE_ASSEMBLY);
+		MonoAssembly* engineAssembly = MonoManager::Instance().GetAssembly(ENGINE_ASSEMBLY);
 		if(engineAssembly == nullptr)
 			BS_EXCEPT(InvalidStateException, String(ENGINE_ASSEMBLY) +  " assembly is not loaded.");
 
@@ -746,9 +746,9 @@ namespace bs
 		for(auto& entry : mapping.components)
 		{
 			BuiltinComponentInfo info = entry;
-			info.monoClass = assembly.getClass(entry.metaData->ns, entry.metaData->name);
+			info.monoClass = assembly.GetClass(entry.metaData->ns, entry.metaData->name);
 
-			::MonoReflectionType* type = MonoUtil::getType(info.monoClass->GetInternalClassInternal());
+			::MonoReflectionType* type = MonoUtil::GetType(info.monoClass->GetInternalClassInternal());
 
 			mBuiltinComponentInfos[type] = info;
 			mBuiltinComponentInfosByTID[info.typeId] = info;
@@ -757,9 +757,9 @@ namespace bs
 		for (auto& entry : mapping.resources)
 		{
 			BuiltinResourceInfo info = entry;
-			info.monoClass = assembly.getClass(entry.metaData->ns, entry.metaData->name);
+			info.monoClass = assembly.GetClass(entry.metaData->ns, entry.metaData->name);
 
-			::MonoReflectionType* type = MonoUtil::getType(info.monoClass->GetInternalClassInternal());
+			::MonoReflectionType* type = MonoUtil::GetType(info.monoClass->GetInternalClassInternal());
 
 			mBuiltinResourceInfos[type] = info;
 			mBuiltinResourceInfosByTID[info.typeId] = info;
@@ -769,9 +769,9 @@ namespace bs
 		for(auto& entry : mapping.reflectableObjects)
 		{
 			ReflectableTypeInfo info = entry;
-			info.monoClass = assembly.getClass(entry.metaData->ns, entry.metaData->name);
+			info.monoClass = assembly.GetClass(entry.metaData->ns, entry.metaData->name);
 
-			::MonoReflectionType* type = MonoUtil::getType(info.monoClass->GetInternalClassInternal());
+			::MonoReflectionType* type = MonoUtil::GetType(info.monoClass->GetInternalClassInternal());
 
 			mReflectableTypeInfos[type] = info;
 			mReflectableTypeInfosByTID[info.typeId] = info;
@@ -878,55 +878,55 @@ namespace bs
 	{
 		if (value != nullptr)
 		{
-			::MonoClass* klass = MonoUtil::getClass(value);
-			MonoClass* monoClass = MonoManager::Instance().findClass(klass);
+			::MonoClass* klass = MonoUtil::GetClass(value);
+			MonoClass* monoClass = MonoManager::Instance().FindClass(klass);
 
-			if (MonoUtil::isEnum(klass))
+			if (MonoUtil::IsEnum(klass))
 			{
 				BS_LOG(Warning, Script, "Unsupported type provided.");
 				return nullptr;
 			}
 
-			MonoPrimitiveType monoPrimitiveType = MonoUtil::getPrimitiveType(klass);
+			MonoPrimitiveType monoPrimitiveType = MonoUtil::GetPrimitiveType(klass);
 			if(monoPrimitiveType != MonoPrimitiveType::Class && monoPrimitiveType != MonoPrimitiveType::ValueType)
 			{
 				BS_LOG(Warning, Script, "Unsupported type provided.");
 				return nullptr;
 			}
 
-			const ScriptMeta* managedResourceMeta = ScriptManagedResource::getMetaData();
-			const ScriptMeta* managedComponentMeta = ScriptManagedComponent::getMetaData();
+			const ScriptMeta* managedResourceMeta = ScriptManagedResource::GetMetaData();
+			const ScriptMeta* managedComponentMeta = ScriptManagedComponent::GetMetaData();
 
-			if (monoClass->isSubClassOf(ScriptResource::getMetaData()->scriptClass)) // Resource
+			if (monoClass->IsSubClassOf(ScriptResource::GetMetaData()->scriptClass)) // Resource
 			{
-				if (monoClass == ScriptResource::getMetaData()->scriptClass ||
-					monoClass == ScriptManagedResource::getMetaData()->scriptClass)
+				if (monoClass == ScriptResource::GetMetaData()->scriptClass ||
+					monoClass == ScriptManagedResource::GetMetaData()->scriptClass)
 				{
 					BS_LOG(Warning, Script, "Unsupported type provided.");
 					return nullptr;
 				}
 
-				if (monoClass->isSubClassOf(managedResourceMeta->scriptClass))
+				if (monoClass->IsSubClassOf(managedResourceMeta->scriptClass))
 				{
 					ScriptManagedResource* scriptResource = nullptr;
-					managedResourceMeta->thisPtrField->get(value, &scriptResource);
+					managedResourceMeta->thisPtrField->Get(value, &scriptResource);
 
 					HManagedResource resource = scriptResource->GetHandle();
 					if (!resource.IsLoaded(false))
 						return nullptr;
 
 					MonoObject* managedInstance = resource->GetManagedInstance();
-					SPtr<ManagedSerializableObject> serializedObject = ManagedSerializableObject::createFromExisting(managedInstance);
+					SPtr<ManagedSerializableObject> serializedObject = ManagedSerializableObject::CreateFromExisting(managedInstance);
 					if (serializedObject == nullptr)
 						return nullptr;
 
-					serializedObject->serialize();
+					serializedObject->Serialize();
 					return serializedObject;
 				}
 				else
 				{
-					::MonoReflectionType* type = MonoUtil::getType(klass);
-					BuiltinResourceInfo* builtinInfo = getBuiltinResourceInfo(type);
+					::MonoReflectionType* type = MonoUtil::GetType(klass);
+					BuiltinResourceInfo* builtinInfo = GetBuiltinResourceInfo(type);
 					if (builtinInfo == nullptr)
 					{
 						assert(false && "Unable to find information about a built-in resource. Did you update BuiltinResourceTypes list?");
@@ -934,16 +934,16 @@ namespace bs
 					}
 
 					ScriptResourceBase* scriptResource = nullptr;
-					builtinInfo->metaData->thisPtrField->get(value, &scriptResource);
+					builtinInfo->metaData->thisPtrField->Get(value, &scriptResource);
 
 					HResource handle = scriptResource->GetGenericHandle();
 					if (!handle.IsLoaded(false))
 						return nullptr;
 
-					return handle.getInternalPtr();
+					return handle.GetInternalPtr();
 				}
 			}
-			else if (monoClass->isSubClassOf(mBuiltin.componentClass)) // Component
+			else if (monoClass->IsSubClassOf(mBuiltin.componentClass)) // Component
 			{
 				if (monoClass == mBuiltin.componentClass || monoClass == mBuiltin.managedComponentClass)
 				{
@@ -951,27 +951,27 @@ namespace bs
 					return nullptr;
 				}
 
-				if(monoClass->isSubClassOf(mBuiltin.managedComponentClass))
+				if(monoClass->IsSubClassOf(mBuiltin.managedComponentClass))
 				{
 					ScriptManagedComponent* scriptComponent = nullptr;
-					managedComponentMeta->thisPtrField->get(value, &scriptComponent);
+					managedComponentMeta->thisPtrField->Get(value, &scriptComponent);
 
 					HManagedComponent component = scriptComponent->GetHandle();
-					if (component.isDestroyed())
+					if (component.IsDestroyed())
 						return nullptr;
 
 					MonoObject* managedInstance = component->GetManagedInstance();
-					SPtr<ManagedSerializableObject> serializedObject = ManagedSerializableObject::createFromExisting(managedInstance);
+					SPtr<ManagedSerializableObject> serializedObject = ManagedSerializableObject::CreateFromExisting(managedInstance);
 					if (serializedObject == nullptr)
 						return nullptr;
 
-					serializedObject->serialize();
+					serializedObject->Serialize();
 					return serializedObject;
 				}
 				else
 				{
-					::MonoReflectionType* type = MonoUtil::getType(klass);
-					BuiltinComponentInfo* builtinInfo = getBuiltinComponentInfo(type);
+					::MonoReflectionType* type = MonoUtil::GetType(klass);
+					BuiltinComponentInfo* builtinInfo = GetBuiltinComponentInfo(type);
 					if (builtinInfo == nullptr)
 					{
 						assert(false && "Unable to find information about a built-in component. Did you update BuiltinComponents list?");
@@ -979,23 +979,23 @@ namespace bs
 					}
 
 					ScriptComponentBase* scriptComponent = nullptr;
-					builtinInfo->metaData->thisPtrField->get(value, &scriptComponent);
+					builtinInfo->metaData->thisPtrField->Get(value, &scriptComponent);
 
 					HComponent handle = scriptComponent->GetComponent();
-					if (handle.isDestroyed())
+					if (handle.IsDestroyed())
 						return nullptr;
 
-					return handle.getInternalPtr();
+					return handle.GetInternalPtr();
 				}
 			}
 
 			// Generic class or value type
 			String elementNs;
 			String elementTypeName;
-			MonoUtil::getClassName(value, elementNs, elementTypeName);
+			MonoUtil::GetClassName(value, elementNs, elementTypeName);
 
 			SPtr<ManagedSerializableObjectInfo> objInfo;
-			if (!instance().getSerializableObjectInfo(elementNs, elementTypeName, objInfo))
+			if (!Instance().GetSerializableObjectInfo(elementNs, elementTypeName, objInfo))
 			{
 				BS_LOG(Error, Script, "Object has no serialization meta-data.");
 				return nullptr;
@@ -1003,29 +1003,29 @@ namespace bs
 
 			if (objInfo->mTypeInfo->mRTIITypeId != 0)
 			{
-				::MonoClass* monoClass = MonoUtil::getClass(value);
-				::MonoReflectionType* monoType = MonoUtil::getType(monoClass);
+				::MonoClass* monoClass = MonoUtil::GetClass(value);
+				::MonoReflectionType* monoType = MonoUtil::GetType(monoClass);
 
-				const ReflectableTypeInfo* reflTypeInfo = instance().getReflectableTypeInfo(monoType);
+				const ReflectableTypeInfo* reflTypeInfo = Instance().GetReflectableTypeInfo(monoType);
 				assert(reflTypeInfo);
 
 				ScriptReflectableBase* scriptReflectable = nullptr;
 
 				if (reflTypeInfo->metaData->thisPtrField != nullptr)
-					reflTypeInfo->metaData->thisPtrField->get(value, &scriptReflectable);
+					reflTypeInfo->metaData->thisPtrField->Get(value, &scriptReflectable);
 
 				return scriptReflectable->GetReflectable();
 			}
 			else
 			{
-				SPtr<ManagedSerializableObject> managedObj = ManagedSerializableObject::createFromExisting(value);
+				SPtr<ManagedSerializableObject> managedObj = ManagedSerializableObject::CreateFromExisting(value);
 				if (!managedObj)
 				{
 					BS_LOG(Error, Script, "Object failed to serialize due to an internal error.");
 					return nullptr;
 				}
 
-				managedObj->serialize();
+				managedObj->Serialize();
 				return managedObj;
 			}
 		}

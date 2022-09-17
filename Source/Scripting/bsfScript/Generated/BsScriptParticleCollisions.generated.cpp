@@ -20,14 +20,14 @@ namespace bs
 
 	void ScriptParticleCollisions::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_setPlanes", (void*)&ScriptParticleCollisions::Internal_setPlanes);
-		metaData.scriptClass->addInternalCall("Internal_getPlanes", (void*)&ScriptParticleCollisions::Internal_getPlanes);
-		metaData.scriptClass->addInternalCall("Internal_setPlaneObjects", (void*)&ScriptParticleCollisions::Internal_setPlaneObjects);
-		metaData.scriptClass->addInternalCall("Internal_getPlaneObjects", (void*)&ScriptParticleCollisions::Internal_getPlaneObjects);
-		metaData.scriptClass->addInternalCall("Internal_setOptions", (void*)&ScriptParticleCollisions::Internal_setOptions);
-		metaData.scriptClass->addInternalCall("Internal_getOptions", (void*)&ScriptParticleCollisions::Internal_getOptions);
-		metaData.scriptClass->addInternalCall("Internal_create", (void*)&ScriptParticleCollisions::Internal_create);
-		metaData.scriptClass->addInternalCall("Internal_create0", (void*)&ScriptParticleCollisions::Internal_create0);
+		metaData.scriptClass->AddInternalCall("Internal_setPlanes", (void*)&ScriptParticleCollisions::InternalSetPlanes);
+		metaData.scriptClass->AddInternalCall("Internal_getPlanes", (void*)&ScriptParticleCollisions::InternalGetPlanes);
+		metaData.scriptClass->AddInternalCall("Internal_setPlaneObjects", (void*)&ScriptParticleCollisions::InternalSetPlaneObjects);
+		metaData.scriptClass->AddInternalCall("Internal_getPlaneObjects", (void*)&ScriptParticleCollisions::InternalGetPlaneObjects);
+		metaData.scriptClass->AddInternalCall("Internal_setOptions", (void*)&ScriptParticleCollisions::InternalSetOptions);
+		metaData.scriptClass->AddInternalCall("Internal_getOptions", (void*)&ScriptParticleCollisions::InternalGetOptions);
+		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptParticleCollisions::InternalCreate);
+		metaData.scriptClass->AddInternalCall("Internal_create0", (void*)&ScriptParticleCollisions::InternalCreate0);
 
 	}
 

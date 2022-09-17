@@ -15,14 +15,14 @@ namespace bs
 	void ScriptScreenSpaceReflectionsSettings::initRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_ScreenSpaceReflectionsSettings", (void*)&ScriptScreenSpaceReflectionsSettings::InternalScreenSpaceReflectionsSettings);
-		metaData.scriptClass->addInternalCall("Internal_getenabled", (void*)&ScriptScreenSpaceReflectionsSettings::Internal_getenabled);
-		metaData.scriptClass->addInternalCall("Internal_setenabled", (void*)&ScriptScreenSpaceReflectionsSettings::Internal_setenabled);
-		metaData.scriptClass->addInternalCall("Internal_getquality", (void*)&ScriptScreenSpaceReflectionsSettings::Internal_getquality);
-		metaData.scriptClass->addInternalCall("Internal_setquality", (void*)&ScriptScreenSpaceReflectionsSettings::Internal_setquality);
-		metaData.scriptClass->addInternalCall("Internal_getintensity", (void*)&ScriptScreenSpaceReflectionsSettings::Internal_getintensity);
-		metaData.scriptClass->addInternalCall("Internal_setintensity", (void*)&ScriptScreenSpaceReflectionsSettings::Internal_setintensity);
-		metaData.scriptClass->addInternalCall("Internal_getmaxRoughness", (void*)&ScriptScreenSpaceReflectionsSettings::Internal_getmaxRoughness);
-		metaData.scriptClass->addInternalCall("Internal_setmaxRoughness", (void*)&ScriptScreenSpaceReflectionsSettings::Internal_setmaxRoughness);
+		metaData.scriptClass->AddInternalCall("Internal_getenabled", (void*)&ScriptScreenSpaceReflectionsSettings::InternalGetenabled);
+		metaData.scriptClass->AddInternalCall("Internal_setenabled", (void*)&ScriptScreenSpaceReflectionsSettings::InternalSetenabled);
+		metaData.scriptClass->AddInternalCall("Internal_getquality", (void*)&ScriptScreenSpaceReflectionsSettings::InternalGetquality);
+		metaData.scriptClass->AddInternalCall("Internal_setquality", (void*)&ScriptScreenSpaceReflectionsSettings::InternalSetquality);
+		metaData.scriptClass->AddInternalCall("Internal_getintensity", (void*)&ScriptScreenSpaceReflectionsSettings::InternalGetintensity);
+		metaData.scriptClass->AddInternalCall("Internal_setintensity", (void*)&ScriptScreenSpaceReflectionsSettings::InternalSetintensity);
+		metaData.scriptClass->AddInternalCall("Internal_getmaxRoughness", (void*)&ScriptScreenSpaceReflectionsSettings::InternalGetmaxRoughness);
+		metaData.scriptClass->AddInternalCall("Internal_setmaxRoughness", (void*)&ScriptScreenSpaceReflectionsSettings::InternalSetmaxRoughness);
 
 	}
 

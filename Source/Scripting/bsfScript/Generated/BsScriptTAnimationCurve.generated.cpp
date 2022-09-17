@@ -90,9 +90,9 @@ namespace bs
 
 	void ScriptTAnimationCurveVector3::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_TAnimationCurve", (void*)&ScriptTAnimationCurveVector3::Internal_TAnimationCurve);
-		metaData.scriptClass->addInternalCall("Internal_evaluate", (void*)&ScriptTAnimationCurveVector3::Internal_evaluate);
-		metaData.scriptClass->addInternalCall("Internal_getKeyFrames", (void*)&ScriptTAnimationCurveVector3::Internal_getKeyFrames);
+		metaData.scriptClass->AddInternalCall("Internal_TAnimationCurve", (void*)&ScriptTAnimationCurveVector3::InternalTAnimationCurve);
+		metaData.scriptClass->AddInternalCall("Internal_evaluate", (void*)&ScriptTAnimationCurveVector3::InternalEvaluate);
+		metaData.scriptClass->AddInternalCall("Internal_getKeyFrames", (void*)&ScriptTAnimationCurveVector3::InternalGetKeyFrames);
 
 	}
 
@@ -155,9 +155,9 @@ namespace bs
 
 	void ScriptTAnimationCurveVector2::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_TAnimationCurve", (void*)&ScriptTAnimationCurveVector2::Internal_TAnimationCurve);
-		metaData.scriptClass->addInternalCall("Internal_evaluate", (void*)&ScriptTAnimationCurveVector2::Internal_evaluate);
-		metaData.scriptClass->addInternalCall("Internal_getKeyFrames", (void*)&ScriptTAnimationCurveVector2::Internal_getKeyFrames);
+		metaData.scriptClass->AddInternalCall("Internal_TAnimationCurve", (void*)&ScriptTAnimationCurveVector2::InternalTAnimationCurve);
+		metaData.scriptClass->AddInternalCall("Internal_evaluate", (void*)&ScriptTAnimationCurveVector2::InternalEvaluate);
+		metaData.scriptClass->AddInternalCall("Internal_getKeyFrames", (void*)&ScriptTAnimationCurveVector2::InternalGetKeyFrames);
 
 	}
 
@@ -220,9 +220,9 @@ namespace bs
 
 	void ScriptTAnimationCurveQuaternion::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_TAnimationCurve", (void*)&ScriptTAnimationCurveQuaternion::Internal_TAnimationCurve);
-		metaData.scriptClass->addInternalCall("Internal_evaluate", (void*)&ScriptTAnimationCurveQuaternion::Internal_evaluate);
-		metaData.scriptClass->addInternalCall("Internal_getKeyFrames", (void*)&ScriptTAnimationCurveQuaternion::Internal_getKeyFrames);
+		metaData.scriptClass->AddInternalCall("Internal_TAnimationCurve", (void*)&ScriptTAnimationCurveQuaternion::InternalTAnimationCurve);
+		metaData.scriptClass->AddInternalCall("Internal_evaluate", (void*)&ScriptTAnimationCurveQuaternion::InternalEvaluate);
+		metaData.scriptClass->AddInternalCall("Internal_getKeyFrames", (void*)&ScriptTAnimationCurveQuaternion::InternalGetKeyFrames);
 
 	}
 
@@ -285,9 +285,9 @@ namespace bs
 
 	void ScriptTAnimationCurveint32_t::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_TAnimationCurve", (void*)&ScriptTAnimationCurveint32_t::Internal_TAnimationCurve);
-		metaData.scriptClass->addInternalCall("Internal_evaluate", (void*)&ScriptTAnimationCurveint32_t::Internal_evaluate);
-		metaData.scriptClass->addInternalCall("Internal_getKeyFrames", (void*)&ScriptTAnimationCurveint32_t::Internal_getKeyFrames);
+		metaData.scriptClass->AddInternalCall("Internal_TAnimationCurve", (void*)&ScriptTAnimationCurveint32_t::InternalTAnimationCurve);
+		metaData.scriptClass->AddInternalCall("Internal_evaluate", (void*)&ScriptTAnimationCurveint32_t::InternalEvaluate);
+		metaData.scriptClass->AddInternalCall("Internal_getKeyFrames", (void*)&ScriptTAnimationCurveint32_t::InternalGetKeyFrames);
 
 	}
 

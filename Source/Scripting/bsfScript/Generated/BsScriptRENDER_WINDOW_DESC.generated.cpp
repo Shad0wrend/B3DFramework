@@ -40,13 +40,13 @@ namespace bs
 		output.depthBuffer = value.depthBuffer;
 		output.multisampleCount = value.multisampleCount;
 		String tmpmultisampleHint;
-		tmpmultisampleHint = MonoUtil::monoToString(value.multisampleHint);
+		tmpmultisampleHint = MonoUtil::MonoToString(value.multisampleHint);
 		output.multisampleHint = tmpmultisampleHint;
 		output.gamma = value.gamma;
 		output.left = value.left;
 		output.top = value.top;
 		String tmptitle;
-		tmptitle = MonoUtil::monoToString(value.title);
+		tmptitle = MonoUtil::MonoToString(value.title);
 		output.title = tmptitle;
 		output.showTitleBar = value.showTitleBar;
 		output.showBorder = value.showBorder;

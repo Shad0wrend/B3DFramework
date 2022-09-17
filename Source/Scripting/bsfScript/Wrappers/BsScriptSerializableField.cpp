@@ -34,7 +34,7 @@ namespace bs
 	MonoObject* ScriptSerializableField::Create(MonoObject* parentObject, const SPtr<ManagedSerializableMemberInfo>& fieldInfo)
 	{
 		MonoString* monoStrName = MonoUtil::WstringToMono(toWString(fieldInfo->mName));
-		MonoReflectionType* internalType = MonoUtil::getType(fieldInfo->mTypeInfo->GetMonoClass());
+		MonoReflectionType* internalType = MonoUtil::GetType(fieldInfo->mTypeInfo->GetMonoClass());
 		UINT32 fieldFlags = (UINT32)fieldInfo->mFlags;
 
 		void* params[4] = { parentObject, monoStrName, &fieldFlags, internalType };
@@ -78,43 +78,43 @@ namespace bs
 			{
 				MonoObject* attrib = fieldInfo->GetAttribute(range);
 
-				ScriptRange::getMinRangeField()->get(attrib, &interopStyle.rangeMin);
-				ScriptRange::getMaxRangeField()->get(attrib, &interopStyle.rangeMax);
-				ScriptRange::getSliderField()->get(attrib, &interopStyle.displayAsSlider);
+				ScriptRange::GetMinRangeField()->Get(attrib, &interopStyle.rangeMin);
+				ScriptRange::GetMaxRangeField()->Get(attrib, &interopStyle.rangeMax);
+				ScriptRange::GetSliderField()->Get(attrib, &interopStyle.displayAsSlider);
 			}
 		}
 
 		if (fieldFlags.IsSet(ScriptFieldFlag::Step))
 		{
-			MonoClass* step = ScriptAssemblyManager::Instance().getBuiltinClasses().stepAttribute;
+			MonoClass* step = ScriptAssemblyManager::Instance().GetBuiltinClasses().stepAttribute;
 			if (step != nullptr)
 			{
 				MonoObject* attrib = fieldInfo->GetAttribute(step);
-				ScriptStep::getStepField()->get(attrib, &interopStyle.stepIncrement);
+				ScriptStep::GetStepField()->Get(attrib, &interopStyle.stepIncrement);
 			}
 		}
 
 		if (fieldFlags.IsSet(ScriptFieldFlag::Category))
 		{
-			MonoClass* category = ScriptAssemblyManager::Instance().getBuiltinClasses().categoryAttribute;
+			MonoClass* category = ScriptAssemblyManager::Instance().GetBuiltinClasses().categoryAttribute;
 			if (category != nullptr)
 			{
 				MonoObject* attrib = fieldInfo->GetAttribute(category);
-				ScriptCategory::GetNameField()->get(attrib, &interopStyle.categoryName);
+				ScriptCategory::GetNameField()->Get(attrib, &interopStyle.categoryName);
 			}
 		}
 
 		if (fieldFlags.IsSet(ScriptFieldFlag::Order))
 		{
-			MonoClass* order = ScriptAssemblyManager::Instance().getBuiltinClasses().orderAttribute;
+			MonoClass* order = ScriptAssemblyManager::Instance().GetBuiltinClasses().orderAttribute;
 			if (order != nullptr)
 			{
 				MonoObject* attrib = fieldInfo->GetAttribute(order);
-				ScriptOrder::getIndexField()->get(attrib, &interopStyle.order);
+				ScriptOrder::GetIndexField()->Get(attrib, &interopStyle.order);
 			}
 		}
 
-		MonoUtil::valueCopy(style, &interopStyle, ScriptSerializableFieldStyle::getMetaData()->scriptClass->GetInternalClassInternal());
+		MonoUtil::ValueCopy(style, &interopStyle, ScriptSerializableFieldStyle::GetMetaData()->scriptClass->GetInternalClassInternal());
 	}
 
 	ScriptSerializableFieldStyle::ScriptSerializableFieldStyle(MonoObject* managedInstance)

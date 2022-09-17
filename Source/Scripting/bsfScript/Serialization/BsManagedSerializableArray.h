@@ -49,7 +49,7 @@ namespace bs
 		/**
 		 * Changes the size of the array. Operates on managed object if in linked state, or on cached data otherwise. If
 		 * in linked state the new instance of the managed object will be created and must be retrieved by
-		 * getManagedInstance().
+		 * GetManagedInstance().
 		 *
 		 * @param[in]	newSizes	Array of sizes, one per array dimension. Number of sizes must match number of array
 		 *							dimensions as specified by its type.

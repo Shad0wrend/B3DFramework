@@ -45,7 +45,7 @@ namespace bs
 	{
 		bool tmp__output;
 		String tmpidentifier;
-		tmpidentifier = MonoUtil::monoToString(identifier);
+		tmpidentifier = MonoUtil::MonoToString(identifier);
 		tmp__output = thisPtr->GetHandle()->contains(tmpidentifier);
 
 		bool __output;
@@ -85,9 +85,9 @@ namespace bs
 	void ScriptStringTable::InternalSetString(ScriptStringTable* thisPtr, MonoString* identifier, Language language, MonoString* value)
 	{
 		String tmpidentifier;
-		tmpidentifier = MonoUtil::monoToString(identifier);
+		tmpidentifier = MonoUtil::MonoToString(identifier);
 		String tmpvalue;
-		tmpvalue = MonoUtil::monoToString(value);
+		tmpvalue = MonoUtil::MonoToString(value);
 		thisPtr->GetHandle()->SetString(tmpidentifier, language, tmpvalue);
 	}
 
@@ -95,7 +95,7 @@ namespace bs
 	{
 		String tmp__output;
 		String tmpidentifier;
-		tmpidentifier = MonoUtil::monoToString(identifier);
+		tmpidentifier = MonoUtil::MonoToString(identifier);
 		tmp__output = thisPtr->GetHandle()->GetString(tmpidentifier, language);
 
 		MonoString* __output;
@@ -107,7 +107,7 @@ namespace bs
 	void ScriptStringTable::InternalRemoveString(ScriptStringTable* thisPtr, MonoString* identifier)
 	{
 		String tmpidentifier;
-		tmpidentifier = MonoUtil::monoToString(identifier);
+		tmpidentifier = MonoUtil::MonoToString(identifier);
 		thisPtr->GetHandle()->removeString(tmpidentifier);
 	}
 

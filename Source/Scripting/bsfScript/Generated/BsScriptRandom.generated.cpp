@@ -23,15 +23,15 @@ namespace bs
 		metaData.scriptClass->AddInternalCall("Internal_getRange", (void*)&ScriptRandom::InternalGetRange);
 		metaData.scriptClass->AddInternalCall("Internal_getUNorm", (void*)&ScriptRandom::InternalGetUNorm);
 		metaData.scriptClass->AddInternalCall("Internal_getSNorm", (void*)&ScriptRandom::InternalGetSNorm);
-		metaData.scriptClass->addInternalCall("Internal_getUnitVector", (void*)&ScriptRandom::Internal_getUnitVector);
-		metaData.scriptClass->addInternalCall("Internal_getUnitVector2D", (void*)&ScriptRandom::Internal_getUnitVector2D);
-		metaData.scriptClass->addInternalCall("Internal_getPointInSphere", (void*)&ScriptRandom::Internal_getPointInSphere);
-		metaData.scriptClass->addInternalCall("Internal_getPointInSphereShell", (void*)&ScriptRandom::Internal_getPointInSphereShell);
-		metaData.scriptClass->addInternalCall("Internal_getPointInCircle", (void*)&ScriptRandom::Internal_getPointInCircle);
-		metaData.scriptClass->addInternalCall("Internal_getPointInCircleShell", (void*)&ScriptRandom::Internal_getPointInCircleShell);
-		metaData.scriptClass->addInternalCall("Internal_getPointInArc", (void*)&ScriptRandom::Internal_getPointInArc);
-		metaData.scriptClass->addInternalCall("Internal_getPointInArcShell", (void*)&ScriptRandom::Internal_getPointInArcShell);
-		metaData.scriptClass->addInternalCall("Internal_getBarycentric", (void*)&ScriptRandom::Internal_getBarycentric);
+		metaData.scriptClass->AddInternalCall("Internal_getUnitVector", (void*)&ScriptRandom::InternalGetUnitVector);
+		metaData.scriptClass->AddInternalCall("Internal_getUnitVector2D", (void*)&ScriptRandom::InternalGetUnitVector2D);
+		metaData.scriptClass->AddInternalCall("Internal_getPointInSphere", (void*)&ScriptRandom::InternalGetPointInSphere);
+		metaData.scriptClass->AddInternalCall("Internal_getPointInSphereShell", (void*)&ScriptRandom::InternalGetPointInSphereShell);
+		metaData.scriptClass->AddInternalCall("Internal_getPointInCircle", (void*)&ScriptRandom::InternalGetPointInCircle);
+		metaData.scriptClass->AddInternalCall("Internal_getPointInCircleShell", (void*)&ScriptRandom::InternalGetPointInCircleShell);
+		metaData.scriptClass->AddInternalCall("Internal_getPointInArc", (void*)&ScriptRandom::InternalGetPointInArc);
+		metaData.scriptClass->AddInternalCall("Internal_getPointInArcShell", (void*)&ScriptRandom::InternalGetPointInArcShell);
+		metaData.scriptClass->AddInternalCall("Internal_getBarycentric", (void*)&ScriptRandom::InternalGetBarycentric);
 
 	}
 

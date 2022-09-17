@@ -16,18 +16,18 @@ namespace bs
 	void ScriptBloomSettings::initRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_BloomSettings", (void*)&ScriptBloomSettings::InternalBloomSettings);
-		metaData.scriptClass->addInternalCall("Internal_getenabled", (void*)&ScriptBloomSettings::Internal_getenabled);
-		metaData.scriptClass->addInternalCall("Internal_setenabled", (void*)&ScriptBloomSettings::Internal_setenabled);
-		metaData.scriptClass->addInternalCall("Internal_getquality", (void*)&ScriptBloomSettings::Internal_getquality);
-		metaData.scriptClass->addInternalCall("Internal_setquality", (void*)&ScriptBloomSettings::Internal_setquality);
-		metaData.scriptClass->addInternalCall("Internal_getthreshold", (void*)&ScriptBloomSettings::Internal_getthreshold);
-		metaData.scriptClass->addInternalCall("Internal_setthreshold", (void*)&ScriptBloomSettings::Internal_setthreshold);
-		metaData.scriptClass->addInternalCall("Internal_getintensity", (void*)&ScriptBloomSettings::Internal_getintensity);
-		metaData.scriptClass->addInternalCall("Internal_setintensity", (void*)&ScriptBloomSettings::Internal_setintensity);
-		metaData.scriptClass->addInternalCall("Internal_gettint", (void*)&ScriptBloomSettings::Internal_gettint);
-		metaData.scriptClass->addInternalCall("Internal_settint", (void*)&ScriptBloomSettings::Internal_settint);
-		metaData.scriptClass->addInternalCall("Internal_getfilterSize", (void*)&ScriptBloomSettings::Internal_getfilterSize);
-		metaData.scriptClass->addInternalCall("Internal_setfilterSize", (void*)&ScriptBloomSettings::Internal_setfilterSize);
+		metaData.scriptClass->AddInternalCall("Internal_getenabled", (void*)&ScriptBloomSettings::InternalGetenabled);
+		metaData.scriptClass->AddInternalCall("Internal_setenabled", (void*)&ScriptBloomSettings::InternalSetenabled);
+		metaData.scriptClass->AddInternalCall("Internal_getquality", (void*)&ScriptBloomSettings::InternalGetquality);
+		metaData.scriptClass->AddInternalCall("Internal_setquality", (void*)&ScriptBloomSettings::InternalSetquality);
+		metaData.scriptClass->AddInternalCall("Internal_getthreshold", (void*)&ScriptBloomSettings::InternalGetthreshold);
+		metaData.scriptClass->AddInternalCall("Internal_setthreshold", (void*)&ScriptBloomSettings::InternalSetthreshold);
+		metaData.scriptClass->AddInternalCall("Internal_getintensity", (void*)&ScriptBloomSettings::InternalGetintensity);
+		metaData.scriptClass->AddInternalCall("Internal_setintensity", (void*)&ScriptBloomSettings::InternalSetintensity);
+		metaData.scriptClass->AddInternalCall("Internal_gettint", (void*)&ScriptBloomSettings::InternalGettint);
+		metaData.scriptClass->AddInternalCall("Internal_settint", (void*)&ScriptBloomSettings::InternalSettint);
+		metaData.scriptClass->AddInternalCall("Internal_getfilterSize", (void*)&ScriptBloomSettings::InternalGetfilterSize);
+		metaData.scriptClass->AddInternalCall("Internal_setfilterSize", (void*)&ScriptBloomSettings::InternalSetfilterSize);
 
 	}
 

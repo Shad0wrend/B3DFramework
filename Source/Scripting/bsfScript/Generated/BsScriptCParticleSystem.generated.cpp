@@ -38,17 +38,17 @@ namespace bs
 
 	void ScriptCParticleSystem::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_setSettings", (void*)&ScriptCParticleSystem::Internal_setSettings);
-		metaData.scriptClass->addInternalCall("Internal_getSettings", (void*)&ScriptCParticleSystem::Internal_getSettings);
-		metaData.scriptClass->addInternalCall("Internal_setGpuSimulationSettings", (void*)&ScriptCParticleSystem::Internal_setGpuSimulationSettings);
-		metaData.scriptClass->addInternalCall("Internal_getGpuSimulationSettings", (void*)&ScriptCParticleSystem::Internal_getGpuSimulationSettings);
-		metaData.scriptClass->addInternalCall("Internal_setEmitters", (void*)&ScriptCParticleSystem::Internal_setEmitters);
-		metaData.scriptClass->addInternalCall("Internal_getEmitters", (void*)&ScriptCParticleSystem::Internal_getEmitters);
-		metaData.scriptClass->addInternalCall("Internal_setEvolvers", (void*)&ScriptCParticleSystem::Internal_setEvolvers);
-		metaData.scriptClass->addInternalCall("Internal_getEvolvers", (void*)&ScriptCParticleSystem::Internal_getEvolvers);
-		metaData.scriptClass->addInternalCall("Internal_setLayer", (void*)&ScriptCParticleSystem::Internal_setLayer);
-		metaData.scriptClass->addInternalCall("Internal_getLayer", (void*)&ScriptCParticleSystem::Internal_getLayer);
-		metaData.scriptClass->addInternalCall("Internal__togglePreviewMode", (void*)&ScriptCParticleSystem::Internal__togglePreviewMode);
+		metaData.scriptClass->AddInternalCall("Internal_setSettings", (void*)&ScriptCParticleSystem::InternalSetSettings);
+		metaData.scriptClass->AddInternalCall("Internal_getSettings", (void*)&ScriptCParticleSystem::InternalGetSettings);
+		metaData.scriptClass->AddInternalCall("Internal_setGpuSimulationSettings", (void*)&ScriptCParticleSystem::InternalSetGpuSimulationSettings);
+		metaData.scriptClass->AddInternalCall("Internal_getGpuSimulationSettings", (void*)&ScriptCParticleSystem::InternalGetGpuSimulationSettings);
+		metaData.scriptClass->AddInternalCall("Internal_setEmitters", (void*)&ScriptCParticleSystem::InternalSetEmitters);
+		metaData.scriptClass->AddInternalCall("Internal_getEmitters", (void*)&ScriptCParticleSystem::InternalGetEmitters);
+		metaData.scriptClass->AddInternalCall("Internal_setEvolvers", (void*)&ScriptCParticleSystem::InternalSetEvolvers);
+		metaData.scriptClass->AddInternalCall("Internal_getEvolvers", (void*)&ScriptCParticleSystem::InternalGetEvolvers);
+		metaData.scriptClass->AddInternalCall("Internal_setLayer", (void*)&ScriptCParticleSystem::InternalSetLayer);
+		metaData.scriptClass->AddInternalCall("Internal_getLayer", (void*)&ScriptCParticleSystem::InternalGetLayer);
+		metaData.scriptClass->AddInternalCall("Internal__togglePreviewMode", (void*)&ScriptCParticleSystem::Internal__togglePreviewMode);
 
 	}
 

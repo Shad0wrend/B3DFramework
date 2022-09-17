@@ -23,20 +23,20 @@ namespace bs
 	{
 		mGCHandle = MonoUtil::NewGcHandle(managedInstance, false);
 
-		MonoClass* listClass = MonoManager::Instance().findClass(MonoUtil::getClass(managedInstance));
+		MonoClass* listClass = MonoManager::Instance().FindClass(MonoUtil::GetClass(managedInstance));
 		if(listClass == nullptr)
 			return;
 
-		initMonoObjects(listClass);
+		InitMonoObjects(listClass);
 
-		mNumElements = getLengthInternal();
+		mNumElements = GetLengthInternal();
 	}
 
 	ManagedSerializableList::~ManagedSerializableList()
 	{
 		if(mGCHandle != 0)
 		{
-			MonoUtil::freeGCHandle(mGCHandle);
+			MonoUtil::FreeGcHandle(mGCHandle);
 			mGCHandle = 0;
 		}
 	}
@@ -49,11 +49,11 @@ namespace bs
 
 		String elementNs;
 		String elementTypeName;
-		MonoUtil::getClassName(managedInstance, elementNs, elementTypeName);
+		MonoUtil::GetClassName(managedInstance, elementNs, elementTypeName);
 
 		String fullName = elementNs + "." + elementTypeName;
 
-		if(ScriptAssemblyManager::Instance().getBuiltinClasses().systemGenericListClass->GetFullName() != fullName)
+		if(ScriptAssemblyManager::Instance().GetBuiltinClasses().systemGenericListClass->GetFullName() != fullName)
 			return nullptr;
 
 		return bs_shared_ptr_new<ManagedSerializableList>(ConstructPrivately(), typeInfo, managedInstance);
@@ -61,27 +61,27 @@ namespace bs
 
 	SPtr<ManagedSerializableList> ManagedSerializableList::CreateNew(const SPtr<ManagedSerializableTypeInfoList>& typeInfo, UINT32 size)
 	{
-		return bs_shared_ptr_new<ManagedSerializableList>(ConstructPrivately(), typeInfo, createManagedInstance(typeInfo, size));
+		return bs_shared_ptr_new<ManagedSerializableList>(ConstructPrivately(), typeInfo, CreateManagedInstance(typeInfo, size));
 	}
 
 	MonoObject* ManagedSerializableList::CreateManagedInstance(const SPtr<ManagedSerializableTypeInfoList>& typeInfo, UINT32 size)
 	{
-		if (!typeInfo->isTypeLoaded())
+		if (!typeInfo->IsTypeLoaded())
 			return nullptr;
 
 		::MonoClass* listMonoClass = typeInfo->GetMonoClass();
-		MonoClass* listClass = MonoManager::Instance().findClass(listMonoClass);
+		MonoClass* listClass = MonoManager::Instance().FindClass(listMonoClass);
 		if (listClass == nullptr)
 			return nullptr;
 
 		void* params[1] = { &size };
-		MonoObject* instance = listClass->createInstance("int", params);
+		MonoObject* instance = listClass->CreateInstance("int", params);
 		
 		ScriptArray tempArray(typeInfo->mElementType->GetMonoClass(), size);
-		params[0] = tempArray.getInternal();
+		params[0] = tempArray.GetInternal();
 
 		MonoMethod* addRangeMethod = listClass->GetMethod("AddRange", 1);
-		addRangeMethod->invoke(instance, params);
+		addRangeMethod->Invoke(instance, params);
 
 		return instance;
 	}
@@ -94,7 +94,7 @@ namespace bs
 	MonoObject* ManagedSerializableList::GetManagedInstance() const
 	{
 		if(mGCHandle != 0)
-			return MonoUtil::getObjectFromGCHandle(mGCHandle);
+			return MonoUtil::GetObjectFromGcHandle(mGCHandle);
 
 		return nullptr;
 	}
@@ -103,8 +103,8 @@ namespace bs
 	{
 		if (mGCHandle != 0)
 		{
-			MonoObject* managedInstance = MonoUtil::getObjectFromGCHandle(mGCHandle);
-			setFieldData(managedInstance, arrayIdx, val);
+			MonoObject* managedInstance = MonoUtil::GetObjectFromGcHandle(mGCHandle);
+			SetFieldData(managedInstance, arrayIdx, val);
 		}
 		else
 			mCachedEntries[arrayIdx] = val;
@@ -117,18 +117,18 @@ namespace bs
 
 	void ManagedSerializableList::AddFieldDataInternal(const SPtr<ManagedSerializableFieldData>& val)
 	{
-		MonoObject* managedInstance = MonoUtil::getObjectFromGCHandle(mGCHandle);
+		MonoObject* managedInstance = MonoUtil::GetObjectFromGcHandle(mGCHandle);
 
 		void* params[1];
 		params[0] = val->GetValue(mListTypeInfo->mElementType);
-		mAddMethod->invoke(managedInstance, params);
+		mAddMethod->Invoke(managedInstance, params);
 	}
 
 	SPtr<ManagedSerializableFieldData> ManagedSerializableList::GetFieldData(UINT32 arrayIdx)
 	{
 		if (mGCHandle != 0)
 		{
-			MonoObject* managedInstance = MonoUtil::getObjectFromGCHandle(mGCHandle);
+			MonoObject* managedInstance = MonoUtil::GetObjectFromGcHandle(mGCHandle);
 			MonoObject* obj = mItemProp->GetIndexed(managedInstance, arrayIdx);
 
 			return ManagedSerializableFieldData::Create(mListTypeInfo->mElementType, obj);
@@ -148,15 +148,15 @@ namespace bs
 
 			void* params[4];
 			params[0] = &dummy;;
-			params[1] = tempArray.getInternal();
+			params[1] = tempArray.GetInternal();
 			params[2] = &dummy;
 			params[3] = &minSize;
 
-			mCopyToMethod->invoke(getManagedInstance(), params);
-			mClearMethod->invoke(getManagedInstance(), nullptr);
+			mCopyToMethod->Invoke(GetManagedInstance(), params);
+			mClearMethod->Invoke(GetManagedInstance(), nullptr);
 
-			params[0] = tempArray.getInternal();
-			mAddRangeMethod->invoke(getManagedInstance(), params);
+			params[0] = tempArray.GetInternal();
+			mAddRangeMethod->Invoke(GetManagedInstance(), params);
 		}
 		else
 		{
@@ -171,38 +171,38 @@ namespace bs
 		if (mGCHandle == 0)
 			return;
 
-		mNumElements = getLengthInternal();
+		mNumElements = GetLengthInternal();
 		mCachedEntries = Vector<SPtr<ManagedSerializableFieldData>>(mNumElements);
 
 		for (UINT32 i = 0; i < mNumElements; i++)
-			mCachedEntries[i] = getFieldData(i);
+			mCachedEntries[i] = GetFieldData(i);
 
 		// Serialize children
 		for (auto& fieldEntry : mCachedEntries)
-			fieldEntry->serialize();
+			fieldEntry->Serialize();
 
-		MonoUtil::freeGCHandle(mGCHandle);
+		MonoUtil::FreeGcHandle(mGCHandle);
 		mGCHandle = 0;
 	}
 
 	MonoObject* ManagedSerializableList::Deserialize()
 	{
-		MonoObject* managedInstance = createManagedInstance(mListTypeInfo, mNumElements);
+		MonoObject* managedInstance = CreateManagedInstance(mListTypeInfo, mNumElements);
 
 		if (managedInstance == nullptr)
 			return nullptr;
 
-		MonoClass* listClass = MonoManager::Instance().findClass(mListTypeInfo->GetMonoClass());
-		initMonoObjects(listClass);
+		MonoClass* listClass = MonoManager::Instance().FindClass(mListTypeInfo->GetMonoClass());
+		InitMonoObjects(listClass);
 
 		// Deserialize children
 		for (auto& fieldEntry : mCachedEntries)
-			fieldEntry->deserialize();
+			fieldEntry->Deserialize();
 
 		UINT32 idx = 0;
 		for (auto& entry : mCachedEntries)
 		{
-			setFieldData(managedInstance, idx, entry);
+			SetFieldData(managedInstance, idx, entry);
 			idx++;
 		}
 
@@ -211,13 +211,13 @@ namespace bs
 
 	UINT32 ManagedSerializableList::GetLengthInternal() const
 	{
-		MonoObject* managedInstance = MonoUtil::getObjectFromGCHandle(mGCHandle);
-		MonoObject* length = mCountProp->get(managedInstance);
+		MonoObject* managedInstance = MonoUtil::GetObjectFromGcHandle(mGCHandle);
+		MonoObject* length = mCountProp->Get(managedInstance);
 
 		if(length == nullptr)
 			return 0;
 
-		return *(UINT32*)MonoUtil::unbox(length);
+		return *(UINT32*)MonoUtil::Unbox(length);
 	}
 
 	void ManagedSerializableList::InitMonoObjects(MonoClass* listClass)

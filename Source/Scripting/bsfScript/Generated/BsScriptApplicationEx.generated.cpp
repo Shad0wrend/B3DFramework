@@ -18,10 +18,10 @@ namespace bs
 
 	void ScriptApplicationEx::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_startUp", (void*)&ScriptApplicationEx::Internal_startUp);
-		metaData.scriptClass->addInternalCall("Internal_startUp0", (void*)&ScriptApplicationEx::Internal_startUp0);
-		metaData.scriptClass->addInternalCall("Internal_runMainLoop", (void*)&ScriptApplicationEx::Internal_runMainLoop);
-		metaData.scriptClass->addInternalCall("Internal_shutDown", (void*)&ScriptApplicationEx::Internal_shutDown);
+		metaData.scriptClass->AddInternalCall("Internal_startUp", (void*)&ScriptApplicationEx::InternalStartUp);
+		metaData.scriptClass->AddInternalCall("Internal_startUp0", (void*)&ScriptApplicationEx::InternalStartUp0);
+		metaData.scriptClass->AddInternalCall("Internal_runMainLoop", (void*)&ScriptApplicationEx::InternalRunMainLoop);
+		metaData.scriptClass->AddInternalCall("Internal_shutDown", (void*)&ScriptApplicationEx::InternalShutDown);
 
 	}
 
@@ -36,28 +36,28 @@ namespace bs
 		new (bs_alloc<ScriptApplicationEx>()) ScriptApplicationEx(managedInstance, value);
 		return managedInstance;
 	}
-	void ScriptApplicationEx::Internal_startUp(__START_UP_DESCInterop* desc)
+	void ScriptApplicationEx::InternalStartUp(__START_UP_DESCInterop* desc)
 	{
 		START_UP_DESC tmpdesc;
 		tmpdesc = ScriptSTART_UP_DESC::fromInterop(*desc);
 		ApplicationEx::StartUp(tmpdesc);
 	}
 
-	void ScriptApplicationEx::Internal_startUp0(__VideoModeInterop* videoMode, MonoString* title, bool fullscreen)
+	void ScriptApplicationEx::InternalStartUp0(__VideoModeInterop* videoMode, MonoString* title, bool fullscreen)
 	{
 		VideoMode tmpvideoMode;
 		tmpvideoMode = ScriptVideoMode::fromInterop(*videoMode);
 		String tmptitle;
-		tmptitle = MonoUtil::monoToString(title);
+		tmptitle = MonoUtil::MonoToString(title);
 		ApplicationEx::StartUp(tmpvideoMode, tmptitle, fullscreen);
 	}
 
-	void ScriptApplicationEx::Internal_runMainLoop()
+	void ScriptApplicationEx::InternalRunMainLoop()
 	{
 		ApplicationEx::runMainLoop();
 	}
 
-	void ScriptApplicationEx::Internal_shutDown()
+	void ScriptApplicationEx::InternalShutDown()
 	{
 		ApplicationEx::ShutDown();
 	}

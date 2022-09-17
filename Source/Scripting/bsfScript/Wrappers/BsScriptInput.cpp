@@ -79,123 +79,123 @@ namespace bs
 
 	void ScriptInput::OnButtonDown(const ButtonEvent& ev)
 	{
-		if (PlayInEditor::Instance().getState() != PlayInEditorState::Playing)
+		if (PlayInEditor::Instance().GetState() != PlayInEditorState::Playing)
 			return;
 
-		MonoUtil::invokeThunk(OnButtonPressedThunk, ev.buttonCode, ev.deviceIdx, ev.isUsed());
+		MonoUtil::InvokeThunk(OnButtonPressedThunk, ev.buttonCode, ev.deviceIdx, ev.IsUsed());
 	}
 
 	void ScriptInput::OnButtonUp(const ButtonEvent& ev)
 	{
-		if (PlayInEditor::Instance().getState() != PlayInEditorState::Playing)
+		if (PlayInEditor::Instance().GetState() != PlayInEditorState::Playing)
 			return;
 
-		MonoUtil::invokeThunk(OnButtonReleasedThunk, ev.buttonCode, ev.deviceIdx, ev.isUsed());
+		MonoUtil::InvokeThunk(OnButtonReleasedThunk, ev.buttonCode, ev.deviceIdx, ev.IsUsed());
 	}
 
 	void ScriptInput::OnCharInput(const TextInputEvent& ev)
 	{
-		if (PlayInEditor::Instance().getState() != PlayInEditorState::Playing)
+		if (PlayInEditor::Instance().GetState() != PlayInEditorState::Playing)
 			return;
 
-		MonoUtil::invokeThunk(OnCharInputThunk, ev.textChar, ev.isUsed());
+		MonoUtil::InvokeThunk(OnCharInputThunk, ev.textChar, ev.IsUsed());
 	}
 
 	void ScriptInput::OnPointerMoved(const PointerEvent& ev)
 	{
-		if (PlayInEditor::Instance().getState() != PlayInEditorState::Playing)
+		if (PlayInEditor::Instance().GetState() != PlayInEditorState::Playing)
 			return;
 
-		MonoObject* screenPos = ScriptVector2I::box(ev.screenPos);
-		MonoObject* delta = ScriptVector2I::box(ev.delta);
+		MonoObject* screenPos = ScriptVector2I::Box(ev.screenPos);
+		MonoObject* delta = ScriptVector2I::Box(ev.delta);
 
-		MonoUtil::invokeThunk(OnPointerMovedThunk, screenPos, delta,
-			ev.button, ev.shift, ev.control, ev.alt, ev.mouseWheelScrollAmount, ev.isUsed());
+		MonoUtil::InvokeThunk(OnPointerMovedThunk, screenPos, delta,
+			ev.button, ev.shift, ev.control, ev.alt, ev.mouseWheelScrollAmount, ev.IsUsed());
 	}
 
 	void ScriptInput::OnPointerPressed(const PointerEvent& ev)
 	{
-		if (PlayInEditor::Instance().getState() != PlayInEditorState::Playing)
+		if (PlayInEditor::Instance().GetState() != PlayInEditorState::Playing)
 			return;
 
-		MonoObject* screenPos = ScriptVector2I::box(ev.screenPos);
-		MonoObject* delta = ScriptVector2I::box(ev.delta);
+		MonoObject* screenPos = ScriptVector2I::Box(ev.screenPos);
+		MonoObject* delta = ScriptVector2I::Box(ev.delta);
 
-		MonoUtil::invokeThunk(OnPointerPressedThunk, screenPos, delta,
-			ev.button, ev.shift, ev.control, ev.alt, ev.mouseWheelScrollAmount, ev.isUsed());
+		MonoUtil::InvokeThunk(OnPointerPressedThunk, screenPos, delta,
+			ev.button, ev.shift, ev.control, ev.alt, ev.mouseWheelScrollAmount, ev.IsUsed());
 	}
 
 	void ScriptInput::OnPointerReleased(const PointerEvent& ev)
 	{
-		if (PlayInEditor::Instance().getState() != PlayInEditorState::Playing)
+		if (PlayInEditor::Instance().GetState() != PlayInEditorState::Playing)
 			return;
 
-		MonoObject* screenPos = ScriptVector2I::box(ev.screenPos);
-		MonoObject* delta = ScriptVector2I::box(ev.delta);
+		MonoObject* screenPos = ScriptVector2I::Box(ev.screenPos);
+		MonoObject* delta = ScriptVector2I::Box(ev.delta);
 
-		MonoUtil::invokeThunk(OnPointerReleasedThunk, screenPos, delta,
-			ev.button, ev.shift, ev.control, ev.alt, ev.mouseWheelScrollAmount, ev.isUsed());
+		MonoUtil::InvokeThunk(OnPointerReleasedThunk, screenPos, delta,
+			ev.button, ev.shift, ev.control, ev.alt, ev.mouseWheelScrollAmount, ev.IsUsed());
 	}
 
 	void ScriptInput::OnPointerDoubleClick(const PointerEvent& ev)
 	{
-		if (PlayInEditor::Instance().getState() != PlayInEditorState::Playing)
+		if (PlayInEditor::Instance().GetState() != PlayInEditorState::Playing)
 			return;
 
-		MonoObject* screenPos = ScriptVector2I::box(ev.screenPos);
-		MonoObject* delta = ScriptVector2I::box(ev.delta);
+		MonoObject* screenPos = ScriptVector2I::Box(ev.screenPos);
+		MonoObject* delta = ScriptVector2I::Box(ev.delta);
 
-		MonoUtil::invokeThunk(OnPointerDoubleClickThunk, screenPos, delta,
-			ev.button, ev.shift, ev.control, ev.alt, ev.mouseWheelScrollAmount, ev.isUsed());
+		MonoUtil::InvokeThunk(OnPointerDoubleClickThunk, screenPos, delta,
+			ev.button, ev.shift, ev.control, ev.alt, ev.mouseWheelScrollAmount, ev.IsUsed());
 	}
 
 	bool ScriptInput::InternalIsButtonHeld(ButtonCode code, UINT32 deviceIdx)
 	{
-		return Input::Instance().isButtonHeld(code, deviceIdx);
+		return Input::Instance().IsButtonHeld(code, deviceIdx);
 	}
 
 	bool ScriptInput::InternalIsButtonDown(ButtonCode code, UINT32 deviceIdx)
 	{
-		return Input::Instance().isButtonDown(code, deviceIdx);
+		return Input::Instance().IsButtonDown(code, deviceIdx);
 	}
 
 	bool ScriptInput::InternalIsButtonUp(ButtonCode code, UINT32 deviceIdx)
 	{
-		return Input::Instance().isButtonUp(code, deviceIdx);
+		return Input::Instance().IsButtonUp(code, deviceIdx);
 	}
 
 	bool ScriptInput::InternalIsPointerButtonHeld(PointerEventButton code)
 	{
-		return Input::Instance().isPointerButtonHeld(code);
+		return Input::Instance().IsPointerButtonHeld(code);
 	}
 
 	bool ScriptInput::InternalIsPointerButtonDown(PointerEventButton code)
 	{
-		return Input::Instance().isPointerButtonDown(code);
+		return Input::Instance().IsPointerButtonDown(code);
 	}
 
 	bool ScriptInput::InternalIsPointerButtonUp(PointerEventButton code)
 	{
-		return Input::Instance().isPointerButtonUp(code);
+		return Input::Instance().IsPointerButtonUp(code);
 	}
 
 	bool ScriptInput::InternalIsPointerDoubleClicked()
 	{
-		return Input::Instance().isPointerDoubleClicked();
+		return Input::Instance().IsPointerDoubleClicked();
 	}
 
 	float ScriptInput::InternalGetAxisValue(UINT32 axisType, UINT32 deviceIdx)
 	{
-		return Input::Instance().getAxisValue(axisType, deviceIdx);
+		return Input::Instance().GetAxisValue(axisType, deviceIdx);
 	}
 
 	void ScriptInput::InternalGetPointerPosition(Vector2I* position)
 	{
-		*position = Input::Instance().getPointerPosition();
+		*position = Input::Instance().GetPointerPosition();
 	}
 
 	void ScriptInput::InternalGetPointerDelta(Vector2I* position)
 	{
-		*position = Input::Instance().getPointerDelta();
+		*position = Input::Instance().GetPointerDelta();
 	}
 }

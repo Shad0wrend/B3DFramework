@@ -77,7 +77,7 @@ namespace bs
 	{
 		float tmp__output;
 		String tmpname;
-		tmpname = MonoUtil::monoToString(name);
+		tmpname = MonoUtil::MonoToString(name);
 		tmp__output = thisPtr->GetInternal()->GetFloat(tmpname);
 
 		float __output;
@@ -90,7 +90,7 @@ namespace bs
 	{
 		bool tmp__output;
 		String tmpname;
-		tmpname = MonoUtil::monoToString(name);
+		tmpname = MonoUtil::MonoToString(name);
 		tmp__output = thisPtr->GetInternal()->GetBool(tmpname);
 
 		bool __output;
@@ -102,35 +102,35 @@ namespace bs
 	void ScriptShaderVariation::InternalSetInt(ScriptShaderVariation* thisPtr, MonoString* name, int32_t value)
 	{
 		String tmpname;
-		tmpname = MonoUtil::monoToString(name);
+		tmpname = MonoUtil::MonoToString(name);
 		thisPtr->GetInternal()->SetInt(tmpname, value);
 	}
 
 	void ScriptShaderVariation::InternalSetUInt(ScriptShaderVariation* thisPtr, MonoString* name, uint32_t value)
 	{
 		String tmpname;
-		tmpname = MonoUtil::monoToString(name);
+		tmpname = MonoUtil::MonoToString(name);
 		thisPtr->GetInternal()->SetUInt(tmpname, value);
 	}
 
 	void ScriptShaderVariation::InternalSetFloat(ScriptShaderVariation* thisPtr, MonoString* name, float value)
 	{
 		String tmpname;
-		tmpname = MonoUtil::monoToString(name);
+		tmpname = MonoUtil::MonoToString(name);
 		thisPtr->GetInternal()->SetFloat(tmpname, value);
 	}
 
 	void ScriptShaderVariation::InternalSetBool(ScriptShaderVariation* thisPtr, MonoString* name, bool value)
 	{
 		String tmpname;
-		tmpname = MonoUtil::monoToString(name);
+		tmpname = MonoUtil::MonoToString(name);
 		thisPtr->GetInternal()->SetBool(tmpname, value);
 	}
 
 	void ScriptShaderVariation::InternalRemoveParam(ScriptShaderVariation* thisPtr, MonoString* paramName)
 	{
 		String tmpparamName;
-		tmpparamName = MonoUtil::monoToString(paramName);
+		tmpparamName = MonoUtil::MonoToString(paramName);
 		thisPtr->GetInternal()->removeParam(tmpparamName);
 	}
 
@@ -138,7 +138,7 @@ namespace bs
 	{
 		bool tmp__output;
 		String tmpparamName;
-		tmpparamName = MonoUtil::monoToString(paramName);
+		tmpparamName = MonoUtil::MonoToString(paramName);
 		tmp__output = thisPtr->GetInternal()->HasParam(tmpparamName);
 
 		bool __output;

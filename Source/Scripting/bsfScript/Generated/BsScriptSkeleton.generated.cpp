@@ -43,7 +43,7 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptSkeleton::Internal_getBoneInfo(ScriptSkeleton* thisPtr, int32_t boneIdx, __SkeletonBoneInfoExInterop* __output)
+	void ScriptSkeleton::InternalGetBoneInfo(ScriptSkeleton* thisPtr, int32_t boneIdx, __SkeletonBoneInfoExInterop* __output)
 	{
 		SkeletonBoneInfoEx tmp__output;
 		tmp__output = SkeletonEx::getBoneInfo(thisPtr->GetInternal(), boneIdx);

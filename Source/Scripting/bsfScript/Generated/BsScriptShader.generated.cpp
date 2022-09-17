@@ -36,7 +36,7 @@ namespace bs
 		return thisPtr->GetRRef();
 	}
 
-	MonoArray* ScriptShader::Internal_getVariationParams(ScriptShader* thisPtr)
+	MonoArray* ScriptShader::InternalGetVariationParams(ScriptShader* thisPtr)
 	{
 		Vector<ShaderVariationParamInfo> vec__output;
 		vec__output = thisPtr->GetHandle()->GetVariationParams();

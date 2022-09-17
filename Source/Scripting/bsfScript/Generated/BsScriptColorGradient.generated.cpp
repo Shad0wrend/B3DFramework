@@ -21,12 +21,12 @@ namespace bs
 		metaData.scriptClass->AddInternalCall("Internal_ColorGradient", (void*)&ScriptColorGradient::InternalColorGradient);
 		metaData.scriptClass->AddInternalCall("Internal_ColorGradient0", (void*)&ScriptColorGradient::InternalColorGradient0);
 		metaData.scriptClass->AddInternalCall("Internal_ColorGradient1", (void*)&ScriptColorGradient::InternalColorGradient1);
-		metaData.scriptClass->addInternalCall("Internal_setKeys", (void*)&ScriptColorGradient::Internal_setKeys);
-		metaData.scriptClass->addInternalCall("Internal_getKeys", (void*)&ScriptColorGradient::Internal_getKeys);
+		metaData.scriptClass->AddInternalCall("Internal_setKeys", (void*)&ScriptColorGradient::InternalSetKeys);
+		metaData.scriptClass->AddInternalCall("Internal_getKeys", (void*)&ScriptColorGradient::InternalGetKeys);
 		metaData.scriptClass->AddInternalCall("Internal_getNumKeys", (void*)&ScriptColorGradient::InternalGetNumKeys);
 		metaData.scriptClass->AddInternalCall("Internal_getKey", (void*)&ScriptColorGradient::InternalGetKey);
-		metaData.scriptClass->addInternalCall("Internal_setConstant", (void*)&ScriptColorGradient::Internal_setConstant);
-		metaData.scriptClass->addInternalCall("Internal_evaluate", (void*)&ScriptColorGradient::Internal_evaluate);
+		metaData.scriptClass->AddInternalCall("Internal_setConstant", (void*)&ScriptColorGradient::InternalSetConstant);
+		metaData.scriptClass->AddInternalCall("Internal_evaluate", (void*)&ScriptColorGradient::InternalEvaluate);
 
 	}
 

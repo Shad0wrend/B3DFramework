@@ -136,14 +136,14 @@ namespace bs
 
 		// Load corlib
 		mCorlibAssembly = new (bs_alloc<MonoAssembly>()) MonoAssembly("", "corlib");
-		mCorlibAssembly->loadFromImage(mono_get_corlib());
+		mCorlibAssembly->LoadFromImage(mono_get_corlib());
 
 		mAssemblies["corlib"] = mCorlibAssembly;
 	}
 
 	MonoManager::~MonoManager()
 	{
-		unloadAll();
+		UnloadAll();
 	}
 
 	MonoAssembly& MonoManager::LoadAssembly(const Path& path, const String& name)
@@ -175,8 +175,8 @@ namespace bs
 		
 		if (!assembly->mIsLoaded)
 		{
-			assembly->load();
-			initializeScriptTypes(*assembly);
+			assembly->Load();
+			InitializeScriptTypes(*assembly);
 		}
 
 		return *assembly;
@@ -185,13 +185,13 @@ namespace bs
 	void MonoManager::InitializeScriptTypes(MonoAssembly& assembly)
 	{
 		// Fully initialize all types that use this assembly
-		Vector<ScriptMetaInfo>& typeMetas = getScriptMetaData()[assembly.mName];
+		Vector<ScriptMetaInfo>& typeMetas = GetScriptMetaData()[assembly.mName];
 		for (auto& entry : typeMetas)
 		{
 			ScriptMeta* meta = entry.metaData;
 			*meta = entry.localMetaData;
 
-			meta->scriptClass = assembly.getClass(meta->ns, meta->name);
+			meta->scriptClass = assembly.GetClass(meta->ns, meta->name);
 			if (meta->scriptClass == nullptr)
 			{
 				BS_EXCEPT(InvalidParametersException,
@@ -214,7 +214,7 @@ namespace bs
 
 		mAssemblies.clear();
 
-		unloadScriptDomain();
+		UnloadScriptDomain();
 
 		if (mRootDomain != nullptr)
 		{
@@ -224,7 +224,7 @@ namespace bs
 
 		// Make sure to explicitly clear this meta-data, as it contains structures allocated from other dynamic libraries,
 		// which will likely get unloaded right after shutdown
-		getScriptMetaData().clear();
+		GetScriptMetaData().clear();
 	}
 
 	MonoAssembly* MonoManager::GetAssembly(const String& name) const
@@ -239,7 +239,7 @@ namespace bs
 
 	void MonoManager::RegisterScriptType(ScriptMeta* metaData, const ScriptMeta& localMetaData)
 	{
-		Vector<ScriptMetaInfo>& mMetas = getScriptMetaData()[localMetaData.assembly];
+		Vector<ScriptMetaInfo>& mMetas = GetScriptMetaData()[localMetaData.assembly];
 		mMetas.push_back({ metaData, localMetaData });
 	}
 
@@ -281,14 +281,14 @@ namespace bs
 			mono_domain_try_unload(mScriptDomain, &exception);
 
 			if (exception != nullptr)
-				MonoUtil::throwIfException(exception);
+				MonoUtil::ThrowIfException(exception);
 
 			mScriptDomain = nullptr;
 		}
 
 		for (auto& assemblyEntry : mAssemblies)
 		{
-			assemblyEntry.second->unload();
+			assemblyEntry.second->Unload();
 
 			// "corlib" assembly persists domain unload since it's in the root domain. However we make sure to clear its
 			// class list as it could contain generic instances that use types from other assemblies.
@@ -296,7 +296,7 @@ namespace bs
 				bs_delete(assemblyEntry.second);
 
 			// Metas hold references to various assembly objects that were just deleted, so clear them
-			Vector<ScriptMetaInfo>& typeMetas = getScriptMetaData()[assemblyEntry.first];
+			Vector<ScriptMetaInfo>& typeMetas = GetScriptMetaData()[assemblyEntry.first];
 			for (auto& entry : typeMetas)
 			{
 				entry.metaData->scriptClass = nullptr;
@@ -310,27 +310,27 @@ namespace bs
 
 	Path MonoManager::GetFrameworkAssembliesFolder() const
 	{
-		return Paths::findPath(MONO_VERSION_DATA[(int)MONO_VERSION].path);
+		return Paths::FindPath(MONO_VERSION_DATA[(int)MONO_VERSION].path);
 	}
 
 	Path MonoManager::GetMonoEtcFolder() const
 	{
-		return Paths::findPath(MONO_ETC_DIR);
+		return Paths::FindPath(MONO_ETC_DIR);
 	}
 
 	Path MonoManager::GetCompilerPath() const
 	{
-		Path compilerPath = Paths::findPath(MONO_COMPILER_DIR);
-		compilerPath.append("mcs.exe");
+		Path compilerPath = Paths::FindPath(MONO_COMPILER_DIR);
+		compilerPath.Append("mcs.exe");
 		return compilerPath;
 	}
 
 	Path MonoManager::GetMonoExecPath() const
 	{
-		Path path = Paths::getBinariesPath();
+		Path path = Paths::GetBinariesPath();
 
 #if BS_PLATFORM == BS_PLATFORM_WIN32
-		path.append("MonoExec.exe");
+		path.Append("MonoExec.exe");
 #else
 		path.append("MonoExec");
 #endif

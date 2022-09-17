@@ -23,6 +23,6 @@ namespace bs
 
 	void ApplicationEx::ShutDown()
 	{
-		shutDown();
+		Application::ShutDown();
 	}
 }

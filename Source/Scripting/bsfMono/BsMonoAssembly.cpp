@@ -181,7 +181,7 @@ namespace bs
 				MonoObject* exception = nullptr;
 				mono_runtime_invoke(entry, nullptr, nullptr, &exception);
 
-				MonoUtil::throwIfException(exception);
+				MonoUtil::ThrowIfException(exception);
 			}
 		}
 	}
@@ -223,7 +223,7 @@ namespace bs
 
 		String ns;
 		String typeName;
-		MonoUtil::getClassName(rawMonoClass, ns, typeName);
+		MonoUtil::GetClassName(rawMonoClass, ns, typeName);
 
 		// Verify the class is actually part of this assembly
 		MonoImage* classImage = mono_class_get_image(rawMonoClass);
@@ -257,7 +257,7 @@ namespace bs
 
 		mClassesByRaw[rawMonoClass] = newClass;
 
-		if (!isGenericClass(typeName)) // No point in referencing generic types by name as all instances share it
+		if (!IsGenericClass(typeName)) // No point in referencing generic types by name as all instances share it
 		{
 			MonoAssembly::ClassId classId(ns, typeName);
 			mClasses[classId] = newClass;
@@ -274,7 +274,7 @@ namespace bs
 		mCachedClassList.clear();
 		Stack<MonoClass*> todo;
 
-		MonoAssembly* corlib = MonoManager::Instance().getAssembly("corlib");
+		MonoAssembly* corlib = MonoManager::Instance().GetAssembly("corlib");
 		MonoClass* compilerGeneratedAttrib = corlib->GetClass("System.Runtime.CompilerServices",
 				"CompilerGeneratedAttribute");
 
@@ -286,9 +286,9 @@ namespace bs
 
 			String ns;
 			String type;
-			MonoUtil::getClassName(monoClass, ns, type);
+			MonoUtil::GetClassName(monoClass, ns, type);
 
-			MonoClass* curClass = getClass(ns, type);
+			MonoClass* curClass = GetClass(ns, type);
 			if (curClass != nullptr)
 			{
 				// Skip compiler generates classes
@@ -311,7 +311,7 @@ namespace bs
 
 						String nestedType = curNestedClass->GetTypeName() + "+" + mono_class_get_name(rawNestedClass);
 
-						MonoClass* nestedClass = getClass(ns, nestedType, rawNestedClass);
+						MonoClass* nestedClass = GetClass(ns, nestedType, rawNestedClass);
 						if (nestedClass != nullptr)
 						{
 							// Skip compiler generated classes

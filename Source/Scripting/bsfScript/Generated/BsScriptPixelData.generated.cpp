@@ -26,12 +26,12 @@ namespace bs
 		metaData.scriptClass->AddInternalCall("Internal_getSize", (void*)&ScriptPixelData::InternalGetSize);
 		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptPixelData::InternalCreate);
 		metaData.scriptClass->AddInternalCall("Internal_create0", (void*)&ScriptPixelData::InternalCreate0);
-		metaData.scriptClass->addInternalCall("Internal_getPixel", (void*)&ScriptPixelData::Internal_getPixel);
-		metaData.scriptClass->addInternalCall("Internal_setPixel", (void*)&ScriptPixelData::Internal_setPixel);
-		metaData.scriptClass->addInternalCall("Internal_getPixels", (void*)&ScriptPixelData::Internal_getPixels);
-		metaData.scriptClass->addInternalCall("Internal_setPixels", (void*)&ScriptPixelData::Internal_setPixels);
-		metaData.scriptClass->addInternalCall("Internal_getRawPixels", (void*)&ScriptPixelData::Internal_getRawPixels);
-		metaData.scriptClass->addInternalCall("Internal_setRawPixels", (void*)&ScriptPixelData::Internal_setRawPixels);
+		metaData.scriptClass->AddInternalCall("Internal_getPixel", (void*)&ScriptPixelData::InternalGetPixel);
+		metaData.scriptClass->AddInternalCall("Internal_setPixel", (void*)&ScriptPixelData::InternalSetPixel);
+		metaData.scriptClass->AddInternalCall("Internal_getPixels", (void*)&ScriptPixelData::InternalGetPixels);
+		metaData.scriptClass->AddInternalCall("Internal_setPixels", (void*)&ScriptPixelData::InternalSetPixels);
+		metaData.scriptClass->AddInternalCall("Internal_getRawPixels", (void*)&ScriptPixelData::InternalGetRawPixels);
+		metaData.scriptClass->AddInternalCall("Internal_setRawPixels", (void*)&ScriptPixelData::InternalSetRawPixels);
 
 	}
 

@@ -23,9 +23,9 @@ namespace bs
 		META_Entry_##ScriptType;																							\
 																															\
 	public:																													\
-		static ScriptComponentBase* create##ScriptType(const HComponent& component)											\
+		static ScriptComponentBase* Create##ScriptType(const HComponent& component)											\
 		{																													\
-			MonoObject* managedInstance = ScriptType::getMetaData()->scriptClass->createInstance();							\
+			MonoObject* managedInstance = ScriptType::GetMetaData()->scriptClass->CreateInstance();							\
 			ScriptType* scriptComponent = new (bs_alloc<ScriptType>())														\
 				ScriptType(managedInstance, static_object_cast<ComponentType>(component));									\
 																															\
@@ -38,10 +38,10 @@ namespace bs
 			META_GetPrevEntries(entries, META_Entry_##ScriptType());														\
 																															\
 			BuiltinComponentInfo entry;																						\
-			entry.metaData = ScriptType::getMetaData();																		\
+			entry.metaData = ScriptType::GetMetaData();																		\
 			entry.typeId = ComponentType::GetRttiStatic()->GetRttiId();														\
 			entry.monoClass = nullptr;																						\
-			entry.createCallback = &create##ScriptType;																		\
+			entry.createCallback = &Create##ScriptType;																		\
 																															\
 			entries.push_back(entry);																						\
 		}																													\
@@ -53,7 +53,7 @@ namespace bs
 		META_LastEntry;																										\
 																															\
 	public:																													\
-		static Vector<BuiltinComponentInfo> getEntries()																	\
+		static Vector<BuiltinComponentInfo> GetEntries()																	\
 		{																													\
 			Vector<BuiltinComponentInfo> entries;																			\
 			META_GetPrevEntries(entries, META_LastEntry());																	\

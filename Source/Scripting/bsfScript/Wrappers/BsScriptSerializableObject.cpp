@@ -47,11 +47,11 @@ namespace bs
 
 	void ScriptSerializableObject::InternalCreateInstance(MonoObject* instance, MonoReflectionType* type)
 	{
-		::MonoClass* monoClass = MonoUtil::getClass(type);
+		::MonoClass* monoClass = MonoUtil::GetClass(type);
 
 		String elementNs;
 		String elementTypeName;
-		MonoUtil::getClassName(monoClass, elementNs, elementTypeName);
+		MonoUtil::GetClassName(monoClass, elementNs, elementTypeName);
 
 		SPtr<ManagedSerializableObjectInfo> objInfo;
 		ScriptAssemblyManager::Instance().GetSerializableObjectInfo(elementNs, elementTypeName, objInfo);
@@ -64,7 +64,7 @@ namespace bs
 		if(!thisPtr->mObjInfo->mBaseClass)
 			return nullptr;
 
-		MonoReflectionType* reflType = MonoUtil::getType(thisPtr->mObjInfo->mBaseClass->mMonoClass->GetInternalClassInternal());
+		MonoReflectionType* reflType = MonoUtil::GetType(thisPtr->mObjInfo->mBaseClass->mMonoClass->GetInternalClassInternal());
 		return Create(owningObject, reflType);
 	}
 
@@ -91,7 +91,7 @@ namespace bs
 			return x->mFieldId < y->mFieldId;
 		});
 
-		::MonoClass* serializableFieldClass = ScriptSerializableField::getMetaData()->scriptClass->GetInternalClassInternal();
+		::MonoClass* serializableFieldClass = ScriptSerializableField::GetMetaData()->scriptClass->GetInternalClassInternal();
 		ScriptArray scriptArray(serializableFieldClass, (UINT32)sortedFields.size());
 
 		UINT32 i = 0;
@@ -103,7 +103,7 @@ namespace bs
 			i++;
 		}
 
-		FieldsField->set(instance, scriptArray.getInternal());
+		FieldsField->Set(instance, scriptArray.GetInternal());
 
 		return nativeInstance;
 	}

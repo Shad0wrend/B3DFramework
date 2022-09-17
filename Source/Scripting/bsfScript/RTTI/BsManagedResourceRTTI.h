@@ -39,7 +39,7 @@ namespace bs
 		void OnSerializationStarted(IReflectable* obj, SerializationContext* context) 
 		{
 			ManagedResource* mr = static_cast<ManagedResource*>(obj);
-			mSerializableObject = ManagedSerializableObject::createFromExisting(mr->GetManagedInstance());
+			mSerializableObject = ManagedSerializableObject::CreateFromExisting(mr->GetManagedInstance());
 		}
 
 		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) 
@@ -48,7 +48,7 @@ namespace bs
 
 			SPtr<Resource> mrPtr = std::static_pointer_cast<Resource>(mr->GetThisPtr());
 			HManagedResource handle = static_resource_cast<ManagedResource>(gResources().CreateResourceHandleInternal(mrPtr));
-			mr->SetHandle(mSerializableObject->deserialize(), handle);
+			mr->SetHandle(mSerializableObject->Deserialize(), handle);
 		}
 
 		const String& GetRttiName() 

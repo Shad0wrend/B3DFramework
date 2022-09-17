@@ -18,14 +18,14 @@ namespace bs
 	void ScriptChromaticAberrationSettings::initRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_ChromaticAberrationSettings", (void*)&ScriptChromaticAberrationSettings::InternalChromaticAberrationSettings);
-		metaData.scriptClass->addInternalCall("Internal_getfringeTexture", (void*)&ScriptChromaticAberrationSettings::Internal_getfringeTexture);
-		metaData.scriptClass->addInternalCall("Internal_setfringeTexture", (void*)&ScriptChromaticAberrationSettings::Internal_setfringeTexture);
-		metaData.scriptClass->addInternalCall("Internal_getenabled", (void*)&ScriptChromaticAberrationSettings::Internal_getenabled);
-		metaData.scriptClass->addInternalCall("Internal_setenabled", (void*)&ScriptChromaticAberrationSettings::Internal_setenabled);
-		metaData.scriptClass->addInternalCall("Internal_gettype", (void*)&ScriptChromaticAberrationSettings::Internal_gettype);
-		metaData.scriptClass->addInternalCall("Internal_settype", (void*)&ScriptChromaticAberrationSettings::Internal_settype);
-		metaData.scriptClass->addInternalCall("Internal_getshiftAmount", (void*)&ScriptChromaticAberrationSettings::Internal_getshiftAmount);
-		metaData.scriptClass->addInternalCall("Internal_setshiftAmount", (void*)&ScriptChromaticAberrationSettings::Internal_setshiftAmount);
+		metaData.scriptClass->AddInternalCall("Internal_getfringeTexture", (void*)&ScriptChromaticAberrationSettings::InternalGetfringeTexture);
+		metaData.scriptClass->AddInternalCall("Internal_setfringeTexture", (void*)&ScriptChromaticAberrationSettings::InternalSetfringeTexture);
+		metaData.scriptClass->AddInternalCall("Internal_getenabled", (void*)&ScriptChromaticAberrationSettings::InternalGetenabled);
+		metaData.scriptClass->AddInternalCall("Internal_setenabled", (void*)&ScriptChromaticAberrationSettings::InternalSetenabled);
+		metaData.scriptClass->AddInternalCall("Internal_gettype", (void*)&ScriptChromaticAberrationSettings::InternalGettype);
+		metaData.scriptClass->AddInternalCall("Internal_settype", (void*)&ScriptChromaticAberrationSettings::InternalSettype);
+		metaData.scriptClass->AddInternalCall("Internal_getshiftAmount", (void*)&ScriptChromaticAberrationSettings::InternalGetshiftAmount);
+		metaData.scriptClass->AddInternalCall("Internal_setshiftAmount", (void*)&ScriptChromaticAberrationSettings::InternalSetshiftAmount);
 
 	}
 

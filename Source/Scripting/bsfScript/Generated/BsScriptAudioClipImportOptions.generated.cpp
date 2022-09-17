@@ -17,15 +17,15 @@ namespace bs
 
 	void ScriptAudioClipImportOptions::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_getformat", (void*)&ScriptAudioClipImportOptions::Internal_getformat);
-		metaData.scriptClass->addInternalCall("Internal_setformat", (void*)&ScriptAudioClipImportOptions::Internal_setformat);
-		metaData.scriptClass->addInternalCall("Internal_getreadMode", (void*)&ScriptAudioClipImportOptions::Internal_getreadMode);
-		metaData.scriptClass->addInternalCall("Internal_setreadMode", (void*)&ScriptAudioClipImportOptions::Internal_setreadMode);
-		metaData.scriptClass->addInternalCall("Internal_getis3D", (void*)&ScriptAudioClipImportOptions::Internal_getis3D);
-		metaData.scriptClass->addInternalCall("Internal_setis3D", (void*)&ScriptAudioClipImportOptions::Internal_setis3D);
-		metaData.scriptClass->addInternalCall("Internal_getbitDepth", (void*)&ScriptAudioClipImportOptions::Internal_getbitDepth);
-		metaData.scriptClass->addInternalCall("Internal_setbitDepth", (void*)&ScriptAudioClipImportOptions::Internal_setbitDepth);
-		metaData.scriptClass->addInternalCall("Internal_create", (void*)&ScriptAudioClipImportOptions::Internal_create);
+		metaData.scriptClass->AddInternalCall("Internal_getformat", (void*)&ScriptAudioClipImportOptions::InternalGetformat);
+		metaData.scriptClass->AddInternalCall("Internal_setformat", (void*)&ScriptAudioClipImportOptions::InternalSetformat);
+		metaData.scriptClass->AddInternalCall("Internal_getreadMode", (void*)&ScriptAudioClipImportOptions::InternalGetreadMode);
+		metaData.scriptClass->AddInternalCall("Internal_setreadMode", (void*)&ScriptAudioClipImportOptions::InternalSetreadMode);
+		metaData.scriptClass->AddInternalCall("Internal_getis3D", (void*)&ScriptAudioClipImportOptions::InternalGetis3D);
+		metaData.scriptClass->AddInternalCall("Internal_setis3D", (void*)&ScriptAudioClipImportOptions::InternalSetis3D);
+		metaData.scriptClass->AddInternalCall("Internal_getbitDepth", (void*)&ScriptAudioClipImportOptions::InternalGetbitDepth);
+		metaData.scriptClass->AddInternalCall("Internal_setbitDepth", (void*)&ScriptAudioClipImportOptions::InternalSetbitDepth);
+		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptAudioClipImportOptions::InternalCreate);
 
 	}
 
@@ -40,12 +40,12 @@ namespace bs
 		new (bs_alloc<ScriptAudioClipImportOptions>()) ScriptAudioClipImportOptions(managedInstance, value);
 		return managedInstance;
 	}
-	void ScriptAudioClipImportOptions::Internal_create(MonoObject* managedInstance)
+	void ScriptAudioClipImportOptions::InternalCreate(MonoObject* managedInstance)
 	{
 		SPtr<AudioClipImportOptions> instance = AudioClipImportOptions::Create();
 		new (bs_alloc<ScriptAudioClipImportOptions>())ScriptAudioClipImportOptions(managedInstance, instance);
 	}
-	AudioFormat ScriptAudioClipImportOptions::Internal_getformat(ScriptAudioClipImportOptions* thisPtr)
+	AudioFormat ScriptAudioClipImportOptions::InternalGetformat(ScriptAudioClipImportOptions* thisPtr)
 	{
 		AudioFormat tmp__output;
 		tmp__output = thisPtr->GetInternal()->format;
@@ -56,12 +56,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptAudioClipImportOptions::Internal_setformat(ScriptAudioClipImportOptions* thisPtr, AudioFormat value)
+	void ScriptAudioClipImportOptions::InternalSetformat(ScriptAudioClipImportOptions* thisPtr, AudioFormat value)
 	{
 		thisPtr->GetInternal()->format = value;
 	}
 
-	AudioReadMode ScriptAudioClipImportOptions::Internal_getreadMode(ScriptAudioClipImportOptions* thisPtr)
+	AudioReadMode ScriptAudioClipImportOptions::InternalGetreadMode(ScriptAudioClipImportOptions* thisPtr)
 	{
 		AudioReadMode tmp__output;
 		tmp__output = thisPtr->GetInternal()->readMode;
@@ -72,12 +72,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptAudioClipImportOptions::Internal_setreadMode(ScriptAudioClipImportOptions* thisPtr, AudioReadMode value)
+	void ScriptAudioClipImportOptions::InternalSetreadMode(ScriptAudioClipImportOptions* thisPtr, AudioReadMode value)
 	{
 		thisPtr->GetInternal()->readMode = value;
 	}
 
-	bool ScriptAudioClipImportOptions::Internal_getis3D(ScriptAudioClipImportOptions* thisPtr)
+	bool ScriptAudioClipImportOptions::InternalGetis3D(ScriptAudioClipImportOptions* thisPtr)
 	{
 		bool tmp__output;
 		tmp__output = thisPtr->GetInternal()->is3D;
@@ -88,12 +88,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptAudioClipImportOptions::Internal_setis3D(ScriptAudioClipImportOptions* thisPtr, bool value)
+	void ScriptAudioClipImportOptions::InternalSetis3D(ScriptAudioClipImportOptions* thisPtr, bool value)
 	{
 		thisPtr->GetInternal()->is3D = value;
 	}
 
-	uint32_t ScriptAudioClipImportOptions::Internal_getbitDepth(ScriptAudioClipImportOptions* thisPtr)
+	uint32_t ScriptAudioClipImportOptions::InternalGetbitDepth(ScriptAudioClipImportOptions* thisPtr)
 	{
 		uint32_t tmp__output;
 		tmp__output = thisPtr->GetInternal()->bitDepth;
@@ -104,7 +104,7 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptAudioClipImportOptions::Internal_setbitDepth(ScriptAudioClipImportOptions* thisPtr, uint32_t value)
+	void ScriptAudioClipImportOptions::InternalSetbitDepth(ScriptAudioClipImportOptions* thisPtr, uint32_t value)
 	{
 		thisPtr->GetInternal()->bitDepth = value;
 	}

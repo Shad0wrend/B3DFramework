@@ -27,8 +27,8 @@ namespace bs
 		metaData.scriptClass->AddInternalCall("Internal_getWidth", (void*)&ScriptRenderTarget::InternalGetWidth);
 		metaData.scriptClass->AddInternalCall("Internal_getHeight", (void*)&ScriptRenderTarget::InternalGetHeight);
 		metaData.scriptClass->AddInternalCall("Internal_getGammaCorrection", (void*)&ScriptRenderTarget::InternalGetGammaCorrection);
-		metaData.scriptClass->addInternalCall("Internal_getPriority", (void*)&ScriptRenderTarget::Internal_getPriority);
-		metaData.scriptClass->addInternalCall("Internal_setPriority", (void*)&ScriptRenderTarget::Internal_setPriority);
+		metaData.scriptClass->AddInternalCall("Internal_getPriority", (void*)&ScriptRenderTarget::InternalGetPriority);
+		metaData.scriptClass->AddInternalCall("Internal_setPriority", (void*)&ScriptRenderTarget::InternalSetPriority);
 		metaData.scriptClass->AddInternalCall("Internal_getSampleCount", (void*)&ScriptRenderTarget::InternalGetSampleCount);
 
 	}

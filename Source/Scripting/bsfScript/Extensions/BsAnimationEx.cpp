@@ -46,7 +46,7 @@ namespace bs
 		thisPtr->generic = value;
 	}
 
-	TAnimationCurve<Vector3> RootMotionEx::getPositionCurves(const SPtr<RootMotion>& thisPtr)
+	TAnimationCurve<Vector3> RootMotionEx::GetPositionCurves(const SPtr<RootMotion>& thisPtr)
 	{
 		return thisPtr->position;
 	}

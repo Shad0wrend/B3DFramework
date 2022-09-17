@@ -75,7 +75,7 @@ namespace bs
 		onRefreshComplete();
 	}
 
-	void ScriptObjectManager::notifyObjectFinalized(ScriptObjectBase* instance)
+	void ScriptObjectManager::NotifyObjectFinalized(ScriptObjectBase* instance)
 	{
 		assert(instance != nullptr);
 
@@ -85,7 +85,7 @@ namespace bs
 
 	void ScriptObjectManager::Update()
 	{
-		processFinalizedObjects();
+		ProcessFinalizedObjects();
 	}
 
 	void ScriptObjectManager::ProcessFinalizedObjects(bool assemblyRefresh)

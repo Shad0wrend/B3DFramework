@@ -36,7 +36,7 @@ namespace bs
 	{
 		if (handle.IsDestroyed())
 		{
-			BS_LOG(Warning, Scene, "Trying to access a destroyed GameObject with instance ID: {0}", handle.getInstanceId());
+			BS_LOG(Warning, Scene, "Trying to access a destroyed GameObject with instance ID: {0}", handle.GetInstanceId());
 			return true;
 		}
 
@@ -51,31 +51,31 @@ namespace bs
 
 	void ScriptComponent::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_AddComponent", (void*)&ScriptComponent::internal_AddComponent);
-		metaData.scriptClass->addInternalCall("Internal_GetComponent", (void*)&ScriptComponent::internal_GetComponent);
-		metaData.scriptClass->addInternalCall("Internal_GetComponents", (void*)&ScriptComponent::internal_GetComponents);
-		metaData.scriptClass->addInternalCall("Internal_GetComponentsPerType", (void*)&ScriptComponent::internal_GetComponentsPerType);
-		metaData.scriptClass->addInternalCall("Internal_RemoveComponent", (void*)&ScriptComponent::internal_removeComponent);
-		metaData.scriptClass->addInternalCall("Internal_GetSceneObject", (void*)&ScriptComponent::internal_getSceneObject);
-		metaData.scriptClass->addInternalCall("Internal_GetNotifyFlags", (void*)&ScriptComponent::internal_getNotifyFlags);
-		metaData.scriptClass->addInternalCall("Internal_SetNotifyFlags", (void*)&ScriptComponent::internal_setNotifyFlags);
-		metaData.scriptClass->addInternalCall("Internal_Destroy", (void*)&ScriptComponent::internal_destroy);
+		metaData.scriptClass->AddInternalCall("Internal_AddComponent", (void*)&ScriptComponent::InternalAddComponent);
+		metaData.scriptClass->AddInternalCall("Internal_GetComponent", (void*)&ScriptComponent::InternalGetComponent);
+		metaData.scriptClass->AddInternalCall("Internal_GetComponents", (void*)&ScriptComponent::InternalGetComponents);
+		metaData.scriptClass->AddInternalCall("Internal_GetComponentsPerType", (void*)&ScriptComponent::InternalGetComponentsPerType);
+		metaData.scriptClass->AddInternalCall("Internal_RemoveComponent", (void*)&ScriptComponent::InternalRemoveComponent);
+		metaData.scriptClass->AddInternalCall("Internal_GetSceneObject", (void*)&ScriptComponent::InternalGetSceneObject);
+		metaData.scriptClass->AddInternalCall("Internal_GetNotifyFlags", (void*)&ScriptComponent::InternalGetNotifyFlags);
+		metaData.scriptClass->AddInternalCall("Internal_SetNotifyFlags", (void*)&ScriptComponent::InternalSetNotifyFlags);
+		metaData.scriptClass->AddInternalCall("Internal_Destroy", (void*)&ScriptComponent::InternalDestroy);
 	}
 
 	MonoObject* ScriptComponent::InternalAddComponent(MonoObject* parentSceneObject, MonoReflectionType* type)
 	{
-		ScriptSceneObject* scriptSO = ScriptSceneObject::toNative(parentSceneObject);
+		ScriptSceneObject* scriptSO = ScriptSceneObject::ToNative(parentSceneObject);
 		HSceneObject so = static_object_cast<SceneObject>(scriptSO->GetNativeHandle());
 
-		if (checkIfDestroyed(so))
+		if (CheckIfDestroyed(so))
 			return nullptr;
 
 		ScriptAssemblyManager& sam = ScriptAssemblyManager::Instance();
 
-		MonoClass* managedComponent = sam.getBuiltinClasses().managedComponentClass;
-		::MonoClass* requestedClass = MonoUtil::getClass(type);
+		MonoClass* managedComponent = sam.GetBuiltinClasses().managedComponentClass;
+		::MonoClass* requestedClass = MonoUtil::GetClass(type);
 
-		bool isManagedComponent = MonoUtil::isSubClassOf(requestedClass, managedComponent->GetInternalClassInternal());
+		bool isManagedComponent = MonoUtil::IsSubClassOf(requestedClass, managedComponent->GetInternalClassInternal());
 		if(isManagedComponent)
 		{
 			GameObjectHandle<ManagedComponent> mc = so->AddComponent<ManagedComponent>(type);
@@ -83,13 +83,13 @@ namespace bs
 		}
 		else
 		{
-			BuiltinComponentInfo* info = sam.getBuiltinComponentInfo(type);
+			BuiltinComponentInfo* info = sam.GetBuiltinComponentInfo(type);
 			if (info == nullptr)
 				return nullptr;
 
 			HComponent component = so->AddComponent(info->typeId);
 			ScriptComponentBase* scriptComponent =
-				ScriptGameObjectManager::Instance().createBuiltinScriptComponent(component);
+				ScriptGameObjectManager::Instance().CreateBuiltinScriptComponent(component);
 
 			return scriptComponent->GetManagedInstance();
 		}
@@ -97,16 +97,16 @@ namespace bs
 
 	MonoObject* ScriptComponent::InternalGetComponent(MonoObject* parentSceneObject, MonoReflectionType* type)
 	{
-		ScriptSceneObject* scriptSO = ScriptSceneObject::toNative(parentSceneObject);
+		ScriptSceneObject* scriptSO = ScriptSceneObject::ToNative(parentSceneObject);
 		HSceneObject so = static_object_cast<SceneObject>(scriptSO->GetNativeHandle());
 
-		if (checkIfDestroyed(so))
+		if (CheckIfDestroyed(so))
 			return nullptr;
 
 		ScriptAssemblyManager& sam = ScriptAssemblyManager::Instance();
-		BuiltinComponentInfo* info = sam.getBuiltinComponentInfo(type);
+		BuiltinComponentInfo* info = sam.GetBuiltinComponentInfo(type);
 
-		::MonoClass* baseClass = MonoUtil::getClass(type);
+		::MonoClass* baseClass = MonoUtil::GetClass(type);
 
 		const Vector<HComponent>& mComponents = so->GetComponents();
 		for(auto& component : mComponents)
@@ -116,9 +116,9 @@ namespace bs
 				GameObjectHandle<ManagedComponent> managedComponent = static_object_cast<ManagedComponent>(component);
 
 				MonoReflectionType* componentReflType = managedComponent->GetRuntimeType();
-				::MonoClass* componentClass = MonoUtil::getClass(componentReflType);
+				::MonoClass* componentClass = MonoUtil::GetClass(componentReflType);
 				
-				if(MonoUtil::isSubClassOf(componentClass, baseClass))
+				if(MonoUtil::IsSubClassOf(componentClass, baseClass))
 				{
 					return managedComponent->GetManagedInstance();
 				}
@@ -130,7 +130,7 @@ namespace bs
 
 				if(info->typeId == component->GetTypeId())
 				{
-					ScriptComponentBase* scriptComponent = ScriptGameObjectManager::Instance().getBuiltinScriptComponent(component);
+					ScriptComponentBase* scriptComponent = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(component);
 					return scriptComponent->GetManagedInstance();
 				}
 			}
@@ -141,16 +141,16 @@ namespace bs
 
 	MonoArray* ScriptComponent::InternalGetComponentsPerType(MonoObject* parentSceneObject, MonoReflectionType* type)
 	{
-		ScriptSceneObject* scriptSO = ScriptSceneObject::toNative(parentSceneObject);
+		ScriptSceneObject* scriptSO = ScriptSceneObject::ToNative(parentSceneObject);
 		HSceneObject so = static_object_cast<SceneObject>(scriptSO->GetNativeHandle());
 
 		ScriptAssemblyManager& sam = ScriptAssemblyManager::Instance();
-		BuiltinComponentInfo* info = sam.getBuiltinComponentInfo(type);
+		BuiltinComponentInfo* info = sam.GetBuiltinComponentInfo(type);
 
-		::MonoClass* baseClass = MonoUtil::getClass(type);
+		::MonoClass* baseClass = MonoUtil::GetClass(type);
 		Vector<MonoObject*> managedComponents;
 
-		if (!checkIfDestroyed(so))
+		if (!CheckIfDestroyed(so))
 		{
 			const Vector<HComponent>& mComponents = so->GetComponents();
 			for (auto& component : mComponents)
@@ -160,9 +160,9 @@ namespace bs
 					GameObjectHandle<ManagedComponent> managedComponent = static_object_cast<ManagedComponent>(component);
 
 					MonoReflectionType* componentReflType = managedComponent->GetRuntimeType();
-					::MonoClass* componentClass = MonoUtil::getClass(componentReflType);
+					::MonoClass* componentClass = MonoUtil::GetClass(componentReflType);
 
-					if (MonoUtil::isSubClassOf(componentClass, baseClass))
+					if (MonoUtil::IsSubClassOf(componentClass, baseClass))
 						managedComponents.push_back(managedComponent->GetManagedInstance());
 				}
 				else
@@ -172,7 +172,7 @@ namespace bs
 
 					if(info->typeId == component->GetTypeId())
 					{
-						ScriptComponentBase* scriptComponent = ScriptGameObjectManager::Instance().getBuiltinScriptComponent(component);
+						ScriptComponentBase* scriptComponent = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(component);
 						managedComponents.push_back(scriptComponent->GetManagedInstance());
 					}
 				}
@@ -183,17 +183,17 @@ namespace bs
 		for (UINT32 i = 0; i < (UINT32)managedComponents.size(); i++)
 			scriptArray.Set(i, managedComponents[i]);
 
-		return scriptArray.getInternal();
+		return scriptArray.GetInternal();
 	}
 
 	MonoArray* ScriptComponent::InternalGetComponents(MonoObject* parentSceneObject)
 	{
-		ScriptSceneObject* scriptSO = ScriptSceneObject::toNative(parentSceneObject);
+		ScriptSceneObject* scriptSO = ScriptSceneObject::ToNative(parentSceneObject);
 		HSceneObject so = static_object_cast<SceneObject>(scriptSO->GetNativeHandle());
 
 		Vector<MonoObject*> managedComponents;
 
-		if (!checkIfDestroyed(so))
+		if (!CheckIfDestroyed(so))
 		{
 			const Vector<HComponent>& mComponents = so->GetComponents();
 			for (auto& component : mComponents)
@@ -206,7 +206,7 @@ namespace bs
 				}
 				else
 				{
-					ScriptComponentBase* scriptComponent = ScriptGameObjectManager::Instance().getBuiltinScriptComponent(component);
+					ScriptComponentBase* scriptComponent = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(component);
 					if(scriptComponent != nullptr)
 						managedComponents.push_back(scriptComponent->GetManagedInstance());
 				}
@@ -217,21 +217,21 @@ namespace bs
 		for(UINT32 i = 0; i < (UINT32)managedComponents.size(); i++)
 			scriptArray.Set(i, managedComponents[i]);
 
-		return scriptArray.getInternal();
+		return scriptArray.GetInternal();
 	}
 
 	void ScriptComponent::InternalRemoveComponent(MonoObject* parentSceneObject, MonoReflectionType* type)
 	{
-		ScriptSceneObject* scriptSO = ScriptSceneObject::toNative(parentSceneObject);
+		ScriptSceneObject* scriptSO = ScriptSceneObject::ToNative(parentSceneObject);
 		HSceneObject so = static_object_cast<SceneObject>(scriptSO->GetNativeHandle());
 
-		if (checkIfDestroyed(so))
+		if (CheckIfDestroyed(so))
 			return;
 
 		ScriptAssemblyManager& sam = ScriptAssemblyManager::Instance();
-		BuiltinComponentInfo* info = sam.getBuiltinComponentInfo(type);
+		BuiltinComponentInfo* info = sam.GetBuiltinComponentInfo(type);
 
-		::MonoClass* baseClass = MonoUtil::getClass(type);
+		::MonoClass* baseClass = MonoUtil::GetClass(type);
 
 		const Vector<HComponent>& mComponents = so->GetComponents();
 		for(auto& component : mComponents)
@@ -241,9 +241,9 @@ namespace bs
 				GameObjectHandle<ManagedComponent> managedComponent = static_object_cast<ManagedComponent>(component);
 
 				MonoReflectionType* componentReflType = managedComponent->GetRuntimeType();
-				::MonoClass* componentClass = MonoUtil::getClass(componentReflType);
+				::MonoClass* componentClass = MonoUtil::GetClass(componentReflType);
 
-				if (MonoUtil::isSubClassOf(componentClass, baseClass))
+				if (MonoUtil::IsSubClassOf(componentClass, baseClass))
 				{
 					managedComponent->Destroy();
 					return;
@@ -268,12 +268,12 @@ namespace bs
 	MonoObject* ScriptComponent::InternalGetSceneObject(ScriptComponentBase* nativeInstance)
 	{
 		HComponent component = nativeInstance->GetComponent();
-		if (checkIfDestroyed(component))
+		if (CheckIfDestroyed(component))
 			return nullptr;
 
 		HSceneObject sceneObject = component->SceneObject();
 
-		ScriptSceneObject* scriptSO = ScriptGameObjectManager::Instance().getOrCreateScriptSceneObject(sceneObject);
+		ScriptSceneObject* scriptSO = ScriptGameObjectManager::Instance().GetOrCreateScriptSceneObject(sceneObject);
 
 		assert(scriptSO->GetManagedInstance() != nullptr);
 		return scriptSO->GetManagedInstance();
@@ -283,7 +283,7 @@ namespace bs
 	{
 		HComponent component = nativeInstance->GetComponent();
 
-		if (!checkIfDestroyed(component))
+		if (!CheckIfDestroyed(component))
 			return component->GetNotifyFlagsInternal();
 
 		return TCF_None;
@@ -293,7 +293,7 @@ namespace bs
 	{
 		HComponent component = nativeInstance->GetComponent();
 
-		if (!checkIfDestroyed(component))
+		if (!CheckIfDestroyed(component))
 			component->SetNotifyFlags(flags);
 	}
 	
@@ -301,7 +301,7 @@ namespace bs
 	{
 		HComponent component = nativeInstance->GetComponent();
 
-		if (!checkIfDestroyed(component))
+		if (!CheckIfDestroyed(component))
 			component->Destroy(immediate);
 	}
 }

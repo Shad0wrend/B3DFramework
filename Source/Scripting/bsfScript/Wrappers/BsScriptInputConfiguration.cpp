@@ -49,7 +49,7 @@ namespace bs
 
 	ScriptInputConfiguration* ScriptInputConfiguration::CreateScriptInputConfig(const SPtr<InputConfiguration>& inputConfig)
 	{
-		MonoObject* instance = metaData.scriptClass->createInstance(false);
+		MonoObject* instance = metaData.scriptClass->CreateInstance(false);
 
 		ScriptInputConfiguration* nativeInstance = new (bs_alloc<ScriptInputConfiguration>()) ScriptInputConfiguration(instance, inputConfig);
 		return nativeInstance;
@@ -57,7 +57,7 @@ namespace bs
 
 	void ScriptInputConfiguration::InternalCreateInstance(MonoObject* object)
 	{
-		SPtr<InputConfiguration> inputConfig = VirtualInput::createConfiguration();
+		SPtr<InputConfiguration> inputConfig = VirtualInput::CreateConfiguration();
 
 		new (bs_alloc<ScriptInputConfiguration>()) ScriptInputConfiguration(object, inputConfig);
 	}
@@ -65,22 +65,22 @@ namespace bs
 	void ScriptInputConfiguration::InternalRegisterButton(ScriptInputConfiguration* thisPtr, MonoString* name, ButtonCode buttonCode,
 		ButtonModifier modifiers, bool repeatable)
 	{
-		String nameStr = MonoUtil::monoToString(name);
+		String nameStr = MonoUtil::MonoToString(name);
 
-		thisPtr->GetInternalValue()->registerButton(nameStr, buttonCode, modifiers, repeatable);
+		thisPtr->GetInternalValue()->RegisterButton(nameStr, buttonCode, modifiers, repeatable);
 	}
 
 	void ScriptInputConfiguration::InternalUnregisterButton(ScriptInputConfiguration* thisPtr, MonoString* name)
 	{
-		String nameStr = MonoUtil::monoToString(name);
+		String nameStr = MonoUtil::MonoToString(name);
 
-		thisPtr->GetInternalValue()->unregisterButton(nameStr);
+		thisPtr->GetInternalValue()->UnregisterButton(nameStr);
 	}
 
 	void ScriptInputConfiguration::InternalRegisterAxis(ScriptInputConfiguration* thisPtr, MonoString* name, InputAxis type, float deadZone,
 		float sensitivity, bool invert)
 	{
-		String nameStr = MonoUtil::monoToString(name);
+		String nameStr = MonoUtil::MonoToString(name);
 
 		VIRTUAL_AXIS_DESC axisDesc;
 		axisDesc.type = (UINT32)type;
@@ -88,14 +88,14 @@ namespace bs
 		axisDesc.invert = invert;
 		axisDesc.sensitivity = sensitivity;
 
-		thisPtr->GetInternalValue()->registerAxis(nameStr, axisDesc);
+		thisPtr->GetInternalValue()->RegisterAxis(nameStr, axisDesc);
 	}
 
 	void ScriptInputConfiguration::InternalUnregisterAxis(ScriptInputConfiguration* thisPtr, MonoString* name)
 	{
-		String nameStr = MonoUtil::monoToString(name);
+		String nameStr = MonoUtil::MonoToString(name);
 
-		thisPtr->GetInternalValue()->unregisterAxis(nameStr);
+		thisPtr->GetInternalValue()->UnregisterAxis(nameStr);
 	}
 
 	void ScriptInputConfiguration::InternalSetRepeatInterval(ScriptInputConfiguration* thisPtr, UINT64 milliseconds)
@@ -122,12 +122,12 @@ namespace bs
 
 	void ScriptVirtualAxis::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_InitVirtualAxis", (void*)&ScriptVirtualAxis::internal_InitVirtualAxis);
+		metaData.scriptClass->AddInternalCall("Internal_InitVirtualAxis", (void*)&ScriptVirtualAxis::InternalInitVirtualAxis);
 	}
 
 	UINT32 ScriptVirtualAxis::InternalInitVirtualAxis(MonoString* name)
 	{
-		String nameStr = MonoUtil::monoToString(name);
+		String nameStr = MonoUtil::MonoToString(name);
 
 		VirtualAxis vb(nameStr);
 		return vb.axisIdentifier;

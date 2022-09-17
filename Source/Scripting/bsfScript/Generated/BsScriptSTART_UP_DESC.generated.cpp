@@ -31,19 +31,19 @@ namespace bs
 	{
 		START_UP_DESC output;
 		String tmprenderAPI;
-		tmprenderAPI = MonoUtil::monoToString(value.renderAPI);
+		tmprenderAPI = MonoUtil::MonoToString(value.renderAPI);
 		output.renderAPI = tmprenderAPI;
 		String tmprenderer;
-		tmprenderer = MonoUtil::monoToString(value.renderer);
+		tmprenderer = MonoUtil::MonoToString(value.renderer);
 		output.renderer = tmprenderer;
 		String tmpphysics;
-		tmpphysics = MonoUtil::monoToString(value.physics);
+		tmpphysics = MonoUtil::MonoToString(value.physics);
 		output.physics = tmpphysics;
 		String tmpaudio;
-		tmpaudio = MonoUtil::monoToString(value.audio);
+		tmpaudio = MonoUtil::MonoToString(value.audio);
 		output.audio = tmpaudio;
 		String tmpinput;
-		tmpinput = MonoUtil::monoToString(value.input);
+		tmpinput = MonoUtil::MonoToString(value.input);
 		output.input = tmpinput;
 		output.physicsCooking = value.physicsCooking;
 		output.asyncAnimation = value.asyncAnimation;

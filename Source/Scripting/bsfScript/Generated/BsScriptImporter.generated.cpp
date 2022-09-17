@@ -35,19 +35,19 @@ namespace bs
 
 	void ScriptImporter::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_import", (void*)&ScriptImporter::Internal_import);
-		metaData.scriptClass->addInternalCall("Internal_importAsync", (void*)&ScriptImporter::Internal_importAsync);
-		metaData.scriptClass->addInternalCall("Internal_importAll", (void*)&ScriptImporter::Internal_importAll);
-		metaData.scriptClass->addInternalCall("Internal_importAllAsync", (void*)&ScriptImporter::Internal_importAllAsync);
-		metaData.scriptClass->addInternalCall("Internal_supportsFileType", (void*)&ScriptImporter::Internal_supportsFileType);
+		metaData.scriptClass->AddInternalCall("Internal_import", (void*)&ScriptImporter::InternalImport);
+		metaData.scriptClass->AddInternalCall("Internal_importAsync", (void*)&ScriptImporter::InternalImportAsync);
+		metaData.scriptClass->AddInternalCall("Internal_importAll", (void*)&ScriptImporter::InternalImportAll);
+		metaData.scriptClass->AddInternalCall("Internal_importAllAsync", (void*)&ScriptImporter::InternalImportAllAsync);
+		metaData.scriptClass->AddInternalCall("Internal_supportsFileType", (void*)&ScriptImporter::InternalSupportsFileType);
 
 	}
 
-	MonoObject* ScriptImporter::Internal_import(MonoString* inputFilePath, MonoObject* importOptions, UUID* UUID)
+	MonoObject* ScriptImporter::InternalImport(MonoString* inputFilePath, MonoObject* importOptions, UUID* UUID)
 	{
 		ResourceHandle<Resource> tmp__output;
 		Path tmpinputFilePath;
-		tmpinputFilePath = MonoUtil::monoToString(inputFilePath);
+		tmpinputFilePath = MonoUtil::MonoToString(inputFilePath);
 		SPtr<ImportOptions> tmpimportOptions;
 		ScriptImportOptionsBase* scriptimportOptions;
 		scriptimportOptions = (ScriptImportOptionsBase*)ScriptImportOptions::toNative(importOptions);
@@ -66,11 +66,11 @@ namespace bs
 		return __output;
 	}
 
-	MonoObject* ScriptImporter::Internal_importAsync(MonoString* inputFilePath, MonoObject* importOptions, UUID* UUID)
+	MonoObject* ScriptImporter::InternalImportAsync(MonoString* inputFilePath, MonoObject* importOptions, UUID* UUID)
 	{
 		TAsyncOp<ResourceHandle<Resource>> tmp__output;
 		Path tmpinputFilePath;
-		tmpinputFilePath = MonoUtil::monoToString(inputFilePath);
+		tmpinputFilePath = MonoUtil::MonoToString(inputFilePath);
 		SPtr<ImportOptions> tmpimportOptions;
 		ScriptImportOptionsBase* scriptimportOptions;
 		scriptimportOptions = (ScriptImportOptionsBase*)ScriptImportOptions::toNative(importOptions);
@@ -97,11 +97,11 @@ namespace bs
 		return __output;
 	}
 
-	MonoObject* ScriptImporter::Internal_importAll(MonoString* inputFilePath, MonoObject* importOptions)
+	MonoObject* ScriptImporter::InternalImportAll(MonoString* inputFilePath, MonoObject* importOptions)
 	{
 		SPtr<MultiResource> tmp__output;
 		Path tmpinputFilePath;
-		tmpinputFilePath = MonoUtil::monoToString(inputFilePath);
+		tmpinputFilePath = MonoUtil::MonoToString(inputFilePath);
 		SPtr<ImportOptions> tmpimportOptions;
 		ScriptImportOptionsBase* scriptimportOptions;
 		scriptimportOptions = (ScriptImportOptionsBase*)ScriptImportOptions::toNative(importOptions);
@@ -115,11 +115,11 @@ namespace bs
 		return __output;
 	}
 
-	MonoObject* ScriptImporter::Internal_importAllAsync(MonoString* inputFilePath, MonoObject* importOptions)
+	MonoObject* ScriptImporter::InternalImportAllAsync(MonoString* inputFilePath, MonoObject* importOptions)
 	{
 		TAsyncOp<SPtr<MultiResource>> tmp__output;
 		Path tmpinputFilePath;
-		tmpinputFilePath = MonoUtil::monoToString(inputFilePath);
+		tmpinputFilePath = MonoUtil::MonoToString(inputFilePath);
 		SPtr<ImportOptions> tmpimportOptions;
 		ScriptImportOptionsBase* scriptimportOptions;
 		scriptimportOptions = (ScriptImportOptionsBase*)ScriptImportOptions::toNative(importOptions);
@@ -141,11 +141,11 @@ namespace bs
 		return __output;
 	}
 
-	bool ScriptImporter::Internal_supportsFileType(MonoString* extension)
+	bool ScriptImporter::InternalSupportsFileType(MonoString* extension)
 	{
 		bool tmp__output;
 		String tmpextension;
-		tmpextension = MonoUtil::monoToString(extension);
+		tmpextension = MonoUtil::MonoToString(extension);
 		tmp__output = Importer::Instance().supportsFileType(tmpextension);
 
 		bool __output;

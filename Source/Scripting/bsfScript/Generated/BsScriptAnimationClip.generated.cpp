@@ -22,18 +22,18 @@ namespace bs
 	void ScriptAnimationClip::initRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptAnimationClip::InternalGetRef);
-		metaData.scriptClass->addInternalCall("Internal_getCurves", (void*)&ScriptAnimationClip::Internal_getCurves);
-		metaData.scriptClass->addInternalCall("Internal_setCurves", (void*)&ScriptAnimationClip::Internal_setCurves);
-		metaData.scriptClass->addInternalCall("Internal_getEvents", (void*)&ScriptAnimationClip::Internal_getEvents);
-		metaData.scriptClass->addInternalCall("Internal_setEvents", (void*)&ScriptAnimationClip::Internal_setEvents);
-		metaData.scriptClass->addInternalCall("Internal_getRootMotion", (void*)&ScriptAnimationClip::Internal_getRootMotion);
-		metaData.scriptClass->addInternalCall("Internal_hasRootMotion", (void*)&ScriptAnimationClip::Internal_hasRootMotion);
-		metaData.scriptClass->addInternalCall("Internal_isAdditive", (void*)&ScriptAnimationClip::Internal_isAdditive);
-		metaData.scriptClass->addInternalCall("Internal_getLength", (void*)&ScriptAnimationClip::Internal_getLength);
-		metaData.scriptClass->addInternalCall("Internal_getSampleRate", (void*)&ScriptAnimationClip::Internal_getSampleRate);
-		metaData.scriptClass->addInternalCall("Internal_setSampleRate", (void*)&ScriptAnimationClip::Internal_setSampleRate);
-		metaData.scriptClass->addInternalCall("Internal_create", (void*)&ScriptAnimationClip::Internal_create);
-		metaData.scriptClass->addInternalCall("Internal_create0", (void*)&ScriptAnimationClip::Internal_create0);
+		metaData.scriptClass->AddInternalCall("Internal_getCurves", (void*)&ScriptAnimationClip::InternalGetCurves);
+		metaData.scriptClass->AddInternalCall("Internal_setCurves", (void*)&ScriptAnimationClip::InternalSetCurves);
+		metaData.scriptClass->AddInternalCall("Internal_getEvents", (void*)&ScriptAnimationClip::InternalGetEvents);
+		metaData.scriptClass->AddInternalCall("Internal_setEvents", (void*)&ScriptAnimationClip::InternalSetEvents);
+		metaData.scriptClass->AddInternalCall("Internal_getRootMotion", (void*)&ScriptAnimationClip::InternalGetRootMotion);
+		metaData.scriptClass->AddInternalCall("Internal_hasRootMotion", (void*)&ScriptAnimationClip::InternalHasRootMotion);
+		metaData.scriptClass->AddInternalCall("Internal_isAdditive", (void*)&ScriptAnimationClip::InternalIsAdditive);
+		metaData.scriptClass->AddInternalCall("Internal_getLength", (void*)&ScriptAnimationClip::InternalGetLength);
+		metaData.scriptClass->AddInternalCall("Internal_getSampleRate", (void*)&ScriptAnimationClip::InternalGetSampleRate);
+		metaData.scriptClass->AddInternalCall("Internal_setSampleRate", (void*)&ScriptAnimationClip::InternalSetSampleRate);
+		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptAnimationClip::InternalCreate);
+		metaData.scriptClass->AddInternalCall("Internal_create0", (void*)&ScriptAnimationClip::InternalCreate0);
 
 	}
 
@@ -96,7 +96,7 @@ namespace bs
 			vecevents.resize(arrayevents.size());
 			for(int i = 0; i < (int)arrayevents.size(); i++)
 			{
-				vecevents[i] = ScriptAnimationEvent::fromInterop(arrayevents.get<__AnimationEventInterop>(i));
+				vecevents[i] = ScriptAnimationEvent::fromInterop(arrayevents.Get<__AnimationEventInterop>(i));
 			}
 		}
 		thisPtr->GetHandle()->SetEvents(vecevents);

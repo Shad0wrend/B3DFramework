@@ -38,43 +38,43 @@ namespace bs
 		GUIOptions options;
 
 		ScriptArray scriptArray(guiOptions);
-		UINT32 arrayLen = scriptArray.size();
+		UINT32 arrayLen = scriptArray.Size();
 		for(UINT32 i = 0; i < arrayLen; i++)
-			options.addOption(scriptArray.get<GUIOption>(i));
+			options.AddOption(scriptArray.Get<GUIOption>(i));
 
-		GUIInputBox* guiInputBox = GUIInputBox::Create(multiline, options, MonoUtil::monoToString(style));
+		GUIInputBox* guiInputBox = GUIInputBox::Create(multiline, options, MonoUtil::MonoToString(style));
 
 		auto nativeInstance = new (bs_alloc<ScriptGUIInputBox>()) ScriptGUIInputBox(instance, guiInputBox);
 
-		guiInputBox->onValueChanged.Connect(std::bind(&ScriptGUIInputBox::onChanged, nativeInstance, _1));
+		guiInputBox->onValueChanged.Connect(std::bind(&::bs::ScriptGUIInputBox::OnChanged, nativeInstance, _1));
 	}
 
 	void ScriptGUIInputBox::InternalGetText(ScriptGUIInputBox* nativeInstance, MonoString** text)
 	{
-		GUIInputBox* inputBox = (GUIInputBox*)nativeInstance->GetGUIElement();
-		MonoUtil::referenceCopy(text, (MonoObject*)MonoUtil::stringToMono(inputBox->GetText()));
+		GUIInputBox* inputBox = (GUIInputBox*)nativeInstance->GetGuiElement();
+		MonoUtil::ReferenceCopy(text, (MonoObject*)MonoUtil::StringToMono(inputBox->GetText()));
 	}
 
 	void ScriptGUIInputBox::InternalSetText(ScriptGUIInputBox* nativeInstance, MonoString* text)
 	{
-		GUIInputBox* inputBox = (GUIInputBox*)nativeInstance->GetGUIElement();
-		inputBox->SetText(MonoUtil::monoToString(text));
+		GUIInputBox* inputBox = (GUIInputBox*)nativeInstance->GetGuiElement();
+		inputBox->SetText(MonoUtil::MonoToString(text));
 	}
 
 	void ScriptGUIInputBox::InternalSetTint(ScriptGUIInputBox* nativeInstance, Color* color)
 	{
-		GUIInputBox* inputBox = (GUIInputBox*)nativeInstance->GetGUIElement();
+		GUIInputBox* inputBox = (GUIInputBox*)nativeInstance->GetGuiElement();
 		inputBox->SetTint(*color);
 	}
 
 	void ScriptGUIInputBox::OnChanged(const String& newValue)
 	{
-		MonoString* monoValue = MonoUtil::stringToMono(newValue);
-		MonoUtil::invokeThunk(onChangedThunk, getManagedInstance(), monoValue);
+		MonoString* monoValue = MonoUtil::StringToMono(newValue);
+		MonoUtil::InvokeThunk(onChangedThunk, GetManagedInstance(), monoValue);
 	}
 
 	void ScriptGUIInputBox::OnConfirmed()
 	{
-		MonoUtil::invokeThunk(onConfirmedThunk, getManagedInstance());
+		MonoUtil::InvokeThunk(onConfirmedThunk, GetManagedInstance());
 	}
 }

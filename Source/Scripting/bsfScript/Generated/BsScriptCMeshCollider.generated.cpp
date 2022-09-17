@@ -18,8 +18,8 @@ namespace bs
 
 	void ScriptCMeshCollider::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_setMesh", (void*)&ScriptCMeshCollider::Internal_setMesh);
-		metaData.scriptClass->addInternalCall("Internal_getMesh", (void*)&ScriptCMeshCollider::Internal_getMesh);
+		metaData.scriptClass->AddInternalCall("Internal_setMesh", (void*)&ScriptCMeshCollider::InternalSetMesh);
+		metaData.scriptClass->AddInternalCall("Internal_getMesh", (void*)&ScriptCMeshCollider::InternalGetMesh);
 
 	}
 
@@ -33,7 +33,7 @@ namespace bs
 		thisPtr->GetHandle()->SetMesh(tmpmesh);
 	}
 
-	MonoObject* ScriptCMeshCollider::Internal_getMesh(ScriptCMeshCollider* thisPtr)
+	MonoObject* ScriptCMeshCollider::InternalGetMesh(ScriptCMeshCollider* thisPtr)
 	{
 		ResourceHandle<PhysicsMesh> tmp__output;
 		tmp__output = thisPtr->GetHandle()->GetMesh();

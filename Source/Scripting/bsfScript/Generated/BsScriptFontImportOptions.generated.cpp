@@ -18,19 +18,19 @@ namespace bs
 
 	void ScriptFontImportOptions::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_getfontSizes", (void*)&ScriptFontImportOptions::Internal_getfontSizes);
-		metaData.scriptClass->addInternalCall("Internal_setfontSizes", (void*)&ScriptFontImportOptions::Internal_setfontSizes);
-		metaData.scriptClass->addInternalCall("Internal_getcharIndexRanges", (void*)&ScriptFontImportOptions::Internal_getcharIndexRanges);
-		metaData.scriptClass->addInternalCall("Internal_setcharIndexRanges", (void*)&ScriptFontImportOptions::Internal_setcharIndexRanges);
-		metaData.scriptClass->addInternalCall("Internal_getdpi", (void*)&ScriptFontImportOptions::Internal_getdpi);
-		metaData.scriptClass->addInternalCall("Internal_setdpi", (void*)&ScriptFontImportOptions::Internal_setdpi);
-		metaData.scriptClass->addInternalCall("Internal_getrenderMode", (void*)&ScriptFontImportOptions::Internal_getrenderMode);
-		metaData.scriptClass->addInternalCall("Internal_setrenderMode", (void*)&ScriptFontImportOptions::Internal_setrenderMode);
-		metaData.scriptClass->addInternalCall("Internal_getbold", (void*)&ScriptFontImportOptions::Internal_getbold);
-		metaData.scriptClass->addInternalCall("Internal_setbold", (void*)&ScriptFontImportOptions::Internal_setbold);
-		metaData.scriptClass->addInternalCall("Internal_getitalic", (void*)&ScriptFontImportOptions::Internal_getitalic);
-		metaData.scriptClass->addInternalCall("Internal_setitalic", (void*)&ScriptFontImportOptions::Internal_setitalic);
-		metaData.scriptClass->addInternalCall("Internal_create", (void*)&ScriptFontImportOptions::Internal_create);
+		metaData.scriptClass->AddInternalCall("Internal_getfontSizes", (void*)&ScriptFontImportOptions::InternalGetfontSizes);
+		metaData.scriptClass->AddInternalCall("Internal_setfontSizes", (void*)&ScriptFontImportOptions::InternalSetfontSizes);
+		metaData.scriptClass->AddInternalCall("Internal_getcharIndexRanges", (void*)&ScriptFontImportOptions::InternalGetcharIndexRanges);
+		metaData.scriptClass->AddInternalCall("Internal_setcharIndexRanges", (void*)&ScriptFontImportOptions::InternalSetcharIndexRanges);
+		metaData.scriptClass->AddInternalCall("Internal_getdpi", (void*)&ScriptFontImportOptions::InternalGetdpi);
+		metaData.scriptClass->AddInternalCall("Internal_setdpi", (void*)&ScriptFontImportOptions::InternalSetdpi);
+		metaData.scriptClass->AddInternalCall("Internal_getrenderMode", (void*)&ScriptFontImportOptions::InternalGetrenderMode);
+		metaData.scriptClass->AddInternalCall("Internal_setrenderMode", (void*)&ScriptFontImportOptions::InternalSetrenderMode);
+		metaData.scriptClass->AddInternalCall("Internal_getbold", (void*)&ScriptFontImportOptions::InternalGetbold);
+		metaData.scriptClass->AddInternalCall("Internal_setbold", (void*)&ScriptFontImportOptions::InternalSetbold);
+		metaData.scriptClass->AddInternalCall("Internal_getitalic", (void*)&ScriptFontImportOptions::InternalGetitalic);
+		metaData.scriptClass->AddInternalCall("Internal_setitalic", (void*)&ScriptFontImportOptions::InternalSetitalic);
+		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptFontImportOptions::InternalCreate);
 
 	}
 
@@ -45,12 +45,12 @@ namespace bs
 		new (bs_alloc<ScriptFontImportOptions>()) ScriptFontImportOptions(managedInstance, value);
 		return managedInstance;
 	}
-	void ScriptFontImportOptions::Internal_create(MonoObject* managedInstance)
+	void ScriptFontImportOptions::InternalCreate(MonoObject* managedInstance)
 	{
 		SPtr<FontImportOptions> instance = FontImportOptions::Create();
 		new (bs_alloc<ScriptFontImportOptions>())ScriptFontImportOptions(managedInstance, instance);
 	}
-	MonoArray* ScriptFontImportOptions::Internal_getfontSizes(ScriptFontImportOptions* thisPtr)
+	MonoArray* ScriptFontImportOptions::InternalGetfontSizes(ScriptFontImportOptions* thisPtr)
 	{
 		Vector<uint32_t> vec__output;
 		vec__output = thisPtr->GetInternal()->fontSizes;
@@ -67,7 +67,7 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptFontImportOptions::Internal_setfontSizes(ScriptFontImportOptions* thisPtr, MonoArray* value)
+	void ScriptFontImportOptions::InternalSetfontSizes(ScriptFontImportOptions* thisPtr, MonoArray* value)
 	{
 		Vector<uint32_t> vecvalue;
 		if(value != nullptr)
@@ -83,7 +83,7 @@ namespace bs
 		thisPtr->GetInternal()->fontSizes = vecvalue;
 	}
 
-	MonoArray* ScriptFontImportOptions::Internal_getcharIndexRanges(ScriptFontImportOptions* thisPtr)
+	MonoArray* ScriptFontImportOptions::InternalGetcharIndexRanges(ScriptFontImportOptions* thisPtr)
 	{
 		Vector<CharRange> vec__output;
 		vec__output = thisPtr->GetInternal()->charIndexRanges;
@@ -100,7 +100,7 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptFontImportOptions::Internal_setcharIndexRanges(ScriptFontImportOptions* thisPtr, MonoArray* value)
+	void ScriptFontImportOptions::InternalSetcharIndexRanges(ScriptFontImportOptions* thisPtr, MonoArray* value)
 	{
 		Vector<CharRange> vecvalue;
 		if(value != nullptr)
@@ -116,7 +116,7 @@ namespace bs
 		thisPtr->GetInternal()->charIndexRanges = vecvalue;
 	}
 
-	uint32_t ScriptFontImportOptions::Internal_getdpi(ScriptFontImportOptions* thisPtr)
+	uint32_t ScriptFontImportOptions::InternalGetdpi(ScriptFontImportOptions* thisPtr)
 	{
 		uint32_t tmp__output;
 		tmp__output = thisPtr->GetInternal()->dpi;
@@ -127,12 +127,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptFontImportOptions::Internal_setdpi(ScriptFontImportOptions* thisPtr, uint32_t value)
+	void ScriptFontImportOptions::InternalSetdpi(ScriptFontImportOptions* thisPtr, uint32_t value)
 	{
 		thisPtr->GetInternal()->dpi = value;
 	}
 
-	FontRenderMode ScriptFontImportOptions::Internal_getrenderMode(ScriptFontImportOptions* thisPtr)
+	FontRenderMode ScriptFontImportOptions::InternalGetrenderMode(ScriptFontImportOptions* thisPtr)
 	{
 		FontRenderMode tmp__output;
 		tmp__output = thisPtr->GetInternal()->renderMode;
@@ -143,12 +143,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptFontImportOptions::Internal_setrenderMode(ScriptFontImportOptions* thisPtr, FontRenderMode value)
+	void ScriptFontImportOptions::InternalSetrenderMode(ScriptFontImportOptions* thisPtr, FontRenderMode value)
 	{
 		thisPtr->GetInternal()->renderMode = value;
 	}
 
-	bool ScriptFontImportOptions::Internal_getbold(ScriptFontImportOptions* thisPtr)
+	bool ScriptFontImportOptions::InternalGetbold(ScriptFontImportOptions* thisPtr)
 	{
 		bool tmp__output;
 		tmp__output = thisPtr->GetInternal()->bold;
@@ -159,12 +159,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptFontImportOptions::Internal_setbold(ScriptFontImportOptions* thisPtr, bool value)
+	void ScriptFontImportOptions::InternalSetbold(ScriptFontImportOptions* thisPtr, bool value)
 	{
 		thisPtr->GetInternal()->bold = value;
 	}
 
-	bool ScriptFontImportOptions::Internal_getitalic(ScriptFontImportOptions* thisPtr)
+	bool ScriptFontImportOptions::InternalGetitalic(ScriptFontImportOptions* thisPtr)
 	{
 		bool tmp__output;
 		tmp__output = thisPtr->GetInternal()->italic;
@@ -175,7 +175,7 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptFontImportOptions::Internal_setitalic(ScriptFontImportOptions* thisPtr, bool value)
+	void ScriptFontImportOptions::InternalSetitalic(ScriptFontImportOptions* thisPtr, bool value)
 	{
 		thisPtr->GetInternal()->italic = value;
 	}

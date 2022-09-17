@@ -42,17 +42,17 @@ namespace bs
 		}
 
 		GUIPanel* relativeToPanel = nullptr;
-		if (relativeTo != nullptr && !relativeTo->isDestroyed())
-			relativeToPanel = static_cast<GUIPanel*>(relativeTo->GetGUIElement());
+		if (relativeTo != nullptr && !relativeTo->IsDestroyed())
+			relativeToPanel = static_cast<GUIPanel*>(relativeTo->GetGuiElement());
 
-		*output = guiElement->GetGUIElement()->GetBounds(relativeToPanel);
+		*output = guiElement->GetGuiElement()->GetBounds(relativeToPanel);
 	}
 
 	void ScriptGUILayoutUtility::InternalCalculateTextBounds(MonoString* text, ScriptFont* fontPtr, int fontSize, Vector2I* output)
 	{
-		String nativeText = MonoUtil::monoToString(text);
+		String nativeText = MonoUtil::MonoToString(text);
 		HFont nativeFont = fontPtr->GetHandle();
 
-		*output = GUIHelper::calcTextSize(nativeText, nativeFont, fontSize);
+		*output = GUIHelper::CalcTextSize(nativeText, nativeFont, fontSize);
 	}
 }

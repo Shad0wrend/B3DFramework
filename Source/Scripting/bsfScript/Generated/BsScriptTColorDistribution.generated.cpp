@@ -20,13 +20,13 @@ namespace bs
 		metaData.scriptClass->AddInternalCall("Internal_TColorDistribution", (void*)&ScriptTColorDistributionColorGradient::InternalTColorDistribution);
 		metaData.scriptClass->AddInternalCall("Internal_TColorDistribution0", (void*)&ScriptTColorDistributionColorGradient::InternalTColorDistribution0);
 		metaData.scriptClass->AddInternalCall("Internal_TColorDistribution1", (void*)&ScriptTColorDistributionColorGradient::InternalTColorDistribution1);
-		metaData.scriptClass->addInternalCall("Internal_TColorDistribution2", (void*)&ScriptTColorDistributionColorGradient::Internal_TColorDistribution2);
-		metaData.scriptClass->addInternalCall("Internal_TColorDistribution3", (void*)&ScriptTColorDistributionColorGradient::Internal_TColorDistribution3);
-		metaData.scriptClass->addInternalCall("Internal_getType", (void*)&ScriptTColorDistributionColorGradient::Internal_getType);
-		metaData.scriptClass->addInternalCall("Internal_getMinConstant", (void*)&ScriptTColorDistributionColorGradient::Internal_getMinConstant);
-		metaData.scriptClass->addInternalCall("Internal_getMaxConstant", (void*)&ScriptTColorDistributionColorGradient::Internal_getMaxConstant);
-		metaData.scriptClass->addInternalCall("Internal_getMinGradient", (void*)&ScriptTColorDistributionColorGradient::Internal_getMinGradient);
-		metaData.scriptClass->addInternalCall("Internal_getMaxGradient", (void*)&ScriptTColorDistributionColorGradient::Internal_getMaxGradient);
+		metaData.scriptClass->AddInternalCall("Internal_TColorDistribution2", (void*)&ScriptTColorDistributionColorGradient::InternalTColorDistribution2);
+		metaData.scriptClass->AddInternalCall("Internal_TColorDistribution3", (void*)&ScriptTColorDistributionColorGradient::InternalTColorDistribution3);
+		metaData.scriptClass->AddInternalCall("Internal_getType", (void*)&ScriptTColorDistributionColorGradient::InternalGetType);
+		metaData.scriptClass->AddInternalCall("Internal_getMinConstant", (void*)&ScriptTColorDistributionColorGradient::InternalGetMinConstant);
+		metaData.scriptClass->AddInternalCall("Internal_getMaxConstant", (void*)&ScriptTColorDistributionColorGradient::InternalGetMaxConstant);
+		metaData.scriptClass->AddInternalCall("Internal_getMinGradient", (void*)&ScriptTColorDistributionColorGradient::InternalGetMinGradient);
+		metaData.scriptClass->AddInternalCall("Internal_getMaxGradient", (void*)&ScriptTColorDistributionColorGradient::InternalGetMaxGradient);
 
 	}
 
@@ -142,16 +142,16 @@ namespace bs
 
 	void ScriptTColorDistributionColorGradientHDR::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_TColorDistribution", (void*)&ScriptTColorDistributionColorGradientHDR::Internal_TColorDistribution);
-		metaData.scriptClass->addInternalCall("Internal_TColorDistribution0", (void*)&ScriptTColorDistributionColorGradientHDR::Internal_TColorDistribution0);
-		metaData.scriptClass->addInternalCall("Internal_TColorDistribution1", (void*)&ScriptTColorDistributionColorGradientHDR::Internal_TColorDistribution1);
-		metaData.scriptClass->addInternalCall("Internal_TColorDistribution2", (void*)&ScriptTColorDistributionColorGradientHDR::Internal_TColorDistribution2);
-		metaData.scriptClass->addInternalCall("Internal_TColorDistribution3", (void*)&ScriptTColorDistributionColorGradientHDR::Internal_TColorDistribution3);
-		metaData.scriptClass->addInternalCall("Internal_getType", (void*)&ScriptTColorDistributionColorGradientHDR::Internal_getType);
-		metaData.scriptClass->addInternalCall("Internal_getMinConstant", (void*)&ScriptTColorDistributionColorGradientHDR::Internal_getMinConstant);
-		metaData.scriptClass->addInternalCall("Internal_getMaxConstant", (void*)&ScriptTColorDistributionColorGradientHDR::Internal_getMaxConstant);
-		metaData.scriptClass->addInternalCall("Internal_getMinGradient", (void*)&ScriptTColorDistributionColorGradientHDR::Internal_getMinGradient);
-		metaData.scriptClass->addInternalCall("Internal_getMaxGradient", (void*)&ScriptTColorDistributionColorGradientHDR::Internal_getMaxGradient);
+		metaData.scriptClass->AddInternalCall("Internal_TColorDistribution", (void*)&ScriptTColorDistributionColorGradientHDR::InternalTColorDistribution);
+		metaData.scriptClass->AddInternalCall("Internal_TColorDistribution0", (void*)&ScriptTColorDistributionColorGradientHDR::InternalTColorDistribution0);
+		metaData.scriptClass->AddInternalCall("Internal_TColorDistribution1", (void*)&ScriptTColorDistributionColorGradientHDR::InternalTColorDistribution1);
+		metaData.scriptClass->AddInternalCall("Internal_TColorDistribution2", (void*)&ScriptTColorDistributionColorGradientHDR::InternalTColorDistribution2);
+		metaData.scriptClass->AddInternalCall("Internal_TColorDistribution3", (void*)&ScriptTColorDistributionColorGradientHDR::InternalTColorDistribution3);
+		metaData.scriptClass->AddInternalCall("Internal_getType", (void*)&ScriptTColorDistributionColorGradientHDR::InternalGetType);
+		metaData.scriptClass->AddInternalCall("Internal_getMinConstant", (void*)&ScriptTColorDistributionColorGradientHDR::InternalGetMinConstant);
+		metaData.scriptClass->AddInternalCall("Internal_getMaxConstant", (void*)&ScriptTColorDistributionColorGradientHDR::InternalGetMaxConstant);
+		metaData.scriptClass->AddInternalCall("Internal_getMinGradient", (void*)&ScriptTColorDistributionColorGradientHDR::InternalGetMinGradient);
+		metaData.scriptClass->AddInternalCall("Internal_getMaxGradient", (void*)&ScriptTColorDistributionColorGradientHDR::InternalGetMaxGradient);
 
 	}
 

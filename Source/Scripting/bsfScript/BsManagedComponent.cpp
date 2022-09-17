@@ -21,7 +21,7 @@ namespace bs
 	ManagedComponent::ManagedComponent(const HSceneObject& parent, MonoReflectionType* runtimeType)
 		: Component(parent), mRuntimeType(runtimeType)
 	{
-		MonoUtil::getClassName(mRuntimeType, mNamespace, mTypeName);
+		MonoUtil::GetClassName(mRuntimeType, mNamespace, mTypeName);
 		SetName(mTypeName);
 	}
 
@@ -42,7 +42,7 @@ namespace bs
 		if (!mMissingType)
 		{
 			MonoObject* instance = mOwner->GetManagedInstance();
-			SPtr<ManagedSerializableObject> serializableObject = ManagedSerializableObject::createFromExisting(instance);
+			SPtr<ManagedSerializableObject> serializableObject = ManagedSerializableObject::CreateFromExisting(instance);
 
 			// Serialize the object information and its fields. We cannot just serialize the entire object because
 			// the managed instance had to be created in a previous step. So we handle creation of the top level object manually.
@@ -52,10 +52,10 @@ namespace bs
 				SPtr<MemoryDataStream> stream = bs_shared_ptr_new<MemoryDataStream>();
 				BinarySerializer bs;
 
-				bs.encode(serializableObject.get(), stream);
+				bs.Encode(serializableObject.get(), stream);
 
-				backupData.size = (UINT32)stream->size();
-				backupData.data = stream->disownMemory();
+				backupData.size = (UINT32)stream->Size();
+				backupData.data = stream->DisownMemory();
 			}
 			else
 			{
@@ -70,11 +70,11 @@ namespace bs
 			if (mSerializedObjectData != nullptr)
 			{
 				BinarySerializer bs;
-				bs.encode(mSerializedObjectData.get(), stream);
+				bs.Encode(mSerializedObjectData.get(), stream);
 			}
 
-			backupData.size = (UINT32)stream->size();
-			backupData.data = stream->disownMemory();
+			backupData.size = (UINT32)stream->Size();
+			backupData.data = stream->DisownMemory();
 		}
 
 		if (clearExisting)
@@ -97,7 +97,7 @@ namespace bs
 
 	void ManagedComponent::Restore(const RawBackupData& data, bool missingType)
 	{
-		initialize(mOwner);
+		Initialize(mOwner);
 		mObjInfo = nullptr;
 
 		MonoObject* instance = mOwner->GetManagedInstance();
@@ -109,16 +109,16 @@ namespace bs
 			serzContext.goState = bs_shared_ptr_new<GameObjectDeserializationState>();
 
 			auto serializableObject = std::static_pointer_cast<ManagedSerializableObject>(
-				bs.decode(bs_shared_ptr_new<MemoryDataStream>(data.data, data.size), data.size,
+				bs.Decode(bs_shared_ptr_new<MemoryDataStream>(data.data, data.size), data.size,
 					BinarySerializerFlag::None, &serzContext));
 
-			serzContext.goState->resolve();
+			serzContext.goState->Resolve();
 
 			if (!missingType)
 			{
-				ScriptAssemblyManager::Instance().getSerializableObjectInfo(mNamespace, mTypeName, mObjInfo);
+				ScriptAssemblyManager::Instance().GetSerializableObjectInfo(mNamespace, mTypeName, mObjInfo);
 
-				serializableObject->deserialize(instance, mObjInfo);
+				serializableObject->Deserialize(instance, mObjInfo);
 			}
 			else
 				mSerializedObjectData = serializableObject;
@@ -140,10 +140,10 @@ namespace bs
 		mManagedClass = nullptr;
 		if (instance != nullptr)
 		{
-			::MonoClass* monoClass = MonoUtil::getClass(instance);
-			mRuntimeType = MonoUtil::getType(monoClass);
+			::MonoClass* monoClass = MonoUtil::GetClass(instance);
+			mRuntimeType = MonoUtil::GetType(monoClass);
 
-			mManagedClass = MonoManager::Instance().findClass(monoClass);
+			mManagedClass = MonoManager::Instance().FindClass(monoClass);
 		}
 
 		mOnCreatedThunk = nullptr;
@@ -219,7 +219,7 @@ namespace bs
 
 			// Search for methods on base class if there is one
 			MonoClass* baseClass = mManagedClass->GetBaseClass();
-			if (baseClass != ScriptManagedComponent::getMetaData()->scriptClass)
+			if (baseClass != ScriptManagedComponent::GetMetaData()->scriptClass)
 				mManagedClass = baseClass;
 			else
 				break;
@@ -227,7 +227,7 @@ namespace bs
 
 		if (mManagedClass != nullptr)
 		{
-			MonoAssembly* engineAssembly = MonoManager::Instance().getAssembly(ENGINE_ASSEMBLY);
+			MonoAssembly* engineAssembly = MonoManager::Instance().GetAssembly(ENGINE_ASSEMBLY);
 			if (engineAssembly == nullptr)
 				BS_EXCEPT(InvalidStateException, String(ENGINE_ASSEMBLY) + " assembly is not loaded.");
 
@@ -243,12 +243,12 @@ namespace bs
 
 	bool ManagedComponent::TypeEquals(const Component& other)
 	{
-		if(Component::typeEquals(other))
+		if(Component::TypeEquals(other))
 		{
 			const ManagedComponent& otherMC = static_cast<const ManagedComponent&>(other);
 
 			// Not comparing MonoReflectionType directly because this needs to be able to work before instantiation
-			return mNamespace == otherMC.getManagedNamespace() && mTypeName == otherMC.getManagedTypeName();
+			return mNamespace == otherMC.GetManagedNamespace() && mTypeName == otherMC.GetManagedTypeName();
 		}
 
 		return false;
@@ -270,16 +270,16 @@ namespace bs
 			params[0] = &box;
 			params[1] = &sphere;
 
-			MonoObject* areBoundsValidObj = mCalculateBoundsMethod->invokeVirtual(instance, params);
+			MonoObject* areBoundsValidObj = mCalculateBoundsMethod->InvokeVirtual(instance, params);
 
 			bool areBoundsValid;
-			areBoundsValid = *(bool*)MonoUtil::unbox(areBoundsValidObj);
+			areBoundsValid = *(bool*)MonoUtil::Unbox(areBoundsValidObj);
 
 			bounds = Bounds(box, sphere);
 			return areBoundsValid;
 		}
 
-		return Component::calculateBounds(bounds);
+		return Component::CalculateBounds(bounds);
 	}
 
 	void ManagedComponent::Update()
@@ -290,7 +290,7 @@ namespace bs
 
 			// Note: Not calling virtual methods. Can be easily done if needed but for now doing this
 			// for some extra speed.
-			MonoUtil::invokeThunk(mOnUpdateThunk, instance);
+			MonoUtil::InvokeThunk(mOnUpdateThunk, instance);
 		}
 	}
 
@@ -302,7 +302,7 @@ namespace bs
 
 			// Note: Not calling virtual methods. Can be easily done if needed but for now doing this
 			// for some extra speed.
-			MonoUtil::invokeThunk(mOnResetThunk, instance);
+			MonoUtil::InvokeThunk(mOnResetThunk, instance);
 		}
 
 		mRequiresReset = false;
@@ -313,14 +313,14 @@ namespace bs
 		mObjInfo = nullptr;
 
 		MonoObject* instance;
-		if (!ScriptAssemblyManager::Instance().getSerializableObjectInfo(mNamespace, mTypeName, mObjInfo))
+		if (!ScriptAssemblyManager::Instance().GetSerializableObjectInfo(mNamespace, mTypeName, mObjInfo))
 		{
-			instance = ScriptAssemblyManager::Instance().getBuiltinClasses().missingComponentClass->createInstance(true);
+			instance = ScriptAssemblyManager::Instance().GetBuiltinClasses().missingComponentClass->CreateInstance(true);
 			mMissingType = true;
 		}
 		else
 		{
-			instance = mObjInfo->mMonoClass->createInstance();
+			instance = mObjInfo->mMonoClass->CreateInstance();
 			mMissingType = false;
 		}
 
@@ -331,7 +331,7 @@ namespace bs
 			const Vector<HComponent>& components = SO()->GetComponents();
 			for (auto& component : components)
 			{
-				if (component.get() == this)
+				if (component.Get() == this)
 				{
 					componentHandle = static_object_cast<ManagedComponent>(component);
 					break;
@@ -340,7 +340,7 @@ namespace bs
 		}
 
 		assert(componentHandle != nullptr);
-		ScriptGameObjectManager::Instance().createManagedScriptComponent(instance, componentHandle);
+		ScriptGameObjectManager::Instance().CreateManagedScriptComponent(instance, componentHandle);
 	}
 
 	void ManagedComponent::OnCreated()
@@ -349,7 +349,7 @@ namespace bs
 
 		if (mSerializedObjectData != nullptr && !mMissingType)
 		{
-			mSerializedObjectData->deserialize(instance, mObjInfo);
+			mSerializedObjectData->Deserialize(instance, mObjInfo);
 			mSerializedObjectData = nullptr;
 		}
 
@@ -357,10 +357,10 @@ namespace bs
 		{
 			// Note: Not calling virtual methods. Can be easily done if needed but for now doing this
 			// for some extra speed.
-			MonoUtil::invokeThunk(mOnCreatedThunk, instance);
+			MonoUtil::InvokeThunk(mOnCreatedThunk, instance);
 		}
 
-		triggerOnReset();
+		TriggerOnReset();
 	}
 
 	void ManagedComponent::OnInitialized()
@@ -371,10 +371,10 @@ namespace bs
 
 			// Note: Not calling virtual methods. Can be easily done if needed but for now doing this
 			// for some extra speed.
-			MonoUtil::invokeThunk(mOnInitializedThunk, instance);
+			MonoUtil::InvokeThunk(mOnInitializedThunk, instance);
 		}
 
-		triggerOnReset();
+		TriggerOnReset();
 	}
 
 	void ManagedComponent::OnDestroyed()
@@ -385,7 +385,7 @@ namespace bs
 
 			// Note: Not calling virtual methods. Can be easily done if needed but for now doing this
 			// for some extra speed.
-			MonoUtil::invokeThunk(mOnDestroyThunk, instance);
+			MonoUtil::InvokeThunk(mOnDestroyThunk, instance);
 		}
 	}
 
@@ -397,7 +397,7 @@ namespace bs
 
 			// Note: Not calling virtual methods. Can be easily done if needed but for now doing this
 			// for some extra speed.
-			MonoUtil::invokeThunk(mOnEnabledThunk, instance);
+			MonoUtil::InvokeThunk(mOnEnabledThunk, instance);
 		}
 	}
 
@@ -409,7 +409,7 @@ namespace bs
 
 			// Note: Not calling virtual methods. Can be easily done if needed but for now doing this
 			// for some extra speed.
-			MonoUtil::invokeThunk(mOnDisabledThunk, instance);
+			MonoUtil::InvokeThunk(mOnDisabledThunk, instance);
 		}
 	}
 
@@ -421,7 +421,7 @@ namespace bs
 
 			// Note: Not calling virtual methods. Can be easily done if needed but for now doing this
 			// for some extra speed.
-			MonoUtil::invokeThunk(mOnTransformChangedThunk, instance, flags);
+			MonoUtil::InvokeThunk(mOnTransformChangedThunk, instance, flags);
 		}
 	}
 

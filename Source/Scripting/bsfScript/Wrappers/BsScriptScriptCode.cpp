@@ -36,16 +36,16 @@ namespace bs
 		WString strText = MonoUtil::MonoToWString(text);
 		HScriptCode scriptCode = ScriptCode::Create(strText);
 
-		ScriptResourceManager::Instance().createBuiltinScriptResource(scriptCode, instance);
+		ScriptResourceManager::Instance().CreateBuiltinScriptResource(scriptCode, instance);
 	}
 
 	MonoString* ScriptScriptCode::InternalGetText(ScriptScriptCode* thisPtr)
 	{
 		HScriptCode scriptCode = thisPtr->GetHandle();
 		if (!scriptCode.IsLoaded())
-			MonoUtil::wstringToMono(L"");
+			MonoUtil::WstringToMono(L"");
 
-		return MonoUtil::wstringToMono(scriptCode->GetString());
+		return MonoUtil::WstringToMono(scriptCode->GetString());
 	}
 
 	void ScriptScriptCode::InternalSetText(ScriptScriptCode* thisPtr, MonoString* text)
@@ -54,7 +54,7 @@ namespace bs
 		if (!scriptCode.IsLoaded())
 			return;
 
-		scriptCode->SetString(MonoUtil::monoToWString(text));
+		scriptCode->SetString(MonoUtil::MonoToWString(text));
 	}
 
 	bool ScriptScriptCode::InternalIsEditorScript(ScriptScriptCode* thisPtr)
@@ -81,29 +81,29 @@ namespace bs
 
 		Vector<FullTypeName> types;
 		if (scriptCode.IsLoaded())
-			types = parseTypes(scriptCode->GetString());
+			types = ParseTypes(scriptCode->GetString());
 
 		Vector<MonoReflectionType*> validTypes;
 		for (auto& type : types)
 		{
 			SPtr<ManagedSerializableObjectInfo> objInfo;
-			if (ScriptAssemblyManager::Instance().getSerializableObjectInfo(toString(type.first), toString(type.second), objInfo))
-				validTypes.push_back(MonoUtil::getType(objInfo->mTypeInfo->GetMonoClass()));
+			if (ScriptAssemblyManager::Instance().GetSerializableObjectInfo(toString(type.first), toString(type.second), objInfo))
+				validTypes.push_back(MonoUtil::GetType(objInfo->mTypeInfo->GetMonoClass()));
 		}
 
 		UINT32 numValidTypes = (UINT32)validTypes.size();
-		MonoClass* typeClass = ScriptAssemblyManager::Instance().getBuiltinClasses().systemTypeClass;
+		MonoClass* typeClass = ScriptAssemblyManager::Instance().GetBuiltinClasses().systemTypeClass;
 
 		ScriptArray scriptArray(typeClass->GetInternalClassInternal(), numValidTypes);
 		for (UINT32 i = 0; i < numValidTypes; i++)
 			scriptArray.Set(i, validTypes[i]);
 
-		return scriptArray.getInternal();
+		return scriptArray.GetInternal();
 	}
 
 	MonoObject* ScriptScriptCode::CreateInstance()
 	{
-		return metaData.scriptClass->createInstance();
+		return metaData.scriptClass->CreateInstance();
 	}
 
 	Vector<ScriptScriptCode::FullTypeName> ScriptScriptCode::ParseTypes(const WString& code)

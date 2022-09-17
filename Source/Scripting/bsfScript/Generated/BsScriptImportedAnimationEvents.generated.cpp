@@ -16,11 +16,11 @@ namespace bs
 
 	void ScriptImportedAnimationEvents::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_ImportedAnimationEvents", (void*)&ScriptImportedAnimationEvents::Internal_ImportedAnimationEvents);
-		metaData.scriptClass->addInternalCall("Internal_getname", (void*)&ScriptImportedAnimationEvents::Internal_getname);
-		metaData.scriptClass->addInternalCall("Internal_setname", (void*)&ScriptImportedAnimationEvents::Internal_setname);
-		metaData.scriptClass->addInternalCall("Internal_getevents", (void*)&ScriptImportedAnimationEvents::Internal_getevents);
-		metaData.scriptClass->addInternalCall("Internal_setevents", (void*)&ScriptImportedAnimationEvents::Internal_setevents);
+		metaData.scriptClass->AddInternalCall("Internal_ImportedAnimationEvents", (void*)&ScriptImportedAnimationEvents::InternalImportedAnimationEvents);
+		metaData.scriptClass->AddInternalCall("Internal_getname", (void*)&ScriptImportedAnimationEvents::InternalGetname);
+		metaData.scriptClass->AddInternalCall("Internal_setname", (void*)&ScriptImportedAnimationEvents::InternalSetname);
+		metaData.scriptClass->AddInternalCall("Internal_getevents", (void*)&ScriptImportedAnimationEvents::InternalGetevents);
+		metaData.scriptClass->AddInternalCall("Internal_setevents", (void*)&ScriptImportedAnimationEvents::InternalSetevents);
 
 	}
 
@@ -35,13 +35,13 @@ namespace bs
 		new (bs_alloc<ScriptImportedAnimationEvents>()) ScriptImportedAnimationEvents(managedInstance, value);
 		return managedInstance;
 	}
-	void ScriptImportedAnimationEvents::Internal_ImportedAnimationEvents(MonoObject* managedInstance)
+	void ScriptImportedAnimationEvents::InternalImportedAnimationEvents(MonoObject* managedInstance)
 	{
 		SPtr<ImportedAnimationEvents> instance = bs_shared_ptr_new<ImportedAnimationEvents>();
 		new (bs_alloc<ScriptImportedAnimationEvents>())ScriptImportedAnimationEvents(managedInstance, instance);
 	}
 
-	MonoString* ScriptImportedAnimationEvents::Internal_getname(ScriptImportedAnimationEvents* thisPtr)
+	MonoString* ScriptImportedAnimationEvents::InternalGetname(ScriptImportedAnimationEvents* thisPtr)
 	{
 		String tmp__output;
 		tmp__output = thisPtr->GetInternal()->name;
@@ -52,14 +52,14 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptImportedAnimationEvents::Internal_setname(ScriptImportedAnimationEvents* thisPtr, MonoString* value)
+	void ScriptImportedAnimationEvents::InternalSetname(ScriptImportedAnimationEvents* thisPtr, MonoString* value)
 	{
 		String tmpvalue;
-		tmpvalue = MonoUtil::monoToString(value);
+		tmpvalue = MonoUtil::MonoToString(value);
 		thisPtr->GetInternal()->name = tmpvalue;
 	}
 
-	MonoArray* ScriptImportedAnimationEvents::Internal_getevents(ScriptImportedAnimationEvents* thisPtr)
+	MonoArray* ScriptImportedAnimationEvents::InternalGetevents(ScriptImportedAnimationEvents* thisPtr)
 	{
 		Vector<AnimationEvent> vec__output;
 		vec__output = thisPtr->GetInternal()->events;
@@ -76,7 +76,7 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptImportedAnimationEvents::Internal_setevents(ScriptImportedAnimationEvents* thisPtr, MonoArray* value)
+	void ScriptImportedAnimationEvents::InternalSetevents(ScriptImportedAnimationEvents* thisPtr, MonoArray* value)
 	{
 		Vector<AnimationEvent> vecvalue;
 		if(value != nullptr)

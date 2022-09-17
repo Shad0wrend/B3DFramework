@@ -25,7 +25,7 @@ namespace bs
 		return thisPtr->GetProperties().priority;
 	}
 
-	void RenderTargetEx::setPriority(const SPtr<RenderTarget>& thisPtr, INT32 priority)
+	void RenderTargetEx::SetPriority(const SPtr<RenderTarget>& thisPtr, INT32 priority)
 	{
 		thisPtr->SetPriority(priority);
 	}
@@ -50,17 +50,17 @@ namespace bs
 
 	SPtr<RenderTexture> RenderTextureEx::Create(const HTexture& colorSurface)
 	{
-		return create(Vector<HTexture>{ colorSurface }, HTexture());
+		return Create(Vector<HTexture>{ colorSurface }, HTexture());
 	}
 
 	SPtr<RenderTexture> RenderTextureEx::Create(const HTexture& colorSurface, const HTexture& depthStencilSurface)
 	{
-		return create(Vector<HTexture>{ colorSurface }, depthStencilSurface);
+		return Create(Vector<HTexture>{ colorSurface }, depthStencilSurface);
 	}
 
 	SPtr<RenderTexture> RenderTextureEx::Create(const Vector<HTexture>& colorSurface)
 	{
-		return create(Vector<HTexture>{ colorSurface }, HTexture());
+		return Create(Vector<HTexture>{ colorSurface }, HTexture());
 	}
 		
 	SPtr<RenderTexture> RenderTextureEx::Create(const Vector<HTexture>& colorSurfaces, const HTexture& depthStencilSurface)

@@ -17,10 +17,10 @@ namespace bs
 
 	void ScriptParticleEmitterBoxShape::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_setOptions", (void*)&ScriptParticleEmitterBoxShape::Internal_setOptions);
-		metaData.scriptClass->addInternalCall("Internal_getOptions", (void*)&ScriptParticleEmitterBoxShape::Internal_getOptions);
+		metaData.scriptClass->AddInternalCall("Internal_setOptions", (void*)&ScriptParticleEmitterBoxShape::InternalSetOptions);
+		metaData.scriptClass->AddInternalCall("Internal_getOptions", (void*)&ScriptParticleEmitterBoxShape::InternalGetOptions);
 		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptParticleEmitterBoxShape::InternalCreate);
-		metaData.scriptClass->addInternalCall("Internal_create0", (void*)&ScriptParticleEmitterBoxShape::Internal_create0);
+		metaData.scriptClass->AddInternalCall("Internal_create0", (void*)&ScriptParticleEmitterBoxShape::InternalCreate0);
 
 	}
 

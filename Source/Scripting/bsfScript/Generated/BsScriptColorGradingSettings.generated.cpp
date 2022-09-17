@@ -15,14 +15,14 @@ namespace bs
 
 	void ScriptColorGradingSettings::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_getsaturation", (void*)&ScriptColorGradingSettings::Internal_getsaturation);
-		metaData.scriptClass->addInternalCall("Internal_setsaturation", (void*)&ScriptColorGradingSettings::Internal_setsaturation);
-		metaData.scriptClass->addInternalCall("Internal_getcontrast", (void*)&ScriptColorGradingSettings::Internal_getcontrast);
-		metaData.scriptClass->addInternalCall("Internal_setcontrast", (void*)&ScriptColorGradingSettings::Internal_setcontrast);
-		metaData.scriptClass->addInternalCall("Internal_getgain", (void*)&ScriptColorGradingSettings::Internal_getgain);
-		metaData.scriptClass->addInternalCall("Internal_setgain", (void*)&ScriptColorGradingSettings::Internal_setgain);
-		metaData.scriptClass->addInternalCall("Internal_getoffset", (void*)&ScriptColorGradingSettings::Internal_getoffset);
-		metaData.scriptClass->addInternalCall("Internal_setoffset", (void*)&ScriptColorGradingSettings::Internal_setoffset);
+		metaData.scriptClass->AddInternalCall("Internal_getsaturation", (void*)&ScriptColorGradingSettings::InternalGetsaturation);
+		metaData.scriptClass->AddInternalCall("Internal_setsaturation", (void*)&ScriptColorGradingSettings::InternalSetsaturation);
+		metaData.scriptClass->AddInternalCall("Internal_getcontrast", (void*)&ScriptColorGradingSettings::InternalGetcontrast);
+		metaData.scriptClass->AddInternalCall("Internal_setcontrast", (void*)&ScriptColorGradingSettings::InternalSetcontrast);
+		metaData.scriptClass->AddInternalCall("Internal_getgain", (void*)&ScriptColorGradingSettings::InternalGetgain);
+		metaData.scriptClass->AddInternalCall("Internal_setgain", (void*)&ScriptColorGradingSettings::InternalSetgain);
+		metaData.scriptClass->AddInternalCall("Internal_getoffset", (void*)&ScriptColorGradingSettings::InternalGetoffset);
+		metaData.scriptClass->AddInternalCall("Internal_setoffset", (void*)&ScriptColorGradingSettings::InternalSetoffset);
 
 	}
 

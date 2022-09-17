@@ -17,10 +17,10 @@ namespace bs
 
 	void ScriptParticleGravity::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_setOptions", (void*)&ScriptParticleGravity::Internal_setOptions);
-		metaData.scriptClass->addInternalCall("Internal_getOptions", (void*)&ScriptParticleGravity::Internal_getOptions);
+		metaData.scriptClass->AddInternalCall("Internal_setOptions", (void*)&ScriptParticleGravity::InternalSetOptions);
+		metaData.scriptClass->AddInternalCall("Internal_getOptions", (void*)&ScriptParticleGravity::InternalGetOptions);
 		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptParticleGravity::InternalCreate);
-		metaData.scriptClass->addInternalCall("Internal_create0", (void*)&ScriptParticleGravity::Internal_create0);
+		metaData.scriptClass->AddInternalCall("Internal_create0", (void*)&ScriptParticleGravity::InternalCreate0);
 
 	}
 

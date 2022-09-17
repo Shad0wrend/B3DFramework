@@ -40,7 +40,7 @@ namespace bs
 	public:
 		ManagedComponentRTTI()
 		{
-			AddReflectablePtrField("mObjectData", 2, &ManagedComponentRTTI::getObjectData, &ManagedComponentRTTI::setObjectData);
+			AddReflectablePtrField("mObjectData", 2, &ManagedComponentRTTI::GetObjectData, &ManagedComponentRTTI::SetObjectData);
 		}
 
 		void OnSerializationStarted(IReflectable* obj, SerializationContext* context) override
@@ -49,7 +49,7 @@ namespace bs
 			MonoObject* managedInstance = mc->GetManagedInstance();
 
 			if (managedInstance != nullptr)
-				mSerializedObjectData = ManagedSerializableObject::createFromExisting(managedInstance);
+				mSerializedObjectData = ManagedSerializableObject::CreateFromExisting(managedInstance);
 			else
 				mSerializedObjectData = mc->mSerializedObjectData;
 		}

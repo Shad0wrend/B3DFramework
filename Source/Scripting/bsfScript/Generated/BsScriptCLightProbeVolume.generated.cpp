@@ -19,17 +19,17 @@ namespace bs
 	void ScriptCLightProbeVolume::initRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_addProbe", (void*)&ScriptCLightProbeVolume::InternalAddProbe);
-		metaData.scriptClass->addInternalCall("Internal_setProbePosition", (void*)&ScriptCLightProbeVolume::Internal_setProbePosition);
-		metaData.scriptClass->addInternalCall("Internal_getProbePosition", (void*)&ScriptCLightProbeVolume::Internal_getProbePosition);
+		metaData.scriptClass->AddInternalCall("Internal_setProbePosition", (void*)&ScriptCLightProbeVolume::InternalSetProbePosition);
+		metaData.scriptClass->AddInternalCall("Internal_getProbePosition", (void*)&ScriptCLightProbeVolume::InternalGetProbePosition);
 		metaData.scriptClass->AddInternalCall("Internal_removeProbe", (void*)&ScriptCLightProbeVolume::InternalRemoveProbe);
-		metaData.scriptClass->AddInternalCall("Internal_getProbes", (void*)&ScriptCLightProbeVolume::Internal_getProbes);
-		metaData.scriptClass->addInternalCall("Internal_renderProbe", (void*)&ScriptCLightProbeVolume::Internal_renderProbe);
-		metaData.scriptClass->addInternalCall("Internal_renderProbes", (void*)&ScriptCLightProbeVolume::Internal_renderProbes);
-		metaData.scriptClass->addInternalCall("Internal_resize", (void*)&ScriptCLightProbeVolume::Internal_resize);
-		metaData.scriptClass->addInternalCall("Internal_clip", (void*)&ScriptCLightProbeVolume::Internal_clip);
-		metaData.scriptClass->addInternalCall("Internal_reset", (void*)&ScriptCLightProbeVolume::Internal_reset);
-		metaData.scriptClass->addInternalCall("Internal_getGridVolume", (void*)&ScriptCLightProbeVolume::Internal_getGridVolume);
-		metaData.scriptClass->addInternalCall("Internal_getCellCount", (void*)&ScriptCLightProbeVolume::Internal_getCellCount);
+		metaData.scriptClass->AddInternalCall("Internal_getProbes", (void*)&ScriptCLightProbeVolume::InternalGetProbes);
+		metaData.scriptClass->AddInternalCall("Internal_renderProbe", (void*)&ScriptCLightProbeVolume::InternalRenderProbe);
+		metaData.scriptClass->AddInternalCall("Internal_renderProbes", (void*)&ScriptCLightProbeVolume::InternalRenderProbes);
+		metaData.scriptClass->AddInternalCall("Internal_resize", (void*)&ScriptCLightProbeVolume::InternalResize);
+		metaData.scriptClass->AddInternalCall("Internal_clip", (void*)&ScriptCLightProbeVolume::InternalClip);
+		metaData.scriptClass->AddInternalCall("Internal_reset", (void*)&ScriptCLightProbeVolume::InternalReset);
+		metaData.scriptClass->AddInternalCall("Internal_getGridVolume", (void*)&ScriptCLightProbeVolume::InternalGetGridVolume);
+		metaData.scriptClass->AddInternalCall("Internal_getCellCount", (void*)&ScriptCLightProbeVolume::InternalGetCellCount);
 
 	}
 

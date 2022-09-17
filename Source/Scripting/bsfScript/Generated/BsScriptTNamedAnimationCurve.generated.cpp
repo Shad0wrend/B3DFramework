@@ -194,7 +194,7 @@ namespace bs
 	{
 		TNamedAnimationCurve<Quaternion> output;
 		String tmpname;
-		tmpname = MonoUtil::monoToString(value.name);
+		tmpname = MonoUtil::MonoToString(value.name);
 		output.name = tmpname;
 		output.flags = value.flags;
 		SPtr<TAnimationCurve<Quaternion>> tmpcurve;
@@ -246,7 +246,7 @@ namespace bs
 	{
 		TNamedAnimationCurve<int32_t> output;
 		String tmpname;
-		tmpname = MonoUtil::monoToString(value.name);
+		tmpname = MonoUtil::MonoToString(value.name);
 		output.name = tmpname;
 		output.flags = value.flags;
 		SPtr<TAnimationCurve<int32_t>> tmpcurve;

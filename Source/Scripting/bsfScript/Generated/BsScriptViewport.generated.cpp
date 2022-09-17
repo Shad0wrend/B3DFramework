@@ -28,12 +28,12 @@ namespace bs
 		metaData.scriptClass->AddInternalCall("Internal_setClearFlags", (void*)&ScriptViewport::InternalSetClearFlags);
 		metaData.scriptClass->AddInternalCall("Internal_getClearFlags", (void*)&ScriptViewport::InternalGetClearFlags);
 		metaData.scriptClass->AddInternalCall("Internal_setClearColorValue", (void*)&ScriptViewport::InternalSetClearColorValue);
-		metaData.scriptClass->addInternalCall("Internal_getClearColorValue", (void*)&ScriptViewport::InternalGetClearColorValue);
-		metaData.scriptClass->addInternalCall("Internal_setClearDepthValue", (void*)&ScriptViewport::InternalSetClearDepthValue);
-		metaData.scriptClass->addInternalCall("Internal_getClearDepthValue", (void*)&ScriptViewport::InternalGetClearDepthValue);
-		metaData.scriptClass->addInternalCall("Internal_setClearStencilValue", (void*)&ScriptViewport::InternalSetClearStencilValue);
-		metaData.scriptClass->addInternalCall("Internal_getClearStencilValue", (void*)&ScriptViewport::InternalGetClearStencilValue);
-		metaData.scriptClass->addInternalCall("Internal_create", (void*)&ScriptViewport::InternalCreate);
+		metaData.scriptClass->AddInternalCall("Internal_getClearColorValue", (void*)&ScriptViewport::InternalGetClearColorValue);
+		metaData.scriptClass->AddInternalCall("Internal_setClearDepthValue", (void*)&ScriptViewport::InternalSetClearDepthValue);
+		metaData.scriptClass->AddInternalCall("Internal_getClearDepthValue", (void*)&ScriptViewport::InternalGetClearDepthValue);
+		metaData.scriptClass->AddInternalCall("Internal_setClearStencilValue", (void*)&ScriptViewport::InternalSetClearStencilValue);
+		metaData.scriptClass->AddInternalCall("Internal_getClearStencilValue", (void*)&ScriptViewport::InternalGetClearStencilValue);
+		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptViewport::InternalCreate);
 
 	}
 

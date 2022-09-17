@@ -15,8 +15,8 @@ namespace bs
 	void ScriptTemporalAASettings::initRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_TemporalAASettings", (void*)&ScriptTemporalAASettings::InternalTemporalAaSettings);
-		metaData.scriptClass->addInternalCall("Internal_getenabled", (void*)&ScriptTemporalAASettings::Internal_getenabled);
-		metaData.scriptClass->addInternalCall("Internal_setenabled", (void*)&ScriptTemporalAASettings::Internal_setenabled);
+		metaData.scriptClass->AddInternalCall("Internal_getenabled", (void*)&ScriptTemporalAASettings::InternalGetenabled);
+		metaData.scriptClass->AddInternalCall("Internal_setenabled", (void*)&ScriptTemporalAASettings::InternalSetenabled);
 
 	}
 

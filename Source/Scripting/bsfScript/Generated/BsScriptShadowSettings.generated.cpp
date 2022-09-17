@@ -15,14 +15,14 @@ namespace bs
 	void ScriptShadowSettings::initRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_ShadowSettings", (void*)&ScriptShadowSettings::InternalShadowSettings);
-		metaData.scriptClass->addInternalCall("Internal_getdirectionalShadowDistance", (void*)&ScriptShadowSettings::Internal_getdirectionalShadowDistance);
-		metaData.scriptClass->addInternalCall("Internal_setdirectionalShadowDistance", (void*)&ScriptShadowSettings::Internal_setdirectionalShadowDistance);
-		metaData.scriptClass->addInternalCall("Internal_getnumCascades", (void*)&ScriptShadowSettings::Internal_getnumCascades);
-		metaData.scriptClass->addInternalCall("Internal_setnumCascades", (void*)&ScriptShadowSettings::Internal_setnumCascades);
-		metaData.scriptClass->addInternalCall("Internal_getcascadeDistributionExponent", (void*)&ScriptShadowSettings::Internal_getcascadeDistributionExponent);
-		metaData.scriptClass->addInternalCall("Internal_setcascadeDistributionExponent", (void*)&ScriptShadowSettings::Internal_setcascadeDistributionExponent);
-		metaData.scriptClass->addInternalCall("Internal_getshadowFilteringQuality", (void*)&ScriptShadowSettings::Internal_getshadowFilteringQuality);
-		metaData.scriptClass->addInternalCall("Internal_setshadowFilteringQuality", (void*)&ScriptShadowSettings::Internal_setshadowFilteringQuality);
+		metaData.scriptClass->AddInternalCall("Internal_getdirectionalShadowDistance", (void*)&ScriptShadowSettings::InternalGetdirectionalShadowDistance);
+		metaData.scriptClass->AddInternalCall("Internal_setdirectionalShadowDistance", (void*)&ScriptShadowSettings::InternalSetdirectionalShadowDistance);
+		metaData.scriptClass->AddInternalCall("Internal_getnumCascades", (void*)&ScriptShadowSettings::InternalGetnumCascades);
+		metaData.scriptClass->AddInternalCall("Internal_setnumCascades", (void*)&ScriptShadowSettings::InternalSetnumCascades);
+		metaData.scriptClass->AddInternalCall("Internal_getcascadeDistributionExponent", (void*)&ScriptShadowSettings::InternalGetcascadeDistributionExponent);
+		metaData.scriptClass->AddInternalCall("Internal_setcascadeDistributionExponent", (void*)&ScriptShadowSettings::InternalSetcascadeDistributionExponent);
+		metaData.scriptClass->AddInternalCall("Internal_getshadowFilteringQuality", (void*)&ScriptShadowSettings::InternalGetshadowFilteringQuality);
+		metaData.scriptClass->AddInternalCall("Internal_setshadowFilteringQuality", (void*)&ScriptShadowSettings::InternalSetshadowFilteringQuality);
 
 	}
 

@@ -88,8 +88,8 @@ namespace bs
 	public:
 		ManagedSerializableFieldDataEntryRTTI()
 		{
-			AddReflectablePtrField("mKey", 0, &ManagedSerializableFieldDataEntryRTTI::getKey, &ManagedSerializableFieldDataEntryRTTI::setKey);
-			AddReflectablePtrField("mValue", 1, &ManagedSerializableFieldDataEntryRTTI::getValue, &ManagedSerializableFieldDataEntryRTTI::setValue);
+			AddReflectablePtrField("mKey", 0, &ManagedSerializableFieldDataEntryRTTI::GetKey, &ManagedSerializableFieldDataEntryRTTI::SetKey);
+			AddReflectablePtrField("mValue", 1, &ManagedSerializableFieldDataEntryRTTI::GetValue, &ManagedSerializableFieldDataEntryRTTI::SetValue);
 		}
 
 		const String& GetRttiName() override
@@ -553,7 +553,7 @@ namespace bs
 	public:
 		ManagedSerializableFieldDataReflectableRefRTTI()
 		{
-			AddReflectablePtrField("mValue", 0, &ManagedSerializableFieldDataReflectableRefRTTI::getValue, &ManagedSerializableFieldDataReflectableRefRTTI::setValue);
+			AddReflectablePtrField("mValue", 0, &ManagedSerializableFieldDataReflectableRefRTTI::GetValue, &ManagedSerializableFieldDataReflectableRefRTTI::SetValue);
 		}
 
 		const String& GetRttiName() override
@@ -582,7 +582,7 @@ namespace bs
 	public:
 		ManagedSerializableFieldDataObjectRTTI()
 		{
-			AddReflectablePtrField("mValue", 0, &ManagedSerializableFieldDataObjectRTTI::getValue, &ManagedSerializableFieldDataObjectRTTI::setValue);
+			AddReflectablePtrField("mValue", 0, &ManagedSerializableFieldDataObjectRTTI::GetValue, &ManagedSerializableFieldDataObjectRTTI::SetValue);
 		}
 
 		const String& GetRttiName() override
@@ -611,7 +611,7 @@ namespace bs
 	public:
 		ManagedSerializableFieldDataArrayRTTI()
 		{
-			AddReflectablePtrField("mValue", 0, &ManagedSerializableFieldDataArrayRTTI::getValue, &ManagedSerializableFieldDataArrayRTTI::setValue);
+			AddReflectablePtrField("mValue", 0, &ManagedSerializableFieldDataArrayRTTI::GetValue, &ManagedSerializableFieldDataArrayRTTI::SetValue);
 		}
 
 		const String& GetRttiName() override
@@ -640,7 +640,7 @@ namespace bs
 	public:
 		ManagedSerializableFieldDataListRTTI()
 		{
-			AddReflectablePtrField("mValue", 0, &ManagedSerializableFieldDataListRTTI::getValue, &ManagedSerializableFieldDataListRTTI::setValue);
+			AddReflectablePtrField("mValue", 0, &ManagedSerializableFieldDataListRTTI::GetValue, &ManagedSerializableFieldDataListRTTI::SetValue);
 		}
 
 		const String& GetRttiName() override
@@ -669,7 +669,7 @@ namespace bs
 	public:
 		ManagedSerializableFieldDataDictionaryRTTI()
 		{
-			AddReflectablePtrField("mValue", 0, &ManagedSerializableFieldDataDictionaryRTTI::getValue, &ManagedSerializableFieldDataDictionaryRTTI::setValue);
+			AddReflectablePtrField("mValue", 0, &ManagedSerializableFieldDataDictionaryRTTI::GetValue, &ManagedSerializableFieldDataDictionaryRTTI::SetValue);
 		}
 
 		const String& GetRttiName() override

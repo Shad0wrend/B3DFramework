@@ -11,7 +11,7 @@ namespace bs
 		thisPtr->SetTexture(name, value, TextureSurface(mipLevel, numMipLevels, arraySlice, numArraySlices));
 	}
 
-	HTexture MaterialEx::getTexture(const HMaterial& thisPtr, const String& name)
+	HTexture MaterialEx::GetTexture(const HMaterial& thisPtr, const String& name)
 	{
 		return thisPtr->GetTexture(name);
 	}

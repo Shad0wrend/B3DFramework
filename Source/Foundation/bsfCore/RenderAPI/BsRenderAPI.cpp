@@ -156,7 +156,7 @@ namespace bs
 
 	SPtr<bs::RenderWindow> RenderAPI::Initialize(const RENDER_WINDOW_DESC& primaryWindowDesc)
 	{
-		gCoreThread().QueueCommand(std::bind((void(RenderAPI::*)())&PooledThread::Initialize, this),
+		gCoreThread().QueueCommand(std::bind((void(RenderAPI::*)())&RenderAPI::Initialize, this),
 			CTQF_InternalQueue | CTQF_BlockUntilComplete);
 
 		RENDER_WINDOW_DESC windowDesc = primaryWindowDesc;

@@ -31,7 +31,7 @@ namespace bs
 		if(resInfo)
 			returnTypeClass = resInfo->monoClass;
 
-		ReflectableTypeInfo* reflTypeInfo = ScriptAssemblyManager::Instance().getReflectableTypeInfo(rttiId);
+		ReflectableTypeInfo* reflTypeInfo = ScriptAssemblyManager::Instance().GetReflectableTypeInfo(rttiId);
 		if(reflTypeInfo)
 			returnTypeClass = reflTypeInfo->monoClass;
 
@@ -52,11 +52,11 @@ namespace bs
 			asyncOpClass = metaData.scriptClass;
 		else
 		{
-			::MonoClass* rawClass = bindGenericParam(returnTypeClass->GetInternalClassInternal());
-			asyncOpClass = MonoManager::Instance().findClass(rawClass);
+			::MonoClass* rawClass = BindGenericParam(returnTypeClass->GetInternalClassInternal());
+			asyncOpClass = MonoManager::Instance().FindClass(rawClass);
 		}
 
-		MonoObject* obj = asyncOpClass->createInstance();
+		MonoObject* obj = asyncOpClass->CreateInstance();
 		new (bs_alloc<ScriptAsyncOpBase>()) ScriptAsyncOpBase(obj, op, convertCallback);
 
 		return obj;
@@ -65,7 +65,7 @@ namespace bs
 	MonoObject* ScriptAsyncOpBase::CreateInternal(const AsyncOpBase& op,
 		const std::function<MonoObject*(const Any&)>& convertCallback)
 	{
-		MonoObject* obj = metaData.scriptClass->createInstance();
+		MonoObject* obj = metaData.scriptClass->CreateInstance();
 		new (bs_alloc<ScriptAsyncOpBase>()) ScriptAsyncOpBase(obj, op, convertCallback);
 
 		return obj;
@@ -73,31 +73,31 @@ namespace bs
 
 	::MonoClass* ScriptAsyncOpBase::BindGenericParam(::MonoClass* param)
 	{
-		MonoClass* asyncOpClass = ScriptAssemblyManager::Instance().getBuiltinClasses().genericAsyncOpClass;
+		MonoClass* asyncOpClass = ScriptAssemblyManager::Instance().GetBuiltinClasses().genericAsyncOpClass;
 
 		::MonoClass* params[1] = { param };
-		return MonoUtil::bindGenericParameters(asyncOpClass->GetInternalClassInternal(), params, 1);
+		return MonoUtil::BindGenericParameters(asyncOpClass->GetInternalClassInternal(), params, 1);
 	}
 
 	bool ScriptAsyncOpBase::InternalIsComplete(ScriptAsyncOpBase* thisPtr)
 	{
-		return thisPtr->mOp.hasCompleted();
+		return thisPtr->mOp.HasCompleted();
 	}
 
 	void ScriptAsyncOpBase::InternalBlockUntilComplete(ScriptAsyncOpBase* thisPtr)
 	{
-		thisPtr->mOp.blockUntilComplete();
+		thisPtr->mOp.BlockUntilComplete();
 	}
 
 	MonoObject* ScriptAsyncOpBase::InternalGetValue(ScriptAsyncOpBase* thisPtr)
 	{
-		if (!thisPtr->mOp.hasCompleted())
+		if (!thisPtr->mOp.HasCompleted())
 			return nullptr;
 
 		if (thisPtr->mConvertCallback == nullptr)
 			return nullptr;
 
-		return thisPtr->mConvertCallback(thisPtr->mOp.getGenericReturnValue());
+		return thisPtr->mConvertCallback(thisPtr->mOp.GetGenericReturnValue());
 	}
 
 }

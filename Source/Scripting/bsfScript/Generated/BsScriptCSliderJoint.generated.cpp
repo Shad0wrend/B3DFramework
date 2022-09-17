@@ -18,8 +18,8 @@ namespace bs
 	{
 		metaData.scriptClass->AddInternalCall("Internal_getPosition", (void*)&ScriptCSliderJoint::InternalGetPosition);
 		metaData.scriptClass->AddInternalCall("Internal_getSpeed", (void*)&ScriptCSliderJoint::InternalGetSpeed);
-		metaData.scriptClass->addInternalCall("Internal_getLimit", (void*)&ScriptCSliderJoint::Internal_getLimit);
-		metaData.scriptClass->addInternalCall("Internal_setLimit", (void*)&ScriptCSliderJoint::Internal_setLimit);
+		metaData.scriptClass->AddInternalCall("Internal_getLimit", (void*)&ScriptCSliderJoint::InternalGetLimit);
+		metaData.scriptClass->AddInternalCall("Internal_setLimit", (void*)&ScriptCSliderJoint::InternalSetLimit);
 		metaData.scriptClass->AddInternalCall("Internal_setFlag", (void*)&ScriptCSliderJoint::InternalSetFlag);
 		metaData.scriptClass->AddInternalCall("Internal_hasFlag", (void*)&ScriptCSliderJoint::InternalHasFlag);
 

@@ -40,13 +40,13 @@ namespace bs
 		ScriptArray scriptArray(guiOptions);
 		UINT32 arrayLen = scriptArray.Size();
 		for (UINT32 i = 0; i < arrayLen; i++)
-			options.addOption(scriptArray.get<GUIOption>(i));
+			options.AddOption(scriptArray.Get<GUIOption>(i));
 
 		SPtr<RenderTexture> renderTexture;
 		if (texture != nullptr)
 			renderTexture = texture->GetInternal();
 
-		GUIRenderTexture* guiTexture = GUIRenderTexture::Create(renderTexture, transparent, options, MonoUtil::monoToString(style));
+		GUIRenderTexture* guiTexture = GUIRenderTexture::Create(renderTexture, transparent, options, MonoUtil::MonoToString(style));
 
 		new (bs_alloc<ScriptGUIRenderTexture>()) ScriptGUIRenderTexture(instance, guiTexture);
 	}
@@ -57,13 +57,13 @@ namespace bs
 		if (texture != nullptr)
 			renderTexture = texture->GetInternal();
 
-		GUIRenderTexture* guiTexture = (GUIRenderTexture*)nativeInstance->GetGUIElement();
+		GUIRenderTexture* guiTexture = (GUIRenderTexture*)nativeInstance->GetGuiElement();
 		guiTexture->SetRenderTexture(renderTexture);
 	}
 
 	void ScriptGUIRenderTexture::InternalSetTint(ScriptGUIRenderTexture* nativeInstance, Color* color)
 	{
-		GUIRenderTexture* guiTexture = (GUIRenderTexture*)nativeInstance->GetGUIElement();
+		GUIRenderTexture* guiTexture = (GUIRenderTexture*)nativeInstance->GetGuiElement();
 		guiTexture->SetTint(*color);
 	}
 }

@@ -15,12 +15,12 @@ namespace bs
 	void ScriptFilmGrainSettings::initRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_FilmGrainSettings", (void*)&ScriptFilmGrainSettings::InternalFilmGrainSettings);
-		metaData.scriptClass->addInternalCall("Internal_getenabled", (void*)&ScriptFilmGrainSettings::Internal_getenabled);
-		metaData.scriptClass->addInternalCall("Internal_setenabled", (void*)&ScriptFilmGrainSettings::Internal_setenabled);
-		metaData.scriptClass->addInternalCall("Internal_getintensity", (void*)&ScriptFilmGrainSettings::Internal_getintensity);
-		metaData.scriptClass->addInternalCall("Internal_setintensity", (void*)&ScriptFilmGrainSettings::Internal_setintensity);
-		metaData.scriptClass->addInternalCall("Internal_getspeed", (void*)&ScriptFilmGrainSettings::Internal_getspeed);
-		metaData.scriptClass->addInternalCall("Internal_setspeed", (void*)&ScriptFilmGrainSettings::Internal_setspeed);
+		metaData.scriptClass->AddInternalCall("Internal_getenabled", (void*)&ScriptFilmGrainSettings::InternalGetenabled);
+		metaData.scriptClass->AddInternalCall("Internal_setenabled", (void*)&ScriptFilmGrainSettings::InternalSetenabled);
+		metaData.scriptClass->AddInternalCall("Internal_getintensity", (void*)&ScriptFilmGrainSettings::InternalGetintensity);
+		metaData.scriptClass->AddInternalCall("Internal_setintensity", (void*)&ScriptFilmGrainSettings::InternalSetintensity);
+		metaData.scriptClass->AddInternalCall("Internal_getspeed", (void*)&ScriptFilmGrainSettings::InternalGetspeed);
+		metaData.scriptClass->AddInternalCall("Internal_setspeed", (void*)&ScriptFilmGrainSettings::InternalSetspeed);
 
 	}
 

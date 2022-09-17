@@ -68,40 +68,40 @@ namespace bs
 		SPtr<PixelData> sourcePixelData = sourceScriptPixelData->GetInternal();
 		SPtr<PixelData> outputData = bs_shared_ptr_new<PixelData>(sourcePixelData->GetWidth(), sourcePixelData->GetHeight(),
 			sourcePixelData->GetDepth(), newFormat);
-		outputData->allocateInternalBuffer();
+		outputData->AllocateInternalBuffer();
 
-		PixelUtil::bulkPixelConversion(*sourcePixelData, *outputData);
+		PixelUtil::BulkPixelConversion(*sourcePixelData, *outputData);
 
 		return ScriptPixelData::Create(outputData);
 	}
 
 	MonoObject* ScriptPixelUtility::InternalCompress(MonoObject* source, CompressionOptions* options)
 	{
-		ScriptPixelData* sourceScriptPixelData = ScriptPixelData::toNative(source);
+		ScriptPixelData* sourceScriptPixelData = ScriptPixelData::ToNative(source);
 		if (sourceScriptPixelData == nullptr)
 			return nullptr;
 
 		SPtr<PixelData> sourcePixelData = sourceScriptPixelData->GetInternal();
 		SPtr<PixelData> outputData = bs_shared_ptr_new<PixelData>(sourcePixelData->GetWidth(), sourcePixelData->GetHeight(),
 			sourcePixelData->GetDepth(), options->format);
-		outputData->allocateInternalBuffer();
+		outputData->AllocateInternalBuffer();
 
-		PixelUtil::compress(*sourcePixelData, *outputData, *options);
+		PixelUtil::Compress(*sourcePixelData, *outputData, *options);
 
 		return ScriptPixelData::Create(outputData);
 	}
 
 	MonoArray* ScriptPixelUtility::InternalGenerateMipmaps(MonoObject* source, MipMapGenOptions* options)
 	{
-		ScriptPixelData* sourceScriptPixelData = ScriptPixelData::toNative(source);
+		ScriptPixelData* sourceScriptPixelData = ScriptPixelData::ToNative(source);
 		if (sourceScriptPixelData == nullptr)
 			return nullptr;
 
 		SPtr<PixelData> sourcePixelData = sourceScriptPixelData->GetInternal();
-		Vector<SPtr<PixelData>> mipmaps = PixelUtil::genMipmaps(*sourcePixelData, *options);
+		Vector<SPtr<PixelData>> mipmaps = PixelUtil::GenMipmaps(*sourcePixelData, *options);
 
 		UINT32 numElements = (UINT32)mipmaps.size();
-		ScriptArray scriptArray(ScriptPixelData::getMetaData()->scriptClass->GetInternalClassInternal(), numElements);
+		ScriptArray scriptArray(ScriptPixelData::GetMetaData()->scriptClass->GetInternalClassInternal(), numElements);
 
 		for (UINT32 i = 0; i < numElements; i++)
 		{
@@ -109,38 +109,38 @@ namespace bs
 			scriptArray.Set(i, managedPixelData);
 		}
 
-		return scriptArray.getInternal();
+		return scriptArray.GetInternal();
 	}
 
 	MonoObject* ScriptPixelUtility::InternalScale(MonoObject* source, PixelVolume* newSize, PixelUtil::Filter filter)
 	{
-		ScriptPixelData* sourceScriptPixelData = ScriptPixelData::toNative(source);
+		ScriptPixelData* sourceScriptPixelData = ScriptPixelData::ToNative(source);
 		if (sourceScriptPixelData == nullptr)
 			return nullptr;
 
 		SPtr<PixelData> sourcePixelData = sourceScriptPixelData->GetInternal();
 		SPtr<PixelData> outputData = bs_shared_ptr_new<PixelData>(newSize->GetWidth(), newSize->GetHeight(),
 			newSize->GetDepth(), sourcePixelData->GetFormat());
-		outputData->allocateInternalBuffer();
+		outputData->AllocateInternalBuffer();
 
-		PixelUtil::scale(*sourcePixelData, *outputData, filter);
+		PixelUtil::Scale(*sourcePixelData, *outputData, filter);
 
 		return ScriptPixelData::Create(outputData);
 	}
 
 	void ScriptPixelUtility::InternalLinearToSrgb(MonoObject* source)
 	{
-		ScriptPixelData* sourceScriptPixelData = ScriptPixelData::toNative(source);
+		ScriptPixelData* sourceScriptPixelData = ScriptPixelData::ToNative(source);
 		if (sourceScriptPixelData == nullptr)
 			return;
 
 		SPtr<PixelData> pixelData = sourceScriptPixelData->GetInternal();
-		PixelUtil::linearToSRGB(*pixelData);
+		PixelUtil::LinearToSrgb(*pixelData);
 	}
 
 	void ScriptPixelUtility::InternalSrgbToLinear(MonoObject* source)
 	{
-		ScriptPixelData* sourceScriptPixelData = ScriptPixelData::toNative(source);
+		ScriptPixelData* sourceScriptPixelData = ScriptPixelData::ToNative(source);
 		if (sourceScriptPixelData == nullptr)
 			return;
 

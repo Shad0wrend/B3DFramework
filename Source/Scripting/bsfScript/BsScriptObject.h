@@ -109,12 +109,12 @@ namespace bs
 		ScriptObject(MonoObject* instance)
 			:Base(instance)
 		{
-			initOnStart.makeSureIAmInstantiated();
+			initOnStart.MakeSureIAmInstantiated();
 
 			Type* param = (Type*)(Base*)this; // Needed due to multiple inheritance. Safe since Type must point to an class derived from this one.
 
 			if(metaData.thisPtrField != nullptr)
-				metaData.thisPtrField->set(instance, &param);
+				metaData.thisPtrField->Set(instance, &param);
 		}
 
 		virtual ~ScriptObject()
@@ -165,7 +165,7 @@ namespace bs
 			ScriptMeta localMetaData = ScriptMeta(Type::getAssemblyName(), Type::getNamespace(), Type::getTypeName(),
 					&Type::initRuntimeData);
 
-			MonoManager::registerScriptType(&metaData, localMetaData);
+			MonoManager::RegisterScriptType(&metaData, localMetaData);
 		}
 
 	protected:

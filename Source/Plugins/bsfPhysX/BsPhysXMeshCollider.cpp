@@ -69,7 +69,7 @@ namespace bs
 	void PhysXMeshCollider::SetGeometry(const PxGeometry& geometry)
 	{
 		PxShape* shape = GetInternal()->GetShapeInternal();
-		if (shape->getGeometryType() != geometry.getType())
+		if (shape->getGeometryType() != geometry.GetType())
 		{
 			PxShape* newShape = gPhysX().GetPhysX()->createShape(geometry, *gPhysX().GetDefaultMaterial(), true);
 			GetInternal()->SetShapeInternal(newShape);

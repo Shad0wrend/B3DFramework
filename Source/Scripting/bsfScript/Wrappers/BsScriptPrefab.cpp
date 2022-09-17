@@ -25,15 +25,15 @@ namespace bs
 	void ScriptPrefab::InternalCreateInstance(MonoObject* instance, ScriptSceneObject* so, bool isScene)
 	{
 		HPrefab prefab = Prefab::Create(so->GetHandle(), isScene);
-		ScriptResourceManager::Instance().createBuiltinScriptResource(prefab, instance);
+		ScriptResourceManager::Instance().CreateBuiltinScriptResource(prefab, instance);
 	}
 
 	MonoObject* ScriptPrefab::InternalInstantiate(ScriptPrefab* thisPtr)
 	{
 		HPrefab prefab = thisPtr->GetHandle();
 
-		HSceneObject instance = prefab->instantiate();
-		ScriptSceneObject* scriptInstance = ScriptGameObjectManager::Instance().getOrCreateScriptSceneObject(instance);
+		HSceneObject instance = prefab->Instantiate();
+		ScriptSceneObject* scriptInstance = ScriptGameObjectManager::Instance().GetOrCreateScriptSceneObject(instance);
 
 		return scriptInstance->GetManagedInstance();
 	}
@@ -41,11 +41,11 @@ namespace bs
 	bool ScriptPrefab::InternalIsScene(ScriptPrefab* thisPtr)
 	{
 		HPrefab prefab = thisPtr->GetHandle();
-		return prefab->isScene();
+		return prefab->IsScene();
 	}
 
 	MonoObject* ScriptPrefab::CreateInstance()
 	{
-		return metaData.scriptClass->createInstance();
+		return metaData.scriptClass->CreateInstance();
 	}
 }

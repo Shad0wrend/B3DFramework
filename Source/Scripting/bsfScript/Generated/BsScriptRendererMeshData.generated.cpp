@@ -23,24 +23,24 @@ namespace bs
 	void ScriptRendererMeshData::initRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptRendererMeshData::InternalCreate);
-		metaData.scriptClass->addInternalCall("Internal_getPositions", (void*)&ScriptRendererMeshData::Internal_getPositions);
-		metaData.scriptClass->addInternalCall("Internal_setPositions", (void*)&ScriptRendererMeshData::Internal_setPositions);
-		metaData.scriptClass->addInternalCall("Internal_getNormals", (void*)&ScriptRendererMeshData::Internal_getNormals);
-		metaData.scriptClass->addInternalCall("Internal_setNormals", (void*)&ScriptRendererMeshData::Internal_setNormals);
-		metaData.scriptClass->addInternalCall("Internal_getTangents", (void*)&ScriptRendererMeshData::Internal_getTangents);
-		metaData.scriptClass->addInternalCall("Internal_setTangents", (void*)&ScriptRendererMeshData::Internal_setTangents);
-		metaData.scriptClass->addInternalCall("Internal_getColors", (void*)&ScriptRendererMeshData::Internal_getColors);
-		metaData.scriptClass->addInternalCall("Internal_setColors", (void*)&ScriptRendererMeshData::Internal_setColors);
-		metaData.scriptClass->addInternalCall("Internal_getUV0", (void*)&ScriptRendererMeshData::Internal_getUV0);
-		metaData.scriptClass->addInternalCall("Internal_setUV0", (void*)&ScriptRendererMeshData::Internal_setUV0);
-		metaData.scriptClass->addInternalCall("Internal_getUV1", (void*)&ScriptRendererMeshData::Internal_getUV1);
-		metaData.scriptClass->addInternalCall("Internal_setUV1", (void*)&ScriptRendererMeshData::Internal_setUV1);
-		metaData.scriptClass->addInternalCall("Internal_getBoneWeights", (void*)&ScriptRendererMeshData::Internal_getBoneWeights);
-		metaData.scriptClass->addInternalCall("Internal_setBoneWeights", (void*)&ScriptRendererMeshData::Internal_setBoneWeights);
-		metaData.scriptClass->addInternalCall("Internal_getIndices", (void*)&ScriptRendererMeshData::Internal_getIndices);
-		metaData.scriptClass->addInternalCall("Internal_setIndices", (void*)&ScriptRendererMeshData::Internal_setIndices);
-		metaData.scriptClass->addInternalCall("Internal_getVertexCount", (void*)&ScriptRendererMeshData::Internal_getVertexCount);
-		metaData.scriptClass->addInternalCall("Internal_getIndexCount", (void*)&ScriptRendererMeshData::Internal_getIndexCount);
+		metaData.scriptClass->AddInternalCall("Internal_getPositions", (void*)&ScriptRendererMeshData::InternalGetPositions);
+		metaData.scriptClass->AddInternalCall("Internal_setPositions", (void*)&ScriptRendererMeshData::InternalSetPositions);
+		metaData.scriptClass->AddInternalCall("Internal_getNormals", (void*)&ScriptRendererMeshData::InternalGetNormals);
+		metaData.scriptClass->AddInternalCall("Internal_setNormals", (void*)&ScriptRendererMeshData::InternalSetNormals);
+		metaData.scriptClass->AddInternalCall("Internal_getTangents", (void*)&ScriptRendererMeshData::InternalGetTangents);
+		metaData.scriptClass->AddInternalCall("Internal_setTangents", (void*)&ScriptRendererMeshData::InternalSetTangents);
+		metaData.scriptClass->AddInternalCall("Internal_getColors", (void*)&ScriptRendererMeshData::InternalGetColors);
+		metaData.scriptClass->AddInternalCall("Internal_setColors", (void*)&ScriptRendererMeshData::InternalSetColors);
+		metaData.scriptClass->AddInternalCall("Internal_getUV0", (void*)&ScriptRendererMeshData::InternalGetUV0);
+		metaData.scriptClass->AddInternalCall("Internal_setUV0", (void*)&ScriptRendererMeshData::InternalSetUV0);
+		metaData.scriptClass->AddInternalCall("Internal_getUV1", (void*)&ScriptRendererMeshData::InternalGetUV1);
+		metaData.scriptClass->AddInternalCall("Internal_setUV1", (void*)&ScriptRendererMeshData::InternalSetUV1);
+		metaData.scriptClass->AddInternalCall("Internal_getBoneWeights", (void*)&ScriptRendererMeshData::InternalGetBoneWeights);
+		metaData.scriptClass->AddInternalCall("Internal_setBoneWeights", (void*)&ScriptRendererMeshData::InternalSetBoneWeights);
+		metaData.scriptClass->AddInternalCall("Internal_getIndices", (void*)&ScriptRendererMeshData::InternalGetIndices);
+		metaData.scriptClass->AddInternalCall("Internal_setIndices", (void*)&ScriptRendererMeshData::InternalSetIndices);
+		metaData.scriptClass->AddInternalCall("Internal_getVertexCount", (void*)&ScriptRendererMeshData::InternalGetVertexCount);
+		metaData.scriptClass->AddInternalCall("Internal_getIndexCount", (void*)&ScriptRendererMeshData::InternalGetIndexCount);
 
 	}
 

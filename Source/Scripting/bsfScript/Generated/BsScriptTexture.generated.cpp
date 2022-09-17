@@ -26,17 +26,17 @@ namespace bs
 		metaData.scriptClass->AddInternalCall("Internal_readData", (void*)&ScriptTexture::InternalReadData);
 		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptTexture::InternalCreate);
 		metaData.scriptClass->AddInternalCall("Internal_getPixelFormat", (void*)&ScriptTexture::InternalGetPixelFormat);
-		metaData.scriptClass->AddInternalCall("Internal_getUsage", (void*)&ScriptTexture::Internal_getUsage);
-		metaData.scriptClass->addInternalCall("Internal_getType", (void*)&ScriptTexture::Internal_getType);
-		metaData.scriptClass->addInternalCall("Internal_getWidth", (void*)&ScriptTexture::Internal_getWidth);
-		metaData.scriptClass->addInternalCall("Internal_getHeight", (void*)&ScriptTexture::Internal_getHeight);
-		metaData.scriptClass->addInternalCall("Internal_getDepth", (void*)&ScriptTexture::Internal_getDepth);
-		metaData.scriptClass->addInternalCall("Internal_getGammaCorrection", (void*)&ScriptTexture::Internal_getGammaCorrection);
-		metaData.scriptClass->addInternalCall("Internal_getSampleCount", (void*)&ScriptTexture::Internal_getSampleCount);
-		metaData.scriptClass->addInternalCall("Internal_getMipmapCount", (void*)&ScriptTexture::Internal_getMipmapCount);
-		metaData.scriptClass->addInternalCall("Internal_getPixels", (void*)&ScriptTexture::Internal_getPixels);
-		metaData.scriptClass->addInternalCall("Internal_setPixels", (void*)&ScriptTexture::Internal_setPixels);
-		metaData.scriptClass->addInternalCall("Internal_setPixelsArray", (void*)&ScriptTexture::Internal_setPixelsArray);
+		metaData.scriptClass->AddInternalCall("Internal_getUsage", (void*)&ScriptTexture::InternalGetUsage);
+		metaData.scriptClass->AddInternalCall("Internal_getType", (void*)&ScriptTexture::InternalGetType);
+		metaData.scriptClass->AddInternalCall("Internal_getWidth", (void*)&ScriptTexture::InternalGetWidth);
+		metaData.scriptClass->AddInternalCall("Internal_getHeight", (void*)&ScriptTexture::InternalGetHeight);
+		metaData.scriptClass->AddInternalCall("Internal_getDepth", (void*)&ScriptTexture::InternalGetDepth);
+		metaData.scriptClass->AddInternalCall("Internal_getGammaCorrection", (void*)&ScriptTexture::InternalGetGammaCorrection);
+		metaData.scriptClass->AddInternalCall("Internal_getSampleCount", (void*)&ScriptTexture::InternalGetSampleCount);
+		metaData.scriptClass->AddInternalCall("Internal_getMipmapCount", (void*)&ScriptTexture::InternalGetMipmapCount);
+		metaData.scriptClass->AddInternalCall("Internal_getPixels", (void*)&ScriptTexture::InternalGetPixels);
+		metaData.scriptClass->AddInternalCall("Internal_setPixels", (void*)&ScriptTexture::InternalSetPixels);
+		metaData.scriptClass->AddInternalCall("Internal_setPixelsArray", (void*)&ScriptTexture::InternalSetPixelsArray);
 
 	}
 

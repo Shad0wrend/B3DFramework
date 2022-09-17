@@ -19,20 +19,20 @@ namespace bs
 
 	void ScriptCRenderable::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_setMesh", (void*)&ScriptCRenderable::Internal_setMesh);
-		metaData.scriptClass->addInternalCall("Internal_getMesh", (void*)&ScriptCRenderable::Internal_getMesh);
-		metaData.scriptClass->addInternalCall("Internal_setMaterial", (void*)&ScriptCRenderable::Internal_setMaterial);
-		metaData.scriptClass->AddInternalCall("Internal_setMaterial0", (void*)&ScriptCRenderable::Internal_setMaterial0);
-		metaData.scriptClass->addInternalCall("Internal_getMaterial", (void*)&ScriptCRenderable::Internal_getMaterial);
-		metaData.scriptClass->addInternalCall("Internal_setMaterials", (void*)&ScriptCRenderable::Internal_setMaterials);
-		metaData.scriptClass->addInternalCall("Internal_getMaterials", (void*)&ScriptCRenderable::Internal_getMaterials);
-		metaData.scriptClass->addInternalCall("Internal_setCullDistanceFactor", (void*)&ScriptCRenderable::Internal_setCullDistanceFactor);
-		metaData.scriptClass->addInternalCall("Internal_getCullDistanceFactor", (void*)&ScriptCRenderable::Internal_getCullDistanceFactor);
-		metaData.scriptClass->addInternalCall("Internal_setWriteVelocity", (void*)&ScriptCRenderable::Internal_setWriteVelocity);
-		metaData.scriptClass->addInternalCall("Internal_getWriteVelocity", (void*)&ScriptCRenderable::Internal_getWriteVelocity);
-		metaData.scriptClass->addInternalCall("Internal_setLayer", (void*)&ScriptCRenderable::Internal_setLayer);
-		metaData.scriptClass->addInternalCall("Internal_getLayer", (void*)&ScriptCRenderable::Internal_getLayer);
-		metaData.scriptClass->addInternalCall("Internal_getBounds", (void*)&ScriptCRenderable::Internal_getBounds);
+		metaData.scriptClass->AddInternalCall("Internal_setMesh", (void*)&ScriptCRenderable::InternalSetMesh);
+		metaData.scriptClass->AddInternalCall("Internal_getMesh", (void*)&ScriptCRenderable::InternalGetMesh);
+		metaData.scriptClass->AddInternalCall("Internal_setMaterial", (void*)&ScriptCRenderable::InternalSetMaterial);
+		metaData.scriptClass->AddInternalCall("Internal_setMaterial0", (void*)&ScriptCRenderable::InternalSetMaterial0);
+		metaData.scriptClass->AddInternalCall("Internal_getMaterial", (void*)&ScriptCRenderable::InternalGetMaterial);
+		metaData.scriptClass->AddInternalCall("Internal_setMaterials", (void*)&ScriptCRenderable::InternalSetMaterials);
+		metaData.scriptClass->AddInternalCall("Internal_getMaterials", (void*)&ScriptCRenderable::InternalGetMaterials);
+		metaData.scriptClass->AddInternalCall("Internal_setCullDistanceFactor", (void*)&ScriptCRenderable::InternalSetCullDistanceFactor);
+		metaData.scriptClass->AddInternalCall("Internal_getCullDistanceFactor", (void*)&ScriptCRenderable::InternalGetCullDistanceFactor);
+		metaData.scriptClass->AddInternalCall("Internal_setWriteVelocity", (void*)&ScriptCRenderable::InternalSetWriteVelocity);
+		metaData.scriptClass->AddInternalCall("Internal_getWriteVelocity", (void*)&ScriptCRenderable::InternalGetWriteVelocity);
+		metaData.scriptClass->AddInternalCall("Internal_setLayer", (void*)&ScriptCRenderable::InternalSetLayer);
+		metaData.scriptClass->AddInternalCall("Internal_getLayer", (void*)&ScriptCRenderable::InternalGetLayer);
+		metaData.scriptClass->AddInternalCall("Internal_getBounds", (void*)&ScriptCRenderable::InternalGetBounds);
 
 	}
 

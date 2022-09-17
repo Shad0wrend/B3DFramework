@@ -15,10 +15,10 @@ namespace bs
 	void ScriptWhiteBalanceSettings::initRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_WhiteBalanceSettings", (void*)&ScriptWhiteBalanceSettings::InternalWhiteBalanceSettings);
-		metaData.scriptClass->addInternalCall("Internal_gettemperature", (void*)&ScriptWhiteBalanceSettings::Internal_gettemperature);
-		metaData.scriptClass->addInternalCall("Internal_settemperature", (void*)&ScriptWhiteBalanceSettings::Internal_settemperature);
-		metaData.scriptClass->addInternalCall("Internal_gettint", (void*)&ScriptWhiteBalanceSettings::Internal_gettint);
-		metaData.scriptClass->addInternalCall("Internal_settint", (void*)&ScriptWhiteBalanceSettings::Internal_settint);
+		metaData.scriptClass->AddInternalCall("Internal_gettemperature", (void*)&ScriptWhiteBalanceSettings::InternalGettemperature);
+		metaData.scriptClass->AddInternalCall("Internal_settemperature", (void*)&ScriptWhiteBalanceSettings::InternalSettemperature);
+		metaData.scriptClass->AddInternalCall("Internal_gettint", (void*)&ScriptWhiteBalanceSettings::InternalGettint);
+		metaData.scriptClass->AddInternalCall("Internal_settint", (void*)&ScriptWhiteBalanceSettings::InternalSettint);
 
 	}
 
@@ -50,7 +50,7 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptWhiteBalanceSettings::Internal_settemperature(ScriptWhiteBalanceSettings* thisPtr, float value)
+	void ScriptWhiteBalanceSettings::InternalSettemperature(ScriptWhiteBalanceSettings* thisPtr, float value)
 	{
 		thisPtr->GetInternal()->temperature = value;
 	}

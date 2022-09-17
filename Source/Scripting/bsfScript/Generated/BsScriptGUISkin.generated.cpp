@@ -21,11 +21,11 @@ namespace bs
 	{
 		metaData.scriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptGUISkin::InternalGetRef);
 		metaData.scriptClass->AddInternalCall("Internal_hasStyle", (void*)&ScriptGUISkin::InternalHasStyle);
-		metaData.scriptClass->addInternalCall("Internal_getStyle", (void*)&ScriptGUISkin::Internal_getStyle);
-		metaData.scriptClass->addInternalCall("Internal_setStyle", (void*)&ScriptGUISkin::Internal_setStyle);
-		metaData.scriptClass->addInternalCall("Internal_removeStyle", (void*)&ScriptGUISkin::Internal_removeStyle);
-		metaData.scriptClass->addInternalCall("Internal_getStyleNames", (void*)&ScriptGUISkin::Internal_getStyleNames);
-		metaData.scriptClass->addInternalCall("Internal_create", (void*)&ScriptGUISkin::Internal_create);
+		metaData.scriptClass->AddInternalCall("Internal_getStyle", (void*)&ScriptGUISkin::InternalGetStyle);
+		metaData.scriptClass->AddInternalCall("Internal_setStyle", (void*)&ScriptGUISkin::InternalSetStyle);
+		metaData.scriptClass->AddInternalCall("Internal_removeStyle", (void*)&ScriptGUISkin::InternalRemoveStyle);
+		metaData.scriptClass->AddInternalCall("Internal_getStyleNames", (void*)&ScriptGUISkin::InternalGetStyleNames);
+		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptGUISkin::InternalCreate);
 
 	}
 
@@ -45,7 +45,7 @@ namespace bs
 	{
 		bool tmp__output;
 		String tmpname;
-		tmpname = MonoUtil::monoToString(name);
+		tmpname = MonoUtil::MonoToString(name);
 		tmp__output = thisPtr->GetHandle()->HasStyle(tmpname);
 
 		bool __output;
@@ -58,7 +58,7 @@ namespace bs
 	{
 		SPtr<GUIElementStyle> tmp__output = bs_shared_ptr_new<GUIElementStyle>();
 		String tmpguiElemType;
-		tmpguiElemType = MonoUtil::monoToString(guiElemType);
+		tmpguiElemType = MonoUtil::MonoToString(guiElemType);
 		*tmp__output = *thisPtr->GetHandle()->GetStyle(tmpguiElemType);
 
 		MonoObject* __output;
@@ -70,7 +70,7 @@ namespace bs
 	void ScriptGUISkin::InternalSetStyle(ScriptGUISkin* thisPtr, MonoString* guiElemType, MonoObject* style)
 	{
 		String tmpguiElemType;
-		tmpguiElemType = MonoUtil::monoToString(guiElemType);
+		tmpguiElemType = MonoUtil::MonoToString(guiElemType);
 		SPtr<GUIElementStyle> tmpstyle;
 		ScriptGUIElementStyle* scriptstyle;
 		scriptstyle = ScriptGUIElementStyle::toNative(style);
@@ -82,7 +82,7 @@ namespace bs
 	void ScriptGUISkin::InternalRemoveStyle(ScriptGUISkin* thisPtr, MonoString* guiElemType)
 	{
 		String tmpguiElemType;
-		tmpguiElemType = MonoUtil::monoToString(guiElemType);
+		tmpguiElemType = MonoUtil::MonoToString(guiElemType);
 		thisPtr->GetHandle()->removeStyle(tmpguiElemType);
 	}
 

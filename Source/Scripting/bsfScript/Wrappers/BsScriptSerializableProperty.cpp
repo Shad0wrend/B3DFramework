@@ -41,7 +41,7 @@ namespace bs
 
 	MonoObject* ScriptSerializableProperty::Create(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
-		MonoObject* managedInstance = metaData.scriptClass->createInstance();
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance();
 		new (bs_alloc<ScriptSerializableProperty>()) ScriptSerializableProperty(managedInstance, typeInfo);
 
 		return managedInstance;
@@ -52,10 +52,10 @@ namespace bs
 		if (reflType == nullptr)
 			return;
 
-		::MonoClass* monoClass = MonoUtil::getClass(reflType);
-		MonoClass* engineClass = MonoManager::Instance().findClass(monoClass);
+		::MonoClass* monoClass = MonoUtil::GetClass(reflType);
+		MonoClass* engineClass = MonoManager::Instance().FindClass(monoClass);
 
-		SPtr<ManagedSerializableTypeInfo> typeInfo = ScriptAssemblyManager::Instance().getTypeInfo(engineClass);
+		SPtr<ManagedSerializableTypeInfo> typeInfo = ScriptAssemblyManager::Instance().GetTypeInfo(engineClass);
 		if (typeInfo == nullptr)
 		{
 			BS_LOG(Warning, Script, "Cannot create an instance of type \"{0}\", it is not marked as serializable.",
@@ -90,7 +90,7 @@ namespace bs
 	MonoObject* ScriptSerializableProperty::InternalCreateManagedObjectInstance(ScriptSerializableProperty* nativeInstance)
 	{
 		SPtr<ManagedSerializableTypeInfoObject> objectTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoObject>(nativeInstance->mTypeInfo);
-		return ManagedSerializableObject::createManagedInstance(objectTypeInfo);
+		return ManagedSerializableObject::CreateManagedInstance(objectTypeInfo);
 	}
 
 	MonoObject* ScriptSerializableProperty::InternalCreateManagedArrayInstance(ScriptSerializableProperty* nativeInstance, MonoArray* sizes)
@@ -98,23 +98,23 @@ namespace bs
 		ScriptArray scriptArray(sizes);
 
 		Vector<UINT32> nativeSizes;
-		UINT32 arrayLen = scriptArray.size();
+		UINT32 arrayLen = scriptArray.Size();
 		for (UINT32 i = 0; i < arrayLen; i++)
-			nativeSizes.push_back(scriptArray.get<UINT32>(i));
+			nativeSizes.push_back(scriptArray.Get<UINT32>(i));
 
 		SPtr<ManagedSerializableTypeInfoArray> arrayTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoArray>(nativeInstance->mTypeInfo);
-		return ManagedSerializableArray::createManagedInstance(arrayTypeInfo, nativeSizes);
+		return ManagedSerializableArray::CreateManagedInstance(arrayTypeInfo, nativeSizes);
 	}
 
 	MonoObject* ScriptSerializableProperty::InternalCreateManagedListInstance(ScriptSerializableProperty* nativeInstance, int size)
 	{
 		SPtr<ManagedSerializableTypeInfoList> listTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoList>(nativeInstance->mTypeInfo);
-		return ManagedSerializableList::createManagedInstance(listTypeInfo, size);
+		return ManagedSerializableList::CreateManagedInstance(listTypeInfo, size);
 	}
 
 	MonoObject* ScriptSerializableProperty::InternalCreateManagedDictionaryInstance(ScriptSerializableProperty* nativeInstance)
 	{
 		SPtr<ManagedSerializableTypeInfoDictionary> dictTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoDictionary>(nativeInstance->mTypeInfo);
-		return ManagedSerializableDictionary::createManagedInstance(dictTypeInfo);
+		return ManagedSerializableDictionary::CreateManagedInstance(dictTypeInfo);
 	}
 }

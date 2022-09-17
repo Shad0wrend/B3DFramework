@@ -17,10 +17,10 @@ namespace bs
 
 	void ScriptParticleEmitterHemisphereShape::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_setOptions", (void*)&ScriptParticleEmitterHemisphereShape::Internal_setOptions);
-		metaData.scriptClass->addInternalCall("Internal_getOptions", (void*)&ScriptParticleEmitterHemisphereShape::Internal_getOptions);
+		metaData.scriptClass->AddInternalCall("Internal_setOptions", (void*)&ScriptParticleEmitterHemisphereShape::InternalSetOptions);
+		metaData.scriptClass->AddInternalCall("Internal_getOptions", (void*)&ScriptParticleEmitterHemisphereShape::InternalGetOptions);
 		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptParticleEmitterHemisphereShape::InternalCreate);
-		metaData.scriptClass->addInternalCall("Internal_create0", (void*)&ScriptParticleEmitterHemisphereShape::Internal_create0);
+		metaData.scriptClass->AddInternalCall("Internal_create0", (void*)&ScriptParticleEmitterHemisphereShape::InternalCreate0);
 
 	}
 

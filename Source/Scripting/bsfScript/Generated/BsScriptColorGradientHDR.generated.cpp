@@ -18,15 +18,15 @@ namespace bs
 
 	void ScriptColorGradientHDR::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_ColorGradientHDR", (void*)&ScriptColorGradientHDR::Internal_ColorGradientHDR);
+		metaData.scriptClass->AddInternalCall("Internal_ColorGradientHDR", (void*)&ScriptColorGradientHDR::InternalColorGradientHDR);
 		metaData.scriptClass->AddInternalCall("Internal_ColorGradientHDR0", (void*)&ScriptColorGradientHDR::InternalColorGradientHdR0);
 		metaData.scriptClass->AddInternalCall("Internal_ColorGradientHDR1", (void*)&ScriptColorGradientHDR::InternalColorGradientHdR1);
-		metaData.scriptClass->addInternalCall("Internal_setKeys", (void*)&ScriptColorGradientHDR::Internal_setKeys);
-		metaData.scriptClass->addInternalCall("Internal_getKeys", (void*)&ScriptColorGradientHDR::Internal_getKeys);
+		metaData.scriptClass->AddInternalCall("Internal_setKeys", (void*)&ScriptColorGradientHDR::InternalSetKeys);
+		metaData.scriptClass->AddInternalCall("Internal_getKeys", (void*)&ScriptColorGradientHDR::InternalGetKeys);
 		metaData.scriptClass->AddInternalCall("Internal_getNumKeys", (void*)&ScriptColorGradientHDR::InternalGetNumKeys);
 		metaData.scriptClass->AddInternalCall("Internal_getKey", (void*)&ScriptColorGradientHDR::InternalGetKey);
-		metaData.scriptClass->addInternalCall("Internal_setConstant", (void*)&ScriptColorGradientHDR::Internal_setConstant);
-		metaData.scriptClass->addInternalCall("Internal_evaluate", (void*)&ScriptColorGradientHDR::Internal_evaluate);
+		metaData.scriptClass->AddInternalCall("Internal_setConstant", (void*)&ScriptColorGradientHDR::InternalSetConstant);
+		metaData.scriptClass->AddInternalCall("Internal_evaluate", (void*)&ScriptColorGradientHDR::InternalEvaluate);
 
 	}
 

@@ -264,9 +264,9 @@ namespace bs
 		mono_add_internal_call(fullMethodName.c_str(), method);
 	}
 
-	MonoObject* MonoClass::createInstance(bool construct) const
+	MonoObject* MonoClass::CreateInstance(bool construct) const
 	{
-		MonoObject* obj = mono_object_new(MonoManager::Instance().getDomain(), mClass);
+		MonoObject* obj = mono_object_new(MonoManager::Instance().GetDomain(), mClass);
 
 		if(construct)
 			mono_runtime_object_init(obj);
@@ -276,16 +276,16 @@ namespace bs
 
 	MonoObject* MonoClass::CreateInstance(void** params, UINT32 numParams)
 	{
-		MonoObject* obj = mono_object_new(MonoManager::Instance().getDomain(), mClass);
-		getMethod(".ctor", numParams)->invoke(obj, params);
+		MonoObject* obj = mono_object_new(MonoManager::Instance().GetDomain(), mClass);
+		GetMethod(".ctor", numParams)->Invoke(obj, params);
 
 		return obj;
 	}
 
 	MonoObject* MonoClass::CreateInstance(const String& ctorSignature, void** params)
 	{
-		MonoObject* obj = mono_object_new(MonoManager::Instance().getDomain(), mClass);
-		getMethodExact(".ctor", ctorSignature)->invoke(obj, params);
+		MonoObject* obj = mono_object_new(MonoManager::Instance().GetDomain(), mClass);
+		GetMethodExact(".ctor", ctorSignature)->Invoke(obj, params);
 
 		return obj;
 	}
@@ -334,9 +334,9 @@ namespace bs
 
 		String ns;
 		String type;
-		MonoUtil::getClassName(monoBase, ns, type);
+		MonoUtil::GetClassName(monoBase, ns, type);
 
-		return MonoManager::Instance().findClass(ns, type);
+		return MonoManager::Instance().FindClass(ns, type);
 	}
 
 	bool MonoClass::IsInstanceOfType(MonoObject* object) const

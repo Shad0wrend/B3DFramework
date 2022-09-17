@@ -53,7 +53,7 @@ namespace bs
 		new (bs_alloc<ScriptHString>())ScriptHString(managedInstance, instance);
 	}
 
-	void ScriptHString::Internal_HString1(MonoObject* managedInstance, uint32_t stringTableId)
+	void ScriptHString::InternalHString1(MonoObject* managedInstance, uint32_t stringTableId)
 	{
 		SPtr<HString> instance = bs_shared_ptr_new<HString>(stringTableId);
 		new (bs_alloc<ScriptHString>())ScriptHString(managedInstance, instance);
@@ -79,7 +79,7 @@ namespace bs
 	void ScriptHString::InternalSetParameter(ScriptHString* thisPtr, uint32_t idx, MonoString* value)
 	{
 		String tmpvalue;
-		tmpvalue = MonoUtil::monoToString(value);
+		tmpvalue = MonoUtil::MonoToString(value);
 		thisPtr->GetInternal()->SetParameter(idx, tmpvalue);
 	}
 }

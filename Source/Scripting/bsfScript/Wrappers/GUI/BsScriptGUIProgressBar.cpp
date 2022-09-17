@@ -42,27 +42,27 @@ namespace bs
 		ScriptArray scriptArray(guiOptions);
 		UINT32 arrayLen = scriptArray.Size();
 		for (UINT32 i = 0; i < arrayLen; i++)
-			options.addOption(scriptArray.get<GUIOption>(i));
+			options.AddOption(scriptArray.Get<GUIOption>(i));
 
-		GUIProgressBar* progressBar = GUIProgressBar::Create(options, MonoUtil::monoToString(style));
+		GUIProgressBar* progressBar = GUIProgressBar::Create(options, MonoUtil::MonoToString(style));
 		new (bs_alloc<ScriptGUIProgressBar>()) ScriptGUIProgressBar(instance, progressBar);
 	}
 
 	void ScriptGUIProgressBar::InternalSetPercent(ScriptGUIProgressBar* nativeInstance, float percent)
 	{
-		GUIProgressBar* progressBar = (GUIProgressBar*)nativeInstance->GetGUIElement();
+		GUIProgressBar* progressBar = (GUIProgressBar*)nativeInstance->GetGuiElement();
 		progressBar->SetPercent(percent);
 	}
 
 	float ScriptGUIProgressBar::InternalGetPercent(ScriptGUIProgressBar* nativeInstance)
 	{
-		GUIProgressBar* progressBar = (GUIProgressBar*)nativeInstance->GetGUIElement();
+		GUIProgressBar* progressBar = (GUIProgressBar*)nativeInstance->GetGuiElement();
 		return progressBar->GetPercent();
 	}
 
 	void ScriptGUIProgressBar::InternalSetTint(ScriptGUIProgressBar* nativeInstance, Color* color)
 	{
-		GUIProgressBar* progressBar = (GUIProgressBar*)nativeInstance->GetGUIElement();
+		GUIProgressBar* progressBar = (GUIProgressBar*)nativeInstance->GetGuiElement();
 		progressBar->SetTint(*color);
 	}
 }

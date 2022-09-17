@@ -77,7 +77,7 @@ namespace bs
 		if (diff != nullptr)
 		{
 			SPtr<ManagedSerializableObject> managedObj = std::static_pointer_cast<ManagedSerializableObject>(object);
-			diff->apply(managedObj);
+			diff->Apply(managedObj);
 		}
 	}
 }

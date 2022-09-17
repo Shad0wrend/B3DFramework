@@ -47,8 +47,8 @@ namespace bs
 		bs.Encode(data.get(), stream);
 
 		stream->Seek(0);
-		SPtr<ManagedSerializableFieldData> clonedData = std::static_pointer_cast<ManagedSerializableFieldData>(bs.decode(stream, (UINT32)stream->size()));
-		clonedData->deserialize();
+		SPtr<ManagedSerializableFieldData> clonedData = std::static_pointer_cast<ManagedSerializableFieldData>(bs.Decode(stream, (UINT32)stream->Size()));
+		clonedData->Deserialize();
 
 		return clonedData->GetValueBoxed(typeInfo);
 	}
@@ -58,10 +58,10 @@ namespace bs
 		if (reflType == nullptr)
 			return nullptr;
 
-		::MonoClass* monoClass = MonoUtil::getClass(reflType);
-		MonoClass* engineClass = MonoManager::Instance().findClass(monoClass);
+		::MonoClass* monoClass = MonoUtil::GetClass(reflType);
+		MonoClass* engineClass = MonoManager::Instance().FindClass(monoClass);
 
-		SPtr<ManagedSerializableTypeInfo> typeInfo = ScriptAssemblyManager::Instance().getTypeInfo(engineClass);
+		SPtr<ManagedSerializableTypeInfo> typeInfo = ScriptAssemblyManager::Instance().GetTypeInfo(engineClass);
 		if (typeInfo == nullptr)
 		{
 			BS_LOG(Warning, Script, "Cannot create an instance of type \"{0}\", it is not marked as serializable.",
@@ -69,17 +69,17 @@ namespace bs
 			return nullptr;
 		}
 			
-		SPtr<ManagedSerializableFieldData> data = ManagedSerializableFieldData::createDefault(typeInfo);
+		SPtr<ManagedSerializableFieldData> data = ManagedSerializableFieldData::CreateDefault(typeInfo);
 		BinarySerializer bs;
 
 		// Note: This code unnecessarily encodes to binary and decodes from it. I could have added a specialized create method that does it directly,
 		// but didn't feel the extra code was justified.
 		SPtr<MemoryDataStream> stream = bs_shared_ptr_new<MemoryDataStream>();
-		bs.encode(data.get(), stream);
+		bs.Encode(data.get(), stream);
 
-		stream->seek(0);
-		SPtr<ManagedSerializableFieldData> createdData = std::static_pointer_cast<ManagedSerializableFieldData>(bs.decode(stream, (UINT32)stream->size()));
-		createdData->deserialize();
+		stream->Seek(0);
+		SPtr<ManagedSerializableFieldData> createdData = std::static_pointer_cast<ManagedSerializableFieldData>(bs.Decode(stream, (UINT32)stream->Size()));
+		createdData->Deserialize();
 
 		return createdData->GetValueBoxed(typeInfo);
 	}

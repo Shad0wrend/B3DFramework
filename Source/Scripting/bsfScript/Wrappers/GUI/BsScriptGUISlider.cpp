@@ -38,10 +38,10 @@ namespace bs
 		metaData.scriptClass->AddInternalCall("Internal_GetValue", (void*)&ScriptGUISliderH::InternalGetValue);
 		metaData.scriptClass->AddInternalCall("Internal_SetValue", (void*)&ScriptGUISliderH::InternalSetValue);
 		metaData.scriptClass->AddInternalCall("Internal_SetRange", (void*)&ScriptGUISliderH::InternalSetRange);
-		metaData.scriptClass->addInternalCall("Internal_GetRangeMaximum", (void*)&ScriptGUISliderH::InternalGetRangeMaximum);
-		metaData.scriptClass->addInternalCall("Internal_GetRangeMinimum", (void*)&ScriptGUISliderH::InternalGetRangeMinimum);
-		metaData.scriptClass->addInternalCall("Internal_SetStep", (void*)&ScriptGUISliderH::InternalSetStep);
-		metaData.scriptClass->addInternalCall("Internal_GetStep", (void*)&ScriptGUISliderH::InternalGetStep);
+		metaData.scriptClass->AddInternalCall("Internal_GetRangeMaximum", (void*)&ScriptGUISliderH::InternalGetRangeMaximum);
+		metaData.scriptClass->AddInternalCall("Internal_GetRangeMinimum", (void*)&ScriptGUISliderH::InternalGetRangeMinimum);
+		metaData.scriptClass->AddInternalCall("Internal_SetStep", (void*)&ScriptGUISliderH::InternalSetStep);
+		metaData.scriptClass->AddInternalCall("Internal_GetStep", (void*)&ScriptGUISliderH::InternalGetStep);
 
 		onChangedThunk = (OnChangedThunkDef)metaData.scriptClass->GetMethod("DoOnChanged", 1)->GetThunk();
 	}
@@ -51,79 +51,79 @@ namespace bs
 		GUIOptions options;
 
 		ScriptArray scriptArray(guiOptions);
-		UINT32 arrayLen = scriptArray.size();
+		UINT32 arrayLen = scriptArray.Size();
 		for (UINT32 i = 0; i < arrayLen; i++)
-			options.addOption(scriptArray.get<GUIOption>(i));
+			options.AddOption(scriptArray.Get<GUIOption>(i));
 
-		GUISliderHorz* guiSlider = GUISliderHorz::Create(options, MonoUtil::monoToString(style));
+		GUISliderHorz* guiSlider = GUISliderHorz::Create(options, MonoUtil::MonoToString(style));
 
 		auto nativeInstance = new (bs_alloc<ScriptGUISliderH>()) ScriptGUISliderH(instance, guiSlider);
-		guiSlider->onChanged.Connect(std::bind(&ScriptGUISliderH::onChanged, nativeInstance, _1));
+		guiSlider->onChanged.Connect(std::bind(&::bs::ScriptGUISliderH::OnChanged, nativeInstance, _1));
 	}
 
 	void ScriptGUISliderH::InternalSetPercent(ScriptGUISliderH* nativeInstance, float percent)
 	{
-		GUISliderHorz* slider = (GUISliderHorz*)nativeInstance->GetGUIElement();
+		GUISliderHorz* slider = (GUISliderHorz*)nativeInstance->GetGuiElement();
 		slider->SetPercent(percent);
 	}
 
 	float ScriptGUISliderH::InternalGetPercent(ScriptGUISliderH* nativeInstance)
 	{
-		GUISliderHorz* slider = (GUISliderHorz*)nativeInstance->GetGUIElement();
+		GUISliderHorz* slider = (GUISliderHorz*)nativeInstance->GetGuiElement();
 		return slider->GetPercent();
 	}
 
 	float ScriptGUISliderH::InternalGetValue(ScriptGUISliderH* nativeInstance)
 	{
-		GUISliderHorz* slider = (GUISliderHorz*)nativeInstance->GetGUIElement();
+		GUISliderHorz* slider = (GUISliderHorz*)nativeInstance->GetGuiElement();
 		return slider->GetValue();
 	}
 
 	void ScriptGUISliderH::InternalSetValue(ScriptGUISliderH* nativeInstance, float percent)
 	{
-		GUISliderHorz* slider = (GUISliderHorz*)nativeInstance->GetGUIElement();
+		GUISliderHorz* slider = (GUISliderHorz*)nativeInstance->GetGuiElement();
 		return slider->SetValue(percent);
 	}
 
 	void ScriptGUISliderH::InternalSetRange(ScriptGUISliderH* nativeInstance, float min, float max)
 	{
-		GUISliderHorz* slider = (GUISliderHorz*)nativeInstance->GetGUIElement();
+		GUISliderHorz* slider = (GUISliderHorz*)nativeInstance->GetGuiElement();
 		return slider->SetRange(min, max);
 	}
 
 	float ScriptGUISliderH::InternalGetRangeMaximum(ScriptGUISliderH* nativeInstance)
 	{
-		GUISliderHorz* slider = (GUISliderHorz*)nativeInstance->GetGUIElement();
+		GUISliderHorz* slider = (GUISliderHorz*)nativeInstance->GetGuiElement();
 		return slider->GetRangeMaximum();
 	}
 
 	float ScriptGUISliderH::InternalGetRangeMinimum(ScriptGUISliderH* nativeInstance)
 	{
-		GUISliderHorz* slider = (GUISliderHorz*)nativeInstance->GetGUIElement();
+		GUISliderHorz* slider = (GUISliderHorz*)nativeInstance->GetGuiElement();
 		return slider->GetRangeMinimum();
 	}
 
 	void ScriptGUISliderH::InternalSetStep(ScriptGUISliderH* nativeInstance, float step)
 	{
-		GUISliderHorz* slider = (GUISliderHorz*)nativeInstance->GetGUIElement();
+		GUISliderHorz* slider = (GUISliderHorz*)nativeInstance->GetGuiElement();
 		return slider->SetStep(step);
 	}
 
 	float ScriptGUISliderH::InternalGetStep(ScriptGUISliderH* nativeInstance)
 	{
-		GUISliderHorz* slider = (GUISliderHorz*)nativeInstance->GetGUIElement();
+		GUISliderHorz* slider = (GUISliderHorz*)nativeInstance->GetGuiElement();
 		return slider->GetStep();
 	}
 
 	void ScriptGUISliderH::InternalSetTint(ScriptGUISliderH* nativeInstance, Color* color)
 	{
-		GUISliderHorz* slider = (GUISliderHorz*)nativeInstance->GetGUIElement();
+		GUISliderHorz* slider = (GUISliderHorz*)nativeInstance->GetGuiElement();
 		slider->SetTint(*color);
 	}
 
 	void ScriptGUISliderH::OnChanged(float percent)
 	{
-		MonoUtil::invokeThunk(onChangedThunk, getManagedInstance(), percent);
+		MonoUtil::InvokeThunk(onChangedThunk, GetManagedInstance(), percent);
 	}
 
 	ScriptGUISliderV::OnChangedThunkDef ScriptGUISliderV::onChangedThunk;
@@ -136,17 +136,17 @@ namespace bs
 
 	void ScriptGUISliderV::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_CreateInstance", (void*)&ScriptGUISliderV::InternalCreateInstance);
-		metaData.scriptClass->addInternalCall("Internal_SetPercent", (void*)&ScriptGUISliderV::InternalSetPercent);
-		metaData.scriptClass->addInternalCall("Internal_GetPercent", (void*)&ScriptGUISliderV::InternalGetPercent);
-		metaData.scriptClass->addInternalCall("Internal_SetTint", (void*)&ScriptGUISliderV::InternalSetTint);
-		metaData.scriptClass->addInternalCall("Internal_GetValue", (void*)&ScriptGUISliderV::InternalGetValue);
-		metaData.scriptClass->addInternalCall("Internal_SetValue", (void*)&ScriptGUISliderV::InternalSetValue);
-		metaData.scriptClass->addInternalCall("Internal_SetRange", (void*)&ScriptGUISliderV::InternalSetRange);
-		metaData.scriptClass->addInternalCall("Internal_GetRangeMaximum", (void*)&ScriptGUISliderV::InternalGetRangeMaximum);
-		metaData.scriptClass->addInternalCall("Internal_GetRangeMinimum", (void*)ScriptGUISliderV::InternalGetRangeMinimum);
-		metaData.scriptClass->addInternalCall("Internal_SetStep", (void*)&ScriptGUISliderV::InternalSetStep);
-		metaData.scriptClass->addInternalCall("Internal_GetStep", (void*)&ScriptGUISliderV::InternalGetStep);
+		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUISliderV::InternalCreateInstance);
+		metaData.scriptClass->AddInternalCall("Internal_SetPercent", (void*)&ScriptGUISliderV::InternalSetPercent);
+		metaData.scriptClass->AddInternalCall("Internal_GetPercent", (void*)&ScriptGUISliderV::InternalGetPercent);
+		metaData.scriptClass->AddInternalCall("Internal_SetTint", (void*)&ScriptGUISliderV::InternalSetTint);
+		metaData.scriptClass->AddInternalCall("Internal_GetValue", (void*)&ScriptGUISliderV::InternalGetValue);
+		metaData.scriptClass->AddInternalCall("Internal_SetValue", (void*)&ScriptGUISliderV::InternalSetValue);
+		metaData.scriptClass->AddInternalCall("Internal_SetRange", (void*)&ScriptGUISliderV::InternalSetRange);
+		metaData.scriptClass->AddInternalCall("Internal_GetRangeMaximum", (void*)&ScriptGUISliderV::InternalGetRangeMaximum);
+		metaData.scriptClass->AddInternalCall("Internal_GetRangeMinimum", (void*)ScriptGUISliderV::InternalGetRangeMinimum);
+		metaData.scriptClass->AddInternalCall("Internal_SetStep", (void*)&ScriptGUISliderV::InternalSetStep);
+		metaData.scriptClass->AddInternalCall("Internal_GetStep", (void*)&ScriptGUISliderV::InternalGetStep);
 
 		onChangedThunk = (OnChangedThunkDef)metaData.scriptClass->GetMethod("DoOnChanged", 1)->GetThunk();
 	}
@@ -156,78 +156,78 @@ namespace bs
 		GUIOptions options;
 
 		ScriptArray scriptArray(guiOptions);
-		UINT32 arrayLen = scriptArray.size();
+		UINT32 arrayLen = scriptArray.Size();
 		for (UINT32 i = 0; i < arrayLen; i++)
-			options.addOption(scriptArray.get<GUIOption>(i));
+			options.AddOption(scriptArray.Get<GUIOption>(i));
 
-		GUISliderVert* guiSlider = GUISliderVert::Create(options, MonoUtil::monoToString(style));
+		GUISliderVert* guiSlider = GUISliderVert::Create(options, MonoUtil::MonoToString(style));
 
 		auto nativeInstance = new (bs_alloc<ScriptGUISliderV>()) ScriptGUISliderV(instance, guiSlider);
-		guiSlider->onChanged.Connect(std::bind(&ScriptGUISliderV::onChanged, nativeInstance, _1));
+		guiSlider->onChanged.Connect(std::bind(&::bs::ScriptGUISliderV::OnChanged, nativeInstance, _1));
 	}
 
 	void ScriptGUISliderV::InternalSetPercent(ScriptGUISliderV* nativeInstance, float percent)
 	{
-		GUISliderVert* slider = (GUISliderVert*)nativeInstance->GetGUIElement();
+		GUISliderVert* slider = (GUISliderVert*)nativeInstance->GetGuiElement();
 		slider->SetPercent(percent);
 	}
 
 	float ScriptGUISliderV::InternalGetPercent(ScriptGUISliderV* nativeInstance)
 	{
-		GUISliderVert* slider = (GUISliderVert*)nativeInstance->GetGUIElement();
+		GUISliderVert* slider = (GUISliderVert*)nativeInstance->GetGuiElement();
 		return slider->GetPercent();
 	}
 
 	float ScriptGUISliderV::InternalGetValue(ScriptGUISliderV* nativeInstance)
 	{
-		GUISliderVert* slider = (GUISliderVert*)nativeInstance->GetGUIElement();
+		GUISliderVert* slider = (GUISliderVert*)nativeInstance->GetGuiElement();
 		return slider->GetValue();
 	}
 
 	void ScriptGUISliderV::InternalSetValue(ScriptGUISliderV* nativeInstance, float percent)
 	{
-		GUISliderVert* slider = (GUISliderVert*)nativeInstance->GetGUIElement();
+		GUISliderVert* slider = (GUISliderVert*)nativeInstance->GetGuiElement();
 		return slider->SetValue(percent);
 	}
 
 	void ScriptGUISliderV::InternalSetRange(ScriptGUISliderV* nativeInstance, float min, float max)
 	{
-		GUISliderVert* slider = (GUISliderVert*)nativeInstance->GetGUIElement();
+		GUISliderVert* slider = (GUISliderVert*)nativeInstance->GetGuiElement();
 		return slider->SetRange(min, max);
 	}
 
 	float ScriptGUISliderV::InternalGetRangeMaximum(ScriptGUISliderV* nativeInstance)
 	{
-		GUISliderVert* slider = (GUISliderVert*)nativeInstance->GetGUIElement();
+		GUISliderVert* slider = (GUISliderVert*)nativeInstance->GetGuiElement();
 		return slider->GetRangeMaximum();
 	}
 
 	float ScriptGUISliderV::InternalGetRangeMinimum(ScriptGUISliderV* nativeInstance)
 	{
-		GUISliderVert* slider = (GUISliderVert*)nativeInstance->GetGUIElement();
+		GUISliderVert* slider = (GUISliderVert*)nativeInstance->GetGuiElement();
 		return slider->GetRangeMinimum();
 	}
 
 	void ScriptGUISliderV::InternalSetStep(ScriptGUISliderV* nativeInstance, float step)
 	{
-		GUISliderVert* slider = (GUISliderVert*)nativeInstance->GetGUIElement();
+		GUISliderVert* slider = (GUISliderVert*)nativeInstance->GetGuiElement();
 		return slider->SetStep(step);
 	}
 
 	float ScriptGUISliderV::InternalGetStep(ScriptGUISliderV* nativeInstance)
 	{
-		GUISliderVert* slider = (GUISliderVert*)nativeInstance->GetGUIElement();
+		GUISliderVert* slider = (GUISliderVert*)nativeInstance->GetGuiElement();
 		return slider->GetStep();
 	}
 
 	void ScriptGUISliderV::InternalSetTint(ScriptGUISliderV* nativeInstance, Color* color)
 	{
-		GUISliderVert* slider = (GUISliderVert*)nativeInstance->GetGUIElement();
+		GUISliderVert* slider = (GUISliderVert*)nativeInstance->GetGuiElement();
 		slider->SetTint(*color);
 	}
 
 	void ScriptGUISliderV::OnChanged(float percent)
 	{
-		MonoUtil::invokeThunk(onChangedThunk, getManagedInstance(), percent);
+		MonoUtil::InvokeThunk(onChangedThunk, GetManagedInstance(), percent);
 	}
 }

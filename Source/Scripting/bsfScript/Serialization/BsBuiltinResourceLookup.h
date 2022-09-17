@@ -62,13 +62,13 @@ namespace bs
 		META_Entry_##ScriptType;																							\
 																															\
 	public:																													\
-		static ScriptResourceBase* create##ScriptType(const HResource& resource, MonoObject* existingInstance)				\
+		static ScriptResourceBase* Create##ScriptType(const HResource& resource, MonoObject* existingInstance)				\
 		{																													\
 			MonoObject* managedInstance;																					\
 			if(existingInstance != nullptr)																					\
 				managedInstance = existingInstance;																			\
 			else																											\
-				managedInstance = ScriptType::createInstance();																\
+				managedInstance = ScriptType::CreateInstance();																\
 																															\
 			ResourceHandle<ResourceType> castHandle = static_resource_cast<ResourceType>(resource);							\
 			ScriptType* scriptResource = new (bs_alloc<ScriptType>()) ScriptType(managedInstance, castHandle);				\
@@ -82,11 +82,11 @@ namespace bs
 			META_GetPrevEntries(entries, META_Entry_##ScriptType());														\
 																															\
 			BuiltinResourceInfo entry;																						\
-			entry.metaData = ScriptType::getMetaData();																		\
+			entry.metaData = ScriptType::GetMetaData();																		\
 			entry.typeId = ResourceType::GetRttiStatic()->GetRttiId();														\
 			entry.monoClass = nullptr;																						\
 			entry.resType = ResourceTypeEnum;																				\
-			entry.createCallback = &create##ScriptType;																		\
+			entry.createCallback = &Create##ScriptType;																		\
 																															\
 			entries.push_back(entry);																						\
 		}																													\
@@ -98,7 +98,7 @@ namespace bs
 		META_LastEntry;																										\
 																															\
 	public:																													\
-		static Vector<BuiltinResourceInfo> getEntries()																		\
+		static Vector<BuiltinResourceInfo> GetEntries()																		\
 		{																													\
 			Vector<BuiltinResourceInfo> entries;																			\
 			META_GetPrevEntries(entries, META_LastEntry());																	\

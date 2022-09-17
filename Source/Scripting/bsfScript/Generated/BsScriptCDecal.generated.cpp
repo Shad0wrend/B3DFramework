@@ -19,16 +19,16 @@ namespace bs
 
 	void ScriptCDecal::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_setMaterial", (void*)&ScriptCDecal::Internal_setMaterial);
-		metaData.scriptClass->addInternalCall("Internal_getMaterial", (void*)&ScriptCDecal::Internal_getMaterial);
-		metaData.scriptClass->addInternalCall("Internal_setSize", (void*)&ScriptCDecal::Internal_setSize);
-		metaData.scriptClass->addInternalCall("Internal_getSize", (void*)&ScriptCDecal::Internal_getSize);
-		metaData.scriptClass->addInternalCall("Internal_setMaxDistance", (void*)&ScriptCDecal::Internal_setMaxDistance);
-		metaData.scriptClass->addInternalCall("Internal_getMaxDistance", (void*)&ScriptCDecal::Internal_getMaxDistance);
-		metaData.scriptClass->addInternalCall("Internal_setLayer", (void*)&ScriptCDecal::Internal_setLayer);
-		metaData.scriptClass->addInternalCall("Internal_getLayer", (void*)&ScriptCDecal::Internal_getLayer);
-		metaData.scriptClass->addInternalCall("Internal_setLayerMask", (void*)&ScriptCDecal::Internal_setLayerMask);
-		metaData.scriptClass->addInternalCall("Internal_getLayerMask", (void*)&ScriptCDecal::Internal_getLayerMask);
+		metaData.scriptClass->AddInternalCall("Internal_setMaterial", (void*)&ScriptCDecal::InternalSetMaterial);
+		metaData.scriptClass->AddInternalCall("Internal_getMaterial", (void*)&ScriptCDecal::InternalGetMaterial);
+		metaData.scriptClass->AddInternalCall("Internal_setSize", (void*)&ScriptCDecal::InternalSetSize);
+		metaData.scriptClass->AddInternalCall("Internal_getSize", (void*)&ScriptCDecal::InternalGetSize);
+		metaData.scriptClass->AddInternalCall("Internal_setMaxDistance", (void*)&ScriptCDecal::InternalSetMaxDistance);
+		metaData.scriptClass->AddInternalCall("Internal_getMaxDistance", (void*)&ScriptCDecal::InternalGetMaxDistance);
+		metaData.scriptClass->AddInternalCall("Internal_setLayer", (void*)&ScriptCDecal::InternalSetLayer);
+		metaData.scriptClass->AddInternalCall("Internal_getLayer", (void*)&ScriptCDecal::InternalGetLayer);
+		metaData.scriptClass->AddInternalCall("Internal_setLayerMask", (void*)&ScriptCDecal::InternalSetLayerMask);
+		metaData.scriptClass->AddInternalCall("Internal_getLayerMask", (void*)&ScriptCDecal::InternalGetLayerMask);
 
 	}
 

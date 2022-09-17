@@ -17,10 +17,10 @@ namespace bs
 
 	void ScriptMultiResource::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_MultiResource", (void*)&ScriptMultiResource::Internal_MultiResource);
-		metaData.scriptClass->addInternalCall("Internal_MultiResource0", (void*)&ScriptMultiResource::Internal_MultiResource0);
-		metaData.scriptClass->addInternalCall("Internal_getentries", (void*)&ScriptMultiResource::Internal_getentries);
-		metaData.scriptClass->addInternalCall("Internal_setentries", (void*)&ScriptMultiResource::Internal_setentries);
+		metaData.scriptClass->AddInternalCall("Internal_MultiResource", (void*)&ScriptMultiResource::InternalMultiResource);
+		metaData.scriptClass->AddInternalCall("Internal_MultiResource0", (void*)&ScriptMultiResource::InternalMultiResource0);
+		metaData.scriptClass->AddInternalCall("Internal_getentries", (void*)&ScriptMultiResource::InternalGetentries);
+		metaData.scriptClass->AddInternalCall("Internal_setentries", (void*)&ScriptMultiResource::InternalSetentries);
 
 	}
 
@@ -35,13 +35,13 @@ namespace bs
 		new (bs_alloc<ScriptMultiResource>()) ScriptMultiResource(managedInstance, value);
 		return managedInstance;
 	}
-	void ScriptMultiResource::Internal_MultiResource(MonoObject* managedInstance)
+	void ScriptMultiResource::InternalMultiResource(MonoObject* managedInstance)
 	{
 		SPtr<MultiResource> instance = bs_shared_ptr_new<MultiResource>();
 		new (bs_alloc<ScriptMultiResource>())ScriptMultiResource(managedInstance, instance);
 	}
 
-	void ScriptMultiResource::Internal_MultiResource0(MonoObject* managedInstance, MonoArray* entries)
+	void ScriptMultiResource::InternalMultiResource0(MonoObject* managedInstance, MonoArray* entries)
 	{
 		Vector<SubResource> vecentries;
 		if(entries != nullptr)
@@ -57,7 +57,7 @@ namespace bs
 		new (bs_alloc<ScriptMultiResource>())ScriptMultiResource(managedInstance, instance);
 	}
 
-	MonoArray* ScriptMultiResource::Internal_getentries(ScriptMultiResource* thisPtr)
+	MonoArray* ScriptMultiResource::InternalGetentries(ScriptMultiResource* thisPtr)
 	{
 		Vector<SubResource> vec__output;
 		vec__output = thisPtr->GetInternal()->entries;
@@ -74,7 +74,7 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptMultiResource::Internal_setentries(ScriptMultiResource* thisPtr, MonoArray* value)
+	void ScriptMultiResource::InternalSetentries(ScriptMultiResource* thisPtr, MonoArray* value)
 	{
 		Vector<SubResource> vecvalue;
 		if(value != nullptr)

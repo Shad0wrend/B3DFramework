@@ -29,8 +29,8 @@ namespace bs
 		SPtr<ManagedSerializableTypeInfoDictionary> dictTypeInfo =
 			std::static_pointer_cast<ManagedSerializableTypeInfoDictionary>(native->GetTypeInfo());
 
-		MonoReflectionType* internalKeyType = MonoUtil::getType(dictTypeInfo->mKeyType->GetMonoClass());
-		MonoReflectionType* internalValueType = MonoUtil::getType(dictTypeInfo->mValueType->GetMonoClass());
+		MonoReflectionType* internalKeyType = MonoUtil::GetType(dictTypeInfo->mKeyType->GetMonoClass());
+		MonoReflectionType* internalValueType = MonoUtil::GetType(dictTypeInfo->mValueType->GetMonoClass());
 
 		void* params[3] = { internalKeyType, internalValueType, managed };
 		MonoObject* managedInstance = metaData.scriptClass->CreateInstance(params, 3);

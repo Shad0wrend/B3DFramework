@@ -30,20 +30,20 @@ namespace bs
 
 	void ScriptCCollider::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_setIsTrigger", (void*)&ScriptCCollider::Internal_setIsTrigger);
-		metaData.scriptClass->addInternalCall("Internal_getIsTrigger", (void*)&ScriptCCollider::Internal_getIsTrigger);
-		metaData.scriptClass->addInternalCall("Internal_setMass", (void*)&ScriptCCollider::Internal_setMass);
-		metaData.scriptClass->addInternalCall("Internal_getMass", (void*)&ScriptCCollider::Internal_getMass);
-		metaData.scriptClass->addInternalCall("Internal_setMaterial", (void*)&ScriptCCollider::Internal_setMaterial);
-		metaData.scriptClass->addInternalCall("Internal_getMaterial", (void*)&ScriptCCollider::Internal_getMaterial);
-		metaData.scriptClass->addInternalCall("Internal_setContactOffset", (void*)&ScriptCCollider::Internal_setContactOffset);
-		metaData.scriptClass->addInternalCall("Internal_getContactOffset", (void*)&ScriptCCollider::Internal_getContactOffset);
-		metaData.scriptClass->addInternalCall("Internal_setRestOffset", (void*)&ScriptCCollider::Internal_setRestOffset);
-		metaData.scriptClass->addInternalCall("Internal_getRestOffset", (void*)&ScriptCCollider::Internal_getRestOffset);
-		metaData.scriptClass->addInternalCall("Internal_setLayer", (void*)&ScriptCCollider::Internal_setLayer);
-		metaData.scriptClass->addInternalCall("Internal_getLayer", (void*)&ScriptCCollider::Internal_getLayer);
-		metaData.scriptClass->addInternalCall("Internal_setCollisionReportMode", (void*)&ScriptCCollider::Internal_setCollisionReportMode);
-		metaData.scriptClass->addInternalCall("Internal_getCollisionReportMode", (void*)&ScriptCCollider::Internal_getCollisionReportMode);
+		metaData.scriptClass->AddInternalCall("Internal_setIsTrigger", (void*)&ScriptCCollider::InternalSetIsTrigger);
+		metaData.scriptClass->AddInternalCall("Internal_getIsTrigger", (void*)&ScriptCCollider::InternalGetIsTrigger);
+		metaData.scriptClass->AddInternalCall("Internal_setMass", (void*)&ScriptCCollider::InternalSetMass);
+		metaData.scriptClass->AddInternalCall("Internal_getMass", (void*)&ScriptCCollider::InternalGetMass);
+		metaData.scriptClass->AddInternalCall("Internal_setMaterial", (void*)&ScriptCCollider::InternalSetMaterial);
+		metaData.scriptClass->AddInternalCall("Internal_getMaterial", (void*)&ScriptCCollider::InternalGetMaterial);
+		metaData.scriptClass->AddInternalCall("Internal_setContactOffset", (void*)&ScriptCCollider::InternalSetContactOffset);
+		metaData.scriptClass->AddInternalCall("Internal_getContactOffset", (void*)&ScriptCCollider::InternalGetContactOffset);
+		metaData.scriptClass->AddInternalCall("Internal_setRestOffset", (void*)&ScriptCCollider::InternalSetRestOffset);
+		metaData.scriptClass->AddInternalCall("Internal_getRestOffset", (void*)&ScriptCCollider::InternalGetRestOffset);
+		metaData.scriptClass->AddInternalCall("Internal_setLayer", (void*)&ScriptCCollider::InternalSetLayer);
+		metaData.scriptClass->AddInternalCall("Internal_getLayer", (void*)&ScriptCCollider::InternalGetLayer);
+		metaData.scriptClass->AddInternalCall("Internal_setCollisionReportMode", (void*)&ScriptCCollider::InternalSetCollisionReportMode);
+		metaData.scriptClass->AddInternalCall("Internal_getCollisionReportMode", (void*)&ScriptCCollider::InternalGetCollisionReportMode);
 
 		onCollisionBeginThunk = (onCollisionBeginThunkDef)metaData.scriptClass->GetMethodExact("Internal_onCollisionBegin", "CollisionData&")->GetThunk();
 		onCollisionStayThunk = (onCollisionStayThunkDef)metaData.scriptClass->GetMethodExact("Internal_onCollisionStay", "CollisionData&")->GetThunk();
@@ -56,7 +56,7 @@ namespace bs
 		__CollisionDataInterop interopp0;
 		interopp0 = ScriptCollisionData::ToInterop(p0);
 		tmpp0 = ScriptCollisionData::Box(interopp0);
-		MonoUtil::invokeThunk(onCollisionBeginThunk, getManagedInstance(), tmpp0);
+		MonoUtil::InvokeThunk(onCollisionBeginThunk, GetManagedInstance(), tmpp0);
 	}
 
 	void ScriptCCollider::OnCollisionStay(const CollisionData& p0)
@@ -65,7 +65,7 @@ namespace bs
 		__CollisionDataInterop interopp0;
 		interopp0 = ScriptCollisionData::ToInterop(p0);
 		tmpp0 = ScriptCollisionData::Box(interopp0);
-		MonoUtil::invokeThunk(onCollisionStayThunk, getManagedInstance(), tmpp0);
+		MonoUtil::InvokeThunk(onCollisionStayThunk, GetManagedInstance(), tmpp0);
 	}
 
 	void ScriptCCollider::OnCollisionEnd(const CollisionData& p0)
@@ -74,7 +74,7 @@ namespace bs
 		__CollisionDataInterop interopp0;
 		interopp0 = ScriptCollisionData::ToInterop(p0);
 		tmpp0 = ScriptCollisionData::Box(interopp0);
-		MonoUtil::invokeThunk(onCollisionEndThunk, getManagedInstance(), tmpp0);
+		MonoUtil::InvokeThunk(onCollisionEndThunk, GetManagedInstance(), tmpp0);
 	}
 	void ScriptCCollider::InternalSetIsTrigger(ScriptCColliderBase* thisPtr, bool value)
 	{

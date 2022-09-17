@@ -38,14 +38,14 @@ namespace bs
 		metaData.scriptClass->AddInternalCall("Internal_setNonWalkableMode", (void*)&ScriptCCharacterController::InternalSetNonWalkableMode);
 		metaData.scriptClass->AddInternalCall("Internal_getMinMoveDistance", (void*)&ScriptCCharacterController::InternalGetMinMoveDistance);
 		metaData.scriptClass->AddInternalCall("Internal_setMinMoveDistance", (void*)&ScriptCCharacterController::InternalSetMinMoveDistance);
-		metaData.scriptClass->addInternalCall("Internal_getContactOffset", (void*)&ScriptCCharacterController::InternalGetContactOffset);
-		metaData.scriptClass->addInternalCall("Internal_setContactOffset", (void*)&ScriptCCharacterController::InternalSetContactOffset);
-		metaData.scriptClass->addInternalCall("Internal_getStepOffset", (void*)&ScriptCCharacterController::InternalGetStepOffset);
-		metaData.scriptClass->addInternalCall("Internal_setStepOffset", (void*)&ScriptCCharacterController::InternalSetStepOffset);
-		metaData.scriptClass->addInternalCall("Internal_getSlopeLimit", (void*)&ScriptCCharacterController::InternalGetSlopeLimit);
-		metaData.scriptClass->addInternalCall("Internal_setSlopeLimit", (void*)&ScriptCCharacterController::InternalSetSlopeLimit);
-		metaData.scriptClass->addInternalCall("Internal_getLayer", (void*)&ScriptCCharacterController::InternalGetLayer);
-		metaData.scriptClass->addInternalCall("Internal_setLayer", (void*)&ScriptCCharacterController::InternalSetLayer);
+		metaData.scriptClass->AddInternalCall("Internal_getContactOffset", (void*)&ScriptCCharacterController::InternalGetContactOffset);
+		metaData.scriptClass->AddInternalCall("Internal_setContactOffset", (void*)&ScriptCCharacterController::InternalSetContactOffset);
+		metaData.scriptClass->AddInternalCall("Internal_getStepOffset", (void*)&ScriptCCharacterController::InternalGetStepOffset);
+		metaData.scriptClass->AddInternalCall("Internal_setStepOffset", (void*)&ScriptCCharacterController::InternalSetStepOffset);
+		metaData.scriptClass->AddInternalCall("Internal_getSlopeLimit", (void*)&ScriptCCharacterController::InternalGetSlopeLimit);
+		metaData.scriptClass->AddInternalCall("Internal_setSlopeLimit", (void*)&ScriptCCharacterController::InternalSetSlopeLimit);
+		metaData.scriptClass->AddInternalCall("Internal_getLayer", (void*)&ScriptCCharacterController::InternalGetLayer);
+		metaData.scriptClass->AddInternalCall("Internal_setLayer", (void*)&ScriptCCharacterController::InternalSetLayer);
 
 		onColliderHitThunk = (onColliderHitThunkDef)metaData.scriptClass->GetMethodExact("Internal_onColliderHit", "ControllerColliderCollision&")->GetThunk();
 		onControllerHitThunk = (onControllerHitThunkDef)metaData.scriptClass->GetMethodExact("Internal_onControllerHit", "ControllerControllerCollision&")->GetThunk();
@@ -57,7 +57,7 @@ namespace bs
 		__ControllerColliderCollisionInterop interopp0;
 		interopp0 = ScriptControllerColliderCollision::ToInterop(p0);
 		tmpp0 = ScriptControllerColliderCollision::Box(interopp0);
-		MonoUtil::invokeThunk(onColliderHitThunk, getManagedInstance(), tmpp0);
+		MonoUtil::InvokeThunk(onColliderHitThunk, GetManagedInstance(), tmpp0);
 	}
 
 	void ScriptCCharacterController::OnControllerHit(const ControllerControllerCollision& p0)
@@ -66,7 +66,7 @@ namespace bs
 		__ControllerControllerCollisionInterop interopp0;
 		interopp0 = ScriptControllerControllerCollision::ToInterop(p0);
 		tmpp0 = ScriptControllerControllerCollision::Box(interopp0);
-		MonoUtil::invokeThunk(onControllerHitThunk, getManagedInstance(), tmpp0);
+		MonoUtil::InvokeThunk(onControllerHitThunk, GetManagedInstance(), tmpp0);
 	}
 	CharacterCollisionFlag ScriptCCharacterController::InternalMove(ScriptCCharacterController* thisPtr, Vector3* displacement)
 	{

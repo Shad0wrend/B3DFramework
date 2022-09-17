@@ -46,7 +46,7 @@ namespace bs
 
 	MonoString* MonoUtil::StringToMono(const String& str)
 	{
-		return wstringToMono(UTF8::toWide(str));
+		return WstringToMono(UTF8::ToWide(str));
 	}
 
 	void MonoUtil::GetClassName(MonoObject* obj, String& ns, String& typeName)
@@ -125,7 +125,7 @@ namespace bs
 	MonoReflectionType* MonoUtil::GetType(::MonoClass* klass)
 	{
 		MonoType* monoType = mono_class_get_type(klass);
-		return mono_type_get_object(MonoManager::Instance().getDomain(), monoType);
+		return mono_type_get_object(MonoManager::Instance().GetDomain(), monoType);
 	}
 
 	UINT32 MonoUtil::NewGcHandle(MonoObject* object, bool pinned)
@@ -152,7 +152,7 @@ namespace bs
 
 	MonoObject* MonoUtil::Box(::MonoClass* klass, void* value)
 	{
-		return mono_value_box(MonoManager::Instance().getDomain(), klass, value);
+		return mono_value_box(MonoManager::Instance().GetDomain(), klass, value);
 	}
 
 	void* MonoUtil::Unbox(MonoObject* object)
@@ -190,7 +190,7 @@ namespace bs
 		MonoType* monoType = mono_class_get_type(enumClass);
 		MonoType* underlyingType = mono_type_get_underlying_type(monoType);
 
-		return getPrimitiveType(mono_class_from_mono_type(underlyingType));
+		return GetPrimitiveType(mono_class_from_mono_type(underlyingType));
 	}
 
 	MonoPrimitiveType MonoUtil::GetPrimitiveType(::MonoClass* monoClass)
@@ -256,34 +256,34 @@ namespace bs
 	void MonoUtil::GetGenericParameters(::MonoClass* klass, ::MonoClass** params, UINT32& numParams)
 	{
 		MonoType* monoType = mono_class_get_type(klass);
-		getGenericParameters(mono_type_get_object(MonoManager::Instance().getDomain(), monoType), params, numParams);
+		GetGenericParameters(mono_type_get_object(MonoManager::Instance().GetDomain(), monoType), params, numParams);
 	}
 
 	void MonoUtil::GetGenericParameters(::MonoReflectionType* type, ::MonoClass** params, UINT32& numParams)
 	{
 		if(!sGenericHelpersInitialized)
 		{
-			MonoAssembly* corlib = MonoManager::Instance().getAssembly("corlib");
+			MonoAssembly* corlib = MonoManager::Instance().GetAssembly("corlib");
 			MonoClass* type = corlib->GetClass("System", "Type");
 			sGenericParamsProp = type->GetProperty("GenericTypeArguments");
 
 			sGenericHelpersInitialized = true;
 		}
 
-		MonoArray* array = (MonoArray*)sGenericParamsProp->get((MonoObject*)type);
+		MonoArray* array = (MonoArray*)sGenericParamsProp->Get((MonoObject*)type);
 		if(array)
 		{
 			ScriptArray scriptArray(array);
 
-			numParams = scriptArray.size();
+			numParams = scriptArray.Size();
 
 			if(params)
 			{
 				for(UINT32 i = 0; i < numParams; i++)
 				{
-					MonoReflectionType* paramType = scriptArray.get<MonoReflectionType*>(i);
+					MonoReflectionType* paramType = scriptArray.Get<MonoReflectionType*>(i);
 					if(paramType)
-						params[i] = getClass(paramType);
+						params[i] = GetClass(paramType);
 				}
 			}
 			
@@ -369,7 +369,7 @@ namespace bs
 
 	void MonoUtil::ThrowIfException(MonoException* exception)
 	{
-		throwIfException(reinterpret_cast<MonoObject*>(exception));
+		ThrowIfException(reinterpret_cast<MonoObject*>(exception));
 	}
 
 	void MonoUtil::ThrowIfException(MonoObject* exception)
@@ -386,7 +386,7 @@ namespace bs
 			MonoString* exceptionStackTrace = (MonoString*)mono_runtime_invoke(exceptionStackGetter, exception, nullptr, nullptr);
 
 			// Note: If you modify this format make sure to also modify Debug.ParseExceptionMessage in managed code.
-			String msg = "Managed exception: " + monoToString(exceptionMsg) + "\n" + monoToString(exceptionStackTrace);
+			String msg = "Managed exception: " + MonoToString(exceptionMsg) + "\n" + MonoToString(exceptionStackTrace);
 
 			BS_LOG(Error, Script, msg);
 		}

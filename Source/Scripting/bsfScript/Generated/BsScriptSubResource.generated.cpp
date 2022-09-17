@@ -32,7 +32,7 @@ namespace bs
 	{
 		SubResource output;
 		String tmpname;
-		tmpname = MonoUtil::monoToString(value.name);
+		tmpname = MonoUtil::MonoToString(value.name);
 		output.name = tmpname;
 		ResourceHandle<Resource> tmpvalue;
 		ScriptResource* scriptvalue;

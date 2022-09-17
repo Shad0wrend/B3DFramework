@@ -18,8 +18,8 @@ namespace bs
 {
 	ScriptResourceManager::ScriptResourceManager()
 	{
-		mResourceDestroyedConn = gResources().onResourceDestroyed.Connect(std::bind(&ScriptResourceManager::onResourceDestroyed, this, _1));
-		mDomainUnloadedConn = MonoManager::Instance().onDomainUnload.Connect(std::bind(&ScriptResourceManager::clearRRefs, this));
+		mResourceDestroyedConn = gResources().onResourceDestroyed.Connect(std::bind(&ScriptResourceManager::OnResourceDestroyed, this, _1));
+		mDomainUnloadedConn = MonoManager::Instance().onDomainUnload.Connect(std::bind(&ScriptResourceManager::ClearRRefs, this));
 	}
 
 	ScriptResourceManager::~ScriptResourceManager()
@@ -52,7 +52,7 @@ namespace bs
 			return nullptr;
 
 		UINT32 rttiId = resource->GetRtti()->GetRttiId();
-		BuiltinResourceInfo* info = ScriptAssemblyManager::Instance().getBuiltinResourceInfo(rttiId);
+		BuiltinResourceInfo* info = ScriptAssemblyManager::Instance().GetBuiltinResourceInfo(rttiId);
 
 		if (info == nullptr)
 			return nullptr;
@@ -67,20 +67,20 @@ namespace bs
 	{
 		const UUID& uuid = resource.GetUuid();
 
-		if (uuid.empty())
+		if (uuid.Empty())
 			return nullptr;
 
-		ScriptResourceBase* output = getScriptResource(uuid);
+		ScriptResourceBase* output = GetScriptResource(uuid);
 
 		if (output == nullptr && create)
-			return createBuiltinScriptResource(resource);
+			return CreateBuiltinScriptResource(resource);
 
 		return output;
 	}
 
 	ScriptResourceBase* ScriptResourceManager::GetScriptResource(const UUID& uuid)
 	{
-		if (uuid.empty())
+		if (uuid.Empty())
 			return nullptr;
 
 		auto findIter = mScriptResources.find(uuid);
@@ -108,7 +108,7 @@ namespace bs
 		HResource resourceHandle = resource->GetGenericHandle();
 		const UUID& uuid = resourceHandle.GetUuid();
 
-		if(uuid.empty())
+		if(uuid.Empty())
 			BS_EXCEPT(InvalidParametersException, "Provided resource handle has an undefined resource UUID.");
 
 #if BS_DEBUG_MODE
@@ -138,13 +138,13 @@ namespace bs
 
 			const auto iterFind = rrefs.find(uuid);
 			if (iterFind != rrefs.end())
-				iterFind->second->clearResource();
+				iterFind->second->ClearResource();
 		}
 
 		auto findIter = mScriptResources.find(uuid);
 		if (findIter != mScriptResources.end())
 		{
-			findIter->second->notifyResourceDestroyed();
+			findIter->second->NotifyResourceDestroyed();
 			mScriptResources.erase(findIter);
 		}
 	}
@@ -156,7 +156,7 @@ namespace bs
 
 	void ScriptResourceManager::ThrowExceptionIfInvalidOrDuplicateInternal(const UUID& uuid) const
 	{
-		if(uuid.empty())
+		if(uuid.Empty())
 			BS_EXCEPT(InvalidParametersException, "Provided resource handle has an undefined resource UUID.");
 
 		auto findIter = mScriptResources.find(uuid);

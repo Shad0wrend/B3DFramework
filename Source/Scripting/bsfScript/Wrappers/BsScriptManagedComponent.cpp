@@ -44,13 +44,13 @@ namespace bs
 		MonoClass* compClass = comp->GetClass();
 
 		bool found = false;
-		String methodName = MonoUtil::monoToString(name);
+		String methodName = MonoUtil::MonoToString(name);
 		while (compClass != nullptr)
 		{
 			MonoMethod* method = compClass->GetMethod(methodName);
 			if (method != nullptr)
 			{
-				method->invoke(compObj, nullptr);
+				method->Invoke(compObj, nullptr);
 				found = true;
 				break;
 			}
@@ -76,24 +76,24 @@ namespace bs
 
 		// See if this type even still exists
 		MonoObject* instance;
-		if (!ScriptAssemblyManager::Instance().getSerializableObjectInfo(mNamespace, mType, currentObjInfo))
+		if (!ScriptAssemblyManager::Instance().GetSerializableObjectInfo(mNamespace, mType, currentObjInfo))
 		{
 			mTypeMissing = true;
-			instance = ScriptAssemblyManager::Instance().getBuiltinClasses().missingComponentClass->createInstance(true);
+			instance = ScriptAssemblyManager::Instance().GetBuiltinClasses().missingComponentClass->CreateInstance(true);
 		}
 		else
 		{
 			mTypeMissing = false;
-			instance = currentObjInfo->mMonoClass->createInstance(construct);
+			instance = currentObjInfo->mMonoClass->CreateInstance(construct);
 		}
 
-		mGCHandle = MonoUtil::newGCHandle(instance, false);
+		mGCHandle = MonoUtil::NewGcHandle(instance, false);
 		return instance;
 	}
 
 	void ScriptManagedComponent::ClearManagedInstanceInternal()
 	{
-		freeManagedInstance();
+		FreeManagedInstance();
 	}
 
 	ScriptObjectBackup ScriptManagedComponent::BeginRefresh()
@@ -103,8 +103,8 @@ namespace bs
 
 		// It's possible that managed component is destroyed but a reference to it
 		// is still kept. Don't backup such components.
-		if (!managedComponent.isDestroyed(true))
-			backupData.data = managedComponent->backup(true);
+		if (!managedComponent.IsDestroyed(true))
+			backupData.data = managedComponent->Backup(true);
 
 		return backupData;
 	}
@@ -114,7 +114,7 @@ namespace bs
 		HManagedComponent managedComponent = static_object_cast<ManagedComponent>(mComponent);
 
 		RawBackupData componentBackup = any_cast<RawBackupData>(backupData.data);
-		managedComponent->restore(componentBackup, mTypeMissing);
+		managedComponent->Restore(componentBackup, mTypeMissing);
 	}
 
 	void ScriptManagedComponent::OnManagedInstanceDeletedInternal(bool assemblyRefresh)
@@ -124,12 +124,12 @@ namespace bs
 		// It's possible that managed component is destroyed but a reference to it
 		// is still kept during assembly refresh. Such components shouldn't be restored
 		// so we delete them.
-		if (!assemblyRefresh || mComponent.isDestroyed(true))
-			ScriptGameObjectManager::Instance().destroyScriptComponent(this);
+		if (!assemblyRefresh || mComponent.IsDestroyed(true))
+			ScriptGameObjectManager::Instance().DestroyScriptComponent(this);
 	}
 
 	void ScriptManagedComponent::NotifyDestroyedInternal()
 	{
-		freeManagedInstance();
+		FreeManagedInstance();
 	}
 }

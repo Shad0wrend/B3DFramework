@@ -122,9 +122,9 @@ namespace bs
 			AddReflectablePtrField("mTypeInfo", 0, &ManagedSerializableObjectInfoRTTI::GetTypeInfo, &ManagedSerializableObjectInfoRTTI::SetTypeInfo);
 			AddReflectablePtrField("mBaseClass", 2, &ManagedSerializableObjectInfoRTTI::GetBaseClass, &ManagedSerializableObjectInfoRTTI::SetBaseClass);
 
-			addReflectablePtrArrayField("mFields", 3, &ManagedSerializableObjectInfoRTTI::getSerializableFieldInfo,
-				&ManagedSerializableObjectInfoRTTI::getSerializableFieldInfoArraySize, &ManagedSerializableObjectInfoRTTI::setSerializableFieldInfo,
-				&ManagedSerializableObjectInfoRTTI::setSerializableFieldInfoArraySize);
+			AddReflectablePtrArrayField("mFields", 3, &ManagedSerializableObjectInfoRTTI::GetSerializableFieldInfo,
+				&ManagedSerializableObjectInfoRTTI::GetSerializableFieldInfoArraySize, &ManagedSerializableObjectInfoRTTI::SetSerializableFieldInfo,
+				&ManagedSerializableObjectInfoRTTI::SetSerializableFieldInfoArraySize);
 		}
 
 		const String& GetRttiName() override

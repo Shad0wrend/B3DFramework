@@ -17,13 +17,13 @@ namespace bs
 
 	void ScriptShaderImportOptions::initRuntimeData()
 	{
-		metaData.scriptClass->addInternalCall("Internal_setDefine", (void*)&ScriptShaderImportOptions::Internal_setDefine);
-		metaData.scriptClass->addInternalCall("Internal_getDefine", (void*)&ScriptShaderImportOptions::Internal_getDefine);
-		metaData.scriptClass->addInternalCall("Internal_hasDefine", (void*)&ScriptShaderImportOptions::Internal_hasDefine);
-		metaData.scriptClass->addInternalCall("Internal_removeDefine", (void*)&ScriptShaderImportOptions::Internal_removeDefine);
-		metaData.scriptClass->addInternalCall("Internal_getlanguages", (void*)&ScriptShaderImportOptions::Internal_getlanguages);
-		metaData.scriptClass->addInternalCall("Internal_setlanguages", (void*)&ScriptShaderImportOptions::Internal_setlanguages);
-		metaData.scriptClass->addInternalCall("Internal_create", (void*)&ScriptShaderImportOptions::Internal_create);
+		metaData.scriptClass->AddInternalCall("Internal_setDefine", (void*)&ScriptShaderImportOptions::InternalSetDefine);
+		metaData.scriptClass->AddInternalCall("Internal_getDefine", (void*)&ScriptShaderImportOptions::InternalGetDefine);
+		metaData.scriptClass->AddInternalCall("Internal_hasDefine", (void*)&ScriptShaderImportOptions::InternalHasDefine);
+		metaData.scriptClass->AddInternalCall("Internal_removeDefine", (void*)&ScriptShaderImportOptions::InternalRemoveDefine);
+		metaData.scriptClass->AddInternalCall("Internal_getlanguages", (void*)&ScriptShaderImportOptions::InternalGetlanguages);
+		metaData.scriptClass->AddInternalCall("Internal_setlanguages", (void*)&ScriptShaderImportOptions::InternalSetlanguages);
+		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptShaderImportOptions::InternalCreate);
 
 	}
 
@@ -38,20 +38,20 @@ namespace bs
 		new (bs_alloc<ScriptShaderImportOptions>()) ScriptShaderImportOptions(managedInstance, value);
 		return managedInstance;
 	}
-	void ScriptShaderImportOptions::Internal_setDefine(ScriptShaderImportOptions* thisPtr, MonoString* define, MonoString* value)
+	void ScriptShaderImportOptions::InternalSetDefine(ScriptShaderImportOptions* thisPtr, MonoString* define, MonoString* value)
 	{
 		String tmpdefine;
-		tmpdefine = MonoUtil::monoToString(define);
+		tmpdefine = MonoUtil::MonoToString(define);
 		String tmpvalue;
-		tmpvalue = MonoUtil::monoToString(value);
+		tmpvalue = MonoUtil::MonoToString(value);
 		thisPtr->GetInternal()->SetDefine(tmpdefine, tmpvalue);
 	}
 
-	bool ScriptShaderImportOptions::Internal_getDefine(ScriptShaderImportOptions* thisPtr, MonoString* define, MonoString** value)
+	bool ScriptShaderImportOptions::InternalGetDefine(ScriptShaderImportOptions* thisPtr, MonoString* define, MonoString** value)
 	{
 		bool tmp__output;
 		String tmpdefine;
-		tmpdefine = MonoUtil::monoToString(define);
+		tmpdefine = MonoUtil::MonoToString(define);
 		String tmpvalue;
 		tmp__output = thisPtr->GetInternal()->GetDefine(tmpdefine, tmpvalue);
 
@@ -62,11 +62,11 @@ namespace bs
 		return __output;
 	}
 
-	bool ScriptShaderImportOptions::Internal_hasDefine(ScriptShaderImportOptions* thisPtr, MonoString* define)
+	bool ScriptShaderImportOptions::InternalHasDefine(ScriptShaderImportOptions* thisPtr, MonoString* define)
 	{
 		bool tmp__output;
 		String tmpdefine;
-		tmpdefine = MonoUtil::monoToString(define);
+		tmpdefine = MonoUtil::MonoToString(define);
 		tmp__output = thisPtr->GetInternal()->HasDefine(tmpdefine);
 
 		bool __output;
@@ -75,19 +75,19 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptShaderImportOptions::Internal_removeDefine(ScriptShaderImportOptions* thisPtr, MonoString* define)
+	void ScriptShaderImportOptions::InternalRemoveDefine(ScriptShaderImportOptions* thisPtr, MonoString* define)
 	{
 		String tmpdefine;
-		tmpdefine = MonoUtil::monoToString(define);
+		tmpdefine = MonoUtil::MonoToString(define);
 		thisPtr->GetInternal()->removeDefine(tmpdefine);
 	}
 
-	void ScriptShaderImportOptions::Internal_create(MonoObject* managedInstance)
+	void ScriptShaderImportOptions::InternalCreate(MonoObject* managedInstance)
 	{
 		SPtr<ShaderImportOptions> instance = ShaderImportOptions::Create();
 		new (bs_alloc<ScriptShaderImportOptions>())ScriptShaderImportOptions(managedInstance, instance);
 	}
-	ShadingLanguageFlag ScriptShaderImportOptions::Internal_getlanguages(ScriptShaderImportOptions* thisPtr)
+	ShadingLanguageFlag ScriptShaderImportOptions::InternalGetlanguages(ScriptShaderImportOptions* thisPtr)
 	{
 		Flags<ShadingLanguageFlag> tmp__output;
 		tmp__output = thisPtr->GetInternal()->languages;
@@ -98,7 +98,7 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptShaderImportOptions::Internal_setlanguages(ScriptShaderImportOptions* thisPtr, ShadingLanguageFlag value)
+	void ScriptShaderImportOptions::InternalSetlanguages(ScriptShaderImportOptions* thisPtr, ShadingLanguageFlag value)
 	{
 		thisPtr->GetInternal()->languages = value;
 	}

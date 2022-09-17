@@ -40,13 +40,13 @@ namespace bs
 		ScriptArray scriptArray(guiOptions);
 		UINT32 arrayLen = scriptArray.Size();
 		for (UINT32 i = 0; i < arrayLen; i++)
-			options.AddOption(scriptArray.get<GUIOption>(i));
+			options.AddOption(scriptArray.Get<GUIOption>(i));
 
 		HSpriteTexture nativeTexture;
 		if(texture != nullptr)
-			nativeTexture = ScriptSpriteTexture::toNative(texture)->GetHandle();
+			nativeTexture = ScriptSpriteTexture::ToNative(texture)->GetHandle();
 
-		GUITexture* guiTexture = GUITexture::Create(nativeTexture, scale, transparent, options, MonoUtil::monoToString(style));
+		GUITexture* guiTexture = GUITexture::Create(nativeTexture, scale, transparent, options, MonoUtil::MonoToString(style));
 
 		new (bs_alloc<ScriptGUITexture>()) ScriptGUITexture(instance, guiTexture);
 	}
@@ -55,15 +55,15 @@ namespace bs
 	{
 		HSpriteTexture nativeTexture;
 		if(texture != nullptr)
-			nativeTexture = ScriptSpriteTexture::toNative(texture)->GetHandle();
+			nativeTexture = ScriptSpriteTexture::ToNative(texture)->GetHandle();
 
-		GUITexture* guiTexture = (GUITexture*)nativeInstance->GetGUIElement();
+		GUITexture* guiTexture = (GUITexture*)nativeInstance->GetGuiElement();
 		guiTexture->SetTexture(nativeTexture);
 	}
 
 	void ScriptGUITexture::InternalSetTint(ScriptGUITexture* nativeInstance, Color* color)
 	{
-		GUITexture* guiTexture = (GUITexture*)nativeInstance->GetGUIElement();
+		GUITexture* guiTexture = (GUITexture*)nativeInstance->GetGuiElement();
 		guiTexture->SetTint(*color);
 	}
 }
