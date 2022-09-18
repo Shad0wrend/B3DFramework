@@ -92,12 +92,12 @@ int main(int argc, char * argv[])
 			const bool fullReimport = modifications == 2;
 
 			sManifest = ResourceManifest::Create("BuiltinResources");
-			gResources().registerResourceManifest(sManifest);
+			gResources().RegisterResourceManifest(sManifest);
 
 			processAssets(generateGenerated, fullReimport, lastUpdateTime);
-			BuiltinResourcesHelper::writeTimestamp(sOutputFolder + TIMESTAMP_NAME);
+			BuiltinResourcesHelper::WriteTimestamp(sOutputFolder + TIMESTAMP_NAME);
 
-			ResourceManifest::save(sManifest, sManifestPath, sOutputFolder);
+			ResourceManifest::Save(sManifest, sManifestPath, sOutputFolder);
 
 			Application::ShutDown();
 			return 1;
@@ -145,8 +145,8 @@ namespace bs
 		{
 			HResource textureResource = gResources().CreateResourceHandleInternal(texture, UUID(uuid));
 
-			gResources().save(textureResource, path, true);
-			sManifest->registerResource(textureResource.GetUuid(), path);
+			gResources().Save(textureResource, path, true);
+			sManifest->RegisterResource(textureResource.GetUuid(), path);
 		};
 
 		Path whitePath = outputDir + BuiltinResources::TEXTURE_WHITE_FILE;
@@ -170,55 +170,55 @@ namespace bs
 
 		UINT32 boxNumVertices = 0;
 		UINT32 boxNumIndices = 0;
-		ShapeMeshes3D::getNumElementsAABox(boxNumVertices, boxNumIndices);
+		ShapeMeshes3D::GetNumElementsAaBox(boxNumVertices, boxNumIndices);
 		SPtr<MeshData> boxMeshData = MeshData::Create(boxNumVertices, boxNumIndices, vertexDesc);
 		AABox box(Vector3(-0.5f, -0.5f, -0.5f), Vector3(0.5f, 0.5f, 0.5f));
 
-		ShapeMeshes3D::solidAABox(box, boxMeshData, 0, 0);
-		SPtr<Mesh> boxMesh = Mesh::CreatePtrInternal(RendererMeshData::convert(boxMeshData));
+		ShapeMeshes3D::SolidAaBox(box, boxMeshData, 0, 0);
+		SPtr<Mesh> boxMesh = Mesh::CreatePtrInternal(RendererMeshData::Convert(boxMeshData));
 
 		UINT32 sphereNumVertices = 0;
 		UINT32 sphereNumIndices = 0;
-		ShapeMeshes3D::getNumElementsSphere(3, sphereNumVertices, sphereNumIndices);
+		ShapeMeshes3D::GetNumElementsSphere(3, sphereNumVertices, sphereNumIndices);
 		SPtr<MeshData> sphereMeshData = bs_shared_ptr_new<MeshData>(sphereNumVertices, sphereNumIndices, vertexDesc);
 
-		ShapeMeshes3D::solidSphere(Sphere(Vector3::ZERO, 1.0f), sphereMeshData, 0, 0, 3);
-		SPtr<Mesh> sphereMesh = Mesh::CreatePtrInternal(RendererMeshData::convert(sphereMeshData));
+		ShapeMeshes3D::SolidSphere(Sphere(Vector3::ZERO, 1.0f), sphereMeshData, 0, 0, 3);
+		SPtr<Mesh> sphereMesh = Mesh::CreatePtrInternal(RendererMeshData::Convert(sphereMeshData));
 
 		UINT32 coneNumVertices = 0;
 		UINT32 coneNumIndices = 0;
-		ShapeMeshes3D::getNumElementsCone(10, coneNumVertices, coneNumIndices);
+		ShapeMeshes3D::GetNumElementsCone(10, coneNumVertices, coneNumIndices);
 		SPtr<MeshData> coneMeshData = bs_shared_ptr_new<MeshData>(coneNumVertices, coneNumIndices, vertexDesc);
 
-		ShapeMeshes3D::solidCone(Vector3::ZERO, Vector3::UNIT_Y, 1.0f, 1.0f, Vector2::ONE, coneMeshData, 0, 0);
-		SPtr<Mesh> coneMesh = Mesh::CreatePtrInternal(RendererMeshData::convert(coneMeshData));
+		ShapeMeshes3D::SolidCone(Vector3::ZERO, Vector3::UNIT_Y, 1.0f, 1.0f, Vector2::ONE, coneMeshData, 0, 0);
+		SPtr<Mesh> coneMesh = Mesh::CreatePtrInternal(RendererMeshData::Convert(coneMeshData));
 
 		UINT32 cylinderNumVertices = 0;
 		UINT32 cylinderNumIndices = 0;
-		ShapeMeshes3D::getNumElementsCylinder(10, cylinderNumVertices, cylinderNumIndices);
+		ShapeMeshes3D::GetNumElementsCylinder(10, cylinderNumVertices, cylinderNumIndices);
 		SPtr<MeshData> cylinderMeshData = bs_shared_ptr_new<MeshData>(cylinderNumVertices, cylinderNumIndices, vertexDesc);
 
-		ShapeMeshes3D::solidCylinder(Vector3::ZERO, Vector3::UNIT_Y, 1.0f, 1.0f, Vector2::ONE, cylinderMeshData, 0, 0);
-		SPtr<Mesh> cylinderMesh = Mesh::CreatePtrInternal(RendererMeshData::convert(cylinderMeshData));
+		ShapeMeshes3D::SolidCylinder(Vector3::ZERO, Vector3::UNIT_Y, 1.0f, 1.0f, Vector2::ONE, cylinderMeshData, 0, 0);
+		SPtr<Mesh> cylinderMesh = Mesh::CreatePtrInternal(RendererMeshData::Convert(cylinderMeshData));
 
 		UINT32 quadNumVertices = 8;
 		UINT32 quadNumIndices = 12;
-		ShapeMeshes3D::getNumElementsQuad(quadNumVertices, quadNumIndices);
+		ShapeMeshes3D::GetNumElementsQuad(quadNumVertices, quadNumIndices);
 		SPtr<MeshData> quadMeshData = bs_shared_ptr_new<MeshData>(quadNumVertices, quadNumIndices, vertexDesc);
 
 		std::array<Vector3, 2> axes = {{ Vector3::UNIT_X, Vector3::UNIT_Z }};
 		std::array<float, 2> sizes = {{ 1.0f, 1.0f }};
 		Rect3 rect(Vector3::ZERO, axes, sizes);
-		ShapeMeshes3D::solidQuad(rect, quadMeshData, 0, 0);
-		SPtr<Mesh> quadMesh = Mesh::CreatePtrInternal(RendererMeshData::convert(quadMeshData));
+		ShapeMeshes3D::SolidQuad(rect, quadMeshData, 0, 0);
+		SPtr<Mesh> quadMesh = Mesh::CreatePtrInternal(RendererMeshData::Convert(quadMeshData));
 
 		UINT32 discNumVertices = 0;
 		UINT32 discNumIndices = 0;
-		ShapeMeshes3D::getNumElementsDisc(10, discNumVertices, discNumIndices);
+		ShapeMeshes3D::GetNumElementsDisc(10, discNumVertices, discNumIndices);
 		SPtr<MeshData> discMeshData = bs_shared_ptr_new<MeshData>(discNumVertices, discNumIndices, vertexDesc);
 
-		ShapeMeshes3D::solidDisc(Vector3::ZERO, 1.0f, Vector3::UNIT_Y, discMeshData, 0, 0);
-		SPtr<Mesh> discMesh = Mesh::CreatePtrInternal(RendererMeshData::convert(discMeshData));
+		ShapeMeshes3D::SolidDisc(Vector3::ZERO, 1.0f, Vector3::UNIT_Y, discMeshData, 0, 0);
+		SPtr<Mesh> discMesh = Mesh::CreatePtrInternal(RendererMeshData::Convert(discMeshData));
 
 		// Save all meshes
 		const Path outputDir = sOutputFolder + BuiltinResources::MESH_FOLDER;
@@ -227,8 +227,8 @@ namespace bs
 		{
 			HResource meshResource = gResources().CreateResourceHandleInternal(mesh, UUID(uuid));
 
-			gResources().save(meshResource, path, true);
-			sManifest->registerResource(meshResource.GetUuid(), path);
+			gResources().Save(meshResource, path, true);
+			sManifest->RegisterResource(meshResource.GetUuid(), path);
 		};
 
 		Path boxPath = outputDir + BuiltinResources::MESH_BOX_FILE;
@@ -267,7 +267,7 @@ namespace bs
 		{
 			std::string name = entry["name"];
 
-			GUIElementStyle style = BuiltinResourcesHelper::loadGUIStyleFromJSON(entry, loader);
+			GUIElementStyle style = BuiltinResourcesHelper::LoadGuiStyleFromJson(entry, loader);
 			skin->SetStyle(name.c_str(), style);
 		}
 
@@ -316,7 +316,7 @@ namespace bs
 
 		if(!cursorsJSON.is_null())
 		{
-			updatedDataLists |= BuiltinResourcesHelper::updateJSON(
+			updatedDataLists |= BuiltinResourcesHelper::UpdateJson(
 				rawCursorFolder,
 				BuiltinResourcesHelper::AssetType::Normal,
 				cursorsJSON);
@@ -324,7 +324,7 @@ namespace bs
 
 		if(!iconsJSON.is_null())
 		{
-			updatedDataLists |= BuiltinResourcesHelper::updateJSON(
+			updatedDataLists |= BuiltinResourcesHelper::UpdateJson(
 				rawIconFolder,
 				BuiltinResourcesHelper::AssetType::Normal,
 				iconsJSON);
@@ -332,7 +332,7 @@ namespace bs
 
 		if(!spriteIconsJSON.is_null())
 		{
-			updatedDataLists |= BuiltinResourcesHelper::updateJSON(
+			updatedDataLists |= BuiltinResourcesHelper::UpdateJson(
 				rawIconFolder,
 				BuiltinResourcesHelper::AssetType::Sprite,
 				spriteIconsJSON);
@@ -340,7 +340,7 @@ namespace bs
 
 		if(!spriteIcons3DJSON.is_null())
 		{
-			updatedDataLists |= BuiltinResourcesHelper::updateJSON(
+			updatedDataLists |= BuiltinResourcesHelper::UpdateJson(
 				rawIcon3DFolder,
 				BuiltinResourcesHelper::AssetType::Sprite,
 				spriteIcons3DJSON);
@@ -348,7 +348,7 @@ namespace bs
 
 		if(!includesJSON.is_null())
 		{
-			updatedDataLists |= BuiltinResourcesHelper::updateJSON(
+			updatedDataLists |= BuiltinResourcesHelper::UpdateJson(
 				rawShaderIncludeFolder,
 				BuiltinResourcesHelper::AssetType::Normal,
 				includesJSON);
@@ -356,7 +356,7 @@ namespace bs
 
 		if(!shadersJSON.is_null())
 		{
-			updatedDataLists |= BuiltinResourcesHelper::updateJSON(
+			updatedDataLists |= BuiltinResourcesHelper::UpdateJson(
 				rawShaderFolder,
 				BuiltinResourcesHelper::AssetType::Normal,
 				shadersJSON);
@@ -364,7 +364,7 @@ namespace bs
 
 		if(!skinJSON.is_null())
 		{
-			updatedDataLists |= BuiltinResourcesHelper::updateJSON(
+			updatedDataLists |= BuiltinResourcesHelper::UpdateJson(
 				rawSkinFolder,
 				BuiltinResourcesHelper::AssetType::Sprite,
 				skinJSON);
@@ -372,13 +372,13 @@ namespace bs
 
 		if(!texturesJSON.is_null())
 		{
-			updatedDataLists |= BuiltinResourcesHelper::updateJSON(
+			updatedDataLists |= BuiltinResourcesHelper::UpdateJson(
 				rawTexturesFolder,
 				BuiltinResourcesHelper::AssetType::Normal,
 				texturesJSON);
 		}
 
-		dataListStream->close();
+		dataListStream->Close();
 
 		if(updatedDataLists)
 		{
@@ -422,8 +422,8 @@ namespace bs
 
 			String jsonString = dataListJSON.dump(4).c_str();
 			dataListStream = FileSystem::CreateAndOpenFile(dataListsFilePath);
-			dataListStream->writeString(jsonString);
-			dataListStream->close();
+			dataListStream->WriteString(jsonString);
+			dataListStream->Close();
 		}
 
 		const Path skinFolder = sOutputFolder + BuiltinResources::SKIN_FOLDER;
@@ -469,25 +469,25 @@ namespace bs
 		{
 			SPtr<DataStream> stream = FileSystem::OpenFile(shaderDependenciesFile);
 			shaderDependenciesJSON = json::parse(stream->GetAsString().c_str());
-			stream->close();
+			stream->Close();
 		}
 
 		// Import cursors
 		if(!cursorsJSON.is_null())
 		{
-			BuiltinResourcesHelper::updateManifest(
+			BuiltinResourcesHelper::UpdateManifest(
 				cursorFolder,
 				cursorsJSON,
 				sManifest,
 				BuiltinResourcesHelper::AssetType::Normal);
 
-			Vector<bool> importFlags = BuiltinResourcesHelper::generateImportFlags(
+			Vector<bool> importFlags = BuiltinResourcesHelper::GenerateImportFlags(
 				cursorsJSON,
 				rawCursorFolder,
 				lastUpdateTime,
 				forceImport);
 
-			BuiltinResourcesHelper::importAssets(
+			BuiltinResourcesHelper::ImportAssets(
 				cursorsJSON,
 				importFlags,
 				rawCursorFolder,
@@ -499,19 +499,19 @@ namespace bs
 		// Import icons
 		if(!iconsJSON.is_null())
 		{
-			BuiltinResourcesHelper::updateManifest(
+			BuiltinResourcesHelper::UpdateManifest(
 				iconFolder,
 				iconsJSON,
 				sManifest,
 				BuiltinResourcesHelper::AssetType::Normal);
 
-			Vector<bool> importFlags = BuiltinResourcesHelper::generateImportFlags(
+			Vector<bool> importFlags = BuiltinResourcesHelper::GenerateImportFlags(
 				iconsJSON,
 				rawIconFolder,
 				lastUpdateTime,
 				forceImport);
 
-			BuiltinResourcesHelper::importAssets(
+			BuiltinResourcesHelper::ImportAssets(
 				iconsJSON,
 				importFlags,
 				rawIconFolder,
@@ -523,19 +523,19 @@ namespace bs
 		// Import sprite icons
 		if(!spriteIconsJSON.is_null())
 		{
-			BuiltinResourcesHelper::updateManifest(
+			BuiltinResourcesHelper::UpdateManifest(
 				iconFolder,
 				spriteIconsJSON,
 				sManifest,
 				BuiltinResourcesHelper::AssetType::Sprite);
 
-			Vector<bool> importFlags = BuiltinResourcesHelper::generateImportFlags(
+			Vector<bool> importFlags = BuiltinResourcesHelper::GenerateImportFlags(
 				spriteIconsJSON,
 				rawIconFolder,
 				lastUpdateTime,
 				forceImport);
 
-			BuiltinResourcesHelper::importAssets(
+			BuiltinResourcesHelper::ImportAssets(
 				spriteIconsJSON,
 				importFlags,
 				rawIconFolder,
@@ -547,19 +547,19 @@ namespace bs
 		// Import 3D sprite icons
 		if(!spriteIcons3DJSON.is_null())
 		{
-			BuiltinResourcesHelper::updateManifest(
+			BuiltinResourcesHelper::UpdateManifest(
 				icon3DFolder,
 				spriteIcons3DJSON,
 				sManifest,
 				BuiltinResourcesHelper::AssetType::Sprite);
 
-			Vector<bool> importFlags = BuiltinResourcesHelper::generateImportFlags(
+			Vector<bool> importFlags = BuiltinResourcesHelper::GenerateImportFlags(
 				spriteIcons3DJSON,
 				rawIcon3DFolder,
 				lastUpdateTime,
 				forceImport);
 
-			BuiltinResourcesHelper::importAssets(
+			BuiltinResourcesHelper::ImportAssets(
 				spriteIcons3DJSON,
 				importFlags,
 				rawIcon3DFolder,
@@ -572,25 +572,25 @@ namespace bs
 		// Import shaders
 		if(!shadersJSON.is_null() && !includesJSON.is_null())
 		{
-			BuiltinResourcesHelper::updateManifest(
+			BuiltinResourcesHelper::UpdateManifest(
 				shaderIncludeFolder,
 				includesJSON,
 				sManifest,
 				BuiltinResourcesHelper::AssetType::Normal);
 
-			BuiltinResourcesHelper::updateManifest(
+			BuiltinResourcesHelper::UpdateManifest(
 				shaderFolder,
 				shadersJSON,
 				sManifest,
 				BuiltinResourcesHelper::AssetType::Normal);
 
-			Vector<bool> includeImportFlags = BuiltinResourcesHelper::generateImportFlags(
+			Vector<bool> includeImportFlags = BuiltinResourcesHelper::GenerateImportFlags(
 				includesJSON,
 				rawShaderIncludeFolder,
 				lastUpdateTime,
 				forceImport);
 
-			Vector<bool> shaderImportFlags = BuiltinResourcesHelper::generateImportFlags(
+			Vector<bool> shaderImportFlags = BuiltinResourcesHelper::GenerateImportFlags(
 				shadersJSON,
 				rawShaderFolder,
 				lastUpdateTime,
@@ -600,7 +600,7 @@ namespace bs
 
 			// Hidden dependency: Includes must be imported before shaders, but import flags for shaders must be generated
 			// before includes are imported, since the process checks if imports changed
-			BuiltinResourcesHelper::importAssets(
+			BuiltinResourcesHelper::ImportAssets(
 				includesJSON,
 				includeImportFlags,
 				rawShaderIncludeFolder,
@@ -611,7 +611,7 @@ namespace bs
 				true);
 
 
-			BuiltinResourcesHelper::importAssets(
+			BuiltinResourcesHelper::ImportAssets(
 				shadersJSON,
 				shaderImportFlags,
 				rawShaderFolder,
@@ -625,19 +625,19 @@ namespace bs
 		// Import GUI sprites
 		if(!skinJSON.is_null())
 		{
-			BuiltinResourcesHelper::updateManifest(
+			BuiltinResourcesHelper::UpdateManifest(
 				skinFolder,
 				skinJSON,
 				sManifest,
 				BuiltinResourcesHelper::AssetType::Sprite);
 
-			Vector<bool> skinImportFlags = BuiltinResourcesHelper::generateImportFlags(
+			Vector<bool> skinImportFlags = BuiltinResourcesHelper::GenerateImportFlags(
 				skinJSON,
 				rawSkinFolder,
 				lastUpdateTime,
 				forceImport);
 
-			BuiltinResourcesHelper::importAssets(
+			BuiltinResourcesHelper::ImportAssets(
 				skinJSON,
 				skinImportFlags,
 				rawSkinFolder,
@@ -649,19 +649,19 @@ namespace bs
 		// Import animated sprites
 		if(!animatedSpritesJSON.is_null())
 		{
-			BuiltinResourcesHelper::updateManifest(
+			BuiltinResourcesHelper::UpdateManifest(
 				animatedSpriteFolder,
 				animatedSpritesJSON,
 				sManifest,
 				BuiltinResourcesHelper::AssetType::Sprite);
 
-			Vector<bool> importFlags = BuiltinResourcesHelper::generateImportFlags(
+			Vector<bool> importFlags = BuiltinResourcesHelper::GenerateImportFlags(
 				animatedSpritesJSON,
 				rawAnimatedSpritesFolder,
 				lastUpdateTime,
 				forceImport);
 
-			BuiltinResourcesHelper::importAssets(
+			BuiltinResourcesHelper::ImportAssets(
 				animatedSpritesJSON,
 				importFlags,
 				rawAnimatedSpritesFolder,
@@ -673,19 +673,19 @@ namespace bs
 		// Import textures
 		if(!texturesJSON.is_null())
 		{
-			BuiltinResourcesHelper::updateManifest(
+			BuiltinResourcesHelper::UpdateManifest(
 				texturesFolder,
 				texturesJSON,
 				sManifest,
 				BuiltinResourcesHelper::AssetType::Normal);
 
-			Vector<bool> importFlags = BuiltinResourcesHelper::generateImportFlags(
+			Vector<bool> importFlags = BuiltinResourcesHelper::GenerateImportFlags(
 				texturesJSON,
 				rawTexturesFolder,
 				lastUpdateTime,
 				forceImport);
 
-			BuiltinResourcesHelper::importAssets(
+			BuiltinResourcesHelper::ImportAssets(
 				texturesJSON,
 				importFlags,
 				rawTexturesFolder,
@@ -700,8 +700,8 @@ namespace bs
 			String jsonString = shaderDependenciesJSON.dump(4).c_str();
 
 			dataListStream = FileSystem::CreateAndOpenFile(shaderDependenciesFile);
-			dataListStream->writeString(jsonString);
-			dataListStream->close();
+			dataListStream->WriteString(jsonString);
+			dataListStream->Close();
 		}
 
 		// Import fonts
@@ -725,7 +725,7 @@ namespace bs
 
 				const Path fontSourcePath = sInputFolder + inputName;
 
-				BuiltinResourcesHelper::importFont(fontSourcePath, outputName, sOutputFolder, fontSizes, antialiasing, UUID,
+				BuiltinResourcesHelper::ImportFont(fontSourcePath, outputName, sOutputFolder, fontSizes, antialiasing, UUID,
 					sManifest);
 			}
 		}
@@ -744,8 +744,8 @@ namespace bs
 
 			HResource skinResource = gResources().CreateResourceHandleInternal(skin, UUID);
 
-			gResources().save(skinResource, outputPath, true);
-			sManifest->registerResource(skinResource.GetUuid(), outputPath);
+			gResources().Save(skinResource, outputPath, true);
+			sManifest->RegisterResource(skinResource.GetUuid(), outputPath);
 		}
 
 		// Generate & save splash screen
@@ -757,16 +757,16 @@ namespace bs
 			Path inputPath = sInputFolder + fileName;
 			Path outputPath = sOutputFolder + (fileName + ".asset");
 
-			auto textureIO = gImporter().createImportOptions<TextureImportOptions>(inputPath);
+			auto textureIO = gImporter().CreateImportOptions<TextureImportOptions>(inputPath);
 			textureIO->cpuCached = true;
 			textureIO->generateMips = false;
-			HTexture splashTexture = gImporter().import<Texture>(inputPath, textureIO);
+			HTexture splashTexture = gImporter().Import<Texture>(inputPath, textureIO);
 
-			SPtr<PixelData> splashPixelData = splashTexture->GetProperties().allocBuffer(0, 0);
-			splashTexture->readCachedData(*splashPixelData);
+			SPtr<PixelData> splashPixelData = splashTexture->GetProperties().AllocBuffer(0, 0);
+			splashTexture->ReadCachedData(*splashPixelData);
 
 			FileEncoder fe(outputPath);
-			fe.encode(splashPixelData.get());
+			fe.Encode(splashPixelData.get());
 		}
 	}
 }

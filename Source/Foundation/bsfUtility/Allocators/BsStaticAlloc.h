@@ -213,6 +213,7 @@ namespace bs
 		UINT32 mTotalAllocBytes = 0;
 	};
 
+	//NOLINTBEGIN(readability-identifier-naming)
 	/** Allocator for the standard library that internally uses a static allocator. */
 	template <int BlockSize, class T>
 	class StdStaticAlloc
@@ -239,7 +240,7 @@ namespace bs
 		template<class U> class rebind { public: typedef StdStaticAlloc<BlockSize, U> other; };
 
 		/** Allocate but don't initialize number elements of type T.*/
-		T* Allocate(const size_t num) const
+		T* allocate(const size_t num) const
 		{
 			if (num == 0)
 				return nullptr;
@@ -255,23 +256,24 @@ namespace bs
 		}
 
 		/** Deallocate storage p of deleted elements. */
-		void Deallocate(T* p, size_t num) const noexcept
+		void deallocate(T* p, size_t num) const noexcept
 		{
 			mStaticAlloc->Free((UINT8*)p, (UINT32)num);
 		}
 
 		StaticAlloc<BlockSize, FreeAlloc>* mStaticAlloc = nullptr;
 
-		size_t MaxSize() const { return std::numeric_limits<UINT32>::max() / sizeof(T); }
-		void Construct(pointer p, const_reference t) { new (p) T(t); }
-		void Destroy(pointer p) { p->~T(); }
+		size_t max_size() const { return std::numeric_limits<UINT32>::max() / sizeof(T); }
+		void construct(pointer p, const_reference t) { new (p) T(t); }
+		void destroy(pointer p) { p->~T(); }
 		template<class U, class... Args>
-		void Construct(U* p, Args&&... args) { new(p) U(std::forward<Args>(args)...); }
+		void construct(U* p, Args&&... args) { new(p) U(std::forward<Args>(args)...); }
 
 		template <class T1, int N1, class T2, int N2>
 		friend bool operator== (const StdStaticAlloc<N1, T1>& a, const StdStaticAlloc<N2, T2>& b) throw();
 	
 	};
+	//NOLINTEND(readability-identifier-naming)
 
 	/** Return that all specializations of this allocator are interchangeable. */
 	template <class T1, int N1, class T2, int N2>
