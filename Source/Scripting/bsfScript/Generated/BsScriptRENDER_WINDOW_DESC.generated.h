@@ -38,10 +38,10 @@ namespace bs
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "RenderWindowDesc")
 
-		static MonoObject* box(const __RENDER_WINDOW_DESCInterop& value);
-		static __RENDER_WINDOW_DESCInterop unbox(MonoObject* value);
-		static RENDER_WINDOW_DESC fromInterop(const __RENDER_WINDOW_DESCInterop& value);
-		static __RENDER_WINDOW_DESCInterop toInterop(const RENDER_WINDOW_DESC& value);
+		static MonoObject* Box(const __RENDER_WINDOW_DESCInterop& value);
+		static __RENDER_WINDOW_DESCInterop Unbox(MonoObject* value);
+		static RENDER_WINDOW_DESC FromInterop(const __RENDER_WINDOW_DESCInterop& value);
+		static __RENDER_WINDOW_DESCInterop ToInterop(const RENDER_WINDOW_DESC& value);
 
 	private:
 		ScriptRENDER_WINDOW_DESC(MonoObject* managedInstance);

@@ -20,7 +20,7 @@ namespace bs
 		/// <summary>Creates a new import options object that allows you to customize how are meshes imported.</summary>
 		public ShaderImportOptions()
 		{
-			Internal_create(this);
+			Internal_Create(this);
 		}
 
 		/// <summary>
@@ -31,8 +31,8 @@ namespace bs
 		[NativeWrapper]
 		public ShadingLanguageFlags Languages
 		{
-			get { return Internal_getlanguages(mCachedPtr); }
-			set { Internal_setlanguages(mCachedPtr, value); }
+			get { return Internal_Getlanguages(mCachedPtr); }
+			set { Internal_Setlanguages(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -42,7 +42,7 @@ namespace bs
 		/// <param name="value">Value to assign to the define.</param>
 		public void SetDefine(string define, string value)
 		{
-			Internal_setDefine(mCachedPtr, define, value);
+			Internal_SetDefine(mCachedPtr, define, value);
 		}
 
 		/// <summary>Checks if the define exists and returns its value if it does.</summary>
@@ -51,7 +51,7 @@ namespace bs
 		/// <returns>True if the define was found, false otherwise.</returns>
 		public bool GetDefine(string define, out string value)
 		{
-			return Internal_getDefine(mCachedPtr, define, out value);
+			return Internal_GetDefine(mCachedPtr, define, out value);
 		}
 
 		/// <summary>Checks if the provided define exists.</summary>
@@ -59,30 +59,30 @@ namespace bs
 		/// <returns>True if the define was found, false otherwise.</returns>
 		public bool HasDefine(string define)
 		{
-			return Internal_hasDefine(mCachedPtr, define);
+			return Internal_HasDefine(mCachedPtr, define);
 		}
 
 		/// <summary>Unregisters a previously set define.</summary>
 		/// <param name="define">Name of the define to unregister.</param>
 		public void RemoveDefine(string define)
 		{
-			Internal_removeDefine(mCachedPtr, define);
+			Internal_RemoveDefine(mCachedPtr, define);
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setDefine(IntPtr thisPtr, string define, string value);
+		private static extern void Internal_SetDefine(IntPtr thisPtr, string define, string value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_getDefine(IntPtr thisPtr, string define, out string value);
+		private static extern bool Internal_GetDefine(IntPtr thisPtr, string define, out string value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_hasDefine(IntPtr thisPtr, string define);
+		private static extern bool Internal_HasDefine(IntPtr thisPtr, string define);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_removeDefine(IntPtr thisPtr, string define);
+		private static extern void Internal_RemoveDefine(IntPtr thisPtr, string define);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ShadingLanguageFlags Internal_getlanguages(IntPtr thisPtr);
+		private static extern ShadingLanguageFlags Internal_Getlanguages(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setlanguages(IntPtr thisPtr, ShadingLanguageFlags value);
+		private static extern void Internal_Setlanguages(IntPtr thisPtr, ShadingLanguageFlags value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create(ShaderImportOptions managedInstance);
+		private static extern void Internal_Create(ShaderImportOptions managedInstance);
 	}
 
 	/** @} */

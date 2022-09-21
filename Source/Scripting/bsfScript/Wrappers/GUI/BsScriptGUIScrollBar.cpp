@@ -20,7 +20,7 @@ namespace bs
 
 	}
 
-	void ScriptGUIScrollBar::initRuntimeData()
+	void ScriptGUIScrollBar::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_SetTint", (void*)&ScriptGUIScrollBar::InternalSetTint);
 		metaData.scriptClass->AddInternalCall("Internal_GetPosition", (void*)&ScriptGUIScrollBar::InternalGetPosition);
@@ -67,7 +67,7 @@ namespace bs
 
 	}
 
-	void ScriptGUIScrollBarH::initRuntimeData()
+	void ScriptGUIScrollBarH::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIScrollBarH::InternalCreateInstance);
 
@@ -102,7 +102,7 @@ namespace bs
 
 	}
 
-	void ScriptGUIScrollBarV::initRuntimeData()
+	void ScriptGUIScrollBarV::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIScrollBarV::InternalCreateInstance);
 
@@ -137,7 +137,7 @@ namespace bs
 
 	}
 
-	void ScriptGUIResizeableScrollBarH::initRuntimeData()
+	void ScriptGUIResizeableScrollBarH::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIResizeableScrollBarH::InternalCreateInstance);
 
@@ -172,7 +172,7 @@ namespace bs
 
 	}
 
-	void ScriptGUIResizeableScrollBarV::initRuntimeData()
+	void ScriptGUIResizeableScrollBarV::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIResizeableScrollBarV::InternalCreateInstance);
 

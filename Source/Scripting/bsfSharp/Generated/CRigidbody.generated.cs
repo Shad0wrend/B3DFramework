@@ -24,131 +24,100 @@ namespace bs
 		private Rigidbody(bool __dummy0) { }
 		protected Rigidbody() { }
 
-		/// <summary>
-		/// Determines the mass of the object and all of its collider shapes. Only relevant if RigidbodyFlag::AutoMass or 
-		/// RigidbodyFlag::AutoTensors is turned off. Value of zero means the object is immovable (but can be rotated).
-		/// </summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public float Mass
 		{
-			get { return Internal_getMass(mCachedPtr); }
-			set { Internal_setMass(mCachedPtr, value); }
+			get { return Internal_GetMass(mCachedPtr); }
+			set { Internal_SetMass(mCachedPtr, value); }
 		}
 
-		/// <summary>
-		/// Determines if the body is kinematic. Kinematic body will not move in response to external forces (for example 
-		/// gravity, or another object pushing it), essentially behaving like collider. Unlike a collider though, you can still 
-		/// move the object and have other dynamic objects respond correctly (meaning it will push other objects).
-		/// </summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public bool IsKinematic
 		{
-			get { return Internal_getIsKinematic(mCachedPtr); }
-			set { Internal_setIsKinematic(mCachedPtr, value); }
+			get { return Internal_GetIsKinematic(mCachedPtr); }
+			set { Internal_SetIsKinematic(mCachedPtr, value); }
 		}
 
-		/// <summary>
-		/// Checks if the body is sleeping. Objects that aren&apos;t moved/rotated for a while are put to sleep to reduce load on 
-		/// the physics system.
-		/// </summary>
 		[NativeWrapper]
 		public bool IsSleeping
 		{
-			get { return Internal_isSleeping(mCachedPtr); }
+			get { return Internal_IsSleeping(mCachedPtr); }
 		}
 
-		/// <summary>
-		/// Determines a threshold of force and torque under which the object will be considered to be put to sleep.
-		/// </summary>
 		[NativeWrapper]
 		public float SleepThreshold
 		{
-			get { return Internal_getSleepThreshold(mCachedPtr); }
-			set { Internal_setSleepThreshold(mCachedPtr, value); }
+			get { return Internal_GetSleepThreshold(mCachedPtr); }
+			set { Internal_SetSleepThreshold(mCachedPtr, value); }
 		}
 
-		/// <summary>Determines whether or not the rigidbody will have the global gravity force applied to it.</summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public bool UseGravity
 		{
-			get { return Internal_getUseGravity(mCachedPtr); }
-			set { Internal_setUseGravity(mCachedPtr, value); }
+			get { return Internal_GetUseGravity(mCachedPtr); }
+			set { Internal_SetUseGravity(mCachedPtr, value); }
 		}
 
-		/// <summary>Determines the linear velocity of the body.</summary>
 		[NativeWrapper]
 		public Vector3 Velocity
 		{
 			get
 			{
 				Vector3 temp;
-				Internal_getVelocity(mCachedPtr, out temp);
+				Internal_GetVelocity(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setVelocity(mCachedPtr, ref value); }
+			set { Internal_SetVelocity(mCachedPtr, ref value); }
 		}
 
-		/// <summary>Determines the angular velocity of the body.</summary>
 		[NativeWrapper]
 		public Vector3 AngularVelocity
 		{
 			get
 			{
 				Vector3 temp;
-				Internal_getAngularVelocity(mCachedPtr, out temp);
+				Internal_GetAngularVelocity(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setAngularVelocity(mCachedPtr, ref value); }
+			set { Internal_SetAngularVelocity(mCachedPtr, ref value); }
 		}
 
-		/// <summary>
-		/// Determines the linear drag of the body. Higher drag values means the object resists linear movement more.
-		/// </summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public float Drag
 		{
-			get { return Internal_getDrag(mCachedPtr); }
-			set { Internal_setDrag(mCachedPtr, value); }
+			get { return Internal_GetDrag(mCachedPtr); }
+			set { Internal_SetDrag(mCachedPtr, value); }
 		}
 
-		/// <summary>
-		/// Determines the angular drag of the body. Higher drag values means the object resists angular movement more.
-		/// </summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public float AngularDrag
 		{
-			get { return Internal_getAngularDrag(mCachedPtr); }
-			set { Internal_setAngularDrag(mCachedPtr, value); }
+			get { return Internal_GetAngularDrag(mCachedPtr); }
+			set { Internal_SetAngularDrag(mCachedPtr, value); }
 		}
 
-		/// <summary>
-		/// Determines the inertia tensor in local mass space. Inertia tensor determines how difficult is to rotate the object. 
-		/// Values of zero in the inertia tensor mean the object will be unable to rotate around a specific axis. Only relevant 
-		/// if RigidbodyFlag::AutoTensors is turned off.
-		/// </summary>
 		[NativeWrapper]
 		public Vector3 InertiaTensor
 		{
 			get
 			{
 				Vector3 temp;
-				Internal_getInertiaTensor(mCachedPtr, out temp);
+				Internal_GetInertiaTensor(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setInertiaTensor(mCachedPtr, ref value); }
+			set { Internal_SetInertiaTensor(mCachedPtr, ref value); }
 		}
 
-		/// <summary>Determines the maximum angular velocity of the rigidbody. Velocity will be clamped to this value.</summary>
 		[NativeWrapper]
 		public float MaxAngularVelocity
 		{
-			get { return Internal_getMaxAngularVelocity(mCachedPtr); }
-			set { Internal_setMaxAngularVelocity(mCachedPtr, value); }
+			get { return Internal_GetMaxAngularVelocity(mCachedPtr); }
+			set { Internal_SetMaxAngularVelocity(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -160,10 +129,10 @@ namespace bs
 			get
 			{
 				Vector3 temp;
-				Internal_getCenterOfMassPosition(mCachedPtr, out temp);
+				Internal_GetCenterOfMassPosition(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setCenterOfMassPosition(mCachedPtr, ref value); }
+			set { Internal_SetCenterOfMassPosition(mCachedPtr, ref value); }
 		}
 
 		/// <summary>
@@ -175,32 +144,24 @@ namespace bs
 			get
 			{
 				Quaternion temp;
-				Internal_getCenterOfMassRotation(mCachedPtr, out temp);
+				Internal_GetCenterOfMassRotation(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setCenterOfMassRotation(mCachedPtr, ref value); }
+			set { Internal_SetCenterOfMassRotation(mCachedPtr, ref value); }
 		}
 
-		/// <summary>
-		/// Determines the number of iterations to use when solving for position. Higher values can improve precision and 
-		/// numerical stability of the simulation.
-		/// </summary>
 		[NativeWrapper]
 		public int PositionSolverCount
 		{
-			get { return Internal_getPositionSolverCount(mCachedPtr); }
-			set { Internal_setPositionSolverCount(mCachedPtr, value); }
+			get { return Internal_GetPositionSolverCount(mCachedPtr); }
+			set { Internal_SetPositionSolverCount(mCachedPtr, value); }
 		}
 
-		/// <summary>
-		/// Determines the number of iterations to use when solving for velocity. Higher values can improve precision and 
-		/// numerical stability of the simulation.
-		/// </summary>
 		[NativeWrapper]
 		public int VelocitySolverCount
 		{
-			get { return Internal_getVelocitySolverCount(mCachedPtr); }
-			set { Internal_setVelocitySolverCount(mCachedPtr, value); }
+			get { return Internal_GetVelocitySolverCount(mCachedPtr); }
+			set { Internal_SetVelocitySolverCount(mCachedPtr, value); }
 		}
 
 		/// <summary>Sets a value that determines which (if any) collision events are reported.</summary>
@@ -208,16 +169,15 @@ namespace bs
 		[NativeWrapper]
 		public CollisionReportMode CollisionReportMode
 		{
-			get { return Internal_getCollisionReportMode(mCachedPtr); }
-			set { Internal_setCollisionReportMode(mCachedPtr, value); }
+			get { return Internal_GetCollisionReportMode(mCachedPtr); }
+			set { Internal_SetCollisionReportMode(mCachedPtr, value); }
 		}
 
-		/// <summary>Flags that control the behaviour of the rigidbody.</summary>
 		[NativeWrapper]
 		public RigidbodyFlag Flags
 		{
-			get { return Internal_getFlags(mCachedPtr); }
-			set { Internal_setFlags(mCachedPtr, value); }
+			get { return Internal_GetFlags(mCachedPtr); }
+			set { Internal_SetFlags(mCachedPtr, value); }
 		}
 
 		/// <summary>Triggered when one of the colliders owned by the rigidbody starts colliding with another object.</summary>
@@ -229,162 +189,130 @@ namespace bs
 		/// <summary>Triggered when one of the colliders owned by the rigidbody stops colliding with another object.</summary>
 		public event Action<CollisionData> OnCollisionEnd;
 
-		/// <summary>
-		/// Moves the rigidbody to a specific position. This method will ensure physically correct movement, meaning the body 
-		/// will collide with other objects along the way.
-		/// </summary>
 		public void Move(Vector3 position)
 		{
-			Internal_move(mCachedPtr, ref position);
+			Internal_Move(mCachedPtr, ref position);
 		}
 
-		/// <summary>
-		/// Rotates the rigidbody. This method will ensure physically correct rotation, meaning the body will collide with other 
-		/// objects along the way.
-		/// </summary>
 		public void Rotate(Quaternion rotation)
 		{
-			Internal_rotate(mCachedPtr, ref rotation);
+			Internal_Rotate(mCachedPtr, ref rotation);
 		}
 
-		/// <summary>
-		/// Forces the object to sleep. Useful if you know the object will not move in any significant way for a while.
-		/// </summary>
 		public void Sleep()
 		{
-			Internal_sleep(mCachedPtr);
+			Internal_Sleep(mCachedPtr);
 		}
 
-		/// <summary>
-		/// Wakes an object up. Useful if you modified properties of this object, and potentially surrounding objects which might 
-		/// result in the object being moved by physics (although the physics system will automatically wake the object up for 
-		/// majority of such cases).
-		/// </summary>
 		public void WakeUp()
 		{
-			Internal_wakeUp(mCachedPtr);
+			Internal_WakeUp(mCachedPtr);
 		}
 
-		/// <summary>Applies a force to the center of the mass of the rigidbody. This will produce linear momentum.</summary>
-		/// <param name="force">Force to apply.</param>
-		/// <param name="mode">Determines what is the type of <paramref name="force"/>.</param>
 		public void AddForce(Vector3 force, ForceMode mode = ForceMode.Force)
 		{
-			Internal_addForce(mCachedPtr, ref force, mode);
+			Internal_AddForce(mCachedPtr, ref force, mode);
 		}
 
-		/// <summary>Applies a torque to the rigidbody. This will produce angular momentum.</summary>
-		/// <param name="torque">Torque to apply.</param>
-		/// <param name="mode">Determines what is the type of <paramref name="torque"/>.</param>
 		public void AddTorque(Vector3 torque, ForceMode mode = ForceMode.Force)
 		{
-			Internal_addTorque(mCachedPtr, ref torque, mode);
+			Internal_AddTorque(mCachedPtr, ref torque, mode);
 		}
 
-		/// <summary>
-		/// Applies a force to a specific point on the rigidbody. This will in most cases produce both linear and angular 
-		/// momentum.
-		/// </summary>
-		/// <param name="force">Force to apply.</param>
-		/// <param name="position">World position to apply the force at.</param>
-		/// <param name="mode">Determines what is the type of <paramref name="force"/>.</param>
 		public void AddForceAtPoint(Vector3 force, Vector3 position, PointForceMode mode = PointForceMode.Force)
 		{
-			Internal_addForceAtPoint(mCachedPtr, ref force, ref position, mode);
+			Internal_AddForceAtPoint(mCachedPtr, ref force, ref position, mode);
 		}
 
-		/// <summary>Returns the total (linear + angular) velocity at a specific point.</summary>
-		/// <param name="point">Point in world space.</param>
-		/// <returns>Total velocity of the point.</returns>
 		public Vector3 GetVelocityAtPoint(Vector3 point)
 		{
 			Vector3 temp;
-			Internal_getVelocityAtPoint(mCachedPtr, ref point, out temp);
+			Internal_GetVelocityAtPoint(mCachedPtr, ref point, out temp);
 			return temp;
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_move(IntPtr thisPtr, ref Vector3 position);
+		private static extern void Internal_Move(IntPtr thisPtr, ref Vector3 position);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_rotate(IntPtr thisPtr, ref Quaternion rotation);
+		private static extern void Internal_Rotate(IntPtr thisPtr, ref Quaternion rotation);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setMass(IntPtr thisPtr, float mass);
+		private static extern void Internal_SetMass(IntPtr thisPtr, float mass);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getMass(IntPtr thisPtr);
+		private static extern float Internal_GetMass(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setIsKinematic(IntPtr thisPtr, bool kinematic);
+		private static extern void Internal_SetIsKinematic(IntPtr thisPtr, bool kinematic);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_getIsKinematic(IntPtr thisPtr);
+		private static extern bool Internal_GetIsKinematic(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_isSleeping(IntPtr thisPtr);
+		private static extern bool Internal_IsSleeping(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_sleep(IntPtr thisPtr);
+		private static extern void Internal_Sleep(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_wakeUp(IntPtr thisPtr);
+		private static extern void Internal_WakeUp(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setSleepThreshold(IntPtr thisPtr, float threshold);
+		private static extern void Internal_SetSleepThreshold(IntPtr thisPtr, float threshold);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getSleepThreshold(IntPtr thisPtr);
+		private static extern float Internal_GetSleepThreshold(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setUseGravity(IntPtr thisPtr, bool gravity);
+		private static extern void Internal_SetUseGravity(IntPtr thisPtr, bool gravity);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_getUseGravity(IntPtr thisPtr);
+		private static extern bool Internal_GetUseGravity(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setVelocity(IntPtr thisPtr, ref Vector3 velocity);
+		private static extern void Internal_SetVelocity(IntPtr thisPtr, ref Vector3 velocity);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getVelocity(IntPtr thisPtr, out Vector3 __output);
+		private static extern void Internal_GetVelocity(IntPtr thisPtr, out Vector3 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setAngularVelocity(IntPtr thisPtr, ref Vector3 velocity);
+		private static extern void Internal_SetAngularVelocity(IntPtr thisPtr, ref Vector3 velocity);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getAngularVelocity(IntPtr thisPtr, out Vector3 __output);
+		private static extern void Internal_GetAngularVelocity(IntPtr thisPtr, out Vector3 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setDrag(IntPtr thisPtr, float drag);
+		private static extern void Internal_SetDrag(IntPtr thisPtr, float drag);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getDrag(IntPtr thisPtr);
+		private static extern float Internal_GetDrag(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setAngularDrag(IntPtr thisPtr, float drag);
+		private static extern void Internal_SetAngularDrag(IntPtr thisPtr, float drag);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getAngularDrag(IntPtr thisPtr);
+		private static extern float Internal_GetAngularDrag(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setInertiaTensor(IntPtr thisPtr, ref Vector3 tensor);
+		private static extern void Internal_SetInertiaTensor(IntPtr thisPtr, ref Vector3 tensor);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getInertiaTensor(IntPtr thisPtr, out Vector3 __output);
+		private static extern void Internal_GetInertiaTensor(IntPtr thisPtr, out Vector3 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setMaxAngularVelocity(IntPtr thisPtr, float maxVelocity);
+		private static extern void Internal_SetMaxAngularVelocity(IntPtr thisPtr, float maxVelocity);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getMaxAngularVelocity(IntPtr thisPtr);
+		private static extern float Internal_GetMaxAngularVelocity(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setCenterOfMassPosition(IntPtr thisPtr, ref Vector3 position);
+		private static extern void Internal_SetCenterOfMassPosition(IntPtr thisPtr, ref Vector3 position);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getCenterOfMassPosition(IntPtr thisPtr, out Vector3 __output);
+		private static extern void Internal_GetCenterOfMassPosition(IntPtr thisPtr, out Vector3 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setCenterOfMassRotation(IntPtr thisPtr, ref Quaternion rotation);
+		private static extern void Internal_SetCenterOfMassRotation(IntPtr thisPtr, ref Quaternion rotation);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getCenterOfMassRotation(IntPtr thisPtr, out Quaternion __output);
+		private static extern void Internal_GetCenterOfMassRotation(IntPtr thisPtr, out Quaternion __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setPositionSolverCount(IntPtr thisPtr, int count);
+		private static extern void Internal_SetPositionSolverCount(IntPtr thisPtr, int count);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getPositionSolverCount(IntPtr thisPtr);
+		private static extern int Internal_GetPositionSolverCount(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setVelocitySolverCount(IntPtr thisPtr, int count);
+		private static extern void Internal_SetVelocitySolverCount(IntPtr thisPtr, int count);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getVelocitySolverCount(IntPtr thisPtr);
+		private static extern int Internal_GetVelocitySolverCount(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setCollisionReportMode(IntPtr thisPtr, CollisionReportMode mode);
+		private static extern void Internal_SetCollisionReportMode(IntPtr thisPtr, CollisionReportMode mode);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern CollisionReportMode Internal_getCollisionReportMode(IntPtr thisPtr);
+		private static extern CollisionReportMode Internal_GetCollisionReportMode(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setFlags(IntPtr thisPtr, RigidbodyFlag flags);
+		private static extern void Internal_SetFlags(IntPtr thisPtr, RigidbodyFlag flags);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern RigidbodyFlag Internal_getFlags(IntPtr thisPtr);
+		private static extern RigidbodyFlag Internal_GetFlags(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_addForce(IntPtr thisPtr, ref Vector3 force, ForceMode mode);
+		private static extern void Internal_AddForce(IntPtr thisPtr, ref Vector3 force, ForceMode mode);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_addTorque(IntPtr thisPtr, ref Vector3 torque, ForceMode mode);
+		private static extern void Internal_AddTorque(IntPtr thisPtr, ref Vector3 torque, ForceMode mode);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_addForceAtPoint(IntPtr thisPtr, ref Vector3 force, ref Vector3 position, PointForceMode mode);
+		private static extern void Internal_AddForceAtPoint(IntPtr thisPtr, ref Vector3 force, ref Vector3 position, PointForceMode mode);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getVelocityAtPoint(IntPtr thisPtr, ref Vector3 point, out Vector3 __output);
+		private static extern void Internal_GetVelocityAtPoint(IntPtr thisPtr, ref Vector3 point, out Vector3 __output);
 		private void Internal_onCollisionBegin(ref CollisionData p0)
 		{
 			OnCollisionBegin?.Invoke(p0);

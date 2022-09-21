@@ -19,25 +19,25 @@ namespace bs
 	{
 	}
 
-	void ScriptSpriteTexture::initRuntimeData()
+	void ScriptSpriteTexture::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptSpriteTexture::InternalGetRef);
-		metaData.scriptClass->AddInternalCall("Internal_setTexture", (void*)&ScriptSpriteTexture::InternalSetTexture);
-		metaData.scriptClass->AddInternalCall("Internal_getTexture", (void*)&ScriptSpriteTexture::InternalGetTexture);
-		metaData.scriptClass->AddInternalCall("Internal_getWidth", (void*)&ScriptSpriteTexture::InternalGetWidth);
-		metaData.scriptClass->AddInternalCall("Internal_getHeight", (void*)&ScriptSpriteTexture::InternalGetHeight);
-		metaData.scriptClass->AddInternalCall("Internal_getFrameWidth", (void*)&ScriptSpriteTexture::InternalGetFrameWidth);
-		metaData.scriptClass->AddInternalCall("Internal_getFrameHeight", (void*)&ScriptSpriteTexture::InternalGetFrameHeight);
-		metaData.scriptClass->AddInternalCall("Internal_setOffset", (void*)&ScriptSpriteTexture::InternalSetOffset);
-		metaData.scriptClass->AddInternalCall("Internal_getOffset", (void*)&ScriptSpriteTexture::InternalGetOffset);
-		metaData.scriptClass->AddInternalCall("Internal_setScale", (void*)&ScriptSpriteTexture::InternalSetScale);
-		metaData.scriptClass->AddInternalCall("Internal_getScale", (void*)&ScriptSpriteTexture::InternalGetScale);
-		metaData.scriptClass->AddInternalCall("Internal_setAnimation", (void*)&ScriptSpriteTexture::InternalSetAnimation);
-		metaData.scriptClass->AddInternalCall("Internal_getAnimation", (void*)&ScriptSpriteTexture::InternalGetAnimation);
-		metaData.scriptClass->AddInternalCall("Internal_setAnimationPlayback", (void*)&ScriptSpriteTexture::InternalSetAnimationPlayback);
-		metaData.scriptClass->AddInternalCall("Internal_getAnimationPlayback", (void*)&ScriptSpriteTexture::InternalGetAnimationPlayback);
-		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptSpriteTexture::InternalCreate);
-		metaData.scriptClass->AddInternalCall("Internal_create0", (void*)&ScriptSpriteTexture::InternalCreate0);
+		metaData.scriptClass->AddInternalCall("Internal_SetTexture", (void*)&ScriptSpriteTexture::InternalSetTexture);
+		metaData.scriptClass->AddInternalCall("Internal_GetTexture", (void*)&ScriptSpriteTexture::InternalGetTexture);
+		metaData.scriptClass->AddInternalCall("Internal_GetWidth", (void*)&ScriptSpriteTexture::InternalGetWidth);
+		metaData.scriptClass->AddInternalCall("Internal_GetHeight", (void*)&ScriptSpriteTexture::InternalGetHeight);
+		metaData.scriptClass->AddInternalCall("Internal_GetFrameWidth", (void*)&ScriptSpriteTexture::InternalGetFrameWidth);
+		metaData.scriptClass->AddInternalCall("Internal_GetFrameHeight", (void*)&ScriptSpriteTexture::InternalGetFrameHeight);
+		metaData.scriptClass->AddInternalCall("Internal_SetOffset", (void*)&ScriptSpriteTexture::InternalSetOffset);
+		metaData.scriptClass->AddInternalCall("Internal_GetOffset", (void*)&ScriptSpriteTexture::InternalGetOffset);
+		metaData.scriptClass->AddInternalCall("Internal_SetScale", (void*)&ScriptSpriteTexture::InternalSetScale);
+		metaData.scriptClass->AddInternalCall("Internal_GetScale", (void*)&ScriptSpriteTexture::InternalGetScale);
+		metaData.scriptClass->AddInternalCall("Internal_SetAnimation", (void*)&ScriptSpriteTexture::InternalSetAnimation);
+		metaData.scriptClass->AddInternalCall("Internal_GetAnimation", (void*)&ScriptSpriteTexture::InternalGetAnimation);
+		metaData.scriptClass->AddInternalCall("Internal_SetAnimationPlayback", (void*)&ScriptSpriteTexture::InternalSetAnimationPlayback);
+		metaData.scriptClass->AddInternalCall("Internal_GetAnimationPlayback", (void*)&ScriptSpriteTexture::InternalGetAnimationPlayback);
+		metaData.scriptClass->AddInternalCall("Internal_Create", (void*)&ScriptSpriteTexture::InternalCreate);
+		metaData.scriptClass->AddInternalCall("Internal_Create0", (void*)&ScriptSpriteTexture::InternalCreate0);
 
 	}
 
@@ -46,7 +46,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		return metaData.scriptClass->createInstance("bool", ctorParams);
+		return metaData.scriptClass->CreateInstance("bool", ctorParams);
 	}
 	MonoObject* ScriptSpriteTexture::InternalGetRef(ScriptSpriteTexture* thisPtr)
 	{
@@ -57,7 +57,7 @@ namespace bs
 	{
 		ResourceHandle<Texture> tmptexture;
 		ScriptRRefBase* scripttexture;
-		scripttexture = ScriptRRefBase::toNative(texture);
+		scripttexture = ScriptRRefBase::ToNative(texture);
 		if(scripttexture != nullptr)
 			tmptexture = static_resource_cast<Texture>(scripttexture->GetHandle());
 		thisPtr->GetHandle()->SetTexture(tmptexture);
@@ -70,7 +70,7 @@ namespace bs
 
 		MonoObject* __output;
 		ScriptRRefBase* script__output;
-		script__output = ScriptResourceManager::Instance().getScriptRRef(tmp__output);
+		script__output = ScriptResourceManager::Instance().GetScriptRRef(tmp__output);
 		if(script__output != nullptr)
 			__output = script__output->GetManagedInstance();
 		else
@@ -182,21 +182,21 @@ namespace bs
 	{
 		ResourceHandle<Texture> tmptexture;
 		ScriptRRefBase* scripttexture;
-		scripttexture = ScriptRRefBase::toNative(texture);
+		scripttexture = ScriptRRefBase::ToNative(texture);
 		if(scripttexture != nullptr)
 			tmptexture = static_resource_cast<Texture>(scripttexture->GetHandle());
 		ResourceHandle<SpriteTexture> instance = SpriteTexture::Create(tmptexture);
-		ScriptResourceManager::Instance().createBuiltinScriptResource(instance, managedInstance);
+		ScriptResourceManager::Instance().CreateBuiltinScriptResource(instance, managedInstance);
 	}
 
 	void ScriptSpriteTexture::InternalCreate0(MonoObject* managedInstance, Vector2* uvOffset, Vector2* uvScale, MonoObject* texture)
 	{
 		ResourceHandle<Texture> tmptexture;
 		ScriptRRefBase* scripttexture;
-		scripttexture = ScriptRRefBase::toNative(texture);
+		scripttexture = ScriptRRefBase::ToNative(texture);
 		if(scripttexture != nullptr)
 			tmptexture = static_resource_cast<Texture>(scripttexture->GetHandle());
 		ResourceHandle<SpriteTexture> instance = SpriteTexture::Create(*uvOffset, *uvScale, tmptexture);
-		ScriptResourceManager::Instance().createBuiltinScriptResource(instance, managedInstance);
+		ScriptResourceManager::Instance().CreateBuiltinScriptResource(instance, managedInstance);
 	}
 }

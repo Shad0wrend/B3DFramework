@@ -12,39 +12,39 @@ namespace bs
 	{
 	}
 
-	void ScriptScreenSpaceLensFlareSettings::initRuntimeData()
+	void ScriptScreenSpaceLensFlareSettings::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_ScreenSpaceLensFlareSettings", (void*)&ScriptScreenSpaceLensFlareSettings::InternalScreenSpaceLensFlareSettings);
-		metaData.scriptClass->AddInternalCall("Internal_getenabled", (void*)&ScriptScreenSpaceLensFlareSettings::InternalGetenabled);
-		metaData.scriptClass->AddInternalCall("Internal_setenabled", (void*)&ScriptScreenSpaceLensFlareSettings::InternalSetenabled);
-		metaData.scriptClass->AddInternalCall("Internal_getdownsampleCount", (void*)&ScriptScreenSpaceLensFlareSettings::InternalGetdownsampleCount);
-		metaData.scriptClass->AddInternalCall("Internal_setdownsampleCount", (void*)&ScriptScreenSpaceLensFlareSettings::InternalSetdownsampleCount);
-		metaData.scriptClass->AddInternalCall("Internal_getthreshold", (void*)&ScriptScreenSpaceLensFlareSettings::InternalGetthreshold);
-		metaData.scriptClass->AddInternalCall("Internal_setthreshold", (void*)&ScriptScreenSpaceLensFlareSettings::InternalSetthreshold);
-		metaData.scriptClass->AddInternalCall("Internal_getghostCount", (void*)&ScriptScreenSpaceLensFlareSettings::InternalGetghostCount);
-		metaData.scriptClass->AddInternalCall("Internal_setghostCount", (void*)&ScriptScreenSpaceLensFlareSettings::InternalSetghostCount);
-		metaData.scriptClass->AddInternalCall("Internal_getghostSpacing", (void*)&ScriptScreenSpaceLensFlareSettings::InternalGetghostSpacing);
-		metaData.scriptClass->AddInternalCall("Internal_setghostSpacing", (void*)&ScriptScreenSpaceLensFlareSettings::InternalSetghostSpacing);
-		metaData.scriptClass->AddInternalCall("Internal_getbrightness", (void*)&ScriptScreenSpaceLensFlareSettings::InternalGetbrightness);
-		metaData.scriptClass->AddInternalCall("Internal_setbrightness", (void*)&ScriptScreenSpaceLensFlareSettings::InternalSetbrightness);
-		metaData.scriptClass->AddInternalCall("Internal_getfilterSize", (void*)&ScriptScreenSpaceLensFlareSettings::InternalGetfilterSize);
-		metaData.scriptClass->AddInternalCall("Internal_setfilterSize", (void*)&ScriptScreenSpaceLensFlareSettings::InternalSetfilterSize);
-		metaData.scriptClass->AddInternalCall("Internal_gethalo", (void*)&ScriptScreenSpaceLensFlareSettings::InternalGethalo);
-		metaData.scriptClass->AddInternalCall("Internal_sethalo", (void*)&ScriptScreenSpaceLensFlareSettings::InternalSethalo);
-		metaData.scriptClass->AddInternalCall("Internal_gethaloRadius", (void*)&ScriptScreenSpaceLensFlareSettings::InternalGethaloRadius);
-		metaData.scriptClass->AddInternalCall("Internal_sethaloRadius", (void*)&ScriptScreenSpaceLensFlareSettings::InternalSethaloRadius);
-		metaData.scriptClass->AddInternalCall("Internal_gethaloThickness", (void*)&ScriptScreenSpaceLensFlareSettings::InternalGethaloThickness);
-		metaData.scriptClass->AddInternalCall("Internal_sethaloThickness", (void*)&ScriptScreenSpaceLensFlareSettings::InternalSethaloThickness);
-		metaData.scriptClass->AddInternalCall("Internal_gethaloThreshold", (void*)&ScriptScreenSpaceLensFlareSettings::InternalGethaloThreshold);
-		metaData.scriptClass->AddInternalCall("Internal_sethaloThreshold", (void*)&ScriptScreenSpaceLensFlareSettings::InternalSethaloThreshold);
-		metaData.scriptClass->AddInternalCall("Internal_gethaloAspectRatio", (void*)&ScriptScreenSpaceLensFlareSettings::InternalGethaloAspectRatio);
-		metaData.scriptClass->AddInternalCall("Internal_sethaloAspectRatio", (void*)&ScriptScreenSpaceLensFlareSettings::InternalSethaloAspectRatio);
-		metaData.scriptClass->AddInternalCall("Internal_getchromaticAberration", (void*)&ScriptScreenSpaceLensFlareSettings::InternalGetchromaticAberration);
-		metaData.scriptClass->AddInternalCall("Internal_setchromaticAberration", (void*)&ScriptScreenSpaceLensFlareSettings::InternalSetchromaticAberration);
-		metaData.scriptClass->AddInternalCall("Internal_getchromaticAberrationOffset", (void*)&ScriptScreenSpaceLensFlareSettings::InternalGetchromaticAberrationOffset);
-		metaData.scriptClass->AddInternalCall("Internal_setchromaticAberrationOffset", (void*)&ScriptScreenSpaceLensFlareSettings::InternalSetchromaticAberrationOffset);
-		metaData.scriptClass->AddInternalCall("Internal_getbicubicUpsampling", (void*)&ScriptScreenSpaceLensFlareSettings::InternalGetbicubicUpsampling);
-		metaData.scriptClass->AddInternalCall("Internal_setbicubicUpsampling", (void*)&ScriptScreenSpaceLensFlareSettings::InternalSetbicubicUpsampling);
+		metaData.scriptClass->AddInternalCall("Internal_Getenabled", (void*)&ScriptScreenSpaceLensFlareSettings::InternalGetenabled);
+		metaData.scriptClass->AddInternalCall("Internal_Setenabled", (void*)&ScriptScreenSpaceLensFlareSettings::InternalSetenabled);
+		metaData.scriptClass->AddInternalCall("Internal_GetdownsampleCount", (void*)&ScriptScreenSpaceLensFlareSettings::InternalGetdownsampleCount);
+		metaData.scriptClass->AddInternalCall("Internal_SetdownsampleCount", (void*)&ScriptScreenSpaceLensFlareSettings::InternalSetdownsampleCount);
+		metaData.scriptClass->AddInternalCall("Internal_Getthreshold", (void*)&ScriptScreenSpaceLensFlareSettings::InternalGetthreshold);
+		metaData.scriptClass->AddInternalCall("Internal_Setthreshold", (void*)&ScriptScreenSpaceLensFlareSettings::InternalSetthreshold);
+		metaData.scriptClass->AddInternalCall("Internal_GetghostCount", (void*)&ScriptScreenSpaceLensFlareSettings::InternalGetghostCount);
+		metaData.scriptClass->AddInternalCall("Internal_SetghostCount", (void*)&ScriptScreenSpaceLensFlareSettings::InternalSetghostCount);
+		metaData.scriptClass->AddInternalCall("Internal_GetghostSpacing", (void*)&ScriptScreenSpaceLensFlareSettings::InternalGetghostSpacing);
+		metaData.scriptClass->AddInternalCall("Internal_SetghostSpacing", (void*)&ScriptScreenSpaceLensFlareSettings::InternalSetghostSpacing);
+		metaData.scriptClass->AddInternalCall("Internal_Getbrightness", (void*)&ScriptScreenSpaceLensFlareSettings::InternalGetbrightness);
+		metaData.scriptClass->AddInternalCall("Internal_Setbrightness", (void*)&ScriptScreenSpaceLensFlareSettings::InternalSetbrightness);
+		metaData.scriptClass->AddInternalCall("Internal_GetfilterSize", (void*)&ScriptScreenSpaceLensFlareSettings::InternalGetfilterSize);
+		metaData.scriptClass->AddInternalCall("Internal_SetfilterSize", (void*)&ScriptScreenSpaceLensFlareSettings::InternalSetfilterSize);
+		metaData.scriptClass->AddInternalCall("Internal_Gethalo", (void*)&ScriptScreenSpaceLensFlareSettings::InternalGethalo);
+		metaData.scriptClass->AddInternalCall("Internal_Sethalo", (void*)&ScriptScreenSpaceLensFlareSettings::InternalSethalo);
+		metaData.scriptClass->AddInternalCall("Internal_GethaloRadius", (void*)&ScriptScreenSpaceLensFlareSettings::InternalGethaloRadius);
+		metaData.scriptClass->AddInternalCall("Internal_SethaloRadius", (void*)&ScriptScreenSpaceLensFlareSettings::InternalSethaloRadius);
+		metaData.scriptClass->AddInternalCall("Internal_GethaloThickness", (void*)&ScriptScreenSpaceLensFlareSettings::InternalGethaloThickness);
+		metaData.scriptClass->AddInternalCall("Internal_SethaloThickness", (void*)&ScriptScreenSpaceLensFlareSettings::InternalSethaloThickness);
+		metaData.scriptClass->AddInternalCall("Internal_GethaloThreshold", (void*)&ScriptScreenSpaceLensFlareSettings::InternalGethaloThreshold);
+		metaData.scriptClass->AddInternalCall("Internal_SethaloThreshold", (void*)&ScriptScreenSpaceLensFlareSettings::InternalSethaloThreshold);
+		metaData.scriptClass->AddInternalCall("Internal_GethaloAspectRatio", (void*)&ScriptScreenSpaceLensFlareSettings::InternalGethaloAspectRatio);
+		metaData.scriptClass->AddInternalCall("Internal_SethaloAspectRatio", (void*)&ScriptScreenSpaceLensFlareSettings::InternalSethaloAspectRatio);
+		metaData.scriptClass->AddInternalCall("Internal_GetchromaticAberration", (void*)&ScriptScreenSpaceLensFlareSettings::InternalGetchromaticAberration);
+		metaData.scriptClass->AddInternalCall("Internal_SetchromaticAberration", (void*)&ScriptScreenSpaceLensFlareSettings::InternalSetchromaticAberration);
+		metaData.scriptClass->AddInternalCall("Internal_GetchromaticAberrationOffset", (void*)&ScriptScreenSpaceLensFlareSettings::InternalGetchromaticAberrationOffset);
+		metaData.scriptClass->AddInternalCall("Internal_SetchromaticAberrationOffset", (void*)&ScriptScreenSpaceLensFlareSettings::InternalSetchromaticAberrationOffset);
+		metaData.scriptClass->AddInternalCall("Internal_GetbicubicUpsampling", (void*)&ScriptScreenSpaceLensFlareSettings::InternalGetbicubicUpsampling);
+		metaData.scriptClass->AddInternalCall("Internal_SetbicubicUpsampling", (void*)&ScriptScreenSpaceLensFlareSettings::InternalSetbicubicUpsampling);
 
 	}
 
@@ -55,7 +55,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptScreenSpaceLensFlareSettings>()) ScriptScreenSpaceLensFlareSettings(managedInstance, value);
 		return managedInstance;
 	}

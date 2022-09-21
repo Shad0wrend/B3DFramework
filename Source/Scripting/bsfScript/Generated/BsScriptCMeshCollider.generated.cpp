@@ -16,10 +16,10 @@ namespace bs
 	{
 	}
 
-	void ScriptCMeshCollider::initRuntimeData()
+	void ScriptCMeshCollider::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_setMesh", (void*)&ScriptCMeshCollider::InternalSetMesh);
-		metaData.scriptClass->AddInternalCall("Internal_getMesh", (void*)&ScriptCMeshCollider::InternalGetMesh);
+		metaData.scriptClass->AddInternalCall("Internal_SetMesh", (void*)&ScriptCMeshCollider::InternalSetMesh);
+		metaData.scriptClass->AddInternalCall("Internal_GetMesh", (void*)&ScriptCMeshCollider::InternalGetMesh);
 
 	}
 
@@ -40,7 +40,7 @@ namespace bs
 
 		MonoObject* __output;
 		ScriptRRefBase* script__output;
-		script__output = ScriptResourceManager::Instance().getScriptRRef(tmp__output);
+		script__output = ScriptResourceManager::Instance().GetScriptRRef(tmp__output);
 		if(script__output != nullptr)
 			__output = script__output->GetManagedInstance();
 		else

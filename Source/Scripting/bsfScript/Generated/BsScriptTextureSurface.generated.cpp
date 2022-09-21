@@ -11,7 +11,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptTextureSurface::initRuntimeData()
+	void ScriptTextureSurface::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptTextureSurface::Box(const TextureSurface& value)

@@ -21,7 +21,7 @@ namespace bs
 		BS_ASSERT(mGCHandle == 0 && "Object being destroyed without its managed instance being freed first.");
 	}
 
-	void ScriptRRefBase::initRuntimeData()
+	void ScriptRRefBase::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_IsLoaded", (void*)&ScriptRRefBase::InternalIsLoaded);
 		metaData.scriptClass->AddInternalCall("Internal_GetResource", (void*)&ScriptRRefBase::InternalGetResource);

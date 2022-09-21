@@ -28,8 +28,8 @@ namespace bs
 		[NativeWrapper]
 		public DepthOfFieldSettings DepthOfField
 		{
-			get { return Internal_getdepthOfField(mCachedPtr); }
-			set { Internal_setdepthOfField(mCachedPtr, value); }
+			get { return Internal_GetdepthOfField(mCachedPtr); }
+			set { Internal_SetdepthOfField(mCachedPtr, value); }
 		}
 
 		/// <summary>Parameters used for customizing the chromatic aberration effect.</summary>
@@ -39,8 +39,8 @@ namespace bs
 		[NativeWrapper]
 		public ChromaticAberrationSettings ChromaticAberration
 		{
-			get { return Internal_getchromaticAberration(mCachedPtr); }
-			set { Internal_setchromaticAberration(mCachedPtr, value); }
+			get { return Internal_GetchromaticAberration(mCachedPtr); }
+			set { Internal_SetchromaticAberration(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -53,8 +53,8 @@ namespace bs
 		[NativeWrapper]
 		public bool EnableAutoExposure
 		{
-			get { return Internal_getenableAutoExposure(mCachedPtr); }
-			set { Internal_setenableAutoExposure(mCachedPtr, value); }
+			get { return Internal_GetenableAutoExposure(mCachedPtr); }
+			set { Internal_SetenableAutoExposure(mCachedPtr, value); }
 		}
 
 		/// <summary>Parameters used for customizing automatic scene exposure.</summary>
@@ -64,8 +64,8 @@ namespace bs
 		[NativeWrapper]
 		public AutoExposureSettings AutoExposure
 		{
-			get { return Internal_getautoExposure(mCachedPtr); }
-			set { Internal_setautoExposure(mCachedPtr, value); }
+			get { return Internal_GetautoExposure(mCachedPtr); }
+			set { Internal_SetautoExposure(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -81,8 +81,8 @@ namespace bs
 		[NativeWrapper]
 		public bool EnableTonemapping
 		{
-			get { return Internal_getenableTonemapping(mCachedPtr); }
-			set { Internal_setenableTonemapping(mCachedPtr, value); }
+			get { return Internal_GetenableTonemapping(mCachedPtr); }
+			set { Internal_SetenableTonemapping(mCachedPtr, value); }
 		}
 
 		/// <summary>Parameters used for customizing tonemapping.</summary>
@@ -92,8 +92,8 @@ namespace bs
 		[NativeWrapper]
 		public TonemappingSettings Tonemapping
 		{
-			get { return Internal_gettonemapping(mCachedPtr); }
-			set { Internal_settonemapping(mCachedPtr, value); }
+			get { return Internal_Gettonemapping(mCachedPtr); }
+			set { Internal_Settonemapping(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -107,8 +107,8 @@ namespace bs
 		[NativeWrapper]
 		public WhiteBalanceSettings WhiteBalance
 		{
-			get { return Internal_getwhiteBalance(mCachedPtr); }
-			set { Internal_setwhiteBalance(mCachedPtr, value); }
+			get { return Internal_GetwhiteBalance(mCachedPtr); }
+			set { Internal_SetwhiteBalance(mCachedPtr, value); }
 		}
 
 		/// <summary>Parameters used for customizing color grading.</summary>
@@ -118,8 +118,8 @@ namespace bs
 		[NativeWrapper]
 		public ColorGradingSettings ColorGrading
 		{
-			get { return Internal_getcolorGrading(mCachedPtr); }
-			set { Internal_setcolorGrading(mCachedPtr, value); }
+			get { return Internal_GetcolorGrading(mCachedPtr); }
+			set { Internal_SetcolorGrading(mCachedPtr, value); }
 		}
 
 		/// <summary>Parameters used for customizing screen space ambient occlusion.</summary>
@@ -129,8 +129,8 @@ namespace bs
 		[NativeWrapper]
 		public AmbientOcclusionSettings AmbientOcclusion
 		{
-			get { return Internal_getambientOcclusion(mCachedPtr); }
-			set { Internal_setambientOcclusion(mCachedPtr, value); }
+			get { return Internal_GetambientOcclusion(mCachedPtr); }
+			set { Internal_SetambientOcclusion(mCachedPtr, value); }
 		}
 
 		/// <summary>Parameters used for customizing screen space reflections.</summary>
@@ -140,8 +140,8 @@ namespace bs
 		[NativeWrapper]
 		public ScreenSpaceReflectionsSettings ScreenSpaceReflections
 		{
-			get { return Internal_getscreenSpaceReflections(mCachedPtr); }
-			set { Internal_setscreenSpaceReflections(mCachedPtr, value); }
+			get { return Internal_GetscreenSpaceReflections(mCachedPtr); }
+			set { Internal_SetscreenSpaceReflections(mCachedPtr, value); }
 		}
 
 		/// <summary>Parameters used for customizing the bloom effect.</summary>
@@ -151,8 +151,8 @@ namespace bs
 		[NativeWrapper]
 		public BloomSettings Bloom
 		{
-			get { return Internal_getbloom(mCachedPtr); }
-			set { Internal_setbloom(mCachedPtr, value); }
+			get { return Internal_Getbloom(mCachedPtr); }
+			set { Internal_Setbloom(mCachedPtr, value); }
 		}
 
 		/// <summary>Parameters used for customizing the screen space lens flare effect.</summary>
@@ -162,8 +162,8 @@ namespace bs
 		[NativeWrapper]
 		public ScreenSpaceLensFlareSettings ScreenSpaceLensFlare
 		{
-			get { return Internal_getscreenSpaceLensFlare(mCachedPtr); }
-			set { Internal_setscreenSpaceLensFlare(mCachedPtr, value); }
+			get { return Internal_GetscreenSpaceLensFlare(mCachedPtr); }
+			set { Internal_SetscreenSpaceLensFlare(mCachedPtr, value); }
 		}
 
 		/// <summary>Parameters used for customizing the film grain effect.</summary>
@@ -173,8 +173,8 @@ namespace bs
 		[NativeWrapper]
 		public FilmGrainSettings FilmGrain
 		{
-			get { return Internal_getfilmGrain(mCachedPtr); }
-			set { Internal_setfilmGrain(mCachedPtr, value); }
+			get { return Internal_GetfilmGrain(mCachedPtr); }
+			set { Internal_SetfilmGrain(mCachedPtr, value); }
 		}
 
 		/// <summary>Parameters used for customizing the motion blur effect.</summary>
@@ -184,8 +184,8 @@ namespace bs
 		[NativeWrapper]
 		public MotionBlurSettings MotionBlur
 		{
-			get { return Internal_getmotionBlur(mCachedPtr); }
-			set { Internal_setmotionBlur(mCachedPtr, value); }
+			get { return Internal_GetmotionBlur(mCachedPtr); }
+			set { Internal_SetmotionBlur(mCachedPtr, value); }
 		}
 
 		/// <summary>Parameters used for customizing the temporal anti-aliasing effect.</summary>
@@ -195,8 +195,8 @@ namespace bs
 		[NativeWrapper]
 		public TemporalAASettings TemporalAA
 		{
-			get { return Internal_gettemporalAA(mCachedPtr); }
-			set { Internal_settemporalAA(mCachedPtr, value); }
+			get { return Internal_GettemporalAA(mCachedPtr); }
+			set { Internal_SettemporalAA(mCachedPtr, value); }
 		}
 
 		/// <summary>Enables the fast approximate anti-aliasing effect.</summary>
@@ -204,8 +204,8 @@ namespace bs
 		[NativeWrapper]
 		public bool EnableFXAA
 		{
-			get { return Internal_getenableFXAA(mCachedPtr); }
-			set { Internal_setenableFXAA(mCachedPtr, value); }
+			get { return Internal_GetenableFXAA(mCachedPtr); }
+			set { Internal_SetenableFXAA(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -218,8 +218,8 @@ namespace bs
 		[NativeWrapper]
 		public float ExposureScale
 		{
-			get { return Internal_getexposureScale(mCachedPtr); }
-			set { Internal_setexposureScale(mCachedPtr, value); }
+			get { return Internal_GetexposureScale(mCachedPtr); }
+			set { Internal_SetexposureScale(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -232,8 +232,8 @@ namespace bs
 		[NativeWrapper]
 		public float Gamma
 		{
-			get { return Internal_getgamma(mCachedPtr); }
-			set { Internal_setgamma(mCachedPtr, value); }
+			get { return Internal_Getgamma(mCachedPtr); }
+			set { Internal_Setgamma(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -244,8 +244,8 @@ namespace bs
 		[NativeWrapper]
 		public bool EnableHDR
 		{
-			get { return Internal_getenableHDR(mCachedPtr); }
-			set { Internal_setenableHDR(mCachedPtr, value); }
+			get { return Internal_GetenableHDR(mCachedPtr); }
+			set { Internal_SetenableHDR(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -256,8 +256,8 @@ namespace bs
 		[NativeWrapper]
 		public bool EnableLighting
 		{
-			get { return Internal_getenableLighting(mCachedPtr); }
-			set { Internal_setenableLighting(mCachedPtr, value); }
+			get { return Internal_GetenableLighting(mCachedPtr); }
+			set { Internal_SetenableLighting(mCachedPtr, value); }
 		}
 
 		/// <summary>Determines if shadows cast by lights should be rendered. Only relevant if lighting is turned on.</summary>
@@ -265,8 +265,8 @@ namespace bs
 		[NativeWrapper]
 		public bool EnableShadows
 		{
-			get { return Internal_getenableShadows(mCachedPtr); }
-			set { Internal_setenableShadows(mCachedPtr, value); }
+			get { return Internal_GetenableShadows(mCachedPtr); }
+			set { Internal_SetenableShadows(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -278,8 +278,8 @@ namespace bs
 		[NativeWrapper]
 		public bool EnableVelocityBuffer
 		{
-			get { return Internal_getenableVelocityBuffer(mCachedPtr); }
-			set { Internal_setenableVelocityBuffer(mCachedPtr, value); }
+			get { return Internal_GetenableVelocityBuffer(mCachedPtr); }
+			set { Internal_SetenableVelocityBuffer(mCachedPtr, value); }
 		}
 
 		/// <summary>Parameters used for customizing shadow rendering.</summary>
@@ -289,8 +289,8 @@ namespace bs
 		[NativeWrapper]
 		public ShadowSettings ShadowSettings
 		{
-			get { return Internal_getshadowSettings(mCachedPtr); }
-			set { Internal_setshadowSettings(mCachedPtr, value); }
+			get { return Internal_GetshadowSettings(mCachedPtr); }
+			set { Internal_SetshadowSettings(mCachedPtr, value); }
 		}
 
 		/// <summary>Determines if indirect lighting (e.g. from light probes or the sky) is rendered.</summary>
@@ -298,8 +298,8 @@ namespace bs
 		[NativeWrapper]
 		public bool EnableIndirectLighting
 		{
-			get { return Internal_getenableIndirectLighting(mCachedPtr); }
-			set { Internal_setenableIndirectLighting(mCachedPtr, value); }
+			get { return Internal_GetenableIndirectLighting(mCachedPtr); }
+			set { Internal_SetenableIndirectLighting(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -311,8 +311,8 @@ namespace bs
 		[NativeWrapper]
 		public bool OverlayOnly
 		{
-			get { return Internal_getoverlayOnly(mCachedPtr); }
-			set { Internal_setoverlayOnly(mCachedPtr, value); }
+			get { return Internal_GetoverlayOnly(mCachedPtr); }
+			set { Internal_SetoverlayOnly(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -323,8 +323,8 @@ namespace bs
 		[NativeWrapper]
 		public bool EnableSkybox
 		{
-			get { return Internal_getenableSkybox(mCachedPtr); }
-			set { Internal_setenableSkybox(mCachedPtr, value); }
+			get { return Internal_GetenableSkybox(mCachedPtr); }
+			set { Internal_SetenableSkybox(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -335,120 +335,120 @@ namespace bs
 		[NativeWrapper]
 		public float CullDistance
 		{
-			get { return Internal_getcullDistance(mCachedPtr); }
-			set { Internal_setcullDistance(mCachedPtr, value); }
+			get { return Internal_GetcullDistance(mCachedPtr); }
+			set { Internal_SetcullDistance(mCachedPtr, value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_RenderSettings(RenderSettings managedInstance);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern DepthOfFieldSettings Internal_getdepthOfField(IntPtr thisPtr);
+		private static extern DepthOfFieldSettings Internal_GetdepthOfField(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setdepthOfField(IntPtr thisPtr, DepthOfFieldSettings value);
+		private static extern void Internal_SetdepthOfField(IntPtr thisPtr, DepthOfFieldSettings value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ChromaticAberrationSettings Internal_getchromaticAberration(IntPtr thisPtr);
+		private static extern ChromaticAberrationSettings Internal_GetchromaticAberration(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setchromaticAberration(IntPtr thisPtr, ChromaticAberrationSettings value);
+		private static extern void Internal_SetchromaticAberration(IntPtr thisPtr, ChromaticAberrationSettings value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_getenableAutoExposure(IntPtr thisPtr);
+		private static extern bool Internal_GetenableAutoExposure(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setenableAutoExposure(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetenableAutoExposure(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern AutoExposureSettings Internal_getautoExposure(IntPtr thisPtr);
+		private static extern AutoExposureSettings Internal_GetautoExposure(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setautoExposure(IntPtr thisPtr, AutoExposureSettings value);
+		private static extern void Internal_SetautoExposure(IntPtr thisPtr, AutoExposureSettings value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_getenableTonemapping(IntPtr thisPtr);
+		private static extern bool Internal_GetenableTonemapping(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setenableTonemapping(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetenableTonemapping(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern TonemappingSettings Internal_gettonemapping(IntPtr thisPtr);
+		private static extern TonemappingSettings Internal_Gettonemapping(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_settonemapping(IntPtr thisPtr, TonemappingSettings value);
+		private static extern void Internal_Settonemapping(IntPtr thisPtr, TonemappingSettings value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern WhiteBalanceSettings Internal_getwhiteBalance(IntPtr thisPtr);
+		private static extern WhiteBalanceSettings Internal_GetwhiteBalance(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setwhiteBalance(IntPtr thisPtr, WhiteBalanceSettings value);
+		private static extern void Internal_SetwhiteBalance(IntPtr thisPtr, WhiteBalanceSettings value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ColorGradingSettings Internal_getcolorGrading(IntPtr thisPtr);
+		private static extern ColorGradingSettings Internal_GetcolorGrading(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setcolorGrading(IntPtr thisPtr, ColorGradingSettings value);
+		private static extern void Internal_SetcolorGrading(IntPtr thisPtr, ColorGradingSettings value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern AmbientOcclusionSettings Internal_getambientOcclusion(IntPtr thisPtr);
+		private static extern AmbientOcclusionSettings Internal_GetambientOcclusion(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setambientOcclusion(IntPtr thisPtr, AmbientOcclusionSettings value);
+		private static extern void Internal_SetambientOcclusion(IntPtr thisPtr, AmbientOcclusionSettings value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ScreenSpaceReflectionsSettings Internal_getscreenSpaceReflections(IntPtr thisPtr);
+		private static extern ScreenSpaceReflectionsSettings Internal_GetscreenSpaceReflections(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setscreenSpaceReflections(IntPtr thisPtr, ScreenSpaceReflectionsSettings value);
+		private static extern void Internal_SetscreenSpaceReflections(IntPtr thisPtr, ScreenSpaceReflectionsSettings value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern BloomSettings Internal_getbloom(IntPtr thisPtr);
+		private static extern BloomSettings Internal_Getbloom(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setbloom(IntPtr thisPtr, BloomSettings value);
+		private static extern void Internal_Setbloom(IntPtr thisPtr, BloomSettings value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ScreenSpaceLensFlareSettings Internal_getscreenSpaceLensFlare(IntPtr thisPtr);
+		private static extern ScreenSpaceLensFlareSettings Internal_GetscreenSpaceLensFlare(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setscreenSpaceLensFlare(IntPtr thisPtr, ScreenSpaceLensFlareSettings value);
+		private static extern void Internal_SetscreenSpaceLensFlare(IntPtr thisPtr, ScreenSpaceLensFlareSettings value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern FilmGrainSettings Internal_getfilmGrain(IntPtr thisPtr);
+		private static extern FilmGrainSettings Internal_GetfilmGrain(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setfilmGrain(IntPtr thisPtr, FilmGrainSettings value);
+		private static extern void Internal_SetfilmGrain(IntPtr thisPtr, FilmGrainSettings value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern MotionBlurSettings Internal_getmotionBlur(IntPtr thisPtr);
+		private static extern MotionBlurSettings Internal_GetmotionBlur(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setmotionBlur(IntPtr thisPtr, MotionBlurSettings value);
+		private static extern void Internal_SetmotionBlur(IntPtr thisPtr, MotionBlurSettings value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern TemporalAASettings Internal_gettemporalAA(IntPtr thisPtr);
+		private static extern TemporalAASettings Internal_GettemporalAA(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_settemporalAA(IntPtr thisPtr, TemporalAASettings value);
+		private static extern void Internal_SettemporalAA(IntPtr thisPtr, TemporalAASettings value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_getenableFXAA(IntPtr thisPtr);
+		private static extern bool Internal_GetenableFXAA(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setenableFXAA(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetenableFXAA(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getexposureScale(IntPtr thisPtr);
+		private static extern float Internal_GetexposureScale(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setexposureScale(IntPtr thisPtr, float value);
+		private static extern void Internal_SetexposureScale(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getgamma(IntPtr thisPtr);
+		private static extern float Internal_Getgamma(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setgamma(IntPtr thisPtr, float value);
+		private static extern void Internal_Setgamma(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_getenableHDR(IntPtr thisPtr);
+		private static extern bool Internal_GetenableHDR(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setenableHDR(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetenableHDR(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_getenableLighting(IntPtr thisPtr);
+		private static extern bool Internal_GetenableLighting(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setenableLighting(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetenableLighting(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_getenableShadows(IntPtr thisPtr);
+		private static extern bool Internal_GetenableShadows(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setenableShadows(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetenableShadows(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_getenableVelocityBuffer(IntPtr thisPtr);
+		private static extern bool Internal_GetenableVelocityBuffer(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setenableVelocityBuffer(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetenableVelocityBuffer(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ShadowSettings Internal_getshadowSettings(IntPtr thisPtr);
+		private static extern ShadowSettings Internal_GetshadowSettings(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setshadowSettings(IntPtr thisPtr, ShadowSettings value);
+		private static extern void Internal_SetshadowSettings(IntPtr thisPtr, ShadowSettings value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_getenableIndirectLighting(IntPtr thisPtr);
+		private static extern bool Internal_GetenableIndirectLighting(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setenableIndirectLighting(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetenableIndirectLighting(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_getoverlayOnly(IntPtr thisPtr);
+		private static extern bool Internal_GetoverlayOnly(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setoverlayOnly(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetoverlayOnly(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_getenableSkybox(IntPtr thisPtr);
+		private static extern bool Internal_GetenableSkybox(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setenableSkybox(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetenableSkybox(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getcullDistance(IntPtr thisPtr);
+		private static extern float Internal_GetcullDistance(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setcullDistance(IntPtr thisPtr, float value);
+		private static extern void Internal_SetcullDistance(IntPtr thisPtr, float value);
 	}
 
 	/** @} */

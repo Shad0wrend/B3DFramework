@@ -11,7 +11,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptPARTICLE_TEXTURE_ANIMATION_DESC::initRuntimeData()
+	void ScriptPARTICLE_TEXTURE_ANIMATION_DESC::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptPARTICLE_TEXTURE_ANIMATION_DESC::Box(const PARTICLE_TEXTURE_ANIMATION_DESC& value)

@@ -12,7 +12,7 @@ namespace bs
 		:ScriptReflectableBase(managedInstance)
 	 { }
 
-	SPtr<ImportOptions> ScriptImportOptionsBase::getInternal() const
+	SPtr<ImportOptions> ScriptImportOptionsBase::GetInternal() const
 	{
 		return std::static_pointer_cast<ImportOptions>(mInternal);
 	}
@@ -22,7 +22,7 @@ namespace bs
 		mInternal = value;
 	}
 
-	void ScriptImportOptions::initRuntimeData()
+	void ScriptImportOptions::InitRuntimeData()
 	{
 
 	}
@@ -34,7 +34,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptImportOptions>()) ScriptImportOptions(managedInstance, value);
 		return managedInstance;
 	}

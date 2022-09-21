@@ -13,18 +13,18 @@ namespace bs
 	{
 	}
 
-	void ScriptAnimationSplitInfo::initRuntimeData()
+	void ScriptAnimationSplitInfo::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_AnimationSplitInfo", (void*)&ScriptAnimationSplitInfo::InternalAnimationSplitInfo);
 		metaData.scriptClass->AddInternalCall("Internal_AnimationSplitInfo0", (void*)&ScriptAnimationSplitInfo::InternalAnimationSplitInfo0);
-		metaData.scriptClass->AddInternalCall("Internal_getname", (void*)&ScriptAnimationSplitInfo::InternalGetname);
-		metaData.scriptClass->AddInternalCall("Internal_setname", (void*)&ScriptAnimationSplitInfo::InternalSetname);
-		metaData.scriptClass->AddInternalCall("Internal_getstartFrame", (void*)&ScriptAnimationSplitInfo::InternalGetstartFrame);
-		metaData.scriptClass->AddInternalCall("Internal_setstartFrame", (void*)&ScriptAnimationSplitInfo::InternalSetstartFrame);
-		metaData.scriptClass->AddInternalCall("Internal_getendFrame", (void*)&ScriptAnimationSplitInfo::InternalGetendFrame);
-		metaData.scriptClass->AddInternalCall("Internal_setendFrame", (void*)&ScriptAnimationSplitInfo::InternalSetendFrame);
-		metaData.scriptClass->AddInternalCall("Internal_getisAdditive", (void*)&ScriptAnimationSplitInfo::InternalGetisAdditive);
-		metaData.scriptClass->AddInternalCall("Internal_setisAdditive", (void*)&ScriptAnimationSplitInfo::InternalSetisAdditive);
+		metaData.scriptClass->AddInternalCall("Internal_Getname", (void*)&ScriptAnimationSplitInfo::InternalGetname);
+		metaData.scriptClass->AddInternalCall("Internal_Setname", (void*)&ScriptAnimationSplitInfo::InternalSetname);
+		metaData.scriptClass->AddInternalCall("Internal_GetstartFrame", (void*)&ScriptAnimationSplitInfo::InternalGetstartFrame);
+		metaData.scriptClass->AddInternalCall("Internal_SetstartFrame", (void*)&ScriptAnimationSplitInfo::InternalSetstartFrame);
+		metaData.scriptClass->AddInternalCall("Internal_GetendFrame", (void*)&ScriptAnimationSplitInfo::InternalGetendFrame);
+		metaData.scriptClass->AddInternalCall("Internal_SetendFrame", (void*)&ScriptAnimationSplitInfo::InternalSetendFrame);
+		metaData.scriptClass->AddInternalCall("Internal_GetisAdditive", (void*)&ScriptAnimationSplitInfo::InternalGetisAdditive);
+		metaData.scriptClass->AddInternalCall("Internal_SetisAdditive", (void*)&ScriptAnimationSplitInfo::InternalSetisAdditive);
 
 	}
 
@@ -35,7 +35,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptAnimationSplitInfo>()) ScriptAnimationSplitInfo(managedInstance, value);
 		return managedInstance;
 	}
@@ -59,7 +59,7 @@ namespace bs
 		tmp__output = thisPtr->GetInternal()->name;
 
 		MonoString* __output;
-		__output = MonoUtil::stringToMono(tmp__output);
+		__output = MonoUtil::StringToMono(tmp__output);
 
 		return __output;
 	}

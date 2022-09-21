@@ -13,7 +13,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptPARTICLE_RECT_SHAPE_DESC::initRuntimeData()
+	void ScriptPARTICLE_RECT_SHAPE_DESC::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptPARTICLE_RECT_SHAPE_DESC::Box(const __PARTICLE_RECT_SHAPE_DESCInterop& value)

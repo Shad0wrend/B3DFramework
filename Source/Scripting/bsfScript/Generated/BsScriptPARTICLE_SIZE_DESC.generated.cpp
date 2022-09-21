@@ -15,7 +15,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptPARTICLE_SIZE_DESC::initRuntimeData()
+	void ScriptPARTICLE_SIZE_DESC::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptPARTICLE_SIZE_DESC::Box(const __PARTICLE_SIZE_DESCInterop& value)
@@ -40,7 +40,7 @@ namespace bs
 		output.size = *tmpsize;
 		SPtr<TDistribution<Vector3>> tmpsize3D;
 		ScriptTDistributionVector3* scriptsize3D;
-		scriptsize3D = ScriptTDistributionVector3::toNative(value.size3D);
+		scriptsize3D = ScriptTDistributionVector3::ToNative(value.size3D);
 		if(scriptsize3D != nullptr)
 			tmpsize3D = scriptsize3D->GetInternal();
 		if(tmpsize3D != nullptr)

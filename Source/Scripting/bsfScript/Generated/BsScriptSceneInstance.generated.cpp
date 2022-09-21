@@ -16,12 +16,12 @@ namespace bs
 	{
 	}
 
-	void ScriptSceneInstance::initRuntimeData()
+	void ScriptSceneInstance::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_getName", (void*)&ScriptSceneInstance::InternalGetName);
-		metaData.scriptClass->AddInternalCall("Internal_getRoot", (void*)&ScriptSceneInstance::InternalGetRoot);
-		metaData.scriptClass->AddInternalCall("Internal_isActive", (void*)&ScriptSceneInstance::InternalIsActive);
-		metaData.scriptClass->AddInternalCall("Internal_getPhysicsScene", (void*)&ScriptSceneInstance::InternalGetPhysicsScene);
+		metaData.scriptClass->AddInternalCall("Internal_GetName", (void*)&ScriptSceneInstance::InternalGetName);
+		metaData.scriptClass->AddInternalCall("Internal_GetRoot", (void*)&ScriptSceneInstance::InternalGetRoot);
+		metaData.scriptClass->AddInternalCall("Internal_IsActive", (void*)&ScriptSceneInstance::InternalIsActive);
+		metaData.scriptClass->AddInternalCall("Internal_GetPhysicsScene", (void*)&ScriptSceneInstance::InternalGetPhysicsScene);
 
 	}
 
@@ -32,7 +32,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptSceneInstance>()) ScriptSceneInstance(managedInstance, value);
 		return managedInstance;
 	}
@@ -42,7 +42,7 @@ namespace bs
 		tmp__output = thisPtr->GetInternal()->GetName();
 
 		MonoString* __output;
-		__output = MonoUtil::stringToMono(tmp__output);
+		__output = MonoUtil::StringToMono(tmp__output);
 
 		return __output;
 	}
@@ -55,7 +55,7 @@ namespace bs
 		MonoObject* __output;
 		ScriptSceneObject* script__output = nullptr;
 		if(tmp__output)
-		script__output = ScriptGameObjectManager::Instance().getOrCreateScriptSceneObject(tmp__output);
+		script__output = ScriptGameObjectManager::Instance().GetOrCreateScriptSceneObject(tmp__output);
 		if(script__output != nullptr)
 			__output = script__output->GetManagedInstance();
 		else
@@ -67,7 +67,7 @@ namespace bs
 	bool ScriptSceneInstance::InternalIsActive(ScriptSceneInstance* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->GetInternal()->isActive();
+		tmp__output = thisPtr->GetInternal()->IsActive();
 
 		bool __output;
 		__output = tmp__output;

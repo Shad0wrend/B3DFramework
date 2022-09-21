@@ -162,8 +162,7 @@ namespace bs
 		{
 			// Need to delay init of actual metaData since it's also a static, and we can't guarantee the order
 			// (if it gets initialized after this, it will just overwrite the data)
-			ScriptMeta localMetaData = ScriptMeta(Type::getAssemblyName(), Type::getNamespace(), Type::getTypeName(),
-					&Type::initRuntimeData);
+			ScriptMeta localMetaData = ScriptMeta(Type::GetAssemblyName(), Type::GetNamespace(), Type::GetTypeName(), &Type::InitRuntimeData);
 
 			MonoManager::RegisterScriptType(&metaData, localMetaData);
 		}
@@ -183,10 +182,10 @@ namespace bs
 
 /** Helper macro to use with script interop objects that form a link between C++ and CLR. */
 #define SCRIPT_OBJ(assembly, namespace, name)		\
-	static String getAssemblyName() { return assembly; }	\
-	static String getNamespace() { return namespace; }		\
-	static String getTypeName() { return name; }			\
-	static void initRuntimeData();
+	static String GetAssemblyName() { return assembly; }	\
+	static String GetNamespace() { return namespace; }		\
+	static String GetTypeName() { return name; }			\
+	static void InitRuntimeData();
 
 	/**	Interop class between C++ & CLR for ScriptObject. */
 	class BS_SCR_BE_EXPORT ScriptObjectImpl : public ScriptObject<ScriptObjectImpl>

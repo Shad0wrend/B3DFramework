@@ -19,13 +19,13 @@ namespace bs
 		/// <summary>Creates a new particle size evolver.</summary>
 		public ParticleSize(ParticleSizeOptions desc)
 		{
-			Internal_create(this, ref desc);
+			Internal_Create(this, ref desc);
 		}
 
 		/// <summary>Creates a new particle size evolver.</summary>
 		public ParticleSize()
 		{
-			Internal_create0(this);
+			Internal_Create0(this);
 		}
 
 		/// <summary>Options describing the evolver.</summary>
@@ -36,20 +36,20 @@ namespace bs
 			get
 			{
 				ParticleSizeOptions temp;
-				Internal_getOptions(mCachedPtr, out temp);
+				Internal_GetOptions(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setOptions(mCachedPtr, ref value); }
+			set { Internal_SetOptions(mCachedPtr, ref value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setOptions(IntPtr thisPtr, ref ParticleSizeOptions options);
+		private static extern void Internal_SetOptions(IntPtr thisPtr, ref ParticleSizeOptions options);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getOptions(IntPtr thisPtr, out ParticleSizeOptions __output);
+		private static extern void Internal_GetOptions(IntPtr thisPtr, out ParticleSizeOptions __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create(ParticleSize managedInstance, ref ParticleSizeOptions desc);
+		private static extern void Internal_Create(ParticleSize managedInstance, ref ParticleSizeOptions desc);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create0(ParticleSize managedInstance);
+		private static extern void Internal_Create0(ParticleSize managedInstance);
 	}
 
 	/** @} */

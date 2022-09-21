@@ -18,12 +18,12 @@ namespace bs
 
 		public PixelData(PixelVolume volume, PixelFormat format = PixelFormat.BGRA8)
 		{
-			Internal_create(this, ref volume, format);
+			Internal_Create(this, ref volume, format);
 		}
 
 		public PixelData(int width, int height, int depth = 1, PixelFormat pixelFormat = PixelFormat.BGRA8)
 		{
-			Internal_create0(this, width, height, depth, pixelFormat);
+			Internal_Create0(this, width, height, depth, pixelFormat);
 		}
 
 		/// <summary>
@@ -33,7 +33,7 @@ namespace bs
 		[NativeWrapper]
 		public int RawRowPitch
 		{
-			get { return Internal_getRowPitch(mCachedPtr); }
+			get { return Internal_GetRowPitch(mCachedPtr); }
 		}
 
 		/// <summary>
@@ -43,14 +43,14 @@ namespace bs
 		[NativeWrapper]
 		public int RawSlicePitch
 		{
-			get { return Internal_getSlicePitch(mCachedPtr); }
+			get { return Internal_GetSlicePitch(mCachedPtr); }
 		}
 
 		/// <summary>Returns the pixel format used by the internal buffer for storing the pixels.</summary>
 		[NativeWrapper]
 		public PixelFormat Format
 		{
-			get { return Internal_getFormat(mCachedPtr); }
+			get { return Internal_GetFormat(mCachedPtr); }
 		}
 
 		/// <summary>Returns extents of the pixel volume this object is capable of holding.</summary>
@@ -60,7 +60,7 @@ namespace bs
 			get
 			{
 				PixelVolume temp;
-				Internal_getExtents(mCachedPtr, out temp);
+				Internal_GetExtents(mCachedPtr, out temp);
 				return temp;
 			}
 		}
@@ -71,14 +71,14 @@ namespace bs
 		[NativeWrapper]
 		public bool RawIsConsecutive
 		{
-			get { return Internal_isConsecutive(mCachedPtr); }
+			get { return Internal_IsConsecutive(mCachedPtr); }
 		}
 
 		/// <summary>Return the size (in bytes) of the buffer this image requires.</summary>
 		[NativeWrapper]
 		public int RawSize
 		{
-			get { return Internal_getSize(mCachedPtr); }
+			get { return Internal_GetSize(mCachedPtr); }
 		}
 
 		/// <summary>Returns a pixel at the specified location in the buffer.</summary>
@@ -89,7 +89,7 @@ namespace bs
 		public Color GetPixel(int x, int y, int z = 0)
 		{
 			Color temp;
-			Internal_getPixel(mCachedPtr, x, y, z, out temp);
+			Internal_GetPixel(mCachedPtr, x, y, z, out temp);
 			return temp;
 		}
 
@@ -100,7 +100,7 @@ namespace bs
 		/// <param name="z">Z coordinate of the pixel.</param>
 		public void SetPixel(Color value, int x, int y, int z = 0)
 		{
-			Internal_setPixel(mCachedPtr, ref value, x, y, z);
+			Internal_SetPixel(mCachedPtr, ref value, x, y, z);
 		}
 
 		/// <summary>Returns values of all pixels.</summary>
@@ -110,7 +110,7 @@ namespace bs
 		/// </returns>
 		public Color[] GetPixels()
 		{
-			return Internal_getPixels(mCachedPtr);
+			return Internal_GetPixels(mCachedPtr);
 		}
 
 		/// <summary>
@@ -122,7 +122,7 @@ namespace bs
 		/// </param>
 		public void SetPixels(Color[] value)
 		{
-			Internal_setPixels(mCachedPtr, value);
+			Internal_SetPixels(mCachedPtr, value);
 		}
 
 		/// <summary>Returns all pixels in the buffer as raw bytes.</summary>
@@ -132,7 +132,7 @@ namespace bs
 		/// </returns>
 		public char[] GetRawPixels()
 		{
-			return Internal_getRawPixels(mCachedPtr);
+			return Internal_GetRawPixels(mCachedPtr);
 		}
 
 		/// <summary>Sets all pixels in the buffer as raw bytes.</summary>
@@ -142,36 +142,36 @@ namespace bs
 		/// </param>
 		public void SetRawPixels(char[] value)
 		{
-			Internal_setRawPixels(mCachedPtr, value);
+			Internal_SetRawPixels(mCachedPtr, value);
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getRowPitch(IntPtr thisPtr);
+		private static extern int Internal_GetRowPitch(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getSlicePitch(IntPtr thisPtr);
+		private static extern int Internal_GetSlicePitch(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern PixelFormat Internal_getFormat(IntPtr thisPtr);
+		private static extern PixelFormat Internal_GetFormat(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getExtents(IntPtr thisPtr, out PixelVolume __output);
+		private static extern void Internal_GetExtents(IntPtr thisPtr, out PixelVolume __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_isConsecutive(IntPtr thisPtr);
+		private static extern bool Internal_IsConsecutive(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getSize(IntPtr thisPtr);
+		private static extern int Internal_GetSize(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create(PixelData managedInstance, ref PixelVolume volume, PixelFormat format);
+		private static extern void Internal_Create(PixelData managedInstance, ref PixelVolume volume, PixelFormat format);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create0(PixelData managedInstance, int width, int height, int depth, PixelFormat pixelFormat);
+		private static extern void Internal_Create0(PixelData managedInstance, int width, int height, int depth, PixelFormat pixelFormat);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getPixel(IntPtr thisPtr, int x, int y, int z, out Color __output);
+		private static extern void Internal_GetPixel(IntPtr thisPtr, int x, int y, int z, out Color __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setPixel(IntPtr thisPtr, ref Color value, int x, int y, int z);
+		private static extern void Internal_SetPixel(IntPtr thisPtr, ref Color value, int x, int y, int z);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern Color[] Internal_getPixels(IntPtr thisPtr);
+		private static extern Color[] Internal_GetPixels(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setPixels(IntPtr thisPtr, Color[] value);
+		private static extern void Internal_SetPixels(IntPtr thisPtr, Color[] value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern char[] Internal_getRawPixels(IntPtr thisPtr);
+		private static extern char[] Internal_GetRawPixels(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setRawPixels(IntPtr thisPtr, char[] value);
+		private static extern void Internal_SetRawPixels(IntPtr thisPtr, char[] value);
 	}
 }

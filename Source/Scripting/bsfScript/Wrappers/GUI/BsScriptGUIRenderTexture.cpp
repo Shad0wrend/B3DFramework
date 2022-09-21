@@ -25,7 +25,7 @@ namespace bs
 
 	}
 
-	void ScriptGUIRenderTexture::initRuntimeData()
+	void ScriptGUIRenderTexture::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIRenderTexture::InternalCreateInstance);
 		metaData.scriptClass->AddInternalCall("Internal_SetTexture", (void*)&ScriptGUIRenderTexture::InternalSetTexture);

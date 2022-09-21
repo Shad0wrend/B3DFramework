@@ -68,7 +68,7 @@ namespace bs
 		/// </summary>
 		public void SetParameter(int idx, string value)
 		{
-			Internal_setParameter(mCachedPtr, idx, value);
+			Internal_SetParameter(mCachedPtr, idx, value);
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
@@ -80,9 +80,9 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_HString2(LocString managedInstance);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern string Internal_getValue(IntPtr thisPtr);
+		private static extern string Internal_GetValue(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setParameter(IntPtr thisPtr, int idx, string value);
+		private static extern void Internal_SetParameter(IntPtr thisPtr, int idx, string value);
 	}
 
 	/** @} */

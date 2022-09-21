@@ -20,7 +20,7 @@ namespace bs
 		SetManagedInstance(instance);
 	}
 
-	void ScriptSceneObject::initRuntimeData()
+	void ScriptSceneObject::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptSceneObject::InternalCreateInstance);
 		metaData.scriptClass->AddInternalCall("Internal_GetName", (void*)&ScriptSceneObject::InternalGetName);

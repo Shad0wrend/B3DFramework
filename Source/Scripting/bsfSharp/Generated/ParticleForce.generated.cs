@@ -19,13 +19,13 @@ namespace bs
 		/// <summary>Creates a new particle force evolver.</summary>
 		public ParticleForce(ParticleForceOptions desc)
 		{
-			Internal_create(this, ref desc);
+			Internal_Create(this, ref desc);
 		}
 
 		/// <summary>Creates a new particle force evolver.</summary>
 		public ParticleForce()
 		{
-			Internal_create0(this);
+			Internal_Create0(this);
 		}
 
 		/// <summary>Options describing the evolver.</summary>
@@ -36,20 +36,20 @@ namespace bs
 			get
 			{
 				ParticleForceOptions temp;
-				Internal_getOptions(mCachedPtr, out temp);
+				Internal_GetOptions(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setOptions(mCachedPtr, ref value); }
+			set { Internal_SetOptions(mCachedPtr, ref value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setOptions(IntPtr thisPtr, ref ParticleForceOptions options);
+		private static extern void Internal_SetOptions(IntPtr thisPtr, ref ParticleForceOptions options);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getOptions(IntPtr thisPtr, out ParticleForceOptions __output);
+		private static extern void Internal_GetOptions(IntPtr thisPtr, out ParticleForceOptions __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create(ParticleForce managedInstance, ref ParticleForceOptions desc);
+		private static extern void Internal_Create(ParticleForce managedInstance, ref ParticleForceOptions desc);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create0(ParticleForce managedInstance);
+		private static extern void Internal_Create0(ParticleForce managedInstance);
 	}
 
 	/** @} */

@@ -15,12 +15,12 @@ namespace bs
 		mInternal = value;
 	}
 
-	void ScriptParticleEmitterLineShape::initRuntimeData()
+	void ScriptParticleEmitterLineShape::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_setOptions", (void*)&ScriptParticleEmitterLineShape::InternalSetOptions);
-		metaData.scriptClass->AddInternalCall("Internal_getOptions", (void*)&ScriptParticleEmitterLineShape::InternalGetOptions);
-		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptParticleEmitterLineShape::InternalCreate);
-		metaData.scriptClass->AddInternalCall("Internal_create0", (void*)&ScriptParticleEmitterLineShape::InternalCreate0);
+		metaData.scriptClass->AddInternalCall("Internal_SetOptions", (void*)&ScriptParticleEmitterLineShape::InternalSetOptions);
+		metaData.scriptClass->AddInternalCall("Internal_GetOptions", (void*)&ScriptParticleEmitterLineShape::InternalGetOptions);
+		metaData.scriptClass->AddInternalCall("Internal_Create", (void*)&ScriptParticleEmitterLineShape::InternalCreate);
+		metaData.scriptClass->AddInternalCall("Internal_Create0", (void*)&ScriptParticleEmitterLineShape::InternalCreate0);
 
 	}
 
@@ -48,14 +48,14 @@ namespace bs
 		tmp__output = thisPtr->GetInternal()->GetOptions();
 
 		__PARTICLE_LINE_SHAPE_DESCInterop interop__output;
-		interop__output = ScriptPARTICLE_LINE_SHAPE_DESC::toInterop(tmp__output);
-		MonoUtil::valueCopy(__output, &interop__output, ScriptPARTICLE_LINE_SHAPE_DESC::getMetaData()->scriptClass->GetInternalClassInternal());
+		interop__output = ScriptPARTICLE_LINE_SHAPE_DESC::ToInterop(tmp__output);
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptPARTICLE_LINE_SHAPE_DESC::GetMetaData()->scriptClass->GetInternalClassInternal());
 	}
 
 	void ScriptParticleEmitterLineShape::InternalCreate(MonoObject* managedInstance, __PARTICLE_LINE_SHAPE_DESCInterop* desc)
 	{
 		PARTICLE_LINE_SHAPE_DESC tmpdesc;
-		tmpdesc = ScriptPARTICLE_LINE_SHAPE_DESC::fromInterop(*desc);
+		tmpdesc = ScriptPARTICLE_LINE_SHAPE_DESC::FromInterop(*desc);
 		SPtr<ParticleEmitterLineShape> instance = ParticleEmitterLineShape::Create(tmpdesc);
 		new (bs_alloc<ScriptParticleEmitterLineShape>())ScriptParticleEmitterLineShape(managedInstance, instance);
 	}

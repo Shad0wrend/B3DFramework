@@ -11,7 +11,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptHingeJointDrive::initRuntimeData()
+	void ScriptHingeJointDrive::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptHingeJointDrive::Box(const HingeJointDrive& value)

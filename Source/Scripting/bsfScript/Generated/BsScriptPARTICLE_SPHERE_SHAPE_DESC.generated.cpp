@@ -11,7 +11,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptPARTICLE_SPHERE_SHAPE_DESC::initRuntimeData()
+	void ScriptPARTICLE_SPHERE_SHAPE_DESC::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptPARTICLE_SPHERE_SHAPE_DESC::Box(const PARTICLE_SPHERE_SHAPE_DESC& value)

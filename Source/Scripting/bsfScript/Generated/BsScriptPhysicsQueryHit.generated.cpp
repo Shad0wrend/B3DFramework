@@ -18,7 +18,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptPhysicsQueryHit::initRuntimeData()
+	void ScriptPhysicsQueryHit::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptPhysicsQueryHit::Box(const __PhysicsQueryHitInterop& value)

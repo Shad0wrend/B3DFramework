@@ -263,24 +263,6 @@ namespace bs
 		ConstReverseIterator Crbegin() const { return ConstReverseIterator(End()); }
 		ConstReverseIterator Crend() const { return ConstReverseIterator(Begin()); }
 
-		Iterator begin() { return Begin(); } // NOLINT
-		Iterator end() { return End(); } // NOLINT
-
-		ConstIterator begin() const { return Begin(); } // NOLINT
-		ConstIterator end() const { return End(); } // NOLINT
-
-		ConstIterator cbegin() const { return Cbegin(); } // NOLINT
-		ConstIterator cend() const { return cend(); } // NOLINT
-
-		ReverseIterator rbegin() { return Rbegin(); } // NOLINT
-		ReverseIterator rend() { return Rend(); } // NOLINT
-
-		ConstReverseIterator rbegin() const { return Rbegin(); } // NOLINT
-		ConstReverseIterator rend() const { return Rend(); } // NOLINT
-
-		ConstReverseIterator crbegin() const { return Crbegin(); } // NOLINT
-		ConstReverseIterator crend() const { return Crend(); } // NOLINT
-
 		UINT32 Size() const { return mSize; }
 		UINT32 Capacity() const { return mCapacity; }
 
@@ -431,6 +413,44 @@ namespace bs
 
 			mSize = size;
 		}
+
+		// STD compatible API
+		Iterator begin() { return Begin(); } // NOLINT
+		Iterator end() { return End(); } // NOLINT
+
+		ConstIterator begin() const { return Begin(); } // NOLINT
+		ConstIterator end() const { return End(); } // NOLINT
+
+		ConstIterator cbegin() const { return Cbegin(); } // NOLINT
+		ConstIterator cend() const { return cend(); } // NOLINT
+
+		ReverseIterator rbegin() { return Rbegin(); } // NOLINT
+		ReverseIterator rend() { return Rend(); } // NOLINT
+
+		ConstReverseIterator rbegin() const { return Rbegin(); } // NOLINT
+		ConstReverseIterator rend() const { return Rend(); } // NOLINT
+
+		ConstReverseIterator crbegin() const { return Crbegin(); } // NOLINT
+		ConstReverseIterator crend() const { return Crend(); } // NOLINT
+
+		UINT32 size() const { return Size(); }
+		UINT32 capacity() const { return Capacity(); }
+
+		Type* data() { return Data(); }
+		const Type* data() const { return Data(); }
+
+		Type& front() { return Front(); }
+		const Type& front() const { return Front(); }
+
+		Type& back() { return Back(); }
+		const Type& back() const { return Back(); }
+
+		Iterator erase(ConstIterator iter) { return Erase(iter); } 
+		void clear() { Clear(); }
+
+		void reserve(UINT32 capacity) { Reserve(capacity); }
+		void resize(UINT32 size, const Type& value = Type()) { Resize(size, value); }
+
 
 	private:
 		/** Returns true if the vector is still using its static memory and hasn't made any dynamic allocations. */

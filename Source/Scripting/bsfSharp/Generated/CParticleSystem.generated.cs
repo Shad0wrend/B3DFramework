@@ -24,7 +24,6 @@ namespace bs
 		private ParticleSystem(bool __dummy0) { }
 		protected ParticleSystem() { }
 
-		/// <summary>Determines general purpose settings that apply to the particle system.</summary>
 		[ShowInInspector]
 		[Inline]
 		[NotNull]
@@ -32,56 +31,43 @@ namespace bs
 		[NativeWrapper]
 		public ParticleSystemSettings Settings
 		{
-			get { return Internal_getSettings(mCachedPtr); }
-			set { Internal_setSettings(mCachedPtr, value); }
+			get { return Internal_GetSettings(mCachedPtr); }
+			set { Internal_SetSettings(mCachedPtr, value); }
 		}
 
-		/// <summary>Determines settings that control particle GPU simulation.</summary>
 		[ShowInInspector]
 		[NotNull]
 		[PassByCopy]
 		[NativeWrapper]
 		public ParticleGpuSimulationSettings GpuSimulationSettings
 		{
-			get { return Internal_getGpuSimulationSettings(mCachedPtr); }
-			set { Internal_setGpuSimulationSettings(mCachedPtr, value); }
+			get { return Internal_GetGpuSimulationSettings(mCachedPtr); }
+			set { Internal_SetGpuSimulationSettings(mCachedPtr, value); }
 		}
 
-		/// <summary>
-		/// Set of objects that determine initial position, normal and other properties of newly spawned particles. Each particle 
-		/// system must have at least one emitter.
-		/// </summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public ParticleEmitter[] Emitters
 		{
-			get { return Internal_getEmitters(mCachedPtr); }
-			set { Internal_setEmitters(mCachedPtr, value); }
+			get { return Internal_GetEmitters(mCachedPtr); }
+			set { Internal_SetEmitters(mCachedPtr, value); }
 		}
 
-		/// <summary>
-		/// Set of objects that determine how particle properties change during their lifetime. Evolvers only affect CPU 
-		/// simulated particles.
-		/// </summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public ParticleEvolver[] Evolvers
 		{
-			get { return Internal_getEvolvers(mCachedPtr); }
-			set { Internal_setEvolvers(mCachedPtr, value); }
+			get { return Internal_GetEvolvers(mCachedPtr); }
+			set { Internal_SetEvolvers(mCachedPtr, value); }
 		}
 
-		/// <summary>
-		/// Determines the layer bitfield that controls whether a system is considered visible in a specific camera. Layer must 
-		/// match camera layer in order for the camera to render the component.
-		/// </summary>
 		[ShowInInspector]
 		[LayerMask]
 		[NativeWrapper]
 		public ulong Layer
 		{
-			get { return Internal_getLayer(mCachedPtr); }
-			set { Internal_setLayer(mCachedPtr, value); }
+			get { return Internal_GetLayer(mCachedPtr); }
+			set { Internal_SetLayer(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -91,31 +77,31 @@ namespace bs
 		/// </summary>
 		internal bool TogglePreviewMode(bool enabled)
 		{
-			return Internal__togglePreviewMode(mCachedPtr, enabled);
+			return Internal_TogglePreviewModeInternal(mCachedPtr, enabled);
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setSettings(IntPtr thisPtr, ParticleSystemSettings settings);
+		private static extern void Internal_SetSettings(IntPtr thisPtr, ParticleSystemSettings settings);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ParticleSystemSettings Internal_getSettings(IntPtr thisPtr);
+		private static extern ParticleSystemSettings Internal_GetSettings(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setGpuSimulationSettings(IntPtr thisPtr, ParticleGpuSimulationSettings settings);
+		private static extern void Internal_SetGpuSimulationSettings(IntPtr thisPtr, ParticleGpuSimulationSettings settings);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ParticleGpuSimulationSettings Internal_getGpuSimulationSettings(IntPtr thisPtr);
+		private static extern ParticleGpuSimulationSettings Internal_GetGpuSimulationSettings(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setEmitters(IntPtr thisPtr, ParticleEmitter[] emitters);
+		private static extern void Internal_SetEmitters(IntPtr thisPtr, ParticleEmitter[] emitters);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ParticleEmitter[] Internal_getEmitters(IntPtr thisPtr);
+		private static extern ParticleEmitter[] Internal_GetEmitters(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setEvolvers(IntPtr thisPtr, ParticleEvolver[] evolvers);
+		private static extern void Internal_SetEvolvers(IntPtr thisPtr, ParticleEvolver[] evolvers);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ParticleEvolver[] Internal_getEvolvers(IntPtr thisPtr);
+		private static extern ParticleEvolver[] Internal_GetEvolvers(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setLayer(IntPtr thisPtr, ulong layer);
+		private static extern void Internal_SetLayer(IntPtr thisPtr, ulong layer);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ulong Internal_getLayer(IntPtr thisPtr);
+		private static extern ulong Internal_GetLayer(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal__togglePreviewMode(IntPtr thisPtr, bool enabled);
+		private static extern bool Internal_TogglePreviewModeInternal(IntPtr thisPtr, bool enabled);
 	}
 
 	/** @} */

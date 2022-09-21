@@ -13,10 +13,10 @@ namespace bs
 	{
 	}
 
-	void ScriptCBone::initRuntimeData()
+	void ScriptCBone::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_setBoneName", (void*)&ScriptCBone::InternalSetBoneName);
-		metaData.scriptClass->AddInternalCall("Internal_getBoneName", (void*)&ScriptCBone::InternalGetBoneName);
+		metaData.scriptClass->AddInternalCall("Internal_SetBoneName", (void*)&ScriptCBone::InternalSetBoneName);
+		metaData.scriptClass->AddInternalCall("Internal_GetBoneName", (void*)&ScriptCBone::InternalGetBoneName);
 
 	}
 

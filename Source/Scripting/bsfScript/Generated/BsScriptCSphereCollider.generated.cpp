@@ -14,12 +14,12 @@ namespace bs
 	{
 	}
 
-	void ScriptCSphereCollider::initRuntimeData()
+	void ScriptCSphereCollider::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_setRadius", (void*)&ScriptCSphereCollider::InternalSetRadius);
-		metaData.scriptClass->AddInternalCall("Internal_getRadius", (void*)&ScriptCSphereCollider::InternalGetRadius);
-		metaData.scriptClass->AddInternalCall("Internal_setCenter", (void*)&ScriptCSphereCollider::InternalSetCenter);
-		metaData.scriptClass->AddInternalCall("Internal_getCenter", (void*)&ScriptCSphereCollider::InternalGetCenter);
+		metaData.scriptClass->AddInternalCall("Internal_SetRadius", (void*)&ScriptCSphereCollider::InternalSetRadius);
+		metaData.scriptClass->AddInternalCall("Internal_GetRadius", (void*)&ScriptCSphereCollider::InternalGetRadius);
+		metaData.scriptClass->AddInternalCall("Internal_SetCenter", (void*)&ScriptCSphereCollider::InternalSetCenter);
+		metaData.scriptClass->AddInternalCall("Internal_GetCenter", (void*)&ScriptCSphereCollider::InternalGetCenter);
 
 	}
 

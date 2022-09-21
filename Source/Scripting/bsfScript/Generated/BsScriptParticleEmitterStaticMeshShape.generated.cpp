@@ -15,12 +15,12 @@ namespace bs
 		mInternal = value;
 	}
 
-	void ScriptParticleEmitterStaticMeshShape::initRuntimeData()
+	void ScriptParticleEmitterStaticMeshShape::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_setOptions", (void*)&ScriptParticleEmitterStaticMeshShape::InternalSetOptions);
-		metaData.scriptClass->AddInternalCall("Internal_getOptions", (void*)&ScriptParticleEmitterStaticMeshShape::InternalGetOptions);
-		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptParticleEmitterStaticMeshShape::InternalCreate);
-		metaData.scriptClass->AddInternalCall("Internal_create0", (void*)&ScriptParticleEmitterStaticMeshShape::InternalCreate0);
+		metaData.scriptClass->AddInternalCall("Internal_SetOptions", (void*)&ScriptParticleEmitterStaticMeshShape::InternalSetOptions);
+		metaData.scriptClass->AddInternalCall("Internal_GetOptions", (void*)&ScriptParticleEmitterStaticMeshShape::InternalGetOptions);
+		metaData.scriptClass->AddInternalCall("Internal_Create", (void*)&ScriptParticleEmitterStaticMeshShape::InternalCreate);
+		metaData.scriptClass->AddInternalCall("Internal_Create0", (void*)&ScriptParticleEmitterStaticMeshShape::InternalCreate0);
 
 	}
 
@@ -49,7 +49,7 @@ namespace bs
 
 		__PARTICLE_STATIC_MESH_SHAPE_DESCInterop interop__output;
 		interop__output = ScriptPARTICLE_STATIC_MESH_SHAPE_DESC::ToInterop(tmp__output);
-		MonoUtil::valueCopy(__output, &interop__output, ScriptPARTICLE_STATIC_MESH_SHAPE_DESC::getMetaData()->scriptClass->GetInternalClassInternal());
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptPARTICLE_STATIC_MESH_SHAPE_DESC::GetMetaData()->scriptClass->GetInternalClassInternal());
 	}
 
 	void ScriptParticleEmitterStaticMeshShape::InternalCreate(MonoObject* managedInstance, __PARTICLE_STATIC_MESH_SHAPE_DESCInterop* desc)

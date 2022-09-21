@@ -13,7 +13,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptBlend1DInfo::initRuntimeData()
+	void ScriptBlend1DInfo::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptBlend1DInfo::Box(const __Blend1DInfoInterop& value)
@@ -36,7 +36,7 @@ namespace bs
 			vecclips.resize(arrayclips.Size());
 			for(int i = 0; i < (int)arrayclips.Size(); i++)
 			{
-				vecclips[i] = ScriptBlendClipInfo::fromInterop(arrayclips.get<__BlendClipInfoInterop>(i));
+				vecclips[i] = ScriptBlendClipInfo::FromInterop(arrayclips.Get<__BlendClipInfoInterop>(i));
 			}
 		}
 		output.clips = vecclips;

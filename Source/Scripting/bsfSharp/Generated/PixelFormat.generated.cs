@@ -25,14 +25,14 @@ namespace bs
 		BC2 = 15,
 		/// <summary>8-bit 4-channel pixel format, unsigned normalized.</summary>
 		BGRA8 = 7,
-		/// <summary>
-		/// DXT5/BC2 format containing RGB with explicit alpha. 8 bits per pixel. Better alpha gradients than BC2.
-		/// </summary>
-		BC3 = 16,
 		/// <summary>8-bit 4-channel pixel format, unsigned normalized.</summary>
 		RGBA8 = 8,
 		/// <summary>DXT1/BC1 format containing opaque RGB or 1-bit alpha RGB. 4 bits per pixel.</summary>
 		BC1 = 13,
+		/// <summary>
+		/// DXT5/BC2 format containing RGB with explicit alpha. 8 bits per pixel. Better alpha gradients than BC2.
+		/// </summary>
+		BC3 = 16,
 		/// <summary>One channel compressed format. 4 bits per pixel.</summary>
 		BC4 = 17,
 		/// <summary>Two channel compressed format. 8 bits per pixel.</summary>

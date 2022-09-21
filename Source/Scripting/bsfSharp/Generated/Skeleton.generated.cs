@@ -21,7 +21,7 @@ namespace bs
 		[NativeWrapper]
 		public int NumBones
 		{
-			get { return Internal_getNumBones(mCachedPtr); }
+			get { return Internal_GetNumBones(mCachedPtr); }
 		}
 
 		/// <summary>Returns information about a bone at the provided index.</summary>
@@ -30,14 +30,14 @@ namespace bs
 		public BoneInfo GetBoneInfo(int boneIdx)
 		{
 			BoneInfo temp;
-			Internal_getBoneInfo(mCachedPtr, boneIdx, out temp);
+			Internal_GetBoneInfo(mCachedPtr, boneIdx, out temp);
 			return temp;
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getNumBones(IntPtr thisPtr);
+		private static extern int Internal_GetNumBones(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getBoneInfo(IntPtr thisPtr, int boneIdx, out BoneInfo __output);
+		private static extern void Internal_GetBoneInfo(IntPtr thisPtr, int boneIdx, out BoneInfo __output);
 	}
 
 	/** @} */

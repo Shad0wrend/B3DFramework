@@ -24,9 +24,9 @@ namespace bs
 	private:
 		SPtr<ColorGradientHDR> mInternal;
 
-		static void InternalColorGradientHdr(MonoObject* managedInstance);
-		static void InternalColorGradientHdR0(MonoObject* managedInstance, Color* color);
-		static void InternalColorGradientHdR1(MonoObject* managedInstance, MonoArray* keys);
+		static void InternalColorGradientHDR(MonoObject* managedInstance);
+		static void InternalColorGradientHDR0(MonoObject* managedInstance, Color* color);
+		static void InternalColorGradientHDR1(MonoObject* managedInstance, MonoArray* keys);
 		static void InternalSetKeys(ScriptColorGradientHDR* thisPtr, MonoArray* keys, float duration);
 		static MonoArray* InternalGetKeys(ScriptColorGradientHDR* thisPtr);
 		static uint32_t InternalGetNumKeys(ScriptColorGradientHDR* thisPtr);

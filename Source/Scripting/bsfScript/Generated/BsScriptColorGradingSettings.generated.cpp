@@ -13,16 +13,16 @@ namespace bs
 	{
 	}
 
-	void ScriptColorGradingSettings::initRuntimeData()
+	void ScriptColorGradingSettings::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_getsaturation", (void*)&ScriptColorGradingSettings::InternalGetsaturation);
-		metaData.scriptClass->AddInternalCall("Internal_setsaturation", (void*)&ScriptColorGradingSettings::InternalSetsaturation);
-		metaData.scriptClass->AddInternalCall("Internal_getcontrast", (void*)&ScriptColorGradingSettings::InternalGetcontrast);
-		metaData.scriptClass->AddInternalCall("Internal_setcontrast", (void*)&ScriptColorGradingSettings::InternalSetcontrast);
-		metaData.scriptClass->AddInternalCall("Internal_getgain", (void*)&ScriptColorGradingSettings::InternalGetgain);
-		metaData.scriptClass->AddInternalCall("Internal_setgain", (void*)&ScriptColorGradingSettings::InternalSetgain);
-		metaData.scriptClass->AddInternalCall("Internal_getoffset", (void*)&ScriptColorGradingSettings::InternalGetoffset);
-		metaData.scriptClass->AddInternalCall("Internal_setoffset", (void*)&ScriptColorGradingSettings::InternalSetoffset);
+		metaData.scriptClass->AddInternalCall("Internal_Getsaturation", (void*)&ScriptColorGradingSettings::InternalGetsaturation);
+		metaData.scriptClass->AddInternalCall("Internal_Setsaturation", (void*)&ScriptColorGradingSettings::InternalSetsaturation);
+		metaData.scriptClass->AddInternalCall("Internal_Getcontrast", (void*)&ScriptColorGradingSettings::InternalGetcontrast);
+		metaData.scriptClass->AddInternalCall("Internal_Setcontrast", (void*)&ScriptColorGradingSettings::InternalSetcontrast);
+		metaData.scriptClass->AddInternalCall("Internal_Getgain", (void*)&ScriptColorGradingSettings::InternalGetgain);
+		metaData.scriptClass->AddInternalCall("Internal_Setgain", (void*)&ScriptColorGradingSettings::InternalSetgain);
+		metaData.scriptClass->AddInternalCall("Internal_Getoffset", (void*)&ScriptColorGradingSettings::InternalGetoffset);
+		metaData.scriptClass->AddInternalCall("Internal_Setoffset", (void*)&ScriptColorGradingSettings::InternalSetoffset);
 
 	}
 
@@ -33,7 +33,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptColorGradingSettings>()) ScriptColorGradingSettings(managedInstance, value);
 		return managedInstance;
 	}

@@ -38,7 +38,7 @@ namespace bs
 		[NativeWrapper]
 		public int NumKeys
 		{
-			get { return Internal_getNumKeys(mCachedPtr); }
+			get { return Internal_GetNumKeys(mCachedPtr); }
 		}
 
 		/// <summary>
@@ -46,36 +46,32 @@ namespace bs
 		/// </summary>
 		public void SetKeys(ColorGradientKey[] keys, float duration = 1f)
 		{
-			Internal_setKeys(mCachedPtr, keys, duration);
+			Internal_SetKeys(mCachedPtr, keys, duration);
 		}
 
-		/// <summary>
-		/// Keys that control the gradient, sorted by time from first to last. Key times should be in range [0, 1].
-		/// </summary>
 		public ColorGradientKey[] GetKeys()
 		{
-			return Internal_getKeys(mCachedPtr);
+			return Internal_GetKeys(mCachedPtr);
 		}
 
 		/// <summary>Returns the color key at the specified index. If out of range an empty key is returned.</summary>
 		public ColorGradientKey GetKey(int idx)
 		{
 			ColorGradientKey temp;
-			Internal_getKey(mCachedPtr, idx, out temp);
+			Internal_GetKey(mCachedPtr, idx, out temp);
 			return temp;
 		}
 
 		/// <summary>Specify a &quot;gradient&quot; that represents a single color value.</summary>
 		public void SetConstant(Color color)
 		{
-			Internal_setConstant(mCachedPtr, ref color);
+			Internal_SetConstant(mCachedPtr, ref color);
 		}
 
-		/// <summary>Evaluates a color at the specified <paramref name="t"/>.</summary>
 		public Color Evaluate(float t)
 		{
 			Color temp;
-			Internal_evaluate(mCachedPtr, t, out temp);
+			Internal_Evaluate(mCachedPtr, t, out temp);
 			return temp;
 		}
 
@@ -86,17 +82,17 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_ColorGradientHDR1(ColorGradientHDR managedInstance, ColorGradientKey[] keys);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setKeys(IntPtr thisPtr, ColorGradientKey[] keys, float duration);
+		private static extern void Internal_SetKeys(IntPtr thisPtr, ColorGradientKey[] keys, float duration);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ColorGradientKey[] Internal_getKeys(IntPtr thisPtr);
+		private static extern ColorGradientKey[] Internal_GetKeys(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getNumKeys(IntPtr thisPtr);
+		private static extern int Internal_GetNumKeys(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getKey(IntPtr thisPtr, int idx, out ColorGradientKey __output);
+		private static extern void Internal_GetKey(IntPtr thisPtr, int idx, out ColorGradientKey __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setConstant(IntPtr thisPtr, ref Color color);
+		private static extern void Internal_SetConstant(IntPtr thisPtr, ref Color color);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_evaluate(IntPtr thisPtr, float t, out Color __output);
+		private static extern void Internal_Evaluate(IntPtr thisPtr, float t, out Color __output);
 	}
 
 	/** @} */

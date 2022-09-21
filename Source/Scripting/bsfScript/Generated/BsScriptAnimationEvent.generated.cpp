@@ -11,7 +11,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptAnimationEvent::initRuntimeData()
+	void ScriptAnimationEvent::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptAnimationEvent::Box(const __AnimationEventInterop& value)

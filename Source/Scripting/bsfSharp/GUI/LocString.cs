@@ -28,7 +28,7 @@ namespace bs
         /// <returns>Translated text for the currently active language.</returns>
         public static explicit operator string(LocString text)
         {
-            return Internal_getValue(text.mCachedPtr);
+            return Internal_GetValue(text.mCachedPtr);
         }
     }
 

@@ -11,7 +11,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptPixelVolume::initRuntimeData()
+	void ScriptPixelVolume::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptPixelVolume::Box(const PixelVolume& value)

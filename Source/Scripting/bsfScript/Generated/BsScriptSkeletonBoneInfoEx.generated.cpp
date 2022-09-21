@@ -11,7 +11,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptSkeletonBoneInfoEx::initRuntimeData()
+	void ScriptSkeletonBoneInfoEx::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptSkeletonBoneInfoEx::Box(const __SkeletonBoneInfoExInterop& value)

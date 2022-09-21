@@ -49,7 +49,7 @@ namespace bs
 		assert(instance != nullptr);
 	}
 
-	void ScriptComponent::initRuntimeData()
+	void ScriptComponent::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_AddComponent", (void*)&ScriptComponent::InternalAddComponent);
 		metaData.scriptClass->AddInternalCall("Internal_GetComponent", (void*)&ScriptComponent::InternalGetComponent);

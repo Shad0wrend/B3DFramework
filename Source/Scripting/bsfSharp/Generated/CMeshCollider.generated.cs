@@ -17,23 +17,18 @@ namespace bs
 		private MeshCollider(bool __dummy0) { }
 		protected MeshCollider() { }
 
-		/// <summary>
-		/// Sets a mesh that represents the collider geometry. This can be a generic triangle mesh, or and convex mesh. Triangle 
-		/// meshes are not supported as triggers, nor are they supported for colliders that are parts of a non-kinematic 
-		/// rigidbody.
-		/// </summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public RRef<PhysicsMesh> Mesh
 		{
-			get { return Internal_getMesh(mCachedPtr); }
-			set { Internal_setMesh(mCachedPtr, value); }
+			get { return Internal_GetMesh(mCachedPtr); }
+			set { Internal_SetMesh(mCachedPtr, value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setMesh(IntPtr thisPtr, RRef<PhysicsMesh> mesh);
+		private static extern void Internal_SetMesh(IntPtr thisPtr, RRef<PhysicsMesh> mesh);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern RRef<PhysicsMesh> Internal_getMesh(IntPtr thisPtr);
+		private static extern RRef<PhysicsMesh> Internal_GetMesh(IntPtr thisPtr);
 	}
 
 	/** @} */

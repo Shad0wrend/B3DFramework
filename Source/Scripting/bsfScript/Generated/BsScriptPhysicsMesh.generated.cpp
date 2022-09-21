@@ -18,12 +18,12 @@ namespace bs
 	{
 	}
 
-	void ScriptPhysicsMesh::initRuntimeData()
+	void ScriptPhysicsMesh::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptPhysicsMesh::InternalGetRef);
-		metaData.scriptClass->AddInternalCall("Internal_getType", (void*)&ScriptPhysicsMesh::InternalGetType);
-		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptPhysicsMesh::InternalCreate);
-		metaData.scriptClass->AddInternalCall("Internal_getMeshData", (void*)&ScriptPhysicsMesh::InternalGetMeshData);
+		metaData.scriptClass->AddInternalCall("Internal_GetType", (void*)&ScriptPhysicsMesh::InternalGetType);
+		metaData.scriptClass->AddInternalCall("Internal_Create", (void*)&ScriptPhysicsMesh::InternalCreate);
+		metaData.scriptClass->AddInternalCall("Internal_GetMeshData", (void*)&ScriptPhysicsMesh::InternalGetMeshData);
 
 	}
 
@@ -54,17 +54,17 @@ namespace bs
 	{
 		SPtr<RendererMeshData> tmpmeshData;
 		ScriptRendererMeshData* scriptmeshData;
-		scriptmeshData = ScriptRendererMeshData::toNative(meshData);
+		scriptmeshData = ScriptRendererMeshData::ToNative(meshData);
 		if(scriptmeshData != nullptr)
 			tmpmeshData = scriptmeshData->GetInternal();
 		ResourceHandle<PhysicsMesh> instance = PhysicsMeshEx::Create(tmpmeshData, type);
-		ScriptResourceManager::Instance().createBuiltinScriptResource(instance, managedInstance);
+		ScriptResourceManager::Instance().CreateBuiltinScriptResource(instance, managedInstance);
 	}
 
 	MonoObject* ScriptPhysicsMesh::InternalGetMeshData(ScriptPhysicsMesh* thisPtr)
 	{
 		SPtr<RendererMeshData> tmp__output;
-		tmp__output = PhysicsMeshEx::getMeshData(thisPtr->GetHandle());
+		tmp__output = PhysicsMeshEx::GetMeshData(thisPtr->GetHandle());
 
 		MonoObject* __output;
 		__output = ScriptRendererMeshData::Create(tmp__output);

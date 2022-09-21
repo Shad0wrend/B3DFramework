@@ -15,12 +15,12 @@ namespace bs
 		mInternal = value;
 	}
 
-	void ScriptParticleTextureAnimation::initRuntimeData()
+	void ScriptParticleTextureAnimation::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_setOptions", (void*)&ScriptParticleTextureAnimation::InternalSetOptions);
-		metaData.scriptClass->AddInternalCall("Internal_getOptions", (void*)&ScriptParticleTextureAnimation::InternalGetOptions);
-		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptParticleTextureAnimation::InternalCreate);
-		metaData.scriptClass->AddInternalCall("Internal_create0", (void*)&ScriptParticleTextureAnimation::InternalCreate0);
+		metaData.scriptClass->AddInternalCall("Internal_SetOptions", (void*)&ScriptParticleTextureAnimation::InternalSetOptions);
+		metaData.scriptClass->AddInternalCall("Internal_GetOptions", (void*)&ScriptParticleTextureAnimation::InternalGetOptions);
+		metaData.scriptClass->AddInternalCall("Internal_Create", (void*)&ScriptParticleTextureAnimation::InternalCreate);
+		metaData.scriptClass->AddInternalCall("Internal_Create0", (void*)&ScriptParticleTextureAnimation::InternalCreate0);
 
 	}
 
@@ -31,7 +31,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptParticleTextureAnimation>()) ScriptParticleTextureAnimation(managedInstance, value);
 		return managedInstance;
 	}

@@ -13,17 +13,17 @@ namespace bs
 	{
 	}
 
-	void ScriptAudioClip::initRuntimeData()
+	void ScriptAudioClip::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptAudioClip::InternalGetRef);
-		metaData.scriptClass->AddInternalCall("Internal_getBitDepth", (void*)&ScriptAudioClip::InternalGetBitDepth);
-		metaData.scriptClass->AddInternalCall("Internal_getFrequency", (void*)&ScriptAudioClip::InternalGetFrequency);
-		metaData.scriptClass->AddInternalCall("Internal_getNumChannels", (void*)&ScriptAudioClip::InternalGetNumChannels);
-		metaData.scriptClass->AddInternalCall("Internal_getFormat", (void*)&ScriptAudioClip::InternalGetFormat);
-		metaData.scriptClass->AddInternalCall("Internal_getReadMode", (void*)&ScriptAudioClip::InternalGetReadMode);
-		metaData.scriptClass->AddInternalCall("Internal_getLength", (void*)&ScriptAudioClip::InternalGetLength);
-		metaData.scriptClass->AddInternalCall("Internal_getNumSamples", (void*)&ScriptAudioClip::InternalGetNumSamples);
-		metaData.scriptClass->AddInternalCall("Internal_is3D", (void*)&ScriptAudioClip::InternalIs3D);
+		metaData.scriptClass->AddInternalCall("Internal_GetBitDepth", (void*)&ScriptAudioClip::InternalGetBitDepth);
+		metaData.scriptClass->AddInternalCall("Internal_GetFrequency", (void*)&ScriptAudioClip::InternalGetFrequency);
+		metaData.scriptClass->AddInternalCall("Internal_GetNumChannels", (void*)&ScriptAudioClip::InternalGetNumChannels);
+		metaData.scriptClass->AddInternalCall("Internal_GetFormat", (void*)&ScriptAudioClip::InternalGetFormat);
+		metaData.scriptClass->AddInternalCall("Internal_GetReadMode", (void*)&ScriptAudioClip::InternalGetReadMode);
+		metaData.scriptClass->AddInternalCall("Internal_GetLength", (void*)&ScriptAudioClip::InternalGetLength);
+		metaData.scriptClass->AddInternalCall("Internal_GetNumSamples", (void*)&ScriptAudioClip::InternalGetNumSamples);
+		metaData.scriptClass->AddInternalCall("Internal_Is3D", (void*)&ScriptAudioClip::InternalIs3D);
 
 	}
 
@@ -32,7 +32,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		return metaData.scriptClass->createInstance("bool", ctorParams);
+		return metaData.scriptClass->CreateInstance("bool", ctorParams);
 	}
 	MonoObject* ScriptAudioClip::InternalGetRef(ScriptAudioClip* thisPtr)
 	{
@@ -119,7 +119,7 @@ namespace bs
 	bool ScriptAudioClip::InternalIs3D(ScriptAudioClip* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->GetHandle()->is3D();
+		tmp__output = thisPtr->GetHandle()->Is3D();
 
 		bool __output;
 		__output = tmp__output;

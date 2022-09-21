@@ -22,8 +22,8 @@ namespace bs
 		[NativeWrapper]
 		public static float Volume
 		{
-			get { return Internal_getVolume(); }
-			set { Internal_setVolume(value); }
+			get { return Internal_GetVolume(); }
+			set { Internal_SetVolume(value); }
 		}
 
 		/// <summary>Determines if audio reproduction is paused globally.</summary>
@@ -31,8 +31,8 @@ namespace bs
 		[NativeWrapper]
 		public static bool Paused
 		{
-			get { return Internal_isPaused(); }
-			set { Internal_setPaused(value); }
+			get { return Internal_IsPaused(); }
+			set { Internal_SetPaused(value); }
 		}
 
 		/// <summary>Determines the device on which is the audio played back on.</summary>
@@ -43,10 +43,10 @@ namespace bs
 			get
 			{
 				AudioDevice temp;
-				Internal_getActiveDevice(out temp);
+				Internal_GetActiveDevice(out temp);
 				return temp;
 			}
-			set { Internal_setActiveDevice(ref value); }
+			set { Internal_SetActiveDevice(ref value); }
 		}
 
 		/// <summary>Returns the default audio device identifier.</summary>
@@ -56,7 +56,7 @@ namespace bs
 			get
 			{
 				AudioDevice temp;
-				Internal_getDefaultDevice(out temp);
+				Internal_GetDefaultDevice(out temp);
 				return temp;
 			}
 		}
@@ -65,25 +65,25 @@ namespace bs
 		[NativeWrapper]
 		public static AudioDevice[] AllDevices
 		{
-			get { return Internal_getAllDevices(); }
+			get { return Internal_GetAllDevices(); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setVolume(float volume);
+		private static extern void Internal_SetVolume(float volume);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getVolume();
+		private static extern float Internal_GetVolume();
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setPaused(bool paused);
+		private static extern void Internal_SetPaused(bool paused);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_isPaused();
+		private static extern bool Internal_IsPaused();
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setActiveDevice(ref AudioDevice device);
+		private static extern void Internal_SetActiveDevice(ref AudioDevice device);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getActiveDevice(out AudioDevice __output);
+		private static extern void Internal_GetActiveDevice(out AudioDevice __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getDefaultDevice(out AudioDevice __output);
+		private static extern void Internal_GetDefaultDevice(out AudioDevice __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern AudioDevice[] Internal_getAllDevices();
+		private static extern AudioDevice[] Internal_GetAllDevices();
 	}
 
 	/** @} */

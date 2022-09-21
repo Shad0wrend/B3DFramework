@@ -19,13 +19,13 @@ namespace bs
 		/// <summary>Creates a new particle color evolver.</summary>
 		public ParticleColor(ParticleColorOptions desc)
 		{
-			Internal_create(this, ref desc);
+			Internal_Create(this, ref desc);
 		}
 
 		/// <summary>Creates a new particle color evolver.</summary>
 		public ParticleColor()
 		{
-			Internal_create0(this);
+			Internal_Create0(this);
 		}
 
 		/// <summary>Options describing the evolver.</summary>
@@ -36,20 +36,20 @@ namespace bs
 			get
 			{
 				ParticleColorOptions temp;
-				Internal_getOptions(mCachedPtr, out temp);
+				Internal_GetOptions(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setOptions(mCachedPtr, ref value); }
+			set { Internal_SetOptions(mCachedPtr, ref value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setOptions(IntPtr thisPtr, ref ParticleColorOptions options);
+		private static extern void Internal_SetOptions(IntPtr thisPtr, ref ParticleColorOptions options);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getOptions(IntPtr thisPtr, out ParticleColorOptions __output);
+		private static extern void Internal_GetOptions(IntPtr thisPtr, out ParticleColorOptions __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create(ParticleColor managedInstance, ref ParticleColorOptions desc);
+		private static extern void Internal_Create(ParticleColor managedInstance, ref ParticleColorOptions desc);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create0(ParticleColor managedInstance);
+		private static extern void Internal_Create0(ParticleColor managedInstance);
 	}
 
 	/** @} */

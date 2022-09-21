@@ -16,7 +16,7 @@ namespace bs
 		:ScriptObject(instance), mOp(op), mConvertCallback(convertCallback)
 	{ }
 
-	void ScriptAsyncOpBase::initRuntimeData()
+	void ScriptAsyncOpBase::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_IsComplete", (void*)&ScriptAsyncOpBase::InternalIsComplete);
 		metaData.scriptClass->AddInternalCall("Internal_BlockUntilComplete", (void*)&ScriptAsyncOpBase::InternalBlockUntilComplete);

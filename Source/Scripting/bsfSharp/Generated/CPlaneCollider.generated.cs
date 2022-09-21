@@ -25,10 +25,10 @@ namespace bs
 			get
 			{
 				Vector3 temp;
-				Internal_getNormal(mCachedPtr, out temp);
+				Internal_GetNormal(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setNormal(mCachedPtr, ref value); }
+			set { Internal_SetNormal(mCachedPtr, ref value); }
 		}
 
 		/// <summary>Determines the distance of the plane from the local origin, along its normal vector.</summary>
@@ -36,18 +36,18 @@ namespace bs
 		[NativeWrapper]
 		public float Distance
 		{
-			get { return Internal_getDistance(mCachedPtr); }
-			set { Internal_setDistance(mCachedPtr, value); }
+			get { return Internal_GetDistance(mCachedPtr); }
+			set { Internal_SetDistance(mCachedPtr, value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setNormal(IntPtr thisPtr, ref Vector3 normal);
+		private static extern void Internal_SetNormal(IntPtr thisPtr, ref Vector3 normal);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getNormal(IntPtr thisPtr, out Vector3 __output);
+		private static extern void Internal_GetNormal(IntPtr thisPtr, out Vector3 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setDistance(IntPtr thisPtr, float distance);
+		private static extern void Internal_SetDistance(IntPtr thisPtr, float distance);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getDistance(IntPtr thisPtr);
+		private static extern float Internal_GetDistance(IntPtr thisPtr);
 	}
 
 	/** @} */

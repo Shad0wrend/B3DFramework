@@ -13,10 +13,10 @@ namespace bs
 	{
 	}
 
-	void ScriptMorphChannel::initRuntimeData()
+	void ScriptMorphChannel::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_getName", (void*)&ScriptMorphChannel::InternalGetName);
-		metaData.scriptClass->AddInternalCall("Internal_getShapes", (void*)&ScriptMorphChannel::InternalGetShapes);
+		metaData.scriptClass->AddInternalCall("Internal_GetName", (void*)&ScriptMorphChannel::InternalGetName);
+		metaData.scriptClass->AddInternalCall("Internal_GetShapes", (void*)&ScriptMorphChannel::InternalGetShapes);
 
 	}
 
@@ -49,7 +49,7 @@ namespace bs
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
-		ScriptArray array__output = create<ScriptMorphShape>(arraySize__output);
+		ScriptArray array__output = ScriptArray::Create<ScriptMorphShape>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
 			SPtr<MorphShape> arrayElemPtr__output = vec__output[i];

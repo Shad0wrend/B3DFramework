@@ -17,16 +17,16 @@ namespace bs
 
 		ScriptMultiResource(MonoObject* managedInstance, const SPtr<MultiResource>& value);
 
-		SPtr<MultiResource> getInternal() const { return mInternal; }
-		static MonoObject* create(const SPtr<MultiResource>& value);
+		SPtr<MultiResource> GetInternal() const { return mInternal; }
+		static MonoObject* Create(const SPtr<MultiResource>& value);
 
 	private:
 		SPtr<MultiResource> mInternal;
 
-		static void Internal_MultiResource(MonoObject* managedInstance);
-		static void Internal_MultiResource0(MonoObject* managedInstance, MonoArray* entries);
-		static MonoArray* Internal_getentries(ScriptMultiResource* thisPtr);
-		static void Internal_setentries(ScriptMultiResource* thisPtr, MonoArray* value);
+		static void InternalMultiResource(MonoObject* managedInstance);
+		static void InternalMultiResource0(MonoObject* managedInstance, MonoArray* entries);
+		static MonoArray* InternalGetentries(ScriptMultiResource* thisPtr);
+		static void InternalSetentries(ScriptMultiResource* thisPtr, MonoArray* value);
 	};
 #endif
 }

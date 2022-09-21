@@ -8,12 +8,12 @@
 #include "BsScriptCBoxCollider.generated.h"
 #include "../../../Foundation/bsfCore/Components/BsCCamera.h"
 #include "BsScriptCCamera.generated.h"
-#include "../../../Foundation/bsfCore/Components/BsCAudioListener.h"
-#include "BsScriptCAudioListener.generated.h"
 #include "../../../Foundation/bsfCore/Components/BsCCharacterController.h"
 #include "BsScriptCCharacterController.generated.h"
 #include "../../../Foundation/bsfCore/Components/BsCAnimation.h"
 #include "BsScriptCAnimation.generated.h"
+#include "../../../Foundation/bsfCore/Components/BsCAudioListener.h"
+#include "BsScriptCAudioListener.generated.h"
 #include "../../../Foundation/bsfCore/Components/BsCAudioSource.h"
 #include "BsScriptCAudioSource.generated.h"
 #include "../../../Foundation/bsfCore/Components/BsCBone.h"
@@ -64,9 +64,9 @@ namespace bs
 	LOOKUP_BEGIN(BuiltinComponent)
 		ADD_ENTRY(CBoxCollider, ScriptCBoxCollider)
 		ADD_ENTRY(CCamera, ScriptCCamera)
-		ADD_ENTRY(CAudioListener, ScriptCAudioListener)
 		ADD_ENTRY(CCharacterController, ScriptCCharacterController)
 		ADD_ENTRY(CAnimation, ScriptCAnimation)
+		ADD_ENTRY(CAudioListener, ScriptCAudioListener)
 		ADD_ENTRY(CAudioSource, ScriptCAudioSource)
 		ADD_ENTRY(CBone, ScriptCBone)
 		ADD_ENTRY(CCollider, ScriptCCollider)

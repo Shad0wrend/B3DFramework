@@ -11,7 +11,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptPARTICLE_HEMISPHERE_SHAPE_DESC::initRuntimeData()
+	void ScriptPARTICLE_HEMISPHERE_SHAPE_DESC::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptPARTICLE_HEMISPHERE_SHAPE_DESC::Box(const PARTICLE_HEMISPHERE_SHAPE_DESC& value)

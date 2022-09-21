@@ -16,10 +16,10 @@ namespace bs
 	{
 	}
 
-	void ScriptRootMotion::initRuntimeData()
+	void ScriptRootMotion::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_getPositionCurves", (void*)&ScriptRootMotion::InternalGetPositionCurves);
-		metaData.scriptClass->AddInternalCall("Internal_getRotationCurves", (void*)&ScriptRootMotion::InternalGetRotationCurves);
+		metaData.scriptClass->AddInternalCall("Internal_GetPositionCurves", (void*)&ScriptRootMotion::InternalGetPositionCurves);
+		metaData.scriptClass->AddInternalCall("Internal_GetRotationCurves", (void*)&ScriptRootMotion::InternalGetRotationCurves);
 
 	}
 
@@ -48,7 +48,7 @@ namespace bs
 	MonoObject* ScriptRootMotion::InternalGetRotationCurves(ScriptRootMotion* thisPtr)
 	{
 		SPtr<TAnimationCurve<Quaternion>> tmp__output = bs_shared_ptr_new<TAnimationCurve<Quaternion>>();
-		*tmp__output = RootMotionEx::getRotationCurves(thisPtr->GetInternal());
+		*tmp__output = RootMotionEx::GetRotationCurves(thisPtr->GetInternal());
 
 		MonoObject* __output;
 		__output = ScriptTAnimationCurveQuaternion::Create(tmp__output);

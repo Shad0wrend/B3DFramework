@@ -13,7 +13,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptLimitConeRange::initRuntimeData()
+	void ScriptLimitConeRange::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptLimitConeRange::Box(const __LimitConeRangeInterop& value)

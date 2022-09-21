@@ -31,7 +31,7 @@ namespace bs
 		:ScriptObject(instance)
 	{ }
 
-	void ScriptInput::initRuntimeData()
+	void ScriptInput::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_IsButtonHeld", (void*)&ScriptInput::InternalIsButtonHeld);
 		metaData.scriptClass->AddInternalCall("Internal_IsButtonDown", (void*)&ScriptInput::InternalIsButtonDown);

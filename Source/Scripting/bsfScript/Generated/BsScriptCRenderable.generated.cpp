@@ -17,22 +17,22 @@ namespace bs
 	{
 	}
 
-	void ScriptCRenderable::initRuntimeData()
+	void ScriptCRenderable::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_setMesh", (void*)&ScriptCRenderable::InternalSetMesh);
-		metaData.scriptClass->AddInternalCall("Internal_getMesh", (void*)&ScriptCRenderable::InternalGetMesh);
-		metaData.scriptClass->AddInternalCall("Internal_setMaterial", (void*)&ScriptCRenderable::InternalSetMaterial);
-		metaData.scriptClass->AddInternalCall("Internal_setMaterial0", (void*)&ScriptCRenderable::InternalSetMaterial0);
-		metaData.scriptClass->AddInternalCall("Internal_getMaterial", (void*)&ScriptCRenderable::InternalGetMaterial);
-		metaData.scriptClass->AddInternalCall("Internal_setMaterials", (void*)&ScriptCRenderable::InternalSetMaterials);
-		metaData.scriptClass->AddInternalCall("Internal_getMaterials", (void*)&ScriptCRenderable::InternalGetMaterials);
-		metaData.scriptClass->AddInternalCall("Internal_setCullDistanceFactor", (void*)&ScriptCRenderable::InternalSetCullDistanceFactor);
-		metaData.scriptClass->AddInternalCall("Internal_getCullDistanceFactor", (void*)&ScriptCRenderable::InternalGetCullDistanceFactor);
-		metaData.scriptClass->AddInternalCall("Internal_setWriteVelocity", (void*)&ScriptCRenderable::InternalSetWriteVelocity);
-		metaData.scriptClass->AddInternalCall("Internal_getWriteVelocity", (void*)&ScriptCRenderable::InternalGetWriteVelocity);
-		metaData.scriptClass->AddInternalCall("Internal_setLayer", (void*)&ScriptCRenderable::InternalSetLayer);
-		metaData.scriptClass->AddInternalCall("Internal_getLayer", (void*)&ScriptCRenderable::InternalGetLayer);
-		metaData.scriptClass->AddInternalCall("Internal_getBounds", (void*)&ScriptCRenderable::InternalGetBounds);
+		metaData.scriptClass->AddInternalCall("Internal_SetMesh", (void*)&ScriptCRenderable::InternalSetMesh);
+		metaData.scriptClass->AddInternalCall("Internal_GetMesh", (void*)&ScriptCRenderable::InternalGetMesh);
+		metaData.scriptClass->AddInternalCall("Internal_SetMaterial", (void*)&ScriptCRenderable::InternalSetMaterial);
+		metaData.scriptClass->AddInternalCall("Internal_SetMaterial0", (void*)&ScriptCRenderable::InternalSetMaterial0);
+		metaData.scriptClass->AddInternalCall("Internal_GetMaterial", (void*)&ScriptCRenderable::InternalGetMaterial);
+		metaData.scriptClass->AddInternalCall("Internal_SetMaterials", (void*)&ScriptCRenderable::InternalSetMaterials);
+		metaData.scriptClass->AddInternalCall("Internal_GetMaterials", (void*)&ScriptCRenderable::InternalGetMaterials);
+		metaData.scriptClass->AddInternalCall("Internal_SetCullDistanceFactor", (void*)&ScriptCRenderable::InternalSetCullDistanceFactor);
+		metaData.scriptClass->AddInternalCall("Internal_GetCullDistanceFactor", (void*)&ScriptCRenderable::InternalGetCullDistanceFactor);
+		metaData.scriptClass->AddInternalCall("Internal_SetWriteVelocity", (void*)&ScriptCRenderable::InternalSetWriteVelocity);
+		metaData.scriptClass->AddInternalCall("Internal_GetWriteVelocity", (void*)&ScriptCRenderable::InternalGetWriteVelocity);
+		metaData.scriptClass->AddInternalCall("Internal_SetLayer", (void*)&ScriptCRenderable::InternalSetLayer);
+		metaData.scriptClass->AddInternalCall("Internal_GetLayer", (void*)&ScriptCRenderable::InternalGetLayer);
+		metaData.scriptClass->AddInternalCall("Internal_GetBounds", (void*)&ScriptCRenderable::InternalGetBounds);
 
 	}
 
@@ -40,7 +40,7 @@ namespace bs
 	{
 		ResourceHandle<Mesh> tmpmesh;
 		ScriptRRefBase* scriptmesh;
-		scriptmesh = ScriptRRefBase::toNative(mesh);
+		scriptmesh = ScriptRRefBase::ToNative(mesh);
 		if(scriptmesh != nullptr)
 			tmpmesh = static_resource_cast<Mesh>(scriptmesh->GetHandle());
 		thisPtr->GetHandle()->SetMesh(tmpmesh);
@@ -53,7 +53,7 @@ namespace bs
 
 		MonoObject* __output;
 		ScriptRRefBase* script__output;
-		script__output = ScriptResourceManager::Instance().getScriptRRef(tmp__output);
+		script__output = ScriptResourceManager::Instance().GetScriptRRef(tmp__output);
 		if(script__output != nullptr)
 			__output = script__output->GetManagedInstance();
 		else
@@ -66,7 +66,7 @@ namespace bs
 	{
 		ResourceHandle<Material> tmpmaterial;
 		ScriptRRefBase* scriptmaterial;
-		scriptmaterial = ScriptRRefBase::toNative(material);
+		scriptmaterial = ScriptRRefBase::ToNative(material);
 		if(scriptmaterial != nullptr)
 			tmpmaterial = static_resource_cast<Material>(scriptmaterial->GetHandle());
 		thisPtr->GetHandle()->SetMaterial(idx, tmpmaterial);
@@ -76,7 +76,7 @@ namespace bs
 	{
 		ResourceHandle<Material> tmpmaterial;
 		ScriptRRefBase* scriptmaterial;
-		scriptmaterial = ScriptRRefBase::toNative(material);
+		scriptmaterial = ScriptRRefBase::ToNative(material);
 		if(scriptmaterial != nullptr)
 			tmpmaterial = static_resource_cast<Material>(scriptmaterial->GetHandle());
 		thisPtr->GetHandle()->SetMaterial(tmpmaterial);
@@ -89,7 +89,7 @@ namespace bs
 
 		MonoObject* __output;
 		ScriptRRefBase* script__output;
-		script__output = ScriptResourceManager::Instance().getScriptRRef(tmp__output);
+		script__output = ScriptResourceManager::Instance().GetScriptRRef(tmp__output);
 		if(script__output != nullptr)
 			__output = script__output->GetManagedInstance();
 		else
@@ -104,11 +104,11 @@ namespace bs
 		if(materials != nullptr)
 		{
 			ScriptArray arraymaterials(materials);
-			vecmaterials.resize(arraymaterials.size());
-			for(int i = 0; i < (int)arraymaterials.size(); i++)
+			vecmaterials.resize(arraymaterials.Size());
+			for(int i = 0; i < (int)arraymaterials.Size(); i++)
 			{
 				ScriptRRefBase* scriptmaterials;
-				scriptmaterials = ScriptRRefBase::toNative(arraymaterials.get<MonoObject*>(i));
+				scriptmaterials = ScriptRRefBase::ToNative(arraymaterials.Get<MonoObject*>(i));
 				if(scriptmaterials != nullptr)
 				{
 					ResourceHandle<Material> arrayElemPtrmaterials = static_resource_cast<Material>(scriptmaterials->GetHandle());
@@ -126,17 +126,17 @@ namespace bs
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
-		ScriptArray array__output = ScriptArray::create<ScriptRRefBase>(arraySize__output);
+		ScriptArray array__output = ScriptArray::Create<ScriptRRefBase>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
 			ScriptRRefBase* script__output;
-			script__output = ScriptResourceManager::Instance().getScriptRRef(vec__output[i]);
+			script__output = ScriptResourceManager::Instance().GetScriptRRef(vec__output[i]);
 			if(script__output != nullptr)
 				array__output.Set(i, script__output->GetManagedInstance());
 			else
 				array__output.Set(i, nullptr);
 		}
-		__output = array__output.getInternal();
+		__output = array__output.GetInternal();
 
 		return __output;
 	}

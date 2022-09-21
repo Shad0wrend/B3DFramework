@@ -14,29 +14,29 @@ namespace bs
 	{
 	}
 
-	void ScriptCLight::initRuntimeData()
+	void ScriptCLight::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_setType", (void*)&ScriptCLight::InternalSetType);
-		metaData.scriptClass->AddInternalCall("Internal_getType", (void*)&ScriptCLight::InternalGetType);
-		metaData.scriptClass->AddInternalCall("Internal_setColor", (void*)&ScriptCLight::InternalSetColor);
-		metaData.scriptClass->AddInternalCall("Internal_getColor", (void*)&ScriptCLight::InternalGetColor);
-		metaData.scriptClass->AddInternalCall("Internal_setIntensity", (void*)&ScriptCLight::InternalSetIntensity);
-		metaData.scriptClass->AddInternalCall("Internal_getIntensity", (void*)&ScriptCLight::InternalGetIntensity);
-		metaData.scriptClass->AddInternalCall("Internal_setUseAutoAttenuation", (void*)&ScriptCLight::InternalSetUseAutoAttenuation);
-		metaData.scriptClass->AddInternalCall("Internal_getUseAutoAttenuation", (void*)&ScriptCLight::InternalGetUseAutoAttenuation);
-		metaData.scriptClass->AddInternalCall("Internal_setAttenuationRadius", (void*)&ScriptCLight::InternalSetAttenuationRadius);
-		metaData.scriptClass->AddInternalCall("Internal_getAttenuationRadius", (void*)&ScriptCLight::InternalGetAttenuationRadius);
-		metaData.scriptClass->AddInternalCall("Internal_setSourceRadius", (void*)&ScriptCLight::InternalSetSourceRadius);
-		metaData.scriptClass->AddInternalCall("Internal_getSourceRadius", (void*)&ScriptCLight::InternalGetSourceRadius);
-		metaData.scriptClass->AddInternalCall("Internal_setSpotAngle", (void*)&ScriptCLight::InternalSetSpotAngle);
-		metaData.scriptClass->AddInternalCall("Internal_getSpotAngle", (void*)&ScriptCLight::InternalGetSpotAngle);
-		metaData.scriptClass->AddInternalCall("Internal_setSpotFalloffAngle", (void*)&ScriptCLight::InternalSetSpotFalloffAngle);
-		metaData.scriptClass->AddInternalCall("Internal_getSpotFalloffAngle", (void*)&ScriptCLight::InternalGetSpotFalloffAngle);
-		metaData.scriptClass->AddInternalCall("Internal_setCastsShadow", (void*)&ScriptCLight::InternalSetCastsShadow);
-		metaData.scriptClass->AddInternalCall("Internal_getCastsShadow", (void*)&ScriptCLight::InternalGetCastsShadow);
-		metaData.scriptClass->AddInternalCall("Internal_setShadowBias", (void*)&ScriptCLight::InternalSetShadowBias);
-		metaData.scriptClass->AddInternalCall("Internal_getShadowBias", (void*)&ScriptCLight::InternalGetShadowBias);
-		metaData.scriptClass->AddInternalCall("Internal_getBounds", (void*)&ScriptCLight::InternalGetBounds);
+		metaData.scriptClass->AddInternalCall("Internal_SetType", (void*)&ScriptCLight::InternalSetType);
+		metaData.scriptClass->AddInternalCall("Internal_GetType", (void*)&ScriptCLight::InternalGetType);
+		metaData.scriptClass->AddInternalCall("Internal_SetColor", (void*)&ScriptCLight::InternalSetColor);
+		metaData.scriptClass->AddInternalCall("Internal_GetColor", (void*)&ScriptCLight::InternalGetColor);
+		metaData.scriptClass->AddInternalCall("Internal_SetIntensity", (void*)&ScriptCLight::InternalSetIntensity);
+		metaData.scriptClass->AddInternalCall("Internal_GetIntensity", (void*)&ScriptCLight::InternalGetIntensity);
+		metaData.scriptClass->AddInternalCall("Internal_SetUseAutoAttenuation", (void*)&ScriptCLight::InternalSetUseAutoAttenuation);
+		metaData.scriptClass->AddInternalCall("Internal_GetUseAutoAttenuation", (void*)&ScriptCLight::InternalGetUseAutoAttenuation);
+		metaData.scriptClass->AddInternalCall("Internal_SetAttenuationRadius", (void*)&ScriptCLight::InternalSetAttenuationRadius);
+		metaData.scriptClass->AddInternalCall("Internal_GetAttenuationRadius", (void*)&ScriptCLight::InternalGetAttenuationRadius);
+		metaData.scriptClass->AddInternalCall("Internal_SetSourceRadius", (void*)&ScriptCLight::InternalSetSourceRadius);
+		metaData.scriptClass->AddInternalCall("Internal_GetSourceRadius", (void*)&ScriptCLight::InternalGetSourceRadius);
+		metaData.scriptClass->AddInternalCall("Internal_SetSpotAngle", (void*)&ScriptCLight::InternalSetSpotAngle);
+		metaData.scriptClass->AddInternalCall("Internal_GetSpotAngle", (void*)&ScriptCLight::InternalGetSpotAngle);
+		metaData.scriptClass->AddInternalCall("Internal_SetSpotFalloffAngle", (void*)&ScriptCLight::InternalSetSpotFalloffAngle);
+		metaData.scriptClass->AddInternalCall("Internal_GetSpotFalloffAngle", (void*)&ScriptCLight::InternalGetSpotFalloffAngle);
+		metaData.scriptClass->AddInternalCall("Internal_SetCastsShadow", (void*)&ScriptCLight::InternalSetCastsShadow);
+		metaData.scriptClass->AddInternalCall("Internal_GetCastsShadow", (void*)&ScriptCLight::InternalGetCastsShadow);
+		metaData.scriptClass->AddInternalCall("Internal_SetShadowBias", (void*)&ScriptCLight::InternalSetShadowBias);
+		metaData.scriptClass->AddInternalCall("Internal_GetShadowBias", (void*)&ScriptCLight::InternalGetShadowBias);
+		metaData.scriptClass->AddInternalCall("Internal_GetBounds", (void*)&ScriptCLight::InternalGetBounds);
 
 	}
 

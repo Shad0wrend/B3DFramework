@@ -13,7 +13,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptPARTICLE_VELOCITY_DESC::initRuntimeData()
+	void ScriptPARTICLE_VELOCITY_DESC::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptPARTICLE_VELOCITY_DESC::Box(const __PARTICLE_VELOCITY_DESCInterop& value)

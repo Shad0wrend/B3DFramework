@@ -18,20 +18,20 @@ namespace bs
 	{
 	}
 
-	void ScriptTDistributionfloat::initRuntimeData()
+	void ScriptTDistributionfloat::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_TDistribution", (void*)&ScriptTDistributionfloat::InternalTDistribution);
 		metaData.scriptClass->AddInternalCall("Internal_TDistribution0", (void*)&ScriptTDistributionfloat::InternalTDistribution0);
 		metaData.scriptClass->AddInternalCall("Internal_TDistribution1", (void*)&ScriptTDistributionfloat::InternalTDistribution1);
 		metaData.scriptClass->AddInternalCall("Internal_TDistribution2", (void*)&ScriptTDistributionfloat::InternalTDistribution2);
 		metaData.scriptClass->AddInternalCall("Internal_TDistribution3", (void*)&ScriptTDistributionfloat::InternalTDistribution3);
-		metaData.scriptClass->AddInternalCall("Internal_getType", (void*)&ScriptTDistributionfloat::InternalGetType);
-		metaData.scriptClass->AddInternalCall("Internal_getMinConstant", (void*)&ScriptTDistributionfloat::InternalGetMinConstant);
-		metaData.scriptClass->AddInternalCall("Internal_getMaxConstant", (void*)&ScriptTDistributionfloat::InternalGetMaxConstant);
-		metaData.scriptClass->AddInternalCall("Internal_getMinCurve", (void*)&ScriptTDistributionfloat::InternalGetMinCurve);
-		metaData.scriptClass->AddInternalCall("Internal_getMaxCurve", (void*)&ScriptTDistributionfloat::InternalGetMaxCurve);
-		metaData.scriptClass->AddInternalCall("Internal_evaluate", (void*)&ScriptTDistributionfloat::InternalEvaluate);
-		metaData.scriptClass->AddInternalCall("Internal_evaluate0", (void*)&ScriptTDistributionfloat::InternalEvaluate0);
+		metaData.scriptClass->AddInternalCall("Internal_GetType", (void*)&ScriptTDistributionfloat::InternalGetType);
+		metaData.scriptClass->AddInternalCall("Internal_GetMinConstant", (void*)&ScriptTDistributionfloat::InternalGetMinConstant);
+		metaData.scriptClass->AddInternalCall("Internal_GetMaxConstant", (void*)&ScriptTDistributionfloat::InternalGetMaxConstant);
+		metaData.scriptClass->AddInternalCall("Internal_GetMinCurve", (void*)&ScriptTDistributionfloat::InternalGetMinCurve);
+		metaData.scriptClass->AddInternalCall("Internal_GetMaxCurve", (void*)&ScriptTDistributionfloat::InternalGetMaxCurve);
+		metaData.scriptClass->AddInternalCall("Internal_Evaluate", (void*)&ScriptTDistributionfloat::InternalEvaluate);
+		metaData.scriptClass->AddInternalCall("Internal_Evaluate0", (void*)&ScriptTDistributionfloat::InternalEvaluate0);
 
 	}
 
@@ -42,7 +42,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptTDistributionfloat>()) ScriptTDistributionfloat(managedInstance, value);
 		return managedInstance;
 	}
@@ -68,7 +68,7 @@ namespace bs
 	{
 		SPtr<TAnimationCurve<float>> tmpcurve;
 		ScriptTAnimationCurvefloat* scriptcurve;
-		scriptcurve = ScriptTAnimationCurvefloat::toNative(curve);
+		scriptcurve = ScriptTAnimationCurvefloat::ToNative(curve);
 		if(scriptcurve != nullptr)
 			tmpcurve = scriptcurve->GetInternal();
 		SPtr<TDistribution<float>> instance = bs_shared_ptr_new<TDistribution<float>>(*tmpcurve);
@@ -79,12 +79,12 @@ namespace bs
 	{
 		SPtr<TAnimationCurve<float>> tmpminCurve;
 		ScriptTAnimationCurvefloat* scriptminCurve;
-		scriptminCurve = ScriptTAnimationCurvefloat::toNative(minCurve);
+		scriptminCurve = ScriptTAnimationCurvefloat::ToNative(minCurve);
 		if(scriptminCurve != nullptr)
 			tmpminCurve = scriptminCurve->GetInternal();
 		SPtr<TAnimationCurve<float>> tmpmaxCurve;
 		ScriptTAnimationCurvefloat* scriptmaxCurve;
-		scriptmaxCurve = ScriptTAnimationCurvefloat::toNative(maxCurve);
+		scriptmaxCurve = ScriptTAnimationCurvefloat::ToNative(maxCurve);
 		if(scriptmaxCurve != nullptr)
 			tmpmaxCurve = scriptmaxCurve->GetInternal();
 		SPtr<TDistribution<float>> instance = bs_shared_ptr_new<TDistribution<float>>(*tmpminCurve, *tmpmaxCurve);
@@ -149,7 +149,7 @@ namespace bs
 	float ScriptTDistributionfloat::InternalEvaluate(ScriptTDistributionfloat* thisPtr, float t, float factor)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->GetInternal()->evaluate(t, factor);
+		tmp__output = thisPtr->GetInternal()->Evaluate(t, factor);
 
 		float __output;
 		__output = tmp__output;
@@ -162,10 +162,10 @@ namespace bs
 		float tmp__output;
 		SPtr<Random> tmpfactor;
 		ScriptRandom* scriptfactor;
-		scriptfactor = ScriptRandom::toNative(factor);
+		scriptfactor = ScriptRandom::ToNative(factor);
 		if(scriptfactor != nullptr)
 			tmpfactor = scriptfactor->GetInternal();
-		tmp__output = thisPtr->GetInternal()->evaluate(t, *tmpfactor);
+		tmp__output = thisPtr->GetInternal()->Evaluate(t, *tmpfactor);
 
 		float __output;
 		__output = tmp__output;
@@ -178,20 +178,20 @@ namespace bs
 	{
 	}
 
-	void ScriptTDistributionVector3::initRuntimeData()
+	void ScriptTDistributionVector3::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_TDistribution", (void*)&ScriptTDistributionVector3::InternalTDistribution);
 		metaData.scriptClass->AddInternalCall("Internal_TDistribution0", (void*)&ScriptTDistributionVector3::InternalTDistribution0);
 		metaData.scriptClass->AddInternalCall("Internal_TDistribution1", (void*)&ScriptTDistributionVector3::InternalTDistribution1);
 		metaData.scriptClass->AddInternalCall("Internal_TDistribution2", (void*)&ScriptTDistributionVector3::InternalTDistribution2);
 		metaData.scriptClass->AddInternalCall("Internal_TDistribution3", (void*)&ScriptTDistributionVector3::InternalTDistribution3);
-		metaData.scriptClass->AddInternalCall("Internal_getType", (void*)&ScriptTDistributionVector3::InternalGetType);
-		metaData.scriptClass->AddInternalCall("Internal_getMinConstant", (void*)&ScriptTDistributionVector3::InternalGetMinConstant);
-		metaData.scriptClass->AddInternalCall("Internal_getMaxConstant", (void*)&ScriptTDistributionVector3::InternalGetMaxConstant);
-		metaData.scriptClass->AddInternalCall("Internal_getMinCurve", (void*)&ScriptTDistributionVector3::InternalGetMinCurve);
-		metaData.scriptClass->AddInternalCall("Internal_getMaxCurve", (void*)&ScriptTDistributionVector3::InternalGetMaxCurve);
-		metaData.scriptClass->AddInternalCall("Internal_evaluate", (void*)&ScriptTDistributionVector3::InternalEvaluate);
-		metaData.scriptClass->AddInternalCall("Internal_evaluate0", (void*)&ScriptTDistributionVector3::InternalEvaluate0);
+		metaData.scriptClass->AddInternalCall("Internal_GetType", (void*)&ScriptTDistributionVector3::InternalGetType);
+		metaData.scriptClass->AddInternalCall("Internal_GetMinConstant", (void*)&ScriptTDistributionVector3::InternalGetMinConstant);
+		metaData.scriptClass->AddInternalCall("Internal_GetMaxConstant", (void*)&ScriptTDistributionVector3::InternalGetMaxConstant);
+		metaData.scriptClass->AddInternalCall("Internal_GetMinCurve", (void*)&ScriptTDistributionVector3::InternalGetMinCurve);
+		metaData.scriptClass->AddInternalCall("Internal_GetMaxCurve", (void*)&ScriptTDistributionVector3::InternalGetMaxCurve);
+		metaData.scriptClass->AddInternalCall("Internal_Evaluate", (void*)&ScriptTDistributionVector3::InternalEvaluate);
+		metaData.scriptClass->AddInternalCall("Internal_Evaluate0", (void*)&ScriptTDistributionVector3::InternalEvaluate0);
 
 	}
 
@@ -202,7 +202,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptTDistributionVector3>()) ScriptTDistributionVector3(managedInstance, value);
 		return managedInstance;
 	}
@@ -228,7 +228,7 @@ namespace bs
 	{
 		SPtr<TAnimationCurve<Vector3>> tmpcurve;
 		ScriptTAnimationCurveVector3* scriptcurve;
-		scriptcurve = ScriptTAnimationCurveVector3::toNative(curve);
+		scriptcurve = ScriptTAnimationCurveVector3::ToNative(curve);
 		if(scriptcurve != nullptr)
 			tmpcurve = scriptcurve->GetInternal();
 		SPtr<TDistribution<Vector3>> instance = bs_shared_ptr_new<TDistribution<Vector3>>(*tmpcurve);
@@ -239,12 +239,12 @@ namespace bs
 	{
 		SPtr<TAnimationCurve<Vector3>> tmpminCurve;
 		ScriptTAnimationCurveVector3* scriptminCurve;
-		scriptminCurve = ScriptTAnimationCurveVector3::toNative(minCurve);
+		scriptminCurve = ScriptTAnimationCurveVector3::ToNative(minCurve);
 		if(scriptminCurve != nullptr)
 			tmpminCurve = scriptminCurve->GetInternal();
 		SPtr<TAnimationCurve<Vector3>> tmpmaxCurve;
 		ScriptTAnimationCurveVector3* scriptmaxCurve;
-		scriptmaxCurve = ScriptTAnimationCurveVector3::toNative(maxCurve);
+		scriptmaxCurve = ScriptTAnimationCurveVector3::ToNative(maxCurve);
 		if(scriptmaxCurve != nullptr)
 			tmpmaxCurve = scriptmaxCurve->GetInternal();
 		SPtr<TDistribution<Vector3>> instance = bs_shared_ptr_new<TDistribution<Vector3>>(*tmpminCurve, *tmpmaxCurve);
@@ -303,7 +303,7 @@ namespace bs
 	void ScriptTDistributionVector3::InternalEvaluate(ScriptTDistributionVector3* thisPtr, float t, float factor, Vector3* __output)
 	{
 		Vector3 tmp__output;
-		tmp__output = thisPtr->GetInternal()->evaluate(t, factor);
+		tmp__output = thisPtr->GetInternal()->Evaluate(t, factor);
 
 		*__output = tmp__output;
 	}
@@ -312,11 +312,11 @@ namespace bs
 	{
 		SPtr<Random> tmpfactor;
 		ScriptRandom* scriptfactor;
-		scriptfactor = ScriptRandom::toNative(factor);
+		scriptfactor = ScriptRandom::ToNative(factor);
 		if(scriptfactor != nullptr)
 			tmpfactor = scriptfactor->GetInternal();
 		Vector3 tmp__output;
-		tmp__output = thisPtr->GetInternal()->evaluate(t, *tmpfactor);
+		tmp__output = thisPtr->GetInternal()->Evaluate(t, *tmpfactor);
 
 		*__output = tmp__output;
 	}
@@ -326,20 +326,20 @@ namespace bs
 	{
 	}
 
-	void ScriptTDistributionVector2::initRuntimeData()
+	void ScriptTDistributionVector2::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_TDistribution", (void*)&ScriptTDistributionVector2::InternalTDistribution);
 		metaData.scriptClass->AddInternalCall("Internal_TDistribution0", (void*)&ScriptTDistributionVector2::InternalTDistribution0);
 		metaData.scriptClass->AddInternalCall("Internal_TDistribution1", (void*)&ScriptTDistributionVector2::InternalTDistribution1);
 		metaData.scriptClass->AddInternalCall("Internal_TDistribution2", (void*)&ScriptTDistributionVector2::InternalTDistribution2);
 		metaData.scriptClass->AddInternalCall("Internal_TDistribution3", (void*)&ScriptTDistributionVector2::InternalTDistribution3);
-		metaData.scriptClass->AddInternalCall("Internal_getType", (void*)&ScriptTDistributionVector2::InternalGetType);
-		metaData.scriptClass->AddInternalCall("Internal_getMinConstant", (void*)&ScriptTDistributionVector2::InternalGetMinConstant);
-		metaData.scriptClass->AddInternalCall("Internal_getMaxConstant", (void*)&ScriptTDistributionVector2::InternalGetMaxConstant);
-		metaData.scriptClass->AddInternalCall("Internal_getMinCurve", (void*)&ScriptTDistributionVector2::InternalGetMinCurve);
-		metaData.scriptClass->AddInternalCall("Internal_getMaxCurve", (void*)&ScriptTDistributionVector2::InternalGetMaxCurve);
-		metaData.scriptClass->AddInternalCall("Internal_evaluate", (void*)&ScriptTDistributionVector2::InternalEvaluate);
-		metaData.scriptClass->AddInternalCall("Internal_evaluate0", (void*)&ScriptTDistributionVector2::InternalEvaluate0);
+		metaData.scriptClass->AddInternalCall("Internal_GetType", (void*)&ScriptTDistributionVector2::InternalGetType);
+		metaData.scriptClass->AddInternalCall("Internal_GetMinConstant", (void*)&ScriptTDistributionVector2::InternalGetMinConstant);
+		metaData.scriptClass->AddInternalCall("Internal_GetMaxConstant", (void*)&ScriptTDistributionVector2::InternalGetMaxConstant);
+		metaData.scriptClass->AddInternalCall("Internal_GetMinCurve", (void*)&ScriptTDistributionVector2::InternalGetMinCurve);
+		metaData.scriptClass->AddInternalCall("Internal_GetMaxCurve", (void*)&ScriptTDistributionVector2::InternalGetMaxCurve);
+		metaData.scriptClass->AddInternalCall("Internal_Evaluate", (void*)&ScriptTDistributionVector2::InternalEvaluate);
+		metaData.scriptClass->AddInternalCall("Internal_Evaluate0", (void*)&ScriptTDistributionVector2::InternalEvaluate0);
 
 	}
 
@@ -350,7 +350,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptTDistributionVector2>()) ScriptTDistributionVector2(managedInstance, value);
 		return managedInstance;
 	}
@@ -376,7 +376,7 @@ namespace bs
 	{
 		SPtr<TAnimationCurve<Vector2>> tmpcurve;
 		ScriptTAnimationCurveVector2* scriptcurve;
-		scriptcurve = ScriptTAnimationCurveVector2::toNative(curve);
+		scriptcurve = ScriptTAnimationCurveVector2::ToNative(curve);
 		if(scriptcurve != nullptr)
 			tmpcurve = scriptcurve->GetInternal();
 		SPtr<TDistribution<Vector2>> instance = bs_shared_ptr_new<TDistribution<Vector2>>(*tmpcurve);
@@ -387,12 +387,12 @@ namespace bs
 	{
 		SPtr<TAnimationCurve<Vector2>> tmpminCurve;
 		ScriptTAnimationCurveVector2* scriptminCurve;
-		scriptminCurve = ScriptTAnimationCurveVector2::toNative(minCurve);
+		scriptminCurve = ScriptTAnimationCurveVector2::ToNative(minCurve);
 		if(scriptminCurve != nullptr)
 			tmpminCurve = scriptminCurve->GetInternal();
 		SPtr<TAnimationCurve<Vector2>> tmpmaxCurve;
 		ScriptTAnimationCurveVector2* scriptmaxCurve;
-		scriptmaxCurve = ScriptTAnimationCurveVector2::toNative(maxCurve);
+		scriptmaxCurve = ScriptTAnimationCurveVector2::ToNative(maxCurve);
 		if(scriptmaxCurve != nullptr)
 			tmpmaxCurve = scriptmaxCurve->GetInternal();
 		SPtr<TDistribution<Vector2>> instance = bs_shared_ptr_new<TDistribution<Vector2>>(*tmpminCurve, *tmpmaxCurve);
@@ -451,7 +451,7 @@ namespace bs
 	void ScriptTDistributionVector2::InternalEvaluate(ScriptTDistributionVector2* thisPtr, float t, float factor, Vector2* __output)
 	{
 		Vector2 tmp__output;
-		tmp__output = thisPtr->GetInternal()->evaluate(t, factor);
+		tmp__output = thisPtr->GetInternal()->Evaluate(t, factor);
 
 		*__output = tmp__output;
 	}
@@ -460,11 +460,11 @@ namespace bs
 	{
 		SPtr<Random> tmpfactor;
 		ScriptRandom* scriptfactor;
-		scriptfactor = ScriptRandom::toNative(factor);
+		scriptfactor = ScriptRandom::ToNative(factor);
 		if(scriptfactor != nullptr)
 			tmpfactor = scriptfactor->GetInternal();
 		Vector2 tmp__output;
-		tmp__output = thisPtr->GetInternal()->evaluate(t, *tmpfactor);
+		tmp__output = thisPtr->GetInternal()->Evaluate(t, *tmpfactor);
 
 		*__output = tmp__output;
 	}

@@ -25,9 +25,9 @@ namespace bs
 		ScriptCCollider(MonoObject* managedInstance, const GameObjectHandle<CCollider>& value);
 
 	private:
-		void OnCollisionBegin(const CollisionData& p0);
-		void OnCollisionStay(const CollisionData& p0);
-		void OnCollisionEnd(const CollisionData& p0);
+		void onCollisionBegin(const CollisionData& p0);
+		void onCollisionStay(const CollisionData& p0);
+		void onCollisionEnd(const CollisionData& p0);
 
 		typedef void(BS_THUNKCALL *onCollisionBeginThunkDef) (MonoObject*, MonoObject* p0, MonoException**);
 		static onCollisionBeginThunkDef onCollisionBeginThunk;

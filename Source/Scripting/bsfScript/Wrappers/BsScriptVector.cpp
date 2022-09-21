@@ -11,7 +11,7 @@ namespace bs
 		:ScriptObject(instance)
 	{ }
 
-	void ScriptVector2::initRuntimeData()
+	void ScriptVector2::InitRuntimeData()
 	{ }
 
 	MonoObject* ScriptVector2::Box(const Vector2& value)
@@ -29,7 +29,7 @@ namespace bs
 		:ScriptObject(instance)
 	{ }
 
-	void ScriptVector3::initRuntimeData()
+	void ScriptVector3::InitRuntimeData()
 	{ }
 
 	MonoObject* ScriptVector3::Box(const Vector3& value)
@@ -47,7 +47,7 @@ namespace bs
 		:ScriptObject(instance)
 	{ }
 
-	void ScriptVector4::initRuntimeData()
+	void ScriptVector4::InitRuntimeData()
 	{ }
 
 	MonoObject* ScriptVector4::Box(const Vector4& value)

@@ -48,7 +48,7 @@ namespace bs
         ///                      animation.</param>
         internal void EditorPlay(RRef<AnimationClip> clip, float startTime, bool freeze = false)
         {
-            bool inPreviewMode = Internal__togglePreviewMode(mCachedPtr, true);
+            bool inPreviewMode = Internal_TogglePreviewModeInternal(mCachedPtr, true);
 
             if (!inPreviewMode)
                 return;
@@ -63,7 +63,7 @@ namespace bs
                 SetState(clip, clipState);
             }
 
-            Internal__refreshClipMappings(mCachedPtr);
+            Internal_RefreshClipMappingsInternal(mCachedPtr);
         }
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace bs
         /// </summary>
         internal void EditorStop()
         {
-            Internal__togglePreviewMode(mCachedPtr, false);
+            Internal_TogglePreviewModeInternal(mCachedPtr, false);
         }
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace bs
         /// <returns>Time in seconds.</returns>
         internal float EditorGetTime()
         {
-            RRef<AnimationClip> clip = Internal_getClip(mCachedPtr, 0);
+            RRef<AnimationClip> clip = Internal_GetClip(mCachedPtr, 0);
 
             AnimationClipState clipState;
             if (clip != null && GetState(clip, out clipState))
@@ -414,7 +414,7 @@ namespace bs
                 foreach (var entry in floatProperties)
                 {
                     float curveValue;
-                    if (Internal__getGenericCurveValue(mCachedPtr, entry.curveIdx, out curveValue))
+                    if (Internal_GetGenericCurveValueInternal(mCachedPtr, entry.curveIdx, out curveValue))
                         entry.setter(curveValue);
                 }
             }

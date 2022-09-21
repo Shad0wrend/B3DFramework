@@ -23,7 +23,7 @@ namespace bs
 		[NativeWrapper]
 		public Vector3Curve Position
 		{
-			get { return Internal_getPositionCurves(mCachedPtr); }
+			get { return Internal_GetPositionCurves(mCachedPtr); }
 		}
 
 		/// <summary>Animation curve representing the rotation of the root bone.</summary>
@@ -32,13 +32,13 @@ namespace bs
 		[NativeWrapper]
 		public QuaternionCurve Rotation
 		{
-			get { return Internal_getRotationCurves(mCachedPtr); }
+			get { return Internal_GetRotationCurves(mCachedPtr); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern Vector3Curve Internal_getPositionCurves(IntPtr thisPtr);
+		private static extern Vector3Curve Internal_GetPositionCurves(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern QuaternionCurve Internal_getRotationCurves(IntPtr thisPtr);
+		private static extern QuaternionCurve Internal_GetRotationCurves(IntPtr thisPtr);
 	}
 
 	/** @} */

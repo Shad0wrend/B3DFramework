@@ -20,25 +20,25 @@ namespace bs
 	{
 	}
 
-	void ScriptAnimationCurves::initRuntimeData()
+	void ScriptAnimationCurves::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_AnimationCurves", (void*)&ScriptAnimationCurves::InternalAnimationCurves);
-		metaData.scriptClass->AddInternalCall("Internal_addPositionCurve", (void*)&ScriptAnimationCurves::InternalAddPositionCurve);
-		metaData.scriptClass->AddInternalCall("Internal_addRotationCurve", (void*)&ScriptAnimationCurves::InternalAddRotationCurve);
-		metaData.scriptClass->AddInternalCall("Internal_addScaleCurve", (void*)&ScriptAnimationCurves::InternalAddScaleCurve);
-		metaData.scriptClass->AddInternalCall("Internal_addGenericCurve", (void*)&ScriptAnimationCurves::InternalAddGenericCurve);
-		metaData.scriptClass->AddInternalCall("Internal_removePositionCurve", (void*)&ScriptAnimationCurves::InternalRemovePositionCurve);
-		metaData.scriptClass->AddInternalCall("Internal_removeRotationCurve", (void*)&ScriptAnimationCurves::InternalRemoveRotationCurve);
-		metaData.scriptClass->AddInternalCall("Internal_removeScaleCurve", (void*)&ScriptAnimationCurves::InternalRemoveScaleCurve);
-		metaData.scriptClass->AddInternalCall("Internal_removeGenericCurve", (void*)&ScriptAnimationCurves::InternalRemoveGenericCurve);
-		metaData.scriptClass->AddInternalCall("Internal_getPositionCurves", (void*)&ScriptAnimationCurves::InternalGetPositionCurves);
-		metaData.scriptClass->AddInternalCall("Internal_setPositionCurves", (void*)&ScriptAnimationCurves::InternalSetPositionCurves);
-		metaData.scriptClass->AddInternalCall("Internal_getRotationCurves", (void*)&ScriptAnimationCurves::InternalGetRotationCurves);
-		metaData.scriptClass->AddInternalCall("Internal_setRotationCurves", (void*)&ScriptAnimationCurves::InternalSetRotationCurves);
-		metaData.scriptClass->AddInternalCall("Internal_getScaleCurves", (void*)&ScriptAnimationCurves::InternalGetScaleCurves);
-		metaData.scriptClass->AddInternalCall("Internal_setScaleCurves", (void*)&ScriptAnimationCurves::InternalSetScaleCurves);
-		metaData.scriptClass->AddInternalCall("Internal_getGenericCurves", (void*)&ScriptAnimationCurves::InternalGetGenericCurves);
-		metaData.scriptClass->AddInternalCall("Internal_setGenericCurves", (void*)&ScriptAnimationCurves::InternalSetGenericCurves);
+		metaData.scriptClass->AddInternalCall("Internal_AddPositionCurve", (void*)&ScriptAnimationCurves::InternalAddPositionCurve);
+		metaData.scriptClass->AddInternalCall("Internal_AddRotationCurve", (void*)&ScriptAnimationCurves::InternalAddRotationCurve);
+		metaData.scriptClass->AddInternalCall("Internal_AddScaleCurve", (void*)&ScriptAnimationCurves::InternalAddScaleCurve);
+		metaData.scriptClass->AddInternalCall("Internal_AddGenericCurve", (void*)&ScriptAnimationCurves::InternalAddGenericCurve);
+		metaData.scriptClass->AddInternalCall("Internal_RemovePositionCurve", (void*)&ScriptAnimationCurves::InternalRemovePositionCurve);
+		metaData.scriptClass->AddInternalCall("Internal_RemoveRotationCurve", (void*)&ScriptAnimationCurves::InternalRemoveRotationCurve);
+		metaData.scriptClass->AddInternalCall("Internal_RemoveScaleCurve", (void*)&ScriptAnimationCurves::InternalRemoveScaleCurve);
+		metaData.scriptClass->AddInternalCall("Internal_RemoveGenericCurve", (void*)&ScriptAnimationCurves::InternalRemoveGenericCurve);
+		metaData.scriptClass->AddInternalCall("Internal_GetPositionCurves", (void*)&ScriptAnimationCurves::InternalGetPositionCurves);
+		metaData.scriptClass->AddInternalCall("Internal_SetPositionCurves", (void*)&ScriptAnimationCurves::InternalSetPositionCurves);
+		metaData.scriptClass->AddInternalCall("Internal_GetRotationCurves", (void*)&ScriptAnimationCurves::InternalGetRotationCurves);
+		metaData.scriptClass->AddInternalCall("Internal_SetRotationCurves", (void*)&ScriptAnimationCurves::InternalSetRotationCurves);
+		metaData.scriptClass->AddInternalCall("Internal_GetScaleCurves", (void*)&ScriptAnimationCurves::InternalGetScaleCurves);
+		metaData.scriptClass->AddInternalCall("Internal_SetScaleCurves", (void*)&ScriptAnimationCurves::InternalSetScaleCurves);
+		metaData.scriptClass->AddInternalCall("Internal_GetGenericCurves", (void*)&ScriptAnimationCurves::InternalGetGenericCurves);
+		metaData.scriptClass->AddInternalCall("Internal_SetGenericCurves", (void*)&ScriptAnimationCurves::InternalSetGenericCurves);
 
 	}
 
@@ -49,7 +49,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptAnimationCurves>()) ScriptAnimationCurves(managedInstance, value);
 		return managedInstance;
 	}
@@ -65,10 +65,10 @@ namespace bs
 		tmpname = MonoUtil::MonoToString(name);
 		SPtr<TAnimationCurve<Vector3>> tmpcurve;
 		ScriptTAnimationCurveVector3* scriptcurve;
-		scriptcurve = ScriptTAnimationCurveVector3::toNative(curve);
+		scriptcurve = ScriptTAnimationCurveVector3::ToNative(curve);
 		if(scriptcurve != nullptr)
 			tmpcurve = scriptcurve->GetInternal();
-		thisPtr->GetInternal()->addPositionCurve(tmpname, *tmpcurve);
+		thisPtr->GetInternal()->AddPositionCurve(tmpname, *tmpcurve);
 	}
 
 	void ScriptAnimationCurves::InternalAddRotationCurve(ScriptAnimationCurves* thisPtr, MonoString* name, MonoObject* curve)
@@ -77,10 +77,10 @@ namespace bs
 		tmpname = MonoUtil::MonoToString(name);
 		SPtr<TAnimationCurve<Quaternion>> tmpcurve;
 		ScriptTAnimationCurveQuaternion* scriptcurve;
-		scriptcurve = ScriptTAnimationCurveQuaternion::toNative(curve);
+		scriptcurve = ScriptTAnimationCurveQuaternion::ToNative(curve);
 		if(scriptcurve != nullptr)
 			tmpcurve = scriptcurve->GetInternal();
-		thisPtr->GetInternal()->addRotationCurve(tmpname, *tmpcurve);
+		thisPtr->GetInternal()->AddRotationCurve(tmpname, *tmpcurve);
 	}
 
 	void ScriptAnimationCurves::InternalAddScaleCurve(ScriptAnimationCurves* thisPtr, MonoString* name, MonoObject* curve)
@@ -89,10 +89,10 @@ namespace bs
 		tmpname = MonoUtil::MonoToString(name);
 		SPtr<TAnimationCurve<Vector3>> tmpcurve;
 		ScriptTAnimationCurveVector3* scriptcurve;
-		scriptcurve = ScriptTAnimationCurveVector3::toNative(curve);
+		scriptcurve = ScriptTAnimationCurveVector3::ToNative(curve);
 		if(scriptcurve != nullptr)
 			tmpcurve = scriptcurve->GetInternal();
-		thisPtr->GetInternal()->addScaleCurve(tmpname, *tmpcurve);
+		thisPtr->GetInternal()->AddScaleCurve(tmpname, *tmpcurve);
 	}
 
 	void ScriptAnimationCurves::InternalAddGenericCurve(ScriptAnimationCurves* thisPtr, MonoString* name, MonoObject* curve)
@@ -101,53 +101,53 @@ namespace bs
 		tmpname = MonoUtil::MonoToString(name);
 		SPtr<TAnimationCurve<float>> tmpcurve;
 		ScriptTAnimationCurvefloat* scriptcurve;
-		scriptcurve = ScriptTAnimationCurvefloat::toNative(curve);
+		scriptcurve = ScriptTAnimationCurvefloat::ToNative(curve);
 		if(scriptcurve != nullptr)
 			tmpcurve = scriptcurve->GetInternal();
-		thisPtr->GetInternal()->addGenericCurve(tmpname, *tmpcurve);
+		thisPtr->GetInternal()->AddGenericCurve(tmpname, *tmpcurve);
 	}
 
 	void ScriptAnimationCurves::InternalRemovePositionCurve(ScriptAnimationCurves* thisPtr, MonoString* name)
 	{
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
-		thisPtr->GetInternal()->removePositionCurve(tmpname);
+		thisPtr->GetInternal()->RemovePositionCurve(tmpname);
 	}
 
 	void ScriptAnimationCurves::InternalRemoveRotationCurve(ScriptAnimationCurves* thisPtr, MonoString* name)
 	{
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
-		thisPtr->GetInternal()->removeRotationCurve(tmpname);
+		thisPtr->GetInternal()->RemoveRotationCurve(tmpname);
 	}
 
 	void ScriptAnimationCurves::InternalRemoveScaleCurve(ScriptAnimationCurves* thisPtr, MonoString* name)
 	{
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
-		thisPtr->GetInternal()->removeScaleCurve(tmpname);
+		thisPtr->GetInternal()->RemoveScaleCurve(tmpname);
 	}
 
 	void ScriptAnimationCurves::InternalRemoveGenericCurve(ScriptAnimationCurves* thisPtr, MonoString* name)
 	{
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
-		thisPtr->GetInternal()->removeGenericCurve(tmpname);
+		thisPtr->GetInternal()->RemoveGenericCurve(tmpname);
 	}
 
 	MonoArray* ScriptAnimationCurves::InternalGetPositionCurves(ScriptAnimationCurves* thisPtr)
 	{
 		Vector<TNamedAnimationCurve<Vector3>> vec__output;
-		vec__output = AnimationCurvesEx::getPositionCurves(thisPtr->GetInternal());
+		vec__output = AnimationCurvesEx::GetPositionCurves(thisPtr->GetInternal());
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
-		ScriptArray array__output = ScriptArray::create<ScriptTNamedAnimationCurveVector3>(arraySize__output);
+		ScriptArray array__output = ScriptArray::Create<ScriptTNamedAnimationCurveVector3>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
-			array__output.Set(i, ScriptTNamedAnimationCurveVector3::toInterop(vec__output[i]));
+			array__output.Set(i, ScriptTNamedAnimationCurveVector3::ToInterop(vec__output[i]));
 		}
-		__output = array__output.getInternal();
+		__output = array__output.GetInternal();
 
 		return __output;
 	}
@@ -158,28 +158,28 @@ namespace bs
 		if(value != nullptr)
 		{
 			ScriptArray arrayvalue(value);
-			vecvalue.resize(arrayvalue.size());
-			for(int i = 0; i < (int)arrayvalue.size(); i++)
+			vecvalue.resize(arrayvalue.Size());
+			for(int i = 0; i < (int)arrayvalue.Size(); i++)
 			{
-				vecvalue[i] = ScriptTNamedAnimationCurveVector3::fromInterop(arrayvalue.Get<__TNamedAnimationCurveVector3Interop>(i));
+				vecvalue[i] = ScriptTNamedAnimationCurveVector3::FromInterop(arrayvalue.Get<__TNamedAnimationCurveVector3Interop>(i));
 			}
 		}
-		AnimationCurvesEx::setPositionCurves(thisPtr->GetInternal(), vecvalue);
+		AnimationCurvesEx::SetPositionCurves(thisPtr->GetInternal(), vecvalue);
 	}
 
 	MonoArray* ScriptAnimationCurves::InternalGetRotationCurves(ScriptAnimationCurves* thisPtr)
 	{
 		Vector<TNamedAnimationCurve<Quaternion>> vec__output;
-		vec__output = AnimationCurvesEx::getRotationCurves(thisPtr->GetInternal());
+		vec__output = AnimationCurvesEx::GetRotationCurves(thisPtr->GetInternal());
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
-		ScriptArray array__output = ScriptArray::create<ScriptTNamedAnimationCurveQuaternion>(arraySize__output);
+		ScriptArray array__output = ScriptArray::Create<ScriptTNamedAnimationCurveQuaternion>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
-			array__output.Set(i, ScriptTNamedAnimationCurveQuaternion::toInterop(vec__output[i]));
+			array__output.Set(i, ScriptTNamedAnimationCurveQuaternion::ToInterop(vec__output[i]));
 		}
-		__output = array__output.getInternal();
+		__output = array__output.GetInternal();
 
 		return __output;
 	}
@@ -190,28 +190,28 @@ namespace bs
 		if(value != nullptr)
 		{
 			ScriptArray arrayvalue(value);
-			vecvalue.resize(arrayvalue.size());
-			for(int i = 0; i < (int)arrayvalue.size(); i++)
+			vecvalue.resize(arrayvalue.Size());
+			for(int i = 0; i < (int)arrayvalue.Size(); i++)
 			{
-				vecvalue[i] = ScriptTNamedAnimationCurveQuaternion::fromInterop(arrayvalue.get<__TNamedAnimationCurveQuaternionInterop>(i));
+				vecvalue[i] = ScriptTNamedAnimationCurveQuaternion::FromInterop(arrayvalue.Get<__TNamedAnimationCurveQuaternionInterop>(i));
 			}
 		}
-		AnimationCurvesEx::setRotationCurves(thisPtr->GetInternal(), vecvalue);
+		AnimationCurvesEx::SetRotationCurves(thisPtr->GetInternal(), vecvalue);
 	}
 
 	MonoArray* ScriptAnimationCurves::InternalGetScaleCurves(ScriptAnimationCurves* thisPtr)
 	{
 		Vector<TNamedAnimationCurve<Vector3>> vec__output;
-		vec__output = AnimationCurvesEx::getScaleCurves(thisPtr->GetInternal());
+		vec__output = AnimationCurvesEx::GetScaleCurves(thisPtr->GetInternal());
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
-		ScriptArray array__output = ScriptArray::create<ScriptTNamedAnimationCurveVector3>(arraySize__output);
+		ScriptArray array__output = ScriptArray::Create<ScriptTNamedAnimationCurveVector3>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
-			array__output.Set(i, ScriptTNamedAnimationCurveVector3::toInterop(vec__output[i]));
+			array__output.Set(i, ScriptTNamedAnimationCurveVector3::ToInterop(vec__output[i]));
 		}
-		__output = array__output.getInternal();
+		__output = array__output.GetInternal();
 
 		return __output;
 	}
@@ -222,28 +222,28 @@ namespace bs
 		if(value != nullptr)
 		{
 			ScriptArray arrayvalue(value);
-			vecvalue.resize(arrayvalue.size());
-			for(int i = 0; i < (int)arrayvalue.size(); i++)
+			vecvalue.resize(arrayvalue.Size());
+			for(int i = 0; i < (int)arrayvalue.Size(); i++)
 			{
-				vecvalue[i] = ScriptTNamedAnimationCurveVector3::fromInterop(arrayvalue.get<__TNamedAnimationCurveVector3Interop>(i));
+				vecvalue[i] = ScriptTNamedAnimationCurveVector3::FromInterop(arrayvalue.Get<__TNamedAnimationCurveVector3Interop>(i));
 			}
 		}
-		AnimationCurvesEx::setScaleCurves(thisPtr->GetInternal(), vecvalue);
+		AnimationCurvesEx::SetScaleCurves(thisPtr->GetInternal(), vecvalue);
 	}
 
 	MonoArray* ScriptAnimationCurves::InternalGetGenericCurves(ScriptAnimationCurves* thisPtr)
 	{
 		Vector<TNamedAnimationCurve<float>> vec__output;
-		vec__output = AnimationCurvesEx::getGenericCurves(thisPtr->GetInternal());
+		vec__output = AnimationCurvesEx::GetGenericCurves(thisPtr->GetInternal());
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
-		ScriptArray array__output = ScriptArray::create<ScriptTNamedAnimationCurvefloat>(arraySize__output);
+		ScriptArray array__output = ScriptArray::Create<ScriptTNamedAnimationCurvefloat>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
-			array__output.Set(i, ScriptTNamedAnimationCurvefloat::toInterop(vec__output[i]));
+			array__output.Set(i, ScriptTNamedAnimationCurvefloat::ToInterop(vec__output[i]));
 		}
-		__output = array__output.getInternal();
+		__output = array__output.GetInternal();
 
 		return __output;
 	}
@@ -254,12 +254,12 @@ namespace bs
 		if(value != nullptr)
 		{
 			ScriptArray arrayvalue(value);
-			vecvalue.resize(arrayvalue.size());
-			for(int i = 0; i < (int)arrayvalue.size(); i++)
+			vecvalue.resize(arrayvalue.Size());
+			for(int i = 0; i < (int)arrayvalue.Size(); i++)
 			{
-				vecvalue[i] = ScriptTNamedAnimationCurvefloat::fromInterop(arrayvalue.get<__TNamedAnimationCurvefloatInterop>(i));
+				vecvalue[i] = ScriptTNamedAnimationCurvefloat::FromInterop(arrayvalue.Get<__TNamedAnimationCurvefloatInterop>(i));
 			}
 		}
-		AnimationCurvesEx::setGenericCurves(thisPtr->GetInternal(), vecvalue);
+		AnimationCurvesEx::SetGenericCurves(thisPtr->GetInternal(), vecvalue);
 	}
 }

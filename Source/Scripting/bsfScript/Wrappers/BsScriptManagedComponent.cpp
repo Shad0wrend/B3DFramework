@@ -29,7 +29,7 @@ namespace bs
 		component->Initialize(this);
 	}
 
-	void ScriptManagedComponent::initRuntimeData()
+	void ScriptManagedComponent::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_Invoke", (void*)&ScriptManagedComponent::InternalInvoke);
 	}

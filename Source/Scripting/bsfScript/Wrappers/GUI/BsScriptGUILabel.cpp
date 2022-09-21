@@ -24,7 +24,7 @@ namespace bs
 
 	}
 
-	void ScriptGUILabel::initRuntimeData()
+	void ScriptGUILabel::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUILabel::InternalCreateInstance);
 		metaData.scriptClass->AddInternalCall("Internal_SetContent", (void*)&ScriptGUILabel::InternalSetContent);

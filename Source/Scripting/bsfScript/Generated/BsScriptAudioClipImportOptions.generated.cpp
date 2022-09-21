@@ -15,17 +15,17 @@ namespace bs
 		mInternal = value;
 	}
 
-	void ScriptAudioClipImportOptions::initRuntimeData()
+	void ScriptAudioClipImportOptions::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_getformat", (void*)&ScriptAudioClipImportOptions::InternalGetformat);
-		metaData.scriptClass->AddInternalCall("Internal_setformat", (void*)&ScriptAudioClipImportOptions::InternalSetformat);
-		metaData.scriptClass->AddInternalCall("Internal_getreadMode", (void*)&ScriptAudioClipImportOptions::InternalGetreadMode);
-		metaData.scriptClass->AddInternalCall("Internal_setreadMode", (void*)&ScriptAudioClipImportOptions::InternalSetreadMode);
-		metaData.scriptClass->AddInternalCall("Internal_getis3D", (void*)&ScriptAudioClipImportOptions::InternalGetis3D);
-		metaData.scriptClass->AddInternalCall("Internal_setis3D", (void*)&ScriptAudioClipImportOptions::InternalSetis3D);
-		metaData.scriptClass->AddInternalCall("Internal_getbitDepth", (void*)&ScriptAudioClipImportOptions::InternalGetbitDepth);
-		metaData.scriptClass->AddInternalCall("Internal_setbitDepth", (void*)&ScriptAudioClipImportOptions::InternalSetbitDepth);
-		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptAudioClipImportOptions::InternalCreate);
+		metaData.scriptClass->AddInternalCall("Internal_Getformat", (void*)&ScriptAudioClipImportOptions::InternalGetformat);
+		metaData.scriptClass->AddInternalCall("Internal_Setformat", (void*)&ScriptAudioClipImportOptions::InternalSetformat);
+		metaData.scriptClass->AddInternalCall("Internal_GetreadMode", (void*)&ScriptAudioClipImportOptions::InternalGetreadMode);
+		metaData.scriptClass->AddInternalCall("Internal_SetreadMode", (void*)&ScriptAudioClipImportOptions::InternalSetreadMode);
+		metaData.scriptClass->AddInternalCall("Internal_Getis3D", (void*)&ScriptAudioClipImportOptions::InternalGetis3D);
+		metaData.scriptClass->AddInternalCall("Internal_Setis3D", (void*)&ScriptAudioClipImportOptions::InternalSetis3D);
+		metaData.scriptClass->AddInternalCall("Internal_GetbitDepth", (void*)&ScriptAudioClipImportOptions::InternalGetbitDepth);
+		metaData.scriptClass->AddInternalCall("Internal_SetbitDepth", (void*)&ScriptAudioClipImportOptions::InternalSetbitDepth);
+		metaData.scriptClass->AddInternalCall("Internal_Create", (void*)&ScriptAudioClipImportOptions::InternalCreate);
 
 	}
 
@@ -36,7 +36,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptAudioClipImportOptions>()) ScriptAudioClipImportOptions(managedInstance, value);
 		return managedInstance;
 	}

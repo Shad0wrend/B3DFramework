@@ -11,7 +11,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptKerningPair::initRuntimeData()
+	void ScriptKerningPair::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptKerningPair::Box(const KerningPair& value)

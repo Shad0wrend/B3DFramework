@@ -11,7 +11,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptBoneWeight::initRuntimeData()
+	void ScriptBoneWeight::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptBoneWeight::Box(const BoneWeight& value)

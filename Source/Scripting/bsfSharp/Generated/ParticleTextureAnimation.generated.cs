@@ -22,13 +22,13 @@ namespace bs
 		/// <summary>Creates a new particle texture animation evolver.</summary>
 		public ParticleTextureAnimation(ParticleTextureAnimationOptions desc)
 		{
-			Internal_create(this, ref desc);
+			Internal_Create(this, ref desc);
 		}
 
 		/// <summary>Creates a new particle texture animation evolver.</summary>
 		public ParticleTextureAnimation()
 		{
-			Internal_create0(this);
+			Internal_Create0(this);
 		}
 
 		/// <summary>Options describing the evolver.</summary>
@@ -39,20 +39,20 @@ namespace bs
 			get
 			{
 				ParticleTextureAnimationOptions temp;
-				Internal_getOptions(mCachedPtr, out temp);
+				Internal_GetOptions(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setOptions(mCachedPtr, ref value); }
+			set { Internal_SetOptions(mCachedPtr, ref value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setOptions(IntPtr thisPtr, ref ParticleTextureAnimationOptions options);
+		private static extern void Internal_SetOptions(IntPtr thisPtr, ref ParticleTextureAnimationOptions options);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getOptions(IntPtr thisPtr, out ParticleTextureAnimationOptions __output);
+		private static extern void Internal_GetOptions(IntPtr thisPtr, out ParticleTextureAnimationOptions __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create(ParticleTextureAnimation managedInstance, ref ParticleTextureAnimationOptions desc);
+		private static extern void Internal_Create(ParticleTextureAnimation managedInstance, ref ParticleTextureAnimationOptions desc);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create0(ParticleTextureAnimation managedInstance);
+		private static extern void Internal_Create0(ParticleTextureAnimation managedInstance);
 	}
 
 	/** @} */

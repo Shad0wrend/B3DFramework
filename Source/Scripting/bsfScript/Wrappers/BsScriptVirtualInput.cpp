@@ -24,7 +24,7 @@ namespace bs
 		:ScriptObject(instance)
 	{ }
 
-	void ScriptVirtualInput::initRuntimeData()
+	void ScriptVirtualInput::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_GetKeyConfig", (void*)&ScriptVirtualInput::InternalGetKeyConfig);
 		metaData.scriptClass->AddInternalCall("Internal_SetKeyConfig", (void*)&ScriptVirtualInput::InternalSetKeyConfig);

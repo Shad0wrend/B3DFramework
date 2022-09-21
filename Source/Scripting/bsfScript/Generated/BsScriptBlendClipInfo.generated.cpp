@@ -15,7 +15,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptBlendClipInfo::initRuntimeData()
+	void ScriptBlendClipInfo::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptBlendClipInfo::Box(const __BlendClipInfoInterop& value)
@@ -46,7 +46,7 @@ namespace bs
 	{
 		__BlendClipInfoInterop output;
 		ScriptRRefBase* scriptclip;
-		scriptclip = ScriptResourceManager::Instance().getScriptRRef(value.clip);
+		scriptclip = ScriptResourceManager::Instance().GetScriptRRef(value.clip);
 		MonoObject* tmpclip;
 		if(scriptclip != nullptr)
 			tmpclip = scriptclip->GetManagedInstance();

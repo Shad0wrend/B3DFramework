@@ -30,56 +30,56 @@ namespace bs
 		[NativeWrapper]
 		public int BitDepth
 		{
-			get { return Internal_getBitDepth(mCachedPtr); }
+			get { return Internal_GetBitDepth(mCachedPtr); }
 		}
 
 		/// <summary>Returns how many samples per second is the audio encoded in.</summary>
 		[NativeWrapper]
 		public int SampleRate
 		{
-			get { return Internal_getFrequency(mCachedPtr); }
+			get { return Internal_GetFrequency(mCachedPtr); }
 		}
 
 		/// <summary>Returns the number of channels provided by the clip.</summary>
 		[NativeWrapper]
 		public int NumChannels
 		{
-			get { return Internal_getNumChannels(mCachedPtr); }
+			get { return Internal_GetNumChannels(mCachedPtr); }
 		}
 
 		/// <summary>Returns in which format is audio data stored in.</summary>
 		[NativeWrapper]
 		public AudioFormat Format
 		{
-			get { return Internal_getFormat(mCachedPtr); }
+			get { return Internal_GetFormat(mCachedPtr); }
 		}
 
 		/// <summary>Returns how is the audio data read/decoded.</summary>
 		[NativeWrapper]
 		public AudioReadMode ReadMode
 		{
-			get { return Internal_getReadMode(mCachedPtr); }
+			get { return Internal_GetReadMode(mCachedPtr); }
 		}
 
 		/// <summary>Returns the length of the audio clip, in seconds.</summary>
 		[NativeWrapper]
 		public float Duration
 		{
-			get { return Internal_getLength(mCachedPtr); }
+			get { return Internal_GetLength(mCachedPtr); }
 		}
 
 		/// <summary>Returns the total number of samples in the clip (includes all channels).</summary>
 		[NativeWrapper]
 		public int NumSamples
 		{
-			get { return Internal_getNumSamples(mCachedPtr); }
+			get { return Internal_GetNumSamples(mCachedPtr); }
 		}
 
 		/// <summary>Determines will the clip be played a spatial 3D sound, or as a normal sound (for example music).</summary>
 		[NativeWrapper]
 		public bool Is3D
 		{
-			get { return Internal_is3D(mCachedPtr); }
+			get { return Internal_Is3D(mCachedPtr); }
 		}
 
 		/// <summary>Returns a reference wrapper for this resource.</summary>
@@ -94,21 +94,21 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern RRef<AudioClip> Internal_GetRef(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getBitDepth(IntPtr thisPtr);
+		private static extern int Internal_GetBitDepth(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getFrequency(IntPtr thisPtr);
+		private static extern int Internal_GetFrequency(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getNumChannels(IntPtr thisPtr);
+		private static extern int Internal_GetNumChannels(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern AudioFormat Internal_getFormat(IntPtr thisPtr);
+		private static extern AudioFormat Internal_GetFormat(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern AudioReadMode Internal_getReadMode(IntPtr thisPtr);
+		private static extern AudioReadMode Internal_GetReadMode(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getLength(IntPtr thisPtr);
+		private static extern float Internal_GetLength(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getNumSamples(IntPtr thisPtr);
+		private static extern int Internal_GetNumSamples(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_is3D(IntPtr thisPtr);
+		private static extern bool Internal_Is3D(IntPtr thisPtr);
 	}
 
 	/** @} */

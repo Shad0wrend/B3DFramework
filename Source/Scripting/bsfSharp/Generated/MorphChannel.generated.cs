@@ -25,20 +25,20 @@ namespace bs
 		[NativeWrapper]
 		public string Name
 		{
-			get { return Internal_getName(mCachedPtr); }
+			get { return Internal_GetName(mCachedPtr); }
 		}
 
 		/// <summary>Returns all morph shapes within this channel, in order from lowest to highest.</summary>
 		[NativeWrapper]
 		public MorphShape[] Shapes
 		{
-			get { return Internal_getShapes(mCachedPtr); }
+			get { return Internal_GetShapes(mCachedPtr); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern string Internal_getName(IntPtr thisPtr);
+		private static extern string Internal_GetName(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern MorphShape[] Internal_getShapes(IntPtr thisPtr);
+		private static extern MorphShape[] Internal_GetShapes(IntPtr thisPtr);
 	}
 
 	/** @} */

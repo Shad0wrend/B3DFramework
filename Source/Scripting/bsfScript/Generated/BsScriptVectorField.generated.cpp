@@ -18,10 +18,10 @@ namespace bs
 	{
 	}
 
-	void ScriptVectorField::initRuntimeData()
+	void ScriptVectorField::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptVectorField::InternalGetRef);
-		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptVectorField::InternalCreate);
+		metaData.scriptClass->AddInternalCall("Internal_Create", (void*)&ScriptVectorField::InternalCreate);
 
 	}
 
@@ -48,10 +48,10 @@ namespace bs
 			vecvalues.resize(arrayvalues.Size());
 			for(int i = 0; i < (int)arrayvalues.Size(); i++)
 			{
-				vecvalues[i] = arrayvalues.get<Vector3>(i);
+				vecvalues[i] = arrayvalues.Get<Vector3>(i);
 			}
 		}
 		ResourceHandle<VectorField> instance = VectorField::Create(tmpdesc, vecvalues);
-		ScriptResourceManager::Instance().createBuiltinScriptResource(instance, managedInstance);
+		ScriptResourceManager::Instance().CreateBuiltinScriptResource(instance, managedInstance);
 	}
 }

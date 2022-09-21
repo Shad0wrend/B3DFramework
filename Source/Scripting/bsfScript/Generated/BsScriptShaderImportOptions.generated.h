@@ -19,16 +19,16 @@ namespace bs
 
 		ScriptShaderImportOptions(MonoObject* managedInstance, const SPtr<ShaderImportOptions>& value);
 
-		static MonoObject* create(const SPtr<ShaderImportOptions>& value);
+		static MonoObject* Create(const SPtr<ShaderImportOptions>& value);
 
 	private:
-		static void Internal_setDefine(ScriptShaderImportOptions* thisPtr, MonoString* define, MonoString* value);
-		static bool Internal_getDefine(ScriptShaderImportOptions* thisPtr, MonoString* define, MonoString** value);
-		static bool Internal_hasDefine(ScriptShaderImportOptions* thisPtr, MonoString* define);
-		static void Internal_removeDefine(ScriptShaderImportOptions* thisPtr, MonoString* define);
-		static ShadingLanguageFlag Internal_getlanguages(ScriptShaderImportOptions* thisPtr);
-		static void Internal_setlanguages(ScriptShaderImportOptions* thisPtr, ShadingLanguageFlag value);
-		static void Internal_create(MonoObject* managedInstance);
+		static void InternalSetDefine(ScriptShaderImportOptions* thisPtr, MonoString* define, MonoString* value);
+		static bool InternalGetDefine(ScriptShaderImportOptions* thisPtr, MonoString* define, MonoString** value);
+		static bool InternalHasDefine(ScriptShaderImportOptions* thisPtr, MonoString* define);
+		static void InternalRemoveDefine(ScriptShaderImportOptions* thisPtr, MonoString* define);
+		static ShadingLanguageFlag InternalGetlanguages(ScriptShaderImportOptions* thisPtr);
+		static void InternalSetlanguages(ScriptShaderImportOptions* thisPtr, ShadingLanguageFlag value);
+		static void InternalCreate(MonoObject* managedInstance);
 	};
 #endif
 }

@@ -14,19 +14,19 @@ namespace bs
 	{
 	}
 
-	void ScriptCDistanceJoint::initRuntimeData()
+	void ScriptCDistanceJoint::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_getDistance", (void*)&ScriptCDistanceJoint::InternalGetDistance);
-		metaData.scriptClass->AddInternalCall("Internal_getMinDistance", (void*)&ScriptCDistanceJoint::InternalGetMinDistance);
-		metaData.scriptClass->AddInternalCall("Internal_setMinDistance", (void*)&ScriptCDistanceJoint::InternalSetMinDistance);
-		metaData.scriptClass->AddInternalCall("Internal_getMaxDistance", (void*)&ScriptCDistanceJoint::InternalGetMaxDistance);
-		metaData.scriptClass->AddInternalCall("Internal_setMaxDistance", (void*)&ScriptCDistanceJoint::InternalSetMaxDistance);
-		metaData.scriptClass->AddInternalCall("Internal_getTolerance", (void*)&ScriptCDistanceJoint::InternalGetTolerance);
-		metaData.scriptClass->AddInternalCall("Internal_setTolerance", (void*)&ScriptCDistanceJoint::InternalSetTolerance);
-		metaData.scriptClass->AddInternalCall("Internal_getSpring", (void*)&ScriptCDistanceJoint::InternalGetSpring);
-		metaData.scriptClass->AddInternalCall("Internal_setSpring", (void*)&ScriptCDistanceJoint::InternalSetSpring);
-		metaData.scriptClass->AddInternalCall("Internal_setFlag", (void*)&ScriptCDistanceJoint::InternalSetFlag);
-		metaData.scriptClass->AddInternalCall("Internal_hasFlag", (void*)&ScriptCDistanceJoint::InternalHasFlag);
+		metaData.scriptClass->AddInternalCall("Internal_GetDistance", (void*)&ScriptCDistanceJoint::InternalGetDistance);
+		metaData.scriptClass->AddInternalCall("Internal_GetMinDistance", (void*)&ScriptCDistanceJoint::InternalGetMinDistance);
+		metaData.scriptClass->AddInternalCall("Internal_SetMinDistance", (void*)&ScriptCDistanceJoint::InternalSetMinDistance);
+		metaData.scriptClass->AddInternalCall("Internal_GetMaxDistance", (void*)&ScriptCDistanceJoint::InternalGetMaxDistance);
+		metaData.scriptClass->AddInternalCall("Internal_SetMaxDistance", (void*)&ScriptCDistanceJoint::InternalSetMaxDistance);
+		metaData.scriptClass->AddInternalCall("Internal_GetTolerance", (void*)&ScriptCDistanceJoint::InternalGetTolerance);
+		metaData.scriptClass->AddInternalCall("Internal_SetTolerance", (void*)&ScriptCDistanceJoint::InternalSetTolerance);
+		metaData.scriptClass->AddInternalCall("Internal_GetSpring", (void*)&ScriptCDistanceJoint::InternalGetSpring);
+		metaData.scriptClass->AddInternalCall("Internal_SetSpring", (void*)&ScriptCDistanceJoint::InternalSetSpring);
+		metaData.scriptClass->AddInternalCall("Internal_SetFlag", (void*)&ScriptCDistanceJoint::InternalSetFlag);
+		metaData.scriptClass->AddInternalCall("Internal_HasFlag", (void*)&ScriptCDistanceJoint::InternalHasFlag);
 
 	}
 

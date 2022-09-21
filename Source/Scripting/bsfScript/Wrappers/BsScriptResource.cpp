@@ -84,7 +84,7 @@ namespace bs
 		return ScriptRRefBase::BindGenericParam(monoClass);
 	}
 
-	void ScriptResource::initRuntimeData()
+	void ScriptResource::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_GetName", (void*)&ScriptResource::InternalGetName);
 		metaData.scriptClass->AddInternalCall("Internal_GetUUID", (void*)&ScriptResource::InternalGetUuid);
@@ -110,7 +110,7 @@ namespace bs
 		:ScriptObject(instance)
 	{ }
 
-	void ScriptUUID::initRuntimeData()
+	void ScriptUUID::InitRuntimeData()
 	{ }
 
 	MonoObject* ScriptUUID::Box(const UUID& value)

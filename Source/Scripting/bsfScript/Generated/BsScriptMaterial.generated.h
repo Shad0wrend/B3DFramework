@@ -9,10 +9,10 @@
 #include "Math/BsMatrix4.h"
 #include "Math/BsMatrix3.h"
 #include "../../../Foundation/bsfCore/Material/BsShaderVariation.h"
-#include "Math/BsVector4.h"
 #include "../../../Foundation/bsfUtility/Image/BsColorGradient.h"
 #include "../../../Foundation/bsfCore/Animation/BsAnimationCurve.h"
 #include "Math/BsVector3.h"
+#include "Math/BsVector4.h"
 
 namespace bs { class Material; }
 namespace bs { class MaterialEx; }

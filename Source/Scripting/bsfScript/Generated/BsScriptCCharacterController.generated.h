@@ -23,8 +23,8 @@ namespace bs
 		ScriptCCharacterController(MonoObject* managedInstance, const GameObjectHandle<CCharacterController>& value);
 
 	private:
-		void OnColliderHit(const ControllerColliderCollision& p0);
-		void OnControllerHit(const ControllerControllerCollision& p0);
+		void onColliderHit(const ControllerColliderCollision& p0);
+		void onControllerHit(const ControllerControllerCollision& p0);
 
 		typedef void(BS_THUNKCALL *onColliderHitThunkDef) (MonoObject*, MonoObject* p0, MonoException**);
 		static onColliderHitThunkDef onColliderHitThunk;

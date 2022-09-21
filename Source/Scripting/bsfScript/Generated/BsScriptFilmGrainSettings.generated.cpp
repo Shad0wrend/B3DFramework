@@ -12,15 +12,15 @@ namespace bs
 	{
 	}
 
-	void ScriptFilmGrainSettings::initRuntimeData()
+	void ScriptFilmGrainSettings::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_FilmGrainSettings", (void*)&ScriptFilmGrainSettings::InternalFilmGrainSettings);
-		metaData.scriptClass->AddInternalCall("Internal_getenabled", (void*)&ScriptFilmGrainSettings::InternalGetenabled);
-		metaData.scriptClass->AddInternalCall("Internal_setenabled", (void*)&ScriptFilmGrainSettings::InternalSetenabled);
-		metaData.scriptClass->AddInternalCall("Internal_getintensity", (void*)&ScriptFilmGrainSettings::InternalGetintensity);
-		metaData.scriptClass->AddInternalCall("Internal_setintensity", (void*)&ScriptFilmGrainSettings::InternalSetintensity);
-		metaData.scriptClass->AddInternalCall("Internal_getspeed", (void*)&ScriptFilmGrainSettings::InternalGetspeed);
-		metaData.scriptClass->AddInternalCall("Internal_setspeed", (void*)&ScriptFilmGrainSettings::InternalSetspeed);
+		metaData.scriptClass->AddInternalCall("Internal_Getenabled", (void*)&ScriptFilmGrainSettings::InternalGetenabled);
+		metaData.scriptClass->AddInternalCall("Internal_Setenabled", (void*)&ScriptFilmGrainSettings::InternalSetenabled);
+		metaData.scriptClass->AddInternalCall("Internal_Getintensity", (void*)&ScriptFilmGrainSettings::InternalGetintensity);
+		metaData.scriptClass->AddInternalCall("Internal_Setintensity", (void*)&ScriptFilmGrainSettings::InternalSetintensity);
+		metaData.scriptClass->AddInternalCall("Internal_Getspeed", (void*)&ScriptFilmGrainSettings::InternalGetspeed);
+		metaData.scriptClass->AddInternalCall("Internal_Setspeed", (void*)&ScriptFilmGrainSettings::InternalSetspeed);
 
 	}
 
@@ -31,7 +31,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptFilmGrainSettings>()) ScriptFilmGrainSettings(managedInstance, value);
 		return managedInstance;
 	}

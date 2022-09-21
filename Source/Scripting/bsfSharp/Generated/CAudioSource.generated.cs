@@ -23,88 +23,68 @@ namespace bs
 		private AudioSource(bool __dummy0) { }
 		protected AudioSource() { }
 
-		/// <summary>Audio clip to play.</summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public RRef<AudioClip> Clip
 		{
-			get { return Internal_getClip(mCachedPtr); }
-			set { Internal_setClip(mCachedPtr, value); }
+			get { return Internal_GetClip(mCachedPtr); }
+			set { Internal_SetClip(mCachedPtr, value); }
 		}
 
-		/// <summary>Volume of the audio played from this source, in [0, 1] range.</summary>
 		[ShowInInspector]
 		[Range(0f, 1f, true)]
 		[NativeWrapper]
 		public float Volume
 		{
-			get { return Internal_getVolume(mCachedPtr); }
-			set { Internal_setVolume(mCachedPtr, value); }
+			get { return Internal_GetVolume(mCachedPtr); }
+			set { Internal_SetVolume(mCachedPtr, value); }
 		}
 
-		/// <summary>Determines the pitch of the played audio. 1 is the default.</summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public float Pitch
 		{
-			get { return Internal_getPitch(mCachedPtr); }
-			set { Internal_setPitch(mCachedPtr, value); }
+			get { return Internal_GetPitch(mCachedPtr); }
+			set { Internal_SetPitch(mCachedPtr, value); }
 		}
 
-		/// <summary>Determines whether the audio clip should loop when it finishes playing.</summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public bool Loop
 		{
-			get { return Internal_getIsLooping(mCachedPtr); }
-			set { Internal_setIsLooping(mCachedPtr, value); }
+			get { return Internal_GetIsLooping(mCachedPtr); }
+			set { Internal_SetIsLooping(mCachedPtr, value); }
 		}
 
-		/// <summary>
-		/// Determines the priority of the audio source. If more audio sources are playing than supported by the hardware, some 
-		/// might get disabled. By setting a higher priority the audio source is guaranteed to be disabled after sources with 
-		/// lower priority.
-		/// </summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public int Priority
 		{
-			get { return Internal_getPriority(mCachedPtr); }
-			set { Internal_setPriority(mCachedPtr, value); }
+			get { return Internal_GetPriority(mCachedPtr); }
+			set { Internal_SetPriority(mCachedPtr, value); }
 		}
 
-		/// <summary>
-		/// Minimum distance at which audio attenuation starts. When the listener is closer to the source than this value, audio 
-		/// is heard at full volume. Once farther away the audio starts attenuating.
-		/// </summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public float MinDistance
 		{
-			get { return Internal_getMinDistance(mCachedPtr); }
-			set { Internal_setMinDistance(mCachedPtr, value); }
+			get { return Internal_GetMinDistance(mCachedPtr); }
+			set { Internal_SetMinDistance(mCachedPtr, value); }
 		}
 
-		/// <summary>
-		/// Attenuation that controls how quickly does audio volume drop off as the listener moves further from the source.
-		/// </summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public float Attenuation
 		{
-			get { return Internal_getAttenuation(mCachedPtr); }
-			set { Internal_setAttenuation(mCachedPtr, value); }
+			get { return Internal_GetAttenuation(mCachedPtr); }
+			set { Internal_SetAttenuation(mCachedPtr, value); }
 		}
 
-		/// <summary>
-		/// Determines the current time of playback. If playback hasn&apos;t yet started, it specifies the time at which playback 
-		/// will start at. The time is in seconds, in range [0, clipLength].
-		/// </summary>
 		[NativeWrapper]
 		public float Time
 		{
-			get { return Internal_getTime(mCachedPtr); }
-			set { Internal_setTime(mCachedPtr, value); }
+			get { return Internal_GetTime(mCachedPtr); }
+			set { Internal_SetTime(mCachedPtr, value); }
 		}
 
 		/// <summary>Sets whether playback should start as soon as the component is enabled.</summary>
@@ -112,79 +92,75 @@ namespace bs
 		[NativeWrapper]
 		public bool PlayOnStart
 		{
-			get { return Internal_getPlayOnStart(mCachedPtr); }
-			set { Internal_setPlayOnStart(mCachedPtr, value); }
+			get { return Internal_GetPlayOnStart(mCachedPtr); }
+			set { Internal_SetPlayOnStart(mCachedPtr, value); }
 		}
 
-		/// <summary>Returns the current state of the audio playback (playing/paused/stopped).</summary>
 		[NativeWrapper]
 		public AudioSourceState State
 		{
-			get { return Internal_getState(mCachedPtr); }
+			get { return Internal_GetState(mCachedPtr); }
 		}
 
-		/// <summary>Starts playing the currently assigned audio clip.</summary>
 		public void Play()
 		{
-			Internal_play(mCachedPtr);
+			Internal_Play(mCachedPtr);
 		}
 
-		/// <summary>Pauses the audio playback.</summary>
 		public void Pause()
 		{
-			Internal_pause(mCachedPtr);
+			Internal_Pause(mCachedPtr);
 		}
 
-		/// <summary>Stops audio playback, rewinding it to the start.</summary>
 		public void Stop()
 		{
-			Internal_stop(mCachedPtr);
+			Internal_Stop(mCachedPtr);
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setClip(IntPtr thisPtr, RRef<AudioClip> clip);
+		private static extern void Internal_SetClip(IntPtr thisPtr, RRef<AudioClip> clip);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern RRef<AudioClip> Internal_getClip(IntPtr thisPtr);
+		private static extern RRef<AudioClip> Internal_GetClip(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setVolume(IntPtr thisPtr, float volume);
+		private static extern void Internal_SetVolume(IntPtr thisPtr, float volume);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getVolume(IntPtr thisPtr);
+		private static extern float Internal_GetVolume(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setPitch(IntPtr thisPtr, float pitch);
+		private static extern void Internal_SetPitch(IntPtr thisPtr, float pitch);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getPitch(IntPtr thisPtr);
+		private static extern float Internal_GetPitch(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setIsLooping(IntPtr thisPtr, bool loop);
+		private static extern void Internal_SetIsLooping(IntPtr thisPtr, bool loop);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_getIsLooping(IntPtr thisPtr);
+		private static extern bool Internal_GetIsLooping(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setPriority(IntPtr thisPtr, int priority);
+		private static extern void Internal_SetPriority(IntPtr thisPtr, int priority);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getPriority(IntPtr thisPtr);
+		private static extern int Internal_GetPriority(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setMinDistance(IntPtr thisPtr, float distance);
+		private static extern void Internal_SetMinDistance(IntPtr thisPtr, float distance);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getMinDistance(IntPtr thisPtr);
+		private static extern float Internal_GetMinDistance(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setAttenuation(IntPtr thisPtr, float attenuation);
+		private static extern void Internal_SetAttenuation(IntPtr thisPtr, float attenuation);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getAttenuation(IntPtr thisPtr);
+		private static extern float Internal_GetAttenuation(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setTime(IntPtr thisPtr, float time);
+		private static extern void Internal_SetTime(IntPtr thisPtr, float time);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getTime(IntPtr thisPtr);
+		private static extern float Internal_GetTime(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setPlayOnStart(IntPtr thisPtr, bool enable);
+		private static extern void Internal_SetPlayOnStart(IntPtr thisPtr, bool enable);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_getPlayOnStart(IntPtr thisPtr);
+		private static extern bool Internal_GetPlayOnStart(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_play(IntPtr thisPtr);
+		private static extern void Internal_Play(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_pause(IntPtr thisPtr);
+		private static extern void Internal_Pause(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_stop(IntPtr thisPtr);
+		private static extern void Internal_Stop(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern AudioSourceState Internal_getState(IntPtr thisPtr);
+		private static extern AudioSourceState Internal_GetState(IntPtr thisPtr);
 	}
 
 	/** @} */

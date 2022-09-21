@@ -26,16 +26,47 @@ namespace bs
 		[NativeWrapper]
 		public bool Enabled
 		{
-			get { return Internal_getenabled(mCachedPtr); }
-			set { Internal_setenabled(mCachedPtr, value); }
+			get { return Internal_Getenabled(mCachedPtr); }
+			set { Internal_Setenabled(mCachedPtr, value); }
+		}
+
+		/// <summary>
+		/// Number of different jittered positions to use. Each frame will use one position and subsequent frames will use 
+		/// subsequent positions until this number of reached, at which point the positions start getting re-used from the start.
+		/// </summary>
+		[ShowInInspector]
+		[Range(4f, 128f, false)]
+		[NativeWrapper]
+		public int JitteredPositionCount
+		{
+			get { return Internal_GetjitteredPositionCount(mCachedPtr); }
+			set { Internal_SetjitteredPositionCount(mCachedPtr, value); }
+		}
+
+		/// <summary>Determines the distance between temporal AA samples. Larger values result in a sharper image.</summary>
+		[ShowInInspector]
+		[Range(0f, 1f, false)]
+		[NativeWrapper]
+		public float Sharpness
+		{
+			get { return Internal_Getsharpness(mCachedPtr); }
+			set { Internal_Setsharpness(mCachedPtr, value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_TemporalAASettings(TemporalAASettings managedInstance);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_getenabled(IntPtr thisPtr);
+		private static extern bool Internal_Getenabled(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setenabled(IntPtr thisPtr, bool value);
+		private static extern void Internal_Setenabled(IntPtr thisPtr, bool value);
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		private static extern int Internal_GetjitteredPositionCount(IntPtr thisPtr);
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		private static extern void Internal_SetjitteredPositionCount(IntPtr thisPtr, int value);
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		private static extern float Internal_Getsharpness(IntPtr thisPtr);
+		[MethodImpl(MethodImplOptions.InternalCall)]
+		private static extern void Internal_Setsharpness(IntPtr thisPtr, float value);
 	}
 
 	/** @} */

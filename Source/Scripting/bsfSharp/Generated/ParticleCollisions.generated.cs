@@ -19,13 +19,13 @@ namespace bs
 		/// <summary>Creates a new particle collision evolver.</summary>
 		public ParticleCollisions(ParticleCollisionsOptions desc)
 		{
-			Internal_create(this, ref desc);
+			Internal_Create(this, ref desc);
 		}
 
 		/// <summary>Creates a new particle collision evolver.</summary>
 		public ParticleCollisions()
 		{
-			Internal_create0(this);
+			Internal_Create0(this);
 		}
 
 		/// <summary>
@@ -35,8 +35,8 @@ namespace bs
 		[NativeWrapper]
 		public Plane[] Planes
 		{
-			get { return Internal_getPlanes(mCachedPtr); }
-			set { Internal_setPlanes(mCachedPtr, value); }
+			get { return Internal_GetPlanes(mCachedPtr); }
+			set { Internal_SetPlanes(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -47,8 +47,8 @@ namespace bs
 		[NativeWrapper]
 		public SceneObject[] PlaneObjects
 		{
-			get { return Internal_getPlaneObjects(mCachedPtr); }
-			set { Internal_setPlaneObjects(mCachedPtr, value); }
+			get { return Internal_GetPlaneObjects(mCachedPtr); }
+			set { Internal_SetPlaneObjects(mCachedPtr, value); }
 		}
 
 		/// <summary>Options describing the evolver.</summary>
@@ -59,28 +59,28 @@ namespace bs
 			get
 			{
 				ParticleCollisionsOptions temp;
-				Internal_getOptions(mCachedPtr, out temp);
+				Internal_GetOptions(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setOptions(mCachedPtr, ref value); }
+			set { Internal_SetOptions(mCachedPtr, ref value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setPlanes(IntPtr thisPtr, Plane[] planes);
+		private static extern void Internal_SetPlanes(IntPtr thisPtr, Plane[] planes);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern Plane[] Internal_getPlanes(IntPtr thisPtr);
+		private static extern Plane[] Internal_GetPlanes(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setPlaneObjects(IntPtr thisPtr, SceneObject[] objects);
+		private static extern void Internal_SetPlaneObjects(IntPtr thisPtr, SceneObject[] objects);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern SceneObject[] Internal_getPlaneObjects(IntPtr thisPtr);
+		private static extern SceneObject[] Internal_GetPlaneObjects(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setOptions(IntPtr thisPtr, ref ParticleCollisionsOptions options);
+		private static extern void Internal_SetOptions(IntPtr thisPtr, ref ParticleCollisionsOptions options);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getOptions(IntPtr thisPtr, out ParticleCollisionsOptions __output);
+		private static extern void Internal_GetOptions(IntPtr thisPtr, out ParticleCollisionsOptions __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create(ParticleCollisions managedInstance, ref ParticleCollisionsOptions desc);
+		private static extern void Internal_Create(ParticleCollisions managedInstance, ref ParticleCollisionsOptions desc);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create0(ParticleCollisions managedInstance);
+		private static extern void Internal_Create0(ParticleCollisions managedInstance);
 	}
 
 	/** @} */

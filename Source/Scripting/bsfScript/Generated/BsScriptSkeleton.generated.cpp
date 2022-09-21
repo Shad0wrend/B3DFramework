@@ -14,10 +14,10 @@ namespace bs
 	{
 	}
 
-	void ScriptSkeleton::initRuntimeData()
+	void ScriptSkeleton::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_getNumBones", (void*)&ScriptSkeleton::InternalGetNumBones);
-		metaData.scriptClass->AddInternalCall("Internal_getBoneInfo", (void*)&ScriptSkeleton::InternalGetBoneInfo);
+		metaData.scriptClass->AddInternalCall("Internal_GetNumBones", (void*)&ScriptSkeleton::InternalGetNumBones);
+		metaData.scriptClass->AddInternalCall("Internal_GetBoneInfo", (void*)&ScriptSkeleton::InternalGetBoneInfo);
 
 	}
 
@@ -46,10 +46,10 @@ namespace bs
 	void ScriptSkeleton::InternalGetBoneInfo(ScriptSkeleton* thisPtr, int32_t boneIdx, __SkeletonBoneInfoExInterop* __output)
 	{
 		SkeletonBoneInfoEx tmp__output;
-		tmp__output = SkeletonEx::getBoneInfo(thisPtr->GetInternal(), boneIdx);
+		tmp__output = SkeletonEx::GetBoneInfo(thisPtr->GetInternal(), boneIdx);
 
 		__SkeletonBoneInfoExInterop interop__output;
-		interop__output = ScriptSkeletonBoneInfoEx::toInterop(tmp__output);
-		MonoUtil::valueCopy(__output, &interop__output, ScriptSkeletonBoneInfoEx::getMetaData()->scriptClass->GetInternalClassInternal());
+		interop__output = ScriptSkeletonBoneInfoEx::ToInterop(tmp__output);
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptSkeletonBoneInfoEx::GetMetaData()->scriptClass->GetInternalClassInternal());
 	}
 }

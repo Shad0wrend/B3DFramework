@@ -22,7 +22,7 @@ namespace bs
 
 		private Texture(PixelFormat format, int width, int height, int depth, TextureType texType, TextureUsage usage, int numSamples, bool hasMipmaps, bool gammaCorrection)
 		{
-			Internal_create(this, format, width, height, depth, texType, usage, numSamples, hasMipmaps, gammaCorrection);
+			Internal_Create(this, format, width, height, depth, texType, usage, numSamples, hasMipmaps, gammaCorrection);
 		}
 
 		/// <summary>Returns a reference wrapper for this resource.</summary>
@@ -31,73 +31,58 @@ namespace bs
 			get { return Internal_GetRef(mCachedPtr); }
 		}
 
-		/// <summary>Returns the pixel format for the texture surface.</summary>
 		[NativeWrapper]
 		public PixelFormat PixelFormat
 		{
-			get { return Internal_getPixelFormat(mCachedPtr); }
+			get { return Internal_GetPixelFormat(mCachedPtr); }
 		}
 
-		/// <summary>Returns a value that signals the engine in what way is the texture expected to be used.</summary>
 		[NativeWrapper]
 		public TextureUsage Usage
 		{
-			get { return Internal_getUsage(mCachedPtr); }
+			get { return Internal_GetUsage(mCachedPtr); }
 		}
 
-		/// <summary>Gets the type of texture.</summary>
 		[NativeWrapper]
 		public TextureType Type
 		{
-			get { return Internal_getType(mCachedPtr); }
+			get { return Internal_GetType(mCachedPtr); }
 		}
 
-		/// <summary>Returns the width of the texture.</summary>
 		[NativeWrapper]
 		public int Width
 		{
-			get { return Internal_getWidth(mCachedPtr); }
+			get { return Internal_GetWidth(mCachedPtr); }
 		}
 
-		/// <summary>Returns the height of the texture.</summary>
 		[NativeWrapper]
 		public int Height
 		{
-			get { return Internal_getHeight(mCachedPtr); }
+			get { return Internal_GetHeight(mCachedPtr); }
 		}
 
-		/// <summary>Returns the depth of the texture (only applicable for 3D textures).</summary>
 		[NativeWrapper]
 		public int Depth
 		{
-			get { return Internal_getDepth(mCachedPtr); }
+			get { return Internal_GetDepth(mCachedPtr); }
 		}
 
-		/// <summary>
-		/// Determines does the texture contain gamma corrected data. If true then the GPU will automatically convert the pixels 
-		/// to linear space before reading from the texture, and convert them to gamma space when writing to the texture.
-		/// </summary>
 		[NativeWrapper]
 		public bool GammaSpace
 		{
-			get { return Internal_getGammaCorrection(mCachedPtr); }
+			get { return Internal_GetGammaCorrection(mCachedPtr); }
 		}
 
-		/// <summary>Gets the number of samples used for multisampling (0 or 1 if multisampling is not used).</summary>
 		[NativeWrapper]
 		public int SampleCount
 		{
-			get { return Internal_getSampleCount(mCachedPtr); }
+			get { return Internal_GetSampleCount(mCachedPtr); }
 		}
 
-		/// <summary>
-		/// Gets the number of mipmaps to be used for this texture. This number excludes the top level map (which is always 
-		/// assumed to be present).
-		/// </summary>
 		[NativeWrapper]
 		public int MipMapCount
 		{
-			get { return Internal_getMipmapCount(mCachedPtr); }
+			get { return Internal_GetMipmapCount(mCachedPtr); }
 		}
 
 		/// <summary>Returns a reference wrapper for this resource.</summary>
@@ -115,7 +100,7 @@ namespace bs
 		/// <returns>Async operation object that will contain the buffer with the data once the operation completes.</returns>
 		public AsyncOp<PixelData> GetGPUPixels(int face = 0, int mipLevel = 0)
 		{
-			return Internal_readData(mCachedPtr, face, mipLevel);
+			return Internal_ReadData(mCachedPtr, face, mipLevel);
 		}
 
 		/// <summary>
@@ -132,7 +117,7 @@ namespace bs
 		/// <returns>A set of pixels for the specified mip level.</returns>
 		public PixelData GetPixels(int face = 0, int mipLevel = 0)
 		{
-			return Internal_getPixels(mCachedPtr, face, mipLevel);
+			return Internal_GetPixels(mCachedPtr, face, mipLevel);
 		}
 
 		/// <summary>Sets pixels for the specified mip level and face.</summary>
@@ -147,7 +132,7 @@ namespace bs
 		/// </param>
 		public void SetPixels(PixelData data, int face = 0, int mipLevel = 0)
 		{
-			Internal_setPixels(mCachedPtr, data, face, mipLevel);
+			Internal_SetPixels(mCachedPtr, data, face, mipLevel);
 		}
 
 		/// <summary>Sets pixels for the specified mip level and face.</summary>
@@ -163,39 +148,39 @@ namespace bs
 		/// </param>
 		public void SetPixels(Color[] colors, int face = 0, int mipLevel = 0)
 		{
-			Internal_setPixelsArray(mCachedPtr, colors, face, mipLevel);
+			Internal_SetPixelsArray(mCachedPtr, colors, face, mipLevel);
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern RRef<Texture> Internal_GetRef(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern AsyncOp<PixelData> Internal_readData(IntPtr thisPtr, int face, int mipLevel);
+		private static extern AsyncOp<PixelData> Internal_ReadData(IntPtr thisPtr, int face, int mipLevel);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create(Texture managedInstance, PixelFormat format, int width, int height, int depth, TextureType texType, TextureUsage usage, int numSamples, bool hasMipmaps, bool gammaCorrection);
+		private static extern void Internal_Create(Texture managedInstance, PixelFormat format, int width, int height, int depth, TextureType texType, TextureUsage usage, int numSamples, bool hasMipmaps, bool gammaCorrection);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern PixelFormat Internal_getPixelFormat(IntPtr thisPtr);
+		private static extern PixelFormat Internal_GetPixelFormat(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern TextureUsage Internal_getUsage(IntPtr thisPtr);
+		private static extern TextureUsage Internal_GetUsage(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern TextureType Internal_getType(IntPtr thisPtr);
+		private static extern TextureType Internal_GetType(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getWidth(IntPtr thisPtr);
+		private static extern int Internal_GetWidth(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getHeight(IntPtr thisPtr);
+		private static extern int Internal_GetHeight(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getDepth(IntPtr thisPtr);
+		private static extern int Internal_GetDepth(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_getGammaCorrection(IntPtr thisPtr);
+		private static extern bool Internal_GetGammaCorrection(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getSampleCount(IntPtr thisPtr);
+		private static extern int Internal_GetSampleCount(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getMipmapCount(IntPtr thisPtr);
+		private static extern int Internal_GetMipmapCount(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern PixelData Internal_getPixels(IntPtr thisPtr, int face, int mipLevel);
+		private static extern PixelData Internal_GetPixels(IntPtr thisPtr, int face, int mipLevel);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setPixels(IntPtr thisPtr, PixelData data, int face, int mipLevel);
+		private static extern void Internal_SetPixels(IntPtr thisPtr, PixelData data, int face, int mipLevel);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setPixelsArray(IntPtr thisPtr, Color[] colors, int face, int mipLevel);
+		private static extern void Internal_SetPixelsArray(IntPtr thisPtr, Color[] colors, int face, int mipLevel);
 	}
 
 	/** @} */

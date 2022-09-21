@@ -25,7 +25,7 @@ namespace bs
 
 	}
 
-	void ScriptGUITexture::initRuntimeData()
+	void ScriptGUITexture::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUITexture::InternalCreateInstance);
 		metaData.scriptClass->AddInternalCall("Internal_SetTexture", (void*)&ScriptGUITexture::InternalSetTexture);

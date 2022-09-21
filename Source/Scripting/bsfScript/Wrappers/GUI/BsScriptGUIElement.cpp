@@ -94,7 +94,7 @@ namespace bs
 
 	}
 
-	void ScriptGUIElement::initRuntimeData()
+	void ScriptGUIElement::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_Destroy", (void*)&ScriptGUIElement::InternalDestroy);
 		metaData.scriptClass->AddInternalCall("Internal_SetVisible", (void*)&ScriptGUIElement::InternalSetVisible);

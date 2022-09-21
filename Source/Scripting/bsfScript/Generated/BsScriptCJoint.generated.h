@@ -26,7 +26,7 @@ namespace bs
 		ScriptCJoint(MonoObject* managedInstance, const GameObjectHandle<CJoint>& value);
 
 	private:
-		void OnJointBreak();
+		void onJointBreak();
 
 		typedef void(BS_THUNKCALL *onJointBreakThunkDef) (MonoObject*, MonoException**);
 		static onJointBreakThunkDef onJointBreakThunk;

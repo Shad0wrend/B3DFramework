@@ -19,8 +19,12 @@ namespace bs
 		static MonoObject* Create(const SPtr<TemporalAASettings>& value);
 
 	private:
-		static void InternalTemporalAaSettings(MonoObject* managedInstance);
+		static void InternalTemporalAASettings(MonoObject* managedInstance);
 		static bool InternalGetenabled(ScriptTemporalAASettings* thisPtr);
 		static void InternalSetenabled(ScriptTemporalAASettings* thisPtr, bool value);
+		static uint32_t InternalGetjitteredPositionCount(ScriptTemporalAASettings* thisPtr);
+		static void InternalSetjitteredPositionCount(ScriptTemporalAASettings* thisPtr, uint32_t value);
+		static float InternalGetsharpness(ScriptTemporalAASettings* thisPtr);
+		static void InternalSetsharpness(ScriptTemporalAASettings* thisPtr, float value);
 	};
 }

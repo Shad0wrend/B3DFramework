@@ -16,7 +16,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptControllerColliderCollision::initRuntimeData()
+	void ScriptControllerColliderCollision::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptControllerColliderCollision::Box(const __ControllerColliderCollisionInterop& value)

@@ -16,7 +16,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptGUIElementStateStyle::initRuntimeData()
+	void ScriptGUIElementStateStyle::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptGUIElementStateStyle::Box(const __GUIElementStateStyleInterop& value)

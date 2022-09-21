@@ -21,90 +21,61 @@ namespace bs
 		private Collider(bool __dummy0) { }
 		protected Collider() { }
 
-		/// <summary>
-		/// Enables/disables a collider as a trigger. A trigger will not be used for collisions (objects will pass through it), 
-		/// but collision events will still be reported.
-		/// </summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public bool Trigger
 		{
-			get { return Internal_getIsTrigger(mCachedPtr); }
-			set { Internal_setIsTrigger(mCachedPtr, value); }
+			get { return Internal_GetIsTrigger(mCachedPtr); }
+			set { Internal_SetIsTrigger(mCachedPtr, value); }
 		}
 
-		/// <summary>
-		/// Determines the mass of the collider. Only relevant if the collider is part of a rigidbody. Ultimately this will 
-		/// determine the total mass, center of mass and inertia tensors of the parent rigidbody (if they&apos;re being 
-		/// calculated automatically).
-		/// </summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public float Mass
 		{
-			get { return Internal_getMass(mCachedPtr); }
-			set { Internal_setMass(mCachedPtr, value); }
+			get { return Internal_GetMass(mCachedPtr); }
+			set { Internal_SetMass(mCachedPtr, value); }
 		}
 
-		/// <summary>
-		/// Determines the physical material of the collider. The material determines how objects hitting the collider behave.
-		/// </summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public RRef<PhysicsMaterial> Material
 		{
-			get { return Internal_getMaterial(mCachedPtr); }
-			set { Internal_setMaterial(mCachedPtr, value); }
+			get { return Internal_GetMaterial(mCachedPtr); }
+			set { Internal_SetMaterial(mCachedPtr, value); }
 		}
 
-		/// <summary>
-		/// Determines how far apart do two shapes need to be away from each other before the physics runtime starts generating 
-		/// repelling impulse for them. This distance will be the sum of contact offsets of the two interacting objects. If 
-		/// objects are moving fast you can increase this value to start generating the impulse earlier and potentially prevent 
-		/// the objects from interpenetrating. This value is in meters. Must be positive and greater than rest offset.
-		///
-		/// Also see setRestOffset().
-		/// </summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public float ContactOffset
 		{
-			get { return Internal_getContactOffset(mCachedPtr); }
-			set { Internal_setContactOffset(mCachedPtr, value); }
+			get { return Internal_GetContactOffset(mCachedPtr); }
+			set { Internal_SetContactOffset(mCachedPtr, value); }
 		}
 
-		/// <summary>
-		/// Determines at what distance should two objects resting on one another come to an equilibrium. The value used in the 
-		/// runtime will be the sum of rest offsets for both interacting objects. This value is in meters. Cannot be larger than 
-		/// contact offset.
-		///
-		/// Also see setContactOffset().
-		/// </summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public float RestOffset
 		{
-			get { return Internal_getRestOffset(mCachedPtr); }
-			set { Internal_setRestOffset(mCachedPtr, value); }
+			get { return Internal_GetRestOffset(mCachedPtr); }
+			set { Internal_SetRestOffset(mCachedPtr, value); }
 		}
 
-		/// <summary>Determines the layer of the collider. Layer controls with which objects will the collider collide.</summary>
 		[ShowInInspector]
 		[LayerMask]
 		[NativeWrapper]
 		public ulong Layer
 		{
-			get { return Internal_getLayer(mCachedPtr); }
-			set { Internal_setLayer(mCachedPtr, value); }
+			get { return Internal_GetLayer(mCachedPtr); }
+			set { Internal_SetLayer(mCachedPtr, value); }
 		}
 
-		/// <summary>Determines which (if any) collision events are reported.</summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public CollisionReportMode CollisionReportMode
 		{
-			get { return Internal_getCollisionReportMode(mCachedPtr); }
-			set { Internal_setCollisionReportMode(mCachedPtr, value); }
+			get { return Internal_GetCollisionReportMode(mCachedPtr); }
+			set { Internal_SetCollisionReportMode(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -126,33 +97,33 @@ namespace bs
 		public event Action<CollisionData> OnCollisionEnd;
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setIsTrigger(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetIsTrigger(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_getIsTrigger(IntPtr thisPtr);
+		private static extern bool Internal_GetIsTrigger(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setMass(IntPtr thisPtr, float mass);
+		private static extern void Internal_SetMass(IntPtr thisPtr, float mass);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getMass(IntPtr thisPtr);
+		private static extern float Internal_GetMass(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setMaterial(IntPtr thisPtr, RRef<PhysicsMaterial> material);
+		private static extern void Internal_SetMaterial(IntPtr thisPtr, RRef<PhysicsMaterial> material);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern RRef<PhysicsMaterial> Internal_getMaterial(IntPtr thisPtr);
+		private static extern RRef<PhysicsMaterial> Internal_GetMaterial(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setContactOffset(IntPtr thisPtr, float value);
+		private static extern void Internal_SetContactOffset(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getContactOffset(IntPtr thisPtr);
+		private static extern float Internal_GetContactOffset(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setRestOffset(IntPtr thisPtr, float value);
+		private static extern void Internal_SetRestOffset(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getRestOffset(IntPtr thisPtr);
+		private static extern float Internal_GetRestOffset(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setLayer(IntPtr thisPtr, ulong layer);
+		private static extern void Internal_SetLayer(IntPtr thisPtr, ulong layer);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ulong Internal_getLayer(IntPtr thisPtr);
+		private static extern ulong Internal_GetLayer(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setCollisionReportMode(IntPtr thisPtr, CollisionReportMode mode);
+		private static extern void Internal_SetCollisionReportMode(IntPtr thisPtr, CollisionReportMode mode);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern CollisionReportMode Internal_getCollisionReportMode(IntPtr thisPtr);
+		private static extern CollisionReportMode Internal_GetCollisionReportMode(IntPtr thisPtr);
 		private void Internal_onCollisionBegin(ref CollisionData p0)
 		{
 			OnCollisionBegin?.Invoke(p0);

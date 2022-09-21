@@ -20,64 +20,58 @@ namespace bs
 		/// <summary>Converts a curve in euler angles (in degrees) into a curve using quaternions.</summary>
 		public static QuaternionCurve EulerToQuaternionCurve(Vector3Curve eulerCurve, EulerAngleOrder order = EulerAngleOrder.YXZ)
 		{
-			return Internal_eulerToQuaternionCurve(eulerCurve, order);
+			return Internal_EulerToQuaternionCurve(eulerCurve, order);
 		}
 
 		/// <summary>Converts a curve in quaternions into a curve using euler angles (in degrees).</summary>
 		public static Vector3Curve QuaternionToEulerCurve(QuaternionCurve quatCurve)
 		{
-			return Internal_quaternionToEulerCurve(quatCurve);
+			return Internal_QuaternionToEulerCurve(quatCurve);
 		}
 
 		/// <summary>Splits a Vector3 curve into three individual curves, one for each component.</summary>
 		public static AnimationCurve[] SplitCurve3D(Vector3Curve compoundCurve)
 		{
-			return Internal_splitCurve3D(compoundCurve);
+			return Internal_SplitCurve3D(compoundCurve);
 		}
 
 		/// <summary>Combines three single component curves into a Vector3 curve.</summary>
 		public static Vector3Curve CombineCurve3D(AnimationCurve[] curveComponents)
 		{
-			return Internal_combineCurve3D(curveComponents);
+			return Internal_CombineCurve3D(curveComponents);
 		}
 
 		/// <summary>Splits a Vector2 curve into two individual curves, one for each component.</summary>
 		public static AnimationCurve[] SplitCurve2D(Vector2Curve compoundCurve)
 		{
-			return Internal_splitCurve2D(compoundCurve);
+			return Internal_SplitCurve2D(compoundCurve);
 		}
 
 		/// <summary>Combines two single component curves into a Vector2 curve.</summary>
 		public static Vector2Curve CombineCurve2D(AnimationCurve[] curveComponents)
 		{
-			return Internal_combineCurve2D(curveComponents);
+			return Internal_CombineCurve2D(curveComponents);
 		}
 
-		/// <summary>Calculates the total range covered by a set of curves.</summary>
-		/// <param name="curves">Curves to calculate range for.</param>
-		/// <param name="xMin">Minimum time value present in the curves.</param>
-		/// <param name="xMax">Maximum time value present in the curves.</param>
-		/// <param name="yMin">Minimum curve value present in the curves.</param>
-		/// <param name="yMax">Maximum curve value present in the curves.</param>
 		public static void CalculateRange(AnimationCurve[] curves, out float xMin, out float xMax, out float yMin, out float yMax)
 		{
-			Internal_calculateRange(curves, out xMin, out xMax, out yMin, out yMax);
+			Internal_CalculateRange(curves, out xMin, out xMax, out yMin, out yMax);
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern QuaternionCurve Internal_eulerToQuaternionCurve(Vector3Curve eulerCurve, EulerAngleOrder order);
+		private static extern QuaternionCurve Internal_EulerToQuaternionCurve(Vector3Curve eulerCurve, EulerAngleOrder order);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern Vector3Curve Internal_quaternionToEulerCurve(QuaternionCurve quatCurve);
+		private static extern Vector3Curve Internal_QuaternionToEulerCurve(QuaternionCurve quatCurve);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern AnimationCurve[] Internal_splitCurve3D(Vector3Curve compoundCurve);
+		private static extern AnimationCurve[] Internal_SplitCurve3D(Vector3Curve compoundCurve);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern Vector3Curve Internal_combineCurve3D(AnimationCurve[] curveComponents);
+		private static extern Vector3Curve Internal_CombineCurve3D(AnimationCurve[] curveComponents);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern AnimationCurve[] Internal_splitCurve2D(Vector2Curve compoundCurve);
+		private static extern AnimationCurve[] Internal_SplitCurve2D(Vector2Curve compoundCurve);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern Vector2Curve Internal_combineCurve2D(AnimationCurve[] curveComponents);
+		private static extern Vector2Curve Internal_CombineCurve2D(AnimationCurve[] curveComponents);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_calculateRange(AnimationCurve[] curves, out float xMin, out float xMax, out float yMin, out float yMax);
+		private static extern void Internal_CalculateRange(AnimationCurve[] curves, out float xMin, out float xMax, out float yMin, out float yMax);
 	}
 
 	/** @} */

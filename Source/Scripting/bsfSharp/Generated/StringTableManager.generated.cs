@@ -25,8 +25,8 @@ namespace bs
 		[NativeWrapper]
 		public static Language ActiveLanguage
 		{
-			get { return Internal_getActiveLanguage(); }
-			set { Internal_setActiveLanguage(value); }
+			get { return Internal_GetActiveLanguage(); }
+			set { Internal_SetActiveLanguage(value); }
 		}
 
 		/// <summary>Returns the string table with the specified id. If the table doesn&apos;t exist new one is created.</summary>
@@ -34,14 +34,14 @@ namespace bs
 		/// <returns>String table with the specified identifier.</returns>
 		public static RRef<StringTable> GetTable(int id)
 		{
-			return Internal_getTable(id);
+			return Internal_GetTable(id);
 		}
 
 		/// <summary>Removes the string table with the specified id.</summary>
 		/// <param name="id">Identifier of the string table.</param>
 		public static void RemoveTable(int id)
 		{
-			Internal_removeTable(id);
+			Internal_RemoveTable(id);
 		}
 
 		/// <summary>Registers a new string table or replaces an old one at the specified id.</summary>
@@ -49,19 +49,19 @@ namespace bs
 		/// <param name="table">New string table to assign to the specified identifier.</param>
 		public static void SetTable(int id, RRef<StringTable> table)
 		{
-			Internal_setTable(id, table);
+			Internal_SetTable(id, table);
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setActiveLanguage(Language language);
+		private static extern void Internal_SetActiveLanguage(Language language);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern Language Internal_getActiveLanguage();
+		private static extern Language Internal_GetActiveLanguage();
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern RRef<StringTable> Internal_getTable(int id);
+		private static extern RRef<StringTable> Internal_GetTable(int id);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_removeTable(int id);
+		private static extern void Internal_RemoveTable(int id);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setTable(int id, RRef<StringTable> table);
+		private static extern void Internal_SetTable(int id, RRef<StringTable> table);
 	}
 
 	/** @} */

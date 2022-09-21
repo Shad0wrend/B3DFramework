@@ -28,7 +28,7 @@ namespace bs
 		/// </param>
 		public PhysicsMesh(MeshData meshData, PhysicsMeshType type = PhysicsMeshType.Convex)
 		{
-			Internal_create(this, meshData, type);
+			Internal_Create(this, meshData, type);
 		}
 
 		/// <summary>Returns a reference wrapper for this resource.</summary>
@@ -41,14 +41,13 @@ namespace bs
 		[NativeWrapper]
 		public PhysicsMeshType Type
 		{
-			get { return Internal_getType(mCachedPtr); }
+			get { return Internal_GetType(mCachedPtr); }
 		}
 
-		/// <summary>Returns the mesh&apos;s indices and vertices.</summary>
 		[NativeWrapper]
 		public MeshData MeshData
 		{
-			get { return Internal_getMeshData(mCachedPtr); }
+			get { return Internal_GetMeshData(mCachedPtr); }
 		}
 
 		/// <summary>Returns a reference wrapper for this resource.</summary>
@@ -63,11 +62,11 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern RRef<PhysicsMesh> Internal_GetRef(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern PhysicsMeshType Internal_getType(IntPtr thisPtr);
+		private static extern PhysicsMeshType Internal_GetType(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create(PhysicsMesh managedInstance, MeshData meshData, PhysicsMeshType type);
+		private static extern void Internal_Create(PhysicsMesh managedInstance, MeshData meshData, PhysicsMeshType type);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern MeshData Internal_getMeshData(IntPtr thisPtr);
+		private static extern MeshData Internal_GetMeshData(IntPtr thisPtr);
 	}
 
 	/** @} */

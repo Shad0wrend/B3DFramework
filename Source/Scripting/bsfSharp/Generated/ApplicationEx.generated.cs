@@ -20,32 +20,32 @@ namespace bs
 
 		public static void StartUp(StartUpDesc desc)
 		{
-			Internal_startUp(ref desc);
+			Internal_StartUp(ref desc);
 		}
 
 		public static void StartUp(VideoMode videoMode, string title, bool fullscreen)
 		{
-			Internal_startUp0(ref videoMode, title, fullscreen);
+			Internal_StartUp0(ref videoMode, title, fullscreen);
 		}
 
 		public static void RunMainLoop()
 		{
-			Internal_runMainLoop();
+			Internal_RunMainLoop();
 		}
 
 		public static void ShutDown()
 		{
-			Internal_shutDown();
+			Internal_ShutDown();
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_startUp(ref StartUpDesc desc);
+		private static extern void Internal_StartUp(ref StartUpDesc desc);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_startUp0(ref VideoMode videoMode, string title, bool fullscreen);
+		private static extern void Internal_StartUp0(ref VideoMode videoMode, string title, bool fullscreen);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_runMainLoop();
+		private static extern void Internal_RunMainLoop();
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_shutDown();
+		private static extern void Internal_ShutDown();
 	}
 
 	/** @} */

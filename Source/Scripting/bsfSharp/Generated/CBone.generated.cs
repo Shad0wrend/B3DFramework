@@ -25,14 +25,14 @@ namespace bs
 		[NativeWrapper]
 		public string Name
 		{
-			get { return Internal_getBoneName(mCachedPtr); }
-			set { Internal_setBoneName(mCachedPtr, value); }
+			get { return Internal_GetBoneName(mCachedPtr); }
+			set { Internal_SetBoneName(mCachedPtr, value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setBoneName(IntPtr thisPtr, string name);
+		private static extern void Internal_SetBoneName(IntPtr thisPtr, string name);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern string Internal_getBoneName(IntPtr thisPtr);
+		private static extern string Internal_GetBoneName(IntPtr thisPtr);
 	}
 
 	/** @} */

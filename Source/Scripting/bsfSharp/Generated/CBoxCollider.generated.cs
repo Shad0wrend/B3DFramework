@@ -17,7 +17,6 @@ namespace bs
 		private BoxCollider(bool __dummy0) { }
 		protected BoxCollider() { }
 
-		/// <summary>Determines the extents (half size) of the geometry of the box.</summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public Vector3 Extents
@@ -25,10 +24,10 @@ namespace bs
 			get
 			{
 				Vector3 temp;
-				Internal_getExtents(mCachedPtr, out temp);
+				Internal_GetExtents(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setExtents(mCachedPtr, ref value); }
+			set { Internal_SetExtents(mCachedPtr, ref value); }
 		}
 
 		/// <summary>Determines the position of the box shape, relative to the component&apos;s scene object.</summary>
@@ -39,20 +38,20 @@ namespace bs
 			get
 			{
 				Vector3 temp;
-				Internal_getCenter(mCachedPtr, out temp);
+				Internal_GetCenter(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setCenter(mCachedPtr, ref value); }
+			set { Internal_SetCenter(mCachedPtr, ref value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setExtents(IntPtr thisPtr, ref Vector3 extents);
+		private static extern void Internal_SetExtents(IntPtr thisPtr, ref Vector3 extents);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getExtents(IntPtr thisPtr, out Vector3 __output);
+		private static extern void Internal_GetExtents(IntPtr thisPtr, out Vector3 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setCenter(IntPtr thisPtr, ref Vector3 center);
+		private static extern void Internal_SetCenter(IntPtr thisPtr, ref Vector3 center);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getCenter(IntPtr thisPtr, out Vector3 __output);
+		private static extern void Internal_GetCenter(IntPtr thisPtr, out Vector3 __output);
 	}
 
 	/** @} */

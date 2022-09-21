@@ -13,7 +13,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptPARTICLE_COLOR_DESC::initRuntimeData()
+	void ScriptPARTICLE_COLOR_DESC::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptPARTICLE_COLOR_DESC::Box(const __PARTICLE_COLOR_DESCInterop& value)

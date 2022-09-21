@@ -31,32 +31,32 @@ namespace bs
 		[NativeWrapper]
 		public string Name
 		{
-			get { return Internal_getname(mCachedPtr); }
-			set { Internal_setname(mCachedPtr, value); }
+			get { return Internal_Getname(mCachedPtr); }
+			set { Internal_Setname(mCachedPtr, value); }
 		}
 
 		[ShowInInspector]
 		[NativeWrapper]
 		public int StartFrame
 		{
-			get { return Internal_getstartFrame(mCachedPtr); }
-			set { Internal_setstartFrame(mCachedPtr, value); }
+			get { return Internal_GetstartFrame(mCachedPtr); }
+			set { Internal_SetstartFrame(mCachedPtr, value); }
 		}
 
 		[ShowInInspector]
 		[NativeWrapper]
 		public int EndFrame
 		{
-			get { return Internal_getendFrame(mCachedPtr); }
-			set { Internal_setendFrame(mCachedPtr, value); }
+			get { return Internal_GetendFrame(mCachedPtr); }
+			set { Internal_SetendFrame(mCachedPtr, value); }
 		}
 
 		[ShowInInspector]
 		[NativeWrapper]
 		public bool IsAdditive
 		{
-			get { return Internal_getisAdditive(mCachedPtr); }
-			set { Internal_setisAdditive(mCachedPtr, value); }
+			get { return Internal_GetisAdditive(mCachedPtr); }
+			set { Internal_SetisAdditive(mCachedPtr, value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
@@ -64,21 +64,21 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_AnimationSplitInfo0(AnimationSplitInfo managedInstance, string name, int startFrame, int endFrame, bool isAdditive);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern string Internal_getname(IntPtr thisPtr);
+		private static extern string Internal_Getname(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setname(IntPtr thisPtr, string value);
+		private static extern void Internal_Setname(IntPtr thisPtr, string value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getstartFrame(IntPtr thisPtr);
+		private static extern int Internal_GetstartFrame(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setstartFrame(IntPtr thisPtr, int value);
+		private static extern void Internal_SetstartFrame(IntPtr thisPtr, int value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getendFrame(IntPtr thisPtr);
+		private static extern int Internal_GetendFrame(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setendFrame(IntPtr thisPtr, int value);
+		private static extern void Internal_SetendFrame(IntPtr thisPtr, int value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_getisAdditive(IntPtr thisPtr);
+		private static extern bool Internal_GetisAdditive(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setisAdditive(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetisAdditive(IntPtr thisPtr, bool value);
 	}
 
 	/** @} */

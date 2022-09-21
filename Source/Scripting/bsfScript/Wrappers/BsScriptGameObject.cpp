@@ -54,7 +54,7 @@ namespace bs
 		:ScriptObject(instance)
 	{ }
 
-	void ScriptGameObject::initRuntimeData()
+	void ScriptGameObject::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_GetInstanceId", (void*)&ScriptGameObject::InternalGetInstanceId);
 		metaData.scriptClass->AddInternalCall("Internal_GetUUID", (void*)&ScriptGameObject::InternalGetUuid);

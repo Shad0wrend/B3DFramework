@@ -29,7 +29,7 @@ namespace bs
 
 	}
 
-	void ScriptGUISliderH::initRuntimeData()
+	void ScriptGUISliderH::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUISliderH::InternalCreateInstance);
 		metaData.scriptClass->AddInternalCall("Internal_SetPercent", (void*)&ScriptGUISliderH::InternalSetPercent);
@@ -134,7 +134,7 @@ namespace bs
 
 	}
 
-	void ScriptGUISliderV::initRuntimeData()
+	void ScriptGUISliderV::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUISliderV::InternalCreateInstance);
 		metaData.scriptClass->AddInternalCall("Internal_SetPercent", (void*)&ScriptGUISliderV::InternalSetPercent);

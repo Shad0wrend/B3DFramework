@@ -16,12 +16,12 @@ namespace bs
 	{
 	}
 
-	void ScriptApplicationEx::initRuntimeData()
+	void ScriptApplicationEx::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_startUp", (void*)&ScriptApplicationEx::InternalStartUp);
-		metaData.scriptClass->AddInternalCall("Internal_startUp0", (void*)&ScriptApplicationEx::InternalStartUp0);
-		metaData.scriptClass->AddInternalCall("Internal_runMainLoop", (void*)&ScriptApplicationEx::InternalRunMainLoop);
-		metaData.scriptClass->AddInternalCall("Internal_shutDown", (void*)&ScriptApplicationEx::InternalShutDown);
+		metaData.scriptClass->AddInternalCall("Internal_StartUp", (void*)&ScriptApplicationEx::InternalStartUp);
+		metaData.scriptClass->AddInternalCall("Internal_StartUp0", (void*)&ScriptApplicationEx::InternalStartUp0);
+		metaData.scriptClass->AddInternalCall("Internal_RunMainLoop", (void*)&ScriptApplicationEx::InternalRunMainLoop);
+		metaData.scriptClass->AddInternalCall("Internal_ShutDown", (void*)&ScriptApplicationEx::InternalShutDown);
 
 	}
 
@@ -32,21 +32,21 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptApplicationEx>()) ScriptApplicationEx(managedInstance, value);
 		return managedInstance;
 	}
 	void ScriptApplicationEx::InternalStartUp(__START_UP_DESCInterop* desc)
 	{
 		START_UP_DESC tmpdesc;
-		tmpdesc = ScriptSTART_UP_DESC::fromInterop(*desc);
+		tmpdesc = ScriptSTART_UP_DESC::FromInterop(*desc);
 		ApplicationEx::StartUp(tmpdesc);
 	}
 
 	void ScriptApplicationEx::InternalStartUp0(__VideoModeInterop* videoMode, MonoString* title, bool fullscreen)
 	{
 		VideoMode tmpvideoMode;
-		tmpvideoMode = ScriptVideoMode::fromInterop(*videoMode);
+		tmpvideoMode = ScriptVideoMode::FromInterop(*videoMode);
 		String tmptitle;
 		tmptitle = MonoUtil::MonoToString(title);
 		ApplicationEx::StartUp(tmpvideoMode, tmptitle, fullscreen);
@@ -54,7 +54,7 @@ namespace bs
 
 	void ScriptApplicationEx::InternalRunMainLoop()
 	{
-		ApplicationEx::runMainLoop();
+		ApplicationEx::RunMainLoop();
 	}
 
 	void ScriptApplicationEx::InternalShutDown()

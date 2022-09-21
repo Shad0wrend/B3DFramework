@@ -14,11 +14,11 @@ namespace bs
 	{
 	}
 
-	void ScriptFont::initRuntimeData()
+	void ScriptFont::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptFont::InternalGetRef);
-		metaData.scriptClass->AddInternalCall("Internal_getBitmap", (void*)&ScriptFont::InternalGetBitmap);
-		metaData.scriptClass->AddInternalCall("Internal_getClosestSize", (void*)&ScriptFont::InternalGetClosestSize);
+		metaData.scriptClass->AddInternalCall("Internal_GetBitmap", (void*)&ScriptFont::InternalGetBitmap);
+		metaData.scriptClass->AddInternalCall("Internal_GetClosestSize", (void*)&ScriptFont::InternalGetClosestSize);
 
 	}
 

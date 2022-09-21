@@ -11,7 +11,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptPARTICLE_COLLISIONS_DESC::initRuntimeData()
+	void ScriptPARTICLE_COLLISIONS_DESC::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptPARTICLE_COLLISIONS_DESC::Box(const PARTICLE_COLLISIONS_DESC& value)

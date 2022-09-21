@@ -19,7 +19,7 @@ namespace bs
 		:TScriptGUIElementBase(instance, layout), mLayout(layout), mOwnsNative(ownsNative)
 	{ }
 
-	void ScriptGUILayout::initRuntimeData()
+	void ScriptGUILayout::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_CreateInstanceX", (void*)&ScriptGUILayout::InternalCreateInstanceX);
 		metaData.scriptClass->AddInternalCall("Internal_CreateInstanceY", (void*)&ScriptGUILayout::InternalCreateInstanceY);
@@ -216,7 +216,7 @@ namespace bs
 		:ScriptObject(instance)
 	{ }
 
-	void ScriptGUIPanel::initRuntimeData()
+	void ScriptGUIPanel::InitRuntimeData()
 	{ }
 
 	MonoObject* ScriptGUIPanel::CreateFromExisting(GUIPanel* panel)

@@ -15,12 +15,12 @@ namespace bs
 	{
 	}
 
-	void ScriptMultiResource::initRuntimeData()
+	void ScriptMultiResource::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_MultiResource", (void*)&ScriptMultiResource::InternalMultiResource);
 		metaData.scriptClass->AddInternalCall("Internal_MultiResource0", (void*)&ScriptMultiResource::InternalMultiResource0);
-		metaData.scriptClass->AddInternalCall("Internal_getentries", (void*)&ScriptMultiResource::InternalGetentries);
-		metaData.scriptClass->AddInternalCall("Internal_setentries", (void*)&ScriptMultiResource::InternalSetentries);
+		metaData.scriptClass->AddInternalCall("Internal_Getentries", (void*)&ScriptMultiResource::InternalGetentries);
+		metaData.scriptClass->AddInternalCall("Internal_Setentries", (void*)&ScriptMultiResource::InternalSetentries);
 
 	}
 
@@ -31,7 +31,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptMultiResource>()) ScriptMultiResource(managedInstance, value);
 		return managedInstance;
 	}
@@ -47,10 +47,10 @@ namespace bs
 		if(entries != nullptr)
 		{
 			ScriptArray arrayentries(entries);
-			vecentries.resize(arrayentries.size());
-			for(int i = 0; i < (int)arrayentries.size(); i++)
+			vecentries.resize(arrayentries.Size());
+			for(int i = 0; i < (int)arrayentries.Size(); i++)
 			{
-				vecentries[i] = ScriptSubResource::fromInterop(arrayentries.get<__SubResourceInterop>(i));
+				vecentries[i] = ScriptSubResource::FromInterop(arrayentries.Get<__SubResourceInterop>(i));
 			}
 		}
 		SPtr<MultiResource> instance = bs_shared_ptr_new<MultiResource>(vecentries);
@@ -64,12 +64,12 @@ namespace bs
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
-		ScriptArray array__output = ScriptArray::create<ScriptSubResource>(arraySize__output);
+		ScriptArray array__output = ScriptArray::Create<ScriptSubResource>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
-			array__output.Set(i, ScriptSubResource::toInterop(vec__output[i]));
+			array__output.Set(i, ScriptSubResource::ToInterop(vec__output[i]));
 		}
-		__output = array__output.getInternal();
+		__output = array__output.GetInternal();
 
 		return __output;
 	}
@@ -80,10 +80,10 @@ namespace bs
 		if(value != nullptr)
 		{
 			ScriptArray arrayvalue(value);
-			vecvalue.resize(arrayvalue.size());
-			for(int i = 0; i < (int)arrayvalue.size(); i++)
+			vecvalue.resize(arrayvalue.Size());
+			for(int i = 0; i < (int)arrayvalue.Size(); i++)
 			{
-				vecvalue[i] = ScriptSubResource::fromInterop(arrayvalue.get<__SubResourceInterop>(i));
+				vecvalue[i] = ScriptSubResource::FromInterop(arrayvalue.Get<__SubResourceInterop>(i));
 			}
 
 		}

@@ -28,6 +28,6 @@ namespace bs
 		static MonoArray* InternalGetEvolvers(ScriptCParticleSystem* thisPtr);
 		static void InternalSetLayer(ScriptCParticleSystem* thisPtr, uint64_t layer);
 		static uint64_t InternalGetLayer(ScriptCParticleSystem* thisPtr);
-		static bool InternalTogglePreviewMode(ScriptCParticleSystem* thisPtr, bool enabled);
+		static bool InternalTogglePreviewModeInternal(ScriptCParticleSystem* thisPtr, bool enabled);
 	};
 }

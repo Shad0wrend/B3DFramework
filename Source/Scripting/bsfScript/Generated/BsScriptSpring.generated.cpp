@@ -11,7 +11,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptSpring::initRuntimeData()
+	void ScriptSpring::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptSpring::Box(const Spring& value)

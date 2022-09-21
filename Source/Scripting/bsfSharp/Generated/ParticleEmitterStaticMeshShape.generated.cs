@@ -22,13 +22,13 @@ namespace bs
 		/// <summary>Creates a new particle emitter static mesh shape.</summary>
 		public ParticleEmitterStaticMeshShape(ParticleStaticMeshShapeOptions desc)
 		{
-			Internal_create(this, ref desc);
+			Internal_Create(this, ref desc);
 		}
 
 		/// <summary>Creates a new particle emitter static mesh shape.</summary>
 		public ParticleEmitterStaticMeshShape()
 		{
-			Internal_create0(this);
+			Internal_Create0(this);
 		}
 
 		/// <summary>Options describing the shape.</summary>
@@ -40,20 +40,20 @@ namespace bs
 			get
 			{
 				ParticleStaticMeshShapeOptions temp;
-				Internal_getOptions(mCachedPtr, out temp);
+				Internal_GetOptions(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setOptions(mCachedPtr, ref value); }
+			set { Internal_SetOptions(mCachedPtr, ref value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setOptions(IntPtr thisPtr, ref ParticleStaticMeshShapeOptions options);
+		private static extern void Internal_SetOptions(IntPtr thisPtr, ref ParticleStaticMeshShapeOptions options);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getOptions(IntPtr thisPtr, out ParticleStaticMeshShapeOptions __output);
+		private static extern void Internal_GetOptions(IntPtr thisPtr, out ParticleStaticMeshShapeOptions __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create(ParticleEmitterStaticMeshShape managedInstance, ref ParticleStaticMeshShapeOptions desc);
+		private static extern void Internal_Create(ParticleEmitterStaticMeshShape managedInstance, ref ParticleStaticMeshShapeOptions desc);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create0(ParticleEmitterStaticMeshShape managedInstance);
+		private static extern void Internal_Create0(ParticleEmitterStaticMeshShape managedInstance);
 	}
 
 	/** @} */

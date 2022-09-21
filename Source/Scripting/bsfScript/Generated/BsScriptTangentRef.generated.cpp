@@ -13,7 +13,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptTangentRef::initRuntimeData()
+	void ScriptTangentRef::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptTangentRef::Box(const __TangentRefInterop& value)

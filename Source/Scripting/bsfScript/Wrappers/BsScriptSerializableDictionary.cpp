@@ -18,7 +18,7 @@ namespace bs
 
 	}
 
-	void ScriptSerializableDictionary::initRuntimeData()
+	void ScriptSerializableDictionary::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_CreateKeyProperty", (void*)&ScriptSerializableDictionary::InternalCreateKeyProperty);
 		metaData.scriptClass->AddInternalCall("Internal_CreateValueProperty", (void*)&ScriptSerializableDictionary::InternalCreateValueProperty);

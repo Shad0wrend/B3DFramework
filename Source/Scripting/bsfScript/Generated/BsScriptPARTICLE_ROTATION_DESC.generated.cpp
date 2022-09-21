@@ -15,7 +15,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptPARTICLE_ROTATION_DESC::initRuntimeData()
+	void ScriptPARTICLE_ROTATION_DESC::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptPARTICLE_ROTATION_DESC::Box(const __PARTICLE_ROTATION_DESCInterop& value)
@@ -40,7 +40,7 @@ namespace bs
 		output.rotation = *tmprotation;
 		SPtr<TDistribution<Vector3>> tmprotation3D;
 		ScriptTDistributionVector3* scriptrotation3D;
-		scriptrotation3D = ScriptTDistributionVector3::toNative(value.rotation3D);
+		scriptrotation3D = ScriptTDistributionVector3::ToNative(value.rotation3D);
 		if(scriptrotation3D != nullptr)
 			tmprotation3D = scriptrotation3D->GetInternal();
 		if(tmprotation3D != nullptr)

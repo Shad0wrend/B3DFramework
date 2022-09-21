@@ -40,7 +40,7 @@ namespace bs
 		/// <returns>Bitmap object if it exists, false otherwise.</returns>
 		public FontBitmap GetBitmap(int size)
 		{
-			return Internal_getBitmap(mCachedPtr, size);
+			return Internal_GetBitmap(mCachedPtr, size);
 		}
 
 		/// <summary>Finds the available font bitmap size closest to the provided size.</summary>
@@ -48,15 +48,15 @@ namespace bs
 		/// <returns>Nearest available bitmap size.</returns>
 		public int GetClosestSize(int size)
 		{
-			return Internal_getClosestSize(mCachedPtr, size);
+			return Internal_GetClosestSize(mCachedPtr, size);
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern RRef<Font> Internal_GetRef(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern FontBitmap Internal_getBitmap(IntPtr thisPtr, int size);
+		private static extern FontBitmap Internal_GetBitmap(IntPtr thisPtr, int size);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getClosestSize(IntPtr thisPtr, int size);
+		private static extern int Internal_GetClosestSize(IntPtr thisPtr, int size);
 	}
 
 	/** @} */

@@ -12,9 +12,9 @@
 #include "../../../Foundation/bsfCore/Material/BsMaterial.h"
 #include "../../../Foundation/bsfCore/Material/BsShader.h"
 #include "BsScriptShaderVariation.generated.h"
-#include "Wrappers/BsScriptVector.h"
 #include "BsScriptColorGradientHDR.generated.h"
 #include "BsScriptTAnimationCurve.generated.h"
+#include "Wrappers/BsScriptVector.h"
 #include "Wrappers/BsScriptVector.h"
 #include "../../../Foundation/bsfCore/Image/BsTexture.h"
 #include "../Extensions/BsMaterialEx.h"
@@ -27,39 +27,39 @@ namespace bs
 	{
 	}
 
-	void ScriptMaterial::initRuntimeData()
+	void ScriptMaterial::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptMaterial::InternalGetRef);
-		metaData.scriptClass->AddInternalCall("Internal_setShader", (void*)&ScriptMaterial::InternalSetShader);
-		metaData.scriptClass->AddInternalCall("Internal_setVariation", (void*)&ScriptMaterial::InternalSetVariation);
-		metaData.scriptClass->AddInternalCall("Internal_clone", (void*)&ScriptMaterial::InternalClone);
-		metaData.scriptClass->AddInternalCall("Internal_getShader", (void*)&ScriptMaterial::InternalGetShader);
-		metaData.scriptClass->AddInternalCall("Internal_getVariation", (void*)&ScriptMaterial::InternalGetVariation);
-		metaData.scriptClass->AddInternalCall("Internal_setFloat", (void*)&ScriptMaterial::InternalSetFloat);
-		metaData.scriptClass->AddInternalCall("Internal_setFloatCurve", (void*)&ScriptMaterial::InternalSetFloatCurve);
-		metaData.scriptClass->AddInternalCall("Internal_setColor", (void*)&ScriptMaterial::InternalSetColor);
-		metaData.scriptClass->AddInternalCall("Internal_setColorGradient", (void*)&ScriptMaterial::InternalSetColorGradient);
-		metaData.scriptClass->AddInternalCall("Internal_setVec2", (void*)&ScriptMaterial::InternalSetVec2);
-		metaData.scriptClass->AddInternalCall("Internal_setVec3", (void*)&ScriptMaterial::InternalSetVec3);
-		metaData.scriptClass->AddInternalCall("Internal_setVec4", (void*)&ScriptMaterial::InternalSetVec4);
-		metaData.scriptClass->AddInternalCall("Internal_setMat3", (void*)&ScriptMaterial::InternalSetMat3);
-		metaData.scriptClass->AddInternalCall("Internal_setMat4", (void*)&ScriptMaterial::InternalSetMat4);
-		metaData.scriptClass->AddInternalCall("Internal_getFloat", (void*)&ScriptMaterial::InternalGetFloat);
-		metaData.scriptClass->AddInternalCall("Internal_getFloatCurve", (void*)&ScriptMaterial::InternalGetFloatCurve);
-		metaData.scriptClass->AddInternalCall("Internal_getColor", (void*)&ScriptMaterial::InternalGetColor);
-		metaData.scriptClass->AddInternalCall("Internal_getColorGradient", (void*)&ScriptMaterial::InternalGetColorGradient);
-		metaData.scriptClass->AddInternalCall("Internal_getVec2", (void*)&ScriptMaterial::InternalGetVec2);
-		metaData.scriptClass->AddInternalCall("Internal_getVec3", (void*)&ScriptMaterial::InternalGetVec3);
-		metaData.scriptClass->AddInternalCall("Internal_getVec4", (void*)&ScriptMaterial::InternalGetVec4);
-		metaData.scriptClass->AddInternalCall("Internal_getMat3", (void*)&ScriptMaterial::InternalGetMat3);
-		metaData.scriptClass->AddInternalCall("Internal_getMat4", (void*)&ScriptMaterial::InternalGetMat4);
-		metaData.scriptClass->AddInternalCall("Internal_isAnimated", (void*)&ScriptMaterial::InternalIsAnimated);
-		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptMaterial::InternalCreate);
-		metaData.scriptClass->AddInternalCall("Internal_create0", (void*)&ScriptMaterial::InternalCreate0);
-		metaData.scriptClass->AddInternalCall("Internal_setTexture", (void*)&ScriptMaterial::InternalSetTexture);
-		metaData.scriptClass->AddInternalCall("Internal_getTexture", (void*)&ScriptMaterial::InternalGetTexture);
-		metaData.scriptClass->AddInternalCall("Internal_setSpriteTexture", (void*)&ScriptMaterial::InternalSetSpriteTexture);
-		metaData.scriptClass->AddInternalCall("Internal_getSpriteTexture", (void*)&ScriptMaterial::InternalGetSpriteTexture);
+		metaData.scriptClass->AddInternalCall("Internal_SetShader", (void*)&ScriptMaterial::InternalSetShader);
+		metaData.scriptClass->AddInternalCall("Internal_SetVariation", (void*)&ScriptMaterial::InternalSetVariation);
+		metaData.scriptClass->AddInternalCall("Internal_Clone", (void*)&ScriptMaterial::InternalClone);
+		metaData.scriptClass->AddInternalCall("Internal_GetShader", (void*)&ScriptMaterial::InternalGetShader);
+		metaData.scriptClass->AddInternalCall("Internal_GetVariation", (void*)&ScriptMaterial::InternalGetVariation);
+		metaData.scriptClass->AddInternalCall("Internal_SetFloat", (void*)&ScriptMaterial::InternalSetFloat);
+		metaData.scriptClass->AddInternalCall("Internal_SetFloatCurve", (void*)&ScriptMaterial::InternalSetFloatCurve);
+		metaData.scriptClass->AddInternalCall("Internal_SetColor", (void*)&ScriptMaterial::InternalSetColor);
+		metaData.scriptClass->AddInternalCall("Internal_SetColorGradient", (void*)&ScriptMaterial::InternalSetColorGradient);
+		metaData.scriptClass->AddInternalCall("Internal_SetVec2", (void*)&ScriptMaterial::InternalSetVec2);
+		metaData.scriptClass->AddInternalCall("Internal_SetVec3", (void*)&ScriptMaterial::InternalSetVec3);
+		metaData.scriptClass->AddInternalCall("Internal_SetVec4", (void*)&ScriptMaterial::InternalSetVec4);
+		metaData.scriptClass->AddInternalCall("Internal_SetMat3", (void*)&ScriptMaterial::InternalSetMat3);
+		metaData.scriptClass->AddInternalCall("Internal_SetMat4", (void*)&ScriptMaterial::InternalSetMat4);
+		metaData.scriptClass->AddInternalCall("Internal_GetFloat", (void*)&ScriptMaterial::InternalGetFloat);
+		metaData.scriptClass->AddInternalCall("Internal_GetFloatCurve", (void*)&ScriptMaterial::InternalGetFloatCurve);
+		metaData.scriptClass->AddInternalCall("Internal_GetColor", (void*)&ScriptMaterial::InternalGetColor);
+		metaData.scriptClass->AddInternalCall("Internal_GetColorGradient", (void*)&ScriptMaterial::InternalGetColorGradient);
+		metaData.scriptClass->AddInternalCall("Internal_GetVec2", (void*)&ScriptMaterial::InternalGetVec2);
+		metaData.scriptClass->AddInternalCall("Internal_GetVec3", (void*)&ScriptMaterial::InternalGetVec3);
+		metaData.scriptClass->AddInternalCall("Internal_GetVec4", (void*)&ScriptMaterial::InternalGetVec4);
+		metaData.scriptClass->AddInternalCall("Internal_GetMat3", (void*)&ScriptMaterial::InternalGetMat3);
+		metaData.scriptClass->AddInternalCall("Internal_GetMat4", (void*)&ScriptMaterial::InternalGetMat4);
+		metaData.scriptClass->AddInternalCall("Internal_IsAnimated", (void*)&ScriptMaterial::InternalIsAnimated);
+		metaData.scriptClass->AddInternalCall("Internal_Create", (void*)&ScriptMaterial::InternalCreate);
+		metaData.scriptClass->AddInternalCall("Internal_Create0", (void*)&ScriptMaterial::InternalCreate0);
+		metaData.scriptClass->AddInternalCall("Internal_SetTexture", (void*)&ScriptMaterial::InternalSetTexture);
+		metaData.scriptClass->AddInternalCall("Internal_GetTexture", (void*)&ScriptMaterial::InternalGetTexture);
+		metaData.scriptClass->AddInternalCall("Internal_SetSpriteTexture", (void*)&ScriptMaterial::InternalSetSpriteTexture);
+		metaData.scriptClass->AddInternalCall("Internal_GetSpriteTexture", (void*)&ScriptMaterial::InternalGetSpriteTexture);
 
 	}
 
@@ -68,7 +68,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		return metaData.scriptClass->createInstance("bool", ctorParams);
+		return metaData.scriptClass->CreateInstance("bool", ctorParams);
 	}
 	MonoObject* ScriptMaterial::InternalGetRef(ScriptMaterial* thisPtr)
 	{
@@ -79,7 +79,7 @@ namespace bs
 	{
 		ResourceHandle<Shader> tmpshader;
 		ScriptRRefBase* scriptshader;
-		scriptshader = ScriptRRefBase::toNative(shader);
+		scriptshader = ScriptRRefBase::ToNative(shader);
 		if(scriptshader != nullptr)
 			tmpshader = static_resource_cast<Shader>(scriptshader->GetHandle());
 		thisPtr->GetHandle()->SetShader(tmpshader);
@@ -89,7 +89,7 @@ namespace bs
 	{
 		SPtr<ShaderVariation> tmpvariation;
 		ScriptShaderVariation* scriptvariation;
-		scriptvariation = ScriptShaderVariation::toNative(variation);
+		scriptvariation = ScriptShaderVariation::ToNative(variation);
 		if(scriptvariation != nullptr)
 			tmpvariation = scriptvariation->GetInternal();
 		thisPtr->GetHandle()->SetVariation(*tmpvariation);
@@ -98,11 +98,11 @@ namespace bs
 	MonoObject* ScriptMaterial::InternalClone(ScriptMaterial* thisPtr)
 	{
 		ResourceHandle<Material> tmp__output;
-		tmp__output = thisPtr->GetHandle()->clone();
+		tmp__output = thisPtr->GetHandle()->Clone();
 
 		MonoObject* __output;
 		ScriptRRefBase* script__output;
-		script__output = ScriptResourceManager::Instance().getScriptRRef(tmp__output);
+		script__output = ScriptResourceManager::Instance().GetScriptRRef(tmp__output);
 		if(script__output != nullptr)
 			__output = script__output->GetManagedInstance();
 		else
@@ -118,7 +118,7 @@ namespace bs
 
 		MonoObject* __output;
 		ScriptRRefBase* script__output;
-		script__output = ScriptResourceManager::Instance().getScriptRRef(tmp__output);
+		script__output = ScriptResourceManager::Instance().GetScriptRRef(tmp__output);
 		if(script__output != nullptr)
 			__output = script__output->GetManagedInstance();
 		else
@@ -151,7 +151,7 @@ namespace bs
 		tmpname = MonoUtil::MonoToString(name);
 		SPtr<TAnimationCurve<float>> tmpvalue;
 		ScriptTAnimationCurvefloat* scriptvalue;
-		scriptvalue = ScriptTAnimationCurvefloat::toNative(value);
+		scriptvalue = ScriptTAnimationCurvefloat::ToNative(value);
 		if(scriptvalue != nullptr)
 			tmpvalue = scriptvalue->GetInternal();
 		thisPtr->GetHandle()->SetFloatCurve(tmpname, *tmpvalue, arrayIdx);
@@ -170,7 +170,7 @@ namespace bs
 		tmpname = MonoUtil::MonoToString(name);
 		SPtr<ColorGradientHDR> tmpvalue;
 		ScriptColorGradientHDR* scriptvalue;
-		scriptvalue = ScriptColorGradientHDR::toNative(value);
+		scriptvalue = ScriptColorGradientHDR::ToNative(value);
 		if(scriptvalue != nullptr)
 			tmpvalue = scriptvalue->GetInternal();
 		thisPtr->GetHandle()->SetColorGradient(tmpname, *tmpvalue, arrayIdx);
@@ -315,7 +315,7 @@ namespace bs
 		bool tmp__output;
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
-		tmp__output = thisPtr->GetHandle()->isAnimated(tmpname, arrayIdx);
+		tmp__output = thisPtr->GetHandle()->IsAnimated(tmpname, arrayIdx);
 
 		bool __output;
 		__output = tmp__output;
@@ -326,18 +326,18 @@ namespace bs
 	void ScriptMaterial::InternalCreate(MonoObject* managedInstance)
 	{
 		ResourceHandle<Material> instance = Material::Create();
-		ScriptResourceManager::Instance().createBuiltinScriptResource(instance, managedInstance);
+		ScriptResourceManager::Instance().CreateBuiltinScriptResource(instance, managedInstance);
 	}
 
 	void ScriptMaterial::InternalCreate0(MonoObject* managedInstance, MonoObject* shader)
 	{
 		ResourceHandle<Shader> tmpshader;
 		ScriptRRefBase* scriptshader;
-		scriptshader = ScriptRRefBase::toNative(shader);
+		scriptshader = ScriptRRefBase::ToNative(shader);
 		if(scriptshader != nullptr)
 			tmpshader = static_resource_cast<Shader>(scriptshader->GetHandle());
 		ResourceHandle<Material> instance = Material::Create(tmpshader);
-		ScriptResourceManager::Instance().createBuiltinScriptResource(instance, managedInstance);
+		ScriptResourceManager::Instance().CreateBuiltinScriptResource(instance, managedInstance);
 	}
 
 	void ScriptMaterial::InternalSetTexture(ScriptMaterial* thisPtr, MonoString* name, MonoObject* value, uint32_t mipLevel, uint32_t numMipLevels, uint32_t arraySlice, uint32_t numArraySlices)
@@ -346,10 +346,10 @@ namespace bs
 		tmpname = MonoUtil::MonoToString(name);
 		ResourceHandle<Texture> tmpvalue;
 		ScriptRRefBase* scriptvalue;
-		scriptvalue = ScriptRRefBase::toNative(value);
+		scriptvalue = ScriptRRefBase::ToNative(value);
 		if(scriptvalue != nullptr)
 			tmpvalue = static_resource_cast<Texture>(scriptvalue->GetHandle());
-		MaterialEx::setTexture(thisPtr->GetHandle(), tmpname, tmpvalue, mipLevel, numMipLevels, arraySlice, numArraySlices);
+		MaterialEx::SetTexture(thisPtr->GetHandle(), tmpname, tmpvalue, mipLevel, numMipLevels, arraySlice, numArraySlices);
 	}
 
 	MonoObject* ScriptMaterial::InternalGetTexture(ScriptMaterial* thisPtr, MonoString* name)
@@ -357,11 +357,11 @@ namespace bs
 		ResourceHandle<Texture> tmp__output;
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
-		tmp__output = MaterialEx::getTexture(thisPtr->GetHandle(), tmpname);
+		tmp__output = MaterialEx::GetTexture(thisPtr->GetHandle(), tmpname);
 
 		MonoObject* __output;
 		ScriptRRefBase* script__output;
-		script__output = ScriptResourceManager::Instance().getScriptRRef(tmp__output);
+		script__output = ScriptResourceManager::Instance().GetScriptRRef(tmp__output);
 		if(script__output != nullptr)
 			__output = script__output->GetManagedInstance();
 		else
@@ -376,10 +376,10 @@ namespace bs
 		tmpname = MonoUtil::MonoToString(name);
 		ResourceHandle<SpriteTexture> tmpvalue;
 		ScriptRRefBase* scriptvalue;
-		scriptvalue = ScriptRRefBase::toNative(value);
+		scriptvalue = ScriptRRefBase::ToNative(value);
 		if(scriptvalue != nullptr)
 			tmpvalue = static_resource_cast<SpriteTexture>(scriptvalue->GetHandle());
-		MaterialEx::setSpriteTexture(thisPtr->GetHandle(), tmpname, tmpvalue);
+		MaterialEx::SetSpriteTexture(thisPtr->GetHandle(), tmpname, tmpvalue);
 	}
 
 	MonoObject* ScriptMaterial::InternalGetSpriteTexture(ScriptMaterial* thisPtr, MonoString* name)
@@ -387,11 +387,11 @@ namespace bs
 		ResourceHandle<SpriteTexture> tmp__output;
 		String tmpname;
 		tmpname = MonoUtil::MonoToString(name);
-		tmp__output = MaterialEx::getSpriteTexture(thisPtr->GetHandle(), tmpname);
+		tmp__output = MaterialEx::GetSpriteTexture(thisPtr->GetHandle(), tmpname);
 
 		MonoObject* __output;
 		ScriptRRefBase* script__output;
-		script__output = ScriptResourceManager::Instance().getScriptRRef(tmp__output);
+		script__output = ScriptResourceManager::Instance().GetScriptRRef(tmp__output);
 		if(script__output != nullptr)
 			__output = script__output->GetManagedInstance();
 		else

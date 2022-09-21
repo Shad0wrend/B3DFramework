@@ -22,13 +22,13 @@ namespace bs
 		/// <summary>Creates a new empty material.</summary>
 		public Material()
 		{
-			Internal_create(this);
+			Internal_Create(this);
 		}
 
 		/// <summary>Creates a new material with the specified shader.</summary>
 		public Material(RRef<Shader> shader)
 		{
-			Internal_create0(this, shader);
+			Internal_Create0(this, shader);
 		}
 
 		/// <summary>Returns a reference wrapper for this resource.</summary>
@@ -45,8 +45,8 @@ namespace bs
 		[NativeWrapper]
 		public RRef<Shader> Shader
 		{
-			get { return Internal_getShader(mCachedPtr); }
-			set { Internal_setShader(mCachedPtr, value); }
+			get { return Internal_GetShader(mCachedPtr); }
+			set { Internal_SetShader(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -59,8 +59,8 @@ namespace bs
 		[NativeWrapper]
 		public ShaderVariation Variation
 		{
-			get { return Internal_getVariation(mCachedPtr); }
-			set { Internal_setVariation(mCachedPtr, value); }
+			get { return Internal_GetVariation(mCachedPtr); }
+			set { Internal_SetVariation(mCachedPtr, value); }
 		}
 
 		/// <summary>Returns a reference wrapper for this resource.</summary>
@@ -75,7 +75,7 @@ namespace bs
 		/// <summary>Creates a deep copy of the material and returns the new object.</summary>
 		public RRef<Material> Clone()
 		{
-			return Internal_clone(mCachedPtr);
+			return Internal_Clone(mCachedPtr);
 		}
 
 		/// <summary>
@@ -85,12 +85,12 @@ namespace bs
 		/// </summary>
 		public void SetFloat(string name, float value, int arrayIdx = 0)
 		{
-			Internal_setFloat(mCachedPtr, name, value, arrayIdx);
+			Internal_SetFloat(mCachedPtr, name, value, arrayIdx);
 		}
 
 		public void SetFloatCurve(string name, AnimationCurve value, int arrayIdx = 0)
 		{
-			Internal_setFloatCurve(mCachedPtr, name, value, arrayIdx);
+			Internal_SetFloatCurve(mCachedPtr, name, value, arrayIdx);
 		}
 
 		/// <summary>
@@ -100,7 +100,7 @@ namespace bs
 		/// </summary>
 		public void SetColor(string name, Color value, int arrayIdx = 0)
 		{
-			Internal_setColor(mCachedPtr, name, ref value, arrayIdx);
+			Internal_SetColor(mCachedPtr, name, ref value, arrayIdx);
 		}
 
 		/// <summary>
@@ -111,7 +111,7 @@ namespace bs
 		/// </summary>
 		public void SetColorGradient(string name, ColorGradientHDR value, int arrayIdx = 0)
 		{
-			Internal_setColorGradient(mCachedPtr, name, value, arrayIdx);
+			Internal_SetColorGradient(mCachedPtr, name, value, arrayIdx);
 		}
 
 		/// <summary>
@@ -121,7 +121,7 @@ namespace bs
 		/// </summary>
 		public void SetVector2(string name, Vector2 value, int arrayIdx = 0)
 		{
-			Internal_setVec2(mCachedPtr, name, ref value, arrayIdx);
+			Internal_SetVec2(mCachedPtr, name, ref value, arrayIdx);
 		}
 
 		/// <summary>
@@ -131,7 +131,7 @@ namespace bs
 		/// </summary>
 		public void SetVector3(string name, Vector3 value, int arrayIdx = 0)
 		{
-			Internal_setVec3(mCachedPtr, name, ref value, arrayIdx);
+			Internal_SetVec3(mCachedPtr, name, ref value, arrayIdx);
 		}
 
 		/// <summary>
@@ -141,7 +141,7 @@ namespace bs
 		/// </summary>
 		public void SetVector4(string name, Vector4 value, int arrayIdx = 0)
 		{
-			Internal_setVec4(mCachedPtr, name, ref value, arrayIdx);
+			Internal_SetVec4(mCachedPtr, name, ref value, arrayIdx);
 		}
 
 		/// <summary>
@@ -151,7 +151,7 @@ namespace bs
 		/// </summary>
 		public void SetMatrix3(string name, Matrix3 value, int arrayIdx = 0)
 		{
-			Internal_setMat3(mCachedPtr, name, ref value, arrayIdx);
+			Internal_SetMat3(mCachedPtr, name, ref value, arrayIdx);
 		}
 
 		/// <summary>
@@ -161,7 +161,7 @@ namespace bs
 		/// </summary>
 		public void SetMatrix4(string name, Matrix4 value, int arrayIdx = 0)
 		{
-			Internal_setMat4(mCachedPtr, name, ref value, arrayIdx);
+			Internal_SetMat4(mCachedPtr, name, ref value, arrayIdx);
 		}
 
 		/// <summary>
@@ -172,7 +172,7 @@ namespace bs
 		/// </summary>
 		public float GetFloat(string name, int arrayIdx = 0)
 		{
-			return Internal_getFloat(mCachedPtr, name, arrayIdx);
+			return Internal_GetFloat(mCachedPtr, name, arrayIdx);
 		}
 
 		/// <summary>
@@ -184,7 +184,7 @@ namespace bs
 		/// </summary>
 		public AnimationCurve GetFloatCurve(string name, int arrayIdx = 0)
 		{
-			return Internal_getFloatCurve(mCachedPtr, name, arrayIdx);
+			return Internal_GetFloatCurve(mCachedPtr, name, arrayIdx);
 		}
 
 		/// <summary>
@@ -197,7 +197,7 @@ namespace bs
 		public Color GetColor(string name, int arrayIdx = 0)
 		{
 			Color temp;
-			Internal_getColor(mCachedPtr, name, arrayIdx, out temp);
+			Internal_GetColor(mCachedPtr, name, arrayIdx, out temp);
 			return temp;
 		}
 
@@ -210,7 +210,7 @@ namespace bs
 		/// </summary>
 		public ColorGradientHDR GetColorGradient(string name, int arrayIdx = 0)
 		{
-			return Internal_getColorGradient(mCachedPtr, name, arrayIdx);
+			return Internal_GetColorGradient(mCachedPtr, name, arrayIdx);
 		}
 
 		/// <summary>
@@ -221,7 +221,7 @@ namespace bs
 		public Vector2 GetVector2(string name, int arrayIdx = 0)
 		{
 			Vector2 temp;
-			Internal_getVec2(mCachedPtr, name, arrayIdx, out temp);
+			Internal_GetVec2(mCachedPtr, name, arrayIdx, out temp);
 			return temp;
 		}
 
@@ -233,7 +233,7 @@ namespace bs
 		public Vector3 GetVector3(string name, int arrayIdx = 0)
 		{
 			Vector3 temp;
-			Internal_getVec3(mCachedPtr, name, arrayIdx, out temp);
+			Internal_GetVec3(mCachedPtr, name, arrayIdx, out temp);
 			return temp;
 		}
 
@@ -245,7 +245,7 @@ namespace bs
 		public Vector4 GetVector4(string name, int arrayIdx = 0)
 		{
 			Vector4 temp;
-			Internal_getVec4(mCachedPtr, name, arrayIdx, out temp);
+			Internal_GetVec4(mCachedPtr, name, arrayIdx, out temp);
 			return temp;
 		}
 
@@ -257,7 +257,7 @@ namespace bs
 		public Matrix3 GetMatrix3(string name, int arrayIdx = 0)
 		{
 			Matrix3 temp;
-			Internal_getMat3(mCachedPtr, name, arrayIdx, out temp);
+			Internal_GetMat3(mCachedPtr, name, arrayIdx, out temp);
 			return temp;
 		}
 
@@ -269,7 +269,7 @@ namespace bs
 		public Matrix4 GetMatrix4(string name, int arrayIdx = 0)
 		{
 			Matrix4 temp;
-			Internal_getMat4(mCachedPtr, name, arrayIdx, out temp);
+			Internal_GetMat4(mCachedPtr, name, arrayIdx, out temp);
 			return temp;
 		}
 
@@ -279,71 +279,71 @@ namespace bs
 		/// </summary>
 		public bool IsAnimated(string name, int arrayIdx = 0)
 		{
-			return Internal_isAnimated(mCachedPtr, name, arrayIdx);
+			return Internal_IsAnimated(mCachedPtr, name, arrayIdx);
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern RRef<Material> Internal_GetRef(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setShader(IntPtr thisPtr, RRef<Shader> shader);
+		private static extern void Internal_SetShader(IntPtr thisPtr, RRef<Shader> shader);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setVariation(IntPtr thisPtr, ShaderVariation variation);
+		private static extern void Internal_SetVariation(IntPtr thisPtr, ShaderVariation variation);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern RRef<Material> Internal_clone(IntPtr thisPtr);
+		private static extern RRef<Material> Internal_Clone(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern RRef<Shader> Internal_getShader(IntPtr thisPtr);
+		private static extern RRef<Shader> Internal_GetShader(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ShaderVariation Internal_getVariation(IntPtr thisPtr);
+		private static extern ShaderVariation Internal_GetVariation(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setFloat(IntPtr thisPtr, string name, float value, int arrayIdx);
+		private static extern void Internal_SetFloat(IntPtr thisPtr, string name, float value, int arrayIdx);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setFloatCurve(IntPtr thisPtr, string name, AnimationCurve value, int arrayIdx);
+		private static extern void Internal_SetFloatCurve(IntPtr thisPtr, string name, AnimationCurve value, int arrayIdx);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setColor(IntPtr thisPtr, string name, ref Color value, int arrayIdx);
+		private static extern void Internal_SetColor(IntPtr thisPtr, string name, ref Color value, int arrayIdx);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setColorGradient(IntPtr thisPtr, string name, ColorGradientHDR value, int arrayIdx);
+		private static extern void Internal_SetColorGradient(IntPtr thisPtr, string name, ColorGradientHDR value, int arrayIdx);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setVec2(IntPtr thisPtr, string name, ref Vector2 value, int arrayIdx);
+		private static extern void Internal_SetVec2(IntPtr thisPtr, string name, ref Vector2 value, int arrayIdx);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setVec3(IntPtr thisPtr, string name, ref Vector3 value, int arrayIdx);
+		private static extern void Internal_SetVec3(IntPtr thisPtr, string name, ref Vector3 value, int arrayIdx);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setVec4(IntPtr thisPtr, string name, ref Vector4 value, int arrayIdx);
+		private static extern void Internal_SetVec4(IntPtr thisPtr, string name, ref Vector4 value, int arrayIdx);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setMat3(IntPtr thisPtr, string name, ref Matrix3 value, int arrayIdx);
+		private static extern void Internal_SetMat3(IntPtr thisPtr, string name, ref Matrix3 value, int arrayIdx);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setMat4(IntPtr thisPtr, string name, ref Matrix4 value, int arrayIdx);
+		private static extern void Internal_SetMat4(IntPtr thisPtr, string name, ref Matrix4 value, int arrayIdx);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getFloat(IntPtr thisPtr, string name, int arrayIdx);
+		private static extern float Internal_GetFloat(IntPtr thisPtr, string name, int arrayIdx);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern AnimationCurve Internal_getFloatCurve(IntPtr thisPtr, string name, int arrayIdx);
+		private static extern AnimationCurve Internal_GetFloatCurve(IntPtr thisPtr, string name, int arrayIdx);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getColor(IntPtr thisPtr, string name, int arrayIdx, out Color __output);
+		private static extern void Internal_GetColor(IntPtr thisPtr, string name, int arrayIdx, out Color __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ColorGradientHDR Internal_getColorGradient(IntPtr thisPtr, string name, int arrayIdx);
+		private static extern ColorGradientHDR Internal_GetColorGradient(IntPtr thisPtr, string name, int arrayIdx);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getVec2(IntPtr thisPtr, string name, int arrayIdx, out Vector2 __output);
+		private static extern void Internal_GetVec2(IntPtr thisPtr, string name, int arrayIdx, out Vector2 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getVec3(IntPtr thisPtr, string name, int arrayIdx, out Vector3 __output);
+		private static extern void Internal_GetVec3(IntPtr thisPtr, string name, int arrayIdx, out Vector3 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getVec4(IntPtr thisPtr, string name, int arrayIdx, out Vector4 __output);
+		private static extern void Internal_GetVec4(IntPtr thisPtr, string name, int arrayIdx, out Vector4 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getMat3(IntPtr thisPtr, string name, int arrayIdx, out Matrix3 __output);
+		private static extern void Internal_GetMat3(IntPtr thisPtr, string name, int arrayIdx, out Matrix3 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getMat4(IntPtr thisPtr, string name, int arrayIdx, out Matrix4 __output);
+		private static extern void Internal_GetMat4(IntPtr thisPtr, string name, int arrayIdx, out Matrix4 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_isAnimated(IntPtr thisPtr, string name, int arrayIdx);
+		private static extern bool Internal_IsAnimated(IntPtr thisPtr, string name, int arrayIdx);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create(Material managedInstance);
+		private static extern void Internal_Create(Material managedInstance);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create0(Material managedInstance, RRef<Shader> shader);
+		private static extern void Internal_Create0(Material managedInstance, RRef<Shader> shader);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setTexture(IntPtr thisPtr, string name, RRef<Texture> value, int mipLevel, int numMipLevels, int arraySlice, int numArraySlices);
+		private static extern void Internal_SetTexture(IntPtr thisPtr, string name, RRef<Texture> value, int mipLevel, int numMipLevels, int arraySlice, int numArraySlices);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern RRef<Texture> Internal_getTexture(IntPtr thisPtr, string name);
+		private static extern RRef<Texture> Internal_GetTexture(IntPtr thisPtr, string name);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setSpriteTexture(IntPtr thisPtr, string name, RRef<SpriteTexture> value);
+		private static extern void Internal_SetSpriteTexture(IntPtr thisPtr, string name, RRef<SpriteTexture> value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern RRef<SpriteTexture> Internal_getSpriteTexture(IntPtr thisPtr, string name);
+		private static extern RRef<SpriteTexture> Internal_GetSpriteTexture(IntPtr thisPtr, string name);
 	}
 
 	/** @} */

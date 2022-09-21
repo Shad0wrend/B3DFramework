@@ -26,12 +26,12 @@ namespace bs
 		void ScriptUpdateFloatPropertiesInternal();
 		void ScriptOnEventTriggeredInternal(const ResourceHandle<AnimationClip>& p0, const String& p1);
 
-		typedef void(BS_THUNKCALL *_scriptRebuildFloatPropertiesThunkDef) (MonoObject*, MonoObject* p0, MonoException**);
-		static _scriptRebuildFloatPropertiesThunkDef _scriptRebuildFloatPropertiesThunk;
-		typedef void(BS_THUNKCALL *_scriptUpdateFloatPropertiesThunkDef) (MonoObject*, MonoException**);
-		static _scriptUpdateFloatPropertiesThunkDef _scriptUpdateFloatPropertiesThunk;
-		typedef void(BS_THUNKCALL *_scriptOnEventTriggeredThunkDef) (MonoObject*, MonoObject* p0, MonoString* p1, MonoException**);
-		static _scriptOnEventTriggeredThunkDef _scriptOnEventTriggeredThunk;
+		typedef void(BS_THUNKCALL *ScriptRebuildFloatPropertiesInternalThunkDef) (MonoObject*, MonoObject* p0, MonoException**);
+		static ScriptRebuildFloatPropertiesInternalThunkDef ScriptRebuildFloatPropertiesInternalThunk;
+		typedef void(BS_THUNKCALL *ScriptUpdateFloatPropertiesInternalThunkDef) (MonoObject*, MonoException**);
+		static ScriptUpdateFloatPropertiesInternalThunkDef ScriptUpdateFloatPropertiesInternalThunk;
+		typedef void(BS_THUNKCALL *ScriptOnEventTriggeredInternalThunkDef) (MonoObject*, MonoObject* p0, MonoString* p1, MonoException**);
+		static ScriptOnEventTriggeredInternalThunkDef ScriptOnEventTriggeredInternalThunk;
 
 		static void InternalSetDefaultClip(ScriptCAnimation* thisPtr, MonoObject* clip);
 		static MonoObject* InternalGetDefaultClip(ScriptCAnimation* thisPtr);
@@ -59,8 +59,8 @@ namespace bs
 		static bool InternalGetEnableCull(ScriptCAnimation* thisPtr);
 		static uint32_t InternalGetNumClips(ScriptCAnimation* thisPtr);
 		static MonoObject* InternalGetClip(ScriptCAnimation* thisPtr, uint32_t idx);
-		static void InternalRefreshClipMappings(ScriptCAnimation* thisPtr);
-		static bool InternalGetGenericCurveValue(ScriptCAnimation* thisPtr, uint32_t curveIdx, float* value);
-		static bool InternalTogglePreviewMode(ScriptCAnimation* thisPtr, bool enabled);
+		static void InternalRefreshClipMappingsInternal(ScriptCAnimation* thisPtr);
+		static bool InternalGetGenericCurveValueInternal(ScriptCAnimation* thisPtr, uint32_t curveIdx, float* value);
+		static bool InternalTogglePreviewModeInternal(ScriptCAnimation* thisPtr, bool enabled);
 	};
 }

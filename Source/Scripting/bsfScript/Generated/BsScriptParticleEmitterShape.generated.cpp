@@ -21,7 +21,7 @@ namespace bs
 		mInternal = value;
 	}
 
-	void ScriptParticleEmitterShape::initRuntimeData()
+	void ScriptParticleEmitterShape::InitRuntimeData()
 	{
 
 	}

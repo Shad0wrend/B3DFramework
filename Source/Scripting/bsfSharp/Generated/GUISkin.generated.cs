@@ -22,7 +22,7 @@ namespace bs
 		/// <summary>Creates an empty GUI skin and returns a handle to it.</summary>
 		public GUISkin()
 		{
-			Internal_create(this);
+			Internal_Create(this);
 		}
 
 		/// <summary>Returns a reference wrapper for this resource.</summary>
@@ -35,7 +35,7 @@ namespace bs
 		[NativeWrapper]
 		public string[] StyleNames
 		{
-			get { return Internal_getStyleNames(mCachedPtr); }
+			get { return Internal_GetStyleNames(mCachedPtr); }
 		}
 
 		/// <summary>Returns a reference wrapper for this resource.</summary>
@@ -50,41 +50,41 @@ namespace bs
 		/// <summary>Checks if the style with the specified name exists.</summary>
 		public bool HasStyle(string name)
 		{
-			return Internal_hasStyle(mCachedPtr, name);
+			return Internal_HasStyle(mCachedPtr, name);
 		}
 
 		/// <summary>Returns a style for the specified GUI element type.</summary>
 		public GUIElementStyle GetStyle(string guiElemType)
 		{
-			return Internal_getStyle(mCachedPtr, guiElemType);
+			return Internal_GetStyle(mCachedPtr, guiElemType);
 		}
 
 		/// <summary>Sets a style for the specified GUI element type.</summary>
 		public void SetStyle(string guiElemType, GUIElementStyle style)
 		{
-			Internal_setStyle(mCachedPtr, guiElemType, style);
+			Internal_SetStyle(mCachedPtr, guiElemType, style);
 		}
 
 		/// <summary>Removes a style for the specified GUI element type.</summary>
 		public void RemoveStyle(string guiElemType)
 		{
-			Internal_removeStyle(mCachedPtr, guiElemType);
+			Internal_RemoveStyle(mCachedPtr, guiElemType);
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern RRef<GUISkin> Internal_GetRef(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_hasStyle(IntPtr thisPtr, string name);
+		private static extern bool Internal_HasStyle(IntPtr thisPtr, string name);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern GUIElementStyle Internal_getStyle(IntPtr thisPtr, string guiElemType);
+		private static extern GUIElementStyle Internal_GetStyle(IntPtr thisPtr, string guiElemType);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setStyle(IntPtr thisPtr, string guiElemType, GUIElementStyle style);
+		private static extern void Internal_SetStyle(IntPtr thisPtr, string guiElemType, GUIElementStyle style);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_removeStyle(IntPtr thisPtr, string guiElemType);
+		private static extern void Internal_RemoveStyle(IntPtr thisPtr, string guiElemType);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern string[] Internal_getStyleNames(IntPtr thisPtr);
+		private static extern string[] Internal_GetStyleNames(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create(GUISkin managedInstance);
+		private static extern void Internal_Create(GUISkin managedInstance);
 	}
 
 	/** @} */

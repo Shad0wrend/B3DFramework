@@ -16,7 +16,7 @@ namespace bs
         /// <returns>Texture assigned to the specified material</returns>
         public RRef<Texture> GetTexture(string name)
         {
-            return Internal_getTexture(mCachedPtr, name);
+            return Internal_GetTexture(mCachedPtr, name);
         }
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace bs
         /// <param name="surface">Subset of the texture to assign.</param>
         public void SetTexture(string name, RRef<Texture> texture, TextureSurface surface)
         {
-            Internal_setTexture(mCachedPtr, name, texture, surface.mipLevel, surface.numMipLevels, surface.face,
+            Internal_SetTexture(mCachedPtr, name, texture, surface.mipLevel, surface.numMipLevels, surface.face,
                 surface.numFaces);
         }
 
@@ -39,7 +39,7 @@ namespace bs
         /// <param name="texture">Texture resource to assign.</param>
         public void SetTexture(string name, RRef<Texture> texture)
         {
-            Internal_setTexture(mCachedPtr, name, texture, 0, 0, 0, 0);
+            Internal_SetTexture(mCachedPtr, name, texture, 0, 0, 0, 0);
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace bs
         /// <returns>Texture assigned to the specified material</returns>
         public RRef<SpriteTexture> GetSpriteTexture(string name)
         {
-            return Internal_getSpriteTexture(mCachedPtr, name);
+            return Internal_GetSpriteTexture(mCachedPtr, name);
         }
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace bs
         /// <param name="texture">Texture resource to assign.</param>
         public void SetSpriteTexture(string name, RRef<SpriteTexture> texture)
         {
-            Internal_setSpriteTexture(mCachedPtr, name, texture);
+            Internal_SetSpriteTexture(mCachedPtr, name, texture);
         }
     }
 

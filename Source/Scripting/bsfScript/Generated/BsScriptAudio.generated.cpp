@@ -14,16 +14,16 @@ namespace bs
 	{
 	}
 
-	void ScriptAudio::initRuntimeData()
+	void ScriptAudio::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_setVolume", (void*)&ScriptAudio::InternalSetVolume);
-		metaData.scriptClass->AddInternalCall("Internal_getVolume", (void*)&ScriptAudio::InternalGetVolume);
-		metaData.scriptClass->AddInternalCall("Internal_setPaused", (void*)&ScriptAudio::InternalSetPaused);
-		metaData.scriptClass->AddInternalCall("Internal_isPaused", (void*)&ScriptAudio::InternalIsPaused);
-		metaData.scriptClass->AddInternalCall("Internal_setActiveDevice", (void*)&ScriptAudio::InternalSetActiveDevice);
-		metaData.scriptClass->AddInternalCall("Internal_getActiveDevice", (void*)&ScriptAudio::InternalGetActiveDevice);
-		metaData.scriptClass->AddInternalCall("Internal_getDefaultDevice", (void*)&ScriptAudio::InternalGetDefaultDevice);
-		metaData.scriptClass->AddInternalCall("Internal_getAllDevices", (void*)&ScriptAudio::InternalGetAllDevices);
+		metaData.scriptClass->AddInternalCall("Internal_SetVolume", (void*)&ScriptAudio::InternalSetVolume);
+		metaData.scriptClass->AddInternalCall("Internal_GetVolume", (void*)&ScriptAudio::InternalGetVolume);
+		metaData.scriptClass->AddInternalCall("Internal_SetPaused", (void*)&ScriptAudio::InternalSetPaused);
+		metaData.scriptClass->AddInternalCall("Internal_IsPaused", (void*)&ScriptAudio::InternalIsPaused);
+		metaData.scriptClass->AddInternalCall("Internal_SetActiveDevice", (void*)&ScriptAudio::InternalSetActiveDevice);
+		metaData.scriptClass->AddInternalCall("Internal_GetActiveDevice", (void*)&ScriptAudio::InternalGetActiveDevice);
+		metaData.scriptClass->AddInternalCall("Internal_GetDefaultDevice", (void*)&ScriptAudio::InternalGetDefaultDevice);
+		metaData.scriptClass->AddInternalCall("Internal_GetAllDevices", (void*)&ScriptAudio::InternalGetAllDevices);
 
 	}
 
@@ -69,36 +69,36 @@ namespace bs
 	void ScriptAudio::InternalGetActiveDevice(__AudioDeviceInterop* __output)
 	{
 		AudioDevice tmp__output;
-		tmp__output = Audio::Instance().getActiveDevice();
+		tmp__output = Audio::Instance().GetActiveDevice();
 
 		__AudioDeviceInterop interop__output;
-		interop__output = ScriptAudioDevice::toInterop(tmp__output);
-		MonoUtil::valueCopy(__output, &interop__output, ScriptAudioDevice::getMetaData()->scriptClass->GetInternalClassInternal());
+		interop__output = ScriptAudioDevice::ToInterop(tmp__output);
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptAudioDevice::GetMetaData()->scriptClass->GetInternalClassInternal());
 	}
 
 	void ScriptAudio::InternalGetDefaultDevice(__AudioDeviceInterop* __output)
 	{
 		AudioDevice tmp__output;
-		tmp__output = Audio::Instance().getDefaultDevice();
+		tmp__output = Audio::Instance().GetDefaultDevice();
 
 		__AudioDeviceInterop interop__output;
-		interop__output = ScriptAudioDevice::toInterop(tmp__output);
-		MonoUtil::valueCopy(__output, &interop__output, ScriptAudioDevice::getMetaData()->scriptClass->GetInternalClassInternal());
+		interop__output = ScriptAudioDevice::ToInterop(tmp__output);
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptAudioDevice::GetMetaData()->scriptClass->GetInternalClassInternal());
 	}
 
 	MonoArray* ScriptAudio::InternalGetAllDevices()
 	{
 		Vector<AudioDevice> vec__output;
-		vec__output = Audio::Instance().getAllDevices();
+		vec__output = Audio::Instance().GetAllDevices();
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
-		ScriptArray array__output = ScriptArray::create<ScriptAudioDevice>(arraySize__output);
+		ScriptArray array__output = ScriptArray::Create<ScriptAudioDevice>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
-			array__output.Set(i, ScriptAudioDevice::toInterop(vec__output[i]));
+			array__output.Set(i, ScriptAudioDevice::ToInterop(vec__output[i]));
 		}
-		__output = array__output.getInternal();
+		__output = array__output.GetInternal();
 
 		return __output;
 	}

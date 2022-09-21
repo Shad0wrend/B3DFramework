@@ -14,20 +14,20 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptSTART_UP_DESC::initRuntimeData()
+	void ScriptSTART_UP_DESC::InitRuntimeData()
 	{ }
 
-	MonoObject*ScriptSTART_UP_DESC::box(const __START_UP_DESCInterop& value)
+	MonoObject*ScriptSTART_UP_DESC::Box(const __START_UP_DESCInterop& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	__START_UP_DESCInterop ScriptSTART_UP_DESC::unbox(MonoObject* value)
+	__START_UP_DESCInterop ScriptSTART_UP_DESC::Unbox(MonoObject* value)
 	{
-		return *(__START_UP_DESCInterop*)MonoUtil::unbox(value);
+		return *(__START_UP_DESCInterop*)MonoUtil::Unbox(value);
 	}
 
-	START_UP_DESC ScriptSTART_UP_DESC::fromInterop(const __START_UP_DESCInterop& value)
+	START_UP_DESC ScriptSTART_UP_DESC::FromInterop(const __START_UP_DESCInterop& value)
 	{
 		START_UP_DESC output;
 		String tmprenderAPI;
@@ -48,16 +48,16 @@ namespace bs
 		output.physicsCooking = value.physicsCooking;
 		output.asyncAnimation = value.asyncAnimation;
 		RENDER_WINDOW_DESC tmpprimaryWindowDesc;
-		tmpprimaryWindowDesc = ScriptRENDER_WINDOW_DESC::fromInterop(value.primaryWindowDesc);
+		tmpprimaryWindowDesc = ScriptRENDER_WINDOW_DESC::FromInterop(value.primaryWindowDesc);
 		output.primaryWindowDesc = tmpprimaryWindowDesc;
 		Vector<String> vecimporters;
 		if(value.importers != nullptr)
 		{
 			ScriptArray arrayimporters(value.importers);
-			vecimporters.resize(arrayimporters.size());
-			for(int i = 0; i < (int)arrayimporters.size(); i++)
+			vecimporters.resize(arrayimporters.Size());
+			for(int i = 0; i < (int)arrayimporters.Size(); i++)
 			{
-				vecimporters[i] = arrayimporters.get<String>(i);
+				vecimporters[i] = arrayimporters.Get<String>(i);
 			}
 		}
 		output.importers = vecimporters;
@@ -65,37 +65,37 @@ namespace bs
 		return output;
 	}
 
-	__START_UP_DESCInterop ScriptSTART_UP_DESC::toInterop(const START_UP_DESC& value)
+	__START_UP_DESCInterop ScriptSTART_UP_DESC::ToInterop(const START_UP_DESC& value)
 	{
 		__START_UP_DESCInterop output;
 		MonoString* tmprenderAPI;
-		tmprenderAPI = MonoUtil::stringToMono(value.renderAPI);
+		tmprenderAPI = MonoUtil::StringToMono(value.renderAPI);
 		output.renderAPI = tmprenderAPI;
 		MonoString* tmprenderer;
-		tmprenderer = MonoUtil::stringToMono(value.renderer);
+		tmprenderer = MonoUtil::StringToMono(value.renderer);
 		output.renderer = tmprenderer;
 		MonoString* tmpphysics;
-		tmpphysics = MonoUtil::stringToMono(value.physics);
+		tmpphysics = MonoUtil::StringToMono(value.physics);
 		output.physics = tmpphysics;
 		MonoString* tmpaudio;
-		tmpaudio = MonoUtil::stringToMono(value.audio);
+		tmpaudio = MonoUtil::StringToMono(value.audio);
 		output.audio = tmpaudio;
 		MonoString* tmpinput;
-		tmpinput = MonoUtil::stringToMono(value.input);
+		tmpinput = MonoUtil::StringToMono(value.input);
 		output.input = tmpinput;
 		output.physicsCooking = value.physicsCooking;
 		output.asyncAnimation = value.asyncAnimation;
 		__RENDER_WINDOW_DESCInterop tmpprimaryWindowDesc;
-		tmpprimaryWindowDesc = ScriptRENDER_WINDOW_DESC::toInterop(value.primaryWindowDesc);
+		tmpprimaryWindowDesc = ScriptRENDER_WINDOW_DESC::ToInterop(value.primaryWindowDesc);
 		output.primaryWindowDesc = tmpprimaryWindowDesc;
 		int arraySizeimporters = (int)value.importers.size();
 		MonoArray* vecimporters;
-		ScriptArray arrayimporters = ScriptArray::create<String>(arraySizeimporters);
+		ScriptArray arrayimporters = ScriptArray::Create<String>(arraySizeimporters);
 		for(int i = 0; i < arraySizeimporters; i++)
 		{
 			arrayimporters.Set(i, value.importers[i]);
 		}
-		vecimporters = arrayimporters.getInternal();
+		vecimporters = arrayimporters.GetInternal();
 		output.importers = vecimporters;
 
 		return output;

@@ -16,12 +16,12 @@ namespace bs
 	{
 	}
 
-	void ScriptCSkybox::initRuntimeData()
+	void ScriptCSkybox::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_getTexture", (void*)&ScriptCSkybox::InternalGetTexture);
-		metaData.scriptClass->AddInternalCall("Internal_setTexture", (void*)&ScriptCSkybox::InternalSetTexture);
-		metaData.scriptClass->AddInternalCall("Internal_setBrightness", (void*)&ScriptCSkybox::InternalSetBrightness);
-		metaData.scriptClass->AddInternalCall("Internal_getBrightness", (void*)&ScriptCSkybox::InternalGetBrightness);
+		metaData.scriptClass->AddInternalCall("Internal_GetTexture", (void*)&ScriptCSkybox::InternalGetTexture);
+		metaData.scriptClass->AddInternalCall("Internal_SetTexture", (void*)&ScriptCSkybox::InternalSetTexture);
+		metaData.scriptClass->AddInternalCall("Internal_SetBrightness", (void*)&ScriptCSkybox::InternalSetBrightness);
+		metaData.scriptClass->AddInternalCall("Internal_GetBrightness", (void*)&ScriptCSkybox::InternalGetBrightness);
 
 	}
 
@@ -32,7 +32,7 @@ namespace bs
 
 		MonoObject* __output;
 		ScriptRRefBase* script__output;
-		script__output = ScriptResourceManager::Instance().getScriptRRef(tmp__output);
+		script__output = ScriptResourceManager::Instance().GetScriptRRef(tmp__output);
 		if(script__output != nullptr)
 			__output = script__output->GetManagedInstance();
 		else
@@ -45,7 +45,7 @@ namespace bs
 	{
 		ResourceHandle<Texture> tmptexture;
 		ScriptRRefBase* scripttexture;
-		scripttexture = ScriptRRefBase::toNative(texture);
+		scripttexture = ScriptRRefBase::ToNative(texture);
 		if(scripttexture != nullptr)
 			tmptexture = static_resource_cast<Texture>(scripttexture->GetHandle());
 		thisPtr->GetHandle()->SetTexture(tmptexture);

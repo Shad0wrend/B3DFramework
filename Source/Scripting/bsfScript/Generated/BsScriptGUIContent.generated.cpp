@@ -15,7 +15,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptGUIContent::initRuntimeData()
+	void ScriptGUIContent::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptGUIContent::Box(const __GUIContentInterop& value)

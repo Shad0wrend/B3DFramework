@@ -19,13 +19,13 @@ namespace bs
 		/// <summary>Creates a new particle velocity evolver.</summary>
 		public ParticleVelocity(ParticleVelocityOptions desc)
 		{
-			Internal_create(this, ref desc);
+			Internal_Create(this, ref desc);
 		}
 
 		/// <summary>Creates a new particle velocity evolver.</summary>
 		public ParticleVelocity()
 		{
-			Internal_create0(this);
+			Internal_Create0(this);
 		}
 
 		/// <summary>Options describing the evolver.</summary>
@@ -36,20 +36,20 @@ namespace bs
 			get
 			{
 				ParticleVelocityOptions temp;
-				Internal_getOptions(mCachedPtr, out temp);
+				Internal_GetOptions(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setOptions(mCachedPtr, ref value); }
+			set { Internal_SetOptions(mCachedPtr, ref value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setOptions(IntPtr thisPtr, ref ParticleVelocityOptions options);
+		private static extern void Internal_SetOptions(IntPtr thisPtr, ref ParticleVelocityOptions options);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getOptions(IntPtr thisPtr, out ParticleVelocityOptions __output);
+		private static extern void Internal_GetOptions(IntPtr thisPtr, out ParticleVelocityOptions __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create(ParticleVelocity managedInstance, ref ParticleVelocityOptions desc);
+		private static extern void Internal_Create(ParticleVelocity managedInstance, ref ParticleVelocityOptions desc);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create0(ParticleVelocity managedInstance);
+		private static extern void Internal_Create0(ParticleVelocity managedInstance);
 	}
 
 	/** @} */

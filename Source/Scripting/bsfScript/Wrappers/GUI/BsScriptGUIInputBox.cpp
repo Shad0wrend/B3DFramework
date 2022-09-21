@@ -22,7 +22,7 @@ namespace bs
 
 	}
 
-	void ScriptGUIInputBox::initRuntimeData()
+	void ScriptGUIInputBox::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIInputBox::InternalCreateInstance);
 		metaData.scriptClass->AddInternalCall("Internal_GetText", (void*)&ScriptGUIInputBox::InternalGetText);

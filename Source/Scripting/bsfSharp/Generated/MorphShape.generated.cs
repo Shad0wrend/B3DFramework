@@ -24,20 +24,20 @@ namespace bs
 		[NativeWrapper]
 		public string Name
 		{
-			get { return Internal_getName(mCachedPtr); }
+			get { return Internal_GetName(mCachedPtr); }
 		}
 
 		/// <summary>Returns the weight of the shape, determining how are different shapes within a channel blended.</summary>
 		[NativeWrapper]
 		public float Weight
 		{
-			get { return Internal_getWeight(mCachedPtr); }
+			get { return Internal_GetWeight(mCachedPtr); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern string Internal_getName(IntPtr thisPtr);
+		private static extern string Internal_GetName(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getWeight(IntPtr thisPtr);
+		private static extern float Internal_GetWeight(IntPtr thisPtr);
 	}
 
 	/** @} */

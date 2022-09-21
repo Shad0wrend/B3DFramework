@@ -25,7 +25,7 @@ namespace bs
 		/// </summary>
 		public AnimationClip(bool isAdditive = false)
 		{
-			Internal_create(this, isAdditive);
+			Internal_Create(this, isAdditive);
 		}
 
 		/// <summary>Creates an animation clip with specified curves.</summary>
@@ -44,7 +44,7 @@ namespace bs
 		/// </param>
 		public AnimationClip(AnimationCurves curves, bool isAdditive = false, int sampleRate = 1, RootMotion rootMotion = null)
 		{
-			Internal_create0(this, curves, isAdditive, sampleRate, rootMotion);
+			Internal_Create0(this, curves, isAdditive, sampleRate, rootMotion);
 		}
 
 		/// <summary>Returns a reference wrapper for this resource.</summary>
@@ -61,8 +61,8 @@ namespace bs
 		[NativeWrapper]
 		public AnimationCurves Curves
 		{
-			get { return Internal_getCurves(mCachedPtr); }
-			set { Internal_setCurves(mCachedPtr, value); }
+			get { return Internal_GetCurves(mCachedPtr); }
+			set { Internal_SetCurves(mCachedPtr, value); }
 		}
 
 		/// <summary>A set of all events to be triggered as the animation is playing.</summary>
@@ -70,8 +70,8 @@ namespace bs
 		[NativeWrapper]
 		public AnimationEvent[] Events
 		{
-			get { return Internal_getEvents(mCachedPtr); }
-			set { Internal_setEvents(mCachedPtr, value); }
+			get { return Internal_GetEvents(mCachedPtr); }
+			set { Internal_SetEvents(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -82,14 +82,14 @@ namespace bs
 		[NativeWrapper]
 		public RootMotion RootMotion
 		{
-			get { return Internal_getRootMotion(mCachedPtr); }
+			get { return Internal_GetRootMotion(mCachedPtr); }
 		}
 
 		/// <summary>Checks if animation clip has root motion curves separate from the normal animation curves.</summary>
 		[NativeWrapper]
 		public bool HasRootMotion
 		{
-			get { return Internal_hasRootMotion(mCachedPtr); }
+			get { return Internal_HasRootMotion(mCachedPtr); }
 		}
 
 		/// <summary>
@@ -99,14 +99,14 @@ namespace bs
 		[NativeWrapper]
 		public bool IsAddtive
 		{
-			get { return Internal_isAdditive(mCachedPtr); }
+			get { return Internal_IsAdditive(mCachedPtr); }
 		}
 
 		/// <summary>Returns the length of the animation clip, in seconds.</summary>
 		[NativeWrapper]
 		public float Length
 		{
-			get { return Internal_getLength(mCachedPtr); }
+			get { return Internal_GetLength(mCachedPtr); }
 		}
 
 		/// <summary>
@@ -118,8 +118,8 @@ namespace bs
 		[NativeWrapper]
 		public int SampleRate
 		{
-			get { return Internal_getSampleRate(mCachedPtr); }
-			set { Internal_setSampleRate(mCachedPtr, value); }
+			get { return Internal_GetSampleRate(mCachedPtr); }
+			set { Internal_SetSampleRate(mCachedPtr, value); }
 		}
 
 		/// <summary>Returns a reference wrapper for this resource.</summary>
@@ -134,29 +134,29 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern RRef<AnimationClip> Internal_GetRef(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern AnimationCurves Internal_getCurves(IntPtr thisPtr);
+		private static extern AnimationCurves Internal_GetCurves(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setCurves(IntPtr thisPtr, AnimationCurves curves);
+		private static extern void Internal_SetCurves(IntPtr thisPtr, AnimationCurves curves);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern AnimationEvent[] Internal_getEvents(IntPtr thisPtr);
+		private static extern AnimationEvent[] Internal_GetEvents(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setEvents(IntPtr thisPtr, AnimationEvent[] events);
+		private static extern void Internal_SetEvents(IntPtr thisPtr, AnimationEvent[] events);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern RootMotion Internal_getRootMotion(IntPtr thisPtr);
+		private static extern RootMotion Internal_GetRootMotion(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_hasRootMotion(IntPtr thisPtr);
+		private static extern bool Internal_HasRootMotion(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_isAdditive(IntPtr thisPtr);
+		private static extern bool Internal_IsAdditive(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getLength(IntPtr thisPtr);
+		private static extern float Internal_GetLength(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getSampleRate(IntPtr thisPtr);
+		private static extern int Internal_GetSampleRate(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setSampleRate(IntPtr thisPtr, int sampleRate);
+		private static extern void Internal_SetSampleRate(IntPtr thisPtr, int sampleRate);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create(AnimationClip managedInstance, bool isAdditive);
+		private static extern void Internal_Create(AnimationClip managedInstance, bool isAdditive);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create0(AnimationClip managedInstance, AnimationCurves curves, bool isAdditive, int sampleRate, RootMotion rootMotion);
+		private static extern void Internal_Create0(AnimationClip managedInstance, AnimationCurves curves, bool isAdditive, int sampleRate, RootMotion rootMotion);
 	}
 
 	/** @} */

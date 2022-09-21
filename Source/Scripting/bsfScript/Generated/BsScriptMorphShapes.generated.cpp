@@ -13,9 +13,9 @@ namespace bs
 	{
 	}
 
-	void ScriptMorphShapes::initRuntimeData()
+	void ScriptMorphShapes::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_getChannels", (void*)&ScriptMorphShapes::InternalGetChannels);
+		metaData.scriptClass->AddInternalCall("Internal_GetChannels", (void*)&ScriptMorphShapes::InternalGetChannels);
 
 	}
 

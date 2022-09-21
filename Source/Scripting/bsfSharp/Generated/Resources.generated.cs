@@ -39,7 +39,7 @@ namespace bs
 		/// <param name="loadFlags">Flags used to control the load process.</param>
 		public static Resource Load(string filePath, ResourceLoadFlag loadFlags = ResourceLoadFlag.Default)
 		{
-			return Internal_load(filePath, loadFlags);
+			return Internal_Load(filePath, loadFlags);
 		}
 
 		/// <summary>
@@ -51,7 +51,7 @@ namespace bs
 		/// <param name="loadFlags">Flags used to control the load process.</param>
 		public static RRefBase LoadAsync(string filePath, ResourceLoadFlag loadFlags = ResourceLoadFlag.Default)
 		{
-			return Internal_loadAsync(filePath, loadFlags);
+			return Internal_LoadAsync(filePath, loadFlags);
 		}
 
 		/// <summary>Loads the resource with the given UUID. Returns an empty handle if resource can&apos;t be loaded.</summary>
@@ -61,9 +61,9 @@ namespace bs
 		/// loading will continue in the background.
 		/// </param>
 		/// <param name="loadFlags">Flags used to control the load process.</param>
-		public static RRefBase LoadFromUUID(UUID uuid, bool async = false, ResourceLoadFlag loadFlags = ResourceLoadFlag.Default)
+		public static RRefBase LoadFromUuid(UUID uuid, bool async = false, ResourceLoadFlag loadFlags = ResourceLoadFlag.Default)
 		{
-			return Internal_loadFromUUID(ref uuid, async, loadFlags);
+			return Internal_LoadFromUuid(ref uuid, async, loadFlags);
 		}
 
 		/// <summary>
@@ -76,19 +76,19 @@ namespace bs
 		/// <param name="resource">Handle of the resource to release.</param>
 		public static void Release(RRefBase resource)
 		{
-			Internal_release(resource);
+			Internal_Release(resource);
 		}
 
 		/// <summary>Finds all resources that aren&apos;t being referenced outside of the resources system and unloads them.</summary>
 		public static void UnloadAllUnused()
 		{
-			Internal_unloadAllUnused();
+			Internal_UnloadAllUnused();
 		}
 
 		/// <summary>Forces unload of all resources, whether they are being used or not.</summary>
 		public static void UnloadAll()
 		{
-			Internal_unloadAll();
+			Internal_UnloadAll();
 		}
 
 		/// <summary>Saves the resource at the specified location.</summary>
@@ -101,7 +101,7 @@ namespace bs
 		/// </param>
 		public static void Save(Resource resource, string filePath, bool overwrite, bool compress = false)
 		{
-			Internal_save(resource, filePath, overwrite, compress);
+			Internal_Save(resource, filePath, overwrite, compress);
 		}
 
 		/// <summary>Saves an existing resource to its previous location.</summary>
@@ -112,7 +112,7 @@ namespace bs
 		/// </param>
 		public static void Save(Resource resource, bool compress = false)
 		{
-			Internal_save0(resource, compress);
+			Internal_Save0(resource, compress);
 		}
 
 		/// <summary>
@@ -123,7 +123,7 @@ namespace bs
 		/// <returns>List of dependencies represented as UUIDs.</returns>
 		public static UUID[] GetDependencies(string filePath)
 		{
-			return Internal_getDependencies(filePath);
+			return Internal_GetDependencies(filePath);
 		}
 
 		/// <summary>Checks is the resource with the specified UUID loaded.</summary>
@@ -134,7 +134,7 @@ namespace bs
 		/// <returns>True if loaded or loading in progress, false otherwise.</returns>
 		public static bool IsLoaded(UUID uuid, bool checkInProgress = true)
 		{
-			return Internal_isLoaded(ref uuid, checkInProgress);
+			return Internal_IsLoaded(ref uuid, checkInProgress);
 		}
 
 		/// <summary>Returns the loading progress of a resource that&apos;s being asynchronously loaded.</summary>
@@ -146,7 +146,7 @@ namespace bs
 		/// <returns>Load progress in range [0, 1].</returns>
 		public static float GetLoadProgress(RRefBase resource, bool includeDependencies = true)
 		{
-			return Internal_getLoadProgress(resource, includeDependencies);
+			return Internal_GetLoadProgress(resource, includeDependencies);
 		}
 
 		/// <summary>
@@ -155,13 +155,13 @@ namespace bs
 		/// </summary>
 		public static void RegisterResourceManifest(ResourceManifest manifest)
 		{
-			Internal_registerResourceManifest(manifest);
+			Internal_RegisterResourceManifest(manifest);
 		}
 
 		/// <summary>Unregisters a resource manifest previously registered with registerResourceManifest().</summary>
 		public static void UnregisterResourceManifest(ResourceManifest manifest)
 		{
-			Internal_unregisterResourceManifest(manifest);
+			Internal_UnregisterResourceManifest(manifest);
 		}
 
 		/// <summary>
@@ -170,57 +170,57 @@ namespace bs
 		/// </summary>
 		public static ResourceManifest GetResourceManifest(string name)
 		{
-			return Internal_getResourceManifest(name);
+			return Internal_GetResourceManifest(name);
 		}
 
 		/// <summary>
 		/// Attempts to retrieve file path from the provided UUID. Returns true if successful, false otherwise.
 		/// </summary>
-		public static bool GetFilePathFromUUID(UUID uuid, out string filePath)
+		public static bool GetFilePathFromUuid(UUID uuid, out string filePath)
 		{
-			return Internal_getFilePathFromUUID(ref uuid, out filePath);
+			return Internal_GetFilePathFromUuid(ref uuid, out filePath);
 		}
 
 		/// <summary>
 		/// Attempts to retrieve UUID from the provided file path. Returns true if successful, false otherwise.
 		/// </summary>
-		public static bool GetUUIDFromFilePath(string path, out UUID uuid)
+		public static bool GetUuidFromFilePath(string path, out UUID uuid)
 		{
-			return Internal_getUUIDFromFilePath(path, out uuid);
+			return Internal_GetUuidFromFilePath(path, out uuid);
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern Resource Internal_load(string filePath, ResourceLoadFlag loadFlags);
+		private static extern Resource Internal_Load(string filePath, ResourceLoadFlag loadFlags);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern RRefBase Internal_loadAsync(string filePath, ResourceLoadFlag loadFlags);
+		private static extern RRefBase Internal_LoadAsync(string filePath, ResourceLoadFlag loadFlags);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern RRefBase Internal_loadFromUUID(ref UUID uuid, bool async, ResourceLoadFlag loadFlags);
+		private static extern RRefBase Internal_LoadFromUuid(ref UUID uuid, bool async, ResourceLoadFlag loadFlags);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_release(RRefBase resource);
+		private static extern void Internal_Release(RRefBase resource);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_unloadAllUnused();
+		private static extern void Internal_UnloadAllUnused();
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_unloadAll();
+		private static extern void Internal_UnloadAll();
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_save(Resource resource, string filePath, bool overwrite, bool compress);
+		private static extern void Internal_Save(Resource resource, string filePath, bool overwrite, bool compress);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_save0(Resource resource, bool compress);
+		private static extern void Internal_Save0(Resource resource, bool compress);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern UUID[] Internal_getDependencies(string filePath);
+		private static extern UUID[] Internal_GetDependencies(string filePath);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_isLoaded(ref UUID uuid, bool checkInProgress);
+		private static extern bool Internal_IsLoaded(ref UUID uuid, bool checkInProgress);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getLoadProgress(RRefBase resource, bool includeDependencies);
+		private static extern float Internal_GetLoadProgress(RRefBase resource, bool includeDependencies);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_registerResourceManifest(ResourceManifest manifest);
+		private static extern void Internal_RegisterResourceManifest(ResourceManifest manifest);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_unregisterResourceManifest(ResourceManifest manifest);
+		private static extern void Internal_UnregisterResourceManifest(ResourceManifest manifest);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ResourceManifest Internal_getResourceManifest(string name);
+		private static extern ResourceManifest Internal_GetResourceManifest(string name);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_getFilePathFromUUID(ref UUID uuid, out string filePath);
+		private static extern bool Internal_GetFilePathFromUuid(ref UUID uuid, out string filePath);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_getUUIDFromFilePath(string path, out UUID uuid);
+		private static extern bool Internal_GetUuidFromFilePath(string path, out UUID uuid);
 		private static void Internal_onResourceLoaded(RRefBase p0)
 		{
 			OnResourceLoaded?.Invoke(p0);

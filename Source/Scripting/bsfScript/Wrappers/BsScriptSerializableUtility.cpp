@@ -16,7 +16,7 @@ namespace bs
 		:ScriptObject(instance)
 	{ }
 
-	void ScriptSerializableUtility::initRuntimeData()
+	void ScriptSerializableUtility::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_Clone", (void*)&ScriptSerializableUtility::InternalClone);
 		metaData.scriptClass->AddInternalCall("Internal_Create", (void*)&ScriptSerializableUtility::InternalCreate);

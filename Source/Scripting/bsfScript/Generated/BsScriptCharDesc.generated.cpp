@@ -13,7 +13,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptCharDesc::initRuntimeData()
+	void ScriptCharDesc::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptCharDesc::Box(const __CharDescInterop& value)
@@ -48,7 +48,7 @@ namespace bs
 			veckerningPairs.resize(arraykerningPairs.Size());
 			for(int i = 0; i < (int)arraykerningPairs.Size(); i++)
 			{
-				veckerningPairs[i] = arraykerningPairs.get<KerningPair>(i);
+				veckerningPairs[i] = arraykerningPairs.Get<KerningPair>(i);
 			}
 		}
 		output.kerningPairs = veckerningPairs;

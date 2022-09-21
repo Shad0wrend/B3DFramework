@@ -25,13 +25,13 @@ namespace bs
 		/// <summary>Creates a new sprite texture that references the entire area of the provided texture.</summary>
 		public SpriteTexture(RRef<Texture> texture)
 		{
-			Internal_create(this, texture);
+			Internal_Create(this, texture);
 		}
 
 		/// <summary>Creates a new sprite texture that references a sub-area of the provided texture.</summary>
 		public SpriteTexture(Vector2 uvOffset, Vector2 uvScale, RRef<Texture> texture)
 		{
-			Internal_create0(this, ref uvOffset, ref uvScale, texture);
+			Internal_Create0(this, ref uvOffset, ref uvScale, texture);
 		}
 
 		/// <summary>Returns a reference wrapper for this resource.</summary>
@@ -45,22 +45,22 @@ namespace bs
 		[NativeWrapper]
 		public RRef<Texture> Texture
 		{
-			get { return Internal_getTexture(mCachedPtr); }
-			set { Internal_setTexture(mCachedPtr, value); }
+			get { return Internal_GetTexture(mCachedPtr); }
+			set { Internal_SetTexture(mCachedPtr, value); }
 		}
 
 		/// <summary>Returns width of the sprite texture in pixels.</summary>
 		[NativeWrapper]
 		public int Width
 		{
-			get { return Internal_getWidth(mCachedPtr); }
+			get { return Internal_GetWidth(mCachedPtr); }
 		}
 
 		/// <summary>Returns height of the sprite texture in pixels.</summary>
 		[NativeWrapper]
 		public int Height
 		{
-			get { return Internal_getHeight(mCachedPtr); }
+			get { return Internal_GetHeight(mCachedPtr); }
 		}
 
 		/// <summary>
@@ -70,7 +70,7 @@ namespace bs
 		[NativeWrapper]
 		public int FrameWidth
 		{
-			get { return Internal_getFrameWidth(mCachedPtr); }
+			get { return Internal_GetFrameWidth(mCachedPtr); }
 		}
 
 		/// <summary>
@@ -80,7 +80,7 @@ namespace bs
 		[NativeWrapper]
 		public int FrameHeight
 		{
-			get { return Internal_getFrameHeight(mCachedPtr); }
+			get { return Internal_GetFrameHeight(mCachedPtr); }
 		}
 
 		/// <summary>
@@ -94,10 +94,10 @@ namespace bs
 			get
 			{
 				Vector2 temp;
-				Internal_getOffset(mCachedPtr, out temp);
+				Internal_GetOffset(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setOffset(mCachedPtr, ref value); }
+			set { Internal_SetOffset(mCachedPtr, ref value); }
 		}
 
 		/// <summary>
@@ -110,10 +110,10 @@ namespace bs
 			get
 			{
 				Vector2 temp;
-				Internal_getScale(mCachedPtr, out temp);
+				Internal_GetScale(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setScale(mCachedPtr, ref value); }
+			set { Internal_SetScale(mCachedPtr, ref value); }
 		}
 
 		/// <summary>
@@ -127,10 +127,10 @@ namespace bs
 			get
 			{
 				SpriteSheetGridAnimation temp;
-				Internal_getAnimation(mCachedPtr, out temp);
+				Internal_GetAnimation(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setAnimation(mCachedPtr, ref value); }
+			set { Internal_SetAnimation(mCachedPtr, ref value); }
 		}
 
 		/// <summary>Determines if and how should the sprite animation play.</summary>
@@ -138,8 +138,8 @@ namespace bs
 		[NativeWrapper]
 		public SpriteAnimationPlayback AnimationPlayback
 		{
-			get { return Internal_getAnimationPlayback(mCachedPtr); }
-			set { Internal_setAnimationPlayback(mCachedPtr, value); }
+			get { return Internal_GetAnimationPlayback(mCachedPtr); }
+			set { Internal_SetAnimationPlayback(mCachedPtr, value); }
 		}
 
 		/// <summary>Returns a reference wrapper for this resource.</summary>
@@ -154,37 +154,37 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern RRef<SpriteTexture> Internal_GetRef(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setTexture(IntPtr thisPtr, RRef<Texture> texture);
+		private static extern void Internal_SetTexture(IntPtr thisPtr, RRef<Texture> texture);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern RRef<Texture> Internal_getTexture(IntPtr thisPtr);
+		private static extern RRef<Texture> Internal_GetTexture(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getWidth(IntPtr thisPtr);
+		private static extern int Internal_GetWidth(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getHeight(IntPtr thisPtr);
+		private static extern int Internal_GetHeight(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getFrameWidth(IntPtr thisPtr);
+		private static extern int Internal_GetFrameWidth(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getFrameHeight(IntPtr thisPtr);
+		private static extern int Internal_GetFrameHeight(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setOffset(IntPtr thisPtr, ref Vector2 offset);
+		private static extern void Internal_SetOffset(IntPtr thisPtr, ref Vector2 offset);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getOffset(IntPtr thisPtr, out Vector2 __output);
+		private static extern void Internal_GetOffset(IntPtr thisPtr, out Vector2 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setScale(IntPtr thisPtr, ref Vector2 scale);
+		private static extern void Internal_SetScale(IntPtr thisPtr, ref Vector2 scale);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getScale(IntPtr thisPtr, out Vector2 __output);
+		private static extern void Internal_GetScale(IntPtr thisPtr, out Vector2 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setAnimation(IntPtr thisPtr, ref SpriteSheetGridAnimation anim);
+		private static extern void Internal_SetAnimation(IntPtr thisPtr, ref SpriteSheetGridAnimation anim);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getAnimation(IntPtr thisPtr, out SpriteSheetGridAnimation __output);
+		private static extern void Internal_GetAnimation(IntPtr thisPtr, out SpriteSheetGridAnimation __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setAnimationPlayback(IntPtr thisPtr, SpriteAnimationPlayback playback);
+		private static extern void Internal_SetAnimationPlayback(IntPtr thisPtr, SpriteAnimationPlayback playback);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern SpriteAnimationPlayback Internal_getAnimationPlayback(IntPtr thisPtr);
+		private static extern SpriteAnimationPlayback Internal_GetAnimationPlayback(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create(SpriteTexture managedInstance, RRef<Texture> texture);
+		private static extern void Internal_Create(SpriteTexture managedInstance, RRef<Texture> texture);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create0(SpriteTexture managedInstance, ref Vector2 uvOffset, ref Vector2 uvScale, RRef<Texture> texture);
+		private static extern void Internal_Create0(SpriteTexture managedInstance, ref Vector2 uvOffset, ref Vector2 uvScale, RRef<Texture> texture);
 	}
 
 	/** @} */

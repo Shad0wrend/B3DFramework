@@ -11,7 +11,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptSpriteSheetGridAnimation::initRuntimeData()
+	void ScriptSpriteSheetGridAnimation::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptSpriteSheetGridAnimation::Box(const SpriteSheetGridAnimation& value)

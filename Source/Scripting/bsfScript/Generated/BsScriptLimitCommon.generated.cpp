@@ -13,7 +13,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptLimitCommon::initRuntimeData()
+	void ScriptLimitCommon::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptLimitCommon::Box(const __LimitCommonInterop& value)

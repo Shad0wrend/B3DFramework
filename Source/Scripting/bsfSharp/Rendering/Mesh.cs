@@ -22,7 +22,7 @@ namespace bs
                 AABox box;
                 Sphere sphere;
 
-                Internal_getBounds(mCachedPtr, out box, out sphere);
+                Internal_GetBounds(mCachedPtr, out box, out sphere);
 
                 return new Bounds(box, sphere);
             }

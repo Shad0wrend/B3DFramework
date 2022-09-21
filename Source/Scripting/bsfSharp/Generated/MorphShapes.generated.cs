@@ -25,11 +25,11 @@ namespace bs
 		[NativeWrapper]
 		public MorphChannel[] Channels
 		{
-			get { return Internal_getChannels(mCachedPtr); }
+			get { return Internal_GetChannels(mCachedPtr); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern MorphChannel[] Internal_getChannels(IntPtr thisPtr);
+		private static extern MorphChannel[] Internal_GetChannels(IntPtr thisPtr);
 	}
 
 	/** @} */

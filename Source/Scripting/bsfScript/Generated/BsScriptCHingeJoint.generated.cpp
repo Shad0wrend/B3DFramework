@@ -15,16 +15,16 @@ namespace bs
 	{
 	}
 
-	void ScriptCHingeJoint::initRuntimeData()
+	void ScriptCHingeJoint::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_getAngle", (void*)&ScriptCHingeJoint::InternalGetAngle);
-		metaData.scriptClass->AddInternalCall("Internal_getSpeed", (void*)&ScriptCHingeJoint::InternalGetSpeed);
-		metaData.scriptClass->AddInternalCall("Internal_getLimit", (void*)&ScriptCHingeJoint::InternalGetLimit);
-		metaData.scriptClass->AddInternalCall("Internal_setLimit", (void*)&ScriptCHingeJoint::InternalSetLimit);
-		metaData.scriptClass->AddInternalCall("Internal_getDrive", (void*)&ScriptCHingeJoint::InternalGetDrive);
-		metaData.scriptClass->AddInternalCall("Internal_setDrive", (void*)&ScriptCHingeJoint::InternalSetDrive);
-		metaData.scriptClass->AddInternalCall("Internal_setFlag", (void*)&ScriptCHingeJoint::InternalSetFlag);
-		metaData.scriptClass->AddInternalCall("Internal_hasFlag", (void*)&ScriptCHingeJoint::InternalHasFlag);
+		metaData.scriptClass->AddInternalCall("Internal_GetAngle", (void*)&ScriptCHingeJoint::InternalGetAngle);
+		metaData.scriptClass->AddInternalCall("Internal_GetSpeed", (void*)&ScriptCHingeJoint::InternalGetSpeed);
+		metaData.scriptClass->AddInternalCall("Internal_GetLimit", (void*)&ScriptCHingeJoint::InternalGetLimit);
+		metaData.scriptClass->AddInternalCall("Internal_SetLimit", (void*)&ScriptCHingeJoint::InternalSetLimit);
+		metaData.scriptClass->AddInternalCall("Internal_GetDrive", (void*)&ScriptCHingeJoint::InternalGetDrive);
+		metaData.scriptClass->AddInternalCall("Internal_SetDrive", (void*)&ScriptCHingeJoint::InternalSetDrive);
+		metaData.scriptClass->AddInternalCall("Internal_SetFlag", (void*)&ScriptCHingeJoint::InternalSetFlag);
+		metaData.scriptClass->AddInternalCall("Internal_HasFlag", (void*)&ScriptCHingeJoint::InternalHasFlag);
 
 	}
 

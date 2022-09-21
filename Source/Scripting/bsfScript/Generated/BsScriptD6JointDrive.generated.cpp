@@ -11,7 +11,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptD6JointDrive::initRuntimeData()
+	void ScriptD6JointDrive::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptD6JointDrive::Box(const D6JointDrive& value)

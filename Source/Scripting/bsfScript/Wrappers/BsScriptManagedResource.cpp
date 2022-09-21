@@ -23,7 +23,7 @@ namespace bs
 		mGCHandle = MonoUtil::NewGcHandle(instance, false);
 	}
 
-	void ScriptManagedResource::initRuntimeData()
+	void ScriptManagedResource::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptManagedResource::InternalCreateInstance);
 	}

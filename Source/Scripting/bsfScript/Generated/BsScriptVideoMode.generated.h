@@ -23,10 +23,10 @@ namespace bs
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "VideoMode")
 
-		static MonoObject* box(const __VideoModeInterop& value);
-		static __VideoModeInterop unbox(MonoObject* value);
-		static VideoMode fromInterop(const __VideoModeInterop& value);
-		static __VideoModeInterop toInterop(const VideoMode& value);
+		static MonoObject* Box(const __VideoModeInterop& value);
+		static __VideoModeInterop Unbox(MonoObject* value);
+		static VideoMode FromInterop(const __VideoModeInterop& value);
+		static __VideoModeInterop ToInterop(const VideoMode& value);
 
 	private:
 		ScriptVideoMode(MonoObject* managedInstance);

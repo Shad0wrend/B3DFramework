@@ -20,11 +20,11 @@ namespace bs
 	{
 	}
 
-	void ScriptTAnimationCurvefloat::initRuntimeData()
+	void ScriptTAnimationCurvefloat::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_TAnimationCurve", (void*)&ScriptTAnimationCurvefloat::InternalTAnimationCurve);
-		metaData.scriptClass->AddInternalCall("Internal_evaluate", (void*)&ScriptTAnimationCurvefloat::InternalEvaluate);
-		metaData.scriptClass->AddInternalCall("Internal_getKeyFrames", (void*)&ScriptTAnimationCurvefloat::InternalGetKeyFrames);
+		metaData.scriptClass->AddInternalCall("Internal_Evaluate", (void*)&ScriptTAnimationCurvefloat::InternalEvaluate);
+		metaData.scriptClass->AddInternalCall("Internal_GetKeyFrames", (void*)&ScriptTAnimationCurvefloat::InternalGetKeyFrames);
 
 	}
 
@@ -48,7 +48,7 @@ namespace bs
 			veckeyframes.resize(arraykeyframes.Size());
 			for(int i = 0; i < (int)arraykeyframes.Size(); i++)
 			{
-				veckeyframes[i] = arraykeyframes.get<TKeyframe<float>>(i);
+				veckeyframes[i] = arraykeyframes.Get<TKeyframe<float>>(i);
 			}
 		}
 		SPtr<TAnimationCurve<float>> instance = bs_shared_ptr_new<TAnimationCurve<float>>(veckeyframes);
@@ -73,12 +73,12 @@ namespace bs
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
-		ScriptArray array__output = ScriptArray::create<ScriptTKeyframefloat>(arraySize__output);
+		ScriptArray array__output = ScriptArray::Create<ScriptTKeyframefloat>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
 			array__output.Set(i, vec__output[i]);
 		}
-		__output = array__output.getInternal();
+		__output = array__output.GetInternal();
 
 		return __output;
 	}
@@ -88,11 +88,11 @@ namespace bs
 	{
 	}
 
-	void ScriptTAnimationCurveVector3::initRuntimeData()
+	void ScriptTAnimationCurveVector3::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_TAnimationCurve", (void*)&ScriptTAnimationCurveVector3::InternalTAnimationCurve);
-		metaData.scriptClass->AddInternalCall("Internal_evaluate", (void*)&ScriptTAnimationCurveVector3::InternalEvaluate);
-		metaData.scriptClass->AddInternalCall("Internal_getKeyFrames", (void*)&ScriptTAnimationCurveVector3::InternalGetKeyFrames);
+		metaData.scriptClass->AddInternalCall("Internal_Evaluate", (void*)&ScriptTAnimationCurveVector3::InternalEvaluate);
+		metaData.scriptClass->AddInternalCall("Internal_GetKeyFrames", (void*)&ScriptTAnimationCurveVector3::InternalGetKeyFrames);
 
 	}
 
@@ -103,7 +103,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptTAnimationCurveVector3>()) ScriptTAnimationCurveVector3(managedInstance, value);
 		return managedInstance;
 	}
@@ -113,10 +113,10 @@ namespace bs
 		if(keyframes != nullptr)
 		{
 			ScriptArray arraykeyframes(keyframes);
-			veckeyframes.resize(arraykeyframes.size());
-			for(int i = 0; i < (int)arraykeyframes.size(); i++)
+			veckeyframes.resize(arraykeyframes.Size());
+			for(int i = 0; i < (int)arraykeyframes.Size(); i++)
 			{
-				veckeyframes[i] = ScriptTKeyframeVector3::fromInterop(arraykeyframes.get<__TKeyframeVector3Interop>(i));
+				veckeyframes[i] = ScriptTKeyframeVector3::FromInterop(arraykeyframes.Get<__TKeyframeVector3Interop>(i));
 			}
 		}
 		SPtr<TAnimationCurve<Vector3>> instance = bs_shared_ptr_new<TAnimationCurve<Vector3>>(veckeyframes);
@@ -126,7 +126,7 @@ namespace bs
 	void ScriptTAnimationCurveVector3::InternalEvaluate(ScriptTAnimationCurveVector3* thisPtr, float time, bool loop, Vector3* __output)
 	{
 		Vector3 tmp__output;
-		tmp__output = thisPtr->GetInternal()->evaluate(time, loop);
+		tmp__output = thisPtr->GetInternal()->Evaluate(time, loop);
 
 		*__output = tmp__output;
 	}
@@ -138,12 +138,12 @@ namespace bs
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
-		ScriptArray array__output = ScriptArray::create<ScriptTKeyframeVector3>(arraySize__output);
+		ScriptArray array__output = ScriptArray::Create<ScriptTKeyframeVector3>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
-			array__output.Set(i, ScriptTKeyframeVector3::toInterop(vec__output[i]));
+			array__output.Set(i, ScriptTKeyframeVector3::ToInterop(vec__output[i]));
 		}
-		__output = array__output.getInternal();
+		__output = array__output.GetInternal();
 
 		return __output;
 	}
@@ -153,11 +153,11 @@ namespace bs
 	{
 	}
 
-	void ScriptTAnimationCurveVector2::initRuntimeData()
+	void ScriptTAnimationCurveVector2::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_TAnimationCurve", (void*)&ScriptTAnimationCurveVector2::InternalTAnimationCurve);
-		metaData.scriptClass->AddInternalCall("Internal_evaluate", (void*)&ScriptTAnimationCurveVector2::InternalEvaluate);
-		metaData.scriptClass->AddInternalCall("Internal_getKeyFrames", (void*)&ScriptTAnimationCurveVector2::InternalGetKeyFrames);
+		metaData.scriptClass->AddInternalCall("Internal_Evaluate", (void*)&ScriptTAnimationCurveVector2::InternalEvaluate);
+		metaData.scriptClass->AddInternalCall("Internal_GetKeyFrames", (void*)&ScriptTAnimationCurveVector2::InternalGetKeyFrames);
 
 	}
 
@@ -168,7 +168,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptTAnimationCurveVector2>()) ScriptTAnimationCurveVector2(managedInstance, value);
 		return managedInstance;
 	}
@@ -178,10 +178,10 @@ namespace bs
 		if(keyframes != nullptr)
 		{
 			ScriptArray arraykeyframes(keyframes);
-			veckeyframes.resize(arraykeyframes.size());
-			for(int i = 0; i < (int)arraykeyframes.size(); i++)
+			veckeyframes.resize(arraykeyframes.Size());
+			for(int i = 0; i < (int)arraykeyframes.Size(); i++)
 			{
-				veckeyframes[i] = ScriptTKeyframeVector2::fromInterop(arraykeyframes.get<__TKeyframeVector2Interop>(i));
+				veckeyframes[i] = ScriptTKeyframeVector2::FromInterop(arraykeyframes.Get<__TKeyframeVector2Interop>(i));
 			}
 		}
 		SPtr<TAnimationCurve<Vector2>> instance = bs_shared_ptr_new<TAnimationCurve<Vector2>>(veckeyframes);
@@ -191,7 +191,7 @@ namespace bs
 	void ScriptTAnimationCurveVector2::InternalEvaluate(ScriptTAnimationCurveVector2* thisPtr, float time, bool loop, Vector2* __output)
 	{
 		Vector2 tmp__output;
-		tmp__output = thisPtr->GetInternal()->evaluate(time, loop);
+		tmp__output = thisPtr->GetInternal()->Evaluate(time, loop);
 
 		*__output = tmp__output;
 	}
@@ -203,12 +203,12 @@ namespace bs
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
-		ScriptArray array__output = ScriptArray::create<ScriptTKeyframeVector2>(arraySize__output);
+		ScriptArray array__output = ScriptArray::Create<ScriptTKeyframeVector2>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
-			array__output.Set(i, ScriptTKeyframeVector2::toInterop(vec__output[i]));
+			array__output.Set(i, ScriptTKeyframeVector2::ToInterop(vec__output[i]));
 		}
-		__output = array__output.getInternal();
+		__output = array__output.GetInternal();
 
 		return __output;
 	}
@@ -218,11 +218,11 @@ namespace bs
 	{
 	}
 
-	void ScriptTAnimationCurveQuaternion::initRuntimeData()
+	void ScriptTAnimationCurveQuaternion::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_TAnimationCurve", (void*)&ScriptTAnimationCurveQuaternion::InternalTAnimationCurve);
-		metaData.scriptClass->AddInternalCall("Internal_evaluate", (void*)&ScriptTAnimationCurveQuaternion::InternalEvaluate);
-		metaData.scriptClass->AddInternalCall("Internal_getKeyFrames", (void*)&ScriptTAnimationCurveQuaternion::InternalGetKeyFrames);
+		metaData.scriptClass->AddInternalCall("Internal_Evaluate", (void*)&ScriptTAnimationCurveQuaternion::InternalEvaluate);
+		metaData.scriptClass->AddInternalCall("Internal_GetKeyFrames", (void*)&ScriptTAnimationCurveQuaternion::InternalGetKeyFrames);
 
 	}
 
@@ -233,7 +233,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptTAnimationCurveQuaternion>()) ScriptTAnimationCurveQuaternion(managedInstance, value);
 		return managedInstance;
 	}
@@ -243,10 +243,10 @@ namespace bs
 		if(keyframes != nullptr)
 		{
 			ScriptArray arraykeyframes(keyframes);
-			veckeyframes.resize(arraykeyframes.size());
-			for(int i = 0; i < (int)arraykeyframes.size(); i++)
+			veckeyframes.resize(arraykeyframes.Size());
+			for(int i = 0; i < (int)arraykeyframes.Size(); i++)
 			{
-				veckeyframes[i] = ScriptTKeyframeQuaternion::fromInterop(arraykeyframes.get<__TKeyframeQuaternionInterop>(i));
+				veckeyframes[i] = ScriptTKeyframeQuaternion::FromInterop(arraykeyframes.Get<__TKeyframeQuaternionInterop>(i));
 			}
 		}
 		SPtr<TAnimationCurve<Quaternion>> instance = bs_shared_ptr_new<TAnimationCurve<Quaternion>>(veckeyframes);
@@ -256,7 +256,7 @@ namespace bs
 	void ScriptTAnimationCurveQuaternion::InternalEvaluate(ScriptTAnimationCurveQuaternion* thisPtr, float time, bool loop, Quaternion* __output)
 	{
 		Quaternion tmp__output;
-		tmp__output = thisPtr->GetInternal()->evaluate(time, loop);
+		tmp__output = thisPtr->GetInternal()->Evaluate(time, loop);
 
 		*__output = tmp__output;
 	}
@@ -268,12 +268,12 @@ namespace bs
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
-		ScriptArray array__output = ScriptArray::create<ScriptTKeyframeQuaternion>(arraySize__output);
+		ScriptArray array__output = ScriptArray::Create<ScriptTKeyframeQuaternion>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
-			array__output.Set(i, ScriptTKeyframeQuaternion::toInterop(vec__output[i]));
+			array__output.Set(i, ScriptTKeyframeQuaternion::ToInterop(vec__output[i]));
 		}
-		__output = array__output.getInternal();
+		__output = array__output.GetInternal();
 
 		return __output;
 	}
@@ -283,11 +283,11 @@ namespace bs
 	{
 	}
 
-	void ScriptTAnimationCurveint32_t::initRuntimeData()
+	void ScriptTAnimationCurveint32_t::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_TAnimationCurve", (void*)&ScriptTAnimationCurveint32_t::InternalTAnimationCurve);
-		metaData.scriptClass->AddInternalCall("Internal_evaluate", (void*)&ScriptTAnimationCurveint32_t::InternalEvaluate);
-		metaData.scriptClass->AddInternalCall("Internal_getKeyFrames", (void*)&ScriptTAnimationCurveint32_t::InternalGetKeyFrames);
+		metaData.scriptClass->AddInternalCall("Internal_Evaluate", (void*)&ScriptTAnimationCurveint32_t::InternalEvaluate);
+		metaData.scriptClass->AddInternalCall("Internal_GetKeyFrames", (void*)&ScriptTAnimationCurveint32_t::InternalGetKeyFrames);
 
 	}
 
@@ -298,7 +298,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptTAnimationCurveint32_t>()) ScriptTAnimationCurveint32_t(managedInstance, value);
 		return managedInstance;
 	}
@@ -308,10 +308,10 @@ namespace bs
 		if(keyframes != nullptr)
 		{
 			ScriptArray arraykeyframes(keyframes);
-			veckeyframes.resize(arraykeyframes.size());
-			for(int i = 0; i < (int)arraykeyframes.size(); i++)
+			veckeyframes.resize(arraykeyframes.Size());
+			for(int i = 0; i < (int)arraykeyframes.Size(); i++)
 			{
-				veckeyframes[i] = arraykeyframes.get<TKeyframe<int32_t>>(i);
+				veckeyframes[i] = arraykeyframes.Get<TKeyframe<int32_t>>(i);
 			}
 		}
 		SPtr<TAnimationCurve<int32_t>> instance = bs_shared_ptr_new<TAnimationCurve<int32_t>>(veckeyframes);
@@ -321,7 +321,7 @@ namespace bs
 	int32_t ScriptTAnimationCurveint32_t::InternalEvaluate(ScriptTAnimationCurveint32_t* thisPtr, float time, bool loop)
 	{
 		int32_t tmp__output;
-		tmp__output = thisPtr->GetInternal()->evaluate(time, loop);
+		tmp__output = thisPtr->GetInternal()->Evaluate(time, loop);
 
 		int32_t __output;
 		__output = tmp__output;
@@ -336,12 +336,12 @@ namespace bs
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
-		ScriptArray array__output = ScriptArray::create<ScriptTKeyframeint32_t>(arraySize__output);
+		ScriptArray array__output = ScriptArray::Create<ScriptTKeyframeint32_t>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
 			array__output.Set(i, vec__output[i]);
 		}
-		__output = array__output.getInternal();
+		__output = array__output.GetInternal();
 
 		return __output;
 	}

@@ -13,7 +13,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptLimitAngularRange::initRuntimeData()
+	void ScriptLimitAngularRange::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptLimitAngularRange::Box(const __LimitAngularRangeInterop& value)

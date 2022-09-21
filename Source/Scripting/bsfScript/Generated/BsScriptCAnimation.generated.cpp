@@ -15,90 +15,90 @@
 
 namespace bs
 {
-	ScriptCAnimation::_scriptRebuildFloatPropertiesThunkDef ScriptCAnimation::_scriptRebuildFloatPropertiesThunk; 
-	ScriptCAnimation::_scriptUpdateFloatPropertiesThunkDef ScriptCAnimation::_scriptUpdateFloatPropertiesThunk; 
-	ScriptCAnimation::_scriptOnEventTriggeredThunkDef ScriptCAnimation::_scriptOnEventTriggeredThunk; 
+	ScriptCAnimation::ScriptRebuildFloatPropertiesInternalThunkDef ScriptCAnimation::ScriptRebuildFloatPropertiesInternalThunk; 
+	ScriptCAnimation::ScriptUpdateFloatPropertiesInternalThunkDef ScriptCAnimation::ScriptUpdateFloatPropertiesInternalThunk; 
+	ScriptCAnimation::ScriptOnEventTriggeredInternalThunkDef ScriptCAnimation::ScriptOnEventTriggeredInternalThunk; 
 
 	ScriptCAnimation::ScriptCAnimation(MonoObject* managedInstance, const GameObjectHandle<CAnimation>& value)
 		:TScriptComponent(managedInstance, value)
 	{
-		value->ScriptOnEventTriggeredInternal = std::bind(&ScriptCAnimation::ScriptRebuildFloatPropertiesInternal, this, std::placeholders::_1);
-		value->ScriptOnEventTriggeredInternal = std::bind(&ScriptCAnimation::ScriptUpdateFloatPropertiesInternal, this);
+		value->ScriptRebuildFloatPropertiesInternal = std::bind(&ScriptCAnimation::ScriptRebuildFloatPropertiesInternal, this, std::placeholders::_1);
+		value->ScriptUpdateFloatPropertiesInternal = std::bind(&ScriptCAnimation::ScriptUpdateFloatPropertiesInternal, this);
 		value->ScriptOnEventTriggeredInternal = std::bind(&ScriptCAnimation::ScriptOnEventTriggeredInternal, this, std::placeholders::_1, std::placeholders::_2);
 	}
 
-	void ScriptCAnimation::initRuntimeData()
+	void ScriptCAnimation::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_setDefaultClip", (void*)&ScriptCAnimation::InternalSetDefaultClip);
-		metaData.scriptClass->AddInternalCall("Internal_getDefaultClip", (void*)&ScriptCAnimation::InternalGetDefaultClip);
-		metaData.scriptClass->AddInternalCall("Internal_setWrapMode", (void*)&ScriptCAnimation::InternalSetWrapMode);
-		metaData.scriptClass->AddInternalCall("Internal_getWrapMode", (void*)&ScriptCAnimation::InternalGetWrapMode);
-		metaData.scriptClass->AddInternalCall("Internal_setSpeed", (void*)&ScriptCAnimation::InternalSetSpeed);
-		metaData.scriptClass->AddInternalCall("Internal_getSpeed", (void*)&ScriptCAnimation::InternalGetSpeed);
-		metaData.scriptClass->AddInternalCall("Internal_play", (void*)&ScriptCAnimation::InternalPlay);
-		metaData.scriptClass->AddInternalCall("Internal_blendAdditive", (void*)&ScriptCAnimation::InternalBlendAdditive);
-		metaData.scriptClass->AddInternalCall("Internal_blend1D", (void*)&ScriptCAnimation::InternalBlend1D);
-		metaData.scriptClass->AddInternalCall("Internal_blend2D", (void*)&ScriptCAnimation::InternalBlend2D);
-		metaData.scriptClass->AddInternalCall("Internal_crossFade", (void*)&ScriptCAnimation::InternalCrossFade);
-		metaData.scriptClass->AddInternalCall("Internal_sample", (void*)&ScriptCAnimation::InternalSample);
-		metaData.scriptClass->AddInternalCall("Internal_stop", (void*)&ScriptCAnimation::InternalStop);
-		metaData.scriptClass->AddInternalCall("Internal_stopAll", (void*)&ScriptCAnimation::InternalStopAll);
-		metaData.scriptClass->AddInternalCall("Internal_isPlaying", (void*)&ScriptCAnimation::InternalIsPlaying);
-		metaData.scriptClass->AddInternalCall("Internal_getState", (void*)&ScriptCAnimation::InternalGetState);
-		metaData.scriptClass->AddInternalCall("Internal_setState", (void*)&ScriptCAnimation::InternalSetState);
-		metaData.scriptClass->AddInternalCall("Internal_setMorphChannelWeight", (void*)&ScriptCAnimation::InternalSetMorphChannelWeight);
-		metaData.scriptClass->AddInternalCall("Internal_setBounds", (void*)&ScriptCAnimation::InternalSetBounds);
-		metaData.scriptClass->AddInternalCall("Internal_getBounds", (void*)&ScriptCAnimation::InternalGetBounds);
-		metaData.scriptClass->AddInternalCall("Internal_setUseBounds", (void*)&ScriptCAnimation::InternalSetUseBounds);
-		metaData.scriptClass->AddInternalCall("Internal_getUseBounds", (void*)&ScriptCAnimation::InternalGetUseBounds);
-		metaData.scriptClass->AddInternalCall("Internal_setEnableCull", (void*)&ScriptCAnimation::InternalSetEnableCull);
-		metaData.scriptClass->AddInternalCall("Internal_getEnableCull", (void*)&ScriptCAnimation::InternalGetEnableCull);
-		metaData.scriptClass->AddInternalCall("Internal_getNumClips", (void*)&ScriptCAnimation::InternalGetNumClips);
-		metaData.scriptClass->AddInternalCall("Internal_getClip", (void*)&ScriptCAnimation::InternalGetClip);
-		metaData.scriptClass->AddInternalCall("Internal__refreshClipMappings", (void*)&ScriptCAnimation::InternalRefreshClipMappings);
-		metaData.scriptClass->AddInternalCall("Internal__getGenericCurveValue", (void*)&ScriptCAnimation::InternalGetGenericCurveValue);
-		metaData.scriptClass->AddInternalCall("Internal__togglePreviewMode", (void*)&ScriptCAnimation::InternalTogglePreviewMode);
+		metaData.scriptClass->AddInternalCall("Internal_SetDefaultClip", (void*)&ScriptCAnimation::InternalSetDefaultClip);
+		metaData.scriptClass->AddInternalCall("Internal_GetDefaultClip", (void*)&ScriptCAnimation::InternalGetDefaultClip);
+		metaData.scriptClass->AddInternalCall("Internal_SetWrapMode", (void*)&ScriptCAnimation::InternalSetWrapMode);
+		metaData.scriptClass->AddInternalCall("Internal_GetWrapMode", (void*)&ScriptCAnimation::InternalGetWrapMode);
+		metaData.scriptClass->AddInternalCall("Internal_SetSpeed", (void*)&ScriptCAnimation::InternalSetSpeed);
+		metaData.scriptClass->AddInternalCall("Internal_GetSpeed", (void*)&ScriptCAnimation::InternalGetSpeed);
+		metaData.scriptClass->AddInternalCall("Internal_Play", (void*)&ScriptCAnimation::InternalPlay);
+		metaData.scriptClass->AddInternalCall("Internal_BlendAdditive", (void*)&ScriptCAnimation::InternalBlendAdditive);
+		metaData.scriptClass->AddInternalCall("Internal_Blend1D", (void*)&ScriptCAnimation::InternalBlend1D);
+		metaData.scriptClass->AddInternalCall("Internal_Blend2D", (void*)&ScriptCAnimation::InternalBlend2D);
+		metaData.scriptClass->AddInternalCall("Internal_CrossFade", (void*)&ScriptCAnimation::InternalCrossFade);
+		metaData.scriptClass->AddInternalCall("Internal_Sample", (void*)&ScriptCAnimation::InternalSample);
+		metaData.scriptClass->AddInternalCall("Internal_Stop", (void*)&ScriptCAnimation::InternalStop);
+		metaData.scriptClass->AddInternalCall("Internal_StopAll", (void*)&ScriptCAnimation::InternalStopAll);
+		metaData.scriptClass->AddInternalCall("Internal_IsPlaying", (void*)&ScriptCAnimation::InternalIsPlaying);
+		metaData.scriptClass->AddInternalCall("Internal_GetState", (void*)&ScriptCAnimation::InternalGetState);
+		metaData.scriptClass->AddInternalCall("Internal_SetState", (void*)&ScriptCAnimation::InternalSetState);
+		metaData.scriptClass->AddInternalCall("Internal_SetMorphChannelWeight", (void*)&ScriptCAnimation::InternalSetMorphChannelWeight);
+		metaData.scriptClass->AddInternalCall("Internal_SetBounds", (void*)&ScriptCAnimation::InternalSetBounds);
+		metaData.scriptClass->AddInternalCall("Internal_GetBounds", (void*)&ScriptCAnimation::InternalGetBounds);
+		metaData.scriptClass->AddInternalCall("Internal_SetUseBounds", (void*)&ScriptCAnimation::InternalSetUseBounds);
+		metaData.scriptClass->AddInternalCall("Internal_GetUseBounds", (void*)&ScriptCAnimation::InternalGetUseBounds);
+		metaData.scriptClass->AddInternalCall("Internal_SetEnableCull", (void*)&ScriptCAnimation::InternalSetEnableCull);
+		metaData.scriptClass->AddInternalCall("Internal_GetEnableCull", (void*)&ScriptCAnimation::InternalGetEnableCull);
+		metaData.scriptClass->AddInternalCall("Internal_GetNumClips", (void*)&ScriptCAnimation::InternalGetNumClips);
+		metaData.scriptClass->AddInternalCall("Internal_GetClip", (void*)&ScriptCAnimation::InternalGetClip);
+		metaData.scriptClass->AddInternalCall("Internal_RefreshClipMappingsInternal", (void*)&ScriptCAnimation::InternalRefreshClipMappingsInternal);
+		metaData.scriptClass->AddInternalCall("Internal_GetGenericCurveValueInternal", (void*)&ScriptCAnimation::InternalGetGenericCurveValueInternal);
+		metaData.scriptClass->AddInternalCall("Internal_TogglePreviewModeInternal", (void*)&ScriptCAnimation::InternalTogglePreviewModeInternal);
 
-		_scriptRebuildFloatPropertiesThunk = (_scriptRebuildFloatPropertiesThunkDef)metaData.scriptClass->GetMethodExact("Internal__scriptRebuildFloatProperties", "RRef`1<AnimationClip>")->GetThunk();
-		_scriptUpdateFloatPropertiesThunk = (_scriptUpdateFloatPropertiesThunkDef)metaData.scriptClass->GetMethodExact("Internal__scriptUpdateFloatProperties", "")->GetThunk();
-		_scriptOnEventTriggeredThunk = (_scriptOnEventTriggeredThunkDef)metaData.scriptClass->GetMethodExact("Internal__scriptOnEventTriggered", "RRef`1<AnimationClip>,string")->GetThunk();
+		ScriptRebuildFloatPropertiesInternalThunk = (ScriptRebuildFloatPropertiesInternalThunkDef)metaData.scriptClass->GetMethodExact("InternalScriptRebuildFloatPropertiesInternal", "RRef`1<AnimationClip>")->GetThunk();
+		ScriptUpdateFloatPropertiesInternalThunk = (ScriptUpdateFloatPropertiesInternalThunkDef)metaData.scriptClass->GetMethodExact("InternalScriptUpdateFloatPropertiesInternal", "")->GetThunk();
+		ScriptOnEventTriggeredInternalThunk = (ScriptOnEventTriggeredInternalThunkDef)metaData.scriptClass->GetMethodExact("InternalScriptOnEventTriggeredInternal", "RRef`1<AnimationClip>,string")->GetThunk();
 	}
 
 	void ScriptCAnimation::ScriptRebuildFloatPropertiesInternal(const ResourceHandle<AnimationClip>& p0)
 	{
 		MonoObject* tmpp0;
 		ScriptRRefBase* scriptp0;
-		scriptp0 = ScriptResourceManager::Instance().getScriptRRef(p0);
+		scriptp0 = ScriptResourceManager::Instance().GetScriptRRef(p0);
 		if(scriptp0 != nullptr)
 			tmpp0 = scriptp0->GetManagedInstance();
 		else
 			tmpp0 = nullptr;
-		MonoUtil::InvokeThunk(_scriptRebuildFloatPropertiesThunk, GetManagedInstance(), tmpp0);
+		MonoUtil::InvokeThunk(ScriptRebuildFloatPropertiesInternalThunk, GetManagedInstance(), tmpp0);
 	}
 
 	void ScriptCAnimation::ScriptUpdateFloatPropertiesInternal()
 	{
-		MonoUtil::InvokeThunk(_scriptUpdateFloatPropertiesThunk, GetManagedInstance());
+		MonoUtil::InvokeThunk(ScriptUpdateFloatPropertiesInternalThunk, GetManagedInstance());
 	}
 
 	void ScriptCAnimation::ScriptOnEventTriggeredInternal(const ResourceHandle<AnimationClip>& p0, const String& p1)
 	{
 		MonoObject* tmpp0;
 		ScriptRRefBase* scriptp0;
-		scriptp0 = ScriptResourceManager::Instance().getScriptRRef(p0);
+		scriptp0 = ScriptResourceManager::Instance().GetScriptRRef(p0);
 		if(scriptp0 != nullptr)
 			tmpp0 = scriptp0->GetManagedInstance();
 		else
 			tmpp0 = nullptr;
 		MonoString* tmpp1;
-		tmpp1 = MonoUtil::stringToMono(p1);
-		MonoUtil::InvokeThunk(_scriptOnEventTriggeredThunk, GetManagedInstance(), tmpp0, tmpp1);
+		tmpp1 = MonoUtil::StringToMono(p1);
+		MonoUtil::InvokeThunk(ScriptOnEventTriggeredInternalThunk, GetManagedInstance(), tmpp0, tmpp1);
 	}
 	void ScriptCAnimation::InternalSetDefaultClip(ScriptCAnimation* thisPtr, MonoObject* clip)
 	{
 		ResourceHandle<AnimationClip> tmpclip;
 		ScriptRRefBase* scriptclip;
-		scriptclip = ScriptRRefBase::toNative(clip);
+		scriptclip = ScriptRRefBase::ToNative(clip);
 		if(scriptclip != nullptr)
 			tmpclip = static_resource_cast<AnimationClip>(scriptclip->GetHandle());
 		thisPtr->GetHandle()->SetDefaultClip(tmpclip);
@@ -111,7 +111,7 @@ namespace bs
 
 		MonoObject* __output;
 		ScriptRRefBase* script__output;
-		script__output = ScriptResourceManager::Instance().getScriptRRef(tmp__output);
+		script__output = ScriptResourceManager::Instance().GetScriptRRef(tmp__output);
 		if(script__output != nullptr)
 			__output = script__output->GetManagedInstance();
 		else
@@ -156,70 +156,70 @@ namespace bs
 	{
 		ResourceHandle<AnimationClip> tmpclip;
 		ScriptRRefBase* scriptclip;
-		scriptclip = ScriptRRefBase::toNative(clip);
+		scriptclip = ScriptRRefBase::ToNative(clip);
 		if(scriptclip != nullptr)
 			tmpclip = static_resource_cast<AnimationClip>(scriptclip->GetHandle());
-		thisPtr->GetHandle()->play(tmpclip);
+		thisPtr->GetHandle()->Play(tmpclip);
 	}
 
 	void ScriptCAnimation::InternalBlendAdditive(ScriptCAnimation* thisPtr, MonoObject* clip, float weight, float fadeLength, uint32_t layer)
 	{
 		ResourceHandle<AnimationClip> tmpclip;
 		ScriptRRefBase* scriptclip;
-		scriptclip = ScriptRRefBase::toNative(clip);
+		scriptclip = ScriptRRefBase::ToNative(clip);
 		if(scriptclip != nullptr)
 			tmpclip = static_resource_cast<AnimationClip>(scriptclip->GetHandle());
-		thisPtr->GetHandle()->blendAdditive(tmpclip, weight, fadeLength, layer);
+		thisPtr->GetHandle()->BlendAdditive(tmpclip, weight, fadeLength, layer);
 	}
 
 	void ScriptCAnimation::InternalBlend1D(ScriptCAnimation* thisPtr, __Blend1DInfoInterop* info, float t)
 	{
 		Blend1DInfo tmpinfo;
-		tmpinfo = ScriptBlend1DInfo::fromInterop(*info);
-		thisPtr->GetHandle()->blend1D(tmpinfo, t);
+		tmpinfo = ScriptBlend1DInfo::FromInterop(*info);
+		thisPtr->GetHandle()->Blend1D(tmpinfo, t);
 	}
 
 	void ScriptCAnimation::InternalBlend2D(ScriptCAnimation* thisPtr, __Blend2DInfoInterop* info, Vector2* t)
 	{
 		Blend2DInfo tmpinfo;
-		tmpinfo = ScriptBlend2DInfo::fromInterop(*info);
-		thisPtr->GetHandle()->blend2D(tmpinfo, *t);
+		tmpinfo = ScriptBlend2DInfo::FromInterop(*info);
+		thisPtr->GetHandle()->Blend2D(tmpinfo, *t);
 	}
 
 	void ScriptCAnimation::InternalCrossFade(ScriptCAnimation* thisPtr, MonoObject* clip, float fadeLength)
 	{
 		ResourceHandle<AnimationClip> tmpclip;
 		ScriptRRefBase* scriptclip;
-		scriptclip = ScriptRRefBase::toNative(clip);
+		scriptclip = ScriptRRefBase::ToNative(clip);
 		if(scriptclip != nullptr)
 			tmpclip = static_resource_cast<AnimationClip>(scriptclip->GetHandle());
-		thisPtr->GetHandle()->crossFade(tmpclip, fadeLength);
+		thisPtr->GetHandle()->CrossFade(tmpclip, fadeLength);
 	}
 
 	void ScriptCAnimation::InternalSample(ScriptCAnimation* thisPtr, MonoObject* clip, float time)
 	{
 		ResourceHandle<AnimationClip> tmpclip;
 		ScriptRRefBase* scriptclip;
-		scriptclip = ScriptRRefBase::toNative(clip);
+		scriptclip = ScriptRRefBase::ToNative(clip);
 		if(scriptclip != nullptr)
 			tmpclip = static_resource_cast<AnimationClip>(scriptclip->GetHandle());
-		thisPtr->GetHandle()->sample(tmpclip, time);
+		thisPtr->GetHandle()->Sample(tmpclip, time);
 	}
 
 	void ScriptCAnimation::InternalStop(ScriptCAnimation* thisPtr, uint32_t layer)
 	{
-		thisPtr->GetHandle()->stop(layer);
+		thisPtr->GetHandle()->Stop(layer);
 	}
 
 	void ScriptCAnimation::InternalStopAll(ScriptCAnimation* thisPtr)
 	{
-		thisPtr->GetHandle()->stopAll();
+		thisPtr->GetHandle()->StopAll();
 	}
 
 	bool ScriptCAnimation::InternalIsPlaying(ScriptCAnimation* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->GetHandle()->isPlaying();
+		tmp__output = thisPtr->GetHandle()->IsPlaying();
 
 		bool __output;
 		__output = tmp__output;
@@ -232,7 +232,7 @@ namespace bs
 		bool tmp__output;
 		ResourceHandle<AnimationClip> tmpclip;
 		ScriptRRefBase* scriptclip;
-		scriptclip = ScriptRRefBase::toNative(clip);
+		scriptclip = ScriptRRefBase::ToNative(clip);
 		if(scriptclip != nullptr)
 			tmpclip = static_resource_cast<AnimationClip>(scriptclip->GetHandle());
 		tmp__output = thisPtr->GetHandle()->GetState(tmpclip, *state);
@@ -247,7 +247,7 @@ namespace bs
 	{
 		ResourceHandle<AnimationClip> tmpclip;
 		ScriptRRefBase* scriptclip;
-		scriptclip = ScriptRRefBase::toNative(clip);
+		scriptclip = ScriptRRefBase::ToNative(clip);
 		if(scriptclip != nullptr)
 			tmpclip = static_resource_cast<AnimationClip>(scriptclip->GetHandle());
 		thisPtr->GetHandle()->SetState(tmpclip, *state);
@@ -323,7 +323,7 @@ namespace bs
 
 		MonoObject* __output;
 		ScriptRRefBase* script__output;
-		script__output = ScriptResourceManager::Instance().getScriptRRef(tmp__output);
+		script__output = ScriptResourceManager::Instance().GetScriptRRef(tmp__output);
 		if(script__output != nullptr)
 			__output = script__output->GetManagedInstance();
 		else
@@ -332,12 +332,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptCAnimation::InternalRefreshClipMappings(ScriptCAnimation* thisPtr)
+	void ScriptCAnimation::InternalRefreshClipMappingsInternal(ScriptCAnimation* thisPtr)
 	{
 		thisPtr->GetHandle()->RefreshClipMappingsInternal();
 	}
 
-	bool ScriptCAnimation::InternalGetGenericCurveValue(ScriptCAnimation* thisPtr, uint32_t curveIdx, float* value)
+	bool ScriptCAnimation::InternalGetGenericCurveValueInternal(ScriptCAnimation* thisPtr, uint32_t curveIdx, float* value)
 	{
 		bool tmp__output;
 		tmp__output = thisPtr->GetHandle()->GetGenericCurveValueInternal(curveIdx, *value);
@@ -348,7 +348,7 @@ namespace bs
 		return __output;
 	}
 
-	bool ScriptCAnimation::InternalTogglePreviewMode(ScriptCAnimation* thisPtr, bool enabled)
+	bool ScriptCAnimation::InternalTogglePreviewModeInternal(ScriptCAnimation* thisPtr, bool enabled)
 	{
 		bool tmp__output;
 		tmp__output = thisPtr->GetHandle()->TogglePreviewModeInternal(enabled);

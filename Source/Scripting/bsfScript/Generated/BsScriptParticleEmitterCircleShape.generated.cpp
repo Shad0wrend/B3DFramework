@@ -15,12 +15,12 @@ namespace bs
 		mInternal = value;
 	}
 
-	void ScriptParticleEmitterCircleShape::initRuntimeData()
+	void ScriptParticleEmitterCircleShape::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_setOptions", (void*)&ScriptParticleEmitterCircleShape::InternalSetOptions);
-		metaData.scriptClass->AddInternalCall("Internal_getOptions", (void*)&ScriptParticleEmitterCircleShape::InternalGetOptions);
-		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptParticleEmitterCircleShape::InternalCreate);
-		metaData.scriptClass->AddInternalCall("Internal_create0", (void*)&ScriptParticleEmitterCircleShape::InternalCreate0);
+		metaData.scriptClass->AddInternalCall("Internal_SetOptions", (void*)&ScriptParticleEmitterCircleShape::InternalSetOptions);
+		metaData.scriptClass->AddInternalCall("Internal_GetOptions", (void*)&ScriptParticleEmitterCircleShape::InternalGetOptions);
+		metaData.scriptClass->AddInternalCall("Internal_Create", (void*)&ScriptParticleEmitterCircleShape::InternalCreate);
+		metaData.scriptClass->AddInternalCall("Internal_Create0", (void*)&ScriptParticleEmitterCircleShape::InternalCreate0);
 
 	}
 
@@ -49,7 +49,7 @@ namespace bs
 
 		__PARTICLE_CIRCLE_SHAPE_DESCInterop interop__output;
 		interop__output = ScriptPARTICLE_CIRCLE_SHAPE_DESC::ToInterop(tmp__output);
-		MonoUtil::valueCopy(__output, &interop__output, ScriptPARTICLE_CIRCLE_SHAPE_DESC::getMetaData()->scriptClass->GetInternalClassInternal());
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptPARTICLE_CIRCLE_SHAPE_DESC::GetMetaData()->scriptClass->GetInternalClassInternal());
 	}
 
 	void ScriptParticleEmitterCircleShape::InternalCreate(MonoObject* managedInstance, __PARTICLE_CIRCLE_SHAPE_DESCInterop* desc)

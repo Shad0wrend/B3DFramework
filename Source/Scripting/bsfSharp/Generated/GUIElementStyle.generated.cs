@@ -29,8 +29,8 @@ namespace bs
 		[NativeWrapper]
 		public Font Font
 		{
-			get { return Internal_getfont(mCachedPtr); }
-			set { Internal_setfont(mCachedPtr, value); }
+			get { return Internal_Getfont(mCachedPtr); }
+			set { Internal_Setfont(mCachedPtr, value); }
 		}
 
 		/// <summary>Font size to use for all text within the GUI element.</summary>
@@ -38,8 +38,8 @@ namespace bs
 		[NativeWrapper]
 		public int FontSize
 		{
-			get { return Internal_getfontSize(mCachedPtr); }
-			set { Internal_setfontSize(mCachedPtr, value); }
+			get { return Internal_GetfontSize(mCachedPtr); }
+			set { Internal_SetfontSize(mCachedPtr, value); }
 		}
 
 		/// <summary>Horizontal alignment of text within the GUI element.</summary>
@@ -47,8 +47,8 @@ namespace bs
 		[NativeWrapper]
 		public TextHorzAlign TextHorzAlign
 		{
-			get { return Internal_gettextHorzAlign(mCachedPtr); }
-			set { Internal_settextHorzAlign(mCachedPtr, value); }
+			get { return Internal_GettextHorzAlign(mCachedPtr); }
+			set { Internal_SettextHorzAlign(mCachedPtr, value); }
 		}
 
 		/// <summary>Vertical alignment of text within the GUI element.</summary>
@@ -56,8 +56,8 @@ namespace bs
 		[NativeWrapper]
 		public TextVertAlign TextVertAlign
 		{
-			get { return Internal_gettextVertAlign(mCachedPtr); }
-			set { Internal_settextVertAlign(mCachedPtr, value); }
+			get { return Internal_GettextVertAlign(mCachedPtr); }
+			set { Internal_SettextVertAlign(mCachedPtr, value); }
 		}
 
 		/// <summary>Position of content image relative to text.</summary>
@@ -65,8 +65,8 @@ namespace bs
 		[NativeWrapper]
 		public GUIImagePosition ImagePosition
 		{
-			get { return Internal_getimagePosition(mCachedPtr); }
-			set { Internal_setimagePosition(mCachedPtr, value); }
+			get { return Internal_GetimagePosition(mCachedPtr); }
+			set { Internal_SetimagePosition(mCachedPtr, value); }
 		}
 
 		/// <summary>Should the text word wrap if it doesn&apos;t fit.</summary>
@@ -74,8 +74,8 @@ namespace bs
 		[NativeWrapper]
 		public bool WordWrap
 		{
-			get { return Internal_getwordWrap(mCachedPtr); }
-			set { Internal_setwordWrap(mCachedPtr, value); }
+			get { return Internal_GetwordWrap(mCachedPtr); }
+			set { Internal_SetwordWrap(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -89,10 +89,10 @@ namespace bs
 			get
 			{
 				GUIElementStateStyle temp;
-				Internal_getnormal(mCachedPtr, out temp);
+				Internal_Getnormal(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setnormal(mCachedPtr, ref value); }
+			set { Internal_Setnormal(mCachedPtr, ref value); }
 		}
 
 		/// <summary>
@@ -106,10 +106,10 @@ namespace bs
 			get
 			{
 				GUIElementStateStyle temp;
-				Internal_gethover(mCachedPtr, out temp);
+				Internal_Gethover(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_sethover(mCachedPtr, ref value); }
+			set { Internal_Sethover(mCachedPtr, ref value); }
 		}
 
 		/// <summary>
@@ -123,10 +123,10 @@ namespace bs
 			get
 			{
 				GUIElementStateStyle temp;
-				Internal_getactive(mCachedPtr, out temp);
+				Internal_Getactive(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setactive(mCachedPtr, ref value); }
+			set { Internal_Setactive(mCachedPtr, ref value); }
 		}
 
 		/// <summary>
@@ -140,10 +140,10 @@ namespace bs
 			get
 			{
 				GUIElementStateStyle temp;
-				Internal_getfocused(mCachedPtr, out temp);
+				Internal_Getfocused(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setfocused(mCachedPtr, ref value); }
+			set { Internal_Setfocused(mCachedPtr, ref value); }
 		}
 
 		/// <summary>
@@ -157,10 +157,10 @@ namespace bs
 			get
 			{
 				GUIElementStateStyle temp;
-				Internal_getfocusedHover(mCachedPtr, out temp);
+				Internal_GetfocusedHover(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setfocusedHover(mCachedPtr, ref value); }
+			set { Internal_SetfocusedHover(mCachedPtr, ref value); }
 		}
 
 		/// <summary>Same as GUIElementStyle::normal, except it&apos;s used when element is in the &apos;on&apos; state.</summary>
@@ -171,10 +171,10 @@ namespace bs
 			get
 			{
 				GUIElementStateStyle temp;
-				Internal_getnormalOn(mCachedPtr, out temp);
+				Internal_GetnormalOn(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setnormalOn(mCachedPtr, ref value); }
+			set { Internal_SetnormalOn(mCachedPtr, ref value); }
 		}
 
 		/// <summary>Same as GUIElementStyle::hover, except it&apos;s used when element is in the &apos;on&apos; state.</summary>
@@ -185,10 +185,10 @@ namespace bs
 			get
 			{
 				GUIElementStateStyle temp;
-				Internal_gethoverOn(mCachedPtr, out temp);
+				Internal_GethoverOn(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_sethoverOn(mCachedPtr, ref value); }
+			set { Internal_SethoverOn(mCachedPtr, ref value); }
 		}
 
 		/// <summary>Same as GUIElementStyle::active, except it&apos;s used when element is in the &apos;on&apos; state.</summary>
@@ -199,10 +199,10 @@ namespace bs
 			get
 			{
 				GUIElementStateStyle temp;
-				Internal_getactiveOn(mCachedPtr, out temp);
+				Internal_GetactiveOn(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setactiveOn(mCachedPtr, ref value); }
+			set { Internal_SetactiveOn(mCachedPtr, ref value); }
 		}
 
 		/// <summary>Same as GUIElementStyle::focused, except it&apos;s used when element is in the &apos;on&apos; state.</summary>
@@ -213,10 +213,10 @@ namespace bs
 			get
 			{
 				GUIElementStateStyle temp;
-				Internal_getfocusedOn(mCachedPtr, out temp);
+				Internal_GetfocusedOn(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setfocusedOn(mCachedPtr, ref value); }
+			set { Internal_SetfocusedOn(mCachedPtr, ref value); }
 		}
 
 		/// <summary>Same as GUIElementStyle::focusedHover, except it&apos;s used when element is in the &apos;on&apos; state.</summary>
@@ -227,10 +227,10 @@ namespace bs
 			get
 			{
 				GUIElementStateStyle temp;
-				Internal_getfocusedHoverOn(mCachedPtr, out temp);
+				Internal_GetfocusedHoverOn(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setfocusedHoverOn(mCachedPtr, ref value); }
+			set { Internal_SetfocusedHoverOn(mCachedPtr, ref value); }
 		}
 
 		/// <summary>Determines how the element is scaled (using the typical Scale9Grid approach).</summary>
@@ -241,10 +241,10 @@ namespace bs
 			get
 			{
 				RectOffset temp;
-				Internal_getborder(mCachedPtr, out temp);
+				Internal_Getborder(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setborder(mCachedPtr, ref value); }
+			set { Internal_Setborder(mCachedPtr, ref value); }
 		}
 
 		/// <summary>
@@ -257,10 +257,10 @@ namespace bs
 			get
 			{
 				RectOffset temp;
-				Internal_getmargins(mCachedPtr, out temp);
+				Internal_Getmargins(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setmargins(mCachedPtr, ref value); }
+			set { Internal_Setmargins(mCachedPtr, ref value); }
 		}
 
 		/// <summary>
@@ -273,10 +273,10 @@ namespace bs
 			get
 			{
 				RectOffset temp;
-				Internal_getcontentOffset(mCachedPtr, out temp);
+				Internal_GetcontentOffset(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setcontentOffset(mCachedPtr, ref value); }
+			set { Internal_SetcontentOffset(mCachedPtr, ref value); }
 		}
 
 		/// <summary>Determines extra distance between this and other elements in a layout.</summary>
@@ -287,10 +287,10 @@ namespace bs
 			get
 			{
 				RectOffset temp;
-				Internal_getpadding(mCachedPtr, out temp);
+				Internal_Getpadding(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setpadding(mCachedPtr, ref value); }
+			set { Internal_Setpadding(mCachedPtr, ref value); }
 		}
 
 		/// <summary>Wanted width of the GUI element in pixels. Only used if fixedWidth is enabled.</summary>
@@ -298,8 +298,8 @@ namespace bs
 		[NativeWrapper]
 		public int Width
 		{
-			get { return Internal_getwidth(mCachedPtr); }
-			set { Internal_setwidth(mCachedPtr, value); }
+			get { return Internal_Getwidth(mCachedPtr); }
+			set { Internal_Setwidth(mCachedPtr, value); }
 		}
 
 		/// <summary>Wanted height of the GUI element in pixels. Only used if fixedHeight is enabled.</summary>
@@ -307,8 +307,8 @@ namespace bs
 		[NativeWrapper]
 		public int Height
 		{
-			get { return Internal_getheight(mCachedPtr); }
-			set { Internal_setheight(mCachedPtr, value); }
+			get { return Internal_Getheight(mCachedPtr); }
+			set { Internal_Setheight(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -318,8 +318,8 @@ namespace bs
 		[NativeWrapper]
 		public int MinWidth
 		{
-			get { return Internal_getminWidth(mCachedPtr); }
-			set { Internal_setminWidth(mCachedPtr, value); }
+			get { return Internal_GetminWidth(mCachedPtr); }
+			set { Internal_SetminWidth(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -329,8 +329,8 @@ namespace bs
 		[NativeWrapper]
 		public int MaxWidth
 		{
-			get { return Internal_getmaxWidth(mCachedPtr); }
-			set { Internal_setmaxWidth(mCachedPtr, value); }
+			get { return Internal_GetmaxWidth(mCachedPtr); }
+			set { Internal_SetmaxWidth(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -340,8 +340,8 @@ namespace bs
 		[NativeWrapper]
 		public int MinHeight
 		{
-			get { return Internal_getminHeight(mCachedPtr); }
-			set { Internal_setminHeight(mCachedPtr, value); }
+			get { return Internal_GetminHeight(mCachedPtr); }
+			set { Internal_SetminHeight(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -351,8 +351,8 @@ namespace bs
 		[NativeWrapper]
 		public int MaxHeight
 		{
-			get { return Internal_getmaxHeight(mCachedPtr); }
-			set { Internal_setmaxHeight(mCachedPtr, value); }
+			get { return Internal_GetmaxHeight(mCachedPtr); }
+			set { Internal_SetmaxHeight(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -362,8 +362,8 @@ namespace bs
 		[NativeWrapper]
 		public bool FixedWidth
 		{
-			get { return Internal_getfixedWidth(mCachedPtr); }
-			set { Internal_setfixedWidth(mCachedPtr, value); }
+			get { return Internal_GetfixedWidth(mCachedPtr); }
+			set { Internal_SetfixedWidth(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -373,8 +373,8 @@ namespace bs
 		[NativeWrapper]
 		public bool FixedHeight
 		{
-			get { return Internal_getfixedHeight(mCachedPtr); }
-			set { Internal_setfixedHeight(mCachedPtr, value); }
+			get { return Internal_GetfixedHeight(mCachedPtr); }
+			set { Internal_SetfixedHeight(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -386,125 +386,125 @@ namespace bs
 		/// <param name="styleName">Name of the style in GUI skin to use for the sub-element.</param>
 		public void AddSubStyle(string guiType, string styleName)
 		{
-			Internal_addSubStyle(mCachedPtr, guiType, styleName);
+			Internal_AddSubStyle(mCachedPtr, guiType, styleName);
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_GUIElementStyle(GUIElementStyle managedInstance);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_addSubStyle(IntPtr thisPtr, string guiType, string styleName);
+		private static extern void Internal_AddSubStyle(IntPtr thisPtr, string guiType, string styleName);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern Font Internal_getfont(IntPtr thisPtr);
+		private static extern Font Internal_Getfont(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setfont(IntPtr thisPtr, Font value);
+		private static extern void Internal_Setfont(IntPtr thisPtr, Font value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getfontSize(IntPtr thisPtr);
+		private static extern int Internal_GetfontSize(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setfontSize(IntPtr thisPtr, int value);
+		private static extern void Internal_SetfontSize(IntPtr thisPtr, int value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern TextHorzAlign Internal_gettextHorzAlign(IntPtr thisPtr);
+		private static extern TextHorzAlign Internal_GettextHorzAlign(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_settextHorzAlign(IntPtr thisPtr, TextHorzAlign value);
+		private static extern void Internal_SettextHorzAlign(IntPtr thisPtr, TextHorzAlign value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern TextVertAlign Internal_gettextVertAlign(IntPtr thisPtr);
+		private static extern TextVertAlign Internal_GettextVertAlign(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_settextVertAlign(IntPtr thisPtr, TextVertAlign value);
+		private static extern void Internal_SettextVertAlign(IntPtr thisPtr, TextVertAlign value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern GUIImagePosition Internal_getimagePosition(IntPtr thisPtr);
+		private static extern GUIImagePosition Internal_GetimagePosition(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setimagePosition(IntPtr thisPtr, GUIImagePosition value);
+		private static extern void Internal_SetimagePosition(IntPtr thisPtr, GUIImagePosition value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_getwordWrap(IntPtr thisPtr);
+		private static extern bool Internal_GetwordWrap(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setwordWrap(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetwordWrap(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getnormal(IntPtr thisPtr, out GUIElementStateStyle __output);
+		private static extern void Internal_Getnormal(IntPtr thisPtr, out GUIElementStateStyle __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setnormal(IntPtr thisPtr, ref GUIElementStateStyle value);
+		private static extern void Internal_Setnormal(IntPtr thisPtr, ref GUIElementStateStyle value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_gethover(IntPtr thisPtr, out GUIElementStateStyle __output);
+		private static extern void Internal_Gethover(IntPtr thisPtr, out GUIElementStateStyle __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_sethover(IntPtr thisPtr, ref GUIElementStateStyle value);
+		private static extern void Internal_Sethover(IntPtr thisPtr, ref GUIElementStateStyle value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getactive(IntPtr thisPtr, out GUIElementStateStyle __output);
+		private static extern void Internal_Getactive(IntPtr thisPtr, out GUIElementStateStyle __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setactive(IntPtr thisPtr, ref GUIElementStateStyle value);
+		private static extern void Internal_Setactive(IntPtr thisPtr, ref GUIElementStateStyle value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getfocused(IntPtr thisPtr, out GUIElementStateStyle __output);
+		private static extern void Internal_Getfocused(IntPtr thisPtr, out GUIElementStateStyle __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setfocused(IntPtr thisPtr, ref GUIElementStateStyle value);
+		private static extern void Internal_Setfocused(IntPtr thisPtr, ref GUIElementStateStyle value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getfocusedHover(IntPtr thisPtr, out GUIElementStateStyle __output);
+		private static extern void Internal_GetfocusedHover(IntPtr thisPtr, out GUIElementStateStyle __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setfocusedHover(IntPtr thisPtr, ref GUIElementStateStyle value);
+		private static extern void Internal_SetfocusedHover(IntPtr thisPtr, ref GUIElementStateStyle value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getnormalOn(IntPtr thisPtr, out GUIElementStateStyle __output);
+		private static extern void Internal_GetnormalOn(IntPtr thisPtr, out GUIElementStateStyle __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setnormalOn(IntPtr thisPtr, ref GUIElementStateStyle value);
+		private static extern void Internal_SetnormalOn(IntPtr thisPtr, ref GUIElementStateStyle value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_gethoverOn(IntPtr thisPtr, out GUIElementStateStyle __output);
+		private static extern void Internal_GethoverOn(IntPtr thisPtr, out GUIElementStateStyle __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_sethoverOn(IntPtr thisPtr, ref GUIElementStateStyle value);
+		private static extern void Internal_SethoverOn(IntPtr thisPtr, ref GUIElementStateStyle value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getactiveOn(IntPtr thisPtr, out GUIElementStateStyle __output);
+		private static extern void Internal_GetactiveOn(IntPtr thisPtr, out GUIElementStateStyle __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setactiveOn(IntPtr thisPtr, ref GUIElementStateStyle value);
+		private static extern void Internal_SetactiveOn(IntPtr thisPtr, ref GUIElementStateStyle value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getfocusedOn(IntPtr thisPtr, out GUIElementStateStyle __output);
+		private static extern void Internal_GetfocusedOn(IntPtr thisPtr, out GUIElementStateStyle __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setfocusedOn(IntPtr thisPtr, ref GUIElementStateStyle value);
+		private static extern void Internal_SetfocusedOn(IntPtr thisPtr, ref GUIElementStateStyle value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getfocusedHoverOn(IntPtr thisPtr, out GUIElementStateStyle __output);
+		private static extern void Internal_GetfocusedHoverOn(IntPtr thisPtr, out GUIElementStateStyle __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setfocusedHoverOn(IntPtr thisPtr, ref GUIElementStateStyle value);
+		private static extern void Internal_SetfocusedHoverOn(IntPtr thisPtr, ref GUIElementStateStyle value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getborder(IntPtr thisPtr, out RectOffset __output);
+		private static extern void Internal_Getborder(IntPtr thisPtr, out RectOffset __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setborder(IntPtr thisPtr, ref RectOffset value);
+		private static extern void Internal_Setborder(IntPtr thisPtr, ref RectOffset value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getmargins(IntPtr thisPtr, out RectOffset __output);
+		private static extern void Internal_Getmargins(IntPtr thisPtr, out RectOffset __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setmargins(IntPtr thisPtr, ref RectOffset value);
+		private static extern void Internal_Setmargins(IntPtr thisPtr, ref RectOffset value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getcontentOffset(IntPtr thisPtr, out RectOffset __output);
+		private static extern void Internal_GetcontentOffset(IntPtr thisPtr, out RectOffset __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setcontentOffset(IntPtr thisPtr, ref RectOffset value);
+		private static extern void Internal_SetcontentOffset(IntPtr thisPtr, ref RectOffset value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getpadding(IntPtr thisPtr, out RectOffset __output);
+		private static extern void Internal_Getpadding(IntPtr thisPtr, out RectOffset __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setpadding(IntPtr thisPtr, ref RectOffset value);
+		private static extern void Internal_Setpadding(IntPtr thisPtr, ref RectOffset value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getwidth(IntPtr thisPtr);
+		private static extern int Internal_Getwidth(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setwidth(IntPtr thisPtr, int value);
+		private static extern void Internal_Setwidth(IntPtr thisPtr, int value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getheight(IntPtr thisPtr);
+		private static extern int Internal_Getheight(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setheight(IntPtr thisPtr, int value);
+		private static extern void Internal_Setheight(IntPtr thisPtr, int value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getminWidth(IntPtr thisPtr);
+		private static extern int Internal_GetminWidth(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setminWidth(IntPtr thisPtr, int value);
+		private static extern void Internal_SetminWidth(IntPtr thisPtr, int value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getmaxWidth(IntPtr thisPtr);
+		private static extern int Internal_GetmaxWidth(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setmaxWidth(IntPtr thisPtr, int value);
+		private static extern void Internal_SetmaxWidth(IntPtr thisPtr, int value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getminHeight(IntPtr thisPtr);
+		private static extern int Internal_GetminHeight(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setminHeight(IntPtr thisPtr, int value);
+		private static extern void Internal_SetminHeight(IntPtr thisPtr, int value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getmaxHeight(IntPtr thisPtr);
+		private static extern int Internal_GetmaxHeight(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setmaxHeight(IntPtr thisPtr, int value);
+		private static extern void Internal_SetmaxHeight(IntPtr thisPtr, int value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_getfixedWidth(IntPtr thisPtr);
+		private static extern bool Internal_GetfixedWidth(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setfixedWidth(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetfixedWidth(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_getfixedHeight(IntPtr thisPtr);
+		private static extern bool Internal_GetfixedHeight(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setfixedHeight(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetfixedHeight(IntPtr thisPtr, bool value);
 	}
 
 	/** @} */

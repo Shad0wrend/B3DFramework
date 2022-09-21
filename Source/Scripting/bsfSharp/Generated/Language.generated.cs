@@ -16,8 +16,6 @@ namespace bs
 	/// </summary>
 	public enum Language
 	{
-		Assamese = 8,
-		Herero = 64,
 		Afar = 0,
 		Abkhazian = 1,
 		Avestan = 2,
@@ -26,6 +24,7 @@ namespace bs
 		Amharic = 5,
 		Aragonese = 6,
 		Arabic = 7,
+		Assamese = 8,
 		Avaric = 9,
 		Aymara = 10,
 		Azerbaijani = 11,
@@ -81,6 +80,7 @@ namespace bs
 		Haitian = 61,
 		Hungarian = 62,
 		Armenian = 63,
+		Herero = 64,
 		Interlingua = 65,
 		Indonesian = 66,
 		Interlingue = 67,

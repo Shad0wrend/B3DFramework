@@ -20,7 +20,7 @@ namespace bs
 		ScriptInputConfigurations[configId] = this;
 	}
 
-	void ScriptInputConfiguration::initRuntimeData()
+	void ScriptInputConfiguration::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptInputConfiguration::InternalCreateInstance);
 		metaData.scriptClass->AddInternalCall("Internal_RegisterButton", (void*)&ScriptInputConfiguration::InternalRegisterButton);
@@ -120,7 +120,7 @@ namespace bs
 		:ScriptObject(instance)
 	{ }
 
-	void ScriptVirtualAxis::initRuntimeData()
+	void ScriptVirtualAxis::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_InitVirtualAxis", (void*)&ScriptVirtualAxis::InternalInitVirtualAxis);
 	}

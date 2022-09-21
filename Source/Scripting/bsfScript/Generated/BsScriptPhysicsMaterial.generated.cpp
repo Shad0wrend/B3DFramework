@@ -16,16 +16,16 @@ namespace bs
 	{
 	}
 
-	void ScriptPhysicsMaterial::initRuntimeData()
+	void ScriptPhysicsMaterial::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptPhysicsMaterial::InternalGetRef);
-		metaData.scriptClass->AddInternalCall("Internal_setStaticFriction", (void*)&ScriptPhysicsMaterial::InternalSetStaticFriction);
-		metaData.scriptClass->AddInternalCall("Internal_getStaticFriction", (void*)&ScriptPhysicsMaterial::InternalGetStaticFriction);
-		metaData.scriptClass->AddInternalCall("Internal_setDynamicFriction", (void*)&ScriptPhysicsMaterial::InternalSetDynamicFriction);
-		metaData.scriptClass->AddInternalCall("Internal_getDynamicFriction", (void*)&ScriptPhysicsMaterial::InternalGetDynamicFriction);
-		metaData.scriptClass->AddInternalCall("Internal_setRestitutionCoefficient", (void*)&ScriptPhysicsMaterial::InternalSetRestitutionCoefficient);
-		metaData.scriptClass->AddInternalCall("Internal_getRestitutionCoefficient", (void*)&ScriptPhysicsMaterial::InternalGetRestitutionCoefficient);
-		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptPhysicsMaterial::InternalCreate);
+		metaData.scriptClass->AddInternalCall("Internal_SetStaticFriction", (void*)&ScriptPhysicsMaterial::InternalSetStaticFriction);
+		metaData.scriptClass->AddInternalCall("Internal_GetStaticFriction", (void*)&ScriptPhysicsMaterial::InternalGetStaticFriction);
+		metaData.scriptClass->AddInternalCall("Internal_SetDynamicFriction", (void*)&ScriptPhysicsMaterial::InternalSetDynamicFriction);
+		metaData.scriptClass->AddInternalCall("Internal_GetDynamicFriction", (void*)&ScriptPhysicsMaterial::InternalGetDynamicFriction);
+		metaData.scriptClass->AddInternalCall("Internal_SetRestitutionCoefficient", (void*)&ScriptPhysicsMaterial::InternalSetRestitutionCoefficient);
+		metaData.scriptClass->AddInternalCall("Internal_GetRestitutionCoefficient", (void*)&ScriptPhysicsMaterial::InternalGetRestitutionCoefficient);
+		metaData.scriptClass->AddInternalCall("Internal_Create", (void*)&ScriptPhysicsMaterial::InternalCreate);
 
 	}
 
@@ -92,6 +92,6 @@ namespace bs
 	void ScriptPhysicsMaterial::InternalCreate(MonoObject* managedInstance, float staticFriction, float dynamicFriction, float restitution)
 	{
 		ResourceHandle<PhysicsMaterial> instance = PhysicsMaterial::Create(staticFriction, dynamicFriction, restitution);
-		ScriptResourceManager::Instance().createBuiltinScriptResource(instance, managedInstance);
+		ScriptResourceManager::Instance().CreateBuiltinScriptResource(instance, managedInstance);
 	}
 }

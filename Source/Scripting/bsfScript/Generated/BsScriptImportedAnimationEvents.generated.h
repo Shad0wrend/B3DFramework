@@ -19,14 +19,14 @@ namespace bs
 
 		ScriptImportedAnimationEvents(MonoObject* managedInstance, const SPtr<ImportedAnimationEvents>& value);
 
-		static MonoObject* create(const SPtr<ImportedAnimationEvents>& value);
+		static MonoObject* Create(const SPtr<ImportedAnimationEvents>& value);
 
 	private:
-		static void Internal_ImportedAnimationEvents(MonoObject* managedInstance);
-		static MonoString* Internal_getname(ScriptImportedAnimationEvents* thisPtr);
-		static void Internal_setname(ScriptImportedAnimationEvents* thisPtr, MonoString* value);
-		static MonoArray* Internal_getevents(ScriptImportedAnimationEvents* thisPtr);
-		static void Internal_setevents(ScriptImportedAnimationEvents* thisPtr, MonoArray* value);
+		static void InternalImportedAnimationEvents(MonoObject* managedInstance);
+		static MonoString* InternalGetname(ScriptImportedAnimationEvents* thisPtr);
+		static void InternalSetname(ScriptImportedAnimationEvents* thisPtr, MonoString* value);
+		static MonoArray* InternalGetevents(ScriptImportedAnimationEvents* thisPtr);
+		static void InternalSetevents(ScriptImportedAnimationEvents* thisPtr, MonoArray* value);
 	};
 #endif
 }

@@ -14,16 +14,16 @@ namespace bs
 	{
 	}
 
-	void ScriptCCapsuleCollider::initRuntimeData()
+	void ScriptCCapsuleCollider::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_setNormal", (void*)&ScriptCCapsuleCollider::InternalSetNormal);
-		metaData.scriptClass->AddInternalCall("Internal_getNormal", (void*)&ScriptCCapsuleCollider::InternalGetNormal);
-		metaData.scriptClass->AddInternalCall("Internal_setCenter", (void*)&ScriptCCapsuleCollider::InternalSetCenter);
-		metaData.scriptClass->AddInternalCall("Internal_getCenter", (void*)&ScriptCCapsuleCollider::InternalGetCenter);
-		metaData.scriptClass->AddInternalCall("Internal_setHalfHeight", (void*)&ScriptCCapsuleCollider::InternalSetHalfHeight);
-		metaData.scriptClass->AddInternalCall("Internal_getHalfHeight", (void*)&ScriptCCapsuleCollider::InternalGetHalfHeight);
-		metaData.scriptClass->AddInternalCall("Internal_setRadius", (void*)&ScriptCCapsuleCollider::InternalSetRadius);
-		metaData.scriptClass->AddInternalCall("Internal_getRadius", (void*)&ScriptCCapsuleCollider::InternalGetRadius);
+		metaData.scriptClass->AddInternalCall("Internal_SetNormal", (void*)&ScriptCCapsuleCollider::InternalSetNormal);
+		metaData.scriptClass->AddInternalCall("Internal_GetNormal", (void*)&ScriptCCapsuleCollider::InternalGetNormal);
+		metaData.scriptClass->AddInternalCall("Internal_SetCenter", (void*)&ScriptCCapsuleCollider::InternalSetCenter);
+		metaData.scriptClass->AddInternalCall("Internal_GetCenter", (void*)&ScriptCCapsuleCollider::InternalGetCenter);
+		metaData.scriptClass->AddInternalCall("Internal_SetHalfHeight", (void*)&ScriptCCapsuleCollider::InternalSetHalfHeight);
+		metaData.scriptClass->AddInternalCall("Internal_GetHalfHeight", (void*)&ScriptCCapsuleCollider::InternalGetHalfHeight);
+		metaData.scriptClass->AddInternalCall("Internal_SetRadius", (void*)&ScriptCCapsuleCollider::InternalSetRadius);
+		metaData.scriptClass->AddInternalCall("Internal_GetRadius", (void*)&ScriptCCapsuleCollider::InternalGetRadius);
 
 	}
 

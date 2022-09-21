@@ -31,7 +31,7 @@ namespace bs
 		[NativeWrapper]
 		public KeyFrame[] KeyFrames
 		{
-			get { return Internal_getKeyFrames(mCachedPtr); }
+			get { return Internal_GetKeyFrames(mCachedPtr); }
 		}
 
 		/// <summary>
@@ -45,15 +45,15 @@ namespace bs
 		/// <returns>Interpolated value from the curve at provided time.</returns>
 		public float Evaluate(float time, bool loop = true)
 		{
-			return Internal_evaluate(mCachedPtr, time, loop);
+			return Internal_Evaluate(mCachedPtr, time, loop);
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_TAnimationCurve(AnimationCurve managedInstance, KeyFrame[] keyframes);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_evaluate(IntPtr thisPtr, float time, bool loop);
+		private static extern float Internal_Evaluate(IntPtr thisPtr, float time, bool loop);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern KeyFrame[] Internal_getKeyFrames(IntPtr thisPtr);
+		private static extern KeyFrame[] Internal_GetKeyFrames(IntPtr thisPtr);
 	}
 
 	/** @} */
@@ -83,7 +83,7 @@ namespace bs
 		[NativeWrapper]
 		public KeyFrameVec3[] KeyFrames
 		{
-			get { return Internal_getKeyFrames(mCachedPtr); }
+			get { return Internal_GetKeyFrames(mCachedPtr); }
 		}
 
 		/// <summary>
@@ -98,16 +98,16 @@ namespace bs
 		public Vector3 Evaluate(float time, bool loop = true)
 		{
 			Vector3 temp;
-			Internal_evaluate(mCachedPtr, time, loop, out temp);
+			Internal_Evaluate(mCachedPtr, time, loop, out temp);
 			return temp;
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_TAnimationCurve(Vector3Curve managedInstance, KeyFrameVec3[] keyframes);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_evaluate(IntPtr thisPtr, float time, bool loop, out Vector3 __output);
+		private static extern void Internal_Evaluate(IntPtr thisPtr, float time, bool loop, out Vector3 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern KeyFrameVec3[] Internal_getKeyFrames(IntPtr thisPtr);
+		private static extern KeyFrameVec3[] Internal_GetKeyFrames(IntPtr thisPtr);
 	}
 
 	/** @} */
@@ -137,7 +137,7 @@ namespace bs
 		[NativeWrapper]
 		public KeyFrameVec2[] KeyFrames
 		{
-			get { return Internal_getKeyFrames(mCachedPtr); }
+			get { return Internal_GetKeyFrames(mCachedPtr); }
 		}
 
 		/// <summary>
@@ -152,16 +152,16 @@ namespace bs
 		public Vector2 Evaluate(float time, bool loop = true)
 		{
 			Vector2 temp;
-			Internal_evaluate(mCachedPtr, time, loop, out temp);
+			Internal_Evaluate(mCachedPtr, time, loop, out temp);
 			return temp;
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_TAnimationCurve(Vector2Curve managedInstance, KeyFrameVec2[] keyframes);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_evaluate(IntPtr thisPtr, float time, bool loop, out Vector2 __output);
+		private static extern void Internal_Evaluate(IntPtr thisPtr, float time, bool loop, out Vector2 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern KeyFrameVec2[] Internal_getKeyFrames(IntPtr thisPtr);
+		private static extern KeyFrameVec2[] Internal_GetKeyFrames(IntPtr thisPtr);
 	}
 
 	/** @} */
@@ -191,7 +191,7 @@ namespace bs
 		[NativeWrapper]
 		public KeyFrameQuat[] KeyFrames
 		{
-			get { return Internal_getKeyFrames(mCachedPtr); }
+			get { return Internal_GetKeyFrames(mCachedPtr); }
 		}
 
 		/// <summary>
@@ -206,16 +206,16 @@ namespace bs
 		public Quaternion Evaluate(float time, bool loop = true)
 		{
 			Quaternion temp;
-			Internal_evaluate(mCachedPtr, time, loop, out temp);
+			Internal_Evaluate(mCachedPtr, time, loop, out temp);
 			return temp;
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_TAnimationCurve(QuaternionCurve managedInstance, KeyFrameQuat[] keyframes);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_evaluate(IntPtr thisPtr, float time, bool loop, out Quaternion __output);
+		private static extern void Internal_Evaluate(IntPtr thisPtr, float time, bool loop, out Quaternion __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern KeyFrameQuat[] Internal_getKeyFrames(IntPtr thisPtr);
+		private static extern KeyFrameQuat[] Internal_GetKeyFrames(IntPtr thisPtr);
 	}
 
 	/** @} */
@@ -245,7 +245,7 @@ namespace bs
 		[NativeWrapper]
 		public KeyFrameInt[] KeyFrames
 		{
-			get { return Internal_getKeyFrames(mCachedPtr); }
+			get { return Internal_GetKeyFrames(mCachedPtr); }
 		}
 
 		/// <summary>
@@ -259,15 +259,15 @@ namespace bs
 		/// <returns>Interpolated value from the curve at provided time.</returns>
 		public int Evaluate(float time, bool loop = true)
 		{
-			return Internal_evaluate(mCachedPtr, time, loop);
+			return Internal_Evaluate(mCachedPtr, time, loop);
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_TAnimationCurve(IntegerCurve managedInstance, KeyFrameInt[] keyframes);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_evaluate(IntPtr thisPtr, float time, bool loop);
+		private static extern int Internal_Evaluate(IntPtr thisPtr, float time, bool loop);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern KeyFrameInt[] Internal_getKeyFrames(IntPtr thisPtr);
+		private static extern KeyFrameInt[] Internal_GetKeyFrames(IntPtr thisPtr);
 	}
 
 	/** @} */

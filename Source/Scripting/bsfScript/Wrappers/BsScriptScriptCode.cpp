@@ -21,7 +21,7 @@ namespace bs
 		
 	}
 
-	void ScriptScriptCode::initRuntimeData()
+	void ScriptScriptCode::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptScriptCode::InternalCreateInstance);
 		metaData.scriptClass->AddInternalCall("Internal_GetText", (void*)&ScriptScriptCode::InternalGetText);

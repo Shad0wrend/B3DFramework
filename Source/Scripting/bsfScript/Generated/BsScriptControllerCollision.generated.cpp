@@ -13,7 +13,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptControllerCollision::initRuntimeData()
+	void ScriptControllerCollision::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptControllerCollision::Box(const __ControllerCollisionInterop& value)

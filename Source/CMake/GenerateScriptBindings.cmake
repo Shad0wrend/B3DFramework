@@ -17,9 +17,9 @@ function(addForGeneration path)
 endfunction()
 
 function(add_generate_script_bindings_target)
-	find_package(BansheeSBGen REQUIRED)
+	find_package(BansheeCodeGenerator REQUIRED)
 
-	if(BansheeSBGen_FOUND)
+	if(BansheeCodeGenerator_FOUND)
 		addForGeneration(${BSF_SOURCE_DIR}/Foundation/bsfUtility)
 		addForGeneration(${BSF_SOURCE_DIR}/Foundation/bsfCore)
 		addForGeneration(${BSF_SOURCE_DIR}/Foundation/bsfEngine)
@@ -51,7 +51,7 @@ function(add_generate_script_bindings_target)
 
 		file(WRITE ${PROJECT_BINARY_DIR}/toParse.cpp ${BS_GLOBAL_FILE_CONTENTS})
 
-		set(GenScriptBinding_SBGEN_EXECUTABLE ${BansheeSBGen_EXECUTABLE_PATH})
+		set(GenScriptBinding_SBGEN_EXECUTABLE ${BansheeCodeGenerator_EXECUTABLE_PATH})
 		set(GenScriptBinding_SOURCE_FILE ${PROJECT_BINARY_DIR}/toParse.cpp)
 		set(GenScriptBinding_OUTPUT_CPP_DIR ${BSF_SOURCE_DIR}/Scripting/bsfScript/Generated)
 		set(GenScriptBinding_OUTPUT_CS_DIR ${BSF_SOURCE_DIR}/Scripting/bsfSharp/Generated)

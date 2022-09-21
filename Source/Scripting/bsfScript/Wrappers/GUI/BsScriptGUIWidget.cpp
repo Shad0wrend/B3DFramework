@@ -33,7 +33,7 @@ namespace bs
 	ScriptGUIWidget::~ScriptGUIWidget()
 	{ }
 
-	void ScriptGUIWidget::initRuntimeData()
+	void ScriptGUIWidget::InitRuntimeData()
 	{
 		sGUIPanelField = metaData.scriptClass->GetField("panel");
 

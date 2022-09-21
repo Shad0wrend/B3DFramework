@@ -20,24 +20,24 @@ namespace bs
 
 		ScriptTextureImportOptions(MonoObject* managedInstance, const SPtr<TextureImportOptions>& value);
 
-		static MonoObject* create(const SPtr<TextureImportOptions>& value);
+		static MonoObject* Create(const SPtr<TextureImportOptions>& value);
 
 	private:
-		static PixelFormat Internal_getformat(ScriptTextureImportOptions* thisPtr);
-		static void Internal_setformat(ScriptTextureImportOptions* thisPtr, PixelFormat value);
-		static bool Internal_getgenerateMips(ScriptTextureImportOptions* thisPtr);
-		static void Internal_setgenerateMips(ScriptTextureImportOptions* thisPtr, bool value);
-		static uint32_t Internal_getmaxMip(ScriptTextureImportOptions* thisPtr);
-		static void Internal_setmaxMip(ScriptTextureImportOptions* thisPtr, uint32_t value);
-		static bool Internal_getcpuCached(ScriptTextureImportOptions* thisPtr);
-		static void Internal_setcpuCached(ScriptTextureImportOptions* thisPtr, bool value);
-		static bool Internal_getsRGB(ScriptTextureImportOptions* thisPtr);
-		static void Internal_setsRGB(ScriptTextureImportOptions* thisPtr, bool value);
-		static bool Internal_getcubemap(ScriptTextureImportOptions* thisPtr);
-		static void Internal_setcubemap(ScriptTextureImportOptions* thisPtr, bool value);
-		static CubemapSourceType Internal_getcubemapSourceType(ScriptTextureImportOptions* thisPtr);
-		static void Internal_setcubemapSourceType(ScriptTextureImportOptions* thisPtr, CubemapSourceType value);
-		static void Internal_create(MonoObject* managedInstance);
+		static PixelFormat InternalGetformat(ScriptTextureImportOptions* thisPtr);
+		static void InternalSetformat(ScriptTextureImportOptions* thisPtr, PixelFormat value);
+		static bool InternalGetgenerateMips(ScriptTextureImportOptions* thisPtr);
+		static void InternalSetgenerateMips(ScriptTextureImportOptions* thisPtr, bool value);
+		static uint32_t InternalGetmaxMip(ScriptTextureImportOptions* thisPtr);
+		static void InternalSetmaxMip(ScriptTextureImportOptions* thisPtr, uint32_t value);
+		static bool InternalGetcpuCached(ScriptTextureImportOptions* thisPtr);
+		static void InternalSetcpuCached(ScriptTextureImportOptions* thisPtr, bool value);
+		static bool InternalGetsRGB(ScriptTextureImportOptions* thisPtr);
+		static void InternalSetsRGB(ScriptTextureImportOptions* thisPtr, bool value);
+		static bool InternalGetcubemap(ScriptTextureImportOptions* thisPtr);
+		static void InternalSetcubemap(ScriptTextureImportOptions* thisPtr, bool value);
+		static CubemapSourceType InternalGetcubemapSourceType(ScriptTextureImportOptions* thisPtr);
+		static void InternalSetcubemapSourceType(ScriptTextureImportOptions* thisPtr, CubemapSourceType value);
+		static void InternalCreate(MonoObject* managedInstance);
 	};
 #endif
 }

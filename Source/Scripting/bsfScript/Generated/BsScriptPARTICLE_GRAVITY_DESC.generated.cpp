@@ -11,7 +11,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptPARTICLE_GRAVITY_DESC::initRuntimeData()
+	void ScriptPARTICLE_GRAVITY_DESC::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptPARTICLE_GRAVITY_DESC::Box(const PARTICLE_GRAVITY_DESC& value)

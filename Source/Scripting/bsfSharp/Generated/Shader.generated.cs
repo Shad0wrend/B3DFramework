@@ -33,14 +33,14 @@ namespace bs
 		[NativeWrapper]
 		public ShaderVariationParamInfo[] VariationParams
 		{
-			get { return Internal_getVariationParams(mCachedPtr); }
+			get { return Internal_GetVariationParams(mCachedPtr); }
 		}
 
 		/// <summary>Returns information about all parameters available in the shader.</summary>
 		[NativeWrapper]
 		public ShaderParameter[] Parameters
 		{
-			get { return Internal_getParameters(mCachedPtr); }
+			get { return Internal_GetParameters(mCachedPtr); }
 		}
 
 		/// <summary>Returns a reference wrapper for this resource.</summary>
@@ -55,9 +55,9 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern RRef<Shader> Internal_GetRef(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ShaderVariationParamInfo[] Internal_getVariationParams(IntPtr thisPtr);
+		private static extern ShaderVariationParamInfo[] Internal_GetVariationParams(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ShaderParameter[] Internal_getParameters(IntPtr thisPtr);
+		private static extern ShaderParameter[] Internal_GetParameters(IntPtr thisPtr);
 	}
 
 	/** @} */

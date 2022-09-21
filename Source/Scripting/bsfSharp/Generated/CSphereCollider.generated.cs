@@ -17,13 +17,12 @@ namespace bs
 		private SphereCollider(bool __dummy0) { }
 		protected SphereCollider() { }
 
-		/// <summary>Determines the radius of the sphere geometry.</summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public float Radius
 		{
-			get { return Internal_getRadius(mCachedPtr); }
-			set { Internal_setRadius(mCachedPtr, value); }
+			get { return Internal_GetRadius(mCachedPtr); }
+			set { Internal_SetRadius(mCachedPtr, value); }
 		}
 
 		/// <summary>Determines position of the sphere shape, relative to the component&apos;s scene object.</summary>
@@ -34,20 +33,20 @@ namespace bs
 			get
 			{
 				Vector3 temp;
-				Internal_getCenter(mCachedPtr, out temp);
+				Internal_GetCenter(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setCenter(mCachedPtr, ref value); }
+			set { Internal_SetCenter(mCachedPtr, ref value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setRadius(IntPtr thisPtr, float radius);
+		private static extern void Internal_SetRadius(IntPtr thisPtr, float radius);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getRadius(IntPtr thisPtr);
+		private static extern float Internal_GetRadius(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setCenter(IntPtr thisPtr, ref Vector3 center);
+		private static extern void Internal_SetCenter(IntPtr thisPtr, ref Vector3 center);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getCenter(IntPtr thisPtr, out Vector3 __output);
+		private static extern void Internal_GetCenter(IntPtr thisPtr, out Vector3 __output);
 	}
 
 	/** @} */

@@ -52,7 +52,7 @@ namespace bs
 		[NativeWrapper]
 		public PropertyDistributionType DistributionType
 		{
-			get { return Internal_getType(mCachedPtr); }
+			get { return Internal_GetType(mCachedPtr); }
 		}
 
 		/// <summary>
@@ -62,7 +62,7 @@ namespace bs
 		public Color GetMinConstant()
 		{
 			Color temp;
-			Internal_getMinConstant(mCachedPtr, out temp);
+			Internal_GetMinConstant(mCachedPtr, out temp);
 			return temp;
 		}
 
@@ -72,7 +72,7 @@ namespace bs
 		public Color GetMaxConstant()
 		{
 			Color temp;
-			Internal_getMaxConstant(mCachedPtr, out temp);
+			Internal_GetMaxConstant(mCachedPtr, out temp);
 			return temp;
 		}
 
@@ -82,7 +82,7 @@ namespace bs
 		/// </summary>
 		public ColorGradient GetMinGradient()
 		{
-			return Internal_getMinGradient(mCachedPtr);
+			return Internal_GetMinGradient(mCachedPtr);
 		}
 
 		/// <summary>
@@ -91,7 +91,7 @@ namespace bs
 		/// </summary>
 		public ColorGradient GetMaxGradient()
 		{
-			return Internal_getMaxGradient(mCachedPtr);
+			return Internal_GetMaxGradient(mCachedPtr);
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
@@ -105,15 +105,15 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_TColorDistribution3(ColorDistribution managedInstance, ColorGradient minGradient, ColorGradient maxGradient);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern PropertyDistributionType Internal_getType(IntPtr thisPtr);
+		private static extern PropertyDistributionType Internal_GetType(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getMinConstant(IntPtr thisPtr, out Color __output);
+		private static extern void Internal_GetMinConstant(IntPtr thisPtr, out Color __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getMaxConstant(IntPtr thisPtr, out Color __output);
+		private static extern void Internal_GetMaxConstant(IntPtr thisPtr, out Color __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ColorGradient Internal_getMinGradient(IntPtr thisPtr);
+		private static extern ColorGradient Internal_GetMinGradient(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ColorGradient Internal_getMaxGradient(IntPtr thisPtr);
+		private static extern ColorGradient Internal_GetMaxGradient(IntPtr thisPtr);
 	}
 
 	/** @} */
@@ -164,7 +164,7 @@ namespace bs
 		[NativeWrapper]
 		public PropertyDistributionType DistributionType
 		{
-			get { return Internal_getType(mCachedPtr); }
+			get { return Internal_GetType(mCachedPtr); }
 		}
 
 		/// <summary>
@@ -174,7 +174,7 @@ namespace bs
 		public Color GetMinConstant()
 		{
 			Color temp;
-			Internal_getMinConstant(mCachedPtr, out temp);
+			Internal_GetMinConstant(mCachedPtr, out temp);
 			return temp;
 		}
 
@@ -184,7 +184,7 @@ namespace bs
 		public Color GetMaxConstant()
 		{
 			Color temp;
-			Internal_getMaxConstant(mCachedPtr, out temp);
+			Internal_GetMaxConstant(mCachedPtr, out temp);
 			return temp;
 		}
 
@@ -194,7 +194,7 @@ namespace bs
 		/// </summary>
 		public ColorGradientHDR GetMinGradient()
 		{
-			return Internal_getMinGradient(mCachedPtr);
+			return Internal_GetMinGradient(mCachedPtr);
 		}
 
 		/// <summary>
@@ -203,7 +203,7 @@ namespace bs
 		/// </summary>
 		public ColorGradientHDR GetMaxGradient()
 		{
-			return Internal_getMaxGradient(mCachedPtr);
+			return Internal_GetMaxGradient(mCachedPtr);
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
@@ -217,15 +217,15 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_TColorDistribution3(ColorHDRDistribution managedInstance, ColorGradientHDR minGradient, ColorGradientHDR maxGradient);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern PropertyDistributionType Internal_getType(IntPtr thisPtr);
+		private static extern PropertyDistributionType Internal_GetType(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getMinConstant(IntPtr thisPtr, out Color __output);
+		private static extern void Internal_GetMinConstant(IntPtr thisPtr, out Color __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getMaxConstant(IntPtr thisPtr, out Color __output);
+		private static extern void Internal_GetMaxConstant(IntPtr thisPtr, out Color __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ColorGradientHDR Internal_getMinGradient(IntPtr thisPtr);
+		private static extern ColorGradientHDR Internal_GetMinGradient(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ColorGradientHDR Internal_getMaxGradient(IntPtr thisPtr);
+		private static extern ColorGradientHDR Internal_GetMaxGradient(IntPtr thisPtr);
 	}
 
 	/** @} */

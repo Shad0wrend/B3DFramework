@@ -17,38 +17,30 @@ namespace bs
 		private Skybox(bool __dummy0) { }
 		protected Skybox() { }
 
-		/// <summary>
-		/// Determines an environment map to use for sampling skybox radiance. Must be a cube-map texture, and should ideally 
-		/// contain HDR data.
-		/// </summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public RRef<Texture> Texture
 		{
-			get { return Internal_getTexture(mCachedPtr); }
-			set { Internal_setTexture(mCachedPtr, value); }
+			get { return Internal_GetTexture(mCachedPtr); }
+			set { Internal_SetTexture(mCachedPtr, value); }
 		}
 
-		/// <summary>
-		/// Brightness multiplier that will be applied to skybox values before they&apos;re being used. Allows you to make the 
-		/// skybox more or less bright. Equal to one by default.
-		/// </summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public float Brightness
 		{
-			get { return Internal_getBrightness(mCachedPtr); }
-			set { Internal_setBrightness(mCachedPtr, value); }
+			get { return Internal_GetBrightness(mCachedPtr); }
+			set { Internal_SetBrightness(mCachedPtr, value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern RRef<Texture> Internal_getTexture(IntPtr thisPtr);
+		private static extern RRef<Texture> Internal_GetTexture(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setTexture(IntPtr thisPtr, RRef<Texture> texture);
+		private static extern void Internal_SetTexture(IntPtr thisPtr, RRef<Texture> texture);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setBrightness(IntPtr thisPtr, float brightness);
+		private static extern void Internal_SetBrightness(IntPtr thisPtr, float brightness);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getBrightness(IntPtr thisPtr);
+		private static extern float Internal_GetBrightness(IntPtr thisPtr);
 	}
 
 	/** @} */

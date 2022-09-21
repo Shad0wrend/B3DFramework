@@ -21,34 +21,34 @@ namespace bs
 
 		ScriptMeshImportOptions(MonoObject* managedInstance, const SPtr<MeshImportOptions>& value);
 
-		static MonoObject* create(const SPtr<MeshImportOptions>& value);
+		static MonoObject* Create(const SPtr<MeshImportOptions>& value);
 
 	private:
-		static bool Internal_getcpuCached(ScriptMeshImportOptions* thisPtr);
-		static void Internal_setcpuCached(ScriptMeshImportOptions* thisPtr, bool value);
-		static bool Internal_getimportNormals(ScriptMeshImportOptions* thisPtr);
-		static void Internal_setimportNormals(ScriptMeshImportOptions* thisPtr, bool value);
-		static bool Internal_getimportTangents(ScriptMeshImportOptions* thisPtr);
-		static void Internal_setimportTangents(ScriptMeshImportOptions* thisPtr, bool value);
-		static bool Internal_getimportBlendShapes(ScriptMeshImportOptions* thisPtr);
-		static void Internal_setimportBlendShapes(ScriptMeshImportOptions* thisPtr, bool value);
-		static bool Internal_getimportSkin(ScriptMeshImportOptions* thisPtr);
-		static void Internal_setimportSkin(ScriptMeshImportOptions* thisPtr, bool value);
-		static bool Internal_getimportAnimation(ScriptMeshImportOptions* thisPtr);
-		static void Internal_setimportAnimation(ScriptMeshImportOptions* thisPtr, bool value);
-		static bool Internal_getreduceKeyFrames(ScriptMeshImportOptions* thisPtr);
-		static void Internal_setreduceKeyFrames(ScriptMeshImportOptions* thisPtr, bool value);
-		static bool Internal_getimportRootMotion(ScriptMeshImportOptions* thisPtr);
-		static void Internal_setimportRootMotion(ScriptMeshImportOptions* thisPtr, bool value);
-		static float Internal_getimportScale(ScriptMeshImportOptions* thisPtr);
-		static void Internal_setimportScale(ScriptMeshImportOptions* thisPtr, float value);
-		static CollisionMeshType Internal_getcollisionMeshType(ScriptMeshImportOptions* thisPtr);
-		static void Internal_setcollisionMeshType(ScriptMeshImportOptions* thisPtr, CollisionMeshType value);
-		static MonoArray* Internal_getanimationSplits(ScriptMeshImportOptions* thisPtr);
-		static void Internal_setanimationSplits(ScriptMeshImportOptions* thisPtr, MonoArray* value);
-		static MonoArray* Internal_getanimationEvents(ScriptMeshImportOptions* thisPtr);
-		static void Internal_setanimationEvents(ScriptMeshImportOptions* thisPtr, MonoArray* value);
-		static void Internal_create(MonoObject* managedInstance);
+		static bool InternalGetcpuCached(ScriptMeshImportOptions* thisPtr);
+		static void InternalSetcpuCached(ScriptMeshImportOptions* thisPtr, bool value);
+		static bool InternalGetimportNormals(ScriptMeshImportOptions* thisPtr);
+		static void InternalSetimportNormals(ScriptMeshImportOptions* thisPtr, bool value);
+		static bool InternalGetimportTangents(ScriptMeshImportOptions* thisPtr);
+		static void InternalSetimportTangents(ScriptMeshImportOptions* thisPtr, bool value);
+		static bool InternalGetimportBlendShapes(ScriptMeshImportOptions* thisPtr);
+		static void InternalSetimportBlendShapes(ScriptMeshImportOptions* thisPtr, bool value);
+		static bool InternalGetimportSkin(ScriptMeshImportOptions* thisPtr);
+		static void InternalSetimportSkin(ScriptMeshImportOptions* thisPtr, bool value);
+		static bool InternalGetimportAnimation(ScriptMeshImportOptions* thisPtr);
+		static void InternalSetimportAnimation(ScriptMeshImportOptions* thisPtr, bool value);
+		static bool InternalGetreduceKeyFrames(ScriptMeshImportOptions* thisPtr);
+		static void InternalSetreduceKeyFrames(ScriptMeshImportOptions* thisPtr, bool value);
+		static bool InternalGetimportRootMotion(ScriptMeshImportOptions* thisPtr);
+		static void InternalSetimportRootMotion(ScriptMeshImportOptions* thisPtr, bool value);
+		static float InternalGetimportScale(ScriptMeshImportOptions* thisPtr);
+		static void InternalSetimportScale(ScriptMeshImportOptions* thisPtr, float value);
+		static CollisionMeshType InternalGetcollisionMeshType(ScriptMeshImportOptions* thisPtr);
+		static void InternalSetcollisionMeshType(ScriptMeshImportOptions* thisPtr, CollisionMeshType value);
+		static MonoArray* InternalGetanimationSplits(ScriptMeshImportOptions* thisPtr);
+		static void InternalSetanimationSplits(ScriptMeshImportOptions* thisPtr, MonoArray* value);
+		static MonoArray* InternalGetanimationEvents(ScriptMeshImportOptions* thisPtr);
+		static void InternalSetanimationEvents(ScriptMeshImportOptions* thisPtr, MonoArray* value);
+		static void InternalCreate(MonoObject* managedInstance);
 	};
 #endif
 }

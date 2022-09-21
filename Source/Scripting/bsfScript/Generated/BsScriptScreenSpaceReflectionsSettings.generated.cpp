@@ -12,17 +12,17 @@ namespace bs
 	{
 	}
 
-	void ScriptScreenSpaceReflectionsSettings::initRuntimeData()
+	void ScriptScreenSpaceReflectionsSettings::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_ScreenSpaceReflectionsSettings", (void*)&ScriptScreenSpaceReflectionsSettings::InternalScreenSpaceReflectionsSettings);
-		metaData.scriptClass->AddInternalCall("Internal_getenabled", (void*)&ScriptScreenSpaceReflectionsSettings::InternalGetenabled);
-		metaData.scriptClass->AddInternalCall("Internal_setenabled", (void*)&ScriptScreenSpaceReflectionsSettings::InternalSetenabled);
-		metaData.scriptClass->AddInternalCall("Internal_getquality", (void*)&ScriptScreenSpaceReflectionsSettings::InternalGetquality);
-		metaData.scriptClass->AddInternalCall("Internal_setquality", (void*)&ScriptScreenSpaceReflectionsSettings::InternalSetquality);
-		metaData.scriptClass->AddInternalCall("Internal_getintensity", (void*)&ScriptScreenSpaceReflectionsSettings::InternalGetintensity);
-		metaData.scriptClass->AddInternalCall("Internal_setintensity", (void*)&ScriptScreenSpaceReflectionsSettings::InternalSetintensity);
-		metaData.scriptClass->AddInternalCall("Internal_getmaxRoughness", (void*)&ScriptScreenSpaceReflectionsSettings::InternalGetmaxRoughness);
-		metaData.scriptClass->AddInternalCall("Internal_setmaxRoughness", (void*)&ScriptScreenSpaceReflectionsSettings::InternalSetmaxRoughness);
+		metaData.scriptClass->AddInternalCall("Internal_Getenabled", (void*)&ScriptScreenSpaceReflectionsSettings::InternalGetenabled);
+		metaData.scriptClass->AddInternalCall("Internal_Setenabled", (void*)&ScriptScreenSpaceReflectionsSettings::InternalSetenabled);
+		metaData.scriptClass->AddInternalCall("Internal_Getquality", (void*)&ScriptScreenSpaceReflectionsSettings::InternalGetquality);
+		metaData.scriptClass->AddInternalCall("Internal_Setquality", (void*)&ScriptScreenSpaceReflectionsSettings::InternalSetquality);
+		metaData.scriptClass->AddInternalCall("Internal_Getintensity", (void*)&ScriptScreenSpaceReflectionsSettings::InternalGetintensity);
+		metaData.scriptClass->AddInternalCall("Internal_Setintensity", (void*)&ScriptScreenSpaceReflectionsSettings::InternalSetintensity);
+		metaData.scriptClass->AddInternalCall("Internal_GetmaxRoughness", (void*)&ScriptScreenSpaceReflectionsSettings::InternalGetmaxRoughness);
+		metaData.scriptClass->AddInternalCall("Internal_SetmaxRoughness", (void*)&ScriptScreenSpaceReflectionsSettings::InternalSetmaxRoughness);
 
 	}
 
@@ -33,7 +33,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptScreenSpaceReflectionsSettings>()) ScriptScreenSpaceReflectionsSettings(managedInstance, value);
 		return managedInstance;
 	}

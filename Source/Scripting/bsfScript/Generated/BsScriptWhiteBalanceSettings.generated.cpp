@@ -12,13 +12,13 @@ namespace bs
 	{
 	}
 
-	void ScriptWhiteBalanceSettings::initRuntimeData()
+	void ScriptWhiteBalanceSettings::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_WhiteBalanceSettings", (void*)&ScriptWhiteBalanceSettings::InternalWhiteBalanceSettings);
-		metaData.scriptClass->AddInternalCall("Internal_gettemperature", (void*)&ScriptWhiteBalanceSettings::InternalGettemperature);
-		metaData.scriptClass->AddInternalCall("Internal_settemperature", (void*)&ScriptWhiteBalanceSettings::InternalSettemperature);
-		metaData.scriptClass->AddInternalCall("Internal_gettint", (void*)&ScriptWhiteBalanceSettings::InternalGettint);
-		metaData.scriptClass->AddInternalCall("Internal_settint", (void*)&ScriptWhiteBalanceSettings::InternalSettint);
+		metaData.scriptClass->AddInternalCall("Internal_Gettemperature", (void*)&ScriptWhiteBalanceSettings::InternalGettemperature);
+		metaData.scriptClass->AddInternalCall("Internal_Settemperature", (void*)&ScriptWhiteBalanceSettings::InternalSettemperature);
+		metaData.scriptClass->AddInternalCall("Internal_Gettint", (void*)&ScriptWhiteBalanceSettings::InternalGettint);
+		metaData.scriptClass->AddInternalCall("Internal_Settint", (void*)&ScriptWhiteBalanceSettings::InternalSettint);
 
 	}
 

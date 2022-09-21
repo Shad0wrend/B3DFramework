@@ -16,10 +16,6 @@ namespace bs
 	/// </summary>
 	public enum TangentMode
 	{
-		/// <summary>
-		/// Tangent is infinite, ensuring there is a instantaneus jump between current and next keyframe value.
-		/// </summary>
-		OutStep = 514,
 		/// <summary>Both tangents are calculated automatically based on the two surrounding keyframes.</summary>
 		Auto = 0,
 		/// <summary>Left tangent is calculated automatically based on the two surrounding keyframes.</summary>
@@ -38,6 +34,10 @@ namespace bs
 		OutFree = 130,
 		/// <summary>Right tangents are calculated automatically based on the two surrounding keyframes.</summary>
 		OutAuto = 66,
+		/// <summary>
+		/// Tangent is infinite, ensuring there is a instantaneus jump between current and next keyframe value.
+		/// </summary>
+		OutStep = 514,
 		/// <summary>Both tangents are manually adjusted by the user.</summary>
 		Free = 1024
 	}

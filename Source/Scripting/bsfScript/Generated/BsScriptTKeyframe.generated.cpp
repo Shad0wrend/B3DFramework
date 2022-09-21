@@ -17,7 +17,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptTKeyframeint32_t::initRuntimeData()
+	void ScriptTKeyframeint32_t::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptTKeyframeint32_t::Box(const TKeyframe<int32_t>& value)
@@ -35,7 +35,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptTKeyframefloat::initRuntimeData()
+	void ScriptTKeyframefloat::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptTKeyframefloat::Box(const TKeyframe<float>& value)
@@ -53,7 +53,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptTKeyframeVector3::initRuntimeData()
+	void ScriptTKeyframeVector3::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptTKeyframeVector3::Box(const __TKeyframeVector3Interop& value)
@@ -93,7 +93,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptTKeyframeVector2::initRuntimeData()
+	void ScriptTKeyframeVector2::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptTKeyframeVector2::Box(const __TKeyframeVector2Interop& value)
@@ -133,7 +133,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptTKeyframeQuaternion::initRuntimeData()
+	void ScriptTKeyframeQuaternion::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptTKeyframeQuaternion::Box(const __TKeyframeQuaternionInterop& value)

@@ -13,7 +13,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptPARTICLE_CONE_SHAPE_DESC::initRuntimeData()
+	void ScriptPARTICLE_CONE_SHAPE_DESC::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptPARTICLE_CONE_SHAPE_DESC::Box(const __PARTICLE_CONE_SHAPE_DESCInterop& value)

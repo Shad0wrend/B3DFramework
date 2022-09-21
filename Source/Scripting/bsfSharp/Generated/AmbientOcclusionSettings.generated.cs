@@ -26,8 +26,8 @@ namespace bs
 		[NativeWrapper]
 		public bool Enabled
 		{
-			get { return Internal_getenabled(mCachedPtr); }
-			set { Internal_setenabled(mCachedPtr, value); }
+			get { return Internal_Getenabled(mCachedPtr); }
+			set { Internal_Setenabled(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -41,8 +41,8 @@ namespace bs
 		[NativeWrapper]
 		public float Radius
 		{
-			get { return Internal_getradius(mCachedPtr); }
-			set { Internal_setradius(mCachedPtr, value); }
+			get { return Internal_Getradius(mCachedPtr); }
+			set { Internal_Setradius(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -55,8 +55,8 @@ namespace bs
 		[NativeWrapper]
 		public float Bias
 		{
-			get { return Internal_getbias(mCachedPtr); }
-			set { Internal_setbias(mCachedPtr, value); }
+			get { return Internal_Getbias(mCachedPtr); }
+			set { Internal_Setbias(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -67,8 +67,8 @@ namespace bs
 		[NativeWrapper]
 		public float FadeDistance
 		{
-			get { return Internal_getfadeDistance(mCachedPtr); }
-			set { Internal_setfadeDistance(mCachedPtr, value); }
+			get { return Internal_GetfadeDistance(mCachedPtr); }
+			set { Internal_SetfadeDistance(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -79,8 +79,8 @@ namespace bs
 		[NativeWrapper]
 		public float FadeRange
 		{
-			get { return Internal_getfadeRange(mCachedPtr); }
-			set { Internal_setfadeRange(mCachedPtr, value); }
+			get { return Internal_GetfadeRange(mCachedPtr); }
+			set { Internal_SetfadeRange(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -92,8 +92,8 @@ namespace bs
 		[NativeWrapper]
 		public float Intensity
 		{
-			get { return Internal_getintensity(mCachedPtr); }
-			set { Internal_setintensity(mCachedPtr, value); }
+			get { return Internal_Getintensity(mCachedPtr); }
+			set { Internal_Setintensity(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -106,8 +106,8 @@ namespace bs
 		[NativeWrapper]
 		public float Power
 		{
-			get { return Internal_getpower(mCachedPtr); }
-			set { Internal_setpower(mCachedPtr, value); }
+			get { return Internal_Getpower(mCachedPtr); }
+			set { Internal_Setpower(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -119,44 +119,44 @@ namespace bs
 		[NativeWrapper]
 		public int Quality
 		{
-			get { return Internal_getquality(mCachedPtr); }
-			set { Internal_setquality(mCachedPtr, value); }
+			get { return Internal_Getquality(mCachedPtr); }
+			set { Internal_Setquality(mCachedPtr, value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_AmbientOcclusionSettings(AmbientOcclusionSettings managedInstance);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_getenabled(IntPtr thisPtr);
+		private static extern bool Internal_Getenabled(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setenabled(IntPtr thisPtr, bool value);
+		private static extern void Internal_Setenabled(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getradius(IntPtr thisPtr);
+		private static extern float Internal_Getradius(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setradius(IntPtr thisPtr, float value);
+		private static extern void Internal_Setradius(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getbias(IntPtr thisPtr);
+		private static extern float Internal_Getbias(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setbias(IntPtr thisPtr, float value);
+		private static extern void Internal_Setbias(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getfadeDistance(IntPtr thisPtr);
+		private static extern float Internal_GetfadeDistance(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setfadeDistance(IntPtr thisPtr, float value);
+		private static extern void Internal_SetfadeDistance(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getfadeRange(IntPtr thisPtr);
+		private static extern float Internal_GetfadeRange(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setfadeRange(IntPtr thisPtr, float value);
+		private static extern void Internal_SetfadeRange(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getintensity(IntPtr thisPtr);
+		private static extern float Internal_Getintensity(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setintensity(IntPtr thisPtr, float value);
+		private static extern void Internal_Setintensity(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getpower(IntPtr thisPtr);
+		private static extern float Internal_Getpower(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setpower(IntPtr thisPtr, float value);
+		private static extern void Internal_Setpower(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getquality(IntPtr thisPtr);
+		private static extern int Internal_Getquality(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setquality(IntPtr thisPtr, int value);
+		private static extern void Internal_Setquality(IntPtr thisPtr, int value);
 	}
 
 	/** @} */

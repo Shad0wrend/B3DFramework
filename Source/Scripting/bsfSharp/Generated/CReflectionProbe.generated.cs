@@ -20,25 +20,22 @@ namespace bs
 		private ReflectionProbe(bool __dummy0) { }
 		protected ReflectionProbe() { }
 
-		/// <summary>Changes the type of the probe.</summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public ReflectionProbeType Type
 		{
-			get { return Internal_getType(mCachedPtr); }
-			set { Internal_setType(mCachedPtr, value); }
+			get { return Internal_GetType(mCachedPtr); }
+			set { Internal_SetType(mCachedPtr, value); }
 		}
 
-		/// <summary>Sets the radius of a sphere reflection probe.</summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public float Radius
 		{
-			get { return Internal_getRadius(mCachedPtr); }
-			set { Internal_setRadius(mCachedPtr, value); }
+			get { return Internal_GetRadius(mCachedPtr); }
+			set { Internal_SetRadius(mCachedPtr, value); }
 		}
 
-		/// <summary>Sets the extents of a box reflection probe. Determines range of influence.</summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public Vector3 Extents
@@ -46,51 +43,43 @@ namespace bs
 			get
 			{
 				Vector3 temp;
-				Internal_getExtents(mCachedPtr, out temp);
+				Internal_GetExtents(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setExtents(mCachedPtr, ref value); }
+			set { Internal_SetExtents(mCachedPtr, ref value); }
 		}
 
-		/// <summary>
-		/// Allows you assign a custom texture to use as a reflection map. This will disable automatic generation of reflections. 
-		/// To re-enable auto-generation call this with a null parameter.
-		/// </summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public RRef<Texture> CustomTexture
 		{
-			get { return Internal_getCustomTexture(mCachedPtr); }
-			set { Internal_setCustomTexture(mCachedPtr, value); }
+			get { return Internal_GetCustomTexture(mCachedPtr); }
+			set { Internal_SetCustomTexture(mCachedPtr, value); }
 		}
 
-		/// <summary>
-		/// Captures the scene at the current location and generates a filtered reflection cubemap. No action is taken if a 
-		/// custom texture is set.
-		/// </summary>
 		public void Capture()
 		{
-			Internal_capture(mCachedPtr);
+			Internal_Capture(mCachedPtr);
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ReflectionProbeType Internal_getType(IntPtr thisPtr);
+		private static extern ReflectionProbeType Internal_GetType(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setType(IntPtr thisPtr, ReflectionProbeType type);
+		private static extern void Internal_SetType(IntPtr thisPtr, ReflectionProbeType type);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getRadius(IntPtr thisPtr);
+		private static extern float Internal_GetRadius(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setRadius(IntPtr thisPtr, float radius);
+		private static extern void Internal_SetRadius(IntPtr thisPtr, float radius);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getExtents(IntPtr thisPtr, out Vector3 __output);
+		private static extern void Internal_GetExtents(IntPtr thisPtr, out Vector3 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setExtents(IntPtr thisPtr, ref Vector3 extents);
+		private static extern void Internal_SetExtents(IntPtr thisPtr, ref Vector3 extents);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern RRef<Texture> Internal_getCustomTexture(IntPtr thisPtr);
+		private static extern RRef<Texture> Internal_GetCustomTexture(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setCustomTexture(IntPtr thisPtr, RRef<Texture> texture);
+		private static extern void Internal_SetCustomTexture(IntPtr thisPtr, RRef<Texture> texture);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_capture(IntPtr thisPtr);
+		private static extern void Internal_Capture(IntPtr thisPtr);
 	}
 
 	/** @} */

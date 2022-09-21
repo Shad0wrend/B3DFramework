@@ -12,25 +12,25 @@ namespace bs
 	{
 	}
 
-	void ScriptAutoExposureSettings::initRuntimeData()
+	void ScriptAutoExposureSettings::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_AutoExposureSettings", (void*)&ScriptAutoExposureSettings::InternalAutoExposureSettings);
-		metaData.scriptClass->AddInternalCall("Internal_gethistogramLog2Min", (void*)&ScriptAutoExposureSettings::InternalGethistogramLog2Min);
-		metaData.scriptClass->AddInternalCall("Internal_sethistogramLog2Min", (void*)&ScriptAutoExposureSettings::InternalSethistogramLog2Min);
-		metaData.scriptClass->AddInternalCall("Internal_gethistogramLog2Max", (void*)&ScriptAutoExposureSettings::InternalGethistogramLog2Max);
-		metaData.scriptClass->AddInternalCall("Internal_sethistogramLog2Max", (void*)&ScriptAutoExposureSettings::InternalSethistogramLog2Max);
-		metaData.scriptClass->AddInternalCall("Internal_gethistogramPctLow", (void*)&ScriptAutoExposureSettings::InternalGethistogramPctLow);
-		metaData.scriptClass->AddInternalCall("Internal_sethistogramPctLow", (void*)&ScriptAutoExposureSettings::InternalSethistogramPctLow);
-		metaData.scriptClass->AddInternalCall("Internal_gethistogramPctHigh", (void*)&ScriptAutoExposureSettings::InternalGethistogramPctHigh);
-		metaData.scriptClass->AddInternalCall("Internal_sethistogramPctHigh", (void*)&ScriptAutoExposureSettings::InternalSethistogramPctHigh);
-		metaData.scriptClass->AddInternalCall("Internal_getminEyeAdaptation", (void*)&ScriptAutoExposureSettings::InternalGetminEyeAdaptation);
-		metaData.scriptClass->AddInternalCall("Internal_setminEyeAdaptation", (void*)&ScriptAutoExposureSettings::InternalSetminEyeAdaptation);
-		metaData.scriptClass->AddInternalCall("Internal_getmaxEyeAdaptation", (void*)&ScriptAutoExposureSettings::InternalGetmaxEyeAdaptation);
-		metaData.scriptClass->AddInternalCall("Internal_setmaxEyeAdaptation", (void*)&ScriptAutoExposureSettings::InternalSetmaxEyeAdaptation);
-		metaData.scriptClass->AddInternalCall("Internal_geteyeAdaptationSpeedUp", (void*)&ScriptAutoExposureSettings::InternalGeteyeAdaptationSpeedUp);
-		metaData.scriptClass->AddInternalCall("Internal_seteyeAdaptationSpeedUp", (void*)&ScriptAutoExposureSettings::InternalSeteyeAdaptationSpeedUp);
-		metaData.scriptClass->AddInternalCall("Internal_geteyeAdaptationSpeedDown", (void*)&ScriptAutoExposureSettings::InternalGeteyeAdaptationSpeedDown);
-		metaData.scriptClass->AddInternalCall("Internal_seteyeAdaptationSpeedDown", (void*)&ScriptAutoExposureSettings::InternalSeteyeAdaptationSpeedDown);
+		metaData.scriptClass->AddInternalCall("Internal_GethistogramLog2Min", (void*)&ScriptAutoExposureSettings::InternalGethistogramLog2Min);
+		metaData.scriptClass->AddInternalCall("Internal_SethistogramLog2Min", (void*)&ScriptAutoExposureSettings::InternalSethistogramLog2Min);
+		metaData.scriptClass->AddInternalCall("Internal_GethistogramLog2Max", (void*)&ScriptAutoExposureSettings::InternalGethistogramLog2Max);
+		metaData.scriptClass->AddInternalCall("Internal_SethistogramLog2Max", (void*)&ScriptAutoExposureSettings::InternalSethistogramLog2Max);
+		metaData.scriptClass->AddInternalCall("Internal_GethistogramPctLow", (void*)&ScriptAutoExposureSettings::InternalGethistogramPctLow);
+		metaData.scriptClass->AddInternalCall("Internal_SethistogramPctLow", (void*)&ScriptAutoExposureSettings::InternalSethistogramPctLow);
+		metaData.scriptClass->AddInternalCall("Internal_GethistogramPctHigh", (void*)&ScriptAutoExposureSettings::InternalGethistogramPctHigh);
+		metaData.scriptClass->AddInternalCall("Internal_SethistogramPctHigh", (void*)&ScriptAutoExposureSettings::InternalSethistogramPctHigh);
+		metaData.scriptClass->AddInternalCall("Internal_GetminEyeAdaptation", (void*)&ScriptAutoExposureSettings::InternalGetminEyeAdaptation);
+		metaData.scriptClass->AddInternalCall("Internal_SetminEyeAdaptation", (void*)&ScriptAutoExposureSettings::InternalSetminEyeAdaptation);
+		metaData.scriptClass->AddInternalCall("Internal_GetmaxEyeAdaptation", (void*)&ScriptAutoExposureSettings::InternalGetmaxEyeAdaptation);
+		metaData.scriptClass->AddInternalCall("Internal_SetmaxEyeAdaptation", (void*)&ScriptAutoExposureSettings::InternalSetmaxEyeAdaptation);
+		metaData.scriptClass->AddInternalCall("Internal_GeteyeAdaptationSpeedUp", (void*)&ScriptAutoExposureSettings::InternalGeteyeAdaptationSpeedUp);
+		metaData.scriptClass->AddInternalCall("Internal_SeteyeAdaptationSpeedUp", (void*)&ScriptAutoExposureSettings::InternalSeteyeAdaptationSpeedUp);
+		metaData.scriptClass->AddInternalCall("Internal_GeteyeAdaptationSpeedDown", (void*)&ScriptAutoExposureSettings::InternalGeteyeAdaptationSpeedDown);
+		metaData.scriptClass->AddInternalCall("Internal_SeteyeAdaptationSpeedDown", (void*)&ScriptAutoExposureSettings::InternalSeteyeAdaptationSpeedDown);
 
 	}
 
@@ -41,7 +41,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptAutoExposureSettings>()) ScriptAutoExposureSettings(managedInstance, value);
 		return managedInstance;
 	}

@@ -20,18 +20,18 @@ namespace bs
 
 		ScriptAudioClipImportOptions(MonoObject* managedInstance, const SPtr<AudioClipImportOptions>& value);
 
-		static MonoObject* create(const SPtr<AudioClipImportOptions>& value);
+		static MonoObject* Create(const SPtr<AudioClipImportOptions>& value);
 
 	private:
-		static AudioFormat Internal_getformat(ScriptAudioClipImportOptions* thisPtr);
-		static void Internal_setformat(ScriptAudioClipImportOptions* thisPtr, AudioFormat value);
-		static AudioReadMode Internal_getreadMode(ScriptAudioClipImportOptions* thisPtr);
-		static void Internal_setreadMode(ScriptAudioClipImportOptions* thisPtr, AudioReadMode value);
-		static bool Internal_getis3D(ScriptAudioClipImportOptions* thisPtr);
-		static void Internal_setis3D(ScriptAudioClipImportOptions* thisPtr, bool value);
-		static uint32_t Internal_getbitDepth(ScriptAudioClipImportOptions* thisPtr);
-		static void Internal_setbitDepth(ScriptAudioClipImportOptions* thisPtr, uint32_t value);
-		static void Internal_create(MonoObject* managedInstance);
+		static AudioFormat InternalGetformat(ScriptAudioClipImportOptions* thisPtr);
+		static void InternalSetformat(ScriptAudioClipImportOptions* thisPtr, AudioFormat value);
+		static AudioReadMode InternalGetreadMode(ScriptAudioClipImportOptions* thisPtr);
+		static void InternalSetreadMode(ScriptAudioClipImportOptions* thisPtr, AudioReadMode value);
+		static bool InternalGetis3D(ScriptAudioClipImportOptions* thisPtr);
+		static void InternalSetis3D(ScriptAudioClipImportOptions* thisPtr, bool value);
+		static uint32_t InternalGetbitDepth(ScriptAudioClipImportOptions* thisPtr);
+		static void InternalSetbitDepth(ScriptAudioClipImportOptions* thisPtr, uint32_t value);
+		static void InternalCreate(MonoObject* managedInstance);
 	};
 #endif
 }

@@ -18,12 +18,12 @@ namespace bs
 
 		ScriptScriptCodeImportOptions(MonoObject* managedInstance, const SPtr<ScriptCodeImportOptions>& value);
 
-		static MonoObject* create(const SPtr<ScriptCodeImportOptions>& value);
+		static MonoObject* Create(const SPtr<ScriptCodeImportOptions>& value);
 
 	private:
-		static bool Internal_geteditorScript(ScriptScriptCodeImportOptions* thisPtr);
-		static void Internal_seteditorScript(ScriptScriptCodeImportOptions* thisPtr, bool value);
-		static void Internal_create(MonoObject* managedInstance);
+		static bool InternalGeteditorScript(ScriptScriptCodeImportOptions* thisPtr);
+		static void InternalSeteditorScript(ScriptScriptCodeImportOptions* thisPtr, bool value);
+		static void InternalCreate(MonoObject* managedInstance);
 	};
 #endif
 }

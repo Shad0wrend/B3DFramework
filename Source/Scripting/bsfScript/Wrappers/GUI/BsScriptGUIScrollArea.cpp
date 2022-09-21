@@ -22,7 +22,7 @@ namespace bs
 
 	}
 
-	void ScriptGUIScrollArea::initRuntimeData()
+	void ScriptGUIScrollArea::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIScrollArea::InternalCreateInstance);
 		metaData.scriptClass->AddInternalCall("Internal_GetContentBounds", (void*)&ScriptGUIScrollArea::InternalGetContentBounds);

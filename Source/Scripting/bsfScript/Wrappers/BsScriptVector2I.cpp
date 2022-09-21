@@ -11,7 +11,7 @@ namespace bs
 		:ScriptObject(instance)
 	{ }
 
-	void ScriptVector2I::initRuntimeData()
+	void ScriptVector2I::InitRuntimeData()
 	{ }
 
 	MonoObject* ScriptVector2I::Box(const Vector2I& value)

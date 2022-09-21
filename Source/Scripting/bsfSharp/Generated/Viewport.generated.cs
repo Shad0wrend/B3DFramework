@@ -24,7 +24,7 @@ namespace bs
 		/// <summary>Creates a new viewport.</summary>
 		public Viewport(RenderTarget target, float x = 0f, float y = 0f, float width = 1f, float height = 1f)
 		{
-			Internal_create(this, target, x, y, width, height);
+			Internal_Create(this, target, x, y, width, height);
 		}
 
 		/// <summary>Determines the render target the viewport is associated with.</summary>
@@ -32,8 +32,8 @@ namespace bs
 		[NativeWrapper]
 		public RenderTarget Target
 		{
-			get { return Internal_getTarget(mCachedPtr); }
-			set { Internal_setTarget(mCachedPtr, value); }
+			get { return Internal_GetTarget(mCachedPtr); }
+			set { Internal_SetTarget(mCachedPtr, value); }
 		}
 
 		/// <summary>Determines the area that the viewport covers. Coordinates are in normalized [0, 1] range.</summary>
@@ -44,10 +44,10 @@ namespace bs
 			get
 			{
 				Rect2 temp;
-				Internal_getArea(mCachedPtr, out temp);
+				Internal_GetArea(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setArea(mCachedPtr, ref value); }
+			set { Internal_SetArea(mCachedPtr, ref value); }
 		}
 
 		/// <summary>Returns the area of the render target covered by the viewport, in pixels.</summary>
@@ -57,7 +57,7 @@ namespace bs
 			get
 			{
 				Rect2I temp;
-				Internal_getPixelArea(mCachedPtr, out temp);
+				Internal_GetPixelArea(mCachedPtr, out temp);
 				return temp;
 			}
 		}
@@ -69,8 +69,8 @@ namespace bs
 		[NativeWrapper]
 		public ClearFlags ClearFlags
 		{
-			get { return Internal_getClearFlags(mCachedPtr); }
-			set { Internal_setClearFlags(mCachedPtr, value); }
+			get { return Internal_GetClearFlags(mCachedPtr); }
+			set { Internal_SetClearFlags(mCachedPtr, value); }
 		}
 
 		/// <summary>Determines the color to clear the viewport to before rendering, if color clear is enabled.</summary>
@@ -81,10 +81,10 @@ namespace bs
 			get
 			{
 				Color temp;
-				Internal_getClearColorValue(mCachedPtr, out temp);
+				Internal_GetClearColorValue(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setClearColorValue(mCachedPtr, ref value); }
+			set { Internal_SetClearColorValue(mCachedPtr, ref value); }
 		}
 
 		/// <summary>Determines the value to clear the depth buffer to before rendering, if depth clear is enabled.</summary>
@@ -92,8 +92,8 @@ namespace bs
 		[NativeWrapper]
 		public float ClearDepth
 		{
-			get { return Internal_getClearDepthValue(mCachedPtr); }
-			set { Internal_setClearDepthValue(mCachedPtr, value); }
+			get { return Internal_GetClearDepthValue(mCachedPtr); }
+			set { Internal_SetClearDepthValue(mCachedPtr, value); }
 		}
 
 		/// <summary>Determines the value to clear the stencil buffer to before rendering, if stencil clear is enabled.</summary>
@@ -101,38 +101,38 @@ namespace bs
 		[NativeWrapper]
 		public ushort ClearStencil
 		{
-			get { return Internal_getClearStencilValue(mCachedPtr); }
-			set { Internal_setClearStencilValue(mCachedPtr, value); }
+			get { return Internal_GetClearStencilValue(mCachedPtr); }
+			set { Internal_SetClearStencilValue(mCachedPtr, value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setTarget(IntPtr thisPtr, RenderTarget target);
+		private static extern void Internal_SetTarget(IntPtr thisPtr, RenderTarget target);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern RenderTarget Internal_getTarget(IntPtr thisPtr);
+		private static extern RenderTarget Internal_GetTarget(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setArea(IntPtr thisPtr, ref Rect2 area);
+		private static extern void Internal_SetArea(IntPtr thisPtr, ref Rect2 area);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getArea(IntPtr thisPtr, out Rect2 __output);
+		private static extern void Internal_GetArea(IntPtr thisPtr, out Rect2 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getPixelArea(IntPtr thisPtr, out Rect2I __output);
+		private static extern void Internal_GetPixelArea(IntPtr thisPtr, out Rect2I __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setClearFlags(IntPtr thisPtr, ClearFlags flags);
+		private static extern void Internal_SetClearFlags(IntPtr thisPtr, ClearFlags flags);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ClearFlags Internal_getClearFlags(IntPtr thisPtr);
+		private static extern ClearFlags Internal_GetClearFlags(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setClearColorValue(IntPtr thisPtr, ref Color color);
+		private static extern void Internal_SetClearColorValue(IntPtr thisPtr, ref Color color);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getClearColorValue(IntPtr thisPtr, out Color __output);
+		private static extern void Internal_GetClearColorValue(IntPtr thisPtr, out Color __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setClearDepthValue(IntPtr thisPtr, float depth);
+		private static extern void Internal_SetClearDepthValue(IntPtr thisPtr, float depth);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getClearDepthValue(IntPtr thisPtr);
+		private static extern float Internal_GetClearDepthValue(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setClearStencilValue(IntPtr thisPtr, ushort value);
+		private static extern void Internal_SetClearStencilValue(IntPtr thisPtr, ushort value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ushort Internal_getClearStencilValue(IntPtr thisPtr);
+		private static extern ushort Internal_GetClearStencilValue(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create(Viewport managedInstance, RenderTarget target, float x, float y, float width, float height);
+		private static extern void Internal_Create(Viewport managedInstance, RenderTarget target, float x, float y, float width, float height);
 	}
 
 	/** @} */

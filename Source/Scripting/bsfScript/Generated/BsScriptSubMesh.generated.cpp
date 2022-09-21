@@ -11,7 +11,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptSubMesh::initRuntimeData()
+	void ScriptSubMesh::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptSubMesh::Box(const SubMesh& value)

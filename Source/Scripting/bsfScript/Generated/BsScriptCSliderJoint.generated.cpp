@@ -14,14 +14,14 @@ namespace bs
 	{
 	}
 
-	void ScriptCSliderJoint::initRuntimeData()
+	void ScriptCSliderJoint::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_getPosition", (void*)&ScriptCSliderJoint::InternalGetPosition);
-		metaData.scriptClass->AddInternalCall("Internal_getSpeed", (void*)&ScriptCSliderJoint::InternalGetSpeed);
-		metaData.scriptClass->AddInternalCall("Internal_getLimit", (void*)&ScriptCSliderJoint::InternalGetLimit);
-		metaData.scriptClass->AddInternalCall("Internal_setLimit", (void*)&ScriptCSliderJoint::InternalSetLimit);
-		metaData.scriptClass->AddInternalCall("Internal_setFlag", (void*)&ScriptCSliderJoint::InternalSetFlag);
-		metaData.scriptClass->AddInternalCall("Internal_hasFlag", (void*)&ScriptCSliderJoint::InternalHasFlag);
+		metaData.scriptClass->AddInternalCall("Internal_GetPosition", (void*)&ScriptCSliderJoint::InternalGetPosition);
+		metaData.scriptClass->AddInternalCall("Internal_GetSpeed", (void*)&ScriptCSliderJoint::InternalGetSpeed);
+		metaData.scriptClass->AddInternalCall("Internal_GetLimit", (void*)&ScriptCSliderJoint::InternalGetLimit);
+		metaData.scriptClass->AddInternalCall("Internal_SetLimit", (void*)&ScriptCSliderJoint::InternalSetLimit);
+		metaData.scriptClass->AddInternalCall("Internal_SetFlag", (void*)&ScriptCSliderJoint::InternalSetFlag);
+		metaData.scriptClass->AddInternalCall("Internal_HasFlag", (void*)&ScriptCSliderJoint::InternalHasFlag);
 
 	}
 
@@ -53,14 +53,14 @@ namespace bs
 		tmp__output = thisPtr->GetHandle()->GetLimit();
 
 		__LimitLinearRangeInterop interop__output;
-		interop__output = ScriptLimitLinearRange::toInterop(tmp__output);
-		MonoUtil::valueCopy(__output, &interop__output, ScriptLimitLinearRange::getMetaData()->scriptClass->GetInternalClassInternal());
+		interop__output = ScriptLimitLinearRange::ToInterop(tmp__output);
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptLimitLinearRange::GetMetaData()->scriptClass->GetInternalClassInternal());
 	}
 
 	void ScriptCSliderJoint::InternalSetLimit(ScriptCSliderJoint* thisPtr, __LimitLinearRangeInterop* limit)
 	{
 		LimitLinearRange tmplimit;
-		tmplimit = ScriptLimitLinearRange::fromInterop(*limit);
+		tmplimit = ScriptLimitLinearRange::FromInterop(*limit);
 		thisPtr->GetHandle()->SetLimit(tmplimit);
 	}
 

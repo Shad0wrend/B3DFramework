@@ -48,7 +48,7 @@ namespace bs
 			AABox(const bs::AABox& box)
 			{
 				center = Vector4(box.GetCenter());
-				extents = Vector4(box.getHalfSize());
+				extents = Vector4(box.GetHalfSize());
 			}
 
 			/** Initializes bounds from a Sphere. */
@@ -101,7 +101,7 @@ namespace bs
 			Rect2(const bs::Rect2& rect)
 			{
 				center = Vector4(rect.GetCenter().x, rect.GetCenter().y, 0.0f, 0.0f);
-				extents = Vector4(rect.getHalfSize().x, rect.getHalfSize().y, 0.0f, 0.0f);
+				extents = Vector4(rect.GetHalfSize().x, rect.GetHalfSize().y, 0.0f, 0.0f);
 			}
 
 			/** Initializes bounds from a vector representing the center and equal extents in all directions. */

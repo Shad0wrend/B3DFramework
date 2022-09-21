@@ -7,8 +7,6 @@
 #include "../../../Foundation/bsfCore/Components/BsCParticleSystem.h"
 #include "Reflection/BsRTTIType.h"
 #include "BsScriptParticleSystemSettings.generated.h"
-#include "../../../Foundation/bsfCore/Particles/BsParticleEvolver.h"
-#include "BsScriptParticleOrbit.generated.h"
 #include "BsScriptParticleGpuSimulationSettings.generated.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleEvolver.h"
 #include "BsScriptParticleGravity.generated.h"
@@ -20,6 +18,8 @@
 #include "BsScriptParticleForce.generated.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleEvolver.h"
 #include "BsScriptParticleVelocity.generated.h"
+#include "../../../Foundation/bsfCore/Particles/BsParticleEvolver.h"
+#include "BsScriptParticleOrbit.generated.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleEvolver.h"
 #include "BsScriptParticleColor.generated.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleEvolver.h"
@@ -36,19 +36,19 @@ namespace bs
 	{
 	}
 
-	void ScriptCParticleSystem::initRuntimeData()
+	void ScriptCParticleSystem::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_setSettings", (void*)&ScriptCParticleSystem::InternalSetSettings);
-		metaData.scriptClass->AddInternalCall("Internal_getSettings", (void*)&ScriptCParticleSystem::InternalGetSettings);
-		metaData.scriptClass->AddInternalCall("Internal_setGpuSimulationSettings", (void*)&ScriptCParticleSystem::InternalSetGpuSimulationSettings);
-		metaData.scriptClass->AddInternalCall("Internal_getGpuSimulationSettings", (void*)&ScriptCParticleSystem::InternalGetGpuSimulationSettings);
-		metaData.scriptClass->AddInternalCall("Internal_setEmitters", (void*)&ScriptCParticleSystem::InternalSetEmitters);
-		metaData.scriptClass->AddInternalCall("Internal_getEmitters", (void*)&ScriptCParticleSystem::InternalGetEmitters);
-		metaData.scriptClass->AddInternalCall("Internal_setEvolvers", (void*)&ScriptCParticleSystem::InternalSetEvolvers);
-		metaData.scriptClass->AddInternalCall("Internal_getEvolvers", (void*)&ScriptCParticleSystem::InternalGetEvolvers);
-		metaData.scriptClass->AddInternalCall("Internal_setLayer", (void*)&ScriptCParticleSystem::InternalSetLayer);
-		metaData.scriptClass->AddInternalCall("Internal_getLayer", (void*)&ScriptCParticleSystem::InternalGetLayer);
-		metaData.scriptClass->AddInternalCall("Internal__togglePreviewMode", (void*)&ScriptCParticleSystem::Internal__togglePreviewMode);
+		metaData.scriptClass->AddInternalCall("Internal_SetSettings", (void*)&ScriptCParticleSystem::InternalSetSettings);
+		metaData.scriptClass->AddInternalCall("Internal_GetSettings", (void*)&ScriptCParticleSystem::InternalGetSettings);
+		metaData.scriptClass->AddInternalCall("Internal_SetGpuSimulationSettings", (void*)&ScriptCParticleSystem::InternalSetGpuSimulationSettings);
+		metaData.scriptClass->AddInternalCall("Internal_GetGpuSimulationSettings", (void*)&ScriptCParticleSystem::InternalGetGpuSimulationSettings);
+		metaData.scriptClass->AddInternalCall("Internal_SetEmitters", (void*)&ScriptCParticleSystem::InternalSetEmitters);
+		metaData.scriptClass->AddInternalCall("Internal_GetEmitters", (void*)&ScriptCParticleSystem::InternalGetEmitters);
+		metaData.scriptClass->AddInternalCall("Internal_SetEvolvers", (void*)&ScriptCParticleSystem::InternalSetEvolvers);
+		metaData.scriptClass->AddInternalCall("Internal_GetEvolvers", (void*)&ScriptCParticleSystem::InternalGetEvolvers);
+		metaData.scriptClass->AddInternalCall("Internal_SetLayer", (void*)&ScriptCParticleSystem::InternalSetLayer);
+		metaData.scriptClass->AddInternalCall("Internal_GetLayer", (void*)&ScriptCParticleSystem::InternalGetLayer);
+		metaData.scriptClass->AddInternalCall("Internal_TogglePreviewModeInternal", (void*)&ScriptCParticleSystem::InternalTogglePreviewModeInternal);
 
 	}
 
@@ -56,7 +56,7 @@ namespace bs
 	{
 		SPtr<ParticleSystemSettings> tmpsettings;
 		ScriptParticleSystemSettings* scriptsettings;
-		scriptsettings = ScriptParticleSystemSettings::toNative(settings);
+		scriptsettings = ScriptParticleSystemSettings::ToNative(settings);
 		if(scriptsettings != nullptr)
 			tmpsettings = scriptsettings->GetInternal();
 		thisPtr->GetHandle()->SetSettings(*tmpsettings);
@@ -77,7 +77,7 @@ namespace bs
 	{
 		SPtr<ParticleGpuSimulationSettings> tmpsettings;
 		ScriptParticleGpuSimulationSettings* scriptsettings;
-		scriptsettings = ScriptParticleGpuSimulationSettings::toNative(settings);
+		scriptsettings = ScriptParticleGpuSimulationSettings::ToNative(settings);
 		if(scriptsettings != nullptr)
 			tmpsettings = scriptsettings->GetInternal();
 		thisPtr->GetHandle()->SetGpuSimulationSettings(*tmpsettings);
@@ -100,11 +100,11 @@ namespace bs
 		if(emitters != nullptr)
 		{
 			ScriptArray arrayemitters(emitters);
-			vecemitters.resize(arrayemitters.size());
-			for(int i = 0; i < (int)arrayemitters.size(); i++)
+			vecemitters.resize(arrayemitters.Size());
+			for(int i = 0; i < (int)arrayemitters.Size(); i++)
 			{
 				ScriptParticleEmitter* scriptemitters;
-				scriptemitters = ScriptParticleEmitter::toNative(arrayemitters.get<MonoObject*>(i));
+				scriptemitters = ScriptParticleEmitter::ToNative(arrayemitters.Get<MonoObject*>(i));
 				if(scriptemitters != nullptr)
 				{
 					SPtr<ParticleEmitter> arrayElemPtremitters = scriptemitters->GetInternal();
@@ -122,7 +122,7 @@ namespace bs
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
-		ScriptArray array__output = ScriptArray::create<ScriptParticleEmitter>(arraySize__output);
+		ScriptArray array__output = ScriptArray::Create<ScriptParticleEmitter>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
 			SPtr<ParticleEmitter> arrayElemPtr__output = vec__output[i];
@@ -130,7 +130,7 @@ namespace bs
 			arrayElem__output = ScriptParticleEmitter::Create(arrayElemPtr__output);
 			array__output.Set(i, arrayElem__output);
 		}
-		__output = array__output.getInternal();
+		__output = array__output.GetInternal();
 
 		return __output;
 	}
@@ -141,11 +141,11 @@ namespace bs
 		if(evolvers != nullptr)
 		{
 			ScriptArray arrayevolvers(evolvers);
-			vecevolvers.resize(arrayevolvers.size());
-			for(int i = 0; i < (int)arrayevolvers.size(); i++)
+			vecevolvers.resize(arrayevolvers.Size());
+			for(int i = 0; i < (int)arrayevolvers.Size(); i++)
 			{
 				ScriptParticleEvolverBase* scriptevolvers;
-				scriptevolvers = (ScriptParticleEvolverBase*)ScriptParticleEvolver::toNative(arrayevolvers.get<MonoObject*>(i));
+				scriptevolvers = (ScriptParticleEvolverBase*)ScriptParticleEvolver::ToNative(arrayevolvers.Get<MonoObject*>(i));
 				if(scriptevolvers != nullptr)
 				{
 					SPtr<ParticleEvolver> arrayElemPtrevolvers = scriptevolvers->GetInternal();
@@ -163,7 +163,7 @@ namespace bs
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
-		ScriptArray array__output = ScriptArray::create<ScriptParticleEvolver>(arraySize__output);
+		ScriptArray array__output = ScriptArray::Create<ScriptParticleEvolver>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
 			SPtr<ParticleEvolver> arrayElemPtr__output = vec__output[i];
@@ -195,7 +195,7 @@ namespace bs
 				arrayElem__output = ScriptParticleEvolver::Create(arrayElemPtr__output);
 			array__output.Set(i, arrayElem__output);
 		}
-		__output = array__output.getInternal();
+		__output = array__output.GetInternal();
 
 		return __output;
 	}
@@ -216,7 +216,7 @@ namespace bs
 		return __output;
 	}
 
-	bool ScriptCParticleSystem::InternalTogglePreviewMode(ScriptCParticleSystem* thisPtr, bool enabled)
+	bool ScriptCParticleSystem::InternalTogglePreviewModeInternal(ScriptCParticleSystem* thisPtr, bool enabled)
 	{
 		bool tmp__output;
 		tmp__output = thisPtr->GetHandle()->TogglePreviewModeInternal(enabled);

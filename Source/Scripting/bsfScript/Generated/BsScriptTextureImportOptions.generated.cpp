@@ -15,23 +15,23 @@ namespace bs
 		mInternal = value;
 	}
 
-	void ScriptTextureImportOptions::initRuntimeData()
+	void ScriptTextureImportOptions::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_getformat", (void*)&ScriptTextureImportOptions::InternalGetformat);
-		metaData.scriptClass->AddInternalCall("Internal_setformat", (void*)&ScriptTextureImportOptions::InternalSetformat);
-		metaData.scriptClass->AddInternalCall("Internal_getgenerateMips", (void*)&ScriptTextureImportOptions::InternalGetgenerateMips);
-		metaData.scriptClass->AddInternalCall("Internal_setgenerateMips", (void*)&ScriptTextureImportOptions::InternalSetgenerateMips);
-		metaData.scriptClass->AddInternalCall("Internal_getmaxMip", (void*)&ScriptTextureImportOptions::InternalGetmaxMip);
-		metaData.scriptClass->AddInternalCall("Internal_setmaxMip", (void*)&ScriptTextureImportOptions::InternalSetmaxMip);
-		metaData.scriptClass->AddInternalCall("Internal_getcpuCached", (void*)&ScriptTextureImportOptions::InternalGetcpuCached);
-		metaData.scriptClass->AddInternalCall("Internal_setcpuCached", (void*)&ScriptTextureImportOptions::InternalSetcpuCached);
-		metaData.scriptClass->AddInternalCall("Internal_getsRGB", (void*)&ScriptTextureImportOptions::InternalGetsRGB);
-		metaData.scriptClass->AddInternalCall("Internal_setsRGB", (void*)&ScriptTextureImportOptions::InternalSetsRGB);
-		metaData.scriptClass->AddInternalCall("Internal_getcubemap", (void*)&ScriptTextureImportOptions::InternalGetcubemap);
-		metaData.scriptClass->AddInternalCall("Internal_setcubemap", (void*)&ScriptTextureImportOptions::InternalSetcubemap);
-		metaData.scriptClass->AddInternalCall("Internal_getcubemapSourceType", (void*)&ScriptTextureImportOptions::InternalGetcubemapSourceType);
-		metaData.scriptClass->AddInternalCall("Internal_setcubemapSourceType", (void*)&ScriptTextureImportOptions::InternalSetcubemapSourceType);
-		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptTextureImportOptions::InternalCreate);
+		metaData.scriptClass->AddInternalCall("Internal_Getformat", (void*)&ScriptTextureImportOptions::InternalGetformat);
+		metaData.scriptClass->AddInternalCall("Internal_Setformat", (void*)&ScriptTextureImportOptions::InternalSetformat);
+		metaData.scriptClass->AddInternalCall("Internal_GetgenerateMips", (void*)&ScriptTextureImportOptions::InternalGetgenerateMips);
+		metaData.scriptClass->AddInternalCall("Internal_SetgenerateMips", (void*)&ScriptTextureImportOptions::InternalSetgenerateMips);
+		metaData.scriptClass->AddInternalCall("Internal_GetmaxMip", (void*)&ScriptTextureImportOptions::InternalGetmaxMip);
+		metaData.scriptClass->AddInternalCall("Internal_SetmaxMip", (void*)&ScriptTextureImportOptions::InternalSetmaxMip);
+		metaData.scriptClass->AddInternalCall("Internal_GetcpuCached", (void*)&ScriptTextureImportOptions::InternalGetcpuCached);
+		metaData.scriptClass->AddInternalCall("Internal_SetcpuCached", (void*)&ScriptTextureImportOptions::InternalSetcpuCached);
+		metaData.scriptClass->AddInternalCall("Internal_GetsRGB", (void*)&ScriptTextureImportOptions::InternalGetsRGB);
+		metaData.scriptClass->AddInternalCall("Internal_SetsRGB", (void*)&ScriptTextureImportOptions::InternalSetsRGB);
+		metaData.scriptClass->AddInternalCall("Internal_Getcubemap", (void*)&ScriptTextureImportOptions::InternalGetcubemap);
+		metaData.scriptClass->AddInternalCall("Internal_Setcubemap", (void*)&ScriptTextureImportOptions::InternalSetcubemap);
+		metaData.scriptClass->AddInternalCall("Internal_GetcubemapSourceType", (void*)&ScriptTextureImportOptions::InternalGetcubemapSourceType);
+		metaData.scriptClass->AddInternalCall("Internal_SetcubemapSourceType", (void*)&ScriptTextureImportOptions::InternalSetcubemapSourceType);
+		metaData.scriptClass->AddInternalCall("Internal_Create", (void*)&ScriptTextureImportOptions::InternalCreate);
 
 	}
 
@@ -42,7 +42,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptTextureImportOptions>()) ScriptTextureImportOptions(managedInstance, value);
 		return managedInstance;
 	}

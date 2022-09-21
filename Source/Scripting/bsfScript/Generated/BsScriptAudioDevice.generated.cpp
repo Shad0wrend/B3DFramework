@@ -11,7 +11,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptAudioDevice::initRuntimeData()
+	void ScriptAudioDevice::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptAudioDevice::Box(const __AudioDeviceInterop& value)

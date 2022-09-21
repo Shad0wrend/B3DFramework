@@ -21,41 +21,34 @@ namespace bs
 		private CharacterController(bool __dummy0) { }
 		protected CharacterController() { }
 
-		/// <summary>
-		/// Determines the position of the bottom of the controller. Position takes contact offset into account. Changing this 
-		/// will teleport the character to the location. Use move() for movement that includes physics.
-		/// </summary>
 		[NativeWrapper]
 		public Vector3 FootPosition
 		{
 			get
 			{
 				Vector3 temp;
-				Internal_getFootPosition(mCachedPtr, out temp);
+				Internal_GetFootPosition(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setFootPosition(mCachedPtr, ref value); }
+			set { Internal_SetFootPosition(mCachedPtr, ref value); }
 		}
 
-		/// <summary>Determines the radius of the controller capsule.</summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public float Radius
 		{
-			get { return Internal_getRadius(mCachedPtr); }
-			set { Internal_setRadius(mCachedPtr, value); }
+			get { return Internal_GetRadius(mCachedPtr); }
+			set { Internal_SetRadius(mCachedPtr, value); }
 		}
 
-		/// <summary>Determines the height between the centers of the two spheres of the controller capsule.</summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public float Height
 		{
-			get { return Internal_getHeight(mCachedPtr); }
-			set { Internal_setHeight(mCachedPtr, value); }
+			get { return Internal_GetHeight(mCachedPtr); }
+			set { Internal_SetHeight(mCachedPtr, value); }
 		}
 
-		/// <summary>Determines the up direction of capsule. Determines capsule orientation.</summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public Vector3 Up
@@ -63,70 +56,52 @@ namespace bs
 			get
 			{
 				Vector3 temp;
-				Internal_getUp(mCachedPtr, out temp);
+				Internal_GetUp(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setUp(mCachedPtr, ref value); }
+			set { Internal_SetUp(mCachedPtr, ref value); }
 		}
 
-		/// <summary>Controls what happens when character encounters a height higher than its step offset.</summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public CharacterClimbingMode ClimbingMode
 		{
-			get { return Internal_getClimbingMode(mCachedPtr); }
-			set { Internal_setClimbingMode(mCachedPtr, value); }
+			get { return Internal_GetClimbingMode(mCachedPtr); }
+			set { Internal_SetClimbingMode(mCachedPtr, value); }
 		}
 
-		/// <summary>Controls what happens when character encounters a slope higher than its slope offset.</summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public CharacterNonWalkableMode NonWalkableMode
 		{
-			get { return Internal_getNonWalkableMode(mCachedPtr); }
-			set { Internal_setNonWalkableMode(mCachedPtr, value); }
+			get { return Internal_GetNonWalkableMode(mCachedPtr); }
+			set { Internal_SetNonWalkableMode(mCachedPtr, value); }
 		}
 
-		/// <summary>
-		/// Represents minimum distance that the character will move during a call to move(). This is used to stop the recursive 
-		/// motion algorithm when the remaining distance is too small.
-		/// </summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public float MinMoveDistance
 		{
-			get { return Internal_getMinMoveDistance(mCachedPtr); }
-			set { Internal_setMinMoveDistance(mCachedPtr, value); }
+			get { return Internal_GetMinMoveDistance(mCachedPtr); }
+			set { Internal_SetMinMoveDistance(mCachedPtr, value); }
 		}
 
-		/// <summary>
-		/// Contact offset specifies a skin around the object within which contacts will be generated. It should be a small 
-		/// positive non-zero value.
-		/// </summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public float ContactOffset
 		{
-			get { return Internal_getContactOffset(mCachedPtr); }
-			set { Internal_setContactOffset(mCachedPtr, value); }
+			get { return Internal_GetContactOffset(mCachedPtr); }
+			set { Internal_SetContactOffset(mCachedPtr, value); }
 		}
 
-		/// <summary>
-		/// Controls which obstacles will the character be able to automatically step over without being stopped. This is the 
-		/// height of the maximum obstacle that will be stepped over (with exceptions, see climbingMode).
-		/// </summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public float StepOffset
 		{
-			get { return Internal_getStepOffset(mCachedPtr); }
-			set { Internal_setStepOffset(mCachedPtr, value); }
+			get { return Internal_GetStepOffset(mCachedPtr); }
+			set { Internal_SetStepOffset(mCachedPtr, value); }
 		}
 
-		/// <summary>
-		/// Controls which slopes should the character consider too steep and won&apos;t be able to move over. See 
-		/// nonWalkableMode for more information.
-		/// </summary>
 		[ShowInInspector]
 		[Range(0f, 180f, true)]
 		[NativeWrapper]
@@ -135,20 +110,19 @@ namespace bs
 			get
 			{
 				Radian temp;
-				Internal_getSlopeLimit(mCachedPtr, out temp);
+				Internal_GetSlopeLimit(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setSlopeLimit(mCachedPtr, ref value); }
+			set { Internal_SetSlopeLimit(mCachedPtr, ref value); }
 		}
 
-		/// <summary>Determines the layer that controls what can the controller collide with.</summary>
 		[ShowInInspector]
 		[LayerMask]
 		[NativeWrapper]
 		public ulong Layer
 		{
-			get { return Internal_getLayer(mCachedPtr); }
-			set { Internal_setLayer(mCachedPtr, value); }
+			get { return Internal_GetLayer(mCachedPtr); }
+			set { Internal_SetLayer(mCachedPtr, value); }
 		}
 
 		/// <summary>Triggered when the controller hits a collider.</summary>
@@ -157,63 +131,57 @@ namespace bs
 		/// <summary>Triggered when the controller hits another character controller.</summary>
 		public event Action<ControllerControllerCollision> OnControllerHit;
 
-		/// <summary>
-		/// Moves the controller in the specified direction by the specified amount, while interacting with surrounding geometry. 
-		/// Returns flags signaling where collision occurred after the movement.
-		///
-		/// Does not account for gravity, you must apply it manually.
-		/// </summary>
 		public CharacterCollisionFlag Move(Vector3 displacement)
 		{
-			return Internal_move(mCachedPtr, ref displacement);
+			return Internal_Move(mCachedPtr, ref displacement);
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern CharacterCollisionFlag Internal_move(IntPtr thisPtr, ref Vector3 displacement);
+		private static extern CharacterCollisionFlag Internal_Move(IntPtr thisPtr, ref Vector3 displacement);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getFootPosition(IntPtr thisPtr, out Vector3 __output);
+		private static extern void Internal_GetFootPosition(IntPtr thisPtr, out Vector3 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setFootPosition(IntPtr thisPtr, ref Vector3 position);
+		private static extern void Internal_SetFootPosition(IntPtr thisPtr, ref Vector3 position);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getRadius(IntPtr thisPtr);
+		private static extern float Internal_GetRadius(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setRadius(IntPtr thisPtr, float radius);
+		private static extern void Internal_SetRadius(IntPtr thisPtr, float radius);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getHeight(IntPtr thisPtr);
+		private static extern float Internal_GetHeight(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setHeight(IntPtr thisPtr, float height);
+		private static extern void Internal_SetHeight(IntPtr thisPtr, float height);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getUp(IntPtr thisPtr, out Vector3 __output);
+		private static extern void Internal_GetUp(IntPtr thisPtr, out Vector3 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setUp(IntPtr thisPtr, ref Vector3 up);
+		private static extern void Internal_SetUp(IntPtr thisPtr, ref Vector3 up);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern CharacterClimbingMode Internal_getClimbingMode(IntPtr thisPtr);
+		private static extern CharacterClimbingMode Internal_GetClimbingMode(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setClimbingMode(IntPtr thisPtr, CharacterClimbingMode mode);
+		private static extern void Internal_SetClimbingMode(IntPtr thisPtr, CharacterClimbingMode mode);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern CharacterNonWalkableMode Internal_getNonWalkableMode(IntPtr thisPtr);
+		private static extern CharacterNonWalkableMode Internal_GetNonWalkableMode(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setNonWalkableMode(IntPtr thisPtr, CharacterNonWalkableMode mode);
+		private static extern void Internal_SetNonWalkableMode(IntPtr thisPtr, CharacterNonWalkableMode mode);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getMinMoveDistance(IntPtr thisPtr);
+		private static extern float Internal_GetMinMoveDistance(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setMinMoveDistance(IntPtr thisPtr, float value);
+		private static extern void Internal_SetMinMoveDistance(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getContactOffset(IntPtr thisPtr);
+		private static extern float Internal_GetContactOffset(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setContactOffset(IntPtr thisPtr, float value);
+		private static extern void Internal_SetContactOffset(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getStepOffset(IntPtr thisPtr);
+		private static extern float Internal_GetStepOffset(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setStepOffset(IntPtr thisPtr, float value);
+		private static extern void Internal_SetStepOffset(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getSlopeLimit(IntPtr thisPtr, out Radian __output);
+		private static extern void Internal_GetSlopeLimit(IntPtr thisPtr, out Radian __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setSlopeLimit(IntPtr thisPtr, ref Radian value);
+		private static extern void Internal_SetSlopeLimit(IntPtr thisPtr, ref Radian value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ulong Internal_getLayer(IntPtr thisPtr);
+		private static extern ulong Internal_GetLayer(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setLayer(IntPtr thisPtr, ulong layer);
+		private static extern void Internal_SetLayer(IntPtr thisPtr, ulong layer);
 		private void Internal_onColliderHit(ref ControllerColliderCollision p0)
 		{
 			OnColliderHit?.Invoke(p0);

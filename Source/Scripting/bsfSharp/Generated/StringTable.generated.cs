@@ -19,7 +19,7 @@ namespace bs
 		/// <summary>Creates a new empty string table resource.</summary>
 		public StringTable()
 		{
-			Internal_create(this);
+			Internal_Create(this);
 		}
 
 		/// <summary>Returns a reference wrapper for this resource.</summary>
@@ -32,14 +32,14 @@ namespace bs
 		[NativeWrapper]
 		public int NumStrings
 		{
-			get { return Internal_getNumStrings(mCachedPtr); }
+			get { return Internal_GetNumStrings(mCachedPtr); }
 		}
 
 		/// <summary>Returns all identifiers that the string table contains localized strings for.</summary>
 		[NativeWrapper]
 		public string[] Identifiers
 		{
-			get { return Internal_getIdentifiers(mCachedPtr); }
+			get { return Internal_GetIdentifiers(mCachedPtr); }
 		}
 
 		/// <summary>Returns a reference wrapper for this resource.</summary>
@@ -56,13 +56,13 @@ namespace bs
 		/// <returns>True if the identifier exists in the table, false otherwise.</returns>
 		public bool Contains(string identifier)
 		{
-			return Internal_contains(mCachedPtr, identifier);
+			return Internal_Contains(mCachedPtr, identifier);
 		}
 
 		/// <summary>Adds or modifies string translation for the specified language.</summary>
 		public void SetString(string identifier, Language language, string value)
 		{
-			Internal_setString(mCachedPtr, identifier, language, value);
+			Internal_SetString(mCachedPtr, identifier, language, value);
 		}
 
 		/// <summary>
@@ -70,31 +70,31 @@ namespace bs
 		/// </summary>
 		public string GetString(string identifier, Language language)
 		{
-			return Internal_getString(mCachedPtr, identifier, language);
+			return Internal_GetString(mCachedPtr, identifier, language);
 		}
 
 		/// <summary>Removes the string described by identifier, from all languages.</summary>
 		public void RemoveString(string identifier)
 		{
-			Internal_removeString(mCachedPtr, identifier);
+			Internal_RemoveString(mCachedPtr, identifier);
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern RRef<StringTable> Internal_GetRef(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_contains(IntPtr thisPtr, string identifier);
+		private static extern bool Internal_Contains(IntPtr thisPtr, string identifier);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getNumStrings(IntPtr thisPtr);
+		private static extern int Internal_GetNumStrings(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern string[] Internal_getIdentifiers(IntPtr thisPtr);
+		private static extern string[] Internal_GetIdentifiers(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setString(IntPtr thisPtr, string identifier, Language language, string value);
+		private static extern void Internal_SetString(IntPtr thisPtr, string identifier, Language language, string value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern string Internal_getString(IntPtr thisPtr, string identifier, Language language);
+		private static extern string Internal_GetString(IntPtr thisPtr, string identifier, Language language);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_removeString(IntPtr thisPtr, string identifier);
+		private static extern void Internal_RemoveString(IntPtr thisPtr, string identifier);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create(StringTable managedInstance);
+		private static extern void Internal_Create(StringTable managedInstance);
 	}
 
 	/** @} */

@@ -14,24 +14,24 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptRENDER_WINDOW_DESC::initRuntimeData()
+	void ScriptRENDER_WINDOW_DESC::InitRuntimeData()
 	{ }
 
-	MonoObject*ScriptRENDER_WINDOW_DESC::box(const __RENDER_WINDOW_DESCInterop& value)
+	MonoObject*ScriptRENDER_WINDOW_DESC::Box(const __RENDER_WINDOW_DESCInterop& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	__RENDER_WINDOW_DESCInterop ScriptRENDER_WINDOW_DESC::unbox(MonoObject* value)
+	__RENDER_WINDOW_DESCInterop ScriptRENDER_WINDOW_DESC::Unbox(MonoObject* value)
 	{
-		return *(__RENDER_WINDOW_DESCInterop*)MonoUtil::unbox(value);
+		return *(__RENDER_WINDOW_DESCInterop*)MonoUtil::Unbox(value);
 	}
 
-	RENDER_WINDOW_DESC ScriptRENDER_WINDOW_DESC::fromInterop(const __RENDER_WINDOW_DESCInterop& value)
+	RENDER_WINDOW_DESC ScriptRENDER_WINDOW_DESC::FromInterop(const __RENDER_WINDOW_DESCInterop& value)
 	{
 		RENDER_WINDOW_DESC output;
 		VideoMode tmpvideoMode;
-		tmpvideoMode = ScriptVideoMode::fromInterop(value.videoMode);
+		tmpvideoMode = ScriptVideoMode::FromInterop(value.videoMode);
 		output.videoMode = tmpvideoMode;
 		output.fullscreen = value.fullscreen;
 		output.vsync = value.vsync;
@@ -58,11 +58,11 @@ namespace bs
 		return output;
 	}
 
-	__RENDER_WINDOW_DESCInterop ScriptRENDER_WINDOW_DESC::toInterop(const RENDER_WINDOW_DESC& value)
+	__RENDER_WINDOW_DESCInterop ScriptRENDER_WINDOW_DESC::ToInterop(const RENDER_WINDOW_DESC& value)
 	{
 		__RENDER_WINDOW_DESCInterop output;
 		__VideoModeInterop tmpvideoMode;
-		tmpvideoMode = ScriptVideoMode::toInterop(value.videoMode);
+		tmpvideoMode = ScriptVideoMode::ToInterop(value.videoMode);
 		output.videoMode = tmpvideoMode;
 		output.fullscreen = value.fullscreen;
 		output.vsync = value.vsync;
@@ -71,13 +71,13 @@ namespace bs
 		output.depthBuffer = value.depthBuffer;
 		output.multisampleCount = value.multisampleCount;
 		MonoString* tmpmultisampleHint;
-		tmpmultisampleHint = MonoUtil::stringToMono(value.multisampleHint);
+		tmpmultisampleHint = MonoUtil::StringToMono(value.multisampleHint);
 		output.multisampleHint = tmpmultisampleHint;
 		output.gamma = value.gamma;
 		output.left = value.left;
 		output.top = value.top;
 		MonoString* tmptitle;
-		tmptitle = MonoUtil::stringToMono(value.title);
+		tmptitle = MonoUtil::StringToMono(value.title);
 		output.title = tmptitle;
 		output.showTitleBar = value.showTitleBar;
 		output.showBorder = value.showBorder;

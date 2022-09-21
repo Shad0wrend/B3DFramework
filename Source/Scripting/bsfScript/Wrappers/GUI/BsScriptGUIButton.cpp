@@ -30,7 +30,7 @@ namespace bs
 
 	}
 
-	void ScriptGUIButton::initRuntimeData()
+	void ScriptGUIButton::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIButton::InternalCreateInstance);
 		metaData.scriptClass->AddInternalCall("Internal_SetContent", (void*)&ScriptGUIButton::InternalSetContent);

@@ -19,16 +19,16 @@ namespace bs
 
 		ScriptApplicationEx(MonoObject* managedInstance, const SPtr<ApplicationEx>& value);
 
-		SPtr<ApplicationEx> getInternal() const { return mInternal; }
-		static MonoObject* create(const SPtr<ApplicationEx>& value);
+		SPtr<ApplicationEx> GetInternal() const { return mInternal; }
+		static MonoObject* Create(const SPtr<ApplicationEx>& value);
 
 	private:
 		SPtr<ApplicationEx> mInternal;
 
-		static void Internal_startUp(__START_UP_DESCInterop* desc);
-		static void Internal_startUp0(__VideoModeInterop* videoMode, MonoString* title, bool fullscreen);
-		static void Internal_runMainLoop();
-		static void Internal_shutDown();
+		static void InternalStartUp(__START_UP_DESCInterop* desc);
+		static void InternalStartUp0(__VideoModeInterop* videoMode, MonoString* title, bool fullscreen);
+		static void InternalRunMainLoop();
+		static void InternalShutDown();
 	};
 #endif
 }

@@ -18,11 +18,11 @@ namespace bs
 		ScriptImporter(MonoObject* managedInstance);
 
 	private:
-		static MonoObject* Internal_import(MonoString* inputFilePath, MonoObject* importOptions, UUID* UUID);
-		static MonoObject* Internal_importAsync(MonoString* inputFilePath, MonoObject* importOptions, UUID* UUID);
-		static MonoObject* Internal_importAll(MonoString* inputFilePath, MonoObject* importOptions);
-		static MonoObject* Internal_importAllAsync(MonoString* inputFilePath, MonoObject* importOptions);
-		static bool Internal_supportsFileType(MonoString* extension);
+		static MonoObject* InternalImport(MonoString* inputFilePath, MonoObject* importOptions, UUID* UUID);
+		static MonoObject* InternalImportAsync(MonoString* inputFilePath, MonoObject* importOptions, UUID* UUID);
+		static MonoObject* InternalImportAll(MonoString* inputFilePath, MonoObject* importOptions);
+		static MonoObject* InternalImportAllAsync(MonoString* inputFilePath, MonoObject* importOptions);
+		static bool InternalSupportsFileType(MonoString* extension);
 	};
 #endif
 }

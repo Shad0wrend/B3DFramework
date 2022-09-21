@@ -15,15 +15,15 @@ namespace bs
 		mInternal = value;
 	}
 
-	void ScriptShaderImportOptions::initRuntimeData()
+	void ScriptShaderImportOptions::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_setDefine", (void*)&ScriptShaderImportOptions::InternalSetDefine);
-		metaData.scriptClass->AddInternalCall("Internal_getDefine", (void*)&ScriptShaderImportOptions::InternalGetDefine);
-		metaData.scriptClass->AddInternalCall("Internal_hasDefine", (void*)&ScriptShaderImportOptions::InternalHasDefine);
-		metaData.scriptClass->AddInternalCall("Internal_removeDefine", (void*)&ScriptShaderImportOptions::InternalRemoveDefine);
-		metaData.scriptClass->AddInternalCall("Internal_getlanguages", (void*)&ScriptShaderImportOptions::InternalGetlanguages);
-		metaData.scriptClass->AddInternalCall("Internal_setlanguages", (void*)&ScriptShaderImportOptions::InternalSetlanguages);
-		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptShaderImportOptions::InternalCreate);
+		metaData.scriptClass->AddInternalCall("Internal_SetDefine", (void*)&ScriptShaderImportOptions::InternalSetDefine);
+		metaData.scriptClass->AddInternalCall("Internal_GetDefine", (void*)&ScriptShaderImportOptions::InternalGetDefine);
+		metaData.scriptClass->AddInternalCall("Internal_HasDefine", (void*)&ScriptShaderImportOptions::InternalHasDefine);
+		metaData.scriptClass->AddInternalCall("Internal_RemoveDefine", (void*)&ScriptShaderImportOptions::InternalRemoveDefine);
+		metaData.scriptClass->AddInternalCall("Internal_Getlanguages", (void*)&ScriptShaderImportOptions::InternalGetlanguages);
+		metaData.scriptClass->AddInternalCall("Internal_Setlanguages", (void*)&ScriptShaderImportOptions::InternalSetlanguages);
+		metaData.scriptClass->AddInternalCall("Internal_Create", (void*)&ScriptShaderImportOptions::InternalCreate);
 
 	}
 
@@ -34,7 +34,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptShaderImportOptions>()) ScriptShaderImportOptions(managedInstance, value);
 		return managedInstance;
 	}
@@ -57,7 +57,7 @@ namespace bs
 
 		bool __output;
 		__output = tmp__output;
-		MonoUtil::referenceCopy(value,  (MonoObject*)MonoUtil::stringToMono(tmpvalue));
+		MonoUtil::ReferenceCopy(value,  (MonoObject*)MonoUtil::StringToMono(tmpvalue));
 
 		return __output;
 	}
@@ -79,7 +79,7 @@ namespace bs
 	{
 		String tmpdefine;
 		tmpdefine = MonoUtil::MonoToString(define);
-		thisPtr->GetInternal()->removeDefine(tmpdefine);
+		thisPtr->GetInternal()->RemoveDefine(tmpdefine);
 	}
 
 	void ScriptShaderImportOptions::InternalCreate(MonoObject* managedInstance)

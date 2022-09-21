@@ -21,7 +21,7 @@ namespace bs
 		mInternal = value;
 	}
 
-	void ScriptParticleEvolver::initRuntimeData()
+	void ScriptParticleEvolver::InitRuntimeData()
 	{
 
 	}

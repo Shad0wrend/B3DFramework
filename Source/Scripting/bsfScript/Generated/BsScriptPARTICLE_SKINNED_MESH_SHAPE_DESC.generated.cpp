@@ -14,17 +14,17 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC::initRuntimeData()
+	void ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC::Box(const __PARTICLE_SKINNED_MESH_SHAPE_DESCInterop& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	__PARTICLE_SKINNED_MESH_SHAPE_DESCInterop ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC::Unbox(MonoObject* value)
 	{
-		return *(__PARTICLE_SKINNED_MESH_SHAPE_DESCInterop*)MonoUtil::unbox(value);
+		return *(__PARTICLE_SKINNED_MESH_SHAPE_DESCInterop*)MonoUtil::Unbox(value);
 	}
 
 	PARTICLE_SKINNED_MESH_SHAPE_DESC ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC::FromInterop(const __PARTICLE_SKINNED_MESH_SHAPE_DESCInterop& value)
@@ -34,7 +34,7 @@ namespace bs
 		output.sequential = value.sequential;
 		GameObjectHandle<CRenderable> tmprenderable;
 		ScriptCRenderable* scriptrenderable;
-		scriptrenderable = ScriptCRenderable::toNative(value.renderable);
+		scriptrenderable = ScriptCRenderable::ToNative(value.renderable);
 		if(scriptrenderable != nullptr)
 			tmprenderable = scriptrenderable->GetHandle();
 		output.renderable = tmprenderable;
@@ -49,7 +49,7 @@ namespace bs
 		output.sequential = value.sequential;
 		ScriptComponentBase* scriptrenderable = nullptr;
 		if(value.renderable.GetComponent())
-			scriptrenderable = ScriptGameObjectManager::Instance().getBuiltinScriptComponent(static_object_cast<Component>(value.renderable.GetComponent()));
+			scriptrenderable = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(value.renderable.GetComponent()));
 		MonoObject* tmprenderable;
 		if(scriptrenderable != nullptr)
 			tmprenderable = scriptrenderable->GetManagedInstance();

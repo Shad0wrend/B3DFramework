@@ -14,12 +14,12 @@ namespace bs
 	{
 	}
 
-	void ScriptCSphericalJoint::initRuntimeData()
+	void ScriptCSphericalJoint::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_getLimit", (void*)&ScriptCSphericalJoint::InternalGetLimit);
-		metaData.scriptClass->AddInternalCall("Internal_setLimit", (void*)&ScriptCSphericalJoint::InternalSetLimit);
-		metaData.scriptClass->AddInternalCall("Internal_setFlag", (void*)&ScriptCSphericalJoint::InternalSetFlag);
-		metaData.scriptClass->AddInternalCall("Internal_hasFlag", (void*)&ScriptCSphericalJoint::InternalHasFlag);
+		metaData.scriptClass->AddInternalCall("Internal_GetLimit", (void*)&ScriptCSphericalJoint::InternalGetLimit);
+		metaData.scriptClass->AddInternalCall("Internal_SetLimit", (void*)&ScriptCSphericalJoint::InternalSetLimit);
+		metaData.scriptClass->AddInternalCall("Internal_SetFlag", (void*)&ScriptCSphericalJoint::InternalSetFlag);
+		metaData.scriptClass->AddInternalCall("Internal_HasFlag", (void*)&ScriptCSphericalJoint::InternalHasFlag);
 
 	}
 

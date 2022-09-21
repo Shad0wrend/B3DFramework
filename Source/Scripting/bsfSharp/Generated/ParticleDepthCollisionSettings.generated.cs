@@ -26,8 +26,8 @@ namespace bs
 		[NativeWrapper]
 		public bool Enabled
 		{
-			get { return Internal_getenabled(mCachedPtr); }
-			set { Internal_setenabled(mCachedPtr, value); }
+			get { return Internal_Getenabled(mCachedPtr); }
+			set { Internal_Setenabled(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -38,8 +38,8 @@ namespace bs
 		[NativeWrapper]
 		public float Restitution
 		{
-			get { return Internal_getrestitution(mCachedPtr); }
-			set { Internal_setrestitution(mCachedPtr, value); }
+			get { return Internal_Getrestitution(mCachedPtr); }
+			set { Internal_Setrestitution(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -50,8 +50,8 @@ namespace bs
 		[NativeWrapper]
 		public float Dampening
 		{
-			get { return Internal_getdampening(mCachedPtr); }
-			set { Internal_setdampening(mCachedPtr, value); }
+			get { return Internal_Getdampening(mCachedPtr); }
+			set { Internal_Setdampening(mCachedPtr, value); }
 		}
 
 		/// <summary>Scale which to apply to particle size in order to determine the collision radius.</summary>
@@ -59,28 +59,28 @@ namespace bs
 		[NativeWrapper]
 		public float RadiusScale
 		{
-			get { return Internal_getradiusScale(mCachedPtr); }
-			set { Internal_setradiusScale(mCachedPtr, value); }
+			get { return Internal_GetradiusScale(mCachedPtr); }
+			set { Internal_SetradiusScale(mCachedPtr, value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_ParticleDepthCollisionSettings(ParticleDepthCollisionSettings managedInstance);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_getenabled(IntPtr thisPtr);
+		private static extern bool Internal_Getenabled(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setenabled(IntPtr thisPtr, bool value);
+		private static extern void Internal_Setenabled(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getrestitution(IntPtr thisPtr);
+		private static extern float Internal_Getrestitution(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setrestitution(IntPtr thisPtr, float value);
+		private static extern void Internal_Setrestitution(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getdampening(IntPtr thisPtr);
+		private static extern float Internal_Getdampening(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setdampening(IntPtr thisPtr, float value);
+		private static extern void Internal_Setdampening(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getradiusScale(IntPtr thisPtr);
+		private static extern float Internal_GetradiusScale(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setradiusScale(IntPtr thisPtr, float value);
+		private static extern void Internal_SetradiusScale(IntPtr thisPtr, float value);
 	}
 
 	/** @} */

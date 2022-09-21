@@ -11,7 +11,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptRectOffset::initRuntimeData()
+	void ScriptRectOffset::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptRectOffset::Box(const RectOffset& value)

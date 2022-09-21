@@ -11,7 +11,7 @@ namespace bs
 		:ScriptObject(instance)
 	{ }
 
-	void ScriptColor::initRuntimeData()
+	void ScriptColor::InitRuntimeData()
 	{ }
 
 	MonoObject* ScriptColor::Box(const Color& value)

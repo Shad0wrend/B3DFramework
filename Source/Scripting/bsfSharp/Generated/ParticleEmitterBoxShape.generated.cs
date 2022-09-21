@@ -22,13 +22,13 @@ namespace bs
 		/// <summary>Creates a new particle emitter box shape.</summary>
 		public ParticleEmitterBoxShape(ParticleBoxShapeOptions desc)
 		{
-			Internal_create(this, ref desc);
+			Internal_Create(this, ref desc);
 		}
 
 		/// <summary>Creates a new particle emitter box shape.</summary>
 		public ParticleEmitterBoxShape()
 		{
-			Internal_create0(this);
+			Internal_Create0(this);
 		}
 
 		/// <summary>Options describing the shape.</summary>
@@ -40,20 +40,20 @@ namespace bs
 			get
 			{
 				ParticleBoxShapeOptions temp;
-				Internal_getOptions(mCachedPtr, out temp);
+				Internal_GetOptions(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setOptions(mCachedPtr, ref value); }
+			set { Internal_SetOptions(mCachedPtr, ref value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setOptions(IntPtr thisPtr, ref ParticleBoxShapeOptions options);
+		private static extern void Internal_SetOptions(IntPtr thisPtr, ref ParticleBoxShapeOptions options);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getOptions(IntPtr thisPtr, out ParticleBoxShapeOptions __output);
+		private static extern void Internal_GetOptions(IntPtr thisPtr, out ParticleBoxShapeOptions __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create(ParticleEmitterBoxShape managedInstance, ref ParticleBoxShapeOptions desc);
+		private static extern void Internal_Create(ParticleEmitterBoxShape managedInstance, ref ParticleBoxShapeOptions desc);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create0(ParticleEmitterBoxShape managedInstance);
+		private static extern void Internal_Create0(ParticleEmitterBoxShape managedInstance);
 	}
 
 	/** @} */

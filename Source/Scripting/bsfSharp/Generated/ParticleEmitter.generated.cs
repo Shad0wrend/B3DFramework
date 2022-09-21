@@ -19,7 +19,7 @@ namespace bs
 		/// <summary>Creates a new emitter.</summary>
 		public ParticleEmitter()
 		{
-			Internal_create(this);
+			Internal_Create(this);
 		}
 
 		/// <summary>Shape over which to emit the particles.</summary>
@@ -27,8 +27,8 @@ namespace bs
 		[NativeWrapper]
 		public ParticleEmitterShape Shape
 		{
-			get { return Internal_getShape(mCachedPtr); }
-			set { Internal_setShape(mCachedPtr, value); }
+			get { return Internal_GetShape(mCachedPtr); }
+			set { Internal_SetShape(mCachedPtr, value); }
 		}
 
 		/// <summary>Determines the number of particles that are emitted every second.</summary>
@@ -38,8 +38,8 @@ namespace bs
 		[NativeWrapper]
 		public FloatDistribution EmissionRate
 		{
-			get { return Internal_getEmissionRate(mCachedPtr); }
-			set { Internal_setEmissionRate(mCachedPtr, value); }
+			get { return Internal_GetEmissionRate(mCachedPtr); }
+			set { Internal_SetEmissionRate(mCachedPtr, value); }
 		}
 
 		/// <summary>Determines discrete intervals to emit particles.</summary>
@@ -47,8 +47,8 @@ namespace bs
 		[NativeWrapper]
 		public ParticleBurst[] EmissionBursts
 		{
-			get { return Internal_getEmissionBursts(mCachedPtr); }
-			set { Internal_setEmissionBursts(mCachedPtr, value); }
+			get { return Internal_GetEmissionBursts(mCachedPtr); }
+			set { Internal_SetEmissionBursts(mCachedPtr, value); }
 		}
 
 		/// <summary>Determines the lifetime of particles when they are initially spawned, in seconds.</summary>
@@ -58,8 +58,8 @@ namespace bs
 		[NativeWrapper]
 		public FloatDistribution InitialLifetime
 		{
-			get { return Internal_getInitialLifetime(mCachedPtr); }
-			set { Internal_setInitialLifetime(mCachedPtr, value); }
+			get { return Internal_GetInitialLifetime(mCachedPtr); }
+			set { Internal_SetInitialLifetime(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -72,8 +72,8 @@ namespace bs
 		[NativeWrapper]
 		public FloatDistribution InitialSpeed
 		{
-			get { return Internal_getInitialSpeed(mCachedPtr); }
-			set { Internal_setInitialSpeed(mCachedPtr, value); }
+			get { return Internal_GetInitialSpeed(mCachedPtr); }
+			set { Internal_SetInitialSpeed(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -86,8 +86,8 @@ namespace bs
 		[NativeWrapper]
 		public FloatDistribution InitialSize
 		{
-			get { return Internal_getInitialSize(mCachedPtr); }
-			set { Internal_setInitialSize(mCachedPtr, value); }
+			get { return Internal_GetInitialSize(mCachedPtr); }
+			set { Internal_SetInitialSize(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -100,8 +100,8 @@ namespace bs
 		[NativeWrapper]
 		public Vector3Distribution InitialSize3D
 		{
-			get { return Internal_getInitialSize3D(mCachedPtr); }
-			set { Internal_setInitialSize3D(mCachedPtr, value); }
+			get { return Internal_GetInitialSize3D(mCachedPtr); }
+			set { Internal_SetInitialSize3D(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -112,8 +112,8 @@ namespace bs
 		[NativeWrapper]
 		public bool Use3DSize
 		{
-			get { return Internal_getUse3DSize(mCachedPtr); }
-			set { Internal_setUse3DSize(mCachedPtr, value); }
+			get { return Internal_GetUse3DSize(mCachedPtr); }
+			set { Internal_SetUse3DSize(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -126,8 +126,8 @@ namespace bs
 		[NativeWrapper]
 		public FloatDistribution InitialRotation
 		{
-			get { return Internal_getInitialRotation(mCachedPtr); }
-			set { Internal_setInitialRotation(mCachedPtr, value); }
+			get { return Internal_GetInitialRotation(mCachedPtr); }
+			set { Internal_SetInitialRotation(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -139,8 +139,8 @@ namespace bs
 		[NativeWrapper]
 		public Vector3Distribution InitialRotation3D
 		{
-			get { return Internal_getInitialRotation3D(mCachedPtr); }
-			set { Internal_setInitialRotation3D(mCachedPtr, value); }
+			get { return Internal_GetInitialRotation3D(mCachedPtr); }
+			set { Internal_SetInitialRotation3D(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -151,8 +151,8 @@ namespace bs
 		[NativeWrapper]
 		public bool Use3DRotation
 		{
-			get { return Internal_getUse3DRotation(mCachedPtr); }
-			set { Internal_setUse3DRotation(mCachedPtr, value); }
+			get { return Internal_GetUse3DRotation(mCachedPtr); }
+			set { Internal_SetUse3DRotation(mCachedPtr, value); }
 		}
 
 		/// <summary>Determines the initial color (in RGB channels) and transparency (in A channel) of particles.</summary>
@@ -162,8 +162,8 @@ namespace bs
 		[NativeWrapper]
 		public ColorDistribution InitialColor
 		{
-			get { return Internal_getInitialColor(mCachedPtr); }
-			set { Internal_setInitialColor(mCachedPtr, value); }
+			get { return Internal_GetInitialColor(mCachedPtr); }
+			set { Internal_SetInitialColor(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -174,8 +174,8 @@ namespace bs
 		[NativeWrapper]
 		public float RandomOffset
 		{
-			get { return Internal_getRandomOffset(mCachedPtr); }
-			set { Internal_setRandomOffset(mCachedPtr, value); }
+			get { return Internal_GetRandomOffset(mCachedPtr); }
+			set { Internal_SetRandomOffset(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -186,8 +186,8 @@ namespace bs
 		[NativeWrapper]
 		public float FlipU
 		{
-			get { return Internal_getFlipU(mCachedPtr); }
-			set { Internal_setFlipU(mCachedPtr, value); }
+			get { return Internal_GetFlipU(mCachedPtr); }
+			set { Internal_SetFlipU(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -198,72 +198,72 @@ namespace bs
 		[NativeWrapper]
 		public float FlipV
 		{
-			get { return Internal_getFlipV(mCachedPtr); }
-			set { Internal_setFlipV(mCachedPtr, value); }
+			get { return Internal_GetFlipV(mCachedPtr); }
+			set { Internal_SetFlipV(mCachedPtr, value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setShape(IntPtr thisPtr, ParticleEmitterShape shape);
+		private static extern void Internal_SetShape(IntPtr thisPtr, ParticleEmitterShape shape);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ParticleEmitterShape Internal_getShape(IntPtr thisPtr);
+		private static extern ParticleEmitterShape Internal_GetShape(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setEmissionRate(IntPtr thisPtr, FloatDistribution value);
+		private static extern void Internal_SetEmissionRate(IntPtr thisPtr, FloatDistribution value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern FloatDistribution Internal_getEmissionRate(IntPtr thisPtr);
+		private static extern FloatDistribution Internal_GetEmissionRate(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setEmissionBursts(IntPtr thisPtr, ParticleBurst[] bursts);
+		private static extern void Internal_SetEmissionBursts(IntPtr thisPtr, ParticleBurst[] bursts);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ParticleBurst[] Internal_getEmissionBursts(IntPtr thisPtr);
+		private static extern ParticleBurst[] Internal_GetEmissionBursts(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setInitialLifetime(IntPtr thisPtr, FloatDistribution value);
+		private static extern void Internal_SetInitialLifetime(IntPtr thisPtr, FloatDistribution value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern FloatDistribution Internal_getInitialLifetime(IntPtr thisPtr);
+		private static extern FloatDistribution Internal_GetInitialLifetime(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setInitialSpeed(IntPtr thisPtr, FloatDistribution value);
+		private static extern void Internal_SetInitialSpeed(IntPtr thisPtr, FloatDistribution value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern FloatDistribution Internal_getInitialSpeed(IntPtr thisPtr);
+		private static extern FloatDistribution Internal_GetInitialSpeed(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setInitialSize(IntPtr thisPtr, FloatDistribution value);
+		private static extern void Internal_SetInitialSize(IntPtr thisPtr, FloatDistribution value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern FloatDistribution Internal_getInitialSize(IntPtr thisPtr);
+		private static extern FloatDistribution Internal_GetInitialSize(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setInitialSize3D(IntPtr thisPtr, Vector3Distribution value);
+		private static extern void Internal_SetInitialSize3D(IntPtr thisPtr, Vector3Distribution value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern Vector3Distribution Internal_getInitialSize3D(IntPtr thisPtr);
+		private static extern Vector3Distribution Internal_GetInitialSize3D(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setUse3DSize(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetUse3DSize(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_getUse3DSize(IntPtr thisPtr);
+		private static extern bool Internal_GetUse3DSize(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setInitialRotation(IntPtr thisPtr, FloatDistribution value);
+		private static extern void Internal_SetInitialRotation(IntPtr thisPtr, FloatDistribution value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern FloatDistribution Internal_getInitialRotation(IntPtr thisPtr);
+		private static extern FloatDistribution Internal_GetInitialRotation(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setInitialRotation3D(IntPtr thisPtr, Vector3Distribution value);
+		private static extern void Internal_SetInitialRotation3D(IntPtr thisPtr, Vector3Distribution value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern Vector3Distribution Internal_getInitialRotation3D(IntPtr thisPtr);
+		private static extern Vector3Distribution Internal_GetInitialRotation3D(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setUse3DRotation(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetUse3DRotation(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_getUse3DRotation(IntPtr thisPtr);
+		private static extern bool Internal_GetUse3DRotation(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setInitialColor(IntPtr thisPtr, ColorDistribution value);
+		private static extern void Internal_SetInitialColor(IntPtr thisPtr, ColorDistribution value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ColorDistribution Internal_getInitialColor(IntPtr thisPtr);
+		private static extern ColorDistribution Internal_GetInitialColor(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setRandomOffset(IntPtr thisPtr, float value);
+		private static extern void Internal_SetRandomOffset(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getRandomOffset(IntPtr thisPtr);
+		private static extern float Internal_GetRandomOffset(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setFlipU(IntPtr thisPtr, float value);
+		private static extern void Internal_SetFlipU(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getFlipU(IntPtr thisPtr);
+		private static extern float Internal_GetFlipU(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setFlipV(IntPtr thisPtr, float value);
+		private static extern void Internal_SetFlipV(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getFlipV(IntPtr thisPtr);
+		private static extern float Internal_GetFlipV(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create(ParticleEmitter managedInstance);
+		private static extern void Internal_Create(ParticleEmitter managedInstance);
 	}
 
 	/** @} */

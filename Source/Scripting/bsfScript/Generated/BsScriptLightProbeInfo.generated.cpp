@@ -13,7 +13,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptLightProbeInfo::initRuntimeData()
+	void ScriptLightProbeInfo::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptLightProbeInfo::Box(const __LightProbeInfoInterop& value)

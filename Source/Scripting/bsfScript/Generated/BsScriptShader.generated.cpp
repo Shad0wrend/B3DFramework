@@ -16,11 +16,11 @@ namespace bs
 	{
 	}
 
-	void ScriptShader::initRuntimeData()
+	void ScriptShader::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptShader::InternalGetRef);
-		metaData.scriptClass->AddInternalCall("Internal_getVariationParams", (void*)&ScriptShader::InternalGetVariationParams);
-		metaData.scriptClass->AddInternalCall("Internal_getParameters", (void*)&ScriptShader::InternalGetParameters);
+		metaData.scriptClass->AddInternalCall("Internal_GetVariationParams", (void*)&ScriptShader::InternalGetVariationParams);
+		metaData.scriptClass->AddInternalCall("Internal_GetParameters", (void*)&ScriptShader::InternalGetParameters);
 
 	}
 
@@ -43,12 +43,12 @@ namespace bs
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
-		ScriptArray array__output = ScriptArray::create<ScriptShaderVariationParamInfo>(arraySize__output);
+		ScriptArray array__output = ScriptArray::Create<ScriptShaderVariationParamInfo>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
-			array__output.Set(i, ScriptShaderVariationParamInfo::toInterop(vec__output[i]));
+			array__output.Set(i, ScriptShaderVariationParamInfo::ToInterop(vec__output[i]));
 		}
-		__output = array__output.getInternal();
+		__output = array__output.GetInternal();
 
 		return __output;
 	}
@@ -56,16 +56,16 @@ namespace bs
 	MonoArray* ScriptShader::InternalGetParameters(ScriptShader* thisPtr)
 	{
 		Vector<ShaderParameter> vec__output;
-		vec__output = ShaderEx::getParameters(thisPtr->GetHandle());
+		vec__output = ShaderEx::GetParameters(thisPtr->GetHandle());
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
-		ScriptArray array__output = ScriptArray::create<ScriptShaderParameter>(arraySize__output);
+		ScriptArray array__output = ScriptArray::Create<ScriptShaderParameter>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
-			array__output.Set(i, ScriptShaderParameter::toInterop(vec__output[i]));
+			array__output.Set(i, ScriptShaderParameter::ToInterop(vec__output[i]));
 		}
-		__output = array__output.getInternal();
+		__output = array__output.GetInternal();
 
 		return __output;
 	}

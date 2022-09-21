@@ -13,7 +13,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptColorGradientKey::initRuntimeData()
+	void ScriptColorGradientKey::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptColorGradientKey::Box(const __ColorGradientKeyInterop& value)

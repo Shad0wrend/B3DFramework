@@ -13,7 +13,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptParticleBurst::initRuntimeData()
+	void ScriptParticleBurst::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptParticleBurst::Box(const __ParticleBurstInterop& value)

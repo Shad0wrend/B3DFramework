@@ -29,7 +29,7 @@ namespace bs
             bool gammaCorrection = false)
         {
             Texture texture = new Texture(true);
-            Internal_create(texture, format, width, height, 1, TextureType.Texture2D, usage, numSamples,
+            Internal_Create(texture, format, width, height, 1, TextureType.Texture2D, usage, numSamples,
                 hasMipmaps, gammaCorrection);
 
             return texture;
@@ -49,7 +49,7 @@ namespace bs
             TextureUsage usage = TextureUsage.Default, bool hasMipmaps = false)
         {
             Texture texture = new Texture(true);
-            Internal_create(texture, format, width, height, depth, TextureType.Texture3D, usage, 1,
+            Internal_Create(texture, format, width, height, depth, TextureType.Texture3D, usage, 1,
                 hasMipmaps, false);
 
             return texture;
@@ -70,7 +70,7 @@ namespace bs
             TextureUsage usage = TextureUsage.Default, bool hasMipmaps = false, bool gammaCorrection = false)
         {
             Texture texture = new Texture(true);
-            Internal_create(texture, format, size, size, 1, TextureType.TextureCube, usage, 1,
+            Internal_Create(texture, format, size, size, 1, TextureType.TextureCube, usage, 1,
                 hasMipmaps, gammaCorrection);
 
             return texture;

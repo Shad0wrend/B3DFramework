@@ -11,7 +11,7 @@ namespace bs
 		:ScriptObject(instance)
 	{ }
 
-	void ScriptVirtualButton::initRuntimeData()
+	void ScriptVirtualButton::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_InitVirtualButton", (void*)&ScriptVirtualButton::InternalInitVirtualButton);
 	}

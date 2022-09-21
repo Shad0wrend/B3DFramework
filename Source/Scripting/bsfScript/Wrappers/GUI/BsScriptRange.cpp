@@ -10,7 +10,7 @@ namespace bs
 
 	ScriptRange::ScriptRange(MonoObject* instance) : ScriptObject(instance)
 	{ }
-	void ScriptRange::initRuntimeData()
+	void ScriptRange::InitRuntimeData()
 	{
 		minRangeField = metaData.scriptClass->GetField("min");
 		maxRangeField = metaData.scriptClass->GetField("max");

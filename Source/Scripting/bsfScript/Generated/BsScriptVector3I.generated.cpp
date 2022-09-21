@@ -11,7 +11,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptVector3I::initRuntimeData()
+	void ScriptVector3I::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptVector3I::Box(const Vector3I& value)

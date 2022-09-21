@@ -20,29 +20,23 @@ namespace bs
 		private HingeJoint(bool __dummy0) { }
 		protected HingeJoint() { }
 
-		/// <summary>Returns the current angle between the two attached bodes.</summary>
 		[NativeWrapper]
 		public Radian Angle
 		{
 			get
 			{
 				Radian temp;
-				Internal_getAngle(mCachedPtr, out temp);
+				Internal_GetAngle(mCachedPtr, out temp);
 				return temp;
 			}
 		}
 
-		/// <summary>Returns the current angular speed of the joint.</summary>
 		[NativeWrapper]
 		public float Speed
 		{
-			get { return Internal_getSpeed(mCachedPtr); }
+			get { return Internal_GetSpeed(mCachedPtr); }
 		}
 
-		/// <summary>
-		/// Determines the limit of the joint. Limit constrains the motion to the specified angle range. You must enable the 
-		/// limit flag on the joint in order for this to be recognized.
-		/// </summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public LimitAngularRange Limit
@@ -50,16 +44,12 @@ namespace bs
 			get
 			{
 				LimitAngularRange temp;
-				Internal_getLimit(mCachedPtr, out temp);
+				Internal_GetLimit(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setLimit(mCachedPtr, ref value); }
+			set { Internal_SetLimit(mCachedPtr, ref value); }
 		}
 
-		/// <summary>
-		/// Determines the drive properties of the joint. It drives the joint&apos;s angular velocity towards a particular value. 
-		/// You must enable the drive flag on the joint in order for the drive to be active.
-		/// </summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public HingeJointDrive Drive
@@ -67,40 +57,38 @@ namespace bs
 			get
 			{
 				HingeJointDrive temp;
-				Internal_getDrive(mCachedPtr, out temp);
+				Internal_GetDrive(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setDrive(mCachedPtr, ref value); }
+			set { Internal_SetDrive(mCachedPtr, ref value); }
 		}
 
-		/// <summary>Enables or disables a flag that controls joint behaviour.</summary>
 		public void SetFlag(HingeJointFlag flag, bool enabled)
 		{
-			Internal_setFlag(mCachedPtr, flag, enabled);
+			Internal_SetFlag(mCachedPtr, flag, enabled);
 		}
 
-		/// <summary>Checks is the specified option enabled.</summary>
 		public bool HasFlag(HingeJointFlag flag)
 		{
-			return Internal_hasFlag(mCachedPtr, flag);
+			return Internal_HasFlag(mCachedPtr, flag);
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getAngle(IntPtr thisPtr, out Radian __output);
+		private static extern void Internal_GetAngle(IntPtr thisPtr, out Radian __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getSpeed(IntPtr thisPtr);
+		private static extern float Internal_GetSpeed(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getLimit(IntPtr thisPtr, out LimitAngularRange __output);
+		private static extern void Internal_GetLimit(IntPtr thisPtr, out LimitAngularRange __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setLimit(IntPtr thisPtr, ref LimitAngularRange limit);
+		private static extern void Internal_SetLimit(IntPtr thisPtr, ref LimitAngularRange limit);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getDrive(IntPtr thisPtr, out HingeJointDrive __output);
+		private static extern void Internal_GetDrive(IntPtr thisPtr, out HingeJointDrive __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setDrive(IntPtr thisPtr, ref HingeJointDrive drive);
+		private static extern void Internal_SetDrive(IntPtr thisPtr, ref HingeJointDrive drive);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setFlag(IntPtr thisPtr, HingeJointFlag flag, bool enabled);
+		private static extern void Internal_SetFlag(IntPtr thisPtr, HingeJointFlag flag, bool enabled);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_hasFlag(IntPtr thisPtr, HingeJointFlag flag);
+		private static extern bool Internal_HasFlag(IntPtr thisPtr, HingeJointFlag flag);
 	}
 
 	/** @} */

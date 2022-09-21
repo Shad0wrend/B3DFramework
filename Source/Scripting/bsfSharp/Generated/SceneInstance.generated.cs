@@ -21,14 +21,14 @@ namespace bs
 		[NativeWrapper]
 		public string Name
 		{
-			get { return Internal_getName(mCachedPtr); }
+			get { return Internal_GetName(mCachedPtr); }
 		}
 
 		/// <summary>Root object of the scene.</summary>
 		[NativeWrapper]
 		public SceneObject Root
 		{
-			get { return Internal_getRoot(mCachedPtr); }
+			get { return Internal_GetRoot(mCachedPtr); }
 		}
 
 		/// <summary>
@@ -37,7 +37,7 @@ namespace bs
 		[NativeWrapper]
 		public bool IsActive
 		{
-			get { return Internal_isActive(mCachedPtr); }
+			get { return Internal_IsActive(mCachedPtr); }
 		}
 
 		/// <summary>
@@ -47,17 +47,17 @@ namespace bs
 		[NativeWrapper]
 		public PhysicsScene Physics
 		{
-			get { return Internal_getPhysicsScene(mCachedPtr); }
+			get { return Internal_GetPhysicsScene(mCachedPtr); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern string Internal_getName(IntPtr thisPtr);
+		private static extern string Internal_GetName(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern SceneObject Internal_getRoot(IntPtr thisPtr);
+		private static extern SceneObject Internal_GetRoot(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_isActive(IntPtr thisPtr);
+		private static extern bool Internal_IsActive(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern PhysicsScene Internal_getPhysicsScene(IntPtr thisPtr);
+		private static extern PhysicsScene Internal_GetPhysicsScene(IntPtr thisPtr);
 	}
 
 	/** @} */

@@ -35,7 +35,7 @@ namespace bs
 		/// <returns>Imported resource.</returns>
 		public static Resource Import(string inputFilePath, ImportOptions importOptions, UUID UUID)
 		{
-			return Internal_import(inputFilePath, importOptions, ref UUID);
+			return Internal_Import(inputFilePath, importOptions, ref UUID);
 		}
 
 		/// <summary>
@@ -44,7 +44,7 @@ namespace bs
 		/// </summary>
 		public static AsyncOp<RRefBase> ImportAsync(string inputFilePath, ImportOptions importOptions, UUID UUID)
 		{
-			return Internal_importAsync(inputFilePath, importOptions, ref UUID);
+			return Internal_ImportAsync(inputFilePath, importOptions, ref UUID);
 		}
 
 		/// <summary>
@@ -60,7 +60,7 @@ namespace bs
 		/// <returns>A list of all imported resources. The primary resource is always the first returned resource.</returns>
 		public static MultiResource ImportAll(string inputFilePath, ImportOptions importOptions)
 		{
-			return Internal_importAll(inputFilePath, importOptions);
+			return Internal_ImportAll(inputFilePath, importOptions);
 		}
 
 		/// <summary>
@@ -69,14 +69,14 @@ namespace bs
 		/// </summary>
 		public static AsyncOp<MultiResource> ImportAllAsync(string inputFilePath, ImportOptions importOptions)
 		{
-			return Internal_importAllAsync(inputFilePath, importOptions);
+			return Internal_ImportAllAsync(inputFilePath, importOptions);
 		}
 
 		/// <summary>Checks if we can import a file with the specified extension.</summary>
 		/// <param name="extension">The extension without the leading dot.</param>
 		public static bool SupportsFileType(string extension)
 		{
-			return Internal_supportsFileType(extension);
+			return Internal_SupportsFileType(extension);
 		}
 
 		/// <summary>
@@ -92,7 +92,7 @@ namespace bs
 		public static Resource Import(string inputFilePath, ImportOptions importOptions)
 		{
 			UUID UUID = new UUID();
-			return Internal_import(inputFilePath, importOptions, ref UUID);
+			return Internal_Import(inputFilePath, importOptions, ref UUID);
 		}
 
 		/// <summary>
@@ -105,7 +105,7 @@ namespace bs
 		{
 			ImportOptions importOptions = null;
 			UUID UUID = new UUID();
-			return Internal_import(inputFilePath, importOptions, ref UUID);
+			return Internal_Import(inputFilePath, importOptions, ref UUID);
 		}
 
 		/// <summary>
@@ -115,7 +115,7 @@ namespace bs
 		public static AsyncOp<RRefBase> ImportAsync(string inputFilePath, ImportOptions importOptions)
 		{
 			UUID UUID = new UUID();
-			return Internal_importAsync(inputFilePath, importOptions, ref UUID);
+			return Internal_ImportAsync(inputFilePath, importOptions, ref UUID);
 		}
 
 		/// <summary>
@@ -126,7 +126,7 @@ namespace bs
 		{
 			ImportOptions importOptions = null;
 			UUID UUID = new UUID();
-			return Internal_importAsync(inputFilePath, importOptions, ref UUID);
+			return Internal_ImportAsync(inputFilePath, importOptions, ref UUID);
 		}
 
 		/// <summary>
@@ -139,7 +139,7 @@ namespace bs
 		public static MultiResource ImportAll(string inputFilePath)
 		{
 			ImportOptions importOptions = null;
-			return Internal_importAll(inputFilePath, importOptions);
+			return Internal_ImportAll(inputFilePath, importOptions);
 		}
 
 		/// <summary>
@@ -149,19 +149,19 @@ namespace bs
 		public static AsyncOp<MultiResource> ImportAllAsync(string inputFilePath)
 		{
 			ImportOptions importOptions = null;
-			return Internal_importAllAsync(inputFilePath, importOptions);
+			return Internal_ImportAllAsync(inputFilePath, importOptions);
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern Resource Internal_import(string inputFilePath, ImportOptions importOptions, ref UUID UUID);
+		private static extern Resource Internal_Import(string inputFilePath, ImportOptions importOptions, ref UUID UUID);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern AsyncOp<RRefBase> Internal_importAsync(string inputFilePath, ImportOptions importOptions, ref UUID UUID);
+		private static extern AsyncOp<RRefBase> Internal_ImportAsync(string inputFilePath, ImportOptions importOptions, ref UUID UUID);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern MultiResource Internal_importAll(string inputFilePath, ImportOptions importOptions);
+		private static extern MultiResource Internal_ImportAll(string inputFilePath, ImportOptions importOptions);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern AsyncOp<MultiResource> Internal_importAllAsync(string inputFilePath, ImportOptions importOptions);
+		private static extern AsyncOp<MultiResource> Internal_ImportAllAsync(string inputFilePath, ImportOptions importOptions);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_supportsFileType(string extension);
+		private static extern bool Internal_SupportsFileType(string extension);
 	}
 
 	/** @} */

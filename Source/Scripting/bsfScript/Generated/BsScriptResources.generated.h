@@ -18,8 +18,8 @@ namespace bs
 
 		ScriptResources(MonoObject* managedInstance);
 
-		static void startUp();
-		static void shutDown();
+		static void StartUp();
+		static void ShutDown();
 
 	private:
 		uint32_t mGCHandle = 0;
@@ -39,22 +39,22 @@ namespace bs
 		static HEvent onResourceDestroyedConn;
 		static HEvent onResourceModifiedConn;
 
-		static MonoObject* Internal_load(MonoString* filePath, ResourceLoadFlag loadFlags);
-		static MonoObject* Internal_loadAsync(MonoString* filePath, ResourceLoadFlag loadFlags);
-		static MonoObject* Internal_loadFromUUID(UUID* uuid, bool async, ResourceLoadFlag loadFlags);
-		static void Internal_release(MonoObject* resource);
-		static void Internal_unloadAllUnused();
-		static void Internal_unloadAll();
-		static void Internal_save(MonoObject* resource, MonoString* filePath, bool overwrite, bool compress);
-		static void Internal_save0(MonoObject* resource, bool compress);
-		static MonoArray* Internal_getDependencies(MonoString* filePath);
-		static bool Internal_IsLoaded(UUID* uuid, bool checkInProgress);
-		static float Internal_getLoadProgress(MonoObject* resource, bool includeDependencies);
-		static void Internal_registerResourceManifest(MonoObject* manifest);
-		static void Internal_unregisterResourceManifest(MonoObject* manifest);
-		static MonoObject* Internal_getResourceManifest(MonoString* name);
-		static bool Internal_getFilePathFromUUID(UUID* uuid, MonoString** filePath);
-		static bool Internal_getUUIDFromFilePath(MonoString* path, UUID* uuid);
+		static MonoObject* InternalLoad(MonoString* filePath, ResourceLoadFlag loadFlags);
+		static MonoObject* InternalLoadAsync(MonoString* filePath, ResourceLoadFlag loadFlags);
+		static MonoObject* InternalLoadFromUuid(UUID* uuid, bool async, ResourceLoadFlag loadFlags);
+		static void InternalRelease(MonoObject* resource);
+		static void InternalUnloadAllUnused();
+		static void InternalUnloadAll();
+		static void InternalSave(MonoObject* resource, MonoString* filePath, bool overwrite, bool compress);
+		static void InternalSave0(MonoObject* resource, bool compress);
+		static MonoArray* InternalGetDependencies(MonoString* filePath);
+		static bool InternalIsLoaded(UUID* uuid, bool checkInProgress);
+		static float InternalGetLoadProgress(MonoObject* resource, bool includeDependencies);
+		static void InternalRegisterResourceManifest(MonoObject* manifest);
+		static void InternalUnregisterResourceManifest(MonoObject* manifest);
+		static MonoObject* InternalGetResourceManifest(MonoString* name);
+		static bool InternalGetFilePathFromUuid(UUID* uuid, MonoString** filePath);
+		static bool InternalGetUuidFromFilePath(MonoString* path, UUID* uuid);
 	};
 #endif
 }

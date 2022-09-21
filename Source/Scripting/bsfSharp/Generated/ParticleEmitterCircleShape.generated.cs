@@ -23,13 +23,13 @@ namespace bs
 		/// <summary>Creates a new particle emitter circle shape.</summary>
 		public ParticleEmitterCircleShape(ParticleCircleShapeOptions desc)
 		{
-			Internal_create(this, ref desc);
+			Internal_Create(this, ref desc);
 		}
 
 		/// <summary>Creates a new particle emitter circle shape.</summary>
 		public ParticleEmitterCircleShape()
 		{
-			Internal_create0(this);
+			Internal_Create0(this);
 		}
 
 		/// <summary>Options describing the shape.</summary>
@@ -41,20 +41,20 @@ namespace bs
 			get
 			{
 				ParticleCircleShapeOptions temp;
-				Internal_getOptions(mCachedPtr, out temp);
+				Internal_GetOptions(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setOptions(mCachedPtr, ref value); }
+			set { Internal_SetOptions(mCachedPtr, ref value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setOptions(IntPtr thisPtr, ref ParticleCircleShapeOptions options);
+		private static extern void Internal_SetOptions(IntPtr thisPtr, ref ParticleCircleShapeOptions options);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getOptions(IntPtr thisPtr, out ParticleCircleShapeOptions __output);
+		private static extern void Internal_GetOptions(IntPtr thisPtr, out ParticleCircleShapeOptions __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create(ParticleEmitterCircleShape managedInstance, ref ParticleCircleShapeOptions desc);
+		private static extern void Internal_Create(ParticleEmitterCircleShape managedInstance, ref ParticleCircleShapeOptions desc);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create0(ParticleEmitterCircleShape managedInstance);
+		private static extern void Internal_Create0(ParticleEmitterCircleShape managedInstance);
 	}
 
 	/** @} */

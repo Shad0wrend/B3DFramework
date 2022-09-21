@@ -15,12 +15,12 @@ namespace bs
 		mInternal = value;
 	}
 
-	void ScriptParticleColor::initRuntimeData()
+	void ScriptParticleColor::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_setOptions", (void*)&ScriptParticleColor::InternalSetOptions);
-		metaData.scriptClass->AddInternalCall("Internal_getOptions", (void*)&ScriptParticleColor::InternalGetOptions);
-		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptParticleColor::InternalCreate);
-		metaData.scriptClass->AddInternalCall("Internal_create0", (void*)&ScriptParticleColor::InternalCreate0);
+		metaData.scriptClass->AddInternalCall("Internal_SetOptions", (void*)&ScriptParticleColor::InternalSetOptions);
+		metaData.scriptClass->AddInternalCall("Internal_GetOptions", (void*)&ScriptParticleColor::InternalGetOptions);
+		metaData.scriptClass->AddInternalCall("Internal_Create", (void*)&ScriptParticleColor::InternalCreate);
+		metaData.scriptClass->AddInternalCall("Internal_Create0", (void*)&ScriptParticleColor::InternalCreate0);
 
 	}
 
@@ -49,7 +49,7 @@ namespace bs
 
 		__PARTICLE_COLOR_DESCInterop interop__output;
 		interop__output = ScriptPARTICLE_COLOR_DESC::ToInterop(tmp__output);
-		MonoUtil::valueCopy(__output, &interop__output, ScriptPARTICLE_COLOR_DESC::getMetaData()->scriptClass->GetInternalClassInternal());
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptPARTICLE_COLOR_DESC::GetMetaData()->scriptClass->GetInternalClassInternal());
 	}
 
 	void ScriptParticleColor::InternalCreate(MonoObject* managedInstance, __PARTICLE_COLOR_DESCInterop* desc)

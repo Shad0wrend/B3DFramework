@@ -13,7 +13,7 @@ namespace bs
 		:ScriptObject(instance)
 	{ }
 
-	void ScriptPixelUtility::initRuntimeData()
+	void ScriptPixelUtility::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_GetMemorySize", (void*)&ScriptPixelUtility::InternalGetMemorySize);
 		metaData.scriptClass->AddInternalCall("Internal_HasAlpha", (void*)&ScriptPixelUtility::InternalHasAlpha);

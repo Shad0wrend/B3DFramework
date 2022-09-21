@@ -22,14 +22,14 @@ namespace bs
 		mInternal = value;
 	}
 
-	void ScriptRenderTarget::initRuntimeData()
+	void ScriptRenderTarget::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_getWidth", (void*)&ScriptRenderTarget::InternalGetWidth);
-		metaData.scriptClass->AddInternalCall("Internal_getHeight", (void*)&ScriptRenderTarget::InternalGetHeight);
-		metaData.scriptClass->AddInternalCall("Internal_getGammaCorrection", (void*)&ScriptRenderTarget::InternalGetGammaCorrection);
-		metaData.scriptClass->AddInternalCall("Internal_getPriority", (void*)&ScriptRenderTarget::InternalGetPriority);
-		metaData.scriptClass->AddInternalCall("Internal_setPriority", (void*)&ScriptRenderTarget::InternalSetPriority);
-		metaData.scriptClass->AddInternalCall("Internal_getSampleCount", (void*)&ScriptRenderTarget::InternalGetSampleCount);
+		metaData.scriptClass->AddInternalCall("Internal_GetWidth", (void*)&ScriptRenderTarget::InternalGetWidth);
+		metaData.scriptClass->AddInternalCall("Internal_GetHeight", (void*)&ScriptRenderTarget::InternalGetHeight);
+		metaData.scriptClass->AddInternalCall("Internal_GetGammaCorrection", (void*)&ScriptRenderTarget::InternalGetGammaCorrection);
+		metaData.scriptClass->AddInternalCall("Internal_GetPriority", (void*)&ScriptRenderTarget::InternalGetPriority);
+		metaData.scriptClass->AddInternalCall("Internal_SetPriority", (void*)&ScriptRenderTarget::InternalSetPriority);
+		metaData.scriptClass->AddInternalCall("Internal_GetSampleCount", (void*)&ScriptRenderTarget::InternalGetSampleCount);
 
 	}
 
@@ -40,14 +40,14 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptRenderTarget>()) ScriptRenderTarget(managedInstance, value);
 		return managedInstance;
 	}
 	uint32_t ScriptRenderTarget::InternalGetWidth(ScriptRenderTargetBase* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = RenderTargetEx::getWidth(thisPtr->GetInternal());
+		tmp__output = RenderTargetEx::GetWidth(thisPtr->GetInternal());
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -58,7 +58,7 @@ namespace bs
 	uint32_t ScriptRenderTarget::InternalGetHeight(ScriptRenderTargetBase* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = RenderTargetEx::getHeight(thisPtr->GetInternal());
+		tmp__output = RenderTargetEx::GetHeight(thisPtr->GetInternal());
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -69,7 +69,7 @@ namespace bs
 	bool ScriptRenderTarget::InternalGetGammaCorrection(ScriptRenderTargetBase* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = RenderTargetEx::getGammaCorrection(thisPtr->GetInternal());
+		tmp__output = RenderTargetEx::GetGammaCorrection(thisPtr->GetInternal());
 
 		bool __output;
 		__output = tmp__output;
@@ -80,7 +80,7 @@ namespace bs
 	int32_t ScriptRenderTarget::InternalGetPriority(ScriptRenderTargetBase* thisPtr)
 	{
 		int32_t tmp__output;
-		tmp__output = RenderTargetEx::getPriority(thisPtr->GetInternal());
+		tmp__output = RenderTargetEx::GetPriority(thisPtr->GetInternal());
 
 		int32_t __output;
 		__output = tmp__output;
@@ -90,13 +90,13 @@ namespace bs
 
 	void ScriptRenderTarget::InternalSetPriority(ScriptRenderTargetBase* thisPtr, int32_t priority)
 	{
-		RenderTargetEx::setPriority(thisPtr->GetInternal(), priority);
+		RenderTargetEx::SetPriority(thisPtr->GetInternal(), priority);
 	}
 
 	uint32_t ScriptRenderTarget::InternalGetSampleCount(ScriptRenderTargetBase* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = RenderTargetEx::getSampleCount(thisPtr->GetInternal());
+		tmp__output = RenderTargetEx::GetSampleCount(thisPtr->GetInternal());
 
 		uint32_t __output;
 		__output = tmp__output;

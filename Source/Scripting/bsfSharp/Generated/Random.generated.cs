@@ -28,38 +28,38 @@ namespace bs
 		/// <summary>Changes the seed of the generator to the specified value.</summary>
 		public void SetSeed(int seed)
 		{
-			Internal_setSeed(mCachedPtr, seed);
+			Internal_SetSeed(mCachedPtr, seed);
 		}
 
 		/// <summary>Returns a random value in range [0, std::numeric_limits&lt;uint32_t&gt;::max()].</summary>
 		public int Get()
 		{
-			return Internal_get(mCachedPtr);
+			return Internal_Get(mCachedPtr);
 		}
 
 		/// <summary>Returns a random value in range [min, max].</summary>
 		public int GetRange(int min, int max)
 		{
-			return Internal_getRange(mCachedPtr, min, max);
+			return Internal_GetRange(mCachedPtr, min, max);
 		}
 
 		/// <summary>Returns a random value in range [0, 1].</summary>
 		public float GetUNorm()
 		{
-			return Internal_getUNorm(mCachedPtr);
+			return Internal_GetUNorm(mCachedPtr);
 		}
 
 		/// <summary>Returns a random value in range [-1, 1].</summary>
 		public float GetSNorm()
 		{
-			return Internal_getSNorm(mCachedPtr);
+			return Internal_GetSNorm(mCachedPtr);
 		}
 
 		/// <summary>Returns a random unit vector in three dimensions.</summary>
 		public Vector3 GetUnitVector()
 		{
 			Vector3 temp;
-			Internal_getUnitVector(mCachedPtr, out temp);
+			Internal_GetUnitVector(mCachedPtr, out temp);
 			return temp;
 		}
 
@@ -67,7 +67,7 @@ namespace bs
 		public Vector2 GetUnitVector2D()
 		{
 			Vector2 temp;
-			Internal_getUnitVector2D(mCachedPtr, out temp);
+			Internal_GetUnitVector2D(mCachedPtr, out temp);
 			return temp;
 		}
 
@@ -75,7 +75,7 @@ namespace bs
 		public Vector3 GetPointInSphere()
 		{
 			Vector3 temp;
-			Internal_getPointInSphere(mCachedPtr, out temp);
+			Internal_GetPointInSphere(mCachedPtr, out temp);
 			return temp;
 		}
 
@@ -88,7 +88,7 @@ namespace bs
 		public Vector3 GetPointInSphereShell(float thickness)
 		{
 			Vector3 temp;
-			Internal_getPointInSphereShell(mCachedPtr, thickness, out temp);
+			Internal_GetPointInSphereShell(mCachedPtr, thickness, out temp);
 			return temp;
 		}
 
@@ -96,7 +96,7 @@ namespace bs
 		public Vector2 GetPointInCircle()
 		{
 			Vector2 temp;
-			Internal_getPointInCircle(mCachedPtr, out temp);
+			Internal_GetPointInCircle(mCachedPtr, out temp);
 			return temp;
 		}
 
@@ -109,7 +109,7 @@ namespace bs
 		public Vector2 GetPointInCircleShell(float thickness)
 		{
 			Vector2 temp;
-			Internal_getPointInCircleShell(mCachedPtr, thickness, out temp);
+			Internal_GetPointInCircleShell(mCachedPtr, thickness, out temp);
 			return temp;
 		}
 
@@ -119,7 +119,7 @@ namespace bs
 		public Vector2 GetPointInArc(Degree angle)
 		{
 			Vector2 temp;
-			Internal_getPointInArc(mCachedPtr, ref angle, out temp);
+			Internal_GetPointInArc(mCachedPtr, ref angle, out temp);
 			return temp;
 		}
 
@@ -132,7 +132,7 @@ namespace bs
 		public Vector2 GetPointInArcShell(Degree angle, float thickness)
 		{
 			Vector2 temp;
-			Internal_getPointInArcShell(mCachedPtr, ref angle, thickness, out temp);
+			Internal_GetPointInArcShell(mCachedPtr, ref angle, thickness, out temp);
 			return temp;
 		}
 
@@ -142,40 +142,40 @@ namespace bs
 		public Vector3 GetBarycentric()
 		{
 			Vector3 temp;
-			Internal_getBarycentric(mCachedPtr, out temp);
+			Internal_GetBarycentric(mCachedPtr, out temp);
 			return temp;
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_Random(Random managedInstance, int seed);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setSeed(IntPtr thisPtr, int seed);
+		private static extern void Internal_SetSeed(IntPtr thisPtr, int seed);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_get(IntPtr thisPtr);
+		private static extern int Internal_Get(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getRange(IntPtr thisPtr, int min, int max);
+		private static extern int Internal_GetRange(IntPtr thisPtr, int min, int max);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getUNorm(IntPtr thisPtr);
+		private static extern float Internal_GetUNorm(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getSNorm(IntPtr thisPtr);
+		private static extern float Internal_GetSNorm(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getUnitVector(IntPtr thisPtr, out Vector3 __output);
+		private static extern void Internal_GetUnitVector(IntPtr thisPtr, out Vector3 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getUnitVector2D(IntPtr thisPtr, out Vector2 __output);
+		private static extern void Internal_GetUnitVector2D(IntPtr thisPtr, out Vector2 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getPointInSphere(IntPtr thisPtr, out Vector3 __output);
+		private static extern void Internal_GetPointInSphere(IntPtr thisPtr, out Vector3 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getPointInSphereShell(IntPtr thisPtr, float thickness, out Vector3 __output);
+		private static extern void Internal_GetPointInSphereShell(IntPtr thisPtr, float thickness, out Vector3 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getPointInCircle(IntPtr thisPtr, out Vector2 __output);
+		private static extern void Internal_GetPointInCircle(IntPtr thisPtr, out Vector2 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getPointInCircleShell(IntPtr thisPtr, float thickness, out Vector2 __output);
+		private static extern void Internal_GetPointInCircleShell(IntPtr thisPtr, float thickness, out Vector2 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getPointInArc(IntPtr thisPtr, ref Degree angle, out Vector2 __output);
+		private static extern void Internal_GetPointInArc(IntPtr thisPtr, ref Degree angle, out Vector2 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getPointInArcShell(IntPtr thisPtr, ref Degree angle, float thickness, out Vector2 __output);
+		private static extern void Internal_GetPointInArcShell(IntPtr thisPtr, ref Degree angle, float thickness, out Vector2 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getBarycentric(IntPtr thisPtr, out Vector3 __output);
+		private static extern void Internal_GetBarycentric(IntPtr thisPtr, out Vector3 __output);
 	}
 
 	/** @} */

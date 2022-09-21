@@ -19,7 +19,7 @@ namespace bs
 
 	}
 
-	void ScriptPlainText::initRuntimeData()
+	void ScriptPlainText::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptPlainText::InternalCreateInstance);
 		metaData.scriptClass->AddInternalCall("Internal_GetText", (void*)&ScriptPlainText::InternalGetText);

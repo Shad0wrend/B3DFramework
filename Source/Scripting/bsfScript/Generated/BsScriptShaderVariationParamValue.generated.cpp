@@ -11,7 +11,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptShaderVariationParamValue::initRuntimeData()
+	void ScriptShaderVariationParamValue::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptShaderVariationParamValue::Box(const __ShaderVariationParamValueInterop& value)

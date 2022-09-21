@@ -37,39 +37,39 @@ namespace bs
 	{
 	}
 
-	void ScriptParticleEmitter::initRuntimeData()
+	void ScriptParticleEmitter::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_setShape", (void*)&ScriptParticleEmitter::InternalSetShape);
-		metaData.scriptClass->AddInternalCall("Internal_getShape", (void*)&ScriptParticleEmitter::InternalGetShape);
-		metaData.scriptClass->AddInternalCall("Internal_setEmissionRate", (void*)&ScriptParticleEmitter::InternalSetEmissionRate);
-		metaData.scriptClass->AddInternalCall("Internal_getEmissionRate", (void*)&ScriptParticleEmitter::InternalGetEmissionRate);
-		metaData.scriptClass->AddInternalCall("Internal_setEmissionBursts", (void*)&ScriptParticleEmitter::InternalSetEmissionBursts);
-		metaData.scriptClass->AddInternalCall("Internal_getEmissionBursts", (void*)&ScriptParticleEmitter::InternalGetEmissionBursts);
-		metaData.scriptClass->AddInternalCall("Internal_setInitialLifetime", (void*)&ScriptParticleEmitter::InternalSetInitialLifetime);
-		metaData.scriptClass->AddInternalCall("Internal_getInitialLifetime", (void*)&ScriptParticleEmitter::InternalGetInitialLifetime);
-		metaData.scriptClass->AddInternalCall("Internal_setInitialSpeed", (void*)&ScriptParticleEmitter::InternalSetInitialSpeed);
-		metaData.scriptClass->AddInternalCall("Internal_getInitialSpeed", (void*)&ScriptParticleEmitter::InternalGetInitialSpeed);
-		metaData.scriptClass->AddInternalCall("Internal_setInitialSize", (void*)&ScriptParticleEmitter::InternalSetInitialSize);
-		metaData.scriptClass->AddInternalCall("Internal_getInitialSize", (void*)&ScriptParticleEmitter::InternalGetInitialSize);
-		metaData.scriptClass->AddInternalCall("Internal_setInitialSize3D", (void*)&ScriptParticleEmitter::InternalSetInitialSize3D);
-		metaData.scriptClass->AddInternalCall("Internal_getInitialSize3D", (void*)&ScriptParticleEmitter::InternalGetInitialSize3D);
-		metaData.scriptClass->AddInternalCall("Internal_setUse3DSize", (void*)&ScriptParticleEmitter::InternalSetUse3DSize);
-		metaData.scriptClass->AddInternalCall("Internal_getUse3DSize", (void*)&ScriptParticleEmitter::InternalGetUse3DSize);
-		metaData.scriptClass->AddInternalCall("Internal_setInitialRotation", (void*)&ScriptParticleEmitter::InternalSetInitialRotation);
-		metaData.scriptClass->AddInternalCall("Internal_getInitialRotation", (void*)&ScriptParticleEmitter::InternalGetInitialRotation);
-		metaData.scriptClass->AddInternalCall("Internal_setInitialRotation3D", (void*)&ScriptParticleEmitter::InternalSetInitialRotation3D);
-		metaData.scriptClass->AddInternalCall("Internal_getInitialRotation3D", (void*)&ScriptParticleEmitter::InternalGetInitialRotation3D);
-		metaData.scriptClass->AddInternalCall("Internal_setUse3DRotation", (void*)&ScriptParticleEmitter::InternalSetUse3DRotation);
-		metaData.scriptClass->AddInternalCall("Internal_getUse3DRotation", (void*)&ScriptParticleEmitter::InternalGetUse3DRotation);
-		metaData.scriptClass->AddInternalCall("Internal_setInitialColor", (void*)&ScriptParticleEmitter::InternalSetInitialColor);
-		metaData.scriptClass->AddInternalCall("Internal_getInitialColor", (void*)&ScriptParticleEmitter::InternalGetInitialColor);
-		metaData.scriptClass->AddInternalCall("Internal_setRandomOffset", (void*)&ScriptParticleEmitter::InternalSetRandomOffset);
-		metaData.scriptClass->AddInternalCall("Internal_getRandomOffset", (void*)&ScriptParticleEmitter::InternalGetRandomOffset);
-		metaData.scriptClass->AddInternalCall("Internal_setFlipU", (void*)&ScriptParticleEmitter::InternalSetFlipU);
-		metaData.scriptClass->AddInternalCall("Internal_getFlipU", (void*)&ScriptParticleEmitter::InternalGetFlipU);
-		metaData.scriptClass->AddInternalCall("Internal_setFlipV", (void*)&ScriptParticleEmitter::InternalSetFlipV);
-		metaData.scriptClass->AddInternalCall("Internal_getFlipV", (void*)&ScriptParticleEmitter::InternalGetFlipV);
-		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptParticleEmitter::InternalCreate);
+		metaData.scriptClass->AddInternalCall("Internal_SetShape", (void*)&ScriptParticleEmitter::InternalSetShape);
+		metaData.scriptClass->AddInternalCall("Internal_GetShape", (void*)&ScriptParticleEmitter::InternalGetShape);
+		metaData.scriptClass->AddInternalCall("Internal_SetEmissionRate", (void*)&ScriptParticleEmitter::InternalSetEmissionRate);
+		metaData.scriptClass->AddInternalCall("Internal_GetEmissionRate", (void*)&ScriptParticleEmitter::InternalGetEmissionRate);
+		metaData.scriptClass->AddInternalCall("Internal_SetEmissionBursts", (void*)&ScriptParticleEmitter::InternalSetEmissionBursts);
+		metaData.scriptClass->AddInternalCall("Internal_GetEmissionBursts", (void*)&ScriptParticleEmitter::InternalGetEmissionBursts);
+		metaData.scriptClass->AddInternalCall("Internal_SetInitialLifetime", (void*)&ScriptParticleEmitter::InternalSetInitialLifetime);
+		metaData.scriptClass->AddInternalCall("Internal_GetInitialLifetime", (void*)&ScriptParticleEmitter::InternalGetInitialLifetime);
+		metaData.scriptClass->AddInternalCall("Internal_SetInitialSpeed", (void*)&ScriptParticleEmitter::InternalSetInitialSpeed);
+		metaData.scriptClass->AddInternalCall("Internal_GetInitialSpeed", (void*)&ScriptParticleEmitter::InternalGetInitialSpeed);
+		metaData.scriptClass->AddInternalCall("Internal_SetInitialSize", (void*)&ScriptParticleEmitter::InternalSetInitialSize);
+		metaData.scriptClass->AddInternalCall("Internal_GetInitialSize", (void*)&ScriptParticleEmitter::InternalGetInitialSize);
+		metaData.scriptClass->AddInternalCall("Internal_SetInitialSize3D", (void*)&ScriptParticleEmitter::InternalSetInitialSize3D);
+		metaData.scriptClass->AddInternalCall("Internal_GetInitialSize3D", (void*)&ScriptParticleEmitter::InternalGetInitialSize3D);
+		metaData.scriptClass->AddInternalCall("Internal_SetUse3DSize", (void*)&ScriptParticleEmitter::InternalSetUse3DSize);
+		metaData.scriptClass->AddInternalCall("Internal_GetUse3DSize", (void*)&ScriptParticleEmitter::InternalGetUse3DSize);
+		metaData.scriptClass->AddInternalCall("Internal_SetInitialRotation", (void*)&ScriptParticleEmitter::InternalSetInitialRotation);
+		metaData.scriptClass->AddInternalCall("Internal_GetInitialRotation", (void*)&ScriptParticleEmitter::InternalGetInitialRotation);
+		metaData.scriptClass->AddInternalCall("Internal_SetInitialRotation3D", (void*)&ScriptParticleEmitter::InternalSetInitialRotation3D);
+		metaData.scriptClass->AddInternalCall("Internal_GetInitialRotation3D", (void*)&ScriptParticleEmitter::InternalGetInitialRotation3D);
+		metaData.scriptClass->AddInternalCall("Internal_SetUse3DRotation", (void*)&ScriptParticleEmitter::InternalSetUse3DRotation);
+		metaData.scriptClass->AddInternalCall("Internal_GetUse3DRotation", (void*)&ScriptParticleEmitter::InternalGetUse3DRotation);
+		metaData.scriptClass->AddInternalCall("Internal_SetInitialColor", (void*)&ScriptParticleEmitter::InternalSetInitialColor);
+		metaData.scriptClass->AddInternalCall("Internal_GetInitialColor", (void*)&ScriptParticleEmitter::InternalGetInitialColor);
+		metaData.scriptClass->AddInternalCall("Internal_SetRandomOffset", (void*)&ScriptParticleEmitter::InternalSetRandomOffset);
+		metaData.scriptClass->AddInternalCall("Internal_GetRandomOffset", (void*)&ScriptParticleEmitter::InternalGetRandomOffset);
+		metaData.scriptClass->AddInternalCall("Internal_SetFlipU", (void*)&ScriptParticleEmitter::InternalSetFlipU);
+		metaData.scriptClass->AddInternalCall("Internal_GetFlipU", (void*)&ScriptParticleEmitter::InternalGetFlipU);
+		metaData.scriptClass->AddInternalCall("Internal_SetFlipV", (void*)&ScriptParticleEmitter::InternalSetFlipV);
+		metaData.scriptClass->AddInternalCall("Internal_GetFlipV", (void*)&ScriptParticleEmitter::InternalGetFlipV);
+		metaData.scriptClass->AddInternalCall("Internal_Create", (void*)&ScriptParticleEmitter::InternalCreate);
 
 	}
 
@@ -80,7 +80,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptParticleEmitter>()) ScriptParticleEmitter(managedInstance, value);
 		return managedInstance;
 	}
@@ -88,7 +88,7 @@ namespace bs
 	{
 		SPtr<ParticleEmitterShape> tmpshape;
 		ScriptParticleEmitterShapeBase* scriptshape;
-		scriptshape = (ScriptParticleEmitterShapeBase*)ScriptParticleEmitterShape::toNative(shape);
+		scriptshape = (ScriptParticleEmitterShapeBase*)ScriptParticleEmitterShape::ToNative(shape);
 		if(scriptshape != nullptr)
 			tmpshape = scriptshape->GetInternal();
 		thisPtr->GetInternal()->SetShape(tmpshape);
@@ -133,7 +133,7 @@ namespace bs
 	{
 		SPtr<TDistribution<float>> tmpvalue;
 		ScriptTDistributionfloat* scriptvalue;
-		scriptvalue = ScriptTDistributionfloat::toNative(value);
+		scriptvalue = ScriptTDistributionfloat::ToNative(value);
 		if(scriptvalue != nullptr)
 			tmpvalue = scriptvalue->GetInternal();
 		thisPtr->GetInternal()->SetEmissionRate(*tmpvalue);
@@ -156,10 +156,10 @@ namespace bs
 		if(bursts != nullptr)
 		{
 			ScriptArray arraybursts(bursts);
-			vecbursts.resize(arraybursts.size());
-			for(int i = 0; i < (int)arraybursts.size(); i++)
+			vecbursts.resize(arraybursts.Size());
+			for(int i = 0; i < (int)arraybursts.Size(); i++)
 			{
-				vecbursts[i] = ScriptParticleBurst::fromInterop(arraybursts.get<__ParticleBurstInterop>(i));
+				vecbursts[i] = ScriptParticleBurst::FromInterop(arraybursts.Get<__ParticleBurstInterop>(i));
 			}
 		}
 		thisPtr->GetInternal()->SetEmissionBursts(vecbursts);
@@ -172,12 +172,12 @@ namespace bs
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
-		ScriptArray array__output = ScriptArray::create<ScriptParticleBurst>(arraySize__output);
+		ScriptArray array__output = ScriptArray::Create<ScriptParticleBurst>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
-			array__output.Set(i, ScriptParticleBurst::toInterop(vec__output[i]));
+			array__output.Set(i, ScriptParticleBurst::ToInterop(vec__output[i]));
 		}
-		__output = array__output.getInternal();
+		__output = array__output.GetInternal();
 
 		return __output;
 	}
@@ -186,7 +186,7 @@ namespace bs
 	{
 		SPtr<TDistribution<float>> tmpvalue;
 		ScriptTDistributionfloat* scriptvalue;
-		scriptvalue = ScriptTDistributionfloat::toNative(value);
+		scriptvalue = ScriptTDistributionfloat::ToNative(value);
 		if(scriptvalue != nullptr)
 			tmpvalue = scriptvalue->GetInternal();
 		thisPtr->GetInternal()->SetInitialLifetime(*tmpvalue);
@@ -207,7 +207,7 @@ namespace bs
 	{
 		SPtr<TDistribution<float>> tmpvalue;
 		ScriptTDistributionfloat* scriptvalue;
-		scriptvalue = ScriptTDistributionfloat::toNative(value);
+		scriptvalue = ScriptTDistributionfloat::ToNative(value);
 		if(scriptvalue != nullptr)
 			tmpvalue = scriptvalue->GetInternal();
 		thisPtr->GetInternal()->SetInitialSpeed(*tmpvalue);
@@ -228,7 +228,7 @@ namespace bs
 	{
 		SPtr<TDistribution<float>> tmpvalue;
 		ScriptTDistributionfloat* scriptvalue;
-		scriptvalue = ScriptTDistributionfloat::toNative(value);
+		scriptvalue = ScriptTDistributionfloat::ToNative(value);
 		if(scriptvalue != nullptr)
 			tmpvalue = scriptvalue->GetInternal();
 		thisPtr->GetInternal()->SetInitialSize(*tmpvalue);
@@ -249,7 +249,7 @@ namespace bs
 	{
 		SPtr<TDistribution<Vector3>> tmpvalue;
 		ScriptTDistributionVector3* scriptvalue;
-		scriptvalue = ScriptTDistributionVector3::toNative(value);
+		scriptvalue = ScriptTDistributionVector3::ToNative(value);
 		if(scriptvalue != nullptr)
 			tmpvalue = scriptvalue->GetInternal();
 		thisPtr->GetInternal()->SetInitialSize3D(*tmpvalue);
@@ -286,7 +286,7 @@ namespace bs
 	{
 		SPtr<TDistribution<float>> tmpvalue;
 		ScriptTDistributionfloat* scriptvalue;
-		scriptvalue = ScriptTDistributionfloat::toNative(value);
+		scriptvalue = ScriptTDistributionfloat::ToNative(value);
 		if(scriptvalue != nullptr)
 			tmpvalue = scriptvalue->GetInternal();
 		thisPtr->GetInternal()->SetInitialRotation(*tmpvalue);
@@ -307,7 +307,7 @@ namespace bs
 	{
 		SPtr<TDistribution<Vector3>> tmpvalue;
 		ScriptTDistributionVector3* scriptvalue;
-		scriptvalue = ScriptTDistributionVector3::toNative(value);
+		scriptvalue = ScriptTDistributionVector3::ToNative(value);
 		if(scriptvalue != nullptr)
 			tmpvalue = scriptvalue->GetInternal();
 		thisPtr->GetInternal()->SetInitialRotation3D(*tmpvalue);
@@ -344,7 +344,7 @@ namespace bs
 	{
 		SPtr<TColorDistribution<ColorGradient>> tmpvalue;
 		ScriptTColorDistributionColorGradient* scriptvalue;
-		scriptvalue = ScriptTColorDistributionColorGradient::toNative(value);
+		scriptvalue = ScriptTColorDistributionColorGradient::ToNative(value);
 		if(scriptvalue != nullptr)
 			tmpvalue = scriptvalue->GetInternal();
 		thisPtr->GetInternal()->SetInitialColor(*tmpvalue);

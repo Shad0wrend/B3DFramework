@@ -16,21 +16,21 @@ namespace bs
 	{
 	}
 
-	void ScriptFontBitmap::initRuntimeData()
+	void ScriptFontBitmap::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_getCharDesc", (void*)&ScriptFontBitmap::InternalGetCharDesc);
-		metaData.scriptClass->AddInternalCall("Internal_getsize", (void*)&ScriptFontBitmap::InternalGetsize);
-		metaData.scriptClass->AddInternalCall("Internal_setsize", (void*)&ScriptFontBitmap::InternalSetsize);
-		metaData.scriptClass->AddInternalCall("Internal_getbaselineOffset", (void*)&ScriptFontBitmap::InternalGetbaselineOffset);
-		metaData.scriptClass->AddInternalCall("Internal_setbaselineOffset", (void*)&ScriptFontBitmap::InternalSetbaselineOffset);
-		metaData.scriptClass->AddInternalCall("Internal_getlineHeight", (void*)&ScriptFontBitmap::InternalGetlineHeight);
-		metaData.scriptClass->AddInternalCall("Internal_setlineHeight", (void*)&ScriptFontBitmap::InternalSetlineHeight);
-		metaData.scriptClass->AddInternalCall("Internal_getmissingGlyph", (void*)&ScriptFontBitmap::InternalGetmissingGlyph);
-		metaData.scriptClass->AddInternalCall("Internal_setmissingGlyph", (void*)&ScriptFontBitmap::InternalSetmissingGlyph);
-		metaData.scriptClass->AddInternalCall("Internal_getspaceWidth", (void*)&ScriptFontBitmap::InternalGetspaceWidth);
-		metaData.scriptClass->AddInternalCall("Internal_setspaceWidth", (void*)&ScriptFontBitmap::InternalSetspaceWidth);
-		metaData.scriptClass->AddInternalCall("Internal_gettexturePages", (void*)&ScriptFontBitmap::InternalGettexturePages);
-		metaData.scriptClass->AddInternalCall("Internal_settexturePages", (void*)&ScriptFontBitmap::InternalSettexturePages);
+		metaData.scriptClass->AddInternalCall("Internal_GetCharDesc", (void*)&ScriptFontBitmap::InternalGetCharDesc);
+		metaData.scriptClass->AddInternalCall("Internal_Getsize", (void*)&ScriptFontBitmap::InternalGetsize);
+		metaData.scriptClass->AddInternalCall("Internal_Setsize", (void*)&ScriptFontBitmap::InternalSetsize);
+		metaData.scriptClass->AddInternalCall("Internal_GetbaselineOffset", (void*)&ScriptFontBitmap::InternalGetbaselineOffset);
+		metaData.scriptClass->AddInternalCall("Internal_SetbaselineOffset", (void*)&ScriptFontBitmap::InternalSetbaselineOffset);
+		metaData.scriptClass->AddInternalCall("Internal_GetlineHeight", (void*)&ScriptFontBitmap::InternalGetlineHeight);
+		metaData.scriptClass->AddInternalCall("Internal_SetlineHeight", (void*)&ScriptFontBitmap::InternalSetlineHeight);
+		metaData.scriptClass->AddInternalCall("Internal_GetmissingGlyph", (void*)&ScriptFontBitmap::InternalGetmissingGlyph);
+		metaData.scriptClass->AddInternalCall("Internal_SetmissingGlyph", (void*)&ScriptFontBitmap::InternalSetmissingGlyph);
+		metaData.scriptClass->AddInternalCall("Internal_GetspaceWidth", (void*)&ScriptFontBitmap::InternalGetspaceWidth);
+		metaData.scriptClass->AddInternalCall("Internal_SetspaceWidth", (void*)&ScriptFontBitmap::InternalSetspaceWidth);
+		metaData.scriptClass->AddInternalCall("Internal_GettexturePages", (void*)&ScriptFontBitmap::InternalGettexturePages);
+		metaData.scriptClass->AddInternalCall("Internal_SettexturePages", (void*)&ScriptFontBitmap::InternalSettexturePages);
 
 	}
 
@@ -41,7 +41,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptFontBitmap>()) ScriptFontBitmap(managedInstance, value);
 		return managedInstance;
 	}
@@ -51,8 +51,8 @@ namespace bs
 		tmp__output = thisPtr->GetInternal()->GetCharDesc(charId);
 
 		__CharDescInterop interop__output;
-		interop__output = ScriptCharDesc::toInterop(tmp__output);
-		MonoUtil::valueCopy(__output, &interop__output, ScriptCharDesc::getMetaData()->scriptClass->GetInternalClassInternal());
+		interop__output = ScriptCharDesc::ToInterop(tmp__output);
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptCharDesc::GetMetaData()->scriptClass->GetInternalClassInternal());
 	}
 
 	uint32_t ScriptFontBitmap::InternalGetsize(ScriptFontBitmap* thisPtr)
@@ -109,8 +109,8 @@ namespace bs
 		tmp__output = thisPtr->GetInternal()->missingGlyph;
 
 		__CharDescInterop interop__output;
-		interop__output = ScriptCharDesc::toInterop(tmp__output);
-		MonoUtil::valueCopy(__output, &interop__output, ScriptCharDesc::getMetaData()->scriptClass->GetInternalClassInternal());
+		interop__output = ScriptCharDesc::ToInterop(tmp__output);
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptCharDesc::GetMetaData()->scriptClass->GetInternalClassInternal());
 
 
 	}
@@ -118,7 +118,7 @@ namespace bs
 	void ScriptFontBitmap::InternalSetmissingGlyph(ScriptFontBitmap* thisPtr, __CharDescInterop* value)
 	{
 		CharDesc tmpvalue;
-		tmpvalue = ScriptCharDesc::fromInterop(*value);
+		tmpvalue = ScriptCharDesc::FromInterop(*value);
 		thisPtr->GetInternal()->missingGlyph = tmpvalue;
 	}
 
@@ -145,17 +145,17 @@ namespace bs
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
-		ScriptArray array__output = ScriptArray::create<ScriptRRefBase>(arraySize__output);
+		ScriptArray array__output = ScriptArray::Create<ScriptRRefBase>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
 			ScriptRRefBase* script__output;
-			script__output = ScriptResourceManager::Instance().getScriptRRef(vec__output[i]);
+			script__output = ScriptResourceManager::Instance().GetScriptRRef(vec__output[i]);
 			if(script__output != nullptr)
 				array__output.Set(i, script__output->GetManagedInstance());
 			else
 				array__output.Set(i, nullptr);
 		}
-		__output = array__output.getInternal();
+		__output = array__output.GetInternal();
 
 		return __output;
 	}
@@ -166,11 +166,11 @@ namespace bs
 		if(value != nullptr)
 		{
 			ScriptArray arrayvalue(value);
-			vecvalue.resize(arrayvalue.size());
-			for(int i = 0; i < (int)arrayvalue.size(); i++)
+			vecvalue.resize(arrayvalue.Size());
+			for(int i = 0; i < (int)arrayvalue.Size(); i++)
 			{
 				ScriptRRefBase* scriptvalue;
-				scriptvalue = ScriptRRefBase::toNative(arrayvalue.get<MonoObject*>(i));
+				scriptvalue = ScriptRRefBase::ToNative(arrayvalue.Get<MonoObject*>(i));
 				if(scriptvalue != nullptr)
 				{
 					ResourceHandle<Texture> arrayElemPtrvalue = static_resource_cast<Texture>(scriptvalue->GetHandle());

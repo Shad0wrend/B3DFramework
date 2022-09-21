@@ -35,7 +35,7 @@ namespace bs
 		/// </param>
 		public PhysicsMaterial(float staticFriction = 0f, float dynamicFriction = 0f, float restitution = 0f)
 		{
-			Internal_create(this, staticFriction, dynamicFriction, restitution);
+			Internal_Create(this, staticFriction, dynamicFriction, restitution);
 		}
 
 		/// <summary>Returns a reference wrapper for this resource.</summary>
@@ -52,8 +52,8 @@ namespace bs
 		[NativeWrapper]
 		public float StaticFriction
 		{
-			get { return Internal_getStaticFriction(mCachedPtr); }
-			set { Internal_setStaticFriction(mCachedPtr, value); }
+			get { return Internal_GetStaticFriction(mCachedPtr); }
+			set { Internal_SetStaticFriction(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -64,8 +64,8 @@ namespace bs
 		[NativeWrapper]
 		public float DynamicFriction
 		{
-			get { return Internal_getDynamicFriction(mCachedPtr); }
-			set { Internal_setDynamicFriction(mCachedPtr, value); }
+			get { return Internal_GetDynamicFriction(mCachedPtr); }
+			set { Internal_SetDynamicFriction(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -76,8 +76,8 @@ namespace bs
 		[NativeWrapper]
 		public float Restitution
 		{
-			get { return Internal_getRestitutionCoefficient(mCachedPtr); }
-			set { Internal_setRestitutionCoefficient(mCachedPtr, value); }
+			get { return Internal_GetRestitutionCoefficient(mCachedPtr); }
+			set { Internal_SetRestitutionCoefficient(mCachedPtr, value); }
 		}
 
 		/// <summary>Returns a reference wrapper for this resource.</summary>
@@ -92,19 +92,19 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern RRef<PhysicsMaterial> Internal_GetRef(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setStaticFriction(IntPtr thisPtr, float value);
+		private static extern void Internal_SetStaticFriction(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getStaticFriction(IntPtr thisPtr);
+		private static extern float Internal_GetStaticFriction(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setDynamicFriction(IntPtr thisPtr, float value);
+		private static extern void Internal_SetDynamicFriction(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getDynamicFriction(IntPtr thisPtr);
+		private static extern float Internal_GetDynamicFriction(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setRestitutionCoefficient(IntPtr thisPtr, float value);
+		private static extern void Internal_SetRestitutionCoefficient(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getRestitutionCoefficient(IntPtr thisPtr);
+		private static extern float Internal_GetRestitutionCoefficient(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create(PhysicsMaterial managedInstance, float staticFriction, float dynamicFriction, float restitution);
+		private static extern void Internal_Create(PhysicsMaterial managedInstance, float staticFriction, float dynamicFriction, float restitution);
 	}
 
 	/** @} */

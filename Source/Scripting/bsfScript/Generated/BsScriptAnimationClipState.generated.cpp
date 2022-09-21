@@ -11,7 +11,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptAnimationClipState::initRuntimeData()
+	void ScriptAnimationClipState::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptAnimationClipState::Box(const AnimationClipState& value)

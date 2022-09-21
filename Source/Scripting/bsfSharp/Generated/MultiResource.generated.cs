@@ -31,8 +31,8 @@ namespace bs
 		[NativeWrapper]
 		public SubResource[] Entries
 		{
-			get { return Internal_getentries(mCachedPtr); }
-			set { Internal_setentries(mCachedPtr, value); }
+			get { return Internal_Getentries(mCachedPtr); }
+			set { Internal_Setentries(mCachedPtr, value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
@@ -40,9 +40,9 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_MultiResource0(MultiResource managedInstance, SubResource[] entries);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern SubResource[] Internal_getentries(IntPtr thisPtr);
+		private static extern SubResource[] Internal_Getentries(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setentries(IntPtr thisPtr, SubResource[] value);
+		private static extern void Internal_Setentries(IntPtr thisPtr, SubResource[] value);
 	}
 
 	/** @} */

@@ -20,7 +20,7 @@ namespace bs
 		/// <summary>Creates a new import options object that allows you to customize how are fonts imported.</summary>
 		public FontImportOptions()
 		{
-			Internal_create(this);
+			Internal_Create(this);
 		}
 
 		/// <summary>Determines font sizes that are to be imported. Sizes are in points.</summary>
@@ -28,8 +28,8 @@ namespace bs
 		[NativeWrapper]
 		public int[] FontSizes
 		{
-			get { return Internal_getfontSizes(mCachedPtr); }
-			set { Internal_setfontSizes(mCachedPtr, value); }
+			get { return Internal_GetfontSizes(mCachedPtr); }
+			set { Internal_SetfontSizes(mCachedPtr, value); }
 		}
 
 		/// <summary>Determines character index ranges to import. Ranges are defined as unicode numbers.</summary>
@@ -37,8 +37,8 @@ namespace bs
 		[NativeWrapper]
 		public CharRange[] CharIndexRanges
 		{
-			get { return Internal_getcharIndexRanges(mCachedPtr); }
-			set { Internal_setcharIndexRanges(mCachedPtr, value); }
+			get { return Internal_GetcharIndexRanges(mCachedPtr); }
+			set { Internal_SetcharIndexRanges(mCachedPtr, value); }
 		}
 
 		/// <summary>Determines dots per inch scale that will be used when rendering the characters.</summary>
@@ -46,8 +46,8 @@ namespace bs
 		[NativeWrapper]
 		public int Dpi
 		{
-			get { return Internal_getdpi(mCachedPtr); }
-			set { Internal_setdpi(mCachedPtr, value); }
+			get { return Internal_Getdpi(mCachedPtr); }
+			set { Internal_Setdpi(mCachedPtr, value); }
 		}
 
 		/// <summary>Determines the render mode used for rendering the characters into a bitmap.</summary>
@@ -55,8 +55,8 @@ namespace bs
 		[NativeWrapper]
 		public FontRenderMode RenderMode
 		{
-			get { return Internal_getrenderMode(mCachedPtr); }
-			set { Internal_setrenderMode(mCachedPtr, value); }
+			get { return Internal_GetrenderMode(mCachedPtr); }
+			set { Internal_SetrenderMode(mCachedPtr, value); }
 		}
 
 		/// <summary>Determines whether the bold font style should be used when rendering.</summary>
@@ -64,8 +64,8 @@ namespace bs
 		[NativeWrapper]
 		public bool Bold
 		{
-			get { return Internal_getbold(mCachedPtr); }
-			set { Internal_setbold(mCachedPtr, value); }
+			get { return Internal_Getbold(mCachedPtr); }
+			set { Internal_Setbold(mCachedPtr, value); }
 		}
 
 		/// <summary>Determines whether the italic font style should be used when rendering.</summary>
@@ -73,36 +73,36 @@ namespace bs
 		[NativeWrapper]
 		public bool Italic
 		{
-			get { return Internal_getitalic(mCachedPtr); }
-			set { Internal_setitalic(mCachedPtr, value); }
+			get { return Internal_Getitalic(mCachedPtr); }
+			set { Internal_Setitalic(mCachedPtr, value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int[] Internal_getfontSizes(IntPtr thisPtr);
+		private static extern int[] Internal_GetfontSizes(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setfontSizes(IntPtr thisPtr, int[] value);
+		private static extern void Internal_SetfontSizes(IntPtr thisPtr, int[] value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern CharRange[] Internal_getcharIndexRanges(IntPtr thisPtr);
+		private static extern CharRange[] Internal_GetcharIndexRanges(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setcharIndexRanges(IntPtr thisPtr, CharRange[] value);
+		private static extern void Internal_SetcharIndexRanges(IntPtr thisPtr, CharRange[] value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getdpi(IntPtr thisPtr);
+		private static extern int Internal_Getdpi(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setdpi(IntPtr thisPtr, int value);
+		private static extern void Internal_Setdpi(IntPtr thisPtr, int value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern FontRenderMode Internal_getrenderMode(IntPtr thisPtr);
+		private static extern FontRenderMode Internal_GetrenderMode(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setrenderMode(IntPtr thisPtr, FontRenderMode value);
+		private static extern void Internal_SetrenderMode(IntPtr thisPtr, FontRenderMode value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_getbold(IntPtr thisPtr);
+		private static extern bool Internal_Getbold(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setbold(IntPtr thisPtr, bool value);
+		private static extern void Internal_Setbold(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_getitalic(IntPtr thisPtr);
+		private static extern bool Internal_Getitalic(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setitalic(IntPtr thisPtr, bool value);
+		private static extern void Internal_Setitalic(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create(FontImportOptions managedInstance);
+		private static extern void Internal_Create(FontImportOptions managedInstance);
 	}
 
 	/** @} */

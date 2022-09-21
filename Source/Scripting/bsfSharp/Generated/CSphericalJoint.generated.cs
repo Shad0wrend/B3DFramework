@@ -21,10 +21,6 @@ namespace bs
 		private SphericalJoint(bool __dummy0) { }
 		protected SphericalJoint() { }
 
-		/// <summary>
-		/// Determines the limit of the joint. This clamps the rotation inside an eliptical angular cone. You must enable limit 
-		/// flag on the joint in order for this to be recognized.
-		/// </summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public LimitConeRange Limit
@@ -32,32 +28,30 @@ namespace bs
 			get
 			{
 				LimitConeRange temp;
-				Internal_getLimit(mCachedPtr, out temp);
+				Internal_GetLimit(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setLimit(mCachedPtr, ref value); }
+			set { Internal_SetLimit(mCachedPtr, ref value); }
 		}
 
-		/// <summary>Enables or disables a flag that controls the joint&apos;s behaviour.</summary>
 		public void SetFlag(SphericalJointFlag flag, bool enabled)
 		{
-			Internal_setFlag(mCachedPtr, flag, enabled);
+			Internal_SetFlag(mCachedPtr, flag, enabled);
 		}
 
-		/// <summary>Checks is the specified flag enabled.</summary>
 		public bool HasFlag(SphericalJointFlag flag)
 		{
-			return Internal_hasFlag(mCachedPtr, flag);
+			return Internal_HasFlag(mCachedPtr, flag);
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getLimit(IntPtr thisPtr, out LimitConeRange __output);
+		private static extern void Internal_GetLimit(IntPtr thisPtr, out LimitConeRange __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setLimit(IntPtr thisPtr, ref LimitConeRange limit);
+		private static extern void Internal_SetLimit(IntPtr thisPtr, ref LimitConeRange limit);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setFlag(IntPtr thisPtr, SphericalJointFlag flag, bool enabled);
+		private static extern void Internal_SetFlag(IntPtr thisPtr, SphericalJointFlag flag, bool enabled);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_hasFlag(IntPtr thisPtr, SphericalJointFlag flag);
+		private static extern bool Internal_HasFlag(IntPtr thisPtr, SphericalJointFlag flag);
 	}
 
 	/** @} */

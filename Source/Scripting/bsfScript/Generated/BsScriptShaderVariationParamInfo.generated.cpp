@@ -13,7 +13,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptShaderVariationParamInfo::initRuntimeData()
+	void ScriptShaderVariationParamInfo::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptShaderVariationParamInfo::Box(const __ShaderVariationParamInfoInterop& value)
@@ -40,10 +40,10 @@ namespace bs
 		if(value.values != nullptr)
 		{
 			ScriptArray arrayvalues(value.values);
-			vecvalues.Resize(arrayvalues.Size());
+			vecvalues.resize(arrayvalues.Size());
 			for(int i = 0; i < (int)arrayvalues.Size(); i++)
 			{
-				vecvalues[i] = ScriptShaderVariationParamValue::fromInterop(arrayvalues.get<__ShaderVariationParamValueInterop>(i));
+				vecvalues[i] = ScriptShaderVariationParamValue::FromInterop(arrayvalues.Get<__ShaderVariationParamValueInterop>(i));
 			}
 		}
 		output.values = vecvalues;
@@ -61,7 +61,7 @@ namespace bs
 		tmpidentifier = MonoUtil::StringToMono(value.identifier);
 		output.identifier = tmpidentifier;
 		output.isInternal = value.isInternal;
-		int arraySizevalues = (int)value.values.Size();
+		int arraySizevalues = (int)value.values.size();
 		MonoArray* vecvalues;
 		ScriptArray arrayvalues = ScriptArray::Create<ScriptShaderVariationParamValue>(arraySizevalues);
 		for(int i = 0; i < arraySizevalues; i++)

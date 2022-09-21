@@ -26,7 +26,7 @@ namespace bs
 		mContextMenu = bs_shared_ptr_new<GUIContextMenu>();
 	}
 
-	void ScriptContextMenu::initRuntimeData()
+	void ScriptContextMenu::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptContextMenu::InternalCreateInstance);
 		metaData.scriptClass->AddInternalCall("Internal_Open", (void*)&ScriptContextMenu::InternalOpen);

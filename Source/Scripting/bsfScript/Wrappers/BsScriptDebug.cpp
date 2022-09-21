@@ -25,7 +25,7 @@ namespace bs
 		:ScriptObject(instance)
 	{ }
 
-	void ScriptDebug::initRuntimeData()
+	void ScriptDebug::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_Log", (void*)&ScriptDebug::InternalLog);
 		metaData.scriptClass->AddInternalCall("Internal_LogWarning", (void*)&ScriptDebug::InternalLogWarning);

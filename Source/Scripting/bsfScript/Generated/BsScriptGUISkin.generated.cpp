@@ -17,15 +17,15 @@ namespace bs
 	{
 	}
 
-	void ScriptGUISkin::initRuntimeData()
+	void ScriptGUISkin::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptGUISkin::InternalGetRef);
-		metaData.scriptClass->AddInternalCall("Internal_hasStyle", (void*)&ScriptGUISkin::InternalHasStyle);
-		metaData.scriptClass->AddInternalCall("Internal_getStyle", (void*)&ScriptGUISkin::InternalGetStyle);
-		metaData.scriptClass->AddInternalCall("Internal_setStyle", (void*)&ScriptGUISkin::InternalSetStyle);
-		metaData.scriptClass->AddInternalCall("Internal_removeStyle", (void*)&ScriptGUISkin::InternalRemoveStyle);
-		metaData.scriptClass->AddInternalCall("Internal_getStyleNames", (void*)&ScriptGUISkin::InternalGetStyleNames);
-		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptGUISkin::InternalCreate);
+		metaData.scriptClass->AddInternalCall("Internal_HasStyle", (void*)&ScriptGUISkin::InternalHasStyle);
+		metaData.scriptClass->AddInternalCall("Internal_GetStyle", (void*)&ScriptGUISkin::InternalGetStyle);
+		metaData.scriptClass->AddInternalCall("Internal_SetStyle", (void*)&ScriptGUISkin::InternalSetStyle);
+		metaData.scriptClass->AddInternalCall("Internal_RemoveStyle", (void*)&ScriptGUISkin::InternalRemoveStyle);
+		metaData.scriptClass->AddInternalCall("Internal_GetStyleNames", (void*)&ScriptGUISkin::InternalGetStyleNames);
+		metaData.scriptClass->AddInternalCall("Internal_Create", (void*)&ScriptGUISkin::InternalCreate);
 
 	}
 
@@ -34,7 +34,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		return metaData.scriptClass->createInstance("bool", ctorParams);
+		return metaData.scriptClass->CreateInstance("bool", ctorParams);
 	}
 	MonoObject* ScriptGUISkin::InternalGetRef(ScriptGUISkin* thisPtr)
 	{
@@ -73,7 +73,7 @@ namespace bs
 		tmpguiElemType = MonoUtil::MonoToString(guiElemType);
 		SPtr<GUIElementStyle> tmpstyle;
 		ScriptGUIElementStyle* scriptstyle;
-		scriptstyle = ScriptGUIElementStyle::toNative(style);
+		scriptstyle = ScriptGUIElementStyle::ToNative(style);
 		if(scriptstyle != nullptr)
 			tmpstyle = scriptstyle->GetInternal();
 		thisPtr->GetHandle()->SetStyle(tmpguiElemType, *tmpstyle);
@@ -83,7 +83,7 @@ namespace bs
 	{
 		String tmpguiElemType;
 		tmpguiElemType = MonoUtil::MonoToString(guiElemType);
-		thisPtr->GetHandle()->removeStyle(tmpguiElemType);
+		thisPtr->GetHandle()->RemoveStyle(tmpguiElemType);
 	}
 
 	MonoArray* ScriptGUISkin::InternalGetStyleNames(ScriptGUISkin* thisPtr)
@@ -93,12 +93,12 @@ namespace bs
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
-		ScriptArray array__output = ScriptArray::create<String>(arraySize__output);
+		ScriptArray array__output = ScriptArray::Create<String>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
 			array__output.Set(i, vec__output[i]);
 		}
-		__output = array__output.getInternal();
+		__output = array__output.GetInternal();
 
 		return __output;
 	}
@@ -106,6 +106,6 @@ namespace bs
 	void ScriptGUISkin::InternalCreate(MonoObject* managedInstance)
 	{
 		ResourceHandle<GUISkin> instance = GUISkin::Create();
-		ScriptResourceManager::Instance().createBuiltinScriptResource(instance, managedInstance);
+		ScriptResourceManager::Instance().CreateBuiltinScriptResource(instance, managedInstance);
 	}
 }

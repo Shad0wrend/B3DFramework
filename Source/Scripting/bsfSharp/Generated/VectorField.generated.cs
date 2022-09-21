@@ -27,7 +27,7 @@ namespace bs
 		/// </param>
 		public VectorField(VectorFieldOptions desc, Vector3[] values)
 		{
-			Internal_create(this, ref desc, values);
+			Internal_Create(this, ref desc, values);
 		}
 
 		/// <summary>Returns a reference wrapper for this resource.</summary>
@@ -48,7 +48,7 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern RRef<VectorField> Internal_GetRef(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create(VectorField managedInstance, ref VectorFieldOptions desc, Vector3[] values);
+		private static extern void Internal_Create(VectorField managedInstance, ref VectorFieldOptions desc, Vector3[] values);
 	}
 
 	/** @} */

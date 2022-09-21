@@ -21,21 +21,21 @@ namespace bs
 		[NativeWrapper]
 		public int Width
 		{
-			get { return Internal_getWidth(mCachedPtr); }
+			get { return Internal_GetWidth(mCachedPtr); }
 		}
 
 		/// <summary>Height of the render target, in pixels.</summary>
 		[NativeWrapper]
 		public int Height
 		{
-			get { return Internal_getHeight(mCachedPtr); }
+			get { return Internal_GetHeight(mCachedPtr); }
 		}
 
 		/// <summary>True if pixels written to the render target will be gamma corrected.</summary>
 		[NativeWrapper]
 		public bool GammaCorrection
 		{
-			get { return Internal_getGammaCorrection(mCachedPtr); }
+			get { return Internal_GetGammaCorrection(mCachedPtr); }
 		}
 
 		/// <summary>
@@ -46,29 +46,29 @@ namespace bs
 		[NativeWrapper]
 		public int Priority
 		{
-			get { return Internal_getPriority(mCachedPtr); }
-			set { Internal_setPriority(mCachedPtr, value); }
+			get { return Internal_GetPriority(mCachedPtr); }
+			set { Internal_SetPriority(mCachedPtr, value); }
 		}
 
 		/// <summary>Controls how many samples are used for multisampling. (0 or 1 if multisampling is not used).</summary>
 		[NativeWrapper]
 		public int SampleCount
 		{
-			get { return Internal_getSampleCount(mCachedPtr); }
+			get { return Internal_GetSampleCount(mCachedPtr); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getWidth(IntPtr thisPtr);
+		private static extern int Internal_GetWidth(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getHeight(IntPtr thisPtr);
+		private static extern int Internal_GetHeight(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_getGammaCorrection(IntPtr thisPtr);
+		private static extern bool Internal_GetGammaCorrection(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getPriority(IntPtr thisPtr);
+		private static extern int Internal_GetPriority(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setPriority(IntPtr thisPtr, int priority);
+		private static extern void Internal_SetPriority(IntPtr thisPtr, int priority);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getSampleCount(IntPtr thisPtr);
+		private static extern int Internal_GetSampleCount(IntPtr thisPtr);
 	}
 
 	/** @} */

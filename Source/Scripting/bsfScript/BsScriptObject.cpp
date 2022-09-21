@@ -43,7 +43,7 @@ namespace bs
 		:ScriptObject(instance)
 	{ }
 
-	void ScriptObjectImpl::initRuntimeData()
+	void ScriptObjectImpl::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_ManagedInstanceDeleted", (void*)&ScriptObjectImpl::InternalManagedInstanceDeleted);
 	}

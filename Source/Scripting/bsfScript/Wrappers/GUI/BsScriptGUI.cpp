@@ -85,7 +85,7 @@ namespace bs
 		}
 	}
 
-	void ScriptGUI::initRuntimeData()
+	void ScriptGUI::InitRuntimeData()
 	{
 		sGUIPanelMethod = metaData.scriptClass->GetMethod("SetPanel", 1);
 

@@ -21,39 +21,39 @@ namespace bs
 	{
 	}
 
-	void ScriptPhysicsScene::initRuntimeData()
+	void ScriptPhysicsScene::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_rayCast", (void*)&ScriptPhysicsScene::InternalRayCast);
-		metaData.scriptClass->AddInternalCall("Internal_rayCast0", (void*)&ScriptPhysicsScene::InternalRayCast0);
-		metaData.scriptClass->AddInternalCall("Internal_boxCast", (void*)&ScriptPhysicsScene::InternalBoxCast);
-		metaData.scriptClass->AddInternalCall("Internal_sphereCast", (void*)&ScriptPhysicsScene::InternalSphereCast);
-		metaData.scriptClass->AddInternalCall("Internal_capsuleCast", (void*)&ScriptPhysicsScene::InternalCapsuleCast);
-		metaData.scriptClass->AddInternalCall("Internal_convexCast", (void*)&ScriptPhysicsScene::InternalConvexCast);
-		metaData.scriptClass->AddInternalCall("Internal_rayCastAll", (void*)&ScriptPhysicsScene::InternalRayCastAll);
-		metaData.scriptClass->AddInternalCall("Internal_rayCastAll0", (void*)&ScriptPhysicsScene::InternalRayCastAll0);
-		metaData.scriptClass->AddInternalCall("Internal_boxCastAll", (void*)&ScriptPhysicsScene::InternalBoxCastAll);
-		metaData.scriptClass->AddInternalCall("Internal_sphereCastAll", (void*)&ScriptPhysicsScene::InternalSphereCastAll);
-		metaData.scriptClass->AddInternalCall("Internal_capsuleCastAll", (void*)&ScriptPhysicsScene::InternalCapsuleCastAll);
-		metaData.scriptClass->AddInternalCall("Internal_convexCastAll", (void*)&ScriptPhysicsScene::InternalConvexCastAll);
-		metaData.scriptClass->AddInternalCall("Internal_rayCastAny", (void*)&ScriptPhysicsScene::InternalRayCastAny);
-		metaData.scriptClass->AddInternalCall("Internal_rayCastAny0", (void*)&ScriptPhysicsScene::InternalRayCastAny0);
-		metaData.scriptClass->AddInternalCall("Internal_boxCastAny", (void*)&ScriptPhysicsScene::InternalBoxCastAny);
-		metaData.scriptClass->AddInternalCall("Internal_sphereCastAny", (void*)&ScriptPhysicsScene::InternalSphereCastAny);
-		metaData.scriptClass->AddInternalCall("Internal_capsuleCastAny", (void*)&ScriptPhysicsScene::InternalCapsuleCastAny);
-		metaData.scriptClass->AddInternalCall("Internal_convexCastAny", (void*)&ScriptPhysicsScene::InternalConvexCastAny);
-		metaData.scriptClass->AddInternalCall("Internal_boxOverlap", (void*)&ScriptPhysicsScene::InternalBoxOverlap);
-		metaData.scriptClass->AddInternalCall("Internal_sphereOverlap", (void*)&ScriptPhysicsScene::InternalSphereOverlap);
-		metaData.scriptClass->AddInternalCall("Internal_capsuleOverlap", (void*)&ScriptPhysicsScene::InternalCapsuleOverlap);
-		metaData.scriptClass->AddInternalCall("Internal_convexOverlap", (void*)&ScriptPhysicsScene::InternalConvexOverlap);
-		metaData.scriptClass->AddInternalCall("Internal_boxOverlapAny", (void*)&ScriptPhysicsScene::InternalBoxOverlapAny);
-		metaData.scriptClass->AddInternalCall("Internal_sphereOverlapAny", (void*)&ScriptPhysicsScene::InternalSphereOverlapAny);
-		metaData.scriptClass->AddInternalCall("Internal_capsuleOverlapAny", (void*)&ScriptPhysicsScene::InternalCapsuleOverlapAny);
-		metaData.scriptClass->AddInternalCall("Internal_convexOverlapAny", (void*)&ScriptPhysicsScene::InternalConvexOverlapAny);
-		metaData.scriptClass->AddInternalCall("Internal_getGravity", (void*)&ScriptPhysicsScene::InternalGetGravity);
-		metaData.scriptClass->AddInternalCall("Internal_setGravity", (void*)&ScriptPhysicsScene::InternalSetGravity);
-		metaData.scriptClass->AddInternalCall("Internal_addBroadPhaseRegion", (void*)&ScriptPhysicsScene::InternalAddBroadPhaseRegion);
-		metaData.scriptClass->AddInternalCall("Internal_removeBroadPhaseRegion", (void*)&ScriptPhysicsScene::InternalRemoveBroadPhaseRegion);
-		metaData.scriptClass->AddInternalCall("Internal_clearBroadPhaseRegions", (void*)&ScriptPhysicsScene::InternalClearBroadPhaseRegions);
+		metaData.scriptClass->AddInternalCall("Internal_RayCast", (void*)&ScriptPhysicsScene::InternalRayCast);
+		metaData.scriptClass->AddInternalCall("Internal_RayCast0", (void*)&ScriptPhysicsScene::InternalRayCast0);
+		metaData.scriptClass->AddInternalCall("Internal_BoxCast", (void*)&ScriptPhysicsScene::InternalBoxCast);
+		metaData.scriptClass->AddInternalCall("Internal_SphereCast", (void*)&ScriptPhysicsScene::InternalSphereCast);
+		metaData.scriptClass->AddInternalCall("Internal_CapsuleCast", (void*)&ScriptPhysicsScene::InternalCapsuleCast);
+		metaData.scriptClass->AddInternalCall("Internal_ConvexCast", (void*)&ScriptPhysicsScene::InternalConvexCast);
+		metaData.scriptClass->AddInternalCall("Internal_RayCastAll", (void*)&ScriptPhysicsScene::InternalRayCastAll);
+		metaData.scriptClass->AddInternalCall("Internal_RayCastAll0", (void*)&ScriptPhysicsScene::InternalRayCastAll0);
+		metaData.scriptClass->AddInternalCall("Internal_BoxCastAll", (void*)&ScriptPhysicsScene::InternalBoxCastAll);
+		metaData.scriptClass->AddInternalCall("Internal_SphereCastAll", (void*)&ScriptPhysicsScene::InternalSphereCastAll);
+		metaData.scriptClass->AddInternalCall("Internal_CapsuleCastAll", (void*)&ScriptPhysicsScene::InternalCapsuleCastAll);
+		metaData.scriptClass->AddInternalCall("Internal_ConvexCastAll", (void*)&ScriptPhysicsScene::InternalConvexCastAll);
+		metaData.scriptClass->AddInternalCall("Internal_RayCastAny", (void*)&ScriptPhysicsScene::InternalRayCastAny);
+		metaData.scriptClass->AddInternalCall("Internal_RayCastAny0", (void*)&ScriptPhysicsScene::InternalRayCastAny0);
+		metaData.scriptClass->AddInternalCall("Internal_BoxCastAny", (void*)&ScriptPhysicsScene::InternalBoxCastAny);
+		metaData.scriptClass->AddInternalCall("Internal_SphereCastAny", (void*)&ScriptPhysicsScene::InternalSphereCastAny);
+		metaData.scriptClass->AddInternalCall("Internal_CapsuleCastAny", (void*)&ScriptPhysicsScene::InternalCapsuleCastAny);
+		metaData.scriptClass->AddInternalCall("Internal_ConvexCastAny", (void*)&ScriptPhysicsScene::InternalConvexCastAny);
+		metaData.scriptClass->AddInternalCall("Internal_BoxOverlap", (void*)&ScriptPhysicsScene::InternalBoxOverlap);
+		metaData.scriptClass->AddInternalCall("Internal_SphereOverlap", (void*)&ScriptPhysicsScene::InternalSphereOverlap);
+		metaData.scriptClass->AddInternalCall("Internal_CapsuleOverlap", (void*)&ScriptPhysicsScene::InternalCapsuleOverlap);
+		metaData.scriptClass->AddInternalCall("Internal_ConvexOverlap", (void*)&ScriptPhysicsScene::InternalConvexOverlap);
+		metaData.scriptClass->AddInternalCall("Internal_BoxOverlapAny", (void*)&ScriptPhysicsScene::InternalBoxOverlapAny);
+		metaData.scriptClass->AddInternalCall("Internal_SphereOverlapAny", (void*)&ScriptPhysicsScene::InternalSphereOverlapAny);
+		metaData.scriptClass->AddInternalCall("Internal_CapsuleOverlapAny", (void*)&ScriptPhysicsScene::InternalCapsuleOverlapAny);
+		metaData.scriptClass->AddInternalCall("Internal_ConvexOverlapAny", (void*)&ScriptPhysicsScene::InternalConvexOverlapAny);
+		metaData.scriptClass->AddInternalCall("Internal_GetGravity", (void*)&ScriptPhysicsScene::InternalGetGravity);
+		metaData.scriptClass->AddInternalCall("Internal_SetGravity", (void*)&ScriptPhysicsScene::InternalSetGravity);
+		metaData.scriptClass->AddInternalCall("Internal_AddBroadPhaseRegion", (void*)&ScriptPhysicsScene::InternalAddBroadPhaseRegion);
+		metaData.scriptClass->AddInternalCall("Internal_RemoveBroadPhaseRegion", (void*)&ScriptPhysicsScene::InternalRemoveBroadPhaseRegion);
+		metaData.scriptClass->AddInternalCall("Internal_ClearBroadPhaseRegions", (void*)&ScriptPhysicsScene::InternalClearBroadPhaseRegions);
 
 	}
 
@@ -64,7 +64,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptPhysicsScene>()) ScriptPhysicsScene(managedInstance, value);
 		return managedInstance;
 	}
@@ -72,13 +72,13 @@ namespace bs
 	{
 		bool tmp__output;
 		PhysicsQueryHit tmphit;
-		tmp__output = thisPtr->GetInternal()->rayCast(*ray, tmphit, layer, max);
+		tmp__output = thisPtr->GetInternal()->RayCast(*ray, tmphit, layer, max);
 
 		bool __output;
 		__output = tmp__output;
 		__PhysicsQueryHitInterop interophit;
 		interophit = ScriptPhysicsQueryHit::ToInterop(tmphit);
-		MonoUtil::valueCopy(hit, &interophit, ScriptPhysicsQueryHit::getMetaData()->scriptClass->GetInternalClassInternal());
+		MonoUtil::ValueCopy(hit, &interophit, ScriptPhysicsQueryHit::GetMetaData()->scriptClass->GetInternalClassInternal());
 
 		return __output;
 	}
@@ -87,13 +87,13 @@ namespace bs
 	{
 		bool tmp__output;
 		PhysicsQueryHit tmphit;
-		tmp__output = thisPtr->GetInternal()->rayCast(*origin, *unitDir, tmphit, layer, max);
+		tmp__output = thisPtr->GetInternal()->RayCast(*origin, *unitDir, tmphit, layer, max);
 
 		bool __output;
 		__output = tmp__output;
 		__PhysicsQueryHitInterop interophit;
 		interophit = ScriptPhysicsQueryHit::ToInterop(tmphit);
-		MonoUtil::valueCopy(hit, &interophit, ScriptPhysicsQueryHit::getMetaData()->scriptClass->GetInternalClassInternal());
+		MonoUtil::ValueCopy(hit, &interophit, ScriptPhysicsQueryHit::GetMetaData()->scriptClass->GetInternalClassInternal());
 
 		return __output;
 	}
@@ -102,13 +102,13 @@ namespace bs
 	{
 		bool tmp__output;
 		PhysicsQueryHit tmphit;
-		tmp__output = thisPtr->GetInternal()->boxCast(*box, *rotation, *unitDir, tmphit, layer, max);
+		tmp__output = thisPtr->GetInternal()->BoxCast(*box, *rotation, *unitDir, tmphit, layer, max);
 
 		bool __output;
 		__output = tmp__output;
 		__PhysicsQueryHitInterop interophit;
 		interophit = ScriptPhysicsQueryHit::ToInterop(tmphit);
-		MonoUtil::valueCopy(hit, &interophit, ScriptPhysicsQueryHit::getMetaData()->scriptClass->GetInternalClassInternal());
+		MonoUtil::ValueCopy(hit, &interophit, ScriptPhysicsQueryHit::GetMetaData()->scriptClass->GetInternalClassInternal());
 
 		return __output;
 	}
@@ -117,13 +117,13 @@ namespace bs
 	{
 		bool tmp__output;
 		PhysicsQueryHit tmphit;
-		tmp__output = thisPtr->GetInternal()->sphereCast(*sphere, *unitDir, tmphit, layer, max);
+		tmp__output = thisPtr->GetInternal()->SphereCast(*sphere, *unitDir, tmphit, layer, max);
 
 		bool __output;
 		__output = tmp__output;
 		__PhysicsQueryHitInterop interophit;
 		interophit = ScriptPhysicsQueryHit::ToInterop(tmphit);
-		MonoUtil::valueCopy(hit, &interophit, ScriptPhysicsQueryHit::getMetaData()->scriptClass->GetInternalClassInternal());
+		MonoUtil::ValueCopy(hit, &interophit, ScriptPhysicsQueryHit::GetMetaData()->scriptClass->GetInternalClassInternal());
 
 		return __output;
 	}
@@ -132,13 +132,13 @@ namespace bs
 	{
 		bool tmp__output;
 		PhysicsQueryHit tmphit;
-		tmp__output = thisPtr->GetInternal()->capsuleCast(*capsule, *rotation, *unitDir, tmphit, layer, max);
+		tmp__output = thisPtr->GetInternal()->CapsuleCast(*capsule, *rotation, *unitDir, tmphit, layer, max);
 
 		bool __output;
 		__output = tmp__output;
 		__PhysicsQueryHitInterop interophit;
 		interophit = ScriptPhysicsQueryHit::ToInterop(tmphit);
-		MonoUtil::valueCopy(hit, &interophit, ScriptPhysicsQueryHit::getMetaData()->scriptClass->GetInternalClassInternal());
+		MonoUtil::ValueCopy(hit, &interophit, ScriptPhysicsQueryHit::GetMetaData()->scriptClass->GetInternalClassInternal());
 
 		return __output;
 	}
@@ -148,17 +148,17 @@ namespace bs
 		bool tmp__output;
 		ResourceHandle<PhysicsMesh> tmpmesh;
 		ScriptRRefBase* scriptmesh;
-		scriptmesh = ScriptRRefBase::toNative(mesh);
+		scriptmesh = ScriptRRefBase::ToNative(mesh);
 		if(scriptmesh != nullptr)
 			tmpmesh = static_resource_cast<PhysicsMesh>(scriptmesh->GetHandle());
 		PhysicsQueryHit tmphit;
-		tmp__output = thisPtr->GetInternal()->convexCast(tmpmesh, *position, *rotation, *unitDir, tmphit, layer, max);
+		tmp__output = thisPtr->GetInternal()->ConvexCast(tmpmesh, *position, *rotation, *unitDir, tmphit, layer, max);
 
 		bool __output;
 		__output = tmp__output;
 		__PhysicsQueryHitInterop interophit;
 		interophit = ScriptPhysicsQueryHit::ToInterop(tmphit);
-		MonoUtil::valueCopy(hit, &interophit, ScriptPhysicsQueryHit::getMetaData()->scriptClass->GetInternalClassInternal());
+		MonoUtil::ValueCopy(hit, &interophit, ScriptPhysicsQueryHit::GetMetaData()->scriptClass->GetInternalClassInternal());
 
 		return __output;
 	}
@@ -166,16 +166,16 @@ namespace bs
 	MonoArray* ScriptPhysicsScene::InternalRayCastAll(ScriptPhysicsScene* thisPtr, Ray* ray, uint64_t layer, float max)
 	{
 		Vector<PhysicsQueryHit> vec__output;
-		vec__output = thisPtr->GetInternal()->rayCastAll(*ray, layer, max);
+		vec__output = thisPtr->GetInternal()->RayCastAll(*ray, layer, max);
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
-		ScriptArray array__output = ScriptArray::create<ScriptPhysicsQueryHit>(arraySize__output);
+		ScriptArray array__output = ScriptArray::Create<ScriptPhysicsQueryHit>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
-			array__output.Set(i, ScriptPhysicsQueryHit::toInterop(vec__output[i]));
+			array__output.Set(i, ScriptPhysicsQueryHit::ToInterop(vec__output[i]));
 		}
-		__output = array__output.getInternal();
+		__output = array__output.GetInternal();
 
 		return __output;
 	}
@@ -183,16 +183,16 @@ namespace bs
 	MonoArray* ScriptPhysicsScene::InternalRayCastAll0(ScriptPhysicsScene* thisPtr, Vector3* origin, Vector3* unitDir, uint64_t layer, float max)
 	{
 		Vector<PhysicsQueryHit> vec__output;
-		vec__output = thisPtr->GetInternal()->rayCastAll(*origin, *unitDir, layer, max);
+		vec__output = thisPtr->GetInternal()->RayCastAll(*origin, *unitDir, layer, max);
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
-		ScriptArray array__output = ScriptArray::create<ScriptPhysicsQueryHit>(arraySize__output);
+		ScriptArray array__output = ScriptArray::Create<ScriptPhysicsQueryHit>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
-			array__output.Set(i, ScriptPhysicsQueryHit::toInterop(vec__output[i]));
+			array__output.Set(i, ScriptPhysicsQueryHit::ToInterop(vec__output[i]));
 		}
-		__output = array__output.getInternal();
+		__output = array__output.GetInternal();
 
 		return __output;
 	}
@@ -200,16 +200,16 @@ namespace bs
 	MonoArray* ScriptPhysicsScene::InternalBoxCastAll(ScriptPhysicsScene* thisPtr, AABox* box, Quaternion* rotation, Vector3* unitDir, uint64_t layer, float max)
 	{
 		Vector<PhysicsQueryHit> vec__output;
-		vec__output = thisPtr->GetInternal()->boxCastAll(*box, *rotation, *unitDir, layer, max);
+		vec__output = thisPtr->GetInternal()->BoxCastAll(*box, *rotation, *unitDir, layer, max);
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
-		ScriptArray array__output = ScriptArray::create<ScriptPhysicsQueryHit>(arraySize__output);
+		ScriptArray array__output = ScriptArray::Create<ScriptPhysicsQueryHit>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
-			array__output.Set(i, ScriptPhysicsQueryHit::toInterop(vec__output[i]));
+			array__output.Set(i, ScriptPhysicsQueryHit::ToInterop(vec__output[i]));
 		}
-		__output = array__output.getInternal();
+		__output = array__output.GetInternal();
 
 		return __output;
 	}
@@ -217,16 +217,16 @@ namespace bs
 	MonoArray* ScriptPhysicsScene::InternalSphereCastAll(ScriptPhysicsScene* thisPtr, Sphere* sphere, Vector3* unitDir, uint64_t layer, float max)
 	{
 		Vector<PhysicsQueryHit> vec__output;
-		vec__output = thisPtr->GetInternal()->sphereCastAll(*sphere, *unitDir, layer, max);
+		vec__output = thisPtr->GetInternal()->SphereCastAll(*sphere, *unitDir, layer, max);
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
-		ScriptArray array__output = ScriptArray::create<ScriptPhysicsQueryHit>(arraySize__output);
+		ScriptArray array__output = ScriptArray::Create<ScriptPhysicsQueryHit>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
-			array__output.Set(i, ScriptPhysicsQueryHit::toInterop(vec__output[i]));
+			array__output.Set(i, ScriptPhysicsQueryHit::ToInterop(vec__output[i]));
 		}
-		__output = array__output.getInternal();
+		__output = array__output.GetInternal();
 
 		return __output;
 	}
@@ -234,16 +234,16 @@ namespace bs
 	MonoArray* ScriptPhysicsScene::InternalCapsuleCastAll(ScriptPhysicsScene* thisPtr, Capsule* capsule, Quaternion* rotation, Vector3* unitDir, uint64_t layer, float max)
 	{
 		Vector<PhysicsQueryHit> vec__output;
-		vec__output = thisPtr->GetInternal()->capsuleCastAll(*capsule, *rotation, *unitDir, layer, max);
+		vec__output = thisPtr->GetInternal()->CapsuleCastAll(*capsule, *rotation, *unitDir, layer, max);
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
-		ScriptArray array__output = ScriptArray::create<ScriptPhysicsQueryHit>(arraySize__output);
+		ScriptArray array__output = ScriptArray::Create<ScriptPhysicsQueryHit>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
-			array__output.Set(i, ScriptPhysicsQueryHit::toInterop(vec__output[i]));
+			array__output.Set(i, ScriptPhysicsQueryHit::ToInterop(vec__output[i]));
 		}
-		__output = array__output.getInternal();
+		__output = array__output.GetInternal();
 
 		return __output;
 	}
@@ -253,19 +253,19 @@ namespace bs
 		Vector<PhysicsQueryHit> vec__output;
 		ResourceHandle<PhysicsMesh> tmpmesh;
 		ScriptRRefBase* scriptmesh;
-		scriptmesh = ScriptRRefBase::toNative(mesh);
+		scriptmesh = ScriptRRefBase::ToNative(mesh);
 		if(scriptmesh != nullptr)
 			tmpmesh = static_resource_cast<PhysicsMesh>(scriptmesh->GetHandle());
-		vec__output = thisPtr->GetInternal()->convexCastAll(tmpmesh, *position, *rotation, *unitDir, layer, max);
+		vec__output = thisPtr->GetInternal()->ConvexCastAll(tmpmesh, *position, *rotation, *unitDir, layer, max);
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
-		ScriptArray array__output = ScriptArray::create<ScriptPhysicsQueryHit>(arraySize__output);
+		ScriptArray array__output = ScriptArray::Create<ScriptPhysicsQueryHit>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
-			array__output.Set(i, ScriptPhysicsQueryHit::toInterop(vec__output[i]));
+			array__output.Set(i, ScriptPhysicsQueryHit::ToInterop(vec__output[i]));
 		}
-		__output = array__output.getInternal();
+		__output = array__output.GetInternal();
 
 		return __output;
 	}
@@ -273,7 +273,7 @@ namespace bs
 	bool ScriptPhysicsScene::InternalRayCastAny(ScriptPhysicsScene* thisPtr, Ray* ray, uint64_t layer, float max)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->GetInternal()->rayCastAny(*ray, layer, max);
+		tmp__output = thisPtr->GetInternal()->RayCastAny(*ray, layer, max);
 
 		bool __output;
 		__output = tmp__output;
@@ -284,7 +284,7 @@ namespace bs
 	bool ScriptPhysicsScene::InternalRayCastAny0(ScriptPhysicsScene* thisPtr, Vector3* origin, Vector3* unitDir, uint64_t layer, float max)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->GetInternal()->rayCastAny(*origin, *unitDir, layer, max);
+		tmp__output = thisPtr->GetInternal()->RayCastAny(*origin, *unitDir, layer, max);
 
 		bool __output;
 		__output = tmp__output;
@@ -295,7 +295,7 @@ namespace bs
 	bool ScriptPhysicsScene::InternalBoxCastAny(ScriptPhysicsScene* thisPtr, AABox* box, Quaternion* rotation, Vector3* unitDir, uint64_t layer, float max)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->GetInternal()->boxCastAny(*box, *rotation, *unitDir, layer, max);
+		tmp__output = thisPtr->GetInternal()->BoxCastAny(*box, *rotation, *unitDir, layer, max);
 
 		bool __output;
 		__output = tmp__output;
@@ -306,7 +306,7 @@ namespace bs
 	bool ScriptPhysicsScene::InternalSphereCastAny(ScriptPhysicsScene* thisPtr, Sphere* sphere, Vector3* unitDir, uint64_t layer, float max)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->GetInternal()->sphereCastAny(*sphere, *unitDir, layer, max);
+		tmp__output = thisPtr->GetInternal()->SphereCastAny(*sphere, *unitDir, layer, max);
 
 		bool __output;
 		__output = tmp__output;
@@ -317,7 +317,7 @@ namespace bs
 	bool ScriptPhysicsScene::InternalCapsuleCastAny(ScriptPhysicsScene* thisPtr, Capsule* capsule, Quaternion* rotation, Vector3* unitDir, uint64_t layer, float max)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->GetInternal()->capsuleCastAny(*capsule, *rotation, *unitDir, layer, max);
+		tmp__output = thisPtr->GetInternal()->CapsuleCastAny(*capsule, *rotation, *unitDir, layer, max);
 
 		bool __output;
 		__output = tmp__output;
@@ -330,10 +330,10 @@ namespace bs
 		bool tmp__output;
 		ResourceHandle<PhysicsMesh> tmpmesh;
 		ScriptRRefBase* scriptmesh;
-		scriptmesh = ScriptRRefBase::toNative(mesh);
+		scriptmesh = ScriptRRefBase::ToNative(mesh);
 		if(scriptmesh != nullptr)
 			tmpmesh = static_resource_cast<PhysicsMesh>(scriptmesh->GetHandle());
-		tmp__output = thisPtr->GetInternal()->convexCastAny(tmpmesh, *position, *rotation, *unitDir, layer, max);
+		tmp__output = thisPtr->GetInternal()->ConvexCastAny(tmpmesh, *position, *rotation, *unitDir, layer, max);
 
 		bool __output;
 		__output = tmp__output;
@@ -344,22 +344,22 @@ namespace bs
 	MonoArray* ScriptPhysicsScene::InternalBoxOverlap(ScriptPhysicsScene* thisPtr, AABox* box, Quaternion* rotation, uint64_t layer)
 	{
 		Vector<GameObjectHandle<CCollider>> vec__output;
-		vec__output = thisPtr->GetInternal()->boxOverlap(*box, *rotation, layer);
+		vec__output = thisPtr->GetInternal()->BoxOverlap(*box, *rotation, layer);
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
-		ScriptArray array__output = ScriptArray::create<ScriptCCollider>(arraySize__output);
+		ScriptArray array__output = ScriptArray::Create<ScriptCCollider>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
 			ScriptComponentBase* script__output = nullptr;
 			if(vec__output[i])
-				script__output = ScriptGameObjectManager::Instance().getBuiltinScriptComponent(static_object_cast<Component>(vec__output[i]));
+				script__output = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(vec__output[i]));
 			if(script__output != nullptr)
 				array__output.Set(i, script__output->GetManagedInstance());
 			else
 				array__output.Set(i, nullptr);
 		}
-		__output = array__output.getInternal();
+		__output = array__output.GetInternal();
 
 		return __output;
 	}
@@ -367,22 +367,22 @@ namespace bs
 	MonoArray* ScriptPhysicsScene::InternalSphereOverlap(ScriptPhysicsScene* thisPtr, Sphere* sphere, uint64_t layer)
 	{
 		Vector<GameObjectHandle<CCollider>> vec__output;
-		vec__output = thisPtr->GetInternal()->sphereOverlap(*sphere, layer);
+		vec__output = thisPtr->GetInternal()->SphereOverlap(*sphere, layer);
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
-		ScriptArray array__output = ScriptArray::create<ScriptCCollider>(arraySize__output);
+		ScriptArray array__output = ScriptArray::Create<ScriptCCollider>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
 			ScriptComponentBase* script__output = nullptr;
 			if(vec__output[i])
-				script__output = ScriptGameObjectManager::Instance().getBuiltinScriptComponent(static_object_cast<Component>(vec__output[i]));
+				script__output = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(vec__output[i]));
 			if(script__output != nullptr)
 				array__output.Set(i, script__output->GetManagedInstance());
 			else
 				array__output.Set(i, nullptr);
 		}
-		__output = array__output.getInternal();
+		__output = array__output.GetInternal();
 
 		return __output;
 	}
@@ -390,22 +390,22 @@ namespace bs
 	MonoArray* ScriptPhysicsScene::InternalCapsuleOverlap(ScriptPhysicsScene* thisPtr, Capsule* capsule, Quaternion* rotation, uint64_t layer)
 	{
 		Vector<GameObjectHandle<CCollider>> vec__output;
-		vec__output = thisPtr->GetInternal()->capsuleOverlap(*capsule, *rotation, layer);
+		vec__output = thisPtr->GetInternal()->CapsuleOverlap(*capsule, *rotation, layer);
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
-		ScriptArray array__output = ScriptArray::create<ScriptCCollider>(arraySize__output);
+		ScriptArray array__output = ScriptArray::Create<ScriptCCollider>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
 			ScriptComponentBase* script__output = nullptr;
 			if(vec__output[i])
-				script__output = ScriptGameObjectManager::Instance().getBuiltinScriptComponent(static_object_cast<Component>(vec__output[i]));
+				script__output = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(vec__output[i]));
 			if(script__output != nullptr)
 				array__output.Set(i, script__output->GetManagedInstance());
 			else
 				array__output.Set(i, nullptr);
 		}
-		__output = array__output.getInternal();
+		__output = array__output.GetInternal();
 
 		return __output;
 	}
@@ -415,25 +415,25 @@ namespace bs
 		Vector<GameObjectHandle<CCollider>> vec__output;
 		ResourceHandle<PhysicsMesh> tmpmesh;
 		ScriptRRefBase* scriptmesh;
-		scriptmesh = ScriptRRefBase::toNative(mesh);
+		scriptmesh = ScriptRRefBase::ToNative(mesh);
 		if(scriptmesh != nullptr)
 			tmpmesh = static_resource_cast<PhysicsMesh>(scriptmesh->GetHandle());
-		vec__output = thisPtr->GetInternal()->convexOverlap(tmpmesh, *position, *rotation, layer);
+		vec__output = thisPtr->GetInternal()->ConvexOverlap(tmpmesh, *position, *rotation, layer);
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
-		ScriptArray array__output = ScriptArray::create<ScriptCCollider>(arraySize__output);
+		ScriptArray array__output = ScriptArray::Create<ScriptCCollider>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
 			ScriptComponentBase* script__output = nullptr;
 			if(vec__output[i])
-				script__output = ScriptGameObjectManager::Instance().getBuiltinScriptComponent(static_object_cast<Component>(vec__output[i]));
+				script__output = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(vec__output[i]));
 			if(script__output != nullptr)
 				array__output.Set(i, script__output->GetManagedInstance());
 			else
 				array__output.Set(i, nullptr);
 		}
-		__output = array__output.getInternal();
+		__output = array__output.GetInternal();
 
 		return __output;
 	}
@@ -441,7 +441,7 @@ namespace bs
 	bool ScriptPhysicsScene::InternalBoxOverlapAny(ScriptPhysicsScene* thisPtr, AABox* box, Quaternion* rotation, uint64_t layer)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->GetInternal()->boxOverlapAny(*box, *rotation, layer);
+		tmp__output = thisPtr->GetInternal()->BoxOverlapAny(*box, *rotation, layer);
 
 		bool __output;
 		__output = tmp__output;
@@ -452,7 +452,7 @@ namespace bs
 	bool ScriptPhysicsScene::InternalSphereOverlapAny(ScriptPhysicsScene* thisPtr, Sphere* sphere, uint64_t layer)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->GetInternal()->sphereOverlapAny(*sphere, layer);
+		tmp__output = thisPtr->GetInternal()->SphereOverlapAny(*sphere, layer);
 
 		bool __output;
 		__output = tmp__output;
@@ -463,7 +463,7 @@ namespace bs
 	bool ScriptPhysicsScene::InternalCapsuleOverlapAny(ScriptPhysicsScene* thisPtr, Capsule* capsule, Quaternion* rotation, uint64_t layer)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->GetInternal()->capsuleOverlapAny(*capsule, *rotation, layer);
+		tmp__output = thisPtr->GetInternal()->CapsuleOverlapAny(*capsule, *rotation, layer);
 
 		bool __output;
 		__output = tmp__output;
@@ -476,10 +476,10 @@ namespace bs
 		bool tmp__output;
 		ResourceHandle<PhysicsMesh> tmpmesh;
 		ScriptRRefBase* scriptmesh;
-		scriptmesh = ScriptRRefBase::toNative(mesh);
+		scriptmesh = ScriptRRefBase::ToNative(mesh);
 		if(scriptmesh != nullptr)
 			tmpmesh = static_resource_cast<PhysicsMesh>(scriptmesh->GetHandle());
-		tmp__output = thisPtr->GetInternal()->convexOverlapAny(tmpmesh, *position, *rotation, layer);
+		tmp__output = thisPtr->GetInternal()->ConvexOverlapAny(tmpmesh, *position, *rotation, layer);
 
 		bool __output;
 		__output = tmp__output;
@@ -503,7 +503,7 @@ namespace bs
 	uint32_t ScriptPhysicsScene::InternalAddBroadPhaseRegion(ScriptPhysicsScene* thisPtr, AABox* region)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->GetInternal()->addBroadPhaseRegion(*region);
+		tmp__output = thisPtr->GetInternal()->AddBroadPhaseRegion(*region);
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -513,11 +513,11 @@ namespace bs
 
 	void ScriptPhysicsScene::InternalRemoveBroadPhaseRegion(ScriptPhysicsScene* thisPtr, uint32_t handle)
 	{
-		thisPtr->GetInternal()->removeBroadPhaseRegion(handle);
+		thisPtr->GetInternal()->RemoveBroadPhaseRegion(handle);
 	}
 
 	void ScriptPhysicsScene::InternalClearBroadPhaseRegions(ScriptPhysicsScene* thisPtr)
 	{
-		thisPtr->GetInternal()->clearBroadPhaseRegions();
+		thisPtr->GetInternal()->ClearBroadPhaseRegions();
 	}
 }

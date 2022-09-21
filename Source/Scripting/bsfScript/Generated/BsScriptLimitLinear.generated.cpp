@@ -13,7 +13,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptLimitLinear::initRuntimeData()
+	void ScriptLimitLinear::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptLimitLinear::Box(const __LimitLinearInterop& value)

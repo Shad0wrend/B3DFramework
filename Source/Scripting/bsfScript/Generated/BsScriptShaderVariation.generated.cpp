@@ -12,21 +12,21 @@ namespace bs
 	{
 	}
 
-	void ScriptShaderVariation::initRuntimeData()
+	void ScriptShaderVariation::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_ShaderVariation", (void*)&ScriptShaderVariation::InternalShaderVariation);
-		metaData.scriptClass->AddInternalCall("Internal_getInt", (void*)&ScriptShaderVariation::InternalGetInt);
-		metaData.scriptClass->AddInternalCall("Internal_getUInt", (void*)&ScriptShaderVariation::InternalGetUInt);
-		metaData.scriptClass->AddInternalCall("Internal_getFloat", (void*)&ScriptShaderVariation::InternalGetFloat);
-		metaData.scriptClass->AddInternalCall("Internal_getBool", (void*)&ScriptShaderVariation::InternalGetBool);
-		metaData.scriptClass->AddInternalCall("Internal_setInt", (void*)&ScriptShaderVariation::InternalSetInt);
-		metaData.scriptClass->AddInternalCall("Internal_setUInt", (void*)&ScriptShaderVariation::InternalSetUInt);
-		metaData.scriptClass->AddInternalCall("Internal_setFloat", (void*)&ScriptShaderVariation::InternalSetFloat);
-		metaData.scriptClass->AddInternalCall("Internal_setBool", (void*)&ScriptShaderVariation::InternalSetBool);
-		metaData.scriptClass->AddInternalCall("Internal_removeParam", (void*)&ScriptShaderVariation::InternalRemoveParam);
-		metaData.scriptClass->AddInternalCall("Internal_hasParam", (void*)&ScriptShaderVariation::InternalHasParam);
-		metaData.scriptClass->AddInternalCall("Internal_clearParams", (void*)&ScriptShaderVariation::InternalClearParams);
-		metaData.scriptClass->AddInternalCall("Internal_getParamNames", (void*)&ScriptShaderVariation::InternalGetParamNames);
+		metaData.scriptClass->AddInternalCall("Internal_GetInt", (void*)&ScriptShaderVariation::InternalGetInt);
+		metaData.scriptClass->AddInternalCall("Internal_GetUInt", (void*)&ScriptShaderVariation::InternalGetUInt);
+		metaData.scriptClass->AddInternalCall("Internal_GetFloat", (void*)&ScriptShaderVariation::InternalGetFloat);
+		metaData.scriptClass->AddInternalCall("Internal_GetBool", (void*)&ScriptShaderVariation::InternalGetBool);
+		metaData.scriptClass->AddInternalCall("Internal_SetInt", (void*)&ScriptShaderVariation::InternalSetInt);
+		metaData.scriptClass->AddInternalCall("Internal_SetUInt", (void*)&ScriptShaderVariation::InternalSetUInt);
+		metaData.scriptClass->AddInternalCall("Internal_SetFloat", (void*)&ScriptShaderVariation::InternalSetFloat);
+		metaData.scriptClass->AddInternalCall("Internal_SetBool", (void*)&ScriptShaderVariation::InternalSetBool);
+		metaData.scriptClass->AddInternalCall("Internal_RemoveParam", (void*)&ScriptShaderVariation::InternalRemoveParam);
+		metaData.scriptClass->AddInternalCall("Internal_HasParam", (void*)&ScriptShaderVariation::InternalHasParam);
+		metaData.scriptClass->AddInternalCall("Internal_ClearParams", (void*)&ScriptShaderVariation::InternalClearParams);
+		metaData.scriptClass->AddInternalCall("Internal_GetParamNames", (void*)&ScriptShaderVariation::InternalGetParamNames);
 
 	}
 
@@ -131,7 +131,7 @@ namespace bs
 	{
 		String tmpparamName;
 		tmpparamName = MonoUtil::MonoToString(paramName);
-		thisPtr->GetInternal()->removeParam(tmpparamName);
+		thisPtr->GetInternal()->RemoveParam(tmpparamName);
 	}
 
 	bool ScriptShaderVariation::InternalHasParam(ScriptShaderVariation* thisPtr, MonoString* paramName)
@@ -149,7 +149,7 @@ namespace bs
 
 	void ScriptShaderVariation::InternalClearParams(ScriptShaderVariation* thisPtr)
 	{
-		thisPtr->GetInternal()->clearParams();
+		thisPtr->GetInternal()->ClearParams();
 	}
 
 	MonoArray* ScriptShaderVariation::InternalGetParamNames(ScriptShaderVariation* thisPtr)
@@ -159,12 +159,12 @@ namespace bs
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
-		ScriptArray array__output = ScriptArray::create<String>(arraySize__output);
+		ScriptArray array__output = ScriptArray::Create<String>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
 			array__output.Set(i, vec__output[i]);
 		}
-		__output = array__output.getInternal();
+		__output = array__output.GetInternal();
 
 		return __output;
 	}

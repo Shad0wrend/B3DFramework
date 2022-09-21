@@ -15,11 +15,11 @@ namespace bs
 		mInternal = value;
 	}
 
-	void ScriptScriptCodeImportOptions::initRuntimeData()
+	void ScriptScriptCodeImportOptions::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_geteditorScript", (void*)&ScriptScriptCodeImportOptions::InternalGeteditorScript);
-		metaData.scriptClass->AddInternalCall("Internal_seteditorScript", (void*)&ScriptScriptCodeImportOptions::InternalSeteditorScript);
-		metaData.scriptClass->AddInternalCall("Internal_create", (void*)&ScriptScriptCodeImportOptions::InternalCreate);
+		metaData.scriptClass->AddInternalCall("Internal_GeteditorScript", (void*)&ScriptScriptCodeImportOptions::InternalGeteditorScript);
+		metaData.scriptClass->AddInternalCall("Internal_SeteditorScript", (void*)&ScriptScriptCodeImportOptions::InternalSeteditorScript);
+		metaData.scriptClass->AddInternalCall("Internal_Create", (void*)&ScriptScriptCodeImportOptions::InternalCreate);
 
 	}
 
@@ -30,7 +30,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptScriptCodeImportOptions>()) ScriptScriptCodeImportOptions(managedInstance, value);
 		return managedInstance;
 	}

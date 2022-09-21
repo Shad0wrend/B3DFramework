@@ -21,13 +21,13 @@ namespace bs
 		/// <summary>Creates a new particle orbit evolver.</summary>
 		public ParticleOrbit(ParticleOrbitOptions desc)
 		{
-			Internal_create(this, ref desc);
+			Internal_Create(this, ref desc);
 		}
 
 		/// <summary>Creates a new particle orbit evolver.</summary>
 		public ParticleOrbit()
 		{
-			Internal_create0(this);
+			Internal_Create0(this);
 		}
 
 		/// <summary>Options describing the evolver.</summary>
@@ -38,20 +38,20 @@ namespace bs
 			get
 			{
 				ParticleOrbitOptions temp;
-				Internal_getOptions(mCachedPtr, out temp);
+				Internal_GetOptions(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setOptions(mCachedPtr, ref value); }
+			set { Internal_SetOptions(mCachedPtr, ref value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setOptions(IntPtr thisPtr, ref ParticleOrbitOptions options);
+		private static extern void Internal_SetOptions(IntPtr thisPtr, ref ParticleOrbitOptions options);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getOptions(IntPtr thisPtr, out ParticleOrbitOptions __output);
+		private static extern void Internal_GetOptions(IntPtr thisPtr, out ParticleOrbitOptions __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create(ParticleOrbit managedInstance, ref ParticleOrbitOptions desc);
+		private static extern void Internal_Create(ParticleOrbit managedInstance, ref ParticleOrbitOptions desc);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create0(ParticleOrbit managedInstance);
+		private static extern void Internal_Create0(ParticleOrbit managedInstance);
 	}
 
 	/** @} */

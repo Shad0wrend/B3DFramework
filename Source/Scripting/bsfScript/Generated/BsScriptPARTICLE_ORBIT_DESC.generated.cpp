@@ -15,7 +15,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptPARTICLE_ORBIT_DESC::initRuntimeData()
+	void ScriptPARTICLE_ORBIT_DESC::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptPARTICLE_ORBIT_DESC::Box(const __PARTICLE_ORBIT_DESCInterop& value)
@@ -40,14 +40,14 @@ namespace bs
 		output.center = *tmpcenter;
 		SPtr<TDistribution<Vector3>> tmpvelocity;
 		ScriptTDistributionVector3* scriptvelocity;
-		scriptvelocity = ScriptTDistributionVector3::toNative(value.velocity);
+		scriptvelocity = ScriptTDistributionVector3::ToNative(value.velocity);
 		if(scriptvelocity != nullptr)
 			tmpvelocity = scriptvelocity->GetInternal();
 		if(tmpvelocity != nullptr)
 		output.velocity = *tmpvelocity;
 		SPtr<TDistribution<float>> tmpradial;
 		ScriptTDistributionfloat* scriptradial;
-		scriptradial = ScriptTDistributionfloat::toNative(value.radial);
+		scriptradial = ScriptTDistributionfloat::ToNative(value.radial);
 		if(scriptradial != nullptr)
 			tmpradial = scriptradial->GetInternal();
 		if(tmpradial != nullptr)

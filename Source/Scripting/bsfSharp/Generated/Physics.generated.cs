@@ -21,7 +21,7 @@ namespace bs
 		[NativeWrapper]
 		public static bool IsUpdateInProgress
 		{
-			get { return Internal__isUpdateInProgress(); }
+			get { return Internal_IsUpdateInProgressInternal(); }
 		}
 
 		/// <summary>
@@ -30,21 +30,21 @@ namespace bs
 		/// </summary>
 		public static void ToggleCollision(ulong groupA, ulong groupB, bool enabled)
 		{
-			Internal_toggleCollision(groupA, groupB, enabled);
+			Internal_ToggleCollision(groupA, groupB, enabled);
 		}
 
 		/// <summary>Checks if two collision layers are allowed to interact.</summary>
 		public static bool IsCollisionEnabled(ulong groupA, ulong groupB)
 		{
-			return Internal_isCollisionEnabled(groupA, groupB);
+			return Internal_IsCollisionEnabled(groupA, groupB);
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_toggleCollision(ulong groupA, ulong groupB, bool enabled);
+		private static extern void Internal_ToggleCollision(ulong groupA, ulong groupB, bool enabled);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_isCollisionEnabled(ulong groupA, ulong groupB);
+		private static extern bool Internal_IsCollisionEnabled(ulong groupA, ulong groupB);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal__isUpdateInProgress();
+		private static extern bool Internal_IsUpdateInProgressInternal();
 	}
 
 	/** @} */

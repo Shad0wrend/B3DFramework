@@ -13,14 +13,14 @@ namespace bs
 	{
 	}
 
-	void ScriptHString::initRuntimeData()
+	void ScriptHString::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_HString", (void*)&ScriptHString::InternalHString);
 		metaData.scriptClass->AddInternalCall("Internal_HString0", (void*)&ScriptHString::InternalHString0);
 		metaData.scriptClass->AddInternalCall("Internal_HString1", (void*)&ScriptHString::InternalHString1);
 		metaData.scriptClass->AddInternalCall("Internal_HString2", (void*)&ScriptHString::InternalHString2);
-		metaData.scriptClass->AddInternalCall("Internal_getValue", (void*)&ScriptHString::InternalGetValue);
-		metaData.scriptClass->AddInternalCall("Internal_setParameter", (void*)&ScriptHString::InternalSetParameter);
+		metaData.scriptClass->AddInternalCall("Internal_GetValue", (void*)&ScriptHString::InternalGetValue);
+		metaData.scriptClass->AddInternalCall("Internal_SetParameter", (void*)&ScriptHString::InternalSetParameter);
 
 	}
 
@@ -71,7 +71,7 @@ namespace bs
 		tmp__output = thisPtr->GetInternal()->GetValue();
 
 		MonoString* __output;
-		__output = MonoUtil::stringToMono(tmp__output);
+		__output = MonoUtil::StringToMono(tmp__output);
 
 		return __output;
 	}

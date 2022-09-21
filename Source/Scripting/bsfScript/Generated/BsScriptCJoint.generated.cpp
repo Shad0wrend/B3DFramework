@@ -21,27 +21,27 @@ namespace bs
 	ScriptCJoint::ScriptCJoint(MonoObject* managedInstance, const GameObjectHandle<CJoint>& value)
 		:TScriptComponent(managedInstance, value)
 	{
-		value->onJointBreak.Connect(std::bind(&::bs::ScriptCJoint::OnJointBreak, this));
+		value->onJointBreak.Connect(std::bind(&ScriptCJoint::onJointBreak, this));
 	}
 
-	void ScriptCJoint::initRuntimeData()
+	void ScriptCJoint::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_getBody", (void*)&ScriptCJoint::InternalGetBody);
-		metaData.scriptClass->AddInternalCall("Internal_setBody", (void*)&ScriptCJoint::InternalSetBody);
-		metaData.scriptClass->AddInternalCall("Internal_getPosition", (void*)&ScriptCJoint::InternalGetPosition);
-		metaData.scriptClass->AddInternalCall("Internal_getRotation", (void*)&ScriptCJoint::InternalGetRotation);
-		metaData.scriptClass->AddInternalCall("Internal_setTransform", (void*)&ScriptCJoint::InternalSetTransform);
-		metaData.scriptClass->AddInternalCall("Internal_getBreakForce", (void*)&ScriptCJoint::InternalGetBreakForce);
-		metaData.scriptClass->AddInternalCall("Internal_setBreakForce", (void*)&ScriptCJoint::InternalSetBreakForce);
-		metaData.scriptClass->AddInternalCall("Internal_getBreakTorque", (void*)&ScriptCJoint::InternalGetBreakTorque);
-		metaData.scriptClass->AddInternalCall("Internal_setBreakTorque", (void*)&ScriptCJoint::InternalSetBreakTorque);
-		metaData.scriptClass->AddInternalCall("Internal_getEnableCollision", (void*)&ScriptCJoint::InternalGetEnableCollision);
-		metaData.scriptClass->AddInternalCall("Internal_setEnableCollision", (void*)&ScriptCJoint::InternalSetEnableCollision);
+		metaData.scriptClass->AddInternalCall("Internal_GetBody", (void*)&ScriptCJoint::InternalGetBody);
+		metaData.scriptClass->AddInternalCall("Internal_SetBody", (void*)&ScriptCJoint::InternalSetBody);
+		metaData.scriptClass->AddInternalCall("Internal_GetPosition", (void*)&ScriptCJoint::InternalGetPosition);
+		metaData.scriptClass->AddInternalCall("Internal_GetRotation", (void*)&ScriptCJoint::InternalGetRotation);
+		metaData.scriptClass->AddInternalCall("Internal_SetTransform", (void*)&ScriptCJoint::InternalSetTransform);
+		metaData.scriptClass->AddInternalCall("Internal_GetBreakForce", (void*)&ScriptCJoint::InternalGetBreakForce);
+		metaData.scriptClass->AddInternalCall("Internal_SetBreakForce", (void*)&ScriptCJoint::InternalSetBreakForce);
+		metaData.scriptClass->AddInternalCall("Internal_GetBreakTorque", (void*)&ScriptCJoint::InternalGetBreakTorque);
+		metaData.scriptClass->AddInternalCall("Internal_SetBreakTorque", (void*)&ScriptCJoint::InternalSetBreakTorque);
+		metaData.scriptClass->AddInternalCall("Internal_GetEnableCollision", (void*)&ScriptCJoint::InternalGetEnableCollision);
+		metaData.scriptClass->AddInternalCall("Internal_SetEnableCollision", (void*)&ScriptCJoint::InternalSetEnableCollision);
 
-		onJointBreakThunk = (onJointBreakThunkDef)metaData.scriptClass->GetMethodExact("Internal_onJointBreak", "")->GetThunk();
+		onJointBreakThunk = (onJointBreakThunkDef)metaData.scriptClass->GetMethodExact("InternalonJointBreak", "")->GetThunk();
 	}
 
-	void ScriptCJoint::OnJointBreak()
+	void ScriptCJoint::onJointBreak()
 	{
 		MonoUtil::InvokeThunk(onJointBreakThunk, GetManagedInstance());
 	}
@@ -53,7 +53,7 @@ namespace bs
 		MonoObject* __output;
 		ScriptComponentBase* script__output = nullptr;
 		if(tmp__output)
-			script__output = ScriptGameObjectManager::Instance().getBuiltinScriptComponent(static_object_cast<Component>(tmp__output));
+			script__output = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(tmp__output));
 		if(script__output != nullptr)
 			__output = script__output->GetManagedInstance();
 		else
@@ -66,7 +66,7 @@ namespace bs
 	{
 		GameObjectHandle<CRigidbody> tmpvalue;
 		ScriptCRigidbody* scriptvalue;
-		scriptvalue = ScriptCRigidbody::toNative(value);
+		scriptvalue = ScriptCRigidbody::ToNative(value);
 		if(scriptvalue != nullptr)
 			tmpvalue = scriptvalue->GetHandle();
 		static_object_cast<CJoint>(thisPtr->GetComponent())->SetBody(body, tmpvalue);

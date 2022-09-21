@@ -11,7 +11,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptKeyframeRef::initRuntimeData()
+	void ScriptKeyframeRef::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptKeyframeRef::Box(const KeyframeRef& value)

@@ -16,17 +16,17 @@ namespace bs
 	{
 	}
 
-	void ScriptColorGradientHDR::initRuntimeData()
+	void ScriptColorGradientHDR::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_ColorGradientHDR", (void*)&ScriptColorGradientHDR::InternalColorGradientHDR);
-		metaData.scriptClass->AddInternalCall("Internal_ColorGradientHDR0", (void*)&ScriptColorGradientHDR::InternalColorGradientHdR0);
-		metaData.scriptClass->AddInternalCall("Internal_ColorGradientHDR1", (void*)&ScriptColorGradientHDR::InternalColorGradientHdR1);
-		metaData.scriptClass->AddInternalCall("Internal_setKeys", (void*)&ScriptColorGradientHDR::InternalSetKeys);
-		metaData.scriptClass->AddInternalCall("Internal_getKeys", (void*)&ScriptColorGradientHDR::InternalGetKeys);
-		metaData.scriptClass->AddInternalCall("Internal_getNumKeys", (void*)&ScriptColorGradientHDR::InternalGetNumKeys);
-		metaData.scriptClass->AddInternalCall("Internal_getKey", (void*)&ScriptColorGradientHDR::InternalGetKey);
-		metaData.scriptClass->AddInternalCall("Internal_setConstant", (void*)&ScriptColorGradientHDR::InternalSetConstant);
-		metaData.scriptClass->AddInternalCall("Internal_evaluate", (void*)&ScriptColorGradientHDR::InternalEvaluate);
+		metaData.scriptClass->AddInternalCall("Internal_ColorGradientHDR0", (void*)&ScriptColorGradientHDR::InternalColorGradientHDR0);
+		metaData.scriptClass->AddInternalCall("Internal_ColorGradientHDR1", (void*)&ScriptColorGradientHDR::InternalColorGradientHDR1);
+		metaData.scriptClass->AddInternalCall("Internal_SetKeys", (void*)&ScriptColorGradientHDR::InternalSetKeys);
+		metaData.scriptClass->AddInternalCall("Internal_GetKeys", (void*)&ScriptColorGradientHDR::InternalGetKeys);
+		metaData.scriptClass->AddInternalCall("Internal_GetNumKeys", (void*)&ScriptColorGradientHDR::InternalGetNumKeys);
+		metaData.scriptClass->AddInternalCall("Internal_GetKey", (void*)&ScriptColorGradientHDR::InternalGetKey);
+		metaData.scriptClass->AddInternalCall("Internal_SetConstant", (void*)&ScriptColorGradientHDR::InternalSetConstant);
+		metaData.scriptClass->AddInternalCall("Internal_Evaluate", (void*)&ScriptColorGradientHDR::InternalEvaluate);
 
 	}
 
@@ -37,32 +37,32 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->createInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptColorGradientHDR>()) ScriptColorGradientHDR(managedInstance, value);
 		return managedInstance;
 	}
-	void ScriptColorGradientHDR::InternalColorGradientHdr(MonoObject* managedInstance)
+	void ScriptColorGradientHDR::InternalColorGradientHDR(MonoObject* managedInstance)
 	{
 		SPtr<ColorGradientHDR> instance = bs_shared_ptr_new<ColorGradientHDR>();
 		new (bs_alloc<ScriptColorGradientHDR>())ScriptColorGradientHDR(managedInstance, instance);
 	}
 
-	void ScriptColorGradientHDR::InternalColorGradientHdR0(MonoObject* managedInstance, Color* color)
+	void ScriptColorGradientHDR::InternalColorGradientHDR0(MonoObject* managedInstance, Color* color)
 	{
 		SPtr<ColorGradientHDR> instance = bs_shared_ptr_new<ColorGradientHDR>(*color);
 		new (bs_alloc<ScriptColorGradientHDR>())ScriptColorGradientHDR(managedInstance, instance);
 	}
 
-	void ScriptColorGradientHDR::InternalColorGradientHdR1(MonoObject* managedInstance, MonoArray* keys)
+	void ScriptColorGradientHDR::InternalColorGradientHDR1(MonoObject* managedInstance, MonoArray* keys)
 	{
 		Vector<ColorGradientKey> veckeys;
 		if(keys != nullptr)
 		{
 			ScriptArray arraykeys(keys);
-			veckeys.resize(arraykeys.size());
-			for(int i = 0; i < (int)arraykeys.size(); i++)
+			veckeys.resize(arraykeys.Size());
+			for(int i = 0; i < (int)arraykeys.Size(); i++)
 			{
-				veckeys[i] = ScriptColorGradientKey::fromInterop(arraykeys.get<__ColorGradientKeyInterop>(i));
+				veckeys[i] = ScriptColorGradientKey::FromInterop(arraykeys.Get<__ColorGradientKeyInterop>(i));
 			}
 		}
 		SPtr<ColorGradientHDR> instance = bs_shared_ptr_new<ColorGradientHDR>(veckeys);
@@ -75,10 +75,10 @@ namespace bs
 		if(keys != nullptr)
 		{
 			ScriptArray arraykeys(keys);
-			veckeys.resize(arraykeys.size());
-			for(int i = 0; i < (int)arraykeys.size(); i++)
+			veckeys.resize(arraykeys.Size());
+			for(int i = 0; i < (int)arraykeys.Size(); i++)
 			{
-				veckeys[i] = ScriptColorGradientKey::fromInterop(arraykeys.get<__ColorGradientKeyInterop>(i));
+				veckeys[i] = ScriptColorGradientKey::FromInterop(arraykeys.Get<__ColorGradientKeyInterop>(i));
 			}
 
 		}
@@ -92,12 +92,12 @@ namespace bs
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
-		ScriptArray array__output = ScriptArray::create<ScriptColorGradientKey>(arraySize__output);
+		ScriptArray array__output = ScriptArray::Create<ScriptColorGradientKey>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
-			array__output.Set(i, ScriptColorGradientKey::toInterop(vec__output[i]));
+			array__output.Set(i, ScriptColorGradientKey::ToInterop(vec__output[i]));
 		}
-		__output = array__output.getInternal();
+		__output = array__output.GetInternal();
 
 		return __output;
 	}
@@ -119,8 +119,8 @@ namespace bs
 		tmp__output = thisPtr->GetInternal()->GetKey(idx);
 
 		__ColorGradientKeyInterop interop__output;
-		interop__output = ScriptColorGradientKey::toInterop(tmp__output);
-		MonoUtil::valueCopy(__output, &interop__output, ScriptColorGradientKey::getMetaData()->scriptClass->GetInternalClassInternal());
+		interop__output = ScriptColorGradientKey::ToInterop(tmp__output);
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptColorGradientKey::GetMetaData()->scriptClass->GetInternalClassInternal());
 	}
 
 	void ScriptColorGradientHDR::InternalSetConstant(ScriptColorGradientHDR* thisPtr, Color* color)
@@ -131,7 +131,7 @@ namespace bs
 	void ScriptColorGradientHDR::InternalEvaluate(ScriptColorGradientHDR* thisPtr, float t, Color* __output)
 	{
 		Color tmp__output;
-		tmp__output = ColorGradientHDREx::evaluate(thisPtr->GetInternal(), t);
+		tmp__output = ColorGradientHDREx::Evaluate(thisPtr->GetInternal(), t);
 
 		*__output = tmp__output;
 	}

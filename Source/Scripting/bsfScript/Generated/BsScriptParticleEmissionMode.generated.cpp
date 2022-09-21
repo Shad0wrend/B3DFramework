@@ -11,7 +11,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptParticleEmissionMode::initRuntimeData()
+	void ScriptParticleEmissionMode::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptParticleEmissionMode::Box(const ParticleEmissionMode& value)

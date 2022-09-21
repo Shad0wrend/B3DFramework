@@ -15,17 +15,17 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptPARTICLE_STATIC_MESH_SHAPE_DESC::initRuntimeData()
+	void ScriptPARTICLE_STATIC_MESH_SHAPE_DESC::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptPARTICLE_STATIC_MESH_SHAPE_DESC::Box(const __PARTICLE_STATIC_MESH_SHAPE_DESCInterop& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	__PARTICLE_STATIC_MESH_SHAPE_DESCInterop ScriptPARTICLE_STATIC_MESH_SHAPE_DESC::Unbox(MonoObject* value)
 	{
-		return *(__PARTICLE_STATIC_MESH_SHAPE_DESCInterop*)MonoUtil::unbox(value);
+		return *(__PARTICLE_STATIC_MESH_SHAPE_DESCInterop*)MonoUtil::Unbox(value);
 	}
 
 	PARTICLE_STATIC_MESH_SHAPE_DESC ScriptPARTICLE_STATIC_MESH_SHAPE_DESC::FromInterop(const __PARTICLE_STATIC_MESH_SHAPE_DESCInterop& value)
@@ -35,7 +35,7 @@ namespace bs
 		output.sequential = value.sequential;
 		ResourceHandle<Mesh> tmpmesh;
 		ScriptRRefBase* scriptmesh;
-		scriptmesh = ScriptRRefBase::toNative(value.mesh);
+		scriptmesh = ScriptRRefBase::ToNative(value.mesh);
 		if(scriptmesh != nullptr)
 			tmpmesh = static_resource_cast<Mesh>(scriptmesh->GetHandle());
 		output.mesh = tmpmesh;
@@ -49,7 +49,7 @@ namespace bs
 		output.type = value.type;
 		output.sequential = value.sequential;
 		ScriptRRefBase* scriptmesh;
-		scriptmesh = ScriptResourceManager::Instance().getScriptRRef(value.mesh);
+		scriptmesh = ScriptResourceManager::Instance().GetScriptRRef(value.mesh);
 		MonoObject* tmpmesh;
 		if(scriptmesh != nullptr)
 			tmpmesh = scriptmesh->GetManagedInstance();

@@ -40,7 +40,7 @@ namespace bs
 		/// </param>
 		public Mesh(int numVertices, int numIndices, MeshTopology topology = MeshTopology.TriangleList, MeshUsage usage = MeshUsage.Static, VertexLayout vertex = VertexLayout.Position, IndexType index = IndexType.Index32)
 		{
-			Internal_create(this, numVertices, numIndices, topology, usage, vertex, index);
+			Internal_Create(this, numVertices, numIndices, topology, usage, vertex, index);
 		}
 
 		/// <summary>
@@ -63,7 +63,7 @@ namespace bs
 		/// </param>
 		public Mesh(int numVertices, int numIndices, SubMesh[] subMeshes, MeshUsage usage = MeshUsage.Static, VertexLayout vertex = VertexLayout.Position, IndexType index = IndexType.Index32)
 		{
-			Internal_create0(this, numVertices, numIndices, subMeshes, usage, vertex, index);
+			Internal_Create0(this, numVertices, numIndices, subMeshes, usage, vertex, index);
 		}
 
 		/// <summary>
@@ -78,7 +78,7 @@ namespace bs
 		/// <param name="usage">Optimizes performance depending on planned usage of the mesh.</param>
 		public Mesh(MeshData data, MeshTopology topology = MeshTopology.TriangleList, MeshUsage usage = MeshUsage.Static)
 		{
-			Internal_create1(this, data, topology, usage);
+			Internal_Create1(this, data, topology, usage);
 		}
 
 		/// <summary>
@@ -93,7 +93,7 @@ namespace bs
 		/// <param name="usage">Optimizes performance depending on planned usage of the mesh.</param>
 		public Mesh(MeshData data, SubMesh[] subMeshes, MeshUsage usage = MeshUsage.Static)
 		{
-			Internal_create2(this, data, subMeshes, usage);
+			Internal_Create2(this, data, subMeshes, usage);
 		}
 
 		/// <summary>Returns a reference wrapper for this resource.</summary>
@@ -106,28 +106,28 @@ namespace bs
 		[NativeWrapper]
 		public Skeleton Skeleton
 		{
-			get { return Internal_getSkeleton(mCachedPtr); }
+			get { return Internal_GetSkeleton(mCachedPtr); }
 		}
 
 		/// <summary>Returns an object containing all shapes used for morph animation, if any are available.</summary>
 		[NativeWrapper]
 		public MorphShapes MorphShapes
 		{
-			get { return Internal_getMorphShapes(mCachedPtr); }
+			get { return Internal_GetMorphShapes(mCachedPtr); }
 		}
 
 		/// <summary>Returns all sub-meshes contained in the mesh.</summary>
 		[NativeWrapper]
 		public SubMesh[] SubMeshes
 		{
-			get { return Internal_getSubMeshes(mCachedPtr); }
+			get { return Internal_GetSubMeshes(mCachedPtr); }
 		}
 
 		/// <summary>Returns the number of sub-meshes contained in this mesh.</summary>
 		[NativeWrapper]
 		public int SubMeshCount
 		{
-			get { return Internal_getSubMeshCount(mCachedPtr); }
+			get { return Internal_GetSubMeshCount(mCachedPtr); }
 		}
 
 		/// <summary>
@@ -139,8 +139,8 @@ namespace bs
 		[NativeWrapper]
 		public MeshData MeshData
 		{
-			get { return Internal_getMeshData(mCachedPtr); }
-			set { Internal_setMeshData(mCachedPtr, value); }
+			get { return Internal_GetMeshData(mCachedPtr); }
+			set { Internal_SetMeshData(mCachedPtr, value); }
 		}
 
 		/// <summary>Returns a reference wrapper for this resource.</summary>
@@ -155,27 +155,27 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern RRef<Mesh> Internal_GetRef(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern Skeleton Internal_getSkeleton(IntPtr thisPtr);
+		private static extern Skeleton Internal_GetSkeleton(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern MorphShapes Internal_getMorphShapes(IntPtr thisPtr);
+		private static extern MorphShapes Internal_GetMorphShapes(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create(Mesh managedInstance, int numVertices, int numIndices, MeshTopology topology, MeshUsage usage, VertexLayout vertex, IndexType index);
+		private static extern void Internal_Create(Mesh managedInstance, int numVertices, int numIndices, MeshTopology topology, MeshUsage usage, VertexLayout vertex, IndexType index);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create0(Mesh managedInstance, int numVertices, int numIndices, SubMesh[] subMeshes, MeshUsage usage, VertexLayout vertex, IndexType index);
+		private static extern void Internal_Create0(Mesh managedInstance, int numVertices, int numIndices, SubMesh[] subMeshes, MeshUsage usage, VertexLayout vertex, IndexType index);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create1(Mesh managedInstance, MeshData data, MeshTopology topology, MeshUsage usage);
+		private static extern void Internal_Create1(Mesh managedInstance, MeshData data, MeshTopology topology, MeshUsage usage);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create2(Mesh managedInstance, MeshData data, SubMesh[] subMeshes, MeshUsage usage);
+		private static extern void Internal_Create2(Mesh managedInstance, MeshData data, SubMesh[] subMeshes, MeshUsage usage);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern SubMesh[] Internal_getSubMeshes(IntPtr thisPtr);
+		private static extern SubMesh[] Internal_GetSubMeshes(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getSubMeshCount(IntPtr thisPtr);
+		private static extern int Internal_GetSubMeshCount(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getBounds(IntPtr thisPtr, out AABox box, out Sphere sphere);
+		private static extern void Internal_GetBounds(IntPtr thisPtr, out AABox box, out Sphere sphere);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern MeshData Internal_getMeshData(IntPtr thisPtr);
+		private static extern MeshData Internal_GetMeshData(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setMeshData(IntPtr thisPtr, MeshData value);
+		private static extern void Internal_SetMeshData(IntPtr thisPtr, MeshData value);
 	}
 
 	/** @} */

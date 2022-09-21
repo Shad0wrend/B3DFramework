@@ -176,9 +176,8 @@ Additionally, if the dependency structure still isn't clear, download one of the
 - Required by bsfSL
 - Executable (tool)
 
- **BansheeSBGen**
- - Banshee Script Binding Generator 1.0
+ **BansheeCodeGenerator**
  - Only required if SCRIPT_BINDING_GENERATION option is specified during the build (off by default)
- - https://github.com/BearishSun/BansheeSBGen
+ - https://github.com/BearishSun/BansheeCodeGenerator
  - Required for generation of C# script binding files. Not required if not using the scripting sub-system.
  - Executable (tool)

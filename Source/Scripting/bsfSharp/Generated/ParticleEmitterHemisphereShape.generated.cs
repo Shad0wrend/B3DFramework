@@ -23,13 +23,13 @@ namespace bs
 		/// <summary>Creates a new particle emitter sphere shape.</summary>
 		public ParticleEmitterHemisphereShape(ParticleHemisphereShapeOptions desc)
 		{
-			Internal_create(this, ref desc);
+			Internal_Create(this, ref desc);
 		}
 
 		/// <summary>Creates a new particle emitter sphere shape.</summary>
 		public ParticleEmitterHemisphereShape()
 		{
-			Internal_create0(this);
+			Internal_Create0(this);
 		}
 
 		/// <summary>Options describing the shape.</summary>
@@ -41,20 +41,20 @@ namespace bs
 			get
 			{
 				ParticleHemisphereShapeOptions temp;
-				Internal_getOptions(mCachedPtr, out temp);
+				Internal_GetOptions(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setOptions(mCachedPtr, ref value); }
+			set { Internal_SetOptions(mCachedPtr, ref value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setOptions(IntPtr thisPtr, ref ParticleHemisphereShapeOptions options);
+		private static extern void Internal_SetOptions(IntPtr thisPtr, ref ParticleHemisphereShapeOptions options);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getOptions(IntPtr thisPtr, out ParticleHemisphereShapeOptions __output);
+		private static extern void Internal_GetOptions(IntPtr thisPtr, out ParticleHemisphereShapeOptions __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create(ParticleEmitterHemisphereShape managedInstance, ref ParticleHemisphereShapeOptions desc);
+		private static extern void Internal_Create(ParticleEmitterHemisphereShape managedInstance, ref ParticleHemisphereShapeOptions desc);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create0(ParticleEmitterHemisphereShape managedInstance);
+		private static extern void Internal_Create0(ParticleEmitterHemisphereShape managedInstance);
 	}
 
 	/** @} */

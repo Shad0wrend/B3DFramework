@@ -58,7 +58,7 @@ namespace bs
 		T* GetRaw(UINT32 idx = 0)
 		{
 #if BS_DEBUG_MODE
-			assert(sizeof(T) == elementSize());
+			assert(sizeof(T) == ElementSize());
 #endif
 			return (T*)GetArrayAddrInternal(mInternal, sizeof(T), idx);
 		}

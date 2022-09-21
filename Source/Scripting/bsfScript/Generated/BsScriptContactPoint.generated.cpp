@@ -13,7 +13,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptContactPoint::initRuntimeData()
+	void ScriptContactPoint::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptContactPoint::Box(const __ContactPointInterop& value)

@@ -11,7 +11,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptShaderParameter::initRuntimeData()
+	void ScriptShaderParameter::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptShaderParameter::Box(const __ShaderParameterInterop& value)
@@ -46,7 +46,7 @@ namespace bs
 		tmpname = MonoUtil::StringToMono(value.name);
 		output.name = tmpname;
 		MonoString* tmpidentifier;
-		tmpidentifier = MonoUtil::stringToMono(value.identifier);
+		tmpidentifier = MonoUtil::StringToMono(value.identifier);
 		output.identifier = tmpidentifier;
 		output.type = value.type;
 		output.flags = value.flags;

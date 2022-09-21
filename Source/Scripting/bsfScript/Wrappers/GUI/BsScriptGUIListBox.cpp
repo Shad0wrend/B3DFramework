@@ -28,7 +28,7 @@ namespace bs
 
 	}
 
-	void ScriptGUIListBox::initRuntimeData()
+	void ScriptGUIListBox::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIListBox::InternalCreateInstance);
 		metaData.scriptClass->AddInternalCall("Internal_SetElements", (void*)&ScriptGUIListBox::InternalSetElements);

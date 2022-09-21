@@ -14,7 +14,7 @@ namespace bs
 		:ScriptObject(instance)
 	{ }
 
-	void ScriptTime::initRuntimeData()
+	void ScriptTime::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_GetRealElapsed", (void*)&ScriptTime::InternalGetRealElapsed);
 		metaData.scriptClass->AddInternalCall("Internal_GetElapsed", (void*)&ScriptTime::InternalGetElapsed);

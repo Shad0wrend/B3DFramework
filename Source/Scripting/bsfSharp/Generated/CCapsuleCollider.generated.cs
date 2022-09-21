@@ -25,10 +25,10 @@ namespace bs
 			get
 			{
 				Vector3 temp;
-				Internal_getNormal(mCachedPtr, out temp);
+				Internal_GetNormal(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setNormal(mCachedPtr, ref value); }
+			set { Internal_SetNormal(mCachedPtr, ref value); }
 		}
 
 		/// <summary>Determines the position of the capsule shape, relative to the component&apos;s scene object.</summary>
@@ -39,49 +39,44 @@ namespace bs
 			get
 			{
 				Vector3 temp;
-				Internal_getCenter(mCachedPtr, out temp);
+				Internal_GetCenter(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setCenter(mCachedPtr, ref value); }
+			set { Internal_SetCenter(mCachedPtr, ref value); }
 		}
 
-		/// <summary>
-		/// Determines the half height of the capsule, from the origin to one of the hemispherical centers, along the normal 
-		/// vector.
-		/// </summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public float HalfHeight
 		{
-			get { return Internal_getHalfHeight(mCachedPtr); }
-			set { Internal_setHalfHeight(mCachedPtr, value); }
+			get { return Internal_GetHalfHeight(mCachedPtr); }
+			set { Internal_SetHalfHeight(mCachedPtr, value); }
 		}
 
-		/// <summary>Determines the radius of the capsule.</summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public float Radius
 		{
-			get { return Internal_getRadius(mCachedPtr); }
-			set { Internal_setRadius(mCachedPtr, value); }
+			get { return Internal_GetRadius(mCachedPtr); }
+			set { Internal_SetRadius(mCachedPtr, value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setNormal(IntPtr thisPtr, ref Vector3 normal);
+		private static extern void Internal_SetNormal(IntPtr thisPtr, ref Vector3 normal);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getNormal(IntPtr thisPtr, out Vector3 __output);
+		private static extern void Internal_GetNormal(IntPtr thisPtr, out Vector3 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setCenter(IntPtr thisPtr, ref Vector3 center);
+		private static extern void Internal_SetCenter(IntPtr thisPtr, ref Vector3 center);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getCenter(IntPtr thisPtr, out Vector3 __output);
+		private static extern void Internal_GetCenter(IntPtr thisPtr, out Vector3 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setHalfHeight(IntPtr thisPtr, float halfHeight);
+		private static extern void Internal_SetHalfHeight(IntPtr thisPtr, float halfHeight);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getHalfHeight(IntPtr thisPtr);
+		private static extern float Internal_GetHalfHeight(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setRadius(IntPtr thisPtr, float radius);
+		private static extern void Internal_SetRadius(IntPtr thisPtr, float radius);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getRadius(IntPtr thisPtr);
+		private static extern float Internal_GetRadius(IntPtr thisPtr);
 	}
 
 	/** @} */

@@ -20,63 +20,44 @@ namespace bs
 		private Renderable(bool __dummy0) { }
 		protected Renderable() { }
 
-		/// <summary>
-		/// Determines the mesh to render. All sub-meshes of the mesh will be rendered, and you may set individual materials for 
-		/// each sub-mesh.
-		/// </summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public RRef<Mesh> Mesh
 		{
-			get { return Internal_getMesh(mCachedPtr); }
-			set { Internal_setMesh(mCachedPtr, value); }
+			get { return Internal_GetMesh(mCachedPtr); }
+			set { Internal_SetMesh(mCachedPtr, value); }
 		}
 
-		/// <summary>
-		/// Determines all materials used for rendering this renderable. Each of the materials is used for rendering a single 
-		/// sub-mesh. If number of materials is larger than number of sub-meshes, they will be ignored. If lower, the remaining 
-		/// materials will be removed.
-		/// </summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public RRef<Material>[] Materials
 		{
-			get { return Internal_getMaterials(mCachedPtr); }
-			set { Internal_setMaterials(mCachedPtr, value); }
+			get { return Internal_GetMaterials(mCachedPtr); }
+			set { Internal_SetMaterials(mCachedPtr, value); }
 		}
 
-		/// <summary>Factor to be applied to the cull distance set in the camera&apos;s render settings.</summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public float CullDistance
 		{
-			get { return Internal_getCullDistanceFactor(mCachedPtr); }
-			set { Internal_setCullDistanceFactor(mCachedPtr, value); }
+			get { return Internal_GetCullDistanceFactor(mCachedPtr); }
+			set { Internal_SetCullDistanceFactor(mCachedPtr, value); }
 		}
 
-		/// <summary>
-		/// If enabled this renderable will write per-pixel velocity information when rendered. This is required for effects such 
-		/// as temporal anti-aliasing and motion blur, but comes with a minor performance overhead. If you are not using those 
-		/// effects you can disable this for a performance gain.
-		/// </summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public bool WriteVelocity
 		{
-			get { return Internal_getWriteVelocity(mCachedPtr); }
-			set { Internal_setWriteVelocity(mCachedPtr, value); }
+			get { return Internal_GetWriteVelocity(mCachedPtr); }
+			set { Internal_SetWriteVelocity(mCachedPtr, value); }
 		}
 
-		/// <summary>
-		/// Determines the layer bitfield that controls whether a renderable is considered visible in a specific camera. 
-		/// Renderable layer must match camera layer in order for the camera to render the component.
-		/// </summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public ulong Layers
 		{
-			get { return Internal_getLayer(mCachedPtr); }
-			set { Internal_setLayer(mCachedPtr, value); }
+			get { return Internal_GetLayer(mCachedPtr); }
+			set { Internal_SetLayer(mCachedPtr, value); }
 		}
 
 		/// <summary>Gets world bounds of the mesh rendered by this object.</summary>
@@ -86,63 +67,54 @@ namespace bs
 			get
 			{
 				Bounds temp;
-				Internal_getBounds(mCachedPtr, out temp);
+				Internal_GetBounds(mCachedPtr, out temp);
 				return temp;
 			}
 		}
 
-		/// <summary>
-		/// Sets a material that will be used for rendering a sub-mesh with the specified index. If a sub-mesh doesn&apos;t have 
-		/// a specific material set then the primary material will be used.
-		/// </summary>
 		public void SetMaterial(int idx, RRef<Material> material)
 		{
-			Internal_setMaterial(mCachedPtr, idx, material);
+			Internal_SetMaterial(mCachedPtr, idx, material);
 		}
 
-		/// <summary>
-		/// Sets a material that will be used for rendering a sub-mesh with the specified index. If a sub-mesh doesn&apos;t have 
-		/// a specific material set then the primary material will be used.
-		/// </summary>
 		public void SetMaterial(RRef<Material> material)
 		{
-			Internal_setMaterial0(mCachedPtr, material);
+			Internal_SetMaterial0(mCachedPtr, material);
 		}
 
-		/// <summary>Returns the material used for rendering a sub-mesh with the specified index.</summary>
 		public RRef<Material> GetMaterial(int idx)
 		{
-			return Internal_getMaterial(mCachedPtr, idx);
+			return Internal_GetMaterial(mCachedPtr, idx);
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setMesh(IntPtr thisPtr, RRef<Mesh> mesh);
+		private static extern void Internal_SetMesh(IntPtr thisPtr, RRef<Mesh> mesh);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern RRef<Mesh> Internal_getMesh(IntPtr thisPtr);
+		private static extern RRef<Mesh> Internal_GetMesh(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setMaterial(IntPtr thisPtr, int idx, RRef<Material> material);
+		private static extern void Internal_SetMaterial(IntPtr thisPtr, int idx, RRef<Material> material);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setMaterial0(IntPtr thisPtr, RRef<Material> material);
+		private static extern void Internal_SetMaterial0(IntPtr thisPtr, RRef<Material> material);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern RRef<Material> Internal_getMaterial(IntPtr thisPtr, int idx);
+		private static extern RRef<Material> Internal_GetMaterial(IntPtr thisPtr, int idx);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setMaterials(IntPtr thisPtr, RRef<Material>[] materials);
+		private static extern void Internal_SetMaterials(IntPtr thisPtr, RRef<Material>[] materials);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern RRef<Material>[] Internal_getMaterials(IntPtr thisPtr);
+		private static extern RRef<Material>[] Internal_GetMaterials(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setCullDistanceFactor(IntPtr thisPtr, float factor);
+		private static extern void Internal_SetCullDistanceFactor(IntPtr thisPtr, float factor);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getCullDistanceFactor(IntPtr thisPtr);
+		private static extern float Internal_GetCullDistanceFactor(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setWriteVelocity(IntPtr thisPtr, bool enable);
+		private static extern void Internal_SetWriteVelocity(IntPtr thisPtr, bool enable);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_getWriteVelocity(IntPtr thisPtr);
+		private static extern bool Internal_GetWriteVelocity(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setLayer(IntPtr thisPtr, ulong layer);
+		private static extern void Internal_SetLayer(IntPtr thisPtr, ulong layer);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ulong Internal_getLayer(IntPtr thisPtr);
+		private static extern ulong Internal_GetLayer(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getBounds(IntPtr thisPtr, out Bounds __output);
+		private static extern void Internal_GetBounds(IntPtr thisPtr, out Bounds __output);
 	}
 
 	/** @} */

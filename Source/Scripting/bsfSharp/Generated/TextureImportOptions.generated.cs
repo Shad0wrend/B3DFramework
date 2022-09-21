@@ -20,7 +20,7 @@ namespace bs
 		/// <summary>Creates a new import options object that allows you to customize how are textures imported.</summary>
 		public TextureImportOptions()
 		{
-			Internal_create(this);
+			Internal_Create(this);
 		}
 
 		/// <summary>Pixel format to import as.</summary>
@@ -28,8 +28,8 @@ namespace bs
 		[NativeWrapper]
 		public PixelFormat Format
 		{
-			get { return Internal_getformat(mCachedPtr); }
-			set { Internal_setformat(mCachedPtr, value); }
+			get { return Internal_Getformat(mCachedPtr); }
+			set { Internal_Setformat(mCachedPtr, value); }
 		}
 
 		/// <summary>Enables or disables mipmap generation for the texture.</summary>
@@ -37,8 +37,8 @@ namespace bs
 		[NativeWrapper]
 		public bool GenerateMips
 		{
-			get { return Internal_getgenerateMips(mCachedPtr); }
-			set { Internal_setgenerateMips(mCachedPtr, value); }
+			get { return Internal_GetgenerateMips(mCachedPtr); }
+			set { Internal_SetgenerateMips(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -48,8 +48,8 @@ namespace bs
 		[NativeWrapper]
 		public int MaxMip
 		{
-			get { return Internal_getmaxMip(mCachedPtr); }
-			set { Internal_setmaxMip(mCachedPtr, value); }
+			get { return Internal_GetmaxMip(mCachedPtr); }
+			set { Internal_SetmaxMip(mCachedPtr, value); }
 		}
 
 		/// <summary>Determines whether the texture data is also stored in main memory, available for fast CPU access.</summary>
@@ -57,8 +57,8 @@ namespace bs
 		[NativeWrapper]
 		public bool CpuCached
 		{
-			get { return Internal_getcpuCached(mCachedPtr); }
-			set { Internal_setcpuCached(mCachedPtr, value); }
+			get { return Internal_GetcpuCached(mCachedPtr); }
+			set { Internal_SetcpuCached(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -69,8 +69,8 @@ namespace bs
 		[NativeWrapper]
 		public bool SRGB
 		{
-			get { return Internal_getsRGB(mCachedPtr); }
-			set { Internal_setsRGB(mCachedPtr, value); }
+			get { return Internal_GetsRGB(mCachedPtr); }
+			set { Internal_SetsRGB(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -81,8 +81,8 @@ namespace bs
 		[NativeWrapper]
 		public bool Cubemap
 		{
-			get { return Internal_getcubemap(mCachedPtr); }
-			set { Internal_setcubemap(mCachedPtr, value); }
+			get { return Internal_Getcubemap(mCachedPtr); }
+			set { Internal_Setcubemap(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -93,40 +93,40 @@ namespace bs
 		[NativeWrapper]
 		public CubemapSourceType CubemapSourceType
 		{
-			get { return Internal_getcubemapSourceType(mCachedPtr); }
-			set { Internal_setcubemapSourceType(mCachedPtr, value); }
+			get { return Internal_GetcubemapSourceType(mCachedPtr); }
+			set { Internal_SetcubemapSourceType(mCachedPtr, value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern PixelFormat Internal_getformat(IntPtr thisPtr);
+		private static extern PixelFormat Internal_Getformat(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setformat(IntPtr thisPtr, PixelFormat value);
+		private static extern void Internal_Setformat(IntPtr thisPtr, PixelFormat value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_getgenerateMips(IntPtr thisPtr);
+		private static extern bool Internal_GetgenerateMips(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setgenerateMips(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetgenerateMips(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_getmaxMip(IntPtr thisPtr);
+		private static extern int Internal_GetmaxMip(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setmaxMip(IntPtr thisPtr, int value);
+		private static extern void Internal_SetmaxMip(IntPtr thisPtr, int value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_getcpuCached(IntPtr thisPtr);
+		private static extern bool Internal_GetcpuCached(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setcpuCached(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetcpuCached(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_getsRGB(IntPtr thisPtr);
+		private static extern bool Internal_GetsRGB(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setsRGB(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetsRGB(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_getcubemap(IntPtr thisPtr);
+		private static extern bool Internal_Getcubemap(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setcubemap(IntPtr thisPtr, bool value);
+		private static extern void Internal_Setcubemap(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern CubemapSourceType Internal_getcubemapSourceType(IntPtr thisPtr);
+		private static extern CubemapSourceType Internal_GetcubemapSourceType(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setcubemapSourceType(IntPtr thisPtr, CubemapSourceType value);
+		private static extern void Internal_SetcubemapSourceType(IntPtr thisPtr, CubemapSourceType value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_create(TextureImportOptions managedInstance);
+		private static extern void Internal_Create(TextureImportOptions managedInstance);
 	}
 
 	/** @} */

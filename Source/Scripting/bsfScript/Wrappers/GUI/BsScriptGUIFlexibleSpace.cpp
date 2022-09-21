@@ -19,7 +19,7 @@ namespace bs
 
 	}
 
-	void ScriptGUIFlexibleSpace::initRuntimeData()
+	void ScriptGUIFlexibleSpace::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIFlexibleSpace::InternalCreateInstance);
 	}

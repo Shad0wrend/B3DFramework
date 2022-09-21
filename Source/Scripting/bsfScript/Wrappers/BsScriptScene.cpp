@@ -35,7 +35,7 @@ namespace bs
 		:ScriptObject(instance)
 	{ }
 
-	void ScriptScene::initRuntimeData()
+	void ScriptScene::InitRuntimeData()
 	{
 		metaData.scriptClass->AddInternalCall("Internal_GetRoot", (void*)&ScriptScene::InternalGetRoot);
 		metaData.scriptClass->AddInternalCall("Internal_GetMainCameraSO", (void*)&ScriptScene::InternalGetMainCameraSo);

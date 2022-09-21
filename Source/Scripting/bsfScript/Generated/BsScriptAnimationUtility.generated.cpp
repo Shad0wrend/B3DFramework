@@ -17,15 +17,15 @@ namespace bs
 	{
 	}
 
-	void ScriptAnimationUtility::initRuntimeData()
+	void ScriptAnimationUtility::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_eulerToQuaternionCurve", (void*)&ScriptAnimationUtility::InternalEulerToQuaternionCurve);
-		metaData.scriptClass->AddInternalCall("Internal_quaternionToEulerCurve", (void*)&ScriptAnimationUtility::InternalQuaternionToEulerCurve);
-		metaData.scriptClass->AddInternalCall("Internal_splitCurve3D", (void*)&ScriptAnimationUtility::InternalSplitCurve3D);
-		metaData.scriptClass->AddInternalCall("Internal_combineCurve3D", (void*)&ScriptAnimationUtility::InternalCombineCurve3D);
-		metaData.scriptClass->AddInternalCall("Internal_splitCurve2D", (void*)&ScriptAnimationUtility::InternalSplitCurve2D);
-		metaData.scriptClass->AddInternalCall("Internal_combineCurve2D", (void*)&ScriptAnimationUtility::InternalCombineCurve2D);
-		metaData.scriptClass->AddInternalCall("Internal_calculateRange", (void*)&ScriptAnimationUtility::InternalCalculateRange);
+		metaData.scriptClass->AddInternalCall("Internal_EulerToQuaternionCurve", (void*)&ScriptAnimationUtility::InternalEulerToQuaternionCurve);
+		metaData.scriptClass->AddInternalCall("Internal_QuaternionToEulerCurve", (void*)&ScriptAnimationUtility::InternalQuaternionToEulerCurve);
+		metaData.scriptClass->AddInternalCall("Internal_SplitCurve3D", (void*)&ScriptAnimationUtility::InternalSplitCurve3D);
+		metaData.scriptClass->AddInternalCall("Internal_CombineCurve3D", (void*)&ScriptAnimationUtility::InternalCombineCurve3D);
+		metaData.scriptClass->AddInternalCall("Internal_SplitCurve2D", (void*)&ScriptAnimationUtility::InternalSplitCurve2D);
+		metaData.scriptClass->AddInternalCall("Internal_CombineCurve2D", (void*)&ScriptAnimationUtility::InternalCombineCurve2D);
+		metaData.scriptClass->AddInternalCall("Internal_CalculateRange", (void*)&ScriptAnimationUtility::InternalCalculateRange);
 
 	}
 
@@ -80,11 +80,11 @@ namespace bs
 		scriptcompoundCurve = ScriptTAnimationCurveVector3::ToNative(compoundCurve);
 		if(scriptcompoundCurve != nullptr)
 			tmpcompoundCurve = scriptcompoundCurve->GetInternal();
-		vec__output = AnimationUtility::splitCurve3D(tmpcompoundCurve);
+		vec__output = AnimationUtility::SplitCurve3D(tmpcompoundCurve);
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
-		ScriptArray array__output = ScriptArray::create<ScriptTAnimationCurvefloat>(arraySize__output);
+		ScriptArray array__output = ScriptArray::Create<ScriptTAnimationCurvefloat>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
 			SPtr<TAnimationCurve<float>> arrayElemPtr__output = vec__output[i];
@@ -92,7 +92,7 @@ namespace bs
 			arrayElem__output = ScriptTAnimationCurvefloat::Create(arrayElemPtr__output);
 			array__output.Set(i, arrayElem__output);
 		}
-		__output = array__output.getInternal();
+		__output = array__output.GetInternal();
 
 		return __output;
 	}
@@ -104,11 +104,11 @@ namespace bs
 		if(curveComponents != nullptr)
 		{
 			ScriptArray arraycurveComponents(curveComponents);
-			veccurveComponents.resize(arraycurveComponents.size());
-			for(int i = 0; i < (int)arraycurveComponents.size(); i++)
+			veccurveComponents.resize(arraycurveComponents.Size());
+			for(int i = 0; i < (int)arraycurveComponents.Size(); i++)
 			{
 				ScriptTAnimationCurvefloat* scriptcurveComponents;
-				scriptcurveComponents = ScriptTAnimationCurvefloat::toNative(arraycurveComponents.get<MonoObject*>(i));
+				scriptcurveComponents = ScriptTAnimationCurvefloat::ToNative(arraycurveComponents.Get<MonoObject*>(i));
 				if(scriptcurveComponents != nullptr)
 				{
 					SPtr<TAnimationCurve<float>> arrayElemPtrcurveComponents = scriptcurveComponents->GetInternal();
@@ -116,7 +116,7 @@ namespace bs
 				}
 			}
 		}
-		tmp__output = AnimationUtility::combineCurve3D(veccurveComponents);
+		tmp__output = AnimationUtility::CombineCurve3D(veccurveComponents);
 
 		MonoObject* __output;
 		__output = ScriptTAnimationCurveVector3::Create(tmp__output);
@@ -129,14 +129,14 @@ namespace bs
 		Vector<SPtr<TAnimationCurve<float>>> vec__output;
 		SPtr<TAnimationCurve<Vector2>> tmpcompoundCurve;
 		ScriptTAnimationCurveVector2* scriptcompoundCurve;
-		scriptcompoundCurve = ScriptTAnimationCurveVector2::toNative(compoundCurve);
+		scriptcompoundCurve = ScriptTAnimationCurveVector2::ToNative(compoundCurve);
 		if(scriptcompoundCurve != nullptr)
 			tmpcompoundCurve = scriptcompoundCurve->GetInternal();
-		vec__output = AnimationUtility::splitCurve2D(tmpcompoundCurve);
+		vec__output = AnimationUtility::SplitCurve2D(tmpcompoundCurve);
 
 		MonoArray* __output;
 		int arraySize__output = (int)vec__output.size();
-		ScriptArray array__output = ScriptArray::create<ScriptTAnimationCurvefloat>(arraySize__output);
+		ScriptArray array__output = ScriptArray::Create<ScriptTAnimationCurvefloat>(arraySize__output);
 		for(int i = 0; i < arraySize__output; i++)
 		{
 			SPtr<TAnimationCurve<float>> arrayElemPtr__output = vec__output[i];
@@ -144,7 +144,7 @@ namespace bs
 			arrayElem__output = ScriptTAnimationCurvefloat::Create(arrayElemPtr__output);
 			array__output.Set(i, arrayElem__output);
 		}
-		__output = array__output.getInternal();
+		__output = array__output.GetInternal();
 
 		return __output;
 	}
@@ -156,11 +156,11 @@ namespace bs
 		if(curveComponents != nullptr)
 		{
 			ScriptArray arraycurveComponents(curveComponents);
-			veccurveComponents.resize(arraycurveComponents.size());
-			for(int i = 0; i < (int)arraycurveComponents.size(); i++)
+			veccurveComponents.resize(arraycurveComponents.Size());
+			for(int i = 0; i < (int)arraycurveComponents.Size(); i++)
 			{
 				ScriptTAnimationCurvefloat* scriptcurveComponents;
-				scriptcurveComponents = ScriptTAnimationCurvefloat::toNative(arraycurveComponents.get<MonoObject*>(i));
+				scriptcurveComponents = ScriptTAnimationCurvefloat::ToNative(arraycurveComponents.Get<MonoObject*>(i));
 				if(scriptcurveComponents != nullptr)
 				{
 					SPtr<TAnimationCurve<float>> arrayElemPtrcurveComponents = scriptcurveComponents->GetInternal();
@@ -168,7 +168,7 @@ namespace bs
 				}
 			}
 		}
-		tmp__output = AnimationUtility::combineCurve2D(veccurveComponents);
+		tmp__output = AnimationUtility::CombineCurve2D(veccurveComponents);
 
 		MonoObject* __output;
 		__output = ScriptTAnimationCurveVector2::Create(tmp__output);
@@ -182,11 +182,11 @@ namespace bs
 		if(curves != nullptr)
 		{
 			ScriptArray arraycurves(curves);
-			veccurves.resize(arraycurves.size());
-			for(int i = 0; i < (int)arraycurves.size(); i++)
+			veccurves.resize(arraycurves.Size());
+			for(int i = 0; i < (int)arraycurves.Size(); i++)
 			{
 				ScriptTAnimationCurvefloat* scriptcurves;
-				scriptcurves = ScriptTAnimationCurvefloat::toNative(arraycurves.get<MonoObject*>(i));
+				scriptcurves = ScriptTAnimationCurvefloat::ToNative(arraycurves.Get<MonoObject*>(i));
 				if(scriptcurves != nullptr)
 				{
 					SPtr<TAnimationCurve<float>> arrayElemPtrcurves = scriptcurves->GetInternal();
@@ -195,6 +195,6 @@ namespace bs
 			}
 
 		}
-		AnimationUtility::calculateRange(veccurves, *xMin, *xMax, *yMin, *yMax);
+		AnimationUtility::CalculateRange(veccurves, *xMin, *xMax, *yMin, *yMax);
 	}
 }

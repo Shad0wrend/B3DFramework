@@ -15,20 +15,20 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptSubResource::initRuntimeData()
+	void ScriptSubResource::InitRuntimeData()
 	{ }
 
-	MonoObject*ScriptSubResource::box(const __SubResourceInterop& value)
+	MonoObject*ScriptSubResource::Box(const __SubResourceInterop& value)
 	{
-		return MonoUtil::box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
-	__SubResourceInterop ScriptSubResource::unbox(MonoObject* value)
+	__SubResourceInterop ScriptSubResource::Unbox(MonoObject* value)
 	{
-		return *(__SubResourceInterop*)MonoUtil::unbox(value);
+		return *(__SubResourceInterop*)MonoUtil::Unbox(value);
 	}
 
-	SubResource ScriptSubResource::fromInterop(const __SubResourceInterop& value)
+	SubResource ScriptSubResource::FromInterop(const __SubResourceInterop& value)
 	{
 		SubResource output;
 		String tmpname;
@@ -36,7 +36,7 @@ namespace bs
 		output.name = tmpname;
 		ResourceHandle<Resource> tmpvalue;
 		ScriptResource* scriptvalue;
-		scriptvalue = ScriptResource::toNative(value.value);
+		scriptvalue = ScriptResource::ToNative(value.value);
 		if(scriptvalue != nullptr)
 			tmpvalue = static_resource_cast<Resource>(scriptvalue->GetGenericHandle());
 		output.value = tmpvalue;
@@ -44,14 +44,14 @@ namespace bs
 		return output;
 	}
 
-	__SubResourceInterop ScriptSubResource::toInterop(const SubResource& value)
+	__SubResourceInterop ScriptSubResource::ToInterop(const SubResource& value)
 	{
 		__SubResourceInterop output;
 		MonoString* tmpname;
-		tmpname = MonoUtil::stringToMono(value.name);
+		tmpname = MonoUtil::StringToMono(value.name);
 		output.name = tmpname;
 		ScriptResourceBase* scriptvalue;
-		scriptvalue = ScriptResourceManager::Instance().getScriptResource(value.value, true);
+		scriptvalue = ScriptResourceManager::Instance().GetScriptResource(value.value, true);
 		MonoObject* tmpvalue;
 		if(scriptvalue != nullptr)
 			tmpvalue = scriptvalue->GetManagedInstance();

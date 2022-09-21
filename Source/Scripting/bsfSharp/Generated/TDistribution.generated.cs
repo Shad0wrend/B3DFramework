@@ -50,7 +50,7 @@ namespace bs
 		[NativeWrapper]
 		public PropertyDistributionType DistributionType
 		{
-			get { return Internal_getType(mCachedPtr); }
+			get { return Internal_GetType(mCachedPtr); }
 		}
 
 		/// <summary>
@@ -59,7 +59,7 @@ namespace bs
 		/// </summary>
 		public float GetMinConstant()
 		{
-			return Internal_getMinConstant(mCachedPtr);
+			return Internal_GetMinConstant(mCachedPtr);
 		}
 
 		/// <summary>
@@ -67,7 +67,7 @@ namespace bs
 		/// </summary>
 		public float GetMaxConstant()
 		{
-			return Internal_getMaxConstant(mCachedPtr);
+			return Internal_GetMaxConstant(mCachedPtr);
 		}
 
 		/// <summary>
@@ -76,7 +76,7 @@ namespace bs
 		/// </summary>
 		public AnimationCurve GetMinCurve()
 		{
-			return Internal_getMinCurve(mCachedPtr);
+			return Internal_GetMinCurve(mCachedPtr);
 		}
 
 		/// <summary>
@@ -85,7 +85,7 @@ namespace bs
 		/// </summary>
 		public AnimationCurve GetMaxCurve()
 		{
-			return Internal_getMaxCurve(mCachedPtr);
+			return Internal_GetMaxCurve(mCachedPtr);
 		}
 
 		/// <summary>Evaluates the value of the distribution.</summary>
@@ -100,7 +100,7 @@ namespace bs
 		/// <returns>Evaluated value.</returns>
 		public float Evaluate(float t, float factor)
 		{
-			return Internal_evaluate(mCachedPtr, t, factor);
+			return Internal_Evaluate(mCachedPtr, t, factor);
 		}
 
 		/// <summary>Evaluates the value of the distribution.</summary>
@@ -114,7 +114,7 @@ namespace bs
 		/// <returns>Evaluated value.</returns>
 		public float Evaluate(float t, Random factor)
 		{
-			return Internal_evaluate0(mCachedPtr, t, factor);
+			return Internal_Evaluate0(mCachedPtr, t, factor);
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
@@ -128,19 +128,19 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_TDistribution3(FloatDistribution managedInstance, AnimationCurve minCurve, AnimationCurve maxCurve);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern PropertyDistributionType Internal_getType(IntPtr thisPtr);
+		private static extern PropertyDistributionType Internal_GetType(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getMinConstant(IntPtr thisPtr);
+		private static extern float Internal_GetMinConstant(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_getMaxConstant(IntPtr thisPtr);
+		private static extern float Internal_GetMaxConstant(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern AnimationCurve Internal_getMinCurve(IntPtr thisPtr);
+		private static extern AnimationCurve Internal_GetMinCurve(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern AnimationCurve Internal_getMaxCurve(IntPtr thisPtr);
+		private static extern AnimationCurve Internal_GetMaxCurve(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_evaluate(IntPtr thisPtr, float t, float factor);
+		private static extern float Internal_Evaluate(IntPtr thisPtr, float t, float factor);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_evaluate0(IntPtr thisPtr, float t, Random factor);
+		private static extern float Internal_Evaluate0(IntPtr thisPtr, float t, Random factor);
 	}
 
 	/** @} */
@@ -189,7 +189,7 @@ namespace bs
 		[NativeWrapper]
 		public PropertyDistributionType DistributionType
 		{
-			get { return Internal_getType(mCachedPtr); }
+			get { return Internal_GetType(mCachedPtr); }
 		}
 
 		/// <summary>
@@ -199,7 +199,7 @@ namespace bs
 		public Vector3 GetMinConstant()
 		{
 			Vector3 temp;
-			Internal_getMinConstant(mCachedPtr, out temp);
+			Internal_GetMinConstant(mCachedPtr, out temp);
 			return temp;
 		}
 
@@ -209,7 +209,7 @@ namespace bs
 		public Vector3 GetMaxConstant()
 		{
 			Vector3 temp;
-			Internal_getMaxConstant(mCachedPtr, out temp);
+			Internal_GetMaxConstant(mCachedPtr, out temp);
 			return temp;
 		}
 
@@ -219,7 +219,7 @@ namespace bs
 		/// </summary>
 		public Vector3Curve GetMinCurve()
 		{
-			return Internal_getMinCurve(mCachedPtr);
+			return Internal_GetMinCurve(mCachedPtr);
 		}
 
 		/// <summary>
@@ -228,7 +228,7 @@ namespace bs
 		/// </summary>
 		public Vector3Curve GetMaxCurve()
 		{
-			return Internal_getMaxCurve(mCachedPtr);
+			return Internal_GetMaxCurve(mCachedPtr);
 		}
 
 		/// <summary>Evaluates the value of the distribution.</summary>
@@ -244,7 +244,7 @@ namespace bs
 		public Vector3 Evaluate(float t, float factor)
 		{
 			Vector3 temp;
-			Internal_evaluate(mCachedPtr, t, factor, out temp);
+			Internal_Evaluate(mCachedPtr, t, factor, out temp);
 			return temp;
 		}
 
@@ -260,7 +260,7 @@ namespace bs
 		public Vector3 Evaluate(float t, Random factor)
 		{
 			Vector3 temp;
-			Internal_evaluate0(mCachedPtr, t, factor, out temp);
+			Internal_Evaluate0(mCachedPtr, t, factor, out temp);
 			return temp;
 		}
 
@@ -275,19 +275,19 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_TDistribution3(Vector3Distribution managedInstance, Vector3Curve minCurve, Vector3Curve maxCurve);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern PropertyDistributionType Internal_getType(IntPtr thisPtr);
+		private static extern PropertyDistributionType Internal_GetType(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getMinConstant(IntPtr thisPtr, out Vector3 __output);
+		private static extern void Internal_GetMinConstant(IntPtr thisPtr, out Vector3 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getMaxConstant(IntPtr thisPtr, out Vector3 __output);
+		private static extern void Internal_GetMaxConstant(IntPtr thisPtr, out Vector3 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern Vector3Curve Internal_getMinCurve(IntPtr thisPtr);
+		private static extern Vector3Curve Internal_GetMinCurve(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern Vector3Curve Internal_getMaxCurve(IntPtr thisPtr);
+		private static extern Vector3Curve Internal_GetMaxCurve(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_evaluate(IntPtr thisPtr, float t, float factor, out Vector3 __output);
+		private static extern void Internal_Evaluate(IntPtr thisPtr, float t, float factor, out Vector3 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_evaluate0(IntPtr thisPtr, float t, Random factor, out Vector3 __output);
+		private static extern void Internal_Evaluate0(IntPtr thisPtr, float t, Random factor, out Vector3 __output);
 	}
 
 	/** @} */
@@ -336,7 +336,7 @@ namespace bs
 		[NativeWrapper]
 		public PropertyDistributionType DistributionType
 		{
-			get { return Internal_getType(mCachedPtr); }
+			get { return Internal_GetType(mCachedPtr); }
 		}
 
 		/// <summary>
@@ -346,7 +346,7 @@ namespace bs
 		public Vector2 GetMinConstant()
 		{
 			Vector2 temp;
-			Internal_getMinConstant(mCachedPtr, out temp);
+			Internal_GetMinConstant(mCachedPtr, out temp);
 			return temp;
 		}
 
@@ -356,7 +356,7 @@ namespace bs
 		public Vector2 GetMaxConstant()
 		{
 			Vector2 temp;
-			Internal_getMaxConstant(mCachedPtr, out temp);
+			Internal_GetMaxConstant(mCachedPtr, out temp);
 			return temp;
 		}
 
@@ -366,7 +366,7 @@ namespace bs
 		/// </summary>
 		public Vector2Curve GetMinCurve()
 		{
-			return Internal_getMinCurve(mCachedPtr);
+			return Internal_GetMinCurve(mCachedPtr);
 		}
 
 		/// <summary>
@@ -375,7 +375,7 @@ namespace bs
 		/// </summary>
 		public Vector2Curve GetMaxCurve()
 		{
-			return Internal_getMaxCurve(mCachedPtr);
+			return Internal_GetMaxCurve(mCachedPtr);
 		}
 
 		/// <summary>Evaluates the value of the distribution.</summary>
@@ -391,7 +391,7 @@ namespace bs
 		public Vector2 Evaluate(float t, float factor)
 		{
 			Vector2 temp;
-			Internal_evaluate(mCachedPtr, t, factor, out temp);
+			Internal_Evaluate(mCachedPtr, t, factor, out temp);
 			return temp;
 		}
 
@@ -407,7 +407,7 @@ namespace bs
 		public Vector2 Evaluate(float t, Random factor)
 		{
 			Vector2 temp;
-			Internal_evaluate0(mCachedPtr, t, factor, out temp);
+			Internal_Evaluate0(mCachedPtr, t, factor, out temp);
 			return temp;
 		}
 
@@ -422,19 +422,19 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_TDistribution3(Vector2Distribution managedInstance, Vector2Curve minCurve, Vector2Curve maxCurve);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern PropertyDistributionType Internal_getType(IntPtr thisPtr);
+		private static extern PropertyDistributionType Internal_GetType(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getMinConstant(IntPtr thisPtr, out Vector2 __output);
+		private static extern void Internal_GetMinConstant(IntPtr thisPtr, out Vector2 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getMaxConstant(IntPtr thisPtr, out Vector2 __output);
+		private static extern void Internal_GetMaxConstant(IntPtr thisPtr, out Vector2 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern Vector2Curve Internal_getMinCurve(IntPtr thisPtr);
+		private static extern Vector2Curve Internal_GetMinCurve(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern Vector2Curve Internal_getMaxCurve(IntPtr thisPtr);
+		private static extern Vector2Curve Internal_GetMaxCurve(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_evaluate(IntPtr thisPtr, float t, float factor, out Vector2 __output);
+		private static extern void Internal_Evaluate(IntPtr thisPtr, float t, float factor, out Vector2 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_evaluate0(IntPtr thisPtr, float t, Random factor, out Vector2 __output);
+		private static extern void Internal_Evaluate0(IntPtr thisPtr, float t, Random factor, out Vector2 __output);
 	}
 
 	/** @} */

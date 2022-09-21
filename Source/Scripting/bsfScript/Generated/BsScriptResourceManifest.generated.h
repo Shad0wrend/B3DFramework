@@ -18,19 +18,19 @@ namespace bs
 
 		ScriptResourceManifest(MonoObject* managedInstance, const SPtr<ResourceManifest>& value);
 
-		static MonoObject* create(const SPtr<ResourceManifest>& value);
+		static MonoObject* Create(const SPtr<ResourceManifest>& value);
 
 	private:
-		static MonoString* Internal_getName(ScriptResourceManifest* thisPtr);
-		static void Internal_registerResource(ScriptResourceManifest* thisPtr, UUID* uuid, MonoString* filePath);
-		static void Internal_unregisterResource(ScriptResourceManifest* thisPtr, UUID* uuid);
-		static bool Internal_uuidToFilePath(ScriptResourceManifest* thisPtr, UUID* uuid, MonoString** filePath);
-		static bool Internal_filePathToUUID(ScriptResourceManifest* thisPtr, MonoString* filePath, UUID* outUUID);
-		static bool Internal_uuidExists(ScriptResourceManifest* thisPtr, UUID* uuid);
-		static bool Internal_filePathExists(ScriptResourceManifest* thisPtr, MonoString* filePath);
-		static void Internal_save(MonoObject* manifest, MonoString* path, MonoString* relativePath);
-		static MonoObject* Internal_load(MonoString* path, MonoString* relativePath);
-		static void Internal_create(MonoObject* managedInstance, MonoString* name);
+		static MonoString* InternalGetName(ScriptResourceManifest* thisPtr);
+		static void InternalRegisterResource(ScriptResourceManifest* thisPtr, UUID* uuid, MonoString* filePath);
+		static void InternalUnregisterResource(ScriptResourceManifest* thisPtr, UUID* uuid);
+		static bool InternalUuidToFilePath(ScriptResourceManifest* thisPtr, UUID* uuid, MonoString** filePath);
+		static bool InternalFilePathToUuid(ScriptResourceManifest* thisPtr, MonoString* filePath, UUID* outUUID);
+		static bool InternalUuidExists(ScriptResourceManifest* thisPtr, UUID* uuid);
+		static bool InternalFilePathExists(ScriptResourceManifest* thisPtr, MonoString* filePath);
+		static void InternalSave(MonoObject* manifest, MonoString* path, MonoString* relativePath);
+		static MonoObject* InternalLoad(MonoString* path, MonoString* relativePath);
+		static void InternalCreate(MonoObject* managedInstance, MonoString* name);
 	};
 #endif
 }

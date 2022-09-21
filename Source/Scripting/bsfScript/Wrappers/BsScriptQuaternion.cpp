@@ -11,7 +11,7 @@ namespace bs
 		:ScriptObject(instance)
 	{ }
 
-	void ScriptQuaternion::initRuntimeData()
+	void ScriptQuaternion::InitRuntimeData()
 	{ }
 
 	MonoObject* ScriptQuaternion::Box(const Quaternion& value)

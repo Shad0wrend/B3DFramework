@@ -11,7 +11,7 @@ namespace bs
 		:ScriptObject(managedInstance)
 	{ }
 
-	void ScriptVECTOR_FIELD_DESC::initRuntimeData()
+	void ScriptVECTOR_FIELD_DESC::InitRuntimeData()
 	{ }
 
 	MonoObject*ScriptVECTOR_FIELD_DESC::Box(const __VECTOR_FIELD_DESCInterop& value)

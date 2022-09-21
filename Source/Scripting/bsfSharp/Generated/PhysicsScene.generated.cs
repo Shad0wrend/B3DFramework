@@ -28,10 +28,10 @@ namespace bs
 			get
 			{
 				Vector3 temp;
-				Internal_getGravity(mCachedPtr, out temp);
+				Internal_GetGravity(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_setGravity(mCachedPtr, ref value); }
+			set { Internal_SetGravity(mCachedPtr, ref value); }
 		}
 
 		/// <summary>Casts a ray into the scene and returns the closest found hit, if any.</summary>
@@ -44,7 +44,7 @@ namespace bs
 		/// <returns>True if something was hit, false otherwise.</returns>
 		public bool RayCast(Ray ray, out PhysicsQueryHit hit, ulong layer = 18446744073709551615, float max = 3.40282347E+38f)
 		{
-			return Internal_rayCast(mCachedPtr, ref ray, out hit, layer, max);
+			return Internal_RayCast(mCachedPtr, ref ray, out hit, layer, max);
 		}
 
 		/// <summary>Casts a ray into the scene and returns the closest found hit, if any.</summary>
@@ -58,7 +58,7 @@ namespace bs
 		/// <returns>True if something was hit, false otherwise.</returns>
 		public bool RayCast(Vector3 origin, Vector3 unitDir, out PhysicsQueryHit hit, ulong layer = 18446744073709551615, float max = 3.40282347E+38f)
 		{
-			return Internal_rayCast0(mCachedPtr, ref origin, ref unitDir, out hit, layer, max);
+			return Internal_RayCast0(mCachedPtr, ref origin, ref unitDir, out hit, layer, max);
 		}
 
 		/// <summary>Performs a sweep into the scene using a box and returns the closest found hit, if any.</summary>
@@ -73,7 +73,7 @@ namespace bs
 		/// <returns>True if something was hit, false otherwise.</returns>
 		public bool BoxCast(AABox box, Quaternion rotation, Vector3 unitDir, out PhysicsQueryHit hit, ulong layer = 18446744073709551615, float max = 3.40282347E+38f)
 		{
-			return Internal_boxCast(mCachedPtr, ref box, ref rotation, ref unitDir, out hit, layer, max);
+			return Internal_BoxCast(mCachedPtr, ref box, ref rotation, ref unitDir, out hit, layer, max);
 		}
 
 		/// <summary>Performs a sweep into the scene using a sphere and returns the closest found hit, if any.</summary>
@@ -87,7 +87,7 @@ namespace bs
 		/// <returns>True if something was hit, false otherwise.</returns>
 		public bool SphereCast(Sphere sphere, Vector3 unitDir, out PhysicsQueryHit hit, ulong layer = 18446744073709551615, float max = 3.40282347E+38f)
 		{
-			return Internal_sphereCast(mCachedPtr, ref sphere, ref unitDir, out hit, layer, max);
+			return Internal_SphereCast(mCachedPtr, ref sphere, ref unitDir, out hit, layer, max);
 		}
 
 		/// <summary>Performs a sweep into the scene using a capsule and returns the closest found hit, if any.</summary>
@@ -102,7 +102,7 @@ namespace bs
 		/// <returns>True if something was hit, false otherwise.</returns>
 		public bool CapsuleCast(Capsule capsule, Quaternion rotation, Vector3 unitDir, out PhysicsQueryHit hit, ulong layer = 18446744073709551615, float max = 3.40282347E+38f)
 		{
-			return Internal_capsuleCast(mCachedPtr, ref capsule, ref rotation, ref unitDir, out hit, layer, max);
+			return Internal_CapsuleCast(mCachedPtr, ref capsule, ref rotation, ref unitDir, out hit, layer, max);
 		}
 
 		/// <summary>Performs a sweep into the scene using a convex mesh and returns the closest found hit, if any.</summary>
@@ -118,7 +118,7 @@ namespace bs
 		/// <returns>True if something was hit, false otherwise.</returns>
 		public bool ConvexCast(RRef<PhysicsMesh> mesh, Vector3 position, Quaternion rotation, Vector3 unitDir, out PhysicsQueryHit hit, ulong layer = 18446744073709551615, float max = 3.40282347E+38f)
 		{
-			return Internal_convexCast(mCachedPtr, mesh, ref position, ref rotation, ref unitDir, out hit, layer, max);
+			return Internal_ConvexCast(mCachedPtr, mesh, ref position, ref rotation, ref unitDir, out hit, layer, max);
 		}
 
 		/// <summary>Casts a ray into the scene and returns all found hits.</summary>
@@ -130,7 +130,7 @@ namespace bs
 		/// <returns>List of all detected hits.</returns>
 		public PhysicsQueryHit[] RayCastAll(Ray ray, ulong layer = 18446744073709551615, float max = 3.40282347E+38f)
 		{
-			return Internal_rayCastAll(mCachedPtr, ref ray, layer, max);
+			return Internal_RayCastAll(mCachedPtr, ref ray, layer, max);
 		}
 
 		/// <summary>Casts a ray into the scene and returns all found hits.</summary>
@@ -143,7 +143,7 @@ namespace bs
 		/// <returns>List of all detected hits.</returns>
 		public PhysicsQueryHit[] RayCastAll(Vector3 origin, Vector3 unitDir, ulong layer = 18446744073709551615, float max = 3.40282347E+38f)
 		{
-			return Internal_rayCastAll0(mCachedPtr, ref origin, ref unitDir, layer, max);
+			return Internal_RayCastAll0(mCachedPtr, ref origin, ref unitDir, layer, max);
 		}
 
 		/// <summary>Performs a sweep into the scene using a box and returns all found hits.</summary>
@@ -157,7 +157,7 @@ namespace bs
 		/// <returns>List of all detected hits.</returns>
 		public PhysicsQueryHit[] BoxCastAll(AABox box, Quaternion rotation, Vector3 unitDir, ulong layer = 18446744073709551615, float max = 3.40282347E+38f)
 		{
-			return Internal_boxCastAll(mCachedPtr, ref box, ref rotation, ref unitDir, layer, max);
+			return Internal_BoxCastAll(mCachedPtr, ref box, ref rotation, ref unitDir, layer, max);
 		}
 
 		/// <summary>Performs a sweep into the scene using a sphere and returns all found hits.</summary>
@@ -170,7 +170,7 @@ namespace bs
 		/// <returns>List of all detected hits.</returns>
 		public PhysicsQueryHit[] SphereCastAll(Sphere sphere, Vector3 unitDir, ulong layer = 18446744073709551615, float max = 3.40282347E+38f)
 		{
-			return Internal_sphereCastAll(mCachedPtr, ref sphere, ref unitDir, layer, max);
+			return Internal_SphereCastAll(mCachedPtr, ref sphere, ref unitDir, layer, max);
 		}
 
 		/// <summary>Performs a sweep into the scene using a capsule and returns all found hits.</summary>
@@ -184,7 +184,7 @@ namespace bs
 		/// <returns>List of all detected hits.</returns>
 		public PhysicsQueryHit[] CapsuleCastAll(Capsule capsule, Quaternion rotation, Vector3 unitDir, ulong layer = 18446744073709551615, float max = 3.40282347E+38f)
 		{
-			return Internal_capsuleCastAll(mCachedPtr, ref capsule, ref rotation, ref unitDir, layer, max);
+			return Internal_CapsuleCastAll(mCachedPtr, ref capsule, ref rotation, ref unitDir, layer, max);
 		}
 
 		/// <summary>Performs a sweep into the scene using a convex mesh and returns all found hits.</summary>
@@ -199,7 +199,7 @@ namespace bs
 		/// <returns>List of all detected hits.</returns>
 		public PhysicsQueryHit[] ConvexCastAll(RRef<PhysicsMesh> mesh, Vector3 position, Quaternion rotation, Vector3 unitDir, ulong layer = 18446744073709551615, float max = 3.40282347E+38f)
 		{
-			return Internal_convexCastAll(mCachedPtr, mesh, ref position, ref rotation, ref unitDir, layer, max);
+			return Internal_ConvexCastAll(mCachedPtr, mesh, ref position, ref rotation, ref unitDir, layer, max);
 		}
 
 		/// <summary>
@@ -214,7 +214,7 @@ namespace bs
 		/// <returns>True if something was hit, false otherwise.</returns>
 		public bool RayCastAny(Ray ray, ulong layer = 18446744073709551615, float max = 3.40282347E+38f)
 		{
-			return Internal_rayCastAny(mCachedPtr, ref ray, layer, max);
+			return Internal_RayCastAny(mCachedPtr, ref ray, layer, max);
 		}
 
 		/// <summary>
@@ -230,7 +230,7 @@ namespace bs
 		/// <returns>True if something was hit, false otherwise.</returns>
 		public bool RayCastAny(Vector3 origin, Vector3 unitDir, ulong layer = 18446744073709551615, float max = 3.40282347E+38f)
 		{
-			return Internal_rayCastAny0(mCachedPtr, ref origin, ref unitDir, layer, max);
+			return Internal_RayCastAny0(mCachedPtr, ref origin, ref unitDir, layer, max);
 		}
 
 		/// <summary>
@@ -247,7 +247,7 @@ namespace bs
 		/// <returns>True if something was hit, false otherwise.</returns>
 		public bool BoxCastAny(AABox box, Quaternion rotation, Vector3 unitDir, ulong layer = 18446744073709551615, float max = 3.40282347E+38f)
 		{
-			return Internal_boxCastAny(mCachedPtr, ref box, ref rotation, ref unitDir, layer, max);
+			return Internal_BoxCastAny(mCachedPtr, ref box, ref rotation, ref unitDir, layer, max);
 		}
 
 		/// <summary>
@@ -263,7 +263,7 @@ namespace bs
 		/// <returns>True if something was hit, false otherwise.</returns>
 		public bool SphereCastAny(Sphere sphere, Vector3 unitDir, ulong layer = 18446744073709551615, float max = 3.40282347E+38f)
 		{
-			return Internal_sphereCastAny(mCachedPtr, ref sphere, ref unitDir, layer, max);
+			return Internal_SphereCastAny(mCachedPtr, ref sphere, ref unitDir, layer, max);
 		}
 
 		/// <summary>
@@ -280,7 +280,7 @@ namespace bs
 		/// <returns>True if something was hit, false otherwise.</returns>
 		public bool CapsuleCastAny(Capsule capsule, Quaternion rotation, Vector3 unitDir, ulong layer = 18446744073709551615, float max = 3.40282347E+38f)
 		{
-			return Internal_capsuleCastAny(mCachedPtr, ref capsule, ref rotation, ref unitDir, layer, max);
+			return Internal_CapsuleCastAny(mCachedPtr, ref capsule, ref rotation, ref unitDir, layer, max);
 		}
 
 		/// <summary>
@@ -298,7 +298,7 @@ namespace bs
 		/// <returns>True if something was hit, false otherwise.</returns>
 		public bool ConvexCastAny(RRef<PhysicsMesh> mesh, Vector3 position, Quaternion rotation, Vector3 unitDir, ulong layer = 18446744073709551615, float max = 3.40282347E+38f)
 		{
-			return Internal_convexCastAny(mCachedPtr, mesh, ref position, ref rotation, ref unitDir, layer, max);
+			return Internal_ConvexCastAny(mCachedPtr, mesh, ref position, ref rotation, ref unitDir, layer, max);
 		}
 
 		/// <summary>Returns a list of all colliders in the scene that overlap the provided box.</summary>
@@ -308,7 +308,7 @@ namespace bs
 		/// <returns>List of all colliders that overlap the box.</returns>
 		public Collider[] BoxOverlap(AABox box, Quaternion rotation, ulong layer = 18446744073709551615)
 		{
-			return Internal_boxOverlap(mCachedPtr, ref box, ref rotation, layer);
+			return Internal_BoxOverlap(mCachedPtr, ref box, ref rotation, layer);
 		}
 
 		/// <summary>Returns a list of all colliders in the scene that overlap the provided sphere.</summary>
@@ -317,7 +317,7 @@ namespace bs
 		/// <returns>List of all colliders that overlap the sphere.</returns>
 		public Collider[] SphereOverlap(Sphere sphere, ulong layer = 18446744073709551615)
 		{
-			return Internal_sphereOverlap(mCachedPtr, ref sphere, layer);
+			return Internal_SphereOverlap(mCachedPtr, ref sphere, layer);
 		}
 
 		/// <summary>Returns a list of all colliders in the scene that overlap the provided capsule.</summary>
@@ -327,7 +327,7 @@ namespace bs
 		/// <returns>List of all colliders that overlap the capsule.</returns>
 		public Collider[] CapsuleOverlap(Capsule capsule, Quaternion rotation, ulong layer = 18446744073709551615)
 		{
-			return Internal_capsuleOverlap(mCachedPtr, ref capsule, ref rotation, layer);
+			return Internal_CapsuleOverlap(mCachedPtr, ref capsule, ref rotation, layer);
 		}
 
 		/// <summary>Returns a list of all colliders in the scene that overlap the provided convex mesh.</summary>
@@ -338,7 +338,7 @@ namespace bs
 		/// <returns>List of all colliders that overlap the mesh.</returns>
 		public Collider[] ConvexOverlap(RRef<PhysicsMesh> mesh, Vector3 position, Quaternion rotation, ulong layer = 18446744073709551615)
 		{
-			return Internal_convexOverlap(mCachedPtr, mesh, ref position, ref rotation, layer);
+			return Internal_ConvexOverlap(mCachedPtr, mesh, ref position, ref rotation, layer);
 		}
 
 		/// <summary>Checks if the provided box overlaps any other collider in the scene.</summary>
@@ -348,7 +348,7 @@ namespace bs
 		/// <returns>True if there is overlap with another object, false otherwise.</returns>
 		public bool BoxOverlapAny(AABox box, Quaternion rotation, ulong layer = 18446744073709551615)
 		{
-			return Internal_boxOverlapAny(mCachedPtr, ref box, ref rotation, layer);
+			return Internal_BoxOverlapAny(mCachedPtr, ref box, ref rotation, layer);
 		}
 
 		/// <summary>Checks if the provided sphere overlaps any other collider in the scene.</summary>
@@ -357,7 +357,7 @@ namespace bs
 		/// <returns>True if there is overlap with another object, false otherwise.</returns>
 		public bool SphereOverlapAny(Sphere sphere, ulong layer = 18446744073709551615)
 		{
-			return Internal_sphereOverlapAny(mCachedPtr, ref sphere, layer);
+			return Internal_SphereOverlapAny(mCachedPtr, ref sphere, layer);
 		}
 
 		/// <summary>Checks if the provided capsule overlaps any other collider in the scene.</summary>
@@ -367,7 +367,7 @@ namespace bs
 		/// <returns>True if there is overlap with another object, false otherwise.</returns>
 		public bool CapsuleOverlapAny(Capsule capsule, Quaternion rotation, ulong layer = 18446744073709551615)
 		{
-			return Internal_capsuleOverlapAny(mCachedPtr, ref capsule, ref rotation, layer);
+			return Internal_CapsuleOverlapAny(mCachedPtr, ref capsule, ref rotation, layer);
 		}
 
 		/// <summary>Checks if the provided convex mesh overlaps any other collider in the scene.</summary>
@@ -378,7 +378,7 @@ namespace bs
 		/// <returns>True if there is overlap with another object, false otherwise.</returns>
 		public bool ConvexOverlapAny(RRef<PhysicsMesh> mesh, Vector3 position, Quaternion rotation, ulong layer = 18446744073709551615)
 		{
-			return Internal_convexOverlapAny(mCachedPtr, mesh, ref position, ref rotation, layer);
+			return Internal_ConvexOverlapAny(mCachedPtr, mesh, ref position, ref rotation, layer);
 		}
 
 		/// <summary>
@@ -388,83 +388,83 @@ namespace bs
 		/// </summary>
 		public int AddPhysicsRegion(AABox region)
 		{
-			return Internal_addBroadPhaseRegion(mCachedPtr, ref region);
+			return Internal_AddBroadPhaseRegion(mCachedPtr, ref region);
 		}
 
 		/// <summary>Removes a physics region.</summary>
 		public void RemovePhysicsRegion(int handle)
 		{
-			Internal_removeBroadPhaseRegion(mCachedPtr, handle);
+			Internal_RemoveBroadPhaseRegion(mCachedPtr, handle);
 		}
 
 		/// <summary>Removes all physics regions.</summary>
 		public void ClearPhysicsRegions()
 		{
-			Internal_clearBroadPhaseRegions(mCachedPtr);
+			Internal_ClearBroadPhaseRegions(mCachedPtr);
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_rayCast(IntPtr thisPtr, ref Ray ray, out PhysicsQueryHit hit, ulong layer, float max);
+		private static extern bool Internal_RayCast(IntPtr thisPtr, ref Ray ray, out PhysicsQueryHit hit, ulong layer, float max);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_rayCast0(IntPtr thisPtr, ref Vector3 origin, ref Vector3 unitDir, out PhysicsQueryHit hit, ulong layer, float max);
+		private static extern bool Internal_RayCast0(IntPtr thisPtr, ref Vector3 origin, ref Vector3 unitDir, out PhysicsQueryHit hit, ulong layer, float max);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_boxCast(IntPtr thisPtr, ref AABox box, ref Quaternion rotation, ref Vector3 unitDir, out PhysicsQueryHit hit, ulong layer, float max);
+		private static extern bool Internal_BoxCast(IntPtr thisPtr, ref AABox box, ref Quaternion rotation, ref Vector3 unitDir, out PhysicsQueryHit hit, ulong layer, float max);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_sphereCast(IntPtr thisPtr, ref Sphere sphere, ref Vector3 unitDir, out PhysicsQueryHit hit, ulong layer, float max);
+		private static extern bool Internal_SphereCast(IntPtr thisPtr, ref Sphere sphere, ref Vector3 unitDir, out PhysicsQueryHit hit, ulong layer, float max);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_capsuleCast(IntPtr thisPtr, ref Capsule capsule, ref Quaternion rotation, ref Vector3 unitDir, out PhysicsQueryHit hit, ulong layer, float max);
+		private static extern bool Internal_CapsuleCast(IntPtr thisPtr, ref Capsule capsule, ref Quaternion rotation, ref Vector3 unitDir, out PhysicsQueryHit hit, ulong layer, float max);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_convexCast(IntPtr thisPtr, RRef<PhysicsMesh> mesh, ref Vector3 position, ref Quaternion rotation, ref Vector3 unitDir, out PhysicsQueryHit hit, ulong layer, float max);
+		private static extern bool Internal_ConvexCast(IntPtr thisPtr, RRef<PhysicsMesh> mesh, ref Vector3 position, ref Quaternion rotation, ref Vector3 unitDir, out PhysicsQueryHit hit, ulong layer, float max);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern PhysicsQueryHit[] Internal_rayCastAll(IntPtr thisPtr, ref Ray ray, ulong layer, float max);
+		private static extern PhysicsQueryHit[] Internal_RayCastAll(IntPtr thisPtr, ref Ray ray, ulong layer, float max);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern PhysicsQueryHit[] Internal_rayCastAll0(IntPtr thisPtr, ref Vector3 origin, ref Vector3 unitDir, ulong layer, float max);
+		private static extern PhysicsQueryHit[] Internal_RayCastAll0(IntPtr thisPtr, ref Vector3 origin, ref Vector3 unitDir, ulong layer, float max);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern PhysicsQueryHit[] Internal_boxCastAll(IntPtr thisPtr, ref AABox box, ref Quaternion rotation, ref Vector3 unitDir, ulong layer, float max);
+		private static extern PhysicsQueryHit[] Internal_BoxCastAll(IntPtr thisPtr, ref AABox box, ref Quaternion rotation, ref Vector3 unitDir, ulong layer, float max);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern PhysicsQueryHit[] Internal_sphereCastAll(IntPtr thisPtr, ref Sphere sphere, ref Vector3 unitDir, ulong layer, float max);
+		private static extern PhysicsQueryHit[] Internal_SphereCastAll(IntPtr thisPtr, ref Sphere sphere, ref Vector3 unitDir, ulong layer, float max);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern PhysicsQueryHit[] Internal_capsuleCastAll(IntPtr thisPtr, ref Capsule capsule, ref Quaternion rotation, ref Vector3 unitDir, ulong layer, float max);
+		private static extern PhysicsQueryHit[] Internal_CapsuleCastAll(IntPtr thisPtr, ref Capsule capsule, ref Quaternion rotation, ref Vector3 unitDir, ulong layer, float max);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern PhysicsQueryHit[] Internal_convexCastAll(IntPtr thisPtr, RRef<PhysicsMesh> mesh, ref Vector3 position, ref Quaternion rotation, ref Vector3 unitDir, ulong layer, float max);
+		private static extern PhysicsQueryHit[] Internal_ConvexCastAll(IntPtr thisPtr, RRef<PhysicsMesh> mesh, ref Vector3 position, ref Quaternion rotation, ref Vector3 unitDir, ulong layer, float max);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_rayCastAny(IntPtr thisPtr, ref Ray ray, ulong layer, float max);
+		private static extern bool Internal_RayCastAny(IntPtr thisPtr, ref Ray ray, ulong layer, float max);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_rayCastAny0(IntPtr thisPtr, ref Vector3 origin, ref Vector3 unitDir, ulong layer, float max);
+		private static extern bool Internal_RayCastAny0(IntPtr thisPtr, ref Vector3 origin, ref Vector3 unitDir, ulong layer, float max);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_boxCastAny(IntPtr thisPtr, ref AABox box, ref Quaternion rotation, ref Vector3 unitDir, ulong layer, float max);
+		private static extern bool Internal_BoxCastAny(IntPtr thisPtr, ref AABox box, ref Quaternion rotation, ref Vector3 unitDir, ulong layer, float max);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_sphereCastAny(IntPtr thisPtr, ref Sphere sphere, ref Vector3 unitDir, ulong layer, float max);
+		private static extern bool Internal_SphereCastAny(IntPtr thisPtr, ref Sphere sphere, ref Vector3 unitDir, ulong layer, float max);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_capsuleCastAny(IntPtr thisPtr, ref Capsule capsule, ref Quaternion rotation, ref Vector3 unitDir, ulong layer, float max);
+		private static extern bool Internal_CapsuleCastAny(IntPtr thisPtr, ref Capsule capsule, ref Quaternion rotation, ref Vector3 unitDir, ulong layer, float max);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_convexCastAny(IntPtr thisPtr, RRef<PhysicsMesh> mesh, ref Vector3 position, ref Quaternion rotation, ref Vector3 unitDir, ulong layer, float max);
+		private static extern bool Internal_ConvexCastAny(IntPtr thisPtr, RRef<PhysicsMesh> mesh, ref Vector3 position, ref Quaternion rotation, ref Vector3 unitDir, ulong layer, float max);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern Collider[] Internal_boxOverlap(IntPtr thisPtr, ref AABox box, ref Quaternion rotation, ulong layer);
+		private static extern Collider[] Internal_BoxOverlap(IntPtr thisPtr, ref AABox box, ref Quaternion rotation, ulong layer);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern Collider[] Internal_sphereOverlap(IntPtr thisPtr, ref Sphere sphere, ulong layer);
+		private static extern Collider[] Internal_SphereOverlap(IntPtr thisPtr, ref Sphere sphere, ulong layer);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern Collider[] Internal_capsuleOverlap(IntPtr thisPtr, ref Capsule capsule, ref Quaternion rotation, ulong layer);
+		private static extern Collider[] Internal_CapsuleOverlap(IntPtr thisPtr, ref Capsule capsule, ref Quaternion rotation, ulong layer);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern Collider[] Internal_convexOverlap(IntPtr thisPtr, RRef<PhysicsMesh> mesh, ref Vector3 position, ref Quaternion rotation, ulong layer);
+		private static extern Collider[] Internal_ConvexOverlap(IntPtr thisPtr, RRef<PhysicsMesh> mesh, ref Vector3 position, ref Quaternion rotation, ulong layer);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_boxOverlapAny(IntPtr thisPtr, ref AABox box, ref Quaternion rotation, ulong layer);
+		private static extern bool Internal_BoxOverlapAny(IntPtr thisPtr, ref AABox box, ref Quaternion rotation, ulong layer);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_sphereOverlapAny(IntPtr thisPtr, ref Sphere sphere, ulong layer);
+		private static extern bool Internal_SphereOverlapAny(IntPtr thisPtr, ref Sphere sphere, ulong layer);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_capsuleOverlapAny(IntPtr thisPtr, ref Capsule capsule, ref Quaternion rotation, ulong layer);
+		private static extern bool Internal_CapsuleOverlapAny(IntPtr thisPtr, ref Capsule capsule, ref Quaternion rotation, ulong layer);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_convexOverlapAny(IntPtr thisPtr, RRef<PhysicsMesh> mesh, ref Vector3 position, ref Quaternion rotation, ulong layer);
+		private static extern bool Internal_ConvexOverlapAny(IntPtr thisPtr, RRef<PhysicsMesh> mesh, ref Vector3 position, ref Quaternion rotation, ulong layer);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_getGravity(IntPtr thisPtr, out Vector3 __output);
+		private static extern void Internal_GetGravity(IntPtr thisPtr, out Vector3 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_setGravity(IntPtr thisPtr, ref Vector3 gravity);
+		private static extern void Internal_SetGravity(IntPtr thisPtr, ref Vector3 gravity);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_addBroadPhaseRegion(IntPtr thisPtr, ref AABox region);
+		private static extern int Internal_AddBroadPhaseRegion(IntPtr thisPtr, ref AABox region);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_removeBroadPhaseRegion(IntPtr thisPtr, int handle);
+		private static extern void Internal_RemoveBroadPhaseRegion(IntPtr thisPtr, int handle);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_clearBroadPhaseRegions(IntPtr thisPtr);
+		private static extern void Internal_ClearBroadPhaseRegions(IntPtr thisPtr);
 	}
 
 	/** @} */
