@@ -67,9 +67,9 @@ namespace bs
 		metaData.scriptClass->AddInternalCall("Internal_AddForceAtPoint", (void*)&ScriptCRigidbody::InternalAddForceAtPoint);
 		metaData.scriptClass->AddInternalCall("Internal_GetVelocityAtPoint", (void*)&ScriptCRigidbody::InternalGetVelocityAtPoint);
 
-		onCollisionBeginThunk = (onCollisionBeginThunkDef)metaData.scriptClass->GetMethodExact("InternalonCollisionBegin", "CollisionData&")->GetThunk();
-		onCollisionStayThunk = (onCollisionStayThunkDef)metaData.scriptClass->GetMethodExact("InternalonCollisionStay", "CollisionData&")->GetThunk();
-		onCollisionEndThunk = (onCollisionEndThunkDef)metaData.scriptClass->GetMethodExact("InternalonCollisionEnd", "CollisionData&")->GetThunk();
+		onCollisionBeginThunk = (onCollisionBeginThunkDef)metaData.scriptClass->GetMethodExact("Internal_onCollisionBegin", "CollisionData&")->GetThunk();
+		onCollisionStayThunk = (onCollisionStayThunkDef)metaData.scriptClass->GetMethodExact("Internal_onCollisionStay", "CollisionData&")->GetThunk();
+		onCollisionEndThunk = (onCollisionEndThunkDef)metaData.scriptClass->GetMethodExact("Internal_onCollisionEnd", "CollisionData&")->GetThunk();
 	}
 
 	void ScriptCRigidbody::onCollisionBegin(const CollisionData& p0)

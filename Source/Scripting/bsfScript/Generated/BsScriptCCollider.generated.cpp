@@ -45,9 +45,9 @@ namespace bs
 		metaData.scriptClass->AddInternalCall("Internal_SetCollisionReportMode", (void*)&ScriptCCollider::InternalSetCollisionReportMode);
 		metaData.scriptClass->AddInternalCall("Internal_GetCollisionReportMode", (void*)&ScriptCCollider::InternalGetCollisionReportMode);
 
-		onCollisionBeginThunk = (onCollisionBeginThunkDef)metaData.scriptClass->GetMethodExact("InternalonCollisionBegin", "CollisionData&")->GetThunk();
-		onCollisionStayThunk = (onCollisionStayThunkDef)metaData.scriptClass->GetMethodExact("InternalonCollisionStay", "CollisionData&")->GetThunk();
-		onCollisionEndThunk = (onCollisionEndThunkDef)metaData.scriptClass->GetMethodExact("InternalonCollisionEnd", "CollisionData&")->GetThunk();
+		onCollisionBeginThunk = (onCollisionBeginThunkDef)metaData.scriptClass->GetMethodExact("Internal_onCollisionBegin", "CollisionData&")->GetThunk();
+		onCollisionStayThunk = (onCollisionStayThunkDef)metaData.scriptClass->GetMethodExact("Internal_onCollisionStay", "CollisionData&")->GetThunk();
+		onCollisionEndThunk = (onCollisionEndThunkDef)metaData.scriptClass->GetMethodExact("Internal_onCollisionEnd", "CollisionData&")->GetThunk();
 	}
 
 	void ScriptCCollider::onCollisionBegin(const CollisionData& p0)

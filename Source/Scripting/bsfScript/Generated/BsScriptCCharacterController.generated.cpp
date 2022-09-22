@@ -47,8 +47,8 @@ namespace bs
 		metaData.scriptClass->AddInternalCall("Internal_GetLayer", (void*)&ScriptCCharacterController::InternalGetLayer);
 		metaData.scriptClass->AddInternalCall("Internal_SetLayer", (void*)&ScriptCCharacterController::InternalSetLayer);
 
-		onColliderHitThunk = (onColliderHitThunkDef)metaData.scriptClass->GetMethodExact("InternalonColliderHit", "ControllerColliderCollision&")->GetThunk();
-		onControllerHitThunk = (onControllerHitThunkDef)metaData.scriptClass->GetMethodExact("InternalonControllerHit", "ControllerControllerCollision&")->GetThunk();
+		onColliderHitThunk = (onColliderHitThunkDef)metaData.scriptClass->GetMethodExact("Internal_onColliderHit", "ControllerColliderCollision&")->GetThunk();
+		onControllerHitThunk = (onControllerHitThunkDef)metaData.scriptClass->GetMethodExact("Internal_onControllerHit", "ControllerControllerCollision&")->GetThunk();
 	}
 
 	void ScriptCCharacterController::onColliderHit(const ControllerColliderCollision& p0)

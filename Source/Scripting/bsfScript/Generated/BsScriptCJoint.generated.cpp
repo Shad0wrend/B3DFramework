@@ -38,7 +38,7 @@ namespace bs
 		metaData.scriptClass->AddInternalCall("Internal_GetEnableCollision", (void*)&ScriptCJoint::InternalGetEnableCollision);
 		metaData.scriptClass->AddInternalCall("Internal_SetEnableCollision", (void*)&ScriptCJoint::InternalSetEnableCollision);
 
-		onJointBreakThunk = (onJointBreakThunkDef)metaData.scriptClass->GetMethodExact("InternalonJointBreak", "")->GetThunk();
+		onJointBreakThunk = (onJointBreakThunkDef)metaData.scriptClass->GetMethodExact("Internal_onJointBreak", "")->GetThunk();
 	}
 
 	void ScriptCJoint::onJointBreak()
