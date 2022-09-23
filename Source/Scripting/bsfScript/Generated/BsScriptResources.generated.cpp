@@ -46,9 +46,9 @@ namespace bs
 		metaData.scriptClass->AddInternalCall("Internal_GetFilePathFromUuid", (void*)&ScriptResources::InternalGetFilePathFromUuid);
 		metaData.scriptClass->AddInternalCall("Internal_GetUuidFromFilePath", (void*)&ScriptResources::InternalGetUuidFromFilePath);
 
-		onResourceLoadedThunk = (onResourceLoadedThunkDef)metaData.scriptClass->GetMethodExact("InternalonResourceLoaded", "RRefBase")->GetThunk();
-		onResourceDestroyedThunk = (onResourceDestroyedThunkDef)metaData.scriptClass->GetMethodExact("InternalonResourceDestroyed", "UUID&")->GetThunk();
-		onResourceModifiedThunk = (onResourceModifiedThunkDef)metaData.scriptClass->GetMethodExact("InternalonResourceModified", "RRefBase")->GetThunk();
+		onResourceLoadedThunk = (onResourceLoadedThunkDef)metaData.scriptClass->GetMethodExact("Internal_onResourceLoaded", "RRefBase")->GetThunk();
+		onResourceDestroyedThunk = (onResourceDestroyedThunkDef)metaData.scriptClass->GetMethodExact("Internal_onResourceDestroyed", "UUID&")->GetThunk();
+		onResourceModifiedThunk = (onResourceModifiedThunkDef)metaData.scriptClass->GetMethodExact("Internal_onResourceModified", "RRefBase")->GetThunk();
 	}
 
 	void ScriptResources::StartUp()
