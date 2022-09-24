@@ -111,8 +111,8 @@ namespace bs
 				mDesc.multisampleCount, mDesc.gamma);
 
 		WINDOW_DESC windowDesc;
-		windowDesc.x = mDesc.left;
-		windowDesc.y = mDesc.top;
+		windowDesc.X = mDesc.left;
+		windowDesc.Y = mDesc.top;
 		windowDesc.width = mDesc.videoMode.width;
 		windowDesc.height = mDesc.videoMode.height;
 		windowDesc.title = mDesc.title;

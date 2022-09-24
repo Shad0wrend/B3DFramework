@@ -194,7 +194,7 @@ namespace bs { namespace ct
 			{
 				case GL_TEXTURE_1D:
 					glCompressedTexSubImage1D(GL_TEXTURE_1D, mLevel,
-						dest.left,
+						dest.Left,
 						dest.GetWidth(),
 						format, data.GetConsecutiveSize(),
 						data.GetData());
@@ -203,7 +203,7 @@ namespace bs { namespace ct
 				case GL_TEXTURE_2D:
 				case GL_TEXTURE_CUBE_MAP:
 					glCompressedTexSubImage2D(mFaceTarget, mLevel,
-						dest.left, dest.top,
+						dest.Left, dest.Top,
 						dest.GetWidth(), dest.GetHeight(),
 						format, data.GetConsecutiveSize(),
 						data.GetData());
@@ -211,7 +211,7 @@ namespace bs { namespace ct
 					break;
 				case GL_TEXTURE_3D:
 					glCompressedTexSubImage3D(GL_TEXTURE_3D, mLevel,
-						dest.left, dest.top, dest.front,
+						dest.Left, dest.Top, dest.Front,
 						dest.GetWidth(), dest.GetHeight(), dest.GetDepth(),
 						format, data.GetConsecutiveSize(),
 						data.GetData());
@@ -257,7 +257,7 @@ namespace bs { namespace ct
 			switch(mTarget) {
 				case GL_TEXTURE_1D:
 					glTexSubImage1D(GL_TEXTURE_1D, mLevel,
-						dest.left,
+						dest.Left,
 						dest.GetWidth(),
 						GLPixelUtil::GetGlOriginFormat(data.GetFormat()), GLPixelUtil::GetGlOriginDataType(data.GetFormat()),
 						data.GetData());
@@ -266,7 +266,7 @@ namespace bs { namespace ct
 				case GL_TEXTURE_2D:
 				case GL_TEXTURE_CUBE_MAP:
 					glTexSubImage2D(mFaceTarget, mLevel,
-						dest.left, dest.top,
+						dest.Left, dest.Top,
 						dest.GetWidth(), dest.GetHeight(),
 						GLPixelUtil::GetGlOriginFormat(data.GetFormat()), GLPixelUtil::GetGlOriginDataType(data.GetFormat()),
 						data.GetData());
@@ -276,7 +276,7 @@ namespace bs { namespace ct
 				case GL_TEXTURE_3D:
 					glTexSubImage3D(
 						mTarget, mLevel,
-						dest.left, dest.top, dest.front,
+						dest.Left, dest.Top, dest.Front,
 						dest.GetWidth(), dest.GetHeight(), dest.GetDepth(),
 						GLPixelUtil::GetGlOriginFormat(data.GetFormat()), GLPixelUtil::GetGlOriginDataType(data.GetFormat()),
 						data.GetData());
@@ -509,8 +509,8 @@ namespace bs { namespace ct
 			glDrawBuffer(GL_COLOR_ATTACHMENT0);
 			BS_CHECK_GL_ERROR();
 
-			glBlitFramebuffer(srcBox.left, srcBox.top, srcBox.right, srcBox.bottom,
-				dstBox.left, dstBox.top, dstBox.right, dstBox.bottom, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+			glBlitFramebuffer(srcBox.Left, srcBox.Top, srcBox.Right, srcBox.Bottom,
+				dstBox.Left, dstBox.Top, dstBox.Right, dstBox.Bottom, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 			BS_CHECK_GL_ERROR();
 
 			// Restore the previously bound FBO
@@ -525,14 +525,14 @@ namespace bs { namespace ct
 
 			if (mTarget == GL_TEXTURE_3D) // 3D textures can't have arrays so their Z coordinate is handled differently
 			{
-				glCopyImageSubData(src->mTextureID, src->mTarget, src->mLevel, srcBox.left, srcBox.top, srcBox.front,
-					mTextureID, mTarget, mLevel, dstBox.left, dstBox.top, dstBox.front, srcBox.GetWidth(), srcBox.GetHeight(), srcBox.GetDepth());
+				glCopyImageSubData(src->mTextureID, src->mTarget, src->mLevel, srcBox.Left, srcBox.Top, srcBox.Front,
+					mTextureID, mTarget, mLevel, dstBox.Left, dstBox.Top, dstBox.Front, srcBox.GetWidth(), srcBox.GetHeight(), srcBox.GetDepth());
 				BS_CHECK_GL_ERROR();
 			}
 			else
 			{
-				glCopyImageSubData(src->mTextureID, src->mTarget, src->mLevel, srcBox.left, srcBox.top, src->mFace,
-					mTextureID, mTarget, mLevel, dstBox.left, dstBox.top, mFace, srcBox.GetWidth(), srcBox.GetHeight(), 1);
+				glCopyImageSubData(src->mTextureID, src->mTarget, src->mLevel, srcBox.Left, srcBox.Top, src->mFace,
+					mTextureID, mTarget, mLevel, dstBox.Left, dstBox.Top, mFace, srcBox.GetWidth(), srcBox.GetHeight(), 1);
 				BS_CHECK_GL_ERROR();
 			}
 		}		

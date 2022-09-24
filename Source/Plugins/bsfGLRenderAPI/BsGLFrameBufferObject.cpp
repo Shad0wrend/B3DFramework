@@ -14,7 +14,7 @@ namespace bs { namespace ct
 		BS_CHECK_GL_ERROR();
 
 		for (UINT32 x = 0; x < BS_MAX_MULTIPLE_RENDER_TARGETS; ++x)
-			mColor[x].buffer = nullptr;
+			mColor[x].Buffer = nullptr;
 
 		BS_INC_RENDER_STAT_CAT(ResCreated, RenderStatObject_FrameBufferObject);
 	}
@@ -36,7 +36,7 @@ namespace bs { namespace ct
 	void GLFrameBufferObject::UnbindSurface(UINT32 attachment)
 	{
 		assert(attachment < BS_MAX_MULTIPLE_RENDER_TARGETS);
-		mColor[attachment].buffer = nullptr;
+		mColor[attachment].Buffer = nullptr;
 	}
 
 	void GLFrameBufferObject::BindDepthStencil(SPtr<GLPixelBuffer> depthStencilBuffer, bool allLayers)
@@ -53,7 +53,7 @@ namespace bs { namespace ct
 	void GLFrameBufferObject::Rebuild()
 	{
 		// Store basic stats
-		UINT16 maxSupportedMRTs = RenderAPI::InstancePtr()->GetCapabilities(0).numMultiRenderTargets;
+		UINT16 maxSupportedMRTs = RenderAPI::InstancePtr()->GetCapabilities(0).NumMultiRenderTargets;
 
 		// Bind simple buffer to add color attachments
 		glBindFramebuffer(GL_FRAMEBUFFER, mFB);
@@ -62,12 +62,12 @@ namespace bs { namespace ct
 		// Bind all attachment points to frame buffer
 		for (UINT16 x = 0; x < maxSupportedMRTs; ++x)
 		{
-			if (mColor[x].buffer)
+			if (mColor[x].Buffer)
 			{
 				// Note: I'm attaching textures to FBO while renderbuffers might yield better performance if I
 				// don't need to read from them
 
-				mColor[x].buffer->BindToFramebuffer(GL_COLOR_ATTACHMENT0 + x, mColor[x].zoffset, mColor[x].allLayers);
+				mColor[x].Buffer->BindToFramebuffer(GL_COLOR_ATTACHMENT0 + x, mColor[x].Zoffset, mColor[x].AllLayers);
 			}
 			else
 			{
@@ -96,7 +96,7 @@ namespace bs { namespace ct
 		for (UINT32 x = 0; x < BS_MAX_MULTIPLE_RENDER_TARGETS; ++x)
 		{
 			// Fill attached colour buffers
-			if (mColor[x].buffer)
+			if (mColor[x].Buffer)
 			{
 				bufs[x] = GL_COLOR_ATTACHMENT0 + x;
 				// Keep highest used buffer + 1

@@ -53,29 +53,29 @@ namespace bs
 		{
 			if (mColorSurfaces[i] != nullptr)
 			{
-				GLTexture* glColorSurface = static_cast<GLTexture*>(mDesc.colorSurfaces[i].texture.get());
+				GLTexture* glColorSurface = static_cast<GLTexture*>(mDesc.ColorSurfaces[i].Texture.get());
 				GLSurfaceDesc surfaceDesc;
-				surfaceDesc.numSamples = GetProperties().multisampleCount;
+				surfaceDesc.NumSamples = GetProperties().MultisampleCount;
 
 				if (mColorSurfaces[i]->GetNumArraySlices() == 1) // Binding a single texture layer
 				{
-					surfaceDesc.allLayers = glColorSurface->GetProperties().GetNumFaces() == 1;
+					surfaceDesc.AllLayers = glColorSurface->GetProperties().GetNumFaces() == 1;
 
 					if (glColorSurface->GetProperties().GetTextureType() != TEX_TYPE_3D)
 					{
-						surfaceDesc.zoffset = 0;
-						surfaceDesc.buffer = glColorSurface->GetBuffer(mColorSurfaces[i]->GetFirstArraySlice(),
+						surfaceDesc.Zoffset = 0;
+						surfaceDesc.Buffer = glColorSurface->GetBuffer(mColorSurfaces[i]->GetFirstArraySlice(),
 							mColorSurfaces[i]->GetMostDetailedMip());
 					}
 					else
 					{
-						surfaceDesc.zoffset = 0;
-						surfaceDesc.buffer = glColorSurface->GetBuffer(0, mColorSurfaces[i]->GetMostDetailedMip());
+						surfaceDesc.Zoffset = 0;
+						surfaceDesc.Buffer = glColorSurface->GetBuffer(0, mColorSurfaces[i]->GetMostDetailedMip());
 					}
 				}
 				else // Binding an array of textures or a range of 3D texture slices
 				{
-					surfaceDesc.allLayers = true;
+					surfaceDesc.AllLayers = true;
 
 					if (glColorSurface->GetProperties().GetTextureType() != TEX_TYPE_3D)
 					{
@@ -85,13 +85,13 @@ namespace bs
 								"textures. The entire range will be bound instead.");
 						}
 
-						surfaceDesc.zoffset = 0;
-						surfaceDesc.buffer = glColorSurface->GetBuffer(0, mColorSurfaces[i]->GetMostDetailedMip());
+						surfaceDesc.Zoffset = 0;
+						surfaceDesc.Buffer = glColorSurface->GetBuffer(0, mColorSurfaces[i]->GetMostDetailedMip());
 					}
 					else
 					{
-						surfaceDesc.zoffset = 0;
-						surfaceDesc.buffer = glColorSurface->GetBuffer(0, mColorSurfaces[i]->GetMostDetailedMip());
+						surfaceDesc.Zoffset = 0;
+						surfaceDesc.Buffer = glColorSurface->GetBuffer(0, mColorSurfaces[i]->GetMostDetailedMip());
 					}
 				}
 
@@ -103,9 +103,9 @@ namespace bs
 			}
 		}
 
-		if (mDepthStencilSurface != nullptr && mDesc.depthStencilSurface.texture != nullptr)
+		if (mDepthStencilSurface != nullptr && mDesc.DepthStencilSurface.Texture != nullptr)
 		{
-			GLTexture* glDepthStencilTexture = static_cast<GLTexture*>(mDesc.depthStencilSurface.texture.get());
+			GLTexture* glDepthStencilTexture = static_cast<GLTexture*>(mDesc.DepthStencilSurface.Texture.get());
 			SPtr<GLPixelBuffer> depthStencilBuffer = nullptr;
 
 			bool allLayers = true;
@@ -301,7 +301,7 @@ namespace bs
 
 		for (UINT32 x = 0; x < PF_COUNT; ++x)
 		{
-			mProps[x].valid = false;
+			mProps[x].Valid = false;
 
 			// Fetch GL format token
 			GLenum fmt = GLPixelUtil::GetGlInternalFormat((PixelFormat)x);
@@ -372,7 +372,7 @@ namespace bs
 			// might still be supported, so we must continue probing.
 			if (fmt == GL_NONE || status == GL_FRAMEBUFFER_COMPLETE)
 			{
-				mProps[x].valid = true;
+				mProps[x].Valid = true;
 
 				// For each depth/stencil formats
 				for (UINT32 depth = 0; depth < DEPTHFORMAT_COUNT; ++depth)
@@ -383,9 +383,9 @@ namespace bs
 						{
 							/// Add mode to allowed modes
 							FormatProperties::Mode mode;
-							mode.depth = depth;
-							mode.stencil = 0;
-							mProps[x].modes.push_back(mode);
+							mode.Depth = depth;
+							mode.Stencil = 0;
+							mProps[x].Modes.push_back(mode);
 						}
 					}
 					else
@@ -395,9 +395,9 @@ namespace bs
 						{
 							/// Add mode to allowed modes
 							FormatProperties::Mode mode;
-							mode.depth = depth;
-							mode.stencil = 0;   // unuse
-							mProps[x].modes.push_back(mode);
+							mode.Depth = depth;
+							mode.Stencil = 0;   // unuse
+							mProps[x].Modes.push_back(mode);
 						}
 					}
 				}

@@ -19,10 +19,10 @@ namespace bs { namespace ct
 	public:
 		GLSurfaceDesc() = default;
 
-		SPtr<GLPixelBuffer> buffer;
-		UINT32 zoffset = 0;
-		UINT32 numSamples = 0;
-		bool allLayers = false;
+		SPtr<GLPixelBuffer> Buffer;
+		UINT32 Zoffset = 0;
+		UINT32 NumSamples = 0;
+		bool AllLayers = false;
 	};
 
 	/**
@@ -73,7 +73,7 @@ namespace bs { namespace ct
 		void Bind();
 
 		/** Checks is the color buffer at the specified index bound. */
-		bool HasColorBuffer(UINT32 idx) const { return mColor[idx].buffer != nullptr; }
+		bool HasColorBuffer(UINT32 idx) const { return mColor[idx].Buffer != nullptr; }
 
 		/**	Returns internal OpenGL frame buffer id. */
 		GLuint GetGlfboid() const { return mFB; }

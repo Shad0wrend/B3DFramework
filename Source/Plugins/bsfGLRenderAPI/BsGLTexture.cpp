@@ -455,35 +455,35 @@ namespace bs { namespace ct
 		auto executeRef = [this](const SPtr<Texture>& target, const TEXTURE_COPY_DESC& desc)
 		{
 			GLTexture* destTex = static_cast<GLTexture*>(target.get());
-			GLTextureBuffer* dest = static_cast<GLTextureBuffer*>(destTex->GetBuffer(desc.dstFace, desc.dstMip).get());
-			GLTextureBuffer* src = static_cast<GLTextureBuffer*>(GetBuffer(desc.srcFace, desc.srcMip).get());
+			GLTextureBuffer* dest = static_cast<GLTextureBuffer*>(destTex->GetBuffer(desc.DstFace, desc.DstMip).get());
+			GLTextureBuffer* src = static_cast<GLTextureBuffer*>(GetBuffer(desc.SrcFace, desc.SrcMip).get());
 
-			bool copyEntireSurface = desc.srcVolume.GetWidth() == 0 ||
-				desc.srcVolume.GetHeight() == 0 ||
-				desc.srcVolume.GetDepth() == 0;
+			bool copyEntireSurface = desc.SrcVolume.GetWidth() == 0 ||
+				desc.SrcVolume.GetHeight() == 0 ||
+				desc.SrcVolume.GetDepth() == 0;
 
-			PixelVolume srcVolume = desc.srcVolume;
+			PixelVolume srcVolume = desc.SrcVolume;
 
 			PixelVolume dstVolume;
-			dstVolume.left = (UINT32)desc.dstPosition.x;
-			dstVolume.top = (UINT32)desc.dstPosition.y;
-			dstVolume.front = (UINT32)desc.dstPosition.z;
+			dstVolume.Left = (UINT32)desc.DstPosition.X;
+			dstVolume.Top = (UINT32)desc.DstPosition.Y;
+			dstVolume.Front = (UINT32)desc.DstPosition.Z;
 
 			if(copyEntireSurface)
 			{
-				srcVolume.right = srcVolume.left + src->GetWidth();
-				srcVolume.bottom = srcVolume.top + src->GetHeight();
-				srcVolume.back = srcVolume.front + src->GetDepth();
+				srcVolume.Right = srcVolume.Left + src->GetWidth();
+				srcVolume.Bottom = srcVolume.Top + src->GetHeight();
+				srcVolume.Back = srcVolume.Front + src->GetDepth();
 
-				dstVolume.right = dstVolume.left + src->GetWidth();
-				dstVolume.bottom = dstVolume.top + src->GetHeight();
-				dstVolume.back = dstVolume.front + src->GetDepth();
+				dstVolume.Right = dstVolume.Left + src->GetWidth();
+				dstVolume.Bottom = dstVolume.Top + src->GetHeight();
+				dstVolume.Back = dstVolume.Front + src->GetDepth();
 			}
 			else
 			{
-				dstVolume.right = dstVolume.left + desc.srcVolume.GetWidth();
-				dstVolume.bottom = dstVolume.top + desc.srcVolume.GetHeight();
-				dstVolume.back = dstVolume.front + desc.srcVolume.GetDepth();
+				dstVolume.Right = dstVolume.Left + desc.SrcVolume.GetWidth();
+				dstVolume.Bottom = dstVolume.Top + desc.SrcVolume.GetHeight();
+				dstVolume.Back = dstVolume.Front + desc.SrcVolume.GetDepth();
 			}
 
 			dest->BlitFromTexture(src, srcVolume, dstVolume);

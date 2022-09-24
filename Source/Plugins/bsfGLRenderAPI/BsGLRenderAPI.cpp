@@ -156,7 +156,7 @@ namespace bs { namespace ct
 		BS_CHECK_GL_ERROR();
 
 		GPUInfo gpuInfo;
-		gpuInfo.numGPUs = 1;
+		gpuInfo.NumGpUs = 1;
 
 		const char* vendor = (const char*)glGetString(GL_VENDOR);
 		BS_CHECK_GL_ERROR();
@@ -164,7 +164,7 @@ namespace bs { namespace ct
 		const char* renderer = (const char*)glGetString(GL_RENDERER);
 		BS_CHECK_GL_ERROR();
 
-		gpuInfo.names[0] = String(vendor) + " " + String(renderer);
+		gpuInfo.Names[0] = String(vendor) + " " + String(renderer);
 
 		PlatformUtility::SetGPUInfoInternal(gpuInfo);
 
@@ -452,11 +452,11 @@ namespace bs { namespace ct
 					if (paramDesc == nullptr)
 						continue;
 
-					for (auto& entry : paramDesc->textures)
+					for (auto& entry : paramDesc->Textures)
 					{
-						UINT32 binding = entry.second.slot;
-						SPtr<Texture> texture = gpuParams->GetTexture(entry.second.set, binding);
-						const TextureSurface& surface = gpuParams->GetTextureSurface(entry.second.set, binding);
+						UINT32 binding = entry.second.Slot;
+						SPtr<Texture> texture = gpuParams->GetTexture(entry.second.Set, binding);
+						const TextureSurface& surface = gpuParams->GetTextureSurface(entry.second.Set, binding);
 
 						UINT32 unit = getTexUnit(binding);
 						if (!ActivateGlTextureUnit(unit))
@@ -471,10 +471,10 @@ namespace bs { namespace ct
 						{
 #if BS_OPENGL_4_3 || BS_OPENGLES_3_1
 							SPtr<TextureView> texView = glTex->RequestView(
-								surface.mipLevel,
-								surface.numMipLevels,
-								surface.face,
-								surface.numFaces,
+								surface.MipLevel,
+								surface.NumMipLevels,
+								surface.Face,
+								surface.NumFaces,
 								GVU_DEFAULT);
 
 							GLTextureView* glTexView = static_cast<GLTextureView*>(texView.get());
@@ -501,20 +501,20 @@ namespace bs { namespace ct
 						else
 						{
 
-							newTextureType = GLTexture::GetGlTextureTarget(entry.second.type);
+							newTextureType = GLTexture::GetGlTextureTarget(entry.second.Type);
 							texId = 0;
 						}
 
-						if (texInfo.type != newTextureType)
+						if (texInfo.Type != newTextureType)
 						{
-							glBindTexture(texInfo.type, 0);
+							glBindTexture(texInfo.Type, 0);
 							BS_CHECK_GL_ERROR();
 						}
 
 						glBindTexture(newTextureType, texId);
 						BS_CHECK_GL_ERROR();
 
-						texInfo.type = newTextureType;
+						texInfo.Type = newTextureType;
 
 						SPtr<GLSLGpuProgram> activeProgram = GetActiveProgram(type);
 						if (activeProgram != nullptr)
@@ -526,10 +526,10 @@ namespace bs { namespace ct
 						}
 					}
 
-					for(auto& entry : paramDesc->samplers)
+					for(auto& entry : paramDesc->Samplers)
 					{
-						UINT32 binding = entry.second.slot;
-						SPtr<SamplerState> samplerState = gpuParams->GetSamplerState(entry.second.set, binding);
+						UINT32 binding = entry.second.Slot;
+						SPtr<SamplerState> samplerState = gpuParams->GetSamplerState(entry.second.Set, binding);
 
 						if (samplerState == nullptr)
 							samplerState = SamplerState::GetDefault();
@@ -539,9 +539,9 @@ namespace bs { namespace ct
 							continue;
 
 						// No sampler options for multisampled textures or buffers
-						bool supportsSampler = mTextureInfos[unit].type != GL_TEXTURE_2D_MULTISAMPLE &&
-							mTextureInfos[unit].type != GL_TEXTURE_2D_MULTISAMPLE_ARRAY &&
-							mTextureInfos[unit].type != GL_TEXTURE_BUFFER;
+						bool supportsSampler = mTextureInfos[unit].Type != GL_TEXTURE_2D_MULTISAMPLE &&
+							mTextureInfos[unit].Type != GL_TEXTURE_2D_MULTISAMPLE_ARRAY &&
+							mTextureInfos[unit].Type != GL_TEXTURE_BUFFER;
 
 						if (supportsSampler)
 						{
@@ -564,14 +564,14 @@ namespace bs { namespace ct
 						}
 					}
 
-					for(auto& entry : paramDesc->buffers)
+					for(auto& entry : paramDesc->Buffers)
 					{
-						UINT32 binding = entry.second.slot;
-						SPtr<GpuBuffer> buffer = gpuParams->GetBuffer(entry.second.set, binding);
+						UINT32 binding = entry.second.Slot;
+						SPtr<GpuBuffer> buffer = gpuParams->GetBuffer(entry.second.Set, binding);
 
 						GLGpuBuffer* glBuffer = static_cast<GLGpuBuffer*>(buffer.get());
 
-						switch(entry.second.type)
+						switch(entry.second.Type)
 						{
 						case GPOT_BYTE_BUFFER: // Texture buffer (read-only, unstructured)
 							{
@@ -583,13 +583,13 @@ namespace bs { namespace ct
 								if (glBuffer != nullptr)
 									texId = glBuffer->GetGlTextureId();
 
-								if (mTextureInfos[unit].type != GL_TEXTURE_BUFFER)
+								if (mTextureInfos[unit].Type != GL_TEXTURE_BUFFER)
 								{
-									glBindTexture(mTextureInfos[unit].type, 0);
+									glBindTexture(mTextureInfos[unit].Type, 0);
 									BS_CHECK_GL_ERROR();
 								}
 
-								mTextureInfos[unit].type = GL_TEXTURE_BUFFER;
+								mTextureInfos[unit].Type = GL_TEXTURE_BUFFER;
 
 								glBindTexture(GL_TEXTURE_BUFFER, texId);
 								BS_CHECK_GL_ERROR();
@@ -660,12 +660,12 @@ namespace bs { namespace ct
 					}
 
 #if BS_OPENGL_4_2 || BS_OPENGLES_3_1
-					for(auto& entry : paramDesc->loadStoreTextures)
+					for(auto& entry : paramDesc->LoadStoreTextures)
 					{
-						UINT32 binding = entry.second.slot;
+						UINT32 binding = entry.second.Slot;
 
-						SPtr<Texture> texture = gpuParams->GetLoadStoreTexture(entry.second.set, binding);
-						const TextureSurface& surface = gpuParams->GetLoadStoreSurface(entry.second.set, binding);
+						SPtr<Texture> texture = gpuParams->GetLoadStoreTexture(entry.second.Set, binding);
+						const TextureSurface& surface = gpuParams->GetLoadStoreSurface(entry.second.Set, binding);
 
 						UINT32 unit = getImageUnit(binding);
 						GLuint texId = 0;
@@ -679,16 +679,16 @@ namespace bs { namespace ct
 							GLTexture* tex = static_cast<GLTexture*>(texture.get());
 							auto& texProps = tex->GetProperties();
 
-							bindAllLayers = texProps.GetNumFaces() == surface.numFaces || surface.numFaces == 0;
+							bindAllLayers = texProps.GetNumFaces() == surface.NumFaces || surface.NumFaces == 0;
 
-							if(!bindAllLayers && surface.numFaces > 1)
+							if(!bindAllLayers && surface.NumFaces > 1)
 							{
 								BS_LOG(Warning, RenderBackend, "Attempting to bind multiple faces of a load-store texture."
 									"You are allowed to bind either a single face, or all the faces of the texture. Only "
 									"the first face will be bound instead.");
 							}
 
-							if(surface.numMipLevels > 1)
+							if(surface.NumMipLevels > 1)
 							{
 								BS_LOG(Warning, RenderBackend, "Attempting to bind multiple mip levels of a load-store "
 									"texture. This is not supported and only the first provided level will be bound.");
@@ -696,8 +696,8 @@ namespace bs { namespace ct
 
 							texId = tex->GetGlid();
 							format = tex->GetGlFormat();
-							mipLevel = surface.mipLevel;
-							face = surface.face;
+							mipLevel = surface.MipLevel;
+							face = surface.Face;
 						}
 
 						glBindImageTexture(unit, texId, mipLevel, bindAllLayers, face, GL_READ_WRITE, format);
@@ -714,10 +714,10 @@ namespace bs { namespace ct
 					}
 #endif
 
-					for (auto& entry : paramDesc->paramBlocks)
+					for (auto& entry : paramDesc->ParamBlocks)
 					{
-						UINT32 binding = entry.second.slot;
-						SPtr<GpuParamBlockBuffer> buffer = gpuParams->GetParamBlockBuffer(entry.second.set, binding);
+						UINT32 binding = entry.second.Slot;
+						SPtr<GpuParamBlockBuffer> buffer = gpuParams->GetParamBlockBuffer(entry.second.Set, binding);
 						
 						if (buffer == nullptr)
 							continue;
@@ -733,40 +733,40 @@ namespace bs { namespace ct
 							UINT8* uniformBufferData = (UINT8*)bs_stack_alloc(buffer->GetSize());
 							buffer->Read(0, uniformBufferData, buffer->GetSize());
 
-							for (auto iter = paramDesc->params.begin(); iter != paramDesc->params.end(); ++iter)
+							for (auto iter = paramDesc->Params.begin(); iter != paramDesc->Params.end(); ++iter)
 							{
 								const GpuParamDataDesc& param = iter->second;
 
-								if (param.paramBlockSlot != 0) // 0 means uniforms are not in a block
+								if (param.ParamBlockSlot != 0) // 0 means uniforms are not in a block
 									continue;
 
-								const UINT8* ptrData = uniformBufferData + param.cpuMemOffset * sizeof(UINT32);
+								const UINT8* ptrData = uniformBufferData + param.CpuMemOffset * sizeof(UINT32);
 
 								// Note: We don't transpose matrices here even though we don't use column major format
 								// because they are assumed to be pre-transposed in the GpuParams buffer
-								switch (param.type)
+								switch (param.Type)
 								{
 								case GPDT_FLOAT1:
-									glProgramUniform1fv(glProgram, param.gpuMemOffset, param.arraySize, (GLfloat*)ptrData);
+									glProgramUniform1fv(glProgram, param.GpuMemOffset, param.ArraySize, (GLfloat*)ptrData);
 									BS_CHECK_GL_ERROR();
 									break;
 								case GPDT_FLOAT2:
-									glProgramUniform2fv(glProgram, param.gpuMemOffset, param.arraySize, (GLfloat*)ptrData);
+									glProgramUniform2fv(glProgram, param.GpuMemOffset, param.ArraySize, (GLfloat*)ptrData);
 									BS_CHECK_GL_ERROR();
 									break;
 								case GPDT_FLOAT3:
-									glProgramUniform3fv(glProgram, param.gpuMemOffset, param.arraySize, (GLfloat*)ptrData);
+									glProgramUniform3fv(glProgram, param.GpuMemOffset, param.ArraySize, (GLfloat*)ptrData);
 									BS_CHECK_GL_ERROR();
 									break;
 								case GPDT_FLOAT4:
-									glProgramUniform4fv(glProgram, param.gpuMemOffset, param.arraySize, (GLfloat*)ptrData);
+									glProgramUniform4fv(glProgram, param.GpuMemOffset, param.ArraySize, (GLfloat*)ptrData);
 									BS_CHECK_GL_ERROR();
 									break;
 								case GPDT_MATRIX_2X2:
 									glProgramUniformMatrix2fv(
 										glProgram,
-										param.gpuMemOffset,
-										param.arraySize,
+										param.GpuMemOffset,
+										param.ArraySize,
 										GL_FALSE,
 										(GLfloat*)ptrData);
 									BS_CHECK_GL_ERROR();
@@ -774,8 +774,8 @@ namespace bs { namespace ct
 								case GPDT_MATRIX_2X3:
 									glProgramUniformMatrix3x2fv(
 										glProgram,
-										param.gpuMemOffset,
-										param.arraySize,
+										param.GpuMemOffset,
+										param.ArraySize,
 										GL_FALSE,
 										(GLfloat*)ptrData);
 									BS_CHECK_GL_ERROR();
@@ -783,8 +783,8 @@ namespace bs { namespace ct
 								case GPDT_MATRIX_2X4:
 									glProgramUniformMatrix4x2fv(
 										glProgram,
-										param.gpuMemOffset,
-										param.arraySize,
+										param.GpuMemOffset,
+										param.ArraySize,
 										GL_FALSE,
 										(GLfloat*)ptrData);
 									BS_CHECK_GL_ERROR();
@@ -792,8 +792,8 @@ namespace bs { namespace ct
 								case GPDT_MATRIX_3X2:
 									glProgramUniformMatrix2x3fv(
 										glProgram,
-										param.gpuMemOffset,
-										param.arraySize,
+										param.GpuMemOffset,
+										param.ArraySize,
 										GL_FALSE,
 										(GLfloat*)ptrData);
 									BS_CHECK_GL_ERROR();
@@ -801,8 +801,8 @@ namespace bs { namespace ct
 								case GPDT_MATRIX_3X3:
 									glProgramUniformMatrix3fv(
 										glProgram,
-										param.gpuMemOffset,
-										param.arraySize,
+										param.GpuMemOffset,
+										param.ArraySize,
 										GL_FALSE,
 										(GLfloat*)ptrData);
 									BS_CHECK_GL_ERROR();
@@ -810,8 +810,8 @@ namespace bs { namespace ct
 								case GPDT_MATRIX_3X4:
 									glProgramUniformMatrix4x3fv(
 										glProgram,
-										param.gpuMemOffset,
-										param.arraySize,
+										param.GpuMemOffset,
+										param.ArraySize,
 										GL_FALSE,
 										(GLfloat*)ptrData);
 									BS_CHECK_GL_ERROR();
@@ -819,8 +819,8 @@ namespace bs { namespace ct
 								case GPDT_MATRIX_4X2:
 									glProgramUniformMatrix2x4fv(
 										glProgram,
-										param.gpuMemOffset,
-										param.arraySize,
+										param.GpuMemOffset,
+										param.ArraySize,
 										GL_FALSE,
 										(GLfloat*)ptrData);
 									BS_CHECK_GL_ERROR();
@@ -828,8 +828,8 @@ namespace bs { namespace ct
 								case GPDT_MATRIX_4X3:
 									glProgramUniformMatrix3x4fv(
 										glProgram,
-										param.gpuMemOffset,
-										param.arraySize,
+										param.GpuMemOffset,
+										param.ArraySize,
 										GL_FALSE,
 										(GLfloat*)ptrData);
 									BS_CHECK_GL_ERROR();
@@ -837,30 +837,30 @@ namespace bs { namespace ct
 								case GPDT_MATRIX_4X4:
 									glProgramUniformMatrix4fv(
 										glProgram,
-										param.gpuMemOffset,
-										param.arraySize,
+										param.GpuMemOffset,
+										param.ArraySize,
 										GL_FALSE,
 										(GLfloat*)ptrData);
 									BS_CHECK_GL_ERROR();
 									break;
 								case GPDT_INT1:
-									glProgramUniform1iv(glProgram, param.gpuMemOffset, param.arraySize, (GLint*)ptrData);
+									glProgramUniform1iv(glProgram, param.GpuMemOffset, param.ArraySize, (GLint*)ptrData);
 									BS_CHECK_GL_ERROR();
 									break;
 								case GPDT_INT2:
-									glProgramUniform2iv(glProgram, param.gpuMemOffset, param.arraySize, (GLint*)ptrData);
+									glProgramUniform2iv(glProgram, param.GpuMemOffset, param.ArraySize, (GLint*)ptrData);
 									BS_CHECK_GL_ERROR();
 									break;
 								case GPDT_INT3:
-									glProgramUniform3iv(glProgram, param.gpuMemOffset, param.arraySize, (GLint*)ptrData);
+									glProgramUniform3iv(glProgram, param.GpuMemOffset, param.ArraySize, (GLint*)ptrData);
 									BS_CHECK_GL_ERROR();
 									break;
 								case GPDT_INT4:
-									glProgramUniform4iv(glProgram, param.gpuMemOffset, param.arraySize, (GLint*)ptrData);
+									glProgramUniform4iv(glProgram, param.GpuMemOffset, param.ArraySize, (GLint*)ptrData);
 									BS_CHECK_GL_ERROR();
 									break;
 								case GPDT_BOOL:
-									glProgramUniform1uiv(glProgram, param.gpuMemOffset, param.arraySize, (GLuint*)ptrData);
+									glProgramUniform1uiv(glProgram, param.GpuMemOffset, param.ArraySize, (GLuint*)ptrData);
 									BS_CHECK_GL_ERROR();
 									break;
 								default:
@@ -939,7 +939,7 @@ namespace bs { namespace ct
 			THROW_IF_NOT_CORE_THREAD;
 
 			// Switch context if different from current one
-			if (target != nullptr && target->GetProperties().isWindow)
+			if (target != nullptr && target->GetProperties().IsWindow)
 			{
 				RenderWindow* window = static_cast<RenderWindow*>(target.get());
 
@@ -965,7 +965,7 @@ namespace bs { namespace ct
 				fbo->Bind();
 
 				// Enable / disable sRGB states
-				if (target->GetProperties().hwGamma)
+				if (target->GetProperties().HwGamma)
 				{
 					glEnable(GL_FRAMEBUFFER_SRGB);
 					BS_CHECK_GL_ERROR();
@@ -1238,7 +1238,7 @@ namespace bs { namespace ct
 				return;
 
 			const RenderTargetProperties& rtProps = mActiveRenderTarget->GetProperties();
-			Rect2I clearRect(0, 0, rtProps.width, rtProps.height);
+			Rect2I clearRect(0, 0, rtProps.Width, rtProps.Height);
 
 			ClearArea(buffers, color, depth, stencil, clearRect, targetMask);
 		};
@@ -1270,7 +1270,7 @@ namespace bs { namespace ct
 		THROW_IF_NOT_CORE_THREAD;
 
 		// Switch context if different from current one
-		if(!target->GetProperties().isWindow)
+		if(!target->GetProperties().IsWindow)
 			return;
 
 		SubmitCommandBuffer(mMainCommandBuffer, syncMask);
@@ -1328,7 +1328,7 @@ namespace bs { namespace ct
 
 		UINT32 numColorBuffers = 1;
 		bool colorMasks[BS_MAX_MULTIPLE_RENDER_TARGETS] = { 0 };
-		if(!mActiveRenderTarget->GetProperties().isWindow)
+		if(!mActiveRenderTarget->GetProperties().IsWindow)
 		{
 			RenderTexture* renderTexture = static_cast<RenderTexture*>(mActiveRenderTarget.get());
 
@@ -1357,12 +1357,12 @@ namespace bs { namespace ct
 
 		const RenderTargetProperties& rtProps = mActiveRenderTarget->GetProperties();
 
-		bool clearEntireTarget = clearRect.width == 0 || clearRect.height == 0;
-		clearEntireTarget |= (clearRect.x == 0 && clearRect.y == 0 && clearRect.width == rtProps.width && clearRect.height == rtProps.height);
+		bool clearEntireTarget = clearRect.Width == 0 || clearRect.Height == 0;
+		clearEntireTarget |= (clearRect.X == 0 && clearRect.Y == 0 && clearRect.Width == rtProps.Width && clearRect.Height == rtProps.Height);
 
 		if (!clearEntireTarget)
 		{
-			SetScissorRect(clearRect.x, clearRect.y, clearRect.x + clearRect.width, clearRect.y + clearRect.height);
+			SetScissorRect(clearRect.X, clearRect.Y, clearRect.X + clearRect.Width, clearRect.Y + clearRect.Height);
 			SetScissorTestEnable(true);
 		}
 
@@ -1401,7 +1401,7 @@ namespace bs { namespace ct
 			{
 				flags |= GL_COLOR_BUFFER_BIT;
 
-				glClearColor(color.r, color.g, color.b, color.a);
+				glClearColor(color.R, color.G, color.B, color.A);
 				BS_CHECK_GL_ERROR();
 			}
 
@@ -1515,35 +1515,35 @@ namespace bs { namespace ct
 
 	void GLRenderAPI::SetTextureAddressingMode(UINT16 unit, const UVWAddressingMode& uvw)
 	{
-		glTexParameteri(mTextureInfos[unit].type, GL_TEXTURE_WRAP_S, GetTextureAddressingMode(uvw.u));
+		glTexParameteri(mTextureInfos[unit].Type, GL_TEXTURE_WRAP_S, GetTextureAddressingMode(uvw.U));
 		BS_CHECK_GL_ERROR();
 
-		glTexParameteri(mTextureInfos[unit].type, GL_TEXTURE_WRAP_T, GetTextureAddressingMode(uvw.v));
+		glTexParameteri(mTextureInfos[unit].Type, GL_TEXTURE_WRAP_T, GetTextureAddressingMode(uvw.V));
 		BS_CHECK_GL_ERROR();
 
-		glTexParameteri(mTextureInfos[unit].type, GL_TEXTURE_WRAP_R, GetTextureAddressingMode(uvw.w));
+		glTexParameteri(mTextureInfos[unit].Type, GL_TEXTURE_WRAP_R, GetTextureAddressingMode(uvw.W));
 		BS_CHECK_GL_ERROR();
 	}
 
 	void GLRenderAPI::SetTextureBorderColor(UINT16 unit, const Color& color)
 	{
-		GLfloat border[4] = { color.r, color.g, color.b, color.a };
-		glTexParameterfv(mTextureInfos[unit].type, GL_TEXTURE_BORDER_COLOR, border);
+		GLfloat border[4] = { color.R, color.G, color.B, color.A };
+		glTexParameterfv(mTextureInfos[unit].Type, GL_TEXTURE_BORDER_COLOR, border);
 		BS_CHECK_GL_ERROR();
 	}
 
 	void GLRenderAPI::SetTextureMipmapBias(UINT16 unit, float bias)
 	{
-		glTexParameterf(mTextureInfos[unit].type, GL_TEXTURE_LOD_BIAS, bias);
+		glTexParameterf(mTextureInfos[unit].Type, GL_TEXTURE_LOD_BIAS, bias);
 		BS_CHECK_GL_ERROR();
 	}
 
 	void GLRenderAPI::SetTextureMipmapRange(UINT16 unit, float min, float max)
 	{
-		glTexParameterf(mTextureInfos[unit].type, GL_TEXTURE_MIN_LOD, min);
+		glTexParameterf(mTextureInfos[unit].Type, GL_TEXTURE_MIN_LOD, min);
 		BS_CHECK_GL_ERROR();
 
-		glTexParameterf(mTextureInfos[unit].type, GL_TEXTURE_MAX_LOD, max);
+		glTexParameterf(mTextureInfos[unit].Type, GL_TEXTURE_MAX_LOD, max);
 		BS_CHECK_GL_ERROR();
 	}
 
@@ -1689,7 +1689,7 @@ namespace bs { namespace ct
 			BS_CHECK_GL_ERROR();
 
 			x = mScissorLeft;
-			y = rtProps.height - mScissorBottom;
+			y = rtProps.Height - mScissorBottom;
 			w = mScissorRight - mScissorLeft;
 			h = mScissorBottom - mScissorTop;
 
@@ -1703,7 +1703,7 @@ namespace bs { namespace ct
 
 			// GL requires you to reset the scissor when disabling
 			x = mViewportLeft;
-			y = rtProps.height - (mViewportTop + mViewportHeight);
+			y = rtProps.Height - (mViewportTop + mViewportHeight);
 			w = mViewportWidth;
 			h = mViewportHeight;
 
@@ -1961,7 +1961,7 @@ namespace bs { namespace ct
 		case FT_MIN:
 			mMinFilter = fo;
 			// Combine with existing mip filter
-			glTexParameteri(mTextureInfos[unit].type, GL_TEXTURE_MIN_FILTER, GetCombinedMinMipFilter());
+			glTexParameteri(mTextureInfos[unit].Type, GL_TEXTURE_MIN_FILTER, GetCombinedMinMipFilter());
 			BS_CHECK_GL_ERROR();
 			break;
 		case FT_MAG:
@@ -1969,12 +1969,12 @@ namespace bs { namespace ct
 			{
 			case FO_ANISOTROPIC: // GL treats linear and aniso the same
 			case FO_LINEAR:
-				glTexParameteri(mTextureInfos[unit].type, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				glTexParameteri(mTextureInfos[unit].Type, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 				BS_CHECK_GL_ERROR();
 				break;
 			case FO_POINT:
 			case FO_NONE:
-				glTexParameteri(mTextureInfos[unit].type, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+				glTexParameteri(mTextureInfos[unit].Type, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 				BS_CHECK_GL_ERROR();
 				break;
 			default:
@@ -1984,7 +1984,7 @@ namespace bs { namespace ct
 		case FT_MIP:
 			mMipFilter = fo;
 			// Combine with existing min filter
-			glTexParameteri(mTextureInfos[unit].type, GL_TEXTURE_MIN_FILTER, GetCombinedMinMipFilter());
+			glTexParameteri(mTextureInfos[unit].Type, GL_TEXTURE_MIN_FILTER, GetCombinedMinMipFilter());
 			BS_CHECK_GL_ERROR();
 			break;
 		}
@@ -2002,7 +2002,7 @@ namespace bs { namespace ct
 		if(maxAnisotropy < 1)
 			maxAnisotropy = 1;
 
-		glTexParameterf(mTextureInfos[unit].type, GL_TEXTURE_MAX_ANISOTROPY_EXT, (float)maxAnisotropy);
+		glTexParameterf(mTextureInfos[unit].Type, GL_TEXTURE_MAX_ANISOTROPY_EXT, (float)maxAnisotropy);
 		BS_CHECK_GL_ERROR();
 	}
 
@@ -2010,15 +2010,15 @@ namespace bs { namespace ct
 	{
 		if (compare == CMPF_ALWAYS_PASS)
 		{
-			glTexParameteri(mTextureInfos[unit].type, GL_TEXTURE_COMPARE_MODE, GL_NONE);
+			glTexParameteri(mTextureInfos[unit].Type, GL_TEXTURE_COMPARE_MODE, GL_NONE);
 			BS_CHECK_GL_ERROR();
 		}
 		else
 		{
-			glTexParameteri(mTextureInfos[unit].type, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+			glTexParameteri(mTextureInfos[unit].Type, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
 			BS_CHECK_GL_ERROR();
 
-			glTexParameteri(mTextureInfos[unit].type, GL_TEXTURE_COMPARE_FUNC, ConvertCompareFunction(compare));
+			glTexParameteri(mTextureInfos[unit].Type, GL_TEXTURE_COMPARE_FUNC, ConvertCompareFunction(compare));
 			BS_CHECK_GL_ERROR();
 		}
 	}
@@ -2027,7 +2027,7 @@ namespace bs { namespace ct
 	{
 		if (mActiveTextureUnit != unit)
 		{
-			if (unit < GetCapabilities(0).numCombinedTextureUnits)
+			if (unit < GetCapabilities(0).NumCombinedTextureUnits)
 			{
 				glActiveTexture(GL_TEXTURE0 + unit);
 				BS_CHECK_GL_ERROR();
@@ -2043,7 +2043,7 @@ namespace bs { namespace ct
 			else
 			{
 				BS_LOG(Warning, RenderBackend, "Provided texture unit index is higher than OpenGL supports. Provided: {0}. "
-					"Supported range: 0 .. {1}", unit, GetCapabilities(0).numCombinedTextureUnits - 1);
+					"Supported range: 0 .. {1}", unit, GetCapabilities(0).NumCombinedTextureUnits - 1);
 				return false;
 			}
 		}
@@ -2086,7 +2086,7 @@ namespace bs { namespace ct
 
 		if(mActivePipeline != pipeline)
 		{
-			glBindProgramPipeline(pipeline->glHandle);
+			glBindProgramPipeline(pipeline->GlHandle);
 			BS_CHECK_GL_ERROR();
 
 			mActivePipeline = pipeline;
@@ -2119,7 +2119,7 @@ namespace bs { namespace ct
 	GLfloat GLRenderAPI::GetCurrentAnisotropy(UINT16 unit)
 	{
 		GLfloat curAniso = 0;
-		glGetTexParameterfv(mTextureInfos[unit].type, GL_TEXTURE_MAX_ANISOTROPY_EXT, &curAniso);
+		glGetTexParameterfv(mTextureInfos[unit].Type, GL_TEXTURE_MAX_ANISOTROPY_EXT, &curAniso);
 		BS_CHECK_GL_ERROR();
 
 		return curAniso ? curAniso : 1;
@@ -2325,7 +2325,7 @@ namespace bs { namespace ct
 
 	void GLRenderAPI::InitFromCaps(RenderAPICapabilities* caps)
 	{
-		if(caps->renderAPIName != GetName())
+		if(caps->RenderApiName != GetName())
 		{
 			BS_EXCEPT(InvalidParametersException,
 				"Trying to initialize GLRenderAPI from RenderSystemCapabilities that do not support OpenGL");
@@ -2352,7 +2352,7 @@ namespace bs { namespace ct
 
 		GLRTTManager::StartUp<GLRTTManager>();
 
-		mNumTextureUnits = caps->numCombinedTextureUnits;
+		mNumTextureUnits = caps->NumCombinedTextureUnits;
 		mTextureInfos = bs_newN<TextureInfo>(mNumTextureUnits);
 		
 		bs::TextureManager::StartUp<bs::GLTextureManager>(std::ref(*mGLSupport));
@@ -2390,31 +2390,31 @@ namespace bs { namespace ct
 		DriverVersion driverVersion;
 		if (!tokens.empty())
 		{
-			driverVersion.major = parseINT32(tokens[0]);
+			driverVersion.Major = parseINT32(tokens[0]);
 			if (tokens.size() > 1)
-				driverVersion.minor = parseINT32(tokens[1]);
+				driverVersion.Minor = parseINT32(tokens[1]);
 			if (tokens.size() > 2)
-				driverVersion.release = parseINT32(tokens[2]);
+				driverVersion.Release = parseINT32(tokens[2]);
 		}
-		driverVersion.build = 0;
+		driverVersion.Build = 0;
 
-		caps.driverVersion = driverVersion;
-		caps.renderAPIName = GetName();
+		caps.DriverVersion = driverVersion;
+		caps.RenderApiName = GetName();
 
 		const char* deviceName = (const char*)glGetString(GL_RENDERER);
-		caps.deviceName = deviceName;
+		caps.DeviceName = deviceName;
 
 		const char* vendorName = (const char*)glGetString(GL_VENDOR);
 		if (strstr(vendorName, "NVIDIA"))
-			caps.deviceVendor = GPU_NVIDIA;
+			caps.DeviceVendor = GPU_NVIDIA;
 		else if (strstr(vendorName, "ATI"))
-			caps.deviceVendor = GPU_AMD;
+			caps.DeviceVendor = GPU_AMD;
 		else if (strstr(vendorName, "AMD"))
-			caps.deviceVendor = GPU_AMD;
+			caps.DeviceVendor = GPU_AMD;
 		else if (strstr(vendorName, "Intel"))
-			caps.deviceVendor = GPU_INTEL;
+			caps.DeviceVendor = GPU_INTEL;
 		else
-			caps.deviceVendor = GPU_UNKNOWN;
+			caps.DeviceVendor = GPU_UNKNOWN;
 
 #if BS_OPENGL_4_1
 		caps.AddShaderProfile("glsl4_1");
@@ -2443,10 +2443,10 @@ namespace bs { namespace ct
 		caps.SetCapability(RSC_RENDER_TARGET_LAYERS);
 #endif
 
-		caps.conventions.uvYAxis = Conventions::Axis::Up;
-		caps.conventions.matrixOrder = Conventions::MatrixOrder::ColumnMajor;
-		caps.minDepth = -1.0f;
-		caps.maxDepth = 1.0f;
+		caps.Conventions.UvYAxis = Conventions::Axis::Up;
+		caps.Conventions.MatrixOrder = Conventions::MatrixOrder::ColumnMajor;
+		caps.MinDepth = -1.0f;
+		caps.MaxDepth = 1.0f;
 
 		GLint maxOutputVertices;
 
@@ -2457,32 +2457,32 @@ namespace bs { namespace ct
 		maxOutputVertices = 0;
 #endif
 
-		caps.geometryProgramNumOutputVertices = maxOutputVertices;
+		caps.GeometryProgramNumOutputVertices = maxOutputVertices;
 
 		// Max number of fragment shader textures
 		GLint units;
 		glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &units);
 		BS_CHECK_GL_ERROR();
 
-		caps.numTextureUnitsPerStage[GPT_FRAGMENT_PROGRAM] = static_cast<UINT16>(units);
+		caps.NumTextureUnitsPerStage[GPT_FRAGMENT_PROGRAM] = static_cast<UINT16>(units);
 
 		// Max number of vertex shader textures
 		GLint vUnits;
 		glGetIntegerv(GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS, &vUnits);
 		BS_CHECK_GL_ERROR();
 
-		caps.numTextureUnitsPerStage[GPT_VERTEX_PROGRAM] = static_cast<UINT16>(vUnits);
+		caps.NumTextureUnitsPerStage[GPT_VERTEX_PROGRAM] = static_cast<UINT16>(vUnits);
 
 		GLint numUniformBlocks;
 		glGetIntegerv(GL_MAX_VERTEX_UNIFORM_BLOCKS, &numUniformBlocks);
 		BS_CHECK_GL_ERROR();
 
-		caps.numGpuParamBlockBuffersPerStage[GPT_VERTEX_PROGRAM] = numUniformBlocks;
+		caps.NumGpuParamBlockBuffersPerStage[GPT_VERTEX_PROGRAM] = numUniformBlocks;
 
 		glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_BLOCKS, &numUniformBlocks);
 		BS_CHECK_GL_ERROR();
 
-		caps.numGpuParamBlockBuffersPerStage[GPT_FRAGMENT_PROGRAM] = numUniformBlocks;
+		caps.NumGpuParamBlockBuffersPerStage[GPT_FRAGMENT_PROGRAM] = numUniformBlocks;
 
 		{
 			GLint geomUnits;
@@ -2494,7 +2494,7 @@ namespace bs { namespace ct
 			geomUnits = 0;
 #endif
 
-			caps.numTextureUnitsPerStage[GPT_GEOMETRY_PROGRAM] = static_cast<UINT16>(geomUnits);
+			caps.NumTextureUnitsPerStage[GPT_GEOMETRY_PROGRAM] = static_cast<UINT16>(geomUnits);
 
 #if BS_OPENGL_4_1 || BS_OPENGLES_3_2
 			glGetIntegerv(GL_MAX_GEOMETRY_UNIFORM_BLOCKS, &numUniformBlocks);
@@ -2503,7 +2503,7 @@ namespace bs { namespace ct
 			numUniformBlocks = 0;
 #endif
 
-			caps.numGpuParamBlockBuffersPerStage[GPT_GEOMETRY_PROGRAM] = numUniformBlocks;
+			caps.NumGpuParamBlockBuffersPerStage[GPT_GEOMETRY_PROGRAM] = numUniformBlocks;
 		}
 
 		if (mGLSupport->CheckExtension("GL_ARB_tessellation_shader"))
@@ -2519,7 +2519,7 @@ namespace bs { namespace ct
 			numUniformBlocks = 0;
 #endif
 
-			caps.numGpuParamBlockBuffersPerStage[GPT_HULL_PROGRAM] = numUniformBlocks;
+			caps.NumGpuParamBlockBuffersPerStage[GPT_HULL_PROGRAM] = numUniformBlocks;
 
 #if BS_OPENGL_4_1 || BS_OPENGLES_3_2
 			glGetIntegerv(GL_MAX_TESS_EVALUATION_UNIFORM_BLOCKS, &numUniformBlocks);
@@ -2528,7 +2528,7 @@ namespace bs { namespace ct
 			numUniformBlocks = 0;
 #endif
 
-			caps.numGpuParamBlockBuffersPerStage[GPT_DOMAIN_PROGRAM] = numUniformBlocks;
+			caps.NumGpuParamBlockBuffersPerStage[GPT_DOMAIN_PROGRAM] = numUniformBlocks;
 		}
 
 		if (mGLSupport->CheckExtension("GL_ARB_compute_shader"))
@@ -2546,7 +2546,7 @@ namespace bs { namespace ct
 			computeUnits = 0;
 #endif
 
-			caps.numTextureUnitsPerStage[GPT_COMPUTE_PROGRAM] = static_cast<UINT16>(computeUnits);
+			caps.NumTextureUnitsPerStage[GPT_COMPUTE_PROGRAM] = static_cast<UINT16>(computeUnits);
 
 #if BS_OPENGL_4_3 || BS_OPENGLES_3_1
 			glGetIntegerv(GL_MAX_COMPUTE_UNIFORM_BLOCKS, &numUniformBlocks);
@@ -2555,7 +2555,7 @@ namespace bs { namespace ct
 			numUniformBlocks = 0;
 #endif
 
-			caps.numGpuParamBlockBuffersPerStage[GPT_COMPUTE_PROGRAM] = numUniformBlocks;
+			caps.NumGpuParamBlockBuffersPerStage[GPT_COMPUTE_PROGRAM] = numUniformBlocks;
 
 			// Max number of load-store textures
 			GLint lsfUnits;
@@ -2567,7 +2567,7 @@ namespace bs { namespace ct
 			lsfUnits = 0;
 #endif
 
-			caps.numLoadStoreTextureUnitsPerStage[GPT_FRAGMENT_PROGRAM] = static_cast<UINT16>(lsfUnits);
+			caps.NumLoadStoreTextureUnitsPerStage[GPT_FRAGMENT_PROGRAM] = static_cast<UINT16>(lsfUnits);
 
 			GLint lscUnits;
 
@@ -2578,7 +2578,7 @@ namespace bs { namespace ct
 			lscUnits = 0;
 #endif
 
-			caps.numLoadStoreTextureUnitsPerStage[GPT_COMPUTE_PROGRAM] = static_cast<UINT16>(lscUnits);
+			caps.NumLoadStoreTextureUnitsPerStage[GPT_COMPUTE_PROGRAM] = static_cast<UINT16>(lscUnits);
 
 			GLint combinedLoadStoreTextureUnits;
 
@@ -2589,21 +2589,21 @@ namespace bs { namespace ct
 			combinedLoadStoreTextureUnits = 0;
 #endif
 
-			caps.numCombinedLoadStoreTextureUnits = static_cast<UINT16>(combinedLoadStoreTextureUnits);
+			caps.NumCombinedLoadStoreTextureUnits = static_cast<UINT16>(combinedLoadStoreTextureUnits);
 		}
 
 		GLint combinedTexUnits;
 		glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &combinedTexUnits);
 		BS_CHECK_GL_ERROR();
 
-		caps.numCombinedTextureUnits = static_cast<UINT16>(combinedTexUnits);
+		caps.NumCombinedTextureUnits = static_cast<UINT16>(combinedTexUnits);
 
 		GLint combinedUniformBlockUnits;
 		glGetIntegerv(GL_MAX_COMBINED_UNIFORM_BLOCKS, &combinedUniformBlockUnits);
 		BS_CHECK_GL_ERROR();
 
-		caps.numCombinedParamBlockBuffers = static_cast<UINT16>(combinedUniformBlockUnits);
-		caps.numMultiRenderTargets = 8;
+		caps.NumCombinedParamBlockBuffers = static_cast<UINT16>(combinedUniformBlockUnits);
+		caps.NumMultiRenderTargets = 8;
 	}
 
 	void GLRenderAPI::MakeGlMatrix(GLfloat gl_matrix[16], const Matrix4& m)
@@ -2627,10 +2627,10 @@ namespace bs { namespace ct
 		const RenderTargetProperties& rtProps = mActiveRenderTarget->GetProperties();
 
 		// Calculate the "lower-left" corner of the viewport
-		mViewportLeft = (UINT32)(rtProps.width * mViewportNorm.x);
-		mViewportTop = (UINT32)(rtProps.height * mViewportNorm.y);
-		mViewportWidth = (UINT32)(rtProps.width * mViewportNorm.width);
-		mViewportHeight = (UINT32)(rtProps.height * mViewportNorm.height);
+		mViewportLeft = (UINT32)(rtProps.Width * mViewportNorm.X);
+		mViewportTop = (UINT32)(rtProps.Height * mViewportNorm.Y);
+		mViewportWidth = (UINT32)(rtProps.Width * mViewportNorm.Width);
+		mViewportHeight = (UINT32)(rtProps.Height * mViewportNorm.Height);
 
 		glViewport(mViewportLeft, mViewportTop, mViewportWidth, mViewportHeight);
 		BS_CHECK_GL_ERROR();
@@ -2667,51 +2667,51 @@ namespace bs { namespace ct
 	GpuParamBlockDesc GLRenderAPI::GenerateParamBlockDesc(const String& name, Vector<GpuParamDataDesc>& params)
 	{
 		GpuParamBlockDesc block;
-		block.blockSize = 0;
-		block.isShareable = true;
-		block.name = name;
-		block.slot = 0;
-		block.set = 0;
+		block.BlockSize = 0;
+		block.IsShareable = true;
+		block.Name = name;
+		block.Slot = 0;
+		block.Set = 0;
 
 		for (auto& param : params)
 		{
 			UINT32 size;
 			
-			if(param.type == GPDT_STRUCT)
+			if(param.Type == GPDT_STRUCT)
 			{
 				// Structs are always aligned and rounded up to vec4
-				size = Math::DivideAndRoundUp(param.elementSize, 16U) * 4;
-				block.blockSize = Math::DivideAndRoundUp(block.blockSize, 4U) * 4;
+				size = Math::DivideAndRoundUp(param.ElementSize, 16U) * 4;
+				block.BlockSize = Math::DivideAndRoundUp(block.BlockSize, 4U) * 4;
 			}
 			else
-				size = GLSLParamParser::CalcInterfaceBlockElementSizeAndOffset(param.type, param.arraySize, block.blockSize);
+				size = GLSLParamParser::CalcInterfaceBlockElementSizeAndOffset(param.Type, param.ArraySize, block.BlockSize);
 
-			if (param.arraySize > 1)
+			if (param.ArraySize > 1)
 			{
-				param.elementSize = size;
-				param.arrayElementStride = size;
-				param.cpuMemOffset = block.blockSize;
-				param.gpuMemOffset = 0;
+				param.ElementSize = size;
+				param.ArrayElementStride = size;
+				param.CpuMemOffset = block.BlockSize;
+				param.GpuMemOffset = 0;
 				
-				block.blockSize += size * param.arraySize;
+				block.BlockSize += size * param.ArraySize;
 			}
 			else
 			{
-				param.elementSize = size;
-				param.arrayElementStride = size;
-				param.cpuMemOffset = block.blockSize;
-				param.gpuMemOffset = 0;
+				param.ElementSize = size;
+				param.ArrayElementStride = size;
+				param.CpuMemOffset = block.BlockSize;
+				param.GpuMemOffset = 0;
 
-				block.blockSize += size;
+				block.BlockSize += size;
 			}
 
-			param.paramBlockSlot = 0;
-			param.paramBlockSet = 0;
+			param.ParamBlockSlot = 0;
+			param.ParamBlockSet = 0;
 		}
 
 		// Constant buffer size must always be a multiple of 16
-		if (block.blockSize % 4 != 0)
-			block.blockSize += (4 - (block.blockSize % 4));
+		if (block.BlockSize % 4 != 0)
+			block.BlockSize += (4 - (block.BlockSize % 4));
 
 		return block;
 	}

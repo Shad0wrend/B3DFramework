@@ -14,7 +14,7 @@ namespace bs { namespace ct {
 		{
 		case TEX_TYPE_1D:
 		{
-			if (desc.numArraySlices <= 1)
+			if (desc.NumArraySlices <= 1)
 				target = GL_TEXTURE_1D;
 			else
 				target = GL_TEXTURE_1D_ARRAY;
@@ -25,14 +25,14 @@ namespace bs { namespace ct {
 		{
 			if(props.GetNumSamples() <= 1)
 			{
-				if (desc.numArraySlices <= 1)
+				if (desc.NumArraySlices <= 1)
 					target = GL_TEXTURE_2D;
 				else
 					target = GL_TEXTURE_2D_ARRAY;
 			}
 			else
 			{
-				if (desc.numArraySlices <= 1)
+				if (desc.NumArraySlices <= 1)
 					target = GL_TEXTURE_2D_MULTISAMPLE;
 				else
 					target = GL_TEXTURE_2D_MULTISAMPLE_ARRAY;
@@ -44,16 +44,16 @@ namespace bs { namespace ct {
 			break;
 		case TEX_TYPE_CUBE_MAP:
 		{
-			if(desc.numArraySlices % 6 == 0)
+			if(desc.NumArraySlices % 6 == 0)
 			{
-				if (desc.numArraySlices == 6)
+				if (desc.NumArraySlices == 6)
 					target = GL_TEXTURE_CUBE_MAP;
 				else
 					target = GL_TEXTURE_CUBE_MAP_ARRAY;
 			}
 			else
 			{
-				if(desc.numArraySlices == 1)
+				if(desc.NumArraySlices == 1)
 					target = GL_TEXTURE_2D;
 				else
 					target = GL_TEXTURE_2D_ARRAY;
@@ -73,14 +73,14 @@ namespace bs { namespace ct {
 			target,
 			originalTexture,
 			texture->GetGlFormat(),
-			desc.mostDetailMip,
-			desc.numMips,
-			desc.firstArraySlice,
-			desc.numArraySlices);
+			desc.MostDetailMip,
+			desc.NumMips,
+			desc.FirstArraySlice,
+			desc.NumArraySlices);
 		BS_CHECK_GL_ERROR();
 #endif
 
-		mTarget = GLTexture::GetGlTextureTarget(props.GetTextureType(), props.GetNumSamples(), desc.numArraySlices);
+		mTarget = GLTexture::GetGlTextureTarget(props.GetTextureType(), props.GetNumSamples(), desc.NumArraySlices);
 	}
 
 	GLTextureView::~GLTextureView()

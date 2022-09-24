@@ -199,14 +199,14 @@ namespace bs { namespace ct
 		GLchar* uniformName = (GLchar*)bs_alloc(sizeof(GLchar)* maxBufferSize);
 
 		GpuParamBlockDesc newGlobalBlockDesc;
-		newGlobalBlockDesc.slot = 0;
-		newGlobalBlockDesc.set = MapParameterToSet(type, ParamType::UniformBlock);
-		newGlobalBlockDesc.name = "BS_INTERNAL_Globals";
-		newGlobalBlockDesc.blockSize = 0;
-		newGlobalBlockDesc.isShareable = false;
+		newGlobalBlockDesc.Slot = 0;
+		newGlobalBlockDesc.Set = MapParameterToSet(type, ParamType::UniformBlock);
+		newGlobalBlockDesc.Name = "BS_INTERNAL_Globals";
+		newGlobalBlockDesc.BlockSize = 0;
+		newGlobalBlockDesc.IsShareable = false;
 
-		returnParamDesc.paramBlocks[newGlobalBlockDesc.name] = newGlobalBlockDesc;
-		GpuParamBlockDesc& globalBlockDesc = returnParamDesc.paramBlocks[newGlobalBlockDesc.name];
+		returnParamDesc.ParamBlocks[newGlobalBlockDesc.Name] = newGlobalBlockDesc;
+		GpuParamBlockDesc& globalBlockDesc = returnParamDesc.ParamBlocks[newGlobalBlockDesc.Name];
 
 		// Enumerate uniform blocks
 		GLint uniformBlockCount = 0;
@@ -236,15 +236,15 @@ namespace bs { namespace ct
 #endif
 
 			GpuParamBlockDesc newBlockDesc;
-			newBlockDesc.slot = index + 1;
-			newBlockDesc.set = MapParameterToSet(type, ParamType::UniformBlock);
-			newBlockDesc.name = uniformName;
-			newBlockDesc.blockSize = 0;
-			newBlockDesc.isShareable = true;
+			newBlockDesc.Slot = index + 1;
+			newBlockDesc.Set = MapParameterToSet(type, ParamType::UniformBlock);
+			newBlockDesc.Name = uniformName;
+			newBlockDesc.BlockSize = 0;
+			newBlockDesc.IsShareable = true;
 
-			returnParamDesc.paramBlocks[newBlockDesc.name] = newBlockDesc;
-			blockSlotToName.insert(std::make_pair(index + 1, newBlockDesc.name));
-			blockNames.insert(newBlockDesc.name);
+			returnParamDesc.ParamBlocks[newBlockDesc.Name] = newBlockDesc;
+			blockSlotToName.insert(std::make_pair(index + 1, newBlockDesc.Name));
+			blockNames.insert(newBlockDesc.Name);
 		}
 
 #if BS_OPENGL_4_3 || BS_OPENGLES_3_1
@@ -260,12 +260,12 @@ namespace bs { namespace ct
 			BS_CHECK_GL_ERROR();
 
 			GpuParamObjectDesc bufferParam;
-			bufferParam.name = uniformName;
-			bufferParam.slot = index;
-			bufferParam.type = GPOT_RWSTRUCTURED_BUFFER;
-			bufferParam.set = MapParameterToSet(type, ParamType::StorageBlock);
+			bufferParam.Name = uniformName;
+			bufferParam.Slot = index;
+			bufferParam.Type = GPOT_RWSTRUCTURED_BUFFER;
+			bufferParam.Set = MapParameterToSet(type, ParamType::StorageBlock);
 
-			returnParamDesc.buffers.insert(std::make_pair(uniformName, bufferParam));
+			returnParamDesc.Buffers.insert(std::make_pair(uniformName, bufferParam));
 		}
 #endif
 
@@ -517,55 +517,55 @@ namespace bs { namespace ct
 			if (isSampler)
 			{
 				GpuParamObjectDesc samplerParam;
-				samplerParam.name = paramName;
-				samplerParam.type = samplerType;
-				samplerParam.slot = glGetUniformLocation(glProgram, uniformName);
-				samplerParam.set = MapParameterToSet(type, ParamType::Sampler);
+				samplerParam.Name = paramName;
+				samplerParam.Type = samplerType;
+				samplerParam.Slot = glGetUniformLocation(glProgram, uniformName);
+				samplerParam.Set = MapParameterToSet(type, ParamType::Sampler);
 
 				GpuParamObjectDesc textureParam;
-				textureParam.name = paramName;
-				textureParam.type = textureType;
-				textureParam.slot = samplerParam.slot;
-				textureParam.set = MapParameterToSet(type, ParamType::Texture);
+				textureParam.Name = paramName;
+				textureParam.Type = textureType;
+				textureParam.Slot = samplerParam.Slot;
+				textureParam.Set = MapParameterToSet(type, ParamType::Texture);
 
-				returnParamDesc.samplers.insert(std::make_pair(paramName, samplerParam));
-				returnParamDesc.textures.insert(std::make_pair(paramName, textureParam));
+				returnParamDesc.Samplers.insert(std::make_pair(paramName, samplerParam));
+				returnParamDesc.Textures.insert(std::make_pair(paramName, textureParam));
 
 				BS_CHECK_GL_ERROR();
 			}
 			else if (isImage)
 			{
 				GpuParamObjectDesc textureParam;
-				textureParam.name = paramName;
-				textureParam.type = textureType;
-				textureParam.slot = glGetUniformLocation(glProgram, uniformName);
-				textureParam.set = MapParameterToSet(type, ParamType::Image);
+				textureParam.Name = paramName;
+				textureParam.Type = textureType;
+				textureParam.Slot = glGetUniformLocation(glProgram, uniformName);
+				textureParam.Set = MapParameterToSet(type, ParamType::Image);
 
-				returnParamDesc.loadStoreTextures.insert(std::make_pair(paramName, textureParam));
+				returnParamDesc.LoadStoreTextures.insert(std::make_pair(paramName, textureParam));
 
 				BS_CHECK_GL_ERROR();
 			}
 			else if (isBuffer)
 			{
 				GpuParamObjectDesc bufferParam;
-				bufferParam.name = paramName;
-				bufferParam.type = GPOT_BYTE_BUFFER;
-				bufferParam.slot = glGetUniformLocation(glProgram, uniformName);
-				bufferParam.set = MapParameterToSet(type, ParamType::Texture);
+				bufferParam.Name = paramName;
+				bufferParam.Type = GPOT_BYTE_BUFFER;
+				bufferParam.Slot = glGetUniformLocation(glProgram, uniformName);
+				bufferParam.Set = MapParameterToSet(type, ParamType::Texture);
 
-				returnParamDesc.buffers.insert(std::make_pair(paramName, bufferParam));
+				returnParamDesc.Buffers.insert(std::make_pair(paramName, bufferParam));
 
 				BS_CHECK_GL_ERROR();
 			}
 			else if(isRWBuffer)
 			{
 				GpuParamObjectDesc bufferParam;
-				bufferParam.name = paramName;
-				bufferParam.type = GPOT_RWBYTE_BUFFER;
-				bufferParam.slot = glGetUniformLocation(glProgram, uniformName);
-				bufferParam.set = MapParameterToSet(type, ParamType::Image);
+				bufferParam.Name = paramName;
+				bufferParam.Type = GPOT_RWBYTE_BUFFER;
+				bufferParam.Slot = glGetUniformLocation(glProgram, uniformName);
+				bufferParam.Set = MapParameterToSet(type, ParamType::Image);
 
-				returnParamDesc.buffers.insert(std::make_pair(paramName, bufferParam));
+				returnParamDesc.Buffers.insert(std::make_pair(paramName, bufferParam));
 
 				BS_CHECK_GL_ERROR();
 			}
@@ -583,9 +583,9 @@ namespace bs { namespace ct
 				GpuParamDataDesc gpuParam;
 
 				if (isInArray)
-					gpuParam.name = cleanParamName;
+					gpuParam.Name = cleanParamName;
 				else
-					gpuParam.name = paramName;
+					gpuParam.Name = paramName;
 
 				DetermineParamInfo(gpuParam, paramName, glProgram, index);
 
@@ -596,26 +596,26 @@ namespace bs { namespace ct
 
 					blockOffset = blockOffset / 4;
 
-					gpuParam.gpuMemOffset = blockOffset;
+					gpuParam.GpuMemOffset = blockOffset;
 
 					String& blockName = blockSlotToName[blockIndex + 1];
-					GpuParamBlockDesc& curBlockDesc = returnParamDesc.paramBlocks[blockName];
+					GpuParamBlockDesc& curBlockDesc = returnParamDesc.ParamBlocks[blockName];
 
-					gpuParam.paramBlockSlot = curBlockDesc.slot;
-					gpuParam.paramBlockSet = MapParameterToSet(type, ParamType::UniformBlock);
-					gpuParam.cpuMemOffset = blockOffset;
-					curBlockDesc.blockSize = std::max(curBlockDesc.blockSize, gpuParam.cpuMemOffset + gpuParam.arrayElementStride * gpuParam.arraySize);
+					gpuParam.ParamBlockSlot = curBlockDesc.Slot;
+					gpuParam.ParamBlockSet = MapParameterToSet(type, ParamType::UniformBlock);
+					gpuParam.CpuMemOffset = blockOffset;
+					curBlockDesc.BlockSize = std::max(curBlockDesc.BlockSize, gpuParam.CpuMemOffset + gpuParam.ArrayElementStride * gpuParam.ArraySize);
 
 					BS_CHECK_GL_ERROR();
 				}
 				else
 				{
-					gpuParam.gpuMemOffset = glGetUniformLocation(glProgram, uniformName);
-					gpuParam.paramBlockSlot = 0;
-					gpuParam.paramBlockSet = MapParameterToSet(type, ParamType::UniformBlock);
-					gpuParam.cpuMemOffset = globalBlockDesc.blockSize;
+					gpuParam.GpuMemOffset = glGetUniformLocation(glProgram, uniformName);
+					gpuParam.ParamBlockSlot = 0;
+					gpuParam.ParamBlockSet = MapParameterToSet(type, ParamType::UniformBlock);
+					gpuParam.CpuMemOffset = globalBlockDesc.BlockSize;
 
-					globalBlockDesc.blockSize = std::max(globalBlockDesc.blockSize, gpuParam.cpuMemOffset + gpuParam.arrayElementStride * gpuParam.arraySize);
+					globalBlockDesc.BlockSize = std::max(globalBlockDesc.BlockSize, gpuParam.CpuMemOffset + gpuParam.ArrayElementStride * gpuParam.ArraySize);
 
 					BS_CHECK_GL_ERROR();
 				}
@@ -624,7 +624,7 @@ namespace bs { namespace ct
 				// not part of a uniform block (in which case we treat struct members as separate parameters)
 				if (!inStruct || blockIndex == -1)
 				{
-					returnParamDesc.params.insert(std::make_pair(gpuParam.name, gpuParam));
+					returnParamDesc.Params.insert(std::make_pair(gpuParam.Name, gpuParam));
 					continue;
 				}
 
@@ -636,15 +636,15 @@ namespace bs { namespace ct
 				{
 					foundStructs[structName] = GpuParamDataDesc();
 					GpuParamDataDesc& structDesc = foundStructs[structName];
-					structDesc.type = GPDT_STRUCT;
-					structDesc.name = structName;
-					structDesc.arraySize = 1;
-					structDesc.elementSize = 0;
-					structDesc.arrayElementStride = 0;
-					structDesc.gpuMemOffset = gpuParam.gpuMemOffset;
-					structDesc.cpuMemOffset = gpuParam.cpuMemOffset;
-					structDesc.paramBlockSlot = gpuParam.paramBlockSlot;
-					structDesc.paramBlockSet = gpuParam.paramBlockSet;
+					structDesc.Type = GPDT_STRUCT;
+					structDesc.Name = structName;
+					structDesc.ArraySize = 1;
+					structDesc.ElementSize = 0;
+					structDesc.ArrayElementStride = 0;
+					structDesc.GpuMemOffset = gpuParam.GpuMemOffset;
+					structDesc.CpuMemOffset = gpuParam.CpuMemOffset;
+					structDesc.ParamBlockSlot = gpuParam.ParamBlockSlot;
+					structDesc.ParamBlockSet = gpuParam.ParamBlockSet;
 				}
 
 				// Update struct with size of the new parameter
@@ -652,49 +652,49 @@ namespace bs { namespace ct
 
 				if (arrayIdx == (UINT32)firstArrayIndex) // Determine element size only using the first array element
 				{
-					structDesc.elementSize = std::max(structDesc.elementSize, gpuParam.cpuMemOffset +
-						gpuParam.arrayElementStride * gpuParam.arraySize);
+					structDesc.ElementSize = std::max(structDesc.ElementSize, gpuParam.CpuMemOffset +
+						gpuParam.ArrayElementStride * gpuParam.ArraySize);
 
-					structDesc.gpuMemOffset = std::min(structDesc.gpuMemOffset, gpuParam.gpuMemOffset);
-					structDesc.cpuMemOffset = std::min(structDesc.cpuMemOffset, gpuParam.cpuMemOffset);
+					structDesc.GpuMemOffset = std::min(structDesc.GpuMemOffset, gpuParam.GpuMemOffset);
+					structDesc.CpuMemOffset = std::min(structDesc.CpuMemOffset, gpuParam.CpuMemOffset);
 				}
 
-				structDesc.arraySize = std::max(structDesc.arraySize, arrayIdx + 1);
+				structDesc.ArraySize = std::max(structDesc.ArraySize, arrayIdx + 1);
 			}
 		}
 
 		for(auto& entry : foundStructs)
 		{
-			entry.second.elementSize = entry.second.elementSize - entry.second.cpuMemOffset;
-			entry.second.arrayElementStride = Math::DivideAndRoundUp(entry.second.elementSize, 4U) * 4;
+			entry.second.ElementSize = entry.second.ElementSize - entry.second.CpuMemOffset;
+			entry.second.ArrayElementStride = Math::DivideAndRoundUp(entry.second.ElementSize, 4U) * 4;
 
-			returnParamDesc.params.insert(std::make_pair(entry.first, entry.second));
+			returnParamDesc.Params.insert(std::make_pair(entry.first, entry.second));
 		}
 
 		// Param blocks always need to be a multiple of 4, so make it so
-		for (auto iter = returnParamDesc.paramBlocks.begin(); iter != returnParamDesc.paramBlocks.end(); ++iter)
+		for (auto iter = returnParamDesc.ParamBlocks.begin(); iter != returnParamDesc.ParamBlocks.end(); ++iter)
 		{
 			GpuParamBlockDesc& blockDesc = iter->second;
 
-			if (blockDesc.blockSize % 4 != 0)
-				blockDesc.blockSize += (4 - (blockDesc.blockSize % 4));
+			if (blockDesc.BlockSize % 4 != 0)
+				blockDesc.BlockSize += (4 - (blockDesc.BlockSize % 4));
 		}
 
 #if BS_DEBUG_MODE
 		// Check if manually calculated and OpenGL buffer sizes match
-		for (auto iter = returnParamDesc.paramBlocks.begin(); iter != returnParamDesc.paramBlocks.end(); ++iter)
+		for (auto iter = returnParamDesc.ParamBlocks.begin(); iter != returnParamDesc.ParamBlocks.end(); ++iter)
 		{
-			if (iter->second.slot == 0)
+			if (iter->second.Slot == 0)
 				continue;
 
 			GLint blockSize = 0;
-			glGetActiveUniformBlockiv(glProgram, iter->second.slot - 1, GL_UNIFORM_BLOCK_DATA_SIZE, &blockSize);
+			glGetActiveUniformBlockiv(glProgram, iter->second.Slot - 1, GL_UNIFORM_BLOCK_DATA_SIZE, &blockSize);
 			BS_CHECK_GL_ERROR();
 
 			assert(blockSize % 4 == 0);
 			blockSize = blockSize / 4;
 
-			if ((INT32)iter->second.blockSize != blockSize)
+			if ((INT32)iter->second.BlockSize != blockSize)
 				BS_EXCEPT(InternalErrorException, "OpenGL specified and manual uniform block buffer sizes don't match!");
 		}
 #endif
@@ -707,7 +707,7 @@ namespace bs { namespace ct
 		GLint arraySize;
 		glGetActiveUniformsiv(programHandle, 1, &uniformIndex, GL_UNIFORM_SIZE, &arraySize);
 		BS_CHECK_GL_ERROR();
-		desc.arraySize = arraySize;
+		desc.ArraySize = arraySize;
 
 		GLint uniformType;
 		glGetActiveUniformsiv(programHandle, 1, &uniformIndex, GL_UNIFORM_TYPE, &uniformType);
@@ -716,80 +716,80 @@ namespace bs { namespace ct
 		switch (uniformType)
 		{
 		case GL_BOOL:
-			desc.type = GPDT_BOOL;
-			desc.elementSize = 1;
+			desc.Type = GPDT_BOOL;
+			desc.ElementSize = 1;
 			break;
 		case GL_FLOAT:
-			desc.type = GPDT_FLOAT1;
-			desc.elementSize = 1;
+			desc.Type = GPDT_FLOAT1;
+			desc.ElementSize = 1;
 			break;
 		case GL_FLOAT_VEC2:
-			desc.type = GPDT_FLOAT2;
-			desc.elementSize = 2;
+			desc.Type = GPDT_FLOAT2;
+			desc.ElementSize = 2;
 			break;
 		case GL_FLOAT_VEC3:
-			desc.type = GPDT_FLOAT3;
-			desc.elementSize = 3;
+			desc.Type = GPDT_FLOAT3;
+			desc.ElementSize = 3;
 			break;
 		case GL_FLOAT_VEC4:
-			desc.type = GPDT_FLOAT4;
-			desc.elementSize = 4;
+			desc.Type = GPDT_FLOAT4;
+			desc.ElementSize = 4;
 			break;
 		case GL_INT:
 		case GL_UNSIGNED_INT:
-			desc.type = GPDT_INT1;
-			desc.elementSize = 1;
+			desc.Type = GPDT_INT1;
+			desc.ElementSize = 1;
 			break;
 		case GL_INT_VEC2:
 		case GL_UNSIGNED_INT_VEC2:
-			desc.type = GPDT_INT2;
-			desc.elementSize = 2;
+			desc.Type = GPDT_INT2;
+			desc.ElementSize = 2;
 			break;
 		case GL_INT_VEC3:
 		case GL_UNSIGNED_INT_VEC3:
-			desc.type = GPDT_INT3;
-			desc.elementSize = 3;
+			desc.Type = GPDT_INT3;
+			desc.ElementSize = 3;
 			break;
 		case GL_INT_VEC4:
 		case GL_UNSIGNED_INT_VEC4:
-			desc.type = GPDT_INT4;
-			desc.elementSize = 4;
+			desc.Type = GPDT_INT4;
+			desc.ElementSize = 4;
 			break;
 		case GL_FLOAT_MAT2:
-			desc.type = GPDT_MATRIX_2X2;
-			desc.elementSize = 4;
+			desc.Type = GPDT_MATRIX_2X2;
+			desc.ElementSize = 4;
 			break;
 		case GL_FLOAT_MAT3:
-			desc.type = GPDT_MATRIX_3X3;
-			desc.elementSize = 9;
+			desc.Type = GPDT_MATRIX_3X3;
+			desc.ElementSize = 9;
 			break;
 		case GL_FLOAT_MAT4:
-			desc.type = GPDT_MATRIX_4X4;
-			desc.elementSize = 16;
+			desc.Type = GPDT_MATRIX_4X4;
+			desc.ElementSize = 16;
 			break;
 		case GL_FLOAT_MAT2x3:
-			desc.type = GPDT_MATRIX_2X3;
-			desc.elementSize = 6;
+			desc.Type = GPDT_MATRIX_2X3;
+			desc.ElementSize = 6;
 			break;
 		case GL_FLOAT_MAT3x2:
-			desc.type = GPDT_MATRIX_3X2;
-			desc.elementSize = 6;
+			desc.Type = GPDT_MATRIX_3X2;
+			desc.ElementSize = 6;
 			break;
 		case GL_FLOAT_MAT2x4:
-			desc.type = GPDT_MATRIX_2X4;
-			desc.elementSize = 8;
+			desc.Type = GPDT_MATRIX_2X4;
+			desc.ElementSize = 8;
 			break;
 		case GL_FLOAT_MAT4x2:
-			desc.type = GPDT_MATRIX_4X2;
-			desc.elementSize = 8;
+			desc.Type = GPDT_MATRIX_4X2;
+			desc.ElementSize = 8;
 			break;
 		case GL_FLOAT_MAT3x4:
-			desc.type = GPDT_MATRIX_3X4;
-			desc.elementSize = 12;
+			desc.Type = GPDT_MATRIX_3X4;
+			desc.ElementSize = 12;
 			break;
 		case GL_FLOAT_MAT4x3:
-			desc.type = GPDT_MATRIX_4X3;
-			desc.elementSize = 12;
+			desc.Type = GPDT_MATRIX_4X3;
+			desc.ElementSize = 12;
 			break;
 		default:
 			BS_EXCEPT(InternalErrorException, "Invalid shader parameter type: " + toString(uniformType) + " for parameter " + paramName);
@@ -805,13 +805,13 @@ namespace bs { namespace ct
 			{
 				assert(arrayStride % 4 == 0);
 
-				desc.arrayElementStride = arrayStride / 4;
+				desc.ArrayElementStride = arrayStride / 4;
 			}
 			else
-				desc.arrayElementStride = desc.elementSize;
+				desc.ArrayElementStride = desc.ElementSize;
 		}
 		else
-			desc.arrayElementStride = desc.elementSize;
+			desc.ArrayElementStride = desc.ElementSize;
 	}
 
 	UINT32 GLSLParamParser::MapParameterToSet(GpuProgramType progType, ParamType paramType)

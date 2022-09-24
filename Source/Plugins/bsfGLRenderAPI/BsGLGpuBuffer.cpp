@@ -17,13 +17,13 @@ namespace bs { namespace ct
 	{
 		assert((deviceMask == GDF_DEFAULT || deviceMask == GDF_PRIMARY) && "Multiple GPUs not supported natively on OpenGL.");
 
-		mFormat = GLPixelUtil::GetBufferFormat(desc.format);
+		mFormat = GLPixelUtil::GetBufferFormat(desc.Format);
 	}
 
 	GLGpuBuffer::GLGpuBuffer(const GPU_BUFFER_DESC& desc, SPtr<HardwareBuffer> underlyingBuffer)
 		: GpuBuffer(desc, std::move(underlyingBuffer))
 	{
-		mFormat = GLPixelUtil::GetBufferFormat(desc.format);
+		mFormat = GLPixelUtil::GetBufferFormat(desc.Format);
 	}
 
 	GLGpuBuffer::~GLGpuBuffer()

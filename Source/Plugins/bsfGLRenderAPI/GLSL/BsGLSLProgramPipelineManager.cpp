@@ -10,11 +10,11 @@ namespace bs { namespace ct
 		(const GLSLProgramPipelineManager::ProgramPipelineKey &key) const
 	{
 		std::size_t seed = 0;
-		bs_hash_combine(seed, key.vertexProgKey);
-		bs_hash_combine(seed, key.fragmentProgKey);
-		bs_hash_combine(seed, key.geometryProgKey);
-		bs_hash_combine(seed, key.hullProgKey);
-		bs_hash_combine(seed, key.domainProgKey);
+		bs_hash_combine(seed, key.VertexProgKey);
+		bs_hash_combine(seed, key.FragmentProgKey);
+		bs_hash_combine(seed, key.GeometryProgKey);
+		bs_hash_combine(seed, key.HullProgKey);
+		bs_hash_combine(seed, key.DomainProgKey);
 
 		return seed;
 	}
@@ -22,15 +22,15 @@ namespace bs { namespace ct
 	bool GLSLProgramPipelineManager::ProgramPipelineKeyEqual::operator()
 		(const GLSLProgramPipelineManager::ProgramPipelineKey &a, const GLSLProgramPipelineManager::ProgramPipelineKey &b) const
 	{
-		return a.vertexProgKey == b.vertexProgKey && a.fragmentProgKey == b.fragmentProgKey && a.geometryProgKey == b.geometryProgKey &&
-			a.hullProgKey == b.hullProgKey && a.domainProgKey == b.domainProgKey;
+		return a.VertexProgKey == b.VertexProgKey && a.FragmentProgKey == b.FragmentProgKey && a.GeometryProgKey == b.GeometryProgKey &&
+			a.HullProgKey == b.HullProgKey && a.DomainProgKey == b.DomainProgKey;
 	}
 
 	GLSLProgramPipelineManager::~GLSLProgramPipelineManager()
 	{
 		for (auto& pipeline : mPipelines)
 		{
-			glDeleteProgramPipelines(1, &pipeline.second.glHandle);
+			glDeleteProgramPipelines(1, &pipeline.second.GlHandle);
 			BS_CHECK_GL_ERROR();
 
 			BS_INC_RENDER_STAT_CAT(ResDestroyed, RenderStatObject_PipelineObject);
@@ -41,11 +41,11 @@ namespace bs { namespace ct
 		GLSLGpuProgram* geometryProgram, GLSLGpuProgram* hullProgram, GLSLGpuProgram* domainProgram)
 	{
 		ProgramPipelineKey key;
-		key.vertexProgKey = vertexProgram != nullptr ? vertexProgram->GetProgramId() : 0;
-		key.fragmentProgKey = fragmentProgram != nullptr ? fragmentProgram->GetProgramId() : 0;
-		key.geometryProgKey = geometryProgram != nullptr ? geometryProgram->GetProgramId() : 0;
-		key.hullProgKey = hullProgram != nullptr ? hullProgram->GetProgramId() : 0;
-		key.domainProgKey = domainProgram != nullptr ? domainProgram->GetProgramId() : 0;
+		key.VertexProgKey = vertexProgram != nullptr ? vertexProgram->GetProgramId() : 0;
+		key.FragmentProgKey = fragmentProgram != nullptr ? fragmentProgram->GetProgramId() : 0;
+		key.GeometryProgKey = geometryProgram != nullptr ? geometryProgram->GetProgramId() : 0;
+		key.HullProgKey = hullProgram != nullptr ? hullProgram->GetProgramId() : 0;
+		key.DomainProgKey = domainProgram != nullptr ? domainProgram->GetProgramId() : 0;
 
 		auto iterFind = mPipelines.find(key);
 
@@ -53,36 +53,36 @@ namespace bs { namespace ct
 		{
 			GLSLProgramPipeline newPipeline;
 
-			glGenProgramPipelines(1, &newPipeline.glHandle);
+			glGenProgramPipelines(1, &newPipeline.GlHandle);
 			BS_CHECK_GL_ERROR();
 
 			if(vertexProgram != nullptr)
 			{
-				glUseProgramStages(newPipeline.glHandle, GL_VERTEX_SHADER_BIT, vertexProgram->GetGlHandle());
+				glUseProgramStages(newPipeline.GlHandle, GL_VERTEX_SHADER_BIT, vertexProgram->GetGlHandle());
 				BS_CHECK_GL_ERROR();
 			}
 
 			if(fragmentProgram != nullptr)
 			{
-				glUseProgramStages(newPipeline.glHandle, GL_FRAGMENT_SHADER_BIT, fragmentProgram->GetGlHandle());
+				glUseProgramStages(newPipeline.GlHandle, GL_FRAGMENT_SHADER_BIT, fragmentProgram->GetGlHandle());
 				BS_CHECK_GL_ERROR();
 			}
 
 			if(geometryProgram != nullptr)
 			{
-				glUseProgramStages(newPipeline.glHandle, GL_GEOMETRY_SHADER_BIT, geometryProgram->GetGlHandle());
+				glUseProgramStages(newPipeline.GlHandle, GL_GEOMETRY_SHADER_BIT, geometryProgram->GetGlHandle());
 				BS_CHECK_GL_ERROR();
 			}
 
 			if(hullProgram != nullptr)
 			{
-				glUseProgramStages(newPipeline.glHandle, GL_TESS_CONTROL_SHADER_BIT, hullProgram->GetGlHandle());
+				glUseProgramStages(newPipeline.GlHandle, GL_TESS_CONTROL_SHADER_BIT, hullProgram->GetGlHandle());
 				BS_CHECK_GL_ERROR();
 			}
 
 			if(domainProgram != nullptr)
 			{
-				glUseProgramStages(newPipeline.glHandle, GL_TESS_EVALUATION_SHADER_BIT, domainProgram->GetGlHandle());
+				glUseProgramStages(newPipeline.GlHandle, GL_TESS_EVALUATION_SHADER_BIT, domainProgram->GetGlHandle());
 				BS_CHECK_GL_ERROR();
 			}
 

@@ -32,7 +32,7 @@ namespace bs { namespace ct
 		{
 			UINT64 hWnd;
 			parentWindow->GetCustomAttribute("WINDOW", &hWnd);
-			desc.platformSpecific["parentWindowHandle"] = toString(hWnd);
+			desc.PlatformSpecific["parentWindowHandle"] = toString(hWnd);
 		}
 
 		bs::Win32RenderWindow* window = new (bs_alloc<bs::Win32RenderWindow>()) bs::Win32RenderWindow(desc, windowId, *this);

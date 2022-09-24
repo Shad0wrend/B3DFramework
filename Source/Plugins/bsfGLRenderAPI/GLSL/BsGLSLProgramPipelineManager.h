@@ -13,7 +13,7 @@ namespace bs { namespace ct
 	/**	Wrapper around OpenGL pipeline object. */
 	struct GLSLProgramPipeline
 	{
-		GLuint glHandle;
+		GLuint GlHandle;
 	};
 
 	/**
@@ -40,11 +40,11 @@ namespace bs { namespace ct
 		/**	Key that uniquely identifies a pipeline object. */
 		struct ProgramPipelineKey
 		{
-			UINT32 vertexProgKey;
-			UINT32 fragmentProgKey;
-			UINT32 geometryProgKey;
-			UINT32 hullProgKey;
-			UINT32 domainProgKey;
+			UINT32 VertexProgKey;
+			UINT32 FragmentProgKey;
+			UINT32 GeometryProgKey;
+			UINT32 HullProgKey;
+			UINT32 DomainProgKey;
 		};
 
 		/**	Used for calculating a hash code from pipeline object key. */

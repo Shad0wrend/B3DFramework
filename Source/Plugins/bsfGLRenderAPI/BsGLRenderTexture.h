@@ -81,7 +81,7 @@ namespace bs
 		 *
 		 * @note	Thread safe.
 		 */
-		bool CheckFormat(PixelFormat format) const { return mProps[format].valid; }
+		bool CheckFormat(PixelFormat format) const { return mProps[format].Valid; }
 
 		/**
 		 * Get the closest supported alternative format. If format is supported, returns format.
@@ -102,12 +102,12 @@ namespace bs
 			/** Allowed modes/properties for this pixel format. */
 			struct Mode
 			{
-				UINT32 depth;     /**< Depth format (0 = no depth). */
-				UINT32 stencil;   /**< Stencil format (0 = no stencil). */
+				UINT32 Depth;     /**< Depth format (0 = no depth). */
+				UINT32 Stencil;   /**< Stencil format (0 = no stencil). */
 			};
 
-			Vector<Mode> modes;
-			bool valid;
+			Vector<Mode> Modes;
+			bool Valid;
 		};
 
 		/** Detect which internal formats are allowed to be used on render target color or depth/stencil surfaces. */
