@@ -433,23 +433,23 @@ namespace bs
 		ConstReverseIterator crbegin() const { return Crbegin(); } // NOLINT
 		ConstReverseIterator crend() const { return Crend(); } // NOLINT
 
-		UINT32 size() const { return Size(); }
-		UINT32 capacity() const { return Capacity(); }
+		UINT32 size() const { return Size(); } // NOLINT
+		UINT32 capacity() const { return Capacity(); } // NOLINT
 
-		Type* data() { return Data(); }
-		const Type* data() const { return Data(); }
+		Type* data() { return Data(); } // NOLINT
+		const Type* data() const { return Data(); } // NOLINT
 
-		Type& front() { return Front(); }
-		const Type& front() const { return Front(); }
+		Type& front() { return Front(); } // NOLINT
+		const Type& front() const { return Front(); } // NOLINT
 
-		Type& back() { return Back(); }
-		const Type& back() const { return Back(); }
+		Type& back() { return Back(); } // NOLINT
+		const Type& back() const { return Back(); } // NOLINT
 
-		Iterator erase(ConstIterator iter) { return Erase(iter); } 
-		void clear() { Clear(); }
+		Iterator erase(ConstIterator iter) { return Erase(iter); }  // NOLINT
+		void clear() { Clear(); } // NOLINT
 
-		void reserve(UINT32 capacity) { Reserve(capacity); }
-		void resize(UINT32 size, const Type& value = Type()) { Resize(size, value); }
+		void reserve(UINT32 capacity) { Reserve(capacity); } // NOLINT
+		void resize(UINT32 size, const Type& value = Type()) { Resize(size, value); } // NOLINT
 
 
 	private:
