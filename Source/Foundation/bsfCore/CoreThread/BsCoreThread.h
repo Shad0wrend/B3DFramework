@@ -59,8 +59,8 @@ namespace bs
 		/** Contains data about an queue for a specific thread. */
 		struct ThreadQueueContainer
 		{
-			SPtr<CommandQueue<CommandQueueSync>> queue;
-			bool isMain;
+			SPtr<CommandQueue<CommandQueueSync>> Queue;
+			bool IsMain;
 		};
 
 		/** Wrapper for the thread-local variable because MSVC can't deal with a thread-local variable marked with dllimport or dllexport,

@@ -20,7 +20,7 @@ namespace bs
 
 	void ScriptSerializableArray::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_CreateProperty", (void*)&ScriptSerializableArray::InternalCreateProperty);
+		metaData.ScriptClass->AddInternalCall("Internal_CreateProperty", (void*)&ScriptSerializableArray::InternalCreateProperty);
 	}
 
 	MonoObject* ScriptSerializableArray::Create(const ScriptSerializableProperty* native, MonoObject* managed)
@@ -28,10 +28,10 @@ namespace bs
 		SPtr<ManagedSerializableTypeInfoArray> arrayTypeInfo =
 			std::static_pointer_cast<ManagedSerializableTypeInfoArray>(native->GetTypeInfo());
 
-		MonoReflectionType* internalElementType = MonoUtil::GetType(arrayTypeInfo->mElementType->GetMonoClass());
+		MonoReflectionType* internalElementType = MonoUtil::GetType(arrayTypeInfo->MElementType->GetMonoClass());
 
 		void* params[2] = { internalElementType, managed };
-		MonoObject* managedInstance = metaData.scriptClass->CreateInstance(params, 2);
+		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance(params, 2);
 
 		new (bs_alloc<ScriptSerializableArray>()) ScriptSerializableArray(managedInstance, arrayTypeInfo);
 
@@ -40,6 +40,6 @@ namespace bs
 
 	MonoObject* ScriptSerializableArray::InternalCreateProperty(ScriptSerializableArray* nativeInstance)
 	{
-		return ScriptSerializableProperty::Create(nativeInstance->mTypeInfo->mElementType);
+		return ScriptSerializableProperty::Create(nativeInstance->mTypeInfo->MElementType);
 	}
 }

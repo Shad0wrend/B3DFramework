@@ -18,28 +18,28 @@ namespace bs
 		 */
 		void setStepCoefficients(const TKeyframe<float>& lhs, const TKeyframe<float>& rhs, float(&coefficients)[4])
 		{
-			if (lhs.outTangent != std::numeric_limits<float>::infinity() &&
-				rhs.inTangent != std::numeric_limits<float>::infinity())
+			if (lhs.OutTangent != std::numeric_limits<float>::infinity() &&
+				rhs.InTangent != std::numeric_limits<float>::infinity())
 				return;
 
 			coefficients[0] = 0.0f;
 			coefficients[1] = 0.0f;
 			coefficients[2] = 0.0f;
-			coefficients[3] = lhs.value;
+			coefficients[3] = lhs.Value;
 		}
 
 		void setStepCoefficients(const TKeyframe<Vector3>& lhs, const TKeyframe<Vector3>& rhs, Vector3(&coefficients)[4])
 		{
 			for (UINT32 i = 0; i < 3; i++)
 			{
-				if (lhs.outTangent[i] != std::numeric_limits<float>::infinity() &&
-					rhs.inTangent[i] != std::numeric_limits<float>::infinity())
+				if (lhs.OutTangent[i] != std::numeric_limits<float>::infinity() &&
+					rhs.InTangent[i] != std::numeric_limits<float>::infinity())
 					continue;
 
 				coefficients[0][i] = 0.0f;
 				coefficients[1][i] = 0.0f;
 				coefficients[2][i] = 0.0f;
-				coefficients[3][i] = lhs.value[i];
+				coefficients[3][i] = lhs.Value[i];
 			}
 		}
 
@@ -47,14 +47,14 @@ namespace bs
 		{
 			for (UINT32 i = 0; i < 2; i++)
 			{
-				if (lhs.outTangent[i] != std::numeric_limits<float>::infinity() &&
-					rhs.inTangent[i] != std::numeric_limits<float>::infinity())
+				if (lhs.OutTangent[i] != std::numeric_limits<float>::infinity() &&
+					rhs.InTangent[i] != std::numeric_limits<float>::infinity())
 					continue;
 
 				coefficients[0][i] = 0.0f;
 				coefficients[1][i] = 0.0f;
 				coefficients[2][i] = 0.0f;
-				coefficients[3][i] = lhs.value[i];
+				coefficients[3][i] = lhs.Value[i];
 			}
 		}
 
@@ -62,36 +62,36 @@ namespace bs
 		{
 			for (UINT32 i = 0; i < 4; i++)
 			{
-				if (lhs.outTangent[i] != std::numeric_limits<float>::infinity() &&
-					rhs.inTangent[i] != std::numeric_limits<float>::infinity())
+				if (lhs.OutTangent[i] != std::numeric_limits<float>::infinity() &&
+					rhs.InTangent[i] != std::numeric_limits<float>::infinity())
 					continue;
 
 				coefficients[0][i] = 0.0f;
 				coefficients[1][i] = 0.0f;
 				coefficients[2][i] = 0.0f;
-				coefficients[3][i] = lhs.value[i];
+				coefficients[3][i] = lhs.Value[i];
 			}
 		}
 
 		/** Checks if any components of the keyframes are constant (step) functions and updates the key value. */
 		void setStepValue(const TKeyframe<float>& lhs, const TKeyframe<float>& rhs, float& value)
 		{
-			if (lhs.outTangent != std::numeric_limits<float>::infinity() &&
-				rhs.inTangent != std::numeric_limits<float>::infinity())
+			if (lhs.OutTangent != std::numeric_limits<float>::infinity() &&
+				rhs.InTangent != std::numeric_limits<float>::infinity())
 				return;
 
-			value = lhs.value;
+			value = lhs.Value;
 		}
 
 		void setStepValue(const TKeyframe<Vector3>& lhs, const TKeyframe<Vector3>& rhs, Vector3& value)
 		{
 			for (UINT32 i = 0; i < 3; i++)
 			{
-				if (lhs.outTangent[i] != std::numeric_limits<float>::infinity() &&
-					rhs.inTangent[i] != std::numeric_limits<float>::infinity())
+				if (lhs.OutTangent[i] != std::numeric_limits<float>::infinity() &&
+					rhs.InTangent[i] != std::numeric_limits<float>::infinity())
 					continue;
 
-				value[i] = lhs.value[i];
+				value[i] = lhs.Value[i];
 			}
 		}
 
@@ -99,11 +99,11 @@ namespace bs
 		{
 			for (UINT32 i = 0; i < 2; i++)
 			{
-				if (lhs.outTangent[i] != std::numeric_limits<float>::infinity() &&
-					rhs.inTangent[i] != std::numeric_limits<float>::infinity())
+				if (lhs.OutTangent[i] != std::numeric_limits<float>::infinity() &&
+					rhs.InTangent[i] != std::numeric_limits<float>::infinity())
 					continue;
 
-				value[i] = lhs.value[i];
+				value[i] = lhs.Value[i];
 			}
 		}
 
@@ -111,19 +111,19 @@ namespace bs
 		{
 			for (UINT32 i = 0; i < 4; i++)
 			{
-				if (lhs.outTangent[i] != std::numeric_limits<float>::infinity() &&
-					rhs.inTangent[i] != std::numeric_limits<float>::infinity())
+				if (lhs.OutTangent[i] != std::numeric_limits<float>::infinity() &&
+					rhs.InTangent[i] != std::numeric_limits<float>::infinity())
 					continue;
 
-				value[i] = lhs.value[i];
+				value[i] = lhs.Value[i];
 			}
 		}
 
 		/** Checks if any components of the keyframes are constant (step) functions and updates the key tangent. */
 		void setStepTangent(const TKeyframe<float>& lhs, const TKeyframe<float>& rhs, float& tangent)
 		{
-			if (lhs.outTangent != std::numeric_limits<float>::infinity() &&
-				rhs.inTangent != std::numeric_limits<float>::infinity())
+			if (lhs.OutTangent != std::numeric_limits<float>::infinity() &&
+				rhs.InTangent != std::numeric_limits<float>::infinity())
 				return;
 
 			tangent = std::numeric_limits<float>::infinity();
@@ -133,8 +133,8 @@ namespace bs
 		{
 			for (UINT32 i = 0; i < 3; i++)
 			{
-				if (lhs.outTangent[i] != std::numeric_limits<float>::infinity() &&
-					rhs.inTangent[i] != std::numeric_limits<float>::infinity())
+				if (lhs.OutTangent[i] != std::numeric_limits<float>::infinity() &&
+					rhs.InTangent[i] != std::numeric_limits<float>::infinity())
 					continue;
 
 				tangent[i] = std::numeric_limits<float>::infinity();
@@ -145,8 +145,8 @@ namespace bs
 		{
 			for (UINT32 i = 0; i < 2; i++)
 			{
-				if (lhs.outTangent[i] != std::numeric_limits<float>::infinity() &&
-					rhs.inTangent[i] != std::numeric_limits<float>::infinity())
+				if (lhs.OutTangent[i] != std::numeric_limits<float>::infinity() &&
+					rhs.InTangent[i] != std::numeric_limits<float>::infinity())
 					continue;
 
 				tangent[i] = std::numeric_limits<float>::infinity();
@@ -157,8 +157,8 @@ namespace bs
 		{
 			for (UINT32 i = 0; i < 4; i++)
 			{
-				if (lhs.outTangent[i] != std::numeric_limits<float>::infinity() &&
-					rhs.inTangent[i] != std::numeric_limits<float>::infinity())
+				if (lhs.OutTangent[i] != std::numeric_limits<float>::infinity() &&
+					rhs.InTangent[i] != std::numeric_limits<float>::infinity())
 					continue;
 
 				tangent[i] = std::numeric_limits<float>::infinity();
@@ -276,26 +276,26 @@ namespace bs
 		template<class T>
 		TKeyframe<T> evaluateKey(const TKeyframe<T>& lhs, const TKeyframe<T>& rhs, float time)
 		{
-			float length = rhs.time - lhs.time;
+			float length = rhs.Time - lhs.Time;
 
 			if (Math::ApproxEquals(length, 0.0f))
 				return lhs;
 
 			// Resize tangents since we're not evaluating the curve over unit range
 			float invLength = 1.0f / length;
-			float t = (time - lhs.time) * invLength;
-			T leftTangent = lhs.outTangent * length;
-			T rightTangent = rhs.inTangent * length;
+			float t = (time - lhs.Time) * invLength;
+			T leftTangent = lhs.OutTangent * length;
+			T rightTangent = rhs.InTangent * length;
 
 			TKeyframe<T> output;
-			output.time = time;
-			output.value = Math::CubicHermite(t, lhs.value, rhs.value, leftTangent, rightTangent);
-			output.inTangent = Math::CubicHermiteD1(t, lhs.value, rhs.value, leftTangent, rightTangent) * invLength;
+			output.Time = time;
+			output.Value = Math::CubicHermite(t, lhs.Value, rhs.Value, leftTangent, rightTangent);
+			output.InTangent = Math::CubicHermiteD1(t, lhs.Value, rhs.Value, leftTangent, rightTangent) * invLength;
 
-			setStepValue(lhs, rhs, output.value);
-			setStepTangent(lhs, rhs, output.inTangent);
+			setStepValue(lhs, rhs, output.Value);
+			setStepTangent(lhs, rhs, output.InTangent);
 
-			output.outTangent = output.inTangent;
+			output.OutTangent = output.InTangent;
 
 			return output;
 		}
@@ -304,8 +304,8 @@ namespace bs
 		TKeyframe<INT32> evaluateKey(const TKeyframe<INT32>& lhs, const TKeyframe<INT32>& rhs, float time)
 		{
 			TKeyframe<INT32> output;
-			output.time = time;
-			output.value = time >= rhs.time ? rhs.value : lhs.value;
+			output.Time = time;
+			output.Value = time >= rhs.Time ? rhs.Value : lhs.Value;
 
 			return output;
 		}
@@ -326,7 +326,7 @@ namespace bs
 		template<class T>
 		void calculateCoeffs(const TKeyframe<T>& lhs, const TKeyframe<T>& rhs, float time, T (&coeffs)[4])
 		{
-			float length = rhs.time - lhs.time;
+			float length = rhs.Time - lhs.Time;
 
 			// Handle the case where both keys are identical, or close enough to cause precision issues
 			if (length < 0.000001f)
@@ -334,10 +334,10 @@ namespace bs
 				coeffs[0] = impl::getZero<T>();
 				coeffs[1] = impl::getZero<T>();
 				coeffs[2] = impl::getZero<T>();
-				coeffs[3] = lhs.value;
+				coeffs[3] = lhs.Value;
 			}
 			else
-				Math::CubicHermiteCoefficients(lhs.value, rhs.value, lhs.outTangent, rhs.inTangent, length, coeffs);
+				Math::CubicHermiteCoefficients(lhs.Value, rhs.Value, lhs.OutTangent, rhs.InTangent, length, coeffs);
 
 			setStepCoefficients(lhs, rhs, coeffs);
 		}
@@ -345,8 +345,8 @@ namespace bs
 		template<>
 		void calculateCoeffs(const TKeyframe<INT32>& lhs, const TKeyframe<INT32>& rhs, float time, INT32 (&coeffs)[4])
 		{
-			coeffs[0] = lhs.value;
-			coeffs[1] = rhs.value;
+			coeffs[0] = lhs.Value;
+			coeffs[1] = rhs.Value;
 		}
 
 		template<class T>
@@ -354,23 +354,23 @@ namespace bs
 		{
 			calculateCoeffs(lhs, rhs, time, coeffs);
 
-			return impl::evaluateCubic(time, lhs.time, rhs.time, coeffs);
+			return impl::evaluateCubic(time, lhs.Time, rhs.Time, coeffs);
 		}
 
 		template<>
 		INT32 evaluateAndUpdateCache(const TKeyframe<INT32>& lhs, const TKeyframe<INT32>& rhs, float time,
 			INT32 (&coeffs)[4])
 		{
-			coeffs[0] = lhs.value;
-			coeffs[1] = rhs.value;
+			coeffs[0] = lhs.Value;
+			coeffs[1] = rhs.Value;
 
-			return time >= rhs.time ? rhs.value : lhs.value;
+			return time >= rhs.Time ? rhs.Value : lhs.Value;
 		}
 
 		template<class T>
 		T evaluate(const TKeyframe<T>& lhs, const TKeyframe<T>& rhs, float time)
 		{
-			float length = rhs.time - lhs.time;
+			float length = rhs.Time - lhs.Time;
 			assert(length > 0.0f);
 
 			float t;
@@ -386,12 +386,12 @@ namespace bs
 			else
 			{
 				// Scale from arbitrary range to [0, 1]
-				t = (time - lhs.time) / length;
-				leftTangent = lhs.outTangent * length;
-				rightTangent = rhs.inTangent * length;
+				t = (time - lhs.Time) / length;
+				leftTangent = lhs.OutTangent * length;
+				rightTangent = rhs.InTangent * length;
 			}
 
-			T output = Math::CubicHermite(t, lhs.value, rhs.value, leftTangent, rightTangent);
+			T output = Math::CubicHermite(t, lhs.Value, rhs.Value, leftTangent, rightTangent);
 			setStepValue(lhs, rhs, output);
 
 			return output;
@@ -400,7 +400,7 @@ namespace bs
 		template<>
 		INT32 evaluate(const TKeyframe<INT32>& lhs, const TKeyframe<INT32>& rhs, float time)
 		{
-			return time >= rhs.time ? rhs.value : lhs.value;
+			return time >= rhs.Time ? rhs.Value : lhs.Value;
 		}
 
 		template <class T>
@@ -572,17 +572,17 @@ namespace bs
 		// Ensure keyframes are sorted
 		if(!keyframes.empty())
 		{
-			float time = keyframes[0].time;
+			float time = keyframes[0].Time;
 			for (UINT32 i = 1; i < (UINT32)keyframes.size(); i++)
 			{
-				assert(keyframes[i].time >= time);
-				time = keyframes[i].time;
+				assert(keyframes[i].Time >= time);
+				time = keyframes[i].Time;
 			}
 		}
 #endif
 
 		if (!keyframes.empty())
-			mEnd = keyframes.back().time;
+			mEnd = keyframes.back().Time;
 		else
 			mEnd = 0.0f;
 
@@ -621,9 +621,9 @@ namespace bs
 			cache.cachedCubicCoefficients[0] = impl::getZero<T>();
 			cache.cachedCubicCoefficients[1] = impl::getZero<T>();
 			cache.cachedCubicCoefficients[2] = impl::getZero<T>();
-			cache.cachedCubicCoefficients[3] = mKeyframes[0].value;
+			cache.cachedCubicCoefficients[3] = mKeyframes[0].Value;
 
-			return mKeyframes[0].value;
+			return mKeyframes[0].Value;
 		}
 		
 		if(time >= mEnd) // Clamp to end, cache constant of the final key and return
@@ -636,9 +636,9 @@ namespace bs
 			cache.cachedCubicCoefficients[0] = impl::getZero<T>();
 			cache.cachedCubicCoefficients[1] = impl::getZero<T>();
 			cache.cachedCubicCoefficients[2] = impl::getZero<T>();
-			cache.cachedCubicCoefficients[3] = mKeyframes[lastKey].value;
+			cache.cachedCubicCoefficients[3] = mKeyframes[lastKey].Value;
 
-			return mKeyframes[lastKey].value;
+			return mKeyframes[lastKey].Value;
 		}
 
 		// Since our value is not in cache, search for the valid pair of keys of interpolate
@@ -651,8 +651,8 @@ namespace bs
 		const KeyFrame& leftKey = mKeyframes[leftKeyIdx];
 		const KeyFrame& rightKey = mKeyframes[rightKeyIdx];
 
-		cache.cachedCurveStart = leftKey.time;
-		cache.cachedCurveEnd = rightKey.time;
+		cache.cachedCurveStart = leftKey.Time;
+		cache.cachedCurveEnd = rightKey.Time;
 
 		return impl::evaluateAndUpdateCache(leftKey, rightKey, time, cache.cachedCubicCoefficients);
 	}
@@ -675,7 +675,7 @@ namespace bs
 		const KeyFrame& rightKey = mKeyframes[rightKeyIdx];
 
 		if (leftKeyIdx == rightKeyIdx)
-			return leftKey.value;
+			return leftKey.Value;
 
 		return impl::evaluate(leftKey, rightKey, time);
 	}
@@ -695,7 +695,7 @@ namespace bs
 			BuildIntegrationCache(integrationCache);
 
 		if(numKeyframes == 1)
-			return (T)(mKeyframes[0].value * (time - mKeyframes[0].time));
+			return (T)(mKeyframes[0].Value * (time - mKeyframes[0].Time));
 
 		UINT32 leftKeyIdx;
 		UINT32 rightKeyIdx;
@@ -708,7 +708,7 @@ namespace bs
 		const KeyFrame& lhs = mKeyframes[leftKeyIdx];
 		T(&coeffs)[4] = integrationCache.coeffs[leftKeyIdx];
 
-		const float t = time - lhs.time;
+		const float t = time - lhs.Time;
 		return integrationCache.segmentSums[leftKeyIdx] + (T)(impl::evaluateCubic(t, 0.0f, 0.0f, coeffs) * t);
 	}
 
@@ -728,8 +728,8 @@ namespace bs
 
 		if(numKeyframes == 1)
 		{
-			float t = time - mKeyframes[0].time;
-			return (T)(mKeyframes[0].value * t * t * 0.5f);
+			float t = time - mKeyframes[0].Time;
+			return (T)(mKeyframes[0].Value * t * t * 0.5f);
 		}
 
 		UINT32 leftKeyIdx;
@@ -738,7 +738,7 @@ namespace bs
 		FindKeys(time, leftKeyIdx, rightKeyIdx);
 
 		const KeyFrame& lhs = mKeyframes[leftKeyIdx];
-		const float t = time - lhs.time;
+		const float t = time - lhs.Time;
 
 		const T sum = (T)(integrationCache.doubleSegmentSums[leftKeyIdx] + integrationCache.segmentSums[leftKeyIdx] * t);
 		if(leftKeyIdx == rightKeyIdx)
@@ -777,14 +777,14 @@ namespace bs
 		if (animInstance.cachedKey != (UINT32)-1)
 		{
 			const KeyFrame& curKey = mKeyframes[animInstance.cachedKey];
-			if (time >= curKey.time)
+			if (time >= curKey.Time)
 			{
 				const UINT32 end = std::min((UINT32)mKeyframes.size(), animInstance.cachedKey + CACHE_LOOKAHEAD + 1);
 				for (UINT32 i = animInstance.cachedKey + 1; i < end; i++)
 				{
 					const KeyFrame& nextKey = mKeyframes[i];
 
-					if (time < nextKey.time)
+					if (time < nextKey.Time)
 					{
 						leftKey = i - 1;
 						rightKey = i;
@@ -801,7 +801,7 @@ namespace bs
 				{
 					const KeyFrame& prevKey = mKeyframes[i];
 
-					if (time >= prevKey.time)
+					if (time >= prevKey.Time)
 					{
 						leftKey = i;
 						rightKey = i + 1;
@@ -829,7 +829,7 @@ namespace bs
 			INT32 half = searchLength >> 1;
 			INT32 mid = start + half;
 
-			if(time < mKeyframes[mid].time)
+			if(time < mKeyframes[mid].Time)
 			{
 				searchLength = half;
 			}
@@ -855,7 +855,7 @@ namespace bs
 		const KeyFrame& leftKey = mKeyframes[leftKeyIdx];
 		const KeyFrame& rightKey = mKeyframes[rightKeyIdx];
 
-		if (Math::Abs(leftKey.time - time) <= Math::Abs(rightKey.time - time))
+		if (Math::Abs(leftKey.Time - time) <= Math::Abs(rightKey.Time - time))
 			return leftKeyIdx;
 		
 		return rightKeyIdx;
@@ -882,16 +882,16 @@ namespace bs
 
 		const KeyFrame& startKey = mKeyframes[startKeyIdx];
 
-		if (!Math::ApproxEquals(startKey.time, start))
+		if (!Math::ApproxEquals(startKey.Time, start))
 		{
-			if(start > startKey.time)
+			if(start > startKey.Time)
 			{
 				if (mKeyframes.size() > (startKeyIdx + 1))
 					keyFrames.push_back(EvaluateKey(startKey, mKeyframes[startKeyIdx + 1], start));
 				else
 				{
 					TKeyframe<T> keyCopy = startKey;
-					keyCopy.time = start;
+					keyCopy.Time = start;
 
 					keyFrames.push_back(keyCopy);
 				}
@@ -906,7 +906,7 @@ namespace bs
 				else
 				{
 					TKeyframe<T> keyCopy = startKey;
-					keyCopy.time = start;
+					keyCopy.Time = start;
 
 					keyFrames.push_back(keyCopy);
 				}
@@ -921,16 +921,16 @@ namespace bs
 		if (!Math::ApproxEquals(end - start, 0.0f))
 		{
 			const KeyFrame& endKey = mKeyframes[endKeyIdx];
-			if(!Math::ApproxEquals(endKey.time, end))
+			if(!Math::ApproxEquals(endKey.Time, end))
 			{
-				if(end > endKey.time)
+				if(end > endKey.Time)
 				{
 					if (mKeyframes.size() > (endKeyIdx + 1))
 						keyFrames.push_back(EvaluateKey(endKey, mKeyframes[endKeyIdx + 1], end));
 					else
 					{
 						TKeyframe<T> keyCopy = endKey;
-						keyCopy.time = end;
+						keyCopy.Time = end;
 
 						keyFrames.push_back(keyCopy);
 					}
@@ -945,7 +945,7 @@ namespace bs
 					else
 					{
 						TKeyframe<T> keyCopy = endKey;
-						keyCopy.time = end;
+						keyCopy.Time = end;
 
 						keyFrames.push_back(keyCopy);
 					}
@@ -957,7 +957,7 @@ namespace bs
 		}
 
 		for (auto& entry : keyFrames)
-			entry.time -= start;
+			entry.Time -= start;
 
 		return TAnimationCurve<T>(keyFrames);
 	}
@@ -972,7 +972,7 @@ namespace bs
 		const auto numKeys = (UINT32)mKeyframes.size();
 
 		for(UINT32 i = 1; i < numKeys; i++)
-			mKeyframes[i].value = impl::getDiff(mKeyframes[i].value, refKey.value);
+			mKeyframes[i].Value = impl::getDiff(mKeyframes[i].Value, refKey.Value);
 	}
 
 	template <class T>
@@ -982,9 +982,9 @@ namespace bs
 			return std::make_pair(0.0f, 0.0f);
 
 		if(mKeyframes.size() == 1)
-			return std::make_pair(mKeyframes[0].time, mKeyframes[0].time);
+			return std::make_pair(mKeyframes[0].Time, mKeyframes[0].Time);
 
-		return std::make_pair(mKeyframes[0].time, mKeyframes[mKeyframes.size() - 1].time);
+		return std::make_pair(mKeyframes[0].Time, mKeyframes[mKeyframes.size() - 1].Time);
 	}
 
 	template <class T>
@@ -995,7 +995,7 @@ namespace bs
 			return std::make_pair(impl::getZero<T>(), impl::getZero<T>());
 
 		std::pair<T, T> output = { std::numeric_limits<T>::infinity(), -std::numeric_limits<T>::infinity() };
-		impl::getMinMax(output, mKeyframes[0].value);
+		impl::getMinMax(output, mKeyframes[0].Value);
 
 		for(UINT32 i = 1; i < numKeys; i++)
 		{
@@ -1003,10 +1003,10 @@ namespace bs
 			const KeyFrame& rhs = mKeyframes[i];
 
 			T coeffs[4];
-			impl::calculateCoeffs(lhs, rhs, lhs.time, coeffs);
-			impl::calcMinMax(output, lhs.time, rhs.time, coeffs);
+			impl::calculateCoeffs(lhs, rhs, lhs.Time, coeffs);
+			impl::calcMinMax(output, lhs.Time, rhs.Time, coeffs);
 
-			T endVal = impl::evaluateCubic(rhs.time, lhs.time, 0.0f, coeffs);
+			T endVal = impl::evaluateCubic(rhs.Time, lhs.Time, 0.0f, coeffs);
 			impl::getMinMax(output, endVal);
 		}
 
@@ -1031,9 +1031,9 @@ namespace bs
 			const KeyFrame& rhs = mKeyframes[i];
 
 			T (&coeffs)[4] = cache.coeffs[i - 1];
-			impl::calcMinMaxIntegrated(output, lhs.time, rhs.time, cache.segmentSums[i - 1], coeffs);
+			impl::calcMinMaxIntegrated(output, lhs.Time, rhs.Time, cache.segmentSums[i - 1], coeffs);
 
-			float t = rhs.time - lhs.time;
+			float t = rhs.Time - lhs.Time;
 			T endVal = (T)(cache.segmentSums[i - 1] + impl::evaluateCubic(t, 0.0f, 0.0f, coeffs) * t);
 			impl::getMinMax(output, endVal);
 		}
@@ -1059,10 +1059,10 @@ namespace bs
 			const KeyFrame& rhs = mKeyframes[i];
 
 			T (&coeffs)[4] = cache.coeffs[i - 1];
-			impl::calcMinMaxIntegratedDouble(output, lhs.time, rhs.time, cache.doubleSegmentSums[i - 1],
+			impl::calcMinMaxIntegratedDouble(output, lhs.Time, rhs.Time, cache.doubleSegmentSums[i - 1],
 				cache.segmentSums[i - 1], coeffs);
 
-			float t = rhs.time - lhs.time;
+			float t = rhs.Time - lhs.Time;
 			T endVal = (T)(cache.doubleSegmentSums[i - 1] + cache.segmentSums[i - 1] * t +
 				impl::evaluateCubic(t, 0.0f, 0.0f, coeffs) * t * t);
 			impl::getMinMax(output, endVal);
@@ -1089,12 +1089,12 @@ namespace bs
 			const TKeyframe<T>& rhs = mKeyframes[i];
 
 			T(&coeffs)[4] = cache.coeffs[i - 1];
-			impl::calculateCoeffs(lhs, rhs, lhs.time, coeffs);
+			impl::calculateCoeffs(lhs, rhs, lhs.Time, coeffs);
 			impl::integrate(coeffs);
 
 			// Evaluate value at the end of the segment and add to the cache (this value is the total area under
 			// the segment)
-			const float t = rhs.time - lhs.time;
+			const float t = rhs.Time - lhs.Time;
 			const T value = (T)(impl::evaluateCubic(t, 0.0f, 0.0f, coeffs) * t);
 			cache.segmentSums[i] = cache.segmentSums[i - 1] + value;
 		}
@@ -1119,12 +1119,12 @@ namespace bs
 			const TKeyframe<T>& rhs = mKeyframes[i];
 
 			T(&coeffs)[4] = cache.coeffs[i - 1];
-			impl::calculateCoeffs(lhs, rhs, lhs.time, coeffs);
+			impl::calculateCoeffs(lhs, rhs, lhs.Time, coeffs);
 			impl::integrate(coeffs);
 
 			// Evaluate value at the end of the segment and add to the cache (this value is the total area under
 			// the segment)
-			const float t = rhs.time - lhs.time;
+			const float t = rhs.Time - lhs.Time;
 			T value = (T)(impl::evaluateCubic(t, 0.0f, 0.0f, coeffs) * t);
 			cache.segmentSums[i] = cache.segmentSums[i - 1] + value;
 

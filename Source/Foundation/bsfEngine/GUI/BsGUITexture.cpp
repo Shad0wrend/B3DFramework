@@ -19,7 +19,7 @@ namespace bs
 		:GUIElement(styleName, dimensions), mScaleMode(scale), mTransparent(transparent), mUsingStyleTexture(false)
 	{
 		mImageSprite = bs_new<ImageSprite>();
-		mDesc.animationStartTime = gTime().GetTime();
+		mDesc.AnimationStartTime = gTime().GetTime();
 
 		if(texture != nullptr)
 		{
@@ -28,7 +28,7 @@ namespace bs
 		}
 		else
 		{
-			mActiveTexture = GetStyleInternal()->normal.texture;
+			mActiveTexture = GetStyleInternal()->Normal.Texture;
 			mUsingStyleTexture = true;
 		}
 
@@ -109,7 +109,7 @@ namespace bs
 
 	void GUITexture::SetTexture(const HSpriteTexture& texture)
 	{
-		Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
+		Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).Optimal;
 
 		mActiveTexture = texture;
 
@@ -118,9 +118,9 @@ namespace bs
 		mActiveTextureHeight = isTexLoaded ? mActiveTexture->GetFrameHeight() : 0;
 
 		mUsingStyleTexture = false;
-		mDesc.animationStartTime = gTime().GetTime();
+		mDesc.AnimationStartTime = gTime().GetTime();
 
-		Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
+		Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).Optimal;
 		if (origSize != newSize)
 			MarkLayoutAsDirtyInternal();
 		else
@@ -132,55 +132,55 @@ namespace bs
 		Vector2I textureSize;
 		if (SpriteTexture::CheckIsLoaded(mActiveTexture))
 		{
-			mDesc.texture = mActiveTexture;
-			textureSize.x = mDesc.texture->GetFrameWidth();
-			textureSize.y = mDesc.texture->GetFrameHeight();
+			mDesc.Texture = mActiveTexture;
+			textureSize.X = mDesc.Texture->GetFrameWidth();
+			textureSize.Y = mDesc.Texture->GetFrameHeight();
 		}
-		Vector2I destSize(mLayoutData.area.width, mLayoutData.area.height);
+		Vector2I destSize(mLayoutData.Area.Width, mLayoutData.Area.Height);
 
 		// ScaleToFit is the only scaling mode that might result in the GUITexture area not being completely covered by
 		// the sprite. We need the actual sprite size and offsets to center it.
 		if(mScaleMode == TextureScaleMode::ScaleToFit)
 		{
-			if(destSize.x != 0 && destSize.y != 0)
+			if(destSize.X != 0 && destSize.Y != 0)
 			{
-				float aspectX = textureSize.x / (float)destSize.x;
-				float aspectY = textureSize.y / (float)destSize.y;
+				float aspectX = textureSize.X / (float)destSize.X;
+				float aspectY = textureSize.Y / (float)destSize.Y;
 
 				if (aspectY > aspectX)
 				{
-					destSize.x = Math::RoundToPosInt(textureSize.x / aspectY);
-					destSize.y = Math::RoundToPosInt(textureSize.y / aspectY);
+					destSize.X = Math::RoundToPosInt(textureSize.X / aspectY);
+					destSize.Y = Math::RoundToPosInt(textureSize.Y / aspectY);
 				}
 				else
 				{
-					destSize.x = Math::RoundToPosInt(textureSize.x / aspectX);
-					destSize.y = Math::RoundToPosInt(textureSize.y / aspectX);
+					destSize.X = Math::RoundToPosInt(textureSize.X / aspectX);
+					destSize.Y = Math::RoundToPosInt(textureSize.Y / aspectX);
 				}
 			}
 
 			mImageSpriteOffset = Vector2I(
-				((INT32)mLayoutData.area.width - destSize.x) / 2,
-				((INT32)mLayoutData.area.height - destSize.y) / 2
+				((INT32)mLayoutData.Area.Width - destSize.X) / 2,
+				((INT32)mLayoutData.Area.Height - destSize.Y) / 2
 			);
 		}
 		else
 			mImageSpriteOffset = Vector2I();
 
-		mDesc.width = (UINT32)destSize.x;
-		mDesc.height = (UINT32)destSize.y;
+		mDesc.Width = (UINT32)destSize.X;
+		mDesc.Height = (UINT32)destSize.Y;
 
-		mDesc.borderLeft = GetStyleInternal()->border.left;
-		mDesc.borderRight = GetStyleInternal()->border.right;
-		mDesc.borderTop = GetStyleInternal()->border.top;
-		mDesc.borderBottom = GetStyleInternal()->border.bottom;
-		mDesc.transparent = mTransparent;
-		mDesc.color = GetTint();
+		mDesc.BorderLeft = GetStyleInternal()->Border.Left;
+		mDesc.BorderRight = GetStyleInternal()->Border.Right;
+		mDesc.BorderTop = GetStyleInternal()->Border.Top;
+		mDesc.BorderBottom = GetStyleInternal()->Border.Bottom;
+		mDesc.Transparent = mTransparent;
+		mDesc.Color = GetTint();
 
 		if(mScaleMode != TextureScaleMode::ScaleToFit)
-			mDesc.uvScale = ImageSprite::GetTextureUvScale(textureSize, destSize, mScaleMode);
+			mDesc.UvScale = ImageSprite::GetTextureUvScale(textureSize, destSize, mScaleMode);
 		else
-			mDesc.uvScale = Vector2::ONE;
+			mDesc.UvScale = Vector2::ONE;
 		
 		mImageSprite->Update(mDesc, (UINT64)GetParentWidgetInternal());
 
@@ -197,8 +197,8 @@ namespace bs
 	{
 		if (mUsingStyleTexture)
 		{
-			mActiveTexture = GetStyleInternal()->normal.texture;
-			mDesc.animationStartTime = gTime().GetTime();
+			mActiveTexture = GetStyleInternal()->Normal.Texture;
+			mDesc.AnimationStartTime = gTime().GetTime();
 
 			bool isTexLoaded = SpriteTexture::CheckIsLoaded(mActiveTexture);
 			mActiveTextureWidth = isTexLoaded ? mActiveTexture->GetFrameWidth() : 0;
@@ -216,23 +216,23 @@ namespace bs
 		// safely detect this. (In short, don't do mActiveTexture->getFrameWidth/Height() here)
 		
 		if(GetDimensionsInternal().FixedWidth())
-			optimalSize.x = GetDimensionsInternal().minWidth;
+			optimalSize.X = GetDimensionsInternal().MinWidth;
 		else
 		{
 			if (SpriteTexture::CheckIsLoaded(mActiveTexture))
-				optimalSize.x = mActiveTextureWidth;
+				optimalSize.X = mActiveTextureWidth;
 			else
-				optimalSize.x = GetDimensionsInternal().maxWidth;
+				optimalSize.X = GetDimensionsInternal().MaxWidth;
 		}
 
 		if(GetDimensionsInternal().FixedHeight())
-			optimalSize.y = GetDimensionsInternal().minHeight;
+			optimalSize.Y = GetDimensionsInternal().MinHeight;
 		else
 		{
 			if (SpriteTexture::CheckIsLoaded(mActiveTexture))
-				optimalSize.y = mActiveTextureHeight;
+				optimalSize.Y = mActiveTextureHeight;
 			else
-				optimalSize.y = GetDimensionsInternal().maxHeight;
+				optimalSize.Y = GetDimensionsInternal().MaxHeight;
 		}
 
 		return optimalSize;
@@ -252,7 +252,7 @@ namespace bs
 		UINT32 vertexStride = sizeof(Vector2) * 2;
 		UINT32 indexStride = sizeof(UINT32);
 
-		Vector2I layoutOffset = Vector2I(mLayoutData.area.x, mLayoutData.area.y) + mImageSpriteOffset + offset;
+		Vector2I layoutOffset = Vector2I(mLayoutData.Area.X, mLayoutData.Area.Y) + mImageSpriteOffset + offset;
 		mImageSprite->FillBuffer(vertices, uvs, indices, vertexOffset, indexOffset, maxNumVerts, maxNumIndices,
 			vertexStride, indexStride, renderElementIdx, layoutOffset, mLayoutData.GetLocalClipRect());
 	}

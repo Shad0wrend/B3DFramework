@@ -21,13 +21,13 @@ namespace bs
 
 	void RTTIField::CheckIsArray(bool array) const
 	{
-		if(array && !schema.isArray)
+		if(array && !Schema.IsArray)
 		{
 			BS_EXCEPT(InternalErrorException,
 				"Invalid field type. Needed an array type but got a single type.");
 		}
 
-		if(!array && schema.isArray)
+		if(!array && Schema.IsArray)
 		{
 			BS_EXCEPT(InternalErrorException,
 				"Invalid field type. Needed a single type but got an array type.");

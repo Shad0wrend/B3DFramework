@@ -37,17 +37,17 @@ namespace bs
 
 	void ScriptGUIToggle::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIToggle::InternalCreateInstance);
-		metaData.scriptClass->AddInternalCall("Internal_SetContent", (void*)&ScriptGUIToggle::InternalSetContent);
-		metaData.scriptClass->AddInternalCall("Internal_GetValue", (void*)&ScriptGUIToggle::InternalGetValue);
-		metaData.scriptClass->AddInternalCall("Internal_SetValue", (void*)&ScriptGUIToggle::InternalSetValue);
-		metaData.scriptClass->AddInternalCall("Internal_SetTint", (void*)&ScriptGUIToggle::InternalSetTint);
+		metaData.ScriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIToggle::InternalCreateInstance);
+		metaData.ScriptClass->AddInternalCall("Internal_SetContent", (void*)&ScriptGUIToggle::InternalSetContent);
+		metaData.ScriptClass->AddInternalCall("Internal_GetValue", (void*)&ScriptGUIToggle::InternalGetValue);
+		metaData.ScriptClass->AddInternalCall("Internal_SetValue", (void*)&ScriptGUIToggle::InternalSetValue);
+		metaData.ScriptClass->AddInternalCall("Internal_SetTint", (void*)&ScriptGUIToggle::InternalSetTint);
 
-		onClickThunk = (OnClickThunkDef)metaData.scriptClass->GetMethod("DoOnClick")->GetThunk();
-		onHoverThunk = (OnHoverThunkDef)metaData.scriptClass->GetMethod("DoOnHover")->GetThunk();
-		onOutThunk = (OnOutThunkDef)metaData.scriptClass->GetMethod("DoOnOut")->GetThunk();
-		onToggledThunk = (OnToggledThunkDef)metaData.scriptClass->GetMethod("DoOnToggled", 1)->GetThunk();
-		onDoubleClickThunk = (OnDoubleClickThunkDef)metaData.scriptClass->GetMethod("DoOnDoubleClick")->GetThunk();
+		onClickThunk = (OnClickThunkDef)metaData.ScriptClass->GetMethod("DoOnClick")->GetThunk();
+		onHoverThunk = (OnHoverThunkDef)metaData.ScriptClass->GetMethod("DoOnHover")->GetThunk();
+		onOutThunk = (OnOutThunkDef)metaData.ScriptClass->GetMethod("DoOnOut")->GetThunk();
+		onToggledThunk = (OnToggledThunkDef)metaData.ScriptClass->GetMethod("DoOnToggled", 1)->GetThunk();
+		onDoubleClickThunk = (OnDoubleClickThunkDef)metaData.ScriptClass->GetMethod("DoOnDoubleClick")->GetThunk();
 	}
 
 	void ScriptGUIToggle::InternalCreateInstance(MonoObject* instance, __GUIContentInterop* content,
@@ -73,11 +73,11 @@ namespace bs
 
 		auto nativeInstance = new (bs_alloc<ScriptGUIToggle>()) ScriptGUIToggle(instance, guiToggle);
 
-		guiToggle->onClick.Connect(std::bind(&::bs::ScriptGUIToggle::OnClick, nativeInstance));
-		guiToggle->onHover.Connect(std::bind(&::bs::ScriptGUIToggle::OnHover, nativeInstance));
-		guiToggle->onOut.Connect(std::bind(&ScriptGUIToggle::OnOut, nativeInstance));
-		guiToggle->onToggled.Connect(std::bind(&::bs::ScriptGUIToggle::OnToggled, nativeInstance, std::placeholders::_1));
-		guiToggle->onDoubleClick.Connect(std::bind(&::bs::ScriptGUIToggle::OnDoubleClick, nativeInstance));
+		guiToggle->OnClick.Connect(std::bind(&::bs::ScriptGUIToggle::OnClick, nativeInstance));
+		guiToggle->OnHover.Connect(std::bind(&::bs::ScriptGUIToggle::OnHover, nativeInstance));
+		guiToggle->OnOut.Connect(std::bind(&ScriptGUIToggle::OnOut, nativeInstance));
+		guiToggle->OnToggled.Connect(std::bind(&::bs::ScriptGUIToggle::OnToggled, nativeInstance, std::placeholders::_1));
+		guiToggle->OnDoubleClick.Connect(std::bind(&::bs::ScriptGUIToggle::OnDoubleClick, nativeInstance));
 	}
 
 	void ScriptGUIToggle::InternalSetContent(ScriptGUIToggle* nativeInstance, __GUIContentInterop* content)

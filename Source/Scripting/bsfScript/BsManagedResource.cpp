@@ -28,13 +28,13 @@ namespace bs
 		SPtr<ManagedResourceMetaData> metaData = bs_shared_ptr_new<ManagedResourceMetaData>();
 		mMetaData = metaData;
 
-		MonoUtil::GetClassName(managedInstance, metaData->typeNamespace, metaData->typeName);
+		MonoUtil::GetClassName(managedInstance, metaData->TypeNamespace, metaData->TypeName);
 
-		MonoClass* managedClass = MonoManager::Instance().FindClass(metaData->typeNamespace, metaData->typeName);
+		MonoClass* managedClass = MonoManager::Instance().FindClass(metaData->TypeNamespace, metaData->TypeName);
 		if (managedClass == nullptr)
 		{
 			BS_LOG(Warning, Script, "Cannot create managed component: {0}.{1} because that type doesn't exist.",
-				metaData->typeNamespace, metaData->typeName);
+				metaData->TypeNamespace, metaData->TypeName);
 			return;
 		}
 	}
@@ -60,13 +60,13 @@ namespace bs
 
 			bs.Encode(serializableObject.get(), stream);
 
-			backupData.size = (UINT32)stream->Size();
-			backupData.data = stream->DisownMemory();
+			backupData.Size = (UINT32)stream->Size();
+			backupData.Data = stream->DisownMemory();
 		}
 		else
 		{
-			backupData.size = 0;
-			backupData.data = nullptr;
+			backupData.Size = 0;
+			backupData.Data = nullptr;
 		}
 
 		return backupData;
@@ -77,16 +77,16 @@ namespace bs
 		MonoObject* instance = mOwner->GetManagedInstance();
 		if (instance != nullptr)
 		{
-			if (data.data != nullptr)
+			if (data.Data != nullptr)
 			{
 				BinarySerializer bs;
 				SPtr<ManagedSerializableObject> serializableObject = std::static_pointer_cast<ManagedSerializableObject>(
-					bs.Decode(bs_shared_ptr_new<MemoryDataStream>(data.data, data.size), data.size));
+					bs.Decode(bs_shared_ptr_new<MemoryDataStream>(data.Data, data.Size), data.Size));
 				
 				SPtr<ManagedResourceMetaData> managedResMetaData = std::static_pointer_cast<ManagedResourceMetaData>(mMetaData);
 				SPtr<ManagedSerializableObjectInfo> currentObjInfo = nullptr;
 
-				if (ScriptAssemblyManager::Instance().GetSerializableObjectInfo(managedResMetaData->typeNamespace, managedResMetaData->typeName, currentObjInfo))
+				if (ScriptAssemblyManager::Instance().GetSerializableObjectInfo(managedResMetaData->TypeNamespace, managedResMetaData->TypeName, currentObjInfo))
 					serializableObject->Deserialize(instance, currentObjInfo);
 			}
 		}

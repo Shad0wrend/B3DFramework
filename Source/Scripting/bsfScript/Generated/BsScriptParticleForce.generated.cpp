@@ -17,10 +17,10 @@ namespace bs
 
 	void ScriptParticleForce::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_SetOptions", (void*)&ScriptParticleForce::InternalSetOptions);
-		metaData.scriptClass->AddInternalCall("Internal_GetOptions", (void*)&ScriptParticleForce::InternalGetOptions);
-		metaData.scriptClass->AddInternalCall("Internal_Create", (void*)&ScriptParticleForce::InternalCreate);
-		metaData.scriptClass->AddInternalCall("Internal_Create0", (void*)&ScriptParticleForce::InternalCreate0);
+		metaData.ScriptClass->AddInternalCall("Internal_SetOptions", (void*)&ScriptParticleForce::InternalSetOptions);
+		metaData.ScriptClass->AddInternalCall("Internal_GetOptions", (void*)&ScriptParticleForce::InternalGetOptions);
+		metaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptParticleForce::InternalCreate);
+		metaData.ScriptClass->AddInternalCall("Internal_Create0", (void*)&ScriptParticleForce::InternalCreate0);
 
 	}
 
@@ -31,7 +31,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptParticleForce>()) ScriptParticleForce(managedInstance, value);
 		return managedInstance;
 	}
@@ -49,7 +49,7 @@ namespace bs
 
 		__PARTICLE_FORCE_DESCInterop interop__output;
 		interop__output = ScriptPARTICLE_FORCE_DESC::ToInterop(tmp__output);
-		MonoUtil::ValueCopy(__output, &interop__output, ScriptPARTICLE_FORCE_DESC::GetMetaData()->scriptClass->GetInternalClassInternal());
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptPARTICLE_FORCE_DESC::GetMetaData()->ScriptClass->GetInternalClassInternal());
 	}
 
 	void ScriptParticleForce::InternalCreate(MonoObject* managedInstance, __PARTICLE_FORCE_DESCInterop* desc)

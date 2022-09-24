@@ -30,17 +30,17 @@ namespace bs
 		AnimationClipState() = default;
 
 		/** Layer the clip is playing on. Multiple clips can be played simulatenously on different layers. */
-		UINT32 layer = 0;
-		float time = 0.0f; /**< Current time the animation is playing from. */
-		float speed = 1.0f; /**< Speed at which the animation is playing. */
-		float weight = 1.0f; /**< Determines how much of an influence does the clip have on the final pose. */
+		UINT32 Layer = 0;
+		float Time = 0.0f; /**< Current time the animation is playing from. */
+		float Speed = 1.0f; /**< Speed at which the animation is playing. */
+		float Weight = 1.0f; /**< Determines how much of an influence does the clip have on the final pose. */
 		/** Determines what happens to other animation clips when a new clip starts playing. */
-		AnimWrapMode wrapMode = AnimWrapMode::Loop;
+		AnimWrapMode WrapMode = AnimWrapMode::Loop;
 		/**
 		 * Determines should the time be advanced automatically. Certain type of animation clips don't involve playback
 		 * (e.g. for blending where animation weight controls the animation).
 		 */
-		bool stopped = false;
+		bool Stopped = false;
 	};
 
 	/** @} */
@@ -93,21 +93,21 @@ namespace bs
 		AnimationClipInfo() = default;
 		AnimationClipInfo(const HAnimationClip& clip);
 
-		HAnimationClip clip;
-		AnimationClipState state;
-		AnimPlaybackType playbackType = AnimPlaybackType::Normal;
+		HAnimationClip Clip;
+		AnimationClipState State;
+		AnimPlaybackType PlaybackType = AnimPlaybackType::Normal;
 
-		float fadeDirection = 0.0f;
-		float fadeTime = 0.0f;
-		float fadeLength = 0.0f;
+		float FadeDirection = 0.0f;
+		float FadeTime = 0.0f;
+		float FadeLength = 0.0f;
 
 		/**
 		 * Version of the animation curves used by the AnimationProxy. Used to detecting the internal animation curves
 		 * changed.
 		 */
-		UINT64 curveVersion = 0;
-		UINT32 layerIdx = (UINT32)-1; /**< Layer index this clip belongs to in AnimationProxy structure. */
-		UINT32 stateIdx = (UINT32)-1; /**< State index this clip belongs to in AnimationProxy structure. */
+		UINT64 CurveVersion = 0;
+		UINT32 LayerIdx = (UINT32)-1; /**< Layer index this clip belongs to in AnimationProxy structure. */
+		UINT32 StateIdx = (UINT32)-1; /**< State index this clip belongs to in AnimationProxy structure. */
 	};
 
 	/** Represents an animation clip used in 1D blending. Each clip has a position on the number line. */
@@ -115,60 +115,60 @@ namespace bs
 	{
 		BlendClipInfo() = default;
 
-		HAnimationClip clip;
-		float position = 0.0f;
+		HAnimationClip Clip;
+		float Position = 0.0f;
 	};
 
 	/** Defines a 1D blend where multiple animation clips are blended between each other using linear interpolation. */
 	struct BS_CORE_EXPORT BS_SCRIPT_EXPORT(pl:true,m:Animation) Blend1DInfo
 	{
-		Vector<BlendClipInfo> clips;
+		Vector<BlendClipInfo> Clips;
 	};
 
 	/** Defines a 2D blend where two animation clips are blended between each other using bilinear interpolation. */
 	struct BS_SCRIPT_EXPORT(pl:true,m:Animation) Blend2DInfo
 	{
-		HAnimationClip topLeftClip;
-		HAnimationClip topRightClip;
-		HAnimationClip botLeftClip;
-		HAnimationClip botRightClip;
+		HAnimationClip TopLeftClip;
+		HAnimationClip TopRightClip;
+		HAnimationClip BotLeftClip;
+		HAnimationClip BotRightClip;
 	};
 
 	/** Contains a mapping between a scene object and an animation curve it is animated with. */
 	struct AnimatedSceneObject
 	{
-		HSceneObject so;
-		String curveName;
+		HSceneObject So;
+		String CurveName;
 	};
 
 	/** Information about a set of morph shapes blended sequentially. */
 	struct MorphChannelInfo
 	{
-		float weight;
-		UINT32 shapeStart;
-		UINT32 shapeCount;
+		float Weight;
+		UINT32 ShapeStart;
+		UINT32 ShapeCount;
 
-		UINT32 frameCurveIdx;
-		UINT32 weightCurveIdx;
+		UINT32 FrameCurveIdx;
+		UINT32 WeightCurveIdx;
 	};
 
 	/** Morph shape and its contribution to the final shape. */
 	struct MorphShapeInfo
 	{
-		SPtr<MorphShape> shape;
-		float frameWeight;
-		float finalWeight;
+		SPtr<MorphShape> Shape;
+		float FrameWeight;
+		float FinalWeight;
 	};
 
 	/** Contains information about a scene object that is animated by a specific animation curve. */
 	struct AnimatedSceneObjectInfo
 	{
-		UINT64 id; /**< Instance ID of the scene object. */
-		INT32 boneIdx; /**< Bone from which to access the transform. If -1 then no bone mapping is present. */
-		INT32 layerIdx; /**< If no bone mapping, layer on which the animation containing the referenced curve is in. */
-		INT32 stateIdx; /**< If no bone mapping, animation state containing the referenced curve. */
-		AnimationCurveMapping curveIndices; /**< Indices of the curves used for the transform. */
-		UINT32 hash; /**< Hash value of the scene object's transform. */
+		UINT64 Id; /**< Instance ID of the scene object. */
+		INT32 BoneIdx; /**< Bone from which to access the transform. If -1 then no bone mapping is present. */
+		INT32 LayerIdx; /**< If no bone mapping, layer on which the animation containing the referenced curve is in. */
+		INT32 StateIdx; /**< If no bone mapping, animation state containing the referenced curve. */
+		AnimationCurveMapping CurveIndices; /**< Indices of the curves used for the transform. */
+		UINT32 Hash; /**< Hash value of the scene object's transform. */
 	};
 
 	/** Represents a copy of the Animation data for use specifically on the animation thread. */
@@ -245,38 +245,38 @@ namespace bs
 		/** Destroys all dynamically allocated objects. */
 		void Clear();
 
-		UINT64 id;
+		UINT64 Id;
 
 		// Skeletal animation
-		AnimationStateLayer* layers = nullptr;
-		UINT32 numLayers = 0;
-		SPtr<Skeleton> skeleton;
-		SkeletonMask skeletonMask;
-		UINT32 numSceneObjects = 0;
-		AnimatedSceneObjectInfo* sceneObjectInfos = nullptr;
-		Matrix4* sceneObjectTransforms = nullptr;
+		AnimationStateLayer* Layers = nullptr;
+		UINT32 NumLayers = 0;
+		SPtr<Skeleton> Skeleton;
+		SkeletonMask SkeletonMask;
+		UINT32 NumSceneObjects = 0;
+		AnimatedSceneObjectInfo* SceneObjectInfos = nullptr;
+		Matrix4* SceneObjectTransforms = nullptr;
 
 		// Morph shape animation
-		MorphChannelInfo* morphChannelInfos = nullptr;
-		MorphShapeInfo* morphShapeInfos = nullptr;
-		UINT32 numMorphChannels = 0;
-		UINT32 numMorphShapes = 0;
-		UINT32 numMorphVertices = 0;
-		bool morphChannelWeightsDirty = false;
+		MorphChannelInfo* MorphChannelInfos = nullptr;
+		MorphShapeInfo* MorphShapeInfos = nullptr;
+		UINT32 NumMorphChannels = 0;
+		UINT32 NumMorphShapes = 0;
+		UINT32 NumMorphVertices = 0;
+		bool MorphChannelWeightsDirty = false;
 
 		// Culling
-		AABox mBounds;
-		bool mCullEnabled = true;
+		AABox MBounds;
+		bool MCullEnabled = true;
 
 		// Single frame sample
-		AnimSampleStep sampleStep = AnimSampleStep::None;
+		AnimSampleStep SampleStep = AnimSampleStep::None;
 
 		// Evaluation results
-		LocalSkeletonPose skeletonPose;
-		LocalSkeletonPose sceneObjectPose;
-		UINT32 numGenericCurves = 0;
-		float* genericCurveOutputs = nullptr;
-		bool wasCulled = false;
+		LocalSkeletonPose SkeletonPose;
+		LocalSkeletonPose SceneObjectPose;
+		UINT32 NumGenericCurves = 0;
+		float* GenericCurveOutputs = nullptr;
+		bool WasCulled = false;
 	};
 
 	/**
@@ -477,7 +477,7 @@ namespace bs
 		static SPtr<Animation> Create();
 
 		/** Triggered whenever an animation event is reached. */
-		Event<void(const HAnimationClip&, const String&)> onEventTriggered;
+		Event<void(const HAnimationClip&, const String&)> OnEventTriggered;
 
 		/** @name Internal
 		 *  @{

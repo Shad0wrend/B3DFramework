@@ -17,17 +17,17 @@ namespace bs
 	MESH_DESC MESH_DESC::DEFAULT = MESH_DESC();
 
 	Mesh::Mesh(const MESH_DESC& desc)
-		:MeshBase(desc.numVertices, desc.numIndices, desc.subMeshes), mVertexDesc(desc.vertexDesc), mUsage(desc.usage),
-		mIndexType(desc.indexType), mSkeleton(desc.skeleton), mMorphShapes(desc.morphShapes)
+		:MeshBase(desc.NumVertices, desc.NumIndices, desc.SubMeshes), mVertexDesc(desc.VertexDesc), mUsage(desc.Usage),
+		mIndexType(desc.IndexType), mSkeleton(desc.Skeleton), mMorphShapes(desc.MorphShapes)
 	{
 
 	}
 
 	Mesh::Mesh(const SPtr<MeshData>& initialMeshData, const MESH_DESC& desc)
-		:MeshBase(initialMeshData->GetNumVertices(), initialMeshData->GetNumIndices(), desc.subMeshes),
+		:MeshBase(initialMeshData->GetNumVertices(), initialMeshData->GetNumIndices(), desc.SubMeshes),
 		mCPUData(initialMeshData), mVertexDesc(initialMeshData->GetVertexDesc()),
-		mUsage(desc.usage), mIndexType(initialMeshData->GetIndexType()), mSkeleton(desc.skeleton),
-		mMorphShapes(desc.morphShapes)
+		mUsage(desc.Usage), mIndexType(initialMeshData->GetIndexType()), mSkeleton(desc.Skeleton),
+		mMorphShapes(desc.MorphShapes)
 	{ }
 
 	Mesh::Mesh()
@@ -107,14 +107,14 @@ namespace bs
 	SPtr<ct::CoreObject> Mesh::CreateCore() const
 	{
 		MESH_DESC desc;
-		desc.numVertices = mProperties.mNumVertices;
-		desc.numIndices = mProperties.mNumIndices;
-		desc.vertexDesc = mVertexDesc;
-		desc.subMeshes = mProperties.mSubMeshes;
-		desc.usage = mUsage;
-		desc.indexType = mIndexType;
-		desc.skeleton = mSkeleton;
-		desc.morphShapes = mMorphShapes;
+		desc.NumVertices = mProperties.mNumVertices;
+		desc.NumIndices = mProperties.mNumIndices;
+		desc.VertexDesc = mVertexDesc;
+		desc.SubMeshes = mProperties.mSubMeshes;
+		desc.Usage = mUsage;
+		desc.IndexType = mIndexType;
+		desc.Skeleton = mSkeleton;
+		desc.MorphShapes = mMorphShapes;
 
 		ct::Mesh* obj = new (bs_alloc<ct::Mesh>()) ct::Mesh(mCPUData, desc, GDF_DEFAULT);
 
@@ -188,12 +188,12 @@ namespace bs
 		int usage, DrawOperationType drawOp, IndexType indexType)
 	{
 		MESH_DESC desc;
-		desc.numVertices = numVertices;
-		desc.numIndices = numIndices;
-		desc.vertexDesc = vertexDesc;
-		desc.usage = usage;
-		desc.subMeshes.push_back(SubMesh(0, numIndices, drawOp));
-		desc.indexType = indexType;
+		desc.NumVertices = numVertices;
+		desc.NumIndices = numIndices;
+		desc.VertexDesc = vertexDesc;
+		desc.Usage = usage;
+		desc.SubMeshes.push_back(SubMesh(0, numIndices, drawOp));
+		desc.IndexType = indexType;
 
 		SPtr<Mesh> meshPtr = CreatePtrInternal(desc);
 		return static_resource_cast<Mesh>(gResources().CreateResourceHandleInternal(meshPtr));
@@ -238,8 +238,8 @@ namespace bs
 	SPtr<Mesh> Mesh::CreatePtrInternal(const SPtr<MeshData>& initialMeshData, int usage, DrawOperationType drawOp)
 	{
 		MESH_DESC desc;
-		desc.usage = usage;
-		desc.subMeshes.push_back(SubMesh(0, initialMeshData->GetNumIndices(), drawOp));
+		desc.Usage = usage;
+		desc.SubMeshes.push_back(SubMesh(0, initialMeshData->GetNumIndices(), drawOp));
 
 		SPtr<Mesh> mesh = bs_core_ptr<Mesh>(new (bs_alloc<Mesh>()) Mesh(initialMeshData, desc));
 		mesh->SetThisPtrInternal(mesh);
@@ -259,9 +259,9 @@ namespace bs
 	namespace ct
 	{
 	Mesh::Mesh(const SPtr<MeshData>& initialMeshData, const MESH_DESC& desc, GpuDeviceFlags deviceMask)
-		: MeshBase(desc.numVertices, desc.numIndices, desc.subMeshes), mVertexData(nullptr), mIndexBuffer(nullptr)
-		, mVertexDesc(desc.vertexDesc), mUsage(desc.usage), mIndexType(desc.indexType), mDeviceMask(deviceMask)
-		, mTempInitialMeshData(initialMeshData), mSkeleton(desc.skeleton), mMorphShapes(desc.morphShapes)
+		: MeshBase(desc.NumVertices, desc.NumIndices, desc.SubMeshes), mVertexData(nullptr), mIndexBuffer(nullptr)
+		, mVertexDesc(desc.VertexDesc), mUsage(desc.Usage), mIndexType(desc.IndexType), mDeviceMask(deviceMask)
+		, mTempInitialMeshData(initialMeshData), mSkeleton(desc.Skeleton), mMorphShapes(desc.MorphShapes)
 
 	{ }
 
@@ -283,15 +283,15 @@ namespace bs
 		int usage = isDynamic ? GBU_DYNAMIC : GBU_STATIC;
 
 		INDEX_BUFFER_DESC ibDesc;
-		ibDesc.indexType = mIndexType;
-		ibDesc.numIndices = mProperties.mNumIndices;
-		ibDesc.usage = (GpuBufferUsage)usage;
+		ibDesc.IndexType = mIndexType;
+		ibDesc.NumIndices = mProperties.mNumIndices;
+		ibDesc.Usage = (GpuBufferUsage)usage;
 
 		mIndexBuffer = IndexBuffer::Create(ibDesc, mDeviceMask);
 
 		mVertexData = bs_shared_ptr_new<VertexData>();
-		mVertexData->vertexCount = mProperties.mNumVertices;
-		mVertexData->vertexDeclaration = VertexDeclaration::Create(mVertexDesc, mDeviceMask);
+		mVertexData->VertexCount = mProperties.mNumVertices;
+		mVertexData->VertexDeclaration = VertexDeclaration::Create(mVertexDesc, mDeviceMask);
 
 		for (UINT32 i = 0; i <= mVertexDesc->GetMaxStreamIdx(); i++)
 		{
@@ -299,9 +299,9 @@ namespace bs
 				continue;
 
 			VERTEX_BUFFER_DESC vbDesc;
-			vbDesc.vertexSize = mVertexData->vertexDeclaration->GetProperties().GetVertexSize(i);
-			vbDesc.numVerts = mVertexData->vertexCount;
-			vbDesc.usage = (GpuBufferUsage)usage;
+			vbDesc.VertexSize = mVertexData->VertexDeclaration->GetProperties().GetVertexSize(i);
+			vbDesc.NumVerts = mVertexData->VertexCount;
+			vbDesc.Usage = (GpuBufferUsage)usage;
 
 			SPtr<VertexBuffer> vertexBuffer = VertexBuffer::Create(vbDesc, mDeviceMask);
 			mVertexData->SetBuffer(i, vertexBuffer);
@@ -521,12 +521,12 @@ namespace bs
 		int usage, DrawOperationType drawOp, IndexType indexType, GpuDeviceFlags deviceMask)
 	{
 		MESH_DESC desc;
-		desc.numVertices = numVertices;
-		desc.numIndices = numIndices;
-		desc.vertexDesc = vertexDesc;
-		desc.subMeshes.push_back(SubMesh(0, numIndices, drawOp));
-		desc.usage = usage;
-		desc.indexType = indexType;
+		desc.NumVertices = numVertices;
+		desc.NumIndices = numIndices;
+		desc.VertexDesc = vertexDesc;
+		desc.SubMeshes.push_back(SubMesh(0, numIndices, drawOp));
+		desc.Usage = usage;
+		desc.IndexType = indexType;
 
 		SPtr<Mesh> mesh = bs_shared_ptr<Mesh>(new (bs_alloc<Mesh>()) Mesh(nullptr, desc, deviceMask));
 		mesh->SetThisPtrInternal(mesh);
@@ -548,10 +548,10 @@ namespace bs
 	SPtr<Mesh> Mesh::Create(const SPtr<MeshData>& initialMeshData, const MESH_DESC& desc, GpuDeviceFlags deviceMask)
 	{
 		MESH_DESC descCopy = desc;
-		descCopy.numVertices = initialMeshData->GetNumVertices();
-		descCopy.numIndices = initialMeshData->GetNumIndices();
-		descCopy.vertexDesc = initialMeshData->GetVertexDesc();
-		descCopy.indexType = initialMeshData->GetIndexType();
+		descCopy.NumVertices = initialMeshData->GetNumVertices();
+		descCopy.NumIndices = initialMeshData->GetNumIndices();
+		descCopy.VertexDesc = initialMeshData->GetVertexDesc();
+		descCopy.IndexType = initialMeshData->GetIndexType();
 
 		SPtr<Mesh> mesh =
 			bs_shared_ptr<Mesh>(new (bs_alloc<Mesh>()) Mesh(initialMeshData, descCopy, deviceMask));
@@ -566,12 +566,12 @@ namespace bs
 		GpuDeviceFlags deviceMask)
 	{
 		MESH_DESC desc;
-		desc.numVertices = initialMeshData->GetNumVertices();
-		desc.numIndices = initialMeshData->GetNumIndices();
-		desc.vertexDesc = initialMeshData->GetVertexDesc();
-		desc.indexType = initialMeshData->GetIndexType();
-		desc.subMeshes.push_back(SubMesh(0, initialMeshData->GetNumIndices(), drawOp));
-		desc.usage = usage;
+		desc.NumVertices = initialMeshData->GetNumVertices();
+		desc.NumIndices = initialMeshData->GetNumIndices();
+		desc.VertexDesc = initialMeshData->GetVertexDesc();
+		desc.IndexType = initialMeshData->GetIndexType();
+		desc.SubMeshes.push_back(SubMesh(0, initialMeshData->GetNumIndices(), drawOp));
+		desc.Usage = usage;
 
 		SPtr<Mesh> mesh =
 			bs_shared_ptr<Mesh>(new (bs_alloc<Mesh>()) Mesh(initialMeshData, desc, deviceMask));

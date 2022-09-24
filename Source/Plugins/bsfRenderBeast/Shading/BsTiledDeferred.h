@@ -173,14 +173,14 @@ namespace bs { namespace ct
 		/** Container for parameters to be passed to the execute() method. */
 		struct Inputs
 		{
-			GBufferTextures gbuffer;
-			SPtr<Texture> lightAccumulation;
-			SPtr<Texture> sceneColorTex;
-			SPtr<Texture> sceneColorTexArray;
-			SPtr<Texture> preIntegratedGF;
-			SPtr<Texture> ambientOcclusion;
-			SPtr<Texture> ssr;
-			SPtr<Texture> msaaCoverage;
+			GBufferTextures Gbuffer;
+			SPtr<Texture> LightAccumulation;
+			SPtr<Texture> SceneColorTex;
+			SPtr<Texture> SceneColorTexArray;
+			SPtr<Texture> PreIntegratedGf;
+			SPtr<Texture> AmbientOcclusion;
+			SPtr<Texture> Ssr;
+			SPtr<Texture> MsaaCoverage;
 		};
 
 		TiledDeferredImageBasedLightingMat();

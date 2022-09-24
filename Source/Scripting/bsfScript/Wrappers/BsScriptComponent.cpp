@@ -51,15 +51,15 @@ namespace bs
 
 	void ScriptComponent::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_AddComponent", (void*)&ScriptComponent::InternalAddComponent);
-		metaData.scriptClass->AddInternalCall("Internal_GetComponent", (void*)&ScriptComponent::InternalGetComponent);
-		metaData.scriptClass->AddInternalCall("Internal_GetComponents", (void*)&ScriptComponent::InternalGetComponents);
-		metaData.scriptClass->AddInternalCall("Internal_GetComponentsPerType", (void*)&ScriptComponent::InternalGetComponentsPerType);
-		metaData.scriptClass->AddInternalCall("Internal_RemoveComponent", (void*)&ScriptComponent::InternalRemoveComponent);
-		metaData.scriptClass->AddInternalCall("Internal_GetSceneObject", (void*)&ScriptComponent::InternalGetSceneObject);
-		metaData.scriptClass->AddInternalCall("Internal_GetNotifyFlags", (void*)&ScriptComponent::InternalGetNotifyFlags);
-		metaData.scriptClass->AddInternalCall("Internal_SetNotifyFlags", (void*)&ScriptComponent::InternalSetNotifyFlags);
-		metaData.scriptClass->AddInternalCall("Internal_Destroy", (void*)&ScriptComponent::InternalDestroy);
+		metaData.ScriptClass->AddInternalCall("Internal_AddComponent", (void*)&ScriptComponent::InternalAddComponent);
+		metaData.ScriptClass->AddInternalCall("Internal_GetComponent", (void*)&ScriptComponent::InternalGetComponent);
+		metaData.ScriptClass->AddInternalCall("Internal_GetComponents", (void*)&ScriptComponent::InternalGetComponents);
+		metaData.ScriptClass->AddInternalCall("Internal_GetComponentsPerType", (void*)&ScriptComponent::InternalGetComponentsPerType);
+		metaData.ScriptClass->AddInternalCall("Internal_RemoveComponent", (void*)&ScriptComponent::InternalRemoveComponent);
+		metaData.ScriptClass->AddInternalCall("Internal_GetSceneObject", (void*)&ScriptComponent::InternalGetSceneObject);
+		metaData.ScriptClass->AddInternalCall("Internal_GetNotifyFlags", (void*)&ScriptComponent::InternalGetNotifyFlags);
+		metaData.ScriptClass->AddInternalCall("Internal_SetNotifyFlags", (void*)&ScriptComponent::InternalSetNotifyFlags);
+		metaData.ScriptClass->AddInternalCall("Internal_Destroy", (void*)&ScriptComponent::InternalDestroy);
 	}
 
 	MonoObject* ScriptComponent::InternalAddComponent(MonoObject* parentSceneObject, MonoReflectionType* type)
@@ -72,7 +72,7 @@ namespace bs
 
 		ScriptAssemblyManager& sam = ScriptAssemblyManager::Instance();
 
-		MonoClass* managedComponent = sam.GetBuiltinClasses().managedComponentClass;
+		MonoClass* managedComponent = sam.GetBuiltinClasses().ManagedComponentClass;
 		::MonoClass* requestedClass = MonoUtil::GetClass(type);
 
 		bool isManagedComponent = MonoUtil::IsSubClassOf(requestedClass, managedComponent->GetInternalClassInternal());
@@ -87,7 +87,7 @@ namespace bs
 			if (info == nullptr)
 				return nullptr;
 
-			HComponent component = so->AddComponent(info->typeId);
+			HComponent component = so->AddComponent(info->TypeId);
 			ScriptComponentBase* scriptComponent =
 				ScriptGameObjectManager::Instance().CreateBuiltinScriptComponent(component);
 
@@ -128,7 +128,7 @@ namespace bs
 				if(info == nullptr)
 					continue;
 
-				if(info->typeId == component->GetTypeId())
+				if(info->TypeId == component->GetTypeId())
 				{
 					ScriptComponentBase* scriptComponent = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(component);
 					return scriptComponent->GetManagedInstance();
@@ -170,7 +170,7 @@ namespace bs
 					if(info == nullptr)
 						continue;
 
-					if(info->typeId == component->GetTypeId())
+					if(info->TypeId == component->GetTypeId())
 					{
 						ScriptComponentBase* scriptComponent = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(component);
 						managedComponents.push_back(scriptComponent->GetManagedInstance());
@@ -179,7 +179,7 @@ namespace bs
 			}
 		}
 
-		ScriptArray scriptArray(metaData.scriptClass->GetInternalClassInternal(), (UINT32)managedComponents.size());
+		ScriptArray scriptArray(metaData.ScriptClass->GetInternalClassInternal(), (UINT32)managedComponents.size());
 		for (UINT32 i = 0; i < (UINT32)managedComponents.size(); i++)
 			scriptArray.Set(i, managedComponents[i]);
 
@@ -213,7 +213,7 @@ namespace bs
 			}
 		}
 
-		ScriptArray scriptArray(metaData.scriptClass->GetInternalClassInternal(), (UINT32)managedComponents.size());
+		ScriptArray scriptArray(metaData.ScriptClass->GetInternalClassInternal(), (UINT32)managedComponents.size());
 		for(UINT32 i = 0; i < (UINT32)managedComponents.size(); i++)
 			scriptArray.Set(i, managedComponents[i]);
 
@@ -254,7 +254,7 @@ namespace bs
 				if(info == nullptr)
 					continue;
 
-				if(info->typeId == component->GetTypeId())
+				if(info->TypeId == component->GetTypeId())
 				{
 					component->Destroy();
 					return;

@@ -22,14 +22,14 @@ namespace bs
 
 	bool TextureProperties::HasAlpha() const
 	{
-		return PixelUtil::HasAlpha(mDesc.format);
+		return PixelUtil::HasAlpha(mDesc.Format);
 	}
 
 	UINT32 TextureProperties::GetNumFaces() const
 	{
 		UINT32 facesPerSlice = GetTextureType() == TEX_TYPE_CUBE_MAP ? 6 : 1;
 
-		return facesPerSlice * mDesc.numArraySlices;
+		return facesPerSlice * mDesc.NumArraySlices;
 	}
 
 	void TextureProperties::MapFromSubresourceIdx(UINT32 subresourceIdx, UINT32& face, UINT32& mip) const
@@ -322,13 +322,13 @@ namespace bs
 	SPtr<Texture> Texture::CreatePtrInternal(const SPtr<PixelData>& pixelData, int usage, bool hwGammaCorrection)
 	{
 		TEXTURE_DESC desc;
-		desc.type = pixelData->GetDepth() > 1 ? TEX_TYPE_3D : TEX_TYPE_2D;
-		desc.width = pixelData->GetWidth();
-		desc.height = pixelData->GetHeight();
-		desc.depth = pixelData->GetDepth();
-		desc.format = pixelData->GetFormat();
-		desc.usage = usage;
-		desc.hwGamma = hwGammaCorrection;
+		desc.Type = pixelData->GetDepth() > 1 ? TEX_TYPE_3D : TEX_TYPE_2D;
+		desc.Width = pixelData->GetWidth();
+		desc.Height = pixelData->GetHeight();
+		desc.Depth = pixelData->GetDepth();
+		desc.Format = pixelData->GetFormat();
+		desc.Usage = usage;
+		desc.HwGamma = hwGammaCorrection;
 
 		return TextureManager::Instance().CreateTexture(desc, pixelData);
 	}
@@ -442,25 +442,25 @@ namespace bs
 			return;
 		}
 
-		if (desc.srcFace >= mProperties.GetNumFaces())
+		if (desc.SrcFace >= mProperties.GetNumFaces())
 		{
 			BS_LOG(Error, Texture, "Invalid source face index.");
 			return;
 		}
 
-		if (desc.dstFace >= target->mProperties.GetNumFaces())
+		if (desc.DstFace >= target->mProperties.GetNumFaces())
 		{
 			BS_LOG(Error, Texture, "Invalid destination face index.");
 			return;
 		}
 
-		if (desc.srcMip > mProperties.GetNumMipmaps())
+		if (desc.SrcMip > mProperties.GetNumMipmaps())
 		{
 			BS_LOG(Error, Texture, "Source mip level out of range. Valid range is [0, {0}].", mProperties.GetNumMipmaps());
 			return;
 		}
 
-		if (desc.dstMip > target->mProperties.GetNumMipmaps())
+		if (desc.DstMip > target->mProperties.GetNumMipmaps())
 		{
 			BS_LOG(Error, Texture, "Destination mip level out of range. Valid range is [0, {0}].",
 				target->mProperties.GetNumMipmaps());
@@ -472,7 +472,7 @@ namespace bs
 			mProperties.GetWidth(),
 			mProperties.GetHeight(),
 			mProperties.GetDepth(),
-			desc.srcMip,
+			desc.SrcMip,
 			srcWidth,
 			srcHeight,
 			srcDepth);
@@ -482,39 +482,39 @@ namespace bs
 			target->mProperties.GetWidth(),
 			target->mProperties.GetHeight(),
 			target->mProperties.GetDepth(),
-			desc.dstMip,
+			desc.DstMip,
 			dstWidth,
 			dstHeight,
 			dstDepth);
 
-		if(desc.dstPosition.x < 0 || desc.dstPosition.x >= (INT32)dstWidth ||
-			desc.dstPosition.y < 0 || desc.dstPosition.y >= (INT32)dstHeight ||
-			desc.dstPosition.z < 0 || desc.dstPosition.z >= (INT32)dstDepth)
+		if(desc.DstPosition.X < 0 || desc.DstPosition.X >= (INT32)dstWidth ||
+			desc.DstPosition.Y < 0 || desc.DstPosition.Y >= (INT32)dstHeight ||
+			desc.DstPosition.Z < 0 || desc.DstPosition.Z >= (INT32)dstDepth)
 		{
 			BS_LOG(Error, Texture, "Destination position falls outside the destination texture.");
 			return;
 		}
 
-		bool entireSurface = desc.srcVolume.GetWidth() == 0 ||
-			desc.srcVolume.GetHeight() == 0 ||
-			desc.srcVolume.GetDepth() == 0;
+		bool entireSurface = desc.SrcVolume.GetWidth() == 0 ||
+			desc.SrcVolume.GetHeight() == 0 ||
+			desc.SrcVolume.GetDepth() == 0;
 
-		UINT32 dstRight = (UINT32)desc.dstPosition.x;
-		UINT32 dstBottom = (UINT32)desc.dstPosition.y;
-		UINT32 dstBack = (UINT32)desc.dstPosition.z;
+		UINT32 dstRight = (UINT32)desc.DstPosition.X;
+		UINT32 dstBottom = (UINT32)desc.DstPosition.Y;
+		UINT32 dstBack = (UINT32)desc.DstPosition.Z;
 		if(!entireSurface)
 		{
-			if(desc.srcVolume.left >= srcWidth || desc.srcVolume.right > srcWidth ||
-				desc.srcVolume.top >= srcHeight || desc.srcVolume.bottom > srcHeight ||
-				desc.srcVolume.front >= srcDepth || desc.srcVolume.back > srcDepth)
+			if(desc.SrcVolume.Left >= srcWidth || desc.SrcVolume.Right > srcWidth ||
+				desc.SrcVolume.Top >= srcHeight || desc.SrcVolume.Bottom > srcHeight ||
+				desc.SrcVolume.Front >= srcDepth || desc.SrcVolume.Back > srcDepth)
 			{
 				BS_LOG(Error, Texture, "Source volume falls outside the source texture.");
 				return;
 			}
 
-			dstRight += desc.srcVolume.GetWidth();
-			dstBottom += desc.srcVolume.GetHeight();
-			dstBack += desc.srcVolume.GetDepth();
+			dstRight += desc.SrcVolume.GetWidth();
+			dstBottom += desc.SrcVolume.GetHeight();
+			dstBack += desc.SrcVolume.GetDepth();
 		}
 		else
 		{
@@ -581,11 +581,11 @@ namespace bs
 		const TextureProperties& texProps = GetProperties();
 
 		TEXTURE_VIEW_DESC key;
-		key.mostDetailMip = mostDetailMip;
-		key.numMips = numMips == 0 ? (texProps.GetNumMipmaps() + 1) : numMips;
-		key.firstArraySlice = firstArraySlice;
-		key.numArraySlices = numArraySlices == 0 ? texProps.GetNumFaces() : numArraySlices;
-		key.usage = usage;
+		key.MostDetailMip = mostDetailMip;
+		key.NumMips = numMips == 0 ? (texProps.GetNumMipmaps() + 1) : numMips;
+		key.FirstArraySlice = firstArraySlice;
+		key.NumArraySlices = numArraySlices == 0 ? texProps.GetNumFaces() : numArraySlices;
+		key.Usage = usage;
 
 		auto iterFind = mTextureViews.find(key);
 		if (iterFind == mTextureViews.end())
@@ -610,13 +610,13 @@ namespace bs
 		GpuDeviceFlags deviceMask)
 	{
 		TEXTURE_DESC desc;
-		desc.type = pixelData->GetDepth() > 1 ? TEX_TYPE_3D : TEX_TYPE_2D;
-		desc.width = pixelData->GetWidth();
-		desc.height = pixelData->GetHeight();
-		desc.depth = pixelData->GetDepth();
-		desc.format = pixelData->GetFormat();
-		desc.usage = usage;
-		desc.hwGamma = hwGammaCorrection;
+		desc.Type = pixelData->GetDepth() > 1 ? TEX_TYPE_3D : TEX_TYPE_2D;
+		desc.Width = pixelData->GetWidth();
+		desc.Height = pixelData->GetHeight();
+		desc.Depth = pixelData->GetDepth();
+		desc.Format = pixelData->GetFormat();
+		desc.Usage = usage;
+		desc.HwGamma = hwGammaCorrection;
 
 		SPtr<Texture> newTex = TextureManager::Instance().CreateTextureInternal(desc, pixelData, deviceMask);
 		newTex->Initialize();

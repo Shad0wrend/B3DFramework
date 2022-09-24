@@ -34,7 +34,7 @@ namespace bs
 		class MemBlock
 		{
 		public:
-			MemBlock(UINT32 size) :mSize(size) { }
+			MemBlock(UINT32 size) :MSize(size) { }
 
 			~MemBlock() = default;
 
@@ -44,9 +44,9 @@ namespace bs
 			/** Releases all allocations within a block but doesn't actually free the memory. */
 			void Clear();
 
-			UINT8* mData = nullptr;
-			UINT32 mFreePtr = 0;
-			UINT32 mSize;
+			UINT8* MData = nullptr;
+			UINT32 MFreePtr = 0;
+			UINT32 MSize;
 		};
 
 	public:

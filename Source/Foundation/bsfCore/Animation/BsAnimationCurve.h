@@ -19,14 +19,14 @@ namespace bs
 	template <class T>
 	struct TKeyframe
 	{
-		T value; /**< Value of the key. */
-		T inTangent; /**< Input tangent (going from the previous key to this one) of the key. */
-		T outTangent; /**< Output tangent (going from this key to next one) of the key. */
-		float time; /**< Position of the key along the animation spline. */
+		T Value; /**< Value of the key. */
+		T InTangent; /**< Input tangent (going from the previous key to this one) of the key. */
+		T OutTangent; /**< Output tangent (going from this key to next one) of the key. */
+		float Time; /**< Position of the key along the animation spline. */
 
 		bool operator== (const TKeyframe<T>& rhs) const
 		{
-			return (value == rhs.value && inTangent == rhs.inTangent && outTangent == rhs.outTangent && time == rhs.time);
+			return (Value == rhs.Value && InTangent == rhs.InTangent && OutTangent == rhs.OutTangent && Time == rhs.Time);
 		}
 
 		bool operator!= (const TKeyframe<T>& rhs) const
@@ -39,12 +39,12 @@ namespace bs
 	template <>
 	struct BS_SCRIPT_EXPORT(m:Animation,n:KeyFrameInt,pl:true) TKeyframe<INT32>
 	{
-		INT32 value; /**< Value of the key. */
-		float time; /**< Position of the key along the animation spline. */
+		INT32 Value; /**< Value of the key. */
+		float Time; /**< Position of the key along the animation spline. */
 
 		bool operator== (const TKeyframe<INT32>& rhs) const
 		{
-			return (value == rhs.value && time == rhs.time);
+			return (Value == rhs.Value && Time == rhs.Time);
 		}
 
 		bool operator!= (const TKeyframe<INT32>& rhs) const
@@ -289,17 +289,17 @@ namespace bs
 		 * @param[in]	curve	Curve containing the animation data.
 		 */
 		TNamedAnimationCurve(const String& name, AnimationCurveFlags flags, const TAnimationCurve<T> curve)
-			:name(name), curve(curve)
+			:Name(name), Curve(curve)
 		{ }
 
 		/** Name of the curve. */
-		String name;
+		String Name;
 
 		/** Flags that describe the animation curve. */
-		AnimationCurveFlags flags;
+		AnimationCurveFlags Flags;
 
 		/** Actual curve containing animation data. */
-		TAnimationCurve<T> curve;
+		TAnimationCurve<T> Curve;
 	};
 
 #ifdef BS_SBGEN

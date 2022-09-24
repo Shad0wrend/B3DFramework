@@ -29,10 +29,10 @@ namespace bs
 
 	void ScriptGUIProgressBar::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIProgressBar::InternalCreateInstance);
-		metaData.scriptClass->AddInternalCall("Internal_SetPercent", (void*)&ScriptGUIProgressBar::InternalSetPercent);
-		metaData.scriptClass->AddInternalCall("Internal_GetPercent", (void*)&ScriptGUIProgressBar::InternalGetPercent);
-		metaData.scriptClass->AddInternalCall("Internal_SetTint", (void*)&ScriptGUIProgressBar::InternalSetTint);
+		metaData.ScriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIProgressBar::InternalCreateInstance);
+		metaData.ScriptClass->AddInternalCall("Internal_SetPercent", (void*)&ScriptGUIProgressBar::InternalSetPercent);
+		metaData.ScriptClass->AddInternalCall("Internal_GetPercent", (void*)&ScriptGUIProgressBar::InternalGetPercent);
+		metaData.ScriptClass->AddInternalCall("Internal_SetTint", (void*)&ScriptGUIProgressBar::InternalSetTint);
 	}
 
 	void ScriptGUIProgressBar::InternalCreateInstance(MonoObject* instance, MonoString* style, MonoArray* guiOptions)

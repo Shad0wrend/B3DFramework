@@ -15,10 +15,10 @@ namespace bs
 
 	bool ResourceHandleBase::IsLoaded(bool checkDependencies) const
 	{
-		bool isLoaded = (mData != nullptr && mData->mIsCreated && mData->mPtr != nullptr);
+		bool isLoaded = (mData != nullptr && mData->MIsCreated && mData->MPtr != nullptr);
 
 		if (checkDependencies && isLoaded)
-			isLoaded = mData->mPtr->AreDependenciesLoaded();
+			isLoaded = mData->MPtr->AreDependenciesLoaded();
 
 		return isLoaded;
 	}
@@ -28,10 +28,10 @@ namespace bs
 		if(mData == nullptr)
 			return;
 
-		if (!mData->mIsCreated)
+		if (!mData->MIsCreated)
 		{
 			Lock lock(mResourceCreatedMutex);
-			while (!mData->mIsCreated)
+			while (!mData->MIsCreated)
 			{
 				mResourceCreatedCondition.wait(lock);
 			}
@@ -39,7 +39,7 @@ namespace bs
 			// Send out ResourceListener events right away, as whatever called this method probably also expects the
 			// listener events to trigger immediately as well
 			if(BS_THREAD_CURRENT_ID == gCoreApplication().GetSimThreadId())
-				ResourceListenerManager::Instance().NotifyListeners(mData->mUUID);
+				ResourceListenerManager::Instance().NotifyListeners(mData->MUuid);
 		}
 
 		if (waitForDependencies)
@@ -48,7 +48,7 @@ namespace bs
 
 			{
 				FrameVector<HResource> dependencies;
-				mData->mPtr->GetResourceDependencies(dependencies);
+				mData->MPtr->GetResourceDependencies(dependencies);
 
 				for (auto& dependency : dependencies)
 					dependency.BlockUntilLoaded(waitForDependencies);
@@ -65,25 +65,25 @@ namespace bs
 
 	void ResourceHandleBase::Destroy()
 	{
-		if(mData->mPtr)
+		if(mData->MPtr)
 			gResources().Destroy(*this);
 	}
 
 	void ResourceHandleBase::SetHandleData(const SPtr<Resource>& ptr, const UUID& uuid)
 	{
-		mData->mPtr = ptr;
+		mData->MPtr = ptr;
 
-		if(mData->mPtr)
-			mData->mUUID = uuid;
+		if(mData->MPtr)
+			mData->MUuid = uuid;
 	}
 
 	void ResourceHandleBase::NotifyLoadComplete()
 	{
-		if (!mData->mIsCreated)
+		if (!mData->MIsCreated)
 		{
 			Lock lock(mResourceCreatedMutex);
 			{
-				mData->mIsCreated = true;
+				mData->MIsCreated = true;
 			}
 
 			mResourceCreatedCondition.notify_all();
@@ -92,20 +92,20 @@ namespace bs
 
 	void ResourceHandleBase::ClearHandleData()
 	{
-		mData->mPtr = nullptr;
+		mData->MPtr = nullptr;
 
 		Lock lock(mResourceCreatedMutex);
-		mData->mIsCreated = false;
+		mData->MIsCreated = false;
 	}
 
 	void ResourceHandleBase::AddInternalRef()
 	{
-		mData->mRefCount.fetch_add(1, std::memory_order_relaxed);
+		mData->MRefCount.fetch_add(1, std::memory_order_relaxed);
 	}
 
 	void ResourceHandleBase::RemoveInternalRef()
 	{
-		mData->mRefCount.fetch_sub(1, std::memory_order_relaxed);
+		mData->MRefCount.fetch_sub(1, std::memory_order_relaxed);
 	}
 
 	void ResourceHandleBase::ThrowIfNotLoaded() const

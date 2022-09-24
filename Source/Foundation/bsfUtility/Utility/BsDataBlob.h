@@ -14,8 +14,8 @@ namespace bs
 	/** Serializable blob of raw memory. */
 	struct DataBlob
 	{
-		UINT8* data = nullptr;
-		UINT32 size = 0;
+		UINT8* Data = nullptr;
+		UINT32 Size = 0;
 	};
 
 	/** @} */

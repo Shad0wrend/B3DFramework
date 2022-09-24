@@ -11,20 +11,20 @@ namespace bs
 {
 	bool DEPTH_STENCIL_STATE_DESC::operator == (const DEPTH_STENCIL_STATE_DESC& rhs) const
 	{
-		return depthReadEnable == rhs.depthReadEnable &&
-			depthWriteEnable == rhs.depthWriteEnable &&
-			depthComparisonFunc == rhs.depthComparisonFunc &&
-			stencilEnable == rhs.stencilEnable &&
-			stencilReadMask == rhs.stencilReadMask &&
-			stencilWriteMask == rhs.stencilWriteMask &&
-			frontStencilFailOp == rhs.frontStencilFailOp &&
-			frontStencilZFailOp == rhs.frontStencilZFailOp &&
-			frontStencilPassOp == rhs.frontStencilPassOp &&
-			frontStencilComparisonFunc == rhs.frontStencilComparisonFunc &&
-			backStencilFailOp == rhs.backStencilFailOp &&
-			backStencilZFailOp == rhs.backStencilZFailOp &&
-			backStencilPassOp == rhs.backStencilPassOp &&
-			backStencilComparisonFunc == rhs.backStencilComparisonFunc;
+		return DepthReadEnable == rhs.DepthReadEnable &&
+			DepthWriteEnable == rhs.DepthWriteEnable &&
+			DepthComparisonFunc == rhs.DepthComparisonFunc &&
+			StencilEnable == rhs.StencilEnable &&
+			StencilReadMask == rhs.StencilReadMask &&
+			StencilWriteMask == rhs.StencilWriteMask &&
+			FrontStencilFailOp == rhs.FrontStencilFailOp &&
+			FrontStencilZFailOp == rhs.FrontStencilZFailOp &&
+			FrontStencilPassOp == rhs.FrontStencilPassOp &&
+			FrontStencilComparisonFunc == rhs.FrontStencilComparisonFunc &&
+			BackStencilFailOp == rhs.BackStencilFailOp &&
+			BackStencilZFailOp == rhs.BackStencilZFailOp &&
+			BackStencilPassOp == rhs.BackStencilPassOp &&
+			BackStencilComparisonFunc == rhs.BackStencilComparisonFunc;
 	}
 
 	DepthStencilProperties::DepthStencilProperties(const DEPTH_STENCIL_STATE_DESC& desc)
@@ -70,20 +70,20 @@ namespace bs
 	UINT64 DepthStencilState::GenerateHash(const DEPTH_STENCIL_STATE_DESC& desc)
 	{
 		size_t hash = 0;
-		bs_hash_combine(hash, desc.depthReadEnable);
-		bs_hash_combine(hash, desc.depthWriteEnable);
-		bs_hash_combine(hash, (UINT32)desc.depthComparisonFunc);
-		bs_hash_combine(hash, desc.stencilEnable);
-		bs_hash_combine(hash, desc.stencilReadMask);
-		bs_hash_combine(hash, desc.stencilWriteMask);
-		bs_hash_combine(hash, (UINT32)desc.frontStencilFailOp);
-		bs_hash_combine(hash, (UINT32)desc.frontStencilZFailOp);
-		bs_hash_combine(hash, (UINT32)desc.frontStencilPassOp);
-		bs_hash_combine(hash, (UINT32)desc.frontStencilComparisonFunc);
-		bs_hash_combine(hash, (UINT32)desc.backStencilFailOp);
-		bs_hash_combine(hash, (UINT32)desc.backStencilZFailOp);
-		bs_hash_combine(hash, (UINT32)desc.backStencilPassOp);
-		bs_hash_combine(hash, (UINT32)desc.backStencilComparisonFunc);
+		bs_hash_combine(hash, desc.DepthReadEnable);
+		bs_hash_combine(hash, desc.DepthWriteEnable);
+		bs_hash_combine(hash, (UINT32)desc.DepthComparisonFunc);
+		bs_hash_combine(hash, desc.StencilEnable);
+		bs_hash_combine(hash, desc.StencilReadMask);
+		bs_hash_combine(hash, desc.StencilWriteMask);
+		bs_hash_combine(hash, (UINT32)desc.FrontStencilFailOp);
+		bs_hash_combine(hash, (UINT32)desc.FrontStencilZFailOp);
+		bs_hash_combine(hash, (UINT32)desc.FrontStencilPassOp);
+		bs_hash_combine(hash, (UINT32)desc.FrontStencilComparisonFunc);
+		bs_hash_combine(hash, (UINT32)desc.BackStencilFailOp);
+		bs_hash_combine(hash, (UINT32)desc.BackStencilZFailOp);
+		bs_hash_combine(hash, (UINT32)desc.BackStencilPassOp);
+		bs_hash_combine(hash, (UINT32)desc.BackStencilComparisonFunc);
 
 		return (UINT64)hash;
 	}

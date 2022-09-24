@@ -18,14 +18,14 @@ namespace bs
 
 	void ScriptStringTable::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptStringTable::InternalGetRef);
-		metaData.scriptClass->AddInternalCall("Internal_Contains", (void*)&ScriptStringTable::InternalContains);
-		metaData.scriptClass->AddInternalCall("Internal_GetNumStrings", (void*)&ScriptStringTable::InternalGetNumStrings);
-		metaData.scriptClass->AddInternalCall("Internal_GetIdentifiers", (void*)&ScriptStringTable::InternalGetIdentifiers);
-		metaData.scriptClass->AddInternalCall("Internal_SetString", (void*)&ScriptStringTable::InternalSetString);
-		metaData.scriptClass->AddInternalCall("Internal_GetString", (void*)&ScriptStringTable::InternalGetString);
-		metaData.scriptClass->AddInternalCall("Internal_RemoveString", (void*)&ScriptStringTable::InternalRemoveString);
-		metaData.scriptClass->AddInternalCall("Internal_Create", (void*)&ScriptStringTable::InternalCreate);
+		metaData.ScriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptStringTable::InternalGetRef);
+		metaData.ScriptClass->AddInternalCall("Internal_Contains", (void*)&ScriptStringTable::InternalContains);
+		metaData.ScriptClass->AddInternalCall("Internal_GetNumStrings", (void*)&ScriptStringTable::InternalGetNumStrings);
+		metaData.ScriptClass->AddInternalCall("Internal_GetIdentifiers", (void*)&ScriptStringTable::InternalGetIdentifiers);
+		metaData.ScriptClass->AddInternalCall("Internal_SetString", (void*)&ScriptStringTable::InternalSetString);
+		metaData.ScriptClass->AddInternalCall("Internal_GetString", (void*)&ScriptStringTable::InternalGetString);
+		metaData.ScriptClass->AddInternalCall("Internal_RemoveString", (void*)&ScriptStringTable::InternalRemoveString);
+		metaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptStringTable::InternalCreate);
 
 	}
 
@@ -34,7 +34,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		return metaData.scriptClass->CreateInstance("bool", ctorParams);
+		return metaData.ScriptClass->CreateInstance("bool", ctorParams);
 	}
 	MonoObject* ScriptStringTable::InternalGetRef(ScriptStringTable* thisPtr)
 	{

@@ -16,7 +16,7 @@ namespace bs
 	template<bool Core>
 	TPass<Core>::TPass()
 	{
-		mData.stencilRefValue = 0;
+		mData.StencilRefValue = 0;
 	}
 
 	template<bool Core>
@@ -34,11 +34,11 @@ namespace bs
 		for (UINT32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
 		{
 			// Transparent if destination color is taken into account
-			if (mData.blendStateDesc.renderTargetDesc[i].dstBlend != BF_ZERO ||
-				mData.blendStateDesc.renderTargetDesc[i].srcBlend == BF_DEST_COLOR ||
-				mData.blendStateDesc.renderTargetDesc[i].srcBlend == BF_INV_DEST_COLOR ||
-				mData.blendStateDesc.renderTargetDesc[i].srcBlend == BF_DEST_ALPHA ||
-				mData.blendStateDesc.renderTargetDesc[i].srcBlend == BF_INV_DEST_ALPHA)
+			if (mData.BlendStateDesc.RenderTargetDesc[i].DstBlend != BF_ZERO ||
+				mData.BlendStateDesc.RenderTargetDesc[i].SrcBlend == BF_DEST_COLOR ||
+				mData.BlendStateDesc.RenderTargetDesc[i].SrcBlend == BF_INV_DEST_COLOR ||
+				mData.BlendStateDesc.RenderTargetDesc[i].SrcBlend == BF_DEST_ALPHA ||
+				mData.BlendStateDesc.RenderTargetDesc[i].SrcBlend == BF_INV_DEST_ALPHA)
 			{
 				transparent = true;
 			}
@@ -54,17 +54,17 @@ namespace bs
 		{
 		default:
 		case GPT_VERTEX_PROGRAM:
-			return mData.vertexProgramDesc;
+			return mData.VertexProgramDesc;
 		case GPT_FRAGMENT_PROGRAM:
-			return mData.fragmentProgramDesc;
+			return mData.FragmentProgramDesc;
 		case GPT_GEOMETRY_PROGRAM:
-			return mData.geometryProgramDesc;
+			return mData.GeometryProgramDesc;
 		case GPT_HULL_PROGRAM:
-			return mData.hullProgramDesc;
+			return mData.HullProgramDesc;
 		case GPT_DOMAIN_PROGRAM:
-			return mData.domainProgramDesc;
+			return mData.DomainProgramDesc;
 		case GPT_COMPUTE_PROGRAM:
-			return mData.computeProgramDesc;
+			return mData.ComputeProgramDesc;
 		}
 	}
 
@@ -73,31 +73,31 @@ namespace bs
 	{
 		if (IsCompute())
 		{
-			SPtr<GpuProgramType> program = GpuProgramType::Create(mData.computeProgramDesc);
+			SPtr<GpuProgramType> program = GpuProgramType::Create(mData.ComputeProgramDesc);
 			mComputePipelineState = ComputePipelineStateType::Create(program);
 		}
 		else
 		{
 			PipelineStateDescType desc;
 
-			if(!mData.vertexProgramDesc.source.empty())
-				desc.vertexProgram = GpuProgramType::Create(mData.vertexProgramDesc);
+			if(!mData.VertexProgramDesc.Source.empty())
+				desc.VertexProgram = GpuProgramType::Create(mData.VertexProgramDesc);
 
-			if(!mData.fragmentProgramDesc.source.empty())
-				desc.fragmentProgram = GpuProgramType::Create(mData.fragmentProgramDesc);
+			if(!mData.FragmentProgramDesc.Source.empty())
+				desc.FragmentProgram = GpuProgramType::Create(mData.FragmentProgramDesc);
 
-			if(!mData.geometryProgramDesc.source.empty())
-				desc.geometryProgram = GpuProgramType::Create(mData.geometryProgramDesc);
+			if(!mData.GeometryProgramDesc.Source.empty())
+				desc.GeometryProgram = GpuProgramType::Create(mData.GeometryProgramDesc);
 
-			if(!mData.hullProgramDesc.source.empty())
-				desc.hullProgram = GpuProgramType::Create(mData.hullProgramDesc);
+			if(!mData.HullProgramDesc.Source.empty())
+				desc.HullProgram = GpuProgramType::Create(mData.HullProgramDesc);
 
-			if(!mData.domainProgramDesc.source.empty())
-				desc.domainProgram = GpuProgramType::Create(mData.domainProgramDesc);
+			if(!mData.DomainProgramDesc.Source.empty())
+				desc.DomainProgram = GpuProgramType::Create(mData.DomainProgramDesc);
 
-			desc.blendState = BlendStateType::Create(mData.blendStateDesc);
-			desc.rasterizerState = RasterizerStateType::Create(mData.rasterizerStateDesc);
-			desc.depthStencilState = DepthStencilStateType::Create(mData.depthStencilStateDesc);
+			desc.BlendState = BlendStateType::Create(mData.BlendStateDesc);
+			desc.RasterizerState = RasterizerStateType::Create(mData.RasterizerStateDesc);
+			desc.DepthStencilState = DepthStencilStateType::Create(mData.DepthStencilStateDesc);
 
 			mGraphicsPipelineState = GraphicsPipelineStateType::Create(desc);
 		}

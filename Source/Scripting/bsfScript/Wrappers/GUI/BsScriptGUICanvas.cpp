@@ -20,14 +20,14 @@ namespace bs
 
 	void ScriptGUICanvas::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUICanvas::InternalCreateInstance);
-		metaData.scriptClass->AddInternalCall("Internal_DrawLine", (void*)&ScriptGUICanvas::InternalDrawLine);
-		metaData.scriptClass->AddInternalCall("Internal_DrawPolyLine", (void*)&ScriptGUICanvas::InternalDrawPolyLine);
-		metaData.scriptClass->AddInternalCall("Internal_DrawTexture", (void*)&ScriptGUICanvas::InternalDrawTexture);
-		metaData.scriptClass->AddInternalCall("Internal_DrawTriangleStrip", (void*)&ScriptGUICanvas::InternalDrawTriangleStrip);
-		metaData.scriptClass->AddInternalCall("Internal_DrawTriangleList", (void*)&ScriptGUICanvas::InternalDrawTriangleList);
-		metaData.scriptClass->AddInternalCall("Internal_DrawText", (void*)&ScriptGUICanvas::InternalDrawText);
-		metaData.scriptClass->AddInternalCall("Internal_Clear", (void*)&ScriptGUICanvas::InternalClear);
+		metaData.ScriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUICanvas::InternalCreateInstance);
+		metaData.ScriptClass->AddInternalCall("Internal_DrawLine", (void*)&ScriptGUICanvas::InternalDrawLine);
+		metaData.ScriptClass->AddInternalCall("Internal_DrawPolyLine", (void*)&ScriptGUICanvas::InternalDrawPolyLine);
+		metaData.ScriptClass->AddInternalCall("Internal_DrawTexture", (void*)&ScriptGUICanvas::InternalDrawTexture);
+		metaData.ScriptClass->AddInternalCall("Internal_DrawTriangleStrip", (void*)&ScriptGUICanvas::InternalDrawTriangleStrip);
+		metaData.ScriptClass->AddInternalCall("Internal_DrawTriangleList", (void*)&ScriptGUICanvas::InternalDrawTriangleList);
+		metaData.ScriptClass->AddInternalCall("Internal_DrawText", (void*)&ScriptGUICanvas::InternalDrawText);
+		metaData.ScriptClass->AddInternalCall("Internal_Clear", (void*)&ScriptGUICanvas::InternalClear);
 	}
 
 	void ScriptGUICanvas::InternalCreateInstance(MonoObject* instance, MonoString* style, MonoArray* guiOptions)

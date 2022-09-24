@@ -33,7 +33,7 @@ namespace bs
 	{
 		GpuParamDataDesc* desc = GetParamDesc(type, name);
 		if(desc != nullptr)
-			return desc->elementSize * 4;
+			return desc->ElementSize * 4;
 
 		return 0;
 	}
@@ -49,8 +49,8 @@ namespace bs
 		if (paramDesc == nullptr)
 			return false;
 
-		auto paramIter = paramDesc->textures.find(name);
-		if(paramIter != paramDesc->textures.end())
+		auto paramIter = paramDesc->Textures.find(name);
+		if(paramIter != paramDesc->Textures.end())
 			return true;
 
 		return false;
@@ -62,8 +62,8 @@ namespace bs
 		if (paramDesc == nullptr)
 			return false;
 
-		auto paramIter = paramDesc->buffers.find(name);
-		if (paramIter != paramDesc->buffers.end())
+		auto paramIter = paramDesc->Buffers.find(name);
+		if (paramIter != paramDesc->Buffers.end())
 			return true;
 
 		return false;
@@ -75,8 +75,8 @@ namespace bs
 		if (paramDesc == nullptr)
 			return false;
 
-		auto paramIter = paramDesc->loadStoreTextures.find(name);
-		if (paramIter != paramDesc->loadStoreTextures.end())
+		auto paramIter = paramDesc->LoadStoreTextures.find(name);
+		if (paramIter != paramDesc->LoadStoreTextures.end())
 			return true;
 
 		return false;
@@ -88,8 +88,8 @@ namespace bs
 		if (paramDesc == nullptr)
 			return false;
 
-		auto paramIter = paramDesc->samplers.find(name);
-		if(paramIter != paramDesc->samplers.end())
+		auto paramIter = paramDesc->Samplers.find(name);
+		if(paramIter != paramDesc->Samplers.end())
 			return true;
 
 		return false;
@@ -101,8 +101,8 @@ namespace bs
 		if (paramDesc == nullptr)
 			return false;
 
-		auto paramBlockIter = paramDesc->paramBlocks.find(name);
-		if(paramBlockIter != paramDesc->paramBlocks.end())
+		auto paramBlockIter = paramDesc->ParamBlocks.find(name);
+		if(paramBlockIter != paramDesc->ParamBlocks.end())
 			return true;
 
 		return false;
@@ -114,8 +114,8 @@ namespace bs
 		if (paramDesc == nullptr)
 			return nullptr;
 
-		auto paramIter = paramDesc->params.find(name);
-		if (paramIter != paramDesc->params.end())
+		auto paramIter = paramDesc->Params.find(name);
+		if (paramIter != paramDesc->Params.end())
 			return &paramIter->second;
 
 		return nullptr;
@@ -127,8 +127,8 @@ namespace bs
 		if (paramDesc == nullptr)
 			return nullptr;
 
-		auto paramBlockIter = paramDesc->paramBlocks.find(name);
-		if (paramBlockIter != paramDesc->paramBlocks.end())
+		auto paramBlockIter = paramDesc->ParamBlocks.find(name);
+		if (paramBlockIter != paramDesc->ParamBlocks.end())
 			return &paramBlockIter->second;
 
 		return nullptr;
@@ -161,16 +161,16 @@ namespace bs
 		mSampledTextureData = (TextureData*)data;
 		for (UINT32 i = 0; i < numTextures; i++)
 		{
-			new (&mSampledTextureData[i].texture) TextureType();
-			new (&mSampledTextureData[i].surface) TextureSurface(0, 0, 0, 0);
+			new (&mSampledTextureData[i].Texture) TextureType();
+			new (&mSampledTextureData[i].Surface) TextureSurface(0, 0, 0, 0);
 		}
 
 		data += texturesSize;
 		mLoadStoreTextureData = (TextureData*)data;
 		for (UINT32 i = 0; i < numStorageTextures; i++)
 		{
-			new (&mLoadStoreTextureData[i].texture) TextureType();
-			new (&mLoadStoreTextureData[i].surface) TextureSurface(0, 0, 0, 0);
+			new (&mLoadStoreTextureData[i].Texture) TextureType();
+			new (&mLoadStoreTextureData[i].Surface) TextureSurface(0, 0, 0, 0);
 		}
 
 		data += loadStoreTexturesSize;
@@ -200,14 +200,14 @@ namespace bs
 
 		for (UINT32 i = 0; i < numTextures; i++)
 		{
-			mSampledTextureData[i].texture.~TextureType();
-			mSampledTextureData[i].surface.~TextureSurface();
+			mSampledTextureData[i].Texture.~TextureType();
+			mSampledTextureData[i].Surface.~TextureSurface();
 		}
 
 		for (UINT32 i = 0; i <  numStorageTextures; i++)
 		{
-			mLoadStoreTextureData[i].texture.~TextureType();
-			mLoadStoreTextureData[i].surface.~TextureSurface();
+			mLoadStoreTextureData[i].Texture.~TextureType();
+			mLoadStoreTextureData[i].Surface.~TextureSurface();
 		}
 
 		for (UINT32 i = 0; i < numBuffers; i++)
@@ -242,14 +242,14 @@ namespace bs
 			return;
 		}
 
-		auto iterFind = paramDescs->paramBlocks.find(name);
-		if (iterFind == paramDescs->paramBlocks.end())
+		auto iterFind = paramDescs->ParamBlocks.find(name);
+		if (iterFind == paramDescs->ParamBlocks.end())
 		{
 			BS_LOG(Warning, RenderBackend, "Cannot find parameter block with the name: '{0}'", name);
 			return;
 		}
 
-		SetParamBlockBuffer(iterFind->second.set, iterFind->second.slot, paramBlockBuffer);
+		SetParamBlockBuffer(iterFind->second.Set, iterFind->second.Slot, paramBlockBuffer);
 	}
 
 	template<bool Core>
@@ -261,11 +261,11 @@ namespace bs
 			if (paramDescs == nullptr)
 				continue;
 
-			auto iterFind = paramDescs->paramBlocks.find(name);
-			if (iterFind == paramDescs->paramBlocks.end())
+			auto iterFind = paramDescs->ParamBlocks.find(name);
+			if (iterFind == paramDescs->ParamBlocks.end())
 				continue;
 
-			SetParamBlockBuffer(iterFind->second.set, iterFind->second.slot, paramBlockBuffer);
+			SetParamBlockBuffer(iterFind->second.Set, iterFind->second.Slot, paramBlockBuffer);
 		}
 	}
 
@@ -281,8 +281,8 @@ namespace bs
 			return;
 		}
 
-		auto iterFind = paramDescs->params.find(name);
-		if (iterFind == paramDescs->params.end())
+		auto iterFind = paramDescs->Params.find(name);
+		if (iterFind == paramDescs->Params.end())
 		{
 			output = TGpuDataParam<T, Core>(nullptr, nullptr);
 			BS_LOG(Warning, RenderBackend, "Cannot find parameter with the name: '{0}'", name);
@@ -302,8 +302,8 @@ namespace bs
 			return;
 		}
 
-		auto iterFind = paramDescs->params.find(name);
-		if (iterFind == paramDescs->params.end() || iterFind->second.type != GPDT_STRUCT)
+		auto iterFind = paramDescs->Params.find(name);
+		if (iterFind == paramDescs->Params.end() || iterFind->second.Type != GPDT_STRUCT)
 		{
 			output = TGpuParamStruct<Core>(nullptr, nullptr);
 			BS_LOG(Warning, RenderBackend, "Cannot find struct parameter with the name: '{0}'", name);
@@ -323,8 +323,8 @@ namespace bs
 			return;
 		}
 
-		auto iterFind = paramDescs->textures.find(name);
-		if (iterFind == paramDescs->textures.end())
+		auto iterFind = paramDescs->Textures.find(name);
+		if (iterFind == paramDescs->Textures.end())
 		{
 			output = TGpuParamTexture<Core>(nullptr, nullptr);
 			BS_LOG(Warning, RenderBackend, "Cannot find texture parameter with the name: '{0}'", name);
@@ -344,8 +344,8 @@ namespace bs
 			return;
 		}
 
-		auto iterFind = paramDescs->loadStoreTextures.find(name);
-		if (iterFind == paramDescs->loadStoreTextures.end())
+		auto iterFind = paramDescs->LoadStoreTextures.find(name);
+		if (iterFind == paramDescs->LoadStoreTextures.end())
 		{
 			output = TGpuParamLoadStoreTexture<Core>(nullptr, nullptr);
 			BS_LOG(Warning, RenderBackend, "Cannot find load-store parameter with the name: '{0}'", name);
@@ -365,8 +365,8 @@ namespace bs
 			return;
 		}
 
-		auto iterFind = paramDescs->buffers.find(name);
-		if (iterFind == paramDescs->buffers.end())
+		auto iterFind = paramDescs->Buffers.find(name);
+		if (iterFind == paramDescs->Buffers.end())
 		{
 			output = TGpuParamBuffer<Core>(nullptr, nullptr);
 			BS_LOG(Warning, RenderBackend, "Cannot find buffer parameter with the name: '{0}'", name);
@@ -386,8 +386,8 @@ namespace bs
 			return;
 		}
 
-		auto iterFind = paramDescs->samplers.find(name);
-		if (iterFind == paramDescs->samplers.end())
+		auto iterFind = paramDescs->Samplers.find(name);
+		if (iterFind == paramDescs->Samplers.end())
 		{
 			output = TGpuParamSampState<Core>(nullptr, nullptr);
 			BS_LOG(Warning, RenderBackend, "Cannot find sampler state parameter with the name: '{0}'", name);
@@ -413,7 +413,7 @@ namespace bs
 		if (globalSlot == (UINT32)-1)
 			return TGpuParams<Core>::TextureType();
 
-		return mSampledTextureData[globalSlot].texture;
+		return mSampledTextureData[globalSlot].Texture;
 	}
 
 	template<bool Core>
@@ -423,7 +423,7 @@ namespace bs
 		if (globalSlot == (UINT32)-1)
 			return TGpuParams<Core>::TextureType();
 
-		return mLoadStoreTextureData[globalSlot].texture;
+		return mLoadStoreTextureData[globalSlot].Texture;
 	}
 
 	template<bool Core>
@@ -455,7 +455,7 @@ namespace bs
 		if (globalSlot == (UINT32)-1)
 			return emptySurface;
 
-		return mSampledTextureData[globalSlot].surface;
+		return mSampledTextureData[globalSlot].Surface;
 	}
 
 	template<bool Core>
@@ -467,7 +467,7 @@ namespace bs
 		if (globalSlot == (UINT32)-1)
 			return emptySurface;
 
-		return mLoadStoreTextureData[globalSlot].surface;
+		return mLoadStoreTextureData[globalSlot].Surface;
 	}
 
 
@@ -478,8 +478,8 @@ namespace bs
 		if (globalSlot == (UINT32)-1)
 			return;
 
-		mSampledTextureData[globalSlot].texture = texture;
-		mSampledTextureData[globalSlot].surface = surface;
+		mSampledTextureData[globalSlot].Texture = texture;
+		mSampledTextureData[globalSlot].Surface = surface;
 
 		MarkResourcesDirtyInternal();
 		MarkCoreDirtyInternal();
@@ -492,8 +492,8 @@ namespace bs
 		if (globalSlot == (UINT32)-1)
 			return;
 
-		mLoadStoreTextureData[globalSlot].texture = texture;
-		mLoadStoreTextureData[globalSlot].surface = surface;
+		mLoadStoreTextureData[globalSlot].Texture = texture;
+		mLoadStoreTextureData[globalSlot].Surface = surface;
 
 		MarkResourcesDirtyInternal();
 		MarkCoreDirtyInternal();
@@ -665,12 +665,12 @@ namespace bs
 		for (UINT32 i = 0; i < numTextures; i++)
 		{
 			new (&sampledSurfaces[i]) TextureSurface();
-			sampledSurfaces[i] = mSampledTextureData[i].surface;
+			sampledSurfaces[i] = mSampledTextureData[i].Surface;
 
 			new (&textures[i]) SPtr<ct::Texture>();
 
-			if (mSampledTextureData[i].texture.IsLoaded())
-				textures[i] = mSampledTextureData[i].texture->GetCore();
+			if (mSampledTextureData[i].Texture.IsLoaded())
+				textures[i] = mSampledTextureData[i].Texture->GetCore();
 			else
 				textures[i] = nullptr;
 		}
@@ -678,12 +678,12 @@ namespace bs
 		for (UINT32 i = 0; i < numStorageTextures; i++)
 		{
 			new (&loadStoreSurfaces[i]) TextureSurface();
-			loadStoreSurfaces[i] = mLoadStoreTextureData[i].surface;
+			loadStoreSurfaces[i] = mLoadStoreTextureData[i].Surface;
 
 			new (&loadStoreTextures[i]) SPtr<ct::Texture>();
 
-			if (mLoadStoreTextureData[i].texture.IsLoaded())
-				loadStoreTextures[i] = mLoadStoreTextureData[i].texture->GetCore();
+			if (mLoadStoreTextureData[i].Texture.IsLoaded())
+				loadStoreTextures[i] = mLoadStoreTextureData[i].Texture->GetCore();
 			else
 				loadStoreTextures[i] = nullptr;
 		}
@@ -718,14 +718,14 @@ namespace bs
 
 		for (UINT32 i = 0; i < numTextures; i++)
 		{
-			if (mSampledTextureData[i].texture != nullptr)
-				resources.push_back(mSampledTextureData[i].texture);
+			if (mSampledTextureData[i].Texture != nullptr)
+				resources.push_back(mSampledTextureData[i].Texture);
 		}
 
 		for (UINT32 i = 0; i < numStorageTextures; i++)
 		{
-			if (mLoadStoreTextureData[i].texture != nullptr)
-				resources.push_back(mLoadStoreTextureData[i].texture);
+			if (mLoadStoreTextureData[i].Texture != nullptr)
+				resources.push_back(mLoadStoreTextureData[i].Texture);
 		}
 	}
 
@@ -790,19 +790,19 @@ namespace bs
 
 		for (UINT32 i = 0; i < numTextures; i++)
 		{
-			mSampledTextureData[i].surface = sampledSurfaces[i];
+			mSampledTextureData[i].Surface = sampledSurfaces[i];
 			loadStoreSurfaces[i].~TextureSurface();
 
-			mSampledTextureData[i].texture = textures[i];
+			mSampledTextureData[i].Texture = textures[i];
 			textures[i].~SPtr<Texture>();
 		}
 
 		for (UINT32 i = 0; i < numStorageTextures; i++)
 		{
-			mLoadStoreTextureData[i].surface = loadStoreSurfaces[i];
+			mLoadStoreTextureData[i].Surface = loadStoreSurfaces[i];
 			loadStoreSurfaces[i].~TextureSurface();
 
-			mLoadStoreTextureData[i].texture = loadStoreTextures[i];
+			mLoadStoreTextureData[i].Texture = loadStoreTextures[i];
 			loadStoreTextures[i].~SPtr<Texture>();
 		}
 

@@ -14,73 +14,73 @@ namespace bs
 	struct BitLength
 	{
 		BitLength(uint32_t bytes = 0, uint8_t bits = 0)
-			:bytes(bytes), bits(bits)
+			:Bytes(bytes), Bits(bits)
 		{
 			assert(bits < 8);
 		}
 
 		bool operator== (const BitLength& rhs) const
 		{
-			return bytes == rhs.bytes && bits == rhs.bits;
+			return Bytes == rhs.Bytes && Bits == rhs.Bits;
 		}
 
 		bool operator!= (const BitLength& rhs) const
 		{
-			return (bytes != rhs.bytes || bits != rhs.bits);
+			return (Bytes != rhs.Bytes || Bits != rhs.Bits);
 		}
 
 		bool operator< (const BitLength& rhs) const
 		{
-			return bytes < rhs.bytes || (bytes == rhs.bytes && bits < rhs.bits);
+			return Bytes < rhs.Bytes || (Bytes == rhs.Bytes && Bits < rhs.Bits);
 		}
 		
 		bool operator<= (const BitLength& rhs) const
 		{
-			return bytes < rhs.bytes || (bytes == rhs.bytes && bits <= rhs.bits);
+			return Bytes < rhs.Bytes || (Bytes == rhs.Bytes && Bits <= rhs.Bits);
 		}
 
 		bool operator> (const BitLength& rhs) const
 		{
-			return bytes > rhs.bytes || (bytes == rhs.bytes && bits > rhs.bits);
+			return Bytes > rhs.Bytes || (Bytes == rhs.Bytes && Bits > rhs.Bits);
 		}
 		
 		bool operator>= (const BitLength& rhs) const
 		{
-			return bytes > rhs.bytes || (bytes == rhs.bytes && bits >= rhs.bits);
+			return Bytes > rhs.Bytes || (Bytes == rhs.Bytes && Bits >= rhs.Bits);
 		}
 		
 		BitLength operator+ (const BitLength& rhs) const
 		{
-			uint8_t totalBits = bits + rhs.bits;
-			return BitLength(bytes + rhs.bytes + (totalBits / 8), totalBits % 8);
+			uint8_t totalBits = Bits + rhs.Bits;
+			return BitLength(Bytes + rhs.Bytes + (totalBits / 8), totalBits % 8);
 		}
 
 		BitLength operator- (const BitLength& rhs) const
 		{
-			if (rhs.bytes > bytes)
+			if (rhs.Bytes > Bytes)
 				return BitLength();
-			else if(rhs.bytes == bytes)
+			else if(rhs.Bytes == Bytes)
 			{
-				if (rhs.bits >= bits)
+				if (rhs.Bits >= Bits)
 					return BitLength();
 			}
 
-			uint32_t newBytes = bytes - rhs.bytes;
+			uint32_t newBytes = Bytes - rhs.Bytes;
 			uint32_t newBits;
-			if(rhs.bits > bits)
+			if(rhs.Bits > Bits)
 			{
 				newBytes--;
-				newBits = 8 - (rhs.bits - bits);
+				newBits = 8 - (rhs.Bits - Bits);
 			}
 			else
-				newBits = bits - rhs.bits;
+				newBits = Bits - rhs.Bits;
 			
 			return BitLength(newBytes, newBits);
 		}
 
 		BitLength operator* (const uint32_t& rhs) const
 		{
-			uint64_t newBits = ((uint64_t)bytes * 8 + bits) * rhs;
+			uint64_t newBits = ((uint64_t)Bytes * 8 + Bits) * rhs;
 			return BitLength((uint32_t)newBits / 8, (uint32_t)newBits % 8);
 		}
 
@@ -103,7 +103,7 @@ namespace bs
 		}
 
 		/** Returns the encoded length in number of bits. */
-		uint64_t GetBits() const { return ((uint64_t)bytes * 8) + bits; }
+		uint64_t GetBits() const { return ((uint64_t)Bytes * 8) + Bits; }
 
 		/** Constructs a new bit length object from a number of bits. */
 		static BitLength FromBits(uint64_t bits)
@@ -111,8 +111,8 @@ namespace bs
 			return BitLength((uint32_t)(bits / 8), (uint32_t)(bits % 8));
 		}
 
-		uint32_t bytes;
-		uint8_t bits;
+		uint32_t Bytes;
+		uint8_t Bits;
 	};
 
 	/** @} */

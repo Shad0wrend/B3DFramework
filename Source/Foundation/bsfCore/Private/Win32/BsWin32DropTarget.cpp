@@ -104,8 +104,8 @@ namespace bs
 			mQueuedDropOps.push_back(DropTargetOp(DropOpType::DragOver, Vector2I((int)pt.x, (int)pt.y)));
 
 			DropTargetOp& op = mQueuedDropOps.back();
-			op.dataType = DropOpDataType::FileList;
-			op.mFileList = mFileLists.back();
+			op.DataType = DropOpDataType::FileList;
+			op.MFileList = mFileLists.back();
 		}
 
 		return S_OK;
@@ -125,8 +125,8 @@ namespace bs
 			mQueuedDropOps.push_back(DropTargetOp(DropOpType::DragOver, Vector2I((int)pt.x, (int)pt.y)));
 
 			DropTargetOp& op = mQueuedDropOps.back();
-			op.dataType = DropOpDataType::FileList;
-			op.mFileList = mFileLists.back();
+			op.DataType = DropOpDataType::FileList;
+			op.MFileList = mFileLists.back();
 		}
 
 		return S_OK;
@@ -140,8 +140,8 @@ namespace bs
 			mQueuedDropOps.push_back(DropTargetOp(DropOpType::Leave, Vector2I()));
 
 			DropTargetOp& op = mQueuedDropOps.back();
-			op.dataType = DropOpDataType::FileList;
-			op.mFileList = mFileLists.back();
+			op.DataType = DropOpDataType::FileList;
+			op.MFileList = mFileLists.back();
 		}
 
 		return S_OK;
@@ -164,8 +164,8 @@ namespace bs
 			mQueuedDropOps.push_back(DropTargetOp(DropOpType::Drop, Vector2I((int)pt.x, (int)pt.y)));
 
 			DropTargetOp& op = mQueuedDropOps.back();
-			op.dataType = DropOpDataType::FileList;
-			op.mFileList = mFileLists.back();
+			op.DataType = DropOpDataType::FileList;
+			op.MFileList = mFileLists.back();
 		}
 
 		return S_OK;
@@ -196,30 +196,30 @@ namespace bs
 		{
 			for(auto& target : mDropTargets)
 			{
-				if(op.type != DropOpType::Leave)
+				if(op.Type != DropOpType::Leave)
 				{
-					if(target->IsInsideInternal(op.position))
+					if(target->IsInsideInternal(op.Position))
 					{
 						if(!target->IsActiveInternal())
 						{
-							target->SetFileListInternal(*op.mFileList);
+							target->SetFileListInternal(*op.MFileList);
 							target->SetActiveInternal(true);
-							target->onEnter(op.position.x, op.position.y);
+							target->OnEnter(op.Position.X, op.Position.Y);
 						}
 
-						if(op.type == DropOpType::DragOver)
-							target->onDragOver(op.position.x, op.position.y);
-						else if(op.type == DropOpType::Drop)
+						if(op.Type == DropOpType::DragOver)
+							target->OnDragOver(op.Position.X, op.Position.Y);
+						else if(op.Type == DropOpType::Drop)
 						{
-							target->SetFileListInternal(*op.mFileList);
-							target->onDrop(op.position.x, op.position.y);
+							target->SetFileListInternal(*op.MFileList);
+							target->OnDrop(op.Position.X, op.Position.Y);
 						}
 					}
 					else
 					{
 						if(target->IsActiveInternal())
 						{
-							target->onLeave();
+							target->OnLeave();
 							target->ClearInternal();
 							target->SetActiveInternal(false);
 						}
@@ -229,18 +229,18 @@ namespace bs
 				{
 					if(target->IsActiveInternal())
 					{
-						target->onLeave();
+						target->OnLeave();
 						target->ClearInternal();
 						target->SetActiveInternal(false);
 					}
 				}
 			}
 
-			if(op.type == DropOpType::Leave || op.type == DropOpType::Drop)
+			if(op.Type == DropOpType::Leave || op.Type == DropOpType::Drop)
 			{
 				while (!mFileLists.empty())
 				{
-					bool done = mFileLists[0] == op.mFileList;
+					bool done = mFileLists[0] == op.MFileList;
 
 					bs_delete(mFileLists[0]);
 					mFileLists.erase(mFileLists.begin());

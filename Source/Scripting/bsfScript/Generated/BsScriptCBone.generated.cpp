@@ -15,8 +15,8 @@ namespace bs
 
 	void ScriptCBone::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_SetBoneName", (void*)&ScriptCBone::InternalSetBoneName);
-		metaData.scriptClass->AddInternalCall("Internal_GetBoneName", (void*)&ScriptCBone::InternalGetBoneName);
+		metaData.ScriptClass->AddInternalCall("Internal_SetBoneName", (void*)&ScriptCBone::InternalSetBoneName);
+		metaData.ScriptClass->AddInternalCall("Internal_GetBoneName", (void*)&ScriptCBone::InternalGetBoneName);
 
 	}
 

@@ -25,10 +25,10 @@ namespace bs { namespace ct
 	/** Contains data needed for performing a single rendering pass. */
 	struct RenderQueueElement
 	{
-		const RenderElement* renderElem = nullptr;
-		UINT32 passIdx = 0;
-		UINT32 techniqueIdx = 0;
-		bool applyPass = true;
+		const RenderElement* RenderElem = nullptr;
+		UINT32 PassIdx = 0;
+		UINT32 TechniqueIdx = 0;
+		bool ApplyPass = true;
 	};
 
 	/**
@@ -41,12 +41,12 @@ namespace bs { namespace ct
 		/**	Data used for renderable element sorting. Represents a single pass for a single mesh. */
 		struct SortableElement
 		{
-			UINT32 seqIdx;
-			INT32 priority;
-			float distFromCamera;
-			UINT32 shaderId;
-			UINT32 techniqueIdx;
-			UINT32 passIdx;
+			UINT32 SeqIdx;
+			INT32 Priority;
+			float DistFromCamera;
+			UINT32 ShaderId;
+			UINT32 TechniqueIdx;
+			UINT32 PassIdx;
 		};
 
 	public:

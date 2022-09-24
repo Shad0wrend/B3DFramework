@@ -12,19 +12,19 @@ namespace bs
 	{
 		UINT32 elementSize;
 
-		if (desc.type == GBT_STANDARD)
-			elementSize = GpuBuffer::GetFormatSize(desc.format);
+		if (desc.Type == GBT_STANDARD)
+			elementSize = GpuBuffer::GetFormatSize(desc.Format);
 		else
-			elementSize = desc.elementSize;
+			elementSize = desc.ElementSize;
 
-		return elementSize * desc.elementCount;
+		return elementSize * desc.ElementCount;
 	}
 
 	GpuBufferProperties::GpuBufferProperties(const GPU_BUFFER_DESC& desc)
 		: mDesc(desc)
 	{
-		if(mDesc.type == GBT_STANDARD)
-			mDesc.elementSize = GpuBuffer::GetFormatSize(mDesc.format);
+		if(mDesc.Type == GBT_STANDARD)
+			mDesc.ElementSize = GpuBuffer::GetFormatSize(mDesc.Format);
 	}
 
 	GpuBuffer::GpuBuffer(const GPU_BUFFER_DESC& desc)
@@ -100,25 +100,25 @@ namespace bs
 	namespace ct
 	{
 	GpuBuffer::GpuBuffer(const GPU_BUFFER_DESC& desc, GpuDeviceFlags deviceMask)
-		:HardwareBuffer(getBufferSize(desc), desc.usage, deviceMask), mProperties(desc)
+		:HardwareBuffer(getBufferSize(desc), desc.Usage, deviceMask), mProperties(desc)
 	{
-		if (desc.type != GBT_STANDARD)
-			assert(desc.format == BF_UNKNOWN && "Format must be set to BF_UNKNOWN when using non-standard buffers");
+		if (desc.Type != GBT_STANDARD)
+			assert(desc.Format == BF_UNKNOWN && "Format must be set to BF_UNKNOWN when using non-standard buffers");
 		else
-			assert(desc.elementSize == 0 && "No element size can be provided for standard buffer. Size is determined from format.");
+			assert(desc.ElementSize == 0 && "No element size can be provided for standard buffer. Size is determined from format.");
 	}
 
 	GpuBuffer::GpuBuffer(const GPU_BUFFER_DESC& desc, SPtr<HardwareBuffer> underlyingBuffer)
-		: HardwareBuffer(getBufferSize(desc), desc.usage, underlyingBuffer->GetDeviceMask()), mProperties(desc)
+		: HardwareBuffer(getBufferSize(desc), desc.Usage, underlyingBuffer->GetDeviceMask()), mProperties(desc)
 		, mBuffer(underlyingBuffer.get()), mSharedBuffer(std::move(underlyingBuffer)), mIsExternalBuffer(true)
 	{
 		const auto& props = GetProperties();
 		assert(mSharedBuffer->GetSize() == (props.GetElementCount() * props.GetElementSize()));
 
-		if (desc.type != GBT_STANDARD)
-			assert(desc.format == BF_UNKNOWN && "Format must be set to BF_UNKNOWN when using non-standard buffers");
+		if (desc.Type != GBT_STANDARD)
+			assert(desc.Format == BF_UNKNOWN && "Format must be set to BF_UNKNOWN when using non-standard buffers");
 		else
-			assert(desc.elementSize == 0 && "No element size can be provided for standard buffer. Size is determined from format.");
+			assert(desc.ElementSize == 0 && "No element size can be provided for standard buffer. Size is determined from format.");
 	}
 
 	GpuBuffer::~GpuBuffer()
@@ -190,11 +190,11 @@ namespace bs
 		}
 
 		GPU_BUFFER_DESC desc;
-		desc.type = type;
-		desc.format = format;
-		desc.usage = mUsage;
-		desc.elementSize = elementSize;
-		desc.elementCount = mBuffer->GetSize() / elemSize;
+		desc.Type = type;
+		desc.Format = format;
+		desc.Usage = mUsage;
+		desc.ElementSize = elementSize;
+		desc.ElementCount = mBuffer->GetSize() / elemSize;
 
 		if(!mSharedBuffer)
 		{

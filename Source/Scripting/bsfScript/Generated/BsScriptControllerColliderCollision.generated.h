@@ -11,12 +11,12 @@ namespace bs
 {
 	struct __ControllerColliderCollisionInterop
 	{
-		MonoObject* collider;
-		uint32_t triangleIndex;
-		Vector3 position;
-		Vector3 normal;
-		Vector3 motionDir;
-		float motionAmount;
+		MonoObject* Collider;
+		uint32_t TriangleIndex;
+		Vector3 Position;
+		Vector3 Normal;
+		Vector3 MotionDir;
+		float MotionAmount;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptControllerColliderCollision : public ScriptObject<ScriptControllerColliderCollision>

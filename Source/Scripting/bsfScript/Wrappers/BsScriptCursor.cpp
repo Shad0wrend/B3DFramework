@@ -15,18 +15,18 @@ namespace bs
 
 	void ScriptCursor::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_GetScreenPosition", (void*)&ScriptCursor::InternalGetScreenPosition);
-		metaData.scriptClass->AddInternalCall("Internal_SetScreenPosition", (void*)&ScriptCursor::InternalSetScreenPosition);
-		metaData.scriptClass->AddInternalCall("Internal_Hide", (void*)&ScriptCursor::InternalHide);
-		metaData.scriptClass->AddInternalCall("Internal_Show", (void*)&ScriptCursor::InternalShow);
-		metaData.scriptClass->AddInternalCall("Internal_ClipToRect", (void*)&ScriptCursor::InternalClipToRect);
-		metaData.scriptClass->AddInternalCall("Internal_ClipDisable", (void*)&ScriptCursor::InternalClipDisable);
-		metaData.scriptClass->AddInternalCall("Internal_SetCursor", (void*)&ScriptCursor::InternalSetCursor);
-		metaData.scriptClass->AddInternalCall("Internal_SetCursorStr", (void*)&ScriptCursor::InternalSetCursorStr);
-		metaData.scriptClass->AddInternalCall("Internal_SetCursorIcon", (void*)&ScriptCursor::InternalSetCursorIcon);
-		metaData.scriptClass->AddInternalCall("Internal_SetCursorIconStr", (void*)&ScriptCursor::InternalSetCursorIconStr);
-		metaData.scriptClass->AddInternalCall("Internal_ClearCursorIcon", (void*)&ScriptCursor::InternalClearCursorIcon);
-		metaData.scriptClass->AddInternalCall("Internal_ClearCursorIconStr", (void*)&ScriptCursor::InternalClearCursorIconStr);
+		metaData.ScriptClass->AddInternalCall("Internal_GetScreenPosition", (void*)&ScriptCursor::InternalGetScreenPosition);
+		metaData.ScriptClass->AddInternalCall("Internal_SetScreenPosition", (void*)&ScriptCursor::InternalSetScreenPosition);
+		metaData.ScriptClass->AddInternalCall("Internal_Hide", (void*)&ScriptCursor::InternalHide);
+		metaData.ScriptClass->AddInternalCall("Internal_Show", (void*)&ScriptCursor::InternalShow);
+		metaData.ScriptClass->AddInternalCall("Internal_ClipToRect", (void*)&ScriptCursor::InternalClipToRect);
+		metaData.ScriptClass->AddInternalCall("Internal_ClipDisable", (void*)&ScriptCursor::InternalClipDisable);
+		metaData.ScriptClass->AddInternalCall("Internal_SetCursor", (void*)&ScriptCursor::InternalSetCursor);
+		metaData.ScriptClass->AddInternalCall("Internal_SetCursorStr", (void*)&ScriptCursor::InternalSetCursorStr);
+		metaData.ScriptClass->AddInternalCall("Internal_SetCursorIcon", (void*)&ScriptCursor::InternalSetCursorIcon);
+		metaData.ScriptClass->AddInternalCall("Internal_SetCursorIconStr", (void*)&ScriptCursor::InternalSetCursorIconStr);
+		metaData.ScriptClass->AddInternalCall("Internal_ClearCursorIcon", (void*)&ScriptCursor::InternalClearCursorIcon);
+		metaData.ScriptClass->AddInternalCall("Internal_ClearCursorIconStr", (void*)&ScriptCursor::InternalClearCursorIconStr);
 	}
 
 	void ScriptCursor::InternalGetScreenPosition(Vector2I* value)

@@ -10,9 +10,9 @@ namespace bs
 	{
 		const SkeletonBoneInfo& boneInfo = thisPtr->GetBoneInfo(boneIdx);
 		SkeletonBoneInfoEx boneInfoEx;
-		boneInfoEx.name = boneInfo.name;
-		boneInfoEx.parent = boneInfo.parent;
-		boneInfoEx.invBindPose = thisPtr->GetInvBindPose(boneIdx);
+		boneInfoEx.Name = boneInfo.Name;
+		boneInfoEx.Parent = boneInfo.Parent;
+		boneInfoEx.InvBindPose = thisPtr->GetInvBindPose(boneIdx);
 
 		return boneInfoEx;
 	}

@@ -18,8 +18,8 @@ namespace bs
 	SPtr<GpuProgram> GpuProgramManager::CreateEmpty(const String& language, GpuProgramType type)
 	{
 		GPU_PROGRAM_DESC desc;
-		desc.language = language;
-		desc.type = type;
+		desc.Language = language;
+		desc.Type = type;
 
 		GpuProgram* program = new (bs_alloc<GpuProgram>()) GpuProgram(desc);
 		SPtr<GpuProgram> ret = bs_core_ptr<GpuProgram>(program);
@@ -64,7 +64,7 @@ namespace bs
 	SPtr<GpuProgramBytecode> NullProgramFactory::CompileBytecode(const GPU_PROGRAM_DESC& desc)
 	{
 		auto bytecode = bs_shared_ptr_new<GpuProgramBytecode>();
-		bytecode->compilerId = "Null";
+		bytecode->CompilerId = "Null";
 
 		return bytecode;
 	}
@@ -123,7 +123,7 @@ namespace bs
 
 	SPtr<GpuProgram> GpuProgramManager::CreateInternal(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask)
 	{
-		GpuProgramFactory* factory = GetFactory(desc.language);
+		GpuProgramFactory* factory = GetFactory(desc.Language);
 		SPtr<GpuProgram> ret = factory->Create(desc, deviceMask);
 
 		return ret;
@@ -131,7 +131,7 @@ namespace bs
 
 	SPtr<GpuProgramBytecode> GpuProgramManager::CompileBytecode(const GPU_PROGRAM_DESC& desc)
 	{
-		GpuProgramFactory* factory = GetFactory(desc.language);
+		GpuProgramFactory* factory = GetFactory(desc.Language);
 		return factory->CompileBytecode(desc);
 	}
 	}

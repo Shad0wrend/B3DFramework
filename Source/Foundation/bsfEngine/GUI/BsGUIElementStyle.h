@@ -24,8 +24,8 @@ namespace bs
 	/**	Specific texture and text color used in a particular GUI element style. */
 	struct BS_EXPORT BS_SCRIPT_EXPORT(m:GUI,pl:true) GUIElementStateStyle
 	{
-		BS_NORREF HSpriteTexture texture;
-		Color textColor;
+		BS_NORREF HSpriteTexture Texture;
+		Color TextColor;
 	};
 
 	/**
@@ -38,112 +38,112 @@ namespace bs
 		GUIElementStyle() = default;
 
 		BS_SCRIPT_EXPORT()
-		BS_NORREF HFont font; /**< Font to use for all text within the GUI element. */
+		BS_NORREF HFont Font; /**< Font to use for all text within the GUI element. */
 
 		BS_SCRIPT_EXPORT()
-		UINT32 fontSize = 8; /**< Font size to use for all text within the GUI element. */
+		UINT32 FontSize = 8; /**< Font size to use for all text within the GUI element. */
 
 		BS_SCRIPT_EXPORT()
-		TextHorzAlign textHorzAlign = THA_Left; /**< Horizontal alignment of text within the GUI element. */
+		TextHorzAlign TextHorzAlign = THA_Left; /**< Horizontal alignment of text within the GUI element. */
 
 		BS_SCRIPT_EXPORT()
-		TextVertAlign textVertAlign = TVA_Top; /**< Vertical alignment of text within the GUI element. */
+		TextVertAlign TextVertAlign = TVA_Top; /**< Vertical alignment of text within the GUI element. */
 
 		BS_SCRIPT_EXPORT()
-		GUIImagePosition imagePosition = GUIImagePosition::Left; /**< Position of content image relative to text. */
+		GUIImagePosition ImagePosition = GUIImagePosition::Left; /**< Position of content image relative to text. */
 
 		BS_SCRIPT_EXPORT()
-		bool wordWrap = false; /**< Should the text word wrap if it doesn't fit. */
+		bool WordWrap = false; /**< Should the text word wrap if it doesn't fit. */
 
 		/**
 		 * Style used when the element doesn't have focus nor is the user interacting with the element. Used when the
 		 * element is in the 'off' state.
 		 */
 		BS_SCRIPT_EXPORT()
-		GUIElementStateStyle normal;
+		GUIElementStateStyle Normal;
 
 		/**
 		 * Style used when the user is hovering the pointer over the element, while the element doesn't have focus. Used
 		 * when the element is in the 'off' state.
 		 */
 		BS_SCRIPT_EXPORT()
-		GUIElementStateStyle hover;
+		GUIElementStateStyle Hover;
 
 		/**
 		 * Style used when the user is actively interacting with the element. Used when the element is in the 'off' state.
 		 */
 		BS_SCRIPT_EXPORT()
-		GUIElementStateStyle active;
+		GUIElementStateStyle Active;
 
 		/**
 		 * Style used when the element has focus but the pointer is not hovering over the element. Used when the element is
 		 * in the 'off' state.
 		 */
 		BS_SCRIPT_EXPORT()
-		GUIElementStateStyle focused;
+		GUIElementStateStyle Focused;
 
 		/**
 		 * Style used when the element has focus and the pointer is hovering over the element. Used when the element is
 		 * in the 'off' state.
 		 */
 		BS_SCRIPT_EXPORT()
-		GUIElementStateStyle focusedHover;
+		GUIElementStateStyle FocusedHover;
 
 		/** Same as GUIElementStyle::normal, except it's used when element is in the 'on' state. */
 		BS_SCRIPT_EXPORT()
-		GUIElementStateStyle normalOn;
+		GUIElementStateStyle NormalOn;
 
 		/** Same as GUIElementStyle::hover, except it's used when element is in the 'on' state. */
 		BS_SCRIPT_EXPORT()
-		GUIElementStateStyle hoverOn;
+		GUIElementStateStyle HoverOn;
 
 		/** Same as GUIElementStyle::active, except it's used when element is in the 'on' state. */
 		BS_SCRIPT_EXPORT()
-		GUIElementStateStyle activeOn;
+		GUIElementStateStyle ActiveOn;
 
 		/** Same as GUIElementStyle::focused, except it's used when element is in the 'on' state. */
 		BS_SCRIPT_EXPORT()
-		GUIElementStateStyle focusedOn;
+		GUIElementStateStyle FocusedOn;
 
 		/** Same as GUIElementStyle::focusedHover, except it's used when element is in the 'on' state. */
 		BS_SCRIPT_EXPORT()
-		GUIElementStateStyle focusedHoverOn;
+		GUIElementStateStyle FocusedHoverOn;
 
 		BS_SCRIPT_EXPORT()
-		RectOffset border; /**< Determines how the element is scaled (using the typical Scale9Grid approach). */
+		RectOffset Border; /**< Determines how the element is scaled (using the typical Scale9Grid approach). */
 
 		BS_SCRIPT_EXPORT()
-		RectOffset margins; /**< Determines offset from the background graphics to the content. Input uses bounds offset by this value. */
+		RectOffset Margins; /**< Determines offset from the background graphics to the content. Input uses bounds offset by this value. */
 
 		BS_SCRIPT_EXPORT()
-		RectOffset contentOffset; /**< Additional offset to the content, that doesn't effect the bounds. Applied on top of the margins offsets. */
+		RectOffset ContentOffset; /**< Additional offset to the content, that doesn't effect the bounds. Applied on top of the margins offsets. */
 
 		BS_SCRIPT_EXPORT()
-		RectOffset padding; /**< Determines extra distance between this and other elements in a layout. */
+		RectOffset Padding; /**< Determines extra distance between this and other elements in a layout. */
 
 		BS_SCRIPT_EXPORT()
-		UINT32 width = 0; /**< Wanted width of the GUI element in pixels. Only used if fixedWidth is enabled. */
+		UINT32 Width = 0; /**< Wanted width of the GUI element in pixels. Only used if fixedWidth is enabled. */
 
 		BS_SCRIPT_EXPORT()
-		UINT32 height = 0; /**< Wanted height of the GUI element in pixels. Only used if fixedHeight is enabled. */
+		UINT32 Height = 0; /**< Wanted height of the GUI element in pixels. Only used if fixedHeight is enabled. */
 
 		BS_SCRIPT_EXPORT()
-		UINT32 minWidth = 0; /**< Minimum width allowed for the GUI element. Used by the layout only when exact width is not specified. */
+		UINT32 MinWidth = 0; /**< Minimum width allowed for the GUI element. Used by the layout only when exact width is not specified. */
 
 		BS_SCRIPT_EXPORT()
-		UINT32 maxWidth = 0; /**< Maximum width allowed for the GUI element. Used by the layout only when exact width is not specified. */
+		UINT32 MaxWidth = 0; /**< Maximum width allowed for the GUI element. Used by the layout only when exact width is not specified. */
 
 		BS_SCRIPT_EXPORT()
-		UINT32 minHeight = 0; /**< Minimum height allowed for the GUI element. Used by the layout only when exact height is not specified. */
+		UINT32 MinHeight = 0; /**< Minimum height allowed for the GUI element. Used by the layout only when exact height is not specified. */
 
 		BS_SCRIPT_EXPORT()
-		UINT32 maxHeight = 0; /**< Maximum height allowed for the GUI element. Used by the layout only when exact height is not specified. */
+		UINT32 MaxHeight = 0; /**< Maximum height allowed for the GUI element. Used by the layout only when exact height is not specified. */
 
 		BS_SCRIPT_EXPORT()
-		bool fixedWidth = false; /**< Determines should the layout resize the element depending on available size. If true no resizing will be done. */
+		bool FixedWidth = false; /**< Determines should the layout resize the element depending on available size. If true no resizing will be done. */
 
 		BS_SCRIPT_EXPORT()
-		bool fixedHeight = false; /**< Determines should the layout resize the element depending on available size. If true no resizing will be done. */
+		bool FixedHeight = false; /**< Determines should the layout resize the element depending on available size. If true no resizing will be done. */
 
 		/**
 		 * Registers a new sub-style that is used by complex GUI elements that contain one or multiple sub-elements.
@@ -154,10 +154,10 @@ namespace bs
 		BS_SCRIPT_EXPORT()
 		void AddSubStyle(const String& guiType, const String& styleName)
 		{
-			subStyles[guiType] = styleName;
+			SubStyles[guiType] = styleName;
 		}
 
-		Map<String, String> subStyles; /**< Sub-styles used by certain more complex elements. */
+		Map<String, String> SubStyles; /**< Sub-styles used by certain more complex elements. */
 
 		/************************************************************************/
 		/* 								SERIALIZATION                      		*/

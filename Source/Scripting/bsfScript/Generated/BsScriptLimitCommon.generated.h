@@ -11,9 +11,9 @@ namespace bs
 {
 	struct __LimitCommonInterop
 	{
-		float contactDist;
-		float restitution;
-		Spring spring;
+		float ContactDist;
+		float Restitution;
+		Spring Spring;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptLimitCommon : public ScriptObject<ScriptLimitCommon>

@@ -98,25 +98,25 @@ namespace bs
 
 		/** Determines if depth collisions are enabled. */
 		BS_SCRIPT_EXPORT()
-		bool enabled = false;
+		bool Enabled = false;
 
 		/**
 		 * Determines the elasticity (bounciness) of the particle collision. Lower values make the collision less bouncy
 		 * and higher values more.
 		 */
 		BS_SCRIPT_EXPORT()
-		float restitution = 1.0f;
+		float Restitution = 1.0f;
 
 		/**
 		 * Determines how much velocity should a particle lose after a collision, in percent of its current velocity. In
 		 * range [0, 1].
 		 */
 		BS_SCRIPT_EXPORT()
-		float dampening = 0.5f;
+		float Dampening = 0.5f;
 
 		/** Scale which to apply to particle size in order to determine the collision radius. */
 		BS_SCRIPT_EXPORT()
-		float radiusScale = 1.0f;
+		float RadiusScale = 1.0f;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -141,22 +141,22 @@ namespace bs
 	{
 		/** Determines in which space are particles in. */
 		BS_SCRIPT_EXPORT()
-		ParticleSimulationSpace simulationSpace = ParticleSimulationSpace::World;
+		ParticleSimulationSpace SimulationSpace = ParticleSimulationSpace::World;
 
 		/** Determines how are particles oriented when rendering. */
 		BS_SCRIPT_EXPORT()
-		ParticleOrientation orientation = ParticleOrientation::ViewPlane;
+		ParticleOrientation Orientation = ParticleOrientation::ViewPlane;
 
 		/**
 		 * Determines the time period during which the system runs, in seconds. This effects evaluation of distributions
 		 * with curves using particle system time for evaluation.
 		 */
 		BS_SCRIPT_EXPORT()
-		float duration = 5.0f;
+		float Duration = 5.0f;
 
 		/** Determines should the particle system time wrap around once it reaches its duration. */
 		BS_SCRIPT_EXPORT()
-		bool isLooping = true;
+		bool IsLooping = true;
 
 		/**
 		 * Determines the maximum number of particles that can ever be active in this system. This number is ignored
@@ -164,7 +164,7 @@ namespace bs
 		 * buffers (shared between all particle systems).
 		 */
 		BS_SCRIPT_EXPORT()
-		UINT32 maxParticles = 2000;
+		UINT32 MaxParticles = 2000;
 
 		/**
 		 * If true the particle system will be simulated on the GPU. This allows much higher particle counts at lower
@@ -172,47 +172,47 @@ namespace bs
 		 * to customize the GPU simulation.
 		 */
 		BS_SCRIPT_EXPORT(category:Advanced,order:1)
-		bool gpuSimulation = false;
+		bool GpuSimulation = false;
 
 
 		/** Determines how is each particle represented on the screen. */
 		BS_SCRIPT_EXPORT(order:2)
-		ParticleRenderMode renderMode = ParticleRenderMode::Billboard;
+		ParticleRenderMode RenderMode = ParticleRenderMode::Billboard;
 
 		/**
 		 * Determines should the particles only be allowed to orient themselves around the Y axis, or freely. Ignored if
 		 * using the Plane orientation mode.
 		 */
 		BS_SCRIPT_EXPORT(order:2)
-		bool orientationLockY = false;
+		bool OrientationLockY = false;
 
 		/**
 		 * Determines a normal of the plane to orient particles towards. Only used if particle orientation mode is set to
 		 * ParticleOrientation::Plane.
 		 */
 		BS_SCRIPT_EXPORT(order:2)
-		Vector3 orientationPlaneNormal = Vector3::UNIT_Z;
+		Vector3 OrientationPlaneNormal = Vector3::UNIT_Z;
 
 		/**
 		 * Determines how (and if) are particles sorted. Sorting controls in what order are particles rendered.
 		 * If GPU simulation is enabled only distance based sorting is supported.
 		 */
 		BS_SCRIPT_EXPORT(order:2)
-		ParticleSortMode sortMode = ParticleSortMode::None;
+		ParticleSortMode SortMode = ParticleSortMode::None;
 
 		/**
 		 * Determines should an automatic seed be used for the internal random number generator. This ensures the particle
 		 * system yields different results each time it is ran.
 		 */
 		BS_SCRIPT_EXPORT(order:2)
-		bool useAutomaticSeed = true;
+		bool UseAutomaticSeed = true;
 
 		/**
 		 * Determines the seed to use for the internal random number generator. Allows you to guarantee identical behaviour
 		 * between different runs. Only relevant if automatic seed is disabled.
 		 */
 		BS_SCRIPT_EXPORT(order:2)
-		UINT32 manualSeed = 0;
+		UINT32 ManualSeed = 0;
 
 		/**
 		 * Determines should the particle system bounds be automatically calculated, or should the fixed value provided
@@ -220,14 +220,14 @@ namespace bs
 		 * simulation is enabled.
 		 */
 		BS_SCRIPT_EXPORT(order:2)
-		bool useAutomaticBounds = true;
+		bool UseAutomaticBounds = true;
 
 		/**
 		 * Custom bounds to use them @p useAutomaticBounds is disabled. The bounds are in the simulation space of the
 		 * particle system.
 		 */
 		BS_SCRIPT_EXPORT(order:2)
-		AABox customBounds;
+		AABox CustomBounds;
 	};
 
 	/** Templated common base for both sim and core thread variants of ParticleSystemSettings. */
@@ -239,11 +239,11 @@ namespace bs
 
 		/** Material to render the particles with. */
 		BS_SCRIPT_EXPORT(loadOnAssign)
-		MaterialType material;
+		MaterialType Material;
 
 		/** Mesh used for representing individual particles when using the Mesh rendering mode. */
 		BS_SCRIPT_EXPORT(loadOnAssign,order:2)
-		MeshType mesh;
+		MeshType Mesh;
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
@@ -255,7 +255,7 @@ namespace bs
 	{
 		/** Intensity of the forces and velocities applied by the vector field. */
 		BS_SCRIPT_EXPORT()
-		float intensity = 1.0f;
+		float Intensity = 1.0f;
 
 		/**
 		 * Determines how closely does the particle velocity follow the vectors in the field. If set to 1 particles
@@ -263,50 +263,50 @@ namespace bs
 		 * particle velocities directly.
 		 */
 		BS_SCRIPT_EXPORT()
-		float tightness = 0.0f;
+		float Tightness = 0.0f;
 
 		/** Scale to apply to the vector field bounds. This is multiplied with the bounds of the vector field resource. */
 		BS_SCRIPT_EXPORT()
-		Vector3 scale = Vector3::ONE;
+		Vector3 Scale = Vector3::ONE;
 
 		/**
 		 * Amount of to move the vector field by relative to the parent particle system. This is added to the bounds
 		 * provided in the vector field resource.
 		 */
 		BS_SCRIPT_EXPORT()
-		Vector3 offset = Vector3::ZERO;
+		Vector3 Offset = Vector3::ZERO;
 
 		/** Initial rotation of the vector field. */
 		BS_SCRIPT_EXPORT()
-		Quaternion rotation = Quaternion::IDENTITY;
+		Quaternion Rotation = Quaternion::IDENTITY;
 
 		/**
 		 * Determines the amount to rotate the vector field every second, in degrees, around XYZ axis respectively.
 		 * Evaluated over the particle system lifetime.
 		 */
 		BS_SCRIPT_EXPORT()
-		Vector3Distribution rotationRate = Vector3(0.0f, 90.0f, 0.0f);
+		Vector3Distribution RotationRate = Vector3(0.0f, 90.0f, 0.0f);
 
 		/**
 		 * Determines should the field influence particles outside of the field bounds. If true the field will be tiled
 		 * infinitely in the X direction.
 		 */
 		BS_SCRIPT_EXPORT()
-		bool tilingX = false;
+		bool TilingX = false;
 
 		/**
 		 * Determines should the field influence particles outside of the field bounds. If true the field will be tiled
 		 * infinitely in the Y direction.
 		 */
 		BS_SCRIPT_EXPORT()
-		bool tilingY = false;
+		bool TilingY = false;
 
 		/**
 		 * Determines should the field influence particles outside of the field bounds. If true the field will be tiled
 		 * infinitely in the Z direction.
 		 */
 		BS_SCRIPT_EXPORT()
-		bool tilingZ = false;
+		bool TilingZ = false;
 	};
 
 	/** Templated common base for both sim and core thread variants of ParticleVectorFieldSettings. */
@@ -315,7 +315,7 @@ namespace bs
 	{
 		/** Vector field resource used for influencing the particles. */
 		BS_SCRIPT_EXPORT()
-		CoreVariantHandleType<VectorField, Core> vectorField;
+		CoreVariantHandleType<VectorField, Core> VectorField;
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
@@ -360,23 +360,23 @@ namespace bs
 	{
 		/** Determines particle color, evaluated over the particle lifetime. */
 		BS_SCRIPT_EXPORT()
-		ColorDistribution colorOverLifetime = Color::White;
+		ColorDistribution ColorOverLifetime = Color::White;
 
 		/** Determines particle size, evaluated over the particle lifetime. Multiplied by the initial particle size. */
 		BS_SCRIPT_EXPORT()
-		Vector2Distribution sizeScaleOverLifetime = Vector2::ONE;
+		Vector2Distribution SizeScaleOverLifetime = Vector2::ONE;
 
 		/** Constant acceleration to apply for each step of the simulation. */
 		BS_SCRIPT_EXPORT()
-		Vector3 acceleration = Vector3::ZERO;
+		Vector3 Acceleration = Vector3::ZERO;
 
 		/** Amount of resistance to apply in the direction opposite of the particle's velocity. */
 		BS_SCRIPT_EXPORT()
-		float drag = 0.0f;
+		float Drag = 0.0f;
 
 		/** Settings controlling particle depth buffer collisions. */
 		BS_SCRIPT_EXPORT()
-		ParticleDepthCollisionSettings depthCollision;
+		ParticleDepthCollisionSettings DepthCollision;
 	};
 
 	/** Templated common base for both sim and core threat variants of ParticleGpuSimulationSettings. */
@@ -384,7 +384,7 @@ namespace bs
 	struct TParticleGpuSimulationSettings : ParticleGpuSimulationSettingsBase
 	{
 		BS_SCRIPT_EXPORT()
-		CoreVariantType<ParticleVectorFieldSettings, Core> vectorField;
+		CoreVariantType<ParticleVectorFieldSettings, Core> VectorField;
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>

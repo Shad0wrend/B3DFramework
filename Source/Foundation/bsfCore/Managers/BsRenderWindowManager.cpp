@@ -21,7 +21,7 @@ namespace bs
 			mWindows[renderWindow->mWindowId] = renderWindow.get();
 		}
 
-		if (renderWindow->GetProperties().isModal)
+		if (renderWindow->GetProperties().IsModal)
 			mModalWindowStack.push_back(renderWindow.get());
 
 		renderWindow->Initialize();
@@ -138,34 +138,34 @@ namespace bs
 		if(mWindowInFocus != newWinInFocus)
 		{
 			if(mWindowInFocus != nullptr)
-				onFocusLost(*mWindowInFocus);
+				OnFocusLost(*mWindowInFocus);
 
 			if(newWinInFocus != nullptr)
-				onFocusGained(*newWinInFocus);
+				OnFocusGained(*newWinInFocus);
 
 			mWindowInFocus = newWinInFocus;
 		}
 
 		for (auto& window : movedOrResizedWindows)
-			window->onResized();
+			window->OnResized();
 
-		if (!onMouseLeftWindow.Empty())
+		if (!OnMouseLeftWindow.Empty())
 		{
 			for (auto& window : mouseLeftWindows)
-				onMouseLeftWindow(*window);
+				OnMouseLeftWindow(*window);
 		}
 
 		SPtr<RenderWindow> primaryWindow = gCoreApplication().GetPrimaryWindow();
 		for(auto& entry : closeRequestedWindows)
 		{
 			// Default behaviour for primary window is to quit the app on close
-			if(entry == primaryWindow.get() && entry->onCloseRequested.Empty())
+			if(entry == primaryWindow.get() && entry->OnCloseRequested.Empty())
 			{
 				gCoreApplication().QuitRequested();
 				continue;
 			}
 
-			entry->onCloseRequested();
+			entry->OnCloseRequested();
 		}
 	}
 

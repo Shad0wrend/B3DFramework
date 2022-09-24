@@ -53,7 +53,7 @@ namespace bs
 
 		String fullName = elementNs + "." + elementTypeName;
 
-		if(ScriptAssemblyManager::Instance().GetBuiltinClasses().systemGenericListClass->GetFullName() != fullName)
+		if(ScriptAssemblyManager::Instance().GetBuiltinClasses().SystemGenericListClass->GetFullName() != fullName)
 			return nullptr;
 
 		return bs_shared_ptr_new<ManagedSerializableList>(ConstructPrivately(), typeInfo, managedInstance);
@@ -77,7 +77,7 @@ namespace bs
 		void* params[1] = { &size };
 		MonoObject* instance = listClass->CreateInstance("int", params);
 		
-		ScriptArray tempArray(typeInfo->mElementType->GetMonoClass(), size);
+		ScriptArray tempArray(typeInfo->MElementType->GetMonoClass(), size);
 		params[0] = tempArray.GetInternal();
 
 		MonoMethod* addRangeMethod = listClass->GetMethod("AddRange", 1);
@@ -112,7 +112,7 @@ namespace bs
 
 	void ManagedSerializableList::SetFieldData(MonoObject* obj, UINT32 arrayIdx, const SPtr<ManagedSerializableFieldData>& val)
 	{
-		mItemProp->SetIndexed(obj, arrayIdx, val->GetValue(mListTypeInfo->mElementType));
+		mItemProp->SetIndexed(obj, arrayIdx, val->GetValue(mListTypeInfo->MElementType));
 	}
 
 	void ManagedSerializableList::AddFieldDataInternal(const SPtr<ManagedSerializableFieldData>& val)
@@ -120,7 +120,7 @@ namespace bs
 		MonoObject* managedInstance = MonoUtil::GetObjectFromGcHandle(mGCHandle);
 
 		void* params[1];
-		params[0] = val->GetValue(mListTypeInfo->mElementType);
+		params[0] = val->GetValue(mListTypeInfo->MElementType);
 		mAddMethod->Invoke(managedInstance, params);
 	}
 
@@ -131,7 +131,7 @@ namespace bs
 			MonoObject* managedInstance = MonoUtil::GetObjectFromGcHandle(mGCHandle);
 			MonoObject* obj = mItemProp->GetIndexed(managedInstance, arrayIdx);
 
-			return ManagedSerializableFieldData::Create(mListTypeInfo->mElementType, obj);
+			return ManagedSerializableFieldData::Create(mListTypeInfo->MElementType, obj);
 		}
 		else
 			return mCachedEntries[arrayIdx];
@@ -141,7 +141,7 @@ namespace bs
 	{
 		if (mGCHandle != 0)
 		{
-			ScriptArray tempArray(mListTypeInfo->mElementType->GetMonoClass(), newSize);
+			ScriptArray tempArray(mListTypeInfo->MElementType->GetMonoClass(), newSize);
 
 			UINT32 minSize = std::min(mNumElements, newSize);
 			UINT32 dummy = 0;

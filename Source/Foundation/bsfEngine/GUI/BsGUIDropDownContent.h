@@ -18,10 +18,10 @@ namespace bs
 		/**	Contains various GUI elements used for displaying a single menu entry. */
 		struct VisibleElement
 		{
-			UINT32 idx = 0;
-			GUIButtonBase* button = nullptr;
-			GUITexture* separator = nullptr;
-			GUILabel* shortcutLabel = nullptr;
+			UINT32 Idx = 0;
+			GUIButtonBase* Button = nullptr;
+			GUITexture* Separator = nullptr;
+			GUILabel* ShortcutLabel = nullptr;
 		};
 
 	public:

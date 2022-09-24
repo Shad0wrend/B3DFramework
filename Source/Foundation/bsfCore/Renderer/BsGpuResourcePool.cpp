@@ -15,10 +15,10 @@ namespace bs { namespace ct
 			if (!isFree)
 				continue;
 
-			if (entry->texture == nullptr)
+			if (entry->Texture == nullptr)
 				continue;
 
-			if (Matches(entry->texture, desc))
+			if (Matches(entry->Texture, desc))
 			{
 				entry->mLastUsedFrame = mCurrentFrame;
 				return entry;
@@ -29,20 +29,20 @@ namespace bs { namespace ct
 		mTextures.Add(newTexture);
 
 		TEXTURE_DESC texDesc;
-		texDesc.type = desc.type;
-		texDesc.width = desc.width;
-		texDesc.height = desc.height;
-		texDesc.depth = desc.depth;
-		texDesc.format = desc.format;
-		texDesc.usage = desc.flag;
-		texDesc.hwGamma = desc.hwGamma;
-		texDesc.numSamples = desc.numSamples;
-		texDesc.numMips = desc.numMipLevels;
+		texDesc.Type = desc.type;
+		texDesc.Width = desc.width;
+		texDesc.Height = desc.height;
+		texDesc.Depth = desc.depth;
+		texDesc.Format = desc.format;
+		texDesc.Usage = desc.flag;
+		texDesc.HwGamma = desc.hwGamma;
+		texDesc.NumSamples = desc.numSamples;
+		texDesc.NumMips = desc.numMipLevels;
 
 		if (desc.type != TEX_TYPE_3D)
-			texDesc.numArraySlices = desc.arraySize;
+			texDesc.NumArraySlices = desc.arraySize;
 
-		newTexture->texture = Texture::Create(texDesc);
+		newTexture->Texture = Texture::Create(texDesc);
 		
 		if ((desc.flag & (TU_RENDERTARGET | TU_DEPTHSTENCIL)) != 0)
 		{
@@ -50,21 +50,21 @@ namespace bs { namespace ct
 
 			if ((desc.flag & TU_RENDERTARGET) != 0)
 			{
-				rtDesc.colorSurfaces[0].texture = newTexture->texture;
-				rtDesc.colorSurfaces[0].face = 0;
-				rtDesc.colorSurfaces[0].numFaces = newTexture->texture->GetProperties().GetNumFaces();
-				rtDesc.colorSurfaces[0].mipLevel = 0;
+				rtDesc.ColorSurfaces[0].Texture = newTexture->Texture;
+				rtDesc.ColorSurfaces[0].Face = 0;
+				rtDesc.ColorSurfaces[0].NumFaces = newTexture->Texture->GetProperties().GetNumFaces();
+				rtDesc.ColorSurfaces[0].MipLevel = 0;
 			}
 
 			if ((desc.flag & TU_DEPTHSTENCIL) != 0)
 			{
-				rtDesc.depthStencilSurface.texture = newTexture->texture;
-				rtDesc.depthStencilSurface.face = 0;
-				rtDesc.depthStencilSurface.numFaces = newTexture->texture->GetProperties().GetNumFaces();
-				rtDesc.depthStencilSurface.mipLevel = 0;
+				rtDesc.DepthStencilSurface.Texture = newTexture->Texture;
+				rtDesc.DepthStencilSurface.Face = 0;
+				rtDesc.DepthStencilSurface.NumFaces = newTexture->Texture->GetProperties().GetNumFaces();
+				rtDesc.DepthStencilSurface.MipLevel = 0;
 			}
 
-			newTexture->renderTexture = RenderTexture::Create(rtDesc);
+			newTexture->RenderTexture = RenderTexture::Create(rtDesc);
 		}
 
 		return newTexture;
@@ -72,7 +72,7 @@ namespace bs { namespace ct
 
 	void GpuResourcePool::Get(SPtr<PooledRenderTexture>& texture, const POOLED_RENDER_TEXTURE_DESC& desc)
 	{
-		if(texture && Matches(texture->texture, desc))
+		if(texture && Matches(texture->Texture, desc))
 			return;
 
 		texture = Get(desc);
@@ -86,10 +86,10 @@ namespace bs { namespace ct
 			if (!isFree)
 				continue;
 
-			if (entry->buffer == nullptr)
+			if (entry->Buffer == nullptr)
 				continue;
 
-			if (Matches(entry->buffer, desc))
+			if (Matches(entry->Buffer, desc))
 			{
 				entry->mLastUsedFrame = mCurrentFrame;
 				return entry;
@@ -100,20 +100,20 @@ namespace bs { namespace ct
 		mBuffers.Add(newBuffer);
 
 		GPU_BUFFER_DESC bufferDesc;
-		bufferDesc.type = desc.type;
-		bufferDesc.elementSize = desc.elementSize;
-		bufferDesc.elementCount = desc.numElements;
-		bufferDesc.format = desc.format;
-		bufferDesc.usage = desc.usage;
+		bufferDesc.Type = desc.type;
+		bufferDesc.ElementSize = desc.elementSize;
+		bufferDesc.ElementCount = desc.numElements;
+		bufferDesc.Format = desc.format;
+		bufferDesc.Usage = desc.usage;
 
-		newBuffer->buffer = GpuBuffer::Create(bufferDesc);
+		newBuffer->Buffer = GpuBuffer::Create(bufferDesc);
 
 		return newBuffer;
 	}
 
 	void GpuResourcePool::Get(SPtr<PooledStorageBuffer>& buffer, const POOLED_STORAGE_BUFFER_DESC& desc)
 	{
-		if(buffer && Matches(buffer->buffer, desc))
+		if(buffer && Matches(buffer->Buffer, desc))
 			return;
 
 		buffer = Get(desc);

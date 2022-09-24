@@ -72,7 +72,7 @@ namespace bs
 
 		if(filterOkay)
 		{
-			Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
+			Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).Optimal;
 
 			mText = text;
 			mNumChars = UTF8::Count(mText);
@@ -95,7 +95,7 @@ namespace bs
 				ScrollTextToCaret();
 			}
 
-			Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
+			Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).Optimal;
 			if (origSize != newSize)
 				MarkLayoutAsDirtyInternal();
 			else
@@ -105,17 +105,17 @@ namespace bs
 
 	void GUIInputBox::UpdateRenderElementsInternal()
 	{		
-		mImageDesc.width = mLayoutData.area.width;
-		mImageDesc.height = mLayoutData.area.height;
-		mImageDesc.borderLeft = GetStyleInternal()->border.left;
-		mImageDesc.borderRight = GetStyleInternal()->border.right;
-		mImageDesc.borderTop = GetStyleInternal()->border.top;
-		mImageDesc.borderBottom = GetStyleInternal()->border.bottom;
-		mImageDesc.color = GetTint();
+		mImageDesc.Width = mLayoutData.Area.Width;
+		mImageDesc.Height = mLayoutData.Area.Height;
+		mImageDesc.BorderLeft = GetStyleInternal()->Border.Left;
+		mImageDesc.BorderRight = GetStyleInternal()->Border.Right;
+		mImageDesc.BorderTop = GetStyleInternal()->Border.Top;
+		mImageDesc.BorderBottom = GetStyleInternal()->Border.Bottom;
+		mImageDesc.Color = GetTint();
 
 		const HSpriteTexture& activeTex = GetActiveTexture();
 		if(SpriteTexture::CheckIsLoaded(activeTex))
-			mImageDesc.texture = activeTex;
+			mImageDesc.Texture = activeTex;
 
 		mImageSprite->Update(mImageDesc, (UINT64)GetParentWidgetInternal());
 
@@ -139,7 +139,7 @@ namespace bs
 
 		// When text bounds are reduced the scroll needs to be adjusted so that
 		// input box isn't filled with mostly empty space.
-		Vector2I offset(mLayoutData.area.x, mLayoutData.area.y);
+		Vector2I offset(mLayoutData.Area.X, mLayoutData.Area.Y);
 		ClampScrollToBounds(mTextSprite->GetBounds(offset, Rect2I()));
 
 		// Populate GUI render elements from the sprites
@@ -159,8 +159,8 @@ namespace bs
 
 						entry->GetRenderElementInfo(i, renderElement);
 
-						renderElement.depth = 2;
-						renderElement.type = GUIMeshType::Triangle;
+						renderElement.Depth = 2;
+						renderElement.Type = GUIMeshType::Triangle;
 					}
 				}
 			}
@@ -171,7 +171,7 @@ namespace bs
 
 	void GUIInputBox::UpdateClippedBounds()
 	{
-		Vector2I offset(mLayoutData.area.x, mLayoutData.area.y);
+		Vector2I offset(mLayoutData.Area.X, mLayoutData.Area.Y);
 		mClippedBounds = mImageSprite->GetBounds(offset, mLayoutData.GetLocalClipRect());
 	}
 
@@ -237,7 +237,7 @@ namespace bs
 		newNumElements += mImageSprite->GetNumRenderElements();
 
 		if(renderElemIdx < newNumElements)
-			return Vector2I(mLayoutData.area.x, mLayoutData.area.y);;
+			return Vector2I(mLayoutData.Area.X, mLayoutData.Area.Y);;
 
 		if(mCaretShown && gGUIManager().GetCaretBlinkState())
 		{
@@ -323,8 +323,8 @@ namespace bs
 		}
 
 		Vector2I contentSize = GUIHelper::CalcOptimalContentsSize(mText, *GetStyleInternal(), GetDimensionsInternal());
-		UINT32 contentWidth = std::max(imageWidth, (UINT32)contentSize.x);
-		UINT32 contentHeight = std::max(imageHeight, (UINT32)contentSize.y);
+		UINT32 contentWidth = std::max(imageWidth, (UINT32)contentSize.X);
+		UINT32 contentHeight = std::max(imageHeight, (UINT32)contentSize.Y);
 
 		return Vector2I(contentWidth, contentHeight);
 	}
@@ -337,8 +337,8 @@ namespace bs
 	Rect2I GUIInputBox::GetTextInputRectInternal() const
 	{
 		Rect2I textBounds = GetCachedContentBounds();
-		textBounds.x -= mLayoutData.area.x;
-		textBounds.y -= mLayoutData.area.y;
+		textBounds.X -= mLayoutData.Area.X;
+		textBounds.Y -= mLayoutData.Area.Y;
 
 		return textBounds;
 	}
@@ -390,9 +390,9 @@ namespace bs
 			{
 				if (!mHasFocus)
 				{
-					Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
+					Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).Optimal;
 					mState = State::Hover;
-					Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
+					Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).Optimal;
 
 					if (origSize != newSize)
 						MarkLayoutAsDirtyInternal();
@@ -411,9 +411,9 @@ namespace bs
 			{
 				if (!mHasFocus)
 				{
-					Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
+					Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).Optimal;
 					mState = State::Normal;
-					Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
+					Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).Optimal;
 
 					if (origSize != newSize)
 						MarkLayoutAsDirtyInternal();
@@ -531,7 +531,7 @@ namespace bs
 		if (IsDisabledInternal())
 			return false;
 
-		Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
+		Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).Optimal;
 
 		if(mSelectionShown)
 			DeleteSelectedText(true);
@@ -556,11 +556,11 @@ namespace bs
 			gGUIManager().GetInputCaretTool()->MoveCaretToChar(charIdx, CARET_AFTER);
 			ScrollTextToCaret();
 
-			if(!onValueChanged.Empty())
-				onValueChanged(mText);
+			if(!OnValueChanged.Empty())
+				OnValueChanged(mText);
 		}
 
-		Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
+		Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).Optimal;
 		if (origSize != newSize)
 			MarkLayoutAsDirtyInternal();
 		else
@@ -584,7 +584,7 @@ namespace bs
 
 		if(ev.GetType() == GUICommandEventType::FocusGained)
 		{
-			Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
+			Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).Optimal;
 			mState = State::Focused;
 
 			ShowSelection(0);
@@ -593,7 +593,7 @@ namespace bs
 			mHasFocus = true;
 			mFocusGainedFrame = gTime().GetFrameIdx();
 
-			Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
+			Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).Optimal;
 			if (origSize != newSize)
 				MarkLayoutAsDirtyInternal();
 			else
@@ -604,7 +604,7 @@ namespace bs
 		
 		if(ev.GetType() == GUICommandEventType::FocusLost)
 		{
-			Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
+			Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).Optimal;
 			mState = State::Normal;
 
 			HideCaret();
@@ -612,7 +612,7 @@ namespace bs
 
 			mHasFocus = false;
 
-			Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
+			Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).Optimal;
 			if (origSize != newSize)
 				MarkLayoutAsDirtyInternal();
 			else
@@ -625,7 +625,7 @@ namespace bs
 		{
 			if(mNumChars > 0)
 			{
-				Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
+				Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).Optimal;
 				if(mSelectionShown)
 				{
 					DeleteSelectedText();
@@ -662,13 +662,13 @@ namespace bs
 
 							ScrollTextToCaret();
 
-							if(!onValueChanged.Empty())
-								onValueChanged(mText);
+							if(!OnValueChanged.Empty())
+								OnValueChanged(mText);
 						}
 					}
 				}
 
-				Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
+				Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).Optimal;
 				if (origSize != newSize)
 					MarkLayoutAsDirtyInternal();
 				else
@@ -682,7 +682,7 @@ namespace bs
 		{
 			if(mNumChars > 0)
 			{
-				Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
+				Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).Optimal;
 				if(mSelectionShown)
 				{
 					DeleteSelectedText();
@@ -714,13 +714,13 @@ namespace bs
 
 							ScrollTextToCaret();
 
-							if(!onValueChanged.Empty())
-								onValueChanged(mText);
+							if(!OnValueChanged.Empty())
+								OnValueChanged(mText);
 						}
 					}
 				}
 
-				Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
+				Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).Optimal;
 				if (origSize != newSize)
 					MarkLayoutAsDirtyInternal();
 				else
@@ -862,7 +862,7 @@ namespace bs
 		{
 			if (mIsMultiline)
 			{
-				Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
+				Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).Optimal;
 
 				if (mSelectionShown)
 					DeleteSelectedText();
@@ -886,11 +886,11 @@ namespace bs
 					gGUIManager().GetInputCaretTool()->MoveCaretRight();
 					ScrollTextToCaret();
 
-					if (!onValueChanged.Empty())
-						onValueChanged(mText);
+					if (!OnValueChanged.Empty())
+						OnValueChanged(mText);
 				}
 
-				Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
+				Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).Optimal;
 				if (origSize != newSize)
 					MarkLayoutAsDirtyInternal();
 				else
@@ -902,7 +902,7 @@ namespace bs
 
 		if (ev.GetType() == GUICommandEventType::Confirm)
 		{
-			onConfirm();
+			OnConfirm();
 			return true;
 		}
 
@@ -980,35 +980,35 @@ namespace bs
 		UINT32 caretHeight = gGUIManager().GetInputCaretTool()->GetCaretHeight();
 		UINT32 caretWidth = 1;
 
-		INT32 left = textOffset.x - mTextOffset.x;
+		INT32 left = textOffset.X - mTextOffset.X;
 		// Include caret width here because we don't want to scroll if just the caret is outside the bounds
 		// (Possible if the text width is exactly the maximum width)
-		INT32 right = left + (INT32)textDesc.width + caretWidth;
-		INT32 top = textOffset.y - mTextOffset.y;
-		INT32 bottom = top + (INT32)textDesc.height;
+		INT32 right = left + (INT32)textDesc.Width + caretWidth;
+		INT32 top = textOffset.Y - mTextOffset.Y;
+		INT32 bottom = top + (INT32)textDesc.Height;
 
 		// If caret is too high to display we don't want the offset to keep adjusting itself
 		caretHeight = std::min(caretHeight, (UINT32)(bottom - top));
-		INT32 caretRight = caretPos.x + (INT32)caretWidth;
-		INT32 caretBottom = caretPos.y + (INT32)caretHeight;
+		INT32 caretRight = caretPos.X + (INT32)caretWidth;
+		INT32 caretBottom = caretPos.Y + (INT32)caretHeight;
 
 		Vector2I offset;
-		if(caretPos.x < left)
+		if(caretPos.X < left)
 		{
-			offset.x = left - caretPos.x;
+			offset.X = left - caretPos.X;
 		}
 		else if(caretRight > right)
 		{
-			offset.x = -(caretRight - right);
+			offset.X = -(caretRight - right);
 		}
 
-		if(caretPos.y < top)
+		if(caretPos.Y < top)
 		{
-			offset.y = top - caretPos.y;
+			offset.Y = top - caretPos.Y;
 		}
 		else if(caretBottom > bottom)
 		{
-			offset.y = -(caretBottom - bottom);
+			offset.Y = -(caretBottom - bottom);
 		}
 
 		mTextOffset += offset;
@@ -1022,10 +1022,10 @@ namespace bs
 		TEXT_SPRITE_DESC textDesc = GetTextDesc();
 
 		Vector2I newTextOffset;
-		INT32 maxScrollableWidth = std::max(0, (INT32)unclippedTextBounds.width - (INT32)textDesc.width);
-		INT32 maxScrollableHeight = std::max(0, (INT32)unclippedTextBounds.height - (INT32)textDesc.height);
-		newTextOffset.x = Math::Clamp(mTextOffset.x, -maxScrollableWidth, 0);
-		newTextOffset.y = Math::Clamp(mTextOffset.y, -maxScrollableHeight, 0);
+		INT32 maxScrollableWidth = std::max(0, (INT32)unclippedTextBounds.Width - (INT32)textDesc.Width);
+		INT32 maxScrollableHeight = std::max(0, (INT32)unclippedTextBounds.Height - (INT32)textDesc.Height);
+		newTextOffset.X = Math::Clamp(mTextOffset.X, -maxScrollableWidth, 0);
+		newTextOffset.Y = Math::Clamp(mTextOffset.Y, -maxScrollableHeight, 0);
 
 		if(newTextOffset != mTextOffset)
 		{
@@ -1119,7 +1119,7 @@ namespace bs
 			ScrollTextToCaret();
 
 			if (!internal)
-				onValueChanged(mText);
+				OnValueChanged(mText);
 		}
 
 		ClearSelection();
@@ -1139,29 +1139,29 @@ namespace bs
 	Vector2I GUIInputBox::GetTextOffset() const
 	{
 		Rect2I textBounds = GetCachedContentBounds();
-		return Vector2I(textBounds.x, textBounds.y) + mTextOffset;
+		return Vector2I(textBounds.X, textBounds.Y) + mTextOffset;
 	}
 
 	Rect2I GUIInputBox::GetTextClipRect() const
 	{
 		Rect2I contentClipRect = GetCachedContentClipRect();
-		return Rect2I(contentClipRect.x - mTextOffset.x, contentClipRect.y - mTextOffset.y, contentClipRect.width, contentClipRect.height);
+		return Rect2I(contentClipRect.X - mTextOffset.X, contentClipRect.Y - mTextOffset.Y, contentClipRect.Width, contentClipRect.Height);
 	}
 
 	TEXT_SPRITE_DESC GUIInputBox::GetTextDesc() const
 	{
 		TEXT_SPRITE_DESC textDesc;
-		textDesc.text = mText;
-		textDesc.font = GetStyleInternal()->font;
-		textDesc.fontSize = GetStyleInternal()->fontSize;
-		textDesc.color = GetTint() * GetActiveTextColor();
+		textDesc.Text = mText;
+		textDesc.Font = GetStyleInternal()->Font;
+		textDesc.FontSize = GetStyleInternal()->FontSize;
+		textDesc.Color = GetTint() * GetActiveTextColor();
 
 		Rect2I textBounds = GetCachedContentBounds();
-		textDesc.width = textBounds.width;
-		textDesc.height = textBounds.height;
-		textDesc.horzAlign = GetStyleInternal()->textHorzAlign;
-		textDesc.vertAlign = GetStyleInternal()->textVertAlign;
-		textDesc.wordWrap = mIsMultiline;
+		textDesc.Width = textBounds.Width;
+		textDesc.Height = textBounds.Height;
+		textDesc.HorzAlign = GetStyleInternal()->TextHorzAlign;
+		textDesc.VertAlign = GetStyleInternal()->TextVertAlign;
+		textDesc.WordWrap = mIsMultiline;
 
 		return textDesc;
 	}
@@ -1171,14 +1171,14 @@ namespace bs
 		switch(mState)
 		{
 		case State::Focused:
-			return GetStyleInternal()->focused.texture;
+			return GetStyleInternal()->Focused.Texture;
 		case State::Hover:
-			return GetStyleInternal()->hover.texture;
+			return GetStyleInternal()->Hover.Texture;
 		case State::Normal:
-			return GetStyleInternal()->normal.texture;
+			return GetStyleInternal()->Normal.Texture;
 		}
 
-		return GetStyleInternal()->normal.texture;
+		return GetStyleInternal()->Normal.Texture;
 	}
 
 	Color GUIInputBox::GetActiveTextColor() const
@@ -1186,14 +1186,14 @@ namespace bs
 		switch (mState)
 		{
 		case State::Focused:
-			return GetStyleInternal()->focused.textColor;
+			return GetStyleInternal()->Focused.TextColor;
 		case State::Hover:
-			return GetStyleInternal()->hover.textColor;
+			return GetStyleInternal()->Hover.TextColor;
 		case State::Normal:
-			return GetStyleInternal()->normal.textColor;
+			return GetStyleInternal()->Normal.TextColor;
 		}
 
-		return GetStyleInternal()->normal.textColor;
+		return GetStyleInternal()->Normal.TextColor;
 	}
 
 	SPtr<GUIContextMenu> GUIInputBox::GetContextMenuInternal() const
@@ -1221,12 +1221,12 @@ namespace bs
 
 	void GUIInputBox::CutText()
 	{
-		Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
+		Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).Optimal;
 
 		CopyText();
 		DeleteSelectedText();
 
-		Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
+		Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).Optimal;
 		if (origSize != newSize)
 			MarkLayoutAsDirtyInternal();
 		else
@@ -1258,7 +1258,7 @@ namespace bs
 
 		if(filterOkay)
 		{
-			Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
+			Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).Optimal;
 			InsertString(charIdx, textInClipboard);
 
 			UINT32 numChars = UTF8::Count(textInClipboard);
@@ -1267,14 +1267,14 @@ namespace bs
 
 			ScrollTextToCaret();
 
-			Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
+			Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).Optimal;
 			if (origSize != newSize)
 				MarkLayoutAsDirtyInternal();
 			else
 				MarkContentAsDirtyInternal();
 
-			if(!onValueChanged.Empty())
-				onValueChanged(mText);
+			if(!OnValueChanged.Empty())
+				OnValueChanged(mText);
 		}
 	}
 }

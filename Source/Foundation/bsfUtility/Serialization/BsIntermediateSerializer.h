@@ -48,13 +48,13 @@ namespace bs
 		struct ObjectToDecode
 		{
 			ObjectToDecode(const SPtr<IReflectable>& _object, const SerializedObject* serializedObject)
-				:object(_object), serializedObject(serializedObject)
+				:Object(_object), SerializedObject(serializedObject)
 			{ }
 
-			SPtr<IReflectable> object;
-			const SerializedObject* serializedObject;
-			bool isDecoded = false;
-			bool decodeInProgress = false; // Used for error reporting circular references
+			SPtr<IReflectable> Object;
+			const SerializedObject* SerializedObject;
+			bool IsDecoded = false;
+			bool DecodeInProgress = false; // Used for error reporting circular references
 		};
 
 		/**	Decodes a single IReflectable object. */

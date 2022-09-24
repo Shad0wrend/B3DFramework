@@ -89,8 +89,8 @@ namespace bs
 		Vector<SubResourceRaw> importedResource = ImportAllInternal(inputFilePath, importOptions);
 		for(auto& entry : importedResource)
 		{
-			HResource handle = gResources().CreateResourceHandleInternal(entry.value);
-			output.push_back({ entry.name, handle });
+			HResource handle = gResources().CreateResourceHandleInternal(entry.Value);
+			output.push_back({ entry.Name, handle });
 		}
 
 		return bs_shared_ptr_new<MultiResource>(output);
@@ -127,7 +127,7 @@ namespace bs
 			auto iterFind = mLastQueuedTask.find(importer);
 			if (iterFind != mLastQueuedTask.end())
 			{
-				if (iterFind->second.id == taskId)
+				if (iterFind->second.Id == taskId)
 					mLastQueuedTask.erase(iterFind);
 
 				mTaskCompleted.notify_one();
@@ -152,7 +152,7 @@ namespace bs
 			auto iterFind = mLastQueuedTask.find(importer);
 			if (iterFind != mLastQueuedTask.end())
 			{
-				if (iterFind->second.id == taskId)
+				if (iterFind->second.Id == taskId)
 					mLastQueuedTask.erase(iterFind);
 
 				mTaskCompleted.notify_one();
@@ -246,8 +246,8 @@ namespace bs
 		Vector<SubResource> subresources;
 		for (auto& entry : rawSubresources)
 		{
-			HResource handle = gResources().CreateResourceHandleInternal(entry.value);
-			subresources.push_back({ entry.name, handle });
+			HResource handle = gResources().CreateResourceHandleInternal(entry.Value);
+			subresources.push_back({ entry.Name, handle });
 		}
 
 		op.CompleteOperationInternal(bs_shared_ptr_new<MultiResource>(subresources));
@@ -270,7 +270,7 @@ namespace bs
 
 			auto iterFind = mLastQueuedTask.find(importer);
 			if(iterFind != mLastQueuedTask.end())
-				dependency = iterFind->second.task;
+				dependency = iterFind->second.Task;
 		}
 
 		SPtr<Task> task = Task::Create("ImportWorker",
@@ -284,7 +284,7 @@ namespace bs
 			auto iterFind = mLastQueuedTask.find(importer);
 			if(iterFind != mLastQueuedTask.end())
 			{
-				if(iterFind->second.id == taskId)
+				if(iterFind->second.Id == taskId)
 					mLastQueuedTask.erase(iterFind);
 
 				mTaskCompleted.notify_one();

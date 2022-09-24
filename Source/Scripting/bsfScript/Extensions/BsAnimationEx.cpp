@@ -8,51 +8,51 @@ namespace bs
 {
 	Vector<TNamedAnimationCurve<Vector3>> AnimationCurvesEx::GetPositionCurves(const SPtr<AnimationCurves>& thisPtr)
 	{
-		return thisPtr->position;
+		return thisPtr->Position;
 	}
 
 	void AnimationCurvesEx::SetPositionCurves(const SPtr<AnimationCurves>& thisPtr, const Vector<TNamedAnimationCurve<Vector3>>& value)
 	{
-		thisPtr->position = value;
+		thisPtr->Position = value;
 	}
 
 	Vector<TNamedAnimationCurve<Quaternion>> AnimationCurvesEx::GetRotationCurves(const SPtr<AnimationCurves>& thisPtr)
 	{
-		return thisPtr->rotation;
+		return thisPtr->Rotation;
 	}
 
 	void AnimationCurvesEx::SetRotationCurves(const SPtr<AnimationCurves>& thisPtr, const Vector<TNamedAnimationCurve<Quaternion>>& value)
 	{
-		thisPtr->rotation = value;
+		thisPtr->Rotation = value;
 	}
 
 	Vector<TNamedAnimationCurve<Vector3>> AnimationCurvesEx::GetScaleCurves(const SPtr<AnimationCurves>& thisPtr)
 	{
-		return thisPtr->scale;
+		return thisPtr->Scale;
 	}
 
 	void AnimationCurvesEx::SetScaleCurves(const SPtr<AnimationCurves>& thisPtr, const Vector<TNamedAnimationCurve<Vector3>>& value)
 	{
-		thisPtr->scale = value;
+		thisPtr->Scale = value;
 	}
 
 	Vector<TNamedAnimationCurve<float>> AnimationCurvesEx::GetGenericCurves(const SPtr<AnimationCurves>& thisPtr)
 	{
-		return thisPtr->generic;
+		return thisPtr->Generic;
 	}
 
 	void AnimationCurvesEx::SetGenericCurves(const SPtr<AnimationCurves>& thisPtr, const Vector<TNamedAnimationCurve<float>>& value)
 	{
-		thisPtr->generic = value;
+		thisPtr->Generic = value;
 	}
 
 	TAnimationCurve<Vector3> RootMotionEx::GetPositionCurves(const SPtr<RootMotion>& thisPtr)
 	{
-		return thisPtr->position;
+		return thisPtr->Position;
 	}
 
 	TAnimationCurve<Quaternion> RootMotionEx::GetRotationCurves(const SPtr<RootMotion>& thisPtr)
 	{
-		return thisPtr->rotation;
+		return thisPtr->Rotation;
 	}
 }

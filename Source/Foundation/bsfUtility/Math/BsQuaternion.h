@@ -18,7 +18,7 @@ namespace bs
 	private:
 		struct EulerAngleOrderData
 		{
-			int a, b, c;
+			int A, B, C;
 		};
 
 	public:
@@ -27,15 +27,15 @@ namespace bs
 		constexpr Quaternion& operator=(const Quaternion&) = default;
 
 		constexpr Quaternion(BS_ZERO zero)
-			: x(0.0f), y(0.0f), z(0.0f), w(0.0f)
+			: X(0.0f), Y(0.0f), Z(0.0f), W(0.0f)
 		{ }
 
 		constexpr Quaternion(BS_IDENTITY)
-			: x(0.0f), y(0.0f), z(0.0f), w(1.0f)
+			: X(0.0f), Y(0.0f), Z(0.0f), W(1.0f)
 		{ }
 
 		constexpr Quaternion(float w, float x, float y, float z)
-			:x(x), y(y), z(z), w(w)
+			:X(x), Y(y), Z(z), W(w)
 		{ }
 
 		/** Construct a quaternion from a rotation matrix. */
@@ -79,24 +79,24 @@ namespace bs
 		/** Exchange the contents of this quaternion with another. */
 		void Swap(Quaternion& other)
 		{
-			std::swap(w, other.w);
-			std::swap(x, other.x);
-			std::swap(y, other.y);
-			std::swap(z, other.z);
+			std::swap(W, other.W);
+			std::swap(X, other.X);
+			std::swap(Y, other.Y);
+			std::swap(Z, other.Z);
 		}
 
 		float operator[] (const size_t i) const
 		{
 			assert(i < 4);
 
-			return *(&x+i);
+			return *(&X+i);
 		}
 
 		float& operator[] (const size_t i)
 		{
 			assert(i < 4);
 
-			return *(&x+i);
+			return *(&X+i);
 		}
 
 		/**
@@ -189,28 +189,28 @@ namespace bs
 
 		Quaternion operator+ (const Quaternion& rhs) const
 		{
-			return Quaternion(w + rhs.w, x + rhs.x, y + rhs.y, z + rhs.z);
+			return Quaternion(W + rhs.W, X + rhs.X, Y + rhs.Y, Z + rhs.Z);
 		}
 
 		Quaternion operator- (const Quaternion& rhs) const
 		{
-			return Quaternion(w - rhs.w, x - rhs.x, y - rhs.y, z - rhs.z);
+			return Quaternion(W - rhs.W, X - rhs.X, Y - rhs.Y, Z - rhs.Z);
 		}
 
 		Quaternion operator* (const Quaternion& rhs) const
 		{
 			return Quaternion
 			(
-				w * rhs.w - x * rhs.x - y * rhs.y - z * rhs.z,
-				w * rhs.x + x * rhs.w + y * rhs.z - z * rhs.y,
-				w * rhs.y + y * rhs.w + z * rhs.x - x * rhs.z,
-				w * rhs.z + z * rhs.w + x * rhs.y - y * rhs.x
+				W * rhs.W - X * rhs.X - Y * rhs.Y - Z * rhs.Z,
+				W * rhs.X + X * rhs.W + Y * rhs.Z - Z * rhs.Y,
+				W * rhs.Y + Y * rhs.W + Z * rhs.X - X * rhs.Z,
+				W * rhs.Z + Z * rhs.W + X * rhs.Y - Y * rhs.X
 			);
 		}
 
 		Quaternion operator* (float rhs) const
 		{
-			return Quaternion(rhs * w, rhs * x, rhs * y, rhs * z);
+			return Quaternion(rhs * W, rhs * X, rhs * Y, rhs * Z);
 		}
 
 		Quaternion operator/ (float rhs) const
@@ -218,17 +218,17 @@ namespace bs
 			assert(rhs != 0.0);
 
 			const float inv = 1.0f / rhs;
-			return Quaternion(w * inv, x * inv, y * inv, z * inv);
+			return Quaternion(W * inv, X * inv, Y * inv, Z * inv);
 		}
 
 		Quaternion operator- () const
 		{
-			return Quaternion(-w, -x, -y, -z);
+			return Quaternion(-W, -X, -Y, -Z);
 		}
 
 		bool operator== (const Quaternion& rhs) const
 		{
-			return (rhs.x == x) && (rhs.y == y) && (rhs.z == z) && (rhs.w == w);
+			return (rhs.X == X) && (rhs.Y == Y) && (rhs.Z == Z) && (rhs.W == W);
 		}
 
 		bool operator!= (const Quaternion& rhs) const
@@ -238,48 +238,48 @@ namespace bs
 
 		Quaternion& operator+= (const Quaternion& rhs)
 		{
-			w += rhs.w;
-			x += rhs.x;
-			y += rhs.y;
-			z += rhs.z;
+			W += rhs.W;
+			X += rhs.X;
+			Y += rhs.Y;
+			Z += rhs.Z;
 
 			return *this;
 		}
 
 		Quaternion& operator-= (const Quaternion& rhs)
 		{
-			w -= rhs.w;
-			x -= rhs.x;
-			y -= rhs.y;
-			z -= rhs.z;
+			W -= rhs.W;
+			X -= rhs.X;
+			Y -= rhs.Y;
+			Z -= rhs.Z;
 
 			return *this;
 		}
 
 		Quaternion& operator*= (const Quaternion& rhs)
 		{
-			float newW = w * rhs.w - x * rhs.x - y * rhs.y - z * rhs.z;
-			float newX = w * rhs.x + x * rhs.w + y * rhs.z - z * rhs.y;
-			float newY = w * rhs.y + y * rhs.w + z * rhs.x - x * rhs.z;
-			float newZ = w * rhs.z + z * rhs.w + x * rhs.y - y * rhs.x;
+			float newW = W * rhs.W - X * rhs.X - Y * rhs.Y - Z * rhs.Z;
+			float newX = W * rhs.X + X * rhs.W + Y * rhs.Z - Z * rhs.Y;
+			float newY = W * rhs.Y + Y * rhs.W + Z * rhs.X - X * rhs.Z;
+			float newZ = W * rhs.Z + Z * rhs.W + X * rhs.Y - Y * rhs.X;
 
-			w = newW;
-			x = newX;
-			y = newY;
-			z = newZ;
+			W = newW;
+			X = newX;
+			Y = newY;
+			Z = newZ;
 
 			return *this;
 		}
 
 		friend Quaternion operator* (float lhs, const Quaternion& rhs)
 		{
-			return Quaternion(lhs * rhs.w, lhs * rhs.x, lhs * rhs.y, lhs * rhs.z);
+			return Quaternion(lhs * rhs.W, lhs * rhs.X, lhs * rhs.Y, lhs * rhs.Z);
 		}
 		
 		/** Calculates the dot product of this quaternion and another. */
 		float Dot(const Quaternion& other) const
 		{
-			return w * other.w + x * other.x + y * other.y + z * other.z;
+			return W * other.W + X * other.X + Y * other.Y + Z * other.Z;
 		}
 
 		/** 
@@ -325,13 +325,13 @@ namespace bs
 		/** Query if any of the components of the quaternion are not a number. */
 		bool IsNaN() const
 		{
-			return Math::IsNaN(x) || Math::IsNaN(y) || Math::IsNaN(z) || Math::IsNaN(w);
+			return Math::IsNaN(X) || Math::IsNaN(Y) || Math::IsNaN(Z) || Math::IsNaN(W);
 		}
 
 		/** Calculates the dot product between two quaternions. */
 		static float Dot(const Quaternion& lhs, const Quaternion& rhs)
 		{
-			return lhs.w * rhs.w + lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;
+			return lhs.W * rhs.W + lhs.X * rhs.X + lhs.Y * rhs.Y + lhs.Z * rhs.Z;
 		}
 
 		/**
@@ -373,13 +373,13 @@ namespace bs
 		/** Returns the minimum of all the quaternion components as a new quaternion. */
 		static Quaternion Min(const Quaternion& a, const Quaternion& b)
 		{
-			return Quaternion(std::min(a.x, b.x), std::min(a.y, b.y), std::min(a.z, b.z), std::min(a.w, b.w));
+			return Quaternion(std::min(a.X, b.X), std::min(a.Y, b.Y), std::min(a.Z, b.Z), std::min(a.W, b.W));
 		}
 
 		/** Returns the maximum of all the quaternion components as a new quaternion. */
 		static Quaternion Max(const Quaternion& a, const Quaternion& b)
 		{
-			return Quaternion(std::max(a.x, b.x), std::max(a.y, b.y), std::max(a.z, b.z), std::max(a.w, b.w));
+			return Quaternion(std::max(a.X, b.X), std::max(a.Y, b.Y), std::max(a.Z, b.Z), std::max(a.W, b.W));
 		}
 
 		static constexpr const float EPSILON = 1e-03f;
@@ -387,7 +387,7 @@ namespace bs
 		static const Quaternion ZERO;
 		static const Quaternion IDENTITY;
 
-		float x, y, z, w; // Note: Order is relevant, don't break it
+		float X, Y, Z, W; // Note: Order is relevant, don't break it
 	};
 
 	/** @} */

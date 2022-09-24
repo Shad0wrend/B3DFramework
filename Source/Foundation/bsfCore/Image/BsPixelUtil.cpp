@@ -342,16 +342,16 @@ namespace bs
 	/**	Data describing a pixel format. */
 	struct PixelFormatDescription
 	{
-		const char* name; /**< Name of the format. */
-		UINT8 elemBytes; /**< Number of bytes one element (color value) uses. */
-		UINT32 flags; /**< PixelFormatFlags set by the pixel format. */
-		PixelComponentType componentType; /**< Data type of a single element of the format. */
-		UINT8 componentCount; /**< Number of elements in the format. */
+		const char* Name; /**< Name of the format. */
+		UINT8 ElemBytes; /**< Number of bytes one element (color value) uses. */
+		UINT32 Flags; /**< PixelFormatFlags set by the pixel format. */
+		PixelComponentType ComponentType; /**< Data type of a single element of the format. */
+		UINT8 ComponentCount; /**< Number of elements in the format. */
 
-		UINT8 rbits, gbits, bbits, abits; /**< Number of bits per element in the format. */
+		UINT8 Rbits, Gbits, Bbits, Abits; /**< Number of bits per element in the format. */
 
-		UINT32 rmask, gmask, bmask, amask; /**< Masks used by packers/unpackers. */
-		UINT8 rshift, gshift, bshift, ashift; /**< Shifts used by packers/unpackers. */
+		UINT32 Rmask, Gmask, Bmask, Amask; /**< Masks used by packers/unpackers. */
+		UINT8 Rshift, Gshift, Bshift, Ashift; /**< Shifts used by packers/unpackers. */
 	};
 
 	/**	A list of all available pixel formats. */
@@ -1195,7 +1195,7 @@ namespace bs
 	struct NVTTCompressOutputHandler : public nvtt::OutputHandler
 	{
 		NVTTCompressOutputHandler(UINT8* buffer, UINT32 sizeBytes)
-			:buffer(buffer), bufferWritePos(buffer), bufferEnd(buffer + sizeBytes)
+			:Buffer(buffer), BufferWritePos(buffer), BufferEnd(buffer + sizeBytes)
 		{ }
 
 		void beginImage(int size, int width, int height, int depth, int face, int miplevel) override
@@ -1203,9 +1203,9 @@ namespace bs
 
 		bool writeData(const void* data, int size) override
 		{
-			assert((bufferWritePos + size) <= bufferEnd);
-			memcpy(bufferWritePos, data, size);
-			bufferWritePos += size;
+			assert((BufferWritePos + size) <= BufferEnd);
+			memcpy(BufferWritePos, data, size);
+			BufferWritePos += size;
 
 			return true;
 		}
@@ -1213,34 +1213,34 @@ namespace bs
 		void endImage() override
 		{ }
 
-		UINT8* buffer;
-		UINT8* bufferWritePos;
-		UINT8* bufferEnd;
+		UINT8* Buffer;
+		UINT8* BufferWritePos;
+		UINT8* BufferEnd;
 	};
 
 	/**	Handles output from NVTT library for a mip-map chain. */
 	struct NVTTMipmapOutputHandler : public nvtt::OutputHandler
 	{
 		NVTTMipmapOutputHandler(const Vector<SPtr<PixelData>>& buffers)
-			:buffers(buffers), bufferWritePos(nullptr), bufferEnd(nullptr)
+			:Buffers(buffers), BufferWritePos(nullptr), BufferEnd(nullptr)
 		{ }
 
 		void beginImage(int size, int width, int height, int depth, int face, int miplevel) override
 		{
-			assert(miplevel >= 0 && miplevel < (int)buffers.size());
-			assert((UINT32)size == buffers[miplevel]->GetConsecutiveSize());
+			assert(miplevel >= 0 && miplevel < (int)Buffers.size());
+			assert((UINT32)size == Buffers[miplevel]->GetConsecutiveSize());
 
-			activeBuffer = buffers[miplevel];
+			ActiveBuffer = Buffers[miplevel];
 
-			bufferWritePos = activeBuffer->GetData();
-			bufferEnd = bufferWritePos + activeBuffer->GetConsecutiveSize();
+			BufferWritePos = ActiveBuffer->GetData();
+			BufferEnd = BufferWritePos + ActiveBuffer->GetConsecutiveSize();
 		}
 
 		bool writeData(const void* data, int size) override
 		{
-			assert((bufferWritePos + size) <= bufferEnd);
-			memcpy(bufferWritePos, data, size);
-			bufferWritePos += size;
+			assert((BufferWritePos + size) <= BufferEnd);
+			memcpy(BufferWritePos, data, size);
+			BufferWritePos += size;
 
 			return true;
 		}
@@ -1248,11 +1248,11 @@ namespace bs
 		void endImage() override
 		{ }
 
-		Vector<SPtr<PixelData>> buffers;
-		SPtr<PixelData> activeBuffer;
+		Vector<SPtr<PixelData>> Buffers;
+		SPtr<PixelData> ActiveBuffer;
 
-		UINT8* bufferWritePos;
-		UINT8* bufferEnd;
+		UINT8* BufferWritePos;
+		UINT8* BufferEnd;
 	};
 
 	nvtt::Format toNVTTFormat(PixelFormat format)
@@ -1332,7 +1332,7 @@ namespace bs
 
 	UINT32 PixelUtil::GetNumElemBytes(PixelFormat format)
 	{
-		return getDescriptionFor(format).elemBytes;
+		return getDescriptionFor(format).ElemBytes;
 	}
 
 	UINT32 PixelUtil::GetBlockSize(PixelFormat format)
@@ -1446,12 +1446,12 @@ namespace bs
 
 	UINT32 PixelUtil::GetNumElemBits(PixelFormat format)
 	{
-		return getDescriptionFor(format).elemBytes * 8;
+		return getDescriptionFor(format).ElemBytes * 8;
 	}
 
 	UINT32 PixelUtil::GetFlags(PixelFormat format)
 	{
-		return getDescriptionFor(format).flags;
+		return getDescriptionFor(format).Flags;
 	}
 
 	bool PixelUtil::HasAlpha(PixelFormat format)
@@ -1574,33 +1574,33 @@ namespace bs
 	void PixelUtil::GetBitDepths(PixelFormat format, int(&rgba)[4])
 	{
 		const PixelFormatDescription& des = getDescriptionFor(format);
-		rgba[0] = des.rbits;
-		rgba[1] = des.gbits;
-		rgba[2] = des.bbits;
-		rgba[3] = des.abits;
+		rgba[0] = des.Rbits;
+		rgba[1] = des.Gbits;
+		rgba[2] = des.Bbits;
+		rgba[3] = des.Abits;
 	}
 
 	void PixelUtil::GetBitMasks(PixelFormat format, UINT32(&rgba)[4])
 	{
 		const PixelFormatDescription& des = getDescriptionFor(format);
-		rgba[0] = des.rmask;
-		rgba[1] = des.gmask;
-		rgba[2] = des.bmask;
-		rgba[3] = des.amask;
+		rgba[0] = des.Rmask;
+		rgba[1] = des.Gmask;
+		rgba[2] = des.Bmask;
+		rgba[3] = des.Amask;
 	}
 
 	void PixelUtil::GetBitShifts(PixelFormat format, UINT8(&rgba)[4])
 	{
 		const PixelFormatDescription& des = getDescriptionFor(format);
-		rgba[0] = des.rshift;
-		rgba[1] = des.gshift;
-		rgba[2] = des.bshift;
-		rgba[3] = des.ashift;
+		rgba[0] = des.Rshift;
+		rgba[1] = des.Gshift;
+		rgba[2] = des.Bshift;
+		rgba[3] = des.Ashift;
 	}
 
 	String PixelUtil::GetFormatName(PixelFormat srcformat)
 	{
-		return getDescriptionFor(srcformat).name;
+		return getDescriptionFor(srcformat).Name;
 	}
 
 	bool PixelUtil::IsAccessible(PixelFormat srcformat)
@@ -1615,13 +1615,13 @@ namespace bs
 	PixelComponentType PixelUtil::GetElementType(PixelFormat format)
 	{
 		const PixelFormatDescription& des = getDescriptionFor(format);
-		return des.componentType;
+		return des.ComponentType;
 	}
 
 	UINT32 PixelUtil::GetNumElements(PixelFormat format)
 	{
 		const PixelFormatDescription& des = getDescriptionFor(format);
-		return des.componentCount;
+		return des.ComponentCount;
 	}
 
 	UINT32 PixelUtil::GetMaxMipmaps(UINT32 width, UINT32 height, UINT32 depth, PixelFormat format)
@@ -1644,23 +1644,23 @@ namespace bs
 
 	void PixelUtil::PackColor(const Color& color, PixelFormat format, void* dest)
 	{
-		PackColor(color.r, color.g, color.b, color.a, format, dest);
+		PackColor(color.R, color.G, color.B, color.A, format, dest);
 	}
 
 	void PixelUtil::PackColor(UINT8 r, UINT8 g, UINT8 b, UINT8 a, PixelFormat format, void* dest)
 	{
 		const PixelFormatDescription &des = getDescriptionFor(format);
 
-		if (des.flags & PFF_INTEGER)
+		if (des.Flags & PFF_INTEGER)
 		{
 			// Shortcut for integer formats packing
-			UINT32 value = ((Bitwise::FixedToFixed(r, 8, des.rbits) << des.rshift) & des.rmask) |
-				((Bitwise::FixedToFixed(g, 8, des.gbits) << des.gshift) & des.gmask) |
-				((Bitwise::FixedToFixed(b, 8, des.bbits) << des.bshift) & des.bmask) |
-				((Bitwise::FixedToFixed(a, 8, des.abits) << des.ashift) & des.amask);
+			UINT32 value = ((Bitwise::FixedToFixed(r, 8, des.Rbits) << des.Rshift) & des.Rmask) |
+				((Bitwise::FixedToFixed(g, 8, des.Gbits) << des.Gshift) & des.Gmask) |
+				((Bitwise::FixedToFixed(b, 8, des.Bbits) << des.Bshift) & des.Bmask) |
+				((Bitwise::FixedToFixed(a, 8, des.Abits) << des.Ashift) & des.Amask);
 
 			// And write to memory
-			Bitwise::IntWrite(dest, des.elemBytes, value);
+			Bitwise::IntWrite(dest, des.ElemBytes, value);
 		}
 		else
 		{
@@ -1691,19 +1691,19 @@ namespace bs
 
 		// All other formats handled in a generic way
 		const PixelFormatDescription& des = getDescriptionFor(format);
-		assert(des.componentCount <= 4);
+		assert(des.ComponentCount <= 4);
 
 		float inputs[] = { r, g, b, a };
-		UINT8 bits[] = { des.rbits, des.gbits, des.bbits, des.abits };
-		UINT32 masks[] = { des.rmask, des.gmask, des.bmask, des.amask };
-		UINT8 shifts[] = { des.rshift, des.gshift, des.bshift, des.ashift };
+		UINT8 bits[] = { des.Rbits, des.Gbits, des.Bbits, des.Abits };
+		UINT32 masks[] = { des.Rmask, des.Gmask, des.Bmask, des.Amask };
+		UINT8 shifts[] = { des.Rshift, des.Gshift, des.Bshift, des.Ashift };
 
-		memset(dest, 0, des.elemBytes);
+		memset(dest, 0, des.ElemBytes);
 
 		UINT32 curBit = 0;
 		UINT32 prevDword = 0;
 		UINT32 dwordValue = 0;
-		for (UINT32 i = 0; i < des.componentCount; i++)
+		for (UINT32 i = 0; i < des.ComponentCount; i++)
 		{
 			UINT32 curDword = curBit / 32;
 
@@ -1717,11 +1717,11 @@ namespace bs
 				prevDword = curDword;
 			}
 
-			if (des.flags & PFF_INTEGER)
+			if (des.Flags & PFF_INTEGER)
 			{
-				if (des.flags & PFF_NORMALIZED)
+				if (des.Flags & PFF_NORMALIZED)
 				{
-					if (des.flags & PFF_SIGNED)
+					if (des.Flags & PFF_SIGNED)
 						dwordValue |= (Bitwise::SnormToUint(inputs[i], bits[i]) << shifts[i]) & masks[i];
 					else
 						dwordValue |= (Bitwise::UnormToUint(inputs[i], bits[i]) << shifts[i]) & masks[i];
@@ -1733,11 +1733,11 @@ namespace bs
 					dwordValue |= (((UINT32)inputs[i]) << shifts[i]) & masks[i];
 				}
 			}
-			else if (des.flags & PFF_FLOAT)
+			else if (des.Flags & PFF_FLOAT)
 			{
 				// Note: Not handling unsigned floats
 
-				if (des.componentType == PCT_FLOAT16)
+				if (des.ComponentType == PCT_FLOAT16)
 					dwordValue |= (Bitwise::FloatToHalf(inputs[i]) << shifts[i]) & masks[i];
 				else
 					dwordValue |= *(UINT32*)&inputs[i];
@@ -1752,32 +1752,32 @@ namespace bs
 		}
 
 		// Write last dword
-		UINT32 numBytes = std::min((prevDword + 1) * 4, (UINT32)des.elemBytes) - (prevDword * 4);
+		UINT32 numBytes = std::min((prevDword + 1) * 4, (UINT32)des.ElemBytes) - (prevDword * 4);
 		UINT32* curDst = ((UINT32*)dest) + prevDword;
 		Bitwise::IntWrite(curDst, numBytes, dwordValue);
 	}
 
 	void PixelUtil::UnpackColor(Color* color, PixelFormat format, const void* src)
 	{
-		UnpackColor(&color->r, &color->g, &color->b, &color->a, format, src);
+		UnpackColor(&color->R, &color->G, &color->B, &color->A, format, src);
 	}
 
 	void PixelUtil::UnpackColor(UINT8* r, UINT8* g, UINT8* b, UINT8* a, PixelFormat format, const void* src)
 	{
 		const PixelFormatDescription &des = getDescriptionFor(format);
 
-		if (des.flags & PFF_INTEGER)
+		if (des.Flags & PFF_INTEGER)
 		{
 			// Shortcut for integer formats unpacking
-			const UINT32 value = Bitwise::IntRead(src, des.elemBytes);
+			const UINT32 value = Bitwise::IntRead(src, des.ElemBytes);
 
-			*r = (UINT8)Bitwise::FixedToFixed((value & des.rmask) >> des.rshift, des.rbits, 8);
-			*g = (UINT8)Bitwise::FixedToFixed((value & des.gmask) >> des.gshift, des.gbits, 8);
-			*b = (UINT8)Bitwise::FixedToFixed((value & des.bmask) >> des.bshift, des.bbits, 8);
+			*r = (UINT8)Bitwise::FixedToFixed((value & des.Rmask) >> des.Rshift, des.Rbits, 8);
+			*g = (UINT8)Bitwise::FixedToFixed((value & des.Gmask) >> des.Gshift, des.Gbits, 8);
+			*b = (UINT8)Bitwise::FixedToFixed((value & des.Bmask) >> des.Bshift, des.Bbits, 8);
 
-			if (des.flags & PFF_HASALPHA)
+			if (des.Flags & PFF_HASALPHA)
 			{
-				*a = (UINT8)Bitwise::FixedToFixed((value & des.amask) >> des.ashift, des.abits, 8);
+				*a = (UINT8)Bitwise::FixedToFixed((value & des.Amask) >> des.Ashift, des.Abits, 8);
 			}
 			else
 			{
@@ -1818,26 +1818,26 @@ namespace bs
 
 		// All other formats handled in a generic way
 		const PixelFormatDescription& des = getDescriptionFor(format);
-		assert(des.componentCount <= 4);
+		assert(des.ComponentCount <= 4);
 
 		float* outputs[] = { r, g, b, a };
-		UINT8 bits[] = { des.rbits, des.gbits, des.bbits, des.abits };
-		UINT32 masks[] = { des.rmask, des.gmask, des.bmask, des.amask };
-		UINT8 shifts[] = { des.rshift, des.gshift, des.bshift, des.ashift };
+		UINT8 bits[] = { des.Rbits, des.Gbits, des.Bbits, des.Abits };
+		UINT32 masks[] = { des.Rmask, des.Gmask, des.Bmask, des.Amask };
+		UINT8 shifts[] = { des.Rshift, des.Gshift, des.Bshift, des.Ashift };
 
 		UINT32 curBit = 0;
-		for(UINT32 i = 0; i < des.componentCount; i++)
+		for(UINT32 i = 0; i < des.ComponentCount; i++)
 		{
 			UINT32 curDword = curBit / 32;
-			UINT32 numBytes = std::min((curDword + 1) * 4, (UINT32)des.elemBytes) - (curDword * 4);
+			UINT32 numBytes = std::min((curDword + 1) * 4, (UINT32)des.ElemBytes) - (curDword * 4);
 
 			UINT32* curSrc = ((UINT32*)src) + curDword;
 			UINT32 value = Bitwise::IntRead(curSrc, numBytes);
-			if(des.flags & PFF_INTEGER)
+			if(des.Flags & PFF_INTEGER)
 			{
-				if(des.flags & PFF_NORMALIZED)
+				if(des.Flags & PFF_NORMALIZED)
 				{
-					if (des.flags & PFF_SIGNED)
+					if (des.Flags & PFF_SIGNED)
 						*outputs[i] = Bitwise::UintToSnorm((value & masks[i]) >> shifts[i], bits[i]);
 					else
 						*outputs[i] = Bitwise::UintToUnorm((value & masks[i]) >> shifts[i], bits[i]);
@@ -1849,11 +1849,11 @@ namespace bs
 					*outputs[i] = (float)((value & masks[i]) >> shifts[i]);
 				}
 			}
-			else if(des.flags & PFF_FLOAT)
+			else if(des.Flags & PFF_FLOAT)
 			{
 				// Note: Not handling unsigned floats
 
-				if (des.componentType == PCT_FLOAT16)
+				if (des.ComponentType == PCT_FLOAT16)
 					*outputs[i] = Bitwise::HalfToFloat((UINT16)((value & masks[i]) >> shifts[i]));
 				else
 					*outputs[i] = *(float*)&value;
@@ -1868,10 +1868,10 @@ namespace bs
 		}
 
 		// Fill empty components
-		for (UINT32 i = des.componentCount; i < 3; i++)
+		for (UINT32 i = des.ComponentCount; i < 3; i++)
 			*outputs[i] = 0.0f;
 
-		if (des.componentCount < 4)
+		if (des.ComponentCount < 4)
 			*outputs[3] = 1.0f;
 	}
 
@@ -1945,15 +1945,15 @@ namespace bs
 			if(IsCompressed(format))
 			{
 				UINT32 blockSize = GetBlockSize(format);
-				pixelSize = blockSize / blockDim.x;
+				pixelSize = blockSize / blockDim.X;
 
-				if(src.GetLeft() % blockDim.x != 0 || src.GetTop() % blockDim.y != 0)
+				if(src.GetLeft() % blockDim.X != 0 || src.GetTop() % blockDim.Y != 0)
 				{
 					BS_LOG(Error, PixelUtility,
 						"Source offset must be a multiple of block size for compressed formats.");
 				}
 
-				if(dst.GetLeft() % blockDim.x != 0 || dst.GetTop() % blockDim.y != 0)
+				if(dst.GetLeft() % blockDim.X != 0 || dst.GetTop() % blockDim.Y != 0)
 				{
 					BS_LOG(Error, PixelUtility,
 						"Destination offset must be a multiple of block size for compressed formats.");
@@ -1976,7 +1976,7 @@ namespace bs
 			const UINT32 rowSize = src.GetWidth()*pixelSize;
 			for (UINT32 z = src.GetFront(); z < src.GetBack(); z++)
 			{
-				for (UINT32 y = src.GetTop(); y < src.GetBottom(); y += blockDim.y)
+				for (UINT32 y = src.GetTop(); y < src.GetBottom(); y += blockDim.Y)
 				{
 					memcpy(dstPtr, srcPtr, rowSize);
 
@@ -2007,7 +2007,7 @@ namespace bs
 			if (src.GetFormat() != dst.GetFormat())
 			{
 				CompressionOptions co;
-				co.format = dst.GetFormat();
+				co.Format = dst.GetFormat();
 				Compress(src, dst, co);
 
 				return;
@@ -2060,23 +2060,23 @@ namespace bs
 		}
 
 		const PixelFormatDescription& pfd = getDescriptionFor(data.GetFormat());
-		if(pfd.elemBytes > 4)
+		if(pfd.ElemBytes > 4)
 		{
 			BS_LOG(Error, PixelUtility, "flipComponentOrder() only supported on 4 byte or smaller pixel formats.");
 			return;
 		}
 
-		if (pfd.componentCount <= 1) // Nothing to flip
+		if (pfd.ComponentCount <= 1) // Nothing to flip
 			return;
 
 		bool bitCountMismatch = false;
-		if (pfd.rbits != pfd.gbits)
+		if (pfd.Rbits != pfd.Gbits)
 			bitCountMismatch = true;
 
-		if(pfd.componentCount > 2 && pfd.rbits != pfd.bbits)
+		if(pfd.ComponentCount > 2 && pfd.Rbits != pfd.Bbits)
 			bitCountMismatch = true;
 
-		if (pfd.componentCount > 3 && pfd.rbits != pfd.abits)
+		if (pfd.ComponentCount > 3 && pfd.Rbits != pfd.Abits)
 			bitCountMismatch = true;
 
 		if(bitCountMismatch)
@@ -2088,32 +2088,32 @@ namespace bs
 
 		struct CompData
 		{
-			UINT32 mask;
-			UINT8 shift;
+			UINT32 Mask;
+			UINT8 Shift;
 		};
 
 		std::array<CompData, 4> compData =
 		{{
-			{ pfd.rmask, pfd.rshift },
-			{ pfd.gmask, pfd.gshift },
-			{ pfd.bmask, pfd.bshift },
-			{ pfd.amask, pfd.ashift }
+			{ pfd.Rmask, pfd.Rshift },
+			{ pfd.Gmask, pfd.Gshift },
+			{ pfd.Bmask, pfd.Bshift },
+			{ pfd.Amask, pfd.Ashift }
 		}};
 
 		// Ensure unused components are at the end, after sort
-		if (pfd.componentCount < 4)
-			compData[3].shift = 0xFF;
+		if (pfd.ComponentCount < 4)
+			compData[3].Shift = 0xFF;
 
-		if (pfd.componentCount < 3)
-			compData[2].shift = 0xFF;
+		if (pfd.ComponentCount < 3)
+			compData[2].Shift = 0xFF;
 
 		std::sort(compData.begin(), compData.end(),
-			[&](const CompData& lhs, const CompData& rhs) { return lhs.shift < rhs.shift; }
+			[&](const CompData& lhs, const CompData& rhs) { return lhs.Shift < rhs.Shift; }
 		);
 
 		UINT8* dataPtr = data.GetData();
 
-		UINT32 pixelSize = pfd.elemBytes;
+		UINT32 pixelSize = pfd.ElemBytes;
 		UINT32 rowSkipBytes = data.GetRowSkip();
 		UINT32 sliceSkipBytes = data.GetSliceSkip();
 
@@ -2123,39 +2123,39 @@ namespace bs
 			{
 				for (UINT32 x = 0; x < data.GetWidth(); x++)
 				{
-					if(pfd.componentCount == 2)
+					if(pfd.ComponentCount == 2)
 					{
 						UINT64 pixelData = 0;
 						memcpy(&pixelData, dataPtr, pixelSize);
 
 						UINT64 output = 0;
-						output |= (pixelData & compData[1].mask) >> compData[1].shift;
-						output |= (pixelData & compData[0].mask) << compData[1].shift;
+						output |= (pixelData & compData[1].Mask) >> compData[1].Shift;
+						output |= (pixelData & compData[0].Mask) << compData[1].Shift;
 
 						memcpy(dataPtr, &output, pixelSize);
 					}
-					else if(pfd.componentCount == 3)
+					else if(pfd.ComponentCount == 3)
 					{
 						UINT64 pixelData = 0;
 						memcpy(&pixelData, dataPtr, pixelSize);
 
 						UINT64 output = 0;
-						output |= (pixelData & compData[2].mask) >> compData[2].shift;
-						output |= (pixelData & compData[0].mask) << compData[2].shift;
+						output |= (pixelData & compData[2].Mask) >> compData[2].Shift;
+						output |= (pixelData & compData[0].Mask) << compData[2].Shift;
 
 						memcpy(dataPtr, &output, pixelSize);
 					}
-					else if(pfd.componentCount == 4)
+					else if(pfd.ComponentCount == 4)
 					{
 						UINT64 pixelData = 0;
 						memcpy(&pixelData, dataPtr, pixelSize);
 
 						UINT64 output = 0;
-						output |= (pixelData & compData[3].mask) >> compData[3].shift;
-						output |= (pixelData & compData[0].mask) << compData[3].shift;
+						output |= (pixelData & compData[3].Mask) >> compData[3].Shift;
+						output |= (pixelData & compData[0].Mask) << compData[3].Shift;
 
-						output |= (pixelData & compData[2].mask) >> (compData[2].shift - compData[1].shift);
-						output |= (pixelData & compData[1].mask) << (compData[2].shift - compData[1].shift);
+						output |= (pixelData & compData[2].Mask) >> (compData[2].Shift - compData[1].Shift);
+						output |= (pixelData & compData[1].Mask) << (compData[2].Shift - compData[1].Shift);
 
 						memcpy(dataPtr, &output, pixelSize);
 					}
@@ -2471,7 +2471,7 @@ namespace bs
 
 	void PixelUtil::Compress(const PixelData& src, PixelData& dst, const CompressionOptions& options)
 	{
-		if (!IsCompressed(options.format))
+		if (!IsCompressed(options.Format))
 		{
 			BS_LOG(Error, PixelUtility, "Compression failed. Destination format is not a valid compressed format.");
 			return;
@@ -2489,7 +2489,7 @@ namespace bs
 			return;
 		}
 
-		PixelFormat interimFormat = options.format == PF_BC6H ? PF_RGBA32F : PF_BGRA8;
+		PixelFormat interimFormat = options.Format == PF_BC6H ? PF_RGBA32F : PF_BGRA8;
 
 		PixelData interimData(src.GetWidth(), src.GetHeight(), 1, interimFormat);
 		interimData.AllocateInternalBuffer();
@@ -2498,15 +2498,15 @@ namespace bs
 		nvtt::InputOptions io;
 		io.setTextureLayout(nvtt::TextureType_2D, src.GetWidth(), src.GetHeight());
 		io.setMipmapGeneration(false);
-		io.setAlphaMode(toNVTTAlphaMode(options.alphaMode));
-		io.setNormalMap(options.isNormalMap);
+		io.setAlphaMode(toNVTTAlphaMode(options.AlphaMode));
+		io.setNormalMap(options.IsNormalMap);
 
 		if (interimFormat == PF_RGBA32F)
 			io.setFormat(nvtt::InputFormat_RGBA_32F);
 		else
 			io.setFormat(nvtt::InputFormat_BGRA_8UB);
 
-		if (options.isSRGB)
+		if (options.IsSrgb)
 			io.setGamma(2.2f, 2.2f);
 		else
 			io.setGamma(1.0f, 1.0f);
@@ -2514,8 +2514,8 @@ namespace bs
 		io.setMipmapData(interimData.GetData(), src.GetWidth(), src.GetHeight());
 
 		nvtt::CompressionOptions co;
-		co.setFormat(toNVTTFormat(options.format));
-		co.setQuality(toNVTTQuality(options.quality));
+		co.setFormat(toNVTTFormat(options.Format));
+		co.setQuality(toNVTTQuality(options.Quality));
 
 		NVTTCompressOutputHandler outputHandler(dst.GetData(), dst.GetConsecutiveSize());
 
@@ -2565,16 +2565,16 @@ namespace bs
 		nvtt::InputOptions io;
 		io.setTextureLayout(nvtt::TextureType_2D, src.GetWidth(), src.GetHeight());
 		io.setMipmapGeneration(true);
-		io.setNormalMap(options.isNormalMap);
-		io.setNormalizeMipmaps(options.normalizeMipmaps);
-		io.setWrapMode(toNVTTWrapMode(options.wrapMode));
+		io.setNormalMap(options.IsNormalMap);
+		io.setNormalizeMipmaps(options.NormalizeMipmaps);
+		io.setWrapMode(toNVTTWrapMode(options.WrapMode));
 
 		if (interimFormat == PF_RGBA32F)
 			io.setFormat(nvtt::InputFormat_RGBA_32F);
 		else
 			io.setFormat(nvtt::InputFormat_BGRA_8UB);
 
-		if (options.isSRGB)
+		if (options.IsSrgb)
 			io.setGamma(2.2f, 2.2f);
 		else
 			io.setGamma(1.0f, 1.0f);

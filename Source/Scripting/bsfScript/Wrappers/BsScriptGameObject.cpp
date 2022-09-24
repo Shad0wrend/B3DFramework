@@ -56,9 +56,9 @@ namespace bs
 
 	void ScriptGameObject::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_GetInstanceId", (void*)&ScriptGameObject::InternalGetInstanceId);
-		metaData.scriptClass->AddInternalCall("Internal_GetUUID", (void*)&ScriptGameObject::InternalGetUuid);
-		metaData.scriptClass->AddInternalCall("Internal_GetIsDestroyed", (void*)&ScriptGameObject::InternalGetIsDestroyed);
+		metaData.ScriptClass->AddInternalCall("Internal_GetInstanceId", (void*)&ScriptGameObject::InternalGetInstanceId);
+		metaData.ScriptClass->AddInternalCall("Internal_GetUUID", (void*)&ScriptGameObject::InternalGetUuid);
+		metaData.ScriptClass->AddInternalCall("Internal_GetIsDestroyed", (void*)&ScriptGameObject::InternalGetIsDestroyed);
 	}
 
 	UINT64 ScriptGameObject::InternalGetInstanceId(ScriptGameObject* nativeInstance)

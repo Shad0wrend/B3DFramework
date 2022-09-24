@@ -36,7 +36,7 @@ namespace bs
 		virtual ~GameObject() = default;
 
 		/**	Returns the unique instance ID of the GameObject. */
-		UINT64 GetInstanceId() const { return mInstanceData->mInstanceId; }
+		UINT64 GetInstanceId() const { return mInstanceData->MInstanceId; }
 
 		/**
 		 * Returns an ID that identifies a link between this object and its equivalent in the linked prefab. This will be

@@ -98,13 +98,13 @@ namespace bs
 		 * the distribution is represented by a gradient.
 		 */
 		BS_SCRIPT_EXPORT()
-		Color GetMinConstant() const { return mMinGradient.GetKey(0).color; }
+		Color GetMinConstant() const { return mMinGradient.GetKey(0).Color; }
 
 		/**
 		 * Returns the maximum value of a constant range. Only defined if the distribution represents a non-gradient range.
 		 */
 		BS_SCRIPT_EXPORT()
-		Color GetMaxConstant() const { return mMaxGradient.GetKey(0).color; }
+		Color GetMaxConstant() const { return mMaxGradient.GetKey(0).Color; }
 
 		/**
 		 * Returns the gradient representing the distribution, or the first gradient representing a gradient range.
@@ -298,13 +298,13 @@ namespace bs
 		 * the distribution is represented by a curve.
 		 */
 		BS_SCRIPT_EXPORT()
-		const T& GetMinConstant() const { return mMinCurve.GetKeyFrames()[0].value; }
+		const T& GetMinConstant() const { return mMinCurve.GetKeyFrames()[0].Value; }
 
 		/**
 		 * Returns the maximum value of a constant range. Only defined if the distribution represents a non-curve range.
 		 */
 		BS_SCRIPT_EXPORT()
-		const T& GetMaxConstant() const { return mMaxCurve.GetKeyFrames()[0].value; }
+		const T& GetMaxConstant() const { return mMaxCurve.GetKeyFrames()[0].Value; }
 
 		/**
 		 * Returns the curve representing the distribution, or the first curve representing a curve range. Undefined if

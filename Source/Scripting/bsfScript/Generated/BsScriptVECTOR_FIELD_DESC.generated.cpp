@@ -16,7 +16,7 @@ namespace bs
 
 	MonoObject*ScriptVECTOR_FIELD_DESC::Box(const __VECTOR_FIELD_DESCInterop& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	__VECTOR_FIELD_DESCInterop ScriptVECTOR_FIELD_DESC::Unbox(MonoObject* value)
@@ -27,10 +27,10 @@ namespace bs
 	VECTOR_FIELD_DESC ScriptVECTOR_FIELD_DESC::FromInterop(const __VECTOR_FIELD_DESCInterop& value)
 	{
 		VECTOR_FIELD_DESC output;
-		output.countX = value.countX;
-		output.countY = value.countY;
-		output.countZ = value.countZ;
-		output.bounds = value.bounds;
+		output.CountX = value.CountX;
+		output.CountY = value.CountY;
+		output.CountZ = value.CountZ;
+		output.Bounds = value.Bounds;
 
 		return output;
 	}
@@ -38,10 +38,10 @@ namespace bs
 	__VECTOR_FIELD_DESCInterop ScriptVECTOR_FIELD_DESC::ToInterop(const VECTOR_FIELD_DESC& value)
 	{
 		__VECTOR_FIELD_DESCInterop output;
-		output.countX = value.countX;
-		output.countY = value.countY;
-		output.countZ = value.countZ;
-		output.bounds = value.bounds;
+		output.CountX = value.CountX;
+		output.CountY = value.CountY;
+		output.CountZ = value.CountZ;
+		output.Bounds = value.Bounds;
 
 		return output;
 	}

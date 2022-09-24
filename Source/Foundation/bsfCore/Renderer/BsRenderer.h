@@ -18,8 +18,8 @@ namespace bs
 	/** Contains various data evaluated by external systems on a per-frame basis that is to be used by the renderer. */
 	struct PerFrameData
 	{
-		const EvaluatedAnimationData* animation = nullptr;
-		const ParticlePerFrameData* particles = nullptr;
+		const EvaluatedAnimationData* Animation = nullptr;
+		const ParticlePerFrameData* Particles = nullptr;
 	};
 
 	namespace ct
@@ -72,32 +72,32 @@ namespace bs
 	struct RendererViewContext
 	{
 		/** Current target the view is rendering to. */
-		SPtr<RenderTarget> currentTarget;
+		SPtr<RenderTarget> CurrentTarget;
 	};
 
 	/** Settings that control renderer scene capture. */
 	struct CaptureSettings
 	{	
 		/** If true scene will be captured in a format that supports high dynamic range. */
-		bool hdr = true;
+		bool Hdr = true;
 
 		/**
 		 * When enabled the alpha channel of the final render target will be populated with an encoded depth value.
 		 * Parameters @p depthEncodeNear and @p depthEncodeFar control which range of the depth buffer to encode.
 		 */
-		bool encodeDepth = false;
+		bool EncodeDepth = false;
 
 		/**
 		 * Controls at which position to start encoding depth, in view space. Only relevant with @p encodeDepth is enabled.
 		 * Depth will be linearly interpolated between this value and @p depthEncodeFar.
 		 */
-		float depthEncodeNear = 0.0f;
+		float DepthEncodeNear = 0.0f;
 
 		/**
 		 * Controls at which position to stop encoding depth, in view space. Only relevant with @p encodeDepth is enabled.
 		 * Depth will be linearly interpolated between @p depthEncodeNear and this value.
 		 */
-		float depthEncodeFar = 0.0f;
+		float DepthEncodeFar = 0.0f;
 	};
 
 	/**
@@ -108,9 +108,9 @@ namespace bs
 	 */
 	struct ExtensionShaderInfo
 	{
-		String name; /**< Unique name of the sub-shader type that is recognized by the renderer. */
-		Path path; /**< Path to the original shader. */
-		ShaderDefines defines; /**< Additional defines to use when compiling the shader. */
+		String Name; /**< Unique name of the sub-shader type that is recognized by the renderer. */
+		Path Path; /**< Path to the original shader. */
+		ShaderDefines Defines; /**< Additional defines to use when compiling the shader. */
 	};
 
 	/**
@@ -120,7 +120,7 @@ namespace bs
 	 */
 	struct ShaderExtensionPointInfo
 	{
-		Vector<ExtensionShaderInfo> shaders;
+		Vector<ExtensionShaderInfo> Shaders;
 	};
 
 	/**
@@ -414,11 +414,11 @@ namespace bs
 		struct RendererTaskQueuedInfo
 		{
 			RendererTaskQueuedInfo(const SPtr<RendererTask>& task, UINT64 frameIdx)
-				:task(task), frameIdx(frameIdx)
+				:Task(task), FrameIdx(frameIdx)
 			{ }
 
-			SPtr<RendererTask> task;
-			UINT64 frameIdx;
+			SPtr<RendererTask> Task;
+			UINT64 FrameIdx;
 		};
 
 		/**
@@ -498,7 +498,7 @@ namespace bs
 		 *
 		 * @note	Sim thread only.
 		 */
-		Event<void()> onComplete;
+		Event<void()> OnComplete;
 
 	private:
 		friend class Renderer;

@@ -18,11 +18,11 @@ namespace bs
 
 	void ScriptStringTableManager::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_SetActiveLanguage", (void*)&ScriptStringTableManager::InternalSetActiveLanguage);
-		metaData.scriptClass->AddInternalCall("Internal_GetActiveLanguage", (void*)&ScriptStringTableManager::InternalGetActiveLanguage);
-		metaData.scriptClass->AddInternalCall("Internal_GetTable", (void*)&ScriptStringTableManager::InternalGetTable);
-		metaData.scriptClass->AddInternalCall("Internal_RemoveTable", (void*)&ScriptStringTableManager::InternalRemoveTable);
-		metaData.scriptClass->AddInternalCall("Internal_SetTable", (void*)&ScriptStringTableManager::InternalSetTable);
+		metaData.ScriptClass->AddInternalCall("Internal_SetActiveLanguage", (void*)&ScriptStringTableManager::InternalSetActiveLanguage);
+		metaData.ScriptClass->AddInternalCall("Internal_GetActiveLanguage", (void*)&ScriptStringTableManager::InternalGetActiveLanguage);
+		metaData.ScriptClass->AddInternalCall("Internal_GetTable", (void*)&ScriptStringTableManager::InternalGetTable);
+		metaData.ScriptClass->AddInternalCall("Internal_RemoveTable", (void*)&ScriptStringTableManager::InternalRemoveTable);
+		metaData.ScriptClass->AddInternalCall("Internal_SetTable", (void*)&ScriptStringTableManager::InternalSetTable);
 
 	}
 

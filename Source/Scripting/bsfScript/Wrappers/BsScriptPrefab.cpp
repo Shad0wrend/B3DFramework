@@ -17,9 +17,9 @@ namespace bs
 
 	void ScriptPrefab::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptPrefab::InternalCreateInstance);
-		metaData.scriptClass->AddInternalCall("Internal_Instantiate", (void*)&ScriptPrefab::InternalInstantiate);
-		metaData.scriptClass->AddInternalCall("Internal_IsScene", (void*)&ScriptPrefab::InternalIsScene);
+		metaData.ScriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptPrefab::InternalCreateInstance);
+		metaData.ScriptClass->AddInternalCall("Internal_Instantiate", (void*)&ScriptPrefab::InternalInstantiate);
+		metaData.ScriptClass->AddInternalCall("Internal_IsScene", (void*)&ScriptPrefab::InternalIsScene);
 	}
 
 	void ScriptPrefab::InternalCreateInstance(MonoObject* instance, ScriptSceneObject* so, bool isScene)
@@ -46,6 +46,6 @@ namespace bs
 
 	MonoObject* ScriptPrefab::CreateInstance()
 	{
-		return metaData.scriptClass->CreateInstance();
+		return metaData.ScriptClass->CreateInstance();
 	}
 }

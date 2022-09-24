@@ -40,18 +40,18 @@ namespace bs
 	private:
 		SPtr<DataStream> GetData(SerializedField* obj, UINT32& size)
 		{
-			size = obj->size;
+			size = obj->Size;
 
-			return bs_shared_ptr_new<MemoryDataStream>(obj->value, obj->size);
+			return bs_shared_ptr_new<MemoryDataStream>(obj->Value, obj->Size);
 		}
 
 		void SetData(SerializedField* obj, const SPtr<DataStream>& value, UINT32 size)
 		{
-			obj->value = (UINT8*)bs_alloc(size);
-			obj->size = size;
-			obj->ownsMemory = true;
+			obj->Value = (UINT8*)bs_alloc(size);
+			obj->Size = size;
+			obj->OwnsMemory = true;
 
-			value->Read(obj->value, size);
+			value->Read(obj->Value, size);
 		}
 
 	public:
@@ -82,10 +82,10 @@ namespace bs
 	private:
 		SPtr<DataStream> GetData(SerializedDataBlock* obj, UINT32& size)
 		{
-			size = obj->size;
-			obj->stream->Seek(obj->offset);
+			size = obj->Size;
+			obj->Stream->Seek(obj->Offset);
 
-			return obj->stream;
+			return obj->Stream;
 		}
 
 		void SetData(SerializedDataBlock* obj, const SPtr<DataStream>& value, UINT32 size)
@@ -93,9 +93,9 @@ namespace bs
 			SPtr<MemoryDataStream> memStream = bs_shared_ptr_new<MemoryDataStream>(size);
 			value->Read(memStream->Data(), size);
 
-			obj->stream = memStream;
-			obj->size = size;
-			obj->offset = 0;
+			obj->Stream = memStream;
+			obj->Size = size;
+			obj->Offset = 0;
 		}
 	public:
 		SerializedDataBlockRTTI()
@@ -125,22 +125,22 @@ namespace bs
 	private:
 		SerializedSubObject& GetEntry(SerializedObject* obj, UINT32 arrayIdx)
 		{
-			return obj->subObjects[arrayIdx];
+			return obj->SubObjects[arrayIdx];
 		}
 
 		void SetEntry(SerializedObject* obj, UINT32 arrayIdx, SerializedSubObject& val)
 		{
-			obj->subObjects[arrayIdx] = val;
+			obj->SubObjects[arrayIdx] = val;
 		}
 
 		UINT32 GetNumEntries(SerializedObject* obj)
 		{
-			return (UINT32)obj->subObjects.size();
+			return (UINT32)obj->SubObjects.size();
 		}
 
 		void SetNumEntries(SerializedObject* obj, UINT32 numEntries)
 		{
-			obj->subObjects = Vector<SerializedSubObject>(numEntries);
+			obj->SubObjects = Vector<SerializedSubObject>(numEntries);
 		}
 	public:
 		SerializedObjectRTTI()
@@ -171,12 +171,12 @@ namespace bs
 	private:
 		UINT32& GetNumElements(SerializedArray* obj)
 		{
-			return obj->numElements;
+			return obj->NumElements;
 		}
 
 		void SetNumElements(SerializedArray* obj, UINT32& val)
 		{
-			obj->numElements = val;
+			obj->NumElements = val;
 		}
 
 		SerializedArrayEntry& GetEntry(SerializedArray* obj, UINT32 arrayIdx)
@@ -186,7 +186,7 @@ namespace bs
 
 		void SetEntry(SerializedArray* obj, UINT32 arrayIdx, SerializedArrayEntry& val)
 		{
-			obj->entries[val.index] = val;
+			obj->Entries[val.Index] = val;
 		}
 
 		UINT32 GetNumEntries(SerializedArray* obj)
@@ -196,7 +196,7 @@ namespace bs
 
 		void SetNumEntries(SerializedArray* obj, UINT32 numEntries)
 		{
-			obj->entries = UnorderedMap<UINT32, SerializedArrayEntry>();
+			obj->Entries = UnorderedMap<UINT32, SerializedArrayEntry>();
 		}
 	public:
 		SerializedArrayRTTI()
@@ -210,7 +210,7 @@ namespace bs
 		{
 			SerializedArray* serializedArray = static_cast<SerializedArray*>(obj);
 
-			for (auto& entry : serializedArray->entries)
+			for (auto& entry : serializedArray->Entries)
 				mSequentialEntries.push_back(entry.second);
 		}
 
@@ -239,12 +239,12 @@ namespace bs
 	private:
 		UINT32& GetTypeId(SerializedSubObject* obj)
 		{
-			return obj->typeId;
+			return obj->TypeId;
 		}
 
 		void SetTypeId(SerializedSubObject* obj, UINT32& val)
 		{
-			obj->typeId = val;
+			obj->TypeId = val;
 		}
 
 		SerializedEntry& GetEntry(SerializedSubObject* obj, UINT32 arrayIdx)
@@ -254,7 +254,7 @@ namespace bs
 
 		void SetEntry(SerializedSubObject* obj, UINT32 arrayIdx, SerializedEntry& val)
 		{
-			obj->entries[val.fieldId] = val;
+			obj->Entries[val.FieldId] = val;
 		}
 
 		UINT32 GetNumEntries(SerializedSubObject* obj)
@@ -264,7 +264,7 @@ namespace bs
 
 		void SetNumEntries(SerializedSubObject* obj, UINT32 numEntries)
 		{
-			obj->entries = UnorderedMap<UINT32, SerializedEntry>();
+			obj->Entries = UnorderedMap<UINT32, SerializedEntry>();
 		}
 	public:
 		SerializedSubObjectRTTI()
@@ -278,7 +278,7 @@ namespace bs
 		{
 			SerializedSubObject* serializableObject = static_cast<SerializedSubObject*>(obj);
 
-			for (auto& entry : serializableObject->entries)
+			for (auto& entry : serializableObject->Entries)
 				mSequentialEntries.push_back(entry.second);
 		}
 
@@ -307,22 +307,22 @@ namespace bs
 	private:
 		UINT32& GetFieldId(SerializedEntry* obj)
 		{
-			return obj->fieldId;
+			return obj->FieldId;
 		}
 
 		void SetFieldId(SerializedEntry* obj, UINT32& val)
 		{
-			obj->fieldId = val;
+			obj->FieldId = val;
 		}
 
 		SPtr<SerializedInstance> GetSerialized(SerializedEntry* obj)
 		{
-			return obj->serialized;
+			return obj->Serialized;
 		}
 
 		void SetSerialized(SerializedEntry* obj, SPtr<SerializedInstance> val)
 		{
-			obj->serialized = val;
+			obj->Serialized = val;
 		}
 
 	public:
@@ -354,22 +354,22 @@ namespace bs
 	private:
 		UINT32& GetArrayIdx(SerializedArrayEntry* obj)
 		{
-			return obj->index;
+			return obj->Index;
 		}
 
 		void SetArrayIdx(SerializedArrayEntry* obj, UINT32& val)
 		{
-			obj->index = val;
+			obj->Index = val;
 		}
 
 		SPtr<SerializedInstance> GetSerialized(SerializedArrayEntry* obj)
 		{
-			return obj->serialized;
+			return obj->Serialized;
 		}
 
 		void SetSerialized(SerializedArrayEntry* obj, SPtr<SerializedInstance> val)
 		{
-			obj->serialized = val;
+			obj->Serialized = val;
 		}
 
 	public:

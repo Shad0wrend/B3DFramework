@@ -101,15 +101,15 @@ namespace bs
 
 	float CJoint::GetBreakForce() const
 	{
-		return mDesc.breakForce;
+		return mDesc.BreakForce;
 	}
 
 	void CJoint::SetBreakForce(float force)
 	{
-		if (mDesc.breakForce == force)
+		if (mDesc.BreakForce == force)
 			return;
 
-		mDesc.breakForce = force;
+		mDesc.BreakForce = force;
 
 		if (mInternal != nullptr)
 			mInternal->SetBreakForce(force);
@@ -117,15 +117,15 @@ namespace bs
 
 	float CJoint::GetBreakTorque() const
 	{
-		return mDesc.breakTorque;
+		return mDesc.BreakTorque;
 	}
 
 	void CJoint::SetBreakTorque(float torque)
 	{
-		if (mDesc.breakTorque == torque)
+		if (mDesc.BreakTorque == torque)
 			return;
 
-		mDesc.breakTorque = torque;
+		mDesc.BreakTorque = torque;
 
 		if (mInternal != nullptr)
 			mInternal->SetBreakTorque(torque);
@@ -133,15 +133,15 @@ namespace bs
 
 	bool CJoint::GetEnableCollision() const
 	{
-		return mDesc.enableCollision;
+		return mDesc.EnableCollision;
 	}
 
 	void CJoint::SetEnableCollision(bool value)
 	{
-		if (mDesc.enableCollision == value)
+		if (mDesc.EnableCollision == value)
 			return;
 
-		mDesc.enableCollision = value;
+		mDesc.EnableCollision = value;
 
 		if (mInternal != nullptr)
 			mInternal->SetEnableCollision(value);
@@ -197,21 +197,21 @@ namespace bs
 	void CJoint::RestoreInternal()
 	{
 		if (mBodies[0] != nullptr)
-			mDesc.bodies[0].body = mBodies[0]->GetInternalInternal();
+			mDesc.Bodies[0].Body = mBodies[0]->GetInternalInternal();
 		else
-			mDesc.bodies[0].body = nullptr;
+			mDesc.Bodies[0].Body = nullptr;
 
 		if (mBodies[1] != nullptr)
-			mDesc.bodies[1].body = mBodies[1]->GetInternalInternal();
+			mDesc.Bodies[1].Body = mBodies[1]->GetInternalInternal();
 		else
-			mDesc.bodies[1].body = nullptr;
+			mDesc.Bodies[1].Body = nullptr;
 
-		GetLocalTransform(JointBody::Target, mDesc.bodies[0].position, mDesc.bodies[0].rotation);
-		GetLocalTransform(JointBody::Anchor, mDesc.bodies[1].position, mDesc.bodies[1].rotation);
+		GetLocalTransform(JointBody::Target, mDesc.Bodies[0].Position, mDesc.Bodies[0].Rotation);
+		GetLocalTransform(JointBody::Anchor, mDesc.Bodies[1].Position, mDesc.Bodies[1].Rotation);
 
 		mInternal = CreateInternal();
 
-		mInternal->onJointBreak.Connect(std::bind(&CJoint::TriggerOnJointBroken, this));
+		mInternal->OnJointBreak.Connect(std::bind(&CJoint::TriggerOnJointBroken, this));
 	}
 
 	void CJoint::DestroyInternal()
@@ -283,7 +283,7 @@ namespace bs
 	
 	void CJoint::TriggerOnJointBroken()
 	{
-		onJointBreak();
+		OnJointBreak();
 	}
 
 	RTTITypeBase* CJoint::GetRttiStatic()

@@ -18,17 +18,17 @@ namespace bs
 	class BS_UTILITY_EXPORT Vector3
 	{
 	public:
-		float x, y, z;
+		float X, Y, Z;
 
 	public:
 		Vector3() = default;
 
 		constexpr Vector3(BS_ZERO)
-			:x(0.0f), y(0.0f), z(0.0f)
+			:X(0.0f), Y(0.0f), Z(0.0f)
 		{ }
 
 		constexpr Vector3(float x, float y, float z)
-			:x(x), y(y), z(z)
+			:X(x), Y(y), Z(z)
 		{ }
 
 		explicit Vector3(const Vector4& vec);
@@ -36,74 +36,74 @@ namespace bs
 		/** Exchange the contents of this vector with another. */
 		void Swap(Vector3& other)
 		{
-			std::swap(x, other.x);
-			std::swap(y, other.y);
-			std::swap(z, other.z);
+			std::swap(X, other.X);
+			std::swap(Y, other.Y);
+			std::swap(Z, other.Z);
 		}
 
 		float operator[] (UINT32 i) const
 		{
 			assert(i < 3);
 
-			return *(&x + i);
+			return *(&X + i);
 		}
 
 		float& operator[] (UINT32 i)
 		{
 			assert(i < 3);
 
-			return *(&x + i);
+			return *(&X + i);
 		}
 
 		/** Pointer accessor for direct copying. */
 		float* Ptr()
 		{
-			return &x;
+			return &X;
 		}
 
 		/** Pointer accessor for direct copying. */
 		const float* Ptr() const
 		{
-			return &x;
+			return &X;
 		}
 
 		Vector3& operator= (float rhs)
 		{
-			x = rhs;
-			y = rhs;
-			z = rhs;
+			X = rhs;
+			Y = rhs;
+			Z = rhs;
 
 			return *this;
 		}
 
 		bool operator== (const Vector3& rhs) const
 		{
-			return (x == rhs.x && y == rhs.y && z == rhs.z);
+			return (X == rhs.X && Y == rhs.Y && Z == rhs.Z);
 		}
 
 		bool operator!= (const Vector3& rhs) const
 		{
-			return (x != rhs.x || y != rhs.y || z != rhs.z);
+			return (X != rhs.X || Y != rhs.Y || Z != rhs.Z);
 		}
 
 		Vector3 operator+ (const Vector3& rhs) const
 		{
-			return Vector3(x + rhs.x, y + rhs.y, z + rhs.z);
+			return Vector3(X + rhs.X, Y + rhs.Y, Z + rhs.Z);
 		}
 
 		Vector3 operator- (const Vector3& rhs) const
 		{
-			return Vector3(x - rhs.x, y - rhs.y, z - rhs.z);
+			return Vector3(X - rhs.X, Y - rhs.Y, Z - rhs.Z);
 		}
 
 		Vector3 operator* (float rhs) const
 		{
-			return Vector3(x * rhs, y * rhs, z * rhs);
+			return Vector3(X * rhs, Y * rhs, Z * rhs);
 		}
 
 		Vector3 operator* (const Vector3& rhs) const
 		{
-			return Vector3(x * rhs.x, y * rhs.y, z * rhs.z);
+			return Vector3(X * rhs.X, Y * rhs.Y, Z * rhs.Z);
 		}
 
 		Vector3 operator/ (float val) const
@@ -111,12 +111,12 @@ namespace bs
 			assert(val != 0.0);
 
 			float fInv = 1.0f / val;
-			return Vector3(x * fInv, y * fInv, z * fInv);
+			return Vector3(X * fInv, Y * fInv, Z * fInv);
 		}
 
 		Vector3 operator/ (const Vector3& rhs) const
 		{
-			return Vector3(x / rhs.x, y / rhs.y, z / rhs.z);
+			return Vector3(X / rhs.X, Y / rhs.Y, Z / rhs.Z);
 		}
 
 		const Vector3& operator+ () const
@@ -126,89 +126,89 @@ namespace bs
 
 		Vector3 operator- () const
 		{
-			return Vector3(-x, -y, -z);
+			return Vector3(-X, -Y, -Z);
 		}
 
 		friend Vector3 operator* (float lhs, const Vector3& rhs)
 		{
-			return Vector3(lhs * rhs.x, lhs * rhs.y, lhs * rhs.z);
+			return Vector3(lhs * rhs.X, lhs * rhs.Y, lhs * rhs.Z);
 		}
 
 		friend Vector3 operator/ (float lhs, const Vector3& rhs)
 		{
-			return Vector3(lhs / rhs.x, lhs / rhs.y, lhs / rhs.z);
+			return Vector3(lhs / rhs.X, lhs / rhs.Y, lhs / rhs.Z);
 		}
 
 		friend Vector3 operator+ (const Vector3& lhs, float rhs)
 		{
-			return Vector3(lhs.x + rhs, lhs.y + rhs, lhs.z + rhs);
+			return Vector3(lhs.X + rhs, lhs.Y + rhs, lhs.Z + rhs);
 		}
 
 		friend Vector3 operator+ (float lhs, const Vector3& rhs)
 		{
-			return Vector3(lhs + rhs.x, lhs + rhs.y, lhs + rhs.z);
+			return Vector3(lhs + rhs.X, lhs + rhs.Y, lhs + rhs.Z);
 		}
 
 		friend Vector3 operator- (const Vector3& lhs, float rhs)
 		{
-			return Vector3(lhs.x - rhs, lhs.y - rhs, lhs.z - rhs);
+			return Vector3(lhs.X - rhs, lhs.Y - rhs, lhs.Z - rhs);
 		}
 
 		friend Vector3 operator- (float lhs, const Vector3& rhs)
 		{
-			return Vector3(lhs - rhs.x, lhs - rhs.y, lhs - rhs.z);
+			return Vector3(lhs - rhs.X, lhs - rhs.Y, lhs - rhs.Z);
 		}
 
 		Vector3& operator+= (const Vector3& rhs)
 		{
-			x += rhs.x;
-			y += rhs.y;
-			z += rhs.z;
+			X += rhs.X;
+			Y += rhs.Y;
+			Z += rhs.Z;
 
 			return *this;
 		}
 
 		Vector3& operator+= (float rhs)
 		{
-			x += rhs;
-			y += rhs;
-			z += rhs;
+			X += rhs;
+			Y += rhs;
+			Z += rhs;
 
 			return *this;
 		}
 
 		Vector3& operator-= (const Vector3& rhs)
 		{
-			x -= rhs.x;
-			y -= rhs.y;
-			z -= rhs.z;
+			X -= rhs.X;
+			Y -= rhs.Y;
+			Z -= rhs.Z;
 
 			return *this;
 		}
 
 		Vector3& operator-= (float rhs)
 		{
-			x -= rhs;
-			y -= rhs;
-			z -= rhs;
+			X -= rhs;
+			Y -= rhs;
+			Z -= rhs;
 
 			return *this;
 		}
 
 		Vector3& operator*= (float rhs)
 		{
-			x *= rhs;
-			y *= rhs;
-			z *= rhs;
+			X *= rhs;
+			Y *= rhs;
+			Z *= rhs;
 
 			return *this;
 		}
 
 		Vector3& operator*= (const Vector3& rhs)
 		{
-			x *= rhs.x;
-			y *= rhs.y;
-			z *= rhs.z;
+			X *= rhs.X;
+			Y *= rhs.Y;
+			Z *= rhs.Z;
 
 			return *this;
 		}
@@ -219,18 +219,18 @@ namespace bs
 
 			float inv = 1.0f / rhs;
 
-			x *= inv;
-			y *= inv;
-			z *= inv;
+			X *= inv;
+			Y *= inv;
+			Z *= inv;
 
 			return *this;
 		}
 
 		Vector3& operator/= (const Vector3& rhs)
 		{
-			x /= rhs.x;
-			y /= rhs.y;
-			z /= rhs.z;
+			X /= rhs.X;
+			Y /= rhs.Y;
+			Z /= rhs.Z;
 
 			return *this;
 		}
@@ -238,13 +238,13 @@ namespace bs
 		/** Returns the length (magnitude) of the vector. */
 		float Length() const
 		{
-			return std::sqrt(x * x + y * y + z * z);
+			return std::sqrt(X * X + Y * Y + Z * Z);
 		}
 
 		/** Returns the square of the length(magnitude) of the vector. */
 		float SquaredLength() const
 		{
-			return x * x + y * y + z * z;
+			return X * X + Y * Y + Z * Z;
 		}
 
 		/**	Returns the distance to another vector. */
@@ -262,7 +262,7 @@ namespace bs
 		/** Calculates the dot (scalar) product of this vector with another. */
 		float Dot(const Vector3& vec) const
 		{
-			return x * vec.x + y * vec.y + z * vec.z;
+			return X * vec.X + Y * vec.Y + Z * vec.Z;
 		}
 
 		/** 
@@ -283,25 +283,25 @@ namespace bs
 		Vector3 Cross(const Vector3& other) const
 		{
 			return Vector3(
-				y * other.z - z * other.y,
-				z * other.x - x * other.z,
-				x * other.y - y * other.x);
+				Y * other.Z - Z * other.Y,
+				Z * other.X - X * other.Z,
+				X * other.Y - Y * other.X);
 		}
 
 		/** Sets this vector's components to the minimum of its own and the ones of the passed in vector. */
 		void Min(const Vector3& cmp)
 		{
-			if (cmp.x < x) x = cmp.x;
-			if (cmp.y < y) y = cmp.y;
-			if (cmp.z < z) z = cmp.z;
+			if (cmp.X < X) X = cmp.X;
+			if (cmp.Y < Y) Y = cmp.Y;
+			if (cmp.Z < Z) Z = cmp.Z;
 		}
 
 		/** Sets this vector's components to the maximum of its own and the ones of the passed in vector. */
 		void Max(const Vector3& cmp)
 		{
-			if (cmp.x > x) x = cmp.x;
-			if (cmp.y > y) y = cmp.y;
-			if (cmp.z > z) z = cmp.z;
+			if (cmp.X > X) X = cmp.X;
+			if (cmp.Y > Y) Y = cmp.Y;
+			if (cmp.Z > Z) Z = cmp.Z;
 		}
 
 		/** Generates a vector perpendicular to this vector. */
@@ -324,7 +324,7 @@ namespace bs
 		/** Returns true if this vector is zero length. */
 		bool IsZeroLength(float tolerance = 1e-04f) const
 		{
-			float sqrdLen = x * x + y * y + z * z;
+			float sqrdLen = X * X + Y * Y + Z * Z;
 			return sqrdLen < tolerance;
 		}
 
@@ -337,10 +337,10 @@ namespace bs
 		/** Calculates two vectors orthonormal to the current vector, and normalizes the current vector if not already. */
 		void OrthogonalComplement(Vector3& a, Vector3& b)
 		{
-			if (std::abs(x) > std::abs(y))
-				a = Vector3(-z, 0, x);
+			if (std::abs(X) > std::abs(Y))
+				a = Vector3(-Z, 0, X);
 			else
-				a = Vector3(0, z, -y);
+				a = Vector3(0, Z, -Y);
 
 			b = Cross(a);
 
@@ -365,7 +365,7 @@ namespace bs
 		/** Calculates the dot (scalar) product of two vectors. */
 		static float Dot(const Vector3& a, const Vector3& b)
 		{
-			return a.x * b.x + a.y * b.y + a.z * b.z;
+			return a.X * b.X + a.Y * b.Y + a.Z * b.Z;
 		}
 
 		/**
@@ -386,9 +386,9 @@ namespace bs
 		static Vector3 Cross(const Vector3& a, const Vector3& b)
 		{
 			return Vector3(
-				a.y * b.z - a.z * b.y,
-				a.z * b.x - a.x * b.z,
-				a.x * b.y - a.y * b.x);
+				a.Y * b.Z - a.Z * b.Y,
+				a.Z * b.X - a.X * b.Z,
+				a.X * b.Y - a.Y * b.X);
 		}
 
 		/**
@@ -406,13 +406,13 @@ namespace bs
 		/** Returns the minimum of all the vector components as a new vector. */
 		static Vector3 Min(const Vector3& a, const Vector3& b)
 		{
-			return Vector3(std::min(a.x, b.x), std::min(a.y, b.y), std::min(a.z, b.z));
+			return Vector3(std::min(a.X, b.X), std::min(a.Y, b.Y), std::min(a.Z, b.Z));
 		}
 
 		/** Returns the maximum of all the vector components as a new vector. */
 		static Vector3 Max(const Vector3& a, const Vector3& b)
 		{
-			return Vector3(std::max(a.x, b.x), std::max(a.y, b.y), std::max(a.z, b.z));
+			return Vector3(std::max(a.X, b.X), std::max(a.Y, b.Y), std::max(a.Z, b.Z));
 		}
 
 		static const Vector3 ZERO;

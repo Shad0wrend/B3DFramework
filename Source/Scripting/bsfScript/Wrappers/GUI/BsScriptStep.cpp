@@ -11,6 +11,6 @@ namespace bs
 
 	void ScriptStep::InitRuntimeData()
 	{
-		stepField = metaData.scriptClass->GetField("step");
+		stepField = metaData.ScriptClass->GetField("step");
 	}
 }

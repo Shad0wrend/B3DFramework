@@ -42,31 +42,31 @@ namespace bs
 		PixelFormat depthStencilFormat)
 	{
 		TEXTURE_DESC textureDesc = colorDesc;
-		textureDesc.usage = TU_RENDERTARGET;
-		textureDesc.numMips = 0;
+		textureDesc.Usage = TU_RENDERTARGET;
+		textureDesc.NumMips = 0;
 
 		HTexture texture = Texture::Create(textureDesc);
 
 		HTexture depthStencil;
 		if(createDepth)
 		{
-			textureDesc.format = depthStencilFormat;
-			textureDesc.hwGamma = false;
-			textureDesc.usage = TU_DEPTHSTENCIL;
+			textureDesc.Format = depthStencilFormat;
+			textureDesc.HwGamma = false;
+			textureDesc.Usage = TU_DEPTHSTENCIL;
 
 			depthStencil = Texture::Create(textureDesc);
 		}
 
 		RENDER_TEXTURE_DESC desc;
-		desc.colorSurfaces[0].texture = texture;
-		desc.colorSurfaces[0].face = 0;
-		desc.colorSurfaces[0].numFaces = 1;
-		desc.colorSurfaces[0].mipLevel = 0;
+		desc.ColorSurfaces[0].Texture = texture;
+		desc.ColorSurfaces[0].Face = 0;
+		desc.ColorSurfaces[0].NumFaces = 1;
+		desc.ColorSurfaces[0].MipLevel = 0;
 
-		desc.depthStencilSurface.texture = depthStencil;
-		desc.depthStencilSurface.face = 0;
-		desc.depthStencilSurface.numFaces = 1;
-		desc.depthStencilSurface.mipLevel = 0;
+		desc.DepthStencilSurface.Texture = depthStencil;
+		desc.DepthStencilSurface.Face = 0;
+		desc.DepthStencilSurface.NumFaces = 1;
+		desc.DepthStencilSurface.MipLevel = 0;
 
 		SPtr<RenderTexture> newRT = CreateRenderTexture(desc);
 
@@ -87,11 +87,11 @@ namespace bs
 	void TextureManager::OnStartUp()
 	{
 		TEXTURE_DESC desc;
-		desc.type = TEX_TYPE_2D;
-		desc.width = 2;
-		desc.height = 2;
-		desc.format = PF_RGBA8;
-		desc.usage = TU_STATIC;
+		desc.Type = TEX_TYPE_2D;
+		desc.Width = 2;
+		desc.Height = 2;
+		desc.Format = PF_RGBA8;
+		desc.Usage = TU_STATIC;
 
 		// White built-in texture
 		SPtr<Texture> whiteTexture = CreateTexture(desc);

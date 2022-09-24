@@ -16,9 +16,9 @@ namespace bs
 
 	void ScriptFont::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptFont::InternalGetRef);
-		metaData.scriptClass->AddInternalCall("Internal_GetBitmap", (void*)&ScriptFont::InternalGetBitmap);
-		metaData.scriptClass->AddInternalCall("Internal_GetClosestSize", (void*)&ScriptFont::InternalGetClosestSize);
+		metaData.ScriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptFont::InternalGetRef);
+		metaData.ScriptClass->AddInternalCall("Internal_GetBitmap", (void*)&ScriptFont::InternalGetBitmap);
+		metaData.ScriptClass->AddInternalCall("Internal_GetClosestSize", (void*)&ScriptFont::InternalGetClosestSize);
 
 	}
 
@@ -27,7 +27,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		return metaData.scriptClass->CreateInstance("bool", ctorParams);
+		return metaData.ScriptClass->CreateInstance("bool", ctorParams);
 	}
 	MonoObject* ScriptFont::InternalGetRef(ScriptFont* thisPtr)
 	{

@@ -13,8 +13,8 @@ namespace bs
 	{
 		mInputConfiguration = CreateConfiguration();
 
-		Input::Instance().onButtonDown.Connect(std::bind(&VirtualInput::ButtonDown, this, _1));
-		Input::Instance().onButtonUp.Connect(std::bind(&VirtualInput::ButtonUp, this, _1));
+		Input::Instance().OnButtonDown.Connect(std::bind(&VirtualInput::ButtonDown, this, _1));
+		Input::Instance().OnButtonUp.Connect(std::bind(&VirtualInput::ButtonUp, this, _1));
 	}
 
 	SPtr<InputConfiguration> VirtualInput::CreateConfiguration()
@@ -29,7 +29,7 @@ namespace bs
 		// Note: Technically this is slightly wrong as it will
 		// "forget" any buttons currently held down, but shouldn't matter much in practice.
 		for (auto& deviceData : mDevices)
-			deviceData.cachedStates.clear();
+			deviceData.CachedStates.clear();
 	}
 
 	bool VirtualInput::IsButtonDown(const VirtualButton& button, UINT32 deviceIdx) const
@@ -37,11 +37,11 @@ namespace bs
 		if (deviceIdx >= (UINT32)mDevices.size())
 			return false;
 
-		const Map<UINT32, ButtonData>& cachedStates = mDevices[deviceIdx].cachedStates;
-		auto iterFind = cachedStates.find(button.buttonIdentifier);
+		const Map<UINT32, ButtonData>& cachedStates = mDevices[deviceIdx].CachedStates;
+		auto iterFind = cachedStates.find(button.ButtonIdentifier);
 
 		if (iterFind != cachedStates.end())
-			return iterFind->second.state == ButtonState::ToggledOn;
+			return iterFind->second.State == ButtonState::ToggledOn;
 		
 		return false;
 	}
@@ -51,11 +51,11 @@ namespace bs
 		if (deviceIdx >= (UINT32)mDevices.size())
 			return false;
 
-		const Map<UINT32, ButtonData>& cachedStates = mDevices[deviceIdx].cachedStates;
-		auto iterFind = cachedStates.find(button.buttonIdentifier);
+		const Map<UINT32, ButtonData>& cachedStates = mDevices[deviceIdx].CachedStates;
+		auto iterFind = cachedStates.find(button.ButtonIdentifier);
 
 		if (iterFind != cachedStates.end())
-			return iterFind->second.state == ButtonState::ToggledOff;
+			return iterFind->second.State == ButtonState::ToggledOff;
 
 		return false;
 	}
@@ -65,11 +65,11 @@ namespace bs
 		if (deviceIdx >= (UINT32)mDevices.size())
 			return false;
 
-		const Map<UINT32, ButtonData>& cachedStates = mDevices[deviceIdx].cachedStates;
-		auto iterFind = cachedStates.find(button.buttonIdentifier);
+		const Map<UINT32, ButtonData>& cachedStates = mDevices[deviceIdx].CachedStates;
+		auto iterFind = cachedStates.find(button.ButtonIdentifier);
 
 		if (iterFind != cachedStates.end())
-			return iterFind->second.state == ButtonState::On || iterFind->second.state == ButtonState::ToggledOn;
+			return iterFind->second.State == ButtonState::On || iterFind->second.State == ButtonState::ToggledOn;
 
 		return false;
 	}
@@ -79,21 +79,21 @@ namespace bs
 		VIRTUAL_AXIS_DESC axisDesc;
 		if (mInputConfiguration->GetAxisInternal(axis, axisDesc))
 		{
-			float axisValue = gInput().GetAxisValue((UINT32)axisDesc.type, deviceIdx);
+			float axisValue = gInput().GetAxisValue((UINT32)axisDesc.Type, deviceIdx);
 
-			bool isMouseAxis = (UINT32)axisDesc.type <= (UINT32)InputAxis::MouseZ;
-			bool isNormalized = axisDesc.normalize || !isMouseAxis;
+			bool isMouseAxis = (UINT32)axisDesc.Type <= (UINT32)InputAxis::MouseZ;
+			bool isNormalized = axisDesc.Normalize || !isMouseAxis;
 
-			if (isNormalized && axisDesc.deadZone > 0.0f)
+			if (isNormalized && axisDesc.DeadZone > 0.0f)
 			{
 				// Scale to [-1, 1] range after removing the dead zone
 				if (axisValue > 0)
-					axisValue = std::max(0.f, axisValue - axisDesc.deadZone) / (1.0f - axisDesc.deadZone);
+					axisValue = std::max(0.f, axisValue - axisDesc.DeadZone) / (1.0f - axisDesc.DeadZone);
 				else
-					axisValue = -std::max(0.f, -axisValue - axisDesc.deadZone) / (1.0f - axisDesc.deadZone);
+					axisValue = -std::max(0.f, -axisValue - axisDesc.DeadZone) / (1.0f - axisDesc.DeadZone);
 			}
 
-			if(axisDesc.normalize)
+			if(axisDesc.Normalize)
 			{
 				if(isMouseAxis)
 				{
@@ -102,12 +102,12 @@ namespace bs
 					axisValue /= 1.0f;
 				}
 
-				axisValue = Math::Clamp(axisValue * axisDesc.sensitivity, -1.0f, 1.0f);
+				axisValue = Math::Clamp(axisValue * axisDesc.Sensitivity, -1.0f, 1.0f);
 			}
 			else
-				axisValue *= axisDesc.sensitivity;
+				axisValue *= axisDesc.Sensitivity;
 
-			if (axisDesc.invert)
+			if (axisDesc.Invert)
 				axisValue = -axisValue;
 
 			return axisValue;
@@ -121,16 +121,16 @@ namespace bs
 		UINT64 frameIdx = gTime().GetFrameIdx();
 		for (auto& deviceData : mDevices)
 		{
-			for (auto& state : deviceData.cachedStates)
+			for (auto& state : deviceData.CachedStates)
 			{
 				// We need to stay in toggled state for one frame.
-				if (state.second.updateFrameIdx == frameIdx)
+				if (state.second.UpdateFrameIdx == frameIdx)
 					continue;
 
-				if (state.second.state == ButtonState::ToggledOff)
-					state.second.state = ButtonState::Off;
-				else if (state.second.state == ButtonState::ToggledOn)
-					state.second.state = ButtonState::On;
+				if (state.second.State == ButtonState::ToggledOff)
+					state.second.State = ButtonState::Off;
+				else if (state.second.State == ButtonState::ToggledOn)
+					state.second.State = ButtonState::On;
 			}
 		}
 
@@ -145,15 +145,15 @@ namespace bs
 			{
 				VirtualButtonEvent& event = mEvents.front();
 
-				if(event.state == ButtonState::On)
+				if(event.State == ButtonState::On)
 				{
-					if(!onButtonDown.Empty())
-						onButtonDown(event.button, event.deviceIdx);
+					if(!OnButtonDown.Empty())
+						OnButtonDown(event.Button, event.DeviceIdx);
 				}
-				else if(event.state == ButtonState::Off)
+				else if(event.State == ButtonState::Off)
 				{
-					if(!onButtonUp.Empty())
-						onButtonUp(event.button, event.deviceIdx);
+					if(!OnButtonUp.Empty())
+						OnButtonUp(event.Button, event.DeviceIdx);
 				}
 
 				mEvents.pop();
@@ -164,23 +164,23 @@ namespace bs
 
 			for (auto& deviceData : mDevices)
 			{
-				for (auto& state : deviceData.cachedStates)
+				for (auto& state : deviceData.CachedStates)
 				{
-					if (state.second.state != ButtonState::On)
+					if (state.second.State != ButtonState::On)
 						continue;
 
-					if (!state.second.allowRepeat)
+					if (!state.second.AllowRepeat)
 						continue;
 
-					UINT64 diff = currentTime - state.second.timestamp;
+					UINT64 diff = currentTime - state.second.Timestamp;
 					if (diff >= repeatInternal)
 					{
-						state.second.timestamp += repeatInternal;
+						state.second.Timestamp += repeatInternal;
 
 						VirtualButtonEvent event;
-						event.button = state.second.button;
-						event.state = ButtonState::On;
-						event.deviceIdx = 0;
+						event.Button = state.second.Button;
+						event.State = ButtonState::On;
+						event.DeviceIdx = 0;
 
 						mEvents.push(event);
 						hasEvents = true;
@@ -195,12 +195,12 @@ namespace bs
 		UINT32 deviceIdx = 0;
 		for (auto& deviceData : mDevices)
 		{
-			for (auto& btnIdentifier : deviceData.heldButtons)
+			for (auto& btnIdentifier : deviceData.HeldButtons)
 			{
-				Map<UINT32, ButtonData>& cachedStates = deviceData.cachedStates;
+				Map<UINT32, ButtonData>& cachedStates = deviceData.CachedStates;
 				ButtonData& data = cachedStates[btnIdentifier];
 
-				onButtonHeld(data.button, deviceIdx);
+				OnButtonHeld(data.Button, deviceIdx);
 			}
 
 			deviceIdx++;
@@ -210,23 +210,23 @@ namespace bs
 
 	void VirtualInput::ButtonDown(const ButtonEvent& event)
 	{
-		if(event.buttonCode == BC_LSHIFT || event.buttonCode == BC_RSHIFT)
+		if(event.ButtonCode == BC_LSHIFT || event.ButtonCode == BC_RSHIFT)
 			mActiveModifiers |= (UINT32)ButtonModifier::Shift;
-		else if(event.buttonCode == BC_LCONTROL || event.buttonCode == BC_RCONTROL)
+		else if(event.ButtonCode == BC_LCONTROL || event.ButtonCode == BC_RCONTROL)
 			mActiveModifiers |= (UINT32)ButtonModifier::Ctrl;
-		else if(event.buttonCode == BC_LMENU || event.buttonCode == BC_RMENU)
+		else if(event.ButtonCode == BC_LMENU || event.ButtonCode == BC_RMENU)
 			mActiveModifiers |= (UINT32)ButtonModifier::Alt;
 
 		tempButtons.clear();
 		tempBtnDescs.clear();
 
-		if (mInputConfiguration->GetButtonsInternal(event.buttonCode, mActiveModifiers, tempButtons, tempBtnDescs))
+		if (mInputConfiguration->GetButtonsInternal(event.ButtonCode, mActiveModifiers, tempButtons, tempBtnDescs))
 		{
-			while (event.deviceIdx >= (UINT32)mDevices.size())
+			while (event.DeviceIdx >= (UINT32)mDevices.size())
 				mDevices.push_back(DeviceData());
 
-			Map<UINT32, ButtonData>& cachedStates = mDevices[event.deviceIdx].cachedStates;
-			DynArray<UINT32>& heldButtons = mDevices[event.deviceIdx].heldButtons;
+			Map<UINT32, ButtonData>& cachedStates = mDevices[event.DeviceIdx].CachedStates;
+			DynArray<UINT32>& heldButtons = mDevices[event.DeviceIdx].HeldButtons;
 
 			UINT32 numButtons = (UINT32)tempButtons.size();
 			for (UINT32 i = 0; i < numButtons; i++)
@@ -234,44 +234,44 @@ namespace bs
 				const VirtualButton& btn = tempButtons[i];
 				const VIRTUAL_BUTTON_DESC& btnDesc = tempBtnDescs[i];
 
-				ButtonData& data = cachedStates[btn.buttonIdentifier];
+				ButtonData& data = cachedStates[btn.ButtonIdentifier];
 
-				data.button = btn;
-				data.state = ButtonState::ToggledOn;
-				data.timestamp = event.timestamp;
-				data.updateFrameIdx = gTime().GetFrameIdx();
-				data.allowRepeat = btnDesc.repeatable;
+				data.Button = btn;
+				data.State = ButtonState::ToggledOn;
+				data.Timestamp = event.Timestamp;
+				data.UpdateFrameIdx = gTime().GetFrameIdx();
+				data.AllowRepeat = btnDesc.Repeatable;
 
 				VirtualButtonEvent virtualEvent;
-				virtualEvent.button = btn;
-				virtualEvent.state = ButtonState::On;
-				virtualEvent.deviceIdx = event.deviceIdx;
+				virtualEvent.Button = btn;
+				virtualEvent.State = ButtonState::On;
+				virtualEvent.DeviceIdx = event.DeviceIdx;
 
 				mEvents.push(virtualEvent);
-				heldButtons.Add(btn.buttonIdentifier);
+				heldButtons.Add(btn.ButtonIdentifier);
 			}
 		}
 	}
 
 	void VirtualInput::ButtonUp(const ButtonEvent& event)
 	{
-		if(event.buttonCode == BC_LSHIFT || event.buttonCode == BC_RSHIFT)
+		if(event.ButtonCode == BC_LSHIFT || event.ButtonCode == BC_RSHIFT)
 			mActiveModifiers &= ~(UINT32)ButtonModifier::Shift;
-		else if(event.buttonCode == BC_LCONTROL || event.buttonCode == BC_RCONTROL)
+		else if(event.ButtonCode == BC_LCONTROL || event.ButtonCode == BC_RCONTROL)
 			mActiveModifiers &= ~(UINT32)ButtonModifier::Ctrl;
-		else if(event.buttonCode == BC_LMENU || event.buttonCode == BC_RMENU)
+		else if(event.ButtonCode == BC_LMENU || event.ButtonCode == BC_RMENU)
 			mActiveModifiers &= ~(UINT32)ButtonModifier::Alt;
 
 		tempButtons.clear();
 		tempBtnDescs.clear();
 
-		if (mInputConfiguration->GetButtonsInternal(event.buttonCode, mActiveModifiers, tempButtons, tempBtnDescs))
+		if (mInputConfiguration->GetButtonsInternal(event.ButtonCode, mActiveModifiers, tempButtons, tempBtnDescs))
 		{
-			while (event.deviceIdx >= (UINT32)mDevices.size())
+			while (event.DeviceIdx >= (UINT32)mDevices.size())
 				mDevices.push_back(DeviceData());
 
-			Map<UINT32, ButtonData>& cachedStates = mDevices[event.deviceIdx].cachedStates;
-			DynArray<UINT32>& heldButtons = mDevices[event.deviceIdx].heldButtons;
+			Map<UINT32, ButtonData>& cachedStates = mDevices[event.DeviceIdx].CachedStates;
+			DynArray<UINT32>& heldButtons = mDevices[event.DeviceIdx].HeldButtons;
 
 			UINT32 numButtons = (UINT32)tempButtons.size();
 			for (UINT32 i = 0; i < numButtons; i++)
@@ -279,22 +279,22 @@ namespace bs
 				const VirtualButton& btn = tempButtons[i];
 				const VIRTUAL_BUTTON_DESC& btnDesc = tempBtnDescs[i];
 
-				ButtonData& data = cachedStates[btn.buttonIdentifier];
+				ButtonData& data = cachedStates[btn.ButtonIdentifier];
 
-				data.button = btn;
-				data.state = ButtonState::ToggledOff;
-				data.timestamp = event.timestamp;
-				data.updateFrameIdx = gTime().GetFrameIdx();
-				data.allowRepeat = btnDesc.repeatable;
+				data.Button = btn;
+				data.State = ButtonState::ToggledOff;
+				data.Timestamp = event.Timestamp;
+				data.UpdateFrameIdx = gTime().GetFrameIdx();
+				data.AllowRepeat = btnDesc.Repeatable;
 
 				VirtualButtonEvent virtualEvent;
-				virtualEvent.button = btn;
-				virtualEvent.state = ButtonState::Off;
-				virtualEvent.deviceIdx = event.deviceIdx;
+				virtualEvent.Button = btn;
+				virtualEvent.State = ButtonState::Off;
+				virtualEvent.DeviceIdx = event.DeviceIdx;
 
 				mEvents.push(virtualEvent);
 
-				auto iterFind = std::find(heldButtons.begin(), heldButtons.end(), btn.buttonIdentifier);
+				auto iterFind = std::find(heldButtons.begin(), heldButtons.end(), btn.ButtonIdentifier);
 				if(iterFind != heldButtons.end())
 					heldButtons.SwapAndErase(iterFind);
 			}

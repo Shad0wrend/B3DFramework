@@ -18,7 +18,7 @@ namespace bs
 
 	MonoObject*ScriptPARTICLE_BOX_SHAPE_DESC::Box(const __PARTICLE_BOX_SHAPE_DESCInterop& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	__PARTICLE_BOX_SHAPE_DESCInterop ScriptPARTICLE_BOX_SHAPE_DESC::Unbox(MonoObject* value)
@@ -29,8 +29,8 @@ namespace bs
 	PARTICLE_BOX_SHAPE_DESC ScriptPARTICLE_BOX_SHAPE_DESC::FromInterop(const __PARTICLE_BOX_SHAPE_DESCInterop& value)
 	{
 		PARTICLE_BOX_SHAPE_DESC output;
-		output.type = value.type;
-		output.extents = value.extents;
+		output.Type = value.Type;
+		output.Extents = value.Extents;
 
 		return output;
 	}
@@ -38,8 +38,8 @@ namespace bs
 	__PARTICLE_BOX_SHAPE_DESCInterop ScriptPARTICLE_BOX_SHAPE_DESC::ToInterop(const PARTICLE_BOX_SHAPE_DESC& value)
 	{
 		__PARTICLE_BOX_SHAPE_DESCInterop output;
-		output.type = value.type;
-		output.extents = value.extents;
+		output.Type = value.Type;
+		output.Extents = value.Extents;
 
 		return output;
 	}

@@ -27,15 +27,15 @@ namespace bs
 		:DistanceJoint(desc)
 	{
 		PxRigidActor* actor0 = nullptr;
-		if (desc.bodies[0].body != nullptr)
-			actor0 = static_cast<PhysXRigidbody*>(desc.bodies[0].body)->GetInternalInternal();
+		if (desc.Bodies[0].Body != nullptr)
+			actor0 = static_cast<PhysXRigidbody*>(desc.Bodies[0].Body)->GetInternalInternal();
 
 		PxRigidActor* actor1 = nullptr;
-		if (desc.bodies[1].body != nullptr)
-			actor1 = static_cast<PhysXRigidbody*>(desc.bodies[1].body)->GetInternalInternal();
+		if (desc.Bodies[1].Body != nullptr)
+			actor1 = static_cast<PhysXRigidbody*>(desc.Bodies[1].Body)->GetInternalInternal();
 
-		PxTransform tfrm0 = toPxTransform(desc.bodies[0].position, desc.bodies[0].rotation);
-		PxTransform tfrm1 = toPxTransform(desc.bodies[1].position, desc.bodies[1].rotation);
+		PxTransform tfrm0 = toPxTransform(desc.Bodies[0].Position, desc.Bodies[0].Rotation);
+		PxTransform tfrm1 = toPxTransform(desc.Bodies[1].Position, desc.Bodies[1].Rotation);
 
 		PxDistanceJoint* joint = PxDistanceJointCreate(*physx, actor0, tfrm0, actor1, tfrm1);
 		joint->userData = this;
@@ -43,20 +43,20 @@ namespace bs
 		mInternal = bs_new<FPhysXJoint>(joint, desc);
 
 		// Calls to virtual methods are okay here
-		SetMinDistance(desc.minDistance);
-		SetMaxDistance(desc.maxDistance);
-		SetTolerance(desc.tolerance);
-		SetSpring(desc.spring);
+		SetMinDistance(desc.MinDistance);
+		SetMaxDistance(desc.MaxDistance);
+		SetTolerance(desc.Tolerance);
+		SetSpring(desc.Spring);
 		
 		PxDistanceJointFlags flags;
 		
-		if(((UINT32)desc.flag & (UINT32)DistanceJointFlag::MaxDistance) != 0)
+		if(((UINT32)desc.Flag & (UINT32)DistanceJointFlag::MaxDistance) != 0)
 			flags |= PxDistanceJointFlag::eMAX_DISTANCE_ENABLED;
 
-		if (((UINT32)desc.flag & (UINT32)DistanceJointFlag::MinDistance) != 0)
+		if (((UINT32)desc.Flag & (UINT32)DistanceJointFlag::MinDistance) != 0)
 			flags |= PxDistanceJointFlag::eMIN_DISTANCE_ENABLED;
 
-		if (((UINT32)desc.flag & (UINT32)DistanceJointFlag::Spring) != 0)
+		if (((UINT32)desc.Flag & (UINT32)DistanceJointFlag::Spring) != 0)
 			flags |= PxDistanceJointFlag::eSPRING_ENABLED;
 
 		joint->setDistanceJointFlags(flags);
@@ -112,8 +112,8 @@ namespace bs
 
 	void PhysXDistanceJoint::SetSpring(const Spring& value)
 	{
-		GetInternal()->setDamping(value.damping);
-		GetInternal()->setStiffness(value.stiffness);
+		GetInternal()->setDamping(value.Damping);
+		GetInternal()->setStiffness(value.Stiffness);
 	}
 
 	void PhysXDistanceJoint::SetFlag(DistanceJointFlag flag, bool enabled)

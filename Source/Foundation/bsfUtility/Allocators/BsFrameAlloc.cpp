@@ -8,15 +8,15 @@ namespace bs
 {
 	UINT8* FrameAlloc::MemBlock::Alloc(UINT32 amount)
 	{
-		UINT8* freePtr = &mData[mFreePtr];
-		mFreePtr += amount;
+		UINT8* freePtr = &MData[MFreePtr];
+		MFreePtr += amount;
 
 		return freePtr;
 	}
 
 	void FrameAlloc::MemBlock::Clear()
 	{
-		mFreePtr = 0;
+		MFreePtr = 0;
 	}
 
 	FrameAlloc::FrameAlloc(UINT32 blockSize)
@@ -37,7 +37,7 @@ namespace bs
 #endif
 		UINT32 freeMem = 0;
 		if(mFreeBlock != nullptr)
-			freeMem = mFreeBlock->mSize - mFreeBlock->mFreePtr;
+			freeMem = mFreeBlock->MSize - mFreeBlock->MFreePtr;
 
 		if(amount > freeMem)
 			AllocBlock(amount);
@@ -66,10 +66,10 @@ namespace bs
 		UINT32 freePtr = 0;
 		if(mFreeBlock != nullptr)
 		{
-			freeMem = mFreeBlock->mSize - mFreeBlock->mFreePtr;
+			freeMem = mFreeBlock->MSize - mFreeBlock->MFreePtr;
 
 #if BS_DEBUG_MODE
-			freePtr = mFreeBlock->mFreePtr + sizeof(UINT32);
+			freePtr = mFreeBlock->MFreePtr + sizeof(UINT32);
 #else
 			freePtr = mFreeBlock->mFreePtr;
 #endif
@@ -150,15 +150,15 @@ namespace bs
 			for (INT32 i = startBlockIdx; i >= 0; i--)
 			{
 				MemBlock* curBlock = mBlocks[i];
-				UINT8* blockEnd = curBlock->mData + curBlock->mSize;
-				if (framePtr >= curBlock->mData && framePtr < blockEnd)
+				UINT8* blockEnd = curBlock->MData + curBlock->MSize;
+				if (framePtr >= curBlock->MData && framePtr < blockEnd)
 				{
-					UINT8* dataEnd = curBlock->mData + curBlock->mFreePtr;
+					UINT8* dataEnd = curBlock->MData + curBlock->MFreePtr;
 					UINT32 sizeInBlock = (UINT32)(dataEnd - framePtr);
-					assert(sizeInBlock <= curBlock->mFreePtr);
+					assert(sizeInBlock <= curBlock->MFreePtr);
 
-					curBlock->mFreePtr -= sizeInBlock;
-					if (curBlock->mFreePtr == 0)
+					curBlock->MFreePtr -= sizeInBlock;
+					if (curBlock->MFreePtr == 0)
 					{
 						numFreedBlocks++;
 
@@ -171,7 +171,7 @@ namespace bs
 				}
 				else
 				{
-					curBlock->mFreePtr = 0;
+					curBlock->MFreePtr = 0;
 					mNextBlockIdx = (UINT32)i;
 					numFreedBlocks++;
 				}
@@ -183,7 +183,7 @@ namespace bs
 				for (UINT32 i = 0; i < numFreedBlocks; i++)
 				{
 					MemBlock* curBlock = mBlocks[mNextBlockIdx];
-					totalBytes += curBlock->mSize;
+					totalBytes += curBlock->MSize;
 
 					DeallocBlock(curBlock);
 					mBlocks.erase(mBlocks.begin() + mNextBlockIdx);
@@ -214,7 +214,7 @@ namespace bs
 				UINT32 totalBytes = 0;
 				for (auto& block : mBlocks)
 				{
-					totalBytes += block->mSize;
+					totalBytes += block->MSize;
 					DeallocBlock(block);
 				}
 
@@ -224,7 +224,7 @@ namespace bs
 				AllocBlock(totalBytes);
 			}
 			else if(mBlocks.size() > 0)
-				mBlocks[0]->mFreePtr = 0;
+				mBlocks[0]->MFreePtr = 0;
 		}
 	}
 
@@ -238,7 +238,7 @@ namespace bs
 		while (mNextBlockIdx < mBlocks.size())
 		{
 			MemBlock* curBlock = mBlocks[mNextBlockIdx];
-			if (blockSize <= curBlock->mSize)
+			if (blockSize <= curBlock->MSize)
 			{
 				newBlock = curBlock;
 				mNextBlockIdx++;
@@ -259,7 +259,7 @@ namespace bs
 			UINT8* data = (UINT8*)reinterpret_cast<UINT8*>(bs_alloc_aligned16(blockSize + sizeof(MemBlock) + alignOffset));
 			newBlock = new (data) MemBlock(blockSize);
 			data += sizeof(MemBlock) + alignOffset;
-			newBlock->mData = data;
+			newBlock->MData = data;
 
 			mBlocks.push_back(newBlock);
 			mNextBlockIdx++;

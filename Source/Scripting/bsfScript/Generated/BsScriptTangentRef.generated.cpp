@@ -18,7 +18,7 @@ namespace bs
 
 	MonoObject*ScriptTangentRef::Box(const __TangentRefInterop& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	__TangentRefInterop ScriptTangentRef::Unbox(MonoObject* value)
@@ -29,8 +29,8 @@ namespace bs
 	TangentRef ScriptTangentRef::FromInterop(const __TangentRefInterop& value)
 	{
 		TangentRef output;
-		output.keyframeRef = value.keyframeRef;
-		output.type = value.type;
+		output.KeyframeRef = value.KeyframeRef;
+		output.Type = value.Type;
 
 		return output;
 	}
@@ -38,8 +38,8 @@ namespace bs
 	__TangentRefInterop ScriptTangentRef::ToInterop(const TangentRef& value)
 	{
 		__TangentRefInterop output;
-		output.keyframeRef = value.keyframeRef;
-		output.type = value.type;
+		output.KeyframeRef = value.KeyframeRef;
+		output.Type = value.Type;
 
 		return output;
 	}

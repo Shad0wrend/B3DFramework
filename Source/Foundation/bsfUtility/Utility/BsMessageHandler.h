@@ -20,8 +20,8 @@ namespace bs
 	{
 		struct MessageHandlerData
 		{
-			UINT32 id;
-			std::function<void()> callback;
+			UINT32 Id;
+			std::function<void()> Callback;
 		};
 
 	public:

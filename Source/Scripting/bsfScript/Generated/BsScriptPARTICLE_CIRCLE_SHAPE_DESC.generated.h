@@ -12,10 +12,10 @@ namespace bs
 {
 	struct __PARTICLE_CIRCLE_SHAPE_DESCInterop
 	{
-		float radius;
-		float thickness;
-		Degree arc;
-		ParticleEmissionMode mode;
+		float Radius;
+		float Thickness;
+		Degree Arc;
+		ParticleEmissionMode Mode;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptPARTICLE_CIRCLE_SHAPE_DESC : public ScriptObject<ScriptPARTICLE_CIRCLE_SHAPE_DESC>

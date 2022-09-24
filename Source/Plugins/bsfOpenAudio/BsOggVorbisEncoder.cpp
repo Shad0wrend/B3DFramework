@@ -209,8 +209,8 @@ namespace bs
 	{
 		struct EncodedBlock
 		{
-			UINT8* data;
-			UINT32 size;
+			UINT8* Data;
+			UINT32 Size;
 		};
 
 		Vector<EncodedBlock> blocks;
@@ -218,10 +218,10 @@ namespace bs
 		auto writeCallback = [&](UINT8* buffer, UINT32 size)
 		{
 			EncodedBlock newBlock;
-			newBlock.data = bs_frame_alloc(size);
-			newBlock.size = size;
+			newBlock.Data = bs_frame_alloc(size);
+			newBlock.Size = size;
 
-			memcpy(newBlock.data, buffer, size);
+			memcpy(newBlock.Data, buffer, size);
 			blocks.push_back(newBlock);
 			totalEncodedSize += size;
 		};
@@ -229,19 +229,19 @@ namespace bs
 		bs_frame_mark();
 
 		OggVorbisEncoder writer;
-		writer.Open(writeCallback, info.sampleRate, info.bitDepth, info.numChannels);
+		writer.Open(writeCallback, info.SampleRate, info.BitDepth, info.NumChannels);
 
-		writer.Write(samples, info.numSamples);
+		writer.Write(samples, info.NumSamples);
 		writer.Close();
 
 		auto output = bs_shared_ptr_new<MemoryDataStream>(totalEncodedSize);
 		UINT32 offset = 0;
 		for (auto& block : blocks)
 		{
-			memcpy(output->Data() + offset, block.data, block.size);
-			offset += block.size;
+			memcpy(output->Data() + offset, block.Data, block.Size);
+			offset += block.Size;
 
-			bs_frame_free(block.data);
+			bs_frame_free(block.Data);
 		}
 
 		bs_frame_clear();

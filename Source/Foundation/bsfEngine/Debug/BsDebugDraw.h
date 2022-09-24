@@ -153,12 +153,12 @@ namespace bs
 		struct MeshRenderData
 		{
 			MeshRenderData(const SPtr<ct::Mesh>& mesh, const SubMesh& subMesh, DebugDrawMaterial type)
-				:mesh(mesh), subMesh(subMesh), type(type)
+				:Mesh(mesh), SubMesh(subMesh), Type(type)
 			{ }
 
-			SPtr<ct::Mesh> mesh;
-			SubMesh subMesh;
-			DebugDrawMaterial type;
+			SPtr<ct::Mesh> Mesh;
+			SubMesh SubMesh;
+			DebugDrawMaterial Type;
 		};
 
 		/** Converts mesh data from DrawHelper into mesh data usable by the debug draw renderer. */

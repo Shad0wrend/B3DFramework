@@ -36,7 +36,7 @@ namespace bs
 
 		/** @copydoc CharacterController::getRadius */
 		BS_SCRIPT_EXPORT(n:Radius,pr:getter)
-		float GetRadius() const { return mDesc.radius; }
+		float GetRadius() const { return mDesc.Radius; }
 
 		/** @copydoc CharacterController::setRadius */
 		BS_SCRIPT_EXPORT(n:Radius,pr:setter)
@@ -44,7 +44,7 @@ namespace bs
 
 		/** @copydoc CharacterController::getHeight */
 		BS_SCRIPT_EXPORT(n:Height,pr:getter)
-		float GetHeight() const { return mDesc.height; }
+		float GetHeight() const { return mDesc.Height; }
 
 		/** @copydoc CharacterController::setHeight */
 		BS_SCRIPT_EXPORT(n:Height,pr:setter)
@@ -52,7 +52,7 @@ namespace bs
 
 		/** @copydoc CharacterController::getUp */
 		BS_SCRIPT_EXPORT(n:Up,pr:getter)
-		Vector3 GetUp() const { return mDesc.up; }
+		Vector3 GetUp() const { return mDesc.Up; }
 
 		/** @copydoc CharacterController::setUp */
 		BS_SCRIPT_EXPORT(n:Up,pr:setter)
@@ -60,7 +60,7 @@ namespace bs
 
 		/** @copydoc CharacterController::getClimbingMode */
 		BS_SCRIPT_EXPORT(n:ClimbingMode,pr:getter)
-		CharacterClimbingMode GetClimbingMode() const { return mDesc.climbingMode; }
+		CharacterClimbingMode GetClimbingMode() const { return mDesc.ClimbingMode; }
 
 		/** @copydoc CharacterController::setClimbingMode */
 		BS_SCRIPT_EXPORT(n:ClimbingMode,pr:setter)
@@ -68,7 +68,7 @@ namespace bs
 
 		/** @copydoc CharacterController::getNonWalkableMode */
 		BS_SCRIPT_EXPORT(n:NonWalkableMode,pr:getter)
-		CharacterNonWalkableMode GetNonWalkableMode() const { return mDesc.nonWalkableMode; }
+		CharacterNonWalkableMode GetNonWalkableMode() const { return mDesc.NonWalkableMode; }
 
 		/** @copydoc CharacterController::setNonWalkableMode */
 		BS_SCRIPT_EXPORT(n:NonWalkableMode,pr:setter)
@@ -76,7 +76,7 @@ namespace bs
 
 		/** @copydoc CharacterController::getMinMoveDistance */
 		BS_SCRIPT_EXPORT(n:MinMoveDistance,pr:getter)
-		float GetMinMoveDistance() const { return mDesc.minMoveDistance; }
+		float GetMinMoveDistance() const { return mDesc.MinMoveDistance; }
 
 		/** @copydoc CharacterController::setMinMoveDistance */
 		BS_SCRIPT_EXPORT(n:MinMoveDistance,pr:setter)
@@ -84,7 +84,7 @@ namespace bs
 
 		/** @copydoc CharacterController::getContactOffset */
 		BS_SCRIPT_EXPORT(n:ContactOffset,pr:getter)
-		float GetContactOffset() const { return mDesc.contactOffset; }
+		float GetContactOffset() const { return mDesc.ContactOffset; }
 
 		/** @copydoc CharacterController::setContactOffset */
 		BS_SCRIPT_EXPORT(n:ContactOffset,pr:setter)
@@ -92,7 +92,7 @@ namespace bs
 
 		/** @copydoc CharacterController::getStepOffset */
 		BS_SCRIPT_EXPORT(n:StepOffset,pr:getter)
-		float GetStepOffset() const { return mDesc.stepOffset; }
+		float GetStepOffset() const { return mDesc.StepOffset; }
 
 		/** @copydoc CharacterController::setStepOffset */
 		BS_SCRIPT_EXPORT(n:StepOffset,pr:setter)
@@ -100,7 +100,7 @@ namespace bs
 
 		/** @copydoc CharacterController::getSlopeLimit */
 		BS_SCRIPT_EXPORT(n:SlopeLimit,pr:getter,range:[0,180],slider)
-		Radian GetSlopeLimit() const { return mDesc.slopeLimit; }
+		Radian GetSlopeLimit() const { return mDesc.SlopeLimit; }
 
 		/** @copydoc CharacterController::setSlopeLimit */
 		BS_SCRIPT_EXPORT(n:SlopeLimit,pr:setter,range:[0,180],slider)
@@ -116,11 +116,11 @@ namespace bs
 
 		/** @copydoc CharacterController::onColliderHit */
 		BS_SCRIPT_EXPORT(n:OnColliderHit)
-		Event<void(const ControllerColliderCollision&)> onColliderHit;
+		Event<void(const ControllerColliderCollision&)> OnColliderHit;
 
 		/** @copydoc CharacterController::onControllerHit */
 		BS_SCRIPT_EXPORT(n:OnControllerHit)
-		Event<void(const ControllerControllerCollision&)> onControllerHit;
+		Event<void(const ControllerControllerCollision&)> OnControllerHit;
 
 		/** @name Internal
 		 *  @{

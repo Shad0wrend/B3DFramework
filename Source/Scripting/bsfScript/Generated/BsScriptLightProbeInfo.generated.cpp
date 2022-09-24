@@ -18,7 +18,7 @@ namespace bs
 
 	MonoObject*ScriptLightProbeInfo::Box(const __LightProbeInfoInterop& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	__LightProbeInfoInterop ScriptLightProbeInfo::Unbox(MonoObject* value)
@@ -29,8 +29,8 @@ namespace bs
 	LightProbeInfo ScriptLightProbeInfo::FromInterop(const __LightProbeInfoInterop& value)
 	{
 		LightProbeInfo output;
-		output.handle = value.handle;
-		output.position = value.position;
+		output.Handle = value.Handle;
+		output.Position = value.Position;
 
 		return output;
 	}
@@ -38,8 +38,8 @@ namespace bs
 	__LightProbeInfoInterop ScriptLightProbeInfo::ToInterop(const LightProbeInfo& value)
 	{
 		__LightProbeInfoInterop output;
-		output.handle = value.handle;
-		output.position = value.position;
+		output.Handle = value.Handle;
+		output.Position = value.Position;
 
 		return output;
 	}

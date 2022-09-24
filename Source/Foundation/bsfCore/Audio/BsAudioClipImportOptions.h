@@ -20,22 +20,22 @@ namespace bs
 
 		/** Audio format to import the audio clip as. */
 		BS_SCRIPT_EXPORT()
-		AudioFormat format = AudioFormat::PCM;
+		AudioFormat Format = AudioFormat::PCM;
 
 		/** Determines how is audio data loaded into memory. */
 		BS_SCRIPT_EXPORT()
-		AudioReadMode readMode = AudioReadMode::LoadDecompressed;
+		AudioReadMode ReadMode = AudioReadMode::LoadDecompressed;
 
 		/**
 		 * Determines should the clip be played as spatial (3D) audio or as normal audio. 3D clips will be converted
 		 * to mono on import.
 		 */
 		BS_SCRIPT_EXPORT()
-		bool is3D = true;
+		bool Is3D = true;
 
 		/** Size of a single sample in bits. The clip will be converted to this bit depth on import. */
 		BS_SCRIPT_EXPORT()
-		UINT32 bitDepth = 16;
+		UINT32 BitDepth = 16;
 
 		// Note: Add options to resample to a different frequency
 

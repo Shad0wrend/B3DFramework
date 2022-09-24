@@ -18,11 +18,11 @@ namespace bs
 {
 	size_t MonoAssembly::ClassId::Hash::operator()(const MonoAssembly::ClassId& v) const
 	{
-		size_t genInstanceAddr = (size_t)v.genericInstance;
+		size_t genInstanceAddr = (size_t)v.GenericInstance;
 
 		size_t seed = 0;
-		bs_hash_combine(seed, v.namespaceName);
-		bs_hash_combine(seed, v.name);
+		bs_hash_combine(seed, v.NamespaceName);
+		bs_hash_combine(seed, v.Name);
 		bs_hash_combine(seed, genInstanceAddr);
 
 		return seed;
@@ -30,11 +30,11 @@ namespace bs
 
 	bool MonoAssembly::ClassId::Equals::operator()(const MonoAssembly::ClassId& a, const MonoAssembly::ClassId& b) const
 	{
-		return a.name == b.name && a.namespaceName == b.namespaceName && a.genericInstance == b.genericInstance;
+		return a.Name == b.Name && a.NamespaceName == b.NamespaceName && a.GenericInstance == b.GenericInstance;
 	}
 
 	MonoAssembly::ClassId::ClassId(const String& namespaceName, String name, ::MonoClass* genericInstance)
-		:namespaceName(namespaceName), name(name), genericInstance(genericInstance)
+		:NamespaceName(namespaceName), Name(name), GenericInstance(genericInstance)
 	{
 
 	}

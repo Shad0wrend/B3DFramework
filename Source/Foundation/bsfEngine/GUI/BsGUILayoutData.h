@@ -27,7 +27,7 @@ namespace bs
 		{
 			UINT32 shiftedDepth = widgetDepth << 24;
 
-			depth = shiftedDepth | (depth & 0x00FFFFFF);
+			Depth = shiftedDepth | (Depth & 0x00FFFFFF);
 		}
 
 		/** Set panel part of element depth. Less significant than widget depth but more than custom element depth. */
@@ -35,36 +35,36 @@ namespace bs
 		{
 			UINT32 signedDepth = ((INT32)panelDepth + 32768) << 8;
 
-			depth = signedDepth | (depth & 0xFF0000FF);;
+			Depth = signedDepth | (Depth & 0xFF0000FF);;
 		}
 
 		/**	Retrieve widget part of element depth (Most significant part). */
 		UINT8 GetWidgetDepth() const
 		{
-			return (depth >> 24) & 0xFF;
+			return (Depth >> 24) & 0xFF;
 		}
 
 		/** Retrieve panel part of element depth. Less significant than widget depth but more than custom element depth. */
 		INT16 GetPanelDepth() const
 		{
-			return (((INT32)depth >> 8) & 0xFFFF) - 32768;
+			return (((INT32)Depth >> 8) & 0xFFFF) - 32768;
 		}
 
 		/**	Returns a clip rectangle that is relative to the current bounds. */
 		Rect2I GetLocalClipRect() const
 		{
-			Rect2I localClipRect = clipRect;
-			localClipRect.x -= area.x;
-			localClipRect.y -= area.y;
+			Rect2I localClipRect = ClipRect;
+			localClipRect.X -= Area.X;
+			localClipRect.Y -= Area.Y;
 
 			return localClipRect;
 		}
 
-		Rect2I area;
-		Rect2I clipRect;
-		UINT32 depth = 0;
-		UINT16 depthRangeMin = -1;
-		UINT16 depthRangeMax = -1;
+		Rect2I Area;
+		Rect2I ClipRect;
+		UINT32 Depth = 0;
+		UINT16 DepthRangeMin = -1;
+		UINT16 DepthRangeMax = -1;
 	};
 
 	/** @} */

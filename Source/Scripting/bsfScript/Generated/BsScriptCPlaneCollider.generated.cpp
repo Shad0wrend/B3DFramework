@@ -16,10 +16,10 @@ namespace bs
 
 	void ScriptCPlaneCollider::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_SetNormal", (void*)&ScriptCPlaneCollider::InternalSetNormal);
-		metaData.scriptClass->AddInternalCall("Internal_GetNormal", (void*)&ScriptCPlaneCollider::InternalGetNormal);
-		metaData.scriptClass->AddInternalCall("Internal_SetDistance", (void*)&ScriptCPlaneCollider::InternalSetDistance);
-		metaData.scriptClass->AddInternalCall("Internal_GetDistance", (void*)&ScriptCPlaneCollider::InternalGetDistance);
+		metaData.ScriptClass->AddInternalCall("Internal_SetNormal", (void*)&ScriptCPlaneCollider::InternalSetNormal);
+		metaData.ScriptClass->AddInternalCall("Internal_GetNormal", (void*)&ScriptCPlaneCollider::InternalGetNormal);
+		metaData.ScriptClass->AddInternalCall("Internal_SetDistance", (void*)&ScriptCPlaneCollider::InternalSetDistance);
+		metaData.ScriptClass->AddInternalCall("Internal_GetDistance", (void*)&ScriptCPlaneCollider::InternalGetDistance);
 
 	}
 

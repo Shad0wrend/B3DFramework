@@ -58,7 +58,7 @@ namespace bs
 		playback(commands);
 #endif
 
-		return newCommand.asyncOp;
+		return newCommand.AsyncOp;
 	}
 
 	void CommandQueueBase::Queue(std::function<void()> commandCallback, bool _notifyWhenComplete, UINT32 _callbackId)
@@ -108,27 +108,27 @@ namespace bs
 		{
 			QueuedCommand& command = commands->front();
 
-			if(command.returnsValue)
+			if(command.ReturnsValue)
 			{
-				AsyncOp& op = command.asyncOp;
-				command.callbackWithReturnValue(op);
+				AsyncOp& op = command.AsyncOp;
+				command.CallbackWithReturnValue(op);
 
-				if(!command.asyncOp.HasCompleted())
+				if(!command.AsyncOp.HasCompleted())
 				{
 					BS_LOG(Warning, CoreThread,
 						"Async operation return value wasn't resolved properly. Resolving automatically to nullptr. " \
 						"Make sure to complete the operation before returning from the command callback method.");
-					command.asyncOp.CompleteOperationInternal(nullptr);
+					command.AsyncOp.CompleteOperationInternal(nullptr);
 				}
 			}
 			else
 			{
-				command.callback();
+				command.Callback();
 			}
 
-			if(command.notifyWhenComplete && notifyCallback != nullptr)
+			if(command.NotifyWhenComplete && notifyCallback != nullptr)
 			{
-				notifyCallback(command.callbackId);
+				notifyCallback(command.CallbackId);
 			}
 
 			commands->pop();
@@ -178,14 +178,14 @@ namespace bs
 	inline size_t CommandQueueBase::QueueBreakpoint::HashFunction::operator()(const QueueBreakpoint& v) const
 	{
 		size_t seed = 0;
-		bs_hash_combine(seed, v.queueIdx);
-		bs_hash_combine(seed, v.commandIdx);
+		bs_hash_combine(seed, v.QueueIdx);
+		bs_hash_combine(seed, v.CommandIdx);
 		return seed;
 	}
 
 	inline bool CommandQueueBase::QueueBreakpoint::EqualFunction::operator()(const QueueBreakpoint &a, const QueueBreakpoint &b) const
 	{
-		return a.queueIdx == b.queueIdx && a.commandIdx == b.commandIdx;
+		return a.QueueIdx == b.QueueIdx && a.CommandIdx == b.CommandIdx;
 	}
 
 	void CommandQueueBase::AddBreakpoint(UINT32 queueIdx, UINT32 commandIdx)

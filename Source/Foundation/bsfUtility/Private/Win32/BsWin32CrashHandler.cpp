@@ -407,15 +407,15 @@ namespace bs
 
 	struct MiniDumpParams
 	{
-		Path filePath;
-		EXCEPTION_POINTERS* exceptionData;
+		Path FilePath;
+		EXCEPTION_POINTERS* ExceptionData;
 	};
 
 	DWORD CALLBACK win32_writeMiniDumpWorker(void* data)
 	{
 		MiniDumpParams* params = (MiniDumpParams*)data;
 
-		WString pathString = UTF8::ToWide(params->filePath.ToString());
+		WString pathString = UTF8::ToWide(params->FilePath.ToString());
 		HANDLE hFile = CreateFileW(pathString.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL,
 			nullptr);
 
@@ -424,7 +424,7 @@ namespace bs
 			MINIDUMP_EXCEPTION_INFORMATION DumpExceptionInfo;
 
 			DumpExceptionInfo.ThreadId = GetCurrentThreadId();
-			DumpExceptionInfo.ExceptionPointers = params->exceptionData;
+			DumpExceptionInfo.ExceptionPointers = params->ExceptionData;
 			DumpExceptionInfo.ClientPointers = false;
 
 			MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), hFile, MiniDumpNormal,
@@ -449,7 +449,7 @@ namespace bs
 
 	struct CrashHandler::Data
 	{
-		Mutex mutex;
+		Mutex Mutex;
 	};
 
 	void win32_popupErrorMessageBox(const WString& msg, const Path& folder)
@@ -468,20 +468,20 @@ namespace bs
 	void CrashHandler::ReportCrash(const String& type, const String& description, const String& function,
 		const String& file, UINT32 line) const
 	{
-		if(mSettings.onBeforeReportCrash)
+		if(mSettings.OnBeforeReportCrash)
 		{
-			if(mSettings.onBeforeReportCrash(type, description, function, file, line))
+			if(mSettings.OnBeforeReportCrash(type, description, function, file, line))
 				return;
 		}
 
 		// Win32 debug methods are not thread safe
-		Lock lock(m->mutex);
+		Lock lock(m->Mutex);
 
 		LogErrorAndStackTrace(type, description, function, file, line);
 
-		if(mSettings.onCrashPrintedToLog)
+		if(mSettings.OnCrashPrintedToLog)
 		{
-			if(mSettings.onCrashPrintedToLog())
+			if(mSettings.OnCrashPrintedToLog())
 				return;
 		}
 
@@ -497,16 +497,16 @@ namespace bs
 
 	int CrashHandler::ReportCrash(void* exceptionDataPtr) const
 	{
-		if(mSettings.onBeforeWindowsSEHReportCrash)
+		if(mSettings.OnBeforeWindowsSehReportCrash)
 		{
-			if(mSettings.onBeforeWindowsSEHReportCrash(exceptionDataPtr))
+			if(mSettings.OnBeforeWindowsSehReportCrash(exceptionDataPtr))
 				return EXCEPTION_EXECUTE_HANDLER;
 		}
 
 		EXCEPTION_POINTERS* exceptionData = (EXCEPTION_POINTERS*)exceptionDataPtr;
 
 		// Win32 debug methods are not thread safe
-		Lock lock(m->mutex);
+		Lock lock(m->Mutex);
 
 		win32_initPSAPI();
 		win32_loadSymbols();
@@ -514,9 +514,9 @@ namespace bs
 		LogErrorAndStackTrace(win32_getExceptionMessage(exceptionData->ExceptionRecord),
 			win32_getStackTrace(*exceptionData->ContextRecord, 0));
 
-		if(mSettings.onCrashPrintedToLog)
+		if(mSettings.OnCrashPrintedToLog)
 		{
-			if(mSettings.onCrashPrintedToLog())
+			if(mSettings.OnCrashPrintedToLog())
 				return EXCEPTION_EXECUTE_HANDLER;
 		}
 

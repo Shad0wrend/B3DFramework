@@ -20,7 +20,7 @@ namespace bs
 
 	MonoObject*ScriptPARTICLE_SIZE_DESC::Box(const __PARTICLE_SIZE_DESCInterop& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	__PARTICLE_SIZE_DESCInterop ScriptPARTICLE_SIZE_DESC::Unbox(MonoObject* value)
@@ -33,19 +33,19 @@ namespace bs
 		PARTICLE_SIZE_DESC output;
 		SPtr<TDistribution<float>> tmpsize;
 		ScriptTDistributionfloat* scriptsize;
-		scriptsize = ScriptTDistributionfloat::ToNative(value.size);
+		scriptsize = ScriptTDistributionfloat::ToNative(value.Size);
 		if(scriptsize != nullptr)
 			tmpsize = scriptsize->GetInternal();
 		if(tmpsize != nullptr)
-		output.size = *tmpsize;
+		output.Size = *tmpsize;
 		SPtr<TDistribution<Vector3>> tmpsize3D;
 		ScriptTDistributionVector3* scriptsize3D;
-		scriptsize3D = ScriptTDistributionVector3::ToNative(value.size3D);
+		scriptsize3D = ScriptTDistributionVector3::ToNative(value.Size3D);
 		if(scriptsize3D != nullptr)
 			tmpsize3D = scriptsize3D->GetInternal();
 		if(tmpsize3D != nullptr)
-		output.size3D = *tmpsize3D;
-		output.use3DSize = value.use3DSize;
+		output.Size3D = *tmpsize3D;
+		output.Use3DSize = value.Use3DSize;
 
 		return output;
 	}
@@ -55,15 +55,15 @@ namespace bs
 		__PARTICLE_SIZE_DESCInterop output;
 		MonoObject* tmpsize;
 		SPtr<TDistribution<float>> tmpsizecopy;
-		tmpsizecopy = bs_shared_ptr_new<TDistribution<float>>(value.size);
+		tmpsizecopy = bs_shared_ptr_new<TDistribution<float>>(value.Size);
 		tmpsize = ScriptTDistributionfloat::Create(tmpsizecopy);
-		output.size = tmpsize;
+		output.Size = tmpsize;
 		MonoObject* tmpsize3D;
 		SPtr<TDistribution<Vector3>> tmpsize3Dcopy;
-		tmpsize3Dcopy = bs_shared_ptr_new<TDistribution<Vector3>>(value.size3D);
+		tmpsize3Dcopy = bs_shared_ptr_new<TDistribution<Vector3>>(value.Size3D);
 		tmpsize3D = ScriptTDistributionVector3::Create(tmpsize3Dcopy);
-		output.size3D = tmpsize3D;
-		output.use3DSize = value.use3DSize;
+		output.Size3D = tmpsize3D;
+		output.Use3DSize = value.Use3DSize;
 
 		return output;
 	}

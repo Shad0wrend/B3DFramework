@@ -39,8 +39,8 @@ namespace bs
 		{
 			DeviceData();
 
-			Vector<float> axes;
-			ButtonState keyStates[BC_Count];
+			Vector<float> Axes;
+			ButtonState KeyStates[BC_Count];
 		};
 
 		/**	Different types of possible input event callbacks. */
@@ -53,11 +53,11 @@ namespace bs
 		struct QueuedEvent
 		{
 			QueuedEvent(EventType type, UINT32 idx)
-				:type(type), idx(idx)
+				:Type(type), Idx(idx)
 			{ }
 
-			EventType type;
-			UINT32 idx;
+			EventType Type;
+			UINT32 Idx;
 		};
 
 	public:
@@ -137,29 +137,29 @@ namespace bs
 		String GetDeviceName(InputDevice type, UINT32 idx);
 
 		/** Triggered whenever a button is first pressed. */
-		Event<void(const ButtonEvent&)> onButtonDown;
+		Event<void(const ButtonEvent&)> OnButtonDown;
 
 		/**	Triggered whenever a button is first released. */
-		Event<void(const ButtonEvent&)> onButtonUp;
+		Event<void(const ButtonEvent&)> OnButtonUp;
 
 		/**	Triggered whenever user inputs a text character. */
-		Event<void(const TextInputEvent&)> onCharInput;
+		Event<void(const TextInputEvent&)> OnCharInput;
 
 		/**	Triggers when some pointing device (mouse cursor, touch) moves. */
-		Event<void(const PointerEvent&)> onPointerMoved;
+		Event<void(const PointerEvent&)> OnPointerMoved;
 
 		/**	Triggers when some pointing device (mouse cursor, touch) button is pressed. */
-		Event<void(const PointerEvent&)> onPointerPressed;
+		Event<void(const PointerEvent&)> OnPointerPressed;
 
 		/**	Triggers when some pointing device (mouse cursor, touch) button is released. */
-		Event<void(const PointerEvent&)> onPointerReleased;
+		Event<void(const PointerEvent&)> OnPointerReleased;
 
 		/**	Triggers when some pointing device (mouse cursor, touch) button is double clicked. */
-		Event<void(const PointerEvent&)> onPointerDoubleClick;
+		Event<void(const PointerEvent&)> OnPointerDoubleClick;
 
 		// TODO Low priority: Remove this, I can emulate it using virtual input
 		/**	Triggers on special input commands. */
-		Event<void(InputCommandType)> onInputCommand;
+		Event<void(InputCommandType)> OnInputCommand;
 
 	public: // ***** INTERNAL ******
 		/** @name Internal

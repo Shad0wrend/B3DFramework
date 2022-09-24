@@ -26,58 +26,58 @@ namespace bs
 		 * depth test passes (depending on the set valueand chosen depth comparison function), that pixel is written and
 		 * depth is updated (if depth write is enabled).
 		 */
-		bool depthReadEnable = true;
+		bool DepthReadEnable = true;
 
 		/** If enabled rendering pixels will update the depth buffer value. */
-		bool depthWriteEnable = true;
+		bool DepthWriteEnable = true;
 
 		/**
 		 * Determines what operation should the renderer use when comparing previous and current depth value. If the
 		 * operation passes, pixel with the current depth value will be considered visible.
 		 */
-		CompareFunction depthComparisonFunc = CMPF_LESS;
+		CompareFunction DepthComparisonFunc = CMPF_LESS;
 
 		/**
 		 * If true then stencil buffer will also be updated when a pixel is written, and pixels will be tested against
 		 * the stencil buffer before rendering.
 		 */
-		bool stencilEnable = false;
+		bool StencilEnable = false;
 
 		/** Mask to apply to any value read from the stencil buffer, before applying the stencil comparison function. */
-		UINT8 stencilReadMask = 0xFF;
+		UINT8 StencilReadMask = 0xFF;
 
 		/**	Mask to apply to any value about to be written in the stencil buffer. */
-		UINT8 stencilWriteMask = 0xFF;
+		UINT8 StencilWriteMask = 0xFF;
 
 		/**	Operation that happens when stencil comparison function fails on a front facing polygon. */
-		StencilOperation frontStencilFailOp = SOP_KEEP;
+		StencilOperation FrontStencilFailOp = SOP_KEEP;
 
 		/** Operation that happens when stencil comparison function passes but depth test fails on a front facing polygon. */
-		StencilOperation frontStencilZFailOp = SOP_KEEP;
+		StencilOperation FrontStencilZFailOp = SOP_KEEP;
 
 		/**	Operation that happens when stencil comparison function passes on a front facing polygon. */
-		StencilOperation frontStencilPassOp = SOP_KEEP;
+		StencilOperation FrontStencilPassOp = SOP_KEEP;
 
 		/**
 		 * Stencil comparison function used for front facing polygons. Stencil buffer will be modified according to
 		 * previously set stencil operations depending whether this comparison passes or fails.
 		 */
-		CompareFunction frontStencilComparisonFunc = CMPF_ALWAYS_PASS;
+		CompareFunction FrontStencilComparisonFunc = CMPF_ALWAYS_PASS;
 
 		/** Operation that happens when stencil comparison function fails on a back facing polygon. */
-		StencilOperation backStencilFailOp = SOP_KEEP;
+		StencilOperation BackStencilFailOp = SOP_KEEP;
 
 		/** Operation that happens when stencil comparison function passes but depth test fails on a back facing polygon. */
-		StencilOperation backStencilZFailOp = SOP_KEEP;
+		StencilOperation BackStencilZFailOp = SOP_KEEP;
 
 		/**	Operation that happens when stencil comparison function passes on a back facing polygon. */
-		StencilOperation backStencilPassOp = SOP_KEEP;
+		StencilOperation BackStencilPassOp = SOP_KEEP;
 
 		/**
 		 * Stencil comparison function used for back facing polygons. Stencil buffer will be modified according	to
 		 * previously set stencil operations depending whether this comparison passes or fails.
 		 */
-		CompareFunction backStencilComparisonFunc = CMPF_ALWAYS_PASS;
+		CompareFunction BackStencilComparisonFunc = CMPF_ALWAYS_PASS;
 	};
 
 	/** Properties of DepthStencilState. Shared between sim and core thread versions of DepthStencilState. */
@@ -87,46 +87,46 @@ namespace bs
 		DepthStencilProperties(const DEPTH_STENCIL_STATE_DESC& desc);
 
 		/** @copydoc DEPTH_STENCIL_STATE_DESC::depthReadEnable */
-		bool GetDepthReadEnable() const { return mData.depthReadEnable; }
+		bool GetDepthReadEnable() const { return mData.DepthReadEnable; }
 
 		/** @copydoc DEPTH_STENCIL_STATE_DESC::depthWriteEnable */
-		bool GetDepthWriteEnable() const { return mData.depthWriteEnable; }
+		bool GetDepthWriteEnable() const { return mData.DepthWriteEnable; }
 
 		/** @copydoc DEPTH_STENCIL_STATE_DESC::depthComparisonFunc */
-		CompareFunction GetDepthComparisonFunc() const { return mData.depthComparisonFunc; }
+		CompareFunction GetDepthComparisonFunc() const { return mData.DepthComparisonFunc; }
 
 		/** @copydoc DEPTH_STENCIL_STATE_DESC::stencilEnable */
-		bool GetStencilEnable() const { return mData.stencilEnable; }
+		bool GetStencilEnable() const { return mData.StencilEnable; }
 
 		/** @copydoc DEPTH_STENCIL_STATE_DESC::stencilReadMask */
-		UINT8 GetStencilReadMask() const { return mData.stencilReadMask; }
+		UINT8 GetStencilReadMask() const { return mData.StencilReadMask; }
 
 		/** @copydoc DEPTH_STENCIL_STATE_DESC::stencilWriteMask */
-		UINT8 GetStencilWriteMask() const { return mData.stencilWriteMask; }
+		UINT8 GetStencilWriteMask() const { return mData.StencilWriteMask; }
 
 		/** @copydoc DEPTH_STENCIL_STATE_DESC::frontStencilFailOp */
-		StencilOperation GetStencilFrontFailOp() const { return mData.frontStencilFailOp; }
+		StencilOperation GetStencilFrontFailOp() const { return mData.FrontStencilFailOp; }
 
 		/** @copydoc DEPTH_STENCIL_STATE_DESC::frontStencilZFailOp */
-		StencilOperation GetStencilFrontZFailOp() const { return mData.frontStencilZFailOp; }
+		StencilOperation GetStencilFrontZFailOp() const { return mData.FrontStencilZFailOp; }
 
 		/** @copydoc DEPTH_STENCIL_STATE_DESC::frontStencilPassOp */
-		StencilOperation GetStencilFrontPassOp() const { return mData.frontStencilPassOp; }
+		StencilOperation GetStencilFrontPassOp() const { return mData.FrontStencilPassOp; }
 
 		/** @copydoc DEPTH_STENCIL_STATE_DESC::frontStencilComparisonFunc */
-		CompareFunction GetStencilFrontCompFunc() const { return mData.frontStencilComparisonFunc; }
+		CompareFunction GetStencilFrontCompFunc() const { return mData.FrontStencilComparisonFunc; }
 
 		/** @copydoc DEPTH_STENCIL_STATE_DESC::backStencilFailOp */
-		StencilOperation GetStencilBackFailOp() const { return mData.backStencilFailOp; }
+		StencilOperation GetStencilBackFailOp() const { return mData.BackStencilFailOp; }
 
 		/** @copydoc DEPTH_STENCIL_STATE_DESC::backStencilZFailOp */
-		StencilOperation GetStencilBackZFailOp() const { return mData.backStencilZFailOp; }
+		StencilOperation GetStencilBackZFailOp() const { return mData.BackStencilZFailOp; }
 
 		/** @copydoc DEPTH_STENCIL_STATE_DESC::backStencilPassOp */
-		StencilOperation GetStencilBackPassOp() const { return mData.backStencilPassOp; }
+		StencilOperation GetStencilBackPassOp() const { return mData.BackStencilPassOp; }
 
 		/** @copydoc DEPTH_STENCIL_STATE_DESC::backStencilComparisonFunc */
-		CompareFunction GetStencilBackCompFunc() const { return mData.backStencilComparisonFunc; }
+		CompareFunction GetStencilBackCompFunc() const { return mData.BackStencilComparisonFunc; }
 
 		/** Returns the hash value generated from the depth-stencil state properties. */
 		UINT64 GetHash() const { return mHash; }

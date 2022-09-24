@@ -17,8 +17,8 @@ namespace bs { namespace ct
 		UINT32 maxSetsPerRow = 4096 / coeffsPerSet;
 		
 		Vector2I output;
-		output.x = (numCoeffSets > maxSetsPerRow ? maxSetsPerRow : numCoeffSets) * coeffsPerSet;
-		output.y = 1 + numCoeffSets / (maxSetsPerRow + 1);
+		output.X = (numCoeffSets > maxSetsPerRow ? maxSetsPerRow : numCoeffSets) * coeffsPerSet;
+		output.Y = 1 + numCoeffSets / (maxSetsPerRow + 1);
 
 		return output;
 	}
@@ -32,8 +32,8 @@ namespace bs { namespace ct
 		UINT32 maxSetsPerRow = 4096 / coeffsPerSet;
 
 		Vector2I output;
-		output.x = (idx % maxSetsPerRow) * coeffsPerSet;
-		output.y = idx / maxSetsPerRow;
+		output.X = (idx % maxSetsPerRow) * coeffsPerSet;
+		output.Y = idx / maxSetsPerRow;
 		
 		return output;
 	}

@@ -24,8 +24,8 @@ namespace bs
 	/** Serializable information about a single light probe. */
 	struct SavedLightProbeInfo
 	{
-		Vector<Vector3> positions;
-		Vector<LightProbeSHCoefficients> coefficients;
+		Vector<Vector3> Positions;
+		Vector<LightProbeSHCoefficients> Coefficients;
 	};
 
 	template<> struct RTTIPlainType<SavedLightProbeInfo>
@@ -41,8 +41,8 @@ namespace bs
 
 				uint32_t version;
 				size += rtti_write(version, stream);
-				size += rtti_write(data.positions, stream);
-				size += rtti_write(data.coefficients, stream);
+				size += rtti_write(data.Positions, stream);
+				size += rtti_write(data.Coefficients, stream);
 
 				return size;
 			});
@@ -59,8 +59,8 @@ namespace bs
 			switch(version)
 			{
 			case 0:
-				rtti_read(data.positions, stream);
-				rtti_read(data.coefficients, stream);
+				rtti_read(data.Positions, stream);
+				rtti_read(data.Coefficients, stream);
 				break;
 			default:
 				BS_LOG(Error, RTTI, "Unknown version of SavedLightProbeInfo data. Unable to deserialize.");
@@ -72,7 +72,7 @@ namespace bs
 
 		static BitLength GetSize(const SavedLightProbeInfo& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
-			BitLength dataSize = rtti_size(data.positions) + rtti_size(data.coefficients) + sizeof(uint32_t);
+			BitLength dataSize = rtti_size(data.Positions) + rtti_size(data.Coefficients) + sizeof(uint32_t);
 
 			rtti_add_header_size(dataSize, compress);
 			return dataSize;
@@ -95,14 +95,14 @@ namespace bs
 			obj->UpdateCoefficients();
 
 			UINT32 numProbes = (UINT32)obj->mProbes.size();
-			mSavedLightProbeInfo.coefficients.resize(numProbes);
-			mSavedLightProbeInfo.positions.resize(numProbes);
+			mSavedLightProbeInfo.Coefficients.resize(numProbes);
+			mSavedLightProbeInfo.Positions.resize(numProbes);
 
 			UINT32 idx = 0;
 			for(auto& entry : obj->mProbes)
 			{
-				mSavedLightProbeInfo.positions[idx] = entry.second.position;
-				mSavedLightProbeInfo.coefficients[idx] = entry.second.coefficients;
+				mSavedLightProbeInfo.Positions[idx] = entry.second.Position;
+				mSavedLightProbeInfo.Coefficients[idx] = entry.second.Coefficients;
 
 				idx++;
 			}
@@ -114,15 +114,15 @@ namespace bs
 		{
 			obj->mProbes.clear();
 
-			UINT32 numProbes = (UINT32)data.positions.size();
+			UINT32 numProbes = (UINT32)data.Positions.size();
 			for(UINT32 i = 0; i < numProbes; ++i)
 			{
 				UINT32 handle = obj->mNextProbeId++;
 
 				LightProbeVolume::ProbeInfo probeInfo;
-				probeInfo.flags = LightProbeFlags::Clean;
-				probeInfo.position = data.positions[i];
-				probeInfo.coefficients = data.coefficients[i];
+				probeInfo.Flags = LightProbeFlags::Clean;
+				probeInfo.Position = data.Positions[i];
+				probeInfo.Coefficients = data.Coefficients[i];
 
 				obj->mProbes[handle] = probeInfo;
 			}

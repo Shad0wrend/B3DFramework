@@ -26,7 +26,7 @@ namespace bs
 		UINT32 charWidth = CalcCharWidth(mLastChar, desc);
 
 		mWidth += charWidth;
-		mHeight = std::max(mHeight, desc.height);
+		mHeight = std::max(mHeight, desc.Height);
 
 		if(mLastChar == nullptr) // First char
 			mCharsStart = mCharsEnd = charIdx;
@@ -45,15 +45,15 @@ namespace bs
 
 	UINT32 TextDataBase::TextWord::CalcCharWidth(const CharDesc* prevDesc, const CharDesc& desc)
 	{
-		UINT32 charWidth = desc.xAdvance;
+		UINT32 charWidth = desc.XAdvance;
 		if (prevDesc != nullptr)
 		{
 			UINT32 kerning = 0;
-			for (size_t j = 0; j < prevDesc->kerningPairs.size(); j++)
+			for (size_t j = 0; j < prevDesc->KerningPairs.size(); j++)
 			{
-				if (prevDesc->kerningPairs[j].otherCharId == desc.charId)
+				if (prevDesc->KerningPairs[j].OtherCharId == desc.CharId)
 				{
-					kerning = prevDesc->kerningPairs[j].amount;
+					kerning = prevDesc->KerningPairs[j].Amount;
 					break;
 				}
 			}
@@ -248,43 +248,43 @@ namespace bs
 				{
 					const CharDesc& curChar = mTextData->GetChar(j);
 
-					INT32 curX = penX + curChar.xOffset;
-					INT32 curY = ((INT32) mTextData->GetBaselineOffset() - curChar.yOffset);
+					INT32 curX = penX + curChar.XOffset;
+					INT32 curY = ((INT32) mTextData->GetBaselineOffset() - curChar.YOffset);
 
 					curX += penNegativeXOffset;
-					penX += curChar.xAdvance + kerning;
+					penX += curChar.XAdvance + kerning;
 					
 					kerning = 0;
 					if((j + 1) <= word.GetCharsEnd())
 					{
 						const CharDesc& nextChar = mTextData->GetChar(j + 1);
-						for(size_t j = 0; j < curChar.kerningPairs.size(); j++)
+						for(size_t j = 0; j < curChar.KerningPairs.size(); j++)
 						{
-							if(curChar.kerningPairs[j].otherCharId == nextChar.charId)
+							if(curChar.KerningPairs[j].OtherCharId == nextChar.CharId)
 							{
-								kerning = curChar.kerningPairs[j].amount;
+								kerning = curChar.KerningPairs[j].Amount;
 								break;
 							}
 						}
 					}
 
-					if(curChar.page != page)
+					if(curChar.Page != page)
 						continue;
 
 					UINT32 curVert = offset * 4;
 					UINT32 curIndex = offset * 6;
 
 					vertices[curVert + 0] = Vector2((float)curX, (float)curY);
-					vertices[curVert + 1] = Vector2((float)(curX + curChar.width), (float)curY);
-					vertices[curVert + 2] = Vector2((float)curX, (float)curY + (float)curChar.height);
-					vertices[curVert + 3] = Vector2((float)(curX + curChar.width), (float)curY + (float)curChar.height);
+					vertices[curVert + 1] = Vector2((float)(curX + curChar.Width), (float)curY);
+					vertices[curVert + 2] = Vector2((float)curX, (float)curY + (float)curChar.Height);
+					vertices[curVert + 3] = Vector2((float)(curX + curChar.Width), (float)curY + (float)curChar.Height);
 
 					if(uvs != nullptr)
 					{
-						uvs[curVert + 0] = Vector2(curChar.uvX, curChar.uvY);
-						uvs[curVert + 1] = Vector2(curChar.uvX + curChar.uvWidth, curChar.uvY);
-						uvs[curVert + 2] = Vector2(curChar.uvX, curChar.uvY + curChar.uvHeight);
-						uvs[curVert + 3] = Vector2(curChar.uvX + curChar.uvWidth, curChar.uvY + curChar.uvHeight);
+						uvs[curVert + 0] = Vector2(curChar.UvX, curChar.UvY);
+						uvs[curVert + 1] = Vector2(curChar.UvX + curChar.UvWidth, curChar.UvY);
+						uvs[curVert + 2] = Vector2(curChar.UvX, curChar.UvY + curChar.UvHeight);
+						uvs[curVert + 3] = Vector2(curChar.UvX + curChar.UvWidth, curChar.UvY + curChar.UvHeight);
 					}
 
 					if(indexes != nullptr)
@@ -359,20 +359,20 @@ namespace bs
 			mFontData = font->GetBitmap(nearestSize);
 		}
 
-		if(mFontData == nullptr || mFontData->texturePages.size() == 0)
+		if(mFontData == nullptr || mFontData->TexturePages.size() == 0)
 			return;
 
-		if(mFontData->size != fontSize)
+		if(mFontData->Size != fontSize)
 		{
 			BS_LOG(Warning, GUI, "Unable to find font with specified size ({0}). Using nearest available size: {1}",
-				fontSize, mFontData->size);
+				fontSize, mFontData->Size);
 		}
 
 		bool widthIsLimited = width > 0;
 		mFont = font;
 
 		UINT32 curLineIdx = MemBuffer->AllocLine(this);
-		UINT32 curHeight = mFontData->lineHeight;
+		UINT32 curHeight = mFontData->LineHeight;
 		UINT32 charIdx = 0;
 
 		while(true)
@@ -392,7 +392,7 @@ namespace bs
 				curLineIdx = MemBuffer->AllocLine(this);
 				curLine = &MemBuffer->LineBuffer[curLineIdx];
 
-				curHeight += mFontData->lineHeight;
+				curHeight += mFontData->LineHeight;
 
 				charIdx++;
 
@@ -433,7 +433,7 @@ namespace bs
 							curLineIdx = MemBuffer->AllocLine(this);
 							curLine = &MemBuffer->LineBuffer[curLineIdx];
 
-							curHeight += mFontData->lineHeight;
+							curHeight += mFontData->LineHeight;
 
 							curLine->AddWord(lastWordIdx, lastWord);
 						}
@@ -447,7 +447,7 @@ namespace bs
 								curLineIdx = MemBuffer->AllocLine(this);
 								curLine = &MemBuffer->LineBuffer[curLineIdx];
 
-								curHeight += mFontData->lineHeight;
+								curHeight += mFontData->LineHeight;
 							}
 							else
 							{
@@ -458,7 +458,7 @@ namespace bs
 									curLineIdx = MemBuffer->AllocLine(this);
 									curLine = &MemBuffer->LineBuffer[curLineIdx];
 
-									curHeight += mFontData->lineHeight;
+									curHeight += mFontData->LineHeight;
 								}
 
 								curLine->AddWord(lastWordIdx, lastWord);
@@ -472,7 +472,7 @@ namespace bs
 						curLineIdx = MemBuffer->AllocLine(this);
 						curLine = &MemBuffer->LineBuffer[curLineIdx];
 
-						curHeight += mFontData->lineHeight;
+						curHeight += mFontData->LineHeight;
 					}
 				}
 			}
@@ -490,7 +490,7 @@ namespace bs
 			else
 			{
 				curLine->Add(charIdx, charDesc);
-				MemBuffer->AddCharToPage(charDesc.page, *mFontData);
+				MemBuffer->AddCharToPage(charDesc.Page, *mFontData);
 			}
 
 			charIdx++;
@@ -547,22 +547,22 @@ namespace bs
 
 	const HTexture& TextDataBase::GetTextureForPage(UINT32 page) const
 	{
-		return mFontData->texturePages[page];
+		return mFontData->TexturePages[page];
 	}
 
 	INT32 TextDataBase::GetBaselineOffset() const
 	{
-		return mFontData->baselineOffset;
+		return mFontData->BaselineOffset;
 	}
 
 	UINT32 TextDataBase::GetLineHeight() const
 	{
-		return mFontData->lineHeight;
+		return mFontData->LineHeight;
 	}
 
 	UINT32 TextDataBase::GetSpaceWidth() const
 	{
-		return mFontData->spaceWidth;
+		return mFontData->SpaceWidth;
 	}
 
 	void TextDataBase::InitAlloc()
@@ -653,12 +653,12 @@ namespace bs
 
 		while(page >= NextFreePageInfo)
 		{
-			PageBuffer[NextFreePageInfo].numQuads = 0;
+			PageBuffer[NextFreePageInfo].NumQuads = 0;
 
 			NextFreePageInfo++;
 		}
 
-		PageBuffer[page].numQuads++;
+		PageBuffer[page].NumQuads++;
 	}
 
 	UINT32 TextDataBase::GetWidth() const

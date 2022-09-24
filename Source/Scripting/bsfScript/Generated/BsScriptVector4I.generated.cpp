@@ -16,7 +16,7 @@ namespace bs
 
 	MonoObject*ScriptVector4I::Box(const Vector4I& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	Vector4I ScriptVector4I::Unbox(MonoObject* value)

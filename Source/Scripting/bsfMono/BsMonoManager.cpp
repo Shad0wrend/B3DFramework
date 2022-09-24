@@ -24,8 +24,8 @@ namespace bs
 	
 	struct MonoVersionData
 	{
-		String path;
-		String version;
+		String Path;
+		String Version;
 	};
 
 	static const MonoVersionData MONO_VERSION_DATA[1] =
@@ -128,7 +128,7 @@ namespace bs
 
 		mono_config_parse(nullptr);
 
-		mRootDomain = mono_jit_init_version("bsfMono", MONO_VERSION_DATA[(int)MONO_VERSION].version.c_str());
+		mRootDomain = mono_jit_init_version("bsfMono", MONO_VERSION_DATA[(int)MONO_VERSION].Version.c_str());
 		if (mRootDomain == nullptr)
 			BS_EXCEPT(InternalErrorException, "Cannot initialize Mono runtime.");
 
@@ -188,22 +188,22 @@ namespace bs
 		Vector<ScriptMetaInfo>& typeMetas = GetScriptMetaData()[assembly.mName];
 		for (auto& entry : typeMetas)
 		{
-			ScriptMeta* meta = entry.metaData;
-			*meta = entry.localMetaData;
+			ScriptMeta* meta = entry.MetaData;
+			*meta = entry.LocalMetaData;
 
-			meta->scriptClass = assembly.GetClass(meta->ns, meta->name);
-			if (meta->scriptClass == nullptr)
+			meta->ScriptClass = assembly.GetClass(meta->Ns, meta->Name);
+			if (meta->ScriptClass == nullptr)
 			{
 				BS_EXCEPT(InvalidParametersException,
-					"Unable to find class of type: \"" + meta->ns + "::" + meta->name + "\"");
+					"Unable to find class of type: \"" + meta->Ns + "::" + meta->Name + "\"");
 			}
 
-			if (meta->scriptClass->HasField("mCachedPtr"))
-				meta->thisPtrField = meta->scriptClass->GetField("mCachedPtr");
+			if (meta->ScriptClass->HasField("mCachedPtr"))
+				meta->ThisPtrField = meta->ScriptClass->GetField("mCachedPtr");
 			else
-				meta->thisPtrField = nullptr;
+				meta->ThisPtrField = nullptr;
 
-			meta->initCallback();
+			meta->InitCallback();
 		}
 	}
 
@@ -239,7 +239,7 @@ namespace bs
 
 	void MonoManager::RegisterScriptType(ScriptMeta* metaData, const ScriptMeta& localMetaData)
 	{
-		Vector<ScriptMetaInfo>& mMetas = GetScriptMetaData()[localMetaData.assembly];
+		Vector<ScriptMetaInfo>& mMetas = GetScriptMetaData()[localMetaData.Assembly];
 		mMetas.push_back({ metaData, localMetaData });
 	}
 
@@ -273,7 +273,7 @@ namespace bs
 	{
 		if (mScriptDomain != nullptr)
 		{
-			onDomainUnload();
+			OnDomainUnload();
 
 			mono_domain_set(mono_get_root_domain(), true);
 
@@ -299,8 +299,8 @@ namespace bs
 			Vector<ScriptMetaInfo>& typeMetas = GetScriptMetaData()[assemblyEntry.first];
 			for (auto& entry : typeMetas)
 			{
-				entry.metaData->scriptClass = nullptr;
-				entry.metaData->thisPtrField = nullptr;
+				entry.MetaData->ScriptClass = nullptr;
+				entry.MetaData->ThisPtrField = nullptr;
 			}
 		}
 
@@ -310,7 +310,7 @@ namespace bs
 
 	Path MonoManager::GetFrameworkAssembliesFolder() const
 	{
-		return Paths::FindPath(MONO_VERSION_DATA[(int)MONO_VERSION].path);
+		return Paths::FindPath(MONO_VERSION_DATA[(int)MONO_VERSION].Path);
 	}
 
 	Path MonoManager::GetMonoEtcFolder() const

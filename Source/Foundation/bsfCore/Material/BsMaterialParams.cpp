@@ -45,16 +45,16 @@ namespace bs
 
 		for (auto& param : dataParams)
 		{
-			if(param.second.type == GPDT_UNKNOWN)
+			if(param.second.Type == GPDT_UNKNOWN)
 				continue;
 
-			UINT32 arraySize = param.second.arraySize > 1 ? param.second.arraySize : 1;
-			if(param.second.type == GPDT_STRUCT)
+			UINT32 arraySize = param.second.ArraySize > 1 ? param.second.ArraySize : 1;
+			if(param.second.Type == GPDT_STRUCT)
 				mNumStructParams += arraySize;
 			else
 			{
-				const GpuParamDataTypeInfo& typeInfo = GpuParams::PARAM_SIZES.lookup[(int)param.second.type];
-				UINT32 paramSize = typeInfo.numColumns * typeInfo.numRows * typeInfo.baseTypeSize;
+				const GpuParamDataTypeInfo& typeInfo = GpuParams::PARAM_SIZES.Lookup[(int)param.second.Type];
+				UINT32 paramSize = typeInfo.NumColumns * typeInfo.NumRows * typeInfo.BaseTypeSize;
 
 				mDataSize += arraySize * paramSize;
 				mNumDataParams += arraySize;
@@ -77,7 +77,7 @@ namespace bs
 
 		for (auto& entry : dataParams)
 		{
-			if(entry.second.type == GPDT_UNKNOWN)
+			if(entry.second.Type == GPDT_UNKNOWN)
 				continue;
 
 			const auto paramIdx = (UINT32)mParams.size();
@@ -86,27 +86,27 @@ namespace bs
 
 			ParamData& dataParam = mParams.back();
 
-			const UINT32 arraySize = entry.second.arraySize > 1 ? entry.second.arraySize : 1;
-			dataParam.arraySize = arraySize;
-			dataParam.type = ParamType::Data;
-			dataParam.dataType = entry.second.type;
-			dataParam.version = 1;
+			const UINT32 arraySize = entry.second.ArraySize > 1 ? entry.second.ArraySize : 1;
+			dataParam.ArraySize = arraySize;
+			dataParam.Type = ParamType::Data;
+			dataParam.DataType = entry.second.Type;
+			dataParam.Version = 1;
 			
-			if(entry.second.type == GPDT_STRUCT)
+			if(entry.second.Type == GPDT_STRUCT)
 			{
-				dataParam.index = structParamIdx;
+				dataParam.Index = structParamIdx;
 				structParamIdx += arraySize;
 			}
 			else
 			{
-				dataParam.index = dataParamIdx;
+				dataParam.Index = dataParamIdx;
 
-				const GpuParamDataTypeInfo& typeInfo = GpuParams::PARAM_SIZES.lookup[(int)dataParam.dataType];
-				const UINT32 paramSize = typeInfo.numColumns * typeInfo.numRows * typeInfo.baseTypeSize;
+				const GpuParamDataTypeInfo& typeInfo = GpuParams::PARAM_SIZES.Lookup[(int)dataParam.DataType];
+				const UINT32 paramSize = typeInfo.NumColumns * typeInfo.NumRows * typeInfo.BaseTypeSize;
 				for (UINT32 i = 0; i < arraySize; i++)
 				{
-					mDataParams[dataParamIdx].offset = dataBufferIdx;
-					mDataParams[dataParamIdx].spriteTextureIdx = (UINT32)-1;
+					mDataParams[dataParamIdx].Offset = dataBufferIdx;
+					mDataParams[dataParamIdx].SpriteTextureIdx = (UINT32)-1;
 
 					dataBufferIdx += paramSize;
 					dataParamIdx++;
@@ -123,11 +123,11 @@ namespace bs
 
 			ParamData& dataParam = mParams.back();
 
-			dataParam.arraySize = 1;
-			dataParam.type = ParamType::Texture;
-			dataParam.dataType = GPDT_UNKNOWN;
-			dataParam.index = textureIdx;
-			dataParam.version = 1;
+			dataParam.ArraySize = 1;
+			dataParam.Type = ParamType::Texture;
+			dataParam.DataType = GPDT_UNKNOWN;
+			dataParam.Index = textureIdx;
+			dataParam.Version = 1;
 
 			textureIdx++;
 		}
@@ -141,11 +141,11 @@ namespace bs
 
 			ParamData& dataParam = mParams.back();
 
-			dataParam.arraySize = 1;
-			dataParam.type = ParamType::Buffer;
-			dataParam.dataType = GPDT_UNKNOWN;
-			dataParam.index = bufferIdx;
-			dataParam.version = 1;
+			dataParam.ArraySize = 1;
+			dataParam.Type = ParamType::Buffer;
+			dataParam.DataType = GPDT_UNKNOWN;
+			dataParam.Index = bufferIdx;
+			dataParam.Version = 1;
 
 			bufferIdx++;
 		}
@@ -159,11 +159,11 @@ namespace bs
 
 			ParamData& dataParam = mParams.back();
 
-			dataParam.arraySize = 1;
-			dataParam.type = ParamType::Sampler;
-			dataParam.dataType = GPDT_UNKNOWN;
-			dataParam.index = samplerIdx;
-			dataParam.version = 1;
+			dataParam.ArraySize = 1;
+			dataParam.Type = ParamType::Sampler;
+			dataParam.DataType = GPDT_UNKNOWN;
+			dataParam.Index = samplerIdx;
+			dataParam.Version = 1;
 
 			samplerIdx++;
 		}
@@ -175,16 +175,16 @@ namespace bs
 		{
 			DataParamInfo& paramInfo = mDataParams[i];
 
-			if (paramInfo.floatCurve)
+			if (paramInfo.FloatCurve)
 			{
-				bs_pool_free(paramInfo.floatCurve);
-				paramInfo.floatCurve = nullptr;
+				bs_pool_free(paramInfo.FloatCurve);
+				paramInfo.FloatCurve = nullptr;
 			}
 
-			if (paramInfo.colorGradient)
+			if (paramInfo.ColorGradient)
 			{
-				bs_pool_free(paramInfo.colorGradient);
-				paramInfo.colorGradient = nullptr;
+				bs_pool_free(paramInfo.ColorGradient);
+				paramInfo.ColorGradient = nullptr;
 			}
 		}
 
@@ -218,9 +218,9 @@ namespace bs
 
 	const ColorGradientHDR& MaterialParamsBase::GetColorGradientParam(const ParamData& param, UINT32 arrayIdx) const
 	{
-		const DataParamInfo& paramInfo = mDataParams[param.index + arrayIdx];
-		if (paramInfo.colorGradient)
-			return *paramInfo.colorGradient;
+		const DataParamInfo& paramInfo = mDataParams[param.Index + arrayIdx];
+		if (paramInfo.ColorGradient)
+			return *paramInfo.ColorGradient;
 
 		static ColorGradientHDR EMPTY_GRADIENT;
 		return EMPTY_GRADIENT;
@@ -228,13 +228,13 @@ namespace bs
 
 	void MaterialParamsBase::SetColorGradientParam(const ParamData& param, UINT32 arrayIdx, const ColorGradientHDR& input) const
 	{
-		DataParamInfo& paramInfo = mDataParams[param.index + arrayIdx];
-		if (paramInfo.colorGradient)
-			bs_pool_free(paramInfo.colorGradient);
+		DataParamInfo& paramInfo = mDataParams[param.Index + arrayIdx];
+		if (paramInfo.ColorGradient)
+			bs_pool_free(paramInfo.ColorGradient);
 
-		paramInfo.colorGradient = bs_pool_new<ColorGradientHDR>(input);
+		paramInfo.ColorGradient = bs_pool_new<ColorGradientHDR>(input);
 
-		param.version = ++mParamVersion;
+		param.Version = ++mParamVersion;
 	}
 
 	UINT32 MaterialParamsBase::GetParamIndex(const String& name) const
@@ -256,10 +256,10 @@ namespace bs
 		UINT32 index = iterFind->second;
 		const ParamData& param = mParams[index];
 		
-		if (param.type != type || (type == ParamType::Data && param.dataType != dataType))
+		if (param.Type != type || (type == ParamType::Data && param.DataType != dataType))
 			return GetParamResult::InvalidType;
 
-		if (arrayIdx >= param.arraySize)
+		if (arrayIdx >= param.ArraySize)
 			return GetParamResult::IndexOutOfBounds;
 
 		output = index;
@@ -277,10 +277,10 @@ namespace bs
 		const ParamData& param = mParams[index];
 		*output = &param;
 
-		if (param.type != type || (type == ParamType::Data && param.dataType != dataType))
+		if (param.Type != type || (type == ParamType::Data && param.DataType != dataType))
 			return GetParamResult::InvalidType;
 
-		if (arrayIdx >= param.arraySize)
+		if (arrayIdx >= param.ArraySize)
 			return GetParamResult::IndexOutOfBounds;
 
 		return GetParamResult::Success;
@@ -346,10 +346,10 @@ namespace bs
 		for (auto& entry : textureParams)
 		{
 			ParamTextureDataType& param = mTextureParams[textureIdx];
-			param.isLoadStore = false;
+			param.IsLoadStore = false;
 
-			if (entry.second.defaultValueIdx != (UINT32)-1)
-				mDefaultTextureParams[textureIdx] = shader->GetDefaultTexture(entry.second.defaultValueIdx);
+			if (entry.second.DefaultValueIdx != (UINT32)-1)
+				mDefaultTextureParams[textureIdx] = shader->GetDefaultTexture(entry.second.DefaultValueIdx);
 
 			textureIdx++;
 		}
@@ -358,8 +358,8 @@ namespace bs
 		UINT32 samplerIdx = 0;
 		for (auto& entry : samplerParams)
 		{
-			if (entry.second.defaultValueIdx != (UINT32)-1)
-				mDefaultSamplerStateParams[samplerIdx] = shader->GetDefaultSampler(entry.second.defaultValueIdx);
+			if (entry.second.DefaultValueIdx != (UINT32)-1)
+				mDefaultSamplerStateParams[samplerIdx] = shader->GetDefaultSampler(entry.second.DefaultValueIdx);
 
 			samplerIdx++;
 		}
@@ -370,14 +370,14 @@ namespace bs
 		UINT32 structIdx = 0;
 		for (auto& entry : dataParams)
 		{
-			if(entry.second.type == GPDT_STRUCT)
+			if(entry.second.Type == GPDT_STRUCT)
 			{
-				UINT32 arraySize = entry.second.arraySize > 1 ? entry.second.arraySize : 1;
+				UINT32 arraySize = entry.second.ArraySize > 1 ? entry.second.ArraySize : 1;
 				for (UINT32 i = 0; i < arraySize; i++)
 				{
 					ParamStructDataType& param = mStructParams[structIdx];
-					param.dataSize = entry.second.elementSize;
-					param.data = mAlloc.Alloc(param.dataSize);
+					param.DataSize = entry.second.ElementSize;
+					param.Data = mAlloc.Alloc(param.DataSize);
 
 					structIdx++;
 				}
@@ -385,25 +385,25 @@ namespace bs
 			else
 			{
 				// Check for SpriteUV attribute
-				UINT32 attribIdx = entry.second.attribIdx;
+				UINT32 attribIdx = entry.second.AttribIdx;
 				while (attribIdx != (UINT32)-1)
 				{
 					const SHADER_PARAM_ATTRIBUTE& attrib = paramAttributes[attribIdx];
-					if (attrib.type == ShaderParamAttributeType::SpriteUV)
+					if (attrib.Type == ShaderParamAttributeType::SpriteUV)
 					{
 						// Find referenced texture
-						const auto findIterTex = mParamLookup.find(attrib.value);
+						const auto findIterTex = mParamLookup.find(attrib.Value);
 						const auto findIterParam = mParamLookup.find(entry.first);
 						if (findIterTex != mParamLookup.end() && findIterParam != mParamLookup.end())
 						{
 							ParamData& paramData = mParams[findIterParam->second];
 
-							DataParamInfo& dataParamInfo = mDataParams[paramData.index];
-							dataParamInfo.spriteTextureIdx = findIterTex->second;
+							DataParamInfo& dataParamInfo = mDataParams[paramData.Index];
+							dataParamInfo.SpriteTextureIdx = findIterTex->second;
 						}
 					}
 
-					attribIdx = attrib.nextParamIdx;
+					attribIdx = attrib.NextParamIdx;
 				}
 			}
 		}
@@ -415,7 +415,7 @@ namespace bs
 		if (mStructParams != nullptr)
 		{
 			for (UINT32 i = 0; i < mNumStructParams; i++)
-				mAlloc.Free(mStructParams[i].data);
+				mAlloc.Free(mStructParams[i].Data);
 		}
 
 		mAlloc.Destruct(mStructParams, mNumStructParams);
@@ -608,10 +608,10 @@ namespace bs
 		UINT32 index = iterFind->second;
 		const ParamData& param = mParams[index];
 
-		if (param.type != ParamType::Data)
+		if (param.Type != ParamType::Data)
 			return false;
 
-		if (arrayIdx >= param.arraySize)
+		if (arrayIdx >= param.ArraySize)
 			return false;
 
 		return IsAnimated(param, arrayIdx);
@@ -620,138 +620,138 @@ namespace bs
 	template<bool Core>
 	void TMaterialParams<Core>::GetStructData(const ParamData& param, void* value, UINT32 size, UINT32 arrayIdx) const
 	{
-		const ParamStructDataType& structParam = mStructParams[param.index + arrayIdx];
-		if (structParam.dataSize != size)
+		const ParamStructDataType& structParam = mStructParams[param.Index + arrayIdx];
+		if (structParam.DataSize != size)
 		{
 			BS_LOG(Warning, Material, "Size mismatch when writing to a struct. Provided size was {0} bytes but the struct "
-				"size is {1} bytes", size, structParam.dataSize);
+				"size is {1} bytes", size, structParam.DataSize);
 			return;
 		}
 
-		memcpy(value, structParam.data, structParam.dataSize);
+		memcpy(value, structParam.Data, structParam.DataSize);
 	}
 
 	template<bool Core>
 	void TMaterialParams<Core>::SetStructData(const ParamData& param, const void* value, UINT32 size, UINT32 arrayIdx)
 	{
-		const ParamStructDataType& structParam = mStructParams[param.index + arrayIdx];
-		if (structParam.dataSize != size)
+		const ParamStructDataType& structParam = mStructParams[param.Index + arrayIdx];
+		if (structParam.DataSize != size)
 		{
 			BS_LOG(Warning, Material, "Size mismatch when writing to a struct. Provided size was {0} bytes but the struct "
-				"size is {1} bytes", size, structParam.dataSize);
+				"size is {1} bytes", size, structParam.DataSize);
 			return;
 		}
 
-		memcpy(structParam.data, value, structParam.dataSize);
-		param.version = ++mParamVersion;
+		memcpy(structParam.Data, value, structParam.DataSize);
+		param.Version = ++mParamVersion;
 	}
 
 	template<bool Core>
 	UINT32 TMaterialParams<Core>::GetStructSize(const ParamData& param) const
 	{
-		const ParamStructDataType& structParam = mStructParams[param.index];
-		return structParam.dataSize;
+		const ParamStructDataType& structParam = mStructParams[param.Index];
+		return structParam.DataSize;
 	}
 
 	template<bool Core>
 	void TMaterialParams<Core>::GetTexture(const ParamData& param, TextureType& value, TextureSurface& surface) const
 	{
-		ParamTextureDataType& textureParam = mTextureParams[param.index];
+		ParamTextureDataType& textureParam = mTextureParams[param.Index];
 
-		if(textureParam.texture)
-			value = textureParam.texture;
-		else if(textureParam.spriteTexture)
-			value = impl::getSpriteTextureAtlas(textureParam.spriteTexture);
+		if(textureParam.Texture)
+			value = textureParam.Texture;
+		else if(textureParam.SpriteTexture)
+			value = impl::getSpriteTextureAtlas(textureParam.SpriteTexture);
 
-		surface = textureParam.surface;
+		surface = textureParam.Surface;
 	}
 	
 	template<bool Core>
 	void TMaterialParams<Core>::SetTexture(const ParamData& param, const TextureType& value, const TextureSurface& surface)
 	{
-		ParamTextureDataType& textureParam = mTextureParams[param.index];
-		textureParam.texture = value;
-		textureParam.spriteTexture = nullptr;
-		textureParam.isLoadStore = false;
-		textureParam.surface = surface;
+		ParamTextureDataType& textureParam = mTextureParams[param.Index];
+		textureParam.Texture = value;
+		textureParam.SpriteTexture = nullptr;
+		textureParam.IsLoadStore = false;
+		textureParam.Surface = surface;
 
-		param.version = ++mParamVersion;
+		param.Version = ++mParamVersion;
 	}
 
 	template<bool Core>
 	void TMaterialParams<Core>::GetSpriteTexture(const ParamData& param, SpriteTextureType& value) const
 	{
-		ParamTextureDataType& textureParam = mTextureParams[param.index];
-		value = textureParam.spriteTexture;
+		ParamTextureDataType& textureParam = mTextureParams[param.Index];
+		value = textureParam.SpriteTexture;
 	}
 	
 	template<bool Core>
 	void TMaterialParams<Core>::SetSpriteTexture(const ParamData& param, const SpriteTextureType& value)
 	{
-		ParamTextureDataType& textureParam = mTextureParams[param.index];
-		textureParam.texture = nullptr;
-		textureParam.spriteTexture = value;
-		textureParam.isLoadStore = false;
-		textureParam.surface = TextureSurface::COMPLETE;
+		ParamTextureDataType& textureParam = mTextureParams[param.Index];
+		textureParam.Texture = nullptr;
+		textureParam.SpriteTexture = value;
+		textureParam.IsLoadStore = false;
+		textureParam.Surface = TextureSurface::COMPLETE;
 
-		param.version = ++mParamVersion;
+		param.Version = ++mParamVersion;
 	}
 
 	template<bool Core>
 	void TMaterialParams<Core>::GetBuffer(const ParamData& param, BufferType& value) const
 	{
-		value = mBufferParams[param.index].value;
+		value = mBufferParams[param.Index].Value;
 	}
 
 	template<bool Core>
 	void TMaterialParams<Core>::SetBuffer(const ParamData& param, const BufferType& value)
 	{
-		mBufferParams[param.index].value = value;
+		mBufferParams[param.Index].Value = value;
 
-		param.version = ++mParamVersion;
+		param.Version = ++mParamVersion;
 	}
 
 	template<bool Core>
 	void TMaterialParams<Core>::GetLoadStoreTexture(const ParamData& param, TextureType& value, TextureSurface& surface) const
 	{
-		ParamTextureDataType& textureParam = mTextureParams[param.index];
-		value = textureParam.texture;
-		surface = textureParam.surface;
+		ParamTextureDataType& textureParam = mTextureParams[param.Index];
+		value = textureParam.Texture;
+		surface = textureParam.Surface;
 	}
 
 	template<bool Core>
 	void TMaterialParams<Core>::SetLoadStoreTexture(const ParamData& param, const TextureType& value, const TextureSurface& surface)
 	{
-		ParamTextureDataType& textureParam = mTextureParams[param.index];
-		textureParam.texture = value;
-		textureParam.spriteTexture = nullptr;
-		textureParam.isLoadStore = true;
-		textureParam.surface = surface;
+		ParamTextureDataType& textureParam = mTextureParams[param.Index];
+		textureParam.Texture = value;
+		textureParam.SpriteTexture = nullptr;
+		textureParam.IsLoadStore = true;
+		textureParam.Surface = surface;
 
-		param.version = ++mParamVersion;
+		param.Version = ++mParamVersion;
 	}
 
 	template<bool Core>
 	void TMaterialParams<Core>::GetSamplerState(const ParamData& param, SamplerType& value) const
 	{
-		value = mSamplerStateParams[param.index].value;
+		value = mSamplerStateParams[param.Index].Value;
 	}
 
 	template<bool Core>
 	void TMaterialParams<Core>::SetSamplerState(const ParamData& param, const SamplerType& value)
 	{
-		mSamplerStateParams[param.index].value = value;
+		mSamplerStateParams[param.Index].Value = value;
 
-		param.version = ++mParamVersion;
+		param.Version = ++mParamVersion;
 	}
 
 	template<bool Core>
 	MateralParamTextureType TMaterialParams<Core>::GetTextureType(const ParamData& param) const
 	{
-		if(mTextureParams[param.index].isLoadStore)
+		if(mTextureParams[param.Index].IsLoadStore)
 			return MateralParamTextureType::LoadStore;
 
-		if(mTextureParams[param.index].spriteTexture)
+		if(mTextureParams[param.Index].SpriteTexture)
 			return MateralParamTextureType::Sprite;
 
 		return MateralParamTextureType::Normal;
@@ -760,9 +760,9 @@ namespace bs
 	template<bool Core>
 	bool TMaterialParams<Core>::IsAnimated(const ParamData& param, UINT32 arrayIdx) const
 	{
-		const DataParamInfo& paramInfo = mDataParams[param.index + arrayIdx];
+		const DataParamInfo& paramInfo = mDataParams[param.Index + arrayIdx];
 
-		return paramInfo.floatCurve || paramInfo.colorGradient || paramInfo.spriteTextureIdx != (UINT32)-1;
+		return paramInfo.FloatCurve || paramInfo.ColorGradient || paramInfo.SpriteTextureIdx != (UINT32)-1;
 	}
 
 	template<bool Core>
@@ -770,11 +770,11 @@ namespace bs
 	{
 		SpriteTextureType output;
 
-		const DataParamInfo& paramInfo = mDataParams[param.index];
-		if (paramInfo.spriteTextureIdx == (UINT32)-1)
+		const DataParamInfo& paramInfo = mDataParams[param.Index];
+		if (paramInfo.SpriteTextureIdx == (UINT32)-1)
 			return output;
 
-		const ParamData* spriteTexParamData = GetParamData(paramInfo.spriteTextureIdx);
+		const ParamData* spriteTexParamData = GetParamData(paramInfo.SpriteTextureIdx);
 		if(spriteTexParamData)
 			GetSpriteTexture(*spriteTexParamData, output);
 
@@ -784,13 +784,13 @@ namespace bs
 	template<bool Core>
 	void TMaterialParams<Core>::GetDefaultTexture(const ParamData& param, TextureType& value) const
 	{
-		value = mDefaultTextureParams[param.index];
+		value = mDefaultTextureParams[param.Index];
 	}
 
 	template<bool Core>
 	void TMaterialParams<Core>::GetDefaultSamplerState(const ParamData& param, SamplerType& value) const
 	{
-		value = mDefaultSamplerStateParams[param.index];
+		value = mDefaultSamplerStateParams[param.Index];
 	}
 
 	template class TMaterialParams<true>;
@@ -814,29 +814,29 @@ namespace bs
 		UINT32 structParamSize = 0;
 		for(auto& param : mParams)
 		{
-			if (param.version <= mLastSyncVersion && !forceAll)
+			if (param.Version <= mLastSyncVersion && !forceAll)
 				continue;
 
-			switch(param.type)
+			switch(param.Type)
 			{
 			case ParamType::Data:
 			{
-				const UINT32 arraySize = param.arraySize > 1 ? param.arraySize : 1;
+				const UINT32 arraySize = param.ArraySize > 1 ? param.ArraySize : 1;
 
-				if(param.dataType == GPDT_STRUCT)
+				if(param.DataType == GPDT_STRUCT)
 				{
 					// Param index
 					structParamSize += sizeof(UINT32);
 
 					// Param data
-					structParamSize += arraySize * mStructParams[param.index].dataSize;
+					structParamSize += arraySize * mStructParams[param.Index].DataSize;
 
 					numDirtyStructParams++;
 				}
 				else
 				{
-					const GpuParamDataTypeInfo& typeInfo = GpuParams::PARAM_SIZES.lookup[(int)param.dataType];
-					const UINT32 paramSize = typeInfo.numColumns * typeInfo.numRows * typeInfo.baseTypeSize;
+					const GpuParamDataTypeInfo& typeInfo = GpuParams::PARAM_SIZES.Lookup[(int)param.DataType];
+					const UINT32 paramSize = typeInfo.NumColumns * typeInfo.NumRows * typeInfo.BaseTypeSize;
 
 					// Param index
 					dataParamSize += sizeof(UINT32);
@@ -848,22 +848,22 @@ namespace bs
 					dataParamSize += sizeof(UINT32);
 					for (UINT32 i = 0; i < arraySize; i++)
 					{
-						const DataParamInfo& paramInfo = mDataParams[param.index + i];
-						if (paramInfo.floatCurve && param.dataType == GPDT_FLOAT1)
+						const DataParamInfo& paramInfo = mDataParams[param.Index + i];
+						if (paramInfo.FloatCurve && param.DataType == GPDT_FLOAT1)
 						{
 							// Array index
 							dataParamSize += sizeof(UINT32);
 
 							// Curve data
-							dataParamSize += rtti_size(*paramInfo.floatCurve).bytes;
+							dataParamSize += rtti_size(*paramInfo.FloatCurve).Bytes;
 						}
-						else if (paramInfo.colorGradient && param.dataType == GPDT_COLOR)
+						else if (paramInfo.ColorGradient && param.DataType == GPDT_COLOR)
 						{
 							// Array index
 							dataParamSize += sizeof(UINT32);
 
 							// Curve data
-							dataParamSize += rtti_size(*paramInfo.colorGradient).bytes;
+							dataParamSize += rtti_size(*paramInfo.ColorGradient).Bytes;
 						}
 					}
 
@@ -925,45 +925,45 @@ namespace bs
 		for(UINT32 i = 0; i < (UINT32)mParams.size(); i++)
 		{
 			ParamData& param = mParams[i];
-			if (param.version <= mLastSyncVersion && !forceAll)
+			if (param.Version <= mLastSyncVersion && !forceAll)
 				continue;
 
-			switch (param.type)
+			switch (param.Type)
 			{
 			case ParamType::Data:
 			{
-				const UINT32 arraySize = param.arraySize > 1 ? param.arraySize : 1;
+				const UINT32 arraySize = param.ArraySize > 1 ? param.ArraySize : 1;
 
-				if (param.dataType == GPDT_STRUCT)
+				if (param.DataType == GPDT_STRUCT)
 				{
-					const ParamStructDataType& paramData = mStructParams[param.index];
+					const ParamStructDataType& paramData = mStructParams[param.Index];
 
 					// Param index
 					stream.Seek((structParamsOffset + dirtyStructParamOffset) * 8);
-					dirtyStructParamOffset += rtti_write(i, stream).bytes;
+					dirtyStructParamOffset += rtti_write(i, stream).Bytes;
 
 					// Param data
 					for (UINT32 j = 0; j < arraySize; j++)
 					{
-						stream.WriteBytes(mStructParams[param.index + j].data, paramData.dataSize);
-						dirtyStructParamOffset += paramData.dataSize;
+						stream.WriteBytes(mStructParams[param.Index + j].Data, paramData.DataSize);
+						dirtyStructParamOffset += paramData.DataSize;
 					}
 				}
 				else
 				{
-					const GpuParamDataTypeInfo& typeInfo = GpuParams::PARAM_SIZES.lookup[(int)param.dataType];
-					const UINT32 paramSize = typeInfo.numColumns * typeInfo.numRows * typeInfo.baseTypeSize;
+					const GpuParamDataTypeInfo& typeInfo = GpuParams::PARAM_SIZES.Lookup[(int)param.DataType];
+					const UINT32 paramSize = typeInfo.NumColumns * typeInfo.NumRows * typeInfo.BaseTypeSize;
 
 					const UINT32 dataSize = arraySize * paramSize;
-					const DataParamInfo& paramInfo = mDataParams[param.index];
+					const DataParamInfo& paramInfo = mDataParams[param.Index];
 
 					// Param index
 					stream.Seek((dataParamsOffset + dirtyDataParamOffset) * 8);
-					dirtyDataParamOffset += rtti_write(i, stream).bytes;
+					dirtyDataParamOffset += rtti_write(i, stream).Bytes;
 
 					// Param data
 					// Note: This relies on the fact that all data params in the array are sequential
-					stream.WriteBytes((uint8_t*)&mDataParamsBuffer[paramInfo.offset], dataSize);
+					stream.WriteBytes((uint8_t*)&mDataParamsBuffer[paramInfo.Offset], dataSize);
 					dirtyDataParamOffset += dataSize;
 
 					// Param curves
@@ -974,24 +974,24 @@ namespace bs
 					UINT32 numDirtyCurves = 0;
 					for (UINT32 j = 0; j < arraySize; j++)
 					{
-						const DataParamInfo& arrParamInfo = mDataParams[param.index + j];
-						if (arrParamInfo.floatCurve && param.dataType == GPDT_FLOAT1)
+						const DataParamInfo& arrParamInfo = mDataParams[param.Index + j];
+						if (arrParamInfo.FloatCurve && param.DataType == GPDT_FLOAT1)
 						{
 							// Array index
-							dirtyDataParamOffset += rtti_write(j, stream).bytes;
+							dirtyDataParamOffset += rtti_write(j, stream).Bytes;
 
 							// Curve data
-							dirtyDataParamOffset += rtti_write(*arrParamInfo.floatCurve, stream).bytes;
+							dirtyDataParamOffset += rtti_write(*arrParamInfo.FloatCurve, stream).Bytes;
 
 							numDirtyCurves++;
 						}
-						else if (arrParamInfo.colorGradient && param.dataType == GPDT_COLOR)
+						else if (arrParamInfo.ColorGradient && param.DataType == GPDT_COLOR)
 						{
 							// Array index
-							dirtyDataParamOffset += rtti_write(j, stream).bytes;
+							dirtyDataParamOffset += rtti_write(j, stream).Bytes;
 
 							// Curve data
-							dirtyDataParamOffset += rtti_write(*arrParamInfo.colorGradient, stream).bytes;
+							dirtyDataParamOffset += rtti_write(*arrParamInfo.ColorGradient, stream).Bytes;
 
 							numDirtyCurves++;
 						}
@@ -1007,18 +1007,18 @@ namespace bs
 				stream.Seek((textureParamsOffset + dirtyTextureParamIdx * textureEntrySize) * 8);
 				rtti_write(i, stream);
 
-				const MaterialParamTextureData& textureData = mTextureParams[param.index];
+				const MaterialParamTextureData& textureData = mTextureParams[param.Index];
 				MaterialParamTextureDataCore* coreTexData = (MaterialParamTextureDataCore*)stream.Cursor();
 				new (coreTexData) MaterialParamTextureDataCore();
 
-				coreTexData->isLoadStore = textureData.isLoadStore;
-				coreTexData->surface = textureData.surface;
+				coreTexData->IsLoadStore = textureData.IsLoadStore;
+				coreTexData->Surface = textureData.Surface;
 
-				if (textureData.texture.IsLoaded())
-					coreTexData->texture = textureData.texture->GetCore();
+				if (textureData.Texture.IsLoaded())
+					coreTexData->Texture = textureData.Texture->GetCore();
 
-				if (textureData.spriteTexture.IsLoaded())
-					coreTexData->spriteTexture = textureData.spriteTexture->GetCore();
+				if (textureData.SpriteTexture.IsLoaded())
+					coreTexData->SpriteTexture = textureData.SpriteTexture->GetCore();
 
 				dirtyTextureParamIdx++;
 			}
@@ -1028,12 +1028,12 @@ namespace bs
 				stream.Seek((bufferParamsOffset + dirtyBufferParamIdx * bufferEntrySize) * 8);
 				rtti_write(i, stream);
 
-				const MaterialParamBufferData& bufferData = mBufferParams[param.index];
+				const MaterialParamBufferData& bufferData = mBufferParams[param.Index];
 				MaterialParamBufferDataCore* coreBufferData = (MaterialParamBufferDataCore*)stream.Cursor();
 				new (coreBufferData) MaterialParamBufferDataCore();
 
-				if(bufferData.value != nullptr)
-					coreBufferData->value = bufferData.value->GetCore();
+				if(bufferData.Value != nullptr)
+					coreBufferData->Value = bufferData.Value->GetCore();
 
 				dirtyBufferParamIdx++;
 			}
@@ -1043,12 +1043,12 @@ namespace bs
 				stream.Seek((samplerStateParamsOffset + dirtySamplerParamIdx * samplerStateEntrySize) * 8);
 				rtti_write(i, stream);
 
-				const MaterialParamSamplerStateData& samplerData = mSamplerStateParams[param.index];
+				const MaterialParamSamplerStateData& samplerData = mSamplerStateParams[param.Index];
 				MaterialParamSamplerStateDataCore* coreSamplerData = (MaterialParamSamplerStateDataCore*)stream.Cursor();
 				new (coreSamplerData) MaterialParamSamplerStateDataCore();
 
-				if (samplerData.value != nullptr)
-					coreSamplerData->value = samplerData.value->GetCore();
+				if (samplerData.Value != nullptr)
+					coreSamplerData->Value = samplerData.Value->GetCore();
 
 				dirtySamplerParamIdx++;
 			}
@@ -1064,15 +1064,15 @@ namespace bs
 		for (UINT32 i = 0; i < (UINT32)mParams.size(); i++)
 		{
 			ParamData& param = mParams[i];
-			if (param.type != ParamType::Texture)
+			if (param.Type != ParamType::Texture)
 				continue;
 
-			const MaterialParamTextureData& textureData = mTextureParams[param.index];
-			if (textureData.texture != nullptr)
-				resources.push_back(textureData.texture);
+			const MaterialParamTextureData& textureData = mTextureParams[param.Index];
+			if (textureData.Texture != nullptr)
+				resources.push_back(textureData.Texture);
 
-			if (textureData.spriteTexture != nullptr)
-				resources.push_back(textureData.spriteTexture);
+			if (textureData.SpriteTexture != nullptr)
+				resources.push_back(textureData.SpriteTexture);
 		}
 	}
 
@@ -1082,34 +1082,34 @@ namespace bs
 		{
 			ParamData& param = mParams[i];
 
-			switch (param.type)
+			switch (param.Type)
 			{
 			case ParamType::Texture:
 			{
-				const MaterialParamTextureData& textureData = mTextureParams[param.index];
+				const MaterialParamTextureData& textureData = mTextureParams[param.Index];
 
-				if (textureData.texture.IsLoaded())
-					coreObjects.push_back(textureData.texture.Get());
+				if (textureData.Texture.IsLoaded())
+					coreObjects.push_back(textureData.Texture.Get());
 
-				if (textureData.spriteTexture.IsLoaded())
-					coreObjects.push_back(textureData.spriteTexture.Get());
+				if (textureData.SpriteTexture.IsLoaded())
+					coreObjects.push_back(textureData.SpriteTexture.Get());
 			}
 			break;
 			case ParamType::Buffer:
 			{
-				const MaterialParamBufferData& bufferData = mBufferParams[param.index];
+				const MaterialParamBufferData& bufferData = mBufferParams[param.Index];
 
-				if (bufferData.value != nullptr)
-					coreObjects.push_back(bufferData.value.get());
+				if (bufferData.Value != nullptr)
+					coreObjects.push_back(bufferData.Value.get());
 			}
 			break;
 			case ParamType::Sampler:
 			{
 
-				const MaterialParamSamplerStateData& samplerData = mSamplerStateParams[param.index];
+				const MaterialParamSamplerStateData& samplerData = mSamplerStateParams[param.Index];
 
-				if (samplerData.value != nullptr)
-					coreObjects.push_back(samplerData.value.get());
+				if (samplerData.Value != nullptr)
+					coreObjects.push_back(samplerData.Value.get());
 			}
 			break;
 			default:
@@ -1141,76 +1141,76 @@ namespace bs
 
 		for (auto& param : mParams)
 		{
-			switch (param.type)
+			switch (param.Type)
 			{
 			case ParamType::Data:
 				{
-					const UINT32 arraySize = param.arraySize > 1 ? param.arraySize : 1;
+					const UINT32 arraySize = param.ArraySize > 1 ? param.ArraySize : 1;
 
-					if(param.dataType == GPDT_STRUCT)
+					if(param.DataType == GPDT_STRUCT)
 					{
 						for (UINT32 i = 0; i < arraySize; i++)
 						{
-							const MaterialParamStructData& srcParamInfo = params->mStructParams[param.index + i];
-							MaterialParamStructDataCore& dstParamInfo = mStructParams[param.index + i];
+							const MaterialParamStructData& srcParamInfo = params->mStructParams[param.Index + i];
+							MaterialParamStructDataCore& dstParamInfo = mStructParams[param.Index + i];
 
-							memcpy(dstParamInfo.data, srcParamInfo.data, srcParamInfo.dataSize);
+							memcpy(dstParamInfo.Data, srcParamInfo.Data, srcParamInfo.DataSize);
 						}
 					}
 					else
 					{
 						for (UINT32 i = 0; i < arraySize; i++)
 						{
-							DataParamInfo& srcParamInfo = params->mDataParams[param.index + i];
-							DataParamInfo& dstParamInfo = mDataParams[param.index + i];
+							DataParamInfo& srcParamInfo = params->mDataParams[param.Index + i];
+							DataParamInfo& dstParamInfo = mDataParams[param.Index + i];
 
-							if (srcParamInfo.floatCurve)
-								dstParamInfo.floatCurve = bs_pool_new<TAnimationCurve<float>>(*srcParamInfo.floatCurve);
+							if (srcParamInfo.FloatCurve)
+								dstParamInfo.FloatCurve = bs_pool_new<TAnimationCurve<float>>(*srcParamInfo.FloatCurve);
 
-							if (srcParamInfo.colorGradient)
-								dstParamInfo.colorGradient = bs_pool_new<ColorGradientHDR>(*srcParamInfo.colorGradient);
+							if (srcParamInfo.ColorGradient)
+								dstParamInfo.ColorGradient = bs_pool_new<ColorGradientHDR>(*srcParamInfo.ColorGradient);
 						}
 					}
 				}
 				break;
 			case ParamType::Texture:
 			{
-				HTexture texture = params->mTextureParams[param.index].texture;
+				HTexture texture = params->mTextureParams[param.Index].Texture;
 				SPtr<Texture> textureCore;
 				if (texture.IsLoaded())
 					textureCore = texture->GetCore();
 
-				mTextureParams[param.index].texture = textureCore;
+				mTextureParams[param.Index].Texture = textureCore;
 
-				HSpriteTexture spriteTexture = params->mTextureParams[param.index].spriteTexture;
+				HSpriteTexture spriteTexture = params->mTextureParams[param.Index].SpriteTexture;
 				SPtr<SpriteTexture> spriteTextureCore;
 				if (spriteTexture.IsLoaded())
 					spriteTextureCore = spriteTexture->GetCore();
 
-				mTextureParams[param.index].spriteTexture = spriteTextureCore;
+				mTextureParams[param.Index].SpriteTexture = spriteTextureCore;
 
-				mTextureParams[param.index].isLoadStore = params->mTextureParams[param.index].isLoadStore;
-				mTextureParams[param.index].surface = params->mTextureParams[param.index].surface;
+				mTextureParams[param.Index].IsLoadStore = params->mTextureParams[param.Index].IsLoadStore;
+				mTextureParams[param.Index].Surface = params->mTextureParams[param.Index].Surface;
 			}
 				break;
 			case ParamType::Buffer:
 			{
-				SPtr<bs::GpuBuffer> buffer = params->mBufferParams[param.index].value;
+				SPtr<bs::GpuBuffer> buffer = params->mBufferParams[param.Index].Value;
 				SPtr<GpuBuffer> bufferCore;
 				if (buffer != nullptr)
 					bufferCore = buffer->GetCore();
 
-				mBufferParams[param.index].value = bufferCore;
+				mBufferParams[param.Index].Value = bufferCore;
 			}
 				break;
 			case ParamType::Sampler:
 			{
-				SPtr<bs::SamplerState> sampState = params->mSamplerStateParams[param.index].value;
+				SPtr<bs::SamplerState> sampState = params->mSamplerStateParams[param.Index].Value;
 				SPtr<SamplerState> sampStateCore;
 				if (sampState != nullptr)
 					sampStateCore = sampState->GetCore();
 
-				mSamplerStateParams[param.index].value = sampStateCore;
+				mSamplerStateParams[param.Index].Value = sampStateCore;
 			}
 				break;
 			default:
@@ -1244,19 +1244,19 @@ namespace bs
 			rtti_read(paramIdx, stream);
 
 			ParamData& param = mParams[paramIdx];
-			param.version = mParamVersion;
+			param.Version = mParamVersion;
 
-			const UINT32 arraySize = param.arraySize > 1 ? param.arraySize : 1;
-			const GpuParamDataTypeInfo& typeInfo = bs::GpuParams::PARAM_SIZES.lookup[(int)param.dataType];
-			const UINT32 paramSize = typeInfo.numColumns * typeInfo.numRows * typeInfo.baseTypeSize;
+			const UINT32 arraySize = param.ArraySize > 1 ? param.ArraySize : 1;
+			const GpuParamDataTypeInfo& typeInfo = bs::GpuParams::PARAM_SIZES.Lookup[(int)param.DataType];
+			const UINT32 paramSize = typeInfo.NumColumns * typeInfo.NumRows * typeInfo.BaseTypeSize;
 
-			const DataParamInfo& paramInfo = mDataParams[param.index];
+			const DataParamInfo& paramInfo = mDataParams[param.Index];
 
 			const UINT32 dataParamSize = arraySize * paramSize;
 
 			// Param data
 			// Note: This relies on the fact that all data params in the array are sequential
-			stream.ReadBytes(&mDataParamsBuffer[paramInfo.offset], dataParamSize);
+			stream.ReadBytes(&mDataParamsBuffer[paramInfo.Offset], dataParamSize);
 
 			// Param curves
 			UINT32 numDirtyCurves = 0;
@@ -1266,22 +1266,22 @@ namespace bs
 				UINT32 localIdx = 0;
 				rtti_read(localIdx, stream);
 
-				DataParamInfo& arrParamInfo = mDataParams[param.index + localIdx];
-				if (param.dataType == GPDT_FLOAT1)
+				DataParamInfo& arrParamInfo = mDataParams[param.Index + localIdx];
+				if (param.DataType == GPDT_FLOAT1)
 				{
-					if(arrParamInfo.floatCurve)
-						bs_pool_free(arrParamInfo.floatCurve);
+					if(arrParamInfo.FloatCurve)
+						bs_pool_free(arrParamInfo.FloatCurve);
 
-					arrParamInfo.floatCurve = bs_pool_new<TAnimationCurve<float>>();
-					rtti_read(*arrParamInfo.floatCurve, stream);
+					arrParamInfo.FloatCurve = bs_pool_new<TAnimationCurve<float>>();
+					rtti_read(*arrParamInfo.FloatCurve, stream);
 				}
-				else if (param.dataType == GPDT_COLOR)
+				else if (param.DataType == GPDT_COLOR)
 				{
-					if(arrParamInfo.colorGradient)
-						bs_pool_free(arrParamInfo.colorGradient);
+					if(arrParamInfo.ColorGradient)
+						bs_pool_free(arrParamInfo.ColorGradient);
 
-					arrParamInfo.colorGradient = bs_pool_new<ColorGradientHDR>();
-					rtti_read(*arrParamInfo.colorGradient, stream);
+					arrParamInfo.ColorGradient = bs_pool_new<ColorGradientHDR>();
+					rtti_read(*arrParamInfo.ColorGradient, stream);
 				}
 			}
 		}
@@ -1292,12 +1292,12 @@ namespace bs
 			rtti_read(paramIdx, stream);
 
 			ParamData& param = mParams[paramIdx];
-			param.version = mParamVersion;
+			param.Version = mParamVersion;
 
 			MaterialParamTextureDataCore* sourceTexData = (MaterialParamTextureDataCore*)stream.Cursor();
 			stream.SkipBytes(sizeof(MaterialParamTextureDataCore));
 
-			mTextureParams[param.index] = *sourceTexData;
+			mTextureParams[param.Index] = *sourceTexData;
 			sourceTexData->~MaterialParamTextureDataCore();
 		}
 
@@ -1307,12 +1307,12 @@ namespace bs
 			rtti_read(paramIdx, stream);
 
 			ParamData& param = mParams[paramIdx];
-			param.version = mParamVersion;
+			param.Version = mParamVersion;
 
 			MaterialParamBufferDataCore* sourceBufferData = (MaterialParamBufferDataCore*)stream.Cursor();
 			stream.SkipBytes(sizeof(MaterialParamBufferDataCore));
 
-			mBufferParams[param.index] = *sourceBufferData;
+			mBufferParams[param.Index] = *sourceBufferData;
 			sourceBufferData->~MaterialParamBufferDataCore();
 		}
 
@@ -1322,12 +1322,12 @@ namespace bs
 			rtti_read(paramIdx, stream);
 
 			ParamData& param = mParams[paramIdx];
-			param.version = mParamVersion;
+			param.Version = mParamVersion;
 
 			MaterialParamSamplerStateDataCore* sourceSamplerStateData = (MaterialParamSamplerStateDataCore*)stream.Cursor();
 			stream.SkipBytes(sizeof(MaterialParamSamplerStateDataCore));
 
-			mSamplerStateParams[param.index] = *sourceSamplerStateData;
+			mSamplerStateParams[param.Index] = *sourceSamplerStateData;
 			sourceSamplerStateData->~MaterialParamSamplerStateDataCore();
 		}
 
@@ -1338,14 +1338,14 @@ namespace bs
 			rtti_read(paramIdx, stream);
 
 			ParamData& param = mParams[paramIdx];
-			param.version = mParamVersion;
+			param.Version = mParamVersion;
 
-			const UINT32 arraySize = param.arraySize > 1 ? param.arraySize : 1;
-			const ParamStructDataType& paramData = mStructParams[param.index];
+			const UINT32 arraySize = param.ArraySize > 1 ? param.ArraySize : 1;
+			const ParamStructDataType& paramData = mStructParams[param.Index];
 
 			// Param data
 			for (UINT32 j = 0; j < arraySize; j++)
-				stream.ReadBytes(mStructParams[param.index + j].data, paramData.dataSize);
+				stream.ReadBytes(mStructParams[param.Index + j].Data, paramData.DataSize);
 		}
 	}
 	}

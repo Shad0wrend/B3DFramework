@@ -20,15 +20,15 @@ namespace bs
 		public:
 			constexpr TexAtlasNode() = default;
 			constexpr TexAtlasNode(UINT32 x, UINT32 y, UINT32 width, UINT32 height)
-				: x(x), y(y), width(width), height(height)
+				: X(x), Y(y), Width(width), Height(height)
 			{ }
 
-			UINT32 x = 0;
-			UINT32 y = 0;
-			UINT32 width = 0;
-			UINT32 height = 0;
-			UINT32 children[2] { std::numeric_limits<UINT32>::max(), std::numeric_limits<UINT32>::max() };
-			bool nodeFull = false;
+			UINT32 X = 0;
+			UINT32 Y = 0;
+			UINT32 Width = 0;
+			UINT32 Height = 0;
+			UINT32 Children[2] { std::numeric_limits<UINT32>::max(), std::numeric_limits<UINT32>::max() };
+			bool NodeFull = false;
 		};
 
 	public:
@@ -112,21 +112,21 @@ namespace bs
 		{
 			struct
 			{
-				UINT32 width, height;
-			} input;
+				UINT32 Width, Height;
+			} Input;
 		
 			struct
 			{
-				UINT32 x, y;
-				UINT32 idx;
-				INT32 page;
-			} output;
+				UINT32 X, Y;
+				UINT32 Idx;
+				INT32 Page;
+			} Output;
 		};
 
 		/** Describes a single page of the texture atlas. */
 		struct Page
 		{
-			UINT32 width, height;
+			UINT32 Width, Height;
 		};
 
 		/**

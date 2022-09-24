@@ -68,24 +68,24 @@ namespace bs
 	{
 		bool operator==(const D6JointDrive& other) const
 		{
-			return stiffness == other.stiffness && damping == other.damping && forceLimit == other.forceLimit &&
-				acceleration == other.acceleration;
+			return Stiffness == other.Stiffness && Damping == other.Damping && ForceLimit == other.ForceLimit &&
+				Acceleration == other.Acceleration;
 		}
 
 		/** Spring strength. Force proportional to the position error. */
-		float stiffness = 0.0f;
+		float Stiffness = 0.0f;
 
 		/** Damping strength. Force propertional to the velocity error. */
-		float damping = 0.0f;
+		float Damping = 0.0f;
 
 		/** Maximum force the drive can apply. */
-		float forceLimit = FLT_MAX;
+		float ForceLimit = FLT_MAX;
 
 		/**
 		 * If true the drive will generate acceleration instead of forces. Acceleration drives are easier to tune as
 		 * they account for the masses of the actors to which the joint is attached.
 		 */
-		bool acceleration = false;
+		bool Acceleration = false;
 	};
 
 	/**
@@ -194,15 +194,15 @@ namespace bs
 	{
 		D6_JOINT_DESC() { }
 
-		D6JointMotion motion[(UINT32)D6JointAxis::Count] = { D6JointMotion::Locked };
-		D6JointDrive drive[(UINT32)D6JointDriveType::Count];
-		LimitLinear limitLinear;
-		LimitAngularRange limitTwist;
-		LimitConeRange limitSwing;
-		Vector3 drivePosition = Vector3::ZERO;
-		Quaternion driveRotation = Quaternion::IDENTITY;
-		Vector3 driveLinearVelocity = Vector3::ZERO;
-		Vector3 driveAngularVelocity = Vector3::ZERO;
+		D6JointMotion Motion[(UINT32)D6JointAxis::Count] = { D6JointMotion::Locked };
+		D6JointDrive Drive[(UINT32)D6JointDriveType::Count];
+		LimitLinear LimitLinear;
+		LimitAngularRange LimitTwist;
+		LimitConeRange LimitSwing;
+		Vector3 DrivePosition = Vector3::ZERO;
+		Quaternion DriveRotation = Quaternion::IDENTITY;
+		Vector3 DriveLinearVelocity = Vector3::ZERO;
+		Vector3 DriveAngularVelocity = Vector3::ZERO;
 	};
 
 	/** @} */

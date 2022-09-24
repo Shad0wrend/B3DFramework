@@ -152,33 +152,33 @@ namespace bs
 		/** Represents a single element drawn by the canvas. */
 		struct CanvasElement
 		{
-			CanvasElementType type;
-			Color color;
-			UINT32 renderElemStart;
-			UINT32 renderElemEnd;
-			UINT32 dataId;
-			UINT8 depth;
+			CanvasElementType Type;
+			Color Color;
+			UINT32 RenderElemStart;
+			UINT32 RenderElemEnd;
+			UINT32 DataId;
+			UINT8 Depth;
 
 			union
 			{
 				struct
 				{
-					UINT32 vertexStart;
-					UINT32 numVertices;
-					mutable UINT32 clippedVertexStart;
-					mutable UINT32 clippedNumVertices;
+					UINT32 VertexStart;
+					UINT32 NumVertices;
+					mutable UINT32 ClippedVertexStart;
+					mutable UINT32 ClippedNumVertices;
 				};
 
 				struct
 				{
-					ImageSprite* imageSprite;
-					TextureScaleMode scaleMode;
+					ImageSprite* ImageSprite;
+					TextureScaleMode ScaleMode;
 				};
 
 				struct
 				{
-					TextSprite* textSprite;
-					UINT32 size;
+					TextSprite* TextSprite;
+					UINT32 Size;
 				};
 			};
 		};
@@ -186,22 +186,22 @@ namespace bs
 		/** Information required for drawing a text canvas element. */
 		struct TextElementData
 		{
-			String string;
-			HFont font;
-			Vector2I position;
+			String String;
+			HFont Font;
+			Vector2I Position;
 		};
 
 		/** Information required for drawing an image canvas element. */
 		struct ImageElementData
 		{
-			HSpriteTexture texture;
-			Rect2I area;
+			HSpriteTexture Texture;
+			Rect2I Area;
 		};
 
 		/** Information required for drawing an arbitrary triangle canvas element. */
 		struct TriangleElementData
 		{
-			SpriteMaterialInfo matInfo;
+			SpriteMaterialInfo MatInfo;
 		};
 
 		GUICanvas(const String& styleName, const GUIDimensions& dimensions);

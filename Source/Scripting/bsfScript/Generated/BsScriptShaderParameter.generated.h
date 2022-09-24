@@ -12,10 +12,10 @@ namespace bs
 {
 	struct __ShaderParameterInterop
 	{
-		MonoString* name;
-		MonoString* identifier;
-		ShaderParameterType type;
-		Flags<ShaderParameterFlag> flags;
+		MonoString* Name;
+		MonoString* Identifier;
+		ShaderParameterType Type;
+		Flags<ShaderParameterFlag> Flags;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptShaderParameter : public ScriptObject<ScriptShaderParameter>

@@ -80,16 +80,16 @@ namespace bs
 		void RemoveGenericCurve(const String& name);
 
 		/** Curves for animating scene object's position. */
-		Vector<TNamedAnimationCurve<Vector3>> position;
+		Vector<TNamedAnimationCurve<Vector3>> Position;
 
 		/** Curves for animating scene object's rotation. */
-		Vector<TNamedAnimationCurve<Quaternion>> rotation;
+		Vector<TNamedAnimationCurve<Quaternion>> Rotation;
 
 		/** Curves for animating scene object's scale. */
-		Vector<TNamedAnimationCurve<Vector3>> scale;
+		Vector<TNamedAnimationCurve<Vector3>> Scale;
 
 		/** Curves for animating generic component properties. */
-		Vector<TNamedAnimationCurve<float>> generic;
+		Vector<TNamedAnimationCurve<float>> Generic;
 	};
 
 	/** Contains a set of animation curves used for moving and rotating the root bone. */
@@ -97,14 +97,14 @@ namespace bs
 	{
 		RootMotion() = default;
 		RootMotion(const TAnimationCurve<Vector3>& position, const TAnimationCurve<Quaternion>& rotation)
-			:position(position), rotation(rotation)
+			:Position(position), Rotation(rotation)
 		{ }
 
 		/** Animation curve representing the movement of the root bone. */
-		TAnimationCurve<Vector3> position;
+		TAnimationCurve<Vector3> Position;
 
 		/** Animation curve representing the rotation of the root bone. */
-		TAnimationCurve<Quaternion> rotation;
+		TAnimationCurve<Quaternion> Rotation;
 	};
 
 	/** Event that is triggered when animation reaches a certain point. */
@@ -119,14 +119,14 @@ namespace bs
 		 * @param[in]	time	Time at which to trigger the event, in seconds.
 		 */
 		AnimationEvent(const String& name, float time)
-			:name(name), time(time)
+			:Name(name), Time(time)
 		{ }
 
 		/** Name used to identify the event when triggered. */
-		String name;
+		String Name;
 
 		/** Time at which to trigger the event, in seconds. */
-		float time = 0.0f;
+		float Time = 0.0f;
 	};
 
 	/** Types of curves in an AnimationClip. */

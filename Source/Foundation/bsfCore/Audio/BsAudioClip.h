@@ -40,22 +40,22 @@ namespace bs
 	struct AUDIO_CLIP_DESC
 	{
 		/** Determines how is audio data read. */
-		AudioReadMode readMode = AudioReadMode::LoadDecompressed;
+		AudioReadMode ReadMode = AudioReadMode::LoadDecompressed;
 
 		/** Determines in which format is the audio data in. */
-		AudioFormat format = AudioFormat::PCM;
+		AudioFormat Format = AudioFormat::PCM;
 
 		/** Sample rate (frequency) of the audio data. */
-		UINT32 frequency = 44100;
+		UINT32 Frequency = 44100;
 
 		/** Number of bits per sample. Not used for compressed formats. */
-		UINT32 bitDepth = 16;
+		UINT32 BitDepth = 16;
 		
 		/** Number of channels. Each channel has its own step of samples. */
-		UINT32 numChannels = 2;
+		UINT32 NumChannels = 2;
 
 		/** Determines should the audio clip be played using 3D positioning. Only valid for mono audio. */
-		bool is3D = true;
+		bool Is3D = true;
 
 		/**
 		 * Determines should the audio clip keep the original data in memory after creation. For example if the audio data
@@ -65,7 +65,7 @@ namespace bs
 		 *
 		 * When loading audio clip directly from disk, this properly is controlled by the ResourceLoadFlag::KeepSourceData.
 		 */
-		bool keepSourceData = true;
+		bool KeepSourceData = true;
 	};
 
 	/**
@@ -79,15 +79,15 @@ namespace bs
 
 		/** Returns the size of a single sample, in bits. */
 		BS_SCRIPT_EXPORT(n:BitDepth,pr:getter)
-		UINT32 GetBitDepth() const { return mDesc.bitDepth; }
+		UINT32 GetBitDepth() const { return mDesc.BitDepth; }
 		
 		/** Returns how many samples per second is the audio encoded in. */
 		BS_SCRIPT_EXPORT(n:SampleRate,pr:getter)
-		UINT32 GetFrequency() const { return mDesc.frequency; }
+		UINT32 GetFrequency() const { return mDesc.Frequency; }
 
 		/** Returns the number of channels provided by the clip. */
 		BS_SCRIPT_EXPORT(n:NumChannels,pr:getter)
-		UINT32 GetNumChannels() const { return mDesc.numChannels; }
+		UINT32 GetNumChannels() const { return mDesc.NumChannels; }
 
 		/**
 		 * Returns in which format is audio data stored in.
@@ -95,7 +95,7 @@ namespace bs
 		 * @see	AudioFormat
 		 */
 		BS_SCRIPT_EXPORT(n:Format,pr:getter)
-		AudioFormat GetFormat() const { return mDesc.format; }
+		AudioFormat GetFormat() const { return mDesc.Format; }
 
 		/**
 		 * Returns how is the audio data read/decoded.
@@ -103,7 +103,7 @@ namespace bs
 		 * @see	AudioReadMode
 		 */
 		BS_SCRIPT_EXPORT(n:ReadMode,pr:getter)
-		AudioReadMode GetReadMode() const { return mDesc.readMode; }
+		AudioReadMode GetReadMode() const { return mDesc.ReadMode; }
 
 		/** Returns the length of the audio clip, in seconds. */
 		BS_SCRIPT_EXPORT(n:Duration,pr:getter)
@@ -115,7 +115,7 @@ namespace bs
 
 		/** Determines will the clip be played a spatial 3D sound, or as a normal sound (for example music). */
 		BS_SCRIPT_EXPORT(n:Is3D,pr:getter)
-		bool Is3D() const { return mDesc.is3D; }
+		bool Is3D() const { return mDesc.Is3D; }
 
 		/**
 		 * Creates a new AudioClip and populates it with provided samples.

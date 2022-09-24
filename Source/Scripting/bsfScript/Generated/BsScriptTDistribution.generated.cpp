@@ -20,18 +20,18 @@ namespace bs
 
 	void ScriptTDistributionfloat::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_TDistribution", (void*)&ScriptTDistributionfloat::InternalTDistribution);
-		metaData.scriptClass->AddInternalCall("Internal_TDistribution0", (void*)&ScriptTDistributionfloat::InternalTDistribution0);
-		metaData.scriptClass->AddInternalCall("Internal_TDistribution1", (void*)&ScriptTDistributionfloat::InternalTDistribution1);
-		metaData.scriptClass->AddInternalCall("Internal_TDistribution2", (void*)&ScriptTDistributionfloat::InternalTDistribution2);
-		metaData.scriptClass->AddInternalCall("Internal_TDistribution3", (void*)&ScriptTDistributionfloat::InternalTDistribution3);
-		metaData.scriptClass->AddInternalCall("Internal_GetType", (void*)&ScriptTDistributionfloat::InternalGetType);
-		metaData.scriptClass->AddInternalCall("Internal_GetMinConstant", (void*)&ScriptTDistributionfloat::InternalGetMinConstant);
-		metaData.scriptClass->AddInternalCall("Internal_GetMaxConstant", (void*)&ScriptTDistributionfloat::InternalGetMaxConstant);
-		metaData.scriptClass->AddInternalCall("Internal_GetMinCurve", (void*)&ScriptTDistributionfloat::InternalGetMinCurve);
-		metaData.scriptClass->AddInternalCall("Internal_GetMaxCurve", (void*)&ScriptTDistributionfloat::InternalGetMaxCurve);
-		metaData.scriptClass->AddInternalCall("Internal_Evaluate", (void*)&ScriptTDistributionfloat::InternalEvaluate);
-		metaData.scriptClass->AddInternalCall("Internal_Evaluate0", (void*)&ScriptTDistributionfloat::InternalEvaluate0);
+		metaData.ScriptClass->AddInternalCall("Internal_TDistribution", (void*)&ScriptTDistributionfloat::InternalTDistribution);
+		metaData.ScriptClass->AddInternalCall("Internal_TDistribution0", (void*)&ScriptTDistributionfloat::InternalTDistribution0);
+		metaData.ScriptClass->AddInternalCall("Internal_TDistribution1", (void*)&ScriptTDistributionfloat::InternalTDistribution1);
+		metaData.ScriptClass->AddInternalCall("Internal_TDistribution2", (void*)&ScriptTDistributionfloat::InternalTDistribution2);
+		metaData.ScriptClass->AddInternalCall("Internal_TDistribution3", (void*)&ScriptTDistributionfloat::InternalTDistribution3);
+		metaData.ScriptClass->AddInternalCall("Internal_GetType", (void*)&ScriptTDistributionfloat::InternalGetType);
+		metaData.ScriptClass->AddInternalCall("Internal_GetMinConstant", (void*)&ScriptTDistributionfloat::InternalGetMinConstant);
+		metaData.ScriptClass->AddInternalCall("Internal_GetMaxConstant", (void*)&ScriptTDistributionfloat::InternalGetMaxConstant);
+		metaData.ScriptClass->AddInternalCall("Internal_GetMinCurve", (void*)&ScriptTDistributionfloat::InternalGetMinCurve);
+		metaData.ScriptClass->AddInternalCall("Internal_GetMaxCurve", (void*)&ScriptTDistributionfloat::InternalGetMaxCurve);
+		metaData.ScriptClass->AddInternalCall("Internal_Evaluate", (void*)&ScriptTDistributionfloat::InternalEvaluate);
+		metaData.ScriptClass->AddInternalCall("Internal_Evaluate0", (void*)&ScriptTDistributionfloat::InternalEvaluate0);
 
 	}
 
@@ -42,7 +42,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptTDistributionfloat>()) ScriptTDistributionfloat(managedInstance, value);
 		return managedInstance;
 	}
@@ -180,18 +180,18 @@ namespace bs
 
 	void ScriptTDistributionVector3::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_TDistribution", (void*)&ScriptTDistributionVector3::InternalTDistribution);
-		metaData.scriptClass->AddInternalCall("Internal_TDistribution0", (void*)&ScriptTDistributionVector3::InternalTDistribution0);
-		metaData.scriptClass->AddInternalCall("Internal_TDistribution1", (void*)&ScriptTDistributionVector3::InternalTDistribution1);
-		metaData.scriptClass->AddInternalCall("Internal_TDistribution2", (void*)&ScriptTDistributionVector3::InternalTDistribution2);
-		metaData.scriptClass->AddInternalCall("Internal_TDistribution3", (void*)&ScriptTDistributionVector3::InternalTDistribution3);
-		metaData.scriptClass->AddInternalCall("Internal_GetType", (void*)&ScriptTDistributionVector3::InternalGetType);
-		metaData.scriptClass->AddInternalCall("Internal_GetMinConstant", (void*)&ScriptTDistributionVector3::InternalGetMinConstant);
-		metaData.scriptClass->AddInternalCall("Internal_GetMaxConstant", (void*)&ScriptTDistributionVector3::InternalGetMaxConstant);
-		metaData.scriptClass->AddInternalCall("Internal_GetMinCurve", (void*)&ScriptTDistributionVector3::InternalGetMinCurve);
-		metaData.scriptClass->AddInternalCall("Internal_GetMaxCurve", (void*)&ScriptTDistributionVector3::InternalGetMaxCurve);
-		metaData.scriptClass->AddInternalCall("Internal_Evaluate", (void*)&ScriptTDistributionVector3::InternalEvaluate);
-		metaData.scriptClass->AddInternalCall("Internal_Evaluate0", (void*)&ScriptTDistributionVector3::InternalEvaluate0);
+		metaData.ScriptClass->AddInternalCall("Internal_TDistribution", (void*)&ScriptTDistributionVector3::InternalTDistribution);
+		metaData.ScriptClass->AddInternalCall("Internal_TDistribution0", (void*)&ScriptTDistributionVector3::InternalTDistribution0);
+		metaData.ScriptClass->AddInternalCall("Internal_TDistribution1", (void*)&ScriptTDistributionVector3::InternalTDistribution1);
+		metaData.ScriptClass->AddInternalCall("Internal_TDistribution2", (void*)&ScriptTDistributionVector3::InternalTDistribution2);
+		metaData.ScriptClass->AddInternalCall("Internal_TDistribution3", (void*)&ScriptTDistributionVector3::InternalTDistribution3);
+		metaData.ScriptClass->AddInternalCall("Internal_GetType", (void*)&ScriptTDistributionVector3::InternalGetType);
+		metaData.ScriptClass->AddInternalCall("Internal_GetMinConstant", (void*)&ScriptTDistributionVector3::InternalGetMinConstant);
+		metaData.ScriptClass->AddInternalCall("Internal_GetMaxConstant", (void*)&ScriptTDistributionVector3::InternalGetMaxConstant);
+		metaData.ScriptClass->AddInternalCall("Internal_GetMinCurve", (void*)&ScriptTDistributionVector3::InternalGetMinCurve);
+		metaData.ScriptClass->AddInternalCall("Internal_GetMaxCurve", (void*)&ScriptTDistributionVector3::InternalGetMaxCurve);
+		metaData.ScriptClass->AddInternalCall("Internal_Evaluate", (void*)&ScriptTDistributionVector3::InternalEvaluate);
+		metaData.ScriptClass->AddInternalCall("Internal_Evaluate0", (void*)&ScriptTDistributionVector3::InternalEvaluate0);
 
 	}
 
@@ -202,7 +202,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptTDistributionVector3>()) ScriptTDistributionVector3(managedInstance, value);
 		return managedInstance;
 	}
@@ -328,18 +328,18 @@ namespace bs
 
 	void ScriptTDistributionVector2::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_TDistribution", (void*)&ScriptTDistributionVector2::InternalTDistribution);
-		metaData.scriptClass->AddInternalCall("Internal_TDistribution0", (void*)&ScriptTDistributionVector2::InternalTDistribution0);
-		metaData.scriptClass->AddInternalCall("Internal_TDistribution1", (void*)&ScriptTDistributionVector2::InternalTDistribution1);
-		metaData.scriptClass->AddInternalCall("Internal_TDistribution2", (void*)&ScriptTDistributionVector2::InternalTDistribution2);
-		metaData.scriptClass->AddInternalCall("Internal_TDistribution3", (void*)&ScriptTDistributionVector2::InternalTDistribution3);
-		metaData.scriptClass->AddInternalCall("Internal_GetType", (void*)&ScriptTDistributionVector2::InternalGetType);
-		metaData.scriptClass->AddInternalCall("Internal_GetMinConstant", (void*)&ScriptTDistributionVector2::InternalGetMinConstant);
-		metaData.scriptClass->AddInternalCall("Internal_GetMaxConstant", (void*)&ScriptTDistributionVector2::InternalGetMaxConstant);
-		metaData.scriptClass->AddInternalCall("Internal_GetMinCurve", (void*)&ScriptTDistributionVector2::InternalGetMinCurve);
-		metaData.scriptClass->AddInternalCall("Internal_GetMaxCurve", (void*)&ScriptTDistributionVector2::InternalGetMaxCurve);
-		metaData.scriptClass->AddInternalCall("Internal_Evaluate", (void*)&ScriptTDistributionVector2::InternalEvaluate);
-		metaData.scriptClass->AddInternalCall("Internal_Evaluate0", (void*)&ScriptTDistributionVector2::InternalEvaluate0);
+		metaData.ScriptClass->AddInternalCall("Internal_TDistribution", (void*)&ScriptTDistributionVector2::InternalTDistribution);
+		metaData.ScriptClass->AddInternalCall("Internal_TDistribution0", (void*)&ScriptTDistributionVector2::InternalTDistribution0);
+		metaData.ScriptClass->AddInternalCall("Internal_TDistribution1", (void*)&ScriptTDistributionVector2::InternalTDistribution1);
+		metaData.ScriptClass->AddInternalCall("Internal_TDistribution2", (void*)&ScriptTDistributionVector2::InternalTDistribution2);
+		metaData.ScriptClass->AddInternalCall("Internal_TDistribution3", (void*)&ScriptTDistributionVector2::InternalTDistribution3);
+		metaData.ScriptClass->AddInternalCall("Internal_GetType", (void*)&ScriptTDistributionVector2::InternalGetType);
+		metaData.ScriptClass->AddInternalCall("Internal_GetMinConstant", (void*)&ScriptTDistributionVector2::InternalGetMinConstant);
+		metaData.ScriptClass->AddInternalCall("Internal_GetMaxConstant", (void*)&ScriptTDistributionVector2::InternalGetMaxConstant);
+		metaData.ScriptClass->AddInternalCall("Internal_GetMinCurve", (void*)&ScriptTDistributionVector2::InternalGetMinCurve);
+		metaData.ScriptClass->AddInternalCall("Internal_GetMaxCurve", (void*)&ScriptTDistributionVector2::InternalGetMaxCurve);
+		metaData.ScriptClass->AddInternalCall("Internal_Evaluate", (void*)&ScriptTDistributionVector2::InternalEvaluate);
+		metaData.ScriptClass->AddInternalCall("Internal_Evaluate0", (void*)&ScriptTDistributionVector2::InternalEvaluate0);
 
 	}
 
@@ -350,7 +350,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptTDistributionVector2>()) ScriptTDistributionVector2(managedInstance, value);
 		return managedInstance;
 	}

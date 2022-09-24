@@ -31,44 +31,44 @@ namespace bs
 	struct SceneInfo
 	{
 		// Cameras and render targets
-		Vector<RendererRenderTarget> renderTargets;
-		Vector<RendererView*> views;
-		UnorderedMap<const Camera*, UINT32> cameraToView;
+		Vector<RendererRenderTarget> RenderTargets;
+		Vector<RendererView*> Views;
+		UnorderedMap<const Camera*, UINT32> CameraToView;
 		
 		// Renderables
-		Vector<RendererRenderable*> renderables;
-		Vector<CullInfo> renderableCullInfos;
+		Vector<RendererRenderable*> Renderables;
+		Vector<CullInfo> RenderableCullInfos;
 
 		// Lights
-		Vector<RendererLight> directionalLights;
-		Vector<RendererLight> radialLights;
-		Vector<RendererLight> spotLights;
-		Vector<Sphere> radialLightWorldBounds;
-		Vector<Sphere> spotLightWorldBounds;
+		Vector<RendererLight> DirectionalLights;
+		Vector<RendererLight> RadialLights;
+		Vector<RendererLight> SpotLights;
+		Vector<Sphere> RadialLightWorldBounds;
+		Vector<Sphere> SpotLightWorldBounds;
 
 		// Reflection probes
-		Vector<RendererReflectionProbe> reflProbes;
-		Vector<Sphere> reflProbeWorldBounds;
-		Vector<bool> reflProbeCubemapArrayUsedSlots;
-		SPtr<Texture> reflProbeCubemapsTex;
+		Vector<RendererReflectionProbe> ReflProbes;
+		Vector<Sphere> ReflProbeWorldBounds;
+		Vector<bool> ReflProbeCubemapArrayUsedSlots;
+		SPtr<Texture> ReflProbeCubemapsTex;
 
 		// Light probes (indirect lighting)
-		LightProbes lightProbes;
+		LightProbes LightProbes;
 
 		// Particles
-		Vector<RendererParticles> particleSystems;
-		Vector<CullInfo> particleSystemCullInfos;
+		Vector<RendererParticles> ParticleSystems;
+		Vector<CullInfo> ParticleSystemCullInfos;
 
 		// Decals
-		Vector<RendererDecal> decals;
-		Vector<CullInfo> decalCullInfos;
+		Vector<RendererDecal> Decals;
+		Vector<CullInfo> DecalCullInfos;
 
 		// Sky
-		Skybox* skybox = nullptr;
+		Skybox* Skybox = nullptr;
 
 		// Buffers for various transient data that gets rebuilt every frame
 		//// Rebuilt every frame
-		mutable Vector<bool> renderableReady;
+		mutable Vector<bool> RenderableReady;
 	};
 
 	/** Contains information about the scene (e.g. renderables, lights, cameras) required by the renderer. */

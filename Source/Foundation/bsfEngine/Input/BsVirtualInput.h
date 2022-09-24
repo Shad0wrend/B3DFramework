@@ -31,26 +31,26 @@ namespace bs
 		/**	Data container for a single virtual button. */
 		struct ButtonData
 		{
-			VirtualButton button;
-			ButtonState state;
-			UINT64 timestamp;
-			UINT64 updateFrameIdx;
-			bool allowRepeat;
+			VirtualButton Button;
+			ButtonState State;
+			UINT64 Timestamp;
+			UINT64 UpdateFrameIdx;
+			bool AllowRepeat;
 		};
 
 		/**	Contains button data for a specific input device. */
 		struct DeviceData
 		{
-			Map<UINT32, ButtonData> cachedStates;
-			DynArray<UINT32> heldButtons;
+			Map<UINT32, ButtonData> CachedStates;
+			DynArray<UINT32> HeldButtons;
 		};
 
 		/**	Data container for a virtual button event. */
 		struct VirtualButtonEvent
 		{
-			VirtualButton button;
-			ButtonState state;
-			UINT32 deviceIdx;
+			VirtualButton Button;
+			ButtonState State;
+			UINT32 DeviceIdx;
 		};
 
 	public:
@@ -100,13 +100,13 @@ namespace bs
 		float GetAxisValue(const VirtualAxis& axis, UINT32 deviceIdx = 0) const;
 
 		/**	Triggered when a virtual button is pressed. */
-		Event<void(const VirtualButton&, UINT32 deviceIdx)> onButtonDown;
+		Event<void(const VirtualButton&, UINT32 deviceIdx)> OnButtonDown;
 
 		/**	Triggered when a virtual button is released. */
-		Event<void(const VirtualButton&, UINT32 deviceIdx)> onButtonUp;
+		Event<void(const VirtualButton&, UINT32 deviceIdx)> OnButtonUp;
 
 		/**	Triggered every frame when a virtual button is being held down. */
-		Event<void(const VirtualButton&, UINT32 deviceIdx)> onButtonHeld;
+		Event<void(const VirtualButton&, UINT32 deviceIdx)> OnButtonHeld;
 
 		/** @name Internal
 		 *  @{

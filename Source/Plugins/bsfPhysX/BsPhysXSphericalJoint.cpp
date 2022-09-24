@@ -23,15 +23,15 @@ namespace bs
 		:SphericalJoint(desc)
 	{
 		PxRigidActor* actor0 = nullptr;
-		if (desc.bodies[0].body != nullptr)
-			actor0 = static_cast<PhysXRigidbody*>(desc.bodies[0].body)->GetInternalInternal();
+		if (desc.Bodies[0].Body != nullptr)
+			actor0 = static_cast<PhysXRigidbody*>(desc.Bodies[0].Body)->GetInternalInternal();
 
 		PxRigidActor* actor1 = nullptr;
-		if (desc.bodies[1].body != nullptr)
-			actor1 = static_cast<PhysXRigidbody*>(desc.bodies[1].body)->GetInternalInternal();
+		if (desc.Bodies[1].Body != nullptr)
+			actor1 = static_cast<PhysXRigidbody*>(desc.Bodies[1].Body)->GetInternalInternal();
 
-		PxTransform tfrm0 = toPxTransform(desc.bodies[0].position, desc.bodies[0].rotation);
-		PxTransform tfrm1 = toPxTransform(desc.bodies[1].position, desc.bodies[1].rotation);
+		PxTransform tfrm0 = toPxTransform(desc.Bodies[0].Position, desc.Bodies[0].Rotation);
+		PxTransform tfrm1 = toPxTransform(desc.Bodies[1].Position, desc.Bodies[1].Rotation);
 
 		PxSphericalJoint* joint = PxSphericalJointCreate(*physx, actor0, tfrm0, actor1, tfrm1);
 		joint->userData = this;
@@ -40,13 +40,13 @@ namespace bs
 
 		PxSphericalJointFlags flags;
 
-		if (((UINT32)desc.flag & (UINT32)SphericalJointFlag::Limit) != 0)
+		if (((UINT32)desc.Flag & (UINT32)SphericalJointFlag::Limit) != 0)
 			flags |= PxSphericalJointFlag::eLIMIT_ENABLED;
 
 		joint->setSphericalJointFlags(flags);
 
 		// Calls to virtual methods are okay here
-		SetLimit(desc.limit);
+		SetLimit(desc.Limit);
 	}
 
 	PhysXSphericalJoint::~PhysXSphericalJoint()
@@ -59,22 +59,22 @@ namespace bs
 		PxJointLimitCone pxLimit = GetInternal()->getLimitCone();
 
 		LimitConeRange limit;
-		limit.yLimitAngle = pxLimit.yAngle;
-		limit.zLimitAngle = pxLimit.zAngle;
-		limit.contactDist = pxLimit.contactDistance;
-		limit.restitution = pxLimit.restitution;
-		limit.spring.stiffness = pxLimit.stiffness;
-		limit.spring.damping = pxLimit.damping;
+		limit.YLimitAngle = pxLimit.yAngle;
+		limit.ZLimitAngle = pxLimit.zAngle;
+		limit.ContactDist = pxLimit.contactDistance;
+		limit.Restitution = pxLimit.restitution;
+		limit.Spring.Stiffness = pxLimit.stiffness;
+		limit.Spring.Damping = pxLimit.damping;
 
 		return limit;
 	}
 
 	void PhysXSphericalJoint::SetLimit(const LimitConeRange& limit)
 	{
-		PxJointLimitCone pxLimit(limit.yLimitAngle.ValueRadians(), limit.zLimitAngle.ValueRadians(), limit.contactDist);
-		pxLimit.stiffness = limit.spring.stiffness;
-		pxLimit.damping = limit.spring.damping;
-		pxLimit.restitution = limit.restitution;
+		PxJointLimitCone pxLimit(limit.YLimitAngle.ValueRadians(), limit.ZLimitAngle.ValueRadians(), limit.ContactDist);
+		pxLimit.stiffness = limit.Spring.Stiffness;
+		pxLimit.damping = limit.Spring.Damping;
+		pxLimit.restitution = limit.Restitution;
 
 		GetInternal()->setLimitCone(pxLimit);
 	}

@@ -13,7 +13,7 @@ namespace bs { namespace ct
 	{
 		SPtr<GpuProgram> gpuProg;
 
-		switch (desc.type)
+		switch (desc.Type)
 		{
 		case GPT_VERTEX_PROGRAM:
 			gpuProg = bs_shared_ptr<D3D11GpuVertexProgram>(new (bs_alloc<D3D11GpuVertexProgram>())
@@ -52,7 +52,7 @@ namespace bs { namespace ct
 		SPtr<GpuProgram> gpuProg;
 
 		GPU_PROGRAM_DESC desc;
-		desc.type = type;
+		desc.Type = type;
 
 		switch (type)
 		{
@@ -110,7 +110,7 @@ namespace bs { namespace ct
 	SPtr<GpuProgramBytecode> D3D11HLSLProgramFactory::CompileBytecode(const GPU_PROGRAM_DESC& desc)
 	{
 		String hlslProfile;
-		switch(desc.type)
+		switch(desc.Type)
 		{
 		case GPT_FRAGMENT_PROGRAM:
 			hlslProfile = "ps_5_0";
@@ -145,8 +145,8 @@ namespace bs { namespace ct
 		ID3DBlob* microcode = nullptr;
 		ID3DBlob* messages = nullptr;
 
-		const String& source = desc.source;
-		const String& entryPoint = desc.entryPoint;
+		const String& source = desc.Source;
+		const String& entryPoint = desc.EntryPoint;
 
 		const D3D_SHADER_MACRO defines[] =
 		{
@@ -193,8 +193,8 @@ namespace bs { namespace ct
 		}
 
 		SPtr<GpuProgramBytecode> bytecode = bs_shared_ptr_new<GpuProgramBytecode>();
-		bytecode->compilerId = DIRECTX_COMPILER_ID;
-		bytecode->messages = compileMessage;
+		bytecode->CompilerId = DIRECTX_COMPILER_ID;
+		bytecode->Messages = compileMessage;
 
 		if (FAILED(hr))
 		{
@@ -204,18 +204,18 @@ namespace bs { namespace ct
 
 		if (microcode != nullptr)
 		{
-			bytecode->instructions.size = (UINT32)microcode->GetBufferSize();
-			bytecode->instructions.data = (UINT8*)bs_alloc(bytecode->instructions.size);
+			bytecode->Instructions.Size = (UINT32)microcode->GetBufferSize();
+			bytecode->Instructions.Data = (UINT8*)bs_alloc(bytecode->Instructions.Size);
 
-			memcpy(bytecode->instructions.data, microcode->GetBufferPointer(), bytecode->instructions.size);
+			memcpy(bytecode->Instructions.Data, microcode->GetBufferPointer(), bytecode->Instructions.Size);
 
 			D3D11HLSLParamParser parser;
-			bytecode->paramDesc = bs_shared_ptr_new<GpuParamDesc>();
+			bytecode->ParamDesc = bs_shared_ptr_new<GpuParamDesc>();
 
-			if (desc.type == GPT_VERTEX_PROGRAM)
-				parser.Parse(microcode, desc.type, *bytecode->paramDesc, &bytecode->vertexInput);
+			if (desc.Type == GPT_VERTEX_PROGRAM)
+				parser.Parse(microcode, desc.Type, *bytecode->ParamDesc, &bytecode->VertexInput);
 			else
-				parser.Parse(microcode, desc.type, *bytecode->paramDesc, nullptr);
+				parser.Parse(microcode, desc.Type, *bytecode->ParamDesc, nullptr);
 		}
 		
 		SAFE_RELEASE(microcode);

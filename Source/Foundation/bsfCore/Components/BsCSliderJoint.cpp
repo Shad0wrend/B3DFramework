@@ -38,15 +38,15 @@ namespace bs
 
 	LimitLinearRange CSliderJoint::GetLimit() const
 	{
-		return mDesc.limit;
+		return mDesc.Limit;
 	}
 
 	void CSliderJoint::SetLimit(const LimitLinearRange& limit)
 	{
-		if (mDesc.limit == limit)
+		if (mDesc.Limit == limit)
 			return;
 
-		mDesc.limit = limit;
+		mDesc.Limit = limit;
 
 		if (mInternal != nullptr)
 			GetInternalInternal()->SetLimit(limit);
@@ -54,14 +54,14 @@ namespace bs
 
 	void CSliderJoint::SetFlag(SliderJointFlag flag, bool enabled)
 	{
-		bool isEnabled = ((UINT32)mDesc.flag & (UINT32)flag) != 0;
+		bool isEnabled = ((UINT32)mDesc.Flag & (UINT32)flag) != 0;
 		if (isEnabled == enabled)
 			return;
 
 		if (enabled)
-			mDesc.flag = (SliderJointFlag)((UINT32)mDesc.flag | (UINT32)flag);
+			mDesc.Flag = (SliderJointFlag)((UINT32)mDesc.Flag | (UINT32)flag);
 		else
-			mDesc.flag = (SliderJointFlag)((UINT32)mDesc.flag & ~(UINT32)flag);
+			mDesc.Flag = (SliderJointFlag)((UINT32)mDesc.Flag & ~(UINT32)flag);
 
 		if (mInternal != nullptr)
 			GetInternalInternal()->SetFlag(flag, enabled);
@@ -69,7 +69,7 @@ namespace bs
 
 	bool CSliderJoint::HasFlag(SliderJointFlag flag) const
 	{
-		return ((UINT32)mDesc.flag & (UINT32)flag) != 0;
+		return ((UINT32)mDesc.Flag & (UINT32)flag) != 0;
 	}
 
 	SPtr<Joint> CSliderJoint::CreateInternal()

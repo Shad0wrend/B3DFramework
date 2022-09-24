@@ -19,22 +19,22 @@ namespace bs
 	private:
 		String& GetNamespace(ManagedResourceMetaData* obj)
 		{
-			return obj->typeNamespace;
+			return obj->TypeNamespace;
 		}
 
 		void SetNamespace(ManagedResourceMetaData* obj, String& val)
 		{
-			obj->typeNamespace = val;
+			obj->TypeNamespace = val;
 		}
 
 		String& GetTypename(ManagedResourceMetaData* obj)
 		{
-			return obj->typeName;
+			return obj->TypeName;
 		}
 
 		void SetTypename(ManagedResourceMetaData* obj, String& val)
 		{
-			obj->typeName = val;
+			obj->TypeName = val;
 		}
 
 	public:

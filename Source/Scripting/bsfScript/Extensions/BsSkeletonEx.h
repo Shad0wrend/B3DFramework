@@ -17,13 +17,13 @@ namespace bs
 	struct BS_SCRIPT_EXPORT(n:BoneInfo,pl:true) SkeletonBoneInfoEx
 	{
 		/** Unique name of the bone. */
-		String name;
+		String Name;
 
 		/** Index of the parent bone (within the relevant Skeleton object). -1 if root bone. */
-		int parent;
+		int Parent;
 
 		/** Inverse transform of the pose the skeleton was initially created in. */
-		Matrix4 invBindPose;
+		Matrix4 InvBindPose;
 	};
 
 	/** Extension class for Skeleton, for adding additional functionality for the script version of the class. */

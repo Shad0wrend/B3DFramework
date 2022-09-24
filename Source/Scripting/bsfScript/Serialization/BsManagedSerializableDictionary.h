@@ -19,8 +19,8 @@ namespace bs
 		ManagedSerializableDictionaryKeyValue(const SPtr<ManagedSerializableFieldData>& key,
 			const SPtr<ManagedSerializableFieldData>& value);
 
-		SPtr<ManagedSerializableFieldData> key;
-		SPtr<ManagedSerializableFieldData> value;
+		SPtr<ManagedSerializableFieldData> Key;
+		SPtr<ManagedSerializableFieldData> Value;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/

@@ -8,15 +8,15 @@ typedef struct tagMMAllocHeader MMAllocHeader;
 
 struct tagMMAllocHeader
 {
-	MMAllocHeader* next;
-	MMAllocHeader* prev;
+	MMAllocHeader* Next;
+	MMAllocHeader* Prev;
 };
 
 void* mmalloc_new_context()
 {
 	MMAllocHeader* header = (MMAllocHeader*)malloc(sizeof(MMAllocHeader));
-	header->next = 0;
-	header->prev = 0;
+	header->Next = 0;
+	header->Prev = 0;
 
 	return header;
 }
@@ -24,8 +24,8 @@ void* mmalloc_new_context()
 void mmalloc_free_context(void* context)
 {
 	MMAllocHeader* header = (MMAllocHeader*)context;
-	while (header->next != 0)
-		mmfree((char*)header->next + sizeof(MMAllocHeader));
+	while (header->Next != 0)
+		mmfree((char*)header->Next + sizeof(MMAllocHeader));
 
 	free(header);
 }
@@ -37,12 +37,12 @@ void* mmalloc(void* context, int size)
 	MMAllocHeader* header = (MMAllocHeader*)buffer;
 	MMAllocHeader* parent = (MMAllocHeader*)context;
 
-	header->next = parent->next;
-	if (parent->next)
-		parent->next->prev = header;
+	header->Next = parent->Next;
+	if (parent->Next)
+		parent->Next->Prev = header;
 
-	header->prev = parent;
-	parent->next = header;
+	header->Prev = parent;
+	parent->Next = header;
 
 	return (char*)buffer + sizeof(MMAllocHeader);
 }
@@ -52,11 +52,11 @@ void mmfree(void* ptr)
 	void* buffer = (char*)ptr - sizeof(MMAllocHeader);
 	MMAllocHeader* header = (MMAllocHeader*)buffer;
 
-	if (header->prev)
-		header->prev->next = header->next;
+	if (header->Prev)
+		header->Prev->Next = header->Next;
 
-	if (header->next)
-		header->next->prev = header->prev;
+	if (header->Next)
+		header->Next->Prev = header->Prev;
 
 	free(buffer);
 }

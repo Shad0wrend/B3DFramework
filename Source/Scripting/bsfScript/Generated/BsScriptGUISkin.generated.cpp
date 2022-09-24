@@ -19,13 +19,13 @@ namespace bs
 
 	void ScriptGUISkin::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptGUISkin::InternalGetRef);
-		metaData.scriptClass->AddInternalCall("Internal_HasStyle", (void*)&ScriptGUISkin::InternalHasStyle);
-		metaData.scriptClass->AddInternalCall("Internal_GetStyle", (void*)&ScriptGUISkin::InternalGetStyle);
-		metaData.scriptClass->AddInternalCall("Internal_SetStyle", (void*)&ScriptGUISkin::InternalSetStyle);
-		metaData.scriptClass->AddInternalCall("Internal_RemoveStyle", (void*)&ScriptGUISkin::InternalRemoveStyle);
-		metaData.scriptClass->AddInternalCall("Internal_GetStyleNames", (void*)&ScriptGUISkin::InternalGetStyleNames);
-		metaData.scriptClass->AddInternalCall("Internal_Create", (void*)&ScriptGUISkin::InternalCreate);
+		metaData.ScriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptGUISkin::InternalGetRef);
+		metaData.ScriptClass->AddInternalCall("Internal_HasStyle", (void*)&ScriptGUISkin::InternalHasStyle);
+		metaData.ScriptClass->AddInternalCall("Internal_GetStyle", (void*)&ScriptGUISkin::InternalGetStyle);
+		metaData.ScriptClass->AddInternalCall("Internal_SetStyle", (void*)&ScriptGUISkin::InternalSetStyle);
+		metaData.ScriptClass->AddInternalCall("Internal_RemoveStyle", (void*)&ScriptGUISkin::InternalRemoveStyle);
+		metaData.ScriptClass->AddInternalCall("Internal_GetStyleNames", (void*)&ScriptGUISkin::InternalGetStyleNames);
+		metaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptGUISkin::InternalCreate);
 
 	}
 
@@ -34,7 +34,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		return metaData.scriptClass->CreateInstance("bool", ctorParams);
+		return metaData.ScriptClass->CreateInstance("bool", ctorParams);
 	}
 	MonoObject* ScriptGUISkin::InternalGetRef(ScriptGUISkin* thisPtr)
 	{

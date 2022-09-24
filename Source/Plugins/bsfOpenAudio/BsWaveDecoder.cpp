@@ -105,9 +105,9 @@ namespace bs
 				if (mStream->Read(&bitDepth, sizeof(bitDepth)) != sizeof(bitDepth))
 					return false;
 
-				info.numChannels = numChannels;
-				info.sampleRate = sampleRate;
-				info.bitDepth = bitDepth;
+				info.NumChannels = numChannels;
+				info.SampleRate = sampleRate;
+				info.BitDepth = bitDepth;
 
 				if (bitDepth != 8 && bitDepth != 16 && bitDepth != 24 && bitDepth != 32)
 				{
@@ -153,7 +153,7 @@ namespace bs
 			// DATA chunk
 			else if (subChunkId[0] == 'd' && subChunkId[1] == 'a' && subChunkId[2] == 't' && subChunkId[3] == 'a')
 			{
-				info.numSamples = subChunkSize / mBytesPerSample;
+				info.NumSamples = subChunkSize / mBytesPerSample;
 				mDataOffset = (UINT32)mStream->Tell();
 
 				foundData = true;

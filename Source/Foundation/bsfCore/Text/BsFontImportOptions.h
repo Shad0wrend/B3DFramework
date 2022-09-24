@@ -26,11 +26,11 @@ namespace bs
 	{
 		CharRange() = default;
 		CharRange(UINT32 start, UINT32 end)
-			: start(start), end(end)
+			: Start(start), End(end)
 		{ }
 
-		UINT32 start = 0;
-		UINT32 end = 0;
+		UINT32 Start = 0;
+		UINT32 End = 0;
 	};
 
 	/**	Import options that allow you to control how is a font imported. */
@@ -41,27 +41,27 @@ namespace bs
 
 		/**	Determines font sizes that are to be imported. Sizes are in points. */
 		BS_SCRIPT_EXPORT()
-		Vector<UINT32> fontSizes = { 10 };
+		Vector<UINT32> FontSizes = { 10 };
 
 		/**	Determines character index ranges to import. Ranges are defined as unicode numbers. */
 		BS_SCRIPT_EXPORT()
-		Vector<CharRange> charIndexRanges = { CharRange(33, 166) }; // Most used ASCII characters
+		Vector<CharRange> CharIndexRanges = { CharRange(33, 166) }; // Most used ASCII characters
 
 		/**	Determines dots per inch scale that will be used when rendering the characters. */
 		BS_SCRIPT_EXPORT()
-		UINT32 dpi = 96;
+		UINT32 Dpi = 96;
 
 		/**	Determines the render mode used for rendering the characters into a bitmap. */
 		BS_SCRIPT_EXPORT()
-		FontRenderMode renderMode = FontRenderMode::HintedSmooth;
+		FontRenderMode RenderMode = FontRenderMode::HintedSmooth;
 
 		/**	Determines whether the bold font style should be used when rendering. */
 		BS_SCRIPT_EXPORT()
-		bool bold = false;
+		bool Bold = false;
 
 		/**	Determines whether the italic font style should be used when rendering. */
 		BS_SCRIPT_EXPORT()
-		bool italic = false;
+		bool Italic = false;
 
 		/** Creates a new import options object that allows you to customize how are fonts imported. */
 		BS_SCRIPT_EXPORT(ec:T)

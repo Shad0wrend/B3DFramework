@@ -26,7 +26,7 @@ namespace bs
 		UINT32 numBones = mSkeleton->GetNumBones();
 		for(UINT32 i = 0; i < numBones; i++)
 		{
-			if(mSkeleton->GetBoneInfo(i).name == name)
+			if(mSkeleton->GetBoneInfo(i).Name == name)
 			{
 				mMask.mIsDisabled[i] = !enabled;
 				break;

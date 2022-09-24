@@ -32,8 +32,8 @@ namespace bs
 		 */
 		static SPtr<ManagedSerializableFieldKey> Create(UINT16 typeId, UINT16 fieldId);
 
-		UINT16 mTypeId = 0;
-		UINT16 mFieldId = 0;
+		UINT16 MTypeId = 0;
+		UINT16 MFieldId = 0;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -145,8 +145,8 @@ namespace bs
 	public:
 		static SPtr<ManagedSerializableFieldDataEntry> Create(const SPtr<ManagedSerializableFieldKey>& key, const SPtr<ManagedSerializableFieldData>& value);
 
-		SPtr<ManagedSerializableFieldKey> mKey;
-		SPtr<ManagedSerializableFieldData> mValue;
+		SPtr<ManagedSerializableFieldKey> MKey;
+		SPtr<ManagedSerializableFieldData> MValue;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -180,7 +180,7 @@ namespace bs
 		/** @copydoc ManagedSerializableFieldData::getHash */
 		size_t GetHash() override;
 
-		bool value = false;
+		bool Value = false;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -214,7 +214,7 @@ namespace bs
 		/** @copydoc ManagedSerializableFieldData::getHash */
 		size_t GetHash() override;
 
-		wchar_t value = 0;
+		wchar_t Value = 0;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -248,7 +248,7 @@ namespace bs
 		/** @copydoc ManagedSerializableFieldData::getHash */
 		size_t GetHash() override;
 
-		INT8 value = 0;
+		INT8 Value = 0;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -282,7 +282,7 @@ namespace bs
 		/** @copydoc ManagedSerializableFieldData::getHash */
 		size_t GetHash() override;
 
-		UINT8 value = 0;
+		UINT8 Value = 0;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -316,7 +316,7 @@ namespace bs
 		/** @copydoc ManagedSerializableFieldData::getHash */
 		size_t GetHash() override;
 
-		INT16 value = 0;
+		INT16 Value = 0;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -350,7 +350,7 @@ namespace bs
 		/** @copydoc ManagedSerializableFieldData::getHash */
 		size_t GetHash() override;
 
-		UINT16 value = 0;
+		UINT16 Value = 0;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -384,7 +384,7 @@ namespace bs
 		/** @copydoc ManagedSerializableFieldData::getHash */
 		size_t GetHash() override;
 
-		INT32 value = 0;
+		INT32 Value = 0;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -418,7 +418,7 @@ namespace bs
 		/** @copydoc ManagedSerializableFieldData::getHash */
 		size_t GetHash() override;
 
-		UINT32 value = 0;
+		UINT32 Value = 0;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -452,7 +452,7 @@ namespace bs
 		/** @copydoc ManagedSerializableFieldData::getHash */
 		size_t GetHash() override;
 
-		INT64 value = 0;
+		INT64 Value = 0;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -486,7 +486,7 @@ namespace bs
 		/** @copydoc ManagedSerializableFieldData::getHash */
 		size_t GetHash() override;
 
-		UINT64 value = 0;
+		UINT64 Value = 0;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -520,7 +520,7 @@ namespace bs
 		/** @copydoc ManagedSerializableFieldData::getHash */
 		size_t GetHash() override;
 
-		float value = 0.0f;
+		float Value = 0.0f;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -554,7 +554,7 @@ namespace bs
 		/** @copydoc ManagedSerializableFieldData::getHash */
 		size_t GetHash() override;
 
-		double value = 0.0;
+		double Value = 0.0;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -588,8 +588,8 @@ namespace bs
 		/** @copydoc ManagedSerializableFieldData::getHash */
 		size_t GetHash() override;
 
-		WString value;
-		bool isNull = false;
+		WString Value;
+		bool IsNull = false;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -621,7 +621,7 @@ namespace bs
 		/** @copydoc ManagedSerializableFieldData::getHash */
 		size_t GetHash() override;
 
-		HResource value;
+		HResource Value;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -653,7 +653,7 @@ namespace bs
 		/** @copydoc ManagedSerializableFieldData::getHash */
 		size_t GetHash() override;
 
-		HGameObject value;
+		HGameObject Value;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -685,7 +685,7 @@ namespace bs
 		/** @copydoc ManagedSerializableFieldData::getHash */
 		size_t GetHash() override;
 
-		SPtr<IReflectable> value;
+		SPtr<IReflectable> Value;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -723,7 +723,7 @@ namespace bs
 		/** @copydoc ManagedSerializableFieldData::deserialize */
 		void Deserialize() override;
 
-		SPtr<ManagedSerializableObject> value;
+		SPtr<ManagedSerializableObject> Value;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -761,7 +761,7 @@ namespace bs
 		/** @copydoc ManagedSerializableFieldData::deserialize */
 		void Deserialize() override;
 
-		SPtr<ManagedSerializableArray> value;
+		SPtr<ManagedSerializableArray> Value;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -799,7 +799,7 @@ namespace bs
 		/** @copydoc ManagedSerializableFieldData::deserialize */
 		void Deserialize() override;
 
-		SPtr<ManagedSerializableList> value;
+		SPtr<ManagedSerializableList> Value;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -837,7 +837,7 @@ namespace bs
 		/** @copydoc ManagedSerializableFieldData::deserialize */
 		void Deserialize() override;
 
-		SPtr<ManagedSerializableDictionary> value;
+		SPtr<ManagedSerializableDictionary> Value;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/

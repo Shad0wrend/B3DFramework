@@ -193,10 +193,10 @@ namespace bs
 	/** Information about a builtin component wrapped as a script object. */
 	struct BuiltinComponentInfo
 	{
-		const ScriptMeta* metaData;
-		UINT32 typeId;
-		MonoClass* monoClass;
-		std::function<ScriptComponentBase*(const HComponent&)> createCallback;
+		const ScriptMeta* MetaData;
+		UINT32 TypeId;
+		MonoClass* MonoClass;
+		std::function<ScriptComponentBase*(const HComponent&)> CreateCallback;
 	};
 
 	/**	Types of resources accessible from script code. */
@@ -210,20 +210,20 @@ namespace bs
 	/** Information about a builtin resource wrapped as a script object. */
 	struct BuiltinResourceInfo
 	{
-		const ScriptMeta* metaData;
-		UINT32 typeId;
-		MonoClass* monoClass;
-		ScriptResourceType resType;
-		std::function<ScriptResourceBase*(const HResource&, MonoObject*)> createCallback;
+		const ScriptMeta* MetaData;
+		UINT32 TypeId;
+		MonoClass* MonoClass;
+		ScriptResourceType ResType;
+		std::function<ScriptResourceBase*(const HResource&, MonoObject*)> CreateCallback;
 	};
 
 	/** Information about a native reflectable object wrapped as a script object. */
 	struct ReflectableTypeInfo
 	{
-		const ScriptMeta* metaData;
-		UINT32 typeId;
-		MonoClass* monoClass;
-		std::function<MonoObject*(const SPtr<IReflectable>&)> createCallback;
+		const ScriptMeta* MetaData;
+		UINT32 TypeId;
+		MonoClass* MonoClass;
+		std::function<MonoObject*(const SPtr<IReflectable>&)> CreateCallback;
 	};
 
 }

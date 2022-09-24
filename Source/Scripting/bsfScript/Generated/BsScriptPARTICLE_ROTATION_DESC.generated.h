@@ -12,9 +12,9 @@ namespace bs
 {
 	struct __PARTICLE_ROTATION_DESCInterop
 	{
-		MonoObject* rotation;
-		MonoObject* rotation3D;
-		bool use3DRotation;
+		MonoObject* Rotation;
+		MonoObject* Rotation3D;
+		bool Use3DRotation;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptPARTICLE_ROTATION_DESC : public ScriptObject<ScriptPARTICLE_ROTATION_DESC>

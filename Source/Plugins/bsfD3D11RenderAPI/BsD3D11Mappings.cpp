@@ -399,10 +399,10 @@ namespace bs { namespace ct
 
 	void D3D11Mappings::Get(const Color& inColor, float* outColor)
 	{
-		outColor[0] = inColor.r;
-		outColor[1] = inColor.g;
-		outColor[2] = inColor.b;
-		outColor[3] = inColor.a;	
+		outColor[0] = inColor.R;
+		outColor[1] = inColor.G;
+		outColor[2] = inColor.B;
+		outColor[3] = inColor.A;	
 	}
 
 	PixelFormat D3D11Mappings::GetPf(DXGI_FORMAT pf)

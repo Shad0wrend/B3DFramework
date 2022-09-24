@@ -11,9 +11,9 @@ namespace bs
 {
 	struct __SkeletonBoneInfoExInterop
 	{
-		MonoString* name;
-		int32_t parent;
-		Matrix4 invBindPose;
+		MonoString* Name;
+		int32_t Parent;
+		Matrix4 InvBindPose;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptSkeletonBoneInfoEx : public ScriptObject<ScriptSkeletonBoneInfoEx>

@@ -25,7 +25,7 @@ namespace bs
 
 	template<bool Core>
 	TSHADER_DESC<Core>::TSHADER_DESC()
-		:queueSortType(QueueSortType::None), queuePriority(0), separablePasses(false), flags(0)
+		:QueueSortType(QueueSortType::None), QueuePriority(0), SeparablePasses(false), Flags(0)
 	{
 
 	}
@@ -33,28 +33,28 @@ namespace bs
 	template<bool Core>
 	void TSHADER_DESC<Core>::AddParameter(SHADER_DATA_PARAM_DESC paramDesc, UINT8* defaultValue)
 	{
-		if(paramDesc.type == GPDT_STRUCT && paramDesc.elementSize <= 0)
+		if(paramDesc.Type == GPDT_STRUCT && paramDesc.ElementSize <= 0)
 		{
 			BS_LOG(Error, Material, "You need to provide a non-zero element size for a struct parameter.");
 			return;
 		}
 
-		const auto iterFind = dataParams.find(paramDesc.name);
-		if(iterFind != dataParams.end())
+		const auto iterFind = DataParams.find(paramDesc.Name);
+		if(iterFind != DataParams.end())
 			return;
 
 		if (defaultValue != nullptr)
 		{
-			paramDesc.defaultValueIdx = (UINT32)dataDefaultValues.size();
-			UINT32 defaultValueSize = Shader::GetDataParamSize(paramDesc.type);
+			paramDesc.DefaultValueIdx = (UINT32)DataDefaultValues.size();
+			UINT32 defaultValueSize = Shader::GetDataParamSize(paramDesc.Type);
 
-			dataDefaultValues.resize(paramDesc.defaultValueIdx + defaultValueSize);
-			memcpy(&dataDefaultValues[paramDesc.defaultValueIdx], defaultValue, defaultValueSize);
+			DataDefaultValues.resize(paramDesc.DefaultValueIdx + defaultValueSize);
+			memcpy(&DataDefaultValues[paramDesc.DefaultValueIdx], defaultValue, defaultValueSize);
 		}
 		else
-			paramDesc.defaultValueIdx = (UINT32)-1;
+			paramDesc.DefaultValueIdx = (UINT32)-1;
 
-		dataParams[paramDesc.name] = paramDesc;
+		DataParams[paramDesc.Name] = paramDesc;
 	}
 
 	template<bool Core>
@@ -69,10 +69,10 @@ namespace bs
 	void TSHADER_DESC<Core>::AddParameter(SHADER_OBJECT_PARAM_DESC paramDesc, const SamplerStateType& defaultValue)
 	{
 		UINT32 defaultValueIdx = (UINT32)-1;
-		if (Shader::IsSampler(paramDesc.type) && defaultValue != nullptr)
+		if (Shader::IsSampler(paramDesc.Type) && defaultValue != nullptr)
 		{
-			defaultValueIdx = (UINT32)samplerDefaultValues.size();
-			samplerDefaultValues.push_back(defaultValue);
+			defaultValueIdx = (UINT32)SamplerDefaultValues.size();
+			SamplerDefaultValues.push_back(defaultValue);
 		}
 
 		AddParameterInternal(std::move(paramDesc), defaultValueIdx);
@@ -82,10 +82,10 @@ namespace bs
 	void TSHADER_DESC<Core>::AddParameter(SHADER_OBJECT_PARAM_DESC paramDesc, const TextureType& defaultValue)
 	{
 		UINT32 defaultValueIdx = (UINT32)-1;
-		if (Shader::IsTexture(paramDesc.type) && defaultValue != nullptr)
+		if (Shader::IsTexture(paramDesc.Type) && defaultValue != nullptr)
 		{
-			defaultValueIdx = (UINT32)textureDefaultValues.size();
-			textureDefaultValues.push_back(defaultValue);
+			defaultValueIdx = (UINT32)TextureDefaultValues.size();
+			TextureDefaultValues.push_back(defaultValue);
 		}
 
 		AddParameterInternal(std::move(paramDesc), defaultValueIdx);
@@ -94,34 +94,34 @@ namespace bs
 	template<bool Core>
 	void TSHADER_DESC<Core>::AddParameterInternal(SHADER_OBJECT_PARAM_DESC paramDesc, UINT32 defaultValueIdx)
 	{
-		Map<String, SHADER_OBJECT_PARAM_DESC>* DEST_LOOKUP[] = { &textureParams, &bufferParams, &samplerParams };
+		Map<String, SHADER_OBJECT_PARAM_DESC>* DEST_LOOKUP[] = { &TextureParams, &BufferParams, &SamplerParams };
 		UINT32 destIdx = 0;
-		if (Shader::IsBuffer(paramDesc.type))
+		if (Shader::IsBuffer(paramDesc.Type))
 			destIdx = 1;
-		else if (Shader::IsSampler(paramDesc.type))
+		else if (Shader::IsSampler(paramDesc.Type))
 			destIdx = 2;
 
 		Map<String, SHADER_OBJECT_PARAM_DESC>& paramsMap = *DEST_LOOKUP[destIdx];
 
-		auto iterFind = paramsMap.find(paramDesc.name);
+		auto iterFind = paramsMap.find(paramDesc.Name);
 		if (iterFind == paramsMap.end())
 		{
-			paramDesc.defaultValueIdx = defaultValueIdx;
-			paramsMap[paramDesc.name] = paramDesc;
+			paramDesc.DefaultValueIdx = defaultValueIdx;
+			paramsMap[paramDesc.Name] = paramDesc;
 		}
 		else
 		{
 			SHADER_OBJECT_PARAM_DESC& desc = iterFind->second;
 
 			// If same name but different properties, we ignore this param
-			if (desc.type != paramDesc.type || desc.rendererSemantic != paramDesc.rendererSemantic)
+			if (desc.Type != paramDesc.Type || desc.RendererSemantic != paramDesc.RendererSemantic)
 				return;
 
-			Vector<String>& gpuVariableNames = desc.gpuVariableNames;
+			Vector<String>& gpuVariableNames = desc.GpuVariableNames;
 			bool found = false;
 			for (UINT32 i = 0; i < (UINT32)gpuVariableNames.size(); i++)
 			{
-				if (gpuVariableNames[i] == paramDesc.gpuVariableName)
+				if (gpuVariableNames[i] == paramDesc.GpuVariableName)
 				{
 					found = true;
 					break;
@@ -129,7 +129,7 @@ namespace bs
 			}
 
 			if (!found)
-				gpuVariableNames.push_back(paramDesc.gpuVariableName);
+				gpuVariableNames.push_back(paramDesc.GpuVariableName);
 		}
 	}
 
@@ -138,28 +138,28 @@ namespace bs
 	{
 		SHADER_DATA_PARAM_DESC* paramDescData = nullptr;
 
-		const auto findIterData = dataParams.find(name);
-		if (findIterData != dataParams.end())
+		const auto findIterData = DataParams.find(name);
+		if (findIterData != DataParams.end())
 			paramDescData = &findIterData->second;
 
 		SHADER_OBJECT_PARAM_DESC* paramDescObj = nullptr;
 		if(!paramDescData)
 		{
-			const auto findIterTexture = textureParams.find(name);
-			if (findIterTexture != textureParams.end())
+			const auto findIterTexture = TextureParams.find(name);
+			if (findIterTexture != TextureParams.end())
 				paramDescObj = &findIterTexture->second;
 
 			if (!paramDescObj)
 			{
-				const auto findIterSampler = samplerParams.find(name);
-				if (findIterSampler != samplerParams.end())
+				const auto findIterSampler = SamplerParams.find(name);
+				if (findIterSampler != SamplerParams.end())
 					paramDescObj = &findIterSampler->second;
 			}
 
 			if (!paramDescObj)
 			{
-				const auto findIterBuffer = bufferParams.find(name);
-				if (findIterBuffer != bufferParams.end())
+				const auto findIterBuffer = BufferParams.find(name);
+				if (findIterBuffer != BufferParams.end())
 					paramDescObj = &findIterBuffer->second;
 			}
 		}
@@ -174,7 +174,7 @@ namespace bs
 			return;
 		}
 
-		if(attrib.type == ShaderParamAttributeType::SpriteUV)
+		if(attrib.Type == ShaderParamAttributeType::SpriteUV)
 		{
 			if(paramDescObj)
 			{
@@ -182,7 +182,7 @@ namespace bs
 				return;
 			}
 
-			if(paramDescData->type != GPDT_FLOAT4)
+			if(paramDescData->Type != GPDT_FLOAT4)
 			{
 				BS_LOG(Warning, Material, "SpriteUV attribute can only be applied to 4D vectors.");
 				return;
@@ -190,12 +190,12 @@ namespace bs
 		}
 
 		// Look for duplicate attributes
-		UINT32 curAttribIdx = paramDesc->attribIdx;
+		UINT32 curAttribIdx = paramDesc->AttribIdx;
 		bool found = false;
 		while(curAttribIdx != (UINT32)-1)
 		{
-			SHADER_PARAM_ATTRIBUTE& curAttrib = paramAttributes[curAttribIdx];
-			if(curAttrib.type == attrib.type)
+			SHADER_PARAM_ATTRIBUTE& curAttrib = ParamAttributes[curAttribIdx];
+			if(curAttrib.Type == attrib.Type)
 			{
 				curAttrib = attrib;
 
@@ -203,18 +203,18 @@ namespace bs
 				break;
 			}
 
-			curAttribIdx = curAttrib.nextParamIdx;
+			curAttribIdx = curAttrib.NextParamIdx;
 		}
 
 		if(!found)
 		{
-			const auto attribIdx = (UINT32)paramAttributes.size();
-			paramAttributes.emplace_back(attrib);
+			const auto attribIdx = (UINT32)ParamAttributes.size();
+			ParamAttributes.emplace_back(attrib);
 
-			if (paramDesc->attribIdx != (UINT32)-1)
-				paramAttributes.back().nextParamIdx = paramDesc->attribIdx;
+			if (paramDesc->AttribIdx != (UINT32)-1)
+				ParamAttributes.back().NextParamIdx = paramDesc->AttribIdx;
 
-			paramDesc->attribIdx = attribIdx;
+			paramDesc->AttribIdx = attribIdx;
 		}
 	}
 
@@ -223,12 +223,12 @@ namespace bs
 		StringID rendererSemantic)
 	{
 		SHADER_PARAM_BLOCK_DESC desc;
-		desc.name = name;
-		desc.shared = shared;
-		desc.usage = usage;
-		desc.rendererSemantic = rendererSemantic;
+		desc.Name = name;
+		desc.Shared = shared;
+		desc.Usage = usage;
+		desc.RendererSemantic = rendererSemantic;
 
-		paramBlocks[name] = desc;
+		ParamBlocks[name] = desc;
 	}
 
 	template struct TSHADER_DESC<false>;
@@ -251,20 +251,20 @@ namespace bs
 	template<bool Core>
 	GpuParamType TShader<Core>::GetParamType(const String& name) const
 	{
-		auto findIterData = mDesc.dataParams.find(name);
-		if (findIterData != mDesc.dataParams.end())
+		auto findIterData = mDesc.DataParams.find(name);
+		if (findIterData != mDesc.DataParams.end())
 			return GPT_DATA;
 
-		auto findIterTexture = mDesc.textureParams.find(name);
-		if (findIterTexture != mDesc.textureParams.end())
+		auto findIterTexture = mDesc.TextureParams.find(name);
+		if (findIterTexture != mDesc.TextureParams.end())
 			return GPT_TEXTURE;
 
-		auto findIterBuffer = mDesc.bufferParams.find(name);
-		if (findIterBuffer != mDesc.bufferParams.end())
+		auto findIterBuffer = mDesc.BufferParams.find(name);
+		if (findIterBuffer != mDesc.BufferParams.end())
 			return GPT_BUFFER;
 
-		auto findIterSampler = mDesc.samplerParams.find(name);
-		if (findIterSampler != mDesc.samplerParams.end())
+		auto findIterSampler = mDesc.SamplerParams.find(name);
+		if (findIterSampler != mDesc.SamplerParams.end())
 			return GPT_SAMPLER;
 
 		BS_EXCEPT(InternalErrorException, "Cannot find the parameter with the name: " + name);
@@ -274,8 +274,8 @@ namespace bs
 	template<bool Core>
 	const SHADER_DATA_PARAM_DESC& TShader<Core>::GetDataParamDesc(const String& name) const
 	{
-		auto findIterData = mDesc.dataParams.find(name);
-		if (findIterData != mDesc.dataParams.end())
+		auto findIterData = mDesc.DataParams.find(name);
+		if (findIterData != mDesc.DataParams.end())
 			return findIterData->second;
 
 		BS_EXCEPT(InternalErrorException, "Cannot find the parameter with the name: " + name);
@@ -286,8 +286,8 @@ namespace bs
 	template<bool Core>
 	const SHADER_OBJECT_PARAM_DESC& TShader<Core>::GetTextureParamDesc(const String& name) const
 	{
-		auto findIterObject = mDesc.textureParams.find(name);
-		if (findIterObject != mDesc.textureParams.end())
+		auto findIterObject = mDesc.TextureParams.find(name);
+		if (findIterObject != mDesc.TextureParams.end())
 			return findIterObject->second;
 
 		BS_EXCEPT(InternalErrorException, "Cannot find the parameter with the name: " + name);
@@ -298,8 +298,8 @@ namespace bs
 	template<bool Core>
 	const SHADER_OBJECT_PARAM_DESC& TShader<Core>::GetSamplerParamDesc(const String& name) const
 	{
-		auto findIterObject = mDesc.samplerParams.find(name);
-		if (findIterObject != mDesc.samplerParams.end())
+		auto findIterObject = mDesc.SamplerParams.find(name);
+		if (findIterObject != mDesc.SamplerParams.end())
 			return findIterObject->second;
 
 		BS_EXCEPT(InternalErrorException, "Cannot find the parameter with the name: " + name);
@@ -310,8 +310,8 @@ namespace bs
 	template<bool Core>
 	const SHADER_OBJECT_PARAM_DESC& TShader<Core>::GetBufferParamDesc(const String& name) const
 	{
-		auto findIterObject = mDesc.bufferParams.find(name);
-		if (findIterObject != mDesc.bufferParams.end())
+		auto findIterObject = mDesc.BufferParams.find(name);
+		if (findIterObject != mDesc.BufferParams.end())
 			return findIterObject->second;
 
 		BS_EXCEPT(InternalErrorException, "Cannot find the parameter with the name: " + name);
@@ -322,8 +322,8 @@ namespace bs
 	template<bool Core>
 	bool TShader<Core>::HasDataParam(const String& name) const
 	{
-		auto findIterData = mDesc.dataParams.find(name);
-		if (findIterData != mDesc.dataParams.end())
+		auto findIterData = mDesc.DataParams.find(name);
+		if (findIterData != mDesc.DataParams.end())
 			return true;
 
 		return false;
@@ -332,8 +332,8 @@ namespace bs
 	template<bool Core>
 	bool TShader<Core>::HasTextureParam(const String& name) const
 	{
-		auto findIterObject = mDesc.textureParams.find(name);
-		if (findIterObject != mDesc.textureParams.end())
+		auto findIterObject = mDesc.TextureParams.find(name);
+		if (findIterObject != mDesc.TextureParams.end())
 			return true;
 
 		return false;
@@ -342,8 +342,8 @@ namespace bs
 	template<bool Core>
 	bool TShader<Core>::HasSamplerParam(const String& name) const
 	{
-		auto findIterObject = mDesc.samplerParams.find(name);
-		if (findIterObject != mDesc.samplerParams.end())
+		auto findIterObject = mDesc.SamplerParams.find(name);
+		if (findIterObject != mDesc.SamplerParams.end())
 			return true;
 
 		return false;
@@ -352,8 +352,8 @@ namespace bs
 	template<bool Core>
 	bool TShader<Core>::HasBufferParam(const String& name) const
 	{
-		auto findIterObject = mDesc.bufferParams.find(name);
-		if (findIterObject != mDesc.bufferParams.end())
+		auto findIterObject = mDesc.BufferParams.find(name);
+		if (findIterObject != mDesc.BufferParams.end())
 			return true;
 
 		return false;
@@ -362,8 +362,8 @@ namespace bs
 	template<bool Core>
 	bool TShader<Core>::HasParamBlock(const String& name) const
 	{
-		auto findIterObject = mDesc.paramBlocks.find(name);
-		if (findIterObject != mDesc.paramBlocks.end())
+		auto findIterObject = mDesc.ParamBlocks.find(name);
+		if (findIterObject != mDesc.ParamBlocks.end())
 			return true;
 
 		return false;
@@ -372,8 +372,8 @@ namespace bs
 	template<bool Core>
 	typename TShader<Core>::TextureType TShader<Core>::GetDefaultTexture(UINT32 index) const
 	{
-		if (index < (UINT32)mDesc.textureDefaultValues.size())
-			return mDesc.textureDefaultValues[index];
+		if (index < (UINT32)mDesc.TextureDefaultValues.size())
+			return mDesc.TextureDefaultValues[index];
 
 		return TextureType();
 	}
@@ -381,8 +381,8 @@ namespace bs
 	template<bool Core>
 	typename TShader<Core>::SamplerStateType TShader<Core>::GetDefaultSampler(UINT32 index) const
 	{
-		if (index < (UINT32)mDesc.samplerDefaultValues.size())
-			return mDesc.samplerDefaultValues[index];
+		if (index < (UINT32)mDesc.SamplerDefaultValues.size())
+			return mDesc.SamplerDefaultValues[index];
 
 		return SamplerStateType();
 	}
@@ -390,8 +390,8 @@ namespace bs
 	template<bool Core>
 	UINT8* TShader<Core>::GetDefaultValue(UINT32 index) const
 	{
-		if (index < (UINT32)mDesc.dataDefaultValues.size())
-			return (UINT8*)&mDesc.dataDefaultValues[index];
+		if (index < (UINT32)mDesc.DataDefaultValues.size())
+			return (UINT8*)&mDesc.DataDefaultValues[index];
 
 		return nullptr;
 	}
@@ -400,7 +400,7 @@ namespace bs
 	Vector<SPtr<typename TShader<Core>::TechniqueType>> TShader<Core>::GetCompatibleTechniques() const
 	{
 		Vector<SPtr<TechniqueType>> output;
-		for (auto& technique : mDesc.techniques)
+		for (auto& technique : mDesc.Techniques)
 		{
 			if (technique->IsSupported())
 				output.push_back(technique);
@@ -414,7 +414,7 @@ namespace bs
 		const ShaderVariation& variation, bool exact) const
 	{
 		Vector<SPtr<TechniqueType>> output;
-		for (auto& technique : mDesc.techniques)
+		for (auto& technique : mDesc.Techniques)
 		{
 			if (technique->IsSupported() && technique->GetVariation().Matches(variation, exact))
 				output.push_back(technique);
@@ -444,13 +444,13 @@ namespace bs
 	void Shader::SetIncludeFiles(const Vector<String>& includes)
 	{
 		SPtr<ShaderMetaData> meta = std::static_pointer_cast<ShaderMetaData>(GetMetaData());
-		meta->includes = includes;
+		meta->Includes = includes;
 	}
 
 	SPtr<ct::CoreObject> Shader::CreateCore() const
 	{
 		Vector<SPtr<ct::Technique>> techniques;
-		for (auto& technique : mDesc.techniques)
+		for (auto& technique : mDesc.Techniques)
 			techniques.push_back(technique->GetCore());
 
 		ct::Shader* shaderCore = new (bs_alloc<ct::Shader>()) ct::Shader(mName, ConvertDesc(mDesc), mId);
@@ -463,56 +463,56 @@ namespace bs
 	ct::SHADER_DESC Shader::ConvertDesc(const SHADER_DESC& desc) const
 	{
 		ct::SHADER_DESC output;
-		output.dataParams = desc.dataParams;
-		output.textureParams = desc.textureParams;
-		output.samplerParams = desc.samplerParams;
-		output.bufferParams = desc.bufferParams;
-		output.paramBlocks = desc.paramBlocks;
-		output.paramAttributes = desc.paramAttributes;
+		output.DataParams = desc.DataParams;
+		output.TextureParams = desc.TextureParams;
+		output.SamplerParams = desc.SamplerParams;
+		output.BufferParams = desc.BufferParams;
+		output.ParamBlocks = desc.ParamBlocks;
+		output.ParamAttributes = desc.ParamAttributes;
 
-		output.dataDefaultValues = desc.dataDefaultValues;
+		output.DataDefaultValues = desc.DataDefaultValues;
 
-		output.samplerDefaultValues.resize(desc.samplerDefaultValues.size());
-		for (UINT32 i = 0; i < (UINT32)desc.samplerDefaultValues.size(); i++)
+		output.SamplerDefaultValues.resize(desc.SamplerDefaultValues.size());
+		for (UINT32 i = 0; i < (UINT32)desc.SamplerDefaultValues.size(); i++)
 		{
-			if (desc.samplerDefaultValues[i] != nullptr)
-				output.samplerDefaultValues[i] = desc.samplerDefaultValues[i]->GetCore();
+			if (desc.SamplerDefaultValues[i] != nullptr)
+				output.SamplerDefaultValues[i] = desc.SamplerDefaultValues[i]->GetCore();
 			else
-				output.samplerDefaultValues[i] = nullptr;
+				output.SamplerDefaultValues[i] = nullptr;
 		}
 
-		output.textureDefaultValues.resize(desc.textureDefaultValues.size());
-		for (UINT32 i = 0; i < (UINT32)desc.textureDefaultValues.size(); i++)
+		output.TextureDefaultValues.resize(desc.TextureDefaultValues.size());
+		for (UINT32 i = 0; i < (UINT32)desc.TextureDefaultValues.size(); i++)
 		{
-			if (desc.textureDefaultValues[i].IsLoaded())
-				output.textureDefaultValues[i] = desc.textureDefaultValues[i]->GetCore();
+			if (desc.TextureDefaultValues[i].IsLoaded())
+				output.TextureDefaultValues[i] = desc.TextureDefaultValues[i]->GetCore();
 			else
-				output.textureDefaultValues[i] = nullptr;
+				output.TextureDefaultValues[i] = nullptr;
 		}
 
-		output.queuePriority = desc.queuePriority;
-		output.queueSortType = desc.queueSortType;
-		output.separablePasses = desc.separablePasses;
-		output.flags = desc.flags;
+		output.QueuePriority = desc.QueuePriority;
+		output.QueueSortType = desc.QueueSortType;
+		output.SeparablePasses = desc.SeparablePasses;
+		output.Flags = desc.Flags;
 
-		for(auto& entry : desc.techniques)
+		for(auto& entry : desc.Techniques)
 		{
 			if(entry)
-				output.techniques.push_back(entry->GetCore());
+				output.Techniques.push_back(entry->GetCore());
 		}
 
-		for(auto& entry : desc.subShaders)
+		for(auto& entry : desc.SubShaders)
 		{
 			ct::SubShader subShader;
-			subShader.name = entry.name;
+			subShader.Name = entry.Name;
 			
-			if(entry.shader)
-				subShader.shader = entry.shader->GetCore();
+			if(entry.Shader)
+				subShader.Shader = entry.Shader->GetCore();
 
-			output.subShaders.push_back(subShader);
+			output.SubShaders.push_back(subShader);
 		}
 
-		output.variationParams = desc.variationParams;
+		output.VariationParams = desc.VariationParams;
 		
 		// Ignoring default values as they are not needed for syncing since
 		// they're initialized through the material.
@@ -521,7 +521,7 @@ namespace bs
 
 	void Shader::GetCoreDependencies(Vector<CoreObject*>& dependencies)
 	{
-		for (auto& technique : mDesc.techniques)
+		for (auto& technique : mDesc.Techniques)
 			dependencies.push_back(technique.get());
 	}
 
@@ -599,8 +599,8 @@ namespace bs
 		static const GpuDataParamInfos PARAM_SIZES;
 
 		UINT32 idx = (UINT32)type;
-		if (idx < sizeof(GpuParams::PARAM_SIZES.lookup))
-			return GpuParams::PARAM_SIZES.lookup[idx].size;
+		if (idx < sizeof(GpuParams::PARAM_SIZES.Lookup))
+			return GpuParams::PARAM_SIZES.Lookup[idx].Size;
 
 		return 0;
 	}

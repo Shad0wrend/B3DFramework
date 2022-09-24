@@ -22,10 +22,10 @@ namespace bs
 		assert((indexOffset + 6) <= meshData->GetNumIndices());
 
 		Vector<Vector2> points;
-		points.push_back(Vector2(area.x, area.y));
-		points.push_back(Vector2(area.x + area.width, area.y));
-		points.push_back(Vector2(area.x + area.width, area.y + area.height));
-		points.push_back(Vector2(area.x, area.y + area.height));	
+		points.push_back(Vector2(area.X, area.Y));
+		points.push_back(Vector2(area.X + area.Width, area.Y));
+		points.push_back(Vector2(area.X + area.Width, area.Y + area.Height));
+		points.push_back(Vector2(area.X, area.Y + area.Height));	
 
 		PixelSolidPolygon(points, positionData, vertexOffset, meshData->GetVertexDesc()->GetVertexStride(), indexData, indexOffset);
 	}
@@ -135,7 +135,7 @@ namespace bs
 			diff.Normalize();
 
 			// Flip 90 degrees
-			Vector2 normal(diff.y, -diff.x);
+			Vector2 normal(diff.Y, -diff.X);
 
 			prevPoints[0] = a - normal * width - diff * border;
 			prevPoints[1] = a + normal * width - diff * border;
@@ -162,8 +162,8 @@ namespace bs
 				diffNext.Normalize();
 
 				// Flip 90 degrees
-				Vector2 normalPrev(diffPrev.y, -diffPrev.x);
-				Vector2 normalNext(diffNext.y, -diffNext.x);
+				Vector2 normalPrev(diffPrev.Y, -diffPrev.X);
+				Vector2 normalNext(diffNext.Y, -diffNext.X);
 
 				Vector2 curPoints[2];
 
@@ -215,7 +215,7 @@ namespace bs
 			diff.Normalize();
 
 			// Flip 90 degrees
-			Vector2 normal(diff.y, -diff.x);
+			Vector2 normal(diff.Y, -diff.X);
 
 			Vector2 curPoints[2];
 			curPoints[0] = b - normal * width + diff * border;

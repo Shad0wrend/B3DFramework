@@ -257,18 +257,18 @@ namespace bs
 			:mIsUsed(false)
 		{ }
 
-		ButtonCode buttonCode; /**< Button code this event is referring to. */
-		UINT64 timestamp; /**< Timestamp in ticks when the event happened. */
-		UINT32 deviceIdx; /**< Index of the device that the event originated from. */
+		ButtonCode ButtonCode; /**< Button code this event is referring to. */
+		UINT64 Timestamp; /**< Timestamp in ticks when the event happened. */
+		UINT32 DeviceIdx; /**< Index of the device that the event originated from. */
 
 		/**	Query is the pressed button a keyboard button. */
-		bool IsKeyboard() const { return (buttonCode & 0xC0000000) == 0; }
+		bool IsKeyboard() const { return (ButtonCode & 0xC0000000) == 0; }
 
 		/** Query is the pressed button a mouse button. */
-		bool IsMouse() const { return (buttonCode & 0x80000000) != 0; }
+		bool IsMouse() const { return (ButtonCode & 0x80000000) != 0; }
 
 		/** Query is the pressed button a gamepad button. */
-		bool IsGamepad() const { return (buttonCode & 0x40000000) != 0; }
+		bool IsGamepad() const { return (ButtonCode & 0x40000000) != 0; }
 
 		/**
 		 * Check if the event has been marked as used. Internally this means nothing but caller might choose to ignore an
@@ -307,31 +307,31 @@ namespace bs
 	{
 	public:
 		PointerEvent()
-			: button(PointerEventButton::Left), type(PointerEventType::CursorMoved), shift(false)
-			, control(false), alt(false), mouseWheelScrollAmount(0.0f), mIsUsed(false)
+			: Button(PointerEventButton::Left), Type(PointerEventType::CursorMoved), Shift(false)
+			, Control(false), Alt(false), MouseWheelScrollAmount(0.0f), mIsUsed(false)
 		{
-			buttonStates[0] = false;
-			buttonStates[1] = false;
-			buttonStates[2] = false;
+			ButtonStates[0] = false;
+			ButtonStates[1] = false;
+			ButtonStates[2] = false;
 		}
 
-		Vector2I screenPos; /**< Screen position where the input event occurred. */
-		Vector2I delta; /**< Change in movement since last sent event. */
+		Vector2I ScreenPos; /**< Screen position where the input event occurred. */
+		Vector2I Delta; /**< Change in movement since last sent event. */
 		/** States of the pointer buttons (for example mouse buttons). */
-		bool buttonStates[(UINT32)PointerEventButton::Count];
+		bool ButtonStates[(UINT32)PointerEventButton::Count];
 		/**
 		 * Button that triggered the pointer event. Might be irrelevant depending on event type. (for example move events
 		 * don't correspond to a button.
 		 */
-		PointerEventButton button;
-		PointerEventType type; /**< Type of the pointer event. */
+		PointerEventButton Button;
+		PointerEventType Type; /**< Type of the pointer event. */
 
-		bool shift; /**< Is shift button on the keyboard being held down. */
-		bool control; /**< Is control button on the keyboard being held down. */
-		bool alt; /**< Is alt button on the keyboard being held down. */
+		bool Shift; /**< Is shift button on the keyboard being held down. */
+		bool Control; /**< Is control button on the keyboard being held down. */
+		bool Alt; /**< Is alt button on the keyboard being held down. */
 
 		/** If mouse wheel is being scrolled, what is the amount. Only relevant for move events. */
-		float mouseWheelScrollAmount;
+		float MouseWheelScrollAmount;
 
 		/**
 		 * Check if the event has been marked as used. Internally this means nothing but caller might choose to ignore an
@@ -365,7 +365,7 @@ namespace bs
 			:mIsUsed(false)
 		{ }
 
-		UINT32 textChar; /**< Character the that was input. */
+		UINT32 TextChar; /**< Character the that was input. */
 
 		/**
 		 * Check if the event has been marked as used. Internally this means nothing but caller might choose to ignore an

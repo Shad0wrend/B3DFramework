@@ -374,18 +374,18 @@ namespace bs
 
 	void CRigidbody::ProcessCollisionData(const CollisionDataRaw& data, CollisionData& output)
 	{
-		output.contactPoints = std::move(data.contactPoints);
+		output.ContactPoints = std::move(data.ContactPoints);
 
-		if (data.colliders[0] != nullptr)
+		if (data.Colliders[0] != nullptr)
 		{
-			CCollider* other = (CCollider*)data.colliders[0]->GetOwnerInternal(PhysicsOwnerType::Component);
-			output.collider[0] = static_object_cast<CCollider>(other->GetHandle());
+			CCollider* other = (CCollider*)data.Colliders[0]->GetOwnerInternal(PhysicsOwnerType::Component);
+			output.Collider[0] = static_object_cast<CCollider>(other->GetHandle());
 		}
 
-		if (data.colliders[1] != nullptr)
+		if (data.Colliders[1] != nullptr)
 		{
-			CCollider* other = (CCollider*)data.colliders[1]->GetOwnerInternal(PhysicsOwnerType::Component);
-			output.collider[1] = static_object_cast<CCollider>(other->GetHandle());
+			CCollider* other = (CCollider*)data.Colliders[1]->GetOwnerInternal(PhysicsOwnerType::Component);
+			output.Collider[1] = static_object_cast<CCollider>(other->GetHandle());
 		}
 	}
 
@@ -405,7 +405,7 @@ namespace bs
 		CollisionData hit;
 		ProcessCollisionData(data, hit);
 
-		onCollisionBegin(hit);
+		OnCollisionBegin(hit);
 	}
 
 	void CRigidbody::TriggerOnCollisionStay(const CollisionDataRaw& data)
@@ -413,7 +413,7 @@ namespace bs
 		CollisionData hit;
 		ProcessCollisionData(data, hit);
 
-		onCollisionStay(hit);
+		OnCollisionStay(hit);
 	}
 
 	void CRigidbody::TriggerOnCollisionEnd(const CollisionDataRaw& data)
@@ -421,7 +421,7 @@ namespace bs
 		CollisionData hit;
 		ProcessCollisionData(data, hit);
 
-		onCollisionEnd(hit);
+		OnCollisionEnd(hit);
 	}
 
 	void CRigidbody::OnInitialized()
@@ -450,9 +450,9 @@ namespace bs
 		CheckForNestedRigibody();
 #endif
 
-		mInternal->onCollisionBegin.Connect(std::bind(&CRigidbody::TriggerOnCollisionBegin, this, _1));
-		mInternal->onCollisionStay.Connect(std::bind(&CRigidbody::TriggerOnCollisionStay, this, _1));
-		mInternal->onCollisionEnd.Connect(std::bind(&CRigidbody::TriggerOnCollisionEnd, this, _1));
+		mInternal->OnCollisionBegin.Connect(std::bind(&CRigidbody::TriggerOnCollisionBegin, this, _1));
+		mInternal->OnCollisionStay.Connect(std::bind(&CRigidbody::TriggerOnCollisionStay, this, _1));
+		mInternal->OnCollisionEnd.Connect(std::bind(&CRigidbody::TriggerOnCollisionEnd, this, _1));
 
 		const Transform& tfrm = SO()->GetTransform();
 		mInternal->SetTransform(tfrm.GetPosition(), tfrm.GetRotation());

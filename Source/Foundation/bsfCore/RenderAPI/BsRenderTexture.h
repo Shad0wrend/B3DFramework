@@ -15,8 +15,8 @@ namespace bs
 	/**	Structure that describes a render texture color and depth/stencil surfaces. */
 	struct BS_CORE_EXPORT RENDER_TEXTURE_DESC
 	{
-		RENDER_SURFACE_DESC colorSurfaces[BS_MAX_MULTIPLE_RENDER_TARGETS];
-		RENDER_SURFACE_DESC depthStencilSurface;
+		RENDER_SURFACE_DESC ColorSurfaces[BS_MAX_MULTIPLE_RENDER_TARGETS];
+		RENDER_SURFACE_DESC DepthStencilSurface;
 	};
 
 	namespace ct { struct RENDER_TEXTURE_DESC; }
@@ -120,8 +120,8 @@ namespace bs
 	 */
 	struct BS_CORE_EXPORT RENDER_TEXTURE_DESC
 	{
-		RENDER_SURFACE_DESC colorSurfaces[BS_MAX_MULTIPLE_RENDER_TARGETS];
-		RENDER_SURFACE_DESC depthStencilSurface;
+		RENDER_SURFACE_DESC ColorSurfaces[BS_MAX_MULTIPLE_RENDER_TARGETS];
+		RENDER_SURFACE_DESC DepthStencilSurface;
 	};
 
 	/**
@@ -146,14 +146,14 @@ namespace bs
 		 *
 		 * @note	Be aware that you cannot bind a render texture for reading and writing at the same time.
 		 */
-		SPtr<Texture> GetColorTexture(UINT32 idx) const { return mDesc.colorSurfaces[idx].texture; }
+		SPtr<Texture> GetColorTexture(UINT32 idx) const { return mDesc.ColorSurfaces[idx].Texture; }
 
 		/**
 		 * Returns a depth/stencil surface texture you may bind as an input to an GPU program.
 		 *
 		 * @note	Be aware that you cannot bind a render texture for reading and writing at the same time.
 		 */
-		SPtr<Texture> GetDepthStencilTexture() const { return mDesc.depthStencilSurface.texture; }
+		SPtr<Texture> GetDepthStencilTexture() const { return mDesc.DepthStencilSurface.Texture; }
 
 		/**	Returns properties that describe the render texture. */
 		const RenderTextureProperties& GetProperties() const;

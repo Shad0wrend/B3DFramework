@@ -69,9 +69,9 @@ namespace bs
 		{
 			// Make sure tags match
 			bool foundMatch = true;
-			for(UINT32 j = 0; j < desc.numTags; j++)
+			for(UINT32 j = 0; j < desc.NumTags; j++)
 			{
-				if (!mTechniques[i]->HasTag(desc.tags[j]))
+				if (!mTechniques[i]->HasTag(desc.Tags[j]))
 				{
 					foundMatch = false;
 					break;
@@ -98,18 +98,18 @@ namespace bs
 				};
 
 				SearchResult matchesSearch = NoParam;
-				if(desc.variation)
+				if(desc.Variation)
 				{
-					const auto& searchVarParams = desc.variation->GetParams();
+					const auto& searchVarParams = desc.Variation->GetParams();
 					const auto findSearch = searchVarParams.find(param.first);
 					if(findSearch != searchVarParams.end())
-						matchesSearch = findSearch->second.i == param.second.i ? Matching : NotMatching;
+						matchesSearch = findSearch->second.I == param.second.I ? Matching : NotMatching;
 				}
 
 				SearchResult matchesInternal = NoParam;
 				const auto findInternal = internalVarParams.find(param.first);
 				if (findInternal != internalVarParams.end())
-					matchesInternal = findInternal->second.i == param.second.i ? Matching : NotMatching;
+					matchesInternal = findInternal->second.I == param.second.I ? Matching : NotMatching;
 
 				switch(matchesSearch)
 				{
@@ -120,7 +120,7 @@ namespace bs
 					default:
 					case NoParam:
 						// When it comes to parameters not part of the search, prefer those with 0 default value
-						currentScore += param.second.ui;
+						currentScore += param.second.Ui;
 						break;
 					case NotMatching:
 						foundMatch = false;
@@ -131,7 +131,7 @@ namespace bs
 					}
 					break;
 				case NotMatching:
-					if(desc.override)
+					if(desc.Override)
 					{
 						foundMatch = false;
 						break;
@@ -160,7 +160,7 @@ namespace bs
 						numMatchedSearchParams++;
 						break;
 						case NotMatching:
-						if(desc.override)
+						if(desc.Override)
 						{
 							numMatchedSearchParams++;
 							numMatchedInternalParams++;
@@ -183,9 +183,9 @@ namespace bs
 			if (!foundMatch)
 				continue;
 
-			if(desc.variation)
+			if(desc.Variation)
 			{
-				const auto& searchVarParams = desc.variation->GetParams();
+				const auto& searchVarParams = desc.Variation->GetParams();
 				if(numMatchedSearchParams != (UINT32)searchVarParams.size())
 					continue;
 			}
@@ -233,14 +233,14 @@ namespace bs
 				SearchResult matches = NoParam;
 				const auto findInternal = internalVarParams.find(param.first);
 				if (findInternal != internalVarParams.end())
-					matches = findInternal->second.i == param.second.i ? Matching : NotMatching;
+					matches = findInternal->second.I == param.second.I ? Matching : NotMatching;
 
 				switch(matches)
 				{
 				default:
 				case NoParam:
 					// When it comes to parameters not part of the search, prefer those with 0 default value
-					currentScore += param.second.ui;
+					currentScore += param.second.Ui;
 					break;
 				case NotMatching:
 					foundMatch = false;
@@ -406,79 +406,79 @@ namespace bs
 		const Map<String, SHADER_DATA_PARAM_DESC>& dataParams = mShader->GetDataParams();
 		for (auto& paramData : dataParams)
 		{
-			if (paramData.second.defaultValueIdx == (UINT32)-1)
+			if (paramData.second.DefaultValueIdx == (UINT32)-1)
 				continue;
 
-			UINT8* buffer = (UINT8*)mShader->GetDefaultValue(paramData.second.defaultValueIdx);
+			UINT8* buffer = (UINT8*)mShader->GetDefaultValue(paramData.second.DefaultValueIdx);
 			if (buffer == nullptr)
 				continue;
 
-			switch (paramData.second.type)
+			switch (paramData.second.Type)
 			{
 			case GPDT_FLOAT1:
-				SetParamValue<float>(paramData.first, buffer, paramData.second.arraySize);
+				SetParamValue<float>(paramData.first, buffer, paramData.second.ArraySize);
 				break;
 			case GPDT_FLOAT2:
-				SetParamValue<Vector2>(paramData.first, buffer, paramData.second.arraySize);
+				SetParamValue<Vector2>(paramData.first, buffer, paramData.second.ArraySize);
 				break;
 			case GPDT_FLOAT3:
-				SetParamValue<Vector3>(paramData.first, buffer, paramData.second.arraySize);
+				SetParamValue<Vector3>(paramData.first, buffer, paramData.second.ArraySize);
 				break;
 			case GPDT_FLOAT4:
-				SetParamValue<Vector4>(paramData.first, buffer, paramData.second.arraySize);
+				SetParamValue<Vector4>(paramData.first, buffer, paramData.second.ArraySize);
 				break;
 			case GPDT_MATRIX_2X2:
-				SetParamValue<Matrix2>(paramData.first, buffer, paramData.second.arraySize);
+				SetParamValue<Matrix2>(paramData.first, buffer, paramData.second.ArraySize);
 				break;
 			case GPDT_MATRIX_2X3:
-				SetParamValue<Matrix2x3>(paramData.first, buffer, paramData.second.arraySize);
+				SetParamValue<Matrix2x3>(paramData.first, buffer, paramData.second.ArraySize);
 				break;
 			case GPDT_MATRIX_2X4:
-				SetParamValue<Matrix2x4>(paramData.first, buffer, paramData.second.arraySize);
+				SetParamValue<Matrix2x4>(paramData.first, buffer, paramData.second.ArraySize);
 				break;
 			case GPDT_MATRIX_3X2:
-				SetParamValue<Matrix3x2>(paramData.first, buffer, paramData.second.arraySize);
+				SetParamValue<Matrix3x2>(paramData.first, buffer, paramData.second.ArraySize);
 				break;
 			case GPDT_MATRIX_3X3:
-				SetParamValue<Matrix3>(paramData.first, buffer, paramData.second.arraySize);
+				SetParamValue<Matrix3>(paramData.first, buffer, paramData.second.ArraySize);
 				break;
 			case GPDT_MATRIX_3X4:
-				SetParamValue<Matrix3x4>(paramData.first, buffer, paramData.second.arraySize);
+				SetParamValue<Matrix3x4>(paramData.first, buffer, paramData.second.ArraySize);
 				break;
 			case GPDT_MATRIX_4X2:
-				SetParamValue<Matrix4x2>(paramData.first, buffer, paramData.second.arraySize);
+				SetParamValue<Matrix4x2>(paramData.first, buffer, paramData.second.ArraySize);
 				break;
 			case GPDT_MATRIX_4X3:
-				SetParamValue<Matrix4x3>(paramData.first, buffer, paramData.second.arraySize);
+				SetParamValue<Matrix4x3>(paramData.first, buffer, paramData.second.ArraySize);
 				break;
 			case GPDT_MATRIX_4X4:
-				SetParamValue<Matrix4>(paramData.first, buffer, paramData.second.arraySize);
+				SetParamValue<Matrix4>(paramData.first, buffer, paramData.second.ArraySize);
 				break;
 			case GPDT_INT1:
-				SetParamValue<int>(paramData.first, buffer, paramData.second.arraySize);
+				SetParamValue<int>(paramData.first, buffer, paramData.second.ArraySize);
 				break;
 			case GPDT_INT2:
-				SetParamValue<Vector2I>(paramData.first, buffer, paramData.second.arraySize);
+				SetParamValue<Vector2I>(paramData.first, buffer, paramData.second.ArraySize);
 				break;
 			case GPDT_INT3:
-				SetParamValue<Vector3I>(paramData.first, buffer, paramData.second.arraySize);
+				SetParamValue<Vector3I>(paramData.first, buffer, paramData.second.ArraySize);
 				break;
 			case GPDT_INT4:
-				SetParamValue<Vector4I>(paramData.first, buffer, paramData.second.arraySize);
+				SetParamValue<Vector4I>(paramData.first, buffer, paramData.second.ArraySize);
 				break;
 			case GPDT_BOOL:
-				SetParamValue<int>(paramData.first, buffer, paramData.second.arraySize);
+				SetParamValue<int>(paramData.first, buffer, paramData.second.ArraySize);
 				break;
 			case GPDT_COLOR:
-				SetParamValue<Color>(paramData.first, buffer, paramData.second.arraySize);
+				SetParamValue<Color>(paramData.first, buffer, paramData.second.ArraySize);
 				break;
 			case GPDT_STRUCT:
 			{
 				TMaterialParamStruct<Core> param = GetParamStruct(paramData.first);
 
-				UINT32 elementSizeBytes = paramData.second.elementSize * sizeof(UINT32);
+				UINT32 elementSizeBytes = paramData.second.ElementSize * sizeof(UINT32);
 				UINT8* ptr = buffer;
-				for (UINT32 i = 0; i < paramData.second.arraySize; i++)
+				for (UINT32 i = 0; i < paramData.second.ArraySize; i++)
 				{
 					param.Set(ptr, elementSizeBytes, i);
 					ptr += elementSizeBytes;
@@ -493,20 +493,20 @@ namespace bs
 		const Map<String, SHADER_OBJECT_PARAM_DESC>& textureParams = mShader->GetTextureParams();
 		for (auto& param : textureParams)
 		{
-			if (param.second.defaultValueIdx == (UINT32)-1)
+			if (param.second.DefaultValueIdx == (UINT32)-1)
 				continue;
 
-			TextureType defaultTex = mShader->GetDefaultTexture(param.second.defaultValueIdx);
+			TextureType defaultTex = mShader->GetDefaultTexture(param.second.DefaultValueIdx);
 			GetParamTexture(param.first).Set(defaultTex);
 		}
 
 		const Map<String, SHADER_OBJECT_PARAM_DESC>& samplerParams = mShader->GetSamplerParams();
 		for (auto& param : samplerParams)
 		{
-			if (param.second.defaultValueIdx == (UINT32)-1)
+			if (param.second.DefaultValueIdx == (UINT32)-1)
 				continue;
 
-			SamplerStateType defaultSampler = mShader->GetDefaultSampler(param.second.defaultValueIdx);
+			SamplerStateType defaultSampler = mShader->GetDefaultSampler(param.second.DefaultValueIdx);
 			GetParamSamplerState(param.first).Set(defaultSampler);
 		}
 	}
@@ -852,27 +852,27 @@ namespace bs
 		auto& dataParams = mShader->GetDataParams();
 		for (auto& param : dataParams)
 		{
-			UINT32 arraySize = param.second.arraySize > 1 ? param.second.arraySize : 1;
+			UINT32 arraySize = param.second.ArraySize > 1 ? param.second.ArraySize : 1;
 
 			const MaterialParams::ParamData* paramData = nullptr;
-			auto result = params->GetParamData(param.first, MaterialParams::ParamType::Data, param.second.type, 0, &paramData);
+			auto result = params->GetParamData(param.first, MaterialParams::ParamType::Data, param.second.Type, 0, &paramData);
 
 			if (result != MaterialParams::GetParamResult::Success)
 				continue;
 
-			UINT32 elemsToCopy = std::min(arraySize, paramData->arraySize);
+			UINT32 elemsToCopy = std::min(arraySize, paramData->ArraySize);
 
-			auto& copyFunction = copyParamLookup[param.second.type];
+			auto& copyFunction = copyParamLookup[param.second.Type];
 			if (copyFunction != nullptr)
 				copyFunction(params, this, param.first, *paramData, elemsToCopy);
 			else
 			{
-				if(param.second.type == GPDT_STRUCT)
+				if(param.second.Type == GPDT_STRUCT)
 				{
 					TMaterialParamStruct<false> curParam = GetParamStruct(param.first);
 
 					UINT32 structSize = params->GetStructSize(*paramData);
-					if (param.second.elementSize != structSize)
+					if (param.second.ElementSize != structSize)
 						continue;
 
 					UINT8* structData = (UINT8*)bs_stack_alloc(structSize);
@@ -892,12 +892,12 @@ namespace bs
 				if(!isAnimated)
 					continue;
 
-				if(param.second.type == GPDT_FLOAT1)
+				if(param.second.Type == GPDT_FLOAT1)
 				{
 					TMaterialCurveParam<float, false> curParam = GetParamFloatCurve(param.first);
 					curParam.Set(params->GetCurveParam<float>(*paramData, i), i);
 				}
-				else if(param.second.type == GPDT_COLOR)
+				else if(param.second.Type == GPDT_COLOR)
 				{
 					TMaterialColorGradientParam<false> curParam = GetParamColorGradient(param.first);
 					curParam.Set(params->GetColorGradientParam(*paramData, i), i);

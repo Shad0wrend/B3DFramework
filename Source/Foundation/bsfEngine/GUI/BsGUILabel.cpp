@@ -30,17 +30,17 @@ namespace bs
 
 	void GUILabel::UpdateRenderElementsInternal()
 	{		
-		const HSpriteTexture& activeTex = GetStyleInternal()->normal.texture;
+		const HSpriteTexture& activeTex = GetStyleInternal()->Normal.Texture;
 		if (SpriteTexture::CheckIsLoaded(activeTex))
 		{
-			mImageDesc.texture = activeTex;
+			mImageDesc.Texture = activeTex;
 
 			if (mImageSprite == nullptr)
 				mImageSprite = bs_new<ImageSprite>();
 		}
 		else
 		{
-			mImageDesc.texture = nullptr;
+			mImageDesc.Texture = nullptr;
 
 			if (mImageSprite != nullptr)
 			{
@@ -51,27 +51,27 @@ namespace bs
 
 		if (mImageSprite != nullptr)
 		{
-			mImageDesc.width = mLayoutData.area.width;
-			mImageDesc.height = mLayoutData.area.height;
+			mImageDesc.Width = mLayoutData.Area.Width;
+			mImageDesc.Height = mLayoutData.Area.Height;
 
-			mImageDesc.borderLeft = GetStyleInternal()->border.left;
-			mImageDesc.borderRight = GetStyleInternal()->border.right;
-			mImageDesc.borderTop = GetStyleInternal()->border.top;
-			mImageDesc.borderBottom = GetStyleInternal()->border.bottom;
-			mImageDesc.color = GetTint();
+			mImageDesc.BorderLeft = GetStyleInternal()->Border.Left;
+			mImageDesc.BorderRight = GetStyleInternal()->Border.Right;
+			mImageDesc.BorderTop = GetStyleInternal()->Border.Top;
+			mImageDesc.BorderBottom = GetStyleInternal()->Border.Bottom;
+			mImageDesc.Color = GetTint();
 
 			mImageSprite->Update(mImageDesc, (UINT64)GetParentWidgetInternal());
 		}
 
-		mDesc.font = GetStyleInternal()->font;
-		mDesc.fontSize = GetStyleInternal()->fontSize;
-		mDesc.wordWrap = GetStyleInternal()->wordWrap;
-		mDesc.horzAlign = GetStyleInternal()->textHorzAlign;
-		mDesc.vertAlign = GetStyleInternal()->textVertAlign;
-		mDesc.width = mLayoutData.area.width;
-		mDesc.height = mLayoutData.area.height;
-		mDesc.text = mContent.text;
-		mDesc.color = GetTint() * GetStyleInternal()->normal.textColor;;
+		mDesc.Font = GetStyleInternal()->Font;
+		mDesc.FontSize = GetStyleInternal()->FontSize;
+		mDesc.WordWrap = GetStyleInternal()->WordWrap;
+		mDesc.HorzAlign = GetStyleInternal()->TextHorzAlign;
+		mDesc.VertAlign = GetStyleInternal()->TextVertAlign;
+		mDesc.Width = mLayoutData.Area.Width;
+		mDesc.Height = mLayoutData.Area.Height;
+		mDesc.Text = mContent.Text;
+		mDesc.Color = GetTint() * GetStyleInternal()->Normal.TextColor;;
 
 		mTextSprite->Update(mDesc, (UINT64)GetParentWidgetInternal());
 
@@ -102,7 +102,7 @@ namespace bs
 		UINT8* uvs = vertices + sizeof(Vector2);
 		UINT32 vertexStride = sizeof(Vector2) * 2;
 		UINT32 indexStride = sizeof(UINT32);
-		Vector2I layoutOffset = Vector2I(mLayoutData.area.x, mLayoutData.area.y) + offset;
+		Vector2I layoutOffset = Vector2I(mLayoutData.Area.X, mLayoutData.Area.Y) + offset;
 
 		UINT32 imageSpriteIdx = mTextSprite->GetNumRenderElements();
 
@@ -120,9 +120,9 @@ namespace bs
 
 	void GUILabel::SetContent(const GUIContent& content)
 	{
-		Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
+		Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).Optimal;
 		mContent = content;
-		Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
+		Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).Optimal;
 
 		if (origSize != newSize)
 			MarkLayoutAsDirtyInternal();

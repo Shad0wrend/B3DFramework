@@ -81,17 +81,17 @@ namespace bs
 		case FAR_LEFT_BOTTOM:
 			return mMinimum;
 		case FAR_LEFT_TOP:
-			return Vector3(mMinimum.x, mMaximum.y, mMinimum.z);
+			return Vector3(mMinimum.X, mMaximum.Y, mMinimum.Z);
 		case FAR_RIGHT_TOP:
-			return Vector3(mMaximum.x, mMaximum.y, mMinimum.z);
+			return Vector3(mMaximum.X, mMaximum.Y, mMinimum.Z);
 		case FAR_RIGHT_BOTTOM:
-			return Vector3(mMaximum.x, mMinimum.y, mMinimum.z);
+			return Vector3(mMaximum.X, mMinimum.Y, mMinimum.Z);
 		case NEAR_RIGHT_BOTTOM:
-			return Vector3(mMaximum.x, mMinimum.y, mMaximum.z);
+			return Vector3(mMaximum.X, mMinimum.Y, mMaximum.Z);
 		case NEAR_LEFT_BOTTOM:
-			return Vector3(mMinimum.x, mMinimum.y, mMaximum.z);
+			return Vector3(mMinimum.X, mMinimum.Y, mMaximum.Z);
 		case NEAR_LEFT_TOP:
-			return Vector3(mMinimum.x, mMaximum.y, mMaximum.z);
+			return Vector3(mMinimum.X, mMaximum.Y, mMaximum.Z);
 		case NEAR_RIGHT_TOP:
 			return mMaximum;
 		default:
@@ -135,31 +135,31 @@ namespace bs
 		Merge(matrix.MultiplyAffine(currentCorner));
 
 		// min,min,max
-		currentCorner.z = oldMax.z;
+		currentCorner.Z = oldMax.Z;
 		Merge(matrix.MultiplyAffine(currentCorner));
 
 		// min max max
-		currentCorner.y = oldMax.y;
+		currentCorner.Y = oldMax.Y;
 		Merge(matrix.MultiplyAffine(currentCorner));
 
 		// min max min
-		currentCorner.z = oldMin.z;
+		currentCorner.Z = oldMin.Z;
 		Merge(matrix.MultiplyAffine(currentCorner));
 
 		// max max min
-		currentCorner.x = oldMax.x;
+		currentCorner.X = oldMax.X;
 		Merge(matrix.MultiplyAffine(currentCorner));
 
 		// max max max
-		currentCorner.z = oldMax.z;
+		currentCorner.Z = oldMax.Z;
 		Merge(matrix.MultiplyAffine(currentCorner));
 
 		// max min max
-		currentCorner.y = oldMin.y;
+		currentCorner.Y = oldMin.Y;
 		Merge(matrix.MultiplyAffine(currentCorner));
 
 		// max min min
-		currentCorner.z = oldMin.z;
+		currentCorner.Z = oldMin.Z;
 		Merge(matrix.MultiplyAffine(currentCorner));
 	}
 
@@ -194,18 +194,18 @@ namespace bs
 	bool AABox::Intersects(const AABox& b2) const
 	{
 		// Use up to 6 separating planes
-		if (mMaximum.x < b2.mMinimum.x)
+		if (mMaximum.X < b2.mMinimum.X)
 			return false;
-		if (mMaximum.y < b2.mMinimum.y)
+		if (mMaximum.Y < b2.mMinimum.Y)
 			return false;
-		if (mMaximum.z < b2.mMinimum.z)
+		if (mMaximum.Z < b2.mMinimum.Z)
 			return false;
 
-		if (mMinimum.x > b2.mMaximum.x)
+		if (mMinimum.X > b2.mMaximum.X)
 			return false;
-		if (mMinimum.y > b2.mMaximum.y)
+		if (mMinimum.Y > b2.mMaximum.Y)
 			return false;
-		if (mMinimum.z > b2.mMaximum.z)
+		if (mMinimum.Z > b2.mMaximum.Z)
 			return false;
 
 		// Otherwise, must be intersecting
@@ -255,22 +255,22 @@ namespace bs
 		const Vector3& raydir = ray.GetDirection();
 
 		// Check origin inside first
-		if ((rayorig.x > min.x && rayorig.y > min.y && rayorig.z > min.z) && (rayorig.x < max.x && rayorig.y < max.y && rayorig.z < max.z))
+		if ((rayorig.X > min.X && rayorig.Y > min.Y && rayorig.Z > min.Z) && (rayorig.X < max.X && rayorig.Y < max.Y && rayorig.Z < max.Z))
 		{
 			return std::pair<bool, float>(true, 0.0f);
 		}
 
 		// Check each face in turn, only check closest 3
 		// Min x
-		if (rayorig.x <= min.x && raydir.x > 0)
+		if (rayorig.X <= min.X && raydir.X > 0)
 		{
-			t = (min.x - rayorig.x) / raydir.x;
+			t = (min.X - rayorig.X) / raydir.X;
 			if (t >= 0)
 			{
 				// Substitute t back into ray and check bounds and dist
 				hitpoint = rayorig + raydir * t;
-				if (hitpoint.y >= min.y && hitpoint.y <= max.y &&
-					hitpoint.z >= min.z && hitpoint.z <= max.z &&
+				if (hitpoint.Y >= min.Y && hitpoint.Y <= max.Y &&
+					hitpoint.Z >= min.Z && hitpoint.Z <= max.Z &&
 					(!hit || t < lowt))
 				{
 					hit = true;
@@ -279,15 +279,15 @@ namespace bs
 			}
 		}
 		// Max x
-		if (rayorig.x >= max.x && raydir.x < 0)
+		if (rayorig.X >= max.X && raydir.X < 0)
 		{
-			t = (max.x - rayorig.x) / raydir.x;
+			t = (max.X - rayorig.X) / raydir.X;
 			if (t >= 0)
 			{
 				// Substitute t back into ray and check bounds and dist
 				hitpoint = rayorig + raydir * t;
-				if (hitpoint.y >= min.y && hitpoint.y <= max.y &&
-					hitpoint.z >= min.z && hitpoint.z <= max.z &&
+				if (hitpoint.Y >= min.Y && hitpoint.Y <= max.Y &&
+					hitpoint.Z >= min.Z && hitpoint.Z <= max.Z &&
 					(!hit || t < lowt))
 				{
 					hit = true;
@@ -296,15 +296,15 @@ namespace bs
 			}
 		}
 		// Min y
-		if (rayorig.y <= min.y && raydir.y > 0)
+		if (rayorig.Y <= min.Y && raydir.Y > 0)
 		{
-			t = (min.y - rayorig.y) / raydir.y;
+			t = (min.Y - rayorig.Y) / raydir.Y;
 			if (t >= 0)
 			{
 				// Substitute t back into ray and check bounds and dist
 				hitpoint = rayorig + raydir * t;
-				if (hitpoint.x >= min.x && hitpoint.x <= max.x &&
-					hitpoint.z >= min.z && hitpoint.z <= max.z &&
+				if (hitpoint.X >= min.X && hitpoint.X <= max.X &&
+					hitpoint.Z >= min.Z && hitpoint.Z <= max.Z &&
 					(!hit || t < lowt))
 				{
 					hit = true;
@@ -313,15 +313,15 @@ namespace bs
 			}
 		}
 		// Max y
-		if (rayorig.y >= max.y && raydir.y < 0)
+		if (rayorig.Y >= max.Y && raydir.Y < 0)
 		{
-			t = (max.y - rayorig.y) / raydir.y;
+			t = (max.Y - rayorig.Y) / raydir.Y;
 			if (t >= 0)
 			{
 				// Substitute t back into ray and check bounds and dist
 				hitpoint = rayorig + raydir * t;
-				if (hitpoint.x >= min.x && hitpoint.x <= max.x &&
-					hitpoint.z >= min.z && hitpoint.z <= max.z &&
+				if (hitpoint.X >= min.X && hitpoint.X <= max.X &&
+					hitpoint.Z >= min.Z && hitpoint.Z <= max.Z &&
 					(!hit || t < lowt))
 				{
 					hit = true;
@@ -330,15 +330,15 @@ namespace bs
 			}
 		}
 		// Min z
-		if (rayorig.z <= min.z && raydir.z > 0)
+		if (rayorig.Z <= min.Z && raydir.Z > 0)
 		{
-			t = (min.z - rayorig.z) / raydir.z;
+			t = (min.Z - rayorig.Z) / raydir.Z;
 			if (t >= 0)
 			{
 				// Substitute t back into ray and check bounds and dist
 				hitpoint = rayorig + raydir * t;
-				if (hitpoint.x >= min.x && hitpoint.x <= max.x &&
-					hitpoint.y >= min.y && hitpoint.y <= max.y &&
+				if (hitpoint.X >= min.X && hitpoint.X <= max.X &&
+					hitpoint.Y >= min.Y && hitpoint.Y <= max.Y &&
 					(!hit || t < lowt))
 				{
 					hit = true;
@@ -347,15 +347,15 @@ namespace bs
 			}
 		}
 		// Max z
-		if (rayorig.z >= max.z && raydir.z < 0)
+		if (rayorig.Z >= max.Z && raydir.Z < 0)
 		{
-			t = (max.z - rayorig.z) / raydir.z;
+			t = (max.Z - rayorig.Z) / raydir.Z;
 			if (t >= 0)
 			{
 				// Substitute t back into ray and check bounds and dist
 				hitpoint = rayorig + raydir * t;
-				if (hitpoint.x >= min.x && hitpoint.x <= max.x &&
-					hitpoint.y >= min.y && hitpoint.y <= max.y &&
+				if (hitpoint.X >= min.X && hitpoint.X <= max.X &&
+					hitpoint.Y >= min.Y && hitpoint.Y <= max.Y &&
 					(!hit || t < lowt))
 				{
 					hit = true;
@@ -448,9 +448,9 @@ namespace bs
 	Vector3 AABox::GetCenter() const
 	{
 		return Vector3(
-			(mMaximum.x + mMinimum.x) * 0.5f,
-			(mMaximum.y + mMinimum.y) * 0.5f,
-			(mMaximum.z + mMinimum.z) * 0.5f);
+			(mMaximum.X + mMinimum.X) * 0.5f,
+			(mMaximum.Y + mMinimum.Y) * 0.5f,
+			(mMaximum.Z + mMinimum.Z) * 0.5f);
 	}
 
 	Vector3 AABox::GetSize() const
@@ -471,31 +471,31 @@ namespace bs
 	float AABox::GetVolume() const
 	{
 		Vector3 diff = mMaximum - mMinimum;
-		return diff.x * diff.y * diff.z;
+		return diff.X * diff.Y * diff.Z;
 	}
 
 	bool AABox::Contains(const Vector3& v) const
 	{
-		return mMinimum.x <= v.x && v.x <= mMaximum.x &&
-				mMinimum.y <= v.y && v.y <= mMaximum.y &&
-				mMinimum.z <= v.z && v.z <= mMaximum.z;
+		return mMinimum.X <= v.X && v.X <= mMaximum.X &&
+				mMinimum.Y <= v.Y && v.Y <= mMaximum.Y &&
+				mMinimum.Z <= v.Z && v.Z <= mMaximum.Z;
 	}
 
 	bool AABox::Contains(const Vector3& v, float extra) const
 	{
-		return (mMinimum.x - extra) <= v.x && v.x <= (mMaximum.x + extra) &&
-			   (mMinimum.y - extra) <= v.y && v.y <= (mMaximum.y + extra) &&
-			   (mMinimum.z - extra) <= v.z && v.z <= (mMaximum.z + extra);
+		return (mMinimum.X - extra) <= v.X && v.X <= (mMaximum.X + extra) &&
+			   (mMinimum.Y - extra) <= v.Y && v.Y <= (mMaximum.Y + extra) &&
+			   (mMinimum.Z - extra) <= v.Z && v.Z <= (mMaximum.Z + extra);
 	}
 
 	bool AABox::Contains(const AABox& other) const
 	{
-		return this->mMinimum.x <= other.mMinimum.x &&
-				this->mMinimum.y <= other.mMinimum.y &&
-				this->mMinimum.z <= other.mMinimum.z &&
-				other.mMaximum.x <= this->mMaximum.x &&
-				other.mMaximum.y <= this->mMaximum.y &&
-				other.mMaximum.z <= this->mMaximum.z;
+		return this->mMinimum.X <= other.mMinimum.X &&
+				this->mMinimum.Y <= other.mMinimum.Y &&
+				this->mMinimum.Z <= other.mMinimum.Z &&
+				other.mMaximum.X <= this->mMaximum.X &&
+				other.mMaximum.Y <= this->mMaximum.Y &&
+				other.mMaximum.Z <= this->mMaximum.Z;
 	}
 
 	bool AABox::operator== (const AABox& rhs) const

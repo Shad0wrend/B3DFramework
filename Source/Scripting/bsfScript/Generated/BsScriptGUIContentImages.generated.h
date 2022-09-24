@@ -10,14 +10,14 @@ namespace bs
 {
 	struct __GUIContentImagesInterop
 	{
-		MonoObject* normal;
-		MonoObject* hover;
-		MonoObject* active;
-		MonoObject* focused;
-		MonoObject* normalOn;
-		MonoObject* hoverOn;
-		MonoObject* activeOn;
-		MonoObject* focusedOn;
+		MonoObject* Normal;
+		MonoObject* Hover;
+		MonoObject* Active;
+		MonoObject* Focused;
+		MonoObject* NormalOn;
+		MonoObject* HoverOn;
+		MonoObject* ActiveOn;
+		MonoObject* FocusedOn;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptGUIContentImages : public ScriptObject<ScriptGUIContentImages>

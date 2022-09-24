@@ -24,17 +24,17 @@ namespace bs { namespace ct
 			mFullscreenQuadVDesc->AddVertElem(VET_FLOAT2, VES_TEXCOORD);
 
 			INDEX_BUFFER_DESC ibDesc;
-			ibDesc.indexType = IT_32BIT;
-			ibDesc.numIndices = 6;
-			ibDesc.usage = GBU_DYNAMIC;
+			ibDesc.IndexType = IT_32BIT;
+			ibDesc.NumIndices = 6;
+			ibDesc.Usage = GBU_DYNAMIC;
 
 			mFullScreenQuadIB = IndexBuffer::Create(ibDesc);
 			mFullscreenQuadVDecl = VertexDeclaration::Create(mFullscreenQuadVDesc);
 
 			VERTEX_BUFFER_DESC vbDesc;
-			vbDesc.vertexSize = mFullscreenQuadVDecl->GetProperties().GetVertexSize(0);
-			vbDesc.numVerts = 4 * NUM_QUAD_VB_SLOTS;
-			vbDesc.usage = GBU_DYNAMIC;
+			vbDesc.VertexSize = mFullscreenQuadVDecl->GetProperties().GetVertexSize(0);
+			vbDesc.NumVerts = 4 * NUM_QUAD_VB_SLOTS;
+			vbDesc.Usage = GBU_DYNAMIC;
 
 			mFullScreenQuadVB = VertexBuffer::Create(vbDesc);
 
@@ -198,7 +198,7 @@ namespace bs { namespace ct
 		RenderAPI& rapi = RenderAPI::Instance();
 		SPtr<VertexData> vertexData = mesh->GetVertexData();
 
-		rapi.SetVertexDeclaration(mesh->GetVertexData()->vertexDeclaration);
+		rapi.SetVertexDeclaration(mesh->GetVertexData()->VertexDeclaration);
 
 		auto& vertexBuffers = vertexData->GetBuffers();
 		if (vertexBuffers.size() > 0)
@@ -227,11 +227,11 @@ namespace bs { namespace ct
 		SPtr<IndexBuffer> indexBuffer = mesh->GetIndexBuffer();
 		rapi.SetIndexBuffer(indexBuffer);
 
-		rapi.SetDrawOperation(subMesh.drawOp);
+		rapi.SetDrawOperation(subMesh.DrawOp);
 
-		UINT32 indexCount = subMesh.indexCount;
-		rapi.DrawIndexed(subMesh.indexOffset + mesh->GetIndexOffset(), indexCount, mesh->GetVertexOffset(),
-			vertexData->vertexCount, numInstances);
+		UINT32 indexCount = subMesh.IndexCount;
+		rapi.DrawIndexed(subMesh.IndexOffset + mesh->GetIndexOffset(), indexCount, mesh->GetVertexOffset(),
+			vertexData->VertexCount, numInstances);
 
 		mesh->NotifyUsedOnGPUInternal();
 	}
@@ -271,11 +271,11 @@ namespace bs { namespace ct
 		SPtr<IndexBuffer> indexBuffer = mesh->GetIndexBuffer();
 		rapi.SetIndexBuffer(indexBuffer);
 
-		rapi.SetDrawOperation(subMesh.drawOp);
+		rapi.SetDrawOperation(subMesh.DrawOp);
 
-		UINT32 indexCount = subMesh.indexCount;
-		rapi.DrawIndexed(subMesh.indexOffset + mesh->GetIndexOffset(), indexCount, mesh->GetVertexOffset(),
-			vertexData->vertexCount, 1);
+		UINT32 indexCount = subMesh.IndexCount;
+		rapi.DrawIndexed(subMesh.IndexOffset + mesh->GetIndexOffset(), indexCount, mesh->GetVertexOffset(),
+			vertexData->VertexCount, 1);
 
 		mesh->NotifyUsedOnGPUInternal();
 	}
@@ -284,13 +284,13 @@ namespace bs { namespace ct
 	{
 		auto& texProps = texture->GetProperties();
 
-		Rect2 fArea((float)area.x, (float)area.y, (float)area.width, (float)area.height);
-		if (area.width == 0 || area.height == 0)
+		Rect2 fArea((float)area.X, (float)area.Y, (float)area.Width, (float)area.Height);
+		if (area.Width == 0 || area.Height == 0)
 		{
-			fArea.x = 0.0f;
-			fArea.y = 0.0f;
-			fArea.width = (float)texProps.GetWidth();
-			fArea.height = (float)texProps.GetHeight();
+			fArea.X = 0.0f;
+			fArea.Y = 0.0f;
+			fArea.Width = (float)texProps.GetWidth();
+			fArea.Height = (float)texProps.GetHeight();
 		}
 
 		BlitMat* blitMat = BlitMat::GetVariation(texProps.GetNumSamples(), !isDepth, isFiltered);
@@ -302,10 +302,10 @@ namespace bs { namespace ct
 		// Note: Consider drawing the quad using a single large triangle for possibly better performance
 		// Note2: Consider setting quad size in shader instead of rebuilding the mesh every time
 
-		const Conventions& rapiConventions = gCaps().conventions;
+		const Conventions& rapiConventions = gCaps().Conventions;
 		Vector3 vertices[4];
 
-		if (rapiConventions.ndcYAxis == Conventions::Axis::Down)
+		if (rapiConventions.NdcYAxis == Conventions::Axis::Down)
 		{
 			vertices[0] = Vector3(-1.0f, -1.0f, 0.0f);
 			vertices[1] = Vector3(1.0f, -1.0f, 0.0f);
@@ -321,25 +321,25 @@ namespace bs { namespace ct
 		}
 
 		Vector2 uvs[4];
-		if ((rapiConventions.uvYAxis == Conventions::Axis::Up) ^ flipUV)
+		if ((rapiConventions.UvYAxis == Conventions::Axis::Up) ^ flipUV)
 		{
-			uvs[0] = Vector2(uv.x, uv.y + uv.height);
-			uvs[1] = Vector2(uv.x + uv.width, uv.y + uv.height);
-			uvs[2] = Vector2(uv.x, uv.y);
-			uvs[3] = Vector2(uv.x + uv.width, uv.y);
+			uvs[0] = Vector2(uv.X, uv.Y + uv.Height);
+			uvs[1] = Vector2(uv.X + uv.Width, uv.Y + uv.Height);
+			uvs[2] = Vector2(uv.X, uv.Y);
+			uvs[3] = Vector2(uv.X + uv.Width, uv.Y);
 		}
 		else
 		{
-			uvs[0] = Vector2(uv.x, uv.y);
-			uvs[1] = Vector2(uv.x + uv.width, uv.y);
-			uvs[2] = Vector2(uv.x, uv.y + uv.height);
-			uvs[3] = Vector2(uv.x + uv.width, uv.y + uv.height);
+			uvs[0] = Vector2(uv.X, uv.Y);
+			uvs[1] = Vector2(uv.X + uv.Width, uv.Y);
+			uvs[2] = Vector2(uv.X, uv.Y + uv.Height);
+			uvs[3] = Vector2(uv.X + uv.Width, uv.Y + uv.Height);
 		}
 
 		for (int i = 0; i < 4; i++)
 		{
-			uvs[i].x /= (float)textureSize.x;
-			uvs[i].y /= (float)textureSize.y;
+			uvs[i].X /= (float)textureSize.X;
+			uvs[i].Y /= (float)textureSize.Y;
 		}
 
 		SPtr<MeshData> meshData = bs_shared_ptr_new<MeshData>(4, 6, mFullscreenQuadVDesc);
@@ -505,8 +505,8 @@ namespace bs { namespace ct
 		const TextureProperties& sourceProps = source->GetProperties();
 
 		Vector2I texSize(sourceProps.GetWidth(), sourceProps.GetHeight());
-		Vector2 invPixelSize(1.0f / texSize.x, 1.0f / texSize.y);
-		Vector2 invTwoPixelSize(2.0f / texSize.x, 2.0f / texSize.y);
+		Vector2 invPixelSize(1.0f / texSize.X, 1.0f / texSize.Y);
+		Vector2 invTwoPixelSize(2.0f / texSize.X, 2.0f / texSize.Y);
 
 		gBicubicUpsampleParamDef.gTint.Set(mParamBuffer, tint);
 		gBicubicUpsampleParamDef.gTextureSize.Set(mParamBuffer, texSize);

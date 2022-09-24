@@ -12,11 +12,11 @@ namespace bs
 {
 	struct __LimitConeRangeInterop
 	{
-		Radian yLimitAngle;
-		Radian zLimitAngle;
-		float contactDist;
-		float restitution;
-		Spring spring;
+		Radian YLimitAngle;
+		Radian ZLimitAngle;
+		float ContactDist;
+		float Restitution;
+		Spring Spring;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptLimitConeRange : public ScriptObject<ScriptLimitConeRange>

@@ -25,8 +25,8 @@ namespace bs { namespace ct
 			:mLastUsedFrame(lastUsedFrame)
 		{ }
 
-		SPtr<Texture> texture;
-		SPtr<RenderTexture> renderTexture;
+		SPtr<Texture> Texture;
+		SPtr<RenderTexture> RenderTexture;
 
 	private:
 		friend class GpuResourcePool;
@@ -41,7 +41,7 @@ namespace bs { namespace ct
 			:mLastUsedFrame(lastUsedFrame)
 		{ }
 
-		SPtr<GpuBuffer> buffer;
+		SPtr<GpuBuffer> Buffer;
 
 	private:
 		friend class GpuResourcePool;

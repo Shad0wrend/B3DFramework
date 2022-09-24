@@ -22,15 +22,15 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN_NAMED(type, mInfo.type, 0)
-			BS_RTTI_MEMBER_PLAIN_NAMED(radius, mInfo.radius, 1)
-			BS_RTTI_MEMBER_PLAIN_NAMED(angle, mInfo.angle, 2)
-			BS_RTTI_MEMBER_PLAIN_NAMED(length, mInfo.length, 3)
-			BS_RTTI_MEMBER_PLAIN_NAMED(thickness, mInfo.thickness, 4)
-			BS_RTTI_MEMBER_PLAIN_NAMED(arc, mInfo.arc, 5)
-			BS_RTTI_MEMBER_PLAIN_NAMED(modeType, mInfo.mode.type, 6)
-			BS_RTTI_MEMBER_PLAIN_NAMED(modeInterval, mInfo.mode.interval, 7)
-			BS_RTTI_MEMBER_PLAIN_NAMED(modeSpeed, mInfo.mode.speed, 8)
+			BS_RTTI_MEMBER_PLAIN_NAMED(type, mInfo.Type, 0)
+			BS_RTTI_MEMBER_PLAIN_NAMED(radius, mInfo.Radius, 1)
+			BS_RTTI_MEMBER_PLAIN_NAMED(angle, mInfo.Angle, 2)
+			BS_RTTI_MEMBER_PLAIN_NAMED(length, mInfo.Length, 3)
+			BS_RTTI_MEMBER_PLAIN_NAMED(thickness, mInfo.Thickness, 4)
+			BS_RTTI_MEMBER_PLAIN_NAMED(arc, mInfo.Arc, 5)
+			BS_RTTI_MEMBER_PLAIN_NAMED(modeType, mInfo.Mode.Type, 6)
+			BS_RTTI_MEMBER_PLAIN_NAMED(modeInterval, mInfo.Mode.Interval, 7)
+			BS_RTTI_MEMBER_PLAIN_NAMED(modeSpeed, mInfo.Mode.Speed, 8)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -56,8 +56,8 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN_NAMED(radius, mInfo.radius, 0)
-			BS_RTTI_MEMBER_PLAIN_NAMED(thickness, mInfo.thickness, 1)
+			BS_RTTI_MEMBER_PLAIN_NAMED(radius, mInfo.Radius, 0)
+			BS_RTTI_MEMBER_PLAIN_NAMED(thickness, mInfo.Thickness, 1)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -83,8 +83,8 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN_NAMED(radius, mInfo.radius, 0)
-			BS_RTTI_MEMBER_PLAIN_NAMED(thickness, mInfo.thickness, 1)
+			BS_RTTI_MEMBER_PLAIN_NAMED(radius, mInfo.Radius, 0)
+			BS_RTTI_MEMBER_PLAIN_NAMED(thickness, mInfo.Thickness, 1)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -110,8 +110,8 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN_NAMED(type, mInfo.type, 0)
-			BS_RTTI_MEMBER_PLAIN_NAMED(extents, mInfo.extents, 1)
+			BS_RTTI_MEMBER_PLAIN_NAMED(type, mInfo.Type, 0)
+			BS_RTTI_MEMBER_PLAIN_NAMED(extents, mInfo.Extents, 1)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -137,10 +137,10 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN_NAMED(length, mInfo.length, 0)
-			BS_RTTI_MEMBER_PLAIN_NAMED(modeType, mInfo.mode.type, 1)
-			BS_RTTI_MEMBER_PLAIN_NAMED(modeInterval, mInfo.mode.interval, 2)
-			BS_RTTI_MEMBER_PLAIN_NAMED(modeSpeed, mInfo.mode.speed, 3)
+			BS_RTTI_MEMBER_PLAIN_NAMED(length, mInfo.Length, 0)
+			BS_RTTI_MEMBER_PLAIN_NAMED(modeType, mInfo.Mode.Type, 1)
+			BS_RTTI_MEMBER_PLAIN_NAMED(modeInterval, mInfo.Mode.Interval, 2)
+			BS_RTTI_MEMBER_PLAIN_NAMED(modeSpeed, mInfo.Mode.Speed, 3)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -166,12 +166,12 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN_NAMED(radius, mInfo.radius, 0)
-			BS_RTTI_MEMBER_PLAIN_NAMED(thickness, mInfo.thickness, 1)
-			BS_RTTI_MEMBER_PLAIN_NAMED(arc, mInfo.arc, 2)
-			BS_RTTI_MEMBER_PLAIN_NAMED(modeType, mInfo.mode.type, 3)
-			BS_RTTI_MEMBER_PLAIN_NAMED(modeInterval, mInfo.mode.interval, 4)
-			BS_RTTI_MEMBER_PLAIN_NAMED(modeSpeed, mInfo.mode.speed, 5)
+			BS_RTTI_MEMBER_PLAIN_NAMED(radius, mInfo.Radius, 0)
+			BS_RTTI_MEMBER_PLAIN_NAMED(thickness, mInfo.Thickness, 1)
+			BS_RTTI_MEMBER_PLAIN_NAMED(arc, mInfo.Arc, 2)
+			BS_RTTI_MEMBER_PLAIN_NAMED(modeType, mInfo.Mode.Type, 3)
+			BS_RTTI_MEMBER_PLAIN_NAMED(modeInterval, mInfo.Mode.Interval, 4)
+			BS_RTTI_MEMBER_PLAIN_NAMED(modeSpeed, mInfo.Mode.Speed, 5)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -197,7 +197,7 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN_NAMED(extents, mInfo.extents, 0)
+			BS_RTTI_MEMBER_PLAIN_NAMED(extents, mInfo.Extents, 0)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -223,9 +223,9 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN_NAMED(type, mInfo.type, 0)
-			BS_RTTI_MEMBER_REFL_NAMED(mesh, mInfo.mesh, 1)
-			BS_RTTI_MEMBER_PLAIN_NAMED(sequential, mInfo.sequential, 2)
+			BS_RTTI_MEMBER_PLAIN_NAMED(type, mInfo.Type, 0)
+			BS_RTTI_MEMBER_REFL_NAMED(mesh, mInfo.Mesh, 1)
+			BS_RTTI_MEMBER_PLAIN_NAMED(sequential, mInfo.Sequential, 2)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -251,8 +251,8 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN_NAMED(type, mInfo.type, 0)
-			BS_RTTI_MEMBER_PLAIN_NAMED(sequential, mInfo.sequential, 1)
+			BS_RTTI_MEMBER_PLAIN_NAMED(type, mInfo.Type, 0)
+			BS_RTTI_MEMBER_PLAIN_NAMED(sequential, mInfo.Sequential, 1)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -286,10 +286,10 @@ namespace bs
 			{
 				BitLength size = 0;
 				size += rtti_write(VERSION, stream);
-				size += rtti_write(data.time, stream);
-				size += rtti_write(data.cycles, stream);
-				size += rtti_write(data.count, stream);
-				size += rtti_write(data.interval, stream);
+				size += rtti_write(data.Time, stream);
+				size += rtti_write(data.Cycles, stream);
+				size += rtti_write(data.Count, stream);
+				size += rtti_write(data.Interval, stream);
 
 				return size;
 			});
@@ -307,10 +307,10 @@ namespace bs
 			switch(version)
 			{
 			case 0:
-				rtti_read(data.time, stream);
-				rtti_read(data.cycles, stream);
-				rtti_read(data.count, stream);
-				rtti_read(data.interval, stream);
+				rtti_read(data.Time, stream);
+				rtti_read(data.Cycles, stream);
+				rtti_read(data.Count, stream);
+				rtti_read(data.Interval, stream);
 				break;
 			default:
 				BS_LOG(Error, RTTI, "Unknown version of ParticleBurst data. Unable to deserialize.");
@@ -324,10 +324,10 @@ namespace bs
 		static BitLength GetSize(const ParticleBurst& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength dataSize = sizeof(uint32_t);
-			dataSize += rtti_size(data.time);
-			dataSize += rtti_size(data.cycles);
-			dataSize += rtti_size(data.count);
-			dataSize += rtti_size(data.interval);
+			dataSize += rtti_size(data.Time);
+			dataSize += rtti_size(data.Cycles);
+			dataSize += rtti_size(data.Count);
+			dataSize += rtti_size(data.Interval);
 
 			rtti_add_header_size(dataSize, compress);
 			return dataSize;
@@ -378,8 +378,8 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN_NAMED(numCycles, mDesc.numCycles, 0)
-			BS_RTTI_MEMBER_PLAIN_NAMED(randomizeRow, mDesc.randomizeRow, 1)
+			BS_RTTI_MEMBER_PLAIN_NAMED(numCycles, mDesc.NumCycles, 0)
+			BS_RTTI_MEMBER_PLAIN_NAMED(randomizeRow, mDesc.RandomizeRow, 1)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -404,10 +404,10 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN_NAMED(center, mDesc.center, 0)
-			BS_RTTI_MEMBER_PLAIN_NAMED(velocity, mDesc.velocity, 1)
-			BS_RTTI_MEMBER_PLAIN_NAMED(radial, mDesc.radial, 2)
-			BS_RTTI_MEMBER_PLAIN_NAMED(worldSpace, mDesc.worldSpace, 3)
+			BS_RTTI_MEMBER_PLAIN_NAMED(center, mDesc.Center, 0)
+			BS_RTTI_MEMBER_PLAIN_NAMED(velocity, mDesc.Velocity, 1)
+			BS_RTTI_MEMBER_PLAIN_NAMED(radial, mDesc.Radial, 2)
+			BS_RTTI_MEMBER_PLAIN_NAMED(worldSpace, mDesc.WorldSpace, 3)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -432,8 +432,8 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN_NAMED(velocity, mDesc.velocity, 0)
-			BS_RTTI_MEMBER_PLAIN_NAMED(worldSpace, mDesc.worldSpace, 1)
+			BS_RTTI_MEMBER_PLAIN_NAMED(velocity, mDesc.Velocity, 0)
+			BS_RTTI_MEMBER_PLAIN_NAMED(worldSpace, mDesc.WorldSpace, 1)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -458,8 +458,8 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN_NAMED(force, mDesc.force, 0)
-			BS_RTTI_MEMBER_PLAIN_NAMED(worldSpace, mDesc.worldSpace, 1)
+			BS_RTTI_MEMBER_PLAIN_NAMED(force, mDesc.Force, 0)
+			BS_RTTI_MEMBER_PLAIN_NAMED(worldSpace, mDesc.WorldSpace, 1)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -484,7 +484,7 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN_NAMED(scale, mDesc.scale, 0)
+			BS_RTTI_MEMBER_PLAIN_NAMED(scale, mDesc.Scale, 0)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -509,7 +509,7 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN_NAMED(color, mDesc.color, 0)
+			BS_RTTI_MEMBER_PLAIN_NAMED(color, mDesc.Color, 0)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -534,9 +534,9 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN_NAMED(size, mDesc.size, 0)
-			BS_RTTI_MEMBER_PLAIN_NAMED(size3D, mDesc.size3D, 1)
-			BS_RTTI_MEMBER_PLAIN_NAMED(use3DSize, mDesc.use3DSize, 2)
+			BS_RTTI_MEMBER_PLAIN_NAMED(size, mDesc.Size, 0)
+			BS_RTTI_MEMBER_PLAIN_NAMED(size3D, mDesc.Size3D, 1)
+			BS_RTTI_MEMBER_PLAIN_NAMED(use3DSize, mDesc.Use3DSize, 2)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -561,9 +561,9 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN_NAMED(rotation, mDesc.rotation, 0)
-			BS_RTTI_MEMBER_PLAIN_NAMED(rotation3D, mDesc.rotation3D, 1)
-			BS_RTTI_MEMBER_PLAIN_NAMED(use3DRotation, mDesc.use3DRotation, 2)
+			BS_RTTI_MEMBER_PLAIN_NAMED(rotation, mDesc.Rotation, 0)
+			BS_RTTI_MEMBER_PLAIN_NAMED(rotation3D, mDesc.Rotation3D, 1)
+			BS_RTTI_MEMBER_PLAIN_NAMED(use3DRotation, mDesc.Use3DRotation, 2)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -589,12 +589,12 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN_NAMED(radius, mDesc.radius, 0)
-			BS_RTTI_MEMBER_PLAIN_NAMED(dampening, mDesc.dampening, 1)
-			BS_RTTI_MEMBER_PLAIN_NAMED(layer, mDesc.layer, 2)
-			BS_RTTI_MEMBER_PLAIN_NAMED(lifetimeLoss, mDesc.lifetimeLoss, 3)
-			BS_RTTI_MEMBER_PLAIN_NAMED(mode, mDesc.mode, 4)
-			BS_RTTI_MEMBER_PLAIN_NAMED(restitution, mDesc.restitution, 5)
+			BS_RTTI_MEMBER_PLAIN_NAMED(radius, mDesc.Radius, 0)
+			BS_RTTI_MEMBER_PLAIN_NAMED(dampening, mDesc.Dampening, 1)
+			BS_RTTI_MEMBER_PLAIN_NAMED(layer, mDesc.Layer, 2)
+			BS_RTTI_MEMBER_PLAIN_NAMED(lifetimeLoss, mDesc.LifetimeLoss, 3)
+			BS_RTTI_MEMBER_PLAIN_NAMED(mode, mDesc.Mode, 4)
+			BS_RTTI_MEMBER_PLAIN_NAMED(restitution, mDesc.Restitution, 5)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -619,16 +619,16 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_REFL(vectorField, 0)
-			BS_RTTI_MEMBER_PLAIN(intensity, 1)
-			BS_RTTI_MEMBER_PLAIN(tightness, 2)
-			BS_RTTI_MEMBER_PLAIN(scale, 3)
-			BS_RTTI_MEMBER_PLAIN(offset, 4)
-			BS_RTTI_MEMBER_PLAIN(rotation, 5)
-			BS_RTTI_MEMBER_PLAIN(rotationRate, 6)
-			BS_RTTI_MEMBER_PLAIN(tilingX, 7)
-			BS_RTTI_MEMBER_PLAIN(tilingY, 8)
-			BS_RTTI_MEMBER_PLAIN(tilingZ, 9)
+			BS_RTTI_MEMBER_REFL(VectorField, 0)
+			BS_RTTI_MEMBER_PLAIN(Intensity, 1)
+			BS_RTTI_MEMBER_PLAIN(Tightness, 2)
+			BS_RTTI_MEMBER_PLAIN(Scale, 3)
+			BS_RTTI_MEMBER_PLAIN(Offset, 4)
+			BS_RTTI_MEMBER_PLAIN(Rotation, 5)
+			BS_RTTI_MEMBER_PLAIN(RotationRate, 6)
+			BS_RTTI_MEMBER_PLAIN(TilingX, 7)
+			BS_RTTI_MEMBER_PLAIN(TilingY, 8)
+			BS_RTTI_MEMBER_PLAIN(TilingZ, 9)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -654,10 +654,10 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN(enabled, 0)
-			BS_RTTI_MEMBER_PLAIN(restitution, 1)
-			BS_RTTI_MEMBER_PLAIN(dampening, 2)
-			BS_RTTI_MEMBER_PLAIN(radiusScale, 3)
+			BS_RTTI_MEMBER_PLAIN(Enabled, 0)
+			BS_RTTI_MEMBER_PLAIN(Restitution, 1)
+			BS_RTTI_MEMBER_PLAIN(Dampening, 2)
+			BS_RTTI_MEMBER_PLAIN(RadiusScale, 3)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -683,12 +683,12 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_REFL(vectorField, 0)
-			BS_RTTI_MEMBER_PLAIN(colorOverLifetime, 1)
-			BS_RTTI_MEMBER_PLAIN(sizeScaleOverLifetime, 2)
-			BS_RTTI_MEMBER_REFL(depthCollision, 3)
-			BS_RTTI_MEMBER_PLAIN(acceleration, 4)
-			BS_RTTI_MEMBER_PLAIN(drag, 5)
+			BS_RTTI_MEMBER_REFL(VectorField, 0)
+			BS_RTTI_MEMBER_PLAIN(ColorOverLifetime, 1)
+			BS_RTTI_MEMBER_PLAIN(SizeScaleOverLifetime, 2)
+			BS_RTTI_MEMBER_REFL(DepthCollision, 3)
+			BS_RTTI_MEMBER_PLAIN(Acceleration, 4)
+			BS_RTTI_MEMBER_PLAIN(Drag, 5)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -714,22 +714,22 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN(simulationSpace, 0)
-			BS_RTTI_MEMBER_PLAIN(orientation, 1)
-			BS_RTTI_MEMBER_PLAIN(orientationLockY, 2)
-			BS_RTTI_MEMBER_PLAIN(orientationPlaneNormal, 3)
-			BS_RTTI_MEMBER_PLAIN(sortMode, 4)
-			BS_RTTI_MEMBER_PLAIN(duration, 5)
-			BS_RTTI_MEMBER_PLAIN(isLooping, 6)
-			BS_RTTI_MEMBER_PLAIN(maxParticles, 7)
-			BS_RTTI_MEMBER_PLAIN(useAutomaticSeed, 8)
+			BS_RTTI_MEMBER_PLAIN(SimulationSpace, 0)
+			BS_RTTI_MEMBER_PLAIN(Orientation, 1)
+			BS_RTTI_MEMBER_PLAIN(OrientationLockY, 2)
+			BS_RTTI_MEMBER_PLAIN(OrientationPlaneNormal, 3)
+			BS_RTTI_MEMBER_PLAIN(SortMode, 4)
+			BS_RTTI_MEMBER_PLAIN(Duration, 5)
+			BS_RTTI_MEMBER_PLAIN(IsLooping, 6)
+			BS_RTTI_MEMBER_PLAIN(MaxParticles, 7)
+			BS_RTTI_MEMBER_PLAIN(UseAutomaticSeed, 8)
 			//BS_RTTI_MEMBER_PLAIN(gravityScale, 9)
-			BS_RTTI_MEMBER_PLAIN(manualSeed, 10)
-			BS_RTTI_MEMBER_REFL(material, 11)
-			BS_RTTI_MEMBER_PLAIN(useAutomaticBounds, 12)
-			BS_RTTI_MEMBER_PLAIN(customBounds, 13)
-			BS_RTTI_MEMBER_PLAIN(renderMode, 14)
-			BS_RTTI_MEMBER_REFL(mesh, 15)
+			BS_RTTI_MEMBER_PLAIN(ManualSeed, 10)
+			BS_RTTI_MEMBER_REFL(Material, 11)
+			BS_RTTI_MEMBER_PLAIN(UseAutomaticBounds, 12)
+			BS_RTTI_MEMBER_PLAIN(CustomBounds, 13)
+			BS_RTTI_MEMBER_PLAIN(RenderMode, 14)
+			BS_RTTI_MEMBER_REFL(Mesh, 15)
 		BS_END_RTTI_MEMBERS
 
 	public:

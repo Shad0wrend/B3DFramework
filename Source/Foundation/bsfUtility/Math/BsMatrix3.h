@@ -20,8 +20,8 @@ namespace bs
 	private:
 		struct EulerAngleOrderData
 		{
-			int a, b, c;
-			float sign;
+			int A, B, C;
+			float Sign;
 		};
 
 	public:

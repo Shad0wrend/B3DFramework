@@ -44,24 +44,24 @@ namespace bs
 
 		{
 			TEXTURE_DESC cubemapDesc;
-			cubemapDesc.type = TEX_TYPE_CUBE_MAP;
-			cubemapDesc.format = PF_RG11B10F;
-			cubemapDesc.width = ct::IBLUtility::REFLECTION_CUBEMAP_SIZE;
-			cubemapDesc.height = ct::IBLUtility::REFLECTION_CUBEMAP_SIZE;
-			cubemapDesc.numMips = PixelUtil::GetMaxMipmaps(cubemapDesc.width, cubemapDesc.height, 1, cubemapDesc.format);
-			cubemapDesc.usage = TU_STATIC | TU_RENDERTARGET;
+			cubemapDesc.Type = TEX_TYPE_CUBE_MAP;
+			cubemapDesc.Format = PF_RG11B10F;
+			cubemapDesc.Width = ct::IBLUtility::REFLECTION_CUBEMAP_SIZE;
+			cubemapDesc.Height = ct::IBLUtility::REFLECTION_CUBEMAP_SIZE;
+			cubemapDesc.NumMips = PixelUtil::GetMaxMipmaps(cubemapDesc.Width, cubemapDesc.Height, 1, cubemapDesc.Format);
+			cubemapDesc.Usage = TU_STATIC | TU_RENDERTARGET;
 
 			mFilteredRadiance = Texture::CreatePtrInternal(cubemapDesc);
 		}
 
 		{
 			TEXTURE_DESC irradianceCubemapDesc;
-			irradianceCubemapDesc.type = TEX_TYPE_CUBE_MAP;
-			irradianceCubemapDesc.format = PF_RG11B10F;
-			irradianceCubemapDesc.width = ct::IBLUtility::IRRADIANCE_CUBEMAP_SIZE;
-			irradianceCubemapDesc.height = ct::IBLUtility::IRRADIANCE_CUBEMAP_SIZE;
-			irradianceCubemapDesc.numMips = 0;
-			irradianceCubemapDesc.usage = TU_STATIC | TU_RENDERTARGET;
+			irradianceCubemapDesc.Type = TEX_TYPE_CUBE_MAP;
+			irradianceCubemapDesc.Format = PF_RG11B10F;
+			irradianceCubemapDesc.Width = ct::IBLUtility::IRRADIANCE_CUBEMAP_SIZE;
+			irradianceCubemapDesc.Height = ct::IBLUtility::IRRADIANCE_CUBEMAP_SIZE;
+			irradianceCubemapDesc.NumMips = 0;
+			irradianceCubemapDesc.Usage = TU_STATIC | TU_RENDERTARGET;
 
 			mIrradiance = Texture::CreatePtrInternal(irradianceCubemapDesc);
 		}
@@ -92,7 +92,7 @@ namespace bs
 
 		mRendererTask = ct::RendererTask::Create("SkyboxFilter", filterSkybox);
 
-		mRendererTask->onComplete.Connect(renderComplete);
+		mRendererTask->OnComplete.Connect(renderComplete);
 		ct::gRenderer()->AddTask(mRendererTask);
 	}
 
@@ -155,7 +155,7 @@ namespace bs
 	CoreSyncData Skybox::SyncToCore(FrameAlloc* allocator)
 	{
 		UINT32 size = 0;
-		size += rtti_size(GetCoreDirtyFlags()).bytes;
+		size += rtti_size(GetCoreDirtyFlags()).Bytes;
 		size += csync_size((SceneActor&)*this);
 		size += csync_size(*this);
 

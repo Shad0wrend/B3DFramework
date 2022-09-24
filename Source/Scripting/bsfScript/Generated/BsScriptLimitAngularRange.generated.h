@@ -12,11 +12,11 @@ namespace bs
 {
 	struct __LimitAngularRangeInterop
 	{
-		Radian lower;
-		Radian upper;
-		float contactDist;
-		float restitution;
-		Spring spring;
+		Radian Lower;
+		Radian Upper;
+		float ContactDist;
+		float Restitution;
+		Spring Spring;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptLimitAngularRange : public ScriptObject<ScriptLimitAngularRange>

@@ -15,22 +15,22 @@ namespace bs
 	struct SerializableMemberStyle // Note: Must match C# struct SerializableFieldStyle
 	{
 		/** Returns the lower bound of the range. Only relevant if @see hasRange is true. */
-		float rangeMin = 0;
+		float RangeMin = 0;
 
 		/** Returns the upper bound of the range. Only relevant if @see hasRange is true. */
-		float rangeMax = 0;
+		float RangeMax = 0;
 
 		/** Minimum increment the field value can be increment/decremented by. Only relevant if @see hasStep is true. */
-		float stepIncrement = 0;
+		float StepIncrement = 0;
 
 		/** If true, number fields will be displayed as sliders instead of regular input boxes. */
-		bool displayAsSlider = false;
+		bool DisplayAsSlider = false;
 
 		/** Name of the category to display in inspector, if the member is part of one. */
-		MonoString* categoryName = nullptr;
+		MonoString* CategoryName = nullptr;
 
 		/** Determines ordering in inspector relative to other members. */
-		int order = 0; 
+		int Order = 0; 
 	};
 
 	/**	Interop class between C++ & CLR for ManagedSerializableFieldInfo. */

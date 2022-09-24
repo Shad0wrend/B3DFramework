@@ -43,8 +43,8 @@ namespace bs
 			// Make sure external IDs are broken because we do some ID matching when dealing with prefabs and keeping
 			// the invalid external references could cause it to match invalid objects in case they end up having the
 			// same ID.
-			BS_ASSERT(!coreContext->goState);
-			coreContext->goState = bs_shared_ptr_new<GameObjectDeserializationState>(GODM_BreakExternal | GODM_UseNewIds);
+			BS_ASSERT(!coreContext->GoState);
+			coreContext->GoState = bs_shared_ptr_new<GameObjectDeserializationState>(GODM_BreakExternal | GODM_UseNewIds);
 		}
 
 		const String& GetRttiName() 

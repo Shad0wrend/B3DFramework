@@ -15,8 +15,8 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedResourceMetaData : public ResourceMetaData
 	{
 	public:
-		String typeNamespace;
-		String typeName;
+		String TypeNamespace;
+		String TypeName;
 
 		/************************************************************************/
 		/* 								SERIALIZATION                      		*/

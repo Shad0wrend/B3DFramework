@@ -27,275 +27,275 @@ namespace bs
 	class BasicRowFiller
 	{
 	public:
-		UINT32 curIdx;
-		GUILayout& labelLayout;
-		GUILayout& contentLayout;
-		GUIWidget& widget;
-		Vector<ProfilerOverlay::BasicRow>& rows;
+		UINT32 CurIdx;
+		GUILayout& LabelLayout;
+		GUILayout& ContentLayout;
+		GUIWidget& Widget;
+		Vector<ProfilerOverlay::BasicRow>& Rows;
 
 		BasicRowFiller(Vector<ProfilerOverlay::BasicRow>& _rows, GUILayout& _labelLayout, GUILayout& _contentLayout, GUIWidget& _widget)
-			:curIdx(0), labelLayout(_labelLayout), contentLayout(_contentLayout), widget(_widget), rows(_rows)
+			:CurIdx(0), LabelLayout(_labelLayout), ContentLayout(_contentLayout), Widget(_widget), Rows(_rows)
 		{ }
 
 		~BasicRowFiller()
 		{
-			UINT32 excessEntries = (UINT32)rows.size() - curIdx;
+			UINT32 excessEntries = (UINT32)Rows.size() - CurIdx;
 			for(UINT32 i = 0; i < excessEntries; i++)
 			{
-				ProfilerOverlay::BasicRow& row = rows[curIdx + i];
+				ProfilerOverlay::BasicRow& row = Rows[CurIdx + i];
 
-				if (!row.disabled)
+				if (!row.Disabled)
 				{
-					row.labelLayout->SetVisible(false);
-					row.contentLayout->SetVisible(false);
-					row.disabled = true;
+					row.LabelLayout->SetVisible(false);
+					row.ContentLayout->SetVisible(false);
+					row.Disabled = true;
 				}
 			}
 
-			rows.resize(curIdx);
+			Rows.resize(CurIdx);
 		}
 
 		void AddData(UINT32 depth, const String& name, float pctOfParent, UINT32 numCalls, UINT64 numAllocs,
 			UINT64 numFrees, double avgTime, double totalTime, double avgSelfTime, double totalSelfTime)
 		{
-			if(curIdx >= rows.size())
+			if(CurIdx >= Rows.size())
 			{
-				rows.push_back(ProfilerOverlay::BasicRow());
+				Rows.push_back(ProfilerOverlay::BasicRow());
 
-				ProfilerOverlay::BasicRow& newRow = rows.back();
+				ProfilerOverlay::BasicRow& newRow = Rows.back();
 
-				newRow.disabled = false;
-				newRow.name = HEString(u8"{0}");
-				newRow.pctOfParent = HEString(u8"{0} %");
-				newRow.numCalls = HEString(u8"{0}");
-				newRow.numAllocs = HEString(u8"{0}");
-				newRow.numFrees = HEString(u8"{0}");
-				newRow.avgTime = HEString(u8"{0}");
-				newRow.totalTime = HEString(u8"{0}");
-				newRow.avgTimeSelf = HEString(u8"{0}");
-				newRow.totalTimeSelf = HEString(u8"{0}");
+				newRow.Disabled = false;
+				newRow.Name = HEString(u8"{0}");
+				newRow.PctOfParent = HEString(u8"{0} %");
+				newRow.NumCalls = HEString(u8"{0}");
+				newRow.NumAllocs = HEString(u8"{0}");
+				newRow.NumFrees = HEString(u8"{0}");
+				newRow.AvgTime = HEString(u8"{0}");
+				newRow.TotalTime = HEString(u8"{0}");
+				newRow.AvgTimeSelf = HEString(u8"{0}");
+				newRow.TotalTimeSelf = HEString(u8"{0}");
 
-				newRow.labelLayout = labelLayout.InsertNewElement<GUILayoutX>(labelLayout.GetNumChildren() - 1); // Insert before flexible space
-				newRow.contentLayout = contentLayout.InsertNewElement<GUILayoutX>(contentLayout.GetNumChildren() - 1); // Insert before flexible space
+				newRow.LabelLayout = LabelLayout.InsertNewElement<GUILayoutX>(LabelLayout.GetNumChildren() - 1); // Insert before flexible space
+				newRow.ContentLayout = ContentLayout.InsertNewElement<GUILayoutX>(ContentLayout.GetNumChildren() - 1); // Insert before flexible space
 
-				newRow.labelSpace = newRow.labelLayout->AddNewElement<GUIFixedSpace>(0);
-				newRow.guiName = newRow.labelLayout->AddNewElement<GUILabel>(newRow.name, GUIOptions(GUIOption::FixedWidth(200)));
+				newRow.LabelSpace = newRow.LabelLayout->AddNewElement<GUIFixedSpace>(0);
+				newRow.GuiName = newRow.LabelLayout->AddNewElement<GUILabel>(newRow.Name, GUIOptions(GUIOption::FixedWidth(200)));
 
-				newRow.guiPctOfParent = newRow.contentLayout->AddNewElement<GUILabel>(newRow.pctOfParent, GUIOptions(GUIOption::FixedWidth(50)));
-				newRow.guiNumCalls = newRow.contentLayout->AddNewElement<GUILabel>(newRow.numCalls, GUIOptions(GUIOption::FixedWidth(50)));
-				newRow.guiNumAllocs = newRow.contentLayout->AddNewElement<GUILabel>(newRow.numAllocs, GUIOptions(GUIOption::FixedWidth(50)));
-				newRow.guiNumFrees = newRow.contentLayout->AddNewElement<GUILabel>(newRow.numFrees, GUIOptions(GUIOption::FixedWidth(50)));
-				newRow.guiAvgTime = newRow.contentLayout->AddNewElement<GUILabel>(newRow.avgTime, GUIOptions(GUIOption::FixedWidth(60)));
-				newRow.guiTotalTime = newRow.contentLayout->AddNewElement<GUILabel>(newRow.totalTime, GUIOptions(GUIOption::FixedWidth(60)));
-				newRow.guiAvgTimeSelf = newRow.contentLayout->AddNewElement<GUILabel>(newRow.avgTimeSelf, GUIOptions(GUIOption::FixedWidth(100)));
-				newRow.guiTotalTimeSelf = newRow.contentLayout->AddNewElement<GUILabel>(newRow.totalTimeSelf, GUIOptions(GUIOption::FixedWidth(100)));
+				newRow.GuiPctOfParent = newRow.ContentLayout->AddNewElement<GUILabel>(newRow.PctOfParent, GUIOptions(GUIOption::FixedWidth(50)));
+				newRow.GuiNumCalls = newRow.ContentLayout->AddNewElement<GUILabel>(newRow.NumCalls, GUIOptions(GUIOption::FixedWidth(50)));
+				newRow.GuiNumAllocs = newRow.ContentLayout->AddNewElement<GUILabel>(newRow.NumAllocs, GUIOptions(GUIOption::FixedWidth(50)));
+				newRow.GuiNumFrees = newRow.ContentLayout->AddNewElement<GUILabel>(newRow.NumFrees, GUIOptions(GUIOption::FixedWidth(50)));
+				newRow.GuiAvgTime = newRow.ContentLayout->AddNewElement<GUILabel>(newRow.AvgTime, GUIOptions(GUIOption::FixedWidth(60)));
+				newRow.GuiTotalTime = newRow.ContentLayout->AddNewElement<GUILabel>(newRow.TotalTime, GUIOptions(GUIOption::FixedWidth(60)));
+				newRow.GuiAvgTimeSelf = newRow.ContentLayout->AddNewElement<GUILabel>(newRow.AvgTimeSelf, GUIOptions(GUIOption::FixedWidth(100)));
+				newRow.GuiTotalTimeSelf = newRow.ContentLayout->AddNewElement<GUILabel>(newRow.TotalTimeSelf, GUIOptions(GUIOption::FixedWidth(100)));
 			}
 			
-			ProfilerOverlay::BasicRow& row = rows[curIdx];
+			ProfilerOverlay::BasicRow& row = Rows[CurIdx];
 
-			row.labelSpace->SetSize(depth * 20);
-			row.name.SetParameter(0, name);
-			row.pctOfParent.SetParameter(0, toString(pctOfParent * 100.0f, 2, 0, ' ', std::ios::fixed));
-			row.numCalls.SetParameter(0, toString(numCalls));
-			row.numAllocs.SetParameter(0, toString(numAllocs));
-			row.numFrees.SetParameter(0, toString(numFrees));
-			row.avgTime.SetParameter(0, toString(avgTime, 2, 0, ' ', std::ios::fixed));
-			row.totalTime.SetParameter(0, toString(totalTime, 2, 0, ' ', std::ios::fixed));
-			row.avgTimeSelf.SetParameter(0, toString(avgSelfTime, 2, 0, ' ', std::ios::fixed));
-			row.totalTimeSelf.SetParameter(0, toString(totalSelfTime, 2, 0, ' ', std::ios::fixed));
+			row.LabelSpace->SetSize(depth * 20);
+			row.Name.SetParameter(0, name);
+			row.PctOfParent.SetParameter(0, toString(pctOfParent * 100.0f, 2, 0, ' ', std::ios::fixed));
+			row.NumCalls.SetParameter(0, toString(numCalls));
+			row.NumAllocs.SetParameter(0, toString(numAllocs));
+			row.NumFrees.SetParameter(0, toString(numFrees));
+			row.AvgTime.SetParameter(0, toString(avgTime, 2, 0, ' ', std::ios::fixed));
+			row.TotalTime.SetParameter(0, toString(totalTime, 2, 0, ' ', std::ios::fixed));
+			row.AvgTimeSelf.SetParameter(0, toString(avgSelfTime, 2, 0, ' ', std::ios::fixed));
+			row.TotalTimeSelf.SetParameter(0, toString(totalSelfTime, 2, 0, ' ', std::ios::fixed));
 
-			row.guiName->SetContent(row.name);
-			row.guiPctOfParent->SetContent(row.pctOfParent);
-			row.guiNumCalls->SetContent(row.numCalls);
-			row.guiNumAllocs->SetContent(row.numAllocs);
-			row.guiNumFrees->SetContent(row.numFrees);
-			row.guiAvgTime->SetContent(row.avgTime);
-			row.guiTotalTime->SetContent(row.totalTime);
-			row.guiAvgTimeSelf->SetContent(row.avgTimeSelf);
-			row.guiTotalTimeSelf->SetContent(row.totalTimeSelf);
+			row.GuiName->SetContent(row.Name);
+			row.GuiPctOfParent->SetContent(row.PctOfParent);
+			row.GuiNumCalls->SetContent(row.NumCalls);
+			row.GuiNumAllocs->SetContent(row.NumAllocs);
+			row.GuiNumFrees->SetContent(row.NumFrees);
+			row.GuiAvgTime->SetContent(row.AvgTime);
+			row.GuiTotalTime->SetContent(row.TotalTime);
+			row.GuiAvgTimeSelf->SetContent(row.AvgTimeSelf);
+			row.GuiTotalTimeSelf->SetContent(row.TotalTimeSelf);
 
-			if (row.disabled)
+			if (row.Disabled)
 			{
-				row.labelLayout->SetVisible(true);
-				row.contentLayout->SetVisible(true);
-				row.disabled = false;
+				row.LabelLayout->SetVisible(true);
+				row.ContentLayout->SetVisible(true);
+				row.Disabled = false;
 			}
 
-			curIdx++;
+			CurIdx++;
 		}
 	};
 
 	class PreciseRowFiller
 	{
 	public:
-		UINT32 curIdx;
-		GUILayout& labelLayout;
-		GUILayout& contentLayout;
-		GUIWidget& widget;
-		Vector<ProfilerOverlay::PreciseRow>& rows;
+		UINT32 CurIdx;
+		GUILayout& LabelLayout;
+		GUILayout& ContentLayout;
+		GUIWidget& Widget;
+		Vector<ProfilerOverlay::PreciseRow>& Rows;
 
 		PreciseRowFiller(Vector<ProfilerOverlay::PreciseRow>& _rows, GUILayout& _labelLayout, GUILayout& _contentLayout, GUIWidget& _widget)
-			:curIdx(0), labelLayout(_labelLayout), contentLayout(_contentLayout), widget(_widget), rows(_rows)
+			:CurIdx(0), LabelLayout(_labelLayout), ContentLayout(_contentLayout), Widget(_widget), Rows(_rows)
 		{ }
 
 		~PreciseRowFiller()
 		{
-			UINT32 excessEntries = (UINT32)rows.size() - curIdx;
+			UINT32 excessEntries = (UINT32)Rows.size() - CurIdx;
 			for(UINT32 i = 0; i < excessEntries; i++)
 			{
-				ProfilerOverlay::PreciseRow& row = rows[curIdx + i];
+				ProfilerOverlay::PreciseRow& row = Rows[CurIdx + i];
 
-				if (!row.disabled)
+				if (!row.Disabled)
 				{
-					row.labelLayout->SetVisible(false);
-					row.contentLayout->SetVisible(false);
-					row.disabled = true;
+					row.LabelLayout->SetVisible(false);
+					row.ContentLayout->SetVisible(false);
+					row.Disabled = true;
 				}
 			}
 
-			rows.resize(curIdx);
+			Rows.resize(CurIdx);
 		}
 
 		void AddData(UINT32 depth, const String& name, float pctOfParent, UINT32 numCalls, UINT64 numAllocs,
 			UINT64 numFrees, UINT64 avgCycles, UINT64 totalCycles, UINT64 avgSelfCycles, UINT64 totalSelfCycles)
 		{
-			if(curIdx >= rows.size())
+			if(CurIdx >= Rows.size())
 			{
-				rows.push_back(ProfilerOverlay::PreciseRow());
+				Rows.push_back(ProfilerOverlay::PreciseRow());
 
-				ProfilerOverlay::PreciseRow& newRow = rows.back();
+				ProfilerOverlay::PreciseRow& newRow = Rows.back();
 
-				newRow.disabled = false;
-				newRow.name = HEString(u8"{0}");
-				newRow.pctOfParent = HEString(u8"{0}");
-				newRow.numCalls = HEString(u8"{0}");
-				newRow.numAllocs = HEString(u8"{0}");
-				newRow.numFrees = HEString(u8"{0}");
-				newRow.avgCycles = HEString(u8"{0}");
-				newRow.totalCycles = HEString(u8"{0}");
-				newRow.avgCyclesSelf = HEString(u8"{0}");
-				newRow.totalCyclesSelf = HEString(u8"{0}");
+				newRow.Disabled = false;
+				newRow.Name = HEString(u8"{0}");
+				newRow.PctOfParent = HEString(u8"{0}");
+				newRow.NumCalls = HEString(u8"{0}");
+				newRow.NumAllocs = HEString(u8"{0}");
+				newRow.NumFrees = HEString(u8"{0}");
+				newRow.AvgCycles = HEString(u8"{0}");
+				newRow.TotalCycles = HEString(u8"{0}");
+				newRow.AvgCyclesSelf = HEString(u8"{0}");
+				newRow.TotalCyclesSelf = HEString(u8"{0}");
 
-				newRow.labelLayout = labelLayout.InsertNewElement<GUILayoutX>(labelLayout.GetNumChildren() - 1); // Insert before flexible space
-				newRow.contentLayout = contentLayout.InsertNewElement<GUILayoutX>(contentLayout.GetNumChildren() - 1); // Insert before flexible space
+				newRow.LabelLayout = LabelLayout.InsertNewElement<GUILayoutX>(LabelLayout.GetNumChildren() - 1); // Insert before flexible space
+				newRow.ContentLayout = ContentLayout.InsertNewElement<GUILayoutX>(ContentLayout.GetNumChildren() - 1); // Insert before flexible space
 
-				newRow.labelSpace = newRow.labelLayout->AddNewElement<GUIFixedSpace>(0);
-				newRow.guiName = newRow.labelLayout->AddNewElement<GUILabel>(newRow.name, GUIOptions(GUIOption::FixedWidth(200)));
+				newRow.LabelSpace = newRow.LabelLayout->AddNewElement<GUIFixedSpace>(0);
+				newRow.GuiName = newRow.LabelLayout->AddNewElement<GUILabel>(newRow.Name, GUIOptions(GUIOption::FixedWidth(200)));
 
-				newRow.guiPctOfParent = newRow.contentLayout->AddNewElement<GUILabel>(newRow.pctOfParent, GUIOptions(GUIOption::FixedWidth(50)));
-				newRow.guiNumCalls = newRow.contentLayout->AddNewElement<GUILabel>(newRow.numCalls, GUIOptions(GUIOption::FixedWidth(50)));
-				newRow.guiNumAllocs = newRow.contentLayout->AddNewElement<GUILabel>(newRow.numAllocs, GUIOptions(GUIOption::FixedWidth(50)));
-				newRow.guiNumFrees = newRow.contentLayout->AddNewElement<GUILabel>(newRow.numFrees, GUIOptions(GUIOption::FixedWidth(50)));
-				newRow.guiAvgCycles = newRow.contentLayout->AddNewElement<GUILabel>(newRow.avgCycles, GUIOptions(GUIOption::FixedWidth(60)));
-				newRow.guiTotalCycles = newRow.contentLayout->AddNewElement<GUILabel>(newRow.totalCycles, GUIOptions(GUIOption::FixedWidth(60)));
-				newRow.guiAvgCyclesSelf = newRow.contentLayout->AddNewElement<GUILabel>(newRow.avgCyclesSelf, GUIOptions(GUIOption::FixedWidth(100)));
-				newRow.guiTotalCyclesSelf = newRow.contentLayout->AddNewElement<GUILabel>(newRow.totalCyclesSelf, GUIOptions(GUIOption::FixedWidth(100)));
+				newRow.GuiPctOfParent = newRow.ContentLayout->AddNewElement<GUILabel>(newRow.PctOfParent, GUIOptions(GUIOption::FixedWidth(50)));
+				newRow.GuiNumCalls = newRow.ContentLayout->AddNewElement<GUILabel>(newRow.NumCalls, GUIOptions(GUIOption::FixedWidth(50)));
+				newRow.GuiNumAllocs = newRow.ContentLayout->AddNewElement<GUILabel>(newRow.NumAllocs, GUIOptions(GUIOption::FixedWidth(50)));
+				newRow.GuiNumFrees = newRow.ContentLayout->AddNewElement<GUILabel>(newRow.NumFrees, GUIOptions(GUIOption::FixedWidth(50)));
+				newRow.GuiAvgCycles = newRow.ContentLayout->AddNewElement<GUILabel>(newRow.AvgCycles, GUIOptions(GUIOption::FixedWidth(60)));
+				newRow.GuiTotalCycles = newRow.ContentLayout->AddNewElement<GUILabel>(newRow.TotalCycles, GUIOptions(GUIOption::FixedWidth(60)));
+				newRow.GuiAvgCyclesSelf = newRow.ContentLayout->AddNewElement<GUILabel>(newRow.AvgCyclesSelf, GUIOptions(GUIOption::FixedWidth(100)));
+				newRow.GuiTotalCyclesSelf = newRow.ContentLayout->AddNewElement<GUILabel>(newRow.TotalCyclesSelf, GUIOptions(GUIOption::FixedWidth(100)));
 			}
 
-			ProfilerOverlay::PreciseRow& row = rows[curIdx];
+			ProfilerOverlay::PreciseRow& row = Rows[CurIdx];
 
-			row.labelSpace->SetSize(depth * 20);
-			row.name.SetParameter(0, name);
-			row.pctOfParent.SetParameter(0, toString(pctOfParent * 100.0f, 2, 0, ' ', std::ios::fixed));
-			row.numCalls.SetParameter(0, toString(numCalls));
-			row.numAllocs.SetParameter(0, toString(numAllocs));
-			row.numFrees.SetParameter(0, toString(numFrees));
-			row.avgCycles.SetParameter(0, toString(avgCycles));
-			row.totalCycles.SetParameter(0, toString(totalCycles));
-			row.avgCyclesSelf.SetParameter(0, toString(avgSelfCycles));
-			row.totalCyclesSelf.SetParameter(0, toString(totalSelfCycles));
+			row.LabelSpace->SetSize(depth * 20);
+			row.Name.SetParameter(0, name);
+			row.PctOfParent.SetParameter(0, toString(pctOfParent * 100.0f, 2, 0, ' ', std::ios::fixed));
+			row.NumCalls.SetParameter(0, toString(numCalls));
+			row.NumAllocs.SetParameter(0, toString(numAllocs));
+			row.NumFrees.SetParameter(0, toString(numFrees));
+			row.AvgCycles.SetParameter(0, toString(avgCycles));
+			row.TotalCycles.SetParameter(0, toString(totalCycles));
+			row.AvgCyclesSelf.SetParameter(0, toString(avgSelfCycles));
+			row.TotalCyclesSelf.SetParameter(0, toString(totalSelfCycles));
 
-			row.guiName->SetContent(row.name);
-			row.guiPctOfParent->SetContent(row.pctOfParent);
-			row.guiNumCalls->SetContent(row.numCalls);
-			row.guiNumAllocs->SetContent(row.numAllocs);
-			row.guiNumFrees->SetContent(row.numFrees);
-			row.guiAvgCycles->SetContent(row.avgCycles);
-			row.guiTotalCycles->SetContent(row.totalCycles);
-			row.guiAvgCyclesSelf->SetContent(row.avgCyclesSelf);
-			row.guiTotalCyclesSelf->SetContent(row.totalCyclesSelf);
+			row.GuiName->SetContent(row.Name);
+			row.GuiPctOfParent->SetContent(row.PctOfParent);
+			row.GuiNumCalls->SetContent(row.NumCalls);
+			row.GuiNumAllocs->SetContent(row.NumAllocs);
+			row.GuiNumFrees->SetContent(row.NumFrees);
+			row.GuiAvgCycles->SetContent(row.AvgCycles);
+			row.GuiTotalCycles->SetContent(row.TotalCycles);
+			row.GuiAvgCyclesSelf->SetContent(row.AvgCyclesSelf);
+			row.GuiTotalCyclesSelf->SetContent(row.TotalCyclesSelf);
 
-			if (row.disabled)
+			if (row.Disabled)
 			{
-				row.labelLayout->SetVisible(true);
-				row.contentLayout->SetVisible(true);
-				row.disabled = false;
+				row.LabelLayout->SetVisible(true);
+				row.ContentLayout->SetVisible(true);
+				row.Disabled = false;
 			}
 
-			curIdx++;
+			CurIdx++;
 		}
 	};
 
 	class GPUSampleRowFiller
 	{
 	public:
-		UINT32 curIdx;
-		GUILayout& labelLayout;
-		GUILayout& contentLayout;
-		GUIWidget& widget;
-		Vector<ProfilerOverlay::GPUSampleRow>& rows;
+		UINT32 CurIdx;
+		GUILayout& LabelLayout;
+		GUILayout& ContentLayout;
+		GUIWidget& Widget;
+		Vector<ProfilerOverlay::GPUSampleRow>& Rows;
 
 		GPUSampleRowFiller(Vector<ProfilerOverlay::GPUSampleRow>& rows, GUILayout& labelLayout, GUILayout& contentLayout,
 			GUIWidget& _widget)
-			:curIdx(0), labelLayout(labelLayout), contentLayout(contentLayout), widget(_widget), rows(rows)
+			:CurIdx(0), LabelLayout(labelLayout), ContentLayout(contentLayout), Widget(_widget), Rows(rows)
 		{ }
 
 		~GPUSampleRowFiller()
 		{
-			UINT32 excessEntries = (UINT32)rows.size() - curIdx;
+			UINT32 excessEntries = (UINT32)Rows.size() - CurIdx;
 			for (UINT32 i = 0; i < excessEntries; i++)
 			{
-				ProfilerOverlay::GPUSampleRow& row = rows[curIdx + i];
+				ProfilerOverlay::GPUSampleRow& row = Rows[CurIdx + i];
 
-				if (!row.disabled)
+				if (!row.Disabled)
 				{
-					row.labelLayout->SetVisible(false);
-					row.contentLayout->SetVisible(false);
-					row.disabled = true;
+					row.LabelLayout->SetVisible(false);
+					row.ContentLayout->SetVisible(false);
+					row.Disabled = true;
 				}
 			}
 
-			rows.resize(curIdx);
+			Rows.resize(CurIdx);
 		}
 
 		void AddData(UINT32 depth, const String& name, float timeMs)
 		{
-			if (curIdx >= rows.size())
+			if (CurIdx >= Rows.size())
 			{
-				rows.push_back(ProfilerOverlay::GPUSampleRow());
+				Rows.push_back(ProfilerOverlay::GPUSampleRow());
 
-				ProfilerOverlay::GPUSampleRow& newRow = rows.back();
+				ProfilerOverlay::GPUSampleRow& newRow = Rows.back();
 
-				newRow.disabled = false;
-				newRow.name = HEString(u8"{1}");
-				newRow.time = HEString(u8"{0}");
+				newRow.Disabled = false;
+				newRow.Name = HEString(u8"{1}");
+				newRow.Time = HEString(u8"{0}");
 
-				newRow.labelLayout = labelLayout.InsertNewElement<GUILayoutX>(labelLayout.GetNumChildren() - 1); // Insert before flexible space
-				newRow.contentLayout = contentLayout.InsertNewElement<GUILayoutX>(contentLayout.GetNumChildren() - 1); // Insert before flexible space
+				newRow.LabelLayout = LabelLayout.InsertNewElement<GUILayoutX>(LabelLayout.GetNumChildren() - 1); // Insert before flexible space
+				newRow.ContentLayout = ContentLayout.InsertNewElement<GUILayoutX>(ContentLayout.GetNumChildren() - 1); // Insert before flexible space
 
-				newRow.labelSpace = newRow.labelLayout->AddNewElement<GUIFixedSpace>(0);
-				newRow.guiName = newRow.labelLayout->AddNewElement<GUILabel>(newRow.name, GUIOptions(GUIOption::FixedWidth(200)));
+				newRow.LabelSpace = newRow.LabelLayout->AddNewElement<GUIFixedSpace>(0);
+				newRow.GuiName = newRow.LabelLayout->AddNewElement<GUILabel>(newRow.Name, GUIOptions(GUIOption::FixedWidth(200)));
 
-				newRow.guiTime = newRow.contentLayout->AddNewElement<GUILabel>(newRow.time, GUIOptions(GUIOption::FixedWidth(100)));
+				newRow.GuiTime = newRow.ContentLayout->AddNewElement<GUILabel>(newRow.Time, GUIOptions(GUIOption::FixedWidth(100)));
 			}
 
-			ProfilerOverlay::GPUSampleRow& row = rows[curIdx];
+			ProfilerOverlay::GPUSampleRow& row = Rows[CurIdx];
 
-			row.labelSpace->SetSize(depth * 20);
-			row.name.SetParameter(0, name);
-			row.time.SetParameter(0, toString(timeMs));
+			row.LabelSpace->SetSize(depth * 20);
+			row.Name.SetParameter(0, name);
+			row.Time.SetParameter(0, toString(timeMs));
 
-			row.guiName->SetContent(row.name);
-			row.guiTime->SetContent(row.time);
+			row.GuiName->SetContent(row.Name);
+			row.GuiTime->SetContent(row.Time);
 
-			if (row.disabled)
+			if (row.Disabled)
 			{
-				row.labelLayout->SetVisible(false);
-				row.contentLayout->SetVisible(false);
-				row.disabled = false;
+				row.LabelLayout->SetVisible(false);
+				row.ContentLayout->SetVisible(false);
+				row.Disabled = false;
 			}
 
-			curIdx++;
+			CurIdx++;
 		}
 	};
 
@@ -321,7 +321,7 @@ namespace bs
 
 		mTarget = camera->GetViewport();
 
-		mTargetResizedConn = mTarget->GetTarget()->onResized.Connect(std::bind(&ProfilerOverlay::TargetResized, this));
+		mTargetResizedConn = mTarget->GetTarget()->OnResized.Connect(std::bind(&ProfilerOverlay::TargetResized, this));
 
 		if(mWidgetSO)
 			mWidgetSO->Destroy();
@@ -541,8 +541,8 @@ namespace bs
 			GPUProfilerReport report = ProfilerGPU::Instance().GetNextReport();
 
 			// TODO - Currently displaying just the first view. I need to add a way to toggle between views
-			if(!report.viewSamples.empty())
-				UpdateGpuSampleContents(report.viewSamples[0]);
+			if(!report.ViewSamples.empty())
+				UpdateGpuSampleContents(report.ViewSamples[0]);
 		}
 	}
 
@@ -557,8 +557,8 @@ namespace bs
 		static const INT32 PADDING = 10;
 		static const float LABELS_CONTENT_RATIO = 0.3f;
 
-		UINT32 width = (UINT32)std::max(0, (INT32)mTarget->GetPixelArea().width - PADDING * 2);
-		UINT32 height = (UINT32)std::max(0, (INT32)(mTarget->GetPixelArea().height - PADDING * 3));
+		UINT32 width = (UINT32)std::max(0, (INT32)mTarget->GetPixelArea().Width - PADDING * 2);
+		UINT32 height = (UINT32)std::max(0, (INT32)(mTarget->GetPixelArea().Height - PADDING * 3));
 
 		UINT32 labelsWidth = Math::CeilToInt(width * LABELS_CONTENT_RATIO);
 		UINT32 contentWidth = width - labelsWidth;
@@ -588,8 +588,8 @@ namespace bs
 		static const INT32 NUM_COLUMNS = 3;
 		static const INT32 HEIGHT_PER_ENTRY = 15;
 
-		UINT32 width = (UINT32)std::max(0, (INT32)mTarget->GetPixelArea().width - PADDING * 2);
-		UINT32 height = (UINT32)std::max(0, (INT32)(mTarget->GetPixelArea().height - PADDING * 3));
+		UINT32 width = (UINT32)std::max(0, (INT32)mTarget->GetPixelArea().Width - PADDING * 2);
+		UINT32 height = (UINT32)std::max(0, (INT32)(mTarget->GetPixelArea().Height - PADDING * 3));
 
 		UINT32 frameHeight = Math::CeilToInt(height * SAMPLES_FRAME_RATIO);
 		UINT32 samplesHeight = height - frameHeight;
@@ -622,30 +622,30 @@ namespace bs
 	{
 		static const UINT32 NUM_ROOT_ENTRIES = 2;
 
-		const CPUProfilerBasicSamplingEntry& simBasicRootEntry = simReport.cpuReport.GetBasicSamplingData();
-		const CPUProfilerPreciseSamplingEntry& simPreciseRootEntry = simReport.cpuReport.GetPreciseSamplingData();
+		const CPUProfilerBasicSamplingEntry& simBasicRootEntry = simReport.CpuReport.GetBasicSamplingData();
+		const CPUProfilerPreciseSamplingEntry& simPreciseRootEntry = simReport.CpuReport.GetPreciseSamplingData();
 
-		const CPUProfilerBasicSamplingEntry& coreBasicRootEntry = coreReport.cpuReport.GetBasicSamplingData();
-		const CPUProfilerPreciseSamplingEntry& corePreciseRootEntry = coreReport.cpuReport.GetPreciseSamplingData();
+		const CPUProfilerBasicSamplingEntry& coreBasicRootEntry = coreReport.CpuReport.GetBasicSamplingData();
+		const CPUProfilerPreciseSamplingEntry& corePreciseRootEntry = coreReport.CpuReport.GetPreciseSamplingData();
 
 		struct TodoBasic
 		{
 			TodoBasic(const CPUProfilerBasicSamplingEntry& _entry, UINT32 _depth)
-				:entry(_entry), depth(_depth)
+				:Entry(_entry), Depth(_depth)
 			{ }
 
-			const CPUProfilerBasicSamplingEntry& entry;
-			UINT32 depth;
+			const CPUProfilerBasicSamplingEntry& Entry;
+			UINT32 Depth;
 		};
 
 		struct TodoPrecise
 		{
 			TodoPrecise(const CPUProfilerPreciseSamplingEntry& _entry, UINT32 _depth)
-				:entry(_entry), depth(_depth)
+				:Entry(_entry), Depth(_depth)
 			{ }
 
-			const CPUProfilerPreciseSamplingEntry& entry;
-			UINT32 depth;
+			const CPUProfilerPreciseSamplingEntry& Entry;
+			UINT32 Depth;
 		};
 
 		BasicRowFiller basicRowFiller(mBasicRows, *mBasicLayoutLabels, *mBasicLayoutContents, *mWidget->GetInternalInternal());
@@ -664,15 +664,15 @@ namespace bs
 				TodoBasic curEntry = todoBasic.top();
 				todoBasic.pop();
 
-				const CPUProfilerBasicSamplingEntry::Data& data = curEntry.entry.data;
-				basicRowFiller.AddData(curEntry.depth, data.name, data.pctOfParent, data.numCalls, data.memAllocs, data.memFrees,
-					data.avgTimeMs, data.totalTimeMs, data.avgSelfTimeMs, data.totalSelfTimeMs);
+				const struct CPUProfilerBasicSamplingEntry::Data& data = curEntry.Entry.Data;
+				basicRowFiller.AddData(curEntry.Depth, data.Name, data.PctOfParent, data.NumCalls, data.MemAllocs, data.MemFrees,
+					data.AvgTimeMs, data.TotalTimeMs, data.AvgSelfTimeMs, data.TotalSelfTimeMs);
 
-				if(curEntry.depth <= MAX_DEPTH)
+				if(curEntry.Depth <= MAX_DEPTH)
 				{
-					for(auto iter = curEntry.entry.childEntries.rbegin(); iter != curEntry.entry.childEntries.rend(); ++iter)
+					for(auto iter = curEntry.Entry.ChildEntries.rbegin(); iter != curEntry.Entry.ChildEntries.rend(); ++iter)
 					{
-						todoBasic.push(TodoBasic(*iter, curEntry.depth + 1));
+						todoBasic.push(TodoBasic(*iter, curEntry.Depth + 1));
 					}
 				}
 			}
@@ -694,15 +694,15 @@ namespace bs
 				TodoPrecise curEntry = todoPrecise.top();
 				todoPrecise.pop();
 
-				const CPUProfilerPreciseSamplingEntry::Data& data = curEntry.entry.data;
-				preciseRowFiller.AddData(curEntry.depth, data.name, data.pctOfParent, data.numCalls, data.memAllocs, data.memFrees,
-					data.avgCycles, data.totalCycles, data.avgSelfCycles, data.totalSelfCycles);
+				const struct CPUProfilerPreciseSamplingEntry::Data& data = curEntry.Entry.Data;
+				preciseRowFiller.AddData(curEntry.Depth, data.Name, data.PctOfParent, data.NumCalls, data.MemAllocs, data.MemFrees,
+					data.AvgCycles, data.TotalCycles, data.AvgSelfCycles, data.TotalSelfCycles);
 
-				if(curEntry.depth <= MAX_DEPTH)
+				if(curEntry.Depth <= MAX_DEPTH)
 				{
-					for(auto iter = curEntry.entry.childEntries.rbegin(); iter != curEntry.entry.childEntries.rend(); ++iter)
+					for(auto iter = curEntry.Entry.ChildEntries.rbegin(); iter != curEntry.Entry.ChildEntries.rend(); ++iter)
 					{
-						todoPrecise.push(TodoPrecise(*iter, curEntry.depth + 1));
+						todoPrecise.push(TodoPrecise(*iter, curEntry.Depth + 1));
 					}
 				}
 			}
@@ -712,23 +712,23 @@ namespace bs
 	void ProfilerOverlay::UpdateGpuSampleContents(const GPUProfileSample& frameSample)
 	{
 		mGPUFrameNumStr.SetParameter(0, toString((UINT64)gTime().GetFrameIdx()));
-		mGPUTimeStr.SetParameter(0, toString(frameSample.timeMs));
-		mGPUDrawCallsStr.SetParameter(0, toString(frameSample.numDrawCalls));
-		mGPURenTargetChangesStr.SetParameter(0, toString(frameSample.numRenderTargetChanges));
-		mGPUPresentsStr.SetParameter(0, toString(frameSample.numPresents));
-		mGPUClearsStr.SetParameter(0, toString(frameSample.numClears));
-		mGPUVerticesStr.SetParameter(0, toString(frameSample.numVertices));
-		mGPUPrimitivesStr.SetParameter(0, toString(frameSample.numPrimitives));
-		mGPUSamplesStr.SetParameter(0, toString(frameSample.numDrawnSamples));
-		mGPUPipelineStateChangesStr.SetParameter(0, toString(frameSample.numPipelineStateChanges));
+		mGPUTimeStr.SetParameter(0, toString(frameSample.TimeMs));
+		mGPUDrawCallsStr.SetParameter(0, toString(frameSample.NumDrawCalls));
+		mGPURenTargetChangesStr.SetParameter(0, toString(frameSample.NumRenderTargetChanges));
+		mGPUPresentsStr.SetParameter(0, toString(frameSample.NumPresents));
+		mGPUClearsStr.SetParameter(0, toString(frameSample.NumClears));
+		mGPUVerticesStr.SetParameter(0, toString(frameSample.NumVertices));
+		mGPUPrimitivesStr.SetParameter(0, toString(frameSample.NumPrimitives));
+		mGPUSamplesStr.SetParameter(0, toString(frameSample.NumDrawnSamples));
+		mGPUPipelineStateChangesStr.SetParameter(0, toString(frameSample.NumPipelineStateChanges));
 
-		mGPUObjectsCreatedStr.SetParameter(0, toString(frameSample.numObjectsCreated));
-		mGPUObjectsDestroyedStr.SetParameter(0, toString(frameSample.numObjectsDestroyed));
-		mGPUResourceWritesStr.SetParameter(0, toString(frameSample.numResourceWrites));
-		mGPUResourceReadsStr.SetParameter(0, toString(frameSample.numResourceReads));
-		mGPUParamBindsStr.SetParameter(0, toString(frameSample.numGpuParamBinds));
-		mGPUVertexBufferBindsStr.SetParameter(0, toString(frameSample.numVertexBufferBinds));
-		mGPUIndexBufferBindsStr.SetParameter(0, toString(frameSample.numIndexBufferBinds));
+		mGPUObjectsCreatedStr.SetParameter(0, toString(frameSample.NumObjectsCreated));
+		mGPUObjectsDestroyedStr.SetParameter(0, toString(frameSample.NumObjectsDestroyed));
+		mGPUResourceWritesStr.SetParameter(0, toString(frameSample.NumResourceWrites));
+		mGPUResourceReadsStr.SetParameter(0, toString(frameSample.NumResourceReads));
+		mGPUParamBindsStr.SetParameter(0, toString(frameSample.NumGpuParamBinds));
+		mGPUVertexBufferBindsStr.SetParameter(0, toString(frameSample.NumVertexBufferBinds));
+		mGPUIndexBufferBindsStr.SetParameter(0, toString(frameSample.NumIndexBufferBinds));
 
 		mGPUFrameNumLbl->SetContent(mGPUFrameNumStr);
 		mGPUTimeLbl->SetContent(mGPUTimeStr);
@@ -759,11 +759,11 @@ namespace bs
 		struct Todo
 		{
 			Todo(const GPUProfileSample& entry, UINT32 depth)
-				:entry(entry), depth(depth)
+				:Entry(entry), Depth(depth)
 			{ }
 
-			const GPUProfileSample& entry;
-			UINT32 depth;
+			const GPUProfileSample& Entry;
+			UINT32 Depth;
 		};
 
 		UINT32 column = 0;
@@ -777,19 +777,19 @@ namespace bs
 			Todo curEntry = todo.top();
 			todo.pop();
 
-			const GPUProfileSample& data = curEntry.entry;
+			const GPUProfileSample& data = curEntry.Entry;
 
 			if(column < GPU_NUM_SAMPLE_COLUMNS)
-				sampleRowFillers[column].AddData(curEntry.depth, data.name, data.timeMs);
+				sampleRowFillers[column].AddData(curEntry.Depth, data.Name, data.TimeMs);
 
 			currentCount++;
 			if (currentCount % mNumGPUSamplesPerColumn == 0)
 				column++;
 
-			if (curEntry.depth <= MAX_DEPTH)
+			if (curEntry.Depth <= MAX_DEPTH)
 			{
-				for (auto iter = curEntry.entry.children.rbegin(); iter != curEntry.entry.children.rend(); ++iter)
-					todo.push(Todo(*iter, curEntry.depth + 1));
+				for (auto iter = curEntry.Entry.Children.rbegin(); iter != curEntry.Entry.Children.rend(); ++iter)
+					todo.push(Todo(*iter, curEntry.Depth + 1));
 			}
 		}
 	}

@@ -20,7 +20,7 @@ namespace bs
 
 	MonoObject*ScriptBlendClipInfo::Box(const __BlendClipInfoInterop& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	__BlendClipInfoInterop ScriptBlendClipInfo::Unbox(MonoObject* value)
@@ -33,11 +33,11 @@ namespace bs
 		BlendClipInfo output;
 		ResourceHandle<AnimationClip> tmpclip;
 		ScriptRRefBase* scriptclip;
-		scriptclip = ScriptRRefBase::ToNative(value.clip);
+		scriptclip = ScriptRRefBase::ToNative(value.Clip);
 		if(scriptclip != nullptr)
 			tmpclip = static_resource_cast<AnimationClip>(scriptclip->GetHandle());
-		output.clip = tmpclip;
-		output.position = value.position;
+		output.Clip = tmpclip;
+		output.Position = value.Position;
 
 		return output;
 	}
@@ -46,14 +46,14 @@ namespace bs
 	{
 		__BlendClipInfoInterop output;
 		ScriptRRefBase* scriptclip;
-		scriptclip = ScriptResourceManager::Instance().GetScriptRRef(value.clip);
+		scriptclip = ScriptResourceManager::Instance().GetScriptRRef(value.Clip);
 		MonoObject* tmpclip;
 		if(scriptclip != nullptr)
 			tmpclip = scriptclip->GetManagedInstance();
 		else
 			tmpclip = nullptr;
-		output.clip = tmpclip;
-		output.position = value.position;
+		output.Clip = tmpclip;
+		output.Position = value.Position;
 
 		return output;
 	}

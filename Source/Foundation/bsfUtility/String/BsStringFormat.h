@@ -24,20 +24,20 @@ namespace bs
 		{
 			FormatParamRange() = default;
 			FormatParamRange(UINT32 start, UINT32 identifierSize, UINT32 paramIdx)
-				:start(start), identifierSize(identifierSize), paramIdx(paramIdx)
+				:Start(start), IdentifierSize(identifierSize), ParamIdx(paramIdx)
 			{ }
 
-			UINT32 start = 0;
-			UINT32 identifierSize = 0;
-			UINT32 paramIdx = 0;
+			UINT32 Start = 0;
+			UINT32 IdentifierSize = 0;
+			UINT32 ParamIdx = 0;
 		};
 
 		/** Structure that holds value of a parameter during string formatting. */
 		template<class T>
 		struct ParamData
 		{
-			T* buffer = nullptr;
-			UINT32 size = 0;
+			T* Buffer = nullptr;
+			UINT32 Size = 0;
 		};
 
 	public:
@@ -107,7 +107,7 @@ namespace bs
 							if (paramIdx < MAX_PARAMS && paramRangeWriteIdx < MAX_PARAM_REFERENCES) // Check if exceeded maximum parameter limit
 							{
 								paramRanges[paramRangeWriteIdx++] = FormatParamRange(charWriteIdx, numParamChars + 2, paramIdx);
-								charWriteIdx += parameters[paramIdx].size;
+								charWriteIdx += parameters[paramIdx].Size;
 
 								processedBracket = true;
 							}
@@ -137,17 +137,17 @@ namespace bs
 			for (UINT32 i = 0; i < paramRangeWriteIdx; i++)
 			{
 				const FormatParamRange& rangeInfo = paramRanges[i];
-				UINT32 copySize = rangeInfo.start - copyDestIdx;
+				UINT32 copySize = rangeInfo.Start - copyDestIdx;
 				
 				memcpy(outputBuffer + copyDestIdx, source + copySourceIdx, copySize * sizeof(T));
-				copySourceIdx += copySize + rangeInfo.identifierSize;
+				copySourceIdx += copySize + rangeInfo.IdentifierSize;
 				copyDestIdx += copySize;
 
-				if (rangeInfo.paramIdx == (UINT32)-1)
+				if (rangeInfo.ParamIdx == (UINT32)-1)
 					continue;
 
-				UINT32 paramSize = parameters[rangeInfo.paramIdx].size;
-				memcpy(outputBuffer + copyDestIdx, parameters[rangeInfo.paramIdx].buffer, paramSize * sizeof(T));
+				UINT32 paramSize = parameters[rangeInfo.ParamIdx].Size;
+				memcpy(outputBuffer + copyDestIdx, parameters[rangeInfo.ParamIdx].Buffer, paramSize * sizeof(T));
 				copyDestIdx += paramSize;
 			}
 
@@ -158,8 +158,8 @@ namespace bs
 
 			for (UINT32 i = 0; i < MAX_PARAMS; i++)
 			{
-				if (parameters[i].buffer != nullptr)
-					bs_free(parameters[i].buffer);
+				if (parameters[i].Buffer != nullptr)
+					bs_free(parameters[i].Buffer);
 			}
 
 			return outputStr;
@@ -262,10 +262,10 @@ namespace bs
 				return;
 
 			BasicString<char> sourceParam = toString(param);
-			parameters[idx].buffer = (char*)bs_alloc((UINT32)sourceParam.size() * sizeof(char));
-			parameters[idx].size = (UINT32)sourceParam.size();
+			parameters[idx].Buffer = (char*)bs_alloc((UINT32)sourceParam.size() * sizeof(char));
+			parameters[idx].Size = (UINT32)sourceParam.size();
 
-			sourceParam.copy(parameters[idx].buffer, parameters[idx].size, 0);
+			sourceParam.copy(parameters[idx].Buffer, parameters[idx].Size, 0);
 			
 			GetParams(parameters, idx + 1, std::forward<Args>(args)...);
 		}

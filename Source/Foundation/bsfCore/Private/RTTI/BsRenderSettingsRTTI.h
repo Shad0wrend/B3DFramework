@@ -18,14 +18,14 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN(histogramLog2Min, 0)
-			BS_RTTI_MEMBER_PLAIN(histogramLog2Max, 1)
-			BS_RTTI_MEMBER_PLAIN(histogramPctLow, 2)
-			BS_RTTI_MEMBER_PLAIN(histogramPctHigh, 3)
-			BS_RTTI_MEMBER_PLAIN(minEyeAdaptation, 4)
-			BS_RTTI_MEMBER_PLAIN(maxEyeAdaptation, 5)
-			BS_RTTI_MEMBER_PLAIN(eyeAdaptationSpeedUp, 6)
-			BS_RTTI_MEMBER_PLAIN(eyeAdaptationSpeedDown, 7)
+			BS_RTTI_MEMBER_PLAIN(HistogramLog2Min, 0)
+			BS_RTTI_MEMBER_PLAIN(HistogramLog2Max, 1)
+			BS_RTTI_MEMBER_PLAIN(HistogramPctLow, 2)
+			BS_RTTI_MEMBER_PLAIN(HistogramPctHigh, 3)
+			BS_RTTI_MEMBER_PLAIN(MinEyeAdaptation, 4)
+			BS_RTTI_MEMBER_PLAIN(MaxEyeAdaptation, 5)
+			BS_RTTI_MEMBER_PLAIN(EyeAdaptationSpeedUp, 6)
+			BS_RTTI_MEMBER_PLAIN(EyeAdaptationSpeedDown, 7)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -50,13 +50,13 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN(filmicCurveShoulderStrength, 0)
-			BS_RTTI_MEMBER_PLAIN(filmicCurveLinearStrength, 1)
-			BS_RTTI_MEMBER_PLAIN(filmicCurveLinearAngle, 2)
-			BS_RTTI_MEMBER_PLAIN(filmicCurveToeStrength, 3)
-			BS_RTTI_MEMBER_PLAIN(filmicCurveToeNumerator, 4)
-			BS_RTTI_MEMBER_PLAIN(filmicCurveToeDenominator, 5)
-			BS_RTTI_MEMBER_PLAIN(filmicCurveLinearWhitePoint, 6)
+			BS_RTTI_MEMBER_PLAIN(FilmicCurveShoulderStrength, 0)
+			BS_RTTI_MEMBER_PLAIN(FilmicCurveLinearStrength, 1)
+			BS_RTTI_MEMBER_PLAIN(FilmicCurveLinearAngle, 2)
+			BS_RTTI_MEMBER_PLAIN(FilmicCurveToeStrength, 3)
+			BS_RTTI_MEMBER_PLAIN(FilmicCurveToeNumerator, 4)
+			BS_RTTI_MEMBER_PLAIN(FilmicCurveToeDenominator, 5)
+			BS_RTTI_MEMBER_PLAIN(FilmicCurveLinearWhitePoint, 6)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -81,8 +81,8 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN(temperature, 0)
-			BS_RTTI_MEMBER_PLAIN(tint, 1)
+			BS_RTTI_MEMBER_PLAIN(Temperature, 0)
+			BS_RTTI_MEMBER_PLAIN(Tint, 1)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -107,10 +107,10 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN(saturation, 0)
-			BS_RTTI_MEMBER_PLAIN(contrast, 1)
-			BS_RTTI_MEMBER_PLAIN(gain, 2)
-			BS_RTTI_MEMBER_PLAIN(offset, 3)
+			BS_RTTI_MEMBER_PLAIN(Saturation, 0)
+			BS_RTTI_MEMBER_PLAIN(Contrast, 1)
+			BS_RTTI_MEMBER_PLAIN(Gain, 2)
+			BS_RTTI_MEMBER_PLAIN(Offset, 3)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -135,23 +135,23 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN(enabled, 0)
-			BS_RTTI_MEMBER_PLAIN(focalDistance, 1)
-			BS_RTTI_MEMBER_PLAIN(focalRange, 2)
-			BS_RTTI_MEMBER_PLAIN(nearTransitionRange, 3)
-			BS_RTTI_MEMBER_PLAIN(farTransitionRange, 4)
-			BS_RTTI_MEMBER_PLAIN(nearBlurAmount, 5)
-			BS_RTTI_MEMBER_PLAIN(farBlurAmount, 6)
-			BS_RTTI_MEMBER_PLAIN(type, 7)
-			BS_RTTI_MEMBER_PLAIN(maxBokehSize, 8)
-			BS_RTTI_MEMBER_REFL(bokehShape, 9)
-			BS_RTTI_MEMBER_PLAIN(adaptiveColorThreshold, 10)
-			BS_RTTI_MEMBER_PLAIN(adaptiveRadiusThreshold, 11)
-			BS_RTTI_MEMBER_PLAIN(apertureSize, 12)
-			BS_RTTI_MEMBER_PLAIN(focalLength, 13)
-			BS_RTTI_MEMBER_PLAIN(sensorSize, 14)
-			BS_RTTI_MEMBER_PLAIN(bokehOcclusion, 15)
-			BS_RTTI_MEMBER_PLAIN(occlusionDepthRange, 16)
+			BS_RTTI_MEMBER_PLAIN(Enabled, 0)
+			BS_RTTI_MEMBER_PLAIN(FocalDistance, 1)
+			BS_RTTI_MEMBER_PLAIN(FocalRange, 2)
+			BS_RTTI_MEMBER_PLAIN(NearTransitionRange, 3)
+			BS_RTTI_MEMBER_PLAIN(FarTransitionRange, 4)
+			BS_RTTI_MEMBER_PLAIN(NearBlurAmount, 5)
+			BS_RTTI_MEMBER_PLAIN(FarBlurAmount, 6)
+			BS_RTTI_MEMBER_PLAIN(Type, 7)
+			BS_RTTI_MEMBER_PLAIN(MaxBokehSize, 8)
+			BS_RTTI_MEMBER_REFL(BokehShape, 9)
+			BS_RTTI_MEMBER_PLAIN(AdaptiveColorThreshold, 10)
+			BS_RTTI_MEMBER_PLAIN(AdaptiveRadiusThreshold, 11)
+			BS_RTTI_MEMBER_PLAIN(ApertureSize, 12)
+			BS_RTTI_MEMBER_PLAIN(FocalLength, 13)
+			BS_RTTI_MEMBER_PLAIN(SensorSize, 14)
+			BS_RTTI_MEMBER_PLAIN(BokehOcclusion, 15)
+			BS_RTTI_MEMBER_PLAIN(OcclusionDepthRange, 16)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -176,14 +176,14 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN(enabled, 0)
-			BS_RTTI_MEMBER_PLAIN(radius, 1)
-			BS_RTTI_MEMBER_PLAIN(bias, 2)
-			BS_RTTI_MEMBER_PLAIN(fadeRange, 3)
-			BS_RTTI_MEMBER_PLAIN(fadeDistance, 4)
-			BS_RTTI_MEMBER_PLAIN(intensity, 5)
-			BS_RTTI_MEMBER_PLAIN(power, 6)
-			BS_RTTI_MEMBER_PLAIN(quality, 7)
+			BS_RTTI_MEMBER_PLAIN(Enabled, 0)
+			BS_RTTI_MEMBER_PLAIN(Radius, 1)
+			BS_RTTI_MEMBER_PLAIN(Bias, 2)
+			BS_RTTI_MEMBER_PLAIN(FadeRange, 3)
+			BS_RTTI_MEMBER_PLAIN(FadeDistance, 4)
+			BS_RTTI_MEMBER_PLAIN(Intensity, 5)
+			BS_RTTI_MEMBER_PLAIN(Power, 6)
+			BS_RTTI_MEMBER_PLAIN(Quality, 7)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -208,11 +208,11 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN(enabled, 0)
-			BS_RTTI_MEMBER_PLAIN(domain, 1)
-			BS_RTTI_MEMBER_PLAIN(filter, 2)
-			BS_RTTI_MEMBER_PLAIN(quality, 3)
-			BS_RTTI_MEMBER_PLAIN(maximumRadius, 4)
+			BS_RTTI_MEMBER_PLAIN(Enabled, 0)
+			BS_RTTI_MEMBER_PLAIN(Domain, 1)
+			BS_RTTI_MEMBER_PLAIN(Filter, 2)
+			BS_RTTI_MEMBER_PLAIN(Quality, 3)
+			BS_RTTI_MEMBER_PLAIN(MaximumRadius, 4)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -237,9 +237,9 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN(enabled, 0)
-			BS_RTTI_MEMBER_PLAIN(jitteredPositionCount, 1)
-			BS_RTTI_MEMBER_PLAIN(sharpness, 2)
+			BS_RTTI_MEMBER_PLAIN(Enabled, 0)
+			BS_RTTI_MEMBER_PLAIN(JitteredPositionCount, 1)
+			BS_RTTI_MEMBER_PLAIN(Sharpness, 2)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -264,10 +264,10 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN(enabled, 0)
-			BS_RTTI_MEMBER_PLAIN(intensity, 1)
-			BS_RTTI_MEMBER_PLAIN(maxRoughness, 2)
-			BS_RTTI_MEMBER_PLAIN(quality, 3)
+			BS_RTTI_MEMBER_PLAIN(Enabled, 0)
+			BS_RTTI_MEMBER_PLAIN(Intensity, 1)
+			BS_RTTI_MEMBER_PLAIN(MaxRoughness, 2)
+			BS_RTTI_MEMBER_PLAIN(Quality, 3)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -292,12 +292,12 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN(enabled, 0)
-			BS_RTTI_MEMBER_PLAIN(quality, 1)
-			BS_RTTI_MEMBER_PLAIN(threshold, 2)
-			BS_RTTI_MEMBER_PLAIN(intensity, 3)
-			BS_RTTI_MEMBER_PLAIN(tint, 4)
-			BS_RTTI_MEMBER_PLAIN(filterSize, 5)
+			BS_RTTI_MEMBER_PLAIN(Enabled, 0)
+			BS_RTTI_MEMBER_PLAIN(Quality, 1)
+			BS_RTTI_MEMBER_PLAIN(Threshold, 2)
+			BS_RTTI_MEMBER_PLAIN(Intensity, 3)
+			BS_RTTI_MEMBER_PLAIN(Tint, 4)
+			BS_RTTI_MEMBER_PLAIN(FilterSize, 5)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -323,21 +323,21 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN(enabled, 0)
-			BS_RTTI_MEMBER_PLAIN(downsampleCount, 1)
-			BS_RTTI_MEMBER_PLAIN(threshold, 2)
-			BS_RTTI_MEMBER_PLAIN(ghostCount, 3)
-			BS_RTTI_MEMBER_PLAIN(ghostSpacing, 4)
-			BS_RTTI_MEMBER_PLAIN(brightness, 5)
-			BS_RTTI_MEMBER_PLAIN(filterSize, 6)
-			BS_RTTI_MEMBER_PLAIN(halo, 7)
-			BS_RTTI_MEMBER_PLAIN(haloAspectRatio, 8)
-			BS_RTTI_MEMBER_PLAIN(haloRadius, 9)
-			BS_RTTI_MEMBER_PLAIN(haloThickness, 10)
-			BS_RTTI_MEMBER_PLAIN(haloThreshold, 11)
-			BS_RTTI_MEMBER_PLAIN(chromaticAberration, 12)
-			BS_RTTI_MEMBER_PLAIN(chromaticAberrationOffset, 13)
-			BS_RTTI_MEMBER_PLAIN(bicubicUpsampling, 14)
+			BS_RTTI_MEMBER_PLAIN(Enabled, 0)
+			BS_RTTI_MEMBER_PLAIN(DownsampleCount, 1)
+			BS_RTTI_MEMBER_PLAIN(Threshold, 2)
+			BS_RTTI_MEMBER_PLAIN(GhostCount, 3)
+			BS_RTTI_MEMBER_PLAIN(GhostSpacing, 4)
+			BS_RTTI_MEMBER_PLAIN(Brightness, 5)
+			BS_RTTI_MEMBER_PLAIN(FilterSize, 6)
+			BS_RTTI_MEMBER_PLAIN(Halo, 7)
+			BS_RTTI_MEMBER_PLAIN(HaloAspectRatio, 8)
+			BS_RTTI_MEMBER_PLAIN(HaloRadius, 9)
+			BS_RTTI_MEMBER_PLAIN(HaloThickness, 10)
+			BS_RTTI_MEMBER_PLAIN(HaloThreshold, 11)
+			BS_RTTI_MEMBER_PLAIN(ChromaticAberration, 12)
+			BS_RTTI_MEMBER_PLAIN(ChromaticAberrationOffset, 13)
+			BS_RTTI_MEMBER_PLAIN(BicubicUpsampling, 14)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -362,10 +362,10 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN(enabled, 0)
-			BS_RTTI_MEMBER_PLAIN(type, 1)
-			BS_RTTI_MEMBER_PLAIN(shiftAmount, 2)
-			BS_RTTI_MEMBER_REFL(fringeTexture, 3)
+			BS_RTTI_MEMBER_PLAIN(Enabled, 0)
+			BS_RTTI_MEMBER_PLAIN(Type, 1)
+			BS_RTTI_MEMBER_PLAIN(ShiftAmount, 2)
+			BS_RTTI_MEMBER_REFL(FringeTexture, 3)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -390,9 +390,9 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN(enabled, 0)
-			BS_RTTI_MEMBER_PLAIN(intensity, 1)
-			BS_RTTI_MEMBER_PLAIN(speed, 2)
+			BS_RTTI_MEMBER_PLAIN(Enabled, 0)
+			BS_RTTI_MEMBER_PLAIN(Intensity, 1)
+			BS_RTTI_MEMBER_PLAIN(Speed, 2)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -417,10 +417,10 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN(directionalShadowDistance, 0)
-			BS_RTTI_MEMBER_PLAIN(numCascades, 1)
-			BS_RTTI_MEMBER_PLAIN(cascadeDistributionExponent, 2)
-			BS_RTTI_MEMBER_PLAIN(shadowFilteringQuality, 3)
+			BS_RTTI_MEMBER_PLAIN(DirectionalShadowDistance, 0)
+			BS_RTTI_MEMBER_PLAIN(NumCascades, 1)
+			BS_RTTI_MEMBER_PLAIN(CascadeDistributionExponent, 2)
+			BS_RTTI_MEMBER_PLAIN(ShadowFilteringQuality, 3)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -445,32 +445,32 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN(enableAutoExposure, 0)
-			BS_RTTI_MEMBER_REFL(autoExposure, 1)
-			BS_RTTI_MEMBER_PLAIN(enableTonemapping, 2)
-			BS_RTTI_MEMBER_REFL(tonemapping, 3)
-			BS_RTTI_MEMBER_REFL(whiteBalance, 4)
-			BS_RTTI_MEMBER_REFL(colorGrading, 5)
-			BS_RTTI_MEMBER_PLAIN(exposureScale, 6)
-			BS_RTTI_MEMBER_PLAIN(gamma, 7)
-			BS_RTTI_MEMBER_REFL(depthOfField, 8)
-			BS_RTTI_MEMBER_PLAIN(enableFXAA, 9)
-			BS_RTTI_MEMBER_REFL(ambientOcclusion, 10)
-			BS_RTTI_MEMBER_REFL(screenSpaceReflections, 11)
-			BS_RTTI_MEMBER_PLAIN(enableHDR, 12)
-			BS_RTTI_MEMBER_PLAIN(enableLighting, 13)
-			BS_RTTI_MEMBER_PLAIN(enableShadows, 14)
-			BS_RTTI_MEMBER_PLAIN(overlayOnly, 15)
-			BS_RTTI_MEMBER_PLAIN(enableIndirectLighting, 16)
-			BS_RTTI_MEMBER_REFL(shadowSettings, 17)
-			BS_RTTI_MEMBER_PLAIN(enableSkybox, 18)
-			BS_RTTI_MEMBER_REFL(bloom, 19)
-			BS_RTTI_MEMBER_REFL(screenSpaceLensFlare, 20)
-			BS_RTTI_MEMBER_REFL(motionBlur, 21)
-			BS_RTTI_MEMBER_REFL(filmGrain, 22)
-			BS_RTTI_MEMBER_REFL(chromaticAberration, 23)
-			BS_RTTI_MEMBER_REFL(temporalAA, 24)
-			BS_RTTI_MEMBER_PLAIN(enableVelocityBuffer, 25)
+			BS_RTTI_MEMBER_PLAIN(EnableAutoExposure, 0)
+			BS_RTTI_MEMBER_REFL(AutoExposure, 1)
+			BS_RTTI_MEMBER_PLAIN(EnableTonemapping, 2)
+			BS_RTTI_MEMBER_REFL(Tonemapping, 3)
+			BS_RTTI_MEMBER_REFL(WhiteBalance, 4)
+			BS_RTTI_MEMBER_REFL(ColorGrading, 5)
+			BS_RTTI_MEMBER_PLAIN(ExposureScale, 6)
+			BS_RTTI_MEMBER_PLAIN(Gamma, 7)
+			BS_RTTI_MEMBER_REFL(DepthOfField, 8)
+			BS_RTTI_MEMBER_PLAIN(EnableFxaa, 9)
+			BS_RTTI_MEMBER_REFL(AmbientOcclusion, 10)
+			BS_RTTI_MEMBER_REFL(ScreenSpaceReflections, 11)
+			BS_RTTI_MEMBER_PLAIN(EnableHdr, 12)
+			BS_RTTI_MEMBER_PLAIN(EnableLighting, 13)
+			BS_RTTI_MEMBER_PLAIN(EnableShadows, 14)
+			BS_RTTI_MEMBER_PLAIN(OverlayOnly, 15)
+			BS_RTTI_MEMBER_PLAIN(EnableIndirectLighting, 16)
+			BS_RTTI_MEMBER_REFL(ShadowSettings, 17)
+			BS_RTTI_MEMBER_PLAIN(EnableSkybox, 18)
+			BS_RTTI_MEMBER_REFL(Bloom, 19)
+			BS_RTTI_MEMBER_REFL(ScreenSpaceLensFlare, 20)
+			BS_RTTI_MEMBER_REFL(MotionBlur, 21)
+			BS_RTTI_MEMBER_REFL(FilmGrain, 22)
+			BS_RTTI_MEMBER_REFL(ChromaticAberration, 23)
+			BS_RTTI_MEMBER_REFL(TemporalAa, 24)
+			BS_RTTI_MEMBER_PLAIN(EnableVelocityBuffer, 25)
 		BS_END_RTTI_MEMBERS
 
 	public:

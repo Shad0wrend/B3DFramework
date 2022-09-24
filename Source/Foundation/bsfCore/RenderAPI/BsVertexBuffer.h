@@ -15,10 +15,10 @@ namespace bs
 	/** Descriptor structure used for initialization of a VertexBuffer. */
 	struct VERTEX_BUFFER_DESC
 	{
-		UINT32 vertexSize; /**< Size of a single vertex in the buffer, in bytes. */
-		UINT32 numVerts; /**< Number of vertices the buffer can hold. */
-		GpuBufferUsage usage = GBU_STATIC; /**< Usage that tells the hardware how will be buffer be used. */
-		bool streamOut = false; /**< If true the buffer will be usable for streaming out data from the GPU. */
+		UINT32 VertexSize; /**< Size of a single vertex in the buffer, in bytes. */
+		UINT32 NumVerts; /**< Number of vertices the buffer can hold. */
+		GpuBufferUsage Usage = GBU_STATIC; /**< Usage that tells the hardware how will be buffer be used. */
+		bool StreamOut = false; /**< If true the buffer will be usable for streaming out data from the GPU. */
 	};
 
 	/** Contains information about a vertex buffer buffer. */

@@ -31,32 +31,32 @@ namespace bs { namespace ct
 		void Set(const SPtr<GpuParamBlockBuffer>& paramBlock, const T& value, UINT32 arrayIdx = 0) const
 		{
 #if BS_DEBUG_MODE
-			if (arrayIdx >= mParamDesc.arraySize)
+			if (arrayIdx >= mParamDesc.ArraySize)
 			{
 				BS_EXCEPT(InvalidParametersException, "Array index out of range. Array size: " +
-					toString(mParamDesc.arraySize) + ". Requested size: " + toString(arrayIdx));
+					toString(mParamDesc.ArraySize) + ". Requested size: " + toString(arrayIdx));
 			}
 #endif
 
-			UINT32 elementSizeBytes = mParamDesc.elementSize * sizeof(UINT32);
+			UINT32 elementSizeBytes = mParamDesc.ElementSize * sizeof(UINT32);
 			UINT32 sizeBytes = std::min(elementSizeBytes, (UINT32)sizeof(T)); // Truncate if it doesn't fit within parameter size
 
-			const bool transposeMatrices = gCaps().conventions.matrixOrder == Conventions::MatrixOrder::ColumnMajor;
+			const bool transposeMatrices = gCaps().Conventions.MatrixOrder == Conventions::MatrixOrder::ColumnMajor;
 			if (TransposePolicy<T>::TransposeEnabled(transposeMatrices))
 			{
 				auto transposed = TransposePolicy<T>::Transpose(value);
-				paramBlock->Write((mParamDesc.cpuMemOffset + arrayIdx * mParamDesc.arrayElementStride) * sizeof(UINT32),
+				paramBlock->Write((mParamDesc.CpuMemOffset + arrayIdx * mParamDesc.ArrayElementStride) * sizeof(UINT32),
 					&transposed, sizeBytes);
 			}
 			else
-				paramBlock->Write((mParamDesc.cpuMemOffset + arrayIdx * mParamDesc.arrayElementStride) * sizeof(UINT32),
+				paramBlock->Write((mParamDesc.CpuMemOffset + arrayIdx * mParamDesc.ArrayElementStride) * sizeof(UINT32),
 					&value, sizeBytes);
 
 			// Set unused bytes to 0
 			if (sizeBytes < elementSizeBytes)
 			{
 				UINT32 diffSize = elementSizeBytes - sizeBytes;
-				paramBlock->ZeroOut((mParamDesc.cpuMemOffset + arrayIdx * mParamDesc.arrayElementStride) * sizeof(UINT32) +
+				paramBlock->ZeroOut((mParamDesc.CpuMemOffset + arrayIdx * mParamDesc.ArrayElementStride) * sizeof(UINT32) +
 					sizeBytes, diffSize);
 			}
 		}
@@ -68,19 +68,19 @@ namespace bs { namespace ct
 		T Get(const SPtr<GpuParamBlockBuffer>& paramBlock, UINT32 arrayIdx = 0) const
 		{
 #if BS_DEBUG_MODE
-			if (arrayIdx >= mParamDesc.arraySize)
+			if (arrayIdx >= mParamDesc.ArraySize)
 			{
 				BS_LOG(Error, Material, "Array index out of range. Array size: {0}. Requested size: {1}",
-					mParamDesc.arraySize, arrayIdx);
+					mParamDesc.ArraySize, arrayIdx);
 				return T();
 			}
 #endif
 
-			UINT32 elementSizeBytes = mParamDesc.elementSize * sizeof(UINT32);
+			UINT32 elementSizeBytes = mParamDesc.ElementSize * sizeof(UINT32);
 			UINT32 sizeBytes = std::min(elementSizeBytes, (UINT32)sizeof(T));
 
 			T value;
-			paramBlock->Read((mParamDesc.cpuMemOffset + arrayIdx * mParamDesc.arrayElementStride) * sizeof(UINT32), &value,
+			paramBlock->Read((mParamDesc.CpuMemOffset + arrayIdx * mParamDesc.ArrayElementStride) * sizeof(UINT32), &value,
 				sizeBytes);
 
 			return value;
@@ -140,7 +140,7 @@ namespace bs { namespace ct
 			RenderAPI& rapi = RenderAPI::Instance();																		\
 																															\
 			GpuParamBlockDesc blockDesc = rapi.GenerateParamBlockDesc(#Name, mParams);										\
-			mBlockSize = blockDesc.blockSize * sizeof(UINT32);																\
+			mBlockSize = blockDesc.BlockSize * sizeof(UINT32);																\
 																															\
 			InitEntries();																									\
 		}																													\
@@ -154,33 +154,33 @@ namespace bs { namespace ct
 /**
  * Registers a new entry in a parameter block. Must be called in between BS_PARAM_BLOCK_BEGIN and BS_PARAM_BLOCK_END calls.
  */
-#define BS_PARAM_BLOCK_ENTRY_ARRAY(Type, Name, NumElements)																	\
-		META_Entry_##Name;																									\
+#define BS_PARAM_BLOCK_ENTRY_ARRAY(Type_, Name_, ElementCount)																\
+		META_Entry_##Name_;																									\
 																															\
-		struct META_NextEntry_##Name {};																					\
-		static void META_GetPrevEntries(Vector<GpuParamDataDesc>& params, META_NextEntry_##Name id)							\
+		struct META_NextEntry_##Name_ {};																					\
+		static void META_GetPrevEntries(Vector<GpuParamDataDesc>& params, META_NextEntry_##Name_ id)						\
 		{																													\
-			META_GetPrevEntries(params, META_Entry_##Name());																\
+			META_GetPrevEntries(params, META_Entry_##Name_());																\
 																															\
 			params.push_back(GpuParamDataDesc());																			\
 			GpuParamDataDesc& newEntry = params.back();																		\
-			newEntry.name = #Name;																							\
-			newEntry.type = (GpuParamDataType)TGpuDataParamInfo<Type>::TypeId;												\
-			newEntry.arraySize = NumElements;																				\
-			newEntry.elementSize = sizeof(Type);																			\
+			newEntry.Name = #Name_;																							\
+			newEntry.Type = (GpuParamDataType)TGpuDataParamInfo<Type_>::TypeId;												\
+			newEntry.ArraySize = ElementCount;																				\
+			newEntry.ElementSize = sizeof(Type_);																			\
 		}																													\
 																															\
-		void META_InitPrevEntry(const Vector<GpuParamDataDesc>& params, UINT32 idx, META_NextEntry_##Name id)				\
+		void META_InitPrevEntry(const Vector<GpuParamDataDesc>& params, UINT32 idx, META_NextEntry_##Name_ id)				\
 		{																													\
-			META_InitPrevEntry(params, idx - 1, META_Entry_##Name());														\
-			Name = ParamBlockParam<Type>(params[idx]);																		\
+			META_InitPrevEntry(params, idx - 1, META_Entry_##Name_());														\
+			Name_ = ParamBlockParam<Type_>(params[idx]);																		\
 		}																													\
 																															\
 	public:																													\
-		ParamBlockParam<Type> Name;																							\
+		ParamBlockParam<Type_> Name_;																						\
 																															\
 	private:																												\
-		typedef META_NextEntry_##Name
+		typedef META_NextEntry_##Name_
 
 /**
  * Registers a new entry in a parameter block. Must be called in between BS_PARAM_BLOCK_BEGIN and BS_PARAM_BLOCK_END calls.

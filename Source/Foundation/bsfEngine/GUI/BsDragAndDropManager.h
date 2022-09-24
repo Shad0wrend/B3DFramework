@@ -17,7 +17,7 @@ namespace bs
 	/**	Holds data returned by DragAndDropManager callbacks. */
 	struct BS_EXPORT DragCallbackInfo
 	{
-		bool processed = false;
+		bool Processed = false;
 	};
 
 	/**
@@ -85,7 +85,7 @@ namespace bs
 		 *
 		 * @note	Internal event. You should use addDropCallback for normal use.
 		 */
-		Event<void(const PointerEvent&, DragCallbackInfo&)> onDragEnded;
+		Event<void(const PointerEvent&, DragCallbackInfo&)> OnDragEnded;
 	private:
 
 		/**	Triggers any drop callbacks and clears callback data. */

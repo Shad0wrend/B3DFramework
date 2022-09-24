@@ -52,8 +52,8 @@ namespace bs
 		const Vector2& extents = mSize * 0.5f;
 
 		AABox localAABB(
-			Vector3(-extents.x, -extents.y, -mMaxDistance),
-			Vector3(extents.x, extents.y, 0.0f)
+			Vector3(-extents.X, -extents.Y, -mMaxDistance),
+			Vector3(extents.X, extents.Y, 0.0f)
 		);
 
 		localAABB.TransformAffine(mTfrmMatrix);
@@ -126,7 +126,7 @@ namespace bs
 	CoreSyncData Decal::SyncToCore(FrameAlloc* allocator)
 	{
 		UINT32 size = 0;
-		size += rtti_size(GetCoreDirtyFlags()).bytes;
+		size += rtti_size(GetCoreDirtyFlags()).Bytes;
 		size += csync_size((SceneActor&)*this);
 		size += csync_size(*this);
 

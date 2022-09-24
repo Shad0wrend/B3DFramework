@@ -17,7 +17,7 @@ namespace bs
 		Vector<SPtr<ct::Shader>> shaders;
 		for (auto& material : materials)
 		{
-			HShader shader = br.GetShader(material.shaderPath);
+			HShader shader = br.GetShader(material.ShaderPath);
 			if (shader.IsLoaded())
 				shaders.push_back(shader->GetCore());
 			else
@@ -47,25 +47,25 @@ namespace bs
 		Vector<RendererMaterialData>& materials = GetMaterials();
 		for (UINT32 i = 0; i < materials.size(); i++)
 		{
-			materials[i].metaData->shaderPath = materials[i].shaderPath;
-			materials[i].metaData->shader = shaders[i];
+			materials[i].MetaData->ShaderPath = materials[i].ShaderPath;
+			materials[i].MetaData->Shader = shaders[i];
 
 			if(!shaders[i])
 			{
-				BS_LOG(Error, Renderer, "Failed to load renderer material: {0}", materials[i].shaderPath);
+				BS_LOG(Error, Renderer, "Failed to load renderer material: {0}", materials[i].ShaderPath);
 				continue;
 			}
 
 			// Note: Making the assumption here that all the techniques are generated due to shader variations
 			Vector<SPtr<ct::Technique>> techniques = shaders[i]->GetCompatibleTechniques();
-			materials[i].metaData->instances.Resize((UINT32)techniques.size());
+			materials[i].MetaData->Instances.Resize((UINT32)techniques.size());
 
 			for(auto& entry : techniques)
-				materials[i].metaData->variations.Add(entry->GetVariation());
+				materials[i].MetaData->Variations.Add(entry->GetVariation());
 
 #if BS_PROFILING_ENABLED
-			const String& filename = materials[i].shaderPath.GetFilename(false);
-			materials[i].metaData->profilerSampleName = ProfilerString("RM: ") +
+			const String& filename = materials[i].ShaderPath.GetFilename(false);
+			materials[i].MetaData->ProfilerSampleName = ProfilerString("RM: ") +
 				ProfilerString(filename.data(), filename.size());
 #endif
 		}
@@ -78,8 +78,8 @@ namespace bs
 		Vector<RendererMaterialData>& materials = GetMaterials();
 		for (auto& entry : materials)
 		{
-			if (entry.shaderPath == shaderPath)
-				return entry.metaData->defines;
+			if (entry.ShaderPath == shaderPath)
+				return entry.MetaData->Defines;
 		}
 
 		return output;
@@ -92,16 +92,16 @@ namespace bs
 		Vector<RendererMaterialData>& materials = GetMaterials();
 		for (UINT32 i = 0; i < materials.size(); i++)
 		{
-			materials[i].metaData->shader = nullptr;
-			materials[i].metaData->overrideShader = nullptr;
+			materials[i].MetaData->Shader = nullptr;
+			materials[i].MetaData->OverrideShader = nullptr;
 
-			for (auto& entry : materials[i].metaData->instances)
+			for (auto& entry : materials[i].MetaData->Instances)
 			{
 				if(entry != nullptr)
 					bs_delete(entry);
 			}
 
-			materials[i].metaData->instances.Clear();
+			materials[i].MetaData->Instances.Clear();
 		}
 	}
 

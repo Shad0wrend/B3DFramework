@@ -135,7 +135,7 @@ namespace bs
 
 			for(auto& subMesh : curSubMeshes)
 			{
-				subMeshes.push_back(SubMesh(subMesh.indexOffset + indexOffset, subMesh.indexCount, subMesh.drawOp));
+				subMeshes.push_back(SubMesh(subMesh.IndexOffset + indexOffset, subMesh.IndexCount, subMesh.DrawOp));
 			}
 
 			indexOffset += numIndices;

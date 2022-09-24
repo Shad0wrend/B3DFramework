@@ -68,11 +68,11 @@ namespace bs { namespace ct
 		struct GpuBufferReference
 		{
 			GpuBufferReference(GpuBufferView* _view)
-				:view(_view), refCount(0)
+				:View(_view), RefCount(0)
 			{ }
 
-			GpuBufferView* view;
-			UINT32 refCount;
+			GpuBufferView* View;
+			UINT32 RefCount;
 		};
 
 		GpuBufferView* mBufferView = nullptr;

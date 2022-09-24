@@ -22,8 +22,8 @@ namespace bs
 
 	void GUIElementBase::SetPosition(INT32 x, INT32 y)
 	{
-		mDimensions.x = x;
-		mDimensions.y = y;
+		mDimensions.X = x;
+		mDimensions.Y = y;
 
 		// Note: I could call _markMeshAsDirty with a little more work. If parent is layout then this call can be ignored
 		// and if it's a panel, we can immediately change the position without a full layout rebuild.
@@ -32,13 +32,13 @@ namespace bs
 
 	void GUIElementBase::SetSize(UINT32 width, UINT32 height)
 	{
-		bool isFixedBefore = (mDimensions.flags & GUIDF_FixedWidth) != 0 && (mDimensions.flags & GUIDF_FixedHeight) != 0;
+		bool isFixedBefore = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
 
-		mDimensions.flags |= GUIDF_FixedWidth | GUIDF_OverWidth | GUIDF_FixedHeight | GUIDF_OverHeight;
-		mDimensions.minWidth = mDimensions.maxWidth = width;
-		mDimensions.minHeight = mDimensions.maxHeight = height;
+		mDimensions.Flags |= GUIDF_FixedWidth | GUIDF_OverWidth | GUIDF_FixedHeight | GUIDF_OverHeight;
+		mDimensions.MinWidth = mDimensions.MaxWidth = width;
+		mDimensions.MinHeight = mDimensions.MaxHeight = height;
 
-		bool isFixedAfter = (mDimensions.flags & GUIDF_FixedWidth) != 0 && (mDimensions.flags & GUIDF_FixedHeight) != 0;
+		bool isFixedAfter = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
 
 		if (isFixedBefore != isFixedAfter)
 			RefreshChildUpdateParents();
@@ -48,12 +48,12 @@ namespace bs
 
 	void GUIElementBase::SetWidth(UINT32 width)
 	{
-		bool isFixedBefore = (mDimensions.flags & GUIDF_FixedWidth) != 0 && (mDimensions.flags & GUIDF_FixedHeight) != 0;
+		bool isFixedBefore = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
 
-		mDimensions.flags |= GUIDF_FixedWidth | GUIDF_OverWidth;
-		mDimensions.minWidth = mDimensions.maxWidth = width;
+		mDimensions.Flags |= GUIDF_FixedWidth | GUIDF_OverWidth;
+		mDimensions.MinWidth = mDimensions.MaxWidth = width;
 
-		bool isFixedAfter = (mDimensions.flags & GUIDF_FixedWidth) != 0 && (mDimensions.flags & GUIDF_FixedHeight) != 0;
+		bool isFixedAfter = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
 
 		if (isFixedBefore != isFixedAfter)
 			RefreshChildUpdateParents();
@@ -66,14 +66,14 @@ namespace bs
 		if (maxWidth < minWidth)
 			std::swap(minWidth, maxWidth);
 
-		bool isFixedBefore = (mDimensions.flags & GUIDF_FixedWidth) != 0 && (mDimensions.flags & GUIDF_FixedHeight) != 0;
+		bool isFixedBefore = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
 
-		mDimensions.flags |= GUIDF_OverWidth;
-		mDimensions.flags &= ~GUIDF_FixedWidth;
-		mDimensions.minWidth = minWidth;
-		mDimensions.maxWidth = maxWidth;
+		mDimensions.Flags |= GUIDF_OverWidth;
+		mDimensions.Flags &= ~GUIDF_FixedWidth;
+		mDimensions.MinWidth = minWidth;
+		mDimensions.MaxWidth = maxWidth;
 
-		bool isFixedAfter = (mDimensions.flags & GUIDF_FixedWidth) != 0 && (mDimensions.flags & GUIDF_FixedHeight) != 0;
+		bool isFixedAfter = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
 
 		if (isFixedBefore != isFixedAfter)
 			RefreshChildUpdateParents();
@@ -83,12 +83,12 @@ namespace bs
 
 	void GUIElementBase::SetHeight(UINT32 height)
 	{
-		bool isFixedBefore = (mDimensions.flags & GUIDF_FixedWidth) != 0 && (mDimensions.flags & GUIDF_FixedHeight) != 0;
+		bool isFixedBefore = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
 
-		mDimensions.flags |= GUIDF_FixedHeight | GUIDF_OverHeight;
-		mDimensions.minHeight = mDimensions.maxHeight = height;
+		mDimensions.Flags |= GUIDF_FixedHeight | GUIDF_OverHeight;
+		mDimensions.MinHeight = mDimensions.MaxHeight = height;
 
-		bool isFixedAfter = (mDimensions.flags & GUIDF_FixedWidth) != 0 && (mDimensions.flags & GUIDF_FixedHeight) != 0;
+		bool isFixedAfter = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
 
 		if (isFixedBefore != isFixedAfter)
 			RefreshChildUpdateParents();
@@ -101,14 +101,14 @@ namespace bs
 		if (maxHeight < minHeight)
 			std::swap(minHeight, maxHeight);
 
-		bool isFixedBefore = (mDimensions.flags & GUIDF_FixedWidth) != 0 && (mDimensions.flags & GUIDF_FixedHeight) != 0;
+		bool isFixedBefore = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
 
-		mDimensions.flags |= GUIDF_OverHeight;
-		mDimensions.flags &= ~GUIDF_FixedHeight;
-		mDimensions.minHeight = minHeight;
-		mDimensions.maxHeight = maxHeight;
+		mDimensions.Flags |= GUIDF_OverHeight;
+		mDimensions.Flags &= ~GUIDF_FixedHeight;
+		mDimensions.MinHeight = minHeight;
+		mDimensions.MaxHeight = maxHeight;
 
-		bool isFixedAfter = (mDimensions.flags & GUIDF_FixedWidth) != 0 && (mDimensions.flags & GUIDF_FixedHeight) != 0;
+		bool isFixedAfter = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
 
 		if (isFixedBefore != isFixedAfter)
 			RefreshChildUpdateParents();
@@ -118,11 +118,11 @@ namespace bs
 
 	void GUIElementBase::ResetDimensions()
 	{
-		bool isFixedBefore = (mDimensions.flags & GUIDF_FixedWidth) != 0 && (mDimensions.flags & GUIDF_FixedHeight) != 0;
+		bool isFixedBefore = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
 
 		mDimensions = GUIDimensions::Create();
 
-		bool isFixedAfter = (mDimensions.flags & GUIDF_FixedWidth) != 0 && (mDimensions.flags & GUIDF_FixedHeight) != 0;
+		bool isFixedAfter = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
 
 		if (isFixedBefore != isFixedAfter)
 			RefreshChildUpdateParents();
@@ -142,18 +142,18 @@ namespace bs
 		if (mUpdateParent != nullptr && mUpdateParent->IsDirtyInternal() && mParentWidget != nullptr)
 			mParentWidget->UpdateLayoutInternal(mUpdateParent);
 
-		Rect2I bounds = mLayoutData.area;
-		bounds.x -= anchorBounds.x;
-		bounds.y -= anchorBounds.y;
+		Rect2I bounds = mLayoutData.Area;
+		bounds.X -= anchorBounds.X;
+		bounds.Y -= anchorBounds.Y;
 		
 		return bounds;
 	}
 
 	void GUIElementBase::SetBounds(const Rect2I& bounds)
 	{
-		SetPosition(bounds.x, bounds.y);
-		SetWidth(bounds.width);
-		SetHeight(bounds.height);
+		SetPosition(bounds.X, bounds.Y);
+		SetWidth(bounds.Width);
+		SetHeight(bounds.Height);
 	}
 
 	Rect2I GUIElementBase::GetGlobalBounds()
@@ -161,7 +161,7 @@ namespace bs
 		if (mUpdateParent != nullptr && mUpdateParent->IsDirtyInternal() && mParentWidget != nullptr)
 			mParentWidget->UpdateLayoutInternal(mUpdateParent);
 
-		return mLayoutData.area;
+		return mLayoutData.Area;
 	}
 
 	Rect2I GUIElementBase::GetScreenBounds() const
@@ -169,26 +169,26 @@ namespace bs
 		if (mUpdateParent != nullptr && mUpdateParent->IsDirtyInternal() && mParentWidget != nullptr)
 			mParentWidget->UpdateLayoutInternal(mUpdateParent);
 
-		Rect2I area = mLayoutData.area;
+		Rect2I area = mLayoutData.Area;
 		if(mParentWidget)
 		{
 			const Matrix4& widgetTfrm = mParentWidget->GetWorldTfrm();
-			Vector2I localPos(area.x, area.y);
+			Vector2I localPos(area.X, area.Y);
 
-			const Vector4 widgetPosFlt = widgetTfrm.MultiplyAffine(Vector4((float)localPos.x, (float)localPos.y, 0.0f, 1.0f));
-			const Vector2I widgetPos(Math::RoundToInt(widgetPosFlt.x), Math::RoundToInt(widgetPosFlt.y));
+			const Vector4 widgetPosFlt = widgetTfrm.MultiplyAffine(Vector4((float)localPos.X, (float)localPos.Y, 0.0f, 1.0f));
+			const Vector2I widgetPos(Math::RoundToInt(widgetPosFlt.X), Math::RoundToInt(widgetPosFlt.Y));
 
 			const RenderWindow* parentWindow = GUIManager::Instance().GetWidgetWindow(*mParentWidget);
 			if(parentWindow)
 			{
 				const Vector2I windowPos = parentWindow->WindowToScreenPos(widgetPos);
-				area.x = windowPos.x;
-				area.y = windowPos.y;
+				area.X = windowPos.X;
+				area.Y = windowPos.Y;
 			}
 			else
 			{
-				area.x = widgetPos.x;
-				area.y = widgetPos.y;
+				area.X = widgetPos.X;
+				area.Y = widgetPos.Y;
 			}
 		}
 

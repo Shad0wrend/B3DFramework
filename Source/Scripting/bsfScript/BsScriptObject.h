@@ -21,17 +21,17 @@ namespace bs
 		ScriptObjectBackup() {}
 
 		explicit ScriptObjectBackup(const Any& data)
-			:data(data)
+			:Data(data)
 		{ }
 
-		Any data;
+		Any Data;
 	};
 
 	/** Contains backup data in the form of a raw memory buffer. */
 	struct RawBackupData
 	{
-		UINT8* data = nullptr;
-		UINT32 size = 0;
+		UINT8* Data = nullptr;
+		UINT32 Size = 0;
 	};
 
 	/**
@@ -113,8 +113,8 @@ namespace bs
 
 			Type* param = (Type*)(Base*)this; // Needed due to multiple inheritance. Safe since Type must point to an class derived from this one.
 
-			if(metaData.thisPtrField != nullptr)
-				metaData.thisPtrField->Set(instance, &param);
+			if(metaData.ThisPtrField != nullptr)
+				metaData.ThisPtrField->Set(instance, &param);
 		}
 
 		virtual ~ScriptObject()
@@ -127,14 +127,14 @@ namespace bs
 
 			Type* param = (Type*)(Base*)this; // Needed due to multiple inheritance. Safe since Type must point to an class derived from this one.
 
-			if (metaData.thisPtrField != nullptr && instance != nullptr)
-				metaData.thisPtrField->Set(instance, &param);
+			if (metaData.ThisPtrField != nullptr && instance != nullptr)
+				metaData.ThisPtrField->Set(instance, &param);
 		}
 
 		/**	Creates a new managed instance of the type wrapped by this interop object. */
 		virtual MonoObject* CreateManagedInstanceInternal(bool construct)
 		{
-			return metaData.scriptClass->CreateInstance(construct);
+			return metaData.ScriptClass->CreateInstance(construct);
 		}
 
 		/**
@@ -145,8 +145,8 @@ namespace bs
 		{
 			Type* nativeInstance = nullptr;
 
-			if (metaData.thisPtrField != nullptr && managedInstance != nullptr)
-				metaData.thisPtrField->Get(managedInstance, &nativeInstance);
+			if (metaData.ThisPtrField != nullptr && managedInstance != nullptr)
+				metaData.ThisPtrField->Get(managedInstance, &nativeInstance);
 
 			return nativeInstance;
 		}

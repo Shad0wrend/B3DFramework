@@ -56,16 +56,16 @@ namespace bs
 		void UpdateInternal();
 
 		/** Triggers when a file in the monitored folder is modified. Provides absolute path to the file. */
-		Event<void(const Path&)> onModified;
+		Event<void(const Path&)> OnModified;
 
 		/**	Triggers when a file/folder is added in the monitored folder. Provides absolute path to the file/folder. */
-		Event<void(const Path&)> onAdded;
+		Event<void(const Path&)> OnAdded;
 
 		/**	Triggers when a file/folder is removed from the monitored folder. Provides absolute path to the file/folder. */
-		Event<void(const Path&)> onRemoved;
+		Event<void(const Path&)> OnRemoved;
 
 		/**	Triggers when a file/folder is renamed in the monitored folder. Provides absolute path with old and new names. */
-		Event<void(const Path&, const Path&)> onRenamed;
+		Event<void(const Path&, const Path&)> OnRenamed;
 
 		/**
 		 * @name Internal

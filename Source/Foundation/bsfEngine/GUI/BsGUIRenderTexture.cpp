@@ -56,10 +56,10 @@ namespace bs
 
 		if (mSourceTexture != nullptr)
 		{
-			if (mSourceTexture->GetProperties().requiresTextureFlipping)
+			if (mSourceTexture->GetProperties().RequiresTextureFlipping)
 			{
-				mDesc.uvOffset = Vector2(0.0f, 1.0f);
-				mDesc.uvScale = Vector2(1.0f, -1.0f);
+				mDesc.UvOffset = Vector2(0.0f, 1.0f);
+				mDesc.UvScale = Vector2(1.0f, -1.0f);
 			}
 
 			SetTexture(SpriteTexture::Create(texture->GetColorTexture(0)));
@@ -77,12 +77,12 @@ namespace bs
 	void GUIRenderTexture::UpdateRenderElementsInternal()
 	{		
 		if(mActiveTexture != nullptr && mActiveTexture.IsLoaded())
-			mDesc.texture = mActiveTexture;
+			mDesc.Texture = mActiveTexture;
 
-		mDesc.width = mLayoutData.area.width;
-		mDesc.height = mLayoutData.area.height;
-		mDesc.transparent = mTransparent;
-		mDesc.color = GetTint();
+		mDesc.Width = mLayoutData.Area.Width;
+		mDesc.Height = mLayoutData.Area.Height;
+		mDesc.Transparent = mTransparent;
+		mDesc.Color = GetTint();
 
 		mImageSprite->Update(mDesc, (UINT64)GetParentWidgetInternal());
 

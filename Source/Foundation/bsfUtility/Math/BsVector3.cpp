@@ -7,7 +7,7 @@
 namespace bs
 {
 	Vector3::Vector3(const Vector4& vec)
-		:x(vec.x), y(vec.y), z(vec.z)
+		:X(vec.X), Y(vec.Y), Z(vec.Z)
 	{
 
 	}
@@ -28,7 +28,7 @@ namespace bs
 
 	bool Vector3::IsNaN() const
 	{
-		return Math::IsNaN(x) || Math::IsNaN(y) || Math::IsNaN(z);
+		return Math::IsNaN(X) || Math::IsNaN(Y) || Math::IsNaN(Z);
 	}
 
 	const Vector3 Vector3::ZERO{BS_ZERO()};

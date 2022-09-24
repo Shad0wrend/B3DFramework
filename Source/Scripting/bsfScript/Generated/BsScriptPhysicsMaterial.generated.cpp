@@ -18,14 +18,14 @@ namespace bs
 
 	void ScriptPhysicsMaterial::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptPhysicsMaterial::InternalGetRef);
-		metaData.scriptClass->AddInternalCall("Internal_SetStaticFriction", (void*)&ScriptPhysicsMaterial::InternalSetStaticFriction);
-		metaData.scriptClass->AddInternalCall("Internal_GetStaticFriction", (void*)&ScriptPhysicsMaterial::InternalGetStaticFriction);
-		metaData.scriptClass->AddInternalCall("Internal_SetDynamicFriction", (void*)&ScriptPhysicsMaterial::InternalSetDynamicFriction);
-		metaData.scriptClass->AddInternalCall("Internal_GetDynamicFriction", (void*)&ScriptPhysicsMaterial::InternalGetDynamicFriction);
-		metaData.scriptClass->AddInternalCall("Internal_SetRestitutionCoefficient", (void*)&ScriptPhysicsMaterial::InternalSetRestitutionCoefficient);
-		metaData.scriptClass->AddInternalCall("Internal_GetRestitutionCoefficient", (void*)&ScriptPhysicsMaterial::InternalGetRestitutionCoefficient);
-		metaData.scriptClass->AddInternalCall("Internal_Create", (void*)&ScriptPhysicsMaterial::InternalCreate);
+		metaData.ScriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptPhysicsMaterial::InternalGetRef);
+		metaData.ScriptClass->AddInternalCall("Internal_SetStaticFriction", (void*)&ScriptPhysicsMaterial::InternalSetStaticFriction);
+		metaData.ScriptClass->AddInternalCall("Internal_GetStaticFriction", (void*)&ScriptPhysicsMaterial::InternalGetStaticFriction);
+		metaData.ScriptClass->AddInternalCall("Internal_SetDynamicFriction", (void*)&ScriptPhysicsMaterial::InternalSetDynamicFriction);
+		metaData.ScriptClass->AddInternalCall("Internal_GetDynamicFriction", (void*)&ScriptPhysicsMaterial::InternalGetDynamicFriction);
+		metaData.ScriptClass->AddInternalCall("Internal_SetRestitutionCoefficient", (void*)&ScriptPhysicsMaterial::InternalSetRestitutionCoefficient);
+		metaData.ScriptClass->AddInternalCall("Internal_GetRestitutionCoefficient", (void*)&ScriptPhysicsMaterial::InternalGetRestitutionCoefficient);
+		metaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptPhysicsMaterial::InternalCreate);
 
 	}
 
@@ -34,7 +34,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		return metaData.scriptClass->CreateInstance("bool", ctorParams);
+		return metaData.ScriptClass->CreateInstance("bool", ctorParams);
 	}
 	MonoObject* ScriptPhysicsMaterial::InternalGetRef(ScriptPhysicsMaterial* thisPtr)
 	{

@@ -18,15 +18,15 @@ namespace bs
 
 	void ScriptColorGradient::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_ColorGradient", (void*)&ScriptColorGradient::InternalColorGradient);
-		metaData.scriptClass->AddInternalCall("Internal_ColorGradient0", (void*)&ScriptColorGradient::InternalColorGradient0);
-		metaData.scriptClass->AddInternalCall("Internal_ColorGradient1", (void*)&ScriptColorGradient::InternalColorGradient1);
-		metaData.scriptClass->AddInternalCall("Internal_SetKeys", (void*)&ScriptColorGradient::InternalSetKeys);
-		metaData.scriptClass->AddInternalCall("Internal_GetKeys", (void*)&ScriptColorGradient::InternalGetKeys);
-		metaData.scriptClass->AddInternalCall("Internal_GetNumKeys", (void*)&ScriptColorGradient::InternalGetNumKeys);
-		metaData.scriptClass->AddInternalCall("Internal_GetKey", (void*)&ScriptColorGradient::InternalGetKey);
-		metaData.scriptClass->AddInternalCall("Internal_SetConstant", (void*)&ScriptColorGradient::InternalSetConstant);
-		metaData.scriptClass->AddInternalCall("Internal_Evaluate", (void*)&ScriptColorGradient::InternalEvaluate);
+		metaData.ScriptClass->AddInternalCall("Internal_ColorGradient", (void*)&ScriptColorGradient::InternalColorGradient);
+		metaData.ScriptClass->AddInternalCall("Internal_ColorGradient0", (void*)&ScriptColorGradient::InternalColorGradient0);
+		metaData.ScriptClass->AddInternalCall("Internal_ColorGradient1", (void*)&ScriptColorGradient::InternalColorGradient1);
+		metaData.ScriptClass->AddInternalCall("Internal_SetKeys", (void*)&ScriptColorGradient::InternalSetKeys);
+		metaData.ScriptClass->AddInternalCall("Internal_GetKeys", (void*)&ScriptColorGradient::InternalGetKeys);
+		metaData.ScriptClass->AddInternalCall("Internal_GetNumKeys", (void*)&ScriptColorGradient::InternalGetNumKeys);
+		metaData.ScriptClass->AddInternalCall("Internal_GetKey", (void*)&ScriptColorGradient::InternalGetKey);
+		metaData.ScriptClass->AddInternalCall("Internal_SetConstant", (void*)&ScriptColorGradient::InternalSetConstant);
+		metaData.ScriptClass->AddInternalCall("Internal_Evaluate", (void*)&ScriptColorGradient::InternalEvaluate);
 
 	}
 
@@ -37,7 +37,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptColorGradient>()) ScriptColorGradient(managedInstance, value);
 		return managedInstance;
 	}
@@ -120,7 +120,7 @@ namespace bs
 
 		__ColorGradientKeyInterop interop__output;
 		interop__output = ScriptColorGradientKey::ToInterop(tmp__output);
-		MonoUtil::ValueCopy(__output, &interop__output, ScriptColorGradientKey::GetMetaData()->scriptClass->GetInternalClassInternal());
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptColorGradientKey::GetMetaData()->ScriptClass->GetInternalClassInternal());
 	}
 
 	void ScriptColorGradient::InternalSetConstant(ScriptColorGradient* thisPtr, Color* color)

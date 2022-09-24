@@ -140,10 +140,10 @@ namespace bs
 			topLeft = invProj.Multiply(topLeft);
 			bottomRight = invProj.Multiply(bottomRight);
 
-			left = topLeft.x;
-			top = topLeft.y;
-			right = bottomRight.x;
-			bottom = bottomRight.y;
+			left = topLeft.X;
+			top = topLeft.Y;
+			right = bottomRight.X;
+			bottom = bottomRight.Y;
 		}
 		else
 		{
@@ -487,17 +487,17 @@ namespace bs
 	Vector3 CameraBase::ScreenToWorldPointDeviceDepth(const Vector2I& screenPoint, float deviceDepth) const
 	{
 		Vector2 ndcPoint = ScreenToNdcPoint(screenPoint);
-		Vector4 worldPoint(ndcPoint.x, ndcPoint.y, deviceDepth, 1.0f);
+		Vector4 worldPoint(ndcPoint.X, ndcPoint.Y, deviceDepth, 1.0f);
 		worldPoint = GetProjectionMatrixRs().Inverse().Multiply(worldPoint);
 
 		Vector3 worldPoint3D;
-		if (Math::Abs(worldPoint.w) > 1e-7f)
+		if (Math::Abs(worldPoint.W) > 1e-7f)
 		{
-			float invW = 1.0f / worldPoint.w;
+			float invW = 1.0f / worldPoint.W;
 
-			worldPoint3D.x = worldPoint.x * invW;
-			worldPoint3D.y = worldPoint.y * invW;
-			worldPoint3D.z = worldPoint.z * invW;
+			worldPoint3D.X = worldPoint.X * invW;
+			worldPoint3D.Y = worldPoint.Y * invW;
+			worldPoint3D.Z = worldPoint.Z * invW;
 		}
 
 		return ViewToWorldPoint(worldPoint3D);
@@ -514,13 +514,13 @@ namespace bs
 		Rect2I viewport = GetViewportRect();
 
 		Vector2 ndcPoint;
-		ndcPoint.x = (float)(((screenPoint.x - viewport.x) / (float)viewport.width) * 2.0f - 1.0f);
+		ndcPoint.X = (float)(((screenPoint.X - viewport.X) / (float)viewport.Width) * 2.0f - 1.0f);
 
-		const Conventions& rapiConventions = ct::gCaps().conventions;
-		if(rapiConventions.ndcYAxis == Conventions::Axis::Down)
-			ndcPoint.y = (float)(((screenPoint.y - viewport.y) / (float)viewport.height) * 2.0f - 1.0f);
+		const Conventions& rapiConventions = ct::gCaps().Conventions;
+		if(rapiConventions.NdcYAxis == Conventions::Axis::Down)
+			ndcPoint.Y = (float)(((screenPoint.Y - viewport.Y) / (float)viewport.Height) * 2.0f - 1.0f);
 		else
-			ndcPoint.y = (float)((1.0f - ((screenPoint.y - viewport.y) / (float)viewport.height)) * 2.0f - 1.0f);
+			ndcPoint.Y = (float)((1.0f - ((screenPoint.Y - viewport.Y) / (float)viewport.Height)) * 2.0f - 1.0f);
 
 		return ndcPoint;
 	}
@@ -540,7 +540,7 @@ namespace bs
 	{
 		Vector3 projPoint = ProjectPoint(viewPoint);
 
-		return Vector2(projPoint.x, projPoint.y);
+		return Vector2(projPoint.X, projPoint.Y);
 	}
 
 	Vector3 CameraBase::NdcToWorldPoint(const Vector2& ndcPoint, float depth) const
@@ -551,7 +551,7 @@ namespace bs
 
 	Vector3 CameraBase::NdcToViewPoint(const Vector2& ndcPoint, float depth) const
 	{
-		return UnprojectPoint(Vector3(ndcPoint.x, ndcPoint.y, depth));
+		return UnprojectPoint(Vector3(ndcPoint.X, ndcPoint.Y, depth));
 	}
 
 	Vector2I CameraBase::NdcToScreenPoint(const Vector2& ndcPoint) const
@@ -559,13 +559,13 @@ namespace bs
 		Rect2I viewport = GetViewportRect();
 
 		Vector2I screenPoint;
-		screenPoint.x = Math::RoundToInt(viewport.x + ((ndcPoint.x + 1.0f) * 0.5f) * viewport.width);
+		screenPoint.X = Math::RoundToInt(viewport.X + ((ndcPoint.X + 1.0f) * 0.5f) * viewport.Width);
 
-		const Conventions& rapiConventions = ct::gCaps().conventions;
-		if(rapiConventions.ndcYAxis == Conventions::Axis::Down)
-			screenPoint.y = Math::RoundToInt(viewport.y + (ndcPoint.y + 1.0f) * 0.5f * viewport.height);
+		const Conventions& rapiConventions = ct::gCaps().Conventions;
+		if(rapiConventions.NdcYAxis == Conventions::Axis::Down)
+			screenPoint.Y = Math::RoundToInt(viewport.Y + (ndcPoint.Y + 1.0f) * 0.5f * viewport.Height);
 		else
-			screenPoint.y = Math::RoundToInt(viewport.y + (1.0f - (ndcPoint.y + 1.0f) * 0.5f) * viewport.height);
+			screenPoint.Y = Math::RoundToInt(viewport.Y + (1.0f - (ndcPoint.Y + 1.0f) * 0.5f) * viewport.Height);
 
 		return screenPoint;
 	}
@@ -574,8 +574,8 @@ namespace bs
 	{
 		Vector2 ndcPoint = ScreenToNdcPoint(screenPoint);
 
-		Vector3 near = UnprojectPoint(Vector3(ndcPoint.x, ndcPoint.y, mNearDist));
-		Vector3 far = UnprojectPoint(Vector3(ndcPoint.x, ndcPoint.y, mNearDist + 1.0f));
+		Vector3 near = UnprojectPoint(Vector3(ndcPoint.X, ndcPoint.Y, mNearDist));
+		Vector3 far = UnprojectPoint(Vector3(ndcPoint.X, ndcPoint.Y, mNearDist + 1.0f));
 
 		Ray ray(near, Vector3::Normalize(far - near));
 		ray.TransformAffine(GetViewMatrix().InverseAffine());
@@ -585,24 +585,24 @@ namespace bs
 
 	Vector3 CameraBase::ProjectPoint(const Vector3& point) const
 	{
-		Vector4 projPoint4(point.x, point.y, point.z, 1.0f);
+		Vector4 projPoint4(point.X, point.Y, point.Z, 1.0f);
 		projPoint4 = GetProjectionMatrixRs().Multiply(projPoint4);
 
-		if (Math::Abs(projPoint4.w) > 1e-7f)
+		if (Math::Abs(projPoint4.W) > 1e-7f)
 		{
-			float invW = 1.0f / projPoint4.w;
-			projPoint4.x *= invW;
-			projPoint4.y *= invW;
-			projPoint4.z *= invW;
+			float invW = 1.0f / projPoint4.W;
+			projPoint4.X *= invW;
+			projPoint4.Y *= invW;
+			projPoint4.Z *= invW;
 		}
 		else
 		{
-			projPoint4.x = 0.0f;
-			projPoint4.y = 0.0f;
-			projPoint4.z = 0.0f;
+			projPoint4.X = 0.0f;
+			projPoint4.Y = 0.0f;
+			projPoint4.Z = 0.0f;
 		}
 
-		return Vector3(projPoint4.x, projPoint4.y, projPoint4.z);
+		return Vector3(projPoint4.X, projPoint4.Y, projPoint4.Z);
 	}
 
 	Vector3 CameraBase::UnprojectPoint(const Vector3& point) const
@@ -611,19 +611,19 @@ namespace bs
 		// (as opposed to if point.z was in device coordinates, in which case we could just inverse project)
 
 		// Get world position for a point near the far plane (0.95f)
-		Vector4 farAwayPoint(point.x, point.y, 0.95f, 1.0f);
+		Vector4 farAwayPoint(point.X, point.Y, 0.95f, 1.0f);
 		farAwayPoint = GetProjectionMatrixRs().Inverse().Multiply(farAwayPoint);
 
 		// Can't proceed if w is too small
-		if (Math::Abs(farAwayPoint.w) > 1e-7f)
+		if (Math::Abs(farAwayPoint.W) > 1e-7f)
 		{
 			// Perspective divide, to get the values that make sense in 3D space
-			float invW = 1.0f / farAwayPoint.w;
+			float invW = 1.0f / farAwayPoint.W;
 			
 			Vector3 farAwayPoint3D;
-			farAwayPoint3D.x = farAwayPoint.x * invW;
-			farAwayPoint3D.y = farAwayPoint.y * invW;
-			farAwayPoint3D.z = farAwayPoint.z * invW;
+			farAwayPoint3D.X = farAwayPoint.X * invW;
+			farAwayPoint3D.Y = farAwayPoint.Y * invW;
+			farAwayPoint3D.Z = farAwayPoint.Z * invW;
 
 			// Find the distance to the far point along the camera's viewing axis
 			float distAlongZ = farAwayPoint3D.Dot(-Vector3::UNIT_Z);
@@ -642,12 +642,12 @@ namespace bs
 					dir /= distAlongZ;
 
 					// And now we just find the final position along the direction
-					return dir * point.z;
+					return dir * point.Z;
 				}
 				else // Ortographic
 				{
 					// Depth difference between our arbitrary point and actual depth
-					float depthDiff = distAlongZ - point.z;
+					float depthDiff = distAlongZ - point.Z;
 
 					// Depth difference along viewing direction
 					Vector3 depthDiffVec = depthDiff * -Vector3::UNIT_Z;
@@ -756,7 +756,7 @@ namespace bs
 	{
 		UINT32 dirtyFlag = GetCoreDirtyFlags();
 
-		UINT32 size = rtti_size(dirtyFlag).bytes;
+		UINT32 size = rtti_size(dirtyFlag).Bytes;
 		
 		if((dirtyFlag & ~(INT32)CameraDirtyFlag::Redraw) != 0)
 		{

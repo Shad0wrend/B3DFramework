@@ -21,7 +21,7 @@ namespace bs
 
 	MonoObject*ScriptControllerColliderCollision::Box(const __ControllerColliderCollisionInterop& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	__ControllerColliderCollisionInterop ScriptControllerColliderCollision::Unbox(MonoObject* value)
@@ -34,15 +34,15 @@ namespace bs
 		ControllerColliderCollision output;
 		GameObjectHandle<CCollider> tmpcollider;
 		ScriptCColliderBase* scriptcollider;
-		scriptcollider = (ScriptCColliderBase*)ScriptCCollider::ToNative(value.collider);
+		scriptcollider = (ScriptCColliderBase*)ScriptCCollider::ToNative(value.Collider);
 		if(scriptcollider != nullptr)
 			tmpcollider = static_object_cast<CCollider>(scriptcollider->GetComponent());
-		output.collider = tmpcollider;
-		output.triangleIndex = value.triangleIndex;
-		output.position = value.position;
-		output.normal = value.normal;
-		output.motionDir = value.motionDir;
-		output.motionAmount = value.motionAmount;
+		output.Collider = tmpcollider;
+		output.TriangleIndex = value.TriangleIndex;
+		output.Position = value.Position;
+		output.Normal = value.Normal;
+		output.MotionDir = value.MotionDir;
+		output.MotionAmount = value.MotionAmount;
 
 		return output;
 	}
@@ -51,19 +51,19 @@ namespace bs
 	{
 		__ControllerColliderCollisionInterop output;
 		ScriptComponentBase* scriptcollider = nullptr;
-		if(value.collider)
-			scriptcollider = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(value.collider));
+		if(value.Collider)
+			scriptcollider = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(value.Collider));
 		MonoObject* tmpcollider;
 		if(scriptcollider != nullptr)
 			tmpcollider = scriptcollider->GetManagedInstance();
 		else
 			tmpcollider = nullptr;
-		output.collider = tmpcollider;
-		output.triangleIndex = value.triangleIndex;
-		output.position = value.position;
-		output.normal = value.normal;
-		output.motionDir = value.motionDir;
-		output.motionAmount = value.motionAmount;
+		output.Collider = tmpcollider;
+		output.TriangleIndex = value.TriangleIndex;
+		output.Position = value.Position;
+		output.Normal = value.Normal;
+		output.MotionDir = value.MotionDir;
+		output.MotionAmount = value.MotionAmount;
 
 		return output;
 	}

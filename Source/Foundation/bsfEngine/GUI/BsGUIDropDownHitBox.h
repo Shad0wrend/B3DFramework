@@ -49,10 +49,10 @@ namespace bs
 		void SetBounds(const Vector<Rect2I>& bounds);
 
 		/** Triggered when hit box loses focus (for example user clicks outside of its bounds). */
-		Event<void()> onFocusLost;
+		Event<void()> OnFocusLost;
 
 		/** Triggered when hit box gains focus (for example user clicks inside of its bounds). */
-		Event<void()> onFocusGained;
+		Event<void()> OnFocusGained;
 
 	private:
 		GUIDropDownHitBox(bool captureMouseOver, bool captureMousePresses, const GUIDimensions& dimensions);

@@ -16,21 +16,21 @@ namespace bs
 		ScriptMeta();
 		ScriptMeta(const String& assembly, const String& ns, const String& name, std::function<void()> initCallback);
 
-		String ns; /**< Namespace the script class is located in. */
-		String name; /**< Type name of the script class. */
-		String assembly; /**< Name of the assembly the script class is located in. */
+		String Ns; /**< Namespace the script class is located in. */
+		String Name; /**< Type name of the script class. */
+		String Assembly; /**< Name of the assembly the script class is located in. */
 		/**
 		 * Callback that will be triggered when assembly containing the class is loaded or refreshed. Used for one time
 		 * initialization.
 		 */
-		std::function<void()> initCallback;
+		std::function<void()> InitCallback;
 		/** Class object describing the script class. Only valid after assembly containing this type was loaded.  */
-		MonoClass* scriptClass;	
+		MonoClass* ScriptClass;	
 		/**
 		 * Field object that contains a pointer to the native instance of the script object. Only valid after assembly
 		 * containing this type was loaded.
 		 */
-		MonoField* thisPtrField;
+		MonoField* ThisPtrField;
 	};
 
 	/** @} */

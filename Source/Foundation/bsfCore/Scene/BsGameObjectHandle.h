@@ -17,11 +17,11 @@ namespace bs
 	struct GameObjectInstanceData
 	{
 		GameObjectInstanceData()
-			:object(nullptr), mInstanceId(0)
+			:Object(nullptr), MInstanceId(0)
 		{ }
 
-		SPtr<GameObject> object;
-		UINT64 mInstanceId;
+		SPtr<GameObject> Object;
+		UINT64 MInstanceId;
 	};
 
 	typedef SPtr<GameObjectInstanceData> GameObjectInstanceDataPtr;
@@ -32,10 +32,10 @@ namespace bs
 		GameObjectHandleData() = default;
 
 		GameObjectHandleData(SPtr<GameObjectInstanceData> ptr)
-			:mPtr(std::move(ptr))
+			:MPtr(std::move(ptr))
 		{ }
 
-		SPtr<GameObjectInstanceData> mPtr;
+		SPtr<GameObjectInstanceData> MPtr;
 	};
 
 	/**
@@ -65,7 +65,7 @@ namespace bs
 		bool IsDestroyed(bool checkQueued = false) const;
 
 		/**	Returns the instance ID of the object the handle is referencing. */
-		UINT64 GetInstanceId() const { return mData->mPtr != nullptr ? mData->mPtr->mInstanceId : 0; }
+		UINT64 GetInstanceId() const { return mData->MPtr != nullptr ? mData->MPtr->MInstanceId : 0; }
 
 		/**
 		 * Returns pointer to the referenced GameObject.
@@ -76,7 +76,7 @@ namespace bs
 		{
 			ThrowIfDestroyed();
 
-			return mData->mPtr->object.get();
+			return mData->MPtr->Object.get();
 		}
 
 		/**
@@ -88,7 +88,7 @@ namespace bs
 		{
 			ThrowIfDestroyed();
 
-			return mData->mPtr->object;
+			return mData->MPtr->Object;
 		}
 
 		/**
@@ -114,7 +114,7 @@ namespace bs
 		const SPtr<GameObjectHandleData>& GetHandleDataInternal() const { return mData; }
 
 		/** Resolves a handle to a proper GameObject in case it was created uninitialized. */
-		void ResolveInternal(const GameObjectHandleBase& object) {	mData->mPtr = object.mData->mPtr; }
+		void ResolveInternal(const GameObjectHandleBase& object) {	mData->MPtr = object.mData->MPtr; }
 
 		/**	Changes the GameObject instance the handle is pointing to. */
 		void SetHandleDataInternal(const SPtr<GameObject>& object);
@@ -147,8 +147,8 @@ namespace bs
 			// It's important not to clear mData->mPtr as some code might rely
 			// on it. (for example for restoring lost handles)
 
-			if (mData->mPtr != nullptr)
-				mData->mPtr->object = nullptr;
+			if (mData->MPtr != nullptr)
+				mData->MPtr->Object = nullptr;
 		}
 
 		SPtr<GameObjectHandleData> mData;
@@ -213,7 +213,7 @@ namespace bs
 		{
 			ThrowIfDestroyed();
 
-			return reinterpret_cast<T*>(mData->mPtr->object.get());
+			return reinterpret_cast<T*>(mData->MPtr->Object.get());
 		}
 
 		/**
@@ -225,7 +225,7 @@ namespace bs
 		{
 			ThrowIfDestroyed();
 
-			return std::static_pointer_cast<T>(mData->mPtr->object);
+			return std::static_pointer_cast<T>(mData->MPtr->Object);
 		}
 
 		/**
@@ -250,7 +250,7 @@ namespace bs
 		template<class _Ty>
 		struct Bool_struct
 		{
-			int _Member;
+			int Member;
 		};
 
 		/**
@@ -262,7 +262,7 @@ namespace bs
 		 */
 		operator int Bool_struct<T>::*() const
 		{
-			return (((mData->mPtr != nullptr) && (mData->mPtr->object != nullptr)) ? &Bool_struct<T>::_Member : 0);
+			return (((mData->MPtr != nullptr) && (mData->MPtr->Object != nullptr)) ? &Bool_struct<T>::Member : 0);
 		}
 
 		/** @} */

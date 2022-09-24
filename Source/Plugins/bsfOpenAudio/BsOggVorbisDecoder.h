@@ -17,8 +17,8 @@ namespace bs
 	{
 		OggDecoderData() = default;
 
-		SPtr<DataStream> stream;
-		UINT32 offset = 0;
+		SPtr<DataStream> Stream;
+		UINT32 Offset = 0;
 	};
 
 	/** Used for reading Ogg Vorbis audio data. */

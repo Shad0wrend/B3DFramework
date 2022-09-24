@@ -26,43 +26,43 @@ namespace bs
 		 * Queries is blending enabled for the specified render target. Blending allows you to combine the color from
 		 * current and previous pixel based on some value.
 		 */
-		bool blendEnable = false;
+		bool BlendEnable = false;
 
 		/**
 		 * Determines what should the source blend factor be. This value determines what will the color being generated
 		 * currently be multiplied by.
 		 */
-		BlendFactor srcBlend = BF_ONE;
+		BlendFactor SrcBlend = BF_ONE;
 
 		/**
 		 * Determines what should the destination blend factor be. This value determines what will the color already in
 		 * render target be multiplied by.
 		 */
-		BlendFactor dstBlend = BF_ZERO;
+		BlendFactor DstBlend = BF_ZERO;
 
 		/**
 		 * Determines how are source and destination colors combined (after they are multiplied by their respective blend
 		 * factors).
 		 */
-		BlendOperation blendOp = BO_ADD;
+		BlendOperation BlendOp = BO_ADD;
 
 		/**
 		 * Determines what should the alpha source blend factor be. This value determines what will the alpha value being
 		 * generated currently be multiplied by.
 		 */
-		BlendFactor srcBlendAlpha = BF_ONE;
+		BlendFactor SrcBlendAlpha = BF_ONE;
 
 		/**
 		 * Determines what should the alpha destination blend factor be. This value determines what will the alpha value
 		 * already in render target be multiplied by.
 		 */
-		BlendFactor dstBlendAlpha = BF_ZERO;
+		BlendFactor DstBlendAlpha = BF_ZERO;
 
 		/**
 		 * Determines how are source and destination alpha values combined (after they are multiplied by their respective
 		 * blend factors).
 		 */
-		BlendOperation blendOpAlpha = BO_ADD;
+		BlendOperation BlendOpAlpha = BO_ADD;
 
 		/**
 		 * Render target write mask allows to choose which pixel components should the pixel shader output.
@@ -70,7 +70,7 @@ namespace bs
 		 * Only the first four bits are used. First bit representing red, second green, third blue and fourth alpha value.
 		 * Set bits means pixel shader will output those channels.
 		 */
-		UINT8 renderTargetWriteMask = 0xFF;
+		UINT8 RenderTargetWriteMask = 0xFF;
 	};
 
 	/** Structure that describes render pipeline blend states. Used for initializing BlendState. */
@@ -89,15 +89,15 @@ namespace bs
 		 * Be aware this is a limited technique only useful for certain situations. Unless you are having performance
 		 * problems use regular blending.
 		 */
-		bool alphaToCoverageEnable = false;
+		bool AlphaToCoverageEnable = false;
 
 		/**
 		 * When not set, only the first render target blend descriptor will be used for all render targets. If set each
 		 * render target will use its own blend descriptor.
 		 */
-		bool independantBlendEnable = false;
+		bool IndependantBlendEnable = false;
 
-		RENDER_TARGET_BLEND_STATE_DESC renderTargetDesc[BS_MAX_MULTIPLE_RENDER_TARGETS];
+		RENDER_TARGET_BLEND_STATE_DESC RenderTargetDesc[BS_MAX_MULTIPLE_RENDER_TARGETS];
 	};
 
 	/** Properties of a BlendState. Shared between sim and core thread versions of BlendState. */
@@ -107,10 +107,10 @@ namespace bs
 		BlendProperties(const BLEND_STATE_DESC& desc);
 
 		/** @copydoc BLEND_STATE_DESC::alphaToCoverageEnable */
-		bool GetAlphaToCoverageEnabled() const { return mData.alphaToCoverageEnable; }
+		bool GetAlphaToCoverageEnabled() const { return mData.AlphaToCoverageEnable; }
 
 		/** @copydoc BLEND_STATE_DESC::independantBlendEnable */
-		bool GetIndependantBlendEnable() const { return mData.independantBlendEnable; }
+		bool GetIndependantBlendEnable() const { return mData.IndependantBlendEnable; }
 
 		/** @copydoc RENDER_TARGET_BLEND_STATE_DESC::blendEnable */
 		bool GetBlendEnabled(UINT32 renderTargetIdx) const;

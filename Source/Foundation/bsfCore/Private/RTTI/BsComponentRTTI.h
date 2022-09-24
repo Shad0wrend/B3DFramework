@@ -34,17 +34,17 @@ namespace bs
 
 			// This shouldn't be null during normal deserialization but could be during some other operations, like applying
 			// a binary diff.
-			if (deserializationData.ptr != nullptr)
+			if (deserializationData.Ptr != nullptr)
 			{
 				// Register the newly created SO with the GameObjectManager and provide it with the original ID so that
 				// deserialized handles pointing to this object can be resolved.
-				SPtr<Component> compPtr = std::static_pointer_cast<Component>(deserializationData.ptr);
+				SPtr<Component> compPtr = std::static_pointer_cast<Component>(deserializationData.Ptr);
 
 				GameObjectHandleBase handle = GameObjectManager::Instance().RegisterObject(compPtr);
-				coreContext->goState->RegisterObject(deserializationData.originalId, handle);
+				coreContext->GoState->RegisterObject(deserializationData.OriginalId, handle);
 			}
 
-			if(comp->mUUID.Empty() || coreContext->goState->GetUseNewUuiDs())
+			if(comp->mUUID.Empty() || coreContext->GoState->GetUseNewUuiDs())
 				comp->mUUID = UUIDGenerator::GenerateRandom();
 			
 			comp->mRTTIData = nullptr;

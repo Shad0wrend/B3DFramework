@@ -24,9 +24,9 @@ namespace bs { namespace ct
 		D3D11_SAMPLER_DESC samplerState;
 		ZeroMemory(&samplerState, sizeof(D3D11_SAMPLER_DESC));
 
-		samplerState.AddressU = D3D11Mappings::Get(mProperties.GetTextureAddressingMode().u);
-		samplerState.AddressV = D3D11Mappings::Get(mProperties.GetTextureAddressingMode().v);
-		samplerState.AddressW = D3D11Mappings::Get(mProperties.GetTextureAddressingMode().w);
+		samplerState.AddressU = D3D11Mappings::Get(mProperties.GetTextureAddressingMode().U);
+		samplerState.AddressV = D3D11Mappings::Get(mProperties.GetTextureAddressingMode().V);
+		samplerState.AddressW = D3D11Mappings::Get(mProperties.GetTextureAddressingMode().W);
 		samplerState.BorderColor[0] = mProperties.GetBorderColor()[0];
 		samplerState.BorderColor[1] = mProperties.GetBorderColor()[1];
 		samplerState.BorderColor[2] = mProperties.GetBorderColor()[2];

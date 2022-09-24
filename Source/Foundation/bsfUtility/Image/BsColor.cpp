@@ -19,10 +19,10 @@ namespace bs
 		Color output;
 		const UINT32 val32 = val;
 
-		output.a = ((val32 >> 24) & 0xFF) / 255.0f;
-		output.b = ((val32 >> 16) & 0xFF) / 255.0f;
-		output.g = ((val32 >> 8) & 0xFF) / 255.0f;
-		output.r = (val32 & 0xFF) / 255.0f;
+		output.A = ((val32 >> 24) & 0xFF) / 255.0f;
+		output.B = ((val32 >> 16) & 0xFF) / 255.0f;
+		output.G = ((val32 >> 8) & 0xFF) / 255.0f;
+		output.R = (val32 & 0xFF) / 255.0f;
 
 		return output;
 	}
@@ -32,10 +32,10 @@ namespace bs
 		Color output;
 		const UINT32 val32 = val;
 
-		output.r = ((val32 >> 24) & 0xFF) / 255.0f;
-		output.g = ((val32 >> 16) & 0xFF) / 255.0f;
-		output.b = ((val32 >> 8) & 0xFF) / 255.0f;
-		output.a = (val32 & 0xFF) / 255.0f;
+		output.R = ((val32 >> 24) & 0xFF) / 255.0f;
+		output.G = ((val32 >> 16) & 0xFF) / 255.0f;
+		output.B = ((val32 >> 8) & 0xFF) / 255.0f;
+		output.A = (val32 & 0xFF) / 255.0f;
 
 		return output;
 	}
@@ -45,10 +45,10 @@ namespace bs
 		Color output;
 		const UINT32 val32 = val;
 
-		output.b = ((val32 >> 24) & 0xFF) / 255.0f;
-		output.g = ((val32 >> 16) & 0xFF) / 255.0f;
-		output.r = ((val32 >> 8) & 0xFF) / 255.0f;
-		output.a = (val32 & 0xFF) / 255.0f;
+		output.B = ((val32 >> 24) & 0xFF) / 255.0f;
+		output.G = ((val32 >> 16) & 0xFF) / 255.0f;
+		output.R = ((val32 >> 8) & 0xFF) / 255.0f;
+		output.A = (val32 & 0xFF) / 255.0f;
 
 		return output;
 	}
@@ -58,10 +58,10 @@ namespace bs
 		Color output;
 		const UINT32 val32 = val;
 
-		output.a = ((val32 >> 24) & 0xFF) / 255.0f;
-		output.r = ((val32 >> 16) & 0xFF) / 255.0f;
-		output.g = ((val32 >> 8) & 0xFF) / 255.0f;
-		output.b = (val32 & 0xFF) / 255.0f;
+		output.A = ((val32 >> 24) & 0xFF) / 255.0f;
+		output.R = ((val32 >> 16) & 0xFF) / 255.0f;
+		output.G = ((val32 >> 8) & 0xFF) / 255.0f;
+		output.B = (val32 & 0xFF) / 255.0f;
 
 		return output;
 	}
@@ -85,7 +85,7 @@ namespace bs
 		if (brightness == 0.0f)
 		{
 			// early exit, this has to be black
-			output.r = output.g = output.b = 0.0f;
+			output.R = output.G = output.B = 0.0f;
 			return output;
 		}
 
@@ -93,7 +93,7 @@ namespace bs
 		{
 			// early exit, this has to be grey
 
-			output.r = output.g = output.b = brightness;
+			output.R = output.G = output.B = brightness;
 			return output;
 		}
 
@@ -113,39 +113,39 @@ namespace bs
 		{
 		case 0:
 			// red domain; green ascends
-			output.r = brightness;
-			output.g = f3;
-			output.b = f1;
+			output.R = brightness;
+			output.G = f3;
+			output.B = f1;
 			break;
 		case 1:
 			// yellow domain; red descends
-			output.r = f2;
-			output.g = brightness;
-			output.b = f1;
+			output.R = f2;
+			output.G = brightness;
+			output.B = f1;
 			break;
 		case 2:
 			// green domain; blue ascends
-			output.r = f1;
-			output.g = brightness;
-			output.b = f3;
+			output.R = f1;
+			output.G = brightness;
+			output.B = f3;
 			break;
 		case 3:
 			// cyan domain; green descends
-			output.r = f1;
-			output.g = f2;
-			output.b = brightness;
+			output.R = f1;
+			output.G = f2;
+			output.B = brightness;
 			break;
 		case 4:
 			// blue domain; red ascends
-			output.r = f3;
-			output.g = f1;
-			output.b = brightness;
+			output.R = f3;
+			output.G = f1;
+			output.B = brightness;
 			break;
 		case 5:
 			// magenta domain; blue descends
-			output.r = brightness;
-			output.g = f1;
-			output.b = f2;
+			output.R = brightness;
+			output.G = f1;
+			output.B = f2;
 			break;
 		}
 
@@ -161,19 +161,19 @@ namespace bs
 		// (RGBA = 8888)
 
 		// Red
-		val8 = static_cast<UINT8>(r * 255);
+		val8 = static_cast<UINT8>(R * 255);
 		val32 = val8 << 24;
 
 		// Green
-		val8 = static_cast<UINT8>(g * 255);
+		val8 = static_cast<UINT8>(G * 255);
 		val32 += val8 << 16;
 
 		// Blue
-		val8 = static_cast<UINT8>(b * 255);
+		val8 = static_cast<UINT8>(B * 255);
 		val32 += val8 << 8;
 
 		// Alpha
-		val8 = static_cast<UINT8>(a * 255);
+		val8 = static_cast<UINT8>(A * 255);
 		val32 += val8;
 
 		return val32;
@@ -188,19 +188,19 @@ namespace bs
 		// (ARGB = 8888)
 
 		// Alpha
-		val8 = static_cast<UINT8>(a * 255);
+		val8 = static_cast<UINT8>(A * 255);
 		val32 = val8 << 24;
 
 		// Red
-		val8 = static_cast<UINT8>(r * 255);
+		val8 = static_cast<UINT8>(R * 255);
 		val32 += val8 << 16;
 
 		// Green
-		val8 = static_cast<UINT8>(g * 255);
+		val8 = static_cast<UINT8>(G * 255);
 		val32 += val8 << 8;
 
 		// Blue
-		val8 = static_cast<UINT8>(b * 255);
+		val8 = static_cast<UINT8>(B * 255);
 		val32 += val8;
 
 		return val32;
@@ -215,19 +215,19 @@ namespace bs
 		// (ARGB = 8888)
 
 		// Blue
-		val8 = static_cast<UINT8>(b * 255);
+		val8 = static_cast<UINT8>(B * 255);
 		val32 = val8 << 24;
 
 		// Green
-		val8 = static_cast<UINT8>(g * 255);
+		val8 = static_cast<UINT8>(G * 255);
 		val32 += val8 << 16;
 
 		// Red
-		val8 = static_cast<UINT8>(r * 255);
+		val8 = static_cast<UINT8>(R * 255);
 		val32 += val8 << 8;
 
 		// Alpha
-		val8 = static_cast<UINT8>(a * 255);
+		val8 = static_cast<UINT8>(A * 255);
 		val32 += val8;
 
 
@@ -243,19 +243,19 @@ namespace bs
 		// (ABRG = 8888)
 
 		// Alpha
-		val8 = static_cast<UINT8>(a * 255);
+		val8 = static_cast<UINT8>(A * 255);
 		val32 = val8 << 24;
 
 		// Blue
-		val8 = static_cast<UINT8>(b * 255);
+		val8 = static_cast<UINT8>(B * 255);
 		val32 += val8 << 16;
 
 		// Green
-		val8 = static_cast<UINT8>(g * 255);
+		val8 = static_cast<UINT8>(G * 255);
 		val32 += val8 << 8;
 
 		// Red
-		val8 = static_cast<UINT8>(r * 255);
+		val8 = static_cast<UINT8>(R * 255);
 		val32 += val8;
 
 
@@ -289,27 +289,27 @@ namespace bs
 	Color Color::GetGamma() const
 	{
 		return Color(
-				bs::linearToSRGB(r),
-				bs::linearToSRGB(g),
-				bs::linearToSRGB(b),
-				a);
+				bs::linearToSRGB(R),
+				bs::linearToSRGB(G),
+				bs::linearToSRGB(B),
+				A);
 	}
 
 	Color Color::GetLinear() const
 	{
 		return Color(
-				bs::SRGBToLinear(r),
-				bs::SRGBToLinear(g),
-				bs::SRGBToLinear(b),
-				a);
+				bs::SRGBToLinear(R),
+				bs::SRGBToLinear(G),
+				bs::SRGBToLinear(B),
+				A);
 	}
 
 	bool Color::operator==(const Color& rhs) const
 	{
-		return (r == rhs.r &&
-			g == rhs.g &&
-			b == rhs.b &&
-			a == rhs.a);
+		return (R == rhs.R &&
+			G == rhs.G &&
+			B == rhs.B &&
+			A == rhs.A);
 	}
 
 	bool Color::operator!=(const Color& rhs) const
@@ -319,8 +319,8 @@ namespace bs
 
 	void Color::GetHsb(float* hue, float* saturation, float* brightness) const
 	{
-		float vMin = std::min(r, std::min(g, b));
-		float vMax = std::max(r, std::max(g, b));
+		float vMin = std::min(R, std::min(G, B));
+		float vMax = std::max(R, std::max(G, B));
 		float delta = vMax - vMin;
 
 		*brightness = vMax;
@@ -336,15 +336,15 @@ namespace bs
 			// a colour
 			*saturation = delta / vMax;
 
-			float deltaR = (((vMax - r) / 6.0f) + (delta / 2.0f)) / delta;
-			float deltaG = (((vMax - g) / 6.0f) + (delta / 2.0f)) / delta;
-			float deltaB = (((vMax - b) / 6.0f) + (delta / 2.0f)) / delta;
+			float deltaR = (((vMax - R) / 6.0f) + (delta / 2.0f)) / delta;
+			float deltaG = (((vMax - G) / 6.0f) + (delta / 2.0f)) / delta;
+			float deltaB = (((vMax - B) / 6.0f) + (delta / 2.0f)) / delta;
 
-			if (Math::ApproxEquals(r, vMax))
+			if (Math::ApproxEquals(R, vMax))
 				*hue = deltaB - deltaG;
-			else if (Math::ApproxEquals(g, vMax))
+			else if (Math::ApproxEquals(G, vMax))
 				*hue = 0.3333333f + deltaR - deltaB;
-			else if (Math::ApproxEquals(b, vMax))
+			else if (Math::ApproxEquals(B, vMax))
 				*hue = 0.6666667f + deltaG - deltaR;
 
 			if (*hue < 0.0f)
@@ -357,10 +357,10 @@ namespace bs
 	Color Color::Lerp(float t, const Color& a, const Color& b)
 	{
 		t = Math::Clamp01(t);
-		return Color(a.r + (b.r - a.r) * t,
-					 a.g + (b.g - a.g) * t,
-					 a.b + (b.b - a.b) * t,
-					 a.a + (b.a - a.a) * t);
+		return Color(a.R + (b.R - a.R) * t,
+					 a.G + (b.G - a.G) * t,
+					 a.B + (b.B - a.B) * t,
+					 a.A + (b.A - a.A) * t);
 	}
 }
 

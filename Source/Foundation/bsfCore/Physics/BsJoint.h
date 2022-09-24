@@ -60,7 +60,7 @@ namespace bs
 		void SetEnableCollision(bool value);
 
 		/** Triggered when the joint's break force or torque is exceeded. */
-		Event<void()> onJointBreak;
+		Event<void()> OnJointBreak;
 
 		/** @name Internal
 		 *  @{
@@ -70,13 +70,13 @@ namespace bs
 		 * Sets the object that owns this physics object, if any. Used for high level systems so they can easily map their
 		 * high level physics objects from the low level ones returned by various queries and events.
 		 */
-		void SetOwnerInternal(PhysicsOwnerType type, void* owner) { mOwner.type = type; mOwner.ownerData = owner; }
+		void SetOwnerInternal(PhysicsOwnerType type, void* owner) { mOwner.Type = type; mOwner.OwnerData = owner; }
 
 		/**
 		 * Gets the object that owns this physics object, if any. Used for high level systems so they can easily map their
 		 * high level physics objects from the low level ones returned by various queries and events.
 		 */
-		void* GetOwnerInternal(PhysicsOwnerType type) const { return mOwner.type == type ? mOwner.ownerData : nullptr; }
+		void* GetOwnerInternal(PhysicsOwnerType type) const { return mOwner.Type == type ? mOwner.OwnerData : nullptr; }
 
 		/** @} */
 
@@ -90,15 +90,15 @@ namespace bs
 	{
 		struct BodyInfo
 		{
-			Rigidbody* body = nullptr;
-			Vector3 position = Vector3::ZERO;
-			Quaternion rotation = Quaternion::IDENTITY;
+			Rigidbody* Body = nullptr;
+			Vector3 Position = Vector3::ZERO;
+			Quaternion Rotation = Quaternion::IDENTITY;
 		};
 
-		BodyInfo bodies[2];
-		float breakForce = FLT_MAX;
-		float breakTorque = FLT_MAX;
-		bool enableCollision = false;
+		BodyInfo Bodies[2];
+		float BreakForce = FLT_MAX;
+		float BreakTorque = FLT_MAX;
+		bool EnableCollision = false;
 	};
 
 	/**
@@ -117,46 +117,46 @@ namespace bs
 		 * @param	damping		Damping strength. Force propertional to the velocity error.
 		 */
 		Spring(float stiffness, float damping)
-			:stiffness(stiffness), damping(damping)
+			:Stiffness(stiffness), Damping(damping)
 		{ }
 
 		bool operator==(const Spring& other) const
 		{
-			return stiffness == other.stiffness && damping == other.damping;
+			return Stiffness == other.Stiffness && Damping == other.Damping;
 		}
 
 		/** Spring strength. Force proportional to the position error. */
-		float stiffness = 0.0f;
+		float Stiffness = 0.0f;
 
 		/** Damping strength. Force propertional to the velocity error. */
-		float damping = 0.0f;
+		float Damping = 0.0f;
 	};
 
 	/** Contains common values used by all Joint limit types. */
 	struct BS_SCRIPT_EXPORT(m:Physics,pl:true) LimitCommon
 	{
 		LimitCommon(float contactDist = -1.0f)
-			:contactDist(contactDist)
+			:ContactDist(contactDist)
 		{ }
 
 		LimitCommon(const Spring& spring, float restitution = 0.0f)
-			: restitution(restitution), spring(spring)
+			: Restitution(restitution), Spring(spring)
 		{ }
 
 		/**
 		 * Distance from the limit at which it becomes active. Allows the solver to activate earlier than the limit is
 		 * reached to avoid breaking the limit.
 		 */
-		float contactDist = -1.0f;
+		float ContactDist = -1.0f;
 
 		/**
 		 * Controls how do objects react when the limit is reached, values closer to zero specify non-ellastic collision,
 		 * while those closer to one specify more ellastic (i.e bouncy) collision. Must be in [0, 1] range.
 		 */
-		float restitution = 0.0f;
+		float Restitution = 0.0f;
 
 		/** Spring that controls how are the bodies pulled back towards the limit when they breach it. */
-		Spring spring;
+		Spring Spring;
 	};
 
 	/** Represents a joint limit between two distance values. Lower value must be less than the upper value. */
@@ -175,7 +175,7 @@ namespace bs
 		 *						than the limit is reached to avoid breaking the limit. Specify -1 for the default.
 		 */
 		LimitLinearRange(float lower, float upper, float contactDist = -1.0f)
-			:LimitCommon(contactDist), lower(lower), upper(upper)
+			:LimitCommon(contactDist), Lower(lower), Upper(upper)
 		{ }
 
 		/**
@@ -189,21 +189,21 @@ namespace bs
 		 *						non-ellastic collision, while those closer to one specify more ellastic (i.e bouncy)
 		 *						collision. Must be in [0, 1] range.
 		 */
-		LimitLinearRange(float lower, float upper, const Spring& spring, float restitution = 0.0f)
-			:LimitCommon(spring, restitution), lower(lower), upper(upper)
+		LimitLinearRange(float lower, float upper, const bs::Spring& spring, float restitution = 0.0f)
+			:LimitCommon(spring, restitution), Lower(lower), Upper(upper)
 		{ }
 
 		bool operator==(const LimitLinearRange& other) const
 		{
-			return lower == other.lower && upper == other.upper && contactDist == other.contactDist &&
-				restitution == other.restitution && spring == other.spring;
+			return Lower == other.Lower && Upper == other.Upper && ContactDist == other.ContactDist &&
+				Restitution == other.Restitution && Spring == other.Spring;
 		}
 
 		/** Lower distance of the limit. Must be less than #upper. */
-		float lower = 0.0f;
+		float Lower = 0.0f;
 
 		/** Upper distance of the limit. Must be more than #lower. */
-		float upper = 0.0f;
+		float Upper = 0.0f;
 	};
 
 	/** Represents a joint limit between zero a single distance value. */
@@ -221,7 +221,7 @@ namespace bs
 		 *						than the limit is reached to avoid breaking the limit. Specify -1 for the default.
 		 */
 		LimitLinear(float extent, float contactDist = -1.0f)
-			:LimitCommon(contactDist), extent(extent)
+			:LimitCommon(contactDist), Extent(extent)
 		{ }
 
 		/**
@@ -234,18 +234,18 @@ namespace bs
 		 *						non-ellastic collision, while those closer to one specify more ellastic (i.e bouncy)
 		 *						collision. Must be in [0, 1] range.
 		 */
-		LimitLinear(float extent, const Spring& spring, float restitution = 0.0f)
-			:LimitCommon(spring, restitution), extent(extent)
+		LimitLinear(float extent, const bs::Spring& spring, float restitution = 0.0f)
+			:LimitCommon(spring, restitution), Extent(extent)
 		{ }
 
 		bool operator==(const LimitLinear& other) const
 		{
-			return extent == other.extent && contactDist == other.contactDist && restitution == other.restitution &&
-				spring == other.spring;
+			return Extent == other.Extent && ContactDist == other.ContactDist && Restitution == other.Restitution &&
+				Spring == other.Spring;
 		}
 
 		/** Distance at which the limit becomes active. */
-		float extent = 0.0f;
+		float Extent = 0.0f;
 	};
 
 	/** Represents a joint limit between two angles. */
@@ -264,7 +264,7 @@ namespace bs
 		 *						than the limit is reached to avoid breaking the limit. Specify -1 for the default.
 		 */
 		LimitAngularRange(Radian lower, Radian upper, float contactDist = -1.0f)
-			:LimitCommon(contactDist), lower(lower), upper(upper)
+			:LimitCommon(contactDist), Lower(lower), Upper(upper)
 		{ }
 
 		/**
@@ -278,23 +278,23 @@ namespace bs
 		 *						non-ellastic collision, while those closer to one specify more ellastic (i.e bouncy)
 		 *						collision. Must be in [0, 1] range.
 		 */
-		LimitAngularRange(Radian lower, Radian upper, const Spring& spring, float restitution = 0.0f)
-			:LimitCommon(spring, restitution), lower(lower), upper(upper)
+		LimitAngularRange(Radian lower, Radian upper, const bs::Spring& spring, float restitution = 0.0f)
+			:LimitCommon(spring, restitution), Lower(lower), Upper(upper)
 		{ }
 
 		bool operator==(const LimitAngularRange& other) const
 		{
-			return lower == other.lower && upper == other.upper && contactDist == other.contactDist &&
-				restitution == other.restitution && spring == other.spring;
+			return Lower == other.Lower && Upper == other.Upper && ContactDist == other.ContactDist &&
+				Restitution == other.Restitution && Spring == other.Spring;
 		}
 
 		/** Lower angle of the limit. Must be less than #upper. */
 		BS_SCRIPT_EXPORT(range:[0,359])
-		Radian lower = Radian(0.0f);
+		Radian Lower = Radian(0.0f);
 
 		/** Upper angle of the limit. Must be less than #lower. */
 		BS_SCRIPT_EXPORT(range:[0,359])
-		Radian upper = Radian(0.0f);
+		Radian Upper = Radian(0.0f);
 	};
 
 	/** Represents a joint limit that contraints movement to within an elliptical cone. */
@@ -314,7 +314,7 @@ namespace bs
 		 *							default.
 		 */
 		LimitConeRange(Radian yLimitAngle, Radian zLimitAngle, float contactDist = -1.0f)
-			:LimitCommon(contactDist), yLimitAngle(yLimitAngle), zLimitAngle(zLimitAngle)
+			:LimitCommon(contactDist), YLimitAngle(yLimitAngle), ZLimitAngle(zLimitAngle)
 		{ }
 
 		/**
@@ -328,23 +328,23 @@ namespace bs
 		 *						non-ellastic collision, while those closer to one specify more ellastic (i.e bouncy)
 		 *						collision. Must be in [0, 1] range.
 		 */
-		LimitConeRange(Radian yLimitAngle, Radian zLimitAngle, const Spring& spring, float restitution = 0.0f)
-			:LimitCommon(spring, restitution), yLimitAngle(yLimitAngle), zLimitAngle(zLimitAngle)
+		LimitConeRange(Radian yLimitAngle, Radian zLimitAngle, const bs::Spring& spring, float restitution = 0.0f)
+			:LimitCommon(spring, restitution), YLimitAngle(yLimitAngle), ZLimitAngle(zLimitAngle)
 		{ }
 
 		bool operator==(const LimitConeRange& other) const
 		{
-			return yLimitAngle == other.yLimitAngle && zLimitAngle == other.zLimitAngle &&
-				contactDist == other.contactDist && restitution == other.restitution && spring == other.spring;
+			return YLimitAngle == other.YLimitAngle && ZLimitAngle == other.ZLimitAngle &&
+				ContactDist == other.ContactDist && Restitution == other.Restitution && Spring == other.Spring;
 		}
 
 		/** Y angle of the cone. Movement is constrainted between 0 and this angle on the Y axis. */
 		BS_SCRIPT_EXPORT(range:[0,180])
-		Radian yLimitAngle = Radian(Math::HALF_PI);
+		Radian YLimitAngle = Radian(Math::HALF_PI);
 
 		/** Z angle of the cone. Movement is constrainted between 0 and this angle on the Z axis. */
 		BS_SCRIPT_EXPORT(range:[0,180])
-		Radian zLimitAngle = Radian(Math::HALF_PI);
+		Radian ZLimitAngle = Radian(Math::HALF_PI);
 	};
 
 	/** @} */

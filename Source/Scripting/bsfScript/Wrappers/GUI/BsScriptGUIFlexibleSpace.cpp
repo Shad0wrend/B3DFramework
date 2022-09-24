@@ -21,7 +21,7 @@ namespace bs
 
 	void ScriptGUIFlexibleSpace::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIFlexibleSpace::InternalCreateInstance);
+		metaData.ScriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIFlexibleSpace::InternalCreateInstance);
 	}
 
 	void ScriptGUIFlexibleSpace::Destroy()

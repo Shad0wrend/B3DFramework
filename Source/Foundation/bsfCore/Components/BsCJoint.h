@@ -69,7 +69,7 @@ namespace bs
 
 		/** @copydoc Joint::onJointBreak */
 		BS_SCRIPT_EXPORT(n:OnJointBreak)
-		Event<void()> onJointBreak;
+		Event<void()> OnJointBreak;
 
 		/** @name Internal
 		 *  @{

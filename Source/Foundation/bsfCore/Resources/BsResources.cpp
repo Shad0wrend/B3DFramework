@@ -48,7 +48,7 @@ namespace bs
 		if (!foundUUID)
 			uuid = UUIDGenerator::GenerateRandom();
 
-		return LoadInternal(uuid, filePath, true, loadFlags).resource;
+		return LoadInternal(uuid, filePath, true, loadFlags).Resource;
 	}
 
 	HResource Resources::Load(const WeakResourceHandle<Resource>& handle, ResourceLoadFlags loadFlags)
@@ -74,7 +74,7 @@ namespace bs
 		if (!foundUUID)
 			uuid = UUIDGenerator::GenerateRandom();
 
-		return LoadInternal(uuid, filePath, false, loadFlags).resource;
+		return LoadInternal(uuid, filePath, false, loadFlags).Resource;
 	}
 
 	HResource Resources::LoadFromUuid(const UUID& uuid, bool async, ResourceLoadFlags loadFlags)
@@ -82,7 +82,7 @@ namespace bs
 		Path filePath;
 		GetFilePathFromUuid(uuid, filePath);
 
-		return LoadInternal(uuid, filePath, !async, loadFlags).resource;
+		return LoadInternal(uuid, filePath, !async, loadFlags).Resource;
 	}
 
 	Resources::LoadInfo Resources::LoadInternal(const UUID& uuid, const Path& filePath, bool synchronous,
@@ -105,16 +105,16 @@ namespace bs
 			auto iterFind2 = mInProgressResources.find(uuid);
 			if (iterFind2 != mInProgressResources.end())
 			{
-				LoadedResourceData& resData = iterFind2->second->resData;
-				output.resource = resData.resource.Lock();
-				output.state = LoadInfo::AlreadyInProgress;
-				output.size = resData.size;
+				LoadedResourceData& resData = iterFind2->second->ResData;
+				output.Resource = resData.Resource.Lock();
+				output.State = LoadInfo::AlreadyInProgress;
+				output.Size = resData.Size;
 
 				// Increase ref. count
 				if (loadFlags.IsSet(ResourceLoadFlag::KeepInternalRef))
 				{
-					resData.numInternalRefs++;
-					output.resource.AddInternalRef();
+					resData.NumInternalRefs++;
+					output.Resource.AddInternalRef();
 				}
 
 				loadInProgress = true;
@@ -126,15 +126,15 @@ namespace bs
 			if (iterFind != mLoadedResources.end())
 			{
 				LoadedResourceData& resData = iterFind->second;
-				output.resource = resData.resource.Lock();
-				output.state = LoadInfo::AlreadyLoaded;
-				output.size = resData.size;
+				output.Resource = resData.Resource.Lock();
+				output.State = LoadInfo::AlreadyLoaded;
+				output.Size = resData.Size;
 
 				// Increase ref. count
 				if (loadFlags.IsSet(ResourceLoadFlag::KeepInternalRef))
 				{
-					resData.numInternalRefs++;
-					output.resource.AddInternalRef();
+					resData.NumInternalRefs++;
+					output.Resource.AddInternalRef();
 				}
 
 				alreadyLoading = true;
@@ -143,16 +143,16 @@ namespace bs
 			// Not loaded and not in progress, register a new handle or find a pre-registered one
 			if(!alreadyLoading)
 			{
-				output.state = LoadInfo::Loading;
-				output.size = 0;
+				output.State = LoadInfo::Loading;
+				output.Size = 0;
 
 				auto iterFind = mHandles.find(uuid);
 				if (iterFind != mHandles.end())
-					output.resource = iterFind->second.Lock();
+					output.Resource = iterFind->second.Lock();
 				else
 				{
-					output.resource = HResource(uuid);
-					mHandles[uuid] = output.resource.GetWeak();
+					output.Resource = HResource(uuid);
+					mHandles[uuid] = output.Resource.GetWeak();
 				}
 			}
 
@@ -185,27 +185,27 @@ namespace bs
 					// to make this whole block asynchronous so every dependency does it on its own thread.
 					FileDecoder fs(filePath);
 					savedResourceData = std::static_pointer_cast<SavedResourceData>(fs.Decode());
-					output.size = fs.GetSize();
+					output.Size = fs.GetSize();
 				}
 
 				// Register an in-progress load unless there is an existing load operation, or the resource is already
 				// loaded
 				if(!alreadyLoading)
 				{
-					ResourceLoadData* loadData = bs_new<ResourceLoadData>(output.resource.GetWeak(), 0, output.size);
+					ResourceLoadData* loadData = bs_new<ResourceLoadData>(output.Resource.GetWeak(), 0, output.Size);
 					mInProgressResources[uuid] = loadData;
 
 					if (loadFlags.IsSet(ResourceLoadFlag::KeepInternalRef))
 					{
-						loadData->resData.numInternalRefs++;
-						output.resource.AddInternalRef();
+						loadData->ResData.NumInternalRefs++;
+						output.Resource.AddInternalRef();
 					}
 
-					loadData->remainingDependencies = 1; // Self
-					loadData->progress.store(0.0f, std::memory_order_relaxed);
+					loadData->RemainingDependencies = 1; // Self
+					loadData->Progress.store(0.0f, std::memory_order_relaxed);
 
 					// Make resource listener trigger before exit if loading synchronously on the main thread
-					loadData->notifyImmediately = synchronous && BS_THREAD_CURRENT_ID == gCoreApplication().GetSimThreadId();
+					loadData->NotifyImmediately = synchronous && BS_THREAD_CURRENT_ID == gCoreApplication().GetSimThreadId();
 
 					// Register dependencies and count them so we know when the resource is fully loaded
 					if (loadDependencies && savedResourceData != nullptr)
@@ -215,7 +215,7 @@ namespace bs
 							if (dependency != uuid)
 							{
 								mDependantLoads[dependency].push_back(loadData);
-								loadData->remainingDependencies++;
+								loadData->RemainingDependencies++;
 								dependenciesToLoad.push_back(dependency);
 							}
 						}
@@ -232,12 +232,12 @@ namespace bs
 						// If load not in progress, register the resource for load
 						if (!loadInProgress)
 						{
-							loadData = bs_new<ResourceLoadData>(output.resource.GetWeak(), 0, output.size);
-							loadData->remainingDependencies = 0;
-							loadData->progress.store(0.0f, std::memory_order_relaxed);
+							loadData = bs_new<ResourceLoadData>(output.Resource.GetWeak(), 0, output.Size);
+							loadData->RemainingDependencies = 0;
+							loadData->Progress.store(0.0f, std::memory_order_relaxed);
 
 							// Make resource listener trigger before exit if loading synchronously
-							loadData->notifyImmediately = synchronous && BS_THREAD_CURRENT_ID == gCoreApplication().GetSimThreadId();
+							loadData->NotifyImmediately = synchronous && BS_THREAD_CURRENT_ID == gCoreApplication().GetSimThreadId();
 						}
 						else
 							loadData = mInProgressResources[uuid];
@@ -261,7 +261,7 @@ namespace bs
 										auto iterFind3 = std::find_if(dependantData.begin(), dependantData.end(),
 											[&](ResourceLoadData* x)
 										{
-											return x->resData.resource.GetUuid() == output.resource.GetUuid();
+											return x->ResData.Resource.GetUuid() == output.Resource.GetUuid();
 										});
 
 										registerDependency = iterFind3 == dependantData.end();
@@ -271,7 +271,7 @@ namespace bs
 								if (registerDependency)
 								{
 									mDependantLoads[dependency].push_back(loadData);
-									loadData->remainingDependencies++;
+									loadData->RemainingDependencies++;
 									dependenciesToLoad.push_back(dependency);
 								}
 							}
@@ -297,11 +297,11 @@ namespace bs
 		// Something went wrong, clean up and exit
 		if(loadFailed)
 		{
-			output.state = LoadInfo::Failed;
-			output.size = 0;
+			output.State = LoadInfo::Failed;
+			output.Size = 0;
 
 			// Clean up in-progress state
-			LoadComplete(output.resource, true);
+			LoadComplete(output.Resource, true);
 			return output;
 		}
 
@@ -323,16 +323,16 @@ namespace bs
 				GetFilePathFromUuid(depUUID, depFilePath);
 
 				LoadInfo loadInfo = LoadInternal(depUUID, depFilePath, synchronous, depLoadFlags);
-				dependencies[i] = loadInfo.resource;
+				dependencies[i] = loadInfo.Resource;
 
 				// Calculate the size of dependencies that still need to be loaded, for progress reporting
-				if(loadInfo.state == LoadInfo::Loading || loadInfo.state == LoadInfo::AlreadyInProgress)
+				if(loadInfo.State == LoadInfo::Loading || loadInfo.State == LoadInfo::AlreadyInProgress)
 				{
 					// Note: Technically, since we're queuing the dependency load with no locking, the load could complete
 					// before the size of the dependency has been registered, which means getLoadProgress() method would
 					// incorrectly report the progress to be higher than it should be. If that becomes an issue then this
 					// operation is better to be moved to the child loadInternal() call.
-					dependencySize += loadInfo.size;
+					dependencySize += loadInfo.Size;
 				}
 			}
 
@@ -346,8 +346,8 @@ namespace bs
 				const auto iterFind = mInProgressResources.find(uuid);
 				if(iterFind != mInProgressResources.end())
 				{
-					iterFind->second->dependencySize = dependencySize;
-					iterFind->second->dependencies = dependencies;
+					iterFind->second->DependencySize = dependencySize;
+					iterFind->second->Dependencies = dependencies;
 				}
 			}
 		}
@@ -362,13 +362,13 @@ namespace bs
 			const auto iterFind = mInProgressResources.find(uuid);
 			if (iterFind != mInProgressResources.end())
 			{
-				if (iterFind->second->loadStarted)
+				if (iterFind->second->LoadStarted)
 				{
 					waitOnLoadInProgress = true;
-					loadTask = iterFind->second->task;
+					loadTask = iterFind->second->Task;
 				}
 				else
-					iterFind->second->loadStarted = true;
+					iterFind->second->LoadStarted = true;
 			}
 		}
 
@@ -378,7 +378,7 @@ namespace bs
 			if(loadTask)
 				loadTask->Wait();
 
-			output.resource.BlockUntilLoaded(false);
+			output.Resource.BlockUntilLoaded(false);
 		}
 
 		// Actually start the file read operation if not already loaded or in progress
@@ -387,7 +387,7 @@ namespace bs
 			// Synchronous or the resource doesn't support async, read the file immediately
 			if (synchronous)
 			{
-				LoadCallback(filePath, output.resource, loadFlags.IsSet(ResourceLoadFlag::KeepSourceData));
+				LoadCallback(filePath, output.Resource, loadFlags.IsSet(ResourceLoadFlag::KeepSourceData));
 			}
 			else // Asynchronous, read the file on a worker thread
 			{
@@ -396,7 +396,7 @@ namespace bs
 
 				bool keepSourceData = loadFlags.IsSet(ResourceLoadFlag::KeepSourceData);
 				SPtr<Task> task = Task::Create(taskName,
-					std::bind(&Resources::LoadCallback, this, filePath, output.resource, keepSourceData));
+					std::bind(&Resources::LoadCallback, this, filePath, output.Resource, keepSourceData));
 
 				// Register the task
 				{
@@ -404,7 +404,7 @@ namespace bs
 
 					const auto iterFind = mInProgressResources.find(uuid);
 					if (iterFind != mInProgressResources.end())
-						iterFind->second->task = task;
+						iterFind->second->Task = task;
 
 					TaskScheduler::Instance().AddTask(task);
 				}
@@ -415,11 +415,11 @@ namespace bs
 			if(!loadInProgress)
 			{
 				// Already loaded, decrement dependency count
-				LoadComplete(output.resource, false);
+				LoadComplete(output.Resource, false);
 			}
 		}
 
-		output.state = LoadInfo::Loading;
+		output.State = LoadInfo::Loading;
 		return output;
 	}
 
@@ -439,7 +439,7 @@ namespace bs
 		}
 
 		CoreSerializationContext serzContext;
-		serzContext.flags = loadWithSaveData ? SF_KeepResourceSourceData : 0;
+		serzContext.Flags = loadWithSaveData ? SF_KeepResourceSourceData : 0;
 
 		// Read meta-data
 		SPtr<SavedResourceData> metaData;
@@ -529,11 +529,11 @@ namespace bs
 				{
 					LoadedResourceData& resData = iterFind->second;
 
-					assert(resData.numInternalRefs > 0);
-					resData.numInternalRefs--;
+					assert(resData.NumInternalRefs > 0);
+					resData.NumInternalRefs--;
 					resource.RemoveInternalRef();
 					
-					std::uint32_t refCount = resource.GetHandleData()->mRefCount.load(std::memory_order_relaxed);
+					std::uint32_t refCount = resource.GetHandleData()->MRefCount.load(std::memory_order_relaxed);
 					lostLastRef = refCount == 0;
 				}
 			}
@@ -553,11 +553,11 @@ namespace bs
 			{
 				const LoadedResourceData& resData = iter->second;
 
-				std::uint32_t refCount = resData.resource.mData->mRefCount.load(std::memory_order_relaxed);
+				std::uint32_t refCount = resData.Resource.mData->MRefCount.load(std::memory_order_relaxed);
 				assert(refCount > 0); // No references but kept in mLoadedResources list?
 
-				if (refCount == resData.numInternalRefs) // Only internal references exist, free it
-					resourcesToUnload.push_back(resData.resource.Lock());
+				if (refCount == resData.NumInternalRefs) // Only internal references exist, free it
+					resourcesToUnload.push_back(resData.Resource.Lock());
 			}
 		}
 
@@ -581,7 +581,7 @@ namespace bs
 		}
 
 		for (auto& loadedResourcePair : loadedResourcesCopy)
-			Destroy(loadedResourcePair.second.resource);
+			Destroy(loadedResourcePair.second.Resource);
 	}
 
 	void Resources::Destroy(ResourceHandleBase& resource)
@@ -613,8 +613,8 @@ namespace bs
 		// the mDestroyMutex lock
 
 		// Notify external systems before we actually destroy it
-		onResourceDestroyed(uuid);
-		resource.mData->mPtr->Destroy();
+		OnResourceDestroyed(uuid);
+		resource.mData->MPtr->Destroy();
 
 		{
 			Lock lock(mLoadedResourceMutex);
@@ -622,10 +622,10 @@ namespace bs
 			if (iterFind != mLoadedResources.end())
 			{
 				LoadedResourceData& resData = iterFind->second;
-				while (resData.numInternalRefs > 0)
+				while (resData.NumInternalRefs > 0)
 				{
-					resData.numInternalRefs--;
-					resData.resource.RemoveInternalRef();
+					resData.NumInternalRefs--;
+					resData.Resource.RemoveInternalRef();
 				}
 
 				mLoadedResources.erase(iterFind);
@@ -696,7 +696,7 @@ namespace bs
 		Vector<ResourceDependency> dependencyList = Utility::FindResourceDependencies(*resource);
 		Vector<UUID> dependencyUUIDs(dependencyList.size());
 		for (UINT32 i = 0; i < (UINT32)dependencyList.size(); i++)
-			dependencyUUIDs[i] = dependencyList[i].resource.GetUuid();
+			dependencyUUIDs[i] = dependencyList[i].Resource.GetUuid();
 
 		UINT32 compressionMethod = (compress && resource->IsCompressible()) ? 1 : 0;
 		SPtr<SavedResourceData> resourceData = bs_shared_ptr_new<SavedResourceData>(dependencyUUIDs,
@@ -812,11 +812,11 @@ namespace bs
 			if (iterFind == mLoadedResources.end())
 			{
 				LoadedResourceData& resData = mLoadedResources[uuid];
-				resData.resource = handle.GetWeak();
+				resData.Resource = handle.GetWeak();
 			}
 		}
 
-		onResourceModified(handle);
+		OnResourceModified(handle);
 
 		// This method is not thread safe due to this call (callable from main thread only)
 		ResourceListenerManager::Instance().NotifyListeners(uuid);
@@ -911,24 +911,24 @@ namespace bs
 
 		// Don't care about dependencies, just report own progress directly
 		if(!includeDependencies)
-			return loadData->progress.load(std::memory_order_relaxed);
+			return loadData->Progress.load(std::memory_order_relaxed);
 
 		// Dependencies that are already fully loaded will just have their loaded sizes in 'dependencyLoadedAmount', while
 		// for those still in progress we need to check their load data
-		float totalBytesLoaded = (float)loadData->dependencyLoadedAmount;
-		for(auto& entry : loadData->dependencies)
+		float totalBytesLoaded = (float)loadData->DependencyLoadedAmount;
+		for(auto& entry : loadData->Dependencies)
 		{
 			auto iterFind3 = mInProgressResources.find(entry.GetUuid());
 			if (iterFind3 == mInProgressResources.end())
 				continue;
 
 			ResourceLoadData* dependencyLoadData = iterFind3->second;
-			totalBytesLoaded += dependencyLoadData->resData.size * dependencyLoadData->progress.load(std::memory_order_relaxed);
+			totalBytesLoaded += dependencyLoadData->ResData.Size * dependencyLoadData->Progress.load(std::memory_order_relaxed);
 		}
 
-		totalBytesLoaded += loadData->resData.size * loadData->progress.load(std::memory_order_relaxed);
+		totalBytesLoaded += loadData->ResData.Size * loadData->Progress.load(std::memory_order_relaxed);
 
-		float totalBytesToLoad = (float)(loadData->dependencySize + loadData->resData.size);
+		float totalBytesToLoad = (float)(loadData->DependencySize + loadData->ResData.Size);
 		assert(totalBytesLoaded <= totalBytesToLoad);
 
 		return std::min(1.0f, totalBytesLoaded / totalBytesToLoad);
@@ -950,7 +950,7 @@ namespace bs
 			if(obj)
 			{
 				LoadedResourceData& resData = mLoadedResources[UUID];
-				resData.resource = newHandle.GetWeak();
+				resData.Resource = newHandle.GetWeak();
 			}
 
 			mHandles[UUID] = newHandle.GetWeak();
@@ -1017,7 +1017,7 @@ namespace bs
 			if (iterFind != mInProgressResources.end())
 			{
 				myLoadData = iterFind->second;
-				finishLoad = myLoadData->remainingDependencies == 0;
+				finishLoad = myLoadData->RemainingDependencies == 0;
 
 				if (finishLoad)
 					mInProgressResources.erase(iterFind);
@@ -1034,36 +1034,36 @@ namespace bs
 
 				// If loadedData is null then we're probably completing load on an already loaded resource, triggered
 				// by its dependencies.
-				if (myLoadData != nullptr && myLoadData->loadedData != nullptr)
+				if (myLoadData != nullptr && myLoadData->LoadedData != nullptr)
 				{
 					Lock loadedLock(mLoadedResourceMutex);
 
-					mLoadedResources[uuid] = myLoadData->resData;
-					resource.SetHandleData(myLoadData->loadedData, uuid);
+					mLoadedResources[uuid] = myLoadData->ResData;
+					resource.SetHandleData(myLoadData->LoadedData, uuid);
 				}
 
 				resource.NotifyLoadComplete();
 
 				for (auto& dependantLoad : dependantLoads)
-					dependantLoad->remainingDependencies--;
+					dependantLoad->RemainingDependencies--;
 			}
 		}
 
 		for (auto& dependantLoad : dependantLoads)
 		{
 			if(notifyProgress && myLoadData)
-				dependantLoad->dependencyLoadedAmount += myLoadData->resData.size;
+				dependantLoad->DependencyLoadedAmount += myLoadData->ResData.Size;
 
-			HResource dependant = dependantLoad->resData.resource.Lock();
+			HResource dependant = dependantLoad->ResData.Resource.Lock();
 			LoadComplete(dependant, false);
 		}
 
 		if (finishLoad && myLoadData != nullptr)
 		{
-			onResourceLoaded(resource);
+			OnResourceLoaded(resource);
 
 			// This should only ever be true on the main thread
-			if (myLoadData->notifyImmediately)
+			if (myLoadData->NotifyImmediately)
 				ResourceListenerManager::Instance().NotifyListeners(uuid);
 
 			bs_delete(myLoadData);
@@ -1078,14 +1078,14 @@ namespace bs
 			myLoadData = mInProgressResources[resource.GetUuid()];
 		}
 
-		SPtr<Resource> rawResource = LoadFromDiskAndDeserialize(filePath, loadWithSaveData, myLoadData->progress);
+		SPtr<Resource> rawResource = LoadFromDiskAndDeserialize(filePath, loadWithSaveData, myLoadData->Progress);
 
 		{
 			Lock lock(mInProgressResourcesMutex);
 
-			myLoadData->loadedData = rawResource;
-			myLoadData->remainingDependencies--;
-			myLoadData->progress.exchange(1.0f, std::memory_order_relaxed);
+			myLoadData->LoadedData = rawResource;
+			myLoadData->RemainingDependencies--;
+			myLoadData->Progress.exchange(1.0f, std::memory_order_relaxed);
 		}
 
 		LoadComplete(resource, true);

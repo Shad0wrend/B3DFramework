@@ -52,7 +52,7 @@ namespace bs { namespace ct
 		virtual float GetTimeMs() = 0;
 
 		/** Triggered when GPU processes the query. As a parameter it provides query duration in milliseconds. */
-		Event<void(float)> onTriggered;
+		Event<void(float)> OnTriggered;
 
 		/**	
 		 * Creates a new query, but does not schedule it on GPU.

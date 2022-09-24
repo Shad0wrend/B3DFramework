@@ -114,13 +114,13 @@ namespace bs
 		LogEntry entry;
 		while (mLog.GetUnreadEntry(entry))
 		{
-			onLogEntryAdded(entry);
+			OnLogEntryAdded(entry);
 		}
 
 		UINT64 hash = mLog.GetHash();
 		if(mLogHash != hash)
 		{
-			onLogModified();
+			OnLogModified();
 			mLogHash = hash;
 		}
 	}
@@ -287,20 +287,20 @@ table td
 			stream << "<p>Started on: " << gTime().GetAppStartUpDateString(false) << "</p>\n";
 
 		SystemInfo systemInfo = PlatformUtility::GetSystemInfo();
-		stream << "<p>OS version: " << systemInfo.osName << " " << (systemInfo.osIs64Bit ? "64-bit" : "32-bit") << "</p>\n";
+		stream << "<p>OS version: " << systemInfo.OsName << " " << (systemInfo.OsIs64Bit ? "64-bit" : "32-bit") << "</p>\n";
 		stream << "<h3>CPU information:</h3>\n";
-		stream << "<p>CPU vendor: " << systemInfo.cpuManufacturer << "</p>\n";
-		stream << "<p>CPU name: " << systemInfo.cpuModel << "</p>\n";
-		stream << "<p>CPU clock speed: " << systemInfo.cpuClockSpeedMhz << "Mhz</p>\n";
-		stream << "<p>CPU core count: " << systemInfo.cpuNumCores << "</p>\n";
+		stream << "<p>CPU vendor: " << systemInfo.CpuManufacturer << "</p>\n";
+		stream << "<p>CPU name: " << systemInfo.CpuModel << "</p>\n";
+		stream << "<p>CPU clock speed: " << systemInfo.CpuClockSpeedMhz << "Mhz</p>\n";
+		stream << "<p>CPU core count: " << systemInfo.CpuNumCores << "</p>\n";
 
 		stream << "<h3>GPU List:</h3>\n";
-		if(systemInfo.gpuInfo.numGPUs == 1)
-			stream << "<p>GPU: " << systemInfo.gpuInfo.names[0] << "</p>\n";
+		if(systemInfo.GpuInfo.NumGpUs == 1)
+			stream << "<p>GPU: " << systemInfo.GpuInfo.Names[0] << "</p>\n";
 		else
 		{
-			for(UINT32 i = 0; i < systemInfo.gpuInfo.numGPUs; i++)
-				stream << "<p>GPU #" << i << ": " << systemInfo.gpuInfo.names[i] << "</p>\n";
+			for(UINT32 i = 0; i < systemInfo.GpuInfo.NumGpUs; i++)
+				stream << "<p>GPU #" << i << ": " << systemInfo.GpuInfo.Names[i] << "</p>\n";
 		}
 
 		// Write log entries
@@ -396,23 +396,23 @@ table td
 				  "================================================================================\n";
 		
 		SystemInfo systemInfo = PlatformUtility::GetSystemInfo();
-		stream << "OS version: " << systemInfo.osName << " " << (systemInfo.osIs64Bit ? "64-bit" : "32-bit") << "\n";
+		stream << "OS version: " << systemInfo.OsName << " " << (systemInfo.OsIs64Bit ? "64-bit" : "32-bit") << "\n";
 		stream << "CPU information:\n";
-		stream << "CPU vendor: " << systemInfo.cpuManufacturer << "\n";
-		stream << "CPU name: " << systemInfo.cpuModel << "\n";
-		stream << "CPU clock speed: " << systemInfo.cpuClockSpeedMhz << "Mhz\n";
-		stream << "CPU core count: " << systemInfo.cpuNumCores << "\n";
+		stream << "CPU vendor: " << systemInfo.CpuManufacturer << "\n";
+		stream << "CPU name: " << systemInfo.CpuModel << "\n";
+		stream << "CPU clock speed: " << systemInfo.CpuClockSpeedMhz << "Mhz\n";
+		stream << "CPU core count: " << systemInfo.CpuNumCores << "\n";
 		
 		stream << "\n";
 		stream << "GPU List:\n" <<
 				  "================================================================================\n";
 		
-		if(systemInfo.gpuInfo.numGPUs == 1)
-			stream << "GPU: " << systemInfo.gpuInfo.names[0] << "\n";
+		if(systemInfo.GpuInfo.NumGpUs == 1)
+			stream << "GPU: " << systemInfo.GpuInfo.Names[0] << "\n";
 		else
 		{
-			for(UINT32 i = 0; i < systemInfo.gpuInfo.numGPUs; i++)
-				stream << "GPU #" << i << ": " << systemInfo.gpuInfo.names[i] << "\n";
+			for(UINT32 i = 0; i < systemInfo.GpuInfo.NumGpUs; i++)
+				stream << "GPU #" << i << ": " << systemInfo.GpuInfo.Names[i] << "\n";
 		}
 		
 		stream << "\n";

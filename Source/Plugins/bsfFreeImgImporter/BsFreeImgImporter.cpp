@@ -133,12 +133,12 @@ namespace bs
 		Vector<SPtr<PixelData>> faceData;
 
 		TextureType texType;
-		if(textureImportOptions->cubemap)
+		if(textureImportOptions->Cubemap)
 		{
 			texType = TEX_TYPE_CUBE_MAP;
 
 			std::array<SPtr<PixelData>, 6> cubemapFaces;
-			if (GenerateCubemap(imgData, textureImportOptions->cubemapSourceType, cubemapFaces))
+			if (GenerateCubemap(imgData, textureImportOptions->CubemapSourceType, cubemapFaces))
 			{
 				faceData.insert(faceData.begin(), cubemapFaces.begin(), cubemapFaces.end());
 			}
@@ -155,32 +155,32 @@ namespace bs
 		}
 
 		UINT32 numMips = 0;
-		if (textureImportOptions->generateMips &&
+		if (textureImportOptions->GenerateMips &&
 			Bitwise::IsPow2(faceData[0]->GetWidth()) && Bitwise::IsPow2(faceData[0]->GetHeight()))
 		{
 			UINT32 maxPossibleMip = PixelUtil::GetMaxMipmaps(faceData[0]->GetWidth(), faceData[0]->GetHeight(),
 				faceData[0]->GetDepth(), faceData[0]->GetFormat());
 
-			if (textureImportOptions->maxMip == 0)
+			if (textureImportOptions->MaxMip == 0)
 				numMips = maxPossibleMip;
 			else
-				numMips = std::min(maxPossibleMip, textureImportOptions->maxMip);
+				numMips = std::min(maxPossibleMip, textureImportOptions->MaxMip);
 		}
 
 		int usage = TU_DEFAULT;
-		if (textureImportOptions->cpuCached)
+		if (textureImportOptions->CpuCached)
 			usage |= TU_CPUCACHED;
 
-		bool sRGB = textureImportOptions->sRGB;
+		bool sRGB = textureImportOptions->SRgb;
 
 		TEXTURE_DESC texDesc;
-		texDesc.type = texType;
-		texDesc.width = faceData[0]->GetWidth();
-		texDesc.height = faceData[0]->GetHeight();
-		texDesc.numMips = numMips;
-		texDesc.format = textureImportOptions->format;
-		texDesc.usage = usage;
-		texDesc.hwGamma = sRGB;
+		texDesc.Type = texType;
+		texDesc.Width = faceData[0]->GetWidth();
+		texDesc.Height = faceData[0]->GetHeight();
+		texDesc.NumMips = numMips;
+		texDesc.Format = textureImportOptions->Format;
+		texDesc.Usage = usage;
+		texDesc.HwGamma = sRGB;
 
 		SPtr<Texture> newTexture = Texture::CreatePtrInternal(texDesc);
 
@@ -191,7 +191,7 @@ namespace bs
 			if (numMips > 0)
 			{
 				MipMapGenOptions mipOptions;
-				mipOptions.isSRGB = sRGB;
+				mipOptions.IsSrgb = sRGB;
 
 				mipLevels = PixelUtil::GenMipmaps(*faceData[i], mipOptions);
 			}
@@ -441,13 +441,13 @@ namespace bs
 		{
 			output[i] = PixelData::Create(faceSize, faceSize, 1, source->GetFormat());
 
-			PixelVolume volume(faceStart.x, faceStart.y, faceStart.x + faceSize, faceStart.y + faceSize);
-			PixelUtil::Copy(*source, *output[i], faceStart.x, faceStart.y);
+			PixelVolume volume(faceStart.X, faceStart.Y, faceStart.X + faceSize, faceStart.Y + faceSize);
+			PixelUtil::Copy(*source, *output[i], faceStart.X, faceStart.Y);
 
 			if (vertical)
-				faceStart.y += faceSize;
+				faceStart.Y += faceSize;
 			else
-				faceStart.x += faceSize;
+				faceStart.X += faceSize;
 		}
 	}
 
@@ -500,12 +500,12 @@ namespace bs
 	{
 		// Using the OpenGL spherical mapping formula
 		Vector3 nrmDir = Vector3::Normalize(dir);
-		nrmDir.z += 1.0f;
+		nrmDir.Z += 1.0f;
 
 		float m = 2 * nrmDir.Length();
 
-		float u = nrmDir.x / m + 0.5f;
-		float v = nrmDir.y / m + 0.5f;
+		float u = nrmDir.X / m + 0.5f;
+		float v = nrmDir.Y / m + 0.5f;
 
 		return Vector2(u, v);
 	}
@@ -518,8 +518,8 @@ namespace bs
 	{
 		Vector3 nrmDir = Vector3::Normalize(dir);
 
-		float u = (atan2(nrmDir.x, nrmDir.z) + Math::PI) / Math::TWO_PI;
-		float v = acos(nrmDir.y) / Math::PI;
+		float u = (atan2(nrmDir.X, nrmDir.Z) + Math::PI) / Math::TWO_PI;
+		float v = acos(nrmDir.Y) / Math::PI;
 
 		return Vector2(u, v);
 	}
@@ -547,8 +547,8 @@ namespace bs
 	{
 		struct RemapInfo
 		{
-			int idx[3];
-			Vector3 sign;
+			int Idx[3];
+			Vector3 Sign;
 		};
 
 		// Mapping from default (X, Y, 1.0f) plane to relevant cube face. Also flipping Y so it corresponds to how pixel
@@ -575,15 +575,15 @@ namespace bs
 				{
 					// Map from pixel coordinates to [-1, 1] range.
 					Vector2 sourceCoord = (Vector2((float)x, (float)y) * invSize) * 2.0f - Vector2(1.0f, 1.0f);
-					Vector3 direction = Vector3(sourceCoord.x, sourceCoord.y, 1.0f);
+					Vector3 direction = Vector3(sourceCoord.X, sourceCoord.Y, 1.0f);
 
-					direction *= remapInfo.sign;
+					direction *= remapInfo.Sign;
 
 					// Rotate towards current face
 					Vector3 rotatedDir;
-					rotatedDir[remapInfo.idx[0]] = direction.x;
-					rotatedDir[remapInfo.idx[1]] = direction.y;
-					rotatedDir[remapInfo.idx[2]] = direction.z;
+					rotatedDir[remapInfo.Idx[0]] = direction.X;
+					rotatedDir[remapInfo.Idx[1]] = direction.Y;
+					rotatedDir[remapInfo.Idx[2]] = direction.Z;
 
 					// Find location in the source to sample from
 					Vector2 sourceUV = remap(rotatedDir);
@@ -614,25 +614,25 @@ namespace bs
 				
 				if(Math::ApproxEquals(aspect, 6.0f)) // Horizontal list
 				{
-					faceSize.x = source->GetWidth() / 6;
-					faceSize.y = source->GetHeight();
+					faceSize.X = source->GetWidth() / 6;
+					faceSize.Y = source->GetHeight();
 				}
 				else if(Math::ApproxEquals(aspect, 1.0f / 6.0f)) // Vertical list
 				{
-					faceSize.x = source->GetWidth();
-					faceSize.y = source->GetHeight() / 6;
+					faceSize.X = source->GetWidth();
+					faceSize.Y = source->GetHeight() / 6;
 					vertical = true;
 				}
 				else if(Math::ApproxEquals(aspect, 4.0f / 3.0f)) // Horizontal cross
 				{
-					faceSize.x = source->GetWidth() / 4;
-					faceSize.y = source->GetHeight() / 3;
+					faceSize.X = source->GetWidth() / 4;
+					faceSize.Y = source->GetHeight() / 3;
 					cross = true;
 				}
 				else if(Math::ApproxEquals(aspect, 3.0f / 4.0f)) // Vertical cross
 				{
-					faceSize.x = source->GetWidth() / 3;
-					faceSize.y = source->GetHeight() / 4;
+					faceSize.X = source->GetWidth() / 3;
+					faceSize.Y = source->GetHeight() / 4;
 					cross = true;
 					vertical = true;
 				}
@@ -646,28 +646,28 @@ namespace bs
 		case CubemapSourceType::Cylindrical:
 		case CubemapSourceType::Spherical:
 			// Half of the source size will be used for each cube face, which should yield good enough quality
-			faceSize.x = std::max(source->GetWidth(), source->GetHeight()) / 2;
-			faceSize.x = Bitwise::ClosestPow2(faceSize.x);
+			faceSize.X = std::max(source->GetWidth(), source->GetHeight()) / 2;
+			faceSize.X = Bitwise::ClosestPow2(faceSize.X);
 
 			// Don't allow sizes larger than 4096
-			faceSize.x = std::min(faceSize.x, 4096);
+			faceSize.X = std::min(faceSize.X, 4096);
 
-			faceSize.y = faceSize.x;
+			faceSize.Y = faceSize.X;
 
 			break;
 		default: // Assuming single-image
-			faceSize.x = source->GetWidth();
-			faceSize.y = source->GetHeight();
+			faceSize.X = source->GetWidth();
+			faceSize.Y = source->GetHeight();
 			break;
 		}
 
-		if (faceSize.x != faceSize.y)
+		if (faceSize.X != faceSize.Y)
 		{
 			BS_LOG(Warning, FreeImageImporter, "Unable to generate a cubemap: width & height must match.");
 			return false;
 		}
 
-		if (!Bitwise::IsPow2(faceSize.x))
+		if (!Bitwise::IsPow2(faceSize.X))
 		{
 			BS_LOG(Warning, FreeImageImporter, "Unable to generate a cubemap: width & height must be powers of 2.");
 			return false;
@@ -678,33 +678,33 @@ namespace bs
 		case CubemapSourceType::Faces:
 		{
 			if (cross)
-				readCubemapCross(source, output, faceSize.x, vertical);
+				readCubemapCross(source, output, faceSize.X, vertical);
 			else
-				readCubemapList(source, output, faceSize.x, vertical);
+				readCubemapList(source, output, faceSize.X, vertical);
 		}
 		break;
 		case CubemapSourceType::Cylindrical:
 		{			
-			UINT32 superSampledFaceSize = faceSize.x * cubemapSupersampling;
+			UINT32 superSampledFaceSize = faceSize.X * cubemapSupersampling;
 
 			std::array<SPtr<PixelData>, 6> superSampledOutput;
 			readCubemapUVRemap(source, superSampledOutput, superSampledFaceSize, &mapCubemapDirToCylindrical);
 
-			if (faceSize.x != (INT32)superSampledFaceSize)
-				downsampleCubemap(superSampledOutput, output, faceSize.x);
+			if (faceSize.X != (INT32)superSampledFaceSize)
+				downsampleCubemap(superSampledOutput, output, faceSize.X);
 			else
 				output = superSampledOutput;
 		}
 		break;
 		case CubemapSourceType::Spherical:
 		{
-			UINT32 superSampledFaceSize = faceSize.x * cubemapSupersampling;
+			UINT32 superSampledFaceSize = faceSize.X * cubemapSupersampling;
 
 			std::array<SPtr<PixelData>, 6> superSampledOutput;
 			readCubemapUVRemap(source, superSampledOutput, superSampledFaceSize, &mapCubemapDirToSpherical);
 
-			if (faceSize.x != (INT32)superSampledFaceSize)
-				downsampleCubemap(superSampledOutput, output, faceSize.x);
+			if (faceSize.X != (INT32)superSampledFaceSize)
+				downsampleCubemap(superSampledOutput, output, faceSize.X);
 			else
 				output = superSampledOutput;
 		}

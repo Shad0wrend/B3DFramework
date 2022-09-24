@@ -47,10 +47,10 @@ namespace bs
 
 	struct __TKeyframeVector3Interop
 	{
-		Vector3 value;
-		Vector3 inTangent;
-		Vector3 outTangent;
-		float time;
+		Vector3 Value;
+		Vector3 InTangent;
+		Vector3 OutTangent;
+		float Time;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptTKeyframeVector3 : public ScriptObject<ScriptTKeyframeVector3>
@@ -70,10 +70,10 @@ namespace bs
 
 	struct __TKeyframeVector2Interop
 	{
-		Vector2 value;
-		Vector2 inTangent;
-		Vector2 outTangent;
-		float time;
+		Vector2 Value;
+		Vector2 InTangent;
+		Vector2 OutTangent;
+		float Time;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptTKeyframeVector2 : public ScriptObject<ScriptTKeyframeVector2>
@@ -93,10 +93,10 @@ namespace bs
 
 	struct __TKeyframeQuaternionInterop
 	{
-		Quaternion value;
-		Quaternion inTangent;
-		Quaternion outTangent;
-		float time;
+		Quaternion Value;
+		Quaternion InTangent;
+		Quaternion OutTangent;
+		float Time;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptTKeyframeQuaternion : public ScriptObject<ScriptTKeyframeQuaternion>

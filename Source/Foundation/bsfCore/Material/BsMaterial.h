@@ -42,13 +42,13 @@ namespace bs
 		static constexpr UINT32 MAX_NUM_TAGS = 10;
 
 		/** A set of tags that the technique must have. */
-		StringID tags[MAX_NUM_TAGS];
+		StringID Tags[MAX_NUM_TAGS];
 
 		/** Number of valid tags in the @p tags array. */
-		UINT32 numTags = 0;
+		UINT32 NumTags = 0;
 
 		/** Specified variation of the technique. Parameters not specified in the variation are assumed to be irrelevant. */
-		const ShaderVariation* variation = nullptr;
+		const ShaderVariation* Variation = nullptr;
 
 		/**
 		 * Determines should the parameters in @p variation override any parameters that might have been defined on the
@@ -57,15 +57,15 @@ namespace bs
 		 * parameter to some different value. Overriding can be useful for renderers which might need to override the user's
 		 * choice of variation.
 		 */
-		bool override = false;
+		bool Override = false;
 
 		/** Registers a new tag to look for when searching for the technique. */
 		void AddTag(const StringID& tag)
 		{
-			BS_ASSERT(numTags < MAX_NUM_TAGS);
+			BS_ASSERT(NumTags < MAX_NUM_TAGS);
 
-			tags[numTags] = tag;
-			numTags++;
+			Tags[NumTags] = tag;
+			NumTags++;
 		}
 	};
 
@@ -80,13 +80,13 @@ namespace bs
 		struct StructData
 		{
 			StructData()
-				:data(nullptr), size(0)
+				:Data(nullptr), Size(0)
 			{ }
 
 			StructData(UINT32 _size)
-				:size(_size)
+				:Size(_size)
 			{
-				data = std::shared_ptr<void>(bs_alloc(_size), (void(*)(void*))&bs_free);
+				Data = std::shared_ptr<void>(bs_alloc(_size), (void(*)(void*))&bs_free);
 			}
 
 			/**
@@ -94,11 +94,11 @@ namespace bs
 			 */
 			void Write(void* _data)
 			{
-				memcpy(data.get(), _data, size);
+				memcpy(Data.get(), _data, Size);
 			}
 
-			SPtr<void> data;
-			UINT32 size;
+			SPtr<void> Data;
+			UINT32 Size;
 		};
 
 		MaterialBase() = default;
@@ -443,7 +443,7 @@ namespace bs
 			TMaterialParamStruct<Core> structParam = GetParamStruct(name);
 
 			MaterialBase::StructData data(structParam.GetElementSize());
-			structParam.Get(data.data.get(), structParam.GetElementSize(), arrayIdx);
+			structParam.Get(data.Data.get(), structParam.GetElementSize(), arrayIdx);
 
 			return data;
 		}

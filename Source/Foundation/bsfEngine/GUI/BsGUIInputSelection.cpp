@@ -44,9 +44,9 @@ namespace bs
 		for(auto& sprite : mSprites)
 		{
 			IMAGE_SPRITE_DESC desc;
-			desc.width = mSelectionRects[idx].width;
-			desc.height = mSelectionRects[idx].height;
-			desc.texture = GUIManager::Instance().GetTextSelectionTexture();
+			desc.Width = mSelectionRects[idx].Width;
+			desc.Height = mSelectionRects[idx].Height;
+			desc.Texture = GUIManager::Instance().GetTextSelectionTexture();
 
 			sprite->Update(desc, (UINT64)widget);
 			idx++;
@@ -55,27 +55,27 @@ namespace bs
 
 	Vector2I GUIInputSelection::GetSelectionSpriteOffset(UINT32 spriteIdx) const
 	{
-		return Vector2I(mSelectionRects[spriteIdx].x, mSelectionRects[spriteIdx].y) + GetTextOffset();
+		return Vector2I(mSelectionRects[spriteIdx].X, mSelectionRects[spriteIdx].Y) + GetTextOffset();
 	}
 
 	Rect2I GUIInputSelection::GetSelectionSpriteClipRect(UINT32 spriteIdx, const Rect2I& parentClipRect) const
 	{
-		Vector2I selectionOffset(mSelectionRects[spriteIdx].x, mSelectionRects[spriteIdx].y);
+		Vector2I selectionOffset(mSelectionRects[spriteIdx].X, mSelectionRects[spriteIdx].Y);
 		Vector2I clipOffset = selectionOffset + mElement->GetTextInputOffsetInternal();
 
-		Rect2I clipRect(-clipOffset.x, -clipOffset.y, mTextDesc.width, mTextDesc.height);
+		Rect2I clipRect(-clipOffset.X, -clipOffset.Y, mTextDesc.Width, mTextDesc.Height);
 
 		Rect2I localParentCliprect = parentClipRect;
 
 		// Move parent rect to our space
-		localParentCliprect.x += mElement->GetTextInputOffsetInternal().x + clipRect.x;
-		localParentCliprect.y += mElement->GetTextInputOffsetInternal().y + clipRect.y;
+		localParentCliprect.X += mElement->GetTextInputOffsetInternal().X + clipRect.X;
+		localParentCliprect.Y += mElement->GetTextInputOffsetInternal().Y + clipRect.Y;
 
 		// Clip our rectangle so its not larger then the parent
 		clipRect.Clip(localParentCliprect);
 
 		// Increase clip size by 1, so we can fit the caret in case it is fully at the end of the text
-		clipRect.width += 1;
+		clipRect.Width += 1;
 
 		return clipRect;
 	}
@@ -112,10 +112,10 @@ namespace bs
 				Rect2I endChar = GetLocalCharRect(endCharIdx);
 
 				Rect2I selectionRect;
-				selectionRect.x = startChar.x;
-				selectionRect.y = lineDesc.GetLineYStart();
-				selectionRect.height = lineDesc.GetLineHeight();
-				selectionRect.width = (endChar.x + endChar.width) - startChar.x;
+				selectionRect.X = startChar.X;
+				selectionRect.Y = lineDesc.GetLineYStart();
+				selectionRect.Height = lineDesc.GetLineHeight();
+				selectionRect.Width = (endChar.X + endChar.Width) - startChar.X;
 
 				selectionRects.push_back(selectionRect);
 			}
@@ -135,10 +135,10 @@ namespace bs
 			Rect2I endChar = GetLocalCharRect(endCharIdx);
 
 			Rect2I selectionRect;
-			selectionRect.x = startChar.x;
-			selectionRect.y = lineDesc.GetLineYStart();
-			selectionRect.height = lineDesc.GetLineHeight();
-			selectionRect.width = (endChar.x + endChar.width) - startChar.x;
+			selectionRect.X = startChar.X;
+			selectionRect.Y = lineDesc.GetLineYStart();
+			selectionRect.Height = lineDesc.GetLineHeight();
+			selectionRect.Width = (endChar.X + endChar.Width) - startChar.X;
 
 			selectionRects.push_back(selectionRect);
 		}
@@ -157,10 +157,10 @@ namespace bs
 					Rect2I endChar = GetLocalCharRect(endCharIdx);
 
 					Rect2I selectionRect;
-					selectionRect.x = startChar.x;
-					selectionRect.y = lineDesc.GetLineYStart();
-					selectionRect.height = lineDesc.GetLineHeight();
-					selectionRect.width = (endChar.x + endChar.width) - startChar.x;
+					selectionRect.X = startChar.X;
+					selectionRect.Y = lineDesc.GetLineYStart();
+					selectionRect.Height = lineDesc.GetLineHeight();
+					selectionRect.Width = (endChar.X + endChar.Width) - startChar.X;
 
 					selectionRects.push_back(selectionRect);
 				}

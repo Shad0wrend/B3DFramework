@@ -12,22 +12,22 @@ namespace bs
 	Vector2I GUIHelper::CalcOptimalContentsSize(const Vector2I& contentSize, const GUIElementStyle& style,
 		const GUIDimensions& dimensions)
 	{
-		UINT32 contentWidth = style.margins.left + style.margins.right + style.contentOffset.left + style.contentOffset.right;
-		UINT32 contentHeight = style.margins.top + style.margins.bottom + style.contentOffset.top + style.contentOffset.bottom;
+		UINT32 contentWidth = style.Margins.Left + style.Margins.Right + style.ContentOffset.Left + style.ContentOffset.Right;
+		UINT32 contentHeight = style.Margins.Top + style.Margins.Bottom + style.ContentOffset.Top + style.ContentOffset.Bottom;
 
-		return Vector2I(std::max((UINT32)contentSize.x, contentWidth), std::max((UINT32)contentSize.y, contentHeight));
+		return Vector2I(std::max((UINT32)contentSize.X, contentWidth), std::max((UINT32)contentSize.Y, contentHeight));
 	}
 
 	Vector2I GUIHelper::CalcOptimalContentsSize(const GUIContent& content, const GUIElementStyle& style,
 		const GUIDimensions& dimensions, GUIElementState state)
 	{
-		Vector2I contentBounds = CalcOptimalContentsSize((const String&)content.text, style, dimensions);
+		Vector2I contentBounds = CalcOptimalContentsSize((const String&)content.Text, style, dimensions);
 
 		const HSpriteTexture& image = content.GetImage(state);
 		if (SpriteTexture::CheckIsLoaded(image))
 		{
-			contentBounds.x += image->GetWidth() + GUIContent::IMAGE_TEXT_SPACING;
-			contentBounds.y = std::max(image->GetHeight(), (UINT32)contentBounds.y);
+			contentBounds.X += image->GetWidth() + GUIContent::IMAGE_TEXT_SPACING;
+			contentBounds.Y = std::max(image->GetHeight(), (UINT32)contentBounds.Y);
 		}
 
 		return contentBounds;
@@ -38,18 +38,18 @@ namespace bs
 	{
 		UINT32 wordWrapWidth = 0;
 
-		if(style.wordWrap)
-			wordWrapWidth = dimensions.maxWidth;
+		if(style.WordWrap)
+			wordWrapWidth = dimensions.MaxWidth;
 
-		UINT32 contentWidth = style.margins.left + style.margins.right + style.contentOffset.left + style.contentOffset.right;
-		UINT32 contentHeight = style.margins.top + style.margins.bottom + style.contentOffset.top + style.contentOffset.bottom;
+		UINT32 contentWidth = style.Margins.Left + style.Margins.Right + style.ContentOffset.Left + style.ContentOffset.Right;
+		UINT32 contentHeight = style.Margins.Top + style.Margins.Bottom + style.ContentOffset.Top + style.ContentOffset.Bottom;
 
-		if(style.font != nullptr && !text.empty())
+		if(style.Font != nullptr && !text.empty())
 		{
 			bs_frame_mark();
 
 			const U32String utf32text = UTF8::ToUtF32(text);
-			TextData<FrameAlloc> textData(utf32text, style.font, style.fontSize, wordWrapWidth, 0, style.wordWrap);
+			TextData<FrameAlloc> textData(utf32text, style.Font, style.FontSize, wordWrapWidth, 0, style.WordWrap);
 
 			contentWidth += textData.GetWidth();
 			contentHeight += textData.GetNumLines() * textData.GetLineHeight();
@@ -70,8 +70,8 @@ namespace bs
 			const U32String utf32text = UTF8::ToUtF32(text);
 			TextData<FrameAlloc> textData(utf32text, font, fontSize, 0, 0, false);
 
-			size.x = textData.GetWidth();
-			size.y = textData.GetNumLines() * textData.GetLineHeight();
+			size.X = textData.GetWidth();
+			size.Y = textData.GetNumLines() * textData.GetLineHeight();
 
 			bs_frame_clear();
 		}

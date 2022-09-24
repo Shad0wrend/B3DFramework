@@ -31,31 +31,31 @@ namespace bs { namespace ct
 	struct LightGridOutputs
 	{
 		/** Parameter block of LightGridParamDef. */
-		SPtr<GpuParamBlockBuffer> gridParams;
+		SPtr<GpuParamBlockBuffer> GridParams;
 		
 		/**
 		 * Flattened array of grid cells, where each entry contains the number of lights affecting that cell, and a index
 		 * into the @p gridLightIndices buffer.
 		 */
-		SPtr<GpuBuffer> gridLightOffsetsAndSize;
+		SPtr<GpuBuffer> GridLightOffsetsAndSize;
 
 		/**
 		 * A list of light indices. Each cell's indices start at specific position and are placed sequentially one after
 		 * another. Lookup into this array is done through offset & size provided by @p gridLightOffsetsAndSize.
 		 */
-		SPtr<GpuBuffer> gridLightIndices;
+		SPtr<GpuBuffer> GridLightIndices;
 
 		/**
 		 * Flattened array of grid cells, where each entry contains the number of reflection probes affecting that cell,
 		 * and a index into the @p gridProbeIndices buffer.
 		 */
-		SPtr<GpuBuffer> gridProbeOffsetsAndSize;
+		SPtr<GpuBuffer> GridProbeOffsetsAndSize;
 
 		/**
 		 * A list of reflection probe indices. Each cell's indices start at specific position and are placed sequentially
 		 * one after another. Lookup into this array is done through offset & size provided by @p gridProbeOffsetsAndSize.
 		 */
-		SPtr<GpuBuffer> gridProbeIndices;
+		SPtr<GpuBuffer> GridProbeIndices;
 	};
 
 	/**

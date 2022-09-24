@@ -21,7 +21,7 @@ namespace bs
 
 	MonoObject*ScriptControllerControllerCollision::Box(const __ControllerControllerCollisionInterop& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	__ControllerControllerCollisionInterop ScriptControllerControllerCollision::Unbox(MonoObject* value)
@@ -34,14 +34,14 @@ namespace bs
 		ControllerControllerCollision output;
 		GameObjectHandle<CCharacterController> tmpcontroller;
 		ScriptCCharacterController* scriptcontroller;
-		scriptcontroller = ScriptCCharacterController::ToNative(value.controller);
+		scriptcontroller = ScriptCCharacterController::ToNative(value.Controller);
 		if(scriptcontroller != nullptr)
 			tmpcontroller = scriptcontroller->GetHandle();
-		output.controller = tmpcontroller;
-		output.position = value.position;
-		output.normal = value.normal;
-		output.motionDir = value.motionDir;
-		output.motionAmount = value.motionAmount;
+		output.Controller = tmpcontroller;
+		output.Position = value.Position;
+		output.Normal = value.Normal;
+		output.MotionDir = value.MotionDir;
+		output.MotionAmount = value.MotionAmount;
 
 		return output;
 	}
@@ -50,18 +50,18 @@ namespace bs
 	{
 		__ControllerControllerCollisionInterop output;
 		ScriptComponentBase* scriptcontroller = nullptr;
-		if(value.controller)
-			scriptcontroller = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(value.controller));
+		if(value.Controller)
+			scriptcontroller = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(value.Controller));
 		MonoObject* tmpcontroller;
 		if(scriptcontroller != nullptr)
 			tmpcontroller = scriptcontroller->GetManagedInstance();
 		else
 			tmpcontroller = nullptr;
-		output.controller = tmpcontroller;
-		output.position = value.position;
-		output.normal = value.normal;
-		output.motionDir = value.motionDir;
-		output.motionAmount = value.motionAmount;
+		output.Controller = tmpcontroller;
+		output.Position = value.Position;
+		output.Normal = value.Normal;
+		output.MotionDir = value.MotionDir;
+		output.MotionAmount = value.MotionAmount;
 
 		return output;
 	}

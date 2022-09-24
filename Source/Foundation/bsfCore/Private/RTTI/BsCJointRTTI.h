@@ -27,14 +27,14 @@ namespace bs
 			BS_RTTI_MEMBER_PLAIN_NAMED(mRotationB, mRotations[1], 5)
 		BS_END_RTTI_MEMBERS
 
-		float& GetBreakForce(OwnerType* obj) { return obj->mDesc.breakForce; }
-		void SetBreakForce(OwnerType* obj, float& val) { obj->mDesc.breakForce = val; }
+		float& GetBreakForce(OwnerType* obj) { return obj->mDesc.BreakForce; }
+		void SetBreakForce(OwnerType* obj, float& val) { obj->mDesc.BreakForce = val; }
 
-		float& GetBreakTorque(OwnerType* obj) { return obj->mDesc.breakTorque; }
-		void SetBreakTorque(OwnerType* obj, float& val) { obj->mDesc.breakTorque = val; }
+		float& GetBreakTorque(OwnerType* obj) { return obj->mDesc.BreakTorque; }
+		void SetBreakTorque(OwnerType* obj, float& val) { obj->mDesc.BreakTorque = val; }
 
-		bool& GetEnableCollision(OwnerType* obj) { return obj->mDesc.enableCollision; }
-		void SetEnableCollision(OwnerType* obj, bool& val) { obj->mDesc.enableCollision = val; }
+		bool& GetEnableCollision(OwnerType* obj) { return obj->mDesc.EnableCollision; }
+		void SetEnableCollision(OwnerType* obj, bool& val) { obj->mDesc.EnableCollision = val; }
 
 	public:
 		CJointRTTI()

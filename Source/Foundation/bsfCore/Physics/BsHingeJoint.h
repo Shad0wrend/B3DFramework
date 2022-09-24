@@ -25,24 +25,24 @@ namespace bs
 	struct BS_SCRIPT_EXPORT(m:Physics,pl:true) HingeJointDrive
 	{
 		/** Target speed of the joint. */
-		float speed = 0.0f;
+		float Speed = 0.0f;
 
 		/** Maximum torque the drive is allowed to apply .*/
-		float forceLimit = FLT_MAX;
+		float ForceLimit = FLT_MAX;
 
 		/** Scales the velocity of the first body, and its response to drive torque is scaled down. */
-		float gearRatio = 1.0f;
+		float GearRatio = 1.0f;
 
 		/**
 		 * If the joint is moving faster than the drive's target speed, the drive will try to break. If you don't want
 		 * the breaking to happen set this to true.
 		 */
-		bool freeSpin = false;
+		bool FreeSpin = false;
 
 		bool operator==(const HingeJointDrive& other) const
 		{
-			return speed == other.speed && forceLimit == other.forceLimit && gearRatio == other.gearRatio &&
-				freeSpin && other.freeSpin;
+			return Speed == other.Speed && ForceLimit == other.ForceLimit && GearRatio == other.GearRatio &&
+				FreeSpin && other.FreeSpin;
 		}
 	};
 
@@ -102,9 +102,9 @@ namespace bs
 	/** Structure used for initializing a new HingeJoint. */
 	struct HINGE_JOINT_DESC : JOINT_DESC
 	{
-		HingeJointDrive drive;
-		LimitAngularRange limit;
-		HingeJointFlag flag = (HingeJointFlag)0;
+		HingeJointDrive Drive;
+		LimitAngularRange Limit;
+		HingeJointFlag Flag = (HingeJointFlag)0;
 	};
 
 	/** @} */

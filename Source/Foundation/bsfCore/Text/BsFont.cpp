@@ -8,13 +8,13 @@ namespace bs
 {
 	const CharDesc& FontBitmap::GetCharDesc(UINT32 charId) const
 	{
-		auto iterFind = characters.find(charId);
-		if(iterFind != characters.end())
+		auto iterFind = Characters.find(charId);
+		if(iterFind != Characters.end())
 		{
-			return characters.at(charId);
+			return Characters.at(charId);
 		}
 
-		return missingGlyph;
+		return MissingGlyph;
 	}
 
 	RTTITypeBase* FontBitmap::GetRttiStatic()
@@ -35,9 +35,9 @@ namespace bs
 	{
 		for(auto iter = fontData.begin(); iter != fontData.end(); ++iter)
 		{
-			mFontDataPerSize[(*iter)->size] = *iter;
+			mFontDataPerSize[(*iter)->Size] = *iter;
 
-			for (auto& texture : (*iter)->texturePages)
+			for (auto& texture : (*iter)->TexturePages)
 			{
 				if (texture != nullptr)
 					AddResourceDependency(texture);
@@ -93,7 +93,7 @@ namespace bs
 	{
 		for (auto& fontDataEntry : mFontDataPerSize)
 		{
-			for (auto& texture : fontDataEntry.second->texturePages)
+			for (auto& texture : fontDataEntry.second->TexturePages)
 			{
 				if (texture.IsLoaded())
 					dependencies.push_back(texture.Get());

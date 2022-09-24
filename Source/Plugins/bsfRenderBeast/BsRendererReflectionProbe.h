@@ -24,14 +24,14 @@ namespace bs { namespace ct
 	/** Information about a single reflection probe, as seen by the lighting shader. */
 	struct ReflProbeData
 	{
-		Vector3 position;
-		float radius;
-		Vector3 boxExtents;
-		float transitionDistance;
-		Matrix4 invBoxTransform;
-		UINT32 cubemapIdx;
-		UINT32 type; // 0 - Sphere, 1 - Box
-		Vector2 padding;
+		Vector3 Position;
+		float Radius;
+		Vector3 BoxExtents;
+		float TransitionDistance;
+		Matrix4 InvBoxTransform;
+		UINT32 CubemapIdx;
+		UINT32 Type; // 0 - Sphere, 1 - Box
+		Vector2 Padding;
 	};
 
 	/** Contains GPU buffers used by the renderer to manipulate reflection probes. */
@@ -81,10 +81,10 @@ namespace bs { namespace ct
 		/** Populates the structure with reflection probe parameters. */
 		void GetParameters(ReflProbeData& output) const;
 
-		ReflectionProbe* probe;
-		UINT32 arrayIdx;
-		bool arrayDirty : 1;
-		mutable bool errorFlagged : 1;
+		ReflectionProbe* Probe;
+		UINT32 ArrayIdx;
+		bool ArrayDirty : 1;
+		mutable bool ErrorFlagged : 1;
 	};
 
 	/** Helper struct containing all parameters for binding image lighting related data to the GPU programs using them .*/
@@ -102,19 +102,19 @@ namespace bs { namespace ct
 		void Populate(const SPtr<GpuParams>& params, GpuProgramType programType, bool optional, bool gridIndices,
 			bool probeArray);
 
-		GpuParamTexture skyReflectionsTexParam;
-		GpuParamTexture ambientOcclusionTexParam;
-		GpuParamTexture ssrTexParam;
-		GpuParamTexture reflectionProbeCubemapsTexParam;
+		GpuParamTexture SkyReflectionsTexParam;
+		GpuParamTexture AmbientOcclusionTexParam;
+		GpuParamTexture SsrTexParam;
+		GpuParamTexture ReflectionProbeCubemapsTexParam;
 
-		GpuParamTexture preintegratedEnvBRDFParam;
-		GpuParamBuffer reflectionProbesParam;
+		GpuParamTexture PreintegratedEnvBrdfParam;
+		GpuParamBuffer ReflectionProbesParam;
 
-		GpuParamBuffer reflectionProbeIndicesParam;
-		GpuParamBinding reflProbeParamBindings;
+		GpuParamBuffer ReflectionProbeIndicesParam;
+		GpuParamBinding ReflProbeParamBindings;
 
 		// Only utilized when standard forward rendering is used
-		GpuParamBinding reflProbesBinding;
+		GpuParamBinding ReflProbesBinding;
 	};
 
 	/** Parameter buffer containing information about reflection probes. */
@@ -126,7 +126,7 @@ namespace bs { namespace ct
 		void Populate(const Skybox* sky, UINT32 numProbes, const SPtr<Texture>& reflectionCubemaps,
 			bool capturingReflections);
 
-		SPtr<GpuParamBlockBuffer> buffer;
+		SPtr<GpuParamBlockBuffer> Buffer;
 	};
 
 	BS_PARAM_BLOCK_BEGIN(ReflProbesParamDef)

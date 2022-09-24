@@ -22,9 +22,9 @@ namespace bs
 
 	void ScriptTAnimationCurvefloat::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_TAnimationCurve", (void*)&ScriptTAnimationCurvefloat::InternalTAnimationCurve);
-		metaData.scriptClass->AddInternalCall("Internal_Evaluate", (void*)&ScriptTAnimationCurvefloat::InternalEvaluate);
-		metaData.scriptClass->AddInternalCall("Internal_GetKeyFrames", (void*)&ScriptTAnimationCurvefloat::InternalGetKeyFrames);
+		metaData.ScriptClass->AddInternalCall("Internal_TAnimationCurve", (void*)&ScriptTAnimationCurvefloat::InternalTAnimationCurve);
+		metaData.ScriptClass->AddInternalCall("Internal_Evaluate", (void*)&ScriptTAnimationCurvefloat::InternalEvaluate);
+		metaData.ScriptClass->AddInternalCall("Internal_GetKeyFrames", (void*)&ScriptTAnimationCurvefloat::InternalGetKeyFrames);
 
 	}
 
@@ -35,7 +35,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptTAnimationCurvefloat>()) ScriptTAnimationCurvefloat(managedInstance, value);
 		return managedInstance;
 	}
@@ -90,9 +90,9 @@ namespace bs
 
 	void ScriptTAnimationCurveVector3::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_TAnimationCurve", (void*)&ScriptTAnimationCurveVector3::InternalTAnimationCurve);
-		metaData.scriptClass->AddInternalCall("Internal_Evaluate", (void*)&ScriptTAnimationCurveVector3::InternalEvaluate);
-		metaData.scriptClass->AddInternalCall("Internal_GetKeyFrames", (void*)&ScriptTAnimationCurveVector3::InternalGetKeyFrames);
+		metaData.ScriptClass->AddInternalCall("Internal_TAnimationCurve", (void*)&ScriptTAnimationCurveVector3::InternalTAnimationCurve);
+		metaData.ScriptClass->AddInternalCall("Internal_Evaluate", (void*)&ScriptTAnimationCurveVector3::InternalEvaluate);
+		metaData.ScriptClass->AddInternalCall("Internal_GetKeyFrames", (void*)&ScriptTAnimationCurveVector3::InternalGetKeyFrames);
 
 	}
 
@@ -103,7 +103,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptTAnimationCurveVector3>()) ScriptTAnimationCurveVector3(managedInstance, value);
 		return managedInstance;
 	}
@@ -155,9 +155,9 @@ namespace bs
 
 	void ScriptTAnimationCurveVector2::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_TAnimationCurve", (void*)&ScriptTAnimationCurveVector2::InternalTAnimationCurve);
-		metaData.scriptClass->AddInternalCall("Internal_Evaluate", (void*)&ScriptTAnimationCurveVector2::InternalEvaluate);
-		metaData.scriptClass->AddInternalCall("Internal_GetKeyFrames", (void*)&ScriptTAnimationCurveVector2::InternalGetKeyFrames);
+		metaData.ScriptClass->AddInternalCall("Internal_TAnimationCurve", (void*)&ScriptTAnimationCurveVector2::InternalTAnimationCurve);
+		metaData.ScriptClass->AddInternalCall("Internal_Evaluate", (void*)&ScriptTAnimationCurveVector2::InternalEvaluate);
+		metaData.ScriptClass->AddInternalCall("Internal_GetKeyFrames", (void*)&ScriptTAnimationCurveVector2::InternalGetKeyFrames);
 
 	}
 
@@ -168,7 +168,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptTAnimationCurveVector2>()) ScriptTAnimationCurveVector2(managedInstance, value);
 		return managedInstance;
 	}
@@ -220,9 +220,9 @@ namespace bs
 
 	void ScriptTAnimationCurveQuaternion::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_TAnimationCurve", (void*)&ScriptTAnimationCurveQuaternion::InternalTAnimationCurve);
-		metaData.scriptClass->AddInternalCall("Internal_Evaluate", (void*)&ScriptTAnimationCurveQuaternion::InternalEvaluate);
-		metaData.scriptClass->AddInternalCall("Internal_GetKeyFrames", (void*)&ScriptTAnimationCurveQuaternion::InternalGetKeyFrames);
+		metaData.ScriptClass->AddInternalCall("Internal_TAnimationCurve", (void*)&ScriptTAnimationCurveQuaternion::InternalTAnimationCurve);
+		metaData.ScriptClass->AddInternalCall("Internal_Evaluate", (void*)&ScriptTAnimationCurveQuaternion::InternalEvaluate);
+		metaData.ScriptClass->AddInternalCall("Internal_GetKeyFrames", (void*)&ScriptTAnimationCurveQuaternion::InternalGetKeyFrames);
 
 	}
 
@@ -233,7 +233,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptTAnimationCurveQuaternion>()) ScriptTAnimationCurveQuaternion(managedInstance, value);
 		return managedInstance;
 	}
@@ -285,9 +285,9 @@ namespace bs
 
 	void ScriptTAnimationCurveint32_t::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_TAnimationCurve", (void*)&ScriptTAnimationCurveint32_t::InternalTAnimationCurve);
-		metaData.scriptClass->AddInternalCall("Internal_Evaluate", (void*)&ScriptTAnimationCurveint32_t::InternalEvaluate);
-		metaData.scriptClass->AddInternalCall("Internal_GetKeyFrames", (void*)&ScriptTAnimationCurveint32_t::InternalGetKeyFrames);
+		metaData.ScriptClass->AddInternalCall("Internal_TAnimationCurve", (void*)&ScriptTAnimationCurveint32_t::InternalTAnimationCurve);
+		metaData.ScriptClass->AddInternalCall("Internal_Evaluate", (void*)&ScriptTAnimationCurveint32_t::InternalEvaluate);
+		metaData.ScriptClass->AddInternalCall("Internal_GetKeyFrames", (void*)&ScriptTAnimationCurveint32_t::InternalGetKeyFrames);
 
 	}
 
@@ -298,7 +298,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptTAnimationCurveint32_t>()) ScriptTAnimationCurveint32_t(managedInstance, value);
 		return managedInstance;
 	}

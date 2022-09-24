@@ -30,9 +30,9 @@ namespace bs
 
 			ClassId(const String& namespaceName, String name, ::MonoClass* genericInstance = nullptr);
 
-			String namespaceName;
-			String name;
-			::MonoClass* genericInstance;
+			String NamespaceName;
+			String Name;
+			::MonoClass* GenericInstance;
 		};
 		/** @endcond */
 

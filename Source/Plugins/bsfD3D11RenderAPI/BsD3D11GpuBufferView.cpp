@@ -13,12 +13,12 @@ namespace bs { namespace ct
 	size_t GpuBufferView::HashFunction::operator()(const GPU_BUFFER_VIEW_DESC& key) const
 	{
 		size_t seed = 0;
-		bs_hash_combine(seed, key.elementWidth);
-		bs_hash_combine(seed, key.firstElement);
-		bs_hash_combine(seed, key.numElements);
-		bs_hash_combine(seed, key.useCounter);
-		bs_hash_combine(seed, key.usage);
-		bs_hash_combine(seed, key.format);
+		bs_hash_combine(seed, key.ElementWidth);
+		bs_hash_combine(seed, key.FirstElement);
+		bs_hash_combine(seed, key.NumElements);
+		bs_hash_combine(seed, key.UseCounter);
+		bs_hash_combine(seed, key.Usage);
+		bs_hash_combine(seed, key.Format);
 
 		return seed;
 	}
@@ -26,8 +26,8 @@ namespace bs { namespace ct
 	bool GpuBufferView::EqualFunction::operator()
 		(const GPU_BUFFER_VIEW_DESC& a, const GPU_BUFFER_VIEW_DESC& b) const
 	{
-		return a.elementWidth == b.elementWidth && a.firstElement == b.firstElement && a.numElements == b.numElements
-			&& a.useCounter == b.useCounter && a.usage == b.usage && a.format == b.format;
+		return a.ElementWidth == b.ElementWidth && a.FirstElement == b.FirstElement && a.NumElements == b.NumElements
+			&& a.UseCounter == b.UseCounter && a.Usage == b.Usage && a.Format == b.Format;
 	}
 
 	GpuBufferView::~GpuBufferView()
@@ -43,13 +43,13 @@ namespace bs { namespace ct
 		mBuffer = buffer;
 		mDesc = desc;
 
-		if ((desc.usage & GVU_DEFAULT) != 0)
-			mSRV = CreateSrv(buffer, desc.firstElement, desc.elementWidth, desc.numElements);
+		if ((desc.Usage & GVU_DEFAULT) != 0)
+			mSRV = CreateSrv(buffer, desc.FirstElement, desc.ElementWidth, desc.NumElements);
 
-		if((desc.usage & GVU_RANDOMWRITE) != 0)
-			mUAV = CreateUav(buffer, desc.firstElement, desc.numElements, desc.useCounter);
+		if((desc.Usage & GVU_RANDOMWRITE) != 0)
+			mUAV = CreateUav(buffer, desc.FirstElement, desc.NumElements, desc.UseCounter);
 
-		if((desc.usage & GVU_RENDERTARGET) != 0 || (desc.usage & GVU_DEPTHSTENCIL) != 0)
+		if((desc.Usage & GVU_RENDERTARGET) != 0 || (desc.Usage & GVU_DEPTHSTENCIL) != 0)
 		{
 			BS_EXCEPT(NotImplementedException, "Invalid usage flags for a GPU buffer view.");
 		}

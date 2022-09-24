@@ -23,12 +23,12 @@ namespace bs
 	{
 		const SerializedGpuProgramData& operator=(const GPU_PROGRAM_DESC& desc)
 		{
-			source = desc.source;
-			entryPoint = desc.entryPoint;
-			language = desc.language;
-			type = desc.type;
-			requiresAdjacency = desc.requiresAdjacency;
-			bytecode = desc.bytecode;
+			Source = desc.Source;
+			EntryPoint = desc.EntryPoint;
+			Language = desc.Language;
+			Type = desc.Type;
+			RequiresAdjacency = desc.RequiresAdjacency;
+			Bytecode = desc.Bytecode;
 
 			return *this;
 		}
@@ -46,12 +46,12 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN(source, 0)
-			BS_RTTI_MEMBER_PLAIN(entryPoint, 1)
-			BS_RTTI_MEMBER_PLAIN(language, 2)
-			BS_RTTI_MEMBER_PLAIN(type, 3)
-			BS_RTTI_MEMBER_PLAIN(requiresAdjacency, 4)
-			BS_RTTI_MEMBER_REFLPTR(bytecode, 5)
+			BS_RTTI_MEMBER_PLAIN(Source, 0)
+			BS_RTTI_MEMBER_PLAIN(EntryPoint, 1)
+			BS_RTTI_MEMBER_PLAIN(Language, 2)
+			BS_RTTI_MEMBER_PLAIN(Type, 3)
+			BS_RTTI_MEMBER_PLAIN(RequiresAdjacency, 4)
+			BS_RTTI_MEMBER_REFLPTR(Bytecode, 5)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -86,11 +86,11 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN_NAMED(blendStateDesc, mData.blendStateDesc, 0)
-			BS_RTTI_MEMBER_PLAIN_NAMED(rasterizerStateDesc, mData.rasterizerStateDesc, 1)
-			BS_RTTI_MEMBER_PLAIN_NAMED(depthStencilState, mData.depthStencilStateDesc, 2)
+			BS_RTTI_MEMBER_PLAIN_NAMED(blendStateDesc, mData.BlendStateDesc, 0)
+			BS_RTTI_MEMBER_PLAIN_NAMED(rasterizerStateDesc, mData.RasterizerStateDesc, 1)
+			BS_RTTI_MEMBER_PLAIN_NAMED(depthStencilState, mData.DepthStencilStateDesc, 2)
 
-			BS_RTTI_MEMBER_PLAIN_NAMED(stencilRefValue, mData.stencilRefValue, 9)
+			BS_RTTI_MEMBER_PLAIN_NAMED(stencilRefValue, mData.StencilRefValue, 9)
 		BS_END_RTTI_MEMBERS
 
 		SerializedGpuProgramData& GetVertexProgramDesc(Pass* obj)
@@ -100,7 +100,7 @@ namespace bs
 
 		void SetVertexProgramDesc(Pass* obj, SerializedGpuProgramData& val)
 		{
-			obj->mData.vertexProgramDesc = val;
+			obj->mData.VertexProgramDesc = val;
 		}
 
 		SerializedGpuProgramData& GetFragmentProgramDesc(Pass* obj)
@@ -110,7 +110,7 @@ namespace bs
 
 		void SetFragmentProgramDesc(Pass* obj, SerializedGpuProgramData& val)
 		{
-			obj->mData.fragmentProgramDesc = val;
+			obj->mData.FragmentProgramDesc = val;
 		}
 
 		SerializedGpuProgramData& GetGeometryProgramDesc(Pass* obj)
@@ -120,7 +120,7 @@ namespace bs
 
 		void SetGeometryProgramDesc(Pass* obj, SerializedGpuProgramData& val)
 		{
-			obj->mData.geometryProgramDesc = val;
+			obj->mData.GeometryProgramDesc = val;
 		}
 
 		SerializedGpuProgramData& GetHullProgramDesc(Pass* obj)
@@ -130,7 +130,7 @@ namespace bs
 
 		void SetHullProgramDesc(Pass* obj, SerializedGpuProgramData& val)
 		{
-			obj->mData.hullProgramDesc = val;
+			obj->mData.HullProgramDesc = val;
 		}
 
 		SerializedGpuProgramData& GetDomainProgramDesc(Pass* obj)
@@ -140,7 +140,7 @@ namespace bs
 
 		void SetDomainProgramDesc(Pass* obj, SerializedGpuProgramData& val)
 		{
-			obj->mData.domainProgramDesc = val;
+			obj->mData.DomainProgramDesc = val;
 		}
 
 		SerializedGpuProgramData& GetComputeProgramDesc(Pass* obj)
@@ -150,7 +150,7 @@ namespace bs
 
 		void SetComputeProgramDesc(Pass* obj, SerializedGpuProgramData& val)
 		{
-			obj->mData.computeProgramDesc = val;
+			obj->mData.ComputeProgramDesc = val;
 		}
 	public:
 		PassRTTI()
@@ -167,19 +167,19 @@ namespace bs
 		{
 			Pass* pass = static_cast<Pass*>(obj);
 
-			mVertexProgramDesc = pass->mData.vertexProgramDesc;
-			mFragmentProgramDesc = pass->mData.fragmentProgramDesc;
-			mGeometryProgramDesc = pass->mData.geometryProgramDesc;
-			mHullProgramDesc = pass->mData.hullProgramDesc;
-			mDomainProgramDesc = pass->mData.domainProgramDesc;
-			mComputeProgramDesc = pass->mData.computeProgramDesc;
+			mVertexProgramDesc = pass->mData.VertexProgramDesc;
+			mFragmentProgramDesc = pass->mData.FragmentProgramDesc;
+			mGeometryProgramDesc = pass->mData.GeometryProgramDesc;
+			mHullProgramDesc = pass->mData.HullProgramDesc;
+			mDomainProgramDesc = pass->mData.DomainProgramDesc;
+			mComputeProgramDesc = pass->mData.ComputeProgramDesc;
 
 			auto initBytecode = [](const SPtr<GpuProgram>& prog, GPU_PROGRAM_DESC& desc)
 			{
 				if (prog)
 				{
 					prog->BlockUntilCoreInitialized();
-					desc.bytecode = prog->GetCore()->GetBytecode();
+					desc.Bytecode = prog->GetCore()->GetBytecode();
 				}
 			};
 

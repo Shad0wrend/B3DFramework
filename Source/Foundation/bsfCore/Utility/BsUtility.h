@@ -18,8 +18,8 @@ namespace bs
 	{
 		ResourceDependency() = default;
 
-		HResource resource;
-		UINT32 numReferences = 0;
+		HResource Resource;
+		UINT32 NumReferences = 0;
 	};
 
 	/** Static class containing various utility methods that do not fit anywhere else. */
@@ -52,8 +52,8 @@ namespace bs
 	/** Provides extra information and maintains state during serialization of various RTTI types in the core. */
 	struct BS_CORE_EXPORT CoreSerializationContext : SerializationContext
 	{
-		SPtr<GameObjectDeserializationState> goState;
-		bool goDeserializationActive = false;
+		SPtr<GameObjectDeserializationState> GoState;
+		bool GoDeserializationActive = false;
 
 		static RTTITypeBase* GetRttiStatic();
 		RTTITypeBase* GetRtti() const ;

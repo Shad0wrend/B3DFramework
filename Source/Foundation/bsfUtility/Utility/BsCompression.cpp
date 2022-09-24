@@ -86,8 +86,8 @@ namespace bs
 	{
 		struct BufferPiece
 		{
-			char* buffer;
-			size_t size;
+			char* Buffer;
+			size_t Size;
 		};
 
 	public:
@@ -95,50 +95,50 @@ namespace bs
 		virtual ~DataStreamSink()
 		{
 			for (auto& entry : mBufferPieces)
-				bs_free(entry.buffer);
+				bs_free(entry.Buffer);
 		}
 
 		void Append(const char* data, size_t n) override
 		{
-			if(mBufferPieces.empty() || mBufferPieces.back().buffer != data)
+			if(mBufferPieces.empty() || mBufferPieces.back().Buffer != data)
 			{
 				BufferPiece piece;
-				piece.buffer = (char*)bs_alloc((UINT32)n);
-				piece.size = n;
+				piece.Buffer = (char*)bs_alloc((UINT32)n);
+				piece.Size = n;
 
-				memcpy(piece.buffer, data, n);
+				memcpy(piece.Buffer, data, n);
 				mBufferPieces.push_back(piece);
 			}
 			else
 			{
 				BufferPiece& piece = mBufferPieces.back();
-				assert(piece.buffer == data);
+				assert(piece.Buffer == data);
 
-				piece.size = n;
+				piece.Size = n;
 			}
 		}
 
 		char* GetAppendBuffer(size_t len, char* scratch) override
 		{
 			BufferPiece piece;
-			piece.buffer = (char*)bs_alloc((UINT32)len);
-			piece.size = 0;
+			piece.Buffer = (char*)bs_alloc((UINT32)len);
+			piece.Size = 0;
 
 			mBufferPieces.push_back(piece);
-			return piece.buffer;
+			return piece.Buffer;
 		}
 
 		char* GetAppendBufferVariable(size_t min_size, size_t desired_size_hint, char* scratch, size_t scratch_size,
 			size_t* allocated_size) override
 		{
 			BufferPiece piece;
-			piece.buffer = (char*)bs_alloc((UINT32)desired_size_hint);
-			piece.size = 0;
+			piece.Buffer = (char*)bs_alloc((UINT32)desired_size_hint);
+			piece.Size = 0;
 
 			mBufferPieces.push_back(piece);
 
 			*allocated_size = desired_size_hint;
-			return piece.buffer;
+			return piece.Buffer;
 		}
 
 		void AppendAndTakeOwnership(char* bytes, size_t n, void(*deleter)(void*, const char*, size_t),
@@ -146,24 +146,24 @@ namespace bs
 		{
 			BufferPiece& piece = mBufferPieces.back();
 
-			if (piece.buffer != bytes)
+			if (piece.Buffer != bytes)
 			{
-				memcpy(piece.buffer, bytes, n);
+				memcpy(piece.Buffer, bytes, n);
 				(*deleter)(deleter_arg, bytes, n);
 			}
 
-			piece.size = n;
+			piece.Size = n;
 		}
 
 		SPtr<MemoryDataStream> GetOutput()
 		{
 			size_t totalSize = 0;
 			for (auto& entry : mBufferPieces)
-				totalSize += entry.size;
+				totalSize += entry.Size;
 
 			SPtr<MemoryDataStream> ds = bs_shared_ptr_new<MemoryDataStream>(totalSize);
 			for (auto& entry : mBufferPieces)
-				ds->Write(entry.buffer, entry.size);
+				ds->Write(entry.Buffer, entry.Size);
 
 			ds->Seek(0);
 			return ds;

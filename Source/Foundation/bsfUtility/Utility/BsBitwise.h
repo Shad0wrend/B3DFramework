@@ -18,49 +18,49 @@ namespace bs
 	/** Floating point number broken down into components for easier access. */
 	union Float754
 	{
-		UINT32 raw;
-		float value;
+		UINT32 Raw;
+		float Value;
 		struct {
 #if BS_ENDIAN == BS_ENDIAN_BIG
 			UINT32 negative : 1;
 			UINT32 exponent : 8;
 			UINT32 mantissa : 23;
 #else
-			UINT32 mantissa : 23;
-			UINT32 exponent : 8;
-			UINT32 negative : 1;
+			UINT32 Mantissa : 23;
+			UINT32 Exponent : 8;
+			UINT32 Negative : 1;
 #endif
-		} field;
+		} Field;
 	};
 
 	/** 10-bit floating point number broken down into components for easier access. */
 	union Float10
 	{
-		UINT32 raw;
+		UINT32 Raw;
 		struct {
 #if BS_ENDIAN == BS_ENDIAN_BIG
 			UINT32 exponent : 5;
 			UINT32 mantissa : 5;
 #else
-			UINT32 mantissa : 5;
-			UINT32 exponent : 5;
+			UINT32 Mantissa : 5;
+			UINT32 Exponent : 5;
 #endif
-		} field;
+		} Field;
 	};
 
 	/** 11-bit floating point number broken down into components for easier access. */
 	union Float11
 	{
-		UINT32 raw;
+		UINT32 Raw;
 		struct {
 #if BS_ENDIAN == BS_ENDIAN_BIG
 			UINT32 exponent : 5;
 			UINT32 mantissa : 6;
 #else
-			UINT32 mantissa : 6;
-			UINT32 exponent : 5;
+			UINT32 Mantissa : 6;
+			UINT32 Exponent : 5;
 #endif
-		} field;
+		} Field;
 	};
 
 	/** Class for manipulating bit patterns. */
@@ -466,9 +466,9 @@ namespace bs
 		/** Convert a float32 to a float16 (NV_half_float). */
 		static UINT16 FloatToHalf(float i)
 		{
-			union { float f; UINT32 i; } v;
-			v.f = i;
-			return FloatToHalfI(v.i);
+			union { float F; UINT32 I; } v;
+			v.F = i;
+			return FloatToHalfI(v.I);
 		}
 
 		/** Converts float in UINT32 format to a a half in UINT16 format. */
@@ -514,9 +514,9 @@ namespace bs
 		/** Convert a float16 (NV_half_float) to a float32. */
 		static float HalfToFloat(UINT16 y)
 		{
-			union { float f; UINT32 i; } v;
-			v.i = HalfToFloatI(y);
-			return v.f;
+			union { float F; UINT32 I; } v;
+			v.I = HalfToFloatI(y);
+			return v.F;
 		}
 
 		/** Converts a half in UINT16 format to a float in UINT32 format. */
@@ -566,36 +566,36 @@ namespace bs
 		static UINT32 FloatToFloat10(float v)
 		{
 			Float754 f;
-			f.value = v;
+			f.Value = v;
 
-			if (f.field.exponent == 0xFF)
+			if (f.Field.Exponent == 0xFF)
 			{
 				// NAN or INF
-				if (f.field.mantissa > 0)
-					return 0x3E0 | (((f.raw >> 18) | (f.raw >> 13) | (f.raw >> 3) | f.raw) & 0x1F);
-				else if (f.field.negative)
+				if (f.Field.Mantissa > 0)
+					return 0x3E0 | (((f.Raw >> 18) | (f.Raw >> 13) | (f.Raw >> 3) | f.Raw) & 0x1F);
+				else if (f.Field.Negative)
 					return 0; // Negative infinity clamped to 0
 				else
 					return 0x3E0; // Positive infinity
 
 			}
-			else if (f.field.negative)
+			else if (f.Field.Negative)
 				return 0; // Negative clamped to 0, no negatives allowed
-			else if (f.raw > 0x477C0000)
+			else if (f.Raw > 0x477C0000)
 				return 0x3DF; // Too large, clamp to max value
 			else
 			{
 				UINT32 val;
-				if (f.raw < 0x38800000U)
+				if (f.Raw < 0x38800000U)
 				{
 					// Too small to be represented as a normalized float, convert to denormalized value
-					UINT32 shift = 113 - f.field.exponent;
-					val = (0x800000U | f.field.mantissa) >> shift;
+					UINT32 shift = 113 - f.Field.Exponent;
+					val = (0x800000U | f.Field.Mantissa) >> shift;
 				}
 				else
 				{
 					// Rebias exponent
-					val = f.raw + 0xC8000000;
+					val = f.Raw + 0xC8000000;
 				}
 
 				return  ((val + 0x1FFFFU + ((val >> 18) & 1)) >> 18) & 0x3FF;
@@ -606,36 +606,36 @@ namespace bs
 		static UINT32 FloatToFloat11(float v)
 		{
 			Float754 f;
-			f.value = v;
+			f.Value = v;
 
-			if (f.field.exponent == 0xFF)
+			if (f.Field.Exponent == 0xFF)
 			{
 				// NAN or INF
-				if (f.field.mantissa > 0)
-					return 0x7C0 | (((f.raw >> 17) | (f.raw >> 11) | (f.raw >> 6) | f.raw) & 0x3F);
-				else if (f.field.negative)
+				if (f.Field.Mantissa > 0)
+					return 0x7C0 | (((f.Raw >> 17) | (f.Raw >> 11) | (f.Raw >> 6) | f.Raw) & 0x3F);
+				else if (f.Field.Negative)
 					return 0; // Negative infinity clamped to 0
 				else
 					return 0x7C0; // Positive infinity
 
 			}
-			else if (f.field.negative)
+			else if (f.Field.Negative)
 				return 0; // Negative clamped to 0, no negatives allowed
-			else if (f.raw > 0x477E0000)
+			else if (f.Raw > 0x477E0000)
 				return 0x7BF; // Too large, clamp to max value
 			else
 			{
 				UINT32 val;
-				if(f.raw < 0x38800000U)
+				if(f.Raw < 0x38800000U)
 				{
 					// Too small to be represented as a normalized float, convert to denormalized value
-					UINT32 shift = 113 - f.field.exponent;
-					val = (0x800000U | f.field.mantissa) >> shift;
+					UINT32 shift = 113 - f.Field.Exponent;
+					val = (0x800000U | f.Field.Mantissa) >> shift;
 				}
 				else
 				{
 					// Rebias exponent
-					val = f.raw + 0xC8000000;
+					val = f.Raw + 0xC8000000;
 				}
 
 				return  ((val + 0xFFFFU + ((val >> 17) & 1)) >> 17) & 0x7FF;
@@ -646,20 +646,20 @@ namespace bs
 		static float Float10ToFloat(UINT32 v)
 		{
 			Float10 f;
-			f.raw = v;
+			f.Raw = v;
 
 			UINT32 output;
-			if (f.field.exponent == 0x1F) // INF or NAN
+			if (f.Field.Exponent == 0x1F) // INF or NAN
 			{
-				output = 0x7f800000 | (f.field.mantissa << 17);
+				output = 0x7f800000 | (f.Field.Mantissa << 17);
 			}
 			else
 			{
 				UINT32 exponent;
-				UINT32 mantissa = f.field.mantissa;
+				UINT32 mantissa = f.Field.Mantissa;
 
-				if (f.field.exponent != 0) // The value is normalized
-					exponent = f.field.exponent;
+				if (f.Field.Exponent != 0) // The value is normalized
+					exponent = f.Field.Exponent;
 				else if (mantissa != 0) // The value is denormalized
 				{
 					// Normalize the value in the resulting float
@@ -688,20 +688,20 @@ namespace bs
 		static float Float11ToFloat(UINT32 v)
 		{
 			Float11 f;
-			f.raw = v;
+			f.Raw = v;
 
 			UINT32 output;
-			if (f.field.exponent == 0x1F) // INF or NAN
+			if (f.Field.Exponent == 0x1F) // INF or NAN
 			{
-				output = 0x7f800000 | (f.field.mantissa << 17);
+				output = 0x7f800000 | (f.Field.Mantissa << 17);
 			}
 			else
 			{
 				UINT32 exponent;
-				UINT32 mantissa = f.field.mantissa;
+				UINT32 mantissa = f.Field.Mantissa;
 
-				if (f.field.exponent != 0) // The value is normalized
-					exponent = f.field.exponent;
+				if (f.Field.Exponent != 0) // The value is normalized
+					exponent = f.Field.Exponent;
 				else if (mantissa != 0) // The value is denormalized
 				{
 					// Normalize the value in the resulting float

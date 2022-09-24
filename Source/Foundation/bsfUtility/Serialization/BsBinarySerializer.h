@@ -119,31 +119,31 @@ namespace bs
 
 		struct ObjectMetaData
 		{
-			UINT32 objectMeta;
-			UINT32 typeId;
+			UINT32 ObjectMeta;
+			UINT32 TypeId;
 		};
 
 		struct ObjectToEncode
 		{
 			ObjectToEncode(UINT32 objectId, SPtr<IReflectable> object)
-				:objectId(objectId), object(std::move(object))
+				:ObjectId(objectId), Object(std::move(object))
 			{ }
 
-			UINT32 objectId;
-			SPtr<IReflectable> object;
+			UINT32 ObjectId;
+			SPtr<IReflectable> Object;
 		};
 
 		struct ObjectToDecode
 		{
 			ObjectToDecode(SPtr<IReflectable> object = nullptr, uint64_t offset = 0, SPtr<RTTISchema> schema = nullptr)
-				:object(std::move(object)), offset(offset), schema(std::move(schema))
+				:Object(std::move(object)), Offset(offset), Schema(std::move(schema))
 			{ }
 
-			SPtr<IReflectable> object;
-			bool isDecoded = false;
-			bool decodeInProgress = false; // Used for error reporting circular references
-			uint64_t offset;
-			SPtr<RTTISchema> schema;
+			SPtr<IReflectable> Object;
+			bool IsDecoded = false;
+			bool DecodeInProgress = false; // Used for error reporting circular references
+			uint64_t Offset;
+			SPtr<RTTISchema> Schema;
 		};
 
 		/** Encodes a single IReflectable object. */

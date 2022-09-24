@@ -122,15 +122,15 @@ namespace bs
 			static_assert(sizeof(RTTIPlainType<DataType>::id) > 0, "Type has no RTTI ID."); // Just making sure provided type has a type ID
 
 			BitLength size = RTTIPlainType<DataType>::GetSize(DataType(), info, false);
-			if (RTTIPlainType<DataType>::hasDynamicSize == 0 && size.bytes > 255)
+			if (RTTIPlainType<DataType>::hasDynamicSize == 0 && size.Bytes > 255)
 			{
 				assert(false);
 				BS_LOG(Error, RTTI, "Trying to create a plain RTTI field with size larger than 255. In order to use larger sizes for plain " \
 					"types please specialize RTTIPlainType, set hasDynamicSize to true.");
 			}
 
-			this->getter = getter;
-			this->setter = setter;
+			this->Getter = getter;
+			this->Setter = setter;
 
 			Init(std::move(name), RTTIFieldSchema(uniqueId, false, RTTIPlainType<DataType>::hasDynamicSize, size,
 				SerializableFT_Plain, RTTIPlainType<DataType>::id, nullptr, info));
@@ -155,17 +155,17 @@ namespace bs
 			static_assert((RTTIPlainType<DataType>::id != 0) || true, ""); // Just making sure provided type has a type ID
 
 			BitLength size = RTTIPlainType<DataType>::GetSize(DataType(), info, false);
-			if (RTTIPlainType<DataType>::hasDynamicSize == 0 && size.bytes > 255)
+			if (RTTIPlainType<DataType>::hasDynamicSize == 0 && size.Bytes > 255)
 			{
 				assert(false);
 				BS_LOG(Error, RTTI, "Trying to create a plain RTTI field with size larger than 255. In order to use larger sizes for plain " \
 					"types please specialize RTTIPlainType, set hasDynamicSize to true.");
 			}
 
-			arrayGetter = getter;
-			arraySetter = setter;
-			arrayGetSize = getSize;
-			arraySetSize = setSize;
+			ArrayGetter = getter;
+			ArraySetter = setter;
+			ArrayGetSize = getSize;
+			ArraySetSize = setSize;
 
 			Init(std::move(name), RTTIFieldSchema(uniqueId, true, RTTIPlainType<DataType>::hasDynamicSize, size,
 				SerializableFT_Plain, RTTIPlainType<DataType>::id, nullptr, info));
@@ -185,9 +185,9 @@ namespace bs
 
 			InterfaceType* rttiObject = static_cast<InterfaceType*>(rtti);
 			ObjectType* castObject = static_cast<ObjectType*>(object);
-			DataType value = (rttiObject->*getter)(castObject);
+			DataType value = (rttiObject->*Getter)(castObject);
 
-			return RTTIPlainType<DataType>::GetSize(value, schema.info, compress);
+			return RTTIPlainType<DataType>::GetSize(value, Schema.Info, compress);
 		}
 
 		/** @copydoc RTTIPlainFieldBase::getArrayElemDynamicSize */
@@ -198,9 +198,9 @@ namespace bs
 
 			InterfaceType* rttiObject = static_cast<InterfaceType*>(rtti);
 			ObjectType* castObject = static_cast<ObjectType*>(object);
-			DataType value = (rttiObject->*arrayGetter)(castObject, index);
+			DataType value = (rttiObject->*ArrayGetter)(castObject, index);
 
-			return RTTIPlainType<DataType>::GetSize(value, schema.info, compress);
+			return RTTIPlainType<DataType>::GetSize(value, Schema.Info, compress);
 		}
 
 		/** Returns the size of the array managed by the field. */
@@ -210,7 +210,7 @@ namespace bs
 
 			InterfaceType* rttiObject = static_cast<InterfaceType*>(rtti);
 			ObjectType* castObject = static_cast<ObjectType*>(object);
-			return (rttiObject->*arrayGetSize)(castObject);
+			return (rttiObject->*ArrayGetSize)(castObject);
 		}
 
 		/** Changes the size of the array managed by the field. Array must be re-populated after. */
@@ -218,14 +218,14 @@ namespace bs
 		{
 			CheckIsArray(true);
 
-			if(!arraySetSize)
+			if(!ArraySetSize)
 			{
-				BS_EXCEPT(InternalErrorException, "Specified field (" + name + ") has no array size setter.");
+				BS_EXCEPT(InternalErrorException, "Specified field (" + Name + ") has no array size setter.");
 			}
 
 			InterfaceType* rttiObject = static_cast<InterfaceType*>(rtti);
 			ObjectType* castObject = static_cast<ObjectType*>(object);
-			(rttiObject->*arraySetSize)(castObject, size);
+			(rttiObject->*ArraySetSize)(castObject, size);
 		}
 
 		/** @copydoc RTTIPlainFieldBase::toBuffer */
@@ -236,9 +236,9 @@ namespace bs
 
 			InterfaceType* rttiObject = static_cast<InterfaceType*>(rtti);
 			ObjectType* castObject = static_cast<ObjectType*>(object);
-			DataType value = (rttiObject->*getter)(castObject);
+			DataType value = (rttiObject->*Getter)(castObject);
 
-			RTTIPlainType<DataType>::ToMemory(value, stream, schema.info, compress);
+			RTTIPlainType<DataType>::ToMemory(value, stream, Schema.Info, compress);
 		}
 
 		/** @copydoc RTTIPlainFieldBase::arrayElemToBuffer */
@@ -249,9 +249,9 @@ namespace bs
 
 			InterfaceType* rttiObject = static_cast<InterfaceType*>(rtti);
 			ObjectType* castObject = static_cast<ObjectType*>(object);
-			DataType value = (rttiObject->*arrayGetter)(castObject, index);
+			DataType value = (rttiObject->*ArrayGetter)(castObject, index);
 
-			RTTIPlainType<DataType>::ToMemory(value, stream, schema.info, compress);
+			RTTIPlainType<DataType>::ToMemory(value, stream, Schema.Info, compress);
 		}
 
 		/** @copydoc RTTIPlainFieldBase::fromBuffer */
@@ -264,15 +264,15 @@ namespace bs
 			ObjectType* castObject = static_cast<ObjectType*>(object);
 
 			DataType value;
-			RTTIPlainType<DataType>::FromMemory(value, stream, schema.info, compress);
+			RTTIPlainType<DataType>::FromMemory(value, stream, Schema.Info, compress);
 
-			if(!setter)
+			if(!Setter)
 			{
 				BS_EXCEPT(InternalErrorException,
-					"Specified field (" + name + ") has no setter.");
+					"Specified field (" + Name + ") has no setter.");
 			}
 
-			(rttiObject->*setter)(castObject, value);
+			(rttiObject->*Setter)(castObject, value);
 		}
 
 		/** @copydoc RTTIPlainFieldBase::arrayElemFromBuffer */
@@ -285,15 +285,15 @@ namespace bs
 			ObjectType* castObject = static_cast<ObjectType*>(object);
 
 			DataType value;
-			RTTIPlainType<DataType>::FromMemory(value, stream, schema.info, compress);
+			RTTIPlainType<DataType>::FromMemory(value, stream, Schema.Info, compress);
 
-			if(!arraySetter)
+			if(!ArraySetter)
 			{
 				BS_EXCEPT(InternalErrorException,
-					"Specified field (" + name + ") has no setter.");
+					"Specified field (" + Name + ") has no setter.");
 			}
 
-			(rttiObject->*arraySetter)(castObject, index, value);
+			(rttiObject->*ArraySetter)(castObject, index, value);
 		}
 
 	private:
@@ -301,17 +301,17 @@ namespace bs
 		{
 			struct
 			{
-				GetterType getter;
-				SetterType setter;
+				GetterType Getter;
+				SetterType Setter;
 			};
 
 			struct
 			{
-				ArrayGetterType arrayGetter;
-				ArraySetterType arraySetter;
+				ArrayGetterType ArrayGetter;
+				ArraySetterType ArraySetter;
 
-				ArrayGetSizeType arrayGetSize;
-				ArraySetSizeType arraySetSize;
+				ArrayGetSizeType ArrayGetSize;
+				ArraySetSizeType ArraySetSize;
 			};
 		};
 	};

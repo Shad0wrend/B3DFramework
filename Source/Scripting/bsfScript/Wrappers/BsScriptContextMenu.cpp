@@ -28,13 +28,13 @@ namespace bs
 
 	void ScriptContextMenu::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptContextMenu::InternalCreateInstance);
-		metaData.scriptClass->AddInternalCall("Internal_Open", (void*)&ScriptContextMenu::InternalOpen);
-		metaData.scriptClass->AddInternalCall("Internal_AddItem", (void*)&ScriptContextMenu::InternalAddItem);
-		metaData.scriptClass->AddInternalCall("Internal_AddSeparator", (void*)&ScriptContextMenu::InternalAddSeparator);
-		metaData.scriptClass->AddInternalCall("Internal_SetLocalizedName", (void*)&ScriptContextMenu::InternalSetLocalizedName);
+		metaData.ScriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptContextMenu::InternalCreateInstance);
+		metaData.ScriptClass->AddInternalCall("Internal_Open", (void*)&ScriptContextMenu::InternalOpen);
+		metaData.ScriptClass->AddInternalCall("Internal_AddItem", (void*)&ScriptContextMenu::InternalAddItem);
+		metaData.ScriptClass->AddInternalCall("Internal_AddSeparator", (void*)&ScriptContextMenu::InternalAddSeparator);
+		metaData.ScriptClass->AddInternalCall("Internal_SetLocalizedName", (void*)&ScriptContextMenu::InternalSetLocalizedName);
 
-		onEntryTriggered = (OnEntryTriggeredThunkDef)metaData.scriptClass->GetMethod("InternalDoOnEntryTriggered", 1)->GetThunk();
+		onEntryTriggered = (OnEntryTriggeredThunkDef)metaData.ScriptClass->GetMethod("InternalDoOnEntryTriggered", 1)->GetThunk();
 	}
 
 	void ScriptContextMenu::InternalCreateInstance(MonoObject* instance)
@@ -51,7 +51,7 @@ namespace bs
 			return;
 
 		Rect2I bounds = layout->GetGlobalBounds();
-		Vector2I windowPosition = *position + Vector2I(bounds.x, bounds.y);
+		Vector2I windowPosition = *position + Vector2I(bounds.X, bounds.Y);
 
 		SPtr<GUIContextMenu> contextMenu = instance->GetInternal();
 		contextMenu->Open(windowPosition, *widget);

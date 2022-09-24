@@ -21,23 +21,23 @@ namespace bs
 
 	void ScriptSpriteTexture::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptSpriteTexture::InternalGetRef);
-		metaData.scriptClass->AddInternalCall("Internal_SetTexture", (void*)&ScriptSpriteTexture::InternalSetTexture);
-		metaData.scriptClass->AddInternalCall("Internal_GetTexture", (void*)&ScriptSpriteTexture::InternalGetTexture);
-		metaData.scriptClass->AddInternalCall("Internal_GetWidth", (void*)&ScriptSpriteTexture::InternalGetWidth);
-		metaData.scriptClass->AddInternalCall("Internal_GetHeight", (void*)&ScriptSpriteTexture::InternalGetHeight);
-		metaData.scriptClass->AddInternalCall("Internal_GetFrameWidth", (void*)&ScriptSpriteTexture::InternalGetFrameWidth);
-		metaData.scriptClass->AddInternalCall("Internal_GetFrameHeight", (void*)&ScriptSpriteTexture::InternalGetFrameHeight);
-		metaData.scriptClass->AddInternalCall("Internal_SetOffset", (void*)&ScriptSpriteTexture::InternalSetOffset);
-		metaData.scriptClass->AddInternalCall("Internal_GetOffset", (void*)&ScriptSpriteTexture::InternalGetOffset);
-		metaData.scriptClass->AddInternalCall("Internal_SetScale", (void*)&ScriptSpriteTexture::InternalSetScale);
-		metaData.scriptClass->AddInternalCall("Internal_GetScale", (void*)&ScriptSpriteTexture::InternalGetScale);
-		metaData.scriptClass->AddInternalCall("Internal_SetAnimation", (void*)&ScriptSpriteTexture::InternalSetAnimation);
-		metaData.scriptClass->AddInternalCall("Internal_GetAnimation", (void*)&ScriptSpriteTexture::InternalGetAnimation);
-		metaData.scriptClass->AddInternalCall("Internal_SetAnimationPlayback", (void*)&ScriptSpriteTexture::InternalSetAnimationPlayback);
-		metaData.scriptClass->AddInternalCall("Internal_GetAnimationPlayback", (void*)&ScriptSpriteTexture::InternalGetAnimationPlayback);
-		metaData.scriptClass->AddInternalCall("Internal_Create", (void*)&ScriptSpriteTexture::InternalCreate);
-		metaData.scriptClass->AddInternalCall("Internal_Create0", (void*)&ScriptSpriteTexture::InternalCreate0);
+		metaData.ScriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptSpriteTexture::InternalGetRef);
+		metaData.ScriptClass->AddInternalCall("Internal_SetTexture", (void*)&ScriptSpriteTexture::InternalSetTexture);
+		metaData.ScriptClass->AddInternalCall("Internal_GetTexture", (void*)&ScriptSpriteTexture::InternalGetTexture);
+		metaData.ScriptClass->AddInternalCall("Internal_GetWidth", (void*)&ScriptSpriteTexture::InternalGetWidth);
+		metaData.ScriptClass->AddInternalCall("Internal_GetHeight", (void*)&ScriptSpriteTexture::InternalGetHeight);
+		metaData.ScriptClass->AddInternalCall("Internal_GetFrameWidth", (void*)&ScriptSpriteTexture::InternalGetFrameWidth);
+		metaData.ScriptClass->AddInternalCall("Internal_GetFrameHeight", (void*)&ScriptSpriteTexture::InternalGetFrameHeight);
+		metaData.ScriptClass->AddInternalCall("Internal_SetOffset", (void*)&ScriptSpriteTexture::InternalSetOffset);
+		metaData.ScriptClass->AddInternalCall("Internal_GetOffset", (void*)&ScriptSpriteTexture::InternalGetOffset);
+		metaData.ScriptClass->AddInternalCall("Internal_SetScale", (void*)&ScriptSpriteTexture::InternalSetScale);
+		metaData.ScriptClass->AddInternalCall("Internal_GetScale", (void*)&ScriptSpriteTexture::InternalGetScale);
+		metaData.ScriptClass->AddInternalCall("Internal_SetAnimation", (void*)&ScriptSpriteTexture::InternalSetAnimation);
+		metaData.ScriptClass->AddInternalCall("Internal_GetAnimation", (void*)&ScriptSpriteTexture::InternalGetAnimation);
+		metaData.ScriptClass->AddInternalCall("Internal_SetAnimationPlayback", (void*)&ScriptSpriteTexture::InternalSetAnimationPlayback);
+		metaData.ScriptClass->AddInternalCall("Internal_GetAnimationPlayback", (void*)&ScriptSpriteTexture::InternalGetAnimationPlayback);
+		metaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptSpriteTexture::InternalCreate);
+		metaData.ScriptClass->AddInternalCall("Internal_Create0", (void*)&ScriptSpriteTexture::InternalCreate0);
 
 	}
 
@@ -46,7 +46,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		return metaData.scriptClass->CreateInstance("bool", ctorParams);
+		return metaData.ScriptClass->CreateInstance("bool", ctorParams);
 	}
 	MonoObject* ScriptSpriteTexture::InternalGetRef(ScriptSpriteTexture* thisPtr)
 	{

@@ -24,15 +24,15 @@ namespace bs
 		:SliderJoint(desc)
 	{
 		PxRigidActor* actor0 = nullptr;
-		if (desc.bodies[0].body != nullptr)
-			actor0 = static_cast<PhysXRigidbody*>(desc.bodies[0].body)->GetInternalInternal();
+		if (desc.Bodies[0].Body != nullptr)
+			actor0 = static_cast<PhysXRigidbody*>(desc.Bodies[0].Body)->GetInternalInternal();
 
 		PxRigidActor* actor1 = nullptr;
-		if (desc.bodies[1].body != nullptr)
-			actor1 = static_cast<PhysXRigidbody*>(desc.bodies[1].body)->GetInternalInternal();
+		if (desc.Bodies[1].Body != nullptr)
+			actor1 = static_cast<PhysXRigidbody*>(desc.Bodies[1].Body)->GetInternalInternal();
 
-		PxTransform tfrm0 = toPxTransform(desc.bodies[0].position, desc.bodies[0].rotation);
-		PxTransform tfrm1 = toPxTransform(desc.bodies[1].position, desc.bodies[1].rotation);
+		PxTransform tfrm0 = toPxTransform(desc.Bodies[0].Position, desc.Bodies[0].Rotation);
+		PxTransform tfrm1 = toPxTransform(desc.Bodies[1].Position, desc.Bodies[1].Rotation);
 
 		PxPrismaticJoint* joint = PxPrismaticJointCreate(*physx, actor0, tfrm0, actor1, tfrm1);
 		joint->userData = this;
@@ -41,13 +41,13 @@ namespace bs
 
 		PxPrismaticJointFlags flags;
 
-		if (((UINT32)desc.flag & (UINT32)SliderJointFlag::Limit) != 0)
+		if (((UINT32)desc.Flag & (UINT32)SliderJointFlag::Limit) != 0)
 			flags |= PxPrismaticJointFlag::eLIMIT_ENABLED;
 
 		joint->setPrismaticJointFlags(flags);
 
 		// Calls to virtual methods are okay here
-		SetLimit(desc.limit);
+		SetLimit(desc.Limit);
 	}
 
 	PhysXSliderJoint::~PhysXSliderJoint()
@@ -70,22 +70,22 @@ namespace bs
 		PxJointLinearLimitPair pxLimit = GetInternal()->getLimit();
 
 		LimitLinearRange limit;
-		limit.lower = pxLimit.lower;
-		limit.upper = pxLimit.upper;
-		limit.contactDist = pxLimit.contactDistance;
-		limit.restitution = pxLimit.restitution;
-		limit.spring.stiffness = pxLimit.stiffness;
-		limit.spring.damping = pxLimit.damping;
+		limit.Lower = pxLimit.lower;
+		limit.Upper = pxLimit.upper;
+		limit.ContactDist = pxLimit.contactDistance;
+		limit.Restitution = pxLimit.restitution;
+		limit.Spring.Stiffness = pxLimit.stiffness;
+		limit.Spring.Damping = pxLimit.damping;
 
 		return limit;
 	}
 
 	void PhysXSliderJoint::SetLimit(const LimitLinearRange& limit)
 	{
-		PxJointLinearLimitPair pxLimit(gPhysX().GetScale(), limit.lower, limit.upper, limit.contactDist);
-		pxLimit.stiffness = limit.spring.stiffness;
-		pxLimit.damping = limit.spring.damping;
-		pxLimit.restitution = limit.restitution;
+		PxJointLinearLimitPair pxLimit(gPhysX().GetScale(), limit.Lower, limit.Upper, limit.ContactDist);
+		pxLimit.stiffness = limit.Spring.Stiffness;
+		pxLimit.damping = limit.Spring.Damping;
+		pxLimit.restitution = limit.Restitution;
 
 		GetInternal()->setLimit(pxLimit);
 	}

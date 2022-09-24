@@ -10,29 +10,29 @@
 namespace bs
 {
 	Plane::Plane(const Vector3& normal, float d)
-		:normal(normal), d(d)
+		:Normal(normal), D(d)
 	{ }
 
 	Plane::Plane(float a, float b, float c, float _d)
-		:normal(a, b, c), d(_d)
+		:Normal(a, b, c), D(_d)
 	{ }
 
 	Plane::Plane(const Vector3& normal, const Vector3& point)
-		:normal(normal), d(normal.Dot(point))
+		:Normal(normal), D(normal.Dot(point))
 	{ }
 
 	Plane::Plane(const Vector3& point0, const Vector3& point1, const Vector3& point2)
 	{
 		Vector3 kEdge1 = point1 - point0;
 		Vector3 kEdge2 = point2 - point0;
-		normal = kEdge1.Cross(kEdge2);
-		normal.Normalize();
-		d = normal.Dot(point0);
+		Normal = kEdge1.Cross(kEdge2);
+		Normal.Normalize();
+		D = Normal.Dot(point0);
 	}
 
 	float Plane::GetDistance(const Vector3& point) const
 	{
-		return normal.Dot(point) - d;
+		return Normal.Dot(point) - D;
 	}
 
 	Plane::Side Plane::GetSide(const Vector3& point, float epsilon) const
@@ -56,7 +56,7 @@ namespace bs
 		// Calculate the maximize allows absolute distance for
 		// the distance between box centre and plane
 		Vector3 halfSize = box.GetHalfSize();
-		float maxAbsDist = abs(normal.x * halfSize.x) + abs(normal.y * halfSize.y) + abs(normal.z * halfSize.z);
+		float maxAbsDist = abs(Normal.X * halfSize.X) + abs(Normal.Y * halfSize.Y) + abs(Normal.Z * halfSize.Z);
 
 		if (dist < -maxAbsDist)
 			return Plane::NEGATIVE_SIDE;
@@ -86,29 +86,29 @@ namespace bs
 	{
 		// We know plane normal is unit length, so use simple method
 		Matrix3 xform;
-		xform[0][0] = 1.0f - normal.x * normal.x;
-		xform[0][1] = -normal.x * normal.y;
-		xform[0][2] = -normal.x * normal.z;
-		xform[1][0] = -normal.y * normal.x;
-		xform[1][1] = 1.0f - normal.y * normal.y;
-		xform[1][2] = -normal.y * normal.z;
-		xform[2][0] = -normal.z * normal.x;
-		xform[2][1] = -normal.z * normal.y;
-		xform[2][2] = 1.0f - normal.z * normal.z;
+		xform[0][0] = 1.0f - Normal.X * Normal.X;
+		xform[0][1] = -Normal.X * Normal.Y;
+		xform[0][2] = -Normal.X * Normal.Z;
+		xform[1][0] = -Normal.Y * Normal.X;
+		xform[1][1] = 1.0f - Normal.Y * Normal.Y;
+		xform[1][2] = -Normal.Y * Normal.Z;
+		xform[2][0] = -Normal.Z * Normal.X;
+		xform[2][1] = -Normal.Z * Normal.Y;
+		xform[2][2] = 1.0f - Normal.Z * Normal.Z;
 		return xform.Multiply(point);
 
 	}
 
 	float Plane::Normalize()
 	{
-		float fLength = normal.Length();
+		float fLength = Normal.Length();
 
 		// Will also work for zero-sized vectors, but will change nothing
 		if (fLength > 1e-08f)
 		{
 			float fInvLength = 1.0f / fLength;
-			normal *= fInvLength;
-			d *= fInvLength;
+			Normal *= fInvLength;
+			D *= fInvLength;
 		}
 
 		return fLength;
@@ -126,7 +126,7 @@ namespace bs
 
 	std::pair<bool, float> Plane::Intersects(const Ray& ray) const
 	{
-		float denom = normal.Dot(ray.GetDirection());
+		float denom = Normal.Dot(ray.GetDirection());
 		if (abs(denom) < std::numeric_limits<float>::epsilon())
 		{
 			// Parallel
@@ -134,7 +134,7 @@ namespace bs
 		}
 		else
 		{
-			float nom = normal.Dot(ray.GetOrigin()) - d;
+			float nom = Normal.Dot(ray.GetOrigin()) - D;
 			float t = -(nom/denom);
 			return std::pair<bool, float>(t >= 0.0f, t);
 		}

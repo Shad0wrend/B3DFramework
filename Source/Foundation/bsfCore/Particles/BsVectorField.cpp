@@ -18,14 +18,14 @@ namespace bs
 	VectorField::VectorField(const VECTOR_FIELD_DESC& desc, const Vector<Vector3>& values)
 		:TVectorField(desc)
 	{
-		if(mDesc.countX == 0 || mDesc.countY == 0 || mDesc.countZ == 0)
+		if(mDesc.CountX == 0 || mDesc.CountY == 0 || mDesc.CountZ == 0)
 			BS_LOG(Warning, Particles, "Vector field count cannot be zero.");
 
-		mDesc.countX = std::max(1U, mDesc.countX);
-		mDesc.countY = std::max(1U, mDesc.countY);
-		mDesc.countZ = std::max(1U, mDesc.countZ);
+		mDesc.CountX = std::max(1U, mDesc.CountX);
+		mDesc.CountY = std::max(1U, mDesc.CountY);
+		mDesc.CountZ = std::max(1U, mDesc.CountZ);
 
-		const UINT32 count = mDesc.countX * mDesc.countY * mDesc.countZ;
+		const UINT32 count = mDesc.CountX * mDesc.CountY * mDesc.CountZ;
 		if(count != (UINT32)values.size())
 		{
 			BS_LOG(Warning, Particles, "Number of values provided to the vector field does not match the expected number. "
@@ -34,28 +34,28 @@ namespace bs
 
 		const UINT32 valuesToCopy = std::min(count, (UINT32)values.size());
 
-		const SPtr<PixelData> pixelData = PixelData::Create(mDesc.countX, mDesc.countY, mDesc.countZ, PF_RGBA16F);
+		const SPtr<PixelData> pixelData = PixelData::Create(mDesc.CountX, mDesc.CountY, mDesc.CountZ, PF_RGBA16F);
 
 		const UINT32 pixelSize = PixelUtil::GetNumElemBytes(PF_RGBA16F);
 		UINT8* data = pixelData->GetData();
-		for(UINT32 z = 0; z < (UINT32)mDesc.countZ; z++)
+		for(UINT32 z = 0; z < (UINT32)mDesc.CountZ; z++)
 		{
-			const UINT32 zArrayIdx = z * mDesc.countY * mDesc.countX;
+			const UINT32 zArrayIdx = z * mDesc.CountY * mDesc.CountX;
 			const UINT32 zDataIdx = z * pixelData->GetSlicePitch();
 
-			for(UINT32 y = 0; y < (UINT32)mDesc.countY; y++)
+			for(UINT32 y = 0; y < (UINT32)mDesc.CountY; y++)
 			{
-				const UINT32 yArrayIdx = y * mDesc.countX;
+				const UINT32 yArrayIdx = y * mDesc.CountX;
 				const UINT32 yDataIdx = y * pixelData->GetRowPitch();
 
-				for(UINT32 x = 0; x < (UINT32)mDesc.countX; x++)
+				for(UINT32 x = 0; x < (UINT32)mDesc.CountX; x++)
 				{
 					const UINT32 arrayIdx = x + yArrayIdx + zArrayIdx;
 					const UINT32 dataIdx = x * pixelSize + yDataIdx + zDataIdx;
 
 					const Vector3& source = arrayIdx < valuesToCopy ? values[arrayIdx] : Vector3::ZERO;
 					UINT8* dest = data + dataIdx;
-					PixelUtil::PackColor(source.x, source.y, source.z, 1.0f, PF_RGBA16F, dest);
+					PixelUtil::PackColor(source.X, source.Y, source.Z, 1.0f, PF_RGBA16F, dest);
 				}
 			}
 		}
@@ -202,19 +202,19 @@ namespace bs
 
 		// Read X, Y, Z sizes
 		Vector3I size;
-		readPos = parseInt(readPos, size.x);
-		readPos = parseInt(readPos, size.y);
-		readPos = parseInt(readPos, size.z);
+		readPos = parseInt(readPos, size.X);
+		readPos = parseInt(readPos, size.Y);
+		readPos = parseInt(readPos, size.Z);
 
-		if(size.x < 0 || size.y < 0 || size.z < 0)
+		if(size.X < 0 || size.Y < 0 || size.Z < 0)
 		{
 			BS_LOG(Error, Particles, "Invalid dimensions.");
 			return nullptr;
 		}
 
-		desc.countX = (UINT32)size.x;
-		desc.countY = (UINT32)size.y;
-		desc.countZ = (UINT32)size.z;
+		desc.CountX = (UINT32)size.X;
+		desc.CountY = (UINT32)size.Y;
+		desc.CountZ = (UINT32)size.Z;
 		
 		if(*readPos == '\0')
 		{
@@ -223,12 +223,12 @@ namespace bs
 		}
 		
 		Vector3 minBounds, maxBounds;
-		readPos = parseFloat(readPos, minBounds.x);
-		readPos = parseFloat(readPos, minBounds.y);
-		readPos = parseFloat(readPos, minBounds.z);
-		readPos = parseFloat(readPos, maxBounds.x);
-		readPos = parseFloat(readPos, maxBounds.y);
-		readPos = parseFloat(readPos, maxBounds.z);
+		readPos = parseFloat(readPos, minBounds.X);
+		readPos = parseFloat(readPos, minBounds.Y);
+		readPos = parseFloat(readPos, minBounds.Z);
+		readPos = parseFloat(readPos, maxBounds.X);
+		readPos = parseFloat(readPos, maxBounds.Y);
+		readPos = parseFloat(readPos, maxBounds.Z);
 
 		if(*readPos == '\0')
 		{
@@ -236,17 +236,17 @@ namespace bs
 			return nullptr;
 		}
 
-		desc.bounds = AABox(minBounds, maxBounds);
+		desc.Bounds = AABox(minBounds, maxBounds);
 
-		const UINT32 count = size.x * size.y * size.z;
+		const UINT32 count = size.X * size.Y * size.Z;
 		Vector<Vector3> values;
 		values.resize(count);
 
 		for(UINT32 i = 0; i < count; i++)
 		{
-			readPos = parseFloat(readPos, values[i].x);
-			readPos = parseFloat(readPos, values[i].y);
-			readPos = parseFloat(readPos, values[i].z);
+			readPos = parseFloat(readPos, values[i].X);
+			readPos = parseFloat(readPos, values[i].Y);
+			readPos = parseFloat(readPos, values[i].Z);
 
 			if ((i != (count - 1)) && *readPos == '\0')
 			{

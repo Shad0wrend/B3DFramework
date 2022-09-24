@@ -10,8 +10,8 @@ namespace bs
 {
 	struct __BlendClipInfoInterop
 	{
-		MonoObject* clip;
-		float position;
+		MonoObject* Clip;
+		float Position;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptBlendClipInfo : public ScriptObject<ScriptBlendClipInfo>

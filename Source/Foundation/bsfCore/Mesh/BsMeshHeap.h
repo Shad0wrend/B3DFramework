@@ -103,25 +103,25 @@ namespace bs
 		/**	Represents a continuous chunk of memory. */
 		struct ChunkData
 		{
-			UINT32 start, size;
+			UINT32 Start, Size;
 		};
 
 		/**	Represents an allocated piece of data representing a mesh. */
 		struct AllocatedData
 		{
-			UINT32 vertChunkIdx;
-			UINT32 idxChunkIdx;
+			UINT32 VertChunkIdx;
+			UINT32 IdxChunkIdx;
 
-			UseFlags useFlags;
-			UINT32 eventQueryIdx;
-			SPtr<TransientMesh> mesh;
+			UseFlags UseFlags;
+			UINT32 EventQueryIdx;
+			SPtr<TransientMesh> Mesh;
 		};
 
 		/**	Data about a GPU query. */
 		struct QueryData
 		{
-			SPtr<EventQuery> query;
-			UINT32 queryId;
+			SPtr<EventQuery> Query;
+			UINT32 QueryId;
 		};
 
 	public:

@@ -16,10 +16,10 @@ namespace bs
 
 	void ScriptCSphericalJoint::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_GetLimit", (void*)&ScriptCSphericalJoint::InternalGetLimit);
-		metaData.scriptClass->AddInternalCall("Internal_SetLimit", (void*)&ScriptCSphericalJoint::InternalSetLimit);
-		metaData.scriptClass->AddInternalCall("Internal_SetFlag", (void*)&ScriptCSphericalJoint::InternalSetFlag);
-		metaData.scriptClass->AddInternalCall("Internal_HasFlag", (void*)&ScriptCSphericalJoint::InternalHasFlag);
+		metaData.ScriptClass->AddInternalCall("Internal_GetLimit", (void*)&ScriptCSphericalJoint::InternalGetLimit);
+		metaData.ScriptClass->AddInternalCall("Internal_SetLimit", (void*)&ScriptCSphericalJoint::InternalSetLimit);
+		metaData.ScriptClass->AddInternalCall("Internal_SetFlag", (void*)&ScriptCSphericalJoint::InternalSetFlag);
+		metaData.ScriptClass->AddInternalCall("Internal_HasFlag", (void*)&ScriptCSphericalJoint::InternalHasFlag);
 
 	}
 
@@ -30,7 +30,7 @@ namespace bs
 
 		__LimitConeRangeInterop interop__output;
 		interop__output = ScriptLimitConeRange::ToInterop(tmp__output);
-		MonoUtil::ValueCopy(__output, &interop__output, ScriptLimitConeRange::GetMetaData()->scriptClass->GetInternalClassInternal());
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptLimitConeRange::GetMetaData()->ScriptClass->GetInternalClassInternal());
 	}
 
 	void ScriptCSphericalJoint::InternalSetLimit(ScriptCSphericalJoint* thisPtr, __LimitConeRangeInterop* limit)

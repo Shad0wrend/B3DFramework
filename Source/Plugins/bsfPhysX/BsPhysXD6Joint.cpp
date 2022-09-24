@@ -103,15 +103,15 @@ namespace bs
 		:D6Joint(desc)
 	{
 		PxRigidActor* actor0 = nullptr;
-		if (desc.bodies[0].body != nullptr)
-			actor0 = static_cast<PhysXRigidbody*>(desc.bodies[0].body)->GetInternalInternal();
+		if (desc.Bodies[0].Body != nullptr)
+			actor0 = static_cast<PhysXRigidbody*>(desc.Bodies[0].Body)->GetInternalInternal();
 
 		PxRigidActor* actor1 = nullptr;
-		if (desc.bodies[1].body != nullptr)
-			actor1 = static_cast<PhysXRigidbody*>(desc.bodies[1].body)->GetInternalInternal();
+		if (desc.Bodies[1].Body != nullptr)
+			actor1 = static_cast<PhysXRigidbody*>(desc.Bodies[1].Body)->GetInternalInternal();
 
-		PxTransform tfrm0 = toPxTransform(desc.bodies[0].position, desc.bodies[0].rotation);
-		PxTransform tfrm1 = toPxTransform(desc.bodies[1].position, desc.bodies[1].rotation);
+		PxTransform tfrm0 = toPxTransform(desc.Bodies[0].Position, desc.Bodies[0].Rotation);
+		PxTransform tfrm1 = toPxTransform(desc.Bodies[1].Position, desc.Bodies[1].Rotation);
 
 		PxD6Joint* joint = PxD6JointCreate(*physx, actor0, tfrm0, actor1, tfrm1);
 		joint->userData = this;
@@ -120,17 +120,17 @@ namespace bs
 
 		// Calls to virtual methods are okay here
 		for (UINT32 i = 0; i < (UINT32)D6JointAxis::Count; i++)
-			SetMotion((D6JointAxis)i, desc.motion[i]);
+			SetMotion((D6JointAxis)i, desc.Motion[i]);
 
 		for (UINT32 i = 0; i < (UINT32)D6JointDriveType::Count; i++)
-			SetDrive((D6JointDriveType)i, desc.drive[i]);
+			SetDrive((D6JointDriveType)i, desc.Drive[i]);
 
-		SetLimitLinear(desc.limitLinear);
-		SetLimitTwist(desc.limitTwist);
-		SetLimitSwing(desc.limitSwing);
+		SetLimitLinear(desc.LimitLinear);
+		SetLimitTwist(desc.LimitTwist);
+		SetLimitSwing(desc.LimitSwing);
 
-		SetDriveTransform(desc.drivePosition, desc.driveRotation);
-		SetDriveVelocity(desc.driveLinearVelocity, desc.driveAngularVelocity);
+		SetDriveTransform(desc.DrivePosition, desc.DriveRotation);
+		SetDriveVelocity(desc.DriveLinearVelocity, desc.DriveAngularVelocity);
 	}
 
 	PhysXD6Joint::~PhysXD6Joint()
@@ -168,21 +168,21 @@ namespace bs
 		PxJointLinearLimit pxLimit = GetInternal()->getLinearLimit();
 
 		LimitLinear limit;
-		limit.extent = pxLimit.value;
-		limit.contactDist = pxLimit.contactDistance;
-		limit.restitution = pxLimit.restitution;
-		limit.spring.stiffness = pxLimit.stiffness;
-		limit.spring.damping = pxLimit.damping;
+		limit.Extent = pxLimit.value;
+		limit.ContactDist = pxLimit.contactDistance;
+		limit.Restitution = pxLimit.restitution;
+		limit.Spring.Stiffness = pxLimit.stiffness;
+		limit.Spring.Damping = pxLimit.damping;
 
 		return limit;
 	}
 
 	void PhysXD6Joint::SetLimitLinear(const LimitLinear& limit)
 	{
-		PxJointLinearLimit pxLimit(gPhysX().GetScale(), limit.extent, limit.contactDist);
-		pxLimit.stiffness = limit.spring.stiffness;
-		pxLimit.damping = limit.spring.damping;
-		pxLimit.restitution = limit.restitution;
+		PxJointLinearLimit pxLimit(gPhysX().GetScale(), limit.Extent, limit.ContactDist);
+		pxLimit.stiffness = limit.Spring.Stiffness;
+		pxLimit.damping = limit.Spring.Damping;
+		pxLimit.restitution = limit.Restitution;
 
 		GetInternal()->setLinearLimit(pxLimit);
 	}
@@ -192,22 +192,22 @@ namespace bs
 		PxJointAngularLimitPair pxLimit = GetInternal()->getTwistLimit();
 
 		LimitAngularRange limit;
-		limit.lower = pxLimit.lower;
-		limit.upper = pxLimit.upper;
-		limit.contactDist = pxLimit.contactDistance;
-		limit.restitution = pxLimit.restitution;
-		limit.spring.stiffness = pxLimit.stiffness;
-		limit.spring.damping = pxLimit.damping;
+		limit.Lower = pxLimit.lower;
+		limit.Upper = pxLimit.upper;
+		limit.ContactDist = pxLimit.contactDistance;
+		limit.Restitution = pxLimit.restitution;
+		limit.Spring.Stiffness = pxLimit.stiffness;
+		limit.Spring.Damping = pxLimit.damping;
 
 		return limit;
 	}
 
 	void PhysXD6Joint::SetLimitTwist(const LimitAngularRange& limit)
 	{
-		PxJointAngularLimitPair pxLimit(limit.lower.ValueRadians(), limit.upper.ValueRadians(), limit.contactDist);
-		pxLimit.stiffness = limit.spring.stiffness;
-		pxLimit.damping = limit.spring.damping;
-		pxLimit.restitution = limit.restitution;
+		PxJointAngularLimitPair pxLimit(limit.Lower.ValueRadians(), limit.Upper.ValueRadians(), limit.ContactDist);
+		pxLimit.stiffness = limit.Spring.Stiffness;
+		pxLimit.damping = limit.Spring.Damping;
+		pxLimit.restitution = limit.Restitution;
 
 		GetInternal()->setTwistLimit(pxLimit);
 	}
@@ -217,22 +217,22 @@ namespace bs
 		PxJointLimitCone pxLimit = GetInternal()->getSwingLimit();
 
 		LimitConeRange limit;
-		limit.yLimitAngle = pxLimit.yAngle;
-		limit.zLimitAngle = pxLimit.zAngle;
-		limit.contactDist = pxLimit.contactDistance;
-		limit.restitution = pxLimit.restitution;
-		limit.spring.stiffness = pxLimit.stiffness;
-		limit.spring.damping = pxLimit.damping;
+		limit.YLimitAngle = pxLimit.yAngle;
+		limit.ZLimitAngle = pxLimit.zAngle;
+		limit.ContactDist = pxLimit.contactDistance;
+		limit.Restitution = pxLimit.restitution;
+		limit.Spring.Stiffness = pxLimit.stiffness;
+		limit.Spring.Damping = pxLimit.damping;
 
 		return limit;
 	}
 
 	void PhysXD6Joint::SetLimitSwing(const LimitConeRange& limit)
 	{
-		PxJointLimitCone pxLimit(limit.yLimitAngle.ValueRadians(), limit.zLimitAngle.ValueRadians(), limit.contactDist);
-		pxLimit.stiffness = limit.spring.stiffness;
-		pxLimit.damping = limit.spring.damping;
-		pxLimit.restitution = limit.restitution;
+		PxJointLimitCone pxLimit(limit.YLimitAngle.ValueRadians(), limit.ZLimitAngle.ValueRadians(), limit.ContactDist);
+		pxLimit.stiffness = limit.Spring.Stiffness;
+		pxLimit.damping = limit.Spring.Damping;
+		pxLimit.restitution = limit.Restitution;
 
 		GetInternal()->setSwingLimit(pxLimit);
 	}
@@ -242,10 +242,10 @@ namespace bs
 		PxD6JointDrive pxDrive = GetInternal()->getDrive(toPxDrive(type));
 
 		D6JointDrive drive;
-		drive.acceleration = pxDrive.flags & PxD6JointDriveFlag::eACCELERATION;
-		drive.stiffness = pxDrive.stiffness;
-		drive.damping = pxDrive.damping;
-		drive.forceLimit = pxDrive.forceLimit;
+		drive.Acceleration = pxDrive.flags & PxD6JointDriveFlag::eACCELERATION;
+		drive.Stiffness = pxDrive.stiffness;
+		drive.Damping = pxDrive.damping;
+		drive.ForceLimit = pxDrive.forceLimit;
 
 		return drive;
 	}
@@ -254,12 +254,12 @@ namespace bs
 	{
 		PxD6JointDrive pxDrive;
 
-		if(drive.acceleration)
+		if(drive.Acceleration)
 			pxDrive.flags = PxD6JointDriveFlag::eACCELERATION;
 
-		pxDrive.stiffness = drive.stiffness;
-		pxDrive.damping = drive.damping;
-		pxDrive.forceLimit = drive.forceLimit;
+		pxDrive.stiffness = drive.Stiffness;
+		pxDrive.damping = drive.Damping;
+		pxDrive.forceLimit = drive.ForceLimit;
 
 		GetInternal()->setDrive(toPxDrive(type), pxDrive);
 	}

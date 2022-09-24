@@ -84,12 +84,12 @@ namespace bs { namespace ct
 		const auto& props = buffer->GetProperties();
 
 		GPU_BUFFER_VIEW_DESC key;
-		key.firstElement = firstElement;
-		key.elementWidth = props.GetElementSize();
-		key.numElements = numElements;
-		key.usage = usage;
-		key.format = props.GetFormat();
-		key.useCounter = false;
+		key.FirstElement = firstElement;
+		key.ElementWidth = props.GetElementSize();
+		key.NumElements = numElements;
+		key.Usage = usage;
+		key.Format = props.GetFormat();
+		key.UseCounter = false;
 
 		auto iterFind = buffer->mBufferViews.find(key);
 		if (iterFind == buffer->mBufferViews.end())
@@ -101,8 +101,8 @@ namespace bs { namespace ct
 			iterFind = buffer->mBufferViews.find(key);
 		}
 
-		iterFind->second->refCount++;
-		return iterFind->second->view;
+		iterFind->second->RefCount++;
+		return iterFind->second->View;
 	}
 
 	void D3D11GpuBuffer::ReleaseView(GpuBufferView* view)
@@ -115,16 +115,16 @@ namespace bs { namespace ct
 			BS_EXCEPT(InternalErrorException, "Trying to release a buffer view that doesn't exist!");
 		}
 
-		iterFind->second->refCount--;
+		iterFind->second->RefCount--;
 
-		if (iterFind->second->refCount == 0)
+		if (iterFind->second->RefCount == 0)
 		{
 			GpuBufferReference* toRemove = iterFind->second;
 
 			buffer->mBufferViews.erase(iterFind);
 
-			if (toRemove->view != nullptr)
-				bs_delete(toRemove->view);
+			if (toRemove->View != nullptr)
+				bs_delete(toRemove->View);
 
 			bs_delete(toRemove);
 		}
@@ -134,8 +134,8 @@ namespace bs { namespace ct
 	{
 		for (auto iter = mBufferViews.begin(); iter != mBufferViews.end(); ++iter)
 		{
-			if (iter->second->view != nullptr)
-				bs_delete(iter->second->view);
+			if (iter->second->View != nullptr)
+				bs_delete(iter->second->View);
 
 			bs_delete(iter->second);
 		}

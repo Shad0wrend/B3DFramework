@@ -58,8 +58,8 @@ namespace bs
 	/** Structure used for initializing a new SphericalJoint. */
 	struct SPHERICAL_JOINT_DESC : JOINT_DESC
 	{
-		LimitConeRange limit;
-		SphericalJointFlag flag = (SphericalJointFlag)0;
+		LimitConeRange Limit;
+		SphericalJointFlag Flag = (SphericalJointFlag)0;
 	};
 
 	/** @} */

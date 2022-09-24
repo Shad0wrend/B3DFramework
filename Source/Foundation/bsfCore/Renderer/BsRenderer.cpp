@@ -36,7 +36,7 @@ namespace bs { namespace ct
 		const Vector<bs::SubShader>& subShaders = shader->GetSubShaders();
 		
 		for(auto& entry : subShaders)
-			SetGlobalShaderOverride(entry.name, entry.shader);
+			SetGlobalShaderOverride(entry.Name, entry.Shader);
 	}
 
 	bool Renderer::CompareCallback(const RendererExtension* a, const RendererExtension* b)
@@ -58,7 +58,7 @@ namespace bs { namespace ct
 		for(auto& entry : mUnresolvedTasks)
 		{
 			if (entry->IsComplete())
-				entry->onComplete();
+				entry->OnComplete();
 			else if (!entry->IsCanceled())
 				mRemainingUnresolvedTasks.push_back(entry);
 		}
@@ -86,9 +86,9 @@ namespace bs { namespace ct
 
 			for(UINT32 i = 0; i < (UINT32)mQueuedTasks.size();)
 			{
-				if(mQueuedTasks[i].frameIdx <= upToFrame)
+				if(mQueuedTasks[i].FrameIdx <= upToFrame)
 				{
-					mRunningTasks.push_back(mQueuedTasks[i].task);
+					mRunningTasks.push_back(mQueuedTasks[i].Task);
 					bs_swap_and_erase(mQueuedTasks, mQueuedTasks.begin() + i);
 					
 					continue;
@@ -132,9 +132,9 @@ namespace bs { namespace ct
 
 			for(UINT32 i = 0; i < (UINT32)mQueuedTasks.size(); i++)
 			{
-				if(mQueuedTasks[i].task.get() == &task)
+				if(mQueuedTasks[i].Task.get() == &task)
 				{
-					mRunningTasks.push_back(mQueuedTasks[i].task);
+					mRunningTasks.push_back(mQueuedTasks[i].Task);
 					bs_swap_and_erase(mQueuedTasks, mQueuedTasks.begin() + i);
 
 					break;

@@ -21,13 +21,13 @@ namespace bs
 	/** Information about a gamepad from DirectInput. */
 	struct GamepadInfo
 	{
-		UINT32 id;
-		GUID guidInstance;
-		GUID guidProduct;
-		String name;
+		UINT32 Id;
+		GUID GuidInstance;
+		GUID GuidProduct;
+		String Name;
 
-		bool isXInput;
-		int xInputDev;
+		bool IsXInput;
+		int XInputDev;
 	};
 
 	/**
@@ -36,11 +36,11 @@ namespace bs
 	 */
 	struct InputPrivateData
 	{
-		IDirectInput8* directInput = nullptr;
-		Vector<GamepadInfo> gamepadInfos;
+		IDirectInput8* DirectInput = nullptr;
+		Vector<GamepadInfo> GamepadInfos;
 
-		DWORD kbSettings = 0;
-		DWORD mouseSettings = 0;
+		DWORD KbSettings = 0;
+		DWORD MouseSettings = 0;
 	};
 
 	// Max number of elements to collect from buffered DirectInput

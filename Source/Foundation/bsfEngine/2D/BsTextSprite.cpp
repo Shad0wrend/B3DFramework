@@ -17,18 +17,18 @@ namespace bs
 	{
 		bs_frame_mark();
 		{
-			const U32String utf32text = UTF8::ToUtF32(desc.text);
-			TextData<FrameAlloc> textData(utf32text, desc.font, desc.fontSize, desc.width, desc.height, desc.wordWrap,
-				desc.wordBreak);
+			const U32String utf32text = UTF8::ToUtF32(desc.Text);
+			TextData<FrameAlloc> textData(utf32text, desc.Font, desc.FontSize, desc.Width, desc.Height, desc.WordWrap,
+				desc.WordBreak);
 
 			UINT32 numPages = textData.GetNumPages();
 
 			// Free all previous memory
 			for (auto& cachedElem : mCachedRenderElements)
 			{
-				if (cachedElem.vertices != nullptr) mAlloc.Free(cachedElem.vertices);
-				if (cachedElem.uvs != nullptr) mAlloc.Free(cachedElem.uvs);
-				if (cachedElem.indexes != nullptr) mAlloc.Free(cachedElem.indexes);
+				if (cachedElem.Vertices != nullptr) mAlloc.Free(cachedElem.Vertices);
+				if (cachedElem.Uvs != nullptr) mAlloc.Free(cachedElem.Uvs);
+				if (cachedElem.Indexes != nullptr) mAlloc.Free(cachedElem.Indexes);
 			}
 
 			mAlloc.Clear();
@@ -43,20 +43,20 @@ namespace bs
 			{
 				UINT32 newNumQuads = textData.GetNumQuadsForPage(texPage);
 
-				cachedElem.vertices = (Vector2*)mAlloc.Alloc(sizeof(Vector2) * newNumQuads * 4);
-				cachedElem.uvs = (Vector2*)mAlloc.Alloc(sizeof(Vector2) * newNumQuads * 4);
-				cachedElem.indexes = (UINT32*)mAlloc.Alloc(sizeof(UINT32) * newNumQuads * 6);
-				cachedElem.numQuads = newNumQuads;
+				cachedElem.Vertices = (Vector2*)mAlloc.Alloc(sizeof(Vector2) * newNumQuads * 4);
+				cachedElem.Uvs = (Vector2*)mAlloc.Alloc(sizeof(Vector2) * newNumQuads * 4);
+				cachedElem.Indexes = (UINT32*)mAlloc.Alloc(sizeof(UINT32) * newNumQuads * 6);
+				cachedElem.NumQuads = newNumQuads;
 
 				const HTexture& tex = textData.GetTextureForPage(texPage);
 
-				SpriteMaterialInfo& matInfo = cachedElem.matInfo;
-				matInfo.groupId = groupId;
-				matInfo.texture = tex;
-				matInfo.tint = desc.color;
-				matInfo.animationStartTime = 0.0f;
+				SpriteMaterialInfo& matInfo = cachedElem.MatInfo;
+				matInfo.GroupId = groupId;
+				matInfo.Texture = tex;
+				matInfo.Tint = desc.Color;
+				matInfo.AnimationStartTime = 0.0f;
 
-				cachedElem.material = SpriteManager::Instance().GetTextMaterial();
+				cachedElem.Material = SpriteManager::Instance().GetTextMaterial();
 
 				texPage++;
 			}
@@ -66,8 +66,8 @@ namespace bs
 			{
 				SpriteRenderElementData& renderElem = mCachedRenderElements[j];
 
-				GenTextQuads(j, textData, desc.width, desc.height, desc.horzAlign, desc.vertAlign, desc.anchor,
-					renderElem.vertices, renderElem.uvs, renderElem.indexes, renderElem.numQuads);
+				GenTextQuads(j, textData, desc.Width, desc.Height, desc.HorzAlign, desc.VertAlign, desc.Anchor,
+					renderElem.Vertices, renderElem.Uvs, renderElem.Indexes, renderElem.NumQuads);
 			}
 		}
 
@@ -96,8 +96,8 @@ namespace bs
 			UINT32 numVertices = writtenQuads * 4;
 			for(UINT32 j = 0; j < numVertices; j++)
 			{
-				vertices[quadOffset * 4 + j].x += (float)position.x;
-				vertices[quadOffset * 4 + j].y += (float)position.y;
+				vertices[quadOffset * 4 + j].X += (float)position.X;
+				vertices[quadOffset * 4 + j].Y += (float)position.Y;
 			}
 
 			quadOffset += writtenQuads;
@@ -132,8 +132,8 @@ namespace bs
 				UINT32 numVertices = writtenQuads * 4;
 				for(UINT32 k = 0; k < numVertices; k++)
 				{
-					vertices[quadOffset * 4 + k].x += (float)position.x;
-					vertices[quadOffset * 4 + k].y += (float)position.y;
+					vertices[quadOffset * 4 + k].X += (float)position.X;
+					vertices[quadOffset * 4 + k].Y += (float)position.Y;
 				}
 
 				quadOffset += writtenQuads;
@@ -200,22 +200,22 @@ namespace bs
 	{
 		for (auto& renderElem : mCachedRenderElements)
 		{
-			if (renderElem.vertices != nullptr)
+			if (renderElem.Vertices != nullptr)
 			{
-				mAlloc.Free(renderElem.vertices);
-				renderElem.vertices = nullptr;
+				mAlloc.Free(renderElem.Vertices);
+				renderElem.Vertices = nullptr;
 			}
 
-			if (renderElem.uvs != nullptr)
+			if (renderElem.Uvs != nullptr)
 			{
-				mAlloc.Free(renderElem.uvs);
-				renderElem.uvs = nullptr;
+				mAlloc.Free(renderElem.Uvs);
+				renderElem.Uvs = nullptr;
 			}
 
-			if (renderElem.indexes != nullptr)
+			if (renderElem.Indexes != nullptr)
 			{
-				mAlloc.Free(renderElem.indexes);
-				renderElem.indexes = nullptr;
+				mAlloc.Free(renderElem.Indexes);
+				renderElem.Indexes = nullptr;
 			}
 		}
 

@@ -68,12 +68,12 @@ namespace bs
 	/** Provides various optional information regarding a RTTI field. */
 	struct BS_UTILITY_EXPORT RTTIFieldInfo
 	{
-		RTTIFieldFlags flags;
+		RTTIFieldFlags Flags;
 
 		RTTIFieldInfo() = default;
 
 		RTTIFieldInfo(RTTIFieldFlags flags)
-			:flags(flags)
+			:Flags(flags)
 		{ }
 
 		static RTTIFieldInfo DEFAULT;
@@ -287,8 +287,8 @@ namespace bs
 		if(compress)
 		{
 			BitLength size = rtti_size(data);
-			uint64_t headerSize = stream.WriteVarInt(size.bytes);
-			headerSize += stream.WriteBits(&size.bits, 3);
+			uint64_t headerSize = stream.WriteVarInt(size.Bytes);
+			headerSize += stream.WriteBits(&size.Bits, 3);
 
 			size += BitLength::FromBits(headerSize);
 			p();
@@ -300,14 +300,14 @@ namespace bs
 			uint64_t sizePos = stream.Tell();
 
 			BitLength size = 0;
-			stream.WriteBytes(size.bytes);
+			stream.WriteBytes(size.Bytes);
 			
 			size = p() + sizeof(uint32_t);
-			assert(size.bits == 0);
+			assert(size.Bits == 0);
 
 			stream.Seek(sizePos);
-			stream.WriteBytes(size.bytes);
-			stream.SkipBytes(size.bytes - sizeof(uint32_t));
+			stream.WriteBytes(size.Bytes);
+			stream.SkipBytes(size.Bytes - sizeof(uint32_t));
 
 			return size;
 		}
@@ -323,9 +323,9 @@ namespace bs
 	{
 		if(compress)
 		{
-			uint64_t headerSizeBits = stream.ReadVarInt(size.bytes);
-			size.bits = 0;
-			headerSizeBits += stream.ReadBits(&size.bits, 3);
+			uint64_t headerSizeBits = stream.ReadVarInt(size.Bytes);
+			size.Bits = 0;
+			headerSizeBits += stream.ReadBits(&size.Bits, 3);
 
 			BitLength headerSize = BitLength::FromBits(headerSizeBits);
 			size += headerSize;
@@ -334,8 +334,8 @@ namespace bs
 		}
 		else
 		{
-			uint32_t sizeBytes = stream.ReadBytes(size.bytes);
-			size.bits = 0;
+			uint32_t sizeBytes = stream.ReadBytes(size.Bytes);
+			size.Bits = 0;
 			
 			return sizeBytes;
 		}
@@ -347,12 +347,12 @@ namespace bs
 		if (compress)
 		{
 			uint8_t bytes[5];
-			uint32_t numBytes = Bitwise::EncodeVarInt(size.bytes, bytes);
+			uint32_t numBytes = Bitwise::EncodeVarInt(size.Bytes, bytes);
 
 			size += BitLength(numBytes, 3);
 		}
 		else
-			size += sizeof(size.bytes);
+			size += sizeof(size.Bytes);
 	}
 
 	/** Helper for checking for existance of rttiEnumFields method on a class. */

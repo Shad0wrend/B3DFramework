@@ -1069,19 +1069,19 @@ namespace bs { namespace ct
 	struct SSAOTextureInputs
 	{
 		/** Full resolution scene depth. Only used by final SSAO pass. */
-		SPtr<Texture> sceneDepth;
+		SPtr<Texture> SceneDepth;
 
 		/** Full resolution buffer containing scene normals. Only used by final SSAO pass. */
-		SPtr<Texture> sceneNormals;
+		SPtr<Texture> SceneNormals;
 
 		/** Precalculated texture containing downsampled normals/depth, to be used for AO input. */
-		SPtr<Texture> aoSetup;
+		SPtr<Texture> AoSetup;
 
 		/** Texture containing AO from the previous pass. Only used if upsampling is enabled. */
-		SPtr<Texture> aoDownsampled;
+		SPtr<Texture> AoDownsampled;
 
 		/** Tileable texture containing random rotations that will be applied to AO samples. */
-		SPtr<Texture> randomRotations;
+		SPtr<Texture> RandomRotations;
 	};
 
 	/** Shader that computes ambient occlusion using screen based methods. */

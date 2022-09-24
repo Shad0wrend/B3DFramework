@@ -13,12 +13,12 @@ namespace bs
 		if (samples != nullptr)
 			mStreamOffset = (UINT32)samples->Tell();
 
-		mKeepSourceData = desc.keepSourceData;
+		mKeepSourceData = desc.KeepSourceData;
 	}
 
 	void AudioClip::Initialize()
 	{
-		mLength = mNumSamples / mDesc.numChannels / (float)mDesc.frequency;
+		mLength = mNumSamples / mDesc.NumChannels / (float)mDesc.Frequency;
 
 		Resource::Initialize();
 	}

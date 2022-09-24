@@ -14,15 +14,15 @@ namespace bs
 
 	void ScriptShadowSettings::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_ShadowSettings", (void*)&ScriptShadowSettings::InternalShadowSettings);
-		metaData.scriptClass->AddInternalCall("Internal_GetdirectionalShadowDistance", (void*)&ScriptShadowSettings::InternalGetdirectionalShadowDistance);
-		metaData.scriptClass->AddInternalCall("Internal_SetdirectionalShadowDistance", (void*)&ScriptShadowSettings::InternalSetdirectionalShadowDistance);
-		metaData.scriptClass->AddInternalCall("Internal_GetnumCascades", (void*)&ScriptShadowSettings::InternalGetnumCascades);
-		metaData.scriptClass->AddInternalCall("Internal_SetnumCascades", (void*)&ScriptShadowSettings::InternalSetnumCascades);
-		metaData.scriptClass->AddInternalCall("Internal_GetcascadeDistributionExponent", (void*)&ScriptShadowSettings::InternalGetcascadeDistributionExponent);
-		metaData.scriptClass->AddInternalCall("Internal_SetcascadeDistributionExponent", (void*)&ScriptShadowSettings::InternalSetcascadeDistributionExponent);
-		metaData.scriptClass->AddInternalCall("Internal_GetshadowFilteringQuality", (void*)&ScriptShadowSettings::InternalGetshadowFilteringQuality);
-		metaData.scriptClass->AddInternalCall("Internal_SetshadowFilteringQuality", (void*)&ScriptShadowSettings::InternalSetshadowFilteringQuality);
+		metaData.ScriptClass->AddInternalCall("Internal_ShadowSettings", (void*)&ScriptShadowSettings::InternalShadowSettings);
+		metaData.ScriptClass->AddInternalCall("Internal_GetdirectionalShadowDistance", (void*)&ScriptShadowSettings::InternalGetdirectionalShadowDistance);
+		metaData.ScriptClass->AddInternalCall("Internal_SetdirectionalShadowDistance", (void*)&ScriptShadowSettings::InternalSetdirectionalShadowDistance);
+		metaData.ScriptClass->AddInternalCall("Internal_GetnumCascades", (void*)&ScriptShadowSettings::InternalGetnumCascades);
+		metaData.ScriptClass->AddInternalCall("Internal_SetnumCascades", (void*)&ScriptShadowSettings::InternalSetnumCascades);
+		metaData.ScriptClass->AddInternalCall("Internal_GetcascadeDistributionExponent", (void*)&ScriptShadowSettings::InternalGetcascadeDistributionExponent);
+		metaData.ScriptClass->AddInternalCall("Internal_SetcascadeDistributionExponent", (void*)&ScriptShadowSettings::InternalSetcascadeDistributionExponent);
+		metaData.ScriptClass->AddInternalCall("Internal_GetshadowFilteringQuality", (void*)&ScriptShadowSettings::InternalGetshadowFilteringQuality);
+		metaData.ScriptClass->AddInternalCall("Internal_SetshadowFilteringQuality", (void*)&ScriptShadowSettings::InternalSetshadowFilteringQuality);
 
 	}
 
@@ -33,7 +33,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptShadowSettings>()) ScriptShadowSettings(managedInstance, value);
 		return managedInstance;
 	}
@@ -46,7 +46,7 @@ namespace bs
 	float ScriptShadowSettings::InternalGetdirectionalShadowDistance(ScriptShadowSettings* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->GetInternal()->directionalShadowDistance;
+		tmp__output = thisPtr->GetInternal()->DirectionalShadowDistance;
 
 		float __output;
 		__output = tmp__output;
@@ -56,13 +56,13 @@ namespace bs
 
 	void ScriptShadowSettings::InternalSetdirectionalShadowDistance(ScriptShadowSettings* thisPtr, float value)
 	{
-		thisPtr->GetInternal()->directionalShadowDistance = value;
+		thisPtr->GetInternal()->DirectionalShadowDistance = value;
 	}
 
 	uint32_t ScriptShadowSettings::InternalGetnumCascades(ScriptShadowSettings* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->GetInternal()->numCascades;
+		tmp__output = thisPtr->GetInternal()->NumCascades;
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -72,13 +72,13 @@ namespace bs
 
 	void ScriptShadowSettings::InternalSetnumCascades(ScriptShadowSettings* thisPtr, uint32_t value)
 	{
-		thisPtr->GetInternal()->numCascades = value;
+		thisPtr->GetInternal()->NumCascades = value;
 	}
 
 	float ScriptShadowSettings::InternalGetcascadeDistributionExponent(ScriptShadowSettings* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->GetInternal()->cascadeDistributionExponent;
+		tmp__output = thisPtr->GetInternal()->CascadeDistributionExponent;
 
 		float __output;
 		__output = tmp__output;
@@ -88,13 +88,13 @@ namespace bs
 
 	void ScriptShadowSettings::InternalSetcascadeDistributionExponent(ScriptShadowSettings* thisPtr, float value)
 	{
-		thisPtr->GetInternal()->cascadeDistributionExponent = value;
+		thisPtr->GetInternal()->CascadeDistributionExponent = value;
 	}
 
 	uint32_t ScriptShadowSettings::InternalGetshadowFilteringQuality(ScriptShadowSettings* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->GetInternal()->shadowFilteringQuality;
+		tmp__output = thisPtr->GetInternal()->ShadowFilteringQuality;
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -104,6 +104,6 @@ namespace bs
 
 	void ScriptShadowSettings::InternalSetshadowFilteringQuality(ScriptShadowSettings* thisPtr, uint32_t value)
 	{
-		thisPtr->GetInternal()->shadowFilteringQuality = value;
+		thisPtr->GetInternal()->ShadowFilteringQuality = value;
 	}
 }

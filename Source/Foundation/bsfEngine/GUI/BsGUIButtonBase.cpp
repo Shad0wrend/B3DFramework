@@ -19,8 +19,8 @@ namespace bs
 		mImageSprite = bs_new<ImageSprite>();
 		mTextSprite = bs_new<TextSprite>();
 
-		mImageDesc.animationStartTime = gTime().GetTime();
-		mContentAnimationStartTime = mImageDesc.animationStartTime;
+		mImageDesc.AnimationStartTime = gTime().GetTime();
+		mContentAnimationStartTime = mImageDesc.AnimationStartTime;
 
 		RefreshContentSprite();
 	}
@@ -36,13 +36,13 @@ namespace bs
 
 	void GUIButtonBase::SetContent(const GUIContent& content)
 	{
-		Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
+		Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).Optimal;
 		mContent = content;
 		mContentAnimationStartTime = gTime().GetTime();
 
 		RefreshContentSprite();
 
-		Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
+		Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).Optimal;
 
 		if (origSize != newSize)
 			MarkLayoutAsDirtyInternal();
@@ -65,20 +65,20 @@ namespace bs
 
 	void GUIButtonBase::UpdateRenderElementsInternal()
 	{		
-		mImageDesc.width = mLayoutData.area.width;
-		mImageDesc.height = mLayoutData.area.height;
+		mImageDesc.Width = mLayoutData.Area.Width;
+		mImageDesc.Height = mLayoutData.Area.Height;
 
 		const HSpriteTexture& activeTex = GetActiveTexture();
 		if (SpriteTexture::CheckIsLoaded(activeTex))
-			mImageDesc.texture = activeTex;
+			mImageDesc.Texture = activeTex;
 		else
-			mImageDesc.texture = nullptr;
+			mImageDesc.Texture = nullptr;
 
-		mImageDesc.borderLeft = GetStyleInternal()->border.left;
-		mImageDesc.borderRight = GetStyleInternal()->border.right;
-		mImageDesc.borderTop = GetStyleInternal()->border.top;
-		mImageDesc.borderBottom = GetStyleInternal()->border.bottom;
-		mImageDesc.color = GetTint();
+		mImageDesc.BorderLeft = GetStyleInternal()->Border.Left;
+		mImageDesc.BorderRight = GetStyleInternal()->Border.Right;
+		mImageDesc.BorderTop = GetStyleInternal()->Border.Top;
+		mImageDesc.BorderBottom = GetStyleInternal()->Border.Bottom;
+		mImageDesc.Color = GetTint();
 
 		mImageSprite->Update(mImageDesc, (UINT64)GetParentWidgetInternal());
 		mTextSprite->Update(GetTextDesc(), (UINT64)GetParentWidgetInternal());
@@ -91,8 +91,8 @@ namespace bs
 			UINT32 contentWidth = image->GetWidth();
 			UINT32 contentHeight = image->GetHeight();
 
-			UINT32 contentMaxWidth = std::min((UINT32)contentBounds.width, contentWidth);
-			UINT32 contentMaxHeight = std::min((UINT32)contentBounds.height, contentHeight);
+			UINT32 contentMaxWidth = std::min((UINT32)contentBounds.Width, contentWidth);
+			UINT32 contentMaxHeight = std::min((UINT32)contentBounds.Height, contentHeight);
 
 			float horzRatio = contentMaxWidth / (float)contentWidth;
 			float vertRatio = contentMaxHeight / (float)contentHeight;
@@ -109,11 +109,11 @@ namespace bs
 			}
 
 			IMAGE_SPRITE_DESC contentImgDesc;
-			contentImgDesc.texture = image;
-			contentImgDesc.width = contentWidth;
-			contentImgDesc.height = contentHeight;
-			contentImgDesc.color = GetTint();
-			contentImgDesc.animationStartTime = mContentAnimationStartTime;
+			contentImgDesc.Texture = image;
+			contentImgDesc.Width = contentWidth;
+			contentImgDesc.Height = contentHeight;
+			contentImgDesc.Color = GetTint();
+			contentImgDesc.AnimationStartTime = mContentAnimationStartTime;
 
 			mContentImageSprite->Update(contentImgDesc, (UINT64)GetParentWidgetInternal());
 		}
@@ -140,8 +140,8 @@ namespace bs
 		}
 
 		Vector2I contentSize = GUIHelper::CalcOptimalContentsSize(mContent, *GetStyleInternal(), GetDimensionsInternal(), mActiveState);
-		UINT32 contentWidth = std::max(imageWidth, (UINT32)contentSize.x);
-		UINT32 contentHeight = std::max(imageHeight, (UINT32)contentSize.y);
+		UINT32 contentWidth = std::max(imageWidth, (UINT32)contentSize.X);
+		UINT32 contentHeight = std::max(imageHeight, (UINT32)contentSize.Y);
 
 		return Vector2I(contentWidth, contentHeight);
 	}
@@ -170,7 +170,7 @@ namespace bs
 
 		if(renderElementIdx < textSpriteIdx)
 		{
-			Vector2I imageOffset = Vector2I(mLayoutData.area.x, mLayoutData.area.y) + offset;
+			Vector2I imageOffset = Vector2I(mLayoutData.Area.X, mLayoutData.Area.Y) + offset;
 
 			mImageSprite->FillBuffer(vertices, uvs, indices, vertexOffset, indexOffset, maxNumVerts, maxNumIndices,
 				vertexStride, indexStride, renderElementIdx, imageOffset, mLayoutData.GetLocalClipRect());
@@ -193,47 +193,47 @@ namespace bs
 			INT32 imageXOffset = 0;
 			INT32 textImageSpacing = 0;
 			
-			if (textBounds.width == 0)
+			if (textBounds.Width == 0)
 			{
-				UINT32 freeWidth = (UINT32)std::max(0, (INT32)contentBounds.width - (INT32)textBounds.width - (INT32)imageBounds.width);
+				UINT32 freeWidth = (UINT32)std::max(0, (INT32)contentBounds.Width - (INT32)textBounds.Width - (INT32)imageBounds.Width);
 				imageXOffset = (INT32)(freeWidth / 2);
 			}
 			else
 				textImageSpacing = GUIContent::IMAGE_TEXT_SPACING;
 
-			if(GetStyleInternal()->imagePosition == GUIImagePosition::Right)
+			if(GetStyleInternal()->ImagePosition == GUIImagePosition::Right)
 			{
-				INT32 imageReservedWidth = std::max(0, (INT32)contentBounds.width - (INT32)textBounds.width);
+				INT32 imageReservedWidth = std::max(0, (INT32)contentBounds.Width - (INT32)textBounds.Width);
 
-				textOffset = Vector2I(contentBounds.x, contentBounds.y);
+				textOffset = Vector2I(contentBounds.X, contentBounds.Y);
 				textClipRect = contentClipRect;
-				textClipRect.width = std::min(contentBounds.width - imageReservedWidth, textClipRect.width);
+				textClipRect.Width = std::min(contentBounds.Width - imageReservedWidth, textClipRect.Width);
 
-				contentOffset = Vector2I(contentBounds.x + textBounds.width + imageXOffset + textImageSpacing, contentBounds.y) + offset;
+				contentOffset = Vector2I(contentBounds.X + textBounds.Width + imageXOffset + textImageSpacing, contentBounds.Y) + offset;
 				imageClipRect = contentClipRect;
-				imageClipRect.x -= textBounds.width + imageXOffset;
+				imageClipRect.X -= textBounds.Width + imageXOffset;
 			}
 			else
 			{
-				INT32 imageReservedWidth = imageBounds.width + imageXOffset;
+				INT32 imageReservedWidth = imageBounds.Width + imageXOffset;
 
-				contentOffset = Vector2I(contentBounds.x + imageXOffset, contentBounds.y) + offset;
+				contentOffset = Vector2I(contentBounds.X + imageXOffset, contentBounds.Y) + offset;
 				imageClipRect = contentClipRect;
-				imageClipRect.x -= imageXOffset;
-				imageClipRect.width = std::min(imageReservedWidth, (INT32)imageClipRect.width);
+				imageClipRect.X -= imageXOffset;
+				imageClipRect.Width = std::min(imageReservedWidth, (INT32)imageClipRect.Width);
 
-				textOffset = Vector2I(contentBounds.x + imageReservedWidth + textImageSpacing, contentBounds.y);
+				textOffset = Vector2I(contentBounds.X + imageReservedWidth + textImageSpacing, contentBounds.Y);
 				textClipRect = contentClipRect;
-				textClipRect.x -= imageReservedWidth;
+				textClipRect.X -= imageReservedWidth;
 			}
 
-			INT32 imageYOffset = (contentBounds.height - imageBounds.height) / 2;
-			imageClipRect.y -= imageYOffset;
-			contentOffset.y += imageYOffset;
+			INT32 imageYOffset = (contentBounds.Height - imageBounds.Height) / 2;
+			imageClipRect.Y -= imageYOffset;
+			contentOffset.Y += imageYOffset;
 		}
 		else
 		{
-			textOffset = Vector2I(contentBounds.x, contentBounds.y) + offset;
+			textOffset = Vector2I(contentBounds.X, contentBounds.Y) + offset;
 			textClipRect = contentClipRect;
 		}
 
@@ -260,7 +260,7 @@ namespace bs
 				else
 					SetStateInternal(IsOnInternal() ? GUIElementState::HoverOn : GUIElementState::Hover);
 
-				onHover();
+				OnHover();
 			}
 
 			return !mOptionFlags.IsSet(GUIElementOption::ClickThrough);
@@ -274,7 +274,7 @@ namespace bs
 				else
 					SetStateInternal(IsOnInternal() ? GUIElementState::NormalOn : GUIElementState::Normal);
 
-				onOut();
+				OnOut();
 			}
 
 			return !mOptionFlags.IsSet(GUIElementOption::ClickThrough);
@@ -295,7 +295,7 @@ namespace bs
 				else
 					SetStateInternal(IsOnInternal() ? GUIElementState::HoverOn : GUIElementState::Hover);
 
-				onClick();
+				OnClick();
 			}
 
 			return !mOptionFlags.IsSet(GUIElementOption::ClickThrough);
@@ -303,7 +303,7 @@ namespace bs
 		else if (ev.GetType() == GUIMouseEventType::MouseDoubleClick)
 		{
 			if (!IsDisabledInternal())
-				onDoubleClick();
+				OnDoubleClick();
 
 			return !mOptionFlags.IsSet(GUIElementOption::ClickThrough);
 		}
@@ -347,7 +347,7 @@ namespace bs
 
 	String GUIButtonBase::GetTooltipInternal() const
 	{
-		return mContent.tooltip;
+		return mContent.Tooltip;
 	}
 
 	void GUIButtonBase::RefreshContentSprite()
@@ -371,36 +371,36 @@ namespace bs
 	TEXT_SPRITE_DESC GUIButtonBase::GetTextDesc() const
 	{
 		TEXT_SPRITE_DESC textDesc;
-		textDesc.text = mContent.text;
-		textDesc.font = GetStyleInternal()->font;
-		textDesc.fontSize = GetStyleInternal()->fontSize;
-		textDesc.color = GetTint() * GetActiveTextColor();
+		textDesc.Text = mContent.Text;
+		textDesc.Font = GetStyleInternal()->Font;
+		textDesc.FontSize = GetStyleInternal()->FontSize;
+		textDesc.Color = GetTint() * GetActiveTextColor();
 
 		Rect2I textBounds = GetCachedContentBounds();
 
-		textDesc.width = textBounds.width;
-		textDesc.height = textBounds.height;
-		textDesc.horzAlign = GetStyleInternal()->textHorzAlign;
-		textDesc.vertAlign = GetStyleInternal()->textVertAlign;
+		textDesc.Width = textBounds.Width;
+		textDesc.Height = textBounds.Height;
+		textDesc.HorzAlign = GetStyleInternal()->TextHorzAlign;
+		textDesc.VertAlign = GetStyleInternal()->TextVertAlign;
 
 		return textDesc;
 	}
 
 	void GUIButtonBase::StyleUpdated()
 	{
-		mImageDesc.animationStartTime = gTime().GetTime();
+		mImageDesc.AnimationStartTime = gTime().GetTime();
 	}
 
 	void GUIButtonBase::SetStateInternal(GUIElementState state)
 	{
-		Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
+		Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).Optimal;
 
 		if(mActiveState != state)
-			mImageDesc.animationStartTime = gTime().GetTime();
+			mImageDesc.AnimationStartTime = gTime().GetTime();
 
 		mActiveState = state;
 		RefreshContentSprite();
-		Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).optimal;
+		Vector2I newSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).Optimal;
 
 		if (origSize != newSize)
 			MarkLayoutAsDirtyInternal();
@@ -413,30 +413,30 @@ namespace bs
 		switch(mActiveState)
 		{
 		case GUIElementState::Normal:
-			return GetStyleInternal()->normal.texture;
+			return GetStyleInternal()->Normal.Texture;
 		case GUIElementState::Hover:
-			return GetStyleInternal()->hover.texture;
+			return GetStyleInternal()->Hover.Texture;
 		case GUIElementState::Active:
-			return GetStyleInternal()->active.texture;
+			return GetStyleInternal()->Active.Texture;
 		case GUIElementState::Focused:
-			return GetStyleInternal()->focused.texture;
+			return GetStyleInternal()->Focused.Texture;
 		case GUIElementState::FocusedHover:
-			return GetStyleInternal()->focusedHover.texture;
+			return GetStyleInternal()->FocusedHover.Texture;
 		case GUIElementState::NormalOn:
-			return GetStyleInternal()->normalOn.texture;
+			return GetStyleInternal()->NormalOn.Texture;
 		case GUIElementState::HoverOn:
-			return GetStyleInternal()->hoverOn.texture;
+			return GetStyleInternal()->HoverOn.Texture;
 		case GUIElementState::ActiveOn:
-			return GetStyleInternal()->activeOn.texture;
+			return GetStyleInternal()->ActiveOn.Texture;
 		case GUIElementState::FocusedOn:
-			return GetStyleInternal()->focusedOn.texture;
+			return GetStyleInternal()->FocusedOn.Texture;
 		case GUIElementState::FocusedHoverOn:
-			return GetStyleInternal()->focusedHoverOn.texture;
+			return GetStyleInternal()->FocusedHoverOn.Texture;
 		default:
 			break;
 		}
 
-		return GetStyleInternal()->normal.texture;
+		return GetStyleInternal()->Normal.Texture;
 	}
 
 	Color GUIButtonBase::GetActiveTextColor() const
@@ -444,29 +444,29 @@ namespace bs
 		switch (mActiveState)
 		{
 		case GUIElementState::Normal:
-			return GetStyleInternal()->normal.textColor;
+			return GetStyleInternal()->Normal.TextColor;
 		case GUIElementState::Hover:
-			return GetStyleInternal()->hover.textColor;
+			return GetStyleInternal()->Hover.TextColor;
 		case GUIElementState::Active:
-			return GetStyleInternal()->active.textColor;
+			return GetStyleInternal()->Active.TextColor;
 		case GUIElementState::Focused:
-			return GetStyleInternal()->focused.textColor;
+			return GetStyleInternal()->Focused.TextColor;
 		case GUIElementState::FocusedHover:
-			return GetStyleInternal()->focusedHover.textColor;
+			return GetStyleInternal()->FocusedHover.TextColor;
 		case GUIElementState::NormalOn:
-			return GetStyleInternal()->normalOn.textColor;
+			return GetStyleInternal()->NormalOn.TextColor;
 		case GUIElementState::HoverOn:
-			return GetStyleInternal()->hoverOn.textColor;
+			return GetStyleInternal()->HoverOn.TextColor;
 		case GUIElementState::ActiveOn:
-			return GetStyleInternal()->activeOn.textColor;
+			return GetStyleInternal()->ActiveOn.TextColor;
 		case GUIElementState::FocusedOn:
-			return GetStyleInternal()->focusedOn.textColor;
+			return GetStyleInternal()->FocusedOn.TextColor;
 		case GUIElementState::FocusedHoverOn:
-			return GetStyleInternal()->focusedHoverOn.textColor;
+			return GetStyleInternal()->FocusedHoverOn.TextColor;
 		default:
 			break;
 		}
 
-		return GetStyleInternal()->normal.textColor;
+		return GetStyleInternal()->Normal.TextColor;
 	}
 }

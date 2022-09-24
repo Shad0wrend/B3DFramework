@@ -20,7 +20,7 @@ namespace bs
 	{
 		/** Creates a new set and allocates enough space for @p capacity particles. */
 		ParticleSetData(UINT32 capacity)
-			:capacity(capacity)
+			:Capacity(capacity)
 		{
 			Allocate();
 		}
@@ -30,7 +30,7 @@ namespace bs
 		 * them from the @p other set.
 		 */
 		ParticleSetData(UINT32 capacity, const ParticleSetData& other)
-			:capacity(capacity)
+			:Capacity(capacity)
 		{
 			Allocate();
 			Copy(other);
@@ -59,19 +59,19 @@ namespace bs
 			Free();
 		}
 
-		UINT32 capacity = 0;
+		UINT32 Capacity = 0;
 
-		Vector3* prevPosition = nullptr;
-		Vector3* position = nullptr;
-		Vector3* velocity = nullptr;
-		Vector3* size = nullptr;
-		Vector3* rotation = nullptr;
-		float* initialLifetime = nullptr;
-		float* lifetime = nullptr;
-		RGBA* color = nullptr;
-		UINT32* seed = nullptr;
-		float* frame = nullptr;
-		UINT32* indices = nullptr;
+		Vector3* PrevPosition = nullptr;
+		Vector3* Position = nullptr;
+		Vector3* Velocity = nullptr;
+		Vector3* Size = nullptr;
+		Vector3* Rotation = nullptr;
+		float* InitialLifetime = nullptr;
+		float* Lifetime = nullptr;
+		RGBA* Color = nullptr;
+		UINT32* Seed = nullptr;
+		float* Frame = nullptr;
+		UINT32* Indices = nullptr;
 
 	private:
 		/**
@@ -81,46 +81,46 @@ namespace bs
 		void Allocate()
 		{
 			alloc.
-				Reserve<Vector3>(capacity).
-				Reserve<Vector3>(capacity).
-				Reserve<Vector3>(capacity).
-				Reserve<Vector3>(capacity).
-				Reserve<Vector3>(capacity).
-				Reserve<float>(capacity).
-				Reserve<float>(capacity).
-				Reserve<RGBA>(capacity).
-				Reserve<UINT32>(capacity).
-				Reserve<float>(capacity).
-				Reserve<UINT32>(capacity).
+				Reserve<Vector3>(Capacity).
+				Reserve<Vector3>(Capacity).
+				Reserve<Vector3>(Capacity).
+				Reserve<Vector3>(Capacity).
+				Reserve<Vector3>(Capacity).
+				Reserve<float>(Capacity).
+				Reserve<float>(Capacity).
+				Reserve<RGBA>(Capacity).
+				Reserve<UINT32>(Capacity).
+				Reserve<float>(Capacity).
+				Reserve<UINT32>(Capacity).
 				Init();
 
-			prevPosition = alloc.Alloc<Vector3>(capacity);
-			position = alloc.Alloc<Vector3>(capacity);
-			velocity = alloc.Alloc<Vector3>(capacity);
-			size = alloc.Alloc<Vector3>(capacity);
-			rotation = alloc.Alloc<Vector3>(capacity);
-			lifetime = alloc.Alloc<float>(capacity);
-			initialLifetime = alloc.Alloc<float>(capacity);
-			color = alloc.Alloc<RGBA>(capacity);
-			seed = alloc.Alloc<UINT32>(capacity);
-			frame = alloc.Alloc<float>(capacity);
-			indices = alloc.Alloc<UINT32>(capacity);
+			PrevPosition = alloc.Alloc<Vector3>(Capacity);
+			Position = alloc.Alloc<Vector3>(Capacity);
+			Velocity = alloc.Alloc<Vector3>(Capacity);
+			Size = alloc.Alloc<Vector3>(Capacity);
+			Rotation = alloc.Alloc<Vector3>(Capacity);
+			Lifetime = alloc.Alloc<float>(Capacity);
+			InitialLifetime = alloc.Alloc<float>(Capacity);
+			Color = alloc.Alloc<RGBA>(Capacity);
+			Seed = alloc.Alloc<UINT32>(Capacity);
+			Frame = alloc.Alloc<float>(Capacity);
+			Indices = alloc.Alloc<UINT32>(Capacity);
 		}
 
 		/** Frees the internal buffers. */
 		void Free()
 		{
-			if(prevPosition) alloc.Free(prevPosition);
-			if(position) alloc.Free(position);
-			if(velocity) alloc.Free(velocity);
-			if(size) alloc.Free(size);
-			if(rotation) alloc.Free(rotation);
-			if(lifetime) alloc.Free(lifetime);
-			if(initialLifetime) alloc.Free(initialLifetime);
-			if(color) alloc.Free(color);
-			if(seed) alloc.Free(seed);
-			if(frame) alloc.Free(frame);
-			if(indices) alloc.Free(indices);
+			if(PrevPosition) alloc.Free(PrevPosition);
+			if(Position) alloc.Free(Position);
+			if(Velocity) alloc.Free(Velocity);
+			if(Size) alloc.Free(Size);
+			if(Rotation) alloc.Free(Rotation);
+			if(Lifetime) alloc.Free(Lifetime);
+			if(InitialLifetime) alloc.Free(InitialLifetime);
+			if(Color) alloc.Free(Color);
+			if(Seed) alloc.Free(Seed);
+			if(Frame) alloc.Free(Frame);
+			if(Indices) alloc.Free(Indices);
 
 			alloc.Clear();
 		}
@@ -128,18 +128,18 @@ namespace bs
 		/** Transfers ownership of @p other internal buffers to this object. */
 		void Move(ParticleSetData& other)
 		{
-			prevPosition = std::exchange(other.prevPosition, nullptr);
-			position = std::exchange(other.position, nullptr);
-			velocity = std::exchange(other.velocity, nullptr);
-			size = std::exchange(other.size, nullptr);
-			rotation = std::exchange(other.rotation, nullptr);
-			lifetime = std::exchange(other.lifetime, nullptr);
-			initialLifetime = std::exchange(other.initialLifetime, nullptr);
-			color = std::exchange(other.color, nullptr);
-			seed = std::exchange(other.seed, nullptr);
-			frame = std::exchange(other.frame, nullptr);
-			indices = std::exchange(other.indices, nullptr);
-			capacity = std::exchange(other.capacity, 0);
+			PrevPosition = std::exchange(other.PrevPosition, nullptr);
+			Position = std::exchange(other.Position, nullptr);
+			Velocity = std::exchange(other.Velocity, nullptr);
+			Size = std::exchange(other.Size, nullptr);
+			Rotation = std::exchange(other.Rotation, nullptr);
+			Lifetime = std::exchange(other.Lifetime, nullptr);
+			InitialLifetime = std::exchange(other.InitialLifetime, nullptr);
+			Color = std::exchange(other.Color, nullptr);
+			Seed = std::exchange(other.Seed, nullptr);
+			Frame = std::exchange(other.Frame, nullptr);
+			Indices = std::exchange(other.Indices, nullptr);
+			Capacity = std::exchange(other.Capacity, 0);
 
 			alloc = std::move(other.alloc);
 		}
@@ -147,19 +147,19 @@ namespace bs
 		/** Copies data from @p other buffers to this object. */
 		void Copy(const ParticleSetData& other)
 		{
-			assert(capacity >= other.capacity);
+			assert(Capacity >= other.Capacity);
 
-			bs_copy(prevPosition, other.prevPosition, other.capacity);
-			bs_copy(position, other.position, other.capacity);
-			bs_copy(velocity, other.velocity, other.capacity);
-			bs_copy(size, other.size, other.capacity);
-			bs_copy(rotation, other.rotation, other.capacity);
-			bs_copy(lifetime, other.lifetime, other.capacity);
-			bs_copy(initialLifetime, other.initialLifetime, other.capacity);
-			bs_copy(color, other.color, other.capacity);
-			bs_copy(seed, other.seed, other.capacity);
-			bs_copy(frame, other.frame, other.capacity);
-			bs_copy(indices, other.indices, other.capacity);
+			bs_copy(PrevPosition, other.PrevPosition, other.Capacity);
+			bs_copy(Position, other.Position, other.Capacity);
+			bs_copy(Velocity, other.Velocity, other.Capacity);
+			bs_copy(Size, other.Size, other.Capacity);
+			bs_copy(Rotation, other.Rotation, other.Capacity);
+			bs_copy(Lifetime, other.Lifetime, other.Capacity);
+			bs_copy(InitialLifetime, other.InitialLifetime, other.Capacity);
+			bs_copy(Color, other.Color, other.Capacity);
+			bs_copy(Seed, other.Seed, other.Capacity);
+			bs_copy(Frame, other.Frame, other.Capacity);
+			bs_copy(Indices, other.Indices, other.Capacity);
 		}
 
 		GroupAlloc alloc;
@@ -190,7 +190,7 @@ namespace bs
 			const UINT32 particleIdx = mCount;
 			mCount += count;
 
-			if(mCount > mParticles.capacity)
+			if(mCount > mParticles.Capacity)
 			{
 				const auto newCapacity = (UINT32)(mCount * CAPACITY_SCALE);
 				ParticleSetData newData(newCapacity, mParticles);
@@ -201,7 +201,7 @@ namespace bs
 			if(particleEnd > mMaxIndex)
 			{
 				for (; mMaxIndex < particleEnd; mMaxIndex++)
-					mParticles.indices[mMaxIndex] = mMaxIndex;
+					mParticles.Indices[mMaxIndex] = mMaxIndex;
 			}
 
 			return particleIdx;
@@ -220,17 +220,17 @@ namespace bs
 			const UINT32 lastIdx = mCount - 1;
 			if(idx != lastIdx)
 			{
-				std::swap(mParticles.prevPosition[idx], mParticles.prevPosition[lastIdx]);
-				std::swap(mParticles.position[idx], mParticles.position[lastIdx]);
-				std::swap(mParticles.velocity[idx], mParticles.velocity[lastIdx]);
-				std::swap(mParticles.size[idx], mParticles.size[lastIdx]);
-				std::swap(mParticles.rotation[idx], mParticles.rotation[lastIdx]);
-				std::swap(mParticles.lifetime[idx], mParticles.lifetime[lastIdx]);
-				std::swap(mParticles.initialLifetime[idx], mParticles.initialLifetime[lastIdx]);
-				std::swap(mParticles.color[idx], mParticles.color[lastIdx]);
-				std::swap(mParticles.seed[idx], mParticles.seed[lastIdx]);
-				std::swap(mParticles.frame[idx], mParticles.frame[lastIdx]);
-				std::swap(mParticles.indices[idx], mParticles.indices[lastIdx]);
+				std::swap(mParticles.PrevPosition[idx], mParticles.PrevPosition[lastIdx]);
+				std::swap(mParticles.Position[idx], mParticles.Position[lastIdx]);
+				std::swap(mParticles.Velocity[idx], mParticles.Velocity[lastIdx]);
+				std::swap(mParticles.Size[idx], mParticles.Size[lastIdx]);
+				std::swap(mParticles.Rotation[idx], mParticles.Rotation[lastIdx]);
+				std::swap(mParticles.Lifetime[idx], mParticles.Lifetime[lastIdx]);
+				std::swap(mParticles.InitialLifetime[idx], mParticles.InitialLifetime[lastIdx]);
+				std::swap(mParticles.Color[idx], mParticles.Color[lastIdx]);
+				std::swap(mParticles.Seed[idx], mParticles.Seed[lastIdx]);
+				std::swap(mParticles.Frame[idx], mParticles.Frame[lastIdx]);
+				std::swap(mParticles.Indices[idx], mParticles.Indices[lastIdx]);
 			}
 
 			mCount--;

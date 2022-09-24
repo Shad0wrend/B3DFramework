@@ -27,7 +27,7 @@ namespace bs
 {
 	ProfilerCPU::Timer::Timer()
 	{
-		time = 0.0f;
+		Time = 0.0f;
 	}
 
 	void ProfilerCPU::Timer::Start()
@@ -37,12 +37,12 @@ namespace bs
 
 	void ProfilerCPU::Timer::Stop()
 	{
-		time += GetCurrentTime() - startTime;
+		Time += GetCurrentTime() - startTime;
 	}
 
 	void ProfilerCPU::Timer::Reset()
 	{
-		time = 0.0f;
+		Time = 0.0f;
 	}
 
 	inline double ProfilerCPU::Timer::GetCurrentTime() const
@@ -55,7 +55,7 @@ namespace bs
 
 	ProfilerCPU::TimerPrecise::TimerPrecise()
 	{
-		cycles = 0;
+		Cycles = 0;
 	}
 
 	void ProfilerCPU::TimerPrecise::Start()
@@ -65,12 +65,12 @@ namespace bs
 
 	void ProfilerCPU::TimerPrecise::Stop()
 	{
-		cycles += GetNumCycles() - startCycles;
+		Cycles += GetNumCycles() - startCycles;
 	}
 
 	void ProfilerCPU::TimerPrecise::Reset()
 	{
-		cycles = 0;
+		Cycles = 0;
 	}
 
 	inline UINT64 ProfilerCPU::TimerPrecise::GetNumCycles()
@@ -100,175 +100,174 @@ namespace bs
 	}
 
 	ProfilerCPU::ProfileData::ProfileData(FrameAlloc* alloc)
-		:samples(alloc)
+		:Samples(alloc)
 	{ }
 
 	void ProfilerCPU::ProfileData::BeginSample()
 	{
-		memAllocs = MemoryCounter::GetNumAllocs();
-		memFrees = MemoryCounter::GetNumFrees();
+		MemAllocs = MemoryCounter::GetNumAllocs();
+		MemFrees = MemoryCounter::GetNumFrees();
 
-		timer.Reset();
-		timer.Start();
+		Timer.Reset();
+		Timer.Start();
 	}
 
 	void ProfilerCPU::ProfileData::EndSample()
 	{
-		timer.Stop();
+		Timer.Stop();
 
-		UINT64 numAllocs = MemoryCounter::GetNumAllocs() - memAllocs;
-		UINT64 numFrees = MemoryCounter::GetNumFrees() - memFrees;
+		UINT64 numAllocs = MemoryCounter::GetNumAllocs() - MemAllocs;
+		UINT64 numFrees = MemoryCounter::GetNumFrees() - MemFrees;
 
-		samples.push_back(ProfileSample(timer.time, numAllocs, numFrees));
+		Samples.push_back(ProfileSample(Timer.Time, numAllocs, numFrees));
 	}
 
 	void ProfilerCPU::ProfileData::ResumeLastSample()
 	{
-		timer.Start();
-		samples.erase(samples.end() - 1);
+		Timer.Start();
+		Samples.erase(Samples.end() - 1);
 	}
 
 	ProfilerCPU::PreciseProfileData::PreciseProfileData(FrameAlloc* alloc)
-		:samples(alloc)
+		:Samples(alloc)
 	{ }
 
 	void ProfilerCPU::PreciseProfileData::BeginSample()
 	{
-		memAllocs = MemoryCounter::GetNumAllocs();
-		memFrees = MemoryCounter::GetNumFrees();
+		MemAllocs = MemoryCounter::GetNumAllocs();
+		MemFrees = MemoryCounter::GetNumFrees();
 
-		timer.Reset();
-		timer.Start();
+		Timer.Reset();
+		Timer.Start();
 	}
 
 	void ProfilerCPU::PreciseProfileData::EndSample()
 	{
-		timer.Stop();
+		Timer.Stop();
 
-		UINT64 numAllocs = MemoryCounter::GetNumAllocs() - memAllocs;
-		UINT64 numFrees = MemoryCounter::GetNumFrees() - memFrees;
+		UINT64 numAllocs = MemoryCounter::GetNumAllocs() - MemAllocs;
+		UINT64 numFrees = MemoryCounter::GetNumFrees() - MemFrees;
 
-		samples.push_back(PreciseProfileSample(timer.cycles, numAllocs, numFrees));
+		Samples.push_back(PreciseProfileSample(Timer.Cycles, numAllocs, numFrees));
 	}
 
 	void ProfilerCPU::PreciseProfileData::ResumeLastSample()
 	{
-		timer.Start();
-		samples.erase(samples.end() - 1);
+		Timer.Start();
+		Samples.erase(Samples.end() - 1);
 	}
 
 	BS_THREADLOCAL ProfilerCPU::ThreadInfo* ProfilerCPU::ThreadInfo::activeThread = nullptr;
 	
 	ProfilerCPU::ThreadInfo::ThreadInfo()
-		:frameAlloc(1024 * 512)
+		:FrameAlloc(1024 * 512)
 	{
 
 	}
 	
 	void ProfilerCPU::ThreadInfo::Begin(const char* _name)
 	{
-		if(isActive)
+		if(IsActive)
 		{
 			BS_LOG(Warning, Profiler, "Profiler::beginThread called on a thread that was already being sampled");
 			return;
 		}
 
-		if(rootBlock == nullptr)
-			rootBlock = GetBlock(_name);
+		if(RootBlock == nullptr)
+			RootBlock = GetBlock(_name);
 
-		activeBlock = ActiveBlock(ActiveSamplingType::Basic, rootBlock);
-		if (activeBlocks == nullptr)
-			activeBlocks = frameAlloc.Construct<Stack<ActiveBlock, StdFrameAlloc<ActiveBlock>>>
-					(StdFrameAlloc<ActiveBlock>(&frameAlloc));
+		ActiveBlock = ProfilerCPU::ActiveBlock(ActiveSamplingType::Basic, RootBlock);
+		if (ActiveBlocks == nullptr)
+			ActiveBlocks = FrameAlloc.Construct<Stack<ProfilerCPU::ActiveBlock, StdFrameAlloc<ProfilerCPU::ActiveBlock>>> (StdFrameAlloc<ProfilerCPU::ActiveBlock>(&FrameAlloc));
 
-		activeBlocks->push(activeBlock);
+		ActiveBlocks->push(ActiveBlock);
 		
-		rootBlock->basic.BeginSample();
-		isActive = true;
+		RootBlock->Basic.BeginSample();
+		IsActive = true;
 	}
 
 	void ProfilerCPU::ThreadInfo::End()
 	{
-		if(activeBlock.type == ActiveSamplingType::Basic)
-			activeBlock.block->basic.EndSample();
+		if(ActiveBlock.Type == ActiveSamplingType::Basic)
+			ActiveBlock.Block->Basic.EndSample();
 		else
-			activeBlock.block->precise.EndSample();
+			ActiveBlock.Block->Precise.EndSample();
 
-		activeBlocks->pop();
+		ActiveBlocks->pop();
 
-		if(!isActive)
+		if(!IsActive)
 			BS_LOG(Warning, Profiler, "Profiler::endThread called on a thread that isn't being sampled.");
 
-		if (activeBlocks->size() > 0)
+		if (ActiveBlocks->size() > 0)
 		{
 			BS_LOG(Warning, Profiler, "Profiler::endThread called but not all sample pairs were closed. "
 				"Sampling data will not be valid.");
 
-			while (activeBlocks->size() > 0)
+			while (ActiveBlocks->size() > 0)
 			{
-				ActiveBlock& curBlock = activeBlocks->top();
-				if(curBlock.type == ActiveSamplingType::Basic)
-					curBlock.block->basic.EndSample();
+				ProfilerCPU::ActiveBlock& curBlock = ActiveBlocks->top();
+				if(curBlock.Type == ActiveSamplingType::Basic)
+					curBlock.Block->Basic.EndSample();
 				else
-					curBlock.block->precise.EndSample();
+					curBlock.Block->Precise.EndSample();
 
-				activeBlocks->pop();
+				ActiveBlocks->pop();
 			}
 		}
 
-		isActive = false;
-		activeBlock = ActiveBlock();
+		IsActive = false;
+		ActiveBlock = ProfilerCPU::ActiveBlock();
 
-		frameAlloc.Free(activeBlocks);
-		activeBlocks = nullptr;
+		FrameAlloc.Free(ActiveBlocks);
+		ActiveBlocks = nullptr;
 	}
 
 	void ProfilerCPU::ThreadInfo::Reset()
 	{
-		if(isActive)
+		if(IsActive)
 			End();
 
-		if(rootBlock != nullptr)
-			ReleaseBlock(rootBlock);
+		if(RootBlock != nullptr)
+			ReleaseBlock(RootBlock);
 
-		rootBlock = nullptr;
-		frameAlloc.Clear(); // Note: This never actually frees memory
+		RootBlock = nullptr;
+		FrameAlloc.Clear(); // Note: This never actually frees memory
 	}
 
 	ProfilerCPU::ProfiledBlock* ProfilerCPU::ThreadInfo::GetBlock(const char* name)
 	{
-		ProfiledBlock* block = frameAlloc.Construct<ProfiledBlock>(&frameAlloc);
-		block->name = (char*)frameAlloc.Alloc(((UINT32)strlen(name) + 1) * sizeof(char));
-		strcpy(block->name, name);
+		ProfiledBlock* block = FrameAlloc.Construct<ProfiledBlock>(&FrameAlloc);
+		block->Name = (char*)FrameAlloc.Alloc(((UINT32)strlen(name) + 1) * sizeof(char));
+		strcpy(block->Name, name);
 
 		return block;
 	}
 
 	void ProfilerCPU::ThreadInfo::ReleaseBlock(ProfiledBlock* block)
 	{
-		frameAlloc.Free((UINT8*)block->name);
-		frameAlloc.Free(block);
+		FrameAlloc.Free((UINT8*)block->Name);
+		FrameAlloc.Free(block);
 	}
 
 	ProfilerCPU::ProfiledBlock::ProfiledBlock(FrameAlloc* alloc)
-		:basic(alloc), precise(alloc), children(alloc)
+		:Basic(alloc), Precise(alloc), Children(alloc)
 	{ }
 
 	ProfilerCPU::ProfiledBlock::~ProfiledBlock()
 	{
 		ThreadInfo* thread = ThreadInfo::activeThread;
 
-		for(auto& child : children)
+		for(auto& child : Children)
 			thread->ReleaseBlock(child);
 
-		children.clear();
+		Children.clear();
 	}
 
 	ProfilerCPU::ProfiledBlock* ProfilerCPU::ProfiledBlock::FindChild(const char* name) const
 	{
-		for(auto& child : children)
+		for(auto& child : Children)
 		{
-			if(strcmp(child->name, name) == 0)
+			if(strcmp(child->Name, name) == 0)
 				return child;
 		}
 
@@ -319,13 +318,13 @@ namespace bs
 	void ProfilerCPU::BeginSample(const char* name)
 	{
 		ThreadInfo* thread = ThreadInfo::activeThread;
-		if(thread == nullptr || !thread->isActive)
+		if(thread == nullptr || !thread->IsActive)
 		{
 			BeginThread("Unknown");
 			thread = ThreadInfo::activeThread;
 		}
 
-		ProfiledBlock* parent = thread->activeBlock.block;
+		ProfiledBlock* parent = thread->ActiveBlock.Block;
 		ProfiledBlock* block = nullptr;
 		
 		if(parent != nullptr)
@@ -336,21 +335,21 @@ namespace bs
 			block = thread->GetBlock(name);
 
 			if(parent != nullptr)
-				parent->children.push_back(block);
+				parent->Children.push_back(block);
 			else
-				thread->rootBlock->children.push_back(block);
+				thread->RootBlock->Children.push_back(block);
 		}
 
-		thread->activeBlock = ActiveBlock(ActiveSamplingType::Basic, block);
-		thread->activeBlocks->push(thread->activeBlock);
+		thread->ActiveBlock = ActiveBlock(ActiveSamplingType::Basic, block);
+		thread->ActiveBlocks->push(thread->ActiveBlock);
 
-		block->basic.BeginSample();
+		block->Basic.BeginSample();
 	}
 
 	void ProfilerCPU::EndSample(const char* name)
 	{
 		ThreadInfo* thread = ThreadInfo::activeThread;
-		ProfiledBlock* block = thread->activeBlock.block;
+		ProfiledBlock* block = thread->ActiveBlock.Block;
 
 #if BS_DEBUG_MODE
 		if(block == nullptr)
@@ -359,28 +358,28 @@ namespace bs
 			return;
 		}
 
-		if(thread->activeBlock.type == ActiveSamplingType::Precise)
+		if(thread->ActiveBlock.Type == ActiveSamplingType::Precise)
 		{
 			BS_LOG(Warning, Profiler, "Mismatched CPUProfiler::endSample. Was expecting Profiler::endSamplePrecise.");
 			return;
 		}
 
-		if(strcmp(block->name, name) != 0)
+		if(strcmp(block->Name, name) != 0)
 		{
 			BS_LOG(Warning, Profiler, "Mismatched CPUProfiler::endSample. Was expecting \"{0}\" but got \"{1}\". "
-				"Sampling data will not be valid.", block->name, name);
+				"Sampling data will not be valid.", block->Name, name);
 			return;
 		}
 #endif
 
-		block->basic.EndSample();
+		block->Basic.EndSample();
 
-		thread->activeBlocks->pop();
+		thread->ActiveBlocks->pop();
 
-		if (!thread->activeBlocks->empty())
-			thread->activeBlock = thread->activeBlocks->top();
+		if (!thread->ActiveBlocks->empty())
+			thread->ActiveBlock = thread->ActiveBlocks->top();
 		else
-			thread->activeBlock = ActiveBlock();
+			thread->ActiveBlock = ActiveBlock();
 	}
 
 	void ProfilerCPU::BeginSamplePrecise(const char* name)
@@ -389,10 +388,10 @@ namespace bs
 		// Increasing thread priority might help. This is generally only a problem with code that executes a long time (10-15+ ms - depending on OS quant length)
 		
 		ThreadInfo* thread = ThreadInfo::activeThread;
-		if(thread == nullptr || !thread->isActive)
+		if(thread == nullptr || !thread->IsActive)
 			BeginThread("Unknown");
 
-		ProfiledBlock* parent = thread->activeBlock.block;
+		ProfiledBlock* parent = thread->ActiveBlock.Block;
 		ProfiledBlock* block = nullptr;
 		
 		if(parent != nullptr)
@@ -403,21 +402,21 @@ namespace bs
 			block = thread->GetBlock(name);
 
 			if(parent != nullptr)
-				parent->children.push_back(block);
+				parent->Children.push_back(block);
 			else
-				thread->rootBlock->children.push_back(block);
+				thread->RootBlock->Children.push_back(block);
 		}
 
-		thread->activeBlock = ActiveBlock(ActiveSamplingType::Precise, block);
-		thread->activeBlocks->push(thread->activeBlock);
+		thread->ActiveBlock = ActiveBlock(ActiveSamplingType::Precise, block);
+		thread->ActiveBlocks->push(thread->ActiveBlock);
 
-		block->precise.BeginSample();
+		block->Precise.BeginSample();
 	}
 
 	void ProfilerCPU::EndSamplePrecise(const char* name)
 	{
 		ThreadInfo* thread = ThreadInfo::activeThread;
-		ProfiledBlock* block = thread->activeBlock.block;
+		ProfiledBlock* block = thread->ActiveBlock.Block;
 
 #if BS_DEBUG_MODE
 		if(block == nullptr)
@@ -426,28 +425,28 @@ namespace bs
 			return;
 		}
 
-		if(thread->activeBlock.type == ActiveSamplingType::Basic)
+		if(thread->ActiveBlock.Type == ActiveSamplingType::Basic)
 		{
 			BS_LOG(Warning, Profiler, "Mismatched CPUProfiler::endSamplePrecise. Was expecting Profiler::endSample.");
 			return;
 		}
 
-		if (strcmp(block->name, name) != 0)
+		if (strcmp(block->Name, name) != 0)
 		{
 			BS_LOG(Warning, Profiler, "Mismatched Profiler::endSamplePrecise. Was expecting \"{0}\" but got \"{1}\". "
-				"Sampling data will not be valid.", block->name, name);
+				"Sampling data will not be valid.", block->Name, name);
 			return;
 		}
 #endif
 
-		block->precise.EndSample();
+		block->Precise.EndSample();
 
-		thread->activeBlocks->pop();
+		thread->ActiveBlocks->pop();
 
-		if (!thread->activeBlocks->empty())
-			thread->activeBlock = thread->activeBlocks->top();
+		if (!thread->ActiveBlocks->empty())
+			thread->ActiveBlock = thread->ActiveBlocks->top();
 		else
-			thread->activeBlock = ActiveBlock();
+			thread->ActiveBlock = ActiveBlock();
 	}
 
 	void ProfilerCPU::Reset()
@@ -466,22 +465,22 @@ namespace bs
 		if(thread == nullptr)
 			return report;
 
-		if(thread->isActive)
+		if(thread->IsActive)
 			thread->End();
 
 		// We need to separate out basic and precise data and form two separate hierarchies
-		if(thread->rootBlock == nullptr)
+		if(thread->RootBlock == nullptr)
 			return report;
 
 		struct TempEntry
 		{
 			TempEntry(ProfiledBlock* _parentBlock, UINT32 _entryIdx)
-				:parentBlock(_parentBlock), entryIdx(_entryIdx)
+				:ParentBlock(_parentBlock), EntryIdx(_entryIdx)
 			{ }
 
-			ProfiledBlock* parentBlock;
-			UINT32 entryIdx;
-			ProfilerVector<UINT32> childIndexes;
+			ProfiledBlock* ParentBlock;
+			UINT32 EntryIdx;
+			ProfilerVector<UINT32> ChildIndexes;
 		};
 
 		ProfilerVector<CPUProfilerBasicSamplingEntry> basicEntries;
@@ -493,19 +492,19 @@ namespace bs
 
 		UINT32 entryIdx = 0;
 		todo.push(entryIdx);
-		flatHierarchy.push_back(TempEntry(thread->rootBlock, entryIdx));
+		flatHierarchy.push_back(TempEntry(thread->RootBlock, entryIdx));
 
 		entryIdx++;
 		while(!todo.empty())
 		{
 			UINT32 curDataIdx = todo.top();
-			ProfiledBlock* curBlock = flatHierarchy[curDataIdx].parentBlock;
+			ProfiledBlock* curBlock = flatHierarchy[curDataIdx].ParentBlock;
 
 			todo.pop();
 
-			for(auto& child : curBlock->children)
+			for(auto& child : curBlock->Children)
 			{
-				flatHierarchy[curDataIdx].childIndexes.push_back(entryIdx);
+				flatHierarchy[curDataIdx].ChildIndexes.push_back(entryIdx);
 
 				todo.push(entryIdx);
 				flatHierarchy.push_back(TempEntry(child, entryIdx));
@@ -521,90 +520,90 @@ namespace bs
 		for(auto iter = flatHierarchy.rbegin(); iter != flatHierarchy.rend(); ++iter)
 		{
 			TempEntry& curData = *iter;
-			ProfiledBlock* curBlock = curData.parentBlock;
+			ProfiledBlock* curBlock = curData.ParentBlock;
 
-			CPUProfilerBasicSamplingEntry* entryBasic = &basicEntries[curData.entryIdx];
-			CPUProfilerPreciseSamplingEntry* entryPrecise = &preciseEntries[curData.entryIdx];
+			CPUProfilerBasicSamplingEntry* entryBasic = &basicEntries[curData.EntryIdx];
+			CPUProfilerPreciseSamplingEntry* entryPrecise = &preciseEntries[curData.EntryIdx];
 
 			// Calculate basic data
-			entryBasic->data.name = String(curBlock->name);
+			entryBasic->Data.Name = String(curBlock->Name);
 
-			entryBasic->data.memAllocs = 0;
-			entryBasic->data.memFrees = 0;
-			entryBasic->data.totalTimeMs = 0.0;
-			entryBasic->data.maxTimeMs = 0.0;
-			for(auto& sample : curBlock->basic.samples)
+			entryBasic->Data.MemAllocs = 0;
+			entryBasic->Data.MemFrees = 0;
+			entryBasic->Data.TotalTimeMs = 0.0;
+			entryBasic->Data.MaxTimeMs = 0.0;
+			for(auto& sample : curBlock->Basic.Samples)
 			{
-				entryBasic->data.totalTimeMs += sample.time;
-				entryBasic->data.maxTimeMs = std::max(entryBasic->data.maxTimeMs, sample.time);
-				entryBasic->data.memAllocs += sample.numAllocs;
-				entryBasic->data.memFrees += sample.numFrees;
+				entryBasic->Data.TotalTimeMs += sample.Time;
+				entryBasic->Data.MaxTimeMs = std::max(entryBasic->Data.MaxTimeMs, sample.Time);
+				entryBasic->Data.MemAllocs += sample.NumAllocs;
+				entryBasic->Data.MemFrees += sample.NumFrees;
 			}
 
-			entryBasic->data.numCalls = (UINT32)curBlock->basic.samples.size();
+			entryBasic->Data.NumCalls = (UINT32)curBlock->Basic.Samples.size();
 
-			if(entryBasic->data.numCalls > 0)
-				entryBasic->data.avgTimeMs = entryBasic->data.totalTimeMs / entryBasic->data.numCalls;
+			if(entryBasic->Data.NumCalls > 0)
+				entryBasic->Data.AvgTimeMs = entryBasic->Data.TotalTimeMs / entryBasic->Data.NumCalls;
 
 			double totalChildTime = 0.0;
-			for(auto& childIdx : curData.childIndexes)
+			for(auto& childIdx : curData.ChildIndexes)
 			{
 				CPUProfilerBasicSamplingEntry* childEntry = &basicEntries[childIdx];
-				totalChildTime += childEntry->data.totalTimeMs;
-				childEntry->data.pctOfParent = (float)(childEntry->data.totalTimeMs / entryBasic->data.totalTimeMs);
+				totalChildTime += childEntry->Data.TotalTimeMs;
+				childEntry->Data.PctOfParent = (float)(childEntry->Data.TotalTimeMs / entryBasic->Data.TotalTimeMs);
 
-				entryBasic->data.estimatedOverheadMs += childEntry->data.estimatedOverheadMs;
+				entryBasic->Data.EstimatedOverheadMs += childEntry->Data.EstimatedOverheadMs;
 			}
 
-			entryBasic->data.estimatedOverheadMs += curBlock->basic.samples.size() * mBasicSamplingOverheadMs;
-			entryBasic->data.estimatedOverheadMs += curBlock->precise.samples.size() * mPreciseSamplingOverheadMs;
+			entryBasic->Data.EstimatedOverheadMs += curBlock->Basic.Samples.size() * mBasicSamplingOverheadMs;
+			entryBasic->Data.EstimatedOverheadMs += curBlock->Precise.Samples.size() * mPreciseSamplingOverheadMs;
 
-			entryBasic->data.totalSelfTimeMs = entryBasic->data.totalTimeMs - totalChildTime;
+			entryBasic->Data.TotalSelfTimeMs = entryBasic->Data.TotalTimeMs - totalChildTime;
 
-			if(entryBasic->data.numCalls > 0)
-				entryBasic->data.avgSelfTimeMs = entryBasic->data.totalSelfTimeMs / entryBasic->data.numCalls;
+			if(entryBasic->Data.NumCalls > 0)
+				entryBasic->Data.AvgSelfTimeMs = entryBasic->Data.TotalSelfTimeMs / entryBasic->Data.NumCalls;
 
-			entryBasic->data.estimatedSelfOverheadMs = mBasicTimerOverhead;
+			entryBasic->Data.EstimatedSelfOverheadMs = mBasicTimerOverhead;
 
 			// Calculate precise data
-			entryPrecise->data.name = String(curBlock->name);
+			entryPrecise->Data.Name = String(curBlock->Name);
 
-			entryPrecise->data.memAllocs = 0;
-			entryPrecise->data.memFrees = 0;
-			entryPrecise->data.totalCycles = 0;
-			entryPrecise->data.maxCycles = 0;
-			for(auto& sample : curBlock->precise.samples)
+			entryPrecise->Data.MemAllocs = 0;
+			entryPrecise->Data.MemFrees = 0;
+			entryPrecise->Data.TotalCycles = 0;
+			entryPrecise->Data.MaxCycles = 0;
+			for(auto& sample : curBlock->Precise.Samples)
 			{
-				entryPrecise->data.totalCycles += sample.cycles;
-				entryPrecise->data.maxCycles = std::max(entryPrecise->data.maxCycles, sample.cycles);
-				entryPrecise->data.memAllocs += sample.numAllocs;
-				entryPrecise->data.memFrees += sample.numFrees;
+				entryPrecise->Data.TotalCycles += sample.Cycles;
+				entryPrecise->Data.MaxCycles = std::max(entryPrecise->Data.MaxCycles, sample.Cycles);
+				entryPrecise->Data.MemAllocs += sample.NumAllocs;
+				entryPrecise->Data.MemFrees += sample.NumFrees;
 			}
 
-			entryPrecise->data.numCalls = (UINT32)curBlock->precise.samples.size();
+			entryPrecise->Data.NumCalls = (UINT32)curBlock->Precise.Samples.size();
 
-			if(entryPrecise->data.numCalls > 0)
-				entryPrecise->data.avgCycles = entryPrecise->data.totalCycles / entryPrecise->data.numCalls;
+			if(entryPrecise->Data.NumCalls > 0)
+				entryPrecise->Data.AvgCycles = entryPrecise->Data.TotalCycles / entryPrecise->Data.NumCalls;
 
 			UINT64 totalChildCycles = 0;
-			for(auto& childIdx : curData.childIndexes)
+			for(auto& childIdx : curData.ChildIndexes)
 			{
 				CPUProfilerPreciseSamplingEntry* childEntry = &preciseEntries[childIdx];
-				totalChildCycles += childEntry->data.totalCycles;
-				childEntry->data.pctOfParent = childEntry->data.totalCycles / (float)entryPrecise->data.totalCycles;
+				totalChildCycles += childEntry->Data.TotalCycles;
+				childEntry->Data.PctOfParent = childEntry->Data.TotalCycles / (float)entryPrecise->Data.TotalCycles;
 
-				entryPrecise->data.estimatedOverhead += childEntry->data.estimatedOverhead;
+				entryPrecise->Data.EstimatedOverhead += childEntry->Data.EstimatedOverhead;
 			}
 
-			entryPrecise->data.estimatedOverhead += curBlock->precise.samples.size() * mPreciseSamplingOverheadCycles;
-			entryPrecise->data.estimatedOverhead += curBlock->basic.samples.size() * mBasicSamplingOverheadCycles;
+			entryPrecise->Data.EstimatedOverhead += curBlock->Precise.Samples.size() * mPreciseSamplingOverheadCycles;
+			entryPrecise->Data.EstimatedOverhead += curBlock->Basic.Samples.size() * mBasicSamplingOverheadCycles;
 
-			entryPrecise->data.totalSelfCycles = entryPrecise->data.totalCycles - totalChildCycles;
+			entryPrecise->Data.TotalSelfCycles = entryPrecise->Data.TotalCycles - totalChildCycles;
 
-			if(entryPrecise->data.numCalls > 0)
-				entryPrecise->data.avgSelfCycles = entryPrecise->data.totalSelfCycles / entryPrecise->data.numCalls;
+			if(entryPrecise->Data.NumCalls > 0)
+				entryPrecise->Data.AvgSelfCycles = entryPrecise->Data.TotalSelfCycles / entryPrecise->Data.NumCalls;
 
-			entryPrecise->data.estimatedSelfOverhead = mPreciseTimerOverhead;
+			entryPrecise->Data.EstimatedSelfOverhead = mPreciseTimerOverhead;
 		}
 
 		// Prune empty basic entries
@@ -629,15 +628,15 @@ namespace bs
 			TempEntry& curEntry = flatHierarchy[curEntryIdx];
 			finalBasicHierarchyTodo.pop();
 
-			for(auto& childIdx : curEntry.childIndexes)
+			for(auto& childIdx : curEntry.ChildIndexes)
 			{
 				finalBasicHierarchyTodo.push(childIdx);
 
 				CPUProfilerBasicSamplingEntry& basicEntry = basicEntries[childIdx];
-				if(basicEntry.data.numCalls > 0)
+				if(basicEntry.Data.NumCalls > 0)
 				{
 					newBasicEntries.push_back(TempEntry(nullptr, childIdx));
-					newBasicEntries[parentEntryIdx].childIndexes.push_back(entryIdx);
+					newBasicEntries[parentEntryIdx].ChildIndexes.push_back(entryIdx);
 
 					parentBasicEntryIndexes.push(entryIdx);
 
@@ -652,7 +651,7 @@ namespace bs
 		{
 			ProfilerVector<CPUProfilerBasicSamplingEntry*> finalBasicEntries;
 
-			report.mBasicSamplingRootEntry = basicEntries[newBasicEntries[0].entryIdx];
+			report.mBasicSamplingRootEntry = basicEntries[newBasicEntries[0].EntryIdx];
 			finalBasicEntries.push_back(&report.mBasicSamplingRootEntry);
 
 			finalBasicHierarchyTodo.push(0);
@@ -666,15 +665,15 @@ namespace bs
 
 				CPUProfilerBasicSamplingEntry* basicEntry = finalBasicEntries[curEntryIdx];
 
-				basicEntry->childEntries.resize(curEntry.childIndexes.size());
+				basicEntry->ChildEntries.resize(curEntry.ChildIndexes.size());
 				UINT32 idx = 0;
 
-				for(auto& childIdx : curEntry.childIndexes)
+				for(auto& childIdx : curEntry.ChildIndexes)
 				{
 					TempEntry& childEntry = newBasicEntries[childIdx];
-					basicEntry->childEntries[idx] = basicEntries[childEntry.entryIdx];
+					basicEntry->ChildEntries[idx] = basicEntries[childEntry.EntryIdx];
 
-					finalBasicEntries.push_back(&(basicEntry->childEntries[idx]));
+					finalBasicEntries.push_back(&(basicEntry->ChildEntries[idx]));
 					finalBasicHierarchyTodo.push(childIdx);
 					idx++;
 				}
@@ -703,15 +702,15 @@ namespace bs
 			TempEntry& curEntry = flatHierarchy[curEntryIdx];
 			finalPreciseHierarchyTodo.pop();
 
-			for(auto& childIdx : curEntry.childIndexes)
+			for(auto& childIdx : curEntry.ChildIndexes)
 			{
 				finalPreciseHierarchyTodo.push(childIdx);
 
 				CPUProfilerPreciseSamplingEntry& preciseEntry = preciseEntries[childIdx];
-				if(preciseEntry.data.numCalls > 0)
+				if(preciseEntry.Data.NumCalls > 0)
 				{
 					newPreciseEntries.push_back(TempEntry(nullptr, childIdx));
-					newPreciseEntries[parentEntryIdx].childIndexes.push_back(entryIdx);
+					newPreciseEntries[parentEntryIdx].ChildIndexes.push_back(entryIdx);
 
 					parentPreciseEntryIndexes.push(entryIdx);
 
@@ -726,7 +725,7 @@ namespace bs
 		{
 			ProfilerVector<CPUProfilerPreciseSamplingEntry*> finalPreciseEntries;
 
-			report.mPreciseSamplingRootEntry = preciseEntries[newPreciseEntries[0].entryIdx];
+			report.mPreciseSamplingRootEntry = preciseEntries[newPreciseEntries[0].EntryIdx];
 			finalPreciseEntries.push_back(&report.mPreciseSamplingRootEntry);
 
 			finalPreciseHierarchyTodo.push(0);
@@ -740,15 +739,15 @@ namespace bs
 
 				CPUProfilerPreciseSamplingEntry* preciseEntry = finalPreciseEntries[curEntryIdx];
 
-				preciseEntry->childEntries.resize(curEntry.childIndexes.size());
+				preciseEntry->ChildEntries.resize(curEntry.ChildIndexes.size());
 				UINT32 idx = 0;
 
-				for(auto& childIdx : curEntry.childIndexes)
+				for(auto& childIdx : curEntry.ChildIndexes)
 				{
 					TempEntry& childEntry = newPreciseEntries[childIdx];
-					preciseEntry->childEntries[idx] = preciseEntries[childEntry.entryIdx];
+					preciseEntry->ChildEntries[idx] = preciseEntries[childEntry.EntryIdx];
 
-					finalPreciseEntries.push_back(&preciseEntry->childEntries.back());
+					finalPreciseEntries.push_back(&preciseEntry->ChildEntries.back());
 					finalPreciseHierarchyTodo.push(childIdx);
 					idx++;
 				}
@@ -774,7 +773,7 @@ namespace bs
 				timer.Stop();
 			}
 
-			double avgTime = double(timer.time)/double(reps);
+			double avgTime = double(timer.Time)/double(reps);
 			if (avgTime < mBasicTimerOverhead)
 				mBasicTimerOverhead = avgTime;
 
@@ -785,7 +784,7 @@ namespace bs
 				timerPrecise.Stop();
 			}
 
-			UINT64 avgCycles = timerPrecise.cycles/reps;
+			UINT64 avgCycles = timerPrecise.Cycles/reps;
 			if (avgCycles < mPreciseTimerOverhead)
 				mPreciseTimerOverhead = avgCycles;
 		}
@@ -843,7 +842,7 @@ namespace bs
 
 			Reset();
 
-			double avgTimeBasic = double(timerA.time)/double(sampleReps * 10 + sampleReps * 5) - mBasicTimerOverhead;
+			double avgTimeBasic = double(timerA.Time)/double(sampleReps * 10 + sampleReps * 5) - mBasicTimerOverhead;
 			if (avgTimeBasic < mBasicSamplingOverheadMs)
 				mBasicSamplingOverheadMs = avgTimeBasic;
 
@@ -893,7 +892,7 @@ namespace bs
 
 			Reset();
 
-			UINT64 avgCyclesBasic = timerPreciseA.cycles/(sampleReps * 10 + sampleReps * 5) - mPreciseTimerOverhead;
+			UINT64 avgCyclesBasic = timerPreciseA.Cycles/(sampleReps * 10 + sampleReps * 5) - mPreciseTimerOverhead;
 			if (avgCyclesBasic < mBasicSamplingOverheadCycles)
 				mBasicSamplingOverheadCycles = avgCyclesBasic;
 
@@ -942,7 +941,7 @@ namespace bs
 
 			Reset();
 
-			double avgTimesPrecise = timerB.time/(sampleReps * 10 + sampleReps * 5);
+			double avgTimesPrecise = timerB.Time/(sampleReps * 10 + sampleReps * 5);
 			if (avgTimesPrecise < mPreciseSamplingOverheadMs)
 				mPreciseSamplingOverheadMs = avgTimesPrecise;
 
@@ -991,7 +990,7 @@ namespace bs
 
 			Reset();
 
-			UINT64 avgCyclesPrecise = timerPreciseB.cycles/(sampleReps * 10 + sampleReps * 5);
+			UINT64 avgCyclesPrecise = timerPreciseB.Cycles/(sampleReps * 10 + sampleReps * 5);
 			if (avgCyclesPrecise < mPreciseSamplingOverheadCycles)
 				mPreciseSamplingOverheadCycles = avgCyclesPrecise;
 		}

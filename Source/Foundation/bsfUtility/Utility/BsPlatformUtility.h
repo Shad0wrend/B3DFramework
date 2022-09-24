@@ -18,22 +18,22 @@ namespace bs
 	/** Contains information about available GPUs on the system. */
 	struct GPUInfo
 	{
-		String names[5];
-		UINT32 numGPUs;
+		String Names[5];
+		UINT32 NumGpUs;
 	};
 
 	/** Contains information about the system hardware and operating system. */
 	struct SystemInfo
 	{
-		String cpuManufacturer;
-		String cpuModel;
-		UINT32 cpuClockSpeedMhz;
-		UINT32 cpuNumCores;
-		UINT32 memoryAmountMb;
-		String osName;
-		bool osIs64Bit;
+		String CpuManufacturer;
+		String CpuModel;
+		UINT32 CpuClockSpeedMhz;
+		UINT32 CpuNumCores;
+		UINT32 MemoryAmountMb;
+		String OsName;
+		bool OsIs64Bit;
 
-		GPUInfo gpuInfo;
+		GPUInfo GpuInfo;
 	};
 
 	/** Provides access to various operating system specific utility functions. */

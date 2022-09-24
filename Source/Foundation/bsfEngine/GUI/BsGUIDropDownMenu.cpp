@@ -56,7 +56,7 @@ namespace bs
 	}
 
 	GUIDropDownMenu::GUIDropDownMenu(const HSceneObject& parent, const DROP_DOWN_BOX_DESC& desc, GUIDropDownType type)
-		:CGUIWidget(parent, desc.camera), mRootMenu(nullptr), mFrontHitBox(nullptr), mBackHitBox(nullptr), mCaptureHitBox(nullptr)
+		:CGUIWidget(parent, desc.Camera), mRootMenu(nullptr), mFrontHitBox(nullptr), mBackHitBox(nullptr), mCaptureHitBox(nullptr)
 	{
 		String stylePrefix = "";
 		switch(type)
@@ -81,10 +81,10 @@ namespace bs
 		mHandleStyle = stylePrefix + "Handle";
 
 		SetDepth(0); // Needs to be in front of everything
-		SetSkin(desc.skin);
+		SetSkin(desc.Skin);
 
 		mFrontHitBox = GUIDropDownHitBox::Create(false, false);
-		mFrontHitBox->onFocusLost.Connect(std::bind(&GUIDropDownMenu::DropDownFocusLost, this));
+		mFrontHitBox->OnFocusLost.Connect(std::bind(&GUIDropDownMenu::DropDownFocusLost, this));
 		mFrontHitBox->SetFocus(true);
 		GUILayoutData hitboxLayoutData = mFrontHitBox->GetLayoutDataInternal();
 		hitboxLayoutData.SetWidgetDepth(0);
@@ -101,11 +101,11 @@ namespace bs
 		mBackHitBox->ChangeParentWidgetInternal(GetInternalInternal());
 		mBackHitBox->MarkLayoutAsDirtyInternal();
 
-		SPtr<Viewport> viewport = desc.camera->GetViewport();
+		SPtr<Viewport> viewport = desc.Camera->GetViewport();
 
-		Rect2I targetBounds(0, 0, viewport->GetPixelArea().width, viewport->GetPixelArea().height);
+		Rect2I targetBounds(0, 0, viewport->GetPixelArea().Width, viewport->GetPixelArea().Height);
 		Vector<Rect2I> captureBounds;
-		targetBounds.Cut(desc.additionalBounds, captureBounds);
+		targetBounds.Cut(desc.AdditionalBounds, captureBounds);
 
 		mCaptureHitBox = GUIDropDownHitBox::Create(true, false);
 		mCaptureHitBox->SetBounds(captureBounds);
@@ -116,10 +116,10 @@ namespace bs
 		mCaptureHitBox->ChangeParentWidgetInternal(GetInternalInternal());
 		mCaptureHitBox->MarkLayoutAsDirtyInternal();
 
-		mAdditionalCaptureBounds = desc.additionalBounds;
+		mAdditionalCaptureBounds = desc.AdditionalBounds;
 
 		Rect2I availableBounds = viewport->GetPixelArea();
-		mRootMenu = bs_new<DropDownSubMenu>(this, nullptr, desc.placement, availableBounds, desc.dropDownData, type, 0);
+		mRootMenu = bs_new<DropDownSubMenu>(this, nullptr, desc.Placement, availableBounds, desc.DropDownData, type, 0);
 	}
 
 	GUIDropDownMenu::~GUIDropDownMenu()
@@ -151,7 +151,7 @@ namespace bs
 		{
 			bounds.push_back(subMenu->GetVisibleBounds());
 
-			subMenu = subMenu->mParent;
+			subMenu = subMenu->MParent;
 		}
 
 		mBackHitBox->SetBounds(bounds);
@@ -169,7 +169,7 @@ namespace bs
 		{
 			bounds.push_back(subMenu->GetVisibleBounds());
 
-			subMenu = subMenu->mParent;
+			subMenu = subMenu->MParent;
 		}
 
 		mBackHitBox->SetBounds(bounds);
@@ -183,132 +183,132 @@ namespace bs
 	GUIDropDownMenu::DropDownSubMenu::DropDownSubMenu(GUIDropDownMenu* owner, DropDownSubMenu* parent,
 		const DropDownAreaPlacement& placement, const Rect2I& availableBounds, const GUIDropDownData& dropDownData,
 		GUIDropDownType type, UINT32 depthOffset)
-		: mOwner(owner), mType(type), mData(dropDownData), mPage(0), x(0), y(0), width(0), height(0)
-		, mDepthOffset(depthOffset), mOpenedUpward(false), mContent(nullptr), mBackgroundFrame(nullptr)
-		, mBackgroundPanel(nullptr), mContentPanel(nullptr), mContentLayout(nullptr), mSidebarPanel(nullptr)
-		, mParent(parent), mSubMenu(nullptr)
+		: MOwner(owner), MType(type), MData(dropDownData), MPage(0), X(0), Y(0), Width(0), Height(0)
+		, MDepthOffset(depthOffset), MOpenedUpward(false), MContent(nullptr), MBackgroundFrame(nullptr)
+		, MBackgroundPanel(nullptr), MContentPanel(nullptr), MContentLayout(nullptr), MSidebarPanel(nullptr)
+		, MParent(parent), MSubMenu(nullptr)
 	{
-		mAvailableBounds = availableBounds;
+		MAvailableBounds = availableBounds;
 
-		const GUIElementStyle* backgroundStyle = mOwner->GetSkin().GetStyle(mOwner->mBackgroundStyle);
-		const GUIElementStyle* sideBarStyle = mOwner->GetSkin().GetStyle(mOwner->mSideBackgroundStyle);
+		const GUIElementStyle* backgroundStyle = MOwner->GetSkin().GetStyle(MOwner->mBackgroundStyle);
+		const GUIElementStyle* sideBarStyle = MOwner->GetSkin().GetStyle(MOwner->mSideBackgroundStyle);
 
 		// Create content GUI element
-		mContent = GUIDropDownContent::Create(this, dropDownData, mOwner->mContentStyle);
-		mContent->SetKeyboardFocus(true);
+		MContent = GUIDropDownContent::Create(this, dropDownData, MOwner->mContentStyle);
+		MContent->SetKeyboardFocus(true);
 
 		// Content area
-		mContentPanel = mOwner->GetPanel()->AddNewElement<GUIPanel>();
-		mContentPanel->SetWidth(width);
-		mContentPanel->SetHeight(height);
-		mContentPanel->SetDepthRange(100 - depthOffset * 2 - 1);
+		MContentPanel = MOwner->GetPanel()->AddNewElement<GUIPanel>();
+		MContentPanel->SetWidth(Width);
+		MContentPanel->SetHeight(Height);
+		MContentPanel->SetDepthRange(100 - depthOffset * 2 - 1);
 
 		// Background frame
-		mBackgroundPanel = mOwner->GetPanel()->AddNewElement<GUIPanel>();
-		mBackgroundPanel->SetWidth(width);
-		mBackgroundPanel->SetHeight(height);
-		mBackgroundPanel->SetDepthRange(100 - depthOffset * 2);
+		MBackgroundPanel = MOwner->GetPanel()->AddNewElement<GUIPanel>();
+		MBackgroundPanel->SetWidth(Width);
+		MBackgroundPanel->SetHeight(Height);
+		MBackgroundPanel->SetDepthRange(100 - depthOffset * 2);
 
-		GUILayout* backgroundLayout = mBackgroundPanel->AddNewElement<GUILayoutX>();
+		GUILayout* backgroundLayout = MBackgroundPanel->AddNewElement<GUILayoutX>();
 
-		mBackgroundFrame = GUITexture::Create(TextureScaleMode::StretchToFit, mOwner->mBackgroundStyle);
-		backgroundLayout->AddElement(mBackgroundFrame);
+		MBackgroundFrame = GUITexture::Create(TextureScaleMode::StretchToFit, MOwner->mBackgroundStyle);
+		backgroundLayout->AddElement(MBackgroundFrame);
 
-		mContentLayout = mContentPanel->AddNewElement<GUILayoutY>();
-		mContentLayout->AddElement(mContent); // Note: It's important this is added to the layout before we
+		MContentLayout = MContentPanel->AddNewElement<GUILayoutY>();
+		MContentLayout->AddElement(MContent); // Note: It's important this is added to the layout before we
 		// use it for size calculations, in order for its skin to be assigned
 
-		UINT32 dropDownBoxWidth = DROP_DOWN_BOX_WIDTH + sideBarStyle->width;
+		UINT32 dropDownBoxWidth = DROP_DOWN_BOX_WIDTH + sideBarStyle->Width;
 
-		UINT32 maxNeededHeight = backgroundStyle->margins.top + backgroundStyle->margins.bottom;
-		UINT32 numElements = (UINT32)dropDownData.entries.size();
+		UINT32 maxNeededHeight = backgroundStyle->Margins.Top + backgroundStyle->Margins.Bottom;
+		UINT32 numElements = (UINT32)dropDownData.Entries.size();
 		for (UINT32 i = 0; i < numElements; i++)
-			maxNeededHeight += mContent->GetElementHeight(i);
+			maxNeededHeight += MContent->GetElementHeight(i);
 
 		DropDownAreaPlacement::HorzDir horzDir;
 		DropDownAreaPlacement::VertDir vertDir;
 		Rect2I placementBounds = placement.GetOptimalBounds(dropDownBoxWidth, maxNeededHeight, availableBounds, horzDir, vertDir);
 
-		mOpenedUpward = vertDir == DropDownAreaPlacement::VertDir::Up;
+		MOpenedUpward = vertDir == DropDownAreaPlacement::VertDir::Up;
 
-		UINT32 actualY = placementBounds.y;
-		if (mOpenedUpward)
-			y = placementBounds.y + placementBounds.height;
+		UINT32 actualY = placementBounds.Y;
+		if (MOpenedUpward)
+			Y = placementBounds.Y + placementBounds.Height;
 		else
-			y = placementBounds.y;
+			Y = placementBounds.Y;
 
-		x = placementBounds.x;
-		width = placementBounds.width;
-		height = placementBounds.height;
+		X = placementBounds.X;
+		Width = placementBounds.Width;
+		Height = placementBounds.Height;
 
-		mContentPanel->SetPosition(x, actualY);
-		mBackgroundPanel->SetPosition(x, actualY);
+		MContentPanel->SetPosition(X, actualY);
+		MBackgroundPanel->SetPosition(X, actualY);
 
 		UpdateGuiElements();
 
-		mOwner->NotifySubMenuOpened(this);
+		MOwner->NotifySubMenuOpened(this);
 	}
 
 	GUIDropDownMenu::DropDownSubMenu::~DropDownSubMenu()
 	{
 		CloseSubMenu();
 
-		mOwner->NotifySubMenuClosed(this);
+		MOwner->NotifySubMenuClosed(this);
 
-		GUIElement::Destroy(mContent);
+		GUIElement::Destroy(MContent);
 
-		GUIElement::Destroy(mBackgroundFrame);
+		GUIElement::Destroy(MBackgroundFrame);
 
-		GUILayout::Destroy(mBackgroundPanel);
-		GUILayout::Destroy(mContentPanel);
+		GUILayout::Destroy(MBackgroundPanel);
+		GUILayout::Destroy(MContentPanel);
 
-		if (mSidebarPanel != nullptr)
-			GUIPanel::Destroy(mSidebarPanel);
+		if (MSidebarPanel != nullptr)
+			GUIPanel::Destroy(MSidebarPanel);
 	}
 
 	Vector<GUIDropDownMenu::DropDownSubMenu::PageInfo> GUIDropDownMenu::DropDownSubMenu::GetPageInfos() const
 	{
-		const GUIElementStyle* backgroundStyle = mOwner->GetSkin().GetStyle(mOwner->mBackgroundStyle);
+		const GUIElementStyle* backgroundStyle = MOwner->GetSkin().GetStyle(MOwner->mBackgroundStyle);
 
-		INT32 numElements = (INT32)mData.entries.size();
+		INT32 numElements = (INT32)MData.Entries.size();
 
 		PageInfo curPageInfo;
-		curPageInfo.start = 0;
-		curPageInfo.end = 0;
-		curPageInfo.idx = 0;
-		curPageInfo.height = backgroundStyle->margins.top + backgroundStyle->margins.bottom;
+		curPageInfo.Start = 0;
+		curPageInfo.End = 0;
+		curPageInfo.Idx = 0;
+		curPageInfo.Height = backgroundStyle->Margins.Top + backgroundStyle->Margins.Bottom;
 		
 		Vector<PageInfo> pageInfos;
 		for (INT32 i = 0; i < numElements; i++)
 		{
-			curPageInfo.height += mContent->GetElementHeight((UINT32)i);
-			curPageInfo.end++;
+			curPageInfo.Height += MContent->GetElementHeight((UINT32)i);
+			curPageInfo.End++;
 
-			if (curPageInfo.height > height)
+			if (curPageInfo.Height > Height)
 			{
 				// Remove last few elements until we fit again
-				while (curPageInfo.height > height && i >= 0)
+				while (curPageInfo.Height > Height && i >= 0)
 				{
-					curPageInfo.height -= mContent->GetElementHeight((UINT32)i);
-					curPageInfo.end--;
+					curPageInfo.Height -= MContent->GetElementHeight((UINT32)i);
+					curPageInfo.End--;
 
 					i--;
 				}
 
 				// Nothing fits, break out of infinite loop
-				if (curPageInfo.start >= curPageInfo.end)
+				if (curPageInfo.Start >= curPageInfo.End)
 					break;
 
 				pageInfos.push_back(curPageInfo);
 
-				curPageInfo.start = curPageInfo.end;
-				curPageInfo.height = backgroundStyle->margins.top + backgroundStyle->margins.bottom;
+				curPageInfo.Start = curPageInfo.End;
+				curPageInfo.Height = backgroundStyle->Margins.Top + backgroundStyle->Margins.Bottom;
 
-				curPageInfo.idx++;
+				curPageInfo.Idx++;
 			}
 		}
 
-		if (curPageInfo.start < curPageInfo.end)
+		if (curPageInfo.Start < curPageInfo.End)
 			pageInfos.push_back(curPageInfo);
 
 		return pageInfos;
@@ -317,31 +317,31 @@ namespace bs
 	void GUIDropDownMenu::DropDownSubMenu::UpdateGuiElements()
 	{
 		// Remove all elements from content layout
-		while(mContentLayout->GetNumChildren() > 0)
-			mContentLayout->RemoveElementAt(mContentLayout->GetNumChildren() - 1);
+		while(MContentLayout->GetNumChildren() > 0)
+			MContentLayout->RemoveElementAt(MContentLayout->GetNumChildren() - 1);
 
-		mContentLayout->AddElement(mContent); // Note: Needs to be added first so that size calculations have proper skin to work with
+		MContentLayout->AddElement(MContent); // Note: Needs to be added first so that size calculations have proper skin to work with
 
-		const GUIElementStyle* backgroundStyle = mOwner->GetSkin().GetStyle(mOwner->mBackgroundStyle);
-		const GUIElementStyle* sideBarStyle = mOwner->GetSkin().GetStyle(mOwner->mSideBackgroundStyle);
-		const GUIElementStyle* scrollUpStyle = mOwner->GetSkin().GetStyle(mOwner->mScrollUpStyle);
-		const GUIElementStyle* scrollDownStyle = mOwner->GetSkin().GetStyle(mOwner->mScrollDownStyle);
+		const GUIElementStyle* backgroundStyle = MOwner->GetSkin().GetStyle(MOwner->mBackgroundStyle);
+		const GUIElementStyle* sideBarStyle = MOwner->GetSkin().GetStyle(MOwner->mSideBackgroundStyle);
+		const GUIElementStyle* scrollUpStyle = MOwner->GetSkin().GetStyle(MOwner->mScrollUpStyle);
+		const GUIElementStyle* scrollDownStyle = MOwner->GetSkin().GetStyle(MOwner->mScrollDownStyle);
 
 		Vector<PageInfo> pageInfos = GetPageInfos();
 
 		UINT32 pageStart = 0, pageEnd = 0;
 		UINT32 pageHeight = 0;
 		UINT32 pageCount = (UINT32)pageInfos.size();
-		if (pageCount > mPage)
+		if (pageCount > MPage)
 		{
-			pageStart = pageInfos[mPage].start;
-			pageEnd = pageInfos[mPage].end;
-			pageHeight = pageInfos[mPage].height;
+			pageStart = pageInfos[MPage].Start;
+			pageEnd = pageInfos[MPage].End;
+			pageHeight = pageInfos[MPage].Height;
 		}
 
-		INT32 actualY = y;
+		INT32 actualY = Y;
 
-		if (mOpenedUpward)
+		if (MOpenedUpward)
 			actualY -= (INT32)pageHeight;
 
 		// Add sidebar if needed
@@ -349,87 +349,87 @@ namespace bs
 		if (pageInfos.size() > 1)
 		{
 			UINT32 sidebarHeight = pageHeight - 2;
-			contentOffset = sideBarStyle->width;
+			contentOffset = sideBarStyle->Width;
 
-			if (mSidebarPanel == nullptr)
+			if (MSidebarPanel == nullptr)
 			{
-				mSidebarPanel = mOwner->GetPanel()->AddNewElement<GUIPanel>();
+				MSidebarPanel = MOwner->GetPanel()->AddNewElement<GUIPanel>();
 
-				mScrollUpBtn = GUIButton::Create(HString(""), mOwner->mScrollUpStyle);
-				mScrollUpBtn->onClick.Connect(std::bind(&DropDownSubMenu::ScrollUp, this));
+				MScrollUpBtn = GUIButton::Create(HString(""), MOwner->mScrollUpStyle);
+				MScrollUpBtn->OnClick.Connect(std::bind(&DropDownSubMenu::ScrollUp, this));
 
-				GUIElementOptions scrollUpBtnOptions = mScrollUpBtn->GetOptionFlags();
+				GUIElementOptions scrollUpBtnOptions = MScrollUpBtn->GetOptionFlags();
 				scrollUpBtnOptions.Unset(GUIElementOption::AcceptsKeyFocus);
 
-				mScrollUpBtn->SetOptionFlags(scrollUpBtnOptions);
+				MScrollUpBtn->SetOptionFlags(scrollUpBtnOptions);
 
-				mScrollDownBtn = GUIButton::Create(HString(""), mOwner->mScrollDownStyle);
-				mScrollDownBtn->onClick.Connect(std::bind(&::bs::GUIDropDownMenu::DropDownSubMenu::ScrollDown, this));
+				MScrollDownBtn = GUIButton::Create(HString(""), MOwner->mScrollDownStyle);
+				MScrollDownBtn->OnClick.Connect(std::bind(&::bs::GUIDropDownMenu::DropDownSubMenu::ScrollDown, this));
 
-				GUIElementOptions scrollDownBtnOptions = mScrollDownBtn->GetOptionFlags();
+				GUIElementOptions scrollDownBtnOptions = MScrollDownBtn->GetOptionFlags();
 				scrollDownBtnOptions.Unset(GUIElementOption::AcceptsKeyFocus);
 
-				mScrollDownBtn->SetOptionFlags(scrollDownBtnOptions);
+				MScrollDownBtn->SetOptionFlags(scrollDownBtnOptions);
 
-				mHandle = GUITexture::Create(mOwner->mHandleStyle);
-				GUITexture* background = GUITexture::Create(mOwner->mSideBackgroundStyle);
+				MHandle = GUITexture::Create(MOwner->mHandleStyle);
+				GUITexture* background = GUITexture::Create(MOwner->mSideBackgroundStyle);
 				background->SetElementDepthInternal(2);
 
-				mSidebarPanel->AddElement(background);
-				mSidebarPanel->AddElement(mScrollUpBtn);
-				mSidebarPanel->AddElement(mScrollDownBtn);
-				mSidebarPanel->AddElement(mHandle);
+				MSidebarPanel->AddElement(background);
+				MSidebarPanel->AddElement(MScrollUpBtn);
+				MSidebarPanel->AddElement(MScrollDownBtn);
+				MSidebarPanel->AddElement(MHandle);
 			}
 
-			mScrollUpBtn->SetPosition(1, 1);
-			mScrollDownBtn->SetPosition(1, sidebarHeight - 1 - scrollDownStyle->height);
+			MScrollUpBtn->SetPosition(1, 1);
+			MScrollDownBtn->SetPosition(1, sidebarHeight - 1 - scrollDownStyle->Height);
 
-			UINT32 maxHandleSize = std::max(0, (INT32)sidebarHeight - (INT32)scrollDownStyle->height - (INT32)scrollUpStyle->height - 2);
+			UINT32 maxHandleSize = std::max(0, (INT32)sidebarHeight - (INT32)scrollDownStyle->Height - (INT32)scrollUpStyle->Height - 2);
 			UINT32 handleSize = maxHandleSize / pageCount;
 
-			INT32 handlePos = 1 + scrollUpStyle->height + mPage * handleSize;
+			INT32 handlePos = 1 + scrollUpStyle->Height + MPage * handleSize;
 
-			mHandle->SetPosition(1, handlePos);
-			mHandle->SetHeight(handleSize);
+			MHandle->SetPosition(1, handlePos);
+			MHandle->SetHeight(handleSize);
 
-			mSidebarPanel->SetPosition(x, actualY);
-			mSidebarPanel->SetWidth(sideBarStyle->width);
-			mSidebarPanel->SetHeight(sidebarHeight);
+			MSidebarPanel->SetPosition(X, actualY);
+			MSidebarPanel->SetWidth(sideBarStyle->Width);
+			MSidebarPanel->SetHeight(sidebarHeight);
 		}
 		else
 		{
-			if (mSidebarPanel != nullptr)
+			if (MSidebarPanel != nullptr)
 			{
-				GUIPanel::Destroy(mSidebarPanel);
-				mSidebarPanel = nullptr;
+				GUIPanel::Destroy(MSidebarPanel);
+				MSidebarPanel = nullptr;
 			}
 		}
 
-		mContent->SetRange(pageStart, pageEnd);
+		MContent->SetRange(pageStart, pageEnd);
 
-		if (mSubMenu == nullptr)
-			mContent->SetKeyboardFocus(true);
+		if (MSubMenu == nullptr)
+			MContent->SetKeyboardFocus(true);
 
 		// Resize and reposition areas
-		mBackgroundPanel->SetWidth(width - contentOffset);
-		mBackgroundPanel->SetHeight(pageHeight);
-		mBackgroundPanel->SetPosition(x + contentOffset, actualY);
+		MBackgroundPanel->SetWidth(Width - contentOffset);
+		MBackgroundPanel->SetHeight(pageHeight);
+		MBackgroundPanel->SetPosition(X + contentOffset, actualY);
 
-		mVisibleBounds = Rect2I(x, actualY, width, pageHeight);
+		MVisibleBounds = Rect2I(X, actualY, Width, pageHeight);
 
-		UINT32 contentWidth = (UINT32)std::max(0, (INT32)width - (INT32)backgroundStyle->margins.left - (INT32)backgroundStyle->margins.right - (INT32)contentOffset);
-		UINT32 contentHeight = (UINT32)std::max(0, (INT32)pageHeight - (INT32)backgroundStyle->margins.top - (INT32)backgroundStyle->margins.bottom);
+		UINT32 contentWidth = (UINT32)std::max(0, (INT32)Width - (INT32)backgroundStyle->Margins.Left - (INT32)backgroundStyle->Margins.Right - (INT32)contentOffset);
+		UINT32 contentHeight = (UINT32)std::max(0, (INT32)pageHeight - (INT32)backgroundStyle->Margins.Top - (INT32)backgroundStyle->Margins.Bottom);
 
-		mContentPanel->SetWidth(contentWidth);
-		mContentPanel->SetHeight(contentHeight);
-		mContentPanel->SetPosition(x + contentOffset + backgroundStyle->margins.left, actualY + backgroundStyle->margins.top);
+		MContentPanel->SetWidth(contentWidth);
+		MContentPanel->SetHeight(contentHeight);
+		MContentPanel->SetPosition(X + contentOffset + backgroundStyle->Margins.Left, actualY + backgroundStyle->Margins.Top);
 	}
 
 	void GUIDropDownMenu::DropDownSubMenu::ScrollDown()
 	{
-		mPage++;
-		if (mPage == (UINT32)GetPageInfos().size())
-			mPage = 0;
+		MPage++;
+		if (MPage == (UINT32)GetPageInfos().size())
+			MPage = 0;
 
 		UpdateGuiElements();
 
@@ -438,10 +438,10 @@ namespace bs
 
 	void GUIDropDownMenu::DropDownSubMenu::ScrollUp()
 	{
-		if (mPage > 0)
-			mPage--;
+		if (MPage > 0)
+			MPage--;
 		else
-			mPage = (UINT32)GetPageInfos().size() - 1;
+			MPage = (UINT32)GetPageInfos().size() - 1;
 
 		UpdateGuiElements();
 		CloseSubMenu();
@@ -449,7 +449,7 @@ namespace bs
 
 	void GUIDropDownMenu::DropDownSubMenu::ScrollToTop()
 	{
-		mPage = 0;
+		MPage = 0;
 		UpdateGuiElements();
 
 		CloseSubMenu();
@@ -457,7 +457,7 @@ namespace bs
 
 	void GUIDropDownMenu::DropDownSubMenu::ScrollToBottom()
 	{
-		mPage = (UINT32)(GetPageInfos().size() - 1);
+		MPage = (UINT32)(GetPageInfos().size() - 1);
 		UpdateGuiElements();
 
 		CloseSubMenu();
@@ -465,12 +465,12 @@ namespace bs
 
 	void GUIDropDownMenu::DropDownSubMenu::CloseSubMenu()
 	{
-		if(mSubMenu != nullptr)
+		if(MSubMenu != nullptr)
 		{
-			bs_delete(mSubMenu);
-			mSubMenu = nullptr;
+			bs_delete(MSubMenu);
+			MSubMenu = nullptr;
 
-			mContent->SetKeyboardFocus(true);
+			MContent->SetKeyboardFocus(true);
 		}
 	}
 
@@ -478,28 +478,28 @@ namespace bs
 	{
 		CloseSubMenu();
 
-		if (!mData.entries[idx].IsSubMenu())
+		if (!MData.Entries[idx].IsSubMenu())
 		{
-			auto callback = mData.entries[idx].GetCallback();
+			auto callback = MData.Entries[idx].GetCallback();
 			if (callback != nullptr)
 				callback();
 
-			if (mType != GUIDropDownType::MultiListBox)
+			if (MType != GUIDropDownType::MultiListBox)
 				GUIDropDownBoxManager::Instance().CloseDropDownBox();
 		}
 		else
 		{
-			mContent->SetKeyboardFocus(false);
+			MContent->SetKeyboardFocus(false);
 
-			mSubMenu = bs_new<DropDownSubMenu>(mOwner, this, DropDownAreaPlacement::AroundBoundsVert(bounds),
-				mAvailableBounds, mData.entries[idx].GetSubMenuData(), mType, mDepthOffset + 1);
+			MSubMenu = bs_new<DropDownSubMenu>(MOwner, this, DropDownAreaPlacement::AroundBoundsVert(bounds),
+				MAvailableBounds, MData.Entries[idx].GetSubMenuData(), MType, MDepthOffset + 1);
 		}
 	}
 
 	void GUIDropDownMenu::DropDownSubMenu::Close()
 	{
-		if (mParent != nullptr)
-			mParent->CloseSubMenu();
+		if (MParent != nullptr)
+			MParent->CloseSubMenu();
 		else // We're the last sub-menu, close the whole thing
 			GUIDropDownBoxManager::Instance().CloseDropDownBox();
 	}

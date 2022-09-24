@@ -29,39 +29,39 @@ namespace bs
 
 	void ScriptCAnimation::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_SetDefaultClip", (void*)&ScriptCAnimation::InternalSetDefaultClip);
-		metaData.scriptClass->AddInternalCall("Internal_GetDefaultClip", (void*)&ScriptCAnimation::InternalGetDefaultClip);
-		metaData.scriptClass->AddInternalCall("Internal_SetWrapMode", (void*)&ScriptCAnimation::InternalSetWrapMode);
-		metaData.scriptClass->AddInternalCall("Internal_GetWrapMode", (void*)&ScriptCAnimation::InternalGetWrapMode);
-		metaData.scriptClass->AddInternalCall("Internal_SetSpeed", (void*)&ScriptCAnimation::InternalSetSpeed);
-		metaData.scriptClass->AddInternalCall("Internal_GetSpeed", (void*)&ScriptCAnimation::InternalGetSpeed);
-		metaData.scriptClass->AddInternalCall("Internal_Play", (void*)&ScriptCAnimation::InternalPlay);
-		metaData.scriptClass->AddInternalCall("Internal_BlendAdditive", (void*)&ScriptCAnimation::InternalBlendAdditive);
-		metaData.scriptClass->AddInternalCall("Internal_Blend1D", (void*)&ScriptCAnimation::InternalBlend1D);
-		metaData.scriptClass->AddInternalCall("Internal_Blend2D", (void*)&ScriptCAnimation::InternalBlend2D);
-		metaData.scriptClass->AddInternalCall("Internal_CrossFade", (void*)&ScriptCAnimation::InternalCrossFade);
-		metaData.scriptClass->AddInternalCall("Internal_Sample", (void*)&ScriptCAnimation::InternalSample);
-		metaData.scriptClass->AddInternalCall("Internal_Stop", (void*)&ScriptCAnimation::InternalStop);
-		metaData.scriptClass->AddInternalCall("Internal_StopAll", (void*)&ScriptCAnimation::InternalStopAll);
-		metaData.scriptClass->AddInternalCall("Internal_IsPlaying", (void*)&ScriptCAnimation::InternalIsPlaying);
-		metaData.scriptClass->AddInternalCall("Internal_GetState", (void*)&ScriptCAnimation::InternalGetState);
-		metaData.scriptClass->AddInternalCall("Internal_SetState", (void*)&ScriptCAnimation::InternalSetState);
-		metaData.scriptClass->AddInternalCall("Internal_SetMorphChannelWeight", (void*)&ScriptCAnimation::InternalSetMorphChannelWeight);
-		metaData.scriptClass->AddInternalCall("Internal_SetBounds", (void*)&ScriptCAnimation::InternalSetBounds);
-		metaData.scriptClass->AddInternalCall("Internal_GetBounds", (void*)&ScriptCAnimation::InternalGetBounds);
-		metaData.scriptClass->AddInternalCall("Internal_SetUseBounds", (void*)&ScriptCAnimation::InternalSetUseBounds);
-		metaData.scriptClass->AddInternalCall("Internal_GetUseBounds", (void*)&ScriptCAnimation::InternalGetUseBounds);
-		metaData.scriptClass->AddInternalCall("Internal_SetEnableCull", (void*)&ScriptCAnimation::InternalSetEnableCull);
-		metaData.scriptClass->AddInternalCall("Internal_GetEnableCull", (void*)&ScriptCAnimation::InternalGetEnableCull);
-		metaData.scriptClass->AddInternalCall("Internal_GetNumClips", (void*)&ScriptCAnimation::InternalGetNumClips);
-		metaData.scriptClass->AddInternalCall("Internal_GetClip", (void*)&ScriptCAnimation::InternalGetClip);
-		metaData.scriptClass->AddInternalCall("Internal_RefreshClipMappingsInternal", (void*)&ScriptCAnimation::InternalRefreshClipMappingsInternal);
-		metaData.scriptClass->AddInternalCall("Internal_GetGenericCurveValueInternal", (void*)&ScriptCAnimation::InternalGetGenericCurveValueInternal);
-		metaData.scriptClass->AddInternalCall("Internal_TogglePreviewModeInternal", (void*)&ScriptCAnimation::InternalTogglePreviewModeInternal);
+		metaData.ScriptClass->AddInternalCall("Internal_SetDefaultClip", (void*)&ScriptCAnimation::InternalSetDefaultClip);
+		metaData.ScriptClass->AddInternalCall("Internal_GetDefaultClip", (void*)&ScriptCAnimation::InternalGetDefaultClip);
+		metaData.ScriptClass->AddInternalCall("Internal_SetWrapMode", (void*)&ScriptCAnimation::InternalSetWrapMode);
+		metaData.ScriptClass->AddInternalCall("Internal_GetWrapMode", (void*)&ScriptCAnimation::InternalGetWrapMode);
+		metaData.ScriptClass->AddInternalCall("Internal_SetSpeed", (void*)&ScriptCAnimation::InternalSetSpeed);
+		metaData.ScriptClass->AddInternalCall("Internal_GetSpeed", (void*)&ScriptCAnimation::InternalGetSpeed);
+		metaData.ScriptClass->AddInternalCall("Internal_Play", (void*)&ScriptCAnimation::InternalPlay);
+		metaData.ScriptClass->AddInternalCall("Internal_BlendAdditive", (void*)&ScriptCAnimation::InternalBlendAdditive);
+		metaData.ScriptClass->AddInternalCall("Internal_Blend1D", (void*)&ScriptCAnimation::InternalBlend1D);
+		metaData.ScriptClass->AddInternalCall("Internal_Blend2D", (void*)&ScriptCAnimation::InternalBlend2D);
+		metaData.ScriptClass->AddInternalCall("Internal_CrossFade", (void*)&ScriptCAnimation::InternalCrossFade);
+		metaData.ScriptClass->AddInternalCall("Internal_Sample", (void*)&ScriptCAnimation::InternalSample);
+		metaData.ScriptClass->AddInternalCall("Internal_Stop", (void*)&ScriptCAnimation::InternalStop);
+		metaData.ScriptClass->AddInternalCall("Internal_StopAll", (void*)&ScriptCAnimation::InternalStopAll);
+		metaData.ScriptClass->AddInternalCall("Internal_IsPlaying", (void*)&ScriptCAnimation::InternalIsPlaying);
+		metaData.ScriptClass->AddInternalCall("Internal_GetState", (void*)&ScriptCAnimation::InternalGetState);
+		metaData.ScriptClass->AddInternalCall("Internal_SetState", (void*)&ScriptCAnimation::InternalSetState);
+		metaData.ScriptClass->AddInternalCall("Internal_SetMorphChannelWeight", (void*)&ScriptCAnimation::InternalSetMorphChannelWeight);
+		metaData.ScriptClass->AddInternalCall("Internal_SetBounds", (void*)&ScriptCAnimation::InternalSetBounds);
+		metaData.ScriptClass->AddInternalCall("Internal_GetBounds", (void*)&ScriptCAnimation::InternalGetBounds);
+		metaData.ScriptClass->AddInternalCall("Internal_SetUseBounds", (void*)&ScriptCAnimation::InternalSetUseBounds);
+		metaData.ScriptClass->AddInternalCall("Internal_GetUseBounds", (void*)&ScriptCAnimation::InternalGetUseBounds);
+		metaData.ScriptClass->AddInternalCall("Internal_SetEnableCull", (void*)&ScriptCAnimation::InternalSetEnableCull);
+		metaData.ScriptClass->AddInternalCall("Internal_GetEnableCull", (void*)&ScriptCAnimation::InternalGetEnableCull);
+		metaData.ScriptClass->AddInternalCall("Internal_GetNumClips", (void*)&ScriptCAnimation::InternalGetNumClips);
+		metaData.ScriptClass->AddInternalCall("Internal_GetClip", (void*)&ScriptCAnimation::InternalGetClip);
+		metaData.ScriptClass->AddInternalCall("Internal_RefreshClipMappingsInternal", (void*)&ScriptCAnimation::InternalRefreshClipMappingsInternal);
+		metaData.ScriptClass->AddInternalCall("Internal_GetGenericCurveValueInternal", (void*)&ScriptCAnimation::InternalGetGenericCurveValueInternal);
+		metaData.ScriptClass->AddInternalCall("Internal_TogglePreviewModeInternal", (void*)&ScriptCAnimation::InternalTogglePreviewModeInternal);
 
-		ScriptRebuildFloatPropertiesInternalThunk = (ScriptRebuildFloatPropertiesInternalThunkDef)metaData.scriptClass->GetMethodExact("Internal_ScriptRebuildFloatPropertiesInternal", "RRef`1<AnimationClip>")->GetThunk();
-		ScriptUpdateFloatPropertiesInternalThunk = (ScriptUpdateFloatPropertiesInternalThunkDef)metaData.scriptClass->GetMethodExact("Internal_ScriptUpdateFloatPropertiesInternal", "")->GetThunk();
-		ScriptOnEventTriggeredInternalThunk = (ScriptOnEventTriggeredInternalThunkDef)metaData.scriptClass->GetMethodExact("Internal_ScriptOnEventTriggeredInternal", "RRef`1<AnimationClip>,string")->GetThunk();
+		ScriptRebuildFloatPropertiesInternalThunk = (ScriptRebuildFloatPropertiesInternalThunkDef)metaData.ScriptClass->GetMethodExact("Internal_ScriptRebuildFloatPropertiesInternal", "RRef`1<AnimationClip>")->GetThunk();
+		ScriptUpdateFloatPropertiesInternalThunk = (ScriptUpdateFloatPropertiesInternalThunkDef)metaData.ScriptClass->GetMethodExact("Internal_ScriptUpdateFloatPropertiesInternal", "")->GetThunk();
+		ScriptOnEventTriggeredInternalThunk = (ScriptOnEventTriggeredInternalThunkDef)metaData.ScriptClass->GetMethodExact("Internal_ScriptOnEventTriggeredInternal", "RRef`1<AnimationClip>,string")->GetThunk();
 	}
 
 	void ScriptCAnimation::ScriptRebuildFloatPropertiesInternal(const ResourceHandle<AnimationClip>& p0)

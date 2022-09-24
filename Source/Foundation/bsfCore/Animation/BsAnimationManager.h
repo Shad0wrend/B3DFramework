@@ -22,35 +22,35 @@ namespace bs
 		/** Contains meta-data about a calculated skeleton pose. Actual data maps to the @p transforms buffer. */
 		struct PoseInfo
 		{
-			UINT64 animId;
-			UINT32 startIdx;
-			UINT32 numBones;
+			UINT64 AnimId;
+			UINT32 StartIdx;
+			UINT32 NumBones;
 		};
 
 		/** Contains data about a calculated morph shape. */
 		struct MorphShapeInfo
 		{
-			SPtr<MeshData> meshData;
-			UINT32 version;
+			SPtr<MeshData> MeshData;
+			UINT32 Version;
 		};
 
 		/** Contains meta-data about where calculated animation data is stored. */
 		struct AnimInfo
 		{
-			PoseInfo poseInfo;
-			MorphShapeInfo morphShapeInfo;
+			PoseInfo PoseInfo;
+			MorphShapeInfo MorphShapeInfo;
 		};
 
 		/**
 		 * Maps animation ID to a animation information structure, which points to relevant skeletal or morph shape data.
 		 */
-		UnorderedMap<UINT64, AnimInfo> infos;
+		UnorderedMap<UINT64, AnimInfo> Infos;
 
 		/** Global joint transforms for all skeletons in the scene. */
-		Vector<Matrix4> transforms;
+		Vector<Matrix4> Transforms;
 
 		/** True if the animation is being evaluated asynchronously along with rendering (delayed one frame). */
-		bool async = false;
+		bool Async = false;
 	};
 
 	/**

@@ -56,40 +56,40 @@ namespace bs { namespace ct
 		 * Optional overrides for material sampler states. Used when renderer wants to override certain sampling properties
 		 * on a global scale (for example filtering most commonly).
 		 */
-		MaterialSamplerOverrides* samplerOverrides;
+		MaterialSamplerOverrides* SamplerOverrides;
 
 		/** Identifier of the animation running on the renderable's mesh. -1 if no animation. */
-		UINT64 animationId;
+		UINT64 AnimationId;
 
 		/** Type of animation applied to this element, if any. */
-		RenderableAnimType animType;
+		RenderableAnimType AnimType;
 
 		/** Binding indices representing where should the per-camera param block buffer be bound to. */
-		GpuParamBinding perCameraBindings[GPT_COUNT];
+		GpuParamBinding PerCameraBindings[GPT_COUNT];
 
 		/** Collection of parameters used for direct lighting using the forward rendering path. */
-		ForwardLightingParams forwardLightingParams;
+		ForwardLightingParams ForwardLightingParams;
 
 		/** Collection of parameters used for image based lighting. */
-		ImageBasedLightingParams imageBasedParams;
+		ImageBasedLightingParams ImageBasedParams;
 		
 		/** GPU buffer containing element's bone matrices, if it requires any. */
-		SPtr<GpuBuffer> boneMatrixBuffer;
+		SPtr<GpuBuffer> BoneMatrixBuffer;
 
 		/** GPU buffer containing element's bone matrices for the previous frame, if it requires any. */
-		SPtr<GpuBuffer> bonePrevMatrixBuffer;
+		SPtr<GpuBuffer> BonePrevMatrixBuffer;
 
 		/** Vertex buffer containing element's morph shape vertices, if it has any. */
-		SPtr<VertexBuffer> morphShapeBuffer;
+		SPtr<VertexBuffer> MorphShapeBuffer;
 
 		/** Vertex declaration used for rendering meshes containing morph shape information. */
-		SPtr<VertexDeclaration> morphVertexDeclaration;
+		SPtr<VertexDeclaration> MorphVertexDeclaration;
 
 		/** Time to used for evaluating material animation. */
-		float materialAnimationTime = 0.0f;
+		float MaterialAnimationTime = 0.0f;
 
 		/** Version of the morph shape vertices in the buffer. */
-		mutable UINT32 morphShapeVersion;
+		mutable UINT32 MorphShapeVersion;
 
 		/** @copydoc RenderElement::draw */
 		void Draw() const override;
@@ -111,15 +111,15 @@ namespace bs { namespace ct
 		 */
 		void UpdatePerCallBuffer(const Matrix4& viewProj, bool flush = true);
 
-		Matrix4 worldTfrm = Matrix4::IDENTITY;
-		Matrix4 prevWorldTfrm = Matrix4::IDENTITY;
-		PrevFrameDirtyState prevFrameDirtyState = PrevFrameDirtyState::Clean;
+		Matrix4 WorldTfrm = Matrix4::IDENTITY;
+		Matrix4 PrevWorldTfrm = Matrix4::IDENTITY;
+		PrevFrameDirtyState PrevFrameDirtyState = PrevFrameDirtyState::Clean;
 		
-		Renderable* renderable;
-		Vector<RenderableElement> elements;
+		Renderable* Renderable;
+		Vector<RenderableElement> Elements;
 
-		SPtr<GpuParamBlockBuffer> perObjectParamBuffer;
-		SPtr<GpuParamBlockBuffer> perCallParamBuffer;
+		SPtr<GpuParamBlockBuffer> PerObjectParamBuffer;
+		SPtr<GpuParamBlockBuffer> PerCallParamBuffer;
 	};
 
 	/** @} */

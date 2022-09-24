@@ -37,15 +37,15 @@ namespace bs
 
 	LimitAngularRange CHingeJoint::GetLimit() const
 	{
-		return mDesc.limit;
+		return mDesc.Limit;
 	}
 
 	void CHingeJoint::SetLimit(const LimitAngularRange& limit)
 	{
-		if (limit == mDesc.limit)
+		if (limit == mDesc.Limit)
 			return;
 
-		mDesc.limit = limit;
+		mDesc.Limit = limit;
 
 		if (mInternal != nullptr)
 			GetInternalInternal()->SetLimit(limit);
@@ -53,15 +53,15 @@ namespace bs
 
 	HingeJointDrive CHingeJoint::GetDrive() const
 	{
-		return mDesc.drive;
+		return mDesc.Drive;
 	}
 
 	void CHingeJoint::SetDrive(const HingeJointDrive& drive)
 	{
-		if (drive == mDesc.drive)
+		if (drive == mDesc.Drive)
 			return;
 
-		mDesc.drive = drive;
+		mDesc.Drive = drive;
 
 		if (mInternal != nullptr)
 			GetInternalInternal()->SetDrive(drive);
@@ -69,14 +69,14 @@ namespace bs
 
 	void CHingeJoint::SetFlag(HingeJointFlag flag, bool enabled)
 	{
-		bool isEnabled = ((UINT32)mDesc.flag & (UINT32)flag) != 0;
+		bool isEnabled = ((UINT32)mDesc.Flag & (UINT32)flag) != 0;
 		if (isEnabled == enabled)
 			return;
 
 		if (enabled)
-			mDesc.flag = (HingeJointFlag)((UINT32)mDesc.flag | (UINT32)flag);
+			mDesc.Flag = (HingeJointFlag)((UINT32)mDesc.Flag | (UINT32)flag);
 		else
-			mDesc.flag = (HingeJointFlag)((UINT32)mDesc.flag & ~(UINT32)flag);
+			mDesc.Flag = (HingeJointFlag)((UINT32)mDesc.Flag & ~(UINT32)flag);
 
 		if (mInternal != nullptr)
 			GetInternalInternal()->SetFlag(flag, enabled);
@@ -84,7 +84,7 @@ namespace bs
 
 	bool CHingeJoint::HasFlag(HingeJointFlag flag) const
 	{
-		return ((UINT32)mDesc.flag & (UINT32)flag) != 0;
+		return ((UINT32)mDesc.Flag & (UINT32)flag) != 0;
 	}
 
 	SPtr<Joint> CHingeJoint::CreateInternal()

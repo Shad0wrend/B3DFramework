@@ -40,29 +40,29 @@ namespace bs { namespace ct
 			return;
 		}
 
-		if(!mBytecode || mBytecode->compilerId != DIRECTX_COMPILER_ID)
+		if(!mBytecode || mBytecode->CompilerId != DIRECTX_COMPILER_ID)
 		{
 			GPU_PROGRAM_DESC desc;
-			desc.type = mType;
-			desc.entryPoint = mEntryPoint;
-			desc.source = mSource;
-			desc.language = "hlsl";
+			desc.Type = mType;
+			desc.EntryPoint = mEntryPoint;
+			desc.Source = mSource;
+			desc.Language = "hlsl";
 
 			mBytecode = CompileBytecode(desc);
 		}
 
-		mCompileMessages = mBytecode->messages;
-		mIsCompiled = mBytecode->instructions.data != nullptr;
+		mCompileMessages = mBytecode->Messages;
+		mIsCompiled = mBytecode->Instructions.Data != nullptr;
 
 		if(mIsCompiled)
 		{
-			mParametersDesc = mBytecode->paramDesc;
+			mParametersDesc = mBytecode->ParamDesc;
 
 			D3D11RenderAPI* rapi = static_cast<D3D11RenderAPI*>(RenderAPI::InstancePtr());
-			LoadFromMicrocode(rapi->GetPrimaryDevice(), mBytecode->instructions);
+			LoadFromMicrocode(rapi->GetPrimaryDevice(), mBytecode->Instructions);
 
 			if(mType == GPT_VERTEX_PROGRAM)
-				mInputDeclaration = HardwareBufferManager::Instance().CreateVertexDeclaration(mBytecode->vertexInput);
+				mInputDeclaration = HardwareBufferManager::Instance().CreateVertexDeclaration(mBytecode->VertexInput);
 			
 		}
 
@@ -85,7 +85,7 @@ namespace bs { namespace ct
 	void D3D11GpuVertexProgram::LoadFromMicrocode(D3D11Device& device, const DataBlob& microcode)
 	{
 		HRESULT hr = device.GetD3D11Device()->CreateVertexShader(
-			microcode.data, microcode.size, device.GetClassLinkage(), &mVertexShader);
+			microcode.Data, microcode.Size, device.GetClassLinkage(), &mVertexShader);
 
 		if (FAILED(hr) || device.HasError())
 		{
@@ -113,7 +113,7 @@ namespace bs { namespace ct
 	void D3D11GpuFragmentProgram::LoadFromMicrocode(D3D11Device& device, const DataBlob& microcode)
 	{
 		HRESULT hr = device.GetD3D11Device()->CreatePixelShader(
-			microcode.data, microcode.size, device.GetClassLinkage(), &mPixelShader);
+			microcode.Data, microcode.Size, device.GetClassLinkage(), &mPixelShader);
 
 		if (FAILED(hr) || device.HasError())
 		{
@@ -141,7 +141,7 @@ namespace bs { namespace ct
 	void D3D11GpuGeometryProgram::LoadFromMicrocode(D3D11Device& device, const DataBlob& microcode)
 	{
 		HRESULT hr = device.GetD3D11Device()->CreateGeometryShader(
-			microcode.data, microcode.size, device.GetClassLinkage(), &mGeometryShader);
+			microcode.Data, microcode.Size, device.GetClassLinkage(), &mGeometryShader);
 
 		if (FAILED(hr) || device.HasError())
 		{
@@ -168,7 +168,7 @@ namespace bs { namespace ct
 	void D3D11GpuDomainProgram::LoadFromMicrocode(D3D11Device& device, const DataBlob& microcode)
 	{
 		HRESULT hr = device.GetD3D11Device()->CreateDomainShader(
-			microcode.data, microcode.size, device.GetClassLinkage(), &mDomainShader);
+			microcode.Data, microcode.Size, device.GetClassLinkage(), &mDomainShader);
 
 		if (FAILED(hr) || device.HasError())
 		{
@@ -196,7 +196,7 @@ namespace bs { namespace ct
 	{
 		// Create the shader
 		HRESULT hr = device.GetD3D11Device()->CreateHullShader(
-			microcode.data, microcode.size, device.GetClassLinkage(), &mHullShader);
+			microcode.Data, microcode.Size, device.GetClassLinkage(), &mHullShader);
 
 		if (FAILED(hr) || device.HasError())
 		{
@@ -224,7 +224,7 @@ namespace bs { namespace ct
 	void D3D11GpuComputeProgram::LoadFromMicrocode(D3D11Device& device, const DataBlob& microcode)
 	{
 		HRESULT hr = device.GetD3D11Device()->CreateComputeShader(
-			microcode.data, microcode.size, device.GetClassLinkage(), &mComputeShader);
+			microcode.Data, microcode.Size, device.GetClassLinkage(), &mComputeShader);
 
 		if (FAILED(hr) || device.HasError())
 		{

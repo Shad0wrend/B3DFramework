@@ -16,7 +16,7 @@ namespace bs
 
 	MonoObject*ScriptPARTICLE_COLLISIONS_DESC::Box(const PARTICLE_COLLISIONS_DESC& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	PARTICLE_COLLISIONS_DESC ScriptPARTICLE_COLLISIONS_DESC::Unbox(MonoObject* value)

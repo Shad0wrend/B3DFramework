@@ -30,16 +30,16 @@ namespace bs
 		struct CoreStoredSyncObjData
 		{
 			CoreStoredSyncObjData()
-				:internalId(0)
+				:InternalId(0)
 			{ }
 
 			CoreStoredSyncObjData(const SPtr<ct::CoreObject> destObj, UINT64 internalId, const CoreSyncData& syncData)
-				:destinationObj(destObj), syncData(syncData), internalId(internalId)
+				:DestinationObj(destObj), SyncData(syncData), InternalId(internalId)
 			{ }
 
-			SPtr<ct::CoreObject> destinationObj;
-			CoreSyncData syncData;
-			UINT64 internalId;
+			SPtr<ct::CoreObject> DestinationObj;
+			CoreSyncData SyncData;
+			UINT64 InternalId;
 		};
 
 		/**
@@ -48,16 +48,16 @@ namespace bs
 		 */
 		struct CoreStoredSyncData
 		{
-			FrameAlloc* alloc = nullptr;
-			Vector<CoreStoredSyncObjData> entries;
-			Vector<SPtr<ct::CoreObject>> destroyedObjects;
+			FrameAlloc* Alloc = nullptr;
+			Vector<CoreStoredSyncObjData> Entries;
+			Vector<SPtr<ct::CoreObject>> DestroyedObjects;
 		};
 
 		/** Contains information about a dirty CoreObject that requires syncing to the core thread. */	
 		struct DirtyObjectData
 		{
-			CoreObject* object;
-			INT32 syncDataId;
+			CoreObject* Object;
+			INT32 SyncDataId;
 		};
 
 	public:

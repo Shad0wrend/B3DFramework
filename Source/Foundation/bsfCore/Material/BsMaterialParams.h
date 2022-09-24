@@ -56,21 +56,21 @@ namespace bs
 		/** Meta-data about a parameter. */
 		struct ParamData
 		{
-			ParamType type;
-			GpuParamDataType dataType;
-			UINT32 index;
-			UINT32 arraySize;
-			mutable UINT64 version;
+			ParamType Type;
+			GpuParamDataType DataType;
+			UINT32 Index;
+			UINT32 ArraySize;
+			mutable UINT64 Version;
 		};
 
 		/** Information about a single data parameter in a material. */
 		struct DataParamInfo
 		{
-			UINT32 offset;
+			UINT32 Offset;
 
-			TAnimationCurve<float>* floatCurve;
-			ColorGradientHDR* colorGradient;
-			UINT32 spriteTextureIdx;
+			TAnimationCurve<float>* FloatCurve;
+			ColorGradientHDR* ColorGradient;
+			UINT32 SpriteTextureIdx;
 		};
 
 		/**
@@ -283,13 +283,13 @@ namespace bs
 		{
 			GpuParamDataType dataType = (GpuParamDataType)TGpuDataParamInfo<T>::TypeId;
 
-			const DataParamInfo& paramInfo = mDataParams[param.index + arrayIdx];
+			const DataParamInfo& paramInfo = mDataParams[param.Index + arrayIdx];
 
-			const GpuParamDataTypeInfo& typeInfo = GpuParams::PARAM_SIZES.lookup[dataType];
-			UINT32 paramTypeSize = typeInfo.numColumns * typeInfo.numRows * typeInfo.baseTypeSize;
+			const GpuParamDataTypeInfo& typeInfo = GpuParams::PARAM_SIZES.Lookup[dataType];
+			UINT32 paramTypeSize = typeInfo.NumColumns * typeInfo.NumRows * typeInfo.BaseTypeSize;
 
 			assert(sizeof(output) == paramTypeSize);
-			memcpy(&output, &mDataParamsBuffer[paramInfo.offset], paramTypeSize);
+			memcpy(&output, &mDataParamsBuffer[paramInfo.Offset], paramTypeSize);
 		}
 
 		/**
@@ -302,26 +302,26 @@ namespace bs
 		{
 			GpuParamDataType dataType = (GpuParamDataType)TGpuDataParamInfo<T>::TypeId;
 
-			DataParamInfo& paramInfo = mDataParams[param.index + arrayIdx];
-			if (paramInfo.floatCurve)
+			DataParamInfo& paramInfo = mDataParams[param.Index + arrayIdx];
+			if (paramInfo.FloatCurve)
 			{
-				bs_pool_free(paramInfo.floatCurve);
-				paramInfo.floatCurve = nullptr;
+				bs_pool_free(paramInfo.FloatCurve);
+				paramInfo.FloatCurve = nullptr;
 			}
 
-			if (paramInfo.colorGradient)
+			if (paramInfo.ColorGradient)
 			{
-				bs_pool_free(paramInfo.colorGradient);
-				paramInfo.colorGradient = nullptr;
+				bs_pool_free(paramInfo.ColorGradient);
+				paramInfo.ColorGradient = nullptr;
 			}
 
-			const GpuParamDataTypeInfo& typeInfo = GpuParams::PARAM_SIZES.lookup[dataType];
-			UINT32 paramTypeSize = typeInfo.numColumns * typeInfo.numRows * typeInfo.baseTypeSize;
+			const GpuParamDataTypeInfo& typeInfo = GpuParams::PARAM_SIZES.Lookup[dataType];
+			UINT32 paramTypeSize = typeInfo.NumColumns * typeInfo.NumRows * typeInfo.BaseTypeSize;
 
 			assert(sizeof(input) == paramTypeSize);
-			memcpy(&mDataParamsBuffer[paramInfo.offset], &input, paramTypeSize);
+			memcpy(&mDataParamsBuffer[paramInfo.Offset], &input, paramTypeSize);
 
-			param.version = ++mParamVersion;
+			param.Version = ++mParamVersion;
 		}
 
 		/**
@@ -337,9 +337,9 @@ namespace bs
 			// Only supported for float types
 			if(dataType == GPDT_FLOAT1)
 			{
-				const DataParamInfo& paramInfo = mDataParams[param.index + arrayIdx];
-				if (paramInfo.floatCurve)
-					return *paramInfo.floatCurve;
+				const DataParamInfo& paramInfo = mDataParams[param.Index + arrayIdx];
+				if (paramInfo.FloatCurve)
+					return *paramInfo.FloatCurve;
 			}
 
 			static TAnimationCurve<T> EMPTY_CURVE;
@@ -359,13 +359,13 @@ namespace bs
 			// Only supported for float types
 			if(dataType == GPDT_FLOAT1)
 			{
-				DataParamInfo& paramInfo = mDataParams[param.index + arrayIdx];
-				if(paramInfo.floatCurve)
-					bs_pool_free(paramInfo.floatCurve);
+				DataParamInfo& paramInfo = mDataParams[param.Index + arrayIdx];
+				if(paramInfo.FloatCurve)
+					bs_pool_free(paramInfo.FloatCurve);
 
-				paramInfo.floatCurve = bs_pool_new<TAnimationCurve<T>>(std::move(input));
+				paramInfo.FloatCurve = bs_pool_new<TAnimationCurve<T>>(std::move(input));
 
-				param.version = ++mParamVersion;
+				param.Version = ++mParamVersion;
 			}
 		}
 
@@ -386,7 +386,7 @@ namespace bs
 		/** Returns pointer to the internal data buffer for a data parameter at the specified index. */
 		UINT8* GetData(UINT32 index) const
 		{
-			return &mDataParamsBuffer[mDataParams[index].offset];
+			return &mDataParamsBuffer[mDataParams[index].Offset];
 		}
 
 		/** Returns a counter that gets incremented whenever a parameter gets updated. */
@@ -416,16 +416,16 @@ namespace bs
 	class BS_CORE_EXPORT MaterialParamStructDataCore
 	{
 	public:
-		UINT8* data;
-		UINT32 dataSize;
+		UINT8* Data;
+		UINT32 DataSize;
 	};
 
 	/** Raw data for a single structure parameter. */
 	class BS_CORE_EXPORT MaterialParamStructData : public IReflectable
 	{
 	public:
-		UINT8* data;
-		UINT32 dataSize;
+		UINT8* Data;
+		UINT32 DataSize;
 
 		friend class MaterialParamStructDataRTTI;
 		static RTTITypeBase* GetRttiStatic();
@@ -436,20 +436,20 @@ namespace bs
 	class BS_CORE_EXPORT MaterialParamTextureDataCore
 	{
 	public:
-		SPtr<ct::Texture> texture;
-		SPtr<ct::SpriteTexture> spriteTexture;
-		bool isLoadStore;
-		TextureSurface surface;
+		SPtr<ct::Texture> Texture;
+		SPtr<ct::SpriteTexture> SpriteTexture;
+		bool IsLoadStore;
+		TextureSurface Surface;
 	};
 
 	/** Data for a single texture parameter. */
 	class BS_CORE_EXPORT MaterialParamTextureData : public IReflectable
 	{
 	public:
-		HTexture texture;
-		HSpriteTexture spriteTexture;
-		bool isLoadStore;
-		TextureSurface surface;
+		HTexture Texture;
+		HSpriteTexture SpriteTexture;
+		bool IsLoadStore;
+		TextureSurface Surface;
 
 		friend class MaterialParamTextureDataRTTI;
 		static RTTITypeBase* GetRttiStatic();
@@ -460,28 +460,28 @@ namespace bs
 	class BS_CORE_EXPORT MaterialParamBufferDataCore
 	{
 	public:
-		SPtr<ct::GpuBuffer> value;
+		SPtr<ct::GpuBuffer> Value;
 	};
 
 	/** Data for a single buffer parameter. */
 	class BS_CORE_EXPORT MaterialParamBufferData
 	{
 	public:
-		SPtr<GpuBuffer> value;
+		SPtr<GpuBuffer> Value;
 	};
 
 	/** Data for a single sampler state parameter. */
 	class BS_CORE_EXPORT MaterialParamSamplerStateDataCore
 	{
 	public:
-		SPtr<ct::SamplerState> value;
+		SPtr<ct::SamplerState> Value;
 	};
 
 	/** Data for a single sampler state parameter. */
 	class BS_CORE_EXPORT MaterialParamSamplerStateData
 	{
 	public:
-		SPtr<SamplerState> value;
+		SPtr<SamplerState> Value;
 	};
 
 	/** Helper typedefs that reference types used by either core or sim thread implementation of TMaterialParams<Core>. */

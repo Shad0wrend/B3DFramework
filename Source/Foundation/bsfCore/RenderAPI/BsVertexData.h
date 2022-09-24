@@ -42,10 +42,10 @@ namespace bs { namespace ct
 		UINT32 GetMaxBufferIndex() const { return mMaxBufferIdx; }
 
 		/**	Declaration used for the contained vertex buffers. */
-		SPtr<VertexDeclaration> vertexDeclaration;
+		SPtr<VertexDeclaration> VertexDeclaration;
 
 		/**	Number of vertices to use. */
-		UINT32 vertexCount = 0;
+		UINT32 VertexCount = 0;
 
 	private:
 		void RecalculateMaxIndex();

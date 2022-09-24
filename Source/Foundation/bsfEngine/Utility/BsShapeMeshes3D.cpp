@@ -719,8 +719,8 @@ namespace bs
 				Vector3 normal = Vector3::Normalize(position);
 
 				Vector2 uv;
-				uv.x = 0.5f - atan2(normal.x, normal.z) / Math::TWO_PI;
-				uv.y = 0.5f - asin(normal.y) / Math::PI;
+				uv.X = 0.5f - atan2(normal.X, normal.Z) / Math::TWO_PI;
+				uv.Y = 0.5f - asin(normal.Y) / Math::PI;
 
 				curUV = writeVector2(curUV, vertexStride, uv);
 			}
@@ -763,12 +763,12 @@ namespace bs
 
 				UINT32 indexToSplit = (UINT32)-1;
 				float offset = 1.0f;
-				if(fabs(uv2.x - uv0.x) > 0.5f)
+				if(fabs(uv2.X - uv0.X) > 0.5f)
 				{
-					if(uv0.x < 0.5f)
+					if(uv0.X < 0.5f)
 					{
 						// 2 is the odd-one out, > 0.5
-						if(uv1.x < 0.5f)
+						if(uv1.X < 0.5f)
 						{
 							indexToSplit = 2;
 							offset = -1.0f;
@@ -783,7 +783,7 @@ namespace bs
 					else
 					{
 						// 2 is the odd-one out, < 0.5
-						if(uv1.x > 0.5f)
+						if(uv1.X > 0.5f)
 						{
 							indexToSplit = 2;
 							offset = 1.0f;
@@ -797,12 +797,12 @@ namespace bs
 
 					}
 				}
-				else if(fabs(uv1.x - uv0.x) > 0.5f)
+				else if(fabs(uv1.X - uv0.X) > 0.5f)
 				{
-					if(uv0.x < 0.5f)
+					if(uv0.X < 0.5f)
 					{
 						// 1 is the odd-one out, > 0.5
-						if(uv2.x < 0.5f)
+						if(uv2.X < 0.5f)
 						{
 							indexToSplit = 1;
 							offset = -1.0f;
@@ -817,7 +817,7 @@ namespace bs
 					else
 					{
 						// 1 is the odd-one out, < 0.5
-						if(uv2.x > 0.5f)
+						if(uv2.X > 0.5f)
 						{
 							indexToSplit = 1;
 							offset = 1.0f;
@@ -830,12 +830,12 @@ namespace bs
 						}
 					}
 				}
-				else if(fabs(uv1.x - uv2.x) > 0.5f)
+				else if(fabs(uv1.X - uv2.X) > 0.5f)
 				{
-					if(uv2.x < 0.5f)
+					if(uv2.X < 0.5f)
 					{
 						// 1 is the odd-one out, > 0.5
-						if(uv0.x < 0.5f)
+						if(uv0.X < 0.5f)
 						{
 							indexToSplit = 1;
 							offset = -1.0f;
@@ -850,7 +850,7 @@ namespace bs
 					else
 					{
 						// 1 is the odd-one out, < 0.5
-						if(uv0.x > 0.5f)
+						if(uv0.X > 0.5f)
 						{
 							indexToSplit = 1;
 							offset = 1.0f;
@@ -876,7 +876,7 @@ namespace bs
 					}
 
 					Vector2 uv = *(Vector2*)&outUV[(i + indexToSplit) * vertexStride];
-					uv.x += offset;
+					uv.X += offset;
 
 					extraUV = writeVector2(extraUV, vertexStride, uv);
 
@@ -974,8 +974,8 @@ namespace bs
 				Vector3 diff = Vector3::Normalize(vec - center);
 
 				Vector2 uv;
-				uv.x = Vector3::Dot(diff, right) * 0.5f + 0.5f;
-				uv.y = Vector3::Dot(diff, top) * 0.5f + 0.5f;
+				uv.X = Vector3::Dot(diff, right) * 0.5f + 0.5f;
+				uv.Y = Vector3::Dot(diff, top) * 0.5f + 0.5f;
 
 				outUV = writeVector2(outUV, vertexStride, uv);
 			}
@@ -989,8 +989,8 @@ namespace bs
 				Vector3 diff = Vector3::Normalize(vec - center);
 
 				Vector2 uv;
-				uv.x = Vector3::Dot(diff, -right) * 0.5f + 0.5f;
-				uv.y = Vector3::Dot(diff, -top) * 0.5f + 0.5f;
+				uv.X = Vector3::Dot(diff, -right) * 0.5f + 0.5f;
+				uv.Y = Vector3::Dot(diff, -top) * 0.5f + 0.5f;
 
 				outUV = writeVector2(outUV, vertexStride, uv);
 			}
@@ -1096,8 +1096,8 @@ namespace bs
 				Vector3 diff = Vector3::Normalize(vec - base);
 
 				Vector2 uv;
-				uv.x = Vector3::Dot(diff, right) * 0.5f + 0.5f;
-				uv.y = Vector3::Dot(diff, top) * 0.5f + 0.5f;
+				uv.X = Vector3::Dot(diff, right) * 0.5f + 0.5f;
+				uv.Y = Vector3::Dot(diff, top) * 0.5f + 0.5f;
 
 				outUV = writeVector2(outUV, vertexStride, uv);
 			}
@@ -1180,8 +1180,8 @@ namespace bs
 			for (UINT32 i = 0; i < numArcVertices; i++)
 			{
 				Vector2 uv;
-				uv.x = angle / Math::TWO_PI;
-				uv.y = 1.0f;
+				uv.X = angle / Math::TWO_PI;
+				uv.Y = 1.0f;
 
 				outUV = writeVector2(outUV, vertexStride, uv);
 				angle += angleIncrement;
@@ -1192,8 +1192,8 @@ namespace bs
 			for (UINT32 i = 0; i < numArcVertices; i++)
 			{
 				Vector2 uv;
-				uv.x = angle / Math::TWO_PI;
-				uv.y = 0.0f;
+				uv.X = angle / Math::TWO_PI;
+				uv.Y = 0.0f;
 
 				outUV = writeVector2(outUV, vertexStride, uv);
 				angle += angleIncrement;
@@ -1295,8 +1295,8 @@ namespace bs
 				Vector3 diff = Vector3::Normalize(vec - base);
 
 				Vector2 uv;
-				uv.x = Vector3::Dot(diff, right) * 0.5f + 0.5f;
-				uv.y = Vector3::Dot(diff, top) * 0.5f + 0.5f;
+				uv.X = Vector3::Dot(diff, right) * 0.5f + 0.5f;
+				uv.Y = Vector3::Dot(diff, top) * 0.5f + 0.5f;
 
 				outUV = writeVector2(outUV, vertexStride, uv);
 			}
@@ -1352,8 +1352,8 @@ namespace bs
 				Vector3 diff = Vector3::Normalize(vec - topVertex);
 
 				Vector2 uv;
-				uv.x = Vector3::Dot(diff, right) * 0.5f + 0.5f;
-				uv.y = Vector3::Dot(diff, top) * 0.5f + 0.5f;
+				uv.X = Vector3::Dot(diff, right) * 0.5f + 0.5f;
+				uv.Y = Vector3::Dot(diff, top) * 0.5f + 0.5f;
 
 				outUV = writeVector2(outUV, vertexStride, uv);
 			}
@@ -1434,8 +1434,8 @@ namespace bs
 			for (UINT32 i = 0; i < numArcVertices + 1; i++)
 			{
 				Vector2 uv;
-				uv.x = angle / Math::TWO_PI;
-				uv.y = 1.0f;
+				uv.X = angle / Math::TWO_PI;
+				uv.Y = 1.0f;
 
 				outUV = writeVector2(outUV, vertexStride, uv);
 				angle += angleIncrement;
@@ -1445,8 +1445,8 @@ namespace bs
 			for (UINT32 i = 0; i < numArcVertices + 1; i++)
 			{
 				Vector2 uv;
-				uv.x = angle / Math::TWO_PI;
-				uv.y = 0.0f;
+				uv.X = angle / Math::TWO_PI;
+				uv.Y = 0.0f;
 
 				outUV = writeVector2(outUV, vertexStride, uv);
 				angle += angleIncrement;
@@ -1710,7 +1710,7 @@ namespace bs
 		}
 
 		Color transparentColor = color;
-		transparentColor.a = 0.0f;
+		transparentColor.A = 0.0f;
 
 		for (UINT32 i = 0, j = numCoords - 1; i < numCoords; j = i++)
 		{
@@ -1867,7 +1867,7 @@ namespace bs
 			Vector3 engineBitangent = Vector3::Cross(normal, tangent);
 			float sign = Vector3::Dot(engineBitangent, bitangent);
 
-			Vector4 packedTangent(tangent.x, tangent.y, tangent.z, sign > 0 ? 1.0f : -1.0f);
+			Vector4 packedTangent(tangent.X, tangent.Y, tangent.Z, sign > 0 ? 1.0f : -1.0f);
 			memcpy(tangents + (vertexOffset + i) * vertexStride, &packedTangent, sizeof(Vector4));
 		}
 

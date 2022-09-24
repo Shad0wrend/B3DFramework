@@ -9,7 +9,7 @@ namespace bs
 	{
 		Vector2 diff = rhs.GetOrigin() - GetOrigin();
 		Vector2 perpDir = rhs.GetDirection();
-		perpDir = Vector2(perpDir.y, -perpDir.x);
+		perpDir = Vector2(perpDir.Y, -perpDir.X);
 
 		float dot = GetDirection().Dot(perpDir);
 		if (std::abs(dot) > 1.0e-4f) // Not parallel

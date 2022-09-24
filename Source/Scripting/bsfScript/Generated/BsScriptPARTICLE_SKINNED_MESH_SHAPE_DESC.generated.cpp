@@ -19,7 +19,7 @@ namespace bs
 
 	MonoObject*ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC::Box(const __PARTICLE_SKINNED_MESH_SHAPE_DESCInterop& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	__PARTICLE_SKINNED_MESH_SHAPE_DESCInterop ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC::Unbox(MonoObject* value)
@@ -30,14 +30,14 @@ namespace bs
 	PARTICLE_SKINNED_MESH_SHAPE_DESC ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC::FromInterop(const __PARTICLE_SKINNED_MESH_SHAPE_DESCInterop& value)
 	{
 		PARTICLE_SKINNED_MESH_SHAPE_DESC output;
-		output.type = value.type;
-		output.sequential = value.sequential;
+		output.Type = value.Type;
+		output.Sequential = value.Sequential;
 		GameObjectHandle<CRenderable> tmprenderable;
 		ScriptCRenderable* scriptrenderable;
-		scriptrenderable = ScriptCRenderable::ToNative(value.renderable);
+		scriptrenderable = ScriptCRenderable::ToNative(value.Renderable);
 		if(scriptrenderable != nullptr)
 			tmprenderable = scriptrenderable->GetHandle();
-		output.renderable = tmprenderable;
+		output.Renderable = tmprenderable;
 
 		return output;
 	}
@@ -45,17 +45,17 @@ namespace bs
 	__PARTICLE_SKINNED_MESH_SHAPE_DESCInterop ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC::ToInterop(const PARTICLE_SKINNED_MESH_SHAPE_DESC& value)
 	{
 		__PARTICLE_SKINNED_MESH_SHAPE_DESCInterop output;
-		output.type = value.type;
-		output.sequential = value.sequential;
+		output.Type = value.Type;
+		output.Sequential = value.Sequential;
 		ScriptComponentBase* scriptrenderable = nullptr;
-		if(value.renderable.GetComponent())
-			scriptrenderable = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(value.renderable.GetComponent()));
+		if(value.Renderable.GetComponent())
+			scriptrenderable = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(value.Renderable.GetComponent()));
 		MonoObject* tmprenderable;
 		if(scriptrenderable != nullptr)
 			tmprenderable = scriptrenderable->GetManagedInstance();
 		else
 			tmprenderable = nullptr;
-		output.renderable = tmprenderable;
+		output.Renderable = tmprenderable;
 
 		return output;
 	}

@@ -25,7 +25,7 @@ namespace bs
 
 	void ScriptManagedResource::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptManagedResource::InternalCreateInstance);
+		metaData.ScriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptManagedResource::InternalCreateInstance);
 	}
 
 	void ScriptManagedResource::InternalCreateInstance(MonoObject* instance)
@@ -41,7 +41,7 @@ namespace bs
 		if (!ScriptAssemblyManager::Instance().GetSerializableObjectInfo(mNamespace, mType, currentObjInfo))
 			return nullptr;
 
-		MonoObject* instance = currentObjInfo->mMonoClass->CreateInstance(construct);
+		MonoObject* instance = currentObjInfo->MMonoClass->CreateInstance(construct);
 		mGCHandle = MonoUtil::NewGcHandle(instance, false);
 
 		return instance;
@@ -55,7 +55,7 @@ namespace bs
 	ScriptObjectBackup ScriptManagedResource::BeginRefresh()
 	{
 		ScriptObjectBackup backupData;
-		backupData.data = mResource->Backup();
+		backupData.Data = mResource->Backup();
 
 		return backupData;
 	}
@@ -64,7 +64,7 @@ namespace bs
 	{
 		MonoObject* instance = MonoUtil::GetObjectFromGcHandle(mGCHandle);
 
-		ResourceBackupData resourceBackup = any_cast<ResourceBackupData>(backupData.data);
+		ResourceBackupData resourceBackup = any_cast<ResourceBackupData>(backupData.Data);
 		mResource->Restore(resourceBackup);
 
 		// If we could not find resource type after refresh, treat it as if it was destroyed

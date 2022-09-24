@@ -35,7 +35,7 @@ namespace bs
 			/**	Resets the elapsed time to zero. */
 			void Reset();
 
-			double time;
+			double Time;
 		private:
 			double startTime = 0.0f;
 			std::chrono::high_resolution_clock mHRClock;
@@ -59,7 +59,7 @@ namespace bs
 			/**	Resets the cycle count to zero. */
 			void Reset();
 
-			UINT64 cycles;
+			UINT64 Cycles;
 		private:
 			UINT64 startCycles;
 
@@ -77,12 +77,12 @@ namespace bs
 		struct ProfileSample
 		{
 			ProfileSample(double _time, UINT64 _numAllocs, UINT64 _numFrees)
-				:time(_time), numAllocs(_numAllocs), numFrees(_numFrees)
+				:Time(_time), NumAllocs(_numAllocs), NumFrees(_numFrees)
 			{ }
 
-			double time;
-			UINT64 numAllocs;
-			UINT64 numFrees;
+			double Time;
+			UINT64 NumAllocs;
+			UINT64 NumFrees;
 		};
 
 		/**
@@ -95,12 +95,12 @@ namespace bs
 		struct PreciseProfileSample
 		{
 			PreciseProfileSample(UINT64 _cycles, UINT64 _numAllocs, UINT64 _numFrees)
-				:cycles(_cycles), numAllocs(_numAllocs), numFrees(_numFrees)
+				:Cycles(_cycles), NumAllocs(_numAllocs), NumFrees(_numFrees)
 			{ }
 
-			UINT64 cycles;
-			UINT64 numAllocs;
-			UINT64 numFrees;
+			UINT64 Cycles;
+			UINT64 NumAllocs;
+			UINT64 NumFrees;
 		};
 
 		/**	Contains basic (time based) profiling data contained in a profiling block. */
@@ -123,11 +123,11 @@ namespace bs
 			 */
 			void ResumeLastSample();
 
-			Vector<ProfileSample, StdFrameAlloc<ProfileSample>> samples;
-			Timer timer;
+			Vector<ProfileSample, StdFrameAlloc<ProfileSample>> Samples;
+			Timer Timer;
 
-			UINT64 memAllocs;
-			UINT64 memFrees;
+			UINT64 MemAllocs;
+			UINT64 MemFrees;
 		};
 
 		/**	Contains precise (CPU cycle based) profiling data contained in a profiling block. */
@@ -150,11 +150,11 @@ namespace bs
 			 */
 			void ResumeLastSample();
 
-			Vector<PreciseProfileSample, StdFrameAlloc<PreciseProfileSample>> samples;
-			TimerPrecise timer;
+			Vector<PreciseProfileSample, StdFrameAlloc<PreciseProfileSample>> Samples;
+			TimerPrecise Timer;
 
-			UINT64 memAllocs;
-			UINT64 memFrees;
+			UINT64 MemAllocs;
+			UINT64 MemFrees;
 		};
 
 		/**
@@ -169,12 +169,12 @@ namespace bs
 			/**	Attempts to find a child block with the specified name. Returns null if not found. */
 			ProfiledBlock* FindChild(const char* name) const;
 
-			char* name;
+			char* Name;
 			
-			ProfileData basic;
-			PreciseProfileData precise;
+			ProfileData Basic;
+			PreciseProfileData Precise;
 
-			Vector<ProfiledBlock*, StdFrameAlloc<ProfiledBlock*>> children;
+			Vector<ProfiledBlock*, StdFrameAlloc<ProfiledBlock*>> Children;
 		};
 
 		/**	CPU sampling type. */
@@ -188,15 +188,15 @@ namespace bs
 		struct ActiveBlock
 		{
 			ActiveBlock()
-				:type(ActiveSamplingType::Basic), block(nullptr)
+				:Type(ActiveSamplingType::Basic), Block(nullptr)
 			{ }
 
 			ActiveBlock(ActiveSamplingType _type, ProfiledBlock* _block)
-				:type(_type), block(_block)
+				:Type(_type), Block(_block)
 			{ }
 
-			ActiveSamplingType type;
-			ProfiledBlock* block;
+			ActiveSamplingType Type;
+			ProfiledBlock* Block;
 		};
 
 		/** Contains data about an active profiling thread. */
@@ -228,13 +228,13 @@ namespace bs
 			void ReleaseBlock(ProfiledBlock* block);
 
 			static BS_THREADLOCAL ThreadInfo* activeThread;
-			bool isActive = false;
+			bool IsActive = false;
 
-			ProfiledBlock* rootBlock = nullptr;
+			ProfiledBlock* RootBlock = nullptr;
 
-			FrameAlloc frameAlloc;
-			ActiveBlock activeBlock;
-			Stack<ActiveBlock, StdFrameAlloc<ActiveBlock>>* activeBlocks = nullptr;
+			FrameAlloc FrameAlloc;
+			ActiveBlock ActiveBlock;
+			Stack<ProfilerCPU::ActiveBlock, StdFrameAlloc<ProfilerCPU::ActiveBlock>>* ActiveBlocks = nullptr;
 		};
 
 	public:
@@ -331,26 +331,26 @@ namespace bs
 		{
 			Data() = default;
 
-			String name; /**< Name of the profiling block. */
-			UINT32 numCalls = 0; /**< Number of times the block was entered. */
+			String Name; /**< Name of the profiling block. */
+			UINT32 NumCalls = 0; /**< Number of times the block was entered. */
 
-			UINT64 memAllocs; /**< Number of memory allocations that happened within the block. */
-			UINT64 memFrees; /**< Number of memory deallocations that happened within the block. */
+			UINT64 MemAllocs; /**< Number of memory allocations that happened within the block. */
+			UINT64 MemFrees; /**< Number of memory deallocations that happened within the block. */
 
-			double avgTimeMs = 0.0; /**< Average time it took to execute the block, per call. In milliseconds. */
-			double maxTimeMs = 0.0; /**< Maximum time of a single call in the block. In milliseconds. */
-			double totalTimeMs = 0.0; /**< Total time the block took, across all calls. In milliseconds. */
+			double AvgTimeMs = 0.0; /**< Average time it took to execute the block, per call. In milliseconds. */
+			double MaxTimeMs = 0.0; /**< Maximum time of a single call in the block. In milliseconds. */
+			double TotalTimeMs = 0.0; /**< Total time the block took, across all calls. In milliseconds. */
 
-			double avgSelfTimeMs = 0.0; /**< Average time it took to execute the block, per call. Ignores time used by child blocks. In milliseconds. */
-			double totalSelfTimeMs = 0.0; /**< Total time the block took, across all calls. Ignores time used by child blocks. In milliseconds. */
+			double AvgSelfTimeMs = 0.0; /**< Average time it took to execute the block, per call. Ignores time used by child blocks. In milliseconds. */
+			double TotalSelfTimeMs = 0.0; /**< Total time the block took, across all calls. Ignores time used by child blocks. In milliseconds. */
 
-			double estimatedSelfOverheadMs = 0.0; /**< Estimated overhead of profiling methods, only for this exact block. In milliseconds. */
-			double estimatedOverheadMs = 0.0; /**< Estimated overhead of profiling methods for this block and all children. In milliseconds. */
+			double EstimatedSelfOverheadMs = 0.0; /**< Estimated overhead of profiling methods, only for this exact block. In milliseconds. */
+			double EstimatedOverheadMs = 0.0; /**< Estimated overhead of profiling methods for this block and all children. In milliseconds. */
 
-			float pctOfParent = 1.0f; /**< Percent of parent block time this block took to execute. Ranging [0.0, 1.0]. */
-		} data;
+			float PctOfParent = 1.0f; /**< Percent of parent block time this block took to execute. Ranging [0.0, 1.0]. */
+		} Data;
 
-		ProfilerVector<CPUProfilerBasicSamplingEntry> childEntries;
+		ProfilerVector<CPUProfilerBasicSamplingEntry> ChildEntries;
 	};
 
 	/**
@@ -363,26 +363,26 @@ namespace bs
 		{
 			Data() = default;
 
-			String name; /**< Name of the profiling block. */
-			UINT32 numCalls = 0; /**< Number of times the block was entered. */
+			String Name; /**< Name of the profiling block. */
+			UINT32 NumCalls = 0; /**< Number of times the block was entered. */
 
-			UINT64 memAllocs; /**< Number of memory allocations that happened within the block. */
-			UINT64 memFrees; /**< Number of memory deallocations that happened within the block. */
+			UINT64 MemAllocs; /**< Number of memory allocations that happened within the block. */
+			UINT64 MemFrees; /**< Number of memory deallocations that happened within the block. */
 
-			UINT64 avgCycles = 0; /**< Average number of cycles it took to execute the block, per call. */
-			UINT64 maxCycles = 0; /**< Maximum number of cycles of a single call in the block. */
-			UINT64 totalCycles = 0; /**< Total number of cycles across all calls in the block. */
+			UINT64 AvgCycles = 0; /**< Average number of cycles it took to execute the block, per call. */
+			UINT64 MaxCycles = 0; /**< Maximum number of cycles of a single call in the block. */
+			UINT64 TotalCycles = 0; /**< Total number of cycles across all calls in the block. */
 
-			UINT64 avgSelfCycles = 0; /**< Average number of cycles it took to execute the block, per call. Ignores cycles used by child blocks. */
-			UINT64 totalSelfCycles = 0; /**< Total number of cycles across all calls in the block. Ignores time used by child blocks. */
+			UINT64 AvgSelfCycles = 0; /**< Average number of cycles it took to execute the block, per call. Ignores cycles used by child blocks. */
+			UINT64 TotalSelfCycles = 0; /**< Total number of cycles across all calls in the block. Ignores time used by child blocks. */
 
-			UINT64 estimatedSelfOverhead = 0; /**< Estimated overhead of profiling methods, only for this exact block. In cycles. */
-			UINT64 estimatedOverhead = 0; /**< Estimated overhead of profiling methods for this block and all children. In cycles. */
+			UINT64 EstimatedSelfOverhead = 0; /**< Estimated overhead of profiling methods, only for this exact block. In cycles. */
+			UINT64 EstimatedOverhead = 0; /**< Estimated overhead of profiling methods for this block and all children. In cycles. */
 
-			float pctOfParent = 1.0f; /**< Percent of parent block cycles used by this block. Ranging [0.0, 1.0]. */
-		} data;
+			float PctOfParent = 1.0f; /**< Percent of parent block cycles used by this block. Ranging [0.0, 1.0]. */
+		} Data;
 
-		ProfilerVector<CPUProfilerPreciseSamplingEntry> childEntries;
+		ProfilerVector<CPUProfilerPreciseSamplingEntry> ChildEntries;
 	};
 
 	/** CPU profiling report containing all profiling information for a single profiling session. */

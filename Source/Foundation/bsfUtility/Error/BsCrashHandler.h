@@ -17,20 +17,20 @@ namespace bs
 			const String& description,
 			const String& function,
 			const String& file,
-			UINT32 line)> onBeforeReportCrash;
+			UINT32 line)> OnBeforeReportCrash;
 
 #if BS_PLATFORM == BS_PLATFORM_WIN32
 		/** Called when a windows SEH exception is started to be handled. Return true to skip default action */
-		std::function<bool(void* exceptionData)> onBeforeWindowsSEHReportCrash;
+		std::function<bool(void* exceptionData)> OnBeforeWindowsSehReportCrash;
 #endif
 		/**
 		* Called after the crash callstack is written to log. Return true to skip writing to file and doing
 		* further other on crash actions
 		*/
-		std::function<bool()> onCrashPrintedToLog;
+		std::function<bool()> OnCrashPrintedToLog;
 
 		/** If true then on UNIX a signal handler is not automatically registered to call the crash handler */
-		bool disableCrashSignalHandler = false;
+		bool DisableCrashSignalHandler = false;
 	};
 
 	/** @addtogroup Internal-Utility

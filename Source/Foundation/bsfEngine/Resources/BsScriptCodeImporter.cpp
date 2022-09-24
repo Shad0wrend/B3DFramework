@@ -35,7 +35,7 @@ namespace bs
 		if (importOptions != nullptr)
 		{
 			SPtr<const ScriptCodeImportOptions> scriptIO = std::static_pointer_cast<const ScriptCodeImportOptions>(importOptions);
-			editorScript = scriptIO->editorScript;
+			editorScript = scriptIO->EditorScript;
 		}
 			
 		SPtr<ScriptCode> scriptCode = ScriptCode::CreatePtrInternal(textData, editorScript);

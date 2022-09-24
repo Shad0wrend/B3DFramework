@@ -21,14 +21,14 @@ namespace bs
 			GET_DIDEVICE_TYPE(lpddi->dwDevType) == DI8DEVTYPE_FLIGHT)
 		{
 			GamepadInfo gamepadInfo;
-			gamepadInfo.name = lpddi->tszInstanceName;
-			gamepadInfo.guidInstance = lpddi->guidInstance;
-			gamepadInfo.guidProduct = lpddi->guidProduct;
-			gamepadInfo.id = (UINT32)data->gamepadInfos.size();
-			gamepadInfo.isXInput = false;
-			gamepadInfo.xInputDev = 0;
+			gamepadInfo.Name = lpddi->tszInstanceName;
+			gamepadInfo.GuidInstance = lpddi->guidInstance;
+			gamepadInfo.GuidProduct = lpddi->guidProduct;
+			gamepadInfo.Id = (UINT32)data->GamepadInfos.size();
+			gamepadInfo.IsXInput = false;
+			gamepadInfo.XInputDev = 0;
 
-			data->gamepadInfos.push_back(gamepadInfo);
+			data->GamepadInfos.push_back(gamepadInfo);
 		}
 
 		return DIENUM_CONTINUE;
@@ -112,10 +112,10 @@ namespace bs
 						DWORD dwVidPid = MAKELONG(dwVid, dwPid);
 						for (auto entry : infos)
 						{
-							if (dwVidPid == entry.guidProduct.Data1)
+							if (dwVidPid == entry.GuidProduct.Data1)
 							{
-								entry.isXInput = true;
-								entry.xInputDev = (int)entry.id; // Note: These might not match and I might need to get the XInput id differently
+								entry.IsXInput = true;
+								entry.XInputDev = (int)entry.Id; // Note: These might not match and I might need to get the XInput id differently
 							}
 						}
 					}
@@ -154,7 +154,7 @@ namespace bs
 	{
 		mPlatformData = bs_new<InputPrivateData>();
 		
-		bool isHeadless = ct::gCaps().deviceName == "Null";
+		bool isHeadless = ct::gCaps().DeviceName == "Null";
 		if(isHeadless)
 			return;
 
@@ -163,23 +163,23 @@ namespace bs
 
 		HINSTANCE hInst = GetModuleHandle(0);
 
-		HRESULT hr = DirectInput8Create(hInst, DIRECTINPUT_VERSION, IID_IDirectInput8, (VOID**)&mPlatformData->directInput, nullptr);
+		HRESULT hr = DirectInput8Create(hInst, DIRECTINPUT_VERSION, IID_IDirectInput8, (VOID**)&mPlatformData->DirectInput, nullptr);
 		if (FAILED(hr))
 			BS_EXCEPT(InternalErrorException, "Unable to initialize DirectInput.");
 
-		mPlatformData->kbSettings = DISCL_FOREGROUND | DISCL_NONEXCLUSIVE;
-		mPlatformData->mouseSettings = DISCL_FOREGROUND | DISCL_NONEXCLUSIVE;
+		mPlatformData->KbSettings = DISCL_FOREGROUND | DISCL_NONEXCLUSIVE;
+		mPlatformData->MouseSettings = DISCL_FOREGROUND | DISCL_NONEXCLUSIVE;
 		
 		// Enumerate all attached devices
 		// Note: Only enumerating gamepads, assuming there is 1 keyboard and 1 mouse
-		mPlatformData->directInput->EnumDevices(NULL, DIEnumDevCallbackInternal, mPlatformData, DIEDFL_ATTACHEDONLY);
+		mPlatformData->DirectInput->EnumDevices(NULL, DIEnumDevCallbackInternal, mPlatformData, DIEDFL_ATTACHEDONLY);
 
 		for (UINT32 i = 0; i < 4; ++i)
 		{
 			XINPUT_STATE state;
 			if (XInputGetState(i, &state) != ERROR_DEVICE_NOT_CONNECTED)
 			{
-				CheckXInputDevices(mPlatformData->gamepadInfos);
+				CheckXInputDevices(mPlatformData->GamepadInfos);
 				break;
 			}
 		}
@@ -192,7 +192,7 @@ namespace bs
 
 		UINT32 numGamepads = GetDeviceCount(InputDevice::Gamepad);
 		for (UINT32 i = 0; i < numGamepads; i++)
-			mGamepads.push_back(bs_new<Gamepad>(mPlatformData->gamepadInfos[i].name, mPlatformData->gamepadInfos[i], this));
+			mGamepads.push_back(bs_new<Gamepad>(mPlatformData->GamepadInfos[i].Name, mPlatformData->GamepadInfos[i], this));
 	}
 
 	void Input::CleanUpRawInput()
@@ -206,8 +206,8 @@ namespace bs
 		for (auto& gamepad : mGamepads)
 			bs_delete(gamepad);
 
-		if(mPlatformData->directInput != nullptr)
-			mPlatformData->directInput->Release();
+		if(mPlatformData->DirectInput != nullptr)
+			mPlatformData->DirectInput->Release();
 
 		bs_delete(mPlatformData);
 	}
@@ -218,7 +218,7 @@ namespace bs
 		{
 		case InputDevice::Keyboard: return 1;
 		case InputDevice::Mouse: return 1;
-		case InputDevice::Gamepad: return (UINT32)mPlatformData->gamepadInfos.size();
+		case InputDevice::Gamepad: return (UINT32)mPlatformData->GamepadInfos.size();
 		default:
 		case InputDevice::Count: return 0;
 		}

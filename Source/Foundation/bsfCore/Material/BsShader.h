@@ -28,8 +28,8 @@ namespace bs
 		using TechniqueType = CoreVariantType<Technique, Core>;
 		using ShaderType = SPtr<CoreVariantType<Shader, Core>>;
 		
-		String name;
-		ShaderType shader;
+		String Name;
+		ShaderType Shader;
 	};
 
 	/** Shared memebers between SHADER_DATA_PARAM_DESC and SHADER_OBJECT_PARAM_DESC */
@@ -37,14 +37,14 @@ namespace bs
 	{
 		SHADER_PARAM_COMMON() = default;
 		SHADER_PARAM_COMMON(String name, String gpuVariableName, StringID rendererSemantic = StringID::NONE)
-			: name(std::move(name)), gpuVariableName(gpuVariableName), rendererSemantic(rendererSemantic)
+			: Name(std::move(name)), GpuVariableName(gpuVariableName), RendererSemantic(rendererSemantic)
 		{ }
 
 		/** The name of the parameter. Name must be unique between all data and object parameters in a shader. */
-		String name;
+		String Name;
 
 		/** Name of the GPU variable in the GpuProgram that the parameter corresponds with. */
-		String gpuVariableName;
+		String GpuVariableName;
 
 		/**
 		 * Optional semantic that allows you to specify the use of this parameter in the renderer. The actual value of the
@@ -53,13 +53,13 @@ namespace bs
 		 * determine if a shader is compatible with a specific renderer or not. Value of 0 signifies the parameter is not
 		 * used by the renderer.
 		 */
-		StringID rendererSemantic;
+		StringID RendererSemantic;
 
 		/** Index of the default value inside the Shader. Should not be set externally by the user. */
-		UINT32 defaultValueIdx = (UINT32)-1;
+		UINT32 DefaultValueIdx = (UINT32)-1;
 
 		/** Index to a set of optional attributes attached to the parameter. Should not be set externally by the user. */
-		UINT32 attribIdx = (UINT32)-1;
+		UINT32 AttribIdx = (UINT32)-1;
 	};
 
 	/** @} */
@@ -79,20 +79,20 @@ namespace bs
 		SHADER_DATA_PARAM_DESC(String name, String gpuVariableName, GpuParamDataType type,
 			StringID rendererSemantic = StringID::NONE, UINT32 arraySize = 1, UINT32 elementSize = 0)
 			:SHADER_PARAM_COMMON(std::move(name), std::move(gpuVariableName), rendererSemantic)
-			, type(type), arraySize(arraySize), elementSize(elementSize)
+			, Type(type), ArraySize(arraySize), ElementSize(elementSize)
 		{ }
 
 		/** The type of the parameter, must be the same as the type in GpuProgram. */
-		GpuParamDataType type = GPDT_FLOAT1;
+		GpuParamDataType Type = GPDT_FLOAT1;
 
 		/** If the parameter is an array, the number of elements in the array. Size of 1 means its not an array. */
-		UINT32 arraySize = 1;
+		UINT32 ArraySize = 1;
 
 		/**
 		 * Size of an individual element in the array, in bytes. You only need to set this if you are setting variable
 		 * length parameters, like structs. Otherwise the size is determined from the type.
 		 */
-		UINT32 elementSize = 0;
+		UINT32 ElementSize = 0;
 	};
 
 	/**
@@ -105,25 +105,25 @@ namespace bs
 		SHADER_OBJECT_PARAM_DESC() = default;
 		SHADER_OBJECT_PARAM_DESC(String name, String gpuVariableName, GpuParamObjectType type,
 			StringID rendererSemantic = StringID::NONE)
-			:SHADER_PARAM_COMMON(std::move(name), gpuVariableName, rendererSemantic), type(type)
+			:SHADER_PARAM_COMMON(std::move(name), gpuVariableName, rendererSemantic), Type(type)
 		{
-			gpuVariableNames.emplace_back(gpuVariableName);
+			GpuVariableNames.emplace_back(gpuVariableName);
 		}
 
 		/** The type of the parameter, must be the same as the type in GpuProgram. */
-		GpuParamObjectType type = GPOT_TEXTURE2D;
+		GpuParamObjectType Type = GPOT_TEXTURE2D;
 
 		/** Names of all GPU variables this shader parameter maps to. */
-		Vector<String> gpuVariableNames;
+		Vector<String> GpuVariableNames;
 	};
 
 	/** Describes a shader parameter block. */
 	struct SHADER_PARAM_BLOCK_DESC
 	{
-		String name;
-		bool shared;
-		StringID rendererSemantic;
-		GpuBufferUsage usage;
+		String Name;
+		bool Shared;
+		StringID RendererSemantic;
+		GpuBufferUsage Usage;
 	};
 
 	/** Available attribute types that can be assigned to Shader parameters. */
@@ -150,39 +150,39 @@ namespace bs
 	struct SHADER_PARAM_ATTRIBUTE
 	{
 		/** Type of the attribute. */
-		ShaderParamAttributeType type = (ShaderParamAttributeType)0;
+		ShaderParamAttributeType Type = (ShaderParamAttributeType)0;
 
 		/** Value of the parameter encoded as a string. */
-		String value;
+		String Value;
 
 		/** Index of the next attribute in the linked list for this parameter. Should not be set externally by the user. */
-		UINT32 nextParamIdx = (UINT32)-1;
+		UINT32 NextParamIdx = (UINT32)-1;
 	};
 
 	/** Represents a single potential value of a shader variation parameter and optionally its name. */
 	struct BS_SCRIPT_EXPORT(m:Renderer,pl:true) ShaderVariationParamValue
 	{
 		/** Optional human-readable name describing what this particular value represents. */
-		String name;
+		String Name;
 
 		/** Integer value of the parameter. */
-		INT32 value = 0;
+		INT32 Value = 0;
 	};
 
 	/** Represents a single shader variation parameter and a set of all possible values. */
 	struct BS_SCRIPT_EXPORT(m:Renderer,pl:true) ShaderVariationParamInfo
 	{
 		/** Optional human-readable name describing the variation parameter. */
-		String name;
+		String Name;
 
 		/** BSL identifier for the parameter. */
-		String identifier;
+		String Identifier;
 
 		/** True if the parameter is for internal use by the renderer, and false if its intended to be set by the user. */
-		bool isInternal = true;
+		bool IsInternal = true;
 
 		/** A list of potential values this parameter can take on. */
-		SmallVector<ShaderVariationParamValue, 4> values;
+		SmallVector<ShaderVariationParamValue, 4> Values;
 	};
 
 	/**
@@ -310,7 +310,7 @@ namespace bs
 		 * least overdraw and is preferable. Transparent objects need to be sorted back to front. You may also specify no
 		 * sorting and the elements will be rendered in the order they were added to the render queue.
 		 */
-		QueueSortType queueSortType;
+		QueueSortType QueueSortType;
 
 		/**
 		 * Priority that allows you to control in what order are your shaders rendered. See QueuePriority for a list of
@@ -323,7 +323,7 @@ namespace bs
 		 * guidance and feel free to increase them or decrease them for finer tuning. (for example QueuePriority::Opaque +
 		 * 1).
 		 */
-		INT32 queuePriority;
+		INT32 QueuePriority;
 
 		/**
 		 * Enables or disables separable passes. When separable passes are disabled all shader passes will be executed in a
@@ -333,33 +333,33 @@ namespace bs
 		 *
 		 * @note	Shaders with transparency generally can't be separable, while opaque can.
 		 */
-		bool separablePasses;
+		bool SeparablePasses;
 
 		/** Flags that let the renderer know how should it interpret the shader. */
-		ShaderFlags flags;
+		ShaderFlags Flags;
 
 		/** Techniques to initialize the shader with. */
-		Vector<SPtr<TechniqueType>> techniques;
+		Vector<SPtr<TechniqueType>> Techniques;
 
 		/** Optional set of sub-shaders to initialize the shader with. */
-		Vector<SubShaderType> subShaders;
+		Vector<SubShaderType> SubShaders;
 
 		/**
 		 * Information about all variation parameters and their possible values. Each permutation of variation parameters
 		 * represents a separate shader technique.
 		 */
-		Vector<ShaderVariationParamInfo> variationParams;
+		Vector<ShaderVariationParamInfo> VariationParams;
 
-		Map<String, SHADER_DATA_PARAM_DESC> dataParams;
-		Map<String, SHADER_OBJECT_PARAM_DESC> textureParams;
-		Map<String, SHADER_OBJECT_PARAM_DESC> bufferParams;
-		Map<String, SHADER_OBJECT_PARAM_DESC> samplerParams;
-		Map<String, SHADER_PARAM_BLOCK_DESC> paramBlocks;
+		Map<String, SHADER_DATA_PARAM_DESC> DataParams;
+		Map<String, SHADER_OBJECT_PARAM_DESC> TextureParams;
+		Map<String, SHADER_OBJECT_PARAM_DESC> BufferParams;
+		Map<String, SHADER_OBJECT_PARAM_DESC> SamplerParams;
+		Map<String, SHADER_PARAM_BLOCK_DESC> ParamBlocks;
 
-		Vector<UINT8> dataDefaultValues;
-		Vector<SamplerStateType> samplerDefaultValues;
-		Vector<TextureType> textureDefaultValues;
-		Vector<SHADER_PARAM_ATTRIBUTE> paramAttributes;
+		Vector<UINT8> DataDefaultValues;
+		Vector<SamplerStateType> SamplerDefaultValues;
+		Vector<TextureType> TextureDefaultValues;
+		Vector<SHADER_PARAM_ATTRIBUTE> ParamAttributes;
 
 	private:
 		/**
@@ -385,7 +385,7 @@ namespace bs
 		virtual ~TShader();
 	
 		/** Returns the total number of techniques in this shader. */
-		UINT32 GetNumTechniques() const { return (UINT32)mDesc.techniques.size(); }
+		UINT32 GetNumTechniques() const { return (UINT32)mDesc.Techniques.size(); }
 
 		/** Returns the list of all supported techniques based on current render API and renderer. */
 		Vector<SPtr<TechniqueType>> GetCompatibleTechniques() const;
@@ -403,44 +403,44 @@ namespace bs
 		Vector<SPtr<TechniqueType>> GetCompatibleTechniques(const ShaderVariation& variation, bool exact) const;
 
 		/** Returns a list of all techniques in this shader. */
-		const Vector<SPtr<TechniqueType>>& GetTechniques() const { return mDesc.techniques; }
+		const Vector<SPtr<TechniqueType>>& GetTechniques() const { return mDesc.Techniques; }
 
 		/** Returns a list of all sub-shaders in this shader. */
-		const Vector<SubShaderType>& GetSubShaders() const { return mDesc.subShaders; }
+		const Vector<SubShaderType>& GetSubShaders() const { return mDesc.SubShaders; }
 
 		/**
 		 * Returns the list of all variation parameters supported by this shader, possible values of each parameter and
 		 * other meta-data.
 		 */
 		BS_SCRIPT_EXPORT(n:VariationParams,pr:getter)
-		const Vector<ShaderVariationParamInfo> GetVariationParams() const { return mDesc.variationParams; }
+		const Vector<ShaderVariationParamInfo> GetVariationParams() const { return mDesc.VariationParams; }
 
 		/**
 		 * Returns currently active queue sort type.
 		 *
 		 * @see		SHADER_DESC::queueSortType
 		 */
-		QueueSortType GetQueueSortType() const { return mDesc.queueSortType; }
+		QueueSortType GetQueueSortType() const { return mDesc.QueueSortType; }
 
 		/**
 		 * Returns currently active queue priority.
 		 *
 		 * @see		SHADER_DESC::queuePriority
 		 */
-		INT32 GetQueuePriority() const { return mDesc.queuePriority; }
+		INT32 GetQueuePriority() const { return mDesc.QueuePriority; }
 
 		/**
 		 * Returns if separable passes are allowed.
 		 *
 		 * @see		SHADER_DESC::separablePasses
 		 */
-		bool GetAllowSeparablePasses() const { return mDesc.separablePasses; }
+		bool GetAllowSeparablePasses() const { return mDesc.SeparablePasses; }
 
 		/**
 		 * Returns flags that control how the renderer interprets the shader. Actual interpretation of the flags depends on
 		 * the active renderer.
 		 */
-		ShaderFlags GetFlags() const { return mDesc.flags; }
+		ShaderFlags GetFlags() const { return mDesc.Flags; }
 
 		/** Returns type of the parameter with the specified name. Throws exception if the parameter doesn't exist. */
 		GpuParamType GetParamType(const String& name) const;
@@ -484,22 +484,22 @@ namespace bs
 		bool HasParamBlock(const String& name) const;
 
 		/**	Returns a map of all data parameters in the shader. */
-		const Map<String, SHADER_DATA_PARAM_DESC>& GetDataParams() const { return mDesc.dataParams; }
+		const Map<String, SHADER_DATA_PARAM_DESC>& GetDataParams() const { return mDesc.DataParams; }
 
 		/**	Returns a map of all texture parameters in the shader. */
-		const Map<String, SHADER_OBJECT_PARAM_DESC>& GetTextureParams() const { return mDesc.textureParams; }
+		const Map<String, SHADER_OBJECT_PARAM_DESC>& GetTextureParams() const { return mDesc.TextureParams; }
 
 		/**	Returns a map of all buffer parameters in the shader. */
-		const Map<String, SHADER_OBJECT_PARAM_DESC>& GetBufferParams() const { return mDesc.bufferParams; }
+		const Map<String, SHADER_OBJECT_PARAM_DESC>& GetBufferParams() const { return mDesc.BufferParams; }
 
 		/** Returns a map of all sampler parameters in the shader. */
-		const Map<String, SHADER_OBJECT_PARAM_DESC>& GetSamplerParams() const { return mDesc.samplerParams; }
+		const Map<String, SHADER_OBJECT_PARAM_DESC>& GetSamplerParams() const { return mDesc.SamplerParams; }
 
 		/** Returns a map of all parameter blocks. */
-		const Map<String, SHADER_PARAM_BLOCK_DESC>& GetParamBlocks() const { return mDesc.paramBlocks; }
+		const Map<String, SHADER_PARAM_BLOCK_DESC>& GetParamBlocks() const { return mDesc.ParamBlocks; }
 
 		/** Returns a list of all parameter attributes, as referenced by individual parameters. */
-		const Vector<SHADER_PARAM_ATTRIBUTE>& GetParamAttributes() const { return mDesc.paramAttributes; }
+		const Vector<SHADER_PARAM_ATTRIBUTE>& GetParamAttributes() const { return mDesc.ParamAttributes; }
 
 		/**
 		 * Returns a default texture for a parameter that has the specified default value index (retrieved from the
@@ -652,7 +652,7 @@ namespace bs
 	class BS_CORE_EXPORT ShaderMetaData : public ResourceMetaData
 	{
 	public:
-		Vector<String> includes;
+		Vector<String> Includes;
 
 		/************************************************************************/
 		/* 								SERIALIZATION                      		*/

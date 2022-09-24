@@ -40,8 +40,8 @@ namespace bs
 	/** Contains information about a single renderable element within a GUIElement. */
 	struct GUIRenderElement : SpriteRenderElement
 	{
-		GUIMeshType type = GUIMeshType::Triangle;
-		UINT32 depth = 0;
+		GUIMeshType Type = GUIMeshType::Triangle;
+		UINT32 Depth = 0;
 	};
 
 	/**
@@ -129,7 +129,7 @@ namespace bs
 		static void Destroy(GUIElement* element);
 
 		/**	Triggered when the element loses or gains focus. */
-		Event<void(bool)> onFocusChanged;
+		Event<void(bool)> OnFocusChanged;
 
 	public: // ***** INTERNAL ******
 		/** @name Internal
@@ -248,7 +248,7 @@ namespace bs
 		 * Returns GUI element depth. This includes widget and area depth, but does not include specific per-render-element
 		 * depth.
 		 */
-		UINT32 GetDepthInternal() const { return mLayoutData.depth; }
+		UINT32 GetDepthInternal() const { return mLayoutData.Depth; }
 
 		/** Returns the navigation group this element belongs to. See setNavGroup(). */
 		SPtr<GUINavGroup> GetNavGroupInternal() const;
@@ -352,12 +352,12 @@ namespace bs
 			struct SpriteInfo
 			{
 				SpriteInfo(Sprite* sprite, UINT32 depth = 0, GUIMeshType meshType = GUIMeshType::Triangle)
-					: sprite(sprite), depth(depth), meshType(meshType)
+					: Sprite(sprite), Depth(depth), MeshType(meshType)
 				{ }
 				
-				Sprite* sprite;
-				UINT32 depth = 0;
-				GUIMeshType meshType = GUIMeshType::Triangle;
+				Sprite* Sprite;
+				UINT32 Depth = 0;
+				GUIMeshType MeshType = GUIMeshType::Triangle;
 			};
 
 			/**
@@ -369,7 +369,7 @@ namespace bs
 			{
 				UINT32 totalCount = 0;
 				for (UINT32 i = 0; i < N; i++)
-					totalCount += spriteInfos[i].sprite ? spriteInfos[i].sprite->GetNumRenderElements() : 0;
+					totalCount += spriteInfos[i].Sprite ? spriteInfos[i].Sprite->GetNumRenderElements() : 0;
 
 				output.Resize(totalCount);
 
@@ -378,14 +378,14 @@ namespace bs
 				{
 					const SpriteInfo& spriteInfo = spriteInfos[i];
 					
-					UINT32 count = spriteInfo.sprite ? spriteInfo.sprite->GetNumRenderElements() : 0;
+					UINT32 count = spriteInfo.Sprite ? spriteInfo.Sprite->GetNumRenderElements() : 0;
 					for(UINT32 j = 0; j < count; j++)
 					{
 						GUIRenderElement& renderElem = output[globalIdx];
-						spriteInfo.sprite->GetRenderElementInfo(j, renderElem);
+						spriteInfo.Sprite->GetRenderElementInfo(j, renderElem);
 
-						renderElem.depth = spriteInfo.depth;
-						renderElem.type = spriteInfo.meshType;
+						renderElem.Depth = spriteInfo.Depth;
+						renderElem.Type = spriteInfo.MeshType;
 						
 						globalIdx++;
 					}

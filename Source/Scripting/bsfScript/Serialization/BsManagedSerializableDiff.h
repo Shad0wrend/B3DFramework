@@ -48,9 +48,9 @@ namespace bs
 			ModifiedField(const SPtr<ManagedSerializableTypeInfo>& parentType,
 				const SPtr<ManagedSerializableMemberInfo>& fieldType, const SPtr<Modification>& modification);
 
-			SPtr<ManagedSerializableTypeInfo> parentType; /**< Type of the parent object the field belongs to. */
-			SPtr<ManagedSerializableMemberInfo> fieldType; /**< Data type of the field. */
-			SPtr<Modification> modification; /**< Recorded modification(s) on the field. */
+			SPtr<ManagedSerializableTypeInfo> ParentType; /**< Type of the parent object the field belongs to. */
+			SPtr<ManagedSerializableMemberInfo> FieldType; /**< Data type of the field. */
+			SPtr<Modification> Modification; /**< Recorded modification(s) on the field. */
 
 			/************************************************************************/
 			/* 								RTTI		                     		*/
@@ -67,8 +67,8 @@ namespace bs
 			ModifiedArrayEntry() = default;
 			ModifiedArrayEntry(UINT32 idx, const SPtr<Modification>& modification);
 
-			UINT32 idx; /**< Index of the array/list entry that is modified. */
-			SPtr<Modification> modification; /**< Recorded modification(s) on the entry. */
+			UINT32 Idx; /**< Index of the array/list entry that is modified. */
+			SPtr<Modification> Modification; /**< Recorded modification(s) on the entry. */
 
 			/************************************************************************/
 			/* 								RTTI		                     		*/
@@ -85,8 +85,8 @@ namespace bs
 			ModifiedDictionaryEntry() = default;
 			ModifiedDictionaryEntry(const SPtr<ManagedSerializableFieldData>& key, const SPtr<Modification>& modification);
 
-			SPtr<ManagedSerializableFieldData> key; /**< Serialized value of the key for the modified entry. */
-			SPtr<Modification> modification; /**< Recorded modification(s) on the dictionary entry value. */
+			SPtr<ManagedSerializableFieldData> Key; /**< Serialized value of the key for the modified entry. */
+			SPtr<Modification> Modification; /**< Recorded modification(s) on the dictionary entry value. */
 
 			/************************************************************************/
 			/* 								RTTI		                     		*/
@@ -105,7 +105,7 @@ namespace bs
 		{
 			static SPtr<ModifiedObject> Create();
 
-			Vector<ModifiedField> entries; /**< A list of entries containing each modified field in the object. */
+			Vector<ModifiedField> Entries; /**< A list of entries containing each modified field in the object. */
 
 			/************************************************************************/
 			/* 								RTTI		                     		*/
@@ -121,9 +121,9 @@ namespace bs
 		{
 			static SPtr<ModifiedArray> Create();
 
-			Vector<ModifiedArrayEntry> entries; /**< A list of all modified array/list entries along with their indices. */
-			Vector<UINT32> origSizes; /**< Original size of the array/list (one size per dimension). */
-			Vector<UINT32> newSizes; /**< New size of the array/list (one size per dimension). */
+			Vector<ModifiedArrayEntry> Entries; /**< A list of all modified array/list entries along with their indices. */
+			Vector<UINT32> OrigSizes; /**< Original size of the array/list (one size per dimension). */
+			Vector<UINT32> NewSizes; /**< New size of the array/list (one size per dimension). */
 
 			/************************************************************************/
 			/* 								RTTI		                     		*/
@@ -140,9 +140,9 @@ namespace bs
 			static SPtr<ModifiedDictionary> Create();
 
 			/** A list of modified entries in the dictionary. */
-			Vector<ModifiedDictionaryEntry> entries;
+			Vector<ModifiedDictionaryEntry> Entries;
 			/** A list of keys for entries that were removed from the dictionary. */
-			Vector<SPtr<ManagedSerializableFieldData>> removed;
+			Vector<SPtr<ManagedSerializableFieldData>> Removed;
 
 			/************************************************************************/
 			/* 								RTTI		                     		*/
@@ -161,7 +161,7 @@ namespace bs
 
 			static SPtr<ModifiedEntry> Create(const SPtr<ManagedSerializableFieldData>& value);
 
-			SPtr<ManagedSerializableFieldData> value;
+			SPtr<ManagedSerializableFieldData> Value;
 
 			/************************************************************************/
 			/* 								RTTI		                     		*/

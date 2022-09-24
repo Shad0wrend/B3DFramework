@@ -106,13 +106,13 @@ namespace bs
 				return;
 
 			auto coreContext = static_cast<CoreSerializationContext*>(context);
-			if(!coreContext->goDeserializationActive)
+			if(!coreContext->GoDeserializationActive)
 			{
-				if (!coreContext->goState)
-					coreContext->goState = bs_shared_ptr_new<GameObjectDeserializationState>();
+				if (!coreContext->GoState)
+					coreContext->GoState = bs_shared_ptr_new<GameObjectDeserializationState>();
 
 				mIsDeserializationParent = true;
-				coreContext->goDeserializationActive = true;
+				coreContext->GoDeserializationActive = true;
 			}
 		}
 
@@ -132,10 +132,10 @@ namespace bs
 
 			// Register the newly created SO with the GameObjectManager and provide it with the original ID so that
 			// deserialized handles pointing to this object can be resolved.
-			SPtr<SceneObject> soPtr = std::static_pointer_cast<SceneObject>(goDeserializationData.ptr);
+			SPtr<SceneObject> soPtr = std::static_pointer_cast<SceneObject>(goDeserializationData.Ptr);
 
 			HSceneObject soHandle = SceneObject::CreateInternal(soPtr);
-			coreContext->goState->RegisterObject(goDeserializationData.originalId, soHandle);
+			coreContext->GoState->RegisterObject(goDeserializationData.OriginalId, soHandle);
 
 			// We stored all components and children in a temporary structure because they rely on the SceneObject being
 			// initialized with the GameObjectManager. Now that it is, we add them.
@@ -148,15 +148,15 @@ namespace bs
 					child->SetParentInternal(so->mThisHandle, false);
 			}
 
-			if(so->mUUID.Empty() || coreContext->goState->GetUseNewUuiDs())
+			if(so->mUUID.Empty() || coreContext->GoState->GetUseNewUuiDs())
 				so->mUUID = UUIDGenerator::GenerateRandom();
 
 			// If this is the deserialization parent, end deserialization (which resolves all game object handles, if we
 			// provided valid IDs), and instantiate (i.e. activate) the deserialized hierarchy.
 			if (mIsDeserializationParent)
 			{
-				coreContext->goState->Resolve();
-				coreContext->goDeserializationActive = false;
+				coreContext->GoState->Resolve();
+				coreContext->GoDeserializationActive = false;
 
 				bool parentActive = true;
 				if (so->GetParent() != nullptr)

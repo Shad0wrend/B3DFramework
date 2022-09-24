@@ -29,15 +29,15 @@ namespace bs
 
 	float CDistanceJoint::GetMinDistance() const
 	{
-		return mDesc.minDistance;
+		return mDesc.MinDistance;
 	}
 
 	void CDistanceJoint::SetMinDistance(float value)
 	{
-		if (mDesc.minDistance == value)
+		if (mDesc.MinDistance == value)
 			return;
 
-		mDesc.minDistance = value;
+		mDesc.MinDistance = value;
 
 		if (mInternal != nullptr)
 			GetInternalInternal()->SetMinDistance(value);
@@ -45,15 +45,15 @@ namespace bs
 
 	float CDistanceJoint::GetMaxDistance() const
 	{
-		return mDesc.maxDistance;
+		return mDesc.MaxDistance;
 	}
 
 	void CDistanceJoint::SetMaxDistance(float value)
 	{
-		if (mDesc.maxDistance == value)
+		if (mDesc.MaxDistance == value)
 			return;
 
-		mDesc.maxDistance = value;
+		mDesc.MaxDistance = value;
 
 		if (mInternal != nullptr)
 			GetInternalInternal()->SetMaxDistance(value);
@@ -61,15 +61,15 @@ namespace bs
 
 	float CDistanceJoint::GetTolerance() const
 	{
-		return mDesc.tolerance;
+		return mDesc.Tolerance;
 	}
 
 	void CDistanceJoint::SetTolerance(float value)
 	{
-		if (mDesc.tolerance == value)
+		if (mDesc.Tolerance == value)
 			return;
 
-		mDesc.tolerance = value;
+		mDesc.Tolerance = value;
 
 		if (mInternal != nullptr)
 			GetInternalInternal()->SetTolerance(value);
@@ -77,15 +77,15 @@ namespace bs
 
 	Spring CDistanceJoint::GetSpring() const
 	{
-		return mDesc.spring;
+		return mDesc.Spring;
 	}
 
 	void CDistanceJoint::SetSpring(const Spring& value)
 	{
-		if (mDesc.spring == value)
+		if (mDesc.Spring == value)
 			return;
 
-		mDesc.spring = value;
+		mDesc.Spring = value;
 
 		if(mInternal != nullptr)
 			GetInternalInternal()->SetSpring(value);
@@ -93,14 +93,14 @@ namespace bs
 
 	void CDistanceJoint::SetFlag(DistanceJointFlag flag, bool enabled)
 	{
-		bool isEnabled = ((UINT32)mDesc.flag & (UINT32)flag) != 0;
+		bool isEnabled = ((UINT32)mDesc.Flag & (UINT32)flag) != 0;
 		if (isEnabled == enabled)
 			return;
 
 		if (enabled)
-			mDesc.flag = (DistanceJointFlag)((UINT32)mDesc.flag | (UINT32)flag);
+			mDesc.Flag = (DistanceJointFlag)((UINT32)mDesc.Flag | (UINT32)flag);
 		else
-			mDesc.flag = (DistanceJointFlag)((UINT32)mDesc.flag & ~(UINT32)flag);
+			mDesc.Flag = (DistanceJointFlag)((UINT32)mDesc.Flag & ~(UINT32)flag);
 
 		if (mInternal != nullptr)
 			GetInternalInternal()->SetFlag(flag, enabled);
@@ -108,7 +108,7 @@ namespace bs
 
 	bool CDistanceJoint::HasFlag(DistanceJointFlag flag) const
 	{
-		return ((UINT32)mDesc.flag & (UINT32)flag) != 0;
+		return ((UINT32)mDesc.Flag & (UINT32)flag) != 0;
 	}
 
 	SPtr<Joint> CDistanceJoint::CreateInternal()

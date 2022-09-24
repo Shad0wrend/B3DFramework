@@ -23,16 +23,16 @@ namespace bs
 		void SetContent(const GUIContent& content);
 
 		/**	Triggered when button is clicked. */
-		Event<void()> onClick;
+		Event<void()> OnClick;
 
 		/**	Triggered when pointer hovers over the button. */
-		Event<void()> onHover;
+		Event<void()> OnHover;
 
 		/**	Triggered when pointer that was previously hovering leaves the button. */
-		Event<void()> onOut;
+		Event<void()> OnOut;
 
 		/**	Triggered when button is clicked twice in rapid succession. */
-		Event<void()> onDoubleClick;
+		Event<void()> OnDoubleClick;
 
 	public: // ***** INTERNAL ******
 		/** @name Internal

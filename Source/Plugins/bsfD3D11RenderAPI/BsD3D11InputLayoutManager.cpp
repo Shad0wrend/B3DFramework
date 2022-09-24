@@ -15,8 +15,8 @@ namespace bs { namespace ct
 		(const D3D11InputLayoutManager::VertexDeclarationKey &key) const
 	{
 		size_t hash = 0;
-		bs_hash_combine(hash, key.vertxDeclId);
-		bs_hash_combine(hash, key.vertexProgramId);
+		bs_hash_combine(hash, key.VertxDeclId);
+		bs_hash_combine(hash, key.VertexProgramId);
 
 		return hash;
 	}
@@ -25,10 +25,10 @@ namespace bs { namespace ct
 		(const D3D11InputLayoutManager::VertexDeclarationKey &a, const D3D11InputLayoutManager::VertexDeclarationKey &b) const
 		
 	{
-		if (a.vertxDeclId != b.vertxDeclId)
+		if (a.VertxDeclId != b.VertxDeclId)
 			return false;
 
-		if(a.vertexProgramId != b.vertexProgramId)
+		if(a.VertexProgramId != b.VertexProgramId)
 			return false;
 
 		return true;
@@ -40,7 +40,7 @@ namespace bs { namespace ct
 		{
 			auto firstElem = mInputLayoutMap.begin();
 
-			SAFE_RELEASE(firstElem->second->inputLayout);
+			SAFE_RELEASE(firstElem->second->InputLayout);
 			bs_delete(firstElem->second);
 
 			mInputLayoutMap.erase(firstElem);
@@ -52,8 +52,8 @@ namespace bs { namespace ct
 		const SPtr<VertexDeclaration>& vertexBufferDecl, D3D11GpuProgram& vertexProgram)
 	{
 		VertexDeclarationKey pair;
-		pair.vertxDeclId = vertexBufferDecl->GetId();
-		pair.vertexProgramId = vertexProgram.GetProgramId();
+		pair.VertxDeclId = vertexBufferDecl->GetId();
+		pair.VertexProgramId = vertexProgram.GetProgramId();
 
 		auto iterFind = mInputLayoutMap.find(pair);
 		if(iterFind == mInputLayoutMap.end())
@@ -69,8 +69,8 @@ namespace bs { namespace ct
 				return nullptr;
 		}
 
-		iterFind->second->lastUsedIdx = ++mLastUsedCounter;
-		return iterFind->second->inputLayout;
+		iterFind->second->LastUsedIdx = ++mLastUsedCounter;
+		return iterFind->second->InputLayout;
 	}
 
 	void D3D11InputLayoutManager::AddNewInputLayout(const SPtr<VertexDeclaration>& vertexShaderDecl,
@@ -144,22 +144,22 @@ namespace bs { namespace ct
 		const DataBlob& microcode = vertexProgram.GetMicroCode();
 
 		InputLayoutEntry* newEntry = bs_new<InputLayoutEntry>();
-		newEntry->lastUsedIdx = ++mLastUsedCounter;
-		newEntry->inputLayout = nullptr;
+		newEntry->LastUsedIdx = ++mLastUsedCounter;
+		newEntry->InputLayout = nullptr;
 		HRESULT hr = device.GetD3D11Device()->CreateInputLayout(
 			&declElements[0],
 			(UINT32)declElements.size(),
-			microcode.data,
-			microcode.size,
-			&newEntry->inputLayout);
+			microcode.Data,
+			microcode.Size,
+			&newEntry->InputLayout);
 
 		if (FAILED(hr)|| device.HasError())
 			BS_EXCEPT(RenderingAPIException, "Unable to set D3D11 vertex declaration" + device.GetErrorDescription());
 
 		// Create key and add to the layout map
 		VertexDeclarationKey pair;
-		pair.vertxDeclId = vertexBufferDecl->GetId();
-		pair.vertexProgramId = vertexProgram.GetProgramId();
+		pair.VertxDeclId = vertexBufferDecl->GetId();
+		pair.VertexProgramId = vertexProgram.GetProgramId();
 
 		mInputLayoutMap[pair] = newEntry;
 
@@ -181,14 +181,14 @@ namespace bs { namespace ct
 		Map<UINT32, VertexDeclarationKey> leastFrequentlyUsedMap;
 
 		for(auto iter = mInputLayoutMap.begin(); iter != mInputLayoutMap.end(); ++iter)
-			leastFrequentlyUsedMap[iter->second->lastUsedIdx] = iter->first;
+			leastFrequentlyUsedMap[iter->second->LastUsedIdx] = iter->first;
 
 		UINT32 elemsRemoved = 0;
 		for(auto iter = leastFrequentlyUsedMap.begin(); iter != leastFrequentlyUsedMap.end(); ++iter)
 		{
 			auto inputLayoutIter = mInputLayoutMap.find(iter->second);
 
-			SAFE_RELEASE(inputLayoutIter->second->inputLayout);
+			SAFE_RELEASE(inputLayoutIter->second->InputLayout);
 			bs_delete(inputLayoutIter->second);
 
 			mInputLayoutMap.erase(inputLayoutIter);

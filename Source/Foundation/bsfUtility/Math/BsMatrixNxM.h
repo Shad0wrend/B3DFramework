@@ -28,7 +28,7 @@ namespace bs
 
 		explicit MatrixNxM(float data[N*M])
 		{
-			memcpy(m, data, N*M * sizeof(float));
+			memcpy(Data, data, N*M * sizeof(float));
 		}
 
 		/** Returns a transpose of the matrix (switched columns and rows). */
@@ -38,7 +38,7 @@ namespace bs
 			for (UINT32 row = 0; row < N; row++)
 			{
 				for (UINT32 col = 0; col < M; col++)
-					matTranspose[col][row] = m[row][col];
+					matTranspose[col][row] = Data[row][col];
 			}
 
 			return matTranspose;
@@ -49,7 +49,7 @@ namespace bs
 		{
 			assert(row < N);
 
-			return (float*)m[row];
+			return (float*)Data[row];
 		}
 
 		bool operator== (const MatrixNxM& rhs) const
@@ -58,7 +58,7 @@ namespace bs
 			{
 				for (UINT32 col = 0; col < M; col++)
 				{
-					if (m[row][col] != rhs.m[row][col])
+					if (Data[row][col] != rhs.Data[row][col])
 						return false;
 				}
 			}
@@ -71,7 +71,7 @@ namespace bs
 			return !operator==(rhs);
 		}
 
-		float m[N][M];
+		float Data[N][M];
 	};
 
 	typedef MatrixNxM<2, 2> Matrix2;

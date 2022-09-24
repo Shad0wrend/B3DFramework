@@ -14,7 +14,7 @@ using namespace bs;
 char* includePush(ParseState* state, const char* filename, int line, int column, int* size)
 {
 	int filenameQuotesLen = (int)strlen(filename);
-	char* filenameNoQuote = (char*)mmalloc(state->memContext, filenameQuotesLen - 1);
+	char* filenameNoQuote = (char*)mmalloc(state->MemContext, filenameQuotesLen - 1);
 	memcpy(filenameNoQuote, filename + 1, filenameQuotesLen - 2);
 	filenameNoQuote[filenameQuotesLen - 2] = '\0';
 
@@ -29,14 +29,14 @@ char* includePush(ParseState* state, const char* filename, int line, int column,
 		String includeSource = include->GetString();
 
 		*size = (int)includeSource.size() + 2;
-		char* output = (char*)mmalloc(state->memContext, *size);
+		char* output = (char*)mmalloc(state->MemContext, *size);
 
 		memcpy(output, includeSource.data(), *size - 2);
 		output[*size - 2] = 0;
 		output[*size - 1] = 0;
 
 		int linkSize =  sizeof(IncludeLink) + sizeof(IncludeData) + filenameLen + 1;
-		char* linkData = (char*)mmalloc(state->memContext, linkSize);
+		char* linkData = (char*)mmalloc(state->MemContext, linkSize);
 
 		IncludeLink* newLink = (IncludeLink*)linkData;
 		linkData += sizeof(IncludeLink);
@@ -47,13 +47,13 @@ char* includePush(ParseState* state, const char* filename, int line, int column,
 		memcpy(linkData, filenameNoQuote, filenameLen);
 		linkData[filenameLen] = '\0';
 
-		includeData->filename = linkData;
-		includeData->buffer = output;
+		includeData->Filename = linkData;
+		includeData->Buffer = output;
 
-		newLink->data = includeData;
-		newLink->next = state->includeStack;
+		newLink->Data = includeData;
+		newLink->Next = state->IncludeStack;
 
-		state->includeStack = newLink;
+		state->IncludeStack = newLink;
 
 		mmfree(filenameNoQuote);
 		return output;
@@ -63,17 +63,17 @@ char* includePush(ParseState* state, const char* filename, int line, int column,
 	int labelLen = (int)strlen(errorLabel);
 
 	int messageLen = filenameLen + labelLen + 1;
-	char* message = (char*)mmalloc(state->memContext, messageLen);
+	char* message = (char*)mmalloc(state->MemContext, messageLen);
 
 	memcpy(message, errorLabel, labelLen);
 	memcpy(message + labelLen, filenameNoQuote, filenameLen);
 	message[messageLen - 1] = '\0';
 
-	state->hasError = 1;
-	state->errorLine = line;
-	state->errorColumn = column;
-	state->errorMessage = message;
-	state->errorFile = getCurrentFilename(state);
+	state->HasError = 1;
+	state->ErrorLine = line;
+	state->ErrorColumn = column;
+	state->ErrorMessage = message;
+	state->ErrorFile = getCurrentFilename(state);
 
 	mmfree(filenameNoQuote);
 	return nullptr;
@@ -81,15 +81,15 @@ char* includePush(ParseState* state, const char* filename, int line, int column,
 
 void includePop(ParseState* state)
 {
-	IncludeLink* current = state->includeStack;
+	IncludeLink* current = state->IncludeStack;
 
 	if (!current)
 		return;
 
-	state->includeStack = current->next;
-	current->next = state->includes;
-	state->includes = current;
+	state->IncludeStack = current->Next;
+	current->Next = state->Includes;
+	state->Includes = current;
 
-	mmfree(current->data->buffer);
-	current->data->buffer = nullptr;
+	mmfree(current->Data->Buffer);
+	current->Data->Buffer = nullptr;
 }

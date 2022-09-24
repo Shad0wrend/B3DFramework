@@ -33,22 +33,22 @@ namespace bs
 	{
 		SpriteRenderElementData() = default;
 
-		Vector2* vertices = nullptr;
-		Vector2* uvs = nullptr;
-		UINT32* indexes = nullptr;
-		UINT32 numQuads = 0;
-		SpriteMaterialInfo matInfo;
-		SpriteMaterial* material = nullptr;
+		Vector2* Vertices = nullptr;
+		Vector2* Uvs = nullptr;
+		UINT32* Indexes = nullptr;
+		UINT32 NumQuads = 0;
+		SpriteMaterialInfo MatInfo;
+		SpriteMaterial* Material = nullptr;
 	};
 
 	/** Contains information about a single sprite render elements mesh and material */
 	struct SpriteRenderElement
 	{
-		UINT32 numIndices = 0;
-		UINT32 numVertices = 0;
+		UINT32 NumIndices = 0;
+		UINT32 NumVertices = 0;
 
-		SpriteMaterialInfo* matInfo = nullptr;
-		SpriteMaterial* material = nullptr;
+		SpriteMaterialInfo* MatInfo = nullptr;
+		SpriteMaterial* Material = nullptr;
 	};
 
 	/**	Generates geometry and contains information needed for rendering a two dimensional element. */
@@ -160,10 +160,10 @@ namespace bs
 	{
 		SpriteRenderElementData& renderElement = mCachedRenderElements[idx];
 		
-		info.numVertices = renderElement.numQuads * 4;
-		info.numIndices = renderElement.numQuads * 6;
-		info.matInfo = &renderElement.matInfo;
-		info.material = renderElement.material;
+		info.NumVertices = renderElement.NumQuads * 4;
+		info.NumIndices = renderElement.NumQuads * 6;
+		info.MatInfo = &renderElement.MatInfo;
+		info.Material = renderElement.Material;
 	}
 
 	/** @} */

@@ -11,8 +11,8 @@ namespace bs
 {
 	struct __GUIElementStateStyleInterop
 	{
-		MonoObject* texture;
-		Color textColor;
+		MonoObject* Texture;
+		Color TextColor;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptGUIElementStateStyle : public ScriptObject<ScriptGUIElementStateStyle>

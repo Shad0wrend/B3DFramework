@@ -22,77 +22,77 @@ namespace bs
 		/**	Holds data about GUI elements in a single row of a "CPU basic" sample. */
 		struct BasicRow
 		{
-			GUILayout* labelLayout;
-			GUILayout* contentLayout;
-			GUIFixedSpace* labelSpace;
+			GUILayout* LabelLayout;
+			GUILayout* ContentLayout;
+			GUIFixedSpace* LabelSpace;
 
-			GUILabel* guiName;
-			GUILabel* guiPctOfParent;
-			GUILabel* guiNumCalls;
-			GUILabel* guiNumAllocs;
-			GUILabel* guiNumFrees;
-			GUILabel* guiAvgTime;
-			GUILabel* guiTotalTime;
-			GUILabel* guiAvgTimeSelf;
-			GUILabel* guiTotalTimeSelf;
+			GUILabel* GuiName;
+			GUILabel* GuiPctOfParent;
+			GUILabel* GuiNumCalls;
+			GUILabel* GuiNumAllocs;
+			GUILabel* GuiNumFrees;
+			GUILabel* GuiAvgTime;
+			GUILabel* GuiTotalTime;
+			GUILabel* GuiAvgTimeSelf;
+			GUILabel* GuiTotalTimeSelf;
 
-			HString name;
-			HString pctOfParent;
-			HString numCalls;
-			HString numAllocs;
-			HString numFrees;
-			HString avgTime;
-			HString totalTime;
-			HString avgTimeSelf;
-			HString totalTimeSelf;
+			HString Name;
+			HString PctOfParent;
+			HString NumCalls;
+			HString NumAllocs;
+			HString NumFrees;
+			HString AvgTime;
+			HString TotalTime;
+			HString AvgTimeSelf;
+			HString TotalTimeSelf;
 
-			bool disabled;
+			bool Disabled;
 		};
 
 		/**	Holds data about GUI elements in a single row of a "CPU precise" sample. */
 		struct PreciseRow
 		{
-			GUILayout* labelLayout;
-			GUILayout* contentLayout;
-			GUIFixedSpace* labelSpace;
+			GUILayout* LabelLayout;
+			GUILayout* ContentLayout;
+			GUIFixedSpace* LabelSpace;
 
-			GUILabel* guiName;
-			GUILabel* guiPctOfParent;
-			GUILabel* guiNumCalls;
-			GUILabel* guiNumAllocs;
-			GUILabel* guiNumFrees;
-			GUILabel* guiAvgCycles;
-			GUILabel* guiTotalCycles;
-			GUILabel* guiAvgCyclesSelf;
-			GUILabel* guiTotalCyclesSelf;
+			GUILabel* GuiName;
+			GUILabel* GuiPctOfParent;
+			GUILabel* GuiNumCalls;
+			GUILabel* GuiNumAllocs;
+			GUILabel* GuiNumFrees;
+			GUILabel* GuiAvgCycles;
+			GUILabel* GuiTotalCycles;
+			GUILabel* GuiAvgCyclesSelf;
+			GUILabel* GuiTotalCyclesSelf;
 
-			HString name;
-			HString pctOfParent;
-			HString numCalls;
-			HString numAllocs;
-			HString numFrees;
-			HString avgCycles;
-			HString totalCycles;
-			HString avgCyclesSelf;
-			HString totalCyclesSelf;
+			HString Name;
+			HString PctOfParent;
+			HString NumCalls;
+			HString NumAllocs;
+			HString NumFrees;
+			HString AvgCycles;
+			HString TotalCycles;
+			HString AvgCyclesSelf;
+			HString TotalCyclesSelf;
 
-			bool disabled;
+			bool Disabled;
 		};
 		
 		/**	Holds data about GUI elements in a single row of a GPU sample. */
 		struct GPUSampleRow
 		{
-			GUILayout* labelLayout;
-			GUILayout* contentLayout;
-			GUIFixedSpace* labelSpace;
+			GUILayout* LabelLayout;
+			GUILayout* ContentLayout;
+			GUIFixedSpace* LabelSpace;
 
-			GUILabel* guiName;
-			GUILabel* guiTime;
+			GUILabel* GuiName;
+			GUILabel* GuiTime;
 
-			HString name;
-			HString time;
+			HString Name;
+			HString Time;
 
-			bool disabled;
+			bool Disabled;
 		};
 
 	public:

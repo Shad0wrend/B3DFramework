@@ -13,25 +13,25 @@ namespace bs
 	template <>
 	void addToVector(const Vector3& val, Vector<float>& output)
 	{
-		output.push_back(val.x);
-		output.push_back(val.y);
-		output.push_back(val.z);
+		output.push_back(val.X);
+		output.push_back(val.Y);
+		output.push_back(val.Z);
 	}
 
 	template <>
 	void addToVector(const Vector2& val, Vector<float>& output)
 	{
-		output.push_back(val.x);
-		output.push_back(val.y);
+		output.push_back(val.X);
+		output.push_back(val.Y);
 	}
 
 	template <>
 	void addToVector(const Color& val, Vector<float>& output)
 	{
-		output.push_back(val.r);
-		output.push_back(val.g);
-		output.push_back(val.b);
-		output.push_back(val.a);
+		output.push_back(val.R);
+		output.push_back(val.G);
+		output.push_back(val.B);
+		output.push_back(val.A);
 	}
 
 	template<class T>

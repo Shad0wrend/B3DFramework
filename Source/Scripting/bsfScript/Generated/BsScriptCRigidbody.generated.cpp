@@ -18,58 +18,58 @@ namespace bs
 	ScriptCRigidbody::ScriptCRigidbody(MonoObject* managedInstance, const GameObjectHandle<CRigidbody>& value)
 		:TScriptComponent(managedInstance, value)
 	{
-		value->onCollisionBegin.Connect(std::bind(&ScriptCRigidbody::onCollisionBegin, this, std::placeholders::_1));
-		value->onCollisionStay.Connect(std::bind(&ScriptCRigidbody::onCollisionStay, this, std::placeholders::_1));
-		value->onCollisionEnd.Connect(std::bind(&ScriptCRigidbody::onCollisionEnd, this, std::placeholders::_1));
+		value->OnCollisionBegin.Connect(std::bind(&ScriptCRigidbody::onCollisionBegin, this, std::placeholders::_1));
+		value->OnCollisionStay.Connect(std::bind(&ScriptCRigidbody::onCollisionStay, this, std::placeholders::_1));
+		value->OnCollisionEnd.Connect(std::bind(&ScriptCRigidbody::onCollisionEnd, this, std::placeholders::_1));
 	}
 
 	void ScriptCRigidbody::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_Move", (void*)&ScriptCRigidbody::InternalMove);
-		metaData.scriptClass->AddInternalCall("Internal_Rotate", (void*)&ScriptCRigidbody::InternalRotate);
-		metaData.scriptClass->AddInternalCall("Internal_SetMass", (void*)&ScriptCRigidbody::InternalSetMass);
-		metaData.scriptClass->AddInternalCall("Internal_GetMass", (void*)&ScriptCRigidbody::InternalGetMass);
-		metaData.scriptClass->AddInternalCall("Internal_SetIsKinematic", (void*)&ScriptCRigidbody::InternalSetIsKinematic);
-		metaData.scriptClass->AddInternalCall("Internal_GetIsKinematic", (void*)&ScriptCRigidbody::InternalGetIsKinematic);
-		metaData.scriptClass->AddInternalCall("Internal_IsSleeping", (void*)&ScriptCRigidbody::InternalIsSleeping);
-		metaData.scriptClass->AddInternalCall("Internal_Sleep", (void*)&ScriptCRigidbody::InternalSleep);
-		metaData.scriptClass->AddInternalCall("Internal_WakeUp", (void*)&ScriptCRigidbody::InternalWakeUp);
-		metaData.scriptClass->AddInternalCall("Internal_SetSleepThreshold", (void*)&ScriptCRigidbody::InternalSetSleepThreshold);
-		metaData.scriptClass->AddInternalCall("Internal_GetSleepThreshold", (void*)&ScriptCRigidbody::InternalGetSleepThreshold);
-		metaData.scriptClass->AddInternalCall("Internal_SetUseGravity", (void*)&ScriptCRigidbody::InternalSetUseGravity);
-		metaData.scriptClass->AddInternalCall("Internal_GetUseGravity", (void*)&ScriptCRigidbody::InternalGetUseGravity);
-		metaData.scriptClass->AddInternalCall("Internal_SetVelocity", (void*)&ScriptCRigidbody::InternalSetVelocity);
-		metaData.scriptClass->AddInternalCall("Internal_GetVelocity", (void*)&ScriptCRigidbody::InternalGetVelocity);
-		metaData.scriptClass->AddInternalCall("Internal_SetAngularVelocity", (void*)&ScriptCRigidbody::InternalSetAngularVelocity);
-		metaData.scriptClass->AddInternalCall("Internal_GetAngularVelocity", (void*)&ScriptCRigidbody::InternalGetAngularVelocity);
-		metaData.scriptClass->AddInternalCall("Internal_SetDrag", (void*)&ScriptCRigidbody::InternalSetDrag);
-		metaData.scriptClass->AddInternalCall("Internal_GetDrag", (void*)&ScriptCRigidbody::InternalGetDrag);
-		metaData.scriptClass->AddInternalCall("Internal_SetAngularDrag", (void*)&ScriptCRigidbody::InternalSetAngularDrag);
-		metaData.scriptClass->AddInternalCall("Internal_GetAngularDrag", (void*)&ScriptCRigidbody::InternalGetAngularDrag);
-		metaData.scriptClass->AddInternalCall("Internal_SetInertiaTensor", (void*)&ScriptCRigidbody::InternalSetInertiaTensor);
-		metaData.scriptClass->AddInternalCall("Internal_GetInertiaTensor", (void*)&ScriptCRigidbody::InternalGetInertiaTensor);
-		metaData.scriptClass->AddInternalCall("Internal_SetMaxAngularVelocity", (void*)&ScriptCRigidbody::InternalSetMaxAngularVelocity);
-		metaData.scriptClass->AddInternalCall("Internal_GetMaxAngularVelocity", (void*)&ScriptCRigidbody::InternalGetMaxAngularVelocity);
-		metaData.scriptClass->AddInternalCall("Internal_SetCenterOfMassPosition", (void*)&ScriptCRigidbody::InternalSetCenterOfMassPosition);
-		metaData.scriptClass->AddInternalCall("Internal_GetCenterOfMassPosition", (void*)&ScriptCRigidbody::InternalGetCenterOfMassPosition);
-		metaData.scriptClass->AddInternalCall("Internal_SetCenterOfMassRotation", (void*)&ScriptCRigidbody::InternalSetCenterOfMassRotation);
-		metaData.scriptClass->AddInternalCall("Internal_GetCenterOfMassRotation", (void*)&ScriptCRigidbody::InternalGetCenterOfMassRotation);
-		metaData.scriptClass->AddInternalCall("Internal_SetPositionSolverCount", (void*)&ScriptCRigidbody::InternalSetPositionSolverCount);
-		metaData.scriptClass->AddInternalCall("Internal_GetPositionSolverCount", (void*)&ScriptCRigidbody::InternalGetPositionSolverCount);
-		metaData.scriptClass->AddInternalCall("Internal_SetVelocitySolverCount", (void*)&ScriptCRigidbody::InternalSetVelocitySolverCount);
-		metaData.scriptClass->AddInternalCall("Internal_GetVelocitySolverCount", (void*)&ScriptCRigidbody::InternalGetVelocitySolverCount);
-		metaData.scriptClass->AddInternalCall("Internal_SetCollisionReportMode", (void*)&ScriptCRigidbody::InternalSetCollisionReportMode);
-		metaData.scriptClass->AddInternalCall("Internal_GetCollisionReportMode", (void*)&ScriptCRigidbody::InternalGetCollisionReportMode);
-		metaData.scriptClass->AddInternalCall("Internal_SetFlags", (void*)&ScriptCRigidbody::InternalSetFlags);
-		metaData.scriptClass->AddInternalCall("Internal_GetFlags", (void*)&ScriptCRigidbody::InternalGetFlags);
-		metaData.scriptClass->AddInternalCall("Internal_AddForce", (void*)&ScriptCRigidbody::InternalAddForce);
-		metaData.scriptClass->AddInternalCall("Internal_AddTorque", (void*)&ScriptCRigidbody::InternalAddTorque);
-		metaData.scriptClass->AddInternalCall("Internal_AddForceAtPoint", (void*)&ScriptCRigidbody::InternalAddForceAtPoint);
-		metaData.scriptClass->AddInternalCall("Internal_GetVelocityAtPoint", (void*)&ScriptCRigidbody::InternalGetVelocityAtPoint);
+		metaData.ScriptClass->AddInternalCall("Internal_Move", (void*)&ScriptCRigidbody::InternalMove);
+		metaData.ScriptClass->AddInternalCall("Internal_Rotate", (void*)&ScriptCRigidbody::InternalRotate);
+		metaData.ScriptClass->AddInternalCall("Internal_SetMass", (void*)&ScriptCRigidbody::InternalSetMass);
+		metaData.ScriptClass->AddInternalCall("Internal_GetMass", (void*)&ScriptCRigidbody::InternalGetMass);
+		metaData.ScriptClass->AddInternalCall("Internal_SetIsKinematic", (void*)&ScriptCRigidbody::InternalSetIsKinematic);
+		metaData.ScriptClass->AddInternalCall("Internal_GetIsKinematic", (void*)&ScriptCRigidbody::InternalGetIsKinematic);
+		metaData.ScriptClass->AddInternalCall("Internal_IsSleeping", (void*)&ScriptCRigidbody::InternalIsSleeping);
+		metaData.ScriptClass->AddInternalCall("Internal_Sleep", (void*)&ScriptCRigidbody::InternalSleep);
+		metaData.ScriptClass->AddInternalCall("Internal_WakeUp", (void*)&ScriptCRigidbody::InternalWakeUp);
+		metaData.ScriptClass->AddInternalCall("Internal_SetSleepThreshold", (void*)&ScriptCRigidbody::InternalSetSleepThreshold);
+		metaData.ScriptClass->AddInternalCall("Internal_GetSleepThreshold", (void*)&ScriptCRigidbody::InternalGetSleepThreshold);
+		metaData.ScriptClass->AddInternalCall("Internal_SetUseGravity", (void*)&ScriptCRigidbody::InternalSetUseGravity);
+		metaData.ScriptClass->AddInternalCall("Internal_GetUseGravity", (void*)&ScriptCRigidbody::InternalGetUseGravity);
+		metaData.ScriptClass->AddInternalCall("Internal_SetVelocity", (void*)&ScriptCRigidbody::InternalSetVelocity);
+		metaData.ScriptClass->AddInternalCall("Internal_GetVelocity", (void*)&ScriptCRigidbody::InternalGetVelocity);
+		metaData.ScriptClass->AddInternalCall("Internal_SetAngularVelocity", (void*)&ScriptCRigidbody::InternalSetAngularVelocity);
+		metaData.ScriptClass->AddInternalCall("Internal_GetAngularVelocity", (void*)&ScriptCRigidbody::InternalGetAngularVelocity);
+		metaData.ScriptClass->AddInternalCall("Internal_SetDrag", (void*)&ScriptCRigidbody::InternalSetDrag);
+		metaData.ScriptClass->AddInternalCall("Internal_GetDrag", (void*)&ScriptCRigidbody::InternalGetDrag);
+		metaData.ScriptClass->AddInternalCall("Internal_SetAngularDrag", (void*)&ScriptCRigidbody::InternalSetAngularDrag);
+		metaData.ScriptClass->AddInternalCall("Internal_GetAngularDrag", (void*)&ScriptCRigidbody::InternalGetAngularDrag);
+		metaData.ScriptClass->AddInternalCall("Internal_SetInertiaTensor", (void*)&ScriptCRigidbody::InternalSetInertiaTensor);
+		metaData.ScriptClass->AddInternalCall("Internal_GetInertiaTensor", (void*)&ScriptCRigidbody::InternalGetInertiaTensor);
+		metaData.ScriptClass->AddInternalCall("Internal_SetMaxAngularVelocity", (void*)&ScriptCRigidbody::InternalSetMaxAngularVelocity);
+		metaData.ScriptClass->AddInternalCall("Internal_GetMaxAngularVelocity", (void*)&ScriptCRigidbody::InternalGetMaxAngularVelocity);
+		metaData.ScriptClass->AddInternalCall("Internal_SetCenterOfMassPosition", (void*)&ScriptCRigidbody::InternalSetCenterOfMassPosition);
+		metaData.ScriptClass->AddInternalCall("Internal_GetCenterOfMassPosition", (void*)&ScriptCRigidbody::InternalGetCenterOfMassPosition);
+		metaData.ScriptClass->AddInternalCall("Internal_SetCenterOfMassRotation", (void*)&ScriptCRigidbody::InternalSetCenterOfMassRotation);
+		metaData.ScriptClass->AddInternalCall("Internal_GetCenterOfMassRotation", (void*)&ScriptCRigidbody::InternalGetCenterOfMassRotation);
+		metaData.ScriptClass->AddInternalCall("Internal_SetPositionSolverCount", (void*)&ScriptCRigidbody::InternalSetPositionSolverCount);
+		metaData.ScriptClass->AddInternalCall("Internal_GetPositionSolverCount", (void*)&ScriptCRigidbody::InternalGetPositionSolverCount);
+		metaData.ScriptClass->AddInternalCall("Internal_SetVelocitySolverCount", (void*)&ScriptCRigidbody::InternalSetVelocitySolverCount);
+		metaData.ScriptClass->AddInternalCall("Internal_GetVelocitySolverCount", (void*)&ScriptCRigidbody::InternalGetVelocitySolverCount);
+		metaData.ScriptClass->AddInternalCall("Internal_SetCollisionReportMode", (void*)&ScriptCRigidbody::InternalSetCollisionReportMode);
+		metaData.ScriptClass->AddInternalCall("Internal_GetCollisionReportMode", (void*)&ScriptCRigidbody::InternalGetCollisionReportMode);
+		metaData.ScriptClass->AddInternalCall("Internal_SetFlags", (void*)&ScriptCRigidbody::InternalSetFlags);
+		metaData.ScriptClass->AddInternalCall("Internal_GetFlags", (void*)&ScriptCRigidbody::InternalGetFlags);
+		metaData.ScriptClass->AddInternalCall("Internal_AddForce", (void*)&ScriptCRigidbody::InternalAddForce);
+		metaData.ScriptClass->AddInternalCall("Internal_AddTorque", (void*)&ScriptCRigidbody::InternalAddTorque);
+		metaData.ScriptClass->AddInternalCall("Internal_AddForceAtPoint", (void*)&ScriptCRigidbody::InternalAddForceAtPoint);
+		metaData.ScriptClass->AddInternalCall("Internal_GetVelocityAtPoint", (void*)&ScriptCRigidbody::InternalGetVelocityAtPoint);
 
-		onCollisionBeginThunk = (onCollisionBeginThunkDef)metaData.scriptClass->GetMethodExact("Internal_onCollisionBegin", "CollisionData&")->GetThunk();
-		onCollisionStayThunk = (onCollisionStayThunkDef)metaData.scriptClass->GetMethodExact("Internal_onCollisionStay", "CollisionData&")->GetThunk();
-		onCollisionEndThunk = (onCollisionEndThunkDef)metaData.scriptClass->GetMethodExact("Internal_onCollisionEnd", "CollisionData&")->GetThunk();
+		onCollisionBeginThunk = (onCollisionBeginThunkDef)metaData.ScriptClass->GetMethodExact("Internal_onCollisionBegin", "CollisionData&")->GetThunk();
+		onCollisionStayThunk = (onCollisionStayThunkDef)metaData.ScriptClass->GetMethodExact("Internal_onCollisionStay", "CollisionData&")->GetThunk();
+		onCollisionEndThunk = (onCollisionEndThunkDef)metaData.ScriptClass->GetMethodExact("Internal_onCollisionEnd", "CollisionData&")->GetThunk();
 	}
 
 	void ScriptCRigidbody::onCollisionBegin(const CollisionData& p0)

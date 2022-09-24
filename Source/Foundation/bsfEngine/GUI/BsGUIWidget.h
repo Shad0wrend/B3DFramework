@@ -22,15 +22,15 @@ namespace bs
 	/**	Data required for rendering a single batch of GUI elements.  */
 	struct GUIMeshRenderData
 	{
-		SubMesh subMesh;
-		SPtr<ct::Texture> texture;
-		SPtr<ct::SpriteTexture> spriteTexture;
-		SpriteMaterial* material;
-		Color tint;
-		float animationStartTime;
-		SPtr<SpriteMaterialExtraInfo> additionalData;
-		bool isLine;
-		UINT32 bufferIdx;
+		SubMesh SubMesh;
+		SPtr<ct::Texture> Texture;
+		SPtr<ct::SpriteTexture> SpriteTexture;
+		SpriteMaterial* Material;
+		Color Tint;
+		float AnimationStartTime;
+		SPtr<SpriteMaterialExtraInfo> AdditionalData;
+		bool IsLine;
+		UINT32 BufferIdx;
 	};
 
 	/** Information about a GUI element that is displaying a render target. */
@@ -38,26 +38,26 @@ namespace bs
 	{
 		GUIRenderTargetRenderData() = default;
 		GUIRenderTargetRenderData(SPtr<ct::RenderTarget> target)
-			:target(std::move(target))
+			:Target(std::move(target))
 		{ }
 		
-		SPtr<ct::RenderTarget> target;
-		UINT64 lastUpdateCount = (UINT64)-1;
+		SPtr<ct::RenderTarget> Target;
+		UINT64 LastUpdateCount = (UINT64)-1;
 	};
 
 	/** Data required for rendering all the batches in a single GUI draw group. */
 	struct GUIDrawGroupRenderData
 	{
-		INT32 id = 0;
-		SPtr<ct::RenderTexture> destination;
-		Rect2I bounds;
-		SubMesh subMesh;
-		bool requiresRedraw = true;
-		UINT32 bufferIdx = 0;
+		INT32 Id = 0;
+		SPtr<ct::RenderTexture> Destination;
+		Rect2I Bounds;
+		SubMesh SubMesh;
+		bool RequiresRedraw = true;
+		UINT32 BufferIdx = 0;
 
-		Vector<GUIMeshRenderData> cachedElements;
-		Vector<GUIMeshRenderData> nonCachedElements;
-		Vector<GUIRenderTargetRenderData> renderTargetElements;
+		Vector<GUIMeshRenderData> CachedElements;
+		Vector<GUIMeshRenderData> NonCachedElements;
+		Vector<GUIRenderTargetRenderData> RenderTargetElements;
 	};
 
 	/**
@@ -66,10 +66,10 @@ namespace bs
 	 */
 	struct GUIDrawGroupRenderDataUpdate
 	{
-		Vector<GUIDrawGroupRenderData> newDrawGroups;
-		Vector<bool> groupDirtyState;
-		SPtr<ct::Mesh> triangleMesh;
-		SPtr<ct::Mesh> lineMesh;
+		Vector<GUIDrawGroupRenderData> NewDrawGroups;
+		Vector<bool> GroupDirtyState;
+		SPtr<ct::Mesh> TriangleMesh;
+		SPtr<ct::Mesh> LineMesh;
 	};
 
 	/**
@@ -108,45 +108,45 @@ namespace bs
 		{
 			GUIGroupRenderElement() = default;
 			GUIGroupRenderElement(GUIElement* element, UINT32 renderElementIdx)
-				:element(element), renderElementIdx(renderElementIdx)
+				:Element(element), RenderElementIdx(renderElementIdx)
 			{ }
 
-			GUIElement* element = nullptr;
-			UINT32 renderElementIdx = 0;
+			GUIElement* Element = nullptr;
+			UINT32 RenderElementIdx = 0;
 		};
 
 		/** Contains information about all draw groups a GUI element is part of. */
 		struct GUIGroupElement
 		{
-			GUIElement* element = nullptr;
-			SmallVector<INT32, 4> groups;
-			Rect2I bounds;
+			GUIElement* Element = nullptr;
+			SmallVector<INT32, 4> Groups;
+			Rect2I Bounds;
 		};
 		
 		/** Data required for rendering a single GUI mesh. */
 		struct GUIMesh
 		{
-			UINT32 indexOffset = 0;
-			UINT32 indexCount = 0;
-			SpriteMaterial* material;
-			SpriteMaterialInfo matInfo;
-			bool isLine;
+			UINT32 IndexOffset = 0;
+			UINT32 IndexCount = 0;
+			SpriteMaterial* Material;
+			SpriteMaterialInfo MatInfo;
+			bool IsLine;
 		};
 
 		/** Holds information about a set of GUI elements that can be drawn together. */
 		struct GUIDrawGroup
 		{
-			INT32 id = 0;
-			UINT32 depthRange = 0;
-			UINT32 minDepth = 0;
-			bool dirtyBounds = true;
-			bool needsRedraw = true;
-			bool dirtyTexture = true;
-			Rect2I bounds;
-			Vector<GUIGroupRenderElement> cachedElements;
-			Vector<GUIGroupRenderElement> nonCachedElements;
-			Vector<GUIMesh> meshes;
-			SPtr<RenderTexture> outputTexture;
+			INT32 Id = 0;
+			UINT32 DepthRange = 0;
+			UINT32 MinDepth = 0;
+			bool DirtyBounds = true;
+			bool NeedsRedraw = true;
+			bool DirtyTexture = true;
+			Rect2I Bounds;
+			Vector<GUIGroupRenderElement> CachedElements;
+			Vector<GUIGroupRenderElement> NonCachedElements;
+			Vector<GUIMesh> Meshes;
+			SPtr<RenderTexture> OutputTexture;
 		};
 
 		/** Splits the provided draw group at the specified depth. Returns the second half of the group. */
@@ -276,10 +276,10 @@ namespace bs
 		static SPtr<GUIWidget> Create(const HCamera& camera);
 
 		/**	Triggered when the widget's viewport size changes. */
-		Event<void()> onOwnerTargetResized;
+		Event<void()> OnOwnerTargetResized;
 
 		/**	Triggered when the parent window gained or lost focus. */
-		Event<void()> onOwnerWindowFocusChanged;
+		Event<void()> OnOwnerWindowFocusChanged;
 
 	public: // ***** INTERNAL ******
 		/** @name Internal
@@ -359,22 +359,22 @@ namespace bs
 		{
 			GUIGroupElement() = default;
 			GUIGroupElement(GUIElement* element, UINT32 renderElement)
-				:element(element), renderElement(renderElement)
+				:Element(element), RenderElement(renderElement)
 			{ }
 
-			GUIElement* element = nullptr;
-			UINT32 renderElement = 0;
+			GUIElement* Element = nullptr;
+			UINT32 RenderElement = 0;
 		};
 
 		/** Holds information about a set of GUI elements that can be drawn together. */
 		struct GUIDrawGroup
 		{
-			UINT32 id = 0;
-			UINT32 depthRange = 0;
-			UINT32 minDepth = 0;
-			Rect2I bounds;
-			Vector<GUIGroupElement> cachedElements;
-			Vector<GUIGroupElement> nonCachedElements;
+			UINT32 Id = 0;
+			UINT32 DepthRange = 0;
+			UINT32 MinDepth = 0;
+			Rect2I Bounds;
+			Vector<GUIGroupElement> CachedElements;
+			Vector<GUIGroupElement> NonCachedElements;
 		};
 		
 		/**	Calculates widget bounds using the bounds of all child elements. */

@@ -49,9 +49,9 @@ namespace bs
 		ScriptVirtualInput::StartUp();
 		ScriptGUI::StartUp();
 
-		mEngineTypeMappings.resources = BuiltinResourceTypes::GetEntries();
-		mEngineTypeMappings.components = BuiltinComponent::GetEntries();
-		mEngineTypeMappings.reflectableObjects = BuiltinReflectableTypes::GetEntries();
+		mEngineTypeMappings.Resources = BuiltinResourceTypes::GetEntries();
+		mEngineTypeMappings.Components = BuiltinComponent::GetEntries();
+		mEngineTypeMappings.ReflectableObjects = BuiltinReflectableTypes::GetEntries();
 
 		ScriptAssemblyManager::Instance().LoadAssemblyInfo(ENGINE_ASSEMBLY, mEngineTypeMappings);
 

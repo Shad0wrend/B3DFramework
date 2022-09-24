@@ -18,7 +18,7 @@ namespace bs
 
 	MonoObject*ScriptControllerCollision::Box(const __ControllerCollisionInterop& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	__ControllerCollisionInterop ScriptControllerCollision::Unbox(MonoObject* value)
@@ -29,10 +29,10 @@ namespace bs
 	ControllerCollision ScriptControllerCollision::FromInterop(const __ControllerCollisionInterop& value)
 	{
 		ControllerCollision output;
-		output.position = value.position;
-		output.normal = value.normal;
-		output.motionDir = value.motionDir;
-		output.motionAmount = value.motionAmount;
+		output.Position = value.Position;
+		output.Normal = value.Normal;
+		output.MotionDir = value.MotionDir;
+		output.MotionAmount = value.MotionAmount;
 
 		return output;
 	}
@@ -40,10 +40,10 @@ namespace bs
 	__ControllerCollisionInterop ScriptControllerCollision::ToInterop(const ControllerCollision& value)
 	{
 		__ControllerCollisionInterop output;
-		output.position = value.position;
-		output.normal = value.normal;
-		output.motionDir = value.motionDir;
-		output.motionAmount = value.motionAmount;
+		output.Position = value.Position;
+		output.Normal = value.Normal;
+		output.MotionDir = value.MotionDir;
+		output.MotionAmount = value.MotionAmount;
 
 		return output;
 	}

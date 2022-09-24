@@ -38,13 +38,13 @@ namespace bs
 		
 		while (existingEntry != nullptr)
 		{
-			if (StringIDUtil<T>::Compare(name, existingEntry->chars))
+			if (StringIDUtil<T>::Compare(name, existingEntry->Chars))
 			{
 				mData = existingEntry;
 				return;
 			}
 
-			existingEntry = existingEntry->next;
+			existingEntry = existingEntry->Next;
 		}
 
 		ScopedSpinLock lock(mSync);
@@ -54,23 +54,23 @@ namespace bs
 		InternalData* lastEntry = nullptr;
 		while (existingEntry != nullptr)
 		{
-			if (StringIDUtil<T>::Compare(name, existingEntry->chars))
+			if (StringIDUtil<T>::Compare(name, existingEntry->Chars))
 			{
 				mData = existingEntry;
 				return;
 			}
 
 			lastEntry = existingEntry;
-			existingEntry = existingEntry->next;
+			existingEntry = existingEntry->Next;
 		}
 
 		mData = AllocEntry();
-		StringIDUtil<T>::Copy(name, mData->chars);
+		StringIDUtil<T>::Copy(name, mData->Chars);
 
 		if (lastEntry == nullptr)
 			mStringHashTable[hash] = mData;
 		else
-			lastEntry->next = mData;
+			lastEntry->Next = mData;
 	}
 
 	template<class T>
@@ -104,8 +104,8 @@ namespace bs
 		UINT32 chunkSpecificIndex = mNextId % ELEMENTS_PER_CHUNK;
 
 		InternalData* newEntry = &chunk[chunkSpecificIndex];
-		newEntry->id = mNextId++;
-		newEntry->next = nullptr;
+		newEntry->Id = mNextId++;
+		newEntry->Next = nullptr;
 
 		return newEntry;
 	}

@@ -95,7 +95,7 @@ namespace bs
 			mObjects.erase(object->GetInstanceId());
 		}
 
-		onDestroyed(static_object_cast<GameObject>(object));
+		OnDestroyed(static_object_cast<GameObject>(object));
 		object.Destroy();
 	}
 
@@ -113,7 +113,7 @@ namespace bs
 	{
 		for (auto& entry : mUnresolvedHandles)
 		{
-			UINT64 instanceId = entry.originalInstanceId;
+			UINT64 instanceId = entry.OriginalInstanceId;
 
 			bool isInternalReference = false;
 
@@ -131,28 +131,28 @@ namespace bs
 				const auto findIterObj = mDeserializedObjects.find(instanceId);
 
 				if (findIterObj != mDeserializedObjects.end())
-					entry.handle.ResolveInternal(findIterObj->second);
+					entry.Handle.ResolveInternal(findIterObj->second);
 				else
 				{
 					if ((mOptions & GODM_KeepMissing) == 0)
-						entry.handle.ResolveInternal(nullptr);
+						entry.Handle.ResolveInternal(nullptr);
 				}
 			}
 			else if (!isInternalReference && (mOptions & GODM_RestoreExternal) != 0)
 			{
 				HGameObject obj;
 				if(GameObjectManager::Instance().TryGetObject(instanceId, obj))
-					entry.handle.ResolveInternal(obj);
+					entry.Handle.ResolveInternal(obj);
 				else
 				{
 					if ((mOptions & GODM_KeepMissing) == 0)
-						entry.handle.ResolveInternal(nullptr);
+						entry.Handle.ResolveInternal(nullptr);
 				}
 			}
 			else
 			{
 				if ((mOptions & GODM_KeepMissing) == 0)
-					entry.handle.ResolveInternal(nullptr);
+					entry.Handle.ResolveInternal(nullptr);
 			}
 		}
 

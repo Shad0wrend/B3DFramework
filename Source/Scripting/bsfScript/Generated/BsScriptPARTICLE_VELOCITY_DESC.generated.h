@@ -11,8 +11,8 @@ namespace bs
 {
 	struct __PARTICLE_VELOCITY_DESCInterop
 	{
-		MonoObject* velocity;
-		bool worldSpace;
+		MonoObject* Velocity;
+		bool WorldSpace;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptPARTICLE_VELOCITY_DESC : public ScriptObject<ScriptPARTICLE_VELOCITY_DESC>

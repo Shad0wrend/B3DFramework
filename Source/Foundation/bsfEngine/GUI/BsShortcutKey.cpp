@@ -12,19 +12,19 @@ namespace bs
 	size_t ShortcutKey::Hash::operator()(const ShortcutKey& x) const
 	{
 		size_t seed = 0;
-		bs_hash_combine(seed, (UINT32)x.button);
-		bs_hash_combine(seed, (UINT32)x.modifier);
+		bs_hash_combine(seed, (UINT32)x.Button);
+		bs_hash_combine(seed, (UINT32)x.Modifier);
 
 		return seed;
 	}
 
 	bool ShortcutKey::Equals::operator()(const ShortcutKey& a, const ShortcutKey& b) const
 	{
-		return a.button == b.button && a.modifier == b.modifier;
+		return a.Button == b.Button && a.Modifier == b.Modifier;
 	}
 
 	ShortcutKey::ShortcutKey(ButtonModifier modifier, ButtonCode code)
-		: modifier(modifier), button(code)
+		: Modifier(modifier), Button(code)
 	{ }
 
 	String ShortcutKey::GetName() const
@@ -69,22 +69,22 @@ namespace bs
 			{BC_PAUSE, HEString(u8"Pause")},
 		};
 
-		if (button == BC_UNASSIGNED)
+		if (Button == BC_UNASSIGNED)
 			return u8"";
 
 		String charStr;
 
-		auto iterFind = FUNCTION_KEY_TO_NAME.find(button);
+		auto iterFind = FUNCTION_KEY_TO_NAME.find(Button);
 		if (iterFind != FUNCTION_KEY_TO_NAME.end())
 		{
 			charStr = ((HString)iterFind->second);
 		}
 		else
 		{
-			charStr = Platform::KeyCodeToUnicode((UINT32)button);
+			charStr = Platform::KeyCodeToUnicode((UINT32)Button);
 			StringUtil::ToUpperCase(charStr);
 		}
 
-		return MODIFIER_TO_NAME[(UINT32)modifier] + charStr;
+		return MODIFIER_TO_NAME[(UINT32)Modifier] + charStr;
 	}
 }

@@ -50,7 +50,7 @@ namespace bs
 		 * Triggered whenever the scrollbar handle is moved or resized. Values provided are the handle position and size
 		 * in percent (ranging [0, 1]).
 		 */
-		Event<void(float posPct, float sizePct)> onScrollOrResize;
+		Event<void(float posPct, float sizePct)> OnScrollOrResize;
 
 	public: // ***** INTERNAL ******
 		/** @name Internal

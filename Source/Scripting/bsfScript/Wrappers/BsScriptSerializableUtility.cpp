@@ -18,8 +18,8 @@ namespace bs
 
 	void ScriptSerializableUtility::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_Clone", (void*)&ScriptSerializableUtility::InternalClone);
-		metaData.scriptClass->AddInternalCall("Internal_Create", (void*)&ScriptSerializableUtility::InternalCreate);
+		metaData.ScriptClass->AddInternalCall("Internal_Clone", (void*)&ScriptSerializableUtility::InternalClone);
+		metaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptSerializableUtility::InternalCreate);
 	}
 
 	MonoObject* ScriptSerializableUtility::InternalClone(MonoObject* original)

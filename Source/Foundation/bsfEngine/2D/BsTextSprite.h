@@ -36,18 +36,18 @@ namespace bs
 	{
 		TEXT_SPRITE_DESC() = default;
 
-		UINT32 width = 0; /**< Width of the bounds to render the text within, in pixels. */
-		UINT32 height = 0; /**< Height of the bounds to render the text within, in pixels. */
-		SpriteAnchor anchor = SA_TopLeft; /**< Determines how to anchor the text within the bounds. */
+		UINT32 Width = 0; /**< Width of the bounds to render the text within, in pixels. */
+		UINT32 Height = 0; /**< Height of the bounds to render the text within, in pixels. */
+		SpriteAnchor Anchor = SA_TopLeft; /**< Determines how to anchor the text within the bounds. */
 
-		String text; /**< UTF-8 encoded text to generate geometry for. */
-		HFont font; /**< Font containing the data about character glyphs. */
-		UINT32 fontSize = 0; /**< Size of the font to use when displaying the text. */
-		Color color; /**< Color tint of the text. */
-		TextHorzAlign horzAlign = THA_Left; /**< Specifies how is text horizontally aligned within its bounds. */
-		TextVertAlign vertAlign = TVA_Top; /**< Specifies how is text vertically aligned within its bounds. */
-		bool wordWrap = false; /**< If true the text will word wrap when it doesn't fit, otherwise it will overflow. */
-		bool wordBreak = true; /**< If enabled together with word wrap it will allow words to be broken if they don't fit. */
+		String Text; /**< UTF-8 encoded text to generate geometry for. */
+		HFont Font; /**< Font containing the data about character glyphs. */
+		UINT32 FontSize = 0; /**< Size of the font to use when displaying the text. */
+		Color Color; /**< Color tint of the text. */
+		TextHorzAlign HorzAlign = THA_Left; /**< Specifies how is text horizontally aligned within its bounds. */
+		TextVertAlign VertAlign = TVA_Top; /**< Specifies how is text vertically aligned within its bounds. */
+		bool WordWrap = false; /**< If true the text will word wrap when it doesn't fit, otherwise it will overflow. */
+		bool WordBreak = true; /**< If enabled together with word wrap it will allow words to be broken if they don't fit. */
 	};
 
 	/**	A sprite consisting of a quads representing a text string. */

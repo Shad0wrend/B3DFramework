@@ -30,7 +30,7 @@ namespace bs
 	ShaderVariation::ShaderVariation(const SmallVector<Param, 4>& params)
 	{
 		for (auto& entry : params)
-			mParams[entry.name] = entry;
+			mParams[entry.Name] = entry;
 	}
 
 	INT32 ShaderVariation::GetInt(const StringID& name)
@@ -39,7 +39,7 @@ namespace bs
 		if (iterFind == mParams.end())
 			return 0;
 		else
-			return iterFind->second.i;
+			return iterFind->second.I;
 	}
 
 	UINT32 ShaderVariation::GetUInt(const StringID& name)
@@ -48,7 +48,7 @@ namespace bs
 		if (iterFind == mParams.end())
 			return 0;
 		else
-			return iterFind->second.ui;
+			return iterFind->second.Ui;
 	}
 
 	float ShaderVariation::GetFloat(const StringID& name)
@@ -57,7 +57,7 @@ namespace bs
 		if (iterFind == mParams.end())
 			return 0.0f;
 		else
-			return iterFind->second.f;
+			return iterFind->second.F;
 	}
 
 	bool ShaderVariation::GetBool(const StringID& name)
@@ -66,7 +66,7 @@ namespace bs
 		if (iterFind == mParams.end())
 			return false;
 		else
-			return iterFind->second.i > 0 ? true : false;
+			return iterFind->second.I > 0 ? true : false;
 	}
 
 	void ShaderVariation::SetInt(const StringID& name, INT32 value)
@@ -105,17 +105,17 @@ namespace bs
 		ShaderDefines defines;
 		for (auto& entry : mParams)
 		{
-			switch (entry.second.type)
+			switch (entry.second.Type)
 			{
 			case Int:
 			case Bool:
-				defines.Set(entry.first.CStr(), entry.second.i);
+				defines.Set(entry.first.CStr(), entry.second.I);
 				break;
 			case UInt:
-				defines.Set(entry.first.CStr(), entry.second.ui);
+				defines.Set(entry.first.CStr(), entry.second.Ui);
 				break;
 			case Float:
-				defines.Set(entry.first.CStr(), entry.second.f);
+				defines.Set(entry.first.CStr(), entry.second.F);
 				break;
 			}
 		}
@@ -131,7 +131,7 @@ namespace bs
 			if(iterFind == mParams.end())
 				return false;
 
-			if(entry.second.i != iterFind->second.i)
+			if(entry.second.I != iterFind->second.I)
 				return false;
 		}
 
@@ -143,7 +143,7 @@ namespace bs
 				if (iterFind == other.mParams.end())
 					return false;
 
-				if (entry.second.i != iterFind->second.i)
+				if (entry.second.I != iterFind->second.I)
 					return false;
 			}
 		}

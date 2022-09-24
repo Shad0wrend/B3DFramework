@@ -24,9 +24,9 @@ namespace bs
 {
 	struct __TNamedAnimationCurvefloatInterop
 	{
-		MonoString* name;
-		Flags<AnimationCurveFlag> flags;
-		MonoObject* curve;
+		MonoString* Name;
+		Flags<AnimationCurveFlag> Flags;
+		MonoObject* Curve;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptTNamedAnimationCurvefloat : public ScriptObject<ScriptTNamedAnimationCurvefloat>
@@ -46,9 +46,9 @@ namespace bs
 
 	struct __TNamedAnimationCurveVector3Interop
 	{
-		MonoString* name;
-		Flags<AnimationCurveFlag> flags;
-		MonoObject* curve;
+		MonoString* Name;
+		Flags<AnimationCurveFlag> Flags;
+		MonoObject* Curve;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptTNamedAnimationCurveVector3 : public ScriptObject<ScriptTNamedAnimationCurveVector3>
@@ -68,9 +68,9 @@ namespace bs
 
 	struct __TNamedAnimationCurveVector2Interop
 	{
-		MonoString* name;
-		Flags<AnimationCurveFlag> flags;
-		MonoObject* curve;
+		MonoString* Name;
+		Flags<AnimationCurveFlag> Flags;
+		MonoObject* Curve;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptTNamedAnimationCurveVector2 : public ScriptObject<ScriptTNamedAnimationCurveVector2>
@@ -90,9 +90,9 @@ namespace bs
 
 	struct __TNamedAnimationCurveQuaternionInterop
 	{
-		MonoString* name;
-		Flags<AnimationCurveFlag> flags;
-		MonoObject* curve;
+		MonoString* Name;
+		Flags<AnimationCurveFlag> Flags;
+		MonoObject* Curve;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptTNamedAnimationCurveQuaternion : public ScriptObject<ScriptTNamedAnimationCurveQuaternion>
@@ -112,9 +112,9 @@ namespace bs
 
 	struct __TNamedAnimationCurveint32_tInterop
 	{
-		MonoString* name;
-		Flags<AnimationCurveFlag> flags;
-		MonoObject* curve;
+		MonoString* Name;
+		Flags<AnimationCurveFlag> Flags;
+		MonoObject* Curve;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptTNamedAnimationCurveint32_t : public ScriptObject<ScriptTNamedAnimationCurveint32_t>

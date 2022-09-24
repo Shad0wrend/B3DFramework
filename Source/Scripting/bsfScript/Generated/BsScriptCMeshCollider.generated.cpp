@@ -18,8 +18,8 @@ namespace bs
 
 	void ScriptCMeshCollider::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_SetMesh", (void*)&ScriptCMeshCollider::InternalSetMesh);
-		metaData.scriptClass->AddInternalCall("Internal_GetMesh", (void*)&ScriptCMeshCollider::InternalGetMesh);
+		metaData.ScriptClass->AddInternalCall("Internal_SetMesh", (void*)&ScriptCMeshCollider::InternalSetMesh);
+		metaData.ScriptClass->AddInternalCall("Internal_GetMesh", (void*)&ScriptCMeshCollider::InternalGetMesh);
 
 	}
 

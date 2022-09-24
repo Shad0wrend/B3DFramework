@@ -187,9 +187,9 @@ namespace bs
 		{
 			mInternal = CreateInternal();
 
-			mInternal->onCollisionBegin.Connect(std::bind(&CCollider::TriggerOnCollisionBegin, this, _1));
-			mInternal->onCollisionStay.Connect(std::bind(&CCollider::TriggerOnCollisionStay, this, _1));
-			mInternal->onCollisionEnd.Connect(std::bind(&CCollider::TriggerOnCollisionEnd, this, _1));
+			mInternal->OnCollisionBegin.Connect(std::bind(&CCollider::TriggerOnCollisionBegin, this, _1));
+			mInternal->OnCollisionStay.Connect(std::bind(&CCollider::TriggerOnCollisionStay, this, _1));
+			mInternal->OnCollisionEnd.Connect(std::bind(&CCollider::TriggerOnCollisionEnd, this, _1));
 		}
 
 		// Note: Merge into one call to avoid many virtual function calls
@@ -265,9 +265,9 @@ namespace bs
 
 			Vector3 scale = parentTfrm.GetScale();
 			Vector3 invScale = scale;
-			if (invScale.x != 0) invScale.x = 1.0f / invScale.x;
-			if (invScale.y != 0) invScale.y = 1.0f / invScale.y;
-			if (invScale.z != 0) invScale.z = 1.0f / invScale.z;
+			if (invScale.X != 0) invScale.X = 1.0f / invScale.X;
+			if (invScale.Y != 0) invScale.Y = 1.0f / invScale.Y;
+			if (invScale.Z != 0) invScale.Z = 1.0f / invScale.Z;
 
 			Quaternion invRotation = parentRot.Inverse();
 
@@ -310,46 +310,46 @@ namespace bs
 	void CCollider::TriggerOnCollisionBegin(const CollisionDataRaw& data)
 	{
 		CollisionData hit;
-		hit.contactPoints = data.contactPoints;
-		hit.collider[0] = static_object_cast<CCollider>(mThisHandle);
+		hit.ContactPoints = data.ContactPoints;
+		hit.Collider[0] = static_object_cast<CCollider>(mThisHandle);
 
-		if(data.colliders[1] != nullptr)
+		if(data.Colliders[1] != nullptr)
 		{
-			CCollider* other = (CCollider*)data.colliders[1]->GetOwnerInternal(PhysicsOwnerType::Component);
-			hit.collider[1] = static_object_cast<CCollider>(other->GetHandle());
+			CCollider* other = (CCollider*)data.Colliders[1]->GetOwnerInternal(PhysicsOwnerType::Component);
+			hit.Collider[1] = static_object_cast<CCollider>(other->GetHandle());
 		}
 
-		onCollisionBegin(hit);
+		OnCollisionBegin(hit);
 	}
 
 	void CCollider::TriggerOnCollisionStay(const CollisionDataRaw& data)
 	{
 		CollisionData hit;
-		hit.contactPoints = data.contactPoints;
-		hit.collider[0] = static_object_cast<CCollider>(mThisHandle);
+		hit.ContactPoints = data.ContactPoints;
+		hit.Collider[0] = static_object_cast<CCollider>(mThisHandle);
 
-		if (data.colliders[1] != nullptr)
+		if (data.Colliders[1] != nullptr)
 		{
-			CCollider* other = (CCollider*)data.colliders[1]->GetOwnerInternal(PhysicsOwnerType::Component);
-			hit.collider[1] = static_object_cast<CCollider>(other->GetHandle());
+			CCollider* other = (CCollider*)data.Colliders[1]->GetOwnerInternal(PhysicsOwnerType::Component);
+			hit.Collider[1] = static_object_cast<CCollider>(other->GetHandle());
 		}
 
-		onCollisionStay(hit);
+		OnCollisionStay(hit);
 	}
 
 	void CCollider::TriggerOnCollisionEnd(const CollisionDataRaw& data)
 	{
 		CollisionData hit;
-		hit.contactPoints = data.contactPoints;
-		hit.collider[0] = static_object_cast<CCollider>(mThisHandle);
+		hit.ContactPoints = data.ContactPoints;
+		hit.Collider[0] = static_object_cast<CCollider>(mThisHandle);
 
-		if (data.colliders[1] != nullptr)
+		if (data.Colliders[1] != nullptr)
 		{
-			CCollider* other = (CCollider*)data.colliders[1]->GetOwnerInternal(PhysicsOwnerType::Component);
-			hit.collider[1] = static_object_cast<CCollider>(other->GetHandle());
+			CCollider* other = (CCollider*)data.Colliders[1]->GetOwnerInternal(PhysicsOwnerType::Component);
+			hit.Collider[1] = static_object_cast<CCollider>(other->GetHandle());
 		}
 
-		onCollisionEnd(hit);
+		OnCollisionEnd(hit);
 	}
 
 	RTTITypeBase* CCollider::GetRttiStatic()

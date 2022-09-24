@@ -21,15 +21,15 @@ namespace bs
 		Torus() = default;
 
 		Torus(const Vector3& normal, float outerRadius, float innerRadius)
-			:normal(normal), outerRadius(outerRadius), innerRadius(innerRadius)
+			:Normal(normal), OuterRadius(outerRadius), InnerRadius(innerRadius)
 		{ }
 
 		/** Ray/torus intersection, returns boolean result and distance to nearest intersection point. */
 		std::pair<bool, float> Intersects(const Ray& ray) const;
 
-		Vector3 normal{BsZero};
-		float outerRadius = 0.0f;
-		float innerRadius = 0.0f;
+		Vector3 Normal{BsZero};
+		float OuterRadius = 0.0f;
+		float InnerRadius = 0.0f;
 	};
 
 	/** @} */

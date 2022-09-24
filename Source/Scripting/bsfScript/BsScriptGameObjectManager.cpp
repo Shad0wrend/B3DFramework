@@ -21,16 +21,16 @@ using namespace std::placeholders;
 namespace bs
 {
 	ScriptGameObjectManager::ScriptGameObjectEntry::ScriptGameObjectEntry(ScriptGameObjectBase* instance, bool isComponent)
-		:instance(instance), isComponent(isComponent)
+		:Instance(instance), IsComponent(isComponent)
 	{ }
 
 	ScriptGameObjectManager::ScriptGameObjectManager()
 	{
 		// Calls OnReset on all components after assembly reload happens
-		mOnAssemblyReloadDoneConn = ScriptObjectManager::Instance().onRefreshComplete.Connect(
+		mOnAssemblyReloadDoneConn = ScriptObjectManager::Instance().OnRefreshComplete.Connect(
 			std::bind(&::bs::ScriptGameObjectManager::SendComponentResetEvents, this));
 
-		onGameObjectDestroyedConn = GameObjectManager::Instance().onDestroyed.Connect(
+		onGameObjectDestroyedConn = GameObjectManager::Instance().OnDestroyed.Connect(
 			std::bind(&::bs::ScriptGameObjectManager::OnGameObjectDestroyed, this, _1));
 	}
 
@@ -51,7 +51,7 @@ namespace bs
 
 	ScriptSceneObject* ScriptGameObjectManager::CreateScriptSceneObject(const HSceneObject& sceneObject)
 	{
-		MonoClass* sceneObjectClass = ScriptAssemblyManager::Instance().GetBuiltinClasses().sceneObjectClass;
+		MonoClass* sceneObjectClass = ScriptAssemblyManager::Instance().GetBuiltinClasses().SceneObjectClass;
 		MonoObject* instance = sceneObjectClass->CreateInstance();
 
 		return CreateScriptSceneObject(instance, sceneObject);
@@ -89,7 +89,7 @@ namespace bs
 		if (info == nullptr)
 			return nullptr;
 
-		ScriptComponentBase* nativeInstance = info->createCallback(component);
+		ScriptComponentBase* nativeInstance = info->CreateCallback(component);
 		nativeInstance->SetNativeHandle(static_object_cast<GameObject>(component));
 
 		UINT64 instanceId = component->GetInstanceId();

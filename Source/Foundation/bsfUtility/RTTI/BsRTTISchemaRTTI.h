@@ -21,7 +21,7 @@ namespace bs
 		static BitLength ToMemory(const RTTIFieldInfo& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
-			size += rtti_write(data.flags, stream);
+			size += rtti_write(data.Flags, stream);
 
 			return size;
 		}
@@ -29,14 +29,14 @@ namespace bs
 		static BitLength FromMemory(RTTIFieldInfo& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
-			size += rtti_read(data.flags, stream);
+			size += rtti_read(data.Flags, stream);
 
 			return size;
 		}
 
 		static BitLength GetSize(const RTTIFieldInfo& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
-			return rtti_size(data.flags);
+			return rtti_size(data.Flags);
 		}
 	};
 
@@ -44,14 +44,14 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN(id, 0)
-			BS_RTTI_MEMBER_PLAIN(type, 1)
-			BS_RTTI_MEMBER_PLAIN(isArray, 2)
-			BS_RTTI_MEMBER_PLAIN(hasDynamicSize, 3)
-			BS_RTTI_MEMBER_PLAIN(size, 4)
-			BS_RTTI_MEMBER_PLAIN(fieldTypeId, 5)
-			BS_RTTI_MEMBER_REFLPTR(fieldTypeSchema, 6)
-			BS_RTTI_MEMBER_PLAIN(info, 7)
+			BS_RTTI_MEMBER_PLAIN(Id, 0)
+			BS_RTTI_MEMBER_PLAIN(Type, 1)
+			BS_RTTI_MEMBER_PLAIN(IsArray, 2)
+			BS_RTTI_MEMBER_PLAIN(HasDynamicSize, 3)
+			BS_RTTI_MEMBER_PLAIN(Size, 4)
+			BS_RTTI_MEMBER_PLAIN(FieldTypeId, 5)
+			BS_RTTI_MEMBER_REFLPTR(FieldTypeSchema, 6)
+			BS_RTTI_MEMBER_PLAIN(Info, 7)
 		BS_END_RTTI_MEMBERS
 		
 	public:
@@ -76,9 +76,9 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN(typeId, 0)
-			BS_RTTI_MEMBER_REFLPTR(baseTypeSchema, 1)
-			BS_RTTI_MEMBER_REFL_ARRAY(fieldSchemas, 2)
+			BS_RTTI_MEMBER_PLAIN(TypeId, 0)
+			BS_RTTI_MEMBER_REFLPTR(BaseTypeSchema, 1)
+			BS_RTTI_MEMBER_REFL_ARRAY(FieldSchemas, 2)
 		BS_END_RTTI_MEMBERS
 		
 	public:

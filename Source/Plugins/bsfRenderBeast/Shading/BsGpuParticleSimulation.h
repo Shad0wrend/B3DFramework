@@ -25,9 +25,9 @@ namespace bs { namespace ct
 	/** Contains information about a single tile allocated in the particle texture used for GPU simulation. */
 	struct GpuParticleTile
 	{
-		UINT32 id = (UINT32)-1;
-		UINT32 numFreeParticles = 0;
-		float lifetime = 0.0f;
+		UINT32 Id = (UINT32)-1;
+		UINT32 NumFreeParticles = 0;
+		float Lifetime = 0.0f;
 	};
 
 	/** Contains functionality specific to a single particle system simulated on the GPU. */
@@ -185,14 +185,14 @@ namespace bs { namespace ct
 	/** Contains textures that get updated with every run of the GPU particle simulation. */
 	struct GpuParticleStateTextures
 	{
-		SPtr<Texture> positionAndTimeTex;
-		SPtr<Texture> velocityTex;
+		SPtr<Texture> PositionAndTimeTex;
+		SPtr<Texture> VelocityTex;
 	};
 
 	/** Contains textures that contain data static throughout the particle's lifetime. */
 	struct GpuParticleStaticTextures
 	{
-		SPtr<Texture> sizeAndRotationTex;
+		SPtr<Texture> SizeAndRotationTex;
 	};
 
 	/** Contains a texture containing quantized versions of all curves used for the GPU particle system. */
@@ -239,8 +239,8 @@ namespace bs { namespace ct
 		/** Information about an allocation not yet injected into the curve texture. */
 		struct PendingAllocation
 		{
-			Color* pixels;
-			TextureRowAllocation allocation;
+			Color* Pixels;
+			TextureRowAllocation Allocation;
 		};
 
 		FrameAlloc mPendingAllocator;

@@ -10,8 +10,8 @@ namespace bs
 {
 	struct __ShaderVariationParamValueInterop
 	{
-		MonoString* name;
-		int32_t value;
+		MonoString* Name;
+		int32_t Value;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptShaderVariationParamValue : public ScriptObject<ScriptShaderVariationParamValue>

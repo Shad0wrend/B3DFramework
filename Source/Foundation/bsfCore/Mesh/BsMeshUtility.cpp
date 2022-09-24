@@ -10,16 +10,16 @@ namespace bs
 {
 	struct VertexFaces
 	{
-		UINT32* faces;
-		UINT32 numFaces = 0;
+		UINT32* Faces;
+		UINT32 NumFaces = 0;
 	};
 
 	struct VertexConnectivity
 	{
 		VertexConnectivity(UINT8* indices, UINT32 numVertices, UINT32 numFaces, UINT32 indexSize)
-			:vertexFaces(nullptr), mMaxFacesPerVertex(0), mNumVertices(numVertices), mFaces(nullptr)
+			:VertexFaces(nullptr), mMaxFacesPerVertex(0), mNumVertices(numVertices), mFaces(nullptr)
 		{
-			vertexFaces = bs_newN<VertexFaces>(numVertices);
+			VertexFaces = bs_newN<bs::VertexFaces>(numVertices);
 
 			ResizeFaceArray(10);
 
@@ -32,26 +32,26 @@ namespace bs
 					memcpy(&vertexIdx, indices + idx * indexSize, indexSize);
 
 					assert(vertexIdx < mNumVertices);
-					VertexFaces& faces = vertexFaces[vertexIdx];
-					if (faces.numFaces >= mMaxFacesPerVertex)
+					bs::VertexFaces& faces = VertexFaces[vertexIdx];
+					if (faces.NumFaces >= mMaxFacesPerVertex)
 						ResizeFaceArray(mMaxFacesPerVertex * 2);
 
-					faces.faces[faces.numFaces] = i;
-					faces.numFaces++;
+					faces.Faces[faces.NumFaces] = i;
+					faces.NumFaces++;
 				}
 			}
 		}
 
 		~VertexConnectivity()
 		{
-			if (vertexFaces != nullptr)
-				bs_deleteN(vertexFaces, mNumVertices);
+			if (VertexFaces != nullptr)
+				bs_deleteN(VertexFaces, mNumVertices);
 
 			if (mFaces != nullptr)
 				bs_free(mFaces);
 		}
 
-		VertexFaces* vertexFaces;
+		VertexFaces* VertexFaces;
 
 	private:
 		void ResizeFaceArray(UINT32 numFaces)
@@ -67,7 +67,7 @@ namespace bs
 			}
 
 			for (UINT32 i = 0; i < mNumVertices; i++)
-				vertexFaces[i].faces = newFaces + (i * numFaces);
+				VertexFaces[i].Faces = newFaces + (i * numFaces);
 
 			mFaces = newFaces;
 			mMaxFacesPerVertex = numFaces;
@@ -87,11 +87,11 @@ namespace bs
 		{
 			ClipVert() { }
 
-			Vector3 point = Vector3::ZERO;
-			Vector2 uv = Vector2::ZERO;
-			float distance = 0.0f;
-			UINT32 occurs = 0;
-			bool visible = true;
+			Vector3 Point = Vector3::ZERO;
+			Vector2 Uv = Vector2::ZERO;
+			float Distance = 0.0f;
+			UINT32 Occurs = 0;
+			bool Visible = true;
 		};
 
 		/** Single edge in the clipped mesh. */
@@ -99,9 +99,9 @@ namespace bs
 		{
 			ClipEdge() { }
 
-			UINT32 verts[2];
-			Vector<UINT32> faces;
-			bool visible = true;
+			UINT32 Verts[2];
+			Vector<UINT32> Faces;
+			bool Visible = true;
 		};
 
 		/** Single polygon in the clipped mesh. */
@@ -109,9 +109,9 @@ namespace bs
 		{
 			ClipFace() { }
 
-			Vector<UINT32> edges;
-			bool visible = true;
-			Vector3 normal = Vector3::ZERO;
+			Vector<UINT32> Edges;
+			bool Visible = true;
+			Vector3 Normal = Vector3::ZERO;
 		};
 
 		/** Contains vertices, edges and faces of the clipped mesh. */
@@ -119,9 +119,9 @@ namespace bs
 		{
 			ClipMesh() { }
 
-			Vector<ClipVert> verts;
-			Vector<ClipEdge> edges;
-			Vector<ClipFace> faces;
+			Vector<ClipVert> Verts;
+			Vector<ClipEdge> Edges;
+			Vector<ClipFace> Faces;
 		};
 
 	protected:
@@ -166,11 +166,11 @@ namespace bs
 
 	void TriangleClipperBase::AddEdgesAndFaces()
 	{
-		UINT32 numTris = (UINT32)mesh.verts.size() / 3;
+		UINT32 numTris = (UINT32)mesh.Verts.size() / 3;
 
 		UINT32 numEdges = numTris * 3;
-		mesh.edges.resize(numEdges);
-		mesh.faces.resize(numTris);
+		mesh.Edges.resize(numEdges);
+		mesh.Faces.resize(numTris);
 
 		for (UINT32 i = 0; i < numTris; i++)
 		{
@@ -178,33 +178,33 @@ namespace bs
 			UINT32 idx1 = i * 3 + 1;
 			UINT32 idx2 = i * 3 + 2;
 
-			ClipEdge& clipEdge0 = mesh.edges[idx0];
-			clipEdge0.verts[0] = idx0;
-			clipEdge0.verts[1] = idx1;
+			ClipEdge& clipEdge0 = mesh.Edges[idx0];
+			clipEdge0.Verts[0] = idx0;
+			clipEdge0.Verts[1] = idx1;
 
-			ClipEdge& clipEdge1 = mesh.edges[idx1];
-			clipEdge1.verts[0] = idx1;
-			clipEdge1.verts[1] = idx2;
+			ClipEdge& clipEdge1 = mesh.Edges[idx1];
+			clipEdge1.Verts[0] = idx1;
+			clipEdge1.Verts[1] = idx2;
 
-			ClipEdge& clipEdge2 = mesh.edges[idx2];
-			clipEdge2.verts[0] = idx2;
-			clipEdge2.verts[1] = idx0;
+			ClipEdge& clipEdge2 = mesh.Edges[idx2];
+			clipEdge2.Verts[0] = idx2;
+			clipEdge2.Verts[1] = idx0;
 
-			ClipFace& clipFace = mesh.faces[i];
+			ClipFace& clipFace = mesh.Faces[i];
 
-			clipFace.edges.push_back(idx0);
-			clipFace.edges.push_back(idx1);
-			clipFace.edges.push_back(idx2);
+			clipFace.Edges.push_back(idx0);
+			clipFace.Edges.push_back(idx1);
+			clipFace.Edges.push_back(idx2);
 
-			clipEdge0.faces.push_back(i);
-			clipEdge1.faces.push_back(i);
-			clipEdge2.faces.push_back(i);
+			clipEdge0.Faces.push_back(i);
+			clipEdge1.Faces.push_back(i);
+			clipEdge2.Faces.push_back(i);
 
 			UINT32 verts[] = { idx0, idx1, idx2, idx0 };
 			for (UINT32 j = 0; j < 3; j++)
-				clipFace.normal += Vector3::Cross(mesh.verts[verts[j]].point, mesh.verts[verts[j + 1]].point);
+				clipFace.Normal += Vector3::Cross(mesh.Verts[verts[j]].Point, mesh.Verts[verts[j + 1]].Point);
 
-			clipFace.normal.Normalize();
+			clipFace.Normal.Normalize();
 		}
 	}
 
@@ -229,26 +229,26 @@ namespace bs
 
 		// Compute signed distances from vertices to plane
 		int positive = 0, negative = 0;
-		for (UINT32 i = 0; i < (UINT32)mesh.verts.size(); i++)
+		for (UINT32 i = 0; i < (UINT32)mesh.Verts.size(); i++)
 		{
-			ClipVert& vertex = mesh.verts[i];
+			ClipVert& vertex = mesh.Verts[i];
 
-			if (vertex.visible)
+			if (vertex.Visible)
 			{
-				vertex.distance = Vector3::Dot(plane.normal, vertex.point) - plane.d;
-				if (vertex.distance >= EPSILON)
+				vertex.Distance = Vector3::Dot(plane.Normal, vertex.Point) - plane.D;
+				if (vertex.Distance >= EPSILON)
 				{
 					positive++;
 				}
-				else if (vertex.distance <= -EPSILON)
+				else if (vertex.Distance <= -EPSILON)
 				{
 					negative++;
-					vertex.visible = false;
+					vertex.Visible = false;
 				}
 				else
 				{
 					// Point on the plane within floating point tolerance
-					vertex.distance = 0;
+					vertex.Distance = 0;
 				}
 			}
 		}
@@ -268,36 +268,36 @@ namespace bs
 
 	void TriangleClipperBase::ProcessEdges()
 	{
-		for (UINT32 i = 0; i < (UINT32)mesh.edges.size(); i++)
+		for (UINT32 i = 0; i < (UINT32)mesh.Edges.size(); i++)
 		{
-			ClipEdge& edge = mesh.edges[i];
+			ClipEdge& edge = mesh.Edges[i];
 
-			if (edge.visible)
+			if (edge.Visible)
 			{
-				const ClipVert& v0 = mesh.verts[edge.verts[0]];
-				const ClipVert& v1 = mesh.verts[edge.verts[1]];
+				const ClipVert& v0 = mesh.Verts[edge.Verts[0]];
+				const ClipVert& v1 = mesh.Verts[edge.Verts[1]];
 
-				float d0 = v0.distance;
-				float d1 = v1.distance;
+				float d0 = v0.Distance;
+				float d1 = v1.Distance;
 
 				if (d0 <= 0 && d1 <= 0)
 				{
 					// Edge is culled, remove edge from faces sharing it
-					for (UINT32 j = 0; j < (UINT32)edge.faces.size(); j++)
+					for (UINT32 j = 0; j < (UINT32)edge.Faces.size(); j++)
 					{
-						ClipFace& face = mesh.faces[edge.faces[j]];
+						ClipFace& face = mesh.Faces[edge.Faces[j]];
 
-						auto iterFind = std::find(face.edges.begin(), face.edges.end(), i);
-						if (iterFind != face.edges.end())
+						auto iterFind = std::find(face.Edges.begin(), face.Edges.end(), i);
+						if (iterFind != face.Edges.end())
 						{
-							face.edges.erase(iterFind);
+							face.Edges.erase(iterFind);
 
-							if (face.edges.empty())
-								face.visible = false;
+							if (face.Edges.empty())
+								face.Visible = false;
 						}
 					}
 
-					edge.visible = false;
+					edge.Visible = false;
 					continue;
 				}
 
@@ -311,60 +311,60 @@ namespace bs
 				// If the old edge is <V0,V1> and I is the intersection point, the new
 				// edge is <V0,I> when d0 > 0 or <I,V1> when d1 > 0.
 				float t = d0 / (d0 - d1);
-				Vector3 intersectPt = (1 - t)*v0.point + t*v1.point;
-				Vector2 intersectUv = (1 - t)*v0.uv + t*v1.uv;
+				Vector3 intersectPt = (1 - t)*v0.Point + t*v1.Point;
+				Vector2 intersectUv = (1 - t)*v0.Uv + t*v1.Uv;
 
-				UINT32 newVertIdx = (UINT32)mesh.verts.size();
-				mesh.verts.push_back(ClipVert());
+				UINT32 newVertIdx = (UINT32)mesh.Verts.size();
+				mesh.Verts.push_back(ClipVert());
 
-				ClipVert& newVert = mesh.verts.back();
-				newVert.point = intersectPt;
-				newVert.uv = intersectUv;
+				ClipVert& newVert = mesh.Verts.back();
+				newVert.Point = intersectPt;
+				newVert.Uv = intersectUv;
 
 				if (d0 > 0)
-					mesh.edges[i].verts[1] = newVertIdx;
+					mesh.Edges[i].Verts[1] = newVertIdx;
 				else
-					mesh.edges[i].verts[0] = newVertIdx;
+					mesh.Edges[i].Verts[0] = newVertIdx;
 			}
 		}
 	}
 
 	void TriangleClipperBase::ProcessFaces()
 	{
-		for (UINT32 i = 0; i < (UINT32)mesh.faces.size(); i++)
+		for (UINT32 i = 0; i < (UINT32)mesh.Faces.size(); i++)
 		{
-			ClipFace& face = mesh.faces[i];
+			ClipFace& face = mesh.Faces[i];
 
-			if (face.visible)
+			if (face.Visible)
 			{
 				// The edge is culled. If the edge is exactly on the clip
 				// plane, it is possible that a visible triangle shares it.
 				// The edge will be re-added during the face loop.
 
-				for (UINT32 j = 0; j < (UINT32)face.edges.size(); j++)
+				for (UINT32 j = 0; j < (UINT32)face.Edges.size(); j++)
 				{
-					ClipEdge& edge = mesh.edges[face.edges[j]];
-					ClipVert& v0 = mesh.verts[edge.verts[0]];
-					ClipVert& v1 = mesh.verts[edge.verts[1]];
+					ClipEdge& edge = mesh.Edges[face.Edges[j]];
+					ClipVert& v0 = mesh.Verts[edge.Verts[0]];
+					ClipVert& v1 = mesh.Verts[edge.Verts[1]];
 
-					v0.occurs = 0;
-					v1.occurs = 0;
+					v0.Occurs = 0;
+					v1.Occurs = 0;
 				}
 			}
 
 			UINT32 start, end;
-			if (GetOpenPolyline(mesh.faces[i], start, end))
+			if (GetOpenPolyline(mesh.Faces[i], start, end))
 			{
 				// Polyline is open, close it
-				UINT32 closeEdgeIdx = (UINT32)mesh.edges.size();
-				mesh.edges.push_back(ClipEdge());
-				ClipEdge& closeEdge = mesh.edges.back();
+				UINT32 closeEdgeIdx = (UINT32)mesh.Edges.size();
+				mesh.Edges.push_back(ClipEdge());
+				ClipEdge& closeEdge = mesh.Edges.back();
 
-				closeEdge.verts[0] = start;
-				closeEdge.verts[1] = end;
+				closeEdge.Verts[0] = start;
+				closeEdge.Verts[1] = end;
 
-				closeEdge.faces.push_back(i);
-				face.edges.push_back(closeEdgeIdx);
+				closeEdge.Faces.push_back(i);
+				face.Edges.push_back(closeEdgeIdx);
 			}
 		}
 	}
@@ -373,54 +373,54 @@ namespace bs
 	{
 		// Count the number of occurrences of each vertex in the polyline. The
 		// resulting "occurs" values must be 1 or 2.
-		for (UINT32 i = 0; i < (UINT32)face.edges.size(); i++)
+		for (UINT32 i = 0; i < (UINT32)face.Edges.size(); i++)
 		{
-			ClipEdge& edge = mesh.edges[face.edges[i]];
+			ClipEdge& edge = mesh.Edges[face.Edges[i]];
 
-			if (edge.visible)
+			if (edge.Visible)
 			{
-				ClipVert& v0 = mesh.verts[edge.verts[0]];
-				ClipVert& v1 = mesh.verts[edge.verts[1]];
+				ClipVert& v0 = mesh.Verts[edge.Verts[0]];
+				ClipVert& v1 = mesh.Verts[edge.Verts[1]];
 
-				v0.occurs++;
-				v1.occurs++;
+				v0.Occurs++;
+				v1.Occurs++;
 			}
 		}
 
 		// Determine if the polyline is open
 		bool gotStart = false;
 		bool gotEnd = false;
-		for (UINT32 i = 0; i < (UINT32)face.edges.size(); i++)
+		for (UINT32 i = 0; i < (UINT32)face.Edges.size(); i++)
 		{
-			const ClipEdge& edge = mesh.edges[face.edges[i]];
+			const ClipEdge& edge = mesh.Edges[face.Edges[i]];
 
-			const ClipVert& v0 = mesh.verts[edge.verts[0]];
-			const ClipVert& v1 = mesh.verts[edge.verts[1]];
+			const ClipVert& v0 = mesh.Verts[edge.Verts[0]];
+			const ClipVert& v1 = mesh.Verts[edge.Verts[1]];
 
-			if (v0.occurs == 1)
+			if (v0.Occurs == 1)
 			{
 				if (!gotStart)
 				{
-					start = edge.verts[0];
+					start = edge.Verts[0];
 					gotStart = true;
 				}
 				else if (!gotEnd)
 				{
-					end = edge.verts[0];
+					end = edge.Verts[0];
 					gotEnd = true;
 				}
 			}
 
-			if (v1.occurs == 1)
+			if (v1.Occurs == 1)
 			{
 				if (!gotStart)
 				{
-					start = edge.verts[1];
+					start = edge.Verts[1];
 					gotStart = true;
 				}
 				else if (!gotEnd)
 				{
-					end = edge.verts[1];
+					end = edge.Verts[1];
 					gotEnd = true;
 				}
 			}
@@ -431,16 +431,16 @@ namespace bs
 
 	void TriangleClipperBase::GetOrderedFaces(FrameVector<FrameVector<UINT32>>& sortedFaces)
 	{
-		for (UINT32 i = 0; i < (UINT32)mesh.faces.size(); i++)
+		for (UINT32 i = 0; i < (UINT32)mesh.Faces.size(); i++)
 		{
-			const ClipFace& face = mesh.faces[i];
+			const ClipFace& face = mesh.Faces[i];
 
-			if (face.visible)
+			if (face.Visible)
 			{
 				// Get the ordered vertices of the face. The first and last
 				// element of the array are the same since the polyline is
 				// closed.
-				UINT32 numSortedVerts = (UINT32)face.edges.size() + 1;
+				UINT32 numSortedVerts = (UINT32)face.Edges.size() + 1;
 				UINT32* sortedVerts = (UINT32*)bs_stack_alloc(sizeof(UINT32) * numSortedVerts);
 
 				GetOrderedVertices(face, sortedVerts);
@@ -452,7 +452,7 @@ namespace bs
 				// face. If you need the opposite convention, switch the
 				// inequality in the if-else statement.
 				Vector3 normal = GetNormal(sortedVerts, numSortedVerts);
-				if (Vector3::Dot(mesh.faces[i].normal, normal) < 0)
+				if (Vector3::Dot(mesh.Faces[i].Normal, normal) < 0)
 				{
 					// Clockwise, need to swap
 					for (INT32 j = (INT32)numSortedVerts - 2; j >= 0; j--)
@@ -473,22 +473,22 @@ namespace bs
 
 	void TriangleClipperBase::GetOrderedVertices(const ClipFace& face, UINT32* sortedVerts)
 	{
-		UINT32 numEdges = (UINT32)face.edges.size();
+		UINT32 numEdges = (UINT32)face.Edges.size();
 		UINT32* sortedEdges = (UINT32*)bs_stack_alloc(sizeof(UINT32) * numEdges);
 		for (UINT32 i = 0; i < numEdges; i++)
-			sortedEdges[i] = face.edges[i];
+			sortedEdges[i] = face.Edges[i];
 
 		// Bubble sort to arrange edges in contiguous order
 		for (UINT32 i0 = 0, i1 = 1, choice = 1; i1 < numEdges - 1; i0 = i1, i1++)
 		{
-			const ClipEdge& edge0 = mesh.edges[sortedEdges[i0]];
+			const ClipEdge& edge0 = mesh.Edges[sortedEdges[i0]];
 
-			UINT32 current = edge0.verts[choice];
+			UINT32 current = edge0.Verts[choice];
 			for (UINT32 j = i1; j < numEdges; j++)
 			{
-				const ClipEdge& edge1 = mesh.edges[sortedEdges[j]];
+				const ClipEdge& edge1 = mesh.Edges[sortedEdges[j]];
 
-				if (edge1.verts[0] == current || edge1.verts[1] == current)
+				if (edge1.Verts[0] == current || edge1.Verts[1] == current)
 				{
 					std::swap(sortedEdges[i1], sortedEdges[j]);
 					choice = 1;
@@ -498,18 +498,18 @@ namespace bs
 		}
 
 		// Add the first two vertices
-		sortedVerts[0] = mesh.edges[sortedEdges[0]].verts[0];
-		sortedVerts[1] = mesh.edges[sortedEdges[0]].verts[1];
+		sortedVerts[0] = mesh.Edges[sortedEdges[0]].Verts[0];
+		sortedVerts[1] = mesh.Edges[sortedEdges[0]].Verts[1];
 
 		// Add the remaining vertices
 		for (UINT32 i = 1; i < numEdges; i++)
 		{
-			const ClipEdge& edge = mesh.edges[sortedEdges[i]];
+			const ClipEdge& edge = mesh.Edges[sortedEdges[i]];
 
-			if (edge.verts[0] == sortedVerts[i])
-				sortedVerts[i + 1] = edge.verts[1];
+			if (edge.Verts[0] == sortedVerts[i])
+				sortedVerts[i + 1] = edge.Verts[1];
 			else
-				sortedVerts[i + 1] = edge.verts[0];
+				sortedVerts[i + 1] = edge.Verts[0];
 		}
 
 		bs_stack_free(sortedEdges);
@@ -519,7 +519,7 @@ namespace bs
 	{
 		Vector3 normal(BsZero);
 		for (UINT32 i = 0; i <= numVertices - 2; i++)
-			normal += Vector3::Cross(mesh.verts[sortedVertices[i]].point, mesh.verts[sortedVertices[i + 1]].point);
+			normal += Vector3::Cross(mesh.Verts[sortedVertices[i]].Point, mesh.Verts[sortedVertices[i + 1]].Point);
 
 		normal.Normalize();
 		return normal;
@@ -547,27 +547,27 @@ namespace bs
 	{
 		// Add vertices
 		UINT32 numVertices = numTris * 3;
-		mesh.verts.resize(numVertices);
+		mesh.Verts.resize(numVertices);
 
 		if (uvs != nullptr)
 		{
 			for (UINT32 i = 0; i < numVertices; i++)
 			{
-				ClipVert& clipVert = mesh.verts[i];
+				ClipVert& clipVert = mesh.Verts[i];
 				Vector2 vector2D = *(Vector2*)(vertices + vertexStride * i);
 
-				clipVert.point = Vector3(vector2D.x, vector2D.y, 0.0f);
-				clipVert.uv = *(Vector2*)(uvs + vertexStride * i);
+				clipVert.Point = Vector3(vector2D.X, vector2D.Y, 0.0f);
+				clipVert.Uv = *(Vector2*)(uvs + vertexStride * i);
 			}
 		}
 		else
 		{
 			for (UINT32 i = 0; i < numVertices; i++)
 			{
-				ClipVert& clipVert = mesh.verts[i];
+				ClipVert& clipVert = mesh.Verts[i];
 				Vector2 vector2D = *(Vector2*)(vertices + vertexStride * i);
 
-				clipVert.point = Vector3(vector2D.x, vector2D.y, 0.0f);
+				clipVert.Point = Vector3(vector2D.X, vector2D.Y, 0.0f);
 			}
 		}
 
@@ -596,20 +596,20 @@ namespace bs
 			{
 				for (UINT32 i = 0; i < (UINT32)face.size() - 2; i++)
 				{
-					const Vector3& v0 = mesh.verts[face[0]].point;
-					const Vector3& v1 = mesh.verts[face[i + 1]].point;
-					const Vector3& v2 = mesh.verts[face[i + 2]].point;
+					const Vector3& v0 = mesh.Verts[face[0]].Point;
+					const Vector3& v1 = mesh.Verts[face[i + 1]].Point;
+					const Vector3& v2 = mesh.Verts[face[i + 2]].Point;
 
-					vertexBuffer[numWritten] = Vector2(v0.x, v0.y);
-					uvBuffer[numWritten] = mesh.verts[face[0]].uv;
+					vertexBuffer[numWritten] = Vector2(v0.X, v0.Y);
+					uvBuffer[numWritten] = mesh.Verts[face[0]].Uv;
 					numWritten++;
 
-					vertexBuffer[numWritten] = Vector2(v1.x, v1.y);
-					uvBuffer[numWritten] = mesh.verts[face[i + 1]].uv;
+					vertexBuffer[numWritten] = Vector2(v1.X, v1.Y);
+					uvBuffer[numWritten] = mesh.Verts[face[i + 1]].Uv;
 					numWritten++;
 
-					vertexBuffer[numWritten] = Vector2(v2.x, v2.y);
-					uvBuffer[numWritten] = mesh.verts[face[i + 2]].uv;
+					vertexBuffer[numWritten] = Vector2(v2.X, v2.Y);
+					uvBuffer[numWritten] = mesh.Verts[face[i + 2]].Uv;
 					numWritten++;
 
 					// Only need to check this here since we guarantee the buffer is in multiples of three
@@ -649,26 +649,26 @@ namespace bs
 	{
 		// Add vertices
 		UINT32 numVertices = numTris * 3;
-		mesh.verts.resize(numVertices);
+		mesh.Verts.resize(numVertices);
 
 		if (uvs != nullptr)
 		{
 			for (UINT32 i = 0; i < numVertices; i++)
 			{
-				ClipVert& clipVert = mesh.verts[i];
+				ClipVert& clipVert = mesh.Verts[i];
 
-				clipVert.point = *(Vector3*)(vertices + vertexStride * i);
-				clipVert.uv = *(Vector2*)(uvs + vertexStride * i);
+				clipVert.Point = *(Vector3*)(vertices + vertexStride * i);
+				clipVert.Uv = *(Vector2*)(uvs + vertexStride * i);
 			}
 		}
 		else
 		{
 			for (UINT32 i = 0; i < numVertices; i++)
 			{
-				ClipVert& clipVert = mesh.verts[i];
+				ClipVert& clipVert = mesh.Verts[i];
 				Vector2 vector2D = *(Vector2*)(vertices + vertexStride * i);
 
-				clipVert.point = Vector3(vector2D.x, vector2D.y, 0.0f);
+				clipVert.Point = Vector3(vector2D.X, vector2D.Y, 0.0f);
 			}
 		}
 
@@ -697,16 +697,16 @@ namespace bs
 			{
 				for (UINT32 i = 0; i < (UINT32)face.size() - 2; i++)
 				{
-					vertexBuffer[numWritten] = mesh.verts[face[0]].point;
-					uvBuffer[numWritten] = mesh.verts[face[0]].uv;
+					vertexBuffer[numWritten] = mesh.Verts[face[0]].Point;
+					uvBuffer[numWritten] = mesh.Verts[face[0]].Uv;
 					numWritten++;
 
-					vertexBuffer[numWritten] = mesh.verts[face[i + 1]].point;
-					uvBuffer[numWritten] = mesh.verts[face[i + 1]].uv;
+					vertexBuffer[numWritten] = mesh.Verts[face[i + 1]].Point;
+					uvBuffer[numWritten] = mesh.Verts[face[i + 1]].Uv;
 					numWritten++;
 
-					vertexBuffer[numWritten] = mesh.verts[face[i + 2]].point;
-					uvBuffer[numWritten] = mesh.verts[face[i + 2]].uv;
+					vertexBuffer[numWritten] = mesh.Verts[face[i + 2]].Point;
+					uvBuffer[numWritten] = mesh.Verts[face[i + 2]].Uv;
 					numWritten++;
 
 					// Only need to check this here since we guarantee the buffer is in multiples of three
@@ -748,12 +748,12 @@ namespace bs
 		VertexConnectivity connectivity(indices, numVertices, numFaces, indexSize);
 		for (UINT32 i = 0; i < numVertices; i++)
 		{
-			VertexFaces& faces = connectivity.vertexFaces[i];
+			VertexFaces& faces = connectivity.VertexFaces[i];
 
 			normals[i] = Vector3::ZERO;
-			for (UINT32 j = 0; j < faces.numFaces; j++)
+			for (UINT32 j = 0; j < faces.NumFaces; j++)
 			{
-				UINT32 faceIdx = faces.faces[j];
+				UINT32 faceIdx = faces.Faces[j];
 				normals[i] += faceNormals[faceIdx];
 			}
 
@@ -797,13 +797,13 @@ namespace bs
 			Vector2 st1 = uv1 - uv0;
 			Vector2 st2 = uv2 - uv0;
 
-			float denom = st1.x * st2.y - st2.x * st1.y;
+			float denom = st1.X * st2.Y - st2.X * st1.Y;
 			if (fabs(denom) >= 0e-8f)
 			{
 				float r = 1.0f / denom;
 
-				faceTangents[i] = (st2.y * q0 - st1.y * q1) * r;
-				faceBitangents[i] = (st1.x * q1 - st2.x * q0) * r;
+				faceTangents[i] = (st2.Y * q0 - st1.Y * q1) * r;
+				faceBitangents[i] = (st1.X * q1 - st2.X * q0) * r;
 
 				faceTangents[i].Normalize();
 				faceBitangents[i].Normalize();
@@ -815,14 +815,14 @@ namespace bs
 		VertexConnectivity connectivity(indices, numVertices, numFaces, indexSize);
 		for (UINT32 i = 0; i < numVertices; i++)
 		{
-			VertexFaces& faces = connectivity.vertexFaces[i];
+			VertexFaces& faces = connectivity.VertexFaces[i];
 
 			tangents[i] = Vector3::ZERO;
 			bitangents[i] = Vector3::ZERO;
 
-			for (UINT32 j = 0; j < faces.numFaces; j++)
+			for (UINT32 j = 0; j < faces.NumFaces; j++)
 			{
-				UINT32 faceIdx = faces.faces[j];
+				UINT32 faceIdx = faces.Faces[j];
 				tangents[i] += faceTangents[faceIdx];
 				bitangents[i] += faceBitangents[faceIdx];
 			}
@@ -879,10 +879,10 @@ namespace bs
 			Vector3 src = *(Vector3*)srcPtr;
 
 			PackedNormal& packed = *(PackedNormal*)dstPtr;
-			packed.x = Math::Clamp((int)(src.x * 127.5f + 127.5f), 0, 255);
-			packed.y = Math::Clamp((int)(src.y * 127.5f + 127.5f), 0, 255);
-			packed.z = Math::Clamp((int)(src.z * 127.5f + 127.5f), 0, 255);
-			packed.w = 128;
+			packed.X = Math::Clamp((int)(src.X * 127.5f + 127.5f), 0, 255);
+			packed.Y = Math::Clamp((int)(src.Y * 127.5f + 127.5f), 0, 255);
+			packed.Z = Math::Clamp((int)(src.Z * 127.5f + 127.5f), 0, 255);
+			packed.W = 128;
 
 			srcPtr += inStride;
 			dstPtr += outStride;
@@ -898,10 +898,10 @@ namespace bs
 			Vector4 src = *(Vector4*)srcPtr;
 			PackedNormal& packed = *(PackedNormal*)dstPtr;
 
-			packed.x = Math::Clamp((int)(src.x * 127.5f + 127.5f), 0, 255);
-			packed.y = Math::Clamp((int)(src.y * 127.5f + 127.5f), 0, 255);
-			packed.z = Math::Clamp((int)(src.z * 127.5f + 127.5f), 0, 255);
-			packed.w = Math::Clamp((int)(src.w * 127.5f + 127.5f), 0, 255);
+			packed.X = Math::Clamp((int)(src.X * 127.5f + 127.5f), 0, 255);
+			packed.Y = Math::Clamp((int)(src.Y * 127.5f + 127.5f), 0, 255);
+			packed.Z = Math::Clamp((int)(src.Z * 127.5f + 127.5f), 0, 255);
+			packed.W = Math::Clamp((int)(src.W * 127.5f + 127.5f), 0, 255);
 
 			srcPtr += inStride;
 			dstPtr += outStride;
@@ -927,10 +927,10 @@ namespace bs
 			PackedNormal& packed = *(PackedNormal*)ptr;
 
 			const float inv = (1.0f / 255.0f) * 2.0f;
-			destination[i].x = (packed.x * inv - 1.0f);
-			destination[i].y = (packed.y * inv - 1.0f);
-			destination[i].z = (packed.z * inv - 1.0f);
-			destination[i].w = (packed.w * inv - 1.0f);
+			destination[i].X = (packed.X * inv - 1.0f);
+			destination[i].Y = (packed.Y * inv - 1.0f);
+			destination[i].Z = (packed.Z * inv - 1.0f);
+			destination[i].W = (packed.W * inv - 1.0f);
 
 			ptr += stride;
 		}

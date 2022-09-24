@@ -105,11 +105,11 @@ namespace bs
 			CachedBlendState() = default;
 
 			CachedBlendState(UINT32 id)
-				:id(id)
+				:Id(id)
 			{ }
 
-			std::weak_ptr<BlendState> state;
-			UINT32 id = 0;
+			std::weak_ptr<BlendState> State;
+			UINT32 Id = 0;
 		};
 
 		/**	Contains data about a cached rasterizer state. */
@@ -118,11 +118,11 @@ namespace bs
 			CachedRasterizerState() = default;
 
 			CachedRasterizerState(UINT32 id)
-				:id(id)
+				:Id(id)
 			{ }
 
-			std::weak_ptr<RasterizerState> state;
-			UINT32 id = 0;
+			std::weak_ptr<RasterizerState> State;
+			UINT32 Id = 0;
 		};
 
 		/** Contains data about a cached depth stencil state. */
@@ -131,11 +131,11 @@ namespace bs
 			CachedDepthStencilState() = default;
 
 			CachedDepthStencilState(UINT32 id)
-				:id(id)
+				:Id(id)
 			{ }
 
-			std::weak_ptr<DepthStencilState> state;
-			UINT32 id = 0;
+			std::weak_ptr<DepthStencilState> State;
+			UINT32 Id = 0;
 		};
 
 	public:

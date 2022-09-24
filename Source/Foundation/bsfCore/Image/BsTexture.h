@@ -48,37 +48,37 @@ namespace bs
 	struct TEXTURE_DESC
 	{
 		/** Type of the texture. */
-		TextureType type = TEX_TYPE_2D;
+		TextureType Type = TEX_TYPE_2D;
 
 		/** Format of pixels in the texture. */
-		PixelFormat format = PF_RGBA8;
+		PixelFormat Format = PF_RGBA8;
 
 		/** Width of the texture in pixels. */
-		UINT32 width = 1;
+		UINT32 Width = 1;
 
 		/** Height of the texture in pixels. */
-		UINT32 height = 1;
+		UINT32 Height = 1;
 
 		/** Depth of the texture in pixels (Must be 1 for 2D textures). */
-		UINT32 depth = 1;
+		UINT32 Depth = 1;
 
 		/** Number of mip-maps the texture has. This number excludes the full resolution map. */
-		UINT32 numMips = 0;
+		UINT32 NumMips = 0;
 
 		/** Describes how the caller plans on using the texture in the pipeline. */
-		INT32 usage = TU_DEFAULT;
+		INT32 Usage = TU_DEFAULT;
 
 		/**
 		 * If true the texture data is assumed to have been gamma corrected and will be converted back to linear space when
 		 * sampled on GPU.
 		 */
-		bool hwGamma = false;
+		bool HwGamma = false;
 
 		/** Number of samples per pixel. Set to 1 or 0 to use the default of a single sample per pixel. */
-		UINT32 numSamples = 0;
+		UINT32 NumSamples = 0;
 
 		/** Number of texture slices to create if creating a texture array. Ignored for 3D textures. */
-		UINT32 numArraySlices = 1;
+		UINT32 NumArraySlices = 1;
 	};
 
 	/** Structure used for specifying information about a texture copy operation. */
@@ -88,28 +88,28 @@ namespace bs
 		 * Face from which to copy. This can be an entry in an array of textures, or a single face of a cube map. If cubemap
 		 * array, then each array entry takes up six faces.
 		 */
-		UINT32 srcFace = 0;
+		UINT32 SrcFace = 0;
 
 		/** Mip level from which to copy. */
-		UINT32 srcMip = 0;
+		UINT32 SrcMip = 0;
 
 		/** Pixel volume from which to copy from. This defaults to all pixels of the face. */
-		PixelVolume srcVolume = PixelVolume(0, 0, 0, 0, 0, 0);
+		PixelVolume SrcVolume = PixelVolume(0, 0, 0, 0, 0, 0);
 
 		/**
 		 * Face to which to copy. This can be an entry in an array of textures, or a single face of a cube map. If cubemap
 		 * array, then each array entry takes up six faces.
 		 */
-		UINT32 dstFace = 0;
+		UINT32 DstFace = 0;
 
 		/** Mip level to which to copy. */
-		UINT32 dstMip = 0;
+		UINT32 DstMip = 0;
 
 		/**
 		 * Coordinates to write the source pixels to. The destination texture must have enough pixels to fit the entire
 		 * source volume.
 		 */
-		Vector3I dstPosition;
+		Vector3I DstPosition;
 
 		BS_CORE_EXPORT static TEXTURE_COPY_DESC DEFAULT;
 	};
@@ -122,38 +122,38 @@ namespace bs
 		TextureProperties(const TEXTURE_DESC& desc);
 
 		/**	Gets the type of texture. */
-		TextureType GetTextureType() const { return mDesc.type; }
+		TextureType GetTextureType() const { return mDesc.Type; }
 
 		/**
 		 * Gets the number of mipmaps to be used for this texture. This number excludes the top level map (which is always
 		 * assumed to be present).
 		 */
-		UINT32 GetNumMipmaps() const { return mDesc.numMips; }
+		UINT32 GetNumMipmaps() const { return mDesc.NumMips; }
 
 		/**
 		 * Determines does the texture contain gamma corrected data. If true then the GPU will automatically convert the
 		 * pixels to linear space before reading from the texture, and convert them to gamma space when writing to the
 		 * texture.
 		 */
-		bool IsHardwareGammaEnabled() const { return mDesc.hwGamma; }
+		bool IsHardwareGammaEnabled() const { return mDesc.HwGamma; }
 
 		/**	Gets the number of samples used for multisampling (0 or 1 if multisampling is not used). */
-		UINT32 GetNumSamples() const { return mDesc.numSamples; }
+		UINT32 GetNumSamples() const { return mDesc.NumSamples; }
 
 		/**	Returns the height of the texture.  */
-		UINT32 GetHeight() const { return mDesc.height; }
+		UINT32 GetHeight() const { return mDesc.Height; }
 
 		/**	Returns the width of the texture. */
-		UINT32 GetWidth() const { return mDesc.width; }
+		UINT32 GetWidth() const { return mDesc.Width; }
 
 		/**	Returns the depth of the texture (only applicable for 3D textures). */
-		UINT32 GetDepth() const { return mDesc.depth; }
+		UINT32 GetDepth() const { return mDesc.Depth; }
 
 		/**	Returns a value that signals the engine in what way is the texture expected to be used. */
-		int GetUsage() const { return mDesc.usage; }
+		int GetUsage() const { return mDesc.Usage; }
 
 		/**	Returns the pixel format for the texture surface. */
-		PixelFormat GetFormat() const { return mDesc.format; }
+		PixelFormat GetFormat() const { return mDesc.Format; }
 
 		/**	Returns true if the texture has an alpha layer. */
 		bool HasAlpha() const;
@@ -165,7 +165,7 @@ namespace bs
 		UINT32 GetNumFaces() const;
 
 		/** Returns the number of array slices of the texture (if the texture is an array texture). */
-		UINT32 GetNumArraySlices() const { return mDesc.numArraySlices; }
+		UINT32 GetNumArraySlices() const { return mDesc.NumArraySlices; }
 
 		/**
 		 * Allocates a buffer that exactly matches the format of the texture described by these properties, for the provided

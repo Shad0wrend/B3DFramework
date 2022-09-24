@@ -39,8 +39,8 @@ namespace bs
 	Vector2I D3D11RenderWindow::ScreenToWindowPos(const Vector2I& screenPos) const
 	{
 		POINT pos;
-		pos.x = screenPos.x;
-		pos.y = screenPos.y;
+		pos.x = screenPos.X;
+		pos.y = screenPos.Y;
 
 		ScreenToClient(GetHWnd(), &pos);
 		return Vector2I(pos.x, pos.y);
@@ -49,8 +49,8 @@ namespace bs
 	Vector2I D3D11RenderWindow::WindowToScreenPos(const Vector2I& windowPos) const
 	{
 		POINT pos;
-		pos.x = windowPos.x;
-		pos.y = windowPos.y;
+		pos.x = windowPos.X;
+		pos.y = windowPos.Y;
 
 		ClientToScreen(GetHWnd(), &pos);
 		return Vector2I(pos.x, pos.y);
@@ -98,7 +98,7 @@ namespace bs
 	{
 		RenderWindowProperties& props = mProperties;
 
-		if (props.isFullScreen)
+		if (props.IsFullScreen)
 			mSwapChain->SetFullscreenState(false, nullptr);
 
 		SAFE_RELEASE(mSwapChain);
@@ -124,48 +124,48 @@ namespace bs
 		mMultisampleType.Quality = 0;
 
 		WINDOW_DESC windowDesc;
-		windowDesc.showTitleBar = mDesc.showTitleBar;
-		windowDesc.showBorder = mDesc.showBorder;
-		windowDesc.allowResize = mDesc.allowResize;
-		windowDesc.enableDoubleClick = true;
-		windowDesc.fullscreen = mDesc.fullscreen;
-		windowDesc.width = mDesc.videoMode.width;
-		windowDesc.height = mDesc.videoMode.height;
-		windowDesc.hidden = mDesc.hidden || mDesc.hideUntilSwap;
-		windowDesc.left = mDesc.left;
-		windowDesc.top = mDesc.top;
-		windowDesc.outerDimensions = false;
-		windowDesc.title = mDesc.title;
-		windowDesc.toolWindow = mDesc.toolWindow;
-		windowDesc.creationParams = this;
-		windowDesc.modal = mDesc.modal;
-		windowDesc.wndProc = &Win32Platform::Win32WndProcInternal;
+		windowDesc.ShowTitleBar = mDesc.ShowTitleBar;
+		windowDesc.ShowBorder = mDesc.ShowBorder;
+		windowDesc.AllowResize = mDesc.AllowResize;
+		windowDesc.EnableDoubleClick = true;
+		windowDesc.Fullscreen = mDesc.Fullscreen;
+		windowDesc.Width = mDesc.VideoMode.Width;
+		windowDesc.Height = mDesc.VideoMode.Height;
+		windowDesc.Hidden = mDesc.Hidden || mDesc.HideUntilSwap;
+		windowDesc.Left = mDesc.Left;
+		windowDesc.Top = mDesc.Top;
+		windowDesc.OuterDimensions = false;
+		windowDesc.Title = mDesc.Title;
+		windowDesc.ToolWindow = mDesc.ToolWindow;
+		windowDesc.CreationParams = this;
+		windowDesc.Modal = mDesc.Modal;
+		windowDesc.WndProc = &Win32Platform::Win32WndProcInternal;
 
 #ifdef BS_STATIC_LIB
 		windowDesc.module = GetModuleHandle(NULL);
 #else
-		windowDesc.module = GetModuleHandle("bsfD3D11RenderAPI.dll");
+		windowDesc.Module = GetModuleHandle("bsfD3D11RenderAPI.dll");
 #endif
 
-		auto opt = mDesc.platformSpecific.find("parentWindowHandle");
-		if (opt != mDesc.platformSpecific.end())
-			windowDesc.parent = (HWND)parseUINT64(opt->second);
+		auto opt = mDesc.PlatformSpecific.find("parentWindowHandle");
+		if (opt != mDesc.PlatformSpecific.end())
+			windowDesc.Parent = (HWND)parseUINT64(opt->second);
 
-		opt = mDesc.platformSpecific.find("externalWindowHandle");
-		if (opt != mDesc.platformSpecific.end())
-			windowDesc.external = (HWND)parseUINT64(opt->second);
+		opt = mDesc.PlatformSpecific.find("externalWindowHandle");
+		if (opt != mDesc.PlatformSpecific.end())
+			windowDesc.External = (HWND)parseUINT64(opt->second);
 
-		mIsChild = windowDesc.parent != nullptr;
-		props.isFullScreen = mDesc.fullscreen && !mIsChild;
+		mIsChild = windowDesc.Parent != nullptr;
+		props.IsFullScreen = mDesc.Fullscreen && !mIsChild;
 
-		if (mDesc.videoMode.isCustom)
+		if (mDesc.VideoMode.IsCustom)
 		{
-			mRefreshRateNumerator = Math::RoundToInt(mDesc.videoMode.refreshRate);
+			mRefreshRateNumerator = Math::RoundToInt(mDesc.VideoMode.RefreshRate);
 			mRefreshRateDenominator = 1;
 		}
 		else
 		{
-			const D3D11VideoMode& d3d11videoMode = static_cast<const D3D11VideoMode&>(mDesc.videoMode);
+			const D3D11VideoMode& d3d11videoMode = static_cast<const D3D11VideoMode&>(mDesc.VideoMode);
 			mRefreshRateNumerator = d3d11videoMode.GetRefreshRateNumerator();
 			mRefreshRateDenominator = d3d11videoMode.GetRefreshRateDenominator();
 		}
@@ -176,31 +176,31 @@ namespace bs
 		UINT32 numOutputs = videoModeInfo.GetNumOutputs();
 		if (numOutputs > 0)
 		{
-			UINT32 actualMonitorIdx = std::min(mDesc.videoMode.outputIdx, numOutputs - 1);
+			UINT32 actualMonitorIdx = std::min(mDesc.VideoMode.OutputIdx, numOutputs - 1);
 			outputInfo = static_cast<const D3D11VideoOutputInfo*>(&videoModeInfo.GetOutputInfo(actualMonitorIdx));
 
 			DXGI_OUTPUT_DESC desc;
 			outputInfo->GetDxgiOutput()->GetDesc(&desc);
 
-			windowDesc.monitor = desc.Monitor;
+			windowDesc.Monitor = desc.Monitor;
 		}
 
-		if (!windowDesc.external)
+		if (!windowDesc.External)
 		{
-			mShowOnSwap = mDesc.hideUntilSwap && !mDesc.hidden;
-			props.isHidden = mDesc.hideUntilSwap || mDesc.hidden;
+			mShowOnSwap = mDesc.HideUntilSwap && !mDesc.Hidden;
+			props.IsHidden = mDesc.HideUntilSwap || mDesc.Hidden;
 		}
 
 		mWindow = bs_new<Win32Window>(windowDesc);
 
-		props.width = mWindow->GetWidth();
-		props.height = mWindow->GetHeight();
-		props.top = mWindow->GetTop();
-		props.left = mWindow->GetLeft();
+		props.Width = mWindow->GetWidth();
+		props.Height = mWindow->GetHeight();
+		props.Top = mWindow->GetTop();
+		props.Left = mWindow->GetLeft();
 
 		CreateSwapChain();
 
-		if (props.isFullScreen)
+		if (props.IsFullScreen)
 		{
 			if (outputInfo != nullptr)
 				mSwapChain->SetFullscreenState(true, outputInfo->GetDxgiOutput());
@@ -229,7 +229,7 @@ namespace bs
 
 		if(mDevice.GetD3D11Device() != nullptr)
 		{
-			HRESULT hr = mSwapChain->Present(GetProperties().vsync ? GetProperties().vsyncInterval : 0, 0);
+			HRESULT hr = mSwapChain->Present(GetProperties().Vsync ? GetProperties().VsyncInterval : 0, 0);
 
 			if( FAILED(hr) )
 				BS_EXCEPT(RenderingAPIException, "Error Presenting surfaces");
@@ -242,17 +242,17 @@ namespace bs
 
 		RenderWindowProperties& props = mProperties;
 
-		if (!props.isFullScreen)
+		if (!props.IsFullScreen)
 		{
 			mWindow->Move(left, top);
 
-			props.top = mWindow->GetTop();
-			props.left = mWindow->GetLeft();
+			props.Top = mWindow->GetTop();
+			props.Left = mWindow->GetLeft();
 
 			{
 				ScopedSpinLock lock(mLock);
-				mSyncedProperties.top = props.top;
-				mSyncedProperties.left = props.left;
+				mSyncedProperties.Top = props.Top;
+				mSyncedProperties.Left = props.Left;
 			}
 
 			bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
@@ -265,17 +265,17 @@ namespace bs
 
 		RenderWindowProperties& props = mProperties;
 
-		if (!props.isFullScreen)
+		if (!props.IsFullScreen)
 		{
 			mWindow->Resize(width, height);
 
-			props.width = mWindow->GetWidth();
-			props.height = mWindow->GetHeight();
+			props.Width = mWindow->GetWidth();
+			props.Height = mWindow->GetHeight();
 
 			{
 				ScopedSpinLock lock(mLock);
-				mSyncedProperties.width = props.width;
-				mSyncedProperties.height = props.height;
+				mSyncedProperties.Width = props.Width;
+				mSyncedProperties.Height = props.Height;
 			}
 
 			bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
@@ -292,7 +292,7 @@ namespace bs
 		if (mSwapChain)
 		{
 			if (state)
-				mSwapChain->SetFullscreenState(props.isFullScreen, nullptr);
+				mSwapChain->SetFullscreenState(props.IsFullScreen, nullptr);
 			else
 				mSwapChain->SetFullscreenState(FALSE, nullptr);
 		}
@@ -362,19 +362,19 @@ namespace bs
 
 		outputInfo.GetDxgiOutput()->FindClosestMatchingMode(&modeDesc, &nearestMode, nullptr);
 
-		mProperties.isFullScreen = true;
-		mProperties.width = width;
-		mProperties.height = height;
+		mProperties.IsFullScreen = true;
+		mProperties.Width = width;
+		mProperties.Height = height;
 
 		mSwapChain->ResizeTarget(&nearestMode);
 		mSwapChain->SetFullscreenState(true, outputInfo.GetDxgiOutput());
 
 		{
 			ScopedSpinLock lock(mLock);
-			mSyncedProperties.top = mProperties.top;
-			mSyncedProperties.left = mProperties.left;
-			mSyncedProperties.width = mProperties.width;
-			mSyncedProperties.height = mProperties.height;
+			mSyncedProperties.Top = mProperties.Top;
+			mSyncedProperties.Left = mProperties.Left;
+			mSyncedProperties.Width = mProperties.Width;
+			mSyncedProperties.Height = mProperties.Height;
 		}
 
 		bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
@@ -388,9 +388,9 @@ namespace bs
 		if (mIsChild)
 			return;
 
-		if (mode.isCustom)
+		if (mode.IsCustom)
 		{
-			SetFullscreen(mode.width, mode.height, mode.refreshRate, mode.outputIdx);
+			SetFullscreen(mode.Width, mode.Height, mode.RefreshRate, mode.OutputIdx);
 			return;
 		}
 
@@ -399,24 +399,24 @@ namespace bs
 		if (numOutputs == 0)
 			return;
 
-		UINT32 actualMonitorIdx = std::min(mode.outputIdx, numOutputs - 1);
+		UINT32 actualMonitorIdx = std::min(mode.OutputIdx, numOutputs - 1);
 		const D3D11VideoOutputInfo& outputInfo = static_cast<const D3D11VideoOutputInfo&>(videoModeInfo.GetOutputInfo(actualMonitorIdx));
 
 		const D3D11VideoMode& videoMode = static_cast<const D3D11VideoMode&>(mode);
 
-		mProperties.isFullScreen = true;
-		mProperties.width = mode.width;
-		mProperties.height = mode.height;
+		mProperties.IsFullScreen = true;
+		mProperties.Width = mode.Width;
+		mProperties.Height = mode.Height;
 
 		mSwapChain->ResizeTarget(&videoMode.GetDxgiModeDesc());
 		mSwapChain->SetFullscreenState(true, outputInfo.GetDxgiOutput());
 
 		{
 			ScopedSpinLock lock(mLock);
-			mSyncedProperties.top = mProperties.top;
-			mSyncedProperties.left = mProperties.left;
-			mSyncedProperties.width = mProperties.width;
-			mSyncedProperties.height = mProperties.height;
+			mSyncedProperties.Top = mProperties.Top;
+			mSyncedProperties.Left = mProperties.Left;
+			mSyncedProperties.Width = mProperties.Width;
+			mSyncedProperties.Height = mProperties.Height;
 		}
 
 		bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
@@ -427,9 +427,9 @@ namespace bs
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
-		mProperties.width = width;
-		mProperties.height = height;
-		mProperties.isFullScreen = false;
+		mProperties.Width = width;
+		mProperties.Height = height;
+		mProperties.IsFullScreen = false;
 
 		mSwapChainDesc.Windowed = true;
 		mSwapChainDesc.BufferDesc.RefreshRate.Numerator = 0;
@@ -451,10 +451,10 @@ namespace bs
 
 		{
 			ScopedSpinLock lock(mLock);
-			mSyncedProperties.top = mProperties.top;
-			mSyncedProperties.left = mProperties.left;
-			mSyncedProperties.width = mProperties.width;
-			mSyncedProperties.height = mProperties.height;
+			mSyncedProperties.Top = mProperties.Top;
+			mSyncedProperties.Left = mProperties.Left;
+			mSyncedProperties.Width = mProperties.Width;
+			mSyncedProperties.Height = mProperties.Height;
 		}
 
 		bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
@@ -463,13 +463,13 @@ namespace bs
 
 	void D3D11RenderWindow::SetVSync(bool enabled, UINT32 interval)
 	{
-		mProperties.vsync = enabled;
-		mProperties.vsyncInterval = interval;
+		mProperties.Vsync = enabled;
+		mProperties.VsyncInterval = interval;
 
 		{
 			ScopedSpinLock lock(mLock);
-			mSyncedProperties.vsync = enabled;
-			mSyncedProperties.vsyncInterval = interval;
+			mSyncedProperties.Vsync = enabled;
+			mSyncedProperties.VsyncInterval = interval;
 		}
 
 		bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
@@ -612,7 +612,7 @@ namespace bs
 		mDevice.GetImmediateContext()->Map(tempTexture, 0,D3D11_MAP_READ, 0, &mappedTex2D);
 
 		// Copy the the texture to the dest
-		PixelData src(GetProperties().width, GetProperties().height, 1, PF_RGBA8);
+		PixelData src(GetProperties().Width, GetProperties().Height, 1, PF_RGBA8);
 		src.SetExternalBuffer((UINT8*)mappedTex2D.pData);
 		PixelUtil::BulkPixelConversion(src, dst);
 
@@ -635,17 +635,17 @@ namespace bs
 
 		RenderWindowProperties& props = mProperties;
 
-		if (props.isFullScreen) // Fullscreen is handled directly by this object
+		if (props.IsFullScreen) // Fullscreen is handled directly by this object
 		{
-			ResizeSwapChainBuffers(props.width, props.height);
+			ResizeSwapChainBuffers(props.Width, props.Height);
 		}
 		else
 		{
 			ResizeSwapChainBuffers(mWindow->GetWidth(), mWindow->GetHeight());
-			props.width = mWindow->GetWidth();
-			props.height = mWindow->GetHeight();
-			props.top = mWindow->GetTop();
-			props.left = mWindow->GetLeft();
+			props.Width = mWindow->GetWidth();
+			props.Height = mWindow->GetHeight();
+			props.Top = mWindow->GetTop();
+			props.Left = mWindow->GetLeft();
 		}
 	}
 
@@ -659,11 +659,11 @@ namespace bs
 		ZeroMemory(&mSwapChainDesc, sizeof(DXGI_SWAP_CHAIN_DESC));
 		DXGI_FORMAT format = DXGI_FORMAT_R8G8B8A8_UNORM;
 		mSwapChainDesc.OutputWindow = mWindow->GetHWnd();
-		mSwapChainDesc.BufferDesc.Width = props.width;
-		mSwapChainDesc.BufferDesc.Height = props.height;
+		mSwapChainDesc.BufferDesc.Width = props.Width;
+		mSwapChainDesc.BufferDesc.Height = props.Height;
 		mSwapChainDesc.BufferDesc.Format = format;
 
-		if (props.isFullScreen)
+		if (props.IsFullScreen)
 		{
 			mSwapChainDesc.BufferDesc.RefreshRate.Numerator = mRefreshRateNumerator;
 			mSwapChainDesc.BufferDesc.RefreshRate.Denominator = mRefreshRateDenominator;
@@ -685,7 +685,7 @@ namespace bs
 		mSwapChainDesc.Windowed	= true;
 
 		D3D11RenderAPI* rs = static_cast<D3D11RenderAPI*>(RenderAPI::InstancePtr());
-		rs->DetermineMultisampleSettings(props.multisampleCount, format, &mMultisampleType);
+		rs->DetermineMultisampleSettings(props.MultisampleCount, format, &mMultisampleType);
 		mSwapChainDesc.SampleDesc.Count = mMultisampleType.Count;
 		mSwapChainDesc.SampleDesc.Quality = mMultisampleType.Quality;
 		
@@ -726,7 +726,7 @@ namespace bs
 		ZeroMemory( &RTVDesc, sizeof(RTVDesc) );
 
 		RTVDesc.Format = BBDesc.Format;
-		RTVDesc.ViewDimension = GetProperties().multisampleCount > 1 ? D3D11_RTV_DIMENSION_TEXTURE2DMS : D3D11_RTV_DIMENSION_TEXTURE2D;
+		RTVDesc.ViewDimension = GetProperties().MultisampleCount > 1 ? D3D11_RTV_DIMENSION_TEXTURE2DMS : D3D11_RTV_DIMENSION_TEXTURE2D;
 		RTVDesc.Texture2D.MipSlice = 0;
 		hr = mDevice.GetD3D11Device()->CreateRenderTargetView(mBackBuffer, &RTVDesc, &mRenderTargetView);
 
@@ -738,15 +738,15 @@ namespace bs
 
 		mDepthStencilView = nullptr;
 
-		if (mDesc.depthBuffer)
+		if (mDesc.DepthBuffer)
 		{
 			TEXTURE_DESC texDesc;
-			texDesc.type = TEX_TYPE_2D;
-			texDesc.width = BBDesc.Width;
-			texDesc.height = BBDesc.Height;
-			texDesc.format = PF_D32_S8X24;
-			texDesc.usage = TU_DEPTHSTENCIL;
-			texDesc.numSamples = GetProperties().multisampleCount;
+			texDesc.Type = TEX_TYPE_2D;
+			texDesc.Width = BBDesc.Width;
+			texDesc.Height = BBDesc.Height;
+			texDesc.Format = PF_D32_S8X24;
+			texDesc.Usage = TU_DEPTHSTENCIL;
+			texDesc.NumSamples = GetProperties().MultisampleCount;
 
 			mDepthStencilBuffer = Texture::Create(texDesc);
 			mDepthStencilView = mDepthStencilBuffer->RequestView(0, 1, 0, 1, GVU_DEPTHSTENCIL);
@@ -767,16 +767,16 @@ namespace bs
 	{
 		DestroySizeDependedD3DResources();
 
-		UINT Flags = mProperties.isFullScreen ? DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH : 0;
+		UINT Flags = mProperties.IsFullScreen ? DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH : 0;
 		HRESULT hr = mSwapChain->ResizeBuffers(mSwapChainDesc.BufferCount, width, height, mSwapChainDesc.BufferDesc.Format, Flags);
 
 		if(hr != S_OK)
 			BS_EXCEPT(InternalErrorException, "Call to ResizeBuffers failed.");
 
 		mSwapChain->GetDesc(&mSwapChainDesc);
-		mProperties.width = mSwapChainDesc.BufferDesc.Width;
-		mProperties.height = mSwapChainDesc.BufferDesc.Height;
-		mProperties.isFullScreen = (0 == mSwapChainDesc.Windowed); // Alt-Enter together with SetWindowAssociation() can change this state
+		mProperties.Width = mSwapChainDesc.BufferDesc.Width;
+		mProperties.Height = mSwapChainDesc.BufferDesc.Height;
+		mProperties.IsFullScreen = (0 == mSwapChainDesc.Windowed); // Alt-Enter together with SetWindowAssociation() can change this state
 
 		CreateSizeDependedD3DResources();
 

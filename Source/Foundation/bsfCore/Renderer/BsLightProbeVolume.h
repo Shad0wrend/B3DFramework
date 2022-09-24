@@ -39,29 +39,29 @@ namespace bs
 	struct LightProbeSHCoefficients
 	{
 		LightProbeSHCoefficients()
-			:coeffsR(), coeffsG(), coeffsB()
+			:CoeffsR(), CoeffsG(), CoeffsB()
 		{ }
 
-		float coeffsR[9];
-		float coeffsG[9];
-		float coeffsB[9];
+		float CoeffsR[9];
+		float CoeffsG[9];
+		float CoeffsB[9];
 	};
 
 	/** SH coefficients for a specific light probe, and its handle. */
 	struct LightProbeCoefficientInfo
 	{
-		UINT32 handle;
-		LightProbeSHCoefficients coefficients;
+		UINT32 Handle;
+		LightProbeSHCoefficients Coefficients;
 	};
 
 	/** Information about a single probe in the light probe volume. */
 	struct BS_SCRIPT_EXPORT(m:Rendering,pl:true) LightProbeInfo
 	{
-		UINT32 handle;
-		Vector3 position;
+		UINT32 Handle;
+		Vector3 Position;
 
 		BS_SCRIPT_EXPORT(ex:true)
-		LightProbeSHCoefficients shCoefficients;
+		LightProbeSHCoefficients ShCoefficients;
 	};
 
 	/**
@@ -78,14 +78,14 @@ namespace bs
 		{
 			ProbeInfo() = default;
 			ProbeInfo(LightProbeFlags flags, const Vector3& position)
-				:flags(flags), position(position)
+				:Flags(flags), Position(position)
 			{ }
 
-			LightProbeFlags flags;
-			Vector3 position;
+			LightProbeFlags Flags;
+			Vector3 Position;
 
 			/** Coefficients are only valid directly after deserialization, or after updateCoefficients() is called. */
-			LightProbeSHCoefficients coefficients;
+			LightProbeSHCoefficients Coefficients;
 		};
 	public:
 		~LightProbeVolume();
@@ -220,13 +220,13 @@ namespace bs
 	struct LightProbeInfo
 	{
 		/** Unique handle representing the probe. Always remains the same. */
-		UINT32 handle;
+		UINT32 Handle;
 
 		/** Flags representing the current state of the probe. */
-		LightProbeFlags flags;
+		LightProbeFlags Flags;
 
 		/** Index into the GPU buffer where probe coefficients are stored. -1 if not assigned. Transient. */
-		UINT32 bufferIdx;
+		UINT32 BufferIdx;
 	};
 
 	/** Core thread usable version of bs::LightProbeVolume. */

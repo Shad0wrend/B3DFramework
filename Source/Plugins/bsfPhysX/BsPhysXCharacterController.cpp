@@ -12,7 +12,7 @@ namespace bs
 {
 	PxExtendedVec3 toPxExtVector(const Vector3& input)
 	{
-		return PxExtendedVec3(input.x, input.y, input.z);
+		return PxExtendedVec3(input.X, input.Y, input.Z);
 	}
 
 	Vector3 fromPxExtVector(const PxExtendedVec3& input)
@@ -51,15 +51,15 @@ namespace bs
 	PxCapsuleControllerDesc toPxDesc(const CHAR_CONTROLLER_DESC& desc)
 	{
 		PxCapsuleControllerDesc output;
-		output.climbingMode = toPxEnum(desc.climbingMode);
-		output.nonWalkableMode = toPxEnum(desc.nonWalkableMode);
-		output.contactOffset = desc.contactOffset;
-		output.stepOffset = desc.stepOffset;
-		output.slopeLimit = desc.slopeLimit.ValueRadians();
-		output.height = desc.height;
-		output.radius = desc.radius;
-		output.upDirection = toPxVector(desc.up);
-		output.position = toPxExtVector(desc.position);
+		output.climbingMode = toPxEnum(desc.ClimbingMode);
+		output.nonWalkableMode = toPxEnum(desc.NonWalkableMode);
+		output.contactOffset = desc.ContactOffset;
+		output.stepOffset = desc.StepOffset;
+		output.slopeLimit = desc.SlopeLimit.ValueRadians();
+		output.height = desc.Height;
+		output.radius = desc.Radius;
+		output.upDirection = toPxVector(desc.Up);
+		output.position = toPxExtVector(desc.Position);
 
 		return output;
 	}
@@ -220,33 +220,33 @@ namespace bs
 
 	void PhysXCharacterController::onShapeHit(const PxControllerShapeHit& hit)
 	{
-		if (onColliderHit.Empty())
+		if (OnColliderHit.Empty())
 			return;
 
 		ControllerColliderCollision collision;
-		collision.position = fromPxExtVector(hit.worldPos);
-		collision.normal = fromPxVector(hit.worldNormal);
-		collision.motionDir = fromPxVector(hit.dir);
-		collision.motionAmount = hit.length;
-		collision.triangleIndex = hit.triangleIndex;
-		collision.colliderRaw = (Collider*)hit.shape->userData;
+		collision.Position = fromPxExtVector(hit.worldPos);
+		collision.Normal = fromPxVector(hit.worldNormal);
+		collision.MotionDir = fromPxVector(hit.dir);
+		collision.MotionAmount = hit.length;
+		collision.TriangleIndex = hit.triangleIndex;
+		collision.ColliderRaw = (Collider*)hit.shape->userData;
 
-		onColliderHit(collision);
+		OnColliderHit(collision);
 	}
 
 	void PhysXCharacterController::onControllerHit(const PxControllersHit& hit)
 	{
-		if (CharacterController::onControllerHit.Empty())
+		if (CharacterController::OnControllerHit.Empty())
 			return;
 
 		ControllerControllerCollision collision;
-		collision.position = fromPxExtVector(hit.worldPos);
-		collision.normal = fromPxVector(hit.worldNormal);
-		collision.motionDir = fromPxVector(hit.dir);
-		collision.motionAmount = hit.length;
-		collision.controllerRaw = (CharacterController*)hit.controller->getUserData();
+		collision.Position = fromPxExtVector(hit.worldPos);
+		collision.Normal = fromPxVector(hit.worldNormal);
+		collision.MotionDir = fromPxVector(hit.dir);
+		collision.MotionAmount = hit.length;
+		collision.ControllerRaw = (CharacterController*)hit.controller->getUserData();
 
-		CharacterController::onControllerHit(collision);
+		CharacterController::OnControllerHit(collision);
 	}
 
 	PxQueryHitType::Enum PhysXCharacterController::preFilter(const PxFilterData& filterData, const PxShape* shape,

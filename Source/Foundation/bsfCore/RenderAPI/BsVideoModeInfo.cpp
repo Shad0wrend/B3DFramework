@@ -6,8 +6,8 @@ namespace bs
 {
 	bool VideoMode::operator== (const VideoMode& other) const
 	{
-		return width == other.width && height == other.height &&
-			outputIdx == other.outputIdx && refreshRate == other.refreshRate;
+		return Width == other.Width && Height == other.Height &&
+			OutputIdx == other.OutputIdx && RefreshRate == other.RefreshRate;
 	}
 
 	VideoOutputInfo::~VideoOutputInfo()

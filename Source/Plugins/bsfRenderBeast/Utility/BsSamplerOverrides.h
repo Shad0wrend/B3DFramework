@@ -13,41 +13,41 @@ namespace bs { namespace ct
 	/**	Contains data about an overridden sampler states for a single pass. */
 	struct PassSamplerOverrides
 	{
-		UINT32** stateOverrides;
-		UINT32 numSets;
+		UINT32** StateOverrides;
+		UINT32 NumSets;
 	};
 
 	/** Contains data about a single overriden sampler state. */
 	struct SamplerOverride
 	{
-		UINT32 paramIdx;
-		UINT64 originalStateHash;
-		SPtr<SamplerState> state;
-		UINT32 set;
-		UINT32 slot;
+		UINT32 ParamIdx;
+		UINT64 OriginalStateHash;
+		SPtr<SamplerState> State;
+		UINT32 Set;
+		UINT32 Slot;
 	};
 
 	/**	Contains data about an overridden sampler states in the entire material. */
 	struct MaterialSamplerOverrides
 	{
-		PassSamplerOverrides* passes;
-		SamplerOverride* overrides;
-		UINT32 numPasses;
-		UINT32 numOverrides;
-		UINT32 refCount;
-		bool isDirty;
+		PassSamplerOverrides* Passes;
+		SamplerOverride* Overrides;
+		UINT32 NumPasses;
+		UINT32 NumOverrides;
+		UINT32 RefCount;
+		bool IsDirty;
 	};
 
 	/** Key used for uniquely identifying a sampler override entry. */
 	struct SamplerOverrideKey
 	{
 		SamplerOverrideKey(const SPtr<Material>& material, UINT32 techniqueIdx)
-			:material(material), techniqueIdx(techniqueIdx)
+			:Material(material), TechniqueIdx(techniqueIdx)
 		{ }
 
 		bool operator== (const SamplerOverrideKey& rhs) const
 		{
-			return material == rhs.material && techniqueIdx == rhs.techniqueIdx;
+			return Material == rhs.Material && TechniqueIdx == rhs.TechniqueIdx;
 		}
 
 		bool operator!= (const SamplerOverrideKey& rhs) const
@@ -55,8 +55,8 @@ namespace bs { namespace ct
 			return !(*this == rhs);
 		}
 
-		SPtr<Material> material;
-		UINT32 techniqueIdx;
+		SPtr<Material> Material;
+		UINT32 TechniqueIdx;
 	};
 
 	/**	Helper class for generating sampler overrides. */
@@ -104,8 +104,8 @@ namespace std
 		size_t operator()(const bs::ct::SamplerOverrideKey& key) const
 		{
 			size_t hash = 0;
-			bs::bs_hash_combine(hash, key.material);
-			bs::bs_hash_combine(hash, key.techniqueIdx);
+			bs::bs_hash_combine(hash, key.Material);
+			bs::bs_hash_combine(hash, key.TechniqueIdx);
 
 			return hash;
 		}

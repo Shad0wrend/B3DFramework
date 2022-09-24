@@ -32,7 +32,7 @@ namespace bs
 			BitLength size;
 			rtti_read_size_header(stream, compress, size);
 
-			uint32_t stringSize = size.bytes - sizeof(size.bytes);
+			uint32_t stringSize = size.Bytes - sizeof(size.Bytes);
 			uint8_t* buffer = (uint8_t*)bs_stack_alloc(stringSize + 1);
 
 			stream.ReadBytes(buffer, stringSize);
@@ -72,7 +72,7 @@ namespace bs
 			BitLength size;
 			rtti_read_size_header(stream, compress, size);
 
-			uint32_t stringSize = size.bytes - sizeof(size.bytes);
+			uint32_t stringSize = size.Bytes - sizeof(size.Bytes);
 			auto buffer = (WString::value_type*)bs_stack_alloc(stringSize + sizeof(WString::value_type));
 
 			stream.ReadBytes((uint8_t*)buffer, stringSize);

@@ -11,10 +11,10 @@ namespace bs
 {
 	struct __ControllerCollisionInterop
 	{
-		Vector3 position;
-		Vector3 normal;
-		Vector3 motionDir;
-		float motionAmount;
+		Vector3 Position;
+		Vector3 Normal;
+		Vector3 MotionDir;
+		float MotionAmount;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptControllerCollision : public ScriptObject<ScriptControllerCollision>

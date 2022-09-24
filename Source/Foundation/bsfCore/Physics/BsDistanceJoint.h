@@ -88,11 +88,11 @@ namespace bs
 	/** Structure used for initializing a new DistanceJoint. */
 	struct DISTANCE_JOINT_DESC : JOINT_DESC
 	{
-		float minDistance = 0.0f;
-		float maxDistance = 0.0f;
-		float tolerance = 0.25f;
-		Spring spring;
-		DistanceJointFlag flag = (DistanceJointFlag)0;
+		float MinDistance = 0.0f;
+		float MaxDistance = 0.0f;
+		float Tolerance = 0.25f;
+		Spring Spring;
+		DistanceJointFlag Flag = (DistanceJointFlag)0;
 	};
 
 	/** @} */

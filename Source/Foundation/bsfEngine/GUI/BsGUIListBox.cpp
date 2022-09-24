@@ -178,8 +178,8 @@ namespace bs
 			bool selected = mElementStates[idx];
 			mElementStates[idx] = !selected;
 
-			if (!onSelectionToggled.Empty())
-				onSelectionToggled(idx, !selected);
+			if (!OnSelectionToggled.Empty())
+				OnSelectionToggled(idx, !selected);
 		}
 		else
 		{
@@ -188,8 +188,8 @@ namespace bs
 
 			mElementStates[idx] = true;
 
-			if (!onSelectionToggled.Empty())
-				onSelectionToggled(idx, true);
+			if (!OnSelectionToggled.Empty())
+				OnSelectionToggled(idx, true);
 
 			CloseListBox();
 		}
@@ -207,17 +207,17 @@ namespace bs
 		for(auto& elem : mElements)
 		{
 			String identifier = toString(i);
-			desc.dropDownData.entries.push_back(GUIDropDownDataEntry::Button(identifier, std::bind(&GUIListBox::ElementSelected, this, i)));
-			desc.dropDownData.localizedNames[identifier] = elem;
+			desc.DropDownData.Entries.push_back(GUIDropDownDataEntry::Button(identifier, std::bind(&GUIListBox::ElementSelected, this, i)));
+			desc.DropDownData.LocalizedNames[identifier] = elem;
 			i++;
 		}
 
 		GUIWidget* widget = GetParentWidgetInternal();
 
-		desc.camera = widget->GetCamera();
-		desc.skin = widget->GetSkinResource();
-		desc.placement = DropDownAreaPlacement::AroundBoundsHorz(mClippedBounds);
-		desc.dropDownData.states = mElementStates;
+		desc.Camera = widget->GetCamera();
+		desc.Skin = widget->GetSkinResource();
+		desc.Placement = DropDownAreaPlacement::AroundBoundsHorz(mClippedBounds);
+		desc.DropDownData.States = mElementStates;
 
 		GUIDropDownType type;
 		if (mIsMultiselect)

@@ -103,8 +103,8 @@ namespace bs { namespace ct {
 		mParams->SetParamBlockBuffer("PerCamera", perCamera);
 		mParams->SetParamBlockBuffer("ReflProbeParams", reflProbeParams);
 
-		mIBLParams.ambientOcclusionTexParam.Set(ao);
-		mIBLParams.ssrTexParam.Set(ssr);
+		mIBLParams.AmbientOcclusionTexParam.Set(ao);
+		mIBLParams.SsrTexParam.Set(ssr);
 
 		RendererMaterial::Bind();
 	}
@@ -141,22 +141,22 @@ namespace bs { namespace ct {
 		mParams->SetParamBlockBuffer("PerCamera", perCamera);
 		mParams->SetParamBlockBuffer("ReflProbeParams", reflProbeParams);
 
-		gPerProbeParamDef.gPosition.Set(mParamBuffer, probeData.position);
+		gPerProbeParamDef.gPosition.Set(mParamBuffer, probeData.Position);
 
-		if(probeData.type == 1)
-			gPerProbeParamDef.gExtents.Set(mParamBuffer, probeData.boxExtents);
+		if(probeData.Type == 1)
+			gPerProbeParamDef.gExtents.Set(mParamBuffer, probeData.BoxExtents);
 		else
 		{
-			Vector3 extents(probeData.radius, probeData.radius, probeData.radius);
+			Vector3 extents(probeData.Radius, probeData.Radius, probeData.Radius);
 			gPerProbeParamDef.gExtents.Set(mParamBuffer, extents);
 		}
 
-		gPerProbeParamDef.gTransitionDistance.Set(mParamBuffer, probeData.transitionDistance);
-		gPerProbeParamDef.gInvBoxTransform.Set(mParamBuffer, probeData.invBoxTransform);
-		gPerProbeParamDef.gCubemapIdx.Set(mParamBuffer, probeData.cubemapIdx);
-		gPerProbeParamDef.gType.Set(mParamBuffer, probeData.type);
+		gPerProbeParamDef.gTransitionDistance.Set(mParamBuffer, probeData.TransitionDistance);
+		gPerProbeParamDef.gInvBoxTransform.Set(mParamBuffer, probeData.InvBoxTransform);
+		gPerProbeParamDef.gCubemapIdx.Set(mParamBuffer, probeData.CubemapIdx);
+		gPerProbeParamDef.gType.Set(mParamBuffer, probeData.Type);
 
-		mIBLParams.reflectionProbeCubemapsTexParam.Set(sceneInfo.reflProbeCubemapsTex);
+		mIBLParams.ReflectionProbeCubemapsTexParam.Set(sceneInfo.ReflProbeCubemapsTex);
 
 		RendererMaterial::Bind();
 	}
@@ -204,7 +204,7 @@ namespace bs { namespace ct {
 		mParams->SetParamBlockBuffer("ReflProbeParams", reflProbeParams);
 
 		if(skybox != nullptr)
-			mIBLParams.skyReflectionsTexParam.Set(skybox->GetFilteredRadiance());
+			mIBLParams.SkyReflectionsTexParam.Set(skybox->GetFilteredRadiance());
 
 		RendererMaterial::Bind();
 	}
@@ -241,7 +241,7 @@ namespace bs { namespace ct {
 		mParams->SetParamBlockBuffer("PerCamera", perCamera);
 		mParams->SetParamBlockBuffer("ReflProbeParams", reflProbeParams);
 
-		mIBLParams.preintegratedEnvBRDFParam.Set(preintegratedBrdf);
+		mIBLParams.PreintegratedEnvBrdfParam.Set(preintegratedBrdf);
 
 		mIBLRadiance.Set(iblRadiance);
 
@@ -273,7 +273,7 @@ namespace bs { namespace ct {
 	{
 		const auto& viewProps = view.GetProperties();
 
-		bool isMSAA = view.GetProperties().target.numSamples > 1;
+		bool isMSAA = view.GetProperties().Target.NumSamples > 1;
 		SPtr<GpuParamBlockBuffer> perViewBuffer = view.GetPerViewBuffer();
 
 		light.GetParameters(mPerLightBuffer);
@@ -297,12 +297,12 @@ namespace bs { namespace ct {
 		else // Radial or spot
 		{
 			// Check if viewer is inside the light volume
-			float distSqrd = (light.internal->GetBounds().GetCenter() - viewProps.viewOrigin).SquaredLength();
+			float distSqrd = (light.Internal->GetBounds().GetCenter() - viewProps.ViewOrigin).SquaredLength();
 
 			// Extend the bounds slighty to cover the case when the viewer is outside, but the near plane is intersecting
 			// the light bounds. We need to be conservative since the material for rendering outside will not properly
 			// render the inside of the light volume.
-			float boundRadius = light.internal->GetBounds().GetRadius() + viewProps.nearPlane * 3.0f;
+			float boundRadius = light.Internal->GetBounds().GetRadius() + viewProps.NearPlane * 3.0f;
 
 			bool isInside = distSqrd < (boundRadius * boundRadius);
 
@@ -332,32 +332,32 @@ namespace bs { namespace ct {
 		const GBufferTextures& gBufferInput, const SceneInfo& sceneInfo, const SPtr<GpuParamBlockBuffer>& reflProbeParams)
 	{
 		const auto& viewProps = view.GetProperties();
-		bool isMSAA = viewProps.target.numSamples > 1;
+		bool isMSAA = viewProps.Target.NumSamples > 1;
 
 		SPtr<GpuParamBlockBuffer> perViewBuffer = view.GetPerViewBuffer();
 
 		// When checking if viewer is inside the volume extend the bounds slighty to cover the case when the viewer is
 		// outside, but the near plane is intersecting the bounds. We need to be conservative since the material for
 		// rendering outside will not properly render the inside of the volume.
-		float radiusBuffer = viewProps.nearPlane * 3.0f;
+		float radiusBuffer = viewProps.NearPlane * 3.0f;
 
 		SPtr<Mesh> stencilMesh;
 		bool isInside;
-		if(probeData.type == 0) // Sphere
+		if(probeData.Type == 0) // Sphere
 		{
 			// Check if viewer is inside the light volume
-			float distSqrd = (probeData.position - viewProps.viewOrigin).SquaredLength();
-			float boundRadius = probeData.radius + radiusBuffer;
+			float distSqrd = (probeData.Position - viewProps.ViewOrigin).SquaredLength();
+			float boundRadius = probeData.Radius + radiusBuffer;
 			
 			isInside = distSqrd < (boundRadius * boundRadius);
 			stencilMesh = RendererUtility::Instance().GetSphereStencil();
 		}
 		else // Box
 		{
-			Vector3 extents = probeData.boxExtents + radiusBuffer;
-			AABox box(probeData.position - extents, probeData.position + extents);
+			Vector3 extents = probeData.BoxExtents + radiusBuffer;
+			AABox box(probeData.Position - extents, probeData.Position + extents);
 
-			isInside = box.Contains(viewProps.viewOrigin);
+			isInside = box.Contains(viewProps.ViewOrigin);
 			stencilMesh = RendererUtility::Instance().GetBoxStencil();
 		}
 

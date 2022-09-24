@@ -21,21 +21,21 @@ namespace bs
 	SPtr<SerializedInstance> SerializedObject::Clone(bool cloneData)
 	{
 		SPtr<SerializedObject> copy = bs_shared_ptr_new<SerializedObject>();
-		copy->subObjects = Vector<SerializedSubObject>(subObjects.size());
+		copy->SubObjects = Vector<SerializedSubObject>(SubObjects.size());
 
 		UINT32 i = 0;
-		for (auto& subObject : subObjects)
+		for (auto& subObject : SubObjects)
 		{
-			copy->subObjects[i].typeId = subObject.typeId;
+			copy->SubObjects[i].TypeId = subObject.TypeId;
 
-			for (auto& entryPair : subObject.entries)
+			for (auto& entryPair : subObject.Entries)
 			{
 				SerializedEntry entry = entryPair.second;
 
-				if (entry.serialized != nullptr)
-					entry.serialized = entry.serialized->Clone(cloneData);
+				if (entry.Serialized != nullptr)
+					entry.Serialized = entry.Serialized->Clone(cloneData);
 
-				copy->subObjects[i].entries[entryPair.first] = entry;
+				copy->SubObjects[i].Entries[entryPair.first] = entry;
 			}
 
 			i++;
@@ -47,18 +47,18 @@ namespace bs
 	SPtr<SerializedInstance> SerializedField::Clone(bool cloneData)
 	{
 		SPtr<SerializedField> copy = bs_shared_ptr_new<SerializedField>();
-		copy->size = size;
+		copy->Size = Size;
 
 		if (cloneData)
 		{
-			copy->value = (UINT8*)bs_alloc(size);
-			memcpy(copy->value, value, size);
-			copy->ownsMemory = true;
+			copy->Value = (UINT8*)bs_alloc(Size);
+			memcpy(copy->Value, Value, Size);
+			copy->OwnsMemory = true;
 		}
 		else
 		{
-			copy->value = value;
-			copy->ownsMemory = false;
+			copy->Value = Value;
+			copy->OwnsMemory = false;
 		}
 
 		return copy;
@@ -67,26 +67,26 @@ namespace bs
 	SPtr<SerializedInstance> SerializedDataBlock::Clone(bool cloneData)
 	{
 		SPtr<SerializedDataBlock> copy = bs_shared_ptr_new<SerializedDataBlock>();
-		copy->size = size;
+		copy->Size = Size;
 
 		if (cloneData)
 		{
-			if(stream->IsFile())
+			if(Stream->IsFile())
 			{
 				BS_LOG(Warning, Generic,
 					"Cloning a file stream. Streaming is disabled and stream data will be loaded into memory.");
 			}
 
-			auto stream = bs_shared_ptr_new<MemoryDataStream>(size);
-			stream->Read(stream->Data(), size);
+			auto stream = bs_shared_ptr_new<MemoryDataStream>(Size);
+			stream->Read(stream->Data(), Size);
 
-			copy->stream = stream;
-			copy->offset = 0;
+			copy->Stream = stream;
+			copy->Offset = 0;
 		}
 		else
 		{
-			copy->stream = stream;
-			copy->offset = offset;
+			copy->Stream = Stream;
+			copy->Offset = Offset;
 		}
 
 		return copy;
@@ -95,14 +95,14 @@ namespace bs
 	SPtr<SerializedInstance> SerializedArray::Clone(bool cloneData)
 	{
 		SPtr<SerializedArray> copy = bs_shared_ptr_new<SerializedArray>();
-		copy->numElements = numElements;
+		copy->NumElements = NumElements;
 
-		for (auto& entryPair : entries)
+		for (auto& entryPair : Entries)
 		{
 			SerializedArrayEntry entry = entryPair.second;
-			entry.serialized = entry.serialized->Clone(cloneData);
+			entry.Serialized = entry.Serialized->Clone(cloneData);
 
-			copy->entries[entryPair.first] = entry;
+			copy->Entries[entryPair.first] = entry;
 		}
 
 		return copy;
@@ -140,8 +140,8 @@ namespace bs
 
 	UINT32 SerializedObject::GetRootTypeId() const
 	{
-		if(subObjects.size() > 0)
-			return subObjects[0].typeId;
+		if(SubObjects.size() > 0)
+			return SubObjects[0].TypeId;
 
 		return 0;
 	}

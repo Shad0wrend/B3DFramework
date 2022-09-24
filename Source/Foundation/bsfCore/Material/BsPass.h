@@ -21,17 +21,17 @@ namespace bs
 	/** Descriptor structure used for initializing a shader pass. */
 	struct PASS_DESC
 	{
-		BLEND_STATE_DESC blendStateDesc;
-		RASTERIZER_STATE_DESC rasterizerStateDesc;
-		DEPTH_STENCIL_STATE_DESC depthStencilStateDesc;
-		UINT32 stencilRefValue;
+		BLEND_STATE_DESC BlendStateDesc;
+		RASTERIZER_STATE_DESC RasterizerStateDesc;
+		DEPTH_STENCIL_STATE_DESC DepthStencilStateDesc;
+		UINT32 StencilRefValue;
 
-		GPU_PROGRAM_DESC vertexProgramDesc;
-		GPU_PROGRAM_DESC fragmentProgramDesc;
-		GPU_PROGRAM_DESC geometryProgramDesc;
-		GPU_PROGRAM_DESC hullProgramDesc;
-		GPU_PROGRAM_DESC domainProgramDesc;
-		GPU_PROGRAM_DESC computeProgramDesc;
+		GPU_PROGRAM_DESC VertexProgramDesc;
+		GPU_PROGRAM_DESC FragmentProgramDesc;
+		GPU_PROGRAM_DESC GeometryProgramDesc;
+		GPU_PROGRAM_DESC HullProgramDesc;
+		GPU_PROGRAM_DESC DomainProgramDesc;
+		GPU_PROGRAM_DESC ComputeProgramDesc;
 	};
 
 	/** @} */
@@ -59,10 +59,10 @@ namespace bs
 		bool HasBlending() const;
 
 		/** Returns true if the pass executes a compute program. */
-		bool IsCompute() const { return !mData.computeProgramDesc.source.empty(); }
+		bool IsCompute() const { return !mData.ComputeProgramDesc.Source.empty(); }
 
 		/** Gets the stencil reference value that is used when performing operations using the stencil buffer. */
-		UINT32 GetStencilRefValue() const { return mData.stencilRefValue; }
+		UINT32 GetStencilRefValue() const { return mData.StencilRefValue; }
 
 		/** Returns the GPU program descriptor for the specified GPU program type. */
 		const GPU_PROGRAM_DESC& GetProgramDesc(bs::GpuProgramType type) const;

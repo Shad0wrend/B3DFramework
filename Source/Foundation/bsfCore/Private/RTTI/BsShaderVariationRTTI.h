@@ -29,9 +29,9 @@ namespace bs
 			{
 				BitLength size = 0;
 				size += rtti_write(VERSION, stream);
-				size += rtti_write(data.name, stream);
-				size += rtti_write(data.type, stream);
-				size += rtti_write(data.i, stream);
+				size += rtti_write(data.Name, stream);
+				size += rtti_write(data.Type, stream);
+				size += rtti_write(data.I, stream);
 
 				return size;
 			});
@@ -47,9 +47,9 @@ namespace bs
 			rtti_read(version, stream);
 			assert(version == 0);
 
-			rtti_read(data.name, stream);
-			rtti_read(data.type, stream);
-			rtti_read(data.i, stream);
+			rtti_read(data.Name, stream);
+			rtti_read(data.Type, stream);
+			rtti_read(data.I, stream);
 
 			return size;
 		}
@@ -58,9 +58,9 @@ namespace bs
 		static BitLength GetSize(const ShaderVariation::Param& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength dataSize = sizeof(uint8_t);
-			dataSize += rtti_size(data.name);
-			dataSize += rtti_size(data.type);
-			dataSize += rtti_size(data.i);
+			dataSize += rtti_size(data.Name);
+			dataSize += rtti_size(data.Type);
+			dataSize += rtti_size(data.I);
 
 			rtti_add_header_size(dataSize, compress);
 			return dataSize;

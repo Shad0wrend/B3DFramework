@@ -26,28 +26,28 @@ namespace bs
 	private:
 		BS_BEGIN_RTTI_MEMBERS
 			BS_RTTI_MEMBER_PLAIN(mSize, 0)
-			BS_RTTI_MEMBER_PLAIN_NAMED(height, mProperties.mDesc.height, 2)
-			BS_RTTI_MEMBER_PLAIN_NAMED(width, mProperties.mDesc.width, 3)
-			BS_RTTI_MEMBER_PLAIN_NAMED(depth, mProperties.mDesc.depth, 4)
-			BS_RTTI_MEMBER_PLAIN_NAMED(numMips, mProperties.mDesc.numMips, 5)
-			BS_RTTI_MEMBER_PLAIN_NAMED(hwGamma, mProperties.mDesc.hwGamma, 6)
-			BS_RTTI_MEMBER_PLAIN_NAMED(numSamples, mProperties.mDesc.numSamples, 7)
-			BS_RTTI_MEMBER_PLAIN_NAMED(type, mProperties.mDesc.type, 9)
-			BS_RTTI_MEMBER_PLAIN_NAMED(format, mProperties.mDesc.format, 10)
+			BS_RTTI_MEMBER_PLAIN_NAMED(height, mProperties.mDesc.Height, 2)
+			BS_RTTI_MEMBER_PLAIN_NAMED(width, mProperties.mDesc.Width, 3)
+			BS_RTTI_MEMBER_PLAIN_NAMED(depth, mProperties.mDesc.Depth, 4)
+			BS_RTTI_MEMBER_PLAIN_NAMED(numMips, mProperties.mDesc.NumMips, 5)
+			BS_RTTI_MEMBER_PLAIN_NAMED(hwGamma, mProperties.mDesc.HwGamma, 6)
+			BS_RTTI_MEMBER_PLAIN_NAMED(numSamples, mProperties.mDesc.NumSamples, 7)
+			BS_RTTI_MEMBER_PLAIN_NAMED(type, mProperties.mDesc.Type, 9)
+			BS_RTTI_MEMBER_PLAIN_NAMED(format, mProperties.mDesc.Format, 10)
 		BS_END_RTTI_MEMBERS
 
-		INT32& GetUsage(Texture* obj) { return obj->mProperties.mDesc.usage; }
+		INT32& GetUsage(Texture* obj) { return obj->mProperties.mDesc.Usage; }
 		void SetUsage(Texture* obj, INT32& val)
 		{
 			// Render target and depth stencil texture formats are for in-memory use only
 			// and don't make sense when serialized
 			if ((val & (TU_DEPTHSTENCIL | TU_RENDERTARGET)) != 0)
 			{
-				obj->mProperties.mDesc.usage &= ~(TU_DEPTHSTENCIL | TU_RENDERTARGET);
-				obj->mProperties.mDesc.usage |= TU_STATIC;
+				obj->mProperties.mDesc.Usage &= ~(TU_DEPTHSTENCIL | TU_RENDERTARGET);
+				obj->mProperties.mDesc.Usage |= TU_STATIC;
 			}
 			else
-				obj->mProperties.mDesc.usage = val;
+				obj->mProperties.mDesc.Usage = val;
 		}
 
 		SPtr<PixelData> GetPixelData(Texture* obj, UINT32 idx)
@@ -100,7 +100,7 @@ namespace bs
 
 			if (originalFormat != validFormat)
 			{
-				texProps.mDesc.format = validFormat;
+				texProps.mDesc.Format = validFormat;
 
 				for (size_t i = 0; i < mPixelData.size(); i++)
 				{

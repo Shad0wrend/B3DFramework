@@ -55,12 +55,12 @@ namespace bs
 			bool foundObjectToProcess = false;
 			for(; iter != mObjectsToEncode.end(); ++iter)
 			{
-				auto foundExisting = serializedObjects.find(iter->objectId);
+				auto foundExisting = serializedObjects.find(iter->ObjectId);
 				if(foundExisting != serializedObjects.end())
 					continue; // Already processed
 
-				SPtr<IReflectable> curObject = iter->object;
-				UINT32 curObjectid = iter->objectId;
+				SPtr<IReflectable> curObject = iter->Object;
+				UINT32 curObjectid = iter->ObjectId;
 				serializedObjects.insert(curObjectid);
 				mObjectsToEncode.erase(iter);
 
@@ -155,7 +155,7 @@ namespace bs
 			}
 
 			if (curSchema)
-				objectTypeId = curSchema->typeId;
+				objectTypeId = curSchema->TypeId;
 
 			if (isRoot)
 			{
@@ -177,10 +177,10 @@ namespace bs
 					assert(iterFind != mDecodeObjectMap.end());
 
 					ObjectToDecode& objectToDecode = iterFind->second;
-					objectToDecode.offset = bufferedStream.Tell();
+					objectToDecode.Offset = bufferedStream.Tell();
 					
-					curSchema = objectToDecode.schema;
-					objectTypeId = curSchema->typeId;
+					curSchema = objectToDecode.Schema;
+					objectTypeId = curSchema->TypeId;
 				}
 			}			
 
@@ -197,12 +197,12 @@ namespace bs
 
 		// Now actually decode the objects
 		ObjectToDecode& rootObjectToDecode = mDecodeObjectMap[rootObjectId];
-		SPtr<IReflectable> rootObject = rootObjectToDecode.object;
+		SPtr<IReflectable> rootObject = rootObjectToDecode.Object;
 
-		rootObjectToDecode.decodeInProgress = true;
+		rootObjectToDecode.DecodeInProgress = true;
 		DecodeEntry(bufferedStream, endBits, flags, rootObject, schema);
-		rootObjectToDecode.decodeInProgress = false;
-		rootObjectToDecode.isDecoded = true;
+		rootObjectToDecode.DecodeInProgress = false;
+		rootObjectToDecode.IsDecoded = true;
 
 		mDecodeObjectMap.clear();
 		bufferedStream.Seek((uint64_t)endBits);
@@ -271,12 +271,12 @@ namespace bs
 				if (writeMeta)
 				{
 					// Copy field ID & other meta-data like field size and type
-					int metaData = EncodeFieldMetaData(curGenericField->schema, false);
+					int metaData = EncodeFieldMetaData(curGenericField->Schema, false);
 
 					stream.WriteBytes(metaData);
 				}
 
-				if(curGenericField->schema.isArray)
+				if(curGenericField->Schema.IsArray)
 				{
 					UINT32 arrayNumElems = curGenericField->GetArraySize(rttiInstance, object);
 
@@ -286,7 +286,7 @@ namespace bs
 					else
 						stream.WriteBytes(arrayNumElems);
 
-					switch(curGenericField->schema.type)
+					switch(curGenericField->Schema.Type)
 					{
 					case SerializableFT_ReflectablePtr:
 						{
@@ -337,12 +337,12 @@ namespace bs
 					default:
 						BS_LOG(Error, Serialization,
 							"Error encoding data. Encountered a type I don't know how to encode. Type: {0}, Is array: {1}",
-							curGenericField->schema.type, curGenericField->schema.isArray);
+							curGenericField->Schema.Type, curGenericField->Schema.IsArray);
 					}
 				}
 				else
 				{
-					switch(curGenericField->schema.type)
+					switch(curGenericField->Schema.Type)
 					{
 					case SerializableFT_ReflectablePtr:
 						{
@@ -406,7 +406,7 @@ namespace bs
 					default:
 						BS_LOG(Error, Serialization,
 							"Error encoding data. Encountered a type I don't know how to encode. Type: {0}, Is array: {1}",
-							curGenericField->schema.type, curGenericField->schema.isArray);
+							curGenericField->Schema.Type, curGenericField->Schema.IsArray);
 					}
 				}
 
@@ -436,7 +436,7 @@ namespace bs
 		ReadObjectMetaData(stream, flags, objectId, objectTypeId, objectIsBaseClass);
 
 		if(schema)
-			objectTypeId = schema->typeId;
+			objectTypeId = schema->TypeId;
 
 		if (objectIsBaseClass)
 		{
@@ -485,7 +485,7 @@ namespace bs
 
 		Vector<RTTIFieldSchema>::iterator fieldSchemaIter;
 		if (schema)
-			fieldSchemaIter = schema->fieldSchemas.begin();
+			fieldSchemaIter = schema->FieldSchemas.begin();
 		
 		while (stream.Tell() < dataEnd)
 		{
@@ -532,15 +532,15 @@ namespace bs
 			}
 			else
 			{
-				if(fieldSchemaIter == schema->fieldSchemas.end())
+				if(fieldSchemaIter == schema->FieldSchemas.end())
 				{
 					// No more fields, move to base type if one exists
-					if (schema->baseTypeSchema)
+					if (schema->BaseTypeSchema)
 					{
-						schema = schema->baseTypeSchema;
-						fieldSchemaIter = schema->fieldSchemas.begin();
+						schema = schema->BaseTypeSchema;
+						fieldSchemaIter = schema->FieldSchemas.begin();
 						
-						baseObjTypeId = schema->typeId;
+						baseObjTypeId = schema->TypeId;
 						objIsBaseClass = true;
 					}
 					else // Otherwise we're done here
@@ -549,7 +549,7 @@ namespace bs
 				else
 				{
 					fieldSchema = *fieldSchemaIter;
-					fieldTypeSchema = fieldSchema.fieldTypeSchema;
+					fieldTypeSchema = fieldSchema.FieldTypeSchema;
 
 					++fieldSchemaIter;
 				}
@@ -587,32 +587,32 @@ namespace bs
 			RTTIField* curGenericField = nullptr;
 
 			if (rtti != nullptr)
-				curGenericField = rtti->FindField(fieldSchema.id);
+				curGenericField = rtti->FindField(fieldSchema.Id);
 
 			if (curGenericField != nullptr)
 			{
-				if (!fieldSchema.hasDynamicSize && curGenericField->schema.size != fieldSchema.size)
+				if (!fieldSchema.HasDynamicSize && curGenericField->Schema.Size != fieldSchema.Size)
 				{
 					BS_EXCEPT(InternalErrorException,
 						"Data type mismatch. Type size stored in file and actual type size don't match. ("
-						+ toString(curGenericField->schema.size.bytes) + " vs. " + toString(fieldSchema.size.bytes) + ")");
+						+ toString(curGenericField->Schema.Size.Bytes) + " vs. " + toString(fieldSchema.Size.Bytes) + ")");
 				}
 
-				if (curGenericField->schema.isArray != fieldSchema.isArray)
+				if (curGenericField->Schema.IsArray != fieldSchema.IsArray)
 				{
 					BS_EXCEPT(InternalErrorException,
 						"Data type mismatch. One is array, other is a single type.");
 				}
 
-				if (curGenericField->schema.type != fieldSchema.type)
+				if (curGenericField->Schema.Type != fieldSchema.Type)
 				{
 					BS_EXCEPT(InternalErrorException,
-						"Data type mismatch. Field types don't match. " + toString(UINT32(curGenericField->schema.type)) + " vs. " + toString(UINT32(fieldSchema.type)));
+						"Data type mismatch. Field types don't match. " + toString(UINT32(curGenericField->Schema.Type)) + " vs. " + toString(UINT32(fieldSchema.Type)));
 				}
 			}
 
 			UINT32 arrayNumElems = 1;
-			if (fieldSchema.isArray)
+			if (fieldSchema.IsArray)
 			{
 				if (compressed)
 					stream.ReadVarInt(arrayNumElems);
@@ -622,7 +622,7 @@ namespace bs
 				if(curGenericField != nullptr)
 					curGenericField->SetArraySize(rttiInstance, output.get(), arrayNumElems);
 
-				switch (fieldSchema.type)
+				switch (fieldSchema.Type)
 				{
 				case SerializableFT_ReflectablePtr:
 				{
@@ -643,7 +643,7 @@ namespace bs
 						{
 							if (findObj == mDecodeObjectMap.end())
 							{
-								SPtr<IReflectable> childObj = IReflectable::CreateInstanceFromTypeId(fieldTypeSchema->typeId);
+								SPtr<IReflectable> childObj = IReflectable::CreateInstanceFromTypeId(fieldTypeSchema->TypeId);
 								mDecodeObjectMap.insert(std::make_pair(objectId, ObjectToDecode(childObj, (UINT32)-1, fieldTypeSchema)));
 							}
 						}
@@ -664,10 +664,10 @@ namespace bs
 							{
 								ObjectToDecode& objToDecode = findObj->second;
 								
-								const bool needsDecoding = !curField->schema.info.flags.IsSet(RTTIFieldFlag::WeakRef) && !objToDecode.isDecoded;
+								const bool needsDecoding = !curField->Schema.Info.Flags.IsSet(RTTIFieldFlag::WeakRef) && !objToDecode.IsDecoded;
 								if (needsDecoding)
 								{
-									if (objToDecode.decodeInProgress)
+									if (objToDecode.DecodeInProgress)
 									{
 										BS_LOG(Warning, Generic, "Detected a circular reference when decoding. Referenced "
 											"object's fields will be resolved in an undefined order (i.e. one of the "
@@ -677,19 +677,19 @@ namespace bs
 									}
 									else
 									{
-										objToDecode.decodeInProgress = true;
+										objToDecode.DecodeInProgress = true;
 
 										const uint64_t curOffset = stream.Tell();
-										stream.Seek(objToDecode.offset);
-										DecodeEntry(stream, dataEnd, flags, objToDecode.object, fieldTypeSchema);
+										stream.Seek(objToDecode.Offset);
+										DecodeEntry(stream, dataEnd, flags, objToDecode.Object, fieldTypeSchema);
 										stream.Seek(curOffset);
 
-										objToDecode.decodeInProgress = false;
-										objToDecode.isDecoded = true;
+										objToDecode.DecodeInProgress = false;
+										objToDecode.IsDecoded = true;
 									}
 								}
 
-								curField->SetArrayValue(rttiInstance, output.get(), i, objToDecode.object);
+								curField->SetArrayValue(rttiInstance, output.get(), i, objToDecode.Object);
 							}
 						}
 					}
@@ -722,8 +722,8 @@ namespace bs
 
 					for (UINT32 i = 0; i < arrayNumElems; i++)
 					{
-						uint64_t typeSizeBits = fieldSchema.size.GetBits();
-						if (fieldSchema.hasDynamicSize)
+						uint64_t typeSizeBits = fieldSchema.Size.GetBits();
+						if (fieldSchema.HasDynamicSize)
 						{
 							if(compressed)
 							{
@@ -752,9 +752,9 @@ namespace bs
 						}
 						else
 						{
-							bool builtin = fieldSchema.fieldTypeId < 16;
+							bool builtin = fieldSchema.FieldTypeId < 16;
 							if (compressed && builtin)
-								SkipBuiltinType(fieldSchema.fieldTypeId, stream, compressed);
+								SkipBuiltinType(fieldSchema.FieldTypeId, stream, compressed);
 							else
 								stream.Skip(typeSizeBits);
 						}
@@ -763,13 +763,13 @@ namespace bs
 				}
 				default:
 					BS_EXCEPT(InternalErrorException,
-						"Error decoding data. Encountered a type I don't know how to decode. Type: " + toString(UINT32(fieldSchema.type)) +
-						", Is array: " + toString(fieldSchema.isArray));
+						"Error decoding data. Encountered a type I don't know how to decode. Type: " + toString(UINT32(fieldSchema.Type)) +
+						", Is array: " + toString(fieldSchema.IsArray));
 				}
 			}
 			else
 			{
-				switch (fieldSchema.type)
+				switch (fieldSchema.Type)
 				{
 				case SerializableFT_ReflectablePtr:
 				{
@@ -788,7 +788,7 @@ namespace bs
 					{
 						if (findObj == mDecodeObjectMap.end())
 						{
-							SPtr<IReflectable> childObj = IReflectable::CreateInstanceFromTypeId(fieldTypeSchema->typeId);
+							SPtr<IReflectable> childObj = IReflectable::CreateInstanceFromTypeId(fieldTypeSchema->TypeId);
 							mDecodeObjectMap.insert(std::make_pair(objectId, ObjectToDecode(childObj, (UINT32)-1, fieldTypeSchema)));
 						}
 					}
@@ -809,10 +809,10 @@ namespace bs
 						{
 							ObjectToDecode& objToDecode = findObj->second;
 
-							const bool needsDecoding = !curField->schema.info.flags.IsSet(RTTIFieldFlag::WeakRef) && !objToDecode.isDecoded;
+							const bool needsDecoding = !curField->Schema.Info.Flags.IsSet(RTTIFieldFlag::WeakRef) && !objToDecode.IsDecoded;
 							if (needsDecoding)
 							{
-								if (objToDecode.decodeInProgress)
+								if (objToDecode.DecodeInProgress)
 								{
 									BS_LOG(Warning, Generic, "Detected a circular reference when decoding. Referenced "
 										"object's fields will be resolved in an undefined order (i.e. one of the objects "
@@ -822,19 +822,19 @@ namespace bs
 								}
 								else
 								{
-									objToDecode.decodeInProgress = true;
+									objToDecode.DecodeInProgress = true;
 
 									const uint64_t curOffset = stream.Tell();
-									stream.Seek(objToDecode.offset);
-									DecodeEntry(stream, dataEnd, flags, objToDecode.object, fieldTypeSchema);
+									stream.Seek(objToDecode.Offset);
+									DecodeEntry(stream, dataEnd, flags, objToDecode.Object, fieldTypeSchema);
 									stream.Seek(curOffset);
 
-									objToDecode.decodeInProgress = false;
-									objToDecode.isDecoded = true;
+									objToDecode.DecodeInProgress = false;
+									objToDecode.IsDecoded = true;
 								}
 							}
 
-							curField->SetValue(rttiInstance, output.get(), objToDecode.object);
+							curField->SetValue(rttiInstance, output.get(), objToDecode.Object);
 						}
 					}
 
@@ -863,8 +863,8 @@ namespace bs
 				{
 					auto* curField = static_cast<RTTIPlainFieldBase*>(curGenericField);
 
-					uint64_t typeSizeBits = fieldSchema.size.GetBits();
-					if (fieldSchema.hasDynamicSize)
+					uint64_t typeSizeBits = fieldSchema.Size.GetBits();
+					if (fieldSchema.HasDynamicSize)
 					{
 						if (compressed)
 						{
@@ -893,9 +893,9 @@ namespace bs
 					}
 					else
 					{
-						bool builtin = fieldSchema.fieldTypeId < 16;
+						bool builtin = fieldSchema.FieldTypeId < 16;
 						if (compressed && builtin)
-							SkipBuiltinType(fieldSchema.fieldTypeId, stream, compressed);
+							SkipBuiltinType(fieldSchema.FieldTypeId, stream, compressed);
 						else
 							stream.Skip(typeSizeBits);
 					}
@@ -947,8 +947,8 @@ namespace bs
 				}
 				default:
 					BS_EXCEPT(InternalErrorException,
-						"Error decoding data. Encountered a type I don't know how to decode. Type: " + toString(UINT32(fieldSchema.type)) +
-						", Is array: " + toString(fieldSchema.isArray));
+						"Error decoding data. Encountered a type I don't know how to decode. Type: " + toString(UINT32(fieldSchema.Type)) +
+						", Is array: " + toString(fieldSchema.IsArray));
 				}
 
 				stream.ClearBuffered(false);
@@ -1014,23 +1014,23 @@ namespace bs
 		//// B - Built-in type ID
 
 		bool isBuiltin = schema.GetTypeId() < 16;
-		UINT32 sizeBytes = schema.hasDynamicSize ? 0 : schema.size.bytes;
+		UINT32 sizeBytes = schema.HasDynamicSize ? 0 : schema.Size.Bytes;
 
 		if(!isBuiltin)
-			return (schema.id << 16 | sizeBytes << 8 |
-				(schema.isArray ? 0x02 : 0) |
-				((schema.type == SerializableFT_DataBlock) ? 0x04 : 0) |
-				((schema.type == SerializableFT_Reflectable) ? 0x08 : 0) |
-				((schema.type == SerializableFT_ReflectablePtr) ? 0x10 : 0) |
-				(schema.hasDynamicSize ? 0x20 : 0) |
+			return (schema.Id << 16 | sizeBytes << 8 |
+				(schema.IsArray ? 0x02 : 0) |
+				((schema.Type == SerializableFT_DataBlock) ? 0x04 : 0) |
+				((schema.Type == SerializableFT_Reflectable) ? 0x08 : 0) |
+				((schema.Type == SerializableFT_ReflectablePtr) ? 0x10 : 0) |
+				(schema.HasDynamicSize ? 0x20 : 0) |
 				(terminator ? 0x40 : 0));
 		else
-			return (schema.id << 16 | (schema.GetTypeId() & 0xF) << 12 |
-				(schema.isArray ? 0x02 : 0) |
-				((schema.type == SerializableFT_DataBlock) ? 0x04 : 0) |
-				((schema.type == SerializableFT_Reflectable) ? 0x08 : 0) |
-				((schema.type == SerializableFT_ReflectablePtr) ? 0x10 : 0) |
-				(schema.hasDynamicSize ? 0x20 : 0) |
+			return (schema.Id << 16 | (schema.GetTypeId() & 0xF) << 12 |
+				(schema.IsArray ? 0x02 : 0) |
+				((schema.Type == SerializableFT_DataBlock) ? 0x04 : 0) |
+				((schema.Type == SerializableFT_Reflectable) ? 0x08 : 0) |
+				((schema.Type == SerializableFT_ReflectablePtr) ? 0x10 : 0) |
+				(schema.HasDynamicSize ? 0x20 : 0) |
 				(terminator ? 0x40 : 0)) |
 				0x80;
 
@@ -1047,25 +1047,25 @@ namespace bs
 		terminator = (encodedData & 0x40) != 0;
 
 		RTTIFieldSchema schema;
-		schema.hasDynamicSize = (encodedData & 0x20) != 0;
+		schema.HasDynamicSize = (encodedData & 0x20) != 0;
 
 		if((encodedData & 0x10) != 0)
-			schema.type = SerializableFT_ReflectablePtr;
+			schema.Type = SerializableFT_ReflectablePtr;
 		else if((encodedData & 0x08) != 0)
-			schema.type = SerializableFT_Reflectable;
+			schema.Type = SerializableFT_Reflectable;
 		else if((encodedData & 0x04) != 0)
-			schema.type = SerializableFT_DataBlock;
+			schema.Type = SerializableFT_DataBlock;
 		else
-			schema.type = SerializableFT_Plain;
+			schema.Type = SerializableFT_Plain;
 
-		schema.isArray = (encodedData & 0x02) != 0;
-		schema.id = (UINT16)((encodedData >> 16) & 0xFFFF);
+		schema.IsArray = (encodedData & 0x02) != 0;
+		schema.Id = (UINT16)((encodedData >> 16) & 0xFFFF);
 
 		bool extended = (encodedData & 0x80) != 0;
 		if (!extended)
-			schema.size = (UINT8)((encodedData >> 8) & 0xFF);
+			schema.Size = (UINT8)((encodedData >> 8) & 0xFF);
 		else
-			schema.fieldTypeId = (UINT8)((encodedData >> 12) & 0xF);
+			schema.FieldTypeId = (UINT8)((encodedData >> 12) & 0xF);
 
 		return schema;
 	}
@@ -1132,21 +1132,21 @@ namespace bs
 		}
 
 		ObjectMetaData metaData;
-		metaData.objectMeta = EncodeObjectMetaData(objId, isBaseClass);
-		metaData.typeId = objTypeId;
+		metaData.ObjectMeta = EncodeObjectMetaData(objId, isBaseClass);
+		metaData.TypeId = objTypeId;
 		return metaData;
 	}
 
 	void BinarySerializer::DecodeObjectMetaData(ObjectMetaData encodedData, UINT32& objId, UINT32& objTypeId, bool& isBaseClass)
 	{
-		if(!IsObjectMetaData(encodedData.objectMeta))
+		if(!IsObjectMetaData(encodedData.ObjectMeta))
 		{
 			BS_EXCEPT(InternalErrorException,
 				"Meta data represents a field description but is trying to be decoded as an object descriptor.");
 		}
 
-		DecodeObjectMetaData(encodedData.objectMeta, objId, isBaseClass);
-		objTypeId = encodedData.typeId;
+		DecodeObjectMetaData(encodedData.ObjectMeta, objId, isBaseClass);
+		objTypeId = encodedData.TypeId;
 	}
 
 	UINT32 BinarySerializer::EncodeObjectMetaData(UINT32 objId, bool isBaseClass)
@@ -1187,8 +1187,8 @@ namespace bs
 		if (!flags.IsSet(BinarySerializerFlag::NoMeta))
 		{
 			ObjectMetaData objectMetaData;
-			objectMetaData.objectMeta = 0;
-			objectMetaData.typeId = 0;
+			objectMetaData.ObjectMeta = 0;
+			objectMetaData.TypeId = 0;
 
 			if (stream.ReadBytes(objectMetaData) != sizeof(ObjectMetaData))
 				BS_EXCEPT(InternalErrorException, "Error decoding data.");

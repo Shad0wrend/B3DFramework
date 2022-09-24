@@ -13,10 +13,10 @@ namespace bs
 		{
 			~ScopeGuard()
 			{
-				callback();
+				Callback();
 			}
 
-			T callback;
+			T Callback;
 		};
 
 		template<class T>
@@ -46,8 +46,8 @@ namespace bs
 
 		struct RTTIPair
 		{
-			RTTITypeBase* rttiA;
-			RTTITypeBase* rttiB;
+			RTTITypeBase* RttiA;
+			RTTITypeBase* RttiB;
 		};
 
 		FrameStack<RTTIPair> rttiInstances;
@@ -56,10 +56,10 @@ namespace bs
 			while (!rttiInstances.empty())
 			{
 				RTTIPair rttiPair = rttiInstances.top();
-				rttiPair.rttiA->OnSerializationEnded(&a, mContext);
-				rttiPair.rttiB->OnSerializationEnded(&b, mContext);
-				mAlloc->Destruct(rttiPair.rttiA);
-				mAlloc->Destruct(rttiPair.rttiB);
+				rttiPair.RttiA->OnSerializationEnded(&a, mContext);
+				rttiPair.RttiB->OnSerializationEnded(&b, mContext);
+				mAlloc->Destruct(rttiPair.RttiA);
+				mAlloc->Destruct(rttiPair.RttiB);
 
 				rttiInstances.pop();
 			}
@@ -79,7 +79,7 @@ namespace bs
 			for (UINT32 i = 0; i < numFields; i++)
 			{
 				RTTIField* curGenericField = rtti->GetField(i);
-				if (curGenericField->schema.isArray)
+				if (curGenericField->Schema.IsArray)
 				{
 					const UINT32 arrayNumElemsA = curGenericField->GetArraySize(rttiInstanceA, &a);
 					const UINT32 arrayNumElemsB = curGenericField->GetArraySize(rttiInstanceB, &b);
@@ -87,7 +87,7 @@ namespace bs
 					if(arrayNumElemsA != arrayNumElemsB)
 						return false;
 
-					switch (curGenericField->schema.type)
+					switch (curGenericField->Schema.Type)
 					{
 					case SerializableFT_ReflectablePtr:
 					{
@@ -153,13 +153,13 @@ namespace bs
 						{
 							UINT32 typeSizeA = 0;
 							UINT32 typeSizeB = 0;
-							if (curField->schema.hasDynamicSize)
+							if (curField->Schema.HasDynamicSize)
 							{
-								typeSizeA = curField->GetArrayElemDynamicSize(rttiInstanceA, &a, arrIdx, false).bytes;
-								typeSizeB = curField->GetArrayElemDynamicSize(rttiInstanceB, &b, arrIdx, false).bytes;
+								typeSizeA = curField->GetArrayElemDynamicSize(rttiInstanceA, &a, arrIdx, false).Bytes;
+								typeSizeB = curField->GetArrayElemDynamicSize(rttiInstanceB, &b, arrIdx, false).Bytes;
 							}
 							else
-								typeSizeA = typeSizeB = curField->schema.size.bytes;
+								typeSizeA = typeSizeB = curField->Schema.Size.Bytes;
 
 							if(typeSizeA != typeSizeB)
 								return false;
@@ -182,13 +182,13 @@ namespace bs
 					}
 					default:
 						BS_EXCEPT(InternalErrorException,
-							"Error encoding data. Encountered a type I don't know how to encode. Type: " + toString(UINT32(curGenericField->schema.type)) +
-							", Is array: " + toString(curGenericField->schema.isArray));
+							"Error encoding data. Encountered a type I don't know how to encode. Type: " + toString(UINT32(curGenericField->Schema.Type)) +
+							", Is array: " + toString(curGenericField->Schema.IsArray));
 					}
 				}
 				else
 				{
-					switch (curGenericField->schema.type)
+					switch (curGenericField->Schema.Type)
 					{
 					case SerializableFT_ReflectablePtr:
 					{
@@ -246,13 +246,13 @@ namespace bs
 
 						UINT32 typeSizeA = 0;
 						UINT32 typeSizeB = 0;
-						if (curField->schema.hasDynamicSize)
+						if (curField->Schema.HasDynamicSize)
 						{
-							typeSizeA = curField->GetDynamicSize(rttiInstanceA, &a, false).bytes;
-							typeSizeB = curField->GetDynamicSize(rttiInstanceB, &b, false).bytes;
+							typeSizeA = curField->GetDynamicSize(rttiInstanceA, &a, false).Bytes;
+							typeSizeB = curField->GetDynamicSize(rttiInstanceB, &b, false).Bytes;
 						}
 						else
-							typeSizeA = typeSizeB = curField->schema.size.bytes;
+							typeSizeA = typeSizeB = curField->Schema.Size.Bytes;
 
 						if (typeSizeA != typeSizeB)
 							return false;
@@ -296,8 +296,8 @@ namespace bs
 					}
 					default:
 						BS_EXCEPT(InternalErrorException,
-							"Error encoding data. Encountered a type I don't know how to encode. Type: " + toString(UINT32(curGenericField->schema.type)) +
-							", Is array: " + toString(curGenericField->schema.isArray));
+							"Error encoding data. Encountered a type I don't know how to encode. Type: " + toString(UINT32(curGenericField->Schema.Type)) +
+							", Is array: " + toString(curGenericField->Schema.IsArray));
 					}
 				}
 			}

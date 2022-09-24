@@ -38,8 +38,8 @@ namespace bs
 
 	void GUIViewport::UpdateClippedBounds()
 	{
-		mClippedBounds = mLayoutData.area;
-		mClippedBounds.Clip(mLayoutData.clipRect);
+		mClippedBounds = mLayoutData.Area;
+		mClippedBounds.Clip(mLayoutData.ClipRect);
 	}
 
 	Vector2I GUIViewport::GetOptimalSizeInternal() const
@@ -63,7 +63,7 @@ namespace bs
 	void GUIViewport::UpdateRenderElementsInternal()
 	{
 		// TODO - This doesn't get called if element mesh is dirty!!! and I need to update the viewport when offset changes (in which case mesh is marked as dirty)
-		float currentAspect = mLayoutData.area.width / (float)mLayoutData.area.height;
+		float currentAspect = mLayoutData.Area.Width / (float)mLayoutData.Area.Height;
 		Radian currentFOV = 2.0f * Math::Atan(Math::Tan(mVerticalFOV * 0.5f) * currentAspect);
 
 		mCamera->SetHorzFov(currentFOV);
@@ -72,10 +72,10 @@ namespace bs
 		SPtr<RenderTarget> renderTarget = viewport->GetTarget();
 		const RenderTargetProperties& rtProps = renderTarget->GetProperties();
 
-		float x = mLayoutData.area.x / (float)rtProps.width;
-		float y = mLayoutData.area.y / (float)rtProps.height;
-		float width = mLayoutData.area.width / (float)rtProps.width;
-		float height = mLayoutData.area.height / (float)rtProps.height;
+		float x = mLayoutData.Area.X / (float)rtProps.Width;
+		float y = mLayoutData.Area.Y / (float)rtProps.Height;
+		float width = mLayoutData.Area.Width / (float)rtProps.Width;
+		float height = mLayoutData.Area.Height / (float)rtProps.Height;
 
 		viewport->SetArea(Rect2(x, y, width, height));
 	}

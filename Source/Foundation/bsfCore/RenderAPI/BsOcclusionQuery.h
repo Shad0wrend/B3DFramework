@@ -48,7 +48,7 @@ namespace bs { namespace ct
 		virtual UINT32 GetNumSamples() = 0;
 
 		/** Triggered when the query has completed. Argument provided is the number of samples counted by the query. */
-		Event<void(UINT32)> onComplete;
+		Event<void(UINT32)> OnComplete;
 
 		/**
 		 * Creates a new occlusion query.

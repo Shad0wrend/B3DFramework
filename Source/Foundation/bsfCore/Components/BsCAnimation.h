@@ -22,9 +22,9 @@ namespace bs
 		/** Information about scene objects bound to a specific animation curve. */
 		struct SceneObjectMappingInfo
 		{
-			HSceneObject sceneObject;
-			bool isMappedToBone;
-			HBone bone;
+			HSceneObject SceneObject;
+			bool IsMappedToBone;
+			HBone Bone;
 		};
 
 	public:
@@ -149,7 +149,7 @@ namespace bs
 		HAnimationClip GetClip(UINT32 idx) const;
 
 		/** Triggered whenever an animation event is reached. */
-		Event<void(const HAnimationClip&, const String&)> onEventTriggered;
+		Event<void(const HAnimationClip&, const String&)> OnEventTriggered;
 
 		/** @name Internal
 		 *  @{

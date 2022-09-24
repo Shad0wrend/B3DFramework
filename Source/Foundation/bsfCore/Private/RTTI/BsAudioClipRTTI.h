@@ -19,15 +19,15 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN_NAMED(readMode, mDesc.readMode, 0)
-			BS_RTTI_MEMBER_PLAIN_NAMED(format, mDesc.format, 1)
-			BS_RTTI_MEMBER_PLAIN_NAMED(frequency, mDesc.frequency, 2)
-			BS_RTTI_MEMBER_PLAIN_NAMED(bitDepth, mDesc.bitDepth, 3)
-			BS_RTTI_MEMBER_PLAIN_NAMED(numChannels, mDesc.numChannels, 4)
+			BS_RTTI_MEMBER_PLAIN_NAMED(readMode, mDesc.ReadMode, 0)
+			BS_RTTI_MEMBER_PLAIN_NAMED(format, mDesc.Format, 1)
+			BS_RTTI_MEMBER_PLAIN_NAMED(frequency, mDesc.Frequency, 2)
+			BS_RTTI_MEMBER_PLAIN_NAMED(bitDepth, mDesc.BitDepth, 3)
+			BS_RTTI_MEMBER_PLAIN_NAMED(numChannels, mDesc.NumChannels, 4)
 			BS_RTTI_MEMBER_PLAIN(mNumSamples, 5)
 			BS_RTTI_MEMBER_PLAIN(mStreamSize, 7)
 			BS_RTTI_MEMBER_PLAIN(mStreamOffset, 8)
-			BS_RTTI_MEMBER_PLAIN_NAMED(is3D, mDesc.is3D, 9)
+			BS_RTTI_MEMBER_PLAIN_NAMED(is3D, mDesc.Is3D, 9)
 			BS_RTTI_MEMBER_PLAIN(mLength, 10)
 		BS_END_RTTI_MEMBERS
 

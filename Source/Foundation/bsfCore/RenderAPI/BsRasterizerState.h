@@ -18,23 +18,23 @@ namespace bs
 		bool operator==(const RASTERIZER_STATE_DESC& rhs) const;
 
 		/** Polygon mode allows you to draw polygons as solid objects or as wireframe by just drawing their edges. */
-		PolygonMode polygonMode = PM_SOLID;
+		PolygonMode PolygonMode = PM_SOLID;
 
 		/**
 		 * Sets vertex winding order. Faces that contain vertices with this order will be culled and not rasterized. Used
 		 * primarily for saving cycles by not rendering backfacing faces.
 		 */
-		CullingMode cullMode = CULL_COUNTERCLOCKWISE;
+		CullingMode CullMode = CULL_COUNTERCLOCKWISE;
 
 		/**
 		 * Represents a constant depth bias that will offset the depth values of new pixels by the specified amount.
 		 *
 		 * @note		This is useful if you want to avoid z fighting for objects at the same or similar depth.
 		 */
-		float depthBias = 0;
+		float DepthBias = 0;
 
 		/**	Maximum depth bias value. */
-		float depthBiasClamp = 0.0f;
+		float DepthBiasClamp = 0.0f;
 
 		/**
 		 * Represents a dynamic depth bias that increases as the slope of the rendered polygons surface increases.
@@ -42,7 +42,7 @@ namespace bs
 		 *
 		 * @note	This is useful if you want to avoid z fighting for objects at the same or similar depth.
 		 */
-		float slopeScaledDepthBias = 0.0f;
+		float SlopeScaledDepthBias = 0.0f;
 
 		/**
 		 * If true, clipping of polygons past the far Z plane is enabled. This ensures proper Z ordering for polygons
@@ -50,14 +50,14 @@ namespace bs
 		 * performing stencil operations that count on objects having a front and a back (like stencil shadow) and don't
 		 * want to clip the back.
 		 */
-		bool depthClipEnable = true;
+		bool DepthClipEnable = true;
 
 		/**
 		 * Scissor rectangle allows you to cull all pixels outside of the scissor rectangle.
 		 *			
 		 * @see		ct::RenderAPI::setScissorRect
 		 */
-		bool scissorEnable = false;
+		bool ScissorEnable = false;
 
 		/**
 		 * Determines how are samples in multi-sample render targets handled. If disabled all samples in the render target
@@ -65,7 +65,7 @@ namespace bs
 		 *			
 		 * @note	In order to get an antialiased image you need to both enable this option and use a MSAA render target.
 		 */
-		bool multisampleEnable = true;
+		bool MultisampleEnable = true;
 
 		/**
 		 * Determines should the lines be antialiased. This is separate from multi-sample antialiasing setting as lines can
@@ -73,7 +73,7 @@ namespace bs
 		 *
 		 * @note	This setting is usually ignored if MSAA is used, as that provides sufficient antialiasing.
 		 */
-		bool antialiasedLineEnable = false;
+		bool AntialiasedLineEnable = false;
 	};
 
 	/** Properties of RasterizerState. Shared between sim and core thread versions of RasterizerState. */
@@ -83,31 +83,31 @@ namespace bs
 		RasterizerProperties(const RASTERIZER_STATE_DESC& desc);
 
 		/** @copydoc RASTERIZER_STATE_DESC::polygonMode */
-		PolygonMode GetPolygonMode() const { return mData.polygonMode; }
+		PolygonMode GetPolygonMode() const { return mData.PolygonMode; }
 
 		/** @copydoc RASTERIZER_STATE_DESC::cullMode */
-		CullingMode GetCullMode() const { return mData.cullMode; }
+		CullingMode GetCullMode() const { return mData.CullMode; }
 
 		/** @copydoc RASTERIZER_STATE_DESC::depthBias */
-		float GetDepthBias() const { return mData.depthBias; }
+		float GetDepthBias() const { return mData.DepthBias; }
 
 		/** @copydoc RASTERIZER_STATE_DESC::depthBiasClamp */
-		float GetDepthBiasClamp() const { return mData.depthBiasClamp; }
+		float GetDepthBiasClamp() const { return mData.DepthBiasClamp; }
 
 		/** @copydoc RASTERIZER_STATE_DESC::slopeScaledDepthBias */
-		float GetSlopeScaledDepthBias() const { return mData.slopeScaledDepthBias; }
+		float GetSlopeScaledDepthBias() const { return mData.SlopeScaledDepthBias; }
 
 		/** @copydoc RASTERIZER_STATE_DESC::depthClipEnable */
-		bool GetDepthClipEnable() const { return mData.depthClipEnable; }
+		bool GetDepthClipEnable() const { return mData.DepthClipEnable; }
 
 		/** @copydoc RASTERIZER_STATE_DESC::scissorEnable */
-		bool GetScissorEnable() const { return mData.scissorEnable; }
+		bool GetScissorEnable() const { return mData.ScissorEnable; }
 
 		/** @copydoc RASTERIZER_STATE_DESC::multisampleEnable */
-		bool GetMultisampleEnable() const { return mData.multisampleEnable; }
+		bool GetMultisampleEnable() const { return mData.MultisampleEnable; }
 
 		/** @copydoc RASTERIZER_STATE_DESC::antialiasedLineEnable */
-		bool GetAntialiasedLineEnable() const { return mData.antialiasedLineEnable; }
+		bool GetAntialiasedLineEnable() const { return mData.AntialiasedLineEnable; }
 
 		/** Returns the hash value generated from the rasterizer state properties. */
 		UINT64 GetHash() const { return mHash; }

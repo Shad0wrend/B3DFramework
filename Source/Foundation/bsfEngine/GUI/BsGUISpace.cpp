@@ -13,9 +13,9 @@ namespace bs
 	LayoutSizeRange GUIFixedSpace::CalculateLayoutSizeRangeInternal() const
 	{
 		LayoutSizeRange range;
-		range.optimal = GetOptimalSizeInternal();
-		range.min = range.optimal;
-		range.max = range.optimal;
+		range.Optimal = GetOptimalSizeInternal();
+		range.Min = range.Optimal;
+		range.Max = range.Optimal;
 
 		return range;
 	}
@@ -39,9 +39,9 @@ namespace bs
 	LayoutSizeRange GUIFlexibleSpace::CalculateLayoutSizeRangeInternal() const
 	{
 		LayoutSizeRange range;
-		range.optimal = GetOptimalSizeInternal();
-		range.min = range.optimal;
-		range.max = range.optimal;
+		range.Optimal = GetOptimalSizeInternal();
+		range.Min = range.Optimal;
+		range.Max = range.Optimal;
 
 		return range;
 	}

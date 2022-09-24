@@ -15,19 +15,19 @@ namespace bs { namespace ct
 		for (auto& query : mEventQueries)
 		{
 			if (query->IsActive())
-				query->onTriggered();
+				query->OnTriggered();
 		}
 
 		for (auto& query : mTimerQueries)
 		{
 			if (query->IsActive())
-				query->onTriggered(query->GetTimeMs());
+				query->OnTriggered(query->GetTimeMs());
 		}
 
 		for (auto& query : mOcclusionQueries)
 		{
 			if (query->IsActive())
-				query->onComplete(query->GetNumSamples());
+				query->OnComplete(query->GetNumSamples());
 		}
 
 		ProcessDeletedQueue();
@@ -39,7 +39,7 @@ namespace bs { namespace ct
 		{
 			if(query->IsActive() && query->IsReady())
 			{
-				query->onTriggered();
+				query->OnTriggered();
 				query->SetActive(false);
 			}
 		}
@@ -48,7 +48,7 @@ namespace bs { namespace ct
 		{
 			if(query->IsActive() && query->IsReady())
 			{
-				query->onTriggered(query->GetTimeMs());
+				query->OnTriggered(query->GetTimeMs());
 				query->SetActive(false);
 			}
 		}
@@ -57,7 +57,7 @@ namespace bs { namespace ct
 		{
 			if (query->IsActive() && query->IsReady())
 			{
-				query->onComplete(query->GetNumSamples());
+				query->OnComplete(query->GetNumSamples());
 				query->SetActive(false);
 			}
 		}

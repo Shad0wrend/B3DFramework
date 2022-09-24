@@ -23,12 +23,12 @@ namespace bs
 
 	void ScriptScriptCode::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptScriptCode::InternalCreateInstance);
-		metaData.scriptClass->AddInternalCall("Internal_GetText", (void*)&ScriptScriptCode::InternalGetText);
-		metaData.scriptClass->AddInternalCall("Internal_SetText", (void*)&ScriptScriptCode::InternalSetText);
-		metaData.scriptClass->AddInternalCall("Internal_IsEditorScript", (void*)&ScriptScriptCode::InternalIsEditorScript);
-		metaData.scriptClass->AddInternalCall("Internal_SetEditorScript", (void*)&ScriptScriptCode::InternalSetEditorScript);
-		metaData.scriptClass->AddInternalCall("Internal_GetTypes", (void*)&ScriptScriptCode::InternalGetTypes);
+		metaData.ScriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptScriptCode::InternalCreateInstance);
+		metaData.ScriptClass->AddInternalCall("Internal_GetText", (void*)&ScriptScriptCode::InternalGetText);
+		metaData.ScriptClass->AddInternalCall("Internal_SetText", (void*)&ScriptScriptCode::InternalSetText);
+		metaData.ScriptClass->AddInternalCall("Internal_IsEditorScript", (void*)&ScriptScriptCode::InternalIsEditorScript);
+		metaData.ScriptClass->AddInternalCall("Internal_SetEditorScript", (void*)&ScriptScriptCode::InternalSetEditorScript);
+		metaData.ScriptClass->AddInternalCall("Internal_GetTypes", (void*)&ScriptScriptCode::InternalGetTypes);
 	}
 
 	void ScriptScriptCode::InternalCreateInstance(MonoObject* instance, MonoString* text)
@@ -88,11 +88,11 @@ namespace bs
 		{
 			SPtr<ManagedSerializableObjectInfo> objInfo;
 			if (ScriptAssemblyManager::Instance().GetSerializableObjectInfo(toString(type.first), toString(type.second), objInfo))
-				validTypes.push_back(MonoUtil::GetType(objInfo->mTypeInfo->GetMonoClass()));
+				validTypes.push_back(MonoUtil::GetType(objInfo->MTypeInfo->GetMonoClass()));
 		}
 
 		UINT32 numValidTypes = (UINT32)validTypes.size();
-		MonoClass* typeClass = ScriptAssemblyManager::Instance().GetBuiltinClasses().systemTypeClass;
+		MonoClass* typeClass = ScriptAssemblyManager::Instance().GetBuiltinClasses().SystemTypeClass;
 
 		ScriptArray scriptArray(typeClass->GetInternalClassInternal(), numValidTypes);
 		for (UINT32 i = 0; i < numValidTypes; i++)
@@ -103,15 +103,15 @@ namespace bs
 
 	MonoObject* ScriptScriptCode::CreateInstance()
 	{
-		return metaData.scriptClass->CreateInstance();
+		return metaData.ScriptClass->CreateInstance();
 	}
 
 	Vector<ScriptScriptCode::FullTypeName> ScriptScriptCode::ParseTypes(const WString& code)
 	{
 		struct NamespaceData
 		{
-			WString ns;
-			INT32 bracketIdx;
+			WString Ns;
+			INT32 BracketIdx;
 		};
 
 		Vector<FullTypeName> output;
@@ -139,7 +139,7 @@ namespace bs
 				{
 					WString ns = L"";
 					if (!namespaces.empty())
-						ns = namespaces.top().ns;
+						ns = namespaces.top().Ns;
 
 					std::wstring tempStr = results[0];
 					WString typeName = tempStr.c_str();

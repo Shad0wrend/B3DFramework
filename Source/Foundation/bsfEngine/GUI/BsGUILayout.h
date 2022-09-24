@@ -80,7 +80,7 @@ namespace bs
 		const Vector<LayoutSizeRange>& GetCachedChildSizeRangesInternal() const { return mChildSizeRanges; }
 
 		/** @copydoc GUIElementBase::GetOptimalSizeInternal */
-		Vector2I GetOptimalSizeInternal() const override { return mSizeRange.optimal; }
+		Vector2I GetOptimalSizeInternal() const override { return mSizeRange.Optimal; }
 
 		/** @copydoc GUIElementBase::GetPaddingInternal */
 		const RectOffset& GetPaddingInternal() const override;

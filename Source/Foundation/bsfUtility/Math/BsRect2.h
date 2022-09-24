@@ -18,17 +18,17 @@ namespace bs
 		Rect2() = default;
 
 		Rect2(float x, float y, float width, float height)
-			:x(x), y(y), width(width), height(height)
+			:X(x), Y(y), Width(width), Height(height)
 		{ }
 
 		Rect2(const Vector2& topLeft, const Vector2& size)
-			:x(topLeft.x), y(topLeft.y), width(size.x), height(size.y)
+			:X(topLeft.X), Y(topLeft.Y), Width(size.X), Height(size.Y)
 		{ }
 
-		float x = 0.0f;
-		float y = 0.0f;
-		float width = 0.0f;
-		float height = 0.0f;
+		float X = 0.0f;
+		float Y = 0.0f;
+		float Width = 0.0f;
+		float Height = 0.0f;
 
 		/** Returns true if the rectangle contains the provided point. */
 		bool Contains(const Vector2& point) const;
@@ -62,7 +62,7 @@ namespace bs
 
 		bool operator== (const Rect2& rhs) const
 		{
-			return x == rhs.x && y == rhs.y && width == rhs.width && height == rhs.height;
+			return X == rhs.X && Y == rhs.Y && Width == rhs.Width && Height == rhs.Height;
 		}
 
 		bool operator!= (const Rect2& rhs) const

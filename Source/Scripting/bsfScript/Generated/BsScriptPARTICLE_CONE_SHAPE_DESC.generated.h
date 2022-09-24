@@ -13,13 +13,13 @@ namespace bs
 {
 	struct __PARTICLE_CONE_SHAPE_DESCInterop
 	{
-		ParticleEmitterConeType type;
-		float radius;
-		Degree angle;
-		float length;
-		float thickness;
-		Degree arc;
-		ParticleEmissionMode mode;
+		ParticleEmitterConeType Type;
+		float Radius;
+		Degree Angle;
+		float Length;
+		float Thickness;
+		Degree Arc;
+		ParticleEmissionMode Mode;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptPARTICLE_CONE_SHAPE_DESC : public ScriptObject<ScriptPARTICLE_CONE_SHAPE_DESC>

@@ -18,7 +18,7 @@ namespace bs
 
 	MonoObject*ScriptLimitLinearRange::Box(const __LimitLinearRangeInterop& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	__LimitLinearRangeInterop ScriptLimitLinearRange::Unbox(MonoObject* value)
@@ -29,11 +29,11 @@ namespace bs
 	LimitLinearRange ScriptLimitLinearRange::FromInterop(const __LimitLinearRangeInterop& value)
 	{
 		LimitLinearRange output;
-		output.lower = value.lower;
-		output.upper = value.upper;
-		output.contactDist = value.contactDist;
-		output.restitution = value.restitution;
-		output.spring = value.spring;
+		output.Lower = value.Lower;
+		output.Upper = value.Upper;
+		output.ContactDist = value.ContactDist;
+		output.Restitution = value.Restitution;
+		output.Spring = value.Spring;
 
 		return output;
 	}
@@ -41,11 +41,11 @@ namespace bs
 	__LimitLinearRangeInterop ScriptLimitLinearRange::ToInterop(const LimitLinearRange& value)
 	{
 		__LimitLinearRangeInterop output;
-		output.lower = value.lower;
-		output.upper = value.upper;
-		output.contactDist = value.contactDist;
-		output.restitution = value.restitution;
-		output.spring = value.spring;
+		output.Lower = value.Lower;
+		output.Upper = value.Upper;
+		output.ContactDist = value.ContactDist;
+		output.Restitution = value.Restitution;
+		output.Spring = value.Spring;
 
 		return output;
 	}

@@ -23,8 +23,8 @@ namespace bs
 		{
 			static UINT64 invalidId = 0;
 
-			if (obj->mData->mPtr != nullptr)
-				return obj->mData->mPtr->mInstanceId;
+			if (obj->mData->MPtr != nullptr)
+				return obj->mData->MPtr->MInstanceId;
 
 			return invalidId;
 		}
@@ -43,10 +43,10 @@ namespace bs
 				return;
 
 			auto coreContext = static_cast<CoreSerializationContext*>(context);
-			if(coreContext->goState)
+			if(coreContext->GoState)
 			{
 				GameObjectHandleBase* gameObjectHandle = static_cast<GameObjectHandleBase*>(obj);
-				coreContext->goState->RegisterUnresolvedHandle(mOriginalInstanceId, *gameObjectHandle);
+				coreContext->GoState->RegisterUnresolvedHandle(mOriginalInstanceId, *gameObjectHandle);
 			}
 		}
 

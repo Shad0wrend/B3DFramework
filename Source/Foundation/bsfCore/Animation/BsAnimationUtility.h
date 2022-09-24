@@ -179,11 +179,11 @@ namespace bs
 	{
 		KeyframeRef() = default;
 		KeyframeRef(INT32 curveIdx, INT32 keyIdx)
-			:curveIdx(curveIdx), keyIdx(keyIdx)
+			:CurveIdx(curveIdx), KeyIdx(keyIdx)
 		{ }
 
-		INT32 curveIdx = 0;
-		INT32 keyIdx = 0;
+		INT32 CurveIdx = 0;
+		INT32 KeyIdx = 0;
 	};
 
 	/** Structure containing a reference to a keyframe tangent, as a keyframe reference and type of the tangent. */
@@ -191,11 +191,11 @@ namespace bs
 	{
 		TangentRef() = default;
 		TangentRef(KeyframeRef keyframeRef, TangentType type)
-			:keyframeRef(keyframeRef), type(type)
+			:KeyframeRef(keyframeRef), Type(type)
 		{ }
 
-		KeyframeRef keyframeRef;
-		TangentType type = TangentType::In;
+		KeyframeRef KeyframeRef;
+		TangentType Type = TangentType::In;
 	};
 
 	/** @} */

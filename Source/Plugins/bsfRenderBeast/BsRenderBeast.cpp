@@ -57,7 +57,7 @@ namespace bs { namespace ct
 		LoadedRendererTextures textures;
 		HTexture bokehFlare = gBuiltinResources().GetTexture(BuiltinTexture::BokehFlare);
 		if(bokehFlare.IsLoaded(false))
-			textures.bokehFlare = bokehFlare->GetCore();
+			textures.BokehFlare = bokehFlare->GetCore();
 
 		gCoreThread().QueueCommand([this, textures]() { InitializeCore(textures); }, CTQF_InternalQueue);
 	}
@@ -284,9 +284,9 @@ namespace bs { namespace ct
 
 	void RenderBeast::SyncOptions(const RenderBeastOptions& options)
 	{
-		bool filteringChanged = mCoreOptions->filtering != options.filtering;
-		if (options.filtering == RenderBeastFiltering::Anisotropic)
-			filteringChanged |= mCoreOptions->anisotropyMax != options.anisotropyMax;
+		bool filteringChanged = mCoreOptions->Filtering != options.Filtering;
+		if (options.Filtering == RenderBeastFiltering::Anisotropic)
+			filteringChanged |= mCoreOptions->AnisotropyMax != options.AnisotropyMax;
 
 		if (filteringChanged)
 			mScene->RefreshSamplerOverrides(true);
@@ -296,7 +296,7 @@ namespace bs { namespace ct
 		mScene->SetOptions(mCoreOptions);
 
 		ShadowRendering& shadowRenderer = mMainViewGroup->GetShadowRenderer();
-		shadowRenderer.SetShadowMapSize(mCoreOptions->shadowMapSize);
+		shadowRenderer.SetShadowMapSize(mCoreOptions->ShadowMapSize);
 	}
 
 	ShaderExtensionPointInfo RenderBeast::GetShaderExtensionPointInfo(const String& name)
@@ -306,22 +306,22 @@ namespace bs { namespace ct
 			ShaderExtensionPointInfo info;
 			
 			ExtensionShaderInfo tiledDeferredInfo;
-			tiledDeferredInfo.name = "TiledDeferredDirectLighting";
-			tiledDeferredInfo.path = TiledDeferredLightingMat::GetShaderPath();
-			tiledDeferredInfo.defines = TiledDeferredLightingMat::GetShaderDefines();
-			info.shaders.push_back(tiledDeferredInfo);
+			tiledDeferredInfo.Name = "TiledDeferredDirectLighting";
+			tiledDeferredInfo.Path = TiledDeferredLightingMat::GetShaderPath();
+			tiledDeferredInfo.Defines = TiledDeferredLightingMat::GetShaderDefines();
+			info.Shaders.push_back(tiledDeferredInfo);
 
 			ExtensionShaderInfo standardDeferredPointInfo;
-			standardDeferredPointInfo.name = "StandardDeferredPointDirectLighting";
-			standardDeferredPointInfo.path = DeferredPointLightMat::GetShaderPath();
-			standardDeferredPointInfo.defines = DeferredPointLightMat::GetShaderDefines();
-			info.shaders.push_back(standardDeferredPointInfo);
+			standardDeferredPointInfo.Name = "StandardDeferredPointDirectLighting";
+			standardDeferredPointInfo.Path = DeferredPointLightMat::GetShaderPath();
+			standardDeferredPointInfo.Defines = DeferredPointLightMat::GetShaderDefines();
+			info.Shaders.push_back(standardDeferredPointInfo);
 
 			ExtensionShaderInfo standardDeferredDirInfo;
-			standardDeferredDirInfo.name = "StandardDeferredDirDirectLighting";
-			standardDeferredDirInfo.path = DeferredDirectionalLightMat::GetShaderPath();
-			standardDeferredDirInfo.defines = DeferredDirectionalLightMat::GetShaderDefines();
-			info.shaders.push_back(standardDeferredPointInfo);
+			standardDeferredDirInfo.Name = "StandardDeferredDirDirectLighting";
+			standardDeferredDirInfo.Path = DeferredDirectionalLightMat::GetShaderPath();
+			standardDeferredDirInfo.Defines = DeferredDirectionalLightMat::GetShaderDefines();
+			info.Shaders.push_back(standardDeferredPointInfo);
 
 			return info;
 		}
@@ -360,9 +360,9 @@ namespace bs { namespace ct
 		}
 
 		FrameTimings timings;
-		timings.time = gTime().GetTime();
-		timings.timeDelta = gTime().GetFrameDelta();
-		timings.frameIdx = gTime().GetFrameIdx();
+		timings.Time = gTime().GetTime();
+		timings.TimeDelta = gTime().GetFrameDelta();
+		timings.FrameIdx = gTime().GetFrameIdx();
 		
 		gCoreThread().QueueCommand(std::bind(&::bs::ct::RenderBeast::RenderAllCore, this, timings, perFrameData));
 	}
@@ -382,45 +382,45 @@ namespace bs { namespace ct
 		mScene->RefreshSamplerOverrides();
 
 		// Update global per-frame hardware buffers
-		mScene->SetParamFrameParams(timings.time);
+		mScene->SetParamFrameParams(timings.Time);
 
 		// Update bounds for all particle systems
-		if(perFrameData.particles)
-			PROFILE_CALL(mScene->UpdateParticleSystemBounds(perFrameData.particles), "Particle bounds")
+		if(perFrameData.Particles)
+			PROFILE_CALL(mScene->UpdateParticleSystemBounds(perFrameData.Particles), "Particle bounds")
 
-		sceneInfo.renderableReady.resize(sceneInfo.renderables.size(), false);
-		sceneInfo.renderableReady.assign(sceneInfo.renderables.size(), false);
+		sceneInfo.RenderableReady.resize(sceneInfo.Renderables.size(), false);
+		sceneInfo.RenderableReady.assign(sceneInfo.Renderables.size(), false);
 		
 		FrameInfo frameInfo(timings, perFrameData);
 
 		// Make sure any renderer tasks finish first, as rendering might depend on them
-		ProcessTasks(false, timings.frameIdx);
+		ProcessTasks(false, timings.FrameIdx);
 
 		// If any reflection probes were updated or added, we need to copy them over in the global reflection probe array
 		UpdateReflProbeArray();
 
 		// Update per-frame data for all renderable objects
-		for (UINT32 i = 0; i < sceneInfo.renderables.size(); i++)
+		for (UINT32 i = 0; i < sceneInfo.Renderables.size(); i++)
 			mScene->PrepareRenderable(i, frameInfo);
 
-		for (UINT32 i = 0; i < sceneInfo.particleSystems.size(); i++)
+		for (UINT32 i = 0; i < sceneInfo.ParticleSystems.size(); i++)
 			mScene->PrepareParticleSystem(i, frameInfo);
 
-		for (UINT32 i = 0; i < sceneInfo.decals.size(); i++)
+		for (UINT32 i = 0; i < sceneInfo.Decals.size(); i++)
 			mScene->PrepareDecal(i, frameInfo);
 
 		// Gather all views
-		for (auto& rtInfo : sceneInfo.renderTargets)
+		for (auto& rtInfo : sceneInfo.RenderTargets)
 		{
 			Vector<RendererView*> views;
-			SPtr<RenderTarget> target = rtInfo.target;
-			const Vector<Camera*>& cameras = rtInfo.cameras;
+			SPtr<RenderTarget> target = rtInfo.Target;
+			const Vector<Camera*>& cameras = rtInfo.Cameras;
 
 			UINT32 numCameras = (UINT32)cameras.size();
 			for (UINT32 i = 0; i < numCameras; i++)
 			{
-				UINT32 viewIdx = sceneInfo.cameraToView.at(cameras[i]);
-				RendererView* viewInfo = sceneInfo.views[viewIdx];
+				UINT32 viewIdx = sceneInfo.CameraToView.at(cameras[i]);
+				RendererView* viewInfo = sceneInfo.Views[viewIdx];
 				views.push_back(viewInfo);
 			}
 
@@ -430,8 +430,8 @@ namespace bs { namespace ct
 			// Render everything
 			bool anythingDrawn = RenderViews(*mMainViewGroup, frameInfo);
 
-			if(rtInfo.target->GetProperties().isWindow && anythingDrawn)
-				PROFILE_CALL(RenderAPI::Instance().SwapBuffers(rtInfo.target), "Swap buffers");
+			if(rtInfo.Target->GetProperties().IsWindow && anythingDrawn)
+				PROFILE_CALL(RenderAPI::Instance().SwapBuffers(rtInfo.Target), "Swap buffers");
 		}
 
 		// Tick pool frame
@@ -466,10 +466,10 @@ namespace bs { namespace ct
 			shadowRenderer.RenderShadowMaps(*mScene, viewGroup, frameInfo);
 
 			// Update various buffers required by each renderable
-			UINT32 numRenderables = (UINT32)sceneInfo.renderables.size();
+			UINT32 numRenderables = (UINT32)sceneInfo.Renderables.size();
 			for (UINT32 i = 0; i < numRenderables; i++)
 			{
-				if (!visibility.renderables[i])
+				if (!visibility.Renderables[i])
 					continue;
 
 				mScene->PrepareVisibleRenderable(i, frameInfo);
@@ -483,8 +483,8 @@ namespace bs { namespace ct
 			view->UpdateAsyncOperations();
 			
 			auto viewId = (UINT64)view;
-			const RendererViewTargetData& viewTarget = view->GetProperties().target;
-			String title = StringUtil::Format("({0} x {1})", viewTarget.targetWidth, viewTarget.targetHeight);
+			const RendererViewTargetData& viewTarget = view->GetProperties().Target;
+			String title = StringUtil::Format("({0} x {1})", viewTarget.TargetWidth, viewTarget.TargetHeight);
 			gProfilerGPU().BeginView(viewId, ProfilerString(title.data(), title.size()));
 			
 			if (!view->ShouldDraw())
@@ -494,7 +494,7 @@ namespace bs { namespace ct
 			}
 			
 			const RenderSettings& settings = view->GetRenderSettings();
-			if (settings.overlayOnly)
+			if (settings.OverlayOnly)
 			{
 				if (RenderOverlay(*view, frameInfo))
 					anythingDrawn = true;
@@ -522,7 +522,7 @@ namespace bs { namespace ct
 		perCameraBuffer->FlushToGpu();
 
 		// Make sure light probe data is up to date
-		if(view.GetRenderSettings().enableIndirectLighting)
+		if(view.GetRenderSettings().EnableIndirectLighting)
 			mScene->UpdateLightProbes();
 
 		view.BeginFrame(frameInfo);
@@ -530,7 +530,7 @@ namespace bs { namespace ct
 		RenderCompositorNodeInputs inputs(viewGroup, view, sceneInfo, *mCoreOptions, frameInfo, mFeatureSet);
 
 		// Register callbacks
-		if (viewProps.triggerCallbacks)
+		if (viewProps.TriggerCallbacks)
 		{
 			const Camera* camera = view.GetSceneCamera();
 			for (auto& extension : mCallbacks)
@@ -544,19 +544,19 @@ namespace bs { namespace ct
 				switch(location)
 				{
 				case RenderLocation::Prepare:
-					inputs.extPrepare.Add(extension);
+					inputs.ExtPrepare.Add(extension);
 					break;
 				case RenderLocation::PreBasePass:
-					inputs.extPreBasePass.Add(extension);
+					inputs.ExtPreBasePass.Add(extension);
 					break;
 				case RenderLocation::PostBasePass:
-					inputs.extPostBasePass.Add(extension);
+					inputs.ExtPostBasePass.Add(extension);
 					break;
 				case RenderLocation::PostLightPass:
-					inputs.extPostLighting.Add(extension);
+					inputs.ExtPostLighting.Add(extension);
 					break;
 				case RenderLocation::Overlay:
-					inputs.extOverlay.Add(extension);
+					inputs.ExtOverlay.Add(extension);
 					break;
 				default:
 					break;
@@ -581,7 +581,7 @@ namespace bs { namespace ct
 
 		auto& viewProps = view.GetProperties();
 		const Camera* camera = view.GetSceneCamera();
-		SPtr<RenderTarget> target = viewProps.target.target;
+		SPtr<RenderTarget> target = viewProps.Target.Target;
 		SPtr<Viewport> viewport = camera->GetViewport();
 
 		ClearFlags clearFlags = viewport->GetClearFlags();
@@ -646,44 +646,44 @@ namespace bs { namespace ct
 	void RenderBeast::UpdateReflProbeArray()
 	{
 		SceneInfo& sceneInfo = mScene->GetSceneInfoInternal();
-		UINT32 numProbes = (UINT32)sceneInfo.reflProbes.size();
+		UINT32 numProbes = (UINT32)sceneInfo.ReflProbes.size();
 
 		bs_frame_mark();
 		{		
 			UINT32 currentCubeArraySize = 0;
 
-			if(sceneInfo.reflProbeCubemapsTex != nullptr)
-				currentCubeArraySize = sceneInfo.reflProbeCubemapsTex->GetProperties().GetNumArraySlices();
+			if(sceneInfo.ReflProbeCubemapsTex != nullptr)
+				currentCubeArraySize = sceneInfo.ReflProbeCubemapsTex->GetProperties().GetNumArraySlices();
 
 			bool forceArrayUpdate = false;
-			if(sceneInfo.reflProbeCubemapsTex == nullptr || (currentCubeArraySize < numProbes && currentCubeArraySize != MaxReflectionCubemaps))
+			if(sceneInfo.ReflProbeCubemapsTex == nullptr || (currentCubeArraySize < numProbes && currentCubeArraySize != MaxReflectionCubemaps))
 			{
 				TEXTURE_DESC cubeMapDesc;
-				cubeMapDesc.type = TEX_TYPE_CUBE_MAP;
-				cubeMapDesc.format = PF_RG11B10F;
-				cubeMapDesc.width = IBLUtility::REFLECTION_CUBEMAP_SIZE;
-				cubeMapDesc.height = IBLUtility::REFLECTION_CUBEMAP_SIZE;
-				cubeMapDesc.numMips = PixelUtil::GetMaxMipmaps(cubeMapDesc.width, cubeMapDesc.height, 1, cubeMapDesc.format);
-				cubeMapDesc.numArraySlices = std::min(MaxReflectionCubemaps, numProbes + 4); // Keep a few empty entries
+				cubeMapDesc.Type = TEX_TYPE_CUBE_MAP;
+				cubeMapDesc.Format = PF_RG11B10F;
+				cubeMapDesc.Width = IBLUtility::REFLECTION_CUBEMAP_SIZE;
+				cubeMapDesc.Height = IBLUtility::REFLECTION_CUBEMAP_SIZE;
+				cubeMapDesc.NumMips = PixelUtil::GetMaxMipmaps(cubeMapDesc.Width, cubeMapDesc.Height, 1, cubeMapDesc.Format);
+				cubeMapDesc.NumArraySlices = std::min(MaxReflectionCubemaps, numProbes + 4); // Keep a few empty entries
 
-				sceneInfo.reflProbeCubemapsTex = Texture::Create(cubeMapDesc);
+				sceneInfo.ReflProbeCubemapsTex = Texture::Create(cubeMapDesc);
 
 				forceArrayUpdate = true;
 			}
 
-			auto& cubemapArrayProps = sceneInfo.reflProbeCubemapsTex->GetProperties();
+			auto& cubemapArrayProps = sceneInfo.ReflProbeCubemapsTex->GetProperties();
 
 			FrameQueue<UINT32> emptySlots;
 			for (UINT32 i = 0; i < numProbes; i++)
 			{
-				const RendererReflectionProbe& probeInfo = sceneInfo.reflProbes[i];
+				const RendererReflectionProbe& probeInfo = sceneInfo.ReflProbes[i];
 
-				if (probeInfo.arrayIdx > MaxReflectionCubemaps)
+				if (probeInfo.ArrayIdx > MaxReflectionCubemaps)
 					continue;
 
-				if(probeInfo.arrayDirty || forceArrayUpdate)
+				if(probeInfo.ArrayDirty || forceArrayUpdate)
 				{
-					SPtr<Texture> texture = probeInfo.probe->GetFilteredTexture();
+					SPtr<Texture> texture = probeInfo.Probe->GetFilteredTexture();
 					if (texture == nullptr)
 						continue;
 
@@ -695,13 +695,13 @@ namespace bs { namespace ct
 
 					if(!isValid)
 					{
-						if (!probeInfo.errorFlagged)
+						if (!probeInfo.ErrorFlagged)
 						{
 							BS_LOG(Error, Renderer, "Cubemap texture invalid to use as a reflection cubemap. "
 								"Check texture size (must be {0}x{0}) and mip-map count",
 								IBLUtility::REFLECTION_CUBEMAP_SIZE);
 
-							probeInfo.errorFlagged = true;
+							probeInfo.ErrorFlagged = true;
 						}
 					}
 					else
@@ -711,17 +711,17 @@ namespace bs { namespace ct
 							for(UINT32 mip = 0; mip <= srcProps.GetNumMipmaps(); mip++)
 							{
 								TEXTURE_COPY_DESC copyDesc;
-								copyDesc.srcFace = face;
-								copyDesc.srcMip = mip;
-								copyDesc.dstFace = probeInfo.arrayIdx * 6 + face;
-								copyDesc.dstMip = mip;
+								copyDesc.SrcFace = face;
+								copyDesc.SrcMip = mip;
+								copyDesc.DstFace = probeInfo.ArrayIdx * 6 + face;
+								copyDesc.DstMip = mip;
 
-								texture->Copy(sceneInfo.reflProbeCubemapsTex, copyDesc);
+								texture->Copy(sceneInfo.ReflProbeCubemapsTex, copyDesc);
 							}
 						}
 					}
 
-					mScene->SetReflectionProbeArrayIndex(i, probeInfo.arrayIdx, true);
+					mScene->SetReflectionProbeArrayIndex(i, probeInfo.ArrayIdx, true);
 				}
 
 				// Note: Consider pruning the reflection cubemap array if empty slot count becomes too high
@@ -741,44 +741,44 @@ namespace bs { namespace ct
 		RenderAPI::Instance().ConvertProjectionMatrix(projTransform, projTransform);
 
 		RENDERER_VIEW_DESC viewDesc;
-		viewDesc.target.clearFlags = FBT_COLOR | FBT_DEPTH;
-		viewDesc.target.clearColor = Color::Black;
-		viewDesc.target.clearDepthValue = 1.0f;
-		viewDesc.target.clearStencilValue = 0;
+		viewDesc.Target.ClearFlags = FBT_COLOR | FBT_DEPTH;
+		viewDesc.Target.ClearColor = Color::Black;
+		viewDesc.Target.ClearDepthValue = 1.0f;
+		viewDesc.Target.ClearStencilValue = 0;
 
-		viewDesc.target.nrmViewRect = Rect2(0, 0, 1.0f, 1.0f);
-		viewDesc.target.viewRect = Rect2I(0, 0, texProps.GetWidth(), texProps.GetHeight());
-		viewDesc.target.targetWidth = texProps.GetWidth();
-		viewDesc.target.targetHeight = texProps.GetHeight();
-		viewDesc.target.numSamples = 1;
+		viewDesc.Target.NrmViewRect = Rect2(0, 0, 1.0f, 1.0f);
+		viewDesc.Target.ViewRect = Rect2I(0, 0, texProps.GetWidth(), texProps.GetHeight());
+		viewDesc.Target.TargetWidth = texProps.GetWidth();
+		viewDesc.Target.TargetHeight = texProps.GetHeight();
+		viewDesc.Target.NumSamples = 1;
 
-		viewDesc.mainView = false;
-		viewDesc.triggerCallbacks = false;
-		viewDesc.runPostProcessing = false;
-		viewDesc.capturingReflections = true;
-		viewDesc.onDemand = false;
-		viewDesc.encodeDepth = settings.encodeDepth;
-		viewDesc.depthEncodeNear = settings.depthEncodeNear;
-		viewDesc.depthEncodeFar = settings.depthEncodeFar;
+		viewDesc.MainView = false;
+		viewDesc.TriggerCallbacks = false;
+		viewDesc.RunPostProcessing = false;
+		viewDesc.CapturingReflections = true;
+		viewDesc.OnDemand = false;
+		viewDesc.EncodeDepth = settings.EncodeDepth;
+		viewDesc.DepthEncodeNear = settings.DepthEncodeNear;
+		viewDesc.DepthEncodeFar = settings.DepthEncodeFar;
 
-		viewDesc.visibleLayers = 0xFFFFFFFFFFFFFFFF;
-		viewDesc.nearPlane = 0.5f;
-		viewDesc.farPlane = 1000.0f;
-		viewDesc.flipView = gCaps().conventions.uvYAxis != Conventions::Axis::Up;
+		viewDesc.VisibleLayers = 0xFFFFFFFFFFFFFFFF;
+		viewDesc.NearPlane = 0.5f;
+		viewDesc.FarPlane = 1000.0f;
+		viewDesc.FlipView = gCaps().Conventions.UvYAxis != Conventions::Axis::Up;
 
-		viewDesc.viewOrigin = position;
-		viewDesc.projTransform = projTransform;
-		viewDesc.projType = PT_PERSPECTIVE;
+		viewDesc.ViewOrigin = position;
+		viewDesc.ProjTransform = projTransform;
+		viewDesc.ProjType = PT_PERSPECTIVE;
 
-		viewDesc.stateReduction = mCoreOptions->stateReductionMode;
-		viewDesc.sceneCamera = nullptr;
+		viewDesc.StateReduction = mCoreOptions->StateReductionMode;
+		viewDesc.SceneCamera = nullptr;
 
 		SPtr<RenderSettings> renderSettings = bs_shared_ptr_new<RenderSettings>();
-		renderSettings->enableHDR = settings.hdr;
-		renderSettings->enableShadows = true;
-		renderSettings->enableIndirectLighting = false;
-		renderSettings->screenSpaceReflections.enabled = false;
-		renderSettings->ambientOcclusion.enabled = false;
+		renderSettings->EnableHdr = settings.Hdr;
+		renderSettings->EnableShadows = true;
+		renderSettings->EnableIndirectLighting = false;
+		renderSettings->ScreenSpaceReflections.Enabled = false;
+		renderSettings->AmbientOcclusion.Enabled = false;
 
 		Matrix4 viewOffsetMat = Matrix4::Translation(-position);
 
@@ -823,12 +823,12 @@ namespace bs { namespace ct
 			Vector3 right = Vector3::Cross(up, forward);
 			Matrix3 viewRotationMat = Matrix3(right, up, forward);
 
-			viewDesc.viewDirection = -forward;
-			viewDesc.viewTransform = Matrix4(viewRotationMat) * viewOffsetMat;
+			viewDesc.ViewDirection = -forward;
+			viewDesc.ViewTransform = Matrix4(viewRotationMat) * viewOffsetMat;
 
 			// Calculate world frustum for culling
 			const Vector<Plane>& frustumPlanes = localFrustum.GetPlanes();
-			Matrix4 worldMatrix = viewDesc.viewTransform.Transpose();
+			Matrix4 worldMatrix = viewDesc.ViewTransform.Transpose();
 
 			Vector<Plane> worldPlanes(frustumPlanes.size());
 			UINT32 j = 0;
@@ -838,15 +838,15 @@ namespace bs { namespace ct
 				j++;
 			}
 
-			viewDesc.cullFrustum = ConvexVolume(worldPlanes);
+			viewDesc.CullFrustum = ConvexVolume(worldPlanes);
 
 			// Set up face render target
 			RENDER_TEXTURE_DESC cubeFaceRTDesc;
-			cubeFaceRTDesc.colorSurfaces[0].texture = cubemap;
-			cubeFaceRTDesc.colorSurfaces[0].face = i;
-			cubeFaceRTDesc.colorSurfaces[0].numFaces = 1;
+			cubeFaceRTDesc.ColorSurfaces[0].Texture = cubemap;
+			cubeFaceRTDesc.ColorSurfaces[0].Face = i;
+			cubeFaceRTDesc.ColorSurfaces[0].NumFaces = 1;
 			
-			viewDesc.target.target = RenderTexture::Create(cubeFaceRTDesc);
+			viewDesc.Target.Target = RenderTexture::Create(cubeFaceRTDesc);
 
 			views[i].SetView(viewDesc);
 			views[i].SetRenderSettings(renderSettings);
@@ -855,7 +855,7 @@ namespace bs { namespace ct
 
 		RendererView* viewPtrs[] = { &views[0], &views[1], &views[2], &views[3], &views[4], &views[5] };
 
-		RendererViewGroup viewGroup(viewPtrs, 6, false, mCoreOptions->shadowMapSize);
+		RendererViewGroup viewGroup(viewPtrs, 6, false, mCoreOptions->ShadowMapSize);
 		viewGroup.DetermineVisibility(sceneInfo);
 
 		FrameInfo frameInfo({ 0.0f, 1.0f / 60.0f, 0 }, PerFrameData());

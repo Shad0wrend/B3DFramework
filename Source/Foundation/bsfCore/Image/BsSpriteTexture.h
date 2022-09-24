@@ -23,26 +23,26 @@ namespace bs
 	{
 		SpriteSheetGridAnimation() = default;
 		SpriteSheetGridAnimation(UINT32 numRows, UINT32 numColumns, UINT32 count, UINT32 fps)
-			: numRows(numRows), numColumns(numColumns), count(count), fps(fps)
+			: NumRows(numRows), NumColumns(numColumns), Count(count), Fps(fps)
 		{ }
 
 		/**
 		 * Number of rows to divide the parent's texture area. Determines height of the individual frame (depends on
 		 * parent texture size).
 		 */
-		UINT32 numRows = 1;
+		UINT32 NumRows = 1;
 
 		/**
 		 * Number of columns to divide the parent's texture area. Determines column of the individual frame (depends on
 		 * parent texture size).
 		 */
-		UINT32 numColumns = 1;
+		UINT32 NumColumns = 1;
 
 		/** Number of frames in the animation. Must be less or equal than @p numRows * @p numColumns. */
-		UINT32 count = 1;
+		UINT32 Count = 1;
 
 		/** How many frames to evaluate each second. Determines the animation speed. */
-		UINT32 fps = 8;
+		UINT32 Fps = 8;
 	};
 
 	/** Type of playback to use for an animation of a SpriteTexture. */

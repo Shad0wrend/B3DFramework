@@ -18,7 +18,7 @@ namespace bs
 
 	MonoObject*ScriptContactPoint::Box(const __ContactPointInterop& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	__ContactPointInterop ScriptContactPoint::Unbox(MonoObject* value)
@@ -29,10 +29,10 @@ namespace bs
 	ContactPoint ScriptContactPoint::FromInterop(const __ContactPointInterop& value)
 	{
 		ContactPoint output;
-		output.position = value.position;
-		output.normal = value.normal;
-		output.impulse = value.impulse;
-		output.separation = value.separation;
+		output.Position = value.Position;
+		output.Normal = value.Normal;
+		output.Impulse = value.Impulse;
+		output.Separation = value.Separation;
 
 		return output;
 	}
@@ -40,10 +40,10 @@ namespace bs
 	__ContactPointInterop ScriptContactPoint::ToInterop(const ContactPoint& value)
 	{
 		__ContactPointInterop output;
-		output.position = value.position;
-		output.normal = value.normal;
-		output.impulse = value.impulse;
-		output.separation = value.separation;
+		output.Position = value.Position;
+		output.Normal = value.Normal;
+		output.Impulse = value.Impulse;
+		output.Separation = value.Separation;
 
 		return output;
 	}

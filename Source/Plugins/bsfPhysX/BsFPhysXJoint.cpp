@@ -20,8 +20,8 @@ namespace bs
 	FPhysXJoint::FPhysXJoint(physx::PxJoint* joint, const JOINT_DESC& desc)
 		:FJoint(desc), mJoint(joint)
 	{
-		mJoint->setBreakForce(desc.breakForce, desc.breakTorque);
-		mJoint->setConstraintFlag(PxConstraintFlag::eCOLLISION_ENABLED, desc.enableCollision);
+		mJoint->setBreakForce(desc.BreakForce, desc.BreakTorque);
+		mJoint->setConstraintFlag(PxConstraintFlag::eCOLLISION_ENABLED, desc.EnableCollision);
 	}
 
 	FPhysXJoint::~FPhysXJoint()

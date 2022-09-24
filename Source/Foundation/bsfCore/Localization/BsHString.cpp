@@ -10,24 +10,24 @@ namespace bs
 	{
 		mStringData = StringTableManager::Instance().GetTable(0)->GetStringData(u8"");
 
-		if (mStringData->numParameters > 0)
-			mParameters = bs_newN<String>(mStringData->numParameters);
+		if (mStringData->NumParameters > 0)
+			mParameters = bs_newN<String>(mStringData->NumParameters);
 	}
 
 	HString::HString(UINT32 stringTableId)
 	{
 		mStringData = StringTableManager::Instance().GetTable(stringTableId)->GetStringData(u8"");
 
-		if (mStringData->numParameters > 0)
-			mParameters = bs_newN<String>(mStringData->numParameters);
+		if (mStringData->NumParameters > 0)
+			mParameters = bs_newN<String>(mStringData->NumParameters);
 	}
 
 	HString::HString(const String& identifierString, UINT32 stringTableId)
 	{
 		mStringData = StringTableManager::Instance().GetTable(stringTableId)->GetStringData(identifierString);
 
-		if (mStringData->numParameters > 0)
-			mParameters = bs_newN<String>(mStringData->numParameters);
+		if (mStringData->NumParameters > 0)
+			mParameters = bs_newN<String>(mStringData->NumParameters);
 	}
 
 	HString::HString(const String& identifierString, const String& defaultString, UINT32 stringTableId)
@@ -37,8 +37,8 @@ namespace bs
 
 		mStringData = table->GetStringData(identifierString);
 
-		if (mStringData->numParameters > 0)
-			mParameters = bs_newN<String>(mStringData->numParameters);
+		if (mStringData->NumParameters > 0)
+			mParameters = bs_newN<String>(mStringData->NumParameters);
 	}
 
 	HString::HString(const HString& copy)
@@ -47,12 +47,12 @@ namespace bs
 		mIsDirty = copy.mIsDirty;
 		mCachedString = copy.mCachedString;
 
-		if (copy.mStringData->numParameters > 0)
+		if (copy.mStringData->NumParameters > 0)
 		{
-			mParameters = bs_newN<String>(mStringData->numParameters);
+			mParameters = bs_newN<String>(mStringData->NumParameters);
 			if (copy.mParameters != nullptr)
 			{
-				for (UINT32 i = 0; i < mStringData->numParameters; i++)
+				for (UINT32 i = 0; i < mStringData->NumParameters; i++)
 					mParameters[i] = copy.mParameters[i];
 			}
 
@@ -61,14 +61,14 @@ namespace bs
 		else
 		{
 			mParameters = nullptr;
-			mStringPtr = &mStringData->string;
+			mStringPtr = &mStringData->String;
 		}
 	}
 
 	HString::~HString()
 	{
 		if (mParameters != nullptr)
-			bs_deleteN(mParameters, mStringData->numParameters);
+			bs_deleteN(mParameters, mStringData->NumParameters);
 	}
 
 	HString::operator const String& () const
@@ -80,7 +80,7 @@ namespace bs
 	{
 		if (mParameters != nullptr)
 		{
-			bs_deleteN(mParameters, mStringData->numParameters);
+			bs_deleteN(mParameters, mStringData->NumParameters);
 			mParameters = nullptr;
 		}
 
@@ -88,12 +88,12 @@ namespace bs
 		mIsDirty = rhs.mIsDirty;
 		mCachedString = rhs.mCachedString;
 
-		if (rhs.mStringData->numParameters > 0)
+		if (rhs.mStringData->NumParameters > 0)
 		{
-			mParameters = bs_newN<String>(mStringData->numParameters);
+			mParameters = bs_newN<String>(mStringData->NumParameters);
 			if (rhs.mParameters != nullptr)
 			{
-				for (UINT32 i = 0; i < mStringData->numParameters; i++)
+				for (UINT32 i = 0; i < mStringData->NumParameters; i++)
 					mParameters[i] = rhs.mParameters[i];
 			}
 
@@ -102,7 +102,7 @@ namespace bs
 		else
 		{
 			mParameters = nullptr;
-			mStringPtr = &mStringData->string;
+			mStringPtr = &mStringData->String;
 		}
 
 		return *this;
@@ -114,12 +114,12 @@ namespace bs
 		{
 			if (mParameters != nullptr)
 			{
-				mStringData->ConcatenateString(mCachedString, mParameters, mStringData->numParameters);
+				mStringData->ConcatenateString(mCachedString, mParameters, mStringData->NumParameters);
 				mStringPtr = &mCachedString;
 			}
 			else
 			{
-				mStringPtr = &mStringData->string;
+				mStringPtr = &mStringData->String;
 			}
 
 			mIsDirty = false;
@@ -130,7 +130,7 @@ namespace bs
 
 	void HString::SetParameter(UINT32 idx, const String& value)
 	{
-		if (idx >= mStringData->numParameters)
+		if (idx >= mStringData->NumParameters)
 			return;
 
 		mParameters[idx] = value;

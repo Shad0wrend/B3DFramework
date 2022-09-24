@@ -78,10 +78,10 @@ namespace bs
 		void SetFilter(std::function<bool(const String&)> filter) { mFilter = filter; }
 
 		/**	Triggered whenever input text has changed. */
-		Event<void(const String&)> onValueChanged;
+		Event<void(const String&)> OnValueChanged;
 
 		/**	Triggered when the user hits the Enter key with the input box in focus. */
-		Event<void()> onConfirm;
+		Event<void()> OnConfirm;
 
 	public: // ***** INTERNAL ******
 		/** @name Internal

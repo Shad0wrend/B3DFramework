@@ -278,13 +278,13 @@ namespace bs
 		static SPtr<Rigidbody> Create(const HSceneObject& linkedSO);
 
 		/** Triggered when one of the colliders owned by the rigidbody starts colliding with another object. */
-		Event<void(const CollisionDataRaw&)> onCollisionBegin;
+		Event<void(const CollisionDataRaw&)> OnCollisionBegin;
 
 		/** Triggered when a previously colliding collider stays in collision. Triggered once per frame. */
-		Event<void(const CollisionDataRaw&)> onCollisionStay;
+		Event<void(const CollisionDataRaw&)> OnCollisionStay;
 
 		/** Triggered when one of the colliders owned by the rigidbody stops colliding with another object. */
-		Event<void(const CollisionDataRaw&)> onCollisionEnd;
+		Event<void(const CollisionDataRaw&)> OnCollisionEnd;
 
 		/** @name Internal
 		 *  @{
@@ -309,13 +309,13 @@ namespace bs
 		 * Sets the object that owns this physics object, if any. Used for high level systems so they can easily map their
 		 * high level physics objects from the low level ones returned by various queries and events.
 		 */
-		void SetOwnerInternal(PhysicsOwnerType type, void* owner) { mOwner.type = type; mOwner.ownerData = owner; }
+		void SetOwnerInternal(PhysicsOwnerType type, void* owner) { mOwner.Type = type; mOwner.OwnerData = owner; }
 
 		/**
 		 * Gets the object that owns this physics object, if any. Used for high level systems so they can easily map their
 		 * high level physics objects from the low level ones returned by various queries and events.
 		 */
-		void* GetOwnerInternal(PhysicsOwnerType type) const { return mOwner.type == type ? mOwner.ownerData : nullptr; }
+		void* GetOwnerInternal(PhysicsOwnerType type) const { return mOwner.Type == type ? mOwner.OwnerData : nullptr; }
 
 		/** @} */
 

@@ -18,64 +18,64 @@ namespace bs
 
 	void ScriptGUIElementStyle::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_GUIElementStyle", (void*)&ScriptGUIElementStyle::InternalGUIElementStyle);
-		metaData.scriptClass->AddInternalCall("Internal_AddSubStyle", (void*)&ScriptGUIElementStyle::InternalAddSubStyle);
-		metaData.scriptClass->AddInternalCall("Internal_Getfont", (void*)&ScriptGUIElementStyle::InternalGetfont);
-		metaData.scriptClass->AddInternalCall("Internal_Setfont", (void*)&ScriptGUIElementStyle::InternalSetfont);
-		metaData.scriptClass->AddInternalCall("Internal_GetfontSize", (void*)&ScriptGUIElementStyle::InternalGetfontSize);
-		metaData.scriptClass->AddInternalCall("Internal_SetfontSize", (void*)&ScriptGUIElementStyle::InternalSetfontSize);
-		metaData.scriptClass->AddInternalCall("Internal_GettextHorzAlign", (void*)&ScriptGUIElementStyle::InternalGettextHorzAlign);
-		metaData.scriptClass->AddInternalCall("Internal_SettextHorzAlign", (void*)&ScriptGUIElementStyle::InternalSettextHorzAlign);
-		metaData.scriptClass->AddInternalCall("Internal_GettextVertAlign", (void*)&ScriptGUIElementStyle::InternalGettextVertAlign);
-		metaData.scriptClass->AddInternalCall("Internal_SettextVertAlign", (void*)&ScriptGUIElementStyle::InternalSettextVertAlign);
-		metaData.scriptClass->AddInternalCall("Internal_GetimagePosition", (void*)&ScriptGUIElementStyle::InternalGetimagePosition);
-		metaData.scriptClass->AddInternalCall("Internal_SetimagePosition", (void*)&ScriptGUIElementStyle::InternalSetimagePosition);
-		metaData.scriptClass->AddInternalCall("Internal_GetwordWrap", (void*)&ScriptGUIElementStyle::InternalGetwordWrap);
-		metaData.scriptClass->AddInternalCall("Internal_SetwordWrap", (void*)&ScriptGUIElementStyle::InternalSetwordWrap);
-		metaData.scriptClass->AddInternalCall("Internal_Getnormal", (void*)&ScriptGUIElementStyle::InternalGetnormal);
-		metaData.scriptClass->AddInternalCall("Internal_Setnormal", (void*)&ScriptGUIElementStyle::InternalSetnormal);
-		metaData.scriptClass->AddInternalCall("Internal_Gethover", (void*)&ScriptGUIElementStyle::InternalGethover);
-		metaData.scriptClass->AddInternalCall("Internal_Sethover", (void*)&ScriptGUIElementStyle::InternalSethover);
-		metaData.scriptClass->AddInternalCall("Internal_Getactive", (void*)&ScriptGUIElementStyle::InternalGetactive);
-		metaData.scriptClass->AddInternalCall("Internal_Setactive", (void*)&ScriptGUIElementStyle::InternalSetactive);
-		metaData.scriptClass->AddInternalCall("Internal_Getfocused", (void*)&ScriptGUIElementStyle::InternalGetfocused);
-		metaData.scriptClass->AddInternalCall("Internal_Setfocused", (void*)&ScriptGUIElementStyle::InternalSetfocused);
-		metaData.scriptClass->AddInternalCall("Internal_GetfocusedHover", (void*)&ScriptGUIElementStyle::InternalGetfocusedHover);
-		metaData.scriptClass->AddInternalCall("Internal_SetfocusedHover", (void*)&ScriptGUIElementStyle::InternalSetfocusedHover);
-		metaData.scriptClass->AddInternalCall("Internal_GetnormalOn", (void*)&ScriptGUIElementStyle::InternalGetnormalOn);
-		metaData.scriptClass->AddInternalCall("Internal_SetnormalOn", (void*)&ScriptGUIElementStyle::InternalSetnormalOn);
-		metaData.scriptClass->AddInternalCall("Internal_GethoverOn", (void*)&ScriptGUIElementStyle::InternalGethoverOn);
-		metaData.scriptClass->AddInternalCall("Internal_SethoverOn", (void*)&ScriptGUIElementStyle::InternalSethoverOn);
-		metaData.scriptClass->AddInternalCall("Internal_GetactiveOn", (void*)&ScriptGUIElementStyle::InternalGetactiveOn);
-		metaData.scriptClass->AddInternalCall("Internal_SetactiveOn", (void*)&ScriptGUIElementStyle::InternalSetactiveOn);
-		metaData.scriptClass->AddInternalCall("Internal_GetfocusedOn", (void*)&ScriptGUIElementStyle::InternalGetfocusedOn);
-		metaData.scriptClass->AddInternalCall("Internal_SetfocusedOn", (void*)&ScriptGUIElementStyle::InternalSetfocusedOn);
-		metaData.scriptClass->AddInternalCall("Internal_GetfocusedHoverOn", (void*)&ScriptGUIElementStyle::InternalGetfocusedHoverOn);
-		metaData.scriptClass->AddInternalCall("Internal_SetfocusedHoverOn", (void*)&ScriptGUIElementStyle::InternalSetfocusedHoverOn);
-		metaData.scriptClass->AddInternalCall("Internal_Getborder", (void*)&ScriptGUIElementStyle::InternalGetborder);
-		metaData.scriptClass->AddInternalCall("Internal_Setborder", (void*)&ScriptGUIElementStyle::InternalSetborder);
-		metaData.scriptClass->AddInternalCall("Internal_Getmargins", (void*)&ScriptGUIElementStyle::InternalGetmargins);
-		metaData.scriptClass->AddInternalCall("Internal_Setmargins", (void*)&ScriptGUIElementStyle::InternalSetmargins);
-		metaData.scriptClass->AddInternalCall("Internal_GetcontentOffset", (void*)&ScriptGUIElementStyle::InternalGetcontentOffset);
-		metaData.scriptClass->AddInternalCall("Internal_SetcontentOffset", (void*)&ScriptGUIElementStyle::InternalSetcontentOffset);
-		metaData.scriptClass->AddInternalCall("Internal_Getpadding", (void*)&ScriptGUIElementStyle::InternalGetpadding);
-		metaData.scriptClass->AddInternalCall("Internal_Setpadding", (void*)&ScriptGUIElementStyle::InternalSetpadding);
-		metaData.scriptClass->AddInternalCall("Internal_Getwidth", (void*)&ScriptGUIElementStyle::InternalGetwidth);
-		metaData.scriptClass->AddInternalCall("Internal_Setwidth", (void*)&ScriptGUIElementStyle::InternalSetwidth);
-		metaData.scriptClass->AddInternalCall("Internal_Getheight", (void*)&ScriptGUIElementStyle::InternalGetheight);
-		metaData.scriptClass->AddInternalCall("Internal_Setheight", (void*)&ScriptGUIElementStyle::InternalSetheight);
-		metaData.scriptClass->AddInternalCall("Internal_GetminWidth", (void*)&ScriptGUIElementStyle::InternalGetminWidth);
-		metaData.scriptClass->AddInternalCall("Internal_SetminWidth", (void*)&ScriptGUIElementStyle::InternalSetminWidth);
-		metaData.scriptClass->AddInternalCall("Internal_GetmaxWidth", (void*)&ScriptGUIElementStyle::InternalGetmaxWidth);
-		metaData.scriptClass->AddInternalCall("Internal_SetmaxWidth", (void*)&ScriptGUIElementStyle::InternalSetmaxWidth);
-		metaData.scriptClass->AddInternalCall("Internal_GetminHeight", (void*)&ScriptGUIElementStyle::InternalGetminHeight);
-		metaData.scriptClass->AddInternalCall("Internal_SetminHeight", (void*)&ScriptGUIElementStyle::InternalSetminHeight);
-		metaData.scriptClass->AddInternalCall("Internal_GetmaxHeight", (void*)&ScriptGUIElementStyle::InternalGetmaxHeight);
-		metaData.scriptClass->AddInternalCall("Internal_SetmaxHeight", (void*)&ScriptGUIElementStyle::InternalSetmaxHeight);
-		metaData.scriptClass->AddInternalCall("Internal_GetfixedWidth", (void*)&ScriptGUIElementStyle::InternalGetfixedWidth);
-		metaData.scriptClass->AddInternalCall("Internal_SetfixedWidth", (void*)&ScriptGUIElementStyle::InternalSetfixedWidth);
-		metaData.scriptClass->AddInternalCall("Internal_GetfixedHeight", (void*)&ScriptGUIElementStyle::InternalGetfixedHeight);
-		metaData.scriptClass->AddInternalCall("Internal_SetfixedHeight", (void*)&ScriptGUIElementStyle::InternalSetfixedHeight);
+		metaData.ScriptClass->AddInternalCall("Internal_GUIElementStyle", (void*)&ScriptGUIElementStyle::InternalGUIElementStyle);
+		metaData.ScriptClass->AddInternalCall("Internal_AddSubStyle", (void*)&ScriptGUIElementStyle::InternalAddSubStyle);
+		metaData.ScriptClass->AddInternalCall("Internal_Getfont", (void*)&ScriptGUIElementStyle::InternalGetfont);
+		metaData.ScriptClass->AddInternalCall("Internal_Setfont", (void*)&ScriptGUIElementStyle::InternalSetfont);
+		metaData.ScriptClass->AddInternalCall("Internal_GetfontSize", (void*)&ScriptGUIElementStyle::InternalGetfontSize);
+		metaData.ScriptClass->AddInternalCall("Internal_SetfontSize", (void*)&ScriptGUIElementStyle::InternalSetfontSize);
+		metaData.ScriptClass->AddInternalCall("Internal_GettextHorzAlign", (void*)&ScriptGUIElementStyle::InternalGettextHorzAlign);
+		metaData.ScriptClass->AddInternalCall("Internal_SettextHorzAlign", (void*)&ScriptGUIElementStyle::InternalSettextHorzAlign);
+		metaData.ScriptClass->AddInternalCall("Internal_GettextVertAlign", (void*)&ScriptGUIElementStyle::InternalGettextVertAlign);
+		metaData.ScriptClass->AddInternalCall("Internal_SettextVertAlign", (void*)&ScriptGUIElementStyle::InternalSettextVertAlign);
+		metaData.ScriptClass->AddInternalCall("Internal_GetimagePosition", (void*)&ScriptGUIElementStyle::InternalGetimagePosition);
+		metaData.ScriptClass->AddInternalCall("Internal_SetimagePosition", (void*)&ScriptGUIElementStyle::InternalSetimagePosition);
+		metaData.ScriptClass->AddInternalCall("Internal_GetwordWrap", (void*)&ScriptGUIElementStyle::InternalGetwordWrap);
+		metaData.ScriptClass->AddInternalCall("Internal_SetwordWrap", (void*)&ScriptGUIElementStyle::InternalSetwordWrap);
+		metaData.ScriptClass->AddInternalCall("Internal_Getnormal", (void*)&ScriptGUIElementStyle::InternalGetnormal);
+		metaData.ScriptClass->AddInternalCall("Internal_Setnormal", (void*)&ScriptGUIElementStyle::InternalSetnormal);
+		metaData.ScriptClass->AddInternalCall("Internal_Gethover", (void*)&ScriptGUIElementStyle::InternalGethover);
+		metaData.ScriptClass->AddInternalCall("Internal_Sethover", (void*)&ScriptGUIElementStyle::InternalSethover);
+		metaData.ScriptClass->AddInternalCall("Internal_Getactive", (void*)&ScriptGUIElementStyle::InternalGetactive);
+		metaData.ScriptClass->AddInternalCall("Internal_Setactive", (void*)&ScriptGUIElementStyle::InternalSetactive);
+		metaData.ScriptClass->AddInternalCall("Internal_Getfocused", (void*)&ScriptGUIElementStyle::InternalGetfocused);
+		metaData.ScriptClass->AddInternalCall("Internal_Setfocused", (void*)&ScriptGUIElementStyle::InternalSetfocused);
+		metaData.ScriptClass->AddInternalCall("Internal_GetfocusedHover", (void*)&ScriptGUIElementStyle::InternalGetfocusedHover);
+		metaData.ScriptClass->AddInternalCall("Internal_SetfocusedHover", (void*)&ScriptGUIElementStyle::InternalSetfocusedHover);
+		metaData.ScriptClass->AddInternalCall("Internal_GetnormalOn", (void*)&ScriptGUIElementStyle::InternalGetnormalOn);
+		metaData.ScriptClass->AddInternalCall("Internal_SetnormalOn", (void*)&ScriptGUIElementStyle::InternalSetnormalOn);
+		metaData.ScriptClass->AddInternalCall("Internal_GethoverOn", (void*)&ScriptGUIElementStyle::InternalGethoverOn);
+		metaData.ScriptClass->AddInternalCall("Internal_SethoverOn", (void*)&ScriptGUIElementStyle::InternalSethoverOn);
+		metaData.ScriptClass->AddInternalCall("Internal_GetactiveOn", (void*)&ScriptGUIElementStyle::InternalGetactiveOn);
+		metaData.ScriptClass->AddInternalCall("Internal_SetactiveOn", (void*)&ScriptGUIElementStyle::InternalSetactiveOn);
+		metaData.ScriptClass->AddInternalCall("Internal_GetfocusedOn", (void*)&ScriptGUIElementStyle::InternalGetfocusedOn);
+		metaData.ScriptClass->AddInternalCall("Internal_SetfocusedOn", (void*)&ScriptGUIElementStyle::InternalSetfocusedOn);
+		metaData.ScriptClass->AddInternalCall("Internal_GetfocusedHoverOn", (void*)&ScriptGUIElementStyle::InternalGetfocusedHoverOn);
+		metaData.ScriptClass->AddInternalCall("Internal_SetfocusedHoverOn", (void*)&ScriptGUIElementStyle::InternalSetfocusedHoverOn);
+		metaData.ScriptClass->AddInternalCall("Internal_Getborder", (void*)&ScriptGUIElementStyle::InternalGetborder);
+		metaData.ScriptClass->AddInternalCall("Internal_Setborder", (void*)&ScriptGUIElementStyle::InternalSetborder);
+		metaData.ScriptClass->AddInternalCall("Internal_Getmargins", (void*)&ScriptGUIElementStyle::InternalGetmargins);
+		metaData.ScriptClass->AddInternalCall("Internal_Setmargins", (void*)&ScriptGUIElementStyle::InternalSetmargins);
+		metaData.ScriptClass->AddInternalCall("Internal_GetcontentOffset", (void*)&ScriptGUIElementStyle::InternalGetcontentOffset);
+		metaData.ScriptClass->AddInternalCall("Internal_SetcontentOffset", (void*)&ScriptGUIElementStyle::InternalSetcontentOffset);
+		metaData.ScriptClass->AddInternalCall("Internal_Getpadding", (void*)&ScriptGUIElementStyle::InternalGetpadding);
+		metaData.ScriptClass->AddInternalCall("Internal_Setpadding", (void*)&ScriptGUIElementStyle::InternalSetpadding);
+		metaData.ScriptClass->AddInternalCall("Internal_Getwidth", (void*)&ScriptGUIElementStyle::InternalGetwidth);
+		metaData.ScriptClass->AddInternalCall("Internal_Setwidth", (void*)&ScriptGUIElementStyle::InternalSetwidth);
+		metaData.ScriptClass->AddInternalCall("Internal_Getheight", (void*)&ScriptGUIElementStyle::InternalGetheight);
+		metaData.ScriptClass->AddInternalCall("Internal_Setheight", (void*)&ScriptGUIElementStyle::InternalSetheight);
+		metaData.ScriptClass->AddInternalCall("Internal_GetminWidth", (void*)&ScriptGUIElementStyle::InternalGetminWidth);
+		metaData.ScriptClass->AddInternalCall("Internal_SetminWidth", (void*)&ScriptGUIElementStyle::InternalSetminWidth);
+		metaData.ScriptClass->AddInternalCall("Internal_GetmaxWidth", (void*)&ScriptGUIElementStyle::InternalGetmaxWidth);
+		metaData.ScriptClass->AddInternalCall("Internal_SetmaxWidth", (void*)&ScriptGUIElementStyle::InternalSetmaxWidth);
+		metaData.ScriptClass->AddInternalCall("Internal_GetminHeight", (void*)&ScriptGUIElementStyle::InternalGetminHeight);
+		metaData.ScriptClass->AddInternalCall("Internal_SetminHeight", (void*)&ScriptGUIElementStyle::InternalSetminHeight);
+		metaData.ScriptClass->AddInternalCall("Internal_GetmaxHeight", (void*)&ScriptGUIElementStyle::InternalGetmaxHeight);
+		metaData.ScriptClass->AddInternalCall("Internal_SetmaxHeight", (void*)&ScriptGUIElementStyle::InternalSetmaxHeight);
+		metaData.ScriptClass->AddInternalCall("Internal_GetfixedWidth", (void*)&ScriptGUIElementStyle::InternalGetfixedWidth);
+		metaData.ScriptClass->AddInternalCall("Internal_SetfixedWidth", (void*)&ScriptGUIElementStyle::InternalSetfixedWidth);
+		metaData.ScriptClass->AddInternalCall("Internal_GetfixedHeight", (void*)&ScriptGUIElementStyle::InternalGetfixedHeight);
+		metaData.ScriptClass->AddInternalCall("Internal_SetfixedHeight", (void*)&ScriptGUIElementStyle::InternalSetfixedHeight);
 
 	}
 
@@ -86,7 +86,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptGUIElementStyle>()) ScriptGUIElementStyle(managedInstance, value);
 		return managedInstance;
 	}
@@ -108,7 +108,7 @@ namespace bs
 	MonoObject* ScriptGUIElementStyle::InternalGetfont(ScriptGUIElementStyle* thisPtr)
 	{
 		ResourceHandle<Font> tmp__output;
-		tmp__output = thisPtr->GetInternal()->font;
+		tmp__output = thisPtr->GetInternal()->Font;
 
 		MonoObject* __output;
 		ScriptResourceBase* script__output;
@@ -128,13 +128,13 @@ namespace bs
 		scriptvalue = ScriptFont::ToNative(value);
 		if(scriptvalue != nullptr)
 			tmpvalue = scriptvalue->GetHandle();
-		thisPtr->GetInternal()->font = tmpvalue;
+		thisPtr->GetInternal()->Font = tmpvalue;
 	}
 
 	uint32_t ScriptGUIElementStyle::InternalGetfontSize(ScriptGUIElementStyle* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->GetInternal()->fontSize;
+		tmp__output = thisPtr->GetInternal()->FontSize;
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -144,13 +144,13 @@ namespace bs
 
 	void ScriptGUIElementStyle::InternalSetfontSize(ScriptGUIElementStyle* thisPtr, uint32_t value)
 	{
-		thisPtr->GetInternal()->fontSize = value;
+		thisPtr->GetInternal()->FontSize = value;
 	}
 
 	TextHorzAlign ScriptGUIElementStyle::InternalGettextHorzAlign(ScriptGUIElementStyle* thisPtr)
 	{
 		TextHorzAlign tmp__output;
-		tmp__output = thisPtr->GetInternal()->textHorzAlign;
+		tmp__output = thisPtr->GetInternal()->TextHorzAlign;
 
 		TextHorzAlign __output;
 		__output = tmp__output;
@@ -160,13 +160,13 @@ namespace bs
 
 	void ScriptGUIElementStyle::InternalSettextHorzAlign(ScriptGUIElementStyle* thisPtr, TextHorzAlign value)
 	{
-		thisPtr->GetInternal()->textHorzAlign = value;
+		thisPtr->GetInternal()->TextHorzAlign = value;
 	}
 
 	TextVertAlign ScriptGUIElementStyle::InternalGettextVertAlign(ScriptGUIElementStyle* thisPtr)
 	{
 		TextVertAlign tmp__output;
-		tmp__output = thisPtr->GetInternal()->textVertAlign;
+		tmp__output = thisPtr->GetInternal()->TextVertAlign;
 
 		TextVertAlign __output;
 		__output = tmp__output;
@@ -176,13 +176,13 @@ namespace bs
 
 	void ScriptGUIElementStyle::InternalSettextVertAlign(ScriptGUIElementStyle* thisPtr, TextVertAlign value)
 	{
-		thisPtr->GetInternal()->textVertAlign = value;
+		thisPtr->GetInternal()->TextVertAlign = value;
 	}
 
 	GUIImagePosition ScriptGUIElementStyle::InternalGetimagePosition(ScriptGUIElementStyle* thisPtr)
 	{
 		GUIImagePosition tmp__output;
-		tmp__output = thisPtr->GetInternal()->imagePosition;
+		tmp__output = thisPtr->GetInternal()->ImagePosition;
 
 		GUIImagePosition __output;
 		__output = tmp__output;
@@ -192,13 +192,13 @@ namespace bs
 
 	void ScriptGUIElementStyle::InternalSetimagePosition(ScriptGUIElementStyle* thisPtr, GUIImagePosition value)
 	{
-		thisPtr->GetInternal()->imagePosition = value;
+		thisPtr->GetInternal()->ImagePosition = value;
 	}
 
 	bool ScriptGUIElementStyle::InternalGetwordWrap(ScriptGUIElementStyle* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->GetInternal()->wordWrap;
+		tmp__output = thisPtr->GetInternal()->WordWrap;
 
 		bool __output;
 		__output = tmp__output;
@@ -208,17 +208,17 @@ namespace bs
 
 	void ScriptGUIElementStyle::InternalSetwordWrap(ScriptGUIElementStyle* thisPtr, bool value)
 	{
-		thisPtr->GetInternal()->wordWrap = value;
+		thisPtr->GetInternal()->WordWrap = value;
 	}
 
 	void ScriptGUIElementStyle::InternalGetnormal(ScriptGUIElementStyle* thisPtr, __GUIElementStateStyleInterop* __output)
 	{
 		GUIElementStateStyle tmp__output;
-		tmp__output = thisPtr->GetInternal()->normal;
+		tmp__output = thisPtr->GetInternal()->Normal;
 
 		__GUIElementStateStyleInterop interop__output;
 		interop__output = ScriptGUIElementStateStyle::ToInterop(tmp__output);
-		MonoUtil::ValueCopy(__output, &interop__output, ScriptGUIElementStateStyle::GetMetaData()->scriptClass->GetInternalClassInternal());
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptGUIElementStateStyle::GetMetaData()->ScriptClass->GetInternalClassInternal());
 
 
 	}
@@ -227,17 +227,17 @@ namespace bs
 	{
 		GUIElementStateStyle tmpvalue;
 		tmpvalue = ScriptGUIElementStateStyle::FromInterop(*value);
-		thisPtr->GetInternal()->normal = tmpvalue;
+		thisPtr->GetInternal()->Normal = tmpvalue;
 	}
 
 	void ScriptGUIElementStyle::InternalGethover(ScriptGUIElementStyle* thisPtr, __GUIElementStateStyleInterop* __output)
 	{
 		GUIElementStateStyle tmp__output;
-		tmp__output = thisPtr->GetInternal()->hover;
+		tmp__output = thisPtr->GetInternal()->Hover;
 
 		__GUIElementStateStyleInterop interop__output;
 		interop__output = ScriptGUIElementStateStyle::ToInterop(tmp__output);
-		MonoUtil::ValueCopy(__output, &interop__output, ScriptGUIElementStateStyle::GetMetaData()->scriptClass->GetInternalClassInternal());
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptGUIElementStateStyle::GetMetaData()->ScriptClass->GetInternalClassInternal());
 
 
 	}
@@ -246,17 +246,17 @@ namespace bs
 	{
 		GUIElementStateStyle tmpvalue;
 		tmpvalue = ScriptGUIElementStateStyle::FromInterop(*value);
-		thisPtr->GetInternal()->hover = tmpvalue;
+		thisPtr->GetInternal()->Hover = tmpvalue;
 	}
 
 	void ScriptGUIElementStyle::InternalGetactive(ScriptGUIElementStyle* thisPtr, __GUIElementStateStyleInterop* __output)
 	{
 		GUIElementStateStyle tmp__output;
-		tmp__output = thisPtr->GetInternal()->active;
+		tmp__output = thisPtr->GetInternal()->Active;
 
 		__GUIElementStateStyleInterop interop__output;
 		interop__output = ScriptGUIElementStateStyle::ToInterop(tmp__output);
-		MonoUtil::ValueCopy(__output, &interop__output, ScriptGUIElementStateStyle::GetMetaData()->scriptClass->GetInternalClassInternal());
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptGUIElementStateStyle::GetMetaData()->ScriptClass->GetInternalClassInternal());
 
 
 	}
@@ -265,17 +265,17 @@ namespace bs
 	{
 		GUIElementStateStyle tmpvalue;
 		tmpvalue = ScriptGUIElementStateStyle::FromInterop(*value);
-		thisPtr->GetInternal()->active = tmpvalue;
+		thisPtr->GetInternal()->Active = tmpvalue;
 	}
 
 	void ScriptGUIElementStyle::InternalGetfocused(ScriptGUIElementStyle* thisPtr, __GUIElementStateStyleInterop* __output)
 	{
 		GUIElementStateStyle tmp__output;
-		tmp__output = thisPtr->GetInternal()->focused;
+		tmp__output = thisPtr->GetInternal()->Focused;
 
 		__GUIElementStateStyleInterop interop__output;
 		interop__output = ScriptGUIElementStateStyle::ToInterop(tmp__output);
-		MonoUtil::ValueCopy(__output, &interop__output, ScriptGUIElementStateStyle::GetMetaData()->scriptClass->GetInternalClassInternal());
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptGUIElementStateStyle::GetMetaData()->ScriptClass->GetInternalClassInternal());
 
 
 	}
@@ -284,17 +284,17 @@ namespace bs
 	{
 		GUIElementStateStyle tmpvalue;
 		tmpvalue = ScriptGUIElementStateStyle::FromInterop(*value);
-		thisPtr->GetInternal()->focused = tmpvalue;
+		thisPtr->GetInternal()->Focused = tmpvalue;
 	}
 
 	void ScriptGUIElementStyle::InternalGetfocusedHover(ScriptGUIElementStyle* thisPtr, __GUIElementStateStyleInterop* __output)
 	{
 		GUIElementStateStyle tmp__output;
-		tmp__output = thisPtr->GetInternal()->focusedHover;
+		tmp__output = thisPtr->GetInternal()->FocusedHover;
 
 		__GUIElementStateStyleInterop interop__output;
 		interop__output = ScriptGUIElementStateStyle::ToInterop(tmp__output);
-		MonoUtil::ValueCopy(__output, &interop__output, ScriptGUIElementStateStyle::GetMetaData()->scriptClass->GetInternalClassInternal());
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptGUIElementStateStyle::GetMetaData()->ScriptClass->GetInternalClassInternal());
 
 
 	}
@@ -303,17 +303,17 @@ namespace bs
 	{
 		GUIElementStateStyle tmpvalue;
 		tmpvalue = ScriptGUIElementStateStyle::FromInterop(*value);
-		thisPtr->GetInternal()->focusedHover = tmpvalue;
+		thisPtr->GetInternal()->FocusedHover = tmpvalue;
 	}
 
 	void ScriptGUIElementStyle::InternalGetnormalOn(ScriptGUIElementStyle* thisPtr, __GUIElementStateStyleInterop* __output)
 	{
 		GUIElementStateStyle tmp__output;
-		tmp__output = thisPtr->GetInternal()->normalOn;
+		tmp__output = thisPtr->GetInternal()->NormalOn;
 
 		__GUIElementStateStyleInterop interop__output;
 		interop__output = ScriptGUIElementStateStyle::ToInterop(tmp__output);
-		MonoUtil::ValueCopy(__output, &interop__output, ScriptGUIElementStateStyle::GetMetaData()->scriptClass->GetInternalClassInternal());
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptGUIElementStateStyle::GetMetaData()->ScriptClass->GetInternalClassInternal());
 
 
 	}
@@ -322,17 +322,17 @@ namespace bs
 	{
 		GUIElementStateStyle tmpvalue;
 		tmpvalue = ScriptGUIElementStateStyle::FromInterop(*value);
-		thisPtr->GetInternal()->normalOn = tmpvalue;
+		thisPtr->GetInternal()->NormalOn = tmpvalue;
 	}
 
 	void ScriptGUIElementStyle::InternalGethoverOn(ScriptGUIElementStyle* thisPtr, __GUIElementStateStyleInterop* __output)
 	{
 		GUIElementStateStyle tmp__output;
-		tmp__output = thisPtr->GetInternal()->hoverOn;
+		tmp__output = thisPtr->GetInternal()->HoverOn;
 
 		__GUIElementStateStyleInterop interop__output;
 		interop__output = ScriptGUIElementStateStyle::ToInterop(tmp__output);
-		MonoUtil::ValueCopy(__output, &interop__output, ScriptGUIElementStateStyle::GetMetaData()->scriptClass->GetInternalClassInternal());
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptGUIElementStateStyle::GetMetaData()->ScriptClass->GetInternalClassInternal());
 
 
 	}
@@ -341,17 +341,17 @@ namespace bs
 	{
 		GUIElementStateStyle tmpvalue;
 		tmpvalue = ScriptGUIElementStateStyle::FromInterop(*value);
-		thisPtr->GetInternal()->hoverOn = tmpvalue;
+		thisPtr->GetInternal()->HoverOn = tmpvalue;
 	}
 
 	void ScriptGUIElementStyle::InternalGetactiveOn(ScriptGUIElementStyle* thisPtr, __GUIElementStateStyleInterop* __output)
 	{
 		GUIElementStateStyle tmp__output;
-		tmp__output = thisPtr->GetInternal()->activeOn;
+		tmp__output = thisPtr->GetInternal()->ActiveOn;
 
 		__GUIElementStateStyleInterop interop__output;
 		interop__output = ScriptGUIElementStateStyle::ToInterop(tmp__output);
-		MonoUtil::ValueCopy(__output, &interop__output, ScriptGUIElementStateStyle::GetMetaData()->scriptClass->GetInternalClassInternal());
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptGUIElementStateStyle::GetMetaData()->ScriptClass->GetInternalClassInternal());
 
 
 	}
@@ -360,17 +360,17 @@ namespace bs
 	{
 		GUIElementStateStyle tmpvalue;
 		tmpvalue = ScriptGUIElementStateStyle::FromInterop(*value);
-		thisPtr->GetInternal()->activeOn = tmpvalue;
+		thisPtr->GetInternal()->ActiveOn = tmpvalue;
 	}
 
 	void ScriptGUIElementStyle::InternalGetfocusedOn(ScriptGUIElementStyle* thisPtr, __GUIElementStateStyleInterop* __output)
 	{
 		GUIElementStateStyle tmp__output;
-		tmp__output = thisPtr->GetInternal()->focusedOn;
+		tmp__output = thisPtr->GetInternal()->FocusedOn;
 
 		__GUIElementStateStyleInterop interop__output;
 		interop__output = ScriptGUIElementStateStyle::ToInterop(tmp__output);
-		MonoUtil::ValueCopy(__output, &interop__output, ScriptGUIElementStateStyle::GetMetaData()->scriptClass->GetInternalClassInternal());
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptGUIElementStateStyle::GetMetaData()->ScriptClass->GetInternalClassInternal());
 
 
 	}
@@ -379,17 +379,17 @@ namespace bs
 	{
 		GUIElementStateStyle tmpvalue;
 		tmpvalue = ScriptGUIElementStateStyle::FromInterop(*value);
-		thisPtr->GetInternal()->focusedOn = tmpvalue;
+		thisPtr->GetInternal()->FocusedOn = tmpvalue;
 	}
 
 	void ScriptGUIElementStyle::InternalGetfocusedHoverOn(ScriptGUIElementStyle* thisPtr, __GUIElementStateStyleInterop* __output)
 	{
 		GUIElementStateStyle tmp__output;
-		tmp__output = thisPtr->GetInternal()->focusedHoverOn;
+		tmp__output = thisPtr->GetInternal()->FocusedHoverOn;
 
 		__GUIElementStateStyleInterop interop__output;
 		interop__output = ScriptGUIElementStateStyle::ToInterop(tmp__output);
-		MonoUtil::ValueCopy(__output, &interop__output, ScriptGUIElementStateStyle::GetMetaData()->scriptClass->GetInternalClassInternal());
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptGUIElementStateStyle::GetMetaData()->ScriptClass->GetInternalClassInternal());
 
 
 	}
@@ -398,13 +398,13 @@ namespace bs
 	{
 		GUIElementStateStyle tmpvalue;
 		tmpvalue = ScriptGUIElementStateStyle::FromInterop(*value);
-		thisPtr->GetInternal()->focusedHoverOn = tmpvalue;
+		thisPtr->GetInternal()->FocusedHoverOn = tmpvalue;
 	}
 
 	void ScriptGUIElementStyle::InternalGetborder(ScriptGUIElementStyle* thisPtr, RectOffset* __output)
 	{
 		RectOffset tmp__output;
-		tmp__output = thisPtr->GetInternal()->border;
+		tmp__output = thisPtr->GetInternal()->Border;
 
 		*__output = tmp__output;
 
@@ -413,13 +413,13 @@ namespace bs
 
 	void ScriptGUIElementStyle::InternalSetborder(ScriptGUIElementStyle* thisPtr, RectOffset* value)
 	{
-		thisPtr->GetInternal()->border = *value;
+		thisPtr->GetInternal()->Border = *value;
 	}
 
 	void ScriptGUIElementStyle::InternalGetmargins(ScriptGUIElementStyle* thisPtr, RectOffset* __output)
 	{
 		RectOffset tmp__output;
-		tmp__output = thisPtr->GetInternal()->margins;
+		tmp__output = thisPtr->GetInternal()->Margins;
 
 		*__output = tmp__output;
 
@@ -428,13 +428,13 @@ namespace bs
 
 	void ScriptGUIElementStyle::InternalSetmargins(ScriptGUIElementStyle* thisPtr, RectOffset* value)
 	{
-		thisPtr->GetInternal()->margins = *value;
+		thisPtr->GetInternal()->Margins = *value;
 	}
 
 	void ScriptGUIElementStyle::InternalGetcontentOffset(ScriptGUIElementStyle* thisPtr, RectOffset* __output)
 	{
 		RectOffset tmp__output;
-		tmp__output = thisPtr->GetInternal()->contentOffset;
+		tmp__output = thisPtr->GetInternal()->ContentOffset;
 
 		*__output = tmp__output;
 
@@ -443,13 +443,13 @@ namespace bs
 
 	void ScriptGUIElementStyle::InternalSetcontentOffset(ScriptGUIElementStyle* thisPtr, RectOffset* value)
 	{
-		thisPtr->GetInternal()->contentOffset = *value;
+		thisPtr->GetInternal()->ContentOffset = *value;
 	}
 
 	void ScriptGUIElementStyle::InternalGetpadding(ScriptGUIElementStyle* thisPtr, RectOffset* __output)
 	{
 		RectOffset tmp__output;
-		tmp__output = thisPtr->GetInternal()->padding;
+		tmp__output = thisPtr->GetInternal()->Padding;
 
 		*__output = tmp__output;
 
@@ -458,13 +458,13 @@ namespace bs
 
 	void ScriptGUIElementStyle::InternalSetpadding(ScriptGUIElementStyle* thisPtr, RectOffset* value)
 	{
-		thisPtr->GetInternal()->padding = *value;
+		thisPtr->GetInternal()->Padding = *value;
 	}
 
 	uint32_t ScriptGUIElementStyle::InternalGetwidth(ScriptGUIElementStyle* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->GetInternal()->width;
+		tmp__output = thisPtr->GetInternal()->Width;
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -474,13 +474,13 @@ namespace bs
 
 	void ScriptGUIElementStyle::InternalSetwidth(ScriptGUIElementStyle* thisPtr, uint32_t value)
 	{
-		thisPtr->GetInternal()->width = value;
+		thisPtr->GetInternal()->Width = value;
 	}
 
 	uint32_t ScriptGUIElementStyle::InternalGetheight(ScriptGUIElementStyle* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->GetInternal()->height;
+		tmp__output = thisPtr->GetInternal()->Height;
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -490,13 +490,13 @@ namespace bs
 
 	void ScriptGUIElementStyle::InternalSetheight(ScriptGUIElementStyle* thisPtr, uint32_t value)
 	{
-		thisPtr->GetInternal()->height = value;
+		thisPtr->GetInternal()->Height = value;
 	}
 
 	uint32_t ScriptGUIElementStyle::InternalGetminWidth(ScriptGUIElementStyle* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->GetInternal()->minWidth;
+		tmp__output = thisPtr->GetInternal()->MinWidth;
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -506,13 +506,13 @@ namespace bs
 
 	void ScriptGUIElementStyle::InternalSetminWidth(ScriptGUIElementStyle* thisPtr, uint32_t value)
 	{
-		thisPtr->GetInternal()->minWidth = value;
+		thisPtr->GetInternal()->MinWidth = value;
 	}
 
 	uint32_t ScriptGUIElementStyle::InternalGetmaxWidth(ScriptGUIElementStyle* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->GetInternal()->maxWidth;
+		tmp__output = thisPtr->GetInternal()->MaxWidth;
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -522,13 +522,13 @@ namespace bs
 
 	void ScriptGUIElementStyle::InternalSetmaxWidth(ScriptGUIElementStyle* thisPtr, uint32_t value)
 	{
-		thisPtr->GetInternal()->maxWidth = value;
+		thisPtr->GetInternal()->MaxWidth = value;
 	}
 
 	uint32_t ScriptGUIElementStyle::InternalGetminHeight(ScriptGUIElementStyle* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->GetInternal()->minHeight;
+		tmp__output = thisPtr->GetInternal()->MinHeight;
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -538,13 +538,13 @@ namespace bs
 
 	void ScriptGUIElementStyle::InternalSetminHeight(ScriptGUIElementStyle* thisPtr, uint32_t value)
 	{
-		thisPtr->GetInternal()->minHeight = value;
+		thisPtr->GetInternal()->MinHeight = value;
 	}
 
 	uint32_t ScriptGUIElementStyle::InternalGetmaxHeight(ScriptGUIElementStyle* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->GetInternal()->maxHeight;
+		tmp__output = thisPtr->GetInternal()->MaxHeight;
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -554,13 +554,13 @@ namespace bs
 
 	void ScriptGUIElementStyle::InternalSetmaxHeight(ScriptGUIElementStyle* thisPtr, uint32_t value)
 	{
-		thisPtr->GetInternal()->maxHeight = value;
+		thisPtr->GetInternal()->MaxHeight = value;
 	}
 
 	bool ScriptGUIElementStyle::InternalGetfixedWidth(ScriptGUIElementStyle* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->GetInternal()->fixedWidth;
+		tmp__output = thisPtr->GetInternal()->FixedWidth;
 
 		bool __output;
 		__output = tmp__output;
@@ -570,13 +570,13 @@ namespace bs
 
 	void ScriptGUIElementStyle::InternalSetfixedWidth(ScriptGUIElementStyle* thisPtr, bool value)
 	{
-		thisPtr->GetInternal()->fixedWidth = value;
+		thisPtr->GetInternal()->FixedWidth = value;
 	}
 
 	bool ScriptGUIElementStyle::InternalGetfixedHeight(ScriptGUIElementStyle* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->GetInternal()->fixedHeight;
+		tmp__output = thisPtr->GetInternal()->FixedHeight;
 
 		bool __output;
 		__output = tmp__output;
@@ -586,6 +586,6 @@ namespace bs
 
 	void ScriptGUIElementStyle::InternalSetfixedHeight(ScriptGUIElementStyle* thisPtr, bool value)
 	{
-		thisPtr->GetInternal()->fixedHeight = value;
+		thisPtr->GetInternal()->FixedHeight = value;
 	}
 }

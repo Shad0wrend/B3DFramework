@@ -75,12 +75,12 @@ namespace bs
 		static void RegisterScriptType(ScriptMeta* metaData, const ScriptMeta& localMetaData);
 
 		/** Triggered when the assembly domain and all relevant assemblies are about to be unloaded. */
-		Event<void()> onDomainUnload;
+		Event<void()> OnDomainUnload;
 	private:
 		struct ScriptMetaInfo
 		{
-			ScriptMeta* metaData;
-			ScriptMeta localMetaData;
+			ScriptMeta* MetaData;
+			ScriptMeta LocalMetaData;
 		};
 
 		/**

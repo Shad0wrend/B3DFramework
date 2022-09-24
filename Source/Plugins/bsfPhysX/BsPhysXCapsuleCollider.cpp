@@ -58,8 +58,8 @@ namespace bs
 
 	void PhysXCapsuleCollider::ApplyGeometry()
 	{
-		PxCapsuleGeometry geometry(std::max(0.01f, mRadius * std::max(mScale.x, mScale.z)),
-			std::max(0.01f, mHalfHeight * mScale.y));
+		PxCapsuleGeometry geometry(std::max(0.01f, mRadius * std::max(mScale.X, mScale.Z)),
+			std::max(0.01f, mHalfHeight * mScale.Y));
 
 		GetInternal()->GetShapeInternal()->setGeometry(geometry);
 	}

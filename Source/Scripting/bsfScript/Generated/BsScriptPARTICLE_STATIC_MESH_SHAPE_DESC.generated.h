@@ -11,9 +11,9 @@ namespace bs
 {
 	struct __PARTICLE_STATIC_MESH_SHAPE_DESCInterop
 	{
-		ParticleEmitterMeshType type;
-		bool sequential;
-		MonoObject* mesh;
+		ParticleEmitterMeshType Type;
+		bool Sequential;
+		MonoObject* Mesh;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptPARTICLE_STATIC_MESH_SHAPE_DESC : public ScriptObject<ScriptPARTICLE_STATIC_MESH_SHAPE_DESC>

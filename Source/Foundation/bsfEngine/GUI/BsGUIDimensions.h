@@ -14,9 +14,9 @@ namespace bs
 	/**	Contains valid size range for a GUI element in a GUI layout. */
 	struct BS_EXPORT LayoutSizeRange
 	{
-		Vector2I optimal;
-		Vector2I min;
-		Vector2I max;
+		Vector2I Optimal;
+		Vector2I Min;
+		Vector2I Max;
 	};
 
 	/**	Flags that identify the type of data stored in a GUIDimensions structure. */
@@ -53,25 +53,25 @@ namespace bs
 		LayoutSizeRange CalculateSizeRange(const Vector2I& optimal) const;
 
 		/**	Checks do the dimensions override the style height. */
-		bool OverridenHeight() const { return (flags & GUIDF_OverHeight) != 0; }
+		bool OverridenHeight() const { return (Flags & GUIDF_OverHeight) != 0; }
 
 		/**	Checks do the dimensions override the style width. */
-		bool OverridenWidth() const { return (flags & GUIDF_OverWidth) != 0; }
+		bool OverridenWidth() const { return (Flags & GUIDF_OverWidth) != 0; }
 
 		/**	Checks do the dimensions contain fixed width. */
-		bool FixedWidth() const { return (flags & GUIDF_FixedWidth) != 0; }
+		bool FixedWidth() const { return (Flags & GUIDF_FixedWidth) != 0; }
 
 		/**	Checks do the dimensions contain fixed height. */
-		bool FixedHeight() const { return (flags & GUIDF_FixedHeight) != 0; }
+		bool FixedHeight() const { return (Flags & GUIDF_FixedHeight) != 0; }
 
-		INT32 x = 0;
-		INT32 y = 0;
+		INT32 X = 0;
+		INT32 Y = 0;
 
-		UINT32 minWidth = 0;
-		UINT32 maxWidth = 0;
-		UINT32 minHeight = 0;
-		UINT32 maxHeight = 0;
-		UINT32 flags = 0;
+		UINT32 MinWidth = 0;
+		UINT32 MaxWidth = 0;
+		UINT32 MinHeight = 0;
+		UINT32 MaxHeight = 0;
+		UINT32 Flags = 0;
 	};
 
 	/** @} */

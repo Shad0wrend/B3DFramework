@@ -14,8 +14,8 @@ namespace bs { namespace ct
 {
 	struct ClearVertex
 	{
-		Vector3 pos;
-		UINT32 col;
+		Vector3 Pos;
+		UINT32 Col;
 	};
 
 	D3D11RenderUtility::D3D11RenderUtility(D3D11Device* device)
@@ -80,15 +80,15 @@ namespace bs { namespace ct
 
 		// TODO - How smart it is to update buffer right before drawing it!? (cache the clip area)
 		ClearVertex vertexData[4];
-		vertexData[0].pos = Vector3(-1.0f, 1.0f, depth);
-		vertexData[1].pos = Vector3(1.0f, 1.0f, depth);
-		vertexData[2].pos = Vector3(-1.0f, -1.0f, depth);
-		vertexData[3].pos = Vector3(1.0f, -1.0f, depth);
+		vertexData[0].Pos = Vector3(-1.0f, 1.0f, depth);
+		vertexData[1].Pos = Vector3(1.0f, 1.0f, depth);
+		vertexData[2].Pos = Vector3(-1.0f, -1.0f, depth);
+		vertexData[3].Pos = Vector3(1.0f, -1.0f, depth);
 
-		vertexData[0].col = color.GetAsRgba();
-		vertexData[1].col = color.GetAsRgba();
-		vertexData[2].col = color.GetAsRgba();
-		vertexData[3].col = color.GetAsRgba();
+		vertexData[0].Col = color.GetAsRgba();
+		vertexData[1].Col = color.GetAsRgba();
+		vertexData[2].Col = color.GetAsRgba();
+		vertexData[3].Col = color.GetAsRgba();
 
 		mDevice->GetImmediateContext()->UpdateSubresource(mClearQuadVB, 0, nullptr, vertexData, 0, sizeof(ClearVertex) * 4);
 
@@ -116,37 +116,37 @@ namespace bs { namespace ct
 
 		BLEND_STATE_DESC blendStateDescNoC;
 		for(int i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
-			blendStateDescNoC.renderTargetDesc[i].renderTargetWriteMask = 0;
+			blendStateDescNoC.RenderTargetDesc[i].RenderTargetWriteMask = 0;
 
 		mClearQuadBlendStateNoC = RenderStateManager::Instance().CreateBlendState(blendStateDescNoC);
 
 		DEPTH_STENCIL_STATE_DESC depthStateDescNoD_NoS;
-		depthStateDescNoD_NoS.depthReadEnable = false;
-		depthStateDescNoD_NoS.depthWriteEnable = false;
-		depthStateDescNoD_NoS.depthComparisonFunc = CMPF_ALWAYS_PASS;
+		depthStateDescNoD_NoS.DepthReadEnable = false;
+		depthStateDescNoD_NoS.DepthWriteEnable = false;
+		depthStateDescNoD_NoS.DepthComparisonFunc = CMPF_ALWAYS_PASS;
 		mClearQuadDSStateNoD_NoS = RenderStateManager::Instance().CreateDepthStencilState(depthStateDescNoD_NoS);
 
 		DEPTH_STENCIL_STATE_DESC depthStateDescYesD_NoS;
-		depthStateDescYesD_NoS.depthReadEnable = false;
-		depthStateDescYesD_NoS.depthWriteEnable = true;
-		depthStateDescYesD_NoS.depthComparisonFunc = CMPF_ALWAYS_PASS;
+		depthStateDescYesD_NoS.DepthReadEnable = false;
+		depthStateDescYesD_NoS.DepthWriteEnable = true;
+		depthStateDescYesD_NoS.DepthComparisonFunc = CMPF_ALWAYS_PASS;
 		mClearQuadDSStateYesD_NoS = RenderStateManager::Instance().CreateDepthStencilState(depthStateDescYesD_NoS);
 
 		DEPTH_STENCIL_STATE_DESC depthStateDescYesD_YesS;
-		depthStateDescYesD_YesS.depthReadEnable = false;
-		depthStateDescYesD_YesS.depthWriteEnable = true;
-		depthStateDescYesD_YesS.depthComparisonFunc = CMPF_ALWAYS_PASS;
-		depthStateDescYesD_YesS.stencilEnable = true;
-		depthStateDescYesD_YesS.frontStencilComparisonFunc = CMPF_ALWAYS_PASS;
-		depthStateDescYesD_YesS.frontStencilPassOp = SOP_REPLACE;
+		depthStateDescYesD_YesS.DepthReadEnable = false;
+		depthStateDescYesD_YesS.DepthWriteEnable = true;
+		depthStateDescYesD_YesS.DepthComparisonFunc = CMPF_ALWAYS_PASS;
+		depthStateDescYesD_YesS.StencilEnable = true;
+		depthStateDescYesD_YesS.FrontStencilComparisonFunc = CMPF_ALWAYS_PASS;
+		depthStateDescYesD_YesS.FrontStencilPassOp = SOP_REPLACE;
 		mClearQuadDSStateYesD_YesS = RenderStateManager::Instance().CreateDepthStencilState(depthStateDescYesD_YesS);
 
 		DEPTH_STENCIL_STATE_DESC depthStateDescNoD_YesS;
-		depthStateDescNoD_YesS.depthReadEnable = false;
-		depthStateDescNoD_YesS.depthWriteEnable = false;
-		depthStateDescNoD_YesS.depthComparisonFunc = CMPF_ALWAYS_PASS;
-		depthStateDescNoD_YesS.stencilEnable = true;
-		depthStateDescNoD_YesS.frontStencilComparisonFunc = CMPF_ALWAYS_PASS;
+		depthStateDescNoD_YesS.DepthReadEnable = false;
+		depthStateDescNoD_YesS.DepthWriteEnable = false;
+		depthStateDescNoD_YesS.DepthComparisonFunc = CMPF_ALWAYS_PASS;
+		depthStateDescNoD_YesS.StencilEnable = true;
+		depthStateDescNoD_YesS.FrontStencilComparisonFunc = CMPF_ALWAYS_PASS;
 		mClearQuadDSStateNoD_YesS = RenderStateManager::Instance().CreateDepthStencilState(depthStateDescNoD_YesS);
 
 		RASTERIZER_STATE_DESC rasterizerStateDesc;
@@ -261,15 +261,15 @@ namespace bs { namespace ct
 		mVBDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
 		ClearVertex vertexData[4];
-		vertexData[0].pos = Vector3(0, 0, 0);
-		vertexData[1].pos = Vector3(0, 0, 0);
-		vertexData[2].pos = Vector3(0, 0, 0);
-		vertexData[3].pos = Vector3(0, 0, 0);
+		vertexData[0].Pos = Vector3(0, 0, 0);
+		vertexData[1].Pos = Vector3(0, 0, 0);
+		vertexData[2].Pos = Vector3(0, 0, 0);
+		vertexData[3].Pos = Vector3(0, 0, 0);
 
-		vertexData[0].col = Color::White.GetAsBgra();
-		vertexData[1].col = Color::White.GetAsBgra();
-		vertexData[2].col = Color::White.GetAsBgra();
-		vertexData[3].col = Color::White.GetAsBgra();
+		vertexData[0].Col = Color::White.GetAsBgra();
+		vertexData[1].Col = Color::White.GetAsBgra();
+		vertexData[2].Col = Color::White.GetAsBgra();
+		vertexData[3].Col = Color::White.GetAsBgra();
 
 		D3D11_SUBRESOURCE_DATA vertexSubresourceData;
 		vertexSubresourceData.pSysMem = vertexData;

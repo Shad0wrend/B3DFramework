@@ -53,79 +53,79 @@ namespace bs
 		switch (GetType())
 		{
 		case DropDownAreaPlacement::Type::Position:
-			potentialLeftStart = potentialRightStart = GetPosition().x;
-			potentialTopStart = potentialBottomStart = GetPosition().y;
+			potentialLeftStart = potentialRightStart = GetPosition().X;
+			potentialTopStart = potentialBottomStart = GetPosition().Y;
 			break;
 		case DropDownAreaPlacement::Type::BoundsHorz:
-			potentialRightStart = GetBounds().x;
-			potentialLeftStart = GetBounds().x + GetBounds().width;
-			potentialBottomStart = GetBounds().y + GetBounds().height;
-			potentialTopStart = GetBounds().y;
+			potentialRightStart = GetBounds().X;
+			potentialLeftStart = GetBounds().X + GetBounds().Width;
+			potentialBottomStart = GetBounds().Y + GetBounds().Height;
+			potentialTopStart = GetBounds().Y;
 			break;
 		case DropDownAreaPlacement::Type::BoundsVert:
-			potentialRightStart = GetBounds().x + GetBounds().width;
-			potentialLeftStart = GetBounds().x;
-			potentialBottomStart = GetBounds().y;
-			potentialTopStart = GetBounds().y + GetBounds().height;
+			potentialRightStart = GetBounds().X + GetBounds().Width;
+			potentialLeftStart = GetBounds().X;
+			potentialBottomStart = GetBounds().Y;
+			potentialTopStart = GetBounds().Y + GetBounds().Height;
 			break;
 		case DropDownAreaPlacement::Type::BoundsAll:
-			potentialRightStart = GetBounds().x + GetBounds().width;
-			potentialLeftStart = GetBounds().x;
-			potentialBottomStart = GetBounds().y + GetBounds().height;
-			potentialTopStart = GetBounds().y;
+			potentialRightStart = GetBounds().X + GetBounds().Width;
+			potentialLeftStart = GetBounds().X;
+			potentialBottomStart = GetBounds().Y + GetBounds().Height;
+			potentialTopStart = GetBounds().Y;
 			break;
 		}
 
 		// Determine x position and whether to align to left or right side of the drop down list
-		UINT32 availableRightwardWidth = (UINT32)std::max(0, (availableArea.x + (INT32)availableArea.width) - potentialRightStart);
-		UINT32 availableLeftwardWidth = (UINT32)std::max(0, potentialLeftStart - availableArea.x);
+		UINT32 availableRightwardWidth = (UINT32)std::max(0, (availableArea.X + (INT32)availableArea.Width) - potentialRightStart);
+		UINT32 availableLeftwardWidth = (UINT32)std::max(0, potentialLeftStart - availableArea.X);
 
 		//// Prefer right if possible
 		if (width <= availableRightwardWidth)
 		{
-			output.x = potentialRightStart;
-			output.width = width;
+			output.X = potentialRightStart;
+			output.Width = width;
 			horzDir = HorzDir::Right;
 		}
 		else
 		{
 			if (availableRightwardWidth >= availableLeftwardWidth)
 			{
-				output.x = potentialRightStart;
-				output.width = std::min(width, availableRightwardWidth);
+				output.X = potentialRightStart;
+				output.Width = std::min(width, availableRightwardWidth);
 				horzDir = HorzDir::Right;
 			}
 			else
 			{
-				output.x = potentialLeftStart - std::min(width, availableLeftwardWidth);
-				output.width = std::min(width, availableLeftwardWidth);
+				output.X = potentialLeftStart - std::min(width, availableLeftwardWidth);
+				output.Width = std::min(width, availableLeftwardWidth);
 				horzDir = HorzDir::Left;
 			}
 		}
 
 		// Determine y position and whether to open upward or downward
-		UINT32 availableDownwardHeight = (UINT32)std::max(0, (availableArea.y + (INT32)availableArea.height) - potentialBottomStart);
-		UINT32 availableUpwardHeight = (UINT32)std::max(0, potentialTopStart - availableArea.y);
+		UINT32 availableDownwardHeight = (UINT32)std::max(0, (availableArea.Y + (INT32)availableArea.Height) - potentialBottomStart);
+		UINT32 availableUpwardHeight = (UINT32)std::max(0, potentialTopStart - availableArea.Y);
 
 		//// Prefer down if possible
 		if (height <= availableDownwardHeight)
 		{
-			output.y = potentialBottomStart;
-			output.height = height;
+			output.Y = potentialBottomStart;
+			output.Height = height;
 			vertDir = VertDir::Down;
 		}
 		else
 		{
 			if (availableDownwardHeight >= availableUpwardHeight)
 			{
-				output.y = potentialBottomStart;
-				output.height = std::min(height, availableDownwardHeight);;
+				output.Y = potentialBottomStart;
+				output.Height = std::min(height, availableDownwardHeight);;
 				vertDir = VertDir::Down;
 			}
 			else
 			{
-				output.y = potentialTopStart - (INT32)std::min(height, availableUpwardHeight);
-				output.height = std::min(height, availableUpwardHeight);
+				output.Y = potentialTopStart - (INT32)std::min(height, availableUpwardHeight);
+				output.Height = std::min(height, availableUpwardHeight);
 				vertDir = VertDir::Up;
 			}
 		}

@@ -13,54 +13,54 @@ namespace bs
 	/** Describes a single GPU program data (for example int, float, Vector2) parameter. */
 	struct GpuParamDataDesc
 	{
-		String name;
-		UINT32 elementSize; /**< In multiples of 4 bytes. */
-		UINT32 arraySize;
-		UINT32 arrayElementStride; /**< In multiples of 4 bytes. */
-		GpuParamDataType type;
+		String Name;
+		UINT32 ElementSize; /**< In multiples of 4 bytes. */
+		UINT32 ArraySize;
+		UINT32 ArrayElementStride; /**< In multiples of 4 bytes. */
+		GpuParamDataType Type;
 
-		UINT32 paramBlockSlot;
-		UINT32 paramBlockSet;
-		UINT32 gpuMemOffset; /**< In multiples of 4 bytes, or index for parameters not in a buffer. */
-		UINT32 cpuMemOffset; /**< In multiples of 4 bytes. */
+		UINT32 ParamBlockSlot;
+		UINT32 ParamBlockSet;
+		UINT32 GpuMemOffset; /**< In multiples of 4 bytes, or index for parameters not in a buffer. */
+		UINT32 CpuMemOffset; /**< In multiples of 4 bytes. */
 	};
 
 	/**	Describes a single GPU program object (for example texture, sampler state) parameter. */
 	struct GpuParamObjectDesc
 	{
-		String name;
-		GpuParamObjectType type;
+		String Name;
+		GpuParamObjectType Type;
 
 		/** Slot within a set. Uniquely identifies bind location in the GPU pipeline, together with the set. */
-		UINT32 slot;
+		UINT32 Slot;
 
 		/** Uniquely identifies the bind location in the GPU pipeline, together with the slot. */
-		UINT32 set;
+		UINT32 Set;
 
 		/** Underlying type of individual elements in the buffer or texture. */
-		GpuBufferFormat elementType = BF_UNKNOWN;
+		GpuBufferFormat ElementType = BF_UNKNOWN;
 	};
 
 	/**	Describes a GPU program parameter block (collection of GPU program data parameters). */
 	struct GpuParamBlockDesc
 	{
-		String name;
-		UINT32 slot; /** Slot within a set. Uniquely identifies bind location in the GPU pipeline, together with the set. */
-		UINT32 set; /** Uniquely identifies the bind location in the GPU pipeline, together with the slot. */
-		UINT32 blockSize; /**< In multiples of 4 bytes. */
-		bool isShareable; /** True for blocks that can be shared between different GPU pipeline stages. */
+		String Name;
+		UINT32 Slot; /** Slot within a set. Uniquely identifies bind location in the GPU pipeline, together with the set. */
+		UINT32 Set; /** Uniquely identifies the bind location in the GPU pipeline, together with the slot. */
+		UINT32 BlockSize; /**< In multiples of 4 bytes. */
+		bool IsShareable; /** True for blocks that can be shared between different GPU pipeline stages. */
 	};
 
 	/** Contains all parameter information for a GPU program, including data and object parameters, plus parameter blocks. */
 	struct BS_CORE_EXPORT GpuParamDesc : IReflectable
 	{
-		Map<String, GpuParamBlockDesc> paramBlocks;
-		Map<String, GpuParamDataDesc> params;
+		Map<String, GpuParamBlockDesc> ParamBlocks;
+		Map<String, GpuParamDataDesc> Params;
 
-		Map<String, GpuParamObjectDesc> samplers;
-		Map<String, GpuParamObjectDesc> textures;
-		Map<String, GpuParamObjectDesc> loadStoreTextures;
-		Map<String, GpuParamObjectDesc> buffers;
+		Map<String, GpuParamObjectDesc> Samplers;
+		Map<String, GpuParamObjectDesc> Textures;
+		Map<String, GpuParamObjectDesc> LoadStoreTextures;
+		Map<String, GpuParamObjectDesc> Buffers;
 
 		/************************************************************************/
 		/* 								SERIALIZATION                      		*/

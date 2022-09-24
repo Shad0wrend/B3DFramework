@@ -115,8 +115,8 @@ namespace bs
 
 		if(triggerEvent)
 		{
-			if (!onToggled.Empty())
-				onToggled(mIsToggled);
+			if (!OnToggled.Empty())
+				OnToggled(mIsToggled);
 		}
 
 		if(mToggleGroup != nullptr)
@@ -161,8 +161,8 @@ namespace bs
 
 			if(triggerEvent)
 			{
-				if (!onToggled.Empty())
-					onToggled(mIsToggled);
+				if (!OnToggled.Empty())
+					OnToggled(mIsToggled);
 			}
 
 			SetOnInternal(false);

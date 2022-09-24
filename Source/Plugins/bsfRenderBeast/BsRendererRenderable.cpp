@@ -24,33 +24,33 @@ namespace bs { namespace ct
 
 	void RenderableElement::Draw() const
 	{
-		if (morphVertexDeclaration == nullptr)
-			gRendererUtility().Draw(mesh, subMesh);
+		if (MorphVertexDeclaration == nullptr)
+			gRendererUtility().Draw(Mesh, SubMesh);
 		else
-			gRendererUtility().DrawMorph(mesh, subMesh, morphShapeBuffer, morphVertexDeclaration);
+			gRendererUtility().DrawMorph(Mesh, SubMesh, MorphShapeBuffer, MorphVertexDeclaration);
 	}
 
 	RendererRenderable::RendererRenderable()
 	{
-		perObjectParamBuffer = gPerObjectParamDef.CreateBuffer();
-		perCallParamBuffer = gPerCallParamDef.CreateBuffer();
+		PerObjectParamBuffer = gPerObjectParamDef.CreateBuffer();
+		PerCallParamBuffer = gPerCallParamDef.CreateBuffer();
 	}
 
 	void RendererRenderable::UpdatePerObjectBuffer()
 	{
-		const Matrix4 worldNoScaleTransform = renderable->GetMatrixNoScale();
-		const UINT32 layer = Bitwise::MostSignificantBit(renderable->GetLayer());
+		const Matrix4 worldNoScaleTransform = Renderable->GetMatrixNoScale();
+		const UINT32 layer = Bitwise::MostSignificantBit(Renderable->GetLayer());
 
-		PerObjectBuffer::Update(perObjectParamBuffer, worldTfrm, worldNoScaleTransform, prevWorldTfrm, layer);
+		PerObjectBuffer::Update(PerObjectParamBuffer, WorldTfrm, worldNoScaleTransform, PrevWorldTfrm, layer);
 	}
 
 	void RendererRenderable::UpdatePerCallBuffer(const Matrix4& viewProj, bool flush)
 	{
-		const Matrix4 worldViewProjMatrix = viewProj * renderable->GetMatrix();
+		const Matrix4 worldViewProjMatrix = viewProj * Renderable->GetMatrix();
 
-		gPerCallParamDef.gMatWorldViewProj.Set(perCallParamBuffer, worldViewProjMatrix);
+		gPerCallParamDef.gMatWorldViewProj.Set(PerCallParamBuffer, worldViewProjMatrix);
 
 		if(flush)
-			perCallParamBuffer->FlushToGpu();
+			PerCallParamBuffer->FlushToGpu();
 	}
 }}

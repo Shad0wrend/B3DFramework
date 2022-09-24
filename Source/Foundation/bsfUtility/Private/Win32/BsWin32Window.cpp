@@ -11,32 +11,32 @@ namespace bs
 
 	struct Win32Window::Pimpl
 	{
-		HWND hWnd = nullptr;
-		INT32 left = 0;
-		INT32 top = 0;
-		UINT32 width = 0;
-		UINT32 height = 0;
-		bool isExternal = false;
-		bool isModal = false;
-		bool isHidden = false;
-		DWORD style = 0;
-		DWORD styleEx = 0;
+		HWND HWnd = nullptr;
+		INT32 Left = 0;
+		INT32 Top = 0;
+		UINT32 Width = 0;
+		UINT32 Height = 0;
+		bool IsExternal = false;
+		bool IsModal = false;
+		bool IsHidden = false;
+		DWORD Style = 0;
+		DWORD StyleEx = 0;
 	};
 
 	Win32Window::Win32Window(const WINDOW_DESC& desc)
 	{
 		m = bs_new<Pimpl>();
-		m->isModal = desc.modal;
-		m->isHidden = desc.hidden;
+		m->IsModal = desc.Modal;
+		m->IsHidden = desc.Hidden;
 		bool shouldFocus = true;
 
-		HMONITOR hMonitor = desc.monitor;
-		if (!desc.external)
+		HMONITOR hMonitor = desc.Monitor;
+		if (!desc.External)
 		{
-			m->style = WS_CLIPCHILDREN;
+			m->Style = WS_CLIPCHILDREN;
 
-			INT32 left = desc.left;
-			INT32 top = desc.top;
+			INT32 left = desc.Left;
+			INT32 top = desc.Top;
 
 			// If we didn't specified the adapter index, or if we didn't find it
 			if (hMonitor == nullptr)
@@ -57,8 +57,8 @@ namespace bs
 			monitorInfo.cbSize = sizeof(MONITORINFO);
 			GetMonitorInfo(hMonitor, &monitorInfo);
 
-			UINT32 width = desc.width;
-			UINT32 height = desc.height;
+			UINT32 width = desc.Width;
+			UINT32 height = desc.Height;
 
 			// No specified top left -> Center the window in the middle of the monitor
 			if (left == -1 || top == -1)
@@ -86,45 +86,45 @@ namespace bs
 				top += monitorInfo.rcWork.top;
 			}
 
-			if (!desc.fullscreen)
+			if (!desc.Fullscreen)
 			{
-				if (desc.parent)
+				if (desc.Parent)
 				{
-					if (desc.toolWindow)
-						m->styleEx = WS_EX_TOOLWINDOW;
+					if (desc.ToolWindow)
+						m->StyleEx = WS_EX_TOOLWINDOW;
 					else
-						m->style |= WS_CHILD;
+						m->Style |= WS_CHILD;
 				}
 				else
 				{
-					if (desc.toolWindow)
-						m->styleEx = WS_EX_TOOLWINDOW;
+					if (desc.ToolWindow)
+						m->StyleEx = WS_EX_TOOLWINDOW;
 				}
 
-				if (!desc.parent || desc.toolWindow)
+				if (!desc.Parent || desc.ToolWindow)
 				{
-					if(desc.showTitleBar)
+					if(desc.ShowTitleBar)
 					{
-						if(desc.showBorder || desc.allowResize)
-							m->style |= WS_OVERLAPPEDWINDOW;
+						if(desc.ShowBorder || desc.AllowResize)
+							m->Style |= WS_OVERLAPPEDWINDOW;
 						else
-							m->style |= WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
+							m->Style |= WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
 					}
 					else
 					{
-						if(desc.showBorder || desc.allowResize)
-							m->style |= WS_POPUP | WS_BORDER;
+						if(desc.ShowBorder || desc.AllowResize)
+							m->Style |= WS_POPUP | WS_BORDER;
 						else
-							m->style |= WS_POPUP;
+							m->Style |= WS_POPUP;
 					}
 				}
 
-				if (!desc.outerDimensions)
+				if (!desc.OuterDimensions)
 				{
 					// Calculate window dimensions required to get the requested client area
 					RECT rect;
 					SetRect(&rect, 0, 0, width, height);
-					AdjustWindowRect(&rect, m->style, false);
+					AdjustWindowRect(&rect, m->Style, false);
 					width = rect.right - rect.left;
 					height = rect.bottom - rect.top;
 
@@ -145,52 +145,52 @@ namespace bs
 						top = (screenh - height) / 2;
 				}
 
-				if (desc.backgroundPixels != nullptr)
-					m->styleEx |= WS_EX_LAYERED;
+				if (desc.BackgroundPixels != nullptr)
+					m->StyleEx |= WS_EX_LAYERED;
 			}
 			else
 			{
-				m->style |= WS_POPUP;
+				m->Style |= WS_POPUP;
 				top = 0;
 				left = 0;
 			}
 
 			UINT classStyle = 0;
-			if (desc.enableDoubleClick)
+			if (desc.EnableDoubleClick)
 				classStyle |= CS_DBLCLKS;
 
 			// Register the window class
-			WNDCLASS wc = { classStyle, desc.wndProc, 0, 0, desc.module,
+			WNDCLASS wc = { classStyle, desc.WndProc, 0, 0, desc.Module,
 				LoadIcon(nullptr, IDI_APPLICATION), LoadCursor(nullptr, IDC_ARROW),
 				(HBRUSH)GetStockObject(BLACK_BRUSH), 0, "Win32Wnd" };
 
 			RegisterClass(&wc);
 
 			// Create main window
-			m->hWnd = CreateWindowEx(m->styleEx, "Win32Wnd", desc.title.c_str(), m->style,
-				left, top, width, height, desc.parent, nullptr, desc.module, desc.creationParams);
-			m->isExternal = false;
+			m->HWnd = CreateWindowEx(m->StyleEx, "Win32Wnd", desc.Title.c_str(), m->Style,
+				left, top, width, height, desc.Parent, nullptr, desc.Module, desc.CreationParams);
+			m->IsExternal = false;
 		}
 		else
 		{
-			m->hWnd = desc.external;
-			m->isExternal = true;
+			m->HWnd = desc.External;
+			m->IsExternal = true;
 		}
 
 		RECT rect;
-		GetWindowRect(m->hWnd, &rect);
-		m->top = rect.top;
-		m->left = rect.left;
+		GetWindowRect(m->HWnd, &rect);
+		m->Top = rect.top;
+		m->Left = rect.left;
 
-		GetClientRect(m->hWnd, &rect);
-		m->width = rect.right;
-		m->height = rect.bottom;
+		GetClientRect(m->HWnd, &rect);
+		m->Width = rect.right;
+		m->Height = rect.bottom;
 
 		// Set background, if any
-		if (desc.backgroundPixels != nullptr)
+		if (desc.BackgroundPixels != nullptr)
 		{
 			HBITMAP backgroundBitmap = Win32PlatformUtility::CreateBitmap(
-				desc.backgroundPixels, desc.backgroundWidth, desc.backgroundHeight, true);
+				desc.BackgroundPixels, desc.BackgroundWidth, desc.BackgroundHeight, true);
 
 			HDC hdcScreen = GetDC(nullptr);
 			HDC hdcMem = CreateCompatibleDC(hdcScreen);
@@ -202,17 +202,17 @@ namespace bs
 			blend.AlphaFormat = AC_SRC_ALPHA;
 
 			POINT origin;
-			origin.x = m->left;
-			origin.y = m->top;
+			origin.x = m->Left;
+			origin.y = m->Top;
 
 			SIZE size;
-			size.cx = m->width;
-			size.cy = m->height;
+			size.cx = m->Width;
+			size.cy = m->Height;
 
 			POINT zero = { 0 };
 
-			UpdateLayeredWindow(m->hWnd, hdcScreen, &origin, &size,
-				hdcMem, &zero, RGB(0, 0, 0), &blend, desc.alphaBlending ? ULW_ALPHA : ULW_OPAQUE);
+			UpdateLayeredWindow(m->HWnd, hdcScreen, &origin, &size,
+				hdcMem, &zero, RGB(0, 0, 0), &blend, desc.AlphaBlending ? ULW_ALPHA : ULW_OPAQUE);
 
 			SelectObject(hdcMem, hOldBitmap);
 			DeleteDC(hdcMem);
@@ -228,17 +228,17 @@ namespace bs
 			{
 				Lock lock(sWindowsMutex);
 
-				if (m->isModal)
+				if (m->IsModal)
 				{
 					if (!sModalWindowStack.empty())
 					{
 						Win32Window* curModalWindow = sModalWindowStack.back();
-						windowsToDisable.push_back(curModalWindow->m->hWnd);
+						windowsToDisable.push_back(curModalWindow->m->HWnd);
 					}
 					else
 					{
 						for (auto& window : sAllWindows)
-							windowsToDisable.push_back(window->m->hWnd);
+							windowsToDisable.push_back(window->m->HWnd);
 					}
 
 					sModalWindowStack.push_back(this);
@@ -250,10 +250,10 @@ namespace bs
 					if (!sModalWindowStack.empty())
 					{
 						shouldFocus = false;
-						windowsToDisable.push_back(m->hWnd);
+						windowsToDisable.push_back(m->HWnd);
 
 						for (auto window : sModalWindowStack)
-							windowsToBringToFront.push_back(window->m->hWnd);
+							windowsToBringToFront.push_back(window->m->HWnd);
 					}
 				}
 
@@ -267,7 +267,7 @@ namespace bs
 				BringWindowToTop(entry);
 
 			if(shouldFocus)
-				SetFocus(m->hWnd);
+				SetFocus(m->HWnd);
 		}
 
 		bs_frame_clear();
@@ -275,7 +275,7 @@ namespace bs
 
 	Win32Window::~Win32Window()
 	{
-		if (m->hWnd && !m->isExternal)
+		if (m->HWnd && !m->IsExternal)
 		{
 			// Handle modal windows
 			bs_frame_mark();
@@ -305,7 +305,7 @@ namespace bs
 						if (!sModalWindowStack.empty()) // Enable next modal window
 						{
 							Win32Window* curModalWindow = sModalWindowStack.back();
-							windowsToEnable.push_back(curModalWindow->m->hWnd);
+							windowsToEnable.push_back(curModalWindow->m->HWnd);
 						}
 						else
 							reenableWindows = true; // No more modal windows, re-enable any remaining window
@@ -314,7 +314,7 @@ namespace bs
 					if (reenableWindows)
 					{
 						for (auto& window : sAllWindows)
-							windowsToEnable.push_back(window->m->hWnd);
+							windowsToEnable.push_back(window->m->HWnd);
 					}
 				}
 
@@ -323,7 +323,7 @@ namespace bs
 			}
 			bs_frame_clear();
 
-			DestroyWindow(m->hWnd);
+			DestroyWindow(m->HWnd);
 		}
 
 		{
@@ -338,163 +338,163 @@ namespace bs
 
 	void Win32Window::Move(INT32 left, INT32 top)
 	{
-		if (m->hWnd)
+		if (m->HWnd)
 		{
-			m->top = top;
-			m->left = left;
+			m->Top = top;
+			m->Left = left;
 
-			SetWindowPos(m->hWnd, HWND_TOP, left, top, m->width, m->height, SWP_NOSIZE);
+			SetWindowPos(m->HWnd, HWND_TOP, left, top, m->Width, m->Height, SWP_NOSIZE);
 		}
 	}
 
 	void Win32Window::Resize(UINT32 width, UINT32 height)
 	{
-		if (m->hWnd)
+		if (m->HWnd)
 		{
 			RECT rc = { 0, 0, (LONG)width, (LONG)height };
-			AdjustWindowRect(&rc, GetWindowLong(m->hWnd, GWL_STYLE), false);
+			AdjustWindowRect(&rc, GetWindowLong(m->HWnd, GWL_STYLE), false);
 			width = rc.right - rc.left;
 			height = rc.bottom - rc.top;
 
-			m->width = width;
-			m->height = height;
+			m->Width = width;
+			m->Height = height;
 
-			SetWindowPos(m->hWnd, HWND_TOP, m->left, m->top, width, height, SWP_NOMOVE);
+			SetWindowPos(m->HWnd, HWND_TOP, m->Left, m->Top, width, height, SWP_NOMOVE);
 		}
 	}
 
 	void Win32Window::SetActive(bool state)
 	{
-		if (m->hWnd)
+		if (m->HWnd)
 		{
 			if (state)
-				ShowWindow(m->hWnd, SW_RESTORE);
+				ShowWindow(m->HWnd, SW_RESTORE);
 			else
-				ShowWindow(m->hWnd, SW_SHOWMINNOACTIVE);
+				ShowWindow(m->HWnd, SW_SHOWMINNOACTIVE);
 		}
 	}
 
 	void Win32Window::SetHidden(bool hidden)
 	{
 		if (hidden)
-			ShowWindow(m->hWnd, SW_HIDE);
+			ShowWindow(m->HWnd, SW_HIDE);
 		else
-			ShowWindow(m->hWnd, SW_SHOW);
+			ShowWindow(m->HWnd, SW_SHOW);
 
-		m->isHidden = hidden;
+		m->IsHidden = hidden;
 	}
 
 	void Win32Window::Minimize()
 	{
-		if (m->hWnd)
-			ShowWindow(m->hWnd, SW_MINIMIZE);
+		if (m->HWnd)
+			ShowWindow(m->HWnd, SW_MINIMIZE);
 
-		if(m->isHidden)
-			ShowWindow(m->hWnd, SW_HIDE);
+		if(m->IsHidden)
+			ShowWindow(m->HWnd, SW_HIDE);
 	}
 
 	void Win32Window::Maximize()
 	{
-		if (m->hWnd)
-			ShowWindow(m->hWnd, SW_MAXIMIZE);
+		if (m->HWnd)
+			ShowWindow(m->HWnd, SW_MAXIMIZE);
 
-		if(m->isHidden)
+		if(m->IsHidden)
 		{
-			ShowWindow(m->hWnd, SW_HIDE);
+			ShowWindow(m->HWnd, SW_HIDE);
 
 			// Note: Doing a maximize followed by hide causes the window to lose focus, and the focus will fail to
 			// restore when user clicks on the window, requiring him to alt-tab to re-gain focus. So we force focus here.
 			// The other option is to delay maximizing until a hidden window is shown, but this requires us to manually
 			// calculate the window size and notify the parent render window so it can immediately update the swap chain.
-			SetFocus(m->hWnd);
+			SetFocus(m->HWnd);
 		}
 	}
 
 	void Win32Window::Restore()
 	{
-		if (m->hWnd)
-			ShowWindow(m->hWnd, SW_RESTORE);
+		if (m->HWnd)
+			ShowWindow(m->HWnd, SW_RESTORE);
 
-		if(m->isHidden)
+		if(m->IsHidden)
 		{
-			ShowWindow(m->hWnd, SW_HIDE);
+			ShowWindow(m->HWnd, SW_HIDE);
 
 			// Note: Doing a restore followed by hide causes the window to lose focus, and the focus will fail to
 			// restore when user clicks on the window, requiring him to alt-tab to re-gain focus. So we force focus here.
 			// The other option is to delay restoring until a hidden window is shown, but this requires us to manually
 			// calculate the window size and notify the parent render window so it can immediately update the swap chain.
-			SetFocus(m->hWnd);
+			SetFocus(m->HWnd);
 		}
 	}
 
 	void Win32Window::WindowMovedOrResizedInternal()
 	{
-		if (!m->hWnd || IsIconic(m->hWnd))
+		if (!m->HWnd || IsIconic(m->HWnd))
 			return;
 
 		RECT rc;
-		GetWindowRect(m->hWnd, &rc);
-		m->top = rc.top;
-		m->left = rc.left;
+		GetWindowRect(m->HWnd, &rc);
+		m->Top = rc.top;
+		m->Left = rc.left;
 
-		GetClientRect(m->hWnd, &rc);
-		m->width = rc.right - rc.left;
-		m->height = rc.bottom - rc.top;
+		GetClientRect(m->HWnd, &rc);
+		m->Width = rc.right - rc.left;
+		m->Height = rc.bottom - rc.top;
 	}
 
 	Vector2I Win32Window::ScreenToWindowPos(const Vector2I& screenPos) const
 	{
 		POINT pos;
-		pos.x = screenPos.x;
-		pos.y = screenPos.y;
+		pos.x = screenPos.X;
+		pos.y = screenPos.Y;
 
-		ScreenToClient(m->hWnd, &pos);
+		ScreenToClient(m->HWnd, &pos);
 		return Vector2I(pos.x, pos.y);
 	}
 
 	Vector2I Win32Window::WindowToScreenPos(const Vector2I& windowPos) const
 	{
 		POINT pos;
-		pos.x = windowPos.x;
-		pos.y = windowPos.y;
+		pos.x = windowPos.X;
+		pos.y = windowPos.Y;
 
-		ClientToScreen(m->hWnd, &pos);
+		ClientToScreen(m->HWnd, &pos);
 		return Vector2I(pos.x, pos.y);
 	}
 
 	INT32 Win32Window::GetLeft() const
 	{
-		return m->left;
+		return m->Left;
 	}
 
 	INT32 Win32Window::GetTop() const
 	{
-		return m->top;
+		return m->Top;
 	}
 
 	UINT32 Win32Window::GetWidth() const
 	{
-		return m->width;
+		return m->Width;
 	}
 
 	UINT32 Win32Window::GetHeight() const
 	{
-		return m->height;
+		return m->Height;
 	}
 
 	HWND Win32Window::GetHWnd() const
 	{
-		return m->hWnd;
+		return m->HWnd;
 	}
 
 	DWORD Win32Window::GetStyle() const
 	{
-		return m->style;
+		return m->Style;
 	}
 
 	DWORD Win32Window::GetStyleEx() const
 	{
-		return m->styleEx;
+		return m->StyleEx;
 	}
 
 	void Win32Window::EnableAllWindowsInternal()
@@ -504,7 +504,7 @@ namespace bs
 		{
 			Lock lock(sWindowsMutex);
 			for (auto& window : sAllWindows)
-				windowsToEnable.push_back(window->m->hWnd);
+				windowsToEnable.push_back(window->m->HWnd);
 		}
 
 		for (auto& entry : windowsToEnable)
@@ -522,12 +522,12 @@ namespace bs
 			if (!sModalWindowStack.empty())
 			{
 				Win32Window* curModalWindow = sModalWindowStack.back();
-				bringToFrontHwnd = curModalWindow->m->hWnd;
+				bringToFrontHwnd = curModalWindow->m->HWnd;
 
 				for (auto& window : sAllWindows)
 				{
 					if (window != curModalWindow)
-						windowsToDisable.push_back(window->m->hWnd);
+						windowsToDisable.push_back(window->m->HWnd);
 				}
 			}
 		}

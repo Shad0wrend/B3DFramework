@@ -181,9 +181,9 @@ namespace bs
 					continue;
 
 				PhysX::TriggerEvent event;
-				event.trigger = (Collider*)pair.triggerShape->userData;
-				event.other = (Collider*)pair.otherShape->userData;
-				event.type = type;
+				event.Trigger = (Collider*)pair.triggerShape->userData;
+				event.Other = (Collider*)pair.otherShape->userData;
+				event.Type = type;
 
 				gPhysX().ReportTriggerEventInternal(event);
 			}
@@ -217,7 +217,7 @@ namespace bs
 					continue;
 
 				PhysX::ContactEvent event;
-				event.type = type;
+				event.Type = type;
 
 				PxU32 contactCount = pair.contactCount;
 				const PxU8* stream = pair.contactStream;
@@ -241,24 +241,24 @@ namespace bs
 							iter.nextContact();
 
 							ContactPoint point;
-							point.position = fromPxVector(iter.getContactPoint());
-							point.separation = iter.getSeparation();
-							point.normal = fromPxVector(iter.getContactNormal());
+							point.Position = fromPxVector(iter.getContactPoint());
+							point.Separation = iter.getSeparation();
+							point.Normal = fromPxVector(iter.getContactNormal());
 
 							if (hasImpulses)
-								point.impulse = impulses[contactIdx];
+								point.Impulse = impulses[contactIdx];
 							else
-								point.impulse = 0.0f;
+								point.Impulse = 0.0f;
 
-							event.points.push_back(point);
+							event.Points.push_back(point);
 
 							contactIdx++;
 						}
 					}
 				}
 
-				event.colliderA = (Collider*)pair.shapes[0]->userData;
-				event.colliderB = (Collider*)pair.shapes[1]->userData;
+				event.ColliderA = (Collider*)pair.shapes[0]->userData;
+				event.ColliderB = (Collider*)pair.shapes[1]->userData;
 
 				gPhysX().ReportContactEventInternal(event);
 			}
@@ -276,9 +276,9 @@ namespace bs
 				PxJoint* pxJoint = (PxJoint*)constraintInfo.externalReference;
 
 				PhysX::JointBreakEvent event;
-				event.joint = (Joint*)pxJoint->userData;
+				event.Joint = (Joint*)pxJoint->userData;
 
-				if(event.joint != nullptr)
+				if(event.Joint != nullptr)
 					gPhysX().ReportJointBreakEventInternal(event);
 			}
 		}
@@ -367,69 +367,69 @@ namespace bs
 
 			if (triMeshGeometry.isValid() && triMeshGeometry.triangleMesh->getTrianglesRemap() != nullptr)
 			{
-				output.unmappedTriangleIdx = triMeshGeometry.triangleMesh->getTrianglesRemap()[input.faceIndex];
+				output.UnmappedTriangleIdx = triMeshGeometry.triangleMesh->getTrianglesRemap()[input.faceIndex];
 				return;
 			}
 		}
 
-		output.unmappedTriangleIdx = input.faceIndex;
+		output.UnmappedTriangleIdx = input.faceIndex;
 	}
 
 	void parseHit(const PxRaycastHit& input, PhysicsQueryHit& output, PxShape* shapeHint = nullptr)
 	{
-		output.point = fromPxVector(input.position);
-		output.normal = fromPxVector(input.normal);
-		output.distance = input.distance;
-		output.triangleIdx = input.faceIndex;
+		output.Point = fromPxVector(input.position);
+		output.Normal = fromPxVector(input.normal);
+		output.Distance = input.distance;
+		output.TriangleIdx = input.faceIndex;
 		setUnmappedTriangleIndex(input, output, shapeHint);
-		output.uv = Vector2(input.u, input.v);
+		output.Uv = Vector2(input.u, input.v);
 
 		if(input.shape)
-			output.colliderRaw = (Collider*)input.shape->userData;
+			output.ColliderRaw = (Collider*)input.shape->userData;
 
-		if (output.colliderRaw != nullptr)
+		if (output.ColliderRaw != nullptr)
 		{
-			CCollider* component = (CCollider*)output.colliderRaw->GetOwnerInternal(PhysicsOwnerType::Component);
+			CCollider* component = (CCollider*)output.ColliderRaw->GetOwnerInternal(PhysicsOwnerType::Component);
 			if (component != nullptr)
-				output.collider = static_object_cast<CCollider>(component->GetHandle());
+				output.Collider = static_object_cast<CCollider>(component->GetHandle());
 		}
 	}
 
 	void parseHit(const PxSweepHit& input, PhysicsQueryHit& output, PxShape* shapeHint = nullptr)
 	{
-		output.point = fromPxVector(input.position);
-		output.normal = fromPxVector(input.normal);
-		output.uv = Vector2::ZERO;
-		output.distance = input.distance;
-		output.triangleIdx = input.faceIndex;
+		output.Point = fromPxVector(input.position);
+		output.Normal = fromPxVector(input.normal);
+		output.Uv = Vector2::ZERO;
+		output.Distance = input.distance;
+		output.TriangleIdx = input.faceIndex;
 		setUnmappedTriangleIndex(input, output, shapeHint);
-		output.colliderRaw = (Collider*)input.shape->userData;
+		output.ColliderRaw = (Collider*)input.shape->userData;
 
-		if (output.colliderRaw != nullptr)
+		if (output.ColliderRaw != nullptr)
 		{
-			CCollider* component = (CCollider*)output.colliderRaw->GetOwnerInternal(PhysicsOwnerType::Component);
+			CCollider* component = (CCollider*)output.ColliderRaw->GetOwnerInternal(PhysicsOwnerType::Component);
 			if (component != nullptr)
-				output.collider = static_object_cast<CCollider>(component->GetHandle());
+				output.Collider = static_object_cast<CCollider>(component->GetHandle());
 		}
 	}
 
 	struct PhysXRaycastQueryCallback : PxRaycastCallback
 	{
 		static const int MAX_HITS = 32;
-		PxRaycastHit buffer[MAX_HITS];
+		PxRaycastHit Buffer[MAX_HITS];
 
-		Vector<PhysicsQueryHit> data;
+		Vector<PhysicsQueryHit> Data;
 
 		PhysXRaycastQueryCallback()
-			:PxRaycastCallback(buffer, MAX_HITS)
+			:PxRaycastCallback(Buffer, MAX_HITS)
 		{ }
 
 		PxAgain processTouches(const PxRaycastHit* buffer, PxU32 nbHits) override
 		{
 			for (PxU32 i = 0; i < nbHits; i++)
 			{
-				data.push_back(PhysicsQueryHit());
-				parseHit(buffer[i], data.back());
+				Data.push_back(PhysicsQueryHit());
+				parseHit(buffer[i], Data.back());
 			}
 
 			return true;
@@ -439,20 +439,20 @@ namespace bs
 	struct PhysXSweepQueryCallback : PxSweepCallback
 	{
 		static const int MAX_HITS = 32;
-		PxSweepHit buffer[MAX_HITS];
+		PxSweepHit Buffer[MAX_HITS];
 
-		Vector<PhysicsQueryHit> data;
+		Vector<PhysicsQueryHit> Data;
 
 		PhysXSweepQueryCallback()
-			:PxSweepCallback(buffer, MAX_HITS)
+			:PxSweepCallback(Buffer, MAX_HITS)
 		{ }
 
 		PxAgain processTouches(const PxSweepHit* buffer, PxU32 nbHits) override
 		{
 			for (PxU32 i = 0; i < nbHits; i++)
 			{
-				data.push_back(PhysicsQueryHit());
-				parseHit(buffer[i], data.back());
+				Data.push_back(PhysicsQueryHit());
+				parseHit(buffer[i], Data.back());
 			}
 
 			return true;
@@ -462,18 +462,18 @@ namespace bs
 	struct PhysXOverlapQueryCallback : PxOverlapCallback
 	{
 		static const int MAX_HITS = 32;
-		PxOverlapHit buffer[MAX_HITS];
+		PxOverlapHit Buffer[MAX_HITS];
 
-		Vector<Collider*> data;
+		Vector<Collider*> Data;
 
 		PhysXOverlapQueryCallback()
-			:PxOverlapCallback(buffer, MAX_HITS)
+			:PxOverlapCallback(Buffer, MAX_HITS)
 		{ }
 
 		PxAgain processTouches(const PxOverlapHit* buffer, PxU32 nbHits) override
 		{
 			for (PxU32 i = 0; i < nbHits; i++)
-				data.push_back((Collider*)buffer[i].shape->userData);
+				Data.push_back((Collider*)buffer[i].shape->userData);
 
 			return true;
 		}
@@ -491,15 +491,15 @@ namespace bs
 	PhysX::PhysX(const PHYSICS_INIT_DESC& input)
 		:Physics(input), mInitDesc(input)
 	{
-		mScale.length = input.typicalLength;
-		mScale.speed = input.typicalSpeed;
+		mScale.length = input.TypicalLength;
+		mScale.speed = input.TypicalSpeed;
 
 		mFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, gPhysXAllocator, gPhysXErrorHandler);
 		mPhysics = PxCreateBasePhysics(PX_PHYSICS_VERSION, *mFoundation, mScale);
 
 		PxRegisterArticulations(*mPhysics);
 
-		if (input.initCooking)
+		if (input.InitCooking)
 		{
 			// Note: PhysX supports cooking for specific platforms to make the generated results better. Consider
 			// allowing the meshes to be re-cooked when target platform is changed. Right now we just use the default value.
@@ -602,19 +602,19 @@ namespace bs
 
 		for(auto& entry : mTriggerEvents)
 		{
-			data.colliders[0] = entry.trigger;
-			data.colliders[1] = entry.other;
+			data.Colliders[0] = entry.Trigger;
+			data.Colliders[1] = entry.Other;
 
-			switch (entry.type)
+			switch (entry.Type)
 			{
 			case ContactEventType::ContactBegin:
-				entry.trigger->onCollisionBegin(data);
+				entry.Trigger->OnCollisionBegin(data);
 				break;
 			case ContactEventType::ContactStay:
-				entry.trigger->onCollisionStay(data);
+				entry.Trigger->OnCollisionStay(data);
 				break;
 			case ContactEventType::ContactEnd:
-				entry.trigger->onCollisionEnd(data);
+				entry.Trigger->OnCollisionEnd(data);
 				break;
 			}
 		}
@@ -622,14 +622,14 @@ namespace bs
 		auto notifyContact = [&](Collider* obj, Collider* other, ContactEventType type,
 			const Vector<ContactPoint>& points, bool flipNormals = false)
 		{
-			data.colliders[0] = obj;
-			data.colliders[1] = other;
-			data.contactPoints = points;
+			data.Colliders[0] = obj;
+			data.Colliders[1] = other;
+			data.ContactPoints = points;
 
 			if(flipNormals)
 			{
-				for (auto& point : data.contactPoints)
-					point.normal = -point.normal;
+				for (auto& point : data.ContactPoints)
+					point.Normal = -point.Normal;
 			}
 
 			Rigidbody* rigidbody = obj->GetRigidbody();
@@ -638,13 +638,13 @@ namespace bs
 				switch (type)
 				{
 				case ContactEventType::ContactBegin:
-					rigidbody->onCollisionBegin(data);
+					rigidbody->OnCollisionBegin(data);
 					break;
 				case ContactEventType::ContactStay:
-					rigidbody->onCollisionStay(data);
+					rigidbody->OnCollisionStay(data);
 					break;
 				case ContactEventType::ContactEnd:
-					rigidbody->onCollisionEnd(data);
+					rigidbody->OnCollisionEnd(data);
 					break;
 				}
 			}
@@ -653,13 +653,13 @@ namespace bs
 				switch (type)
 				{
 				case ContactEventType::ContactBegin:
-					obj->onCollisionBegin(data);
+					obj->OnCollisionBegin(data);
 					break;
 				case ContactEventType::ContactStay:
-					obj->onCollisionStay(data);
+					obj->OnCollisionStay(data);
 					break;
 				case ContactEventType::ContactEnd:
-					obj->onCollisionEnd(data);
+					obj->OnCollisionEnd(data);
 					break;
 				}
 			}
@@ -667,30 +667,30 @@ namespace bs
 
 		for (auto& entry : mContactEvents)
 		{
-			if (entry.colliderA != nullptr)
+			if (entry.ColliderA != nullptr)
 			{
-				CollisionReportMode reportModeA = entry.colliderA->GetCollisionReportMode();
+				CollisionReportMode reportModeA = entry.ColliderA->GetCollisionReportMode();
 
 				if (reportModeA == CollisionReportMode::ReportPersistent)
-					notifyContact(entry.colliderA, entry.colliderB, entry.type, entry.points, true);
-				else if (reportModeA == CollisionReportMode::Report && entry.type != ContactEventType::ContactStay)
-					notifyContact(entry.colliderA, entry.colliderB, entry.type, entry.points, true);
+					notifyContact(entry.ColliderA, entry.ColliderB, entry.Type, entry.Points, true);
+				else if (reportModeA == CollisionReportMode::Report && entry.Type != ContactEventType::ContactStay)
+					notifyContact(entry.ColliderA, entry.ColliderB, entry.Type, entry.Points, true);
 			}
 
-			if (entry.colliderB != nullptr)
+			if (entry.ColliderB != nullptr)
 			{
-				CollisionReportMode reportModeB = entry.colliderB->GetCollisionReportMode();
+				CollisionReportMode reportModeB = entry.ColliderB->GetCollisionReportMode();
 
 				if (reportModeB == CollisionReportMode::ReportPersistent)
-					notifyContact(entry.colliderB, entry.colliderA, entry.type, entry.points, false);
-				else if (reportModeB == CollisionReportMode::Report && entry.type != ContactEventType::ContactStay)
-					notifyContact(entry.colliderB, entry.colliderA, entry.type, entry.points, false);
+					notifyContact(entry.ColliderB, entry.ColliderA, entry.Type, entry.Points, false);
+				else if (reportModeB == CollisionReportMode::Report && entry.Type != ContactEventType::ContactStay)
+					notifyContact(entry.ColliderB, entry.ColliderA, entry.Type, entry.Points, false);
 			}
 		}
 
 		for(auto& entry : mJointBreakEvents)
 		{
-			entry.joint->onJointBreak();
+			entry.Joint->OnJointBreak();
 		}
 
 		mTriggerEvents.clear();
@@ -755,7 +755,7 @@ namespace bs
 		:mPhysics(physics)
 	{
 		PxSceneDesc sceneDesc(scale); // TODO - Test out various other parameters provided by scene desc
-		sceneDesc.gravity = toPxVector(input.gravity);
+		sceneDesc.gravity = toPxVector(input.Gravity);
 		sceneDesc.cpuDispatcher = &gPhysXCPUDispatcher;
 		sceneDesc.filterShader = PhysXFilterShader;
 		sceneDesc.simulationEventCallback = &gPhysXEventCallback;
@@ -764,7 +764,7 @@ namespace bs
 		// Optionally: eENABLE_KINEMATIC_STATIC_PAIRS, eENABLE_KINEMATIC_PAIRS, eENABLE_PCM
 		sceneDesc.flags = PxSceneFlag::eENABLE_ACTIVETRANSFORMS;
 
-		if (input.flags.IsSet(PhysicsFlag::CCD_Enable))
+		if (input.Flags.IsSet(PhysicsFlag::CCD_Enable))
 			sceneDesc.flags |= PxSceneFlag::eENABLE_CCD;
 
 		// Optionally: eMBP
@@ -862,7 +862,7 @@ namespace bs
 		mScene->sweep(geometry, tfrm, toPxVector(unitDir), maxDist, output,
 			PxHitFlag::eDEFAULT | PxHitFlag::eUV, filterData);
 
-		return output.data;
+		return output.Data;
 	}
 
 	bool PhysXScene::SweepAny(const PxGeometry& geometry, const PxTransform& tfrm, const Vector3& unitDir, UINT64 layer,
@@ -948,7 +948,7 @@ namespace bs
 		mScene->raycast(toPxVector(origin), toPxVector(unitDir), max, output,
 			PxHitFlag::eDEFAULT | PxHitFlag::eUV | PxHitFlag::eMESH_MULTIPLE, filterData);
 
-		return output.data;
+		return output.Data;
 	}
 
 	Vector<PhysicsQueryHit> PhysXScene::BoxCastAll(const AABox& box, const Quaternion& rotation,
@@ -1169,7 +1169,7 @@ namespace bs
 		memcpy(&filterData.data.word0, &layer, sizeof(layer));
 
 		mScene->overlap(geometry, tfrm, output, filterData);
-		return output.data;
+		return output.Data;
 	}
 
 	void PhysXScene::SetFlag(PhysicsFlags flag, bool enabled)

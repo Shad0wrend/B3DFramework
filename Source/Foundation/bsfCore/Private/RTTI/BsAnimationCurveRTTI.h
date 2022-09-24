@@ -22,10 +22,10 @@ namespace bs
 		/** @copydoc RTTIPlainType::toMemory */
 		static BitLength ToMemory(const TKeyframe<T>& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
-			rtti_write(data.value, stream);
-			rtti_write(data.inTangent, stream);
-			rtti_write(data.outTangent, stream);
-			rtti_write(data.time, stream);
+			rtti_write(data.Value, stream);
+			rtti_write(data.InTangent, stream);
+			rtti_write(data.OutTangent, stream);
+			rtti_write(data.Time, stream);
 
 			return sizeof(TKeyframe<T>);
 		}
@@ -33,10 +33,10 @@ namespace bs
 		/** @copydoc RTTIPlainType::fromMemory */
 		static BitLength FromMemory(TKeyframe<T>& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
-			rtti_read(data.value, stream);
-			rtti_read(data.inTangent, stream);
-			rtti_read(data.outTangent, stream);
-			rtti_read(data.time, stream);
+			rtti_read(data.Value, stream);
+			rtti_read(data.InTangent, stream);
+			rtti_read(data.OutTangent, stream);
+			rtti_read(data.Time, stream);
 			
 			return sizeof(TKeyframe<T>);
 		}
@@ -111,9 +111,9 @@ namespace bs
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]()
 			{
 				BitLength size = 0;
-				size += rtti_write(data.name, stream);
-				size += rtti_write(data.flags, stream);
-				size += rtti_write(data.curve, stream);
+				size += rtti_write(data.Name, stream);
+				size += rtti_write(data.Flags, stream);
+				size += rtti_write(data.Curve, stream);
 
 				return size;
 			});
@@ -125,9 +125,9 @@ namespace bs
 			BitLength size;
 			rtti_read_size_header(stream, compress, size);
 
-			rtti_read(data.name, stream);
-			rtti_read(data.flags, stream);
-			rtti_read(data.curve, stream);
+			rtti_read(data.Name, stream);
+			rtti_read(data.Flags, stream);
+			rtti_read(data.Curve, stream);
 
 			return size;
 		}
@@ -136,9 +136,9 @@ namespace bs
 		static BitLength GetSize(const TNamedAnimationCurve<T>& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength dataSize;
-			dataSize += rtti_size(data.name);
-			dataSize += rtti_size(data.flags);
-			dataSize += rtti_size(data.curve);
+			dataSize += rtti_size(data.Name);
+			dataSize += rtti_size(data.Flags);
+			dataSize += rtti_size(data.Curve);
 			rtti_add_header_size(dataSize, compress);
 
 			return dataSize;

@@ -15,7 +15,7 @@ namespace bs
 	/**	Contains data about a profiling session. */
 	struct ProfilerReport
 	{
-		CPUProfilerReport cpuReport;
+		CPUProfilerReport CpuReport;
 	};
 
 	/**	Type of thread used by the profiler. */

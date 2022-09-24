@@ -19,17 +19,17 @@ namespace bs
 	/** Descriptor structure used for initialization of a GpuProgram. */
 	struct GPU_PROGRAM_DESC
 	{
-		String source; /**< Source code to compile the program from. */
-		String entryPoint; /**< Name of the entry point function, for example "main". */
-		String language; /**< Language the source is written in, for example "hlsl" or "glsl". */
-		GpuProgramType type = GPT_VERTEX_PROGRAM; /**< Type of the program, for example vertex or fragment. */
-		bool requiresAdjacency = false; /**< If true then adjacency information will be provided when rendering. */
+		String Source; /**< Source code to compile the program from. */
+		String EntryPoint; /**< Name of the entry point function, for example "main". */
+		String Language; /**< Language the source is written in, for example "hlsl" or "glsl". */
+		GpuProgramType Type = GPT_VERTEX_PROGRAM; /**< Type of the program, for example vertex or fragment. */
+		bool RequiresAdjacency = false; /**< If true then adjacency information will be provided when rendering. */
 
 		/**
 		 * Optional intermediate version of the GPU program. Can significantly speed up GPU program compilation/creation
 		 * when supported by the render backend. Call ct::GpuProgram::compileBytecode to generate it.
 		 */
-		SPtr<GpuProgramBytecode> bytecode;
+		SPtr<GpuProgramBytecode> Bytecode;
 	};
 
 	/**
@@ -43,8 +43,8 @@ namespace bs
 		/** Information returned when compiling a GPU program. */
 		struct CompileStatus
 		{
-			bool success = false;
-			String messages;
+			bool Success = false;
+			String Messages;
 		};
 
 		virtual ~GpuProgram() = default;
@@ -116,22 +116,22 @@ namespace bs
 		~GpuProgramBytecode();
 
 		/** Instructions (compiled code) for the GPU program. Contains no data if compilation was not succesful. */
-		DataBlob instructions;
+		DataBlob Instructions;
 
 		/** Reflected information about GPU program parameters. */
-		SPtr<GpuParamDesc> paramDesc;
+		SPtr<GpuParamDesc> ParamDesc;
 
 		/** Input parameters for a vertex GPU program. */
-		Vector<VertexElement> vertexInput;
+		Vector<VertexElement> VertexInput;
 
 		/** Messages output during the compilation process. Includes errors in case compilation failed. */
-		String messages;
+		String Messages;
 
 		/** Identifier of the compiler that compiled the bytecode. */
-		String compilerId;
+		String CompilerId;
 
 		/** Version of the compiler that compiled the bytecode. */
-		UINT32 compilerVersion = 0;
+		UINT32 CompilerVersion = 0;
 
 		/************************************************************************/
 		/* 								SERIALIZATION                      		*/

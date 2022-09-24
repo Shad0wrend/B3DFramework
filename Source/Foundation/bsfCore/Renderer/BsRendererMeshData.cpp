@@ -223,15 +223,15 @@ namespace bs
 			UINT8* indices = indexPtr;
 			float* weights = (float*)weightPtr;
 
-			weightDst->index0 = indices[0];
-			weightDst->index1 = indices[1];
-			weightDst->index2 = indices[2];
-			weightDst->index3 = indices[3];
+			weightDst->Index0 = indices[0];
+			weightDst->Index1 = indices[1];
+			weightDst->Index2 = indices[2];
+			weightDst->Index3 = indices[3];
 
-			weightDst->weight0 = weights[0];
-			weightDst->weight1 = weights[1];
-			weightDst->weight2 = weights[2];
-			weightDst->weight3 = weights[3];
+			weightDst->Weight0 = weights[0];
+			weightDst->Weight1 = weights[1];
+			weightDst->Weight2 = weights[2];
+			weightDst->Weight3 = weights[3];
 
 			weightDst++;
 			indexPtr += stride;
@@ -261,15 +261,15 @@ namespace bs
 			UINT8* indices = indexPtr;
 			float* weights = (float*)weightPtr;
 
-			indices[0] = weightSrc->index0;
-			indices[1] = weightSrc->index1;
-			indices[2] = weightSrc->index2;
-			indices[3] = weightSrc->index3;
+			indices[0] = weightSrc->Index0;
+			indices[1] = weightSrc->Index1;
+			indices[2] = weightSrc->Index2;
+			indices[3] = weightSrc->Index3;
 
-			weights[0] = weightSrc->weight0;
-			weights[1] = weightSrc->weight1;
-			weights[2] = weightSrc->weight2;
-			weights[3] = weightSrc->weight3;
+			weights[0] = weightSrc->Weight0;
+			weights[1] = weightSrc->Weight1;
+			weights[2] = weightSrc->Weight2;
+			weights[3] = weightSrc->Weight3;
 
 			weightSrc++;
 			indexPtr += stride;

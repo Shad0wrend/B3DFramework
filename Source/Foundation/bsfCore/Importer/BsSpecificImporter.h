@@ -16,8 +16,8 @@ namespace bs
 	 */
 	struct SubResourceRaw
 	{
-		String name; /**< Unique name of the sub-resource. */
-		SPtr<Resource> value; /**< Contents of the sub-resource. */
+		String Name; /**< Unique name of the sub-resource. */
+		SPtr<Resource> Value; /**< Contents of the sub-resource. */
 	};
 
 	/** Modes signififying the level of asynchronous functionality provided by a SpecificImporter. */

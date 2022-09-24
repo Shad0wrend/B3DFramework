@@ -74,10 +74,10 @@ namespace bs
 		mLayout->AddElement(mDownBtn);
 		mLayout->AddNewElement<GUIFixedSpace>(2);
 
-		mHandleBtn->onHandleMovedOrResized.Connect(std::bind(&::bs::GUIScrollBar::HandleMoved, this, _1, _2));
+		mHandleBtn->OnHandleMovedOrResized.Connect(std::bind(&::bs::GUIScrollBar::HandleMoved, this, _1, _2));
 
-		mUpBtn->onClick.Connect(std::bind(&::bs::GUIScrollBar::UpButtonClicked, this));
-		mDownBtn->onClick.Connect(std::bind(&::bs::GUIScrollBar::DownButtonClicked, this));
+		mUpBtn->OnClick.Connect(std::bind(&::bs::GUIScrollBar::UpButtonClicked, this));
+		mDownBtn->OnClick.Connect(std::bind(&::bs::GUIScrollBar::DownButtonClicked, this));
 	}
 
 	GUIScrollBar::~GUIScrollBar()
@@ -93,12 +93,12 @@ namespace bs
 	{
 		IMAGE_SPRITE_DESC desc;
 
-		if(GetStyleInternal()->normal.texture != nullptr && GetStyleInternal()->normal.texture.IsLoaded())
-			desc.texture = GetStyleInternal()->normal.texture;
+		if(GetStyleInternal()->Normal.Texture != nullptr && GetStyleInternal()->Normal.Texture.IsLoaded())
+			desc.Texture = GetStyleInternal()->Normal.Texture;
 
-		desc.width = mLayoutData.area.width;
-		desc.height = mLayoutData.area.height;
-		desc.color = GetTint();
+		desc.Width = mLayoutData.Area.Width;
+		desc.Height = mLayoutData.Area.Height;
+		desc.Color = GetTint();
 
 		mImageSprite->Update(desc, (UINT64)GetParentWidgetInternal());
 
@@ -140,7 +140,7 @@ namespace bs
 		UINT32 vertexStride = sizeof(Vector2) * 2;
 		UINT32 indexStride = sizeof(UINT32);
 
-		Vector2I layoutOffset = Vector2I(mLayoutData.area.x, mLayoutData.area.y) + offset;
+		Vector2I layoutOffset = Vector2I(mLayoutData.Area.X, mLayoutData.Area.Y) + offset;
 		mImageSprite->FillBuffer(vertices, uvs, indices, vertexOffset, indexOffset, maxNumVerts, maxNumIndices,
 			vertexStride, indexStride, renderElementIdx, layoutOffset, mLayoutData.GetLocalClipRect());
 	}
@@ -155,8 +155,8 @@ namespace bs
 
 	void GUIScrollBar::HandleMoved(float handlePct, float sizePct)
 	{
-		if(!onScrollOrResize.Empty())
-			onScrollOrResize(handlePct, sizePct);
+		if(!OnScrollOrResize.Empty())
+			OnScrollOrResize(handlePct, sizePct);
 	}
 
 	void GUIScrollBar::UpButtonClicked()
@@ -192,8 +192,8 @@ namespace bs
 		{
 			mHandleBtn->MarkLayoutAsDirtyInternal();
 
-			if (!onScrollOrResize.Empty())
-				onScrollOrResize(newHandlePos, mHandleBtn->GetHandleSizePctInternal());
+			if (!OnScrollOrResize.Empty())
+				OnScrollOrResize(newHandlePos, mHandleBtn->GetHandleSizePctInternal());
 		}
 	}
 

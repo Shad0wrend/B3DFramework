@@ -14,12 +14,12 @@ namespace bs
 
 	const String& Resource::GetName() const
 	{
-		return mMetaData->displayName;
+		return mMetaData->DisplayName;
 	}
 
 	void Resource::SetName(const String& name)
 	{
-		mMetaData->displayName = name;
+		mMetaData->DisplayName = name;
 	}
 
 	void Resource::GetResourceDependencies(FrameVector<HResource>& dependencies) const

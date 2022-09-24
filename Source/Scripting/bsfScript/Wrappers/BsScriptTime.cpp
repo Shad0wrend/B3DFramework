@@ -16,11 +16,11 @@ namespace bs
 
 	void ScriptTime::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_GetRealElapsed", (void*)&ScriptTime::InternalGetRealElapsed);
-		metaData.scriptClass->AddInternalCall("Internal_GetElapsed", (void*)&ScriptTime::InternalGetElapsed);
-		metaData.scriptClass->AddInternalCall("Internal_GetFrameDelta", (void*)&ScriptTime::InternalGetFrameDelta);
-		metaData.scriptClass->AddInternalCall("Internal_GetFrameNumber", (void*)&ScriptTime::InternalGetFrameNumber);
-		metaData.scriptClass->AddInternalCall("Internal_GetPrecise", (void*)&ScriptTime::InternalGetPrecise);
+		metaData.ScriptClass->AddInternalCall("Internal_GetRealElapsed", (void*)&ScriptTime::InternalGetRealElapsed);
+		metaData.ScriptClass->AddInternalCall("Internal_GetElapsed", (void*)&ScriptTime::InternalGetElapsed);
+		metaData.ScriptClass->AddInternalCall("Internal_GetFrameDelta", (void*)&ScriptTime::InternalGetFrameDelta);
+		metaData.ScriptClass->AddInternalCall("Internal_GetFrameNumber", (void*)&ScriptTime::InternalGetFrameNumber);
+		metaData.ScriptClass->AddInternalCall("Internal_GetPrecise", (void*)&ScriptTime::InternalGetPrecise);
 	}
 
 	float ScriptTime::InternalGetRealElapsed()

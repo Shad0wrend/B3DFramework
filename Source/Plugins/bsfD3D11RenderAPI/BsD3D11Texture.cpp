@@ -65,8 +65,8 @@ namespace bs { namespace ct
 		{
 			D3D11Texture* other = static_cast<D3D11Texture*>(target.get());
 
-			UINT32 srcResIdx = D3D11CalcSubresource(desc.srcMip, desc.srcFace, mProperties.GetNumMipmaps() + 1);
-			UINT32 destResIdx = D3D11CalcSubresource(desc.dstMip, desc.dstFace, target->GetProperties().GetNumMipmaps() + 1);
+			UINT32 srcResIdx = D3D11CalcSubresource(desc.SrcMip, desc.SrcFace, mProperties.GetNumMipmaps() + 1);
+			UINT32 destResIdx = D3D11CalcSubresource(desc.DstMip, desc.DstFace, target->GetProperties().GetNumMipmaps() + 1);
 
 			D3D11RenderAPI* rs = static_cast<D3D11RenderAPI*>(RenderAPI::InstancePtr());
 			D3D11Device& device = rs->GetPrimaryDevice();
@@ -74,9 +74,9 @@ namespace bs { namespace ct
 			bool srcHasMultisample = mProperties.GetNumSamples() > 1;
 			bool destHasMultisample = target->GetProperties().GetNumSamples() > 1;
 
-			bool copyEntireSurface = desc.srcVolume.GetWidth() == 0 ||
-				desc.srcVolume.GetHeight() == 0 ||
-				desc.srcVolume.GetDepth() == 0;
+			bool copyEntireSurface = desc.SrcVolume.GetWidth() == 0 ||
+				desc.SrcVolume.GetHeight() == 0 ||
+				desc.SrcVolume.GetDepth() == 0;
 
 			if (srcHasMultisample && !destHasMultisample) // Resolving from MS to non-MS texture
 			{
@@ -86,18 +86,18 @@ namespace bs { namespace ct
 				{
 					// Need to first resolve to a temporary texture, then copy
 					TEXTURE_DESC tempDesc;
-					tempDesc.width = mProperties.GetWidth();
-					tempDesc.height = mProperties.GetHeight();
-					tempDesc.format = mProperties.GetFormat();
-					tempDesc.hwGamma = mProperties.IsHardwareGammaEnabled();
+					tempDesc.Width = mProperties.GetWidth();
+					tempDesc.Height = mProperties.GetHeight();
+					tempDesc.Format = mProperties.GetFormat();
+					tempDesc.HwGamma = mProperties.IsHardwareGammaEnabled();
 
 					SPtr<D3D11Texture> temporary = std::static_pointer_cast<D3D11Texture>(Texture::Create(tempDesc));
 					device.GetImmediateContext()->ResolveSubresource(temporary->GetDX11Resource(), 0, mTex, srcResIdx, mDXGIFormat);
 
 					TEXTURE_COPY_DESC tempCopyDesc;
-					tempCopyDesc.dstMip = desc.dstMip;
-					tempCopyDesc.dstFace = desc.dstFace;
-					tempCopyDesc.dstPosition = desc.dstPosition;
+					tempCopyDesc.DstMip = desc.DstMip;
+					tempCopyDesc.DstFace = desc.DstFace;
+					tempCopyDesc.DstPosition = desc.DstPosition;
 
 					temporary->Copy(target, tempCopyDesc);
 				}
@@ -105,12 +105,12 @@ namespace bs { namespace ct
 			else
 			{
 				D3D11_BOX srcRegion;
-				srcRegion.left = desc.srcVolume.left;
-				srcRegion.right = desc.srcVolume.right;
-				srcRegion.top = desc.srcVolume.top;
-				srcRegion.bottom = desc.srcVolume.bottom;
-				srcRegion.front = desc.srcVolume.front;
-				srcRegion.back = desc.srcVolume.back;
+				srcRegion.left = desc.SrcVolume.Left;
+				srcRegion.right = desc.SrcVolume.Right;
+				srcRegion.top = desc.SrcVolume.Top;
+				srcRegion.bottom = desc.SrcVolume.Bottom;
+				srcRegion.front = desc.SrcVolume.Front;
+				srcRegion.back = desc.SrcVolume.Back;
 
 				D3D11_BOX* srcRegionPtr = nullptr;
 				if(!copyEntireSurface)
@@ -119,9 +119,9 @@ namespace bs { namespace ct
 				device.GetImmediateContext()->CopySubresourceRegion(
 					other->GetDX11Resource(),
 					destResIdx,
-					(UINT32)desc.dstPosition.x,
-					(UINT32)desc.dstPosition.y,
-					(UINT32)desc.dstPosition.z,
+					(UINT32)desc.DstPosition.X,
+					(UINT32)desc.DstPosition.Y,
+					(UINT32)desc.DstPosition.Z,
 					mTex,
 					srcResIdx,
 					srcRegionPtr);
@@ -388,11 +388,11 @@ namespace bs { namespace ct
 		if ((usage & TU_DEPTHSTENCIL) == 0 || readableDepth)
 		{
 			TEXTURE_VIEW_DESC viewDesc;
-			viewDesc.mostDetailMip = 0;
-			viewDesc.numMips = desc.MipLevels;
-			viewDesc.firstArraySlice = 0;
-			viewDesc.numArraySlices = desc.ArraySize;
-			viewDesc.usage = GVU_DEFAULT;
+			viewDesc.MostDetailMip = 0;
+			viewDesc.NumMips = desc.MipLevels;
+			viewDesc.FirstArraySlice = 0;
+			viewDesc.NumArraySlices = desc.ArraySize;
+			viewDesc.Usage = GVU_DEFAULT;
 
 			mShaderResourceView = bs_shared_ptr<D3D11TextureView>(new (bs_alloc<D3D11TextureView>()) D3D11TextureView(this, viewDesc));
 		}
@@ -532,11 +532,11 @@ namespace bs { namespace ct
 		if((usage & TU_DEPTHSTENCIL) == 0 || readableDepth)
 		{
 			TEXTURE_VIEW_DESC viewDesc;
-			viewDesc.mostDetailMip = 0;
-			viewDesc.numMips = desc.MipLevels;
-			viewDesc.firstArraySlice = 0;
-			viewDesc.numArraySlices = desc.ArraySize;
-			viewDesc.usage = GVU_DEFAULT;
+			viewDesc.MostDetailMip = 0;
+			viewDesc.NumMips = desc.MipLevels;
+			viewDesc.FirstArraySlice = 0;
+			viewDesc.NumArraySlices = desc.ArraySize;
+			viewDesc.Usage = GVU_DEFAULT;
 
 			mShaderResourceView = bs_shared_ptr<D3D11TextureView>(new (bs_alloc<D3D11TextureView>()) D3D11TextureView(this, viewDesc));
 		}
@@ -650,11 +650,11 @@ namespace bs { namespace ct
 		if ((usage & TU_DEPTHSTENCIL) == 0 || readableDepth)
 		{
 			TEXTURE_VIEW_DESC viewDesc;
-			viewDesc.mostDetailMip = 0;
-			viewDesc.numMips = desc.MipLevels;
-			viewDesc.firstArraySlice = 0;
-			viewDesc.numArraySlices = 1;
-			viewDesc.usage = GVU_DEFAULT;
+			viewDesc.MostDetailMip = 0;
+			viewDesc.NumMips = desc.MipLevels;
+			viewDesc.FirstArraySlice = 0;
+			viewDesc.NumArraySlices = 1;
+			viewDesc.Usage = GVU_DEFAULT;
 
 			mShaderResourceView = bs_shared_ptr<D3D11TextureView>(new (bs_alloc<D3D11TextureView>()) D3D11TextureView(this, viewDesc));
 		}

@@ -18,7 +18,7 @@ namespace bs
 
 	MonoObject*ScriptLimitConeRange::Box(const __LimitConeRangeInterop& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	__LimitConeRangeInterop ScriptLimitConeRange::Unbox(MonoObject* value)
@@ -29,11 +29,11 @@ namespace bs
 	LimitConeRange ScriptLimitConeRange::FromInterop(const __LimitConeRangeInterop& value)
 	{
 		LimitConeRange output;
-		output.yLimitAngle = value.yLimitAngle;
-		output.zLimitAngle = value.zLimitAngle;
-		output.contactDist = value.contactDist;
-		output.restitution = value.restitution;
-		output.spring = value.spring;
+		output.YLimitAngle = value.YLimitAngle;
+		output.ZLimitAngle = value.ZLimitAngle;
+		output.ContactDist = value.ContactDist;
+		output.Restitution = value.Restitution;
+		output.Spring = value.Spring;
 
 		return output;
 	}
@@ -41,11 +41,11 @@ namespace bs
 	__LimitConeRangeInterop ScriptLimitConeRange::ToInterop(const LimitConeRange& value)
 	{
 		__LimitConeRangeInterop output;
-		output.yLimitAngle = value.yLimitAngle;
-		output.zLimitAngle = value.zLimitAngle;
-		output.contactDist = value.contactDist;
-		output.restitution = value.restitution;
-		output.spring = value.spring;
+		output.YLimitAngle = value.YLimitAngle;
+		output.ZLimitAngle = value.ZLimitAngle;
+		output.ContactDist = value.ContactDist;
+		output.Restitution = value.Restitution;
+		output.Spring = value.Spring;
 
 		return output;
 	}

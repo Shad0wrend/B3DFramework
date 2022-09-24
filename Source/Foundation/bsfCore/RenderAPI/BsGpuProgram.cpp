@@ -12,8 +12,8 @@ namespace bs
 {
 	GpuProgramBytecode::~GpuProgramBytecode()
 	{
-		if(instructions.data)
-			bs_free(instructions.data);
+		if(Instructions.Data)
+			bs_free(Instructions.Data);
 	}
 
 	RTTITypeBase* GpuProgramBytecode::GetRttiStatic()
@@ -27,8 +27,8 @@ namespace bs
 	}
 
 	GpuProgram::GpuProgram(const GPU_PROGRAM_DESC& desc)
-		: mNeedsAdjacencyInfo(desc.requiresAdjacency), mLanguage(desc.language), mType(desc.type)
-		, mEntryPoint(desc.entryPoint), mSource(desc.source)
+		: mNeedsAdjacencyInfo(desc.RequiresAdjacency), mLanguage(desc.Language), mType(desc.Type)
+		, mEntryPoint(desc.EntryPoint), mSource(desc.Source)
 	{
 
 	}
@@ -56,12 +56,12 @@ namespace bs
 	SPtr<ct::CoreObject> GpuProgram::CreateCore() const
 	{
 		GPU_PROGRAM_DESC desc;
-		desc.source = mSource;
-		desc.entryPoint = mEntryPoint;
-		desc.language = mLanguage;
-		desc.type = mType;
-		desc.requiresAdjacency = mNeedsAdjacencyInfo;
-		desc.bytecode = mBytecode;
+		desc.Source = mSource;
+		desc.EntryPoint = mEntryPoint;
+		desc.Language = mLanguage;
+		desc.Type = mType;
+		desc.RequiresAdjacency = mNeedsAdjacencyInfo;
+		desc.Bytecode = mBytecode;
 
 		return ct::GpuProgramManager::Instance().CreateInternal(desc);
 	}
@@ -87,8 +87,8 @@ namespace bs
 	namespace ct
 	{
 	GpuProgram::GpuProgram(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask)
-		: mNeedsAdjacencyInfo(desc.requiresAdjacency), mType(desc.type), mEntryPoint(desc.entryPoint), mSource(desc.source)
-		, mBytecode(desc.bytecode)
+		: mNeedsAdjacencyInfo(desc.RequiresAdjacency), mType(desc.Type), mEntryPoint(desc.EntryPoint), mSource(desc.Source)
+		, mBytecode(desc.Bytecode)
 	{
 		mParametersDesc = bs_shared_ptr_new<GpuParamDesc>();
 	}

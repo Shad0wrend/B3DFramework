@@ -280,37 +280,37 @@ namespace bs
 		 * Returns left-most start of the pixel volume. This value is not used internally in any way. It is just passed
 		 * through from the constructor.
 		 */
-		UINT32 GetLeft() const { return mExtents.left; }
+		UINT32 GetLeft() const { return mExtents.Left; }
 
 		/**
 		 * Returns right-most end of the pixel volume. This value is not used internally in any way. It is just passed
 		 * through from the constructor.
 		 */
-		UINT32 GetRight() const { return mExtents.right; }
+		UINT32 GetRight() const { return mExtents.Right; }
 
 		/**
 		 * Returns top-most start of the pixel volume. This value is not used internally in any way. It is just passed
 		 * through from the constructor.
 		 */
-		UINT32 GetTop() const { return mExtents.top; }
+		UINT32 GetTop() const { return mExtents.Top; }
 
 		/**
 		 * Returns bottom-most end of the pixel volume. This value is not used internally in any way. It is just passed
 		 * through from the constructor.
 		 */
-		UINT32 GetBottom() const { return mExtents.bottom; }
+		UINT32 GetBottom() const { return mExtents.Bottom; }
 
 		/**
 		 * Returns front-most start of the pixel volume. This value is not used internally in any way. It is just passed
 		 * through from the constructor.
 		 */
-		UINT32 GetFront() const { return mExtents.front; }
+		UINT32 GetFront() const { return mExtents.Front; }
 
 		/**
 		 * Returns back-most end of the pixel volume. This value is not used internally in any way. It is just passed
 		 * through from the constructor.
 		 */
-		UINT32 GetBack() const { return mExtents.back; }
+		UINT32 GetBack() const { return mExtents.Back; }
 
 		/** Returns extents of the pixel volume this object is capable of holding. */
 		BS_SCRIPT_EXPORT(n:Extents,pr:getter)

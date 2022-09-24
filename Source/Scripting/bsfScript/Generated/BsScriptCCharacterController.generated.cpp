@@ -17,38 +17,38 @@ namespace bs
 	ScriptCCharacterController::ScriptCCharacterController(MonoObject* managedInstance, const GameObjectHandle<CCharacterController>& value)
 		:TScriptComponent(managedInstance, value)
 	{
-		value->onColliderHit.Connect(std::bind(&ScriptCCharacterController::onColliderHit, this, std::placeholders::_1));
-		value->onControllerHit.Connect(std::bind(&ScriptCCharacterController::onControllerHit, this, std::placeholders::_1));
+		value->OnColliderHit.Connect(std::bind(&ScriptCCharacterController::onColliderHit, this, std::placeholders::_1));
+		value->OnControllerHit.Connect(std::bind(&ScriptCCharacterController::onControllerHit, this, std::placeholders::_1));
 	}
 
 	void ScriptCCharacterController::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_Move", (void*)&ScriptCCharacterController::InternalMove);
-		metaData.scriptClass->AddInternalCall("Internal_GetFootPosition", (void*)&ScriptCCharacterController::InternalGetFootPosition);
-		metaData.scriptClass->AddInternalCall("Internal_SetFootPosition", (void*)&ScriptCCharacterController::InternalSetFootPosition);
-		metaData.scriptClass->AddInternalCall("Internal_GetRadius", (void*)&ScriptCCharacterController::InternalGetRadius);
-		metaData.scriptClass->AddInternalCall("Internal_SetRadius", (void*)&ScriptCCharacterController::InternalSetRadius);
-		metaData.scriptClass->AddInternalCall("Internal_GetHeight", (void*)&ScriptCCharacterController::InternalGetHeight);
-		metaData.scriptClass->AddInternalCall("Internal_SetHeight", (void*)&ScriptCCharacterController::InternalSetHeight);
-		metaData.scriptClass->AddInternalCall("Internal_GetUp", (void*)&ScriptCCharacterController::InternalGetUp);
-		metaData.scriptClass->AddInternalCall("Internal_SetUp", (void*)&ScriptCCharacterController::InternalSetUp);
-		metaData.scriptClass->AddInternalCall("Internal_GetClimbingMode", (void*)&ScriptCCharacterController::InternalGetClimbingMode);
-		metaData.scriptClass->AddInternalCall("Internal_SetClimbingMode", (void*)&ScriptCCharacterController::InternalSetClimbingMode);
-		metaData.scriptClass->AddInternalCall("Internal_GetNonWalkableMode", (void*)&ScriptCCharacterController::InternalGetNonWalkableMode);
-		metaData.scriptClass->AddInternalCall("Internal_SetNonWalkableMode", (void*)&ScriptCCharacterController::InternalSetNonWalkableMode);
-		metaData.scriptClass->AddInternalCall("Internal_GetMinMoveDistance", (void*)&ScriptCCharacterController::InternalGetMinMoveDistance);
-		metaData.scriptClass->AddInternalCall("Internal_SetMinMoveDistance", (void*)&ScriptCCharacterController::InternalSetMinMoveDistance);
-		metaData.scriptClass->AddInternalCall("Internal_GetContactOffset", (void*)&ScriptCCharacterController::InternalGetContactOffset);
-		metaData.scriptClass->AddInternalCall("Internal_SetContactOffset", (void*)&ScriptCCharacterController::InternalSetContactOffset);
-		metaData.scriptClass->AddInternalCall("Internal_GetStepOffset", (void*)&ScriptCCharacterController::InternalGetStepOffset);
-		metaData.scriptClass->AddInternalCall("Internal_SetStepOffset", (void*)&ScriptCCharacterController::InternalSetStepOffset);
-		metaData.scriptClass->AddInternalCall("Internal_GetSlopeLimit", (void*)&ScriptCCharacterController::InternalGetSlopeLimit);
-		metaData.scriptClass->AddInternalCall("Internal_SetSlopeLimit", (void*)&ScriptCCharacterController::InternalSetSlopeLimit);
-		metaData.scriptClass->AddInternalCall("Internal_GetLayer", (void*)&ScriptCCharacterController::InternalGetLayer);
-		metaData.scriptClass->AddInternalCall("Internal_SetLayer", (void*)&ScriptCCharacterController::InternalSetLayer);
+		metaData.ScriptClass->AddInternalCall("Internal_Move", (void*)&ScriptCCharacterController::InternalMove);
+		metaData.ScriptClass->AddInternalCall("Internal_GetFootPosition", (void*)&ScriptCCharacterController::InternalGetFootPosition);
+		metaData.ScriptClass->AddInternalCall("Internal_SetFootPosition", (void*)&ScriptCCharacterController::InternalSetFootPosition);
+		metaData.ScriptClass->AddInternalCall("Internal_GetRadius", (void*)&ScriptCCharacterController::InternalGetRadius);
+		metaData.ScriptClass->AddInternalCall("Internal_SetRadius", (void*)&ScriptCCharacterController::InternalSetRadius);
+		metaData.ScriptClass->AddInternalCall("Internal_GetHeight", (void*)&ScriptCCharacterController::InternalGetHeight);
+		metaData.ScriptClass->AddInternalCall("Internal_SetHeight", (void*)&ScriptCCharacterController::InternalSetHeight);
+		metaData.ScriptClass->AddInternalCall("Internal_GetUp", (void*)&ScriptCCharacterController::InternalGetUp);
+		metaData.ScriptClass->AddInternalCall("Internal_SetUp", (void*)&ScriptCCharacterController::InternalSetUp);
+		metaData.ScriptClass->AddInternalCall("Internal_GetClimbingMode", (void*)&ScriptCCharacterController::InternalGetClimbingMode);
+		metaData.ScriptClass->AddInternalCall("Internal_SetClimbingMode", (void*)&ScriptCCharacterController::InternalSetClimbingMode);
+		metaData.ScriptClass->AddInternalCall("Internal_GetNonWalkableMode", (void*)&ScriptCCharacterController::InternalGetNonWalkableMode);
+		metaData.ScriptClass->AddInternalCall("Internal_SetNonWalkableMode", (void*)&ScriptCCharacterController::InternalSetNonWalkableMode);
+		metaData.ScriptClass->AddInternalCall("Internal_GetMinMoveDistance", (void*)&ScriptCCharacterController::InternalGetMinMoveDistance);
+		metaData.ScriptClass->AddInternalCall("Internal_SetMinMoveDistance", (void*)&ScriptCCharacterController::InternalSetMinMoveDistance);
+		metaData.ScriptClass->AddInternalCall("Internal_GetContactOffset", (void*)&ScriptCCharacterController::InternalGetContactOffset);
+		metaData.ScriptClass->AddInternalCall("Internal_SetContactOffset", (void*)&ScriptCCharacterController::InternalSetContactOffset);
+		metaData.ScriptClass->AddInternalCall("Internal_GetStepOffset", (void*)&ScriptCCharacterController::InternalGetStepOffset);
+		metaData.ScriptClass->AddInternalCall("Internal_SetStepOffset", (void*)&ScriptCCharacterController::InternalSetStepOffset);
+		metaData.ScriptClass->AddInternalCall("Internal_GetSlopeLimit", (void*)&ScriptCCharacterController::InternalGetSlopeLimit);
+		metaData.ScriptClass->AddInternalCall("Internal_SetSlopeLimit", (void*)&ScriptCCharacterController::InternalSetSlopeLimit);
+		metaData.ScriptClass->AddInternalCall("Internal_GetLayer", (void*)&ScriptCCharacterController::InternalGetLayer);
+		metaData.ScriptClass->AddInternalCall("Internal_SetLayer", (void*)&ScriptCCharacterController::InternalSetLayer);
 
-		onColliderHitThunk = (onColliderHitThunkDef)metaData.scriptClass->GetMethodExact("Internal_onColliderHit", "ControllerColliderCollision&")->GetThunk();
-		onControllerHitThunk = (onControllerHitThunkDef)metaData.scriptClass->GetMethodExact("Internal_onControllerHit", "ControllerControllerCollision&")->GetThunk();
+		onColliderHitThunk = (onColliderHitThunkDef)metaData.ScriptClass->GetMethodExact("Internal_onColliderHit", "ControllerColliderCollision&")->GetThunk();
+		onControllerHitThunk = (onControllerHitThunkDef)metaData.ScriptClass->GetMethodExact("Internal_onControllerHit", "ControllerControllerCollision&")->GetThunk();
 	}
 
 	void ScriptCCharacterController::onColliderHit(const ControllerColliderCollision& p0)

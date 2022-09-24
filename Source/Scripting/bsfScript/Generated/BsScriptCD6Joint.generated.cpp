@@ -21,25 +21,25 @@ namespace bs
 
 	void ScriptCD6Joint::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_GetMotion", (void*)&ScriptCD6Joint::InternalGetMotion);
-		metaData.scriptClass->AddInternalCall("Internal_SetMotion", (void*)&ScriptCD6Joint::InternalSetMotion);
-		metaData.scriptClass->AddInternalCall("Internal_GetTwist", (void*)&ScriptCD6Joint::InternalGetTwist);
-		metaData.scriptClass->AddInternalCall("Internal_GetSwingY", (void*)&ScriptCD6Joint::InternalGetSwingY);
-		metaData.scriptClass->AddInternalCall("Internal_GetSwingZ", (void*)&ScriptCD6Joint::InternalGetSwingZ);
-		metaData.scriptClass->AddInternalCall("Internal_GetLimitLinear", (void*)&ScriptCD6Joint::InternalGetLimitLinear);
-		metaData.scriptClass->AddInternalCall("Internal_SetLimitLinear", (void*)&ScriptCD6Joint::InternalSetLimitLinear);
-		metaData.scriptClass->AddInternalCall("Internal_GetLimitTwist", (void*)&ScriptCD6Joint::InternalGetLimitTwist);
-		metaData.scriptClass->AddInternalCall("Internal_SetLimitTwist", (void*)&ScriptCD6Joint::InternalSetLimitTwist);
-		metaData.scriptClass->AddInternalCall("Internal_GetLimitSwing", (void*)&ScriptCD6Joint::InternalGetLimitSwing);
-		metaData.scriptClass->AddInternalCall("Internal_SetLimitSwing", (void*)&ScriptCD6Joint::InternalSetLimitSwing);
-		metaData.scriptClass->AddInternalCall("Internal_GetDrive", (void*)&ScriptCD6Joint::InternalGetDrive);
-		metaData.scriptClass->AddInternalCall("Internal_SetDrive", (void*)&ScriptCD6Joint::InternalSetDrive);
-		metaData.scriptClass->AddInternalCall("Internal_GetDrivePosition", (void*)&ScriptCD6Joint::InternalGetDrivePosition);
-		metaData.scriptClass->AddInternalCall("Internal_GetDriveRotation", (void*)&ScriptCD6Joint::InternalGetDriveRotation);
-		metaData.scriptClass->AddInternalCall("Internal_SetDriveTransform", (void*)&ScriptCD6Joint::InternalSetDriveTransform);
-		metaData.scriptClass->AddInternalCall("Internal_GetDriveLinearVelocity", (void*)&ScriptCD6Joint::InternalGetDriveLinearVelocity);
-		metaData.scriptClass->AddInternalCall("Internal_GetDriveAngularVelocity", (void*)&ScriptCD6Joint::InternalGetDriveAngularVelocity);
-		metaData.scriptClass->AddInternalCall("Internal_SetDriveVelocity", (void*)&ScriptCD6Joint::InternalSetDriveVelocity);
+		metaData.ScriptClass->AddInternalCall("Internal_GetMotion", (void*)&ScriptCD6Joint::InternalGetMotion);
+		metaData.ScriptClass->AddInternalCall("Internal_SetMotion", (void*)&ScriptCD6Joint::InternalSetMotion);
+		metaData.ScriptClass->AddInternalCall("Internal_GetTwist", (void*)&ScriptCD6Joint::InternalGetTwist);
+		metaData.ScriptClass->AddInternalCall("Internal_GetSwingY", (void*)&ScriptCD6Joint::InternalGetSwingY);
+		metaData.ScriptClass->AddInternalCall("Internal_GetSwingZ", (void*)&ScriptCD6Joint::InternalGetSwingZ);
+		metaData.ScriptClass->AddInternalCall("Internal_GetLimitLinear", (void*)&ScriptCD6Joint::InternalGetLimitLinear);
+		metaData.ScriptClass->AddInternalCall("Internal_SetLimitLinear", (void*)&ScriptCD6Joint::InternalSetLimitLinear);
+		metaData.ScriptClass->AddInternalCall("Internal_GetLimitTwist", (void*)&ScriptCD6Joint::InternalGetLimitTwist);
+		metaData.ScriptClass->AddInternalCall("Internal_SetLimitTwist", (void*)&ScriptCD6Joint::InternalSetLimitTwist);
+		metaData.ScriptClass->AddInternalCall("Internal_GetLimitSwing", (void*)&ScriptCD6Joint::InternalGetLimitSwing);
+		metaData.ScriptClass->AddInternalCall("Internal_SetLimitSwing", (void*)&ScriptCD6Joint::InternalSetLimitSwing);
+		metaData.ScriptClass->AddInternalCall("Internal_GetDrive", (void*)&ScriptCD6Joint::InternalGetDrive);
+		metaData.ScriptClass->AddInternalCall("Internal_SetDrive", (void*)&ScriptCD6Joint::InternalSetDrive);
+		metaData.ScriptClass->AddInternalCall("Internal_GetDrivePosition", (void*)&ScriptCD6Joint::InternalGetDrivePosition);
+		metaData.ScriptClass->AddInternalCall("Internal_GetDriveRotation", (void*)&ScriptCD6Joint::InternalGetDriveRotation);
+		metaData.ScriptClass->AddInternalCall("Internal_SetDriveTransform", (void*)&ScriptCD6Joint::InternalSetDriveTransform);
+		metaData.ScriptClass->AddInternalCall("Internal_GetDriveLinearVelocity", (void*)&ScriptCD6Joint::InternalGetDriveLinearVelocity);
+		metaData.ScriptClass->AddInternalCall("Internal_GetDriveAngularVelocity", (void*)&ScriptCD6Joint::InternalGetDriveAngularVelocity);
+		metaData.ScriptClass->AddInternalCall("Internal_SetDriveVelocity", (void*)&ScriptCD6Joint::InternalSetDriveVelocity);
 
 	}
 
@@ -90,7 +90,7 @@ namespace bs
 
 		__LimitLinearInterop interop__output;
 		interop__output = ScriptLimitLinear::ToInterop(tmp__output);
-		MonoUtil::ValueCopy(__output, &interop__output, ScriptLimitLinear::GetMetaData()->scriptClass->GetInternalClassInternal());
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptLimitLinear::GetMetaData()->ScriptClass->GetInternalClassInternal());
 	}
 
 	void ScriptCD6Joint::InternalSetLimitLinear(ScriptCD6Joint* thisPtr, __LimitLinearInterop* limit)
@@ -107,7 +107,7 @@ namespace bs
 
 		__LimitAngularRangeInterop interop__output;
 		interop__output = ScriptLimitAngularRange::ToInterop(tmp__output);
-		MonoUtil::ValueCopy(__output, &interop__output, ScriptLimitAngularRange::GetMetaData()->scriptClass->GetInternalClassInternal());
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptLimitAngularRange::GetMetaData()->ScriptClass->GetInternalClassInternal());
 	}
 
 	void ScriptCD6Joint::InternalSetLimitTwist(ScriptCD6Joint* thisPtr, __LimitAngularRangeInterop* limit)
@@ -124,7 +124,7 @@ namespace bs
 
 		__LimitConeRangeInterop interop__output;
 		interop__output = ScriptLimitConeRange::ToInterop(tmp__output);
-		MonoUtil::ValueCopy(__output, &interop__output, ScriptLimitConeRange::GetMetaData()->scriptClass->GetInternalClassInternal());
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptLimitConeRange::GetMetaData()->ScriptClass->GetInternalClassInternal());
 	}
 
 	void ScriptCD6Joint::InternalSetLimitSwing(ScriptCD6Joint* thisPtr, __LimitConeRangeInterop* limit)

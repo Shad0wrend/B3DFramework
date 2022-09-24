@@ -181,24 +181,24 @@ namespace bs
 		{
 			if(menuItem->IsSeparator())
 			{
-				dropDownData.entries.push_back(GUIDropDownDataEntry::Separator());
+				dropDownData.Entries.push_back(GUIDropDownDataEntry::Separator());
 			}
 			else
 			{
 				if(menuItem->GetNumChildren() == 0)
 				{
-					dropDownData.entries.push_back(GUIDropDownDataEntry::Button(menuItem->GetName(),
+					dropDownData.Entries.push_back(GUIDropDownDataEntry::Button(menuItem->GetName(),
 						menuItem->GetCallback(), menuItem->GetShortcut().GetName()));
 				}
 				else
 				{
-					dropDownData.entries.push_back(GUIDropDownDataEntry::SubMenu(menuItem->GetName(),
+					dropDownData.Entries.push_back(GUIDropDownDataEntry::SubMenu(menuItem->GetName(),
 						GetDropDownDataInternal(*menuItem)));
 				}
 			}
 		}
 
-		dropDownData.localizedNames = mLocalizedEntryNames;
+		dropDownData.LocalizedNames = mLocalizedEntryNames;
 
 		return dropDownData;
 	}

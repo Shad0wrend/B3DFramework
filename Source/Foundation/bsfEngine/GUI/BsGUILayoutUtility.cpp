@@ -8,7 +8,7 @@ namespace bs
 {
 	Vector2I GUILayoutUtility::CalcOptimalSize(const GUIElementBase* elem)
 	{
-		return elem->CalculateLayoutSizeRangeInternal().optimal;
+		return elem->CalculateLayoutSizeRangeInternal().Optimal;
 	}
 
 	Vector2I GUILayoutUtility::CalcActualSize(UINT32 width, UINT32 height, GUILayout* layout, bool updateOptimalSizes)
@@ -28,8 +28,8 @@ namespace bs
 			elementAreas = bs_stack_new<Rect2I>(numElements);
 
 		Rect2I parentArea;
-		parentArea.width = width;
-		parentArea.height = height;
+		parentArea.Width = width;
+		parentArea.Height = height;
 
 		layout->GetElementAreasInternal(parentArea, elementAreas, numElements, layout->GetCachedChildSizeRangesInternal(), layout->GetCachedSizeRangeInternal());
 
@@ -41,21 +41,21 @@ namespace bs
 
 			if (child->GetTypeInternal() == GUIElementBase::Type::Layout || child->GetTypeInternal() == GUIElementBase::Type::Panel)
 			{
-				Vector2I childActualSize = CalcActualSizeInternal(childArea.width, childArea.height, static_cast<GUILayout*>(child));
-				actualAreas[i].width = (UINT32)childActualSize.x;
-				actualAreas[i].height = (UINT32)childActualSize.y;
+				Vector2I childActualSize = CalcActualSizeInternal(childArea.Width, childArea.Height, static_cast<GUILayout*>(child));
+				actualAreas[i].Width = (UINT32)childActualSize.X;
+				actualAreas[i].Height = (UINT32)childActualSize.Y;
 			}
 			else if (child->GetTypeInternal() == GUIElementBase::Type::Element)
 			{
 				RectOffset padding = child->GetPaddingInternal();
 
-				actualAreas[i].width = elementAreas[i].width + padding.left + padding.right;
-				actualAreas[i].height = elementAreas[i].height + padding.top + padding.bottom;
+				actualAreas[i].Width = elementAreas[i].Width + padding.Left + padding.Right;
+				actualAreas[i].Height = elementAreas[i].Height + padding.Top + padding.Bottom;
 			}
 			else
 			{
-				actualAreas[i].width = elementAreas[i].width;
-				actualAreas[i].height = elementAreas[i].height;
+				actualAreas[i].Width = elementAreas[i].Width;
+				actualAreas[i].Height = elementAreas[i].Height;
 			}
 		}
 
@@ -66,19 +66,19 @@ namespace bs
 		{
 			Rect2I childArea = actualAreas[0];
 
-			min = Vector2I(childArea.x, childArea.y);
-			max = Vector2I(childArea.x + childArea.width, childArea.y + childArea.height);
+			min = Vector2I(childArea.X, childArea.Y);
+			max = Vector2I(childArea.X + childArea.Width, childArea.Y + childArea.Height);
 		}
 
 		for (UINT32 i = 1; i < numElements; i++)
 		{
 			Rect2I childArea = actualAreas[i];
 
-			min.x = std::min(min.x, childArea.x);
-			min.y = std::min(min.y, childArea.y);
+			min.X = std::min(min.X, childArea.X);
+			min.Y = std::min(min.Y, childArea.Y);
 
-			max.x = std::max(max.x, childArea.x + (INT32)childArea.width);
-			max.y = std::max(max.y, childArea.y + (INT32)childArea.height);
+			max.X = std::max(max.X, childArea.X + (INT32)childArea.Width);
+			max.Y = std::max(max.Y, childArea.Y + (INT32)childArea.Height);
 		}
 
 		Vector2I actualSize = max - min;

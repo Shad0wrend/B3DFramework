@@ -20,12 +20,12 @@ namespace bs
 		static UINT32 VERSION;
 
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN_NAMED(left, mExtents.left, 0)
-			BS_RTTI_MEMBER_PLAIN_NAMED(top, mExtents.top, 1)
-			BS_RTTI_MEMBER_PLAIN_NAMED(right, mExtents.right, 2)
-			BS_RTTI_MEMBER_PLAIN_NAMED(bottom, mExtents.bottom, 3)
-			BS_RTTI_MEMBER_PLAIN_NAMED(front, mExtents.front, 4)
-			BS_RTTI_MEMBER_PLAIN_NAMED(back, mExtents.back, 5)
+			BS_RTTI_MEMBER_PLAIN_NAMED(left, mExtents.Left, 0)
+			BS_RTTI_MEMBER_PLAIN_NAMED(top, mExtents.Top, 1)
+			BS_RTTI_MEMBER_PLAIN_NAMED(right, mExtents.Right, 2)
+			BS_RTTI_MEMBER_PLAIN_NAMED(bottom, mExtents.Bottom, 3)
+			BS_RTTI_MEMBER_PLAIN_NAMED(front, mExtents.Front, 4)
+			BS_RTTI_MEMBER_PLAIN_NAMED(back, mExtents.Back, 5)
 			BS_RTTI_MEMBER_PLAIN(mRowPitch, 6)
 			BS_RTTI_MEMBER_PLAIN(mSlicePitch, 7)
 			BS_RTTI_MEMBER_PLAIN(mFormat, 8)

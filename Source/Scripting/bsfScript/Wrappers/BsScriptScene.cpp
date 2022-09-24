@@ -37,22 +37,22 @@ namespace bs
 
 	void ScriptScene::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_GetRoot", (void*)&ScriptScene::InternalGetRoot);
-		metaData.scriptClass->AddInternalCall("Internal_GetMainCameraSO", (void*)&ScriptScene::InternalGetMainCameraSo);
+		metaData.ScriptClass->AddInternalCall("Internal_GetRoot", (void*)&ScriptScene::InternalGetRoot);
+		metaData.ScriptClass->AddInternalCall("Internal_GetMainCameraSO", (void*)&ScriptScene::InternalGetMainCameraSo);
 
 #if BS_IS_BANSHEE3D
-		metaData.scriptClass->AddInternalCall("Internal_SetActiveScene", (void*)&ScriptScene::InternalSetActiveScene);
-		metaData.scriptClass->AddInternalCall("Internal_ClearScene", (void*)&ScriptScene::InternalClearScene);
+		metaData.ScriptClass->AddInternalCall("Internal_SetActiveScene", (void*)&ScriptScene::InternalSetActiveScene);
+		metaData.ScriptClass->AddInternalCall("Internal_ClearScene", (void*)&ScriptScene::InternalClearScene);
 
-		MonoMethod* updateMethod = metaData.scriptClass->GetMethod("OnUpdate");
+		MonoMethod* updateMethod = metaData.ScriptClass->GetMethod("OnUpdate");
 		onUpdateThunk = (OnUpdateThunkDef)updateMethod->GetThunk();
 #endif
 	}
 
 	void ScriptScene::StartUp()
 	{
-		OnRefreshStartedConn = ScriptObjectManager::Instance().onRefreshStarted.Connect(&OnRefreshStarted);
-		OnRefreshDomainLoadedConn = ScriptObjectManager::Instance().onRefreshDomainLoaded.Connect(&OnRefreshDomainLoaded);
+		OnRefreshStartedConn = ScriptObjectManager::Instance().OnRefreshStarted.Connect(&OnRefreshStarted);
+		OnRefreshDomainLoadedConn = ScriptObjectManager::Instance().OnRefreshDomainLoaded.Connect(&OnRefreshDomainLoaded);
 	}
 
 	void ScriptScene::ShutDown()
@@ -89,22 +89,22 @@ namespace bs
 
 	void ScriptScene::OnRefreshStarted()
 	{
-		MonoMethod* uuidMethod = metaData.scriptClass->GetMethod("GetSceneUUID");
+		MonoMethod* uuidMethod = metaData.ScriptClass->GetMethod("GetSceneUUID");
 		if (uuidMethod != nullptr)
 			sActiveSceneUUID = ScriptUUID::Unbox(uuidMethod->Invoke(nullptr, nullptr));
 
-		MonoMethod* nameMethod = metaData.scriptClass->GetMethod("GetSceneName");
+		MonoMethod* nameMethod = metaData.ScriptClass->GetMethod("GetSceneName");
 		if (nameMethod != nullptr)
 			sActiveSceneName = MonoUtil::MonoToString((MonoString*)nameMethod->Invoke(nullptr, nullptr));
 
-		MonoMethod* genericPrefabMethod = metaData.scriptClass->GetMethod("GetIsGenericPrefab");
+		MonoMethod* genericPrefabMethod = metaData.ScriptClass->GetMethod("GetIsGenericPrefab");
 		if (genericPrefabMethod != nullptr)
 			sIsGenericPrefab = *(bool*)MonoUtil::Unbox(genericPrefabMethod->Invoke(nullptr, nullptr));
 	}
 
 	void ScriptScene::OnRefreshDomainLoaded()
 	{
-		MonoMethod* uuidMethod = metaData.scriptClass->GetMethod("SetSceneUUID", 1);
+		MonoMethod* uuidMethod = metaData.ScriptClass->GetMethod("SetSceneUUID", 1);
 		if (uuidMethod != nullptr)
 		{
 			void* params[1];
@@ -113,7 +113,7 @@ namespace bs
 			uuidMethod->Invoke(nullptr, params);
 		}
 			
-		MonoMethod* nameMethod = metaData.scriptClass->GetMethod("SetSceneName", 1);
+		MonoMethod* nameMethod = metaData.ScriptClass->GetMethod("SetSceneName", 1);
 		if (nameMethod != nullptr)
 		{
 			void* params[1];
@@ -122,7 +122,7 @@ namespace bs
 			nameMethod->Invoke(nullptr, params);
 		}
 
-		MonoMethod* genericPrefabMethod = metaData.scriptClass->GetMethod("SetIsGenericPrefab", 1);
+		MonoMethod* genericPrefabMethod = metaData.ScriptClass->GetMethod("SetIsGenericPrefab", 1);
 		if (genericPrefabMethod != nullptr)
 		{
 			void* params[1] = { &sIsGenericPrefab };

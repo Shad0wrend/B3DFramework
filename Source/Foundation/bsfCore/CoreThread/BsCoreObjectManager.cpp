@@ -69,14 +69,14 @@ namespace bs
 					mDestroyedSyncData.push_back(CoreStoredSyncObjData(coreObject, internalId, objSyncData));
 
 					DirtyObjectData& dirtyObjData = mDirtyObjects[internalId];
-					dirtyObjData.syncDataId = (INT32)mDestroyedSyncData.size() - 1;
-					dirtyObjData.object = nullptr;
+					dirtyObjData.SyncDataId = (INT32)mDestroyedSyncData.size() - 1;
+					dirtyObjData.Object = nullptr;
 				}
 				else
 				{
 					DirtyObjectData& dirtyObjData = mDirtyObjects[internalId];
-					dirtyObjData.syncDataId = -1;
-					dirtyObjData.object = nullptr;
+					dirtyObjData.SyncDataId = -1;
+					dirtyObjData.Object = nullptr;
 				}
 			}
 
@@ -224,9 +224,9 @@ namespace bs
 	{
 		struct IndividualCoreSyncData
 		{
-			SPtr<ct::CoreObject> destination;
-			CoreSyncData syncData;
-			FrameAlloc* allocator;
+			SPtr<ct::CoreObject> Destination;
+			CoreSyncData SyncData;
+			FrameAlloc* Allocator;
 		};
 
 		Lock lock(mObjectsMutex);
@@ -263,9 +263,9 @@ namespace bs
 
 			syncData.push_back(IndividualCoreSyncData());
 			IndividualCoreSyncData& data = syncData.back();
-			data.allocator = allocator;
-			data.destination = objectCore;
-			data.syncData = curObj->SyncToCore(allocator);
+			data.Allocator = allocator;
+			data.Destination = objectCore;
+			data.SyncData = curObj->SyncToCore(allocator);
 
 			curObj->MarkCoreClean();
 			mDirtyObjects.erase(id);
@@ -280,12 +280,12 @@ namespace bs
 			for (auto riter = data.rbegin(); riter != data.rend(); ++riter)
 			{
 				const IndividualCoreSyncData& entry = *riter;
-				entry.destination->SyncToCore(entry.syncData);
+				entry.Destination->SyncToCore(entry.SyncData);
 
-				UINT8* dataPtr = entry.syncData.GetBuffer();
+				UINT8* dataPtr = entry.SyncData.GetBuffer();
 
 				if (dataPtr != nullptr)
-					entry.allocator->Free(dataPtr);
+					entry.Allocator->Free(dataPtr);
 			}
 		};
 
@@ -300,7 +300,7 @@ namespace bs
 		mCoreSyncData.push_back(CoreStoredSyncData());
 		CoreStoredSyncData& syncData = mCoreSyncData.back();
 
-		syncData.alloc = allocator;
+		syncData.Alloc = allocator;
 		
 		// Add all objects dependant on the dirty objects
 		bs_frame_mark();
@@ -317,7 +317,7 @@ namespace bs
 						const bool wasDirty = dependant->IsCoreDirty();
 
 						// Let the dependant objects know their dependency changed
-						CoreObject* dependency = objectData.second.object;
+						CoreObject* dependency = objectData.second.Object;
 						dependant->OnDependencyDirty(dependency, dependency->GetCoreDirtyFlags());
 
 						if (!wasDirty && dependant->IsCoreDirty())
@@ -369,22 +369,22 @@ namespace bs
 				CoreSyncData objSyncData = curObj->SyncToCore(allocator);
 				curObj->MarkCoreClean();
 
-				syncData.entries.push_back(CoreStoredSyncObjData(objectCore,
+				syncData.Entries.push_back(CoreStoredSyncObjData(objectCore,
 					curObj->GetInternalId(), objSyncData));
 			};
 
-			CoreObject* object = objectData.second.object;
+			CoreObject* object = objectData.second.Object;
 			if (object != nullptr)
 				syncObject(object);
 			else
 			{
 				// Object was destroyed but we still need to sync its modifications before it was destroyed
-				if (objectData.second.syncDataId != -1)
+				if (objectData.second.SyncDataId != -1)
 				{
-					const CoreStoredSyncObjData& objData = mDestroyedSyncData[objectData.second.syncDataId];
+					const CoreStoredSyncObjData& objData = mDestroyedSyncData[objectData.second.SyncDataId];
 
-					syncData.entries.push_back(objData);
-					syncData.destroyedObjects.push_back(objData.destinationObj);
+					syncData.Entries.push_back(objData);
+					syncData.DestroyedObjects.push_back(objData.DestinationObj);
 				}
 			}
 		}
@@ -402,20 +402,20 @@ namespace bs
 
 		CoreStoredSyncData& syncData = mCoreSyncData.front();
 
-		for (auto& objSyncData : syncData.entries)
+		for (auto& objSyncData : syncData.Entries)
 		{
-			SPtr<ct::CoreObject> destinationObj = objSyncData.destinationObj;
+			SPtr<ct::CoreObject> destinationObj = objSyncData.DestinationObj;
 			if (destinationObj != nullptr)
-				destinationObj->SyncToCore(objSyncData.syncData);
+				destinationObj->SyncToCore(objSyncData.SyncData);
 
-			UINT8* data = objSyncData.syncData.GetBuffer();
+			UINT8* data = objSyncData.SyncData.GetBuffer();
 
 			if (data != nullptr)
-				syncData.alloc->Free(data);
+				syncData.Alloc->Free(data);
 		}
 
-		syncData.destroyedObjects.clear();
-		syncData.entries.clear();
+		syncData.DestroyedObjects.clear();
+		syncData.Entries.clear();
 		mCoreSyncData.pop_front();
 	}
 }

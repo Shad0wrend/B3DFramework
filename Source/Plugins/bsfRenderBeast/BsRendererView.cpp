@@ -51,16 +51,16 @@ namespace bs { namespace ct
 	}
 
 	RendererViewData::RendererViewData()
-		:encodeDepth(false)
+		:EncodeDepth(false)
 	{
 		
 	}
 
 	RendererViewProperties::RendererViewProperties(const RENDERER_VIEW_DESC& src)
-		:RendererViewData(src), frameIdx(0), target(src.target)
+		:RendererViewData(src), FrameIdx(0), Target(src.Target)
 	{
-		projTransformNoAA = src.projTransform;
-		viewProjTransform = src.projTransform * src.viewTransform;
+		ProjTransformNoAa = src.ProjTransform;
+		ViewProjTransform = src.ProjTransform * src.ViewTransform;
 	}
 
 	RendererView::RendererView()
@@ -70,12 +70,12 @@ namespace bs { namespace ct
 	}
 
 	RendererView::RendererView(const RENDERER_VIEW_DESC& desc)
-		: mProperties(desc), mCamera(desc.sceneCamera), mRenderSettingsHash(0), mViewIdx(-1)
+		: mProperties(desc), mCamera(desc.SceneCamera), mRenderSettingsHash(0), mViewIdx(-1)
 	{
 		mParamBuffer = gPerCameraParamDef.CreateBuffer();
-		mProperties.prevViewProjTransform = mProperties.viewProjTransform;
+		mProperties.PrevViewProjTransform = mProperties.ViewProjTransform;
 
-		SetStateReductionMode(desc.stateReduction);
+		SetStateReductionMode(desc.StateReduction);
 	}
 
 	void RendererView::SetStateReductionMode(StateReduction reductionMode)
@@ -109,27 +109,27 @@ namespace bs { namespace ct
 	void RendererView::SetTransform(const Vector3& origin, const Vector3& direction, const Matrix4& view,
 									  const Matrix4& proj, const ConvexVolume& worldFrustum)
 	{
-		mProperties.viewOrigin = origin;
-		mProperties.viewDirection = direction;
-		mProperties.viewTransform = view;
-		mProperties.projTransform = proj;
-		mProperties.projTransformNoAA = proj;
-		mProperties.cullFrustum = worldFrustum;
-		mProperties.viewProjTransform = proj * view;
-		mProperties.temporalJitter = Vector2::ZERO;
+		mProperties.ViewOrigin = origin;
+		mProperties.ViewDirection = direction;
+		mProperties.ViewTransform = view;
+		mProperties.ProjTransform = proj;
+		mProperties.ProjTransformNoAa = proj;
+		mProperties.CullFrustum = worldFrustum;
+		mProperties.ViewProjTransform = proj * view;
+		mProperties.TemporalJitter = Vector2::ZERO;
 	}
 
 	void RendererView::SetView(const RENDERER_VIEW_DESC& desc)
 	{
-		mCamera = desc.sceneCamera;
+		mCamera = desc.SceneCamera;
 		mProperties = desc;
-		mProperties.projTransformNoAA = desc.projTransform;
-		mProperties.viewProjTransform = desc.projTransform * desc.viewTransform;
-		mProperties.prevViewProjTransform = Matrix4::IDENTITY;
-		mProperties.target = desc.target;
-		mProperties.temporalJitter = Vector2::ZERO;
+		mProperties.ProjTransformNoAa = desc.ProjTransform;
+		mProperties.ViewProjTransform = desc.ProjTransform * desc.ViewTransform;
+		mProperties.PrevViewProjTransform = Matrix4::IDENTITY;
+		mProperties.Target = desc.Target;
+		mProperties.TemporalJitter = Vector2::ZERO;
 
-		SetStateReductionMode(desc.stateReduction);
+		SetStateReductionMode(desc.StateReduction);
 	}
 
 	void RendererView::BeginFrame(const FrameInfo& frameInfo)
@@ -146,18 +146,18 @@ namespace bs { namespace ct
 			{
 				UINT32 newTargetWidth = 0;
 				UINT32 newTargetHeight = 0;
-				if (mProperties.target.target != nullptr)
+				if (mProperties.Target.Target != nullptr)
 				{
-					newTargetWidth = mProperties.target.target->GetProperties().width;
-					newTargetHeight = mProperties.target.target->GetProperties().height;
+					newTargetWidth = mProperties.Target.Target->GetProperties().Width;
+					newTargetHeight = mProperties.Target.Target->GetProperties().Height;
 				}
 
-				if(newTargetWidth != mProperties.target.targetWidth ||
-					newTargetHeight != mProperties.target.targetHeight)
+				if(newTargetWidth != mProperties.Target.TargetWidth ||
+					newTargetHeight != mProperties.Target.TargetHeight)
 				{
-					mProperties.target.viewRect = viewport->GetPixelArea();
-					mProperties.target.targetWidth = newTargetWidth;
-					mProperties.target.targetHeight = newTargetHeight;
+					mProperties.Target.ViewRect = viewport->GetPixelArea();
+					mProperties.Target.TargetWidth = newTargetWidth;
+					mProperties.Target.TargetHeight = newTargetHeight;
 					
 					perViewBufferDirty = true;
 				}
@@ -165,9 +165,9 @@ namespace bs { namespace ct
 		}
 
 		// Update projection matrix jitter if temporal AA is enabled
-		if(mRenderSettings->temporalAA.enabled)
+		if(mRenderSettings->TemporalAa.Enabled)
 		{
-			UINT32 positionCount = mRenderSettings->temporalAA.jitteredPositionCount;
+			UINT32 positionCount = mRenderSettings->TemporalAa.JitteredPositionCount;
 			positionCount = Math::Clamp(positionCount, 4U, 128U);
 			
 			UINT32 positionIndex = mTemporalPositionIdx % positionCount;
@@ -183,7 +183,7 @@ namespace bs { namespace ct
 					{ -6.0f / 16.0f,  2.0f / 16.0f }
 				};
 
-				mProperties.temporalJitter = samples[positionIndex];
+				mProperties.TemporalJitter = samples[positionIndex];
 			}
 			else
 			{
@@ -192,20 +192,20 @@ namespace bs { namespace ct
 				float u1 = Math::HaltonSequence<float>(positionIndex + 1, 2);
 				float u2 = Math::HaltonSequence<float>(positionIndex + 1, 3);
 
-				float scale = (2.0f - mRenderSettings->temporalAA.sharpness) * 0.3f;
+				float scale = (2.0f - mRenderSettings->TemporalAa.Sharpness) * 0.3f;
 
 				float angle = 2.0f * Math::PI * u2;
 				float radius = scale * Math::Sqrt(-2.0f * Math::Log(Math::Max(u1, EPSILON)));
 
-				mProperties.temporalJitter = Vector2(radius * Math::Cos(angle), radius * Math::Sin(angle));
+				mProperties.TemporalJitter = Vector2(radius * Math::Cos(angle), radius * Math::Sin(angle));
 			}
 
-			Vector2 viewSize = Vector2((float)mProperties.target.targetWidth, (float)mProperties.target.targetHeight);
-			Vector2 subsampleJitter = mProperties.temporalJitter / viewSize;
-			Matrix4 subSampleTranslate = Matrix4::Translation(Vector3(subsampleJitter.x, subsampleJitter.y, 0.0f));
+			Vector2 viewSize = Vector2((float)mProperties.Target.TargetWidth, (float)mProperties.Target.TargetHeight);
+			Vector2 subsampleJitter = mProperties.TemporalJitter / viewSize;
+			Matrix4 subSampleTranslate = Matrix4::Translation(Vector3(subsampleJitter.X, subsampleJitter.Y, 0.0f));
 			
-			mProperties.projTransform = subSampleTranslate * mProperties.projTransformNoAA;
-			mProperties.viewProjTransform = mProperties.projTransform * mProperties.viewTransform;
+			mProperties.ProjTransform = subSampleTranslate * mProperties.ProjTransformNoAa;
+			mProperties.ViewProjTransform = mProperties.ProjTransform * mProperties.ViewTransform;
 
 			mTemporalPositionIdx++;
 			perViewBufferDirty = true;
@@ -215,21 +215,21 @@ namespace bs { namespace ct
 			UpdatePerViewBuffer();
 
 		// Note: inverse view-projection can be cached, it doesn't change every frame
-		Matrix4 viewProj = mProperties.projTransform * mProperties.viewTransform;
+		Matrix4 viewProj = mProperties.ProjTransform * mProperties.ViewTransform;
 		Matrix4 invViewProj = viewProj.Inverse();
-		Matrix4 NDCToPrevNDC = mProperties.prevViewProjTransform * invViewProj;
+		Matrix4 NDCToPrevNDC = mProperties.PrevViewProjTransform * invViewProj;
 		
 		gPerCameraParamDef.gNDCToPrevNDC.Set(mParamBuffer, NDCToPrevNDC);
 
-		mFrameTimings = frameInfo.timings;
-		mAsyncAnim = frameInfo.perFrameData.animation ? frameInfo.perFrameData.animation->async : false;
+		mFrameTimings = frameInfo.Timings;
+		mAsyncAnim = frameInfo.PerFrameData.Animation ? frameInfo.PerFrameData.Animation->Async : false;
 
 		// Account for auto-exposure taking multiple frames
 		if (mRedrawThisFrame)
 		{
 			// Note: Doing this here instead of _notifyNeedsRedraw because we need an up-to-date frame index
-			if (mRenderSettings->enableHDR && mRenderSettings->enableAutoExposure)
-				mWaitingOnAutoExposureFrame = mFrameTimings.frameIdx;
+			if (mRenderSettings->EnableHdr && mRenderSettings->EnableAutoExposure)
+				mWaitingOnAutoExposureFrame = mFrameTimings.FrameIdx;
 			else
 				mWaitingOnAutoExposureFrame = std::numeric_limits<UINT64>::max();
 		}
@@ -238,11 +238,11 @@ namespace bs { namespace ct
 	void RendererView::EndFrame()
 	{
 		// Save view-projection matrix to use for temporal filtering
-		mProperties.prevViewProjTransform = mProperties.viewProjTransform;
+		mProperties.PrevViewProjTransform = mProperties.ViewProjTransform;
 
 		// Advance per-view frame index. This is used primarily by temporal rendering effects, and pausing the frame index
 		// allows you to freeze the current rendering as is, without temporal artifacts.
-		mProperties.frameIdx++;
+		mProperties.FrameIdx++;
 
 		mDeferredOpaqueQueue->Clear();
 		mForwardOpaqueQueue->Clear();
@@ -253,7 +253,7 @@ namespace bs { namespace ct
 			mRedrawForFrames--;
 
 		if (mRedrawForSeconds > 0.0f)
-			mRedrawForSeconds -= mFrameTimings.timeDelta;
+			mRedrawForSeconds -= mFrameTimings.TimeDelta;
 
 		mRedrawThisFrame = false;
 	}
@@ -271,10 +271,10 @@ namespace bs { namespace ct
 
 	bool RendererView::ShouldDraw() const
 	{
-		if (!mProperties.onDemand)
+		if (!mProperties.OnDemand)
 			return true;
 
-		if(mRenderSettings->enableHDR && mRenderSettings->enableAutoExposure)
+		if(mRenderSettings->EnableHdr && mRenderSettings->EnableAutoExposure)
 		{
 			constexpr float AUTO_EXPOSURE_TOLERANCE = 0.01f;
 			
@@ -294,7 +294,7 @@ namespace bs { namespace ct
 
 	bool RendererView::RequiresVelocityWrites() const
 	{
-		return mRenderSettings->temporalAA.enabled || mRenderSettings->enableVelocityBuffer;
+		return mRenderSettings->TemporalAa.Enabled || mRenderSettings->EnableVelocityBuffer;
 	}
 
 	void RendererView::UpdateAsyncOperations()
@@ -303,7 +303,7 @@ namespace bs { namespace ct
 		auto lastFinishedIter = mLuminanceUpdates.end();
 		for(auto iter = mLuminanceUpdates.begin(); iter != mLuminanceUpdates.end(); ++iter)
 		{
-			if (iter->commandBuffer->GetState() == CommandBufferState::Executing)
+			if (iter->CommandBuffer->GetState() == CommandBufferState::Executing)
 				break;
 
 			lastFinishedIter = iter;
@@ -314,14 +314,14 @@ namespace bs { namespace ct
 			// Get new luminance value
 			mPreviousEyeAdaptation = mCurrentEyeAdaptation;
 
-			PixelData data = lastFinishedIter->outputTexture->texture->Lock(GBL_READ_ONLY);
-			mCurrentEyeAdaptation = data.GetColorAt(0, 0).r;
-			lastFinishedIter->outputTexture->texture->Unlock();
+			PixelData data = lastFinishedIter->OutputTexture->Texture->Lock(GBL_READ_ONLY);
+			mCurrentEyeAdaptation = data.GetColorAt(0, 0).R;
+			lastFinishedIter->OutputTexture->Texture->Unlock();
 
 			// We've received information about eye adaptation, use that to determine if redrawing
 			// is required (technically we're drawing a few frames extra, as this information is always
 			// a few frames too late).
-			if (lastFinishedIter->frameIdx == mWaitingOnAutoExposureFrame)
+			if (lastFinishedIter->FrameIdx == mWaitingOnAutoExposureFrame)
 				mWaitingOnAutoExposureFrame = std::numeric_limits<UINT64>::max();
 
 			mLuminanceUpdates.erase(mLuminanceUpdates.begin(), lastFinishedIter + 1);
@@ -330,7 +330,7 @@ namespace bs { namespace ct
 	
 	RendererViewRedrawReason RendererView::GetRedrawReason() const
 	{
-		if (!mProperties.onDemand)
+		if (!mProperties.OnDemand)
 			return RendererViewRedrawReason::PerFrame;
 
 		if (mRedrawThisFrame)
@@ -341,10 +341,10 @@ namespace bs { namespace ct
 
 	float RendererView::GetCurrentExposure() const
 	{
-		if (mRenderSettings->enableAutoExposure)
+		if (mRenderSettings->EnableAutoExposure)
 			return mPreviousEyeAdaptation;
 
-		return Math::Pow(2.0f, mRenderSettings->exposureScale);
+		return Math::Pow(2.0f, mRenderSettings->ExposureScale);
 	}
 
 	void RendererView::NotifyLuminanceUpdatedInternal(UINT64 frameIdx, SPtr<CommandBuffer> cb, SPtr<PooledRenderTexture> texture) const
@@ -355,13 +355,13 @@ namespace bs { namespace ct
 	void RendererView::DetermineVisible(const Vector<RendererRenderable*>& renderables, const Vector<CullInfo>& cullInfos,
 		Vector<bool>* visibility)
 	{
-		mVisibility.renderables.clear();
-		mVisibility.renderables.resize(renderables.size(), false);
+		mVisibility.Renderables.clear();
+		mVisibility.Renderables.resize(renderables.size(), false);
 
 		if (!ShouldDraw3D())
 			return;
 
-		CalculateVisibility(cullInfos, mVisibility.renderables);
+		CalculateVisibility(cullInfos, mVisibility.Renderables);
 
 		if(visibility != nullptr)
 		{
@@ -369,7 +369,7 @@ namespace bs { namespace ct
 			{
 				bool visible = (*visibility)[i];
 
-				(*visibility)[i] = visible || mVisibility.renderables[i];
+				(*visibility)[i] = visible || mVisibility.Renderables[i];
 			}
 		}
 	}
@@ -377,13 +377,13 @@ namespace bs { namespace ct
 	void RendererView::DetermineVisible(const Vector<RendererParticles>& particleSystems, const Vector<CullInfo>& cullInfos,
 		Vector<bool>* visibility)
 	{
-		mVisibility.particleSystems.clear();
-		mVisibility.particleSystems.resize(particleSystems.size(), false);
+		mVisibility.ParticleSystems.clear();
+		mVisibility.ParticleSystems.resize(particleSystems.size(), false);
 
 		if (!ShouldDraw3D())
 			return;
 
-		CalculateVisibility(cullInfos, mVisibility.particleSystems);
+		CalculateVisibility(cullInfos, mVisibility.ParticleSystems);
 
 		if(visibility != nullptr)
 		{
@@ -391,7 +391,7 @@ namespace bs { namespace ct
 			{
 				bool visible = (*visibility)[i];
 
-				(*visibility)[i] = visible || mVisibility.particleSystems[i];
+				(*visibility)[i] = visible || mVisibility.ParticleSystems[i];
 			}
 		}
 	}
@@ -399,13 +399,13 @@ namespace bs { namespace ct
 	void RendererView::DetermineVisible(const Vector<RendererDecal>& decals, const Vector<CullInfo>& cullInfos,
 		Vector<bool>* visibility)
 	{
-		mVisibility.decals.clear();
-		mVisibility.decals.resize(decals.size(), false);
+		mVisibility.Decals.clear();
+		mVisibility.Decals.resize(decals.size(), false);
 
 		if (!ShouldDraw3D())
 			return;
 
-		CalculateVisibility(cullInfos, mVisibility.decals);
+		CalculateVisibility(cullInfos, mVisibility.Decals);
 
 		if(visibility != nullptr)
 		{
@@ -413,7 +413,7 @@ namespace bs { namespace ct
 			{
 				bool visible = (*visibility)[i];
 
-				(*visibility)[i] = visible || mVisibility.decals[i];
+				(*visibility)[i] = visible || mVisibility.Decals[i];
 			}
 		}
 	}
@@ -433,17 +433,17 @@ namespace bs { namespace ct
 		Vector<bool>* perViewVisibility;
 		if(lightType == LightType::Radial)
 		{
-			mVisibility.radialLights.clear();
-			mVisibility.radialLights.resize(lights.size(), false);
+			mVisibility.RadialLights.clear();
+			mVisibility.RadialLights.resize(lights.size(), false);
 
-			perViewVisibility = &mVisibility.radialLights;
+			perViewVisibility = &mVisibility.RadialLights;
 		}
 		else // Spot
 		{
-			mVisibility.spotLights.clear();
-			mVisibility.spotLights.resize(lights.size(), false);
+			mVisibility.SpotLights.clear();
+			mVisibility.SpotLights.resize(lights.size(), false);
 
-			perViewVisibility = &mVisibility.spotLights;
+			perViewVisibility = &mVisibility.SpotLights;
 		}
 
 		if (!ShouldDraw3D())
@@ -464,22 +464,22 @@ namespace bs { namespace ct
 
 	void RendererView::CalculateVisibility(const Vector<CullInfo>& cullInfos, Vector<bool>& visibility) const
 	{
-		UINT64 cameraLayers = mProperties.visibleLayers;
-		const ConvexVolume& worldFrustum = mProperties.cullFrustum;
-		const Vector3& worldCameraPosition = mProperties.viewOrigin;
-		float baseCullDistance = mRenderSettings->cullDistance;
+		UINT64 cameraLayers = mProperties.VisibleLayers;
+		const ConvexVolume& worldFrustum = mProperties.CullFrustum;
+		const Vector3& worldCameraPosition = mProperties.ViewOrigin;
+		float baseCullDistance = mRenderSettings->CullDistance;
 
 		for (UINT32 i = 0; i < (UINT32)cullInfos.size(); i++)
 		{
-			if ((cullInfos[i].layer & cameraLayers) == 0)
+			if ((cullInfos[i].Layer & cameraLayers) == 0)
 				continue;
 
 			// Do distance culling
-			const Sphere& boundingSphere = cullInfos[i].bounds.GetSphere();
+			const Sphere& boundingSphere = cullInfos[i].Bounds.GetSphere();
 			const Vector3& worldRenderablePosition = boundingSphere.GetCenter();
 
 			float distanceToCameraSq = worldCameraPosition.SquaredDistance(worldRenderablePosition);
-			float correctedCullDistance = cullInfos[i].cullDistanceFactor * baseCullDistance;
+			float correctedCullDistance = cullInfos[i].CullDistanceFactor * baseCullDistance;
 			float maxDistanceToCamera = correctedCullDistance + boundingSphere.GetRadius();
 
 			if (distanceToCameraSq > maxDistanceToCamera * maxDistanceToCamera)
@@ -491,7 +491,7 @@ namespace bs { namespace ct
 			if (worldFrustum.Intersects(boundingSphere))
 			{
 				// More precise with the box
-				const AABox& boundingBox = cullInfos[i].bounds.GetBox();
+				const AABox& boundingBox = cullInfos[i].Bounds.GetBox();
 
 				if (worldFrustum.Intersects(boundingBox))
 					visibility[i] = true;
@@ -501,7 +501,7 @@ namespace bs { namespace ct
 
 	void RendererView::CalculateVisibility(const Vector<Sphere>& bounds, Vector<bool>& visibility) const
 	{
-		const ConvexVolume& worldFrustum = mProperties.cullFrustum;
+		const ConvexVolume& worldFrustum = mProperties.CullFrustum;
 
 		for (UINT32 i = 0; i < (UINT32)bounds.size(); i++)
 		{
@@ -512,7 +512,7 @@ namespace bs { namespace ct
 
 	void RendererView::CalculateVisibility(const Vector<AABox>& bounds, Vector<bool>& visibility) const
 	{
-		const ConvexVolume& worldFrustum = mProperties.cullFrustum;
+		const ConvexVolume& worldFrustum = mProperties.CullFrustum;
 
 		for (UINT32 i = 0; i < (UINT32)bounds.size(); i++)
 		{
@@ -524,28 +524,28 @@ namespace bs { namespace ct
 	void RendererView::QueueRenderElements(const SceneInfo& sceneInfo)
 	{
 		// Queue renderables
-		for(UINT32 i = 0; i < (UINT32)sceneInfo.renderables.size(); i++)
+		for(UINT32 i = 0; i < (UINT32)sceneInfo.Renderables.size(); i++)
 		{
-			if (!mVisibility.renderables[i])
+			if (!mVisibility.Renderables[i])
 				continue;
 
-			const AABox& boundingBox = sceneInfo.renderableCullInfos[i].bounds.GetBox();
-			const float distanceToCamera = (mProperties.viewOrigin - boundingBox.GetCenter()).Length();
+			const AABox& boundingBox = sceneInfo.RenderableCullInfos[i].Bounds.GetBox();
+			const float distanceToCamera = (mProperties.ViewOrigin - boundingBox.GetCenter()).Length();
 
 			bool needsVelocity = RequiresVelocityWrites();
-			for (auto& renderElem : sceneInfo.renderables[i]->elements)
+			for (auto& renderElem : sceneInfo.Renderables[i]->Elements)
 			{
 				UINT32 techniqueIdx;
 				if (needsVelocity)
 				{
-					techniqueIdx = renderElem.writeVelocityTechniqueIdx != (UINT32)-1
-						? renderElem.writeVelocityTechniqueIdx
-						: renderElem.defaultTechniqueIdx;
+					techniqueIdx = renderElem.WriteVelocityTechniqueIdx != (UINT32)-1
+						? renderElem.WriteVelocityTechniqueIdx
+						: renderElem.DefaultTechniqueIdx;
 				}
 				else
-					techniqueIdx = renderElem.defaultTechniqueIdx;
+					techniqueIdx = renderElem.DefaultTechniqueIdx;
 
-				ShaderFlags shaderFlags = renderElem.material->GetShader()->GetFlags();
+				ShaderFlags shaderFlags = renderElem.Material->GetShader()->GetFlags();
 
 				// Note: I could keep renderables in multiple separate arrays, so I don't need to do the check here
 				if (shaderFlags.IsSet(ShaderFlag::Transparent))
@@ -558,54 +558,54 @@ namespace bs { namespace ct
 		}
 
 		// Queue particle systems
-		for(UINT32 i = 0; i < (UINT32)sceneInfo.particleSystems.size(); i++)
+		for(UINT32 i = 0; i < (UINT32)sceneInfo.ParticleSystems.size(); i++)
 		{
-			if (!mVisibility.particleSystems[i])
+			if (!mVisibility.ParticleSystems[i])
 				continue;
 
-			const ParticlesRenderElement& renderElem = sceneInfo.particleSystems[i].renderElement;
+			const ParticlesRenderElement& renderElem = sceneInfo.ParticleSystems[i].RenderElement;
 			if (!renderElem.IsValid())
 				continue;
 
-			const AABox& boundingBox = sceneInfo.particleSystemCullInfos[i].bounds.GetBox();
-			const float distanceToCamera = (mProperties.viewOrigin - boundingBox.GetCenter()).Length();
+			const AABox& boundingBox = sceneInfo.ParticleSystemCullInfos[i].Bounds.GetBox();
+			const float distanceToCamera = (mProperties.ViewOrigin - boundingBox.GetCenter()).Length();
 
-			ShaderFlags shaderFlags = renderElem.material->GetShader()->GetFlags();
+			ShaderFlags shaderFlags = renderElem.Material->GetShader()->GetFlags();
 
 			if (shaderFlags.IsSet(ShaderFlag::Transparent))
-				mTransparentQueue->Add(&renderElem, distanceToCamera, renderElem.defaultTechniqueIdx);
+				mTransparentQueue->Add(&renderElem, distanceToCamera, renderElem.DefaultTechniqueIdx);
 			else if (shaderFlags.IsSet(ShaderFlag::Forward))
-				mForwardOpaqueQueue->Add(&renderElem, distanceToCamera, renderElem.defaultTechniqueIdx);
+				mForwardOpaqueQueue->Add(&renderElem, distanceToCamera, renderElem.DefaultTechniqueIdx);
 			else
-				mDeferredOpaqueQueue->Add(&renderElem, distanceToCamera, renderElem.defaultTechniqueIdx);
+				mDeferredOpaqueQueue->Add(&renderElem, distanceToCamera, renderElem.DefaultTechniqueIdx);
 		}
 
 		// Queue decals
-		const bool isMSAA = mProperties.target.numSamples > 1;
-		for(UINT32 i = 0; i < (UINT32)sceneInfo.decals.size(); i++)
+		const bool isMSAA = mProperties.Target.NumSamples > 1;
+		for(UINT32 i = 0; i < (UINT32)sceneInfo.Decals.size(); i++)
 		{
-			if (!mVisibility.decals[i])
+			if (!mVisibility.Decals[i])
 				continue;
 
-			const DecalRenderElement& renderElem = sceneInfo.decals[i].renderElement;
+			const DecalRenderElement& renderElem = sceneInfo.Decals[i].RenderElement;
 
 			// Note: I could keep renderables in multiple separate arrays, so I don't need to do the check here
-			ShaderFlags shaderFlags = renderElem.material->GetShader()->GetFlags();
+			ShaderFlags shaderFlags = renderElem.Material->GetShader()->GetFlags();
 
 			// Decals are only supported using deferred rendering
 			if (shaderFlags.IsSetAny(ShaderFlag::Transparent | ShaderFlag::Forward))
 				continue;
 
-			const AABox& boundingBox = sceneInfo.decalCullInfos[i].bounds.GetBox();
-			const float distanceToCamera = (mProperties.viewOrigin - boundingBox.GetCenter()).Length();
+			const AABox& boundingBox = sceneInfo.DecalCullInfos[i].Bounds.GetBox();
+			const float distanceToCamera = (mProperties.ViewOrigin - boundingBox.GetCenter()).Length();
 
 			// Check if viewer is inside the decal volume
 
 			// Extend the bounds slighty to cover the case when the viewer is outside, but the near plane is intersecting
 			// the decal bounds. We need to be conservative since the material for rendering outside will not properly
 			// render the inside of the decal volume.
-			const bool isInside = boundingBox.Contains(mProperties.viewOrigin, mProperties.nearPlane * 3.0f);
-			const UINT32* techniqueIndices = renderElem.techniqueIndices[(INT32)isInside];
+			const bool isInside = boundingBox.Contains(mProperties.ViewOrigin, mProperties.NearPlane * 3.0f);
+			const UINT32* techniqueIndices = renderElem.TechniqueIndices[(INT32)isInside];
 
 			// No MSAA evaluation, or same value for all samples (no divergence between samples)
 			mDecalQueue->Add(&renderElem, distanceToCamera,
@@ -645,8 +645,8 @@ namespace bs { namespace ct
 
 		const RenderAPICapabilities& caps = gCaps();
 
-		float depthRange = caps.maxDepth - caps.minDepth;
-		float minDepth = caps.minDepth;
+		float depthRange = caps.MaxDepth - caps.MinDepth;
+		float minDepth = caps.MinDepth;
 
 		float a = projMatrix[2][2];
 		float b = projMatrix[2][3];
@@ -656,13 +656,13 @@ namespace bs { namespace ct
 
 		if (c != 0.0f)
 		{
-			output.x = b / (depthRange * c);
-			output.y = minDepth / depthRange - a / (depthRange * c);
+			output.X = b / (depthRange * c);
+			output.Y = minDepth / depthRange - a / (depthRange * c);
 		}
 		else // Ortographic, assuming viewing towards negative Z
 		{
-			output.x = b / -depthRange;
-			output.y = minDepth / depthRange - a / -depthRange;
+			output.X = b / -depthRange;
+			output.Y = minDepth / depthRange - a / -depthRange;
 		}
 
 		return output;
@@ -692,13 +692,13 @@ namespace bs { namespace ct
 
 		if (c != 0.0f)
 		{
-			output.x = b / c;
-			output.y = -a / c;
+			output.X = b / c;
+			output.Y = -a / c;
 		}
 		else // Ortographic, assuming viewing towards negative Z
 		{
-			output.x = -b;
-			output.y = a;
+			output.X = -b;
+			output.Y = a;
 		}
 
 		return output;
@@ -709,8 +709,8 @@ namespace bs { namespace ct
 		const RenderAPICapabilities& caps = gCaps();
 
 		Vector2 ndcZToDeviceZ;
-		ndcZToDeviceZ.x = 1.0f / (caps.maxDepth - caps.minDepth);
-		ndcZToDeviceZ.y = -caps.minDepth;
+		ndcZToDeviceZ.X = 1.0f / (caps.MaxDepth - caps.MinDepth);
+		ndcZToDeviceZ.Y = -caps.MinDepth;
 
 		return ndcZToDeviceZ;
 	}
@@ -746,17 +746,17 @@ namespace bs { namespace ct
 
 	void RendererView::UpdatePerViewBuffer()
 	{
-		Matrix4 viewProj = mProperties.projTransform * mProperties.viewTransform;
-		Matrix4 invProj = invertProjectionMatrix(mProperties.projTransform);
-		Matrix4 invView = mProperties.viewTransform.InverseAffine();
+		Matrix4 viewProj = mProperties.ProjTransform * mProperties.ViewTransform;
+		Matrix4 invProj = invertProjectionMatrix(mProperties.ProjTransform);
+		Matrix4 invView = mProperties.ViewTransform.InverseAffine();
 		Matrix4 invViewProj = invView * invProj;
 
-		gPerCameraParamDef.gMatProj.Set(mParamBuffer, mProperties.projTransform);
-		gPerCameraParamDef.gMatView.Set(mParamBuffer, mProperties.viewTransform);
+		gPerCameraParamDef.gMatProj.Set(mParamBuffer, mProperties.ProjTransform);
+		gPerCameraParamDef.gMatView.Set(mParamBuffer, mProperties.ViewTransform);
 		gPerCameraParamDef.gMatViewProj.Set(mParamBuffer, viewProj);
 		gPerCameraParamDef.gMatInvViewProj.Set(mParamBuffer, invViewProj);
 		gPerCameraParamDef.gMatInvProj.Set(mParamBuffer, invProj);
-		gPerCameraParamDef.gMatPrevViewProj.Set(mParamBuffer, mProperties.prevViewProjTransform);
+		gPerCameraParamDef.gMatPrevViewProj.Set(mParamBuffer, mProperties.PrevViewProjTransform);
 
 		// Construct a special inverse view-projection matrix that had projection entries that effect z and w eliminated.
 		// Used to transform a vector(clip_x, clip_y, view_z, view_w), where clip_x/clip_y are in clip space, and
@@ -764,31 +764,31 @@ namespace bs { namespace ct
 
 		// Only projects z/w coordinates (cancels out with the inverse matrix below)
 		Matrix4 projZ = Matrix4::IDENTITY;
-		projZ[2][2] = mProperties.projTransform[2][2];
-		projZ[2][3] = mProperties.projTransform[2][3];
-		projZ[3][2] = mProperties.projTransform[3][2];
+		projZ[2][2] = mProperties.ProjTransform[2][2];
+		projZ[2][3] = mProperties.ProjTransform[2][3];
+		projZ[3][2] = mProperties.ProjTransform[3][2];
 		projZ[3][3] = 0.0f;
 
-		Matrix4 NDCToPrevNDC = mProperties.prevViewProjTransform * invViewProj;
+		Matrix4 NDCToPrevNDC = mProperties.PrevViewProjTransform * invViewProj;
 		
 		gPerCameraParamDef.gMatScreenToWorld.Set(mParamBuffer, invViewProj * projZ);
 		gPerCameraParamDef.gNDCToPrevNDC.Set(mParamBuffer, NDCToPrevNDC);
-		gPerCameraParamDef.gViewDir.Set(mParamBuffer, mProperties.viewDirection);
-		gPerCameraParamDef.gViewOrigin.Set(mParamBuffer, mProperties.viewOrigin);
-		gPerCameraParamDef.gDeviceZToWorldZ.Set(mParamBuffer, GetDeviceZToViewZ(mProperties.projTransform));
-		gPerCameraParamDef.gNDCZToWorldZ.Set(mParamBuffer, GetNdczToViewZ(mProperties.projTransform));
+		gPerCameraParamDef.gViewDir.Set(mParamBuffer, mProperties.ViewDirection);
+		gPerCameraParamDef.gViewOrigin.Set(mParamBuffer, mProperties.ViewOrigin);
+		gPerCameraParamDef.gDeviceZToWorldZ.Set(mParamBuffer, GetDeviceZToViewZ(mProperties.ProjTransform));
+		gPerCameraParamDef.gNDCZToWorldZ.Set(mParamBuffer, GetNdczToViewZ(mProperties.ProjTransform));
 		gPerCameraParamDef.gNDCZToDeviceZ.Set(mParamBuffer, GetNdczToDeviceZ());
 
-		Vector2 nearFar(mProperties.nearPlane, mProperties.farPlane);
+		Vector2 nearFar(mProperties.NearPlane, mProperties.FarPlane);
 		gPerCameraParamDef.gNearFar.Set(mParamBuffer, nearFar);
 
-		const Rect2I& viewRect = mProperties.target.viewRect;
+		const Rect2I& viewRect = mProperties.Target.ViewRect;
 
 		Vector4I viewportRect;
-		viewportRect[0] = viewRect.x;
-		viewportRect[1] = viewRect.y;
-		viewportRect[2] = viewRect.width;
-		viewportRect[3] = viewRect.height;
+		viewportRect[0] = viewRect.X;
+		viewportRect[1] = viewRect.Y;
+		viewportRect[2] = viewRect.Width;
+		viewportRect[3] = viewRect.Height;
 
 		gPerCameraParamDef.gViewportRectangle.Set(mParamBuffer, viewportRect);
 
@@ -796,13 +796,13 @@ namespace bs { namespace ct
 		gPerCameraParamDef.gClipToUVScaleOffset.Set(mParamBuffer, ndcToUV);
 
 		Vector4 uvToNDC(
-			1.0f / ndcToUV.x,
-			1.0f / ndcToUV.y,
-			-ndcToUV.z / ndcToUV.x,
-			-ndcToUV.w / ndcToUV.y);
+			1.0f / ndcToUV.X,
+			1.0f / ndcToUV.Y,
+			-ndcToUV.Z / ndcToUV.X,
+			-ndcToUV.W / ndcToUV.Y);
 		gPerCameraParamDef.gUVToClipScaleOffset.Set(mParamBuffer, uvToNDC);
 
-		if (!mRenderSettings->enableLighting)
+		if (!mRenderSettings->EnableLighting)
 			gPerCameraParamDef.gAmbientFactor.Set(mParamBuffer, 100.0f);
 		else
 			gPerCameraParamDef.gAmbientFactor.Set(mParamBuffer, 0.0f);
@@ -811,23 +811,23 @@ namespace bs { namespace ct
 	Vector4 RendererView::GetNdcToUv() const
 	{
 		const RenderAPICapabilities& caps = gCaps();
-		const Rect2I& viewRect = mProperties.target.viewRect;
+		const Rect2I& viewRect = mProperties.Target.ViewRect;
 		
-		float halfWidth = viewRect.width * 0.5f;
-		float halfHeight = viewRect.height * 0.5f;
+		float halfWidth = viewRect.Width * 0.5f;
+		float halfHeight = viewRect.Height * 0.5f;
 
-		float rtWidth = mProperties.target.targetWidth != 0 ? (float)mProperties.target.targetWidth : 20.0f;
-		float rtHeight = mProperties.target.targetHeight != 0 ? (float)mProperties.target.targetHeight : 20.0f;
+		float rtWidth = mProperties.Target.TargetWidth != 0 ? (float)mProperties.Target.TargetWidth : 20.0f;
+		float rtHeight = mProperties.Target.TargetHeight != 0 ? (float)mProperties.Target.TargetHeight : 20.0f;
 
 		Vector4 ndcToUV;
-		ndcToUV.x = halfWidth / rtWidth;
-		ndcToUV.y = -halfHeight / rtHeight;
-		ndcToUV.z = viewRect.x / rtWidth + (halfWidth + caps.horizontalTexelOffset) / rtWidth;
-		ndcToUV.w = viewRect.y / rtHeight + (halfHeight + caps.verticalTexelOffset) / rtHeight;
+		ndcToUV.X = halfWidth / rtWidth;
+		ndcToUV.Y = -halfHeight / rtHeight;
+		ndcToUV.Z = viewRect.X / rtWidth + (halfWidth + caps.HorizontalTexelOffset) / rtWidth;
+		ndcToUV.W = viewRect.Y / rtHeight + (halfHeight + caps.VerticalTexelOffset) / rtHeight;
 
 		// Either of these flips the Y axis, but if they're both true they cancel out
-		if ((caps.conventions.uvYAxis == Conventions::Axis::Up) ^ (caps.conventions.ndcYAxis == Conventions::Axis::Down))
-			ndcToUV.y = -ndcToUV.y;
+		if ((caps.Conventions.UvYAxis == Conventions::Axis::Up) ^ (caps.Conventions.NdcYAxis == Conventions::Axis::Down))
+			ndcToUV.Y = -ndcToUV.Y;
 
 		return ndcToUV;
 	}
@@ -835,7 +835,7 @@ namespace bs { namespace ct
 	void RendererView::UpdateLightGrid(const VisibleLightData& visibleLightData,
 		const VisibleReflProbeData& visibleReflProbeData)
 	{
-		mLightGrid.UpdateGrid(*this, visibleLightData, visibleReflProbeData, !mRenderSettings->enableLighting);
+		mLightGrid.UpdateGrid(*this, visibleLightData, visibleReflProbeData, !mRenderSettings->EnableLighting);
 	}
 
 	RendererViewGroup::RendererViewGroup(RendererView** views, UINT32 numViews, bool mainPass, UINT32 shadowMapSize)
@@ -874,20 +874,20 @@ namespace bs { namespace ct
 			return;
 
 		// Calculate renderable visibility per view
-		mVisibility.renderables.resize(sceneInfo.renderables.size(), false);
-		mVisibility.renderables.assign(sceneInfo.renderables.size(), false);
+		mVisibility.Renderables.resize(sceneInfo.Renderables.size(), false);
+		mVisibility.Renderables.assign(sceneInfo.Renderables.size(), false);
 
-		mVisibility.particleSystems.resize(sceneInfo.particleSystems.size(), false);
-		mVisibility.particleSystems.assign(sceneInfo.particleSystems.size(), false);
+		mVisibility.ParticleSystems.resize(sceneInfo.ParticleSystems.size(), false);
+		mVisibility.ParticleSystems.assign(sceneInfo.ParticleSystems.size(), false);
 
-		mVisibility.decals.resize(sceneInfo.decals.size(), false);
-		mVisibility.decals.assign(sceneInfo.decals.size(), false);
+		mVisibility.Decals.resize(sceneInfo.Decals.size(), false);
+		mVisibility.Decals.assign(sceneInfo.Decals.size(), false);
 
 		for(UINT32 i = 0; i < numViews; i++)
 		{
-			mViews[i]->DetermineVisible(sceneInfo.renderables, sceneInfo.renderableCullInfos, &mVisibility.renderables);
-			mViews[i]->DetermineVisible(sceneInfo.particleSystems, sceneInfo.particleSystemCullInfos, &mVisibility.particleSystems);
-			mViews[i]->DetermineVisible(sceneInfo.decals, sceneInfo.decalCullInfos, &mVisibility.decals);
+			mViews[i]->DetermineVisible(sceneInfo.Renderables, sceneInfo.RenderableCullInfos, &mVisibility.Renderables);
+			mViews[i]->DetermineVisible(sceneInfo.ParticleSystems, sceneInfo.ParticleSystemCullInfos, &mVisibility.ParticleSystems);
+			mViews[i]->DetermineVisible(sceneInfo.Decals, sceneInfo.DecalCullInfos, &mVisibility.Decals);
 		}
 		
 		// Generate render queues per camera
@@ -898,30 +898,30 @@ namespace bs { namespace ct
 		}
 
 		// Calculate light visibility for all views
-		const auto numRadialLights = (UINT32)sceneInfo.radialLights.size();
-		mVisibility.radialLights.resize(numRadialLights, false);
-		mVisibility.radialLights.assign(numRadialLights, false);
+		const auto numRadialLights = (UINT32)sceneInfo.RadialLights.size();
+		mVisibility.RadialLights.resize(numRadialLights, false);
+		mVisibility.RadialLights.assign(numRadialLights, false);
 
-		const auto numSpotLights = (UINT32)sceneInfo.spotLights.size();
-		mVisibility.spotLights.resize(numSpotLights, false);
-		mVisibility.spotLights.assign(numSpotLights, false);
+		const auto numSpotLights = (UINT32)sceneInfo.SpotLights.size();
+		mVisibility.SpotLights.resize(numSpotLights, false);
+		mVisibility.SpotLights.assign(numSpotLights, false);
 
 		for (UINT32 i = 0; i < numViews; i++)
 		{
 			if (!mViews[i]->ShouldDraw3D())
 				continue;
 
-			mViews[i]->DetermineVisible(sceneInfo.radialLights, sceneInfo.radialLightWorldBounds, LightType::Radial,
-				&mVisibility.radialLights);
+			mViews[i]->DetermineVisible(sceneInfo.RadialLights, sceneInfo.RadialLightWorldBounds, LightType::Radial,
+				&mVisibility.RadialLights);
 
-			mViews[i]->DetermineVisible(sceneInfo.spotLights, sceneInfo.spotLightWorldBounds, LightType::Spot,
-				&mVisibility.spotLights);
+			mViews[i]->DetermineVisible(sceneInfo.SpotLights, sceneInfo.SpotLightWorldBounds, LightType::Spot,
+				&mVisibility.SpotLights);
 		}
 
 		// Calculate refl. probe visibility for all views
-		const auto numProbes = (UINT32)sceneInfo.reflProbes.size();
-		mVisibility.reflProbes.resize(numProbes, false);
-		mVisibility.reflProbes.assign(numProbes, false);
+		const auto numProbes = (UINT32)sceneInfo.ReflProbes.size();
+		mVisibility.ReflProbes.resize(numProbes, false);
+		mVisibility.ReflProbes.assign(numProbes, false);
 
 		// Note: Per-view visibility for refl. probes currently isn't calculated
 		for (UINT32 i = 0; i < numViews; i++)
@@ -929,10 +929,10 @@ namespace bs { namespace ct
 			const auto& viewProps = mViews[i]->GetProperties();
 
 			// Don't recursively render reflection probes when generating reflection probe maps
-			if (viewProps.capturingReflections)
+			if (viewProps.CapturingReflections)
 				continue;
 
-			mViews[i]->CalculateVisibility(sceneInfo.reflProbeWorldBounds, mVisibility.reflProbes);
+			mViews[i]->CalculateVisibility(sceneInfo.ReflProbeWorldBounds, mVisibility.ReflProbes);
 		}
 
 		// Organize light and refl. probe visibility information in a more GPU friendly manner

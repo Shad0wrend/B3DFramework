@@ -48,16 +48,16 @@ namespace bs { namespace ct
 				if (samplerState == nullptr)
 					samplerState = SamplerState::GetDefault();
 
-				override.paramIdx = paramIdx;
+				override.ParamIdx = paramIdx;
 				
 				if (CheckNeedsOverride(samplerState, options))
-					override.state = GenerateSamplerOverride(samplerState, options);
+					override.State = GenerateSamplerOverride(samplerState, options);
 				else
-					override.state = samplerState;
+					override.State = samplerState;
 
-				override.originalStateHash = override.state->GetProperties().GetHash();
+				override.OriginalStateHash = override.State->GetProperties().GetHash();
 
-				for (auto& entry : samplerParam.second.gpuVariableNames)
+				for (auto& entry : samplerParam.second.GpuVariableNames)
 					overrideLookup[entry] = overrideIdx;
 			}
 
@@ -80,9 +80,9 @@ namespace bs { namespace ct
 					if (paramDesc == nullptr)
 						continue;
 
-					for (auto iter = paramDesc->samplers.begin(); iter != paramDesc->samplers.end(); ++iter)
+					for (auto iter = paramDesc->Samplers.begin(); iter != paramDesc->Samplers.end(); ++iter)
 					{
-						UINT32 set = iter->second.set;
+						UINT32 set = iter->second.Set;
 						maxSamplerSet = std::max(maxSamplerSet, set + 1);
 					}
 				}
@@ -106,10 +106,10 @@ namespace bs { namespace ct
 					if (paramDesc == nullptr)
 						continue;
 
-					for (auto iter = paramDesc->samplers.begin(); iter != paramDesc->samplers.end(); ++iter)
+					for (auto iter = paramDesc->Samplers.begin(); iter != paramDesc->Samplers.end(); ++iter)
 					{
-						UINT32 set = iter->second.set;
-						UINT32 slot = iter->second.slot;
+						UINT32 set = iter->second.Set;
+						UINT32 slot = iter->second.Slot;
 						slotsPerSetIter[set] = std::max(slotsPerSetIter[set], slot + 1);
 					}
 				}
@@ -130,10 +130,10 @@ namespace bs { namespace ct
 			output = (MaterialSamplerOverrides*)outputData;
 			outputData += sizeof(MaterialSamplerOverrides);
 
-			output->refCount = 0;
-			output->numPasses = numPasses;
-			output->passes = (PassSamplerOverrides*)outputData;
-			output->isDirty = true;
+			output->RefCount = 0;
+			output->NumPasses = numPasses;
+			output->Passes = (PassSamplerOverrides*)outputData;
+			output->IsDirty = true;
 			outputData += sizeof(PassSamplerOverrides) * numPasses;
 
 			slotsPerSetIter = slotsPerSet;
@@ -141,14 +141,14 @@ namespace bs { namespace ct
 			{
 				SPtr<GpuParams> paramsPtr = paramsSet->GetGpuParams(i);
 
-				PassSamplerOverrides& passOverrides = output->passes[i];
-				passOverrides.numSets = numSetsPerPass[i];
-				passOverrides.stateOverrides = (UINT32**)outputData;
-				outputData += sizeof(UINT32*) * passOverrides.numSets;
+				PassSamplerOverrides& passOverrides = output->Passes[i];
+				passOverrides.NumSets = numSetsPerPass[i];
+				passOverrides.StateOverrides = (UINT32**)outputData;
+				outputData += sizeof(UINT32*) * passOverrides.NumSets;
 
-				for (UINT32 j = 0; j < passOverrides.numSets; j++)
+				for (UINT32 j = 0; j < passOverrides.NumSets; j++)
 				{
-					passOverrides.stateOverrides[j] = (UINT32*)outputData;
+					passOverrides.StateOverrides[j] = (UINT32*)outputData;
 					outputData += sizeof(UINT32) * slotsPerSetIter[j];
 				}
 
@@ -160,13 +160,13 @@ namespace bs { namespace ct
 						continue;
 
 					UINT32 numStates = 0;
-					for (auto iter = paramDesc->samplers.begin(); iter != paramDesc->samplers.end(); ++iter)
+					for (auto iter = paramDesc->Samplers.begin(); iter != paramDesc->Samplers.end(); ++iter)
 					{
-						UINT32 set = iter->second.set;
-						UINT32 slot = iter->second.slot;
+						UINT32 set = iter->second.Set;
+						UINT32 slot = iter->second.Slot;
 						while (slot > numStates)
 						{
-							passOverrides.stateOverrides[set][numStates] = (UINT32)-1;
+							passOverrides.StateOverrides[set][numStates] = (UINT32)-1;
 							numStates++;
 						}
 
@@ -174,22 +174,22 @@ namespace bs { namespace ct
 
 						auto iterFind = overrideLookup.find(iter->first);
 						if (iterFind != overrideLookup.end())
-							passOverrides.stateOverrides[set][slot] = iterFind->second;
+							passOverrides.StateOverrides[set][slot] = iterFind->second;
 						else
-							passOverrides.stateOverrides[set][slot] = (UINT32)-1;
+							passOverrides.StateOverrides[set][slot] = (UINT32)-1;
 					}
 				}
 
-				slotsPerSetIter += passOverrides.numSets;
+				slotsPerSetIter += passOverrides.NumSets;
 			}
 
-			output->numOverrides = (UINT32)overrides.size();
-			output->overrides = (SamplerOverride*)outputData;
+			output->NumOverrides = (UINT32)overrides.size();
+			output->Overrides = (SamplerOverride*)outputData;
 
-			for(UINT32 i = 0; i < output->numOverrides; i++)
+			for(UINT32 i = 0; i < output->NumOverrides; i++)
 			{
-				new (&output->overrides[i].state) SPtr<SamplerState>();
-				output->overrides[i] = overrides[i];
+				new (&output->Overrides[i].State) SPtr<SamplerState>();
+				output->Overrides[i] = overrides[i];
 			}
 
 			bs_stack_free(slotsPerSet);
@@ -204,8 +204,8 @@ namespace bs { namespace ct
 	{
 		if (overrides != nullptr)
 		{
-			for (UINT32 i = 0; i < overrides->numOverrides; i++)
-				overrides->overrides[i].state.~SPtr<SamplerState>();
+			for (UINT32 i = 0; i < overrides->NumOverrides; i++)
+				overrides->Overrides[i].State.~SPtr<SamplerState>();
 
 			bs_free(overrides);
 			overrides = nullptr;
@@ -216,7 +216,7 @@ namespace bs { namespace ct
 	{
 		const SamplerProperties& props = samplerState->GetProperties();
 
-		switch (options->filtering)
+		switch (options->Filtering)
 		{
 		case RenderBeastFiltering::Bilinear:
 		{
@@ -253,7 +253,7 @@ namespace bs { namespace ct
 			if (props.GetTextureFiltering(FT_MIP) != FO_ANISOTROPIC)
 				return true;
 
-			if (props.GetTextureAnisotropy() != options->anisotropyMax)
+			if (props.GetTextureAnisotropy() != options->AnisotropyMax)
 				return true;
 		}
 			break;
@@ -267,26 +267,26 @@ namespace bs { namespace ct
 		const SamplerProperties& props = samplerState->GetProperties();
 		SAMPLER_STATE_DESC desc = props.GetDesc();
 
-		switch (options->filtering)
+		switch (options->Filtering)
 		{
 		case RenderBeastFiltering::Bilinear:
-			desc.minFilter = FO_LINEAR;
-			desc.magFilter = FO_LINEAR;
-			desc.mipFilter = FO_POINT;
+			desc.MinFilter = FO_LINEAR;
+			desc.MagFilter = FO_LINEAR;
+			desc.MipFilter = FO_POINT;
 			break;
 		case RenderBeastFiltering::Trilinear:
-			desc.minFilter = FO_LINEAR;
-			desc.magFilter = FO_LINEAR;
-			desc.mipFilter = FO_LINEAR;
+			desc.MinFilter = FO_LINEAR;
+			desc.MagFilter = FO_LINEAR;
+			desc.MipFilter = FO_LINEAR;
 			break;
 		case RenderBeastFiltering::Anisotropic:
-			desc.minFilter = FO_ANISOTROPIC;
-			desc.magFilter = FO_ANISOTROPIC;
-			desc.mipFilter = FO_ANISOTROPIC;
+			desc.MinFilter = FO_ANISOTROPIC;
+			desc.MagFilter = FO_ANISOTROPIC;
+			desc.MipFilter = FO_ANISOTROPIC;
 			break;
 		}
 
-		desc.maxAniso = options->anisotropyMax;
+		desc.MaxAniso = options->AnisotropyMax;
 
 		return RenderStateManager::Instance().CreateSamplerState(desc);
 	}

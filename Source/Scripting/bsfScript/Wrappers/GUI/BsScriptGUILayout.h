@@ -18,8 +18,8 @@ namespace bs
 		/**	Contains information about an interop object that represents a child of the layout. */
 		struct ChildInfo
 		{
-			ScriptGUIElementBaseTBase* element;
-			uint32_t gcHandle;
+			ScriptGUIElementBaseTBase* Element;
+			uint32_t GcHandle;
 		};
 
 	public:

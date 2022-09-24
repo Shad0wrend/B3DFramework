@@ -19,8 +19,8 @@ namespace bs
 	 */
 	struct BS_SCRIPT_EXPORT(m:Importer,pl:true,api:bsf) SubResource
 	{
-		String name; /**< Unique name of the sub-resource. */
-		BS_NORREF HResource value; /**< Contents of the sub-resource. */
+		String Name; /**< Unique name of the sub-resource. */
+		BS_NORREF HResource Value; /**< Contents of the sub-resource. */
 	};
 
 	/** Contains a group of resources imported from a single source file. */
@@ -31,11 +31,11 @@ namespace bs
 
 		BS_SCRIPT_EXPORT()
 		MultiResource(const Vector<SubResource>& entries)
-			:entries(entries)
+			:Entries(entries)
 		{ }
 
 		BS_SCRIPT_EXPORT()
-		Vector<SubResource> entries;
+		Vector<SubResource> Entries;
 	};
 
 	/** Module responsible for importing various asset types and converting them to types usable by the engine. */
@@ -212,11 +212,11 @@ namespace bs
 			QueuedTask() = default;
 
 			QueuedTask(SPtr<Task> task, UINT64 id)
-				:task(std::move(task)), id(id)
+				:Task(std::move(task)), Id(id)
 			{ }
 
-			SPtr<Task> task;
-			UINT64 id;
+			SPtr<Task> Task;
+			UINT64 Id;
 		};
 
 		UnorderedMap<SpecificImporter*, QueuedTask> mLastQueuedTask;

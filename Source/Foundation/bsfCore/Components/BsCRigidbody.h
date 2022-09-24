@@ -194,15 +194,15 @@ namespace bs
 
 		/** @copydoc Rigidbody::onCollisionBegin */
 		BS_SCRIPT_EXPORT(n:OnCollisionBegin)
-		Event<void(const CollisionData&)> onCollisionBegin;
+		Event<void(const CollisionData&)> OnCollisionBegin;
 
 		/** @copydoc Rigidbody::onCollisionStay */
 		BS_SCRIPT_EXPORT(n:OnCollisionStay)
-		Event<void(const CollisionData&)> onCollisionStay;
+		Event<void(const CollisionData&)> OnCollisionStay;
 
 		/** @copydoc Rigidbody::onCollisionEnd */
 		BS_SCRIPT_EXPORT(n:OnCollisionEnd)
-		Event<void(const CollisionData&)> onCollisionEnd;
+		Event<void(const CollisionData&)> OnCollisionEnd;
 
 		/** @name Internal
 		 *  @{

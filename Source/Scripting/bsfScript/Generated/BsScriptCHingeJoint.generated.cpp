@@ -17,14 +17,14 @@ namespace bs
 
 	void ScriptCHingeJoint::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_GetAngle", (void*)&ScriptCHingeJoint::InternalGetAngle);
-		metaData.scriptClass->AddInternalCall("Internal_GetSpeed", (void*)&ScriptCHingeJoint::InternalGetSpeed);
-		metaData.scriptClass->AddInternalCall("Internal_GetLimit", (void*)&ScriptCHingeJoint::InternalGetLimit);
-		metaData.scriptClass->AddInternalCall("Internal_SetLimit", (void*)&ScriptCHingeJoint::InternalSetLimit);
-		metaData.scriptClass->AddInternalCall("Internal_GetDrive", (void*)&ScriptCHingeJoint::InternalGetDrive);
-		metaData.scriptClass->AddInternalCall("Internal_SetDrive", (void*)&ScriptCHingeJoint::InternalSetDrive);
-		metaData.scriptClass->AddInternalCall("Internal_SetFlag", (void*)&ScriptCHingeJoint::InternalSetFlag);
-		metaData.scriptClass->AddInternalCall("Internal_HasFlag", (void*)&ScriptCHingeJoint::InternalHasFlag);
+		metaData.ScriptClass->AddInternalCall("Internal_GetAngle", (void*)&ScriptCHingeJoint::InternalGetAngle);
+		metaData.ScriptClass->AddInternalCall("Internal_GetSpeed", (void*)&ScriptCHingeJoint::InternalGetSpeed);
+		metaData.ScriptClass->AddInternalCall("Internal_GetLimit", (void*)&ScriptCHingeJoint::InternalGetLimit);
+		metaData.ScriptClass->AddInternalCall("Internal_SetLimit", (void*)&ScriptCHingeJoint::InternalSetLimit);
+		metaData.ScriptClass->AddInternalCall("Internal_GetDrive", (void*)&ScriptCHingeJoint::InternalGetDrive);
+		metaData.ScriptClass->AddInternalCall("Internal_SetDrive", (void*)&ScriptCHingeJoint::InternalSetDrive);
+		metaData.ScriptClass->AddInternalCall("Internal_SetFlag", (void*)&ScriptCHingeJoint::InternalSetFlag);
+		metaData.ScriptClass->AddInternalCall("Internal_HasFlag", (void*)&ScriptCHingeJoint::InternalHasFlag);
 
 	}
 
@@ -54,7 +54,7 @@ namespace bs
 
 		__LimitAngularRangeInterop interop__output;
 		interop__output = ScriptLimitAngularRange::ToInterop(tmp__output);
-		MonoUtil::ValueCopy(__output, &interop__output, ScriptLimitAngularRange::GetMetaData()->scriptClass->GetInternalClassInternal());
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptLimitAngularRange::GetMetaData()->ScriptClass->GetInternalClassInternal());
 	}
 
 	void ScriptCHingeJoint::InternalSetLimit(ScriptCHingeJoint* thisPtr, __LimitAngularRangeInterop* limit)

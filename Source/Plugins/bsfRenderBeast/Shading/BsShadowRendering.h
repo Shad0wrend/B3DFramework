@@ -235,23 +235,23 @@ namespace bs { namespace ct
 		ShadowProjectParams(const Light& light, const SPtr<Texture>& shadowMap,
 			const SPtr<GpuParamBlockBuffer>& shadowParams, const SPtr<GpuParamBlockBuffer>& perCameraParams,
 			GBufferTextures gbuffer)
-			: light(light), shadowMap(shadowMap), shadowParams(shadowParams), perCamera(perCameraParams), gbuffer(gbuffer)
+			: Light(light), ShadowMap(shadowMap), ShadowParams(shadowParams), PerCamera(perCameraParams), Gbuffer(gbuffer)
 		{ }
 
 		/** Light which is casting the shadow. */
-		const Light& light;
+		const Light& Light;
 
 		/** Texture containing the shadow map. */
-		const SPtr<Texture>& shadowMap;
+		const SPtr<Texture>& ShadowMap;
 
 		/** Parameter block containing parameters specific for shadow projection. */
-		const SPtr<GpuParamBlockBuffer> shadowParams;
+		const SPtr<GpuParamBlockBuffer> ShadowParams;
 
 		/** Parameter block containing parameters specific to this view. */
-		const SPtr<GpuParamBlockBuffer>& perCamera;
+		const SPtr<GpuParamBlockBuffer>& PerCamera;
 
 		/** Contains the GBuffer textures. */
-		GBufferTextures gbuffer;
+		GBufferTextures Gbuffer;
 	};
 
 	BS_PARAM_BLOCK_BEGIN(ShadowProjectParamsDef)
@@ -372,32 +372,32 @@ namespace bs { namespace ct
 		/** Updates normalized area coordinates based on the non-normalized ones and the provided atlas size. */
 		void UpdateNormArea(UINT32 atlasSize);
 
-		UINT32 lightIdx; /**< Index of the light casting this shadow. */
-		Rect2I area; /**< Area of the shadow map in pixels, relative to its source texture. */
-		Rect2 normArea; /**< Normalized shadow map area in [0, 1] range. */
-		UINT32 textureIdx; /**< Index of the texture the shadow map is stored in. */
+		UINT32 LightIdx; /**< Index of the light casting this shadow. */
+		Rect2I Area; /**< Area of the shadow map in pixels, relative to its source texture. */
+		Rect2 NormArea; /**< Normalized shadow map area in [0, 1] range. */
+		UINT32 TextureIdx; /**< Index of the texture the shadow map is stored in. */
 
-		float depthNear; /**< Distance to the near plane. */
-		float depthFar; /**< Distance to the far plane. */
-		float depthFade; /**< Distance to the plane at which to start fading out the shadows (only for CSM). */
-		float fadeRange; /**< Distance from the fade plane to the far plane (only for CSM). */
+		float DepthNear; /**< Distance to the near plane. */
+		float DepthFar; /**< Distance to the far plane. */
+		float DepthFade; /**< Distance to the plane at which to start fading out the shadows (only for CSM). */
+		float FadeRange; /**< Distance from the fade plane to the far plane (only for CSM). */
 
-		float depthBias; /**< Bias used to reduce shadow acne. */
-		float depthRange; /**< Length of the range covered by the shadow caster volume. */
+		float DepthBias; /**< Bias used to reduce shadow acne. */
+		float DepthRange; /**< Length of the range covered by the shadow caster volume. */
 
-		UINT32 cascadeIdx; /**< Index of a cascade. Only relevant for CSM. */
+		UINT32 CascadeIdx; /**< Index of a cascade. Only relevant for CSM. */
 
 		/** View-projection matrix from the shadow casters point of view. */
-		Matrix4 shadowVPTransform;
+		Matrix4 ShadowVpTransform;
 
 		/** View-projection matrix for each cubemap face, used for omni-directional shadows. */
-		Matrix4 shadowVPTransforms[6];
+		Matrix4 ShadowVpTransforms[6];
 
 		/** Bounds of the geometry the shadow is being applied on. */
-		Sphere subjectBounds;
+		Sphere SubjectBounds;
 
 		/** Determines the fade amount of the shadow, for each view in the scene. */
-		SmallVector<float, 6> fadePerView;
+		SmallVector<float, 6> FadePerView;
 	};
 
 	/**
@@ -515,22 +515,22 @@ namespace bs { namespace ct
 		/** Contains information required for generating a shadow map for a specific light. */
 		struct ShadowMapOptions
 		{
-			UINT32 lightIdx;
-			UINT32 mapSize;
-			SmallVector<float, 6> fadePercents;
+			UINT32 LightIdx;
+			UINT32 MapSize;
+			SmallVector<float, 6> FadePercents;
 		};
 
 		/** Contains references to all shadows cast by a specific light. */
 		struct LightShadows
 		{
-			UINT32 startIdx = 0;
-			UINT32 numShadows = 0;
+			UINT32 StartIdx = 0;
+			UINT32 NumShadows = 0;
 		};
 
 		/** Contains references to all shadows cast by a specific light, per view. */
 		struct PerViewLightShadows
 		{
-			SmallVector<LightShadows, 6> viewShadows;
+			SmallVector<LightShadows, 6> ViewShadows;
 		};
 	public:
 		ShadowRendering(UINT32 shadowMapSize);

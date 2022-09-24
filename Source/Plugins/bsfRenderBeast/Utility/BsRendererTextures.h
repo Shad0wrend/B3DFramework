@@ -14,7 +14,7 @@ namespace bs { namespace ct
 	struct LoadedRendererTextures
 	{
 		/** Default texture to use for Bokeh flare. */
-		SPtr<Texture> bokehFlare;
+		SPtr<Texture> BokehFlare;
 	};
 
 	/** Contains static textures required for various render techniques. */

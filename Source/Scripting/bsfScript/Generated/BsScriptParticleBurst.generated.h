@@ -11,10 +11,10 @@ namespace bs
 {
 	struct __ParticleBurstInterop
 	{
-		float time;
-		MonoObject* count;
-		uint32_t cycles;
-		float interval;
+		float Time;
+		MonoObject* Count;
+		uint32_t Cycles;
+		float Interval;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptParticleBurst : public ScriptObject<ScriptParticleBurst>

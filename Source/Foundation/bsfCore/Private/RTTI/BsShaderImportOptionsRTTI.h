@@ -20,7 +20,7 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN(languages, 1)
+			BS_RTTI_MEMBER_PLAIN(Languages, 1)
 		BS_END_RTTI_MEMBERS
 
 		std::pair<String, String>& GetDefinePair(ShaderImportOptions* obj, UINT32 idx)

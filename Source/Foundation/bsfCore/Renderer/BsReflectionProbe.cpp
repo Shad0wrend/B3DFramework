@@ -19,7 +19,7 @@ namespace bs
 	float ReflectionProbeBase::GetRadius() const
 	{
 		Vector3 scale = mTransform.GetScale();
-		return mRadius * std::max(std::max(scale.x, scale.y), scale.z);
+		return mRadius * std::max(std::max(scale.X, scale.Y), scale.Z);
 	}
 
 	void ReflectionProbeBase::UpdateBounds()
@@ -30,7 +30,7 @@ namespace bs
 		switch (mType)
 		{
 		case ReflectionProbeType::Sphere:
-			mBounds = Sphere(position, mRadius * std::max(std::max(scale.x, scale.y), scale.z));
+			mBounds = Sphere(position, mRadius * std::max(std::max(scale.X, scale.Y), scale.Z));
 			break;
 		case ReflectionProbeType::Box:
 			mBounds = Sphere(position, (mExtents * scale).Length());
@@ -86,12 +86,12 @@ namespace bs
 			mRendererTask->Cancel();
 
 		TEXTURE_DESC cubemapDesc;
-		cubemapDesc.type = TEX_TYPE_CUBE_MAP;
-		cubemapDesc.format = PF_RG11B10F;
-		cubemapDesc.width = ct::IBLUtility::REFLECTION_CUBEMAP_SIZE;
-		cubemapDesc.height = ct::IBLUtility::REFLECTION_CUBEMAP_SIZE;
-		cubemapDesc.numMips = PixelUtil::GetMaxMipmaps(cubemapDesc.width, cubemapDesc.height, 1, cubemapDesc.format);
-		cubemapDesc.usage = TU_STATIC | TU_RENDERTARGET;
+		cubemapDesc.Type = TEX_TYPE_CUBE_MAP;
+		cubemapDesc.Format = PF_RG11B10F;
+		cubemapDesc.Width = ct::IBLUtility::REFLECTION_CUBEMAP_SIZE;
+		cubemapDesc.Height = ct::IBLUtility::REFLECTION_CUBEMAP_SIZE;
+		cubemapDesc.NumMips = PixelUtil::GetMaxMipmaps(cubemapDesc.Width, cubemapDesc.Height, 1, cubemapDesc.Format);
+		cubemapDesc.Usage = TU_STATIC | TU_RENDERTARGET;
 
 		mFilteredTexture = Texture::CreatePtrInternal(cubemapDesc);
 
@@ -111,9 +111,9 @@ namespace bs
 					coreProbe->mExtents.Length();
 
 				ct::CaptureSettings settings;
-				settings.encodeDepth = true;
-				settings.depthEncodeNear = radius;
-				settings.depthEncodeFar = radius + 1; // + 1 arbitrary, make it a customizable value?
+				settings.EncodeDepth = true;
+				settings.DepthEncodeNear = radius;
+				settings.DepthEncodeFar = radius + 1; // + 1 arbitrary, make it a customizable value?
 
 				ct::gRenderer()->CaptureSceneCubeMap(coreTexture, coreProbe->GetTransform().GetPosition(), settings);
 				ct::gIBLUtility().FilterCubemapForSpecular(coreTexture, nullptr);
@@ -143,7 +143,7 @@ namespace bs
 			mRendererTask = ct::RendererTask::Create("ReflProbeRender", filterReflProbe);
 		}
 
-		mRendererTask->onComplete.Connect(renderComplete);
+		mRendererTask->OnComplete.Connect(renderComplete);
 		ct::gRenderer()->AddTask(mRendererTask);
 	}
 
@@ -198,7 +198,7 @@ namespace bs
 	CoreSyncData ReflectionProbe::SyncToCore(FrameAlloc* allocator)
 	{
 		UINT32 size = 0;
-		size += rtti_size(GetCoreDirtyFlags()).bytes;
+		size += rtti_size(GetCoreDirtyFlags()).Bytes;
 		size += csync_size((SceneActor&)*this);
 		size += csync_size(*this);
 

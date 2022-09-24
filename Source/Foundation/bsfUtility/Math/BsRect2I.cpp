@@ -11,9 +11,9 @@ namespace bs
 
 	bool Rect2I::Contains(const Vector2I& point) const
 	{
-		if(point.x >= x && point.x < (x + (INT32)width))
+		if(point.X >= X && point.X < (X + (INT32)Width))
 		{
-			if(point.y >= y && point.y < (y + (INT32)height))
+			if(point.Y >= Y && point.Y < (Y + (INT32)Height))
 				return true;
 		}
 
@@ -22,14 +22,14 @@ namespace bs
 
 	bool Rect2I::Overlaps(const Rect2I& other) const
 	{
-		INT32 otherRight = other.x + (INT32)other.width;
-		INT32 myRight = x + (INT32)width;
+		INT32 otherRight = other.X + (INT32)other.Width;
+		INT32 myRight = X + (INT32)Width;
 
-		INT32 otherBottom = other.y + (INT32)other.height;
-		INT32 myBottom = y + (INT32)height;
+		INT32 otherBottom = other.Y + (INT32)other.Height;
+		INT32 myBottom = Y + (INT32)Height;
 
-		if(x < otherRight && myRight > other.x &&
-			y < otherBottom && myBottom > other.y)
+		if(X < otherRight && myRight > other.X &&
+			Y < otherBottom && myBottom > other.Y)
 			return true;
 
 		return false;
@@ -37,40 +37,40 @@ namespace bs
 
 	void Rect2I::Encapsulate(const Rect2I& other)
 	{
-		int myRight = x + (INT32)width;
-		int myBottom = y + (INT32)height;
-		int otherRight = other.x + (INT32)other.width;
-		int otherBottom = other.y + (INT32)other.height;
+		int myRight = X + (INT32)Width;
+		int myBottom = Y + (INT32)Height;
+		int otherRight = other.X + (INT32)other.Width;
+		int otherBottom = other.Y + (INT32)other.Height;
 
-		if(other.x < x)
-			x = other.x;
+		if(other.X < X)
+			X = other.X;
 
-		if(other.y < y)
-			y = other.y;
+		if(other.Y < Y)
+			Y = other.Y;
 
 		if(otherRight > myRight)
-			width = otherRight - x;
+			Width = otherRight - X;
 		else
-			width = myRight - x;
+			Width = myRight - X;
 
 		if(otherBottom > myBottom)
-			height = otherBottom - y;
+			Height = otherBottom - Y;
 		else
-			height = myBottom - y;
+			Height = myBottom - Y;
 	}
 
 	void Rect2I::Clip(const Rect2I& clipRect)
 	{
-		int newLeft = std::max(x, clipRect.x);
-		int newTop = std::max(y, clipRect.y);
+		int newLeft = std::max(X, clipRect.X);
+		int newTop = std::max(Y, clipRect.Y);
 
-		int newRight = Math::Clamp(x + (INT32)width, clipRect.x, clipRect.x + (INT32)clipRect.width);
-		int newBottom = Math::Clamp(y + (INT32)height, clipRect.y, clipRect.y + (INT32)clipRect.height);
+		int newRight = Math::Clamp(X + (INT32)Width, clipRect.X, clipRect.X + (INT32)clipRect.Width);
+		int newBottom = Math::Clamp(Y + (INT32)Height, clipRect.Y, clipRect.Y + (INT32)clipRect.Height);
 
-		x = std::min(newLeft, newRight);
-		y = std::min(newTop, newBottom);
-		width = std::max(0, newRight - newLeft);
-		height = std::max(0, newBottom - newTop);
+		X = std::min(newLeft, newRight);
+		Y = std::min(newTop, newBottom);
+		Width = std::max(0, newRight - newLeft);
+		Height = std::max(0, newBottom - newTop);
 	}
 
 	void Rect2I::Cut(const Rect2I& cutRect, Vector<Rect2I>& pieces)
@@ -78,52 +78,52 @@ namespace bs
 		UINT32 initialPieces = (UINT32)pieces.size();
 
 		// Cut horizontal
-		if (cutRect.x > x && cutRect.x < (x + (INT32)width))
+		if (cutRect.X > X && cutRect.X < (X + (INT32)Width))
 		{
 			Rect2I leftPiece;
-			leftPiece.x = x;
-			leftPiece.width = cutRect.x - x;
-			leftPiece.y = y;
-			leftPiece.height = height;
+			leftPiece.X = X;
+			leftPiece.Width = cutRect.X - X;
+			leftPiece.Y = Y;
+			leftPiece.Height = Height;
 
 			pieces.push_back(leftPiece);
 		}
 
-		if ((cutRect.x + (INT32)cutRect.width) > x && (cutRect.x + (INT32)cutRect.width) < (x + (INT32)width))
+		if ((cutRect.X + (INT32)cutRect.Width) > X && (cutRect.X + (INT32)cutRect.Width) < (X + (INT32)Width))
 		{
 			Rect2I rightPiece;
-			rightPiece.x = cutRect.x + cutRect.width;
-			rightPiece.width = (x + width) - (cutRect.x + cutRect.width);
-			rightPiece.y = y;
-			rightPiece.height = height;
+			rightPiece.X = cutRect.X + cutRect.Width;
+			rightPiece.Width = (X + Width) - (cutRect.X + cutRect.Width);
+			rightPiece.Y = Y;
+			rightPiece.Height = Height;
 
 			pieces.push_back(rightPiece);
 		}
 
 		// Cut vertical
-		INT32 cutLeft = std::min(std::max(x, cutRect.x), x + (INT32)width);
-		INT32 cutRight = std::max(std::min(x + (INT32)width, cutRect.x + (INT32)cutRect.width), x);
+		INT32 cutLeft = std::min(std::max(X, cutRect.X), X + (INT32)Width);
+		INT32 cutRight = std::max(std::min(X + (INT32)Width, cutRect.X + (INT32)cutRect.Width), X);
 
 		if (cutLeft != cutRight)
 		{
-			if (cutRect.y > y && cutRect.y < (y + (INT32)height))
+			if (cutRect.Y > Y && cutRect.Y < (Y + (INT32)Height))
 			{
 				Rect2I topPiece;
-				topPiece.y = y;
-				topPiece.height = cutRect.y - y;
-				topPiece.x = cutLeft;
-				topPiece.width = cutRight - cutLeft;
+				topPiece.Y = Y;
+				topPiece.Height = cutRect.Y - Y;
+				topPiece.X = cutLeft;
+				topPiece.Width = cutRight - cutLeft;
 
 				pieces.push_back(topPiece);
 			}
 
-			if ((cutRect.y + (INT32)cutRect.height) > y && (cutRect.y + (INT32)cutRect.height) < (y + (INT32)height))
+			if ((cutRect.Y + (INT32)cutRect.Height) > Y && (cutRect.Y + (INT32)cutRect.Height) < (Y + (INT32)Height))
 			{
 				Rect2I bottomPiece;
-				bottomPiece.y = cutRect.y + cutRect.height;
-				bottomPiece.height = (y + height) - (cutRect.y + cutRect.height);
-				bottomPiece.x = cutLeft;
-				bottomPiece.width = cutRight - cutLeft;
+				bottomPiece.Y = cutRect.Y + cutRect.Height;
+				bottomPiece.Height = (Y + Height) - (cutRect.Y + cutRect.Height);
+				bottomPiece.X = cutLeft;
+				bottomPiece.Width = cutRight - cutLeft;
 
 				pieces.push_back(bottomPiece);
 			}
@@ -132,8 +132,8 @@ namespace bs
 		// No cut
 		if (initialPieces == (UINT32)pieces.size())
 		{
-			if (cutRect.x <= x && (cutRect.x + (INT32)cutRect.width) >= (x + (INT32)width) &&
-				cutRect.y <= y && (cutRect.y + (INT32)cutRect.height) >= (y + (INT32)height))
+			if (cutRect.X <= X && (cutRect.X + (INT32)cutRect.Width) >= (X + (INT32)Width) &&
+				cutRect.Y <= Y && (cutRect.Y + (INT32)cutRect.Height) >= (Y + (INT32)Height))
 			{
 				// Cut rectangle completely encompasses this one
 			}
@@ -166,10 +166,10 @@ namespace bs
 	void Rect2I::Transform(const Matrix4& matrix)
 	{
 		Vector4 verts[4];
-		verts[0] = Vector4((float)x, (float)y, 0.0f, 1.0f);
-		verts[1] = Vector4((float)x + width, (float)y, 0.0f, 1.0f);
-		verts[2] = Vector4((float)x, (float)y + height, 0.0f, 1.0f);
-		verts[3] = Vector4((float)x + width, (float)y + height, 0.0f, 1.0f);
+		verts[0] = Vector4((float)X, (float)Y, 0.0f, 1.0f);
+		verts[1] = Vector4((float)X + Width, (float)Y, 0.0f, 1.0f);
+		verts[2] = Vector4((float)X, (float)Y + Height, 0.0f, 1.0f);
+		verts[3] = Vector4((float)X + Width, (float)Y + Height, 0.0f, 1.0f);
 
 		for(UINT32 i = 0; i < 4; i++)
 			verts[i] = matrix.Multiply(verts[i]);
@@ -181,22 +181,22 @@ namespace bs
 
 		for(UINT32 i = 0; i < 4; i++)
 		{
-			if(verts[i].x < minX)
-				minX = verts[i].x;
+			if(verts[i].X < minX)
+				minX = verts[i].X;
 
-			if(verts[i].y < minY)
-				minY = verts[i].y;
+			if(verts[i].Y < minY)
+				minY = verts[i].Y;
 
-			if(verts[i].x > maxX)
-				maxX = verts[i].x;
+			if(verts[i].X > maxX)
+				maxX = verts[i].X;
 
-			if(verts[i].y > maxY)
-				maxY = verts[i].y;
+			if(verts[i].Y > maxY)
+				maxY = verts[i].Y;
 		}
 
-		x = Math::FloorToInt(minX);
-		y = Math::FloorToInt(minY);
-		width = (UINT32)Math::CeilToInt(maxX) - x;
-		height = (UINT32)Math::CeilToInt(maxY) - y;
+		X = Math::FloorToInt(minX);
+		Y = Math::FloorToInt(minY);
+		Width = (UINT32)Math::CeilToInt(maxX) - X;
+		Height = (UINT32)Math::CeilToInt(maxY) - Y;
 	}
 }

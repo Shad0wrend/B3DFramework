@@ -11,25 +11,25 @@ namespace bs
 		switch (state)
 		{
 		case GUIElementState::Normal:
-			return images.normal;
+			return Images.Normal;
 		case GUIElementState::Hover:
-			return images.hover;
+			return Images.Hover;
 		case GUIElementState::Active:
-			return images.active;
+			return Images.Active;
 		case GUIElementState::Focused:
 		case GUIElementState::FocusedHover:
-			return images.focused;
+			return Images.Focused;
 		case GUIElementState::NormalOn:
-			return images.normalOn;
+			return Images.NormalOn;
 		case GUIElementState::HoverOn:
-			return images.hoverOn;
+			return Images.HoverOn;
 		case GUIElementState::ActiveOn:
-			return images.activeOn;
+			return Images.ActiveOn;
 		case GUIElementState::FocusedOn:
 		case GUIElementState::FocusedHoverOn:
-			return images.focusedOn;
+			return Images.FocusedOn;
 		default:
-			return images.normal;
+			return Images.Normal;
 		}
 	}
 }

@@ -58,7 +58,7 @@ namespace bs
 			gSceneManager().SetRootNodeInternal(mSavedScene);
 
 			mSavedScene = nullptr;
-			onStopped();
+			OnStopped();
 		}
 			break;
 		case PlayInEditorState::Playing:
@@ -71,9 +71,9 @@ namespace bs
 			gAnimation().SetPaused(false);
 
 			if (oldState == PlayInEditorState::Stopped)
-				onPlay();
+				OnPlay();
 			else
-				onUnpaused();
+				OnUnpaused();
 		}
 			break;
 		case PlayInEditorState::Paused:
@@ -88,9 +88,9 @@ namespace bs
 			gSceneManager().SetComponentState(ComponentState::Paused);
 
 			if (oldState == PlayInEditorState::Stopped)
-				onPlay();
+				OnPlay();
 
-			onPaused();
+			OnPaused();
 		}
 			break;
 		default:

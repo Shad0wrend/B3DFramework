@@ -17,18 +17,18 @@ namespace bs
 	size_t MonoClass::MethodId::Hash::operator()(const MonoClass::MethodId& v) const
 	{
 		size_t seed = 0;
-		bs_hash_combine(seed, v.name);
-		bs_hash_combine(seed, v.numParams);
+		bs_hash_combine(seed, v.Name);
+		bs_hash_combine(seed, v.NumParams);
 		return seed;
 	}
 
 	bool MonoClass::MethodId::Equals::operator()(const MonoClass::MethodId& a, const MonoClass::MethodId& b) const
 	{
-		return a.name == b.name && a.numParams == b.numParams;
+		return a.Name == b.Name && a.NumParams == b.NumParams;
 	}
 
 	MonoClass::MethodId::MethodId(const String& name, UINT32 numParams)
-		:name(name), numParams(numParams)
+		:Name(name), NumParams(numParams)
 	{
 		
 	}

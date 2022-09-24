@@ -49,19 +49,19 @@ namespace bs
 
 		/** Triggered right after the play mode is entered. */
 		BS_SCRIPT_EXPORT()
-		Event<void()> onPlay;
+		Event<void()> OnPlay;
 
 		/** Triggered right after the play mode is exited. */
 		BS_SCRIPT_EXPORT(in:true)
-		Event<void()> onStopped;
+		Event<void()> OnStopped;
 
 		/** Triggered right after the user pauses play mode. */
 		BS_SCRIPT_EXPORT()
-		Event<void()> onPaused;
+		Event<void()> OnPaused;
 
 		/** Triggered right after the user unpauses play mode. */
 		BS_SCRIPT_EXPORT()
-		Event<void()> onUnpaused;
+		Event<void()> OnUnpaused;
 
 		/** @name Internal
 		 *  @{

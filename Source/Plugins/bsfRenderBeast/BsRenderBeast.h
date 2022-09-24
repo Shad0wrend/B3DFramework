@@ -25,11 +25,11 @@ namespace bs
 	struct FrameInfo
 	{
 		FrameInfo(const FrameTimings& timings, PerFrameData perFrameData)
-			:timings(timings), perFrameData(perFrameData)
+			:Timings(timings), PerFrameData(perFrameData)
 		{ }
 
-		FrameTimings timings;
-		PerFrameData perFrameData;
+		FrameTimings Timings;
+		PerFrameData PerFrameData;
 	};
 
 	/**
@@ -41,8 +41,8 @@ namespace bs
 		/** Renderer information for a single material. */
 		struct RendererMaterial
 		{
-			Vector<SPtr<GpuParamsSet>> params;
-			UINT32 matVersion;
+			Vector<SPtr<GpuParamsSet>> Params;
+			UINT32 MatVersion;
 		};
 
 	public:

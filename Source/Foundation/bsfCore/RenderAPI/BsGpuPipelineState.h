@@ -14,15 +14,15 @@ namespace bs
 	/** Descriptor structure used for initializing a GPU pipeline state. */
 	struct PIPELINE_STATE_DESC
 	{
-		SPtr<BlendState> blendState;
-		SPtr<RasterizerState> rasterizerState;
-		SPtr<DepthStencilState> depthStencilState;
+		SPtr<BlendState> BlendState;
+		SPtr<RasterizerState> RasterizerState;
+		SPtr<DepthStencilState> DepthStencilState;
 
-		SPtr<GpuProgram> vertexProgram;
-		SPtr<GpuProgram> fragmentProgram;
-		SPtr<GpuProgram> geometryProgram;
-		SPtr<GpuProgram> hullProgram;
-		SPtr<GpuProgram> domainProgram;
+		SPtr<GpuProgram> VertexProgram;
+		SPtr<GpuProgram> FragmentProgram;
+		SPtr<GpuProgram> GeometryProgram;
+		SPtr<GpuProgram> HullProgram;
+		SPtr<GpuProgram> DomainProgram;
 	};
 
 	/** @} */
@@ -36,15 +36,15 @@ namespace bs
 	/** Descriptor structure used for initializing a GPU pipeline state. */
 	struct PIPELINE_STATE_DESC
 	{
-		SPtr<BlendState> blendState;
-		SPtr<RasterizerState> rasterizerState;
-		SPtr<DepthStencilState> depthStencilState;
+		SPtr<BlendState> BlendState;
+		SPtr<RasterizerState> RasterizerState;
+		SPtr<DepthStencilState> DepthStencilState;
 
-		SPtr<GpuProgram> vertexProgram;
-		SPtr<GpuProgram> fragmentProgram;
-		SPtr<GpuProgram> geometryProgram;
-		SPtr<GpuProgram> hullProgram;
-		SPtr<GpuProgram> domainProgram;
+		SPtr<GpuProgram> VertexProgram;
+		SPtr<GpuProgram> FragmentProgram;
+		SPtr<GpuProgram> GeometryProgram;
+		SPtr<GpuProgram> HullProgram;
+		SPtr<GpuProgram> DomainProgram;
 	};
 
 	/** @} */
@@ -90,21 +90,21 @@ namespace bs
 
 		virtual ~TGraphicsPipelineState() = default;
 
-		bool HasVertexProgram() const { return mData.vertexProgram != nullptr; }
-		bool HasFragmentProgram() const { return mData.fragmentProgram != nullptr; }
-		bool HasGeometryProgram() const { return mData.geometryProgram != nullptr; }
-		bool HasHullProgram() const { return mData.hullProgram != nullptr; }
-		bool HasDomainProgram() const { return mData.domainProgram != nullptr; }
+		bool HasVertexProgram() const { return mData.VertexProgram != nullptr; }
+		bool HasFragmentProgram() const { return mData.FragmentProgram != nullptr; }
+		bool HasGeometryProgram() const { return mData.GeometryProgram != nullptr; }
+		bool HasHullProgram() const { return mData.HullProgram != nullptr; }
+		bool HasDomainProgram() const { return mData.DomainProgram != nullptr; }
 
-		BlendStateType GetBlendState() const { return mData.blendState; }
-		RasterizerStateType GetRasterizerState() const { return mData.rasterizerState; }
-		DepthStencilStateType GetDepthStencilState() const { return mData.depthStencilState; }
+		BlendStateType GetBlendState() const { return mData.BlendState; }
+		RasterizerStateType GetRasterizerState() const { return mData.RasterizerState; }
+		DepthStencilStateType GetDepthStencilState() const { return mData.DepthStencilState; }
 
-		const GpuProgramType& GetVertexProgram() const { return mData.vertexProgram; }
-		const GpuProgramType& GetFragmentProgram() const { return mData.fragmentProgram; }
-		const GpuProgramType& GetGeometryProgram() const { return mData.geometryProgram; }
-		const GpuProgramType& GetHullProgram() const { return mData.hullProgram; }
-		const GpuProgramType& GetDomainProgram() const { return mData.domainProgram; }
+		const GpuProgramType& GetVertexProgram() const { return mData.VertexProgram; }
+		const GpuProgramType& GetFragmentProgram() const { return mData.FragmentProgram; }
+		const GpuProgramType& GetGeometryProgram() const { return mData.GeometryProgram; }
+		const GpuProgramType& GetHullProgram() const { return mData.HullProgram; }
+		const GpuProgramType& GetDomainProgram() const { return mData.DomainProgram; }
 
 		/** Returns an object containing meta-data for parameters of all GPU programs used in this pipeline state. */
 		const SPtr<GpuPipelineParamInfoType>& GetParamInfo() const { return mParamInfo; }

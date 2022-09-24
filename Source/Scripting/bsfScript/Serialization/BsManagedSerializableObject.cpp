@@ -14,15 +14,15 @@ namespace bs
 	size_t ManagedSerializableObject::Hash::operator()(const ManagedSerializableFieldKey& x) const
 	{
 		size_t seed = 0;
-		bs_hash_combine(seed, (UINT32)x.mFieldId);
-		bs_hash_combine(seed, (UINT32)x.mTypeId);
+		bs_hash_combine(seed, (UINT32)x.MFieldId);
+		bs_hash_combine(seed, (UINT32)x.MTypeId);
 
 		return seed;
 	}
 
 	bool ManagedSerializableObject::Equals::operator()(const ManagedSerializableFieldKey& a, const ManagedSerializableFieldKey& b) const
 	{
-		return a.mFieldId == b.mFieldId && a.mTypeId == b.mTypeId;
+		return a.MFieldId == b.MFieldId && a.MTypeId == b.MTypeId;
 	}
 
 	ManagedSerializableObject::ManagedSerializableObject(const ConstructPrivately& dummy)
@@ -66,7 +66,7 @@ namespace bs
 		SPtr<ManagedSerializableObjectInfo> currentObjInfo = nullptr;
 
 		// See if this type even still exists
-		if (!ScriptAssemblyManager::Instance().GetSerializableObjectInfo(type->mTypeNamespace, type->mTypeName, currentObjInfo))
+		if (!ScriptAssemblyManager::Instance().GetSerializableObjectInfo(type->MTypeNamespace, type->MTypeName, currentObjInfo))
 			return nullptr;
 
 		return bs_shared_ptr_new<ManagedSerializableObject>(ConstructPrivately(), currentObjInfo, CreateManagedInstance(type));
@@ -77,14 +77,14 @@ namespace bs
 		SPtr<ManagedSerializableObjectInfo> currentObjInfo = nullptr;
 
 		// See if this type even still exists
-		if (!ScriptAssemblyManager::Instance().GetSerializableObjectInfo(type->mTypeNamespace, type->mTypeName, currentObjInfo))
+		if (!ScriptAssemblyManager::Instance().GetSerializableObjectInfo(type->MTypeNamespace, type->MTypeName, currentObjInfo))
 			return nullptr;
 
-		if(!currentObjInfo->mTypeInfo->mFlags.IsSet(ScriptTypeFlag::Serializable))
+		if(!currentObjInfo->MTypeInfo->MFlags.IsSet(ScriptTypeFlag::Serializable))
 			return nullptr;
 
-		const bool construct = currentObjInfo->mMonoClass->GetMethod(".ctor", 0) != nullptr;
-		return currentObjInfo->mMonoClass->CreateInstance(construct);
+		const bool construct = currentObjInfo->MMonoClass->GetMethod(".ctor", 0) != nullptr;
+		return currentObjInfo->MMonoClass->CreateInstance(construct);
 	}
 
 	SPtr<ManagedSerializableObject> ManagedSerializableObject::CreateEmpty()
@@ -110,16 +110,16 @@ namespace bs
 		SPtr<ManagedSerializableObjectInfo> curType = mObjInfo;
 		while (curType != nullptr)
 		{
-			for (auto& field : curType->mFields)
+			for (auto& field : curType->MFields)
 			{
 				if (field.second->IsSerializable())
 				{
-					ManagedSerializableFieldKey key(field.second->mParentTypeId, field.second->mFieldId);
+					ManagedSerializableFieldKey key(field.second->MParentTypeId, field.second->MFieldId);
 					mCachedData[key] = GetFieldData(field.second);
 				}
 			}
 
-			curType = curType->mBaseClass;
+			curType = curType->MBaseClass;
 		}
 
 		// Serialize children
@@ -134,13 +134,13 @@ namespace bs
 	{
 		// See if this type even still exists
 		SPtr<ManagedSerializableObjectInfo> currentObjInfo = nullptr;
-		if (!ScriptAssemblyManager::Instance().GetSerializableObjectInfo(mObjInfo->mTypeInfo->mTypeNamespace,
-			mObjInfo->mTypeInfo->mTypeName, currentObjInfo))
+		if (!ScriptAssemblyManager::Instance().GetSerializableObjectInfo(mObjInfo->MTypeInfo->MTypeNamespace,
+			mObjInfo->MTypeInfo->MTypeName, currentObjInfo))
 		{
 			return nullptr;
 		}
 
-		MonoObject* managedInstance = CreateManagedInstance(currentObjInfo->mTypeInfo);
+		MonoObject* managedInstance = CreateManagedInstance(currentObjInfo->MTypeInfo);
 		Deserialize(managedInstance, currentObjInfo);
 
 		return managedInstance;
@@ -160,24 +160,24 @@ namespace bs
 		SPtr<ManagedSerializableObjectInfo> curType = mObjInfo;
 		while (curType != nullptr)
 		{
-			for (auto& field : curType->mFields)
+			for (auto& field : curType->MFields)
 			{
 				if (field.second->IsSerializable())
 				{
-					UINT32 fieldId = field.second->mFieldId;
-					UINT32 typeID = field.second->mParentTypeId;
+					UINT32 fieldId = field.second->MFieldId;
+					UINT32 typeID = field.second->MParentTypeId;
 
 					ManagedSerializableFieldKey key(typeID, fieldId);
 
-					SPtr<ManagedSerializableMemberInfo> matchingFieldInfo = objInfo->FindMatchingField(field.second, curType->mTypeInfo);
+					SPtr<ManagedSerializableMemberInfo> matchingFieldInfo = objInfo->FindMatchingField(field.second, curType->MTypeInfo);
 					if (matchingFieldInfo != nullptr)
-						matchingFieldInfo->SetValue(instance, mCachedData[key]->GetValue(matchingFieldInfo->mTypeInfo));
+						matchingFieldInfo->SetValue(instance, mCachedData[key]->GetValue(matchingFieldInfo->MTypeInfo));
 
 					i++;
 				}
 			}
 
-			curType = curType->mBaseClass;
+			curType = curType->MBaseClass;
 		}
 	}
 
@@ -185,13 +185,13 @@ namespace bs
 	{
 		SPtr<ManagedSerializableObjectInfo> otherObjInfo = other.GetObjectInfo();
 
-		if (!mObjInfo->mTypeInfo->Matches(otherObjInfo->mTypeInfo))
+		if (!mObjInfo->MTypeInfo->Matches(otherObjInfo->MTypeInfo))
 			return false;
 
 		SPtr<ManagedSerializableObjectInfo> curObjInfo = mObjInfo;
 		while (curObjInfo != nullptr)
 		{
-			for (auto& field : curObjInfo->mFields)
+			for (auto& field : curObjInfo->MFields)
 			{
 				if (!field.second->IsSerializable())
 					continue;
@@ -211,7 +211,7 @@ namespace bs
 					return false;
 			}
 
-			curObjInfo = curObjInfo->mBaseClass;
+			curObjInfo = curObjInfo->MBaseClass;
 		}
 
 		return true;
@@ -222,11 +222,11 @@ namespace bs
 		if (mGCHandle != 0)
 		{
 			MonoObject* managedInstance = MonoUtil::GetObjectFromGcHandle(mGCHandle);
-			fieldInfo->SetValue(managedInstance, val->GetValue(fieldInfo->mTypeInfo));
+			fieldInfo->SetValue(managedInstance, val->GetValue(fieldInfo->MTypeInfo));
 		}
 		else
 		{
-			ManagedSerializableFieldKey key(fieldInfo->mParentTypeId, fieldInfo->mFieldId);
+			ManagedSerializableFieldKey key(fieldInfo->MParentTypeId, fieldInfo->MFieldId);
 			mCachedData[key] = val;
 		}
 	}
@@ -238,11 +238,11 @@ namespace bs
 			MonoObject* managedInstance = MonoUtil::GetObjectFromGcHandle(mGCHandle);
 			MonoObject* fieldValue = fieldInfo->GetValue(managedInstance);
 
-			return ManagedSerializableFieldData::Create(fieldInfo->mTypeInfo, fieldValue);
+			return ManagedSerializableFieldData::Create(fieldInfo->MTypeInfo, fieldValue);
 		}
 		else
 		{
-			ManagedSerializableFieldKey key(fieldInfo->mParentTypeId, fieldInfo->mFieldId);
+			ManagedSerializableFieldKey key(fieldInfo->MParentTypeId, fieldInfo->MFieldId);
 			auto iterFind = mCachedData.find(key);
 
 			if (iterFind != mCachedData.end())

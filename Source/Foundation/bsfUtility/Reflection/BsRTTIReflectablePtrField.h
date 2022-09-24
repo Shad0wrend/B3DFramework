@@ -94,8 +94,8 @@ namespace bs
 		 */
 		void InitSingle(String name, UINT16 uniqueId, GetterType getter, SetterType setter, const RTTIFieldInfo& info)
 		{
-			this->getter = getter;
-			this->setter = setter;
+			this->Getter = getter;
+			this->Setter = setter;
 
 			Init(std::move(name), RTTIFieldSchema(uniqueId, false, true, 0, SerializableFT_ReflectablePtr, 0, nullptr, info));
 		}
@@ -116,10 +116,10 @@ namespace bs
 		void InitArray(String name, UINT16 uniqueId, ArrayGetterType getter, ArrayGetSizeType getSize,
 			ArraySetterType setter, ArraySetSizeType setSize, const RTTIFieldInfo& info)
 		{
-			arrayGetter = getter;
-			arraySetter = setter;
-			arrayGetSize = getSize;
-			arraySetSize = setSize;
+			ArrayGetter = getter;
+			ArraySetter = setter;
+			ArrayGetSize = getSize;
+			ArraySetSize = setSize;
 
 			Init(std::move(name), RTTIFieldSchema(uniqueId, true, true, 0, SerializableFT_ReflectablePtr, 0, nullptr, info));
 		}
@@ -129,8 +129,8 @@ namespace bs
 		{
 			// This need to be initialized after the field itself, otherwise we get recursive static constructor
 			// calls due to one type calling GetRttiStatic() on one another
-			schema.fieldTypeSchema = DataType::GetRttiStatic()->GetSchema();;
-			schema.fieldTypeId = DataType::GetRttiStatic()->GetRttiId();
+			Schema.FieldTypeSchema = DataType::GetRttiStatic()->GetSchema();;
+			Schema.FieldTypeId = DataType::GetRttiStatic()->GetRttiId();
 		}
 
 		/** @copydoc RTTIReflectablePtrFieldBase::getValue */
@@ -141,7 +141,7 @@ namespace bs
 			InterfaceType* rttiObject = static_cast<InterfaceType*>(rtti);
 			ObjectType* castObjType = static_cast<ObjectType*>(object);
 
-			SPtr<IReflectable> castDataType = (rttiObject->*getter)(castObjType);
+			SPtr<IReflectable> castDataType = (rttiObject->*Getter)(castObjType);
 			return castDataType;
 		}
 
@@ -153,7 +153,7 @@ namespace bs
 			InterfaceType* rttiObject = static_cast<InterfaceType*>(rtti);
 			ObjectType* castObjType = static_cast<ObjectType*>(object);
 
-			SPtr<IReflectable> castDataType = (rttiObject->*arrayGetter)(castObjType, index);
+			SPtr<IReflectable> castDataType = (rttiObject->*ArrayGetter)(castObjType, index);
 			return castDataType;
 		}
 
@@ -162,17 +162,17 @@ namespace bs
 		{
 			CheckIsArray(false);
 
-			if(!setter)
+			if(!Setter)
 			{
 				BS_EXCEPT(InternalErrorException,
-					"Specified field (" + name + ") has no setter.");
+					"Specified field (" + Name + ") has no setter.");
 			}
 
 			InterfaceType* rttiObject = static_cast<InterfaceType*>(rtti);
 			ObjectType* castObjType = static_cast<ObjectType*>(object);
 			SPtr<DataType> castDataObj = std::static_pointer_cast<DataType>(value);
 
-			(rttiObject->*setter)(castObjType, castDataObj);
+			(rttiObject->*Setter)(castObjType, castDataObj);
 		}
 
 		/** @copydoc RTTIReflectablePtrFieldBase::setArrayValue */
@@ -180,17 +180,17 @@ namespace bs
 		{
 			CheckIsArray(true);
 
-			if(!arraySetter)
+			if(!ArraySetter)
 			{
 				BS_EXCEPT(InternalErrorException,
-					"Specified field (" + name + ") has no setter.");
+					"Specified field (" + Name + ") has no setter.");
 			}
 
 			InterfaceType* rttiObject = static_cast<InterfaceType*>(rtti);
 			ObjectType* castObjType = static_cast<ObjectType*>(object);
 			SPtr<DataType> castDataObj = std::static_pointer_cast<DataType>(value);
 
-			(rttiObject->*arraySetter)(castObjType, index, castDataObj);
+			(rttiObject->*ArraySetter)(castObjType, index, castDataObj);
 		}
 
 		/** @copydoc RTTIField::setArraySize */
@@ -201,7 +201,7 @@ namespace bs
 			InterfaceType* rttiObject = static_cast<InterfaceType*>(rtti);
 			ObjectType* castObject = static_cast<ObjectType*>(object);
 
-			return (rttiObject->*arrayGetSize)(castObject);
+			return (rttiObject->*ArrayGetSize)(castObject);
 		}
 
 		/** @copydoc RTTIField::setArraySize */
@@ -209,16 +209,16 @@ namespace bs
 		{
 			CheckIsArray(true);
 
-			if(!arraySetSize)
+			if(!ArraySetSize)
 			{
 				BS_EXCEPT(InternalErrorException,
-					"Specified field (" + name + ") has no array size setter.");
+					"Specified field (" + Name + ") has no array size setter.");
 			}
 
 			InterfaceType* rttiObject = static_cast<InterfaceType*>(rtti);
 			ObjectType* castObject = static_cast<ObjectType*>(object);
 
-			(rttiObject->*arraySetSize)(castObject, size);
+			(rttiObject->*ArraySetSize)(castObject, size);
 		}
 
 		/** @copydoc RTTIReflectablePtrFieldBase::newObject */
@@ -251,17 +251,17 @@ namespace bs
 		{
 			struct
 			{
-				GetterType getter;
-				SetterType setter;
+				GetterType Getter;
+				SetterType Setter;
 			};
 
 			struct
 			{
-				ArrayGetterType arrayGetter;
-				ArraySetterType arraySetter;
+				ArrayGetterType ArrayGetter;
+				ArraySetterType ArraySetter;
 
-				ArrayGetSizeType arrayGetSize;
-				ArraySetSizeType arraySetSize;
+				ArrayGetSizeType ArrayGetSize;
+				ArraySetSizeType ArraySetSize;
 			};
 		};
 	};

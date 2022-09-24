@@ -10,15 +10,15 @@ namespace bs
 {
 	bool RASTERIZER_STATE_DESC::operator == (const RASTERIZER_STATE_DESC& rhs) const
 	{
-		return polygonMode == rhs.polygonMode &&
-			cullMode == rhs.cullMode &&
-			depthBias == rhs.depthBias &&
-			depthBiasClamp == rhs.depthBiasClamp &&
-			slopeScaledDepthBias == rhs.slopeScaledDepthBias &&
-			depthClipEnable == rhs.depthClipEnable &&
-			scissorEnable == rhs.scissorEnable &&
-			multisampleEnable == rhs.multisampleEnable &&
-			antialiasedLineEnable == rhs.antialiasedLineEnable;
+		return PolygonMode == rhs.PolygonMode &&
+			CullMode == rhs.CullMode &&
+			DepthBias == rhs.DepthBias &&
+			DepthBiasClamp == rhs.DepthBiasClamp &&
+			SlopeScaledDepthBias == rhs.SlopeScaledDepthBias &&
+			DepthClipEnable == rhs.DepthClipEnable &&
+			ScissorEnable == rhs.ScissorEnable &&
+			MultisampleEnable == rhs.MultisampleEnable &&
+			AntialiasedLineEnable == rhs.AntialiasedLineEnable;
 	}
 
 	RasterizerProperties::RasterizerProperties(const RASTERIZER_STATE_DESC& desc)
@@ -67,15 +67,15 @@ namespace bs
 	UINT64 RasterizerState::GenerateHash(const RASTERIZER_STATE_DESC& desc)
 	{
 		size_t hash = 0;
-		bs_hash_combine(hash, (UINT32)desc.polygonMode);
-		bs_hash_combine(hash, (UINT32)desc.cullMode);
-		bs_hash_combine(hash, desc.depthBias);
-		bs_hash_combine(hash, desc.depthBiasClamp);
-		bs_hash_combine(hash, desc.slopeScaledDepthBias);
-		bs_hash_combine(hash, desc.depthClipEnable);
-		bs_hash_combine(hash, desc.scissorEnable);
-		bs_hash_combine(hash, desc.multisampleEnable);
-		bs_hash_combine(hash, desc.antialiasedLineEnable);
+		bs_hash_combine(hash, (UINT32)desc.PolygonMode);
+		bs_hash_combine(hash, (UINT32)desc.CullMode);
+		bs_hash_combine(hash, desc.DepthBias);
+		bs_hash_combine(hash, desc.DepthBiasClamp);
+		bs_hash_combine(hash, desc.SlopeScaledDepthBias);
+		bs_hash_combine(hash, desc.DepthClipEnable);
+		bs_hash_combine(hash, desc.ScissorEnable);
+		bs_hash_combine(hash, desc.MultisampleEnable);
+		bs_hash_combine(hash, desc.AntialiasedLineEnable);
 
 		return (UINT64)hash;
 	}

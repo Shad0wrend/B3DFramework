@@ -49,8 +49,8 @@ namespace bs
 		/** Contains a list of buffers for the specified size. */
 		struct BuffersPerSize
 		{
-			Vector<ParticleRenderData*> buffers;
-			UINT32 nextFreeIdx = 0;
+			Vector<ParticleRenderData*> Buffers;
+			UINT32 NextFreeIdx = 0;
 		};
 
 	public:
@@ -60,13 +60,13 @@ namespace bs
 
 			for (auto& sizeEntry : mBillboardBufferList)
 			{
-				for (auto& entry : sizeEntry.second.buffers)
+				for (auto& entry : sizeEntry.second.Buffers)
 					mBillboardAlloc.Destruct(static_cast<ParticleBillboardRenderData*>(entry));
 			}
 
 			for (auto& sizeEntry : mMeshBufferList)
 			{
-				for (auto& entry : sizeEntry.second.buffers)
+				for (auto& entry : sizeEntry.second.Buffers)
 					mMeshAlloc.Destruct(static_cast<ParticleMeshRenderData*>(entry));
 			}
 
@@ -88,10 +88,10 @@ namespace bs
 				Lock lock(mMutex);
 
 				BuffersPerSize& buffers = mBillboardBufferList[size];
-				if (buffers.nextFreeIdx < (UINT32)buffers.buffers.size())
+				if (buffers.NextFreeIdx < (UINT32)buffers.Buffers.size())
 				{
-					output = static_cast<ParticleBillboardRenderData*>(buffers.buffers[buffers.nextFreeIdx]);
-					buffers.nextFreeIdx++;
+					output = static_cast<ParticleBillboardRenderData*>(buffers.Buffers[buffers.NextFreeIdx]);
+					buffers.NextFreeIdx++;
 				}
 			}
 
@@ -102,8 +102,8 @@ namespace bs
 				Lock lock(mMutex);
 
 				BuffersPerSize& buffers = mBillboardBufferList[size];
-				buffers.buffers.push_back(output);
-				buffers.nextFreeIdx++;
+				buffers.Buffers.push_back(output);
+				buffers.NextFreeIdx++;
 			}
 
 			// Populate buffer contents
@@ -111,32 +111,32 @@ namespace bs
 			const ParticleSetData& particles = particleSet.GetParticles();
 
 			// TODO: Use non-temporal writes?
-			iterateOverPixels<Vector4>(output->positionAndRotation, count,
+			iterateOverPixels<Vector4>(output->PositionAndRotation, count,
 				[&particles](Vector4* dst, UINT32 idx)
 			{
-				dst->x = particles.position[idx].x;
-				dst->y = particles.position[idx].y;
-				dst->z = particles.position[idx].z;
-				dst->w = particles.rotation[idx].x * Math::DEG2RAD;
+				dst->X = particles.Position[idx].X;
+				dst->Y = particles.Position[idx].Y;
+				dst->Z = particles.Position[idx].Z;
+				dst->W = particles.Rotation[idx].X * Math::DEG2RAD;
 
 			});
 
-			iterateOverPixels<RGBA>(output->color, count,
+			iterateOverPixels<RGBA>(output->Color, count,
 				[&particles](RGBA* dst, UINT32 idx)
 			{
-				*dst = particles.color[idx];
+				*dst = particles.Color[idx];
 			});
 
-			iterateOverPixels<UINT16>(output->sizeAndFrameIdx, count, sizeof(UINT16) * 4,
+			iterateOverPixels<UINT16>(output->SizeAndFrameIdx, count, sizeof(UINT16) * 4,
 				[&particles](UINT16* dst, UINT32 idx)
 			{
-				dst[0] = Bitwise::FloatToHalf(particles.size[idx].x);
-				dst[1] = Bitwise::FloatToHalf(particles.size[idx].y);
-				dst[2] = Bitwise::FloatToHalf(particles.frame[idx]);
+				dst[0] = Bitwise::FloatToHalf(particles.Size[idx].X);
+				dst[1] = Bitwise::FloatToHalf(particles.Size[idx].Y);
+				dst[2] = Bitwise::FloatToHalf(particles.Frame[idx]);
 			});
 
-			output->indices.clear();
-			output->indices.resize(count);
+			output->Indices.clear();
+			output->Indices.resize(count);
 
 			return output;
 		}
@@ -155,10 +155,10 @@ namespace bs
 				Lock lock(mMutex);
 
 				BuffersPerSize& buffers = mMeshBufferList[size];
-				if (buffers.nextFreeIdx < (UINT32)buffers.buffers.size())
+				if (buffers.NextFreeIdx < (UINT32)buffers.Buffers.size())
 				{
-					output = static_cast<ParticleMeshRenderData*>(buffers.buffers[buffers.nextFreeIdx]);
-					buffers.nextFreeIdx++;
+					output = static_cast<ParticleMeshRenderData*>(buffers.Buffers[buffers.NextFreeIdx]);
+					buffers.NextFreeIdx++;
 				}
 			}
 
@@ -169,8 +169,8 @@ namespace bs
 				Lock lock(mMutex);
 
 				BuffersPerSize& buffers = mMeshBufferList[size];
-				buffers.buffers.push_back(output);
-				buffers.nextFreeIdx++;
+				buffers.Buffers.push_back(output);
+				buffers.NextFreeIdx++;
 			}
 
 			// Populate buffer contents
@@ -178,39 +178,39 @@ namespace bs
 			const ParticleSetData& particles = particleSet.GetParticles();
 
 			// TODO: Use non-temporal writes?
-			iterateOverPixels<Vector4>(output->position, count,
+			iterateOverPixels<Vector4>(output->Position, count,
 				[&particles](Vector4* dst, UINT32 idx)
 			{
-				dst->x = particles.position[idx].x;
-				dst->y = particles.position[idx].y;
-				dst->z = particles.position[idx].z;
+				dst->X = particles.Position[idx].X;
+				dst->Y = particles.Position[idx].Y;
+				dst->Z = particles.Position[idx].Z;
 
 			});
 
-			iterateOverPixels<RGBA>(output->color, count,
+			iterateOverPixels<RGBA>(output->Color, count,
 				[&particles](RGBA* dst, UINT32 idx)
 			{
-				*dst = particles.color[idx];
+				*dst = particles.Color[idx];
 			});
 
-			iterateOverPixels<UINT16>(output->rotation, count, sizeof(UINT16) * 4,
+			iterateOverPixels<UINT16>(output->Rotation, count, sizeof(UINT16) * 4,
 				[&particles](UINT16* dst, UINT32 idx)
 			{
-				dst[0] = Bitwise::FloatToHalf(particles.rotation[idx].x * Math::DEG2RAD);
-				dst[1] = Bitwise::FloatToHalf(particles.rotation[idx].y * Math::DEG2RAD);
-				dst[2] = Bitwise::FloatToHalf(particles.rotation[idx].z * Math::DEG2RAD);
+				dst[0] = Bitwise::FloatToHalf(particles.Rotation[idx].X * Math::DEG2RAD);
+				dst[1] = Bitwise::FloatToHalf(particles.Rotation[idx].Y * Math::DEG2RAD);
+				dst[2] = Bitwise::FloatToHalf(particles.Rotation[idx].Z * Math::DEG2RAD);
 			});
 
-			iterateOverPixels<UINT16>(output->size, count, sizeof(UINT16) * 4,
+			iterateOverPixels<UINT16>(output->Size, count, sizeof(UINT16) * 4,
 				[&particles](UINT16* dst, UINT32 idx)
 			{
-				dst[0] = Bitwise::FloatToHalf(particles.size[idx].x);
-				dst[1] = Bitwise::FloatToHalf(particles.size[idx].y);
-				dst[2] = Bitwise::FloatToHalf(particles.size[idx].z);
+				dst[0] = Bitwise::FloatToHalf(particles.Size[idx].X);
+				dst[1] = Bitwise::FloatToHalf(particles.Size[idx].Y);
+				dst[2] = Bitwise::FloatToHalf(particles.Size[idx].Z);
 			});
 
-			output->indices.clear();
-			output->indices.resize(count);
+			output->Indices.clear();
+			output->Indices.resize(count);
 
 			return output;
 		}
@@ -247,21 +247,21 @@ namespace bs
 			const UINT32 count = particleSet.GetParticleCount();
 			const ParticleSetData& particles = particleSet.GetParticles();
 
-			output->particles.clear();
-			output->particles.resize(count);
+			output->Particles.clear();
+			output->Particles.resize(count);
 
 			// TODO: Use non-temporal writes?
 			for (UINT32 i = 0; i < count; i++)
 			{
 				GpuParticle particle;
-				particle.position = particles.position[i];
-				particle.lifetime = particles.lifetime[i];
-				particle.initialLifetime =  particles.initialLifetime[i];
-				particle.velocity = particles.velocity[i];
-				particle.size = Vector2(particles.size[i].x, particles.size[i].z);
-				particle.rotation = particles.rotation[i].z;
+				particle.Position = particles.Position[i];
+				particle.Lifetime = particles.Lifetime[i];
+				particle.InitialLifetime =  particles.InitialLifetime[i];
+				particle.Velocity = particles.Velocity[i];
+				particle.Size = Vector2(particles.Size[i].X, particles.Size[i].Z);
+				particle.Rotation = particles.Rotation[i].Z;
 
-				output->particles[i] = particle;
+				output->Particles[i] = particle;
 			}
 
 			return output;
@@ -273,10 +273,10 @@ namespace bs
 			Lock lock(mMutex);
 
 			for(auto& buffers : mBillboardBufferList)
-				buffers.second.nextFreeIdx = 0;
+				buffers.second.NextFreeIdx = 0;
 
 			for(auto& buffers : mMeshBufferList)
-				buffers.second.nextFreeIdx = 0;
+				buffers.second.NextFreeIdx = 0;
 
 			mNextFreeGPUBuffer = 0;
 		}
@@ -287,14 +287,14 @@ namespace bs
 		{
 			auto output = mBillboardAlloc.Construct<ParticleBillboardRenderData>();
 
-			output->positionAndRotation = PixelData(size, size, 1, PF_RGBA32F);
-			output->color = PixelData(size, size, 1, PF_RGBA8);
-			output->sizeAndFrameIdx = PixelData(size, size, 1, PF_RGBA16F);
+			output->PositionAndRotation = PixelData(size, size, 1, PF_RGBA32F);
+			output->Color = PixelData(size, size, 1, PF_RGBA8);
+			output->SizeAndFrameIdx = PixelData(size, size, 1, PF_RGBA16F);
 
 			// Note: Potentially allocate them all in one large block
-			output->positionAndRotation.AllocateInternalBuffer();
-			output->color.AllocateInternalBuffer();
-			output->sizeAndFrameIdx.AllocateInternalBuffer();
+			output->PositionAndRotation.AllocateInternalBuffer();
+			output->Color.AllocateInternalBuffer();
+			output->SizeAndFrameIdx.AllocateInternalBuffer();
 
 			return output;
 		}
@@ -304,16 +304,16 @@ namespace bs
 		{
 			auto output = mMeshAlloc.Construct<ParticleMeshRenderData>();
 
-			output->position = PixelData(size, size, 1, PF_RGBA32F);
-			output->color = PixelData(size, size, 1, PF_RGBA8);
-			output->size = PixelData(size, size, 1, PF_RGBA16F);
-			output->rotation = PixelData(size, size, 1, PF_RGBA16F);
+			output->Position = PixelData(size, size, 1, PF_RGBA32F);
+			output->Color = PixelData(size, size, 1, PF_RGBA8);
+			output->Size = PixelData(size, size, 1, PF_RGBA16F);
+			output->Rotation = PixelData(size, size, 1, PF_RGBA16F);
 
 			// Note: Potentially allocate them all in one large block
-			output->position.AllocateInternalBuffer();
-			output->color.AllocateInternalBuffer();
-			output->size.AllocateInternalBuffer();
-			output->rotation.AllocateInternalBuffer();
+			output->Position.AllocateInternalBuffer();
+			output->Color.AllocateInternalBuffer();
+			output->Size.AllocateInternalBuffer();
+			output->Rotation.AllocateInternalBuffer();
 
 			return output;
 		}
@@ -338,7 +338,7 @@ namespace bs
 	struct ParticleManager::Members
 	{
 		// TODO - Perhaps sharing one pool is better
-		ParticleSimulationDataPool simDataPool[CoreThread::NUM_SYNC_BUFFERS];
+		ParticleSimulationDataPool SimDataPool[CoreThread::NUM_SYNC_BUFFERS];
 	};
 
 	ParticleManager::ParticleManager()
@@ -372,8 +372,8 @@ namespace bs
 
 		// Prepare the write buffer
 		ParticlePerFrameData& simulationData = mSimulationData[mWriteBufferIdx];
-		simulationData.cpuData.clear();
-		simulationData.gpuData.clear();
+		simulationData.CpuData.clear();
+		simulationData.GpuData.clear();
 
 		// Queue evaluation tasks
 		{
@@ -383,7 +383,7 @@ namespace bs
 
 		float timeDelta = gTime().GetFrameDelta();
 
-		ParticleSimulationDataPool& simDataPool = m->simDataPool[mWriteBufferIdx];
+		ParticleSimulationDataPool& simDataPool = m->SimDataPool[mWriteBufferIdx];
 		simDataPool.Clear();
 
 		for (auto& system : mSystems)
@@ -401,33 +401,33 @@ namespace bs
 					const UINT32 numParticles = system->mParticleSet->GetParticleCount();
 					const ParticleSystemSettings& settings = system->GetSettings();
 
-					if(settings.gpuSimulation)
+					if(settings.GpuSimulation)
 						simulationDataGPU = simDataPool.AllocGpu(*system->mParticleSet);
 					else
 					{
-						if(settings.renderMode == ParticleRenderMode::Billboard)
+						if(settings.RenderMode == ParticleRenderMode::Billboard)
 							simulationDataCPU = simDataPool.AllocCpuBillboard(*system->mParticleSet);
 						else
 							simulationDataCPU = simDataPool.AllocCpuMesh(*system->mParticleSet);
 
-						simulationDataCPU->numParticles = numParticles;
+						simulationDataCPU->NumParticles = numParticles;
 
-						if(settings.useAutomaticBounds)
-							simulationDataCPU->bounds = system->CalculateBoundsInternal();
+						if(settings.UseAutomaticBounds)
+							simulationDataCPU->Bounds = system->CalculateBoundsInternal();
 						else
-							simulationDataCPU->bounds = settings.customBounds;
+							simulationDataCPU->Bounds = settings.CustomBounds;
 
 						// If using a camera-independant sorting mode, sort the particles right away
-						switch (settings.sortMode)
+						switch (settings.SortMode)
 						{
 						default:
 						case ParticleSortMode::None: // No sort, just point the indices back to themselves
 							for (UINT32 i = 0; i < numParticles; i++)
-								simulationDataCPU->indices[i] = i;
+								simulationDataCPU->Indices[i] = i;
 							break;
 						case ParticleSortMode::OldToYoung:
 						case ParticleSortMode::YoungToOld:
-							SortParticles(*system->mParticleSet, settings.sortMode, Vector3::ZERO, simulationDataCPU->indices.data());
+							SortParticles(*system->mParticleSet, settings.SortMode, Vector3::ZERO, simulationDataCPU->Indices.data());
 							break;
 						case ParticleSortMode::Distance: break;
 						}
@@ -441,9 +441,9 @@ namespace bs
 					mNumActiveWorkers--;
 
 					if(simulationDataCPU)
-						simulationData.cpuData[system->mId] = simulationDataCPU;
+						simulationData.CpuData[system->mId] = simulationDataCPU;
 					else if(simulationDataGPU)
-						simulationData.gpuData[system->mId] = simulationDataGPU;
+						simulationData.GpuData[system->mId] = simulationDataGPU;
 				}
 
 				mWorkerDoneSignal.notify_one();
@@ -476,11 +476,11 @@ namespace bs
 		struct ParticleSortData
 		{
 			ParticleSortData(float key, UINT32 idx)
-				:key(key), idx(idx)
+				:Key(key), Idx(idx)
 			{ }
 
-			float key;
-			UINT32 idx;
+			float Key;
+			UINT32 Idx;
 		};
 
 		const UINT32 count = set.GetParticleCount();
@@ -497,21 +497,21 @@ namespace bs
 			case ParticleSortMode::Distance:
 				for(UINT32 i = 0; i < count; i++)
 				{
-					float distance = viewPoint.SquaredDistance(particles.position[i]);
+					float distance = viewPoint.SquaredDistance(particles.Position[i]);
 					sortData.emplace_back(distance, i);
 				}
 				break;
 			case ParticleSortMode::OldToYoung:
 				for(UINT32 i = 0; i < count; i++)
 				{
-					float lifetime = particles.lifetime[i];
+					float lifetime = particles.Lifetime[i];
 					sortData.emplace_back(lifetime, i);
 				}
 				break;
 			case ParticleSortMode::YoungToOld:
 				for(UINT32 i = 0; i < count; i++)
 				{
-					float lifetime = particles.initialLifetime[i] - particles.lifetime[i];
+					float lifetime = particles.InitialLifetime[i] - particles.Lifetime[i];
 					sortData.emplace_back(lifetime, i);
 				}
 				break;
@@ -520,11 +520,11 @@ namespace bs
 			std::sort(sortData.begin(), sortData.end(),
 				[](const ParticleSortData& lhs, const ParticleSortData& rhs)
 			{
-				return rhs.key < lhs.key;
+				return rhs.Key < lhs.Key;
 			});
 
 			for (UINT32 i = 0; i < count; i++)
-				indices[i] = sortData[i].idx;
+				indices[i] = sortData[i].Idx;
 		}
 		bs_frame_clear();
 	}

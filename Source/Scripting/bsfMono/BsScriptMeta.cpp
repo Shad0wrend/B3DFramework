@@ -8,13 +8,13 @@
 namespace bs
 {
 	ScriptMeta::ScriptMeta()
-		:scriptClass(nullptr), thisPtrField(nullptr)
+		:ScriptClass(nullptr), ThisPtrField(nullptr)
 	{
 
 	}
 
 	ScriptMeta::ScriptMeta(const String& assembly, const String& ns, const String& name, std::function<void()> initCallback)
-		:ns(ns), name(name), assembly(assembly), initCallback(initCallback), scriptClass(nullptr), thisPtrField(nullptr)
+		:Ns(ns), Name(name), Assembly(assembly), InitCallback(initCallback), ScriptClass(nullptr), ThisPtrField(nullptr)
 	{
 
 	}

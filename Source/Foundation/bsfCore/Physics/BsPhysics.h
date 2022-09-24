@@ -144,12 +144,12 @@ namespace bs
 	/** Contains parameters used for initializing the physics system. */
 	struct PHYSICS_INIT_DESC
 	{
-		float typicalLength = 1.0f; /**< Typical length of an object in the scene. */
-		float typicalSpeed = 9.81f; /**< Typical speed of an object in the scene. */
-		Vector3 gravity = Vector3(0.0f, -9.81f, 0.0f); /**< Initial gravity. */
-		bool initCooking = true; /**< Determines should the cooking library be initialized. */
+		float TypicalLength = 1.0f; /**< Typical length of an object in the scene. */
+		float TypicalSpeed = 9.81f; /**< Typical speed of an object in the scene. */
+		Vector3 Gravity = Vector3(0.0f, -9.81f, 0.0f); /**< Initial gravity. */
+		bool InitCooking = true; /**< Determines should the cooking library be initialized. */
 		/** Flags that control global physics option. */
-		PhysicsFlags flags = PhysicsFlag::CCT_OverlapRecovery | PhysicsFlag::CCT_PreciseSweeps | PhysicsFlag::CCD_Enable;
+		PhysicsFlags Flags = PhysicsFlag::CCT_OverlapRecovery | PhysicsFlag::CCT_PreciseSweeps | PhysicsFlag::CCD_Enable;
 	};
 
 	/**

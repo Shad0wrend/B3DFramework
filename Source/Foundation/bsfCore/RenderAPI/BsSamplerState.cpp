@@ -8,16 +8,16 @@ namespace bs
 {
 	bool SAMPLER_STATE_DESC::operator == (const SAMPLER_STATE_DESC& rhs) const
 	{
-		return addressMode == rhs.addressMode &&
-			minFilter == rhs.minFilter &&
-			magFilter == rhs.magFilter &&
-			mipFilter == rhs.mipFilter &&
-			maxAniso == rhs.maxAniso &&
-			mipmapBias == rhs.mipmapBias &&
-			mipMin == rhs.mipMin &&
-			mipMax == rhs.mipMax &&
-			borderColor == rhs.borderColor &&
-			comparisonFunc == rhs.comparisonFunc;
+		return AddressMode == rhs.AddressMode &&
+			MinFilter == rhs.MinFilter &&
+			MagFilter == rhs.MagFilter &&
+			MipFilter == rhs.MipFilter &&
+			MaxAniso == rhs.MaxAniso &&
+			MipmapBias == rhs.MipmapBias &&
+			MipMin == rhs.MipMin &&
+			MipMax == rhs.MipMax &&
+			BorderColor == rhs.BorderColor &&
+			ComparisonFunc == rhs.ComparisonFunc;
 	}
 
 	SamplerProperties::SamplerProperties(const SAMPLER_STATE_DESC& desc)
@@ -29,19 +29,19 @@ namespace bs
 		switch (ft)
 		{
 		case FT_MIN:
-			return mData.minFilter;
+			return mData.MinFilter;
 		case FT_MAG:
-			return mData.magFilter;
+			return mData.MagFilter;
 		case FT_MIP:
-			return mData.mipFilter;
+			return mData.MipFilter;
 		}
 
-		return mData.minFilter;
+		return mData.MinFilter;
 	}
 
 	const Color& SamplerProperties::GetBorderColor() const
 	{
-		return mData.borderColor;
+		return mData.BorderColor;
 	}
 
 	SamplerState::SamplerState(const SAMPLER_STATE_DESC& desc)
@@ -73,18 +73,18 @@ namespace bs
 	UINT64 SamplerState::GenerateHash(const SAMPLER_STATE_DESC& desc)
 	{
 		size_t hash = 0;
-		bs_hash_combine(hash, (UINT32)desc.addressMode.u);
-		bs_hash_combine(hash, (UINT32)desc.addressMode.v);
-		bs_hash_combine(hash, (UINT32)desc.addressMode.w);
-		bs_hash_combine(hash, (UINT32)desc.minFilter);
-		bs_hash_combine(hash, (UINT32)desc.magFilter);
-		bs_hash_combine(hash, (UINT32)desc.mipFilter);
-		bs_hash_combine(hash, desc.maxAniso);
-		bs_hash_combine(hash, desc.mipmapBias);
-		bs_hash_combine(hash, desc.mipMin);
-		bs_hash_combine(hash, desc.mipMax);
-		bs_hash_combine(hash, desc.borderColor);
-		bs_hash_combine(hash, (UINT32)desc.comparisonFunc);
+		bs_hash_combine(hash, (UINT32)desc.AddressMode.U);
+		bs_hash_combine(hash, (UINT32)desc.AddressMode.V);
+		bs_hash_combine(hash, (UINT32)desc.AddressMode.W);
+		bs_hash_combine(hash, (UINT32)desc.MinFilter);
+		bs_hash_combine(hash, (UINT32)desc.MagFilter);
+		bs_hash_combine(hash, (UINT32)desc.MipFilter);
+		bs_hash_combine(hash, desc.MaxAniso);
+		bs_hash_combine(hash, desc.MipmapBias);
+		bs_hash_combine(hash, desc.MipMin);
+		bs_hash_combine(hash, desc.MipMax);
+		bs_hash_combine(hash, desc.BorderColor);
+		bs_hash_combine(hash, (UINT32)desc.ComparisonFunc);
 
 		return (UINT64)hash;
 	}

@@ -128,76 +128,76 @@ namespace bs { namespace ct
 		struct CpuBillboardSimulationParams
 		{
 			/** Binding spot for the texture containing position and rotation information. */
-			GpuParamTexture positionAndRotTexture;
+			GpuParamTexture PositionAndRotTexture;
 
 			/** Binding spot for the texture containing color information. */
-			GpuParamTexture colorTexture;
+			GpuParamTexture ColorTexture;
 
 			/** Binding spot for the texture containing size and sub-image index information. */
-			GpuParamTexture sizeAndFrameIdxTexture;
+			GpuParamTexture SizeAndFrameIdxTexture;
 		};
 
 		/** Parameters relevant for mesh rendering of the outputs of the particle CPU simulation. */
 		struct CpuMeshSimulationParams
 		{
 			/** Binding spot for the texture containing position. */
-			GpuParamTexture positionTexture;
+			GpuParamTexture PositionTexture;
 
 			/** Binding spot for the texture containing color information. */
-			GpuParamTexture colorTexture;
+			GpuParamTexture ColorTexture;
 
 			/** Binding spot for the texture containing rotation. */
-			GpuParamTexture rotationTexture;
+			GpuParamTexture RotationTexture;
 
 			/** Binding spot for the texture containing size. */
-			GpuParamTexture sizeTexture;
+			GpuParamTexture SizeTexture;
 		};
 
 		/** Parameters relevant for rendering the outputs of the particle GPU simulation. */
 		struct GpuSimulationParams
 		{
 			/** Binding spot for the texture containing position (.xyz) and time (.w) information. */
-			GpuParamTexture positionTimeTexture;
+			GpuParamTexture PositionTimeTexture;
 
 			/** Binding spot for the texture containing 2D size (.xy) and rotation (.z) information. */
-			GpuParamTexture sizeRotationTexture;
+			GpuParamTexture SizeRotationTexture;
 
 			/** Binding spot for the texture containing quantized curves used for evaluating various particle properties. */
-			GpuParamTexture curvesTexture;
+			GpuParamTexture CurvesTexture;
 		};
 
 		/** Binding locations for the per-camera param block buffer. */
-		GpuParamBinding perCameraBindings[GPT_COUNT];
+		GpuParamBinding PerCameraBindings[GPT_COUNT];
 
 		/** Binding spot for the buffer containing instance id -> particle index mapping. */
-		GpuParamBuffer indicesBuffer;
+		GpuParamBuffer IndicesBuffer;
 
 		/** Optional texture input for the depth buffer. */
-		GpuParamTexture depthInputTexture;
+		GpuParamTexture DepthInputTexture;
 
 		/** Parameters relevant for billboard rendering of the outputs of the particle CPU simulation. */
-		CpuBillboardSimulationParams paramsCPUBillboard;
+		CpuBillboardSimulationParams ParamsCpuBillboard;
 
 		/** Parameters relevant for mesh rendering of the outputs of the particle CPU simulation. */
-		CpuMeshSimulationParams paramsCPUMesh;
+		CpuMeshSimulationParams ParamsCpuMesh;
 
 		/** Parameters relevant for rendering the outputs of the particle GPU simulation. */
-		GpuSimulationParams paramsGPU;
+		GpuSimulationParams ParamsGpu;
 
 		/** Collection of parameters used for direct lighting using the forward rendering path. */
-		ForwardLightingParams forwardLightingParams;
+		ForwardLightingParams ForwardLightingParams;
 
 		/** Collection of parameters used for image based lighting. */
-		ImageBasedLightingParams imageBasedParams;
+		ImageBasedLightingParams ImageBasedParams;
 
 		/** Number of particles to render. */
-		UINT32 numParticles = 0;
+		UINT32 NumParticles = 0;
 
 		/** True if the particle should be drawn as a 3D mesh instead of a billboard. */
-		bool is3D = false;
+		bool Is3D = false;
 
 		/** Checks if the element has all the properties required for rendering. */
-		bool IsValid() const { return !is3D || mesh != nullptr; }
+		bool IsValid() const { return !Is3D || Mesh != nullptr; }
 
 		/** @copydoc RenderElement::draw */
 		void Draw() const override;
@@ -207,37 +207,37 @@ namespace bs { namespace ct
 	struct RendererParticles
 	{
 		/** Owner particle system. */
-		ParticleSystem* particleSystem = nullptr;
+		ParticleSystem* ParticleSystem = nullptr;
 
 		/** Variant of the particle system used for simulating the particles on the GPU. */
-		GpuParticleSystem* gpuParticleSystem = nullptr;
+		GpuParticleSystem* GpuParticleSystem = nullptr;
 
 		/** Matrix that transforms the particle system to world space. */
-		Matrix4 localToWorld = Matrix4::IDENTITY;
+		Matrix4 LocalToWorld = Matrix4::IDENTITY;
 
 		/** Previous frame's local -> world transform matrix. */
-		Matrix4 prevLocalToWorld = Matrix4::IDENTITY;
+		Matrix4 PrevLocalToWorld = Matrix4::IDENTITY;
 
 		/** Determines if the previous frame properties require updating. */
-		PrevFrameDirtyState prevFrameDirtyState = PrevFrameDirtyState::Clean;
+		PrevFrameDirtyState PrevFrameDirtyState = PrevFrameDirtyState::Clean;
 
 		/** Element used for sorting and rendering the particle system. */
-		mutable ParticlesRenderElement renderElement;
+		mutable ParticlesRenderElement RenderElement;
 
 		/** Parameters used by the particle rendering shader. */
-		SPtr<GpuParamBlockBuffer> particlesParamBuffer;
+		SPtr<GpuParamBlockBuffer> ParticlesParamBuffer;
 
 		/** Extra parameters required by the particle rendering shader if the particle system is GPU simulated. */
-		SPtr<GpuParamBlockBuffer> gpuParticlesParamBuffer;
+		SPtr<GpuParamBlockBuffer> GpuParticlesParamBuffer;
 
 		/** Buffer containing the world transform data for the rendered object. */
-		SPtr<GpuParamBlockBuffer> perObjectParamBuffer;
+		SPtr<GpuParamBlockBuffer> PerObjectParamBuffer;
 
 		/** Information about the color over lifetime curve stored in the global curve texture. */
-		TextureRowAllocation colorCurveAlloc;
+		TextureRowAllocation ColorCurveAlloc;
 
 		/** Information about the size over lifetime / frame index curve stored in the global curve texture. */
-		TextureRowAllocation sizeScaleFrameIdxCurveAlloc;
+		TextureRowAllocation SizeScaleFrameIdxCurveAlloc;
 
 		/** Updates the per-object GPU buffer according to the currently set properties. */
 		void UpdatePerObjectBuffer();
@@ -268,10 +268,10 @@ namespace bs { namespace ct
 	 */
 	struct ParticleBillboardTextures
 	{
-		SPtr<Texture> positionAndRotation;
-		SPtr<Texture> color;
-		SPtr<Texture> sizeAndFrameIdx;
-		SPtr<GpuBuffer> indices;
+		SPtr<Texture> PositionAndRotation;
+		SPtr<Texture> Color;
+		SPtr<Texture> SizeAndFrameIdx;
+		SPtr<GpuBuffer> Indices;
 	};
 
 	/**
@@ -280,11 +280,11 @@ namespace bs { namespace ct
 	 */
 	struct ParticleMeshTextures
 	{
-		SPtr<Texture> position;
-		SPtr<Texture> color;
-		SPtr<Texture> size;
-		SPtr<Texture> rotation;
-		SPtr<GpuBuffer> indices;
+		SPtr<Texture> Position;
+		SPtr<Texture> Color;
+		SPtr<Texture> Size;
+		SPtr<Texture> Rotation;
+		SPtr<GpuBuffer> Indices;
 	};
 
 	/** Keeps a pool of textures used for the purposes of the particle system. */
@@ -293,15 +293,15 @@ namespace bs { namespace ct
 		/** A set of created textures for billboard rendering, per size. */
 		struct BillboardBuffersPerSize
 		{
-			Vector<ParticleBillboardTextures*> buffers;
-			UINT32 nextFreeIdx = 0;
+			Vector<ParticleBillboardTextures*> Buffers;
+			UINT32 NextFreeIdx = 0;
 		};
 
 		/** A set of created textures for mesh rendering, per size. */
 		struct MeshBuffersPerSize
 		{
-			Vector<ParticleMeshTextures*> buffers;
-			UINT32 nextFreeIdx = 0;
+			Vector<ParticleMeshTextures*> Buffers;
+			UINT32 NextFreeIdx = 0;
 		};
 
 	public:

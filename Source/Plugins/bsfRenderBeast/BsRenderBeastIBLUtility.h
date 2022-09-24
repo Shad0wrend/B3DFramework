@@ -68,10 +68,10 @@ namespace bs { namespace ct
 	struct SHVector5
 	{
 		SHVector5()
-			:coeffs()
+			:Coeffs()
 		{ }
 
-		float coeffs[25];
+		float Coeffs[25];
 	};
 
 	/** Vector representing spherical coefficients for 5 bands, separate for red, green and blue components. */
@@ -83,7 +83,7 @@ namespace bs { namespace ct
 	/** Vector representing spherical harmonic coefficients for 3 bands. */
 	struct SHVector3
 	{
-		float coeffs[9];
+		float Coeffs[9];
 	};
 
 	/** Vector representing spherical coefficients for 3 bands, separate for red, green and blue components. */
@@ -95,15 +95,15 @@ namespace bs { namespace ct
 	/** Intermediate structure used for spherical coefficient calculation. Contains RGB coefficients and weight. */
 	struct SHCoeffsAndWeight5
 	{
-		SHVector5RGB coeffs;
-		float weight;
+		SHVector5RGB Coeffs;
+		float Weight;
 	};
 
 	/** Intermediate structure used for spherical coefficient calculation. Contains RGB coefficients and weight. */
 	struct SHCoeffsAndWeight3
 	{
-		SHVector3RGB coeffs;
-		float weight;
+		SHVector3RGB Coeffs;
+		float Weight;
 	};
 
 	BS_PARAM_BLOCK_BEGIN(IrradianceComputeSHParamDef)

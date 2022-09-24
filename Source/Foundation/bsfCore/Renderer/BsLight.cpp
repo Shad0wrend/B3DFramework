@@ -240,7 +240,7 @@ namespace bs
 	CoreSyncData Light::SyncToCore(FrameAlloc* allocator)
 	{
 		UINT32 size = 0;
-		size += rtti_size(GetCoreDirtyFlags()).bytes;
+		size += rtti_size(GetCoreDirtyFlags()).Bytes;
 		size += csync_size((SceneActor&)*this);
 		size += csync_size(*this);
 

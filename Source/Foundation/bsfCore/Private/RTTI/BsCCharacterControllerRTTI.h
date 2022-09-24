@@ -20,16 +20,16 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN_NAMED(mPosition, mDesc.position, 0)
-			BS_RTTI_MEMBER_PLAIN_NAMED(mContactOffset, mDesc.contactOffset, 1)
-			BS_RTTI_MEMBER_PLAIN_NAMED(mStepOffset, mDesc.stepOffset, 2)
-			BS_RTTI_MEMBER_PLAIN_NAMED(mSlopeLimit, mDesc.slopeLimit, 3)
-			BS_RTTI_MEMBER_PLAIN_NAMED(mMinMoveDistance, mDesc.minMoveDistance, 4)
-			BS_RTTI_MEMBER_PLAIN_NAMED(mHeight, mDesc.height, 5)
-			BS_RTTI_MEMBER_PLAIN_NAMED(mRadius, mDesc.radius, 6)
-			BS_RTTI_MEMBER_PLAIN_NAMED(mUp, mDesc.up, 7)
-			BS_RTTI_MEMBER_PLAIN_NAMED(mClimbingMode, mDesc.climbingMode, 8)
-			BS_RTTI_MEMBER_PLAIN_NAMED(mNonWalkableMode, mDesc.nonWalkableMode, 9)
+			BS_RTTI_MEMBER_PLAIN_NAMED(mPosition, mDesc.Position, 0)
+			BS_RTTI_MEMBER_PLAIN_NAMED(mContactOffset, mDesc.ContactOffset, 1)
+			BS_RTTI_MEMBER_PLAIN_NAMED(mStepOffset, mDesc.StepOffset, 2)
+			BS_RTTI_MEMBER_PLAIN_NAMED(mSlopeLimit, mDesc.SlopeLimit, 3)
+			BS_RTTI_MEMBER_PLAIN_NAMED(mMinMoveDistance, mDesc.MinMoveDistance, 4)
+			BS_RTTI_MEMBER_PLAIN_NAMED(mHeight, mDesc.Height, 5)
+			BS_RTTI_MEMBER_PLAIN_NAMED(mRadius, mDesc.Radius, 6)
+			BS_RTTI_MEMBER_PLAIN_NAMED(mUp, mDesc.Up, 7)
+			BS_RTTI_MEMBER_PLAIN_NAMED(mClimbingMode, mDesc.ClimbingMode, 8)
+			BS_RTTI_MEMBER_PLAIN_NAMED(mNonWalkableMode, mDesc.NonWalkableMode, 9)
 			BS_RTTI_MEMBER_PLAIN(mLayer, 10)
 		BS_END_RTTI_MEMBERS
 

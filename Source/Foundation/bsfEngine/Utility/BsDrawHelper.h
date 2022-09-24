@@ -38,10 +38,10 @@ namespace bs
 		/**	Container for mesh of a specific type output by the DrawHelper. */
 		struct ShapeMeshData
 		{
-			SPtr<Mesh> mesh;
-			SubMesh subMesh;
-			MeshType type;
-			HTexture texture;
+			SPtr<Mesh> Mesh;
+			SubMesh SubMesh;
+			MeshType Type;
+			HTexture Texture;
 		};
 
 		DrawHelper();
@@ -140,89 +140,89 @@ namespace bs
 	private:
 		struct CommonData
 		{
-			Color color;
-			Matrix4 transform;
-			Vector3 center;
-			UINT64 layer;
+			Color Color;
+			Matrix4 Transform;
+			Vector3 Center;
+			UINT64 Layer;
 		};
 
 		struct CubeData : CommonData
 		{
-			Vector3 position;
-			Vector3 extents;
+			Vector3 Position;
+			Vector3 Extents;
 		};
 
 		struct SphereData : CommonData
 		{
-			Vector3 position;
-			float radius;
-			UINT32 quality;
+			Vector3 Position;
+			float Radius;
+			UINT32 Quality;
 		};
 
 		struct LineData : CommonData
 		{
-			Vector3 start;
-			Vector3 end;
+			Vector3 Start;
+			Vector3 End;
 		};
 
 		struct LineListData : CommonData
 		{
-			Vector<Vector3> lines;
+			Vector<Vector3> Lines;
 		};
 
 		struct Rect3Data : CommonData
 		{
-			Rect3 area;
+			Rect3 Area;
 		};
 
 		struct FrustumData : CommonData
 		{
-			Vector3 position;
-			float aspect;
+			Vector3 Position;
+			float Aspect;
 			Degree FOV;
-			float nearDist;
-			float farDist;
+			float NearDist;
+			float FarDist;
 		};
 
 		struct ConeData : CommonData
 		{
-			Vector3 base;
-			Vector3 normal;
-			float height;
-			float radius;
-			Vector2 scale;
-			UINT32 quality;
+			Vector3 Base;
+			Vector3 Normal;
+			float Height;
+			float Radius;
+			Vector2 Scale;
+			UINT32 Quality;
 		};
 
 		struct DiscData : CommonData
 		{
-			Vector3 position;
-			Vector3 normal;
-			float radius;
-			UINT32 quality;
+			Vector3 Position;
+			Vector3 Normal;
+			float Radius;
+			UINT32 Quality;
 		};
 
 		struct ArcData : CommonData
 		{
-			Vector3 position;
-			Vector3 normal;
-			float radius;
-			Degree startAngle;
-			Degree amountAngle;
-			UINT32 quality;
+			Vector3 Position;
+			Vector3 Normal;
+			float Radius;
+			Degree StartAngle;
+			Degree AmountAngle;
+			UINT32 Quality;
 		};
 
 		struct Text2DData : CommonData
 		{
-			Vector3 position;
-			String text;
-			HFont font;
-			UINT32 size;
+			Vector3 Position;
+			String Text;
+			HFont Font;
+			UINT32 Size;
 		};
 
 		struct WireMeshData : CommonData
 		{
-			SPtr<MeshData> meshData;
+			SPtr<MeshData> MeshData;
 		};
 
 		static const UINT32 VERTEX_BUFFER_GROWTH;

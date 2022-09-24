@@ -33,8 +33,8 @@ namespace bs
 		{
 			TestEntry(Func test, const String& name);
 
-			Func test;
-			String name;
+			Func Test;
+			String Name;
 		};
 
 	public:

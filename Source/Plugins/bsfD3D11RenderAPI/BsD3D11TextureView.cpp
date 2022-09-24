@@ -13,23 +13,23 @@ namespace bs { namespace ct
 	D3D11TextureView::D3D11TextureView(const D3D11Texture* texture, const TEXTURE_VIEW_DESC& desc)
 		: TextureView(desc)
 	{
-		if ((mDesc.usage & GVU_RANDOMWRITE) != 0)
-			mUAV = CreateUav(texture, mDesc.mostDetailMip, mDesc.firstArraySlice, mDesc.numArraySlices);
-		else if ((mDesc.usage & GVU_RENDERTARGET) != 0)
-			mRTV = CreateRtv(texture, mDesc.mostDetailMip, mDesc.firstArraySlice, mDesc.numArraySlices);
-		else if ((mDesc.usage & GVU_DEPTHSTENCIL) != 0)
+		if ((mDesc.Usage & GVU_RANDOMWRITE) != 0)
+			mUAV = CreateUav(texture, mDesc.MostDetailMip, mDesc.FirstArraySlice, mDesc.NumArraySlices);
+		else if ((mDesc.Usage & GVU_RENDERTARGET) != 0)
+			mRTV = CreateRtv(texture, mDesc.MostDetailMip, mDesc.FirstArraySlice, mDesc.NumArraySlices);
+		else if ((mDesc.Usage & GVU_DEPTHSTENCIL) != 0)
 		{
-			mWDepthWStencilView = CreateDsv(texture, mDesc.mostDetailMip, mDesc.firstArraySlice, mDesc.numArraySlices,
+			mWDepthWStencilView = CreateDsv(texture, mDesc.MostDetailMip, mDesc.FirstArraySlice, mDesc.NumArraySlices,
 				false, false);
-			mRODepthWStencilView = CreateDsv(texture, mDesc.mostDetailMip, mDesc.firstArraySlice, mDesc.numArraySlices,
+			mRODepthWStencilView = CreateDsv(texture, mDesc.MostDetailMip, mDesc.FirstArraySlice, mDesc.NumArraySlices,
 				true, false);
-			mRODepthROStencilView = CreateDsv(texture, mDesc.mostDetailMip, mDesc.firstArraySlice, mDesc.numArraySlices,
+			mRODepthROStencilView = CreateDsv(texture, mDesc.MostDetailMip, mDesc.FirstArraySlice, mDesc.NumArraySlices,
 				true, true);
-			mWDepthROStencilView = CreateDsv(texture, mDesc.mostDetailMip, mDesc.firstArraySlice, mDesc.numArraySlices,
+			mWDepthROStencilView = CreateDsv(texture, mDesc.MostDetailMip, mDesc.FirstArraySlice, mDesc.NumArraySlices,
 				false, true);
 		}
 		else
-			mSRV = CreateSrv(texture, mDesc.mostDetailMip, mDesc.numMips, mDesc.firstArraySlice, mDesc.numArraySlices);
+			mSRV = CreateSrv(texture, mDesc.MostDetailMip, mDesc.NumMips, mDesc.FirstArraySlice, mDesc.NumArraySlices);
 	}
 
 	D3D11TextureView::~D3D11TextureView()

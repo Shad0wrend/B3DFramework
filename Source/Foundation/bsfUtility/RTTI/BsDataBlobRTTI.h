@@ -21,7 +21,7 @@ namespace bs
 		{
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]()
 			{
-				return stream.WriteBytes(data.data, data.size);
+				return stream.WriteBytes(data.Data, data.Size);
 			});
 		}
 
@@ -30,20 +30,20 @@ namespace bs
 			BitLength size;
 			rtti_read_size_header(stream, compress, size);
 
-			if (data.data != nullptr)
-				bs_free(data.data);
+			if (data.Data != nullptr)
+				bs_free(data.Data);
 
-			data.size = size.bytes - sizeof(uint32_t);
-			data.data = (uint8_t*)bs_alloc(data.size);
+			data.Size = size.Bytes - sizeof(uint32_t);
+			data.Data = (uint8_t*)bs_alloc(data.Size);
 
-			stream.ReadBytes(data.data, data.size);
+			stream.ReadBytes(data.Data, data.Size);
 
 			return size;
 		}
 
 		static BitLength GetSize(const DataBlob& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
-			BitLength dataSize = data.size;
+			BitLength dataSize = data.Size;
 
 			rtti_add_header_size(dataSize, compress);
 			return dataSize;

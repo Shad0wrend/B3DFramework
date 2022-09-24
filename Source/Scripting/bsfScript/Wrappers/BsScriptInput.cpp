@@ -33,37 +33,37 @@ namespace bs
 
 	void ScriptInput::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_IsButtonHeld", (void*)&ScriptInput::InternalIsButtonHeld);
-		metaData.scriptClass->AddInternalCall("Internal_IsButtonDown", (void*)&ScriptInput::InternalIsButtonDown);
-		metaData.scriptClass->AddInternalCall("Internal_IsButtonUp", (void*)&ScriptInput::InternalIsButtonUp);
-		metaData.scriptClass->AddInternalCall("Internal_IsPointerButtonHeld", (void*)&ScriptInput::InternalIsPointerButtonHeld);
-		metaData.scriptClass->AddInternalCall("Internal_IsPointerButtonDown", (void*)&ScriptInput::InternalIsPointerButtonDown);
-		metaData.scriptClass->AddInternalCall("Internal_IsPointerButtonUp", (void*)&ScriptInput::InternalIsPointerButtonUp);
-		metaData.scriptClass->AddInternalCall("Internal_IsPointerDoubleClicked", (void*)&ScriptInput::InternalIsPointerDoubleClicked);
-		metaData.scriptClass->AddInternalCall("Internal_GetAxisValue", (void*)&ScriptInput::InternalGetAxisValue);
-		metaData.scriptClass->AddInternalCall("Internal_GetPointerPosition", (void*)&ScriptInput::InternalGetPointerPosition);
-		metaData.scriptClass->AddInternalCall("Internal_GetPointerDelta", (void*)&ScriptInput::InternalGetPointerDelta);
+		metaData.ScriptClass->AddInternalCall("Internal_IsButtonHeld", (void*)&ScriptInput::InternalIsButtonHeld);
+		metaData.ScriptClass->AddInternalCall("Internal_IsButtonDown", (void*)&ScriptInput::InternalIsButtonDown);
+		metaData.ScriptClass->AddInternalCall("Internal_IsButtonUp", (void*)&ScriptInput::InternalIsButtonUp);
+		metaData.ScriptClass->AddInternalCall("Internal_IsPointerButtonHeld", (void*)&ScriptInput::InternalIsPointerButtonHeld);
+		metaData.ScriptClass->AddInternalCall("Internal_IsPointerButtonDown", (void*)&ScriptInput::InternalIsPointerButtonDown);
+		metaData.ScriptClass->AddInternalCall("Internal_IsPointerButtonUp", (void*)&ScriptInput::InternalIsPointerButtonUp);
+		metaData.ScriptClass->AddInternalCall("Internal_IsPointerDoubleClicked", (void*)&ScriptInput::InternalIsPointerDoubleClicked);
+		metaData.ScriptClass->AddInternalCall("Internal_GetAxisValue", (void*)&ScriptInput::InternalGetAxisValue);
+		metaData.ScriptClass->AddInternalCall("Internal_GetPointerPosition", (void*)&ScriptInput::InternalGetPointerPosition);
+		metaData.ScriptClass->AddInternalCall("Internal_GetPointerDelta", (void*)&ScriptInput::InternalGetPointerDelta);
 
-		OnButtonPressedThunk = (OnButtonEventThunkDef)metaData.scriptClass->GetMethodExact("Internal_TriggerButtonDown", "ButtonCode,int,bool")->GetThunk();
-		OnButtonReleasedThunk = (OnButtonEventThunkDef)metaData.scriptClass->GetMethodExact("Internal_TriggerButtonUp", "ButtonCode,int,bool")->GetThunk();
-		OnCharInputThunk = (OnCharInputEventThunkDef)metaData.scriptClass->GetMethodExact("Internal_TriggerCharInput", "int,bool")->GetThunk();
-		OnPointerPressedThunk = (OnPointerEventThunkDef)metaData.scriptClass->GetMethodExact("Internal_TriggerPointerPressed", "Vector2I,Vector2I,PointerButton,bool,bool,bool,single,bool")->GetThunk();
-		OnPointerReleasedThunk = (OnPointerEventThunkDef)metaData.scriptClass->GetMethodExact("Internal_TriggerPointerReleased", "Vector2I,Vector2I,PointerButton,bool,bool,bool,single,bool")->GetThunk();
-		OnPointerMovedThunk = (OnPointerEventThunkDef)metaData.scriptClass->GetMethodExact("Internal_TriggerPointerMove", "Vector2I,Vector2I,PointerButton,bool,bool,bool,single,bool")->GetThunk();
-		OnPointerDoubleClickThunk = (OnPointerEventThunkDef)metaData.scriptClass->GetMethodExact("Internal_TriggerPointerDoubleClick", "Vector2I,Vector2I,PointerButton,bool,bool,bool,single,bool")->GetThunk();
+		OnButtonPressedThunk = (OnButtonEventThunkDef)metaData.ScriptClass->GetMethodExact("Internal_TriggerButtonDown", "ButtonCode,int,bool")->GetThunk();
+		OnButtonReleasedThunk = (OnButtonEventThunkDef)metaData.ScriptClass->GetMethodExact("Internal_TriggerButtonUp", "ButtonCode,int,bool")->GetThunk();
+		OnCharInputThunk = (OnCharInputEventThunkDef)metaData.ScriptClass->GetMethodExact("Internal_TriggerCharInput", "int,bool")->GetThunk();
+		OnPointerPressedThunk = (OnPointerEventThunkDef)metaData.ScriptClass->GetMethodExact("Internal_TriggerPointerPressed", "Vector2I,Vector2I,PointerButton,bool,bool,bool,single,bool")->GetThunk();
+		OnPointerReleasedThunk = (OnPointerEventThunkDef)metaData.ScriptClass->GetMethodExact("Internal_TriggerPointerReleased", "Vector2I,Vector2I,PointerButton,bool,bool,bool,single,bool")->GetThunk();
+		OnPointerMovedThunk = (OnPointerEventThunkDef)metaData.ScriptClass->GetMethodExact("Internal_TriggerPointerMove", "Vector2I,Vector2I,PointerButton,bool,bool,bool,single,bool")->GetThunk();
+		OnPointerDoubleClickThunk = (OnPointerEventThunkDef)metaData.ScriptClass->GetMethodExact("Internal_TriggerPointerDoubleClick", "Vector2I,Vector2I,PointerButton,bool,bool,bool,single,bool")->GetThunk();
 	}
 
 	void ScriptInput::StartUp()
 	{
 		Input& input = Input::Instance();
 
-		OnButtonPressedConn = input.onButtonDown.Connect(&ScriptInput::OnButtonDown);
-		OnButtonReleasedConn = input.onButtonUp.Connect(&ScriptInput::OnButtonUp);
-		OnCharInputConn = input.onCharInput.Connect(&ScriptInput::OnCharInput);
-		OnPointerPressedConn = input.onPointerPressed.Connect(&ScriptInput::OnPointerPressed);
-		OnPointerReleasedConn = input.onPointerReleased.Connect(&ScriptInput::OnPointerReleased);
-		OnPointerMovedConn = input.onPointerMoved.Connect(&ScriptInput::OnPointerMoved);
-		OnPointerDoubleClickConn = input.onPointerDoubleClick.Connect(&ScriptInput::OnPointerDoubleClick);
+		OnButtonPressedConn = input.OnButtonDown.Connect(&ScriptInput::OnButtonDown);
+		OnButtonReleasedConn = input.OnButtonUp.Connect(&ScriptInput::OnButtonUp);
+		OnCharInputConn = input.OnCharInput.Connect(&ScriptInput::OnCharInput);
+		OnPointerPressedConn = input.OnPointerPressed.Connect(&ScriptInput::OnPointerPressed);
+		OnPointerReleasedConn = input.OnPointerReleased.Connect(&ScriptInput::OnPointerReleased);
+		OnPointerMovedConn = input.OnPointerMoved.Connect(&ScriptInput::OnPointerMoved);
+		OnPointerDoubleClickConn = input.OnPointerDoubleClick.Connect(&ScriptInput::OnPointerDoubleClick);
 	}
 
 	void ScriptInput::ShutDown()
@@ -82,7 +82,7 @@ namespace bs
 		if (PlayInEditor::Instance().GetState() != PlayInEditorState::Playing)
 			return;
 
-		MonoUtil::InvokeThunk(OnButtonPressedThunk, ev.buttonCode, ev.deviceIdx, ev.IsUsed());
+		MonoUtil::InvokeThunk(OnButtonPressedThunk, ev.ButtonCode, ev.DeviceIdx, ev.IsUsed());
 	}
 
 	void ScriptInput::OnButtonUp(const ButtonEvent& ev)
@@ -90,7 +90,7 @@ namespace bs
 		if (PlayInEditor::Instance().GetState() != PlayInEditorState::Playing)
 			return;
 
-		MonoUtil::InvokeThunk(OnButtonReleasedThunk, ev.buttonCode, ev.deviceIdx, ev.IsUsed());
+		MonoUtil::InvokeThunk(OnButtonReleasedThunk, ev.ButtonCode, ev.DeviceIdx, ev.IsUsed());
 	}
 
 	void ScriptInput::OnCharInput(const TextInputEvent& ev)
@@ -98,7 +98,7 @@ namespace bs
 		if (PlayInEditor::Instance().GetState() != PlayInEditorState::Playing)
 			return;
 
-		MonoUtil::InvokeThunk(OnCharInputThunk, ev.textChar, ev.IsUsed());
+		MonoUtil::InvokeThunk(OnCharInputThunk, ev.TextChar, ev.IsUsed());
 	}
 
 	void ScriptInput::OnPointerMoved(const PointerEvent& ev)
@@ -106,11 +106,11 @@ namespace bs
 		if (PlayInEditor::Instance().GetState() != PlayInEditorState::Playing)
 			return;
 
-		MonoObject* screenPos = ScriptVector2I::Box(ev.screenPos);
-		MonoObject* delta = ScriptVector2I::Box(ev.delta);
+		MonoObject* screenPos = ScriptVector2I::Box(ev.ScreenPos);
+		MonoObject* delta = ScriptVector2I::Box(ev.Delta);
 
 		MonoUtil::InvokeThunk(OnPointerMovedThunk, screenPos, delta,
-			ev.button, ev.shift, ev.control, ev.alt, ev.mouseWheelScrollAmount, ev.IsUsed());
+			ev.Button, ev.Shift, ev.Control, ev.Alt, ev.MouseWheelScrollAmount, ev.IsUsed());
 	}
 
 	void ScriptInput::OnPointerPressed(const PointerEvent& ev)
@@ -118,11 +118,11 @@ namespace bs
 		if (PlayInEditor::Instance().GetState() != PlayInEditorState::Playing)
 			return;
 
-		MonoObject* screenPos = ScriptVector2I::Box(ev.screenPos);
-		MonoObject* delta = ScriptVector2I::Box(ev.delta);
+		MonoObject* screenPos = ScriptVector2I::Box(ev.ScreenPos);
+		MonoObject* delta = ScriptVector2I::Box(ev.Delta);
 
 		MonoUtil::InvokeThunk(OnPointerPressedThunk, screenPos, delta,
-			ev.button, ev.shift, ev.control, ev.alt, ev.mouseWheelScrollAmount, ev.IsUsed());
+			ev.Button, ev.Shift, ev.Control, ev.Alt, ev.MouseWheelScrollAmount, ev.IsUsed());
 	}
 
 	void ScriptInput::OnPointerReleased(const PointerEvent& ev)
@@ -130,11 +130,11 @@ namespace bs
 		if (PlayInEditor::Instance().GetState() != PlayInEditorState::Playing)
 			return;
 
-		MonoObject* screenPos = ScriptVector2I::Box(ev.screenPos);
-		MonoObject* delta = ScriptVector2I::Box(ev.delta);
+		MonoObject* screenPos = ScriptVector2I::Box(ev.ScreenPos);
+		MonoObject* delta = ScriptVector2I::Box(ev.Delta);
 
 		MonoUtil::InvokeThunk(OnPointerReleasedThunk, screenPos, delta,
-			ev.button, ev.shift, ev.control, ev.alt, ev.mouseWheelScrollAmount, ev.IsUsed());
+			ev.Button, ev.Shift, ev.Control, ev.Alt, ev.MouseWheelScrollAmount, ev.IsUsed());
 	}
 
 	void ScriptInput::OnPointerDoubleClick(const PointerEvent& ev)
@@ -142,11 +142,11 @@ namespace bs
 		if (PlayInEditor::Instance().GetState() != PlayInEditorState::Playing)
 			return;
 
-		MonoObject* screenPos = ScriptVector2I::Box(ev.screenPos);
-		MonoObject* delta = ScriptVector2I::Box(ev.delta);
+		MonoObject* screenPos = ScriptVector2I::Box(ev.ScreenPos);
+		MonoObject* delta = ScriptVector2I::Box(ev.Delta);
 
 		MonoUtil::InvokeThunk(OnPointerDoubleClickThunk, screenPos, delta,
-			ev.button, ev.shift, ev.control, ev.alt, ev.mouseWheelScrollAmount, ev.IsUsed());
+			ev.Button, ev.Shift, ev.Control, ev.Alt, ev.MouseWheelScrollAmount, ev.IsUsed());
 	}
 
 	bool ScriptInput::InternalIsButtonHeld(ButtonCode code, UINT32 deviceIdx)

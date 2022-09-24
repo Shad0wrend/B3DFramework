@@ -79,16 +79,16 @@ namespace bs
 
 		bool operator==(const Plane& rhs) const
 		{
-			return (rhs.d == d && rhs.normal == normal);
+			return (rhs.D == D && rhs.Normal == Normal);
 		}
 		bool operator!=(const Plane& rhs) const
 		{
-			return (rhs.d != d || rhs.normal != normal);
+			return (rhs.D != D || rhs.Normal != Normal);
 		}
 
 	public:
-		Vector3 normal{BsZero};
-		float d = 0.0f;
+		Vector3 Normal{BsZero};
+		float D = 0.0f;
 	};
 
 	/** @} */

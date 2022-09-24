@@ -221,28 +221,28 @@ namespace bs
 			ParamOffset() = default;
 
 			ParamOffset(UINT32 _paramIdx, UINT32 _location)
-				:paramIdx(_paramIdx), location(_location)
+				:ParamIdx(_paramIdx), Location(_location)
 			{ }
 
-			UINT32 paramIdx = 0;
-			UINT32 location = 0;
+			UINT32 ParamIdx = 0;
+			UINT32 Location = 0;
 		};
 
 		LocalizedStringData() = default;
 		~LocalizedStringData();
 
-		String string;
-		UINT32 numParameters = 0;
-		ParamOffset* parameterOffsets = nullptr;
+		String String;
+		UINT32 NumParameters = 0;
+		ParamOffset* ParameterOffsets = nullptr;
 
-		void ConcatenateString(String& outputString, String* parameters, UINT32 numParameterValues) const;
-		void UpdateString(const String& string);
+		void ConcatenateString(bs::String& outputString, bs::String* parameters, UINT32 numParameterValues) const;
+		void UpdateString(const bs::String& string);
 	};
 
 	/** Data for a single language in the string table. */
 	struct LanguageData
 	{
-		UnorderedMap<String, SPtr<LocalizedStringData>> strings;
+		UnorderedMap<String, SPtr<LocalizedStringData>> Strings;
 	};
 
 	/** @} */

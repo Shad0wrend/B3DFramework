@@ -44,7 +44,7 @@ namespace bs
 			if (Is3D())
 			{
 				Vector3 position = transform.GetPosition();
-				alSource3f(mSourceIDs[i], AL_POSITION, position.x, position.y, position.z);
+				alSource3f(mSourceIDs[i], AL_POSITION, position.X, position.Y, position.Z);
 			}
 			else
 				alSource3f(mSourceIDs[i], AL_POSITION, 0.0f, 0.0f, 0.0f);
@@ -63,7 +63,7 @@ namespace bs
 				alcMakeContextCurrent(contexts[i]);
 
 			if (Is3D())
-				alSource3f(mSourceIDs[i], AL_VELOCITY, velocity.x, velocity.y, velocity.z);
+				alSource3f(mSourceIDs[i], AL_VELOCITY, velocity.X, velocity.Y, velocity.Z);
 			else
 				alSource3f(mSourceIDs[i], AL_VELOCITY, 0.0f, 0.0f, 0.0f);
 		}
@@ -405,8 +405,8 @@ namespace bs
 				Vector3 position = mTransform.GetPosition();
 
 				alSourcei(mSourceIDs[i], AL_SOURCE_RELATIVE, false);
-				alSource3f(mSourceIDs[i], AL_POSITION, position.x, position.y, position.z);
-				alSource3f(mSourceIDs[i], AL_VELOCITY, mVelocity.x, mVelocity.y, mVelocity.z);
+				alSource3f(mSourceIDs[i], AL_POSITION, position.X, position.Y, position.Z);
+				alSource3f(mSourceIDs[i], AL_VELOCITY, mVelocity.X, mVelocity.Y, mVelocity.Z);
 			}
 			else
 			{
@@ -487,10 +487,10 @@ namespace bs
 	void OAAudioSource::StreamUnlocked()
 	{
 		AudioDataInfo info;
-		info.bitDepth = mAudioClip->GetBitDepth();
-		info.numChannels = mAudioClip->GetNumChannels();
-		info.sampleRate = mAudioClip->GetFrequency();
-		info.numSamples = 0;
+		info.BitDepth = mAudioClip->GetBitDepth();
+		info.NumChannels = mAudioClip->GetNumChannels();
+		info.SampleRate = mAudioClip->GetFrequency();
+		info.NumSamples = 0;
 
 		UINT32 totalNumSamples = mAudioClip->GetNumSamples();
 
@@ -593,8 +593,8 @@ namespace bs
 		}
 
 		// Read audio data
-		UINT32 numSamples = std::min(numRemainingSamples, info.sampleRate * info.numChannels); // 1 second of data
-		UINT32 sampleBufferSize = numSamples * (info.bitDepth / 8);
+		UINT32 numSamples = std::min(numRemainingSamples, info.SampleRate * info.NumChannels); // 1 second of data
+		UINT32 sampleBufferSize = numSamples * (info.BitDepth / 8);
 
 		UINT8* samples = (UINT8*)bs_stack_alloc(sampleBufferSize);
 
@@ -603,7 +603,7 @@ namespace bs
 		audioClip->GetSamples(samples, mStreamQueuedPosition, numSamples);
 		mStreamQueuedPosition += numSamples;
 
-		info.numSamples = numSamples;
+		info.NumSamples = numSamples;
 		gOAAudio().WriteToOpenALBufferInternal(buffer, samples, info);
 
 		bs_stack_free(samples);

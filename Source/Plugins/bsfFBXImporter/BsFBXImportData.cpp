@@ -6,16 +6,16 @@ namespace bs
 {
 	FBXImportNode::~FBXImportNode()
 	{
-		for (auto& child : children)
+		for (auto& child : Children)
 			bs_delete(child);
 	}
 
 	FBXImportScene::~FBXImportScene()
 	{
-		if (rootNode != nullptr)
-			bs_delete(rootNode);
+		if (RootNode != nullptr)
+			bs_delete(RootNode);
 
-		for (auto& mesh : meshes)
+		for (auto& mesh : Meshes)
 			bs_delete(mesh);
 	}
 }

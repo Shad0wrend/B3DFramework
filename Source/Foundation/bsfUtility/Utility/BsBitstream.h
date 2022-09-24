@@ -848,32 +848,32 @@ namespace bs
 
 	inline void Bitstream::WriteNorm(const Vector3& value, uint32_t bits)
 	{
-		WriteRange(value.x, -1.0f, 1.0f, bits);
-		WriteRange(value.y, -1.0f, 1.0f, bits);
-		WriteRange(value.z, -1.0f, 1.0f, bits);
+		WriteRange(value.X, -1.0f, 1.0f, bits);
+		WriteRange(value.Y, -1.0f, 1.0f, bits);
+		WriteRange(value.Z, -1.0f, 1.0f, bits);
 	}
 
 	inline void Bitstream::ReadNorm(Vector3& value, uint32_t bits)
 	{
-		ReadRange(value.x, -1.0f, 1.0f, bits);
-		ReadRange(value.y, -1.0f, 1.0f, bits);
-		ReadRange(value.z, -1.0f, 1.0f, bits);
+		ReadRange(value.X, -1.0f, 1.0f, bits);
+		ReadRange(value.Y, -1.0f, 1.0f, bits);
+		ReadRange(value.Z, -1.0f, 1.0f, bits);
 	}
 
 	inline void Bitstream::WriteNorm(const Quaternion& value, uint32_t bits)
 	{
-		WriteRange(value.x, -1.0f, 1.0f, bits);
-		WriteRange(value.y, -1.0f, 1.0f, bits);
-		WriteRange(value.z, -1.0f, 1.0f, bits);
-		WriteRange(value.w, -1.0f, 1.0f, bits);
+		WriteRange(value.X, -1.0f, 1.0f, bits);
+		WriteRange(value.Y, -1.0f, 1.0f, bits);
+		WriteRange(value.Z, -1.0f, 1.0f, bits);
+		WriteRange(value.W, -1.0f, 1.0f, bits);
 	}
 
 	inline void Bitstream::ReadNorm(Quaternion& value, uint32_t bits)
 	{
-		ReadRange(value.x, -1.0f, 1.0f, bits);
-		ReadRange(value.y, -1.0f, 1.0f, bits);
-		ReadRange(value.z, -1.0f, 1.0f, bits);
-		ReadRange(value.w, -1.0f, 1.0f, bits);
+		ReadRange(value.X, -1.0f, 1.0f, bits);
+		ReadRange(value.Y, -1.0f, 1.0f, bits);
+		ReadRange(value.Z, -1.0f, 1.0f, bits);
+		ReadRange(value.W, -1.0f, 1.0f, bits);
 	}
 
 	template <class T>

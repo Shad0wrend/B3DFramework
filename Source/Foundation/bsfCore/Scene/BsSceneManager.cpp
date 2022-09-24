@@ -136,7 +136,7 @@ namespace bs
 	{
 		auto iterFind = mBoundActors.find(actor.get());
 		if (iterFind != mBoundActors.end())
-			return iterFind->second.so;
+			return iterFind->second.So;
 
 		return HSceneObject();		
 	}
@@ -189,7 +189,7 @@ namespace bs
 	void SceneManager::UpdateCoreObjectTransformsInternal()
 	{
 		for (auto& entry : mBoundActors)
-			entry.second.actor->UpdateStateInternal(*entry.second.so);
+			entry.second.Actor->UpdateStateInternal(*entry.second.So);
 	}
 
 	SPtr<Camera> SceneManager::GetMainCamera() const
@@ -208,7 +208,7 @@ namespace bs
 		mMainRTResizedConn.Disconnect();
 
 		if (rt != nullptr)
-			mMainRTResizedConn = rt->onResized.Connect(std::bind(&SceneManager::OnMainRenderTargetResized, this));
+			mMainRTResizedConn = rt->OnResized.Connect(std::bind(&SceneManager::OnMainRenderTargetResized, this));
 
 		mMainRT = rt;
 
@@ -216,7 +216,7 @@ namespace bs
 		if (rt != nullptr)
 		{
 			auto& rtProps = rt->GetProperties();
-			aspect = rtProps.width / (float)rtProps.height;
+			aspect = rtProps.Width / (float)rtProps.Height;
 		}
 
 		for (auto& entry : mMainCameras)
@@ -472,7 +472,7 @@ namespace bs
 
 		for(auto& entry : mStateChanges)
 		{
-			const HComponent& component = entry.obj;
+			const HComponent& component = entry.Obj;
 			if(component.IsDestroyed(false))
 				continue;
 
@@ -484,7 +484,7 @@ namespace bs
 			const bool isActive = component->SO()->GetActive();
 
 			UINT32 listType = 0;
-			switch(entry.type)
+			switch(entry.Type)
 			{
 			case ComponentStateEventType::Created:
 				if (alwaysRun || !isStopped)
@@ -568,7 +568,7 @@ namespace bs
 	void SceneManager::OnMainRenderTargetResized()
 	{
 		auto& rtProps = mMainRT->GetProperties();
-		float aspect = rtProps.width / (float)rtProps.height;
+		float aspect = rtProps.Width / (float)rtProps.Height;
 
 		for (auto& entry : mMainCameras)
 			entry->SetAspectRatio(aspect);

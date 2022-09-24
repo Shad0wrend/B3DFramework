@@ -25,8 +25,8 @@ namespace bs
 			ScriptGameObjectEntry() = default;
 			ScriptGameObjectEntry(ScriptGameObjectBase* instance, bool isComponent);
 
-			ScriptGameObjectBase* instance = nullptr;
-			bool isComponent = false;
+			ScriptGameObjectBase* Instance = nullptr;
+			bool IsComponent = false;
 		};
 
 	public:

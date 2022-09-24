@@ -12,9 +12,9 @@ namespace bs
 {
 	struct __PARTICLE_SIZE_DESCInterop
 	{
-		MonoObject* size;
-		MonoObject* size3D;
-		bool use3DSize;
+		MonoObject* Size;
+		MonoObject* Size3D;
+		bool Use3DSize;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptPARTICLE_SIZE_DESC : public ScriptObject<ScriptPARTICLE_SIZE_DESC>

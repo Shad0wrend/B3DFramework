@@ -14,14 +14,14 @@ namespace bs
 	/** Converts a sim thread pipeline state descriptor to a core thread one. */
 	void convertPassDesc(const PIPELINE_STATE_DESC& input, ct::PIPELINE_STATE_DESC& output)
 	{
-		output.blendState = input.blendState != nullptr ? input.blendState->GetCore() : nullptr;
-		output.rasterizerState = input.rasterizerState != nullptr ? input.rasterizerState->GetCore() : nullptr;
-		output.depthStencilState = input.depthStencilState != nullptr ? input.depthStencilState->GetCore() : nullptr;
-		output.vertexProgram = input.vertexProgram != nullptr ? input.vertexProgram->GetCore() : nullptr;
-		output.fragmentProgram = input.fragmentProgram != nullptr ? input.fragmentProgram->GetCore() : nullptr;
-		output.geometryProgram = input.geometryProgram != nullptr ? input.geometryProgram->GetCore() : nullptr;
-		output.hullProgram = input.hullProgram != nullptr ? input.hullProgram->GetCore() : nullptr;
-		output.domainProgram = input.domainProgram != nullptr ? input.domainProgram->GetCore() : nullptr;
+		output.BlendState = input.BlendState != nullptr ? input.BlendState->GetCore() : nullptr;
+		output.RasterizerState = input.RasterizerState != nullptr ? input.RasterizerState->GetCore() : nullptr;
+		output.DepthStencilState = input.DepthStencilState != nullptr ? input.DepthStencilState->GetCore() : nullptr;
+		output.VertexProgram = input.VertexProgram != nullptr ? input.VertexProgram->GetCore() : nullptr;
+		output.FragmentProgram = input.FragmentProgram != nullptr ? input.FragmentProgram->GetCore() : nullptr;
+		output.GeometryProgram = input.GeometryProgram != nullptr ? input.GeometryProgram->GetCore() : nullptr;
+		output.HullProgram = input.HullProgram != nullptr ? input.HullProgram->GetCore() : nullptr;
+		output.DomainProgram = input.DomainProgram != nullptr ? input.DomainProgram->GetCore() : nullptr;
 	}
 
 	template<bool Core>
@@ -36,34 +36,34 @@ namespace bs
 		:TGraphicsPipelineState(desc)
 	{
 		GPU_PIPELINE_PARAMS_DESC paramsDesc;
-		if (desc.vertexProgram != nullptr)
+		if (desc.VertexProgram != nullptr)
 		{
-			desc.vertexProgram->BlockUntilCoreInitialized();
-			paramsDesc.vertexParams = desc.vertexProgram->GetParamDesc();
+			desc.VertexProgram->BlockUntilCoreInitialized();
+			paramsDesc.VertexParams = desc.VertexProgram->GetParamDesc();
 		}
 
-		if (desc.fragmentProgram != nullptr)
+		if (desc.FragmentProgram != nullptr)
 		{
-			desc.fragmentProgram->BlockUntilCoreInitialized();
-			paramsDesc.fragmentParams = desc.fragmentProgram->GetParamDesc();
+			desc.FragmentProgram->BlockUntilCoreInitialized();
+			paramsDesc.FragmentParams = desc.FragmentProgram->GetParamDesc();
 		}
 
-		if (desc.geometryProgram != nullptr)
+		if (desc.GeometryProgram != nullptr)
 		{
-			desc.geometryProgram->BlockUntilCoreInitialized();
-			paramsDesc.geometryParams = desc.geometryProgram->GetParamDesc();
+			desc.GeometryProgram->BlockUntilCoreInitialized();
+			paramsDesc.GeometryParams = desc.GeometryProgram->GetParamDesc();
 		}
 
-		if (desc.hullProgram != nullptr)
+		if (desc.HullProgram != nullptr)
 		{
-			desc.hullProgram->BlockUntilCoreInitialized();
-			paramsDesc.hullParams = desc.hullProgram->GetParamDesc();
+			desc.HullProgram->BlockUntilCoreInitialized();
+			paramsDesc.HullParams = desc.HullProgram->GetParamDesc();
 		}
 		
-		if (desc.domainProgram != nullptr)
+		if (desc.DomainProgram != nullptr)
 		{
-			desc.domainProgram->BlockUntilCoreInitialized();
-			paramsDesc.domainParams = desc.domainProgram->GetParamDesc();
+			desc.DomainProgram->BlockUntilCoreInitialized();
+			paramsDesc.DomainParams = desc.DomainProgram->GetParamDesc();
 		}
 
 		mParamInfo = GpuPipelineParamInfo::Create(paramsDesc);
@@ -104,7 +104,7 @@ namespace bs
 	{
 		GPU_PIPELINE_PARAMS_DESC paramsDesc;
 		program->BlockUntilCoreInitialized();
-		paramsDesc.computeParams = program->GetParamDesc();
+		paramsDesc.ComputeParams = program->GetParamDesc();
 
 		mParamInfo = GpuPipelineParamInfo::Create(paramsDesc);
 	}
@@ -133,20 +133,20 @@ namespace bs
 	void GraphicsPipelineState::Initialize()
 	{
 		GPU_PIPELINE_PARAMS_DESC paramsDesc;
-		if (mData.vertexProgram != nullptr)
-			paramsDesc.vertexParams = mData.vertexProgram->GetParamDesc();
+		if (mData.VertexProgram != nullptr)
+			paramsDesc.VertexParams = mData.VertexProgram->GetParamDesc();
 
-		if (mData.fragmentProgram != nullptr)
-			paramsDesc.fragmentParams = mData.fragmentProgram->GetParamDesc();
+		if (mData.FragmentProgram != nullptr)
+			paramsDesc.FragmentParams = mData.FragmentProgram->GetParamDesc();
 
-		if (mData.geometryProgram != nullptr)
-			paramsDesc.geometryParams = mData.geometryProgram->GetParamDesc();
+		if (mData.GeometryProgram != nullptr)
+			paramsDesc.GeometryParams = mData.GeometryProgram->GetParamDesc();
 
-		if (mData.hullProgram != nullptr)
-			paramsDesc.hullParams = mData.hullProgram->GetParamDesc();
+		if (mData.HullProgram != nullptr)
+			paramsDesc.HullParams = mData.HullProgram->GetParamDesc();
 
-		if (mData.domainProgram != nullptr)
-			paramsDesc.domainParams = mData.domainProgram->GetParamDesc();
+		if (mData.DomainProgram != nullptr)
+			paramsDesc.DomainParams = mData.DomainProgram->GetParamDesc();
 
 		mParamInfo = GpuPipelineParamInfo::Create(paramsDesc, mDeviceMask);
 
@@ -165,7 +165,7 @@ namespace bs
 	void ComputePipelineState::Initialize()
 	{
 		GPU_PIPELINE_PARAMS_DESC paramsDesc;
-		paramsDesc.computeParams = mProgram->GetParamDesc();
+		paramsDesc.ComputeParams = mProgram->GetParamDesc();
 
 		mParamInfo = GpuPipelineParamInfo::Create(paramsDesc, mDeviceMask);
 

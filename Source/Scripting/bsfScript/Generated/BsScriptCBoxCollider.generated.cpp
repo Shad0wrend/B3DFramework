@@ -16,10 +16,10 @@ namespace bs
 
 	void ScriptCBoxCollider::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_SetExtents", (void*)&ScriptCBoxCollider::InternalSetExtents);
-		metaData.scriptClass->AddInternalCall("Internal_GetExtents", (void*)&ScriptCBoxCollider::InternalGetExtents);
-		metaData.scriptClass->AddInternalCall("Internal_SetCenter", (void*)&ScriptCBoxCollider::InternalSetCenter);
-		metaData.scriptClass->AddInternalCall("Internal_GetCenter", (void*)&ScriptCBoxCollider::InternalGetCenter);
+		metaData.ScriptClass->AddInternalCall("Internal_SetExtents", (void*)&ScriptCBoxCollider::InternalSetExtents);
+		metaData.ScriptClass->AddInternalCall("Internal_GetExtents", (void*)&ScriptCBoxCollider::InternalGetExtents);
+		metaData.ScriptClass->AddInternalCall("Internal_SetCenter", (void*)&ScriptCBoxCollider::InternalSetCenter);
+		metaData.ScriptClass->AddInternalCall("Internal_GetCenter", (void*)&ScriptCBoxCollider::InternalGetCenter);
 
 	}
 

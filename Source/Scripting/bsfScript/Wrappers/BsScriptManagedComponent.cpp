@@ -31,7 +31,7 @@ namespace bs
 
 	void ScriptManagedComponent::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_Invoke", (void*)&ScriptManagedComponent::InternalInvoke);
+		metaData.ScriptClass->AddInternalCall("Internal_Invoke", (void*)&ScriptManagedComponent::InternalInvoke);
 	}
 
 	void ScriptManagedComponent::InternalInvoke(ScriptManagedComponent* nativeInstance, MonoString* name)
@@ -57,7 +57,7 @@ namespace bs
 
 			// Search for methods on base class if there is one
 			MonoClass* baseClass = compClass->GetBaseClass();
-			if (baseClass != metaData.scriptClass)
+			if (baseClass != metaData.ScriptClass)
 				compClass = baseClass;
 			else
 				break;
@@ -79,12 +79,12 @@ namespace bs
 		if (!ScriptAssemblyManager::Instance().GetSerializableObjectInfo(mNamespace, mType, currentObjInfo))
 		{
 			mTypeMissing = true;
-			instance = ScriptAssemblyManager::Instance().GetBuiltinClasses().missingComponentClass->CreateInstance(true);
+			instance = ScriptAssemblyManager::Instance().GetBuiltinClasses().MissingComponentClass->CreateInstance(true);
 		}
 		else
 		{
 			mTypeMissing = false;
-			instance = currentObjInfo->mMonoClass->CreateInstance(construct);
+			instance = currentObjInfo->MMonoClass->CreateInstance(construct);
 		}
 
 		mGCHandle = MonoUtil::NewGcHandle(instance, false);
@@ -104,7 +104,7 @@ namespace bs
 		// It's possible that managed component is destroyed but a reference to it
 		// is still kept. Don't backup such components.
 		if (!managedComponent.IsDestroyed(true))
-			backupData.data = managedComponent->Backup(true);
+			backupData.Data = managedComponent->Backup(true);
 
 		return backupData;
 	}
@@ -113,7 +113,7 @@ namespace bs
 	{
 		HManagedComponent managedComponent = static_object_cast<ManagedComponent>(mComponent);
 
-		RawBackupData componentBackup = any_cast<RawBackupData>(backupData.data);
+		RawBackupData componentBackup = any_cast<RawBackupData>(backupData.Data);
 		managedComponent->Restore(componentBackup, mTypeMissing);
 	}
 

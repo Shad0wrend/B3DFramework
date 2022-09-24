@@ -14,10 +14,10 @@ namespace bs
 	/**	Data that is shared between all resource handles. */
 	struct BS_CORE_EXPORT ResourceHandleData
 	{
-		SPtr<Resource> mPtr;
-		UUID mUUID;
-		bool mIsCreated = false;
-		std::atomic<std::uint32_t> mRefCount{0};
+		SPtr<Resource> MPtr;
+		UUID MUuid;
+		bool MIsCreated = false;
+		std::atomic<std::uint32_t> MRefCount{0};
 	};
 
 	/**
@@ -53,7 +53,7 @@ namespace bs
 		void Release();
 
 		/** Returns the UUID of the resource the handle is referring to. */
-		const UUID& GetUuid() const { return mData != nullptr ? mData->mUUID : UUID::EMPTY; }
+		const UUID& GetUuid() const { return mData != nullptr ? mData->MUuid : UUID::EMPTY; }
 
 	public: // ***** INTERNAL ******
 		/** @name Internal
@@ -148,14 +148,14 @@ namespace bs
 		void AddRef()
 		{
 			if (mData)
-				mData->mRefCount.fetch_add(1, std::memory_order_relaxed);
+				mData->MRefCount.fetch_add(1, std::memory_order_relaxed);
 		};
 
 		void ReleaseRef()
 		{
 			if (mData)
 			{
-				std::uint32_t refCount = mData->mRefCount.fetch_sub(1, std::memory_order_release);
+				std::uint32_t refCount = mData->MRefCount.fetch_sub(1, std::memory_order_release);
 
 				if (refCount == 1)
 				{
@@ -253,7 +253,7 @@ namespace bs
 		template<class _Ty>
 		struct Bool_struct
 		{
-			int _Member;
+			int Member;
 		};
 
 		/**
@@ -264,7 +264,7 @@ namespace bs
 		 */
 		operator int Bool_struct<T>::*() const
 		{
-			return ((this->mData != nullptr && !this->mData->mUUID.Empty()) ? &Bool_struct<T>::_Member : 0);
+			return ((this->mData != nullptr && !this->mData->MUuid.Empty()) ? &Bool_struct<T>::Member : 0);
 		}
 
 		/**
@@ -276,7 +276,7 @@ namespace bs
 		{
 			this->ThrowIfNotLoaded();
 
-			return reinterpret_cast<T*>(this->mData->mPtr.get());
+			return reinterpret_cast<T*>(this->mData->MPtr.get());
 		}
 
 		/**
@@ -288,7 +288,7 @@ namespace bs
 		{
 			this->ThrowIfNotLoaded();
 
-			return std::static_pointer_cast<T>(this->mData->mPtr);
+			return std::static_pointer_cast<T>(this->mData->MPtr);
 		}
 
 		/** Converts a handle into a weak handle. */
@@ -331,7 +331,7 @@ namespace bs
 		TResourceHandle(const UUID& uuid)
 		{
 			this->mData = bs_shared_ptr_new<ResourceHandleData>();
-			this->mData->mUUID = uuid;
+			this->mData->MUuid = uuid;
 
 			this->AddRef();
 		}
@@ -343,7 +343,7 @@ namespace bs
 			this->AddRef();
 
 			this->SetHandleData(ptr, uuid);
-			this->mData->mIsCreated = true;
+			this->mData->MIsCreated = true;
 		}
 
 		/**	Replaces the internal handle data pointer, effectively transforming the handle into a different handle. */
@@ -371,7 +371,7 @@ namespace bs
 	bool operator==(const TResourceHandle<_Ty1, _Weak1>& _Left, const TResourceHandle<_Ty2, _Weak2>& _Right)
 	{
 		if(_Left.GetHandleData() != nullptr && _Right.GetHandleData() != nullptr)
-			return _Left.GetHandleData()->mPtr == _Right.GetHandleData()->mPtr;
+			return _Left.GetHandleData()->MPtr == _Right.GetHandleData()->MPtr;
 
 		return _Left.GetHandleData() == _Right.GetHandleData();
 	}

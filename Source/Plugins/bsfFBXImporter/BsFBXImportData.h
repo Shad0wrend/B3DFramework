@@ -23,15 +23,15 @@ namespace bs
 	/**	Options that control FBX import */
 	struct FBXImportOptions
 	{
-		bool importAnimation = true;
-		bool importSkin = true;
-		bool importBlendShapes = true;
-		bool importNormals = true;
-		bool importTangents = true;
-		float importScale = 0.01f;
-		float animSampleRate = 1.0f / 60.0f;
-		bool animResample = false;
-		bool reduceKeyframes = true;
+		bool ImportAnimation = true;
+		bool ImportSkin = true;
+		bool ImportBlendShapes = true;
+		bool ImportNormals = true;
+		bool ImportTangents = true;
+		float ImportScale = 0.01f;
+		float AnimSampleRate = 1.0f / 60.0f;
+		bool AnimResample = false;
+		bool ReduceKeyframes = true;
 	};
 
 	/**	Represents a single node in the FBX transform hierarchy. */
@@ -39,41 +39,41 @@ namespace bs
 	{
 		~FBXImportNode();
 
-		Matrix4 geomTransform;
-		Transform localTransform;
-		Matrix4 worldTransform;
-		String name;
-		FbxNode* fbxNode;
-		bool flipWinding;
+		Matrix4 GeomTransform;
+		Transform LocalTransform;
+		Matrix4 WorldTransform;
+		String Name;
+		FbxNode* FbxNode;
+		bool FlipWinding;
 
-		Vector<FBXImportNode*> children;
+		Vector<FBXImportNode*> Children;
 	};
 
 	/**	Contains geometry from one blend shape frame. */
 	struct FBXBlendShapeFrame
 	{
-		Vector<Vector3> positions;
-		Vector<Vector3> normals;
-		Vector<Vector3> tangents;
-		Vector<Vector3> bitangents;
+		Vector<Vector3> Positions;
+		Vector<Vector3> Normals;
+		Vector<Vector3> Tangents;
+		Vector<Vector3> Bitangents;
 
-		float weight;
-		String name;
+		float Weight;
+		String Name;
 	};
 
 	/**	Contains all geometry for a single blend shape. */
 	struct FBXBlendShape
 	{
-		String name;
-		Vector<FBXBlendShapeFrame> frames;
+		String Name;
+		Vector<FBXBlendShapeFrame> Frames;
 	};
 
 	/**	Contains data about a single bone in a skinned mesh. */
 	struct FBXBone
 	{
-		FBXImportNode* node;
-		Transform localTfrm;
-		Matrix4 bindPose;
+		FBXImportNode* Node;
+		Transform LocalTfrm;
+		Matrix4 BindPose;
 	};
 
 	/** Contains a set of bone weights and indices for a single vertex, used in a skinned mesh. */
@@ -83,42 +83,42 @@ namespace bs
 		{
 			for (UINT32 i = 0; i < FBX_IMPORT_MAX_BONE_INFLUENCES; i++)
 			{
-				weights[i] = 0.0f;
-				indices[i] = -1;
+				Weights[i] = 0.0f;
+				Indices[i] = -1;
 			}
 		}
 
-		float weights[FBX_IMPORT_MAX_BONE_INFLUENCES];
-		INT32 indices[FBX_IMPORT_MAX_BONE_INFLUENCES];
+		float Weights[FBX_IMPORT_MAX_BONE_INFLUENCES];
+		INT32 Indices[FBX_IMPORT_MAX_BONE_INFLUENCES];
 	};
 
 	/**	Animation curves required to animate a single bone. */
 	struct FBXBoneAnimation
 	{
-		FBXImportNode* node;
+		FBXImportNode* Node;
 
-		TAnimationCurve<Vector3> translation;
-		TAnimationCurve<Quaternion> rotation;
-		TAnimationCurve<Vector3> scale;
+		TAnimationCurve<Vector3> Translation;
+		TAnimationCurve<Quaternion> Rotation;
+		TAnimationCurve<Vector3> Scale;
 	};
 
 	/**	Animation curve required to animate a blend shape. */
 	struct FBXBlendShapeAnimation
 	{
-		String blendShape;
-		TAnimationCurve<float> curve;
+		String BlendShape;
+		TAnimationCurve<float> Curve;
 	};
 
 	/** Animation clip containing a set of bone or blend shape animations. */
 	struct FBXAnimationClip
 	{
-		String name;
-		float start;
-		float end;
-		UINT32 sampleRate;
+		String Name;
+		float Start;
+		float End;
+		UINT32 SampleRate;
 
-		Vector<FBXBoneAnimation> boneAnimations;
-		Vector<FBXBlendShapeAnimation> blendShapeAnimations;
+		Vector<FBXBoneAnimation> BoneAnimations;
+		Vector<FBXBlendShapeAnimation> BlendShapeAnimations;
 	};
 
 	/** All information required for creating an animation clip. */
@@ -126,40 +126,40 @@ namespace bs
 	{
 		FBXAnimationClipData(const String& name, bool isAdditive, UINT32 sampleRate, const SPtr<AnimationCurves>& curves,
 			const SPtr<RootMotion>& rootMotion)
-			:name(name), isAdditive(isAdditive), sampleRate(sampleRate), curves(curves), rootMotion(rootMotion)
+			:Name(name), IsAdditive(isAdditive), SampleRate(sampleRate), Curves(curves), RootMotion(rootMotion)
 		{ }
 
-		String name;
-		bool isAdditive;
-		UINT32 sampleRate;
-		SPtr<AnimationCurves> curves;
-		SPtr<RootMotion> rootMotion;
+		String Name;
+		bool IsAdditive;
+		UINT32 SampleRate;
+		SPtr<AnimationCurves> Curves;
+		SPtr<RootMotion> RootMotion;
 	};
 
 	/**	Imported mesh data. */
 	struct FBXImportMesh
 	{
-		FbxMesh* fbxMesh;
+		FbxMesh* FbxMesh;
 
-		Vector<int> indices;
-		Vector<Vector3> positions;
-		Vector<Vector3> normals;
-		Vector<Vector3> tangents;
-		Vector<Vector3> bitangents;
-		Vector<RGBA> colors;
+		Vector<int> Indices;
+		Vector<Vector3> Positions;
+		Vector<Vector3> Normals;
+		Vector<Vector3> Tangents;
+		Vector<Vector3> Bitangents;
+		Vector<RGBA> Colors;
 		Vector<Vector2> UV[FBX_IMPORT_MAX_UV_LAYERS];
-		Vector<int> materials;
+		Vector<int> Materials;
 
-		Vector<int> smoothingGroups;
-		Vector<FBXBlendShape> blendShapes;
+		Vector<int> SmoothingGroups;
+		Vector<FBXBlendShape> BlendShapes;
 
-		Vector<FBXBoneInfluence> boneInfluences;
-		Vector<FBXBone> bones;
+		Vector<FBXBoneInfluence> BoneInfluences;
+		Vector<FBXBone> Bones;
 
-		SPtr<MeshData> meshData;
-		Vector<SubMesh> subMeshes;
+		SPtr<MeshData> MeshData;
+		Vector<SubMesh> SubMeshes;
 
-		Vector<FBXImportNode*> referencedBy;
+		Vector<FBXImportNode*> ReferencedBy;
 	};
 
 	/**	Scene information used and modified during FBX import. */
@@ -168,13 +168,13 @@ namespace bs
 		FBXImportScene() = default;
 		~FBXImportScene();
 
-		Vector<FBXImportMesh*> meshes;
-		FBXImportNode* rootNode = nullptr;
+		Vector<FBXImportMesh*> Meshes;
+		FBXImportNode* RootNode = nullptr;
 
-		UnorderedMap<FbxNode*, FBXImportNode*> nodeMap;
-		UnorderedMap<FbxMesh*, UINT32> meshMap;
+		UnorderedMap<FbxNode*, FBXImportNode*> NodeMap;
+		UnorderedMap<FbxMesh*, UINT32> MeshMap;
 
-		Vector<FBXAnimationClip> clips;
+		Vector<FBXAnimationClip> Clips;
 	};
 
 	/** @} */

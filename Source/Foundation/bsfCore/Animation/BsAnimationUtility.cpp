@@ -11,12 +11,12 @@ namespace bs
 	{
 		for (UINT32 i = 0; i < 3; i++)
 		{
-			if (lhsIn.outTangent[i] != std::numeric_limits<float>::infinity() &&
-				rhsIn.inTangent[i] != std::numeric_limits<float>::infinity())
+			if (lhsIn.OutTangent[i] != std::numeric_limits<float>::infinity() &&
+				rhsIn.InTangent[i] != std::numeric_limits<float>::infinity())
 				continue;
 
-			lhsOut.outTangent[i] = std::numeric_limits<float>::infinity();
-			rhsOut.inTangent[i] = std::numeric_limits<float>::infinity();
+			lhsOut.OutTangent[i] = std::numeric_limits<float>::infinity();
+			rhsOut.InTangent[i] = std::numeric_limits<float>::infinity();
 		}
 	}
 
@@ -25,14 +25,14 @@ namespace bs
 	{
 		for (UINT32 i = 0; i < 4; i++)
 		{
-			if (lhsIn.outTangent[i] != std::numeric_limits<float>::infinity() &&
-				rhsIn.inTangent[i] != std::numeric_limits<float>::infinity())
+			if (lhsIn.OutTangent[i] != std::numeric_limits<float>::infinity() &&
+				rhsIn.InTangent[i] != std::numeric_limits<float>::infinity())
 				continue;
 
 			if (i < 3)
 			{
-				lhsOut.outTangent[i] = std::numeric_limits<float>::infinity();
-				rhsOut.inTangent[i] = std::numeric_limits<float>::infinity();
+				lhsOut.OutTangent[i] = std::numeric_limits<float>::infinity();
+				rhsOut.InTangent[i] = std::numeric_limits<float>::infinity();
 			}
 		}
 	}
@@ -76,9 +76,9 @@ namespace bs
 		auto eulerToQuaternion = [&](INT32 keyIdx, Vector3& angles, const Quaternion& lastQuat)
 		{
 			Quaternion quat(
-				Degree(angles.x),
-				Degree(angles.y),
-				Degree(angles.z), order);
+				Degree(angles.X),
+				Degree(angles.Y),
+				Degree(angles.Z), order);
 
 			// Flip quaternion in case rotation is over 180 degrees (use shortest path)
 			if (keyIdx > 0)
@@ -100,10 +100,10 @@ namespace bs
 			quatKeyframes.emplace_back();
 			TKeyframe<Quaternion>& keyframe = quatKeyframes.back();
 
-			keyframe.time = time;
-			keyframe.value = quat;
-			keyframe.inTangent = Quaternion::ZERO;
-			keyframe.outTangent = Quaternion::ZERO;
+			keyframe.Time = time;
+			keyframe.Value = quat;
+			keyframe.InTangent = Quaternion::ZERO;
+			keyframe.OutTangent = Quaternion::ZERO;
 		};
 
 		// Calculate key values
@@ -112,14 +112,14 @@ namespace bs
 		float lastTime = 0.0f;
 		for (INT32 i = 0; i < numKeys; i++)
 		{
-			float time = eulerCurve->GetKeyFrame(i).time;
-			Vector3 angles = eulerCurve->GetKeyFrame(i).value;
+			float time = eulerCurve->GetKeyFrame(i).Time;
+			Vector3 angles = eulerCurve->GetKeyFrame(i).Value;
 
 			Vector3 diff = angles - lastAngles;
 			float maxAngle = std::max(std::max(
-				abs(diff.x),
-				abs(diff.y)),
-				abs(diff.z)
+				abs(diff.X),
+				abs(diff.Y)),
+				abs(diff.Z)
 			);
 
 			// Is the angle greater than 180? In which case we need multiple keyframes to represent it via quaternions
@@ -133,9 +133,9 @@ namespace bs
 				for (INT32 j = 0; j < numSplits; j++)
 				{
 					Quaternion partQuat(
-						Degree(partAngles.x),
-						Degree(partAngles.y),
-						Degree(partAngles.z), order);
+						Degree(partAngles.X),
+						Degree(partAngles.Y),
+						Degree(partAngles.Z), order);
 
 					float curTime = (j == (numSplits - 1)) ? time : lastTime + partTime;
 					Quaternion curQuat = lastQuat * partQuat;
@@ -168,21 +168,21 @@ namespace bs
 			TKeyframe<Quaternion>& currentKey = quatKeyframes[i];
 			TKeyframe<Quaternion>& nextKey = quatKeyframes[i + 1];
 
-			float dt = nextKey.time - currentKey.time;
-			float startFitTime = currentKey.time + dt * FIT_TIME;
-			float endFitTime = currentKey.time + dt * (1.0f - FIT_TIME);
+			float dt = nextKey.Time - currentKey.Time;
+			float startFitTime = currentKey.Time + dt * FIT_TIME;
+			float endFitTime = currentKey.Time + dt * (1.0f - FIT_TIME);
 
 			Vector3 anglesStart = eulerCurve->Evaluate(startFitTime, false);
 			Vector3 anglesEnd = eulerCurve->Evaluate(endFitTime, false);
-			Quaternion startFitValue = eulerToQuaternion(i, anglesStart, currentKey.value);
+			Quaternion startFitValue = eulerToQuaternion(i, anglesStart, currentKey.Value);
 			Quaternion endFitValue = eulerToQuaternion(i, anglesEnd, startFitValue);
 
 			float invFitTime = 1.0f / (dt * FIT_TIME);
-			currentKey.outTangent = (startFitValue - currentKey.value) * invFitTime;
-			nextKey.inTangent = (nextKey.value - endFitValue) * invFitTime;
+			currentKey.OutTangent = (startFitValue - currentKey.Value) * invFitTime;
+			nextKey.InTangent = (nextKey.Value - endFitValue) * invFitTime;
 
-			const TKeyframe<Vector3>& currentEulerKey = eulerCurve->EvaluateKey(currentKey.time, false);
-			const TKeyframe<Vector3>& nextEulerKey = eulerCurve->EvaluateKey(nextKey.time, false);
+			const TKeyframe<Vector3>& currentEulerKey = eulerCurve->EvaluateKey(currentKey.Time, false);
+			const TKeyframe<Vector3>& nextEulerKey = eulerCurve->EvaluateKey(nextKey.Time, false);
 			setStepTangent(currentEulerKey, nextEulerKey, currentKey, nextKey);
 		}
 
@@ -215,14 +215,14 @@ namespace bs
 		// Calculate key values
 		for (INT32 i = 0; i < numKeys; i++)
 		{
-			float time = quatCurve->GetKeyFrame(i).time;
-			Quaternion quat = quatCurve->GetKeyFrame(i).value;
+			float time = quatCurve->GetKeyFrame(i).Time;
+			Quaternion quat = quatCurve->GetKeyFrame(i).Value;
 			Vector3 euler = quaternionToEuler(quat);
 
-			eulerKeyframes[i].time = time;
-			eulerKeyframes[i].value = euler;
-			eulerKeyframes[i].inTangent = Vector3::ZERO;
-			eulerKeyframes[i].outTangent = Vector3::ZERO;
+			eulerKeyframes[i].Time = time;
+			eulerKeyframes[i].Value = euler;
+			eulerKeyframes[i].InTangent = Vector3::ZERO;
+			eulerKeyframes[i].OutTangent = Vector3::ZERO;
 		}
 
 		// Calculate extra values between keys so we can approximate tangents. If we're sampling very close to the key
@@ -235,9 +235,9 @@ namespace bs
 			const TKeyframe<Quaternion>& currentQuatKey = quatCurve->GetKeyFrame(i);
 			const TKeyframe<Quaternion>& nextQuatKey = quatCurve->GetKeyFrame(i + 1);
 
-			float dt = nextKey.time - currentKey.time;
-			float startFitTime = currentKey.time + dt * FIT_TIME;
-			float endFitTime = currentKey.time + dt * (1.0f - FIT_TIME);
+			float dt = nextKey.Time - currentKey.Time;
+			float startFitTime = currentKey.Time + dt * FIT_TIME;
+			float endFitTime = currentKey.Time + dt * (1.0f - FIT_TIME);
 
 			Quaternion startQuat = Quaternion::Normalize(quatCurve->Evaluate(startFitTime, false));
 			Quaternion endQuat = Quaternion::Normalize(quatCurve->Evaluate(endFitTime, false));
@@ -247,13 +247,13 @@ namespace bs
 			// If fit values rotate for more than 180 degrees, wrap them so they use the shortest path
 			for(int j = 0; j < 3; j++)
 			{
-				startFitValue[j] = fmod(startFitValue[j] - currentKey.value[j] + 180.0f, 360.0f) + currentKey.value[j] - 180.0f;
-				endFitValue[j] = nextKey.value[j] + fmod(nextKey.value[j] - endFitValue[j] + 180.0f, 360.0f) - 180.0f;
+				startFitValue[j] = fmod(startFitValue[j] - currentKey.Value[j] + 180.0f, 360.0f) + currentKey.Value[j] - 180.0f;
+				endFitValue[j] = nextKey.Value[j] + fmod(nextKey.Value[j] - endFitValue[j] + 180.0f, 360.0f) - 180.0f;
 			}
 			
 			float invFitTime = 1.0f / (dt * FIT_TIME);
-			currentKey.outTangent = (startFitValue - currentKey.value) * invFitTime;
-			nextKey.inTangent = (nextKey.value - endFitValue) * invFitTime;
+			currentKey.OutTangent = (startFitValue - currentKey.Value) * invFitTime;
+			nextKey.InTangent = (nextKey.Value - endFitValue) * invFitTime;
 
 			setStepTangent(currentQuatKey, nextQuatKey, currentKey, nextKey);
 		}
@@ -274,7 +274,7 @@ namespace bs
 			const TKeyframe<T>& key = compoundCurve.GetKeyFrame(i);
 
 			TKeyframe<float> newKey;
-			newKey.time = key.time;
+			newKey.Time = key.Time;
 
 			for (UINT32 j = 0; j < NUM_COMPONENTS; j++)
 			{
@@ -283,17 +283,17 @@ namespace bs
 				{
 					const TKeyframe<float>& prevKey = keyFrames[j].back();
 
-					bool isEqual = Math::ApproxEquals(prevKey.value, TCurveProperties<T>::GetComponent(key.value, j)) &&
-						Math::ApproxEquals(prevKey.outTangent, TCurveProperties<T>::GetComponent(key.inTangent, j));
+					bool isEqual = Math::ApproxEquals(prevKey.Value, TCurveProperties<T>::GetComponent(key.Value, j)) &&
+						Math::ApproxEquals(prevKey.OutTangent, TCurveProperties<T>::GetComponent(key.InTangent, j));
 
 					addNew = !isEqual;
 				}
 
 				if (addNew)
 				{
-					newKey.value = TCurveProperties<T>::GetComponent(key.value, j);
-					newKey.inTangent = TCurveProperties<T>::GetComponent(key.inTangent, j);
-					newKey.outTangent = TCurveProperties<T>::GetComponent(key.outTangent, j);
+					newKey.Value = TCurveProperties<T>::GetComponent(key.Value, j);
+					newKey.InTangent = TCurveProperties<T>::GetComponent(key.InTangent, j);
+					newKey.OutTangent = TCurveProperties<T>::GetComponent(key.OutTangent, j);
 
 					keyFrames[j].push_back(newKey);
 				}
@@ -317,13 +317,13 @@ namespace bs
 			{
 				const TKeyframe<float>& keyFrame = curveComponents[i]->GetKeyFrame(j);
 
-				auto iterFind = keyFrames.find(keyFrame.time);
+				auto iterFind = keyFrames.find(keyFrame.Time);
 				if (iterFind == keyFrames.end())
 				{
 					TKeyframe<T> newKeyFrame;
-					newKeyFrame.time = keyFrame.time;
+					newKeyFrame.Time = keyFrame.Time;
 
-					keyFrames.insert(std::make_pair(keyFrame.time, newKeyFrame));
+					keyFrames.insert(std::make_pair(keyFrame.Time, newKeyFrame));
 				}
 			}
 		}
@@ -337,10 +337,10 @@ namespace bs
 			
 			for(UINT32 j = 0; j < NUM_COMPONENTS; j++)
 			{
-				TKeyframe<float> currentKey = curveComponents[j]->EvaluateKey(keyFrame.time, false);
-				TCurveProperties<T>::SetComponent(keyFrame.value, j, currentKey.value);
-				TCurveProperties<T>::SetComponent(keyFrame.inTangent, j, currentKey.inTangent);
-				TCurveProperties<T>::SetComponent(keyFrame.outTangent, j, currentKey.outTangent);
+				TKeyframe<float> currentKey = curveComponents[j]->EvaluateKey(keyFrame.Time, false);
+				TCurveProperties<T>::SetComponent(keyFrame.Value, j, currentKey.Value);
+				TCurveProperties<T>::SetComponent(keyFrame.InTangent, j, currentKey.InTangent);
+				TCurveProperties<T>::SetComponent(keyFrame.OutTangent, j, currentKey.OutTangent);
 			}
 
 			output[idx] = keyFrame;
@@ -507,10 +507,10 @@ namespace bs
 		for (INT32 i = 0; i < numKeys; i++)
 		{
 			const TKeyframe<T>& key = curve.GetKeyFrame(i);
-			newKeyframes[i].time = key.time;
-			newKeyframes[i].value = key.value * factor;
-			newKeyframes[i].inTangent = key.inTangent * factor;
-			newKeyframes[i].outTangent = key.outTangent * factor;
+			newKeyframes[i].Time = key.Time;
+			newKeyframes[i].Value = key.Value * factor;
+			newKeyframes[i].InTangent = key.InTangent * factor;
+			newKeyframes[i].OutTangent = key.OutTangent * factor;
 		}
 
 		return TAnimationCurve<T>(newKeyframes);
@@ -525,10 +525,10 @@ namespace bs
 		for (INT32 i = 0; i < numKeys; i++)
 		{
 			const TKeyframe<T>& key = curve.GetKeyFrame(i);
-			newKeyframes[i].time = key.time + offset;
-			newKeyframes[i].value = key.value;
-			newKeyframes[i].inTangent = key.inTangent;
-			newKeyframes[i].outTangent = key.outTangent;
+			newKeyframes[i].Time = key.Time + offset;
+			newKeyframes[i].Value = key.Value;
+			newKeyframes[i].InTangent = key.InTangent;
+			newKeyframes[i].OutTangent = key.OutTangent;
 		}
 
 		return TAnimationCurve<T>(newKeyframes);
@@ -543,18 +543,18 @@ namespace bs
 
 		if (keyframes.size() == 1)
 		{
-			keyframes[0].inTangent = TCurveProperties<T>::GetZero();
-			keyframes[0].outTangent = TCurveProperties<T>::GetZero();
+			keyframes[0].InTangent = TCurveProperties<T>::GetZero();
+			keyframes[0].OutTangent = TCurveProperties<T>::GetZero();
 
 			return;
 		}
 
 		auto calcTangent = [](const Keyframe& left, const Keyframe& right)
 		{
-			float diff = right.time - left.time;
+			float diff = right.Time - left.Time;
 
 			if (!Math::ApproxEquals(diff, 0.0f))
-				return (right.value - left.value) / diff;
+				return (right.Value - left.Value) / diff;
 
 			return std::numeric_limits<T>::infinity();
 		};
@@ -564,8 +564,8 @@ namespace bs
 			Keyframe& keyThis = keyframes[0];
 			const Keyframe& keyNext = keyframes[1];
 
-			keyThis.inTangent = TCurveProperties<T>::GetZero();
-			keyThis.outTangent = calcTangent(keyThis, keyNext);
+			keyThis.InTangent = TCurveProperties<T>::GetZero();
+			keyThis.OutTangent = calcTangent(keyThis, keyNext);
 		}
 
 		// Inner keyframes
@@ -575,8 +575,8 @@ namespace bs
 			Keyframe& keyThis = keyframes[i];
 			const Keyframe& keyNext = keyframes[i + 1];
 
-			keyThis.outTangent = calcTangent(keyPrev, keyNext);
-			keyThis.inTangent = keyThis.outTangent;
+			keyThis.OutTangent = calcTangent(keyPrev, keyNext);
+			keyThis.InTangent = keyThis.OutTangent;
 		}
 
 		// Last keyframe
@@ -584,8 +584,8 @@ namespace bs
 			Keyframe& keyThis = keyframes[keyframes.size() - 1];
 			const Keyframe& keyPrev = keyframes[keyframes.size() - 2];
 
-			keyThis.outTangent = TCurveProperties<T>::GetZero();
-			keyThis.inTangent = calcTangent(keyPrev, keyThis);
+			keyThis.OutTangent = TCurveProperties<T>::GetZero();
+			keyThis.InTangent = calcTangent(keyPrev, keyThis);
 		}
 	}
 

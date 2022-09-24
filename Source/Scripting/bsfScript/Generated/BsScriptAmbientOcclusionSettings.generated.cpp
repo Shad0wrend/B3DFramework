@@ -14,23 +14,23 @@ namespace bs
 
 	void ScriptAmbientOcclusionSettings::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_AmbientOcclusionSettings", (void*)&ScriptAmbientOcclusionSettings::InternalAmbientOcclusionSettings);
-		metaData.scriptClass->AddInternalCall("Internal_Getenabled", (void*)&ScriptAmbientOcclusionSettings::InternalGetenabled);
-		metaData.scriptClass->AddInternalCall("Internal_Setenabled", (void*)&ScriptAmbientOcclusionSettings::InternalSetenabled);
-		metaData.scriptClass->AddInternalCall("Internal_Getradius", (void*)&ScriptAmbientOcclusionSettings::InternalGetradius);
-		metaData.scriptClass->AddInternalCall("Internal_Setradius", (void*)&ScriptAmbientOcclusionSettings::InternalSetradius);
-		metaData.scriptClass->AddInternalCall("Internal_Getbias", (void*)&ScriptAmbientOcclusionSettings::InternalGetbias);
-		metaData.scriptClass->AddInternalCall("Internal_Setbias", (void*)&ScriptAmbientOcclusionSettings::InternalSetbias);
-		metaData.scriptClass->AddInternalCall("Internal_GetfadeDistance", (void*)&ScriptAmbientOcclusionSettings::InternalGetfadeDistance);
-		metaData.scriptClass->AddInternalCall("Internal_SetfadeDistance", (void*)&ScriptAmbientOcclusionSettings::InternalSetfadeDistance);
-		metaData.scriptClass->AddInternalCall("Internal_GetfadeRange", (void*)&ScriptAmbientOcclusionSettings::InternalGetfadeRange);
-		metaData.scriptClass->AddInternalCall("Internal_SetfadeRange", (void*)&ScriptAmbientOcclusionSettings::InternalSetfadeRange);
-		metaData.scriptClass->AddInternalCall("Internal_Getintensity", (void*)&ScriptAmbientOcclusionSettings::InternalGetintensity);
-		metaData.scriptClass->AddInternalCall("Internal_Setintensity", (void*)&ScriptAmbientOcclusionSettings::InternalSetintensity);
-		metaData.scriptClass->AddInternalCall("Internal_Getpower", (void*)&ScriptAmbientOcclusionSettings::InternalGetpower);
-		metaData.scriptClass->AddInternalCall("Internal_Setpower", (void*)&ScriptAmbientOcclusionSettings::InternalSetpower);
-		metaData.scriptClass->AddInternalCall("Internal_Getquality", (void*)&ScriptAmbientOcclusionSettings::InternalGetquality);
-		metaData.scriptClass->AddInternalCall("Internal_Setquality", (void*)&ScriptAmbientOcclusionSettings::InternalSetquality);
+		metaData.ScriptClass->AddInternalCall("Internal_AmbientOcclusionSettings", (void*)&ScriptAmbientOcclusionSettings::InternalAmbientOcclusionSettings);
+		metaData.ScriptClass->AddInternalCall("Internal_Getenabled", (void*)&ScriptAmbientOcclusionSettings::InternalGetenabled);
+		metaData.ScriptClass->AddInternalCall("Internal_Setenabled", (void*)&ScriptAmbientOcclusionSettings::InternalSetenabled);
+		metaData.ScriptClass->AddInternalCall("Internal_Getradius", (void*)&ScriptAmbientOcclusionSettings::InternalGetradius);
+		metaData.ScriptClass->AddInternalCall("Internal_Setradius", (void*)&ScriptAmbientOcclusionSettings::InternalSetradius);
+		metaData.ScriptClass->AddInternalCall("Internal_Getbias", (void*)&ScriptAmbientOcclusionSettings::InternalGetbias);
+		metaData.ScriptClass->AddInternalCall("Internal_Setbias", (void*)&ScriptAmbientOcclusionSettings::InternalSetbias);
+		metaData.ScriptClass->AddInternalCall("Internal_GetfadeDistance", (void*)&ScriptAmbientOcclusionSettings::InternalGetfadeDistance);
+		metaData.ScriptClass->AddInternalCall("Internal_SetfadeDistance", (void*)&ScriptAmbientOcclusionSettings::InternalSetfadeDistance);
+		metaData.ScriptClass->AddInternalCall("Internal_GetfadeRange", (void*)&ScriptAmbientOcclusionSettings::InternalGetfadeRange);
+		metaData.ScriptClass->AddInternalCall("Internal_SetfadeRange", (void*)&ScriptAmbientOcclusionSettings::InternalSetfadeRange);
+		metaData.ScriptClass->AddInternalCall("Internal_Getintensity", (void*)&ScriptAmbientOcclusionSettings::InternalGetintensity);
+		metaData.ScriptClass->AddInternalCall("Internal_Setintensity", (void*)&ScriptAmbientOcclusionSettings::InternalSetintensity);
+		metaData.ScriptClass->AddInternalCall("Internal_Getpower", (void*)&ScriptAmbientOcclusionSettings::InternalGetpower);
+		metaData.ScriptClass->AddInternalCall("Internal_Setpower", (void*)&ScriptAmbientOcclusionSettings::InternalSetpower);
+		metaData.ScriptClass->AddInternalCall("Internal_Getquality", (void*)&ScriptAmbientOcclusionSettings::InternalGetquality);
+		metaData.ScriptClass->AddInternalCall("Internal_Setquality", (void*)&ScriptAmbientOcclusionSettings::InternalSetquality);
 
 	}
 
@@ -41,7 +41,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptAmbientOcclusionSettings>()) ScriptAmbientOcclusionSettings(managedInstance, value);
 		return managedInstance;
 	}
@@ -54,7 +54,7 @@ namespace bs
 	bool ScriptAmbientOcclusionSettings::InternalGetenabled(ScriptAmbientOcclusionSettings* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->GetInternal()->enabled;
+		tmp__output = thisPtr->GetInternal()->Enabled;
 
 		bool __output;
 		__output = tmp__output;
@@ -64,13 +64,13 @@ namespace bs
 
 	void ScriptAmbientOcclusionSettings::InternalSetenabled(ScriptAmbientOcclusionSettings* thisPtr, bool value)
 	{
-		thisPtr->GetInternal()->enabled = value;
+		thisPtr->GetInternal()->Enabled = value;
 	}
 
 	float ScriptAmbientOcclusionSettings::InternalGetradius(ScriptAmbientOcclusionSettings* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->GetInternal()->radius;
+		tmp__output = thisPtr->GetInternal()->Radius;
 
 		float __output;
 		__output = tmp__output;
@@ -80,13 +80,13 @@ namespace bs
 
 	void ScriptAmbientOcclusionSettings::InternalSetradius(ScriptAmbientOcclusionSettings* thisPtr, float value)
 	{
-		thisPtr->GetInternal()->radius = value;
+		thisPtr->GetInternal()->Radius = value;
 	}
 
 	float ScriptAmbientOcclusionSettings::InternalGetbias(ScriptAmbientOcclusionSettings* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->GetInternal()->bias;
+		tmp__output = thisPtr->GetInternal()->Bias;
 
 		float __output;
 		__output = tmp__output;
@@ -96,13 +96,13 @@ namespace bs
 
 	void ScriptAmbientOcclusionSettings::InternalSetbias(ScriptAmbientOcclusionSettings* thisPtr, float value)
 	{
-		thisPtr->GetInternal()->bias = value;
+		thisPtr->GetInternal()->Bias = value;
 	}
 
 	float ScriptAmbientOcclusionSettings::InternalGetfadeDistance(ScriptAmbientOcclusionSettings* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->GetInternal()->fadeDistance;
+		tmp__output = thisPtr->GetInternal()->FadeDistance;
 
 		float __output;
 		__output = tmp__output;
@@ -112,13 +112,13 @@ namespace bs
 
 	void ScriptAmbientOcclusionSettings::InternalSetfadeDistance(ScriptAmbientOcclusionSettings* thisPtr, float value)
 	{
-		thisPtr->GetInternal()->fadeDistance = value;
+		thisPtr->GetInternal()->FadeDistance = value;
 	}
 
 	float ScriptAmbientOcclusionSettings::InternalGetfadeRange(ScriptAmbientOcclusionSettings* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->GetInternal()->fadeRange;
+		tmp__output = thisPtr->GetInternal()->FadeRange;
 
 		float __output;
 		__output = tmp__output;
@@ -128,13 +128,13 @@ namespace bs
 
 	void ScriptAmbientOcclusionSettings::InternalSetfadeRange(ScriptAmbientOcclusionSettings* thisPtr, float value)
 	{
-		thisPtr->GetInternal()->fadeRange = value;
+		thisPtr->GetInternal()->FadeRange = value;
 	}
 
 	float ScriptAmbientOcclusionSettings::InternalGetintensity(ScriptAmbientOcclusionSettings* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->GetInternal()->intensity;
+		tmp__output = thisPtr->GetInternal()->Intensity;
 
 		float __output;
 		__output = tmp__output;
@@ -144,13 +144,13 @@ namespace bs
 
 	void ScriptAmbientOcclusionSettings::InternalSetintensity(ScriptAmbientOcclusionSettings* thisPtr, float value)
 	{
-		thisPtr->GetInternal()->intensity = value;
+		thisPtr->GetInternal()->Intensity = value;
 	}
 
 	float ScriptAmbientOcclusionSettings::InternalGetpower(ScriptAmbientOcclusionSettings* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->GetInternal()->power;
+		tmp__output = thisPtr->GetInternal()->Power;
 
 		float __output;
 		__output = tmp__output;
@@ -160,13 +160,13 @@ namespace bs
 
 	void ScriptAmbientOcclusionSettings::InternalSetpower(ScriptAmbientOcclusionSettings* thisPtr, float value)
 	{
-		thisPtr->GetInternal()->power = value;
+		thisPtr->GetInternal()->Power = value;
 	}
 
 	uint32_t ScriptAmbientOcclusionSettings::InternalGetquality(ScriptAmbientOcclusionSettings* thisPtr)
 	{
 		uint32_t tmp__output;
-		tmp__output = thisPtr->GetInternal()->quality;
+		tmp__output = thisPtr->GetInternal()->Quality;
 
 		uint32_t __output;
 		__output = tmp__output;
@@ -176,6 +176,6 @@ namespace bs
 
 	void ScriptAmbientOcclusionSettings::InternalSetquality(ScriptAmbientOcclusionSettings* thisPtr, uint32_t value)
 	{
-		thisPtr->GetInternal()->quality = value;
+		thisPtr->GetInternal()->Quality = value;
 	}
 }

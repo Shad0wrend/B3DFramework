@@ -21,17 +21,17 @@ namespace bs
 	private:
 		String& GetName(ManagedSerializableAssemblyInfo* obj)
 		{
-			return obj->mName;
+			return obj->MName;
 		}
 
 		void SetName(ManagedSerializableAssemblyInfo* obj, String& val)
 		{
-			obj->mName = val;
+			obj->MName = val;
 		}
 
 		SPtr<ManagedSerializableObjectInfo> GetSerializableObjectInfo(ManagedSerializableAssemblyInfo* obj, UINT32 idx)
 		{
-			auto iter = obj->mObjectInfos.begin();
+			auto iter = obj->MObjectInfos.begin();
 			for(UINT32 i = 0; i < idx; i++)
 				iter++;
 
@@ -40,11 +40,11 @@ namespace bs
 
 		void SetSerializableObjectInfo(ManagedSerializableAssemblyInfo* obj, UINT32 idx, SPtr<ManagedSerializableObjectInfo> val)
 		{
-			obj->mTypeNameToId[val->GetFullTypeName()] = val->mTypeInfo->mTypeId;
-			obj->mObjectInfos[val->mTypeInfo->mTypeId] = val;
+			obj->MTypeNameToId[val->GetFullTypeName()] = val->MTypeInfo->MTypeId;
+			obj->MObjectInfos[val->MTypeInfo->MTypeId] = val;
 		}
 		
-		UINT32 GetSerializableObjectInfoArraySize(ManagedSerializableAssemblyInfo* obj) { return (UINT32)obj->mObjectInfos.size(); }
+		UINT32 GetSerializableObjectInfoArraySize(ManagedSerializableAssemblyInfo* obj) { return (UINT32)obj->MObjectInfos.size(); }
 		void SetSerializableObjectInfoArraySize(ManagedSerializableAssemblyInfo* obj, UINT32 size) {  }
 
 	public:
@@ -80,27 +80,27 @@ namespace bs
 
 		SPtr<ManagedSerializableTypeInfoObject> GetTypeInfo(ManagedSerializableObjectInfo* obj)
 		{
-			return obj->mTypeInfo;
+			return obj->MTypeInfo;
 		}
 
 		void SetTypeInfo(ManagedSerializableObjectInfo* obj, SPtr<ManagedSerializableTypeInfoObject> val)
 		{
-			obj->mTypeInfo = val;
+			obj->MTypeInfo = val;
 		}
 
 		SPtr<ManagedSerializableObjectInfo> GetBaseClass(ManagedSerializableObjectInfo* obj)
 		{
-			return obj->mBaseClass;
+			return obj->MBaseClass;
 		}
 
 		void SetBaseClass(ManagedSerializableObjectInfo* obj, SPtr<ManagedSerializableObjectInfo> val)
 		{
-			obj->mBaseClass = val;
+			obj->MBaseClass = val;
 		}
 
 		SPtr<ManagedSerializableMemberInfo> GetSerializableFieldInfo(ManagedSerializableObjectInfo* obj, UINT32 idx)
 		{
-			auto iter = obj->mFields.begin();
+			auto iter = obj->MFields.begin();
 			for(UINT32 i = 0; i < idx; i++)
 				iter++;
 
@@ -109,11 +109,11 @@ namespace bs
 
 		void SetSerializableFieldInfo(ManagedSerializableObjectInfo* obj, UINT32 idx, SPtr<ManagedSerializableMemberInfo> val)
 		{
-			obj->mFieldNameToId[val->mName] = val->mFieldId;
-			obj->mFields[val->mFieldId] = val;
+			obj->MFieldNameToId[val->MName] = val->MFieldId;
+			obj->MFields[val->MFieldId] = val;
 		}
 
-		UINT32 GetSerializableFieldInfoArraySize(ManagedSerializableObjectInfo* obj) { return (UINT32)obj->mFields.size(); }
+		UINT32 GetSerializableFieldInfoArraySize(ManagedSerializableObjectInfo* obj) { return (UINT32)obj->MFields.size(); }
 		void SetSerializableFieldInfoArraySize(ManagedSerializableObjectInfo* obj, UINT32 size) {  }
 
 	public:
@@ -148,11 +148,11 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN(mName, 0)
-			BS_RTTI_MEMBER_REFLPTR(mTypeInfo, 1)
-			BS_RTTI_MEMBER_PLAIN(mFieldId, 2)
-			BS_RTTI_MEMBER_PLAIN(mFlags, 3)
-			BS_RTTI_MEMBER_PLAIN(mParentTypeId, 4)
+			BS_RTTI_MEMBER_PLAIN(MName, 0)
+			BS_RTTI_MEMBER_REFLPTR(MTypeInfo, 1)
+			BS_RTTI_MEMBER_PLAIN(MFieldId, 2)
+			BS_RTTI_MEMBER_PLAIN(MFlags, 3)
+			BS_RTTI_MEMBER_PLAIN(MParentTypeId, 4)
 		BS_END_RTTI_MEMBERS
 			
 	public:
@@ -259,7 +259,7 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN(mType, 0)
+			BS_RTTI_MEMBER_PLAIN(MType, 0)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -288,9 +288,9 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN(mUnderlyingType, 0)
-			BS_RTTI_MEMBER_PLAIN(mTypeNamespace, 1)
-			BS_RTTI_MEMBER_PLAIN(mTypeName, 2)
+			BS_RTTI_MEMBER_PLAIN(MUnderlyingType, 0)
+			BS_RTTI_MEMBER_PLAIN(MTypeNamespace, 1)
+			BS_RTTI_MEMBER_PLAIN(MTypeName, 2)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -319,10 +319,10 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN(mType, 0)
-			BS_RTTI_MEMBER_PLAIN(mTypeName, 1)
-			BS_RTTI_MEMBER_PLAIN(mTypeNamespace, 2)
-			BS_RTTI_MEMBER_PLAIN(mRTIITypeId, 3)
+			BS_RTTI_MEMBER_PLAIN(MType, 0)
+			BS_RTTI_MEMBER_PLAIN(MTypeName, 1)
+			BS_RTTI_MEMBER_PLAIN(MTypeNamespace, 2)
+			BS_RTTI_MEMBER_PLAIN(MRtiiTypeId, 3)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -351,7 +351,7 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_REFLPTR(mResourceType, 0)
+			BS_RTTI_MEMBER_REFLPTR(MResourceType, 0)
 		BS_END_RTTI_MEMBERS
 
 
@@ -381,12 +381,12 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN(mTypeName, 0)
-			BS_RTTI_MEMBER_PLAIN(mTypeNamespace, 1)
-			BS_RTTI_MEMBER_PLAIN(mValueType, 2)
-			BS_RTTI_MEMBER_PLAIN(mTypeId, 4)
-			BS_RTTI_MEMBER_PLAIN(mFlags, 5)
-			BS_RTTI_MEMBER_PLAIN(mRTIITypeId, 6)
+			BS_RTTI_MEMBER_PLAIN(MTypeName, 0)
+			BS_RTTI_MEMBER_PLAIN(MTypeNamespace, 1)
+			BS_RTTI_MEMBER_PLAIN(MValueType, 2)
+			BS_RTTI_MEMBER_PLAIN(MTypeId, 4)
+			BS_RTTI_MEMBER_PLAIN(MFlags, 5)
+			BS_RTTI_MEMBER_PLAIN(MRtiiTypeId, 6)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -415,8 +415,8 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_REFLPTR(mElementType, 0)
-			BS_RTTI_MEMBER_PLAIN(mRank, 1)
+			BS_RTTI_MEMBER_REFLPTR(MElementType, 0)
+			BS_RTTI_MEMBER_PLAIN(MRank, 1)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -445,7 +445,7 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_REFLPTR(mElementType, 0)
+			BS_RTTI_MEMBER_REFLPTR(MElementType, 0)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -474,8 +474,8 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_REFLPTR(mKeyType, 0)
-			BS_RTTI_MEMBER_REFLPTR(mValueType, 1)
+			BS_RTTI_MEMBER_REFLPTR(MKeyType, 0)
+			BS_RTTI_MEMBER_REFLPTR(MValueType, 1)
 		BS_END_RTTI_MEMBERS
 
 

@@ -11,10 +11,10 @@ namespace bs
 {
 	struct __VECTOR_FIELD_DESCInterop
 	{
-		uint32_t countX;
-		uint32_t countY;
-		uint32_t countZ;
-		AABox bounds;
+		uint32_t CountX;
+		uint32_t CountY;
+		uint32_t CountZ;
+		AABox Bounds;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptVECTOR_FIELD_DESC : public ScriptObject<ScriptVECTOR_FIELD_DESC>

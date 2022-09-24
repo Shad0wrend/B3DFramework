@@ -26,10 +26,10 @@ namespace bs
 							   // other thread sees properly initialized AudioClip members
 
 			AudioDataInfo info;
-			info.bitDepth = mDesc.bitDepth;
-			info.numChannels = mDesc.numChannels;
-			info.numSamples = mNumSamples;
-			info.sampleRate = mDesc.frequency;
+			info.BitDepth = mDesc.BitDepth;
+			info.NumChannels = mDesc.NumChannels;
+			info.NumSamples = mNumSamples;
+			info.SampleRate = mDesc.Frequency;
 
 			// If we need to keep source data, read everything into memory and keep a copy
 			if (mKeepSourceData)
@@ -45,8 +45,8 @@ namespace bs
 
 			// Load decompressed data into a sound buffer
 			bool loadDecompressed =
-				mDesc.readMode == AudioReadMode::LoadDecompressed ||
-				(mDesc.readMode == AudioReadMode::LoadCompressed && mDesc.format == AudioFormat::PCM);
+				mDesc.ReadMode == AudioReadMode::LoadDecompressed ||
+				(mDesc.ReadMode == AudioReadMode::LoadCompressed && mDesc.Format == AudioFormat::PCM);
 
 			if(loadDecompressed)
 			{
@@ -61,15 +61,15 @@ namespace bs
 					offset = mStreamOffset;
 				}
 
-				UINT32 bufferSize = info.numSamples * (info.bitDepth / 8);
+				UINT32 bufferSize = info.NumSamples * (info.BitDepth / 8);
 				UINT8* sampleBuffer = (UINT8*)bs_stack_alloc(bufferSize);
 
 				// Decompress from Ogg
-				if (mDesc.format == AudioFormat::VORBIS)
+				if (mDesc.Format == AudioFormat::VORBIS)
 				{
 					OggVorbisDecoder reader;
 					if (reader.Open(stream, info, offset))
-						reader.Read(sampleBuffer, info.numSamples);
+						reader.Read(sampleBuffer, info.NumSamples);
 					else
 						BS_LOG(Error, Audio, "Failed decompressing AudioClip stream.");
 				}
@@ -90,7 +90,7 @@ namespace bs
 				bs_stack_free(sampleBuffer);
 			}
 			// Load compressed data for streaming from memory
-			else if(mDesc.readMode == AudioReadMode::LoadCompressed)
+			else if(mDesc.ReadMode == AudioReadMode::LoadCompressed)
 			{
 				// If reading from file, make a copy of data in memory, otherwise just take ownership of the existing buffer
 				if (mStreamData->IsFile())
@@ -116,7 +116,7 @@ namespace bs
 				// Do nothing
 			}
 
-			if (mDesc.format == AudioFormat::VORBIS && mDesc.readMode != AudioReadMode::LoadDecompressed)
+			if (mDesc.Format == AudioFormat::VORBIS && mDesc.ReadMode != AudioReadMode::LoadDecompressed)
 			{
 				mNeedsDecompression = true;
 
@@ -145,7 +145,7 @@ namespace bs
 			}
 			else
 			{
-				UINT32 bytesPerSample = mDesc.bitDepth / 8;
+				UINT32 bytesPerSample = mDesc.BitDepth / 8;
 				UINT32 size = count * bytesPerSample;
 				UINT32 streamOffset = mStreamOffset + offset * bytesPerSample;
 
@@ -160,7 +160,7 @@ namespace bs
 		{
 			assert(!mNeedsDecompression); // Normal stream must exist if decompressing
 
-			const UINT32 bytesPerSample = mDesc.bitDepth / 8;
+			const UINT32 bytesPerSample = mDesc.BitDepth / 8;
 			UINT32 size = count * bytesPerSample;
 			UINT32 streamOffset = offset * bytesPerSample;
 

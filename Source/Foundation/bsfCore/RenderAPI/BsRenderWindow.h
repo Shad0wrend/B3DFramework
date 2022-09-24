@@ -48,62 +48,62 @@ namespace bs
 	struct BS_CORE_EXPORT BS_SCRIPT_EXPORT(m:RenderAPI,pl:true,api:bsf) RENDER_WINDOW_DESC
 	{
 		/** Output monitor, frame buffer resize and refresh rate. */
-		VideoMode videoMode;
+		VideoMode VideoMode;
 
 		/** Should the window be opened in fullscreen mode. */
-		bool fullscreen = false;
+		bool Fullscreen = false;
 
 		/** Should the window wait for vertical sync before swapping buffers. */
-		bool vsync = false;
+		bool Vsync = false;
 
 		/** Determines how many vsync intervals occur per frame. FPS = refreshRate/interval. Usually 1 when vsync active. */
-		UINT32 vsyncInterval = 1;
+		UINT32 VsyncInterval = 1;
 
 		/** Should the window be hidden initially. */
-		bool hidden = false;
+		bool Hidden = false;
 
 		/** Should the window be created with a depth/stencil buffer. */
-		bool depthBuffer = false;
+		bool DepthBuffer = false;
 
 		/** If higher than 1, texture containing multiple samples per pixel is created. */
-		UINT32 multisampleCount = 0;
+		UINT32 MultisampleCount = 0;
 
 		/** Hint about what kind of multisampling to use. Render system specific. */
-		String multisampleHint = "";
+		String MultisampleHint = "";
 
 		/** Should the written color pixels be gamma corrected before write. */
-		bool gamma = false;
+		bool Gamma = false;
 
 		/** Window origin on X axis in pixels. -1 == screen center. Relative to monitor provided in videoMode. */
-		INT32 left = -1;
+		INT32 Left = -1;
 
 		/** Window origin on Y axis in pixels. -1 == screen center. Relative to monitor provided in videoMode. */
-		INT32 top = -1;
+		INT32 Top = -1;
 
 		/** Title of the window. */
-		String title = "";
+		String Title = "";
 
 		/** Determines if the title-bar should be shown or not. */
-		bool showTitleBar = true;
+		bool ShowTitleBar = true;
 
 		/** Determines if the window border should be shown or not. */
-		bool showBorder = true;
+		bool ShowBorder = true;
 
 		/** Determines if the user can resize the window by dragging on the window edges. */
-		bool allowResize = true;
+		bool AllowResize = true;
 
 		/** Tool windows have no task bar entry and always remain on top of their parent window. */
-		bool toolWindow = false;
+		bool ToolWindow = false;
 
 		/** When a modal window is open all other windows will be locked until modal window is closed. */
-		bool modal = false;
+		bool Modal = false;
 
 		/** Window will be created as hidden and only be shown when the first framebuffer swap happens. */
-		bool hideUntilSwap = false;
+		bool HideUntilSwap = false;
 
 		/** Platform-specific creation options. */
 		BS_SCRIPT_EXPORT(ex:true)
-		UnorderedMap<String, String> platformSpecific;
+		UnorderedMap<String, String> PlatformSpecific;
 	};
 
 	/**	Contains various properties that describe a render window. */
@@ -114,25 +114,25 @@ namespace bs
 		virtual ~RenderWindowProperties() = default;
 
 		/**	True if window is running in fullscreen mode. */
-		bool isFullScreen = false;
+		bool IsFullScreen = false;
 
 		/**	Horizontal origin of the window in pixels. */
-		INT32 left = 0;
+		INT32 Left = 0;
 
 		/**	Vertical origin of the window in pixels. */
-		INT32 top = 0;
+		INT32 Top = 0;
 
 		/**	Indicates whether the window currently has keyboard focus. */
-		bool hasFocus = false;
+		bool HasFocus = false;
 
 		/**	True if the window is hidden. */
-		bool isHidden = false;
+		bool IsHidden = false;
 
 		/**	True if the window is modal (blocks interaction with any non-modal window until closed). */
-		bool isModal = false;
+		bool IsModal = false;
 
 		/**	True if the window is maximized. */
-		bool isMaximized = false;
+		bool IsMaximized = false;
 	};
 
 	/**
@@ -240,7 +240,7 @@ namespace bs
 		static SPtr<RenderWindow> Create(RENDER_WINDOW_DESC& desc, SPtr<RenderWindow> parentWindow = nullptr);
 
 		/** Triggers when the OS requests that the window is closed (e.g. user clicks on the X button in the title bar). */
-		Event<void()> onCloseRequested;
+		Event<void()> OnCloseRequested;
 
 		/**
 		 * @name Internal

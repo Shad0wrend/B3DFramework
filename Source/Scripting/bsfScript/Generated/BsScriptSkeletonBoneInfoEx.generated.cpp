@@ -16,7 +16,7 @@ namespace bs
 
 	MonoObject*ScriptSkeletonBoneInfoEx::Box(const __SkeletonBoneInfoExInterop& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	__SkeletonBoneInfoExInterop ScriptSkeletonBoneInfoEx::Unbox(MonoObject* value)
@@ -28,10 +28,10 @@ namespace bs
 	{
 		SkeletonBoneInfoEx output;
 		String tmpname;
-		tmpname = MonoUtil::MonoToString(value.name);
-		output.name = tmpname;
-		output.parent = value.parent;
-		output.invBindPose = value.invBindPose;
+		tmpname = MonoUtil::MonoToString(value.Name);
+		output.Name = tmpname;
+		output.Parent = value.Parent;
+		output.InvBindPose = value.InvBindPose;
 
 		return output;
 	}
@@ -40,10 +40,10 @@ namespace bs
 	{
 		__SkeletonBoneInfoExInterop output;
 		MonoString* tmpname;
-		tmpname = MonoUtil::StringToMono(value.name);
-		output.name = tmpname;
-		output.parent = value.parent;
-		output.invBindPose = value.invBindPose;
+		tmpname = MonoUtil::StringToMono(value.Name);
+		output.Name = tmpname;
+		output.Parent = value.Parent;
+		output.InvBindPose = value.InvBindPose;
 
 		return output;
 	}

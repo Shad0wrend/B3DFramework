@@ -114,12 +114,12 @@ namespace bs
 		Vector<MeshRenderData> proxyData;
 		for (auto& entry : meshData)
 		{
-			if (entry.type == DrawHelper::MeshType::Solid)
-				proxyData.push_back(MeshRenderData(entry.mesh->GetCore(), entry.subMesh, DebugDrawMaterial::Solid));
-			else if (entry.type == DrawHelper::MeshType::Wire)
-				proxyData.push_back(MeshRenderData(entry.mesh->GetCore(), entry.subMesh, DebugDrawMaterial::Wire));
-			else if (entry.type == DrawHelper::MeshType::Line)
-				proxyData.push_back(MeshRenderData(entry.mesh->GetCore(), entry.subMesh, DebugDrawMaterial::Line));
+			if (entry.Type == DrawHelper::MeshType::Solid)
+				proxyData.push_back(MeshRenderData(entry.Mesh->GetCore(), entry.SubMesh, DebugDrawMaterial::Solid));
+			else if (entry.Type == DrawHelper::MeshType::Wire)
+				proxyData.push_back(MeshRenderData(entry.Mesh->GetCore(), entry.SubMesh, DebugDrawMaterial::Wire));
+			else if (entry.Type == DrawHelper::MeshType::Line)
+				proxyData.push_back(MeshRenderData(entry.Mesh->GetCore(), entry.SubMesh, DebugDrawMaterial::Line));
 		}
 
 		return proxyData;
@@ -209,8 +209,8 @@ namespace bs
 
 		for (auto& entry : mMeshes)
 		{
-			DebugDrawMat* mat = DebugDrawMat::GetVariation(entry.type);
-			mat->Execute(mParamBuffer, entry.mesh, entry.subMesh);
+			DebugDrawMat* mat = DebugDrawMat::GetVariation(entry.Type);
+			mat->Execute(mParamBuffer, entry.Mesh, entry.SubMesh);
 		}
 	}
 	}

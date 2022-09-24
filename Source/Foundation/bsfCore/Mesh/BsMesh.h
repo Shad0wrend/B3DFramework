@@ -21,38 +21,38 @@ namespace bs
 		MESH_DESC() { }
 
 		/** Number of vertices in the mesh. */
-		UINT32 numVertices = 0;
+		UINT32 NumVertices = 0;
 
 		/** Number of indices in the mesh. */
-		UINT32 numIndices = 0;
+		UINT32 NumIndices = 0;
 
 		/**
 		 * Vertex description structure that describes how are vertices organized in the vertex buffer. When binding a mesh
 		 * to the pipeline you must ensure vertex description at least partially matches the input description of the
 		 * currently bound vertex GPU program.
 		 */
-		SPtr<VertexDataDesc> vertexDesc;
+		SPtr<VertexDataDesc> VertexDesc;
 
 		/**
 		 * Defines how are indices separated into sub-meshes, and how are those sub-meshes rendered. Sub-meshes may be
 		 * rendered independently.
 		 */
-		Vector<SubMesh> subMeshes;
+		Vector<SubMesh> SubMeshes;
 
 		/** Optimizes performance depending on planned usage of the mesh. */
-		INT32 usage = MU_STATIC;
+		INT32 Usage = MU_STATIC;
 
 		/**
 		 * Size of indices, use smaller size for better performance, however be careful not to go over the number of
 		 * vertices limited by the size.
 		 */
-		IndexType indexType = IT_32BIT;
+		IndexType IndexType = IT_32BIT;
 
 		/** Optional skeleton that can be used for skeletal animation of the mesh. */
-		SPtr<Skeleton> skeleton;
+		SPtr<Skeleton> Skeleton;
 
 		/** Optional set of morph shapes that can be used for per-vertex animation of the mesh. */
-		SPtr<MorphShapes> morphShapes;
+		SPtr<MorphShapes> MorphShapes;
 
 		static MESH_DESC DEFAULT;
 	};

@@ -69,12 +69,12 @@ namespace bs
 			BS_EXCEPT(InternalErrorException, "Failed to load font file: " + filePath.ToString() + ". Unknown error.");
 		}
 
-		Vector<CharRange> charIndexRanges = fontImportOptions->charIndexRanges;
-		Vector<UINT32> fontSizes = fontImportOptions->fontSizes;
-		UINT32 dpi = fontImportOptions->dpi;
+		Vector<CharRange> charIndexRanges = fontImportOptions->CharIndexRanges;
+		Vector<UINT32> fontSizes = fontImportOptions->FontSizes;
+		UINT32 dpi = fontImportOptions->Dpi;
 
 		FT_Int32 loadFlags;
-		switch (fontImportOptions->renderMode)
+		switch (fontImportOptions->RenderMode)
 		{
 		case FontRenderMode::Smooth:
 			loadFlags = FT_LOAD_TARGET_NORMAL | FT_LOAD_NO_HINTING;
@@ -126,7 +126,7 @@ namespace bs
 			Map<UINT32, UINT32> seqIdxToCharIdx;
 			for(auto iter = charIndexRanges.begin(); iter != charIndexRanges.end(); ++iter)
 			{
-				for(UINT32 charIdx = iter->start; charIdx <= iter->end; charIdx++)
+				for(UINT32 charIdx = iter->Start; charIdx <= iter->End; charIdx++)
 				{
 					error = FT_Load_Char(face, (FT_ULong)charIdx, loadFlags);
 
@@ -141,8 +141,8 @@ namespace bs
 					FT_GlyphSlot slot = face->glyph;
 
 					TextureAtlasUtility::Element atlasElement;
-					atlasElement.input.width = slot->bitmap.width;
-					atlasElement.input.height = slot->bitmap.rows;
+					atlasElement.Input.Width = slot->bitmap.width;
+					atlasElement.Input.Height = slot->bitmap.rows;
 
 					atlasElements.push_back(atlasElement);
 					seqIdxToCharIdx[(UINT32)atlasElements.size() - 1] = charIdx;
@@ -164,8 +164,8 @@ namespace bs
 				FT_GlyphSlot slot = face->glyph;
 
 				TextureAtlasUtility::Element atlasElement;
-				atlasElement.input.width = slot->bitmap.width;
-				atlasElement.input.height = slot->bitmap.rows;
+				atlasElement.Input.Width = slot->bitmap.width;
+				atlasElement.Input.Height = slot->bitmap.rows;
 
 				atlasElements.push_back(atlasElement);
 			}
@@ -181,10 +181,10 @@ namespace bs
 			UINT32 pageIdx = 0;
 			for(auto pageIter = pages.begin(); pageIter != pages.end(); ++pageIter)
 			{
-				UINT32 bufferSize = pageIter->width * pageIter->height * 2;
+				UINT32 bufferSize = pageIter->Width * pageIter->Height * 2;
 
 				// TODO - I don't actually need a 2 channel texture
-				SPtr<PixelData> pixelData = bs_shared_ptr_new<PixelData>(pageIter->width, pageIter->height, 1, PF_RG8);
+				SPtr<PixelData> pixelData = bs_shared_ptr_new<PixelData>(pageIter->Width, pageIter->Height, 1, PF_RG8);
 
 				pixelData->AllocateInternalBuffer();
 				UINT8* pixelBuffer = pixelData->GetData();
@@ -193,11 +193,11 @@ namespace bs
 				for(size_t i = 0; i < atlasElements.size(); i++)
 				{
 					// Copy character bitmap
-					if(atlasElements[i].output.page != (INT32)pageIdx)
+					if(atlasElements[i].Output.Page != (INT32)pageIdx)
 						continue;
 
 					TextureAtlasUtility::Element curElement = atlasElements[i];
-					UINT32 elementIdx = curElement.output.idx;
+					UINT32 elementIdx = curElement.Output.Idx;
 					
 					bool isMissingGlypth = elementIdx == (atlasElements.size() - 1); // It's always the last element
 
@@ -227,7 +227,7 @@ namespace bs
 						BS_EXCEPT(InternalErrorException, "Failed to render glyph bitmap");
 
 					UINT8* sourceBuffer = slot->bitmap.buffer;
-					UINT8* dstBuffer = pixelBuffer + (curElement.output.y * pageIter->width * 2) + curElement.output.x * 2;
+					UINT8* dstBuffer = pixelBuffer + (curElement.Output.Y * pageIter->Width * 2) + curElement.Output.X * 2;
 
 					if(slot->bitmap.pixel_mode == ft_pixel_mode_grays)
 					{
@@ -239,7 +239,7 @@ namespace bs
 								dstBuffer[bitmapColumn * 2 + 1] = sourceBuffer[bitmapColumn];
 							}
 
-							dstBuffer += pageIter->width * 2;
+							dstBuffer += pageIter->Width * 2;
 							sourceBuffer += slot->bitmap.pitch;
 						}
 					}
@@ -257,7 +257,7 @@ namespace bs
 								dstBuffer[bitmapColumn * 2 + 1] = dstValue;
 							}
 
-							dstBuffer += pageIter->width * 2;
+							dstBuffer += pageIter->Width * 2;
 							sourceBuffer += slot->bitmap.pitch;
 						}
 					}
@@ -267,24 +267,24 @@ namespace bs
 					// Store character information
 					CharDesc charDesc;
 
-					float invTexWidth = 1.0f / pageIter->width;
-					float invTexHeight = 1.0f / pageIter->height;
+					float invTexWidth = 1.0f / pageIter->Width;
+					float invTexHeight = 1.0f / pageIter->Height;
 
-					charDesc.charId = charIdx;
-					charDesc.width = curElement.input.width;
-					charDesc.height = curElement.input.height;
-					charDesc.page = curElement.output.page;
-					charDesc.uvWidth = invTexWidth * curElement.input.width;
-					charDesc.uvHeight = invTexHeight * curElement.input.height;
-					charDesc.uvX = invTexWidth * curElement.output.x;
-					charDesc.uvY = invTexHeight * curElement.output.y;
-					charDesc.xOffset = slot->bitmap_left;
-					charDesc.yOffset = slot->bitmap_top;
-					charDesc.xAdvance = slot->advance.x >> 6;
-					charDesc.yAdvance = slot->advance.y >> 6;
+					charDesc.CharId = charIdx;
+					charDesc.Width = curElement.Input.Width;
+					charDesc.Height = curElement.Input.Height;
+					charDesc.Page = curElement.Output.Page;
+					charDesc.UvWidth = invTexWidth * curElement.Input.Width;
+					charDesc.UvHeight = invTexHeight * curElement.Input.Height;
+					charDesc.UvX = invTexWidth * curElement.Output.X;
+					charDesc.UvY = invTexHeight * curElement.Output.Y;
+					charDesc.XOffset = slot->bitmap_left;
+					charDesc.YOffset = slot->bitmap_top;
+					charDesc.XAdvance = slot->advance.x >> 6;
+					charDesc.YAdvance = slot->advance.y >> 6;
 
 					baselineOffset = std::max(baselineOffset, (INT32)(slot->metrics.horiBearingY >> 6));
-					lineHeight = std::max(lineHeight, charDesc.height);
+					lineHeight = std::max(lineHeight, charDesc.Height);
 
 					// Load kerning and store char
 					if(!isMissingGlypth)
@@ -292,7 +292,7 @@ namespace bs
 						FT_Vector resultKerning;
 						for(auto kerningIter = charIndexRanges.begin(); kerningIter != charIndexRanges.end(); ++kerningIter)
 						{
-							for(UINT32 kerningCharIdx = kerningIter->start; kerningCharIdx <= kerningIter->end; kerningCharIdx++)
+							for(UINT32 kerningCharIdx = kerningIter->Start; kerningCharIdx <= kerningIter->End; kerningCharIdx++)
 							{
 								if(kerningCharIdx == charIdx)
 									continue;
@@ -307,25 +307,25 @@ namespace bs
 									continue;
 
 								KerningPair pair;
-								pair.amount = kerningX;
-								pair.otherCharId = kerningCharIdx;
+								pair.Amount = kerningX;
+								pair.OtherCharId = kerningCharIdx;
 
-								charDesc.kerningPairs.push_back(pair);
+								charDesc.KerningPairs.push_back(pair);
 							}
 						}
 
-						fontData->characters[charIdx] = charDesc;
+						fontData->Characters[charIdx] = charDesc;
 					}
 					else
 					{
-						fontData->missingGlyph = charDesc;
+						fontData->MissingGlyph = charDesc;
 					}
 				}
 
 				TEXTURE_DESC texDesc;
-				texDesc.width = pageIter->width;
-				texDesc.height = pageIter->height;
-				texDesc.format = PF_RG8;
+				texDesc.Width = pageIter->Width;
+				texDesc.Height = pageIter->Height;
+				texDesc.Format = PF_RG8;
 
 				HTexture newTex = Texture::Create(texDesc);
 
@@ -342,15 +342,15 @@ namespace bs
 					newTex->WriteData(pixelData);
 				}
 
-				newTex->SetName(u8"FontPage" + toString((UINT32)fontData->texturePages.size()));
+				newTex->SetName(u8"FontPage" + toString((UINT32)fontData->TexturePages.size()));
 
-				fontData->texturePages.push_back(newTex);
+				fontData->TexturePages.push_back(newTex);
 				pageIdx++;
 			}
 
-			fontData->size = fontSizes[i];
-			fontData->baselineOffset = baselineOffset;
-			fontData->lineHeight = lineHeight;
+			fontData->Size = fontSizes[i];
+			fontData->BaselineOffset = baselineOffset;
+			fontData->LineHeight = lineHeight;
 
 			// Get space size
 			error = FT_Load_Char(face, 32, loadFlags);
@@ -358,7 +358,7 @@ namespace bs
 			if(error)
 				BS_EXCEPT(InternalErrorException, "Failed to load a character");
 
-			fontData->spaceWidth = face->glyph->advance.x >> 6;
+			fontData->SpaceWidth = face->glyph->advance.x >> 6;
 
 			dataPerSize.push_back(fontData);
 		}

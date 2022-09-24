@@ -120,8 +120,8 @@ namespace bs { namespace ct
 		assert(faceSize == props.GetHeight());
 
 		Vector2I dispatchSize;
-		dispatchSize.x = Math::DivideAndRoundUp(faceSize, TILE_WIDTH * PIXELS_PER_THREAD);
-		dispatchSize.y = Math::DivideAndRoundUp(faceSize, TILE_HEIGHT * PIXELS_PER_THREAD);
+		dispatchSize.X = Math::DivideAndRoundUp(faceSize, TILE_WIDTH * PIXELS_PER_THREAD);
+		dispatchSize.Y = Math::DivideAndRoundUp(faceSize, TILE_HEIGHT * PIXELS_PER_THREAD);
 
 		mInputTexture.Set(source);
 		gIrradianceComputeSHParamDef.gCubeFace.Set(mParamBuffer, face);
@@ -133,7 +133,7 @@ namespace bs { namespace ct
 		RenderAPI& rapi = RenderAPI::Instance();
 
 		Bind();
-		rapi.DispatchCompute(dispatchSize.x, dispatchSize.y);
+		rapi.DispatchCompute(dispatchSize.X, dispatchSize.Y);
 	}
 
 	SPtr<GpuBuffer> IrradianceComputeSHMat::CreateOutputBuffer(const SPtr<Texture>& source, UINT32& numCoeffSets)
@@ -143,21 +143,21 @@ namespace bs { namespace ct
 		assert(faceSize == props.GetHeight());
 
 		Vector2I dispatchSize;
-		dispatchSize.x = Math::DivideAndRoundUp(faceSize, TILE_WIDTH * PIXELS_PER_THREAD);
-		dispatchSize.y = Math::DivideAndRoundUp(faceSize, TILE_HEIGHT * PIXELS_PER_THREAD);
+		dispatchSize.X = Math::DivideAndRoundUp(faceSize, TILE_WIDTH * PIXELS_PER_THREAD);
+		dispatchSize.Y = Math::DivideAndRoundUp(faceSize, TILE_HEIGHT * PIXELS_PER_THREAD);
 
-		numCoeffSets = dispatchSize.x * dispatchSize.y * 6;
+		numCoeffSets = dispatchSize.X * dispatchSize.Y * 6;
 
 		GPU_BUFFER_DESC bufferDesc;
-		bufferDesc.type = GBT_STRUCTURED;
-		bufferDesc.elementCount = numCoeffSets;
-		bufferDesc.format = BF_UNKNOWN;
-		bufferDesc.usage = GBU_LOADSTORE;
+		bufferDesc.Type = GBT_STRUCTURED;
+		bufferDesc.ElementCount = numCoeffSets;
+		bufferDesc.Format = BF_UNKNOWN;
+		bufferDesc.Usage = GBU_LOADSTORE;
 
 		if(mVariation.GetInt("SH_ORDER") == 3)
-			bufferDesc.elementSize = sizeof(SHCoeffsAndWeight3);
+			bufferDesc.ElementSize = sizeof(SHCoeffsAndWeight3);
 		else
-			bufferDesc.elementSize = sizeof(SHCoeffsAndWeight5);
+			bufferDesc.ElementSize = sizeof(SHCoeffsAndWeight5);
 
 		return GpuBuffer::Create(bufferDesc);
 	}
@@ -281,11 +281,11 @@ namespace bs { namespace ct
 
 		// Render to just one pixel corresponding to the coefficient
 		Rect2 viewRect;
-		viewRect.x = (outputOffset.x + coefficientIdx) / (float)rtProps.width;
-		viewRect.y = outputOffset.y / (float)rtProps.height;
+		viewRect.X = (outputOffset.X + coefficientIdx) / (float)rtProps.Width;
+		viewRect.Y = outputOffset.Y / (float)rtProps.Height;
 
-		viewRect.width = 1.0f / rtProps.width;
-		viewRect.height = 1.0f / rtProps.height;
+		viewRect.Width = 1.0f / rtProps.Width;
+		viewRect.Height = 1.0f / rtProps.Height;
 
 		// Render
 		RenderAPI& rapi = RenderAPI::Instance();
@@ -341,10 +341,10 @@ namespace bs { namespace ct
 		Vector2I size = IBLUtility::GetShCoeffTextureSize(numCoeffSets, shOrder);
 
 		TEXTURE_DESC textureDesc;
-		textureDesc.width = (UINT32)size.x;
-		textureDesc.height = (UINT32)size.y;
-		textureDesc.format = PF_RGBA32F;
-		textureDesc.usage = TU_STATIC | TU_LOADSTORE;
+		textureDesc.Width = (UINT32)size.X;
+		textureDesc.Height = (UINT32)size.Y;
+		textureDesc.Format = PF_RGBA32F;
+		textureDesc.Usage = TU_STATIC | TU_LOADSTORE;
 
 		return Texture::Create(textureDesc);
 	}
@@ -390,12 +390,12 @@ namespace bs { namespace ct
 		if (scratchCubemap == nullptr)
 		{
 			TEXTURE_DESC cubemapDesc;
-			cubemapDesc.type = TEX_TYPE_CUBE_MAP;
-			cubemapDesc.format = props.GetFormat();
-			cubemapDesc.width = props.GetWidth();
-			cubemapDesc.height = props.GetHeight();
-			cubemapDesc.numMips = PixelUtil::GetMaxMipmaps(cubemapDesc.width, cubemapDesc.height, 1, cubemapDesc.format);
-			cubemapDesc.usage = TU_STATIC | TU_RENDERTARGET;
+			cubemapDesc.Type = TEX_TYPE_CUBE_MAP;
+			cubemapDesc.Format = props.GetFormat();
+			cubemapDesc.Width = props.GetWidth();
+			cubemapDesc.Height = props.GetHeight();
+			cubemapDesc.NumMips = PixelUtil::GetMaxMipmaps(cubemapDesc.Width, cubemapDesc.Height, 1, cubemapDesc.Format);
+			cubemapDesc.Usage = TU_STATIC | TU_RENDERTARGET;
 
 			scratchCubemap = Texture::Create(cubemapDesc);
 		}
@@ -415,8 +415,8 @@ namespace bs { namespace ct
 		for (UINT32 face = 0; face < 6; face++)
 		{
 			TEXTURE_COPY_DESC copyDesc;
-			copyDesc.srcFace = face;
-			copyDesc.dstFace = face;
+			copyDesc.SrcFace = face;
+			copyDesc.DstFace = face;
 
 			cubemap->Copy(scratchCubemap, copyDesc);
 		}
@@ -434,10 +434,10 @@ namespace bs { namespace ct
 			for (UINT32 face = 0; face < 6; face++)
 			{
 				RENDER_TEXTURE_DESC cubeFaceRTDesc;
-				cubeFaceRTDesc.colorSurfaces[0].texture = cubemap;
-				cubeFaceRTDesc.colorSurfaces[0].face = face;
-				cubeFaceRTDesc.colorSurfaces[0].numFaces = 1;
-				cubeFaceRTDesc.colorSurfaces[0].mipLevel = mip;
+				cubeFaceRTDesc.ColorSurfaces[0].Texture = cubemap;
+				cubeFaceRTDesc.ColorSurfaces[0].Face = face;
+				cubeFaceRTDesc.ColorSurfaces[0].NumFaces = 1;
+				cubeFaceRTDesc.ColorSurfaces[0].MipLevel = mip;
 
 				SPtr<RenderTarget> target = RenderTexture::Create(cubeFaceRTDesc);
 
@@ -475,18 +475,18 @@ namespace bs { namespace ct
 		{
 			SPtr<PooledRenderTexture> finalCoeffs = gGpuResourcePool().Get(IrradianceAccumulateCubeSHMat::GetOutputDesc());
 
-			FilterCubemapForIrradianceNonCompute(cubemap, 0, finalCoeffs->renderTexture);
-			coeffTexture = finalCoeffs->texture;
+			FilterCubemapForIrradianceNonCompute(cubemap, 0, finalCoeffs->RenderTexture);
+			coeffTexture = finalCoeffs->Texture;
 		}
 
 		IrradianceProjectSHMat* shProject = IrradianceProjectSHMat::Get();
 		for (UINT32 face = 0; face < 6; face++)
 		{
 			RENDER_TEXTURE_DESC cubeFaceRTDesc;
-			cubeFaceRTDesc.colorSurfaces[0].texture = output;
-			cubeFaceRTDesc.colorSurfaces[0].face = face;
-			cubeFaceRTDesc.colorSurfaces[0].numFaces = 1;
-			cubeFaceRTDesc.colorSurfaces[0].mipLevel = 0;
+			cubeFaceRTDesc.ColorSurfaces[0].Texture = output;
+			cubeFaceRTDesc.ColorSurfaces[0].Face = face;
+			cubeFaceRTDesc.ColorSurfaces[0].NumFaces = 1;
+			cubeFaceRTDesc.ColorSurfaces[0].MipLevel = 0;
 
 			SPtr<RenderTarget> target = RenderTexture::Create(cubeFaceRTDesc);
 			shProject->Execute(coeffTexture, face, target);
@@ -511,7 +511,7 @@ namespace bs { namespace ct
 		else
 		{
 			RENDER_TEXTURE_DESC rtDesc;
-			rtDesc.colorSurfaces[0].texture = output;
+			rtDesc.ColorSurfaces[0].Texture = output;
 
 			SPtr<RenderTexture> target = RenderTexture::Create(rtDesc);
 			FilterCubemapForIrradianceNonCompute(cubemap, outputIdx, target);
@@ -538,20 +538,20 @@ namespace bs { namespace ct
 			UINT32 numDownsamples = sizeLog2Diff - 1;
 
 			TEXTURE_DESC cubemapDesc;
-			cubemapDesc.type = TEX_TYPE_CUBE_MAP;
-			cubemapDesc.format = srcProps.GetFormat();
-			cubemapDesc.width = mipSize;
-			cubemapDesc.height = mipSize;
-			cubemapDesc.numMips = numDownsamples - 1;
-			cubemapDesc.usage = TU_STATIC | TU_RENDERTARGET;
+			cubemapDesc.Type = TEX_TYPE_CUBE_MAP;
+			cubemapDesc.Format = srcProps.GetFormat();
+			cubemapDesc.Width = mipSize;
+			cubemapDesc.Height = mipSize;
+			cubemapDesc.NumMips = numDownsamples - 1;
+			cubemapDesc.Usage = TU_STATIC | TU_RENDERTARGET;
 
 			scratchTex = Texture::Create(cubemapDesc);
 
 			DownsampleCubemap(src, srcMip, scratchTex, 0);
-			for(UINT32 i = 0; i < cubemapDesc.numMips; i++)
+			for(UINT32 i = 0; i < cubemapDesc.NumMips; i++)
 				DownsampleCubemap(scratchTex, i, scratchTex, i + 1);
 
-			srcMip = cubemapDesc.numMips;
+			srcMip = cubemapDesc.NumMips;
 		}
 
 		// Same size so just copy
@@ -560,10 +560,10 @@ namespace bs { namespace ct
 			for (UINT32 face = 0; face < 6; face++)
 			{
 				TEXTURE_COPY_DESC copyDesc;
-				copyDesc.srcFace = face;
-				copyDesc.srcMip = srcMip;
-				copyDesc.dstFace = face;
-				copyDesc.dstMip = dstMip;
+				copyDesc.SrcFace = face;
+				copyDesc.SrcMip = srcMip;
+				copyDesc.DstFace = face;
+				copyDesc.DstMip = dstMip;
 
 				src->Copy(dst, copyDesc);
 			}
@@ -578,10 +578,10 @@ namespace bs { namespace ct
 		for (UINT32 face = 0; face < 6; face++)
 		{
 			RENDER_TEXTURE_DESC cubeFaceRTDesc;
-			cubeFaceRTDesc.colorSurfaces[0].texture = dst;
-			cubeFaceRTDesc.colorSurfaces[0].face = face;
-			cubeFaceRTDesc.colorSurfaces[0].numFaces = 1;
-			cubeFaceRTDesc.colorSurfaces[0].mipLevel = dstMip;
+			cubeFaceRTDesc.ColorSurfaces[0].Texture = dst;
+			cubeFaceRTDesc.ColorSurfaces[0].Face = face;
+			cubeFaceRTDesc.ColorSurfaces[0].NumFaces = 1;
+			cubeFaceRTDesc.ColorSurfaces[0].MipLevel = dstMip;
 
 			SPtr<RenderTarget> target = RenderTexture::Create(cubeFaceRTDesc);
 
@@ -608,10 +608,10 @@ namespace bs { namespace ct
 			for(UINT32 face = 0; face < 6; face++)
 			{
 				RENDER_TEXTURE_DESC cubeFaceRTDesc;
-				cubeFaceRTDesc.colorSurfaces[0].texture = coeffsTex->texture;
-				cubeFaceRTDesc.colorSurfaces[0].face = face;
-				cubeFaceRTDesc.colorSurfaces[0].numFaces = 1;
-				cubeFaceRTDesc.colorSurfaces[0].mipLevel = 0;
+				cubeFaceRTDesc.ColorSurfaces[0].Texture = coeffsTex->Texture;
+				cubeFaceRTDesc.ColorSurfaces[0].Face = face;
+				cubeFaceRTDesc.ColorSurfaces[0].NumFaces = 1;
+				cubeFaceRTDesc.ColorSurfaces[0].MipLevel = 0;
 
 				SPtr<RenderTarget> target = RenderTexture::Create(cubeFaceRTDesc);
 				shCompute->Execute(cubemap, face, coeff, target);
@@ -627,18 +627,18 @@ namespace bs { namespace ct
 
 			for(UINT32 mip = 0; mip < numMips; mip++)
 			{
-				SPtr<PooledRenderTexture> accumCoeffsTex = resPool.Get(shAccum->GetOutputDesc(downsampleInput->texture));
+				SPtr<PooledRenderTexture> accumCoeffsTex = resPool.Get(shAccum->GetOutputDesc(downsampleInput->Texture));
 
 				for(UINT32 face = 0; face < 6; face++)
 				{
 					RENDER_TEXTURE_DESC cubeFaceRTDesc;
-					cubeFaceRTDesc.colorSurfaces[0].texture = accumCoeffsTex->texture;
-					cubeFaceRTDesc.colorSurfaces[0].face = face;
-					cubeFaceRTDesc.colorSurfaces[0].numFaces = 1;
-					cubeFaceRTDesc.colorSurfaces[0].mipLevel = 0;
+					cubeFaceRTDesc.ColorSurfaces[0].Texture = accumCoeffsTex->Texture;
+					cubeFaceRTDesc.ColorSurfaces[0].Face = face;
+					cubeFaceRTDesc.ColorSurfaces[0].NumFaces = 1;
+					cubeFaceRTDesc.ColorSurfaces[0].MipLevel = 0;
 
 					SPtr<RenderTarget> target = RenderTexture::Create(cubeFaceRTDesc);
-					shAccum->Execute(downsampleInput->texture, face, 0, target);
+					shAccum->Execute(downsampleInput->Texture, face, 0, target);
 				}
 
 				downsampleInput = accumCoeffsTex;
@@ -646,7 +646,7 @@ namespace bs { namespace ct
 
 			// Sum up all the faces and write the coefficient to the final texture
 			Vector2I outputOffset = GetShCoeffXyFromIdx(outputIdx, 3);
-			shAccumCube->Execute(downsampleInput->texture, 0, outputOffset, coeff, output);
+			shAccumCube->Execute(downsampleInput->Texture, 0, outputOffset, coeff, output);
 		}
 	}
 }}

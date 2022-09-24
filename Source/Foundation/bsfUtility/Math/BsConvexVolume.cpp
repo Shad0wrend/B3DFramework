@@ -22,10 +22,10 @@ namespace bs
 		// Left
 		{
 			Plane plane;
-			plane.normal.x = proj[3][0] + proj[0][0];
-			plane.normal.y = proj[3][1] + proj[0][1];
-			plane.normal.z = proj[3][2] + proj[0][2];
-			plane.d = proj[3][3] + proj[0][3];
+			plane.Normal.X = proj[3][0] + proj[0][0];
+			plane.Normal.Y = proj[3][1] + proj[0][1];
+			plane.Normal.Z = proj[3][2] + proj[0][2];
+			plane.D = proj[3][3] + proj[0][3];
 
 			mPlanes.push_back(plane);
 		}
@@ -33,10 +33,10 @@ namespace bs
 		// Right
 		{
 			Plane plane;
-			plane.normal.x = proj[3][0] - proj[0][0];
-			plane.normal.y = proj[3][1] - proj[0][1];
-			plane.normal.z = proj[3][2] - proj[0][2];
-			plane.d = proj[3][3] - proj[0][3];
+			plane.Normal.X = proj[3][0] - proj[0][0];
+			plane.Normal.Y = proj[3][1] - proj[0][1];
+			plane.Normal.Z = proj[3][2] - proj[0][2];
+			plane.D = proj[3][3] - proj[0][3];
 
 			mPlanes.push_back(plane);
 		}
@@ -44,10 +44,10 @@ namespace bs
 		// Top
 		{
 			Plane plane;
-			plane.normal.x = proj[3][0] - proj[1][0];
-			plane.normal.y = proj[3][1] - proj[1][1];
-			plane.normal.z = proj[3][2] - proj[1][2];
-			plane.d = proj[3][3] - proj[1][3];
+			plane.Normal.X = proj[3][0] - proj[1][0];
+			plane.Normal.Y = proj[3][1] - proj[1][1];
+			plane.Normal.Z = proj[3][2] - proj[1][2];
+			plane.D = proj[3][3] - proj[1][3];
 
 			mPlanes.push_back(plane);
 		}
@@ -55,10 +55,10 @@ namespace bs
 		// Bottom
 		{
 			Plane plane;
-			plane.normal.x = proj[3][0] + proj[1][0];
-			plane.normal.y = proj[3][1] + proj[1][1];
-			plane.normal.z = proj[3][2] + proj[1][2];
-			plane.d = proj[3][3] + proj[1][3];
+			plane.Normal.X = proj[3][0] + proj[1][0];
+			plane.Normal.Y = proj[3][1] + proj[1][1];
+			plane.Normal.Z = proj[3][2] + proj[1][2];
+			plane.D = proj[3][3] + proj[1][3];
 
 			mPlanes.push_back(plane);
 		}
@@ -66,10 +66,10 @@ namespace bs
 		// Far
 		{
 			Plane plane;
-			plane.normal.x = proj[3][0] - proj[2][0];
-			plane.normal.y = proj[3][1] - proj[2][1];
-			plane.normal.z = proj[3][2] - proj[2][2];
-			plane.d = proj[3][3] - proj[2][3];
+			plane.Normal.X = proj[3][0] - proj[2][0];
+			plane.Normal.Y = proj[3][1] - proj[2][1];
+			plane.Normal.Z = proj[3][2] - proj[2][2];
+			plane.D = proj[3][3] - proj[2][3];
 
 			mPlanes.push_back(plane);
 		}
@@ -78,18 +78,18 @@ namespace bs
 		if(useNearPlane)
 		{
 			Plane plane;
-			plane.normal.x = proj[3][0] + proj[2][0];
-			plane.normal.y = proj[3][1] + proj[2][1];
-			plane.normal.z = proj[3][2] + proj[2][2];
-			plane.d = proj[3][3] + proj[2][3];
+			plane.Normal.X = proj[3][0] + proj[2][0];
+			plane.Normal.Y = proj[3][1] + proj[2][1];
+			plane.Normal.Z = proj[3][2] + proj[2][2];
+			plane.D = proj[3][3] + proj[2][3];
 
 			mPlanes.push_back(plane);
 		}
 
 		for (UINT32 i = 0; i < (UINT32)mPlanes.size(); i++)
 		{
-			float length = mPlanes[i].normal.Normalize();
-			mPlanes[i].d /= -length;
+			float length = mPlanes[i].Normal.Normalize();
+			mPlanes[i].D /= -length;
 		}
 	}
 
@@ -97,15 +97,15 @@ namespace bs
 	{
 		Vector3 center = box.GetCenter();
 		Vector3 extents = box.GetHalfSize();
-		Vector3 absExtents(Math::Abs(extents.x), Math::Abs(extents.y), Math::Abs(extents.z));
+		Vector3 absExtents(Math::Abs(extents.X), Math::Abs(extents.Y), Math::Abs(extents.Z));
 
 		for (auto& plane : mPlanes)
 		{
-			float dist = center.Dot(plane.normal) - plane.d;
+			float dist = center.Dot(plane.Normal) - plane.D;
 
-			float effectiveRadius = absExtents.x * abs(plane.normal.x);
-			effectiveRadius += absExtents.y * abs(plane.normal.y);
-			effectiveRadius += absExtents.z * abs(plane.normal.z);
+			float effectiveRadius = absExtents.X * abs(plane.Normal.X);
+			effectiveRadius += absExtents.Y * abs(plane.Normal.Y);
+			effectiveRadius += absExtents.Z * abs(plane.Normal.Z);
 
 			if (dist < -effectiveRadius)
 				return false;
@@ -121,7 +121,7 @@ namespace bs
 
 		for (auto& plane : mPlanes)
 		{
-			float dist = center.Dot(plane.normal) - plane.d;
+			float dist = center.Dot(plane.Normal) - plane.D;
 
 			if (dist < -radius)
 				return false;

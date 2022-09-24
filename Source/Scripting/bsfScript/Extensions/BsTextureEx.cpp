@@ -16,20 +16,20 @@ namespace bs
 			numMips = PixelUtil::GetMaxMipmaps(width, height, 1, format);
 
 		TEXTURE_DESC texDesc;
-		texDesc.type = texType;
-		texDesc.width = width;
-		texDesc.height = height;
+		texDesc.Type = texType;
+		texDesc.Width = width;
+		texDesc.Height = height;
 		
 		if (texType == TEX_TYPE_3D)
-			texDesc.depth = depth;
+			texDesc.Depth = depth;
 		else
-			texDesc.depth = 1;
+			texDesc.Depth = 1;
 
-		texDesc.numMips = numMips;
-		texDesc.format = format;
-		texDesc.usage = usage;
-		texDesc.hwGamma = gammaCorrection;
-		texDesc.numSamples = numSamples;
+		texDesc.NumMips = numMips;
+		texDesc.Format = format;
+		texDesc.Usage = usage;
+		texDesc.HwGamma = gammaCorrection;
+		texDesc.NumSamples = numSamples;
 
 		return Texture::Create(texDesc);
 	}

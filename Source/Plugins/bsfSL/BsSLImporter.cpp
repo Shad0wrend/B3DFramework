@@ -33,24 +33,24 @@ namespace bs
 
 		SPtr<const ShaderImportOptions> io = std::static_pointer_cast<const ShaderImportOptions>(importOptions);
 		String shaderName = filePath.GetFilename(false);
-		BSLFXCompileResult result = BSLFXCompiler::Compile(shaderName, source, io->GetDefines(), io->languages);
+		BSLFXCompileResult result = BSLFXCompiler::Compile(shaderName, source, io->GetDefines(), io->Languages);
 
-		if (result.shader != nullptr)
-			result.shader->SetName(shaderName);
+		if (result.Shader != nullptr)
+			result.Shader->SetName(shaderName);
 		
-		if(!result.errorMessage.empty())
+		if(!result.ErrorMessage.empty())
 		{
 			String file;
-			if (result.errorFile.empty())
+			if (result.ErrorFile.empty())
 				file = filePath.ToString();
 			else
-				file = result.errorFile;
+				file = result.ErrorFile;
 
 			BS_LOG(Error, BSLCompiler, "Compilation error when importing shader \"{0}\":\n{1}. Location: {2} ({3})",
-				file, result.errorMessage, result.errorLine, result.errorColumn);
+				file, result.ErrorMessage, result.ErrorLine, result.ErrorColumn);
 		}
 
-		return result.shader;
+		return result.Shader;
 	}
 
 	SPtr<ImportOptions> SLImporter::CreateImportOptions() const

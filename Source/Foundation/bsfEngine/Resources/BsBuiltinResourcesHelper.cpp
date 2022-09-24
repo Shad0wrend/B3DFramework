@@ -43,12 +43,12 @@ namespace bs
 		struct QueuedImportOp
 		{
 			QueuedImportOp(const TAsyncOp<HResource>& op, const Path& outputPath, const nlohmann::json& jsonEntry)
-				:op(op), outputPath(outputPath), jsonEntry(jsonEntry)
+				:Op(op), OutputPath(outputPath), JsonEntry(jsonEntry)
 			{ }
 
-			TAsyncOp<HResource> op;
-			Path outputPath;
-			const nlohmann::json& jsonEntry;
+			TAsyncOp<HResource> Op;
+			Path OutputPath;
+			const nlohmann::json& JsonEntry;
 		};
 
 		List<QueuedImportOp> queuedOps;
@@ -79,7 +79,7 @@ namespace bs
 					SPtr<TextureImportOptions> texImportOptions =
 						std::static_pointer_cast<TextureImportOptions>(importOptions);
 
-					texImportOptions->generateMips = mipmap;
+					texImportOptions->GenerateMips = mipmap;
 				}
 				else if (rtti_is_of_type<ShaderImportOptions>(importOptions))
 				{
@@ -148,9 +148,9 @@ namespace bs
 
 		struct IconData
 		{
-			String name;
-			HTexture source;
-			SPtr<PixelData> srcData;
+			String Name;
+			HTexture Source;
+			SPtr<PixelData> SrcData;
 			std::string TextureUUIDs[3];
 			std::string SpriteUUIDs[3];
 		};
@@ -161,19 +161,19 @@ namespace bs
 			for(auto iter = queuedOps.begin(); iter != queuedOps.end();)
 			{
 				QueuedImportOp& importOp = *iter;
-				if(!importOp.op.HasCompleted())
+				if(!importOp.Op.HasCompleted())
 				{
 					++iter;
 					continue;
 				}
 
-				HResource outputRes = importOp.op.GetReturnValue();
+				HResource outputRes = importOp.Op.GetReturnValue();
 				if (outputRes != nullptr)
 				{
-					Resources::Instance().Save(outputRes, importOp.outputPath, true, compress);
-					manifest->RegisterResource(outputRes.GetUuid(), importOp.outputPath);
+					Resources::Instance().Save(outputRes, importOp.OutputPath, true, compress);
+					manifest->RegisterResource(outputRes.GetUuid(), importOp.OutputPath);
 
-					const nlohmann::json& entry = importOp.jsonEntry;
+					const nlohmann::json& entry = importOp.JsonEntry;
 
 					std::string name = entry["Path"];
 
@@ -197,9 +197,9 @@ namespace bs
 							SPtr<ShaderMetaData> shaderMetaData = std::static_pointer_cast<ShaderMetaData>(shader->GetMetaData());
 
 							nlohmann::json dependencyEntries;
-							if (shaderMetaData != nullptr && shaderMetaData->includes.size() > 0)
+							if (shaderMetaData != nullptr && shaderMetaData->Includes.size() > 0)
 							{
-								for (auto& include : shaderMetaData->includes)
+								for (auto& include : shaderMetaData->Includes)
 								{
 									Path includePath = include.c_str();
 									if (include.substr(0, 8) == "$ENGINE$" || include.substr(0, 8) == "$EDITOR$")
@@ -232,10 +232,10 @@ namespace bs
 							auto& jsonAnimation = entry["Animation"];
 
 							SpriteSheetGridAnimation animation;
-							animation.numRows = jsonAnimation["NumRows"].get<UINT32>();
-							animation.numColumns = jsonAnimation["NumColumns"].get<UINT32>();
-							animation.count = jsonAnimation["Count"].get<UINT32>();
-							animation.fps = jsonAnimation["FPS"].get<UINT32>();
+							animation.NumRows = jsonAnimation["NumRows"].get<UINT32>();
+							animation.NumColumns = jsonAnimation["NumColumns"].get<UINT32>();
+							animation.Count = jsonAnimation["Count"].get<UINT32>();
+							animation.Fps = jsonAnimation["FPS"].get<UINT32>();
 
 							generateAnimatedSprite(tex, name.c_str(), UUID(spriteUUID.c_str()),
 								SpriteAnimationPlayback::Loop, animation);
@@ -248,8 +248,8 @@ namespace bs
 					if (isIcon)
 					{
 						IconData iconData;
-						iconData.source = static_resource_cast<Texture>(outputRes);
-						iconData.name = name.c_str();
+						iconData.Source = static_resource_cast<Texture>(outputRes);
+						iconData.Name = name.c_str();
 
 						if (mode == AssetType::Normal)
 						{
@@ -280,8 +280,8 @@ namespace bs
 		{
 			IconData& data = iconsToGenerate[i];
 
-			data.srcData = data.source->GetProperties().AllocBuffer(0, 0);
-			data.source->ReadData(data.srcData);
+			data.SrcData = data.Source->GetProperties().AllocBuffer(0, 0);
+			data.Source->ReadData(data.SrcData);
 		}
 
 		gCoreThread().Submit(true);
@@ -299,7 +299,7 @@ namespace bs
 
 		for (UINT32 i = 0; i < (UINT32)iconsToGenerate.size(); i++)
 		{
-			SPtr<PixelData> src = iconsToGenerate[i].srcData;
+			SPtr<PixelData> src = iconsToGenerate[i].SrcData;
 
 			SPtr<PixelData> scaled48 = PixelData::Create(48, 48, 1, src->GetFormat());
 			PixelUtil::Scale(*src, *scaled48);
@@ -310,9 +310,9 @@ namespace bs
 			SPtr<PixelData> scaled16 = PixelData::Create(16, 16, 1, src->GetFormat());
 			PixelUtil::Scale(*scaled32, *scaled16);
 
-			Path outputPath48 = outputFolder + (iconsToGenerate[i].name + "48.asset");
-			Path outputPath32 = outputFolder + (iconsToGenerate[i].name + "32.asset");
-			Path outputPath16 = outputFolder + (iconsToGenerate[i].name + "16.asset");
+			Path outputPath48 = outputFolder + (iconsToGenerate[i].Name + "48.asset");
+			Path outputPath32 = outputFolder + (iconsToGenerate[i].Name + "32.asset");
+			Path outputPath16 = outputFolder + (iconsToGenerate[i].Name + "16.asset");
 
 			HTexture tex48 = saveTexture(scaled48, outputPath48, iconsToGenerate[i].TextureUUIDs[0]);
 			HTexture tex32 = saveTexture(scaled32, outputPath32, iconsToGenerate[i].TextureUUIDs[1]);
@@ -320,9 +320,9 @@ namespace bs
 
 			if (mode == AssetType::Sprite)
 			{
-				generateSprite(tex48, iconsToGenerate[i].name + "48", UUID(iconsToGenerate[i].SpriteUUIDs[0].c_str()));
-				generateSprite(tex32, iconsToGenerate[i].name + "32", UUID(iconsToGenerate[i].SpriteUUIDs[1].c_str()));
-				generateSprite(tex16, iconsToGenerate[i].name + "16", UUID(iconsToGenerate[i].SpriteUUIDs[2].c_str()));
+				generateSprite(tex48, iconsToGenerate[i].Name + "48", UUID(iconsToGenerate[i].SpriteUUIDs[0].c_str()));
+				generateSprite(tex32, iconsToGenerate[i].Name + "32", UUID(iconsToGenerate[i].SpriteUUIDs[1].c_str()));
+				generateSprite(tex16, iconsToGenerate[i].Name + "16", UUID(iconsToGenerate[i].SpriteUUIDs[2].c_str()));
 			}
 		}
 	}
@@ -335,8 +335,8 @@ namespace bs
 		{
 			FontImportOptions* importOptions = static_cast<FontImportOptions*>(fontImportOptions.get());
 
-			importOptions->fontSizes = { fontSizes };
-			importOptions->renderMode = antialiasing ? FontRenderMode::HintedSmooth : FontRenderMode::HintedRaster;
+			importOptions->FontSizes = { fontSizes };
+			importOptions->RenderMode = antialiasing ? FontRenderMode::HintedSmooth : FontRenderMode::HintedRaster;
 		}
 		else
 			return;
@@ -358,7 +358,7 @@ namespace bs
 			Path texPageOutputPath = outputFolder;
 
 			UINT32 pageIdx = 0;
-			for (auto tex : fontData->texturePages)
+			for (auto tex : fontData->TexturePages)
 			{
 				texPageOutputPath.SetFilename(fontName + u8"_" + toString(size) + u8"_texpage_" +
 					toString(pageIdx) + u8".asset");
@@ -702,10 +702,10 @@ namespace bs
 				for (UINT32 j = 0; j < GPT_COUNT; j++)
 				{
 					const GPU_PROGRAM_DESC& desc = pass->GetProgramDesc((GpuProgramType)j);
-					if (desc.source.empty())
+					if (desc.Source.empty())
 						continue;
 
-					if (!desc.bytecode)
+					if (!desc.Bytecode)
 					{
 						hasBytecode = false;
 						break;
@@ -737,23 +737,23 @@ namespace bs
 		if(entry.count("font") > 0)
 		{
 			std::string font = entry["font"];
-			style.font = loader.LoadFont(font.c_str());
+			style.Font = loader.LoadFont(font.c_str());
 		}
 
 		if(entry.count("fontSize") > 0)
-			style.fontSize = entry["fontSize"];
+			style.FontSize = entry["fontSize"];
 
 		if(entry.count("textHorzAlign") > 0)
-			style.textHorzAlign = entry["textHorzAlign"];
+			style.TextHorzAlign = entry["textHorzAlign"];
 
 		if(entry.count("textVertAlign") > 0)
-			style.textVertAlign = entry["textVertAlign"];
+			style.TextVertAlign = entry["textVertAlign"];
 
 		if(entry.count("imagePosition") > 0)
-			style.imagePosition = entry["imagePosition"];
+			style.ImagePosition = entry["imagePosition"];
 
 		if(entry.count("wordWrap") > 0)
-			style.wordWrap = entry["wordWrap"];
+			style.WordWrap = entry["wordWrap"];
 
 		const auto loadState = [&loader, &entry](const char* name, GUIElementStateStyle& state)
 		{
@@ -765,60 +765,60 @@ namespace bs
 			if(subEntry.count("texture") > 0)
 			{
 				std::string texture = subEntry["texture"];
-				state.texture = loader.LoadTexture(texture.c_str());
+				state.Texture = loader.LoadTexture(texture.c_str());
 			}
 
 			if(subEntry.count("textColor") > 0)
 			{
 				nlohmann::json colorEntry = subEntry["textColor"];
 
-				state.textColor.r = colorEntry["r"];
-				state.textColor.g = colorEntry["g"];
-				state.textColor.b = colorEntry["b"];
-				state.textColor.a = colorEntry["a"];
+				state.TextColor.R = colorEntry["r"];
+				state.TextColor.G = colorEntry["g"];
+				state.TextColor.B = colorEntry["b"];
+				state.TextColor.A = colorEntry["a"];
 			}
 
 			return true;
 		};
 
-		loadState("normal", style.normal);
+		loadState("normal", style.Normal);
 
-		const bool hasHover = loadState("hover", style.hover);
+		const bool hasHover = loadState("hover", style.Hover);
 		if(!hasHover)
-			style.hover = style.normal;
+			style.Hover = style.Normal;
 
-		if(!loadState("active", style.active))
-			style.active = style.normal;
+		if(!loadState("active", style.Active))
+			style.Active = style.Normal;
 
-		if(!loadState("focused", style.focused))
-			style.focused = style.normal;
+		if(!loadState("focused", style.Focused))
+			style.Focused = style.Normal;
 
-		if(!loadState("focusedHover", style.focusedHover))
+		if(!loadState("focusedHover", style.FocusedHover))
 		{
 			if(hasHover)
-				style.focusedHover = style.hover;
+				style.FocusedHover = style.Hover;
 			else
-				style.focusedHover = style.normal;
+				style.FocusedHover = style.Normal;
 		}
 
-		loadState("normalOn", style.normalOn);
+		loadState("normalOn", style.NormalOn);
 
-		const bool hasHoverOn = loadState("hoverOn", style.hoverOn);
+		const bool hasHoverOn = loadState("hoverOn", style.HoverOn);
 		if(!hasHoverOn)
-			style.hoverOn = style.normalOn;
+			style.HoverOn = style.NormalOn;
 
-		if(!loadState("activeOn", style.activeOn))
-			style.activeOn = style.normalOn;
+		if(!loadState("activeOn", style.ActiveOn))
+			style.ActiveOn = style.NormalOn;
 
-		if(!loadState("focusedOn", style.focusedOn))
-			style.focusedOn = style.normalOn;
+		if(!loadState("focusedOn", style.FocusedOn))
+			style.FocusedOn = style.NormalOn;
 
-		if(!loadState("focusedHoverOn", style.focusedHoverOn))
+		if(!loadState("focusedHoverOn", style.FocusedHoverOn))
 		{
 			if(hasHoverOn)
-				style.focusedHoverOn = style.hoverOn;
+				style.FocusedHoverOn = style.HoverOn;
 			else
-				style.focusedHoverOn = style.normalOn;
+				style.FocusedHoverOn = style.NormalOn;
 		}
 
 		const auto loadRectOffset = [entry](const char* name, RectOffset& state)
@@ -827,40 +827,40 @@ namespace bs
 				return;
 
 			nlohmann::json subEntry = entry[name];
-			state.left = subEntry["left"];
-			state.right = subEntry["right"];
-			state.top = subEntry["top"];
-			state.bottom = subEntry["bottom"];
+			state.Left = subEntry["left"];
+			state.Right = subEntry["right"];
+			state.Top = subEntry["top"];
+			state.Bottom = subEntry["bottom"];
 		};
 
-		loadRectOffset("border", style.border);
-		loadRectOffset("margins", style.margins);
-		loadRectOffset("contentOffset", style.contentOffset);
-		loadRectOffset("padding", style.padding);
+		loadRectOffset("border", style.Border);
+		loadRectOffset("margins", style.Margins);
+		loadRectOffset("contentOffset", style.ContentOffset);
+		loadRectOffset("padding", style.Padding);
 
 		if(entry.count("width") > 0)
-			style.width = entry["width"];
+			style.Width = entry["width"];
 
 		if(entry.count("height") > 0)
-			style.height = entry["height"];
+			style.Height = entry["height"];
 
 		if(entry.count("minWidth") > 0)
-			style.minWidth = entry["minWidth"];
+			style.MinWidth = entry["minWidth"];
 
 		if(entry.count("maxWidth") > 0)
-			style.maxWidth = entry["maxWidth"];
+			style.MaxWidth = entry["maxWidth"];
 
 		if(entry.count("minHeight") > 0)
-			style.minHeight = entry["minHeight"];
+			style.MinHeight = entry["minHeight"];
 		
 		if(entry.count("maxHeight") > 0)
-			style.maxHeight = entry["maxHeight"];
+			style.MaxHeight = entry["maxHeight"];
 
 		if(entry.count("fixedWidth") > 0)
-			style.fixedWidth = entry["fixedWidth"];
+			style.FixedWidth = entry["fixedWidth"];
 
 		if(entry.count("fixedHeight") > 0)
-			style.fixedHeight = entry["fixedHeight"];
+			style.FixedHeight = entry["fixedHeight"];
 
 		if(entry.count("subStyles") > 0)
 		{
@@ -870,7 +870,7 @@ namespace bs
 				std::string name = subStyle["name"];
 				std::string styleName = subStyle["style"];
 
-				style.subStyles.insert(std::make_pair(name.c_str(), styleName.c_str()));
+				style.SubStyles.insert(std::make_pair(name.c_str(), styleName.c_str()));
 			}
 		}
 

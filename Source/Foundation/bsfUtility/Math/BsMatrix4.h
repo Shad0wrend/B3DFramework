@@ -227,19 +227,19 @@ namespace bs
 		/** Assigns the vector to a column of the matrix. */
 		void SetColumn(UINT32 idx, const Vector4& column)
 		{
-			m[0][idx] = column.x;
-			m[1][idx] = column.y;
-			m[2][idx] = column.z;
-			m[3][idx] = column.w;
+			m[0][idx] = column.X;
+			m[1][idx] = column.Y;
+			m[2][idx] = column.Z;
+			m[3][idx] = column.W;
 		}
 
 		/** Assigns the vector to a row of the matrix. */
 		void SetRow(UINT32 idx, const Vector4& column)
 		{
-			m[idx][0] = column.x;
-			m[idx][1] = column.y;
-			m[idx][2] = column.z;
-			m[idx][3] = column.w;
+			m[idx][0] = column.X;
+			m[idx][1] = column.Y;
+			m[idx][2] = column.Z;
+			m[idx][3] = column.W;
 		}
 
 		/** Returns the rotation/scaling part of the matrix as a 3x3 matrix. */
@@ -349,9 +349,9 @@ namespace bs
 		 */
 		Plane MultiplyAffine(const Plane& p) const
 		{
-			Vector4 localNormal(p.normal.x, p.normal.y, p.normal.z, 0.0f);
-			Vector4 localPoint = localNormal * p.d;
-			localPoint.w = 1.0f;
+			Vector4 localNormal(p.Normal.X, p.Normal.Y, p.Normal.Z, 0.0f);
+			Vector4 localPoint = localNormal * p.D;
+			localPoint.W = 1.0f;
 
 			Matrix4 itMat = Inverse().Transpose();
 			Vector4 worldNormal = itMat.MultiplyAffine(localNormal);
@@ -359,7 +359,7 @@ namespace bs
 
 			float d = worldNormal.Dot(worldPoint);
 
-			return Plane(worldNormal.x, worldNormal.y, worldNormal.z, d);
+			return Plane(worldNormal.X, worldNormal.Y, worldNormal.Z, d);
 		}
 
 		/**
@@ -370,9 +370,9 @@ namespace bs
 		Vector3 MultiplyAffine(const Vector3& v) const
 		{
 			return Vector3(
-				m[0][0] * v.x + m[0][1] * v.y + m[0][2] * v.z + m[0][3],
-				m[1][0] * v.x + m[1][1] * v.y + m[1][2] * v.z + m[1][3],
-				m[2][0] * v.x + m[2][1] * v.y + m[2][2] * v.z + m[2][3]);
+				m[0][0] * v.X + m[0][1] * v.Y + m[0][2] * v.Z + m[0][3],
+				m[1][0] * v.X + m[1][1] * v.Y + m[1][2] * v.Z + m[1][3],
+				m[2][0] * v.X + m[2][1] * v.Y + m[2][2] * v.Z + m[2][3]);
 		}
 
 		/**
@@ -383,19 +383,19 @@ namespace bs
 		Vector4 MultiplyAffine(const Vector4& v) const
 		{
 			return Vector4(
-				m[0][0] * v.x + m[0][1] * v.y + m[0][2] * v.z + m[0][3] * v.w,
-				m[1][0] * v.x + m[1][1] * v.y + m[1][2] * v.z + m[1][3] * v.w,
-				m[2][0] * v.x + m[2][1] * v.y + m[2][2] * v.z + m[2][3] * v.w,
-				v.w);
+				m[0][0] * v.X + m[0][1] * v.Y + m[0][2] * v.Z + m[0][3] * v.W,
+				m[1][0] * v.X + m[1][1] * v.Y + m[1][2] * v.Z + m[1][3] * v.W,
+				m[2][0] * v.X + m[2][1] * v.Y + m[2][2] * v.Z + m[2][3] * v.W,
+				v.W);
 		}
 
 		/** Transform a 3D direction by this matrix. */
 		Vector3 MultiplyDirection(const Vector3& v) const
 		{
 			return Vector3(
-				m[0][0] * v.x + m[0][1] * v.y + m[0][2] * v.z,
-				m[1][0] * v.x + m[1][1] * v.y + m[1][2] * v.z,
-				m[2][0] * v.x + m[2][1] * v.y + m[2][2] * v.z);
+				m[0][0] * v.X + m[0][1] * v.Y + m[0][2] * v.Z,
+				m[1][0] * v.X + m[1][1] * v.Y + m[1][2] * v.Z,
+				m[2][0] * v.X + m[2][1] * v.Y + m[2][2] * v.Z);
 		}
 
 		/**
@@ -411,11 +411,11 @@ namespace bs
 		{
 			Vector3 r(BsZero);
 
-			float fInvW = 1.0f / (m[3][0] * v.x + m[3][1] * v.y + m[3][2] * v.z + m[3][3]);
+			float fInvW = 1.0f / (m[3][0] * v.X + m[3][1] * v.Y + m[3][2] * v.Z + m[3][3]);
 
-			r.x = (m[0][0] * v.x + m[0][1] * v.y + m[0][2] * v.z + m[0][3]) * fInvW;
-			r.y = (m[1][0] * v.x + m[1][1] * v.y + m[1][2] * v.z + m[1][3]) * fInvW;
-			r.z = (m[2][0] * v.x + m[2][1] * v.y + m[2][2] * v.z + m[2][3]) * fInvW;
+			r.X = (m[0][0] * v.X + m[0][1] * v.Y + m[0][2] * v.Z + m[0][3]) * fInvW;
+			r.Y = (m[1][0] * v.X + m[1][1] * v.Y + m[1][2] * v.Z + m[1][3]) * fInvW;
+			r.Z = (m[2][0] * v.X + m[2][1] * v.Y + m[2][2] * v.Z + m[2][3]) * fInvW;
 
 			return r;
 		}
@@ -428,10 +428,10 @@ namespace bs
 		Vector4 Multiply(const Vector4& v) const
 		{
 			return Vector4(
-				m[0][0] * v.x + m[0][1] * v.y + m[0][2] * v.z + m[0][3] * v.w,
-				m[1][0] * v.x + m[1][1] * v.y + m[1][2] * v.z + m[1][3] * v.w,
-				m[2][0] * v.x + m[2][1] * v.y + m[2][2] * v.z + m[2][3] * v.w,
-				m[3][0] * v.x + m[3][1] * v.y + m[3][2] * v.z + m[3][3] * v.w
+				m[0][0] * v.X + m[0][1] * v.Y + m[0][2] * v.Z + m[0][3] * v.W,
+				m[1][0] * v.X + m[1][1] * v.Y + m[1][2] * v.Z + m[1][3] * v.W,
+				m[2][0] * v.X + m[2][1] * v.Y + m[2][2] * v.Z + m[2][3] * v.W,
+				m[3][0] * v.X + m[3][1] * v.Y + m[3][2] * v.Z + m[3][3] * v.W
 			);
 		}
 

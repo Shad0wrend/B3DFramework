@@ -37,7 +37,7 @@ namespace bs
 		{
 			for (auto& handlerData : iterFind->second)
 			{
-				handlerData.callback();
+				handlerData.Callback();
 			}
 		}
 	}
@@ -47,8 +47,8 @@ namespace bs
 		UINT32 callbackId = mNextCallbackId++;
 		
 		MessageHandlerData data;
-		data.id = callbackId;
-		data.callback = callback;
+		data.Id = callbackId;
+		data.Callback = callback;
 
 		mMessageHandlers[message.mMsgIdentifier].push_back(data);
 		mHandlerIdToMessageMap[callbackId] = message.mMsgIdentifier;
@@ -69,7 +69,7 @@ namespace bs
 				std::remove_if(handlerData.begin(), handlerData.end(),
 				[&](MessageHandlerData& x)
 				{
-					return x.id == handleId;
+					return x.Id == handleId;
 				}),
 				handlerData.end());
 		}

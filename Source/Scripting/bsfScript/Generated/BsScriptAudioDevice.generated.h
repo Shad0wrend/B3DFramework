@@ -10,7 +10,7 @@ namespace bs
 {
 	struct __AudioDeviceInterop
 	{
-		MonoString* name;
+		MonoString* Name;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptAudioDevice : public ScriptObject<ScriptAudioDevice>

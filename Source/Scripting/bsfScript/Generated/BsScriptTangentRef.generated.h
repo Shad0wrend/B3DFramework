@@ -12,8 +12,8 @@ namespace bs
 {
 	struct __TangentRefInterop
 	{
-		KeyframeRef keyframeRef;
-		TangentType type;
+		KeyframeRef KeyframeRef;
+		TangentType Type;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptTangentRef : public ScriptObject<ScriptTangentRef>

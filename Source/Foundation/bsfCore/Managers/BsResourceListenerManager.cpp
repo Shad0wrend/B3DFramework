@@ -24,8 +24,8 @@ namespace bs
 
 	ResourceListenerManager::ResourceListenerManager()
 	{
-		mResourceLoadedConn = gResources().onResourceLoaded.Connect(std::bind(&::bs::ResourceListenerManager::OnResourceLoaded, this, _1));
-		mResourceModifiedConn = gResources().onResourceModified.Connect(std::bind(&::bs::ResourceListenerManager::OnResourceModified, this, _1));
+		mResourceLoadedConn = gResources().OnResourceLoaded.Connect(std::bind(&::bs::ResourceListenerManager::OnResourceLoaded, this, _1));
+		mResourceModifiedConn = gResources().OnResourceModified.Connect(std::bind(&::bs::ResourceListenerManager::OnResourceModified, this, _1));
 	}
 
 	ResourceListenerManager::~ResourceListenerManager()

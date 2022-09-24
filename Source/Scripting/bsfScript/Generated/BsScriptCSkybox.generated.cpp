@@ -18,10 +18,10 @@ namespace bs
 
 	void ScriptCSkybox::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_GetTexture", (void*)&ScriptCSkybox::InternalGetTexture);
-		metaData.scriptClass->AddInternalCall("Internal_SetTexture", (void*)&ScriptCSkybox::InternalSetTexture);
-		metaData.scriptClass->AddInternalCall("Internal_SetBrightness", (void*)&ScriptCSkybox::InternalSetBrightness);
-		metaData.scriptClass->AddInternalCall("Internal_GetBrightness", (void*)&ScriptCSkybox::InternalGetBrightness);
+		metaData.ScriptClass->AddInternalCall("Internal_GetTexture", (void*)&ScriptCSkybox::InternalGetTexture);
+		metaData.ScriptClass->AddInternalCall("Internal_SetTexture", (void*)&ScriptCSkybox::InternalSetTexture);
+		metaData.ScriptClass->AddInternalCall("Internal_SetBrightness", (void*)&ScriptCSkybox::InternalSetBrightness);
+		metaData.ScriptClass->AddInternalCall("Internal_GetBrightness", (void*)&ScriptCSkybox::InternalGetBrightness);
 
 	}
 

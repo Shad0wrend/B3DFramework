@@ -10,10 +10,10 @@ namespace bs
 	/** Contains private data for the Win32 Mouse implementation. */
 	struct Mouse::Pimpl
 	{
-		IDirectInput8* directInput;
-		IDirectInputDevice8* mouse;
-		DWORD coopSettings;
-		HWND hWnd;
+		IDirectInput8* DirectInput;
+		IDirectInputDevice8* Mouse;
+		DWORD CoopSettings;
+		HWND HWnd;
 	};
 
 	/**
@@ -29,33 +29,33 @@ namespace bs
 		dipdw.diph.dwHow = DIPH_DEVICE;
 		dipdw.dwData = DI_BUFFER_SIZE_MOUSE;
 
-		if (FAILED(m->directInput->CreateDevice(GUID_SysMouse, &m->mouse, nullptr)))
+		if (FAILED(m->DirectInput->CreateDevice(GUID_SysMouse, &m->Mouse, nullptr)))
 			BS_EXCEPT(InternalErrorException, "DirectInput mouse init: Failed to create device.");
 
-		if (FAILED(m->mouse->SetDataFormat(&c_dfDIMouse2)))
+		if (FAILED(m->Mouse->SetDataFormat(&c_dfDIMouse2)))
 			BS_EXCEPT(InternalErrorException, "DirectInput mouse init: Failed to set format.");
 
-		if (FAILED(m->mouse->SetCooperativeLevel(hWnd, m->coopSettings)))
+		if (FAILED(m->Mouse->SetCooperativeLevel(hWnd, m->CoopSettings)))
 			BS_EXCEPT(InternalErrorException, "DirectInput mouse init: Failed to set coop level.");
 
-		if (FAILED(m->mouse->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph)))
+		if (FAILED(m->Mouse->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph)))
 			BS_EXCEPT(InternalErrorException, "DirectInput mouse init: Failed to set property.");
 
-		HRESULT hr = m->mouse->Acquire();
+		HRESULT hr = m->Mouse->Acquire();
 		if (FAILED(hr) && hr != DIERR_OTHERAPPHASPRIO)
 			BS_EXCEPT(InternalErrorException, "DirectInput mouse init: Failed to acquire device.");
 
-		m->hWnd = hWnd;
+		m->HWnd = hWnd;
 	}
 
 	/** Releases DirectInput resources for the provided device */
 	void releaseDirectInput(Mouse::Pimpl* m)
 	{
-		if(m->mouse)
+		if(m->Mouse)
 		{
-			m->mouse->Unacquire();
-			m->mouse->Release();
-			m->mouse = nullptr;
+			m->Mouse->Unacquire();
+			m->Mouse->Release();
+			m->Mouse = nullptr;
 		}
 	}
 
@@ -74,9 +74,9 @@ namespace bs
 		InputPrivateData* pvtData = owner->GetPrivateDataInternal();
 
 		m = bs_new<Pimpl>();
-		m->directInput = pvtData->directInput;
-		m->coopSettings = pvtData->mouseSettings;
-		m->mouse = nullptr;
+		m->DirectInput = pvtData->DirectInput;
+		m->CoopSettings = pvtData->MouseSettings;
+		m->Mouse = nullptr;
 
 		initializeDirectInput(m, (HWND)owner->GetWindowHandleInternal());
 	}
@@ -90,20 +90,20 @@ namespace bs
 
 	void Mouse::Capture()
 	{
-		if (m->mouse == nullptr)
+		if (m->Mouse == nullptr)
 			return;
 
 		DIDEVICEOBJECTDATA diBuff[DI_BUFFER_SIZE_MOUSE];
 		DWORD numEntries = DI_BUFFER_SIZE_MOUSE;
 
-		HRESULT hr = m->mouse->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), diBuff, &numEntries, 0);
+		HRESULT hr = m->Mouse->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), diBuff, &numEntries, 0);
 		if (hr != DI_OK)
 		{
-			hr = m->mouse->Acquire();
+			hr = m->Mouse->Acquire();
 			while (hr == DIERR_INPUTLOST)
-				hr = m->mouse->Acquire();
+				hr = m->Mouse->Acquire();
 
-			hr = m->mouse->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), diBuff, &numEntries, 0);
+			hr = m->Mouse->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), diBuff, &numEntries, 0);
 
 			if (FAILED(hr))
 				return;
@@ -166,14 +166,14 @@ namespace bs
 	{
 		HWND newhWnd = (HWND)windowHandle;
 
-		if(m->hWnd != newhWnd)
+		if(m->HWnd != newhWnd)
 		{
 			releaseDirectInput(m);
 
 			if (windowHandle != (UINT64)-1)
 				initializeDirectInput(m, newhWnd);
 			else
-				m->hWnd = (HWND)-1;
+				m->HWnd = (HWND)-1;
 		}
 	}
 }

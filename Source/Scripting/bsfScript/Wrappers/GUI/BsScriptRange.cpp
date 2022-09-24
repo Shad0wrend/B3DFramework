@@ -12,8 +12,8 @@ namespace bs
 	{ }
 	void ScriptRange::InitRuntimeData()
 	{
-		minRangeField = metaData.scriptClass->GetField("min");
-		maxRangeField = metaData.scriptClass->GetField("max");
-		sliderField = metaData.scriptClass->GetField("slider");
+		minRangeField = metaData.ScriptClass->GetField("min");
+		maxRangeField = metaData.ScriptClass->GetField("max");
+		sliderField = metaData.ScriptClass->GetField("slider");
 	}
 }

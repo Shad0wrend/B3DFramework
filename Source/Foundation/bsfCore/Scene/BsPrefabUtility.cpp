@@ -13,27 +13,27 @@ namespace bs
 		/**	Contains saved Component instance data. */
 		struct ComponentProxy
 		{
-			GameObjectInstanceDataPtr instanceData;
-			UINT32 linkId;
-			UUID uuid;
+			GameObjectInstanceDataPtr InstanceData;
+			UINT32 LinkId;
+			UUID Uuid;
 		};
 
 		/** Contains saved SceneObject instance data, as well as saved instance data for all its children and components. */
 		struct SceneObjectProxy
 		{
-			GameObjectInstanceDataPtr instanceData;
-			UINT32 linkId;
-			UUID uuid;
+			GameObjectInstanceDataPtr InstanceData;
+			UINT32 LinkId;
+			UUID Uuid;
 
-			Vector<ComponentProxy> components;
-			Vector<SceneObjectProxy> children;
+			Vector<ComponentProxy> Components;
+			Vector<SceneObjectProxy> Children;
 		};
 
 		/** Contains linked game-object instance data and UUID. */
 		struct LinkedInstanceData
 		{
-			GameObjectInstanceDataPtr instanceData;
-			UUID uuid;
+			GameObjectInstanceDataPtr InstanceData;
+			UUID Uuid;
 		};
 
 		/**
@@ -53,52 +53,52 @@ namespace bs
 		{
 			struct StackData
 			{
-				HSceneObject so;
-				SceneObjectProxy* proxy;
+				HSceneObject So;
+				SceneObjectProxy* Proxy;
 			};
 
 			Stack<StackData> todo;
 			todo.push({so, &output});
 
-			output.instanceData = so->GetInstanceDataInternal();
-			output.uuid = so->GetUuid();
-			output.linkId = (UINT32)-1;
+			output.InstanceData = so->GetInstanceDataInternal();
+			output.Uuid = so->GetUuid();
+			output.LinkId = (UINT32)-1;
 
 			while (!todo.empty())
 			{
 				StackData curData = todo.top();
 				todo.pop();
 
-				const Vector<HComponent>& components = curData.so->GetComponents();
+				const Vector<HComponent>& components = curData.So->GetComponents();
 				for (auto& component : components)
 				{
-					curData.proxy->components.push_back(ComponentProxy());
+					curData.Proxy->Components.push_back(ComponentProxy());
 
-					ComponentProxy& componentProxy = curData.proxy->components.back();
-					componentProxy.instanceData = component->GetInstanceDataInternal();
-					componentProxy.uuid = component->GetUuid();
-					componentProxy.linkId = component->GetLinkId();
+					ComponentProxy& componentProxy = curData.Proxy->Components.back();
+					componentProxy.InstanceData = component->GetInstanceDataInternal();
+					componentProxy.Uuid = component->GetUuid();
+					componentProxy.LinkId = component->GetLinkId();
 
-					linkedInstanceData[componentProxy.linkId] = { componentProxy.instanceData, componentProxy.uuid };
+					linkedInstanceData[componentProxy.LinkId] = { componentProxy.InstanceData, componentProxy.Uuid };
 				}
 
-				UINT32 numChildren = curData.so->GetNumChildren();
-				curData.proxy->children.resize(numChildren);
+				UINT32 numChildren = curData.So->GetNumChildren();
+				curData.Proxy->Children.resize(numChildren);
 
 				for (UINT32 i = 0; i < numChildren; i++)
 				{
-					HSceneObject child = curData.so->GetChild(i);
+					HSceneObject child = curData.So->GetChild(i);
 
-					SceneObjectProxy& childProxy = curData.proxy->children[i];
+					SceneObjectProxy& childProxy = curData.Proxy->Children[i];
 
-					childProxy.instanceData = child->GetInstanceDataInternal();
-					childProxy.uuid = child->GetUuid();
-					childProxy.linkId = child->GetLinkId();
+					childProxy.InstanceData = child->GetInstanceDataInternal();
+					childProxy.Uuid = child->GetUuid();
+					childProxy.LinkId = child->GetLinkId();
 
-					linkedInstanceData[childProxy.linkId] = { childProxy.instanceData, childProxy.uuid };
+					linkedInstanceData[childProxy.LinkId] = { childProxy.InstanceData, childProxy.Uuid };
 
 					if (child->GetPrefabLinkUUIDInternal().Empty())
-						todo.push({ child, &curData.proxy->children[i] });
+						todo.push({ child, &curData.Proxy->Children[i] });
 				}
 			}
 		}
@@ -132,8 +132,8 @@ namespace bs
 						auto iterFind = linkedInstanceData.find(component->GetLinkId());
 						if (iterFind != linkedInstanceData.end())
 						{
-							component->SetInstanceDataInternal(iterFind->second.instanceData);
-							component->SetUUIDInternal(iterFind->second.uuid);
+							component->SetInstanceDataInternal(iterFind->second.InstanceData);
+							component->SetUUIDInternal(iterFind->second.Uuid);
 							component.SetHandleDataInternal(component.GetInternalPtr());
 						}
 					}
@@ -149,8 +149,8 @@ namespace bs
 						auto iterFind = linkedInstanceData.find(child->GetLinkId());
 						if (iterFind != linkedInstanceData.end())
 						{
-							child->SetInstanceDataInternal(iterFind->second.instanceData);
-							child->SetUUIDInternal(iterFind->second.uuid);
+							child->SetInstanceDataInternal(iterFind->second.InstanceData);
+							child->SetUUIDInternal(iterFind->second.Uuid);
 						}
 					}
 
@@ -174,31 +174,31 @@ namespace bs
 		{
 			struct StackEntry
 			{
-				HSceneObject so;
-				SceneObjectProxy* proxy;
+				HSceneObject So;
+				SceneObjectProxy* Proxy;
 			};
 
 			Stack<StackEntry> todo;
 			todo.push(StackEntry());
 
 			StackEntry& topEntry = todo.top();
-			topEntry.so = so;
-			topEntry.proxy = &proxy;
+			topEntry.So = so;
+			topEntry.Proxy = &proxy;
 
 			while (!todo.empty())
 			{
 				StackEntry current = todo.top();
 				todo.pop();
 
-				if (current.proxy->linkId == (UINT32)-1)
+				if (current.Proxy->LinkId == (UINT32)-1)
 				{
-					current.so->SetInstanceDataInternal(current.proxy->instanceData);
-					current.so->SetUUIDInternal(current.proxy->uuid);
+					current.So->SetInstanceDataInternal(current.Proxy->InstanceData);
+					current.So->SetUUIDInternal(current.Proxy->Uuid);
 				}
 
-				Vector<HComponent>& components = current.so->GetComponentsInternal();
+				Vector<HComponent>& components = current.So->GetComponentsInternal();
 				UINT32 componentProxyIdx = 0;
-				UINT32 numComponentProxies = (UINT32)current.proxy->components.size();
+				UINT32 numComponentProxies = (UINT32)current.Proxy->Components.size();
 				for (auto& component : components)
 				{
 					if (component->GetLinkId() == (UINT32)-1)
@@ -207,11 +207,11 @@ namespace bs
 						(void)foundInstanceData;
 						for (; componentProxyIdx < numComponentProxies; componentProxyIdx++)
 						{
-							if (current.proxy->components[componentProxyIdx].linkId != (UINT32)-1)
+							if (current.Proxy->Components[componentProxyIdx].LinkId != (UINT32)-1)
 								continue;
 
-							component->SetInstanceDataInternal(current.proxy->components[componentProxyIdx].instanceData);
-							component->SetUUIDInternal(current.proxy->components[componentProxyIdx].uuid);
+							component->SetInstanceDataInternal(current.Proxy->Components[componentProxyIdx].InstanceData);
+							component->SetUUIDInternal(current.Proxy->Components[componentProxyIdx].Uuid);
 							component.SetHandleDataInternal(component.GetInternalPtr());
 
 							foundInstanceData = true;
@@ -222,12 +222,12 @@ namespace bs
 					}
 				}
 
-				UINT32 numChildren = current.so->GetNumChildren();
+				UINT32 numChildren = current.So->GetNumChildren();
 				UINT32 childProxyIdx = 0;
-				UINT32 numChildProxies = (UINT32)current.proxy->children.size();
+				UINT32 numChildProxies = (UINT32)current.Proxy->Children.size();
 				for (UINT32 i = 0; i < numChildren; i++)
 				{
-					HSceneObject child = current.so->GetChild(i);
+					HSceneObject child = current.So->GetChild(i);
 
 					if (child->GetLinkId() == (UINT32)-1)
 					{
@@ -235,20 +235,20 @@ namespace bs
 						(void)foundInstanceData;
 						for (; childProxyIdx < numChildProxies; childProxyIdx++)
 						{
-							if (current.proxy->children[childProxyIdx].linkId != (UINT32)-1)
+							if (current.Proxy->Children[childProxyIdx].LinkId != (UINT32)-1)
 								continue;
 
-							assert(current.proxy->children[childProxyIdx].linkId == (UINT32)-1);
-							child->SetInstanceDataInternal(current.proxy->children[childProxyIdx].instanceData);
-							child->SetUUIDInternal(current.proxy->children[childProxyIdx].uuid);
+							assert(current.Proxy->Children[childProxyIdx].LinkId == (UINT32)-1);
+							child->SetInstanceDataInternal(current.Proxy->Children[childProxyIdx].InstanceData);
+							child->SetUUIDInternal(current.Proxy->Children[childProxyIdx].Uuid);
 
 							if (child->GetPrefabLinkUUIDInternal().Empty())
 							{
 								todo.push(StackEntry());
 
 								StackEntry& newEntry = todo.top();
-								newEntry.so = child;
-								newEntry.proxy = &current.proxy->children[childProxyIdx];
+								newEntry.So = child;
+								newEntry.Proxy = &current.Proxy->Children[childProxyIdx];
 							}
 
 							foundInstanceData = true;
@@ -264,13 +264,13 @@ namespace bs
 
 						for (UINT32 j = 0; j < numChildProxies; j++)
 						{
-							if (child->GetLinkId() == current.proxy->children[j].linkId)
+							if (child->GetLinkId() == current.Proxy->Children[j].LinkId)
 							{
 								todo.push(StackEntry());
 
 								StackEntry& newEntry = todo.top();
-								newEntry.so = child;
-								newEntry.proxy = &current.proxy->children[j];
+								newEntry.So = child;
+								newEntry.Proxy = &current.Proxy->Children[j];
 								break;
 							}
 						}
@@ -352,10 +352,10 @@ namespace bs
 		// (as those aren't stored in the prefab diff)
 		struct RestoredPrefabInstance
 		{
-			HSceneObject newInstance;
-			HSceneObject originalParent;
-			SPtr<PrefabDiff> diff;
-			UINT32 originalLinkId;
+			HSceneObject NewInstance;
+			HSceneObject OriginalParent;
+			SPtr<PrefabDiff> Diff;
+			UINT32 OriginalLinkId;
 		};
 
 		Vector<RestoredPrefabInstance> newPrefabInstanceData;
@@ -404,20 +404,20 @@ namespace bs
 		{
 			// Diffs must be applied after everything is instantiated and instance data restored since it may contain
 			// game object handles within or external to its prefab instance.
-			if (entry.diff != nullptr)
-				entry.diff->Apply(entry.newInstance);
+			if (entry.Diff != nullptr)
+				entry.Diff->Apply(entry.NewInstance);
 
-			entry.newInstance->mPrefabDiff = entry.diff;
+			entry.NewInstance->mPrefabDiff = entry.Diff;
 
-			entry.newInstance->SetParent(entry.originalParent, false);
-			entry.newInstance->mLinkId = entry.originalLinkId;
+			entry.NewInstance->SetParent(entry.OriginalParent, false);
+			entry.NewInstance->mLinkId = entry.OriginalLinkId;
 		}
 
 		// Finally, instantiate everything if the top scene object is live (instantiated)
 		if (topLevelObject->IsInstantiated())
 		{
 			for (auto& entry : newPrefabInstanceData)
-				entry.newInstance->InstantiateInternal(true);
+				entry.NewInstance->InstantiateInternal(true);
 		}
 
 		gResources().UnloadAllUnused();

@@ -69,9 +69,9 @@ namespace bs { namespace ct
 	/** Information about current time and frame index. */
 	struct FrameTimings
 	{
-		float time = 0.0f;
-		float timeDelta = 0.0f;
-		UINT64 frameIdx = 0;
+		float Time = 0.0f;
+		float TimeDelta = 0.0f;
+		UINT64 FrameIdx = 0;
 	};
 
 	/** @} */

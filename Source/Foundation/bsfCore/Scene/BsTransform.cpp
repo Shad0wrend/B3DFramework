@@ -50,9 +50,9 @@ namespace bs
 	void Transform::SetWorldPosition(const Vector3& position, const Transform& parent)
 	{
 		Vector3 invScale = parent.GetScale();
-		if (invScale.x != 0) invScale.x = 1.0f / invScale.x;
-		if (invScale.y != 0) invScale.y = 1.0f / invScale.y;
-		if (invScale.z != 0) invScale.z = 1.0f / invScale.z;
+		if (invScale.X != 0) invScale.X = 1.0f / invScale.X;
+		if (invScale.Y != 0) invScale.Y = 1.0f / invScale.Y;
+		if (invScale.Z != 0) invScale.Z = 1.0f / invScale.Z;
 
 		Quaternion invRotation = parent.GetRotation().Inverse();
 

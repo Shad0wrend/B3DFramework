@@ -27,35 +27,35 @@ namespace bs
 		if (mParent == nullptr)
 			return;
 
-		GpuParamBufferType paramBlock = mParent->GetParamBlockBuffer(mParamDesc->paramBlockSet, mParamDesc->paramBlockSlot);
+		GpuParamBufferType paramBlock = mParent->GetParamBlockBuffer(mParamDesc->ParamBlockSet, mParamDesc->ParamBlockSlot);
 		if (paramBlock == nullptr)
 			return;
 
 #if BS_DEBUG_MODE
-		if (arrayIdx >= mParamDesc->arraySize)
+		if (arrayIdx >= mParamDesc->ArraySize)
 		{
 			BS_EXCEPT(InvalidParametersException, "Array index out of range. Array size: " +
-				toString(mParamDesc->arraySize) + ". Requested size: " + toString(arrayIdx));
+				toString(mParamDesc->ArraySize) + ". Requested size: " + toString(arrayIdx));
 		}
 #endif
 
-		UINT32 elementSizeBytes = mParamDesc->elementSize * sizeof(UINT32);
+		UINT32 elementSizeBytes = mParamDesc->ElementSize * sizeof(UINT32);
 		UINT32 sizeBytes = std::min(elementSizeBytes, (UINT32)sizeof(T)); // Truncate if it doesn't fit within parameter size
 
-		const bool transposeMatrices = ct::gCaps().conventions.matrixOrder == Conventions::MatrixOrder::ColumnMajor;
+		const bool transposeMatrices = ct::gCaps().Conventions.MatrixOrder == Conventions::MatrixOrder::ColumnMajor;
 		if (TransposePolicy<T>::TransposeEnabled(transposeMatrices))
 		{
 			auto transposed = TransposePolicy<T>::Transpose(value);
-			paramBlock->Write((mParamDesc->cpuMemOffset + arrayIdx * mParamDesc->arrayElementStride) * sizeof(UINT32), &transposed, sizeBytes);
+			paramBlock->Write((mParamDesc->CpuMemOffset + arrayIdx * mParamDesc->ArrayElementStride) * sizeof(UINT32), &transposed, sizeBytes);
 		}
 		else
-			paramBlock->Write((mParamDesc->cpuMemOffset + arrayIdx * mParamDesc->arrayElementStride) * sizeof(UINT32), &value, sizeBytes);
+			paramBlock->Write((mParamDesc->CpuMemOffset + arrayIdx * mParamDesc->ArrayElementStride) * sizeof(UINT32), &value, sizeBytes);
 
 		// Set unused bytes to 0
 		if (sizeBytes < elementSizeBytes)
 		{
 			UINT32 diffSize = elementSizeBytes - sizeBytes;
-			paramBlock->ZeroOut((mParamDesc->cpuMemOffset + arrayIdx * mParamDesc->arrayElementStride)  * sizeof(UINT32) + sizeBytes, diffSize);
+			paramBlock->ZeroOut((mParamDesc->CpuMemOffset + arrayIdx * mParamDesc->ArrayElementStride)  * sizeof(UINT32) + sizeBytes, diffSize);
 		}
 
 		mParent->MarkCoreDirtyInternal();
@@ -67,23 +67,23 @@ namespace bs
 		if (mParent == nullptr)
 			return T();
 
-		GpuParamBufferType paramBlock = mParent->GetParamBlockBuffer(mParamDesc->paramBlockSet, mParamDesc->paramBlockSlot);
+		GpuParamBufferType paramBlock = mParent->GetParamBlockBuffer(mParamDesc->ParamBlockSet, mParamDesc->ParamBlockSlot);
 		if (paramBlock == nullptr)
 			return T();
 
 #if BS_DEBUG_MODE
-		if (arrayIdx >= mParamDesc->arraySize)
+		if (arrayIdx >= mParamDesc->ArraySize)
 		{
 			BS_EXCEPT(InvalidParametersException, "Array index out of range. Array size: " +
-				toString(mParamDesc->arraySize) + ". Requested size: " + toString(arrayIdx));
+				toString(mParamDesc->ArraySize) + ". Requested size: " + toString(arrayIdx));
 		}
 #endif
 
-		UINT32 elementSizeBytes = mParamDesc->elementSize * sizeof(UINT32);
+		UINT32 elementSizeBytes = mParamDesc->ElementSize * sizeof(UINT32);
 		UINT32 sizeBytes = std::min(elementSizeBytes, (UINT32)sizeof(T));
 
 		T value;
-		paramBlock->Read((mParamDesc->cpuMemOffset + arrayIdx * mParamDesc->arrayElementStride) * sizeof(UINT32), &value, sizeBytes);
+		paramBlock->Read((mParamDesc->CpuMemOffset + arrayIdx * mParamDesc->ArrayElementStride) * sizeof(UINT32), &value, sizeBytes);
 
 		return value;
 	}
@@ -104,11 +104,11 @@ namespace bs
 		if (mParent == nullptr)
 			return;
 
-		GpuParamBufferType paramBlock = mParent->GetParamBlockBuffer(mParamDesc->paramBlockSet, mParamDesc->paramBlockSlot);
+		GpuParamBufferType paramBlock = mParent->GetParamBlockBuffer(mParamDesc->ParamBlockSet, mParamDesc->ParamBlockSlot);
 		if (paramBlock == nullptr)
 			return;
 
-		UINT32 elementSizeBytes = mParamDesc->elementSize * sizeof(UINT32);
+		UINT32 elementSizeBytes = mParamDesc->ElementSize * sizeof(UINT32);
 
 #if BS_DEBUG_MODE
 		if (sizeBytes > elementSizeBytes)
@@ -117,22 +117,22 @@ namespace bs
 				" Supplied size: {1}", elementSizeBytes, sizeBytes);
 		}
 
-		if (arrayIdx >= mParamDesc->arraySize)
+		if (arrayIdx >= mParamDesc->ArraySize)
 		{
 			BS_EXCEPT(InvalidParametersException, "Array index out of range. Array size: " +
-				toString(mParamDesc->arraySize) + ". Requested size: " + toString(arrayIdx));
+				toString(mParamDesc->ArraySize) + ". Requested size: " + toString(arrayIdx));
 		}
 #endif
 
 		sizeBytes = std::min(elementSizeBytes, sizeBytes);
 
-		paramBlock->Write((mParamDesc->cpuMemOffset + arrayIdx * mParamDesc->arrayElementStride) * sizeof(UINT32), value, sizeBytes);
+		paramBlock->Write((mParamDesc->CpuMemOffset + arrayIdx * mParamDesc->ArrayElementStride) * sizeof(UINT32), value, sizeBytes);
 
 		// Set unused bytes to 0
 		if (sizeBytes < elementSizeBytes)
 		{
 			UINT32 diffSize = elementSizeBytes - sizeBytes;
-			paramBlock->ZeroOut((mParamDesc->cpuMemOffset + arrayIdx * mParamDesc->arrayElementStride)  * sizeof(UINT32) + sizeBytes, diffSize);
+			paramBlock->ZeroOut((mParamDesc->CpuMemOffset + arrayIdx * mParamDesc->ArrayElementStride)  * sizeof(UINT32) + sizeBytes, diffSize);
 		}
 
 		mParent->MarkCoreDirtyInternal();
@@ -144,11 +144,11 @@ namespace bs
 		if (mParent == nullptr)
 			return;
 
-		GpuParamBufferType paramBlock = mParent->GetParamBlockBuffer(mParamDesc->paramBlockSet, mParamDesc->paramBlockSlot);
+		GpuParamBufferType paramBlock = mParent->GetParamBlockBuffer(mParamDesc->ParamBlockSet, mParamDesc->ParamBlockSlot);
 		if (paramBlock == nullptr)
 			return;
 
-		UINT32 elementSizeBytes = mParamDesc->elementSize * sizeof(UINT32);
+		UINT32 elementSizeBytes = mParamDesc->ElementSize * sizeof(UINT32);
 
 #if BS_DEBUG_MODE
 		if (sizeBytes > elementSizeBytes)
@@ -157,15 +157,15 @@ namespace bs
 				" Supplied size: {1}", elementSizeBytes, sizeBytes);
 		}
 
-		if (arrayIdx >= mParamDesc->arraySize)
+		if (arrayIdx >= mParamDesc->ArraySize)
 		{
 			BS_EXCEPT(InvalidParametersException, "Array index out of range. Array size: " +
-				toString(mParamDesc->arraySize) + ". Requested size: " + toString(arrayIdx));
+				toString(mParamDesc->ArraySize) + ". Requested size: " + toString(arrayIdx));
 		}
 #endif
 		sizeBytes = std::min(elementSizeBytes, sizeBytes);
 
-		paramBlock->Read((mParamDesc->cpuMemOffset + arrayIdx * mParamDesc->arrayElementStride) * sizeof(UINT32), value, sizeBytes);
+		paramBlock->Read((mParamDesc->CpuMemOffset + arrayIdx * mParamDesc->ArrayElementStride) * sizeof(UINT32), value, sizeBytes);
 	}
 
 	template<bool Core>
@@ -174,7 +174,7 @@ namespace bs
 		if (mParent == nullptr)
 			return 0;
 
-		return mParamDesc->elementSize * sizeof(UINT32);
+		return mParamDesc->ElementSize * sizeof(UINT32);
 	}
 
 	template<bool Core>
@@ -193,7 +193,7 @@ namespace bs
 		if (mParent == nullptr)
 			return;
 
-		mParent->SetTexture(mParamDesc->set, mParamDesc->slot, texture, surface);
+		mParent->SetTexture(mParamDesc->Set, mParamDesc->Slot, texture, surface);
 
 		mParent->MarkResourcesDirtyInternal();
 		mParent->MarkCoreDirtyInternal();
@@ -205,7 +205,7 @@ namespace bs
 		if (mParent == nullptr)
 			return TextureType();
 
-		return mParent->GetTexture(mParamDesc->set, mParamDesc->slot);
+		return mParent->GetTexture(mParamDesc->Set, mParamDesc->Slot);
 	}
 
 	template<bool Core>
@@ -224,7 +224,7 @@ namespace bs
 		if (mParent == nullptr)
 			return;
 
-		mParent->SetBuffer(mParamDesc->set, mParamDesc->slot, buffer);
+		mParent->SetBuffer(mParamDesc->Set, mParamDesc->Slot, buffer);
 
 		mParent->MarkResourcesDirtyInternal();
 		mParent->MarkCoreDirtyInternal();
@@ -236,7 +236,7 @@ namespace bs
 		if (mParent == nullptr)
 			return BufferType();
 
-		return mParent->GetBuffer(mParamDesc->set, mParamDesc->slot);
+		return mParent->GetBuffer(mParamDesc->Set, mParamDesc->Slot);
 	}
 
 	template<bool Core>
@@ -255,7 +255,7 @@ namespace bs
 		if (mParent == nullptr)
 			return;
 
-		mParent->SetLoadStoreTexture(mParamDesc->set, mParamDesc->slot, texture, surface);
+		mParent->SetLoadStoreTexture(mParamDesc->Set, mParamDesc->Slot, texture, surface);
 
 		mParent->MarkResourcesDirtyInternal();
 		mParent->MarkCoreDirtyInternal();
@@ -267,7 +267,7 @@ namespace bs
 		if (mParent == nullptr)
 			return TextureType();
 
-		return mParent->GetTexture(mParamDesc->set, mParamDesc->slot);
+		return mParent->GetTexture(mParamDesc->Set, mParamDesc->Slot);
 	}
 
 	template<bool Core>
@@ -286,7 +286,7 @@ namespace bs
 		if (mParent == nullptr)
 			return;
 
-		mParent->SetSamplerState(mParamDesc->set, mParamDesc->slot, samplerState);
+		mParent->SetSamplerState(mParamDesc->Set, mParamDesc->Slot, samplerState);
 
 		mParent->MarkResourcesDirtyInternal();
 		mParent->MarkCoreDirtyInternal();
@@ -298,7 +298,7 @@ namespace bs
 		if (mParent == nullptr)
 			return SamplerStateType();
 
-		return mParent->GetSamplerState(mParamDesc->set, mParamDesc->slot);
+		return mParent->GetSamplerState(mParamDesc->Set, mParamDesc->Slot);
 	}
 
 	template class TGpuDataParam < float, false > ;

@@ -13,9 +13,9 @@ namespace bs
 {
 	struct __GUIContentInterop
 	{
-		MonoObject* text;
-		__GUIContentImagesInterop images;
-		MonoObject* tooltip;
+		MonoObject* Text;
+		__GUIContentImagesInterop Images;
+		MonoObject* Tooltip;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptGUIContent : public ScriptObject<ScriptGUIContent>

@@ -18,7 +18,7 @@ namespace bs { namespace ct
 	SPtr<GpuProgram> GLSLProgramFactory::Create(GpuProgramType type, GpuDeviceFlags deviceMask)
 	{
 		GPU_PROGRAM_DESC desc;
-		desc.type = type;
+		desc.Type = type;
 
 		GLSLGpuProgram* prog = new (bs_alloc<GLSLGpuProgram>()) GLSLGpuProgram(desc, deviceMask);
 
@@ -32,7 +32,7 @@ namespace bs { namespace ct
 	{
 		// Note: No bytecode format for GLSL
 		SPtr<GpuProgramBytecode> bytecode = bs_shared_ptr_new<GpuProgramBytecode>();
-		bytecode->compilerId = OPENGL_COMPILER_ID;
+		bytecode->CompilerId = OPENGL_COMPILER_ID;
 
 		return bytecode;
 	}

@@ -16,7 +16,7 @@ namespace bs
 
 	MonoObject*ScriptShaderParameter::Box(const __ShaderParameterInterop& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	__ShaderParameterInterop ScriptShaderParameter::Unbox(MonoObject* value)
@@ -28,13 +28,13 @@ namespace bs
 	{
 		ShaderParameter output;
 		String tmpname;
-		tmpname = MonoUtil::MonoToString(value.name);
-		output.name = tmpname;
+		tmpname = MonoUtil::MonoToString(value.Name);
+		output.Name = tmpname;
 		String tmpidentifier;
-		tmpidentifier = MonoUtil::MonoToString(value.identifier);
-		output.identifier = tmpidentifier;
-		output.type = value.type;
-		output.flags = value.flags;
+		tmpidentifier = MonoUtil::MonoToString(value.Identifier);
+		output.Identifier = tmpidentifier;
+		output.Type = value.Type;
+		output.Flags = value.Flags;
 
 		return output;
 	}
@@ -43,13 +43,13 @@ namespace bs
 	{
 		__ShaderParameterInterop output;
 		MonoString* tmpname;
-		tmpname = MonoUtil::StringToMono(value.name);
-		output.name = tmpname;
+		tmpname = MonoUtil::StringToMono(value.Name);
+		output.Name = tmpname;
 		MonoString* tmpidentifier;
-		tmpidentifier = MonoUtil::StringToMono(value.identifier);
-		output.identifier = tmpidentifier;
-		output.type = value.type;
-		output.flags = value.flags;
+		tmpidentifier = MonoUtil::StringToMono(value.Identifier);
+		output.Identifier = tmpidentifier;
+		output.Type = value.Type;
+		output.Flags = value.Flags;
 
 		return output;
 	}

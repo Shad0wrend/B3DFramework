@@ -12,19 +12,19 @@ namespace bs
 		const Vector3& org = ray.GetOrigin();
 		const Vector3& dir = ray.GetDirection();
 
-		float u = normal.Dot(org);
-		float v = normal.Dot(dir);
+		float u = Normal.Dot(org);
+		float v = Normal.Dot(dir);
 
 		float a = dir.Dot(dir) - v * v;
 		float b = 2 * (org.Dot(dir) - u * v);
 		float c = org.Dot(org) - u * u;
-		float d = org.Dot(org) + outerRadius*outerRadius - innerRadius*innerRadius;
+		float d = org.Dot(org) + OuterRadius*OuterRadius - InnerRadius*InnerRadius;
 
 		float A = 1.0f;
 		float B = 4 * org.Dot(dir);
-		float C = 2 * d + 0.25f * B * B - 4 * outerRadius * outerRadius * a;
-		float D = B * d - 4 * outerRadius * outerRadius * b;
-		float E = d * d - 4 * outerRadius * outerRadius * c;
+		float C = 2 * d + 0.25f * B * B - 4 * OuterRadius * OuterRadius * a;
+		float D = B * d - 4 * OuterRadius * OuterRadius * b;
+		float E = d * d - 4 * OuterRadius * OuterRadius * c;
 
 		float roots[4];
 		UINT32 numRoots = Math::SolveQuartic(A, B, C, D, E, roots);

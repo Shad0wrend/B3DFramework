@@ -17,46 +17,46 @@ namespace bs
 	/** Contains all the built-in script classes that are always available. */
 	struct BuiltinScriptClasses
 	{
-		MonoClass* systemArrayClass = nullptr;
-		MonoClass* systemGenericListClass = nullptr;
-		MonoClass* systemGenericDictionaryClass = nullptr;
-		MonoClass* systemTypeClass = nullptr;
+		MonoClass* SystemArrayClass = nullptr;
+		MonoClass* SystemGenericListClass = nullptr;
+		MonoClass* SystemGenericDictionaryClass = nullptr;
+		MonoClass* SystemTypeClass = nullptr;
 
-		MonoClass* componentClass = nullptr;
-		MonoClass* managedComponentClass = nullptr;
-		MonoClass* sceneObjectClass = nullptr;
-		MonoClass* missingComponentClass = nullptr;
+		MonoClass* ComponentClass = nullptr;
+		MonoClass* ManagedComponentClass = nullptr;
+		MonoClass* SceneObjectClass = nullptr;
+		MonoClass* MissingComponentClass = nullptr;
 
-		MonoClass* rrefBaseClass = nullptr;
-		MonoClass* genericRRefClass = nullptr;
-		MonoClass* genericAsyncOpClass = nullptr;
+		MonoClass* RrefBaseClass = nullptr;
+		MonoClass* GenericRRefClass = nullptr;
+		MonoClass* GenericAsyncOpClass = nullptr;
 
-		MonoClass* serializeObjectAttribute = nullptr;
-		MonoClass* dontSerializeFieldAttribute = nullptr;
-		MonoClass* serializeFieldAttribute = nullptr;
-		MonoClass* hideInInspectorAttribute = nullptr;
-		MonoClass* showInInspectorAttribute = nullptr;
-		MonoClass* rangeAttribute = nullptr;
-		MonoClass* stepAttribute = nullptr;
-		MonoClass* layerMaskAttribute = nullptr;
-		MonoClass* nativeWrapperAttribute = nullptr;
-		MonoClass* notNullAttribute = nullptr;
-		MonoClass* passByCopyAttribute = nullptr;
-		MonoClass* applyOnDirtyAttribute = nullptr;
-		MonoClass* asQuaternionAttribute = nullptr;
-		MonoClass* categoryAttribute = nullptr;
-		MonoClass* orderAttribute = nullptr;
-		MonoClass* inlineAttribute = nullptr;
-		MonoClass* loadOnAssignAttribute = nullptr;
-		MonoClass* hdrAttribute = nullptr;
+		MonoClass* SerializeObjectAttribute = nullptr;
+		MonoClass* DontSerializeFieldAttribute = nullptr;
+		MonoClass* SerializeFieldAttribute = nullptr;
+		MonoClass* HideInInspectorAttribute = nullptr;
+		MonoClass* ShowInInspectorAttribute = nullptr;
+		MonoClass* RangeAttribute = nullptr;
+		MonoClass* StepAttribute = nullptr;
+		MonoClass* LayerMaskAttribute = nullptr;
+		MonoClass* NativeWrapperAttribute = nullptr;
+		MonoClass* NotNullAttribute = nullptr;
+		MonoClass* PassByCopyAttribute = nullptr;
+		MonoClass* ApplyOnDirtyAttribute = nullptr;
+		MonoClass* AsQuaternionAttribute = nullptr;
+		MonoClass* CategoryAttribute = nullptr;
+		MonoClass* OrderAttribute = nullptr;
+		MonoClass* InlineAttribute = nullptr;
+		MonoClass* LoadOnAssignAttribute = nullptr;
+		MonoClass* HdrAttribute = nullptr;
 	};
 
 	/** Contains mapping between managed objects and their native wrappers for various types. */
 	struct BuiltinTypeMappings
 	{
-		Vector<BuiltinComponentInfo> components;
-		Vector<BuiltinResourceInfo> resources;
-		Vector<ReflectableTypeInfo> reflectableObjects;
+		Vector<BuiltinComponentInfo> Components;
+		Vector<BuiltinResourceInfo> Resources;
+		Vector<ReflectableTypeInfo> ReflectableObjects;
 
 		static BuiltinTypeMappings EMPTY;
 	};

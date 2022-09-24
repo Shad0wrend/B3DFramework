@@ -20,8 +20,8 @@ namespace bs
 	/**	Provides temporary storage for data used during GameObject deserialization. */
 	struct GODeserializationData
 	{
-		SPtr<GameObject> ptr;
-		UINT64 originalId = 0;
+		SPtr<GameObject> Ptr;
+		UINT64 OriginalId = 0;
 	};
 
 	class BS_CORE_EXPORT GameObjectRTTI : public RTTIType<GameObject, IReflectable, GameObjectRTTI>
@@ -33,7 +33,7 @@ namespace bs
 			BS_RTTI_MEMBER_PLAIN(mUUID, 3)
 		BS_END_RTTI_MEMBERS
 
-		UINT64& GetInstanceId(GameObject* obj) { return obj->mInstanceData->mInstanceId; }
+		UINT64& GetInstanceId(GameObject* obj) { return obj->mInstanceData->MInstanceId; }
 		void SetInstanceId(GameObject* obj, UINT64& instanceId)
 		{
 			// We record the ID for later use. Any child RTTI of GameObject must call GameObjectManager::registerObject
@@ -42,7 +42,7 @@ namespace bs
 			GameObject* go = static_cast<GameObject*>(obj);
 			GODeserializationData& deserializationData = any_cast_ref<GODeserializationData>(go->mRTTIData);
 
-			deserializationData.originalId = instanceId;
+			deserializationData.OriginalId = instanceId;
 		}
 
 	public:
@@ -67,7 +67,7 @@ namespace bs
 			GODeserializationData& deserializationData = any_cast_ref<GODeserializationData>(gameObject->mRTTIData);
 
 			// Store shared pointer since the system only provides us with raw ones
-			deserializationData.ptr = gameObjectPtr;
+			deserializationData.Ptr = gameObjectPtr;
 		}
 
 		const String& GetRttiName() 

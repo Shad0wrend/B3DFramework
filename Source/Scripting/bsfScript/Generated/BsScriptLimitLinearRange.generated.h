@@ -11,11 +11,11 @@ namespace bs
 {
 	struct __LimitLinearRangeInterop
 	{
-		float lower;
-		float upper;
-		float contactDist;
-		float restitution;
-		Spring spring;
+		float Lower;
+		float Upper;
+		float ContactDist;
+		float Restitution;
+		Spring Spring;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptLimitLinearRange : public ScriptObject<ScriptLimitLinearRange>

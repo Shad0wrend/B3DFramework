@@ -93,76 +93,76 @@ namespace bs { namespace ct
 	{
 		RendererViewData();
 
-		Matrix4 viewTransform;
-		Matrix4 projTransform;
-		Vector3 viewDirection;
-		Vector3 viewOrigin;
-		bool flipView;
-		float nearPlane;
-		float farPlane;
-		ProjectionType projType;
+		Matrix4 ViewTransform;
+		Matrix4 ProjTransform;
+		Vector3 ViewDirection;
+		Vector3 ViewOrigin;
+		bool FlipView;
+		float NearPlane;
+		float FarPlane;
+		ProjectionType ProjType;
 
 		/**
 		 * Determines does this view output to the final render target. If false the view is usually used for some
 		 * sort of helper rendering.
 		 */
-		bool mainView;
+		bool MainView;
 
 		/**
 		 * When enabled, renderer extension callbacks will be triggered, allowing other systems to inject their own
 		 * render operations into the view.
 		 */
-		bool triggerCallbacks : 1;
+		bool TriggerCallbacks : 1;
 
 		/** When enabled, post-processing effects (like tonemapping) will be executed. */
-		bool runPostProcessing : 1;
+		bool RunPostProcessing : 1;
 
 		/**
 		 * Determines if the view is currently rendering reflection probes. This ensures the systems can disable refl.
 		 * probe reads in order to prevent incorrect rendering (since probes won't yet have any data).
 		 */
-		bool capturingReflections : 1;
+		bool CapturingReflections : 1;
 
 		/**
 		 * When enabled the alpha channel of the final render target will be populated with an encoded depth value.
 		 * Parameters @p depthEncodeNear and @p depthEncodeFar control which range of the depth buffer to encode.
 		 */
-		bool encodeDepth : 1;
+		bool EncodeDepth : 1;
 
 		/** If true the view will only be rendered when requested, otherwise it will be rendered every frame. */
-		bool onDemand : 1;
+		bool OnDemand : 1;
 
 		/**
 		 * Controls at which position to start encoding depth, in view space. Only relevant with @p encodeDepth is enabled.
 		 * Depth will be linearly interpolated between this value and @p depthEncodeFar.
 		 */
-		float depthEncodeNear = 0.0f;
+		float DepthEncodeNear = 0.0f;
 
 		/**
 		 * Controls at which position to stop encoding depth, in view space. Only relevant with @p encodeDepth is enabled.
 		 * Depth will be linearly interpolated between @p depthEncodeNear and this value.
 		 */
-		float depthEncodeFar = 0.0f;
+		float DepthEncodeFar = 0.0f;
 
-		UINT64 visibleLayers;
-		ConvexVolume cullFrustum;
+		UINT64 VisibleLayers;
+		ConvexVolume CullFrustum;
 	};
 
 	/** Data shared between RENDERER_VIEW_TARGET_DESC and RendererViewTargetProperties */
 	struct RendererViewTargetData
 	{
-		SPtr<RenderTarget> target;
+		SPtr<RenderTarget> Target;
 
-		Rect2I viewRect;
-		Rect2 nrmViewRect;
-		UINT32 targetWidth;
-		UINT32 targetHeight;
-		UINT32 numSamples;
+		Rect2I ViewRect;
+		Rect2 NrmViewRect;
+		UINT32 TargetWidth;
+		UINT32 TargetHeight;
+		UINT32 NumSamples;
 
-		UINT32 clearFlags;
-		Color clearColor;
-		float clearDepthValue;
-		UINT16 clearStencilValue;
+		UINT32 ClearFlags;
+		Color ClearColor;
+		float ClearDepthValue;
+		UINT16 ClearStencilValue;
 	};
 
 	/** Set of properties describing the output render target used by a renderer view. */
@@ -172,10 +172,10 @@ namespace bs { namespace ct
 	/** Set of properties used describing a specific view that the renderer can render. */
 	struct RENDERER_VIEW_DESC : RendererViewData
 	{
-		RENDERER_VIEW_TARGET_DESC target;
+		RENDERER_VIEW_TARGET_DESC Target;
 
-		StateReduction stateReduction;
-		Camera* sceneCamera;
+		StateReduction StateReduction;
+		Camera* SceneCamera;
 	};
 
 	/** Set of properties used describing a specific view that the renderer can render. */
@@ -184,43 +184,43 @@ namespace bs { namespace ct
 		RendererViewProperties() {}
 		RendererViewProperties(const RENDERER_VIEW_DESC& src);
 
-		Matrix4 viewProjTransform;
-		Matrix4 prevViewProjTransform;
-		Matrix4 projTransformNoAA;
-		Vector2 temporalJitter { BsZero };
-		UINT32 frameIdx;
+		Matrix4 ViewProjTransform;
+		Matrix4 PrevViewProjTransform;
+		Matrix4 ProjTransformNoAa;
+		Vector2 TemporalJitter { BsZero };
+		UINT32 FrameIdx;
 
-		RendererViewTargetData target;
+		RendererViewTargetData Target;
 	};
 
 	/** Information whether certain scene objects are visible in a view, per object type. */
 	struct VisibilityInfo
 	{
-		Vector<bool> renderables;
-		Vector<bool> radialLights;
-		Vector<bool> spotLights;
-		Vector<bool> reflProbes;
-		Vector<bool> particleSystems;
-		Vector<bool> decals;
+		Vector<bool> Renderables;
+		Vector<bool> RadialLights;
+		Vector<bool> SpotLights;
+		Vector<bool> ReflProbes;
+		Vector<bool> ParticleSystems;
+		Vector<bool> Decals;
 	};
 
 	/** Information used for culling an object against a view. */
 	struct CullInfo
 	{
 		CullInfo(const Bounds& bounds, UINT64 layer = -1, float cullDistanceFactor = 1.0f)
-			:layer(layer), bounds(bounds), cullDistanceFactor(cullDistanceFactor)
+			:Layer(layer), Bounds(bounds), CullDistanceFactor(cullDistanceFactor)
 		{ }
 
-		UINT64 layer;
-		Bounds bounds;
-		float cullDistanceFactor;
+		UINT64 Layer;
+		Bounds Bounds;
+		float CullDistanceFactor;
 	};
 
 	/**	Renderer information specific to a single render target. */
 	struct RendererRenderTarget
 	{
-		SPtr<RenderTarget> target;
-		Vector<Camera*> cameras;
+		SPtr<RenderTarget> Target;
+		Vector<Camera*> Cameras;
 	};
 
 	/** Returns the reason why is a RendererView being redrawn. */
@@ -433,7 +433,7 @@ namespace bs { namespace ct
 		bool ShouldDraw() const;
 
 		/** Determines if view's 3D geometry should be rendered this frame. */
-		bool ShouldDraw3D() const { return !mRenderSettings->overlayOnly && ShouldDraw(); }
+		bool ShouldDraw3D() const { return !mRenderSettings->OverlayOnly && ShouldDraw(); }
 
 		/** Returns true if the view should write to the velocity buffer. */
 		bool RequiresVelocityWrites() const;
@@ -468,7 +468,7 @@ namespace bs { namespace ct
 		 * rendering of a single frame. This should be set to null if the renderer is not currently rendering the
 		 * view.
 		 */
-		void NotifyCompositorTargetChangedInternal(const SPtr<RenderTarget>& target) const { mContext.currentTarget = target; }
+		void NotifyCompositorTargetChangedInternal(const SPtr<RenderTarget>& target) const { mContext.CurrentTarget = target; }
 
 		/**
 		 * Notifies the view that a new average luminance is being calculated on the provided command buffer. The results
@@ -505,12 +505,12 @@ namespace bs { namespace ct
 		struct LuminanceUpdate
 		{
 			LuminanceUpdate(UINT64 frameIdx, SPtr<CommandBuffer> commandBuffer, SPtr<PooledRenderTexture> outputTexture)
-				: frameIdx(frameIdx), commandBuffer(std::move(commandBuffer)), outputTexture(std::move(outputTexture))
+				: FrameIdx(frameIdx), CommandBuffer(std::move(commandBuffer)), OutputTexture(std::move(outputTexture))
 			{ }
 
-			UINT64 frameIdx;
-			SPtr<CommandBuffer> commandBuffer;
-			SPtr<PooledRenderTexture> outputTexture;
+			UINT64 FrameIdx;
+			SPtr<CommandBuffer> CommandBuffer;
+			SPtr<PooledRenderTexture> OutputTexture;
 		};
 		
 		RendererViewProperties mProperties;

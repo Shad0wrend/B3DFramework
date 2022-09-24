@@ -42,8 +42,8 @@ namespace bs
 	{
 		SerializedEntry() = default;
 
-		UINT32 fieldId = 0;
-		SPtr<SerializedInstance> serialized;
+		UINT32 FieldId = 0;
+		SPtr<SerializedInstance> Serialized;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -59,8 +59,8 @@ namespace bs
 	{
 		SerializedSubObject() = default;
 
-		UINT32 typeId = 0;
-		UnorderedMap<UINT32, SerializedEntry> entries;
+		UINT32 TypeId = 0;
+		UnorderedMap<UINT32, SerializedEntry> Entries;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -121,7 +121,7 @@ namespace bs
 		static SPtr<SerializedObject> Create(IReflectable& obj,
 			SerializedObjectEncodeFlags flags = SerializedObjectEncodeFlags(), SerializationContext* context = nullptr);
 
-		Vector<SerializedSubObject> subObjects;
+		Vector<SerializedSubObject> SubObjects;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -139,16 +139,16 @@ namespace bs
 
 		~SerializedField()
 		{
-			if (ownsMemory && value != nullptr)
-				bs_free(value);
+			if (OwnsMemory && Value != nullptr)
+				bs_free(Value);
 		}
 
 		/** @copydoc SerializedInstance::clone */
 		SPtr<SerializedInstance> Clone(bool cloneData = true) ;
 
-		UINT8* value = nullptr;
-		UINT32 size = 0;
-		bool ownsMemory = false;
+		UINT8* Value = nullptr;
+		UINT32 Size = 0;
+		bool OwnsMemory = false;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -167,9 +167,9 @@ namespace bs
 		/** @copydoc SerializedInstance::clone */
 		SPtr<SerializedInstance> Clone(bool cloneData = true) ;
 
-		SPtr<DataStream> stream;
-		UINT32 offset = 0;
-		UINT32 size = 0;
+		SPtr<DataStream> Stream;
+		UINT32 Offset = 0;
+		UINT32 Size = 0;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -185,8 +185,8 @@ namespace bs
 	{
 		SerializedArrayEntry() = default;
 
-		UINT32 index = 0;
-		SPtr<SerializedInstance> serialized;
+		UINT32 Index = 0;
+		SPtr<SerializedInstance> Serialized;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -205,8 +205,8 @@ namespace bs
 		/** @copydoc SerializedInstance::clone */
 		SPtr<SerializedInstance> Clone(bool cloneData = true) ;
 
-		UnorderedMap<UINT32, SerializedArrayEntry> entries;
-		UINT32 numElements = 0;
+		UnorderedMap<UINT32, SerializedArrayEntry> Entries;
+		UINT32 NumElements = 0;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/

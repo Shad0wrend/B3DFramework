@@ -14,7 +14,7 @@ namespace bs
 {
 	ManagedSerializableDictionaryKeyValue::ManagedSerializableDictionaryKeyValue(const SPtr<ManagedSerializableFieldData>& key,
 		const SPtr<ManagedSerializableFieldData>& value)
-		:key(key), value(value)
+		:Key(key), Value(value)
 	{
 		
 	}
@@ -42,8 +42,8 @@ namespace bs
 			MonoObject* keyCollection = parent->mKeysProp->Get(managedInstance);
 			MonoObject* valueCollection = parent->mValuesProp->Get(managedInstance);
 
-			mKeyType = parent->mDictionaryTypeInfo->mKeyType->GetMonoClass();
-			mValueType = parent->mDictionaryTypeInfo->mValueType->GetMonoClass();
+			mKeyType = parent->mDictionaryTypeInfo->MKeyType->GetMonoClass();
+			mValueType = parent->mDictionaryTypeInfo->MValueType->GetMonoClass();
 
 			ScriptArray keys(mKeyType, mNumEntries);
 			ScriptArray values(mValueType, mNumEntries);
@@ -150,7 +150,7 @@ namespace bs
 				else
 					obj = *(MonoObject**)val;
 
-				return ManagedSerializableFieldData::Create(mParent->mDictionaryTypeInfo->mKeyType, obj);
+				return ManagedSerializableFieldData::Create(mParent->mDictionaryTypeInfo->MKeyType, obj);
 			}
 			else
 				return nullptr;
@@ -181,7 +181,7 @@ namespace bs
 				else
 					obj = *(MonoObject**)val;
 
-				return ManagedSerializableFieldData::Create(mParent->mDictionaryTypeInfo->mValueType, obj);
+				return ManagedSerializableFieldData::Create(mParent->mDictionaryTypeInfo->MValueType, obj);
 			}
 			else
 				return nullptr;
@@ -254,7 +254,7 @@ namespace bs
 
 		String fullName = elementNs + "." + elementTypeName;
 
-		if(ScriptAssemblyManager::Instance().GetBuiltinClasses().systemGenericDictionaryClass->GetFullName() != fullName)
+		if(ScriptAssemblyManager::Instance().GetBuiltinClasses().SystemGenericDictionaryClass->GetFullName() != fullName)
 			return nullptr;
 
 		return bs_shared_ptr_new<ManagedSerializableDictionary>(ConstructPrivately(), typeInfo, managedInstance);
@@ -360,21 +360,21 @@ namespace bs
 			MonoObject* value = nullptr;
 
 			void* params[2];
-			params[0] = key->GetValue(mDictionaryTypeInfo->mKeyType);
+			params[0] = key->GetValue(mDictionaryTypeInfo->MKeyType);
 			params[1] = &value;
 
 			MonoObject* managedInstance = MonoUtil::GetObjectFromGcHandle(mGCHandle);
 			mTryGetValueMethod->Invoke(managedInstance, params);
 
 			MonoObject* boxedValue = value;
-			::MonoClass* valueTypeClass = mDictionaryTypeInfo->mValueType->GetMonoClass();
+			::MonoClass* valueTypeClass = mDictionaryTypeInfo->MValueType->GetMonoClass();
 			if (MonoUtil::IsValueType(valueTypeClass))
 			{
 				if (value != nullptr)
 					boxedValue = MonoUtil::Box(valueTypeClass, &value);
 			}
 
-			return ManagedSerializableFieldData::Create(mDictionaryTypeInfo->mValueType, boxedValue);
+			return ManagedSerializableFieldData::Create(mDictionaryTypeInfo->MValueType, boxedValue);
 		}
 		else
 		{
@@ -398,8 +398,8 @@ namespace bs
 	void ManagedSerializableDictionary::SetFieldData(MonoObject* obj, const SPtr<ManagedSerializableFieldData>& key, const SPtr<ManagedSerializableFieldData>& val)
 	{
 		void* params[2];
-		params[0] = key->GetValue(mDictionaryTypeInfo->mKeyType);
-		params[1] = val->GetValue(mDictionaryTypeInfo->mValueType);
+		params[0] = key->GetValue(mDictionaryTypeInfo->MKeyType);
+		params[1] = val->GetValue(mDictionaryTypeInfo->MValueType);
 
 		mAddMethod->Invoke(obj, params);
 	}
@@ -409,7 +409,7 @@ namespace bs
 		if (mGCHandle != 0)
 		{
 			void* params[1];
-			params[0] = key->GetValue(mDictionaryTypeInfo->mKeyType);
+			params[0] = key->GetValue(mDictionaryTypeInfo->MKeyType);
 
 			MonoObject* managedInstance = MonoUtil::GetObjectFromGcHandle(mGCHandle);
 			mRemoveMethod->Invoke(managedInstance, params);
@@ -427,7 +427,7 @@ namespace bs
 		if (mGCHandle != 0)
 		{
 			void* params[1];
-			params[0] = key->GetValue(mDictionaryTypeInfo->mKeyType);
+			params[0] = key->GetValue(mDictionaryTypeInfo->MKeyType);
 
 			MonoObject* managedInstance = MonoUtil::GetObjectFromGcHandle(mGCHandle);
 			MonoObject* returnVal = mContainsKeyMethod->Invoke(managedInstance, params);

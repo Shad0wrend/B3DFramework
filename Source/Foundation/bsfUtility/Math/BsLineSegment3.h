@@ -29,13 +29,13 @@ namespace bs
 		std::pair<std::array<Vector3, 2>, float> GetNearestPoint(const Ray& ray) const;
 
 		/** Returns the length of the line segment. */
-		float GetLength() const { return start.Distance(end); }
+		float GetLength() const { return Start.Distance(End); }
 
 		/** Returns the center point along the line segment. */
-		Vector3 GetCenter() const { return start + (end - start) * 0.5f; }
+		Vector3 GetCenter() const { return Start + (End - Start) * 0.5f; }
 
-		Vector3 start = BsZero;
-		Vector3 end = BsZero;
+		Vector3 Start = BsZero;
+		Vector3 End = BsZero;
 	};
 
 	/** @} */

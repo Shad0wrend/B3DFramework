@@ -66,22 +66,22 @@ namespace bs { namespace ct
 		 * Optional overrides for material sampler states. Used when renderer wants to override certain sampling properties
 		 * on a global scale (for example filtering most commonly).
 		 */
-		MaterialSamplerOverrides* samplerOverrides;
+		MaterialSamplerOverrides* SamplerOverrides;
 
 		/** Binding indices representing where should the per-camera param block buffer be bound to. */
-		GpuParamBinding perCameraBindings[GPT_COUNT];
+		GpuParamBinding PerCameraBindings[GPT_COUNT];
 
 		/** Indices for different variations of the used material. */
-		UINT32 techniqueIndices[2][3];
+		UINT32 TechniqueIndices[2][3];
 
 		/** Time to used for evaluating material animation. */
-		float materialAnimationTime = 0.0f;
+		float MaterialAnimationTime = 0.0f;
 
 		/** Texture input for the depth buffer. */
-		GpuParamTexture depthInputTexture;
+		GpuParamTexture DepthInputTexture;
 
 		/** Texture input for the mask buffer. */
-		GpuParamTexture maskInputTexture;
+		GpuParamTexture MaskInputTexture;
 
 		/** @copydoc RenderElement::draw */
 		void Draw() const override;
@@ -103,12 +103,12 @@ namespace bs { namespace ct
 		 */
 		void UpdatePerCallBuffer(const Matrix4& viewProj, bool flush = true) const;
 
-		Decal* decal;
-		mutable DecalRenderElement renderElement;
+		Decal* Decal;
+		mutable DecalRenderElement RenderElement;
 
-		SPtr<GpuParamBlockBuffer> decalParamBuffer;
-		SPtr<GpuParamBlockBuffer> perObjectParamBuffer;
-		SPtr<GpuParamBlockBuffer> perCallParamBuffer;
+		SPtr<GpuParamBlockBuffer> DecalParamBuffer;
+		SPtr<GpuParamBlockBuffer> PerObjectParamBuffer;
+		SPtr<GpuParamBlockBuffer> PerCallParamBuffer;
 	};
 
 	/** @} */

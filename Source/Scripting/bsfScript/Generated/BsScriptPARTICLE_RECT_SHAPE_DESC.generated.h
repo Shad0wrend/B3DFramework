@@ -11,7 +11,7 @@ namespace bs
 {
 	struct __PARTICLE_RECT_SHAPE_DESCInterop
 	{
-		Vector2 extents;
+		Vector2 Extents;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptPARTICLE_RECT_SHAPE_DESC : public ScriptObject<ScriptPARTICLE_RECT_SHAPE_DESC>

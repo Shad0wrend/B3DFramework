@@ -28,61 +28,61 @@ namespace bs
 
 	void ScriptRenderSettings::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_RenderSettings", (void*)&ScriptRenderSettings::InternalRenderSettings);
-		metaData.scriptClass->AddInternalCall("Internal_GetdepthOfField", (void*)&ScriptRenderSettings::InternalGetdepthOfField);
-		metaData.scriptClass->AddInternalCall("Internal_SetdepthOfField", (void*)&ScriptRenderSettings::InternalSetdepthOfField);
-		metaData.scriptClass->AddInternalCall("Internal_GetchromaticAberration", (void*)&ScriptRenderSettings::InternalGetchromaticAberration);
-		metaData.scriptClass->AddInternalCall("Internal_SetchromaticAberration", (void*)&ScriptRenderSettings::InternalSetchromaticAberration);
-		metaData.scriptClass->AddInternalCall("Internal_GetenableAutoExposure", (void*)&ScriptRenderSettings::InternalGetenableAutoExposure);
-		metaData.scriptClass->AddInternalCall("Internal_SetenableAutoExposure", (void*)&ScriptRenderSettings::InternalSetenableAutoExposure);
-		metaData.scriptClass->AddInternalCall("Internal_GetautoExposure", (void*)&ScriptRenderSettings::InternalGetautoExposure);
-		metaData.scriptClass->AddInternalCall("Internal_SetautoExposure", (void*)&ScriptRenderSettings::InternalSetautoExposure);
-		metaData.scriptClass->AddInternalCall("Internal_GetenableTonemapping", (void*)&ScriptRenderSettings::InternalGetenableTonemapping);
-		metaData.scriptClass->AddInternalCall("Internal_SetenableTonemapping", (void*)&ScriptRenderSettings::InternalSetenableTonemapping);
-		metaData.scriptClass->AddInternalCall("Internal_Gettonemapping", (void*)&ScriptRenderSettings::InternalGettonemapping);
-		metaData.scriptClass->AddInternalCall("Internal_Settonemapping", (void*)&ScriptRenderSettings::InternalSettonemapping);
-		metaData.scriptClass->AddInternalCall("Internal_GetwhiteBalance", (void*)&ScriptRenderSettings::InternalGetwhiteBalance);
-		metaData.scriptClass->AddInternalCall("Internal_SetwhiteBalance", (void*)&ScriptRenderSettings::InternalSetwhiteBalance);
-		metaData.scriptClass->AddInternalCall("Internal_GetcolorGrading", (void*)&ScriptRenderSettings::InternalGetcolorGrading);
-		metaData.scriptClass->AddInternalCall("Internal_SetcolorGrading", (void*)&ScriptRenderSettings::InternalSetcolorGrading);
-		metaData.scriptClass->AddInternalCall("Internal_GetambientOcclusion", (void*)&ScriptRenderSettings::InternalGetambientOcclusion);
-		metaData.scriptClass->AddInternalCall("Internal_SetambientOcclusion", (void*)&ScriptRenderSettings::InternalSetambientOcclusion);
-		metaData.scriptClass->AddInternalCall("Internal_GetscreenSpaceReflections", (void*)&ScriptRenderSettings::InternalGetscreenSpaceReflections);
-		metaData.scriptClass->AddInternalCall("Internal_SetscreenSpaceReflections", (void*)&ScriptRenderSettings::InternalSetscreenSpaceReflections);
-		metaData.scriptClass->AddInternalCall("Internal_Getbloom", (void*)&ScriptRenderSettings::InternalGetbloom);
-		metaData.scriptClass->AddInternalCall("Internal_Setbloom", (void*)&ScriptRenderSettings::InternalSetbloom);
-		metaData.scriptClass->AddInternalCall("Internal_GetscreenSpaceLensFlare", (void*)&ScriptRenderSettings::InternalGetscreenSpaceLensFlare);
-		metaData.scriptClass->AddInternalCall("Internal_SetscreenSpaceLensFlare", (void*)&ScriptRenderSettings::InternalSetscreenSpaceLensFlare);
-		metaData.scriptClass->AddInternalCall("Internal_GetfilmGrain", (void*)&ScriptRenderSettings::InternalGetfilmGrain);
-		metaData.scriptClass->AddInternalCall("Internal_SetfilmGrain", (void*)&ScriptRenderSettings::InternalSetfilmGrain);
-		metaData.scriptClass->AddInternalCall("Internal_GetmotionBlur", (void*)&ScriptRenderSettings::InternalGetmotionBlur);
-		metaData.scriptClass->AddInternalCall("Internal_SetmotionBlur", (void*)&ScriptRenderSettings::InternalSetmotionBlur);
-		metaData.scriptClass->AddInternalCall("Internal_GettemporalAA", (void*)&ScriptRenderSettings::InternalGettemporalAA);
-		metaData.scriptClass->AddInternalCall("Internal_SettemporalAA", (void*)&ScriptRenderSettings::InternalSettemporalAA);
-		metaData.scriptClass->AddInternalCall("Internal_GetenableFXAA", (void*)&ScriptRenderSettings::InternalGetenableFXAA);
-		metaData.scriptClass->AddInternalCall("Internal_SetenableFXAA", (void*)&ScriptRenderSettings::InternalSetenableFXAA);
-		metaData.scriptClass->AddInternalCall("Internal_GetexposureScale", (void*)&ScriptRenderSettings::InternalGetexposureScale);
-		metaData.scriptClass->AddInternalCall("Internal_SetexposureScale", (void*)&ScriptRenderSettings::InternalSetexposureScale);
-		metaData.scriptClass->AddInternalCall("Internal_Getgamma", (void*)&ScriptRenderSettings::InternalGetgamma);
-		metaData.scriptClass->AddInternalCall("Internal_Setgamma", (void*)&ScriptRenderSettings::InternalSetgamma);
-		metaData.scriptClass->AddInternalCall("Internal_GetenableHDR", (void*)&ScriptRenderSettings::InternalGetenableHDR);
-		metaData.scriptClass->AddInternalCall("Internal_SetenableHDR", (void*)&ScriptRenderSettings::InternalSetenableHDR);
-		metaData.scriptClass->AddInternalCall("Internal_GetenableLighting", (void*)&ScriptRenderSettings::InternalGetenableLighting);
-		metaData.scriptClass->AddInternalCall("Internal_SetenableLighting", (void*)&ScriptRenderSettings::InternalSetenableLighting);
-		metaData.scriptClass->AddInternalCall("Internal_GetenableShadows", (void*)&ScriptRenderSettings::InternalGetenableShadows);
-		metaData.scriptClass->AddInternalCall("Internal_SetenableShadows", (void*)&ScriptRenderSettings::InternalSetenableShadows);
-		metaData.scriptClass->AddInternalCall("Internal_GetenableVelocityBuffer", (void*)&ScriptRenderSettings::InternalGetenableVelocityBuffer);
-		metaData.scriptClass->AddInternalCall("Internal_SetenableVelocityBuffer", (void*)&ScriptRenderSettings::InternalSetenableVelocityBuffer);
-		metaData.scriptClass->AddInternalCall("Internal_GetshadowSettings", (void*)&ScriptRenderSettings::InternalGetshadowSettings);
-		metaData.scriptClass->AddInternalCall("Internal_SetshadowSettings", (void*)&ScriptRenderSettings::InternalSetshadowSettings);
-		metaData.scriptClass->AddInternalCall("Internal_GetenableIndirectLighting", (void*)&ScriptRenderSettings::InternalGetenableIndirectLighting);
-		metaData.scriptClass->AddInternalCall("Internal_SetenableIndirectLighting", (void*)&ScriptRenderSettings::InternalSetenableIndirectLighting);
-		metaData.scriptClass->AddInternalCall("Internal_GetoverlayOnly", (void*)&ScriptRenderSettings::InternalGetoverlayOnly);
-		metaData.scriptClass->AddInternalCall("Internal_SetoverlayOnly", (void*)&ScriptRenderSettings::InternalSetoverlayOnly);
-		metaData.scriptClass->AddInternalCall("Internal_GetenableSkybox", (void*)&ScriptRenderSettings::InternalGetenableSkybox);
-		metaData.scriptClass->AddInternalCall("Internal_SetenableSkybox", (void*)&ScriptRenderSettings::InternalSetenableSkybox);
-		metaData.scriptClass->AddInternalCall("Internal_GetcullDistance", (void*)&ScriptRenderSettings::InternalGetcullDistance);
-		metaData.scriptClass->AddInternalCall("Internal_SetcullDistance", (void*)&ScriptRenderSettings::InternalSetcullDistance);
+		metaData.ScriptClass->AddInternalCall("Internal_RenderSettings", (void*)&ScriptRenderSettings::InternalRenderSettings);
+		metaData.ScriptClass->AddInternalCall("Internal_GetdepthOfField", (void*)&ScriptRenderSettings::InternalGetdepthOfField);
+		metaData.ScriptClass->AddInternalCall("Internal_SetdepthOfField", (void*)&ScriptRenderSettings::InternalSetdepthOfField);
+		metaData.ScriptClass->AddInternalCall("Internal_GetchromaticAberration", (void*)&ScriptRenderSettings::InternalGetchromaticAberration);
+		metaData.ScriptClass->AddInternalCall("Internal_SetchromaticAberration", (void*)&ScriptRenderSettings::InternalSetchromaticAberration);
+		metaData.ScriptClass->AddInternalCall("Internal_GetenableAutoExposure", (void*)&ScriptRenderSettings::InternalGetenableAutoExposure);
+		metaData.ScriptClass->AddInternalCall("Internal_SetenableAutoExposure", (void*)&ScriptRenderSettings::InternalSetenableAutoExposure);
+		metaData.ScriptClass->AddInternalCall("Internal_GetautoExposure", (void*)&ScriptRenderSettings::InternalGetautoExposure);
+		metaData.ScriptClass->AddInternalCall("Internal_SetautoExposure", (void*)&ScriptRenderSettings::InternalSetautoExposure);
+		metaData.ScriptClass->AddInternalCall("Internal_GetenableTonemapping", (void*)&ScriptRenderSettings::InternalGetenableTonemapping);
+		metaData.ScriptClass->AddInternalCall("Internal_SetenableTonemapping", (void*)&ScriptRenderSettings::InternalSetenableTonemapping);
+		metaData.ScriptClass->AddInternalCall("Internal_Gettonemapping", (void*)&ScriptRenderSettings::InternalGettonemapping);
+		metaData.ScriptClass->AddInternalCall("Internal_Settonemapping", (void*)&ScriptRenderSettings::InternalSettonemapping);
+		metaData.ScriptClass->AddInternalCall("Internal_GetwhiteBalance", (void*)&ScriptRenderSettings::InternalGetwhiteBalance);
+		metaData.ScriptClass->AddInternalCall("Internal_SetwhiteBalance", (void*)&ScriptRenderSettings::InternalSetwhiteBalance);
+		metaData.ScriptClass->AddInternalCall("Internal_GetcolorGrading", (void*)&ScriptRenderSettings::InternalGetcolorGrading);
+		metaData.ScriptClass->AddInternalCall("Internal_SetcolorGrading", (void*)&ScriptRenderSettings::InternalSetcolorGrading);
+		metaData.ScriptClass->AddInternalCall("Internal_GetambientOcclusion", (void*)&ScriptRenderSettings::InternalGetambientOcclusion);
+		metaData.ScriptClass->AddInternalCall("Internal_SetambientOcclusion", (void*)&ScriptRenderSettings::InternalSetambientOcclusion);
+		metaData.ScriptClass->AddInternalCall("Internal_GetscreenSpaceReflections", (void*)&ScriptRenderSettings::InternalGetscreenSpaceReflections);
+		metaData.ScriptClass->AddInternalCall("Internal_SetscreenSpaceReflections", (void*)&ScriptRenderSettings::InternalSetscreenSpaceReflections);
+		metaData.ScriptClass->AddInternalCall("Internal_Getbloom", (void*)&ScriptRenderSettings::InternalGetbloom);
+		metaData.ScriptClass->AddInternalCall("Internal_Setbloom", (void*)&ScriptRenderSettings::InternalSetbloom);
+		metaData.ScriptClass->AddInternalCall("Internal_GetscreenSpaceLensFlare", (void*)&ScriptRenderSettings::InternalGetscreenSpaceLensFlare);
+		metaData.ScriptClass->AddInternalCall("Internal_SetscreenSpaceLensFlare", (void*)&ScriptRenderSettings::InternalSetscreenSpaceLensFlare);
+		metaData.ScriptClass->AddInternalCall("Internal_GetfilmGrain", (void*)&ScriptRenderSettings::InternalGetfilmGrain);
+		metaData.ScriptClass->AddInternalCall("Internal_SetfilmGrain", (void*)&ScriptRenderSettings::InternalSetfilmGrain);
+		metaData.ScriptClass->AddInternalCall("Internal_GetmotionBlur", (void*)&ScriptRenderSettings::InternalGetmotionBlur);
+		metaData.ScriptClass->AddInternalCall("Internal_SetmotionBlur", (void*)&ScriptRenderSettings::InternalSetmotionBlur);
+		metaData.ScriptClass->AddInternalCall("Internal_GettemporalAA", (void*)&ScriptRenderSettings::InternalGettemporalAA);
+		metaData.ScriptClass->AddInternalCall("Internal_SettemporalAA", (void*)&ScriptRenderSettings::InternalSettemporalAA);
+		metaData.ScriptClass->AddInternalCall("Internal_GetenableFXAA", (void*)&ScriptRenderSettings::InternalGetenableFXAA);
+		metaData.ScriptClass->AddInternalCall("Internal_SetenableFXAA", (void*)&ScriptRenderSettings::InternalSetenableFXAA);
+		metaData.ScriptClass->AddInternalCall("Internal_GetexposureScale", (void*)&ScriptRenderSettings::InternalGetexposureScale);
+		metaData.ScriptClass->AddInternalCall("Internal_SetexposureScale", (void*)&ScriptRenderSettings::InternalSetexposureScale);
+		metaData.ScriptClass->AddInternalCall("Internal_Getgamma", (void*)&ScriptRenderSettings::InternalGetgamma);
+		metaData.ScriptClass->AddInternalCall("Internal_Setgamma", (void*)&ScriptRenderSettings::InternalSetgamma);
+		metaData.ScriptClass->AddInternalCall("Internal_GetenableHDR", (void*)&ScriptRenderSettings::InternalGetenableHDR);
+		metaData.ScriptClass->AddInternalCall("Internal_SetenableHDR", (void*)&ScriptRenderSettings::InternalSetenableHDR);
+		metaData.ScriptClass->AddInternalCall("Internal_GetenableLighting", (void*)&ScriptRenderSettings::InternalGetenableLighting);
+		metaData.ScriptClass->AddInternalCall("Internal_SetenableLighting", (void*)&ScriptRenderSettings::InternalSetenableLighting);
+		metaData.ScriptClass->AddInternalCall("Internal_GetenableShadows", (void*)&ScriptRenderSettings::InternalGetenableShadows);
+		metaData.ScriptClass->AddInternalCall("Internal_SetenableShadows", (void*)&ScriptRenderSettings::InternalSetenableShadows);
+		metaData.ScriptClass->AddInternalCall("Internal_GetenableVelocityBuffer", (void*)&ScriptRenderSettings::InternalGetenableVelocityBuffer);
+		metaData.ScriptClass->AddInternalCall("Internal_SetenableVelocityBuffer", (void*)&ScriptRenderSettings::InternalSetenableVelocityBuffer);
+		metaData.ScriptClass->AddInternalCall("Internal_GetshadowSettings", (void*)&ScriptRenderSettings::InternalGetshadowSettings);
+		metaData.ScriptClass->AddInternalCall("Internal_SetshadowSettings", (void*)&ScriptRenderSettings::InternalSetshadowSettings);
+		metaData.ScriptClass->AddInternalCall("Internal_GetenableIndirectLighting", (void*)&ScriptRenderSettings::InternalGetenableIndirectLighting);
+		metaData.ScriptClass->AddInternalCall("Internal_SetenableIndirectLighting", (void*)&ScriptRenderSettings::InternalSetenableIndirectLighting);
+		metaData.ScriptClass->AddInternalCall("Internal_GetoverlayOnly", (void*)&ScriptRenderSettings::InternalGetoverlayOnly);
+		metaData.ScriptClass->AddInternalCall("Internal_SetoverlayOnly", (void*)&ScriptRenderSettings::InternalSetoverlayOnly);
+		metaData.ScriptClass->AddInternalCall("Internal_GetenableSkybox", (void*)&ScriptRenderSettings::InternalGetenableSkybox);
+		metaData.ScriptClass->AddInternalCall("Internal_SetenableSkybox", (void*)&ScriptRenderSettings::InternalSetenableSkybox);
+		metaData.ScriptClass->AddInternalCall("Internal_GetcullDistance", (void*)&ScriptRenderSettings::InternalGetcullDistance);
+		metaData.ScriptClass->AddInternalCall("Internal_SetcullDistance", (void*)&ScriptRenderSettings::InternalSetcullDistance);
 
 	}
 
@@ -93,7 +93,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptRenderSettings>()) ScriptRenderSettings(managedInstance, value);
 		return managedInstance;
 	}
@@ -106,7 +106,7 @@ namespace bs
 	MonoObject* ScriptRenderSettings::InternalGetdepthOfField(ScriptRenderSettings* thisPtr)
 	{
 		SPtr<DepthOfFieldSettings> tmp__output = bs_shared_ptr_new<DepthOfFieldSettings>();
-		*tmp__output = thisPtr->GetInternal()->depthOfField;
+		*tmp__output = thisPtr->GetInternal()->DepthOfField;
 
 		MonoObject* __output;
 		__output = ScriptDepthOfFieldSettings::Create(tmp__output);
@@ -121,13 +121,13 @@ namespace bs
 		scriptvalue = ScriptDepthOfFieldSettings::ToNative(value);
 		if(scriptvalue != nullptr)
 			tmpvalue = scriptvalue->GetInternal();
-		thisPtr->GetInternal()->depthOfField = *tmpvalue;
+		thisPtr->GetInternal()->DepthOfField = *tmpvalue;
 	}
 
 	MonoObject* ScriptRenderSettings::InternalGetchromaticAberration(ScriptRenderSettings* thisPtr)
 	{
 		SPtr<ChromaticAberrationSettings> tmp__output = bs_shared_ptr_new<ChromaticAberrationSettings>();
-		*tmp__output = thisPtr->GetInternal()->chromaticAberration;
+		*tmp__output = thisPtr->GetInternal()->ChromaticAberration;
 
 		MonoObject* __output;
 		__output = ScriptChromaticAberrationSettings::Create(tmp__output);
@@ -142,13 +142,13 @@ namespace bs
 		scriptvalue = ScriptChromaticAberrationSettings::ToNative(value);
 		if(scriptvalue != nullptr)
 			tmpvalue = scriptvalue->GetInternal();
-		thisPtr->GetInternal()->chromaticAberration = *tmpvalue;
+		thisPtr->GetInternal()->ChromaticAberration = *tmpvalue;
 	}
 
 	bool ScriptRenderSettings::InternalGetenableAutoExposure(ScriptRenderSettings* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->GetInternal()->enableAutoExposure;
+		tmp__output = thisPtr->GetInternal()->EnableAutoExposure;
 
 		bool __output;
 		__output = tmp__output;
@@ -158,13 +158,13 @@ namespace bs
 
 	void ScriptRenderSettings::InternalSetenableAutoExposure(ScriptRenderSettings* thisPtr, bool value)
 	{
-		thisPtr->GetInternal()->enableAutoExposure = value;
+		thisPtr->GetInternal()->EnableAutoExposure = value;
 	}
 
 	MonoObject* ScriptRenderSettings::InternalGetautoExposure(ScriptRenderSettings* thisPtr)
 	{
 		SPtr<AutoExposureSettings> tmp__output = bs_shared_ptr_new<AutoExposureSettings>();
-		*tmp__output = thisPtr->GetInternal()->autoExposure;
+		*tmp__output = thisPtr->GetInternal()->AutoExposure;
 
 		MonoObject* __output;
 		__output = ScriptAutoExposureSettings::Create(tmp__output);
@@ -179,13 +179,13 @@ namespace bs
 		scriptvalue = ScriptAutoExposureSettings::ToNative(value);
 		if(scriptvalue != nullptr)
 			tmpvalue = scriptvalue->GetInternal();
-		thisPtr->GetInternal()->autoExposure = *tmpvalue;
+		thisPtr->GetInternal()->AutoExposure = *tmpvalue;
 	}
 
 	bool ScriptRenderSettings::InternalGetenableTonemapping(ScriptRenderSettings* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->GetInternal()->enableTonemapping;
+		tmp__output = thisPtr->GetInternal()->EnableTonemapping;
 
 		bool __output;
 		__output = tmp__output;
@@ -195,13 +195,13 @@ namespace bs
 
 	void ScriptRenderSettings::InternalSetenableTonemapping(ScriptRenderSettings* thisPtr, bool value)
 	{
-		thisPtr->GetInternal()->enableTonemapping = value;
+		thisPtr->GetInternal()->EnableTonemapping = value;
 	}
 
 	MonoObject* ScriptRenderSettings::InternalGettonemapping(ScriptRenderSettings* thisPtr)
 	{
 		SPtr<TonemappingSettings> tmp__output = bs_shared_ptr_new<TonemappingSettings>();
-		*tmp__output = thisPtr->GetInternal()->tonemapping;
+		*tmp__output = thisPtr->GetInternal()->Tonemapping;
 
 		MonoObject* __output;
 		__output = ScriptTonemappingSettings::Create(tmp__output);
@@ -216,13 +216,13 @@ namespace bs
 		scriptvalue = ScriptTonemappingSettings::ToNative(value);
 		if(scriptvalue != nullptr)
 			tmpvalue = scriptvalue->GetInternal();
-		thisPtr->GetInternal()->tonemapping = *tmpvalue;
+		thisPtr->GetInternal()->Tonemapping = *tmpvalue;
 	}
 
 	MonoObject* ScriptRenderSettings::InternalGetwhiteBalance(ScriptRenderSettings* thisPtr)
 	{
 		SPtr<WhiteBalanceSettings> tmp__output = bs_shared_ptr_new<WhiteBalanceSettings>();
-		*tmp__output = thisPtr->GetInternal()->whiteBalance;
+		*tmp__output = thisPtr->GetInternal()->WhiteBalance;
 
 		MonoObject* __output;
 		__output = ScriptWhiteBalanceSettings::Create(tmp__output);
@@ -237,13 +237,13 @@ namespace bs
 		scriptvalue = ScriptWhiteBalanceSettings::ToNative(value);
 		if(scriptvalue != nullptr)
 			tmpvalue = scriptvalue->GetInternal();
-		thisPtr->GetInternal()->whiteBalance = *tmpvalue;
+		thisPtr->GetInternal()->WhiteBalance = *tmpvalue;
 	}
 
 	MonoObject* ScriptRenderSettings::InternalGetcolorGrading(ScriptRenderSettings* thisPtr)
 	{
 		SPtr<ColorGradingSettings> tmp__output = bs_shared_ptr_new<ColorGradingSettings>();
-		*tmp__output = thisPtr->GetInternal()->colorGrading;
+		*tmp__output = thisPtr->GetInternal()->ColorGrading;
 
 		MonoObject* __output;
 		__output = ScriptColorGradingSettings::Create(tmp__output);
@@ -258,13 +258,13 @@ namespace bs
 		scriptvalue = ScriptColorGradingSettings::ToNative(value);
 		if(scriptvalue != nullptr)
 			tmpvalue = scriptvalue->GetInternal();
-		thisPtr->GetInternal()->colorGrading = *tmpvalue;
+		thisPtr->GetInternal()->ColorGrading = *tmpvalue;
 	}
 
 	MonoObject* ScriptRenderSettings::InternalGetambientOcclusion(ScriptRenderSettings* thisPtr)
 	{
 		SPtr<AmbientOcclusionSettings> tmp__output = bs_shared_ptr_new<AmbientOcclusionSettings>();
-		*tmp__output = thisPtr->GetInternal()->ambientOcclusion;
+		*tmp__output = thisPtr->GetInternal()->AmbientOcclusion;
 
 		MonoObject* __output;
 		__output = ScriptAmbientOcclusionSettings::Create(tmp__output);
@@ -279,13 +279,13 @@ namespace bs
 		scriptvalue = ScriptAmbientOcclusionSettings::ToNative(value);
 		if(scriptvalue != nullptr)
 			tmpvalue = scriptvalue->GetInternal();
-		thisPtr->GetInternal()->ambientOcclusion = *tmpvalue;
+		thisPtr->GetInternal()->AmbientOcclusion = *tmpvalue;
 	}
 
 	MonoObject* ScriptRenderSettings::InternalGetscreenSpaceReflections(ScriptRenderSettings* thisPtr)
 	{
 		SPtr<ScreenSpaceReflectionsSettings> tmp__output = bs_shared_ptr_new<ScreenSpaceReflectionsSettings>();
-		*tmp__output = thisPtr->GetInternal()->screenSpaceReflections;
+		*tmp__output = thisPtr->GetInternal()->ScreenSpaceReflections;
 
 		MonoObject* __output;
 		__output = ScriptScreenSpaceReflectionsSettings::Create(tmp__output);
@@ -300,13 +300,13 @@ namespace bs
 		scriptvalue = ScriptScreenSpaceReflectionsSettings::ToNative(value);
 		if(scriptvalue != nullptr)
 			tmpvalue = scriptvalue->GetInternal();
-		thisPtr->GetInternal()->screenSpaceReflections = *tmpvalue;
+		thisPtr->GetInternal()->ScreenSpaceReflections = *tmpvalue;
 	}
 
 	MonoObject* ScriptRenderSettings::InternalGetbloom(ScriptRenderSettings* thisPtr)
 	{
 		SPtr<BloomSettings> tmp__output = bs_shared_ptr_new<BloomSettings>();
-		*tmp__output = thisPtr->GetInternal()->bloom;
+		*tmp__output = thisPtr->GetInternal()->Bloom;
 
 		MonoObject* __output;
 		__output = ScriptBloomSettings::Create(tmp__output);
@@ -321,13 +321,13 @@ namespace bs
 		scriptvalue = ScriptBloomSettings::ToNative(value);
 		if(scriptvalue != nullptr)
 			tmpvalue = scriptvalue->GetInternal();
-		thisPtr->GetInternal()->bloom = *tmpvalue;
+		thisPtr->GetInternal()->Bloom = *tmpvalue;
 	}
 
 	MonoObject* ScriptRenderSettings::InternalGetscreenSpaceLensFlare(ScriptRenderSettings* thisPtr)
 	{
 		SPtr<ScreenSpaceLensFlareSettings> tmp__output = bs_shared_ptr_new<ScreenSpaceLensFlareSettings>();
-		*tmp__output = thisPtr->GetInternal()->screenSpaceLensFlare;
+		*tmp__output = thisPtr->GetInternal()->ScreenSpaceLensFlare;
 
 		MonoObject* __output;
 		__output = ScriptScreenSpaceLensFlareSettings::Create(tmp__output);
@@ -342,13 +342,13 @@ namespace bs
 		scriptvalue = ScriptScreenSpaceLensFlareSettings::ToNative(value);
 		if(scriptvalue != nullptr)
 			tmpvalue = scriptvalue->GetInternal();
-		thisPtr->GetInternal()->screenSpaceLensFlare = *tmpvalue;
+		thisPtr->GetInternal()->ScreenSpaceLensFlare = *tmpvalue;
 	}
 
 	MonoObject* ScriptRenderSettings::InternalGetfilmGrain(ScriptRenderSettings* thisPtr)
 	{
 		SPtr<FilmGrainSettings> tmp__output = bs_shared_ptr_new<FilmGrainSettings>();
-		*tmp__output = thisPtr->GetInternal()->filmGrain;
+		*tmp__output = thisPtr->GetInternal()->FilmGrain;
 
 		MonoObject* __output;
 		__output = ScriptFilmGrainSettings::Create(tmp__output);
@@ -363,13 +363,13 @@ namespace bs
 		scriptvalue = ScriptFilmGrainSettings::ToNative(value);
 		if(scriptvalue != nullptr)
 			tmpvalue = scriptvalue->GetInternal();
-		thisPtr->GetInternal()->filmGrain = *tmpvalue;
+		thisPtr->GetInternal()->FilmGrain = *tmpvalue;
 	}
 
 	MonoObject* ScriptRenderSettings::InternalGetmotionBlur(ScriptRenderSettings* thisPtr)
 	{
 		SPtr<MotionBlurSettings> tmp__output = bs_shared_ptr_new<MotionBlurSettings>();
-		*tmp__output = thisPtr->GetInternal()->motionBlur;
+		*tmp__output = thisPtr->GetInternal()->MotionBlur;
 
 		MonoObject* __output;
 		__output = ScriptMotionBlurSettings::Create(tmp__output);
@@ -384,13 +384,13 @@ namespace bs
 		scriptvalue = ScriptMotionBlurSettings::ToNative(value);
 		if(scriptvalue != nullptr)
 			tmpvalue = scriptvalue->GetInternal();
-		thisPtr->GetInternal()->motionBlur = *tmpvalue;
+		thisPtr->GetInternal()->MotionBlur = *tmpvalue;
 	}
 
 	MonoObject* ScriptRenderSettings::InternalGettemporalAA(ScriptRenderSettings* thisPtr)
 	{
 		SPtr<TemporalAASettings> tmp__output = bs_shared_ptr_new<TemporalAASettings>();
-		*tmp__output = thisPtr->GetInternal()->temporalAA;
+		*tmp__output = thisPtr->GetInternal()->TemporalAa;
 
 		MonoObject* __output;
 		__output = ScriptTemporalAASettings::Create(tmp__output);
@@ -405,13 +405,13 @@ namespace bs
 		scriptvalue = ScriptTemporalAASettings::ToNative(value);
 		if(scriptvalue != nullptr)
 			tmpvalue = scriptvalue->GetInternal();
-		thisPtr->GetInternal()->temporalAA = *tmpvalue;
+		thisPtr->GetInternal()->TemporalAa = *tmpvalue;
 	}
 
 	bool ScriptRenderSettings::InternalGetenableFXAA(ScriptRenderSettings* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->GetInternal()->enableFXAA;
+		tmp__output = thisPtr->GetInternal()->EnableFxaa;
 
 		bool __output;
 		__output = tmp__output;
@@ -421,13 +421,13 @@ namespace bs
 
 	void ScriptRenderSettings::InternalSetenableFXAA(ScriptRenderSettings* thisPtr, bool value)
 	{
-		thisPtr->GetInternal()->enableFXAA = value;
+		thisPtr->GetInternal()->EnableFxaa = value;
 	}
 
 	float ScriptRenderSettings::InternalGetexposureScale(ScriptRenderSettings* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->GetInternal()->exposureScale;
+		tmp__output = thisPtr->GetInternal()->ExposureScale;
 
 		float __output;
 		__output = tmp__output;
@@ -437,13 +437,13 @@ namespace bs
 
 	void ScriptRenderSettings::InternalSetexposureScale(ScriptRenderSettings* thisPtr, float value)
 	{
-		thisPtr->GetInternal()->exposureScale = value;
+		thisPtr->GetInternal()->ExposureScale = value;
 	}
 
 	float ScriptRenderSettings::InternalGetgamma(ScriptRenderSettings* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->GetInternal()->gamma;
+		tmp__output = thisPtr->GetInternal()->Gamma;
 
 		float __output;
 		__output = tmp__output;
@@ -453,13 +453,13 @@ namespace bs
 
 	void ScriptRenderSettings::InternalSetgamma(ScriptRenderSettings* thisPtr, float value)
 	{
-		thisPtr->GetInternal()->gamma = value;
+		thisPtr->GetInternal()->Gamma = value;
 	}
 
 	bool ScriptRenderSettings::InternalGetenableHDR(ScriptRenderSettings* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->GetInternal()->enableHDR;
+		tmp__output = thisPtr->GetInternal()->EnableHdr;
 
 		bool __output;
 		__output = tmp__output;
@@ -469,13 +469,13 @@ namespace bs
 
 	void ScriptRenderSettings::InternalSetenableHDR(ScriptRenderSettings* thisPtr, bool value)
 	{
-		thisPtr->GetInternal()->enableHDR = value;
+		thisPtr->GetInternal()->EnableHdr = value;
 	}
 
 	bool ScriptRenderSettings::InternalGetenableLighting(ScriptRenderSettings* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->GetInternal()->enableLighting;
+		tmp__output = thisPtr->GetInternal()->EnableLighting;
 
 		bool __output;
 		__output = tmp__output;
@@ -485,13 +485,13 @@ namespace bs
 
 	void ScriptRenderSettings::InternalSetenableLighting(ScriptRenderSettings* thisPtr, bool value)
 	{
-		thisPtr->GetInternal()->enableLighting = value;
+		thisPtr->GetInternal()->EnableLighting = value;
 	}
 
 	bool ScriptRenderSettings::InternalGetenableShadows(ScriptRenderSettings* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->GetInternal()->enableShadows;
+		tmp__output = thisPtr->GetInternal()->EnableShadows;
 
 		bool __output;
 		__output = tmp__output;
@@ -501,13 +501,13 @@ namespace bs
 
 	void ScriptRenderSettings::InternalSetenableShadows(ScriptRenderSettings* thisPtr, bool value)
 	{
-		thisPtr->GetInternal()->enableShadows = value;
+		thisPtr->GetInternal()->EnableShadows = value;
 	}
 
 	bool ScriptRenderSettings::InternalGetenableVelocityBuffer(ScriptRenderSettings* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->GetInternal()->enableVelocityBuffer;
+		tmp__output = thisPtr->GetInternal()->EnableVelocityBuffer;
 
 		bool __output;
 		__output = tmp__output;
@@ -517,13 +517,13 @@ namespace bs
 
 	void ScriptRenderSettings::InternalSetenableVelocityBuffer(ScriptRenderSettings* thisPtr, bool value)
 	{
-		thisPtr->GetInternal()->enableVelocityBuffer = value;
+		thisPtr->GetInternal()->EnableVelocityBuffer = value;
 	}
 
 	MonoObject* ScriptRenderSettings::InternalGetshadowSettings(ScriptRenderSettings* thisPtr)
 	{
 		SPtr<ShadowSettings> tmp__output = bs_shared_ptr_new<ShadowSettings>();
-		*tmp__output = thisPtr->GetInternal()->shadowSettings;
+		*tmp__output = thisPtr->GetInternal()->ShadowSettings;
 
 		MonoObject* __output;
 		__output = ScriptShadowSettings::Create(tmp__output);
@@ -538,13 +538,13 @@ namespace bs
 		scriptvalue = ScriptShadowSettings::ToNative(value);
 		if(scriptvalue != nullptr)
 			tmpvalue = scriptvalue->GetInternal();
-		thisPtr->GetInternal()->shadowSettings = *tmpvalue;
+		thisPtr->GetInternal()->ShadowSettings = *tmpvalue;
 	}
 
 	bool ScriptRenderSettings::InternalGetenableIndirectLighting(ScriptRenderSettings* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->GetInternal()->enableIndirectLighting;
+		tmp__output = thisPtr->GetInternal()->EnableIndirectLighting;
 
 		bool __output;
 		__output = tmp__output;
@@ -554,13 +554,13 @@ namespace bs
 
 	void ScriptRenderSettings::InternalSetenableIndirectLighting(ScriptRenderSettings* thisPtr, bool value)
 	{
-		thisPtr->GetInternal()->enableIndirectLighting = value;
+		thisPtr->GetInternal()->EnableIndirectLighting = value;
 	}
 
 	bool ScriptRenderSettings::InternalGetoverlayOnly(ScriptRenderSettings* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->GetInternal()->overlayOnly;
+		tmp__output = thisPtr->GetInternal()->OverlayOnly;
 
 		bool __output;
 		__output = tmp__output;
@@ -570,13 +570,13 @@ namespace bs
 
 	void ScriptRenderSettings::InternalSetoverlayOnly(ScriptRenderSettings* thisPtr, bool value)
 	{
-		thisPtr->GetInternal()->overlayOnly = value;
+		thisPtr->GetInternal()->OverlayOnly = value;
 	}
 
 	bool ScriptRenderSettings::InternalGetenableSkybox(ScriptRenderSettings* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->GetInternal()->enableSkybox;
+		tmp__output = thisPtr->GetInternal()->EnableSkybox;
 
 		bool __output;
 		__output = tmp__output;
@@ -586,13 +586,13 @@ namespace bs
 
 	void ScriptRenderSettings::InternalSetenableSkybox(ScriptRenderSettings* thisPtr, bool value)
 	{
-		thisPtr->GetInternal()->enableSkybox = value;
+		thisPtr->GetInternal()->EnableSkybox = value;
 	}
 
 	float ScriptRenderSettings::InternalGetcullDistance(ScriptRenderSettings* thisPtr)
 	{
 		float tmp__output;
-		tmp__output = thisPtr->GetInternal()->cullDistance;
+		tmp__output = thisPtr->GetInternal()->CullDistance;
 
 		float __output;
 		__output = tmp__output;
@@ -602,6 +602,6 @@ namespace bs
 
 	void ScriptRenderSettings::InternalSetcullDistance(ScriptRenderSettings* thisPtr, float value)
 	{
-		thisPtr->GetInternal()->cullDistance = value;
+		thisPtr->GetInternal()->CullDistance = value;
 	}
 }

@@ -23,8 +23,8 @@ namespace bs
 	 */
 	struct BS_CORE_EXPORT PrefabComponentDiff : public IReflectable
 	{
-		INT32 id;
-		SPtr<SerializedObject> data;
+		INT32 Id;
+		SPtr<SerializedObject> Data;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -55,22 +55,22 @@ namespace bs
 	{
 		PrefabObjectDiff() { }
 
-		UINT32 id = 0;
+		UINT32 Id = 0;
 
-		String name;
-		Vector3 position = Vector3::ZERO;
-		Quaternion rotation = Quaternion::IDENTITY;
-		Vector3 scale = Vector3::ZERO;
-		bool isActive = false;
-		UINT32 soFlags = 0;
+		String Name;
+		Vector3 Position = Vector3::ZERO;
+		Quaternion Rotation = Quaternion::IDENTITY;
+		Vector3 Scale = Vector3::ZERO;
+		bool IsActive = false;
+		UINT32 SoFlags = 0;
 
-		Vector<SPtr<PrefabComponentDiff>> componentDiffs;
-		Vector<UINT32> removedComponents;
-		Vector<SPtr<SerializedObject>> addedComponents;
+		Vector<SPtr<PrefabComponentDiff>> ComponentDiffs;
+		Vector<UINT32> RemovedComponents;
+		Vector<SPtr<SerializedObject>> AddedComponents;
 
-		Vector<SPtr<PrefabObjectDiff>> childDiffs;
-		Vector<UINT32> removedChildren;
-		Vector<SPtr<SerializedObject>> addedChildren;
+		Vector<SPtr<PrefabObjectDiff>> ChildDiffs;
+		Vector<UINT32> RemovedChildren;
+		Vector<SPtr<SerializedObject>> AddedChildren;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -109,8 +109,8 @@ namespace bs
 		/** A reference to a renamed game object instance data, and its original ID so it may be restored later. */
 		struct RenamedGameObject
 		{
-			GameObjectInstanceDataPtr instanceData;
-			UINT64 originalId;
+			GameObjectInstanceDataPtr InstanceData;
+			UINT64 OriginalId;
 		};
 
 		/**

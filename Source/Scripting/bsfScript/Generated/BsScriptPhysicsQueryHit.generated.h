@@ -12,13 +12,13 @@ namespace bs
 {
 	struct __PhysicsQueryHitInterop
 	{
-		Vector3 point;
-		Vector3 normal;
-		Vector2 uv;
-		float distance;
-		uint32_t triangleIdx;
-		uint32_t unmappedTriangleIdx;
-		MonoObject* collider;
+		Vector3 Point;
+		Vector3 Normal;
+		Vector2 Uv;
+		float Distance;
+		uint32_t TriangleIdx;
+		uint32_t UnmappedTriangleIdx;
+		MonoObject* Collider;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptPhysicsQueryHit : public ScriptObject<ScriptPhysicsQueryHit>

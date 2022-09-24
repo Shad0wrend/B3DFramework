@@ -16,7 +16,7 @@ namespace bs
 
 	MonoObject*ScriptSpriteSheetGridAnimation::Box(const SpriteSheetGridAnimation& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	SpriteSheetGridAnimation ScriptSpriteSheetGridAnimation::Unbox(MonoObject* value)

@@ -9,20 +9,20 @@ namespace bs
 	struct BMP_HEADER
 	{
 		UINT16 BM;
-		UINT32 size_of_file;
-		UINT32 reserve;
-		UINT32 offset_of_pixel_data;
-		UINT32 size_of_header;
-		UINT32 width;
-		UINT32 hight;
-		UINT16 num_of_color_plane;
-		UINT16 num_of_bit_per_pix;
-		UINT32 compression;
-		UINT32 size_of_pix_data;
-		UINT32 h_resolution;
-		UINT32 v_resolution;
-		UINT32 num_of_color_in_palette;
-		UINT32 important_colors;
+		UINT32 SizeOfFile;
+		UINT32 Reserve;
+		UINT32 OffsetOfPixelData;
+		UINT32 SizeOfHeader;
+		UINT32 Width;
+		UINT32 Hight;
+		UINT16 NumOfColorPlane;
+		UINT16 NumOfBitPerPix;
+		UINT32 Compression;
+		UINT32 SizeOfPixData;
+		UINT32 HResolution;
+		UINT32 VResolution;
+		UINT32 NumOfColorInPalette;
+		UINT32 ImportantColors;
 
 	};
 
@@ -43,20 +43,20 @@ namespace bs
 
 		BMP_HEADER header;
 		header.BM = 0x4d42;
-		header.size_of_file =  sizeof(header) + dataSize;
-		header.reserve = 0000;
-		header.offset_of_pixel_data = 54;
-		header.size_of_header = 40;
-		header.width = width;
-		header.hight = height;
-		header.num_of_color_plane = 1;
-		header.num_of_bit_per_pix = bmpBytesPerPixel * 8;
-		header.compression = 0;
-		header.size_of_pix_data = dataSize;
-		header.h_resolution = 2835;
-		header.v_resolution = 2835;
-		header.num_of_color_in_palette = 0;
-		header.important_colors = 0;
+		header.SizeOfFile =  sizeof(header) + dataSize;
+		header.Reserve = 0000;
+		header.OffsetOfPixelData = 54;
+		header.SizeOfHeader = 40;
+		header.Width = width;
+		header.Hight = height;
+		header.NumOfColorPlane = 1;
+		header.NumOfBitPerPix = bmpBytesPerPixel * 8;
+		header.Compression = 0;
+		header.SizeOfPixData = dataSize;
+		header.HResolution = 2835;
+		header.VResolution = 2835;
+		header.NumOfColorInPalette = 0;
+		header.ImportantColors = 0;
 
 		// Write header
 		memcpy(output, &header, sizeof(header));

@@ -25,13 +25,13 @@ namespace bs
 	struct BS_CORE_EXPORT ParticleRenderData
 	{
 		/** Contains mapping from unsorted to sorted particle indices. */
-		Vector<UINT32> indices;
+		Vector<UINT32> Indices;
 
 		/** Total number of particles in the particle system. */
-		UINT32 numParticles;
+		UINT32 NumParticles;
 
 		/** Bounds of the particle system, in the system's simulation space. */
-		AABox bounds;
+		AABox Bounds;
 	};
 
 	/**
@@ -41,13 +41,13 @@ namespace bs
 	struct BS_CORE_EXPORT ParticleBillboardRenderData : ParticleRenderData
 	{
 		/** Contains particle positions in .xyz and 2D rotation in .w */
-		PixelData positionAndRotation;
+		PixelData PositionAndRotation;
 
 		/** Contains particle color in .xyz and transparency in .a. */
-		PixelData color;
+		PixelData Color;
 
 		/** Contains 2D particle size in .xy, frame index (used for animation) in .z. */
-		PixelData sizeAndFrameIdx;
+		PixelData SizeAndFrameIdx;
 	};
 
 	/**
@@ -57,16 +57,16 @@ namespace bs
 	struct BS_CORE_EXPORT ParticleMeshRenderData : ParticleRenderData
 	{
 		/** Contains particle positions in .xyz with .w unused. */
-		PixelData position;
+		PixelData Position;
 
 		/** Contains particle color in .xyz and transparency in .a. */
-		PixelData color;
+		PixelData Color;
 
 		/** Contains particle size in .xyz with .w unused. */
-		PixelData size;
+		PixelData Size;
 
 		/** Contains particle rotation in radians in .xyz with .w unused. */
-		PixelData rotation;
+		PixelData Rotation;
 	};
 	/**
 	 * Contains information about a single particle about to be inserted into the GPU simulation. Matches the structure
@@ -74,13 +74,13 @@ namespace bs
 	 */
 	struct GpuParticleVertex
 	{
-		Vector3 position;
-		float lifetime;
-		Vector3 velocity;
-		float invMaxLifetime;
-		Vector2 size;
-		float rotation;
-		Vector2 dataUV;
+		Vector3 Position;
+		float Lifetime;
+		Vector3 Velocity;
+		float InvMaxLifetime;
+		Vector2 Size;
+		float Rotation;
+		Vector2 DataUv;
 	};
 
 	/** Extension of GpuParticle that contains data not required by the injection vertex buffer. */
@@ -90,32 +90,32 @@ namespace bs
 		GpuParticleVertex GetVertex() const
 		{
 			GpuParticleVertex output;
-			output.position = position;
-			output.lifetime = (initialLifetime - lifetime) / initialLifetime;
-			output.velocity = velocity;
-			output.invMaxLifetime = 1.0f / initialLifetime;
-			output.size = size;
-			output.rotation = rotation;
-			output.dataUV = dataUV;
+			output.Position = Position;
+			output.Lifetime = (InitialLifetime - Lifetime) / InitialLifetime;
+			output.Velocity = Velocity;
+			output.InvMaxLifetime = 1.0f / InitialLifetime;
+			output.Size = Size;
+			output.Rotation = Rotation;
+			output.DataUv = DataUv;
 
 			return output;
 		}
 
-		float initialLifetime;
+		float InitialLifetime;
 	};
 
 	/** Contains inputs to the GPU particle simulation as provided by the particle system manager. */
 	struct BS_CORE_EXPORT ParticleGPUSimulationData
 	{
 		/** A set of the particles to be inserted into the simulation. */
-		Vector<GpuParticle> particles;
+		Vector<GpuParticle> Particles;
 	};
 
 	/** Contains simulation data resulting from all particle systems, for a single frame. */
 	struct ParticlePerFrameData
 	{
-		UnorderedMap<UINT32, ParticleRenderData*> cpuData;
-		UnorderedMap<UINT32, ParticleGPUSimulationData*> gpuData;
+		UnorderedMap<UINT32, ParticleRenderData*> CpuData;
+		UnorderedMap<UINT32, ParticleGPUSimulationData*> GpuData;
 	};
 
 	/** Keeps track of all active ParticleSystem%s and performs per-frame updates. */

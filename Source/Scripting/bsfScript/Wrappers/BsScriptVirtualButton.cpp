@@ -13,7 +13,7 @@ namespace bs
 
 	void ScriptVirtualButton::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_InitVirtualButton", (void*)&ScriptVirtualButton::InternalInitVirtualButton);
+		metaData.ScriptClass->AddInternalCall("Internal_InitVirtualButton", (void*)&ScriptVirtualButton::InternalInitVirtualButton);
 	}
 
 	UINT32 ScriptVirtualButton::InternalInitVirtualButton(MonoString* name)
@@ -21,13 +21,13 @@ namespace bs
 		String nameStr = MonoUtil::MonoToString(name);
 
 		VirtualButton vb(nameStr);
-		return vb.buttonIdentifier;
+		return vb.ButtonIdentifier;
 	}
 
 	MonoObject* ScriptVirtualButton::Box(const VirtualButton& value)
 	{
 		// We're casting away const but it's fine since structs are passed by value anyway
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	VirtualButton ScriptVirtualButton::Unbox(MonoObject* obj)

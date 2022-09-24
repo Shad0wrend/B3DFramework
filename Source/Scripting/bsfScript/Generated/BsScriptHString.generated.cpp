@@ -15,12 +15,12 @@ namespace bs
 
 	void ScriptHString::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_HString", (void*)&ScriptHString::InternalHString);
-		metaData.scriptClass->AddInternalCall("Internal_HString0", (void*)&ScriptHString::InternalHString0);
-		metaData.scriptClass->AddInternalCall("Internal_HString1", (void*)&ScriptHString::InternalHString1);
-		metaData.scriptClass->AddInternalCall("Internal_HString2", (void*)&ScriptHString::InternalHString2);
-		metaData.scriptClass->AddInternalCall("Internal_GetValue", (void*)&ScriptHString::InternalGetValue);
-		metaData.scriptClass->AddInternalCall("Internal_SetParameter", (void*)&ScriptHString::InternalSetParameter);
+		metaData.ScriptClass->AddInternalCall("Internal_HString", (void*)&ScriptHString::InternalHString);
+		metaData.ScriptClass->AddInternalCall("Internal_HString0", (void*)&ScriptHString::InternalHString0);
+		metaData.ScriptClass->AddInternalCall("Internal_HString1", (void*)&ScriptHString::InternalHString1);
+		metaData.ScriptClass->AddInternalCall("Internal_HString2", (void*)&ScriptHString::InternalHString2);
+		metaData.ScriptClass->AddInternalCall("Internal_GetValue", (void*)&ScriptHString::InternalGetValue);
+		metaData.ScriptClass->AddInternalCall("Internal_SetParameter", (void*)&ScriptHString::InternalSetParameter);
 
 	}
 
@@ -31,7 +31,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptHString>()) ScriptHString(managedInstance, value);
 		return managedInstance;
 	}

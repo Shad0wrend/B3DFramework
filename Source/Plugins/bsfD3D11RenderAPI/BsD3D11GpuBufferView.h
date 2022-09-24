@@ -17,12 +17,12 @@ namespace bs { namespace ct
 	 */
 	struct BS_CORE_EXPORT GPU_BUFFER_VIEW_DESC
 	{
-		UINT32 firstElement;
-		UINT32 elementWidth;
-		UINT32 numElements;
-		bool useCounter;
-		GpuViewUsage usage;
-		GpuBufferFormat format;
+		UINT32 FirstElement;
+		UINT32 ElementWidth;
+		UINT32 NumElements;
+		bool UseCounter;
+		GpuViewUsage Usage;
+		GpuBufferFormat Format;
 	};
 
 	/**
@@ -60,19 +60,19 @@ namespace bs { namespace ct
 		D3D11GpuBuffer* GetBuffer() const { return mBuffer; }
 
 		/** Returns index of first element in the buffer that this view provides access to. */
-		UINT32 GetFirstElement() const { return mDesc.firstElement; }
+		UINT32 GetFirstElement() const { return mDesc.FirstElement; }
 
 		/** Returns width of an element in the buffer, in bytes. */
-		UINT32 GetElementWidth() const { return mDesc.elementWidth; }
+		UINT32 GetElementWidth() const { return mDesc.ElementWidth; }
 
 		/**	Returns the total number of elements this buffer provides access to. */
-		UINT32 GetNumElements() const { return mDesc.numElements; }
+		UINT32 GetNumElements() const { return mDesc.NumElements; }
 
 		/**	Returns true if this view allows a GPU program to use counters on the bound buffer. */
-		bool GetUseCounter() const { return mDesc.useCounter; }
+		bool GetUseCounter() const { return mDesc.UseCounter; }
 
 		/** Returns view usage which determines where in the pipeline can the view be bound. */
-		GpuViewUsage GetUsage() const { return mDesc.usage; }
+		GpuViewUsage GetUsage() const { return mDesc.Usage; }
 
 		/** Returns the DX11 shader resource view object for the buffer. */
 		ID3D11ShaderResourceView* GetSrv() const { return mSRV; }

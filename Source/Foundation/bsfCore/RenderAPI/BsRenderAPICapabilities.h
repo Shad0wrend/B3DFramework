@@ -75,13 +75,13 @@ namespace bs
 		};
 
 		/** Determines the direction of the Y axis in UV (texture mapping) space. */
-		Axis uvYAxis = Axis::Down;
+		Axis UvYAxis = Axis::Down;
 
 		/** Determines the direction of the Y axis in normalized device coordinate (NDC) space. */
-		Axis ndcYAxis = Axis::Up;
+		Axis NdcYAxis = Axis::Up;
 
 		/** Determines the order in which matrices are laid out in GPU programs. */
-		MatrixOrder matrixOrder = MatrixOrder::RowMajor;
+		MatrixOrder MatrixOrder = MatrixOrder::RowMajor;
 	};
 
 	/** Holds data about render system driver version. */
@@ -93,7 +93,7 @@ namespace bs
 		String ToString() const
 		{
 			StringStream str;
-			str << major << "." << minor << "." << release << "." << build;
+			str << Major << "." << Minor << "." << Release << "." << Build;
 			return str.str();
 		}
 
@@ -103,21 +103,21 @@ namespace bs
 			Vector<bs::String> tokens = StringUtil::Split(versionString, ".");
 			if(!tokens.empty())
 			{
-				major = parseINT32(tokens[0]);
+				Major = parseINT32(tokens[0]);
 				if (tokens.size() > 1)
-					minor = parseINT32(tokens[1]);
+					Minor = parseINT32(tokens[1]);
 				if (tokens.size() > 2)
-					release = parseINT32(tokens[2]);
+					Release = parseINT32(tokens[2]);
 				if (tokens.size() > 3)
-					build = parseINT32(tokens[3]);
+					Build = parseINT32(tokens[3]);
 			}
 
 		}
 
-		INT32 major = 0;
-		INT32 minor = 0;
-		INT32 release = 0;
-		INT32 build = 0;
+		INT32 Major = 0;
+		INT32 Minor = 0;
+		INT32 Release = 0;
+		INT32 Build = 0;
 	};
 
 	/** Types of GPU vendors. */
@@ -135,61 +135,61 @@ namespace bs
 	{
 	public:	
 		/** The identifier associated with the render API. */
-		StringID renderAPIName;
+		StringID RenderApiName;
 
 		/** Current version of the driver (render backend). */
-		DriverVersion driverVersion;
+		DriverVersion DriverVersion;
 
 		/** The name of the device (GPU) as reported by the render system. */
-		String deviceName;
+		String DeviceName;
 
 		/** Vendor of the device (GPU). */
-		GPUVendor deviceVendor = GPU_UNKNOWN;
+		GPUVendor DeviceVendor = GPU_UNKNOWN;
 
 		/** The number of texture units available per stage. */
-		UINT16 numTextureUnitsPerStage[GPT_COUNT] { 0 };
+		UINT16 NumTextureUnitsPerStage[GPT_COUNT] { 0 };
 
 		/** Total number of texture units available. */
-		UINT16 numCombinedTextureUnits = 0;
+		UINT16 NumCombinedTextureUnits = 0;
 
 		/** The number of parameter block buffers available per stage. */
-		UINT16 numGpuParamBlockBuffersPerStage[GPT_COUNT] { 0 };
+		UINT16 NumGpuParamBlockBuffersPerStage[GPT_COUNT] { 0 };
 
 		/** Total number of parameter block buffers available. */
-		UINT16 numCombinedParamBlockBuffers = 0;
+		UINT16 NumCombinedParamBlockBuffers = 0;
 
 		/** The number of load-store texture unitss available per stage. */
-		UINT16 numLoadStoreTextureUnitsPerStage[GPT_COUNT] { 0 };
+		UINT16 NumLoadStoreTextureUnitsPerStage[GPT_COUNT] { 0 };
 
 		/** Total number of load-store texture units available. */
-		UINT16 numCombinedLoadStoreTextureUnits = 0;
+		UINT16 NumCombinedLoadStoreTextureUnits = 0;
 
 		/** Maximum number of vertex buffers we can bind at once. */
-		UINT32 maxBoundVertexBuffers = 0;
+		UINT32 MaxBoundVertexBuffers = 0;
 
 		/** The number of simultaneous render targets supported. */
-		UINT16 numMultiRenderTargets = 0;
+		UINT16 NumMultiRenderTargets = 0;
 
 		/** The number of vertices a geometry program can emit in a single run. */
-		UINT32 geometryProgramNumOutputVertices = 0;
+		UINT32 GeometryProgramNumOutputVertices = 0;
 
 		/** Horizontal texel offset used for mapping texels to pixels. */
-		float horizontalTexelOffset = 0.0f;
+		float HorizontalTexelOffset = 0.0f;
 
 		/** Vertical texel offset used for mapping texels to pixels. */
-		float verticalTexelOffset = 0.0f;
+		float VerticalTexelOffset = 0.0f;
 
 		/** Minimum (closest) depth value used by this render backend */
-		float minDepth = 0.0f;
+		float MinDepth = 0.0f;
 
 		/** Maximum (farthest) depth value used by this render backend. */
-		float maxDepth = 1.0f;
+		float MaxDepth = 1.0f;
 
 		/** Returns various conventions expected by the render backend. */
-		Conventions conventions;
+		Conventions Conventions;
 
 		/** Native type used for vertex colors. */
-		VertexElementType vertexColorType = VET_COLOR_ABGR;
+		VertexElementType VertexColorType = VET_COLOR_ABGR;
 
 		/**	Sets a capability flag indicating this capability is supported. */
 		void SetCapability(const Capabilities c)

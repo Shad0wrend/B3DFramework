@@ -74,12 +74,12 @@ namespace bs
 
 		return
 		{{
-			direction.x,
-			direction.y,
-			direction.z,
-			up.x,
-			up.y,
-			up.z
+			direction.X,
+			direction.Y,
+			direction.Z,
+			up.X,
+			up.Y,
+			up.Z
 		}};
 	}
 
@@ -87,7 +87,7 @@ namespace bs
 	{
 		Vector3 position = GetTransform().GetPosition();
 
-		alListener3f(AL_POSITION, position.x, position.y, position.z);
+		alListener3f(AL_POSITION, position.X, position.Y, position.Z);
 	}
 
 	void OAAudioListener::UpdateOrientation(const std::array<float, 6>& orientation)
@@ -97,7 +97,7 @@ namespace bs
 
 	void OAAudioListener::UpdateVelocity()
 	{
-		alListener3f(AL_VELOCITY, mVelocity.x, mVelocity.y, mVelocity.z);
+		alListener3f(AL_VELOCITY, mVelocity.X, mVelocity.Y, mVelocity.Z);
 	}
 
 	void OAAudioListener::UpdateVolume(float volume)

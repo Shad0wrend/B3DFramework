@@ -16,9 +16,9 @@ namespace bs
 	/**	C++ version of the managed LogEntry structure. */
 	struct ScriptLogEntryData
 	{
-		MonoString* message;
-		LogVerbosity verbosity;
-		UINT32 category;
+		MonoString* Message;
+		LogVerbosity Verbosity;
+		UINT32 Category;
 	};
 
 	ScriptDebug::ScriptDebug(MonoObject* instance)
@@ -27,19 +27,19 @@ namespace bs
 
 	void ScriptDebug::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_Log", (void*)&ScriptDebug::InternalLog);
-		metaData.scriptClass->AddInternalCall("Internal_LogWarning", (void*)&ScriptDebug::InternalLogWarning);
-		metaData.scriptClass->AddInternalCall("Internal_LogError", (void*)&ScriptDebug::InternalLogError);
-		metaData.scriptClass->AddInternalCall("Internal_LogMessage", (void*)&ScriptDebug::InternalLogMessage);
-		metaData.scriptClass->AddInternalCall("Internal_Clear", (void*)&ScriptDebug::InternalClear);
-		metaData.scriptClass->AddInternalCall("Internal_GetMessages", (void*)&ScriptDebug::InternalGetMessages);
+		metaData.ScriptClass->AddInternalCall("Internal_Log", (void*)&ScriptDebug::InternalLog);
+		metaData.ScriptClass->AddInternalCall("Internal_LogWarning", (void*)&ScriptDebug::InternalLogWarning);
+		metaData.ScriptClass->AddInternalCall("Internal_LogError", (void*)&ScriptDebug::InternalLogError);
+		metaData.ScriptClass->AddInternalCall("Internal_LogMessage", (void*)&ScriptDebug::InternalLogMessage);
+		metaData.ScriptClass->AddInternalCall("Internal_Clear", (void*)&ScriptDebug::InternalClear);
+		metaData.ScriptClass->AddInternalCall("Internal_GetMessages", (void*)&ScriptDebug::InternalGetMessages);
 
-		onAddedThunk = (OnAddedThunkDef)metaData.scriptClass->GetMethod("Internal_OnAdded", 3)->GetThunk();
+		onAddedThunk = (OnAddedThunkDef)metaData.ScriptClass->GetMethod("Internal_OnAdded", 3)->GetThunk();
 	}
 
 	void ScriptDebug::StartUp()
 	{
-		mOnLogEntryAddedConn = gDebug().onLogEntryAdded.Connect(&ScriptDebug::OnLogEntryAdded);
+		mOnLogEntryAddedConn = gDebug().OnLogEntryAdded.Connect(&ScriptDebug::OnLogEntryAdded);
 	}
 
 	void ScriptDebug::ShutDown()

@@ -76,8 +76,8 @@ namespace bs
 	{
 		if (PixelUtil::IsCompressed(mFormat))
 		{
-			if (volume.left == GetLeft() && volume.top == GetTop() && volume.front == GetFront() &&
-				volume.right == GetRight() && volume.bottom == GetBottom() && volume.back == GetBack())
+			if (volume.Left == GetLeft() && volume.Top == GetTop() && volume.Front == GetFront() &&
+				volume.Right == GetRight() && volume.Bottom == GetBottom() && volume.Back == GetBack())
 			{
 				// Entire buffer is being queried
 				return *this;
@@ -94,9 +94,9 @@ namespace bs
 		const size_t elemSize = PixelUtil::GetNumElemBytes(mFormat);
 		PixelData rval(volume.GetWidth(), volume.GetHeight(), volume.GetDepth(), mFormat);
 
-		rval.SetExternalBuffer(((UINT8*)GetData()) + ((volume.left - GetLeft())*elemSize)
-			+ ((volume.top - GetTop())*mRowPitch)
-			+ ((volume.front - GetFront())*mSlicePitch));
+		rval.SetExternalBuffer(((UINT8*)GetData()) + ((volume.Left - GetLeft())*elemSize)
+			+ ((volume.Top - GetTop())*mRowPitch)
+			+ ((volume.Front - GetFront())*mSlicePitch));
 
 		rval.mFormat = mFormat;
 		PixelUtil::GetPitch(volume.GetWidth(), volume.GetHeight(), volume.GetDepth(), mFormat, rval.mRowPitch,
@@ -116,11 +116,11 @@ namespace bs
 		{
 			pixelCoords -= Vector2(0.5f, 0.5f);
 
-			UINT32 x = (UINT32)Math::Clamp(Math::FloorToInt(pixelCoords.x), 0, maxExtentX);
-			UINT32 y = (UINT32)Math::Clamp(Math::FloorToInt(pixelCoords.y), 0, maxExtentY);
+			UINT32 x = (UINT32)Math::Clamp(Math::FloorToInt(pixelCoords.X), 0, maxExtentX);
+			UINT32 y = (UINT32)Math::Clamp(Math::FloorToInt(pixelCoords.Y), 0, maxExtentY);
 
-			float fracX = pixelCoords.x - x;
-			float fracY = pixelCoords.y - y;
+			float fracX = pixelCoords.X - x;
+			float fracY = pixelCoords.Y - y;
 
 			x = Math::Clamp(x, 0U, (UINT32)maxExtentX);
 			y = Math::Clamp(y, 0U, (UINT32)maxExtentY);
@@ -138,8 +138,8 @@ namespace bs
 		}
 		else
 		{
-			UINT32 x = (UINT32)Math::Clamp(Math::FloorToInt(pixelCoords.x), 0, maxExtentX);
-			UINT32 y = (UINT32)Math::Clamp(Math::FloorToInt(pixelCoords.y), 0, maxExtentY);
+			UINT32 x = (UINT32)Math::Clamp(Math::FloorToInt(pixelCoords.X), 0, maxExtentX);
+			UINT32 y = (UINT32)Math::Clamp(Math::FloorToInt(pixelCoords.Y), 0, maxExtentY);
 
 			return GetColorAt(x, y);
 		}

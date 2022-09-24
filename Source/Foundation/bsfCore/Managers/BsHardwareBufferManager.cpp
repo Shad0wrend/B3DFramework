@@ -69,14 +69,14 @@ namespace bs
 	{
 
 	HardwareBufferManager::VertexDeclarationKey::VertexDeclarationKey(const Vector<VertexElement>& elements)
-		:elements(elements)
+		:Elements(elements)
 	{ }
 
 
 	size_t HardwareBufferManager::VertexDeclarationKey::HashFunction::operator()(const VertexDeclarationKey& v) const
 	{
 		size_t hash = 0;
-		for(auto& entry : v.elements)
+		for(auto& entry : v.Elements)
 			bs_hash_combine(hash, VertexElement::GetHash(entry));
 
 		return hash;
@@ -85,12 +85,12 @@ namespace bs
 	bool HardwareBufferManager::VertexDeclarationKey::EqualFunction::operator()(const VertexDeclarationKey& lhs,
 		const VertexDeclarationKey& rhs) const
 	{
-		if (lhs.elements.size() != rhs.elements.size())
+		if (lhs.Elements.size() != rhs.Elements.size())
 			return false;
 
-		size_t numElements = lhs.elements.size();
-		auto iterLeft = lhs.elements.begin();
-		auto iterRight = rhs.elements.begin();
+		size_t numElements = lhs.Elements.size();
+		auto iterLeft = lhs.Elements.begin();
+		auto iterRight = rhs.Elements.begin();
 		for(size_t i = 0; i < numElements; i++)
 		{
 			if (*iterLeft != *iterRight)

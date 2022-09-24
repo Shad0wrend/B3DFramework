@@ -16,25 +16,25 @@ namespace bs { namespace ct
 	{
 	public:
 		/**	Reference to the mesh to render. */
-		SPtr<Mesh> mesh;
+		SPtr<Mesh> Mesh;
 
 		/**	Portion of the mesh to render. */
-		SubMesh subMesh;
+		SubMesh SubMesh;
 
 		/**	Material to render the mesh with. */
-		SPtr<Material> material;
+		SPtr<Material> Material;
 
 		/** Index of the technique in the material to render the element with. */
-		UINT32 defaultTechniqueIdx = 0;
+		UINT32 DefaultTechniqueIdx = 0;
 
 		/** Index of the technique in the material to render the element with when velocity writes are supported. */
-		UINT32 writeVelocityTechniqueIdx = (UINT32)-1;
+		UINT32 WriteVelocityTechniqueIdx = (UINT32)-1;
 
 		/** All GPU parameters from the material used by the renderable. */
-		SPtr<GpuParamsSet> params;
+		SPtr<GpuParamsSet> Params;
 
 		/** Renderer specific value that identifies the type of this renderable element. */
-		UINT32 type = 0;
+		UINT32 Type = 0;
 
 		/** Executes the draw call for the render element. */
 		virtual void Draw() const = 0;

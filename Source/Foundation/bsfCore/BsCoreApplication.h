@@ -16,18 +16,18 @@ namespace bs
 	/**	Structure containing parameters for starting the application. */
 	struct BS_SCRIPT_EXPORT(m:Application,pl:true,api:bsf) START_UP_DESC
 	{
-		String renderAPI; /**< Name of the render system plugin to use. */
-		String renderer; /**< Name of the renderer plugin to use. */
-		String physics; /**< Name of physics plugin to use. */
-		String audio; /**< Name of the audio plugin to use. */
-		String input; /**< Name of the input plugin to use. */
+		String RenderApi; /**< Name of the render system plugin to use. */
+		String Renderer; /**< Name of the renderer plugin to use. */
+		String Physics; /**< Name of physics plugin to use. */
+		String Audio; /**< Name of the audio plugin to use. */
+		String Input; /**< Name of the input plugin to use. */
 
 		/**
 		 * True if physics cooking library should be loaded. Cooking is useful for creating collision meshes during
 		 * development type, but might be unnecessary in the final application. When turned off you can save on space by
 		 * not shipping the cooking library.
 		 */
-		bool physicsCooking = true;
+		bool PhysicsCooking = true;
 
 		/**
 		 * True if animation should be evaluated at the same time while rendering is happening. This introduces a one
@@ -35,22 +35,22 @@ namespace bs
 		 * to finish evaluating before rendering starts, ensuring up-to-date frame but potentially blocking the rendering
 		 * thread from moving forward until the animation finishes.
 		 */
-		bool asyncAnimation = true;
+		bool AsyncAnimation = true;
 
-		RENDER_WINDOW_DESC primaryWindowDesc; /**< Describes the window to create during start-up. */
+		RENDER_WINDOW_DESC PrimaryWindowDesc; /**< Describes the window to create during start-up. */
 
-		Vector<String> importers; /**< A list of importer plugins to load. */
+		Vector<String> Importers; /**< A list of importer plugins to load. */
 
 		/**
 		 *If specified Log will call this function whenever a new log message is added. If this returns true then
 		 * the default action of the log will be skipped.
 		 */
 		BS_SCRIPT_EXPORT(ex:true)
-		std::function<bool(const String& message, LogVerbosity verbosity, UINT32 category)> logCallback;
+		std::function<bool(const String& message, LogVerbosity verbosity, UINT32 category)> LogCallback;
 
 		/** Crash handling customization */
 		BS_SCRIPT_EXPORT(ex:true)
-		CrashHandlerSettings crashHandling;
+		CrashHandlerSettings CrashHandling;
 	};
 
 	/**

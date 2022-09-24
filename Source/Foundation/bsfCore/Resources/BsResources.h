@@ -51,33 +51,33 @@ namespace bs
 		{
 			LoadedResourceData() = default;
 			LoadedResourceData(const WeakResourceHandle<Resource>& resource, UINT32 size)
-				:resource(resource), size(size)
+				:Resource(resource), Size(size)
 			{ }
 
-			WeakResourceHandle<Resource> resource;
-			UINT32 numInternalRefs = 0;
-			UINT32 size = 0;
+			WeakResourceHandle<Resource> Resource;
+			UINT32 NumInternalRefs = 0;
+			UINT32 Size = 0;
 		};
 
 		/** Information about a resource that's currently being loaded. */
 		struct ResourceLoadData
 		{
 			ResourceLoadData(const WeakResourceHandle<Resource>& resource, UINT32 numDependencies, UINT32 size)
-				:resData(resource, size), remainingDependencies(numDependencies)
+				:ResData(resource, size), RemainingDependencies(numDependencies)
 			{ }
 
-			LoadedResourceData resData;
-			SPtr<Resource> loadedData;
-			UINT32 remainingDependencies;
-			Vector<HResource> dependencies;
-			bool notifyImmediately;
-			bool loadStarted = false;
-			SPtr<Task> task;
+			LoadedResourceData ResData;
+			SPtr<Resource> LoadedData;
+			UINT32 RemainingDependencies;
+			Vector<HResource> Dependencies;
+			bool NotifyImmediately;
+			bool LoadStarted = false;
+			SPtr<Task> Task;
 
 			// Progress reporting
-			UINT32 dependencySize = 0;
-			UINT32 dependencyLoadedAmount = 0;
-			std::atomic<float> progress;
+			UINT32 DependencySize = 0;
+			UINT32 DependencyLoadedAmount = 0;
+			std::atomic<float> Progress;
 		};
 
 		/** Information about an issued resource load. */
@@ -85,9 +85,9 @@ namespace bs
 		{
 			enum State { Loading, Failed, AlreadyInProgress, AlreadyLoaded };
 
-			HResource resource;
-			UINT32 size;
-			State state;
+			HResource Resource;
+			UINT32 Size;
+			State State;
 		};
 
 	public:
@@ -314,7 +314,7 @@ namespace bs
 		 * being loaded asynchronously.
 		 */
 		BS_SCRIPT_EXPORT()
-		Event<void(BS_NORREF const HResource&)> onResourceLoaded;
+		Event<void(BS_NORREF const HResource&)> OnResourceLoaded;
 
 		/**
 		 * Called when the resource has been destroyed. Provides UUID of the destroyed resource.
@@ -322,7 +322,7 @@ namespace bs
 		 * @note	It is undefined from which thread this will get called from.
 		 */
 		BS_SCRIPT_EXPORT()
-		Event<void(const UUID&)> onResourceDestroyed;
+		Event<void(const UUID&)> OnResourceDestroyed;
 
 		/**
 		 * Called when the internal resource the handle is pointing to has changed.
@@ -330,7 +330,7 @@ namespace bs
 		 * @note	It is undefined from which thread this will get called from.
 		 */
 		BS_SCRIPT_EXPORT()
-		Event<void(BS_NORREF const HResource&)> onResourceModified;
+		Event<void(BS_NORREF const HResource&)> OnResourceModified;
 
 	public: // ***** INTERNAL ******
 		/** @name Internal

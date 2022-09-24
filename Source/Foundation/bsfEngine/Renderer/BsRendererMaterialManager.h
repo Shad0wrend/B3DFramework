@@ -23,8 +23,8 @@ namespace bs
 		/**	Information used for initializing a renderer material managed by this module. */	
 		struct RendererMaterialData
 		{
-			ct::RendererMaterialMetaData* metaData;
-			const Path shaderPath;
+			ct::RendererMaterialMetaData* MetaData;
+			const Path ShaderPath;
 		};
 
 	public:

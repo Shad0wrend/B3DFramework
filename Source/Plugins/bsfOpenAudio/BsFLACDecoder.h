@@ -15,13 +15,13 @@ namespace bs
 	/** Data used by the FLAC decoder. */
 	struct FLACDecoderData
 	{
-		SPtr<DataStream> stream;
-		UINT32 streamOffset = 0;
-		AudioDataInfo info;
-		UINT8* output = nullptr;
-		Vector<UINT8> overflow;
-		UINT32 samplesToRead = 0;
-		bool error = false;
+		SPtr<DataStream> Stream;
+		UINT32 StreamOffset = 0;
+		AudioDataInfo Info;
+		UINT8* Output = nullptr;
+		Vector<UINT8> Overflow;
+		UINT32 SamplesToRead = 0;
+		bool Error = false;
 	};
 
 	/** Decodes FLAC audio data into raw PCM samples. */

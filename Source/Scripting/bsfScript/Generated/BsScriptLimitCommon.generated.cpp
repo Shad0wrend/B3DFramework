@@ -18,7 +18,7 @@ namespace bs
 
 	MonoObject*ScriptLimitCommon::Box(const __LimitCommonInterop& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	__LimitCommonInterop ScriptLimitCommon::Unbox(MonoObject* value)
@@ -29,9 +29,9 @@ namespace bs
 	LimitCommon ScriptLimitCommon::FromInterop(const __LimitCommonInterop& value)
 	{
 		LimitCommon output;
-		output.contactDist = value.contactDist;
-		output.restitution = value.restitution;
-		output.spring = value.spring;
+		output.ContactDist = value.ContactDist;
+		output.Restitution = value.Restitution;
+		output.Spring = value.Spring;
 
 		return output;
 	}
@@ -39,9 +39,9 @@ namespace bs
 	__LimitCommonInterop ScriptLimitCommon::ToInterop(const LimitCommon& value)
 	{
 		__LimitCommonInterop output;
-		output.contactDist = value.contactDist;
-		output.restitution = value.restitution;
-		output.spring = value.spring;
+		output.ContactDist = value.ContactDist;
+		output.Restitution = value.Restitution;
+		output.Spring = value.Spring;
 
 		return output;
 	}

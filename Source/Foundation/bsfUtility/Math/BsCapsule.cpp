@@ -14,9 +14,9 @@ namespace bs
 		const Vector3& org = ray.GetOrigin();
 		const Vector3& dir = ray.GetDirection();
 
-		Vector3 segDir = mSegment.end - mSegment.start;
+		Vector3 segDir = mSegment.End - mSegment.Start;
 		float segExtent = segDir.Normalize() * 0.5f;
-		Vector3 segCenter = mSegment.start + segDir * segExtent;
+		Vector3 segCenter = mSegment.Start + segDir * segExtent;
 
 		Vector3 basis[3];
 		basis[0] = segDir;

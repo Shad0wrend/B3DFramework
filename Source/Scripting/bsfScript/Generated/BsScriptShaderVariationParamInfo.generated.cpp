@@ -18,7 +18,7 @@ namespace bs
 
 	MonoObject*ScriptShaderVariationParamInfo::Box(const __ShaderVariationParamInfoInterop& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	__ShaderVariationParamInfoInterop ScriptShaderVariationParamInfo::Unbox(MonoObject* value)
@@ -30,23 +30,23 @@ namespace bs
 	{
 		ShaderVariationParamInfo output;
 		String tmpname;
-		tmpname = MonoUtil::MonoToString(value.name);
-		output.name = tmpname;
+		tmpname = MonoUtil::MonoToString(value.Name);
+		output.Name = tmpname;
 		String tmpidentifier;
-		tmpidentifier = MonoUtil::MonoToString(value.identifier);
-		output.identifier = tmpidentifier;
-		output.isInternal = value.isInternal;
+		tmpidentifier = MonoUtil::MonoToString(value.Identifier);
+		output.Identifier = tmpidentifier;
+		output.IsInternal = value.IsInternal;
 		SmallVector<ShaderVariationParamValue, 4> vecvalues;
-		if(value.values != nullptr)
+		if(value.Values != nullptr)
 		{
-			ScriptArray arrayvalues(value.values);
+			ScriptArray arrayvalues(value.Values);
 			vecvalues.resize(arrayvalues.Size());
 			for(int i = 0; i < (int)arrayvalues.Size(); i++)
 			{
 				vecvalues[i] = ScriptShaderVariationParamValue::FromInterop(arrayvalues.Get<__ShaderVariationParamValueInterop>(i));
 			}
 		}
-		output.values = vecvalues;
+		output.Values = vecvalues;
 
 		return output;
 	}
@@ -55,21 +55,21 @@ namespace bs
 	{
 		__ShaderVariationParamInfoInterop output;
 		MonoString* tmpname;
-		tmpname = MonoUtil::StringToMono(value.name);
-		output.name = tmpname;
+		tmpname = MonoUtil::StringToMono(value.Name);
+		output.Name = tmpname;
 		MonoString* tmpidentifier;
-		tmpidentifier = MonoUtil::StringToMono(value.identifier);
-		output.identifier = tmpidentifier;
-		output.isInternal = value.isInternal;
-		int arraySizevalues = (int)value.values.size();
+		tmpidentifier = MonoUtil::StringToMono(value.Identifier);
+		output.Identifier = tmpidentifier;
+		output.IsInternal = value.IsInternal;
+		int arraySizevalues = (int)value.Values.size();
 		MonoArray* vecvalues;
 		ScriptArray arrayvalues = ScriptArray::Create<ScriptShaderVariationParamValue>(arraySizevalues);
 		for(int i = 0; i < arraySizevalues; i++)
 		{
-			arrayvalues.Set(i, ScriptShaderVariationParamValue::ToInterop(value.values[i]));
+			arrayvalues.Set(i, ScriptShaderVariationParamValue::ToInterop(value.Values[i]));
 		}
 		vecvalues = arrayvalues.GetInternal();
-		output.values = vecvalues;
+		output.Values = vecvalues;
 
 		return output;
 	}

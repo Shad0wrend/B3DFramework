@@ -22,7 +22,7 @@ namespace bs
 
 	void checkValidDesc(const INDEX_BUFFER_DESC& desc)
 	{
-		if(desc.numIndices == 0)
+		if(desc.NumIndices == 0)
 			BS_EXCEPT(InvalidParametersException, "Index buffer index count is not allowed to be zero.");
 	}
 
@@ -31,7 +31,7 @@ namespace bs
 	{ }
 
 	IndexBuffer::IndexBuffer(const INDEX_BUFFER_DESC& desc)
-		:mProperties(desc.indexType, desc.numIndices), mUsage(desc.usage)
+		:mProperties(desc.IndexType, desc.NumIndices), mUsage(desc.Usage)
 	{
 #if BS_DEBUG_MODE
 		checkValidDesc(desc);
@@ -46,9 +46,9 @@ namespace bs
 	SPtr<ct::CoreObject> IndexBuffer::CreateCore() const
 	{
 		INDEX_BUFFER_DESC desc;
-		desc.indexType = mProperties.mIndexType;
-		desc.numIndices = mProperties.mNumIndices;
-		desc.usage = mUsage;
+		desc.IndexType = mProperties.mIndexType;
+		desc.NumIndices = mProperties.mNumIndices;
+		desc.Usage = mUsage;
 
 		return ct::HardwareBufferManager::Instance().CreateIndexBufferInternal(desc);
 	}
@@ -61,8 +61,8 @@ namespace bs
 	namespace ct
 	{
 	IndexBuffer::IndexBuffer(const INDEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask)
-		: HardwareBuffer(calcIndexSize(desc.indexType) * desc.numIndices, desc.usage, deviceMask)
-		, mProperties(desc.indexType, desc.numIndices)
+		: HardwareBuffer(calcIndexSize(desc.IndexType) * desc.NumIndices, desc.Usage, deviceMask)
+		, mProperties(desc.IndexType, desc.NumIndices)
 	{
 #if BS_DEBUG_MODE
 		checkValidDesc(desc);
@@ -154,11 +154,11 @@ namespace bs
 		}
 
 		GPU_BUFFER_DESC desc;
-		desc.type = type;
-		desc.format = format;
-		desc.usage = mUsage;
-		desc.elementSize = elementSize;
-		desc.elementCount = mBuffer->GetSize() / elemSize;
+		desc.Type = type;
+		desc.Format = format;
+		desc.Usage = mUsage;
+		desc.ElementSize = elementSize;
+		desc.ElementCount = mBuffer->GetSize() / elemSize;
 
 		if(!mSharedBuffer)
 			mSharedBuffer = bs_shared_ptr(mBuffer, mBufferDeleter);

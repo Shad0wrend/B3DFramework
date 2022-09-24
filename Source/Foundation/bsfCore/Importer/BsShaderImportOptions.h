@@ -97,7 +97,7 @@ namespace bs
 		 * which render backends it will be able to run on.
 		 */
 		BS_SCRIPT_EXPORT()
-		ShadingLanguageFlags languages = ShadingLanguageFlag::All;
+		ShadingLanguageFlags Languages = ShadingLanguageFlag::All;
 
 		/** Creates a new import options object that allows you to customize how are meshes imported. */
 		BS_SCRIPT_EXPORT(ec:T)

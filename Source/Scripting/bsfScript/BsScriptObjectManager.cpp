@@ -28,7 +28,7 @@ namespace bs
 	{
 		Map<ScriptObjectBase*, ScriptObjectBackup> backupData;
 
-		onRefreshStarted();
+		OnRefreshStarted();
 
 		// Make sure any managed game objects are properly destroyed so their OnDestroy callbacks fire before unloading the domain
 		GameObjectManager::Instance().DestroyQueuedObjects();
@@ -55,8 +55,8 @@ namespace bs
 
 		for (auto& entry : assemblies)
 		{
-			MonoManager::Instance().LoadAssembly(*entry.path, entry.name);
-			ScriptAssemblyManager::Instance().LoadAssemblyInfo(entry.name, *entry.typeMapping);
+			MonoManager::Instance().LoadAssembly(*entry.Path, entry.Name);
+			ScriptAssemblyManager::Instance().LoadAssemblyInfo(entry.Name, *entry.TypeMapping);
 		}
 
 		Vector<ScriptObjectBase*> scriptObjCopy(mScriptObjects.size()); // Store originals as we could add new objects during the next iteration
@@ -64,7 +64,7 @@ namespace bs
 		for (auto& scriptObject : mScriptObjects)
 			scriptObjCopy[idx++] = scriptObject;
 
-		onRefreshDomainLoaded();
+		OnRefreshDomainLoaded();
 
 		for (auto& scriptObject : scriptObjCopy)
 			scriptObject->RestoreManagedInstanceInternal();
@@ -72,7 +72,7 @@ namespace bs
 		for (auto& scriptObject : scriptObjCopy)
 			scriptObject->EndRefresh(backupData[scriptObject]);
 
-		onRefreshComplete();
+		OnRefreshComplete();
 	}
 
 	void ScriptObjectManager::NotifyObjectFinalized(ScriptObjectBase* instance)

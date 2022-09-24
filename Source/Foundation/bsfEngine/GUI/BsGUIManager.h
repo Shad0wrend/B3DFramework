@@ -53,55 +53,55 @@ namespace bs
 		struct WidgetInfo
 		{
 			WidgetInfo(GUIWidget* _widget)
-				:widget(_widget)
+				:Widget(_widget)
 			{ }
 
-			GUIWidget* widget;
+			GUIWidget* Widget;
 		};
 
 		/**	Container for data about a single GUI element and its widget. */
 		struct ElementInfo
 		{
 			ElementInfo(GUIElement* element, GUIWidget* widget)
-				:element(element), widget(widget)
+				:Element(element), Widget(widget)
 			{ }
 
-			GUIElement* element;
-			GUIWidget* widget;
+			GUIElement* Element;
+			GUIWidget* Widget;
 		};
 
 		/**	Container for data about a single GUI element and its widget currently under the pointer. */
 		struct ElementInfoUnderPointer
 		{
 			ElementInfoUnderPointer(GUIElement* element, GUIWidget* widget)
-				:element(element), widget(widget), usesMouseOver(false),
-				receivedMouseOver(false), isHovering(false)
+				:Element(element), Widget(widget), UsesMouseOver(false),
+				ReceivedMouseOver(false), IsHovering(false)
 			{ }
 
-			GUIElement* element;
-			GUIWidget* widget;
-			bool usesMouseOver;
-			bool receivedMouseOver;
-			bool isHovering;
+			GUIElement* Element;
+			GUIWidget* Widget;
+			bool UsesMouseOver;
+			bool ReceivedMouseOver;
+			bool IsHovering;
 		};
 
 		/**	Container for GUI element in focus. */
 		struct ElementFocusInfo
 		{
 			ElementFocusInfo(GUIElement* element, GUIWidget* widget, bool usesFocus)
-				:element(element), widget(widget), usesFocus(usesFocus)
+				:Element(element), Widget(widget), UsesFocus(usesFocus)
 			{ }
 
-			GUIElement* element;
-			GUIWidget* widget;
-			bool usesFocus;
+			GUIElement* Element;
+			GUIWidget* Widget;
+			bool UsesFocus;
 		};
 
 		/**	Container for GUI elements that need to have their focus state forcefully changed. */
 		struct ElementForcedFocusInfo
 		{
-			GUIElement* element;
-			bool focus;
+			GUIElement* Element;
+			bool Focus;
 		};
 
 	public:
@@ -441,15 +441,15 @@ namespace bs
 		
 		struct GUIWidgetRenderData
 		{
-			UINT64 widgetId;
-			UINT32 widgetDepth = 0;
-			Vector<GUIDrawGroupRenderData> drawGroups;
-			Vector<SPtr<GpuParamBlockBuffer>> paramBlocks;
+			UINT64 WidgetId;
+			UINT32 WidgetDepth = 0;
+			Vector<GUIDrawGroupRenderData> DrawGroups;
+			Vector<SPtr<GpuParamBlockBuffer>> ParamBlocks;
 
-			SPtr<Mesh> triangleMesh;
-			SPtr<Mesh> lineMesh;
-			SPtr<Mesh> drawGroupMesh;
-			Matrix4 worldTransform = Matrix4::IDENTITY;
+			SPtr<Mesh> TriangleMesh;
+			SPtr<Mesh> LineMesh;
+			SPtr<Mesh> DrawGroupMesh;
+			Matrix4 WorldTransform = Matrix4::IDENTITY;
 		};
 		
 		UnorderedMap<const Camera*, Vector<GUIWidgetRenderData>> mPerCameraData;

@@ -9,7 +9,7 @@ namespace bs
 	size_t oggRead(void* ptr, size_t size, size_t nmemb, void* data)
 	{
 		OggDecoderData* decoderData = static_cast<OggDecoderData*>(data);
-		return static_cast<std::size_t>(decoderData->stream->Read(ptr, size * nmemb));
+		return static_cast<std::size_t>(decoderData->Stream->Read(ptr, size * nmemb));
 	}
 
 	int oggSeek(void* data, ogg_int64_t offset, int whence)
@@ -18,24 +18,24 @@ namespace bs
 		switch (whence)
 		{
 		case SEEK_SET:
-			offset += decoderData->offset;
+			offset += decoderData->Offset;
 			break;
 		case SEEK_CUR:
-			offset += decoderData->stream->Tell();
+			offset += decoderData->Stream->Tell();
 			break;
 		case SEEK_END:
-			offset = std::max(0, (INT32)decoderData->stream->Size() - 1);
+			offset = std::max(0, (INT32)decoderData->Stream->Size() - 1);
 			break;
 		}
 
-		decoderData->stream->Seek((UINT32)offset);
-		return (int)(decoderData->stream->Tell() - decoderData->offset);
+		decoderData->Stream->Seek((UINT32)offset);
+		return (int)(decoderData->Stream->Tell() - decoderData->Offset);
 	}
 
 	long oggTell(void* data)
 	{
 		OggDecoderData* decoderData = static_cast<OggDecoderData*>(data);
-		return (long)(decoderData->stream->Tell() - decoderData->offset);
+		return (long)(decoderData->Stream->Tell() - decoderData->Offset);
 	}
 
 	static ov_callbacks callbacks = { &oggRead, &oggSeek, nullptr, &oggTell };
@@ -54,8 +54,8 @@ namespace bs
 	bool OggVorbisDecoder::IsValid(const SPtr<DataStream>& stream, UINT32 offset)
 	{
 		stream->Seek(offset);
-		mDecoderData.stream = stream;
-		mDecoderData.offset = offset;
+		mDecoderData.Stream = stream;
+		mDecoderData.Offset = offset;
 
 		OggVorbis_File file;
 		if (ov_test_callbacks(&mDecoderData, &file, nullptr, 0, callbacks) == 0)
@@ -73,8 +73,8 @@ namespace bs
 			return false;
 
 		stream->Seek(offset);
-		mDecoderData.stream = stream;
-		mDecoderData.offset = offset;
+		mDecoderData.Stream = stream;
+		mDecoderData.Offset = offset;
 
 		int status = ov_open_callbacks(&mDecoderData, &mOggVorbisFile, nullptr, 0, callbacks);
 		if (status < 0)
@@ -84,12 +84,12 @@ namespace bs
 		}
 
 		vorbis_info* vorbisInfo = ov_info(&mOggVorbisFile, -1);
-		info.numChannels = vorbisInfo->channels;
-		info.sampleRate = vorbisInfo->rate;
-		info.numSamples = (UINT32)(ov_pcm_total(&mOggVorbisFile, -1) * vorbisInfo->channels);
-		info.bitDepth = 16;
+		info.NumChannels = vorbisInfo->channels;
+		info.SampleRate = vorbisInfo->rate;
+		info.NumSamples = (UINT32)(ov_pcm_total(&mOggVorbisFile, -1) * vorbisInfo->channels);
+		info.BitDepth = 16;
 
-		mChannelCount = info.numChannels;
+		mChannelCount = info.NumChannels;
 		return true;
 	}
 

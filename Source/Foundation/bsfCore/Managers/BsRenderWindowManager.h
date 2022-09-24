@@ -57,13 +57,13 @@ namespace bs
 		RenderWindow* GetTopMostModal() const;
 
 		/** Event that is triggered when a window gains focus. */
-		Event<void(RenderWindow&)> onFocusGained;
+		Event<void(RenderWindow&)> OnFocusGained;
 
 		/**	Event that is triggered when a window loses focus. */
-		Event<void(RenderWindow&)> onFocusLost;
+		Event<void(RenderWindow&)> OnFocusLost;
 
 		/**	Event that is triggered when mouse leaves a window. */
-		Event<void(RenderWindow&)> onMouseLeftWindow;
+		Event<void(RenderWindow&)> OnMouseLeftWindow;
 	protected:
 		friend class RenderWindow;
 

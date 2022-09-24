@@ -20,8 +20,8 @@ namespace bs
 
 	void ScriptVectorField::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptVectorField::InternalGetRef);
-		metaData.scriptClass->AddInternalCall("Internal_Create", (void*)&ScriptVectorField::InternalCreate);
+		metaData.ScriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptVectorField::InternalGetRef);
+		metaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptVectorField::InternalCreate);
 
 	}
 
@@ -30,7 +30,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		return metaData.scriptClass->CreateInstance("bool", ctorParams);
+		return metaData.ScriptClass->CreateInstance("bool", ctorParams);
 	}
 	MonoObject* ScriptVectorField::InternalGetRef(ScriptVectorField* thisPtr)
 	{

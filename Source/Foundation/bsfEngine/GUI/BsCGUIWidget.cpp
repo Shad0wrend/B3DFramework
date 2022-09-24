@@ -19,9 +19,9 @@ namespace bs
 		SetFlag(ComponentFlag::AlwaysRun, true);
 
 		mInternal = GUIWidget::Create(camera);
-		mOwnerTargetResizedConn = mInternal->onOwnerTargetResized.Connect(
+		mOwnerTargetResizedConn = mInternal->OnOwnerTargetResized.Connect(
 			std::bind(&CGUIWidget::OwnerTargetResized, this));
-		mOwnerWindowFocusChangedConn = mInternal->onOwnerWindowFocusChanged.Connect(
+		mOwnerWindowFocusChangedConn = mInternal->OnOwnerWindowFocusChanged.Connect(
 			std::bind(&CGUIWidget::OwnerWindowFocusChanged, this));
 	}
 

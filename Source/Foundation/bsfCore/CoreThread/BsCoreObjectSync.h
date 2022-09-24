@@ -259,7 +259,7 @@ namespace bs
 		void GetSizeInternal(T&& value, std::enable_if_t<
 			!detail::is_shared_ptr<std::decay_t<T>>::value>* = 0)
 		{
-			mSize += rtti_size(value).bytes;
+			mSize += rtti_size(value).Bytes;
 		}
 
 		template<class T>

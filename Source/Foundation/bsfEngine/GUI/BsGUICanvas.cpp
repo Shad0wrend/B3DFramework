@@ -53,23 +53,23 @@ namespace bs
 		mElements.push_back(CanvasElement());
 		CanvasElement& element = mElements.back();
 
-		element.type = CanvasElementType::Line;
-		element.color = color;
-		element.dataId = (UINT32)mTriangleElementData.size();
-		element.vertexStart = (UINT32)mVertexData.size();
-		element.numVertices = (UINT32)vertices.size();
-		element.depth = depth;
+		element.Type = CanvasElementType::Line;
+		element.Color = color;
+		element.DataId = (UINT32)mTriangleElementData.size();
+		element.VertexStart = (UINT32)mVertexData.size();
+		element.NumVertices = (UINT32)vertices.size();
+		element.Depth = depth;
 
 		mDepthRange = std::max(mDepthRange, (UINT8)(depth + 1));
 
 		mTriangleElementData.push_back(TriangleElementData());
 		TriangleElementData& elemData = mTriangleElementData.back();
-		elemData.matInfo.groupId = 0;
-		elemData.matInfo.tint = color;
+		elemData.MatInfo.GroupId = 0;
+		elemData.MatInfo.Tint = color;
 
 		for (auto& vertex : vertices)
 		{
-			Vector2 point = Vector2((float)vertex.x, (float)vertex.y);
+			Vector2 point = Vector2((float)vertex.X, (float)vertex.Y);
 			point += Vector2(0.5f, 0.5f); // Offset to the middle of the pixel
 
 			mVertexData.push_back(point);
@@ -85,12 +85,12 @@ namespace bs
 		mElements.push_back(CanvasElement());
 		CanvasElement& element = mElements.back();
 
-		element.type = CanvasElementType::Image;
-		element.color = color;
-		element.dataId = (UINT32)mImageData.size();
-		element.scaleMode = scaleMode;
-		element.imageSprite = bs_new<ImageSprite>();
-		element.depth = depth;
+		element.Type = CanvasElementType::Image;
+		element.Color = color;
+		element.DataId = (UINT32)mImageData.size();
+		element.ScaleMode = scaleMode;
+		element.ImageSprite = bs_new<ImageSprite>();
+		element.Depth = depth;
 
 		mDepthRange = std::max(mDepthRange, (UINT8)(depth + 1));
 
@@ -109,12 +109,12 @@ namespace bs
 		mElements.push_back(CanvasElement());
 		CanvasElement& element = mElements.back();
 
-		element.type = CanvasElementType::Triangle;
-		element.color = color;
-		element.dataId = (UINT32)mTriangleElementData.size();
-		element.vertexStart = (UINT32)mVertexData.size();
-		element.numVertices = (UINT32)(vertices.size() - 2) * 3;
-		element.depth = depth;
+		element.Type = CanvasElementType::Triangle;
+		element.Color = color;
+		element.DataId = (UINT32)mTriangleElementData.size();
+		element.VertexStart = (UINT32)mVertexData.size();
+		element.NumVertices = (UINT32)(vertices.size() - 2) * 3;
+		element.Depth = depth;
 
 		mDepthRange = std::max(mDepthRange, (UINT8)(depth + 1));
 
@@ -123,22 +123,22 @@ namespace bs
 		{
 			if (i % 2 == 0)
 			{
-				mVertexData.push_back(Vector2((float)vertices[i - 2].x + 0.5f, (float)vertices[i - 2].y + 0.5f));
-				mVertexData.push_back(Vector2((float)vertices[i - 1].x + 0.5f, (float)vertices[i - 1].y + 0.5f));
-				mVertexData.push_back(Vector2((float)vertices[i - 0].x + 0.5f, (float)vertices[i - 0].y + 0.5f));
+				mVertexData.push_back(Vector2((float)vertices[i - 2].X + 0.5f, (float)vertices[i - 2].Y + 0.5f));
+				mVertexData.push_back(Vector2((float)vertices[i - 1].X + 0.5f, (float)vertices[i - 1].Y + 0.5f));
+				mVertexData.push_back(Vector2((float)vertices[i - 0].X + 0.5f, (float)vertices[i - 0].Y + 0.5f));
 			}
 			else
 			{
-				mVertexData.push_back(Vector2((float)vertices[i - 0].x + 0.5f, (float)vertices[i - 0].y + 0.5f));
-				mVertexData.push_back(Vector2((float)vertices[i - 1].x + 0.5f, (float)vertices[i - 1].y + 0.5f));
-				mVertexData.push_back(Vector2((float)vertices[i - 2].x + 0.5f, (float)vertices[i - 2].y + 0.5f));
+				mVertexData.push_back(Vector2((float)vertices[i - 0].X + 0.5f, (float)vertices[i - 0].Y + 0.5f));
+				mVertexData.push_back(Vector2((float)vertices[i - 1].X + 0.5f, (float)vertices[i - 1].Y + 0.5f));
+				mVertexData.push_back(Vector2((float)vertices[i - 2].X + 0.5f, (float)vertices[i - 2].Y + 0.5f));
 			}
 		}
 
 		mTriangleElementData.push_back(TriangleElementData());
 		TriangleElementData& elemData = mTriangleElementData.back();
-		elemData.matInfo.groupId = 0;
-		elemData.matInfo.tint = color;
+		elemData.MatInfo.GroupId = 0;
+		elemData.MatInfo.Tint = color;
 
 		mForceTriangleBuild = true;
 		MarkContentAsDirtyInternal();
@@ -155,22 +155,22 @@ namespace bs
 		mElements.push_back(CanvasElement());
 		CanvasElement& element = mElements.back();
 
-		element.type = CanvasElementType::Triangle;
-		element.color = color;
-		element.dataId = (UINT32)mTriangleElementData.size();
-		element.vertexStart = (UINT32)mVertexData.size();
-		element.numVertices = (UINT32)vertices.size();
-		element.depth = depth;
+		element.Type = CanvasElementType::Triangle;
+		element.Color = color;
+		element.DataId = (UINT32)mTriangleElementData.size();
+		element.VertexStart = (UINT32)mVertexData.size();
+		element.NumVertices = (UINT32)vertices.size();
+		element.Depth = depth;
 
 		mDepthRange = std::max(mDepthRange, (UINT8)(depth + 1));
 
 		for (auto& vertex : vertices)
-			mVertexData.push_back(Vector2((float)vertex.x + 0.5f, (float)vertex.y + 0.5f));
+			mVertexData.push_back(Vector2((float)vertex.X + 0.5f, (float)vertex.Y + 0.5f));
 
 		mTriangleElementData.push_back(TriangleElementData());
 		TriangleElementData& elemData = mTriangleElementData.back();
-		elemData.matInfo.groupId = 0;
-		elemData.matInfo.tint = color;
+		elemData.MatInfo.GroupId = 0;
+		elemData.MatInfo.Tint = color;
 
 		mForceTriangleBuild = true;
 		MarkContentAsDirtyInternal();
@@ -182,12 +182,12 @@ namespace bs
 		mElements.push_back(CanvasElement());
 		CanvasElement& element = mElements.back();
 
-		element.type = CanvasElementType::Text;
-		element.color = color;
-		element.dataId = (UINT32)mTextData.size();
-		element.size = size;
-		element.textSprite = bs_new<TextSprite>();
-		element.depth = depth;
+		element.Type = CanvasElementType::Text;
+		element.Color = color;
+		element.DataId = (UINT32)mTextData.size();
+		element.Size = size;
+		element.TextSprite = bs_new<TextSprite>();
+		element.Depth = depth;
 
 		mDepthRange = std::max(mDepthRange, (UINT8)(depth + 1));
 
@@ -199,11 +199,11 @@ namespace bs
 	{
 		for (auto& element : mElements)
 		{
-			if(element.type == CanvasElementType::Image && element.imageSprite != nullptr)
-				bs_delete(element.imageSprite);
+			if(element.Type == CanvasElementType::Image && element.ImageSprite != nullptr)
+				bs_delete(element.ImageSprite);
 
-			if (element.type == CanvasElementType::Text && element.textSprite != nullptr)
-				bs_delete(element.textSprite);
+			if (element.Type == CanvasElementType::Text && element.TextSprite != nullptr)
+				bs_delete(element.TextSprite);
 		}
 
 		mElements.clear();
@@ -221,44 +221,44 @@ namespace bs
 
 	void GUICanvas::UpdateRenderElementsInternal()
 	{
-		Vector2 offset((float)mLayoutData.area.x, (float)mLayoutData.area.y);
+		Vector2 offset((float)mLayoutData.Area.X, (float)mLayoutData.Area.Y);
 		Rect2I clipRect = mLayoutData.GetLocalClipRect();
 		BuildAllTriangleElementsIfDirty(offset, clipRect);
 
 		mRenderElements.Clear();
 		for(auto& element : mElements)
 		{
-			element.renderElemStart = mRenderElements.Size();
+			element.RenderElemStart = mRenderElements.Size();
 			
-			switch(element.type)
+			switch(element.Type)
 			{
 			case CanvasElementType::Image:
 				BuildImageElement(element);
 
-				for(UINT32 i = 0; i < element.imageSprite->GetNumRenderElements(); i++)
+				for(UINT32 i = 0; i < element.ImageSprite->GetNumRenderElements(); i++)
 				{
 					mRenderElements.Add(GUIRenderElement());
 					GUIRenderElement& renderElement = mRenderElements.Back();
 
-					element.imageSprite->GetRenderElementInfo(i, renderElement);
+					element.ImageSprite->GetRenderElementInfo(i, renderElement);
 
-					renderElement.depth = element.depth;
-					renderElement.type = GUIMeshType::Triangle;
+					renderElement.Depth = element.Depth;
+					renderElement.Type = GUIMeshType::Triangle;
 				}
 				
 				break;
 			case CanvasElementType::Text:
 				BuildTextElement(element);
 
-				for(UINT32 i = 0; i < element.textSprite->GetNumRenderElements(); i++)
+				for(UINT32 i = 0; i < element.TextSprite->GetNumRenderElements(); i++)
 				{
 					mRenderElements.Add(GUIRenderElement());
 					GUIRenderElement& renderElement = mRenderElements.Back();
 
-					element.textSprite->GetRenderElementInfo(i, renderElement);
+					element.TextSprite->GetRenderElementInfo(i, renderElement);
 
-					renderElement.depth = element.depth;
-					renderElement.type = GUIMeshType::Triangle;
+					renderElement.Depth = element.Depth;
+					renderElement.Type = GUIMeshType::Triangle;
 				}
 				break;
 			case CanvasElementType::Line:
@@ -266,16 +266,16 @@ namespace bs
 					mRenderElements.Add(GUIRenderElement());
 					GUIRenderElement& renderElement = mRenderElements.Back();
 
-					renderElement.numVertices = element.clippedNumVertices;
-					renderElement.numIndices = element.clippedNumVertices;
+					renderElement.NumVertices = element.ClippedNumVertices;
+					renderElement.NumIndices = element.ClippedNumVertices;
 
-					renderElement.material = SpriteManager::Instance().GetLineMaterial();
-					renderElement.matInfo = &mTriangleElementData[element.dataId].matInfo;
+					renderElement.Material = SpriteManager::Instance().GetLineMaterial();
+					renderElement.MatInfo = &mTriangleElementData[element.DataId].MatInfo;
 					
-					renderElement.depth = element.depth;
-					renderElement.type = GUIMeshType::Line;
+					renderElement.Depth = element.Depth;
+					renderElement.Type = GUIMeshType::Line;
 
-					mTriangleElementData[element.dataId].matInfo.groupId = (UINT64)GetParentWidgetInternal();
+					mTriangleElementData[element.DataId].MatInfo.GroupId = (UINT64)GetParentWidgetInternal();
 
 					// Actual mesh build happens when reading from it, because the mesh size varies due to clipping rectangle/offset
 					break;
@@ -286,23 +286,23 @@ namespace bs
 					mRenderElements.Add(GUIRenderElement());
 					GUIRenderElement& renderElement = mRenderElements.Back();
 
-					renderElement.numVertices = element.clippedNumVertices;
-					renderElement.numIndices = element.clippedNumVertices;
+					renderElement.NumVertices = element.ClippedNumVertices;
+					renderElement.NumIndices = element.ClippedNumVertices;
 
-					renderElement.material = SpriteManager::Instance().GetImageMaterial(SpriteMaterialTransparency::Alpha);
-					renderElement.matInfo = &mTriangleElementData[element.dataId].matInfo;
+					renderElement.Material = SpriteManager::Instance().GetImageMaterial(SpriteMaterialTransparency::Alpha);
+					renderElement.MatInfo = &mTriangleElementData[element.DataId].MatInfo;
 
-					renderElement.depth = element.depth;
-					renderElement.type = GUIMeshType::Triangle;
+					renderElement.Depth = element.Depth;
+					renderElement.Type = GUIMeshType::Triangle;
 
-					mTriangleElementData[element.dataId].matInfo.groupId = (UINT64)GetParentWidgetInternal();
+					mTriangleElementData[element.DataId].MatInfo.GroupId = (UINT64)GetParentWidgetInternal();
 
 					// Actual mesh build happens when reading from it, because the mesh size varies due to clipping rectangle/offset
 					break;
 				}
 			}
 
-			element.renderElemEnd = mRenderElements.Size();
+			element.RenderElemEnd = mRenderElements.Size();
 		}
 
 		GUIElement::UpdateRenderElementsInternal();
@@ -326,40 +326,40 @@ namespace bs
 		UINT8* uvs = vertices + sizeof(Vector2);
 		UINT32 indexStride = sizeof(UINT32);
 
-		Vector2I layoutOffset = Vector2I(mLayoutData.area.x, mLayoutData.area.y) + offset;
+		Vector2I layoutOffset = Vector2I(mLayoutData.Area.X, mLayoutData.Area.Y) + offset;
 		Rect2I clipRect = mLayoutData.GetLocalClipRect();
 
-		Vector2 floatOffset((float)layoutOffset.x, (float)layoutOffset.y);
+		Vector2 floatOffset((float)layoutOffset.X, (float)layoutOffset.Y);
 		BuildAllTriangleElementsIfDirty(floatOffset, clipRect);
 
 		const CanvasElement& element = FindElement(renderElementIdx);
-		renderElementIdx -= element.renderElemStart;
+		renderElementIdx -= element.RenderElemStart;
 
-		switch(element.type)
+		switch(element.Type)
 		{
 		case CanvasElementType::Image:
 		{
 			UINT32 vertexStride = sizeof(Vector2) * 2;
-			const Rect2I& area = mImageData[element.dataId].area;
+			const Rect2I& area = mImageData[element.DataId].Area;
 
-			layoutOffset.x += area.x;
-			layoutOffset.y += area.y;
-			clipRect.x -= area.x;
-			clipRect.y -= area.y;
+			layoutOffset.X += area.X;
+			layoutOffset.Y += area.Y;
+			clipRect.X -= area.X;
+			clipRect.Y -= area.Y;
 
-			element.imageSprite->FillBuffer(vertices, uvs, indices, vertexOffset, indexOffset, maxNumVerts, maxNumIndices,
+			element.ImageSprite->FillBuffer(vertices, uvs, indices, vertexOffset, indexOffset, maxNumVerts, maxNumIndices,
 				vertexStride, indexStride, renderElementIdx, layoutOffset, clipRect);
 		}
 			break;
 		case CanvasElementType::Text:
 		{
 			UINT32 vertexStride = sizeof(Vector2) * 2;
-			const Vector2I& position = mTextData[element.dataId].position;
+			const Vector2I& position = mTextData[element.DataId].Position;
 			layoutOffset += position;
-			clipRect.x -= position.x;
-			clipRect.y -= position.y;
+			clipRect.X -= position.X;
+			clipRect.Y -= position.Y;
 
-			element.textSprite->FillBuffer(vertices, uvs, indices, vertexOffset, indexOffset, maxNumVerts, maxNumIndices,
+			element.TextSprite->FillBuffer(vertices, uvs, indices, vertexOffset, indexOffset, maxNumVerts, maxNumIndices,
 				vertexStride, indexStride, renderElementIdx, layoutOffset, clipRect);
 		}
 			break;
@@ -373,7 +373,7 @@ namespace bs
 			UINT32 maxVertIdx = maxNumVerts;
 			UINT32 maxIndexIdx = maxNumIndices;
 
-			UINT32 numVertices = element.clippedNumVertices;
+			UINT32 numVertices = element.ClippedNumVertices;
 			UINT32 numIndices = numVertices;
 
 			assert((startVert + numVertices) <= maxVertIdx);
@@ -384,9 +384,9 @@ namespace bs
 			UINT32* indexDst = indices + startIndex;
 
 			Vector2 zeroUV(BsZero);
-			for(UINT32 i = 0; i < element.clippedNumVertices; i++)
+			for(UINT32 i = 0; i < element.ClippedNumVertices; i++)
 			{
-				memcpy(vertDst, &mClippedVertices[element.clippedVertexStart + i], sizeof(Vector2));
+				memcpy(vertDst, &mClippedVertices[element.ClippedVertexStart + i], sizeof(Vector2));
 				memcpy(uvDst, &zeroUV, sizeof(Vector2));
 
 				vertDst += vertexStride;
@@ -405,7 +405,7 @@ namespace bs
 			UINT32 maxVertIdx = maxNumVerts;
 			UINT32 maxIndexIdx = maxNumIndices;
 
-			UINT32 numVertices = element.clippedNumVertices;
+			UINT32 numVertices = element.ClippedNumVertices;
 			UINT32 numIndices = numVertices;
 
 			assert((startVert + numVertices) <= maxVertIdx);
@@ -414,9 +414,9 @@ namespace bs
 			UINT8* vertDst = vertices + startVert * vertexStride;
 			UINT32* indexDst = indices + startIndex;
 
-			for (UINT32 i = 0; i < element.clippedNumVertices; i++)
+			for (UINT32 i = 0; i < element.ClippedNumVertices; i++)
 			{
-				const Vector2& point = mClippedLineVertices[element.clippedVertexStart + i];
+				const Vector2& point = mClippedLineVertices[element.ClippedVertexStart + i];
 
 				memcpy(vertDst, &point, sizeof(Vector2));
 
@@ -430,94 +430,94 @@ namespace bs
 
 	void GUICanvas::BuildImageElement(const CanvasElement& element)
 	{
-		assert(element.type == CanvasElementType::Image);
+		assert(element.Type == CanvasElementType::Image);
 
-		const ImageElementData& imageData = mImageData[element.dataId];
+		const ImageElementData& imageData = mImageData[element.DataId];
 
 		IMAGE_SPRITE_DESC desc;
-		desc.width = imageData.area.width;
-		desc.height = imageData.area.height;
+		desc.Width = imageData.Area.Width;
+		desc.Height = imageData.Area.Height;
 
-		desc.transparent = true;
-		desc.color = element.color;
+		desc.Transparent = true;
+		desc.Color = element.Color;
 
 		Vector2I textureSize;
-		if (SpriteTexture::CheckIsLoaded(imageData.texture))
+		if (SpriteTexture::CheckIsLoaded(imageData.Texture))
 		{
-			desc.texture = imageData.texture;
-			textureSize.x = desc.texture->GetWidth();
-			textureSize.y = desc.texture->GetHeight();
+			desc.Texture = imageData.Texture;
+			textureSize.X = desc.Texture->GetWidth();
+			textureSize.Y = desc.Texture->GetHeight();
 		}
 
-		Vector2I destSize(mLayoutData.area.width, mLayoutData.area.height);
-		desc.uvScale = ImageSprite::GetTextureUvScale(textureSize, destSize, element.scaleMode);
+		Vector2I destSize(mLayoutData.Area.Width, mLayoutData.Area.Height);
+		desc.UvScale = ImageSprite::GetTextureUvScale(textureSize, destSize, element.ScaleMode);
 
-		element.imageSprite->Update(desc, (UINT64)GetParentWidgetInternal());
+		element.ImageSprite->Update(desc, (UINT64)GetParentWidgetInternal());
 	}
 
 	void GUICanvas::BuildTextElement(const CanvasElement& element)
 	{
-		assert(element.type == CanvasElementType::Text);
+		assert(element.Type == CanvasElementType::Text);
 
-		const TextElementData& textData = mTextData[element.dataId];
+		const TextElementData& textData = mTextData[element.DataId];
 
 		TEXT_SPRITE_DESC desc;
-		desc.font = textData.font;
-		desc.fontSize = element.size;
-		desc.text = textData.string;
-		desc.color = element.color;
+		desc.Font = textData.Font;
+		desc.FontSize = element.Size;
+		desc.Text = textData.String;
+		desc.Color = element.Color;
 
-		element.textSprite->Update(desc, (UINT64)GetParentWidgetInternal());
+		element.TextSprite->Update(desc, (UINT64)GetParentWidgetInternal());
 	}
 
 	void GUICanvas::BuildTriangleElement(const CanvasElement& element, const Vector2& offset, const Rect2I& clipRect) const
 	{
-		assert(element.type == CanvasElementType::Triangle || element.type == CanvasElementType::Line);
+		assert(element.Type == CanvasElementType::Triangle || element.Type == CanvasElementType::Line);
 
-		if (element.type == CanvasElementType::Triangle)
+		if (element.Type == CanvasElementType::Triangle)
 		{
-			UINT8* verticesToClip = (UINT8*)&mVertexData[element.vertexStart];
-			UINT32 trianglesToClip = element.numVertices / 3;
+			UINT8* verticesToClip = (UINT8*)&mVertexData[element.VertexStart];
+			UINT32 trianglesToClip = element.NumVertices / 3;
 
 			auto writeCallback = [&](Vector2* vertices, Vector2* uvs, UINT32 count)
 			{
 				for (UINT32 i = 0; i < count; i++)
 					mClippedVertices.push_back(vertices[i] + offset);
 
-				element.clippedNumVertices += count;
+				element.ClippedNumVertices += count;
 			};
 
-			element.clippedVertexStart = (UINT32)mClippedVertices.size();
-			element.clippedNumVertices = 0;
+			element.ClippedVertexStart = (UINT32)mClippedVertices.size();
+			element.ClippedNumVertices = 0;
 
 			ImageSprite::ClipTrianglesToRect(verticesToClip, nullptr, trianglesToClip, sizeof(Vector2), clipRect,
 				writeCallback);
 		}
 		else
 		{
-			UINT32 numLines = element.numVertices - 1;
-			const Vector2* linePoints = &mVertexData[element.vertexStart];
+			UINT32 numLines = element.NumVertices - 1;
+			const Vector2* linePoints = &mVertexData[element.VertexStart];
 
 			struct Plane2D
 			{
 				Plane2D(const Vector2& normal, float d)
-					:normal(normal), d(d)
+					:Normal(normal), D(d)
 				{ }
 
-				Vector2 normal;
-				float d;
+				Vector2 Normal;
+				float D;
 			};
 
 			std::array<Plane2D, 4> clipPlanes =
 			{{
-				Plane2D(Vector2(1.0f, 0.0f), (float)clipRect.x),
-				Plane2D(Vector2(-1.0f, 0.0f), (float)-(clipRect.x + (INT32)clipRect.width)),
-				Plane2D(Vector2(0.0f, 1.0f), (float)clipRect.y),
-				Plane2D(Vector2(0.0f, -1.0f), (float)-(clipRect.y + (INT32)clipRect.height))
+				Plane2D(Vector2(1.0f, 0.0f), (float)clipRect.X),
+				Plane2D(Vector2(-1.0f, 0.0f), (float)-(clipRect.X + (INT32)clipRect.Width)),
+				Plane2D(Vector2(0.0f, 1.0f), (float)clipRect.Y),
+				Plane2D(Vector2(0.0f, -1.0f), (float)-(clipRect.Y + (INT32)clipRect.Height))
 			}};
 
-			element.clippedVertexStart = (UINT32)mClippedLineVertices.size();
-			element.clippedNumVertices = 0;
+			element.ClippedVertexStart = (UINT32)mClippedLineVertices.size();
+			element.ClippedNumVertices = 0;
 
 			for (UINT32 i = 0; i < numLines; i++)
 			{
@@ -528,8 +528,8 @@ namespace bs
 				for(UINT32 j = 0; j < (UINT32)clipPlanes.size(); j++)
 				{
 					const Plane2D& plane = clipPlanes[j];
-					float d0 = plane.normal.Dot(a) - plane.d;
-					float d1 = plane.normal.Dot(b) - plane.d;
+					float d0 = plane.Normal.Dot(a) - plane.D;
+					float d1 = plane.Normal.Dot(b) - plane.D;
 
 					// Line not visible
 					if (d0 <= 0 && d1 <= 0)
@@ -558,7 +558,7 @@ namespace bs
 				mClippedLineVertices.push_back(a + offset);
 				mClippedLineVertices.push_back(b + offset);
 
-				element.clippedNumVertices += 2;
+				element.ClippedNumVertices += 2;
 			}
 		}
 	}
@@ -574,7 +574,7 @@ namespace bs
 		mClippedLineVertices.clear();
 		for(auto& element : mElements)
 		{
-			if (element.type != CanvasElementType::Triangle && element.type != CanvasElementType::Line)
+			if (element.Type != CanvasElementType::Triangle && element.Type != CanvasElementType::Line)
 				continue;
 
 			BuildTriangleElement(element, offset, clipRect);
@@ -595,10 +595,10 @@ namespace bs
 			INT32 middle = (start + end) / 2;
 			const CanvasElement& current = mElements[middle];
 
-			if (renderElementIdx >= current.renderElemStart && renderElementIdx < current.renderElemEnd)
+			if (renderElementIdx >= current.RenderElemStart && renderElementIdx < current.RenderElemEnd)
 				return current;
 
-			if (renderElementIdx < current.renderElemStart)
+			if (renderElementIdx < current.RenderElemStart)
 				end = middle - 1;
 			else
 				start = middle + 1;

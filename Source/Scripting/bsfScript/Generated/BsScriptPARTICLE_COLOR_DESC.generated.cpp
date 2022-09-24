@@ -18,7 +18,7 @@ namespace bs
 
 	MonoObject*ScriptPARTICLE_COLOR_DESC::Box(const __PARTICLE_COLOR_DESCInterop& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	__PARTICLE_COLOR_DESCInterop ScriptPARTICLE_COLOR_DESC::Unbox(MonoObject* value)
@@ -31,11 +31,11 @@ namespace bs
 		PARTICLE_COLOR_DESC output;
 		SPtr<TColorDistribution<ColorGradient>> tmpcolor;
 		ScriptTColorDistributionColorGradient* scriptcolor;
-		scriptcolor = ScriptTColorDistributionColorGradient::ToNative(value.color);
+		scriptcolor = ScriptTColorDistributionColorGradient::ToNative(value.Color);
 		if(scriptcolor != nullptr)
 			tmpcolor = scriptcolor->GetInternal();
 		if(tmpcolor != nullptr)
-		output.color = *tmpcolor;
+		output.Color = *tmpcolor;
 
 		return output;
 	}
@@ -45,9 +45,9 @@ namespace bs
 		__PARTICLE_COLOR_DESCInterop output;
 		MonoObject* tmpcolor;
 		SPtr<TColorDistribution<ColorGradient>> tmpcolorcopy;
-		tmpcolorcopy = bs_shared_ptr_new<TColorDistribution<ColorGradient>>(value.color);
+		tmpcolorcopy = bs_shared_ptr_new<TColorDistribution<ColorGradient>>(value.Color);
 		tmpcolor = ScriptTColorDistributionColorGradient::Create(tmpcolorcopy);
-		output.color = tmpcolor;
+		output.Color = tmpcolor;
 
 		return output;
 	}

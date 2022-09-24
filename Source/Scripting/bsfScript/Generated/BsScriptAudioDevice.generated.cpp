@@ -16,7 +16,7 @@ namespace bs
 
 	MonoObject*ScriptAudioDevice::Box(const __AudioDeviceInterop& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	__AudioDeviceInterop ScriptAudioDevice::Unbox(MonoObject* value)
@@ -28,8 +28,8 @@ namespace bs
 	{
 		AudioDevice output;
 		String tmpname;
-		tmpname = MonoUtil::MonoToString(value.name);
-		output.name = tmpname;
+		tmpname = MonoUtil::MonoToString(value.Name);
+		output.Name = tmpname;
 
 		return output;
 	}
@@ -38,8 +38,8 @@ namespace bs
 	{
 		__AudioDeviceInterop output;
 		MonoString* tmpname;
-		tmpname = MonoUtil::StringToMono(value.name);
-		output.name = tmpname;
+		tmpname = MonoUtil::StringToMono(value.Name);
+		output.Name = tmpname;
 
 		return output;
 	}

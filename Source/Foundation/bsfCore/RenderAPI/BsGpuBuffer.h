@@ -16,22 +16,22 @@ namespace bs
 	struct GPU_BUFFER_DESC
 	{
 		/** Number of elements in the buffer. */
-		UINT32 elementCount = 0;
+		UINT32 ElementCount = 0;
 
 		/**
 		 * Size of each individual element in the buffer, in bytes. Only needed if using non-standard buffer. If using
 		 * standard buffers element size is calculated from format and this must be zero.
 		 */
-		UINT32 elementSize = 0;
+		UINT32 ElementSize = 0;
 
 		/** Type of the buffer. Determines how is buffer seen by the GPU program and in what ways can it be used. */
-		GpuBufferType type = GBT_STANDARD;
+		GpuBufferType Type = GBT_STANDARD;
 
 		/** Format if the data in the buffer. Only relevant for standard buffers, must be BF_UNKNOWN otherwise. */
-		GpuBufferFormat format = BF_32X4F;
+		GpuBufferFormat Format = BF_32X4F;
 
 		/** Usage that tells the hardware how will be buffer be used. */
-		GpuBufferUsage usage = GBU_STATIC;
+		GpuBufferUsage Usage = GBU_STATIC;
 	};
 
 	/**
@@ -47,19 +47,19 @@ namespace bs
 		 * Returns the type of the GPU buffer. Type determines which kind of views (if any) can be created for the buffer,
 		 * and how is data read or modified in it.
 		 */
-		GpuBufferType GetType() const { return mDesc.type; }
+		GpuBufferType GetType() const { return mDesc.Type; }
 
 		/** Returns format used by the buffer. Only relevant for standard buffers. */
-		GpuBufferFormat GetFormat() const { return mDesc.format; }
+		GpuBufferFormat GetFormat() const { return mDesc.Format; }
 
 		/** Returns buffer usage which determines how are planning on updating the buffer contents. */
-		GpuBufferUsage GetUsage() const { return mDesc.usage; }
+		GpuBufferUsage GetUsage() const { return mDesc.Usage; }
 
 		/**	Returns number of elements in the buffer. */
-		UINT32 GetElementCount() const { return mDesc.elementCount; }
+		UINT32 GetElementCount() const { return mDesc.ElementCount; }
 
 		/**	Returns size of a single element in the buffer in bytes. */
-		UINT32 GetElementSize() const { return mDesc.elementSize; }
+		UINT32 GetElementSize() const { return mDesc.ElementSize; }
 
 	protected:
 		friend class GpuBuffer;

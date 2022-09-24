@@ -22,12 +22,12 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN(instructions, 0)
-			BS_RTTI_MEMBER_REFLPTR(paramDesc, 1)
-			BS_RTTI_MEMBER_PLAIN(vertexInput, 2)
-			BS_RTTI_MEMBER_PLAIN(messages, 3)
-			BS_RTTI_MEMBER_PLAIN(compilerId, 4)
-			BS_RTTI_MEMBER_PLAIN(compilerVersion, 5)
+			BS_RTTI_MEMBER_PLAIN(Instructions, 0)
+			BS_RTTI_MEMBER_REFLPTR(ParamDesc, 1)
+			BS_RTTI_MEMBER_PLAIN(VertexInput, 2)
+			BS_RTTI_MEMBER_PLAIN(Messages, 3)
+			BS_RTTI_MEMBER_PLAIN(CompilerId, 4)
+			BS_RTTI_MEMBER_PLAIN(CompilerVersion, 5)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -52,12 +52,12 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN(paramBlocks, 0)
-			BS_RTTI_MEMBER_PLAIN(params, 1)
-			BS_RTTI_MEMBER_PLAIN(samplers, 2)
-			BS_RTTI_MEMBER_PLAIN(textures, 3)
-			BS_RTTI_MEMBER_PLAIN(loadStoreTextures, 4)
-			BS_RTTI_MEMBER_PLAIN(buffers, 5)
+			BS_RTTI_MEMBER_PLAIN(ParamBlocks, 0)
+			BS_RTTI_MEMBER_PLAIN(Params, 1)
+			BS_RTTI_MEMBER_PLAIN(Samplers, 2)
+			BS_RTTI_MEMBER_PLAIN(Textures, 3)
+			BS_RTTI_MEMBER_PLAIN(LoadStoreTextures, 4)
+			BS_RTTI_MEMBER_PLAIN(Buffers, 5)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -132,16 +132,16 @@ namespace bs
 				BitLength size = 0;
 				size += rtti_write(VERSION, stream);
 
-				size += rtti_write(data.name, stream);
-				size += rtti_write(data.elementSize, stream);
-				size += rtti_write(data.arraySize, stream);
-				size += rtti_write(data.arrayElementStride, stream);
-				size += rtti_write(data.type, stream);
+				size += rtti_write(data.Name, stream);
+				size += rtti_write(data.ElementSize, stream);
+				size += rtti_write(data.ArraySize, stream);
+				size += rtti_write(data.ArrayElementStride, stream);
+				size += rtti_write(data.Type, stream);
 
-				size += rtti_write(data.paramBlockSlot, stream);
-				size += rtti_write(data.paramBlockSet, stream);
-				size += rtti_write(data.gpuMemOffset, stream);
-				size += rtti_write(data.cpuMemOffset, stream);
+				size += rtti_write(data.ParamBlockSlot, stream);
+				size += rtti_write(data.ParamBlockSet, stream);
+				size += rtti_write(data.GpuMemOffset, stream);
+				size += rtti_write(data.CpuMemOffset, stream);
 
 				return size;
 			});
@@ -156,26 +156,26 @@ namespace bs
 			rtti_read(version, stream);
 			assert(version == VERSION);
 
-			rtti_read(data.name, stream);
-			rtti_read(data.elementSize, stream);
-			rtti_read(data.arraySize, stream);
-			rtti_read(data.arrayElementStride, stream);
-			rtti_read(data.type, stream);
+			rtti_read(data.Name, stream);
+			rtti_read(data.ElementSize, stream);
+			rtti_read(data.ArraySize, stream);
+			rtti_read(data.ArrayElementStride, stream);
+			rtti_read(data.Type, stream);
 
-			rtti_read(data.paramBlockSlot, stream);
-			rtti_read(data.paramBlockSet, stream);
-			rtti_read(data.gpuMemOffset, stream);
-			rtti_read(data.cpuMemOffset, stream);
+			rtti_read(data.ParamBlockSlot, stream);
+			rtti_read(data.ParamBlockSet, stream);
+			rtti_read(data.GpuMemOffset, stream);
+			rtti_read(data.CpuMemOffset, stream);
 
 			return size;
 		}
 
 		static BitLength GetSize(const GpuParamDataDesc& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
-			BitLength dataSize = rtti_size(VERSION) + rtti_size(data.name) + rtti_size(data.elementSize) +
-				rtti_size(data.arraySize) + rtti_size(data.arrayElementStride) + rtti_size(data.type) +
-				rtti_size(data.paramBlockSlot) + rtti_size(data.paramBlockSet) +
-				rtti_size(data.gpuMemOffset) + rtti_size(data.cpuMemOffset);
+			BitLength dataSize = rtti_size(VERSION) + rtti_size(data.Name) + rtti_size(data.ElementSize) +
+				rtti_size(data.ArraySize) + rtti_size(data.ArrayElementStride) + rtti_size(data.Type) +
+				rtti_size(data.ParamBlockSlot) + rtti_size(data.ParamBlockSet) +
+				rtti_size(data.GpuMemOffset) + rtti_size(data.CpuMemOffset);
 
 			rtti_add_header_size(dataSize, compress);
 			return dataSize;
@@ -193,11 +193,11 @@ namespace bs
 			{
 				BitLength size = 0;
 				size += rtti_write(VERSION, stream);
-				size += rtti_write(data.name, stream);
-				size += rtti_write(data.type, stream);
-				size += rtti_write(data.slot, stream);
-				size += rtti_write(data.set, stream);
-				size += rtti_write(data.elementType, stream);
+				size += rtti_write(data.Name, stream);
+				size += rtti_write(data.Type, stream);
+				size += rtti_write(data.Slot, stream);
+				size += rtti_write(data.Set, stream);
+				size += rtti_write(data.ElementType, stream);
 
 				return size;
 			});
@@ -211,21 +211,21 @@ namespace bs
 			uint32_t version = 0;
 			rtti_read(version, stream);
 
-			rtti_read(data.name, stream);
-			rtti_read(data.type, stream);
-			rtti_read(data.slot, stream);
-			rtti_read(data.set, stream);
+			rtti_read(data.Name, stream);
+			rtti_read(data.Type, stream);
+			rtti_read(data.Slot, stream);
+			rtti_read(data.Set, stream);
 
 			if (version > 1)
-				rtti_read(data.elementType, stream);
+				rtti_read(data.ElementType, stream);
 
 			return size;
 		}
 
 		static BitLength GetSize(const GpuParamObjectDesc& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
-			BitLength dataSize = rtti_size(VERSION) + rtti_size(data.name) + rtti_size(data.type) +
-				rtti_size(data.slot) + rtti_size(data.set) + rtti_size(data.elementType);
+			BitLength dataSize = rtti_size(VERSION) + rtti_size(data.Name) + rtti_size(data.Type) +
+				rtti_size(data.Slot) + rtti_size(data.Set) + rtti_size(data.ElementType);
 
 			rtti_add_header_size(dataSize, compress);
 			return dataSize;
@@ -243,11 +243,11 @@ namespace bs
 			{
 				BitLength size = 0;
 				size += rtti_write(VERSION, stream);
-				size += rtti_write(data.name, stream);
-				size += rtti_write(data.set, stream);
-				size += rtti_write(data.slot, stream);
-				size += rtti_write(data.blockSize, stream);
-				size += rtti_write(data.isShareable, stream);
+				size += rtti_write(data.Name, stream);
+				size += rtti_write(data.Set, stream);
+				size += rtti_write(data.Slot, stream);
+				size += rtti_write(data.BlockSize, stream);
+				size += rtti_write(data.IsShareable, stream);
 
 				return size;
 			});
@@ -262,19 +262,19 @@ namespace bs
 			rtti_read(version, stream);
 			assert(version == VERSION);
 
-			rtti_read(data.name, stream);
-			rtti_read(data.set, stream);
-			rtti_read(data.slot, stream);
-			rtti_read(data.blockSize, stream);
-			rtti_read(data.isShareable, stream);
+			rtti_read(data.Name, stream);
+			rtti_read(data.Set, stream);
+			rtti_read(data.Slot, stream);
+			rtti_read(data.BlockSize, stream);
+			rtti_read(data.IsShareable, stream);
 
 			return size;
 		}
 
 		static BitLength GetSize(const GpuParamBlockDesc& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
-			BitLength dataSize = rtti_size(VERSION) + rtti_size(data.name) + rtti_size(data.set) +
-				rtti_size(data.slot) + rtti_size(data.blockSize) + rtti_size(data.isShareable);
+			BitLength dataSize = rtti_size(VERSION) + rtti_size(data.Name) + rtti_size(data.Set) +
+				rtti_size(data.Slot) + rtti_size(data.BlockSize) + rtti_size(data.IsShareable);
 			
 			rtti_add_header_size(dataSize, compress);
 			return dataSize;

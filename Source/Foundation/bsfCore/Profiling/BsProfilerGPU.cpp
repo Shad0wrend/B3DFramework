@@ -37,8 +37,8 @@ namespace bs
 		}
 
 		mIsFrameActive = true;
-		mActiveFrame.uncategorizedSamples.clear();
-		mActiveFrame.viewSamples.clear();
+		mActiveFrame.UncategorizedSamples.clear();
+		mActiveFrame.ViewSamples.clear();
 	}
 
 	void ProfilerGPU::EndFrame(bool discard)
@@ -81,9 +81,9 @@ namespace bs
 		}
 
 		auto sample = mViewSamplePool.Construct<ProfiledViewSample>();
-		sample->viewId = id;
+		sample->ViewId = id;
 
-		mActiveFrame.viewSamples.push_back(sample);
+		mActiveFrame.ViewSamples.push_back(sample);
 
 		BeginSampleInternal(*sample, true);
 		mIsViewActive = true;
@@ -100,7 +100,7 @@ namespace bs
 		if (!mIsViewActive)
 			return;
 
-		EndSampleInternal(*mActiveFrame.viewSamples.back());
+		EndSampleInternal(*mActiveFrame.ViewSamples.back());
 		mIsViewActive = false;
 	}
 
@@ -113,20 +113,20 @@ namespace bs
 		}
 
 		auto sample = mSamplePool.Construct<ProfiledSample>();
-		sample->name = std::move(name);
+		sample->Name = std::move(name);
 		BeginSampleInternal(*sample, false);
 
 		if (mActiveSamples.empty())
 		{
 			if (mIsViewActive)
-				mActiveFrame.viewSamples.back()->children.push_back(sample);
+				mActiveFrame.ViewSamples.back()->Children.push_back(sample);
 			else
-				mActiveFrame.uncategorizedSamples.push_back(sample);
+				mActiveFrame.UncategorizedSamples.push_back(sample);
 		}
 		else
 		{
 			ProfiledSample* parent = mActiveSamples.top();
-			parent->children.push_back(sample);
+			parent->Children.push_back(sample);
 		}
 		
 		mActiveSamples.push(sample);
@@ -138,10 +138,10 @@ namespace bs
 			return;
 
 		ProfiledSample* lastSample = mActiveSamples.top();
-		if (lastSample->name != name)
+		if (lastSample->Name != name)
 		{
 			BS_LOG(Error, Profiler, "Attempting to end a sample that doesn't match. Got: {0}. Expected: {1}",
-				name.c_str(), lastSample->name.c_str());
+				name.c_str(), lastSample->Name.c_str());
 			return;
 		}
 
@@ -183,18 +183,18 @@ namespace bs
 			// Make sure all the top-level queries have finished. If they have that implies
 			// all their children have finished as well
 			bool isReady = true;
-			for(auto& entry : frame.viewSamples)
+			for(auto& entry : frame.ViewSamples)
 			{
-				if (!entry->activeTimeQuery->IsReady())
+				if (!entry->ActiveTimeQuery->IsReady())
 				{
 					isReady = false;
 					break;
 				}
 			}
 
-			for(auto& entry : frame.uncategorizedSamples)
+			for(auto& entry : frame.UncategorizedSamples)
 			{
-				if (!entry->activeTimeQuery->IsReady())
+				if (!entry->ActiveTimeQuery->IsReady())
 				{
 					isReady = false;
 					break;
@@ -205,14 +205,14 @@ namespace bs
 				break;
 			
 			GPUProfilerReport report;
-			report.viewSamples.resize(frame.viewSamples.size());
-			report.uncategorizedSamples.resize(frame.uncategorizedSamples.size());
+			report.ViewSamples.resize(frame.ViewSamples.size());
+			report.UncategorizedSamples.resize(frame.UncategorizedSamples.size());
 			
-			for (size_t i = 0; i < frame.viewSamples.size(); i++)
-				ResolveSample(*frame.viewSamples[i], report.viewSamples[i]);
+			for (size_t i = 0; i < frame.ViewSamples.size(); i++)
+				ResolveSample(*frame.ViewSamples[i], report.ViewSamples[i]);
 				
-			for (size_t i = 0; i < frame.uncategorizedSamples.size(); i++)
-				ResolveSample(*frame.uncategorizedSamples[i], report.uncategorizedSamples[i]);
+			for (size_t i = 0; i < frame.UncategorizedSamples.size(); i++)
+				ResolveSample(*frame.UncategorizedSamples[i], report.UncategorizedSamples[i]);
 				
 			FreeFrame(frame);
 			mUnresolvedFrames.pop();
@@ -230,96 +230,96 @@ namespace bs
 
 	void ProfilerGPU::FreeSample(ProfiledSample& sample)
 	{
-		for(auto& entry : sample.children)
+		for(auto& entry : sample.Children)
 		{
 			FreeSample(*entry);
 			mSamplePool.Destruct(entry);
 		}
 
-		sample.children.clear();
+		sample.Children.clear();
 
-		mFreeTimerQueries.push(sample.activeTimeQuery);
+		mFreeTimerQueries.push(sample.ActiveTimeQuery);
 
-		if(sample.activeOcclusionQuery)
-			mFreeOcclusionQueries.push(sample.activeOcclusionQuery);
+		if(sample.ActiveOcclusionQuery)
+			mFreeOcclusionQueries.push(sample.ActiveOcclusionQuery);
 	}
 
 	void ProfilerGPU::FreeFrame(ProfiledFrame& frame)
 	{
-		for (size_t i = 0; i < frame.viewSamples.size(); i++)
+		for (size_t i = 0; i < frame.ViewSamples.size(); i++)
 		{
-			FreeSample(*frame.viewSamples[i]);
-			mViewSamplePool.Destruct(frame.viewSamples[i]);
+			FreeSample(*frame.ViewSamples[i]);
+			mViewSamplePool.Destruct(frame.ViewSamples[i]);
 		}
 			
-		for (size_t i = 0; i < frame.uncategorizedSamples.size(); i++)
+		for (size_t i = 0; i < frame.UncategorizedSamples.size(); i++)
 		{
-			FreeSample(*frame.uncategorizedSamples[i]);
-			mSamplePool.Destruct(frame.uncategorizedSamples[i]);
+			FreeSample(*frame.UncategorizedSamples[i]);
+			mSamplePool.Destruct(frame.UncategorizedSamples[i]);
 		}
 
-		frame.viewSamples.clear();
-		frame.uncategorizedSamples.clear();
+		frame.ViewSamples.clear();
+		frame.UncategorizedSamples.clear();
 	}
 
 	void ProfilerGPU::ResolveSample(const ProfiledSample& sample, GPUProfileSample& reportSample)
 	{
-		reportSample.name.assign(sample.name.data(), sample.name.size());
-		reportSample.timeMs = sample.activeTimeQuery->GetTimeMs();
+		reportSample.Name.assign(sample.Name.data(), sample.Name.size());
+		reportSample.TimeMs = sample.ActiveTimeQuery->GetTimeMs();
 
-		if(sample.activeOcclusionQuery)
-			reportSample.numDrawnSamples = sample.activeOcclusionQuery->GetNumSamples();
+		if(sample.ActiveOcclusionQuery)
+			reportSample.NumDrawnSamples = sample.ActiveOcclusionQuery->GetNumSamples();
 		else
-			reportSample.numDrawnSamples = 0;
+			reportSample.NumDrawnSamples = 0;
 
-		reportSample.numDrawCalls = (UINT32)(sample.endStats.numDrawCalls - sample.startStats.numDrawCalls);
-		reportSample.numRenderTargetChanges = (UINT32)(sample.endStats.numRenderTargetChanges - sample.startStats.numRenderTargetChanges);
-		reportSample.numPresents = (UINT32)(sample.endStats.numPresents - sample.startStats.numPresents);
-		reportSample.numClears = (UINT32)(sample.endStats.numClears - sample.startStats.numClears);
+		reportSample.NumDrawCalls = (UINT32)(sample.EndStats.NumDrawCalls - sample.StartStats.NumDrawCalls);
+		reportSample.NumRenderTargetChanges = (UINT32)(sample.EndStats.NumRenderTargetChanges - sample.StartStats.NumRenderTargetChanges);
+		reportSample.NumPresents = (UINT32)(sample.EndStats.NumPresents - sample.StartStats.NumPresents);
+		reportSample.NumClears = (UINT32)(sample.EndStats.NumClears - sample.StartStats.NumClears);
 
-		reportSample.numVertices = (UINT32)(sample.endStats.numVertices - sample.startStats.numVertices);
-		reportSample.numPrimitives = (UINT32)(sample.endStats.numPrimitives - sample.startStats.numPrimitives);
+		reportSample.NumVertices = (UINT32)(sample.EndStats.NumVertices - sample.StartStats.NumVertices);
+		reportSample.NumPrimitives = (UINT32)(sample.EndStats.NumPrimitives - sample.StartStats.NumPrimitives);
 
-		reportSample.numPipelineStateChanges = (UINT32)(sample.endStats.numPipelineStateChanges - sample.startStats.numPipelineStateChanges);
+		reportSample.NumPipelineStateChanges = (UINT32)(sample.EndStats.NumPipelineStateChanges - sample.StartStats.NumPipelineStateChanges);
 
-		reportSample.numGpuParamBinds = (UINT32)(sample.endStats.numGpuParamBinds - sample.startStats.numGpuParamBinds);
-		reportSample.numVertexBufferBinds = (UINT32)(sample.endStats.numVertexBufferBinds - sample.startStats.numVertexBufferBinds);
-		reportSample.numIndexBufferBinds = (UINT32)(sample.endStats.numIndexBufferBinds - sample.startStats.numIndexBufferBinds);
+		reportSample.NumGpuParamBinds = (UINT32)(sample.EndStats.NumGpuParamBinds - sample.StartStats.NumGpuParamBinds);
+		reportSample.NumVertexBufferBinds = (UINT32)(sample.EndStats.NumVertexBufferBinds - sample.StartStats.NumVertexBufferBinds);
+		reportSample.NumIndexBufferBinds = (UINT32)(sample.EndStats.NumIndexBufferBinds - sample.StartStats.NumIndexBufferBinds);
 
-		reportSample.numResourceWrites = (UINT32)(sample.endStats.numResourceWrites - sample.startStats.numResourceWrites);
-		reportSample.numResourceReads = (UINT32)(sample.endStats.numResourceReads - sample.startStats.numResourceReads);
+		reportSample.NumResourceWrites = (UINT32)(sample.EndStats.NumResourceWrites - sample.StartStats.NumResourceWrites);
+		reportSample.NumResourceReads = (UINT32)(sample.EndStats.NumResourceReads - sample.StartStats.NumResourceReads);
 
-		reportSample.numObjectsCreated = (UINT32)(sample.endStats.numObjectsCreated - sample.startStats.numObjectsCreated);
-		reportSample.numObjectsDestroyed = (UINT32)(sample.endStats.numObjectsDestroyed - sample.startStats.numObjectsDestroyed);
+		reportSample.NumObjectsCreated = (UINT32)(sample.EndStats.NumObjectsCreated - sample.StartStats.NumObjectsCreated);
+		reportSample.NumObjectsDestroyed = (UINT32)(sample.EndStats.NumObjectsDestroyed - sample.StartStats.NumObjectsDestroyed);
 
-		for(auto& entry : sample.children)
+		for(auto& entry : sample.Children)
 		{
-			reportSample.children.push_back(GPUProfileSample());
-			ResolveSample(*entry, reportSample.children.back());
+			reportSample.Children.push_back(GPUProfileSample());
+			ResolveSample(*entry, reportSample.Children.back());
 		}
 	}
 
 	void ProfilerGPU::BeginSampleInternal(ProfiledSample& sample, bool issueOcclusion)
 	{
-		sample.startStats = RenderStats::Instance().GetData();
-		sample.activeTimeQuery = GetTimerQuery();
-		sample.activeTimeQuery->Begin();
+		sample.StartStats = RenderStats::Instance().GetData();
+		sample.ActiveTimeQuery = GetTimerQuery();
+		sample.ActiveTimeQuery->Begin();
 
 		if(issueOcclusion)
 		{
-			sample.activeOcclusionQuery = GetOcclusionQuery();
-			sample.activeOcclusionQuery->Begin();
+			sample.ActiveOcclusionQuery = GetOcclusionQuery();
+			sample.ActiveOcclusionQuery->Begin();
 		}
 	}
 
 	void ProfilerGPU::EndSampleInternal(ProfiledSample& sample)
 	{
-		sample.endStats = RenderStats::Instance().GetData();
+		sample.EndStats = RenderStats::Instance().GetData();
 
-		if(sample.activeOcclusionQuery)
-			sample.activeOcclusionQuery->End();
+		if(sample.ActiveOcclusionQuery)
+			sample.ActiveOcclusionQuery->End();
 
-		sample.activeTimeQuery->End();
+		sample.ActiveTimeQuery->End();
 	}
 
 	SPtr<ct::TimerQuery> ProfilerGPU::GetTimerQuery() const

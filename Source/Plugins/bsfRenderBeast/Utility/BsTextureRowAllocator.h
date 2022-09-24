@@ -15,10 +15,10 @@ namespace bs { namespace ct
 	struct TextureRowAllocation
 	{
 		/** Starting pixels of the allocation. */
-		uint16_t x = 0, y = 0;
+		uint16_t X = 0, Y = 0;
 
 		/** Number of pixels in the allocation. */
-		uint32_t length = 0;
+		uint32_t Length = 0;
 	};
 
 	/** Allocates elements of variable size within rows of a texture. */
@@ -43,9 +43,9 @@ namespace bs { namespace ct
 		struct RowRegion
 		{
 			// Note: 'next' must be the first member because of shenanigans we do in alloc() and free()
-			RowRegion* next = nullptr;
-			uint32_t x = 0;
-			uint32_t length = WIDTH;
+			RowRegion* Next = nullptr;
+			uint32_t X = 0;
+			uint32_t Length = WIDTH;
 		};
 
 		RowRegion* mFreeRegions[HEIGHT];
@@ -68,7 +68,7 @@ namespace bs { namespace ct
 			while(region)
 			{
 				RowRegion* curRegion = region;
-				region = region->next;
+				region = region->Next;
 
 				mAlloc.Free(curRegion);
 			}
@@ -86,32 +86,32 @@ namespace bs { namespace ct
 			RowRegion* prevRegion = (RowRegion*)&mFreeRegions[i]; // This ensures an assignment to prevRegion->next changes the entry of mFreeRegions
 			while(region)
 			{
-				if(region->length == length)
+				if(region->Length == length)
 				{
-					output.x = region->x;
-					output.y = i;
-					output.length = length;
+					output.X = region->X;
+					output.Y = i;
+					output.Length = length;
 
-					prevRegion->next = region->next;
+					prevRegion->Next = region->Next;
 					mAlloc.Free(region);
 
 					return output;
 				}
 
-				if(region->length > length)
+				if(region->Length > length)
 				{
-					output.x = region->x;
-					output.y = i;
-					output.length = length;
+					output.X = region->X;
+					output.Y = i;
+					output.Length = length;
 
-					region->x += length;
-					region->length -= length;
+					region->X += length;
+					region->Length -= length;
 
 					return output;
 				}
 
 				prevRegion = region;
-				region = region->next;
+				region = region->Next;
 			}
 		}
 
@@ -121,49 +121,49 @@ namespace bs { namespace ct
 	template <uint32_t WIDTH, uint32_t HEIGHT>
 	void TextureRowAllocator<WIDTH, HEIGHT>::Free(const TextureRowAllocation& alloc)
 	{
-		if(alloc.length == 0)
+		if(alloc.Length == 0)
 			return;
 
-		RowRegion* region = mFreeRegions[alloc.y];
-		RowRegion* prevRegion = (RowRegion*)&mFreeRegions[alloc.y]; // This ensures an assignment to prevRegion->next changes the entry of mFreeRegions
+		RowRegion* region = mFreeRegions[alloc.Y];
+		RowRegion* prevRegion = (RowRegion*)&mFreeRegions[alloc.Y]; // This ensures an assignment to prevRegion->next changes the entry of mFreeRegions
 
 		if(region)
 		{
 			// Find the location where to insert the free region
-			while (region && alloc.x > (region->x + region->length))
+			while (region && alloc.X > (region->X + region->Length))
 			{
 				prevRegion = region;
-				region = region->next;
+				region = region->Next;
 			}
 
 			if(region)
 			{
 				// End of the allocation is the beginning of this region
-				if((alloc.x + alloc.length) == region->x)
+				if((alloc.X + alloc.Length) == region->X)
 				{
-					region->x -= alloc.length;
-					region->length += alloc.length;
+					region->X -= alloc.Length;
+					region->Length += alloc.Length;
 
 					return;
 				}
 
 				// Beginning of the allocation is at the end of this region
-				const uint32_t regionEnd = region->x + region->length;
-				if (alloc.x == regionEnd)
+				const uint32_t regionEnd = region->X + region->Length;
+				if (alloc.X == regionEnd)
 				{
-					region->length += alloc.length;
+					region->Length += alloc.Length;
 
 					// Merge any directly following regions
 					prevRegion = region;
-					region = region->next;
+					region = region->Next;
 
-					while(region && region->x == (prevRegion->x + prevRegion->length))
+					while(region && region->X == (prevRegion->X + prevRegion->Length))
 					{
-						prevRegion->length += region->length;
-						prevRegion->next = region->next;
+						prevRegion->Length += region->Length;
+						prevRegion->Next = region->Next;
 
 						RowRegion* toDelete = region;
-						region = region->next;
+						region = region->Next;
 
 						mAlloc.Free(toDelete);
 					}
@@ -174,11 +174,11 @@ namespace bs { namespace ct
 		}
 			
 		auto newRegion = (RowRegion*)mAlloc.Alloc();
-		newRegion->x = alloc.x;
-		newRegion->length = alloc.length;
-		newRegion->next = region;
+		newRegion->X = alloc.X;
+		newRegion->Length = alloc.Length;
+		newRegion->Next = region;
 
-		prevRegion->next = newRegion;
+		prevRegion->Next = newRegion;
 	}
 
 	/* @} */

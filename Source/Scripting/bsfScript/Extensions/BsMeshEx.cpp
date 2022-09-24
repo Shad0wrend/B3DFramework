@@ -9,12 +9,12 @@ namespace bs
 		VertexLayout vertex, IndexType index)
 	{
 		MESH_DESC desc;
-		desc.numVertices = numVertices;
-		desc.numIndices = numIndices;
-		desc.vertexDesc = RendererMeshData::VertexLayoutVertexDesc(vertex);
-		desc.subMeshes = { SubMesh(0, numIndices, topology) };
-		desc.usage = usage;
-		desc.indexType = index;
+		desc.NumVertices = numVertices;
+		desc.NumIndices = numIndices;
+		desc.VertexDesc = RendererMeshData::VertexLayoutVertexDesc(vertex);
+		desc.SubMeshes = { SubMesh(0, numIndices, topology) };
+		desc.Usage = usage;
+		desc.IndexType = index;
 
 		return Mesh::Create(desc);
 	}
@@ -23,12 +23,12 @@ namespace bs
 		VertexLayout vertex, IndexType index)
 	{
 		MESH_DESC desc;
-		desc.numVertices = numVertices;
-		desc.numIndices = numIndices;
-		desc.vertexDesc = RendererMeshData::VertexLayoutVertexDesc(vertex);
-		desc.subMeshes = subMeshes;
-		desc.usage = usage;
-		desc.indexType = index;
+		desc.NumVertices = numVertices;
+		desc.NumIndices = numIndices;
+		desc.VertexDesc = RendererMeshData::VertexLayoutVertexDesc(vertex);
+		desc.SubMeshes = subMeshes;
+		desc.Usage = usage;
+		desc.IndexType = index;
 
 		return Mesh::Create(desc);
 	}
@@ -44,8 +44,8 @@ namespace bs
 			numIndices = meshData->GetNumIndices();
 
 		MESH_DESC desc;
-		desc.subMeshes = { SubMesh(0, numIndices, topology) };
-		desc.usage = usage;
+		desc.SubMeshes = { SubMesh(0, numIndices, topology) };
+		desc.Usage = usage;
 
 		return Mesh::Create(meshData, desc);
 	}
@@ -57,8 +57,8 @@ namespace bs
 			meshData = data->GetData();
 
 		MESH_DESC desc;
-		desc.subMeshes = subMeshes;
-		desc.usage = usage;
+		desc.SubMeshes = subMeshes;
+		desc.Usage = usage;
 
 		return Mesh::Create(meshData, desc);
 	}

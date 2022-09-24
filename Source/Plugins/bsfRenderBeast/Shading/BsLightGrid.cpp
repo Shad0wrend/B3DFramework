@@ -31,11 +31,11 @@ namespace bs { namespace ct
 		mParams->GetBufferParam(GPT_COMPUTE_PROGRAM, "gProbesLL", mProbesLLParam);
 
 		GPU_BUFFER_DESC desc;
-		desc.elementCount = 1;
-		desc.format = BF_UNKNOWN;
-		desc.usage = GBU_LOADSTORE;
-		desc.type = GBT_STRUCTURED;
-		desc.elementSize = 4;
+		desc.ElementCount = 1;
+		desc.Format = BF_UNKNOWN;
+		desc.Usage = GBU_LOADSTORE;
+		desc.Type = GBT_STRUCTURED;
+		desc.ElementSize = 4;
 
 		mLightsCounter = GpuBuffer::Create(desc);
 		mLightsCounterParam.Set(mLightsCounter);
@@ -58,11 +58,11 @@ namespace bs { namespace ct
 		if(numCells > mBufferNumCells || mBufferNumCells == 0)
 		{
 			GPU_BUFFER_DESC desc;
-			desc.elementCount = numCells;
-			desc.format = BF_UNKNOWN;
-			desc.usage = GBU_LOADSTORE;
-			desc.type = GBT_STRUCTURED;
-			desc.elementSize = 4;
+			desc.ElementCount = numCells;
+			desc.Format = BF_UNKNOWN;
+			desc.Usage = GBU_LOADSTORE;
+			desc.Type = GBT_STRUCTURED;
+			desc.ElementSize = 4;
 
 			mLightsLLHeads = GpuBuffer::Create(desc);
 			mLightsLLHeadsParam.Set(mLightsLLHeads);
@@ -70,15 +70,15 @@ namespace bs { namespace ct
 			mProbesLLHeads = GpuBuffer::Create(desc);
 			mProbesLLHeadsParam.Set(mProbesLLHeads);
 
-			desc.type = GBT_STANDARD;
-			desc.format = BF_32X4U;
-			desc.elementCount = numCells * MAX_LIGHTS_PER_CELL;
-			desc.elementSize = 0;
+			desc.Type = GBT_STANDARD;
+			desc.Format = BF_32X4U;
+			desc.ElementCount = numCells * MAX_LIGHTS_PER_CELL;
+			desc.ElementSize = 0;
 
 			mLightsLL = GpuBuffer::Create(desc);
 			mLightsLLParam.Set(mLightsLL);
 
-			desc.format = BF_32X2U;
+			desc.Format = BF_32X2U;
 			mProbesLL = GpuBuffer::Create(desc);
 			mProbesLLParam.Set(mProbesLL);
 
@@ -94,10 +94,10 @@ namespace bs { namespace ct
 
 		UINT32 clearValue = 0xFFFFFFFF;
 		Color clearColor;
-		clearColor.r = *(float*) &clearValue;
-		clearColor.g = *(float*) &clearValue;
-		clearColor.b = *(float*) &clearValue;
-		clearColor.a = *(float*) &clearValue;
+		clearColor.R = *(float*) &clearValue;
+		clearColor.G = *(float*) &clearValue;
+		clearColor.B = *(float*) &clearValue;
+		clearColor.A = *(float*) &clearValue;
 
 		clearMat->Execute(mLightsLLHeads, clearColor);
 		clearMat->Execute(mProbesLLHeads, clearColor);
@@ -148,11 +148,11 @@ namespace bs { namespace ct
 		mParams->GetBufferParam(GPT_COMPUTE_PROGRAM, "gGridProbeIndices", mGridProbeIndicesParam);
 
 		GPU_BUFFER_DESC desc;
-		desc.elementCount = 2;
-		desc.format = BF_UNKNOWN;
-		desc.usage = GBU_LOADSTORE;
-		desc.type = GBT_STRUCTURED;
-		desc.elementSize = 4;
+		desc.ElementCount = 2;
+		desc.Format = BF_UNKNOWN;
+		desc.Usage = GBU_LOADSTORE;
+		desc.Type = GBT_STRUCTURED;
+		desc.ElementSize = 4;
 
 		mGridDataCounter = GpuBuffer::Create(desc);
 		mGridDataCounterParam.Set(mGridDataCounter);
@@ -173,22 +173,22 @@ namespace bs { namespace ct
 		if (numCells > mBufferNumCells || mBufferNumCells == 0)
 		{
 			GPU_BUFFER_DESC desc;
-			desc.elementCount = numCells;
-			desc.format = BF_32X4U;
-			desc.usage = GBU_LOADSTORE;
-			desc.type = GBT_STANDARD;
-			desc.elementSize = 0;
+			desc.ElementCount = numCells;
+			desc.Format = BF_32X4U;
+			desc.Usage = GBU_LOADSTORE;
+			desc.Type = GBT_STANDARD;
+			desc.ElementSize = 0;
 
 			mGridLightOffsetAndSize = GpuBuffer::Create(desc);
 			mGridLightOffsetAndSizeParam.Set(mGridLightOffsetAndSize);
 
-			desc.format = BF_32X2U;
+			desc.Format = BF_32X2U;
 
 			mGridProbeOffsetAndSize = GpuBuffer::Create(desc);
 			mGridProbeOffsetAndSizeParam.Set(mGridProbeOffsetAndSize);
 
-			desc.format = BF_32X1U;
-			desc.elementCount = numCells * MAX_LIGHTS_PER_CELL;
+			desc.Format = BF_32X1U;
+			desc.ElementCount = numCells * MAX_LIGHTS_PER_CELL;
 			mGridLightIndices = GpuBuffer::Create(desc);
 			mGridLightIndicesParam.Set(mGridLightIndices);
 
@@ -245,8 +245,8 @@ namespace bs { namespace ct
 	{
 		const RendererViewProperties& viewProps = view.GetProperties();
 
-		UINT32 width = viewProps.target.viewRect.width;
-		UINT32 height = viewProps.target.viewRect.height;
+		UINT32 width = viewProps.Target.ViewRect.Width;
+		UINT32 height = viewProps.Target.ViewRect.Height;
 
 		Vector3I gridSize;
 		gridSize[0] = (width + CELL_XY_SIZE - 1) / CELL_XY_SIZE;
@@ -307,13 +307,13 @@ namespace bs { namespace ct
 
 		LightGridLLReductionMat* reductionMat = LightGridLLReductionMat::Get();
 		reductionMat->GetOutputs(
-			outputs.gridLightOffsetsAndSize,
-			outputs.gridLightIndices,
-			outputs.gridProbeOffsetsAndSize,
-			outputs.gridProbeIndices
+			outputs.GridLightOffsetsAndSize,
+			outputs.GridLightIndices,
+			outputs.GridProbeOffsetsAndSize,
+			outputs.GridProbeIndices
 		);
 
-		outputs.gridParams = mGridParamBuffer;
+		outputs.GridParams = mGridParamBuffer;
 
 		return outputs;
 	}

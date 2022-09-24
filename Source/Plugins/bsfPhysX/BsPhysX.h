@@ -32,25 +32,25 @@ namespace bs
 		/** Event reported when a physics object interacts with a collider. */
 		struct TriggerEvent
 		{
-			Collider* trigger; /** Trigger that was interacted with. */
-			Collider* other; /** Collider that was interacted with. */
-			ContactEventType type; /** Exact type of the event. */
+			Collider* Trigger; /** Trigger that was interacted with. */
+			Collider* Other; /** Collider that was interacted with. */
+			ContactEventType Type; /** Exact type of the event. */
 		};
 
 		/** Event reported when two colliders interact. */
 		struct ContactEvent
 		{
-			Collider* colliderA; /** First collider. */
-			Collider* colliderB; /** Second collider. */
-			ContactEventType type; /** Exact type of the event. */
+			Collider* ColliderA; /** First collider. */
+			Collider* ColliderB; /** Second collider. */
+			ContactEventType Type; /** Exact type of the event. */
 			// Note: Not too happy this is heap allocated, use static allocator?
-			Vector<ContactPoint> points; /** Information about all contact points between the colliders. */
+			Vector<ContactPoint> Points; /** Information about all contact points between the colliders. */
 		};
 
 		/** Event reported when a joint breaks. */
 		struct JointBreakEvent
 		{
-			Joint* joint; /** Broken joint. */
+			Joint* Joint; /** Broken joint. */
 		};
 
 	public:

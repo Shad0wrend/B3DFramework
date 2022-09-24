@@ -12,10 +12,10 @@ namespace bs
 {
 	struct __PARTICLE_ORBIT_DESCInterop
 	{
-		MonoObject* center;
-		MonoObject* velocity;
-		MonoObject* radial;
-		bool worldSpace;
+		MonoObject* Center;
+		MonoObject* Velocity;
+		MonoObject* Radial;
+		bool WorldSpace;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptPARTICLE_ORBIT_DESC : public ScriptObject<ScriptPARTICLE_ORBIT_DESC>

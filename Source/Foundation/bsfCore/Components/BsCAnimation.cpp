@@ -253,13 +253,13 @@ namespace bs
 						for (auto& entry : mMappingInfos)
 						{
 							// We allow a null bone for the root bone mapping, should be non-null for everything else
-							if(!entry.isMappedToBone || entry.bone == nullptr)
+							if(!entry.IsMappedToBone || entry.Bone == nullptr)
 								continue;
 
 							const UINT32 numBones = skeleton->GetNumBones();
 							for (UINT32 j = 0; j < numBones; j++)
 							{
-								if (skeleton->GetBoneInfo(j).name == entry.bone->GetBoneName())
+								if (skeleton->GetBoneInfo(j).Name == entry.Bone->GetBoneName())
 								{
 									Matrix4 bindPose = skeleton->GetInvBindPose(j).InverseAffine();
 									bindPose = SO()->GetTransform().GetMatrix() * bindPose;
@@ -268,9 +268,9 @@ namespace bs
 									Quaternion rotation;
 									bindPose.Decomposition(position, rotation, scale);
 
-									entry.sceneObject->SetWorldPosition(position);
-									entry.sceneObject->SetWorldRotation(rotation);
-									entry.sceneObject->SetWorldScale(scale);
+									entry.SceneObject->SetWorldPosition(position);
+									entry.SceneObject->SetWorldRotation(rotation);
+									entry.SceneObject->SetWorldScale(scale);
 
 									break;
 								}
@@ -312,7 +312,7 @@ namespace bs
 
 		if (!previewMode)
 		{
-			mInternal->onEventTriggered.Connect(std::bind(&CAnimation::EventTriggered, this, _1, _2));
+			mInternal->OnEventTriggered.Connect(std::bind(&CAnimation::EventTriggered, this, _1, _2));
 
 			mInternal->SetWrapMode(mWrapMode);
 			mInternal->SetSpeed(mSpeed);
@@ -416,14 +416,14 @@ namespace bs
 		const HSceneObject& currentSO = bone->SO();
 
 		SceneObjectMappingInfo newMapping;
-		newMapping.sceneObject = currentSO;
-		newMapping.isMappedToBone = true;
-		newMapping.bone = std::move(bone);
+		newMapping.SceneObject = currentSO;
+		newMapping.IsMappedToBone = true;
+		newMapping.Bone = std::move(bone);
 
 		mMappingInfos.push_back(newMapping);
 
 		if(mInternal)
-			mInternal->MapCurveToSceneObject(newMapping.bone->GetBoneName(), newMapping.sceneObject);
+			mInternal->MapCurveToSceneObject(newMapping.Bone->GetBoneName(), newMapping.SceneObject);
 	}
 
 	void CAnimation::RemoveBoneInternal(const HBone& bone)
@@ -431,10 +431,10 @@ namespace bs
 		HSceneObject newSO;
 		for (UINT32 i = 0; i < (UINT32)mMappingInfos.size(); i++)
 		{
-			if (mMappingInfos[i].bone == bone)
+			if (mMappingInfos[i].Bone == bone)
 			{
 				if(mInternal)
-					mInternal->UnmapSceneObject(mMappingInfos[i].sceneObject);
+					mInternal->UnmapSceneObject(mMappingInfos[i].SceneObject);
 
 				mMappingInfos.erase(mMappingInfos.begin() + i);
 				i--;
@@ -449,10 +449,10 @@ namespace bs
 
 		for (UINT32 i = 0; i < (UINT32)mMappingInfos.size(); i++)
 		{
-			if (mMappingInfos[i].bone == bone)
+			if (mMappingInfos[i].Bone == bone)
 			{
-				mInternal->UnmapSceneObject(mMappingInfos[i].sceneObject);
-				mInternal->MapCurveToSceneObject(bone->GetBoneName(), mMappingInfos[i].sceneObject);
+				mInternal->UnmapSceneObject(mMappingInfos[i].SceneObject);
+				mInternal->MapCurveToSceneObject(bone->GetBoneName(), mMappingInfos[i].SceneObject);
 				break;
 			}
 		}
@@ -513,11 +513,11 @@ namespace bs
 		mMappingInfos.clear();
 
 		SceneObjectMappingInfo rootMapping;
-		rootMapping.sceneObject = SO();
-		rootMapping.isMappedToBone = true;
+		rootMapping.SceneObject = SO();
+		rootMapping.IsMappedToBone = true;
 
 		mMappingInfos.push_back(rootMapping);
-		mInternal->MapCurveToSceneObject("", rootMapping.sceneObject);
+		mInternal->MapCurveToSceneObject("", rootMapping.SceneObject);
 
 		Vector<HBone> childBones = FindChildBones();
 		for (auto& entry : childBones)
@@ -529,10 +529,10 @@ namespace bs
 		Vector<SceneObjectMappingInfo> newMappingInfos;
 		for(auto& entry : mMappingInfos)
 		{
-			if (entry.isMappedToBone)
+			if (entry.IsMappedToBone)
 				newMappingInfos.push_back(entry);
 			else
-				UnmapSceneObject(entry.sceneObject);
+				UnmapSceneObject(entry.SceneObject);
 		}
 
 		if (mPrimaryPlayingClip.IsLoaded())
@@ -549,7 +549,7 @@ namespace bs
 				bool found = false;
 				for (UINT32 i = 0; i < (UINT32)newMappingInfos.size(); i++)
 				{
-					if (newMappingInfos[i].sceneObject == currentSO)
+					if (newMappingInfos[i].SceneObject == currentSO)
 					{
 						found = true;
 						break;
@@ -559,8 +559,8 @@ namespace bs
 				if (!found)
 				{
 					SceneObjectMappingInfo newMappingInfo;
-					newMappingInfo.isMappedToBone = false;
-					newMappingInfo.sceneObject = currentSO;
+					newMappingInfo.IsMappedToBone = false;
+					newMappingInfo.SceneObject = currentSO;
 
 					newMappingInfos.push_back(newMappingInfo);
 					MapCurveToSceneObject(name, currentSO);
@@ -568,14 +568,14 @@ namespace bs
 			};
 
 			SPtr<AnimationCurves> curves = mPrimaryPlayingClip->GetCurves();
-			for(auto& curve : curves->position)
-				findMappings(curve.name, curve.flags);
+			for(auto& curve : curves->Position)
+				findMappings(curve.Name, curve.Flags);
 
-			for(auto& curve : curves->rotation)
-				findMappings(curve.name, curve.flags);
+			for(auto& curve : curves->Rotation)
+				findMappings(curve.Name, curve.Flags);
 
-			for(auto& curve : curves->scale)
-				findMappings(curve.name, curve.flags);
+			for(auto& curve : curves->Scale)
+				findMappings(curve.Name, curve.Flags);
 		}
 
 		mMappingInfos = newMappingInfos;
@@ -625,7 +625,7 @@ namespace bs
 
 	void CAnimation::EventTriggered(const HAnimationClip& clip, const String& name)
 	{
-		onEventTriggered(clip, name);
+		OnEventTriggered(clip, name);
 
 		if(ScriptOnEventTriggeredInternal)
 			ScriptOnEventTriggeredInternal(clip, name);

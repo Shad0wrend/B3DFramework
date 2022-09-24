@@ -26,7 +26,7 @@ namespace bs
 
 				mMaterial = material;
 				mParamIndex = paramIndex;
-				mArraySize = data->arraySize;
+				mArraySize = data->ArraySize;
 			}
 			else
 				params->ReportGetParamError(result, name, 0);

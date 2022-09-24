@@ -19,7 +19,7 @@ namespace bs
 
 	MonoObject*ScriptGUIContentImages::Box(const __GUIContentImagesInterop& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	__GUIContentImagesInterop ScriptGUIContentImages::Unbox(MonoObject* value)
@@ -32,52 +32,52 @@ namespace bs
 		GUIContentImages output;
 		ResourceHandle<SpriteTexture> tmpnormal;
 		ScriptSpriteTexture* scriptnormal;
-		scriptnormal = ScriptSpriteTexture::ToNative(value.normal);
+		scriptnormal = ScriptSpriteTexture::ToNative(value.Normal);
 		if(scriptnormal != nullptr)
 			tmpnormal = scriptnormal->GetHandle();
-		output.normal = tmpnormal;
+		output.Normal = tmpnormal;
 		ResourceHandle<SpriteTexture> tmphover;
 		ScriptSpriteTexture* scripthover;
-		scripthover = ScriptSpriteTexture::ToNative(value.hover);
+		scripthover = ScriptSpriteTexture::ToNative(value.Hover);
 		if(scripthover != nullptr)
 			tmphover = scripthover->GetHandle();
-		output.hover = tmphover;
+		output.Hover = tmphover;
 		ResourceHandle<SpriteTexture> tmpactive;
 		ScriptSpriteTexture* scriptactive;
-		scriptactive = ScriptSpriteTexture::ToNative(value.active);
+		scriptactive = ScriptSpriteTexture::ToNative(value.Active);
 		if(scriptactive != nullptr)
 			tmpactive = scriptactive->GetHandle();
-		output.active = tmpactive;
+		output.Active = tmpactive;
 		ResourceHandle<SpriteTexture> tmpfocused;
 		ScriptSpriteTexture* scriptfocused;
-		scriptfocused = ScriptSpriteTexture::ToNative(value.focused);
+		scriptfocused = ScriptSpriteTexture::ToNative(value.Focused);
 		if(scriptfocused != nullptr)
 			tmpfocused = scriptfocused->GetHandle();
-		output.focused = tmpfocused;
+		output.Focused = tmpfocused;
 		ResourceHandle<SpriteTexture> tmpnormalOn;
 		ScriptSpriteTexture* scriptnormalOn;
-		scriptnormalOn = ScriptSpriteTexture::ToNative(value.normalOn);
+		scriptnormalOn = ScriptSpriteTexture::ToNative(value.NormalOn);
 		if(scriptnormalOn != nullptr)
 			tmpnormalOn = scriptnormalOn->GetHandle();
-		output.normalOn = tmpnormalOn;
+		output.NormalOn = tmpnormalOn;
 		ResourceHandle<SpriteTexture> tmphoverOn;
 		ScriptSpriteTexture* scripthoverOn;
-		scripthoverOn = ScriptSpriteTexture::ToNative(value.hoverOn);
+		scripthoverOn = ScriptSpriteTexture::ToNative(value.HoverOn);
 		if(scripthoverOn != nullptr)
 			tmphoverOn = scripthoverOn->GetHandle();
-		output.hoverOn = tmphoverOn;
+		output.HoverOn = tmphoverOn;
 		ResourceHandle<SpriteTexture> tmpactiveOn;
 		ScriptSpriteTexture* scriptactiveOn;
-		scriptactiveOn = ScriptSpriteTexture::ToNative(value.activeOn);
+		scriptactiveOn = ScriptSpriteTexture::ToNative(value.ActiveOn);
 		if(scriptactiveOn != nullptr)
 			tmpactiveOn = scriptactiveOn->GetHandle();
-		output.activeOn = tmpactiveOn;
+		output.ActiveOn = tmpactiveOn;
 		ResourceHandle<SpriteTexture> tmpfocusedOn;
 		ScriptSpriteTexture* scriptfocusedOn;
-		scriptfocusedOn = ScriptSpriteTexture::ToNative(value.focusedOn);
+		scriptfocusedOn = ScriptSpriteTexture::ToNative(value.FocusedOn);
 		if(scriptfocusedOn != nullptr)
 			tmpfocusedOn = scriptfocusedOn->GetHandle();
-		output.focusedOn = tmpfocusedOn;
+		output.FocusedOn = tmpfocusedOn;
 
 		return output;
 	}
@@ -86,69 +86,69 @@ namespace bs
 	{
 		__GUIContentImagesInterop output;
 		ScriptResourceBase* scriptnormal;
-		scriptnormal = ScriptResourceManager::Instance().GetScriptResource(value.normal, true);
+		scriptnormal = ScriptResourceManager::Instance().GetScriptResource(value.Normal, true);
 		MonoObject* tmpnormal;
 		if(scriptnormal != nullptr)
 			tmpnormal = scriptnormal->GetManagedInstance();
 		else
 			tmpnormal = nullptr;
-		output.normal = tmpnormal;
+		output.Normal = tmpnormal;
 		ScriptResourceBase* scripthover;
-		scripthover = ScriptResourceManager::Instance().GetScriptResource(value.hover, true);
+		scripthover = ScriptResourceManager::Instance().GetScriptResource(value.Hover, true);
 		MonoObject* tmphover;
 		if(scripthover != nullptr)
 			tmphover = scripthover->GetManagedInstance();
 		else
 			tmphover = nullptr;
-		output.hover = tmphover;
+		output.Hover = tmphover;
 		ScriptResourceBase* scriptactive;
-		scriptactive = ScriptResourceManager::Instance().GetScriptResource(value.active, true);
+		scriptactive = ScriptResourceManager::Instance().GetScriptResource(value.Active, true);
 		MonoObject* tmpactive;
 		if(scriptactive != nullptr)
 			tmpactive = scriptactive->GetManagedInstance();
 		else
 			tmpactive = nullptr;
-		output.active = tmpactive;
+		output.Active = tmpactive;
 		ScriptResourceBase* scriptfocused;
-		scriptfocused = ScriptResourceManager::Instance().GetScriptResource(value.focused, true);
+		scriptfocused = ScriptResourceManager::Instance().GetScriptResource(value.Focused, true);
 		MonoObject* tmpfocused;
 		if(scriptfocused != nullptr)
 			tmpfocused = scriptfocused->GetManagedInstance();
 		else
 			tmpfocused = nullptr;
-		output.focused = tmpfocused;
+		output.Focused = tmpfocused;
 		ScriptResourceBase* scriptnormalOn;
-		scriptnormalOn = ScriptResourceManager::Instance().GetScriptResource(value.normalOn, true);
+		scriptnormalOn = ScriptResourceManager::Instance().GetScriptResource(value.NormalOn, true);
 		MonoObject* tmpnormalOn;
 		if(scriptnormalOn != nullptr)
 			tmpnormalOn = scriptnormalOn->GetManagedInstance();
 		else
 			tmpnormalOn = nullptr;
-		output.normalOn = tmpnormalOn;
+		output.NormalOn = tmpnormalOn;
 		ScriptResourceBase* scripthoverOn;
-		scripthoverOn = ScriptResourceManager::Instance().GetScriptResource(value.hoverOn, true);
+		scripthoverOn = ScriptResourceManager::Instance().GetScriptResource(value.HoverOn, true);
 		MonoObject* tmphoverOn;
 		if(scripthoverOn != nullptr)
 			tmphoverOn = scripthoverOn->GetManagedInstance();
 		else
 			tmphoverOn = nullptr;
-		output.hoverOn = tmphoverOn;
+		output.HoverOn = tmphoverOn;
 		ScriptResourceBase* scriptactiveOn;
-		scriptactiveOn = ScriptResourceManager::Instance().GetScriptResource(value.activeOn, true);
+		scriptactiveOn = ScriptResourceManager::Instance().GetScriptResource(value.ActiveOn, true);
 		MonoObject* tmpactiveOn;
 		if(scriptactiveOn != nullptr)
 			tmpactiveOn = scriptactiveOn->GetManagedInstance();
 		else
 			tmpactiveOn = nullptr;
-		output.activeOn = tmpactiveOn;
+		output.ActiveOn = tmpactiveOn;
 		ScriptResourceBase* scriptfocusedOn;
-		scriptfocusedOn = ScriptResourceManager::Instance().GetScriptResource(value.focusedOn, true);
+		scriptfocusedOn = ScriptResourceManager::Instance().GetScriptResource(value.FocusedOn, true);
 		MonoObject* tmpfocusedOn;
 		if(scriptfocusedOn != nullptr)
 			tmpfocusedOn = scriptfocusedOn->GetManagedInstance();
 		else
 			tmpfocusedOn = nullptr;
-		output.focusedOn = tmpfocusedOn;
+		output.FocusedOn = tmpfocusedOn;
 
 		return output;
 	}

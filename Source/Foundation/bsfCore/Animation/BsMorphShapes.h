@@ -17,12 +17,12 @@ namespace bs
 	{
 		MorphVertex() = default;
 		MorphVertex(const Vector3& deltaPosition, const Vector3& deltaNormal, UINT32 sourceIdx)
-			:deltaPosition(deltaPosition), deltaNormal(deltaNormal), sourceIdx(sourceIdx)
+			:DeltaPosition(deltaPosition), DeltaNormal(deltaNormal), SourceIdx(sourceIdx)
 		{ }
 
-		Vector3 deltaPosition;
-		Vector3 deltaNormal;
-		UINT32 sourceIdx;
+		Vector3 DeltaPosition;
+		Vector3 DeltaNormal;
+		UINT32 SourceIdx;
 	};
 
 	/**

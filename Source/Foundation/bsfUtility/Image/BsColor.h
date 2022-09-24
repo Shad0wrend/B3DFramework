@@ -32,7 +32,7 @@ namespace bs
 		static const Color BansheeOrange;
 
 		constexpr explicit Color(float red = 1.0f, float green = 1.0f, float blue = 1.0f, float alpha = 1.0f )
-			:r(red), g(green), b(blue), a(alpha)
+			:R(red), G(green), B(blue), A(alpha)
 		{ }
 
 		bool operator==(const Color& rhs) const;
@@ -68,25 +68,25 @@ namespace bs
 		/** Clamps color value to the range [0, 1]. */
 		void Saturate()
 		{
-			if (r < 0)
-				r = 0;
-			else if (r > 1)
-				r = 1;
+			if (R < 0)
+				R = 0;
+			else if (R > 1)
+				R = 1;
 
-			if (g < 0)
-				g = 0;
-			else if (g > 1)
-				g = 1;
+			if (G < 0)
+				G = 0;
+			else if (G > 1)
+				G = 1;
 
-			if (b < 0)
-				b = 0;
-			else if (b > 1)
-				b = 1;
+			if (B < 0)
+				B = 0;
+			else if (B > 1)
+				B = 1;
 
-			if (a < 0)
-				a = 0;
-			else if (a > 1)
-				a = 1;
+			if (A < 0)
+				A = 0;
+			else if (A > 1)
+				A = 1;
 		}
 
 		/** Clamps colour value to the range [0, 1]. Returned saturated color as a copy. */
@@ -101,51 +101,51 @@ namespace bs
 		{
 			assert(i < 4);
 
-			return *(&r+i);
+			return *(&R+i);
 		}
 
 		float& operator[] (const UINT32 i)
 		{
 			assert(i < 4);
 
-			return *(&r+i);
+			return *(&R+i);
 		}
 
 		/** Pointer accessor for direct copying. */
 		float* Ptr()
 		{
-			return &r;
+			return &R;
 		}
 
 		/** Pointer accessor for direct copying. */
 		const float* Ptr() const
 		{
-			return &r;
+			return &R;
 		}
 
 		Color operator+ (const Color& rhs) const
 		{
-			return Color(r + rhs.r, g + rhs.g, b + rhs.b, a + rhs.a);
+			return Color(R + rhs.R, G + rhs.G, B + rhs.B, A + rhs.A);
 		}
 
 		Color operator- (const Color& rhs) const
 		{
-			return Color(r - rhs.r, g - rhs.g, b - rhs.b, a - rhs.a);
+			return Color(R - rhs.R, G - rhs.G, B - rhs.B, A - rhs.A);
 		}
 
 		Color operator* (float rhs) const
 		{
-			return Color(rhs * r, rhs * g, rhs * b, rhs * a);
+			return Color(rhs * R, rhs * G, rhs * B, rhs * A);
 		}
 
 		Color operator* (const Color& rhs) const
 		{
-			return Color(rhs.r * r, rhs.g * g, rhs.b * b, rhs.a * a);
+			return Color(rhs.R * R, rhs.G * G, rhs.B * B, rhs.A * A);
 		}
 
 		Color operator/ (const Color& rhs) const
 		{
-			return Color(r / rhs.r, g / rhs.g, b / rhs.b, a / rhs.a);
+			return Color(R / rhs.R, G / rhs.G, B / rhs.B, A / rhs.A);
 		}
 
 		Color operator/ (float rhs) const
@@ -153,40 +153,40 @@ namespace bs
 			assert(rhs != 0.0f);
 			float invRhs = 1.0f / rhs;
 
-			return Color(r * invRhs, g * invRhs, b * invRhs, a * invRhs);
+			return Color(R * invRhs, G * invRhs, B * invRhs, A * invRhs);
 		}
 
 		friend Color operator* (float lhs, const Color& rhs)
 		{
-			return Color(lhs * rhs.r, lhs * rhs.g, lhs * rhs.b, lhs * rhs.a);
+			return Color(lhs * rhs.R, lhs * rhs.G, lhs * rhs.B, lhs * rhs.A);
 		}
 
 		Color& operator+= (const Color& rhs)
 		{
-			r += rhs.r;
-			g += rhs.g;
-			b += rhs.b;
-			a += rhs.a;
+			R += rhs.R;
+			G += rhs.G;
+			B += rhs.B;
+			A += rhs.A;
 
 			return *this;
 		}
 
 		Color& operator-= (const Color& rhs)
 		{
-			r -= rhs.r;
-			g -= rhs.g;
-			b -= rhs.b;
-			a -= rhs.a;
+			R -= rhs.R;
+			G -= rhs.G;
+			B -= rhs.B;
+			A -= rhs.A;
 
 			return *this;
 		}
 
 		Color& operator*= (float rhs)
 		{
-			r *= rhs;
-			g *= rhs;
-			b *= rhs;
-			a *= rhs;
+			R *= rhs;
+			G *= rhs;
+			B *= rhs;
+			A *= rhs;
 
 			return *this;
 		}
@@ -197,10 +197,10 @@ namespace bs
 
 			float invRhs = 1.0f / rhs;
 
-			r *= invRhs;
-			g *= invRhs;
-			b *= invRhs;
-			a *= invRhs;
+			R *= invRhs;
+			G *= invRhs;
+			B *= invRhs;
+			A *= invRhs;
 
 			return *this;
 		}
@@ -256,7 +256,7 @@ namespace bs
 			return rb | ga;
 		}
 
-		float r, g, b, a;
+		float R, G, B, A;
 	};
 
 	/** @} */
@@ -273,10 +273,10 @@ struct hash<bs::Color>
 	size_t operator()(const bs::Color& color) const
 	{
 		size_t hash = 0;
-		bs::bs_hash_combine(hash, color.r);
-		bs::bs_hash_combine(hash, color.g);
-		bs::bs_hash_combine(hash, color.b);
-		bs::bs_hash_combine(hash, color.a);
+		bs::bs_hash_combine(hash, color.R);
+		bs::bs_hash_combine(hash, color.G);
+		bs::bs_hash_combine(hash, color.B);
+		bs::bs_hash_combine(hash, color.A);
 
 		return hash;
 	}

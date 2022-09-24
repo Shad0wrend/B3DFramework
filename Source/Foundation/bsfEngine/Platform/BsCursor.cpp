@@ -99,8 +99,8 @@ namespace bs
 	{
 		UINT32 id = (UINT32)type;
 
-		mCustomIcons[id].pixelData = pixelData;
-		mCustomIcons[id].hotSpot = hotSpot;
+		mCustomIcons[id].PixelData = pixelData;
+		mCustomIcons[id].HotSpot = hotSpot;
 
 		if((UINT32)mActiveCursorId == id)
 			UpdateCursorImage(); // Refresh active
@@ -132,34 +132,34 @@ namespace bs
 		switch (type)
 		{
 		case CursorType::Arrow:
-			mCustomIcons[id].pixelData = BuiltinResources::Instance().GetCursorArrow(mCustomIcons[id].hotSpot);
+			mCustomIcons[id].PixelData = BuiltinResources::Instance().GetCursorArrow(mCustomIcons[id].HotSpot);
 			return;
 		case CursorType::Wait:
-			mCustomIcons[id].pixelData = BuiltinResources::Instance().GetCursorWait(mCustomIcons[id].hotSpot);
+			mCustomIcons[id].PixelData = BuiltinResources::Instance().GetCursorWait(mCustomIcons[id].HotSpot);
 			return;
 		case CursorType::IBeam:
-			mCustomIcons[id].pixelData = BuiltinResources::Instance().GetCursorIBeam(mCustomIcons[id].hotSpot);
+			mCustomIcons[id].PixelData = BuiltinResources::Instance().GetCursorIBeam(mCustomIcons[id].HotSpot);
 			return;
 		case CursorType::ArrowDrag:
-			mCustomIcons[id].pixelData = BuiltinResources::Instance().GetCursorArrowDrag(mCustomIcons[id].hotSpot);
+			mCustomIcons[id].PixelData = BuiltinResources::Instance().GetCursorArrowDrag(mCustomIcons[id].HotSpot);
 			return;
 		case CursorType::SizeNESW:
-			mCustomIcons[id].pixelData = BuiltinResources::Instance().GetCursorSizeNesw(mCustomIcons[id].hotSpot);
+			mCustomIcons[id].PixelData = BuiltinResources::Instance().GetCursorSizeNesw(mCustomIcons[id].HotSpot);
 			return;
 		case CursorType::SizeNS:
-			mCustomIcons[id].pixelData = BuiltinResources::Instance().GetCursorSizeNs(mCustomIcons[id].hotSpot);
+			mCustomIcons[id].PixelData = BuiltinResources::Instance().GetCursorSizeNs(mCustomIcons[id].HotSpot);
 			return;
 		case CursorType::SizeNWSE:
-			mCustomIcons[id].pixelData = BuiltinResources::Instance().GetCursorSizeNwse(mCustomIcons[id].hotSpot);
+			mCustomIcons[id].PixelData = BuiltinResources::Instance().GetCursorSizeNwse(mCustomIcons[id].HotSpot);
 			return;
 		case CursorType::SizeWE:
-			mCustomIcons[id].pixelData = BuiltinResources::Instance().GetCursorSizeWe(mCustomIcons[id].hotSpot);
+			mCustomIcons[id].PixelData = BuiltinResources::Instance().GetCursorSizeWe(mCustomIcons[id].HotSpot);
 			return;
 		case CursorType::Deny:
-			mCustomIcons[id].pixelData = BuiltinResources::Instance().GetCursorDeny(mCustomIcons[id].hotSpot);
+			mCustomIcons[id].PixelData = BuiltinResources::Instance().GetCursorDeny(mCustomIcons[id].HotSpot);
 			return;
 		case CursorType::ArrowLeftRight:
-			mCustomIcons[id].pixelData = BuiltinResources::Instance().GetCursorMoveLeftRight(mCustomIcons[id].hotSpot);
+			mCustomIcons[id].PixelData = BuiltinResources::Instance().GetCursorMoveLeftRight(mCustomIcons[id].HotSpot);
 			return;
 		default:
 			break;
@@ -174,7 +174,7 @@ namespace bs
 			return;
 
 		CustomIcon& customIcon = mCustomIcons[mActiveCursorId];
-		Platform::SetCursor(customIcon.pixelData, customIcon.hotSpot);
+		Platform::SetCursor(customIcon.PixelData, customIcon.HotSpot);
 	}
 
 	Cursor& gCursor()

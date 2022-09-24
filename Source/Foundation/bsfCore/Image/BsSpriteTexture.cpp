@@ -12,7 +12,7 @@ namespace bs
 	Rect2 SpriteTextureBase::Evaluate(float t) const
 	{
 		if(mPlayback == SpriteAnimationPlayback::None)
-			return Rect2(mUVOffset.x, mUVOffset.y, mUVScale.x, mUVScale.y);
+			return Rect2(mUVOffset.X, mUVOffset.Y, mUVScale.X, mUVScale.Y);
 
 		UINT32 row;
 		UINT32 column;
@@ -21,11 +21,11 @@ namespace bs
 		Rect2 output;
 
 		// Note: These could be pre-calculated
-		output.width = mUVScale.x / mAnimation.numColumns;
-		output.height = mUVScale.y / mAnimation.numRows;
+		output.Width = mUVScale.X / mAnimation.NumColumns;
+		output.Height = mUVScale.Y / mAnimation.NumRows;
 
-		output.x = mUVOffset.x + column * output.width;
-		output.y = mUVOffset.y + row * output.height;
+		output.X = mUVOffset.X + column * output.Width;
+		output.Y = mUVOffset.Y + row * output.Height;
 
 		return output;
 	}
@@ -42,8 +42,8 @@ namespace bs
 
 		// Note: Duration could be pre-calculated
 		float duration = 0.0f;
-		if (mAnimation.fps > 0)
-			duration = mAnimation.count / (float)mAnimation.fps;
+		if (mAnimation.Fps > 0)
+			duration = mAnimation.Count / (float)mAnimation.Fps;
 
 		switch(mPlayback)
 		{
@@ -62,11 +62,11 @@ namespace bs
 		const float pct = t / duration;
 		UINT32 frame = 0;
 		
-		if(mAnimation.count > 0)
-			frame = Math::Clamp(Math::FloorToPosInt(pct * mAnimation.count), 0U, mAnimation.count - 1);
+		if(mAnimation.Count > 0)
+			frame = Math::Clamp(Math::FloorToPosInt(pct * mAnimation.Count), 0U, mAnimation.Count - 1);
 
-		row = frame / mAnimation.numColumns;
-		column = frame % mAnimation.numColumns;
+		row = frame / mAnimation.NumColumns;
+		column = frame % mAnimation.NumColumns;
 	}
 
 	template <bool Core>
@@ -105,22 +105,22 @@ namespace bs
 
 	UINT32 SpriteTexture::GetWidth() const
 	{
-		return Math::RoundToInt(mAtlasTexture->GetProperties().GetWidth() * mUVScale.x);
+		return Math::RoundToInt(mAtlasTexture->GetProperties().GetWidth() * mUVScale.X);
 	}
 
 	UINT32 SpriteTexture::GetHeight() const
 	{
-		return Math::RoundToInt(mAtlasTexture->GetProperties().GetHeight() * mUVScale.y);
+		return Math::RoundToInt(mAtlasTexture->GetProperties().GetHeight() * mUVScale.Y);
 	}
 
 	UINT32 SpriteTexture::GetFrameWidth() const
 	{
-		return GetWidth() / std::max(1U, mAnimation.numColumns);
+		return GetWidth() / std::max(1U, mAnimation.NumColumns);
 	}
 
 	UINT32 SpriteTexture::GetFrameHeight() const
 	{
-		return GetHeight() / std::max(1U, mAnimation.numRows);
+		return GetHeight() / std::max(1U, mAnimation.NumRows);
 	}
 
 	void SpriteTexture::MarkCoreDirtyInternal()

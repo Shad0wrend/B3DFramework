@@ -170,9 +170,9 @@ namespace bs
 		Matrix3 rot3x3;
 		rotation.ToRotationMatrix(rot3x3);
 
-		m[0][0] = scale.x * rot3x3[0][0]; m[0][1] = scale.y * rot3x3[0][1]; m[0][2] = scale.z * rot3x3[0][2]; m[0][3] = translation.x;
-		m[1][0] = scale.x * rot3x3[1][0]; m[1][1] = scale.y * rot3x3[1][1]; m[1][2] = scale.z * rot3x3[1][2]; m[1][3] = translation.y;
-		m[2][0] = scale.x * rot3x3[2][0]; m[2][1] = scale.y * rot3x3[2][1]; m[2][2] = scale.z * rot3x3[2][2]; m[2][3] = translation.z;
+		m[0][0] = scale.X * rot3x3[0][0]; m[0][1] = scale.Y * rot3x3[0][1]; m[0][2] = scale.Z * rot3x3[0][2]; m[0][3] = translation.X;
+		m[1][0] = scale.X * rot3x3[1][0]; m[1][1] = scale.Y * rot3x3[1][1]; m[1][2] = scale.Z * rot3x3[1][2]; m[1][3] = translation.Y;
+		m[2][0] = scale.X * rot3x3[2][0]; m[2][1] = scale.Y * rot3x3[2][1]; m[2][2] = scale.Z * rot3x3[2][2]; m[2][3] = translation.Z;
 
 		// No projection term
 		m[3][0] = 0; m[3][1] = 0; m[3][2] = 0; m[3][3] = 1;
@@ -182,7 +182,7 @@ namespace bs
 	{
 		// Invert the parameters
 		Vector3 invTranslate = -translation;
-		Vector3 invScale(1 / scale.x, 1 / scale.y, 1 / scale.z);
+		Vector3 invScale(1 / scale.X, 1 / scale.Y, 1 / scale.Z);
 		Quaternion invRot = rotation.Inverse();
 
 		// Because we're inverting, order is translation, rotation, scale
@@ -195,9 +195,9 @@ namespace bs
 		invRot.ToRotationMatrix(rot3x3);
 
 		// Set up final matrix with scale, rotation and translation
-		m[0][0] = invScale.x * rot3x3[0][0]; m[0][1] = invScale.x * rot3x3[0][1]; m[0][2] = invScale.x * rot3x3[0][2]; m[0][3] = invTranslate.x;
-		m[1][0] = invScale.y * rot3x3[1][0]; m[1][1] = invScale.y * rot3x3[1][1]; m[1][2] = invScale.y * rot3x3[1][2]; m[1][3] = invTranslate.y;
-		m[2][0] = invScale.z * rot3x3[2][0]; m[2][1] = invScale.z * rot3x3[2][1]; m[2][2] = invScale.z * rot3x3[2][2]; m[2][3] = invTranslate.z;		
+		m[0][0] = invScale.X * rot3x3[0][0]; m[0][1] = invScale.X * rot3x3[0][1]; m[0][2] = invScale.X * rot3x3[0][2]; m[0][3] = invTranslate.X;
+		m[1][0] = invScale.Y * rot3x3[1][0]; m[1][1] = invScale.Y * rot3x3[1][1]; m[1][2] = invScale.Y * rot3x3[1][2]; m[1][3] = invTranslate.Y;
+		m[2][0] = invScale.Z * rot3x3[2][0]; m[2][1] = invScale.Z * rot3x3[2][1]; m[2][2] = invScale.Z * rot3x3[2][2]; m[2][3] = invTranslate.Z;		
 
 		// No projection term
 		m[3][0] = 0; m[3][1] = 0; m[3][2] = 0; m[3][3] = 1;
@@ -236,9 +236,9 @@ namespace bs
 
 		// Make final matrix
 		*this = Matrix4(rotT);
-		m[0][3] = trans.x;
-		m[1][3] = trans.y;
-		m[2][3] = trans.z;
+		m[0][3] = trans.X;
+		m[1][3] = trans.Y;
+		m[2][3] = trans.Z;
 	}
 
 	void Matrix4::MakeProjectionOrtho(float left, float right, float top,
@@ -287,9 +287,9 @@ namespace bs
 	{
 		Matrix4 mat;
 
-		mat[0][0] = 1.0f; mat[0][1] = 0.0f; mat[0][2] = 0.0f; mat[0][3] = translation.x;
-		mat[1][0] = 0.0f; mat[1][1] = 1.0f; mat[1][2] = 0.0f; mat[1][3] = translation.y;
-		mat[2][0] = 0.0f; mat[2][1] = 0.0f; mat[2][2] = 1.0f; mat[2][3] = translation.z;
+		mat[0][0] = 1.0f; mat[0][1] = 0.0f; mat[0][2] = 0.0f; mat[0][3] = translation.X;
+		mat[1][0] = 0.0f; mat[1][1] = 1.0f; mat[1][2] = 0.0f; mat[1][3] = translation.Y;
+		mat[2][0] = 0.0f; mat[2][1] = 0.0f; mat[2][2] = 1.0f; mat[2][3] = translation.Z;
 		mat[3][0] = 0.0f; mat[3][1] = 0.0f; mat[3][2] = 0.0f; mat[3][3] = 1.0f;
 
 		return mat;
@@ -299,9 +299,9 @@ namespace bs
 	{
 		Matrix4 mat;
 
-		mat[0][0] = scale.x; mat[0][1] = 0.0f; mat[0][2] = 0.0f; mat[0][3] = 0.0f;
-		mat[1][0] = 0.0f; mat[1][1] = scale.y; mat[1][2] = 0.0f; mat[1][3] = 0.0f;
-		mat[2][0] = 0.0f; mat[2][1] = 0.0f; mat[2][2] = scale.z; mat[2][3] = 0.0f;
+		mat[0][0] = scale.X; mat[0][1] = 0.0f; mat[0][2] = 0.0f; mat[0][3] = 0.0f;
+		mat[1][0] = 0.0f; mat[1][1] = scale.Y; mat[1][2] = 0.0f; mat[1][3] = 0.0f;
+		mat[2][0] = 0.0f; mat[2][1] = 0.0f; mat[2][2] = scale.Z; mat[2][3] = 0.0f;
 		mat[3][0] = 0.0f; mat[3][1] = 0.0f; mat[3][2] = 0.0f; mat[3][3] = 1.0f;
 
 		return mat;

@@ -14,10 +14,10 @@ namespace bs
 	void GUIContextMenu::Open(const Vector2I& position, GUIWidget& widget)
 	{
 		DROP_DOWN_BOX_DESC desc;
-		desc.camera = widget.GetCamera();
-		desc.skin = widget.GetSkinResource();
-		desc.placement = DropDownAreaPlacement::AroundPosition(position);
-		desc.dropDownData = GetDropDownData();
+		desc.Camera = widget.GetCamera();
+		desc.Skin = widget.GetSkinResource();
+		desc.Placement = DropDownAreaPlacement::AroundPosition(position);
+		desc.DropDownData = GetDropDownData();
 
 		GameObjectHandle<GUIDropDownMenu> dropDownBox = GUIDropDownBoxManager::Instance().OpenDropDownBox(
 			desc, GUIDropDownType::ContextMenu, std::bind(&GUIContextMenu::OnMenuClosed, this));

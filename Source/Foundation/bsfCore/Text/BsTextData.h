@@ -99,8 +99,8 @@ namespace bs
 		 */
 		struct PageInfo
 		{
-			UINT32 numQuads;
-			HTexture texture;
+			UINT32 NumQuads;
+			HTexture Texture;
 		};
 
 	public:
@@ -237,7 +237,7 @@ namespace bs
 		BS_CORE_EXPORT const HTexture& GetTextureForPage(UINT32 page) const;
 
 		/**	Returns the number of quads used by all the characters in the provided page. */
-		BS_CORE_EXPORT UINT32 GetNumQuadsForPage(UINT32 page) const { return mPageInfos[page].numQuads; }
+		BS_CORE_EXPORT UINT32 GetNumQuadsForPage(UINT32 page) const { return mPageInfos[page].NumQuads; }
 
 		/**	Returns the width of the actual text in pixels. */
 		BS_CORE_EXPORT UINT32 GetWidth() const;

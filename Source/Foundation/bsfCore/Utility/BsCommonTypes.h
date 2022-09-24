@@ -356,11 +356,11 @@ namespace bs
 	/**	Contains data about a type used for GPU data parameters. */
 	struct GpuParamDataTypeInfo
 	{
-		UINT32 baseTypeSize;
-		UINT32 size;
-		UINT32 alignment;
-		UINT32 numRows;
-		UINT32 numColumns;
+		UINT32 BaseTypeSize;
+		UINT32 Size;
+		UINT32 Alignment;
+		UINT32 NumRows;
+		UINT32 NumColumns;
 	};
 
 	/**	Contains a lookup table for various information of all types used for data GPU parameters. Sizes are in bytes. */
@@ -368,31 +368,31 @@ namespace bs
 	{
 		GpuDataParamInfos()
 		{
-			memset(lookup, 0, sizeof(lookup));
+			memset(Lookup, 0, sizeof(Lookup));
 
-			lookup[(UINT32)GPDT_FLOAT1] = { 4, 4, 4, 1, 1 };
-			lookup[(UINT32)GPDT_FLOAT2] = { 4, 8, 8, 1, 2 };
-			lookup[(UINT32)GPDT_FLOAT3] = { 4, 16, 16, 1, 3 };
-			lookup[(UINT32)GPDT_FLOAT4] = { 4, 16, 16, 1, 4 };
-			lookup[(UINT32)GPDT_COLOR]  = { 4, 16, 16, 1, 4 };
-			lookup[(UINT32)GPDT_MATRIX_2X2] = { 4, 16, 8, 2, 2 };
-			lookup[(UINT32)GPDT_MATRIX_2X3] = { 4, 32, 16, 2, 3 };
-			lookup[(UINT32)GPDT_MATRIX_2X4] = { 4, 32, 16, 2, 4 };
-			lookup[(UINT32)GPDT_MATRIX_3X2] = { 4, 24, 8, 3, 2 };
-			lookup[(UINT32)GPDT_MATRIX_3X3] = { 4, 48, 16, 3, 3 };
-			lookup[(UINT32)GPDT_MATRIX_3X4] = { 4, 48, 16, 3, 4 };
-			lookup[(UINT32)GPDT_MATRIX_4X2] = { 4, 32, 8, 4, 2 };
-			lookup[(UINT32)GPDT_MATRIX_4X3] = { 4, 64, 16, 4, 3 };
-			lookup[(UINT32)GPDT_MATRIX_4X4] = { 4, 64, 16, 4, 4 };
-			lookup[(UINT32)GPDT_INT1] = { 4, 4, 4, 1, 1 };
-			lookup[(UINT32)GPDT_INT2] = { 4, 8, 8, 1, 2 };
-			lookup[(UINT32)GPDT_INT3] = { 4, 12, 16, 1, 3 };
-			lookup[(UINT32)GPDT_INT4] = { 4, 16, 16, 1, 4 };
-			lookup[(UINT32)GPDT_BOOL] = { 4, 4, 4, 1, 1 };
-			lookup[(UINT32)GPDT_STRUCT] = { 4, 0, 16, 1, 1 };
+			Lookup[(UINT32)GPDT_FLOAT1] = { 4, 4, 4, 1, 1 };
+			Lookup[(UINT32)GPDT_FLOAT2] = { 4, 8, 8, 1, 2 };
+			Lookup[(UINT32)GPDT_FLOAT3] = { 4, 16, 16, 1, 3 };
+			Lookup[(UINT32)GPDT_FLOAT4] = { 4, 16, 16, 1, 4 };
+			Lookup[(UINT32)GPDT_COLOR]  = { 4, 16, 16, 1, 4 };
+			Lookup[(UINT32)GPDT_MATRIX_2X2] = { 4, 16, 8, 2, 2 };
+			Lookup[(UINT32)GPDT_MATRIX_2X3] = { 4, 32, 16, 2, 3 };
+			Lookup[(UINT32)GPDT_MATRIX_2X4] = { 4, 32, 16, 2, 4 };
+			Lookup[(UINT32)GPDT_MATRIX_3X2] = { 4, 24, 8, 3, 2 };
+			Lookup[(UINT32)GPDT_MATRIX_3X3] = { 4, 48, 16, 3, 3 };
+			Lookup[(UINT32)GPDT_MATRIX_3X4] = { 4, 48, 16, 3, 4 };
+			Lookup[(UINT32)GPDT_MATRIX_4X2] = { 4, 32, 8, 4, 2 };
+			Lookup[(UINT32)GPDT_MATRIX_4X3] = { 4, 64, 16, 4, 3 };
+			Lookup[(UINT32)GPDT_MATRIX_4X4] = { 4, 64, 16, 4, 4 };
+			Lookup[(UINT32)GPDT_INT1] = { 4, 4, 4, 1, 1 };
+			Lookup[(UINT32)GPDT_INT2] = { 4, 8, 8, 1, 2 };
+			Lookup[(UINT32)GPDT_INT3] = { 4, 12, 16, 1, 3 };
+			Lookup[(UINT32)GPDT_INT4] = { 4, 16, 16, 1, 4 };
+			Lookup[(UINT32)GPDT_BOOL] = { 4, 4, 4, 1, 1 };
+			Lookup[(UINT32)GPDT_STRUCT] = { 4, 0, 16, 1, 1 };
 		}
 
-		GpuParamDataTypeInfo lookup[GPDT_COUNT];
+		GpuParamDataTypeInfo Lookup[GPDT_COUNT];
 	};
 
 	/**	Type of GPU object parameters that can be used as inputs to a GPU program. */
@@ -594,39 +594,39 @@ namespace bs
 	struct UVWAddressingMode
 	{
 		UVWAddressingMode()
-			:u(TAM_WRAP), v(TAM_WRAP), w(TAM_WRAP)
+			:U(TAM_WRAP), V(TAM_WRAP), W(TAM_WRAP)
 		{ }
 
 		bool operator==(const UVWAddressingMode& rhs) const
 		{
-			return u == rhs.u && v == rhs.v && w == rhs.w;
+			return U == rhs.U && V == rhs.V && W == rhs.W;
 		}
 
-		TextureAddressingMode u, v, w;
+		TextureAddressingMode U, V, W;
 	};
 
 	/**	References a subset of surfaces within a texture. */
 	struct BS_SCRIPT_EXPORT(m:Rendering,pl:true) TextureSurface
 	{
 		TextureSurface(UINT32 mipLevel = 0, UINT32 numMipLevels = 1, UINT32 face = 0, UINT32 numFaces = 1)
-			:mipLevel(mipLevel), numMipLevels(numMipLevels), face(face), numFaces(numFaces)
+			:MipLevel(mipLevel), NumMipLevels(numMipLevels), Face(face), NumFaces(numFaces)
 		{ }
 
 		/** First mip level to reference. */
-		UINT32 mipLevel;
+		UINT32 MipLevel;
 
 		/** Number of mip levels to reference. Must be greater than zero. */
-		UINT32 numMipLevels;
+		UINT32 NumMipLevels;
 
 		/**
 		 * First face to reference. Face can represent a single cubemap face, or a single array entry in a
 		 * texture array. If cubemaps are laid out in a texture array then every six sequential faces represent a single
 		 * array entry.
 		 */
-		UINT32 face;
+		UINT32 Face;
 
 		/** Number of faces to reference, if the texture has more than one. */
-		UINT32 numFaces;
+		UINT32 NumFaces;
 
 		/** Surface that covers all texture sub-resources. */
 		static BS_CORE_EXPORT const TextureSurface COMPLETE;
@@ -635,10 +635,10 @@ namespace bs
 	/** Meta-data describing a chunk of audio. */
 	struct AudioDataInfo
 	{
-		UINT32 numSamples; /**< Total number of audio samples in the audio data (includes all channels). */
-		UINT32 sampleRate; /**< Number of audio samples per second, per channel. */
-		UINT32 numChannels; /**< Number of channels. Each channel has its own set of samples. */
-		UINT32 bitDepth; /**< Number of bits per sample. */
+		UINT32 NumSamples; /**< Total number of audio samples in the audio data (includes all channels). */
+		UINT32 SampleRate; /**< Number of audio samples per second, per channel. */
+		UINT32 NumChannels; /**< Number of channels. Each channel has its own set of samples. */
+		UINT32 BitDepth; /**< Number of bits per sample. */
 	};
 
 	/** Helper class for syncing dirty data from sim CoreObject to core CoreObject and other way around. */

@@ -23,11 +23,11 @@ namespace bs
 		{
 			// |w| > 1/2, may as well choose w > 1/2
 			root = Math::Sqrt(trace + 1.0f);  // 2w
-			w = 0.5f*root;
+			W = 0.5f*root;
 			root = 0.5f/root;  // 1/(4w)
-			x = (mat[2][1]-mat[1][2])*root;
-			y = (mat[0][2]-mat[2][0])*root;
-			z = (mat[1][0]-mat[0][1])*root;
+			X = (mat[2][1]-mat[1][2])*root;
+			Y = (mat[0][2]-mat[2][0])*root;
+			Z = (mat[1][0]-mat[0][1])*root;
 		}
 		else
 		{
@@ -46,11 +46,11 @@ namespace bs
 
 			root = Math::Sqrt(mat[i][i]-mat[j][j]-mat[k][k] + 1.0f);
 
-			float* cmpntLookup[3] = { &x, &y, &z };
+			float* cmpntLookup[3] = { &X, &Y, &Z };
 			*cmpntLookup[i] = 0.5f*root;
 			root = 0.5f/root;
 
-			w = (mat[k][j]-mat[j][k])*root;
+			W = (mat[k][j]-mat[j][k])*root;
 			*cmpntLookup[j] = (mat[j][i]+mat[i][j])*root;
 			*cmpntLookup[k] = (mat[k][i]+mat[i][k])*root;
 		}
@@ -63,27 +63,27 @@ namespace bs
 		Radian halfAngle (0.5f*angle);
 		float sin = Math::Sin(halfAngle);
 
-		w = Math::Cos(halfAngle);
-		x = sin*axis.x;
-		y = sin*axis.y;
-		z = sin*axis.z;
+		W = Math::Cos(halfAngle);
+		X = sin*axis.X;
+		Y = sin*axis.Y;
+		Z = sin*axis.Z;
 	}
 
 	void Quaternion::FromAxes(const Vector3& xaxis, const Vector3& yaxis, const Vector3& zaxis)
 	{
 		Matrix3 kRot;
 
-		kRot[0][0] = xaxis.x;
-		kRot[1][0] = xaxis.y;
-		kRot[2][0] = xaxis.z;
+		kRot[0][0] = xaxis.X;
+		kRot[1][0] = xaxis.Y;
+		kRot[2][0] = xaxis.Z;
 
-		kRot[0][1] = yaxis.x;
-		kRot[1][1] = yaxis.y;
-		kRot[2][1] = yaxis.z;
+		kRot[0][1] = yaxis.X;
+		kRot[1][1] = yaxis.Y;
+		kRot[2][1] = yaxis.Z;
 
-		kRot[0][2] = zaxis.x;
-		kRot[1][2] = zaxis.y;
-		kRot[2][2] = zaxis.z;
+		kRot[0][2] = zaxis.X;
+		kRot[1][2] = zaxis.Y;
+		kRot[2][2] = zaxis.Z;
 
 		FromRotationMatrix(kRot);
 	}
@@ -134,23 +134,23 @@ namespace bs
 		quats[1] = Quaternion(cy, 0.0f, sy, 0.0f);
 		quats[2] = Quaternion(cz, 0.0f, 0.0f, sz);
 
-		*this = quats[l.c] * (quats[l.b] * quats[l.a]);
+		*this = quats[l.C] * (quats[l.B] * quats[l.A]);
 	}
 
 	void Quaternion::ToRotationMatrix(Matrix3& mat) const
 	{
-		float tx  = x+x;
-		float ty  = y+y;
-		float tz  = z+z;
-		float twx = tx*w;
-		float twy = ty*w;
-		float twz = tz*w;
-		float txx = tx*x;
-		float txy = ty*x;
-		float txz = tz*x;
-		float tyy = ty*y;
-		float tyz = tz*y;
-		float tzz = tz*z;
+		float tx  = X+X;
+		float ty  = Y+Y;
+		float tz  = Z+Z;
+		float twx = tx*W;
+		float twy = ty*W;
+		float twz = tz*W;
+		float txx = tx*X;
+		float txy = ty*X;
+		float txz = tz*X;
+		float tyy = ty*Y;
+		float tyz = tz*Y;
+		float tzz = tz*Z;
 
 		mat[0][0] = 1.0f-(tyy+tzz);
 		mat[0][1] = txy-twz;
@@ -165,22 +165,22 @@ namespace bs
 
 	void Quaternion::ToAxisAngle(Vector3& axis, Radian& angle) const
 	{
-		float sqrLength = x*x+y*y+z*z;
+		float sqrLength = X*X+Y*Y+Z*Z;
 		if ( sqrLength > 0.0 )
 		{
-			angle = 2.0*Math::Acos(w);
+			angle = 2.0*Math::Acos(W);
 			float invLength = Math::InvSqrt(sqrLength);
-			axis.x = x*invLength;
-			axis.y = y*invLength;
-			axis.z = z*invLength;
+			axis.X = X*invLength;
+			axis.Y = Y*invLength;
+			axis.Z = Z*invLength;
 		}
 		else
 		{
 			// Angle is 0 (mod 2*pi), so any axis will do
 			angle = Radian(0.0);
-			axis.x = 1.0;
-			axis.y = 0.0;
-			axis.z = 0.0;
+			axis.X = 1.0;
+			axis.Y = 0.0;
+			axis.Z = 0.0;
 		}
 	}
 
@@ -189,17 +189,17 @@ namespace bs
 		Matrix3 matRot;
 		ToRotationMatrix(matRot);
 
-		xaxis.x = matRot[0][0];
-		xaxis.y = matRot[1][0];
-		xaxis.z = matRot[2][0];
+		xaxis.X = matRot[0][0];
+		xaxis.Y = matRot[1][0];
+		xaxis.Z = matRot[2][0];
 
-		yaxis.x = matRot[0][1];
-		yaxis.y = matRot[1][1];
-		yaxis.z = matRot[2][1];
+		yaxis.X = matRot[0][1];
+		yaxis.Y = matRot[1][1];
+		yaxis.Z = matRot[2][1];
 
-		zaxis.x = matRot[0][2];
-		zaxis.y = matRot[1][2];
-		zaxis.z = matRot[2][2];
+		zaxis.X = matRot[0][2];
+		zaxis.Y = matRot[1][2];
+		zaxis.Z = matRot[2][2];
 	}
 
 	bool Quaternion::ToEulerAngles(Radian& xAngle, Radian& yAngle, Radian& zAngle) const
@@ -211,55 +211,55 @@ namespace bs
 
 	Vector3 Quaternion::XAxis() const
 	{
-		float fTy  = 2.0f*y;
-		float fTz  = 2.0f*z;
-		float fTwy = fTy*w;
-		float fTwz = fTz*w;
-		float fTxy = fTy*x;
-		float fTxz = fTz*x;
-		float fTyy = fTy*y;
-		float fTzz = fTz*z;
+		float fTy  = 2.0f*Y;
+		float fTz  = 2.0f*Z;
+		float fTwy = fTy*W;
+		float fTwz = fTz*W;
+		float fTxy = fTy*X;
+		float fTxz = fTz*X;
+		float fTyy = fTy*Y;
+		float fTzz = fTz*Z;
 
 		return Vector3(1.0f-(fTyy+fTzz), fTxy+fTwz, fTxz-fTwy);
 	}
 
 	Vector3 Quaternion::YAxis() const
 	{
-		float fTx  = 2.0f*x;
-		float fTy  = 2.0f*y;
-		float fTz  = 2.0f*z;
-		float fTwx = fTx*w;
-		float fTwz = fTz*w;
-		float fTxx = fTx*x;
-		float fTxy = fTy*x;
-		float fTyz = fTz*y;
-		float fTzz = fTz*z;
+		float fTx  = 2.0f*X;
+		float fTy  = 2.0f*Y;
+		float fTz  = 2.0f*Z;
+		float fTwx = fTx*W;
+		float fTwz = fTz*W;
+		float fTxx = fTx*X;
+		float fTxy = fTy*X;
+		float fTyz = fTz*Y;
+		float fTzz = fTz*Z;
 
 		return Vector3(fTxy-fTwz, 1.0f-(fTxx+fTzz), fTyz+fTwx);
 	}
 
 	Vector3 Quaternion::ZAxis() const
 	{
-		float fTx  = 2.0f*x;
-		float fTy  = 2.0f*y;
-		float fTz  = 2.0f*z;
-		float fTwx = fTx*w;
-		float fTwy = fTy*w;
-		float fTxx = fTx*x;
-		float fTxz = fTz*x;
-		float fTyy = fTy*y;
-		float fTyz = fTz*y;
+		float fTx  = 2.0f*X;
+		float fTy  = 2.0f*Y;
+		float fTz  = 2.0f*Z;
+		float fTwx = fTx*W;
+		float fTwy = fTy*W;
+		float fTxx = fTx*X;
+		float fTxz = fTz*X;
+		float fTyy = fTy*Y;
+		float fTyz = fTz*Y;
 
 		return Vector3(fTxz+fTwy, fTyz-fTwx, 1.0f-(fTxx+fTyy));
 	}
 
 	Quaternion Quaternion::Inverse() const
 	{
-		float fNorm = w*w+x*x+y*y+z*z;
+		float fNorm = W*W+X*X+Y*Y+Z*Z;
 		if (fNorm > 0.0f)
 		{
 			float fInvNorm = 1.0f/fNorm;
-			return Quaternion(w*fInvNorm,-x*fInvNorm,-y*fInvNorm,-z*fInvNorm);
+			return Quaternion(W*fInvNorm,-X*fInvNorm,-Y*fInvNorm,-Z*fInvNorm);
 		}
 		else
 		{
@@ -289,7 +289,7 @@ namespace bs
 		{
 			// Oops, a 180 degree turn (infinite possible rotation axes)
 			// Default to yaw i.e. use current UP
-			*this = Quaternion(-y, -z, w, x);
+			*this = Quaternion(-Y, -Z, W, X);
 		}
 		else
 		{
@@ -400,10 +400,10 @@ namespace bs
 
 			Vector3 c = v0.Cross(v1);
 
-			q.x = c.x * invs;
-			q.y = c.y * invs;
-			q.z = c.z * invs;
-			q.w = s * 0.5f;
+			q.X = c.X * invs;
+			q.Y = c.Y * invs;
+			q.Z = c.Z * invs;
+			q.W = s * 0.5f;
 			q.Normalize();
 		}
 

@@ -56,34 +56,34 @@ namespace bs
 		struct Param
 		{
 			Param()
-				:i(0), type(Int)
+				:I(0), Type(Int)
 			{ }
 
 			Param(const String& name, INT32 val)
-				:i(val), name(name), type(Int)
+				:I(val), Name(name), Type(Int)
 			{ }
 
 			Param(const String& name, UINT32 val)
-				:ui(val), name(name), type(Int)
+				:Ui(val), Name(name), Type(Int)
 			{ }
 
 			Param(const String& name, float val)
-				:f(val), name(name), type(Float)
+				:F(val), Name(name), Type(Float)
 			{ }
 
 			Param(const String& name, bool val)
-				:i(val ? 1 : 0), name(name), type(Bool)
+				:I(val ? 1 : 0), Name(name), Type(Bool)
 			{ }
 
 			union
 			{
-				INT32 i;
-				UINT32 ui;
-				float f;
+				INT32 I;
+				UINT32 Ui;
+				float F;
 			};
 
-			StringID name;
-			ParamType type;
+			StringID Name;
+			ParamType Type;
 		};
 
 		BS_SCRIPT_EXPORT()
@@ -146,7 +146,7 @@ namespace bs
 		void SetBool(const StringID& name, bool value);
 
 		/** Registers a new parameter that controls the variation. */
-		void AddParam(const Param& param) { mParams[param.name] = param; }
+		void AddParam(const Param& param) { mParams[param.Name] = param; }
 
 		/** Removes a parameter with the specified name. */
 		BS_SCRIPT_EXPORT()

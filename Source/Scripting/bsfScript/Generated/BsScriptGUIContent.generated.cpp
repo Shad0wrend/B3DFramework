@@ -20,7 +20,7 @@ namespace bs
 
 	MonoObject*ScriptGUIContent::Box(const __GUIContentInterop& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	__GUIContentInterop ScriptGUIContent::Unbox(MonoObject* value)
@@ -33,21 +33,21 @@ namespace bs
 		GUIContent output;
 		SPtr<HString> tmptext;
 		ScriptHString* scripttext;
-		scripttext = ScriptHString::ToNative(value.text);
+		scripttext = ScriptHString::ToNative(value.Text);
 		if(scripttext != nullptr)
 			tmptext = scripttext->GetInternal();
 		if(tmptext != nullptr)
-		output.text = *tmptext;
+		output.Text = *tmptext;
 		GUIContentImages tmpimages;
-		tmpimages = ScriptGUIContentImages::FromInterop(value.images);
-		output.images = tmpimages;
+		tmpimages = ScriptGUIContentImages::FromInterop(value.Images);
+		output.Images = tmpimages;
 		SPtr<HString> tmptooltip;
 		ScriptHString* scripttooltip;
-		scripttooltip = ScriptHString::ToNative(value.tooltip);
+		scripttooltip = ScriptHString::ToNative(value.Tooltip);
 		if(scripttooltip != nullptr)
 			tmptooltip = scripttooltip->GetInternal();
 		if(tmptooltip != nullptr)
-		output.tooltip = *tmptooltip;
+		output.Tooltip = *tmptooltip;
 
 		return output;
 	}
@@ -57,17 +57,17 @@ namespace bs
 		__GUIContentInterop output;
 		MonoObject* tmptext;
 		SPtr<HString> tmptextcopy;
-		tmptextcopy = bs_shared_ptr_new<HString>(value.text);
+		tmptextcopy = bs_shared_ptr_new<HString>(value.Text);
 		tmptext = ScriptHString::Create(tmptextcopy);
-		output.text = tmptext;
+		output.Text = tmptext;
 		__GUIContentImagesInterop tmpimages;
-		tmpimages = ScriptGUIContentImages::ToInterop(value.images);
-		output.images = tmpimages;
+		tmpimages = ScriptGUIContentImages::ToInterop(value.Images);
+		output.Images = tmpimages;
 		MonoObject* tmptooltip;
 		SPtr<HString> tmptooltipcopy;
-		tmptooltipcopy = bs_shared_ptr_new<HString>(value.tooltip);
+		tmptooltipcopy = bs_shared_ptr_new<HString>(value.Tooltip);
 		tmptooltip = ScriptHString::Create(tmptooltipcopy);
-		output.tooltip = tmptooltip;
+		output.Tooltip = tmptooltip;
 
 		return output;
 	}

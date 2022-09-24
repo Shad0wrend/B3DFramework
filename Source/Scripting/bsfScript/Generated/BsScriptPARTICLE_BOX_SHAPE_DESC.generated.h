@@ -12,8 +12,8 @@ namespace bs
 {
 	struct __PARTICLE_BOX_SHAPE_DESCInterop
 	{
-		ParticleEmitterBoxType type;
-		Vector3 extents;
+		ParticleEmitterBoxType Type;
+		Vector3 Extents;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptPARTICLE_BOX_SHAPE_DESC : public ScriptObject<ScriptPARTICLE_BOX_SHAPE_DESC>

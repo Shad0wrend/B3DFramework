@@ -62,10 +62,10 @@ namespace bs
 				mFreePtr = 0;
 			}
 
-			UINT8* mData = nullptr;
-			UINT32 mFreePtr = 0;
-			UINT32 mSize = 0;
-			MemBlock* mNextBlock = nullptr;
+			UINT8* MData = nullptr;
+			UINT32 MFreePtr = 0;
+			UINT32 MSize = 0;
+			MemBlock* MNextBlock = nullptr;
 		};
 
 	public:

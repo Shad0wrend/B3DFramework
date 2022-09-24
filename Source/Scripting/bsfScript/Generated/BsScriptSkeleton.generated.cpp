@@ -16,8 +16,8 @@ namespace bs
 
 	void ScriptSkeleton::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_GetNumBones", (void*)&ScriptSkeleton::InternalGetNumBones);
-		metaData.scriptClass->AddInternalCall("Internal_GetBoneInfo", (void*)&ScriptSkeleton::InternalGetBoneInfo);
+		metaData.ScriptClass->AddInternalCall("Internal_GetNumBones", (void*)&ScriptSkeleton::InternalGetNumBones);
+		metaData.ScriptClass->AddInternalCall("Internal_GetBoneInfo", (void*)&ScriptSkeleton::InternalGetBoneInfo);
 
 	}
 
@@ -28,7 +28,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptSkeleton>()) ScriptSkeleton(managedInstance, value);
 		return managedInstance;
 	}
@@ -50,6 +50,6 @@ namespace bs
 
 		__SkeletonBoneInfoExInterop interop__output;
 		interop__output = ScriptSkeletonBoneInfoEx::ToInterop(tmp__output);
-		MonoUtil::ValueCopy(__output, &interop__output, ScriptSkeletonBoneInfoEx::GetMetaData()->scriptClass->GetInternalClassInternal());
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptSkeletonBoneInfoEx::GetMetaData()->ScriptClass->GetInternalClassInternal());
 	}
 }

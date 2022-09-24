@@ -100,7 +100,7 @@ namespace bs
 		void MoveOneStep(bool forward);
 
 		/** Triggered when the user drags the handle. */
-		Event<void(float pos, float size)> onHandleMovedOrResized;
+		Event<void(float pos, float size)> OnHandleMovedOrResized;
 
 	public: // ***** INTERNAL ******
 		/** @name Internal

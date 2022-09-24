@@ -32,7 +32,7 @@ namespace bs
 		/** Returns width and height of the decal, scaled by decal's transform. */
 		Vector2 GetWorldSize() const
 		{
-			return Vector2(mSize.x * mTransform.GetScale().x, mSize.y * mTransform.GetScale().y);
+			return Vector2(mSize.X * mTransform.GetScale().X, mSize.Y * mTransform.GetScale().Y);
 		}
 
 		/** Determines the maximum distance (from its origin) at which the decal is displayed. */
@@ -42,7 +42,7 @@ namespace bs
 		float GetMaxDistance() const { return mMaxDistance; }
 
 		/** Maximum distance (from its origin) at which the decal is displayed, scaled by decal's transform. */
-		float GetWorldMaxDistance() const { return mMaxDistance * mTransform.GetScale().z; }
+		float GetWorldMaxDistance() const { return mMaxDistance * mTransform.GetScale().Z; }
 
 		/**
 		 * Bitfield that allows you to mask on which objects will the decal be projected onto. Only objects with the

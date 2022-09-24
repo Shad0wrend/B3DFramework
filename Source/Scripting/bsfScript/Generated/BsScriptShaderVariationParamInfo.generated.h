@@ -12,10 +12,10 @@ namespace bs
 {
 	struct __ShaderVariationParamInfoInterop
 	{
-		MonoString* name;
-		MonoString* identifier;
-		bool isInternal;
-		MonoArray* values;
+		MonoString* Name;
+		MonoString* Identifier;
+		bool IsInternal;
+		MonoArray* Values;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptShaderVariationParamInfo : public ScriptObject<ScriptShaderVariationParamInfo>

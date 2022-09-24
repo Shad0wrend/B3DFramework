@@ -16,12 +16,12 @@ namespace bs
 
 	void ScriptCSliderJoint::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_GetPosition", (void*)&ScriptCSliderJoint::InternalGetPosition);
-		metaData.scriptClass->AddInternalCall("Internal_GetSpeed", (void*)&ScriptCSliderJoint::InternalGetSpeed);
-		metaData.scriptClass->AddInternalCall("Internal_GetLimit", (void*)&ScriptCSliderJoint::InternalGetLimit);
-		metaData.scriptClass->AddInternalCall("Internal_SetLimit", (void*)&ScriptCSliderJoint::InternalSetLimit);
-		metaData.scriptClass->AddInternalCall("Internal_SetFlag", (void*)&ScriptCSliderJoint::InternalSetFlag);
-		metaData.scriptClass->AddInternalCall("Internal_HasFlag", (void*)&ScriptCSliderJoint::InternalHasFlag);
+		metaData.ScriptClass->AddInternalCall("Internal_GetPosition", (void*)&ScriptCSliderJoint::InternalGetPosition);
+		metaData.ScriptClass->AddInternalCall("Internal_GetSpeed", (void*)&ScriptCSliderJoint::InternalGetSpeed);
+		metaData.ScriptClass->AddInternalCall("Internal_GetLimit", (void*)&ScriptCSliderJoint::InternalGetLimit);
+		metaData.ScriptClass->AddInternalCall("Internal_SetLimit", (void*)&ScriptCSliderJoint::InternalSetLimit);
+		metaData.ScriptClass->AddInternalCall("Internal_SetFlag", (void*)&ScriptCSliderJoint::InternalSetFlag);
+		metaData.ScriptClass->AddInternalCall("Internal_HasFlag", (void*)&ScriptCSliderJoint::InternalHasFlag);
 
 	}
 
@@ -54,7 +54,7 @@ namespace bs
 
 		__LimitLinearRangeInterop interop__output;
 		interop__output = ScriptLimitLinearRange::ToInterop(tmp__output);
-		MonoUtil::ValueCopy(__output, &interop__output, ScriptLimitLinearRange::GetMetaData()->scriptClass->GetInternalClassInternal());
+		MonoUtil::ValueCopy(__output, &interop__output, ScriptLimitLinearRange::GetMetaData()->ScriptClass->GetInternalClassInternal());
 	}
 
 	void ScriptCSliderJoint::InternalSetLimit(ScriptCSliderJoint* thisPtr, __LimitLinearRangeInterop* limit)

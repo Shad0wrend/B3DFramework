@@ -18,10 +18,10 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN(format, 0)
-			BS_RTTI_MEMBER_PLAIN(readMode, 1)
-			BS_RTTI_MEMBER_PLAIN(is3D, 2)
-			BS_RTTI_MEMBER_PLAIN(bitDepth, 3)
+			BS_RTTI_MEMBER_PLAIN(Format, 0)
+			BS_RTTI_MEMBER_PLAIN(ReadMode, 1)
+			BS_RTTI_MEMBER_PLAIN(Is3D, 2)
+			BS_RTTI_MEMBER_PLAIN(BitDepth, 3)
 		BS_END_RTTI_MEMBERS
 	public:
 		/** @copydoc RTTIType::getRTTIName */

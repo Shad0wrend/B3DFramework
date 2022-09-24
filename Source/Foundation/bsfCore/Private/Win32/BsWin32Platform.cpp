@@ -18,37 +18,37 @@ namespace bs
 	/** Encapsulate native cursor data so we can avoid including windows.h as it pollutes the global namespace. */
 	struct BS_CORE_EXPORT NativeCursorData
 	{
-		HCURSOR cursor;
+		HCURSOR Cursor;
 	};
 
 	/**	Encapsulate drop target data so we can avoid including windows.h as it pollutes the global namespace. */
 	struct BS_CORE_EXPORT NativeDropTargetData
 	{
-		Map<const RenderWindow*, Win32DropTarget*> dropTargetsPerWindow;
-		Vector<Win32DropTarget*> dropTargetsToInitialize;
-		Vector<Win32DropTarget*> dropTargetsToDestroy;
+		Map<const RenderWindow*, Win32DropTarget*> DropTargetsPerWindow;
+		Vector<Win32DropTarget*> DropTargetsToInitialize;
+		Vector<Win32DropTarget*> DropTargetsToDestroy;
 	};
 
 	struct Platform::Pimpl
 	{
-		bool mIsCursorHidden = false;
-		NativeCursorData mCursor;
-		bool mUsingCustomCursor = false;
-		Map<const ct::RenderWindow*, WindowNonClientAreaData> mNonClientAreas;
+		bool MIsCursorHidden = false;
+		NativeCursorData MCursor;
+		bool MUsingCustomCursor = false;
+		Map<const ct::RenderWindow*, WindowNonClientAreaData> MNonClientAreas;
 
-		bool mIsTrackingMouse = false;
-		NativeDropTargetData mDropTargets;
+		bool MIsTrackingMouse = false;
+		NativeDropTargetData MDropTargets;
 
-		bool mRequiresStartUp = false;
-		bool mRequiresShutDown = false;
+		bool MRequiresStartUp = false;
+		bool MRequiresShutDown = false;
 
-		bool mCursorClipping = false;
-		HWND mClipWindow = 0;
-		RECT mClipRect;
+		bool MCursorClipping = false;
+		HWND MClipWindow = 0;
+		RECT MClipRect;
 
-		bool mIsActive = false;
+		bool MIsActive = false;
 
-		Mutex mSync;
+		Mutex MSync;
 	};
 
 	Event<void(const Vector2I&, const OSPointerButtonStates&)> Platform::onCursorMoved;
@@ -66,25 +66,25 @@ namespace bs
 	/** Checks if any of the windows of the current application are active. */
 	bool isAppActive(Platform::Pimpl* data)
 	{
-		Lock lock(data->mSync);
+		Lock lock(data->MSync);
 
-		return data->mIsActive;
+		return data->MIsActive;
 	}
 
 	/** Enables or disables cursor clipping depending on the stored data. */
 	void applyClipping(Platform::Pimpl* data)
 	{
-		if(data->mCursorClipping)
+		if(data->MCursorClipping)
 		{
-			if(data->mClipWindow)
+			if(data->MClipWindow)
 			{
 				// Clip cursor to the window
 				RECT clipWindowRect;
-				if (GetWindowRect(data->mClipWindow, &clipWindowRect))
+				if (GetWindowRect(data->MClipWindow, &clipWindowRect))
 					ClipCursor(&clipWindowRect);
 			}
 			else
-				ClipCursor(&data->mClipRect);
+				ClipCursor(&data->MClipRect);
 		}
 		else
 			ClipCursor(nullptr);
@@ -103,15 +103,15 @@ namespace bs
 		POINT cursorPos;
 		GetCursorPos(&cursorPos);
 
-		screenPos.x = cursorPos.x;
-		screenPos.y = cursorPos.y;
+		screenPos.X = cursorPos.x;
+		screenPos.Y = cursorPos.y;
 
 		return screenPos;
 	}
 
 	void Platform::SetCursorPosition(const Vector2I& screenPos)
 	{
-		SetCursorPos(screenPos.x, screenPos.y);
+		SetCursorPos(screenPos.X, screenPos.Y);
 	}
 
 	void Platform::CaptureMouse(const RenderWindow& window)
@@ -137,8 +137,8 @@ namespace bs
 		SPtr<RenderWindow> primaryWindow = gCoreApplication().GetPrimaryWindow();
 
 		POINT point;
-		point.x = screenPos.x;
-		point.y = screenPos.y;
+		point.x = screenPos.X;
+		point.y = screenPos.Y;
 
 		UINT64 hwndToCheck;
 		window.GetCustomAttribute("WINDOW", &hwndToCheck);
@@ -149,10 +149,10 @@ namespace bs
 
 	void Platform::HideCursor()
 	{
-		if (mData->mIsCursorHidden)
+		if (mData->MIsCursorHidden)
 			return;
 
-		mData->mIsCursorHidden = true;
+		mData->MIsCursorHidden = true;
 
 		// ShowCursor(FALSE) doesn't work. Presumably because we're in the wrong thread, and using
 		// WM_SETCURSOR in message loop to hide the cursor is smarter solution anyway.
@@ -166,10 +166,10 @@ namespace bs
 
 	void Platform::ShowCursor()
 	{
-		if (!mData->mIsCursorHidden)
+		if (!mData->MIsCursorHidden)
 			return;
 
-		mData->mIsCursorHidden = false;
+		mData->MIsCursorHidden = false;
 
 		// ShowCursor(FALSE) doesn't work. Presumably because we're in the wrong thread, and using
 		// WM_SETCURSOR in message loop to hide the cursor is smarter solution anyway.
@@ -183,7 +183,7 @@ namespace bs
 
 	bool Platform::IsCursorHidden()
 	{
-		return mData->mIsCursorHidden;
+		return mData->MIsCursorHidden;
 	}
 
 	void Platform::ClipCursorToWindow(const RenderWindow& window)
@@ -191,8 +191,8 @@ namespace bs
 		UINT64 hwnd;
 		window.GetCustomAttribute("WINDOW", &hwnd);
 
-		mData->mCursorClipping = true;
-		mData->mClipWindow = (HWND)hwnd;
+		mData->MCursorClipping = true;
+		mData->MClipWindow = (HWND)hwnd;
 
 		if(isAppActive(mData))
 			applyClipping(mData);
@@ -200,13 +200,13 @@ namespace bs
 
 	void Platform::ClipCursorToRect(const Rect2I& screenRect)
 	{
-		mData->mCursorClipping = true;
-		mData->mClipWindow = 0;
+		mData->MCursorClipping = true;
+		mData->MClipWindow = 0;
 
-		mData->mClipRect.left = screenRect.x;
-		mData->mClipRect.top = screenRect.y;
-		mData->mClipRect.right = screenRect.x + screenRect.width;
-		mData->mClipRect.bottom = screenRect.y + screenRect.height;
+		mData->MClipRect.left = screenRect.X;
+		mData->MClipRect.top = screenRect.Y;
+		mData->MClipRect.right = screenRect.X + screenRect.Width;
+		mData->MClipRect.bottom = screenRect.Y + screenRect.Height;
 
 		if(isAppActive(mData))
 			applyClipping(mData);
@@ -214,8 +214,8 @@ namespace bs
 
 	void Platform::ClipCursorDisable()
 	{
-		mData->mCursorClipping = false;
-		mData->mClipWindow = 0;
+		mData->MCursorClipping = false;
+		mData->MClipWindow = 0;
 
 		if(isAppActive(mData))
 			applyClipping(mData);
@@ -224,13 +224,13 @@ namespace bs
 	// TODO - Add support for animated custom cursor
 	void Platform::SetCursor(PixelData& pixelData, const Vector2I& hotSpot)
 	{
-		if (mData->mUsingCustomCursor)
+		if (mData->MUsingCustomCursor)
 		{
 			::SetCursor(0);
-			DestroyIcon(mData->mCursor.cursor);
+			DestroyIcon(mData->MCursor.Cursor);
 		}
 
-		mData->mUsingCustomCursor = true;
+		mData->MUsingCustomCursor = true;
 
 		Vector<Color> pixels = pixelData.GetColors();
 		UINT32 width = pixelData.GetWidth();
@@ -241,12 +241,12 @@ namespace bs
 
 		ICONINFO iconinfo = {0};
 		iconinfo.fIcon = FALSE;
-		iconinfo.xHotspot = (DWORD)hotSpot.x;
-		iconinfo.yHotspot = (DWORD)hotSpot.y;
+		iconinfo.xHotspot = (DWORD)hotSpot.X;
+		iconinfo.yHotspot = (DWORD)hotSpot.Y;
 		iconinfo.hbmMask = hMonoBitmap;
 		iconinfo.hbmColor = hBitmap;
 
-		mData->mCursor.cursor = CreateIconIndirect(&iconinfo);
+		mData->MCursor.Cursor = CreateIconIndirect(&iconinfo);
 		
 		DeleteObject(hBitmap);
 		DeleteObject(hMonoBitmap);
@@ -290,26 +290,26 @@ namespace bs
 
 	void Platform::SetCaptionNonClientAreas(const ct::RenderWindow& window, const Vector<Rect2I>& nonClientAreas)
 	{
-		Lock lock(mData->mSync);
+		Lock lock(mData->MSync);
 
-		mData->mNonClientAreas[&window].moveAreas = nonClientAreas;
+		mData->MNonClientAreas[&window].MoveAreas = nonClientAreas;
 	}
 
 	void Platform::SetResizeNonClientAreas(const ct::RenderWindow& window, const Vector<NonClientResizeArea>& nonClientAreas)
 	{
-		Lock lock(mData->mSync);
+		Lock lock(mData->MSync);
 
-		mData->mNonClientAreas[&window].resizeAreas = nonClientAreas;
+		mData->MNonClientAreas[&window].ResizeAreas = nonClientAreas;
 	}
 
 	void Platform::ResetNonClientAreas(const ct::RenderWindow& window)
 	{
-		Lock lock(mData->mSync);
+		Lock lock(mData->MSync);
 
-		auto iterFind = mData->mNonClientAreas.find(&window);
+		auto iterFind = mData->MNonClientAreas.find(&window);
 
-		if (iterFind != end(mData->mNonClientAreas))
-			mData->mNonClientAreas.erase(iterFind);
+		if (iterFind != end(mData->MNonClientAreas))
+			mData->MNonClientAreas.erase(iterFind);
 	}
 
 	void Platform::Sleep(UINT32 duration)
@@ -322,18 +322,18 @@ namespace bs
 		const RenderWindow* window = target->GetOwnerWindowInternal();
 
 		Win32DropTarget* win32DropTarget = nullptr;
-		auto iterFind = mData->mDropTargets.dropTargetsPerWindow.find(window);
-		if (iterFind == mData->mDropTargets.dropTargetsPerWindow.end())
+		auto iterFind = mData->MDropTargets.DropTargetsPerWindow.find(window);
+		if (iterFind == mData->MDropTargets.DropTargetsPerWindow.end())
 		{
 			UINT64 hwnd;
 			window->GetCustomAttribute("WINDOW", &hwnd);
 
 			win32DropTarget = bs_new<Win32DropTarget>((HWND)hwnd);
-			mData->mDropTargets.dropTargetsPerWindow[window] = win32DropTarget;
+			mData->MDropTargets.DropTargetsPerWindow[window] = win32DropTarget;
 
 			{
-				Lock lock(mData->mSync);
-				mData->mDropTargets.dropTargetsToInitialize.push_back(win32DropTarget);
+				Lock lock(mData->MSync);
+				mData->MDropTargets.DropTargetsToInitialize.push_back(win32DropTarget);
 			}
 		}
 		else
@@ -344,8 +344,8 @@ namespace bs
 
 	void Win32Platform::UnregisterDropTarget(DropTarget* target)
 	{
-		auto iterFind = mData->mDropTargets.dropTargetsPerWindow.find(target->GetOwnerWindowInternal());
-		if (iterFind == mData->mDropTargets.dropTargetsPerWindow.end())
+		auto iterFind = mData->MDropTargets.DropTargetsPerWindow.find(target->GetOwnerWindowInternal());
+		if (iterFind == mData->MDropTargets.DropTargetsPerWindow.end())
 		{
 			BS_LOG(Warning, Platform, "Attempting to destroy a drop target but cannot find its parent window.");
 		}
@@ -356,11 +356,11 @@ namespace bs
 
 			if(win32DropTarget->GetNumDropTargets() == 0)
 			{
-				mData->mDropTargets.dropTargetsPerWindow.erase(iterFind);
+				mData->MDropTargets.DropTargetsPerWindow.erase(iterFind);
 
 				{
-					Lock lock(mData->mSync);
-					mData->mDropTargets.dropTargetsToDestroy.push_back(win32DropTarget);
+					Lock lock(mData->MSync);
+					mData->MDropTargets.DropTargetsToDestroy.push_back(win32DropTarget);
 				}
 			}
 		}
@@ -452,7 +452,7 @@ namespace bs
 
 	void Platform::StartUpInternal()
 	{
-		Lock lock(mData->mSync);
+		Lock lock(mData->MSync);
 
 		if (timeBeginPeriod(1) == TIMERR_NOCANDO)
 		{
@@ -460,12 +460,12 @@ namespace bs
 				"in performance for waiting threads.");
 		}
 
-		mData->mRequiresStartUp = true;
+		mData->MRequiresStartUp = true;
 	}
 
 	void Platform::UpdateInternal()
 	{
-		for (auto& dropTarget : mData->mDropTargets.dropTargetsPerWindow)
+		for (auto& dropTarget : mData->MDropTargets.DropTargetsPerWindow)
 		{
 			dropTarget.second->Update();
 		}
@@ -474,54 +474,54 @@ namespace bs
 	void Platform::CoreUpdateInternal()
 	{
 		{
-			Lock lock(mData->mSync);
-			if (mData->mRequiresStartUp)
+			Lock lock(mData->MSync);
+			if (mData->MRequiresStartUp)
 			{
 				OleInitialize(nullptr);
 
-				mData->mRequiresStartUp = false;
+				mData->MRequiresStartUp = false;
 			}
 		}
 
 		{
-			Lock lock(mData->mSync);
-			for (auto& dropTargetToDestroy : mData->mDropTargets.dropTargetsToDestroy)
+			Lock lock(mData->MSync);
+			for (auto& dropTargetToDestroy : mData->MDropTargets.DropTargetsToDestroy)
 			{
 				dropTargetToDestroy->UnregisterWithOs();
 				dropTargetToDestroy->Release();
 			}
 
-			mData->mDropTargets.dropTargetsToDestroy.clear();
+			mData->MDropTargets.DropTargetsToDestroy.clear();
 		}
 
 		{
-			Lock lock(mData->mSync);
-			for (auto& dropTargetToInit : mData->mDropTargets.dropTargetsToInitialize)
+			Lock lock(mData->MSync);
+			for (auto& dropTargetToInit : mData->MDropTargets.DropTargetsToInitialize)
 			{
 				dropTargetToInit->RegisterWithOs();
 			}
 
-			mData->mDropTargets.dropTargetsToInitialize.clear();
+			mData->MDropTargets.DropTargetsToInitialize.clear();
 		}
 
 		MessagePumpInternal();
 
 		{
-			Lock lock(mData->mSync);
-			if (mData->mRequiresShutDown)
+			Lock lock(mData->MSync);
+			if (mData->MRequiresShutDown)
 			{
 				OleUninitialize();
-				mData->mRequiresShutDown = false;
+				mData->MRequiresShutDown = false;
 			}
 		}
 	}
 
 	void Platform::ShutDownInternal()
 	{
-		Lock lock(mData->mSync);
+		Lock lock(mData->MSync);
 
 		timeEndPeriod(1);
-		mData->mRequiresShutDown = true;
+		mData->MRequiresShutDown = true;
 	}
 
 	/**	Translate engine non client area to win32 non client area. */
@@ -570,14 +570,14 @@ namespace bs
 		if (!nonClient)
 			ClientToScreen(hWnd, &clientPoint);
 
-		mousePos.x = clientPoint.x;
-		mousePos.y = clientPoint.y;
+		mousePos.X = clientPoint.x;
+		mousePos.Y = clientPoint.y;
 
-		btnStates.mouseButtons[0] = (wParam & MK_LBUTTON) != 0;
-		btnStates.mouseButtons[1] = (wParam & MK_MBUTTON) != 0;
-		btnStates.mouseButtons[2] = (wParam & MK_RBUTTON) != 0;
-		btnStates.shift = (wParam & MK_SHIFT) != 0;
-		btnStates.ctrl = (wParam & MK_CONTROL) != 0;
+		btnStates.MouseButtons[0] = (wParam & MK_LBUTTON) != 0;
+		btnStates.MouseButtons[1] = (wParam & MK_MBUTTON) != 0;
+		btnStates.MouseButtons[2] = (wParam & MK_RBUTTON) != 0;
+		btnStates.Shift = (wParam & MK_SHIFT) != 0;
+		btnStates.Ctrl = (wParam & MK_CONTROL) != 0;
 	}
 
 	/**
@@ -634,7 +634,7 @@ namespace bs
 			if (newWindow != nullptr)
 			{
 				const RenderWindowProperties& props = newWindow->GetProperties();
-				if (!props.isHidden)
+				if (!props.IsHidden)
 					ShowWindow(hWnd, SW_SHOWNORMAL);
 			}
 			else
@@ -656,18 +656,18 @@ namespace bs
 			case WA_ACTIVE:
 			case WA_CLICKACTIVE:
 				{
-					Lock lock(mData->mSync);
+					Lock lock(mData->MSync);
 
-					mData->mIsActive = true;
+					mData->MIsActive = true;
 				}
 
 				applyClipping(mData);
 				break;
 			case WA_INACTIVE:
 				{
-					Lock lock(mData->mSync);
+					Lock lock(mData->MSync);
 
-					mData->mIsActive = false;
+					mData->MIsActive = false;
 				}
 
 				ClipCursor(nullptr);
@@ -678,14 +678,14 @@ namespace bs
 			}
 		case WM_SETFOCUS:
 			{
-				if (!win->GetProperties().hasFocus)
+				if (!win->GetProperties().HasFocus)
 					win->NotifyWindowEventInternal(WindowEventType::FocusReceived);
 
 				return 0;
 			}
 		case WM_KILLFOCUS:
 			{
-				if (win->GetProperties().hasFocus)
+				if (win->GetProperties().HasFocus)
 					win->NotifyWindowEventInternal(WindowEventType::FocusLost);
 
 				return 0;
@@ -744,7 +744,7 @@ namespace bs
 					return 0;
 				}
 
-				::SetCursor(mData->mCursor.cursor);
+				::SetCursor(mData->MCursor.Cursor);
 			}
 			return true;
 		case WM_GETMINMAXINFO:
@@ -774,8 +774,8 @@ namespace bs
 			}
 		case WM_NCHITTEST:
 			{
-				auto iterFind = mData->mNonClientAreas.find(win);
-				if (iterFind == mData->mNonClientAreas.end())
+				auto iterFind = mData->MNonClientAreas.find(win);
+				if (iterFind == mData->MNonClientAreas.end())
 					break;
 
 				POINT mousePos;
@@ -785,17 +785,17 @@ namespace bs
 				ScreenToClient(hWnd, &mousePos);
 
 				Vector2I mousePosInt;
-				mousePosInt.x = mousePos.x;
-				mousePosInt.y = mousePos.y;
+				mousePosInt.X = mousePos.x;
+				mousePosInt.Y = mousePos.y;
 
-				Vector<NonClientResizeArea>& resizeAreasPerWindow = iterFind->second.resizeAreas;
+				Vector<NonClientResizeArea>& resizeAreasPerWindow = iterFind->second.ResizeAreas;
 				for(auto area : resizeAreasPerWindow)
 				{
-					if (area.area.Contains(mousePosInt))
-						return translateNonClientAreaType(area.type);
+					if (area.Area.Contains(mousePosInt))
+						return translateNonClientAreaType(area.Type);
 				}
 
-				Vector<Rect2I>& moveAreasPerWindow = iterFind->second.moveAreas;
+				Vector<Rect2I>& moveAreasPerWindow = iterFind->second.MoveAreas;
 				for(auto area : moveAreasPerWindow)
 				{
 					if(area.Contains(mousePosInt))
@@ -824,9 +824,9 @@ namespace bs
 			{
 				// Note: Right now I track only mouse leaving client area. So it's possible for the "mouse left window" callback
 				// to trigger, while the mouse is still in the non-client area of the window.
-				mData->mIsTrackingMouse = false; // TrackMouseEvent ends when this message is received and needs to be re-applied
+				mData->MIsTrackingMouse = false; // TrackMouseEvent ends when this message is received and needs to be re-applied
 
-				Lock lock(mData->mSync);
+				Lock lock(mData->MSync);
 				win->NotifyWindowEventInternal(WindowEventType::MouseLeft);
 			}
 			return 0;
@@ -926,7 +926,7 @@ namespace bs
 		case WM_MOUSEMOVE:
 			{
 				// Set up tracking so we get notified when mouse leaves the window
-				if(!mData->mIsTrackingMouse)
+				if(!mData->MIsTrackingMouse)
 				{
 					TRACKMOUSEEVENT tme = { sizeof(tme) };
 					tme.dwFlags = TME_LEAVE;
@@ -934,7 +934,7 @@ namespace bs
 					tme.hwndTrack = hWnd;
 					TrackMouseEvent(&tme);
 
-					mData->mIsTrackingMouse = true;
+					mData->MIsTrackingMouse = true;
 				}
 
 				Vector2I intMousePos;

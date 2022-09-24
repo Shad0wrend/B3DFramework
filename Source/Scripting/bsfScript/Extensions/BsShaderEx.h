@@ -43,16 +43,16 @@ namespace bs
 	struct BS_SCRIPT_EXPORT(m:Rendering,pl:true) ShaderParameter
 	{
 		/** Name of the parameter variable. */
-		String name;
+		String Name;
 
 		/** Variable identifier of the parameter. */
-		String identifier;
+		String Identifier;
 
 		/** Data type of the parameter. */
-		ShaderParameterType type;
+		ShaderParameterType Type;
 
 		/** Flags used to further describe the parameter. */
-		ShaderParameterFlags flags;
+		ShaderParameterFlags Flags;
 	};
 
 	/** Extension class for Shader, for adding additional functionality for the script version of the class. */

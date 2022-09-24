@@ -223,8 +223,8 @@ namespace bs
 		/** Data for a single bound texture. */
 		struct TextureData
 		{
-			TextureType texture;
-			TextureSurface surface;
+			TextureType Texture;
+			TextureSurface Surface;
 		};
 
 		ParamsBufferType* mParamBlockBuffers = nullptr;

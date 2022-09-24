@@ -18,28 +18,28 @@ namespace bs
 
 	void ScriptCAudioSource::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_SetClip", (void*)&ScriptCAudioSource::InternalSetClip);
-		metaData.scriptClass->AddInternalCall("Internal_GetClip", (void*)&ScriptCAudioSource::InternalGetClip);
-		metaData.scriptClass->AddInternalCall("Internal_SetVolume", (void*)&ScriptCAudioSource::InternalSetVolume);
-		metaData.scriptClass->AddInternalCall("Internal_GetVolume", (void*)&ScriptCAudioSource::InternalGetVolume);
-		metaData.scriptClass->AddInternalCall("Internal_SetPitch", (void*)&ScriptCAudioSource::InternalSetPitch);
-		metaData.scriptClass->AddInternalCall("Internal_GetPitch", (void*)&ScriptCAudioSource::InternalGetPitch);
-		metaData.scriptClass->AddInternalCall("Internal_SetIsLooping", (void*)&ScriptCAudioSource::InternalSetIsLooping);
-		metaData.scriptClass->AddInternalCall("Internal_GetIsLooping", (void*)&ScriptCAudioSource::InternalGetIsLooping);
-		metaData.scriptClass->AddInternalCall("Internal_SetPriority", (void*)&ScriptCAudioSource::InternalSetPriority);
-		metaData.scriptClass->AddInternalCall("Internal_GetPriority", (void*)&ScriptCAudioSource::InternalGetPriority);
-		metaData.scriptClass->AddInternalCall("Internal_SetMinDistance", (void*)&ScriptCAudioSource::InternalSetMinDistance);
-		metaData.scriptClass->AddInternalCall("Internal_GetMinDistance", (void*)&ScriptCAudioSource::InternalGetMinDistance);
-		metaData.scriptClass->AddInternalCall("Internal_SetAttenuation", (void*)&ScriptCAudioSource::InternalSetAttenuation);
-		metaData.scriptClass->AddInternalCall("Internal_GetAttenuation", (void*)&ScriptCAudioSource::InternalGetAttenuation);
-		metaData.scriptClass->AddInternalCall("Internal_SetTime", (void*)&ScriptCAudioSource::InternalSetTime);
-		metaData.scriptClass->AddInternalCall("Internal_GetTime", (void*)&ScriptCAudioSource::InternalGetTime);
-		metaData.scriptClass->AddInternalCall("Internal_SetPlayOnStart", (void*)&ScriptCAudioSource::InternalSetPlayOnStart);
-		metaData.scriptClass->AddInternalCall("Internal_GetPlayOnStart", (void*)&ScriptCAudioSource::InternalGetPlayOnStart);
-		metaData.scriptClass->AddInternalCall("Internal_Play", (void*)&ScriptCAudioSource::InternalPlay);
-		metaData.scriptClass->AddInternalCall("Internal_Pause", (void*)&ScriptCAudioSource::InternalPause);
-		metaData.scriptClass->AddInternalCall("Internal_Stop", (void*)&ScriptCAudioSource::InternalStop);
-		metaData.scriptClass->AddInternalCall("Internal_GetState", (void*)&ScriptCAudioSource::InternalGetState);
+		metaData.ScriptClass->AddInternalCall("Internal_SetClip", (void*)&ScriptCAudioSource::InternalSetClip);
+		metaData.ScriptClass->AddInternalCall("Internal_GetClip", (void*)&ScriptCAudioSource::InternalGetClip);
+		metaData.ScriptClass->AddInternalCall("Internal_SetVolume", (void*)&ScriptCAudioSource::InternalSetVolume);
+		metaData.ScriptClass->AddInternalCall("Internal_GetVolume", (void*)&ScriptCAudioSource::InternalGetVolume);
+		metaData.ScriptClass->AddInternalCall("Internal_SetPitch", (void*)&ScriptCAudioSource::InternalSetPitch);
+		metaData.ScriptClass->AddInternalCall("Internal_GetPitch", (void*)&ScriptCAudioSource::InternalGetPitch);
+		metaData.ScriptClass->AddInternalCall("Internal_SetIsLooping", (void*)&ScriptCAudioSource::InternalSetIsLooping);
+		metaData.ScriptClass->AddInternalCall("Internal_GetIsLooping", (void*)&ScriptCAudioSource::InternalGetIsLooping);
+		metaData.ScriptClass->AddInternalCall("Internal_SetPriority", (void*)&ScriptCAudioSource::InternalSetPriority);
+		metaData.ScriptClass->AddInternalCall("Internal_GetPriority", (void*)&ScriptCAudioSource::InternalGetPriority);
+		metaData.ScriptClass->AddInternalCall("Internal_SetMinDistance", (void*)&ScriptCAudioSource::InternalSetMinDistance);
+		metaData.ScriptClass->AddInternalCall("Internal_GetMinDistance", (void*)&ScriptCAudioSource::InternalGetMinDistance);
+		metaData.ScriptClass->AddInternalCall("Internal_SetAttenuation", (void*)&ScriptCAudioSource::InternalSetAttenuation);
+		metaData.ScriptClass->AddInternalCall("Internal_GetAttenuation", (void*)&ScriptCAudioSource::InternalGetAttenuation);
+		metaData.ScriptClass->AddInternalCall("Internal_SetTime", (void*)&ScriptCAudioSource::InternalSetTime);
+		metaData.ScriptClass->AddInternalCall("Internal_GetTime", (void*)&ScriptCAudioSource::InternalGetTime);
+		metaData.ScriptClass->AddInternalCall("Internal_SetPlayOnStart", (void*)&ScriptCAudioSource::InternalSetPlayOnStart);
+		metaData.ScriptClass->AddInternalCall("Internal_GetPlayOnStart", (void*)&ScriptCAudioSource::InternalGetPlayOnStart);
+		metaData.ScriptClass->AddInternalCall("Internal_Play", (void*)&ScriptCAudioSource::InternalPlay);
+		metaData.ScriptClass->AddInternalCall("Internal_Pause", (void*)&ScriptCAudioSource::InternalPause);
+		metaData.ScriptClass->AddInternalCall("Internal_Stop", (void*)&ScriptCAudioSource::InternalStop);
+		metaData.ScriptClass->AddInternalCall("Internal_GetState", (void*)&ScriptCAudioSource::InternalGetState);
 
 	}
 

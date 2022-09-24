@@ -20,9 +20,9 @@ namespace bs
 	{
 		assert(col < 3);
 
-		m[0][col] = vec.x;
-		m[1][col] = vec.y;
-		m[2][col] = vec.z;
+		m[0][col] = vec.X;
+		m[1][col] = vec.Y;
+		m[2][col] = vec.Z;
 	}
 
 	void Matrix3::FromAxes(const Vector3& xAxis, const Vector3& yAxis, const Vector3& zAxis)
@@ -659,9 +659,9 @@ namespace bs
 		{
 			if (radians < Radian(Math::PI))
 			{
-				axis.x = m[2][1]-m[1][2];
-				axis.y = m[0][2]-m[2][0];
-				axis.z = m[1][0]-m[0][1];
+				axis.X = m[2][1]-m[1][2];
+				axis.Y = m[0][2]-m[2][0];
+				axis.Z = m[1][0]-m[0][1];
 				axis.Normalize();
 			}
 			else
@@ -674,18 +674,18 @@ namespace bs
 					if (m[0][0] >= m[2][2])
 					{
 						// r00 is maximum diagonal term
-						axis.x = 0.5f*Math::Sqrt(m[0][0] - m[1][1] - m[2][2] + 1.0f);
-						fHalfInverse = 0.5f/axis.x;
-						axis.y = fHalfInverse*m[0][1];
-						axis.z = fHalfInverse*m[0][2];
+						axis.X = 0.5f*Math::Sqrt(m[0][0] - m[1][1] - m[2][2] + 1.0f);
+						fHalfInverse = 0.5f/axis.X;
+						axis.Y = fHalfInverse*m[0][1];
+						axis.Z = fHalfInverse*m[0][2];
 					}
 					else
 					{
 						// r22 is maximum diagonal term
-						axis.z = 0.5f*Math::Sqrt(m[2][2] - m[0][0] - m[1][1] + 1.0f);
-						fHalfInverse = 0.5f/axis.z;
-						axis.x = fHalfInverse*m[0][2];
-						axis.y = fHalfInverse*m[1][2];
+						axis.Z = 0.5f*Math::Sqrt(m[2][2] - m[0][0] - m[1][1] + 1.0f);
+						fHalfInverse = 0.5f/axis.Z;
+						axis.X = fHalfInverse*m[0][2];
+						axis.Y = fHalfInverse*m[1][2];
 					}
 				}
 				else
@@ -694,18 +694,18 @@ namespace bs
 					if ( m[1][1] >= m[2][2] )
 					{
 						// r11 is maximum diagonal term
-						axis.y = 0.5f*Math::Sqrt(m[1][1] - m[0][0] - m[2][2] + 1.0f);
-						fHalfInverse  = 0.5f/axis.y;
-						axis.x = fHalfInverse*m[0][1];
-						axis.z = fHalfInverse*m[1][2];
+						axis.Y = 0.5f*Math::Sqrt(m[1][1] - m[0][0] - m[2][2] + 1.0f);
+						fHalfInverse  = 0.5f/axis.Y;
+						axis.X = fHalfInverse*m[0][1];
+						axis.Z = fHalfInverse*m[1][2];
 					}
 					else
 					{
 						// r22 is maximum diagonal term
-						axis.z = 0.5f*Math::Sqrt(m[2][2] - m[0][0] - m[1][1] + 1.0f);
-						fHalfInverse = 0.5f/axis.z;
-						axis.x = fHalfInverse*m[0][2];
-						axis.y = fHalfInverse*m[1][2];
+						axis.Z = 0.5f*Math::Sqrt(m[2][2] - m[0][0] - m[1][1] + 1.0f);
+						fHalfInverse = 0.5f/axis.Z;
+						axis.X = fHalfInverse*m[0][2];
+						axis.Y = fHalfInverse*m[1][2];
 					}
 				}
 			}
@@ -714,9 +714,9 @@ namespace bs
 		{
 			// The angle is 0 and the matrix is the identity.  Any axis will
 			// work, so just use the x-axis.
-			axis.x = 1.0f;
-			axis.y = 0.0f;
-			axis.z = 0.0f;
+			axis.X = 1.0f;
+			axis.Y = 0.0f;
+			axis.Z = 0.0f;
 		}
 	}
 
@@ -725,15 +725,15 @@ namespace bs
 		float cos = Math::Cos(angle);
 		float sin = Math::Sin(angle);
 		float oneMinusCos = 1.0f-cos;
-		float x2 = axis.x*axis.x;
-		float y2 = axis.y*axis.y;
-		float z2 = axis.z*axis.z;
-		float xym = axis.x*axis.y*oneMinusCos;
-		float xzm = axis.x*axis.z*oneMinusCos;
-		float yzm = axis.y*axis.z*oneMinusCos;
-		float xSin = axis.x*sin;
-		float ySin = axis.y*sin;
-		float zSin = axis.z*sin;
+		float x2 = axis.X*axis.X;
+		float y2 = axis.Y*axis.Y;
+		float z2 = axis.Z*axis.Z;
+		float xym = axis.X*axis.Y*oneMinusCos;
+		float xzm = axis.X*axis.Z*oneMinusCos;
+		float yzm = axis.Y*axis.Z*oneMinusCos;
+		float xSin = axis.X*sin;
+		float ySin = axis.Y*sin;
+		float zSin = axis.Z*sin;
 
 		m[0][0] = x2*oneMinusCos+cos;
 		m[0][1] = xym-zSin;
@@ -845,7 +845,7 @@ namespace bs
 			sz, cz, 0.0f,
 			0.0f, 0.0f, 1.0f);
 
-		*this = mats[l.c]*(mats[l.b]*mats[l.a]);
+		*this = mats[l.C]*(mats[l.B]*mats[l.A]);
 	}
 
 	void Matrix3::Tridiagonal(float diag[3], float subDiag[3])

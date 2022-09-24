@@ -13,14 +13,14 @@ namespace bs
 	/** A three dimensional vector with integer coordinates. */
 	struct BS_SCRIPT_EXPORT(m:Math,pl:true) Vector3I
 	{
-		INT32 x = 0;
-		INT32 y = 0;
-		INT32 z = 0;
+		INT32 X = 0;
+		INT32 Y = 0;
+		INT32 Z = 0;
 
 		constexpr Vector3I() = default;
 
 		constexpr Vector3I(INT32 x, INT32 y, INT32 z)
-			:x(x), y(y), z(z)
+			:X(x), Y(y), Z(z)
 		{ }
 
 		INT32 operator[] (size_t i) const
@@ -29,9 +29,9 @@ namespace bs
 
 			switch (i)
 			{
-				case 0: return x;
-				case 1: return y;
-				case 2: return z;
+				case 0: return X;
+				case 1: return Y;
+				case 2: return Z;
 				default: return 0;
 			}
 		}
@@ -42,16 +42,16 @@ namespace bs
 
 			switch (i)
 			{
-				case 0: return x;
-				case 1: return y;
-				case 2: return z;
-				default: return x;
+				case 0: return X;
+				case 1: return Y;
+				case 2: return Z;
+				default: return X;
 			}
 		}
 
 		bool operator== (const Vector3I& rhs) const
 		{
-			return x == rhs.x && y == rhs.y && z == rhs.z;
+			return X == rhs.X && Y == rhs.Y && Z == rhs.Z;
 		}
 
 		bool operator!= (const Vector3I& rhs) const

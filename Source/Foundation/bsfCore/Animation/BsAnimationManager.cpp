@@ -91,7 +91,7 @@ namespace bs
 		for(auto& entry : allCameras)
 		{
 			// Note: This should also check on-demand cameras as there's no point in updating them if they wont render this frame
-			bool isOverlayCamera = entry.second->GetRenderSettings()->overlayOnly;
+			bool isOverlayCamera = entry.second->GetRenderSettings()->OverlayOnly;
 			if (isOverlayCamera)
 				continue;
 
@@ -104,14 +104,14 @@ namespace bs
 		UINT32 totalNumBones = 0;
 		for (auto& anim : mProxies)
 		{
-			if (anim->skeleton != nullptr)
-				totalNumBones += anim->skeleton->GetNumBones();
+			if (anim->Skeleton != nullptr)
+				totalNumBones += anim->Skeleton->GetNumBones();
 		}
 
 		// Prepare the write buffer
 		EvaluatedAnimationData& renderData = mAnimData[mPoseWriteBufferIdx];
-		renderData.transforms.resize(totalNumBones);
-		renderData.infos.clear();
+		renderData.Transforms.resize(totalNumBones);
+		renderData.Infos.clear();
 
 		// Queue animation evaluation tasks
 		{
@@ -139,8 +139,8 @@ namespace bs
 			SPtr<Task> task = Task::Create("AnimWorker", evaluateAnimWorker);
 			TaskScheduler::Instance().AddTask(task);
 
-			if (anim->skeleton != nullptr)
-				curBoneIdx += anim->skeleton->GetNumBones();
+			if (anim->Skeleton != nullptr)
+				curBoneIdx += anim->Skeleton->GetNumBones();
 		}
 
 		// Wait for tasks to complete
@@ -169,19 +169,19 @@ namespace bs
 		else
 			output = &mAnimData[mPoseReadBufferIdx];
 
-		output->async = async;
+		output->Async = async;
 		return output;
 	}
 
 	void AnimationManager::EvaluateAnimation(AnimationProxy* anim, UINT32& curBoneIdx)
 	{
 		// Culling
-		if (anim->mCullEnabled)
+		if (anim->MCullEnabled)
 		{
 			bool isVisible = false;
 			for (auto& frustum : mCullFrustums)
 			{
-				if (frustum.Intersects(anim->mBounds))
+				if (frustum.Intersects(anim->MBounds))
 				{
 					isVisible = true;
 					break;
@@ -190,12 +190,12 @@ namespace bs
 
 			if (!isVisible)
 			{
-				anim->wasCulled = true;
+				anim->WasCulled = true;
 				return;
 			}
 		}
 
-		anim->wasCulled = false;
+		anim->WasCulled = false;
 
 		// Evaluation
 		EvaluatedAnimationData& renderData = mAnimData[mPoseWriteBufferIdx];
@@ -207,281 +207,281 @@ namespace bs
 		bool hasAnimInfo = false;
 
 		// Evaluate skeletal animation
-		if (anim->skeleton != nullptr)
+		if (anim->Skeleton != nullptr)
 		{
-			UINT32 numBones = anim->skeleton->GetNumBones();
+			UINT32 numBones = anim->Skeleton->GetNumBones();
 
-			EvaluatedAnimationData::PoseInfo& poseInfo = animInfo.poseInfo;
-			poseInfo.animId = anim->id;
-			poseInfo.startIdx = curBoneIdx;
-			poseInfo.numBones = numBones;
+			EvaluatedAnimationData::PoseInfo& poseInfo = animInfo.PoseInfo;
+			poseInfo.AnimId = anim->Id;
+			poseInfo.StartIdx = curBoneIdx;
+			poseInfo.NumBones = numBones;
 
-			memset(anim->skeletonPose.hasOverride, 0, sizeof(bool) * anim->skeletonPose.numBones);
-			Matrix4* boneDst = renderData.transforms.data() + curBoneIdx;
+			memset(anim->SkeletonPose.HasOverride, 0, sizeof(bool) * anim->SkeletonPose.NumBones);
+			Matrix4* boneDst = renderData.Transforms.data() + curBoneIdx;
 
 			// Copy transforms from mapped scene objects
 			UINT32 boneTfrmIdx = 0;
-			for (UINT32 i = 0; i < anim->numSceneObjects; i++)
+			for (UINT32 i = 0; i < anim->NumSceneObjects; i++)
 			{
-				const AnimatedSceneObjectInfo& soInfo = anim->sceneObjectInfos[i];
+				const AnimatedSceneObjectInfo& soInfo = anim->SceneObjectInfos[i];
 
-				if (soInfo.boneIdx == -1)
+				if (soInfo.BoneIdx == -1)
 					continue;
 
-				boneDst[soInfo.boneIdx] = anim->sceneObjectTransforms[boneTfrmIdx];
-				anim->skeletonPose.hasOverride[soInfo.boneIdx] = true;
+				boneDst[soInfo.BoneIdx] = anim->SceneObjectTransforms[boneTfrmIdx];
+				anim->SkeletonPose.HasOverride[soInfo.BoneIdx] = true;
 				boneTfrmIdx++;
 			}
 
 			// Animate bones
-			anim->skeleton->GetPose(boneDst, anim->skeletonPose, anim->skeletonMask, anim->layers, anim->numLayers);
+			anim->Skeleton->GetPose(boneDst, anim->SkeletonPose, anim->SkeletonMask, anim->Layers, anim->NumLayers);
 
 			curBoneIdx += numBones;
 			hasAnimInfo = true;
 		}
 		else
 		{
-			EvaluatedAnimationData::PoseInfo& poseInfo = animInfo.poseInfo;
-			poseInfo.animId = anim->id;
-			poseInfo.startIdx = 0;
-			poseInfo.numBones = 0;
+			EvaluatedAnimationData::PoseInfo& poseInfo = animInfo.PoseInfo;
+			poseInfo.AnimId = anim->Id;
+			poseInfo.StartIdx = 0;
+			poseInfo.NumBones = 0;
 		}
 
 		// Reset mapped SO transform
-		for (UINT32 i = 0; i < anim->sceneObjectPose.numBones; i++)
+		for (UINT32 i = 0; i < anim->SceneObjectPose.NumBones; i++)
 		{
-			anim->sceneObjectPose.positions[i] = Vector3::ZERO;
-			anim->sceneObjectPose.rotations[i] = Quaternion::IDENTITY;
-			anim->sceneObjectPose.scales[i] = Vector3::ONE;
+			anim->SceneObjectPose.Positions[i] = Vector3::ZERO;
+			anim->SceneObjectPose.Rotations[i] = Quaternion::IDENTITY;
+			anim->SceneObjectPose.Scales[i] = Vector3::ONE;
 		}
 
 		// Update mapped scene objects
-		memset(anim->sceneObjectPose.hasOverride, 1, sizeof(bool) * 3 * anim->numSceneObjects);
+		memset(anim->SceneObjectPose.HasOverride, 1, sizeof(bool) * 3 * anim->NumSceneObjects);
 
 		// Update scene object transforms
-		for (UINT32 i = 0; i < anim->numSceneObjects; i++)
+		for (UINT32 i = 0; i < anim->NumSceneObjects; i++)
 		{
-			const AnimatedSceneObjectInfo& soInfo = anim->sceneObjectInfos[i];
+			const AnimatedSceneObjectInfo& soInfo = anim->SceneObjectInfos[i];
 
 			// We already evaluated bones
-			if (soInfo.boneIdx != -1)
+			if (soInfo.BoneIdx != -1)
 				continue;
 
-			if (soInfo.layerIdx == -1 || soInfo.stateIdx == -1)
+			if (soInfo.LayerIdx == -1 || soInfo.StateIdx == -1)
 				continue;
 
-			const AnimationState& state = anim->layers[soInfo.layerIdx].states[soInfo.stateIdx];
-			if (state.disabled)
+			const AnimationState& state = anim->Layers[soInfo.LayerIdx].States[soInfo.StateIdx];
+			if (state.Disabled)
 				continue;
 
 			{
-				UINT32 curveIdx = soInfo.curveIndices.position;
+				UINT32 curveIdx = soInfo.CurveIndices.Position;
 				if (curveIdx != (UINT32)-1)
 				{
-					const TAnimationCurve<Vector3>& curve = state.curves->position[curveIdx].curve;
-					anim->sceneObjectPose.positions[curveIdx] = curve.Evaluate(state.time, state.positionCaches[curveIdx], false);
-					anim->sceneObjectPose.hasOverride[i * 3 + 0] = false;
+					const TAnimationCurve<Vector3>& curve = state.Curves->Position[curveIdx].Curve;
+					anim->SceneObjectPose.Positions[curveIdx] = curve.Evaluate(state.Time, state.PositionCaches[curveIdx], false);
+					anim->SceneObjectPose.HasOverride[i * 3 + 0] = false;
 				}
 			}
 
 			{
-				UINT32 curveIdx = soInfo.curveIndices.rotation;
+				UINT32 curveIdx = soInfo.CurveIndices.Rotation;
 				if (curveIdx != (UINT32)-1)
 				{
-					const TAnimationCurve<Quaternion>& curve = state.curves->rotation[curveIdx].curve;
-					anim->sceneObjectPose.rotations[curveIdx] = curve.Evaluate(state.time, state.rotationCaches[curveIdx], false);
-					anim->sceneObjectPose.rotations[curveIdx].Normalize();
-					anim->sceneObjectPose.hasOverride[i * 3 + 1] = false;
+					const TAnimationCurve<Quaternion>& curve = state.Curves->Rotation[curveIdx].Curve;
+					anim->SceneObjectPose.Rotations[curveIdx] = curve.Evaluate(state.Time, state.RotationCaches[curveIdx], false);
+					anim->SceneObjectPose.Rotations[curveIdx].Normalize();
+					anim->SceneObjectPose.HasOverride[i * 3 + 1] = false;
 				}
 			}
 
 			{
-				UINT32 curveIdx = soInfo.curveIndices.scale;
+				UINT32 curveIdx = soInfo.CurveIndices.Scale;
 				if (curveIdx != (UINT32)-1)
 				{
-					const TAnimationCurve<Vector3>& curve = state.curves->scale[curveIdx].curve;
-					anim->sceneObjectPose.scales[curveIdx] = curve.Evaluate(state.time, state.scaleCaches[curveIdx], false);
-					anim->sceneObjectPose.hasOverride[i * 3 + 2] = false;
+					const TAnimationCurve<Vector3>& curve = state.Curves->Scale[curveIdx].Curve;
+					anim->SceneObjectPose.Scales[curveIdx] = curve.Evaluate(state.Time, state.ScaleCaches[curveIdx], false);
+					anim->SceneObjectPose.HasOverride[i * 3 + 2] = false;
 				}
 			}
 		}
 
 		// Update generic curves
 		// Note: No blending for generic animations, just use first animation
-		if (anim->numLayers > 0 && anim->layers[0].numStates > 0)
+		if (anim->NumLayers > 0 && anim->Layers[0].NumStates > 0)
 		{
-			const AnimationState& state = anim->layers[0].states[0];
-			if (!state.disabled)
+			const AnimationState& state = anim->Layers[0].States[0];
+			if (!state.Disabled)
 			{
-				UINT32 numCurves = (UINT32)state.curves->generic.size();
+				UINT32 numCurves = (UINT32)state.Curves->Generic.size();
 				for (UINT32 i = 0; i < numCurves; i++)
 				{
-					const TAnimationCurve<float>& curve = state.curves->generic[i].curve;
-					anim->genericCurveOutputs[i] = curve.Evaluate(state.time, state.genericCaches[i], false);
+					const TAnimationCurve<float>& curve = state.Curves->Generic[i].Curve;
+					anim->GenericCurveOutputs[i] = curve.Evaluate(state.Time, state.GenericCaches[i], false);
 				}
 			}
 		}
 
 		// Update morph shapes
-		if (anim->numMorphShapes > 0)
+		if (anim->NumMorphShapes > 0)
 		{
-			auto iterFind = prevRenderData.infos.find(anim->id);
-			if (iterFind != prevRenderData.infos.end())
-				animInfo.morphShapeInfo = iterFind->second.morphShapeInfo;
+			auto iterFind = prevRenderData.Infos.find(anim->Id);
+			if (iterFind != prevRenderData.Infos.end())
+				animInfo.MorphShapeInfo = iterFind->second.MorphShapeInfo;
 			else
-				animInfo.morphShapeInfo.version = 1; // 0 is considered invalid version
+				animInfo.MorphShapeInfo.Version = 1; // 0 is considered invalid version
 
 			// Recalculate weights if curves are present
 			bool hasMorphCurves = false;
-			for (UINT32 i = 0; i < anim->numMorphChannels; i++)
+			for (UINT32 i = 0; i < anim->NumMorphChannels; i++)
 			{
-				MorphChannelInfo& channelInfo = anim->morphChannelInfos[i];
-				if (channelInfo.weightCurveIdx != (UINT32)-1)
+				MorphChannelInfo& channelInfo = anim->MorphChannelInfos[i];
+				if (channelInfo.WeightCurveIdx != (UINT32)-1)
 				{
-					channelInfo.weight = Math::Clamp01(anim->genericCurveOutputs[channelInfo.weightCurveIdx]);
+					channelInfo.Weight = Math::Clamp01(anim->GenericCurveOutputs[channelInfo.WeightCurveIdx]);
 					hasMorphCurves = true;
 				}
 
 				float frameWeight;
-				if (channelInfo.frameCurveIdx != (UINT32)-1)
+				if (channelInfo.FrameCurveIdx != (UINT32)-1)
 				{
-					frameWeight = Math::Clamp01(anim->genericCurveOutputs[channelInfo.frameCurveIdx]);
+					frameWeight = Math::Clamp01(anim->GenericCurveOutputs[channelInfo.FrameCurveIdx]);
 					hasMorphCurves = true;
 				}
 				else
 					frameWeight = 0.0f;
 
-				if (channelInfo.shapeCount == 1)
+				if (channelInfo.ShapeCount == 1)
 				{
-					MorphShapeInfo& shapeInfo = anim->morphShapeInfos[channelInfo.shapeStart];
+					MorphShapeInfo& shapeInfo = anim->MorphShapeInfos[channelInfo.ShapeStart];
 
 					// Blend between base shape and the only available frame
-					float relative = frameWeight - shapeInfo.frameWeight;
+					float relative = frameWeight - shapeInfo.FrameWeight;
 					if (relative <= 0.0f)
 					{
-						float diff = shapeInfo.frameWeight;
+						float diff = shapeInfo.FrameWeight;
 						if (diff > 0.0f)
 						{
 							float t = -relative / diff;
-							shapeInfo.finalWeight = 1.0f - std::min(t, 1.0f);
+							shapeInfo.FinalWeight = 1.0f - std::min(t, 1.0f);
 						}
 						else
-							shapeInfo.finalWeight = 1.0f;
+							shapeInfo.FinalWeight = 1.0f;
 					}
 					else // If past the final frame we clamp
-						shapeInfo.finalWeight = 1.0f;
+						shapeInfo.FinalWeight = 1.0f;
 				}
-				else if (channelInfo.shapeCount > 1)
+				else if (channelInfo.ShapeCount > 1)
 				{
-					for (UINT32 j = 0; j < channelInfo.shapeCount - 1; j++)
+					for (UINT32 j = 0; j < channelInfo.ShapeCount - 1; j++)
 					{
 						float prevShapeWeight;
 						if (j > 0)
-							prevShapeWeight = anim->morphShapeInfos[j - 1].frameWeight;
+							prevShapeWeight = anim->MorphShapeInfos[j - 1].FrameWeight;
 						else
 							prevShapeWeight = 0.0f; // Base shape, blend between it and the first frame
 
-						float nextShapeWeight = anim->morphShapeInfos[j + 1].frameWeight;
-						MorphShapeInfo& shapeInfo = anim->morphShapeInfos[j];
+						float nextShapeWeight = anim->MorphShapeInfos[j + 1].FrameWeight;
+						MorphShapeInfo& shapeInfo = anim->MorphShapeInfos[j];
 
-						float relative = frameWeight - shapeInfo.frameWeight;
+						float relative = frameWeight - shapeInfo.FrameWeight;
 						if (relative <= 0.0f)
 						{
-							float diff = shapeInfo.frameWeight - prevShapeWeight;
+							float diff = shapeInfo.FrameWeight - prevShapeWeight;
 							if (diff > 0.0f)
 							{
 								float t = -relative / diff;
-								shapeInfo.finalWeight = 1.0f - std::min(t, 1.0f);
+								shapeInfo.FinalWeight = 1.0f - std::min(t, 1.0f);
 							}
 							else
-								shapeInfo.finalWeight = 1.0f;
+								shapeInfo.FinalWeight = 1.0f;
 						}
 						else
 						{
-							float diff = nextShapeWeight - shapeInfo.frameWeight;
+							float diff = nextShapeWeight - shapeInfo.FrameWeight;
 							if (diff > 0.0f)
 							{
 								float t = relative / diff;
-								shapeInfo.finalWeight = std::min(t, 1.0f);
+								shapeInfo.FinalWeight = std::min(t, 1.0f);
 							}
 							else
-								shapeInfo.finalWeight = 0.0f;
+								shapeInfo.FinalWeight = 0.0f;
 						}
 					}
 
 					// Last frame
 					{
-						UINT32 lastFrame = channelInfo.shapeStart + channelInfo.shapeCount - 1;
-						MorphShapeInfo& prevShapeInfo = anim->morphShapeInfos[lastFrame - 1];
-						MorphShapeInfo& shapeInfo = anim->morphShapeInfos[lastFrame];
+						UINT32 lastFrame = channelInfo.ShapeStart + channelInfo.ShapeCount - 1;
+						MorphShapeInfo& prevShapeInfo = anim->MorphShapeInfos[lastFrame - 1];
+						MorphShapeInfo& shapeInfo = anim->MorphShapeInfos[lastFrame];
 
-						float relative = frameWeight - shapeInfo.frameWeight;
+						float relative = frameWeight - shapeInfo.FrameWeight;
 						if (relative <= 0.0f)
 						{
-							float diff = shapeInfo.frameWeight - prevShapeInfo.frameWeight;
+							float diff = shapeInfo.FrameWeight - prevShapeInfo.FrameWeight;
 							if (diff > 0.0f)
 							{
 								float t = -relative / diff;
-								shapeInfo.finalWeight = 1.0f - std::min(t, 1.0f);
+								shapeInfo.FinalWeight = 1.0f - std::min(t, 1.0f);
 							}
 							else
-								shapeInfo.finalWeight = 1.0f;
+								shapeInfo.FinalWeight = 1.0f;
 						}
 						else // If past the final frame we clamp
-							shapeInfo.finalWeight = 1.0f;
+							shapeInfo.FinalWeight = 1.0f;
 					}
 				}
 
-				for (UINT32 j = 0; j < channelInfo.shapeCount; j++)
+				for (UINT32 j = 0; j < channelInfo.ShapeCount; j++)
 				{
-					MorphShapeInfo& shapeInfo = anim->morphShapeInfos[channelInfo.shapeStart + j];
-					shapeInfo.finalWeight *= channelInfo.weight;
+					MorphShapeInfo& shapeInfo = anim->MorphShapeInfos[channelInfo.ShapeStart + j];
+					shapeInfo.FinalWeight *= channelInfo.Weight;
 				}
 			}
 
 			// Generate morph shape vertices
-			if (anim->morphChannelWeightsDirty || hasMorphCurves)
+			if (anim->MorphChannelWeightsDirty || hasMorphCurves)
 			{
-				SPtr<MeshData> meshData = bs_shared_ptr_new<MeshData>(anim->numMorphVertices, 0, mBlendShapeVertexDesc);
+				SPtr<MeshData> meshData = bs_shared_ptr_new<MeshData>(anim->NumMorphVertices, 0, mBlendShapeVertexDesc);
 
 				UINT8* bufferData = meshData->GetData();
 				memset(bufferData, 0, meshData->GetSize());
 
-				UINT32 tempDataSize = (sizeof(Vector3) + sizeof(float)) * anim->numMorphVertices;
+				UINT32 tempDataSize = (sizeof(Vector3) + sizeof(float)) * anim->NumMorphVertices;
 				UINT8* tempData = (UINT8*)bs_stack_alloc(tempDataSize);
 				memset(tempData, 0, tempDataSize);
 
 				Vector3* tempNormals = (Vector3*)tempData;
-				float* accumulatedWeight = (float*)(tempData + sizeof(Vector3) * anim->numMorphVertices);
+				float* accumulatedWeight = (float*)(tempData + sizeof(Vector3) * anim->NumMorphVertices);
 
 				UINT8* positions = meshData->GetElementData(VES_POSITION, 1, 1);
 				UINT8* normals = meshData->GetElementData(VES_NORMAL, 1, 1);
 
 				UINT32 stride = mBlendShapeVertexDesc->GetVertexStride(1);
 
-				for (UINT32 i = 0; i < anim->numMorphShapes; i++)
+				for (UINT32 i = 0; i < anim->NumMorphShapes; i++)
 				{
-					const MorphShapeInfo& info = anim->morphShapeInfos[i];
-					float absWeight = Math::Abs(info.finalWeight);
+					const MorphShapeInfo& info = anim->MorphShapeInfos[i];
+					float absWeight = Math::Abs(info.FinalWeight);
 
 					if (absWeight < 0.0001f)
 						continue;
 
-					const Vector<MorphVertex>& morphVertices = info.shape->GetVertices();
+					const Vector<MorphVertex>& morphVertices = info.Shape->GetVertices();
 					UINT32 numVertices = (UINT32)morphVertices.size();
 					for (UINT32 j = 0; j < numVertices; j++)
 					{
 						const MorphVertex& vertex = morphVertices[j];
 
-						Vector3* destPos = (Vector3*)(positions + vertex.sourceIdx * stride);
-						*destPos += vertex.deltaPosition * info.finalWeight;
+						Vector3* destPos = (Vector3*)(positions + vertex.SourceIdx * stride);
+						*destPos += vertex.DeltaPosition * info.FinalWeight;
 
-						tempNormals[vertex.sourceIdx] += vertex.deltaNormal * info.finalWeight;
-						accumulatedWeight[vertex.sourceIdx] += absWeight;
+						tempNormals[vertex.SourceIdx] += vertex.DeltaNormal * info.FinalWeight;
+						accumulatedWeight[vertex.SourceIdx] += absWeight;
 					}
 				}
 
-				for (UINT32 i = 0; i < anim->numMorphVertices; i++)
+				for (UINT32 i = 0; i < anim->NumMorphVertices; i++)
 				{
 					PackedNormal* destNrm = (PackedNormal*)(normals + i * stride);
 
@@ -491,7 +491,7 @@ namespace bs
 						normal /= 2.0f; // Accumulated normal is in range [-2, 2] but our normal packing method assumes [-1, 1] range
 
 						MeshUtility::PackNormals(&normal, (UINT8*)destNrm, 1, sizeof(Vector3), stride);
-						destNrm->w = (UINT8)(std::min(1.0f, accumulatedWeight[i]) * 255.999f);
+						destNrm->W = (UINT8)(std::min(1.0f, accumulatedWeight[i]) * 255.999f);
 					}
 					else
 					{
@@ -501,21 +501,21 @@ namespace bs
 
 				bs_stack_free(tempData);
 
-				animInfo.morphShapeInfo.meshData = meshData;
+				animInfo.MorphShapeInfo.MeshData = meshData;
 
-				animInfo.morphShapeInfo.version++;
-				anim->morphChannelWeightsDirty = false;
+				animInfo.MorphShapeInfo.Version++;
+				anim->MorphChannelWeightsDirty = false;
 			}
 
 			hasAnimInfo = true;
 		}
 		else
-			animInfo.morphShapeInfo.version = 1;
+			animInfo.MorphShapeInfo.Version = 1;
 
 		if (hasAnimInfo)
 		{
 			Lock lock(mMutex);
-			renderData.infos[anim->id] = animInfo;
+			renderData.Infos[anim->Id] = animInfo;
 		}
 	}
 

@@ -66,15 +66,15 @@ namespace bs
 
 		if(ev.GetType() == GUICommandEventType::FocusGained)
 		{
-			if(!onFocusGained.Empty())
-				onFocusGained();
+			if(!OnFocusGained.Empty())
+				OnFocusGained();
 
 			return false;
 		}
 		else if(ev.GetType() == GUICommandEventType::FocusLost)
 		{
-			if(!onFocusLost.Empty())
-				onFocusLost();
+			if(!OnFocusLost.Empty())
+				OnFocusLost();
 
 			return false;
 		}

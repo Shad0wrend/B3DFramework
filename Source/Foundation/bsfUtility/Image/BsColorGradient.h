@@ -60,11 +60,11 @@ namespace bs
 	{
 		ColorGradientKey() = default;
 		ColorGradientKey(const Color& color, float time)
-			:color(color), time(time)
+			:Color(color), Time(time)
 		{ }
 
-		Color color;
-		float time = 0.0f;
+		Color Color;
+		float Time = 0.0f;
 	};
 
 	/** Common templated class for different color gradient implementations. */

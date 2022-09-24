@@ -51,24 +51,24 @@ namespace bs
 		SpriteMaterialInfo Clone() const
 		{
 			SpriteMaterialInfo info;
-			info.groupId = groupId;
-			info.texture = texture;
-			info.spriteTexture = spriteTexture;
-			info.tint = tint;
-			info.animationStartTime = animationStartTime;
+			info.GroupId = GroupId;
+			info.Texture = Texture;
+			info.SpriteTexture = SpriteTexture;
+			info.Tint = Tint;
+			info.AnimationStartTime = AnimationStartTime;
 
-			if(additionalData != nullptr)
-				info.additionalData = additionalData->Clone();
+			if(AdditionalData != nullptr)
+				info.AdditionalData = AdditionalData->Clone();
 
 			return info;
 		}
 
-		UINT64 groupId = 0;
-		HTexture texture;
-		HSpriteTexture spriteTexture;
-		Color tint;
-		float animationStartTime = 0.0f;
-		SPtr<SpriteMaterialExtraInfo> additionalData;
+		UINT64 GroupId = 0;
+		HTexture Texture;
+		HSpriteTexture SpriteTexture;
+		Color Tint;
+		float AnimationStartTime = 0.0f;
+		SPtr<SpriteMaterialExtraInfo> AdditionalData;
 	};
 
 	/** Interfaced implemented by materials used for rendering sprites. This is expected to be used as a singleton. */

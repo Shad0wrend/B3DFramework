@@ -94,9 +94,9 @@ namespace bs
 
 			do
 			{
-				output.x = GetSNorm();
-				output.y = GetSNorm();
-				output.z = GetSNorm();
+				output.X = GetSNorm();
+				output.Y = GetSNorm();
+				output.Z = GetSNorm();
 				sqrdSize = output.SquaredLength();
 				
 			} while (sqrdSize > 1.0f || sqrdSize < 0.001f);
@@ -116,8 +116,8 @@ namespace bs
 
 			do
 			{
-				output.x = GetSNorm();
-				output.y = GetSNorm();
+				output.X = GetSNorm();
+				output.Y = GetSNorm();
 				sqrdSize = output.SquaredLength();
 				
 			} while (sqrdSize > 1.0f || sqrdSize < 0.001f);

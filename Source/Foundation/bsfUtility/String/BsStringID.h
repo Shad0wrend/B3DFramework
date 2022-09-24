@@ -41,9 +41,9 @@ namespace bs
 		/**	Internal data that is shared by all instances for a specific string. */
 		struct InternalData
 		{
-			UINT32 id;
-			InternalData* next;
-			char chars[STRING_SIZE];
+			UINT32 Id;
+			InternalData* Next;
+			char Chars[STRING_SIZE];
 		};
 
 		/**	Performs initialization of static members as soon as the library is loaded. */
@@ -84,7 +84,7 @@ namespace bs
 		}
 
 		/** Implicitly converts to a normal string. */
-		operator String() const { return String(mData->chars); }
+		operator String() const { return String(mData->Chars); }
 
 		/**	Returns true if the string id has no value assigned. */
 		bool Empty() const
@@ -98,11 +98,11 @@ namespace bs
 			if (mData == nullptr)
 				return "";
 
-			return mData->chars;
+			return mData->Chars;
 		}
 
 		/** Returns the unique identifier of the string. */
-		UINT32 Id() const { return mData ? mData->id : -1; }
+		UINT32 Id() const { return mData ? mData->Id : -1; }
 
 		static const StringID NONE;
 

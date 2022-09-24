@@ -53,18 +53,18 @@ namespace bs
 		RTTIFieldSchema() = default;
 		RTTIFieldSchema(INT16 id, bool isArray, bool hasDynamicSize, BitLength size, SerializableFieldType type,
 			UINT32 fieldTypeId, SPtr<RTTISchema> fieldTypeSchema, const RTTIFieldInfo& info)
-			: id(id), isArray(isArray), hasDynamicSize(hasDynamicSize), size(size), type(type)
-			, fieldTypeId(fieldTypeId), fieldTypeSchema(std::move(fieldTypeSchema)), info(info)
+			: Id(id), IsArray(isArray), HasDynamicSize(hasDynamicSize), Size(size), Type(type)
+			, FieldTypeId(fieldTypeId), FieldTypeSchema(std::move(fieldTypeSchema)), Info(info)
 		{ }
 		
-		UINT16 id = 0;
-		bool isArray = false;
-		bool hasDynamicSize = false;
-		BitLength size = 0;
-		SerializableFieldType type = SerializableFT_Plain;
-		UINT32 fieldTypeId = 0;
-		SPtr<RTTISchema> fieldTypeSchema;
-		RTTIFieldInfo info;
+		UINT16 Id = 0;
+		bool IsArray = false;
+		bool HasDynamicSize = false;
+		BitLength Size = 0;
+		SerializableFieldType Type = SerializableFT_Plain;
+		UINT32 FieldTypeId = 0;
+		SPtr<RTTISchema> FieldTypeSchema;
+		RTTIFieldInfo Info;
 
 		static RTTITypeBase* GetRttiStatic();
 		RTTITypeBase* GetRtti() const override;
@@ -83,8 +83,8 @@ namespace bs
 	 */
 	struct BS_UTILITY_EXPORT RTTIField
 	{	
-		String name;
-		RTTIFieldSchema schema;
+		String Name;
+		RTTIFieldSchema Schema;
 		
 		virtual ~RTTIField() = default;
 
@@ -114,8 +114,8 @@ namespace bs
 	protected:
 		void Init(String name, const RTTIFieldSchema& schema)
 		{
-			this->name = std::move(name);
-			this->schema = schema;
+			this->Name = std::move(name);
+			this->Schema = schema;
 		}
 	};
 

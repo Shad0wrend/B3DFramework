@@ -20,16 +20,16 @@ namespace bs
 	struct BS_SCRIPT_EXPORT(m:Particles,pl:true,n:VectorFieldOptions) VECTOR_FIELD_DESC
 	{
 		/** Number of entries in the vector field along the X axis. */
-		UINT32 countX = 1;
+		UINT32 CountX = 1;
 
 		/** Number of entries in the vector field along the Y axis. */
-		UINT32 countY = 1;
+		UINT32 CountY = 1;
 
 		/** Number of entries in the vector field along the Z axis. */
-		UINT32 countZ = 1;
+		UINT32 CountZ = 1;
 
 		/** Spatial bounds of the vector field. */
-		AABox bounds = AABox::BOX_EMPTY;
+		AABox Bounds = AABox::BOX_EMPTY;
 	};
 
 	/** @} */

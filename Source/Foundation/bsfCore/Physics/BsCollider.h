@@ -117,17 +117,17 @@ namespace bs
 		 * Triggered when some object starts interacting with the collider. Only triggered if proper collision report mode
 		 * is turned on.
 		 */
-		Event<void(const CollisionDataRaw&)> onCollisionBegin;
+		Event<void(const CollisionDataRaw&)> OnCollisionBegin;
 		/**
 		 * Triggered for every frame that an object remains interacting with a collider. Only triggered if proper collision
 		 * report mode is turned on.
 		 */
-		Event<void(const CollisionDataRaw&)> onCollisionStay;
+		Event<void(const CollisionDataRaw&)> OnCollisionStay;
 		/**
 		 * Triggered when some object stops interacting with the collider. Only triggered if proper collision report mode
 		 * is turned on.
 		 */
-		Event<void(const CollisionDataRaw&)> onCollisionEnd;
+		Event<void(const CollisionDataRaw&)> OnCollisionEnd;
 
 		/** @name Internal
 		 *  @{
@@ -140,13 +140,13 @@ namespace bs
 		 * Sets the object that owns this physics object, if any. Used for high level systems so they can easily map their
 		 * high level physics objects from the low level ones returned by various queries and events.
 		 */
-		void SetOwnerInternal(PhysicsOwnerType type, void* owner) { mOwner.type = type; mOwner.ownerData = owner; }
+		void SetOwnerInternal(PhysicsOwnerType type, void* owner) { mOwner.Type = type; mOwner.OwnerData = owner; }
 
 		/**
 		 * Gets the object that owns this physics object, if any. Used for high level systems so they can easily map their
 		 * high level physics objects from the low level ones returned by various queries and events.
 		 */
-		void* GetOwnerInternal(PhysicsOwnerType type) const { return mOwner.type == type ? mOwner.ownerData : nullptr; }
+		void* GetOwnerInternal(PhysicsOwnerType type) const { return mOwner.Type == type ? mOwner.OwnerData : nullptr; }
 
 		/** @} */
 	protected:

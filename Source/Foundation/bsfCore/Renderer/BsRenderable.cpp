@@ -319,7 +319,7 @@ namespace bs
 	CoreSyncData Renderable::SyncToCore(FrameAlloc* allocator)
 	{
 		const UINT32 dirtyFlags = GetCoreDirtyFlags();
-		UINT32 size = rtti_size(dirtyFlags).bytes;
+		UINT32 size = rtti_size(dirtyFlags).Bytes;
 		SceneActor::RttiEnumFields(RttiCoreSyncSize(size), (ActorDirtyFlags)dirtyFlags);
 
 		// The most common case if only the transform changed, so we sync only transform related options
@@ -335,14 +335,14 @@ namespace bs
 				animationId = (UINT64)-1;
 
 			size +=
-				rtti_size(mLayer).bytes +
-				rtti_size(mOverrideBounds).bytes +
-				rtti_size(mUseOverrideBounds).bytes +
-				rtti_size(mWriteVelocity).bytes +
-				rtti_size(numMaterials).bytes +
-				rtti_size(animationId).bytes +
-				rtti_size(mAnimType).bytes +
-				rtti_size(mCullDistanceFactor).bytes +
+				rtti_size(mLayer).Bytes +
+				rtti_size(mOverrideBounds).Bytes +
+				rtti_size(mUseOverrideBounds).Bytes +
+				rtti_size(mWriteVelocity).Bytes +
+				rtti_size(numMaterials).Bytes +
+				rtti_size(animationId).Bytes +
+				rtti_size(mAnimType).Bytes +
+				rtti_size(mCullDistanceFactor).Bytes +
 				sizeof(SPtr<ct::Mesh>) +
 				numMaterials * sizeof(SPtr<ct::Material>);
 		}
@@ -520,11 +520,11 @@ namespace bs
 	SPtr<GpuBuffer> createBoneMatrixBuffer(UINT32 numBones)
 	{
 		GPU_BUFFER_DESC desc;
-		desc.elementCount = numBones * 3;
-		desc.elementSize = 0;
-		desc.type = GBT_STANDARD;
-		desc.format = BF_32X4F;
-		desc.usage = GBU_DYNAMIC;
+		desc.ElementCount = numBones * 3;
+		desc.ElementSize = 0;
+		desc.Type = GBT_STANDARD;
+		desc.Format = BF_32X4F;
+		desc.Usage = GBU_DYNAMIC;
 
 		SPtr<GpuBuffer> buffer = GpuBuffer::Create(desc);
 		UINT8* dest = (UINT8*)buffer->Lock(0, numBones * 3 * sizeof(Vector4), GBL_WRITE_ONLY_DISCARD);
@@ -579,9 +579,9 @@ namespace bs
 			UINT32 numVertices = morphShapes->GetNumVertices();
 
 			VERTEX_BUFFER_DESC desc;
-			desc.vertexSize = vertexSize;
-			desc.numVerts = numVertices;
-			desc.usage = GBU_DYNAMIC;
+			desc.VertexSize = vertexSize;
+			desc.NumVerts = numVertices;
+			desc.Usage = GBU_DYNAMIC;
 
 			SPtr<VertexBuffer> vertexBuffer = VertexBuffer::Create(desc);
 
@@ -605,8 +605,8 @@ namespace bs
 
 		const EvaluatedAnimationData::AnimInfo* animInfo = nullptr;
 
-		auto iterFind = animData.infos.find(mAnimationId);
-		if (iterFind != animData.infos.end())
+		auto iterFind = animData.Infos.find(mAnimationId);
+		if (iterFind != animData.Infos.end())
 			animInfo = &iterFind->second;
 
 		if (animInfo == nullptr)
@@ -614,17 +614,17 @@ namespace bs
 
 		if (mAnimType == RenderableAnimType::Skinned || mAnimType == RenderableAnimType::SkinnedMorph)
 		{
-			const EvaluatedAnimationData::PoseInfo& poseInfo = animInfo->poseInfo;
+			const EvaluatedAnimationData::PoseInfo& poseInfo = animInfo->PoseInfo;
 
 			if (mWriteVelocity)
 				std::swap(mBoneMatrixBuffer, mBonePrevMatrixBuffer);
 
 			// Note: If multiple elements are using the same animation (not possible atm), this buffer should be shared by
 			// all such elements
-			UINT8* dest = (UINT8*)mBoneMatrixBuffer->Lock(0, poseInfo.numBones * 3 * sizeof(Vector4), GBL_WRITE_ONLY_DISCARD);
-			for (UINT32 j = 0; j < poseInfo.numBones; j++)
+			UINT8* dest = (UINT8*)mBoneMatrixBuffer->Lock(0, poseInfo.NumBones * 3 * sizeof(Vector4), GBL_WRITE_ONLY_DISCARD);
+			for (UINT32 j = 0; j < poseInfo.NumBones; j++)
 			{
-				const Matrix4& transform = animData.transforms[poseInfo.startIdx + j];
+				const Matrix4& transform = animData.Transforms[poseInfo.StartIdx + j];
 				memcpy(dest, &transform, 12 * sizeof(float)); // Assuming row-major format
 
 				dest += 12 * sizeof(float);
@@ -635,15 +635,15 @@ namespace bs
 
 		if (mAnimType == RenderableAnimType::Morph || mAnimType == RenderableAnimType::SkinnedMorph)
 		{
-			if (mMorphShapeVersion != animInfo->morphShapeInfo.version)
+			if (mMorphShapeVersion != animInfo->MorphShapeInfo.Version)
 			{
-				SPtr<MeshData> meshData = animInfo->morphShapeInfo.meshData;
+				SPtr<MeshData> meshData = animInfo->MorphShapeInfo.MeshData;
 
 				UINT32 bufferSize = meshData->GetSize();
 				UINT8* data = meshData->GetData();
 
 				mMorphShapeBuffer->WriteData(0, bufferSize, data, BWT_DISCARD);
-				mMorphShapeVersion = animInfo->morphShapeInfo.version;
+				mMorphShapeVersion = animInfo->MorphShapeInfo.Version;
 			}
 		}
 	}

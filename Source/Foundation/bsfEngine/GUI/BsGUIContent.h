@@ -34,18 +34,18 @@ namespace bs
 		GUIContentImages() = default;
 
 		GUIContentImages(const HSpriteTexture& image)
-			:normal(image), hover(image), active(image), focused(image),
-			normalOn(image), hoverOn(image), activeOn(image), focusedOn(image)
+			:Normal(image), Hover(image), Active(image), Focused(image),
+			NormalOn(image), HoverOn(image), ActiveOn(image), FocusedOn(image)
 		{ }
 
-		BS_NORREF HSpriteTexture normal;
-		BS_NORREF HSpriteTexture hover;
-		BS_NORREF HSpriteTexture active;
-		BS_NORREF HSpriteTexture focused;
-		BS_NORREF HSpriteTexture normalOn;
-		BS_NORREF HSpriteTexture hoverOn;
-		BS_NORREF HSpriteTexture activeOn;
-		BS_NORREF HSpriteTexture focusedOn;
+		BS_NORREF HSpriteTexture Normal;
+		BS_NORREF HSpriteTexture Hover;
+		BS_NORREF HSpriteTexture Active;
+		BS_NORREF HSpriteTexture Focused;
+		BS_NORREF HSpriteTexture NormalOn;
+		BS_NORREF HSpriteTexture HoverOn;
+		BS_NORREF HSpriteTexture ActiveOn;
+		BS_NORREF HSpriteTexture FocusedOn;
 	};
 
 	/**
@@ -60,32 +60,32 @@ namespace bs
 
 		/**	Constructs content with just a string. */
 		GUIContent(const HString& text)
-			: text(text)
+			: Text(text)
 		{ }
 
 		/**	Constructs content with a string and a tooltip. */
 		GUIContent(const HString& text, const HString& tooltip)
-			: text(text), tooltip(tooltip)
+			: Text(text), Tooltip(tooltip)
 		{ }
 
 		/**	Constructs content with just an image. */
 		GUIContent(const GUIContentImages& image)
-			: images(image)
+			: Images(image)
 		{ }
 
 		/**	Constructs content with an image and a tooltip. */
 		GUIContent(const GUIContentImages& image, const HString& tooltip)
-			: images(image), tooltip(tooltip)
+			: Images(image), Tooltip(tooltip)
 		{ }
 
 		/**	Constructs content with a string and an image. */
 		GUIContent(const HString& text, const GUIContentImages& image)
-			: text(text), images(image)
+			: Text(text), Images(image)
 		{ }
 
 		/**	Constructs content with a string, an image and a tooltip. */
 		GUIContent(const HString& text, const GUIContentImages& image, const HString& tooltip)
-			: text(text), images(image), tooltip(tooltip)
+			: Text(text), Images(image), Tooltip(tooltip)
 		{ }
 
 		/**	Returns image content (if any). */
@@ -94,9 +94,9 @@ namespace bs
 		/**	Determines the spacing between text and image content in pixels. */
 		static const UINT32 IMAGE_TEXT_SPACING;
 
-		HString text;
-		GUIContentImages images;
-		HString tooltip;
+		HString Text;
+		GUIContentImages Images;
+		HString Tooltip;
 	};
 
 	/** @} */

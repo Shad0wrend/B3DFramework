@@ -113,8 +113,8 @@ namespace bs {	namespace ct
 			getBasePassVariation<false>(useForwardRendering, supportsClusteredForward, shaderCanWriteVelocity, animType);
 		
 		FIND_TECHNIQUE_DESC findDesc;
-		findDesc.variation = variation;
-		findDesc.override = true;
+		findDesc.Variation = variation;
+		findDesc.Override = true;
 
 		UINT32 techniqueIdx = material.FindTechnique(findDesc);
 
@@ -179,10 +179,10 @@ namespace bs {	namespace ct
 
 	RendererScene::~RendererScene()
 	{
-		for (auto& entry : mInfo.renderables)
+		for (auto& entry : mInfo.Renderables)
 			bs_delete(entry);
 
-		for (auto& entry : mInfo.views)
+		for (auto& entry : mInfo.Views)
 			bs_delete(entry);
 
 		assert(mSamplerOverrides.empty());
@@ -196,10 +196,10 @@ namespace bs {	namespace ct
 		view->SetRenderSettings(camera->GetRenderSettings());
 		view->UpdatePerViewBuffer();
 
-		UINT32 viewIdx = (UINT32)mInfo.views.size();
-		mInfo.views.push_back(view);
+		UINT32 viewIdx = (UINT32)mInfo.Views.size();
+		mInfo.Views.push_back(view);
 
-		mInfo.cameraToView[camera] = viewIdx;
+		mInfo.CameraToView[camera] = viewIdx;
 		camera->SetRendererId(viewIdx);
 
 		UpdateCameraRenderTargets(camera);
@@ -208,7 +208,7 @@ namespace bs {	namespace ct
 	void RendererScene::UpdateCamera(Camera* camera, UINT32 updateFlag)
 	{
 		UINT32 cameraId = camera->GetRendererId();
-		RendererView* view = mInfo.views[cameraId];
+		RendererView* view = mInfo.Views[cameraId];
 
 		if ((updateFlag & (UINT32)CameraDirtyFlag::Redraw) != 0)
 			view->NotifyNeedsRedrawInternal();
@@ -246,27 +246,27 @@ namespace bs {	namespace ct
 	{
 		UINT32 cameraId = camera->GetRendererId();
 
-		Camera* lastCamera = mInfo.views.back()->GetSceneCamera();
+		Camera* lastCamera = mInfo.Views.back()->GetSceneCamera();
 		UINT32 lastCameraId = lastCamera->GetRendererId();
 		
 		if (cameraId != lastCameraId)
 		{
 			// Swap current last element with the one we want to erase
-			std::swap(mInfo.views[cameraId], mInfo.views[lastCameraId]);
+			std::swap(mInfo.Views[cameraId], mInfo.Views[lastCameraId]);
 			lastCamera->SetRendererId(cameraId);
 
-			mInfo.cameraToView[lastCamera] = cameraId;
+			mInfo.CameraToView[lastCamera] = cameraId;
 		}
 		
 		// Last element is the one we want to erase
-		RendererView* view = mInfo.views[mInfo.views.size() - 1];
+		RendererView* view = mInfo.Views[mInfo.Views.size() - 1];
 		bs_delete(view);
 
-		mInfo.views.erase(mInfo.views.end() - 1);
+		mInfo.Views.erase(mInfo.Views.end() - 1);
 
-		auto iterFind = mInfo.cameraToView.find(camera);
-		if(iterFind != mInfo.cameraToView.end())
-			mInfo.cameraToView.erase(iterFind);
+		auto iterFind = mInfo.CameraToView.find(camera);
+		if(iterFind != mInfo.CameraToView.end())
+			mInfo.CameraToView.erase(iterFind);
 
 		UpdateCameraRenderTargets(camera, true);
 	}
@@ -275,28 +275,28 @@ namespace bs {	namespace ct
 	{
 		if (light->GetType() == LightType::Directional)
 		{
-			UINT32 lightId = (UINT32)mInfo.directionalLights.size();
+			UINT32 lightId = (UINT32)mInfo.DirectionalLights.size();
 			light->SetRendererId(lightId);
 
-			mInfo.directionalLights.push_back(RendererLight(light));
+			mInfo.DirectionalLights.push_back(RendererLight(light));
 		}
 		else
 		{
 			if (light->GetType() == LightType::Radial)
 			{
-				UINT32 lightId = (UINT32)mInfo.radialLights.size();
+				UINT32 lightId = (UINT32)mInfo.RadialLights.size();
 				light->SetRendererId(lightId);
 
-				mInfo.radialLights.push_back(RendererLight(light));
-				mInfo.radialLightWorldBounds.push_back(light->GetBounds());
+				mInfo.RadialLights.push_back(RendererLight(light));
+				mInfo.RadialLightWorldBounds.push_back(light->GetBounds());
 			}
 			else // Spot
 			{
-				UINT32 lightId = (UINT32)mInfo.spotLights.size();
+				UINT32 lightId = (UINT32)mInfo.SpotLights.size();
 				light->SetRendererId(lightId);
 
-				mInfo.spotLights.push_back(RendererLight(light));
-				mInfo.spotLightWorldBounds.push_back(light->GetBounds());
+				mInfo.SpotLights.push_back(RendererLight(light));
+				mInfo.SpotLightWorldBounds.push_back(light->GetBounds());
 			}
 		}
 	}
@@ -306,9 +306,9 @@ namespace bs {	namespace ct
 		UINT32 lightId = light->GetRendererId();
 
 		if (light->GetType() == LightType::Radial)
-			mInfo.radialLightWorldBounds[lightId] = light->GetBounds();
+			mInfo.RadialLightWorldBounds[lightId] = light->GetBounds();
 		else if(light->GetType() == LightType::Spot)
-			mInfo.spotLightWorldBounds[lightId] = light->GetBounds();
+			mInfo.SpotLightWorldBounds[lightId] = light->GetBounds();
 	}
 
 	void RendererScene::UnregisterLight(Light* light)
@@ -316,184 +316,184 @@ namespace bs {	namespace ct
 		UINT32 lightId = light->GetRendererId();
 		if (light->GetType() == LightType::Directional)
 		{
-			Light* lastLight = mInfo.directionalLights.back().internal;
+			Light* lastLight = mInfo.DirectionalLights.back().Internal;
 			UINT32 lastLightId = lastLight->GetRendererId();
 
 			if (lightId != lastLightId)
 			{
 				// Swap current last element with the one we want to erase
-				std::swap(mInfo.directionalLights[lightId], mInfo.directionalLights[lastLightId]);
+				std::swap(mInfo.DirectionalLights[lightId], mInfo.DirectionalLights[lastLightId]);
 				lastLight->SetRendererId(lightId);
 			}
 
 			// Last element is the one we want to erase
-			mInfo.directionalLights.erase(mInfo.directionalLights.end() - 1);
+			mInfo.DirectionalLights.erase(mInfo.DirectionalLights.end() - 1);
 		}
 		else
 		{
 			if (light->GetType() == LightType::Radial)
 			{
-				Light* lastLight = mInfo.radialLights.back().internal;
+				Light* lastLight = mInfo.RadialLights.back().Internal;
 				UINT32 lastLightId = lastLight->GetRendererId();
 
 				if (lightId != lastLightId)
 				{
 					// Swap current last element with the one we want to erase
-					std::swap(mInfo.radialLights[lightId], mInfo.radialLights[lastLightId]);
-					std::swap(mInfo.radialLightWorldBounds[lightId], mInfo.radialLightWorldBounds[lastLightId]);
+					std::swap(mInfo.RadialLights[lightId], mInfo.RadialLights[lastLightId]);
+					std::swap(mInfo.RadialLightWorldBounds[lightId], mInfo.RadialLightWorldBounds[lastLightId]);
 
 					lastLight->SetRendererId(lightId);
 				}
 
 				// Last element is the one we want to erase
-				mInfo.radialLights.erase(mInfo.radialLights.end() - 1);
-				mInfo.radialLightWorldBounds.erase(mInfo.radialLightWorldBounds.end() - 1);
+				mInfo.RadialLights.erase(mInfo.RadialLights.end() - 1);
+				mInfo.RadialLightWorldBounds.erase(mInfo.RadialLightWorldBounds.end() - 1);
 			}
 			else // Spot
 			{
-				Light* lastLight = mInfo.spotLights.back().internal;
+				Light* lastLight = mInfo.SpotLights.back().Internal;
 				UINT32 lastLightId = lastLight->GetRendererId();
 
 				if (lightId != lastLightId)
 				{
 					// Swap current last element with the one we want to erase
-					std::swap(mInfo.spotLights[lightId], mInfo.spotLights[lastLightId]);
-					std::swap(mInfo.spotLightWorldBounds[lightId], mInfo.spotLightWorldBounds[lastLightId]);
+					std::swap(mInfo.SpotLights[lightId], mInfo.SpotLights[lastLightId]);
+					std::swap(mInfo.SpotLightWorldBounds[lightId], mInfo.SpotLightWorldBounds[lastLightId]);
 
 					lastLight->SetRendererId(lightId);
 				}
 
 				// Last element is the one we want to erase
-				mInfo.spotLights.erase(mInfo.spotLights.end() - 1);
-				mInfo.spotLightWorldBounds.erase(mInfo.spotLightWorldBounds.end() - 1);
+				mInfo.SpotLights.erase(mInfo.SpotLights.end() - 1);
+				mInfo.SpotLightWorldBounds.erase(mInfo.SpotLightWorldBounds.end() - 1);
 			}
 		}
 	}
 
 	void RendererScene::RegisterRenderable(Renderable* renderable)
 	{
-		UINT32 renderableId = (UINT32)mInfo.renderables.size();
+		UINT32 renderableId = (UINT32)mInfo.Renderables.size();
 
 		renderable->SetRendererId(renderableId);
 
-		mInfo.renderables.push_back(bs_new<RendererRenderable>());
-		mInfo.renderableCullInfos.push_back(CullInfo(renderable->GetBounds(), renderable->GetLayer(), renderable->GetCullDistanceFactor()));
+		mInfo.Renderables.push_back(bs_new<RendererRenderable>());
+		mInfo.RenderableCullInfos.push_back(CullInfo(renderable->GetBounds(), renderable->GetLayer(), renderable->GetCullDistanceFactor()));
 
-		RendererRenderable* rendererRenderable = mInfo.renderables.back();
-		rendererRenderable->renderable = renderable;
-		rendererRenderable->worldTfrm = renderable->GetMatrix();
-		rendererRenderable->prevWorldTfrm = rendererRenderable->worldTfrm;
-		rendererRenderable->prevFrameDirtyState = PrevFrameDirtyState::Clean;
+		RendererRenderable* rendererRenderable = mInfo.Renderables.back();
+		rendererRenderable->Renderable = renderable;
+		rendererRenderable->WorldTfrm = renderable->GetMatrix();
+		rendererRenderable->PrevWorldTfrm = rendererRenderable->WorldTfrm;
+		rendererRenderable->PrevFrameDirtyState = PrevFrameDirtyState::Clean;
 		rendererRenderable->UpdatePerObjectBuffer();
 
 		SPtr<Mesh> mesh = renderable->GetMesh();
 		if (mesh != nullptr)
 		{
 			const MeshProperties& meshProps = mesh->GetProperties();
-			SPtr<VertexDeclaration> vertexDecl = mesh->GetVertexData()->vertexDeclaration;
+			SPtr<VertexDeclaration> vertexDecl = mesh->GetVertexData()->VertexDeclaration;
 
 			for (UINT32 i = 0; i < meshProps.GetNumSubMeshes(); i++)
 			{
-				rendererRenderable->elements.push_back(RenderableElement());
-				RenderableElement& renElement = rendererRenderable->elements.back();
+				rendererRenderable->Elements.push_back(RenderableElement());
+				RenderableElement& renElement = rendererRenderable->Elements.back();
 
-				renElement.type = (UINT32)RenderElementType::Renderable;
-				renElement.mesh = mesh;
-				renElement.subMesh = meshProps.GetSubMesh(i);
-				renElement.animType = renderable->GetAnimType();
-				renElement.animationId = renderable->GetAnimationId();
-				renElement.morphShapeVersion = 0;
-				renElement.morphShapeBuffer = renderable->GetMorphShapeBuffer();
-				renElement.boneMatrixBuffer = renderable->GetBoneMatrixBuffer();
-				renElement.bonePrevMatrixBuffer = renderable->GetBonePrevMatrixBuffer();
-				renElement.morphVertexDeclaration = renderable->GetMorphVertexDeclaration();
+				renElement.Type = (UINT32)RenderElementType::Renderable;
+				renElement.Mesh = mesh;
+				renElement.SubMesh = meshProps.GetSubMesh(i);
+				renElement.AnimType = renderable->GetAnimType();
+				renElement.AnimationId = renderable->GetAnimationId();
+				renElement.MorphShapeVersion = 0;
+				renElement.MorphShapeBuffer = renderable->GetMorphShapeBuffer();
+				renElement.BoneMatrixBuffer = renderable->GetBoneMatrixBuffer();
+				renElement.BonePrevMatrixBuffer = renderable->GetBonePrevMatrixBuffer();
+				renElement.MorphVertexDeclaration = renderable->GetMorphVertexDeclaration();
 
-				renElement.material = renderable->GetMaterial(i);
-				if (renElement.material == nullptr)
-					renElement.material = renderable->GetMaterial(0);
+				renElement.Material = renderable->GetMaterial(i);
+				if (renElement.Material == nullptr)
+					renElement.Material = renderable->GetMaterial(0);
 
-				if (renElement.material != nullptr && renElement.material->GetShader() == nullptr)
-					renElement.material = nullptr;
+				if (renElement.Material != nullptr && renElement.Material->GetShader() == nullptr)
+					renElement.Material = nullptr;
 
 				// If no material use the default material
-				if (renElement.material == nullptr)
-					renElement.material = Material::Create(DefaultMaterial::Get()->GetShader());
+				if (renElement.Material == nullptr)
+					renElement.Material = Material::Create(DefaultMaterial::Get()->GetShader());
 
 				// Determine which technique to use
 				static_assert((UINT32)RenderableAnimType::Count == 4, "RenderableAnimType is expected to have four sequential entries.");
 
-				const SPtr<Shader>& shader = renElement.material->GetShader();
+				const SPtr<Shader>& shader = renElement.Material->GetShader();
 				ShaderFlags shaderFlags = shader->GetFlags();
 				const bool useForwardRendering = shaderFlags.IsSet(ShaderFlag::Forward) || shaderFlags.IsSet(ShaderFlag::Transparent);
 				bool supportsClusteredForward = gRenderBeast()->GetFeatureSet() == RenderBeastFeatureSet::Desktop;
 
 				const Vector<ShaderVariationParamInfo>& variationParams = shader->GetVariationParams();
 				const bool shaderCanWriteVelocity = std::find_if(variationParams.begin(), variationParams.end(),
-					[](const ShaderVariationParamInfo& x) { return x.identifier == "WRITE_VELOCITY"; }) != variationParams.end();
+					[](const ShaderVariationParamInfo& x) { return x.Identifier == "WRITE_VELOCITY"; }) != variationParams.end();
 				
 				const bool writeVelocity = shaderCanWriteVelocity && renderable->GetWriteVelocity();
 				
 				RenderableAnimType animType = renderable->GetAnimType();
 
-				renElement.defaultTechniqueIdx = initAndRetrieveBasePassTechnique(*renElement.material, useForwardRendering,
+				renElement.DefaultTechniqueIdx = initAndRetrieveBasePassTechnique(*renElement.Material, useForwardRendering,
 					supportsClusteredForward, shaderCanWriteVelocity, false, animType);
 
 #if BS_DEBUG_MODE
-				validateBasePassMaterial(*renElement.material, animType, renElement.defaultTechniqueIdx, *vertexDecl);
+				validateBasePassMaterial(*renElement.Material, animType, renElement.DefaultTechniqueIdx, *vertexDecl);
 #endif
 
 				// Generate or assigned renderer specific data for the material
-				renElement.params = renElement.material->CreateParamsSet(renElement.defaultTechniqueIdx);
-				renElement.material->UpdateParamsSet(renElement.params, 0.0f, true);
+				renElement.Params = renElement.Material->CreateParamsSet(renElement.DefaultTechniqueIdx);
+				renElement.Material->UpdateParamsSet(renElement.Params, 0.0f, true);
 
 				if (writeVelocity)
 				{
-					renElement.writeVelocityTechniqueIdx = initAndRetrieveBasePassTechnique(*renElement.material, useForwardRendering,
+					renElement.WriteVelocityTechniqueIdx = initAndRetrieveBasePassTechnique(*renElement.Material, useForwardRendering,
 						supportsClusteredForward, shaderCanWriteVelocity, true, animType);
 
 #if BS_DEBUG_MODE
-					validateBasePassMaterial(*renElement.material, animType, renElement.writeVelocityTechniqueIdx, *vertexDecl);
+					validateBasePassMaterial(*renElement.Material, animType, renElement.WriteVelocityTechniqueIdx, *vertexDecl);
 #endif
 
 					// Note: Using the same params as the non-velocity technique. There are assumed to be no differences
 				}
 				else
-					renElement.writeVelocityTechniqueIdx = (UINT32)-1;
+					renElement.WriteVelocityTechniqueIdx = (UINT32)-1;
 				
 				// Generate or assign sampler state overrides
-				renElement.samplerOverrides = AllocSamplerStateOverrides(renElement);
+				renElement.SamplerOverrides = AllocSamplerStateOverrides(renElement);
 			}
 		}
 
 		// Prepare all parameter bindings
-		for(auto& element : rendererRenderable->elements)
+		for(auto& element : rendererRenderable->Elements)
 		{
-			SPtr<Shader> shader = element.material->GetShader();
+			SPtr<Shader> shader = element.Material->GetShader();
 			if (shader == nullptr)
 			{
 				BS_LOG(Warning, Renderer, "Missing shader on material.");
 				continue;
 			}
 
-			SPtr<GpuParams> gpuParams = element.params->GetGpuParams();
+			SPtr<GpuParams> gpuParams = element.Params->GetGpuParams();
 
 			// Note: Perhaps perform buffer validation to ensure expected buffer has the same size and layout as the
 			// provided buffer, and show a warning otherwise. But this is perhaps better handled on a higher level.
 			gpuParams->SetParamBlockBuffer("PerFrame", mPerFrameParamBuffer);
-			gpuParams->SetParamBlockBuffer("PerObject", rendererRenderable->perObjectParamBuffer);
-			gpuParams->SetParamBlockBuffer("PerCall", rendererRenderable->perCallParamBuffer);
+			gpuParams->SetParamBlockBuffer("PerObject", rendererRenderable->PerObjectParamBuffer);
+			gpuParams->SetParamBlockBuffer("PerCall", rendererRenderable->PerCallParamBuffer);
 
 			gpuParams->GetParamInfo()->GetBindings(
 				GpuPipelineParamInfoBase::ParamType::ParamBlock,
 				"PerCamera",
-				element.perCameraBindings
+				element.PerCameraBindings
 			);
 
 			if (gpuParams->HasBuffer(GPT_VERTEX_PROGRAM, "boneMatrices"))
-				gpuParams->SetBuffer(GPT_VERTEX_PROGRAM, "boneMatrices", element.boneMatrixBuffer);
+				gpuParams->SetBuffer(GPT_VERTEX_PROGRAM, "boneMatrices", element.BoneMatrixBuffer);
 
 			if (gpuParams->HasBuffer(GPT_VERTEX_PROGRAM, "prevBoneMatrices"))
-				gpuParams->SetBuffer(GPT_VERTEX_PROGRAM, "prevBoneMatrices", element.bonePrevMatrixBuffer);
+				gpuParams->SetBuffer(GPT_VERTEX_PROGRAM, "prevBoneMatrices", element.BonePrevMatrixBuffer);
 
 			ShaderFlags shaderFlags = shader->GetFlags();
 			const bool useForwardRendering = shaderFlags.IsSet(ShaderFlag::Forward) || shaderFlags.IsSet(ShaderFlag::Transparent);
@@ -502,8 +502,8 @@ namespace bs {	namespace ct
 			{
 				const bool supportsClusteredForward = gRenderBeast()->GetFeatureSet() == RenderBeastFeatureSet::Desktop;
 
-				element.forwardLightingParams.Populate(gpuParams, supportsClusteredForward);
-				element.imageBasedParams.Populate(gpuParams, GPT_FRAGMENT_PROGRAM, true, supportsClusteredForward,
+				element.ForwardLightingParams.Populate(gpuParams, supportsClusteredForward);
+				element.ImageBasedParams.Populate(gpuParams, GPT_FRAGMENT_PROGRAM, true, supportsClusteredForward,
 					supportsClusteredForward);
 			}
 		}
@@ -513,79 +513,79 @@ namespace bs {	namespace ct
 	{
 		UINT32 renderableId = renderable->GetRendererId();
 
-		RendererRenderable* rendererRenderable = mInfo.renderables[renderableId];
+		RendererRenderable* rendererRenderable = mInfo.Renderables[renderableId];
 
-		if(rendererRenderable->prevFrameDirtyState != PrevFrameDirtyState::Updated)
-			rendererRenderable->prevWorldTfrm = rendererRenderable->worldTfrm;
+		if(rendererRenderable->PrevFrameDirtyState != PrevFrameDirtyState::Updated)
+			rendererRenderable->PrevWorldTfrm = rendererRenderable->WorldTfrm;
 
-		rendererRenderable->worldTfrm = renderable->GetMatrix();
-		rendererRenderable->prevFrameDirtyState = PrevFrameDirtyState::Updated;
+		rendererRenderable->WorldTfrm = renderable->GetMatrix();
+		rendererRenderable->PrevFrameDirtyState = PrevFrameDirtyState::Updated;
 
-		mInfo.renderables[renderableId]->UpdatePerObjectBuffer();
-		mInfo.renderableCullInfos[renderableId].bounds = renderable->GetBounds();
-		mInfo.renderableCullInfos[renderableId].cullDistanceFactor = renderable->GetCullDistanceFactor();
+		mInfo.Renderables[renderableId]->UpdatePerObjectBuffer();
+		mInfo.RenderableCullInfos[renderableId].Bounds = renderable->GetBounds();
+		mInfo.RenderableCullInfos[renderableId].CullDistanceFactor = renderable->GetCullDistanceFactor();
 	}
 
 	void RendererScene::UnregisterRenderable(Renderable* renderable)
 	{
 		UINT32 renderableId = renderable->GetRendererId();
-		Renderable* lastRenerable = mInfo.renderables.back()->renderable;
+		Renderable* lastRenerable = mInfo.Renderables.back()->Renderable;
 		UINT32 lastRenderableId = lastRenerable->GetRendererId();
 
-		RendererRenderable* rendererRenderable = mInfo.renderables[renderableId];
-		Vector<RenderableElement>& elements = rendererRenderable->elements;
+		RendererRenderable* rendererRenderable = mInfo.Renderables[renderableId];
+		Vector<RenderableElement>& elements = rendererRenderable->Elements;
 		for (auto& element : elements)
 		{
 			FreeSamplerStateOverrides(element);
-			element.samplerOverrides = nullptr;
+			element.SamplerOverrides = nullptr;
 		}
 
 		if (renderableId != lastRenderableId)
 		{
 			// Swap current last element with the one we want to erase
-			std::swap(mInfo.renderables[renderableId], mInfo.renderables[lastRenderableId]);
-			std::swap(mInfo.renderableCullInfos[renderableId], mInfo.renderableCullInfos[lastRenderableId]);
+			std::swap(mInfo.Renderables[renderableId], mInfo.Renderables[lastRenderableId]);
+			std::swap(mInfo.RenderableCullInfos[renderableId], mInfo.RenderableCullInfos[lastRenderableId]);
 
 			lastRenerable->SetRendererId(renderableId);
 		}
 
 		// Last element is the one we want to erase
-		mInfo.renderables.erase(mInfo.renderables.end() - 1);
-		mInfo.renderableCullInfos.erase(mInfo.renderableCullInfos.end() - 1);
+		mInfo.Renderables.erase(mInfo.Renderables.end() - 1);
+		mInfo.RenderableCullInfos.erase(mInfo.RenderableCullInfos.end() - 1);
 
 		bs_delete(rendererRenderable);
 	}
 
 	void RendererScene::RegisterReflectionProbe(ReflectionProbe* probe)
 	{
-		UINT32 probeId = (UINT32)mInfo.reflProbes.size();
+		UINT32 probeId = (UINT32)mInfo.ReflProbes.size();
 		probe->SetRendererId(probeId);
 
-		mInfo.reflProbes.push_back(RendererReflectionProbe(probe));
-		RendererReflectionProbe& probeInfo = mInfo.reflProbes.back();
+		mInfo.ReflProbes.push_back(RendererReflectionProbe(probe));
+		RendererReflectionProbe& probeInfo = mInfo.ReflProbes.back();
 
-		mInfo.reflProbeWorldBounds.push_back(probe->GetBounds());
+		mInfo.ReflProbeWorldBounds.push_back(probe->GetBounds());
 
 		// Find a spot in cubemap array
-		UINT32 numArrayEntries = (UINT32)mInfo.reflProbeCubemapArrayUsedSlots.size();
+		UINT32 numArrayEntries = (UINT32)mInfo.ReflProbeCubemapArrayUsedSlots.size();
 		for(UINT32 i = 0; i < numArrayEntries; i++)
 		{
-			if(!mInfo.reflProbeCubemapArrayUsedSlots[i])
+			if(!mInfo.ReflProbeCubemapArrayUsedSlots[i])
 			{
 				SetReflectionProbeArrayIndex(probeId, i, false);
-				mInfo.reflProbeCubemapArrayUsedSlots[i] = true;
+				mInfo.ReflProbeCubemapArrayUsedSlots[i] = true;
 				break;
 			}
 		}
 
 		// No empty slot was found
-		if (probeInfo.arrayIdx == (UINT32)-1)
+		if (probeInfo.ArrayIdx == (UINT32)-1)
 		{
 			SetReflectionProbeArrayIndex(probeId, numArrayEntries, false);
-			mInfo.reflProbeCubemapArrayUsedSlots.push_back(true);
+			mInfo.ReflProbeCubemapArrayUsedSlots.push_back(true);
 		}
 
-		if(probeInfo.arrayIdx > MaxReflectionCubemaps)
+		if(probeInfo.ArrayIdx > MaxReflectionCubemaps)
 		{
 			BS_LOG(Error, Renderer, "Reached the maximum number of allowed reflection probe cubemaps at once. "
 				"Ignoring reflection probe data.");
@@ -596,113 +596,113 @@ namespace bs {	namespace ct
 	{
 		// Should only get called if transform changes, any other major changes and ReflProbeInfo entry gets rebuild
 		UINT32 probeId = probe->GetRendererId();
-		mInfo.reflProbeWorldBounds[probeId] = probe->GetBounds();
+		mInfo.ReflProbeWorldBounds[probeId] = probe->GetBounds();
 
 		if (texture)
 		{
-			RendererReflectionProbe& probeInfo = mInfo.reflProbes[probeId];
-			probeInfo.arrayDirty = true;
+			RendererReflectionProbe& probeInfo = mInfo.ReflProbes[probeId];
+			probeInfo.ArrayDirty = true;
 		}
 	}
 
 	void RendererScene::UnregisterReflectionProbe(ReflectionProbe* probe)
 	{
 		UINT32 probeId = probe->GetRendererId();
-		UINT32 arrayIdx = mInfo.reflProbes[probeId].arrayIdx;
+		UINT32 arrayIdx = mInfo.ReflProbes[probeId].ArrayIdx;
 
 		if (arrayIdx != (UINT32)-1)
-			mInfo.reflProbeCubemapArrayUsedSlots[arrayIdx] = false;
+			mInfo.ReflProbeCubemapArrayUsedSlots[arrayIdx] = false;
 
-		ReflectionProbe* lastProbe = mInfo.reflProbes.back().probe;
+		ReflectionProbe* lastProbe = mInfo.ReflProbes.back().Probe;
 		UINT32 lastProbeId = lastProbe->GetRendererId();
 
 		if (probeId != lastProbeId)
 		{
 			// Swap current last element with the one we want to erase
-			std::swap(mInfo.reflProbes[probeId], mInfo.reflProbes[lastProbeId]);
-			std::swap(mInfo.reflProbeWorldBounds[probeId], mInfo.reflProbeWorldBounds[lastProbeId]);
+			std::swap(mInfo.ReflProbes[probeId], mInfo.ReflProbes[lastProbeId]);
+			std::swap(mInfo.ReflProbeWorldBounds[probeId], mInfo.ReflProbeWorldBounds[lastProbeId]);
 
 			lastProbe->SetRendererId(probeId);
 		}
 
 		// Last element is the one we want to erase
-		mInfo.reflProbes.erase(mInfo.reflProbes.end() - 1);
-		mInfo.reflProbeWorldBounds.erase(mInfo.reflProbeWorldBounds.end() - 1);
+		mInfo.ReflProbes.erase(mInfo.ReflProbes.end() - 1);
+		mInfo.ReflProbeWorldBounds.erase(mInfo.ReflProbeWorldBounds.end() - 1);
 	}
 
 	void RendererScene::SetReflectionProbeArrayIndex(UINT32 probeIdx, UINT32 arrayIdx, bool markAsClean)
 	{
-		RendererReflectionProbe* probe = &mInfo.reflProbes[probeIdx];
-		probe->arrayIdx = arrayIdx;
+		RendererReflectionProbe* probe = &mInfo.ReflProbes[probeIdx];
+		probe->ArrayIdx = arrayIdx;
 
 		if (markAsClean)
-			probe->arrayDirty = false;
+			probe->ArrayDirty = false;
 	}
 
 	void RendererScene::RegisterLightProbeVolume(LightProbeVolume* volume)
 	{
-		mInfo.lightProbes.NotifyAdded(volume);
+		mInfo.LightProbes.NotifyAdded(volume);
 	}
 
 	void RendererScene::UpdateLightProbeVolume(LightProbeVolume* volume)
 	{
-		mInfo.lightProbes.NotifyDirty(volume);
+		mInfo.LightProbes.NotifyDirty(volume);
 	}
 
 	void RendererScene::UnregisterLightProbeVolume(LightProbeVolume* volume)
 	{
-		mInfo.lightProbes.NotifyRemoved(volume);
+		mInfo.LightProbes.NotifyRemoved(volume);
 	}
 
 	void RendererScene::UpdateLightProbes()
 	{
-		mInfo.lightProbes.UpdateProbes();
+		mInfo.LightProbes.UpdateProbes();
 	}
 
 	void RendererScene::RegisterSkybox(Skybox* skybox)
 	{
-		mInfo.skybox = skybox;
+		mInfo.Skybox = skybox;
 	}
 
 	void RendererScene::UnregisterSkybox(Skybox* skybox)
 	{
-		if (mInfo.skybox == skybox)
-			mInfo.skybox = nullptr;
+		if (mInfo.Skybox == skybox)
+			mInfo.Skybox = nullptr;
 	}
 
 	void RendererScene::RegisterParticleSystem(ParticleSystem* particleSystem)
 	{
-		const auto rendererId = (UINT32)mInfo.particleSystems.size();
+		const auto rendererId = (UINT32)mInfo.ParticleSystems.size();
 		particleSystem->SetRendererId(rendererId);
 
-		mInfo.particleSystems.push_back(RendererParticles());
-		mInfo.particleSystemCullInfos.push_back(CullInfo(Bounds(), particleSystem->GetLayer()));
+		mInfo.ParticleSystems.push_back(RendererParticles());
+		mInfo.ParticleSystemCullInfos.push_back(CullInfo(Bounds(), particleSystem->GetLayer()));
 
-		RendererParticles& rendererParticles = mInfo.particleSystems.back();
-		rendererParticles.particleSystem = particleSystem;
+		RendererParticles& rendererParticles = mInfo.ParticleSystems.back();
+		rendererParticles.ParticleSystem = particleSystem;
 
 		UpdateParticleSystem(particleSystem, false);
 
-		rendererParticles.prevLocalToWorld = rendererParticles.localToWorld;
-		rendererParticles.prevFrameDirtyState = PrevFrameDirtyState::Clean;
+		rendererParticles.PrevLocalToWorld = rendererParticles.LocalToWorld;
+		rendererParticles.PrevFrameDirtyState = PrevFrameDirtyState::Clean;
 	}
 
 	void RendererScene::UpdateParticleSystem(ParticleSystem* particleSystem, bool tfrmOnly)
 	{
 		const UINT32 rendererId = particleSystem->GetRendererId();
-		RendererParticles& rendererParticles = mInfo.particleSystems[rendererId];
+		RendererParticles& rendererParticles = mInfo.ParticleSystems[rendererId];
 
-		rendererParticles.prevLocalToWorld = rendererParticles.localToWorld;
-		rendererParticles.prevFrameDirtyState = PrevFrameDirtyState::Updated;
+		rendererParticles.PrevLocalToWorld = rendererParticles.LocalToWorld;
+		rendererParticles.PrevFrameDirtyState = PrevFrameDirtyState::Updated;
 
 		const ParticleSystemSettings& settings = particleSystem->GetSettings();
-		if (settings.simulationSpace == ParticleSimulationSpace::Local)
+		if (settings.SimulationSpace == ParticleSimulationSpace::Local)
 		{
 			const Transform& tfrm = particleSystem->GetTransform();
-			rendererParticles.localToWorld = tfrm.GetMatrix();
+			rendererParticles.LocalToWorld = tfrm.GetMatrix();
 		}
 		else
-			rendererParticles.localToWorld = Matrix4::IDENTITY;
+			rendererParticles.LocalToWorld = Matrix4::IDENTITY;
 
 		if(tfrmOnly)
 		{
@@ -710,13 +710,13 @@ namespace bs {	namespace ct
 			return;
 		}
 
-		rendererParticles.perObjectParamBuffer = gPerObjectParamDef.CreateBuffer();
+		rendererParticles.PerObjectParamBuffer = gPerObjectParamDef.CreateBuffer();
 		rendererParticles.UpdatePerObjectBuffer();
 
 		SPtr<GpuParamBlockBuffer> particlesParamBuffer = gParticlesParamDef.CreateBuffer();
-		rendererParticles.particlesParamBuffer = particlesParamBuffer;
+		rendererParticles.ParticlesParamBuffer = particlesParamBuffer;
 
-		Vector3 axisForward = settings.orientationPlaneNormal;
+		Vector3 axisForward = settings.OrientationPlaneNormal;
 
 		Vector3 axisUp = Vector3::UNIT_Y;
 		if (axisForward.Dot(axisUp) > 0.9998f)
@@ -729,40 +729,40 @@ namespace bs {	namespace ct
 		gParticlesParamDef.gAxisRight.Set(particlesParamBuffer, axisRight);
 
 		// Initialize the variant of the particle system for GPU simulation, if needed
-		if (settings.gpuSimulation)
+		if (settings.GpuSimulation)
 		{
-			if (!rendererParticles.gpuParticleSystem)
-				rendererParticles.gpuParticleSystem = bs_pool_new<GpuParticleSystem>(particleSystem);
+			if (!rendererParticles.GpuParticleSystem)
+				rendererParticles.GpuParticleSystem = bs_pool_new<GpuParticleSystem>(particleSystem);
 		}
 		else
 		{
-			if (rendererParticles.gpuParticleSystem)
+			if (rendererParticles.GpuParticleSystem)
 			{
-				bs_pool_delete(rendererParticles.gpuParticleSystem);
-				rendererParticles.gpuParticleSystem = nullptr;
+				bs_pool_delete(rendererParticles.GpuParticleSystem);
+				rendererParticles.GpuParticleSystem = nullptr;
 			}
 		}
 
-		ParticlesRenderElement& renElement = rendererParticles.renderElement;
-		renElement.type = (UINT32)RenderElementType::Particle;
+		ParticlesRenderElement& renElement = rendererParticles.RenderElement;
+		renElement.Type = (UINT32)RenderElementType::Particle;
 
-		renElement.material = settings.material;
+		renElement.Material = settings.Material;
 
-		if (renElement.material != nullptr && renElement.material->GetShader() == nullptr)
-			renElement.material = nullptr;
+		if (renElement.Material != nullptr && renElement.Material->GetShader() == nullptr)
+			renElement.Material = nullptr;
 
 		// If no material use the default material
-		if (renElement.material == nullptr)
-			renElement.material = Material::Create(DefaultParticlesMat::Get()->GetShader());
+		if (renElement.Material == nullptr)
+			renElement.Material = Material::Create(DefaultParticlesMat::Get()->GetShader());
 
-		const SPtr<Shader> shader = renElement.material->GetShader();
+		const SPtr<Shader> shader = renElement.Material->GetShader();
 
 		SpriteTexture* spriteTexture = nullptr;
 		if (shader->HasTextureParam("gTexture"))
-			spriteTexture = renElement.material->GetSpriteTexture("gTexture").get();
+			spriteTexture = renElement.Material->GetSpriteTexture("gTexture").get();
 
 		if(!spriteTexture && shader->HasTextureParam("gAlbedoTex"))
-			spriteTexture = renElement.material->GetSpriteTexture("gAlbedoTex").get();
+			spriteTexture = renElement.Material->GetSpriteTexture("gAlbedoTex").get();
 
 		if (spriteTexture)
 		{
@@ -771,7 +771,7 @@ namespace bs {	namespace ct
 
 			const SpriteSheetGridAnimation& anim = spriteTexture->GetAnimation();
 			gParticlesParamDef.gSubImageSize.Set(particlesParamBuffer,
-				Vector4((float)anim.numColumns, (float)anim.numRows, 1.0f / anim.numColumns, 1.0f / anim.numRows));
+				Vector4((float)anim.NumColumns, (float)anim.NumRows, 1.0f / anim.NumColumns, 1.0f / anim.NumRows));
 		}
 		else
 		{
@@ -780,10 +780,10 @@ namespace bs {	namespace ct
 			gParticlesParamDef.gSubImageSize.Set(particlesParamBuffer, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 		}
 
-		const ParticleOrientation orientation = settings.orientation;
-		const bool lockY = settings.orientationLockY;
-		const bool gpu = settings.gpuSimulation;
-		const bool is3d = settings.renderMode == ParticleRenderMode::Mesh;
+		const ParticleOrientation orientation = settings.Orientation;
+		const bool lockY = settings.OrientationLockY;
+		const bool gpu = settings.GpuSimulation;
+		const bool is3d = settings.RenderMode == ParticleRenderMode::Mesh;
 
 		ShaderFlags shaderFlags = shader->GetFlags();
 		const bool requiresForwardLighting = shaderFlags.IsSet(ShaderFlag::Forward);
@@ -802,93 +802,93 @@ namespace bs {	namespace ct
 		const ShaderVariation* variation = &getParticleShaderVariation(orientation, lockY, gpu, is3d, forwardLightingType);
 
 		FIND_TECHNIQUE_DESC findDesc;
-		findDesc.variation = variation;
-		findDesc.override = true;
+		findDesc.Variation = variation;
+		findDesc.Override = true;
 
-		UINT32 techniqueIdx = renElement.material->FindTechnique(findDesc);
+		UINT32 techniqueIdx = renElement.Material->FindTechnique(findDesc);
 
 		if (techniqueIdx == (UINT32)-1)
-			techniqueIdx = renElement.material->GetDefaultTechnique();
+			techniqueIdx = renElement.Material->GetDefaultTechnique();
 
-		renElement.defaultTechniqueIdx = techniqueIdx;
+		renElement.DefaultTechniqueIdx = techniqueIdx;
 
 		// Make sure the technique shaders are compiled
-		const SPtr<Technique>& technique = renElement.material->GetTechnique(techniqueIdx);
+		const SPtr<Technique>& technique = renElement.Material->GetTechnique(techniqueIdx);
 		if (technique)
 			technique->Compile();
 
 		// Generate or assigned renderer specific data for the material
-		renElement.params = renElement.material->CreateParamsSet(techniqueIdx);
-		renElement.material->UpdateParamsSet(renElement.params, 0.0f, true);
+		renElement.Params = renElement.Material->CreateParamsSet(techniqueIdx);
+		renElement.Material->UpdateParamsSet(renElement.Params, 0.0f, true);
 
-		SPtr<GpuParams> gpuParams = renElement.params->GetGpuParams();
+		SPtr<GpuParams> gpuParams = renElement.Params->GetGpuParams();
 
 		if (gpu)
 		{
 			gpuParams->GetTextureParam(GPT_VERTEX_PROGRAM, "gPositionTimeTex",
-				renElement.paramsGPU.positionTimeTexture);
+				renElement.ParamsGpu.PositionTimeTexture);
 			gpuParams->GetTextureParam(GPT_VERTEX_PROGRAM, "gSizeRotationTex",
-				renElement.paramsGPU.sizeRotationTexture);
+				renElement.ParamsGpu.SizeRotationTexture);
 			gpuParams->GetTextureParam(GPT_VERTEX_PROGRAM, "gCurvesTex",
-				renElement.paramsGPU.curvesTexture);
+				renElement.ParamsGpu.CurvesTexture);
 
-			rendererParticles.gpuParticlesParamBuffer = gGpuParticlesParamDef.CreateBuffer();
-			renElement.is3D = false;
+			rendererParticles.GpuParticlesParamBuffer = gGpuParticlesParamDef.CreateBuffer();
+			renElement.Is3D = false;
 		}
 		else
 		{
-			switch (settings.renderMode)
+			switch (settings.RenderMode)
 			{
 			case ParticleRenderMode::Billboard:
 				gpuParams->GetTextureParam(GPT_VERTEX_PROGRAM, "gPositionAndRotTex",
-					renElement.paramsCPUBillboard.positionAndRotTexture);
+					renElement.ParamsCpuBillboard.PositionAndRotTexture);
 				gpuParams->GetTextureParam(GPT_VERTEX_PROGRAM, "gColorTex",
-					renElement.paramsCPUBillboard.colorTexture);
+					renElement.ParamsCpuBillboard.ColorTexture);
 				gpuParams->GetTextureParam(GPT_VERTEX_PROGRAM, "gSizeAndFrameIdxTex",
-					renElement.paramsCPUBillboard.sizeAndFrameIdxTexture);
+					renElement.ParamsCpuBillboard.SizeAndFrameIdxTexture);
 
-				renElement.is3D = false;
+				renElement.Is3D = false;
 				break;
 			case ParticleRenderMode::Mesh:
 				gpuParams->GetTextureParam(GPT_VERTEX_PROGRAM, "gPositionTex",
-					renElement.paramsCPUMesh.positionTexture);
+					renElement.ParamsCpuMesh.PositionTexture);
 				gpuParams->GetTextureParam(GPT_VERTEX_PROGRAM, "gColorTex",
-					renElement.paramsCPUMesh.colorTexture);
+					renElement.ParamsCpuMesh.ColorTexture);
 				gpuParams->GetTextureParam(GPT_VERTEX_PROGRAM, "gSizeTex",
-					renElement.paramsCPUMesh.sizeTexture);
+					renElement.ParamsCpuMesh.SizeTexture);
 				gpuParams->GetTextureParam(GPT_VERTEX_PROGRAM, "gRotationTex",
-					renElement.paramsCPUMesh.rotationTexture);
+					renElement.ParamsCpuMesh.RotationTexture);
 
-				renElement.is3D = true;
-				renElement.mesh = settings.mesh;
+				renElement.Is3D = true;
+				renElement.Mesh = settings.Mesh;
 				break;
 			default:
 				break;
 			}
 
-			rendererParticles.gpuParticlesParamBuffer = nullptr;
+			rendererParticles.GpuParticlesParamBuffer = nullptr;
 		}
 
 		// Note: Perhaps perform buffer validation to ensure expected buffer has the same size and layout as the
 		// provided buffer, and show a warning otherwise. But this is perhaps better handled on a higher level.
-		gpuParams->SetParamBlockBuffer("ParticleParams", rendererParticles.particlesParamBuffer);
-		gpuParams->SetParamBlockBuffer("PerObject", rendererParticles.perObjectParamBuffer);
-		gpuParams->SetParamBlockBuffer("GpuParticleParams", rendererParticles.gpuParticlesParamBuffer);
+		gpuParams->SetParamBlockBuffer("ParticleParams", rendererParticles.ParticlesParamBuffer);
+		gpuParams->SetParamBlockBuffer("PerObject", rendererParticles.PerObjectParamBuffer);
+		gpuParams->SetParamBlockBuffer("GpuParticleParams", rendererParticles.GpuParticlesParamBuffer);
 
-		gpuParams->GetBufferParam(GPT_VERTEX_PROGRAM, "gIndices", renElement.indicesBuffer);
+		gpuParams->GetBufferParam(GPT_VERTEX_PROGRAM, "gIndices", renElement.IndicesBuffer);
 
 		gpuParams->GetParamInfo()->GetBindings(
 			GpuPipelineParamInfoBase::ParamType::ParamBlock,
 			"PerCamera",
-			renElement.perCameraBindings
+			renElement.PerCameraBindings
 		);
 
 		if (gpu)
 		{
 			// Allocate curves
 			GpuParticleCurves& curves = GpuParticleSimulation::Instance().GetResources().GetCurveTexture();
-			curves.Free(rendererParticles.colorCurveAlloc);
-			curves.Free(rendererParticles.sizeScaleFrameIdxCurveAlloc);
+			curves.Free(rendererParticles.ColorCurveAlloc);
+			curves.Free(rendererParticles.SizeScaleFrameIdxCurveAlloc);
 
 			static constexpr UINT32 NUM_CURVE_SAMPLES = 128;
 			Color samples[NUM_CURVE_SAMPLES];
@@ -896,7 +896,7 @@ namespace bs {	namespace ct
 			const ParticleGpuSimulationSettings& gpuSimSettings = particleSystem->GetGpuSimulationSettings();
 
 			// Write color over lifetime curve
-			LookupTable colorLookup = gpuSimSettings.colorOverLifetime.ToLookupTable(NUM_CURVE_SAMPLES, true);
+			LookupTable colorLookup = gpuSimSettings.ColorOverLifetime.ToLookupTable(NUM_CURVE_SAMPLES, true);
 
 			for (UINT32 i = 0; i < NUM_CURVE_SAMPLES; i++)
 			{
@@ -904,10 +904,10 @@ namespace bs {	namespace ct
 				samples[i] = Color(sample[0], sample[1], sample[2], sample[3]);
 			}
 
-			rendererParticles.colorCurveAlloc = curves.Alloc(samples, NUM_CURVE_SAMPLES);
+			rendererParticles.ColorCurveAlloc = curves.Alloc(samples, NUM_CURVE_SAMPLES);
 
 			// Write size over lifetime / sprite animation curve
-			LookupTable sizeLookup = gpuSimSettings.sizeScaleOverLifetime.ToLookupTable(NUM_CURVE_SAMPLES, true);
+			LookupTable sizeLookup = gpuSimSettings.SizeScaleOverLifetime.ToLookupTable(NUM_CURVE_SAMPLES, true);
 
 			float frameSamples[NUM_CURVE_SAMPLES];
 			if (spriteTexture && spriteTexture->GetAnimationPlayback() != SpriteAnimationPlayback::None)
@@ -916,7 +916,7 @@ namespace bs {	namespace ct
 				for (UINT32 i = 0; i < NUM_CURVE_SAMPLES; i++)
 				{
 					const float t = i / (float)(NUM_CURVE_SAMPLES - 1);
-					frameSamples[i] = t * (anim.count - 1);
+					frameSamples[i] = t * (anim.Count - 1);
 				}
 			}
 			else
@@ -928,17 +928,17 @@ namespace bs {	namespace ct
 				samples[i] = Color(sample[0], sample[1], frameSamples[i], 0.0f);
 			}
 
-			rendererParticles.sizeScaleFrameIdxCurveAlloc = curves.Alloc(samples, NUM_CURVE_SAMPLES);
+			rendererParticles.SizeScaleFrameIdxCurveAlloc = curves.Alloc(samples, NUM_CURVE_SAMPLES);
 
-			const Vector2 colorUVOffset = GpuParticleCurves::GetUvOffset(rendererParticles.colorCurveAlloc);
-			const float colorUVScale = GpuParticleCurves::GetUvScale(rendererParticles.colorCurveAlloc);
+			const Vector2 colorUVOffset = GpuParticleCurves::GetUvOffset(rendererParticles.ColorCurveAlloc);
+			const float colorUVScale = GpuParticleCurves::GetUvScale(rendererParticles.ColorCurveAlloc);
 
 			const Vector2 sizeScaleFrameIdxUVOffset =
-				GpuParticleCurves::GetUvOffset(rendererParticles.sizeScaleFrameIdxCurveAlloc);
+				GpuParticleCurves::GetUvOffset(rendererParticles.SizeScaleFrameIdxCurveAlloc);
 			const float sizeScaleFrameIdxUVScale =
-				GpuParticleCurves::GetUvScale(rendererParticles.sizeScaleFrameIdxCurveAlloc);
+				GpuParticleCurves::GetUvScale(rendererParticles.SizeScaleFrameIdxCurveAlloc);
 
-			const SPtr<GpuParamBlockBuffer>& gpuParticlesParamBuffer = rendererParticles.gpuParticlesParamBuffer;
+			const SPtr<GpuParamBlockBuffer>& gpuParticlesParamBuffer = rendererParticles.GpuParticlesParamBuffer;
 			gGpuParticlesParamDef.gColorCurveOffset.Set(gpuParticlesParamBuffer, colorUVOffset);
 			gGpuParticlesParamDef.gColorCurveScale.Set(gpuParticlesParamBuffer, Vector2(colorUVScale, 0.0f));
 			gGpuParticlesParamDef.gSizeScaleFrameIdxCurveOffset.Set(gpuParticlesParamBuffer,
@@ -954,7 +954,7 @@ namespace bs {	namespace ct
 
 				const SpriteSheetGridAnimation& anim = spriteTexture->GetAnimation();
 				gParticlesParamDef.gSubImageSize.Set(particlesParamBuffer,
-					Vector4((float)anim.numColumns, (float)anim.numRows, 1.0f / anim.numColumns, 1.0f / anim.numRows));
+					Vector4((float)anim.NumColumns, (float)anim.NumRows, 1.0f / anim.NumColumns, 1.0f / anim.NumRows));
 			}
 		}
 
@@ -962,8 +962,8 @@ namespace bs {	namespace ct
 		const bool useForwardRendering = shaderFlags.IsSet(ShaderFlag::Forward);
 		if (useForwardRendering)
 		{
-			renElement.forwardLightingParams.Populate(gpuParams, supportsClusteredForward);
-			renElement.imageBasedParams.Populate(gpuParams, GPT_FRAGMENT_PROGRAM, true, supportsClusteredForward,
+			renElement.ForwardLightingParams.Populate(gpuParams, supportsClusteredForward);
+			renElement.ImageBasedParams.Populate(gpuParams, GPT_FRAGMENT_PROGRAM, true, supportsClusteredForward,
 				supportsClusteredForward);
 		}
 
@@ -972,163 +972,163 @@ namespace bs {	namespace ct
 		{
 			// Optional depth buffer input if requested
 			if (gpuParams->HasTexture(GPT_FRAGMENT_PROGRAM, "gDepthBufferTex"))
-				gpuParams->GetTextureParam(GPT_FRAGMENT_PROGRAM, "gDepthBufferTex", renElement.depthInputTexture);
+				gpuParams->GetTextureParam(GPT_FRAGMENT_PROGRAM, "gDepthBufferTex", renElement.DepthInputTexture);
 		}
 	}
 
 	void RendererScene::UnregisterParticleSystem(ParticleSystem* particleSystem)
 	{
 		const UINT32 rendererId = particleSystem->GetRendererId();
-		RendererParticles& rendererParticles = mInfo.particleSystems[rendererId];
+		RendererParticles& rendererParticles = mInfo.ParticleSystems[rendererId];
 
 		// Free curves
 		GpuParticleCurves& curves = GpuParticleSimulation::Instance().GetResources().GetCurveTexture();
-		curves.Free(rendererParticles.colorCurveAlloc);
-		curves.Free(rendererParticles.sizeScaleFrameIdxCurveAlloc);
+		curves.Free(rendererParticles.ColorCurveAlloc);
+		curves.Free(rendererParticles.SizeScaleFrameIdxCurveAlloc);
 
-		if (rendererParticles.gpuParticleSystem)
+		if (rendererParticles.GpuParticleSystem)
 		{
-			bs_pool_delete(rendererParticles.gpuParticleSystem);
-			rendererParticles.gpuParticleSystem = nullptr;
+			bs_pool_delete(rendererParticles.GpuParticleSystem);
+			rendererParticles.GpuParticleSystem = nullptr;
 		}
 
-		ParticleSystem* lastSystem = mInfo.particleSystems.back().particleSystem;
+		ParticleSystem* lastSystem = mInfo.ParticleSystems.back().ParticleSystem;
 		const UINT32 lastRendererId = lastSystem->GetRendererId();
 
 		if (rendererId != lastRendererId)
 		{
 			// Swap current last element with the one we want to erase
-			std::swap(mInfo.particleSystems[rendererId], mInfo.particleSystems[lastRendererId]);
-			std::swap(mInfo.particleSystemCullInfos[rendererId], mInfo.particleSystemCullInfos[lastRendererId]);
+			std::swap(mInfo.ParticleSystems[rendererId], mInfo.ParticleSystems[lastRendererId]);
+			std::swap(mInfo.ParticleSystemCullInfos[rendererId], mInfo.ParticleSystemCullInfos[lastRendererId]);
 
 			lastSystem->SetRendererId(rendererId);
 		}
 
 		// Last element is the one we want to erase
-		mInfo.particleSystems.erase(mInfo.particleSystems.end() - 1);
-		mInfo.particleSystemCullInfos.erase(mInfo.particleSystemCullInfos.end() - 1);
+		mInfo.ParticleSystems.erase(mInfo.ParticleSystems.end() - 1);
+		mInfo.ParticleSystemCullInfos.erase(mInfo.ParticleSystemCullInfos.end() - 1);
 	}
 
 	void RendererScene::RegisterDecal(Decal* decal)
 	{
-		const auto renderableId = (UINT32)mInfo.decals.size();
+		const auto renderableId = (UINT32)mInfo.Decals.size();
 		decal->SetRendererId(renderableId);
 
-		mInfo.decals.emplace_back();
-		mInfo.decalCullInfos.push_back(CullInfo(decal->GetBounds(), decal->GetLayer()));
+		mInfo.Decals.emplace_back();
+		mInfo.DecalCullInfos.push_back(CullInfo(decal->GetBounds(), decal->GetLayer()));
 
-		RendererDecal& rendererDecal = mInfo.decals.back();
-		rendererDecal.decal = decal;
+		RendererDecal& rendererDecal = mInfo.Decals.back();
+		rendererDecal.Decal = decal;
 		rendererDecal.UpdatePerObjectBuffer();
 
-		DecalRenderElement& renElement = rendererDecal.renderElement;
-		renElement.type = (UINT32)RenderElementType::Decal;
-		renElement.mesh = RendererUtility::Instance().GetBoxStencil();
-		renElement.subMesh = renElement.mesh->GetProperties().GetSubMesh();
+		DecalRenderElement& renElement = rendererDecal.RenderElement;
+		renElement.Type = (UINT32)RenderElementType::Decal;
+		renElement.Mesh = RendererUtility::Instance().GetBoxStencil();
+		renElement.SubMesh = renElement.Mesh->GetProperties().GetSubMesh();
 
-		renElement.material = decal->GetMaterial();
+		renElement.Material = decal->GetMaterial();
 
-		if (renElement.material != nullptr && renElement.material->GetShader() == nullptr)
-			renElement.material = nullptr;
+		if (renElement.Material != nullptr && renElement.Material->GetShader() == nullptr)
+			renElement.Material = nullptr;
 
 		// If no material use the default material
-		if (renElement.material == nullptr)
-			renElement.material = Material::Create(DefaultDecalMat::Get()->GetShader());
+		if (renElement.Material == nullptr)
+			renElement.Material = Material::Create(DefaultDecalMat::Get()->GetShader());
 
 		for(UINT32 i = 0; i < 2; i++)
 		{
 			for(UINT32 j = 0; j < 3; j++)
 			{
 				FIND_TECHNIQUE_DESC findDesc;
-				findDesc.variation = DECAL_VAR_LOOKUP[i][j];
-				findDesc.override = true;
+				findDesc.Variation = DECAL_VAR_LOOKUP[i][j];
+				findDesc.Override = true;
 
-				UINT32 techniqueIdx = renElement.material->FindTechnique(findDesc);
+				UINT32 techniqueIdx = renElement.Material->FindTechnique(findDesc);
 				if(techniqueIdx == (UINT32)-1)
 					techniqueIdx = 0;
 
-				const SPtr<Technique>& technique = renElement.material->GetTechnique(techniqueIdx);
+				const SPtr<Technique>& technique = renElement.Material->GetTechnique(techniqueIdx);
 				if (technique)
 					technique->Compile();
 
-				renElement.techniqueIndices[i][j] = techniqueIdx;
+				renElement.TechniqueIndices[i][j] = techniqueIdx;
 			}
 		}
 
-		renElement.defaultTechniqueIdx = renElement.techniqueIndices[0][0];
+		renElement.DefaultTechniqueIdx = renElement.TechniqueIndices[0][0];
 
 		// Generate or assigned renderer specific data for the material
 		// Note: This makes the assumption that all variations of the material share the same parameter set
-		renElement.params = renElement.material->CreateParamsSet(renElement.defaultTechniqueIdx);
-		renElement.material->UpdateParamsSet(renElement.params, 0.0f, true);
+		renElement.Params = renElement.Material->CreateParamsSet(renElement.DefaultTechniqueIdx);
+		renElement.Material->UpdateParamsSet(renElement.Params, 0.0f, true);
 
 		// Generate or assign sampler state overrides
-		renElement.samplerOverrides = AllocSamplerStateOverrides(renElement);
+		renElement.SamplerOverrides = AllocSamplerStateOverrides(renElement);
 
 		// Prepare all parameter bindings
-		SPtr<GpuParams> gpuParams = renElement.params->GetGpuParams();
+		SPtr<GpuParams> gpuParams = renElement.Params->GetGpuParams();
 
 		// Note: Perhaps perform buffer validation to ensure expected buffer has the same size and layout as the
 		// provided buffer, and show a warning otherwise. But this is perhaps better handled on a higher level.
 		gpuParams->SetParamBlockBuffer("PerFrame", mPerFrameParamBuffer);
-		gpuParams->SetParamBlockBuffer("DecalParams", rendererDecal.decalParamBuffer);
-		gpuParams->SetParamBlockBuffer("PerObject", rendererDecal.perObjectParamBuffer);
-		gpuParams->SetParamBlockBuffer("PerCall", rendererDecal.perCallParamBuffer);
+		gpuParams->SetParamBlockBuffer("DecalParams", rendererDecal.DecalParamBuffer);
+		gpuParams->SetParamBlockBuffer("PerObject", rendererDecal.PerObjectParamBuffer);
+		gpuParams->SetParamBlockBuffer("PerCall", rendererDecal.PerCallParamBuffer);
 
 		gpuParams->GetParamInfo()->GetBindings(
 			GpuPipelineParamInfoBase::ParamType::ParamBlock,
 			"PerCamera",
-			renElement.perCameraBindings
+			renElement.PerCameraBindings
 		);
 
 		if (gpuParams->HasTexture(GPT_FRAGMENT_PROGRAM, "gDepthBufferTex"))
-			gpuParams->GetTextureParam(GPT_FRAGMENT_PROGRAM, "gDepthBufferTex", renElement.depthInputTexture);
+			gpuParams->GetTextureParam(GPT_FRAGMENT_PROGRAM, "gDepthBufferTex", renElement.DepthInputTexture);
 
 		if (gpuParams->HasTexture(GPT_FRAGMENT_PROGRAM, "gMaskTex"))
-			gpuParams->GetTextureParam(GPT_FRAGMENT_PROGRAM, "gMaskTex", renElement.maskInputTexture);
+			gpuParams->GetTextureParam(GPT_FRAGMENT_PROGRAM, "gMaskTex", renElement.MaskInputTexture);
 	}
 
 	void RendererScene::UpdateDecal(Decal* decal)
 	{
 		const UINT32 rendererId = decal->GetRendererId();
 
-		mInfo.decals[rendererId].UpdatePerObjectBuffer();
-		mInfo.decalCullInfos[rendererId].bounds = decal->GetBounds();
+		mInfo.Decals[rendererId].UpdatePerObjectBuffer();
+		mInfo.DecalCullInfos[rendererId].Bounds = decal->GetBounds();
 	}
 
 	void RendererScene::UnregisterDecal(Decal* decal)
 	{
 		const UINT32 rendererId = decal->GetRendererId();
-		Decal* lastDecal = mInfo.decals.back().decal;
+		Decal* lastDecal = mInfo.Decals.back().Decal;
 		const UINT32 lastDecalId = lastDecal->GetRendererId();
 
-		RendererDecal& rendererDecal = mInfo.decals[rendererId];
-		DecalRenderElement& renElement = rendererDecal.renderElement;
+		RendererDecal& rendererDecal = mInfo.Decals[rendererId];
+		DecalRenderElement& renElement = rendererDecal.RenderElement;
 
 		// Unregister sampler overrides
 		FreeSamplerStateOverrides(renElement);
-		renElement.samplerOverrides = nullptr;
+		renElement.SamplerOverrides = nullptr;
 
 		if (rendererId != lastDecalId)
 		{
 			// Swap current last element with the one we want to erase
-			std::swap(mInfo.decals[rendererId], mInfo.decals[lastDecalId]);
-			std::swap(mInfo.decalCullInfos[rendererId], mInfo.decalCullInfos[lastDecalId]);
+			std::swap(mInfo.Decals[rendererId], mInfo.Decals[lastDecalId]);
+			std::swap(mInfo.DecalCullInfos[rendererId], mInfo.DecalCullInfos[lastDecalId]);
 
 			lastDecal->SetRendererId(rendererId);
 		}
 
 		// Last element is the one we want to erase
-		mInfo.decals.erase(mInfo.decals.end() - 1);
-		mInfo.decalCullInfos.erase(mInfo.decalCullInfos.end() - 1);
+		mInfo.Decals.erase(mInfo.Decals.end() - 1);
+		mInfo.DecalCullInfos.erase(mInfo.DecalCullInfos.end() - 1);
 	}
 
 	void RendererScene::SetOptions(const SPtr<RenderBeastOptions>& options)
 	{
 		mOptions = options;
 
-		for (auto& entry : mInfo.views)
-			entry->SetStateReductionMode(mOptions->stateReductionMode);
+		for (auto& entry : mInfo.Views)
+			entry->SetStateReductionMode(mOptions->StateReductionMode);
 	}
 
 	RENDERER_VIEW_DESC RendererScene::CreateViewDesc(Camera* camera) const
@@ -1137,58 +1137,58 @@ namespace bs {	namespace ct
 		ClearFlags clearFlags = viewport->GetClearFlags();
 		RENDERER_VIEW_DESC viewDesc;
 
-		viewDesc.target.clearFlags = 0;
+		viewDesc.Target.ClearFlags = 0;
 		if (clearFlags.IsSet(ClearFlagBits::Color))
-			viewDesc.target.clearFlags |= FBT_COLOR;
+			viewDesc.Target.ClearFlags |= FBT_COLOR;
 
 		if (clearFlags.IsSet(ClearFlagBits::Depth))
-			viewDesc.target.clearFlags |= FBT_DEPTH;
+			viewDesc.Target.ClearFlags |= FBT_DEPTH;
 
 		if (clearFlags.IsSet(ClearFlagBits::Stencil))
-			viewDesc.target.clearFlags |= FBT_STENCIL;
+			viewDesc.Target.ClearFlags |= FBT_STENCIL;
 
-		viewDesc.target.clearColor = viewport->GetClearColorValue();
-		viewDesc.target.clearDepthValue = viewport->GetClearDepthValue();
-		viewDesc.target.clearStencilValue = viewport->GetClearStencilValue();
+		viewDesc.Target.ClearColor = viewport->GetClearColorValue();
+		viewDesc.Target.ClearDepthValue = viewport->GetClearDepthValue();
+		viewDesc.Target.ClearStencilValue = viewport->GetClearStencilValue();
 
-		viewDesc.target.target = viewport->GetTarget();
-		viewDesc.target.nrmViewRect = viewport->GetArea();
-		viewDesc.target.viewRect = viewport->GetPixelArea();
+		viewDesc.Target.Target = viewport->GetTarget();
+		viewDesc.Target.NrmViewRect = viewport->GetArea();
+		viewDesc.Target.ViewRect = viewport->GetPixelArea();
 
-		if (viewDesc.target.target != nullptr)
+		if (viewDesc.Target.Target != nullptr)
 		{
-			viewDesc.target.targetWidth = viewDesc.target.target->GetProperties().width;
-			viewDesc.target.targetHeight = viewDesc.target.target->GetProperties().height;
+			viewDesc.Target.TargetWidth = viewDesc.Target.Target->GetProperties().Width;
+			viewDesc.Target.TargetHeight = viewDesc.Target.Target->GetProperties().Height;
 		}
 		else
 		{
-			viewDesc.target.targetWidth = 0;
-			viewDesc.target.targetHeight = 0;
+			viewDesc.Target.TargetWidth = 0;
+			viewDesc.Target.TargetHeight = 0;
 		}
 
-		viewDesc.target.numSamples = camera->GetMsaaCount();
+		viewDesc.Target.NumSamples = camera->GetMsaaCount();
 
-		viewDesc.mainView = camera->IsMain();
-		viewDesc.triggerCallbacks = true;
-		viewDesc.runPostProcessing = true;
-		viewDesc.capturingReflections = false;
-		viewDesc.onDemand = camera->GetFlags().IsSet(CameraFlag::OnDemand);
+		viewDesc.MainView = camera->IsMain();
+		viewDesc.TriggerCallbacks = true;
+		viewDesc.RunPostProcessing = true;
+		viewDesc.CapturingReflections = false;
+		viewDesc.OnDemand = camera->GetFlags().IsSet(CameraFlag::OnDemand);
 
-		viewDesc.cullFrustum = camera->GetWorldFrustum();
-		viewDesc.visibleLayers = camera->GetLayers();
-		viewDesc.nearPlane = camera->GetNearClipDistance();
-		viewDesc.farPlane = camera->GetFarClipDistance();
-		viewDesc.flipView = false;
+		viewDesc.CullFrustum = camera->GetWorldFrustum();
+		viewDesc.VisibleLayers = camera->GetLayers();
+		viewDesc.NearPlane = camera->GetNearClipDistance();
+		viewDesc.FarPlane = camera->GetFarClipDistance();
+		viewDesc.FlipView = false;
 
 		const Transform& tfrm = camera->GetTransform();
-		viewDesc.viewOrigin = tfrm.GetPosition();
-		viewDesc.viewDirection = tfrm.GetForward();
-		viewDesc.projTransform = camera->GetProjectionMatrixRs();
-		viewDesc.viewTransform = camera->GetViewMatrix();
-		viewDesc.projType = camera->GetProjectionType();
+		viewDesc.ViewOrigin = tfrm.GetPosition();
+		viewDesc.ViewDirection = tfrm.GetForward();
+		viewDesc.ProjTransform = camera->GetProjectionMatrixRs();
+		viewDesc.ViewTransform = camera->GetViewMatrix();
+		viewDesc.ProjType = camera->GetProjectionType();
 
-		viewDesc.stateReduction = mOptions->stateReductionMode;
-		viewDesc.sceneCamera = camera;
+		viewDesc.StateReduction = mOptions->StateReductionMode;
+		viewDesc.SceneCamera = camera;
 
 		return viewDesc;
 	}
@@ -1199,23 +1199,23 @@ namespace bs {	namespace ct
 
 		// Remove from render target list
 		int rtChanged = 0; // 0 - No RT, 1 - RT found, 2 - RT changed
-		for (auto iterTarget = mInfo.renderTargets.begin(); iterTarget != mInfo.renderTargets.end(); ++iterTarget)
+		for (auto iterTarget = mInfo.RenderTargets.begin(); iterTarget != mInfo.RenderTargets.end(); ++iterTarget)
 		{
 			RendererRenderTarget& target = *iterTarget;
-			for (auto iterCam = target.cameras.begin(); iterCam != target.cameras.end(); ++iterCam)
+			for (auto iterCam = target.Cameras.begin(); iterCam != target.Cameras.end(); ++iterCam)
 			{
 				if (camera == *iterCam)
 				{
 					if(remove)
 					{
-						target.cameras.erase(iterCam);
+						target.Cameras.erase(iterCam);
 						rtChanged = 1;
 					}
 					else
 					{
-						if (renderTarget != target.target)
+						if (renderTarget != target.Target)
 						{
-							target.cameras.erase(iterCam);
+							target.Cameras.erase(iterCam);
 							rtChanged = 2;
 						}
 						else
@@ -1226,9 +1226,9 @@ namespace bs {	namespace ct
 				}
 			}
 
-			if (target.cameras.empty())
+			if (target.Cameras.empty())
 			{
-				mInfo.renderTargets.erase(iterTarget);
+				mInfo.RenderTargets.erase(iterTarget);
 				break;
 			}
 		}
@@ -1236,31 +1236,31 @@ namespace bs {	namespace ct
 		// Register in render target list
 		if (renderTarget != nullptr && !remove && (rtChanged == 0 || rtChanged == 2))
 		{
-			auto findIter = std::find_if(mInfo.renderTargets.begin(), mInfo.renderTargets.end(),
-				[&](const RendererRenderTarget& x) { return x.target == renderTarget; });
+			auto findIter = std::find_if(mInfo.RenderTargets.begin(), mInfo.RenderTargets.end(),
+				[&](const RendererRenderTarget& x) { return x.Target == renderTarget; });
 
-			if (findIter != mInfo.renderTargets.end())
+			if (findIter != mInfo.RenderTargets.end())
 			{
-				findIter->cameras.push_back(camera);
+				findIter->Cameras.push_back(camera);
 			}
 			else
 			{
-				mInfo.renderTargets.push_back(RendererRenderTarget());
-				RendererRenderTarget& renderTargetData = mInfo.renderTargets.back();
+				mInfo.RenderTargets.push_back(RendererRenderTarget());
+				RendererRenderTarget& renderTargetData = mInfo.RenderTargets.back();
 
-				renderTargetData.target = renderTarget;
-				renderTargetData.cameras.push_back(camera);
+				renderTargetData.Target = renderTarget;
+				renderTargetData.Cameras.push_back(camera);
 			}
 
 			// Sort render targets based on priority
 			auto cameraComparer = [&](const Camera* a, const Camera* b) { return a->GetPriority() > b->GetPriority(); };
 			auto renderTargetInfoComparer = [&](const RendererRenderTarget& a, const RendererRenderTarget& b)
-			{ return a.target->GetProperties().priority > b.target->GetProperties().priority; };
-			std::sort(begin(mInfo.renderTargets), end(mInfo.renderTargets), renderTargetInfoComparer);
+			{ return a.Target->GetProperties().Priority > b.Target->GetProperties().Priority; };
+			std::sort(begin(mInfo.RenderTargets), end(mInfo.RenderTargets), renderTargetInfoComparer);
 
-			for (auto& camerasPerTarget : mInfo.renderTargets)
+			for (auto& camerasPerTarget : mInfo.RenderTargets)
 			{
-				Vector<Camera*>& cameras = camerasPerTarget.cameras;
+				Vector<Camera*>& cameras = camerasPerTarget.Cameras;
 
 				std::sort(begin(cameras), end(cameras), cameraComparer);
 			}
@@ -1272,13 +1272,13 @@ namespace bs {	namespace ct
 		bool anyDirty = false;
 		for (auto& entry : mSamplerOverrides)
 		{
-			SPtr<MaterialParams> materialParams = entry.first.material->GetInternalParamsInternal();
+			SPtr<MaterialParams> materialParams = entry.first.Material->GetInternalParamsInternal();
 
 			MaterialSamplerOverrides* materialOverrides = entry.second;
-			for(UINT32 i = 0; i < materialOverrides->numOverrides; i++)
+			for(UINT32 i = 0; i < materialOverrides->NumOverrides; i++)
 			{
-				SamplerOverride& override = materialOverrides->overrides[i];
-				const MaterialParamsBase::ParamData* materialParamData = materialParams->GetParamData(override.paramIdx);
+				SamplerOverride& override = materialOverrides->Overrides[i];
+				const MaterialParamsBase::ParamData* materialParamData = materialParams->GetParamData(override.ParamIdx);
 
 				SPtr<SamplerState> samplerState;
 				materialParams->GetSamplerState(*materialParamData, samplerState);
@@ -1287,19 +1287,19 @@ namespace bs {	namespace ct
 				if (samplerState != nullptr)
 					hash = samplerState->GetProperties().GetHash();
 
-				if (hash != override.originalStateHash || force)
+				if (hash != override.OriginalStateHash || force)
 				{
 					if (samplerState != nullptr)
-						override.state = SamplerOverrideUtility::GenerateSamplerOverride(samplerState, mOptions);
+						override.State = SamplerOverrideUtility::GenerateSamplerOverride(samplerState, mOptions);
 					else
-						override.state = SamplerOverrideUtility::GenerateSamplerOverride(SamplerState::GetDefault(), mOptions);
+						override.State = SamplerOverrideUtility::GenerateSamplerOverride(SamplerState::GetDefault(), mOptions);
 
-					override.originalStateHash = override.state->GetProperties().GetHash();
-					materialOverrides->isDirty = true;
+					override.OriginalStateHash = override.State->GetProperties().GetHash();
+					materialOverrides->IsDirty = true;
 				}
 
 				// Dirty flag can also be set externally, so check here even though we assign it above
-				if (materialOverrides->isDirty)
+				if (materialOverrides->IsDirty)
 					anyDirty = true;
 			}
 		}
@@ -1308,18 +1308,18 @@ namespace bs {	namespace ct
 		if (!anyDirty)
 			return;
 
-		UINT32 numRenderables = (UINT32)mInfo.renderables.size();
+		UINT32 numRenderables = (UINT32)mInfo.Renderables.size();
 		for (UINT32 i = 0; i < numRenderables; i++)
 		{
-			for(auto& element : mInfo.renderables[i]->elements)
+			for(auto& element : mInfo.Renderables[i]->Elements)
 			{
-				MaterialSamplerOverrides* overrides = element.samplerOverrides;
-				if(overrides != nullptr && overrides->isDirty)
+				MaterialSamplerOverrides* overrides = element.SamplerOverrides;
+				if(overrides != nullptr && overrides->IsDirty)
 				{
-					UINT32 numPasses = element.material->GetNumPasses();
+					UINT32 numPasses = element.Material->GetNumPasses();
 					for(UINT32 j = 0; j < numPasses; j++)
 					{
-						SPtr<GpuParams> params = element.params->GetGpuParams(j);
+						SPtr<GpuParams> params = element.Params->GetGpuParams(j);
 
 						const UINT32 numStages = 6;
 						for (UINT32 k = 0; k < numStages; k++)
@@ -1330,16 +1330,16 @@ namespace bs {	namespace ct
 							if (paramDesc == nullptr)
 								continue;
 
-							for (auto& samplerDesc : paramDesc->samplers)
+							for (auto& samplerDesc : paramDesc->Samplers)
 							{
-								UINT32 set = samplerDesc.second.set;
-								UINT32 slot = samplerDesc.second.slot;
+								UINT32 set = samplerDesc.second.Set;
+								UINT32 slot = samplerDesc.second.Slot;
 
-								UINT32 overrideIndex = overrides->passes[j].stateOverrides[set][slot];
+								UINT32 overrideIndex = overrides->Passes[j].StateOverrides[set][slot];
 								if (overrideIndex == (UINT32)-1)
 									continue;
 
-								params->SetSamplerState(set, slot, overrides->overrides[overrideIndex].state);
+								params->SetSamplerState(set, slot, overrides->Overrides[overrideIndex].State);
 							}
 						}
 					}
@@ -1348,7 +1348,7 @@ namespace bs {	namespace ct
 		}
 
 		for (auto& entry : mSamplerOverrides)
-			entry.second->isDirty = false;
+			entry.second->IsDirty = false;
 	}
 
 	void RendererScene::SetParamFrameParams(float time)
@@ -1358,22 +1358,22 @@ namespace bs {	namespace ct
 
 	void RendererScene::PrepareRenderable(UINT32 idx, const FrameInfo& frameInfo)
 	{
-		RendererRenderable* rendererRenderable = mInfo.renderables[idx];
+		RendererRenderable* rendererRenderable = mInfo.Renderables[idx];
 		
-		for (auto& element : rendererRenderable->elements)
-			element.materialAnimationTime += frameInfo.timings.timeDelta;
+		for (auto& element : rendererRenderable->Elements)
+			element.MaterialAnimationTime += frameInfo.Timings.TimeDelta;
 
-		if (frameInfo.perFrameData.animation != nullptr)
-			rendererRenderable->renderable->UpdatePrevFrameAnimationBuffers();
+		if (frameInfo.PerFrameData.Animation != nullptr)
+			rendererRenderable->Renderable->UpdatePrevFrameAnimationBuffers();
 
-		if (rendererRenderable->prevFrameDirtyState != PrevFrameDirtyState::Clean)
+		if (rendererRenderable->PrevFrameDirtyState != PrevFrameDirtyState::Clean)
 		{
-			if (rendererRenderable->prevFrameDirtyState == PrevFrameDirtyState::Updated)
-				rendererRenderable->prevFrameDirtyState = PrevFrameDirtyState::CopyMostRecent;
-			else if (rendererRenderable->prevFrameDirtyState == PrevFrameDirtyState::CopyMostRecent)
+			if (rendererRenderable->PrevFrameDirtyState == PrevFrameDirtyState::Updated)
+				rendererRenderable->PrevFrameDirtyState = PrevFrameDirtyState::CopyMostRecent;
+			else if (rendererRenderable->PrevFrameDirtyState == PrevFrameDirtyState::CopyMostRecent)
 			{
-				rendererRenderable->prevWorldTfrm = mInfo.renderables[idx]->worldTfrm;
-				rendererRenderable->prevFrameDirtyState = PrevFrameDirtyState::Clean;
+				rendererRenderable->PrevWorldTfrm = mInfo.Renderables[idx]->WorldTfrm;
+				rendererRenderable->PrevFrameDirtyState = PrevFrameDirtyState::Clean;
 				rendererRenderable->UpdatePerObjectBuffer();
 			}
 		}
@@ -1381,53 +1381,53 @@ namespace bs {	namespace ct
 
 	void RendererScene::PrepareVisibleRenderable(UINT32 idx, const FrameInfo& frameInfo)
 	{
-		if (mInfo.renderableReady[idx])
+		if (mInfo.RenderableReady[idx])
 			return;
 
-		RendererRenderable* rendererRenderable = mInfo.renderables[idx];
+		RendererRenderable* rendererRenderable = mInfo.Renderables[idx];
 		
 		// Note: Before uploading bone matrices perhaps check if they has actually been changed since last frame
-		if(frameInfo.perFrameData.animation != nullptr)
-			rendererRenderable->renderable->UpdateAnimationBuffers(*frameInfo.perFrameData.animation);
+		if(frameInfo.PerFrameData.Animation != nullptr)
+			rendererRenderable->Renderable->UpdateAnimationBuffers(*frameInfo.PerFrameData.Animation);
 		
 		// Note: Could this step be moved in notifyRenderableUpdated, so it only triggers when material actually gets
 		// changed? Although it shouldn't matter much because if the internal versions keeping track of dirty params.
-		for (auto& element : rendererRenderable->elements)
-			element.material->UpdateParamsSet(element.params, element.materialAnimationTime);
+		for (auto& element : rendererRenderable->Elements)
+			element.Material->UpdateParamsSet(element.Params, element.MaterialAnimationTime);
 
-		mInfo.renderables[idx]->perObjectParamBuffer->FlushToGpu();
-		mInfo.renderableReady[idx] = true;
+		mInfo.Renderables[idx]->PerObjectParamBuffer->FlushToGpu();
+		mInfo.RenderableReady[idx] = true;
 	}
 
 	void RendererScene::PrepareParticleSystem(UINT32 idx, const FrameInfo& frameInfo)
 	{
-		RendererParticles& rendererParticles = mInfo.particleSystems[idx];
+		RendererParticles& rendererParticles = mInfo.ParticleSystems[idx];
 		
-		if (rendererParticles.prevFrameDirtyState != PrevFrameDirtyState::Clean)
+		if (rendererParticles.PrevFrameDirtyState != PrevFrameDirtyState::Clean)
 		{
-			if (rendererParticles.prevFrameDirtyState == PrevFrameDirtyState::Updated)
-				rendererParticles.prevFrameDirtyState = PrevFrameDirtyState::CopyMostRecent;
-			else if (rendererParticles.prevFrameDirtyState == PrevFrameDirtyState::CopyMostRecent)
+			if (rendererParticles.PrevFrameDirtyState == PrevFrameDirtyState::Updated)
+				rendererParticles.PrevFrameDirtyState = PrevFrameDirtyState::CopyMostRecent;
+			else if (rendererParticles.PrevFrameDirtyState == PrevFrameDirtyState::CopyMostRecent)
 			{
-				rendererParticles.prevLocalToWorld = rendererParticles.localToWorld;
-				rendererParticles.prevFrameDirtyState = PrevFrameDirtyState::Clean;
+				rendererParticles.PrevLocalToWorld = rendererParticles.LocalToWorld;
+				rendererParticles.PrevFrameDirtyState = PrevFrameDirtyState::Clean;
 				rendererParticles.UpdatePerObjectBuffer();
 			}
 		}
 		
-		ParticlesRenderElement& renElement = mInfo.particleSystems[idx].renderElement;
-		renElement.material->UpdateParamsSet(renElement.params, 0.0f);
+		ParticlesRenderElement& renElement = mInfo.ParticleSystems[idx].RenderElement;
+		renElement.Material->UpdateParamsSet(renElement.Params, 0.0f);
 		
-		mInfo.particleSystems[idx].perObjectParamBuffer->FlushToGpu();
+		mInfo.ParticleSystems[idx].PerObjectParamBuffer->FlushToGpu();
 	}
 
 	void RendererScene::PrepareDecal(UINT32 idx, const FrameInfo& frameInfo)
 	{
-		DecalRenderElement& renElement = mInfo.decals[idx].renderElement;
-		renElement.materialAnimationTime += frameInfo.timings.timeDelta;
-		renElement.material->UpdateParamsSet(renElement.params, renElement.materialAnimationTime);
+		DecalRenderElement& renElement = mInfo.Decals[idx].RenderElement;
+		renElement.MaterialAnimationTime += frameInfo.Timings.TimeDelta;
+		renElement.Material->UpdateParamsSet(renElement.Params, renElement.MaterialAnimationTime);
 		
-		mInfo.decals[idx].perObjectParamBuffer->FlushToGpu();
+		mInfo.Decals[idx].PerObjectParamBuffer->FlushToGpu();
 	}
 
 	void RendererScene::UpdateParticleSystemBounds(const ParticlePerFrameData* particleRenderData)
@@ -1435,58 +1435,58 @@ namespace bs {	namespace ct
 		// Note: Avoid updating bounds for deterministic particle systems every frame. Also see if this can be copied
 		// over in a faster way (or ideally just assigned)
 
-		for(auto& entry : mInfo.particleSystems)
+		for(auto& entry : mInfo.ParticleSystems)
 		{
-			const UINT32 rendererId = entry.particleSystem->GetRendererId();
+			const UINT32 rendererId = entry.ParticleSystem->GetRendererId();
 
 			AABox worldAABox = AABox::INF_BOX;
-			const auto iterFind = particleRenderData->cpuData.find(entry.particleSystem->GetId());
-			if(iterFind != particleRenderData->cpuData.end())
-				worldAABox = iterFind->second->bounds;
-			else if(entry.gpuParticleSystem)
-				worldAABox = entry.gpuParticleSystem->GetBounds();
+			const auto iterFind = particleRenderData->CpuData.find(entry.ParticleSystem->GetId());
+			if(iterFind != particleRenderData->CpuData.end())
+				worldAABox = iterFind->second->Bounds;
+			else if(entry.GpuParticleSystem)
+				worldAABox = entry.GpuParticleSystem->GetBounds();
 
-			const ParticleSystemSettings& settings = entry.particleSystem->GetSettings();
-			if (settings.simulationSpace == ParticleSimulationSpace::Local)
-				worldAABox.TransformAffine(entry.localToWorld);
+			const ParticleSystemSettings& settings = entry.ParticleSystem->GetSettings();
+			if (settings.SimulationSpace == ParticleSimulationSpace::Local)
+				worldAABox.TransformAffine(entry.LocalToWorld);
 
 			const Sphere worldSphere(worldAABox.GetCenter(), worldAABox.GetRadius());
-			mInfo.particleSystemCullInfos[rendererId].bounds = Bounds(worldAABox, worldSphere);
+			mInfo.ParticleSystemCullInfos[rendererId].Bounds = Bounds(worldAABox, worldSphere);
 		}
 	}
 
 	MaterialSamplerOverrides* RendererScene::AllocSamplerStateOverrides(RenderElement& elem)
 	{
-		SamplerOverrideKey samplerKey(elem.material, elem.defaultTechniqueIdx);
+		SamplerOverrideKey samplerKey(elem.Material, elem.DefaultTechniqueIdx);
 		auto iterFind = mSamplerOverrides.find(samplerKey);
 		if (iterFind != mSamplerOverrides.end())
 		{
-			iterFind->second->refCount++;
+			iterFind->second->RefCount++;
 			return iterFind->second;
 		}
 		else
 		{
-			SPtr<Shader> shader = elem.material->GetShader();
+			SPtr<Shader> shader = elem.Material->GetShader();
 			MaterialSamplerOverrides* samplerOverrides = SamplerOverrideUtility::GenerateSamplerOverrides(shader,
-				elem.material->GetInternalParamsInternal(), elem.params, mOptions);
+				elem.Material->GetInternalParamsInternal(), elem.Params, mOptions);
 
 			mSamplerOverrides[samplerKey] = samplerOverrides;
 
-			samplerOverrides->refCount++;
+			samplerOverrides->RefCount++;
 			return samplerOverrides;
 		}
 	}
 
 	void RendererScene::FreeSamplerStateOverrides(RenderElement& elem)
 	{
-		SamplerOverrideKey samplerKey(elem.material, elem.defaultTechniqueIdx);
+		SamplerOverrideKey samplerKey(elem.Material, elem.DefaultTechniqueIdx);
 
 		auto iterFind = mSamplerOverrides.find(samplerKey);
 		assert(iterFind != mSamplerOverrides.end());
 
 		MaterialSamplerOverrides* samplerOverrides = iterFind->second;
-		samplerOverrides->refCount--;
-		if (samplerOverrides->refCount == 0)
+		samplerOverrides->RefCount--;
+		if (samplerOverrides->RefCount == 0)
 		{
 			PassSamplerOverrides(samplerOverrides);
 			mSamplerOverrides.erase(iterFind);

@@ -18,6 +18,6 @@ namespace bs
 
 	MonoObject* ScriptShaderInclude::CreateInstance()
 	{
-		return metaData.scriptClass->CreateInstance();
+		return metaData.ScriptClass->CreateInstance();
 	}
 }

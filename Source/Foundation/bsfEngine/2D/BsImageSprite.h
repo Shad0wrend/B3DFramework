@@ -18,30 +18,30 @@ namespace bs
 	{
 		IMAGE_SPRITE_DESC() = default;
 
-		UINT32 width = 0; /**< Width of the image in pixels. */
-		UINT32 height = 0; /**< Height of the image in pixels. */
-		SpriteAnchor anchor = SA_TopLeft; /**< Determines where in the provided bounds will the sprite be placed. */
-		Vector2 uvScale = Vector2(1.0f, 1.0f); /**< Scale applied to UV width/height used for rendering the sprite. */
-		Vector2 uvOffset = Vector2(0.0f, 0.0f); /**< Offset applied to UV coordinates when rendering the sprite. */
-		bool transparent = true; /**< Should the sprite be rendered with transparency. */
+		UINT32 Width = 0; /**< Width of the image in pixels. */
+		UINT32 Height = 0; /**< Height of the image in pixels. */
+		SpriteAnchor Anchor = SA_TopLeft; /**< Determines where in the provided bounds will the sprite be placed. */
+		Vector2 UvScale = Vector2(1.0f, 1.0f); /**< Scale applied to UV width/height used for rendering the sprite. */
+		Vector2 UvOffset = Vector2(0.0f, 0.0f); /**< Offset applied to UV coordinates when rendering the sprite. */
+		bool Transparent = true; /**< Should the sprite be rendered with transparency. */
 
-		HSpriteTexture texture; /**< Texture to overlay on the sprite. */
-		Color color; /**< Color tint to apply to the sprite. */
+		HSpriteTexture Texture; /**< Texture to overlay on the sprite. */
+		Color Color; /**< Color tint to apply to the sprite. */
 		/**
 		 * Time (since application start) at which the sprite texture's 0th frame is played. Used if the sprite texture
 		 * has sprite sheet animation defined.
 		 */
-		float animationStartTime = 0.0f;
+		float AnimationStartTime = 0.0f;
 
 		/**
 		 * Borders (in texels) that allow you to control how is the texture scaled. If borders are 0 the texture will be
 		 * scaled uniformly. If they are not null only the area inside the borders will be scaled and the outside are will
 		 * remain the original size as in the texture. This allows you to implement "Scale9Grid" functionality.
 		 */
-		UINT32 borderLeft = 0;
-		UINT32 borderRight = 0;
-		UINT32 borderTop = 0;
-		UINT32 borderBottom = 0;
+		UINT32 BorderLeft = 0;
+		UINT32 BorderRight = 0;
+		UINT32 BorderTop = 0;
+		UINT32 BorderBottom = 0;
 	};
 
 	/**	A sprite consisting of a single image represented by a sprite texture. */

@@ -26,25 +26,25 @@ namespace bs
 
 	void ScriptVirtualInput::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_GetKeyConfig", (void*)&ScriptVirtualInput::InternalGetKeyConfig);
-		metaData.scriptClass->AddInternalCall("Internal_SetKeyConfig", (void*)&ScriptVirtualInput::InternalSetKeyConfig);
-		metaData.scriptClass->AddInternalCall("Internal_IsButtonHeld", (void*)&ScriptVirtualInput::InternalIsButtonHeld);
-		metaData.scriptClass->AddInternalCall("Internal_IsButtonDown", (void*)&ScriptVirtualInput::InternalIsButtonDown);
-		metaData.scriptClass->AddInternalCall("Internal_IsButtonUp", (void*)&ScriptVirtualInput::InternalIsButtonUp);
-		metaData.scriptClass->AddInternalCall("Internal_GetAxisValue", (void*)&ScriptVirtualInput::InternalGetAxisValue);
+		metaData.ScriptClass->AddInternalCall("Internal_GetKeyConfig", (void*)&ScriptVirtualInput::InternalGetKeyConfig);
+		metaData.ScriptClass->AddInternalCall("Internal_SetKeyConfig", (void*)&ScriptVirtualInput::InternalSetKeyConfig);
+		metaData.ScriptClass->AddInternalCall("Internal_IsButtonHeld", (void*)&ScriptVirtualInput::InternalIsButtonHeld);
+		metaData.ScriptClass->AddInternalCall("Internal_IsButtonDown", (void*)&ScriptVirtualInput::InternalIsButtonDown);
+		metaData.ScriptClass->AddInternalCall("Internal_IsButtonUp", (void*)&ScriptVirtualInput::InternalIsButtonUp);
+		metaData.ScriptClass->AddInternalCall("Internal_GetAxisValue", (void*)&ScriptVirtualInput::InternalGetAxisValue);
 
-		OnButtonUpThunk = (OnButtonEventThunkDef)metaData.scriptClass->GetMethodExact("Internal_TriggerButtonDown", "VirtualButton,int")->GetThunk();
-		OnButtonDownThunk = (OnButtonEventThunkDef)metaData.scriptClass->GetMethodExact("Internal_TriggerButtonUp", "VirtualButton,int")->GetThunk();
-		OnButtonHeldThunk = (OnButtonEventThunkDef)metaData.scriptClass->GetMethodExact("Internal_TriggerButtonHeld", "VirtualButton,int")->GetThunk();
+		OnButtonUpThunk = (OnButtonEventThunkDef)metaData.ScriptClass->GetMethodExact("Internal_TriggerButtonDown", "VirtualButton,int")->GetThunk();
+		OnButtonDownThunk = (OnButtonEventThunkDef)metaData.ScriptClass->GetMethodExact("Internal_TriggerButtonUp", "VirtualButton,int")->GetThunk();
+		OnButtonHeldThunk = (OnButtonEventThunkDef)metaData.ScriptClass->GetMethodExact("Internal_TriggerButtonHeld", "VirtualButton,int")->GetThunk();
 	}
 
 	void ScriptVirtualInput::StartUp()
 	{
 		VirtualInput& input = VirtualInput::Instance();
 
-		OnButtonPressedConn = input.onButtonDown.Connect(&ScriptVirtualInput::OnButtonDown);
-		OnButtonReleasedConn = input.onButtonUp.Connect(&ScriptVirtualInput::OnButtonUp);
-		OnButtonHeldConn = input.onButtonHeld.Connect(&ScriptVirtualInput::OnButtonHeld);
+		OnButtonPressedConn = input.OnButtonDown.Connect(&ScriptVirtualInput::OnButtonDown);
+		OnButtonReleasedConn = input.OnButtonUp.Connect(&ScriptVirtualInput::OnButtonUp);
+		OnButtonHeldConn = input.OnButtonHeld.Connect(&ScriptVirtualInput::OnButtonHeld);
 	}
 
 	void ScriptVirtualInput::ShutDown()

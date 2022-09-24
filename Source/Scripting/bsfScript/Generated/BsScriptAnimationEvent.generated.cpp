@@ -16,7 +16,7 @@ namespace bs
 
 	MonoObject*ScriptAnimationEvent::Box(const __AnimationEventInterop& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	__AnimationEventInterop ScriptAnimationEvent::Unbox(MonoObject* value)
@@ -28,9 +28,9 @@ namespace bs
 	{
 		AnimationEvent output;
 		String tmpname;
-		tmpname = MonoUtil::MonoToString(value.name);
-		output.name = tmpname;
-		output.time = value.time;
+		tmpname = MonoUtil::MonoToString(value.Name);
+		output.Name = tmpname;
+		output.Time = value.Time;
 
 		return output;
 	}
@@ -39,9 +39,9 @@ namespace bs
 	{
 		__AnimationEventInterop output;
 		MonoString* tmpname;
-		tmpname = MonoUtil::StringToMono(value.name);
-		output.name = tmpname;
-		output.time = value.time;
+		tmpname = MonoUtil::StringToMono(value.Name);
+		output.Name = tmpname;
+		output.Time = value.Time;
 
 		return output;
 	}

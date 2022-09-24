@@ -16,44 +16,44 @@ namespace bs
 	/** Contains various profiler statistics about a single GPU profiling sample. */
 	struct GPUProfileSample
 	{
-		String name; /**< Name of the sample for easier identification. */
-		float timeMs; /**< Time in milliseconds it took to execute the sampled block. */
+		String Name; /**< Name of the sample for easier identification. */
+		float TimeMs; /**< Time in milliseconds it took to execute the sampled block. */
 
-		UINT32 numDrawCalls; /**< Number of draw calls that happened. */
-		UINT32 numRenderTargetChanges; /**< How many times was render target changed. */
-		UINT32 numPresents; /**< How many times did a buffer swap happen on a double buffered render target. */
-		UINT32 numClears; /**< How many times was render target cleared. */
+		UINT32 NumDrawCalls; /**< Number of draw calls that happened. */
+		UINT32 NumRenderTargetChanges; /**< How many times was render target changed. */
+		UINT32 NumPresents; /**< How many times did a buffer swap happen on a double buffered render target. */
+		UINT32 NumClears; /**< How many times was render target cleared. */
 
-		UINT32 numVertices; /**< Total number of vertices sent to the GPU. */
-		UINT32 numPrimitives; /**< Total number of primitives sent to the GPU. */
-		UINT32 numDrawnSamples; /**< Number of samples drawn by the GPU. */
+		UINT32 NumVertices; /**< Total number of vertices sent to the GPU. */
+		UINT32 NumPrimitives; /**< Total number of primitives sent to the GPU. */
+		UINT32 NumDrawnSamples; /**< Number of samples drawn by the GPU. */
 
-		UINT32 numPipelineStateChanges; /**< How many times did the pipeline state change. */
+		UINT32 NumPipelineStateChanges; /**< How many times did the pipeline state change. */
 
-		UINT32 numGpuParamBinds; /**< How many times were GPU parameters bound. */
-		UINT32 numVertexBufferBinds; /**< How many times was a vertex buffer bound. */
-		UINT32 numIndexBufferBinds; /**< How many times was an index buffer bound. */
+		UINT32 NumGpuParamBinds; /**< How many times were GPU parameters bound. */
+		UINT32 NumVertexBufferBinds; /**< How many times was a vertex buffer bound. */
+		UINT32 NumIndexBufferBinds; /**< How many times was an index buffer bound. */
 
-		UINT32 numResourceWrites; /**< How many times were GPU resources written to. */
-		UINT32 numResourceReads; /**< How many times were GPU resources read from. */
+		UINT32 NumResourceWrites; /**< How many times were GPU resources written to. */
+		UINT32 NumResourceReads; /**< How many times were GPU resources read from. */
 
-		UINT32 numObjectsCreated; /**< How many GPU objects were created. */
-		UINT32 numObjectsDestroyed; /**< How many GPU objects were destroyed. */
+		UINT32 NumObjectsCreated; /**< How many GPU objects were created. */
+		UINT32 NumObjectsDestroyed; /**< How many GPU objects were destroyed. */
 
-		Vector<GPUProfileSample> children;
+		Vector<GPUProfileSample> Children;
 	};
 
 	/** Contains various profiler statistics for a particular view. */
 	struct GPUProfileViewSample : GPUProfileSample
 	{
-		UINT64 viewId;
+		UINT64 ViewId;
 	};
 
 	/** Profiler report containing information about GPU sampling data from a single frame. */
 	struct GPUProfilerReport
 	{
-		Vector<GPUProfileViewSample> viewSamples; /**< Profiler samples belonging to a particular view. */
-		Vector<GPUProfileSample> uncategorizedSamples; /**< Profiler samples not grouped under a particular view. */
+		Vector<GPUProfileViewSample> ViewSamples; /**< Profiler samples belonging to a particular view. */
+		Vector<GPUProfileSample> UncategorizedSamples; /**< Profiler samples not grouped under a particular view. */
 	};
 
 	/**
@@ -66,24 +66,24 @@ namespace bs
 	private:
 		struct ProfiledSample
 		{
-			ProfilerString name;
-			RenderStatsData startStats;
-			RenderStatsData endStats;
-			SPtr<ct::TimerQuery> activeTimeQuery;
-			SPtr<ct::OcclusionQuery> activeOcclusionQuery;
+			ProfilerString Name;
+			RenderStatsData StartStats;
+			RenderStatsData EndStats;
+			SPtr<ct::TimerQuery> ActiveTimeQuery;
+			SPtr<ct::OcclusionQuery> ActiveOcclusionQuery;
 
-			Vector<ProfiledSample*> children;
+			Vector<ProfiledSample*> Children;
 		};
 
 		struct ProfiledViewSample : ProfiledSample
 		{
-			UINT64 viewId;
+			UINT64 ViewId;
 		};
 
 		struct ProfiledFrame
 		{
-			Vector<ProfiledViewSample*> viewSamples;
-			Vector<ProfiledSample*> uncategorizedSamples;
+			Vector<ProfiledViewSample*> ViewSamples;
+			Vector<ProfiledSample*> UncategorizedSamples;
 		};
 
 	public:

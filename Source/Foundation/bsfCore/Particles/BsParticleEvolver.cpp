@@ -53,13 +53,13 @@ namespace bs
 	{
 		const Vector3 output = distribution.Evaluate(t, factor);
 
-		if(state.worldSpace == inWorldSpace)
+		if(state.WorldSpace == inWorldSpace)
 			return output;
 
-		if(state.worldSpace)
-			return applyTransform<dir>(state.localToWorld, output);
+		if(state.WorldSpace)
+			return applyTransform<dir>(state.LocalToWorld, output);
 		else
-			return applyTransform<dir>(state.worldToLocal, output);
+			return applyTransform<dir>(state.WorldToLocal, output);
 	}
 
 	ParticleTextureAnimation::ParticleTextureAnimation(const PARTICLE_TEXTURE_ANIMATION_DESC& desc)
@@ -73,7 +73,7 @@ namespace bs
 		ParticleSetData& particles = set.GetParticles();
 
 		SpriteTexture* texture = nullptr;
-		const HMaterial& material = state.system->GetSettings().material;
+		const HMaterial& material = state.System->GetSettings().Material;
 		if (material.IsLoaded(false))
 		{
 			const HShader& shader = material->GetShader();
@@ -96,13 +96,13 @@ namespace bs
 		if(hasValidAnimation)
 		{
 			const SpriteSheetGridAnimation& gridAnim = texture->GetAnimation();
-			hasValidAnimation = gridAnim.numRows > 0 && gridAnim.numColumns > 0 && gridAnim.count > 0;
+			hasValidAnimation = gridAnim.NumRows > 0 && gridAnim.NumColumns > 0 && gridAnim.Count > 0;
 		}
 
 		if(!hasValidAnimation)
 		{
 			for (UINT32 i = startIdx; i < endIdx; i++)
-				particles.frame[i] = 0.0f;
+				particles.Frame[i] = 0.0f;
 
 			return;
 		}
@@ -113,25 +113,25 @@ namespace bs
 		{
 			UINT32 frameOffset;
 			UINT32 numFrames;
-			if (mDesc.randomizeRow)
+			if (mDesc.RandomizeRow)
 			{
-				const UINT32 rowSeed = particles.seed[i] + PARTICLE_ROW_VARIATION;
-				const UINT32 row = Random(rowSeed).GetRange(0, gridAnim.numRows);
+				const UINT32 rowSeed = particles.Seed[i] + PARTICLE_ROW_VARIATION;
+				const UINT32 row = Random(rowSeed).GetRange(0, gridAnim.NumRows);
 
-				frameOffset = row * gridAnim.numColumns;
-				numFrames = gridAnim.numColumns;
+				frameOffset = row * gridAnim.NumColumns;
+				numFrames = gridAnim.NumColumns;
 			}
 			else
 			{
 				frameOffset = 0;
-				numFrames = gridAnim.count;
+				numFrames = gridAnim.Count;
 			}
 
-			float particleT = (particles.initialLifetime[i] - particles.lifetime[i]) / particles.initialLifetime[i];
-			particleT = Math::Repeat(mDesc.numCycles * particleT, 1.0f);
+			float particleT = (particles.InitialLifetime[i] - particles.Lifetime[i]) / particles.InitialLifetime[i];
+			particleT = Math::Repeat(mDesc.NumCycles * particleT, 1.0f);
 
 			const float frame = particleT * (numFrames - 1);
-			particles.frame[i] = frameOffset + Math::Clamp(frame, 0.0f, (float)(numFrames - 1));
+			particles.Frame[i] = frameOffset + Math::Clamp(frame, 0.0f, (float)(numFrames - 1));
 		}
 	}
 
@@ -165,14 +165,14 @@ namespace bs
 		const UINT32 endIdx = startIdx + count;
 		ParticleSetData& particles = set.GetParticles();
 
-		const Vector3 center = evaluateTransformed(mDesc.center, state, state.nrmTimeEnd, random, mDesc.worldSpace);
+		const Vector3 center = evaluateTransformed(mDesc.Center, state, state.NrmTimeEnd, random, mDesc.WorldSpace);
 		const float subFrameSpacing = (spacing && count > 0) ? 1.0f / count : 1.0f;
 
 		for (UINT32 i = startIdx; i < endIdx; i++)
 		{
-			const float particleT = (particles.initialLifetime[i] - particles.lifetime[i]) / particles.initialLifetime[i];
+			const float particleT = (particles.InitialLifetime[i] - particles.Lifetime[i]) / particles.InitialLifetime[i];
 
-			float timeStep = state.timeStep;
+			float timeStep = state.TimeStep;
 			if(spacing)
 			{
 				const UINT32 localIdx = i - startIdx;
@@ -180,27 +180,27 @@ namespace bs
 				timeStep *= subFrameOffset;
 			}
 
-			const UINT32 velocitySeed = particles.seed[i] + PARTICLE_ORBIT_VELOCITY;
-			Vector3 orbitVelocity = evaluateTransformed<true>(mDesc.velocity, state, particleT, Random(velocitySeed),
-				mDesc.worldSpace);
+			const UINT32 velocitySeed = particles.Seed[i] + PARTICLE_ORBIT_VELOCITY;
+			Vector3 orbitVelocity = evaluateTransformed<true>(mDesc.Velocity, state, particleT, Random(velocitySeed),
+				mDesc.WorldSpace);
 			orbitVelocity *= Math::TWO_PI;
 
 
 			orbitVelocity *= timeStep;
 
-			const Matrix3 rotation(Radian(orbitVelocity.x), Radian(orbitVelocity.y), Radian(orbitVelocity.z));
+			const Matrix3 rotation(Radian(orbitVelocity.X), Radian(orbitVelocity.Y), Radian(orbitVelocity.Z));
 
-			const Vector3 point = particles.position[i] - center;
+			const Vector3 point = particles.Position[i] - center;
 			const Vector3 newPoint = rotation.Multiply(point);
 
 			Vector3 velocity = newPoint - point;
 
-			const UINT32 radialSeed = particles.seed[i] + PARTICLE_ORBIT_RADIAL;
-			const float radial = mDesc.radial.Evaluate(particleT, Random(radialSeed).GetUNorm());
+			const UINT32 radialSeed = particles.Seed[i] + PARTICLE_ORBIT_RADIAL;
+			const float radial = mDesc.Radial.Evaluate(particleT, Random(radialSeed).GetUNorm());
 			if(radial != 0.0f)
 				velocity += Vector3::Normalize(point) * radial * timeStep;
 
-			particles.position[i] += velocity;
+			particles.Position[i] += velocity;
 		}
 	}
 
@@ -237,9 +237,9 @@ namespace bs
 		const float subFrameSpacing = (spacing && count > 0) ? 1.0f / count : 1.0f;
 		for (UINT32 i = startIdx; i < endIdx; i++)
 		{
-			const float particleT = (particles.initialLifetime[i] - particles.lifetime[i]) / particles.initialLifetime[i];
+			const float particleT = (particles.InitialLifetime[i] - particles.Lifetime[i]) / particles.InitialLifetime[i];
 
-			float timeStep = state.timeStep;
+			float timeStep = state.TimeStep;
 			if(spacing)
 			{
 				const UINT32 localIdx = i - startIdx;
@@ -247,11 +247,11 @@ namespace bs
 				timeStep *= subFrameOffset;
 			}
 
-			const UINT32 velocitySeed = particles.seed[i] + PARTICLE_LINEAR_VELOCITY;
-			const Vector3 velocity = evaluateTransformed<true>(mDesc.velocity, state, particleT, Random(velocitySeed),
-				mDesc.worldSpace) * timeStep;
+			const UINT32 velocitySeed = particles.Seed[i] + PARTICLE_LINEAR_VELOCITY;
+			const Vector3 velocity = evaluateTransformed<true>(mDesc.Velocity, state, particleT, Random(velocitySeed),
+				mDesc.WorldSpace) * timeStep;
 
-			particles.position[i] += velocity;
+			particles.Position[i] += velocity;
 		}
 	}
 
@@ -288,9 +288,9 @@ namespace bs
 		const float subFrameSpacing = (spacing && count > 0) ? 1.0f / count : 1.0f;
 		for (UINT32 i = startIdx; i < endIdx; i++)
 		{
-			const float particleT = (particles.initialLifetime[i] - particles.lifetime[i]) / particles.initialLifetime[i];
+			const float particleT = (particles.InitialLifetime[i] - particles.Lifetime[i]) / particles.InitialLifetime[i];
 
-			float timeStep = state.timeStep;
+			float timeStep = state.TimeStep;
 			if(spacing)
 			{
 				const UINT32 localIdx = i - startIdx;
@@ -298,11 +298,11 @@ namespace bs
 				timeStep *= subFrameOffset;
 			}
 
-			const UINT32 forceSeed = particles.seed[i] + PARTICLE_FORCE;
-			const Vector3 force = evaluateTransformed<true>(mDesc.force, state, particleT, Random(forceSeed),
-				mDesc.worldSpace) * timeStep;
+			const UINT32 forceSeed = particles.Seed[i] + PARTICLE_FORCE;
+			const Vector3 force = evaluateTransformed<true>(mDesc.Force, state, particleT, Random(forceSeed),
+				mDesc.WorldSpace) * timeStep;
 
-			particles.velocity[i] += force * timeStep;
+			particles.Velocity[i] += force * timeStep;
 		}
 	}
 
@@ -333,10 +333,10 @@ namespace bs
 	void ParticleGravity::Evolve(Random& random, const ParticleSystemState& state, ParticleSet& set,
 		UINT32 startIdx, UINT32 count, bool spacing, float spacingOffset) const
 	{
-		Vector3 gravity = state.scene->GetPhysicsScene()->GetGravity() * mDesc.scale;
+		Vector3 gravity = state.Scene->GetPhysicsScene()->GetGravity() * mDesc.Scale;
 
-		if (!state.worldSpace)
-			gravity = state.worldToLocal.MultiplyDirection(gravity);
+		if (!state.WorldSpace)
+			gravity = state.WorldToLocal.MultiplyDirection(gravity);
 
 		const UINT32 endIdx = startIdx + count;
 		ParticleSetData& particles = set.GetParticles();
@@ -344,7 +344,7 @@ namespace bs
 		const float subFrameSpacing = (spacing && count > 0) ? 1.0f / count : 1.0f;
 		for (UINT32 i = startIdx; i < endIdx; i++)
 		{
-			float timeStep = state.timeStep;
+			float timeStep = state.TimeStep;
 			if(spacing)
 			{
 				const UINT32 localIdx = i - startIdx;
@@ -352,7 +352,7 @@ namespace bs
 				timeStep *= subFrameOffset;
 			}
 
-			particles.velocity[i] += gravity * timeStep;
+			particles.Velocity[i] += gravity * timeStep;
 		}
 	}
 
@@ -388,10 +388,10 @@ namespace bs
 
 		for (UINT32 i = startIdx; i < endIdx; i++)
 		{
-			const UINT32 colorSeed = particles.seed[i] + PARTICLE_COLOR;
-			const float particleT = (particles.initialLifetime[i] - particles.lifetime[i]) / particles.initialLifetime[i];
+			const UINT32 colorSeed = particles.Seed[i] + PARTICLE_COLOR;
+			const float particleT = (particles.InitialLifetime[i] - particles.Lifetime[i]) / particles.InitialLifetime[i];
 
-			particles.color[i] = mDesc.color.Evaluate(particleT, Random(colorSeed));
+			particles.Color[i] = mDesc.Color.Evaluate(particleT, Random(colorSeed));
 		}
 	}
 
@@ -425,25 +425,25 @@ namespace bs
 		const UINT32 endIdx = startIdx + count;
 		ParticleSetData& particles = set.GetParticles();
 
-		if(!mDesc.use3DSize)
+		if(!mDesc.Use3DSize)
 		{
 			for (UINT32 i = startIdx; i < endIdx; i++)
 			{
-				const UINT32 sizeSeed = particles.seed[i] + PARTICLE_SIZE;
-				const float particleT = (particles.initialLifetime[i] - particles.lifetime[i]) / particles.initialLifetime[i];
+				const UINT32 sizeSeed = particles.Seed[i] + PARTICLE_SIZE;
+				const float particleT = (particles.InitialLifetime[i] - particles.Lifetime[i]) / particles.InitialLifetime[i];
 
-				const float size = mDesc.size.Evaluate(particleT, Random(sizeSeed));
-				particles.size[i] = Vector3(size, size, size);
+				const float size = mDesc.Size.Evaluate(particleT, Random(sizeSeed));
+				particles.Size[i] = Vector3(size, size, size);
 			}
 		}
 		else
 		{
 			for (UINT32 i = startIdx; i < endIdx; i++)
 			{
-				const UINT32 sizeSeed = particles.seed[i] + PARTICLE_SIZE;
-				const float particleT = (particles.initialLifetime[i] - particles.lifetime[i]) / particles.initialLifetime[i];
+				const UINT32 sizeSeed = particles.Seed[i] + PARTICLE_SIZE;
+				const float particleT = (particles.InitialLifetime[i] - particles.Lifetime[i]) / particles.InitialLifetime[i];
 
-				particles.size[i] = mDesc.size3D.Evaluate(particleT, Random(sizeSeed));
+				particles.Size[i] = mDesc.Size3D.Evaluate(particleT, Random(sizeSeed));
 			}
 		}
 	}
@@ -478,25 +478,25 @@ namespace bs
 		const UINT32 endIdx = startIdx + count;
 		ParticleSetData& particles = set.GetParticles();
 
-		if(!mDesc.use3DRotation)
+		if(!mDesc.Use3DRotation)
 		{
 			for (UINT32 i = startIdx; i < endIdx; i++)
 			{
-				const UINT32 rotationSeed = particles.seed[i] + PARTICLE_ROTATION;
-				const float particleT = (particles.initialLifetime[i] - particles.lifetime[i]) / particles.initialLifetime[i];
+				const UINT32 rotationSeed = particles.Seed[i] + PARTICLE_ROTATION;
+				const float particleT = (particles.InitialLifetime[i] - particles.Lifetime[i]) / particles.InitialLifetime[i];
 
-				const float rotation = mDesc.rotation.Evaluate(particleT, Random(rotationSeed));
-				particles.rotation[i] = Vector3(rotation, 0.0f, 0.0f);
+				const float rotation = mDesc.Rotation.Evaluate(particleT, Random(rotationSeed));
+				particles.Rotation[i] = Vector3(rotation, 0.0f, 0.0f);
 			}
 		}
 		else
 		{
 			for (UINT32 i = startIdx; i < endIdx; i++)
 			{
-				const UINT32 rotationSeed = particles.seed[i] + PARTICLE_ROTATION;
-				const float particleT = (particles.initialLifetime[i] - particles.lifetime[i]) / particles.initialLifetime[i];
+				const UINT32 rotationSeed = particles.Seed[i] + PARTICLE_ROTATION;
+				const float particleT = (particles.InitialLifetime[i] - particles.Lifetime[i]) / particles.InitialLifetime[i];
 
-				particles.rotation[i] = mDesc.rotation3D.Evaluate(particleT, Random(rotationSeed));
+				particles.Rotation[i] = mDesc.Rotation3D.Evaluate(particleT, Random(rotationSeed));
 			}
 		}
 	}
@@ -524,30 +524,30 @@ namespace bs
 	/** Information about a particle collision. */
 	struct ParticleHitInfo
 	{
-		Vector3 position;
-		Vector3 normal;
-		UINT32 idx;
+		Vector3 Position;
+		Vector3 Normal;
+		UINT32 Idx;
 	};
 
 	/** Calculates the new position and velocity after a particle was detected to be colliding. */
 	void calcCollisionResponse(Vector3& position, Vector3& velocity, const ParticleHitInfo& hitInfo,
 		const PARTICLE_COLLISIONS_DESC& desc)
 	{
-		Vector3 diff = position - hitInfo.position;
+		Vector3 diff = position - hitInfo.Position;
 
 		// Reflect & dampen
-		const float dampenFactor = 1.0f - desc.dampening;
+		const float dampenFactor = 1.0f - desc.Dampening;
 
-		Vector3 reflectedPos = diff.Reflect(hitInfo.normal) * dampenFactor;
-		Vector3 reflectedVel = velocity.Reflect(hitInfo.normal) * dampenFactor;
+		Vector3 reflectedPos = diff.Reflect(hitInfo.Normal) * dampenFactor;
+		Vector3 reflectedVel = velocity.Reflect(hitInfo.Normal) * dampenFactor;
 
 		// Bounce
-		const float restitutionFactor = 1.0f - desc.restitution;
+		const float restitutionFactor = 1.0f - desc.Restitution;
 
-		reflectedPos -= hitInfo.normal * reflectedPos.Dot(hitInfo.normal) * restitutionFactor;
-		reflectedVel -= hitInfo.normal * reflectedVel.Dot(hitInfo.normal) * restitutionFactor;
+		reflectedPos -= hitInfo.Normal * reflectedPos.Dot(hitInfo.Normal) * restitutionFactor;
+		reflectedVel -= hitInfo.Normal * reflectedVel.Dot(hitInfo.Normal) * restitutionFactor;
 
-		position = hitInfo.position + reflectedPos;
+		position = hitInfo.Position + reflectedPos;
 		velocity = reflectedVel;
 	}
 
@@ -561,8 +561,8 @@ namespace bs
 		AABox groupBounds = AABox::INF_BOX;
 		for(UINT32 i = 0; i < numRays; i++)
 		{
-			groupBounds.Merge(segments[i].start);
-			groupBounds.Merge(segments[i].end);
+			groupBounds.Merge(segments[i].Start);
+			groupBounds.Merge(segments[i].End);
 		}
 
 		Vector<Collider*> hitColliders = physicsScene.BoxOverlapInternal(groupBounds, Quaternion::IDENTITY, layer);
@@ -574,16 +574,16 @@ namespace bs
 		{
 			float nearestHit = std::numeric_limits<float>::max();
 			ParticleHitInfo hitInfo;
-			hitInfo.idx = i;
+			hitInfo.Idx = i;
 
-			Vector3 diff = segments[i].end - segments[i].start;
+			Vector3 diff = segments[i].End - segments[i].Start;
 			const float length = diff.Length();
 
 			if(Math::ApproxEquals(length, 0.0f))
 				continue;
 
 			Ray ray;
-			ray.SetOrigin(segments[i].start);
+			ray.SetOrigin(segments[i].Start);
 			ray.SetDirection(diff / length);
 
 			for(auto& collider : hitColliders)
@@ -591,12 +591,12 @@ namespace bs
 				PhysicsQueryHit queryHit;
 				if(collider->RayCast(ray, queryHit, length))
 				{
-					if(queryHit.distance < nearestHit)
+					if(queryHit.Distance < nearestHit)
 					{
-						nearestHit = queryHit.distance;
+						nearestHit = queryHit.Distance;
 
-						hitInfo.position = queryHit.point;
-						hitInfo.normal = queryHit.normal;
+						hitInfo.Position = queryHit.Point;
+						hitInfo.Normal = queryHit.Normal;
 					}
 				}
 			}
@@ -611,10 +611,10 @@ namespace bs
 	ParticleCollisions::ParticleCollisions(const PARTICLE_COLLISIONS_DESC& desc)
 		:mDesc(desc)
 	{
-		mDesc.restitution = std::max(mDesc.restitution, 0.0f);
-		mDesc.dampening = Math::Clamp01(mDesc.dampening);
-		mDesc.lifetimeLoss = Math::Clamp01(mDesc.lifetimeLoss);
-		mDesc.radius = std::max(mDesc.radius, 0.0f);
+		mDesc.Restitution = std::max(mDesc.Restitution, 0.0f);
+		mDesc.Dampening = Math::Clamp01(mDesc.Dampening);
+		mDesc.LifetimeLoss = Math::Clamp01(mDesc.LifetimeLoss);
+		mDesc.Radius = std::max(mDesc.Radius, 0.0f);
 	}
 
 	void ParticleCollisions::Evolve(Random& random, const ParticleSystemState& state, ParticleSet& set,
@@ -623,7 +623,7 @@ namespace bs
 		const UINT32 endIdx = startIdx + count;
 		ParticleSetData& particles = set.GetParticles();
 
-		if(mDesc.mode == ParticleCollisionMode::Plane)
+		if(mDesc.Mode == ParticleCollisionMode::Plane)
 		{
 			UINT32 numPlanes[2] = { 0, 0 };
 			Plane* planes[2];
@@ -642,8 +642,8 @@ namespace bs
 					const Transform& tfrm = entry->GetTransform();
 					Plane plane = Plane(tfrm.GetForward(), tfrm.GetPosition());
 
-					if(!state.worldSpace)
-						plane = state.worldToLocal.MultiplyAffine(plane);
+					if(!state.WorldSpace)
+						plane = state.WorldToLocal.MultiplyAffine(plane);
 						
 					objPlanes[numPlanes[0]++] = plane;
 				}
@@ -653,11 +653,11 @@ namespace bs
 
 			// If particles are in world space, we can just use collision planes as is
 			Plane* localPlanes = nullptr;
-			if (state.worldSpace)
+			if (state.WorldSpace)
 				planes[1] = (Plane*)mCollisionPlanes.data();
 			else
 			{
-				const Matrix4& worldToLocal = state.worldToLocal;
+				const Matrix4& worldToLocal = state.WorldToLocal;
 				localPlanes = bs_stack_alloc<Plane>((UINT32)mCollisionPlanes.size());
 
 				for (UINT32 i = 0; i < (UINT32)mCollisionPlanes.size(); i++)
@@ -670,8 +670,8 @@ namespace bs
 
 			for(UINT32 i = startIdx; i < endIdx; i++)
 			{
-				Vector3& position = particles.position[i];
-				Vector3& velocity = particles.velocity[i];
+				Vector3& position = particles.Position[i];
+				Vector3& velocity = particles.Velocity[i];
 
 				for(UINT32 j = 0; j < bs_size(planes); j++)
 				{
@@ -680,25 +680,25 @@ namespace bs
 						const Plane& plane = planes[j][k];
 
 						const float dist = plane.GetDistance(position);
-						if (dist > mDesc.radius)
+						if (dist > mDesc.Radius)
 							continue;
 
-						const float distToTravelAlongNormal = plane.normal.Dot(velocity);
+						const float distToTravelAlongNormal = plane.Normal.Dot(velocity);
 
 						// Ignore movement parallel to the plane
 						if (Math::ApproxEquals(distToTravelAlongNormal, 0.0f))
 							continue;
 
-						const float distFromBoundary = mDesc.radius - dist;
+						const float distFromBoundary = mDesc.Radius - dist;
 						const float rayT = distFromBoundary / distToTravelAlongNormal;
 
 						ParticleHitInfo hitInfo;
-						hitInfo.normal = plane.normal;
-						hitInfo.position = position + velocity * rayT;
-						hitInfo.idx = i;
+						hitInfo.Normal = plane.Normal;
+						hitInfo.Position = position + velocity * rayT;
+						hitInfo.Idx = i;
 
 						calcCollisionResponse(position, velocity, hitInfo, mDesc);
-						particles.lifetime[i] -= mDesc.lifetimeLoss * particles.initialLifetime[i];
+						particles.Lifetime[i] -= mDesc.LifetimeLoss * particles.InitialLifetime[i];
 
 						break;
 					}
@@ -722,44 +722,44 @@ namespace bs
 
 			for(UINT32 i = 0; i < numRays; i++)
 			{
-				const Vector3& prevPosition = particles.prevPosition[rayStart + i];
-				const Vector3& position = particles.position[rayStart + i];
+				const Vector3& prevPosition = particles.PrevPosition[rayStart + i];
+				const Vector3& position = particles.Position[rayStart + i];
 
 				segments[i] = LineSegment3(prevPosition, position);
 			}
 
-			if(!state.worldSpace)
+			if(!state.WorldSpace)
 			{
 				for (UINT32 i = 0; i < numRays; i++)
 				{
-					segments[i].start = state.localToWorld.MultiplyAffine(segments[i].start);
-					segments[i].end = state.localToWorld.MultiplyAffine(segments[i].end);
+					segments[i].Start = state.LocalToWorld.MultiplyAffine(segments[i].Start);
+					segments[i].End = state.LocalToWorld.MultiplyAffine(segments[i].End);
 				}
 			}
 
-			const PhysicsScene& physicsScene = *state.scene->GetPhysicsScene();
-			const UINT32 numHits = groupRaycast(physicsScene, segments, hits, numRays, mDesc.layer);
+			const PhysicsScene& physicsScene = *state.Scene->GetPhysicsScene();
+			const UINT32 numHits = groupRaycast(physicsScene, segments, hits, numRays, mDesc.Layer);
 
-			if(!state.worldSpace)
+			if(!state.WorldSpace)
 			{
 				for (UINT32 i = 0; i < numHits; i++)
 				{
-					hits[i].position = state.worldToLocal.MultiplyAffine(hits[i].position);
-					hits[i].normal = state.worldToLocal.MultiplyDirection(hits[i].normal);
+					hits[i].Position = state.WorldToLocal.MultiplyAffine(hits[i].Position);
+					hits[i].Normal = state.WorldToLocal.MultiplyDirection(hits[i].Normal);
 				}
 			}
 
 			for(UINT32 i = 0; i < numHits; i++)
 			{
 				ParticleHitInfo& hitInfo = hits[i];
-				const UINT32 particleIdx = rayStart + hitInfo.idx;
+				const UINT32 particleIdx = rayStart + hitInfo.Idx;
 				
-				Vector3& position = particles.position[particleIdx];
-				Vector3& velocity = particles.velocity[particleIdx];
+				Vector3& position = particles.Position[particleIdx];
+				Vector3& velocity = particles.Velocity[particleIdx];
 
 				calcCollisionResponse(position, velocity, hitInfo, mDesc);
 
-				particles.lifetime[particleIdx] -= mDesc.lifetimeLoss * particles.initialLifetime[particleIdx];
+				particles.Lifetime[particleIdx] -= mDesc.LifetimeLoss * particles.InitialLifetime[particleIdx];
 			}
 
 			bs_stack_free(hits);

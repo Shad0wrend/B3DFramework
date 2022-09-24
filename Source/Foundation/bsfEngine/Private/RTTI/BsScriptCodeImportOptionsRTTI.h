@@ -18,7 +18,7 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN(editorScript, 0)
+			BS_RTTI_MEMBER_PLAIN(EditorScript, 0)
 		BS_END_RTTI_MEMBERS
 
 	public:

@@ -38,7 +38,7 @@ namespace bs
 	public:
 		struct LockGuard
 		{
-			Lock lock;
+			Lock Lock;
 		};
 
 		bool IsValidThread(ThreadId ownerThread) const
@@ -64,26 +64,26 @@ namespace bs
 #if BS_DEBUG_MODE
 		QueuedCommand(std::function<void(AsyncOp&)> _callback, UINT32 _debugId, const SPtr<AsyncOpSyncData>& asyncOpSyncData,
 			bool _notifyWhenComplete = false, UINT32 _callbackId = 0)
-			: debugId(_debugId), callbackWithReturnValue(_callback), asyncOp(asyncOpSyncData), returnsValue(true)
-			, callbackId(_callbackId), notifyWhenComplete(_notifyWhenComplete)
+			: DebugId(_debugId), CallbackWithReturnValue(_callback), AsyncOp(asyncOpSyncData), ReturnsValue(true)
+			, CallbackId(_callbackId), NotifyWhenComplete(_notifyWhenComplete)
 		{ }
 
 		QueuedCommand(std::function<void()> _callback, UINT32 _debugId, bool _notifyWhenComplete = false, UINT32 _callbackId = 0)
-			:debugId(_debugId), callback(_callback), asyncOp(AsyncOpEmpty()), returnsValue(false), callbackId(_callbackId)
-			, notifyWhenComplete(_notifyWhenComplete)
+			:DebugId(_debugId), Callback(_callback), AsyncOp(AsyncOpEmpty()), ReturnsValue(false), CallbackId(_callbackId)
+			, NotifyWhenComplete(_notifyWhenComplete)
 		{ }
 
-		UINT32 debugId;
+		UINT32 DebugId;
 #else
 		QueuedCommand(std::function<void(AsyncOp&)> _callback, const SPtr<AsyncOpSyncData>& asyncOpSyncData,
 			bool _notifyWhenComplete = false, UINT32 _callbackId = 0)
-			: callbackWithReturnValue(_callback), asyncOp(asyncOpSyncData), returnsValue(true), callbackId(_callbackId)
-			, notifyWhenComplete(_notifyWhenComplete)
+			: CallbackWithReturnValue(_callback), AsyncOp(asyncOpSyncData), ReturnsValue(true), CallbackId(_callbackId)
+			, NotifyWhenComplete(_notifyWhenComplete)
 		{ }
 
 		QueuedCommand(std::function<void()> _callback, bool _notifyWhenComplete = false, UINT32 _callbackId = 0)
-			: callback(_callback), asyncOp(AsyncOpEmpty()), returnsValue(false), callbackId(_callbackId)
-			, notifyWhenComplete(_notifyWhenComplete)
+			: Callback(_callback), AsyncOp(AsyncOpEmpty()), ReturnsValue(false), CallbackId(_callbackId)
+			, NotifyWhenComplete(_notifyWhenComplete)
 		{ }
 #endif
 
@@ -92,40 +92,40 @@ namespace bs
 
 		QueuedCommand(const QueuedCommand& source)
 		{
-			callback = source.callback;
-			callbackWithReturnValue = source.callbackWithReturnValue;
-			asyncOp = source.asyncOp;
-			returnsValue = source.returnsValue;
-			callbackId = source.callbackId;
-			notifyWhenComplete = source.notifyWhenComplete;
+			Callback = source.Callback;
+			CallbackWithReturnValue = source.CallbackWithReturnValue;
+			AsyncOp = source.AsyncOp;
+			ReturnsValue = source.ReturnsValue;
+			CallbackId = source.CallbackId;
+			NotifyWhenComplete = source.NotifyWhenComplete;
 
 #if BS_DEBUG_MODE
-			debugId = source.debugId;
+			DebugId = source.DebugId;
 #endif
 		}
 
 		QueuedCommand& operator=(const QueuedCommand& rhs)
 		{
-			callback = rhs.callback;
-			callbackWithReturnValue = rhs.callbackWithReturnValue;
-			asyncOp = rhs.asyncOp;
-			returnsValue = rhs.returnsValue;
-			callbackId = rhs.callbackId;
-			notifyWhenComplete = rhs.notifyWhenComplete;
+			Callback = rhs.Callback;
+			CallbackWithReturnValue = rhs.CallbackWithReturnValue;
+			AsyncOp = rhs.AsyncOp;
+			ReturnsValue = rhs.ReturnsValue;
+			CallbackId = rhs.CallbackId;
+			NotifyWhenComplete = rhs.NotifyWhenComplete;
 			
 #if BS_DEBUG_MODE
-			debugId = rhs.debugId;
+			DebugId = rhs.DebugId;
 #endif
 
 			return *this;
 		}
 
-		std::function<void()> callback;
-		std::function<void(AsyncOp&)> callbackWithReturnValue;
-		AsyncOp asyncOp;
-		bool returnsValue;
-		UINT32 callbackId;
-		bool notifyWhenComplete;
+		std::function<void()> Callback;
+		std::function<void(AsyncOp&)> CallbackWithReturnValue;
+		AsyncOp AsyncOp;
+		bool ReturnsValue;
+		UINT32 CallbackId;
+		bool NotifyWhenComplete;
 	};
 
 	/** Manages a list of commands that can be queued for later execution on the core thread. */
@@ -255,11 +255,11 @@ namespace bs
 			};
 
 			QueueBreakpoint(UINT32 _queueIdx, UINT32 _commandIdx)
-				:queueIdx(_queueIdx), commandIdx(_commandIdx)
+				:QueueIdx(_queueIdx), CommandIdx(_commandIdx)
 			{ }
 
-			UINT32 queueIdx;
-			UINT32 commandIdx;
+			UINT32 QueueIdx;
+			UINT32 CommandIdx;
 
 			inline size_t operator()(const QueueBreakpoint& v) const;
 		};

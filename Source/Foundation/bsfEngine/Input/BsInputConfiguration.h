@@ -29,9 +29,9 @@ namespace bs
 		 */
 		VIRTUAL_BUTTON_DESC(ButtonCode buttonCode, ButtonModifier modifiers = ButtonModifier::None, bool repeatable = false);
 
-		ButtonCode buttonCode = BC_0;
-		ButtonModifier modifiers = ButtonModifier::None;
-		bool repeatable = false;
+		ButtonCode ButtonCode = BC_0;
+		ButtonModifier Modifiers = ButtonModifier::None;
+		bool Repeatable = false;
 	};
 
 	/**
@@ -50,23 +50,23 @@ namespace bs
 		VIRTUAL_AXIS_DESC(UINT32 type);
 
 		/** Type of physical axis to map to. See InputAxis type for common types, but you are not limited to those values. */
-		UINT32 type = (UINT32)InputAxis::MouseX;
+		UINT32 Type = (UINT32)InputAxis::MouseX;
 
 		/** Value below which to ignore axis value and consider it 0. */
-		float deadZone = 0.0001f;
+		float DeadZone = 0.0001f;
 
 		/** Higher sensitivity means the axis will more easily reach its maximum values. */
-		float sensitivity = 1.0f;
+		float Sensitivity = 1.0f;
 
 		/** Should the axis be inverted. */
-		bool invert = false;
+		bool Invert = false;
 
 		/**
 		 * If enabled, axis values will be normalized to [-1, 1] range. Most axes already come in normalized form and this
 		 * value will not affect such axes. Some axes, like mouse movement are not normalized by default and will instead
 		 * report relative movement. By enabling this you will normalize such axes to [-1, 1] range.
 		 */
-		bool normalize = false;
+		bool Normalize = false;
 	};
 
 	/**
@@ -88,10 +88,10 @@ namespace bs
 
 		bool operator== (const VirtualButton& rhs) const
 		{
-			return (buttonIdentifier == rhs.buttonIdentifier);
+			return (ButtonIdentifier == rhs.ButtonIdentifier);
 		}
 
-		UINT32 buttonIdentifier = 0;
+		UINT32 ButtonIdentifier = 0;
 	private:
 		/** Returns a static map of all virtual button identifiers and their buttons. */
 		static Map<String, UINT32>& GetUniqueButtonIds();
@@ -117,11 +117,11 @@ namespace bs
 		VirtualAxis() = default;
 		VirtualAxis(const String& name);
 
-		UINT32 axisIdentifier = 0;
+		UINT32 AxisIdentifier = 0;
 
 		bool operator== (const VirtualAxis& rhs) const
 		{
-			return (axisIdentifier == rhs.axisIdentifier);
+			return (AxisIdentifier == rhs.AxisIdentifier);
 		}
 
 	private:
@@ -138,23 +138,23 @@ namespace bs
 		/**	Internal virtual button data container. */
 		struct VirtualButtonData
 		{
-			String name;
-			VirtualButton button;
-			VIRTUAL_BUTTON_DESC desc;
+			String Name;
+			VirtualButton Button;
+			VIRTUAL_BUTTON_DESC Desc;
 		};
 
 		/**	Internal virtual axis data container. */
 		struct VirtualAxisData
 		{
-			String name;
-			VirtualAxis axis;
-			VIRTUAL_AXIS_DESC desc;
+			String Name;
+			VirtualAxis Axis;
+			VIRTUAL_AXIS_DESC Desc;
 		};
 
 		/**	Internal container for holding axis data for all devices. */
 		struct DeviceAxisData
 		{
-			VirtualAxisData axes[(UINT32)InputAxis::Count];
+			VirtualAxisData Axes[(UINT32)InputAxis::Count];
 		};
 
 	public:

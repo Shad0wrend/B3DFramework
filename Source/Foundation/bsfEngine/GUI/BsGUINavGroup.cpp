@@ -84,8 +84,8 @@ namespace bs
 						const Rect2I boundsLHS = lhs->GetClippedBoundsInternal();
 						const Rect2I boundsRHS = rhs->GetClippedBoundsInternal();
 
-						if(boundsLHS.y != boundsRHS.y)
-							return boundsLHS.y < boundsRHS.y;
+						if(boundsLHS.Y != boundsRHS.Y)
+							return boundsLHS.Y < boundsRHS.Y;
 
 						return lhs < rhs;
 					}
@@ -101,7 +101,7 @@ namespace bs
 						continue;
 
 					const Rect2I elemBounds = element->GetClippedBoundsInternal();
-					const bool isFullyClipped = elemBounds.width == 0 || elemBounds.height == 0;
+					const bool isFullyClipped = elemBounds.Width == 0 || elemBounds.Height == 0;
 
 					if (isFullyClipped)
 						continue;
@@ -122,18 +122,18 @@ namespace bs
 					const Rect2I elemBounds = element->GetClippedBoundsInternal();
 					if(iterElem == elements.begin())
 					{
-						firstRowY = elemBounds.y;
-						rowY = elemBounds.y;
+						firstRowY = elemBounds.Y;
+						rowY = elemBounds.Y;
 					}
 					else
 					{
-						const INT32 yDiff = elemBounds.y - rowY;
+						const INT32 yDiff = elemBounds.Y - rowY;
 
 						// New row
 						if (yDiff >= ROW_HEIGHT)
 						{
 							iterRowStart = iterElem;
-							rowY = elemBounds.y;
+							rowY = elemBounds.Y;
 						}
 					}
 
@@ -156,21 +156,21 @@ namespace bs
 						continue;
 
 					const Rect2I elemBounds = element->GetClippedBoundsInternal();
-					const INT32 yDiff = elemBounds.y - rowY;
+					const INT32 yDiff = elemBounds.Y - rowY;
 
 					// New row
 					if(yDiff >= ROW_HEIGHT)
 					{
-						rowY = elemBounds.y;
+						rowY = elemBounds.Y;
 						break;
 					}
 
 					// Note: We're purposely ignoring elements at the same exact position, as the tab focus would then just
 					// ping-pong between the two elements, and we'd have to keep a list of previously visited elements in
 					// order to avoid the issue.
-					if(elemBounds.x > focusedElemBounds.x)
+					if(elemBounds.X > focusedElemBounds.X)
 					{
-						const INT32 xDiff = elemBounds.x - focusedElemBounds.x;
+						const INT32 xDiff = elemBounds.X - focusedElemBounds.X;
 						if (xDiff < nearestX)
 						{
 							nearestX = xDiff;
@@ -188,15 +188,15 @@ namespace bs
 						GUIElement* element = *iterElem;
 
 						const Rect2I elemBounds = element->GetClippedBoundsInternal();
-						const INT32 yDiff = elemBounds.y - rowY;
+						const INT32 yDiff = elemBounds.Y - rowY;
 
 						// New row
 						if (yDiff >= ROW_HEIGHT)
 							break;
 
-						if (elemBounds.x < nearestX)
+						if (elemBounds.X < nearestX)
 						{
-							nearestX = elemBounds.x;
+							nearestX = elemBounds.X;
 							nextElement = element;
 						}
 					}
@@ -242,10 +242,10 @@ namespace bs
 
 			// Ignore elements that have been fully clipped
 			const Rect2I elemBounds = element->GetClippedBoundsInternal();
-			if(elemBounds.width == 0 || elemBounds.height == 0)
+			if(elemBounds.Width == 0 || elemBounds.Height == 0)
 				continue;
 
-			Vector2I elementPos(elemBounds.x, elemBounds.y);
+			Vector2I elementPos(elemBounds.X, elemBounds.Y);
 
 			const UINT32 dist = elementPos.SquaredLength();
 			if (dist < lowestDist)

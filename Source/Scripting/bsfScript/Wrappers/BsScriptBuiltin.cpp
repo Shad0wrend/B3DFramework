@@ -19,10 +19,10 @@ namespace bs
 
 	void ScriptBuiltin::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_GetWhiteTexture", (void*)&ScriptBuiltin::InternalGetWhiteTexture);
-		metaData.scriptClass->AddInternalCall("Internal_GetBuiltinShader", (void*)&ScriptBuiltin::InternalGetBuiltinShader);
-		metaData.scriptClass->AddInternalCall("Internal_GetMesh", (void*)&ScriptBuiltin::InternalGetMesh);
-		metaData.scriptClass->AddInternalCall("Internal_GetDefaultFont", (void*)&ScriptBuiltin::InternalGetDefaultFont);
+		metaData.ScriptClass->AddInternalCall("Internal_GetWhiteTexture", (void*)&ScriptBuiltin::InternalGetWhiteTexture);
+		metaData.ScriptClass->AddInternalCall("Internal_GetBuiltinShader", (void*)&ScriptBuiltin::InternalGetBuiltinShader);
+		metaData.ScriptClass->AddInternalCall("Internal_GetMesh", (void*)&ScriptBuiltin::InternalGetMesh);
+		metaData.ScriptClass->AddInternalCall("Internal_GetDefaultFont", (void*)&ScriptBuiltin::InternalGetDefaultFont);
 	}
 
 	MonoObject* ScriptBuiltin::InternalGetWhiteTexture()

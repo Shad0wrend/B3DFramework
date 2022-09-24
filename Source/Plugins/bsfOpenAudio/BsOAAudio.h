@@ -98,8 +98,8 @@ namespace bs
 		/** Command queued for a streaming audio source. */
 		struct StreamingCommand
 		{
-			StreamingCommandType type;
-			OAAudioSource* source;
+			StreamingCommandType Type;
+			OAAudioSource* Source;
 		};
 
 		/** @copydoc Audio::createClip */

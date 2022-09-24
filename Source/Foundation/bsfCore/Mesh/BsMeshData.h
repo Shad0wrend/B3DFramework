@@ -83,15 +83,15 @@ namespace bs
 	/** Contains per-vertex bone weights and indexes used for skinning, for up to four bones. */
 	struct BS_SCRIPT_EXPORT(pl:true,m:Utility) BoneWeight
 	{
-		int index0;
-		int index1;
-		int index2;
-		int index3;
+		int Index0;
+		int Index1;
+		int Index2;
+		int Index3;
 
-		float weight0;
-		float weight1;
-		float weight2;
-		float weight3;
+		float Weight0;
+		float Weight1;
+		float Weight2;
+		float Weight3;
 	};
 
 	/** Contains mesh vertex and index data used for initializing, updating and reading mesh data from Mesh. */

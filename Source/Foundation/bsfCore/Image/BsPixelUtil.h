@@ -62,21 +62,21 @@ namespace bs
 	/**	Options used to control texture compression. */
 	struct CompressionOptions
 	{
-		PixelFormat format = PF_BC1; /*< Format to compress to. Must be a format containing compressed data. */
-		AlphaMode alphaMode = AlphaMode::None; /*< Controls how to (and if) to compress the alpha channel. */
-		bool isNormalMap = false; /*< Determines does the input data represent a normal map. */
-		bool isSRGB = false; /*< Determines has the input data been gamma corrected. */
-		CompressionQuality quality = CompressionQuality::Normal; /*< Compressed image quality. Better compression might take longer to execute but will generate better results. */
+		PixelFormat Format = PF_BC1; /*< Format to compress to. Must be a format containing compressed data. */
+		AlphaMode AlphaMode = AlphaMode::None; /*< Controls how to (and if) to compress the alpha channel. */
+		bool IsNormalMap = false; /*< Determines does the input data represent a normal map. */
+		bool IsSrgb = false; /*< Determines has the input data been gamma corrected. */
+		CompressionQuality Quality = CompressionQuality::Normal; /*< Compressed image quality. Better compression might take longer to execute but will generate better results. */
 	};
 
 	/**	Options used to control texture mip map generation. */
 	struct MipMapGenOptions
 	{
-		MipMapFilter filter = MipMapFilter::Box; /*< Filter to use when downsamping input data. */
-		MipMapWrapMode wrapMode = MipMapWrapMode::Mirror; /*< Determines how to downsample pixels on borders. */
-		bool isNormalMap = false; /*< Determines does the input data represent a normal map. */
-		bool normalizeMipmaps = false; /*< Should the downsampled values be re-normalized. Only relevant for mip-maps representing normal maps. */
-		bool isSRGB = false; /*< Determines has the input data been gamma corrected. */
+		MipMapFilter Filter = MipMapFilter::Box; /*< Filter to use when downsamping input data. */
+		MipMapWrapMode WrapMode = MipMapWrapMode::Mirror; /*< Determines how to downsample pixels on borders. */
+		bool IsNormalMap = false; /*< Determines does the input data represent a normal map. */
+		bool NormalizeMipmaps = false; /*< Should the downsampled values be re-normalized. Only relevant for mip-maps representing normal maps. */
+		bool IsSrgb = false; /*< Determines has the input data been gamma corrected. */
 	};
 
 	/**	Utility methods for converting and managing pixel data and formats. */

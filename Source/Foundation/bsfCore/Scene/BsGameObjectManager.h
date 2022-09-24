@@ -105,7 +105,7 @@ namespace bs
 		void DestroyQueuedObjects();
 
 		/**	Triggered when a game object is being destroyed. */
-		Event<void(const HGameObject&)> onDestroyed;
+		Event<void(const HGameObject&)> OnDestroyed;
 
 	private:
 		std::atomic<UINT64> mNextAvailableID = { 1 } ; // 0 is not a valid ID
@@ -122,8 +122,8 @@ namespace bs
 		/**	Contains data for an yet unresolved game object handle. */
 		struct UnresolvedHandle
 		{
-			UINT64 originalInstanceId;
-			GameObjectHandleBase handle;
+			UINT64 OriginalInstanceId;
+			GameObjectHandleBase Handle;
 		};
 
 	public:

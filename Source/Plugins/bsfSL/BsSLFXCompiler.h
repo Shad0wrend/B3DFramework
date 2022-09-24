@@ -23,11 +23,11 @@ namespace bs
 	/**	Contains the results of compilation returned from the BSLFXCompiler. */
 	struct BSLFXCompileResult
 	{
-		SPtr<Shader> shader; /**< Resulting shader if compilation was successful. Null if error occurred. */
-		String errorMessage; /**< Error message if compilation failed. */
-		int errorLine = 0; /**< Line of the error if one occurred. */
-		int errorColumn = 0; /**< Column of the error if one occurred. */
-		String errorFile; /**< File in which the error occurred. Empty if root file. */
+		SPtr<Shader> Shader; /**< Resulting shader if compilation was successful. Null if error occurred. */
+		String ErrorMessage; /**< Error message if compilation failed. */
+		int ErrorLine = 0; /**< Line of the error if one occurred. */
+		int ErrorColumn = 0; /**< Column of the error if one occurred. */
+		String ErrorFile; /**< File in which the error occurred. Empty if root file. */
 	};
 
 	/**	Transforms a source file written in BSL FX syntax into a Shader object. */
@@ -42,74 +42,74 @@ namespace bs
 		/**	Temporary data describing a pass during parsing. */
 		struct PassData
 		{
-			BLEND_STATE_DESC blendDesc;
-			RASTERIZER_STATE_DESC rasterizerDesc;
-			DEPTH_STENCIL_STATE_DESC depthStencilDesc;
-			UINT32 stencilRefValue = 0;
-			UINT32 seqIdx = 0;
+			BLEND_STATE_DESC BlendDesc;
+			RASTERIZER_STATE_DESC RasterizerDesc;
+			DEPTH_STENCIL_STATE_DESC DepthStencilDesc;
+			UINT32 StencilRefValue = 0;
+			UINT32 SeqIdx = 0;
 
-			bool blendIsDefault = true;
-			bool rasterizerIsDefault = true;
-			bool depthStencilIsDefault = true;
+			bool BlendIsDefault = true;
+			bool RasterizerIsDefault = true;
+			bool DepthStencilIsDefault = true;
 
-			String code; // Parsed code block
+			String Code; // Parsed code block
 
-			String vertexCode;
-			String fragmentCode;
-			String geometryCode;
-			String hullCode;
-			String domainCode;
-			String computeCode;
+			String VertexCode;
+			String FragmentCode;
+			String GeometryCode;
+			String HullCode;
+			String DomainCode;
+			String ComputeCode;
 		};
 
 		/** A set of attributes describing a BSL construct. */
 		struct AttributeData
 		{
-			Vector<std::pair<INT32, String>> attributes;
+			Vector<std::pair<INT32, String>> Attributes;
 		};
 
 		/** Value of a single variation option along with an optional name. */
 		struct VariationOption
 		{
-			String name;
-			UINT32 value;
+			String Name;
+			UINT32 Value;
 		};
 
 		/** Information about different variations of a single shader. */
 		struct VariationData
 		{
-			String name;
-			String identifier;
-			bool internal = true;
-			Vector<VariationOption> values;
+			String Name;
+			String Identifier;
+			bool Internal = true;
+			Vector<VariationOption> Values;
 		};
 
 		/** Information describing a shader/mixin node, without the actual contents. */
 		struct ShaderMetaData
 		{
-			String name;
-			Vector<String> includes;
-			bool isMixin;
+			String Name;
+			Vector<String> Includes;
+			bool IsMixin;
 
-			String language;
-			String featureSet;
+			String Language;
+			String FeatureSet;
 
-			Vector<StringID> tags;
-			Vector<VariationData> variations;
+			Vector<StringID> Tags;
+			Vector<VariationData> Variations;
 		};
 
 		/** Temporary data for describing a shader/mixin node during parsing. */
 		struct ShaderData
 		{
-			ShaderMetaData metaData;
-			Vector<PassData> passes;
+			ShaderMetaData MetaData;
+			Vector<PassData> Passes;
 		};
 
 		/** Temporary data describing a sub-shader during parsing. */
 		struct SubShaderData
 		{
-			String name;
-			UINT32 codeBlockIndex;
+			String Name;
+			UINT32 CodeBlockIndex;
 		};
 
 	public:

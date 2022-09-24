@@ -16,7 +16,7 @@ namespace bs
 		for (UINT32 i = 0; i < numFields; i++)
 		{
 			RTTIField* field = type->GetField(i);
-			if (field->schema.type == SerializableFT_Reflectable || field->schema.type == SerializableFT_ReflectablePtr)
+			if (field->Schema.Type == SerializableFT_Reflectable || field->Schema.Type == SerializableFT_ReflectablePtr)
 				return true;
 		}
 
@@ -27,7 +27,7 @@ namespace bs
 			for (UINT32 i = 0; i < numFields; i++)
 			{
 				RTTIField* field = derivedClass->GetField(i);
-				if (field->schema.type == SerializableFT_Reflectable || field->schema.type == SerializableFT_ReflectablePtr)
+				if (field->Schema.Type == SerializableFT_Reflectable || field->Schema.Type == SerializableFT_ReflectablePtr)
 					return true;
 			}
 		}
@@ -47,16 +47,16 @@ namespace bs
 			for (UINT32 i = 0; i < numFields; i++)
 			{
 				RTTIField* field = rtti->GetField(i);
-				if (field->schema.info.flags.IsSet(RTTIFieldFlag::SkipInReferenceSearch))
+				if (field->Schema.Info.Flags.IsSet(RTTIFieldFlag::SkipInReferenceSearch))
 					continue;
 
-				if (field->schema.type == SerializableFT_Reflectable)
+				if (field->Schema.Type == SerializableFT_Reflectable)
 				{
 					auto reflectableField = static_cast<RTTIReflectableFieldBase*>(field);
 
 					if (reflectableField->GetType()->GetRttiId() == TID_ResourceHandle)
 					{
-						if (reflectableField->schema.isArray)
+						if (reflectableField->Schema.IsArray)
 						{
 							const UINT32 numElements = reflectableField->GetArraySize(rttiInstance, &obj);
 							for (UINT32 j = 0; j < numElements; j++)
@@ -65,8 +65,8 @@ namespace bs
 								if (!resource.GetUuid().Empty())
 								{
 									ResourceDependency& dependency = dependencies[resource.GetUuid()];
-									dependency.resource = resource;
-									dependency.numReferences++;
+									dependency.Resource = resource;
+									dependency.NumReferences++;
 								}
 							}
 						}
@@ -76,8 +76,8 @@ namespace bs
 							if (!resource.GetUuid().Empty())
 							{
 								ResourceDependency& dependency = dependencies[resource.GetUuid()];
-								dependency.resource = resource;
-								dependency.numReferences++;
+								dependency.Resource = resource;
+								dependency.NumReferences++;
 							}
 						}
 					}
@@ -87,7 +87,7 @@ namespace bs
 						// reflectable children that may hold the reference.
 						if (hasReflectableChildren(reflectableField->GetType()))
 						{
-							if (reflectableField->schema.isArray)
+							if (reflectableField->Schema.IsArray)
 							{
 								const UINT32 numElements = reflectableField->GetArraySize(rttiInstance, &obj);
 								for (UINT32 j = 0; j < numElements; j++)
@@ -104,7 +104,7 @@ namespace bs
 						}
 					}
 				}
-				else if (field->schema.type == SerializableFT_ReflectablePtr && recursive)
+				else if (field->Schema.Type == SerializableFT_ReflectablePtr && recursive)
 				{
 					auto reflectablePtrField = static_cast<RTTIReflectablePtrFieldBase*>(field);
 
@@ -112,7 +112,7 @@ namespace bs
 					// reflectable children that may hold the reference.
 					if (hasReflectableChildren(reflectablePtrField->GetType()))
 					{
-						if (reflectablePtrField->schema.isArray)
+						if (reflectablePtrField->Schema.IsArray)
 						{
 							const UINT32 numElements = reflectablePtrField->GetArraySize(rttiInstance, &obj);
 							for (UINT32 j = 0; j < numElements; j++)

@@ -26,10 +26,10 @@ namespace bs
 			output = type->NewRttiObject();
 			auto iterNewObj = mObjectMap.insert(std::make_pair(serializedObject, ObjectToDecode(output, serializedObject)));
 
-			iterNewObj.first->second.decodeInProgress = true;
+			iterNewObj.first->second.DecodeInProgress = true;
 			DecodeEntry(output, serializedObject);
-			iterNewObj.first->second.decodeInProgress = false;
-			iterNewObj.first->second.isDecoded = true;
+			iterNewObj.first->second.DecodeInProgress = false;
+			iterNewObj.first->second.IsDecoded = true;
 		}
 
 		// Go through the remaining objects (should be only ones with weak refs)
@@ -37,13 +37,13 @@ namespace bs
 		{
 			ObjectToDecode& objToDecode = iter->second;
 
-			if (objToDecode.isDecoded)
+			if (objToDecode.IsDecoded)
 				continue;
 
-			objToDecode.decodeInProgress = true;
-			DecodeEntry(objToDecode.object, objToDecode.serializedObject);
-			objToDecode.decodeInProgress = false;
-			objToDecode.isDecoded = true;
+			objToDecode.DecodeInProgress = true;
+			DecodeEntry(objToDecode.Object, objToDecode.SerializedObject);
+			objToDecode.DecodeInProgress = false;
+			objToDecode.IsDecoded = true;
 		}
 
 		mObjectMap.clear();
@@ -62,16 +62,16 @@ namespace bs
 
 	void IntermediateSerializer::DecodeEntry(const SPtr<IReflectable>& object, const SerializedObject* serializableObject)
 	{
-		UINT32 numSubObjects = (UINT32)serializableObject->subObjects.size();
+		UINT32 numSubObjects = (UINT32)serializableObject->SubObjects.size();
 		if (numSubObjects == 0)
 			return;
 
 		FrameStack<RTTITypeBase*> rttiInstances;
 		for (INT32 subObjectIdx = numSubObjects - 1; subObjectIdx >= 0; subObjectIdx--)
 		{
-			const SerializedSubObject& subObject = serializableObject->subObjects[subObjectIdx];
+			const SerializedSubObject& subObject = serializableObject->SubObjects[subObjectIdx];
 
-			RTTITypeBase* rtti = IReflectable::GetRttifromTypeIdInternal(subObject.typeId);
+			RTTITypeBase* rtti = IReflectable::GetRttifromTypeIdInternal(subObject.TypeId);
 			if (rtti == nullptr)
 				continue;
 
@@ -84,27 +84,27 @@ namespace bs
 			{
 				RTTIField* curGenericField = rtti->GetField(fieldIdx);
 
-				auto iterFindFieldData = subObject.entries.find(curGenericField->schema.id);
-				if (iterFindFieldData == subObject.entries.end())
+				auto iterFindFieldData = subObject.Entries.find(curGenericField->Schema.Id);
+				if (iterFindFieldData == subObject.Entries.end())
 					continue;
 
-				SPtr<SerializedInstance> entryData = iterFindFieldData->second.serialized;
-				if (curGenericField->schema.isArray)
+				SPtr<SerializedInstance> entryData = iterFindFieldData->second.Serialized;
+				if (curGenericField->Schema.IsArray)
 				{
 					SPtr<SerializedArray> arrayData = std::static_pointer_cast<SerializedArray>(entryData);
 
-					UINT32 arrayNumElems = (UINT32)arrayData->numElements;
+					UINT32 arrayNumElems = (UINT32)arrayData->NumElements;
 					curGenericField->SetArraySize(rttiInstance, object.get(), arrayNumElems);
 
-					switch (curGenericField->schema.type)
+					switch (curGenericField->Schema.Type)
 					{
 					case SerializableFT_ReflectablePtr:
 					{
 						auto* curField = static_cast<RTTIReflectablePtrFieldBase*>(curGenericField);
 
-						for (auto& arrayElem : arrayData->entries)
+						for (auto& arrayElem : arrayData->Entries)
 						{
-							SPtr<SerializedObject> arrayElemData = std::static_pointer_cast<SerializedObject>(arrayElem.second.serialized);
+							SPtr<SerializedObject> arrayElemData = std::static_pointer_cast<SerializedObject>(arrayElem.second.Serialized);
 							RTTITypeBase* childRtti = nullptr;
 
 							if (arrayElemData != nullptr)
@@ -122,10 +122,10 @@ namespace bs
 
 								ObjectToDecode& objToDecode = findObj->second;
 
-								bool needsDecoding = !curField->schema.info.flags.IsSet(RTTIFieldFlag::WeakRef) && !objToDecode.isDecoded;
+								bool needsDecoding = !curField->Schema.Info.Flags.IsSet(RTTIFieldFlag::WeakRef) && !objToDecode.IsDecoded;
 								if (needsDecoding)
 								{
-									if (objToDecode.decodeInProgress)
+									if (objToDecode.DecodeInProgress)
 									{
 										BS_LOG(Warning, Generic, "Detected a circular reference when decoding. "
 											"Referenced object's fields will be resolved in an undefined order "
@@ -136,14 +136,14 @@ namespace bs
 									}
 									else
 									{
-										objToDecode.decodeInProgress = true;
-										DecodeEntry(objToDecode.object, objToDecode.serializedObject);
-										objToDecode.decodeInProgress = false;
-										objToDecode.isDecoded = true;
+										objToDecode.DecodeInProgress = true;
+										DecodeEntry(objToDecode.Object, objToDecode.SerializedObject);
+										objToDecode.DecodeInProgress = false;
+										objToDecode.IsDecoded = true;
 									}
 								}
 
-								curField->SetArrayValue(rttiInstance, object.get(), arrayElem.first, objToDecode.object);
+								curField->SetArrayValue(rttiInstance, object.get(), arrayElem.first, objToDecode.Object);
 							}
 							else
 							{
@@ -156,9 +156,9 @@ namespace bs
 					{
 						auto* curField = static_cast<RTTIReflectableFieldBase*>(curGenericField);
 
-						for (auto& arrayElem : arrayData->entries)
+						for (auto& arrayElem : arrayData->Entries)
 						{
-							SPtr<SerializedObject> arrayElemData = std::static_pointer_cast<SerializedObject>(arrayElem.second.serialized);
+							SPtr<SerializedObject> arrayElemData = std::static_pointer_cast<SerializedObject>(arrayElem.second.Serialized);
 							RTTITypeBase* childRtti = nullptr;
 
 							if (arrayElemData != nullptr)
@@ -177,12 +177,12 @@ namespace bs
 					{
 						auto* curField = static_cast<RTTIPlainFieldBase*>(curGenericField);
 
-						for (auto& arrayElem : arrayData->entries)
+						for (auto& arrayElem : arrayData->Entries)
 						{
-							SPtr<SerializedField> fieldData = std::static_pointer_cast<SerializedField>(arrayElem.second.serialized);
+							SPtr<SerializedField> fieldData = std::static_pointer_cast<SerializedField>(arrayElem.second.Serialized);
 							if (fieldData != nullptr)
 							{
-								Bitstream tempStream(fieldData->value, fieldData->size);
+								Bitstream tempStream(fieldData->Value, fieldData->Size);
 								curField->ArrayElemFromBuffer(rttiInstance, object.get(), arrayElem.first, tempStream);
 							}
 						}
@@ -194,7 +194,7 @@ namespace bs
 				}
 				else
 				{
-					switch (curGenericField->schema.type)
+					switch (curGenericField->Schema.Type)
 					{
 					case SerializableFT_ReflectablePtr:
 					{
@@ -218,10 +218,10 @@ namespace bs
 
 							ObjectToDecode& objToDecode = findObj->second;
 
-							bool needsDecoding = !curField->schema.info.flags.IsSet(RTTIFieldFlag::WeakRef) && !objToDecode.isDecoded;
+							bool needsDecoding = !curField->Schema.Info.Flags.IsSet(RTTIFieldFlag::WeakRef) && !objToDecode.IsDecoded;
 							if (needsDecoding)
 							{
-								if (objToDecode.decodeInProgress)
+								if (objToDecode.DecodeInProgress)
 								{
 									BS_LOG(Warning, Generic, "Detected a circular reference when decoding. Referenced "
 										"object's fields will be resolved in an undefined order (i.e. one of the "
@@ -231,14 +231,14 @@ namespace bs
 								}
 								else
 								{
-									objToDecode.decodeInProgress = true;
-									DecodeEntry(objToDecode.object, objToDecode.serializedObject);
-									objToDecode.decodeInProgress = false;
-									objToDecode.isDecoded = true;
+									objToDecode.DecodeInProgress = true;
+									DecodeEntry(objToDecode.Object, objToDecode.SerializedObject);
+									objToDecode.DecodeInProgress = false;
+									objToDecode.IsDecoded = true;
 								}
 							}
 
-							curField->SetValue(rttiInstance, object.get(), objToDecode.object);
+							curField->SetValue(rttiInstance, object.get(), objToDecode.Object);
 						}
 						else
 						{
@@ -271,7 +271,7 @@ namespace bs
 						SPtr<SerializedField> fieldData = std::static_pointer_cast<SerializedField>(entryData);
 						if (fieldData != nullptr)
 						{
-							Bitstream tempStream(fieldData->value, fieldData->size);
+							Bitstream tempStream(fieldData->Value, fieldData->Size);
 							curField->FromBuffer(rttiInstance, object.get(), tempStream);
 						}
 					}
@@ -283,8 +283,8 @@ namespace bs
 						SPtr<SerializedDataBlock> fieldData = std::static_pointer_cast<SerializedDataBlock>(entryData);
 						if (fieldData != nullptr)
 						{
-							fieldData->stream->Seek(fieldData->offset);
-							curField->SetValue(rttiInstance, object.get(), fieldData->stream, fieldData->size);
+							fieldData->Stream->Seek(fieldData->Offset);
+							curField->SetValue(rttiInstance, object.get(), fieldData->Stream, fieldData->Size);
 						}
 
 						break;
@@ -333,9 +333,9 @@ namespace bs
 
 			rttiInstance->OnSerializationStarted(object, context);
 
-			output->subObjects.push_back(SerializedSubObject());
-			SerializedSubObject& subObject = output->subObjects.back();
-			subObject.typeId = rtti->GetRttiId();
+			output->SubObjects.push_back(SerializedSubObject());
+			SerializedSubObject& subObject = output->SubObjects.back();
+			subObject.TypeId = rtti->GetRttiId();
 
 			const UINT32 numFields = rtti->GetNumFields();
 			for (UINT32 i = 0; i < numFields; i++)
@@ -344,7 +344,7 @@ namespace bs
 
 				if(replicableOnly)
 				{
-					if(!curGenericField->schema.info.flags.IsSet(RTTIFieldFlag::Replicate))
+					if(!curGenericField->Schema.Info.Flags.IsSet(RTTIFieldFlag::Replicate))
 						continue;
 				}
 
@@ -352,10 +352,10 @@ namespace bs
 					flags, context, alloc);
 
 				SerializedEntry entry;
-				entry.fieldId = curGenericField->schema.id;
-				entry.serialized = serializedEntry;
+				entry.FieldId = curGenericField->Schema.Id;
+				entry.Serialized = serializedEntry;
 
-				subObject.entries.insert(std::make_pair(curGenericField->schema.id, entry));
+				subObject.Entries.insert(std::make_pair(curGenericField->Schema.Id, entry));
 			}
 
 			rtti = rtti->GetBaseClass();
@@ -373,7 +373,7 @@ namespace bs
 		bool shallow = flags.IsSet(SerializedObjectEncodeFlag::Shallow);
 
 		SPtr<SerializedInstance> output;
-		if (field->schema.isArray)
+		if (field->Schema.IsArray)
 		{
 			const UINT32 arrayNumElems = field->GetArraySize(rtti, object);
 			bool wholeArray = arrayIdx == (UINT32)-1;
@@ -391,12 +391,12 @@ namespace bs
 			if (wholeArray)
 			{
 				serializedArray = bs_shared_ptr_new<SerializedArray>();
-				serializedArray->numElements = arrayNumElems;
+				serializedArray->NumElements = arrayNumElems;
 
 				output = serializedArray;
 			}
 
-			switch (field->schema.type)
+			switch (field->Schema.Type)
 			{
 			case SerializableFT_ReflectablePtr:
 			{
@@ -417,10 +417,10 @@ namespace bs
 					if (wholeArray)
 					{
 						SerializedArrayEntry arrayEntry;
-						arrayEntry.serialized = serializedChildObj;
-						arrayEntry.index = arrIdx;
+						arrayEntry.Serialized = serializedChildObj;
+						arrayEntry.Index = arrIdx;
 
-						serializedArray->entries[arrIdx] = arrayEntry;
+						serializedArray->Entries[arrIdx] = arrayEntry;
 					}
 					else
 						output = serializedChildObj;
@@ -441,10 +441,10 @@ namespace bs
 					if (wholeArray)
 					{
 						SerializedArrayEntry arrayEntry;
-						arrayEntry.serialized = serializedChildObj;
-						arrayEntry.index = arrIdx;
+						arrayEntry.Serialized = serializedChildObj;
+						arrayEntry.Index = arrIdx;
 
-						serializedArray->entries[arrIdx] = arrayEntry;
+						serializedArray->Entries[arrIdx] = arrayEntry;
 					}
 					else
 						output = serializedChildObj;
@@ -459,26 +459,26 @@ namespace bs
 				for (UINT32 arrIdx = 0; arrIdx < arrayNumElems; arrIdx++)
 				{
 					UINT32 typeSize = 0;
-					if (curField->schema.hasDynamicSize)
-						typeSize = curField->GetArrayElemDynamicSize(rtti, object, arrIdx, false).bytes;
+					if (curField->Schema.HasDynamicSize)
+						typeSize = curField->GetArrayElemDynamicSize(rtti, object, arrIdx, false).Bytes;
 					else
-						typeSize = curField->schema.size.bytes;
+						typeSize = curField->Schema.Size.Bytes;
 
 					const auto serializedField = bs_shared_ptr_new<SerializedField>();
-					serializedField->value = (UINT8*)bs_alloc(typeSize);
-					serializedField->ownsMemory = true;
-					serializedField->size = typeSize;
+					serializedField->Value = (UINT8*)bs_alloc(typeSize);
+					serializedField->OwnsMemory = true;
+					serializedField->Size = typeSize;
 
-					Bitstream tempStream(serializedField->value, typeSize);
+					Bitstream tempStream(serializedField->Value, typeSize);
 					curField->ArrayElemToStream(rtti, object, arrIdx, tempStream);
 
 					if (wholeArray)
 					{
 						SerializedArrayEntry arrayEntry;
-						arrayEntry.serialized = serializedField;
-						arrayEntry.index = arrIdx;
+						arrayEntry.Serialized = serializedField;
+						arrayEntry.Index = arrIdx;
 
-						serializedArray->entries[arrIdx] = arrayEntry;
+						serializedArray->Entries[arrIdx] = arrayEntry;
 					}
 					else
 						output = serializedField;
@@ -488,13 +488,13 @@ namespace bs
 			}
 			default:
 				BS_EXCEPT(InternalErrorException,
-					"Error encoding data. Encountered a type I don't know how to encode. Type: " + toString(UINT32(field->schema.type)) +
-					", Is array: " + toString(field->schema.isArray));
+					"Error encoding data. Encountered a type I don't know how to encode. Type: " + toString(UINT32(field->Schema.Type)) +
+					", Is array: " + toString(field->Schema.IsArray));
 			}
 		}
 		else
 		{
-			switch (field->schema.type)
+			switch (field->Schema.Type)
 			{
 			case SerializableFT_ReflectablePtr:
 			{
@@ -524,17 +524,17 @@ namespace bs
 				auto curField = static_cast<RTTIPlainFieldBase*>(field);
 
 				UINT32 typeSize = 0;
-				if (curField->schema.hasDynamicSize)
-					typeSize = curField->GetDynamicSize(rtti, object, false).bytes;
+				if (curField->Schema.HasDynamicSize)
+					typeSize = curField->GetDynamicSize(rtti, object, false).Bytes;
 				else
-					typeSize = curField->schema.size.bytes;
+					typeSize = curField->Schema.Size.Bytes;
 
 				const auto serializedField = bs_shared_ptr_new<SerializedField>();
-				serializedField->value = (UINT8*)bs_alloc(typeSize);
-				serializedField->ownsMemory = true;
-				serializedField->size = typeSize;
+				serializedField->Value = (UINT8*)bs_alloc(typeSize);
+				serializedField->OwnsMemory = true;
+				serializedField->Size = typeSize;
 
-				Bitstream tempStream(serializedField->value, typeSize);
+				Bitstream tempStream(serializedField->Value, typeSize);
 				curField->ToStream(rtti, object, tempStream);
 
 				output = serializedField;
@@ -552,18 +552,18 @@ namespace bs
 				blockStream->Read(stream->Data(), dataBlockSize);
 
 				SPtr<SerializedDataBlock> serializedDataBlock = bs_shared_ptr_new<SerializedDataBlock>();
-				serializedDataBlock->stream = stream;
-				serializedDataBlock->offset = 0;
+				serializedDataBlock->Stream = stream;
+				serializedDataBlock->Offset = 0;
 
-				serializedDataBlock->size = dataBlockSize;
+				serializedDataBlock->Size = dataBlockSize;
 				output = serializedDataBlock;
 
 				break;
 			}
 			default:
 				BS_EXCEPT(InternalErrorException,
-					"Error encoding data. Encountered a type I don't know how to encode. Type: " + toString(UINT32(field->schema.type)) +
-					", Is array: " + toString(field->schema.isArray));
+					"Error encoding data. Encountered a type I don't know how to encode. Type: " + toString(UINT32(field->Schema.Type)) +
+					", Is array: " + toString(field->Schema.IsArray));
 			}
 		}
 

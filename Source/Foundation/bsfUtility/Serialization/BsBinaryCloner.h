@@ -30,15 +30,15 @@ namespace bs
 		/** Identifier representing a single field or an array entry in an object. */
 		struct FieldId
 		{
-			RTTIField* field;
-			INT32 arrayIdx;
+			RTTIField* Field;
+			INT32 ArrayIdx;
 		};
 
 		/** A saved reference to an object with a field identifier that owns it. */
 		struct ObjectReference
 		{
-			FieldId fieldId;
-			SPtr<IReflectable> object;
+			FieldId FieldId;
+			SPtr<IReflectable> Object;
 		};
 
 		/**
@@ -47,9 +47,9 @@ namespace bs
 		 */
 		struct SubObjectReferenceData
 		{
-			RTTITypeBase* rtti;
-			Vector<ObjectReference> references;
-			Vector<ObjectReferenceData> children;
+			RTTITypeBase* Rtti;
+			Vector<ObjectReference> References;
+			Vector<ObjectReferenceData> Children;
 		};
 
 		/**
@@ -57,8 +57,8 @@ namespace bs
 		 */
 		struct ObjectReferenceData
 		{
-			FieldId fieldId;
-			Vector<SubObjectReferenceData> subObjectData;
+			FieldId FieldId;
+			Vector<SubObjectReferenceData> SubObjectData;
 		};
 
 		/**

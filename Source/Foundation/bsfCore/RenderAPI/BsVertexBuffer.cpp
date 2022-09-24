@@ -9,10 +9,10 @@ namespace bs
 {
 	void checkValidDesc(const VERTEX_BUFFER_DESC& desc)
 	{
-		if(desc.vertexSize == 0)
+		if(desc.VertexSize == 0)
 			BS_EXCEPT(InvalidParametersException, "Vertex buffer vertex size is not allowed to be zero.");
 
-		if(desc.numVerts == 0)
+		if(desc.NumVerts == 0)
 			BS_EXCEPT(InvalidParametersException, "Vertex buffer vertex count is not allowed to be zero.");
 	}
 
@@ -21,7 +21,7 @@ namespace bs
 	{ }
 
 	VertexBuffer::VertexBuffer(const VERTEX_BUFFER_DESC& desc)
-		: mProperties(desc.numVerts, desc.vertexSize), mUsage(desc.usage), mStreamOut(desc.streamOut)
+		: mProperties(desc.NumVerts, desc.VertexSize), mUsage(desc.Usage), mStreamOut(desc.StreamOut)
 	{
 #if BS_DEBUG_MODE
 		checkValidDesc(desc);
@@ -31,10 +31,10 @@ namespace bs
 	SPtr<ct::CoreObject> VertexBuffer::CreateCore() const
 	{
 		VERTEX_BUFFER_DESC desc;
-		desc.vertexSize = mProperties.mVertexSize;
-		desc.numVerts = mProperties.mNumVertices;
-		desc.usage = mUsage;
-		desc.streamOut = mStreamOut;
+		desc.VertexSize = mProperties.mVertexSize;
+		desc.NumVerts = mProperties.mNumVertices;
+		desc.Usage = mUsage;
+		desc.StreamOut = mStreamOut;
 
 		return ct::HardwareBufferManager::Instance().CreateVertexBufferInternal(desc);
 	}
@@ -52,7 +52,7 @@ namespace bs
 	namespace ct
 	{
 	VertexBuffer::VertexBuffer(const VERTEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask)
-		:HardwareBuffer(desc.vertexSize * desc.numVerts, desc.usage, deviceMask), mProperties(desc.numVerts, desc.vertexSize)
+		:HardwareBuffer(desc.VertexSize * desc.NumVerts, desc.Usage, deviceMask), mProperties(desc.NumVerts, desc.VertexSize)
 	{
 #if BS_DEBUG_MODE
 		checkValidDesc(desc);
@@ -142,11 +142,11 @@ namespace bs
 		}
 
 		GPU_BUFFER_DESC desc;
-		desc.type = type;
-		desc.format = format;
-		desc.usage = mUsage;
-		desc.elementSize = elementSize;
-		desc.elementCount = mBuffer->GetSize() / elemSize;
+		desc.Type = type;
+		desc.Format = format;
+		desc.Usage = mUsage;
+		desc.ElementSize = elementSize;
+		desc.ElementCount = mBuffer->GetSize() / elemSize;
 
 		if(!mSharedBuffer)
 			mSharedBuffer = bs_shared_ptr(mBuffer, mBufferDeleter);

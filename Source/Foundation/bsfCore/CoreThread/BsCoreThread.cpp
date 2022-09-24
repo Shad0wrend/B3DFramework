@@ -168,14 +168,14 @@ namespace bs
 		{
 			SPtr<CommandQueue<CommandQueueSync>> newQueue = bs_shared_ptr_new<CommandQueue<CommandQueueSync>>(BS_THREAD_CURRENT_ID);
 			mPerThreadQueue.current = bs_new<ThreadQueueContainer>();
-			mPerThreadQueue.current->queue = newQueue;
-			mPerThreadQueue.current->isMain = BS_THREAD_CURRENT_ID == mSimThreadId;
+			mPerThreadQueue.current->Queue = newQueue;
+			mPerThreadQueue.current->IsMain = BS_THREAD_CURRENT_ID == mSimThreadId;
 
 			Lock lock(mSubmitMutex);
 			mAllQueues.push_back(mPerThreadQueue.current);
 		}
 
-		return mPerThreadQueue.current->queue;
+		return mPerThreadQueue.current->Queue;
 	}
 
 	void CoreThread::SubmitCommandQueue(CommandQueue<CommandQueueSync>& queue, bool blockUntilComplete)
@@ -203,15 +203,15 @@ namespace bs
 			ThreadQueueContainer* mainQueue = nullptr;
 			for (auto& queue : mAllQueues)
 			{
-				if (!queue->isMain)
-					SubmitCommandQueue(*queue->queue, false);
+				if (!queue->IsMain)
+					SubmitCommandQueue(*queue->Queue, false);
 				else
 					mainQueue = queue;
 			}
 
 			// Then main
 			if (mainQueue != nullptr)
-				SubmitCommandQueue(*mainQueue->queue, false);
+				SubmitCommandQueue(*mainQueue->Queue, false);
 
 			if(blockUntilComplete)
 			{

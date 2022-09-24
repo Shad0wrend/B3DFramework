@@ -23,25 +23,25 @@ namespace bs
 
 	void ScriptRRefBase::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_IsLoaded", (void*)&ScriptRRefBase::InternalIsLoaded);
-		metaData.scriptClass->AddInternalCall("Internal_GetResource", (void*)&ScriptRRefBase::InternalGetResource);
-		metaData.scriptClass->AddInternalCall("Internal_GetUUID", (void*)&ScriptRRefBase::InternalGetUuid);
-		metaData.scriptClass->AddInternalCall("Internal_CastAs", (void*)&ScriptRRefBase::InternalCastAs);
+		metaData.ScriptClass->AddInternalCall("Internal_IsLoaded", (void*)&ScriptRRefBase::InternalIsLoaded);
+		metaData.ScriptClass->AddInternalCall("Internal_GetResource", (void*)&ScriptRRefBase::InternalGetResource);
+		metaData.ScriptClass->AddInternalCall("Internal_GetUUID", (void*)&ScriptRRefBase::InternalGetUuid);
+		metaData.ScriptClass->AddInternalCall("Internal_CastAs", (void*)&ScriptRRefBase::InternalCastAs);
 	}
 
 	ScriptRRefBase* ScriptRRefBase::CreateInternal(const ResourceHandle<Resource>& handle, ::MonoClass* rawType)
 	{
 		MonoClass* type = nullptr;
 		if(rawType == nullptr)
-			type = metaData.scriptClass;
+			type = metaData.ScriptClass;
 		else
 		{
 			type = MonoManager::Instance().FindClass(rawType);
 			if (type == nullptr)
-				type = metaData.scriptClass;
+				type = metaData.ScriptClass;
 			else
 			{
-				assert(type->IsSubClassOf(metaData.scriptClass));
+				assert(type->IsSubClassOf(metaData.ScriptClass));
 			}
 		}
 
@@ -80,7 +80,7 @@ namespace bs
 
 	::MonoClass* ScriptRRefBase::BindGenericParam(::MonoClass* param)
 	{
-		MonoClass* rrefClass = ScriptAssemblyManager::Instance().GetBuiltinClasses().genericRRefClass;
+		MonoClass* rrefClass = ScriptAssemblyManager::Instance().GetBuiltinClasses().GenericRRefClass;
 
 		::MonoClass* params[1] = { param };
 		return MonoUtil::BindGenericParameters(rrefClass->GetInternalClassInternal(), params, 1);
@@ -133,8 +133,8 @@ namespace bs
 			return nullptr; // Not a valid type
 
 		::MonoClass* rrefType = nullptr;
-		if(resType == ScriptResource::GetMetaData()->scriptClass ||
-			resType->IsSubClassOf(ScriptResource::GetMetaData()->scriptClass))
+		if(resType == ScriptResource::GetMetaData()->ScriptClass ||
+			resType->IsSubClassOf(ScriptResource::GetMetaData()->ScriptClass))
 			rrefType = BindGenericParam(rawResType);
 
 		ScriptRRefBase* castRRefBase = Create(thisPtr->mResource, rrefType);

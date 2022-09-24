@@ -11,14 +11,14 @@ namespace bs
 
 	LocalizedStringData::~LocalizedStringData()
 	{
-		if(parameterOffsets != nullptr)
-			bs_deleteN(parameterOffsets, numParameters);
+		if(ParameterOffsets != nullptr)
+			bs_deleteN(ParameterOffsets, NumParameters);
 	}
 
-	void LocalizedStringData::ConcatenateString(String& outputString, String* parameters, UINT32 numParameterValues) const
+	void LocalizedStringData::ConcatenateString(bs::String& outputString, bs::String* parameters, UINT32 numParameterValues) const
 	{
 		// A safeguard in case translated strings have different number of parameters
-		UINT32 actualNumParameters = std::min(numParameterValues, numParameters);
+		UINT32 actualNumParameters = std::min(numParameterValues, NumParameters);
 		
 		if(parameters != nullptr)
 		{
@@ -26,12 +26,12 @@ namespace bs
 			UINT32 prevIdx = 0;
 			for(UINT32 i = 0; i < actualNumParameters; i++)
 			{
-				totalNumChars += (parameterOffsets[i].location - prevIdx) + (UINT32)parameters[parameterOffsets[i].paramIdx].size();;
+				totalNumChars += (ParameterOffsets[i].Location - prevIdx) + (UINT32)parameters[ParameterOffsets[i].ParamIdx].size();;
 
-				prevIdx = parameterOffsets[i].location;
+				prevIdx = ParameterOffsets[i].Location;
 			}
 
-			totalNumChars += (UINT32)string.size() - prevIdx;
+			totalNumChars += (UINT32)String.size() - prevIdx;
 
 			outputString.resize(totalNumChars);
 			char* strData = &outputString[0]; // String contiguity required by C++11, but this should work elsewhere as well
@@ -39,32 +39,32 @@ namespace bs
 			prevIdx = 0;
 			for(UINT32 i = 0; i < actualNumParameters; i++)
 			{
-				UINT32 strSize = parameterOffsets[i].location - prevIdx;
-				memcpy(strData, &string[prevIdx], strSize * sizeof(char));
+				UINT32 strSize = ParameterOffsets[i].Location - prevIdx;
+				memcpy(strData, &String[prevIdx], strSize * sizeof(char));
 				strData += strSize;
 
-				String& param = parameters[parameterOffsets[i].paramIdx];
+				bs::String& param = parameters[ParameterOffsets[i].ParamIdx];
 				memcpy(strData, &param[0], param.size() * sizeof(char));
 				strData += param.size();
 
-				prevIdx = parameterOffsets[i].location;
+				prevIdx = ParameterOffsets[i].Location;
 			}
 
-			memcpy(strData, &string[prevIdx], (string.size() - prevIdx) * sizeof(char));
+			memcpy(strData, &String[prevIdx], (String.size() - prevIdx) * sizeof(char));
 		}
 		else
 		{
-			outputString.resize(string.size());
+			outputString.resize(String.size());
 			char* strData = &outputString[0]; // String contiguity required by C++11, but this should work elsewhere as well
 
-			memcpy(strData, &string[0], string.size() * sizeof(char));
+			memcpy(strData, &String[0], String.size() * sizeof(char));
 		}
 	}
 
-	void LocalizedStringData::UpdateString(const String& _string)
+	void LocalizedStringData::UpdateString(const bs::String& _string)
 	{
-		if(parameterOffsets != nullptr)
-			bs_deleteN(parameterOffsets, numParameters);
+		if(ParameterOffsets != nullptr)
+			bs_deleteN(ParameterOffsets, NumParameters);
 
 		Vector<ParamOffset> paramOffsets;
 
@@ -122,39 +122,39 @@ namespace bs
 			escaped = false;
 		}
 
-		string = cleanString.str();
-		numParameters = (UINT32)paramOffsets.size();
+		String = cleanString.str();
+		NumParameters = (UINT32)paramOffsets.size();
 
 		// Try to find out of order param offsets and fix them
 		std::sort(begin(paramOffsets), end(paramOffsets),
-			[&] (const ParamOffset& a, const ParamOffset& b) { return a.paramIdx < b.paramIdx; } );
+			[&] (const ParamOffset& a, const ParamOffset& b) { return a.ParamIdx < b.ParamIdx; } );
 
 		if(paramOffsets.size() > 0)
 		{
 			UINT32 sequentialIdx = 0;
-			UINT32 lastParamIdx = paramOffsets[0].paramIdx;
-			for(UINT32 i = 0; i < numParameters; i++)
+			UINT32 lastParamIdx = paramOffsets[0].ParamIdx;
+			for(UINT32 i = 0; i < NumParameters; i++)
 			{
-				if(paramOffsets[i].paramIdx == lastParamIdx)
+				if(paramOffsets[i].ParamIdx == lastParamIdx)
 				{
-					paramOffsets[i].paramIdx = sequentialIdx;
+					paramOffsets[i].ParamIdx = sequentialIdx;
 					continue;
 				}
 
-				lastParamIdx = paramOffsets[i].paramIdx;
+				lastParamIdx = paramOffsets[i].ParamIdx;
 				sequentialIdx++;
 
-				paramOffsets[i].paramIdx = sequentialIdx;
+				paramOffsets[i].ParamIdx = sequentialIdx;
 			}
 		}
 
 		// Re-sort based on location since we find that more useful at runtime
 		std::sort(begin(paramOffsets), end(paramOffsets),
-			[&] (const ParamOffset& a, const ParamOffset& b) { return a.location < b.location; } );
+			[&] (const ParamOffset& a, const ParamOffset& b) { return a.Location < b.Location; } );
 
-		parameterOffsets = bs_newN<ParamOffset>(numParameters);
-		for(UINT32 i = 0; i < numParameters; i++)
-			parameterOffsets[i] = paramOffsets[i];
+		ParameterOffsets = bs_newN<ParamOffset>(NumParameters);
+		for(UINT32 i = 0; i < NumParameters; i++)
+			ParameterOffsets[i] = paramOffsets[i];
 	}
 
 	StringTable::StringTable()
@@ -199,13 +199,13 @@ namespace bs
 	{
 		LanguageData* curLanguage = &(mAllLanguages[(UINT32)language]);
 
-		auto iterFind = curLanguage->strings.find(identifier);
+		auto iterFind = curLanguage->Strings.find(identifier);
 
 		SPtr<LocalizedStringData> stringData;
-		if(iterFind == curLanguage->strings.end())
+		if(iterFind == curLanguage->Strings.end())
 		{
 			stringData = bs_shared_ptr_new<LocalizedStringData>();
-			curLanguage->strings[identifier] = stringData;
+			curLanguage->Strings[identifier] = stringData;
 		}
 		else
 		{
@@ -220,9 +220,9 @@ namespace bs
 	{
 		LanguageData* curLanguage = &(mAllLanguages[(UINT32)language]);
 
-		auto iterFind = curLanguage->strings.find(identifier);
-		if (iterFind != curLanguage->strings.end())
-			return iterFind->second->string;
+		auto iterFind = curLanguage->Strings.find(identifier);
+		if (iterFind != curLanguage->Strings.end())
+			return iterFind->second->String;
 			
 		return identifier;
 	}
@@ -231,7 +231,7 @@ namespace bs
 	{
 		for(UINT32 i = 0; i < (UINT32)Language::Count; i++)
 		{
-			mAllLanguages[i].strings.erase(identifier);
+			mAllLanguages[i].Strings.erase(identifier);
 		}
 
 		mIdentifiers.erase(identifier);
@@ -246,20 +246,20 @@ namespace bs
 	{
 		LanguageData* curLanguage = &(mAllLanguages[(UINT32)language]);
 
-		auto iterFind = curLanguage->strings.find(identifier);
-		if(iterFind != curLanguage->strings.end())
+		auto iterFind = curLanguage->Strings.find(identifier);
+		if(iterFind != curLanguage->Strings.end())
 			return iterFind->second;
 
-		auto defaultIterFind = mDefaultLanguageData->strings.find(identifier);
-		if(defaultIterFind != mDefaultLanguageData->strings.end())
+		auto defaultIterFind = mDefaultLanguageData->Strings.find(identifier);
+		if(defaultIterFind != mDefaultLanguageData->Strings.end())
 			return defaultIterFind->second;
 
 		if(insertIfNonExisting)
 		{
 			SetString(identifier, DEFAULT_LANGUAGE, identifier);
 
-			auto defaultIterFind = mDefaultLanguageData->strings.find(identifier);
-			if(defaultIterFind != mDefaultLanguageData->strings.end())
+			auto defaultIterFind = mDefaultLanguageData->Strings.find(identifier);
+			if(defaultIterFind != mDefaultLanguageData->Strings.end())
 				return defaultIterFind->second;
 		}
 

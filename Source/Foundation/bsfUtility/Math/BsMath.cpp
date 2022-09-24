@@ -263,24 +263,24 @@ namespace bs
 
 	bool Math::ApproxEquals(const Vector2& a, const Vector2& b, float tolerance)
 	{
-		return fabs(b.x - a.x) <= tolerance && fabs(b.y - a.y) <= tolerance;
+		return fabs(b.X - a.X) <= tolerance && fabs(b.Y - a.Y) <= tolerance;
 	}
 
 	bool Math::ApproxEquals(const Vector3& a, const Vector3& b, float tolerance)
 	{
-		return fabs(b.x - a.x) <= tolerance && fabs(b.y - a.y) <= tolerance && fabs(b.z - a.z) <= tolerance;
+		return fabs(b.X - a.X) <= tolerance && fabs(b.Y - a.Y) <= tolerance && fabs(b.Z - a.Z) <= tolerance;
 	}
 
 	bool Math::ApproxEquals(const Vector4& a, const Vector4& b, float tolerance)
 	{
-		return fabs(b.x - a.x) <= tolerance && fabs(b.y - a.y) <= tolerance && fabs(b.z - a.z) <= tolerance &&
-			fabs(b.w - a.w) <= tolerance;
+		return fabs(b.X - a.X) <= tolerance && fabs(b.Y - a.Y) <= tolerance && fabs(b.Z - a.Z) <= tolerance &&
+			fabs(b.W - a.W) <= tolerance;
 	}
 
 	bool Math::ApproxEquals(const Quaternion& a, const Quaternion& b, float tolerance)
 	{
-		return fabs(b.x - a.x) <= tolerance && fabs(b.y - a.y) <= tolerance && fabs(b.z - a.z) <= tolerance &&
-			fabs(b.w - a.w) <= tolerance;
+		return fabs(b.X - a.X) <= tolerance && fabs(b.Y - a.Y) <= tolerance && fabs(b.Z - a.Z) <= tolerance &&
+			fabs(b.W - a.W) <= tolerance;
 	}
 
 	Vector3 Math::CalculateTriTangent(const Vector3& position1, const Vector3& position2,

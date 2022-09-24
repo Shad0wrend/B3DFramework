@@ -772,7 +772,7 @@ namespace bs
 			flags |= GODM_UseNewUUID;
 
 		CoreSerializationContext serzContext;
-		serzContext.goState = bs_shared_ptr_new<GameObjectDeserializationState>(flags);
+		serzContext.GoState = bs_shared_ptr_new<GameObjectDeserializationState>(flags);
 
 		stream->Seek(0);
 		SPtr<SceneObject> cloneObj = std::static_pointer_cast<SceneObject>(
@@ -832,7 +832,7 @@ namespace bs
 			if(x.IsDestroyed())
 				return false;
 
-			return x.GetHandleDataInternal()->mPtr->object.get() == component; }
+			return x.GetHandleDataInternal()->MPtr->Object.get() == component; }
 		);
 
 		if(iterFind != mComponents.end())

@@ -168,108 +168,108 @@ typedef enum tagConditionalOp ConditionalOp;
 
 struct tagNodeLink
 {
-	ASTFXNode* node;
-	NodeLink* next;
+	ASTFXNode* Node;
+	NodeLink* Next;
 };
 
 struct tagIncludeData
 {
-	char* filename;
-	char* buffer;
+	char* Filename;
+	char* Buffer;
 };
 
 struct tagIncludeLink
 {
-	IncludeData* data;
-	IncludeLink* next;
+	IncludeData* Data;
+	IncludeLink* Next;
 };
 
 struct tagConditionalData
 {
-	char* name;
-	int selfEnabled;
-	int enabled;
-	ConditionalOp op;
-	char* value;
+	char* Name;
+	int SelfEnabled;
+	int Enabled;
+	ConditionalOp Op;
+	char* Value;
 
-	ConditionalData* next;
+	ConditionalData* Next;
 };
 
 struct tagRawCode
 {
-	char* code;
-	int index;
-	int size;
-	int capacity;
+	char* Code;
+	int Index;
+	int Size;
+	int Capacity;
 
-	RawCode* next;
+	RawCode* Next;
 };
 
 struct tagDefineEntry
 {
-	char* name;
-	char* expr;
+	char* Name;
+	char* Expr;
 };
 
 struct tagParseState
 {
-	ASTFXNode* rootNode;
-	ASTFXNode* topNode;
-	void* memContext;
+	ASTFXNode* RootNode;
+	ASTFXNode* TopNode;
+	void* MemContext;
 
-	int hasError;
-	int errorLine;
-	int errorColumn;
-	const char* errorMessage;
-	char* errorFile;
+	int HasError;
+	int ErrorLine;
+	int ErrorColumn;
+	const char* ErrorMessage;
+	char* ErrorFile;
 
-	NodeLink* nodeStack;
-	IncludeLink* includeStack;
-	IncludeLink* includes;
-	RawCode* rawCodeBlock[RCT_Count];
-	int numRawCodeBlocks[RCT_Count];
-	int numOpenBrackets;
+	NodeLink* NodeStack;
+	IncludeLink* IncludeStack;
+	IncludeLink* Includes;
+	RawCode* RawCodeBlock[RCT_Count];
+	int NumRawCodeBlocks[RCT_Count];
+	int NumOpenBrackets;
 
-	DefineEntry* defines;
-	int numDefines;
-	int defineCapacity;
-	ConditionalData* conditionalStack;
+	DefineEntry* Defines;
+	int NumDefines;
+	int DefineCapacity;
+	ConditionalData* ConditionalStack;
 };
 
 struct tagOptionInfo
 {
-	OptionType type;
-	OptionDataType dataType;
+	OptionType Type;
+	OptionDataType DataType;
 };
 
 union tagOptionData
 {
-	int intValue;
-	float floatValue;
-	const char* strValue;
-	float matrixValue[16];
-	int intVectorValue[4];
-	ASTFXNode* nodePtr;
+	int IntValue;
+	float FloatValue;
+	const char* StrValue;
+	float MatrixValue[16];
+	int IntVectorValue[4];
+	ASTFXNode* NodePtr;
 };
 
 struct tagNodeOption
 {
-	OptionType type;
-	OptionData value;
+	OptionType Type;
+	OptionData Value;
 };
 
 struct tagNodeOptions
 {
-	NodeOption* entries;
+	NodeOption* Entries;
 
-	int count;
-	int bufferSize;
+	int Count;
+	int BufferSize;
 };
 
 struct tagASTFXNode
 {
-	NodeType type;
-	NodeOptions* options;
+	NodeType Type;
+	NodeOptions* Options;
 };
 
 extern OptionInfo OPTION_LOOKUP[OT_Count];

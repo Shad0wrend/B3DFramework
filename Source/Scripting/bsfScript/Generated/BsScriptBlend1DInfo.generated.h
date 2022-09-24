@@ -12,7 +12,7 @@ namespace bs
 {
 	struct __Blend1DInfoInterop
 	{
-		MonoArray* clips;
+		MonoArray* Clips;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptBlend1DInfo : public ScriptObject<ScriptBlend1DInfo>

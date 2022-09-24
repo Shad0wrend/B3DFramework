@@ -32,14 +32,14 @@ namespace bs
 
 	void ScriptGUIButton::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIButton::InternalCreateInstance);
-		metaData.scriptClass->AddInternalCall("Internal_SetContent", (void*)&ScriptGUIButton::InternalSetContent);
-		metaData.scriptClass->AddInternalCall("Internal_SetTint", (void*)&ScriptGUIButton::InternalSetTint);
+		metaData.ScriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIButton::InternalCreateInstance);
+		metaData.ScriptClass->AddInternalCall("Internal_SetContent", (void*)&ScriptGUIButton::InternalSetContent);
+		metaData.ScriptClass->AddInternalCall("Internal_SetTint", (void*)&ScriptGUIButton::InternalSetTint);
 
-		onClickThunk = (OnClickThunkDef)metaData.scriptClass->GetMethod("DoOnClick")->GetThunk();
-		onDoubleClickThunk = (OnDoubleClickThunkDef)metaData.scriptClass->GetMethod("DoOnDoubleClick")->GetThunk();
-		onHoverThunk = (OnHoverThunkDef)metaData.scriptClass->GetMethod("DoOnHover")->GetThunk();
-		onOutThunk = (OnOutThunkDef)metaData.scriptClass->GetMethod("DoOnOut")->GetThunk();
+		onClickThunk = (OnClickThunkDef)metaData.ScriptClass->GetMethod("DoOnClick")->GetThunk();
+		onDoubleClickThunk = (OnDoubleClickThunkDef)metaData.ScriptClass->GetMethod("DoOnDoubleClick")->GetThunk();
+		onHoverThunk = (OnHoverThunkDef)metaData.ScriptClass->GetMethod("DoOnHover")->GetThunk();
+		onOutThunk = (OnOutThunkDef)metaData.ScriptClass->GetMethod("DoOnOut")->GetThunk();
 	}
 
 	void ScriptGUIButton::InternalCreateInstance(MonoObject* instance, __GUIContentInterop* content,
@@ -57,10 +57,10 @@ namespace bs
 
 		auto nativeInstance = new (bs_alloc<ScriptGUIButton>()) ScriptGUIButton(instance, guiButton);
 
-		guiButton->onClick.Connect(std::bind(&::bs::ScriptGUIButton::OnClick, nativeInstance));
-		guiButton->onDoubleClick.Connect(std::bind(&::bs::ScriptGUIButton::OnDoubleClick, nativeInstance));
-		guiButton->onHover.Connect(std::bind(&::bs::ScriptGUIButton::OnHover, nativeInstance));
-		guiButton->onOut.Connect(std::bind(&ScriptGUIButton::OnOut, nativeInstance));
+		guiButton->OnClick.Connect(std::bind(&::bs::ScriptGUIButton::OnClick, nativeInstance));
+		guiButton->OnDoubleClick.Connect(std::bind(&::bs::ScriptGUIButton::OnDoubleClick, nativeInstance));
+		guiButton->OnHover.Connect(std::bind(&::bs::ScriptGUIButton::OnHover, nativeInstance));
+		guiButton->OnOut.Connect(std::bind(&ScriptGUIButton::OnOut, nativeInstance));
 	}
 
 	void ScriptGUIButton::InternalSetContent(ScriptGUIButton* nativeInstance, __GUIContentInterop* content)

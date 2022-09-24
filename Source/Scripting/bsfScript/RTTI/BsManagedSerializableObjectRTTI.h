@@ -34,7 +34,7 @@ namespace bs
 		{
 			SPtr<ManagedSerializableMemberInfo> field = mSequentialFields[arrayIdx];
 
-			SPtr<ManagedSerializableFieldKey> fieldKey = ManagedSerializableFieldKey::Create(field->mParentTypeId, field->mFieldId);
+			SPtr<ManagedSerializableFieldKey> fieldKey = ManagedSerializableFieldKey::Create(field->MParentTypeId, field->MFieldId);
 			SPtr<ManagedSerializableFieldData> fieldData = obj->GetFieldData(field);
 
 			return ManagedSerializableFieldDataEntry::Create(fieldKey, fieldData);
@@ -42,7 +42,7 @@ namespace bs
 
 		void SetFieldsEntry(ManagedSerializableObject* obj, UINT32 arrayIdx, SPtr<ManagedSerializableFieldDataEntry> val)
 		{
-			obj->mCachedData[*val->mKey] = val->mValue;
+			obj->mCachedData[*val->MKey] = val->MValue;
 		}
 
 		UINT32 GetNumFieldEntries(ManagedSerializableObject* obj)
@@ -70,13 +70,13 @@ namespace bs
 			SPtr<ManagedSerializableObjectInfo> curType = castObj->mObjInfo;
 			while (curType != nullptr)
 			{
-				for (auto& field : curType->mFields)
+				for (auto& field : curType->MFields)
 				{
 					if (field.second->IsSerializable())
 						mSequentialFields.push_back(field.second);
 				}
 
-				curType = curType->mBaseClass;
+				curType = curType->MBaseClass;
 			}
 		}
 

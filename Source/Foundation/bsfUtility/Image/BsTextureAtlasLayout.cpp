@@ -49,59 +49,59 @@ namespace bs
 	bool TextureAtlasLayout::AddToNode(UINT32 nodeIdx, UINT32 width, UINT32 height, UINT32& x, UINT32& y, bool allowGrowth)
 	{
 		TexAtlasNode* node = &mNodes[nodeIdx];
-		float aspect = node->width / (float)node->height;
+		float aspect = node->Width / (float)node->Height;
 
-		if (node->children[0] != (UINT32)-1)
+		if (node->Children[0] != (UINT32)-1)
 		{
-			if (AddToNode(node->children[0], width, height, x, y, allowGrowth))
+			if (AddToNode(node->Children[0], width, height, x, y, allowGrowth))
 				return true;
 
-			return AddToNode(node->children[1], width, height, x, y, allowGrowth);
+			return AddToNode(node->Children[1], width, height, x, y, allowGrowth);
 		}
 		else
 		{
-			if (node->nodeFull)
+			if (node->NodeFull)
 				return false;
 
-			if (width > node->width || height > node->height)
+			if (width > node->Width || height > node->Height)
 				return false;
 
 			if(!allowGrowth)
 			{
-				if (node->x + width > mWidth || node->y + height > mHeight)
+				if (node->X + width > mWidth || node->Y + height > mHeight)
 					return false;
 			}
 
-			if (width == node->width && height == node->height)
+			if (width == node->Width && height == node->Height)
 			{
-				x = node->x;
-				y = node->y;
-				node->nodeFull = true;
+				x = node->X;
+				y = node->Y;
+				node->NodeFull = true;
 
 				return true;
 			}
 
-			float dw = (float)(node->width - width);
-			float dh = (node->height - height) * aspect;
+			float dw = (float)(node->Width - width);
+			float dh = (node->Height - height) * aspect;
 
 			UINT32 nextChildIdx = (UINT32)mNodes.size();
-			node->children[0] = nextChildIdx;
-			node->children[1] = nextChildIdx + 1;
+			node->Children[0] = nextChildIdx;
+			node->Children[1] = nextChildIdx + 1;
 
 			TexAtlasNode nodeCopy = *node;
 			node = nullptr; // Undefined past this point
 			if (dw > dh)
 			{
-				mNodes.emplace_back(nodeCopy.x, nodeCopy.y, width, nodeCopy.height);
-				mNodes.emplace_back(nodeCopy.x + width, nodeCopy.y, nodeCopy.width - width, nodeCopy.height);
+				mNodes.emplace_back(nodeCopy.X, nodeCopy.Y, width, nodeCopy.Height);
+				mNodes.emplace_back(nodeCopy.X + width, nodeCopy.Y, nodeCopy.Width - width, nodeCopy.Height);
 			}
 			else
 			{
-				mNodes.emplace_back(nodeCopy.x, nodeCopy.y, nodeCopy.width, height);
-				mNodes.emplace_back(nodeCopy.x, nodeCopy.y + height, nodeCopy.width, nodeCopy.height - height);
+				mNodes.emplace_back(nodeCopy.X, nodeCopy.Y, nodeCopy.Width, height);
+				mNodes.emplace_back(nodeCopy.X, nodeCopy.Y + height, nodeCopy.Width, nodeCopy.Height - height);
 			}
 
-			return AddToNode(nodeCopy.children[0], width, height, x, y, allowGrowth);
+			return AddToNode(nodeCopy.Children[0], width, height, x, y, allowGrowth);
 		}
 	}
 
@@ -110,14 +110,14 @@ namespace bs
 	{
 		for (size_t i = 0; i < elements.size(); i++)
 		{
-			elements[i].output.idx = (UINT32)i; // Preserve original index before sorting
-			elements[i].output.page = -1;
+			elements[i].Output.Idx = (UINT32)i; // Preserve original index before sorting
+			elements[i].Output.Page = -1;
 		}
 
 		std::sort(elements.begin(), elements.end(),
 			[](const Element& a, const Element& b)
 		{
-			return a.input.width * a.input.height > b.input.width * b.input.height;
+			return a.Input.Width * a.Input.Height > b.Input.Width * b.Input.Height;
 		});
 
 		Vector<TextureAtlasLayout> layouts;
@@ -136,9 +136,9 @@ namespace bs
 				// Assumes elements are sorted from largest to smallest
 				for (UINT32 i = 0; i < (UINT32)elements.size(); i++)
 				{
-					if (elements[i].output.page == -1)
+					if (elements[i].Output.Page == -1)
 					{
-						UINT32 size = elements[i].input.width * elements[i].input.height;
+						UINT32 size = elements[i].Input.Width * elements[i].Input.Height;
 						if (size < sizeLimit)
 						{
 							largestId = i;
@@ -153,20 +153,20 @@ namespace bs
 				Element& element = elements[largestId];
 
 				// Check if an element is too large to ever fit
-				if(element.input.width > maxWidth || element.input.height > maxHeight)
+				if(element.Input.Width > maxWidth || element.Input.Height > maxHeight)
 				{
 					BS_LOG(Warning, Generic, "Some of the provided elements don't fit in an atlas of provided size. "
 						"Returning empty array of pages.");
 					return Vector<Page>();
 				}
 
-				if (curLayout.AddElement(element.input.width, element.input.height, element.output.x, element.output.y))
+				if (curLayout.AddElement(element.Input.Width, element.Input.Height, element.Output.X, element.Output.Y))
 				{
-					element.output.page = (UINT32)layouts.size() - 1;
+					element.Output.Page = (UINT32)layouts.size() - 1;
 					remainingCount--;
 				}
 				else
-					sizeLimit = element.input.width * element.input.height;
+					sizeLimit = element.Input.Width * element.Input.Height;
 			}
 		}
 

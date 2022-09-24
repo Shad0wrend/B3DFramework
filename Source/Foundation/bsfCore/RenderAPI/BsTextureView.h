@@ -19,25 +19,25 @@ namespace bs
 		 * First mip level of the parent texture the view binds (0 - base level). This applied to all array slices
 		 * specified below.
 		 */
-		UINT32 mostDetailMip;
+		UINT32 MostDetailMip;
 
 		/** Number of mip levels to bind to the view. This applied to all array slices specified below. */
-		UINT32 numMips;
+		UINT32 NumMips;
 
 		/**
 		 * First array slice the view binds to. This will be array index for 1D and 2D array textures, texture slice index
 		 * for 3D textures, and face index for cube textures(cube index * 6).
 		 */
-		UINT32 firstArraySlice;
+		UINT32 FirstArraySlice;
 
 		/**
 		 * Number of array slices to bind tot he view. This will be number of array elements for 1D and 2D array textures,
 		 * number of slices for 3D textures, and number of cubes for cube textures.
 		 */
-		UINT32 numArraySlices;
+		UINT32 NumArraySlices;
 
 		/** Type of texture view. */
-		GpuViewUsage usage;
+		GpuViewUsage Usage;
 	};
 
 	/**
@@ -66,19 +66,19 @@ namespace bs
 		virtual ~TextureView() = default;
 
 		/**	Returns the most detailed mip level visible by the view. */
-		UINT32 GetMostDetailedMip() const { return mDesc.mostDetailMip; }
+		UINT32 GetMostDetailedMip() const { return mDesc.MostDetailMip; }
 
 		/**	Returns the number of mip levels in a single slice visible by the view. */
-		UINT32 GetNumMips() const { return mDesc.numMips; }
+		UINT32 GetNumMips() const { return mDesc.NumMips; }
 
 		/**	Returns the first array slice index visible by this view. */
-		UINT32 GetFirstArraySlice() const { return mDesc.firstArraySlice; }
+		UINT32 GetFirstArraySlice() const { return mDesc.FirstArraySlice; }
 
 		/**	Returns the number of array slices visible by this view. */
-		UINT32 GetNumArraySlices() const { return mDesc.numArraySlices; }
+		UINT32 GetNumArraySlices() const { return mDesc.NumArraySlices; }
 
 		/**	Returns texture view usage. This determines where on the pipeline can be bind the view. */
-		GpuViewUsage GetUsage() const { return mDesc.usage; }
+		GpuViewUsage GetUsage() const { return mDesc.Usage; }
 
 		/**	Returns the descriptor structure used for initializing the view. */
 		const TEXTURE_VIEW_DESC& GetDesc() const { return mDesc; }

@@ -21,15 +21,15 @@ namespace bs
 
 	LimitConeRange CSphericalJoint::GetLimit() const
 	{
-		return mDesc.limit;
+		return mDesc.Limit;
 	}
 
 	void CSphericalJoint::SetLimit(const LimitConeRange& limit)
 	{
-		if (limit == mDesc.limit)
+		if (limit == mDesc.Limit)
 			return;
 
-		mDesc.limit = limit;
+		mDesc.Limit = limit;
 
 		if (mInternal != nullptr)
 			GetInternalInternal()->SetLimit(limit);
@@ -37,14 +37,14 @@ namespace bs
 	
 	void CSphericalJoint::SetFlag(SphericalJointFlag flag, bool enabled)
 	{
-		bool isEnabled = ((UINT32)mDesc.flag & (UINT32)flag) != 0;
+		bool isEnabled = ((UINT32)mDesc.Flag & (UINT32)flag) != 0;
 		if (isEnabled == enabled)
 			return;
 
 		if (enabled)
-			mDesc.flag = (SphericalJointFlag)((UINT32)mDesc.flag | (UINT32)flag);
+			mDesc.Flag = (SphericalJointFlag)((UINT32)mDesc.Flag | (UINT32)flag);
 		else
-			mDesc.flag = (SphericalJointFlag)((UINT32)mDesc.flag & ~(UINT32)flag);
+			mDesc.Flag = (SphericalJointFlag)((UINT32)mDesc.Flag & ~(UINT32)flag);
 
 		if (mInternal != nullptr)
 			GetInternalInternal()->SetFlag(flag, enabled);
@@ -52,7 +52,7 @@ namespace bs
 
 	bool CSphericalJoint::HasFlag(SphericalJointFlag flag) const
 	{
-		return ((UINT32)mDesc.flag & (UINT32)flag) != 0;
+		return ((UINT32)mDesc.Flag & (UINT32)flag) != 0;
 	}
 
 	SPtr<Joint> CSphericalJoint::CreateInternal()

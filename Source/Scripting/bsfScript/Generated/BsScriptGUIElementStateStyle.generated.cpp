@@ -21,7 +21,7 @@ namespace bs
 
 	MonoObject*ScriptGUIElementStateStyle::Box(const __GUIElementStateStyleInterop& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	__GUIElementStateStyleInterop ScriptGUIElementStateStyle::Unbox(MonoObject* value)
@@ -34,11 +34,11 @@ namespace bs
 		GUIElementStateStyle output;
 		ResourceHandle<SpriteTexture> tmptexture;
 		ScriptSpriteTexture* scripttexture;
-		scripttexture = ScriptSpriteTexture::ToNative(value.texture);
+		scripttexture = ScriptSpriteTexture::ToNative(value.Texture);
 		if(scripttexture != nullptr)
 			tmptexture = scripttexture->GetHandle();
-		output.texture = tmptexture;
-		output.textColor = value.textColor;
+		output.Texture = tmptexture;
+		output.TextColor = value.TextColor;
 
 		return output;
 	}
@@ -47,14 +47,14 @@ namespace bs
 	{
 		__GUIElementStateStyleInterop output;
 		ScriptResourceBase* scripttexture;
-		scripttexture = ScriptResourceManager::Instance().GetScriptResource(value.texture, true);
+		scripttexture = ScriptResourceManager::Instance().GetScriptResource(value.Texture, true);
 		MonoObject* tmptexture;
 		if(scripttexture != nullptr)
 			tmptexture = scripttexture->GetManagedInstance();
 		else
 			tmptexture = nullptr;
-		output.texture = tmptexture;
-		output.textColor = value.textColor;
+		output.Texture = tmptexture;
+		output.TextColor = value.TextColor;
 
 		return output;
 	}

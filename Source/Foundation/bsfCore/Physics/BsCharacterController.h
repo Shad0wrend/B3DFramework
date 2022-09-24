@@ -154,10 +154,10 @@ namespace bs
 		static SPtr<CharacterController> Create(PhysicsScene& scene, const CHAR_CONTROLLER_DESC& desc);
 
 		/** Triggered when the controller hits a collider. */
-		Event<void(const ControllerColliderCollision&)> onColliderHit;
+		Event<void(const ControllerColliderCollision&)> OnColliderHit;
 
 		/** Triggered when the controller hits another character controller. */
-		Event<void(const ControllerControllerCollision&)> onControllerHit;
+		Event<void(const ControllerControllerCollision&)> OnControllerHit;
 
 		/** @name Internal
 		 *  @{
@@ -167,13 +167,13 @@ namespace bs
 		 * Sets the object that owns this physics object, if any. Used for high level systems so they can easily map their
 		 * high level physics objects from the low level ones returned by various queries and events.
 		 */
-		void SetOwnerInternal(PhysicsOwnerType type, void* owner) { mOwner.type = type; mOwner.ownerData = owner; }
+		void SetOwnerInternal(PhysicsOwnerType type, void* owner) { mOwner.Type = type; mOwner.OwnerData = owner; }
 
 		/**
 		 * Gets the object that owns this physics object, if any. Used for high level systems so they can easily map their
 		 * high level physics objects from the low level ones returned by various queries and events.
 		 */
-		void* GetOwnerInternal(PhysicsOwnerType type) const { return mOwner.type == type ? mOwner.ownerData : nullptr; }
+		void* GetOwnerInternal(PhysicsOwnerType type) const { return mOwner.Type == type ? mOwner.OwnerData : nullptr; }
 
 		/** @} */
 	private:
@@ -185,63 +185,63 @@ namespace bs
 	struct CHAR_CONTROLLER_DESC
 	{
 		/** Center of the controller capsule */
-		Vector3 position = Vector3::ZERO;
+		Vector3 Position = Vector3::ZERO;
 
 		/**
 		 * Contact offset specifies a skin around the object within which contacts will be generated. It should be a small
 		 * positive non-zero value.
 		 */
-		float contactOffset = 0.1f;
+		float ContactOffset = 0.1f;
 
 		/**
 		 * Controls which obstacles will the character be able to automatically step over without being stopped. This is the
 		 * height of the maximum obstacle that will be stepped over (with exceptions, see climbingMode).
 		 */
-		float stepOffset = 0.5f;
+		float StepOffset = 0.5f;
 
 		/**
 		 * Controls which slopes should the character consider too steep and won't be able to move over. See
 		 * nonWalkableMode for more information.
 		 */
-		Radian slopeLimit = Degree(45.0f);
+		Radian SlopeLimit = Degree(45.0f);
 
 		/**
 		 * Represents minimum distance that the character will move during a call to move(). This is used to stop the
 		 * recursive motion algorithm when the remaining distance is too small.
 		 */
-		float minMoveDistance = 0.0f;
+		float MinMoveDistance = 0.0f;
 
 		/** Height between the centers of the two spheres of the controller capsule. */
-		float height = 1.0f;
+		float Height = 1.0f;
 
 		/** Radius of the controller capsule. */
-		float radius = 1.0f;
+		float Radius = 1.0f;
 		
 		/** Up direction of controller capsule. Determines capsule orientation. */
-		Vector3 up = Vector3::UNIT_Y;
+		Vector3 Up = Vector3::UNIT_Y;
 
 		/**
 		 * Controls what happens when character encounters a height higher than its step offset.
 		 *
 		 * @see	CharacterClimbingMode
 		 */
-		CharacterClimbingMode climbingMode = CharacterClimbingMode::Normal;
+		CharacterClimbingMode ClimbingMode = CharacterClimbingMode::Normal;
 
 		/**
 		 * Controls what happens when character encounters a slope higher than its slope offset.
 		 *
 		 * @see	CharacterNonWalkableMode
 		 */
-		CharacterNonWalkableMode nonWalkableMode = CharacterNonWalkableMode::Prevent;
+		CharacterNonWalkableMode NonWalkableMode = CharacterNonWalkableMode::Prevent;
 	};
 
 	/** Contains data about a collision of a character controller and another object. */
 	struct BS_SCRIPT_EXPORT(m:Physics,pl:true) ControllerCollision
 	{
-		Vector3 position; /**< Contact position. */
-		Vector3 normal; /**< Contact normal. */
-		Vector3 motionDir; /**< Direction of motion after the hit. */
-		float motionAmount; /**< Magnitude of motion after the hit. */
+		Vector3 Position; /**< Contact position. */
+		Vector3 Normal; /**< Contact normal. */
+		Vector3 MotionDir; /**< Direction of motion after the hit. */
+		float MotionAmount; /**< Magnitude of motion after the hit. */
 	};
 
 	/** Contains data about a collision of a character controller and a collider. */
@@ -251,11 +251,11 @@ namespace bs
 		 * Component of the controller that was touched. Can be null if the controller has no component parent, in which
 		 * case check #colliderRaw.
 		 */
-		HCollider collider;
+		HCollider Collider;
 
 		BS_SCRIPT_EXPORT(ex:true)
-		Collider* colliderRaw; /**< Collider that was touched. */
-		UINT32 triangleIndex; /**< Touched triangle index for mesh colliders. */
+		bs::Collider* ColliderRaw; /**< Collider that was touched. */
+		UINT32 TriangleIndex; /**< Touched triangle index for mesh colliders. */
 	};
 
 	/** Contains data about a collision between two character controllers. */
@@ -265,10 +265,10 @@ namespace bs
 		 * Component of the controller that was touched. Can be null if the controller has no component parent, in which
 		 * case check #controllerRaw.
 		 */
-		HCharacterController controller;
+		HCharacterController Controller;
 
 		BS_SCRIPT_EXPORT(ex:true)
-		CharacterController* controllerRaw; /**< Controller that was touched. */
+		CharacterController* ControllerRaw; /**< Controller that was touched. */
 	};
 
 	/** @} */

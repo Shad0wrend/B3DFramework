@@ -54,13 +54,13 @@ namespace bs
 
 				bs.Encode(serializableObject.get(), stream);
 
-				backupData.size = (UINT32)stream->Size();
-				backupData.data = stream->DisownMemory();
+				backupData.Size = (UINT32)stream->Size();
+				backupData.Data = stream->DisownMemory();
 			}
 			else
 			{
-				backupData.size = 0;
-				backupData.data = nullptr;
+				backupData.Size = 0;
+				backupData.Data = nullptr;
 			}
 		}
 		else
@@ -73,8 +73,8 @@ namespace bs
 				bs.Encode(mSerializedObjectData.get(), stream);
 			}
 
-			backupData.size = (UINT32)stream->Size();
-			backupData.data = stream->DisownMemory();
+			backupData.Size = (UINT32)stream->Size();
+			backupData.Data = stream->DisownMemory();
 		}
 
 		if (clearExisting)
@@ -101,18 +101,18 @@ namespace bs
 		mObjInfo = nullptr;
 
 		MonoObject* instance = mOwner->GetManagedInstance();
-		if (instance != nullptr && data.data != nullptr)
+		if (instance != nullptr && data.Data != nullptr)
 		{
 			BinarySerializer bs;
 
 			CoreSerializationContext serzContext;
-			serzContext.goState = bs_shared_ptr_new<GameObjectDeserializationState>();
+			serzContext.GoState = bs_shared_ptr_new<GameObjectDeserializationState>();
 
 			auto serializableObject = std::static_pointer_cast<ManagedSerializableObject>(
-				bs.Decode(bs_shared_ptr_new<MemoryDataStream>(data.data, data.size), data.size,
+				bs.Decode(bs_shared_ptr_new<MemoryDataStream>(data.Data, data.Size), data.Size,
 					BinarySerializerFlag::None, &serzContext));
 
-			serzContext.goState->Resolve();
+			serzContext.GoState->Resolve();
 
 			if (!missingType)
 			{
@@ -219,7 +219,7 @@ namespace bs
 
 			// Search for methods on base class if there is one
 			MonoClass* baseClass = mManagedClass->GetBaseClass();
-			if (baseClass != ScriptManagedComponent::GetMetaData()->scriptClass)
+			if (baseClass != ScriptManagedComponent::GetMetaData()->ScriptClass)
 				mManagedClass = baseClass;
 			else
 				break;
@@ -315,12 +315,12 @@ namespace bs
 		MonoObject* instance;
 		if (!ScriptAssemblyManager::Instance().GetSerializableObjectInfo(mNamespace, mTypeName, mObjInfo))
 		{
-			instance = ScriptAssemblyManager::Instance().GetBuiltinClasses().missingComponentClass->CreateInstance(true);
+			instance = ScriptAssemblyManager::Instance().GetBuiltinClasses().MissingComponentClass->CreateInstance(true);
 			mMissingType = true;
 		}
 		else
 		{
-			instance = mObjInfo->mMonoClass->CreateInstance();
+			instance = mObjInfo->MMonoClass->CreateInstance();
 			mMissingType = false;
 		}
 

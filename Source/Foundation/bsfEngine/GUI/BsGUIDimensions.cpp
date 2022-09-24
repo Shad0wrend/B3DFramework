@@ -20,28 +20,28 @@ namespace bs
 			switch(option.type)
 			{
 			case GUIOption::Type::Position:
-				dimensions.x = (INT32)option.min;
-				dimensions.y = (INT32)option.max;
+				dimensions.X = (INT32)option.min;
+				dimensions.Y = (INT32)option.max;
 				break;
 			case GUIOption::Type::FixedWidth:
-				dimensions.flags |= GUIDF_FixedWidth | GUIDF_OverWidth;
-				dimensions.minWidth = dimensions.maxWidth = option.min;
+				dimensions.Flags |= GUIDF_FixedWidth | GUIDF_OverWidth;
+				dimensions.MinWidth = dimensions.MaxWidth = option.min;
 				break;
 			case GUIOption::Type::FixedHeight:
-				dimensions.flags |= GUIDF_FixedHeight | GUIDF_OverHeight;
-				dimensions.minHeight = dimensions.maxHeight = option.min;
+				dimensions.Flags |= GUIDF_FixedHeight | GUIDF_OverHeight;
+				dimensions.MinHeight = dimensions.MaxHeight = option.min;
 				break;
 			case GUIOption::Type::FlexibleWidth:
-				dimensions.flags |= GUIDF_OverWidth;
-				dimensions.flags &= ~GUIDF_FixedWidth;
-				dimensions.minWidth = option.min;
-				dimensions.maxWidth = option.max;
+				dimensions.Flags |= GUIDF_OverWidth;
+				dimensions.Flags &= ~GUIDF_FixedWidth;
+				dimensions.MinWidth = option.min;
+				dimensions.MaxWidth = option.max;
 				break;
 			case GUIOption::Type::FlexibleHeight:
-				dimensions.flags |= GUIDF_OverHeight;
-				dimensions.flags &= ~GUIDF_FixedHeight;
-				dimensions.minHeight = option.min;
-				dimensions.maxHeight = option.max;
+				dimensions.Flags |= GUIDF_OverHeight;
+				dimensions.Flags &= ~GUIDF_FixedHeight;
+				dimensions.MinHeight = option.min;
+				dimensions.MaxHeight = option.max;
 				break;
 			}
 		}
@@ -53,31 +53,31 @@ namespace bs
 	{
 		if(!OverridenWidth())
 		{
-			if (style->fixedWidth)
+			if (style->FixedWidth)
 			{
-				flags |= GUIDF_FixedWidth;
-				minWidth = maxWidth = style->width;
+				Flags |= GUIDF_FixedWidth;
+				MinWidth = MaxWidth = style->Width;
 			}
 			else
 			{
-				flags &= ~GUIDF_FixedWidth;
-				minWidth = style->minWidth;
-				maxWidth = style->maxWidth;
+				Flags &= ~GUIDF_FixedWidth;
+				MinWidth = style->MinWidth;
+				MaxWidth = style->MaxWidth;
 			}
 		}
 
 		if(!OverridenHeight())
 		{
-			if (style->fixedHeight)
+			if (style->FixedHeight)
 			{
-				flags |= GUIDF_FixedHeight;
-				minHeight = maxHeight = style->height;
+				Flags |= GUIDF_FixedHeight;
+				MinHeight = MaxHeight = style->Height;
 			}
 			else
 			{
-				flags &= ~GUIDF_FixedHeight;
-				minHeight = style->minHeight;
-				maxHeight = style->maxHeight;
+				Flags &= ~GUIDF_FixedHeight;
+				MinHeight = style->MinHeight;
+				MaxHeight = style->MaxHeight;
 			}
 		}
 	}
@@ -88,47 +88,47 @@ namespace bs
 
 		if (FixedHeight())
 		{
-			sizeRange.optimal.y = std::max(0, (INT32)minHeight);
-			sizeRange.min.y = sizeRange.optimal.y;
-			sizeRange.max.y = sizeRange.optimal.y;
+			sizeRange.Optimal.Y = std::max(0, (INT32)MinHeight);
+			sizeRange.Min.Y = sizeRange.Optimal.Y;
+			sizeRange.Max.Y = sizeRange.Optimal.Y;
 		}
 		else
 		{
-			sizeRange.optimal.y = optimal.y;
+			sizeRange.Optimal.Y = optimal.Y;
 
-			if (minHeight > 0)
+			if (MinHeight > 0)
 			{
-				sizeRange.optimal.y = std::max(std::max(0, (INT32)minHeight), sizeRange.optimal.y);
-				sizeRange.min.y = std::max(0, (INT32)minHeight);
+				sizeRange.Optimal.Y = std::max(std::max(0, (INT32)MinHeight), sizeRange.Optimal.Y);
+				sizeRange.Min.Y = std::max(0, (INT32)MinHeight);
 			}
 
-			if (maxHeight > 0)
+			if (MaxHeight > 0)
 			{
-				sizeRange.optimal.y = std::min(std::max(0, (INT32)maxHeight), sizeRange.optimal.y);
-				sizeRange.max.y = std::max(0, (INT32)maxHeight);
+				sizeRange.Optimal.Y = std::min(std::max(0, (INT32)MaxHeight), sizeRange.Optimal.Y);
+				sizeRange.Max.Y = std::max(0, (INT32)MaxHeight);
 			}
 		}
 
 		if (FixedWidth())
 		{
-			sizeRange.optimal.x = std::max(0, (INT32)minWidth);
-			sizeRange.min.x = sizeRange.optimal.x;
-			sizeRange.max.x = sizeRange.optimal.x;
+			sizeRange.Optimal.X = std::max(0, (INT32)MinWidth);
+			sizeRange.Min.X = sizeRange.Optimal.X;
+			sizeRange.Max.X = sizeRange.Optimal.X;
 		}
 		else
 		{
-			sizeRange.optimal.x = optimal.x;
+			sizeRange.Optimal.X = optimal.X;
 
-			if (minWidth > 0)
+			if (MinWidth > 0)
 			{
-				sizeRange.optimal.x = std::max(std::max(0, (INT32)minWidth), sizeRange.optimal.x);
-				sizeRange.min.x = std::max(0, (INT32)minWidth);
+				sizeRange.Optimal.X = std::max(std::max(0, (INT32)MinWidth), sizeRange.Optimal.X);
+				sizeRange.Min.X = std::max(0, (INT32)MinWidth);
 			}
 
-			if (maxWidth > 0)
+			if (MaxWidth > 0)
 			{
-				sizeRange.optimal.x = std::min(std::max(0, (INT32)maxWidth), sizeRange.optimal.x);
-				sizeRange.max.x = std::max(0, (INT32)maxWidth);
+				sizeRange.Optimal.X = std::min(std::max(0, (INT32)MaxWidth), sizeRange.Optimal.X);
+				sizeRange.Max.X = std::max(0, (INT32)MaxWidth);
 			}
 		}
 

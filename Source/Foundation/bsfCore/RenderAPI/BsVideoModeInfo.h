@@ -29,29 +29,29 @@ namespace bs
 		 *							represents the primary device while order of others is undefined.
 		 */
 		VideoMode(UINT32 width, UINT32 height, float refreshRate = 60.0f, UINT32 outputIdx = 0)
-			:width(width), height(height), refreshRate(refreshRate), outputIdx(outputIdx)
+			:Width(width), Height(height), RefreshRate(refreshRate), OutputIdx(outputIdx)
 		{ }
 		virtual ~VideoMode() = default;
 
 		bool operator== (const VideoMode& other) const;
 
 		/**	Width of the front/back buffer in pixels. */
-		UINT32 width = 1280;
+		UINT32 Width = 1280;
 
 		/**	Height of the front/back buffer in pixels. */
-		UINT32 height = 720;
+		UINT32 Height = 720;
 
 		/**	Refresh rate in hertz. */
-		float refreshRate = 60.0f;
+		float RefreshRate = 60.0f;
 
 		/**	Index of the parent video output. */
-		UINT32 outputIdx = 0;
+		UINT32 OutputIdx = 0;
 
 		/**
 		 * Determines was video mode user created or provided by the API/OS. API/OS created video modes can contain
 		 * additional information that allows the video mode to be used more accurately and you should use them when possible.
 		 */
-		bool isCustom = true;
+		bool IsCustom = true;
 	};
 
 	/** Contains information about a video output device, including a list of all available video modes. */

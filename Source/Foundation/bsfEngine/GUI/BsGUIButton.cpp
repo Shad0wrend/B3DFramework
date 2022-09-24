@@ -44,7 +44,7 @@ namespace bs
 		{
 			if(!IsDisabledInternal())
 			{
-				onClick();
+				OnClick();
 				return true;
 			}
 		}

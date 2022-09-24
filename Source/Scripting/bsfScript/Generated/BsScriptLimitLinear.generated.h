@@ -11,10 +11,10 @@ namespace bs
 {
 	struct __LimitLinearInterop
 	{
-		float extent;
-		float contactDist;
-		float restitution;
-		Spring spring;
+		float Extent;
+		float ContactDist;
+		float Restitution;
+		Spring Spring;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptLimitLinear : public ScriptObject<ScriptLimitLinear>

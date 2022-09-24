@@ -19,7 +19,7 @@ namespace bs
 	struct ParticleEvolverProperties
 	{
 		ParticleEvolverProperties(bool analytical, INT32 priority)
-			: analytical(analytical), priority(priority)
+			: Analytical(analytical), Priority(priority)
 		{ }
 
 		/**
@@ -27,14 +27,14 @@ namespace bs
 		 * just the time value. Non-analytical (numerical) evolvers require the previous state of the particle and will
 		 * incrementally update the particle state.
 		 */
-		bool analytical;
+		bool Analytical;
 
 		/**
 		 * Determines the order in which this evolver will be evaluated relative to other active evolvers. Higher values
 		 * means that the evolver will be executed sooner. Negative values mean the evolver will be executed after
 		 * position/velocity is integrated.
 		 */
-		INT32 priority;
+		INT32 Priority;
 	};
 
 	/** Updates properties of all active particles in a particle system in some way. */
@@ -75,10 +75,10 @@ namespace bs
 		 * Randomly pick a row to use for animation when the particle is first spawned. This implies that only a single row
 		 * of the grid will be used for individual particle's animation.
 		 */
-		bool randomizeRow = false;
+		bool RandomizeRow = false;
 
 		/** Number of cycles to loop the animation during particle's lifetime. */
-		UINT32 numCycles = 1;
+		UINT32 NumCycles = 1;
 	};
 
 	/**
@@ -133,19 +133,19 @@ namespace bs
 	struct BS_SCRIPT_EXPORT(m:Particles,pl:true,n:ParticleOrbitOptions) PARTICLE_ORBIT_DESC
 	{
 		/** Position of the center around which to orbit. Evaluated over particle system lifetime. */
-		Vector3Distribution center = Vector3(0.0f, 0.0f, 0.0f);
+		Vector3Distribution Center = Vector3(0.0f, 0.0f, 0.0f);
 
 		/**
 		 * Determines the speed of rotation around each axis. The speed is specified in "turns" where 0 = no rotation,
 		 * 0.5 = 180 degree rotation and 1 = 360 degree rotation. Evaluated over particle lifetime.
 		 */
-		Vector3Distribution velocity = Vector3(0.0f, 1.0f, 0.0f);
+		Vector3Distribution Velocity = Vector3(0.0f, 1.0f, 0.0f);
 
 		/** Speed at which to push or pull the particles towards/away from the center. Evaluated over particle lifetime. */
-		FloatDistribution radial = 0.0f;
+		FloatDistribution Radial = 0.0f;
 
 		/** True if the properties provided are in world space, false if in local space. */
-		bool worldSpace = false;
+		bool WorldSpace = false;
 	};
 
 	/** Moves particles so that their sprites orbit their center according to the provided offset and rotation values. */
@@ -197,10 +197,10 @@ namespace bs
 	struct BS_SCRIPT_EXPORT(m:Particles,pl:true,n:ParticleVelocityOptions) PARTICLE_VELOCITY_DESC
 	{
 		/** Determines the velocity of the particles evaluated over particle lifetime. */
-		Vector3Distribution velocity = Vector3(0.0f, 1.0f, 0.0f);
+		Vector3Distribution Velocity = Vector3(0.0f, 1.0f, 0.0f);
 
 		/** True if the velocity is provided in world space, false if in local space. */
-		bool worldSpace = false;
+		bool WorldSpace = false;
 	};
 
 	/** Applies linear velocity to the particles. */
@@ -252,10 +252,10 @@ namespace bs
 	struct BS_SCRIPT_EXPORT(m:Particles,pl:true,n:ParticleForceOptions) PARTICLE_FORCE_DESC
 	{
 		/** Determines the force of the particles evaluated over particle lifetime. */
-		Vector3Distribution force = Vector3(0.0f, 0.0f, 0.0f);
+		Vector3Distribution Force = Vector3(0.0f, 0.0f, 0.0f);
 
 		/** True if the force is provided in world space, false if in local space. */
-		bool worldSpace = false;
+		bool WorldSpace = false;
 	};
 
 	/** Applies an arbitrary force to the particles. */
@@ -307,7 +307,7 @@ namespace bs
 	struct BS_SCRIPT_EXPORT(m:Particles,pl:true,n:ParticleGravityOptions) PARTICLE_GRAVITY_DESC
 	{
 		/** Scale which to apply to the gravity value retrieved from the physics sub-system. */
-		float scale = 1.0f;
+		float Scale = 1.0f;
 	};
 
 	/** Applies gravity to the particles. */
@@ -359,7 +359,7 @@ namespace bs
 	struct BS_SCRIPT_EXPORT(m:Particles,pl:true,n:ParticleColorOptions) PARTICLE_COLOR_DESC
 	{
 		/** Determines the color of the particles evaluated over particle lifetime. */
-		ColorDistribution color = Color::White;
+		ColorDistribution Color = Color::White;
 	};
 
 	/** Changes the color of the particles over the particle lifetime. */
@@ -413,19 +413,19 @@ namespace bs
 		/**
 		 * Determines the uniform size of the particles evaluated over particle lifetime. Only used if 3D size is disabled.
 		 */
-		FloatDistribution size = 1.0f;
+		FloatDistribution Size = 1.0f;
 
 		/**
 		 * Determines the non-uniform size of the particles evaluated over particle lifetime. Only used if 3D size is
 		 * enabled.
 		 */
-		Vector3Distribution size3D = Vector3::ONE;
+		Vector3Distribution Size3D = Vector3::ONE;
 
 		/**
 		 * Determines should the size be evaluated uniformly for all dimensions, or evaluate each dimension with its own
 		 * distribution.
 		 */
-		bool use3DSize = false;
+		bool Use3DSize = false;
 	};
 
 	/** Changes the size of the particles over the particle lifetime. */
@@ -480,16 +480,16 @@ namespace bs
 		 * Determines the rotation of the particles in degrees, applied around the particle's local Z axis. Only used if
 		 * 3D rotation is disabled.
 		 */
-		FloatDistribution rotation = 0.0f;
+		FloatDistribution Rotation = 0.0f;
 
 		/** Determines the rotation of the particles in degrees as Euler angles. Only used if 3D rotation is enabled. */
-		Vector3Distribution rotation3D = Vector3::ZERO;
+		Vector3Distribution Rotation3D = Vector3::ZERO;
 
 		/**
 		 * Determines should the particle rotation be a single angle applied around a Z axis (if disabled), or a
 		 * set of Euler angles that allow you to rotate around every axis (if enabled).
 		 */
-		bool use3DRotation = false;
+		bool Use3DRotation = false;
 	};
 
 	/** Rotates the particles over the particle lifetime. */
@@ -551,34 +551,34 @@ namespace bs
 	struct BS_SCRIPT_EXPORT(m:Particles,pl:true,n:ParticleCollisionsOptions) PARTICLE_COLLISIONS_DESC
 	{
 		/** Collision mode determining with which geometry the particles will interact with. */
-		ParticleCollisionMode mode = ParticleCollisionMode::Plane;
+		ParticleCollisionMode Mode = ParticleCollisionMode::Plane;
 
 		/**
 		 * Determines the elasticity (bounciness) of the particle collision. Lower values make the collision less bouncy
 		 * and higher values more.
 		 */
-		float restitution = 1.0f;
+		float Restitution = 1.0f;
 
 		/**
 		 * Determines how much velocity should a particle lose after a collision, in percent of its current velocity. In
 		 * range [0, 1].
 		 */
-		float dampening = 0.5f;
+		float Dampening = 0.5f;
 
 		/**
 		 * Determines how much should the particle lifetime be reduced after a collision, in percent of its original
 		 * lifetime. In range [0, 1].
 		 */
-		float lifetimeLoss = 0.0f;
+		float LifetimeLoss = 0.0f;
 
 		/** Radius of every individual particle used for collisions, in meters. */
-		float radius = 0.01f;
+		float Radius = 0.01f;
 
 		/**
 		 * Physics layers that determine which objects will particle collide with. Only relevant when using the World
 		 * collision mode.
 		 */
-		UINT64 layer = 0xFFFFFFFFFFFFFFFF;
+		UINT64 Layer = 0xFFFFFFFFFFFFFFFF;
 	};
 
 	/** Particle evolver that allows particles to collide with the world. */

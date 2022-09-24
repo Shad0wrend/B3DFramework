@@ -10,14 +10,14 @@ namespace bs
 	template <class Processor>
 	void AutoExposureSettings::RttiEnumFields(Processor p)
 	{
-		p(histogramLog2Min);
-		p(histogramLog2Max);
-		p(histogramPctLow);
-		p(histogramPctHigh);
-		p(minEyeAdaptation);
-		p(maxEyeAdaptation);
-		p(eyeAdaptationSpeedUp);
-		p(eyeAdaptationSpeedDown);
+		p(HistogramLog2Min);
+		p(HistogramLog2Max);
+		p(HistogramPctLow);
+		p(HistogramPctHigh);
+		p(MinEyeAdaptation);
+		p(MaxEyeAdaptation);
+		p(EyeAdaptationSpeedUp);
+		p(EyeAdaptationSpeedDown);
 	}
 
 	RTTITypeBase* AutoExposureSettings::GetRttiStatic()
@@ -33,13 +33,13 @@ namespace bs
 	template <class Processor>
 	void TonemappingSettings::RttiEnumFields(Processor p)
 	{
-		p(filmicCurveShoulderStrength);
-		p(filmicCurveLinearStrength);
-		p(filmicCurveLinearAngle);
-		p(filmicCurveToeStrength);
-		p(filmicCurveToeNumerator);
-		p(filmicCurveToeDenominator);
-		p(filmicCurveLinearWhitePoint);
+		p(FilmicCurveShoulderStrength);
+		p(FilmicCurveLinearStrength);
+		p(FilmicCurveLinearAngle);
+		p(FilmicCurveToeStrength);
+		p(FilmicCurveToeNumerator);
+		p(FilmicCurveToeDenominator);
+		p(FilmicCurveLinearWhitePoint);
 	}
 
 	RTTITypeBase* TonemappingSettings::GetRttiStatic()
@@ -55,8 +55,8 @@ namespace bs
 	template <class Processor>
 	void WhiteBalanceSettings::RttiEnumFields(Processor p)
 	{
-		p(temperature);
-		p(tint);
+		p(Temperature);
+		p(Tint);
 	}
 
 	RTTITypeBase* WhiteBalanceSettings::GetRttiStatic()
@@ -72,10 +72,10 @@ namespace bs
 	template <class Processor>
 	void ColorGradingSettings::RttiEnumFields(Processor p)
 	{
-		p(saturation);
-		p(gain);
-		p(contrast);
-		p(offset);
+		p(Saturation);
+		p(Gain);
+		p(Contrast);
+		p(Offset);
 	}
 
 	RTTITypeBase* ColorGradingSettings::GetRttiStatic()
@@ -91,14 +91,14 @@ namespace bs
 	template <class Processor>
 	void AmbientOcclusionSettings::RttiEnumFields(Processor p)
 	{
-		p(enabled);
-		p(radius);
-		p(bias);
-		p(fadeDistance);
-		p(fadeRange);
-		p(intensity);
-		p(power);
-		p(quality);
+		p(Enabled);
+		p(Radius);
+		p(Bias);
+		p(FadeDistance);
+		p(FadeRange);
+		p(Intensity);
+		p(Power);
+		p(Quality);
 	}
 
 	RTTITypeBase* AmbientOcclusionSettings::GetRttiStatic()
@@ -115,23 +115,23 @@ namespace bs
 	template <class Processor>
 	void TDepthOfFieldSettings<Core>::RttiEnumFields(Processor p)
 	{
-		p(enabled);
-		p(focalDistance);
-		p(focalRange);
-		p(nearTransitionRange);
-		p(farTransitionRange);
-		p(nearBlurAmount);
-		p(farBlurAmount);
-		p(type);
-		p(maxBokehSize);
-		p(bokehShape);
-		p(adaptiveColorThreshold);
-		p(adaptiveRadiusThreshold);
-		p(focalLength);
-		p(apertureSize);
-		p(sensorSize);
-		p(bokehOcclusion);
-		p(occlusionDepthRange);
+		p(Enabled);
+		p(FocalDistance);
+		p(FocalRange);
+		p(NearTransitionRange);
+		p(FarTransitionRange);
+		p(NearBlurAmount);
+		p(FarBlurAmount);
+		p(Type);
+		p(MaxBokehSize);
+		p(BokehShape);
+		p(AdaptiveColorThreshold);
+		p(AdaptiveRadiusThreshold);
+		p(FocalLength);
+		p(ApertureSize);
+		p(SensorSize);
+		p(BokehOcclusion);
+		p(OcclusionDepthRange);
 	}
 
 	template struct TDepthOfFieldSettings<false>;
@@ -150,10 +150,10 @@ namespace bs
 	template <class Processor>
 	void ScreenSpaceReflectionsSettings::RttiEnumFields(Processor p)
 	{
-		p(enabled);
-		p(quality);
-		p(intensity);
-		p(maxRoughness);
+		p(Enabled);
+		p(Quality);
+		p(Intensity);
+		p(MaxRoughness);
 	}
 
 	RTTITypeBase* ScreenSpaceReflectionsSettings::GetRttiStatic()
@@ -169,12 +169,12 @@ namespace bs
 	template <class Processor>
 	void BloomSettings::RttiEnumFields(Processor p)
 	{
-		p(enabled);
-		p(quality);
-		p(threshold);
-		p(intensity);
-		p(tint);
-		p(filterSize);
+		p(Enabled);
+		p(Quality);
+		p(Threshold);
+		p(Intensity);
+		p(Tint);
+		p(FilterSize);
 	}
 
 	RTTITypeBase* BloomSettings::GetRttiStatic()
@@ -190,21 +190,21 @@ namespace bs
 	template <class Processor>
 	void ScreenSpaceLensFlareSettings::RttiEnumFields(Processor p)
 	{
-		p(enabled);
-		p(downsampleCount);
-		p(threshold);
-		p(ghostCount);
-		p(ghostSpacing);
-		p(brightness);
-		p(filterSize);
-		p(halo);
-		p(haloRadius);
-		p(haloThickness);
-		p(haloThreshold);
-		p(haloAspectRatio);
-		p(chromaticAberration);
-		p(chromaticAberrationOffset);
-		p(bicubicUpsampling);
+		p(Enabled);
+		p(DownsampleCount);
+		p(Threshold);
+		p(GhostCount);
+		p(GhostSpacing);
+		p(Brightness);
+		p(FilterSize);
+		p(Halo);
+		p(HaloRadius);
+		p(HaloThickness);
+		p(HaloThreshold);
+		p(HaloAspectRatio);
+		p(ChromaticAberration);
+		p(ChromaticAberrationOffset);
+		p(BicubicUpsampling);
 	}
 
 	RTTITypeBase* ScreenSpaceLensFlareSettings::GetRttiStatic()
@@ -220,11 +220,11 @@ namespace bs
 	template <class Processor>
 	void MotionBlurSettings::RttiEnumFields(Processor p)
 	{
-		p(enabled);
-		p(domain);
-		p(filter);
-		p(quality);
-		p(maximumRadius);
+		p(Enabled);
+		p(Domain);
+		p(Filter);
+		p(Quality);
+		p(MaximumRadius);
 	}
 
 	RTTITypeBase* MotionBlurSettings::GetRttiStatic()
@@ -240,9 +240,9 @@ namespace bs
 	template <class Processor>
 	void TemporalAASettings::RttiEnumFields(Processor p)
 	{
-		p(enabled);
-		p(jitteredPositionCount);
-		p(sharpness);
+		p(Enabled);
+		p(JitteredPositionCount);
+		p(Sharpness);
 	}
 
 	RTTITypeBase* TemporalAASettings::GetRttiStatic()
@@ -259,10 +259,10 @@ namespace bs
 	template <class Processor>
 	void TChromaticAberrationSettings<Core>::RttiEnumFields(Processor p)
 	{
-		p(enabled);
-		p(type);
-		p(shiftAmount);
-		p(fringeTexture);
+		p(Enabled);
+		p(Type);
+		p(ShiftAmount);
+		p(FringeTexture);
 	}
 
 	template struct TChromaticAberrationSettings<false>;
@@ -281,9 +281,9 @@ namespace bs
 	template <class Processor>
 	void FilmGrainSettings::RttiEnumFields(Processor p)
 	{
-		p(enabled);
-		p(intensity);
-		p(speed);
+		p(Enabled);
+		p(Intensity);
+		p(Speed);
 	}
 
 	RTTITypeBase* FilmGrainSettings::GetRttiStatic()
@@ -319,32 +319,32 @@ namespace bs
 	template <class Processor>
 	void TRenderSettings<Core>::RttiEnumFields(Processor p)
 	{
-		p(enableAutoExposure);
-		p(autoExposure);
-		p(enableTonemapping);
-		p(tonemapping);
-		p(whiteBalance);
-		p(colorGrading);
-		p(depthOfField);
-		p(ambientOcclusion);
-		p(screenSpaceReflections);
-		p(bloom);
-		p(screenSpaceLensFlare);
-		p(exposureScale);
-		p(gamma);
-		p(enableFXAA);
-		p(enableHDR);
-		p(enableLighting);
-		p(enableShadows);
-		p(enableIndirectLighting);
-		p(overlayOnly);
-		p(enableSkybox);
-		p(cullDistance);
-		p(motionBlur);
-		p(filmGrain);
-		p(chromaticAberration);
-		p(temporalAA);
-		p(enableVelocityBuffer);
+		p(EnableAutoExposure);
+		p(AutoExposure);
+		p(EnableTonemapping);
+		p(Tonemapping);
+		p(WhiteBalance);
+		p(ColorGrading);
+		p(DepthOfField);
+		p(AmbientOcclusion);
+		p(ScreenSpaceReflections);
+		p(Bloom);
+		p(ScreenSpaceLensFlare);
+		p(ExposureScale);
+		p(Gamma);
+		p(EnableFxaa);
+		p(EnableHdr);
+		p(EnableLighting);
+		p(EnableShadows);
+		p(EnableIndirectLighting);
+		p(OverlayOnly);
+		p(EnableSkybox);
+		p(CullDistance);
+		p(MotionBlur);
+		p(FilmGrain);
+		p(ChromaticAberration);
+		p(TemporalAa);
+		p(EnableVelocityBuffer);
 	}
 
 	template struct TRenderSettings<false>;

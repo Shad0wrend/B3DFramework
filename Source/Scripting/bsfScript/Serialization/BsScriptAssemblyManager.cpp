@@ -44,74 +44,74 @@ namespace bs
 		LoadTypeMappings(*curAssembly, typeMappings);
 
 		SPtr<ManagedSerializableAssemblyInfo> assemblyInfo = bs_shared_ptr_new<ManagedSerializableAssemblyInfo>();
-		assemblyInfo->mName = assemblyName;
+		assemblyInfo->MName = assemblyName;
 
 		mAssemblyInfos[assemblyName] = assemblyInfo;
 
-		MonoClass* resourceClass = ScriptResource::GetMetaData()->scriptClass;
-		MonoClass* managedResourceClass = ScriptManagedResource::GetMetaData()->scriptClass;
+		MonoClass* resourceClass = ScriptResource::GetMetaData()->ScriptClass;
+		MonoClass* managedResourceClass = ScriptManagedResource::GetMetaData()->ScriptClass;
 
 		// Populate class data
 		const Vector<MonoClass*>& allClasses = curAssembly->GetAllClasses();
 		for(auto& curClass : allClasses)
 		{
 			const bool isSerializable =
-				curClass->IsSubClassOf(mBuiltin.componentClass) ||
+				curClass->IsSubClassOf(mBuiltin.ComponentClass) ||
 				curClass->IsSubClassOf(resourceClass) ||
-				curClass->HasAttribute(mBuiltin.serializeObjectAttribute);
+				curClass->HasAttribute(mBuiltin.SerializeObjectAttribute);
 
 			const bool isInspectable =
-				curClass->HasAttribute(mBuiltin.showInInspectorAttribute);
+				curClass->HasAttribute(mBuiltin.ShowInInspectorAttribute);
 
 			if ((isSerializable || isInspectable) &&
-				curClass != mBuiltin.componentClass && curClass != resourceClass &&
-				curClass != mBuiltin.managedComponentClass && curClass != managedResourceClass)
+				curClass != mBuiltin.ComponentClass && curClass != resourceClass &&
+				curClass != mBuiltin.ManagedComponentClass && curClass != managedResourceClass)
 			{
 				SPtr<ManagedSerializableTypeInfoObject> typeInfo = bs_shared_ptr_new<ManagedSerializableTypeInfoObject>();
-				typeInfo->mTypeNamespace = curClass->GetNamespace();
-				typeInfo->mTypeName = curClass->GetTypeName();
-				typeInfo->mTypeId = mUniqueTypeId++;
+				typeInfo->MTypeNamespace = curClass->GetNamespace();
+				typeInfo->MTypeName = curClass->GetTypeName();
+				typeInfo->MTypeId = mUniqueTypeId++;
 
 				if(isSerializable)
-					typeInfo->mFlags |= ScriptTypeFlag::Serializable;
+					typeInfo->MFlags |= ScriptTypeFlag::Serializable;
 
 				if(isSerializable || isInspectable)
-					typeInfo->mFlags |= ScriptTypeFlag::Inspectable;
+					typeInfo->MFlags |= ScriptTypeFlag::Inspectable;
 
 				MonoPrimitiveType monoPrimitiveType = MonoUtil::GetPrimitiveType(curClass->GetInternalClassInternal());
 
 				if(monoPrimitiveType == MonoPrimitiveType::ValueType)
-					typeInfo->mValueType = true;
+					typeInfo->MValueType = true;
 				else
-					typeInfo->mValueType = false;
+					typeInfo->MValueType = false;
 
 				::MonoReflectionType* type = MonoUtil::GetType(curClass->GetInternalClassInternal());
 
 				// Is this a wrapper for some reflectable type?
 				ReflectableTypeInfo* reflTypeInfo = GetReflectableTypeInfo(type);
 				if(reflTypeInfo != nullptr)
-					typeInfo->mRTIITypeId = reflTypeInfo->typeId;
+					typeInfo->MRtiiTypeId = reflTypeInfo->TypeId;
 				else
-					typeInfo->mRTIITypeId = 0;
+					typeInfo->MRtiiTypeId = 0;
 
 				SPtr<ManagedSerializableObjectInfo> objInfo = bs_shared_ptr_new<ManagedSerializableObjectInfo>();
 
-				objInfo->mTypeInfo = typeInfo;
-				objInfo->mMonoClass = curClass;
+				objInfo->MTypeInfo = typeInfo;
+				objInfo->MMonoClass = curClass;
 
-				assemblyInfo->mTypeNameToId[objInfo->GetFullTypeName()] = typeInfo->mTypeId;
-				assemblyInfo->mObjectInfos[typeInfo->mTypeId] = objInfo;
+				assemblyInfo->MTypeNameToId[objInfo->GetFullTypeName()] = typeInfo->MTypeId;
+				assemblyInfo->MObjectInfos[typeInfo->MTypeId] = objInfo;
 			}
 		}
 
 		// Populate field & property data
-		for(auto& curClassInfo : assemblyInfo->mObjectInfos)
+		for(auto& curClassInfo : assemblyInfo->MObjectInfos)
 		{
 			SPtr<ManagedSerializableObjectInfo> objInfo = curClassInfo.second;
 
 			UINT32 mUniqueFieldId = 1;
 
-			const Vector<MonoField*>& fields = objInfo->mMonoClass->GetAllFields();
+			const Vector<MonoField*>& fields = objInfo->MMonoClass->GetAllFields();
 			for(auto& field : fields)
 			{
 				if(field->IsStatic())
@@ -126,82 +126,82 @@ namespace bs
 
 				if(const auto* objTypeInfo = rtti_cast<ManagedSerializableTypeInfoObject>(typeInfo.get()))
 				{
-					typeIsSerializable = objTypeInfo->mFlags.IsSet(ScriptTypeFlag::Serializable);
-					typeIsInspectable = typeIsSerializable || objTypeInfo->mFlags.IsSet(ScriptTypeFlag::Inspectable);
+					typeIsSerializable = objTypeInfo->MFlags.IsSet(ScriptTypeFlag::Serializable);
+					typeIsInspectable = typeIsSerializable || objTypeInfo->MFlags.IsSet(ScriptTypeFlag::Inspectable);
 				}
 
 				SPtr<ManagedSerializableFieldInfo> fieldInfo = bs_shared_ptr_new<ManagedSerializableFieldInfo>();
-				fieldInfo->mFieldId = mUniqueFieldId++;
-				fieldInfo->mName = field->GetName();
-				fieldInfo->mMonoField = field;
-				fieldInfo->mTypeInfo = typeInfo;
-				fieldInfo->mParentTypeId = objInfo->mTypeInfo->mTypeId;
+				fieldInfo->MFieldId = mUniqueFieldId++;
+				fieldInfo->MName = field->GetName();
+				fieldInfo->MMonoField = field;
+				fieldInfo->MTypeInfo = typeInfo;
+				fieldInfo->MParentTypeId = objInfo->MTypeInfo->MTypeId;
 				
 				MonoMemberVisibility visibility = field->GetVisibility();
 				if (visibility == MonoMemberVisibility::Public)
 				{
-					if (typeIsSerializable && !field->HasAttribute(mBuiltin.dontSerializeFieldAttribute))
-						fieldInfo->mFlags |= ScriptFieldFlag::Serializable;
+					if (typeIsSerializable && !field->HasAttribute(mBuiltin.DontSerializeFieldAttribute))
+						fieldInfo->MFlags |= ScriptFieldFlag::Serializable;
 
-					if (typeIsInspectable && !field->HasAttribute(mBuiltin.hideInInspectorAttribute))
-						fieldInfo->mFlags |= ScriptFieldFlag::Inspectable;
+					if (typeIsInspectable && !field->HasAttribute(mBuiltin.HideInInspectorAttribute))
+						fieldInfo->MFlags |= ScriptFieldFlag::Inspectable;
 
-					fieldInfo->mFlags |= ScriptFieldFlag::Animable;
+					fieldInfo->MFlags |= ScriptFieldFlag::Animable;
 				}
 				else
 				{
-					if (typeIsSerializable && field->HasAttribute(mBuiltin.serializeFieldAttribute))
-						fieldInfo->mFlags |= ScriptFieldFlag::Serializable;
+					if (typeIsSerializable && field->HasAttribute(mBuiltin.SerializeFieldAttribute))
+						fieldInfo->MFlags |= ScriptFieldFlag::Serializable;
 
-					if (typeIsInspectable && field->HasAttribute(mBuiltin.showInInspectorAttribute))
-						fieldInfo->mFlags |= ScriptFieldFlag::Inspectable;
+					if (typeIsInspectable && field->HasAttribute(mBuiltin.ShowInInspectorAttribute))
+						fieldInfo->MFlags |= ScriptFieldFlag::Inspectable;
 				}
 
-				if (field->HasAttribute(mBuiltin.rangeAttribute))
-					fieldInfo->mFlags |= ScriptFieldFlag::Range;
+				if (field->HasAttribute(mBuiltin.RangeAttribute))
+					fieldInfo->MFlags |= ScriptFieldFlag::Range;
 
-				if (field->HasAttribute(mBuiltin.stepAttribute))
-					fieldInfo->mFlags |= ScriptFieldFlag::Step;
+				if (field->HasAttribute(mBuiltin.StepAttribute))
+					fieldInfo->MFlags |= ScriptFieldFlag::Step;
 
-				if (field->HasAttribute(mBuiltin.layerMaskAttribute))
+				if (field->HasAttribute(mBuiltin.LayerMaskAttribute))
 				{
 					// Layout mask attribute is only relevant for 64-bit integer types
 					if (const auto* primTypeInfo = rtti_cast<ManagedSerializableTypeInfoPrimitive>(typeInfo.get()))
 					{
-						if (primTypeInfo->mType == ScriptPrimitiveType::I64 ||
-							primTypeInfo->mType == ScriptPrimitiveType::U64)
+						if (primTypeInfo->MType == ScriptPrimitiveType::I64 ||
+							primTypeInfo->MType == ScriptPrimitiveType::U64)
 						{
-							fieldInfo->mFlags |= ScriptFieldFlag::AsLayerMask;
+							fieldInfo->MFlags |= ScriptFieldFlag::AsLayerMask;
 						}
 					}
 				}
 
-				if (field->HasAttribute(mBuiltin.asQuaternionAttribute))
-					fieldInfo->mFlags |= ScriptFieldFlag::AsQuaternion;
+				if (field->HasAttribute(mBuiltin.AsQuaternionAttribute))
+					fieldInfo->MFlags |= ScriptFieldFlag::AsQuaternion;
 
-				if(field->HasAttribute(mBuiltin.notNullAttribute))
-					fieldInfo->mFlags |= ScriptFieldFlag::NotNull;
+				if(field->HasAttribute(mBuiltin.NotNullAttribute))
+					fieldInfo->MFlags |= ScriptFieldFlag::NotNull;
 
-				if(field->HasAttribute(mBuiltin.categoryAttribute))
-					fieldInfo->mFlags |= ScriptFieldFlag::Category;
+				if(field->HasAttribute(mBuiltin.CategoryAttribute))
+					fieldInfo->MFlags |= ScriptFieldFlag::Category;
 
-				if(field->HasAttribute(mBuiltin.orderAttribute))
-					fieldInfo->mFlags |= ScriptFieldFlag::Order;
+				if(field->HasAttribute(mBuiltin.OrderAttribute))
+					fieldInfo->MFlags |= ScriptFieldFlag::Order;
 
-				if(field->HasAttribute(mBuiltin.inlineAttribute))
-					fieldInfo->mFlags |= ScriptFieldFlag::Inline;
+				if(field->HasAttribute(mBuiltin.InlineAttribute))
+					fieldInfo->MFlags |= ScriptFieldFlag::Inline;
 
-				if (field->HasAttribute(mBuiltin.loadOnAssignAttribute))
-					fieldInfo->mFlags |= ScriptFieldFlag::LoadOnAssign;
+				if (field->HasAttribute(mBuiltin.LoadOnAssignAttribute))
+					fieldInfo->MFlags |= ScriptFieldFlag::LoadOnAssign;
 
-				if(field->HasAttribute(mBuiltin.hdrAttribute))
-					fieldInfo->mFlags |= ScriptFieldFlag::HDR;
+				if(field->HasAttribute(mBuiltin.HdrAttribute))
+					fieldInfo->MFlags |= ScriptFieldFlag::HDR;
 
-				objInfo->mFieldNameToId[fieldInfo->mName] = fieldInfo->mFieldId;
-				objInfo->mFields[fieldInfo->mFieldId] = fieldInfo;
+				objInfo->MFieldNameToId[fieldInfo->MName] = fieldInfo->MFieldId;
+				objInfo->MFields[fieldInfo->MFieldId] = fieldInfo;
 			}
 
-			const Vector<MonoProperty*>& properties = objInfo->mMonoClass->GetAllProperties();
+			const Vector<MonoProperty*>& properties = objInfo->MMonoClass->GetAllProperties();
 			for (auto& property : properties)
 			{
 				SPtr<ManagedSerializableTypeInfo> typeInfo = GetTypeInfo(property->GetReturnType());
@@ -213,95 +213,95 @@ namespace bs
 
 				if(const auto* objTypeInfo = rtti_cast<ManagedSerializableTypeInfoObject>(typeInfo.get()))
 				{
-					typeIsSerializable = objTypeInfo->mFlags.IsSet(ScriptTypeFlag::Serializable);
-					typeIsInspectable = typeIsSerializable || objTypeInfo->mFlags.IsSet(ScriptTypeFlag::Inspectable);
+					typeIsSerializable = objTypeInfo->MFlags.IsSet(ScriptTypeFlag::Serializable);
+					typeIsInspectable = typeIsSerializable || objTypeInfo->MFlags.IsSet(ScriptTypeFlag::Inspectable);
 				}
 
 				SPtr<ManagedSerializablePropertyInfo> propertyInfo = bs_shared_ptr_new<ManagedSerializablePropertyInfo>();
-				propertyInfo->mFieldId = mUniqueFieldId++;
-				propertyInfo->mName = property->GetName();
-				propertyInfo->mMonoProperty = property;
-				propertyInfo->mTypeInfo = typeInfo;
-				propertyInfo->mParentTypeId = objInfo->mTypeInfo->mTypeId;
+				propertyInfo->MFieldId = mUniqueFieldId++;
+				propertyInfo->MName = property->GetName();
+				propertyInfo->MMonoProperty = property;
+				propertyInfo->MTypeInfo = typeInfo;
+				propertyInfo->MParentTypeId = objInfo->MTypeInfo->MTypeId;
 
 				if (!property->IsIndexed())
 				{
 					MonoMemberVisibility visibility = property->GetVisibility();
 					if (visibility == MonoMemberVisibility::Public)
-						propertyInfo->mFlags |= ScriptFieldFlag::Animable;
+						propertyInfo->MFlags |= ScriptFieldFlag::Animable;
 
-					if (typeIsSerializable && property->HasAttribute(mBuiltin.serializeFieldAttribute))
-						propertyInfo->mFlags |= ScriptFieldFlag::Serializable;
+					if (typeIsSerializable && property->HasAttribute(mBuiltin.SerializeFieldAttribute))
+						propertyInfo->MFlags |= ScriptFieldFlag::Serializable;
 
-					if (typeIsInspectable && property->HasAttribute(mBuiltin.showInInspectorAttribute))
-						propertyInfo->mFlags |= ScriptFieldFlag::Inspectable;
+					if (typeIsInspectable && property->HasAttribute(mBuiltin.ShowInInspectorAttribute))
+						propertyInfo->MFlags |= ScriptFieldFlag::Inspectable;
 
-					if (property->HasAttribute(mBuiltin.rangeAttribute))
-						propertyInfo->mFlags |= ScriptFieldFlag::Range;
+					if (property->HasAttribute(mBuiltin.RangeAttribute))
+						propertyInfo->MFlags |= ScriptFieldFlag::Range;
 
-					if (property->HasAttribute(mBuiltin.stepAttribute))
-						propertyInfo->mFlags |= ScriptFieldFlag::Step;
+					if (property->HasAttribute(mBuiltin.StepAttribute))
+						propertyInfo->MFlags |= ScriptFieldFlag::Step;
 
-					if (property->HasAttribute(mBuiltin.layerMaskAttribute))
+					if (property->HasAttribute(mBuiltin.LayerMaskAttribute))
 					{
 						// Layout mask attribute is only relevant for 64-bit integer types
 						if (const auto* primTypeInfo = rtti_cast<ManagedSerializableTypeInfoPrimitive>(typeInfo.get()))
 						{
-							if (primTypeInfo->mType == ScriptPrimitiveType::I64 ||
-								primTypeInfo->mType == ScriptPrimitiveType::U64)
+							if (primTypeInfo->MType == ScriptPrimitiveType::I64 ||
+								primTypeInfo->MType == ScriptPrimitiveType::U64)
 							{
-								propertyInfo->mFlags |= ScriptFieldFlag::AsLayerMask;
+								propertyInfo->MFlags |= ScriptFieldFlag::AsLayerMask;
 							}
 						}
 					}
 
-					if (property->HasAttribute(mBuiltin.asQuaternionAttribute))
-						propertyInfo->mFlags |= ScriptFieldFlag::AsQuaternion;
+					if (property->HasAttribute(mBuiltin.AsQuaternionAttribute))
+						propertyInfo->MFlags |= ScriptFieldFlag::AsQuaternion;
 
-					if (property->HasAttribute(mBuiltin.notNullAttribute))
-						propertyInfo->mFlags |= ScriptFieldFlag::NotNull;
+					if (property->HasAttribute(mBuiltin.NotNullAttribute))
+						propertyInfo->MFlags |= ScriptFieldFlag::NotNull;
 
-					if (property->HasAttribute(mBuiltin.passByCopyAttribute))
-						propertyInfo->mFlags |= ScriptFieldFlag::PassByCopy;
+					if (property->HasAttribute(mBuiltin.PassByCopyAttribute))
+						propertyInfo->MFlags |= ScriptFieldFlag::PassByCopy;
 
-					if (property->HasAttribute(mBuiltin.applyOnDirtyAttribute))
-						propertyInfo->mFlags |= ScriptFieldFlag::ApplyOnDirty;
+					if (property->HasAttribute(mBuiltin.ApplyOnDirtyAttribute))
+						propertyInfo->MFlags |= ScriptFieldFlag::ApplyOnDirty;
 
-					if (property->HasAttribute(mBuiltin.nativeWrapperAttribute))
-						propertyInfo->mFlags |= ScriptFieldFlag::NativeWrapper;
+					if (property->HasAttribute(mBuiltin.NativeWrapperAttribute))
+						propertyInfo->MFlags |= ScriptFieldFlag::NativeWrapper;
 
-					if (property->HasAttribute(mBuiltin.categoryAttribute))
-						propertyInfo->mFlags |= ScriptFieldFlag::Category;
+					if (property->HasAttribute(mBuiltin.CategoryAttribute))
+						propertyInfo->MFlags |= ScriptFieldFlag::Category;
 
-					if (property->HasAttribute(mBuiltin.orderAttribute))
-						propertyInfo->mFlags |= ScriptFieldFlag::Order;
+					if (property->HasAttribute(mBuiltin.OrderAttribute))
+						propertyInfo->MFlags |= ScriptFieldFlag::Order;
 
-					if (property->HasAttribute(mBuiltin.inlineAttribute))
-						propertyInfo->mFlags |= ScriptFieldFlag::Inline;
+					if (property->HasAttribute(mBuiltin.InlineAttribute))
+						propertyInfo->MFlags |= ScriptFieldFlag::Inline;
 
-					if (property->HasAttribute(mBuiltin.loadOnAssignAttribute))
-						propertyInfo->mFlags |= ScriptFieldFlag::LoadOnAssign;
+					if (property->HasAttribute(mBuiltin.LoadOnAssignAttribute))
+						propertyInfo->MFlags |= ScriptFieldFlag::LoadOnAssign;
 
-					if (property->HasAttribute(mBuiltin.hdrAttribute))
-						propertyInfo->mFlags |= ScriptFieldFlag::HDR;
+					if (property->HasAttribute(mBuiltin.HdrAttribute))
+						propertyInfo->MFlags |= ScriptFieldFlag::HDR;
 				}
 
-				objInfo->mFieldNameToId[propertyInfo->mName] = propertyInfo->mFieldId;
-				objInfo->mFields[propertyInfo->mFieldId] = propertyInfo;
+				objInfo->MFieldNameToId[propertyInfo->MName] = propertyInfo->MFieldId;
+				objInfo->MFields[propertyInfo->MFieldId] = propertyInfo;
 			}
 		}
 
 		// Form parent/child connections
-		for(auto& curClass : assemblyInfo->mObjectInfos)
+		for(auto& curClass : assemblyInfo->MObjectInfos)
 		{
-			MonoClass* base = curClass.second->mMonoClass->GetBaseClass();
+			MonoClass* base = curClass.second->MMonoClass->GetBaseClass();
 			while(base != nullptr)
 			{
 				SPtr<ManagedSerializableObjectInfo> baseObjInfo;
 				if(GetSerializableObjectInfo(base->GetNamespace(), base->GetTypeName(), baseObjInfo))
 				{
-					curClass.second->mBaseClass = baseObjInfo;
-					baseObjInfo->mDerivedClasses.push_back(curClass.second);
+					curClass.second->MBaseClass = baseObjInfo;
+					baseObjInfo->MDerivedClasses.push_back(curClass.second);
 
 					break;
 				}
@@ -406,15 +406,15 @@ namespace bs
 			if(!isEnum)
 			{
 				SPtr<ManagedSerializableTypeInfoPrimitive> typeInfo = bs_shared_ptr_new<ManagedSerializableTypeInfoPrimitive>();
-				typeInfo->mType = scriptPrimitiveType;
+				typeInfo->MType = scriptPrimitiveType;
 				return typeInfo;
 			}
 			else
 			{
 				SPtr<ManagedSerializableTypeInfoEnum> typeInfo = bs_shared_ptr_new<ManagedSerializableTypeInfoEnum>();
-				typeInfo->mUnderlyingType = scriptPrimitiveType;
-				typeInfo->mTypeNamespace = monoClass->GetNamespace();
-				typeInfo->mTypeName = monoClass->GetTypeName();
+				typeInfo->MUnderlyingType = scriptPrimitiveType;
+				typeInfo->MTypeNamespace = monoClass->GetNamespace();
+				typeInfo->MTypeName = monoClass->GetTypeName();
 				return typeInfo;
 			}
 		}
@@ -423,22 +423,22 @@ namespace bs
 		switch(monoPrimitiveType)
 		{
 		case MonoPrimitiveType::Class:
-			if(monoClass->IsSubClassOf(ScriptResource::GetMetaData()->scriptClass)) // Resource
+			if(monoClass->IsSubClassOf(ScriptResource::GetMetaData()->ScriptClass)) // Resource
 			{
 				SPtr<ManagedSerializableTypeInfoRef> typeInfo = bs_shared_ptr_new<ManagedSerializableTypeInfoRef>();
-				typeInfo->mTypeNamespace = monoClass->GetNamespace();
-				typeInfo->mTypeName = monoClass->GetTypeName();
-				typeInfo->mRTIITypeId = 0;
+				typeInfo->MTypeNamespace = monoClass->GetNamespace();
+				typeInfo->MTypeName = monoClass->GetTypeName();
+				typeInfo->MRtiiTypeId = 0;
 
-				if(monoClass == ScriptResource::GetMetaData()->scriptClass)
-					typeInfo->mType = ScriptReferenceType::BuiltinResourceBase;
-				else if (monoClass == ScriptManagedResource::GetMetaData()->scriptClass)
-					typeInfo->mType = ScriptReferenceType::ManagedResourceBase;
-				else if (monoClass->IsSubClassOf(ScriptManagedResource::GetMetaData()->scriptClass))
-					typeInfo->mType = ScriptReferenceType::ManagedResource;
-				else if (monoClass->IsSubClassOf(ScriptResource::GetMetaData()->scriptClass))
+				if(monoClass == ScriptResource::GetMetaData()->ScriptClass)
+					typeInfo->MType = ScriptReferenceType::BuiltinResourceBase;
+				else if (monoClass == ScriptManagedResource::GetMetaData()->ScriptClass)
+					typeInfo->MType = ScriptReferenceType::ManagedResourceBase;
+				else if (monoClass->IsSubClassOf(ScriptManagedResource::GetMetaData()->ScriptClass))
+					typeInfo->MType = ScriptReferenceType::ManagedResource;
+				else if (monoClass->IsSubClassOf(ScriptResource::GetMetaData()->ScriptClass))
 				{
-					typeInfo->mType = ScriptReferenceType::BuiltinResource;
+					typeInfo->MType = ScriptReferenceType::BuiltinResource;
 
 					::MonoReflectionType* type = MonoUtil::GetType(monoClass->GetInternalClassInternal());
 					BuiltinResourceInfo* builtinInfo = GetBuiltinResourceInfo(type);
@@ -448,31 +448,31 @@ namespace bs
 						return nullptr;
 					}
 
-					typeInfo->mRTIITypeId = builtinInfo->typeId;
+					typeInfo->MRtiiTypeId = builtinInfo->TypeId;
 				}
 
 				return typeInfo;
 			}
-			else if(monoClass == ScriptRRefBase::GetMetaData()->scriptClass) // Resource reference
+			else if(monoClass == ScriptRRefBase::GetMetaData()->ScriptClass) // Resource reference
 				return bs_shared_ptr_new<ManagedSerializableTypeInfoRRef>();
-			else if (monoClass->IsSubClassOf(mBuiltin.sceneObjectClass) || monoClass->IsSubClassOf(mBuiltin.componentClass)) // Game object
+			else if (monoClass->IsSubClassOf(mBuiltin.SceneObjectClass) || monoClass->IsSubClassOf(mBuiltin.ComponentClass)) // Game object
 			{
 				SPtr<ManagedSerializableTypeInfoRef> typeInfo = bs_shared_ptr_new<ManagedSerializableTypeInfoRef>();
-				typeInfo->mTypeNamespace = monoClass->GetNamespace();
-				typeInfo->mTypeName = monoClass->GetTypeName();
-				typeInfo->mRTIITypeId = 0;
+				typeInfo->MTypeNamespace = monoClass->GetNamespace();
+				typeInfo->MTypeName = monoClass->GetTypeName();
+				typeInfo->MRtiiTypeId = 0;
 
-				if (monoClass == mBuiltin.componentClass)
-					typeInfo->mType = ScriptReferenceType::BuiltinComponentBase;
-				else if (monoClass == mBuiltin.managedComponentClass)
-					typeInfo->mType = ScriptReferenceType::ManagedComponentBase;
-				else if (monoClass->IsSubClassOf(mBuiltin.sceneObjectClass))
-					typeInfo->mType = ScriptReferenceType::SceneObject;
-				else if (monoClass->IsSubClassOf(mBuiltin.managedComponentClass))
-					typeInfo->mType = ScriptReferenceType::ManagedComponent;
-				else if (monoClass->IsSubClassOf(mBuiltin.componentClass))
+				if (monoClass == mBuiltin.ComponentClass)
+					typeInfo->MType = ScriptReferenceType::BuiltinComponentBase;
+				else if (monoClass == mBuiltin.ManagedComponentClass)
+					typeInfo->MType = ScriptReferenceType::ManagedComponentBase;
+				else if (monoClass->IsSubClassOf(mBuiltin.SceneObjectClass))
+					typeInfo->MType = ScriptReferenceType::SceneObject;
+				else if (monoClass->IsSubClassOf(mBuiltin.ManagedComponentClass))
+					typeInfo->MType = ScriptReferenceType::ManagedComponent;
+				else if (monoClass->IsSubClassOf(mBuiltin.ComponentClass))
 				{
-					typeInfo->mType = ScriptReferenceType::BuiltinComponent;
+					typeInfo->MType = ScriptReferenceType::BuiltinComponent;
 
 					::MonoReflectionType* type = MonoUtil::GetType(monoClass->GetInternalClassInternal());
 					BuiltinComponentInfo* builtinInfo = GetBuiltinComponentInfo(type);
@@ -482,7 +482,7 @@ namespace bs
 						return nullptr;
 					}
 
-					typeInfo->mRTIITypeId = builtinInfo->typeId;
+					typeInfo->MRtiiTypeId = builtinInfo->TypeId;
 				}
 
 				return typeInfo;
@@ -496,10 +496,10 @@ namespace bs
 				if(reflTypeInfo != nullptr)
 				{
 					SPtr<ManagedSerializableTypeInfoRef> typeInfo = bs_shared_ptr_new<ManagedSerializableTypeInfoRef>();
-					typeInfo->mTypeNamespace = monoClass->GetNamespace();
-					typeInfo->mTypeName = monoClass->GetTypeName();
-					typeInfo->mRTIITypeId = reflTypeInfo->typeId;
-					typeInfo->mType = ScriptReferenceType::ReflectableObject;
+					typeInfo->MTypeNamespace = monoClass->GetNamespace();
+					typeInfo->MTypeName = monoClass->GetTypeName();
+					typeInfo->MRtiiTypeId = reflTypeInfo->TypeId;
+					typeInfo->MType = ScriptReferenceType::ReflectableObject;
 
 					return typeInfo;
 				}
@@ -508,7 +508,7 @@ namespace bs
 					// Finally, it's either a normal managed object, or a non-reflectable type wrapper
 					SPtr<ManagedSerializableObjectInfo> objInfo;
 					if (GetSerializableObjectInfo(monoClass->GetNamespace(), monoClass->GetTypeName(), objInfo))
-						return objInfo->mTypeInfo;
+						return objInfo->MTypeInfo;
 				}
 			}
 
@@ -517,12 +517,12 @@ namespace bs
 			{
 				SPtr<ManagedSerializableObjectInfo> objInfo;
 				if (GetSerializableObjectInfo(monoClass->GetNamespace(), monoClass->GetTypeName(), objInfo))
-					return objInfo->mTypeInfo;
+					return objInfo->MTypeInfo;
 			}
 
 			break;
 		case MonoPrimitiveType::Generic:
-			if(monoClass->GetFullName() == mBuiltin.systemGenericListClass->GetFullName()) // Full name is part of CIL spec, so it is just fine to compare like this
+			if(monoClass->GetFullName() == mBuiltin.SystemGenericListClass->GetFullName()) // Full name is part of CIL spec, so it is just fine to compare like this
 			{
 				SPtr<ManagedSerializableTypeInfoList> typeInfo = bs_shared_ptr_new<ManagedSerializableTypeInfoList>();
 
@@ -530,14 +530,14 @@ namespace bs
 				MonoClass* itemClass = itemProperty->GetReturnType();
 
 				if (itemClass != nullptr)
-					typeInfo->mElementType = GetTypeInfo(itemClass);
+					typeInfo->MElementType = GetTypeInfo(itemClass);
 				
-				if (typeInfo->mElementType == nullptr)
+				if (typeInfo->MElementType == nullptr)
 					return nullptr;
 
 				return typeInfo;
 			}
-			else if(monoClass->GetFullName() == mBuiltin.systemGenericDictionaryClass->GetFullName())
+			else if(monoClass->GetFullName() == mBuiltin.SystemGenericDictionaryClass->GetFullName())
 			{
 				SPtr<ManagedSerializableTypeInfoDictionary> typeInfo = bs_shared_ptr_new<ManagedSerializableTypeInfoDictionary>();
 
@@ -552,18 +552,18 @@ namespace bs
 
 				MonoClass* keyClass = keyProperty->GetReturnType();
 				if(keyClass != nullptr)
-					typeInfo->mKeyType = GetTypeInfo(keyClass);
+					typeInfo->MKeyType = GetTypeInfo(keyClass);
 
 				MonoClass* valueClass = valueProperty->GetReturnType();
 				if(valueClass != nullptr)
-					typeInfo->mValueType = GetTypeInfo(valueClass);
+					typeInfo->MValueType = GetTypeInfo(valueClass);
 
-				if (typeInfo->mKeyType == nullptr || typeInfo->mValueType == nullptr)
+				if (typeInfo->MKeyType == nullptr || typeInfo->MValueType == nullptr)
 					return nullptr;
 
 				return typeInfo;
 			}
-			else if(monoClass->GetFullName() == mBuiltin.genericRRefClass->GetFullName())
+			else if(monoClass->GetFullName() == mBuiltin.GenericRRefClass->GetFullName())
 			{
 				SPtr<ManagedSerializableTypeInfoRRef> typeInfo = bs_shared_ptr_new<ManagedSerializableTypeInfoRRef>();
 				
@@ -571,9 +571,9 @@ namespace bs
 				MonoClass* itemClass = itemProperty->GetReturnType();
 
 				if (itemClass != nullptr)
-					typeInfo->mResourceType = GetTypeInfo(itemClass);
+					typeInfo->MResourceType = GetTypeInfo(itemClass);
 				
-				if (typeInfo->mResourceType == nullptr)
+				if (typeInfo->MResourceType == nullptr)
 					return nullptr;
 
 				return typeInfo;
@@ -588,13 +588,13 @@ namespace bs
 				{
 					MonoClass* monoElementClass = MonoManager::Instance().FindClass(elementClass);
 					if(monoElementClass != nullptr)
-						typeInfo->mElementType = GetTypeInfo(monoElementClass);
+						typeInfo->MElementType = GetTypeInfo(monoElementClass);
 				}
 
-				if (typeInfo->mElementType == nullptr)
+				if (typeInfo->MElementType == nullptr)
 					return nullptr;
 
-				typeInfo->mRank = ScriptArray::GetRank(monoClass->GetInternalClassInternal());
+				typeInfo->MRank = ScriptArray::GetRank(monoClass->GetInternalClassInternal());
 
 				return typeInfo;
 			}
@@ -622,120 +622,120 @@ namespace bs
 		if(engineAssembly == nullptr)
 			BS_EXCEPT(InvalidStateException, String(ENGINE_ASSEMBLY) +  " assembly is not loaded.");
 
-		mBuiltin.systemArrayClass = corlib->GetClass("System", "Array");
-		if(mBuiltin.systemArrayClass == nullptr)
+		mBuiltin.SystemArrayClass = corlib->GetClass("System", "Array");
+		if(mBuiltin.SystemArrayClass == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find System.Array managed class.");
 
-		mBuiltin.systemGenericListClass = corlib->GetClass("System.Collections.Generic", "List`1");
-		if(mBuiltin.systemGenericListClass == nullptr)
+		mBuiltin.SystemGenericListClass = corlib->GetClass("System.Collections.Generic", "List`1");
+		if(mBuiltin.SystemGenericListClass == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find List<T> managed class.");
 
-		mBuiltin.systemGenericDictionaryClass = corlib->GetClass("System.Collections.Generic", "Dictionary`2");
-		if(mBuiltin.systemGenericDictionaryClass == nullptr)
+		mBuiltin.SystemGenericDictionaryClass = corlib->GetClass("System.Collections.Generic", "Dictionary`2");
+		if(mBuiltin.SystemGenericDictionaryClass == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find Dictionary<TKey, TValue> managed class.");
 
-		mBuiltin.systemTypeClass = corlib->GetClass("System", "Type");
-		if (mBuiltin.systemTypeClass == nullptr)
+		mBuiltin.SystemTypeClass = corlib->GetClass("System", "Type");
+		if (mBuiltin.SystemTypeClass == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find Type managed class.");
 
-		mBuiltin.serializeObjectAttribute = engineAssembly->GetClass(ENGINE_NS, "SerializeObject");
-		if(mBuiltin.serializeObjectAttribute == nullptr)
+		mBuiltin.SerializeObjectAttribute = engineAssembly->GetClass(ENGINE_NS, "SerializeObject");
+		if(mBuiltin.SerializeObjectAttribute == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find SerializableObject managed class.");
 
-		mBuiltin.dontSerializeFieldAttribute = engineAssembly->GetClass(ENGINE_NS, "DontSerializeField");
-		if(mBuiltin.dontSerializeFieldAttribute == nullptr)
+		mBuiltin.DontSerializeFieldAttribute = engineAssembly->GetClass(ENGINE_NS, "DontSerializeField");
+		if(mBuiltin.DontSerializeFieldAttribute == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find DontSerializeField managed class.");
 
-		mBuiltin.rangeAttribute = engineAssembly->GetClass(ENGINE_NS, "Range");
-		if (mBuiltin.rangeAttribute == nullptr)
+		mBuiltin.RangeAttribute = engineAssembly->GetClass(ENGINE_NS, "Range");
+		if (mBuiltin.RangeAttribute == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find Range managed class.");
 
-		mBuiltin.stepAttribute = engineAssembly->GetClass(ENGINE_NS, "Step");
-		if (mBuiltin.stepAttribute == nullptr)
+		mBuiltin.StepAttribute = engineAssembly->GetClass(ENGINE_NS, "Step");
+		if (mBuiltin.StepAttribute == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find Step managed class.");
 
-		mBuiltin.layerMaskAttribute = engineAssembly->GetClass(ENGINE_NS, "LayerMask");
-		if (mBuiltin.layerMaskAttribute == nullptr)
+		mBuiltin.LayerMaskAttribute = engineAssembly->GetClass(ENGINE_NS, "LayerMask");
+		if (mBuiltin.LayerMaskAttribute == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find LayerMask managed class.");
 
-		mBuiltin.asQuaternionAttribute = engineAssembly->GetClass(ENGINE_NS, "AsQuaternion");
-		if (mBuiltin.asQuaternionAttribute == nullptr)
+		mBuiltin.AsQuaternionAttribute = engineAssembly->GetClass(ENGINE_NS, "AsQuaternion");
+		if (mBuiltin.AsQuaternionAttribute == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find AsQuaternion managed class.");
 
-		mBuiltin.nativeWrapperAttribute = engineAssembly->GetClass(ENGINE_NS, "NativeWrapper");
-		if (mBuiltin.nativeWrapperAttribute == nullptr)
+		mBuiltin.NativeWrapperAttribute = engineAssembly->GetClass(ENGINE_NS, "NativeWrapper");
+		if (mBuiltin.NativeWrapperAttribute == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find NativeWrapper managed class.");
 
-		mBuiltin.notNullAttribute = engineAssembly->GetClass(ENGINE_NS, "NotNull");
-		if (mBuiltin.notNullAttribute == nullptr)
+		mBuiltin.NotNullAttribute = engineAssembly->GetClass(ENGINE_NS, "NotNull");
+		if (mBuiltin.NotNullAttribute == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find NotNull managed class.");
 
-		mBuiltin.passByCopyAttribute = engineAssembly->GetClass(ENGINE_NS, "PassByCopy");
-		if (mBuiltin.passByCopyAttribute == nullptr)
+		mBuiltin.PassByCopyAttribute = engineAssembly->GetClass(ENGINE_NS, "PassByCopy");
+		if (mBuiltin.PassByCopyAttribute == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find PassByCopy managed class.");
 
-		mBuiltin.applyOnDirtyAttribute = engineAssembly->GetClass(ENGINE_NS, "ApplyOnDirty");
-		if (mBuiltin.applyOnDirtyAttribute == nullptr)
+		mBuiltin.ApplyOnDirtyAttribute = engineAssembly->GetClass(ENGINE_NS, "ApplyOnDirty");
+		if (mBuiltin.ApplyOnDirtyAttribute == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find ApplyOnDirty managed class.");
 
-		mBuiltin.componentClass = engineAssembly->GetClass(ENGINE_NS, "Component");
-		if(mBuiltin.componentClass == nullptr)
+		mBuiltin.ComponentClass = engineAssembly->GetClass(ENGINE_NS, "Component");
+		if(mBuiltin.ComponentClass == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find Component managed class.");
 
-		mBuiltin.managedComponentClass = engineAssembly->GetClass(ENGINE_NS, "ManagedComponent");
-		if (mBuiltin.managedComponentClass == nullptr)
+		mBuiltin.ManagedComponentClass = engineAssembly->GetClass(ENGINE_NS, "ManagedComponent");
+		if (mBuiltin.ManagedComponentClass == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find ManagedComponent managed class.");
 
-		mBuiltin.missingComponentClass = engineAssembly->GetClass(ENGINE_NS, "MissingComponent");
-		if (mBuiltin.missingComponentClass == nullptr)
+		mBuiltin.MissingComponentClass = engineAssembly->GetClass(ENGINE_NS, "MissingComponent");
+		if (mBuiltin.MissingComponentClass == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find MissingComponent managed class.");
 
-		mBuiltin.sceneObjectClass = engineAssembly->GetClass(ENGINE_NS, "SceneObject");
-		if(mBuiltin.sceneObjectClass == nullptr)
+		mBuiltin.SceneObjectClass = engineAssembly->GetClass(ENGINE_NS, "SceneObject");
+		if(mBuiltin.SceneObjectClass == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find SceneObject managed class.");
 
-		mBuiltin.rrefBaseClass = engineAssembly->GetClass(ENGINE_NS, "RRefBase");
-		if(mBuiltin.rrefBaseClass == nullptr)
+		mBuiltin.RrefBaseClass = engineAssembly->GetClass(ENGINE_NS, "RRefBase");
+		if(mBuiltin.RrefBaseClass == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find RRefBase managed class.");
 
-		mBuiltin.genericRRefClass = engineAssembly->GetClass(ENGINE_NS, "RRef`1");
-		if(mBuiltin.genericRRefClass == nullptr)
+		mBuiltin.GenericRRefClass = engineAssembly->GetClass(ENGINE_NS, "RRef`1");
+		if(mBuiltin.GenericRRefClass == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find RRef<T> managed class.");
 
-		mBuiltin.genericAsyncOpClass = engineAssembly->GetClass(ENGINE_NS, "AsyncOp`1");
-		if(mBuiltin.genericAsyncOpClass == nullptr)
+		mBuiltin.GenericAsyncOpClass = engineAssembly->GetClass(ENGINE_NS, "AsyncOp`1");
+		if(mBuiltin.GenericAsyncOpClass == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find AsyncOp<T> managed class.");
 
-		mBuiltin.serializeFieldAttribute = engineAssembly->GetClass(ENGINE_NS, "SerializeField");
-		if(mBuiltin.serializeFieldAttribute == nullptr)
+		mBuiltin.SerializeFieldAttribute = engineAssembly->GetClass(ENGINE_NS, "SerializeField");
+		if(mBuiltin.SerializeFieldAttribute == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find SerializeField managed class.");
 
-		mBuiltin.hideInInspectorAttribute = engineAssembly->GetClass(ENGINE_NS, "HideInInspector");
-		if(mBuiltin.hideInInspectorAttribute == nullptr)
+		mBuiltin.HideInInspectorAttribute = engineAssembly->GetClass(ENGINE_NS, "HideInInspector");
+		if(mBuiltin.HideInInspectorAttribute == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find HideInInspector managed class.");
 
-		mBuiltin.showInInspectorAttribute = engineAssembly->GetClass(ENGINE_NS, "ShowInInspector");
-		if (mBuiltin.showInInspectorAttribute == nullptr)
+		mBuiltin.ShowInInspectorAttribute = engineAssembly->GetClass(ENGINE_NS, "ShowInInspector");
+		if (mBuiltin.ShowInInspectorAttribute == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find ShowInInspector managed class.");
 
-		mBuiltin.categoryAttribute = engineAssembly->GetClass(ENGINE_NS, "Category");
-		if (mBuiltin.categoryAttribute == nullptr)
+		mBuiltin.CategoryAttribute = engineAssembly->GetClass(ENGINE_NS, "Category");
+		if (mBuiltin.CategoryAttribute == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find Category managed class.");
 
-		mBuiltin.orderAttribute = engineAssembly->GetClass(ENGINE_NS, "Order");
-		if (mBuiltin.orderAttribute == nullptr)
+		mBuiltin.OrderAttribute = engineAssembly->GetClass(ENGINE_NS, "Order");
+		if (mBuiltin.OrderAttribute == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find Order managed class.");
 
-		mBuiltin.inlineAttribute = engineAssembly->GetClass(ENGINE_NS, "Inline");
-		if (mBuiltin.inlineAttribute == nullptr)
+		mBuiltin.InlineAttribute = engineAssembly->GetClass(ENGINE_NS, "Inline");
+		if (mBuiltin.InlineAttribute == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find Inline managed class.");
 
-		mBuiltin.loadOnAssignAttribute = engineAssembly->GetClass(ENGINE_NS, "LoadOnAssign");
-		if (mBuiltin.loadOnAssignAttribute == nullptr)
+		mBuiltin.LoadOnAssignAttribute = engineAssembly->GetClass(ENGINE_NS, "LoadOnAssign");
+		if (mBuiltin.LoadOnAssignAttribute == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find LoadOnAssign managed class.");
 
-		mBuiltin.hdrAttribute = engineAssembly->GetClass(ENGINE_NS, "HDR");
-		if (mBuiltin.hdrAttribute == nullptr)
+		mBuiltin.HdrAttribute = engineAssembly->GetClass(ENGINE_NS, "HDR");
+		if (mBuiltin.HdrAttribute == nullptr)
 			BS_EXCEPT(InvalidStateException, "Cannot find HDR managed class.");
 
 		mBaseTypesInitialized = true;
@@ -743,38 +743,38 @@ namespace bs
 
 	void ScriptAssemblyManager::LoadTypeMappings(MonoAssembly& assembly, const BuiltinTypeMappings& mapping)
 	{
-		for(auto& entry : mapping.components)
+		for(auto& entry : mapping.Components)
 		{
 			BuiltinComponentInfo info = entry;
-			info.monoClass = assembly.GetClass(entry.metaData->ns, entry.metaData->name);
+			info.MonoClass = assembly.GetClass(entry.MetaData->Ns, entry.MetaData->Name);
 
-			::MonoReflectionType* type = MonoUtil::GetType(info.monoClass->GetInternalClassInternal());
+			::MonoReflectionType* type = MonoUtil::GetType(info.MonoClass->GetInternalClassInternal());
 
 			mBuiltinComponentInfos[type] = info;
-			mBuiltinComponentInfosByTID[info.typeId] = info;
+			mBuiltinComponentInfosByTID[info.TypeId] = info;
 		}
 
-		for (auto& entry : mapping.resources)
+		for (auto& entry : mapping.Resources)
 		{
 			BuiltinResourceInfo info = entry;
-			info.monoClass = assembly.GetClass(entry.metaData->ns, entry.metaData->name);
+			info.MonoClass = assembly.GetClass(entry.MetaData->Ns, entry.MetaData->Name);
 
-			::MonoReflectionType* type = MonoUtil::GetType(info.monoClass->GetInternalClassInternal());
+			::MonoReflectionType* type = MonoUtil::GetType(info.MonoClass->GetInternalClassInternal());
 
 			mBuiltinResourceInfos[type] = info;
-			mBuiltinResourceInfosByTID[info.typeId] = info;
-			mBuiltinResourceInfosByType[(UINT32)info.resType] = info;
+			mBuiltinResourceInfosByTID[info.TypeId] = info;
+			mBuiltinResourceInfosByType[(UINT32)info.ResType] = info;
 		}
 
-		for(auto& entry : mapping.reflectableObjects)
+		for(auto& entry : mapping.ReflectableObjects)
 		{
 			ReflectableTypeInfo info = entry;
-			info.monoClass = assembly.GetClass(entry.metaData->ns, entry.metaData->name);
+			info.MonoClass = assembly.GetClass(entry.MetaData->Ns, entry.MetaData->Name);
 
-			::MonoReflectionType* type = MonoUtil::GetType(info.monoClass->GetInternalClassInternal());
+			::MonoReflectionType* type = MonoUtil::GetType(info.MonoClass->GetInternalClassInternal());
 
 			mReflectableTypeInfos[type] = info;
-			mReflectableTypeInfosByTID[info.typeId] = info;
+			mReflectableTypeInfosByTID[info.TypeId] = info;
 		}
 	}
 
@@ -849,10 +849,10 @@ namespace bs
 			if (curAssembly.second == nullptr)
 				continue;
 
-			auto iterFind = curAssembly.second->mTypeNameToId.find(fullName);
-			if(iterFind != curAssembly.second->mTypeNameToId.end())
+			auto iterFind = curAssembly.second->MTypeNameToId.find(fullName);
+			if(iterFind != curAssembly.second->MTypeNameToId.end())
 			{
-				outInfo = curAssembly.second->mObjectInfos[iterFind->second];
+				outInfo = curAssembly.second->MObjectInfos[iterFind->second];
 
 				return true;
 			}
@@ -866,8 +866,8 @@ namespace bs
 		String fullName = ns + "." + typeName;
 		for(auto& curAssembly : mAssemblyInfos)
 		{
-			auto iterFind = curAssembly.second->mTypeNameToId.find(fullName);
-			if(iterFind != curAssembly.second->mTypeNameToId.end())
+			auto iterFind = curAssembly.second->MTypeNameToId.find(fullName);
+			if(iterFind != curAssembly.second->MTypeNameToId.end())
 				return true;
 		}
 
@@ -897,19 +897,19 @@ namespace bs
 			const ScriptMeta* managedResourceMeta = ScriptManagedResource::GetMetaData();
 			const ScriptMeta* managedComponentMeta = ScriptManagedComponent::GetMetaData();
 
-			if (monoClass->IsSubClassOf(ScriptResource::GetMetaData()->scriptClass)) // Resource
+			if (monoClass->IsSubClassOf(ScriptResource::GetMetaData()->ScriptClass)) // Resource
 			{
-				if (monoClass == ScriptResource::GetMetaData()->scriptClass ||
-					monoClass == ScriptManagedResource::GetMetaData()->scriptClass)
+				if (monoClass == ScriptResource::GetMetaData()->ScriptClass ||
+					monoClass == ScriptManagedResource::GetMetaData()->ScriptClass)
 				{
 					BS_LOG(Warning, Script, "Unsupported type provided.");
 					return nullptr;
 				}
 
-				if (monoClass->IsSubClassOf(managedResourceMeta->scriptClass))
+				if (monoClass->IsSubClassOf(managedResourceMeta->ScriptClass))
 				{
 					ScriptManagedResource* scriptResource = nullptr;
-					managedResourceMeta->thisPtrField->Get(value, &scriptResource);
+					managedResourceMeta->ThisPtrField->Get(value, &scriptResource);
 
 					HManagedResource resource = scriptResource->GetHandle();
 					if (!resource.IsLoaded(false))
@@ -934,7 +934,7 @@ namespace bs
 					}
 
 					ScriptResourceBase* scriptResource = nullptr;
-					builtinInfo->metaData->thisPtrField->Get(value, &scriptResource);
+					builtinInfo->MetaData->ThisPtrField->Get(value, &scriptResource);
 
 					HResource handle = scriptResource->GetGenericHandle();
 					if (!handle.IsLoaded(false))
@@ -943,18 +943,18 @@ namespace bs
 					return handle.GetInternalPtr();
 				}
 			}
-			else if (monoClass->IsSubClassOf(mBuiltin.componentClass)) // Component
+			else if (monoClass->IsSubClassOf(mBuiltin.ComponentClass)) // Component
 			{
-				if (monoClass == mBuiltin.componentClass || monoClass == mBuiltin.managedComponentClass)
+				if (monoClass == mBuiltin.ComponentClass || monoClass == mBuiltin.ManagedComponentClass)
 				{
 					BS_LOG(Warning, Script, "Unsupported type provided.");
 					return nullptr;
 				}
 
-				if(monoClass->IsSubClassOf(mBuiltin.managedComponentClass))
+				if(monoClass->IsSubClassOf(mBuiltin.ManagedComponentClass))
 				{
 					ScriptManagedComponent* scriptComponent = nullptr;
-					managedComponentMeta->thisPtrField->Get(value, &scriptComponent);
+					managedComponentMeta->ThisPtrField->Get(value, &scriptComponent);
 
 					HManagedComponent component = scriptComponent->GetHandle();
 					if (component.IsDestroyed())
@@ -979,7 +979,7 @@ namespace bs
 					}
 
 					ScriptComponentBase* scriptComponent = nullptr;
-					builtinInfo->metaData->thisPtrField->Get(value, &scriptComponent);
+					builtinInfo->MetaData->ThisPtrField->Get(value, &scriptComponent);
 
 					HComponent handle = scriptComponent->GetComponent();
 					if (handle.IsDestroyed())
@@ -1001,7 +1001,7 @@ namespace bs
 				return nullptr;
 			}
 
-			if (objInfo->mTypeInfo->mRTIITypeId != 0)
+			if (objInfo->MTypeInfo->MRtiiTypeId != 0)
 			{
 				::MonoClass* monoClass = MonoUtil::GetClass(value);
 				::MonoReflectionType* monoType = MonoUtil::GetType(monoClass);
@@ -1011,8 +1011,8 @@ namespace bs
 
 				ScriptReflectableBase* scriptReflectable = nullptr;
 
-				if (reflTypeInfo->metaData->thisPtrField != nullptr)
-					reflTypeInfo->metaData->thisPtrField->Get(value, &scriptReflectable);
+				if (reflTypeInfo->MetaData->ThisPtrField != nullptr)
+					reflTypeInfo->MetaData->ThisPtrField->Get(value, &scriptReflectable);
 
 				return scriptReflectable->GetReflectable();
 			}

@@ -11,11 +11,11 @@ namespace bs
 	{
 		Rect2I bounds = mBounds;
 
-		if(clipRect.width > 0 && clipRect.height > 0)
+		if(clipRect.Width > 0 && clipRect.Height > 0)
 			bounds.Clip(clipRect);
 
-		bounds.x += offset.x;
-		bounds.y += offset.y;
+		bounds.X += offset.X;
+		bounds.Y += offset.Y;
 
 		return bounds;
 	}
@@ -32,8 +32,8 @@ namespace bs
 		UINT32 maxVertIdx = maxNumVerts;
 		UINT32 maxIndexIdx = maxNumIndices;
 
-		UINT32 numVertices = renderElem.numQuads * 4;
-		UINT32 numIndices = renderElem.numQuads * 6;
+		UINT32 numVertices = renderElem.NumQuads * 4;
+		UINT32 numIndices = renderElem.NumQuads * 6;
 
 		assert((startVert + numVertices) <= maxVertIdx);
 		assert((startIndex + numIndices) <= maxIndexIdx);
@@ -42,35 +42,35 @@ namespace bs
 		UINT8* uvDst = uv + startVert * vertexStride;
 
 		// TODO - I'm sure this can be done in a more cache friendly way. Profile it later.
-		Vector2 vecOffset((float)offset.x, (float)offset.y);
+		Vector2 vecOffset((float)offset.X, (float)offset.Y);
 		if(clip)
 		{
-			for(UINT32 i = 0; i < renderElem.numQuads; i++)
+			for(UINT32 i = 0; i < renderElem.NumQuads; i++)
 			{
 				UINT8* vecStart = vertDst;
 				UINT8* uvStart = uvDst;
 				UINT32 vertIdx = i * 4;
 
-				memcpy(vertDst, &renderElem.vertices[vertIdx + 0], sizeof(Vector2));
-				memcpy(uvDst, &renderElem.uvs[vertIdx + 0], sizeof(Vector2));
+				memcpy(vertDst, &renderElem.Vertices[vertIdx + 0], sizeof(Vector2));
+				memcpy(uvDst, &renderElem.Uvs[vertIdx + 0], sizeof(Vector2));
 
 				vertDst += vertexStride;
 				uvDst += vertexStride;
 
-				memcpy(vertDst, &renderElem.vertices[vertIdx + 1], sizeof(Vector2));
-				memcpy(uvDst, &renderElem.uvs[vertIdx + 1], sizeof(Vector2));
+				memcpy(vertDst, &renderElem.Vertices[vertIdx + 1], sizeof(Vector2));
+				memcpy(uvDst, &renderElem.Uvs[vertIdx + 1], sizeof(Vector2));
 
 				vertDst += vertexStride;
 				uvDst += vertexStride;
 
-				memcpy(vertDst, &renderElem.vertices[vertIdx + 2], sizeof(Vector2));
-				memcpy(uvDst, &renderElem.uvs[vertIdx + 2], sizeof(Vector2));
+				memcpy(vertDst, &renderElem.Vertices[vertIdx + 2], sizeof(Vector2));
+				memcpy(uvDst, &renderElem.Uvs[vertIdx + 2], sizeof(Vector2));
 
 				vertDst += vertexStride;
 				uvDst += vertexStride;
 
-				memcpy(vertDst, &renderElem.vertices[vertIdx + 3], sizeof(Vector2));
-				memcpy(uvDst, &renderElem.uvs[vertIdx + 3], sizeof(Vector2));
+				memcpy(vertDst, &renderElem.Vertices[vertIdx + 3], sizeof(Vector2));
+				memcpy(uvDst, &renderElem.Uvs[vertIdx + 3], sizeof(Vector2));
 
 				ClipQuadsToRect(vecStart, uvStart, 1, vertexStride, clipRect);
 
@@ -96,31 +96,31 @@ namespace bs
 		}
 		else
 		{
-			for(UINT32 i = 0; i < renderElem.numQuads; i++)
+			for(UINT32 i = 0; i < renderElem.NumQuads; i++)
 			{
 				UINT8* vecStart = vertDst;
 				UINT32 vertIdx = i * 4;
 
-				memcpy(vertDst, &renderElem.vertices[vertIdx + 0], sizeof(Vector2));
-				memcpy(uvDst, &renderElem.uvs[vertIdx + 0], sizeof(Vector2));
+				memcpy(vertDst, &renderElem.Vertices[vertIdx + 0], sizeof(Vector2));
+				memcpy(uvDst, &renderElem.Uvs[vertIdx + 0], sizeof(Vector2));
 
 				vertDst += vertexStride;
 				uvDst += vertexStride;
 
-				memcpy(vertDst, &renderElem.vertices[vertIdx + 1], sizeof(Vector2));
-				memcpy(uvDst, &renderElem.uvs[vertIdx + 1], sizeof(Vector2));
+				memcpy(vertDst, &renderElem.Vertices[vertIdx + 1], sizeof(Vector2));
+				memcpy(uvDst, &renderElem.Uvs[vertIdx + 1], sizeof(Vector2));
 
 				vertDst += vertexStride;
 				uvDst += vertexStride;
 
-				memcpy(vertDst, &renderElem.vertices[vertIdx + 2], sizeof(Vector2));
-				memcpy(uvDst, &renderElem.uvs[vertIdx + 2], sizeof(Vector2));
+				memcpy(vertDst, &renderElem.Vertices[vertIdx + 2], sizeof(Vector2));
+				memcpy(uvDst, &renderElem.Uvs[vertIdx + 2], sizeof(Vector2));
 
 				vertDst += vertexStride;
 				uvDst += vertexStride;
 
-				memcpy(vertDst, &renderElem.vertices[vertIdx + 3], sizeof(Vector2));
-				memcpy(uvDst, &renderElem.uvs[vertIdx + 3], sizeof(Vector2));
+				memcpy(vertDst, &renderElem.Vertices[vertIdx + 3], sizeof(Vector2));
+				memcpy(uvDst, &renderElem.Uvs[vertIdx + 3], sizeof(Vector2));
 
 				vertDst = vecStart;
 				Vector2* curVec = (Vector2*)vertDst;
@@ -144,9 +144,9 @@ namespace bs
 		}
 
 		if(indices != nullptr)
-			memcpy(&indices[startIndex], renderElem.indexes, numIndices * sizeof(UINT32));
+			memcpy(&indices[startIndex], renderElem.Indexes, numIndices * sizeof(UINT32));
 
-		return renderElem.numQuads;
+		return renderElem.NumQuads;
 	}
 
 	Vector2I Sprite::GetAnchorOffset(SpriteAnchor anchor, UINT32 width, UINT32 height)
@@ -185,10 +185,10 @@ namespace bs
 		bool foundStartingPoint = false;
 		for(auto& renderElem : mCachedRenderElements)
 		{
-			if(renderElem.vertices != nullptr && renderElem.numQuads > 0)
+			if(renderElem.Vertices != nullptr && renderElem.NumQuads > 0)
 			{
-				min = renderElem.vertices[0];
-				max = renderElem.vertices[0];
+				min = renderElem.Vertices[0];
+				max = renderElem.Vertices[0];
 				foundStartingPoint = true;
 				break;
 			}
@@ -203,19 +203,19 @@ namespace bs
 		// Calculate bounds
 		for(auto& renderElem : mCachedRenderElements)
 		{
-			if(renderElem.vertices != nullptr && renderElem.numQuads > 0)
+			if(renderElem.Vertices != nullptr && renderElem.NumQuads > 0)
 			{
-				UINT32 vertexCount = renderElem.numQuads * 4;
+				UINT32 vertexCount = renderElem.NumQuads * 4;
 
 				for(UINT32 i = 0; i < vertexCount; i++)
 				{
-					min = Vector2::Min(min, renderElem.vertices[i]);
-					max = Vector2::Max(max, renderElem.vertices[i]);
+					min = Vector2::Min(min, renderElem.Vertices[i]);
+					max = Vector2::Max(max, renderElem.Vertices[i]);
 				}
 			}
 		}
 
-		mBounds = Rect2I((int)min.x, (int)min.y, (int)(max.x - min.x), (int)(max.y - min.y));
+		mBounds = Rect2I((int)min.X, (int)min.Y, (int)(max.X - min.X), (int)(max.Y - min.Y));
 	}
 
 	// This will only properly clip an array of quads
@@ -223,10 +223,10 @@ namespace bs
 	// (0, 0) represents top left of the screen
 	void Sprite::ClipQuadsToRect(UINT8* vertices, UINT8* uv, UINT32 numQuads, UINT32 vertStride, const Rect2I& clipRect)
 	{
-		float left = (float)clipRect.x;
-		float right = (float)clipRect.x + clipRect.width;
-		float top = (float)clipRect.y;
-		float bottom = (float)clipRect.y + clipRect.height;
+		float left = (float)clipRect.X;
+		float right = (float)clipRect.X + clipRect.Width;
+		float top = (float)clipRect.Y;
+		float bottom = (float)clipRect.Y + clipRect.Height;
 
 		for(UINT32 i = 0; i < numQuads; i++)
 		{
@@ -241,16 +241,16 @@ namespace bs
 			Vector2* uvD = (Vector2*)(uv + vertStride * 3);
 
 			// Attempt to skip those that are definitely not clipped
-			if(vecA->x >= left && vecB->x <= right &&
-				vecA->y >= top && vecC->y <= bottom)
+			if(vecA->X >= left && vecB->X <= right &&
+				vecA->Y >= top && vecC->Y <= bottom)
 			{
 				continue;
 			}
 
 			// TODO - Skip those that are 100% clipped as well
 
-			float du = (uvB->x - uvA->x) / (vecB->x - vecA->x);
-			float dv = (uvA->y - uvC->y) / (vecA->y - vecD->y);
+			float du = (uvB->X - uvA->X) / (vecB->X - vecA->X);
+			float dv = (uvA->Y - uvC->Y) / (vecA->Y - vecD->Y);
 
 			if(right < left)
 				std::swap(left, right);
@@ -259,38 +259,38 @@ namespace bs
 				std::swap(bottom, top);
 
 			// Clip left
-			float newLeft = Math::Clamp(vecA->x, left, right);
-			float uvLeftOffset = (newLeft - vecA->x) * du;
+			float newLeft = Math::Clamp(vecA->X, left, right);
+			float uvLeftOffset = (newLeft - vecA->X) * du;
 
 			// Clip right
-			float newRight = Math::Clamp(vecB->x, left, right);
-			float uvRightOffset = (vecB->x - newRight) * du;
+			float newRight = Math::Clamp(vecB->X, left, right);
+			float uvRightOffset = (vecB->X - newRight) * du;
 
 			// Clip top
-			float newTop = Math::Clamp(vecA->y, top, bottom);
-			float uvTopOffset = (newTop - vecA->y) * dv;
+			float newTop = Math::Clamp(vecA->Y, top, bottom);
+			float uvTopOffset = (newTop - vecA->Y) * dv;
 
 			// Clip bottom
-			float newBottom = Math::Clamp(vecC->y, top, bottom);
-			float uvBottomOffset = (vecC->y - newBottom) * dv;
+			float newBottom = Math::Clamp(vecC->Y, top, bottom);
+			float uvBottomOffset = (vecC->Y - newBottom) * dv;
 
-			vecA->x = newLeft;
-			vecC->x = newLeft;
-			vecB->x = newRight;
-			vecD->x = newRight;
-			vecA->y = newTop;
-			vecB->y = newTop;
-			vecC->y = newBottom;
-			vecD->y = newBottom;
+			vecA->X = newLeft;
+			vecC->X = newLeft;
+			vecB->X = newRight;
+			vecD->X = newRight;
+			vecA->Y = newTop;
+			vecB->Y = newTop;
+			vecC->Y = newBottom;
+			vecD->Y = newBottom;
 			
-			uvA->x += uvLeftOffset;
-			uvC->x += uvLeftOffset;
-			uvB->x -= uvRightOffset;
-			uvD->x -= uvRightOffset;
-			uvA->y += uvTopOffset;
-			uvB->y += uvTopOffset;
-			uvC->y -= uvBottomOffset;
-			uvD->y -= uvBottomOffset;
+			uvA->X += uvLeftOffset;
+			uvC->X += uvLeftOffset;
+			uvB->X -= uvRightOffset;
+			uvD->X -= uvRightOffset;
+			uvA->Y += uvTopOffset;
+			uvB->Y += uvTopOffset;
+			uvC->Y -= uvBottomOffset;
+			uvD->Y -= uvBottomOffset;
 
 			vertices += vertStride * 4;
 			uv += vertStride * 4;
@@ -302,10 +302,10 @@ namespace bs
 	{
 		Vector<Plane> clipPlanes =
 		{
-			Plane(Vector3(1.0f, 0.0f, 0.0f), (float)clipRect.x),
-			Plane(Vector3(-1.0f, 0.0f, 0.0f), (float)-(clipRect.x + (INT32)clipRect.width)),
-			Plane(Vector3(0.0f, 1.0f, 0.0f), (float)clipRect.y),
-			Plane(Vector3(0.0f, -1.0f, 0.0f), (float)-(clipRect.y + (INT32)clipRect.height))
+			Plane(Vector3(1.0f, 0.0f, 0.0f), (float)clipRect.X),
+			Plane(Vector3(-1.0f, 0.0f, 0.0f), (float)-(clipRect.X + (INT32)clipRect.Width)),
+			Plane(Vector3(0.0f, 1.0f, 0.0f), (float)clipRect.Y),
+			Plane(Vector3(0.0f, -1.0f, 0.0f), (float)-(clipRect.Y + (INT32)clipRect.Height))
 		};
 
 		MeshUtility::Clip2D(vertices, uv, numTris, vertStride, clipPlanes, writeCallback);

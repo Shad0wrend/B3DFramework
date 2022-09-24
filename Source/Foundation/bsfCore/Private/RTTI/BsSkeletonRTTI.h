@@ -89,8 +89,8 @@ namespace bs
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]()
 			{
 				BitLength size = 0;
-				size += rtti_write(data.name, stream);
-				size += rtti_write(data.parent, stream);
+				size += rtti_write(data.Name, stream);
+				size += rtti_write(data.Parent, stream);
 
 				return size;
 			});
@@ -102,8 +102,8 @@ namespace bs
 			BitLength size;
 			rtti_read_size_header(stream, compress, size);
 
-			rtti_read(data.name, stream);
-			rtti_read(data.parent, stream);
+			rtti_read(data.Name, stream);
+			rtti_read(data.Parent, stream);
 
 			return size;
 		}
@@ -112,8 +112,8 @@ namespace bs
 		static BitLength GetSize(const SkeletonBoneInfo& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength dataSize;
-			dataSize += rtti_size(data.name);
-			dataSize += rtti_size(data.parent);
+			dataSize += rtti_size(data.Name);
+			dataSize += rtti_size(data.Parent);
 
 			rtti_add_header_size(dataSize, compress);
 			return dataSize;

@@ -11,8 +11,8 @@ namespace bs
 {
 	struct __PARTICLE_LINE_SHAPE_DESCInterop
 	{
-		float length;
-		ParticleEmissionMode mode;
+		float Length;
+		ParticleEmissionMode Mode;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptPARTICLE_LINE_SHAPE_DESC : public ScriptObject<ScriptPARTICLE_LINE_SHAPE_DESC>

@@ -17,7 +17,7 @@ namespace bs
 		if(alcIsExtensionPresent(nullptr, "ALC_ENUMERATE_ALL_EXT") != ALC_FALSE)
 		{
 			const ALCchar* defaultDevice = alcGetString(nullptr, ALC_DEFAULT_ALL_DEVICES_SPECIFIER);
-			mDefaultDevice.name = String(defaultDevice);
+			mDefaultDevice.Name = String(defaultDevice);
 
 			const ALCchar* devices = alcGetString(nullptr, ALC_ALL_DEVICES_SPECIFIER);
 
@@ -54,7 +54,7 @@ namespace bs
 
 		mActiveDevice = mDefaultDevice;
 
-		String defaultDeviceName = mDefaultDevice.name;
+		String defaultDeviceName = mDefaultDevice.Name;
 		if(enumeratedDevices)
 			mDevice = alcOpenDevice(defaultDeviceName.c_str());
 		else
@@ -127,7 +127,7 @@ namespace bs
 		
 		mActiveDevice = device;
 
-		String narrowName = device.name;
+		String narrowName = device.Name;
 		mDevice = alcOpenDevice(narrowName.c_str());
 		if (mDevice == nullptr)
 			BS_LOG(Error, Audio, "Failed to open OpenAL device: ", narrowName);
@@ -271,13 +271,13 @@ namespace bs
 
 			for(auto& command : mStreamingCommandQueue)
 			{
-				switch(command.type)
+				switch(command.Type)
 				{
 				case StreamingCommandType::Start:
-					mStreamingSources.insert(command.source);
+					mStreamingSources.insert(command.Source);
 					break;
 				case StreamingCommandType::Stop:
-					mStreamingSources.erase(command.source);
+					mStreamingSources.erase(command.Source);
 					break;
 				default:
 					break;
@@ -360,19 +360,19 @@ namespace bs
 
 	void OAAudio::WriteToOpenALBufferInternal(UINT32 bufferId, UINT8* samples, const AudioDataInfo& info)
 	{
-		if (info.numChannels <= 2) // Mono or stereo
+		if (info.NumChannels <= 2) // Mono or stereo
 		{
-			if (info.bitDepth > 16)
+			if (info.BitDepth > 16)
 			{
 				if (IsExtensionSupportedInternal("AL_EXT_float32"))
 				{
-					UINT32 bufferSize = info.numSamples * sizeof(float);
+					UINT32 bufferSize = info.NumSamples * sizeof(float);
 					float* sampleBufferFloat = (float*)bs_stack_alloc(bufferSize);
 
-					AudioUtility::ConvertToFloat(samples, info.bitDepth, sampleBufferFloat, info.numSamples);
+					AudioUtility::ConvertToFloat(samples, info.BitDepth, sampleBufferFloat, info.NumSamples);
 
-					ALenum format = GetOpenALBufferFormatInternal(info.numChannels, info.bitDepth);
-					alBufferData(bufferId, format, sampleBufferFloat, bufferSize, info.sampleRate);
+					ALenum format = GetOpenALBufferFormatInternal(info.NumChannels, info.BitDepth);
+					alBufferData(bufferId, format, sampleBufferFloat, bufferSize, info.SampleRate);
 
 					bs_stack_free(sampleBufferFloat);
 				}
@@ -381,71 +381,71 @@ namespace bs
 					BS_LOG(Warning, RenderBackend,
 						"OpenAL doesn't support bit depth larger than 16. Your audio data will be truncated.");
 
-					UINT32 bufferSize = info.numSamples * 2;
+					UINT32 bufferSize = info.NumSamples * 2;
 					UINT8* sampleBuffer16 = (UINT8*)bs_stack_alloc(bufferSize);
 
-					AudioUtility::ConvertBitDepth(samples, info.bitDepth, sampleBuffer16, 16, info.numSamples);
+					AudioUtility::ConvertBitDepth(samples, info.BitDepth, sampleBuffer16, 16, info.NumSamples);
 
-					ALenum format = GetOpenALBufferFormatInternal(info.numChannels, 16);
-					alBufferData(bufferId, format, sampleBuffer16, bufferSize, info.sampleRate);
+					ALenum format = GetOpenALBufferFormatInternal(info.NumChannels, 16);
+					alBufferData(bufferId, format, sampleBuffer16, bufferSize, info.SampleRate);
 
 					bs_stack_free(sampleBuffer16);
 				}
 			}
-			else if(info.bitDepth == 8)
+			else if(info.BitDepth == 8)
 			{
 				// OpenAL expects unsigned 8-bit data, but engine stores it as signed, so convert
-				UINT32 bufferSize = info.numSamples * (info.bitDepth / 8);
+				UINT32 bufferSize = info.NumSamples * (info.BitDepth / 8);
 				UINT8* sampleBuffer = (UINT8*)bs_stack_alloc(bufferSize);
 
-				for(UINT32 i = 0; i < info.numSamples; i++)
+				for(UINT32 i = 0; i < info.NumSamples; i++)
 					sampleBuffer[i] = ((INT8*)samples)[i] + 128;
 
-				ALenum format = GetOpenALBufferFormatInternal(info.numChannels, 16);
-				alBufferData(bufferId, format, sampleBuffer, bufferSize, info.sampleRate);
+				ALenum format = GetOpenALBufferFormatInternal(info.NumChannels, 16);
+				alBufferData(bufferId, format, sampleBuffer, bufferSize, info.SampleRate);
 
 				bs_stack_free(sampleBuffer);
 			}
 			else
 			{
-				ALenum format = GetOpenALBufferFormatInternal(info.numChannels, info.bitDepth);
-				alBufferData(bufferId, format, samples, info.numSamples * (info.bitDepth / 8), info.sampleRate);
+				ALenum format = GetOpenALBufferFormatInternal(info.NumChannels, info.BitDepth);
+				alBufferData(bufferId, format, samples, info.NumSamples * (info.BitDepth / 8), info.SampleRate);
 			}
 		}
 		else // Multichannel
 		{
 			// Note: Assuming AL_EXT_MCFORMATS is supported. If it's not, channels should be reduced to mono or stereo.
 
-			if (info.bitDepth == 24) // 24-bit not supported, convert to 32-bit
+			if (info.BitDepth == 24) // 24-bit not supported, convert to 32-bit
 			{
-				UINT32 bufferSize = info.numSamples * sizeof(INT32);
+				UINT32 bufferSize = info.NumSamples * sizeof(INT32);
 				UINT8* sampleBuffer32 = (UINT8*)bs_stack_alloc(bufferSize);
 
-				AudioUtility::ConvertBitDepth(samples, info.bitDepth, sampleBuffer32, 32, info.numSamples);
+				AudioUtility::ConvertBitDepth(samples, info.BitDepth, sampleBuffer32, 32, info.NumSamples);
 
-				ALenum format = GetOpenALBufferFormatInternal(info.numChannels, 32);
-				alBufferData(bufferId, format, sampleBuffer32, bufferSize, info.sampleRate);
+				ALenum format = GetOpenALBufferFormatInternal(info.NumChannels, 32);
+				alBufferData(bufferId, format, sampleBuffer32, bufferSize, info.SampleRate);
 
 				bs_stack_free(sampleBuffer32);
 			}
-			else if (info.bitDepth == 8)
+			else if (info.BitDepth == 8)
 			{
 				// OpenAL expects unsigned 8-bit data, but engine stores it as signed, so convert
-				UINT32 bufferSize = info.numSamples * (info.bitDepth / 8);
+				UINT32 bufferSize = info.NumSamples * (info.BitDepth / 8);
 				UINT8* sampleBuffer = (UINT8*)bs_stack_alloc(bufferSize);
 
-				for (UINT32 i = 0; i < info.numSamples; i++)
+				for (UINT32 i = 0; i < info.NumSamples; i++)
 					sampleBuffer[i] = ((INT8*)samples)[i] + 128;
 
-				ALenum format = GetOpenALBufferFormatInternal(info.numChannels, 16);
-				alBufferData(bufferId, format, sampleBuffer, bufferSize, info.sampleRate);
+				ALenum format = GetOpenALBufferFormatInternal(info.NumChannels, 16);
+				alBufferData(bufferId, format, sampleBuffer, bufferSize, info.SampleRate);
 
 				bs_stack_free(sampleBuffer);
 			}
 			else
 			{
-				ALenum format = GetOpenALBufferFormatInternal(info.numChannels, info.bitDepth);
-				alBufferData(bufferId, format, samples, info.numSamples * (info.bitDepth / 8), info.sampleRate);
+				ALenum format = GetOpenALBufferFormatInternal(info.NumChannels, info.BitDepth);
+				alBufferData(bufferId, format, samples, info.NumSamples * (info.BitDepth / 8), info.SampleRate);
 			}
 		}
 	}

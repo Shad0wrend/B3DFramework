@@ -18,11 +18,11 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableFieldKeyRTTI : public RTTIType<ManagedSerializableFieldKey, IReflectable, ManagedSerializableFieldKeyRTTI>
 	{
 	private:
-		UINT16& GetTypeId(ManagedSerializableFieldKey* obj) { return obj->mTypeId; }
-		void SetTypeId(ManagedSerializableFieldKey* obj, UINT16& val) { obj->mTypeId = val; }
+		UINT16& GetTypeId(ManagedSerializableFieldKey* obj) { return obj->MTypeId; }
+		void SetTypeId(ManagedSerializableFieldKey* obj, UINT16& val) { obj->MTypeId = val; }
 
-		UINT16& GetFieldId(ManagedSerializableFieldKey* obj) { return obj->mFieldId; }
-		void SetFieldId(ManagedSerializableFieldKey* obj, UINT16& val) { obj->mFieldId = val; }
+		UINT16& GetFieldId(ManagedSerializableFieldKey* obj) { return obj->MFieldId; }
+		void SetFieldId(ManagedSerializableFieldKey* obj, UINT16& val) { obj->MFieldId = val; }
 
 	public:
 		ManagedSerializableFieldKeyRTTI()
@@ -79,11 +79,11 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataEntryRTTI : public RTTIType<ManagedSerializableFieldDataEntry, IReflectable, ManagedSerializableFieldDataEntryRTTI>
 	{
 	private:
-		SPtr<ManagedSerializableFieldKey> GetKey(ManagedSerializableFieldDataEntry* obj)	{ return obj->mKey; }
-		void SetKey(ManagedSerializableFieldDataEntry* obj, SPtr<ManagedSerializableFieldKey> val) { obj->mKey = val; }
+		SPtr<ManagedSerializableFieldKey> GetKey(ManagedSerializableFieldDataEntry* obj)	{ return obj->MKey; }
+		void SetKey(ManagedSerializableFieldDataEntry* obj, SPtr<ManagedSerializableFieldKey> val) { obj->MKey = val; }
 
-		SPtr<ManagedSerializableFieldData> GetValue(ManagedSerializableFieldDataEntry* obj) { return obj->mValue; }
-		void SetValue(ManagedSerializableFieldDataEntry* obj, SPtr<ManagedSerializableFieldData> val) { obj->mValue = val; }
+		SPtr<ManagedSerializableFieldData> GetValue(ManagedSerializableFieldDataEntry* obj) { return obj->MValue; }
+		void SetValue(ManagedSerializableFieldDataEntry* obj, SPtr<ManagedSerializableFieldData> val) { obj->MValue = val; }
 
 	public:
 		ManagedSerializableFieldDataEntryRTTI()
@@ -460,8 +460,8 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataStringRTTI : public RTTIType<ManagedSerializableFieldDataString, ManagedSerializableFieldData, ManagedSerializableFieldDataStringRTTI>
 	{
 	private:
-		WString& GetValue(ManagedSerializableFieldDataString* obj) { return obj->value; }
-		void SetValue(ManagedSerializableFieldDataString* obj, WString& val) { obj->value = val; }
+		WString& GetValue(ManagedSerializableFieldDataString* obj) { return obj->Value; }
+		void SetValue(ManagedSerializableFieldDataString* obj, WString& val) { obj->Value = val; }
 
 	public:
 		ManagedSerializableFieldDataStringRTTI()
@@ -518,8 +518,8 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataGameObjectRefRTTI : public RTTIType<ManagedSerializableFieldDataGameObjectRef, ManagedSerializableFieldData, ManagedSerializableFieldDataGameObjectRefRTTI>
 	{
 	private:
-		HGameObject& GetValue(ManagedSerializableFieldDataGameObjectRef* obj) { return obj->value; }
-		void SetValue(ManagedSerializableFieldDataGameObjectRef* obj, HGameObject& val) { obj->value = val; }
+		HGameObject& GetValue(ManagedSerializableFieldDataGameObjectRef* obj) { return obj->Value; }
+		void SetValue(ManagedSerializableFieldDataGameObjectRef* obj, HGameObject& val) { obj->Value = val; }
 
 	public:
 		ManagedSerializableFieldDataGameObjectRefRTTI()
@@ -576,8 +576,8 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataObjectRTTI : public RTTIType<ManagedSerializableFieldDataObject, ManagedSerializableFieldData, ManagedSerializableFieldDataObjectRTTI>
 	{
 	private:
-		SPtr<ManagedSerializableObject> GetValue(ManagedSerializableFieldDataObject* obj) { return obj->value; }
-		void SetValue(ManagedSerializableFieldDataObject* obj, SPtr<ManagedSerializableObject> val) { obj->value = val; }
+		SPtr<ManagedSerializableObject> GetValue(ManagedSerializableFieldDataObject* obj) { return obj->Value; }
+		void SetValue(ManagedSerializableFieldDataObject* obj, SPtr<ManagedSerializableObject> val) { obj->Value = val; }
 
 	public:
 		ManagedSerializableFieldDataObjectRTTI()
@@ -605,8 +605,8 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataArrayRTTI : public RTTIType<ManagedSerializableFieldDataArray, ManagedSerializableFieldData, ManagedSerializableFieldDataArrayRTTI>
 	{
 	private:
-		SPtr<ManagedSerializableArray> GetValue(ManagedSerializableFieldDataArray* obj) { return obj->value; }
-		void SetValue(ManagedSerializableFieldDataArray* obj, SPtr<ManagedSerializableArray> val) { obj->value = val; }
+		SPtr<ManagedSerializableArray> GetValue(ManagedSerializableFieldDataArray* obj) { return obj->Value; }
+		void SetValue(ManagedSerializableFieldDataArray* obj, SPtr<ManagedSerializableArray> val) { obj->Value = val; }
 
 	public:
 		ManagedSerializableFieldDataArrayRTTI()
@@ -634,8 +634,8 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataListRTTI : public RTTIType<ManagedSerializableFieldDataList, ManagedSerializableFieldData, ManagedSerializableFieldDataListRTTI>
 	{
 	private:
-		SPtr<ManagedSerializableList> GetValue(ManagedSerializableFieldDataList* obj) { return obj->value; }
-		void SetValue(ManagedSerializableFieldDataList* obj, SPtr<ManagedSerializableList> val) { obj->value = val; }
+		SPtr<ManagedSerializableList> GetValue(ManagedSerializableFieldDataList* obj) { return obj->Value; }
+		void SetValue(ManagedSerializableFieldDataList* obj, SPtr<ManagedSerializableList> val) { obj->Value = val; }
 
 	public:
 		ManagedSerializableFieldDataListRTTI()
@@ -663,8 +663,8 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataDictionaryRTTI : public RTTIType<ManagedSerializableFieldDataDictionary, ManagedSerializableFieldData, ManagedSerializableFieldDataDictionaryRTTI>
 	{
 	private:
-		SPtr<ManagedSerializableDictionary> GetValue(ManagedSerializableFieldDataDictionary* obj) { return obj->value; }
-		void SetValue(ManagedSerializableFieldDataDictionary* obj, SPtr<ManagedSerializableDictionary> val) { obj->value = val; }
+		SPtr<ManagedSerializableDictionary> GetValue(ManagedSerializableFieldDataDictionary* obj) { return obj->Value; }
+		void SetValue(ManagedSerializableFieldDataDictionary* obj, SPtr<ManagedSerializableDictionary> val) { obj->Value = val; }
 
 	public:
 		ManagedSerializableFieldDataDictionaryRTTI()

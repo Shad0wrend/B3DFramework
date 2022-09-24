@@ -11,8 +11,8 @@ namespace bs
 {
 	struct __LightProbeInfoInterop
 	{
-		uint32_t handle;
-		Vector3 position;
+		uint32_t Handle;
+		Vector3 Position;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptLightProbeInfo : public ScriptObject<ScriptLightProbeInfo>

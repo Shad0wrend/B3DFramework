@@ -82,7 +82,7 @@ namespace bs
 		 * Triggered whenever user selects or deselects an element in the list box. Returned index maps to the element in
 		 * the elements array that the list box was initialized with.
 		 */
-		Event<void(UINT32, bool)> onSelectionToggled;
+		Event<void(UINT32, bool)> OnSelectionToggled;
 
 	public: // ***** INTERNAL ******
 		/** @name Internal

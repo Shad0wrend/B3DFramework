@@ -51,15 +51,15 @@ namespace bs { namespace ct
 	/**	Contains data common to all render material instances of a specific type. */
 	struct RendererMaterialMetaData
 	{
-		Path shaderPath;
-		SPtr<Shader> shader;
-		SPtr<Shader> overrideShader;
-		SmallVector<RendererMaterialBase*, 4> instances;
-		ShaderVariations variations;
-		ShaderDefines defines;
+		Path ShaderPath;
+		SPtr<ct::Shader> Shader;
+		SPtr<ct::Shader> OverrideShader;
+		SmallVector<RendererMaterialBase*, 4> Instances;
+		ShaderVariations Variations;
+		ShaderDefines Defines;
 
 #if BS_PROFILING_ENABLED
-		ProfilerString profilerSampleName;
+		ProfilerString ProfilerSampleName;
 #endif
 	};
 
@@ -70,7 +70,7 @@ namespace bs { namespace ct
 	struct RendererMaterialProfileBlock : ProfileGPUBlock
 	{
 		RendererMaterialProfileBlock(const RendererMaterialMetaData& metaData)
-			:ProfileGPUBlock(metaData.profilerSampleName)
+			:ProfileGPUBlock(metaData.ProfilerSampleName)
 		{ }
 	};
 
@@ -92,7 +92,7 @@ namespace bs { namespace ct
 		 * Helper field to be set before construction. Identifiers the variation of the material to initialize this
 		 * object with.
 		 */
-		UINT32 _varIdx;
+		UINT32 VarIdx;
 	protected:
 		friend class RendererMaterialManager;
 
@@ -132,35 +132,35 @@ namespace bs { namespace ct
 		 */
 		static T* Get()
 		{
-			if(mMetaData.instances[0] == nullptr)
+			if(mMetaData.Instances[0] == nullptr)
 			{
 				RendererMaterialBase* mat = bs_alloc<T>();
-				mat->_varIdx = 0;
+				mat->VarIdx = 0;
 				new (mat) T();
 				
-				mMetaData.instances[0] = mat;
+				mMetaData.Instances[0] = mat;
 			}
 
-			return (T*)mMetaData.instances[0];
+			return (T*)mMetaData.Instances[0];
 		}
 
 		/** Retrieves an instance of a particular variation of this renderer material. */
 		static T* Get(const ShaderVariation& variation)
 		{
 			if(variation.GetIdx() == (UINT32)-1)
-				variation.SetIdx(mMetaData.variations.Find(variation));
+				variation.SetIdx(mMetaData.Variations.Find(variation));
 
 			UINT32 varIdx = variation.GetIdx();
-			if(mMetaData.instances[varIdx] == nullptr)
+			if(mMetaData.Instances[varIdx] == nullptr)
 			{
 				RendererMaterialBase* mat = bs_alloc<T>();
-				mat->_varIdx = varIdx;
+				mat->VarIdx = varIdx;
 				new (mat) T();
 				
-				mMetaData.instances[varIdx] = mat;
+				mMetaData.Instances[varIdx] = mat;
 			}
 
-			return (T*)mMetaData.instances[varIdx];
+			return (T*)mMetaData.Instances[varIdx];
 		}
 
 		/**
@@ -170,25 +170,25 @@ namespace bs { namespace ct
 		 */
 		static void SetOverride(const SPtr<Shader>& shader)
 		{
-			if(mMetaData.overrideShader == shader)
+			if(mMetaData.OverrideShader == shader)
 				return;
 
-			for(UINT32 i = 0; i < mMetaData.instances.Size(); i++)
+			for(UINT32 i = 0; i < mMetaData.Instances.Size(); i++)
 			{
-				if (mMetaData.instances[i] != nullptr)
-					bs_delete(mMetaData.instances[i]);
+				if (mMetaData.Instances[i] != nullptr)
+					bs_delete(mMetaData.Instances[i]);
 
-				mMetaData.instances[i] = nullptr;
+				mMetaData.Instances[i] = nullptr;
 			}
 
-			mMetaData.overrideShader = shader;
+			mMetaData.OverrideShader = shader;
 		}
 
 		/** Returns the path to the built-in (non-overriden) shader used by this material. */
-		static Path GetShaderPath() { return mMetaData.shaderPath; }
+		static Path GetShaderPath() { return mMetaData.ShaderPath; }
 
 		/** Returns a set of dynamically defined defines used when compiling this shader. */
-		static ShaderDefines GetShaderDefines() { return mMetaData.defines; }
+		static ShaderDefines GetShaderDefines() { return mMetaData.Defines; }
 
 		/**
 		 * Binds the materials and its parameters to the pipeline. This material will be used for rendering any subsequent
@@ -223,12 +223,12 @@ namespace bs { namespace ct
 		{
 			mInitOnStart.Instantiate();
 
-			if(mMetaData.overrideShader)
-				mShader = mMetaData.overrideShader;
+			if(mMetaData.OverrideShader)
+				mShader = mMetaData.OverrideShader;
 			else
-				mShader = mMetaData.shader;
+				mShader = mMetaData.Shader;
 
-			mVariation = mMetaData.variations.Get(_varIdx);
+			mVariation = mMetaData.Variations.Get(VarIdx);
 
 			const Vector<SPtr<Technique>>& techniques = mShader->GetTechniques();
 			for(auto& entry : techniques)
@@ -254,7 +254,7 @@ namespace bs { namespace ct
 					const auto& textureParams = mShader->GetTextureParams();
 					for(auto& param : textureParams)
 					{
-						UINT32 defaultValueIdx = param.second.defaultValueIdx;
+						UINT32 defaultValueIdx = param.second.DefaultValueIdx;
 						if(defaultValueIdx == (UINT32)-1)
 							continue;
 
@@ -262,7 +262,7 @@ namespace bs { namespace ct
 						{
 							GpuProgramType progType = (GpuProgramType)i;
 
-							for(auto& varName : param.second.gpuVariableNames)
+							for(auto& varName : param.second.GpuVariableNames)
 							{
 								if(mParams->HasTexture(progType, varName))
 								{
@@ -276,7 +276,7 @@ namespace bs { namespace ct
 					const auto& samplerParams = mShader->GetSamplerParams();
 					for(auto& param : samplerParams)
 					{
-						UINT32 defaultValueIdx = param.second.defaultValueIdx;
+						UINT32 defaultValueIdx = param.second.DefaultValueIdx;
 						if(defaultValueIdx == (UINT32)-1)
 							continue;
 
@@ -284,7 +284,7 @@ namespace bs { namespace ct
 						{
 							GpuProgramType progType = (GpuProgramType)i;
 
-							for(auto& varName : param.second.gpuVariableNames)
+							for(auto& varName : param.second.GpuVariableNames)
 							{
 								if(mParams->HasSamplerState(progType, varName))
 								{

@@ -18,10 +18,10 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN_NAMED(countX, mDesc.countX, 0)
-			BS_RTTI_MEMBER_PLAIN_NAMED(countY, mDesc.countY, 1)
-			BS_RTTI_MEMBER_PLAIN_NAMED(countZ, mDesc.countZ, 2)
-			BS_RTTI_MEMBER_PLAIN_NAMED(bounds, mDesc.bounds, 3)
+			BS_RTTI_MEMBER_PLAIN_NAMED(countX, mDesc.CountX, 0)
+			BS_RTTI_MEMBER_PLAIN_NAMED(countY, mDesc.CountY, 1)
+			BS_RTTI_MEMBER_PLAIN_NAMED(countZ, mDesc.CountZ, 2)
+			BS_RTTI_MEMBER_PLAIN_NAMED(bounds, mDesc.Bounds, 3)
 			BS_RTTI_MEMBER_REFLPTR(mTexture, 4)
 		BS_END_RTTI_MEMBERS
 

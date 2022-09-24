@@ -58,7 +58,7 @@ namespace bs
 
 	void CCharacterController::SetRadius(float radius)
 	{
-		mDesc.radius = radius;
+		mDesc.Radius = radius;
 
 		if (mInternal != nullptr)
 			UpdateDimensions();
@@ -66,7 +66,7 @@ namespace bs
 
 	void CCharacterController::SetHeight(float height)
 	{
-		mDesc.height = height;
+		mDesc.Height = height;
 
 		if (mInternal != nullptr)
 			UpdateDimensions();
@@ -74,7 +74,7 @@ namespace bs
 
 	void CCharacterController::SetUp(const Vector3& up)
 	{
-		mDesc.up = up;
+		mDesc.Up = up;
 
 		if (mInternal != nullptr)
 			mInternal->SetUp(up);
@@ -82,7 +82,7 @@ namespace bs
 
 	void CCharacterController::SetClimbingMode(CharacterClimbingMode mode)
 	{
-		mDesc.climbingMode = mode;
+		mDesc.ClimbingMode = mode;
 
 		if (mInternal != nullptr)
 			mInternal->SetClimbingMode(mode);
@@ -90,7 +90,7 @@ namespace bs
 
 	void CCharacterController::SetNonWalkableMode(CharacterNonWalkableMode mode)
 	{
-		mDesc.nonWalkableMode = mode;
+		mDesc.NonWalkableMode = mode;
 
 		if (mInternal != nullptr)
 			mInternal->SetNonWalkableMode(mode);
@@ -98,7 +98,7 @@ namespace bs
 
 	void CCharacterController::SetMinMoveDistance(float value)
 	{
-		mDesc.minMoveDistance = value;
+		mDesc.MinMoveDistance = value;
 
 		if (mInternal != nullptr)
 			mInternal->SetMinMoveDistance(value);
@@ -106,7 +106,7 @@ namespace bs
 
 	void CCharacterController::SetContactOffset(float value)
 	{
-		mDesc.contactOffset = value;
+		mDesc.ContactOffset = value;
 
 		if (mInternal != nullptr)
 			mInternal->SetContactOffset(value);
@@ -114,7 +114,7 @@ namespace bs
 
 	void CCharacterController::SetStepOffset(float value)
 	{
-		mDesc.stepOffset = value;
+		mDesc.StepOffset = value;
 
 		if (mInternal != nullptr)
 			mInternal->SetStepOffset(value);
@@ -122,7 +122,7 @@ namespace bs
 
 	void CCharacterController::SetSlopeLimit(Radian value)
 	{
-		mDesc.slopeLimit = value;
+		mDesc.SlopeLimit = value;
 
 		if (mInternal != nullptr)
 			mInternal->SetSlopeLimit(value);
@@ -155,12 +155,12 @@ namespace bs
 	{
 		const SPtr<SceneInstance>& scene = SO()->GetScene();
 
-		mDesc.position = SO()->GetTransform().GetPosition();
+		mDesc.Position = SO()->GetTransform().GetPosition();
 		mInternal = CharacterController::Create(*scene->GetPhysicsScene(), mDesc);
 		mInternal->SetOwnerInternal(PhysicsOwnerType::Component, this);
 
-		mInternal->onColliderHit.Connect(std::bind(&CCharacterController::TriggerOnColliderHit, this, _1));
-		mInternal->onControllerHit.Connect(std::bind(&CCharacterController::TriggerOnControllerHit, this, _1));
+		mInternal->OnColliderHit.Connect(std::bind(&CCharacterController::TriggerOnColliderHit, this, _1));
+		mInternal->OnControllerHit.Connect(std::bind(&CCharacterController::TriggerOnControllerHit, this, _1));
 
 		mInternal->SetLayer(mLayer);
 		UpdateDimensions();
@@ -184,8 +184,8 @@ namespace bs
 	void CCharacterController::UpdateDimensions()
 	{
 		Vector3 scale = SO()->GetTransform().GetScale();
-		float height = mDesc.height * Math::Abs(scale.y);
-		float radius = mDesc.radius * Math::Abs(std::max(scale.x, scale.z));
+		float height = mDesc.Height * Math::Abs(scale.Y);
+		float radius = mDesc.Radius * Math::Abs(std::max(scale.X, scale.Z));
 
 		mInternal->SetHeight(height);
 		mInternal->SetRadius(radius);
@@ -206,13 +206,13 @@ namespace bs
 		// Const-cast and modify is okay because we're the only object receiving this event
 		auto& hit = const_cast<ControllerColliderCollision&>(value);
 
-		if(hit.colliderRaw)
+		if(hit.ColliderRaw)
 		{
-			const auto collider = (CCollider*)hit.colliderRaw->GetOwnerInternal(PhysicsOwnerType::Component);
-			hit.collider = static_object_cast<CCollider>(collider->GetHandle());
+			const auto collider = (CCollider*)hit.ColliderRaw->GetOwnerInternal(PhysicsOwnerType::Component);
+			hit.Collider = static_object_cast<CCollider>(collider->GetHandle());
 		}
 
-		onColliderHit(hit);
+		OnColliderHit(hit);
 	}
 
 	void CCharacterController::TriggerOnControllerHit(const ControllerControllerCollision& value)
@@ -220,13 +220,13 @@ namespace bs
 		// Const-cast and modify is okay because we're the only object receiving this event
 		ControllerControllerCollision& hit = const_cast<ControllerControllerCollision&>(value);
 
-		if(hit.controllerRaw)
+		if(hit.ControllerRaw)
 		{
-			const auto controller = (CCharacterController*)hit.controllerRaw->GetOwnerInternal(PhysicsOwnerType::Component);
-			hit.controller = static_object_cast<CCharacterController>(controller->GetHandle());
+			const auto controller = (CCharacterController*)hit.ControllerRaw->GetOwnerInternal(PhysicsOwnerType::Component);
+			hit.Controller = static_object_cast<CCharacterController>(controller->GetHandle());
 		}
 
-		onControllerHit(hit);
+		OnControllerHit(hit);
 	}
 
 	RTTITypeBase* CCharacterController::GetRttiStatic()

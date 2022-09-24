@@ -13,15 +13,15 @@ namespace bs
 	{
 		mElement = element;
 		mTextDesc = textDesc;
-		mNumChars = UTF8::Count(mTextDesc.text);
+		mNumChars = UTF8::Count(mTextDesc.Text);
 
 		mLineDescs.clear();
 
 		bs_frame_mark();
 		{
-			const U32String utf32text = UTF8::ToUtF32(mTextDesc.text);
-			TextData<FrameAlloc> textData(utf32text, mTextDesc.font, mTextDesc.fontSize,
-				mTextDesc.width, mTextDesc.height, mTextDesc.wordWrap, mTextDesc.wordBreak);
+			const U32String utf32text = UTF8::ToUtF32(mTextDesc.Text);
+			TextData<FrameAlloc> textData(utf32text, mTextDesc.Font, mTextDesc.FontSize,
+				mTextDesc.Width, mTextDesc.Height, mTextDesc.WordWrap, mTextDesc.WordBreak);
 
 			UINT32 numLines = textData.GetNumLines();
 			UINT32 numPages = textData.GetNumPages();
@@ -35,7 +35,7 @@ namespace bs
 
 			mQuads = bs_newN<Vector2>(mNumQuads * 4);
 
-			TextSprite::GenTextQuads(textData, mTextDesc.width, mTextDesc.height, mTextDesc.horzAlign, mTextDesc.vertAlign, mTextDesc.anchor,
+			TextSprite::GenTextQuads(textData, mTextDesc.Width, mTextDesc.Height, mTextDesc.HorzAlign, mTextDesc.VertAlign, mTextDesc.Anchor,
 				mQuads, nullptr, nullptr, mNumQuads);
 
 			// Store cached line data
@@ -43,8 +43,8 @@ namespace bs
 			UINT32 curLineIdx = 0;
 
 			Vector2I* alignmentOffsets = bs_frame_new<Vector2I>(numLines);
-			TextSprite::GetAlignmentOffsets(textData, mTextDesc.width, mTextDesc.height, mTextDesc.horzAlign,
-				mTextDesc.vertAlign, alignmentOffsets);
+			TextSprite::GetAlignmentOffsets(textData, mTextDesc.Width, mTextDesc.Height, mTextDesc.HorzAlign,
+				mTextDesc.VertAlign, alignmentOffsets);
 
 			for (UINT32 i = 0; i < numLines; i++)
 			{
@@ -56,7 +56,7 @@ namespace bs
 				UINT32 startChar = curCharIdx;
 				UINT32 endChar = curCharIdx + line.GetNumChars() + (hasNewline ? 1 : 0);
 				UINT32 lineHeight = line.GetYOffset();
-				INT32 lineYStart = alignmentOffsets[curLineIdx].y;
+				INT32 lineYStart = alignmentOffsets[curLineIdx].Y;
 
 				GUIInputLineDesc lineDesc(startChar, endChar, lineHeight, lineYStart, hasNewline);
 				mLineDescs.push_back(lineDesc);
@@ -72,9 +72,9 @@ namespace bs
 
 	Vector2I GUIInputTool::GetTextOffset() const
 	{
-		Vector2I offset(mElement->GetLayoutDataInternal().area.x, mElement->GetLayoutDataInternal().area.y);
+		Vector2I offset(mElement->GetLayoutDataInternal().Area.X, mElement->GetLayoutDataInternal().Area.Y);
 
-		return offset + mElement->GetTextInputOffsetInternal() + Vector2I(mElement->GetTextInputRectInternal().x, mElement->GetTextInputRectInternal().y);
+		return offset + mElement->GetTextInputOffsetInternal() + Vector2I(mElement->GetTextInputRectInternal().X, mElement->GetTextInputRectInternal().Y);
 	}
 
 	Rect2I GUIInputTool::GetCharRect(UINT32 charIdx) const
@@ -82,8 +82,8 @@ namespace bs
 		Rect2I charRect = GetLocalCharRect(charIdx);
 		Vector2I textOffset = GetTextOffset();
 
-		charRect.x += textOffset.x;
-		charRect.y += textOffset.y;
+		charRect.X += textOffset.X;
+		charRect.Y += textOffset.Y;
 
 		return charRect;
 	}
@@ -107,10 +107,10 @@ namespace bs
 			UINT32 vertIdx = quadIdx * 4;
 
 			Rect2I charRect;
-			charRect.x = Math::RoundToInt(mQuads[vertIdx + 0].x);
-			charRect.y = Math::RoundToInt(mQuads[vertIdx + 0].y);
-			charRect.width = Math::RoundToInt(mQuads[vertIdx + 3].x - charRect.x);
-			charRect.height = Math::RoundToInt(mQuads[vertIdx + 3].y - charRect.y);
+			charRect.X = Math::RoundToInt(mQuads[vertIdx + 0].X);
+			charRect.Y = Math::RoundToInt(mQuads[vertIdx + 0].Y);
+			charRect.Width = Math::RoundToInt(mQuads[vertIdx + 3].X - charRect.X);
+			charRect.Height = Math::RoundToInt(mQuads[vertIdx + 3].Y - charRect.Y);
 
 			return charRect;
 		}
@@ -121,7 +121,7 @@ namespace bs
 
 	INT32 GUIInputTool::GetCharIdxAtPos(const Vector2I& pos) const
 	{
-		Vector2 vecPos((float)pos.x, (float)pos.y);
+		Vector2 vecPos((float)pos.X, (float)pos.Y);
 
 		UINT32 lineStartChar = 0;
 		UINT32 lineEndChar = 0;
@@ -129,8 +129,8 @@ namespace bs
 		UINT32 lineIdx = 0;
 		for(auto& line : mLineDescs)
 		{
-			INT32 lineStart = line.GetLineYStart() + GetTextOffset().y;
-			if(pos.y >= lineStart && pos.y < (lineStart + (INT32)line.GetLineHeight()))
+			INT32 lineStart = line.GetLineYStart() + GetTextOffset().Y;
+			if(pos.Y >= lineStart && pos.Y < (lineStart + (INT32)line.GetLineHeight()))
 			{
 				lineStartChar = line.GetStartChar();
 				lineEndChar = line.GetEndChar(false);
@@ -156,11 +156,11 @@ namespace bs
 		{
 			UINT32 curVert = i * 4;
 
-			float centerX = mQuads[curVert + 0].x + mQuads[curVert + 1].x;
+			float centerX = mQuads[curVert + 0].X + mQuads[curVert + 1].X;
 			centerX *= 0.5f;
-			centerX += textOffset.x;
+			centerX += textOffset.X;
 
-			float dist = Math::Abs(centerX - vecPos.x);
+			float dist = Math::Abs(centerX - vecPos.X);
 			if(dist < nearestDist)
 			{
 				nearestChar = i + numNewlineChars;
@@ -254,9 +254,9 @@ namespace bs
 
 	bool GUIInputTool::IsNewlineChar(UINT32 charIdx) const
 	{
-		UINT32 byteIdx = UTF8::CharToByteIndex(mTextDesc.text, charIdx);
+		UINT32 byteIdx = UTF8::CharToByteIndex(mTextDesc.Text, charIdx);
 
-		return mTextDesc.text[byteIdx] == '\n';
+		return mTextDesc.Text[byteIdx] == '\n';
 	}
 
 	bool GUIInputTool::IsDescValid() const

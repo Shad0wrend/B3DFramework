@@ -259,10 +259,10 @@ namespace bs
 	/** Contains serializable meta-data about a RTTIType. */
 	struct RTTISchema : IReflectable
 	{
-		UINT32 typeId = 0;
+		UINT32 TypeId = 0;
 
-		SPtr<RTTISchema> baseTypeSchema;
-		Vector<RTTIFieldSchema> fieldSchemas;
+		SPtr<RTTISchema> BaseTypeSchema;
+		Vector<RTTIFieldSchema> FieldSchemas;
 
 		static RTTITypeBase* GetRttiStatic();
 		RTTITypeBase* GetRtti() const override;
@@ -688,7 +688,7 @@ namespace bs
 	/** Extendable class to be used by the user to provide extra information to RTTIType objects during serialization. */
 	struct BS_UTILITY_EXPORT SerializationContext : IReflectable
 	{
-		UINT32 flags = 0;
+		UINT32 Flags = 0;
 
 		static RTTITypeBase* GetRttiStatic();
 		RTTITypeBase* GetRtti() const override;

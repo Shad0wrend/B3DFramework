@@ -20,7 +20,7 @@ namespace bs
 
 	MonoObject*ScriptPARTICLE_STATIC_MESH_SHAPE_DESC::Box(const __PARTICLE_STATIC_MESH_SHAPE_DESCInterop& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	__PARTICLE_STATIC_MESH_SHAPE_DESCInterop ScriptPARTICLE_STATIC_MESH_SHAPE_DESC::Unbox(MonoObject* value)
@@ -31,14 +31,14 @@ namespace bs
 	PARTICLE_STATIC_MESH_SHAPE_DESC ScriptPARTICLE_STATIC_MESH_SHAPE_DESC::FromInterop(const __PARTICLE_STATIC_MESH_SHAPE_DESCInterop& value)
 	{
 		PARTICLE_STATIC_MESH_SHAPE_DESC output;
-		output.type = value.type;
-		output.sequential = value.sequential;
+		output.Type = value.Type;
+		output.Sequential = value.Sequential;
 		ResourceHandle<Mesh> tmpmesh;
 		ScriptRRefBase* scriptmesh;
-		scriptmesh = ScriptRRefBase::ToNative(value.mesh);
+		scriptmesh = ScriptRRefBase::ToNative(value.Mesh);
 		if(scriptmesh != nullptr)
 			tmpmesh = static_resource_cast<Mesh>(scriptmesh->GetHandle());
-		output.mesh = tmpmesh;
+		output.Mesh = tmpmesh;
 
 		return output;
 	}
@@ -46,16 +46,16 @@ namespace bs
 	__PARTICLE_STATIC_MESH_SHAPE_DESCInterop ScriptPARTICLE_STATIC_MESH_SHAPE_DESC::ToInterop(const PARTICLE_STATIC_MESH_SHAPE_DESC& value)
 	{
 		__PARTICLE_STATIC_MESH_SHAPE_DESCInterop output;
-		output.type = value.type;
-		output.sequential = value.sequential;
+		output.Type = value.Type;
+		output.Sequential = value.Sequential;
 		ScriptRRefBase* scriptmesh;
-		scriptmesh = ScriptResourceManager::Instance().GetScriptRRef(value.mesh);
+		scriptmesh = ScriptResourceManager::Instance().GetScriptRRef(value.Mesh);
 		MonoObject* tmpmesh;
 		if(scriptmesh != nullptr)
 			tmpmesh = scriptmesh->GetManagedInstance();
 		else
 			tmpmesh = nullptr;
-		output.mesh = tmpmesh;
+		output.Mesh = tmpmesh;
 
 		return output;
 	}

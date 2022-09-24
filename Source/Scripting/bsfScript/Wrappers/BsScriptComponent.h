@@ -64,7 +64,7 @@ namespace bs
 		/** @copydoc ScriptObject::_createManagedInstance */
 		MonoObject* CreateManagedInstanceInternal(bool construct) override
 		{
-			MonoObject* managedInstance = ScriptClass::metaData.scriptClass->CreateInstance(construct);
+			MonoObject* managedInstance = ScriptClass::metaData.ScriptClass->CreateInstance(construct);
 			this->SetManagedInstance(managedInstance);
 
 			return managedInstance;

@@ -28,7 +28,7 @@ namespace bs
 		RegisterChildElementInternal(mBackground);
 		RegisterChildElementInternal(mFillBackground);
 
-		mHandleMovedConn = mSliderHandle->onHandleMovedOrResized.Connect(std::bind(&GUISlider::OnHandleMoved, this, _1, _2));
+		mHandleMovedConn = mSliderHandle->OnHandleMovedOrResized.Connect(std::bind(&GUISlider::OnHandleMoved, this, _1, _2));
 	}
 
 	GUISlider::~GUISlider()
@@ -59,8 +59,8 @@ namespace bs
 		Vector2I optimalSize = mSliderHandle->GetOptimalSizeInternal();
 
 		Vector2I backgroundSize = mBackground->GetOptimalSizeInternal();
-		optimalSize.x = std::max(optimalSize.x, backgroundSize.x);
-		optimalSize.y = std::max(optimalSize.y, backgroundSize.y);
+		optimalSize.X = std::max(optimalSize.X, backgroundSize.X);
+		optimalSize.Y = std::max(optimalSize.Y, backgroundSize.Y);
 
 		return optimalSize;
 	}
@@ -72,62 +72,62 @@ namespace bs
 		if (mHorizontal)
 		{
 			Vector2I optimalSize = mBackground->GetOptimalSizeInternal();
-			childData.area.height = optimalSize.y;
-			childData.area.y = data.area.y + (INT32)((data.area.height - childData.area.height) * 0.5f);
+			childData.Area.Height = optimalSize.Y;
+			childData.Area.Y = data.Area.Y + (INT32)((data.Area.Height - childData.Area.Height) * 0.5f);
 
-			childData.clipRect = data.area;
-			childData.clipRect.Clip(data.clipRect);
+			childData.ClipRect = data.Area;
+			childData.ClipRect.Clip(data.ClipRect);
 
 			mBackground->SetLayoutDataInternal(childData);
 
 			optimalSize = mSliderHandle->GetOptimalSizeInternal();
-			childData.area.height = optimalSize.y;
-			childData.area.y = data.area.y + (INT32)((data.area.height - childData.area.height) * 0.5f);
+			childData.Area.Height = optimalSize.Y;
+			childData.Area.Y = data.Area.Y + (INT32)((data.Area.Height - childData.Area.Height) * 0.5f);
 
-			childData.clipRect = data.area;
-			childData.clipRect.Clip(data.clipRect);
+			childData.ClipRect = data.Area;
+			childData.ClipRect.Clip(data.ClipRect);
 
 			mSliderHandle->SetLayoutDataInternal(childData);
-			UINT32 handleWidth = optimalSize.x;
+			UINT32 handleWidth = optimalSize.X;
 
 			optimalSize = mFillBackground->GetOptimalSizeInternal();
-			childData.area.height = optimalSize.y;
-			childData.area.y = data.area.y + (INT32)((data.area.height - childData.area.height) * 0.5f);
-			childData.area.width = mSliderHandle->GetHandlePosPx() + handleWidth / 2;
+			childData.Area.Height = optimalSize.Y;
+			childData.Area.Y = data.Area.Y + (INT32)((data.Area.Height - childData.Area.Height) * 0.5f);
+			childData.Area.Width = mSliderHandle->GetHandlePosPx() + handleWidth / 2;
 
-			childData.clipRect = data.area;
-			childData.clipRect.Clip(data.clipRect);
+			childData.ClipRect = data.Area;
+			childData.ClipRect.Clip(data.ClipRect);
 
 			mFillBackground->SetLayoutDataInternal(childData);
 		}
 		else
 		{
 			Vector2I optimalSize = mBackground->GetOptimalSizeInternal();
-			childData.area.width = optimalSize.x;
-			childData.area.x = data.area.x + (INT32)((data.area.width - childData.area.width) * 0.5f);
+			childData.Area.Width = optimalSize.X;
+			childData.Area.X = data.Area.X + (INT32)((data.Area.Width - childData.Area.Width) * 0.5f);
 
-			childData.clipRect = data.area;
-			childData.clipRect.Clip(data.clipRect);
+			childData.ClipRect = data.Area;
+			childData.ClipRect.Clip(data.ClipRect);
 
 			mBackground->SetLayoutDataInternal(childData);
 
 			optimalSize = mSliderHandle->GetOptimalSizeInternal();
-			childData.area.width = optimalSize.x;
-			childData.area.x = data.area.x + (INT32)((data.area.width - childData.area.width) * 0.5f);
+			childData.Area.Width = optimalSize.X;
+			childData.Area.X = data.Area.X + (INT32)((data.Area.Width - childData.Area.Width) * 0.5f);
 
-			childData.clipRect = data.area;
-			childData.clipRect.Clip(data.clipRect);
+			childData.ClipRect = data.Area;
+			childData.ClipRect.Clip(data.ClipRect);
 
 			mSliderHandle->SetLayoutDataInternal(childData);
-			UINT32 handleHeight = optimalSize.y;
+			UINT32 handleHeight = optimalSize.Y;
 
 			optimalSize = mFillBackground->GetOptimalSizeInternal();
-			childData.area.width = optimalSize.x;
-			childData.area.x = data.area.x + (INT32)((data.area.width - childData.area.width) * 0.5f);
-			childData.area.height = mSliderHandle->GetHandlePosPx() + handleHeight / 2;
+			childData.Area.Width = optimalSize.X;
+			childData.Area.X = data.Area.X + (INT32)((data.Area.Width - childData.Area.Width) * 0.5f);
+			childData.Area.Height = mSliderHandle->GetHandlePosPx() + handleHeight / 2;
 
-			childData.clipRect = data.area;
-			childData.clipRect.Clip(data.clipRect);
+			childData.ClipRect = data.Area;
+			childData.ClipRect.Clip(data.ClipRect);
 
 			mFillBackground->SetLayoutDataInternal(childData);
 		}
@@ -141,9 +141,9 @@ namespace bs
 
 		const GUIElementStyle* bgStyle = mBackground->GetStyleInternal();
 		if(mHasFocus)
-			mBackground->SetTexture(bgStyle->focused.texture);
+			mBackground->SetTexture(bgStyle->Focused.Texture);
 		else
-			mBackground->SetTexture(bgStyle->normal.texture);
+			mBackground->SetTexture(bgStyle->Normal.Texture);
 	}
 
 	void GUISlider::SetPercent(float pct)
@@ -214,7 +214,7 @@ namespace bs
 
 	void GUISlider::OnHandleMoved(float newPosition, float newSize)
 	{
-		onChanged(GetValue());
+		OnChanged(GetValue());
 	}
 
 	bool GUISlider::CommandEventInternal(const GUICommandEvent& ev)
@@ -227,14 +227,14 @@ namespace bs
 			mHasFocus = true;
 
 			if(!IsDisabledInternal())
-				mBackground->SetTexture(bgStyle->focused.texture);
+				mBackground->SetTexture(bgStyle->Focused.Texture);
 
 			return true;
 		}
 		else if(ev.GetType() == GUICommandEventType::FocusLost)
 		{
 			mHasFocus = false;
-			mBackground->SetTexture(bgStyle->normal.texture);
+			mBackground->SetTexture(bgStyle->Normal.Texture);
 
 			return true;
 		}

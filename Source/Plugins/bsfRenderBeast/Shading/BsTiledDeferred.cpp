@@ -47,15 +47,15 @@ namespace bs { namespace ct
 
 		mLightBufferParam.Set(lightData.GetLightBuffer());
 
-		UINT32 width = viewProps.target.viewRect.width;
-		UINT32 height = viewProps.target.viewRect.height;
+		UINT32 width = viewProps.Target.ViewRect.Width;
+		UINT32 height = viewProps.Target.ViewRect.Height;
 
 		Vector2I framebufferSize;
 		framebufferSize[0] = width;
 		framebufferSize[1] = height;
 		gTiledLightingParamDef.gFramebufferSize.Set(mParamBuffer, framebufferSize);
 
-		if (!settings.enableLighting)
+		if (!settings.EnableLighting)
 		{
 			Vector4I lightCounts;
 			lightCounts[0] = 0;
@@ -88,7 +88,7 @@ namespace bs { namespace ct
 			lightStrides[0] = lightCounts[0];
 			lightStrides[1] = lightStrides[0] + lightCounts[1];
 
-			if(!settings.enableShadows)
+			if(!settings.EnableShadows)
 				gTiledLightingParamDef.gLightCounts.Set(mParamBuffer, lightCounts);
 			else
 				gTiledLightingParamDef.gLightCounts.Set(mParamBuffer, unshadowedLightCounts);
@@ -194,9 +194,9 @@ namespace bs { namespace ct
 		UINT32 height = props.GetHeight();
 		gClearLoadStoreParamDef.gSize.Set(mParamBuffer, Vector2I((INT32)width, (INT32)height));
 		gClearLoadStoreParamDef.gFloatClearVal.Set(mParamBuffer,
-			Vector4(clearValue.r, clearValue.g, clearValue.a, clearValue.a));
+			Vector4(clearValue.R, clearValue.G, clearValue.A, clearValue.A));
 		gClearLoadStoreParamDef.gIntClearVal.Set(mParamBuffer,
-			Vector4I(*(INT32*)&clearValue.r, *(INT32*)&clearValue.g, *(INT32*)&clearValue.a, *(INT32*)&clearValue.a));
+			Vector4I(*(INT32*)&clearValue.R, *(INT32*)&clearValue.G, *(INT32*)&clearValue.A, *(INT32*)&clearValue.A));
 
 		Bind();
 
@@ -216,9 +216,9 @@ namespace bs { namespace ct
 		UINT32 height = 1;
 		gClearLoadStoreParamDef.gSize.Set(mParamBuffer, Vector2I((INT32)width, (INT32)height));
 		gClearLoadStoreParamDef.gFloatClearVal.Set(mParamBuffer,
-			Vector4(clearValue.r, clearValue.g, clearValue.a, clearValue.a));
+			Vector4(clearValue.R, clearValue.G, clearValue.A, clearValue.A));
 		gClearLoadStoreParamDef.gIntClearVal.Set(mParamBuffer,
-			Vector4I(*(INT32*)&clearValue.r, *(INT32*)&clearValue.g, *(INT32*)&clearValue.a, *(INT32*)&clearValue.a));
+			Vector4I(*(INT32*)&clearValue.R, *(INT32*)&clearValue.G, *(INT32*)&clearValue.A, *(INT32*)&clearValue.A));
 
 		Bind();
 
@@ -316,7 +316,7 @@ namespace bs { namespace ct
 
 		mImageBasedParams.Populate(mParams, GPT_COMPUTE_PROGRAM, false, false, true);
 
-		mParams->SetParamBlockBuffer("ReflProbeParams", mReflProbeParamBuffer.buffer);
+		mParams->SetParamBlockBuffer("ReflProbeParams", mReflProbeParamBuffer.Buffer);
 	}
 
 	void TiledDeferredImageBasedLightingMat::InitDefinesInternal(ShaderDefines& defines)
@@ -330,8 +330,8 @@ namespace bs { namespace ct
 		BS_RENMAT_PROFILE_BLOCK
 
 		const RendererViewProperties& viewProps = view.GetProperties();
-		UINT32 width = viewProps.target.viewRect.width;
-		UINT32 height = viewProps.target.viewRect.height;
+		UINT32 width = viewProps.Target.ViewRect.Width;
+		UINT32 height = viewProps.Target.ViewRect.Height;
 
 		Vector2I framebufferSize;
 		framebufferSize[0] = width;
@@ -339,41 +339,41 @@ namespace bs { namespace ct
 		gTiledImageBasedLightingParamDef.gFramebufferSize.Set(mParamBuffer, framebufferSize);
 
 		Skybox* skybox = nullptr;
-		if(view.GetRenderSettings().enableSkybox)
-			skybox = sceneInfo.skybox;
+		if(view.GetRenderSettings().EnableSkybox)
+			skybox = sceneInfo.Skybox;
 
-		mReflProbeParamBuffer.Populate(skybox, probeData.GetNumProbes(), sceneInfo.reflProbeCubemapsTex,
-			viewProps.capturingReflections);
+		mReflProbeParamBuffer.Populate(skybox, probeData.GetNumProbes(), sceneInfo.ReflProbeCubemapsTex,
+			viewProps.CapturingReflections);
 
 		mParamBuffer->FlushToGpu();
-		mReflProbeParamBuffer.buffer->FlushToGpu();
+		mReflProbeParamBuffer.Buffer->FlushToGpu();
 
-		mGBufferA.Set(inputs.gbuffer.albedo);
-		mGBufferB.Set(inputs.gbuffer.normals);
-		mGBufferC.Set(inputs.gbuffer.roughMetal);
-		mGBufferDepth.Set(inputs.gbuffer.depth);
+		mGBufferA.Set(inputs.Gbuffer.Albedo);
+		mGBufferB.Set(inputs.Gbuffer.Normals);
+		mGBufferC.Set(inputs.Gbuffer.RoughMetal);
+		mGBufferDepth.Set(inputs.Gbuffer.Depth);
 
 		SPtr<Texture> skyFilteredRadiance;
 		if(skybox)
 			skyFilteredRadiance = skybox->GetFilteredRadiance();
 
-		mImageBasedParams.preintegratedEnvBRDFParam.Set(inputs.preIntegratedGF);
-		mImageBasedParams.reflectionProbesParam.Set(probeData.GetProbeBuffer());
-		mImageBasedParams.reflectionProbeCubemapsTexParam.Set(sceneInfo.reflProbeCubemapsTex);
-		mImageBasedParams.skyReflectionsTexParam.Set(skyFilteredRadiance);
-		mImageBasedParams.ambientOcclusionTexParam.Set(inputs.ambientOcclusion);
-		mImageBasedParams.ssrTexParam.Set(inputs.ssr);
+		mImageBasedParams.PreintegratedEnvBrdfParam.Set(inputs.PreIntegratedGf);
+		mImageBasedParams.ReflectionProbesParam.Set(probeData.GetProbeBuffer());
+		mImageBasedParams.ReflectionProbeCubemapsTexParam.Set(sceneInfo.ReflProbeCubemapsTex);
+		mImageBasedParams.SkyReflectionsTexParam.Set(skyFilteredRadiance);
+		mImageBasedParams.AmbientOcclusionTexParam.Set(inputs.AmbientOcclusion);
+		mImageBasedParams.SsrTexParam.Set(inputs.Ssr);
 
 		mParams->SetParamBlockBuffer("PerCamera", view.GetPerViewBuffer());
 
-		mInColorTextureParam.Set(inputs.lightAccumulation);
+		mInColorTextureParam.Set(inputs.LightAccumulation);
 		if (mSampleCount > 1)
 		{
-			mOutputTextureParam.Set(inputs.sceneColorTexArray, TextureSurface::COMPLETE);
-			mMSAACoverageTexParam.Set(inputs.msaaCoverage);
+			mOutputTextureParam.Set(inputs.SceneColorTexArray, TextureSurface::COMPLETE);
+			mMSAACoverageTexParam.Set(inputs.MsaaCoverage);
 		}
 		else
-			mOutputTextureParam.Set(inputs.sceneColorTex);
+			mOutputTextureParam.Set(inputs.SceneColorTex);
 
 		UINT32 numTilesX = (UINT32)Math::CeilToInt(width / (float)TILE_SIZE);
 		UINT32 numTilesY = (UINT32)Math::CeilToInt(height / (float)TILE_SIZE);

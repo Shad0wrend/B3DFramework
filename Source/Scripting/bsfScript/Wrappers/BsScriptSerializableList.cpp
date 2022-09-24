@@ -20,17 +20,17 @@ namespace bs
 
 	void ScriptSerializableList::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_CreateProperty", (void*)&ScriptSerializableList::InternalCreateProperty);
+		metaData.ScriptClass->AddInternalCall("Internal_CreateProperty", (void*)&ScriptSerializableList::InternalCreateProperty);
 	}
 
 	MonoObject* ScriptSerializableList::Create(const ScriptSerializableProperty* native, MonoObject* managed)
 	{
 		SPtr<ManagedSerializableTypeInfoList> listTypeInfo =
 			std::static_pointer_cast<ManagedSerializableTypeInfoList>(native->GetTypeInfo());
-		MonoReflectionType* internalElementType = MonoUtil::GetType(listTypeInfo->mElementType->GetMonoClass());
+		MonoReflectionType* internalElementType = MonoUtil::GetType(listTypeInfo->MElementType->GetMonoClass());
 
 		void* params[2] = { internalElementType, managed };
-		MonoObject* managedInstance = metaData.scriptClass->CreateInstance(params, 2);
+		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance(params, 2);
 
 		new (bs_alloc<ScriptSerializableList>()) ScriptSerializableList(managedInstance, listTypeInfo);
 		return managedInstance;
@@ -38,6 +38,6 @@ namespace bs
 
 	MonoObject* ScriptSerializableList::InternalCreateProperty(ScriptSerializableList* nativeInstance)
 	{
-		return ScriptSerializableProperty::Create(nativeInstance->mTypeInfo->mElementType);
+		return ScriptSerializableProperty::Create(nativeInstance->mTypeInfo->MElementType);
 	}
 }

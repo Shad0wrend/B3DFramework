@@ -28,8 +28,8 @@ namespace bs
 
 		InitMonoObjects();
 
-		mNumElements.resize(typeInfo->mRank);
-		for(UINT32 i = 0; i < typeInfo->mRank; i++)
+		mNumElements.resize(typeInfo->MRank);
+		for(UINT32 i = 0; i < typeInfo->MRank; i++)
 			mNumElements[i] = GetLengthInternal(i);
 	}
 
@@ -48,7 +48,7 @@ namespace bs
 		if(managedInstance == nullptr)
 			return nullptr;
 
-		if(!ScriptAssemblyManager::Instance().GetBuiltinClasses().systemArrayClass->IsInstanceOfType(managedInstance))
+		if(!ScriptAssemblyManager::Instance().GetBuiltinClasses().SystemArrayClass->IsInstanceOfType(managedInstance))
 			return nullptr;
 
 		return bs_shared_ptr_new<ManagedSerializableArray>(ConstructPrivately(), typeInfo, managedInstance);
@@ -69,7 +69,7 @@ namespace bs
 		if (!typeInfo->IsTypeLoaded())
 			return nullptr;
 
-		MonoClass* arrayClass = ScriptAssemblyManager::Instance().GetBuiltinClasses().systemArrayClass;
+		MonoClass* arrayClass = ScriptAssemblyManager::Instance().GetBuiltinClasses().SystemArrayClass;
 
 		MonoMethod* createInstance = arrayClass->GetMethodExact("CreateInstance", "Type,int[]");
 
@@ -77,7 +77,7 @@ namespace bs
 		for (UINT32 i = 0; i < (UINT32)sizes.size(); i++)
 			lengthArray.Set(i, sizes[i]);
 
-		void* params[2] = { MonoUtil::GetType(typeInfo->mElementType->GetMonoClass()), lengthArray.GetInternal() };
+		void* params[2] = { MonoUtil::GetType(typeInfo->MElementType->GetMonoClass()), lengthArray.GetInternal() };
 		return createInstance->Invoke(nullptr, params);
 	}
 
@@ -105,10 +105,10 @@ namespace bs
 	void ManagedSerializableArray::SetFieldData(MonoArray* obj, UINT32 arrayIdx, const SPtr<ManagedSerializableFieldData>& val)
 	{
 		if (MonoUtil::IsValueType(mElementMonoClass))
-			SetValueInternal(obj, arrayIdx, val->GetValue(mArrayTypeInfo->mElementType));
+			SetValueInternal(obj, arrayIdx, val->GetValue(mArrayTypeInfo->MElementType));
 		else
 		{
-			MonoObject* ptrToObj = (MonoObject*)val->GetValue(mArrayTypeInfo->mElementType);
+			MonoObject* ptrToObj = (MonoObject*)val->GetValue(mArrayTypeInfo->MElementType);
 			SetValueInternal(obj, arrayIdx, &ptrToObj);
 		}
 	}
@@ -132,10 +132,10 @@ namespace bs
 				if (arrayValue != nullptr)
 					boxedObj = MonoUtil::Box(mElementMonoClass, arrayValue);
 
-				return ManagedSerializableFieldData::Create(mArrayTypeInfo->mElementType, boxedObj);
+				return ManagedSerializableFieldData::Create(mArrayTypeInfo->MElementType, boxedObj);
 			}
 			else
-				return ManagedSerializableFieldData::Create(mArrayTypeInfo->mElementType, *(MonoObject**)arrayValue);
+				return ManagedSerializableFieldData::Create(mArrayTypeInfo->MElementType, *(MonoObject**)arrayValue);
 		}
 		else
 			return mCachedEntries[arrayIdx];
@@ -146,8 +146,8 @@ namespace bs
 		if(mGCHandle == 0)
 			return;
 
-		mNumElements.resize(mArrayTypeInfo->mRank);
-		for (UINT32 i = 0; i < mArrayTypeInfo->mRank; i++)
+		mNumElements.resize(mArrayTypeInfo->MRank);
+		for (UINT32 i = 0; i < mArrayTypeInfo->MRank; i++)
 			mNumElements[i] = GetLengthInternal(i);
 
 		UINT32 numElements = GetTotalLength();
@@ -201,9 +201,9 @@ namespace bs
 
 	void ManagedSerializableArray::InitMonoObjects()
 	{
-		mElementMonoClass = mArrayTypeInfo->mElementType->GetMonoClass();
+		mElementMonoClass = mArrayTypeInfo->MElementType->GetMonoClass();
 
-		MonoClass* arrayClass = ScriptAssemblyManager::Instance().GetBuiltinClasses().systemArrayClass;
+		MonoClass* arrayClass = ScriptAssemblyManager::Instance().GetBuiltinClasses().SystemArrayClass;
 		mCopyMethod = arrayClass->GetMethodExact("Copy", "Array,Array,int");
 	}
 
@@ -234,7 +234,7 @@ namespace bs
 	{
 		if (mGCHandle != 0)
 		{
-			assert(mArrayTypeInfo->mRank == (UINT32)newSizes.size());
+			assert(mArrayTypeInfo->MRank == (UINT32)newSizes.size());
 
 			UINT32 srcCount = 1;
 			for (auto& numElems : mNumElements)
@@ -271,7 +271,7 @@ namespace bs
 	{
 		MonoObject* managedInstace = MonoUtil::GetObjectFromGcHandle(mGCHandle);
 
-		MonoClass* systemArray = ScriptAssemblyManager::Instance().GetBuiltinClasses().systemArrayClass;
+		MonoClass* systemArray = ScriptAssemblyManager::Instance().GetBuiltinClasses().SystemArrayClass;
 		MonoMethod* getLength = systemArray->GetMethod("GetLength", 1);
 
 		void* params[1] = { &dimension };

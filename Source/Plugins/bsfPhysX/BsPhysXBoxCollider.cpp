@@ -13,7 +13,7 @@ namespace bs
 		const Quaternion& rotation, const Vector3& extents)
 		:mExtents(extents)
 	{
-		PxBoxGeometry geometry(extents.x, extents.y, extents.z);
+		PxBoxGeometry geometry(extents.X, extents.Y, extents.Z);
 
 		PxShape* shape = physx->createShape(geometry, *gPhysX().GetDefaultMaterial(), true);
 		shape->setLocalPose(toPxTransform(position, rotation));
@@ -47,8 +47,8 @@ namespace bs
 
 	void PhysXBoxCollider::ApplyGeometry()
 	{
-		PxBoxGeometry geometry(std::max(0.01f, mExtents.x * mScale.x),
-			std::max(0.01f, mExtents.y * mScale.y), std::max(0.01f, mExtents.z * mScale.z));
+		PxBoxGeometry geometry(std::max(0.01f, mExtents.X * mScale.X),
+			std::max(0.01f, mExtents.Y * mScale.Y), std::max(0.01f, mExtents.Z * mScale.Z));
 
 		GetInternal()->GetShapeInternal()->setGeometry(geometry);
 	}

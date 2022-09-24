@@ -51,8 +51,8 @@ namespace bs
 
 		createPanel();
 
-		sDomainLoadConn = ScriptObjectManager::Instance().onRefreshDomainLoaded.Connect(createPanel);
-		sDomainUnloadConn = MonoManager::Instance().onDomainUnload.Connect(clearPanel);
+		sDomainLoadConn = ScriptObjectManager::Instance().OnRefreshDomainLoaded.Connect(createPanel);
+		sDomainUnloadConn = MonoManager::Instance().OnDomainUnload.Connect(clearPanel);
 	}
 
 	void ScriptGUI::Update()
@@ -87,9 +87,9 @@ namespace bs
 
 	void ScriptGUI::InitRuntimeData()
 	{
-		sGUIPanelMethod = metaData.scriptClass->GetMethod("SetPanel", 1);
+		sGUIPanelMethod = metaData.ScriptClass->GetMethod("SetPanel", 1);
 
-		metaData.scriptClass->AddInternalCall("Internal_SetSkin", (void*)&ScriptGUI::InternalSetSkin);
+		metaData.ScriptClass->AddInternalCall("Internal_SetSkin", (void*)&ScriptGUI::InternalSetSkin);
 	}
 
 	void ScriptGUI::InternalSetSkin(ScriptGUISkin* skin)

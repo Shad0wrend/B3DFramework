@@ -24,25 +24,25 @@ namespace bs { namespace ct
 	struct RenderBeastOptions : public RendererOptions
 	{
 		/**	Type of filtering to use for all textures on scene elements. */
-		RenderBeastFiltering filtering = RenderBeastFiltering::Anisotropic;
+		RenderBeastFiltering Filtering = RenderBeastFiltering::Anisotropic;
 
 		/**
 		 * Maximum number of samples to be used when performing anisotropic filtering. Only relevant if #filtering is set to
 		 * RenderBeastFiltering::Anisotropic.
 		 */
-		UINT32 anisotropyMax = 16;
+		UINT32 AnisotropyMax = 16;
 
 		/**
 		 * Controls if and how a render queue groups renderable objects by material in order to reduce number of state
 		 * changes. Sorting by material can reduce CPU usage but could increase overdraw.
 		 */
-		StateReduction stateReductionMode = StateReduction::Distance;
+		StateReduction StateReductionMode = StateReduction::Distance;
 
 		/**
 		 * Determines the maximum shadow map size, in pixels. The system might decide to use smaller resolution maps for
 		 * shadows far away, but will never increase the resolution past the provided value.
 		 */
-		UINT32 shadowMapSize = 2048;
+		UINT32 ShadowMapSize = 2048;
 	};
 
 	/** @} */

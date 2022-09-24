@@ -160,7 +160,7 @@ namespace bs
 				bool operator()(const VertexDeclarationKey& lhs, const VertexDeclarationKey& rhs) const;
 			};
 
-			Vector<VertexElement> elements;
+			Vector<VertexElement> Elements;
 		};
 
 		/** @copydoc createVertexBuffer */

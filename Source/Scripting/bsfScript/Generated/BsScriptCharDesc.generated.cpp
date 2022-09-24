@@ -18,7 +18,7 @@ namespace bs
 
 	MonoObject*ScriptCharDesc::Box(const __CharDescInterop& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	__CharDescInterop ScriptCharDesc::Unbox(MonoObject* value)
@@ -29,29 +29,29 @@ namespace bs
 	CharDesc ScriptCharDesc::FromInterop(const __CharDescInterop& value)
 	{
 		CharDesc output;
-		output.charId = value.charId;
-		output.page = value.page;
-		output.uvX = value.uvX;
-		output.uvY = value.uvY;
-		output.uvWidth = value.uvWidth;
-		output.uvHeight = value.uvHeight;
-		output.width = value.width;
-		output.height = value.height;
-		output.xOffset = value.xOffset;
-		output.yOffset = value.yOffset;
-		output.xAdvance = value.xAdvance;
-		output.yAdvance = value.yAdvance;
+		output.CharId = value.CharId;
+		output.Page = value.Page;
+		output.UvX = value.UvX;
+		output.UvY = value.UvY;
+		output.UvWidth = value.UvWidth;
+		output.UvHeight = value.UvHeight;
+		output.Width = value.Width;
+		output.Height = value.Height;
+		output.XOffset = value.XOffset;
+		output.YOffset = value.YOffset;
+		output.XAdvance = value.XAdvance;
+		output.YAdvance = value.YAdvance;
 		Vector<KerningPair> veckerningPairs;
-		if(value.kerningPairs != nullptr)
+		if(value.KerningPairs != nullptr)
 		{
-			ScriptArray arraykerningPairs(value.kerningPairs);
+			ScriptArray arraykerningPairs(value.KerningPairs);
 			veckerningPairs.resize(arraykerningPairs.Size());
 			for(int i = 0; i < (int)arraykerningPairs.Size(); i++)
 			{
 				veckerningPairs[i] = arraykerningPairs.Get<KerningPair>(i);
 			}
 		}
-		output.kerningPairs = veckerningPairs;
+		output.KerningPairs = veckerningPairs;
 
 		return output;
 	}
@@ -59,27 +59,27 @@ namespace bs
 	__CharDescInterop ScriptCharDesc::ToInterop(const CharDesc& value)
 	{
 		__CharDescInterop output;
-		output.charId = value.charId;
-		output.page = value.page;
-		output.uvX = value.uvX;
-		output.uvY = value.uvY;
-		output.uvWidth = value.uvWidth;
-		output.uvHeight = value.uvHeight;
-		output.width = value.width;
-		output.height = value.height;
-		output.xOffset = value.xOffset;
-		output.yOffset = value.yOffset;
-		output.xAdvance = value.xAdvance;
-		output.yAdvance = value.yAdvance;
-		int arraySizekerningPairs = (int)value.kerningPairs.size();
+		output.CharId = value.CharId;
+		output.Page = value.Page;
+		output.UvX = value.UvX;
+		output.UvY = value.UvY;
+		output.UvWidth = value.UvWidth;
+		output.UvHeight = value.UvHeight;
+		output.Width = value.Width;
+		output.Height = value.Height;
+		output.XOffset = value.XOffset;
+		output.YOffset = value.YOffset;
+		output.XAdvance = value.XAdvance;
+		output.YAdvance = value.YAdvance;
+		int arraySizekerningPairs = (int)value.KerningPairs.size();
 		MonoArray* veckerningPairs;
 		ScriptArray arraykerningPairs = ScriptArray::Create<ScriptKerningPair>(arraySizekerningPairs);
 		for(int i = 0; i < arraySizekerningPairs; i++)
 		{
-			arraykerningPairs.Set(i, value.kerningPairs[i]);
+			arraykerningPairs.Set(i, value.KerningPairs[i]);
 		}
 		veckerningPairs = arraykerningPairs.GetInternal();
-		output.kerningPairs = veckerningPairs;
+		output.KerningPairs = veckerningPairs;
 
 		return output;
 	}

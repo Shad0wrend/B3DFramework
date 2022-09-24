@@ -39,8 +39,8 @@ namespace bs
 		Vector2I optimalSize = mBar->GetOptimalSizeInternal();
 
 		Vector2I backgroundSize = mBackground->GetOptimalSizeInternal();
-		optimalSize.x = std::max(optimalSize.x, backgroundSize.x);
-		optimalSize.y = std::max(optimalSize.y, backgroundSize.y);
+		optimalSize.X = std::max(optimalSize.X, backgroundSize.X);
+		optimalSize.Y = std::max(optimalSize.Y, backgroundSize.Y);
 
 		return optimalSize;
 	}
@@ -53,14 +53,14 @@ namespace bs
 		
 		GUILayoutData barLayoutData = data;
 
-		barLayoutData.area.x += style->margins.left;
-		barLayoutData.area.y += style->margins.top;
+		barLayoutData.Area.X += style->Margins.Left;
+		barLayoutData.Area.Y += style->Margins.Top;
 
-		UINT32 maxProgressBarWidth = std::max((UINT32)0, (UINT32)(data.area.width - style->margins.left - style->margins.right));
-		UINT32 progressBarHeight = std::max((UINT32)0, (UINT32)(data.area.height - style->margins.top - style->margins.bottom));
+		UINT32 maxProgressBarWidth = std::max((UINT32)0, (UINT32)(data.Area.Width - style->Margins.Left - style->Margins.Right));
+		UINT32 progressBarHeight = std::max((UINT32)0, (UINT32)(data.Area.Height - style->Margins.Top - style->Margins.Bottom));
 
-		barLayoutData.area.width = (UINT32)Math::FloorToInt(maxProgressBarWidth * mPercent);
-		barLayoutData.area.height = progressBarHeight;
+		barLayoutData.Area.Width = (UINT32)Math::FloorToInt(maxProgressBarWidth * mPercent);
+		barLayoutData.Area.Height = progressBarHeight;
 
 		mBar->SetLayoutDataInternal(barLayoutData);
 	}

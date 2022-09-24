@@ -119,7 +119,7 @@ namespace bs
 		// Use the current render system to determine if possible
 		if (ct::RenderAPI::InstancePtr() != nullptr)
 		{
-			return ct::RenderAPI::Instance().GetCapabilities(0).vertexColorType;
+			return ct::RenderAPI::Instance().GetCapabilities(0).VertexColorType;
 		}
 		else
 		{

@@ -61,11 +61,11 @@ namespace bs
 		// Ensure keys are sorted
 		if(!keys.empty())
 		{
-			float time = keys[0].time;
+			float time = keys[0].Time;
 			for (UINT32 i = 1; i < (UINT32)keys.size(); i++)
 			{
-				assert(keys[i].time >= time);
-				time = keys[i].time;
+				assert(keys[i].Time >= time);
+				time = keys[i].Time;
 			}
 		}
 #endif
@@ -84,8 +84,8 @@ namespace bs
 			if(mNumKeys >= MAX_KEYS)
 				break;
 
-			mColors[mNumKeys] = impl::TGradientHelper<COLOR>::ToInternalColor(key.color);
-			mTimes[mNumKeys] = impl::TGradientHelper<COLOR>::GetInternalTime(Math::Clamp01(key.time));
+			mColors[mNumKeys] = impl::TGradientHelper<COLOR>::ToInternalColor(key.Color);
+			mTimes[mNumKeys] = impl::TGradientHelper<COLOR>::GetInternalTime(Math::Clamp01(key.Time));
 
 			mNumKeys++;
 		}
@@ -97,8 +97,8 @@ namespace bs
 		Vector<ColorGradientKey> output(mNumKeys);
 		for(UINT32 i = 0; i < mNumKeys; i++)
 		{
-			output[i].color = impl::TGradientHelper<COLOR>::FromInternalColor(mColors[i]);
-			output[i].time = impl::TGradientHelper<COLOR>::FromInternalTime(mTimes[i]);
+			output[i].Color = impl::TGradientHelper<COLOR>::FromInternalColor(mColors[i]);
+			output[i].Time = impl::TGradientHelper<COLOR>::FromInternalTime(mTimes[i]);
 		}
 
 		return output;

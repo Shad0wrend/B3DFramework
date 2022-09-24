@@ -32,7 +32,7 @@ namespace bs
 		{
 		public:
 			MemBlock(UINT8* blockData)
-				:blockData(blockData), freePtr(0), freeElems(ElemsPerBlock), nextBlock(nullptr)
+				:BlockData(blockData), FreePtr(0), FreeElems(ElemsPerBlock), NextBlock(nullptr)
 			{
 				UINT32 offset = 0;
 				for(UINT32 i = 0; i < ElemsPerBlock; i++)
@@ -46,7 +46,7 @@ namespace bs
 
 			~MemBlock()
 			{
-				assert(freeElems == ElemsPerBlock && "Not all elements were deallocated from a block.");
+				assert(FreeElems == ElemsPerBlock && "Not all elements were deallocated from a block.");
 			}
 
 			/**
@@ -55,9 +55,9 @@ namespace bs
 			 */
 			UINT8* Alloc()
 			{
-				UINT8* freeEntry = &blockData[freePtr];
-				freePtr = *(UINT32*)freeEntry;
-				--freeElems;
+				UINT8* freeEntry = &BlockData[FreePtr];
+				FreePtr = *(UINT32*)freeEntry;
+				--FreeElems;
 
 				return freeEntry;
 			}
@@ -66,16 +66,16 @@ namespace bs
 			void Dealloc(void* data)
 			{
 				UINT32* entryPtr = (UINT32*)data;
-				*entryPtr = freePtr;
-				++freeElems;
+				*entryPtr = FreePtr;
+				++FreeElems;
 
-				freePtr = (UINT32)(((UINT8*)data) - blockData);
+				FreePtr = (UINT32)(((UINT8*)data) - BlockData);
 			}
 
-			UINT8* blockData;
-			UINT32 freePtr;
-			UINT32 freeElems;
-			MemBlock* nextBlock;
+			UINT8* BlockData;
+			UINT32 FreePtr;
+			UINT32 FreeElems;
+			MemBlock* NextBlock;
 		};
 
 	public:
@@ -93,7 +93,7 @@ namespace bs
 			MemBlock* curBlock = mFreeBlock;
 			while (curBlock != nullptr)
 			{
-				MemBlock* nextBlock = curBlock->nextBlock;
+				MemBlock* nextBlock = curBlock->NextBlock;
 				DeallocBlock(curBlock);
 
 				curBlock = nextBlock;
@@ -105,7 +105,7 @@ namespace bs
 		{
 			ScopedLock<Lock> lock(mLockPolicy);
 
-			if(mFreeBlock == nullptr || mFreeBlock->freeElems == 0)
+			if(mFreeBlock == nullptr || mFreeBlock->FreeElems == 0)
 				AllocBlock();
 
 			mTotalNumElems++;
@@ -123,12 +123,12 @@ namespace bs
 			while(curBlock)
 			{
 				constexpr UINT32 blockDataSize = ActualElemSize * ElemsPerBlock;
-				if(data >= curBlock->blockData && data < (curBlock->blockData + blockDataSize))
+				if(data >= curBlock->BlockData && data < (curBlock->BlockData + blockDataSize))
 				{
 					curBlock->Dealloc(data);
 					mTotalNumElems--;
 
-					if(curBlock->freeElems == 0 && curBlock->nextBlock)
+					if(curBlock->FreeElems == 0 && curBlock->NextBlock)
 					{
 						// Free the block, but only if there is some extra free space in other blocks
 						const UINT32 totalSpace = (mNumBlocks - 1) * ElemsPerBlock;
@@ -136,7 +136,7 @@ namespace bs
 
 						if(freeSpace > ElemsPerBlock / 2)
 						{
-							mFreeBlock = curBlock->nextBlock;
+							mFreeBlock = curBlock->NextBlock;
 							DeallocBlock(curBlock);
 						}
 					}
@@ -144,7 +144,7 @@ namespace bs
 					return;
 				}
 
-				curBlock = curBlock->nextBlock;
+				curBlock = curBlock->NextBlock;
 			}
 
 			assert(false);
@@ -177,14 +177,14 @@ namespace bs
 
 			while (curBlock != nullptr)
 			{
-				MemBlock* nextBlock = curBlock->nextBlock;
-				if (nextBlock != nullptr && nextBlock->freeElems > 0)
+				MemBlock* nextBlock = curBlock->NextBlock;
+				if (nextBlock != nullptr && nextBlock->FreeElems > 0)
 				{
 					// Found an existing block with free space
 					newBlock = nextBlock;
 
-					curBlock->nextBlock = newBlock->nextBlock;
-					newBlock->nextBlock = mFreeBlock;
+					curBlock->NextBlock = newBlock->NextBlock;
+					newBlock->NextBlock = mFreeBlock;
 
 					break;
 				}
@@ -205,7 +205,7 @@ namespace bs
 				newBlock = new (data) MemBlock((UINT8*)blockData);
 				mNumBlocks++;
 
-				newBlock->nextBlock = mFreeBlock;
+				newBlock->NextBlock = mFreeBlock;
 			}
 
 			mFreeBlock = newBlock;

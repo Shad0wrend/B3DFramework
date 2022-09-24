@@ -16,13 +16,13 @@ namespace bs
 	{
 		struct
 		{
-			UINT8 x;
-			UINT8 y;
-			UINT8 z;
-			UINT8 w;
+			UINT8 X;
+			UINT8 Y;
+			UINT8 Z;
+			UINT8 W;
 		};
 
-		UINT32 packed;
+		UINT32 Packed;
 	};
 
 	/** Performs various operations on mesh geometry. */
@@ -186,9 +186,9 @@ namespace bs
 			Vector3 output;
 
 			const float inv = (1.0f / 255.0f) * 2.0f;
-			output.x = (packed.x * inv - 1.0f);
-			output.y = (packed.y * inv - 1.0f);
-			output.z = (packed.z * inv - 1.0f);
+			output.X = (packed.X * inv - 1.0f);
+			output.Y = (packed.Y * inv - 1.0f);
+			output.Z = (packed.Z * inv - 1.0f);
 
 			return output;
 		}

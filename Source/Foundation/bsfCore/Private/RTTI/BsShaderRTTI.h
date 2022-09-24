@@ -31,15 +31,15 @@ namespace bs
 			{
 				BitLength size = 0;
 
-				size += rtti_write(data.arraySize, stream);
-				size += rtti_write(data.rendererSemantic, stream);
-				size += rtti_write(data.type, stream);
-				size += rtti_write(data.name, stream);
-				size += rtti_write(data.gpuVariableName, stream);
-				size += rtti_write(data.elementSize, stream);
-				size += rtti_write(data.defaultValueIdx, stream);
+				size += rtti_write(data.ArraySize, stream);
+				size += rtti_write(data.RendererSemantic, stream);
+				size += rtti_write(data.Type, stream);
+				size += rtti_write(data.Name, stream);
+				size += rtti_write(data.GpuVariableName, stream);
+				size += rtti_write(data.ElementSize, stream);
+				size += rtti_write(data.DefaultValueIdx, stream);
 				size += rtti_write(VERSION, stream);
-				size += rtti_write(data.attribIdx, stream);
+				size += rtti_write(data.AttribIdx, stream);
 
 				return size;
 			});
@@ -50,13 +50,13 @@ namespace bs
 			BitLength size;
 			BitLength sizeRead = rtti_read_size_header(stream, compress, size);
 
-			sizeRead += rtti_read(data.arraySize, stream);
-			sizeRead += rtti_read(data.rendererSemantic, stream);
-			sizeRead += rtti_read(data.type, stream);
-			sizeRead += rtti_read(data.name, stream);
-			sizeRead += rtti_read(data.gpuVariableName, stream);
-			sizeRead += rtti_read(data.elementSize, stream);
-			sizeRead += rtti_read(data.defaultValueIdx, stream);
+			sizeRead += rtti_read(data.ArraySize, stream);
+			sizeRead += rtti_read(data.RendererSemantic, stream);
+			sizeRead += rtti_read(data.Type, stream);
+			sizeRead += rtti_read(data.Name, stream);
+			sizeRead += rtti_read(data.GpuVariableName, stream);
+			sizeRead += rtti_read(data.ElementSize, stream);
+			sizeRead += rtti_read(data.DefaultValueIdx, stream);
 
 			// There's more to read, meaning we're reading a newer version of the format
 			// (In the first version, version field is missing, so we check this way).
@@ -67,7 +67,7 @@ namespace bs
 				switch(version)
 				{
 				case 1:
-					rtti_read(data.attribIdx, stream);
+					rtti_read(data.AttribIdx, stream);
 					break;
 				default:
 					BS_LOG(Error, RTTI, "Unknown version. Unable to deserialize.");
@@ -80,9 +80,9 @@ namespace bs
 
 		static BitLength GetSize(const SHADER_DATA_PARAM_DESC& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
-			BitLength dataSize = rtti_size(data.arraySize) + rtti_size(data.rendererSemantic) + rtti_size(data.type) +
-				rtti_size(data.name) + rtti_size(data.gpuVariableName) + rtti_size(data.elementSize) +
-				rtti_size(data.defaultValueIdx) + rtti_size(data.attribIdx) + sizeof(uint32_t);
+			BitLength dataSize = rtti_size(data.ArraySize) + rtti_size(data.RendererSemantic) + rtti_size(data.Type) +
+				rtti_size(data.Name) + rtti_size(data.GpuVariableName) + rtti_size(data.ElementSize) +
+				rtti_size(data.DefaultValueIdx) + rtti_size(data.AttribIdx) + sizeof(uint32_t);
 
 			rtti_add_header_size(dataSize, compress);
 			return dataSize;
@@ -100,13 +100,13 @@ namespace bs
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]()
 			{
 				BitLength size = 0;
-				size += rtti_write(data.rendererSemantic, stream);
-				size += rtti_write(data.type, stream);
-				size += rtti_write(data.name, stream);
-				size += rtti_write(data.gpuVariableNames, stream);
-				size += rtti_write(data.defaultValueIdx, stream);
+				size += rtti_write(data.RendererSemantic, stream);
+				size += rtti_write(data.Type, stream);
+				size += rtti_write(data.Name, stream);
+				size += rtti_write(data.GpuVariableNames, stream);
+				size += rtti_write(data.DefaultValueIdx, stream);
 				size += rtti_write(VERSION, stream);
-				size += rtti_write(data.attribIdx, stream);
+				size += rtti_write(data.AttribIdx, stream);
 
 				return size;
 			});
@@ -117,11 +117,11 @@ namespace bs
 			BitLength size;
 			BitLength sizeRead = rtti_read_size_header(stream, compress, size);
 
-			sizeRead += rtti_read(data.rendererSemantic, stream);
-			sizeRead += rtti_read(data.type, stream);
-			sizeRead += rtti_read(data.name, stream);
-			sizeRead += rtti_read(data.gpuVariableNames, stream);
-			sizeRead += rtti_read(data.defaultValueIdx, stream);
+			sizeRead += rtti_read(data.RendererSemantic, stream);
+			sizeRead += rtti_read(data.Type, stream);
+			sizeRead += rtti_read(data.Name, stream);
+			sizeRead += rtti_read(data.GpuVariableNames, stream);
+			sizeRead += rtti_read(data.DefaultValueIdx, stream);
 
 			// There's more to read, meaning we're reading a newer version of the format
 			// (In the first version, version field is missing, so we check this way).
@@ -132,7 +132,7 @@ namespace bs
 				switch(version)
 				{
 				case 1:
-					rtti_read(data.attribIdx, stream);
+					rtti_read(data.AttribIdx, stream);
 					break;
 				default:
 					BS_LOG(Error, RTTI, "Unknown version. Unable to deserialize.");
@@ -145,9 +145,9 @@ namespace bs
 
 		static BitLength GetSize(const SHADER_OBJECT_PARAM_DESC& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
-			BitLength dataSize = rtti_size(data.rendererSemantic) + rtti_size(data.type) +
-				rtti_size(data.name) + rtti_size(data.gpuVariableNames) +
-				rtti_size(data.defaultValueIdx) + rtti_size(data.attribIdx) + sizeof(uint32_t);
+			BitLength dataSize = rtti_size(data.RendererSemantic) + rtti_size(data.Type) +
+				rtti_size(data.Name) + rtti_size(data.GpuVariableNames) +
+				rtti_size(data.DefaultValueIdx) + rtti_size(data.AttribIdx) + sizeof(uint32_t);
 
 			rtti_add_header_size(dataSize, compress);
 			return dataSize;
@@ -163,10 +163,10 @@ namespace bs
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]()
 			{
 				BitLength size = 0;
-				size += rtti_write(data.shared, stream);
-				size += rtti_write(data.usage, stream);
-				size += rtti_write(data.name, stream);
-				size += rtti_write(data.rendererSemantic, stream);
+				size += rtti_write(data.Shared, stream);
+				size += rtti_write(data.Usage, stream);
+				size += rtti_write(data.Name, stream);
+				size += rtti_write(data.RendererSemantic, stream);
 
 				return size;
 			});
@@ -177,18 +177,18 @@ namespace bs
 			BitLength size;
 			rtti_read_size_header(stream, compress, size);
 
-			rtti_read(data.shared, stream);
-			rtti_read(data.usage, stream);
-			rtti_read(data.name, stream);
-			rtti_read(data.rendererSemantic, stream);
+			rtti_read(data.Shared, stream);
+			rtti_read(data.Usage, stream);
+			rtti_read(data.Name, stream);
+			rtti_read(data.RendererSemantic, stream);
 
 			return size;
 		}
 
 		static BitLength GetSize(const SHADER_PARAM_BLOCK_DESC& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
-			BitLength dataSize = rtti_size(data.shared) + rtti_size(data.usage) +
-				rtti_size(data.name) + rtti_size(data.rendererSemantic);
+			BitLength dataSize = rtti_size(data.Shared) + rtti_size(data.Usage) +
+				rtti_size(data.Name) + rtti_size(data.RendererSemantic);
 
 			rtti_add_header_size(dataSize, compress);
 			return dataSize;
@@ -207,9 +207,9 @@ namespace bs
 			{
 				BitLength size = 0;
 				size += rtti_write(VERSION, stream);
-				size += rtti_write(data.type, stream);
-				size += rtti_write(data.value, stream);
-				size += rtti_write(data.nextParamIdx, stream);
+				size += rtti_write(data.Type, stream);
+				size += rtti_write(data.Value, stream);
+				size += rtti_write(data.NextParamIdx, stream);
 
 				return size;
 			});
@@ -226,9 +226,9 @@ namespace bs
 			switch(version)
 			{
 			case 0:
-				rtti_read(data.type, stream);
-				rtti_read(data.value, stream);
-				rtti_read(data.nextParamIdx, stream);
+				rtti_read(data.Type, stream);
+				rtti_read(data.Value, stream);
+				rtti_read(data.NextParamIdx, stream);
 				break;
 			default:
 				BS_LOG(Error, RTTI, "Unknown version. Unable to deserialize.");
@@ -240,8 +240,8 @@ namespace bs
 
 		static BitLength GetSize(const SHADER_PARAM_ATTRIBUTE& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
-			BitLength dataSize = rtti_size(data.type) + rtti_size(data.value) +
-				rtti_size(data.nextParamIdx) + sizeof(uint32_t);
+			BitLength dataSize = rtti_size(data.Type) + rtti_size(data.Value) +
+				rtti_size(data.NextParamIdx) + sizeof(uint32_t);
 
 			rtti_add_header_size(dataSize, compress);
 			return dataSize;
@@ -261,8 +261,8 @@ namespace bs
 			{
 				BitLength size = 0;
 				size += rtti_write(VERSION, stream);
-				size += rtti_write(data.name, stream);
-				size += rtti_write(data.value, stream);
+				size += rtti_write(data.Name, stream);
+				size += rtti_write(data.Value, stream);
 
 				return size;
 			});
@@ -278,8 +278,8 @@ namespace bs
 			rtti_read(version, stream);
 			assert(version == 0);
 
-			rtti_read(data.name, stream);
-			rtti_read(data.value, stream);
+			rtti_read(data.Name, stream);
+			rtti_read(data.Value, stream);
 
 			return size;
 		}
@@ -288,8 +288,8 @@ namespace bs
 		static BitLength GetSize(const ShaderVariationParamValue& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength dataSize = sizeof(uint8_t);
-			dataSize += rtti_size(data.name);
-			dataSize += rtti_size(data.value);
+			dataSize += rtti_size(data.Name);
+			dataSize += rtti_size(data.Value);
 
 			rtti_add_header_size(dataSize, compress);
 			return dataSize;
@@ -309,10 +309,10 @@ namespace bs
 			{
 				BitLength size = 0;
 				size += rtti_write(VERSION, stream);
-				size += rtti_write(data.name, stream);
-				size += rtti_write(data.identifier, stream);
-				size += rtti_write(data.isInternal, stream);
-				size += rtti_write(data.values, stream);
+				size += rtti_write(data.Name, stream);
+				size += rtti_write(data.Identifier, stream);
+				size += rtti_write(data.IsInternal, stream);
+				size += rtti_write(data.Values, stream);
 
 				return size;
 			});
@@ -328,10 +328,10 @@ namespace bs
 			rtti_read(version, stream);
 			assert(version == 0);
 
-			rtti_read(data.name, stream);
-			rtti_read(data.identifier, stream);
-			rtti_read(data.isInternal, stream);
-			rtti_read(data.values, stream);
+			rtti_read(data.Name, stream);
+			rtti_read(data.Identifier, stream);
+			rtti_read(data.IsInternal, stream);
+			rtti_read(data.Values, stream);
 
 			return size;
 		}
@@ -340,10 +340,10 @@ namespace bs
 		static BitLength GetSize(const ShaderVariationParamInfo& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength dataSize = sizeof(uint8_t);
-			dataSize += rtti_size(data.name);
-			dataSize += rtti_size(data.identifier);
-			dataSize += rtti_size(data.isInternal);
-			dataSize += rtti_size(data.values);
+			dataSize += rtti_size(data.Name);
+			dataSize += rtti_size(data.Identifier);
+			dataSize += rtti_size(data.IsInternal);
+			dataSize += rtti_size(data.Values);
 
 			rtti_add_header_size(dataSize, compress);
 			return dataSize;
@@ -354,8 +354,8 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN(name, 0)
-			BS_RTTI_MEMBER_REFLPTR(shader, 1)
+			BS_RTTI_MEMBER_PLAIN(Name, 0)
+			BS_RTTI_MEMBER_REFLPTR(Shader, 1)
 		BS_END_RTTI_MEMBERS
 
 	public:
@@ -380,82 +380,82 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_REFLPTR_ARRAY_NAMED(mTechniques, mDesc.techniques, 0)
+			BS_RTTI_MEMBER_REFLPTR_ARRAY_NAMED(mTechniques, mDesc.Techniques, 0)
 			BS_RTTI_MEMBER_PLAIN(mName, 1)
 
-			BS_RTTI_MEMBER_PLAIN_NAMED(mQueueSortType, mDesc.queueSortType, 7)
-			BS_RTTI_MEMBER_PLAIN_NAMED(mQueuePriority, mDesc.queuePriority, 8)
-			BS_RTTI_MEMBER_PLAIN_NAMED(mSeparablePasses, mDesc.separablePasses, 9)
+			BS_RTTI_MEMBER_PLAIN_NAMED(mQueueSortType, mDesc.QueueSortType, 7)
+			BS_RTTI_MEMBER_PLAIN_NAMED(mQueuePriority, mDesc.QueuePriority, 8)
+			BS_RTTI_MEMBER_PLAIN_NAMED(mSeparablePasses, mDesc.SeparablePasses, 9)
 
-			BS_RTTI_MEMBER_PLAIN_NAMED(mDataDefaultValues, mDesc.dataDefaultValues, 10)
-			BS_RTTI_MEMBER_REFL_ARRAY_NAMED(mTextureDefaultValues, mDesc.textureDefaultValues, 11)
-			BS_RTTI_MEMBER_REFLPTR_ARRAY_NAMED(mSamplerDefaultValues, mDesc.samplerDefaultValues, 12)
+			BS_RTTI_MEMBER_PLAIN_NAMED(mDataDefaultValues, mDesc.DataDefaultValues, 10)
+			BS_RTTI_MEMBER_REFL_ARRAY_NAMED(mTextureDefaultValues, mDesc.TextureDefaultValues, 11)
+			BS_RTTI_MEMBER_REFLPTR_ARRAY_NAMED(mSamplerDefaultValues, mDesc.SamplerDefaultValues, 12)
 
-			BS_RTTI_MEMBER_PLAIN_NAMED(mFlags, mDesc.flags, 13)
-			BS_RTTI_MEMBER_REFL_ARRAY_NAMED(mSubShaders, mDesc.subShaders, 14)
+			BS_RTTI_MEMBER_PLAIN_NAMED(mFlags, mDesc.Flags, 13)
+			BS_RTTI_MEMBER_REFL_ARRAY_NAMED(mSubShaders, mDesc.SubShaders, 14)
 
-			BS_RTTI_MEMBER_PLAIN_ARRAY_NAMED(mParamAttributes, mDesc.paramAttributes, 15)
-			BS_RTTI_MEMBER_PLAIN_ARRAY_NAMED(mVariationParams, mDesc.variationParams, 16)
+			BS_RTTI_MEMBER_PLAIN_ARRAY_NAMED(mParamAttributes, mDesc.ParamAttributes, 15)
+			BS_RTTI_MEMBER_PLAIN_ARRAY_NAMED(mVariationParams, mDesc.VariationParams, 16)
 		BS_END_RTTI_MEMBERS
 
 		SHADER_DATA_PARAM_DESC& GetDataParam(Shader* obj, UINT32 idx)
 		{
-			auto iter = obj->mDesc.dataParams.begin();
+			auto iter = obj->mDesc.DataParams.begin();
 			for(UINT32 i = 0; i < idx; i++) ++iter;
 
 			return iter->second;
 		}
 
-		void SetDataParam(Shader* obj, UINT32 idx, SHADER_DATA_PARAM_DESC& val) { obj->mDesc.dataParams[val.name] = val; }
-		UINT32 GetDataParamsArraySize(Shader* obj) { return (UINT32)obj->mDesc.dataParams.size(); }
+		void SetDataParam(Shader* obj, UINT32 idx, SHADER_DATA_PARAM_DESC& val) { obj->mDesc.DataParams[val.Name] = val; }
+		UINT32 GetDataParamsArraySize(Shader* obj) { return (UINT32)obj->mDesc.DataParams.size(); }
 		void SetDataParamsArraySize(Shader* obj, UINT32 size) {  } // Do nothing
 
 		SHADER_OBJECT_PARAM_DESC& GetTextureParam(Shader* obj, UINT32 idx)
 		{
-			auto iter = obj->mDesc.textureParams.begin();
+			auto iter = obj->mDesc.TextureParams.begin();
 			for(UINT32 i = 0; i < idx; i++) ++iter;
 
 			return iter->second;
 		}
 
-		void SetTextureParam(Shader* obj, UINT32 idx, SHADER_OBJECT_PARAM_DESC& val) { obj->mDesc.textureParams[val.name] = val; }
-		UINT32 GetTextureParamsArraySize(Shader* obj) { return (UINT32)obj->mDesc.textureParams.size(); }
+		void SetTextureParam(Shader* obj, UINT32 idx, SHADER_OBJECT_PARAM_DESC& val) { obj->mDesc.TextureParams[val.Name] = val; }
+		UINT32 GetTextureParamsArraySize(Shader* obj) { return (UINT32)obj->mDesc.TextureParams.size(); }
 		void SetTextureParamsArraySize(Shader* obj, UINT32 size) {  } // Do nothing
 
 		SHADER_OBJECT_PARAM_DESC& GetSamplerParam(Shader* obj, UINT32 idx)
 		{
-			auto iter = obj->mDesc.samplerParams.begin();
+			auto iter = obj->mDesc.SamplerParams.begin();
 			for (UINT32 i = 0; i < idx; i++) ++iter;
 
 			return iter->second;
 		}
 
-		void SetSamplerParam(Shader* obj, UINT32 idx, SHADER_OBJECT_PARAM_DESC& val) { obj->mDesc.samplerParams[val.name] = val; }
-		UINT32 GetSamplerParamsArraySize(Shader* obj) { return (UINT32)obj->mDesc.samplerParams.size(); }
+		void SetSamplerParam(Shader* obj, UINT32 idx, SHADER_OBJECT_PARAM_DESC& val) { obj->mDesc.SamplerParams[val.Name] = val; }
+		UINT32 GetSamplerParamsArraySize(Shader* obj) { return (UINT32)obj->mDesc.SamplerParams.size(); }
 		void SetSamplerParamsArraySize(Shader* obj, UINT32 size) {  } // Do nothing
 
 		SHADER_OBJECT_PARAM_DESC& GetBufferParam(Shader* obj, UINT32 idx)
 		{
-			auto iter = obj->mDesc.bufferParams.begin();
+			auto iter = obj->mDesc.BufferParams.begin();
 			for (UINT32 i = 0; i < idx; i++) ++iter;
 
 			return iter->second;
 		}
 
-		void SetBufferParam(Shader* obj, UINT32 idx, SHADER_OBJECT_PARAM_DESC& val) { obj->mDesc.bufferParams[val.name] = val; }
-		UINT32 GetBufferParamsArraySize(Shader* obj) { return (UINT32)obj->mDesc.bufferParams.size(); }
+		void SetBufferParam(Shader* obj, UINT32 idx, SHADER_OBJECT_PARAM_DESC& val) { obj->mDesc.BufferParams[val.Name] = val; }
+		UINT32 GetBufferParamsArraySize(Shader* obj) { return (UINT32)obj->mDesc.BufferParams.size(); }
 		void SetBufferParamsArraySize(Shader* obj, UINT32 size) {  } // Do nothing
 
 		SHADER_PARAM_BLOCK_DESC& GetParamBlock(Shader* obj, UINT32 idx)
 		{
-			auto iter = obj->mDesc.paramBlocks.begin();
+			auto iter = obj->mDesc.ParamBlocks.begin();
 			for (UINT32 i = 0; i < idx; i++) ++iter;
 
 			return iter->second;
 		}
 
-		void SetParamBlock(Shader* obj, UINT32 idx, SHADER_PARAM_BLOCK_DESC& val) { obj->mDesc.paramBlocks[val.name] = val; }
-		UINT32 GetParamBlocksArraySize(Shader* obj) { return (UINT32)obj->mDesc.paramBlocks.size(); }
+		void SetParamBlock(Shader* obj, UINT32 idx, SHADER_PARAM_BLOCK_DESC& val) { obj->mDesc.ParamBlocks[val.Name] = val; }
+		UINT32 GetParamBlocksArraySize(Shader* obj) { return (UINT32)obj->mDesc.ParamBlocks.size(); }
 		void SetParamBlocksArraySize(Shader* obj, UINT32 size) {  } // Do nothing
 
 	public:
@@ -499,8 +499,8 @@ namespace bs
 	class BS_CORE_EXPORT ShaderMetaDataRTTI : public RTTIType < ShaderMetaData, ResourceMetaData, ShaderMetaDataRTTI >
 	{
 	private:
-		Vector<String>& GetIncludes(ShaderMetaData* obj) { return obj->includes; }
-		void SetIncludes(ShaderMetaData* obj, Vector<String>& includes) { obj->includes = includes; }
+		Vector<String>& GetIncludes(ShaderMetaData* obj) { return obj->Includes; }
+		void SetIncludes(ShaderMetaData* obj, Vector<String>& includes) { obj->Includes = includes; }
 
 	public:
 		ShaderMetaDataRTTI()

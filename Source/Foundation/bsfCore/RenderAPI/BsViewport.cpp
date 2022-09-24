@@ -32,10 +32,10 @@ namespace bs
 		float height = (float)GetTargetHeight();
 		
 		Rect2I area;
-		area.x = (int)(mNormArea.x * width);
-		area.y = (int)(mNormArea.y * height);
-		area.width = (int)(mNormArea.width * width);
-		area.height = (int)(mNormArea.height * height);
+		area.X = (int)(mNormArea.X * width);
+		area.Y = (int)(mNormArea.Y * height);
+		area.Width = (int)(mNormArea.Width * width);
+		area.Height = (int)(mNormArea.Height * height);
 
 		return area;
 	}
@@ -115,7 +115,7 @@ namespace bs
 	UINT32 Viewport::GetTargetWidth() const
 	{
 		if (mTarget != nullptr)
-			return mTarget->GetProperties().width;
+			return mTarget->GetProperties().Width;
 
 		return 0;
 	}
@@ -123,7 +123,7 @@ namespace bs
 	UINT32 Viewport::GetTargetHeight() const
 	{
 		if(mTarget != nullptr)
-			return mTarget->GetProperties().height;
+			return mTarget->GetProperties().Height;
 
 		return 0;
 	}
@@ -135,7 +135,7 @@ namespace bs
 			targetCore = mTarget->GetCore();
 
 		ct::Viewport* viewport = new (bs_alloc<ct::Viewport>())
-			ct::Viewport(targetCore, mNormArea.x, mNormArea.y, mNormArea.width, mNormArea.height);
+			ct::Viewport(targetCore, mNormArea.X, mNormArea.Y, mNormArea.Width, mNormArea.Height);
 
 		SPtr<ct::Viewport> viewportPtr = bs_shared_ptr<ct::Viewport>(viewport);
 		viewportPtr->SetThisPtrInternal(viewportPtr);
@@ -210,7 +210,7 @@ namespace bs
 	UINT32 Viewport::GetTargetWidth() const
 	{
 		if (mTarget != nullptr)
-			return mTarget->GetProperties().width;
+			return mTarget->GetProperties().Width;
 
 		return 0;
 	}
@@ -218,7 +218,7 @@ namespace bs
 	UINT32 Viewport::GetTargetHeight() const
 	{
 		if (mTarget != nullptr)
-			return mTarget->GetProperties().height;
+			return mTarget->GetProperties().Height;
 
 		return 0;
 	}

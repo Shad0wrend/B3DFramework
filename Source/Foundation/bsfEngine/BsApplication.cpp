@@ -151,19 +151,19 @@ namespace bs
 		START_UP_DESC desc;
 
 		// Set up default plugins
-		desc.renderAPI = BS_RENDER_API_MODULE;
-		desc.renderer = BS_RENDERER_MODULE;
-		desc.audio = BS_AUDIO_MODULE;
-		desc.physics = BS_PHYSICS_MODULE;
+		desc.RenderApi = BS_RENDER_API_MODULE;
+		desc.Renderer = BS_RENDERER_MODULE;
+		desc.Audio = BS_AUDIO_MODULE;
+		desc.Physics = BS_PHYSICS_MODULE;
 
-		desc.importers.push_back("bsfFreeImgImporter");
-		desc.importers.push_back("bsfFBXImporter");
-		desc.importers.push_back("bsfFontImporter");
-		desc.importers.push_back("bsfSL");
+		desc.Importers.push_back("bsfFreeImgImporter");
+		desc.Importers.push_back("bsfFBXImporter");
+		desc.Importers.push_back("bsfFontImporter");
+		desc.Importers.push_back("bsfSL");
 
-		desc.primaryWindowDesc.videoMode = videoMode;
-		desc.primaryWindowDesc.fullscreen = fullscreen;
-		desc.primaryWindowDesc.title = title;
+		desc.PrimaryWindowDesc.VideoMode = videoMode;
+		desc.PrimaryWindowDesc.Fullscreen = fullscreen;
+		desc.PrimaryWindowDesc.Title = title;
 
 		return desc;
 	}

@@ -36,7 +36,7 @@ namespace bs
 			Resource* resource = static_cast<Resource*>(obj);
 
 			if(context)
-				resource->mKeepSourceData = (context->flags & SF_KeepResourceSourceData) != 0;
+				resource->mKeepSourceData = (context->Flags & SF_KeepResourceSourceData) != 0;
 			else
 				resource->mKeepSourceData = false;
 		}

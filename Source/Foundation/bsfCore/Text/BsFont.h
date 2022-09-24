@@ -21,30 +21,30 @@ namespace bs
 
 		/** Font size for which the data is contained. */
 		BS_SCRIPT_EXPORT()
-		UINT32 size;
+		UINT32 Size;
 		
 		/** Y offset to the baseline on which the characters are placed, in pixels. */
 		BS_SCRIPT_EXPORT()
-		INT32 baselineOffset;
+		INT32 BaselineOffset;
 
 		/** Height of a single line of the font, in pixels. */
 		BS_SCRIPT_EXPORT()
-		UINT32 lineHeight;
+		UINT32 LineHeight;
 
 		/** Character to use when data for a character is missing. */
 		BS_SCRIPT_EXPORT()
-		CharDesc missingGlyph;
+		CharDesc MissingGlyph;
 
 		/** Width of a space in pixels. */
 		BS_SCRIPT_EXPORT()
-		UINT32 spaceWidth;
+		UINT32 SpaceWidth;
 
 		/** Textures in which the character's pixels are stored. */
 		BS_SCRIPT_EXPORT()
-		Vector<HTexture> texturePages;
+		Vector<HTexture> TexturePages;
 
 		/** All characters in the font referenced by character ID. */
-		Map<UINT32, CharDesc> characters;
+		Map<UINT32, CharDesc> Characters;
 
 		/************************************************************************/
 		/* 								SERIALIZATION                      		*/

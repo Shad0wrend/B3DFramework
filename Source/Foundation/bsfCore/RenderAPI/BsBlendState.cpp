@@ -10,26 +10,26 @@ namespace bs
 {
 	bool RENDER_TARGET_BLEND_STATE_DESC::operator == (const RENDER_TARGET_BLEND_STATE_DESC& rhs) const
 	{
-		return blendEnable == rhs.blendEnable &&
-			srcBlend == rhs.srcBlend &&
-			dstBlend == rhs.dstBlend &&
-			blendOp == rhs.blendOp &&
-			srcBlendAlpha == rhs.srcBlendAlpha &&
-			dstBlendAlpha == rhs.dstBlendAlpha &&
-			blendOpAlpha == rhs.blendOpAlpha &&
-			renderTargetWriteMask == rhs.renderTargetWriteMask;
+		return BlendEnable == rhs.BlendEnable &&
+			SrcBlend == rhs.SrcBlend &&
+			DstBlend == rhs.DstBlend &&
+			BlendOp == rhs.BlendOp &&
+			SrcBlendAlpha == rhs.SrcBlendAlpha &&
+			DstBlendAlpha == rhs.DstBlendAlpha &&
+			BlendOpAlpha == rhs.BlendOpAlpha &&
+			RenderTargetWriteMask == rhs.RenderTargetWriteMask;
 	}
 
 	bool BLEND_STATE_DESC::operator == (const BLEND_STATE_DESC& rhs) const
 	{
-		bool equals = alphaToCoverageEnable == rhs.alphaToCoverageEnable &&
-			independantBlendEnable == rhs.independantBlendEnable;
+		bool equals = AlphaToCoverageEnable == rhs.AlphaToCoverageEnable &&
+			IndependantBlendEnable == rhs.IndependantBlendEnable;
 
 		if (equals)
 		{
 			for (UINT32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
 			{
-				equals &= renderTargetDesc[i] == rhs.renderTargetDesc[i];
+				equals &= RenderTargetDesc[i] == rhs.RenderTargetDesc[i];
 			}
 		}
 
@@ -44,56 +44,56 @@ namespace bs
 	{
 		assert(renderTargetIdx < BS_MAX_MULTIPLE_RENDER_TARGETS);
 
-		return mData.renderTargetDesc[renderTargetIdx].blendEnable;
+		return mData.RenderTargetDesc[renderTargetIdx].BlendEnable;
 	}
 
 	BlendFactor BlendProperties::GetSrcBlend(UINT32 renderTargetIdx) const
 	{
 		assert(renderTargetIdx < BS_MAX_MULTIPLE_RENDER_TARGETS);
 
-		return mData.renderTargetDesc[renderTargetIdx].srcBlend;
+		return mData.RenderTargetDesc[renderTargetIdx].SrcBlend;
 	}
 
 	BlendFactor BlendProperties::GetDstBlend(UINT32 renderTargetIdx) const
 	{
 		assert(renderTargetIdx < BS_MAX_MULTIPLE_RENDER_TARGETS);
 
-		return mData.renderTargetDesc[renderTargetIdx].dstBlend;
+		return mData.RenderTargetDesc[renderTargetIdx].DstBlend;
 	}
 
 	BlendOperation BlendProperties::GetBlendOperation(UINT32 renderTargetIdx) const
 	{
 		assert(renderTargetIdx < BS_MAX_MULTIPLE_RENDER_TARGETS);
 
-		return mData.renderTargetDesc[renderTargetIdx].blendOp;
+		return mData.RenderTargetDesc[renderTargetIdx].BlendOp;
 	}
 
 	BlendFactor BlendProperties::GetAlphaSrcBlend(UINT32 renderTargetIdx) const
 	{
 		assert(renderTargetIdx < BS_MAX_MULTIPLE_RENDER_TARGETS);
 
-		return mData.renderTargetDesc[renderTargetIdx].srcBlendAlpha;
+		return mData.RenderTargetDesc[renderTargetIdx].SrcBlendAlpha;
 	}
 
 	BlendFactor BlendProperties::GetAlphaDstBlend(UINT32 renderTargetIdx) const
 	{
 		assert(renderTargetIdx < BS_MAX_MULTIPLE_RENDER_TARGETS);
 
-		return mData.renderTargetDesc[renderTargetIdx].dstBlendAlpha;
+		return mData.RenderTargetDesc[renderTargetIdx].DstBlendAlpha;
 	}
 
 	BlendOperation BlendProperties::GetAlphaBlendOperation(UINT32 renderTargetIdx) const
 	{
 		assert(renderTargetIdx < BS_MAX_MULTIPLE_RENDER_TARGETS);
 
-		return mData.renderTargetDesc[renderTargetIdx].blendOpAlpha;
+		return mData.RenderTargetDesc[renderTargetIdx].BlendOpAlpha;
 	}
 
 	UINT8 BlendProperties::GetRenderTargetWriteMask(UINT32 renderTargetIdx) const
 	{
 		assert(renderTargetIdx < BS_MAX_MULTIPLE_RENDER_TARGETS);
 
-		return mData.renderTargetDesc[renderTargetIdx].renderTargetWriteMask;
+		return mData.RenderTargetDesc[renderTargetIdx].RenderTargetWriteMask;
 	}
 
 	BlendState::BlendState(const BLEND_STATE_DESC& desc)
@@ -136,19 +136,19 @@ namespace bs
 	UINT64 BlendState::GenerateHash(const BLEND_STATE_DESC& desc)
 	{
 		size_t hash = 0;
-		bs_hash_combine(hash, desc.alphaToCoverageEnable);
-		bs_hash_combine(hash, desc.independantBlendEnable);
+		bs_hash_combine(hash, desc.AlphaToCoverageEnable);
+		bs_hash_combine(hash, desc.IndependantBlendEnable);
 
 		for (UINT32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
 		{
-			bs_hash_combine(hash, desc.renderTargetDesc[i].blendEnable);
-			bs_hash_combine(hash, (UINT32)desc.renderTargetDesc[i].srcBlend);
-			bs_hash_combine(hash, (UINT32)desc.renderTargetDesc[i].dstBlend);
-			bs_hash_combine(hash, (UINT32)desc.renderTargetDesc[i].blendOp);
-			bs_hash_combine(hash, (UINT32)desc.renderTargetDesc[i].srcBlendAlpha);
-			bs_hash_combine(hash, (UINT32)desc.renderTargetDesc[i].dstBlendAlpha);
-			bs_hash_combine(hash, (UINT32)desc.renderTargetDesc[i].blendOpAlpha);
-			bs_hash_combine(hash, desc.renderTargetDesc[i].renderTargetWriteMask);
+			bs_hash_combine(hash, desc.RenderTargetDesc[i].BlendEnable);
+			bs_hash_combine(hash, (UINT32)desc.RenderTargetDesc[i].SrcBlend);
+			bs_hash_combine(hash, (UINT32)desc.RenderTargetDesc[i].DstBlend);
+			bs_hash_combine(hash, (UINT32)desc.RenderTargetDesc[i].BlendOp);
+			bs_hash_combine(hash, (UINT32)desc.RenderTargetDesc[i].SrcBlendAlpha);
+			bs_hash_combine(hash, (UINT32)desc.RenderTargetDesc[i].DstBlendAlpha);
+			bs_hash_combine(hash, (UINT32)desc.RenderTargetDesc[i].BlendOpAlpha);
+			bs_hash_combine(hash, desc.RenderTargetDesc[i].RenderTargetWriteMask);
 		}
 
 		return (UINT64)hash;

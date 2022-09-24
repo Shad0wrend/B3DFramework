@@ -26,24 +26,24 @@ namespace ct
 	{
 		RenderCompositorNodeInputs(const RendererViewGroup& viewGroup, const RendererView& view, const SceneInfo& scene,
 			const RenderBeastOptions& options, const FrameInfo& frameInfo, RenderBeastFeatureSet featureSet)
-			: viewGroup(viewGroup), view(view), scene(scene), options(options), frameInfo(frameInfo), featureSet(featureSet)
+			: ViewGroup(viewGroup), View(view), Scene(scene), Options(options), FrameInfo(frameInfo), FeatureSet(featureSet)
 		{ }
 
-		const RendererViewGroup& viewGroup;
-		const RendererView& view;
-		const SceneInfo& scene;
-		const RenderBeastOptions& options;
-		const FrameInfo& frameInfo;
-		const RenderBeastFeatureSet featureSet;
+		const RendererViewGroup& ViewGroup;
+		const RendererView& View;
+		const SceneInfo& Scene;
+		const RenderBeastOptions& Options;
+		const FrameInfo& FrameInfo;
+		const RenderBeastFeatureSet FeatureSet;
 
 		// Callbacks to external systems can hook into the compositor
-		SmallVector<RendererExtension*, 4> extPrepare;
-		SmallVector<RendererExtension*, 4> extPreBasePass;
-		SmallVector<RendererExtension*, 4> extPostBasePass;
-		SmallVector<RendererExtension*, 4> extPostLighting;
-		SmallVector<RendererExtension*, 4> extOverlay;
+		SmallVector<RendererExtension*, 4> ExtPrepare;
+		SmallVector<RendererExtension*, 4> ExtPreBasePass;
+		SmallVector<RendererExtension*, 4> ExtPostBasePass;
+		SmallVector<RendererExtension*, 4> ExtPostLighting;
+		SmallVector<RendererExtension*, 4> ExtOverlay;
 
-		SmallVector<RenderCompositorNode*, 4> inputNodes;
+		SmallVector<RenderCompositorNode*, 4> InputNodes;
 	};
 
 	/**
@@ -85,10 +85,10 @@ namespace ct
 		/** Contains internal information about a single render node. */
 		struct NodeInfo
 		{
-			RenderCompositorNode* node;
-			NodeType* nodeType;
-			UINT32 lastUseIdx;
-			SmallVector<RenderCompositorNode*, 4> inputs;
+			RenderCompositorNode* Node;
+			NodeType* NodeType;
+			UINT32 LastUseIdx;
+			SmallVector<RenderCompositorNode*, 4> Inputs;
 		};
 
 	public:
@@ -130,7 +130,7 @@ namespace ct
 			/** Returns identifier for all the dependencies of a node of this type. */
 			virtual SmallVector<StringID, 4> GetDependencies(const RendererView& view) const = 0;
 
-			StringID id;
+			StringID Id;
 		};
 		
 		/** Templated implementation of NodeType. */
@@ -139,7 +139,7 @@ namespace ct
 		{
 			TNodeType()
 			{
-				id = T::GetNodeId();
+				Id = T::GetNodeId();
 			}
 
 			/** @copydoc NodeType::Create() */
@@ -188,7 +188,7 @@ namespace ct
 	{
 	public:
 		// Outputs
-		SPtr<PooledRenderTexture> depthTex;
+		SPtr<PooledRenderTexture> DepthTex;
 
 		static StringID GetNodeId() { return "SceneDepth"; }
 		static SmallVector<StringID, 4> GetDependencies(const RendererView& view);
@@ -208,14 +208,14 @@ namespace ct
 	{
 	public:
 		// Outputs
-		SPtr<PooledRenderTexture> albedoTex;
-		SPtr<PooledRenderTexture> normalTex;
-		SPtr<PooledRenderTexture> roughMetalTex;
-		SPtr<PooledRenderTexture> idTex;
-		SPtr<PooledRenderTexture> velocityTex;
+		SPtr<PooledRenderTexture> AlbedoTex;
+		SPtr<PooledRenderTexture> NormalTex;
+		SPtr<PooledRenderTexture> RoughMetalTex;
+		SPtr<PooledRenderTexture> IdTex;
+		SPtr<PooledRenderTexture> VelocityTex;
 
-		SPtr<RenderTexture> renderTarget;
-		SPtr<RenderTexture> renderTargetNoMask;
+		SPtr<RenderTexture> RenderTarget;
+		SPtr<RenderTexture> RenderTargetNoMask;
 
 		static StringID GetNodeId() { return "BasePass"; }
 		static SmallVector<StringID, 4> GetDependencies(const RendererView& view);
@@ -236,15 +236,15 @@ namespace ct
 		 * Contains scene color. If MSAA is used this texture will be null until the texture array data is first resolved
 		 * into this texture.
 		 */
-		SPtr<PooledRenderTexture> sceneColorTex;
+		SPtr<PooledRenderTexture> SceneColorTex;
 
 		/**
 		 * Texture array version of sceneColorTex. Only available when MSAA is used, since random writes to
 		 * multisampled texture aren't supported on all render backends.
 		 */
-		SPtr<PooledRenderTexture> sceneColorTexArray;
+		SPtr<PooledRenderTexture> SceneColorTexArray;
 
-		SPtr<RenderTexture> renderTarget;
+		SPtr<RenderTexture> RenderTarget;
 
 		/** Converts MSAA data from the texture array into the MSAA texture. */
 		void MsaaTexArrayToTexture();
@@ -277,7 +277,7 @@ namespace ct
 	{
 	public:
 		// Outputs
-		SPtr<PooledRenderTexture> output;
+		SPtr<PooledRenderTexture> Output;
 
 		static StringID GetNodeId() { return "MSAACoverage"; }
 		static SmallVector<StringID, 4> GetDependencies(const RendererView& view);
@@ -334,15 +334,15 @@ namespace ct
 		 * Contains lighting information accumulated from multiple lights. If MSAA is used this texture will be null until
 		 * the texture array data is first resolved into this texture.
 		 */
-		SPtr<PooledRenderTexture> lightAccumulationTex;
+		SPtr<PooledRenderTexture> LightAccumulationTex;
 
 		/**
 		 * Texture array version of lightAccumulationTex. Only available when MSAA is used, since random writes to
 		 * multisampled texture aren't supported on all render backends.
 		 */
-		SPtr<PooledRenderTexture> lightAccumulationTexArray;
+		SPtr<PooledRenderTexture> LightAccumulationTexArray;
 
-		SPtr<RenderTexture> renderTarget;
+		SPtr<RenderTexture> RenderTarget;
 
 		/** Converts MSAA data from the texture array into the MSAA texture. */
 		void MsaaTexArrayToTexture();
@@ -365,7 +365,7 @@ namespace ct
 	{
 	public:
 		// Outputs
-		RCNodeLightAccumulation* output;
+		RCNodeLightAccumulation* Output;
 
 		static StringID GetNodeId() { return "DeferredDirectLighting"; }
 		static SmallVector<StringID, 4> GetDependencies(const RendererView& view);
@@ -388,7 +388,7 @@ namespace ct
 	{
 	public:
 		// Outputs
-		RCNodeLightAccumulation* output;
+		RCNodeLightAccumulation* Output;
 
 		static StringID GetNodeId() { return "DeferredIndirectSpecularLighting"; }
 		static SmallVector<StringID, 4> GetDependencies(const RendererView& view);
@@ -506,7 +506,7 @@ namespace ct
 	class RCNodeEyeAdaptation : public RenderCompositorNode
 	{
 	public:
-		SPtr<PooledRenderTexture> output;
+		SPtr<PooledRenderTexture> Output;
 
 		static StringID GetNodeId() { return "EyeAdaptation"; }
 		static SmallVector<StringID, 4> GetDependencies(const RendererView& view);
@@ -614,7 +614,7 @@ namespace ct
 	class RCNodeHalfSceneColor : public RenderCompositorNode
 	{
 	public:
-		SPtr<PooledRenderTexture> output;
+		SPtr<PooledRenderTexture> Output;
 
 		static StringID GetNodeId() { return "HalfSceneColor"; }
 		static SmallVector<StringID, 4> GetDependencies(const RendererView& view);
@@ -635,8 +635,8 @@ namespace ct
 	public:
 		static constexpr UINT32 MAX_NUM_DOWNSAMPLES = 6;
 
-		SPtr<PooledRenderTexture> output[MAX_NUM_DOWNSAMPLES];
-		UINT32 availableDownsamples = 0;
+		SPtr<PooledRenderTexture> Output[MAX_NUM_DOWNSAMPLES];
+		UINT32 AvailableDownsamples = 0;
 
 		static StringID GetNodeId() { return "SceneColorDownsamples"; }
 		static SmallVector<StringID, 4> GetDependencies(const RendererView& view);
@@ -652,7 +652,7 @@ namespace ct
 	class RCNodeResolvedSceneDepth : public RenderCompositorNode
 	{
 	public:
-		SPtr<PooledRenderTexture> output;
+		SPtr<PooledRenderTexture> Output;
 
 		static StringID GetNodeId() { return "ResolvedSceneDepth"; }
 		static SmallVector<StringID, 4> GetDependencies(const RendererView& view);
@@ -668,7 +668,7 @@ namespace ct
 	class RCNodeHiZ : public RenderCompositorNode
 	{
 	public:
-		SPtr<PooledRenderTexture> output;
+		SPtr<PooledRenderTexture> Output;
 
 		static StringID GetNodeId() { return "HiZ"; }
 		static SmallVector<StringID, 4> GetDependencies(const RendererView& view);
@@ -684,7 +684,7 @@ namespace ct
 	class RCNodeSSAO : public RenderCompositorNode
 	{
 	public:
-		SPtr<Texture> output;
+		SPtr<Texture> Output;
 
 		static StringID GetNodeId() { return "SSAO"; }
 		static SmallVector<StringID, 4> GetDependencies(const RendererView& view);
@@ -702,7 +702,7 @@ namespace ct
 	class RCNodeSSR : public RenderCompositorNode
 	{
 	public:
-		SPtr<Texture> output;
+		SPtr<Texture> Output;
 
 		~RCNodeSSR();
 
@@ -730,7 +730,7 @@ namespace ct
 	class RCNodeTemporalAA : public RenderCompositorNode
 	{
 	public:
-		SPtr<Texture> output;
+		SPtr<Texture> Output;
 
 		~RCNodeTemporalAA();
 
@@ -754,7 +754,7 @@ namespace ct
 	class RCNodeBloom : public RenderCompositorNode
 	{
 	public:
-		SPtr<Texture> output;
+		SPtr<Texture> Output;
 
 		static StringID GetNodeId() { return "Bloom"; }
 		static SmallVector<StringID, 4> GetDependencies(const RendererView& view);

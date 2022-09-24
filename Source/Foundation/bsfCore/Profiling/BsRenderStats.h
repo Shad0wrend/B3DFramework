@@ -28,26 +28,26 @@ namespace bs
 	{
 		RenderStatsData() = default;
 
-		UINT64 numDrawCalls = 0;
-		UINT64 numComputeCalls = 0;
-		UINT64 numRenderTargetChanges = 0;
-		UINT64 numPresents = 0;
-		UINT64 numClears = 0;
+		UINT64 NumDrawCalls = 0;
+		UINT64 NumComputeCalls = 0;
+		UINT64 NumRenderTargetChanges = 0;
+		UINT64 NumPresents = 0;
+		UINT64 NumClears = 0;
 
-		UINT64 numVertices = 0;
-		UINT64 numPrimitives = 0;
+		UINT64 NumVertices = 0;
+		UINT64 NumPrimitives = 0;
 
-		UINT64 numPipelineStateChanges = 0;
+		UINT64 NumPipelineStateChanges = 0;
 
-		UINT64 numGpuParamBinds = 0;
-		UINT64 numVertexBufferBinds = 0;
-		UINT64 numIndexBufferBinds = 0;
+		UINT64 NumGpuParamBinds = 0;
+		UINT64 NumVertexBufferBinds = 0;
+		UINT64 NumIndexBufferBinds = 0;
 
-		UINT64 numResourceWrites;
-		UINT64 numResourceReads;
+		UINT64 NumResourceWrites;
+		UINT64 NumResourceReads;
 
-		UINT64 numObjectsCreated;
-		UINT64 numObjectsDestroyed;
+		UINT64 NumObjectsCreated;
+		UINT64 NumObjectsDestroyed;
 	};
 
 	/**
@@ -59,40 +59,40 @@ namespace bs
 	{
 	public:
 		/** Increments draw call counter indicating how many times were render system API Draw methods called. */
-		void IncNumDrawCalls() { mData.numDrawCalls++; }
+		void IncNumDrawCalls() { mData.NumDrawCalls++; }
 
 		/** Increments compute call counter indicating how many times were compute shaders dispatched. */
-		void IncNumComputeCalls() { mData.numComputeCalls++; }
+		void IncNumComputeCalls() { mData.NumComputeCalls++; }
 
 		/** Increments render target change counter indicating how many times did the active render target change. */
-		void IncNumRenderTargetChanges() { mData.numRenderTargetChanges++; }
+		void IncNumRenderTargetChanges() { mData.NumRenderTargetChanges++; }
 
 		/** Increments render target present counter indicating how many times did the buffer swap happen. */
-		void IncNumPresents() { mData.numPresents++; }
+		void IncNumPresents() { mData.NumPresents++; }
 
 		/**
 		 * Increments render target clear counter indicating how many times did the target the cleared, entirely or
 		 * partially.
 		 */
-		void IncNumClears() { mData.numClears++; }
+		void IncNumClears() { mData.NumClears++; }
 
 		/** Increments vertex draw counter indicating how many vertices were sent to the pipeline. */
-		void AddNumVertices(UINT32 count) { mData.numVertices += count; }
+		void AddNumVertices(UINT32 count) { mData.NumVertices += count; }
 
 		/** Increments primitive draw counter indicating how many primitives were sent to the pipeline. */
-		void AddNumPrimitives(UINT32 count) { mData.numPrimitives += count; }
+		void AddNumPrimitives(UINT32 count) { mData.NumPrimitives += count; }
 
 		/** Increments pipeline state change counter indicating how many times was a pipeline state bound. */
-		void IncNumPipelineStateChanges() { mData.numPipelineStateChanges++; }
+		void IncNumPipelineStateChanges() { mData.NumPipelineStateChanges++; }
 
 		/** Increments GPU parameter change counter indicating how many times were GPU parameters bound to the pipeline. */
-		void IncNumGpuParamBinds() { mData.numGpuParamBinds++; }
+		void IncNumGpuParamBinds() { mData.NumGpuParamBinds++; }
 
 		/** Increments vertex buffer change counter indicating how many times was a vertex buffer bound to the pipeline. */
-		void IncNumVertexBufferBinds() { mData.numVertexBufferBinds++; }
+		void IncNumVertexBufferBinds() { mData.NumVertexBufferBinds++; }
 
 		/** Increments index buffer change counter indicating how many times was a index buffer bound to the pipeline. */
-		void IncNumIndexBufferBinds() { mData.numIndexBufferBinds++; }
+		void IncNumIndexBufferBinds() { mData.NumIndexBufferBinds++; }
 
 		/**
 		 * Increments created GPU resource counter.
@@ -109,7 +109,7 @@ namespace bs
 			// TODO - I should also track number of active GPU objects using this method, instead
 			// of just keeping track of how many were created and destroyed during the frame.
 
-			mData.numObjectsCreated++;
+			mData.NumObjectsCreated++;
 		}
 
 		/**
@@ -117,21 +117,21 @@ namespace bs
 		 *
 		 * @param[in]	category	Category of the resource.
 		 */
-		void IncResDestroyed(UINT32 category) { mData.numObjectsDestroyed++; }
+		void IncResDestroyed(UINT32 category) { mData.NumObjectsDestroyed++; }
 
 		/**
 		 * Increments GPU resource read counter.
 		 *
 		 * @param[in]	category	Category of the resource.
 		 */
-		void IncResRead(UINT32 category) { mData.numResourceReads++; }
+		void IncResRead(UINT32 category) { mData.NumResourceReads++; }
 
 		/**
 		 * Increments GPU resource write counter.
 		 *
 		 * @param[in]	category	Category of the resource.
 		 */
-		void IncResWrite(UINT32 category) { mData.numResourceWrites++; }
+		void IncResWrite(UINT32 category) { mData.NumResourceWrites++; }
 
 		/**
 		 * Returns an object containing various rendering statistics.

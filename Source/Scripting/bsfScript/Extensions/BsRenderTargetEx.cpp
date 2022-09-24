@@ -7,22 +7,22 @@ namespace bs
 {
 	UINT32 RenderTargetEx::GetWidth(const SPtr<RenderTarget>& thisPtr)
 	{
-		return thisPtr->GetProperties().width;
+		return thisPtr->GetProperties().Width;
 	}
 
 	UINT32 RenderTargetEx::GetHeight(const SPtr<RenderTarget>& thisPtr)
 	{
-		return thisPtr->GetProperties().height;
+		return thisPtr->GetProperties().Height;
 	}
 
 	bool RenderTargetEx::GetGammaCorrection(const SPtr<RenderTarget>& thisPtr)
 	{
-		return thisPtr->GetProperties().hwGamma;
+		return thisPtr->GetProperties().HwGamma;
 	}
 
 	INT32 RenderTargetEx::GetPriority(const SPtr<RenderTarget>& thisPtr)
 	{
-		return thisPtr->GetProperties().priority;
+		return thisPtr->GetProperties().Priority;
 	}
 
 	void RenderTargetEx::SetPriority(const SPtr<RenderTarget>& thisPtr, INT32 priority)
@@ -32,18 +32,18 @@ namespace bs
 
 	UINT32 RenderTargetEx::GetSampleCount(const SPtr<RenderTarget>& thisPtr)
 	{
-		return thisPtr->GetProperties().multisampleCount;
+		return thisPtr->GetProperties().MultisampleCount;
 	}
 
 	SPtr<RenderTexture> RenderTextureEx::Create(PixelFormat format, int width, int height, int numSamples, bool gammaCorrection, bool createDepth, PixelFormat depthStencilFormat)
 	{
 		TEXTURE_DESC texDesc;
-		texDesc.type = TEX_TYPE_2D;
-		texDesc.width = width;
-		texDesc.height = height;
-		texDesc.format = format;
-		texDesc.hwGamma = gammaCorrection;
-		texDesc.numSamples = numSamples;
+		texDesc.Type = TEX_TYPE_2D;
+		texDesc.Width = width;
+		texDesc.Height = height;
+		texDesc.Format = format;
+		texDesc.HwGamma = gammaCorrection;
+		texDesc.NumSamples = numSamples;
 
 		return RenderTexture::Create(texDesc, createDepth, depthStencilFormat);
 	}
@@ -68,14 +68,14 @@ namespace bs
 		RENDER_SURFACE_DESC depthStencilSurfaceDesc;
 		if (depthStencilSurface != nullptr)
 		{
-			depthStencilSurfaceDesc.face = 0;
-			depthStencilSurfaceDesc.mipLevel = 0;
-			depthStencilSurfaceDesc.numFaces = 1;
+			depthStencilSurfaceDesc.Face = 0;
+			depthStencilSurfaceDesc.MipLevel = 0;
+			depthStencilSurfaceDesc.NumFaces = 1;
 
 			if (!depthStencilSurface.IsLoaded())
 				BS_LOG(Error, RenderBackend, "Render texture must be created using a fully loaded texture.");
 			else
-				depthStencilSurfaceDesc.texture = depthStencilSurface;
+				depthStencilSurfaceDesc.Texture = depthStencilSurface;
 		}
 
 		UINT32 numSurfaces = std::min((UINT32)colorSurfaces.size(), (UINT32)BS_MAX_MULTIPLE_RENDER_TARGETS);
@@ -84,19 +84,19 @@ namespace bs
 		for (UINT32 i = 0; i < numSurfaces; i++)
 		{
 			RENDER_SURFACE_DESC surfaceDesc;
-			surfaceDesc.face = 0;
-			surfaceDesc.mipLevel = 0;
-			surfaceDesc.numFaces = 1;
+			surfaceDesc.Face = 0;
+			surfaceDesc.MipLevel = 0;
+			surfaceDesc.NumFaces = 1;
 
 			if (!colorSurfaces[i].IsLoaded())
 				BS_LOG(Error, RenderBackend, "Render texture must be created using a fully loaded texture.");
 			else
-				surfaceDesc.texture = colorSurfaces[i];
+				surfaceDesc.Texture = colorSurfaces[i];
 
-			desc.colorSurfaces[i] = surfaceDesc;
+			desc.ColorSurfaces[i] = surfaceDesc;
 		}
 
-		desc.depthStencilSurface = depthStencilSurfaceDesc;
+		desc.DepthStencilSurface = depthStencilSurfaceDesc;
 
 		return RenderTexture::Create(desc);
 	}

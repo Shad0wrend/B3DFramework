@@ -17,7 +17,7 @@ namespace bs
 		mMaterial = material->GetCore();
 
 		FIND_TECHNIQUE_DESC findTechniqueDesc;
-		findTechniqueDesc.variation = &variation;
+		findTechniqueDesc.Variation = &variation;
 
 		variation.SetBool("ALPHA", false);
 		mTechnique = mMaterial->FindTechnique(findTechniqueDesc);
@@ -76,14 +76,14 @@ namespace bs
 	UINT64 SpriteMaterial::GetMergeHash(const SpriteMaterialInfo& info) const
 	{
 		UINT64 textureId = 0;
-		if (info.texture.IsLoaded())
-			textureId = info.texture->GetInternalId();
+		if (info.Texture.IsLoaded())
+			textureId = info.Texture->GetInternalId();
 
 		size_t hash = 0;
-		bs_hash_combine(hash, info.groupId);
+		bs_hash_combine(hash, info.GroupId);
 		bs_hash_combine(hash, GetId());
 		bs_hash_combine(hash, textureId);
-		bs_hash_combine(hash, info.tint);
+		bs_hash_combine(hash, info.Tint);
 
 		return (UINT64)hash;
 	}

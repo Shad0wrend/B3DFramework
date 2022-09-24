@@ -247,28 +247,28 @@ namespace bs
 	WString toWString(const Vector2& val)
 	{
 		WStringStream stream;
-		stream << val.x << L" " << val.y;
+		stream << val.X << L" " << val.Y;
 		return stream.str();
 	}
 
 	WString toWString(const Vector2I& val)
 	{
 		WStringStream stream;
-		stream << val.x << L" " << val.y;
+		stream << val.X << L" " << val.Y;
 		return stream.str();
 	}
 
 	WString toWString(const Vector3& val)
 	{
 		WStringStream stream;
-		stream << val.x << L" " << val.y << L" " << val.z;
+		stream << val.X << L" " << val.Y << L" " << val.Z;
 		return stream.str();
 	}
 
 	WString toWString(const Vector4& val)
 	{
 		WStringStream stream;
-		stream << val.x << L" " << val.y << L" " << val.z << L" " << val.w;
+		stream << val.X << L" " << val.Y << L" " << val.Z << L" " << val.W;
 		return stream.str();
 	}
 
@@ -336,14 +336,14 @@ namespace bs
 	WString toWString(const Quaternion& val)
 	{
 		WStringStream stream;
-		stream  << val.w << L" " << val.x << L" " << val.y << L" " << val.z;
+		stream  << val.W << L" " << val.X << L" " << val.Y << L" " << val.Z;
 		return stream.str();
 	}
 
 	WString toWString(const Color& val)
 	{
 		WStringStream stream;
-		stream << val.r << L" " << val.g << L" " << val.b << L" " << val.a;
+		stream << val.R << L" " << val.G << L" " << val.B << L" " << val.A;
 		return stream.str();
 	}
 
@@ -464,28 +464,28 @@ namespace bs
 	String toString(const Vector2& val)
 	{
 		StringStream stream;
-		stream << val.x << " " << val.y;
+		stream << val.X << " " << val.Y;
 		return stream.str();
 	}
 
 	String toString(const Vector2I& val)
 	{
 		StringStream stream;
-		stream << val.x << " " << val.y;
+		stream << val.X << " " << val.Y;
 		return stream.str();
 	}
 
 	String toString(const Vector3& val)
 	{
 		StringStream stream;
-		stream << val.x << " " << val.y << " " << val.z;
+		stream << val.X << " " << val.Y << " " << val.Z;
 		return stream.str();
 	}
 
 	String toString(const Vector4& val)
 	{
 		StringStream stream;
-		stream << val.x << " " << val.y << " " << val.z << " " << val.w;
+		stream << val.X << " " << val.Y << " " << val.Z << " " << val.W;
 		return stream.str();
 	}
 
@@ -553,14 +553,14 @@ namespace bs
 	String toString(const Quaternion& val)
 	{
 		StringStream stream;
-		stream  << val.w << " " << val.x << " " << val.y << " " << val.z;
+		stream  << val.W << " " << val.X << " " << val.Y << " " << val.Z;
 		return stream.str();
 	}
 
 	String toString(const Color& val)
 	{
 		StringStream stream;
-		stream << val.r << " " << val.g << " " << val.b << " " << val.a;
+		stream << val.R << " " << val.G << " " << val.B << " " << val.A;
 		return stream.str();
 	}
 

@@ -25,11 +25,11 @@ namespace bs
 		{
 			CustomIcon() = default;
 			CustomIcon(const PixelData& pixelData, const Vector2I& hotSpot)
-				:hotSpot(hotSpot), pixelData(pixelData)
+				:HotSpot(hotSpot), PixelData(pixelData)
 			{ }
 
-			Vector2I hotSpot;
-			PixelData pixelData;
+			Vector2I HotSpot;
+			PixelData PixelData;
 		};
 
 	public:

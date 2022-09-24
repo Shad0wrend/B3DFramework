@@ -57,30 +57,30 @@ namespace bs
 	{
 		OSPointerButtonStates()
 		{
-			mouseButtons[0] = false;
-			mouseButtons[1] = false;
-			mouseButtons[2] = false;
+			MouseButtons[0] = false;
+			MouseButtons[1] = false;
+			MouseButtons[2] = false;
 
-			shift = false;
-			ctrl = false;
+			Shift = false;
+			Ctrl = false;
 		}
 
-		bool mouseButtons[(UINT32)OSMouseButton::Count];
-		bool shift, ctrl;
+		bool MouseButtons[(UINT32)OSMouseButton::Count];
+		bool Shift, Ctrl;
 	};
 
 	/**	Represents a specific non client area used for window resizing. */
 	struct BS_CORE_EXPORT NonClientResizeArea
 	{
-		NonClientAreaBorderType type;
-		Rect2I area;
+		NonClientAreaBorderType Type;
+		Rect2I Area;
 	};
 
 	/** Contains a list of window move and resize non client areas. */
 	struct BS_CORE_EXPORT WindowNonClientAreaData
 	{
-		Vector<NonClientResizeArea> resizeAreas;
-		Vector<Rect2I> moveAreas;
+		Vector<NonClientResizeArea> ResizeAreas;
+		Vector<Rect2I> MoveAreas;
 	};
 
 	/**	Provides access to various operating system functions, including the main message pump. */

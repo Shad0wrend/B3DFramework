@@ -20,8 +20,8 @@ namespace bs
 	class BS_UTILITY_EXPORT AsyncOpSyncData
 	{
 	public:
-		Mutex mMutex;
-		Signal mCondition;
+		Mutex MMutex;
+		Signal MCondition;
 	};
 
 	/**
@@ -45,8 +45,8 @@ namespace bs
 		{
 			AsyncOpData() = default;
 
-			Any mReturnValue;
-			volatile std::atomic<bool> mIsCompleted{false};
+			Any MReturnValue;
+			volatile std::atomic<bool> MIsCompleted{false};
 		};
 
 	public:
@@ -68,7 +68,7 @@ namespace bs
 		/** Returns true if the async operation has completed. */
 		bool HasCompleted() const
 		{
-			return mData->mIsCompleted.load(std::memory_order_acquire);
+			return mData->MIsCompleted.load(std::memory_order_acquire);
 		}
 
 		/**
@@ -86,9 +86,9 @@ namespace bs
 				return;
 			}
 
-			Lock lock(mSyncData->mMutex);
+			Lock lock(mSyncData->MMutex);
 			while (!HasCompleted())
-				mSyncData->mCondition.wait(lock);
+				mSyncData->MCondition.wait(lock);
 		}
 
 		/**
@@ -102,7 +102,7 @@ namespace bs
 				BS_LOG(Error, Generic, "Trying to get AsyncOp return value but the operation hasn't completed.");
 #endif
 
-			return mData->mReturnValue;
+			return mData->MReturnValue;
 		}
 
 	protected:
@@ -145,7 +145,7 @@ namespace bs
 				BS_LOG(Error, Generic, "Trying to get AsyncOp return value but the operation hasn't completed.");
 #endif
 
-			return any_cast<ReturnType>(mData->mReturnValue);
+			return any_cast<ReturnType>(mData->MReturnValue);
 		}
 
 	public: // ***** INTERNAL ******
@@ -156,16 +156,16 @@ namespace bs
 		/** Mark the async operation as completed, without setting a return value. */
 		void CompleteOperationInternal()
 		{
-			mData->mIsCompleted.store(true, std::memory_order_release);
+			mData->MIsCompleted.store(true, std::memory_order_release);
 
 			if (mSyncData != nullptr)
-				mSyncData->mCondition.notify_all();
+				mSyncData->MCondition.notify_all();
 		}
 
 		/** Mark the async operation as completed. */
 		void CompleteOperationInternal(const ReturnType& returnValue)
 		{
-			mData->mReturnValue = returnValue;
+			mData->MReturnValue = returnValue;
 			CompleteOperationInternal();
 		}
 

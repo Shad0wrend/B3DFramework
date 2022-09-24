@@ -20,12 +20,12 @@ namespace bs
 	public:
 		GameSettings() = default;
 
-		UUID mainSceneUUID; /**< Resource UUID of the default scene that is loaded when the application is started. */
-		bool fullscreen = true; /**< If true the application will be started in fullscreen using user's desktop resolution. */
-		bool useDesktopResolution = true; /**< If running in fullscreen should the user's desktop resolution be used instead of the specified resolution. */
-		UINT32 resolutionWidth = 1280; /**< Width of the window. */
-		UINT32 resolutionHeight = 720; /**< Height of the window. */
-		WString titleBarText; /**< Text displayed in window's titlebar. */
+		UUID MainSceneUuid; /**< Resource UUID of the default scene that is loaded when the application is started. */
+		bool Fullscreen = true; /**< If true the application will be started in fullscreen using user's desktop resolution. */
+		bool UseDesktopResolution = true; /**< If running in fullscreen should the user's desktop resolution be used instead of the specified resolution. */
+		UINT32 ResolutionWidth = 1280; /**< Width of the window. */
+		UINT32 ResolutionHeight = 720; /**< Height of the window. */
+		WString TitleBarText; /**< Text displayed in window's titlebar. */
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/

@@ -6,7 +6,7 @@
 namespace bs
 {
 	TestSuite::TestEntry::TestEntry(Func test, const String& name)
-		:test(test), name(name)
+		:Test(test), Name(name)
 	{ }
 
 	void TestSuite::Run(TestOutput& output)
@@ -17,9 +17,9 @@ namespace bs
 
 		for (auto& testEntry : mTests)
 		{
-			mActiveTestName = testEntry.name;
+			mActiveTestName = testEntry.Name;
 			
-			(this->*(testEntry.test))();
+			(this->*(testEntry.Test))();
 		}
 
 		for (auto& suite : mSuites)

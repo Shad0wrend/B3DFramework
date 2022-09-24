@@ -20,7 +20,7 @@ namespace bs
 
 		/**	Determines whether the script is editor-only or a normal game script. */
 		BS_SCRIPT_EXPORT()
-		bool editorScript = false;
+		bool EditorScript = false;
 
 		/** Creates a new import options object that allows you to customize how is script code imported. */
 		BS_SCRIPT_EXPORT(ec:T)

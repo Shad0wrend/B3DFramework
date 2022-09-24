@@ -32,8 +32,8 @@ namespace bs
 
 	void GUIElement::UpdateClippedBounds()
 	{
-		mClippedBounds = mLayoutData.area;
-		mClippedBounds.Clip(mLayoutData.clipRect);
+		mClippedBounds = mLayoutData.Area;
+		mClippedBounds.Clip(mLayoutData.ClipRect);
 	}
 
 	void GUIElement::SetStyle(const String& styleName)
@@ -56,12 +56,12 @@ namespace bs
 	{
 		if (ev.GetType() == GUICommandEventType::FocusGained)
 		{
-			onFocusChanged(true);
+			OnFocusChanged(true);
 			return !mOptionFlags.IsSet(GUIElementOption::ClickThrough);
 		}
 		else if (ev.GetType() == GUICommandEventType::FocusLost)
 		{
-			onFocusChanged(false);
+			OnFocusChanged(false);
 			return !mOptionFlags.IsSet(GUIElementOption::ClickThrough);
 		}
 
@@ -82,13 +82,13 @@ namespace bs
 
 	void GUIElement::SetElementDepthInternal(UINT8 depth)
 	{
-		mLayoutData.depth = depth | (mLayoutData.depth & 0xFFFFFF00);
+		mLayoutData.Depth = depth | (mLayoutData.Depth & 0xFFFFFF00);
 		MarkMeshAsDirtyInternal();
 	}
 
 	UINT8 GUIElement::GetElementDepthInternal() const
 	{
-		return mLayoutData.depth & 0xFF;
+		return mLayoutData.Depth & 0xFF;
 	}
 
 	void GUIElement::SetLayoutDataInternal(const GUILayoutData& data)
@@ -132,7 +132,7 @@ namespace bs
 	const RectOffset& GUIElement::GetPaddingInternal() const
 	{
 		if(mStyle != nullptr)
-			return mStyle->padding;
+			return mStyle->Padding;
 		else
 		{
 			static RectOffset padding;
@@ -181,12 +181,12 @@ namespace bs
 
 	void GUIElement::ResetDimensions()
 	{
-		bool isFixedBefore = (mDimensions.flags & GUIDF_FixedWidth) != 0 && (mDimensions.flags & GUIDF_FixedHeight) != 0;
+		bool isFixedBefore = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
 
 		mDimensions = GUIDimensions::Create();
 		mDimensions.UpdateWithStyle(mStyle);
 
-		bool isFixedAfter = (mDimensions.flags & GUIDF_FixedWidth) != 0 && (mDimensions.flags & GUIDF_FixedHeight) != 0;
+		bool isFixedAfter = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
 
 		if (isFixedBefore != isFixedAfter)
 			RefreshChildUpdateParents();
@@ -198,10 +198,10 @@ namespace bs
 	{
 		Rect2I bounds = GetClippedBoundsInternal();
 		
-		bounds.x += mStyle->margins.left;
-		bounds.y += mStyle->margins.top;
-		bounds.width = (UINT32)std::max(0, (INT32)bounds.width - (INT32)(mStyle->margins.left + mStyle->margins.right));
-		bounds.height = (UINT32)std::max(0, (INT32)bounds.height - (INT32)(mStyle->margins.top + mStyle->margins.bottom));
+		bounds.X += mStyle->Margins.Left;
+		bounds.Y += mStyle->Margins.Top;
+		bounds.Width = (UINT32)std::max(0, (INT32)bounds.Width - (INT32)(mStyle->Margins.Left + mStyle->Margins.Right));
+		bounds.Height = (UINT32)std::max(0, (INT32)bounds.Height - (INT32)(mStyle->Margins.Top + mStyle->Margins.Bottom));
 
 		return bounds;
 	}
@@ -210,12 +210,12 @@ namespace bs
 	{
 		Rect2I bounds;
 
-		bounds.x = mLayoutData.area.x + mStyle->margins.left + mStyle->contentOffset.left;
-		bounds.y = mLayoutData.area.y + mStyle->margins.top + mStyle->contentOffset.top;
-		bounds.width = (UINT32)std::max(0, (INT32)mLayoutData.area.width -
-			(INT32)(mStyle->margins.left + mStyle->margins.right + mStyle->contentOffset.left + mStyle->contentOffset.right));
-		bounds.height = (UINT32)std::max(0, (INT32)mLayoutData.area.height -
-			(INT32)(mStyle->margins.top + mStyle->margins.bottom + mStyle->contentOffset.top + mStyle->contentOffset.bottom));
+		bounds.X = mLayoutData.Area.X + mStyle->Margins.Left + mStyle->ContentOffset.Left;
+		bounds.Y = mLayoutData.Area.Y + mStyle->Margins.Top + mStyle->ContentOffset.Top;
+		bounds.Width = (UINT32)std::max(0, (INT32)mLayoutData.Area.Width -
+			(INT32)(mStyle->Margins.Left + mStyle->Margins.Right + mStyle->ContentOffset.Left + mStyle->ContentOffset.Right));
+		bounds.Height = (UINT32)std::max(0, (INT32)mLayoutData.Area.Height -
+			(INT32)(mStyle->Margins.Top + mStyle->Margins.Bottom + mStyle->ContentOffset.Top + mStyle->ContentOffset.Bottom));
 
 		return bounds;
 	}
@@ -225,13 +225,13 @@ namespace bs
 		Rect2I contentBounds = GetCachedContentBounds();
 		
 		// Transform into element space so we can clip it using the element clip rectangle
-		Vector2I offsetDiff = Vector2I(contentBounds.x - mLayoutData.area.x, contentBounds.y - mLayoutData.area.y);
-		Rect2I contentClipRect(offsetDiff.x, offsetDiff.y, contentBounds.width, contentBounds.height);
+		Vector2I offsetDiff = Vector2I(contentBounds.X - mLayoutData.Area.X, contentBounds.Y - mLayoutData.Area.Y);
+		Rect2I contentClipRect(offsetDiff.X, offsetDiff.Y, contentBounds.Width, contentBounds.Height);
 		contentClipRect.Clip(mLayoutData.GetLocalClipRect());
 
 		// Transform into content sprite space
-		contentClipRect.x -= offsetDiff.x;
-		contentClipRect.y -= offsetDiff.y;
+		contentClipRect.X -= offsetDiff.X;
+		contentClipRect.Y -= offsetDiff.Y;
 
 		return contentClipRect;
 	}
@@ -271,11 +271,11 @@ namespace bs
 		{
 			mStyle = newStyle;
 
-			bool isFixedBefore = (mDimensions.flags & GUIDF_FixedWidth) != 0 && (mDimensions.flags & GUIDF_FixedHeight) != 0;
+			bool isFixedBefore = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
 
 			mDimensions.UpdateWithStyle(mStyle);
 
-			bool isFixedAfter = (mDimensions.flags & GUIDF_FixedWidth) != 0 && (mDimensions.flags & GUIDF_FixedHeight) != 0;
+			bool isFixedAfter = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
 			if (isFixedBefore != isFixedAfter)
 				RefreshChildUpdateParents();
 
@@ -286,9 +286,9 @@ namespace bs
 
 	const String& GUIElement::GetSubStyleName(const String& subStyleTypeName) const
 	{
-		auto iterFind = mStyle->subStyles.find(subStyleTypeName);
+		auto iterFind = mStyle->SubStyles.find(subStyleTypeName);
 
-		if (iterFind != mStyle->subStyles.end())
+		if (iterFind != mStyle->SubStyles.end())
 			return iterFind->second;
 		else
 			return StringUtil::BLANK;
@@ -315,10 +315,10 @@ namespace bs
 	{
 		Rect2I bounds = GetBounds();
 
-		bounds.x += mStyle->margins.left;
-		bounds.y += mStyle->margins.top;
-		bounds.width = (UINT32)std::max(0, (INT32)bounds.width - (INT32)(mStyle->margins.left + mStyle->margins.right));
-		bounds.height = (UINT32)std::max(0, (INT32)bounds.height - (INT32)(mStyle->margins.top + mStyle->margins.bottom));
+		bounds.X += mStyle->Margins.Left;
+		bounds.Y += mStyle->Margins.Top;
+		bounds.Width = (UINT32)std::max(0, (INT32)bounds.Width - (INT32)(mStyle->Margins.Left + mStyle->Margins.Right));
+		bounds.Height = (UINT32)std::max(0, (INT32)bounds.Height - (INT32)(mStyle->Margins.Top + mStyle->Margins.Bottom));
 
 		return bounds;
 	}

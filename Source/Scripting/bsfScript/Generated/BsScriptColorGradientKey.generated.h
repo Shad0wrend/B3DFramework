@@ -11,8 +11,8 @@ namespace bs
 {
 	struct __ColorGradientKeyInterop
 	{
-		Color color;
-		float time;
+		Color Color;
+		float Time;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptColorGradientKey : public ScriptObject<ScriptColorGradientKey>

@@ -16,7 +16,7 @@ namespace bs
 
 	MonoObject*ScriptKeyframeRef::Box(const KeyframeRef& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	KeyframeRef ScriptKeyframeRef::Unbox(MonoObject* value)

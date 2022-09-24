@@ -41,20 +41,20 @@ int main(int argc, char * argv[])
 		return 2;
 
 	START_UP_DESC desc;
-	desc.renderAPI = BS_RENDER_API_MODULE;
-	desc.renderer = BS_RENDERER_MODULE;
-	desc.audio = BS_AUDIO_MODULE;
-	desc.physics = BS_PHYSICS_MODULE;
+	desc.RenderApi = BS_RENDER_API_MODULE;
+	desc.Renderer = BS_RENDERER_MODULE;
+	desc.Audio = BS_AUDIO_MODULE;
+	desc.Physics = BS_PHYSICS_MODULE;
 
-	desc.importers.push_back("bsfFreeImgImporter");
-	desc.importers.push_back("bsfFBXImporter");
-	desc.importers.push_back("bsfFontImporter");
-	desc.importers.push_back("bsfSL");
+	desc.Importers.push_back("bsfFreeImgImporter");
+	desc.Importers.push_back("bsfFBXImporter");
+	desc.Importers.push_back("bsfFontImporter");
+	desc.Importers.push_back("bsfSL");
 
-	desc.primaryWindowDesc.videoMode = VideoMode (64, 64);
-	desc.primaryWindowDesc.fullscreen = false;
-	desc.primaryWindowDesc.title = "bsf importer";
-	desc.primaryWindowDesc.hidden = true;
+	desc.PrimaryWindowDesc.VideoMode = VideoMode (64, 64);
+	desc.PrimaryWindowDesc.Fullscreen = false;
+	desc.PrimaryWindowDesc.Title = "bsf importer";
+	desc.PrimaryWindowDesc.Hidden = true;
 
 	Application::StartUp(desc);
 
@@ -758,8 +758,8 @@ namespace bs
 			Path outputPath = sOutputFolder + (fileName + ".asset");
 
 			auto textureIO = gImporter().CreateImportOptions<TextureImportOptions>(inputPath);
-			textureIO->cpuCached = true;
-			textureIO->generateMips = false;
+			textureIO->CpuCached = true;
+			textureIO->GenerateMips = false;
 			HTexture splashTexture = gImporter().Import<Texture>(inputPath, textureIO);
 
 			SPtr<PixelData> splashPixelData = splashTexture->GetProperties().AllocBuffer(0, 0);

@@ -26,24 +26,24 @@ namespace bs
 
 	Rect2I GUIInputCaret::GetSpriteClipRect(const Rect2I& parentClipRect) const
 	{
-		Vector2I offset(mElement->GetLayoutDataInternal().area.x, mElement->GetLayoutDataInternal().area.y);
+		Vector2I offset(mElement->GetLayoutDataInternal().Area.X, mElement->GetLayoutDataInternal().Area.Y);
 
 		Vector2I clipOffset = GetSpriteOffset() - offset -
-			Vector2I(mElement->GetTextInputRectInternal().x, mElement->GetTextInputRectInternal().y);
+			Vector2I(mElement->GetTextInputRectInternal().X, mElement->GetTextInputRectInternal().Y);
 
-		Rect2I clipRect(-clipOffset.x, -clipOffset.y, mTextDesc.width, mTextDesc.height);
+		Rect2I clipRect(-clipOffset.X, -clipOffset.Y, mTextDesc.Width, mTextDesc.Height);
 
 		Rect2I localParentCliprect = parentClipRect;
 
 		// Move parent rect to our space
-		localParentCliprect.x += mElement->GetTextInputOffsetInternal().x + clipRect.x;
-		localParentCliprect.y += mElement->GetTextInputOffsetInternal().y + clipRect.y;
+		localParentCliprect.X += mElement->GetTextInputOffsetInternal().X + clipRect.X;
+		localParentCliprect.Y += mElement->GetTextInputOffsetInternal().Y + clipRect.Y;
 
 		// Clip our rectangle so its not larger then the parent
 		clipRect.Clip(localParentCliprect);
 
 		// Increase clip size by 1, so we can fit the caret in case it is fully at the end of the text
-		clipRect.width += 1;
+		clipRect.Width += 1;
 
 		return clipRect;
 	}
@@ -51,9 +51,9 @@ namespace bs
 	void GUIInputCaret::UpdateSprite()
 	{
 		IMAGE_SPRITE_DESC mCaretDesc;
-		mCaretDesc.width = 1;
-		mCaretDesc.height = GetCaretHeight();
-		mCaretDesc.texture = GUIManager::Instance().GetCaretTexture();
+		mCaretDesc.Width = 1;
+		mCaretDesc.Height = GetCaretHeight();
+		mCaretDesc.Texture = GUIManager::Instance().GetCaretTexture();
 
 		GUIWidget* widget = nullptr;
 		if (mElement != nullptr)
@@ -104,7 +104,7 @@ namespace bs
 		}
 
 		Vector2I caretCoords = GetCaretPosition(mElement->GetTextInputOffsetInternal());
-		caretCoords.y -= GetCaretHeight();
+		caretCoords.Y -= GetCaretHeight();
 
 		MoveCaretToPos(caretCoords);
 	}
@@ -129,7 +129,7 @@ namespace bs
 		}
 
 		Vector2I caretCoords = GetCaretPosition(mElement->GetTextInputOffsetInternal());
-		caretCoords.y += GetCaretHeight();
+		caretCoords.Y += GetCaretHeight();
 
 		MoveCaretToPos(caretCoords);
 	}
@@ -142,8 +142,8 @@ namespace bs
 		{
 			Rect2I charRect = GetCharRect(charIdx);
 
-			float xCenter = charRect.x + charRect.width * 0.5f;
-			if(pos.x <= xCenter)
+			float xCenter = charRect.X + charRect.Width * 0.5f;
+			if(pos.X <= xCenter)
 				MoveCaretToChar(charIdx, CARET_BEFORE);
 			else
 				MoveCaretToChar(charIdx, CARET_AFTER);
@@ -163,8 +163,8 @@ namespace bs
 			{
 				const GUIInputLineDesc& line = GetLineDesc(i);
 
-				INT32 lineStart = line.GetLineYStart() + GetTextOffset().y;
-				if(pos.y >= lineStart && pos.y < (lineStart + (INT32)line.GetLineHeight()))
+				INT32 lineStart = line.GetLineYStart() + GetTextOffset().Y;
+				if(pos.Y >= lineStart && pos.Y < (lineStart + (INT32)line.GetLineHeight()))
 				{
 					mCaretPos = curPos;
 					return;
@@ -176,9 +176,9 @@ namespace bs
 
 			{
 				const GUIInputLineDesc& firstLine = GetLineDesc(0);
-				INT32 lineStart = firstLine.GetLineYStart() + GetTextOffset().y;
+				INT32 lineStart = firstLine.GetLineYStart() + GetTextOffset().Y;
 
-				if(pos.y < lineStart) // Before first line
+				if(pos.Y < lineStart) // Before first line
 					mCaretPos = 0;
 				else // After last line
 					mCaretPos = curPos - 1;
@@ -244,7 +244,7 @@ namespace bs
 				if(mCaretPos == curPos)
 				{
 					// Caret is on line start
-					return Vector2I(offset.x, lineDesc.GetLineYStart() + GetTextOffset().y);
+					return Vector2I(offset.X, lineDesc.GetLineYStart() + GetTextOffset().Y);
 				}
 
 				curPos += lineDesc.GetEndChar(false) - lineDesc.GetStartChar() + 1; // + 1 for special line start position
@@ -258,9 +258,9 @@ namespace bs
 
 			Rect2I charRect = GetCharRect(charIdx);
 			UINT32 lineIdx = GetLineForChar(charIdx);
-			UINT32 yOffset = GetLineDesc(lineIdx).GetLineYStart() + GetTextOffset().y;
+			UINT32 yOffset = GetLineDesc(lineIdx).GetLineYStart() + GetTextOffset().Y;
 
-			return Vector2I(charRect.x + charRect.width, yOffset);
+			return Vector2I(charRect.X + charRect.Width, yOffset);
 		}
 
 		return offset;
@@ -279,13 +279,13 @@ namespace bs
 		}
 		else
 		{
-			if(mTextDesc.font != nullptr)
+			if(mTextDesc.Font != nullptr)
 			{
-				UINT32 nearestSize = mTextDesc.font->GetClosestSize(mTextDesc.fontSize);
-				SPtr<const FontBitmap> fontData = mTextDesc.font->GetBitmap(nearestSize);
+				UINT32 nearestSize = mTextDesc.Font->GetClosestSize(mTextDesc.FontSize);
+				SPtr<const FontBitmap> fontData = mTextDesc.Font->GetBitmap(nearestSize);
 
 				if(fontData != nullptr)
-					return fontData->lineHeight;
+					return fontData->LineHeight;
 			}
 		}
 

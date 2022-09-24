@@ -20,11 +20,11 @@ namespace bs
 	{
 		BoundActorData() = default;
 		BoundActorData(const SPtr<SceneActor>& actor, const HSceneObject& so)
-			:actor(actor), so(so)
+			:Actor(actor), So(so)
 		{ }
 
-		SPtr<SceneActor> actor;
-		HSceneObject so;
+		SPtr<SceneActor> Actor;
+		HSceneObject So;
 	};
 
 	/** Possible states components can be in. Controls which component callbacks are triggered. */
@@ -199,11 +199,11 @@ namespace bs
 		struct ComponentStateChange
 		{
 			ComponentStateChange(HComponent obj, ComponentStateEventType type)
-				:obj(std::move(obj)), type(type)
+				:Obj(std::move(obj)), Type(type)
 			{ }
 
-			HComponent obj;
-			ComponentStateEventType type;
+			HComponent Obj;
+			ComponentStateEventType Type;
 		};
 
 		friend class SceneObject;

@@ -15,7 +15,7 @@ namespace bs
 
 	void ScriptMorphShapes::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_GetChannels", (void*)&ScriptMorphShapes::InternalGetChannels);
+		metaData.ScriptClass->AddInternalCall("Internal_GetChannels", (void*)&ScriptMorphShapes::InternalGetChannels);
 
 	}
 
@@ -26,7 +26,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptMorphShapes>()) ScriptMorphShapes(managedInstance, value);
 		return managedInstance;
 	}

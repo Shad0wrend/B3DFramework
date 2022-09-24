@@ -17,12 +17,12 @@ namespace bs
 	{
 		AssemblyRefreshInfo() = default;
 		AssemblyRefreshInfo(const char* name, const Path* path, const BuiltinTypeMappings* typeMapping)
-			:name(name), path(path), typeMapping(typeMapping)
+			:Name(name), Path(path), TypeMapping(typeMapping)
 		{ }
 
-		const char* name = nullptr;
-		const Path* path = nullptr;
-		const BuiltinTypeMappings* typeMapping = nullptr;
+		const char* Name = nullptr;
+		const Path* Path = nullptr;
+		const BuiltinTypeMappings* TypeMapping = nullptr;
 	};
 
 	/**	Keeps track of all script interop objects and handles assembly refresh. */
@@ -69,16 +69,16 @@ namespace bs
 		 * Triggered right after a domain was reloaded. This signals the outside world that they should update any kept Mono
 		 * references as the old ones will no longer be valid.
 		 */
-		Event<void()> onRefreshDomainLoaded;
+		Event<void()> OnRefreshDomainLoaded;
 
 		/**
 		 * Triggered just before the assembly refresh starts. At this point all managed objects are still valid, but are
 		 * about to be destroyed.
 		 */
-		Event<void()> onRefreshStarted;
+		Event<void()> OnRefreshStarted;
 
 		/**	Triggered after the assembly refresh ends. New assemblies should be loaded at this point. */
-		Event<void()> onRefreshComplete;
+		Event<void()> OnRefreshComplete;
 	private:
 		Set<ScriptObjectBase*> mScriptObjects;
 

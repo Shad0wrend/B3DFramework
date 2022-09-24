@@ -14,7 +14,7 @@ namespace bs
 		IReflectable* newObj, ObjectMap& objectMap, bool reflectableOnly)
 	{
 		CoreSerializationContext context;
-		context.goState = bs_shared_ptr_new<GameObjectDeserializationState>(GODM_UseOriginalIds | GODM_RestoreExternal);
+		context.GoState = bs_shared_ptr_new<GameObjectDeserializationState>(GODM_UseOriginalIds | GODM_RestoreExternal);
 
 		ManagedSerializableObject* orgManSerzObj;
 		SPtr<ManagedSerializableObject> orgDecodedObject;
@@ -46,23 +46,23 @@ namespace bs
 			newManSerzObj = static_cast<ManagedSerializableObject*>(newObj);
 		}
 
-		context.goState->Resolve();
+		context.GoState->Resolve();
 
 		SPtr<ManagedSerializableDiff> diff = ManagedSerializableDiff::Create(orgManSerzObj, newManSerzObj);
 		if (diff == nullptr)
 			return nullptr;
 
 		SPtr<SerializedObject> output = bs_shared_ptr_new<SerializedObject>();
-		output->subObjects.push_back(SerializedSubObject());
+		output->SubObjects.push_back(SerializedSubObject());
 
-		SerializedSubObject& subObject = output->subObjects.back();
-		subObject.typeId = ManagedSerializableObject::GetRttiStatic()->GetRttiId();
+		SerializedSubObject& subObject = output->SubObjects.back();
+		subObject.TypeId = ManagedSerializableObject::GetRttiStatic()->GetRttiId();
 
 		SerializedEntry entry;
-		entry.fieldId = 0;
-		entry.serialized = SerializedObject::Create(*diff);
+		entry.FieldId = 0;
+		entry.Serialized = SerializedObject::Create(*diff);
 
-		subObject.entries[0] = entry;
+		subObject.Entries[0] = entry;
 
 		return output;
 	}
@@ -70,7 +70,7 @@ namespace bs
 	void ManagedDiff::ApplyDiff(const SPtr<IReflectable>& object, const SPtr<SerializedObject>& serzDiff,
 		FrameAlloc& alloc, DiffObjectMap& objectMap, FrameVector<DiffCommand>& diffCommands, SerializationContext* context)
 	{
-		SPtr<SerializedObject> diffObj = std::static_pointer_cast<SerializedObject>(serzDiff->subObjects[0].entries[0].serialized);
+		SPtr<SerializedObject> diffObj = std::static_pointer_cast<SerializedObject>(serzDiff->SubObjects[0].Entries[0].Serialized);
 
 		SPtr<ManagedSerializableDiff> diff = std::static_pointer_cast<ManagedSerializableDiff>(diffObj->Decode(context));
 		

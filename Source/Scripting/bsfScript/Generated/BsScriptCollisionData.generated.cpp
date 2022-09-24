@@ -21,7 +21,7 @@ namespace bs
 
 	MonoObject*ScriptCollisionData::Box(const __CollisionDataInterop& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	__CollisionDataInterop ScriptCollisionData::Unbox(MonoObject* value)
@@ -33,9 +33,9 @@ namespace bs
 	{
 		CollisionData output;
 		GameObjectHandle<CCollider> veccollider[2];
-		if(value.collider != nullptr)
+		if(value.Collider != nullptr)
 		{
-			ScriptArray arraycollider(value.collider);
+			ScriptArray arraycollider(value.Collider);
 			for(int i = 0; i < (int)arraycollider.Size(); i++)
 			{
 				ScriptCColliderBase* scriptcollider;
@@ -49,18 +49,18 @@ namespace bs
 		}
 		auto tmpcollider = veccollider;
 		for(int i = 0; i < 2; ++i)
-			output.collider[i] = tmpcollider[i];
+			output.Collider[i] = tmpcollider[i];
 		Vector<ContactPoint> veccontactPoints;
-		if(value.contactPoints != nullptr)
+		if(value.ContactPoints != nullptr)
 		{
-			ScriptArray arraycontactPoints(value.contactPoints);
+			ScriptArray arraycontactPoints(value.ContactPoints);
 			veccontactPoints.resize(arraycontactPoints.Size());
 			for(int i = 0; i < (int)arraycontactPoints.Size(); i++)
 			{
 				veccontactPoints[i] = ScriptContactPoint::FromInterop(arraycontactPoints.Get<__ContactPointInterop>(i));
 			}
 		}
-		output.contactPoints = veccontactPoints;
+		output.ContactPoints = veccontactPoints;
 
 		return output;
 	}
@@ -74,24 +74,24 @@ namespace bs
 		for(int i = 0; i < arraySizecollider; i++)
 		{
 			ScriptComponentBase* scriptcollider = nullptr;
-			if(value.collider[i])
-				scriptcollider = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(value.collider[i]));
+			if(value.Collider[i])
+				scriptcollider = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(value.Collider[i]));
 				if(scriptcollider != nullptr)
 				arraycollider.Set(i, scriptcollider->GetManagedInstance());
 			else
 				arraycollider.Set(i, nullptr);
 		}
 		veccollider = arraycollider.GetInternal();
-		output.collider = veccollider;
-		int arraySizecontactPoints = (int)value.contactPoints.size();
+		output.Collider = veccollider;
+		int arraySizecontactPoints = (int)value.ContactPoints.size();
 		MonoArray* veccontactPoints;
 		ScriptArray arraycontactPoints = ScriptArray::Create<ScriptContactPoint>(arraySizecontactPoints);
 		for(int i = 0; i < arraySizecontactPoints; i++)
 		{
-			arraycontactPoints.Set(i, ScriptContactPoint::ToInterop(value.contactPoints[i]));
+			arraycontactPoints.Set(i, ScriptContactPoint::ToInterop(value.ContactPoints[i]));
 		}
 		veccontactPoints = arraycontactPoints.GetInternal();
-		output.contactPoints = veccontactPoints;
+		output.ContactPoints = veccontactPoints;
 
 		return output;
 	}

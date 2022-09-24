@@ -18,9 +18,9 @@ namespace bs
 
 	void ScriptAsyncOpBase::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_IsComplete", (void*)&ScriptAsyncOpBase::InternalIsComplete);
-		metaData.scriptClass->AddInternalCall("Internal_BlockUntilComplete", (void*)&ScriptAsyncOpBase::InternalBlockUntilComplete);
-		metaData.scriptClass->AddInternalCall("Internal_GetValue", (void*)&ScriptAsyncOpBase::InternalGetValue);
+		metaData.ScriptClass->AddInternalCall("Internal_IsComplete", (void*)&ScriptAsyncOpBase::InternalIsComplete);
+		metaData.ScriptClass->AddInternalCall("Internal_BlockUntilComplete", (void*)&ScriptAsyncOpBase::InternalBlockUntilComplete);
+		metaData.ScriptClass->AddInternalCall("Internal_GetValue", (void*)&ScriptAsyncOpBase::InternalGetValue);
 	}
 
 	MonoObject* ScriptAsyncOpBase::CreateInternal(const AsyncOpBase& op,
@@ -29,11 +29,11 @@ namespace bs
 		MonoClass* returnTypeClass = nullptr;
 		BuiltinResourceInfo* resInfo = ScriptAssemblyManager::Instance().GetBuiltinResourceInfo(rttiId);
 		if(resInfo)
-			returnTypeClass = resInfo->monoClass;
+			returnTypeClass = resInfo->MonoClass;
 
 		ReflectableTypeInfo* reflTypeInfo = ScriptAssemblyManager::Instance().GetReflectableTypeInfo(rttiId);
 		if(reflTypeInfo)
-			returnTypeClass = reflTypeInfo->monoClass;
+			returnTypeClass = reflTypeInfo->MonoClass;
 
 		if(!returnTypeClass)
 		{
@@ -49,7 +49,7 @@ namespace bs
 	{
 		MonoClass* asyncOpClass = nullptr;
 		if(!returnTypeClass)
-			asyncOpClass = metaData.scriptClass;
+			asyncOpClass = metaData.ScriptClass;
 		else
 		{
 			::MonoClass* rawClass = BindGenericParam(returnTypeClass->GetInternalClassInternal());
@@ -65,7 +65,7 @@ namespace bs
 	MonoObject* ScriptAsyncOpBase::CreateInternal(const AsyncOpBase& op,
 		const std::function<MonoObject*(const Any&)>& convertCallback)
 	{
-		MonoObject* obj = metaData.scriptClass->CreateInstance();
+		MonoObject* obj = metaData.ScriptClass->CreateInstance();
 		new (bs_alloc<ScriptAsyncOpBase>()) ScriptAsyncOpBase(obj, op, convertCallback);
 
 		return obj;
@@ -73,7 +73,7 @@ namespace bs
 
 	::MonoClass* ScriptAsyncOpBase::BindGenericParam(::MonoClass* param)
 	{
-		MonoClass* asyncOpClass = ScriptAssemblyManager::Instance().GetBuiltinClasses().genericAsyncOpClass;
+		MonoClass* asyncOpClass = ScriptAssemblyManager::Instance().GetBuiltinClasses().GenericAsyncOpClass;
 
 		::MonoClass* params[1] = { param };
 		return MonoUtil::BindGenericParameters(asyncOpClass->GetInternalClassInternal(), params, 1);

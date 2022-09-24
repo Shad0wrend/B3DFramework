@@ -22,7 +22,7 @@ namespace bs
 
 	MonoObject*ScriptTKeyframeint32_t::Box(const TKeyframe<int32_t>& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	TKeyframe<int32_t> ScriptTKeyframeint32_t::Unbox(MonoObject* value)
@@ -40,7 +40,7 @@ namespace bs
 
 	MonoObject*ScriptTKeyframefloat::Box(const TKeyframe<float>& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	TKeyframe<float> ScriptTKeyframefloat::Unbox(MonoObject* value)
@@ -58,7 +58,7 @@ namespace bs
 
 	MonoObject*ScriptTKeyframeVector3::Box(const __TKeyframeVector3Interop& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	__TKeyframeVector3Interop ScriptTKeyframeVector3::Unbox(MonoObject* value)
@@ -69,10 +69,10 @@ namespace bs
 	TKeyframe<Vector3> ScriptTKeyframeVector3::FromInterop(const __TKeyframeVector3Interop& value)
 	{
 		TKeyframe<Vector3> output;
-		output.value = value.value;
-		output.inTangent = value.inTangent;
-		output.outTangent = value.outTangent;
-		output.time = value.time;
+		output.Value = value.Value;
+		output.InTangent = value.InTangent;
+		output.OutTangent = value.OutTangent;
+		output.Time = value.Time;
 
 		return output;
 	}
@@ -80,10 +80,10 @@ namespace bs
 	__TKeyframeVector3Interop ScriptTKeyframeVector3::ToInterop(const TKeyframe<Vector3>& value)
 	{
 		__TKeyframeVector3Interop output;
-		output.value = value.value;
-		output.inTangent = value.inTangent;
-		output.outTangent = value.outTangent;
-		output.time = value.time;
+		output.Value = value.Value;
+		output.InTangent = value.InTangent;
+		output.OutTangent = value.OutTangent;
+		output.Time = value.Time;
 
 		return output;
 	}
@@ -98,7 +98,7 @@ namespace bs
 
 	MonoObject*ScriptTKeyframeVector2::Box(const __TKeyframeVector2Interop& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	__TKeyframeVector2Interop ScriptTKeyframeVector2::Unbox(MonoObject* value)
@@ -109,10 +109,10 @@ namespace bs
 	TKeyframe<Vector2> ScriptTKeyframeVector2::FromInterop(const __TKeyframeVector2Interop& value)
 	{
 		TKeyframe<Vector2> output;
-		output.value = value.value;
-		output.inTangent = value.inTangent;
-		output.outTangent = value.outTangent;
-		output.time = value.time;
+		output.Value = value.Value;
+		output.InTangent = value.InTangent;
+		output.OutTangent = value.OutTangent;
+		output.Time = value.Time;
 
 		return output;
 	}
@@ -120,10 +120,10 @@ namespace bs
 	__TKeyframeVector2Interop ScriptTKeyframeVector2::ToInterop(const TKeyframe<Vector2>& value)
 	{
 		__TKeyframeVector2Interop output;
-		output.value = value.value;
-		output.inTangent = value.inTangent;
-		output.outTangent = value.outTangent;
-		output.time = value.time;
+		output.Value = value.Value;
+		output.InTangent = value.InTangent;
+		output.OutTangent = value.OutTangent;
+		output.Time = value.Time;
 
 		return output;
 	}
@@ -138,7 +138,7 @@ namespace bs
 
 	MonoObject*ScriptTKeyframeQuaternion::Box(const __TKeyframeQuaternionInterop& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	__TKeyframeQuaternionInterop ScriptTKeyframeQuaternion::Unbox(MonoObject* value)
@@ -149,10 +149,10 @@ namespace bs
 	TKeyframe<Quaternion> ScriptTKeyframeQuaternion::FromInterop(const __TKeyframeQuaternionInterop& value)
 	{
 		TKeyframe<Quaternion> output;
-		output.value = value.value;
-		output.inTangent = value.inTangent;
-		output.outTangent = value.outTangent;
-		output.time = value.time;
+		output.Value = value.Value;
+		output.InTangent = value.InTangent;
+		output.OutTangent = value.OutTangent;
+		output.Time = value.Time;
 
 		return output;
 	}
@@ -160,10 +160,10 @@ namespace bs
 	__TKeyframeQuaternionInterop ScriptTKeyframeQuaternion::ToInterop(const TKeyframe<Quaternion>& value)
 	{
 		__TKeyframeQuaternionInterop output;
-		output.value = value.value;
-		output.inTangent = value.inTangent;
-		output.outTangent = value.outTangent;
-		output.time = value.time;
+		output.Value = value.Value;
+		output.InTangent = value.InTangent;
+		output.OutTangent = value.OutTangent;
+		output.Time = value.Time;
 
 		return output;
 	}

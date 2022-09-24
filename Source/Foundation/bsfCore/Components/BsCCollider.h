@@ -91,15 +91,15 @@ namespace bs
 
 		/** @copydoc Collider::onCollisionBegin */
 		BS_SCRIPT_EXPORT(n:OnCollisionBegin)
-		Event<void(const CollisionData&)> onCollisionBegin;
+		Event<void(const CollisionData&)> OnCollisionBegin;
 
 		/** @copydoc Collider::onCollisionStay */
 		BS_SCRIPT_EXPORT(n:OnCollisionStay)
-		Event<void(const CollisionData&)> onCollisionStay;
+		Event<void(const CollisionData&)> OnCollisionStay;
 
 		/** @copydoc Collider::onCollisionEnd */
 		BS_SCRIPT_EXPORT(n:OnCollisionEnd)
-		Event<void(const CollisionData&)> onCollisionEnd;
+		Event<void(const CollisionData&)> OnCollisionEnd;
 
 		/** @name Internal
 		 *  @{

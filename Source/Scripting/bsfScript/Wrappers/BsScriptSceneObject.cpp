@@ -22,52 +22,52 @@ namespace bs
 
 	void ScriptSceneObject::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptSceneObject::InternalCreateInstance);
-		metaData.scriptClass->AddInternalCall("Internal_GetName", (void*)&ScriptSceneObject::InternalGetName);
-		metaData.scriptClass->AddInternalCall("Internal_SetName", (void*)&ScriptSceneObject::InternalSetName);
-		metaData.scriptClass->AddInternalCall("Internal_GetActive", (void*)&ScriptSceneObject::InternalGetActive);
-		metaData.scriptClass->AddInternalCall("Internal_SetActive", (void*)&ScriptSceneObject::InternalSetActive);
-		metaData.scriptClass->AddInternalCall("Internal_HasFlag", (void*)&ScriptSceneObject::InternalHasFlag);
+		metaData.ScriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptSceneObject::InternalCreateInstance);
+		metaData.ScriptClass->AddInternalCall("Internal_GetName", (void*)&ScriptSceneObject::InternalGetName);
+		metaData.ScriptClass->AddInternalCall("Internal_SetName", (void*)&ScriptSceneObject::InternalSetName);
+		metaData.ScriptClass->AddInternalCall("Internal_GetActive", (void*)&ScriptSceneObject::InternalGetActive);
+		metaData.ScriptClass->AddInternalCall("Internal_SetActive", (void*)&ScriptSceneObject::InternalSetActive);
+		metaData.ScriptClass->AddInternalCall("Internal_HasFlag", (void*)&ScriptSceneObject::InternalHasFlag);
 
-		metaData.scriptClass->AddInternalCall("Internal_GetMobility", (void*)&ScriptSceneObject::InternalGetMobility);
-		metaData.scriptClass->AddInternalCall("Internal_SetMobility", (void*)&ScriptSceneObject::InternalSetMobility);
-		metaData.scriptClass->AddInternalCall("Internal_GetParent", (void*)&ScriptSceneObject::InternalGetParent);
-		metaData.scriptClass->AddInternalCall("Internal_GetParent", (void*)&ScriptSceneObject::InternalGetParent);
-		metaData.scriptClass->AddInternalCall("Internal_SetParent", (void*)&ScriptSceneObject::InternalSetParent);
-		metaData.scriptClass->AddInternalCall("Internal_GetScene", (void*)&ScriptSceneObject::InternalGetScene);
-		metaData.scriptClass->AddInternalCall("Internal_GetNumChildren", (void*)&ScriptSceneObject::InternalGetNumChildren);
-		metaData.scriptClass->AddInternalCall("Internal_GetChild", (void*)&ScriptSceneObject::InternalGetChild);
-		metaData.scriptClass->AddInternalCall("Internal_FindChild", (void*)&ScriptSceneObject::InternalFindChild);
-		metaData.scriptClass->AddInternalCall("Internal_FindChildren", (void*)&ScriptSceneObject::InternalFindChildren);
+		metaData.ScriptClass->AddInternalCall("Internal_GetMobility", (void*)&ScriptSceneObject::InternalGetMobility);
+		metaData.ScriptClass->AddInternalCall("Internal_SetMobility", (void*)&ScriptSceneObject::InternalSetMobility);
+		metaData.ScriptClass->AddInternalCall("Internal_GetParent", (void*)&ScriptSceneObject::InternalGetParent);
+		metaData.ScriptClass->AddInternalCall("Internal_GetParent", (void*)&ScriptSceneObject::InternalGetParent);
+		metaData.ScriptClass->AddInternalCall("Internal_SetParent", (void*)&ScriptSceneObject::InternalSetParent);
+		metaData.ScriptClass->AddInternalCall("Internal_GetScene", (void*)&ScriptSceneObject::InternalGetScene);
+		metaData.ScriptClass->AddInternalCall("Internal_GetNumChildren", (void*)&ScriptSceneObject::InternalGetNumChildren);
+		metaData.ScriptClass->AddInternalCall("Internal_GetChild", (void*)&ScriptSceneObject::InternalGetChild);
+		metaData.ScriptClass->AddInternalCall("Internal_FindChild", (void*)&ScriptSceneObject::InternalFindChild);
+		metaData.ScriptClass->AddInternalCall("Internal_FindChildren", (void*)&ScriptSceneObject::InternalFindChildren);
 
-		metaData.scriptClass->AddInternalCall("Internal_GetPosition", (void*)&ScriptSceneObject::InternalGetPosition);
-		metaData.scriptClass->AddInternalCall("Internal_GetLocalPosition", (void*)&ScriptSceneObject::InternalGetLocalPosition);
-		metaData.scriptClass->AddInternalCall("Internal_GetRotation", (void*)&ScriptSceneObject::InternalGetRotation);
-		metaData.scriptClass->AddInternalCall("Internal_GetLocalRotation", (void*)&ScriptSceneObject::InternalGetLocalRotation);
-		metaData.scriptClass->AddInternalCall("Internal_GetScale", (void*)&ScriptSceneObject::InternalGetScale);
-		metaData.scriptClass->AddInternalCall("Internal_GetLocalScale", (void*)&ScriptSceneObject::InternalGetLocalScale);
+		metaData.ScriptClass->AddInternalCall("Internal_GetPosition", (void*)&ScriptSceneObject::InternalGetPosition);
+		metaData.ScriptClass->AddInternalCall("Internal_GetLocalPosition", (void*)&ScriptSceneObject::InternalGetLocalPosition);
+		metaData.ScriptClass->AddInternalCall("Internal_GetRotation", (void*)&ScriptSceneObject::InternalGetRotation);
+		metaData.ScriptClass->AddInternalCall("Internal_GetLocalRotation", (void*)&ScriptSceneObject::InternalGetLocalRotation);
+		metaData.ScriptClass->AddInternalCall("Internal_GetScale", (void*)&ScriptSceneObject::InternalGetScale);
+		metaData.ScriptClass->AddInternalCall("Internal_GetLocalScale", (void*)&ScriptSceneObject::InternalGetLocalScale);
 
-		metaData.scriptClass->AddInternalCall("Internal_SetPosition", (void*)&ScriptSceneObject::InternalSetPosition);
-		metaData.scriptClass->AddInternalCall("Internal_SetLocalPosition", (void*)&ScriptSceneObject::InternalSetLocalPosition);
-		metaData.scriptClass->AddInternalCall("Internal_SetRotation", (void*)&ScriptSceneObject::InternalSetRotation);
-		metaData.scriptClass->AddInternalCall("Internal_SetLocalRotation", (void*)&ScriptSceneObject::InternalSetLocalRotation);
-		metaData.scriptClass->AddInternalCall("Internal_SetLocalScale", (void*)&ScriptSceneObject::InternalSetLocalScale);
+		metaData.ScriptClass->AddInternalCall("Internal_SetPosition", (void*)&ScriptSceneObject::InternalSetPosition);
+		metaData.ScriptClass->AddInternalCall("Internal_SetLocalPosition", (void*)&ScriptSceneObject::InternalSetLocalPosition);
+		metaData.ScriptClass->AddInternalCall("Internal_SetRotation", (void*)&ScriptSceneObject::InternalSetRotation);
+		metaData.ScriptClass->AddInternalCall("Internal_SetLocalRotation", (void*)&ScriptSceneObject::InternalSetLocalRotation);
+		metaData.ScriptClass->AddInternalCall("Internal_SetLocalScale", (void*)&ScriptSceneObject::InternalSetLocalScale);
 
-		metaData.scriptClass->AddInternalCall("Internal_GetLocalTransform", (void*)&ScriptSceneObject::InternalGetLocalTransform);
-		metaData.scriptClass->AddInternalCall("Internal_GetWorldTransform", (void*)&ScriptSceneObject::InternalGetWorldTransform);
-		metaData.scriptClass->AddInternalCall("Internal_LookAt", (void*)&ScriptSceneObject::InternalLookAt);
-		metaData.scriptClass->AddInternalCall("Internal_Move", (void*)&ScriptSceneObject::InternalMove);
-		metaData.scriptClass->AddInternalCall("Internal_MoveLocal", (void*)&ScriptSceneObject::InternalMoveLocal);
-		metaData.scriptClass->AddInternalCall("Internal_Rotate", (void*)&ScriptSceneObject::InternalRotate);
-		metaData.scriptClass->AddInternalCall("Internal_Roll", (void*)&ScriptSceneObject::InternalRoll);
-		metaData.scriptClass->AddInternalCall("Internal_Yaw", (void*)&ScriptSceneObject::InternalYaw);
-		metaData.scriptClass->AddInternalCall("Internal_Pitch", (void*)&ScriptSceneObject::InternalPitch);
-		metaData.scriptClass->AddInternalCall("Internal_SetForward", (void*)&ScriptSceneObject::InternalSetForward);
-		metaData.scriptClass->AddInternalCall("Internal_GetForward", (void*)&ScriptSceneObject::InternalGetForward);
-		metaData.scriptClass->AddInternalCall("Internal_GetUp", (void*)&ScriptSceneObject::InternalGetUp);
-		metaData.scriptClass->AddInternalCall("Internal_GetRight", (void*)&ScriptSceneObject::InternalGetRight);
+		metaData.ScriptClass->AddInternalCall("Internal_GetLocalTransform", (void*)&ScriptSceneObject::InternalGetLocalTransform);
+		metaData.ScriptClass->AddInternalCall("Internal_GetWorldTransform", (void*)&ScriptSceneObject::InternalGetWorldTransform);
+		metaData.ScriptClass->AddInternalCall("Internal_LookAt", (void*)&ScriptSceneObject::InternalLookAt);
+		metaData.ScriptClass->AddInternalCall("Internal_Move", (void*)&ScriptSceneObject::InternalMove);
+		metaData.ScriptClass->AddInternalCall("Internal_MoveLocal", (void*)&ScriptSceneObject::InternalMoveLocal);
+		metaData.ScriptClass->AddInternalCall("Internal_Rotate", (void*)&ScriptSceneObject::InternalRotate);
+		metaData.ScriptClass->AddInternalCall("Internal_Roll", (void*)&ScriptSceneObject::InternalRoll);
+		metaData.ScriptClass->AddInternalCall("Internal_Yaw", (void*)&ScriptSceneObject::InternalYaw);
+		metaData.ScriptClass->AddInternalCall("Internal_Pitch", (void*)&ScriptSceneObject::InternalPitch);
+		metaData.ScriptClass->AddInternalCall("Internal_SetForward", (void*)&ScriptSceneObject::InternalSetForward);
+		metaData.ScriptClass->AddInternalCall("Internal_GetForward", (void*)&ScriptSceneObject::InternalGetForward);
+		metaData.ScriptClass->AddInternalCall("Internal_GetUp", (void*)&ScriptSceneObject::InternalGetUp);
+		metaData.ScriptClass->AddInternalCall("Internal_GetRight", (void*)&ScriptSceneObject::InternalGetRight);
 
-		metaData.scriptClass->AddInternalCall("Internal_Destroy", (void*)&ScriptSceneObject::InternalDestroy);
+		metaData.ScriptClass->AddInternalCall("Internal_Destroy", (void*)&ScriptSceneObject::InternalDestroy);
 	}
 
 	void ScriptSceneObject::InternalCreateInstance(MonoObject* instance, MonoString* name, UINT32 flags)
@@ -428,7 +428,7 @@ namespace bs
 
 	MonoObject* ScriptSceneObject::CreateManagedInstanceInternal(bool construct)
 	{
-		MonoObject* managedInstance = metaData.scriptClass->CreateInstance(construct);
+		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance(construct);
 		SetManagedInstance(managedInstance);
 
 		return managedInstance;

@@ -45,7 +45,7 @@ namespace bs
 
 	void ScriptObjectImpl::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_ManagedInstanceDeleted", (void*)&ScriptObjectImpl::InternalManagedInstanceDeleted);
+		metaData.ScriptClass->AddInternalCall("Internal_ManagedInstanceDeleted", (void*)&ScriptObjectImpl::InternalManagedInstanceDeleted);
 	}
 
 	void ScriptObjectImpl::InternalManagedInstanceDeleted(ScriptObjectBase* instance)

@@ -12,8 +12,8 @@ namespace bs
 {
 	struct __CollisionDataInterop
 	{
-		MonoArray* collider;
-		MonoArray* contactPoints;
+		MonoArray* Collider;
+		MonoArray* ContactPoints;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptCollisionData : public ScriptObject<ScriptCollisionData>

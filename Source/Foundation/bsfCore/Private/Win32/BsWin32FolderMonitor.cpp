@@ -39,80 +39,80 @@ namespace bs
 
 		static const UINT32 READ_BUFFER_SIZE = 65536;
 
-		Path mFolderToMonitor;
-		HANDLE mDirHandle;
-		OVERLAPPED mOverlapped;
-		MonitorState mState;
-		UINT8 mBuffer[READ_BUFFER_SIZE];
-		DWORD mBufferSize;
-		bool mMonitorSubdirectories;
-		DWORD mMonitorFlags;
-		DWORD mReadError;
+		Path MFolderToMonitor;
+		HANDLE MDirHandle;
+		OVERLAPPED MOverlapped;
+		MonitorState MState;
+		UINT8 MBuffer[READ_BUFFER_SIZE];
+		DWORD MBufferSize;
+		bool MMonitorSubdirectories;
+		DWORD MMonitorFlags;
+		DWORD MReadError;
 
-		WString mCachedOldFileName; // Used during rename notifications as they are handled in two steps
+		WString MCachedOldFileName; // Used during rename notifications as they are handled in two steps
 
-		Mutex mStatusMutex;
-		Signal mStartStopEvent;
+		Mutex MStatusMutex;
+		Signal MStartStopEvent;
 	};
 
 	FolderMonitor::FolderWatchInfo::FolderWatchInfo(const Path& folderToMonitor, HANDLE dirHandle, bool monitorSubdirectories, DWORD monitorFlags)
-		:mFolderToMonitor(folderToMonitor), mDirHandle(dirHandle), mState(MonitorState::Inactive), mBufferSize(0),
-		mMonitorSubdirectories(monitorSubdirectories), mMonitorFlags(monitorFlags), mReadError(0)
+		:MFolderToMonitor(folderToMonitor), MDirHandle(dirHandle), MState(MonitorState::Inactive), MBufferSize(0),
+		MMonitorSubdirectories(monitorSubdirectories), MMonitorFlags(monitorFlags), MReadError(0)
 	{
-		memset(&mOverlapped, 0, sizeof(mOverlapped));
+		memset(&MOverlapped, 0, sizeof(MOverlapped));
 	}
 
 	FolderMonitor::FolderWatchInfo::~FolderWatchInfo()
 	{
-		assert(mState == MonitorState::Inactive);
+		assert(MState == MonitorState::Inactive);
 
 		StopMonitor(0);
 	}
 
 	void FolderMonitor::FolderWatchInfo::StartMonitor(HANDLE compPortHandle)
 	{
-		if(mState != MonitorState::Inactive)
+		if(MState != MonitorState::Inactive)
 			return; // Already monitoring
 
 		{
-			Lock lock(mStatusMutex);
+			Lock lock(MStatusMutex);
 
-			mState = MonitorState::Starting;
-			PostQueuedCompletionStatus(compPortHandle, sizeof(this), (ULONG_PTR)this, &mOverlapped);
+			MState = MonitorState::Starting;
+			PostQueuedCompletionStatus(compPortHandle, sizeof(this), (ULONG_PTR)this, &MOverlapped);
 
-			while(mState != MonitorState::Monitoring)
-				mStartStopEvent.wait(lock);
+			while(MState != MonitorState::Monitoring)
+				MStartStopEvent.wait(lock);
 		}
 
-		if(mReadError != ERROR_SUCCESS)
+		if(MReadError != ERROR_SUCCESS)
 		{
 			{
-				Lock lock(mStatusMutex);
-				mState = MonitorState::Inactive;
+				Lock lock(MStatusMutex);
+				MState = MonitorState::Inactive;
 			}
 
 			BS_EXCEPT(InternalErrorException, "Failed to start folder monitor on folder \"" +
-				mFolderToMonitor.ToString() + "\" because ReadDirectoryChangesW failed.");
+				MFolderToMonitor.ToString() + "\" because ReadDirectoryChangesW failed.");
 		}
 	}
 
 	void FolderMonitor::FolderWatchInfo::StopMonitor(HANDLE compPortHandle)
 	{
-		if(mState != MonitorState::Inactive)
+		if(MState != MonitorState::Inactive)
 		{
-			Lock lock(mStatusMutex);
+			Lock lock(MStatusMutex);
 
-			mState = MonitorState::Shutdown;
-			PostQueuedCompletionStatus(compPortHandle, sizeof(this), (ULONG_PTR)this, &mOverlapped);
+			MState = MonitorState::Shutdown;
+			PostQueuedCompletionStatus(compPortHandle, sizeof(this), (ULONG_PTR)this, &MOverlapped);
 
-			while(mState != MonitorState::Inactive)
-				mStartStopEvent.wait(lock);
+			while(MState != MonitorState::Inactive)
+				MStartStopEvent.wait(lock);
 		}
 
-		if(mDirHandle != INVALID_HANDLE_VALUE)
+		if(MDirHandle != INVALID_HANDLE_VALUE)
 		{			
-			CloseHandle(mDirHandle);
-			mDirHandle = INVALID_HANDLE_VALUE;
+			CloseHandle(MDirHandle);
+			MDirHandle = INVALID_HANDLE_VALUE;
 		}
 	}
 
@@ -209,14 +209,14 @@ namespace bs
 			FileAction* action = (FileAction*)bytes;
 			bytes += sizeof(FileAction);
 
-			action->oldName = nullptr;
-			action->newName = (String::value_type*)bytes;
-			action->type = FileActionType::Added;
+			action->OldName = nullptr;
+			action->NewName = (String::value_type*)bytes;
+			action->Type = FileActionType::Added;
 
-			memcpy(action->newName, utf8filename.data(), utf8filename.size() * sizeof(String::value_type));
-			action->newName[utf8filename.size()] = L'\0';
-			action->lastSize = 0;
-			action->checkForWriteStarted = false;
+			memcpy(action->NewName, utf8filename.data(), utf8filename.size() * sizeof(String::value_type));
+			action->NewName[utf8filename.size()] = L'\0';
+			action->LastSize = 0;
+			action->CheckForWriteStarted = false;
 
 			return action;
 		}
@@ -229,14 +229,14 @@ namespace bs
 			FileAction* action = (FileAction*)bytes;
 			bytes += sizeof(FileAction);
 
-			action->oldName = nullptr;
-			action->newName = (String::value_type*)bytes;
-			action->type = FileActionType::Removed;
+			action->OldName = nullptr;
+			action->NewName = (String::value_type*)bytes;
+			action->Type = FileActionType::Removed;
 
-			memcpy(action->newName, utf8filename.data(), utf8filename.size() * sizeof(String::value_type));
-			action->newName[utf8filename.size()] = L'\0';
-			action->lastSize = 0;
-			action->checkForWriteStarted = false;
+			memcpy(action->NewName, utf8filename.data(), utf8filename.size() * sizeof(String::value_type));
+			action->NewName[utf8filename.size()] = L'\0';
+			action->LastSize = 0;
+			action->CheckForWriteStarted = false;
 
 			return action;
 		}
@@ -249,14 +249,14 @@ namespace bs
 			FileAction* action = (FileAction*)bytes;
 			bytes += sizeof(FileAction);
 
-			action->oldName = nullptr;
-			action->newName = (String::value_type*)bytes;
-			action->type = FileActionType::Modified;
+			action->OldName = nullptr;
+			action->NewName = (String::value_type*)bytes;
+			action->Type = FileActionType::Modified;
 
-			memcpy(action->newName, utf8filename.data(), utf8filename.size() * sizeof(String::value_type));
-			action->newName[utf8filename.size()] = L'\0';
-			action->lastSize = 0;
-			action->checkForWriteStarted = false;
+			memcpy(action->NewName, utf8filename.data(), utf8filename.size() * sizeof(String::value_type));
+			action->NewName[utf8filename.size()] = L'\0';
+			action->LastSize = 0;
+			action->CheckForWriteStarted = false;
 
 			return action;
 		}
@@ -272,19 +272,19 @@ namespace bs
 			FileAction* action = (FileAction*)bytes;
 			bytes += sizeof(FileAction);
 
-			action->oldName = (String::value_type*)bytes;
+			action->OldName = (String::value_type*)bytes;
 			bytes += (utf8Oldfilename.size() + 1) * sizeof(String::value_type);
 
-			action->newName = (String::value_type*)bytes;
-			action->type = FileActionType::Modified;
+			action->NewName = (String::value_type*)bytes;
+			action->Type = FileActionType::Modified;
 
-			memcpy(action->oldName, utf8Oldfilename.data(), utf8Oldfilename.size() * sizeof(String::value_type));
-			action->oldName[utf8Oldfilename.size()] = L'\0';
+			memcpy(action->OldName, utf8Oldfilename.data(), utf8Oldfilename.size() * sizeof(String::value_type));
+			action->OldName[utf8Oldfilename.size()] = L'\0';
 
-			memcpy(action->newName, utf8Newfilename.data(), utf8Newfilename.size() * sizeof(String::value_type));
-			action->newName[utf8Newfilename.size()] = L'\0';
-			action->lastSize = 0;
-			action->checkForWriteStarted = false;
+			memcpy(action->NewName, utf8Newfilename.data(), utf8Newfilename.size() * sizeof(String::value_type));
+			action->NewName[utf8Newfilename.size()] = L'\0';
+			action->LastSize = 0;
+			action->CheckForWriteStarted = false;
 
 			return action;
 		}
@@ -294,31 +294,31 @@ namespace bs
 			bs_free(action);
 		}
 
-		String::value_type* oldName;
-		String::value_type* newName;
-		FileActionType type;
+		String::value_type* OldName;
+		String::value_type* NewName;
+		FileActionType Type;
 
-		UINT64 lastSize;
-		bool checkForWriteStarted;
+		UINT64 LastSize;
+		bool CheckForWriteStarted;
 	};
 
 	struct FolderMonitor::Pimpl
 	{
-		Vector<FolderWatchInfo*> mFoldersToWatch;
-		HANDLE mCompPortHandle;
+		Vector<FolderWatchInfo*> MFoldersToWatch;
+		HANDLE MCompPortHandle;
 
-		Queue<FileAction*> mFileActions;
-		List<FileAction*> mActiveFileActions;
+		Queue<FileAction*> MFileActions;
+		List<FileAction*> MActiveFileActions;
 
-		Mutex mMainMutex;
-		Thread* mWorkerThread;
+		Mutex MMainMutex;
+		Thread* MWorkerThread;
 	};
 
 	FolderMonitor::FolderMonitor()
 	{
 		m = bs_new<Pimpl>();
-		m->mWorkerThread = nullptr;
-		m->mCompPortHandle = nullptr;
+		m->MWorkerThread = nullptr;
+		m->MCompPortHandle = nullptr;
 	}
 
 	FolderMonitor::~FolderMonitor()
@@ -326,10 +326,10 @@ namespace bs
 		StopMonitorAll();
 
 		// No need for mutex since we know worker thread is shut down by now
-		while(!m->mFileActions.empty())
+		while(!m->MFileActions.empty())
 		{
-			FileAction* action = m->mFileActions.front();
-			m->mFileActions.pop();
+			FileAction* action = m->MFileActions.front();
+			m->MFileActions.pop();
 
 			FileAction::Destroy(action);
 		}
@@ -366,37 +366,37 @@ namespace bs
 		if(changeFilter.IsSet(FolderChangeBit::FileWrite))
 			filterFlags |= FILE_NOTIFY_CHANGE_LAST_WRITE;
 
-		m->mFoldersToWatch.push_back(bs_new<FolderWatchInfo>(folderPath, dirHandle, subdirectories, filterFlags));
-		FolderWatchInfo* watchInfo = m->mFoldersToWatch.back();
+		m->MFoldersToWatch.push_back(bs_new<FolderWatchInfo>(folderPath, dirHandle, subdirectories, filterFlags));
+		FolderWatchInfo* watchInfo = m->MFoldersToWatch.back();
 
-		m->mCompPortHandle = CreateIoCompletionPort(dirHandle, m->mCompPortHandle, (ULONG_PTR)watchInfo, 0);
+		m->MCompPortHandle = CreateIoCompletionPort(dirHandle, m->MCompPortHandle, (ULONG_PTR)watchInfo, 0);
 
-		if(m->mCompPortHandle == nullptr)
+		if(m->MCompPortHandle == nullptr)
 		{
-			m->mFoldersToWatch.erase(m->mFoldersToWatch.end() - 1);
+			m->MFoldersToWatch.erase(m->MFoldersToWatch.end() - 1);
 			bs_delete(watchInfo);
 			BS_EXCEPT(InternalErrorException, "Failed to open completion port for folder monitoring. Error code: " + toString((UINT64)GetLastError()));
 		}
 
-		if(m->mWorkerThread == nullptr)
+		if(m->MWorkerThread == nullptr)
 		{
-			m->mWorkerThread = bs_new<Thread>(std::bind(&FolderMonitor::WorkerThreadMain, this));
+			m->MWorkerThread = bs_new<Thread>(std::bind(&FolderMonitor::WorkerThreadMain, this));
 
-			if(m->mWorkerThread == nullptr)
+			if(m->MWorkerThread == nullptr)
 			{
-				m->mFoldersToWatch.erase(m->mFoldersToWatch.end() - 1);
+				m->MFoldersToWatch.erase(m->MFoldersToWatch.end() - 1);
 				bs_delete(watchInfo);
 				BS_EXCEPT(InternalErrorException, "Failed to create a new worker thread for folder monitoring");
 			}
 		}
 
-		if(m->mWorkerThread != nullptr)
+		if(m->MWorkerThread != nullptr)
 		{
-			watchInfo->StartMonitor(m->mCompPortHandle);
+			watchInfo->StartMonitor(m->MCompPortHandle);
 		}
 		else
 		{
-			m->mFoldersToWatch.erase(m->mFoldersToWatch.end() - 1);
+			m->MFoldersToWatch.erase(m->MFoldersToWatch.end() - 1);
 			bs_delete(watchInfo);
 			BS_EXCEPT(InternalErrorException, "Failed to create a new worker thread for folder monitoring");
 		}
@@ -404,54 +404,54 @@ namespace bs
 
 	void FolderMonitor::StopMonitor(const Path& folderPath)
 	{
-		auto findIter = std::find_if(m->mFoldersToWatch.begin(), m->mFoldersToWatch.end(),
-			[&](const FolderWatchInfo* x) { return x->mFolderToMonitor == folderPath; });
+		auto findIter = std::find_if(m->MFoldersToWatch.begin(), m->MFoldersToWatch.end(),
+			[&](const FolderWatchInfo* x) { return x->MFolderToMonitor == folderPath; });
 
-		if(findIter != m->mFoldersToWatch.end())
+		if(findIter != m->MFoldersToWatch.end())
 		{
 			FolderWatchInfo* watchInfo = *findIter;
 
-			watchInfo->StopMonitor(m->mCompPortHandle);
+			watchInfo->StopMonitor(m->MCompPortHandle);
 			bs_delete(watchInfo);
 
-			m->mFoldersToWatch.erase(findIter);
+			m->MFoldersToWatch.erase(findIter);
 		}
 
-		if(m->mFoldersToWatch.size() == 0)
+		if(m->MFoldersToWatch.size() == 0)
 			StopMonitorAll();
 	}
 
 	void FolderMonitor::StopMonitorAll()
 	{
-		for(auto& watchInfo : m->mFoldersToWatch)
+		for(auto& watchInfo : m->MFoldersToWatch)
 		{
-			watchInfo->StopMonitor(m->mCompPortHandle);
+			watchInfo->StopMonitor(m->MCompPortHandle);
 
 			{
 				// Note: Need this mutex to ensure worker thread is done with watchInfo.
 				// Even though we wait for a condition variable from the worker thread in stopMonitor,
 				// that doesn't mean the worker thread is done with the condition variable
 				// (which is stored inside watchInfo)
-				Lock lock(m->mMainMutex);
+				Lock lock(m->MMainMutex);
 				bs_delete(watchInfo);
 			}
 		}
 
-		m->mFoldersToWatch.clear();
+		m->MFoldersToWatch.clear();
 
-		if(m->mWorkerThread != nullptr)
+		if(m->MWorkerThread != nullptr)
 		{
-			PostQueuedCompletionStatus(m->mCompPortHandle, 0, 0, nullptr);
+			PostQueuedCompletionStatus(m->MCompPortHandle, 0, 0, nullptr);
 
-			m->mWorkerThread->join();
-			bs_delete(m->mWorkerThread);
-			m->mWorkerThread = nullptr;
+			m->MWorkerThread->join();
+			bs_delete(m->MWorkerThread);
+			m->MWorkerThread = nullptr;
 		}
 
-		if(m->mCompPortHandle != nullptr)
+		if(m->MCompPortHandle != nullptr)
 		{
-			CloseHandle(m->mCompPortHandle);
-			m->mCompPortHandle = nullptr;
+			CloseHandle(m->MCompPortHandle);
+			m->MCompPortHandle = nullptr;
 		}
 	}
 
@@ -464,7 +464,7 @@ namespace bs
 			DWORD numBytes;
 			LPOVERLAPPED overlapped;
 
-			if(!GetQueuedCompletionStatus(m->mCompPortHandle, &numBytes, (PULONG_PTR) &watchInfo, &overlapped, INFINITE))
+			if(!GetQueuedCompletionStatus(m->MCompPortHandle, &numBytes, (PULONG_PTR) &watchInfo, &overlapped, INFINITE))
 			{
 				assert(false);
 				// TODO: Folder handle was lost most likely. Not sure how to deal with that. Shutdown watch on this folder and cleanup?
@@ -475,91 +475,91 @@ namespace bs
 				MonitorState state;
 
 				{
-					Lock lock(watchInfo->mStatusMutex);
-					state = watchInfo->mState;
+					Lock lock(watchInfo->MStatusMutex);
+					state = watchInfo->MState;
 				}
 
 				switch(state)
 				{
 				case MonitorState::Starting:
-					if(!ReadDirectoryChangesW(watchInfo->mDirHandle, watchInfo->mBuffer, FolderWatchInfo::READ_BUFFER_SIZE,
-						watchInfo->mMonitorSubdirectories, watchInfo->mMonitorFlags, &watchInfo->mBufferSize, &watchInfo->mOverlapped, nullptr))
+					if(!ReadDirectoryChangesW(watchInfo->MDirHandle, watchInfo->MBuffer, FolderWatchInfo::READ_BUFFER_SIZE,
+						watchInfo->MMonitorSubdirectories, watchInfo->MMonitorFlags, &watchInfo->MBufferSize, &watchInfo->MOverlapped, nullptr))
 					{
 						assert(false); // TODO - Possibly the buffer was too small?
-						watchInfo->mReadError = GetLastError();
+						watchInfo->MReadError = GetLastError();
 					}
 					else
 					{
-						watchInfo->mReadError = ERROR_SUCCESS;
+						watchInfo->MReadError = ERROR_SUCCESS;
 
 						{
-							Lock lock(watchInfo->mStatusMutex);
-							watchInfo->mState = MonitorState::Monitoring;
+							Lock lock(watchInfo->MStatusMutex);
+							watchInfo->MState = MonitorState::Monitoring;
 						}
 					}
 
-					watchInfo->mStartStopEvent.notify_one();
+					watchInfo->MStartStopEvent.notify_one();
 
 					break;
 				case MonitorState::Monitoring:
 					{
-						FileNotifyInfo info(watchInfo->mBuffer, FolderWatchInfo::READ_BUFFER_SIZE);
+						FileNotifyInfo info(watchInfo->MBuffer, FolderWatchInfo::READ_BUFFER_SIZE);
 						HandleNotifications(info, *watchInfo);
 
-						if(!ReadDirectoryChangesW(watchInfo->mDirHandle, watchInfo->mBuffer, FolderWatchInfo::READ_BUFFER_SIZE,
-							watchInfo->mMonitorSubdirectories, watchInfo->mMonitorFlags, &watchInfo->mBufferSize, &watchInfo->mOverlapped, nullptr))
+						if(!ReadDirectoryChangesW(watchInfo->MDirHandle, watchInfo->MBuffer, FolderWatchInfo::READ_BUFFER_SIZE,
+							watchInfo->MMonitorSubdirectories, watchInfo->MMonitorFlags, &watchInfo->MBufferSize, &watchInfo->MOverlapped, nullptr))
 						{
 							assert(false); // TODO: Failed during normal operation, possibly the buffer was too small. Shutdown watch on this folder and cleanup?
-							watchInfo->mReadError = GetLastError();
+							watchInfo->MReadError = GetLastError();
 						}
 						else
 						{
-							watchInfo->mReadError = ERROR_SUCCESS;
+							watchInfo->MReadError = ERROR_SUCCESS;
 						}
 					}
 					break;
 				case MonitorState::Shutdown:
-					if(watchInfo->mDirHandle != INVALID_HANDLE_VALUE)
+					if(watchInfo->MDirHandle != INVALID_HANDLE_VALUE)
 					{
-						CloseHandle(watchInfo->mDirHandle);
-						watchInfo->mDirHandle = INVALID_HANDLE_VALUE;
+						CloseHandle(watchInfo->MDirHandle);
+						watchInfo->MDirHandle = INVALID_HANDLE_VALUE;
 
 						{
-							Lock lock(watchInfo->mStatusMutex);
-							watchInfo->mState = MonitorState::Shutdown2;
+							Lock lock(watchInfo->MStatusMutex);
+							watchInfo->MState = MonitorState::Shutdown2;
 						}
 					}
 					else
 					{
 						{
-							Lock lock(watchInfo->mStatusMutex);
-							watchInfo->mState = MonitorState::Inactive;
+							Lock lock(watchInfo->MStatusMutex);
+							watchInfo->MState = MonitorState::Inactive;
 						}
 
 						{
-							Lock lock(m->mMainMutex); // Ensures that we don't delete "watchInfo" before this thread is done with mStartStopEvent
-							watchInfo->mStartStopEvent.notify_one();
+							Lock lock(m->MMainMutex); // Ensures that we don't delete "watchInfo" before this thread is done with mStartStopEvent
+							watchInfo->MStartStopEvent.notify_one();
 						}
 					}
 
 					break;
 				case MonitorState::Shutdown2:
-					if(watchInfo->mDirHandle != INVALID_HANDLE_VALUE)
+					if(watchInfo->MDirHandle != INVALID_HANDLE_VALUE)
 					{
 						// Handle is still open? Try again.
-						CloseHandle(watchInfo->mDirHandle);
-						watchInfo->mDirHandle = INVALID_HANDLE_VALUE;
+						CloseHandle(watchInfo->MDirHandle);
+						watchInfo->MDirHandle = INVALID_HANDLE_VALUE;
 					}
 					else
 					{
 						{
-							Lock lock(watchInfo->mStatusMutex);
-							watchInfo->mState = MonitorState::Inactive;
+							Lock lock(watchInfo->MStatusMutex);
+							watchInfo->MState = MonitorState::Inactive;
 						}
 
 						{
-							Lock lock(m->mMainMutex); // Ensures that we don't delete "watchInfo" before this thread is done with mStartStopEvent
-							watchInfo->mStartStopEvent.notify_one();
+							Lock lock(m->MMainMutex); // Ensures that we don't delete "watchInfo" before this thread is done with mStartStopEvent
+							watchInfo->MStartStopEvent.notify_one();
 						}
 					}
 
@@ -578,7 +578,7 @@ namespace bs
 
 		do
 		{
-			WString fullPath = notifyInfo.GetFileNameWithPath(watchInfo.mFolderToMonitor);
+			WString fullPath = notifyInfo.GetFileNameWithPath(watchInfo.MFolderToMonitor);
 
 			// Ignore notifications about hidden files
 			if ((GetFileAttributesW(fullPath.c_str()) & FILE_ATTRIBUTE_HIDDEN) != 0)
@@ -596,38 +596,38 @@ namespace bs
 					mActions.push_back(FileAction::CreateModified(fullPath));
 				break;
 			case FILE_ACTION_RENAMED_OLD_NAME:
-					watchInfo.mCachedOldFileName = fullPath;
+					watchInfo.MCachedOldFileName = fullPath;
 				break;
 			case FILE_ACTION_RENAMED_NEW_NAME:
-					mActions.push_back(FileAction::CreateRenamed(watchInfo.mCachedOldFileName, fullPath));
+					mActions.push_back(FileAction::CreateRenamed(watchInfo.MCachedOldFileName, fullPath));
 				break;
 			}
 	
 		} while(notifyInfo.GetNext());
 
 		{
-			Lock lock(m->mMainMutex);
+			Lock lock(m->MMainMutex);
 
 			for(auto& action : mActions)
-				m->mFileActions.push(action);
+				m->MFileActions.push(action);
 		}
 	}
 
 	void FolderMonitor::UpdateInternal()
 	{
 		{
-			Lock lock(m->mMainMutex);
+			Lock lock(m->MMainMutex);
 
-			while (!m->mFileActions.empty())
+			while (!m->MFileActions.empty())
 			{
-				FileAction* action = m->mFileActions.front();
-				m->mFileActions.pop();
+				FileAction* action = m->MFileActions.front();
+				m->MFileActions.pop();
 
-				m->mActiveFileActions.push_back(action);
+				m->MActiveFileActions.push_back(action);
 			}
 		}
 
-		for (auto iter = m->mActiveFileActions.begin(); iter != m->mActiveFileActions.end();)
+		for (auto iter = m->MActiveFileActions.begin(); iter != m->MActiveFileActions.end();)
 		{
 			FileAction* action = *iter;
 			
@@ -635,49 +635,49 @@ namespace bs
 			// Sadly there doesn't seem to be a way to properly determine when those files are done being written, so instead
 			// we check for at least a couple of frames if the file's size hasn't changed before reporting a file action.
 			// This takes care of most of the issues and avoids reporting partially written files in almost all cases.
-			if (FileSystem::Exists(action->newName))
+			if (FileSystem::Exists(action->NewName))
 			{
-				UINT64 size = FileSystem::GetFileSize(action->newName);
-				if (!action->checkForWriteStarted)
+				UINT64 size = FileSystem::GetFileSize(action->NewName);
+				if (!action->CheckForWriteStarted)
 				{
-					action->checkForWriteStarted = true;
-					action->lastSize = size;
+					action->CheckForWriteStarted = true;
+					action->LastSize = size;
 
 					++iter;
 					continue;
 				}
 				else
 				{
-					if (action->lastSize != size)
+					if (action->LastSize != size)
 					{
-						action->lastSize = size;
+						action->LastSize = size;
 						++iter;
 						continue;
 					}
 				}
 			}
 
-			switch (action->type)
+			switch (action->Type)
 			{
 			case FileActionType::Added:
-				if (!onAdded.Empty())
-					onAdded(Path(action->newName));
+				if (!OnAdded.Empty())
+					OnAdded(Path(action->NewName));
 				break;
 			case FileActionType::Removed:
-				if (!onRemoved.Empty())
-					onRemoved(Path(action->newName));
+				if (!OnRemoved.Empty())
+					OnRemoved(Path(action->NewName));
 				break;
 			case FileActionType::Modified:
-				if (!onModified.Empty())
-					onModified(Path(action->newName));
+				if (!OnModified.Empty())
+					OnModified(Path(action->NewName));
 				break;
 			case FileActionType::Renamed:
-				if (!onRenamed.Empty())
-					onRenamed(Path(action->oldName), Path(action->newName));
+				if (!OnRenamed.Empty())
+					OnRenamed(Path(action->OldName), Path(action->NewName));
 				break;
 			}
 
-			m->mActiveFileActions.erase(iter++);
+			m->MActiveFileActions.erase(iter++);
 			FileAction::Destroy(action);
 		}
 	}

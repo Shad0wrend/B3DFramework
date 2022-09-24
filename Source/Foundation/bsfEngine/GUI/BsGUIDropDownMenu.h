@@ -16,20 +16,20 @@ namespace bs
 	/**	Contains items used for initializing one level in a drop down box hierarchy. */
 	struct BS_EXPORT GUIDropDownData
 	{
-		Vector<GUIDropDownDataEntry> entries;
-		Vector<bool> states;
-		UnorderedMap<String, HString> localizedNames;
+		Vector<GUIDropDownDataEntry> Entries;
+		Vector<bool> States;
+		UnorderedMap<String, HString> LocalizedNames;
 	};
 
 	/**	A set of parameters used for initializing a drop down box. */
 	struct DROP_DOWN_BOX_DESC
 	{
-		SPtr<Camera> camera; /**< Camera on which to open the drop down box. */
-		DropDownAreaPlacement placement; /**< Determines how is the drop down box positioned in the visible area. */
-		GUIDropDownData dropDownData; /**< Data to use for initializing menu items of the drop down box. */
-		HGUISkin skin; /**< Skin to use for drop down box GUI elements. */
+		SPtr<Camera> Camera; /**< Camera on which to open the drop down box. */
+		DropDownAreaPlacement Placement; /**< Determines how is the drop down box positioned in the visible area. */
+		GUIDropDownData DropDownData; /**< Data to use for initializing menu items of the drop down box. */
+		HGUISkin Skin; /**< Skin to use for drop down box GUI elements. */
 		/** Additional bounds that control what is considered the inside or the outside of the drop down box. */
-		Vector<Rect2I> additionalBounds;
+		Vector<Rect2I> AdditionalBounds;
 	};
 
 	/**	Represents a single entry in a drop down box. */
@@ -110,10 +110,10 @@ namespace bs
 			/**	Represents a single sub-menu page. */
 			struct PageInfo
 			{
-				UINT32 idx;
-				UINT32 start;
-				UINT32 end;
-				UINT32 height;
+				UINT32 Idx;
+				UINT32 Start;
+				UINT32 End;
+				UINT32 Height;
 			};
 
 		public:
@@ -175,40 +175,40 @@ namespace bs
 			void Close();
 
 			/**	Returns the type of the displayed drop down menu. */
-			GUIDropDownType GetType() const { return mType; }
+			GUIDropDownType GetType() const { return MType; }
 
 			/**	Returns actual visible bounds of the sub-menu. */
-			Rect2I GetVisibleBounds() const { return mVisibleBounds; }
+			Rect2I GetVisibleBounds() const { return MVisibleBounds; }
 
 			/**	Returns the drop box object that owns this sub-menu. */
-			GUIDropDownMenu* GetOwner() const { return mOwner; }
+			GUIDropDownMenu* GetOwner() const { return MOwner; }
 
 		public:
-			GUIDropDownMenu* mOwner;
+			GUIDropDownMenu* MOwner;
 
-			GUIDropDownType mType;
-			GUIDropDownData mData;
-			UINT32 mPage;
-			INT32 x, y;
-			UINT32 width, height;
-			Rect2I mVisibleBounds;
-			Rect2I mAvailableBounds;
-			UINT32 mDepthOffset;
-			bool mOpenedUpward;
+			GUIDropDownType MType;
+			GUIDropDownData MData;
+			UINT32 MPage;
+			INT32 X, Y;
+			UINT32 Width, Height;
+			Rect2I MVisibleBounds;
+			Rect2I MAvailableBounds;
+			UINT32 MDepthOffset;
+			bool MOpenedUpward;
 
-			GUIDropDownContent* mContent;
-			GUITexture* mBackgroundFrame;
-			GUIButton* mScrollUpBtn;
-			GUIButton* mScrollDownBtn;
-			GUITexture* mHandle;
+			GUIDropDownContent* MContent;
+			GUITexture* MBackgroundFrame;
+			GUIButton* MScrollUpBtn;
+			GUIButton* MScrollDownBtn;
+			GUITexture* MHandle;
 
-			GUIPanel* mBackgroundPanel;
-			GUIPanel* mContentPanel;
-			GUILayout* mContentLayout;
-			GUIPanel* mSidebarPanel;
+			GUIPanel* MBackgroundPanel;
+			GUIPanel* MContentPanel;
+			GUILayout* MContentLayout;
+			GUIPanel* MSidebarPanel;
 
-			DropDownSubMenu* mParent;
-			DropDownSubMenu* mSubMenu;
+			DropDownSubMenu* MParent;
+			DropDownSubMenu* MSubMenu;
 		};
 
 	private:

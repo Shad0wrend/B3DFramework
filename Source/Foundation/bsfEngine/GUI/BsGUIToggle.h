@@ -132,7 +132,7 @@ namespace bs
 		bool IsToggled() const { return mIsToggled; }
 
 		/**	Triggered whenever the button is toggled on or off. */
-		Event<void(bool)> onToggled;
+		Event<void(bool)> OnToggled;
 
 	public: // ***** INTERNAL ******
 		/** @name Internal

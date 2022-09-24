@@ -41,19 +41,19 @@ namespace bs
 	struct BS_SCRIPT_EXPORT(m:Particles,pl:true) ParticleEmissionMode
 	{
 		/** Type that determines general behaviour. */
-		ParticleEmissionModeType type = ParticleEmissionModeType::Random;
+		ParticleEmissionModeType Type = ParticleEmissionModeType::Random;
 
 		/**
 		 * Speed along which particle generation should move around the shape, relevant for Loop and PingPing emission
 		 * modes.
 		 */
-		float speed = 1.0f;
+		float Speed = 1.0f;
 
 		/**
 		 * Determines the minimum interval allowed between the generated particles. 0 specifies the particles can be
 		 * generated anywhere on the shape.
 		 */
-		float interval = 0.0f;
+		float Interval = 0.0f;
 	};
 
 	/**
@@ -118,29 +118,29 @@ namespace bs
 	struct BS_SCRIPT_EXPORT(m:Particles,pl:true,n:ParticleConeShapeOptions) PARTICLE_CONE_SHAPE_DESC
 	{
 		/** Determines where on the cone are the particles emitter from. */
-		ParticleEmitterConeType type = ParticleEmitterConeType::Base;
+		ParticleEmitterConeType Type = ParticleEmitterConeType::Base;
 
 		/** Radius of the cone base. */
-		float radius = 0.0f;
+		float Radius = 0.0f;
 
 		/** Angle of the cone. */
-		Degree angle = Degree(45.0f);
+		Degree Angle = Degree(45.0f);
 
 		/** Length of the cone. Irrelevant if emission type is Base. */
-		float length = 1.0f;
+		float Length = 1.0f;
 
 		/**
 		 * Proportion of the volume that can emit particles. Thickness of 0 results in particles being emitted only from the
 		 * edge of the cone, while thickness of 1 results in particles being emitted from the entire volume. In-between
 		 * values will use a part of the volume.
 		 */
-		float thickness = 1.0f;
+		float Thickness = 1.0f;
 
 		/** Angular portion of the cone from which to emit particles from, in degrees. */
-		Degree arc = Degree(360.0f);
+		Degree Arc = Degree(360.0f);
 
 		/** Determines how will particle positions on the shape be generated. */
-		ParticleEmissionMode mode;
+		ParticleEmissionMode Mode;
 	};
 
 	/**
@@ -209,14 +209,14 @@ namespace bs
 	struct BS_SCRIPT_EXPORT(m:Particles,pl:true,n:ParticleSphereShapeOptions) PARTICLE_SPHERE_SHAPE_DESC
 	{
 		/** Radius of the sphere. */
-		float radius = 1.0f;
+		float Radius = 1.0f;
 
 		/**
 		 * Proportion of the volume that can emit particles. Thickness of 0 results in particles being emitted only from the
 		 * edge of the volume, while thickness of 1 results in particles being emitted from the entire volume. In-between
 		 * values will use a part of the volume.
 		 */
-		float thickness = 0.0f;
+		float Thickness = 0.0f;
 	};
 
 	/**
@@ -278,14 +278,14 @@ namespace bs
 	struct BS_SCRIPT_EXPORT(m:Particles,pl:true,n:ParticleHemisphereShapeOptions) PARTICLE_HEMISPHERE_SHAPE_DESC
 	{
 		/** Radius of the hemisphere. */
-		float radius = 1.0f;
+		float Radius = 1.0f;
 
 		/**
 		 * Proportion of the volume that can emit particles. Thickness of 0 results in particles being emitted only from the
 		 * edge of the volume, while thickness of 1 results in particles being emitted from the entire volume. In-between
 		 * values will use a part of the volume.
 		 */
-		float thickness = 0.0f;
+		float Thickness = 0.0f;
 	};
 
 	/**
@@ -358,10 +358,10 @@ namespace bs
 	struct BS_SCRIPT_EXPORT(m:Particles,pl:true,n:ParticleBoxShapeOptions) PARTICLE_BOX_SHAPE_DESC
 	{
 		/** Determines from which portion of the box should particles be emitted from. */
-		ParticleEmitterBoxType type = ParticleEmitterBoxType::Volume;
+		ParticleEmitterBoxType Type = ParticleEmitterBoxType::Volume;
 
 		/** Extends of the box. */
-		Vector3 extents = Vector3::ONE;
+		Vector3 Extents = Vector3::ONE;
 	};
 
 	/**
@@ -425,10 +425,10 @@ namespace bs
 	struct BS_SCRIPT_EXPORT(m:Particles,pl:true,n:ParticleLineShapeOptions) PARTICLE_LINE_SHAPE_DESC
 	{
 		/** Length of the line. */
-		float length = 1.0f;
+		float Length = 1.0f;
 
 		/** Determines how will particle positions on the shape be generated. */
-		ParticleEmissionMode mode;
+		ParticleEmissionMode Mode;
 	};
 
 	/** Particle emitter shape that emits particles from a line segment. */
@@ -489,20 +489,20 @@ namespace bs
 	struct BS_SCRIPT_EXPORT(m:Particles,pl:true,n:ParticleCircleShapeOptions) PARTICLE_CIRCLE_SHAPE_DESC
 	{
 		/** Radius of the circle. */
-		float radius = 1.0f;
+		float Radius = 1.0f;
 
 		/**
 		 * Proportion of the surface that can emit particles. Thickness of 0 results in particles being emitted only from
 		 * the edge of the circle, while thickness of 1 results in particles being emitted from the entire surface.
 		 * In-between values will use a part of the surface.
 		 */
-		float thickness = 0.0f;
+		float Thickness = 0.0f;
 
 		/** Angular portion of the cone from which to emit particles from, in degrees. */
-		Degree arc = Degree(360.0f);
+		Degree Arc = Degree(360.0f);
 
 		/** Determines how will particle positions on the shape be generated. */
-		ParticleEmissionMode mode;
+		ParticleEmissionMode Mode;
 	};
 
 	/**
@@ -568,7 +568,7 @@ namespace bs
 	struct BS_SCRIPT_EXPORT(m:Particles,pl:true,n:ParticleRectShapeOptions) PARTICLE_RECT_SHAPE_DESC
 	{
 		/** Extents of the rectangle. */
-		Vector2 extents = Vector2::ONE;
+		Vector2 Extents = Vector2::ONE;
 	};
 
 	/** Particle emitter shape that emits particles from the surface of a rectangle. */
@@ -637,19 +637,19 @@ namespace bs
 	struct BS_SCRIPT_EXPORT(m:Particles,pl:true,n:ParticleStaticMeshShapeOptions) PARTICLE_STATIC_MESH_SHAPE_DESC
 	{
 		/** Determines from which portion of the mesh are the particles emitted from. */
-		ParticleEmitterMeshType type = ParticleEmitterMeshType::Triangle;
+		ParticleEmitterMeshType Type = ParticleEmitterMeshType::Triangle;
 
 		/**
 		 * When enabled the particles will be emitted sequentially from mesh vertices in the order they are defined.
 		 * Only relevant for the Vertex emit mode.
 		 */
-		bool sequential = false;
+		bool Sequential = false;
 
 		/**
 		 * Mesh to spawn particles on. Must at least contain per-vertex position data encoded as 3D float vectors. Can
 		 * optionally contain per-vertex normals encoded as 3D float vectors or as 4-byte unsigned-normalized format.
 		 */
-		HMesh mesh;
+		HMesh Mesh;
 	};
 
 	/**
@@ -661,8 +661,8 @@ namespace bs
 		/** Contains the cumulative, normalized weight of the triangle and its vertex indices. */
 		struct TriangleWeight
 		{
-			float cumulativeWeight;
-			UINT32 indices[3];
+			float CumulativeWeight;
+			UINT32 Indices[3];
 		};
 
 	public:
@@ -790,13 +790,13 @@ namespace bs
 	struct BS_SCRIPT_EXPORT(m:Particles,pl:true,n:ParticleSkinnedMeshShapeOptions) PARTICLE_SKINNED_MESH_SHAPE_DESC
 	{
 		/** Determines from which portion of the mesh are the particles emitted from. */
-		ParticleEmitterMeshType type = ParticleEmitterMeshType::Triangle;
+		ParticleEmitterMeshType Type = ParticleEmitterMeshType::Triangle;
 
 		/**
 		 * When enabled the particles will be emitted sequentially from mesh vertices in the order they are defined.
 		 * Only relevant for the Vertex emit mode.
 		 */
-		bool sequential = false;
+		bool Sequential = false;
 
 		/**
 		 * Renderable object containing a mesh to spawn particles on, as well as the attached Animation object resposible
@@ -804,7 +804,7 @@ namespace bs
 		 * vectors, blend indices encoded in 4-byte format, and blend weights encoded a 4D float vectors. Can optionally
 		 * contain per-vertex normals encoded as 3D float vectors or as 4-byte unsigned-normalized format.
 		 */
-		ComponentOrActor<Renderable> renderable;
+		ComponentOrActor<Renderable> Renderable;
 	};
 
 	/**
@@ -866,23 +866,23 @@ namespace bs
 	{
 		ParticleBurst() = default;
 		ParticleBurst(float time, FloatDistribution count, UINT32 cycles = 1, float interval = 1.0f)
-			:time(time), count(std::move(count)), cycles(cycles), interval(interval)
+			:Time(time), Count(std::move(count)), Cycles(cycles), Interval(interval)
 		{ }
 
 		/** Time at which to trigger the burst, in seconds. */
-		float time = 0.0f;
+		float Time = 0.0f;
 
 		/** Number of particles to emit when the burst triggers. */
-		FloatDistribution count = 0;
+		FloatDistribution Count = 0;
 
 		/**
 		 * Determines how many times to trigger the burst. If 0 the burst will trigger infinitely. Use @p interval to
 		 * to control the time between each cycle.
 		 */
-		UINT32 cycles = 1;
+		UINT32 Cycles = 1;
 
 		/** Controls how much time needs to pass before triggering another burst cycle, in seconds. */
-		float interval = 1.0f;
+		float Interval = 1.0f;
 	};
 
 	/** Handles spawning of new particles using the specified parameters and shape. */

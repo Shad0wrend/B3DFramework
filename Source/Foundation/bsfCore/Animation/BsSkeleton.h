@@ -24,54 +24,54 @@ namespace bs
 	  */
 	struct AnimationCurveMapping
 	{
-		UINT32 position;
-		UINT32 rotation;
-		UINT32 scale;
+		UINT32 Position;
+		UINT32 Rotation;
+		UINT32 Scale;
 	};
 
 	/** Information about a single bone used for constructing a skeleton. */
 	struct BONE_DESC
 	{
-		String name; /**< Unique name of the bone. */
-		UINT32 parent; /**< Index of the parent bone, if any. -1 if root bone. */
+		String Name; /**< Unique name of the bone. */
+		UINT32 Parent; /**< Index of the parent bone, if any. -1 if root bone. */
 
-		Transform localTfrm; /**< Local transform of the bone, relative to other bones in the hierarchy. */
-		Matrix4 invBindPose; /**< Inverse bind pose which transforms vertices from their bind pose into local space. */
+		Transform LocalTfrm; /**< Local transform of the bone, relative to other bones in the hierarchy. */
+		Matrix4 InvBindPose; /**< Inverse bind pose which transforms vertices from their bind pose into local space. */
 	};
 
 	/** Contains information about a single playing animation clip. */
 	struct AnimationState
 	{
-		SPtr<AnimationCurves> curves; /**< All curves in the animation clip. */
-		float length; /**< Total length of the animation clip in seconds (same as the length of the longest animation curve). */
-		AnimationCurveMapping* boneToCurveMapping; /**< Mapping of bone indices to curve indices for quick lookup .*/
-		AnimationCurveMapping* soToCurveMapping; /**< Mapping of scene object indices to curve indices for quick lookup. */
+		SPtr<AnimationCurves> Curves; /**< All curves in the animation clip. */
+		float Length; /**< Total length of the animation clip in seconds (same as the length of the longest animation curve). */
+		AnimationCurveMapping* BoneToCurveMapping; /**< Mapping of bone indices to curve indices for quick lookup .*/
+		AnimationCurveMapping* SoToCurveMapping; /**< Mapping of scene object indices to curve indices for quick lookup. */
 
-		TCurveCache<Vector3>* positionCaches; /**< Cache used for evaluating position curves. */
-		TCurveCache<Quaternion>* rotationCaches; /**< Cache used for evaluating rotation curves. */
-		TCurveCache<Vector3>* scaleCaches; /**< Cache used for evaluating scale curves. */
-		TCurveCache<float>* genericCaches; /**< Cache used for evaluating generic curves. */
+		TCurveCache<Vector3>* PositionCaches; /**< Cache used for evaluating position curves. */
+		TCurveCache<Quaternion>* RotationCaches; /**< Cache used for evaluating rotation curves. */
+		TCurveCache<Vector3>* ScaleCaches; /**< Cache used for evaluating scale curves. */
+		TCurveCache<float>* GenericCaches; /**< Cache used for evaluating generic curves. */
 
-		float time; /**< Time to evaluate the curve at. */
-		float weight; /**< Determines how much of an influence will this clip have in regard to others in the same layer. */
-		bool loop; /**< Determines should the animation loop (wrap) once ending or beginning frames are passed. */
-		bool disabled; /**< If true the clip state will not be evaluated. */
+		float Time; /**< Time to evaluate the curve at. */
+		float Weight; /**< Determines how much of an influence will this clip have in regard to others in the same layer. */
+		bool Loop; /**< Determines should the animation loop (wrap) once ending or beginning frames are passed. */
+		bool Disabled; /**< If true the clip state will not be evaluated. */
 	};
 
 	/** Contains animation states for a single animation layer. */
 	struct AnimationStateLayer
 	{
-		AnimationState* states; /**< Array of animation states in the layer. */
-		UINT32 numStates; /**< Number of states in @p states. */
+		AnimationState* States; /**< Array of animation states in the layer. */
+		UINT32 NumStates; /**< Number of states in @p states. */
 
-		UINT8 index; /**< Unique index of the animation layer. */
+		UINT8 Index; /**< Unique index of the animation layer. */
 
 		/**
 		 * If true animations from this layer will be added on top of other layers using the per-state weights. If false
 		 * the weights will be normalized, animations will be blended with each other according to the normalized weights
 		 * and then added on top of other layers.
 		 */
-		bool additive;
+		bool Additive;
 	};
 
 	/**
@@ -91,18 +91,18 @@ namespace bs
 		LocalSkeletonPose& operator=(const LocalSkeletonPose& other) = delete;
 		LocalSkeletonPose& operator=(LocalSkeletonPose&& other);
 
-		Vector3* positions = nullptr; /**< Local bone positions at specific animation time. */
-		Quaternion* rotations = nullptr; /**< Local bone rotations at specific animation time. */
-		Vector3* scales = nullptr; /**< Local bone scales at specific animation time. */
-		bool* hasOverride = nullptr; /**< True if the bone transform was overriden externally (local pose was ignored). */
-		UINT32 numBones = 0; /**< Number of bones in the pose. */
+		Vector3* Positions = nullptr; /**< Local bone positions at specific animation time. */
+		Quaternion* Rotations = nullptr; /**< Local bone rotations at specific animation time. */
+		Vector3* Scales = nullptr; /**< Local bone scales at specific animation time. */
+		bool* HasOverride = nullptr; /**< True if the bone transform was overriden externally (local pose was ignored). */
+		UINT32 NumBones = 0; /**< Number of bones in the pose. */
 	};
 
 	/** Contains internal information about a single bone in a Skeleton. */
 	struct SkeletonBoneInfo
 	{
-		String name; /**< Unique name of the bone. */
-		UINT32 parent; /**< Index of the bone parent, or -1 if root (no parent). */
+		String Name; /**< Unique name of the bone. */
+		UINT32 Parent; /**< Index of the bone parent, or -1 if root (no parent). */
 	};
 
 	/**

@@ -85,18 +85,18 @@ namespace bs
 		 */
 		struct DiffCommand
 		{
-			RTTIField* field;
-			UINT32 type;
-			SPtr<IReflectable> object;
-			UINT8* value;
-			SPtr<DataStream> streamValue;
-			UINT32 size;
+			RTTIField* Field;
+			UINT32 Type;
+			SPtr<IReflectable> Object;
+			UINT8* Value;
+			SPtr<DataStream> StreamValue;
+			UINT32 Size;
 
 			union
 			{
-				UINT32 arrayIdx;
-				UINT32 arraySize;
-				RTTITypeBase* rttiType;
+				UINT32 ArrayIdx;
+				UINT32 ArraySize;
+				RTTITypeBase* RttiType;
 			};
 		};
 

@@ -20,32 +20,32 @@ namespace bs
 	private:
 		SPtr<ManagedSerializableTypeInfo> GetParentType(ManagedSerializableDiff::ModifiedField* obj)
 		{
-			return obj->parentType;
+			return obj->ParentType;
 		}
 
 		void SetParentType(ManagedSerializableDiff::ModifiedField* obj, SPtr<ManagedSerializableTypeInfo> val)
 		{
-			obj->parentType = val;
+			obj->ParentType = val;
 		}
 
 		SPtr<ManagedSerializableMemberInfo> GetFieldType(ManagedSerializableDiff::ModifiedField* obj)
 		{
-			return obj->fieldType;
+			return obj->FieldType;
 		}
 
 		void SetFieldType(ManagedSerializableDiff::ModifiedField* obj, SPtr<ManagedSerializableMemberInfo> val)
 		{
-			obj->fieldType = val;
+			obj->FieldType = val;
 		}
 
 		SPtr<ManagedSerializableDiff::Modification> GetModification(ManagedSerializableDiff::ModifiedField* obj)
 		{
-			return obj->modification;
+			return obj->Modification;
 		}
 
 		void SetModification(ManagedSerializableDiff::ModifiedField* obj, SPtr<ManagedSerializableDiff::Modification> val)
 		{
-			obj->modification = val;
+			obj->Modification = val;
 		}
 	public:
 		ModifiedFieldRTTI()
@@ -78,22 +78,22 @@ namespace bs
 	private:
 		UINT32& GetIdx(ManagedSerializableDiff::ModifiedArrayEntry* obj)
 		{
-			return obj->idx;
+			return obj->Idx;
 		}
 
 		void SetIdx(ManagedSerializableDiff::ModifiedArrayEntry* obj, UINT32& val)
 		{
-			obj->idx = val;
+			obj->Idx = val;
 		}
 
 		SPtr<ManagedSerializableDiff::Modification> GetModification(ManagedSerializableDiff::ModifiedArrayEntry* obj)
 		{
-			return obj->modification;
+			return obj->Modification;
 		}
 
 		void SetModification(ManagedSerializableDiff::ModifiedArrayEntry* obj, SPtr<ManagedSerializableDiff::Modification> val)
 		{
-			obj->modification = val;
+			obj->Modification = val;
 		}
 	public:
 		ModifiedArrayEntryRTTI()
@@ -125,22 +125,22 @@ namespace bs
 	private:
 		SPtr<ManagedSerializableFieldData> GetKey(ManagedSerializableDiff::ModifiedDictionaryEntry* obj)
 		{
-			return obj->key;
+			return obj->Key;
 		}
 
 		void SetKey(ManagedSerializableDiff::ModifiedDictionaryEntry* obj, SPtr<ManagedSerializableFieldData> val)
 		{
-			obj->key = val;
+			obj->Key = val;
 		}
 
 		SPtr<ManagedSerializableDiff::Modification> GetModification(ManagedSerializableDiff::ModifiedDictionaryEntry* obj)
 		{
-			return obj->modification;
+			return obj->Modification;
 		}
 
 		void SetModification(ManagedSerializableDiff::ModifiedDictionaryEntry* obj, SPtr<ManagedSerializableDiff::Modification> val)
 		{
-			obj->modification = val;
+			obj->Modification = val;
 		}
 	public:
 		ModifiedDictionaryEntryRTTI()
@@ -196,22 +196,22 @@ namespace bs
 	private:
 		ManagedSerializableDiff::ModifiedField& GetFieldEntry(ManagedSerializableDiff::ModifiedObject* obj, UINT32 arrayIdx)
 		{
-			return obj->entries[arrayIdx];
+			return obj->Entries[arrayIdx];
 		}
 
 		void SetFieldEntry(ManagedSerializableDiff::ModifiedObject* obj, UINT32 arrayIdx, ManagedSerializableDiff::ModifiedField& val)
 		{
-			obj->entries[arrayIdx] = val;
+			obj->Entries[arrayIdx] = val;
 		}
 
 		UINT32 GetNumFieldEntries(ManagedSerializableDiff::ModifiedObject* obj)
 		{
-			return (UINT32)obj->entries.size();
+			return (UINT32)obj->Entries.size();
 		}
 
 		void SetNumFieldEntries(ManagedSerializableDiff::ModifiedObject* obj, UINT32 numEntries)
 		{
-			obj->entries = Vector<ManagedSerializableDiff::ModifiedField>(numEntries);
+			obj->Entries = Vector<ManagedSerializableDiff::ModifiedField>(numEntries);
 		}
 
 	public:
@@ -244,42 +244,42 @@ namespace bs
 	private:
 		Vector<UINT32>& GetOrigSizes(ManagedSerializableDiff::ModifiedArray* obj)
 		{
-			return obj->origSizes;
+			return obj->OrigSizes;
 		}
 
 		void SetOrigSizes(ManagedSerializableDiff::ModifiedArray* obj, Vector<UINT32>& val)
 		{
-			obj->origSizes = val;
+			obj->OrigSizes = val;
 		}
 
 		Vector<UINT32>& GetNewSizes(ManagedSerializableDiff::ModifiedArray* obj)
 		{
-			return obj->newSizes;
+			return obj->NewSizes;
 		}
 
 		void SetNewSizes(ManagedSerializableDiff::ModifiedArray* obj, Vector<UINT32>& val)
 		{
-			obj->newSizes = val;
+			obj->NewSizes = val;
 		}
 
 		ManagedSerializableDiff::ModifiedArrayEntry& GetFieldEntry(ManagedSerializableDiff::ModifiedArray* obj, UINT32 arrayIdx)
 		{
-			return obj->entries[arrayIdx];
+			return obj->Entries[arrayIdx];
 		}
 
 		void SetFieldEntry(ManagedSerializableDiff::ModifiedArray* obj, UINT32 arrayIdx, ManagedSerializableDiff::ModifiedArrayEntry& val)
 		{
-			obj->entries[arrayIdx] = val;
+			obj->Entries[arrayIdx] = val;
 		}
 
 		UINT32 GetNumFieldEntries(ManagedSerializableDiff::ModifiedArray* obj)
 		{
-			return (UINT32)obj->entries.size();
+			return (UINT32)obj->Entries.size();
 		}
 
 		void SetNumFieldEntries(ManagedSerializableDiff::ModifiedArray* obj, UINT32 numEntries)
 		{
-			obj->entries = Vector<ManagedSerializableDiff::ModifiedArrayEntry>(numEntries);
+			obj->Entries = Vector<ManagedSerializableDiff::ModifiedArrayEntry>(numEntries);
 		}
 
 	public:
@@ -314,42 +314,42 @@ namespace bs
 	private:
 		SPtr<ManagedSerializableFieldData> GetRemovedEntry(ManagedSerializableDiff::ModifiedDictionary* obj, UINT32 arrayIdx)
 		{
-			return obj->removed[arrayIdx];
+			return obj->Removed[arrayIdx];
 		}
 
 		void SetRemovedEntry(ManagedSerializableDiff::ModifiedDictionary* obj, UINT32 arrayIdx, SPtr<ManagedSerializableFieldData> val)
 		{
-			obj->removed[arrayIdx] = val;
+			obj->Removed[arrayIdx] = val;
 		}
 
 		UINT32 GetNumRemovedEntries(ManagedSerializableDiff::ModifiedDictionary* obj)
 		{
-			return (UINT32)obj->removed.size();
+			return (UINT32)obj->Removed.size();
 		}
 
 		void SetNumRemovedEntries(ManagedSerializableDiff::ModifiedDictionary* obj, UINT32 numEntries)
 		{
-			obj->removed = Vector<SPtr<ManagedSerializableFieldData>>(numEntries);
+			obj->Removed = Vector<SPtr<ManagedSerializableFieldData>>(numEntries);
 		}
 
 		ManagedSerializableDiff::ModifiedDictionaryEntry& GetFieldEntry(ManagedSerializableDiff::ModifiedDictionary* obj, UINT32 arrayIdx)
 		{
-			return obj->entries[arrayIdx];
+			return obj->Entries[arrayIdx];
 		}
 
 		void SetFieldEntry(ManagedSerializableDiff::ModifiedDictionary* obj, UINT32 arrayIdx, ManagedSerializableDiff::ModifiedDictionaryEntry& val)
 		{
-			obj->entries[arrayIdx] = val;
+			obj->Entries[arrayIdx] = val;
 		}
 
 		UINT32 GetNumFieldEntries(ManagedSerializableDiff::ModifiedDictionary* obj)
 		{
-			return (UINT32)obj->entries.size();
+			return (UINT32)obj->Entries.size();
 		}
 
 		void SetNumFieldEntries(ManagedSerializableDiff::ModifiedDictionary* obj, UINT32 numEntries)
 		{
-			obj->entries = Vector<ManagedSerializableDiff::ModifiedDictionaryEntry>(numEntries);
+			obj->Entries = Vector<ManagedSerializableDiff::ModifiedDictionaryEntry>(numEntries);
 		}
 
 	public:
@@ -384,12 +384,12 @@ namespace bs
 	private:
 		SPtr<ManagedSerializableFieldData> GetValue(ManagedSerializableDiff::ModifiedEntry* obj)
 		{
-			return obj->value;
+			return obj->Value;
 		}
 
 		void SetValue(ManagedSerializableDiff::ModifiedEntry* obj, SPtr<ManagedSerializableFieldData> val)
 		{
-			obj->value = val;
+			obj->Value = val;
 		}
 
 	public:

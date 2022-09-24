@@ -165,7 +165,7 @@ namespace bs
 			state->Initialize();
 
 			CachedDepthStencilState cachedData(id);
-			cachedData.state = state;
+			cachedData.State = state;
 
 			NotifyDepthStencilStateCreated(desc, cachedData);
 		}
@@ -183,7 +183,7 @@ namespace bs
 			state->Initialize();
 
 			CachedRasterizerState cachedData(id);
-			cachedData.state = state;
+			cachedData.State = state;
 
 			NotifyRasterizerStateCreated(desc, cachedData);
 		}
@@ -201,7 +201,7 @@ namespace bs
 			state->Initialize();
 
 			CachedBlendState cachedData(id);
-			cachedData.state = state;
+			cachedData.State = state;
 
 			NotifyBlendStateCreated(desc, cachedData);
 		}
@@ -259,7 +259,7 @@ namespace bs
 			state = CreateDepthStencilStateInternalInternal(desc, id);
 
 			CachedDepthStencilState cachedData(id);
-			cachedData.state = state;
+			cachedData.State = state;
 
 			NotifyDepthStencilStateCreated(desc, cachedData);
 		}
@@ -276,7 +276,7 @@ namespace bs
 			state = CreateRasterizerStateInternalInternal(desc, id);
 
 			CachedRasterizerState cachedData(id);
-			cachedData.state = state;
+			cachedData.State = state;
 
 			NotifyRasterizerStateCreated(desc, cachedData);
 		}
@@ -293,7 +293,7 @@ namespace bs
 			state = CreateBlendStateInternalInternal(desc, id);
 
 			CachedBlendState cachedData(id);
-			cachedData.state = state;
+			cachedData.State = state;
 
 			NotifyBlendStateCreated(desc, cachedData);
 		}
@@ -430,10 +430,10 @@ namespace bs
 		auto iterFind = mCachedBlendStates.find(desc);
 		if (iterFind != mCachedBlendStates.end())
 		{
-			id = iterFind->second.id;
+			id = iterFind->second.Id;
 
-			if (!iterFind->second.state.expired())
-				return iterFind->second.state.lock();
+			if (!iterFind->second.State.expired())
+				return iterFind->second.State.lock();
 
 			return nullptr;
 		}
@@ -451,10 +451,10 @@ namespace bs
 		auto iterFind = mCachedRasterizerStates.find(desc);
 		if (iterFind != mCachedRasterizerStates.end())
 		{
-			id = iterFind->second.id;
+			id = iterFind->second.Id;
 
-			if (!iterFind->second.state.expired())
-				return iterFind->second.state.lock();
+			if (!iterFind->second.State.expired())
+				return iterFind->second.State.lock();
 
 			return nullptr;
 		}
@@ -472,10 +472,10 @@ namespace bs
 		auto iterFind = mCachedDepthStencilStates.find(desc);
 		if (iterFind != mCachedDepthStencilStates.end())
 		{
-			id = iterFind->second.id;
+			id = iterFind->second.Id;
 
-			if (!iterFind->second.state.expired())
-				return iterFind->second.state.lock();
+			if (!iterFind->second.State.expired())
+				return iterFind->second.State.lock();
 
 			return nullptr;
 		}

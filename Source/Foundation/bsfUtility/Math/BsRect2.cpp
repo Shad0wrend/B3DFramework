@@ -11,9 +11,9 @@ namespace bs
 
 	bool Rect2::Contains(const Vector2& point) const
 	{
-		if(point.x >= x && point.x <= (x + width))
+		if(point.X >= X && point.X <= (X + Width))
 		{
-			if(point.y >= y && point.y <= (y + height))
+			if(point.Y >= Y && point.Y <= (Y + Height))
 				return true;
 		}
 
@@ -22,14 +22,14 @@ namespace bs
 
 	bool Rect2::Overlaps(const Rect2& other) const
 	{
-		float otherRight = other.x + other.width;
-		float myRight = x + width;
+		float otherRight = other.X + other.Width;
+		float myRight = X + Width;
 
-		float otherBottom = other.y + other.height;
-		float myBottom = y + height;
+		float otherBottom = other.Y + other.Height;
+		float myBottom = Y + Height;
 
-		if(x < otherRight && myRight > other.x &&
-			y < otherBottom && myBottom > other.y)
+		if(X < otherRight && myRight > other.X &&
+			Y < otherBottom && myBottom > other.Y)
 			return true;
 
 		return false;
@@ -37,49 +37,49 @@ namespace bs
 
 	void Rect2::Encapsulate(const Rect2& other)
 	{
-		float myRight = x + width;
-		float myBottom = y + height;
-		float otherRight = other.x + other.width;
-		float otherBottom = other.y + other.height;
+		float myRight = X + Width;
+		float myBottom = Y + Height;
+		float otherRight = other.X + other.Width;
+		float otherBottom = other.Y + other.Height;
 
-		if(other.x < x)
-			x = other.x;
+		if(other.X < X)
+			X = other.X;
 
-		if(other.y < y)
-			y = other.y;
+		if(other.Y < Y)
+			Y = other.Y;
 
 		if(otherRight > myRight)
-			width = otherRight - x;
+			Width = otherRight - X;
 		else
-			width = myRight - x;
+			Width = myRight - X;
 
 		if(otherBottom > myBottom)
-			height = otherBottom - y;
+			Height = otherBottom - Y;
 		else
-			height = myBottom - y;
+			Height = myBottom - Y;
 	}
 
 	void Rect2::Clip(const Rect2& clipRect)
 	{
-		float newLeft = std::max(x, clipRect.x);
-		float newTop = std::max(y, clipRect.y);
+		float newLeft = std::max(X, clipRect.X);
+		float newTop = std::max(Y, clipRect.Y);
 
-		float newRight = std::min(x + width, clipRect.x + clipRect.width);
-		float newBottom = std::min(y + height, clipRect.y + clipRect.height);
+		float newRight = std::min(X + Width, clipRect.X + clipRect.Width);
+		float newBottom = std::min(Y + Height, clipRect.Y + clipRect.Height);
 
-		x = newLeft;
-		y = newTop;
-		width = newRight - newLeft;
-		height = newBottom - newTop;
+		X = newLeft;
+		Y = newTop;
+		Width = newRight - newLeft;
+		Height = newBottom - newTop;
 	}
 
 	void Rect2::Transform(const Matrix4& matrix)
 	{
 		Vector4 verts[4];
-		verts[0] = Vector4(x, y, 0.0f, 1.0f);
-		verts[1] = Vector4(x + width, y, 0.0f, 1.0f);
-		verts[2] = Vector4(x, y + height, 0.0f, 1.0f);
-		verts[3] = Vector4(x + width, y + height, 0.0f, 1.0f);
+		verts[0] = Vector4(X, Y, 0.0f, 1.0f);
+		verts[1] = Vector4(X + Width, Y, 0.0f, 1.0f);
+		verts[2] = Vector4(X, Y + Height, 0.0f, 1.0f);
+		verts[3] = Vector4(X + Width, Y + Height, 0.0f, 1.0f);
 
 		for(UINT32 i = 0; i < 4; i++)
 			verts[i] = matrix.Multiply(verts[i]);
@@ -91,32 +91,32 @@ namespace bs
 
 		for(UINT32 i = 0; i < 4; i++)
 		{
-			if(verts[i].x < minX)
-				minX = verts[i].x;
+			if(verts[i].X < minX)
+				minX = verts[i].X;
 
-			if(verts[i].y < minY)
-				minY = verts[i].y;
+			if(verts[i].Y < minY)
+				minY = verts[i].Y;
 
-			if(verts[i].x > maxX)
-				maxX = verts[i].x;
+			if(verts[i].X > maxX)
+				maxX = verts[i].X;
 
-			if(verts[i].y > maxY)
-				maxY = verts[i].y;
+			if(verts[i].Y > maxY)
+				maxY = verts[i].Y;
 		}
 
-		x = minX;
-		y = minY;
-		width = maxX - x;
-		height = maxY - y;
+		X = minX;
+		Y = minY;
+		Width = maxX - X;
+		Height = maxY - Y;
 	}
 
 	Vector2 Rect2::GetCenter() const
 	{
-		return Vector2(x + width * 0.5f, y + height * 0.5f);
+		return Vector2(X + Width * 0.5f, Y + Height * 0.5f);
 	}
 
 	Vector2 Rect2::GetHalfSize() const
 	{
-		return Vector2(width, height) * 0.5f;
+		return Vector2(Width, Height) * 0.5f;
 	}
 }

@@ -19,8 +19,8 @@ namespace bs
 	class BS_CORE_EXPORT ResourceHandleRTTI : public RTTIType<TResourceHandleBase<false>, IReflectable, ResourceHandleRTTI>
 	{
 	private:
-		UUID& GetUuid(TResourceHandleBase<false>* obj) { return obj->mData != nullptr ? obj->mData->mUUID : UUID::EMPTY; }
-		void SetUuid(TResourceHandleBase<false>* obj, UUID& uuid) { obj->mData->mUUID = uuid; }
+		UUID& GetUuid(TResourceHandleBase<false>* obj) { return obj->mData != nullptr ? obj->mData->MUuid : UUID::EMPTY; }
+		void SetUuid(TResourceHandleBase<false>* obj, UUID& uuid) { obj->mData->MUuid = uuid; }
 
 	public:
 		ResourceHandleRTTI()
@@ -32,9 +32,9 @@ namespace bs
 		{
 			TResourceHandleBase<false>* resourceHandle = static_cast<TResourceHandleBase<false>*>(obj);
 
-			if(resourceHandle->mData && !resourceHandle->mData->mUUID.Empty())
+			if(resourceHandle->mData && !resourceHandle->mData->MUuid.Empty())
 			{
-				HResource loadedResource = gResources().GetResourceHandleInternal(resourceHandle->mData->mUUID);
+				HResource loadedResource = gResources().GetResourceHandleInternal(resourceHandle->mData->MUuid);
 
 				resourceHandle->ReleaseRef();
 				resourceHandle->mData = loadedResource.mData;
@@ -58,7 +58,7 @@ namespace bs
 			SPtr<TResourceHandleBase<false>> obj = bs_shared_ptr<TResourceHandleBase<false>>
 				(new (bs_alloc<TResourceHandleBase<false>>()) TResourceHandleBase<false>());
 			obj->mData = bs_shared_ptr_new<ResourceHandleData>();
-			obj->mData->mRefCount.fetch_add(1, std::memory_order_relaxed);
+			obj->mData->MRefCount.fetch_add(1, std::memory_order_relaxed);
 
 			return obj;
 		}
@@ -67,8 +67,8 @@ namespace bs
 	class BS_CORE_EXPORT WeakResourceHandleRTTI : public RTTIType<TResourceHandleBase<true>, IReflectable, WeakResourceHandleRTTI>
 	{
 	private:
-		UUID& GetUuid(TResourceHandleBase<true>* obj) { return obj->mData != nullptr ? obj->mData->mUUID : UUID::EMPTY; }
-		void SetUuid(TResourceHandleBase<true>* obj, UUID& uuid) { obj->mData->mUUID = uuid; }
+		UUID& GetUuid(TResourceHandleBase<true>* obj) { return obj->mData != nullptr ? obj->mData->MUuid : UUID::EMPTY; }
+		void SetUuid(TResourceHandleBase<true>* obj, UUID& uuid) { obj->mData->MUuid = uuid; }
 
 	public:
 		WeakResourceHandleRTTI()
@@ -80,9 +80,9 @@ namespace bs
 		{
 			TResourceHandleBase<true>* resourceHandle = static_cast<TResourceHandleBase<true>*>(obj);
 
-			if (resourceHandle->mData && !resourceHandle->mData->mUUID.Empty())
+			if (resourceHandle->mData && !resourceHandle->mData->MUuid.Empty())
 			{
-				HResource loadedResource = gResources().GetResourceHandleInternal(resourceHandle->mData->mUUID);
+				HResource loadedResource = gResources().GetResourceHandleInternal(resourceHandle->mData->MUuid);
 				resourceHandle->mData = loadedResource.mData;
 			}
 		}

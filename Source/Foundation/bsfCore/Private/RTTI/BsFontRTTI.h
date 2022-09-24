@@ -19,13 +19,13 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN(size, 0)
-			BS_RTTI_MEMBER_PLAIN(baselineOffset, 1)
-			BS_RTTI_MEMBER_PLAIN(lineHeight, 2)
-			BS_RTTI_MEMBER_PLAIN(missingGlyph, 3)
-			BS_RTTI_MEMBER_PLAIN(spaceWidth, 4)
-			BS_RTTI_MEMBER_REFL_ARRAY(texturePages, 5)
-			BS_RTTI_MEMBER_PLAIN(characters, 6)
+			BS_RTTI_MEMBER_PLAIN(Size, 0)
+			BS_RTTI_MEMBER_PLAIN(BaselineOffset, 1)
+			BS_RTTI_MEMBER_PLAIN(LineHeight, 2)
+			BS_RTTI_MEMBER_PLAIN(MissingGlyph, 3)
+			BS_RTTI_MEMBER_PLAIN(SpaceWidth, 4)
+			BS_RTTI_MEMBER_REFL_ARRAY(TexturePages, 5)
+			BS_RTTI_MEMBER_PLAIN(Characters, 6)
 		BS_END_RTTI_MEMBERS
 
 	public:

@@ -16,7 +16,7 @@ namespace bs
 
 	MonoObject*ScriptBoneWeight::Box(const BoneWeight& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	BoneWeight ScriptBoneWeight::Unbox(MonoObject* value)

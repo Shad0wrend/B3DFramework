@@ -10,8 +10,8 @@ namespace bs
 {
 	struct __AnimationEventInterop
 	{
-		MonoString* name;
-		float time;
+		MonoString* Name;
+		float Time;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptAnimationEvent : public ScriptObject<ScriptAnimationEvent>

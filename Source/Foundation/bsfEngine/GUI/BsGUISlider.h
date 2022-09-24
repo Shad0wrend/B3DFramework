@@ -69,7 +69,7 @@ namespace bs
 		void SetTint(const Color& color) ;
 
 		/** Triggered when the user changes the value of the slider. */
-		Event<void(float percent)> onChanged;
+		Event<void(float percent)> OnChanged;
 
 	public: // ***** INTERNAL ******
 		/** @name Internal

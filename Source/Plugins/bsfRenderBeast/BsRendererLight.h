@@ -27,16 +27,16 @@ namespace ct
 	/** Information about a single light, as seen by the lighting shader. */
 	struct LightData
 	{
-		Vector3 position;
-		float boundsRadius;
-		Vector3 direction;
-		float luminance;
-		Vector3 spotAngles;
-		float attRadiusSqrdInv;
-		Vector3 color;
-		float srcRadius;
-		Vector3 shiftedLightPosition;
-		float padding;
+		Vector3 Position;
+		float BoundsRadius;
+		Vector3 Direction;
+		float Luminance;
+		Vector3 SpotAngles;
+		float AttRadiusSqrdInv;
+		Vector3 Color;
+		float SrcRadius;
+		Vector3 ShiftedLightPosition;
+		float Padding;
 	};
 
 	/**	Renderer information specific to a single light. */
@@ -61,16 +61,16 @@ namespace ct
 		 */
 		Vector3 GetShiftedLightPosition() const;
 
-		Light* internal;
+		Light* Internal;
 	};
 
 	/** Container for all GBuffer textures. */
 	struct GBufferTextures
 	{
-		SPtr<Texture> albedo;
-		SPtr<Texture> normals;
-		SPtr<Texture> roughMetal;
-		SPtr<Texture> depth;
+		SPtr<Texture> Albedo;
+		SPtr<Texture> Normals;
+		SPtr<Texture> RoughMetal;
+		SPtr<Texture> Depth;
 	};
 
 	/** Allows you to easily bind GBuffer textures to some material. */
@@ -103,37 +103,37 @@ namespace ct
 		void Populate(const SPtr<GpuParams>& params, bool clustered);
 
 		/** Binding indices representing where should lights param block buffer be bound to. */
-		GpuParamBinding gridParamsBindings[GPT_COUNT];
+		GpuParamBinding GridParamsBindings[GPT_COUNT];
 
 		/**
 		 * Parameter to which to bind a buffer containing light grid offsets and size, per grid cell. Used for forward
 		 * rendering.
 		 */
-		GpuParamBuffer gridLightOffsetsAndSizeParam;
+		GpuParamBuffer GridLightOffsetsAndSizeParam;
 
 		/** Parameter to which to bind a buffer containing all light indices, as mapped by grid offsets & size. */
-		GpuParamBuffer gridLightIndicesParam;
+		GpuParamBuffer GridLightIndicesParam;
 
 		/** Parameter to which to bind light buffer used for forward rendering. */
-		GpuParamBuffer lightsBufferParam;
+		GpuParamBuffer LightsBufferParam;
 
 		/**
 		 * Parameter to which to bind a buffer containing reflection probe grid offsets and size, per grid cell. Used for
 		 * forward rendering.
 		 */
-		GpuParamBuffer gridProbeOffsetsAndSizeParam;
+		GpuParamBuffer GridProbeOffsetsAndSizeParam;
 
 		/**
 		 * Binding for a parameter block containing a list of lights influencing this object. Only used when standard
 		 * (non-clustered) forward rendering is used.
 		 */
-		GpuParamBinding lightsParamBlockBinding;
+		GpuParamBinding LightsParamBlockBinding;
 
 		/**
 		 * Binding for a parameter block that contains the number of lights and reflection probes in the light/refl. probe
 		 * parameter blocks. Only used when standard (non-clustered) forward rendering is used.
 		 */
-		GpuParamBinding lightAndReflProbeParamsParamBlockBinding;
+		GpuParamBinding LightAndReflProbeParamsParamBlockBinding;
 	};
 
 	/**

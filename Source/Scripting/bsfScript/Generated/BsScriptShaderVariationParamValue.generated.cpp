@@ -16,7 +16,7 @@ namespace bs
 
 	MonoObject*ScriptShaderVariationParamValue::Box(const __ShaderVariationParamValueInterop& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	__ShaderVariationParamValueInterop ScriptShaderVariationParamValue::Unbox(MonoObject* value)
@@ -28,9 +28,9 @@ namespace bs
 	{
 		ShaderVariationParamValue output;
 		String tmpname;
-		tmpname = MonoUtil::MonoToString(value.name);
-		output.name = tmpname;
-		output.value = value.value;
+		tmpname = MonoUtil::MonoToString(value.Name);
+		output.Name = tmpname;
+		output.Value = value.Value;
 
 		return output;
 	}
@@ -39,9 +39,9 @@ namespace bs
 	{
 		__ShaderVariationParamValueInterop output;
 		MonoString* tmpname;
-		tmpname = MonoUtil::StringToMono(value.name);
-		output.name = tmpname;
-		output.value = value.value;
+		tmpname = MonoUtil::StringToMono(value.Name);
+		output.Name = tmpname;
+		output.Value = value.Value;
 
 		return output;
 	}

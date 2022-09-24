@@ -30,8 +30,8 @@ namespace bs
 
 			MethodId(const String& name, UINT32 numParams);
 
-			String name;
-			UINT32 numParams;
+			String Name;
+			UINT32 NumParams;
 		};
 
 		/** @endcond */

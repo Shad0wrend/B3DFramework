@@ -38,7 +38,7 @@ namespace bs
 		class MemBlock
 		{
 		public:
-			MemBlock(UINT32 size) :mSize(size) { }
+			MemBlock(UINT32 size) :MSize(size) { }
 
 			~MemBlock() = default;
 
@@ -48,8 +48,8 @@ namespace bs
 			 */
 			UINT8* Alloc(UINT32 amount)
 			{
-				UINT8* freePtr = &mData[mFreePtr];
-				mFreePtr += amount;
+				UINT8* freePtr = &MData[MFreePtr];
+				MFreePtr += amount;
 
 				return freePtr;
 			}
@@ -63,15 +63,15 @@ namespace bs
 			 */
 			void Dealloc(UINT8* data, UINT32 amount)
 			{
-				mFreePtr -= amount;
-				assert((&mData[mFreePtr]) == data && "Out of order stack deallocation detected. Deallocations need to happen in order opposite of allocations.");
+				MFreePtr -= amount;
+				assert((&MData[MFreePtr]) == data && "Out of order stack deallocation detected. Deallocations need to happen in order opposite of allocations.");
 			}
 
-			UINT8* mData = nullptr;
-			UINT32 mFreePtr = 0;
-			UINT32 mSize = 0;
-			MemBlock* mNextBlock = nullptr;
-			MemBlock* mPrevBlock = nullptr;
+			UINT8* MData = nullptr;
+			UINT32 MFreePtr = 0;
+			UINT32 MSize = 0;
+			MemBlock* MNextBlock = nullptr;
+			MemBlock* MPrevBlock = nullptr;
 		};
 
 	public:
@@ -82,12 +82,12 @@ namespace bs
 
 		~MemStackInternal()
 		{
-			assert(mFreeBlock->mFreePtr == 0 && "Not all blocks were released before shutting down the stack allocator.");
+			assert(mFreeBlock->MFreePtr == 0 && "Not all blocks were released before shutting down the stack allocator.");
 
 			MemBlock* curBlock = mFreeBlock;
 			while (curBlock != nullptr)
 			{
-				MemBlock* nextBlock = curBlock->mNextBlock;
+				MemBlock* nextBlock = curBlock->MNextBlock;
 				DeallocBlock(curBlock);
 
 				curBlock = nextBlock;
@@ -110,7 +110,7 @@ namespace bs
 		{
 			amount += sizeof(UINT32);
 
-			UINT32 freeMem = mFreeBlock->mSize - mFreeBlock->mFreePtr;
+			UINT32 freeMem = mFreeBlock->MSize - mFreeBlock->MFreePtr;
 			if(amount > freeMem)
 				AllocBlock(amount);
 
@@ -130,24 +130,24 @@ namespace bs
 			UINT32* storedSize = reinterpret_cast<UINT32*>(data);
 			mFreeBlock->Dealloc(data, *storedSize);
 
-			if (mFreeBlock->mFreePtr == 0)
+			if (mFreeBlock->MFreePtr == 0)
 			{
 				MemBlock* emptyBlock = mFreeBlock;
 
-				if (emptyBlock->mPrevBlock != nullptr)
-					mFreeBlock = emptyBlock->mPrevBlock;
+				if (emptyBlock->MPrevBlock != nullptr)
+					mFreeBlock = emptyBlock->MPrevBlock;
 
 				// Merge with next block
-				if (emptyBlock->mNextBlock != nullptr)
+				if (emptyBlock->MNextBlock != nullptr)
 				{
-					UINT32 totalSize = emptyBlock->mSize + emptyBlock->mNextBlock->mSize;
+					UINT32 totalSize = emptyBlock->MSize + emptyBlock->MNextBlock->MSize;
 
-					if (emptyBlock->mPrevBlock != nullptr)
-						emptyBlock->mPrevBlock->mNextBlock = nullptr;
+					if (emptyBlock->MPrevBlock != nullptr)
+						emptyBlock->MPrevBlock->MNextBlock = nullptr;
 					else
 						mFreeBlock = nullptr;
 
-					DeallocBlock(emptyBlock->mNextBlock);
+					DeallocBlock(emptyBlock->MNextBlock);
 					DeallocBlock(emptyBlock);
 
 					AllocBlock(totalSize);
@@ -173,8 +173,8 @@ namespace bs
 
 			while (curBlock != nullptr)
 			{
-				MemBlock* nextBlock = curBlock->mNextBlock;
-				if (nextBlock != nullptr && nextBlock->mSize >= blockSize)
+				MemBlock* nextBlock = curBlock->MNextBlock;
+				if (nextBlock != nullptr && nextBlock->MSize >= blockSize)
 				{
 					newBlock = nextBlock;
 					break;
@@ -189,16 +189,16 @@ namespace bs
 				newBlock = new (data)MemBlock(blockSize);
 				data += sizeof(MemBlock);
 
-				newBlock->mData = data;
-				newBlock->mPrevBlock = mFreeBlock;
+				newBlock->MData = data;
+				newBlock->MPrevBlock = mFreeBlock;
 
 				if (mFreeBlock != nullptr)
 				{
-					if(mFreeBlock->mNextBlock != nullptr)
-						mFreeBlock->mNextBlock->mPrevBlock = newBlock;
+					if(mFreeBlock->MNextBlock != nullptr)
+						mFreeBlock->MNextBlock->MPrevBlock = newBlock;
 
-					newBlock->mNextBlock = mFreeBlock->mNextBlock;
-					mFreeBlock->mNextBlock = newBlock;
+					newBlock->MNextBlock = mFreeBlock->MNextBlock;
+					mFreeBlock->MNextBlock = newBlock;
 				}
 			}
 

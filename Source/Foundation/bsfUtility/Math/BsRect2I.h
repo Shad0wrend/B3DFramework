@@ -17,13 +17,13 @@ namespace bs
 		constexpr Rect2I() = default;
 
 		constexpr Rect2I(INT32 x, INT32 y, UINT32 width, UINT32 height)
-			:x(x), y(y), width(width), height(height)
+			:X(x), Y(y), Width(width), Height(height)
 		{ }
 
-		INT32 x = 0;
-		INT32 y = 0;
-		UINT32 width = 0;
-		UINT32 height = 0;
+		INT32 X = 0;
+		INT32 Y = 0;
+		UINT32 Width = 0;
+		UINT32 Height = 0;
 
 		/** Returns true if the rectangle contains the provided point. */
 		bool Contains(const Vector2I& point) const;
@@ -64,7 +64,7 @@ namespace bs
 
 		bool operator== (const Rect2I& rhs) const
 		{
-			return x == rhs.x && y == rhs.y && width == rhs.width && height == rhs.height;
+			return X == rhs.X && Y == rhs.Y && Width == rhs.Width && Height == rhs.Height;
 		}
 
 		bool operator!= (const Rect2I& rhs) const

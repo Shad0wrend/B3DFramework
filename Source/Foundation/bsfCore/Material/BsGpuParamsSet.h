@@ -34,69 +34,69 @@ namespace bs
 		/** Binding location for a single GPU param block buffer. */
 		struct BlockBinding
 		{
-			UINT32 set;
-			UINT32 slot;
+			UINT32 Set;
+			UINT32 Slot;
 		};
 
 		/** All bindings for GPU param block buffers, for a single pass. */
 		struct PassBlockBindings
 		{
-			BlockBinding bindings[GPT_COUNT];
+			BlockBinding Bindings[GPT_COUNT];
 		};
 
 		/** Information about a parameter block buffer. */
 		struct BlockInfo
 		{
 			BlockInfo(const String& name, UINT32 set, UINT32 slot, const ParamBlockPtrType& buffer, bool shareable)
-				: name(name), set(set), slot(slot), buffer(buffer), shareable(shareable), allowUpdate(true), isUsed(true)
-				, passData(nullptr)
+				: Name(name), Set(set), Slot(slot), Buffer(buffer), Shareable(shareable), AllowUpdate(true), IsUsed(true)
+				, PassData(nullptr)
 			{ }
 
-			String name;
-			UINT32 set;
-			UINT32 slot;
-			ParamBlockPtrType buffer;
-			bool shareable;
-			bool allowUpdate;
-			bool isUsed;
+			String Name;
+			UINT32 Set;
+			UINT32 Slot;
+			ParamBlockPtrType Buffer;
+			bool Shareable;
+			bool AllowUpdate;
+			bool IsUsed;
 
-			PassBlockBindings* passData;
+			PassBlockBindings* PassData;
 		};
 
 		/** Information about how a data parameter maps from a material parameter into a parameter block buffer. */
 		struct DataParamInfo
 		{
-			UINT32 paramIdx;
-			UINT32 blockIdx;
-			UINT32 offset;
-			UINT32 arrayStride;
+			UINT32 ParamIdx;
+			UINT32 BlockIdx;
+			UINT32 Offset;
+			UINT32 ArrayStride;
 		};
 
 		/** Information about how an object parameter maps from a material parameter to a GPU stage slot. */
 		struct ObjectParamInfo
 		{
-			UINT32 paramIdx;
-			UINT32 slotIdx;
-			UINT32 setIdx;
+			UINT32 ParamIdx;
+			UINT32 SlotIdx;
+			UINT32 SetIdx;
 		};
 
 		/** Information about all object parameters for a specific GPU programmable stage. */
 		struct StageParamInfo
 		{
-			ObjectParamInfo* textures;
-			UINT32 numTextures;
-			ObjectParamInfo* loadStoreTextures;
-			UINT32 numLoadStoreTextures;
-			ObjectParamInfo* buffers;
-			UINT32 numBuffers;
-			ObjectParamInfo* samplerStates;
-			UINT32 numSamplerStates;
+			ObjectParamInfo* Textures;
+			UINT32 NumTextures;
+			ObjectParamInfo* LoadStoreTextures;
+			UINT32 NumLoadStoreTextures;
+			ObjectParamInfo* Buffers;
+			UINT32 NumBuffers;
+			ObjectParamInfo* SamplerStates;
+			UINT32 NumSamplerStates;
 		};
 
 		/** Information about all object parameters for a specific pass. */
 		struct PassParamInfo
 		{
-			StageParamInfo stages[GPT_COUNT];
+			StageParamInfo Stages[GPT_COUNT];
 		};
 
 	public:

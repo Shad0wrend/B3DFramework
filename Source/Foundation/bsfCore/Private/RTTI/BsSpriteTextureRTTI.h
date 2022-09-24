@@ -62,10 +62,10 @@ namespace bs
 			{
 				BitLength size = 0;
 				size += rtti_write(VERSION, stream);
-				size += rtti_write(data.numRows, stream);
-				size += rtti_write(data.numColumns, stream);
-				size += rtti_write(data.count, stream);
-				size += rtti_write(data.fps, stream);
+				size += rtti_write(data.NumRows, stream);
+				size += rtti_write(data.NumColumns, stream);
+				size += rtti_write(data.Count, stream);
+				size += rtti_write(data.Fps, stream);
 
 				return size;
 			});
@@ -83,10 +83,10 @@ namespace bs
 			{
 			case 0:
 			{
-				rtti_read(data.numRows, stream);
-				rtti_read(data.numColumns, stream);
-				rtti_read(data.count, stream);
-				rtti_read(data.fps, stream);
+				rtti_read(data.NumRows, stream);
+				rtti_read(data.NumColumns, stream);
+				rtti_read(data.Count, stream);
+				rtti_read(data.Fps, stream);
 			}
 				break;
 			default:
@@ -99,8 +99,8 @@ namespace bs
 
 		static BitLength GetSize(const SpriteSheetGridAnimation& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
-			BitLength dataSize = rtti_size(data.numRows) + rtti_size(data.numColumns) +
-				rtti_size(data.count) + rtti_size(data.fps) + sizeof(uint32_t);
+			BitLength dataSize = rtti_size(data.NumRows) + rtti_size(data.NumColumns) +
+				rtti_size(data.Count) + rtti_size(data.Fps) + sizeof(uint32_t);
 
 			rtti_add_header_size(dataSize, compress);
 			return dataSize;

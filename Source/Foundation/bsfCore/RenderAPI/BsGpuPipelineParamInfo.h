@@ -15,19 +15,19 @@ namespace bs
 	/** Helper structure used for initializing GpuPipelineParamInfo. */
 	struct GPU_PIPELINE_PARAMS_DESC
 	{
-		SPtr<GpuParamDesc> fragmentParams;
-		SPtr<GpuParamDesc> vertexParams;
-		SPtr<GpuParamDesc> geometryParams;
-		SPtr<GpuParamDesc> hullParams;
-		SPtr<GpuParamDesc> domainParams;
-		SPtr<GpuParamDesc> computeParams;
+		SPtr<GpuParamDesc> FragmentParams;
+		SPtr<GpuParamDesc> VertexParams;
+		SPtr<GpuParamDesc> GeometryParams;
+		SPtr<GpuParamDesc> HullParams;
+		SPtr<GpuParamDesc> DomainParams;
+		SPtr<GpuParamDesc> ComputeParams;
 	};
 
 	/** Binding location for a single GPU program parameter. */
 	struct GpuParamBinding
 	{
-		UINT32 set = (UINT32)-1;
-		UINT32 slot = (UINT32)-1;
+		UINT32 Set = (UINT32)-1;
+		UINT32 Slot = (UINT32)-1;
 	};
 
 	/** Contains code common to both sim and core thread implementations of GpuPipelineParamInfo. */
@@ -84,17 +84,17 @@ namespace bs
 		/** Information about a single set in the param info object. */
 		struct SetInfo
 		{
-			UINT32* slotIndices;
-			ParamType* slotTypes;
-			UINT32* slotSamplers;
-			UINT32 numSlots;
+			UINT32* SlotIndices;
+			ParamType* SlotTypes;
+			UINT32* SlotSamplers;
+			UINT32 NumSlots;
 		};
 
 		/** Information how a resource maps to a certain set/slot. */
 		struct ResourceInfo
 		{
-			UINT32 set;
-			UINT32 slot;
+			UINT32 Set;
+			UINT32 Slot;
 		};
 		
 		std::array<SPtr<GpuParamDesc>, 6> mParamDescs;

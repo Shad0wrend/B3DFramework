@@ -18,20 +18,20 @@ namespace bs
 
 	void ScriptPixelData::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_GetRowPitch", (void*)&ScriptPixelData::InternalGetRowPitch);
-		metaData.scriptClass->AddInternalCall("Internal_GetSlicePitch", (void*)&ScriptPixelData::InternalGetSlicePitch);
-		metaData.scriptClass->AddInternalCall("Internal_GetFormat", (void*)&ScriptPixelData::InternalGetFormat);
-		metaData.scriptClass->AddInternalCall("Internal_GetExtents", (void*)&ScriptPixelData::InternalGetExtents);
-		metaData.scriptClass->AddInternalCall("Internal_IsConsecutive", (void*)&ScriptPixelData::InternalIsConsecutive);
-		metaData.scriptClass->AddInternalCall("Internal_GetSize", (void*)&ScriptPixelData::InternalGetSize);
-		metaData.scriptClass->AddInternalCall("Internal_Create", (void*)&ScriptPixelData::InternalCreate);
-		metaData.scriptClass->AddInternalCall("Internal_Create0", (void*)&ScriptPixelData::InternalCreate0);
-		metaData.scriptClass->AddInternalCall("Internal_GetPixel", (void*)&ScriptPixelData::InternalGetPixel);
-		metaData.scriptClass->AddInternalCall("Internal_SetPixel", (void*)&ScriptPixelData::InternalSetPixel);
-		metaData.scriptClass->AddInternalCall("Internal_GetPixels", (void*)&ScriptPixelData::InternalGetPixels);
-		metaData.scriptClass->AddInternalCall("Internal_SetPixels", (void*)&ScriptPixelData::InternalSetPixels);
-		metaData.scriptClass->AddInternalCall("Internal_GetRawPixels", (void*)&ScriptPixelData::InternalGetRawPixels);
-		metaData.scriptClass->AddInternalCall("Internal_SetRawPixels", (void*)&ScriptPixelData::InternalSetRawPixels);
+		metaData.ScriptClass->AddInternalCall("Internal_GetRowPitch", (void*)&ScriptPixelData::InternalGetRowPitch);
+		metaData.ScriptClass->AddInternalCall("Internal_GetSlicePitch", (void*)&ScriptPixelData::InternalGetSlicePitch);
+		metaData.ScriptClass->AddInternalCall("Internal_GetFormat", (void*)&ScriptPixelData::InternalGetFormat);
+		metaData.ScriptClass->AddInternalCall("Internal_GetExtents", (void*)&ScriptPixelData::InternalGetExtents);
+		metaData.ScriptClass->AddInternalCall("Internal_IsConsecutive", (void*)&ScriptPixelData::InternalIsConsecutive);
+		metaData.ScriptClass->AddInternalCall("Internal_GetSize", (void*)&ScriptPixelData::InternalGetSize);
+		metaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptPixelData::InternalCreate);
+		metaData.ScriptClass->AddInternalCall("Internal_Create0", (void*)&ScriptPixelData::InternalCreate0);
+		metaData.ScriptClass->AddInternalCall("Internal_GetPixel", (void*)&ScriptPixelData::InternalGetPixel);
+		metaData.ScriptClass->AddInternalCall("Internal_SetPixel", (void*)&ScriptPixelData::InternalSetPixel);
+		metaData.ScriptClass->AddInternalCall("Internal_GetPixels", (void*)&ScriptPixelData::InternalGetPixels);
+		metaData.ScriptClass->AddInternalCall("Internal_SetPixels", (void*)&ScriptPixelData::InternalSetPixels);
+		metaData.ScriptClass->AddInternalCall("Internal_GetRawPixels", (void*)&ScriptPixelData::InternalGetRawPixels);
+		metaData.ScriptClass->AddInternalCall("Internal_SetRawPixels", (void*)&ScriptPixelData::InternalSetRawPixels);
 
 	}
 
@@ -42,7 +42,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptPixelData>()) ScriptPixelData(managedInstance, value);
 		return managedInstance;
 	}

@@ -18,13 +18,13 @@ namespace bs
 	class BS_CORE_EXPORT CSphericalJointRTTI : public RTTIType<CSphericalJoint, CJoint, CSphericalJointRTTI>
 	{
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN_NAMED(mFlag, mDesc.flag, 0)
-			BS_RTTI_MEMBER_PLAIN_NAMED(mYLimitAngle, mDesc.limit.yLimitAngle, 1)
-			BS_RTTI_MEMBER_PLAIN_NAMED(mZLimitAngle, mDesc.limit.zLimitAngle, 2)
-			BS_RTTI_MEMBER_PLAIN_NAMED(mLimitContactDist, mDesc.limit.contactDist, 3)
-			BS_RTTI_MEMBER_PLAIN_NAMED(mLimitRestitution, mDesc.limit.restitution, 4)
-			BS_RTTI_MEMBER_PLAIN_NAMED(mSpringDamping, mDesc.limit.spring.damping, 5)
-			BS_RTTI_MEMBER_PLAIN_NAMED(mSpringStiffness, mDesc.limit.spring.stiffness, 6)
+			BS_RTTI_MEMBER_PLAIN_NAMED(mFlag, mDesc.Flag, 0)
+			BS_RTTI_MEMBER_PLAIN_NAMED(mYLimitAngle, mDesc.Limit.YLimitAngle, 1)
+			BS_RTTI_MEMBER_PLAIN_NAMED(mZLimitAngle, mDesc.Limit.ZLimitAngle, 2)
+			BS_RTTI_MEMBER_PLAIN_NAMED(mLimitContactDist, mDesc.Limit.ContactDist, 3)
+			BS_RTTI_MEMBER_PLAIN_NAMED(mLimitRestitution, mDesc.Limit.Restitution, 4)
+			BS_RTTI_MEMBER_PLAIN_NAMED(mSpringDamping, mDesc.Limit.Spring.Damping, 5)
+			BS_RTTI_MEMBER_PLAIN_NAMED(mSpringStiffness, mDesc.Limit.Spring.Stiffness, 6)
 		BS_END_RTTI_MEMBERS
 	public:
 		const String& GetRttiName() override

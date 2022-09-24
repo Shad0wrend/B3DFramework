@@ -11,9 +11,9 @@ namespace bs
 {
 	struct __PARTICLE_SKINNED_MESH_SHAPE_DESCInterop
 	{
-		ParticleEmitterMeshType type;
-		bool sequential;
-		MonoObject* renderable;
+		ParticleEmitterMeshType Type;
+		bool Sequential;
+		MonoObject* Renderable;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC : public ScriptObject<ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC>

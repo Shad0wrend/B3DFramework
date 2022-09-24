@@ -30,15 +30,15 @@ namespace bs
 		{
 		public:
 			Data(const ValueType& value)
-				:value(value)
+				:Value(value)
 			{ }
 
 			DataBase* Clone() const override
 			{
-				return bs_new<Data>(Data(value));
+				return bs_new<Data>(Data(Value));
 			}
 
-			ValueType value;
+			ValueType Value;
 		};
 
 	public:
@@ -108,7 +108,7 @@ namespace bs
 	ValueType* any_cast(Any* operand)
 	{
 		if (operand != nullptr)
-			return &static_cast<Any::Data<ValueType>*>(operand->mData)->value;
+			return &static_cast<Any::Data<ValueType>*>(operand->mData)->Value;
 		else
 			return nullptr;
 	}

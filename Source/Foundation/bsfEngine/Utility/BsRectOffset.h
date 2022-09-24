@@ -16,12 +16,12 @@ namespace bs
 		RectOffset() = default;
 
 		RectOffset(INT32 left, INT32 right, INT32 top, INT32 bottom)
-			:left(left), right(right), top(top), bottom(bottom)
+			:Left(left), Right(right), Top(top), Bottom(bottom)
 		{ }
 
 		bool operator==(const RectOffset& rhs) const
 		{
-			return left == rhs.left && right == rhs.right && top == rhs.top && bottom == rhs.bottom;
+			return Left == rhs.Left && Right == rhs.Right && Top == rhs.Top && Bottom == rhs.Bottom;
 		}
 
 		bool operator!=(const RectOffset& rhs) const
@@ -29,10 +29,10 @@ namespace bs
 			return !operator==(rhs);
 		}
 
-		INT32 left = 0;
-		INT32 right = 0;
-		INT32 top = 0;
-		INT32 bottom = 0;
+		INT32 Left = 0;
+		INT32 Right = 0;
+		INT32 Top = 0;
+		INT32 Bottom = 0;
 	};
 
 	/** @} */

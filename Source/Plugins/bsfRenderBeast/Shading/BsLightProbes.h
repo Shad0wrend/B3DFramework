@@ -155,26 +155,26 @@ namespace bs { namespace ct
 	struct LightProbesInfo
 	{
 		/** Contains a set of spherical harmonic coefficients for every light probe. */
-		SPtr<Texture> shCoefficients;
+		SPtr<Texture> ShCoefficients;
 
 		/**
 		 * Contains information about tetrahedra formed by light probes. First half of the buffer is populated by actual
 		 * tetrahedrons, while the second half is populated by information about outer faces (triangles). @p numTetrahedra
 		 * marks the spot where split happens.
 		 */
-		SPtr<GpuBuffer> tetrahedra;
+		SPtr<GpuBuffer> Tetrahedra;
 
 		/** Contains additional information about outer tetrahedron faces, required for extrapolating tetrahedron data. */
-		SPtr<GpuBuffer> faces;
+		SPtr<GpuBuffer> Faces;
 
 		/**
 		 * Mesh representing the entire light probe volume. Each vertex has an associated tetrahedron (or face) index which
 		 * can be used to map into the tetrahedra array to retrieve probe information.
 		 */
-		SPtr<Mesh> tetrahedraVolume;
+		SPtr<Mesh> TetrahedraVolume;
 
 		/** Total number of valid tetrahedra in the @p tetrahedra buffer. */
-		UINT32 numTetrahedra;
+		UINT32 NumTetrahedra;
 	};
 
 	/** Handles any pre-processing for light (irradiance) probe lighting. */
@@ -184,9 +184,9 @@ namespace bs { namespace ct
 		struct VolumeInfo
 		{
 			/** Volume containing the information about the probes. */
-			LightProbeVolume* volume;
+			LightProbeVolume* Volume;
 			/** Remains true as long as there are dirty probes in the volume. */
-			bool isDirty;
+			bool IsDirty;
 		};
 
 		/**
@@ -196,8 +196,8 @@ namespace bs { namespace ct
 		 */
 		struct TetrahedronData
 		{
-			Tetrahedron volume;
-			Matrix4 transform;
+			Tetrahedron Volume;
+			Matrix4 Transform;
 		};
 
 		/**
@@ -206,12 +206,12 @@ namespace bs { namespace ct
 		 */
 		struct TetrahedronFaceData
 		{
-			UINT32 innerVertices[3];
-			UINT32 outerVertices[3];
-			Vector3 normals[3];
-			Matrix4 transform;
-			UINT32 tetrahedron;
-			bool quadratic;
+			UINT32 InnerVertices[3];
+			UINT32 OuterVertices[3];
+			Vector3 Normals[3];
+			Matrix4 Transform;
+			UINT32 Tetrahedron;
+			bool Quadratic;
 		};
 	public:
 		LightProbes();

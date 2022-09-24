@@ -20,8 +20,8 @@ namespace bs
 		GUISkinEntry() = default;
 		GUISkinEntry(const String& name, const GUIElementStyle& style);
 
-		String name;
-		GUIElementStyle style;
+		String Name;
+		GUIElementStyle Style;
 
 	public:
 		friend class GUISkinEntryRTTI;
@@ -32,11 +32,11 @@ namespace bs
 	class BS_EXPORT GUISkinEntryRTTI : public RTTIType <GUISkinEntry, IReflectable, GUISkinEntryRTTI>
 	{
 	private:
-		String& GetName(GUISkinEntry* obj) { return obj->name; }
-		void SetName(GUISkinEntry* obj, String& val) { obj->name = val; }
+		String& GetName(GUISkinEntry* obj) { return obj->Name; }
+		void SetName(GUISkinEntry* obj, String& val) { obj->Name = val; }
 
-		GUIElementStyle& GetStyle(GUISkinEntry* obj) { return obj->style; }
-		void SetStyle(GUISkinEntry* obj, GUIElementStyle& val) { obj->style = val; }
+		GUIElementStyle& GetStyle(GUISkinEntry* obj) { return obj->Style; }
+		void SetStyle(GUISkinEntry* obj, GUIElementStyle& val) { obj->Style = val; }
 
 	public:
 		GUISkinEntryRTTI()
@@ -70,7 +70,7 @@ namespace bs
 			return mStyles[idx];
 		}
 
-		void SetStyle(GUISkin* obj, UINT32 idx, GUISkinEntry& val) { obj->mStyles[val.name] = val.style; }
+		void SetStyle(GUISkin* obj, UINT32 idx, GUISkinEntry& val) { obj->mStyles[val.Name] = val.Style; }
 		UINT32 GetStyleArraySize(GUISkin* obj) { return (UINT32)obj->mStyles.size(); }
 		void SetStyleArraySize(GUISkin* obj, UINT32 size) { /* Do nothing */ }
 

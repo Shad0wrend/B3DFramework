@@ -11,6 +11,6 @@ namespace bs
 
 	void ScriptCategory::InitRuntimeData()
 	{
-		nameField = metaData.scriptClass->GetField("name");
+		nameField = metaData.ScriptClass->GetField("name");
 	}
 }

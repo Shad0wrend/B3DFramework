@@ -18,7 +18,7 @@ namespace bs
 
 	MonoObject*ScriptLimitAngularRange::Box(const __LimitAngularRangeInterop& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	__LimitAngularRangeInterop ScriptLimitAngularRange::Unbox(MonoObject* value)
@@ -29,11 +29,11 @@ namespace bs
 	LimitAngularRange ScriptLimitAngularRange::FromInterop(const __LimitAngularRangeInterop& value)
 	{
 		LimitAngularRange output;
-		output.lower = value.lower;
-		output.upper = value.upper;
-		output.contactDist = value.contactDist;
-		output.restitution = value.restitution;
-		output.spring = value.spring;
+		output.Lower = value.Lower;
+		output.Upper = value.Upper;
+		output.ContactDist = value.ContactDist;
+		output.Restitution = value.Restitution;
+		output.Spring = value.Spring;
 
 		return output;
 	}
@@ -41,11 +41,11 @@ namespace bs
 	__LimitAngularRangeInterop ScriptLimitAngularRange::ToInterop(const LimitAngularRange& value)
 	{
 		__LimitAngularRangeInterop output;
-		output.lower = value.lower;
-		output.upper = value.upper;
-		output.contactDist = value.contactDist;
-		output.restitution = value.restitution;
-		output.spring = value.spring;
+		output.Lower = value.Lower;
+		output.Upper = value.Upper;
+		output.ContactDist = value.ContactDist;
+		output.Restitution = value.Restitution;
+		output.Spring = value.Spring;
 
 		return output;
 	}

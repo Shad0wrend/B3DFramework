@@ -64,8 +64,8 @@ namespace bs
 	/** Structure used for initializing a new SliderJoint. */
 	struct SLIDER_JOINT_DESC : JOINT_DESC
 	{
-		LimitLinearRange limit;
-		SliderJointFlag flag = (SliderJointFlag)0;
+		LimitLinearRange Limit;
+		SliderJointFlag Flag = (SliderJointFlag)0;
 	};
 
 	/** @} */

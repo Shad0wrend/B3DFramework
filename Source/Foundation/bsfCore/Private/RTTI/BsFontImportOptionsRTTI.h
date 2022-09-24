@@ -19,12 +19,12 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			BS_RTTI_MEMBER_PLAIN(fontSizes, 0)
-			BS_RTTI_MEMBER_PLAIN(dpi, 2)
-			BS_RTTI_MEMBER_PLAIN(renderMode, 3)
-			BS_RTTI_MEMBER_PLAIN(bold, 4)
-			BS_RTTI_MEMBER_PLAIN(italic, 5)
-			BS_RTTI_MEMBER_PLAIN(charIndexRanges, 6)
+			BS_RTTI_MEMBER_PLAIN(FontSizes, 0)
+			BS_RTTI_MEMBER_PLAIN(Dpi, 2)
+			BS_RTTI_MEMBER_PLAIN(RenderMode, 3)
+			BS_RTTI_MEMBER_PLAIN(Bold, 4)
+			BS_RTTI_MEMBER_PLAIN(Italic, 5)
+			BS_RTTI_MEMBER_PLAIN(CharIndexRanges, 6)
 		BS_END_RTTI_MEMBERS
 
 		// For compability with old version
@@ -37,11 +37,11 @@ namespace bs
 		void SetCharIndexRangesOld(FontImportOptions* obj, Vector<std::pair<UINT32, UINT32>>& value)
 		{
 			// If already set it's assumed the new version already populated it
-			if(!obj->charIndexRanges.empty())
+			if(!obj->CharIndexRanges.empty())
 				return;
 
 			for(auto& entry : value)
-				obj->charIndexRanges.push_back(CharRange(entry.first, entry.second));
+				obj->CharIndexRanges.push_back(CharRange(entry.first, entry.second));
 		}
 
 	public:

@@ -67,48 +67,48 @@ namespace bs
 			if (!reader->Open(stream, info))
 				return nullptr;
 
-			bytesPerSample = info.bitDepth / 8;
-			bufferSize = info.numSamples * bytesPerSample;
+			bytesPerSample = info.BitDepth / 8;
+			bufferSize = info.NumSamples * bytesPerSample;
 
 			sampleStream = bs_shared_ptr_new<MemoryDataStream>(bufferSize);
-			reader->Read(sampleStream->Data(), info.numSamples);
+			reader->Read(sampleStream->Data(), info.NumSamples);
 		}
 
 		SPtr<const AudioClipImportOptions> clipIO = std::static_pointer_cast<const AudioClipImportOptions>(importOptions);
 
 		// If 3D, convert to mono
-		if(clipIO->is3D && info.numChannels > 1)
+		if(clipIO->Is3D && info.NumChannels > 1)
 		{
-			UINT32 numSamplesPerChannel = info.numSamples / info.numChannels;
+			UINT32 numSamplesPerChannel = info.NumSamples / info.NumChannels;
 
 			UINT32 monoBufferSize = numSamplesPerChannel * bytesPerSample;
 			auto monoStream = bs_shared_ptr_new<MemoryDataStream>(monoBufferSize);
 
-			AudioUtility::ConvertToMono(sampleStream->Data(), monoStream->Data(), info.bitDepth, numSamplesPerChannel, info.numChannels);
+			AudioUtility::ConvertToMono(sampleStream->Data(), monoStream->Data(), info.BitDepth, numSamplesPerChannel, info.NumChannels);
 
-			info.numSamples = numSamplesPerChannel;
-			info.numChannels = 1;
+			info.NumSamples = numSamplesPerChannel;
+			info.NumChannels = 1;
 
 			sampleStream = monoStream;
 			bufferSize = monoBufferSize;
 		}
 
 		// Convert bit depth if needed
-		if(clipIO->bitDepth != info.bitDepth)
+		if(clipIO->BitDepth != info.BitDepth)
 		{
-			UINT32 outBufferSize = info.numSamples * (clipIO->bitDepth / 8);
+			UINT32 outBufferSize = info.NumSamples * (clipIO->BitDepth / 8);
 			auto outStream = bs_shared_ptr_new<MemoryDataStream>(outBufferSize);
 
-			AudioUtility::ConvertBitDepth(sampleStream->Data(), info.bitDepth, outStream->Data(), clipIO->bitDepth, info.numSamples);
+			AudioUtility::ConvertBitDepth(sampleStream->Data(), info.BitDepth, outStream->Data(), clipIO->BitDepth, info.NumSamples);
 
-			info.bitDepth = clipIO->bitDepth;
+			info.BitDepth = clipIO->BitDepth;
 
 			sampleStream = outStream;
 			bufferSize = outBufferSize;
 		}
 
 		// Encode to Ogg Vorbis if needed
-		if(clipIO->format == AudioFormat::VORBIS)
+		if(clipIO->Format == AudioFormat::VORBIS)
 		{
 			// Note: If the original source was in Ogg Vorbis we could just copy it here, but instead we decode to PCM and
 			// then re-encode which is redundant. If later we decide to copy be aware that the engine encodes Ogg in a
@@ -117,14 +117,14 @@ namespace bs
 		}
 
 		AUDIO_CLIP_DESC clipDesc;
-		clipDesc.bitDepth = info.bitDepth;
-		clipDesc.format = clipIO->format;
-		clipDesc.frequency = info.sampleRate;
-		clipDesc.numChannels = info.numChannels;
-		clipDesc.readMode = clipIO->readMode;
-		clipDesc.is3D = clipIO->is3D;
+		clipDesc.BitDepth = info.BitDepth;
+		clipDesc.Format = clipIO->Format;
+		clipDesc.Frequency = info.SampleRate;
+		clipDesc.NumChannels = info.NumChannels;
+		clipDesc.ReadMode = clipIO->ReadMode;
+		clipDesc.Is3D = clipIO->Is3D;
 
-		SPtr<AudioClip> clip = AudioClip::CreatePtrInternal(sampleStream, bufferSize, info.numSamples, clipDesc);
+		SPtr<AudioClip> clip = AudioClip::CreatePtrInternal(sampleStream, bufferSize, info.NumSamples, clipDesc);
 
 		const String fileName = filePath.GetFilename(false);
 		clip->SetName(fileName);

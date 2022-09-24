@@ -19,22 +19,22 @@ namespace bs
 	private:
 		SPtr<ManagedSerializableFieldData> GetKey(ManagedSerializableDictionaryKeyValue* obj)
 		{
-			return obj->key;
+			return obj->Key;
 		}
 
 		void SetKey(ManagedSerializableDictionaryKeyValue* obj, SPtr<ManagedSerializableFieldData> val)
 		{
-			obj->key = val;
+			obj->Key = val;
 		}
 
 		SPtr<ManagedSerializableFieldData> GetValue(ManagedSerializableDictionaryKeyValue* obj)
 		{
-			return obj->value;
+			return obj->Value;
 		}
 
 		void SetValue(ManagedSerializableDictionaryKeyValue* obj, SPtr<ManagedSerializableFieldData> val)
 		{
-			obj->value = val;
+			obj->Value = val;
 		}
 
 	public:
@@ -74,7 +74,7 @@ namespace bs
 
 		void SetEntry(ManagedSerializableDictionary* obj, UINT32 arrayIdx, ManagedSerializableDictionaryKeyValue& val)
 		{
-			obj->SetFieldData(val.key, val.value);
+			obj->SetFieldData(val.Key, val.Value);
 		}
 
 		UINT32 GetNumEntries(ManagedSerializableDictionary* obj)

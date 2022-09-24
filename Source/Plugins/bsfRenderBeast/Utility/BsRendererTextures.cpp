@@ -19,8 +19,8 @@ namespace bs { namespace ct
 		for (UINT32 i = 0; i < 16; ++i)
 		{
 			float angle = (mapping[i] / 16.0f) * Math::PI;
-			bases[i].x = cos(angle);
-			bases[i].y = sin(angle);
+			bases[i].X = cos(angle);
+			bases[i].Y = sin(angle);
 		}
 
 		SPtr<PixelData> pixelData = PixelData::Create(4, 4, 1, PF_RG8);
@@ -30,8 +30,8 @@ namespace bs { namespace ct
 				UINT32 base = (y * 4) + x;
 
 				Color color;
-				color.r = bases[base].x * 0.5f + 0.5f;
-				color.g = bases[base].y * 0.5f + 0.5f;
+				color.R = bases[base].X * 0.5f + 0.5f;
+				color.G = bases[base].Y * 0.5f + 0.5f;
 
 				pixelData->SetColorAt(color, x, y);
 			}
@@ -60,9 +60,9 @@ namespace bs { namespace ct
 	Vector3 sphericalToCartesian(float cosTheta, float sinTheta, float phi)
 	{
 		Vector3 output;
-		output.x = sinTheta * cos(phi);
-		output.y = sinTheta * sin(phi);
-		output.z = cosTheta;
+		output.X = sinTheta * cos(phi);
+		output.Y = sinTheta * sin(phi);
+		output.Z = cosTheta;
 
 		return output;
 	}
@@ -88,28 +88,28 @@ namespace bs { namespace ct
 	SPtr<Texture> generatePreintegratedEnvBRDF()
 	{
 		TEXTURE_DESC desc;
-		desc.type = TEX_TYPE_2D;
-		desc.format = PF_RG16F;
-		desc.width = 128;
-		desc.height = 32;
+		desc.Type = TEX_TYPE_2D;
+		desc.Format = PF_RG16F;
+		desc.Width = 128;
+		desc.Height = 32;
 
 		SPtr<Texture> texture = Texture::Create(desc);
 		PixelData pixelData = texture->Lock(GBL_WRITE_ONLY_DISCARD);
 
-		for (UINT32 y = 0; y < desc.height; y++)
+		for (UINT32 y = 0; y < desc.Height; y++)
 		{
-			float roughness = (float)(y + 0.5f) / desc.height;
+			float roughness = (float)(y + 0.5f) / desc.Height;
 			float m = roughness * roughness;
 			float m2 = m*m;
 
-			for (UINT32 x = 0; x < desc.width; x++)
+			for (UINT32 x = 0; x < desc.Width; x++)
 			{
-				float NoV = (float)(x + 0.5f) / desc.width;
+				float NoV = (float)(x + 0.5f) / desc.Width;
 
 				Vector3 V;
-				V.x = sqrt(1.0f - NoV * NoV); // sine
-				V.y = 0.0f;
-				V.z = NoV;
+				V.X = sqrt(1.0f - NoV * NoV); // sine
+				V.Y = 0.0f;
+				V.Z = NoV;
 
 				// These are the two integrals resulting from the second part of the split-sum approximation. Described in
 				// Epic's 2013 paper:
@@ -133,8 +133,8 @@ namespace bs { namespace ct
 					Vector3 L = 2.0f * Vector3::Dot(V, H) * H - V;
 
 					float VoH = std::max(Vector3::Dot(V, H), 0.0f);
-					float NoL = std::max(L.z, 0.0f); // N assumed (0, 0, 1)
-					float NoH = std::max(H.z, 0.0f); // N assumed (0, 0, 1)
+					float NoL = std::max(L.Z, 0.0f); // N assumed (0, 0, 1)
+					float NoH = std::max(H.Z, 0.0f); // N assumed (0, 0, 1)
 
 					// Set second part of the split sum integral is split into two parts:
 					//   F0*I[G * (1 - (1 - v.h)^5) * cos(theta)] + I[G * (1 - v.h)^5 * cos(theta)] (F0 * scale + bias)
@@ -163,8 +163,8 @@ namespace bs { namespace ct
 				offset /= NumSamples;
 
 				Color color;
-				color.r = Math::Clamp01(scale);
-				color.g = Math::Clamp01(offset);
+				color.R = Math::Clamp01(scale);
+				color.G = Math::Clamp01(offset);
 
 				pixelData.SetColorAt(color, x, y);
 			}
@@ -178,10 +178,10 @@ namespace bs { namespace ct
 	SPtr<Texture> generateDefaultIndirect()
 	{
 		TEXTURE_DESC dummySkyDesc;
-		dummySkyDesc.type = TEX_TYPE_CUBE_MAP;
-		dummySkyDesc.format = PF_RG11B10F;
-		dummySkyDesc.width = 2;
-		dummySkyDesc.height = 2;
+		dummySkyDesc.Type = TEX_TYPE_CUBE_MAP;
+		dummySkyDesc.Format = PF_RG11B10F;
+		dummySkyDesc.Width = 2;
+		dummySkyDesc.Height = 2;
 
 		// Note: Eventually replace this with a time of day model
 		float intensity = 1.0f;
@@ -224,12 +224,12 @@ namespace bs { namespace ct
 		}
 
 		TEXTURE_DESC irradianceCubemapDesc;
-		irradianceCubemapDesc.type = TEX_TYPE_CUBE_MAP;
-		irradianceCubemapDesc.format = PF_RG11B10F;
-		irradianceCubemapDesc.width = IBLUtility::IRRADIANCE_CUBEMAP_SIZE;
-		irradianceCubemapDesc.height = IBLUtility::IRRADIANCE_CUBEMAP_SIZE;
-		irradianceCubemapDesc.numMips = 0;
-		irradianceCubemapDesc.usage = TU_STATIC | TU_RENDERTARGET;
+		irradianceCubemapDesc.Type = TEX_TYPE_CUBE_MAP;
+		irradianceCubemapDesc.Format = PF_RG11B10F;
+		irradianceCubemapDesc.Width = IBLUtility::IRRADIANCE_CUBEMAP_SIZE;
+		irradianceCubemapDesc.Height = IBLUtility::IRRADIANCE_CUBEMAP_SIZE;
+		irradianceCubemapDesc.NumMips = 0;
+		irradianceCubemapDesc.Usage = TU_STATIC | TU_RENDERTARGET;
 
 		SPtr<Texture> irradiance = Texture::Create(irradianceCubemapDesc);
 		gIBLUtility().FilterCubemapForIrradiance(skyTexture, irradiance);
@@ -286,7 +286,7 @@ namespace bs { namespace ct
 		ssaoRandomization4x4 = generate4x4RandomizationTexture();
 		defaultIndirect = generateDefaultIndirect();
 		lensFlareGradient = generateLensFlareGradientTint();
-		bokehFlare = textures.bokehFlare;
+		bokehFlare = textures.BokehFlare;
 		chromaticAberrationFringe = generateChromaticAberrationFringe();
 	}
 

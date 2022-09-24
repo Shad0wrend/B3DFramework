@@ -16,7 +16,7 @@ namespace bs
 
 	MonoObject*ScriptHingeJointDrive::Box(const HingeJointDrive& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	HingeJointDrive ScriptHingeJointDrive::Unbox(MonoObject* value)

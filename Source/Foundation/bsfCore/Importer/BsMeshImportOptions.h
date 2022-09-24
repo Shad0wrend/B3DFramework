@@ -28,20 +28,20 @@ namespace bs
 
 		BS_SCRIPT_EXPORT()
 		AnimationSplitInfo(const String& name, UINT32 startFrame, UINT32 endFrame, bool isAdditive = false)
-			: name(name), startFrame(startFrame), endFrame(endFrame), isAdditive(isAdditive)
+			: Name(name), StartFrame(startFrame), EndFrame(endFrame), IsAdditive(isAdditive)
 		{ }
 
 		BS_SCRIPT_EXPORT()
-		String name;
+		String Name;
 
 		BS_SCRIPT_EXPORT()
-		UINT32 startFrame = 0;
+		UINT32 StartFrame = 0;
 
 		BS_SCRIPT_EXPORT()
-		UINT32 endFrame = 0;
+		UINT32 EndFrame = 0;
 
 		BS_SCRIPT_EXPORT()
-		bool isAdditive = false;
+		bool IsAdditive = false;
 
 		/************************************************************************/
 		/* 								SERIALIZATION                      		*/
@@ -59,10 +59,10 @@ namespace bs
 		ImportedAnimationEvents() = default;
 
 		BS_SCRIPT_EXPORT()
-		String name;
+		String Name;
 
 		BS_SCRIPT_EXPORT()
-		Vector<AnimationEvent> events;
+		Vector<AnimationEvent> Events;
 
 		/************************************************************************/
 		/* 								SERIALIZATION                      		*/
@@ -83,34 +83,34 @@ namespace bs
 
 		/**	Determines whether the texture data is also stored in CPU memory. */
 		BS_SCRIPT_EXPORT()
-		bool cpuCached = false;
+		bool CpuCached = false;
 
 		/**	Determines should mesh normals be imported if available. */
 		BS_SCRIPT_EXPORT()
-		bool importNormals = true;
+		bool ImportNormals = true;
 
 		/**	Determines should mesh tangents and bitangents be imported if available. */
 		BS_SCRIPT_EXPORT()
-		bool importTangents = true;
+		bool ImportTangents = true;
 
 		/**	Determines should mesh blend shapes be imported if available. */
 		BS_SCRIPT_EXPORT()
-		bool importBlendShapes = false;
+		bool ImportBlendShapes = false;
 
 		/**	Determines should mesh skin data like bone weights, indices and bind poses be imported if available. */
 		BS_SCRIPT_EXPORT()
-		bool importSkin = false;
+		bool ImportSkin = false;
 
 		/**	Determines should animation clips be imported if available. */
 		BS_SCRIPT_EXPORT()
-		bool importAnimation = false;
+		bool ImportAnimation = false;
 
 		/**	
 		 * Enables or disables keyframe reduction. Keyframe reduction will reduce the number of key-frames in an animation
 		 * clip by removing identical keyframes, and therefore reducing the size of the clip.
 		 */
 		BS_SCRIPT_EXPORT()
-		bool reduceKeyFrames = true;
+		bool ReduceKeyFrames = true;
 
 		/**	
 		 * Enables or disables import of root motion curves. When enabled, any animation curves in imported animations
@@ -119,18 +119,18 @@ namespace bs
 		 * and applies them as required.
 		 */
 		BS_SCRIPT_EXPORT()
-		bool importRootMotion = false;
+		bool ImportRootMotion = false;
 
 		/** Uniformly scales the imported mesh by the specified value. */
 		BS_SCRIPT_EXPORT()
-		float importScale = 1.0f;
+		float ImportScale = 1.0f;
 
 		/**	
 		 * Determines what type (if any) of collision mesh should be imported. If enabled the collision mesh will be
 		 * available as a sub-resource returned by the importer (along with the normal mesh).
 		 */
 		BS_SCRIPT_EXPORT()
-		CollisionMeshType collisionMeshType = CollisionMeshType::None;
+		CollisionMeshType CollisionMeshType = CollisionMeshType::None;
 
 		/**
 		 * Animation split infos that determine how will the source animation clip be split. If no splits are present the
@@ -138,11 +138,11 @@ namespace bs
 		 * Split infos only affect the primary animation clip, other clips will not be split.
 		 */
 		BS_SCRIPT_EXPORT()
-		Vector<AnimationSplitInfo> animationSplits;
+		Vector<AnimationSplitInfo> AnimationSplits;
 
 		/** Set of events that will be added to the animation clip, if animation import is enabled. */
 		BS_SCRIPT_EXPORT()
-		Vector<ImportedAnimationEvents> animationEvents;
+		Vector<ImportedAnimationEvents> AnimationEvents;
 
 		/** Creates a new import options object that allows you to customize how are meshes imported. */
 		BS_SCRIPT_EXPORT(ec:T)

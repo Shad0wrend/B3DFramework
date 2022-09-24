@@ -61,9 +61,9 @@ namespace bs
 	::MonoClass* ScriptResourceBase::GetManagedResourceClass(UINT32 rttiId)
 	{
 		if(rttiId == Resource::GetRttiStatic()->GetRttiId())
-			return ScriptResource::GetMetaData()->scriptClass->GetInternalClassInternal();
+			return ScriptResource::GetMetaData()->ScriptClass->GetInternalClassInternal();
 		else if(rttiId == ManagedResource::GetRttiStatic()->GetRttiId())
-			return ScriptResource::GetMetaData()->scriptClass->GetInternalClassInternal();
+			return ScriptResource::GetMetaData()->ScriptClass->GetInternalClassInternal();
 		else
 		{
 			BuiltinResourceInfo* info = ScriptAssemblyManager::Instance().GetBuiltinResourceInfo(rttiId);
@@ -71,7 +71,7 @@ namespace bs
 			if (info == nullptr)
 				return nullptr;
 
-			return info->monoClass->GetInternalClassInternal();
+			return info->MonoClass->GetInternalClassInternal();
 		}
 	}
 
@@ -86,9 +86,9 @@ namespace bs
 
 	void ScriptResource::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_GetName", (void*)&ScriptResource::InternalGetName);
-		metaData.scriptClass->AddInternalCall("Internal_GetUUID", (void*)&ScriptResource::InternalGetUuid);
-		metaData.scriptClass->AddInternalCall("Internal_Release", (void*)&ScriptResource::InternalRelease);
+		metaData.ScriptClass->AddInternalCall("Internal_GetName", (void*)&ScriptResource::InternalGetName);
+		metaData.ScriptClass->AddInternalCall("Internal_GetUUID", (void*)&ScriptResource::InternalGetUuid);
+		metaData.ScriptClass->AddInternalCall("Internal_Release", (void*)&ScriptResource::InternalRelease);
 	}
 
 	MonoString* ScriptResource::InternalGetName(ScriptResourceBase* nativeInstance)
@@ -116,7 +116,7 @@ namespace bs
 	MonoObject* ScriptUUID::Box(const UUID& value)
 	{
 		// We're casting away const but it's fine since structs are passed by value anyway
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	UUID ScriptUUID::Unbox(MonoObject* obj)

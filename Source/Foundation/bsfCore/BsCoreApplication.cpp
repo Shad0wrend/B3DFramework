@@ -73,9 +73,9 @@ namespace bs
 		, mSimThreadId(BS_THREAD_CURRENT_ID), mRunMainLoop(false)
 	{
 		// Ensure all errors are reported properly
-		CrashHandler::StartUp(desc.crashHandling);
-		if(desc.logCallback)
-			gDebug().SetLogCallback(desc.logCallback);
+		CrashHandler::StartUp(desc.CrashHandling);
+		if(desc.LogCallback)
+			gDebug().SetLogCallback(desc.LogCallback);
 	}
 
 	CoreApplication::~CoreApplication()
@@ -170,28 +170,28 @@ namespace bs
 		ct::GpuProgramManager::StartUp();
 		RenderAPIManager::StartUp();
 
-		mPrimaryWindow = RenderAPIManager::Instance().Initialize(mStartUpDesc.renderAPI, mStartUpDesc.primaryWindowDesc);
+		mPrimaryWindow = RenderAPIManager::Instance().Initialize(mStartUpDesc.RenderApi, mStartUpDesc.PrimaryWindowDesc);
 
 		ct::ParamBlockManager::StartUp();
 		Input::StartUp();
 		RendererManager::StartUp();
 
-		LoadPlugin(mStartUpDesc.renderer, &mRendererPlugin);
+		LoadPlugin(mStartUpDesc.Renderer, &mRendererPlugin);
 
 		// Must be initialized before the scene manager, as game scene creation triggers physics scene creation
-		PhysicsManager::StartUp(mStartUpDesc.physics, mStartUpDesc.physicsCooking);
+		PhysicsManager::StartUp(mStartUpDesc.Physics, mStartUpDesc.PhysicsCooking);
 		SceneManager::StartUp();
-		RendererManager::Instance().SetActive(mStartUpDesc.renderer);
+		RendererManager::Instance().SetActive(mStartUpDesc.Renderer);
 		StartUpRenderer();
 
 		ProfilerGPU::StartUp();
 		MeshManager::StartUp();
 		Importer::StartUp();
-		AudioManager::StartUp(mStartUpDesc.audio);
+		AudioManager::StartUp(mStartUpDesc.Audio);
 		AnimationManager::StartUp();
 		ParticleManager::StartUp();
 
-		for (auto& importerName : mStartUpDesc.importers)
+		for (auto& importerName : mStartUpDesc.Importers)
 			LoadPlugin(importerName);
 
 		// Built-in importers
@@ -297,8 +297,8 @@ namespace bs
 
 		// Evaluate animation after scene and plugin updates because the renderer will just now be displaying the
 		// animation we sent on the previous frame, and we want the scene information to match to what is displayed.
-		perFrameData.animation = AnimationManager::Instance().Update(mStartUpDesc.asyncAnimation);
-		perFrameData.particles = ParticleManager::Instance().Update(*perFrameData.animation);
+		perFrameData.Animation = AnimationManager::Instance().Update(mStartUpDesc.AsyncAnimation);
+		perFrameData.Particles = ParticleManager::Instance().Update(*perFrameData.Animation);
 
 		// Send out resource events in case any were loaded/destroyed/modified
 		ResourceListenerManager::Instance().Update();

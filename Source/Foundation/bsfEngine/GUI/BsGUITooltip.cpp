@@ -52,23 +52,23 @@ namespace bs
 		INT32 contentOffsetY = 0;
 		if(backgroundStyle != nullptr)
 		{
-			size.x += backgroundStyle->margins.left + backgroundStyle->margins.right;
-			size.y += backgroundStyle->margins.top + backgroundStyle->margins.bottom;
+			size.X += backgroundStyle->Margins.Left + backgroundStyle->Margins.Right;
+			size.Y += backgroundStyle->Margins.Top + backgroundStyle->Margins.Bottom;
 
-			contentOffsetX = backgroundStyle->margins.left;
-			contentOffsetY = backgroundStyle->margins.top;
+			contentOffsetX = backgroundStyle->Margins.Left;
+			contentOffsetY = backgroundStyle->Margins.Top;
 		}
 
 		// Content area
 		GUIPanel* contentPanel = GetPanel()->AddNewElement<GUIPanel>();
-		contentPanel->SetWidth((UINT32)size.x);
-		contentPanel->SetHeight((UINT32)size.y);
+		contentPanel->SetWidth((UINT32)size.X);
+		contentPanel->SetHeight((UINT32)size.Y);
 		contentPanel->SetDepthRange(-1);
 
 		// Background frame
 		GUIPanel* backgroundPanel = GetPanel()->AddNewElement<GUIPanel>();
-		backgroundPanel->SetWidth((UINT32)size.x);
-		backgroundPanel->SetHeight((UINT32)size.y);
+		backgroundPanel->SetWidth((UINT32)size.X);
+		backgroundPanel->SetHeight((UINT32)size.Y);
 		backgroundPanel->SetDepthRange(0);
 
 		GUILayout* backgroundLayout = backgroundPanel->AddNewElement<GUILayoutX>();
@@ -82,17 +82,17 @@ namespace bs
 			BuiltinResources::MultiLineLabelStyle);
 
 		Rect2I positionBounds;
-		positionBounds.x = position.x;
-		positionBounds.y = position.y;
-		positionBounds.width = CURSOR_SIZE;
-		positionBounds.height = CURSOR_SIZE;
+		positionBounds.X = position.X;
+		positionBounds.Y = position.Y;
+		positionBounds.Width = CURSOR_SIZE;
+		positionBounds.Height = CURSOR_SIZE;
 
 		DropDownAreaPlacement::HorzDir horzDir;
 		DropDownAreaPlacement::VertDir vertDir;
 		DropDownAreaPlacement placement = DropDownAreaPlacement::AroundBounds(positionBounds);
-		Rect2I placementBounds = placement.GetOptimalBounds((UINT32)size.x, (UINT32)size.y, availableBounds, horzDir, vertDir);
+		Rect2I placementBounds = placement.GetOptimalBounds((UINT32)size.X, (UINT32)size.Y, availableBounds, horzDir, vertDir);
 
-		backgroundPanel->SetPosition(placementBounds.x, placementBounds.y);
-		contentPanel->SetPosition(placementBounds.x + contentOffsetX, placementBounds.y + contentOffsetY);
+		backgroundPanel->SetPosition(placementBounds.X, placementBounds.Y);
+		contentPanel->SetPosition(placementBounds.X + contentOffsetX, placementBounds.Y + contentOffsetY);
 	}
 }

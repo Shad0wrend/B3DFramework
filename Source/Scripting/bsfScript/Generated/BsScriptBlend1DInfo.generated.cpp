@@ -18,7 +18,7 @@ namespace bs
 
 	MonoObject*ScriptBlend1DInfo::Box(const __Blend1DInfoInterop& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	__Blend1DInfoInterop ScriptBlend1DInfo::Unbox(MonoObject* value)
@@ -30,16 +30,16 @@ namespace bs
 	{
 		Blend1DInfo output;
 		Vector<BlendClipInfo> vecclips;
-		if(value.clips != nullptr)
+		if(value.Clips != nullptr)
 		{
-			ScriptArray arrayclips(value.clips);
+			ScriptArray arrayclips(value.Clips);
 			vecclips.resize(arrayclips.Size());
 			for(int i = 0; i < (int)arrayclips.Size(); i++)
 			{
 				vecclips[i] = ScriptBlendClipInfo::FromInterop(arrayclips.Get<__BlendClipInfoInterop>(i));
 			}
 		}
-		output.clips = vecclips;
+		output.Clips = vecclips;
 
 		return output;
 	}
@@ -47,15 +47,15 @@ namespace bs
 	__Blend1DInfoInterop ScriptBlend1DInfo::ToInterop(const Blend1DInfo& value)
 	{
 		__Blend1DInfoInterop output;
-		int arraySizeclips = (int)value.clips.size();
+		int arraySizeclips = (int)value.Clips.size();
 		MonoArray* vecclips;
 		ScriptArray arrayclips = ScriptArray::Create<ScriptBlendClipInfo>(arraySizeclips);
 		for(int i = 0; i < arraySizeclips; i++)
 		{
-			arrayclips.Set(i, ScriptBlendClipInfo::ToInterop(value.clips[i]));
+			arrayclips.Set(i, ScriptBlendClipInfo::ToInterop(value.Clips[i]));
 		}
 		vecclips = arrayclips.GetInternal();
-		output.clips = vecclips;
+		output.Clips = vecclips;
 
 		return output;
 	}

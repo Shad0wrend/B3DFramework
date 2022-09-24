@@ -10,10 +10,10 @@ namespace bs
 {
 	struct __Blend2DInfoInterop
 	{
-		MonoObject* topLeftClip;
-		MonoObject* topRightClip;
-		MonoObject* botLeftClip;
-		MonoObject* botRightClip;
+		MonoObject* TopLeftClip;
+		MonoObject* TopRightClip;
+		MonoObject* BotLeftClip;
+		MonoObject* BotRightClip;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptBlend2DInfo : public ScriptObject<ScriptBlend2DInfo>

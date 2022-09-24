@@ -11,19 +11,19 @@ namespace bs
 {
 	struct __CharDescInterop
 	{
-		uint32_t charId;
-		uint32_t page;
-		float uvX;
-		float uvY;
-		float uvWidth;
-		float uvHeight;
-		uint32_t width;
-		uint32_t height;
-		int32_t xOffset;
-		int32_t yOffset;
-		int32_t xAdvance;
-		int32_t yAdvance;
-		MonoArray* kerningPairs;
+		uint32_t CharId;
+		uint32_t Page;
+		float UvX;
+		float UvY;
+		float UvWidth;
+		float UvHeight;
+		uint32_t Width;
+		uint32_t Height;
+		int32_t XOffset;
+		int32_t YOffset;
+		int32_t XAdvance;
+		int32_t YAdvance;
+		MonoArray* KerningPairs;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptCharDesc : public ScriptObject<ScriptCharDesc>

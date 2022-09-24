@@ -154,13 +154,13 @@ namespace bs { namespace ct
 		Bind();
 
 		RenderAPI& rapi = RenderAPI::Instance();
-		rapi.DispatchCompute(threadGroupCount.x, threadGroupCount.y);
+		rapi.DispatchCompute(threadGroupCount.X, threadGroupCount.Y);
 	}
 
 	POOLED_RENDER_TEXTURE_DESC EyeAdaptHistogramMat::GetOutputDesc(const SPtr<Texture>& target)
 	{
 		Vector2I threadGroupCount = GetThreadGroupCount(target);
-		UINT32 numHistograms = threadGroupCount.x * threadGroupCount.y;
+		UINT32 numHistograms = threadGroupCount.X * threadGroupCount.Y;
 
 		return POOLED_RENDER_TEXTURE_DESC::Create2D(PF_RGBA16F, HISTOGRAM_NUM_TEXELS, numHistograms,
 			TU_LOADSTORE);
@@ -174,17 +174,17 @@ namespace bs { namespace ct
 		const TextureProperties& props = target->GetProperties();
 	
 		Vector2I threadGroupCount;
-		threadGroupCount.x = ((INT32)props.GetWidth() + texelsPerThreadGroupX - 1) / texelsPerThreadGroupX;
-		threadGroupCount.y = ((INT32)props.GetHeight() + texelsPerThreadGroupY - 1) / texelsPerThreadGroupY;
+		threadGroupCount.X = ((INT32)props.GetWidth() + texelsPerThreadGroupX - 1) / texelsPerThreadGroupX;
+		threadGroupCount.Y = ((INT32)props.GetHeight() + texelsPerThreadGroupY - 1) / texelsPerThreadGroupY;
 
 		return threadGroupCount;
 	}
 
 	Vector2 EyeAdaptHistogramMat::GetHistogramScaleOffset(const AutoExposureSettings& settings)
 	{
-		float diff = settings.histogramLog2Max - settings.histogramLog2Min;
+		float diff = settings.HistogramLog2Max - settings.HistogramLog2Min;
 		float scale = 1.0f / diff;
-		float offset = -settings.histogramLog2Min * scale;
+		float offset = -settings.HistogramLog2Min * scale;
 
 		return Vector2(scale, offset);
 	}
@@ -217,7 +217,7 @@ namespace bs { namespace ct
 		mEyeAdaptationTex.Set(eyeAdaptationTex);
 
 		Vector2I threadGroupCount = EyeAdaptHistogramMat::GetThreadGroupCount(sceneColor);
-		UINT32 numHistograms = threadGroupCount.x * threadGroupCount.y;
+		UINT32 numHistograms = threadGroupCount.X * threadGroupCount.Y;
 
 		gEyeAdaptHistogramReduceParamDef.gThreadGroupCount.Set(mParamBuffer, numHistograms);
 
@@ -285,25 +285,25 @@ namespace bs { namespace ct
 		Vector2 histogramScaleAndOffset = EyeAdaptHistogramMat::GetHistogramScaleOffset(settings);
 
 		Vector4 eyeAdaptationParams[3];
-		eyeAdaptationParams[0].x = histogramScaleAndOffset.x;
-		eyeAdaptationParams[0].y = histogramScaleAndOffset.y;
+		eyeAdaptationParams[0].X = histogramScaleAndOffset.X;
+		eyeAdaptationParams[0].Y = histogramScaleAndOffset.Y;
 
-		float histogramPctHigh = Math::Clamp01(settings.histogramPctHigh);
+		float histogramPctHigh = Math::Clamp01(settings.HistogramPctHigh);
 
-		eyeAdaptationParams[0].z = std::min(Math::Clamp01(settings.histogramPctLow), histogramPctHigh);
-		eyeAdaptationParams[0].w = histogramPctHigh;
+		eyeAdaptationParams[0].Z = std::min(Math::Clamp01(settings.HistogramPctLow), histogramPctHigh);
+		eyeAdaptationParams[0].W = histogramPctHigh;
 
-		eyeAdaptationParams[1].x = std::min(settings.minEyeAdaptation, settings.maxEyeAdaptation);
-		eyeAdaptationParams[1].y = settings.maxEyeAdaptation;
+		eyeAdaptationParams[1].X = std::min(settings.MinEyeAdaptation, settings.MaxEyeAdaptation);
+		eyeAdaptationParams[1].Y = settings.MaxEyeAdaptation;
 
-		eyeAdaptationParams[1].z = settings.eyeAdaptationSpeedUp;
-		eyeAdaptationParams[1].w = settings.eyeAdaptationSpeedDown;
+		eyeAdaptationParams[1].Z = settings.EyeAdaptationSpeedUp;
+		eyeAdaptationParams[1].W = settings.EyeAdaptationSpeedDown;
 
-		eyeAdaptationParams[2].x = Math::Pow(2.0f, exposureScale);
-		eyeAdaptationParams[2].y = frameDelta;
+		eyeAdaptationParams[2].X = Math::Pow(2.0f, exposureScale);
+		eyeAdaptationParams[2].Y = frameDelta;
 
-		eyeAdaptationParams[2].z = Math::Pow(2.0f, settings.histogramLog2Min);
-		eyeAdaptationParams[2].w = 0.0f; // Unused
+		eyeAdaptationParams[2].Z = Math::Pow(2.0f, settings.HistogramLog2Min);
+		eyeAdaptationParams[2].W = 0.0f; // Unused
 
 		gEyeAdaptationParamDef.gEyeAdaptationParams.Set(paramBuffer, eyeAdaptationParams[0], 0);
 		gEyeAdaptationParamDef.gEyeAdaptationParams.Set(paramBuffer, eyeAdaptationParams[1], 1);
@@ -318,9 +318,9 @@ namespace bs { namespace ct
 		mParams->GetTextureParam(GPT_FRAGMENT_PROGRAM, "gInputTex", mInputTex);
 
 		SAMPLER_STATE_DESC desc;
-		desc.minFilter = FO_POINT;
-		desc.magFilter = FO_POINT;
-		desc.mipFilter = FO_POINT;
+		desc.MinFilter = FO_POINT;
+		desc.MagFilter = FO_POINT;
+		desc.MipFilter = FO_POINT;
 
 		SPtr<SamplerState> samplerState = SamplerState::Create(desc);
 		setSamplerState(mParams, GPT_FRAGMENT_PROGRAM, "gInputSamp", "gInputTex", samplerState);
@@ -458,35 +458,35 @@ namespace bs { namespace ct
 	void CreateTonemapLUTMat::PopulateParamBuffers(const RenderSettings& settings)
 	{
 		// Set parameters
-		gCreateTonemapLUTParamDef.gGammaAdjustment.Set(mParamBuffer, 2.2f / settings.gamma);
+		gCreateTonemapLUTParamDef.gGammaAdjustment.Set(mParamBuffer, 2.2f / settings.Gamma);
 
 		// Note: Assuming sRGB (PC monitor) for now, change to Rec.709 when running on console (value 1), or to raw 2.2
 		// gamma when running on Mac (value 2)
 		gCreateTonemapLUTParamDef.gGammaCorrectionType.Set(mParamBuffer, 0);
 
 		Vector4 tonemapParams[2];
-		tonemapParams[0].x = settings.tonemapping.filmicCurveShoulderStrength;
-		tonemapParams[0].y = settings.tonemapping.filmicCurveLinearStrength;
-		tonemapParams[0].z = settings.tonemapping.filmicCurveLinearAngle;
-		tonemapParams[0].w = settings.tonemapping.filmicCurveToeStrength;
+		tonemapParams[0].X = settings.Tonemapping.FilmicCurveShoulderStrength;
+		tonemapParams[0].Y = settings.Tonemapping.FilmicCurveLinearStrength;
+		tonemapParams[0].Z = settings.Tonemapping.FilmicCurveLinearAngle;
+		tonemapParams[0].W = settings.Tonemapping.FilmicCurveToeStrength;
 
-		tonemapParams[1].x = settings.tonemapping.filmicCurveToeNumerator;
-		tonemapParams[1].y = settings.tonemapping.filmicCurveToeDenominator;
-		tonemapParams[1].z = settings.tonemapping.filmicCurveLinearWhitePoint;
-		tonemapParams[1].w = 0.0f; // Unused
+		tonemapParams[1].X = settings.Tonemapping.FilmicCurveToeNumerator;
+		tonemapParams[1].Y = settings.Tonemapping.FilmicCurveToeDenominator;
+		tonemapParams[1].Z = settings.Tonemapping.FilmicCurveLinearWhitePoint;
+		tonemapParams[1].W = 0.0f; // Unused
 
 		gCreateTonemapLUTParamDef.gTonemapParams.Set(mParamBuffer, tonemapParams[0], 0);
 		gCreateTonemapLUTParamDef.gTonemapParams.Set(mParamBuffer, tonemapParams[1], 1);
 
 		// Set color grading params
-		gCreateTonemapLUTParamDef.gSaturation.Set(mParamBuffer, settings.colorGrading.saturation);
-		gCreateTonemapLUTParamDef.gContrast.Set(mParamBuffer, settings.colorGrading.contrast);
-		gCreateTonemapLUTParamDef.gGain.Set(mParamBuffer, settings.colorGrading.gain);
-		gCreateTonemapLUTParamDef.gOffset.Set(mParamBuffer, settings.colorGrading.offset);
+		gCreateTonemapLUTParamDef.gSaturation.Set(mParamBuffer, settings.ColorGrading.Saturation);
+		gCreateTonemapLUTParamDef.gContrast.Set(mParamBuffer, settings.ColorGrading.Contrast);
+		gCreateTonemapLUTParamDef.gGain.Set(mParamBuffer, settings.ColorGrading.Gain);
+		gCreateTonemapLUTParamDef.gOffset.Set(mParamBuffer, settings.ColorGrading.Offset);
 
 		// Set white balance params
-		gWhiteBalanceParamDef.gWhiteTemp.Set(mWhiteBalanceParamBuffer, settings.whiteBalance.temperature);
-		gWhiteBalanceParamDef.gWhiteOffset.Set(mWhiteBalanceParamBuffer, settings.whiteBalance.tint);
+		gWhiteBalanceParamDef.gWhiteTemp.Set(mWhiteBalanceParamBuffer, settings.WhiteBalance.Temperature);
+		gWhiteBalanceParamDef.gWhiteOffset.Set(mWhiteBalanceParamBuffer, settings.WhiteBalance.Tint);
 	}
 
 	POOLED_RENDER_TEXTURE_DESC CreateTonemapLUTMat::GetOutputDesc() const
@@ -533,10 +533,10 @@ namespace bs { namespace ct
 
 		const TextureProperties& texProps = sceneColor->GetProperties();
 
-		gTonemappingParamDef.gRawGamma.Set(mParamBuffer, 1.0f / settings.gamma);
-		gTonemappingParamDef.gManualExposureScale.Set(mParamBuffer, Math::Pow(2.0f, settings.exposureScale));
+		gTonemappingParamDef.gRawGamma.Set(mParamBuffer, 1.0f / settings.Gamma);
+		gTonemappingParamDef.gManualExposureScale.Set(mParamBuffer, Math::Pow(2.0f, settings.ExposureScale));
 		gTonemappingParamDef.gTexSize.Set(mParamBuffer, Vector2((float)texProps.GetWidth(), (float)texProps.GetHeight()));
-		gTonemappingParamDef.gBloomTint.Set(mParamBuffer, settings.bloom.tint);
+		gTonemappingParamDef.gBloomTint.Set(mParamBuffer, settings.Bloom.Tint);
 		gTonemappingParamDef.gNumSamples.Set(mParamBuffer, texProps.GetNumSamples());
 
 		// Set parameters
@@ -648,7 +648,7 @@ namespace bs { namespace ct
 		BS_RENMAT_PROFILE_BLOCK
 
 		gBloomClipParamDef.gThreshold.Set(mParamBuffer, threshold);
-		gBloomClipParamDef.gManualExposureScale.Set(mParamBuffer, Math::Pow(2.0f, settings.exposureScale));
+		gBloomClipParamDef.gManualExposureScale.Set(mParamBuffer, Math::Pow(2.0f, settings.ExposureScale));
 
 		// Set parameters
 		mInputTex.Set(input);
@@ -688,14 +688,14 @@ namespace bs { namespace ct
 		BS_RENMAT_PROFILE_BLOCK
 
 		// Set parameters
-		gScreenSpaceLensFlareParamDef.gThreshold.Set(mParamBuffer, settings.threshold);
-		gScreenSpaceLensFlareParamDef.gGhostCount.Set(mParamBuffer, settings.ghostCount);
-		gScreenSpaceLensFlareParamDef.gGhostSpacing.Set(mParamBuffer, settings.ghostSpacing);
-		gScreenSpaceLensFlareParamDef.gHaloRadius.Set(mParamBuffer, settings.haloRadius);
-		gScreenSpaceLensFlareParamDef.gHaloThickness.Set(mParamBuffer, settings.haloThickness);
-		gScreenSpaceLensFlareParamDef.gHaloThreshold.Set(mParamBuffer, settings.haloThreshold);
-		gScreenSpaceLensFlareParamDef.gHaloAspectRatio.Set(mParamBuffer, settings.haloAspectRatio);
-		gScreenSpaceLensFlareParamDef.gChromaticAberration.Set(mParamBuffer, settings.chromaticAberrationOffset);
+		gScreenSpaceLensFlareParamDef.gThreshold.Set(mParamBuffer, settings.Threshold);
+		gScreenSpaceLensFlareParamDef.gGhostCount.Set(mParamBuffer, settings.GhostCount);
+		gScreenSpaceLensFlareParamDef.gGhostSpacing.Set(mParamBuffer, settings.GhostSpacing);
+		gScreenSpaceLensFlareParamDef.gHaloRadius.Set(mParamBuffer, settings.HaloRadius);
+		gScreenSpaceLensFlareParamDef.gHaloThickness.Set(mParamBuffer, settings.HaloThickness);
+		gScreenSpaceLensFlareParamDef.gHaloThreshold.Set(mParamBuffer, settings.HaloThreshold);
+		gScreenSpaceLensFlareParamDef.gHaloAspectRatio.Set(mParamBuffer, settings.HaloAspectRatio);
+		gScreenSpaceLensFlareParamDef.gChromaticAberration.Set(mParamBuffer, settings.ChromaticAberrationOffset);
 
 		mInputTex.Set(input);
 		mGradientTex.Set(RendererTextures::lensFlareGradient);
@@ -760,11 +760,11 @@ namespace bs { namespace ct
 		gChromaticAberrationParamDef.gInputSize.Set(mParamBuffer,
 			Vector2((float)texProps.GetWidth(), (float)texProps.GetHeight()));
 
-		gChromaticAberrationParamDef.gShiftAmount.Set(mParamBuffer, settings.shiftAmount);
+		gChromaticAberrationParamDef.gShiftAmount.Set(mParamBuffer, settings.ShiftAmount);
 		
 		SPtr<Texture> fringeTex;
-		if (settings.fringeTexture)
-			fringeTex = settings.fringeTexture;
+		if (settings.FringeTexture)
+			fringeTex = settings.FringeTexture;
 		else
 			fringeTex = RendererTextures::chromaticAberrationFringe;
 		
@@ -808,8 +808,8 @@ namespace bs { namespace ct
 		BS_RENMAT_PROFILE_BLOCK
 
 		// Set parameters
-		gFilmGrainParamDef.gIntensity.Set(mParamBuffer, settings.intensity);
-		gFilmGrainParamDef.gTime.Set(mParamBuffer, settings.speed * time);
+		gFilmGrainParamDef.gIntensity.Set(mParamBuffer, settings.Intensity);
+		gFilmGrainParamDef.gTime.Set(mParamBuffer, settings.Speed * time);
 
 		mInputTex.Set(input);
 
@@ -849,7 +849,7 @@ namespace bs { namespace ct
 		const RenderTextureProperties& dstProps = destination->GetProperties();
 
 		POOLED_RENDER_TEXTURE_DESC tempTextureDesc = POOLED_RENDER_TEXTURE_DESC::Create2D(srcProps.GetFormat(),
-			dstProps.width, dstProps.height, TU_RENDERTARGET);
+			dstProps.Width, dstProps.Height, TU_RENDERTARGET);
 		SPtr<PooledRenderTexture> tempTexture = gGpuResourcePool().Get(tempTextureDesc);
 
 		// Horizontal pass
@@ -861,7 +861,7 @@ namespace bs { namespace ct
 				mAdditiveTexture.Set(Texture::BLACK);
 
 			RenderAPI& rapi = RenderAPI::Instance();
-			rapi.SetRenderTarget(tempTexture->renderTexture);
+			rapi.SetRenderTarget(tempTexture->RenderTexture);
 
 			Bind();
 			gRendererUtility().DrawScreenQuad();
@@ -870,7 +870,7 @@ namespace bs { namespace ct
 		// Vertical pass
 		{
 			PopulateBuffer(mParamBuffer, DirVertical, source, filterSize, tint);
-			mInputTexture.Set(tempTexture->texture);
+			mInputTexture.Set(tempTexture->Texture);
 
 			if(mIsAdditive)
 			{
@@ -988,7 +988,7 @@ namespace bs { namespace ct
 
 		for (UINT32 i = 0; i < numSamples; ++i)
 		{
-			Vector4 weight(tint.r, tint.g, tint.b, tint.a);
+			Vector4 weight(tint.R, tint.G, tint.B, tint.A);
 			weight *= sampleWeights[i];
 
 			gGaussianBlurParamDef.gSampleWeights.Set(buffer, weight, i);
@@ -1041,12 +1041,12 @@ namespace bs { namespace ct
 		mParams->GetTextureParam(GPT_FRAGMENT_PROGRAM, "gDepthTex", mDepthTexture);
 
 		SAMPLER_STATE_DESC desc;
-		desc.minFilter = FO_POINT;
-		desc.magFilter = FO_POINT;
-		desc.mipFilter = FO_POINT;
-		desc.addressMode.u = TAM_CLAMP;
-		desc.addressMode.v = TAM_CLAMP;
-		desc.addressMode.w = TAM_CLAMP;
+		desc.MinFilter = FO_POINT;
+		desc.MagFilter = FO_POINT;
+		desc.MipFilter = FO_POINT;
+		desc.AddressMode.U = TAM_CLAMP;
+		desc.AddressMode.V = TAM_CLAMP;
+		desc.AddressMode.W = TAM_CLAMP;
 
 		SPtr<SamplerState> samplerState = SamplerState::Create(desc);
 		setSamplerState(mParams, GPT_FRAGMENT_PROGRAM, "gColorSamp", "gColorTex", samplerState);
@@ -1075,21 +1075,21 @@ namespace bs { namespace ct
 			mOutput1 = gGpuResourcePool().Get(outputTexDesc);
 
 			RENDER_TEXTURE_DESC rtDesc;
-			rtDesc.colorSurfaces[0].texture = mOutput0->texture;
-			rtDesc.colorSurfaces[1].texture = mOutput1->texture;
+			rtDesc.ColorSurfaces[0].Texture = mOutput0->Texture;
+			rtDesc.ColorSurfaces[1].Texture = mOutput1->Texture;
 
 			rt = RenderTexture::Create(rtDesc);
 		}
 		else
-			rt = mOutput0->renderTexture;
+			rt = mOutput0->RenderTexture;
 
 		Vector2 invTexSize(1.0f / srcProps.GetWidth(), 1.0f / srcProps.GetHeight());
 
 		gGaussianDOFParamDef.gHalfPixelOffset.Set(mParamBuffer, invTexSize * 0.5f);
-		gGaussianDOFParamDef.gNearBlurPlane.Set(mParamBuffer, settings.focalDistance - settings.focalRange * 0.5f);
-		gGaussianDOFParamDef.gFarBlurPlane.Set(mParamBuffer, settings.focalDistance + settings.focalRange * 0.5f);
-		gGaussianDOFParamDef.gInvNearBlurRange.Set(mParamBuffer, 1.0f / settings.nearTransitionRange);
-		gGaussianDOFParamDef.gInvFarBlurRange.Set(mParamBuffer, 1.0f / settings.farTransitionRange);
+		gGaussianDOFParamDef.gNearBlurPlane.Set(mParamBuffer, settings.FocalDistance - settings.FocalRange * 0.5f);
+		gGaussianDOFParamDef.gFarBlurPlane.Set(mParamBuffer, settings.FocalDistance + settings.FocalRange * 0.5f);
+		gGaussianDOFParamDef.gInvNearBlurRange.Set(mParamBuffer, 1.0f / settings.NearTransitionRange);
+		gGaussianDOFParamDef.gInvFarBlurRange.Set(mParamBuffer, 1.0f / settings.FarTransitionRange);
 
 		mColorTexture.Set(color);
 		mDepthTexture.Set(depth);
@@ -1160,10 +1160,10 @@ namespace bs { namespace ct
 		Vector2 invTexSize(1.0f / srcProps.GetWidth(), 1.0f / srcProps.GetHeight());
 
 		gGaussianDOFParamDef.gHalfPixelOffset.Set(mParamBuffer, invTexSize * 0.5f);
-		gGaussianDOFParamDef.gNearBlurPlane.Set(mParamBuffer, settings.focalDistance - settings.focalRange * 0.5f);
-		gGaussianDOFParamDef.gFarBlurPlane.Set(mParamBuffer, settings.focalDistance + settings.focalRange * 0.5f);
-		gGaussianDOFParamDef.gInvNearBlurRange.Set(mParamBuffer, 1.0f / settings.nearTransitionRange);
-		gGaussianDOFParamDef.gInvFarBlurRange.Set(mParamBuffer, 1.0f / settings.farTransitionRange);
+		gGaussianDOFParamDef.gNearBlurPlane.Set(mParamBuffer, settings.FocalDistance - settings.FocalRange * 0.5f);
+		gGaussianDOFParamDef.gFarBlurPlane.Set(mParamBuffer, settings.FocalDistance + settings.FocalRange * 0.5f);
+		gGaussianDOFParamDef.gInvNearBlurRange.Set(mParamBuffer, 1.0f / settings.NearTransitionRange);
+		gGaussianDOFParamDef.gInvFarBlurRange.Set(mParamBuffer, 1.0f / settings.FarTransitionRange);
 
 		mFocusedTexture.Set(focused);
 		mNearTexture.Set(near);
@@ -1280,8 +1280,8 @@ namespace bs { namespace ct
 
 		// Prepare vertex buffer for rendering tiles
 		VERTEX_BUFFER_DESC tileVertexBufferDesc;
-		tileVertexBufferDesc.numVerts = QUADS_PER_TILE * 4;
-		tileVertexBufferDesc.vertexSize = tileVertexDesc->GetVertexStride();
+		tileVertexBufferDesc.NumVerts = QUADS_PER_TILE * 4;
+		tileVertexBufferDesc.VertexSize = tileVertexDesc->GetVertexStride();
 
 		mTileVertexBuffer = VertexBuffer::Create(tileVertexBufferDesc);
 
@@ -1298,19 +1298,19 @@ namespace bs { namespace ct
 
 		// Prepare indices for rendering tiles
 		INDEX_BUFFER_DESC tileIndexBufferDesc;
-		tileIndexBufferDesc.indexType = IT_16BIT;
-		tileIndexBufferDesc.numIndices = QUADS_PER_TILE * 6;
+		tileIndexBufferDesc.IndexType = IT_16BIT;
+		tileIndexBufferDesc.NumIndices = QUADS_PER_TILE * 6;
 
 		mTileIndexBuffer = IndexBuffer::Create(tileIndexBufferDesc);
 
 		auto* const indices = (UINT16*)mTileIndexBuffer->Lock(GBL_WRITE_ONLY_DISCARD);
 
-		const Conventions& rapiConventions = gCaps().conventions;
+		const Conventions& rapiConventions = gCaps().Conventions;
 		for (UINT32 i = 0; i < QUADS_PER_TILE; i++)
 		{
 			// If UV is flipped, then our tile will be upside down so we need to change index order so it doesn't
 			// get culled.
-			if (rapiConventions.uvYAxis == Conventions::Axis::Up)
+			if (rapiConventions.UvYAxis == Conventions::Axis::Up)
 			{
 				indices[i * 6 + 0] = i * 4 + 2; indices[i * 6 + 1] = i * 4 + 1; indices[i * 6 + 2] = i * 4 + 0;
 				indices[i * 6 + 3] = i * 4 + 2; indices[i * 6 + 4] = i * 4 + 3; indices[i * 6 + 5] = i * 4 + 1;
@@ -1339,15 +1339,15 @@ namespace bs { namespace ct
 		const RenderTargetProperties& dstProps = output->GetProperties();
 
 		Vector2 inputInvTexSize(1.0f / srcProps.GetWidth(), 1.0f / srcProps.GetHeight());
-		Vector2 outputInvTexSize(1.0f / dstProps.width, 1.0f / dstProps.height);
+		Vector2 outputInvTexSize(1.0f / dstProps.Width, 1.0f / dstProps.Height);
 		gBokehDOFParamDef.gInvInputSize.Set(mParamBuffer, inputInvTexSize);
 		gBokehDOFParamDef.gInvOutputSize.Set(mParamBuffer, outputInvTexSize);
-		gBokehDOFParamDef.gAdaptiveThresholdCOC.Set(mParamBuffer, settings.adaptiveRadiusThreshold);
-		gBokehDOFParamDef.gAdaptiveThresholdColor.Set(mParamBuffer, settings.adaptiveColorThreshold);
+		gBokehDOFParamDef.gAdaptiveThresholdCOC.Set(mParamBuffer, settings.AdaptiveRadiusThreshold);
+		gBokehDOFParamDef.gAdaptiveThresholdColor.Set(mParamBuffer, settings.AdaptiveColorThreshold);
 		gBokehDOFParamDef.gLayerPixelOffset.Set(mParamBuffer, (INT32)srcProps.GetHeight() + (INT32)NEAR_FAR_PADDING);
-		gBokehDOFParamDef.gInvDepthRange.Set(mParamBuffer, 1.0f / settings.occlusionDepthRange);
+		gBokehDOFParamDef.gInvDepthRange.Set(mParamBuffer, 1.0f / settings.OcclusionDepthRange);
 
-		float bokehSize = settings.maxBokehSize * srcProps.GetWidth();
+		float bokehSize = settings.MaxBokehSize * srcProps.GetWidth();
 		gBokehDOFParamDef.gBokehSize.Set(mParamBuffer, Vector2(bokehSize, bokehSize));
 
 		Vector2I imageSize(srcProps.GetWidth(), srcProps.GetHeight());
@@ -1360,7 +1360,7 @@ namespace bs { namespace ct
 		mInputTextureVS.Set(input);
 		mInputTextureFS.Set(input);
 
-		SPtr<Texture> bokehTexture = settings.bokehShape;
+		SPtr<Texture> bokehTexture = settings.BokehShape;
 		if(bokehTexture == nullptr)
 			bokehTexture = RendererTextures::bokehFlare;
 
@@ -1380,7 +1380,7 @@ namespace bs { namespace ct
 		rapi.SetDrawOperation(DOT_TRIANGLE_LIST);
 
 		Bind();
-		const UINT32 numInstances = Math::DivideAndRoundUp((UINT32)(tileCount.x * tileCount.y), QUADS_PER_TILE);
+		const UINT32 numInstances = Math::DivideAndRoundUp((UINT32)(tileCount.X * tileCount.Y), QUADS_PER_TILE);
 		rapi.DrawIndexed(0, QUADS_PER_TILE * 6, 0, QUADS_PER_TILE * 4, numInstances);
 	}
 
@@ -1397,28 +1397,28 @@ namespace bs { namespace ct
 	void BokehDOFMat::PopulateDofCommonParams(const SPtr<GpuParamBlockBuffer>& buffer, const DepthOfFieldSettings& settings,
 		const RendererView& view)
 	{
-		gDepthOfFieldCommonParamDef.gFocalPlaneDistance.Set(buffer, settings.focalDistance);
-		gDepthOfFieldCommonParamDef.gApertureSize.Set(buffer, settings.apertureSize * 0.001f); // mm to m
-		gDepthOfFieldCommonParamDef.gFocalLength.Set(buffer, settings.focalLength * 0.001f); // mm to m
-		gDepthOfFieldCommonParamDef.gInFocusRange.Set(buffer, settings.focalRange);
-		gDepthOfFieldCommonParamDef.gNearTransitionRegion.Set(buffer, settings.nearTransitionRange);
-		gDepthOfFieldCommonParamDef.gFarTransitionRegion.Set(buffer, settings.farTransitionRange);
+		gDepthOfFieldCommonParamDef.gFocalPlaneDistance.Set(buffer, settings.FocalDistance);
+		gDepthOfFieldCommonParamDef.gApertureSize.Set(buffer, settings.ApertureSize * 0.001f); // mm to m
+		gDepthOfFieldCommonParamDef.gFocalLength.Set(buffer, settings.FocalLength * 0.001f); // mm to m
+		gDepthOfFieldCommonParamDef.gInFocusRange.Set(buffer, settings.FocalRange);
+		gDepthOfFieldCommonParamDef.gNearTransitionRegion.Set(buffer, settings.NearTransitionRange);
+		gDepthOfFieldCommonParamDef.gFarTransitionRegion.Set(buffer, settings.FarTransitionRange);
 
 		float sensorSize, imageSize;
-		if(settings.sensorSize.x < settings.sensorSize.y)
+		if(settings.SensorSize.X < settings.SensorSize.Y)
 		{
-			sensorSize = settings.sensorSize.x;
-			imageSize = (float)view.GetProperties().target.targetWidth;
+			sensorSize = settings.SensorSize.X;
+			imageSize = (float)view.GetProperties().Target.TargetWidth;
 		}
 		else
 		{
-			sensorSize = settings.sensorSize.y;
-			imageSize = (float)view.GetProperties().target.targetHeight;
+			sensorSize = settings.SensorSize.Y;
+			imageSize = (float)view.GetProperties().Target.TargetHeight;
 		}
 
 		gDepthOfFieldCommonParamDef.gSensorSize.Set(buffer, sensorSize);
 		gDepthOfFieldCommonParamDef.gImageSize.Set(buffer, imageSize);
-		gDepthOfFieldCommonParamDef.gMaxBokehSize.Set(buffer, Math::Clamp01(settings.maxBokehSize) * imageSize);
+		gDepthOfFieldCommonParamDef.gMaxBokehSize.Set(buffer, Math::Clamp01(settings.MaxBokehSize) * imageSize);
 	}
 
 	BokehDOFMat* BokehDOFMat::GetVariation(bool depthOcclusion)
@@ -1504,12 +1504,12 @@ namespace bs { namespace ct
 		mParams->GetTextureParam(GPT_FRAGMENT_PROGRAM, "gDepthBufferTex", mDepthTexture);
 
 		SAMPLER_STATE_DESC pointSampDesc;
-		pointSampDesc.minFilter = FO_POINT;
-		pointSampDesc.magFilter = FO_POINT;
-		pointSampDesc.mipFilter = FO_POINT;
-		pointSampDesc.addressMode.u = TAM_CLAMP;
-		pointSampDesc.addressMode.v = TAM_CLAMP;
-		pointSampDesc.addressMode.w = TAM_CLAMP;
+		pointSampDesc.MinFilter = FO_POINT;
+		pointSampDesc.MagFilter = FO_POINT;
+		pointSampDesc.MipFilter = FO_POINT;
+		pointSampDesc.AddressMode.U = TAM_CLAMP;
+		pointSampDesc.AddressMode.V = TAM_CLAMP;
+		pointSampDesc.AddressMode.W = TAM_CLAMP;
 
 		SPtr<SamplerState> pointSampState = SamplerState::Create(pointSampDesc);
 
@@ -1523,7 +1523,7 @@ namespace bs { namespace ct
 		BS_RENMAT_PROFILE_BLOCK
 
 		UINT32 numSamples;
-		switch(settings.quality)
+		switch(settings.Quality)
 		{
 		default:
 		case MotionBlurQuality::VeryLow: numSamples = 4; break;
@@ -1563,9 +1563,9 @@ namespace bs { namespace ct
 			mParams->SetParamBlockBuffer(GPT_FRAGMENT_PROGRAM, "Input", mParamBuffer);
 
 			SAMPLER_STATE_DESC inputSampDesc;
-			inputSampDesc.minFilter = FO_POINT;
-			inputSampDesc.magFilter = FO_POINT;
-			inputSampDesc.mipFilter = FO_POINT;
+			inputSampDesc.MinFilter = FO_POINT;
+			inputSampDesc.MagFilter = FO_POINT;
+			inputSampDesc.MipFilter = FO_POINT;
 
 			SPtr<SamplerState> inputSampState = SamplerState::Create(inputSampDesc);
 			setSamplerState(mParams, GPT_FRAGMENT_PROGRAM, "gDepthSamp", "gDepthTex", inputSampState);
@@ -1667,12 +1667,12 @@ namespace bs { namespace ct
 		mParams->GetTextureParam(GPT_FRAGMENT_PROGRAM, "gRandomTex", mRandomTexture);
 
 		SAMPLER_STATE_DESC inputSampDesc;
-		inputSampDesc.minFilter = FO_POINT;
-		inputSampDesc.magFilter = FO_POINT;
-		inputSampDesc.mipFilter = FO_POINT;
-		inputSampDesc.addressMode.u = TAM_CLAMP;
-		inputSampDesc.addressMode.v = TAM_CLAMP;
-		inputSampDesc.addressMode.w = TAM_CLAMP;
+		inputSampDesc.MinFilter = FO_POINT;
+		inputSampDesc.MagFilter = FO_POINT;
+		inputSampDesc.MipFilter = FO_POINT;
+		inputSampDesc.AddressMode.U = TAM_CLAMP;
+		inputSampDesc.AddressMode.V = TAM_CLAMP;
+		inputSampDesc.AddressMode.W = TAM_CLAMP;
 
 		SPtr<SamplerState> inputSampState = SamplerState::Create(inputSampDesc);
 		if(mParams->HasSamplerState(GPT_FRAGMENT_PROGRAM, "gInputSamp"))
@@ -1693,12 +1693,12 @@ namespace bs { namespace ct
 		}
 
 		SAMPLER_STATE_DESC randomSampDesc;
-		randomSampDesc.minFilter = FO_POINT;
-		randomSampDesc.magFilter = FO_POINT;
-		randomSampDesc.mipFilter = FO_POINT;
-		randomSampDesc.addressMode.u = TAM_WRAP;
-		randomSampDesc.addressMode.v = TAM_WRAP;
-		randomSampDesc.addressMode.w = TAM_WRAP;
+		randomSampDesc.MinFilter = FO_POINT;
+		randomSampDesc.MagFilter = FO_POINT;
+		randomSampDesc.MipFilter = FO_POINT;
+		randomSampDesc.AddressMode.U = TAM_WRAP;
+		randomSampDesc.AddressMode.V = TAM_WRAP;
+		randomSampDesc.AddressMode.W = TAM_WRAP;
 
 		SPtr<SamplerState> randomSampState = SamplerState::Create(randomSampDesc);
 		setSamplerState(mParams, GPT_FRAGMENT_PROGRAM, "gRandomSamp", "gRandomTex", randomSampState);
@@ -1717,14 +1717,14 @@ namespace bs { namespace ct
 		const RenderTargetProperties& rtProps = destination->GetProperties();
 
 		Vector2 tanHalfFOV;
-		tanHalfFOV.x = 1.0f / viewProps.projTransform[0][0];
-		tanHalfFOV.y = 1.0f / viewProps.projTransform[1][1];
+		tanHalfFOV.X = 1.0f / viewProps.ProjTransform[0][0];
+		tanHalfFOV.Y = 1.0f / viewProps.ProjTransform[1][1];
 
-		float cotHalfFOV = viewProps.projTransform[0][0];
+		float cotHalfFOV = viewProps.ProjTransform[0][0];
 
 		// Downsampled AO uses a larger AO radius (in higher resolutions this would cause too much cache trashing). This
 		// means if only full res AO is used, then only AO from nearby geometry will be calculated.
-		float viewScale = viewProps.target.viewRect.width / (float)rtProps.width;
+		float viewScale = viewProps.Target.ViewRect.Width / (float)rtProps.Width;
 
 		// Ramp up the radius exponentially. c^log2(x) function chosen arbitrarily, as it ramps up the radius in a nice way
 		float scale = pow(DOWNSAMPLE_SCALE, Math::Log2(viewScale));
@@ -1735,59 +1735,59 @@ namespace bs { namespace ct
 		// Normalize the scale in [0, 1] range
 		scale /= maxScale;
 
-		float radius = settings.radius * scale;
+		float radius = settings.Radius * scale;
 
 		// Factors used for scaling the AO contribution with range
 		Vector2 fadeMultiplyAdd;
-		fadeMultiplyAdd.x = 1.0f / settings.fadeRange;
-		fadeMultiplyAdd.y = -settings.fadeDistance / settings.fadeRange;
+		fadeMultiplyAdd.X = 1.0f / settings.FadeRange;
+		fadeMultiplyAdd.Y = -settings.FadeDistance / settings.FadeRange;
 
 		gSSAOParamDef.gSampleRadius.Set(mParamBuffer, radius);
 		gSSAOParamDef.gCotHalfFOV.Set(mParamBuffer, cotHalfFOV);
 		gSSAOParamDef.gTanHalfFOV.Set(mParamBuffer, tanHalfFOV);
 		gSSAOParamDef.gWorldSpaceRadiusMask.Set(mParamBuffer, 1.0f);
-		gSSAOParamDef.gBias.Set(mParamBuffer, (settings.bias * viewScale) / 1000.0f);
+		gSSAOParamDef.gBias.Set(mParamBuffer, (settings.Bias * viewScale) / 1000.0f);
 		gSSAOParamDef.gFadeMultiplyAdd.Set(mParamBuffer, fadeMultiplyAdd);
-		gSSAOParamDef.gPower.Set(mParamBuffer, settings.power);
-		gSSAOParamDef.gIntensity.Set(mParamBuffer, settings.intensity);
+		gSSAOParamDef.gPower.Set(mParamBuffer, settings.Power);
+		gSSAOParamDef.gIntensity.Set(mParamBuffer, settings.Intensity);
 		
 		bool upsample = mVariation.GetBool("MIX_WITH_UPSAMPLED");
 		if(upsample)
 		{
-			const TextureProperties& props = textures.aoDownsampled->GetProperties();
+			const TextureProperties& props = textures.AoDownsampled->GetProperties();
 
 			Vector2 downsampledPixelSize;
-			downsampledPixelSize.x = 1.0f / props.GetWidth();
-			downsampledPixelSize.y = 1.0f / props.GetHeight();
+			downsampledPixelSize.X = 1.0f / props.GetWidth();
+			downsampledPixelSize.Y = 1.0f / props.GetHeight();
 
 			gSSAOParamDef.gDownsampledPixelSize.Set(mParamBuffer, downsampledPixelSize);
 		}
 
 		// Generate a scale which we need to use in order to achieve tiling
-		const TextureProperties& rndProps = textures.randomRotations->GetProperties();
+		const TextureProperties& rndProps = textures.RandomRotations->GetProperties();
 		UINT32 rndWidth = rndProps.GetWidth();
 		UINT32 rndHeight = rndProps.GetHeight();
 
 		//// Multiple of random texture size, rounded up
-		UINT32 scaleWidth = (rtProps.width + rndWidth - 1) / rndWidth;
-		UINT32 scaleHeight = (rtProps.height + rndHeight - 1) / rndHeight;
+		UINT32 scaleWidth = (rtProps.Width + rndWidth - 1) / rndWidth;
+		UINT32 scaleHeight = (rtProps.Height + rndHeight - 1) / rndHeight;
 
 		Vector2 randomTileScale((float)scaleWidth, (float)scaleHeight);
 		gSSAOParamDef.gRandomTileScale.Set(mParamBuffer, randomTileScale);
 
-		mSetupAOTexture.Set(textures.aoSetup);
+		mSetupAOTexture.Set(textures.AoSetup);
 
 		bool finalPass = mVariation.GetBool("FINAL_AO");
 		if (finalPass)
 		{
-			mDepthTexture.Set(textures.sceneDepth);
-			mNormalsTexture.Set(textures.sceneNormals);
+			mDepthTexture.Set(textures.SceneDepth);
+			mNormalsTexture.Set(textures.SceneNormals);
 		}
 
 		if (upsample)
-			mDownsampledAOTexture.Set(textures.aoDownsampled);
+			mDownsampledAOTexture.Set(textures.AoDownsampled);
 		
-		mRandomTexture.Set(textures.randomRotations);
+		mRandomTexture.Set(textures.RandomRotations);
 
 		SPtr<GpuParamBlockBuffer> perView = view.GetPerViewBuffer();
 		mParams->SetParamBlockBuffer("PerCamera", perView);
@@ -1842,12 +1842,12 @@ namespace bs { namespace ct
 		mParams->GetTextureParam(GPT_FRAGMENT_PROGRAM, "gNormalsTex", mNormalsTexture);
 
 		SAMPLER_STATE_DESC inputSampDesc;
-		inputSampDesc.minFilter = FO_LINEAR;
-		inputSampDesc.magFilter = FO_LINEAR;
-		inputSampDesc.mipFilter = FO_LINEAR;
-		inputSampDesc.addressMode.u = TAM_CLAMP;
-		inputSampDesc.addressMode.v = TAM_CLAMP;
-		inputSampDesc.addressMode.w = TAM_CLAMP;
+		inputSampDesc.MinFilter = FO_LINEAR;
+		inputSampDesc.MagFilter = FO_LINEAR;
+		inputSampDesc.MipFilter = FO_LINEAR;
+		inputSampDesc.AddressMode.U = TAM_CLAMP;
+		inputSampDesc.AddressMode.V = TAM_CLAMP;
+		inputSampDesc.AddressMode.W = TAM_CLAMP;
 
 		SPtr<SamplerState> inputSampState = SamplerState::Create(inputSampDesc);
 
@@ -1869,10 +1869,10 @@ namespace bs { namespace ct
 		const RenderTargetProperties& rtProps = destination->GetProperties();
 
 		Vector2 pixelSize;
-		pixelSize.x = 1.0f / rtProps.width;
-		pixelSize.y = 1.0f / rtProps.height;
+		pixelSize.X = 1.0f / rtProps.Width;
+		pixelSize.Y = 1.0f / rtProps.Height;
 
-		float scale = viewProps.target.viewRect.width / (float)rtProps.width;
+		float scale = viewProps.Target.ViewRect.Width / (float)rtProps.Width;
 
 		gSSAODownsampleParamDef.gPixelSize.Set(mParamBuffer, pixelSize);
 		gSSAODownsampleParamDef.gInvDepthThreshold.Set(mParamBuffer, (1.0f / depthRange) / scale);
@@ -1901,12 +1901,12 @@ namespace bs { namespace ct
 		mParams->GetTextureParam(GPT_FRAGMENT_PROGRAM, "gDepthTex", mDepthTexture);
 
 		SAMPLER_STATE_DESC inputSampDesc;
-		inputSampDesc.minFilter = FO_POINT;
-		inputSampDesc.magFilter = FO_POINT;
-		inputSampDesc.mipFilter = FO_POINT;
-		inputSampDesc.addressMode.u = TAM_CLAMP;
-		inputSampDesc.addressMode.v = TAM_CLAMP;
-		inputSampDesc.addressMode.w = TAM_CLAMP;
+		inputSampDesc.MinFilter = FO_POINT;
+		inputSampDesc.MagFilter = FO_POINT;
+		inputSampDesc.MipFilter = FO_POINT;
+		inputSampDesc.AddressMode.U = TAM_CLAMP;
+		inputSampDesc.AddressMode.V = TAM_CLAMP;
+		inputSampDesc.AddressMode.W = TAM_CLAMP;
 
 		SPtr<SamplerState> inputSampState = SamplerState::Create(inputSampDesc);
 		if(mParams->HasSamplerState(GPT_FRAGMENT_PROGRAM, "gInputSamp"))
@@ -1927,16 +1927,16 @@ namespace bs { namespace ct
 		const TextureProperties& texProps = ao->GetProperties();
 
 		Vector2 pixelSize;
-		pixelSize.x = 1.0f / texProps.GetWidth();
-		pixelSize.y = 1.0f / texProps.GetHeight();
+		pixelSize.X = 1.0f / texProps.GetWidth();
+		pixelSize.Y = 1.0f / texProps.GetHeight();
 
 		Vector2 pixelOffset(BsZero);
 		if (mVariation.GetBool("DIR_HORZ"))
-			pixelOffset.x = pixelSize.x;
+			pixelOffset.X = pixelSize.X;
 		else
-			pixelOffset.y = pixelSize.y;
+			pixelOffset.Y = pixelSize.Y;
 
-		float scale = viewProps.target.viewRect.width / (float)texProps.GetWidth();
+		float scale = viewProps.Target.ViewRect.Width / (float)texProps.GetWidth();
 
 		gSSAOBlurParamDef.gPixelSize.Set(mParamBuffer, pixelSize);
 		gSSAOBlurParamDef.gPixelOffset.Set(mParamBuffer, pixelOffset);
@@ -1979,18 +1979,18 @@ namespace bs { namespace ct
 
 		mGBufferParams.Bind(gbuffer);
 
-		Vector2 roughnessScaleBias = SSRTraceMat::CalcRoughnessFadeScaleBias(settings.maxRoughness);
+		Vector2 roughnessScaleBias = SSRTraceMat::CalcRoughnessFadeScaleBias(settings.MaxRoughness);
 		gSSRStencilParamDef.gRoughnessScaleBias.Set(mParamBuffer, roughnessScaleBias);
 
 		SPtr<GpuParamBlockBuffer> perView = view.GetPerViewBuffer();
 		mParams->SetParamBlockBuffer("PerCamera", perView);
 
 		const RendererViewProperties& viewProps = view.GetProperties();
-		const Rect2I& viewRect = viewProps.target.viewRect;
+		const Rect2I& viewRect = viewProps.Target.ViewRect;
 		Bind();
 
-		if(viewProps.target.numSamples > 1)
-			gRendererUtility().DrawScreenQuad(Rect2(0.0f, 0.0f, (float)viewRect.width, (float)viewRect.height));
+		if(viewProps.Target.NumSamples > 1)
+			gRendererUtility().DrawScreenQuad(Rect2(0.0f, 0.0f, (float)viewRect.Width, (float)viewRect.Height));
 		else
 			gRendererUtility().DrawScreenQuad();
 	}
@@ -2022,12 +2022,12 @@ namespace bs { namespace ct
 			mParams->SetParamBlockBuffer(GPT_FRAGMENT_PROGRAM, "Input", mParamBuffer);
 
 		SAMPLER_STATE_DESC desc;
-		desc.minFilter = FO_POINT;
-		desc.magFilter = FO_POINT;
-		desc.mipFilter = FO_POINT;
-		desc.addressMode.u = TAM_CLAMP;
-		desc.addressMode.v = TAM_CLAMP;
-		desc.addressMode.w = TAM_CLAMP;
+		desc.MinFilter = FO_POINT;
+		desc.MagFilter = FO_POINT;
+		desc.MipFilter = FO_POINT;
+		desc.AddressMode.U = TAM_CLAMP;
+		desc.AddressMode.V = TAM_CLAMP;
+		desc.AddressMode.W = TAM_CLAMP;
 
 		SPtr<SamplerState> hiZSamplerState = SamplerState::Create(desc);
 		if (mParams->HasSamplerState(GPT_FRAGMENT_PROGRAM, "gHiZSamp"))
@@ -2050,43 +2050,43 @@ namespace bs { namespace ct
 		mSceneColorTexture.Set(sceneColor);
 		mHiZTexture.Set(hiZ);
 		
-		Rect2I viewRect = viewProps.target.viewRect;
+		Rect2I viewRect = viewProps.Target.ViewRect;
 
 		// Maps from NDC to UV [0, 1]
 		Vector4 ndcToHiZUV;
-		ndcToHiZUV.x = 0.5f;
-		ndcToHiZUV.y = -0.5f;
-		ndcToHiZUV.z = 0.5f;
-		ndcToHiZUV.w = 0.5f;
+		ndcToHiZUV.X = 0.5f;
+		ndcToHiZUV.Y = -0.5f;
+		ndcToHiZUV.Z = 0.5f;
+		ndcToHiZUV.W = 0.5f;
 
 		// Either of these flips the Y axis, but if they're both true they cancel out
-		const Conventions& rapiConventions = gCaps().conventions;
+		const Conventions& rapiConventions = gCaps().Conventions;
 
-		if ((rapiConventions.uvYAxis == Conventions::Axis::Up) ^ (rapiConventions.ndcYAxis == Conventions::Axis::Down))
-			ndcToHiZUV.y = -ndcToHiZUV.y;
+		if ((rapiConventions.UvYAxis == Conventions::Axis::Up) ^ (rapiConventions.NdcYAxis == Conventions::Axis::Down))
+			ndcToHiZUV.Y = -ndcToHiZUV.Y;
 		
 		// Maps from [0, 1] to area of HiZ where depth is stored in
-		ndcToHiZUV.x *= (float)viewRect.width / hiZProps.GetWidth();
-		ndcToHiZUV.y *= (float)viewRect.height / hiZProps.GetHeight();
-		ndcToHiZUV.z *= (float)viewRect.width / hiZProps.GetWidth();
-		ndcToHiZUV.w *= (float)viewRect.height / hiZProps.GetHeight();
+		ndcToHiZUV.X *= (float)viewRect.Width / hiZProps.GetWidth();
+		ndcToHiZUV.Y *= (float)viewRect.Height / hiZProps.GetHeight();
+		ndcToHiZUV.Z *= (float)viewRect.Width / hiZProps.GetWidth();
+		ndcToHiZUV.W *= (float)viewRect.Height / hiZProps.GetHeight();
 		
 		// Maps from HiZ UV to [0, 1] UV
 		Vector2 HiZUVToScreenUV;
-		HiZUVToScreenUV.x = hiZProps.GetWidth() / (float)viewRect.width;
-		HiZUVToScreenUV.y = hiZProps.GetHeight() / (float)viewRect.height;
+		HiZUVToScreenUV.X = hiZProps.GetWidth() / (float)viewRect.Width;
+		HiZUVToScreenUV.Y = hiZProps.GetHeight() / (float)viewRect.Height;
 
 		// Used for roughness fading
-		Vector2 roughnessScaleBias = CalcRoughnessFadeScaleBias(settings.maxRoughness);
+		Vector2 roughnessScaleBias = CalcRoughnessFadeScaleBias(settings.MaxRoughness);
 
-		UINT32 temporalJitter = (viewProps.frameIdx % 8) * 1503;
+		UINT32 temporalJitter = (viewProps.FrameIdx % 8) * 1503;
 
-		Vector2I bufferSize(viewRect.width, viewRect.height);
+		Vector2I bufferSize(viewRect.Width, viewRect.Height);
 		gSSRTraceParamDef.gHiZSize.Set(mParamBuffer, bufferSize);
 		gSSRTraceParamDef.gHiZNumMips.Set(mParamBuffer, hiZProps.GetNumMipmaps());
 		gSSRTraceParamDef.gNDCToHiZUV.Set(mParamBuffer, ndcToHiZUV);
 		gSSRTraceParamDef.gHiZUVToScreenUV.Set(mParamBuffer, HiZUVToScreenUV);
-		gSSRTraceParamDef.gIntensity.Set(mParamBuffer, settings.intensity);
+		gSSRTraceParamDef.gIntensity.Set(mParamBuffer, settings.Intensity);
 		gSSRTraceParamDef.gRoughnessScaleBias.Set(mParamBuffer, roughnessScaleBias);
 		gSSRTraceParamDef.gTemporalJitter.Set(mParamBuffer, temporalJitter);
 
@@ -2098,8 +2098,8 @@ namespace bs { namespace ct
 
 		Bind();
 
-		if(viewProps.target.numSamples > 1)
-			gRendererUtility().DrawScreenQuad(Rect2(0.0f, 0.0f, (float)viewRect.width, (float)viewRect.height));
+		if(viewProps.Target.NumSamples > 1)
+			gRendererUtility().DrawScreenQuad(Rect2(0.0f, 0.0f, (float)viewRect.Width, (float)viewRect.Height));
 		else
 			gRendererUtility().DrawScreenQuad();
 	}
@@ -2109,8 +2109,8 @@ namespace bs { namespace ct
 		const static float RANGE_SCALE = 2.0f;
 
 		Vector2 scaleBias;
-		scaleBias.x = -RANGE_SCALE / (-1.0f + maxRoughness);
-		scaleBias.y = (RANGE_SCALE * maxRoughness) / (-1.0f + maxRoughness);
+		scaleBias.X = -RANGE_SCALE / (-1.0f + maxRoughness);
+		scaleBias.Y = (RANGE_SCALE * maxRoughness) / (-1.0f + maxRoughness);
 
 		return scaleBias;
 	}
@@ -2164,12 +2164,12 @@ namespace bs { namespace ct
 		mParams->SetParamBlockBuffer(GPT_FRAGMENT_PROGRAM, "TemporalInput", mTemporalParamBuffer);
 
 		SAMPLER_STATE_DESC pointSampDesc;
-		pointSampDesc.minFilter = FO_POINT;
-		pointSampDesc.magFilter = FO_POINT;
-		pointSampDesc.mipFilter = FO_POINT;
-		pointSampDesc.addressMode.u = TAM_CLAMP;
-		pointSampDesc.addressMode.v = TAM_CLAMP;
-		pointSampDesc.addressMode.w = TAM_CLAMP;
+		pointSampDesc.MinFilter = FO_POINT;
+		pointSampDesc.MagFilter = FO_POINT;
+		pointSampDesc.MipFilter = FO_POINT;
+		pointSampDesc.AddressMode.U = TAM_CLAMP;
+		pointSampDesc.AddressMode.V = TAM_CLAMP;
+		pointSampDesc.AddressMode.W = TAM_CLAMP;
 
 		SPtr<SamplerState> pointSampState = SamplerState::Create(pointSampDesc);
 
@@ -2179,12 +2179,12 @@ namespace bs { namespace ct
 			mParams->SetSamplerState(GPT_FRAGMENT_PROGRAM, "gSceneDepth", pointSampState);
 
 		SAMPLER_STATE_DESC linearSampDesc;
-		linearSampDesc.minFilter = FO_POINT;
-		linearSampDesc.magFilter = FO_POINT;
-		linearSampDesc.mipFilter = FO_POINT;
-		linearSampDesc.addressMode.u = TAM_CLAMP;
-		linearSampDesc.addressMode.v = TAM_CLAMP;
-		linearSampDesc.addressMode.w = TAM_CLAMP;
+		linearSampDesc.MinFilter = FO_POINT;
+		linearSampDesc.MagFilter = FO_POINT;
+		linearSampDesc.MipFilter = FO_POINT;
+		linearSampDesc.AddressMode.U = TAM_CLAMP;
+		linearSampDesc.AddressMode.V = TAM_CLAMP;
+		linearSampDesc.AddressMode.W = TAM_CLAMP;
 
 		SPtr<SamplerState> linearSampState = SamplerState::Create(linearSampDesc);
 		if(mParams->HasSamplerState(GPT_FRAGMENT_PROGRAM, "gLinearSampler"))
@@ -2235,12 +2235,12 @@ namespace bs { namespace ct
 		gTemporalFilteringParamDef.gManualExposure.Set(mParamBuffer, 1.0f / exposure);
 
 		Vector2 jitterUV;
-		jitterUV.x = jitter.x * 0.5f;
+		jitterUV.X = jitter.X * 0.5f;
 
-		if ((gCaps().conventions.uvYAxis == Conventions::Axis::Up) ^ (gCaps().conventions.ndcYAxis == Conventions::Axis::Down))
-			jitterUV.y = jitter.y * 0.5f;
+		if ((gCaps().Conventions.UvYAxis == Conventions::Axis::Up) ^ (gCaps().Conventions.NdcYAxis == Conventions::Axis::Down))
+			jitterUV.Y = jitter.Y * 0.5f;
 		else
-			jitterUV.y = jitter.y * -0.5f;
+			jitterUV.Y = jitter.Y * -0.5f;
 		
 		// Generate samples
 		// Note: Move this code to a more general spot where it can be used by other temporal shaders.
@@ -2325,12 +2325,12 @@ namespace bs { namespace ct
 		rapi.SetRenderTarget(destination);
 
 		const RendererViewProperties& viewProps = view.GetProperties();
-		const Rect2I& viewRect = viewProps.target.viewRect;
+		const Rect2I& viewRect = viewProps.Target.ViewRect;
 
 		Bind();
 
-		if(viewProps.target.numSamples > 1)
-			gRendererUtility().DrawScreenQuad(Rect2(0.0f, 0.0f, (float)viewRect.width, (float)viewRect.height));
+		if(viewProps.Target.NumSamples > 1)
+			gRendererUtility().DrawScreenQuad(Rect2(0.0f, 0.0f, (float)viewRect.Width, (float)viewRect.Height));
 		else
 			gRendererUtility().DrawScreenQuad();
 	}
@@ -2379,12 +2379,12 @@ namespace bs { namespace ct
 		mParams->GetTextureParam(GPT_FRAGMENT_PROGRAM, "gInputTex", mInputTexture);
 
 		SAMPLER_STATE_DESC sampDesc;
-		sampDesc.minFilter = FO_POINT;
-		sampDesc.magFilter = FO_POINT;
-		sampDesc.mipFilter = FO_POINT;
-		sampDesc.addressMode.u = TAM_CLAMP;
-		sampDesc.addressMode.v = TAM_CLAMP;
-		sampDesc.addressMode.w = TAM_CLAMP;
+		sampDesc.MinFilter = FO_POINT;
+		sampDesc.MagFilter = FO_POINT;
+		sampDesc.MipFilter = FO_POINT;
+		sampDesc.AddressMode.U = TAM_CLAMP;
+		sampDesc.AddressMode.V = TAM_CLAMP;
+		sampDesc.AddressMode.W = TAM_CLAMP;
 
 		SPtr<SamplerState> samplerState = SamplerState::Create(sampDesc);
 		setSamplerState(mParams, GPT_FRAGMENT_PROGRAM, "gInputSamp", "gInputTex", samplerState);
@@ -2416,12 +2416,12 @@ namespace bs { namespace ct
 
 		mGBufferParams.Bind(gbuffer);
 
-		const Rect2I& viewRect = view.GetProperties().target.viewRect;
+		const Rect2I& viewRect = view.GetProperties().Target.ViewRect;
 		SPtr<GpuParamBlockBuffer> perView = view.GetPerViewBuffer();
 		mParams->SetParamBlockBuffer("PerCamera", perView);
 
 		Bind();
-		gRendererUtility().DrawScreenQuad(Rect2(0, 0, (float)viewRect.width, (float)viewRect.height));
+		gRendererUtility().DrawScreenQuad(Rect2(0, 0, (float)viewRect.Width, (float)viewRect.Height));
 	}
 
 	MSAACoverageMat* MSAACoverageMat::GetVariation(UINT32 msaaCount)
@@ -2447,10 +2447,10 @@ namespace bs { namespace ct
 	{
 		BS_RENMAT_PROFILE_BLOCK
 
-		const Rect2I& viewRect = view.GetProperties().target.viewRect;
+		const Rect2I& viewRect = view.GetProperties().Target.ViewRect;
 		mCoverageTexParam.Set(coverage);
 
 		Bind();
-		gRendererUtility().DrawScreenQuad(Rect2(0, 0, (float)viewRect.width, (float)viewRect.height));
+		gRendererUtility().DrawScreenQuad(Rect2(0, 0, (float)viewRect.Width, (float)viewRect.Height));
 	}
 }}

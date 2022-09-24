@@ -18,8 +18,8 @@ namespace bs
 {
 	ScriptResourceManager::ScriptResourceManager()
 	{
-		mResourceDestroyedConn = gResources().onResourceDestroyed.Connect(std::bind(&ScriptResourceManager::OnResourceDestroyed, this, _1));
-		mDomainUnloadedConn = MonoManager::Instance().onDomainUnload.Connect(std::bind(&ScriptResourceManager::ClearRRefs, this));
+		mResourceDestroyedConn = gResources().OnResourceDestroyed.Connect(std::bind(&ScriptResourceManager::OnResourceDestroyed, this, _1));
+		mDomainUnloadedConn = MonoManager::Instance().OnDomainUnload.Connect(std::bind(&ScriptResourceManager::ClearRRefs, this));
 	}
 
 	ScriptResourceManager::~ScriptResourceManager()
@@ -57,7 +57,7 @@ namespace bs
 		if (info == nullptr)
 			return nullptr;
 
-		ScriptResourceBase* scriptResource = info->createCallback(resource, instance);
+		ScriptResourceBase* scriptResource = info->CreateCallback(resource, instance);
 		mScriptResources[uuid] = scriptResource;
 
 		return scriptResource;

@@ -18,7 +18,7 @@ namespace bs
 
 	MonoObject*ScriptColorGradientKey::Box(const __ColorGradientKeyInterop& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	__ColorGradientKeyInterop ScriptColorGradientKey::Unbox(MonoObject* value)
@@ -29,8 +29,8 @@ namespace bs
 	ColorGradientKey ScriptColorGradientKey::FromInterop(const __ColorGradientKeyInterop& value)
 	{
 		ColorGradientKey output;
-		output.color = value.color;
-		output.time = value.time;
+		output.Color = value.Color;
+		output.Time = value.Time;
 
 		return output;
 	}
@@ -38,8 +38,8 @@ namespace bs
 	__ColorGradientKeyInterop ScriptColorGradientKey::ToInterop(const ColorGradientKey& value)
 	{
 		__ColorGradientKeyInterop output;
-		output.color = value.color;
-		output.time = value.time;
+		output.Color = value.Color;
+		output.Time = value.Time;
 
 		return output;
 	}

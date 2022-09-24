@@ -19,19 +19,19 @@ namespace bs
 	{
 		RENDER_SURFACE_DESC() { }
 
-		HTexture texture;
+		HTexture Texture;
 
 		/** First face of the texture to bind (array index in texture arrays, or Z slice in 3D textures). */
-		UINT32 face = 0;
+		UINT32 Face = 0;
 
 		/**
 		 * Number of faces to bind (entries in a texture array, or Z slices in 3D textures). When zero the entire resource
 		 * will be bound.
 		 */
-		UINT32 numFaces = 0;
+		UINT32 NumFaces = 0;
 
 		/** If the texture has multiple mips, which one to bind (only one can be bound for rendering). */
-		UINT32 mipLevel = 0;
+		UINT32 MipLevel = 0;
 	};
 
 	namespace ct
@@ -45,19 +45,19 @@ namespace bs
 	{
 		RENDER_SURFACE_DESC() { }
 
-		SPtr<Texture> texture;
+		SPtr<Texture> Texture;
 
 		/** First face of the texture to bind (array index in texture arrays, or Z slice in 3D textures). */
-		UINT32 face = 0;
+		UINT32 Face = 0;
 
 		/**
 		 * Number of faces to bind (entries in a texture array, or Z slices in 3D textures). When zero the entire resource
 		 * will be bound.
 		 */
-		UINT32 numFaces = 0;
+		UINT32 NumFaces = 0;
 
 		/** If the texture has multiple mips, which one to bind (only one can be bound for rendering). */
-		UINT32 mipLevel = 0;
+		UINT32 MipLevel = 0;
 	};
 	}
 
@@ -68,50 +68,50 @@ namespace bs
 		virtual ~RenderTargetProperties() = default;
 
 		/** Width of the render target, in pixels. */
-		UINT32 width = 0;
+		UINT32 Width = 0;
 
 		/** Height of the render target, in pixels. */
-		UINT32 height = 0;
+		UINT32 Height = 0;
 
 		/**
 		 * Number of three dimensional slices of the render target. This will be number of layers for array
 		 * textures or number of faces cube textures.
 		 */
-		UINT32 numSlices = 0;
+		UINT32 NumSlices = 0;
 
 		/**
 		 * Controls in what order is the render target rendered to compared to other render targets. Targets with higher
 		 * priority will be rendered before ones with lower priority.
 		 */
-		INT32 priority = 0;
+		INT32 Priority = 0;
 
 		/**
 		 * True if the render target will wait for vertical sync before swapping buffers. This will eliminate
 		 * tearing but may increase input latency.
 		 */
-		bool vsync = false;
+		bool Vsync = false;
 
 		/**
 		 * Controls how often should the frame be presented in respect to display device refresh rate. Normal value is 1
 		 * where it will match the refresh rate. Higher values will decrease the frame rate (for example present interval of
 		 * 2 on 60Hz refresh rate will display at most 30 frames per second).
 		 */
-		UINT32 vsyncInterval = 1;
+		UINT32 VsyncInterval = 1;
 
 		/** True if pixels written to the render target will be gamma corrected. */
-		bool hwGamma = false;
+		bool HwGamma = false;
 
 		/**
 		 * Does the texture need to be vertically flipped because of different screen space coordinate systems.	(Determines
 		 * is origin top left or bottom left. Engine default is top left.)
 		 */
-		bool requiresTextureFlipping = false;
+		bool RequiresTextureFlipping = false;
 
 		/** True if the target is a window, false if an offscreen target. */
-		bool isWindow = false;
+		bool IsWindow = false;
 
 		/** Controls how many samples are used for multisampling. (0 or 1 if multisampling is not used). */
-		UINT32 multisampleCount = 0;
+		UINT32 MultisampleCount = 0;
 	};
 
 	/**
@@ -151,7 +151,7 @@ namespace bs
 		 *
 		 * @note	Sim thread only.
 		 */
-		mutable Event<void()> onResized;
+		mutable Event<void()> OnResized;
 
 	protected:
 		friend class ct::RenderTarget;

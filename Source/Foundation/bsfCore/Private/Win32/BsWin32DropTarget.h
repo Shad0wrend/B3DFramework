@@ -41,14 +41,14 @@ namespace bs
 		struct DropTargetOp
 		{
 			DropTargetOp(DropOpType _type, const Vector2I& _pos)
-				:type(_type), position(_pos), dataType(DropOpDataType::None)
+				:Type(_type), Position(_pos), DataType(DropOpDataType::None)
 			{ }
 
-			DropOpType type;
-			Vector2I position;
+			DropOpType Type;
+			Vector2I Position;
 
-			DropOpDataType dataType;
-			Vector<Path>* mFileList;
+			DropOpDataType DataType;
+			Vector<Path>* MFileList;
 		};
 
 	public:

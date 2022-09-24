@@ -9,7 +9,7 @@ namespace bs
 {
 	ShortcutManager::ShortcutManager()
 	{
-		mOnButtonDownConn = Input::Instance().onButtonDown.Connect(std::bind(&::bs::ShortcutManager::OnButtonDown, this, _1));
+		mOnButtonDownConn = Input::Instance().OnButtonDown.Connect(std::bind(&::bs::ShortcutManager::OnButtonDown, this, _1));
 	}
 
 	ShortcutManager::~ShortcutManager()
@@ -39,7 +39,7 @@ namespace bs
 		if (Input::Instance().IsButtonHeld(BC_LMENU) || Input::Instance().IsButtonHeld(BC_RMENU))
 			modifiers |= (UINT32)ButtonModifier::Alt;
 
-		ShortcutKey searchKey((ButtonModifier)modifiers, event.buttonCode);
+		ShortcutKey searchKey((ButtonModifier)modifiers, event.ButtonCode);
 
 		auto iterFind = mShortcuts.find(searchKey);
 		if (iterFind != mShortcuts.end())

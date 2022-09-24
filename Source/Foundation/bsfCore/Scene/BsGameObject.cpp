@@ -9,19 +9,19 @@ namespace bs
 	void GameObject::Initialize(const SPtr<GameObject>& object, UINT64 instanceId)
 	{
 		mInstanceData = bs_shared_ptr_new<GameObjectInstanceData>();
-		mInstanceData->object = object;
-		mInstanceData->mInstanceId = instanceId;
+		mInstanceData->Object = object;
+		mInstanceData->MInstanceId = instanceId;
 	}
 
 	void GameObject::SetInstanceDataInternal(GameObjectInstanceDataPtr& other)
 	{
-		SPtr<GameObject> myPtr = mInstanceData->object;
-		UINT64 oldId = mInstanceData->mInstanceId;
+		SPtr<GameObject> myPtr = mInstanceData->Object;
+		UINT64 oldId = mInstanceData->MInstanceId;
 
 		mInstanceData = other;
-		mInstanceData->object = myPtr;
+		mInstanceData->Object = myPtr;
 
-		GameObjectManager::Instance().RemapId(oldId, mInstanceData->mInstanceId);
+		GameObjectManager::Instance().RemapId(oldId, mInstanceData->MInstanceId);
 	}
 	
 	RTTITypeBase* GameObject::GetRttiStatic()

@@ -15,7 +15,7 @@ namespace bs
 	struct Tetrahedron
 	{
 		/** Indices of vertices that form the tetrahedron pointing to an external point array. */
-		INT32 vertices[4];
+		INT32 Vertices[4];
 
 		/**
 		 * Indices pointing to neighbor tetrahedrons. Each neighbor index maps to the @p vertices array, so neighbor/vertex
@@ -23,21 +23,21 @@ namespace bs
 		 * the vertex). If a tetrahedron is on the volume edge, it has only three neighbors and its last neighbor will be
 		 * set to -1.
 		 */
-		INT32 neighbors[4];
+		INT32 Neighbors[4];
 	};
 
 	/** Contains information about a single face of a tetrahedron. */
 	struct TetrahedronFace
 	{
-		INT32 vertices[3];
-		INT32 tetrahedron;
+		INT32 Vertices[3];
+		INT32 Tetrahedron;
 	};
 
 	/** Contains information about a volume made out of tetrahedrons. */
 	struct TetrahedronVolume
 	{
-		Vector<Tetrahedron> tetrahedra;
-		Vector<TetrahedronFace> outerFaces;
+		Vector<Tetrahedron> Tetrahedra;
+		Vector<TetrahedronFace> OuterFaces;
 	};
 
 	/** Contains helper methods that triangulate point data. */

@@ -54,10 +54,10 @@ namespace bs { namespace ct
 		mVideoModeInfo = mActiveD3DDriver->GetVideoModeInfo();
 
 		GPUInfo gpuInfo;
-		gpuInfo.numGPUs = std::min(5U, mDriverList->Count());
+		gpuInfo.NumGpUs = std::min(5U, mDriverList->Count());
 
-		for(UINT32 i = 0; i < gpuInfo.numGPUs; i++)
-			gpuInfo.names[i] = mDriverList->Item(i)->GetDriverName();
+		for(UINT32 i = 0; i < gpuInfo.NumGpUs; i++)
+			gpuInfo.Names[i] = mDriverList->Item(i)->GetDriverName();
 
 		PlatformUtility::SetGPUInfoInternal(gpuInfo);
 
@@ -373,33 +373,33 @@ namespace bs { namespace ct
 					if (paramDesc == nullptr)
 						return;
 
-					for (auto iter = paramDesc->textures.begin(); iter != paramDesc->textures.end(); ++iter)
+					for (auto iter = paramDesc->Textures.begin(); iter != paramDesc->Textures.end(); ++iter)
 					{
-						UINT32 slot = iter->second.slot;
+						UINT32 slot = iter->second.Slot;
 
-						SPtr<Texture> texture = gpuParams->GetTexture(iter->second.set, slot);
-						const TextureSurface& surface = gpuParams->GetTextureSurface(iter->second.set, slot);
+						SPtr<Texture> texture = gpuParams->GetTexture(iter->second.Set, slot);
+						const TextureSurface& surface = gpuParams->GetTextureSurface(iter->second.Set, slot);
 
 						while (slot >= (UINT32)srvs.size())
 							srvs.push_back(nullptr);
 
 						if (texture != nullptr)
 						{
-							SPtr<TextureView> texView = texture->RequestView(surface.mipLevel, surface.numMipLevels,
-															surface.face, surface.numFaces, GVU_DEFAULT);
+							SPtr<TextureView> texView = texture->RequestView(surface.MipLevel, surface.NumMipLevels,
+															surface.Face, surface.NumFaces, GVU_DEFAULT);
 
 							D3D11TextureView* d3d11texView = static_cast<D3D11TextureView*>(texView.get());
 							srvs[slot] = d3d11texView->GetSrv();
 						}
 					}
 
-					for (auto iter = paramDesc->buffers.begin(); iter != paramDesc->buffers.end(); ++iter)
+					for (auto iter = paramDesc->Buffers.begin(); iter != paramDesc->Buffers.end(); ++iter)
 					{
-						UINT32 slot = iter->second.slot;
-						SPtr<GpuBuffer> buffer = gpuParams->GetBuffer(iter->second.set, slot);
+						UINT32 slot = iter->second.Slot;
+						SPtr<GpuBuffer> buffer = gpuParams->GetBuffer(iter->second.Set, slot);
 
-						bool isLoadStore = iter->second.type != GPOT_BYTE_BUFFER &&
-							iter->second.type != GPOT_STRUCTURED_BUFFER;
+						bool isLoadStore = iter->second.Type != GPOT_BYTE_BUFFER &&
+							iter->second.Type != GPOT_STRUCTURED_BUFFER;
 
 						if (!isLoadStore)
 						{
@@ -425,20 +425,20 @@ namespace bs { namespace ct
 						}
 					}
 
-					for (auto iter = paramDesc->loadStoreTextures.begin(); iter != paramDesc->loadStoreTextures.end(); ++iter)
+					for (auto iter = paramDesc->LoadStoreTextures.begin(); iter != paramDesc->LoadStoreTextures.end(); ++iter)
 					{
-						UINT32 slot = iter->second.slot;
+						UINT32 slot = iter->second.Slot;
 
-						SPtr<Texture> texture = gpuParams->GetLoadStoreTexture(iter->second.set, slot);
-						const TextureSurface& surface = gpuParams->GetLoadStoreSurface(iter->second.set, slot);
+						SPtr<Texture> texture = gpuParams->GetLoadStoreTexture(iter->second.Set, slot);
+						const TextureSurface& surface = gpuParams->GetLoadStoreSurface(iter->second.Set, slot);
 
 						while (slot >= (UINT32)uavs.size())
 							uavs.push_back(nullptr);
 
 						if (texture != nullptr)
 						{
-							SPtr<TextureView> texView = texture->RequestView(surface.mipLevel, 1,
-								surface.face, surface.numFaces, GVU_RANDOMWRITE);
+							SPtr<TextureView> texView = texture->RequestView(surface.MipLevel, 1,
+								surface.Face, surface.NumFaces, GVU_RANDOMWRITE);
 
 							D3D11TextureView* d3d11texView = static_cast<D3D11TextureView*>(texView.get());
 							uavs[slot] = d3d11texView->GetUav();
@@ -449,10 +449,10 @@ namespace bs { namespace ct
 						}
 					}
 
-					for (auto iter = paramDesc->samplers.begin(); iter != paramDesc->samplers.end(); ++iter)
+					for (auto iter = paramDesc->Samplers.begin(); iter != paramDesc->Samplers.end(); ++iter)
 					{
-						UINT32 slot = iter->second.slot;
-						SPtr<SamplerState> samplerState = gpuParams->GetSamplerState(iter->second.set, slot);
+						UINT32 slot = iter->second.Slot;
+						SPtr<SamplerState> samplerState = gpuParams->GetSamplerState(iter->second.Set, slot);
 
 						while (slot >= (UINT32)samplers.size())
 							samplers.push_back(nullptr);
@@ -465,10 +465,10 @@ namespace bs { namespace ct
 						samplers[slot] = d3d11SamplerState->GetInternal();
 					}
 
-					for (auto iter = paramDesc->paramBlocks.begin(); iter != paramDesc->paramBlocks.end(); ++iter)
+					for (auto iter = paramDesc->ParamBlocks.begin(); iter != paramDesc->ParamBlocks.end(); ++iter)
 					{
-						UINT32 slot = iter->second.slot;
-						SPtr<GpuParamBlockBuffer> buffer = gpuParams->GetParamBlockBuffer(iter->second.set, slot);
+						UINT32 slot = iter->second.Slot;
+						SPtr<GpuParamBlockBuffer> buffer = gpuParams->GetParamBlockBuffer(iter->second.Set, slot);
 
 						while (slot >= (UINT32)constBuffers.size())
 							constBuffers.push_back(nullptr);
@@ -626,7 +626,7 @@ namespace bs { namespace ct
 		{
 			THROW_IF_NOT_CORE_THREAD;
 
-			UINT32 maxBoundVertexBuffers = mCurrentCapabilities[0].maxBoundVertexBuffers;
+			UINT32 maxBoundVertexBuffers = mCurrentCapabilities[0].MaxBoundVertexBuffers;
 			if (index < 0 || (index + numBuffers) >= maxBoundVertexBuffers)
 			{
 				BS_EXCEPT(InvalidParametersException, "Invalid vertex index: " + toString(index) +
@@ -870,9 +870,9 @@ namespace bs { namespace ct
 
 			Rect2I clearArea((int)mViewport.TopLeftX, (int)mViewport.TopLeftY, (int)mViewport.Width, (int)mViewport.Height);
 
-			bool clearEntireTarget = clearArea.width == 0 || clearArea.height == 0;
-			clearEntireTarget |= (clearArea.x == 0 && clearArea.y == 0 && clearArea.width == rtProps.width &&
-				clearArea.height == rtProps.height);
+			bool clearEntireTarget = clearArea.Width == 0 || clearArea.Height == 0;
+			clearEntireTarget |= (clearArea.X == 0 && clearArea.Y == 0 && clearArea.Width == rtProps.Width &&
+				clearArea.Height == rtProps.Height);
 
 			if (!clearEntireTarget)
 			{
@@ -905,7 +905,7 @@ namespace bs { namespace ct
 			// Clear render surfaces
 			if (buffers & FBT_COLOR)
 			{
-				UINT32 maxRenderTargets = mCurrentCapabilities[0].numMultiRenderTargets;
+				UINT32 maxRenderTargets = mCurrentCapabilities[0].NumMultiRenderTargets;
 
 				ID3D11RenderTargetView** views = bs_newN<ID3D11RenderTargetView*>(maxRenderTargets);
 				memset(views, 0, sizeof(ID3D11RenderTargetView*) * maxRenderTargets);
@@ -918,10 +918,10 @@ namespace bs { namespace ct
 				}
 
 				float clearColor[4];
-				clearColor[0] = color.r;
-				clearColor[1] = color.g;
-				clearColor[2] = color.b;
-				clearColor[3] = color.a;
+				clearColor[0] = color.R;
+				clearColor[1] = color.G;
+				clearColor[2] = color.B;
+				clearColor[3] = color.A;
 
 				for (UINT32 i = 0; i < maxRenderTargets; i++)
 				{
@@ -972,7 +972,7 @@ namespace bs { namespace ct
 			mActiveRenderTarget = target;
 			mActiveRenderTargetModified = false;
 
-			UINT32 maxRenderTargets = mCurrentCapabilities[0].numMultiRenderTargets;
+			UINT32 maxRenderTargets = mCurrentCapabilities[0].NumMultiRenderTargets;
 			ID3D11RenderTargetView** views = bs_newN<ID3D11RenderTargetView*>(maxRenderTargets);
 			memset(views, 0, sizeof(ID3D11RenderTargetView*) * maxRenderTargets);
 
@@ -1062,15 +1062,15 @@ namespace bs { namespace ct
 		const RenderTargetProperties& rtProps = mActiveRenderTarget->GetProperties();
 
 		// Set viewport dimensions
-		mViewport.TopLeftX = (FLOAT)(rtProps.width * mViewportNorm.x);
-		mViewport.TopLeftY = (FLOAT)(rtProps.height * mViewportNorm.y);
-		mViewport.Width = (FLOAT)(rtProps.width * mViewportNorm.width);
-		mViewport.Height = (FLOAT)(rtProps.height * mViewportNorm.height);
+		mViewport.TopLeftX = (FLOAT)(rtProps.Width * mViewportNorm.X);
+		mViewport.TopLeftY = (FLOAT)(rtProps.Height * mViewportNorm.Y);
+		mViewport.Width = (FLOAT)(rtProps.Width * mViewportNorm.Width);
+		mViewport.Height = (FLOAT)(rtProps.Height * mViewportNorm.Height);
 
-		if (rtProps.requiresTextureFlipping)
+		if (rtProps.RequiresTextureFlipping)
 		{
 			// Convert "top-left" to "bottom-left"
-			mViewport.TopLeftY = rtProps.height - mViewport.Height - mViewport.TopLeftY;
+			mViewport.TopLeftY = rtProps.Height - mViewport.Height - mViewport.TopLeftY;
 		}
 
 		mViewport.MinDepth = 0.0f;
@@ -1097,15 +1097,15 @@ namespace bs { namespace ct
 		DriverVersion driverVersion;
 		if (SUCCEEDED(adapter->CheckInterfaceSupport(IID_ID3D10Device, &driverVersionNum)))
 		{
-			driverVersion.major = HIWORD(driverVersionNum.HighPart);
-			driverVersion.minor = LOWORD(driverVersionNum.HighPart);
-			driverVersion.release = HIWORD(driverVersionNum.LowPart);
-			driverVersion.build = LOWORD(driverVersionNum.LowPart);
+			driverVersion.Major = HIWORD(driverVersionNum.HighPart);
+			driverVersion.Minor = LOWORD(driverVersionNum.HighPart);
+			driverVersion.Release = HIWORD(driverVersionNum.LowPart);
+			driverVersion.Build = LOWORD(driverVersionNum.LowPart);
 		}
 
-		caps.driverVersion = driverVersion;
-		caps.deviceName = mActiveD3DDriver->GetDriverDescription();
-		caps.renderAPIName = GetName();
+		caps.DriverVersion = driverVersion;
+		caps.DeviceName = mActiveD3DDriver->GetDriverDescription();
+		caps.RenderApiName = GetName();
 
 		caps.SetCapability(RSC_TEXTURE_COMPRESSION_BC);
 		caps.SetCapability(RSC_TEXTURE_VIEWS);
@@ -1115,31 +1115,31 @@ namespace bs { namespace ct
 		caps.AddShaderProfile("hlsl");
 
 		if(mFeatureLevel >= D3D_FEATURE_LEVEL_10_1)
-			caps.maxBoundVertexBuffers = 32;
+			caps.MaxBoundVertexBuffers = 32;
 		else
-			caps.maxBoundVertexBuffers = 16;
+			caps.MaxBoundVertexBuffers = 16;
 
 		if(mFeatureLevel >= D3D_FEATURE_LEVEL_10_0)
 		{
 			caps.SetCapability(RSC_GEOMETRY_PROGRAM);
 
-			caps.numTextureUnitsPerStage[GPT_FRAGMENT_PROGRAM] = D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT;
-			caps.numTextureUnitsPerStage[GPT_VERTEX_PROGRAM] = D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT;
-			caps.numTextureUnitsPerStage[GPT_GEOMETRY_PROGRAM]= D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT;
+			caps.NumTextureUnitsPerStage[GPT_FRAGMENT_PROGRAM] = D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT;
+			caps.NumTextureUnitsPerStage[GPT_VERTEX_PROGRAM] = D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT;
+			caps.NumTextureUnitsPerStage[GPT_GEOMETRY_PROGRAM]= D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT;
 
-			caps.numCombinedTextureUnits
-				= caps.numTextureUnitsPerStage[GPT_FRAGMENT_PROGRAM]
-				+ caps.numTextureUnitsPerStage[GPT_VERTEX_PROGRAM]
-				+ caps.numTextureUnitsPerStage[GPT_GEOMETRY_PROGRAM];
+			caps.NumCombinedTextureUnits
+				= caps.NumTextureUnitsPerStage[GPT_FRAGMENT_PROGRAM]
+				+ caps.NumTextureUnitsPerStage[GPT_VERTEX_PROGRAM]
+				+ caps.NumTextureUnitsPerStage[GPT_GEOMETRY_PROGRAM];
 
-			caps.numGpuParamBlockBuffersPerStage[GPT_FRAGMENT_PROGRAM] = D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT;
-			caps.numGpuParamBlockBuffersPerStage[GPT_VERTEX_PROGRAM] = D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT;
-			caps.numGpuParamBlockBuffersPerStage[GPT_GEOMETRY_PROGRAM] = D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT;
+			caps.NumGpuParamBlockBuffersPerStage[GPT_FRAGMENT_PROGRAM] = D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT;
+			caps.NumGpuParamBlockBuffersPerStage[GPT_VERTEX_PROGRAM] = D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT;
+			caps.NumGpuParamBlockBuffersPerStage[GPT_GEOMETRY_PROGRAM] = D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT;
 
-			caps.numCombinedParamBlockBuffers
-				= caps.numGpuParamBlockBuffersPerStage[GPT_FRAGMENT_PROGRAM]
-				+ caps.numGpuParamBlockBuffersPerStage[GPT_VERTEX_PROGRAM]
-				+ caps.numGpuParamBlockBuffersPerStage[GPT_GEOMETRY_PROGRAM];
+			caps.NumCombinedParamBlockBuffers
+				= caps.NumGpuParamBlockBuffersPerStage[GPT_FRAGMENT_PROGRAM]
+				+ caps.NumGpuParamBlockBuffersPerStage[GPT_VERTEX_PROGRAM]
+				+ caps.NumGpuParamBlockBuffersPerStage[GPT_GEOMETRY_PROGRAM];
 		}
 
 		if(mFeatureLevel >= D3D_FEATURE_LEVEL_11_0)
@@ -1148,36 +1148,36 @@ namespace bs { namespace ct
 			caps.SetCapability(RSC_COMPUTE_PROGRAM);
 			caps.SetCapability(RSC_LOAD_STORE);
 
-			caps.numTextureUnitsPerStage[GPT_HULL_PROGRAM] = D3D11_COMMONSHADER_INPUT_RESOURCE_REGISTER_COUNT;
-			caps.numTextureUnitsPerStage[GPT_DOMAIN_PROGRAM] = D3D11_COMMONSHADER_INPUT_RESOURCE_REGISTER_COUNT;
-			caps.numTextureUnitsPerStage[GPT_COMPUTE_PROGRAM] = D3D11_COMMONSHADER_INPUT_RESOURCE_REGISTER_COUNT;
+			caps.NumTextureUnitsPerStage[GPT_HULL_PROGRAM] = D3D11_COMMONSHADER_INPUT_RESOURCE_REGISTER_COUNT;
+			caps.NumTextureUnitsPerStage[GPT_DOMAIN_PROGRAM] = D3D11_COMMONSHADER_INPUT_RESOURCE_REGISTER_COUNT;
+			caps.NumTextureUnitsPerStage[GPT_COMPUTE_PROGRAM] = D3D11_COMMONSHADER_INPUT_RESOURCE_REGISTER_COUNT;
 
-			caps.numCombinedTextureUnits
-				= caps.numTextureUnitsPerStage[GPT_FRAGMENT_PROGRAM]
-				+ caps.numTextureUnitsPerStage[GPT_VERTEX_PROGRAM]
-				+ caps.numTextureUnitsPerStage[GPT_GEOMETRY_PROGRAM]
-				+ caps.numTextureUnitsPerStage[GPT_HULL_PROGRAM]
-				+ caps.numTextureUnitsPerStage[GPT_DOMAIN_PROGRAM]
-				+ caps.numTextureUnitsPerStage[GPT_COMPUTE_PROGRAM];
+			caps.NumCombinedTextureUnits
+				= caps.NumTextureUnitsPerStage[GPT_FRAGMENT_PROGRAM]
+				+ caps.NumTextureUnitsPerStage[GPT_VERTEX_PROGRAM]
+				+ caps.NumTextureUnitsPerStage[GPT_GEOMETRY_PROGRAM]
+				+ caps.NumTextureUnitsPerStage[GPT_HULL_PROGRAM]
+				+ caps.NumTextureUnitsPerStage[GPT_DOMAIN_PROGRAM]
+				+ caps.NumTextureUnitsPerStage[GPT_COMPUTE_PROGRAM];
 
-			caps.numGpuParamBlockBuffersPerStage[GPT_HULL_PROGRAM] = D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT;
-			caps.numGpuParamBlockBuffersPerStage[GPT_DOMAIN_PROGRAM] = D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT;
-			caps.numGpuParamBlockBuffersPerStage[GPT_COMPUTE_PROGRAM] = D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT;
+			caps.NumGpuParamBlockBuffersPerStage[GPT_HULL_PROGRAM] = D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT;
+			caps.NumGpuParamBlockBuffersPerStage[GPT_DOMAIN_PROGRAM] = D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT;
+			caps.NumGpuParamBlockBuffersPerStage[GPT_COMPUTE_PROGRAM] = D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT;
 
-			caps.numCombinedParamBlockBuffers
-				= caps.numGpuParamBlockBuffersPerStage[GPT_FRAGMENT_PROGRAM]
-				+ caps.numGpuParamBlockBuffersPerStage[GPT_VERTEX_PROGRAM]
-				+ caps.numGpuParamBlockBuffersPerStage[GPT_GEOMETRY_PROGRAM]
-				+ caps.numGpuParamBlockBuffersPerStage[GPT_HULL_PROGRAM]
-				+ caps.numGpuParamBlockBuffersPerStage[GPT_DOMAIN_PROGRAM]
-				+ caps.numGpuParamBlockBuffersPerStage[GPT_COMPUTE_PROGRAM];
+			caps.NumCombinedParamBlockBuffers
+				= caps.NumGpuParamBlockBuffersPerStage[GPT_FRAGMENT_PROGRAM]
+				+ caps.NumGpuParamBlockBuffersPerStage[GPT_VERTEX_PROGRAM]
+				+ caps.NumGpuParamBlockBuffersPerStage[GPT_GEOMETRY_PROGRAM]
+				+ caps.NumGpuParamBlockBuffersPerStage[GPT_HULL_PROGRAM]
+				+ caps.NumGpuParamBlockBuffersPerStage[GPT_DOMAIN_PROGRAM]
+				+ caps.NumGpuParamBlockBuffersPerStage[GPT_COMPUTE_PROGRAM];
 
-			caps.numLoadStoreTextureUnitsPerStage[GPT_FRAGMENT_PROGRAM] = D3D11_PS_CS_UAV_REGISTER_COUNT;
-			caps.numLoadStoreTextureUnitsPerStage[GPT_COMPUTE_PROGRAM] = D3D11_PS_CS_UAV_REGISTER_COUNT;
+			caps.NumLoadStoreTextureUnitsPerStage[GPT_FRAGMENT_PROGRAM] = D3D11_PS_CS_UAV_REGISTER_COUNT;
+			caps.NumLoadStoreTextureUnitsPerStage[GPT_COMPUTE_PROGRAM] = D3D11_PS_CS_UAV_REGISTER_COUNT;
 
-			caps.numCombinedLoadStoreTextureUnits
-				= caps.numLoadStoreTextureUnitsPerStage[GPT_FRAGMENT_PROGRAM]
-				+ caps.numLoadStoreTextureUnitsPerStage[GPT_COMPUTE_PROGRAM];
+			caps.NumCombinedLoadStoreTextureUnits
+				= caps.NumLoadStoreTextureUnitsPerStage[GPT_FRAGMENT_PROGRAM]
+				+ caps.NumLoadStoreTextureUnitsPerStage[GPT_COMPUTE_PROGRAM];
 		}
 
 		// Adapter details
@@ -1187,21 +1187,21 @@ namespace bs { namespace ct
 		switch(adapterID.VendorId)
 		{
 		case 0x10DE:
-			caps.deviceVendor = GPU_NVIDIA;
+			caps.DeviceVendor = GPU_NVIDIA;
 			break;
 		case 0x1002:
-			caps.deviceVendor = GPU_AMD;
+			caps.DeviceVendor = GPU_AMD;
 			break;
 		case 0x163C:
 		case 0x8086:
-			caps.deviceVendor = GPU_INTEL;
+			caps.DeviceVendor = GPU_INTEL;
 			break;
 		default:
-			caps.deviceVendor = GPU_UNKNOWN;
+			caps.DeviceVendor = GPU_UNKNOWN;
 			break;
 		};
 
-		caps.numMultiRenderTargets = D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT;
+		caps.NumMultiRenderTargets = D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT;
 	}
 
 	void D3D11RenderAPI::DetermineMultisampleSettings(UINT32 multisampleCount, DXGI_FORMAT format, DXGI_SAMPLE_DESC* outputSampleDesc)
@@ -1319,78 +1319,78 @@ namespace bs { namespace ct
 	GpuParamBlockDesc D3D11RenderAPI::GenerateParamBlockDesc(const String& name, Vector<GpuParamDataDesc>& params)
 	{
 		GpuParamBlockDesc block;
-		block.blockSize = 0;
-		block.isShareable = true;
-		block.name = name;
-		block.slot = 0;
-		block.set = 0;
+		block.BlockSize = 0;
+		block.IsShareable = true;
+		block.Name = name;
+		block.Slot = 0;
+		block.Set = 0;
 
 		for (auto& param : params)
 		{
-			const GpuParamDataTypeInfo& typeInfo = bs::GpuParams::PARAM_SIZES.lookup[param.type];
+			const GpuParamDataTypeInfo& typeInfo = bs::GpuParams::PARAM_SIZES.Lookup[param.Type];
 
-			if (param.arraySize > 1)
+			if (param.ArraySize > 1)
 			{
 				// Arrays perform no packing and their elements are always padded and aligned to four component vectors
 				UINT32 size;
-				if(param.type == GPDT_STRUCT)
-					size = Math::DivideAndRoundUp(param.elementSize, 16U) * 4;
+				if(param.Type == GPDT_STRUCT)
+					size = Math::DivideAndRoundUp(param.ElementSize, 16U) * 4;
 				else
-					size = Math::DivideAndRoundUp(typeInfo.size, 16U) * 4;
+					size = Math::DivideAndRoundUp(typeInfo.Size, 16U) * 4;
 
-				block.blockSize = Math::DivideAndRoundUp(block.blockSize, 4U) * 4;
+				block.BlockSize = Math::DivideAndRoundUp(block.BlockSize, 4U) * 4;
 
-				param.elementSize = size;
-				param.arrayElementStride = size;
-				param.cpuMemOffset = block.blockSize;
-				param.gpuMemOffset = 0;
+				param.ElementSize = size;
+				param.ArrayElementStride = size;
+				param.CpuMemOffset = block.BlockSize;
+				param.GpuMemOffset = 0;
 
 				// Last array element isn't rounded up to four component vectors unless it's a struct
-				if(param.type != GPDT_STRUCT)
+				if(param.Type != GPDT_STRUCT)
 				{
-					block.blockSize += size * (param.arraySize - 1);
-					block.blockSize += typeInfo.size / 4;
+					block.BlockSize += size * (param.ArraySize - 1);
+					block.BlockSize += typeInfo.Size / 4;
 				}
 				else
-					block.blockSize += param.arraySize * size;
+					block.BlockSize += param.ArraySize * size;
 			}
 			else
 			{
 				UINT32 size;
-				if(param.type == GPDT_STRUCT)
+				if(param.Type == GPDT_STRUCT)
 				{
 					// Structs are always aligned and arounded up to 4 component vectors
-					size = Math::DivideAndRoundUp(param.elementSize, 16U) * 4;
-					block.blockSize = Math::DivideAndRoundUp(block.blockSize, 4U) * 4;
+					size = Math::DivideAndRoundUp(param.ElementSize, 16U) * 4;
+					block.BlockSize = Math::DivideAndRoundUp(block.BlockSize, 4U) * 4;
 				}
 				else
 				{
-					size = typeInfo.baseTypeSize * (typeInfo.numRows * typeInfo.numColumns) / 4;
+					size = typeInfo.BaseTypeSize * (typeInfo.NumRows * typeInfo.NumColumns) / 4;
 
 					// Pack everything as tightly as possible as long as the data doesn't cross 16 byte boundary
-					UINT32 alignOffset = block.blockSize % 4;
+					UINT32 alignOffset = block.BlockSize % 4;
 					if (alignOffset != 0 && size > (4 - alignOffset))
 					{
 						UINT32 padding = (4 - alignOffset);
-						block.blockSize += padding;
+						block.BlockSize += padding;
 					}
 				}
 
-				param.elementSize = size;
-				param.arrayElementStride = size;
-				param.cpuMemOffset = block.blockSize;
-				param.gpuMemOffset = 0;
+				param.ElementSize = size;
+				param.ArrayElementStride = size;
+				param.CpuMemOffset = block.BlockSize;
+				param.GpuMemOffset = 0;
 
-				block.blockSize += size;
+				block.BlockSize += size;
 			}
 
-			param.paramBlockSlot = 0;
-			param.paramBlockSet = 0;
+			param.ParamBlockSlot = 0;
+			param.ParamBlockSet = 0;
 		}
 
 		// Constant buffer size must always be a multiple of 16
-		if (block.blockSize % 4 != 0)
-			block.blockSize += (4 - (block.blockSize % 4));
+		if (block.BlockSize % 4 != 0)
+			block.BlockSize += (4 - (block.BlockSize % 4));
 
 		return block;
 	}

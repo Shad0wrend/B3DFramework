@@ -15,9 +15,9 @@ namespace bs
 	/** Descriptor structure used for initialization of an IndexBuffer. */
 	struct INDEX_BUFFER_DESC
 	{
-		IndexType indexType; /**< Index type, determines the size of a single index. */
-		UINT32 numIndices; /**< Number of indices can buffer can hold. */
-		GpuBufferUsage usage = GBU_STATIC; /**< Usage that tells the hardware how will be buffer be used. */
+		IndexType IndexType; /**< Index type, determines the size of a single index. */
+		UINT32 NumIndices; /**< Number of indices can buffer can hold. */
+		GpuBufferUsage Usage = GBU_STATIC; /**< Usage that tells the hardware how will be buffer be used. */
 	};
 
 	/**	Contains information about an index buffer. */

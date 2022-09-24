@@ -42,7 +42,7 @@ namespace bs { namespace ct
 		virtual bool IsReady() const = 0;
 
 		/**	Triggered when GPU starts processing the query. */
-		Event<void()> onTriggered;
+		Event<void()> OnTriggered;
 
 		/**	
 		 * Creates a new query, but does not schedule it on GPU.

@@ -18,7 +18,7 @@ namespace bs
 
 	MonoObject*ScriptPARTICLE_FORCE_DESC::Box(const __PARTICLE_FORCE_DESCInterop& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	__PARTICLE_FORCE_DESCInterop ScriptPARTICLE_FORCE_DESC::Unbox(MonoObject* value)
@@ -31,12 +31,12 @@ namespace bs
 		PARTICLE_FORCE_DESC output;
 		SPtr<TDistribution<Vector3>> tmpforce;
 		ScriptTDistributionVector3* scriptforce;
-		scriptforce = ScriptTDistributionVector3::ToNative(value.force);
+		scriptforce = ScriptTDistributionVector3::ToNative(value.Force);
 		if(scriptforce != nullptr)
 			tmpforce = scriptforce->GetInternal();
 		if(tmpforce != nullptr)
-		output.force = *tmpforce;
-		output.worldSpace = value.worldSpace;
+		output.Force = *tmpforce;
+		output.WorldSpace = value.WorldSpace;
 
 		return output;
 	}
@@ -46,10 +46,10 @@ namespace bs
 		__PARTICLE_FORCE_DESCInterop output;
 		MonoObject* tmpforce;
 		SPtr<TDistribution<Vector3>> tmpforcecopy;
-		tmpforcecopy = bs_shared_ptr_new<TDistribution<Vector3>>(value.force);
+		tmpforcecopy = bs_shared_ptr_new<TDistribution<Vector3>>(value.Force);
 		tmpforce = ScriptTDistributionVector3::Create(tmpforcecopy);
-		output.force = tmpforce;
-		output.worldSpace = value.worldSpace;
+		output.Force = tmpforce;
+		output.WorldSpace = value.WorldSpace;
 
 		return output;
 	}
