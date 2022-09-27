@@ -19,7 +19,7 @@ namespace bs
 
 	MonoObject*ScriptRENDER_WINDOW_DESC::Box(const __RENDER_WINDOW_DESCInterop& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	__RENDER_WINDOW_DESCInterop ScriptRENDER_WINDOW_DESC::Unbox(MonoObject* value)
@@ -30,30 +30,30 @@ namespace bs
 	RENDER_WINDOW_DESC ScriptRENDER_WINDOW_DESC::FromInterop(const __RENDER_WINDOW_DESCInterop& value)
 	{
 		RENDER_WINDOW_DESC output;
-		VideoMode tmpvideoMode;
-		tmpvideoMode = ScriptVideoMode::FromInterop(value.videoMode);
-		output.videoMode = tmpvideoMode;
-		output.fullscreen = value.fullscreen;
-		output.vsync = value.vsync;
-		output.vsyncInterval = value.vsyncInterval;
-		output.hidden = value.hidden;
-		output.depthBuffer = value.depthBuffer;
-		output.multisampleCount = value.multisampleCount;
-		String tmpmultisampleHint;
-		tmpmultisampleHint = MonoUtil::MonoToString(value.multisampleHint);
-		output.multisampleHint = tmpmultisampleHint;
-		output.gamma = value.gamma;
-		output.left = value.left;
-		output.top = value.top;
-		String tmptitle;
-		tmptitle = MonoUtil::MonoToString(value.title);
-		output.title = tmptitle;
-		output.showTitleBar = value.showTitleBar;
-		output.showBorder = value.showBorder;
-		output.allowResize = value.allowResize;
-		output.toolWindow = value.toolWindow;
-		output.modal = value.modal;
-		output.hideUntilSwap = value.hideUntilSwap;
+		VideoMode tmpVideoMode;
+		tmpVideoMode = ScriptVideoMode::FromInterop(value.VideoMode);
+		output.VideoMode = tmpVideoMode;
+		output.Fullscreen = value.Fullscreen;
+		output.Vsync = value.Vsync;
+		output.VsyncInterval = value.VsyncInterval;
+		output.Hidden = value.Hidden;
+		output.DepthBuffer = value.DepthBuffer;
+		output.MultisampleCount = value.MultisampleCount;
+		String tmpMultisampleHint;
+		tmpMultisampleHint = MonoUtil::MonoToString(value.MultisampleHint);
+		output.MultisampleHint = tmpMultisampleHint;
+		output.Gamma = value.Gamma;
+		output.Left = value.Left;
+		output.Top = value.Top;
+		String tmpTitle;
+		tmpTitle = MonoUtil::MonoToString(value.Title);
+		output.Title = tmpTitle;
+		output.ShowTitleBar = value.ShowTitleBar;
+		output.ShowBorder = value.ShowBorder;
+		output.AllowResize = value.AllowResize;
+		output.ToolWindow = value.ToolWindow;
+		output.Modal = value.Modal;
+		output.HideUntilSwap = value.HideUntilSwap;
 
 		return output;
 	}
@@ -61,30 +61,30 @@ namespace bs
 	__RENDER_WINDOW_DESCInterop ScriptRENDER_WINDOW_DESC::ToInterop(const RENDER_WINDOW_DESC& value)
 	{
 		__RENDER_WINDOW_DESCInterop output;
-		__VideoModeInterop tmpvideoMode;
-		tmpvideoMode = ScriptVideoMode::ToInterop(value.videoMode);
-		output.videoMode = tmpvideoMode;
-		output.fullscreen = value.fullscreen;
-		output.vsync = value.vsync;
-		output.vsyncInterval = value.vsyncInterval;
-		output.hidden = value.hidden;
-		output.depthBuffer = value.depthBuffer;
-		output.multisampleCount = value.multisampleCount;
-		MonoString* tmpmultisampleHint;
-		tmpmultisampleHint = MonoUtil::StringToMono(value.multisampleHint);
-		output.multisampleHint = tmpmultisampleHint;
-		output.gamma = value.gamma;
-		output.left = value.left;
-		output.top = value.top;
-		MonoString* tmptitle;
-		tmptitle = MonoUtil::StringToMono(value.title);
-		output.title = tmptitle;
-		output.showTitleBar = value.showTitleBar;
-		output.showBorder = value.showBorder;
-		output.allowResize = value.allowResize;
-		output.toolWindow = value.toolWindow;
-		output.modal = value.modal;
-		output.hideUntilSwap = value.hideUntilSwap;
+		__VideoModeInterop tmpVideoMode;
+		tmpVideoMode = ScriptVideoMode::ToInterop(value.VideoMode);
+		output.VideoMode = tmpVideoMode;
+		output.Fullscreen = value.Fullscreen;
+		output.Vsync = value.Vsync;
+		output.VsyncInterval = value.VsyncInterval;
+		output.Hidden = value.Hidden;
+		output.DepthBuffer = value.DepthBuffer;
+		output.MultisampleCount = value.MultisampleCount;
+		MonoString* tmpMultisampleHint;
+		tmpMultisampleHint = MonoUtil::StringToMono(value.MultisampleHint);
+		output.MultisampleHint = tmpMultisampleHint;
+		output.Gamma = value.Gamma;
+		output.Left = value.Left;
+		output.Top = value.Top;
+		MonoString* tmpTitle;
+		tmpTitle = MonoUtil::StringToMono(value.Title);
+		output.Title = tmpTitle;
+		output.ShowTitleBar = value.ShowTitleBar;
+		output.ShowBorder = value.ShowBorder;
+		output.AllowResize = value.AllowResize;
+		output.ToolWindow = value.ToolWindow;
+		output.Modal = value.Modal;
+		output.HideUntilSwap = value.HideUntilSwap;
 
 		return output;
 	}

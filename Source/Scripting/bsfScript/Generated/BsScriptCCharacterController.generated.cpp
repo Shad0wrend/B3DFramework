@@ -11,14 +11,14 @@
 
 namespace bs
 {
-	ScriptCCharacterController::onColliderHitThunkDef ScriptCCharacterController::onColliderHitThunk; 
-	ScriptCCharacterController::onControllerHitThunkDef ScriptCCharacterController::onControllerHitThunk; 
+	ScriptCCharacterController::OnColliderHitThunkDef ScriptCCharacterController::OnColliderHitThunk; 
+	ScriptCCharacterController::OnControllerHitThunkDef ScriptCCharacterController::OnControllerHitThunk; 
 
 	ScriptCCharacterController::ScriptCCharacterController(MonoObject* managedInstance, const GameObjectHandle<CCharacterController>& value)
 		:TScriptComponent(managedInstance, value)
 	{
-		value->OnColliderHit.Connect(std::bind(&ScriptCCharacterController::onColliderHit, this, std::placeholders::_1));
-		value->OnControllerHit.Connect(std::bind(&ScriptCCharacterController::onControllerHit, this, std::placeholders::_1));
+		value->OnColliderHit.Connect(std::bind(&ScriptCCharacterController::OnColliderHit, this, std::placeholders::_1));
+		value->OnControllerHit.Connect(std::bind(&ScriptCCharacterController::OnControllerHit, this, std::placeholders::_1));
 	}
 
 	void ScriptCCharacterController::InitRuntimeData()
@@ -47,26 +47,26 @@ namespace bs
 		metaData.ScriptClass->AddInternalCall("Internal_GetLayer", (void*)&ScriptCCharacterController::InternalGetLayer);
 		metaData.ScriptClass->AddInternalCall("Internal_SetLayer", (void*)&ScriptCCharacterController::InternalSetLayer);
 
-		onColliderHitThunk = (onColliderHitThunkDef)metaData.ScriptClass->GetMethodExact("Internal_onColliderHit", "ControllerColliderCollision&")->GetThunk();
-		onControllerHitThunk = (onControllerHitThunkDef)metaData.ScriptClass->GetMethodExact("Internal_onControllerHit", "ControllerControllerCollision&")->GetThunk();
+		OnColliderHitThunk = (OnColliderHitThunkDef)metaData.ScriptClass->GetMethodExact("Internal_OnColliderHit", "ControllerColliderCollision&")->GetThunk();
+		OnControllerHitThunk = (OnControllerHitThunkDef)metaData.ScriptClass->GetMethodExact("Internal_OnControllerHit", "ControllerControllerCollision&")->GetThunk();
 	}
 
-	void ScriptCCharacterController::onColliderHit(const ControllerColliderCollision& p0)
+	void ScriptCCharacterController::OnColliderHit(const ControllerColliderCollision& p0)
 	{
 		MonoObject* tmpp0;
 		__ControllerColliderCollisionInterop interopp0;
 		interopp0 = ScriptControllerColliderCollision::ToInterop(p0);
 		tmpp0 = ScriptControllerColliderCollision::Box(interopp0);
-		MonoUtil::InvokeThunk(onColliderHitThunk, GetManagedInstance(), tmpp0);
+		MonoUtil::InvokeThunk(OnColliderHitThunk, GetManagedInstance(), tmpp0);
 	}
 
-	void ScriptCCharacterController::onControllerHit(const ControllerControllerCollision& p0)
+	void ScriptCCharacterController::OnControllerHit(const ControllerControllerCollision& p0)
 	{
 		MonoObject* tmpp0;
 		__ControllerControllerCollisionInterop interopp0;
 		interopp0 = ScriptControllerControllerCollision::ToInterop(p0);
 		tmpp0 = ScriptControllerControllerCollision::Box(interopp0);
-		MonoUtil::InvokeThunk(onControllerHitThunk, GetManagedInstance(), tmpp0);
+		MonoUtil::InvokeThunk(OnControllerHitThunk, GetManagedInstance(), tmpp0);
 	}
 	CharacterCollisionFlag ScriptCCharacterController::InternalMove(ScriptCCharacterController* thisPtr, Vector3* displacement)
 	{

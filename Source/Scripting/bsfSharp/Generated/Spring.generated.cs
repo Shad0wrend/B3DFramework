@@ -21,8 +21,8 @@ namespace bs
 		public static Spring Default()
 		{
 			Spring value = new Spring();
-			value.stiffness = 0f;
-			value.damping = 0f;
+			value.Stiffness = 0f;
+			value.Damping = 0f;
 
 			return value;
 		}
@@ -32,14 +32,14 @@ namespace bs
 		/// <param name="damping">Damping strength. Force propertional to the velocity error.</param>
 		public Spring(float stiffness, float damping)
 		{
-			this.stiffness = stiffness;
-			this.damping = damping;
+			this.Stiffness = stiffness;
+			this.Damping = damping;
 		}
 
 		/// <summary>Spring strength. Force proportional to the position error.</summary>
-		public float stiffness;
+		public float Stiffness;
 		/// <summary>Damping strength. Force propertional to the velocity error.</summary>
-		public float damping;
+		public float Damping;
 	}
 
 	/** @} */

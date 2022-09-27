@@ -18,27 +18,27 @@ namespace bs
 		public static ParticleOrbitOptions Default()
 		{
 			ParticleOrbitOptions value = new ParticleOrbitOptions();
-			value.center = null;
-			value.velocity = null;
-			value.radial = new FloatDistribution(0f);
-			value.worldSpace = false;
+			value.Center = null;
+			value.Velocity = null;
+			value.Radial = new FloatDistribution(0f);
+			value.WorldSpace = false;
 
 			return value;
 		}
 
 		/// <summary>Position of the center around which to orbit. Evaluated over particle system lifetime.</summary>
-		public Vector3Distribution center;
+		public Vector3Distribution Center;
 		/// <summary>
 		/// Determines the speed of rotation around each axis. The speed is specified in &quot;turns&quot; where 0 = no rotation, 
 		/// 0.5 = 180 degree rotation and 1 = 360 degree rotation. Evaluated over particle lifetime.
 		/// </summary>
-		public Vector3Distribution velocity;
+		public Vector3Distribution Velocity;
 		/// <summary>
 		/// Speed at which to push or pull the particles towards/away from the center. Evaluated over particle lifetime.
 		/// </summary>
-		public FloatDistribution radial;
+		public FloatDistribution Radial;
 		/// <summary>True if the properties provided are in world space, false if in local space.</summary>
-		public bool worldSpace;
+		public bool WorldSpace;
 	}
 
 	/** @} */

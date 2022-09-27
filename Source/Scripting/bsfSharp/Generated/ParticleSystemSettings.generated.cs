@@ -23,8 +23,8 @@ namespace bs
 		[NativeWrapper]
 		public RRef<Material> Material
 		{
-			get { return Internal_Getmaterial(mCachedPtr); }
-			set { Internal_Setmaterial(mCachedPtr, value); }
+			get { return Internal_GetMaterial(mCachedPtr); }
+			set { Internal_SetMaterial(mCachedPtr, value); }
 		}
 
 		/// <summary>Mesh used for representing individual particles when using the Mesh rendering mode.</summary>
@@ -34,8 +34,8 @@ namespace bs
 		[NativeWrapper]
 		public RRef<Mesh> Mesh
 		{
-			get { return Internal_Getmesh(mCachedPtr); }
-			set { Internal_Setmesh(mCachedPtr, value); }
+			get { return Internal_GetMesh(mCachedPtr); }
+			set { Internal_SetMesh(mCachedPtr, value); }
 		}
 
 		/// <summary>Determines in which space are particles in.</summary>
@@ -43,8 +43,8 @@ namespace bs
 		[NativeWrapper]
 		public ParticleSimulationSpace SimulationSpace
 		{
-			get { return Internal_GetsimulationSpace(mCachedPtr); }
-			set { Internal_SetsimulationSpace(mCachedPtr, value); }
+			get { return Internal_GetSimulationSpace(mCachedPtr); }
+			set { Internal_SetSimulationSpace(mCachedPtr, value); }
 		}
 
 		/// <summary>Determines how are particles oriented when rendering.</summary>
@@ -52,8 +52,8 @@ namespace bs
 		[NativeWrapper]
 		public ParticleOrientation Orientation
 		{
-			get { return Internal_Getorientation(mCachedPtr); }
-			set { Internal_Setorientation(mCachedPtr, value); }
+			get { return Internal_GetOrientation(mCachedPtr); }
+			set { Internal_SetOrientation(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -64,8 +64,8 @@ namespace bs
 		[NativeWrapper]
 		public float Duration
 		{
-			get { return Internal_Getduration(mCachedPtr); }
-			set { Internal_Setduration(mCachedPtr, value); }
+			get { return Internal_GetDuration(mCachedPtr); }
+			set { Internal_SetDuration(mCachedPtr, value); }
 		}
 
 		/// <summary>Determines should the particle system time wrap around once it reaches its duration.</summary>
@@ -73,8 +73,8 @@ namespace bs
 		[NativeWrapper]
 		public bool IsLooping
 		{
-			get { return Internal_GetisLooping(mCachedPtr); }
-			set { Internal_SetisLooping(mCachedPtr, value); }
+			get { return Internal_GetIsLooping(mCachedPtr); }
+			set { Internal_SetIsLooping(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -86,8 +86,8 @@ namespace bs
 		[NativeWrapper]
 		public int MaxParticles
 		{
-			get { return Internal_GetmaxParticles(mCachedPtr); }
-			set { Internal_SetmaxParticles(mCachedPtr, value); }
+			get { return Internal_GetMaxParticles(mCachedPtr); }
+			set { Internal_SetMaxParticles(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -101,8 +101,8 @@ namespace bs
 		[NativeWrapper]
 		public bool GpuSimulation
 		{
-			get { return Internal_GetgpuSimulation(mCachedPtr); }
-			set { Internal_SetgpuSimulation(mCachedPtr, value); }
+			get { return Internal_GetGpuSimulation(mCachedPtr); }
+			set { Internal_SetGpuSimulation(mCachedPtr, value); }
 		}
 
 		/// <summary>Determines how is each particle represented on the screen.</summary>
@@ -111,8 +111,8 @@ namespace bs
 		[NativeWrapper]
 		public ParticleRenderMode RenderMode
 		{
-			get { return Internal_GetrenderMode(mCachedPtr); }
-			set { Internal_SetrenderMode(mCachedPtr, value); }
+			get { return Internal_GetRenderMode(mCachedPtr); }
+			set { Internal_SetRenderMode(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -124,8 +124,8 @@ namespace bs
 		[NativeWrapper]
 		public bool OrientationLockY
 		{
-			get { return Internal_GetorientationLockY(mCachedPtr); }
-			set { Internal_SetorientationLockY(mCachedPtr, value); }
+			get { return Internal_GetOrientationLockY(mCachedPtr); }
+			set { Internal_SetOrientationLockY(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -140,10 +140,10 @@ namespace bs
 			get
 			{
 				Vector3 temp;
-				Internal_GetorientationPlaneNormal(mCachedPtr, out temp);
+				Internal_GetOrientationPlaneNormal(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_SetorientationPlaneNormal(mCachedPtr, ref value); }
+			set { Internal_SetOrientationPlaneNormal(mCachedPtr, ref value); }
 		}
 
 		/// <summary>
@@ -155,8 +155,8 @@ namespace bs
 		[NativeWrapper]
 		public ParticleSortMode SortMode
 		{
-			get { return Internal_GetsortMode(mCachedPtr); }
-			set { Internal_SetsortMode(mCachedPtr, value); }
+			get { return Internal_GetSortMode(mCachedPtr); }
+			set { Internal_SetSortMode(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -168,8 +168,8 @@ namespace bs
 		[NativeWrapper]
 		public bool UseAutomaticSeed
 		{
-			get { return Internal_GetuseAutomaticSeed(mCachedPtr); }
-			set { Internal_SetuseAutomaticSeed(mCachedPtr, value); }
+			get { return Internal_GetUseAutomaticSeed(mCachedPtr); }
+			set { Internal_SetUseAutomaticSeed(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -181,8 +181,8 @@ namespace bs
 		[NativeWrapper]
 		public int ManualSeed
 		{
-			get { return Internal_GetmanualSeed(mCachedPtr); }
-			set { Internal_SetmanualSeed(mCachedPtr, value); }
+			get { return Internal_GetManualSeed(mCachedPtr); }
+			set { Internal_SetManualSeed(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -195,8 +195,8 @@ namespace bs
 		[NativeWrapper]
 		public bool UseAutomaticBounds
 		{
-			get { return Internal_GetuseAutomaticBounds(mCachedPtr); }
-			set { Internal_SetuseAutomaticBounds(mCachedPtr, value); }
+			get { return Internal_GetUseAutomaticBounds(mCachedPtr); }
+			set { Internal_SetUseAutomaticBounds(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -211,76 +211,76 @@ namespace bs
 			get
 			{
 				AABox temp;
-				Internal_GetcustomBounds(mCachedPtr, out temp);
+				Internal_GetCustomBounds(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_SetcustomBounds(mCachedPtr, ref value); }
+			set { Internal_SetCustomBounds(mCachedPtr, ref value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern RRef<Material> Internal_Getmaterial(IntPtr thisPtr);
+		private static extern RRef<Material> Internal_GetMaterial(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Setmaterial(IntPtr thisPtr, RRef<Material> value);
+		private static extern void Internal_SetMaterial(IntPtr thisPtr, RRef<Material> value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern RRef<Mesh> Internal_Getmesh(IntPtr thisPtr);
+		private static extern RRef<Mesh> Internal_GetMesh(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Setmesh(IntPtr thisPtr, RRef<Mesh> value);
+		private static extern void Internal_SetMesh(IntPtr thisPtr, RRef<Mesh> value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ParticleSimulationSpace Internal_GetsimulationSpace(IntPtr thisPtr);
+		private static extern ParticleSimulationSpace Internal_GetSimulationSpace(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetsimulationSpace(IntPtr thisPtr, ParticleSimulationSpace value);
+		private static extern void Internal_SetSimulationSpace(IntPtr thisPtr, ParticleSimulationSpace value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ParticleOrientation Internal_Getorientation(IntPtr thisPtr);
+		private static extern ParticleOrientation Internal_GetOrientation(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Setorientation(IntPtr thisPtr, ParticleOrientation value);
+		private static extern void Internal_SetOrientation(IntPtr thisPtr, ParticleOrientation value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_Getduration(IntPtr thisPtr);
+		private static extern float Internal_GetDuration(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Setduration(IntPtr thisPtr, float value);
+		private static extern void Internal_SetDuration(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_GetisLooping(IntPtr thisPtr);
+		private static extern bool Internal_GetIsLooping(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetisLooping(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetIsLooping(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_GetmaxParticles(IntPtr thisPtr);
+		private static extern int Internal_GetMaxParticles(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetmaxParticles(IntPtr thisPtr, int value);
+		private static extern void Internal_SetMaxParticles(IntPtr thisPtr, int value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_GetgpuSimulation(IntPtr thisPtr);
+		private static extern bool Internal_GetGpuSimulation(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetgpuSimulation(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetGpuSimulation(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ParticleRenderMode Internal_GetrenderMode(IntPtr thisPtr);
+		private static extern ParticleRenderMode Internal_GetRenderMode(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetrenderMode(IntPtr thisPtr, ParticleRenderMode value);
+		private static extern void Internal_SetRenderMode(IntPtr thisPtr, ParticleRenderMode value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_GetorientationLockY(IntPtr thisPtr);
+		private static extern bool Internal_GetOrientationLockY(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetorientationLockY(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetOrientationLockY(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_GetorientationPlaneNormal(IntPtr thisPtr, out Vector3 __output);
+		private static extern void Internal_GetOrientationPlaneNormal(IntPtr thisPtr, out Vector3 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetorientationPlaneNormal(IntPtr thisPtr, ref Vector3 value);
+		private static extern void Internal_SetOrientationPlaneNormal(IntPtr thisPtr, ref Vector3 value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ParticleSortMode Internal_GetsortMode(IntPtr thisPtr);
+		private static extern ParticleSortMode Internal_GetSortMode(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetsortMode(IntPtr thisPtr, ParticleSortMode value);
+		private static extern void Internal_SetSortMode(IntPtr thisPtr, ParticleSortMode value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_GetuseAutomaticSeed(IntPtr thisPtr);
+		private static extern bool Internal_GetUseAutomaticSeed(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetuseAutomaticSeed(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetUseAutomaticSeed(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_GetmanualSeed(IntPtr thisPtr);
+		private static extern int Internal_GetManualSeed(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetmanualSeed(IntPtr thisPtr, int value);
+		private static extern void Internal_SetManualSeed(IntPtr thisPtr, int value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_GetuseAutomaticBounds(IntPtr thisPtr);
+		private static extern bool Internal_GetUseAutomaticBounds(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetuseAutomaticBounds(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetUseAutomaticBounds(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_GetcustomBounds(IntPtr thisPtr, out AABox __output);
+		private static extern void Internal_GetCustomBounds(IntPtr thisPtr, out AABox __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetcustomBounds(IntPtr thisPtr, ref AABox value);
+		private static extern void Internal_SetCustomBounds(IntPtr thisPtr, ref AABox value);
 	}
 
 	/** @} */

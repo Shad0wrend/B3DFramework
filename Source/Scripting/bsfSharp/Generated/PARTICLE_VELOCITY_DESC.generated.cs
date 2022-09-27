@@ -18,16 +18,16 @@ namespace bs
 		public static ParticleVelocityOptions Default()
 		{
 			ParticleVelocityOptions value = new ParticleVelocityOptions();
-			value.velocity = null;
-			value.worldSpace = false;
+			value.Velocity = null;
+			value.WorldSpace = false;
 
 			return value;
 		}
 
 		/// <summary>Determines the velocity of the particles evaluated over particle lifetime.</summary>
-		public Vector3Distribution velocity;
+		public Vector3Distribution Velocity;
 		/// <summary>True if the velocity is provided in world space, false if in local space.</summary>
-		public bool worldSpace;
+		public bool WorldSpace;
 	}
 
 	/** @} */

@@ -21,17 +21,17 @@ namespace bs
 
 	private:
 		static void InternalGetCharDesc(ScriptFontBitmap* thisPtr, uint32_t charId, __CharDescInterop* __output);
-		static uint32_t InternalGetsize(ScriptFontBitmap* thisPtr);
-		static void InternalSetsize(ScriptFontBitmap* thisPtr, uint32_t value);
-		static int32_t InternalGetbaselineOffset(ScriptFontBitmap* thisPtr);
-		static void InternalSetbaselineOffset(ScriptFontBitmap* thisPtr, int32_t value);
-		static uint32_t InternalGetlineHeight(ScriptFontBitmap* thisPtr);
-		static void InternalSetlineHeight(ScriptFontBitmap* thisPtr, uint32_t value);
-		static void InternalGetmissingGlyph(ScriptFontBitmap* thisPtr, __CharDescInterop* __output);
-		static void InternalSetmissingGlyph(ScriptFontBitmap* thisPtr, __CharDescInterop* value);
-		static uint32_t InternalGetspaceWidth(ScriptFontBitmap* thisPtr);
-		static void InternalSetspaceWidth(ScriptFontBitmap* thisPtr, uint32_t value);
-		static MonoArray* InternalGettexturePages(ScriptFontBitmap* thisPtr);
-		static void InternalSettexturePages(ScriptFontBitmap* thisPtr, MonoArray* value);
+		static uint32_t InternalGetSize(ScriptFontBitmap* thisPtr);
+		static void InternalSetSize(ScriptFontBitmap* thisPtr, uint32_t value);
+		static int32_t InternalGetBaselineOffset(ScriptFontBitmap* thisPtr);
+		static void InternalSetBaselineOffset(ScriptFontBitmap* thisPtr, int32_t value);
+		static uint32_t InternalGetLineHeight(ScriptFontBitmap* thisPtr);
+		static void InternalSetLineHeight(ScriptFontBitmap* thisPtr, uint32_t value);
+		static void InternalGetMissingGlyph(ScriptFontBitmap* thisPtr, __CharDescInterop* __output);
+		static void InternalSetMissingGlyph(ScriptFontBitmap* thisPtr, __CharDescInterop* value);
+		static uint32_t InternalGetSpaceWidth(ScriptFontBitmap* thisPtr);
+		static void InternalSetSpaceWidth(ScriptFontBitmap* thisPtr, uint32_t value);
+		static MonoArray* InternalGetTexturePages(ScriptFontBitmap* thisPtr);
+		static void InternalSetTexturePages(ScriptFontBitmap* thisPtr, MonoArray* value);
 	};
 }

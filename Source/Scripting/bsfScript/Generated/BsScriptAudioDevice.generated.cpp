@@ -27,9 +27,9 @@ namespace bs
 	AudioDevice ScriptAudioDevice::FromInterop(const __AudioDeviceInterop& value)
 	{
 		AudioDevice output;
-		String tmpname;
-		tmpname = MonoUtil::MonoToString(value.Name);
-		output.Name = tmpname;
+		String tmpName;
+		tmpName = MonoUtil::MonoToString(value.Name);
+		output.Name = tmpName;
 
 		return output;
 	}
@@ -37,9 +37,9 @@ namespace bs
 	__AudioDeviceInterop ScriptAudioDevice::ToInterop(const AudioDevice& value)
 	{
 		__AudioDeviceInterop output;
-		MonoString* tmpname;
-		tmpname = MonoUtil::StringToMono(value.Name);
-		output.Name = tmpname;
+		MonoString* tmpName;
+		tmpName = MonoUtil::StringToMono(value.Name);
+		output.Name = tmpName;
 
 		return output;
 	}

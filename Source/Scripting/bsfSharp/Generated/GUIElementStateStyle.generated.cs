@@ -14,8 +14,8 @@ namespace bs
 	[StructLayout(LayoutKind.Sequential), SerializeObject]
 	public partial struct GUIElementStateStyle
 	{
-		public SpriteTexture texture;
-		public Color textColor;
+		public SpriteTexture Texture;
+		public Color TextColor;
 	}
 
 	/** @} */

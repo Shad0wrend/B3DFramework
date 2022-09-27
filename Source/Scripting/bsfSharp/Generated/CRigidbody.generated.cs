@@ -10,14 +10,6 @@ namespace bs
 	 *  @{
 	 */
 
-	/// <summary>
-	/// Rigidbody is a dynamic physics object that can be moved using forces (or directly). It will interact with other static 
-	/// and dynamic physics objects in the scene accordingly (it will push other non-kinematic rigidbodies, and collide with 
-	/// static objects).
-	///
-	/// The shape and mass of a rigidbody is governed by its colliders. You must attach at least one collider for the 
-	/// rigidbody to be valid.
-	/// </summary>
 	[ShowInInspector]
 	public partial class Rigidbody : Component
 	{
@@ -180,13 +172,10 @@ namespace bs
 			set { Internal_SetFlags(mCachedPtr, value); }
 		}
 
-		/// <summary>Triggered when one of the colliders owned by the rigidbody starts colliding with another object.</summary>
 		public event Action<CollisionData> OnCollisionBegin;
 
-		/// <summary>Triggered when a previously colliding collider stays in collision. Triggered once per frame.</summary>
 		public event Action<CollisionData> OnCollisionStay;
 
-		/// <summary>Triggered when one of the colliders owned by the rigidbody stops colliding with another object.</summary>
 		public event Action<CollisionData> OnCollisionEnd;
 
 		public void Move(Vector3 position)
@@ -313,15 +302,15 @@ namespace bs
 		private static extern void Internal_AddForceAtPoint(IntPtr thisPtr, ref Vector3 force, ref Vector3 position, PointForceMode mode);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_GetVelocityAtPoint(IntPtr thisPtr, ref Vector3 point, out Vector3 __output);
-		private void Internal_onCollisionBegin(ref CollisionData p0)
+		private void Internal_OnCollisionBegin(ref CollisionData p0)
 		{
 			OnCollisionBegin?.Invoke(p0);
 		}
-		private void Internal_onCollisionStay(ref CollisionData p0)
+		private void Internal_OnCollisionStay(ref CollisionData p0)
 		{
 			OnCollisionStay?.Invoke(p0);
 		}
-		private void Internal_onCollisionEnd(ref CollisionData p0)
+		private void Internal_OnCollisionEnd(ref CollisionData p0)
 		{
 			OnCollisionEnd?.Invoke(p0);
 		}

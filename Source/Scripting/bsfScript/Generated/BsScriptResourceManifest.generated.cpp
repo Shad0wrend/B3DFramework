@@ -16,16 +16,16 @@ namespace bs
 
 	void ScriptResourceManifest::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_GetName", (void*)&ScriptResourceManifest::InternalGetName);
-		metaData.scriptClass->AddInternalCall("Internal_RegisterResource", (void*)&ScriptResourceManifest::InternalRegisterResource);
-		metaData.scriptClass->AddInternalCall("Internal_UnregisterResource", (void*)&ScriptResourceManifest::InternalUnregisterResource);
-		metaData.scriptClass->AddInternalCall("Internal_UuidToFilePath", (void*)&ScriptResourceManifest::InternalUuidToFilePath);
-		metaData.scriptClass->AddInternalCall("Internal_FilePathToUuid", (void*)&ScriptResourceManifest::InternalFilePathToUuid);
-		metaData.scriptClass->AddInternalCall("Internal_UuidExists", (void*)&ScriptResourceManifest::InternalUuidExists);
-		metaData.scriptClass->AddInternalCall("Internal_FilePathExists", (void*)&ScriptResourceManifest::InternalFilePathExists);
-		metaData.scriptClass->AddInternalCall("Internal_Save", (void*)&ScriptResourceManifest::InternalSave);
-		metaData.scriptClass->AddInternalCall("Internal_Load", (void*)&ScriptResourceManifest::InternalLoad);
-		metaData.scriptClass->AddInternalCall("Internal_Create", (void*)&ScriptResourceManifest::InternalCreate);
+		metaData.ScriptClass->AddInternalCall("Internal_GetName", (void*)&ScriptResourceManifest::InternalGetName);
+		metaData.ScriptClass->AddInternalCall("Internal_RegisterResource", (void*)&ScriptResourceManifest::InternalRegisterResource);
+		metaData.ScriptClass->AddInternalCall("Internal_UnregisterResource", (void*)&ScriptResourceManifest::InternalUnregisterResource);
+		metaData.ScriptClass->AddInternalCall("Internal_UuidToFilePath", (void*)&ScriptResourceManifest::InternalUuidToFilePath);
+		metaData.ScriptClass->AddInternalCall("Internal_FilePathToUuid", (void*)&ScriptResourceManifest::InternalFilePathToUuid);
+		metaData.ScriptClass->AddInternalCall("Internal_UuidExists", (void*)&ScriptResourceManifest::InternalUuidExists);
+		metaData.ScriptClass->AddInternalCall("Internal_FilePathExists", (void*)&ScriptResourceManifest::InternalFilePathExists);
+		metaData.ScriptClass->AddInternalCall("Internal_Save", (void*)&ScriptResourceManifest::InternalSave);
+		metaData.ScriptClass->AddInternalCall("Internal_Load", (void*)&ScriptResourceManifest::InternalLoad);
+		metaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptResourceManifest::InternalCreate);
 
 	}
 
@@ -36,7 +36,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptResourceManifest>()) ScriptResourceManifest(managedInstance, value);
 		return managedInstance;
 	}

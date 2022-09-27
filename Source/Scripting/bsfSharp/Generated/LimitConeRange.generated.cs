@@ -18,11 +18,11 @@ namespace bs
 		public static LimitConeRange Default()
 		{
 			LimitConeRange value = new LimitConeRange();
-			value.yLimitAngle = Radian.Default();
-			value.zLimitAngle = Radian.Default();
-			value.contactDist = -1f;
-			value.restitution = 0f;
-			value.spring = Spring.Default();
+			value.YLimitAngle = Radian.Default();
+			value.ZLimitAngle = Radian.Default();
+			value.ContactDist = -1f;
+			value.Restitution = 0f;
+			value.Spring = Spring.Default();
 
 			return value;
 		}
@@ -42,11 +42,11 @@ namespace bs
 		/// </param>
 		public LimitConeRange(Radian yLimitAngle, Radian zLimitAngle, float contactDist = -1f)
 		{
-			this.yLimitAngle = yLimitAngle;
-			this.zLimitAngle = zLimitAngle;
-			this.contactDist = -1f;
-			this.restitution = 0f;
-			this.spring = Spring.Default();
+			this.YLimitAngle = yLimitAngle;
+			this.ZLimitAngle = zLimitAngle;
+			this.ContactDist = -1f;
+			this.Restitution = 0f;
+			this.Spring = Spring.Default();
 		}
 
 		/// <summary>
@@ -68,11 +68,11 @@ namespace bs
 		/// </param>
 		public LimitConeRange(Radian yLimitAngle, Radian zLimitAngle, Spring spring, float restitution = 0f)
 		{
-			this.yLimitAngle = yLimitAngle;
-			this.zLimitAngle = zLimitAngle;
-			this.contactDist = -1f;
-			this.restitution = 0f;
-			this.spring = Spring.Default();
+			this.YLimitAngle = yLimitAngle;
+			this.ZLimitAngle = zLimitAngle;
+			this.ContactDist = -1f;
+			this.Restitution = 0f;
+			this.Spring = Spring.Default();
 		}
 
 		///<summary>
@@ -81,9 +81,9 @@ namespace bs
 		public LimitCommon GetBase()
 		{
 			LimitCommon value;
-			value.contactDist = contactDist;
-			value.restitution = restitution;
-			value.spring = spring;
+			value.ContactDist = ContactDist;
+			value.Restitution = Restitution;
+			value.Spring = Spring;
 			return value;
 		}
 
@@ -93,29 +93,29 @@ namespace bs
 		///</summary>
 		public void SetBase(LimitCommon value)
 		{
-			contactDist = value.contactDist;
-			restitution = value.restitution;
-			spring = value.spring;
+			ContactDist = value.ContactDist;
+			Restitution = value.Restitution;
+			Spring = value.Spring;
 		}
 
 		/// <summary>Y angle of the cone. Movement is constrainted between 0 and this angle on the Y axis.</summary>
 		[Range(0f, 180f, false)]
-		public Radian yLimitAngle;
+		public Radian YLimitAngle;
 		/// <summary>Z angle of the cone. Movement is constrainted between 0 and this angle on the Z axis.</summary>
 		[Range(0f, 180f, false)]
-		public Radian zLimitAngle;
+		public Radian ZLimitAngle;
 		/// <summary>
 		/// Distance from the limit at which it becomes active. Allows the solver to activate earlier than the limit is reached 
 		/// to avoid breaking the limit.
 		/// </summary>
-		public float contactDist;
+		public float ContactDist;
 		/// <summary>
 		/// Controls how do objects react when the limit is reached, values closer to zero specify non-ellastic collision, while 
 		/// those closer to one specify more ellastic (i.e bouncy) collision. Must be in [0, 1] range.
 		/// </summary>
-		public float restitution;
+		public float Restitution;
 		/// <summary>Spring that controls how are the bodies pulled back towards the limit when they breach it.</summary>
-		public Spring spring;
+		public Spring Spring;
 	}
 
 	/** @} */

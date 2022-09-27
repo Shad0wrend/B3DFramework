@@ -31,20 +31,20 @@ namespace bs
 	PARTICLE_SIZE_DESC ScriptPARTICLE_SIZE_DESC::FromInterop(const __PARTICLE_SIZE_DESCInterop& value)
 	{
 		PARTICLE_SIZE_DESC output;
-		SPtr<TDistribution<float>> tmpsize;
-		ScriptTDistributionfloat* scriptsize;
-		scriptsize = ScriptTDistributionfloat::ToNative(value.Size);
-		if(scriptsize != nullptr)
-			tmpsize = scriptsize->GetInternal();
-		if(tmpsize != nullptr)
-		output.Size = *tmpsize;
-		SPtr<TDistribution<Vector3>> tmpsize3D;
-		ScriptTDistributionVector3* scriptsize3D;
-		scriptsize3D = ScriptTDistributionVector3::ToNative(value.Size3D);
-		if(scriptsize3D != nullptr)
-			tmpsize3D = scriptsize3D->GetInternal();
-		if(tmpsize3D != nullptr)
-		output.Size3D = *tmpsize3D;
+		SPtr<TDistribution<float>> tmpSize;
+		ScriptTDistributionfloat* scriptSize;
+		scriptSize = ScriptTDistributionfloat::ToNative(value.Size);
+		if(scriptSize != nullptr)
+			tmpSize = scriptSize->GetInternal();
+		if(tmpSize != nullptr)
+		output.Size = *tmpSize;
+		SPtr<TDistribution<Vector3>> tmpSize3D;
+		ScriptTDistributionVector3* scriptSize3D;
+		scriptSize3D = ScriptTDistributionVector3::ToNative(value.Size3D);
+		if(scriptSize3D != nullptr)
+			tmpSize3D = scriptSize3D->GetInternal();
+		if(tmpSize3D != nullptr)
+		output.Size3D = *tmpSize3D;
 		output.Use3DSize = value.Use3DSize;
 
 		return output;
@@ -53,16 +53,16 @@ namespace bs
 	__PARTICLE_SIZE_DESCInterop ScriptPARTICLE_SIZE_DESC::ToInterop(const PARTICLE_SIZE_DESC& value)
 	{
 		__PARTICLE_SIZE_DESCInterop output;
-		MonoObject* tmpsize;
-		SPtr<TDistribution<float>> tmpsizecopy;
-		tmpsizecopy = bs_shared_ptr_new<TDistribution<float>>(value.Size);
-		tmpsize = ScriptTDistributionfloat::Create(tmpsizecopy);
-		output.Size = tmpsize;
-		MonoObject* tmpsize3D;
-		SPtr<TDistribution<Vector3>> tmpsize3Dcopy;
-		tmpsize3Dcopy = bs_shared_ptr_new<TDistribution<Vector3>>(value.Size3D);
-		tmpsize3D = ScriptTDistributionVector3::Create(tmpsize3Dcopy);
-		output.Size3D = tmpsize3D;
+		MonoObject* tmpSize;
+		SPtr<TDistribution<float>> tmpSizecopy;
+		tmpSizecopy = bs_shared_ptr_new<TDistribution<float>>(value.Size);
+		tmpSize = ScriptTDistributionfloat::Create(tmpSizecopy);
+		output.Size = tmpSize;
+		MonoObject* tmpSize3D;
+		SPtr<TDistribution<Vector3>> tmpSize3Dcopy;
+		tmpSize3Dcopy = bs_shared_ptr_new<TDistribution<Vector3>>(value.Size3D);
+		tmpSize3D = ScriptTDistributionVector3::Create(tmpSize3Dcopy);
+		output.Size3D = tmpSize3D;
 		output.Use3DSize = value.Use3DSize;
 
 		return output;

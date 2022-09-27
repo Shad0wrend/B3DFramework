@@ -18,9 +18,9 @@ namespace bs
 		public static ParticleSizeOptions Default()
 		{
 			ParticleSizeOptions value = new ParticleSizeOptions();
-			value.size = new FloatDistribution(1f);
-			value.size3D = null;
-			value.use3DSize = false;
+			value.Size = new FloatDistribution(1f);
+			value.Size3D = null;
+			value.Use3DSize = false;
 
 			return value;
 		}
@@ -28,16 +28,16 @@ namespace bs
 		/// <summary>
 		/// Determines the uniform size of the particles evaluated over particle lifetime. Only used if 3D size is disabled.
 		/// </summary>
-		public FloatDistribution size;
+		public FloatDistribution Size;
 		/// <summary>
 		/// Determines the non-uniform size of the particles evaluated over particle lifetime. Only used if 3D size is enabled.
 		/// </summary>
-		public Vector3Distribution size3D;
+		public Vector3Distribution Size3D;
 		/// <summary>
 		/// Determines should the size be evaluated uniformly for all dimensions, or evaluate each dimension with its own 
 		/// distribution.
 		/// </summary>
-		public bool use3DSize;
+		public bool Use3DSize;
 	}
 
 	/** @} */

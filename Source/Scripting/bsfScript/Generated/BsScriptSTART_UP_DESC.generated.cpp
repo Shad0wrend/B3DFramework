@@ -19,7 +19,7 @@ namespace bs
 
 	MonoObject*ScriptSTART_UP_DESC::Box(const __START_UP_DESCInterop& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	__START_UP_DESCInterop ScriptSTART_UP_DESC::Unbox(MonoObject* value)
@@ -30,37 +30,37 @@ namespace bs
 	START_UP_DESC ScriptSTART_UP_DESC::FromInterop(const __START_UP_DESCInterop& value)
 	{
 		START_UP_DESC output;
-		String tmprenderAPI;
-		tmprenderAPI = MonoUtil::MonoToString(value.renderAPI);
-		output.renderAPI = tmprenderAPI;
-		String tmprenderer;
-		tmprenderer = MonoUtil::MonoToString(value.renderer);
-		output.renderer = tmprenderer;
-		String tmpphysics;
-		tmpphysics = MonoUtil::MonoToString(value.physics);
-		output.physics = tmpphysics;
-		String tmpaudio;
-		tmpaudio = MonoUtil::MonoToString(value.audio);
-		output.audio = tmpaudio;
-		String tmpinput;
-		tmpinput = MonoUtil::MonoToString(value.input);
-		output.input = tmpinput;
-		output.physicsCooking = value.physicsCooking;
-		output.asyncAnimation = value.asyncAnimation;
-		RENDER_WINDOW_DESC tmpprimaryWindowDesc;
-		tmpprimaryWindowDesc = ScriptRENDER_WINDOW_DESC::FromInterop(value.primaryWindowDesc);
-		output.primaryWindowDesc = tmpprimaryWindowDesc;
-		Vector<String> vecimporters;
-		if(value.importers != nullptr)
+		String tmpRenderApi;
+		tmpRenderApi = MonoUtil::MonoToString(value.RenderApi);
+		output.RenderApi = tmpRenderApi;
+		String tmpRenderer;
+		tmpRenderer = MonoUtil::MonoToString(value.Renderer);
+		output.Renderer = tmpRenderer;
+		String tmpPhysics;
+		tmpPhysics = MonoUtil::MonoToString(value.Physics);
+		output.Physics = tmpPhysics;
+		String tmpAudio;
+		tmpAudio = MonoUtil::MonoToString(value.Audio);
+		output.Audio = tmpAudio;
+		String tmpInput;
+		tmpInput = MonoUtil::MonoToString(value.Input);
+		output.Input = tmpInput;
+		output.PhysicsCooking = value.PhysicsCooking;
+		output.AsyncAnimation = value.AsyncAnimation;
+		RENDER_WINDOW_DESC tmpPrimaryWindowDesc;
+		tmpPrimaryWindowDesc = ScriptRENDER_WINDOW_DESC::FromInterop(value.PrimaryWindowDesc);
+		output.PrimaryWindowDesc = tmpPrimaryWindowDesc;
+		Vector<String> vecImporters;
+		if(value.Importers != nullptr)
 		{
-			ScriptArray arrayimporters(value.importers);
-			vecimporters.resize(arrayimporters.Size());
-			for(int i = 0; i < (int)arrayimporters.Size(); i++)
+			ScriptArray arrayImporters(value.Importers);
+			vecImporters.resize(arrayImporters.Size());
+			for(int i = 0; i < (int)arrayImporters.Size(); i++)
 			{
-				vecimporters[i] = arrayimporters.Get<String>(i);
+				vecImporters[i] = arrayImporters.Get<String>(i);
 			}
 		}
-		output.importers = vecimporters;
+		output.Importers = vecImporters;
 
 		return output;
 	}
@@ -68,35 +68,35 @@ namespace bs
 	__START_UP_DESCInterop ScriptSTART_UP_DESC::ToInterop(const START_UP_DESC& value)
 	{
 		__START_UP_DESCInterop output;
-		MonoString* tmprenderAPI;
-		tmprenderAPI = MonoUtil::StringToMono(value.renderAPI);
-		output.renderAPI = tmprenderAPI;
-		MonoString* tmprenderer;
-		tmprenderer = MonoUtil::StringToMono(value.renderer);
-		output.renderer = tmprenderer;
-		MonoString* tmpphysics;
-		tmpphysics = MonoUtil::StringToMono(value.physics);
-		output.physics = tmpphysics;
-		MonoString* tmpaudio;
-		tmpaudio = MonoUtil::StringToMono(value.audio);
-		output.audio = tmpaudio;
-		MonoString* tmpinput;
-		tmpinput = MonoUtil::StringToMono(value.input);
-		output.input = tmpinput;
-		output.physicsCooking = value.physicsCooking;
-		output.asyncAnimation = value.asyncAnimation;
-		__RENDER_WINDOW_DESCInterop tmpprimaryWindowDesc;
-		tmpprimaryWindowDesc = ScriptRENDER_WINDOW_DESC::ToInterop(value.primaryWindowDesc);
-		output.primaryWindowDesc = tmpprimaryWindowDesc;
-		int arraySizeimporters = (int)value.importers.size();
-		MonoArray* vecimporters;
-		ScriptArray arrayimporters = ScriptArray::Create<String>(arraySizeimporters);
-		for(int i = 0; i < arraySizeimporters; i++)
+		MonoString* tmpRenderApi;
+		tmpRenderApi = MonoUtil::StringToMono(value.RenderApi);
+		output.RenderApi = tmpRenderApi;
+		MonoString* tmpRenderer;
+		tmpRenderer = MonoUtil::StringToMono(value.Renderer);
+		output.Renderer = tmpRenderer;
+		MonoString* tmpPhysics;
+		tmpPhysics = MonoUtil::StringToMono(value.Physics);
+		output.Physics = tmpPhysics;
+		MonoString* tmpAudio;
+		tmpAudio = MonoUtil::StringToMono(value.Audio);
+		output.Audio = tmpAudio;
+		MonoString* tmpInput;
+		tmpInput = MonoUtil::StringToMono(value.Input);
+		output.Input = tmpInput;
+		output.PhysicsCooking = value.PhysicsCooking;
+		output.AsyncAnimation = value.AsyncAnimation;
+		__RENDER_WINDOW_DESCInterop tmpPrimaryWindowDesc;
+		tmpPrimaryWindowDesc = ScriptRENDER_WINDOW_DESC::ToInterop(value.PrimaryWindowDesc);
+		output.PrimaryWindowDesc = tmpPrimaryWindowDesc;
+		int arraySizeImporters = (int)value.Importers.size();
+		MonoArray* vecImporters;
+		ScriptArray arrayImporters = ScriptArray::Create<String>(arraySizeImporters);
+		for(int i = 0; i < arraySizeImporters; i++)
 		{
-			arrayimporters.Set(i, value.importers[i]);
+			arrayImporters.Set(i, value.Importers[i]);
 		}
-		vecimporters = arrayimporters.GetInternal();
-		output.importers = vecimporters;
+		vecImporters = arrayImporters.GetInternal();
+		output.Importers = vecImporters;
 
 		return output;
 	}

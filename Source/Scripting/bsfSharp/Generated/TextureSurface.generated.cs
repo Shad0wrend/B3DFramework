@@ -16,23 +16,23 @@ namespace bs
 	{
 		public TextureSurface(int mipLevel = 0, int numMipLevels = 1, int face = 0, int numFaces = 1)
 		{
-			this.mipLevel = mipLevel;
-			this.numMipLevels = numMipLevels;
-			this.face = face;
-			this.numFaces = numFaces;
+			this.MipLevel = mipLevel;
+			this.NumMipLevels = numMipLevels;
+			this.Face = face;
+			this.NumFaces = numFaces;
 		}
 
 		/// <summary>First mip level to reference.</summary>
-		public int mipLevel;
+		public int MipLevel;
 		/// <summary>Number of mip levels to reference. Must be greater than zero.</summary>
-		public int numMipLevels;
+		public int NumMipLevels;
 		/// <summary>
 		/// First face to reference. Face can represent a single cubemap face, or a single array entry in a texture array. If 
 		/// cubemaps are laid out in a texture array then every six sequential faces represent a single array entry.
 		/// </summary>
-		public int face;
+		public int Face;
 		/// <summary>Number of faces to reference, if the texture has more than one.</summary>
-		public int numFaces;
+		public int NumFaces;
 	}
 
 	/** @} */

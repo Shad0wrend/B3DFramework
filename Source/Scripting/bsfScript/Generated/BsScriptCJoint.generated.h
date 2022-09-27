@@ -26,10 +26,10 @@ namespace bs
 		ScriptCJoint(MonoObject* managedInstance, const GameObjectHandle<CJoint>& value);
 
 	private:
-		void onJointBreak();
+		void OnJointBreak();
 
-		typedef void(BS_THUNKCALL *onJointBreakThunkDef) (MonoObject*, MonoException**);
-		static onJointBreakThunkDef onJointBreakThunk;
+		typedef void(BS_THUNKCALL *OnJointBreakThunkDef) (MonoObject*, MonoException**);
+		static OnJointBreakThunkDef OnJointBreakThunk;
 
 		static MonoObject* InternalGetBody(ScriptCJointBase* thisPtr, JointBody body);
 		static void InternalSetBody(ScriptCJointBase* thisPtr, JointBody body, MonoObject* value);

@@ -10,10 +10,6 @@ namespace bs
 	 *  @{
 	 */
 
-	/// <summary>
-	/// Hinge joint removes all but a single rotation degree of freedom from its two attached bodies (for example a door 
-	/// hinge).
-	/// </summary>
 	[ShowInInspector]
 	public partial class HingeJoint : Joint
 	{

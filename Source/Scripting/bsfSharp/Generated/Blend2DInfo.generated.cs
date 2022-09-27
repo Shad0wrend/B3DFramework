@@ -16,10 +16,10 @@ namespace bs
 	[StructLayout(LayoutKind.Sequential), SerializeObject]
 	public partial struct Blend2DInfo
 	{
-		public RRef<AnimationClip> topLeftClip;
-		public RRef<AnimationClip> topRightClip;
-		public RRef<AnimationClip> botLeftClip;
-		public RRef<AnimationClip> botRightClip;
+		public RRef<AnimationClip> TopLeftClip;
+		public RRef<AnimationClip> TopRightClip;
+		public RRef<AnimationClip> BotLeftClip;
+		public RRef<AnimationClip> BotRightClip;
 	}
 
 	/** @} */

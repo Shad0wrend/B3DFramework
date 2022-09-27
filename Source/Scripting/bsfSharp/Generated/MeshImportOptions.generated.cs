@@ -30,8 +30,8 @@ namespace bs
 		[NativeWrapper]
 		public bool CpuCached
 		{
-			get { return Internal_GetcpuCached(mCachedPtr); }
-			set { Internal_SetcpuCached(mCachedPtr, value); }
+			get { return Internal_GetCpuCached(mCachedPtr); }
+			set { Internal_SetCpuCached(mCachedPtr, value); }
 		}
 
 		/// <summary>Determines should mesh normals be imported if available.</summary>
@@ -39,8 +39,8 @@ namespace bs
 		[NativeWrapper]
 		public bool ImportNormals
 		{
-			get { return Internal_GetimportNormals(mCachedPtr); }
-			set { Internal_SetimportNormals(mCachedPtr, value); }
+			get { return Internal_GetImportNormals(mCachedPtr); }
+			set { Internal_SetImportNormals(mCachedPtr, value); }
 		}
 
 		/// <summary>Determines should mesh tangents and bitangents be imported if available.</summary>
@@ -48,8 +48,8 @@ namespace bs
 		[NativeWrapper]
 		public bool ImportTangents
 		{
-			get { return Internal_GetimportTangents(mCachedPtr); }
-			set { Internal_SetimportTangents(mCachedPtr, value); }
+			get { return Internal_GetImportTangents(mCachedPtr); }
+			set { Internal_SetImportTangents(mCachedPtr, value); }
 		}
 
 		/// <summary>Determines should mesh blend shapes be imported if available.</summary>
@@ -57,8 +57,8 @@ namespace bs
 		[NativeWrapper]
 		public bool ImportBlendShapes
 		{
-			get { return Internal_GetimportBlendShapes(mCachedPtr); }
-			set { Internal_SetimportBlendShapes(mCachedPtr, value); }
+			get { return Internal_GetImportBlendShapes(mCachedPtr); }
+			set { Internal_SetImportBlendShapes(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -68,8 +68,8 @@ namespace bs
 		[NativeWrapper]
 		public bool ImportSkin
 		{
-			get { return Internal_GetimportSkin(mCachedPtr); }
-			set { Internal_SetimportSkin(mCachedPtr, value); }
+			get { return Internal_GetImportSkin(mCachedPtr); }
+			set { Internal_SetImportSkin(mCachedPtr, value); }
 		}
 
 		/// <summary>Determines should animation clips be imported if available.</summary>
@@ -77,8 +77,8 @@ namespace bs
 		[NativeWrapper]
 		public bool ImportAnimation
 		{
-			get { return Internal_GetimportAnimation(mCachedPtr); }
-			set { Internal_SetimportAnimation(mCachedPtr, value); }
+			get { return Internal_GetImportAnimation(mCachedPtr); }
+			set { Internal_SetImportAnimation(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -89,8 +89,8 @@ namespace bs
 		[NativeWrapper]
 		public bool ReduceKeyFrames
 		{
-			get { return Internal_GetreduceKeyFrames(mCachedPtr); }
-			set { Internal_SetreduceKeyFrames(mCachedPtr, value); }
+			get { return Internal_GetReduceKeyFrames(mCachedPtr); }
+			set { Internal_SetReduceKeyFrames(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -103,8 +103,8 @@ namespace bs
 		[NativeWrapper]
 		public bool ImportRootMotion
 		{
-			get { return Internal_GetimportRootMotion(mCachedPtr); }
-			set { Internal_SetimportRootMotion(mCachedPtr, value); }
+			get { return Internal_GetImportRootMotion(mCachedPtr); }
+			set { Internal_SetImportRootMotion(mCachedPtr, value); }
 		}
 
 		/// <summary>Uniformly scales the imported mesh by the specified value.</summary>
@@ -112,8 +112,8 @@ namespace bs
 		[NativeWrapper]
 		public float ImportScale
 		{
-			get { return Internal_GetimportScale(mCachedPtr); }
-			set { Internal_SetimportScale(mCachedPtr, value); }
+			get { return Internal_GetImportScale(mCachedPtr); }
+			set { Internal_SetImportScale(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -124,8 +124,8 @@ namespace bs
 		[NativeWrapper]
 		public CollisionMeshType CollisionMeshType
 		{
-			get { return Internal_GetcollisionMeshType(mCachedPtr); }
-			set { Internal_SetcollisionMeshType(mCachedPtr, value); }
+			get { return Internal_GetCollisionMeshType(mCachedPtr); }
+			set { Internal_SetCollisionMeshType(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -139,8 +139,8 @@ namespace bs
 		[NativeWrapper]
 		public AnimationSplitInfo[] AnimationSplits
 		{
-			get { return Internal_GetanimationSplits(mCachedPtr); }
-			set { Internal_SetanimationSplits(mCachedPtr, value); }
+			get { return Internal_GetAnimationSplits(mCachedPtr); }
+			set { Internal_SetAnimationSplits(mCachedPtr, value); }
 		}
 
 		/// <summary>Set of events that will be added to the animation clip, if animation import is enabled.</summary>
@@ -150,58 +150,58 @@ namespace bs
 		[NativeWrapper]
 		public ImportedAnimationEvents[] AnimationEvents
 		{
-			get { return Internal_GetanimationEvents(mCachedPtr); }
-			set { Internal_SetanimationEvents(mCachedPtr, value); }
+			get { return Internal_GetAnimationEvents(mCachedPtr); }
+			set { Internal_SetAnimationEvents(mCachedPtr, value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_GetcpuCached(IntPtr thisPtr);
+		private static extern bool Internal_GetCpuCached(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetcpuCached(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetCpuCached(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_GetimportNormals(IntPtr thisPtr);
+		private static extern bool Internal_GetImportNormals(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetimportNormals(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetImportNormals(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_GetimportTangents(IntPtr thisPtr);
+		private static extern bool Internal_GetImportTangents(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetimportTangents(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetImportTangents(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_GetimportBlendShapes(IntPtr thisPtr);
+		private static extern bool Internal_GetImportBlendShapes(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetimportBlendShapes(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetImportBlendShapes(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_GetimportSkin(IntPtr thisPtr);
+		private static extern bool Internal_GetImportSkin(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetimportSkin(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetImportSkin(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_GetimportAnimation(IntPtr thisPtr);
+		private static extern bool Internal_GetImportAnimation(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetimportAnimation(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetImportAnimation(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_GetreduceKeyFrames(IntPtr thisPtr);
+		private static extern bool Internal_GetReduceKeyFrames(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetreduceKeyFrames(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetReduceKeyFrames(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_GetimportRootMotion(IntPtr thisPtr);
+		private static extern bool Internal_GetImportRootMotion(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetimportRootMotion(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetImportRootMotion(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GetimportScale(IntPtr thisPtr);
+		private static extern float Internal_GetImportScale(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetimportScale(IntPtr thisPtr, float value);
+		private static extern void Internal_SetImportScale(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern CollisionMeshType Internal_GetcollisionMeshType(IntPtr thisPtr);
+		private static extern CollisionMeshType Internal_GetCollisionMeshType(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetcollisionMeshType(IntPtr thisPtr, CollisionMeshType value);
+		private static extern void Internal_SetCollisionMeshType(IntPtr thisPtr, CollisionMeshType value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern AnimationSplitInfo[] Internal_GetanimationSplits(IntPtr thisPtr);
+		private static extern AnimationSplitInfo[] Internal_GetAnimationSplits(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetanimationSplits(IntPtr thisPtr, AnimationSplitInfo[] value);
+		private static extern void Internal_SetAnimationSplits(IntPtr thisPtr, AnimationSplitInfo[] value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ImportedAnimationEvents[] Internal_GetanimationEvents(IntPtr thisPtr);
+		private static extern ImportedAnimationEvents[] Internal_GetAnimationEvents(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetanimationEvents(IntPtr thisPtr, ImportedAnimationEvents[] value);
+		private static extern void Internal_SetAnimationEvents(IntPtr thisPtr, ImportedAnimationEvents[] value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_Create(MeshImportOptions managedInstance);
 	}

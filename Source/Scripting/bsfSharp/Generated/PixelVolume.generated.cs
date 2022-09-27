@@ -14,41 +14,41 @@ namespace bs
 		public static PixelVolume Default()
 		{
 			PixelVolume value = new PixelVolume();
-			value.left = 0;
-			value.top = 0;
-			value.right = 1;
-			value.bottom = 1;
-			value.front = 0;
-			value.back = 1;
+			value.Left = 0;
+			value.Top = 0;
+			value.Right = 1;
+			value.Bottom = 1;
+			value.Front = 0;
+			value.Back = 1;
 
 			return value;
 		}
 
 		public PixelVolume(int left, int top, int right, int bottom)
 		{
-			this.left = left;
-			this.top = top;
-			this.right = right;
-			this.bottom = bottom;
-			this.front = 0;
-			this.back = 1;
+			this.Left = left;
+			this.Top = top;
+			this.Right = right;
+			this.Bottom = bottom;
+			this.Front = 0;
+			this.Back = 1;
 		}
 
 		public PixelVolume(int left, int top, int front, int right, int bottom, int back)
 		{
-			this.left = left;
-			this.top = top;
-			this.right = right;
-			this.bottom = bottom;
-			this.front = front;
-			this.back = back;
+			this.Left = left;
+			this.Top = top;
+			this.Right = right;
+			this.Bottom = bottom;
+			this.Front = front;
+			this.Back = back;
 		}
 
-		public int left;
-		public int top;
-		public int right;
-		public int bottom;
-		public int front;
-		public int back;
+		public int Left;
+		public int Top;
+		public int Right;
+		public int Bottom;
+		public int Front;
+		public int Back;
 	}
 }

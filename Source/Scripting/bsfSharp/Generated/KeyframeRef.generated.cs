@@ -17,20 +17,20 @@ namespace bs
 		public static KeyframeRef Default()
 		{
 			KeyframeRef value = new KeyframeRef();
-			value.curveIdx = 0;
-			value.keyIdx = 0;
+			value.CurveIdx = 0;
+			value.KeyIdx = 0;
 
 			return value;
 		}
 
 		public KeyframeRef(int curveIdx, int keyIdx)
 		{
-			this.curveIdx = curveIdx;
-			this.keyIdx = keyIdx;
+			this.CurveIdx = curveIdx;
+			this.KeyIdx = keyIdx;
 		}
 
-		public int curveIdx;
-		public int keyIdx;
+		public int CurveIdx;
+		public int KeyIdx;
 	}
 
 	/** @} */

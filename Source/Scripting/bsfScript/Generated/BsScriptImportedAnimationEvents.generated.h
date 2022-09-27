@@ -23,10 +23,10 @@ namespace bs
 
 	private:
 		static void InternalImportedAnimationEvents(MonoObject* managedInstance);
-		static MonoString* InternalGetname(ScriptImportedAnimationEvents* thisPtr);
-		static void InternalSetname(ScriptImportedAnimationEvents* thisPtr, MonoString* value);
-		static MonoArray* InternalGetevents(ScriptImportedAnimationEvents* thisPtr);
-		static void InternalSetevents(ScriptImportedAnimationEvents* thisPtr, MonoArray* value);
+		static MonoString* InternalGetName(ScriptImportedAnimationEvents* thisPtr);
+		static void InternalSetName(ScriptImportedAnimationEvents* thisPtr, MonoString* value);
+		static MonoArray* InternalGetEvents(ScriptImportedAnimationEvents* thisPtr);
+		static void InternalSetEvents(ScriptImportedAnimationEvents* thisPtr, MonoArray* value);
 	};
 #endif
 }

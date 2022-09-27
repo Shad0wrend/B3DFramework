@@ -17,13 +17,13 @@ namespace bs
 
 	void ScriptShaderImportOptions::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_SetDefine", (void*)&ScriptShaderImportOptions::InternalSetDefine);
-		metaData.scriptClass->AddInternalCall("Internal_GetDefine", (void*)&ScriptShaderImportOptions::InternalGetDefine);
-		metaData.scriptClass->AddInternalCall("Internal_HasDefine", (void*)&ScriptShaderImportOptions::InternalHasDefine);
-		metaData.scriptClass->AddInternalCall("Internal_RemoveDefine", (void*)&ScriptShaderImportOptions::InternalRemoveDefine);
-		metaData.scriptClass->AddInternalCall("Internal_Getlanguages", (void*)&ScriptShaderImportOptions::InternalGetlanguages);
-		metaData.scriptClass->AddInternalCall("Internal_Setlanguages", (void*)&ScriptShaderImportOptions::InternalSetlanguages);
-		metaData.scriptClass->AddInternalCall("Internal_Create", (void*)&ScriptShaderImportOptions::InternalCreate);
+		metaData.ScriptClass->AddInternalCall("Internal_SetDefine", (void*)&ScriptShaderImportOptions::InternalSetDefine);
+		metaData.ScriptClass->AddInternalCall("Internal_GetDefine", (void*)&ScriptShaderImportOptions::InternalGetDefine);
+		metaData.ScriptClass->AddInternalCall("Internal_HasDefine", (void*)&ScriptShaderImportOptions::InternalHasDefine);
+		metaData.ScriptClass->AddInternalCall("Internal_RemoveDefine", (void*)&ScriptShaderImportOptions::InternalRemoveDefine);
+		metaData.ScriptClass->AddInternalCall("Internal_GetLanguages", (void*)&ScriptShaderImportOptions::InternalGetLanguages);
+		metaData.ScriptClass->AddInternalCall("Internal_SetLanguages", (void*)&ScriptShaderImportOptions::InternalSetLanguages);
+		metaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptShaderImportOptions::InternalCreate);
 
 	}
 
@@ -34,7 +34,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptShaderImportOptions>()) ScriptShaderImportOptions(managedInstance, value);
 		return managedInstance;
 	}
@@ -87,10 +87,10 @@ namespace bs
 		SPtr<ShaderImportOptions> instance = ShaderImportOptions::Create();
 		new (bs_alloc<ScriptShaderImportOptions>())ScriptShaderImportOptions(managedInstance, instance);
 	}
-	ShadingLanguageFlag ScriptShaderImportOptions::InternalGetlanguages(ScriptShaderImportOptions* thisPtr)
+	ShadingLanguageFlag ScriptShaderImportOptions::InternalGetLanguages(ScriptShaderImportOptions* thisPtr)
 	{
 		Flags<ShadingLanguageFlag> tmp__output;
-		tmp__output = thisPtr->GetInternal()->languages;
+		tmp__output = thisPtr->GetInternal()->Languages;
 
 		ShadingLanguageFlag __output;
 		__output = (ShadingLanguageFlag)(uint32_t)tmp__output;
@@ -98,9 +98,9 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptShaderImportOptions::InternalSetlanguages(ScriptShaderImportOptions* thisPtr, ShadingLanguageFlag value)
+	void ScriptShaderImportOptions::InternalSetLanguages(ScriptShaderImportOptions* thisPtr, ShadingLanguageFlag value)
 	{
-		thisPtr->GetInternal()->languages = value;
+		thisPtr->GetInternal()->Languages = value;
 	}
 #endif
 }

@@ -18,23 +18,23 @@ namespace bs
 		public static Vector3I Default()
 		{
 			Vector3I value = new Vector3I();
-			value.x = 0;
-			value.y = 0;
-			value.z = 0;
+			value.X = 0;
+			value.Y = 0;
+			value.Z = 0;
 
 			return value;
 		}
 
 		public Vector3I(int x, int y, int z)
 		{
-			this.x = x;
-			this.y = y;
-			this.z = z;
+			this.X = x;
+			this.Y = y;
+			this.Z = z;
 		}
 
-		public int x;
-		public int y;
-		public int z;
+		public int X;
+		public int Y;
+		public int Z;
 	}
 
 	/** @} */

@@ -20,21 +20,21 @@ namespace bs
 
 	private:
 		static void InternalAmbientOcclusionSettings(MonoObject* managedInstance);
-		static bool InternalGetenabled(ScriptAmbientOcclusionSettings* thisPtr);
-		static void InternalSetenabled(ScriptAmbientOcclusionSettings* thisPtr, bool value);
-		static float InternalGetradius(ScriptAmbientOcclusionSettings* thisPtr);
-		static void InternalSetradius(ScriptAmbientOcclusionSettings* thisPtr, float value);
-		static float InternalGetbias(ScriptAmbientOcclusionSettings* thisPtr);
-		static void InternalSetbias(ScriptAmbientOcclusionSettings* thisPtr, float value);
-		static float InternalGetfadeDistance(ScriptAmbientOcclusionSettings* thisPtr);
-		static void InternalSetfadeDistance(ScriptAmbientOcclusionSettings* thisPtr, float value);
-		static float InternalGetfadeRange(ScriptAmbientOcclusionSettings* thisPtr);
-		static void InternalSetfadeRange(ScriptAmbientOcclusionSettings* thisPtr, float value);
-		static float InternalGetintensity(ScriptAmbientOcclusionSettings* thisPtr);
-		static void InternalSetintensity(ScriptAmbientOcclusionSettings* thisPtr, float value);
-		static float InternalGetpower(ScriptAmbientOcclusionSettings* thisPtr);
-		static void InternalSetpower(ScriptAmbientOcclusionSettings* thisPtr, float value);
-		static uint32_t InternalGetquality(ScriptAmbientOcclusionSettings* thisPtr);
-		static void InternalSetquality(ScriptAmbientOcclusionSettings* thisPtr, uint32_t value);
+		static bool InternalGetEnabled(ScriptAmbientOcclusionSettings* thisPtr);
+		static void InternalSetEnabled(ScriptAmbientOcclusionSettings* thisPtr, bool value);
+		static float InternalGetRadius(ScriptAmbientOcclusionSettings* thisPtr);
+		static void InternalSetRadius(ScriptAmbientOcclusionSettings* thisPtr, float value);
+		static float InternalGetBias(ScriptAmbientOcclusionSettings* thisPtr);
+		static void InternalSetBias(ScriptAmbientOcclusionSettings* thisPtr, float value);
+		static float InternalGetFadeDistance(ScriptAmbientOcclusionSettings* thisPtr);
+		static void InternalSetFadeDistance(ScriptAmbientOcclusionSettings* thisPtr, float value);
+		static float InternalGetFadeRange(ScriptAmbientOcclusionSettings* thisPtr);
+		static void InternalSetFadeRange(ScriptAmbientOcclusionSettings* thisPtr, float value);
+		static float InternalGetIntensity(ScriptAmbientOcclusionSettings* thisPtr);
+		static void InternalSetIntensity(ScriptAmbientOcclusionSettings* thisPtr, float value);
+		static float InternalGetPower(ScriptAmbientOcclusionSettings* thisPtr);
+		static void InternalSetPower(ScriptAmbientOcclusionSettings* thisPtr, float value);
+		static uint32_t InternalGetQuality(ScriptAmbientOcclusionSettings* thisPtr);
+		static void InternalSetQuality(ScriptAmbientOcclusionSettings* thisPtr, uint32_t value);
 	};
 }

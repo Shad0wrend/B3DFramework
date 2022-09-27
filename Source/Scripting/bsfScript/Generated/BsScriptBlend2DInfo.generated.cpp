@@ -31,30 +31,30 @@ namespace bs
 	Blend2DInfo ScriptBlend2DInfo::FromInterop(const __Blend2DInfoInterop& value)
 	{
 		Blend2DInfo output;
-		ResourceHandle<AnimationClip> tmptopLeftClip;
-		ScriptRRefBase* scripttopLeftClip;
-		scripttopLeftClip = ScriptRRefBase::ToNative(value.TopLeftClip);
-		if(scripttopLeftClip != nullptr)
-			tmptopLeftClip = static_resource_cast<AnimationClip>(scripttopLeftClip->GetHandle());
-		output.TopLeftClip = tmptopLeftClip;
-		ResourceHandle<AnimationClip> tmptopRightClip;
-		ScriptRRefBase* scripttopRightClip;
-		scripttopRightClip = ScriptRRefBase::ToNative(value.TopRightClip);
-		if(scripttopRightClip != nullptr)
-			tmptopRightClip = static_resource_cast<AnimationClip>(scripttopRightClip->GetHandle());
-		output.TopRightClip = tmptopRightClip;
-		ResourceHandle<AnimationClip> tmpbotLeftClip;
-		ScriptRRefBase* scriptbotLeftClip;
-		scriptbotLeftClip = ScriptRRefBase::ToNative(value.BotLeftClip);
-		if(scriptbotLeftClip != nullptr)
-			tmpbotLeftClip = static_resource_cast<AnimationClip>(scriptbotLeftClip->GetHandle());
-		output.BotLeftClip = tmpbotLeftClip;
-		ResourceHandle<AnimationClip> tmpbotRightClip;
-		ScriptRRefBase* scriptbotRightClip;
-		scriptbotRightClip = ScriptRRefBase::ToNative(value.BotRightClip);
-		if(scriptbotRightClip != nullptr)
-			tmpbotRightClip = static_resource_cast<AnimationClip>(scriptbotRightClip->GetHandle());
-		output.BotRightClip = tmpbotRightClip;
+		ResourceHandle<AnimationClip> tmpTopLeftClip;
+		ScriptRRefBase* scriptTopLeftClip;
+		scriptTopLeftClip = ScriptRRefBase::ToNative(value.TopLeftClip);
+		if(scriptTopLeftClip != nullptr)
+			tmpTopLeftClip = static_resource_cast<AnimationClip>(scriptTopLeftClip->GetHandle());
+		output.TopLeftClip = tmpTopLeftClip;
+		ResourceHandle<AnimationClip> tmpTopRightClip;
+		ScriptRRefBase* scriptTopRightClip;
+		scriptTopRightClip = ScriptRRefBase::ToNative(value.TopRightClip);
+		if(scriptTopRightClip != nullptr)
+			tmpTopRightClip = static_resource_cast<AnimationClip>(scriptTopRightClip->GetHandle());
+		output.TopRightClip = tmpTopRightClip;
+		ResourceHandle<AnimationClip> tmpBotLeftClip;
+		ScriptRRefBase* scriptBotLeftClip;
+		scriptBotLeftClip = ScriptRRefBase::ToNative(value.BotLeftClip);
+		if(scriptBotLeftClip != nullptr)
+			tmpBotLeftClip = static_resource_cast<AnimationClip>(scriptBotLeftClip->GetHandle());
+		output.BotLeftClip = tmpBotLeftClip;
+		ResourceHandle<AnimationClip> tmpBotRightClip;
+		ScriptRRefBase* scriptBotRightClip;
+		scriptBotRightClip = ScriptRRefBase::ToNative(value.BotRightClip);
+		if(scriptBotRightClip != nullptr)
+			tmpBotRightClip = static_resource_cast<AnimationClip>(scriptBotRightClip->GetHandle());
+		output.BotRightClip = tmpBotRightClip;
 
 		return output;
 	}
@@ -62,38 +62,38 @@ namespace bs
 	__Blend2DInfoInterop ScriptBlend2DInfo::ToInterop(const Blend2DInfo& value)
 	{
 		__Blend2DInfoInterop output;
-		ScriptRRefBase* scripttopLeftClip;
-		scripttopLeftClip = ScriptResourceManager::Instance().GetScriptRRef(value.TopLeftClip);
-		MonoObject* tmptopLeftClip;
-		if(scripttopLeftClip != nullptr)
-			tmptopLeftClip = scripttopLeftClip->GetManagedInstance();
+		ScriptRRefBase* scriptTopLeftClip;
+		scriptTopLeftClip = ScriptResourceManager::Instance().GetScriptRRef(value.TopLeftClip);
+		MonoObject* tmpTopLeftClip;
+		if(scriptTopLeftClip != nullptr)
+			tmpTopLeftClip = scriptTopLeftClip->GetManagedInstance();
 		else
-			tmptopLeftClip = nullptr;
-		output.TopLeftClip = tmptopLeftClip;
-		ScriptRRefBase* scripttopRightClip;
-		scripttopRightClip = ScriptResourceManager::Instance().GetScriptRRef(value.TopRightClip);
-		MonoObject* tmptopRightClip;
-		if(scripttopRightClip != nullptr)
-			tmptopRightClip = scripttopRightClip->GetManagedInstance();
+			tmpTopLeftClip = nullptr;
+		output.TopLeftClip = tmpTopLeftClip;
+		ScriptRRefBase* scriptTopRightClip;
+		scriptTopRightClip = ScriptResourceManager::Instance().GetScriptRRef(value.TopRightClip);
+		MonoObject* tmpTopRightClip;
+		if(scriptTopRightClip != nullptr)
+			tmpTopRightClip = scriptTopRightClip->GetManagedInstance();
 		else
-			tmptopRightClip = nullptr;
-		output.TopRightClip = tmptopRightClip;
-		ScriptRRefBase* scriptbotLeftClip;
-		scriptbotLeftClip = ScriptResourceManager::Instance().GetScriptRRef(value.BotLeftClip);
-		MonoObject* tmpbotLeftClip;
-		if(scriptbotLeftClip != nullptr)
-			tmpbotLeftClip = scriptbotLeftClip->GetManagedInstance();
+			tmpTopRightClip = nullptr;
+		output.TopRightClip = tmpTopRightClip;
+		ScriptRRefBase* scriptBotLeftClip;
+		scriptBotLeftClip = ScriptResourceManager::Instance().GetScriptRRef(value.BotLeftClip);
+		MonoObject* tmpBotLeftClip;
+		if(scriptBotLeftClip != nullptr)
+			tmpBotLeftClip = scriptBotLeftClip->GetManagedInstance();
 		else
-			tmpbotLeftClip = nullptr;
-		output.BotLeftClip = tmpbotLeftClip;
-		ScriptRRefBase* scriptbotRightClip;
-		scriptbotRightClip = ScriptResourceManager::Instance().GetScriptRRef(value.BotRightClip);
-		MonoObject* tmpbotRightClip;
-		if(scriptbotRightClip != nullptr)
-			tmpbotRightClip = scriptbotRightClip->GetManagedInstance();
+			tmpBotLeftClip = nullptr;
+		output.BotLeftClip = tmpBotLeftClip;
+		ScriptRRefBase* scriptBotRightClip;
+		scriptBotRightClip = ScriptResourceManager::Instance().GetScriptRRef(value.BotRightClip);
+		MonoObject* tmpBotRightClip;
+		if(scriptBotRightClip != nullptr)
+			tmpBotRightClip = scriptBotRightClip->GetManagedInstance();
 		else
-			tmpbotRightClip = nullptr;
-		output.BotRightClip = tmpbotRightClip;
+			tmpBotRightClip = nullptr;
+		output.BotRightClip = tmpBotRightClip;
 
 		return output;
 	}

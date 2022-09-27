@@ -32,12 +32,12 @@ namespace bs
 		PARTICLE_SKINNED_MESH_SHAPE_DESC output;
 		output.Type = value.Type;
 		output.Sequential = value.Sequential;
-		GameObjectHandle<CRenderable> tmprenderable;
-		ScriptCRenderable* scriptrenderable;
-		scriptrenderable = ScriptCRenderable::ToNative(value.Renderable);
-		if(scriptrenderable != nullptr)
-			tmprenderable = scriptrenderable->GetHandle();
-		output.Renderable = tmprenderable;
+		GameObjectHandle<CRenderable> tmpRenderable;
+		ScriptCRenderable* scriptRenderable;
+		scriptRenderable = ScriptCRenderable::ToNative(value.Renderable);
+		if(scriptRenderable != nullptr)
+			tmpRenderable = scriptRenderable->GetHandle();
+		output.Renderable = tmpRenderable;
 
 		return output;
 	}
@@ -47,15 +47,15 @@ namespace bs
 		__PARTICLE_SKINNED_MESH_SHAPE_DESCInterop output;
 		output.Type = value.Type;
 		output.Sequential = value.Sequential;
-		ScriptComponentBase* scriptrenderable = nullptr;
+		ScriptComponentBase* scriptRenderable = nullptr;
 		if(value.Renderable.GetComponent())
-			scriptrenderable = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(value.Renderable.GetComponent()));
-		MonoObject* tmprenderable;
-		if(scriptrenderable != nullptr)
-			tmprenderable = scriptrenderable->GetManagedInstance();
+			scriptRenderable = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(value.Renderable.GetComponent()));
+		MonoObject* tmpRenderable;
+		if(scriptRenderable != nullptr)
+			tmpRenderable = scriptRenderable->GetManagedInstance();
 		else
-			tmprenderable = nullptr;
-		output.Renderable = tmprenderable;
+			tmpRenderable = nullptr;
+		output.Renderable = tmpRenderable;
 
 		return output;
 	}

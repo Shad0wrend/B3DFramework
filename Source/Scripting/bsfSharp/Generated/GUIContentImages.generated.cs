@@ -18,38 +18,38 @@ namespace bs
 		public static GUIContentImages Default()
 		{
 			GUIContentImages value = new GUIContentImages();
-			value.normal = null;
-			value.hover = null;
-			value.active = null;
-			value.focused = null;
-			value.normalOn = null;
-			value.hoverOn = null;
-			value.activeOn = null;
-			value.focusedOn = null;
+			value.Normal = null;
+			value.Hover = null;
+			value.Active = null;
+			value.Focused = null;
+			value.NormalOn = null;
+			value.HoverOn = null;
+			value.ActiveOn = null;
+			value.FocusedOn = null;
 
 			return value;
 		}
 
 		public GUIContentImages(SpriteTexture image)
 		{
-			this.normal = image;
-			this.hover = image;
-			this.active = image;
-			this.focused = image;
-			this.normalOn = image;
-			this.hoverOn = image;
-			this.activeOn = image;
-			this.focusedOn = image;
+			this.Normal = image;
+			this.Hover = image;
+			this.Active = image;
+			this.Focused = image;
+			this.NormalOn = image;
+			this.HoverOn = image;
+			this.ActiveOn = image;
+			this.FocusedOn = image;
 		}
 
-		public SpriteTexture normal;
-		public SpriteTexture hover;
-		public SpriteTexture active;
-		public SpriteTexture focused;
-		public SpriteTexture normalOn;
-		public SpriteTexture hoverOn;
-		public SpriteTexture activeOn;
-		public SpriteTexture focusedOn;
+		public SpriteTexture Normal;
+		public SpriteTexture Hover;
+		public SpriteTexture Active;
+		public SpriteTexture Focused;
+		public SpriteTexture NormalOn;
+		public SpriteTexture HoverOn;
+		public SpriteTexture ActiveOn;
+		public SpriteTexture FocusedOn;
 	}
 
 	/** @} */

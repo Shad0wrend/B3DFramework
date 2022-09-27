@@ -18,25 +18,25 @@ namespace bs
 		public static HingeJointDrive Default()
 		{
 			HingeJointDrive value = new HingeJointDrive();
-			value.speed = 0f;
-			value.forceLimit = 3.40282347E+38f;
-			value.gearRatio = 1f;
-			value.freeSpin = false;
+			value.Speed = 0f;
+			value.ForceLimit = 3.40282347E+38f;
+			value.GearRatio = 1f;
+			value.FreeSpin = false;
 
 			return value;
 		}
 
 		/// <summary>Target speed of the joint.</summary>
-		public float speed;
+		public float Speed;
 		/// <summary>Maximum torque the drive is allowed to apply .</summary>
-		public float forceLimit;
+		public float ForceLimit;
 		/// <summary>Scales the velocity of the first body, and its response to drive torque is scaled down.</summary>
-		public float gearRatio;
+		public float GearRatio;
 		/// <summary>
 		/// If the joint is moving faster than the drive&apos;s target speed, the drive will try to break. If you don&apos;t want 
 		/// the breaking to happen set this to true.
 		/// </summary>
-		public bool freeSpin;
+		public bool FreeSpin;
 	}
 
 	/** @} */

@@ -31,27 +31,27 @@ namespace bs
 	PARTICLE_ORBIT_DESC ScriptPARTICLE_ORBIT_DESC::FromInterop(const __PARTICLE_ORBIT_DESCInterop& value)
 	{
 		PARTICLE_ORBIT_DESC output;
-		SPtr<TDistribution<Vector3>> tmpcenter;
-		ScriptTDistributionVector3* scriptcenter;
-		scriptcenter = ScriptTDistributionVector3::ToNative(value.Center);
-		if(scriptcenter != nullptr)
-			tmpcenter = scriptcenter->GetInternal();
-		if(tmpcenter != nullptr)
-		output.Center = *tmpcenter;
-		SPtr<TDistribution<Vector3>> tmpvelocity;
-		ScriptTDistributionVector3* scriptvelocity;
-		scriptvelocity = ScriptTDistributionVector3::ToNative(value.Velocity);
-		if(scriptvelocity != nullptr)
-			tmpvelocity = scriptvelocity->GetInternal();
-		if(tmpvelocity != nullptr)
-		output.Velocity = *tmpvelocity;
-		SPtr<TDistribution<float>> tmpradial;
-		ScriptTDistributionfloat* scriptradial;
-		scriptradial = ScriptTDistributionfloat::ToNative(value.Radial);
-		if(scriptradial != nullptr)
-			tmpradial = scriptradial->GetInternal();
-		if(tmpradial != nullptr)
-		output.Radial = *tmpradial;
+		SPtr<TDistribution<Vector3>> tmpCenter;
+		ScriptTDistributionVector3* scriptCenter;
+		scriptCenter = ScriptTDistributionVector3::ToNative(value.Center);
+		if(scriptCenter != nullptr)
+			tmpCenter = scriptCenter->GetInternal();
+		if(tmpCenter != nullptr)
+		output.Center = *tmpCenter;
+		SPtr<TDistribution<Vector3>> tmpVelocity;
+		ScriptTDistributionVector3* scriptVelocity;
+		scriptVelocity = ScriptTDistributionVector3::ToNative(value.Velocity);
+		if(scriptVelocity != nullptr)
+			tmpVelocity = scriptVelocity->GetInternal();
+		if(tmpVelocity != nullptr)
+		output.Velocity = *tmpVelocity;
+		SPtr<TDistribution<float>> tmpRadial;
+		ScriptTDistributionfloat* scriptRadial;
+		scriptRadial = ScriptTDistributionfloat::ToNative(value.Radial);
+		if(scriptRadial != nullptr)
+			tmpRadial = scriptRadial->GetInternal();
+		if(tmpRadial != nullptr)
+		output.Radial = *tmpRadial;
 		output.WorldSpace = value.WorldSpace;
 
 		return output;
@@ -60,21 +60,21 @@ namespace bs
 	__PARTICLE_ORBIT_DESCInterop ScriptPARTICLE_ORBIT_DESC::ToInterop(const PARTICLE_ORBIT_DESC& value)
 	{
 		__PARTICLE_ORBIT_DESCInterop output;
-		MonoObject* tmpcenter;
-		SPtr<TDistribution<Vector3>> tmpcentercopy;
-		tmpcentercopy = bs_shared_ptr_new<TDistribution<Vector3>>(value.Center);
-		tmpcenter = ScriptTDistributionVector3::Create(tmpcentercopy);
-		output.Center = tmpcenter;
-		MonoObject* tmpvelocity;
-		SPtr<TDistribution<Vector3>> tmpvelocitycopy;
-		tmpvelocitycopy = bs_shared_ptr_new<TDistribution<Vector3>>(value.Velocity);
-		tmpvelocity = ScriptTDistributionVector3::Create(tmpvelocitycopy);
-		output.Velocity = tmpvelocity;
-		MonoObject* tmpradial;
-		SPtr<TDistribution<float>> tmpradialcopy;
-		tmpradialcopy = bs_shared_ptr_new<TDistribution<float>>(value.Radial);
-		tmpradial = ScriptTDistributionfloat::Create(tmpradialcopy);
-		output.Radial = tmpradial;
+		MonoObject* tmpCenter;
+		SPtr<TDistribution<Vector3>> tmpCentercopy;
+		tmpCentercopy = bs_shared_ptr_new<TDistribution<Vector3>>(value.Center);
+		tmpCenter = ScriptTDistributionVector3::Create(tmpCentercopy);
+		output.Center = tmpCenter;
+		MonoObject* tmpVelocity;
+		SPtr<TDistribution<Vector3>> tmpVelocitycopy;
+		tmpVelocitycopy = bs_shared_ptr_new<TDistribution<Vector3>>(value.Velocity);
+		tmpVelocity = ScriptTDistributionVector3::Create(tmpVelocitycopy);
+		output.Velocity = tmpVelocity;
+		MonoObject* tmpRadial;
+		SPtr<TDistribution<float>> tmpRadialcopy;
+		tmpRadialcopy = bs_shared_ptr_new<TDistribution<float>>(value.Radial);
+		tmpRadial = ScriptTDistributionfloat::Create(tmpRadialcopy);
+		output.Radial = tmpRadial;
 		output.WorldSpace = value.WorldSpace;
 
 		return output;

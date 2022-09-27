@@ -18,24 +18,24 @@ namespace bs
 		public static ShaderVariationParamInfo Default()
 		{
 			ShaderVariationParamInfo value = new ShaderVariationParamInfo();
-			value.name = "";
-			value.identifier = "";
-			value.isInternal = true;
-			value.values = null;
+			value.Name = "";
+			value.Identifier = "";
+			value.IsInternal = true;
+			value.Values = null;
 
 			return value;
 		}
 
 		/// <summary>Optional human-readable name describing the variation parameter.</summary>
-		public string name;
+		public string Name;
 		/// <summary>BSL identifier for the parameter.</summary>
-		public string identifier;
+		public string Identifier;
 		/// <summary>
 		/// True if the parameter is for internal use by the renderer, and false if its intended to be set by the user.
 		/// </summary>
-		public bool isInternal;
+		public bool IsInternal;
 		/// <summary>A list of potential values this parameter can take on.</summary>
-		public ShaderVariationParamValue[] values;
+		public ShaderVariationParamValue[] Values;
 	}
 
 	/** @} */

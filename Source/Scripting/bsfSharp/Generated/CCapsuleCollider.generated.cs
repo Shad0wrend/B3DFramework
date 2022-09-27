@@ -10,7 +10,6 @@ namespace bs
 	 *  @{
 	 */
 
-	/// <summary>Collider with a capsule geometry.</summary>
 	[ShowInInspector]
 	public partial class CapsuleCollider : Collider
 	{

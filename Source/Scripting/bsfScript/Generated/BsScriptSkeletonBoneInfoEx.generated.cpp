@@ -27,9 +27,9 @@ namespace bs
 	SkeletonBoneInfoEx ScriptSkeletonBoneInfoEx::FromInterop(const __SkeletonBoneInfoExInterop& value)
 	{
 		SkeletonBoneInfoEx output;
-		String tmpname;
-		tmpname = MonoUtil::MonoToString(value.Name);
-		output.Name = tmpname;
+		String tmpName;
+		tmpName = MonoUtil::MonoToString(value.Name);
+		output.Name = tmpName;
 		output.Parent = value.Parent;
 		output.InvBindPose = value.InvBindPose;
 
@@ -39,9 +39,9 @@ namespace bs
 	__SkeletonBoneInfoExInterop ScriptSkeletonBoneInfoEx::ToInterop(const SkeletonBoneInfoEx& value)
 	{
 		__SkeletonBoneInfoExInterop output;
-		MonoString* tmpname;
-		tmpname = MonoUtil::StringToMono(value.Name);
-		output.Name = tmpname;
+		MonoString* tmpName;
+		tmpName = MonoUtil::StringToMono(value.Name);
+		output.Name = tmpName;
 		output.Parent = value.Parent;
 		output.InvBindPose = value.InvBindPose;
 

@@ -26,8 +26,8 @@ namespace bs
 		[NativeWrapper]
 		public bool Enabled
 		{
-			get { return Internal_Getenabled(mCachedPtr); }
-			set { Internal_Setenabled(mCachedPtr, value); }
+			get { return Internal_GetEnabled(mCachedPtr); }
+			set { Internal_SetEnabled(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -38,8 +38,8 @@ namespace bs
 		[NativeWrapper]
 		public int Quality
 		{
-			get { return Internal_Getquality(mCachedPtr); }
-			set { Internal_Setquality(mCachedPtr, value); }
+			get { return Internal_GetQuality(mCachedPtr); }
+			set { Internal_SetQuality(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -51,8 +51,8 @@ namespace bs
 		[NativeWrapper]
 		public float Threshold
 		{
-			get { return Internal_Getthreshold(mCachedPtr); }
-			set { Internal_Setthreshold(mCachedPtr, value); }
+			get { return Internal_GetThreshold(mCachedPtr); }
+			set { Internal_SetThreshold(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -62,8 +62,8 @@ namespace bs
 		[NativeWrapper]
 		public float Intensity
 		{
-			get { return Internal_Getintensity(mCachedPtr); }
-			set { Internal_Setintensity(mCachedPtr, value); }
+			get { return Internal_GetIntensity(mCachedPtr); }
+			set { Internal_SetIntensity(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -76,10 +76,10 @@ namespace bs
 			get
 			{
 				Color temp;
-				Internal_Gettint(mCachedPtr, out temp);
+				Internal_GetTint(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_Settint(mCachedPtr, ref value); }
+			set { Internal_SetTint(mCachedPtr, ref value); }
 		}
 
 		/// <summary>
@@ -91,36 +91,36 @@ namespace bs
 		[NativeWrapper]
 		public float FilterSize
 		{
-			get { return Internal_GetfilterSize(mCachedPtr); }
-			set { Internal_SetfilterSize(mCachedPtr, value); }
+			get { return Internal_GetFilterSize(mCachedPtr); }
+			set { Internal_SetFilterSize(mCachedPtr, value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_BloomSettings(BloomSettings managedInstance);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_Getenabled(IntPtr thisPtr);
+		private static extern bool Internal_GetEnabled(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Setenabled(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetEnabled(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_Getquality(IntPtr thisPtr);
+		private static extern int Internal_GetQuality(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Setquality(IntPtr thisPtr, int value);
+		private static extern void Internal_SetQuality(IntPtr thisPtr, int value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_Getthreshold(IntPtr thisPtr);
+		private static extern float Internal_GetThreshold(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Setthreshold(IntPtr thisPtr, float value);
+		private static extern void Internal_SetThreshold(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_Getintensity(IntPtr thisPtr);
+		private static extern float Internal_GetIntensity(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Setintensity(IntPtr thisPtr, float value);
+		private static extern void Internal_SetIntensity(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Gettint(IntPtr thisPtr, out Color __output);
+		private static extern void Internal_GetTint(IntPtr thisPtr, out Color __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Settint(IntPtr thisPtr, ref Color value);
+		private static extern void Internal_SetTint(IntPtr thisPtr, ref Color value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GetfilterSize(IntPtr thisPtr);
+		private static extern float Internal_GetFilterSize(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetfilterSize(IntPtr thisPtr, float value);
+		private static extern void Internal_SetFilterSize(IntPtr thisPtr, float value);
 	}
 
 	/** @} */

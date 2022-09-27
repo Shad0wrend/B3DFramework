@@ -18,14 +18,14 @@ namespace bs
 		public static BlendClipInfo Default()
 		{
 			BlendClipInfo value = new BlendClipInfo();
-			value.clip = null;
-			value.position = 0f;
+			value.Clip = null;
+			value.Position = 0f;
 
 			return value;
 		}
 
-		public RRef<AnimationClip> clip;
-		public float position;
+		public RRef<AnimationClip> Clip;
+		public float Position;
 	}
 
 	/** @} */

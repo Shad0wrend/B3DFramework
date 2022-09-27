@@ -15,34 +15,34 @@ namespace bs
 	public partial struct CharDesc
 	{
 		/// <summary>Character ID, corresponding to a Unicode key.</summary>
-		public int charId;
+		public int CharId;
 		/// <summary>Index of the texture the character is located on.</summary>
-		public int page;
+		public int Page;
 		/// <summary>Texture coordinates of the character in the page texture.</summary>
-		public float uvX;
+		public float UvX;
 		/// <summary>Texture coordinates of the character in the page texture.</summary>
-		public float uvY;
+		public float UvY;
 		/// <summary>Width/height of the character in texture coordinates.</summary>
-		public float uvWidth;
+		public float UvWidth;
 		/// <summary>Width/height of the character in texture coordinates.</summary>
-		public float uvHeight;
+		public float UvHeight;
 		/// <summary>Width/height of the character in pixels.</summary>
-		public int width;
+		public int Width;
 		/// <summary>Width/height of the character in pixels.</summary>
-		public int height;
+		public int Height;
 		/// <summary>Offset for the visible portion of the character in pixels.</summary>
-		public int xOffset;
+		public int XOffset;
 		/// <summary>Offset for the visible portion of the character in pixels.</summary>
-		public int yOffset;
+		public int YOffset;
 		/// <summary>Determines how much to advance the pen after writing this character, in pixels.</summary>
-		public int xAdvance;
+		public int XAdvance;
 		/// <summary>Determines how much to advance the pen after writing this character, in pixels.</summary>
-		public int yAdvance;
+		public int YAdvance;
 		/// <summary>
 		/// Pairs that determine if certain character pairs should be closer or father together. for example &quot;AV&quot; 
 		/// combination.
 		/// </summary>
-		public KerningPair[] kerningPairs;
+		public KerningPair[] KerningPairs;
 	}
 
 	/** @} */

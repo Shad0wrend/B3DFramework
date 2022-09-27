@@ -22,8 +22,8 @@ namespace bs
 		[NativeWrapper]
 		public RRef<VectorField> VectorField
 		{
-			get { return Internal_GetvectorField(mCachedPtr); }
-			set { Internal_SetvectorField(mCachedPtr, value); }
+			get { return Internal_GetVectorField(mCachedPtr); }
+			set { Internal_SetVectorField(mCachedPtr, value); }
 		}
 
 		/// <summary>Intensity of the forces and velocities applied by the vector field.</summary>
@@ -31,8 +31,8 @@ namespace bs
 		[NativeWrapper]
 		public float Intensity
 		{
-			get { return Internal_Getintensity(mCachedPtr); }
-			set { Internal_Setintensity(mCachedPtr, value); }
+			get { return Internal_GetIntensity(mCachedPtr); }
+			set { Internal_SetIntensity(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -44,8 +44,8 @@ namespace bs
 		[NativeWrapper]
 		public float Tightness
 		{
-			get { return Internal_Gettightness(mCachedPtr); }
-			set { Internal_Settightness(mCachedPtr, value); }
+			get { return Internal_GetTightness(mCachedPtr); }
+			set { Internal_SetTightness(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -58,10 +58,10 @@ namespace bs
 			get
 			{
 				Vector3 temp;
-				Internal_Getscale(mCachedPtr, out temp);
+				Internal_GetScale(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_Setscale(mCachedPtr, ref value); }
+			set { Internal_SetScale(mCachedPtr, ref value); }
 		}
 
 		/// <summary>
@@ -75,10 +75,10 @@ namespace bs
 			get
 			{
 				Vector3 temp;
-				Internal_Getoffset(mCachedPtr, out temp);
+				Internal_GetOffset(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_Setoffset(mCachedPtr, ref value); }
+			set { Internal_SetOffset(mCachedPtr, ref value); }
 		}
 
 		/// <summary>Initial rotation of the vector field.</summary>
@@ -89,10 +89,10 @@ namespace bs
 			get
 			{
 				Quaternion temp;
-				Internal_Getrotation(mCachedPtr, out temp);
+				Internal_GetRotation(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_Setrotation(mCachedPtr, ref value); }
+			set { Internal_SetRotation(mCachedPtr, ref value); }
 		}
 
 		/// <summary>
@@ -105,8 +105,8 @@ namespace bs
 		[NativeWrapper]
 		public Vector3Distribution RotationRate
 		{
-			get { return Internal_GetrotationRate(mCachedPtr); }
-			set { Internal_SetrotationRate(mCachedPtr, value); }
+			get { return Internal_GetRotationRate(mCachedPtr); }
+			set { Internal_SetRotationRate(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -117,8 +117,8 @@ namespace bs
 		[NativeWrapper]
 		public bool TilingX
 		{
-			get { return Internal_GettilingX(mCachedPtr); }
-			set { Internal_SettilingX(mCachedPtr, value); }
+			get { return Internal_GetTilingX(mCachedPtr); }
+			set { Internal_SetTilingX(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -129,8 +129,8 @@ namespace bs
 		[NativeWrapper]
 		public bool TilingY
 		{
-			get { return Internal_GettilingY(mCachedPtr); }
-			set { Internal_SettilingY(mCachedPtr, value); }
+			get { return Internal_GetTilingY(mCachedPtr); }
+			set { Internal_SetTilingY(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -141,50 +141,50 @@ namespace bs
 		[NativeWrapper]
 		public bool TilingZ
 		{
-			get { return Internal_GettilingZ(mCachedPtr); }
-			set { Internal_SettilingZ(mCachedPtr, value); }
+			get { return Internal_GetTilingZ(mCachedPtr); }
+			set { Internal_SetTilingZ(mCachedPtr, value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern RRef<VectorField> Internal_GetvectorField(IntPtr thisPtr);
+		private static extern RRef<VectorField> Internal_GetVectorField(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetvectorField(IntPtr thisPtr, RRef<VectorField> value);
+		private static extern void Internal_SetVectorField(IntPtr thisPtr, RRef<VectorField> value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_Getintensity(IntPtr thisPtr);
+		private static extern float Internal_GetIntensity(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Setintensity(IntPtr thisPtr, float value);
+		private static extern void Internal_SetIntensity(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_Gettightness(IntPtr thisPtr);
+		private static extern float Internal_GetTightness(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Settightness(IntPtr thisPtr, float value);
+		private static extern void Internal_SetTightness(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Getscale(IntPtr thisPtr, out Vector3 __output);
+		private static extern void Internal_GetScale(IntPtr thisPtr, out Vector3 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Setscale(IntPtr thisPtr, ref Vector3 value);
+		private static extern void Internal_SetScale(IntPtr thisPtr, ref Vector3 value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Getoffset(IntPtr thisPtr, out Vector3 __output);
+		private static extern void Internal_GetOffset(IntPtr thisPtr, out Vector3 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Setoffset(IntPtr thisPtr, ref Vector3 value);
+		private static extern void Internal_SetOffset(IntPtr thisPtr, ref Vector3 value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Getrotation(IntPtr thisPtr, out Quaternion __output);
+		private static extern void Internal_GetRotation(IntPtr thisPtr, out Quaternion __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Setrotation(IntPtr thisPtr, ref Quaternion value);
+		private static extern void Internal_SetRotation(IntPtr thisPtr, ref Quaternion value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern Vector3Distribution Internal_GetrotationRate(IntPtr thisPtr);
+		private static extern Vector3Distribution Internal_GetRotationRate(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetrotationRate(IntPtr thisPtr, Vector3Distribution value);
+		private static extern void Internal_SetRotationRate(IntPtr thisPtr, Vector3Distribution value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_GettilingX(IntPtr thisPtr);
+		private static extern bool Internal_GetTilingX(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SettilingX(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetTilingX(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_GettilingY(IntPtr thisPtr);
+		private static extern bool Internal_GetTilingY(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SettilingY(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetTilingY(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_GettilingZ(IntPtr thisPtr);
+		private static extern bool Internal_GetTilingZ(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SettilingZ(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetTilingZ(IntPtr thisPtr, bool value);
 	}
 
 	/** @} */

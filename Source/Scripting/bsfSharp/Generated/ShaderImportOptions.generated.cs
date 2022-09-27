@@ -31,8 +31,8 @@ namespace bs
 		[NativeWrapper]
 		public ShadingLanguageFlags Languages
 		{
-			get { return Internal_Getlanguages(mCachedPtr); }
-			set { Internal_Setlanguages(mCachedPtr, value); }
+			get { return Internal_GetLanguages(mCachedPtr); }
+			set { Internal_SetLanguages(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -78,9 +78,9 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_RemoveDefine(IntPtr thisPtr, string define);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ShadingLanguageFlags Internal_Getlanguages(IntPtr thisPtr);
+		private static extern ShadingLanguageFlags Internal_GetLanguages(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Setlanguages(IntPtr thisPtr, ShadingLanguageFlags value);
+		private static extern void Internal_SetLanguages(IntPtr thisPtr, ShadingLanguageFlags value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_Create(ShaderImportOptions managedInstance);
 	}

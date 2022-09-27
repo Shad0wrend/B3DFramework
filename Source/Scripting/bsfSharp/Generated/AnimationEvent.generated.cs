@@ -18,8 +18,8 @@ namespace bs
 		public static AnimationEvent Default()
 		{
 			AnimationEvent value = new AnimationEvent();
-			value.name = "";
-			value.time = 0f;
+			value.Name = "";
+			value.Time = 0f;
 
 			return value;
 		}
@@ -29,14 +29,14 @@ namespace bs
 		/// <param name="time">Time at which to trigger the event, in seconds.</param>
 		public AnimationEvent(string name, float time)
 		{
-			this.name = name;
-			this.time = time;
+			this.Name = name;
+			this.Time = time;
 		}
 
 		/// <summary>Name used to identify the event when triggered.</summary>
-		public string name;
+		public string Name;
 		/// <summary>Time at which to trigger the event, in seconds.</summary>
-		public float time;
+		public float Time;
 	}
 
 	/** @} */

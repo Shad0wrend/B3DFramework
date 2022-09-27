@@ -15,22 +15,22 @@ namespace bs
 	void ScriptAutoExposureSettings::InitRuntimeData()
 	{
 		metaData.ScriptClass->AddInternalCall("Internal_AutoExposureSettings", (void*)&ScriptAutoExposureSettings::InternalAutoExposureSettings);
-		metaData.ScriptClass->AddInternalCall("Internal_GethistogramLog2Min", (void*)&ScriptAutoExposureSettings::InternalGethistogramLog2Min);
-		metaData.ScriptClass->AddInternalCall("Internal_SethistogramLog2Min", (void*)&ScriptAutoExposureSettings::InternalSethistogramLog2Min);
-		metaData.ScriptClass->AddInternalCall("Internal_GethistogramLog2Max", (void*)&ScriptAutoExposureSettings::InternalGethistogramLog2Max);
-		metaData.ScriptClass->AddInternalCall("Internal_SethistogramLog2Max", (void*)&ScriptAutoExposureSettings::InternalSethistogramLog2Max);
-		metaData.ScriptClass->AddInternalCall("Internal_GethistogramPctLow", (void*)&ScriptAutoExposureSettings::InternalGethistogramPctLow);
-		metaData.ScriptClass->AddInternalCall("Internal_SethistogramPctLow", (void*)&ScriptAutoExposureSettings::InternalSethistogramPctLow);
-		metaData.ScriptClass->AddInternalCall("Internal_GethistogramPctHigh", (void*)&ScriptAutoExposureSettings::InternalGethistogramPctHigh);
-		metaData.ScriptClass->AddInternalCall("Internal_SethistogramPctHigh", (void*)&ScriptAutoExposureSettings::InternalSethistogramPctHigh);
-		metaData.ScriptClass->AddInternalCall("Internal_GetminEyeAdaptation", (void*)&ScriptAutoExposureSettings::InternalGetminEyeAdaptation);
-		metaData.ScriptClass->AddInternalCall("Internal_SetminEyeAdaptation", (void*)&ScriptAutoExposureSettings::InternalSetminEyeAdaptation);
-		metaData.ScriptClass->AddInternalCall("Internal_GetmaxEyeAdaptation", (void*)&ScriptAutoExposureSettings::InternalGetmaxEyeAdaptation);
-		metaData.ScriptClass->AddInternalCall("Internal_SetmaxEyeAdaptation", (void*)&ScriptAutoExposureSettings::InternalSetmaxEyeAdaptation);
-		metaData.ScriptClass->AddInternalCall("Internal_GeteyeAdaptationSpeedUp", (void*)&ScriptAutoExposureSettings::InternalGeteyeAdaptationSpeedUp);
-		metaData.ScriptClass->AddInternalCall("Internal_SeteyeAdaptationSpeedUp", (void*)&ScriptAutoExposureSettings::InternalSeteyeAdaptationSpeedUp);
-		metaData.ScriptClass->AddInternalCall("Internal_GeteyeAdaptationSpeedDown", (void*)&ScriptAutoExposureSettings::InternalGeteyeAdaptationSpeedDown);
-		metaData.ScriptClass->AddInternalCall("Internal_SeteyeAdaptationSpeedDown", (void*)&ScriptAutoExposureSettings::InternalSeteyeAdaptationSpeedDown);
+		metaData.ScriptClass->AddInternalCall("Internal_GetHistogramLog2Min", (void*)&ScriptAutoExposureSettings::InternalGetHistogramLog2Min);
+		metaData.ScriptClass->AddInternalCall("Internal_SetHistogramLog2Min", (void*)&ScriptAutoExposureSettings::InternalSetHistogramLog2Min);
+		metaData.ScriptClass->AddInternalCall("Internal_GetHistogramLog2Max", (void*)&ScriptAutoExposureSettings::InternalGetHistogramLog2Max);
+		metaData.ScriptClass->AddInternalCall("Internal_SetHistogramLog2Max", (void*)&ScriptAutoExposureSettings::InternalSetHistogramLog2Max);
+		metaData.ScriptClass->AddInternalCall("Internal_GetHistogramPctLow", (void*)&ScriptAutoExposureSettings::InternalGetHistogramPctLow);
+		metaData.ScriptClass->AddInternalCall("Internal_SetHistogramPctLow", (void*)&ScriptAutoExposureSettings::InternalSetHistogramPctLow);
+		metaData.ScriptClass->AddInternalCall("Internal_GetHistogramPctHigh", (void*)&ScriptAutoExposureSettings::InternalGetHistogramPctHigh);
+		metaData.ScriptClass->AddInternalCall("Internal_SetHistogramPctHigh", (void*)&ScriptAutoExposureSettings::InternalSetHistogramPctHigh);
+		metaData.ScriptClass->AddInternalCall("Internal_GetMinEyeAdaptation", (void*)&ScriptAutoExposureSettings::InternalGetMinEyeAdaptation);
+		metaData.ScriptClass->AddInternalCall("Internal_SetMinEyeAdaptation", (void*)&ScriptAutoExposureSettings::InternalSetMinEyeAdaptation);
+		metaData.ScriptClass->AddInternalCall("Internal_GetMaxEyeAdaptation", (void*)&ScriptAutoExposureSettings::InternalGetMaxEyeAdaptation);
+		metaData.ScriptClass->AddInternalCall("Internal_SetMaxEyeAdaptation", (void*)&ScriptAutoExposureSettings::InternalSetMaxEyeAdaptation);
+		metaData.ScriptClass->AddInternalCall("Internal_GetEyeAdaptationSpeedUp", (void*)&ScriptAutoExposureSettings::InternalGetEyeAdaptationSpeedUp);
+		metaData.ScriptClass->AddInternalCall("Internal_SetEyeAdaptationSpeedUp", (void*)&ScriptAutoExposureSettings::InternalSetEyeAdaptationSpeedUp);
+		metaData.ScriptClass->AddInternalCall("Internal_GetEyeAdaptationSpeedDown", (void*)&ScriptAutoExposureSettings::InternalGetEyeAdaptationSpeedDown);
+		metaData.ScriptClass->AddInternalCall("Internal_SetEyeAdaptationSpeedDown", (void*)&ScriptAutoExposureSettings::InternalSetEyeAdaptationSpeedDown);
 
 	}
 
@@ -51,7 +51,7 @@ namespace bs
 		new (bs_alloc<ScriptAutoExposureSettings>())ScriptAutoExposureSettings(managedInstance, instance);
 	}
 
-	float ScriptAutoExposureSettings::InternalGethistogramLog2Min(ScriptAutoExposureSettings* thisPtr)
+	float ScriptAutoExposureSettings::InternalGetHistogramLog2Min(ScriptAutoExposureSettings* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->GetInternal()->HistogramLog2Min;
@@ -62,12 +62,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptAutoExposureSettings::InternalSethistogramLog2Min(ScriptAutoExposureSettings* thisPtr, float value)
+	void ScriptAutoExposureSettings::InternalSetHistogramLog2Min(ScriptAutoExposureSettings* thisPtr, float value)
 	{
 		thisPtr->GetInternal()->HistogramLog2Min = value;
 	}
 
-	float ScriptAutoExposureSettings::InternalGethistogramLog2Max(ScriptAutoExposureSettings* thisPtr)
+	float ScriptAutoExposureSettings::InternalGetHistogramLog2Max(ScriptAutoExposureSettings* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->GetInternal()->HistogramLog2Max;
@@ -78,12 +78,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptAutoExposureSettings::InternalSethistogramLog2Max(ScriptAutoExposureSettings* thisPtr, float value)
+	void ScriptAutoExposureSettings::InternalSetHistogramLog2Max(ScriptAutoExposureSettings* thisPtr, float value)
 	{
 		thisPtr->GetInternal()->HistogramLog2Max = value;
 	}
 
-	float ScriptAutoExposureSettings::InternalGethistogramPctLow(ScriptAutoExposureSettings* thisPtr)
+	float ScriptAutoExposureSettings::InternalGetHistogramPctLow(ScriptAutoExposureSettings* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->GetInternal()->HistogramPctLow;
@@ -94,12 +94,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptAutoExposureSettings::InternalSethistogramPctLow(ScriptAutoExposureSettings* thisPtr, float value)
+	void ScriptAutoExposureSettings::InternalSetHistogramPctLow(ScriptAutoExposureSettings* thisPtr, float value)
 	{
 		thisPtr->GetInternal()->HistogramPctLow = value;
 	}
 
-	float ScriptAutoExposureSettings::InternalGethistogramPctHigh(ScriptAutoExposureSettings* thisPtr)
+	float ScriptAutoExposureSettings::InternalGetHistogramPctHigh(ScriptAutoExposureSettings* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->GetInternal()->HistogramPctHigh;
@@ -110,12 +110,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptAutoExposureSettings::InternalSethistogramPctHigh(ScriptAutoExposureSettings* thisPtr, float value)
+	void ScriptAutoExposureSettings::InternalSetHistogramPctHigh(ScriptAutoExposureSettings* thisPtr, float value)
 	{
 		thisPtr->GetInternal()->HistogramPctHigh = value;
 	}
 
-	float ScriptAutoExposureSettings::InternalGetminEyeAdaptation(ScriptAutoExposureSettings* thisPtr)
+	float ScriptAutoExposureSettings::InternalGetMinEyeAdaptation(ScriptAutoExposureSettings* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->GetInternal()->MinEyeAdaptation;
@@ -126,12 +126,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptAutoExposureSettings::InternalSetminEyeAdaptation(ScriptAutoExposureSettings* thisPtr, float value)
+	void ScriptAutoExposureSettings::InternalSetMinEyeAdaptation(ScriptAutoExposureSettings* thisPtr, float value)
 	{
 		thisPtr->GetInternal()->MinEyeAdaptation = value;
 	}
 
-	float ScriptAutoExposureSettings::InternalGetmaxEyeAdaptation(ScriptAutoExposureSettings* thisPtr)
+	float ScriptAutoExposureSettings::InternalGetMaxEyeAdaptation(ScriptAutoExposureSettings* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->GetInternal()->MaxEyeAdaptation;
@@ -142,12 +142,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptAutoExposureSettings::InternalSetmaxEyeAdaptation(ScriptAutoExposureSettings* thisPtr, float value)
+	void ScriptAutoExposureSettings::InternalSetMaxEyeAdaptation(ScriptAutoExposureSettings* thisPtr, float value)
 	{
 		thisPtr->GetInternal()->MaxEyeAdaptation = value;
 	}
 
-	float ScriptAutoExposureSettings::InternalGeteyeAdaptationSpeedUp(ScriptAutoExposureSettings* thisPtr)
+	float ScriptAutoExposureSettings::InternalGetEyeAdaptationSpeedUp(ScriptAutoExposureSettings* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->GetInternal()->EyeAdaptationSpeedUp;
@@ -158,12 +158,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptAutoExposureSettings::InternalSeteyeAdaptationSpeedUp(ScriptAutoExposureSettings* thisPtr, float value)
+	void ScriptAutoExposureSettings::InternalSetEyeAdaptationSpeedUp(ScriptAutoExposureSettings* thisPtr, float value)
 	{
 		thisPtr->GetInternal()->EyeAdaptationSpeedUp = value;
 	}
 
-	float ScriptAutoExposureSettings::InternalGeteyeAdaptationSpeedDown(ScriptAutoExposureSettings* thisPtr)
+	float ScriptAutoExposureSettings::InternalGetEyeAdaptationSpeedDown(ScriptAutoExposureSettings* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->GetInternal()->EyeAdaptationSpeedDown;
@@ -174,7 +174,7 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptAutoExposureSettings::InternalSeteyeAdaptationSpeedDown(ScriptAutoExposureSettings* thisPtr, float value)
+	void ScriptAutoExposureSettings::InternalSetEyeAdaptationSpeedDown(ScriptAutoExposureSettings* thisPtr, float value)
 	{
 		thisPtr->GetInternal()->EyeAdaptationSpeedDown = value;
 	}

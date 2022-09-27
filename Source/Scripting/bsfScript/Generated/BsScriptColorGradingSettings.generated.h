@@ -20,13 +20,13 @@ namespace bs
 		static MonoObject* Create(const SPtr<ColorGradingSettings>& value);
 
 	private:
-		static void InternalGetsaturation(ScriptColorGradingSettings* thisPtr, Vector3* __output);
-		static void InternalSetsaturation(ScriptColorGradingSettings* thisPtr, Vector3* value);
-		static void InternalGetcontrast(ScriptColorGradingSettings* thisPtr, Vector3* __output);
-		static void InternalSetcontrast(ScriptColorGradingSettings* thisPtr, Vector3* value);
-		static void InternalGetgain(ScriptColorGradingSettings* thisPtr, Vector3* __output);
-		static void InternalSetgain(ScriptColorGradingSettings* thisPtr, Vector3* value);
-		static void InternalGetoffset(ScriptColorGradingSettings* thisPtr, Vector3* __output);
-		static void InternalSetoffset(ScriptColorGradingSettings* thisPtr, Vector3* value);
+		static void InternalGetSaturation(ScriptColorGradingSettings* thisPtr, Vector3* __output);
+		static void InternalSetSaturation(ScriptColorGradingSettings* thisPtr, Vector3* value);
+		static void InternalGetContrast(ScriptColorGradingSettings* thisPtr, Vector3* __output);
+		static void InternalSetContrast(ScriptColorGradingSettings* thisPtr, Vector3* value);
+		static void InternalGetGain(ScriptColorGradingSettings* thisPtr, Vector3* __output);
+		static void InternalSetGain(ScriptColorGradingSettings* thisPtr, Vector3* value);
+		static void InternalGetOffset(ScriptColorGradingSettings* thisPtr, Vector3* __output);
+		static void InternalSetOffset(ScriptColorGradingSettings* thisPtr, Vector3* value);
 	};
 }

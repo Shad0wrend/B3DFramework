@@ -40,12 +40,12 @@ namespace bs
 		output.Distance = value.Distance;
 		output.TriangleIdx = value.TriangleIdx;
 		output.UnmappedTriangleIdx = value.UnmappedTriangleIdx;
-		GameObjectHandle<CCollider> tmpcollider;
-		ScriptCColliderBase* scriptcollider;
-		scriptcollider = (ScriptCColliderBase*)ScriptCCollider::ToNative(value.Collider);
-		if(scriptcollider != nullptr)
-			tmpcollider = static_object_cast<CCollider>(scriptcollider->GetComponent());
-		output.Collider = tmpcollider;
+		GameObjectHandle<CCollider> tmpCollider;
+		ScriptCColliderBase* scriptCollider;
+		scriptCollider = (ScriptCColliderBase*)ScriptCCollider::ToNative(value.Collider);
+		if(scriptCollider != nullptr)
+			tmpCollider = static_object_cast<CCollider>(scriptCollider->GetComponent());
+		output.Collider = tmpCollider;
 
 		return output;
 	}
@@ -59,15 +59,15 @@ namespace bs
 		output.Distance = value.Distance;
 		output.TriangleIdx = value.TriangleIdx;
 		output.UnmappedTriangleIdx = value.UnmappedTriangleIdx;
-		ScriptComponentBase* scriptcollider = nullptr;
+		ScriptComponentBase* scriptCollider = nullptr;
 		if(value.Collider)
-			scriptcollider = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(value.Collider));
-		MonoObject* tmpcollider;
-		if(scriptcollider != nullptr)
-			tmpcollider = scriptcollider->GetManagedInstance();
+			scriptCollider = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(value.Collider));
+		MonoObject* tmpCollider;
+		if(scriptCollider != nullptr)
+			tmpCollider = scriptCollider->GetManagedInstance();
 		else
-			tmpcollider = nullptr;
-		output.Collider = tmpcollider;
+			tmpCollider = nullptr;
+		output.Collider = tmpCollider;
 
 		return output;
 	}

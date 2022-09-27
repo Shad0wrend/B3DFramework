@@ -15,15 +15,15 @@ namespace bs
 	public partial struct ContactPoint
 	{
 		/// <summary>Contact point in world space.</summary>
-		public Vector3 position;
+		public Vector3 Position;
 		/// <summary>Normal pointing from the second shape to the first shape.</summary>
-		public Vector3 normal;
+		public Vector3 Normal;
 		/// <summary>
 		/// Impulse applied to the objects to keep them from penetrating. Divide by simulation step to get the force.
 		/// </summary>
-		public float impulse;
+		public float Impulse;
 		/// <summary>Determines how far are the objects. Negative value denotes penetration.</summary>
-		public float separation;
+		public float Separation;
 	}
 
 	/** @} */

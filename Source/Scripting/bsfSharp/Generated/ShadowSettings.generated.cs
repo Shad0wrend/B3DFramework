@@ -30,8 +30,8 @@ namespace bs
 		[NativeWrapper]
 		public float DirectionalShadowDistance
 		{
-			get { return Internal_GetdirectionalShadowDistance(mCachedPtr); }
-			set { Internal_SetdirectionalShadowDistance(mCachedPtr, value); }
+			get { return Internal_GetDirectionalShadowDistance(mCachedPtr); }
+			set { Internal_SetDirectionalShadowDistance(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -44,8 +44,8 @@ namespace bs
 		[NativeWrapper]
 		public int NumCascades
 		{
-			get { return Internal_GetnumCascades(mCachedPtr); }
-			set { Internal_SetnumCascades(mCachedPtr, value); }
+			get { return Internal_GetNumCascades(mCachedPtr); }
+			set { Internal_SetNumCascades(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -60,8 +60,8 @@ namespace bs
 		[NativeWrapper]
 		public float CascadeDistributionExponent
 		{
-			get { return Internal_GetcascadeDistributionExponent(mCachedPtr); }
-			set { Internal_SetcascadeDistributionExponent(mCachedPtr, value); }
+			get { return Internal_GetCascadeDistributionExponent(mCachedPtr); }
+			set { Internal_SetCascadeDistributionExponent(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -73,28 +73,28 @@ namespace bs
 		[NativeWrapper]
 		public int ShadowFilteringQuality
 		{
-			get { return Internal_GetshadowFilteringQuality(mCachedPtr); }
-			set { Internal_SetshadowFilteringQuality(mCachedPtr, value); }
+			get { return Internal_GetShadowFilteringQuality(mCachedPtr); }
+			set { Internal_SetShadowFilteringQuality(mCachedPtr, value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_ShadowSettings(ShadowSettings managedInstance);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GetdirectionalShadowDistance(IntPtr thisPtr);
+		private static extern float Internal_GetDirectionalShadowDistance(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetdirectionalShadowDistance(IntPtr thisPtr, float value);
+		private static extern void Internal_SetDirectionalShadowDistance(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_GetnumCascades(IntPtr thisPtr);
+		private static extern int Internal_GetNumCascades(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetnumCascades(IntPtr thisPtr, int value);
+		private static extern void Internal_SetNumCascades(IntPtr thisPtr, int value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GetcascadeDistributionExponent(IntPtr thisPtr);
+		private static extern float Internal_GetCascadeDistributionExponent(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetcascadeDistributionExponent(IntPtr thisPtr, float value);
+		private static extern void Internal_SetCascadeDistributionExponent(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_GetshadowFilteringQuality(IntPtr thisPtr);
+		private static extern int Internal_GetShadowFilteringQuality(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetshadowFilteringQuality(IntPtr thisPtr, int value);
+		private static extern void Internal_SetShadowFilteringQuality(IntPtr thisPtr, int value);
 	}
 
 	/** @} */

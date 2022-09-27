@@ -21,9 +21,9 @@ namespace bs
 		public static GUIContent Default()
 		{
 			GUIContent value = new GUIContent();
-			value.text = null;
-			value.images = GUIContentImages.Default();
-			value.tooltip = null;
+			value.Text = null;
+			value.Images = GUIContentImages.Default();
+			value.Tooltip = null;
 
 			return value;
 		}
@@ -31,54 +31,54 @@ namespace bs
 		/// <summary>Constructs content with just a string.</summary>
 		public GUIContent(LocString text)
 		{
-			this.text = text;
-			this.images = GUIContentImages.Default();
-			this.tooltip = null;
+			this.Text = text;
+			this.Images = GUIContentImages.Default();
+			this.Tooltip = null;
 		}
 
 		/// <summary>Constructs content with a string and a tooltip.</summary>
 		public GUIContent(LocString text, LocString tooltip)
 		{
-			this.text = text;
-			this.images = GUIContentImages.Default();
-			this.tooltip = tooltip;
+			this.Text = text;
+			this.Images = GUIContentImages.Default();
+			this.Tooltip = tooltip;
 		}
 
 		/// <summary>Constructs content with just an image.</summary>
 		public GUIContent(GUIContentImages image)
 		{
-			this.text = null;
-			this.images = image;
-			this.tooltip = null;
+			this.Text = null;
+			this.Images = image;
+			this.Tooltip = null;
 		}
 
 		/// <summary>Constructs content with an image and a tooltip.</summary>
 		public GUIContent(GUIContentImages image, LocString tooltip)
 		{
-			this.text = null;
-			this.images = image;
-			this.tooltip = tooltip;
+			this.Text = null;
+			this.Images = image;
+			this.Tooltip = tooltip;
 		}
 
 		/// <summary>Constructs content with a string and an image.</summary>
 		public GUIContent(LocString text, GUIContentImages image)
 		{
-			this.text = text;
-			this.images = image;
-			this.tooltip = null;
+			this.Text = text;
+			this.Images = image;
+			this.Tooltip = null;
 		}
 
 		/// <summary>Constructs content with a string, an image and a tooltip.</summary>
 		public GUIContent(LocString text, GUIContentImages image, LocString tooltip)
 		{
-			this.text = text;
-			this.images = image;
-			this.tooltip = tooltip;
+			this.Text = text;
+			this.Images = image;
+			this.Tooltip = tooltip;
 		}
 
-		public LocString text;
-		public GUIContentImages images;
-		public LocString tooltip;
+		public LocString Text;
+		public GUIContentImages Images;
+		public LocString Tooltip;
 	}
 
 	/** @} */

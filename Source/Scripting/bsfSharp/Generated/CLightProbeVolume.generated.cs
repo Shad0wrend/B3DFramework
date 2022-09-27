@@ -10,13 +10,6 @@ namespace bs
 	 *  @{
 	 */
 
-	/// <summary>
-	/// Allows you to define a volume of light probes that will be used for indirect lighting. Lighting information in the 
-	/// scene will be interpolated from nearby probes to calculate the amount of indirect lighting at that position. It is up 
-	/// to the caller to place the light probes in areas where the lighting changes in order to yield the best results.
-	///
-	/// The volume can never have less than 4 probes.
-	/// </summary>
 	[ShowInInspector]
 	public partial class LightProbeVolume : Component
 	{

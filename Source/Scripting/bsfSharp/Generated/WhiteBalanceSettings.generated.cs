@@ -31,8 +31,8 @@ namespace bs
 		[NativeWrapper]
 		public float Temperature
 		{
-			get { return Internal_Gettemperature(mCachedPtr); }
-			set { Internal_Settemperature(mCachedPtr, value); }
+			get { return Internal_GetTemperature(mCachedPtr); }
+			set { Internal_SetTemperature(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -47,20 +47,20 @@ namespace bs
 		[NativeWrapper]
 		public float Tint
 		{
-			get { return Internal_Gettint(mCachedPtr); }
-			set { Internal_Settint(mCachedPtr, value); }
+			get { return Internal_GetTint(mCachedPtr); }
+			set { Internal_SetTint(mCachedPtr, value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_WhiteBalanceSettings(WhiteBalanceSettings managedInstance);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_Gettemperature(IntPtr thisPtr);
+		private static extern float Internal_GetTemperature(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Settemperature(IntPtr thisPtr, float value);
+		private static extern void Internal_SetTemperature(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_Gettint(IntPtr thisPtr);
+		private static extern float Internal_GetTint(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Settint(IntPtr thisPtr, float value);
+		private static extern void Internal_SetTint(IntPtr thisPtr, float value);
 	}
 
 	/** @} */

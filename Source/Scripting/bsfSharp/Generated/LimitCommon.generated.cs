@@ -16,30 +16,30 @@ namespace bs
 	{
 		public LimitCommon(float contactDist = -1f)
 		{
-			this.contactDist = contactDist;
-			this.restitution = 0f;
-			this.spring = Spring.Default();
+			this.ContactDist = contactDist;
+			this.Restitution = 0f;
+			this.Spring = Spring.Default();
 		}
 
 		public LimitCommon(Spring spring, float restitution = 0f)
 		{
-			this.contactDist = -1f;
-			this.restitution = restitution;
-			this.spring = spring;
+			this.ContactDist = -1f;
+			this.Restitution = restitution;
+			this.Spring = spring;
 		}
 
 		/// <summary>
 		/// Distance from the limit at which it becomes active. Allows the solver to activate earlier than the limit is reached 
 		/// to avoid breaking the limit.
 		/// </summary>
-		public float contactDist;
+		public float ContactDist;
 		/// <summary>
 		/// Controls how do objects react when the limit is reached, values closer to zero specify non-ellastic collision, while 
 		/// those closer to one specify more ellastic (i.e bouncy) collision. Must be in [0, 1] range.
 		/// </summary>
-		public float restitution;
+		public float Restitution;
 		/// <summary>Spring that controls how are the bodies pulled back towards the limit when they breach it.</summary>
-		public Spring spring;
+		public Spring Spring;
 	}
 
 	/** @} */

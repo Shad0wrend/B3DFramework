@@ -20,20 +20,20 @@ namespace bs
 		public static TangentRef Default()
 		{
 			TangentRef value = new TangentRef();
-			value.keyframeRef = KeyframeRef.Default();
-			value.type = TangentType.In;
+			value.KeyframeRef = KeyframeRef.Default();
+			value.Type = TangentType.In;
 
 			return value;
 		}
 
 		public TangentRef(KeyframeRef keyframeRef, TangentType type)
 		{
-			this.keyframeRef = keyframeRef;
-			this.type = type;
+			this.KeyframeRef = keyframeRef;
+			this.Type = type;
 		}
 
-		public KeyframeRef keyframeRef;
-		public TangentType type;
+		public KeyframeRef KeyframeRef;
+		public TangentType Type;
 	}
 
 	/** @} */

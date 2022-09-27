@@ -10,13 +10,6 @@ namespace bs
 	 *  @{
 	 */
 
-	/// <summary>
-	/// Represents a source for emitting audio. Audio can be played spatially (gun shot), or normally (music). Each audio 
-	/// source must have an AudioClip to play-back, and it can also have a position in the case of spatial (3D) audio.
-	///
-	/// Whether or not an audio source is spatial is controlled by the assigned AudioClip. The volume and the pitch of a 
-	/// spatial audio source is controlled by its position and the AudioListener&apos;s position/direction/velocity.
-	/// </summary>
 	[ShowInInspector]
 	public partial class AudioSource : Component
 	{

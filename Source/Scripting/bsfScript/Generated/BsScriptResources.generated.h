@@ -24,20 +24,20 @@ namespace bs
 	private:
 		uint32_t mGCHandle = 0;
 
-		static void onResourceLoaded(const ResourceHandle<Resource>& p0);
-		static void onResourceDestroyed(const UUID& p0);
-		static void onResourceModified(const ResourceHandle<Resource>& p0);
+		static void OnResourceLoaded(const ResourceHandle<Resource>& p0);
+		static void OnResourceDestroyed(const UUID& p0);
+		static void OnResourceModified(const ResourceHandle<Resource>& p0);
 
-		typedef void(BS_THUNKCALL *onResourceLoadedThunkDef) (MonoObject* p0, MonoException**);
-		static onResourceLoadedThunkDef onResourceLoadedThunk;
-		typedef void(BS_THUNKCALL *onResourceDestroyedThunkDef) (MonoObject* p0, MonoException**);
-		static onResourceDestroyedThunkDef onResourceDestroyedThunk;
-		typedef void(BS_THUNKCALL *onResourceModifiedThunkDef) (MonoObject* p0, MonoException**);
-		static onResourceModifiedThunkDef onResourceModifiedThunk;
+		typedef void(BS_THUNKCALL *OnResourceLoadedThunkDef) (MonoObject* p0, MonoException**);
+		static OnResourceLoadedThunkDef OnResourceLoadedThunk;
+		typedef void(BS_THUNKCALL *OnResourceDestroyedThunkDef) (MonoObject* p0, MonoException**);
+		static OnResourceDestroyedThunkDef OnResourceDestroyedThunk;
+		typedef void(BS_THUNKCALL *OnResourceModifiedThunkDef) (MonoObject* p0, MonoException**);
+		static OnResourceModifiedThunkDef OnResourceModifiedThunk;
 
-		static HEvent onResourceLoadedConn;
-		static HEvent onResourceDestroyedConn;
-		static HEvent onResourceModifiedConn;
+		static HEvent OnResourceLoadedConn;
+		static HEvent OnResourceDestroyedConn;
+		static HEvent OnResourceModifiedConn;
 
 		static MonoObject* InternalLoad(MonoString* filePath, ResourceLoadFlag loadFlags);
 		static MonoObject* InternalLoadAsync(MonoString* filePath, ResourceLoadFlag loadFlags);

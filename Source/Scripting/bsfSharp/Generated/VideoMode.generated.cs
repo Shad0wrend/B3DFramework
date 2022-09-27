@@ -21,11 +21,11 @@ namespace bs
 		public static VideoMode Default()
 		{
 			VideoMode value = new VideoMode();
-			value.width = 1280;
-			value.height = 720;
-			value.refreshRate = 60f;
-			value.outputIdx = 0;
-			value.isCustom = true;
+			value.Width = 1280;
+			value.Height = 720;
+			value.RefreshRate = 60f;
+			value.OutputIdx = 0;
+			value.IsCustom = true;
 
 			return value;
 		}
@@ -40,26 +40,26 @@ namespace bs
 		/// </param>
 		public VideoMode(int width, int height, float refreshRate = 60f, int outputIdx = 0)
 		{
-			this.width = width;
-			this.height = height;
-			this.refreshRate = refreshRate;
-			this.outputIdx = outputIdx;
-			this.isCustom = true;
+			this.Width = width;
+			this.Height = height;
+			this.RefreshRate = refreshRate;
+			this.OutputIdx = outputIdx;
+			this.IsCustom = true;
 		}
 
 		/// <summary>Width of the front/back buffer in pixels.</summary>
-		public int width;
+		public int Width;
 		/// <summary>Height of the front/back buffer in pixels.</summary>
-		public int height;
+		public int Height;
 		/// <summary>Refresh rate in hertz.</summary>
-		public float refreshRate;
+		public float RefreshRate;
 		/// <summary>Index of the parent video output.</summary>
-		public int outputIdx;
+		public int OutputIdx;
 		/// <summary>
 		/// Determines was video mode user created or provided by the API/OS. API/OS created video modes can contain additional 
 		/// information that allows the video mode to be used more accurately and you should use them when possible.
 		/// </summary>
-		public bool isCustom;
+		public bool IsCustom;
 	}
 
 	/** @} */

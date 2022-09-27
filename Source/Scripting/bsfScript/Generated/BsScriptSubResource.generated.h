@@ -11,8 +11,8 @@ namespace bs
 #if !BS_IS_BANSHEE3D
 	struct __SubResourceInterop
 	{
-		MonoString* name;
-		MonoObject* value;
+		MonoString* Name;
+		MonoObject* Value;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptSubResource : public ScriptObject<ScriptSubResource>

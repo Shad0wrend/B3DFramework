@@ -15,9 +15,9 @@ namespace bs
 	public partial struct KeyFrameInt
 	{
 		/// <summary>Value of the key.</summary>
-		public int value;
+		public int Value;
 		/// <summary>Position of the key along the animation spline.</summary>
-		public float time;
+		public float Time;
 	}
 
 	/** @} */
@@ -31,13 +31,13 @@ namespace bs
 	public partial struct KeyFrame
 	{
 		/// <summary>Value of the key.</summary>
-		public float value;
+		public float Value;
 		/// <summary>Input tangent (going from the previous key to this one) of the key.</summary>
-		public float inTangent;
+		public float InTangent;
 		/// <summary>Output tangent (going from this key to next one) of the key.</summary>
-		public float outTangent;
+		public float OutTangent;
 		/// <summary>Position of the key along the animation spline.</summary>
-		public float time;
+		public float Time;
 	}
 
 	/** @} */
@@ -51,13 +51,13 @@ namespace bs
 	public partial struct KeyFrameVec3
 	{
 		/// <summary>Value of the key.</summary>
-		public Vector3 value;
+		public Vector3 Value;
 		/// <summary>Input tangent (going from the previous key to this one) of the key.</summary>
-		public Vector3 inTangent;
+		public Vector3 InTangent;
 		/// <summary>Output tangent (going from this key to next one) of the key.</summary>
-		public Vector3 outTangent;
+		public Vector3 OutTangent;
 		/// <summary>Position of the key along the animation spline.</summary>
-		public float time;
+		public float Time;
 	}
 
 	/** @} */
@@ -71,13 +71,13 @@ namespace bs
 	public partial struct KeyFrameVec2
 	{
 		/// <summary>Value of the key.</summary>
-		public Vector2 value;
+		public Vector2 Value;
 		/// <summary>Input tangent (going from the previous key to this one) of the key.</summary>
-		public Vector2 inTangent;
+		public Vector2 InTangent;
 		/// <summary>Output tangent (going from this key to next one) of the key.</summary>
-		public Vector2 outTangent;
+		public Vector2 OutTangent;
 		/// <summary>Position of the key along the animation spline.</summary>
-		public float time;
+		public float Time;
 	}
 
 	/** @} */
@@ -91,13 +91,13 @@ namespace bs
 	public partial struct KeyFrameQuat
 	{
 		/// <summary>Value of the key.</summary>
-		public Quaternion value;
+		public Quaternion Value;
 		/// <summary>Input tangent (going from the previous key to this one) of the key.</summary>
-		public Quaternion inTangent;
+		public Quaternion InTangent;
 		/// <summary>Output tangent (going from this key to next one) of the key.</summary>
-		public Quaternion outTangent;
+		public Quaternion OutTangent;
 		/// <summary>Position of the key along the animation spline.</summary>
-		public float time;
+		public float Time;
 	}
 
 	/** @} */

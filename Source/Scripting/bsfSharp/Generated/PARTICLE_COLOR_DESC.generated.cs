@@ -15,7 +15,7 @@ namespace bs
 	public partial struct ParticleColorOptions
 	{
 		/// <summary>Determines the color of the particles evaluated over particle lifetime.</summary>
-		public ColorDistribution color;
+		public ColorDistribution Color;
 	}
 
 	/** @} */

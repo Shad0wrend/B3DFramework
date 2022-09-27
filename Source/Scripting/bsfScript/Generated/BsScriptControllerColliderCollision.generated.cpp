@@ -32,12 +32,12 @@ namespace bs
 	ControllerColliderCollision ScriptControllerColliderCollision::FromInterop(const __ControllerColliderCollisionInterop& value)
 	{
 		ControllerColliderCollision output;
-		GameObjectHandle<CCollider> tmpcollider;
-		ScriptCColliderBase* scriptcollider;
-		scriptcollider = (ScriptCColliderBase*)ScriptCCollider::ToNative(value.Collider);
-		if(scriptcollider != nullptr)
-			tmpcollider = static_object_cast<CCollider>(scriptcollider->GetComponent());
-		output.Collider = tmpcollider;
+		GameObjectHandle<CCollider> tmpCollider;
+		ScriptCColliderBase* scriptCollider;
+		scriptCollider = (ScriptCColliderBase*)ScriptCCollider::ToNative(value.Collider);
+		if(scriptCollider != nullptr)
+			tmpCollider = static_object_cast<CCollider>(scriptCollider->GetComponent());
+		output.Collider = tmpCollider;
 		output.TriangleIndex = value.TriangleIndex;
 		output.Position = value.Position;
 		output.Normal = value.Normal;
@@ -50,15 +50,15 @@ namespace bs
 	__ControllerColliderCollisionInterop ScriptControllerColliderCollision::ToInterop(const ControllerColliderCollision& value)
 	{
 		__ControllerColliderCollisionInterop output;
-		ScriptComponentBase* scriptcollider = nullptr;
+		ScriptComponentBase* scriptCollider = nullptr;
 		if(value.Collider)
-			scriptcollider = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(value.Collider));
-		MonoObject* tmpcollider;
-		if(scriptcollider != nullptr)
-			tmpcollider = scriptcollider->GetManagedInstance();
+			scriptCollider = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(value.Collider));
+		MonoObject* tmpCollider;
+		if(scriptCollider != nullptr)
+			tmpCollider = scriptCollider->GetManagedInstance();
 		else
-			tmpcollider = nullptr;
-		output.Collider = tmpcollider;
+			tmpCollider = nullptr;
+		output.Collider = tmpCollider;
 		output.TriangleIndex = value.TriangleIndex;
 		output.Position = value.Position;
 		output.Normal = value.Normal;

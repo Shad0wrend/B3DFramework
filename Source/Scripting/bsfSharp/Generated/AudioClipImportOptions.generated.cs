@@ -28,8 +28,8 @@ namespace bs
 		[NativeWrapper]
 		public AudioFormat Format
 		{
-			get { return Internal_Getformat(mCachedPtr); }
-			set { Internal_Setformat(mCachedPtr, value); }
+			get { return Internal_GetFormat(mCachedPtr); }
+			set { Internal_SetFormat(mCachedPtr, value); }
 		}
 
 		/// <summary>Determines how is audio data loaded into memory.</summary>
@@ -37,8 +37,8 @@ namespace bs
 		[NativeWrapper]
 		public AudioReadMode ReadMode
 		{
-			get { return Internal_GetreadMode(mCachedPtr); }
-			set { Internal_SetreadMode(mCachedPtr, value); }
+			get { return Internal_GetReadMode(mCachedPtr); }
+			set { Internal_SetReadMode(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -49,8 +49,8 @@ namespace bs
 		[NativeWrapper]
 		public bool Is3D
 		{
-			get { return Internal_Getis3D(mCachedPtr); }
-			set { Internal_Setis3D(mCachedPtr, value); }
+			get { return Internal_GetIs3D(mCachedPtr); }
+			set { Internal_SetIs3D(mCachedPtr, value); }
 		}
 
 		/// <summary>Size of a single sample in bits. The clip will be converted to this bit depth on import.</summary>
@@ -58,26 +58,26 @@ namespace bs
 		[NativeWrapper]
 		public int BitDepth
 		{
-			get { return Internal_GetbitDepth(mCachedPtr); }
-			set { Internal_SetbitDepth(mCachedPtr, value); }
+			get { return Internal_GetBitDepth(mCachedPtr); }
+			set { Internal_SetBitDepth(mCachedPtr, value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern AudioFormat Internal_Getformat(IntPtr thisPtr);
+		private static extern AudioFormat Internal_GetFormat(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Setformat(IntPtr thisPtr, AudioFormat value);
+		private static extern void Internal_SetFormat(IntPtr thisPtr, AudioFormat value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern AudioReadMode Internal_GetreadMode(IntPtr thisPtr);
+		private static extern AudioReadMode Internal_GetReadMode(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetreadMode(IntPtr thisPtr, AudioReadMode value);
+		private static extern void Internal_SetReadMode(IntPtr thisPtr, AudioReadMode value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_Getis3D(IntPtr thisPtr);
+		private static extern bool Internal_GetIs3D(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Setis3D(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetIs3D(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_GetbitDepth(IntPtr thisPtr);
+		private static extern int Internal_GetBitDepth(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetbitDepth(IntPtr thisPtr, int value);
+		private static extern void Internal_SetBitDepth(IntPtr thisPtr, int value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_Create(AudioClipImportOptions managedInstance);
 	}

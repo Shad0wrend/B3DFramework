@@ -26,8 +26,8 @@ namespace bs
 		[NativeWrapper]
 		public bool Enabled
 		{
-			get { return Internal_Getenabled(mCachedPtr); }
-			set { Internal_Setenabled(mCachedPtr, value); }
+			get { return Internal_GetEnabled(mCachedPtr); }
+			set { Internal_SetEnabled(mCachedPtr, value); }
 		}
 
 		/// <summary>Determines which parts of the scene will trigger motion blur.</summary>
@@ -35,8 +35,8 @@ namespace bs
 		[NativeWrapper]
 		public MotionBlurDomain Domain
 		{
-			get { return Internal_Getdomain(mCachedPtr); }
-			set { Internal_Setdomain(mCachedPtr, value); }
+			get { return Internal_GetDomain(mCachedPtr); }
+			set { Internal_SetDomain(mCachedPtr, value); }
 		}
 
 		/// <summary>Type of filter to use when filtering samples contributing to a blurred pixel.</summary>
@@ -44,8 +44,8 @@ namespace bs
 		[NativeWrapper]
 		public MotionBlurFilter Filter
 		{
-			get { return Internal_Getfilter(mCachedPtr); }
-			set { Internal_Setfilter(mCachedPtr, value); }
+			get { return Internal_GetFilter(mCachedPtr); }
+			set { Internal_SetFilter(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -56,8 +56,8 @@ namespace bs
 		[NativeWrapper]
 		public MotionBlurQuality Quality
 		{
-			get { return Internal_Getquality(mCachedPtr); }
-			set { Internal_Setquality(mCachedPtr, value); }
+			get { return Internal_GetQuality(mCachedPtr); }
+			set { Internal_SetQuality(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -70,32 +70,32 @@ namespace bs
 		[NativeWrapper]
 		public float MaximumRadius
 		{
-			get { return Internal_GetmaximumRadius(mCachedPtr); }
-			set { Internal_SetmaximumRadius(mCachedPtr, value); }
+			get { return Internal_GetMaximumRadius(mCachedPtr); }
+			set { Internal_SetMaximumRadius(mCachedPtr, value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_MotionBlurSettings(MotionBlurSettings managedInstance);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_Getenabled(IntPtr thisPtr);
+		private static extern bool Internal_GetEnabled(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Setenabled(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetEnabled(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern MotionBlurDomain Internal_Getdomain(IntPtr thisPtr);
+		private static extern MotionBlurDomain Internal_GetDomain(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Setdomain(IntPtr thisPtr, MotionBlurDomain value);
+		private static extern void Internal_SetDomain(IntPtr thisPtr, MotionBlurDomain value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern MotionBlurFilter Internal_Getfilter(IntPtr thisPtr);
+		private static extern MotionBlurFilter Internal_GetFilter(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Setfilter(IntPtr thisPtr, MotionBlurFilter value);
+		private static extern void Internal_SetFilter(IntPtr thisPtr, MotionBlurFilter value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern MotionBlurQuality Internal_Getquality(IntPtr thisPtr);
+		private static extern MotionBlurQuality Internal_GetQuality(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Setquality(IntPtr thisPtr, MotionBlurQuality value);
+		private static extern void Internal_SetQuality(IntPtr thisPtr, MotionBlurQuality value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GetmaximumRadius(IntPtr thisPtr);
+		private static extern float Internal_GetMaximumRadius(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetmaximumRadius(IntPtr thisPtr, float value);
+		private static extern void Internal_SetMaximumRadius(IntPtr thisPtr, float value);
 	}
 
 	/** @} */

@@ -22,8 +22,8 @@ namespace bs
 		[NativeWrapper]
 		public RRef<Texture> BokehShape
 		{
-			get { return Internal_GetbokehShape(mCachedPtr); }
-			set { Internal_SetbokehShape(mCachedPtr, value); }
+			get { return Internal_GetBokehShape(mCachedPtr); }
+			set { Internal_SetBokehShape(mCachedPtr, value); }
 		}
 
 		/// <summary>Enables or disables the depth of field effect.</summary>
@@ -31,8 +31,8 @@ namespace bs
 		[NativeWrapper]
 		public bool Enabled
 		{
-			get { return Internal_Getenabled(mCachedPtr); }
-			set { Internal_Setenabled(mCachedPtr, value); }
+			get { return Internal_GetEnabled(mCachedPtr); }
+			set { Internal_SetEnabled(mCachedPtr, value); }
 		}
 
 		/// <summary>Type of depth of field effect to use.</summary>
@@ -40,8 +40,8 @@ namespace bs
 		[NativeWrapper]
 		public DepthOfFieldType Type
 		{
-			get { return Internal_Gettype(mCachedPtr); }
-			set { Internal_Settype(mCachedPtr, value); }
+			get { return Internal_GetType(mCachedPtr); }
+			set { Internal_SetType(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -52,8 +52,8 @@ namespace bs
 		[NativeWrapper]
 		public float FocalDistance
 		{
-			get { return Internal_GetfocalDistance(mCachedPtr); }
-			set { Internal_SetfocalDistance(mCachedPtr, value); }
+			get { return Internal_GetFocalDistance(mCachedPtr); }
+			set { Internal_SetFocalDistance(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -66,8 +66,8 @@ namespace bs
 		[NativeWrapper]
 		public float FocalRange
 		{
-			get { return Internal_GetfocalRange(mCachedPtr); }
-			set { Internal_SetfocalRange(mCachedPtr, value); }
+			get { return Internal_GetFocalRange(mCachedPtr); }
+			set { Internal_SetFocalRange(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -78,8 +78,8 @@ namespace bs
 		[NativeWrapper]
 		public float NearTransitionRange
 		{
-			get { return Internal_GetnearTransitionRange(mCachedPtr); }
-			set { Internal_SetnearTransitionRange(mCachedPtr, value); }
+			get { return Internal_GetNearTransitionRange(mCachedPtr); }
+			set { Internal_SetNearTransitionRange(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -90,8 +90,8 @@ namespace bs
 		[NativeWrapper]
 		public float FarTransitionRange
 		{
-			get { return Internal_GetfarTransitionRange(mCachedPtr); }
-			set { Internal_SetfarTransitionRange(mCachedPtr, value); }
+			get { return Internal_GetFarTransitionRange(mCachedPtr); }
+			set { Internal_SetFarTransitionRange(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -102,8 +102,8 @@ namespace bs
 		[NativeWrapper]
 		public float NearBlurAmount
 		{
-			get { return Internal_GetnearBlurAmount(mCachedPtr); }
-			set { Internal_SetnearBlurAmount(mCachedPtr, value); }
+			get { return Internal_GetNearBlurAmount(mCachedPtr); }
+			set { Internal_SetNearBlurAmount(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -114,8 +114,8 @@ namespace bs
 		[NativeWrapper]
 		public float FarBlurAmount
 		{
-			get { return Internal_GetfarBlurAmount(mCachedPtr); }
-			set { Internal_SetfarBlurAmount(mCachedPtr, value); }
+			get { return Internal_GetFarBlurAmount(mCachedPtr); }
+			set { Internal_SetFarBlurAmount(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -127,8 +127,8 @@ namespace bs
 		[NativeWrapper]
 		public float MaxBokehSize
 		{
-			get { return Internal_GetmaxBokehSize(mCachedPtr); }
-			set { Internal_SetmaxBokehSize(mCachedPtr, value); }
+			get { return Internal_GetMaxBokehSize(mCachedPtr); }
+			set { Internal_SetMaxBokehSize(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -141,8 +141,8 @@ namespace bs
 		[NativeWrapper]
 		public float AdaptiveColorThreshold
 		{
-			get { return Internal_GetadaptiveColorThreshold(mCachedPtr); }
-			set { Internal_SetadaptiveColorThreshold(mCachedPtr, value); }
+			get { return Internal_GetAdaptiveColorThreshold(mCachedPtr); }
+			set { Internal_SetAdaptiveColorThreshold(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -156,8 +156,8 @@ namespace bs
 		[NativeWrapper]
 		public float AdaptiveRadiusThreshold
 		{
-			get { return Internal_GetadaptiveRadiusThreshold(mCachedPtr); }
-			set { Internal_SetadaptiveRadiusThreshold(mCachedPtr, value); }
+			get { return Internal_GetAdaptiveRadiusThreshold(mCachedPtr); }
+			set { Internal_SetAdaptiveRadiusThreshold(mCachedPtr, value); }
 		}
 
 		/// <summary>Camera aperture size in mm. Only relevant when using Bokeh depth of field.</summary>
@@ -166,8 +166,8 @@ namespace bs
 		[NativeWrapper]
 		public float ApertureSize
 		{
-			get { return Internal_GetapertureSize(mCachedPtr); }
-			set { Internal_SetapertureSize(mCachedPtr, value); }
+			get { return Internal_GetApertureSize(mCachedPtr); }
+			set { Internal_SetApertureSize(mCachedPtr, value); }
 		}
 
 		/// <summary>Focal length of the camera&apos;s lens (e.g. 75mm). Only relevant when using Bokeh depth of field.</summary>
@@ -176,8 +176,8 @@ namespace bs
 		[NativeWrapper]
 		public float FocalLength
 		{
-			get { return Internal_GetfocalLength(mCachedPtr); }
-			set { Internal_SetfocalLength(mCachedPtr, value); }
+			get { return Internal_GetFocalLength(mCachedPtr); }
+			set { Internal_SetFocalLength(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -191,10 +191,10 @@ namespace bs
 			get
 			{
 				Vector2 temp;
-				Internal_GetsensorSize(mCachedPtr, out temp);
+				Internal_GetSensorSize(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_SetsensorSize(mCachedPtr, ref value); }
+			set { Internal_SetSensorSize(mCachedPtr, ref value); }
 		}
 
 		/// <summary>
@@ -206,8 +206,8 @@ namespace bs
 		[NativeWrapper]
 		public bool BokehOcclusion
 		{
-			get { return Internal_GetbokehOcclusion(mCachedPtr); }
-			set { Internal_SetbokehOcclusion(mCachedPtr, value); }
+			get { return Internal_GetBokehOcclusion(mCachedPtr); }
+			set { Internal_SetBokehOcclusion(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -219,79 +219,79 @@ namespace bs
 		[NativeWrapper]
 		public float OcclusionDepthRange
 		{
-			get { return Internal_GetocclusionDepthRange(mCachedPtr); }
-			set { Internal_SetocclusionDepthRange(mCachedPtr, value); }
+			get { return Internal_GetOcclusionDepthRange(mCachedPtr); }
+			set { Internal_SetOcclusionDepthRange(mCachedPtr, value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_DepthOfFieldSettings(DepthOfFieldSettings managedInstance);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern RRef<Texture> Internal_GetbokehShape(IntPtr thisPtr);
+		private static extern RRef<Texture> Internal_GetBokehShape(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetbokehShape(IntPtr thisPtr, RRef<Texture> value);
+		private static extern void Internal_SetBokehShape(IntPtr thisPtr, RRef<Texture> value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_Getenabled(IntPtr thisPtr);
+		private static extern bool Internal_GetEnabled(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Setenabled(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetEnabled(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern DepthOfFieldType Internal_Gettype(IntPtr thisPtr);
+		private static extern DepthOfFieldType Internal_GetType(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Settype(IntPtr thisPtr, DepthOfFieldType value);
+		private static extern void Internal_SetType(IntPtr thisPtr, DepthOfFieldType value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GetfocalDistance(IntPtr thisPtr);
+		private static extern float Internal_GetFocalDistance(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetfocalDistance(IntPtr thisPtr, float value);
+		private static extern void Internal_SetFocalDistance(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GetfocalRange(IntPtr thisPtr);
+		private static extern float Internal_GetFocalRange(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetfocalRange(IntPtr thisPtr, float value);
+		private static extern void Internal_SetFocalRange(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GetnearTransitionRange(IntPtr thisPtr);
+		private static extern float Internal_GetNearTransitionRange(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetnearTransitionRange(IntPtr thisPtr, float value);
+		private static extern void Internal_SetNearTransitionRange(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GetfarTransitionRange(IntPtr thisPtr);
+		private static extern float Internal_GetFarTransitionRange(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetfarTransitionRange(IntPtr thisPtr, float value);
+		private static extern void Internal_SetFarTransitionRange(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GetnearBlurAmount(IntPtr thisPtr);
+		private static extern float Internal_GetNearBlurAmount(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetnearBlurAmount(IntPtr thisPtr, float value);
+		private static extern void Internal_SetNearBlurAmount(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GetfarBlurAmount(IntPtr thisPtr);
+		private static extern float Internal_GetFarBlurAmount(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetfarBlurAmount(IntPtr thisPtr, float value);
+		private static extern void Internal_SetFarBlurAmount(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GetmaxBokehSize(IntPtr thisPtr);
+		private static extern float Internal_GetMaxBokehSize(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetmaxBokehSize(IntPtr thisPtr, float value);
+		private static extern void Internal_SetMaxBokehSize(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GetadaptiveColorThreshold(IntPtr thisPtr);
+		private static extern float Internal_GetAdaptiveColorThreshold(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetadaptiveColorThreshold(IntPtr thisPtr, float value);
+		private static extern void Internal_SetAdaptiveColorThreshold(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GetadaptiveRadiusThreshold(IntPtr thisPtr);
+		private static extern float Internal_GetAdaptiveRadiusThreshold(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetadaptiveRadiusThreshold(IntPtr thisPtr, float value);
+		private static extern void Internal_SetAdaptiveRadiusThreshold(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GetapertureSize(IntPtr thisPtr);
+		private static extern float Internal_GetApertureSize(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetapertureSize(IntPtr thisPtr, float value);
+		private static extern void Internal_SetApertureSize(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GetfocalLength(IntPtr thisPtr);
+		private static extern float Internal_GetFocalLength(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetfocalLength(IntPtr thisPtr, float value);
+		private static extern void Internal_SetFocalLength(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_GetsensorSize(IntPtr thisPtr, out Vector2 __output);
+		private static extern void Internal_GetSensorSize(IntPtr thisPtr, out Vector2 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetsensorSize(IntPtr thisPtr, ref Vector2 value);
+		private static extern void Internal_SetSensorSize(IntPtr thisPtr, ref Vector2 value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_GetbokehOcclusion(IntPtr thisPtr);
+		private static extern bool Internal_GetBokehOcclusion(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetbokehOcclusion(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetBokehOcclusion(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GetocclusionDepthRange(IntPtr thisPtr);
+		private static extern float Internal_GetOcclusionDepthRange(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetocclusionDepthRange(IntPtr thisPtr, float value);
+		private static extern void Internal_SetOcclusionDepthRange(IntPtr thisPtr, float value);
 	}
 }

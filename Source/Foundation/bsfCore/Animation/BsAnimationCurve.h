@@ -278,7 +278,7 @@ namespace bs
 		 * @param[in]	curve	Curve containing the animation data.
 		 */
 		TNamedAnimationCurve(const String& name, const TAnimationCurve<T> curve)
-			:name(name), curve(curve)
+			:Name(name), Curve(curve)
 		{ }
 
 		/**

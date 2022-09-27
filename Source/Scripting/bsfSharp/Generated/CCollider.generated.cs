@@ -10,11 +10,6 @@ namespace bs
 	 *  @{
 	 */
 
-	/// <summary>
-	/// Collider represents physics geometry that can be in multiple states: - Default: Static geometry that physics objects 
-	/// can collide with. - Trigger: Static geometry that can&apos;t be collided with but will report touch events. - Dynamic: 
-	/// Dynamic geometry that is a part of a Rigidbody. A set of colliders defines the shape of the parent rigidbody.
-	/// </summary>
 	[ShowInInspector]
 	public partial class Collider : Component
 	{
@@ -78,22 +73,10 @@ namespace bs
 			set { Internal_SetCollisionReportMode(mCachedPtr, value); }
 		}
 
-		/// <summary>
-		/// Triggered when some object starts interacting with the collider. Only triggered if proper collision report mode is 
-		/// turned on.
-		/// </summary>
 		public event Action<CollisionData> OnCollisionBegin;
 
-		/// <summary>
-		/// Triggered for every frame that an object remains interacting with a collider. Only triggered if proper collision 
-		/// report mode is turned on.
-		/// </summary>
 		public event Action<CollisionData> OnCollisionStay;
 
-		/// <summary>
-		/// Triggered when some object stops interacting with the collider. Only triggered if proper collision report mode is 
-		/// turned on.
-		/// </summary>
 		public event Action<CollisionData> OnCollisionEnd;
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
@@ -124,15 +107,15 @@ namespace bs
 		private static extern void Internal_SetCollisionReportMode(IntPtr thisPtr, CollisionReportMode mode);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern CollisionReportMode Internal_GetCollisionReportMode(IntPtr thisPtr);
-		private void Internal_onCollisionBegin(ref CollisionData p0)
+		private void Internal_OnCollisionBegin(ref CollisionData p0)
 		{
 			OnCollisionBegin?.Invoke(p0);
 		}
-		private void Internal_onCollisionStay(ref CollisionData p0)
+		private void Internal_OnCollisionStay(ref CollisionData p0)
 		{
 			OnCollisionStay?.Invoke(p0);
 		}
-		private void Internal_onCollisionEnd(ref CollisionData p0)
+		private void Internal_OnCollisionEnd(ref CollisionData p0)
 		{
 			OnCollisionEnd?.Invoke(p0);
 		}

@@ -14,8 +14,8 @@ namespace bs
 	[StructLayout(LayoutKind.Sequential), SerializeObject]
 	public partial struct LightProbeInfo
 	{
-		public int handle;
-		public Vector3 position;
+		public int Handle;
+		public Vector3 Position;
 	}
 
 	/** @} */

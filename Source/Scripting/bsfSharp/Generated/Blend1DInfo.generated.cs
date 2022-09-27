@@ -16,7 +16,7 @@ namespace bs
 	[StructLayout(LayoutKind.Sequential), SerializeObject]
 	public partial struct Blend1DInfo
 	{
-		public BlendClipInfo[] clips;
+		public BlendClipInfo[] Clips;
 	}
 
 	/** @} */

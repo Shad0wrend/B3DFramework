@@ -18,31 +18,31 @@ namespace bs
 		public static AnimationClipState Default()
 		{
 			AnimationClipState value = new AnimationClipState();
-			value.layer = 0;
-			value.time = 0f;
-			value.speed = 1f;
-			value.weight = 1f;
-			value.wrapMode = AnimWrapMode.Loop;
-			value.stopped = false;
+			value.Layer = 0;
+			value.Time = 0f;
+			value.Speed = 1f;
+			value.Weight = 1f;
+			value.WrapMode = AnimWrapMode.Loop;
+			value.Stopped = false;
 
 			return value;
 		}
 
 		/// <summary>Layer the clip is playing on. Multiple clips can be played simulatenously on different layers.</summary>
-		public int layer;
+		public int Layer;
 		/// <summary>Current time the animation is playing from.</summary>
-		public float time;
+		public float Time;
 		/// <summary>Speed at which the animation is playing.</summary>
-		public float speed;
+		public float Speed;
 		/// <summary>Determines how much of an influence does the clip have on the final pose.</summary>
-		public float weight;
+		public float Weight;
 		/// <summary>Determines what happens to other animation clips when a new clip starts playing.</summary>
-		public AnimWrapMode wrapMode;
+		public AnimWrapMode WrapMode;
 		/// <summary>
 		/// Determines should the time be advanced automatically. Certain type of animation clips don&apos;t involve playback 
 		/// (e.g. for blending where animation weight controls the animation).
 		/// </summary>
-		public bool stopped;
+		public bool Stopped;
 	}
 
 	/** @} */

@@ -18,16 +18,16 @@ namespace bs
 		public static ShaderVariationParamValue Default()
 		{
 			ShaderVariationParamValue value = new ShaderVariationParamValue();
-			value.name = "";
-			value.value = 0;
+			value.Name = "";
+			value.Value = 0;
 
 			return value;
 		}
 
 		/// <summary>Optional human-readable name describing what this particular value represents.</summary>
-		public string name;
+		public string Name;
 		/// <summary>Integer value of the parameter.</summary>
-		public int value;
+		public int Value;
 	}
 
 	/** @} */

@@ -19,18 +19,18 @@ namespace bs
 
 	void ScriptParticleGpuSimulationSettings::InitRuntimeData()
 	{
-		metaData.ScriptClass->AddInternalCall("Internal_GetvectorField", (void*)&ScriptParticleGpuSimulationSettings::InternalGetvectorField);
-		metaData.ScriptClass->AddInternalCall("Internal_SetvectorField", (void*)&ScriptParticleGpuSimulationSettings::InternalSetvectorField);
-		metaData.ScriptClass->AddInternalCall("Internal_GetcolorOverLifetime", (void*)&ScriptParticleGpuSimulationSettings::InternalGetcolorOverLifetime);
-		metaData.ScriptClass->AddInternalCall("Internal_SetcolorOverLifetime", (void*)&ScriptParticleGpuSimulationSettings::InternalSetcolorOverLifetime);
-		metaData.ScriptClass->AddInternalCall("Internal_GetsizeScaleOverLifetime", (void*)&ScriptParticleGpuSimulationSettings::InternalGetsizeScaleOverLifetime);
-		metaData.ScriptClass->AddInternalCall("Internal_SetsizeScaleOverLifetime", (void*)&ScriptParticleGpuSimulationSettings::InternalSetsizeScaleOverLifetime);
-		metaData.ScriptClass->AddInternalCall("Internal_Getacceleration", (void*)&ScriptParticleGpuSimulationSettings::InternalGetacceleration);
-		metaData.ScriptClass->AddInternalCall("Internal_Setacceleration", (void*)&ScriptParticleGpuSimulationSettings::InternalSetacceleration);
-		metaData.ScriptClass->AddInternalCall("Internal_Getdrag", (void*)&ScriptParticleGpuSimulationSettings::InternalGetdrag);
-		metaData.ScriptClass->AddInternalCall("Internal_Setdrag", (void*)&ScriptParticleGpuSimulationSettings::InternalSetdrag);
-		metaData.ScriptClass->AddInternalCall("Internal_GetdepthCollision", (void*)&ScriptParticleGpuSimulationSettings::InternalGetdepthCollision);
-		metaData.ScriptClass->AddInternalCall("Internal_SetdepthCollision", (void*)&ScriptParticleGpuSimulationSettings::InternalSetdepthCollision);
+		metaData.ScriptClass->AddInternalCall("Internal_GetVectorField", (void*)&ScriptParticleGpuSimulationSettings::InternalGetVectorField);
+		metaData.ScriptClass->AddInternalCall("Internal_SetVectorField", (void*)&ScriptParticleGpuSimulationSettings::InternalSetVectorField);
+		metaData.ScriptClass->AddInternalCall("Internal_GetColorOverLifetime", (void*)&ScriptParticleGpuSimulationSettings::InternalGetColorOverLifetime);
+		metaData.ScriptClass->AddInternalCall("Internal_SetColorOverLifetime", (void*)&ScriptParticleGpuSimulationSettings::InternalSetColorOverLifetime);
+		metaData.ScriptClass->AddInternalCall("Internal_GetSizeScaleOverLifetime", (void*)&ScriptParticleGpuSimulationSettings::InternalGetSizeScaleOverLifetime);
+		metaData.ScriptClass->AddInternalCall("Internal_SetSizeScaleOverLifetime", (void*)&ScriptParticleGpuSimulationSettings::InternalSetSizeScaleOverLifetime);
+		metaData.ScriptClass->AddInternalCall("Internal_GetAcceleration", (void*)&ScriptParticleGpuSimulationSettings::InternalGetAcceleration);
+		metaData.ScriptClass->AddInternalCall("Internal_SetAcceleration", (void*)&ScriptParticleGpuSimulationSettings::InternalSetAcceleration);
+		metaData.ScriptClass->AddInternalCall("Internal_GetDrag", (void*)&ScriptParticleGpuSimulationSettings::InternalGetDrag);
+		metaData.ScriptClass->AddInternalCall("Internal_SetDrag", (void*)&ScriptParticleGpuSimulationSettings::InternalSetDrag);
+		metaData.ScriptClass->AddInternalCall("Internal_GetDepthCollision", (void*)&ScriptParticleGpuSimulationSettings::InternalGetDepthCollision);
+		metaData.ScriptClass->AddInternalCall("Internal_SetDepthCollision", (void*)&ScriptParticleGpuSimulationSettings::InternalSetDepthCollision);
 
 	}
 
@@ -45,7 +45,7 @@ namespace bs
 		new (bs_alloc<ScriptParticleGpuSimulationSettings>()) ScriptParticleGpuSimulationSettings(managedInstance, value);
 		return managedInstance;
 	}
-	MonoObject* ScriptParticleGpuSimulationSettings::InternalGetvectorField(ScriptParticleGpuSimulationSettings* thisPtr)
+	MonoObject* ScriptParticleGpuSimulationSettings::InternalGetVectorField(ScriptParticleGpuSimulationSettings* thisPtr)
 	{
 		SPtr<ParticleVectorFieldSettings> tmp__output = bs_shared_ptr_new<ParticleVectorFieldSettings>();
 		*tmp__output = thisPtr->GetInternal()->VectorField;
@@ -56,7 +56,7 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptParticleGpuSimulationSettings::InternalSetvectorField(ScriptParticleGpuSimulationSettings* thisPtr, MonoObject* value)
+	void ScriptParticleGpuSimulationSettings::InternalSetVectorField(ScriptParticleGpuSimulationSettings* thisPtr, MonoObject* value)
 	{
 		SPtr<ParticleVectorFieldSettings> tmpvalue;
 		ScriptParticleVectorFieldSettings* scriptvalue;
@@ -66,7 +66,7 @@ namespace bs
 		thisPtr->GetInternal()->VectorField = *tmpvalue;
 	}
 
-	MonoObject* ScriptParticleGpuSimulationSettings::InternalGetcolorOverLifetime(ScriptParticleGpuSimulationSettings* thisPtr)
+	MonoObject* ScriptParticleGpuSimulationSettings::InternalGetColorOverLifetime(ScriptParticleGpuSimulationSettings* thisPtr)
 	{
 		SPtr<TColorDistribution<ColorGradient>> tmp__output = bs_shared_ptr_new<TColorDistribution<ColorGradient>>();
 		*tmp__output = thisPtr->GetInternal()->ColorOverLifetime;
@@ -77,7 +77,7 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptParticleGpuSimulationSettings::InternalSetcolorOverLifetime(ScriptParticleGpuSimulationSettings* thisPtr, MonoObject* value)
+	void ScriptParticleGpuSimulationSettings::InternalSetColorOverLifetime(ScriptParticleGpuSimulationSettings* thisPtr, MonoObject* value)
 	{
 		SPtr<TColorDistribution<ColorGradient>> tmpvalue;
 		ScriptTColorDistributionColorGradient* scriptvalue;
@@ -87,7 +87,7 @@ namespace bs
 		thisPtr->GetInternal()->ColorOverLifetime = *tmpvalue;
 	}
 
-	MonoObject* ScriptParticleGpuSimulationSettings::InternalGetsizeScaleOverLifetime(ScriptParticleGpuSimulationSettings* thisPtr)
+	MonoObject* ScriptParticleGpuSimulationSettings::InternalGetSizeScaleOverLifetime(ScriptParticleGpuSimulationSettings* thisPtr)
 	{
 		SPtr<TDistribution<Vector2>> tmp__output = bs_shared_ptr_new<TDistribution<Vector2>>();
 		*tmp__output = thisPtr->GetInternal()->SizeScaleOverLifetime;
@@ -98,7 +98,7 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptParticleGpuSimulationSettings::InternalSetsizeScaleOverLifetime(ScriptParticleGpuSimulationSettings* thisPtr, MonoObject* value)
+	void ScriptParticleGpuSimulationSettings::InternalSetSizeScaleOverLifetime(ScriptParticleGpuSimulationSettings* thisPtr, MonoObject* value)
 	{
 		SPtr<TDistribution<Vector2>> tmpvalue;
 		ScriptTDistributionVector2* scriptvalue;
@@ -108,7 +108,7 @@ namespace bs
 		thisPtr->GetInternal()->SizeScaleOverLifetime = *tmpvalue;
 	}
 
-	void ScriptParticleGpuSimulationSettings::InternalGetacceleration(ScriptParticleGpuSimulationSettings* thisPtr, Vector3* __output)
+	void ScriptParticleGpuSimulationSettings::InternalGetAcceleration(ScriptParticleGpuSimulationSettings* thisPtr, Vector3* __output)
 	{
 		Vector3 tmp__output;
 		tmp__output = thisPtr->GetInternal()->Acceleration;
@@ -118,12 +118,12 @@ namespace bs
 
 	}
 
-	void ScriptParticleGpuSimulationSettings::InternalSetacceleration(ScriptParticleGpuSimulationSettings* thisPtr, Vector3* value)
+	void ScriptParticleGpuSimulationSettings::InternalSetAcceleration(ScriptParticleGpuSimulationSettings* thisPtr, Vector3* value)
 	{
 		thisPtr->GetInternal()->Acceleration = *value;
 	}
 
-	float ScriptParticleGpuSimulationSettings::InternalGetdrag(ScriptParticleGpuSimulationSettings* thisPtr)
+	float ScriptParticleGpuSimulationSettings::InternalGetDrag(ScriptParticleGpuSimulationSettings* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->GetInternal()->Drag;
@@ -134,12 +134,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptParticleGpuSimulationSettings::InternalSetdrag(ScriptParticleGpuSimulationSettings* thisPtr, float value)
+	void ScriptParticleGpuSimulationSettings::InternalSetDrag(ScriptParticleGpuSimulationSettings* thisPtr, float value)
 	{
 		thisPtr->GetInternal()->Drag = value;
 	}
 
-	MonoObject* ScriptParticleGpuSimulationSettings::InternalGetdepthCollision(ScriptParticleGpuSimulationSettings* thisPtr)
+	MonoObject* ScriptParticleGpuSimulationSettings::InternalGetDepthCollision(ScriptParticleGpuSimulationSettings* thisPtr)
 	{
 		SPtr<ParticleDepthCollisionSettings> tmp__output = bs_shared_ptr_new<ParticleDepthCollisionSettings>();
 		*tmp__output = thisPtr->GetInternal()->DepthCollision;
@@ -150,7 +150,7 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptParticleGpuSimulationSettings::InternalSetdepthCollision(ScriptParticleGpuSimulationSettings* thisPtr, MonoObject* value)
+	void ScriptParticleGpuSimulationSettings::InternalSetDepthCollision(ScriptParticleGpuSimulationSettings* thisPtr, MonoObject* value)
 	{
 		SPtr<ParticleDepthCollisionSettings> tmpvalue;
 		ScriptParticleDepthCollisionSettings* scriptvalue;

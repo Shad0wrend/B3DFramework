@@ -16,16 +16,16 @@ namespace bs
 		:ScriptComponentBase(managedInstance)
 	 { }
 
-	ScriptCCollider::onCollisionBeginThunkDef ScriptCCollider::onCollisionBeginThunk; 
-	ScriptCCollider::onCollisionStayThunkDef ScriptCCollider::onCollisionStayThunk; 
-	ScriptCCollider::onCollisionEndThunkDef ScriptCCollider::onCollisionEndThunk; 
+	ScriptCCollider::OnCollisionBeginThunkDef ScriptCCollider::OnCollisionBeginThunk; 
+	ScriptCCollider::OnCollisionStayThunkDef ScriptCCollider::OnCollisionStayThunk; 
+	ScriptCCollider::OnCollisionEndThunkDef ScriptCCollider::OnCollisionEndThunk; 
 
 	ScriptCCollider::ScriptCCollider(MonoObject* managedInstance, const GameObjectHandle<CCollider>& value)
 		:TScriptComponent(managedInstance, value)
 	{
-		value->OnCollisionBegin.Connect(std::bind(&ScriptCCollider::onCollisionBegin, this, std::placeholders::_1));
-		value->OnCollisionStay.Connect(std::bind(&ScriptCCollider::onCollisionStay, this, std::placeholders::_1));
-		value->OnCollisionEnd.Connect(std::bind(&ScriptCCollider::onCollisionEnd, this, std::placeholders::_1));
+		value->OnCollisionBegin.Connect(std::bind(&ScriptCCollider::OnCollisionBegin, this, std::placeholders::_1));
+		value->OnCollisionStay.Connect(std::bind(&ScriptCCollider::OnCollisionStay, this, std::placeholders::_1));
+		value->OnCollisionEnd.Connect(std::bind(&ScriptCCollider::OnCollisionEnd, this, std::placeholders::_1));
 	}
 
 	void ScriptCCollider::InitRuntimeData()
@@ -45,36 +45,36 @@ namespace bs
 		metaData.ScriptClass->AddInternalCall("Internal_SetCollisionReportMode", (void*)&ScriptCCollider::InternalSetCollisionReportMode);
 		metaData.ScriptClass->AddInternalCall("Internal_GetCollisionReportMode", (void*)&ScriptCCollider::InternalGetCollisionReportMode);
 
-		onCollisionBeginThunk = (onCollisionBeginThunkDef)metaData.ScriptClass->GetMethodExact("Internal_onCollisionBegin", "CollisionData&")->GetThunk();
-		onCollisionStayThunk = (onCollisionStayThunkDef)metaData.ScriptClass->GetMethodExact("Internal_onCollisionStay", "CollisionData&")->GetThunk();
-		onCollisionEndThunk = (onCollisionEndThunkDef)metaData.ScriptClass->GetMethodExact("Internal_onCollisionEnd", "CollisionData&")->GetThunk();
+		OnCollisionBeginThunk = (OnCollisionBeginThunkDef)metaData.ScriptClass->GetMethodExact("Internal_OnCollisionBegin", "CollisionData&")->GetThunk();
+		OnCollisionStayThunk = (OnCollisionStayThunkDef)metaData.ScriptClass->GetMethodExact("Internal_OnCollisionStay", "CollisionData&")->GetThunk();
+		OnCollisionEndThunk = (OnCollisionEndThunkDef)metaData.ScriptClass->GetMethodExact("Internal_OnCollisionEnd", "CollisionData&")->GetThunk();
 	}
 
-	void ScriptCCollider::onCollisionBegin(const CollisionData& p0)
+	void ScriptCCollider::OnCollisionBegin(const CollisionData& p0)
 	{
 		MonoObject* tmpp0;
 		__CollisionDataInterop interopp0;
 		interopp0 = ScriptCollisionData::ToInterop(p0);
 		tmpp0 = ScriptCollisionData::Box(interopp0);
-		MonoUtil::InvokeThunk(onCollisionBeginThunk, GetManagedInstance(), tmpp0);
+		MonoUtil::InvokeThunk(OnCollisionBeginThunk, GetManagedInstance(), tmpp0);
 	}
 
-	void ScriptCCollider::onCollisionStay(const CollisionData& p0)
+	void ScriptCCollider::OnCollisionStay(const CollisionData& p0)
 	{
 		MonoObject* tmpp0;
 		__CollisionDataInterop interopp0;
 		interopp0 = ScriptCollisionData::ToInterop(p0);
 		tmpp0 = ScriptCollisionData::Box(interopp0);
-		MonoUtil::InvokeThunk(onCollisionStayThunk, GetManagedInstance(), tmpp0);
+		MonoUtil::InvokeThunk(OnCollisionStayThunk, GetManagedInstance(), tmpp0);
 	}
 
-	void ScriptCCollider::onCollisionEnd(const CollisionData& p0)
+	void ScriptCCollider::OnCollisionEnd(const CollisionData& p0)
 	{
 		MonoObject* tmpp0;
 		__CollisionDataInterop interopp0;
 		interopp0 = ScriptCollisionData::ToInterop(p0);
 		tmpp0 = ScriptCollisionData::Box(interopp0);
-		MonoUtil::InvokeThunk(onCollisionEndThunk, GetManagedInstance(), tmpp0);
+		MonoUtil::InvokeThunk(OnCollisionEndThunk, GetManagedInstance(), tmpp0);
 	}
 	void ScriptCCollider::InternalSetIsTrigger(ScriptCColliderBase* thisPtr, bool value)
 	{

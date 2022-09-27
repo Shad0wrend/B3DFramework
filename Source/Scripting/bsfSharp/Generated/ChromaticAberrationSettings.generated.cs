@@ -26,8 +26,8 @@ namespace bs
 		[NativeWrapper]
 		public RRef<Texture> FringeTexture
 		{
-			get { return Internal_GetfringeTexture(mCachedPtr); }
-			set { Internal_SetfringeTexture(mCachedPtr, value); }
+			get { return Internal_GetFringeTexture(mCachedPtr); }
+			set { Internal_SetFringeTexture(mCachedPtr, value); }
 		}
 
 		/// <summary>Enables or disables the effect.</summary>
@@ -35,8 +35,8 @@ namespace bs
 		[NativeWrapper]
 		public bool Enabled
 		{
-			get { return Internal_Getenabled(mCachedPtr); }
-			set { Internal_Setenabled(mCachedPtr, value); }
+			get { return Internal_GetEnabled(mCachedPtr); }
+			set { Internal_SetEnabled(mCachedPtr, value); }
 		}
 
 		/// <summary>Type of algorithm to use for rendering the effect.</summary>
@@ -44,8 +44,8 @@ namespace bs
 		[NativeWrapper]
 		public ChromaticAberrationType Type
 		{
-			get { return Internal_Gettype(mCachedPtr); }
-			set { Internal_Settype(mCachedPtr, value); }
+			get { return Internal_GetType(mCachedPtr); }
+			set { Internal_SetType(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -57,27 +57,27 @@ namespace bs
 		[NativeWrapper]
 		public float ShiftAmount
 		{
-			get { return Internal_GetshiftAmount(mCachedPtr); }
-			set { Internal_SetshiftAmount(mCachedPtr, value); }
+			get { return Internal_GetShiftAmount(mCachedPtr); }
+			set { Internal_SetShiftAmount(mCachedPtr, value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_ChromaticAberrationSettings(ChromaticAberrationSettings managedInstance);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern RRef<Texture> Internal_GetfringeTexture(IntPtr thisPtr);
+		private static extern RRef<Texture> Internal_GetFringeTexture(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetfringeTexture(IntPtr thisPtr, RRef<Texture> value);
+		private static extern void Internal_SetFringeTexture(IntPtr thisPtr, RRef<Texture> value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_Getenabled(IntPtr thisPtr);
+		private static extern bool Internal_GetEnabled(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Setenabled(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetEnabled(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ChromaticAberrationType Internal_Gettype(IntPtr thisPtr);
+		private static extern ChromaticAberrationType Internal_GetType(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Settype(IntPtr thisPtr, ChromaticAberrationType value);
+		private static extern void Internal_SetType(IntPtr thisPtr, ChromaticAberrationType value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GetshiftAmount(IntPtr thisPtr);
+		private static extern float Internal_GetShiftAmount(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetshiftAmount(IntPtr thisPtr, float value);
+		private static extern void Internal_SetShiftAmount(IntPtr thisPtr, float value);
 	}
 }

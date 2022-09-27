@@ -10,14 +10,6 @@ namespace bs
 	 *  @{
 	 */
 
-	/// <summary>
-	/// Controls spawning, evolution and rendering of particles. Particles can be 2D or 3D, with a variety of rendering 
-	/// options. Particle system should be used for rendering objects that cannot properly be represented using static or 
-	/// animated meshes, like liquids, smoke or flames.
-	///
-	/// The particle system requires you to specify at least one ParticleEmitter, which controls how are new particles 
-	/// generated. You will also want to specify one or more ParticleEvolver%s, which change particle properties over time.
-	/// </summary>
 	[ShowInInspector]
 	public partial class ParticleSystem : Component
 	{

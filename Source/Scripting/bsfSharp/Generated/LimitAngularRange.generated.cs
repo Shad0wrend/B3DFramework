@@ -18,11 +18,11 @@ namespace bs
 		public static LimitAngularRange Default()
 		{
 			LimitAngularRange value = new LimitAngularRange();
-			value.lower = Radian.Default();
-			value.upper = Radian.Default();
-			value.contactDist = -1f;
-			value.restitution = 0f;
-			value.spring = Spring.Default();
+			value.Lower = Radian.Default();
+			value.Upper = Radian.Default();
+			value.ContactDist = -1f;
+			value.Restitution = 0f;
+			value.Spring = Spring.Default();
 
 			return value;
 		}
@@ -38,11 +38,11 @@ namespace bs
 		/// </param>
 		public LimitAngularRange(Radian lower, Radian upper, float contactDist = -1f)
 		{
-			this.lower = lower;
-			this.upper = upper;
-			this.contactDist = -1f;
-			this.restitution = 0f;
-			this.spring = Spring.Default();
+			this.Lower = lower;
+			this.Upper = upper;
+			this.ContactDist = -1f;
+			this.Restitution = 0f;
+			this.Spring = Spring.Default();
 		}
 
 		/// <summary>
@@ -60,11 +60,11 @@ namespace bs
 		/// </param>
 		public LimitAngularRange(Radian lower, Radian upper, Spring spring, float restitution = 0f)
 		{
-			this.lower = lower;
-			this.upper = upper;
-			this.contactDist = -1f;
-			this.restitution = 0f;
-			this.spring = Spring.Default();
+			this.Lower = lower;
+			this.Upper = upper;
+			this.ContactDist = -1f;
+			this.Restitution = 0f;
+			this.Spring = Spring.Default();
 		}
 
 		///<summary>
@@ -73,9 +73,9 @@ namespace bs
 		public LimitCommon GetBase()
 		{
 			LimitCommon value;
-			value.contactDist = contactDist;
-			value.restitution = restitution;
-			value.spring = spring;
+			value.ContactDist = ContactDist;
+			value.Restitution = Restitution;
+			value.Spring = Spring;
 			return value;
 		}
 
@@ -85,29 +85,29 @@ namespace bs
 		///</summary>
 		public void SetBase(LimitCommon value)
 		{
-			contactDist = value.contactDist;
-			restitution = value.restitution;
-			spring = value.spring;
+			ContactDist = value.ContactDist;
+			Restitution = value.Restitution;
+			Spring = value.Spring;
 		}
 
 		/// <summary>Lower angle of the limit. Must be less than #upper.</summary>
 		[Range(0f, 359f, false)]
-		public Radian lower;
+		public Radian Lower;
 		/// <summary>Upper angle of the limit. Must be less than #lower.</summary>
 		[Range(0f, 359f, false)]
-		public Radian upper;
+		public Radian Upper;
 		/// <summary>
 		/// Distance from the limit at which it becomes active. Allows the solver to activate earlier than the limit is reached 
 		/// to avoid breaking the limit.
 		/// </summary>
-		public float contactDist;
+		public float ContactDist;
 		/// <summary>
 		/// Controls how do objects react when the limit is reached, values closer to zero specify non-ellastic collision, while 
 		/// those closer to one specify more ellastic (i.e bouncy) collision. Must be in [0, 1] range.
 		/// </summary>
-		public float restitution;
+		public float Restitution;
 		/// <summary>Spring that controls how are the bodies pulled back towards the limit when they breach it.</summary>
-		public Spring spring;
+		public Spring Spring;
 	}
 
 	/** @} */

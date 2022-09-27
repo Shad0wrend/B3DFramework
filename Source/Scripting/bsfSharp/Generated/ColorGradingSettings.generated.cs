@@ -23,10 +23,10 @@ namespace bs
 			get
 			{
 				Vector3 temp;
-				Internal_Getsaturation(mCachedPtr, out temp);
+				Internal_GetSaturation(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_Setsaturation(mCachedPtr, ref value); }
+			set { Internal_SetSaturation(mCachedPtr, ref value); }
 		}
 
 		/// <summary>
@@ -40,10 +40,10 @@ namespace bs
 			get
 			{
 				Vector3 temp;
-				Internal_Getcontrast(mCachedPtr, out temp);
+				Internal_GetContrast(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_Setcontrast(mCachedPtr, ref value); }
+			set { Internal_SetContrast(mCachedPtr, ref value); }
 		}
 
 		/// <summary>
@@ -56,10 +56,10 @@ namespace bs
 			get
 			{
 				Vector3 temp;
-				Internal_Getgain(mCachedPtr, out temp);
+				Internal_GetGain(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_Setgain(mCachedPtr, ref value); }
+			set { Internal_SetGain(mCachedPtr, ref value); }
 		}
 
 		/// <summary>
@@ -72,27 +72,27 @@ namespace bs
 			get
 			{
 				Vector3 temp;
-				Internal_Getoffset(mCachedPtr, out temp);
+				Internal_GetOffset(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_Setoffset(mCachedPtr, ref value); }
+			set { Internal_SetOffset(mCachedPtr, ref value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Getsaturation(IntPtr thisPtr, out Vector3 __output);
+		private static extern void Internal_GetSaturation(IntPtr thisPtr, out Vector3 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Setsaturation(IntPtr thisPtr, ref Vector3 value);
+		private static extern void Internal_SetSaturation(IntPtr thisPtr, ref Vector3 value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Getcontrast(IntPtr thisPtr, out Vector3 __output);
+		private static extern void Internal_GetContrast(IntPtr thisPtr, out Vector3 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Setcontrast(IntPtr thisPtr, ref Vector3 value);
+		private static extern void Internal_SetContrast(IntPtr thisPtr, ref Vector3 value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Getgain(IntPtr thisPtr, out Vector3 __output);
+		private static extern void Internal_GetGain(IntPtr thisPtr, out Vector3 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Setgain(IntPtr thisPtr, ref Vector3 value);
+		private static extern void Internal_SetGain(IntPtr thisPtr, ref Vector3 value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Getoffset(IntPtr thisPtr, out Vector3 __output);
+		private static extern void Internal_GetOffset(IntPtr thisPtr, out Vector3 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Setoffset(IntPtr thisPtr, ref Vector3 value);
+		private static extern void Internal_SetOffset(IntPtr thisPtr, ref Vector3 value);
 	}
 }

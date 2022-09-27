@@ -20,11 +20,11 @@ namespace bs
 
 	private:
 		static void InternalFilmGrainSettings(MonoObject* managedInstance);
-		static bool InternalGetenabled(ScriptFilmGrainSettings* thisPtr);
-		static void InternalSetenabled(ScriptFilmGrainSettings* thisPtr, bool value);
-		static float InternalGetintensity(ScriptFilmGrainSettings* thisPtr);
-		static void InternalSetintensity(ScriptFilmGrainSettings* thisPtr, float value);
-		static float InternalGetspeed(ScriptFilmGrainSettings* thisPtr);
-		static void InternalSetspeed(ScriptFilmGrainSettings* thisPtr, float value);
+		static bool InternalGetEnabled(ScriptFilmGrainSettings* thisPtr);
+		static void InternalSetEnabled(ScriptFilmGrainSettings* thisPtr, bool value);
+		static float InternalGetIntensity(ScriptFilmGrainSettings* thisPtr);
+		static void InternalSetIntensity(ScriptFilmGrainSettings* thisPtr, float value);
+		static float InternalGetSpeed(ScriptFilmGrainSettings* thisPtr);
+		static void InternalSetSpeed(ScriptFilmGrainSettings* thisPtr, float value);
 	};
 }

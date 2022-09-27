@@ -14,7 +14,7 @@ namespace bs
 	[StructLayout(LayoutKind.Sequential), SerializeObject]
 	public partial struct AudioDevice
 	{
-		public string name;
+		public string Name;
 	}
 
 	/** @} */

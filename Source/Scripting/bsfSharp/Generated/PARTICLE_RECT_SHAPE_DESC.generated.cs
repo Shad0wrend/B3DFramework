@@ -15,7 +15,7 @@ namespace bs
 	public partial struct ParticleRectShapeOptions
 	{
 		/// <summary>Extents of the rectangle.</summary>
-		public Vector2 extents;
+		public Vector2 Extents;
 	}
 
 	/** @} */

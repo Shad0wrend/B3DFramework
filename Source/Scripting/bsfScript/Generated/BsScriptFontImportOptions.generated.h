@@ -23,18 +23,18 @@ namespace bs
 		static MonoObject* Create(const SPtr<FontImportOptions>& value);
 
 	private:
-		static MonoArray* InternalGetfontSizes(ScriptFontImportOptions* thisPtr);
-		static void InternalSetfontSizes(ScriptFontImportOptions* thisPtr, MonoArray* value);
-		static MonoArray* InternalGetcharIndexRanges(ScriptFontImportOptions* thisPtr);
-		static void InternalSetcharIndexRanges(ScriptFontImportOptions* thisPtr, MonoArray* value);
-		static uint32_t InternalGetdpi(ScriptFontImportOptions* thisPtr);
-		static void InternalSetdpi(ScriptFontImportOptions* thisPtr, uint32_t value);
-		static FontRenderMode InternalGetrenderMode(ScriptFontImportOptions* thisPtr);
-		static void InternalSetrenderMode(ScriptFontImportOptions* thisPtr, FontRenderMode value);
-		static bool InternalGetbold(ScriptFontImportOptions* thisPtr);
-		static void InternalSetbold(ScriptFontImportOptions* thisPtr, bool value);
-		static bool InternalGetitalic(ScriptFontImportOptions* thisPtr);
-		static void InternalSetitalic(ScriptFontImportOptions* thisPtr, bool value);
+		static MonoArray* InternalGetFontSizes(ScriptFontImportOptions* thisPtr);
+		static void InternalSetFontSizes(ScriptFontImportOptions* thisPtr, MonoArray* value);
+		static MonoArray* InternalGetCharIndexRanges(ScriptFontImportOptions* thisPtr);
+		static void InternalSetCharIndexRanges(ScriptFontImportOptions* thisPtr, MonoArray* value);
+		static uint32_t InternalGetDpi(ScriptFontImportOptions* thisPtr);
+		static void InternalSetDpi(ScriptFontImportOptions* thisPtr, uint32_t value);
+		static FontRenderMode InternalGetRenderMode(ScriptFontImportOptions* thisPtr);
+		static void InternalSetRenderMode(ScriptFontImportOptions* thisPtr, FontRenderMode value);
+		static bool InternalGetBold(ScriptFontImportOptions* thisPtr);
+		static void InternalSetBold(ScriptFontImportOptions* thisPtr, bool value);
+		static bool InternalGetItalic(ScriptFontImportOptions* thisPtr);
+		static void InternalSetItalic(ScriptFontImportOptions* thisPtr, bool value);
 		static void InternalCreate(MonoObject* managedInstance);
 	};
 #endif

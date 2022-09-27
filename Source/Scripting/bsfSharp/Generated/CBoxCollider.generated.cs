@@ -10,7 +10,6 @@ namespace bs
 	 *  @{
 	 */
 
-	/// <summary>Collider with box geometry.</summary>
 	[ShowInInspector]
 	public partial class BoxCollider : Collider
 	{

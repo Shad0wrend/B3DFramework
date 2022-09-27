@@ -13,13 +13,13 @@
 namespace bs
 {
 #if !BS_IS_BANSHEE3D
-	ScriptResources::onResourceLoadedThunkDef ScriptResources::onResourceLoadedThunk; 
-	ScriptResources::onResourceDestroyedThunkDef ScriptResources::onResourceDestroyedThunk; 
-	ScriptResources::onResourceModifiedThunkDef ScriptResources::onResourceModifiedThunk; 
+	ScriptResources::OnResourceLoadedThunkDef ScriptResources::OnResourceLoadedThunk; 
+	ScriptResources::OnResourceDestroyedThunkDef ScriptResources::OnResourceDestroyedThunk; 
+	ScriptResources::OnResourceModifiedThunkDef ScriptResources::OnResourceModifiedThunk; 
 
-	HEvent ScriptResources::onResourceLoadedConn;
-	HEvent ScriptResources::onResourceDestroyedConn;
-	HEvent ScriptResources::onResourceModifiedConn;
+	HEvent ScriptResources::OnResourceLoadedConn;
+	HEvent ScriptResources::OnResourceDestroyedConn;
+	HEvent ScriptResources::OnResourceModifiedConn;
 
 	ScriptResources::ScriptResources(MonoObject* managedInstance)
 		:ScriptObject(managedInstance)
@@ -29,42 +29,42 @@ namespace bs
 
 	void ScriptResources::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_Load", (void*)&ScriptResources::InternalLoad);
-		metaData.scriptClass->AddInternalCall("Internal_LoadAsync", (void*)&ScriptResources::InternalLoadAsync);
-		metaData.scriptClass->AddInternalCall("Internal_LoadFromUuid", (void*)&ScriptResources::InternalLoadFromUuid);
-		metaData.scriptClass->AddInternalCall("Internal_Release", (void*)&ScriptResources::InternalRelease);
-		metaData.scriptClass->AddInternalCall("Internal_UnloadAllUnused", (void*)&ScriptResources::InternalUnloadAllUnused);
-		metaData.scriptClass->AddInternalCall("Internal_UnloadAll", (void*)&ScriptResources::InternalUnloadAll);
-		metaData.scriptClass->AddInternalCall("Internal_Save", (void*)&ScriptResources::InternalSave);
-		metaData.scriptClass->AddInternalCall("Internal_Save0", (void*)&ScriptResources::InternalSave0);
-		metaData.scriptClass->AddInternalCall("Internal_GetDependencies", (void*)&ScriptResources::InternalGetDependencies);
-		metaData.scriptClass->AddInternalCall("Internal_IsLoaded", (void*)&ScriptResources::InternalIsLoaded);
-		metaData.scriptClass->AddInternalCall("Internal_GetLoadProgress", (void*)&ScriptResources::InternalGetLoadProgress);
-		metaData.scriptClass->AddInternalCall("Internal_RegisterResourceManifest", (void*)&ScriptResources::InternalRegisterResourceManifest);
-		metaData.scriptClass->AddInternalCall("Internal_UnregisterResourceManifest", (void*)&ScriptResources::InternalUnregisterResourceManifest);
-		metaData.scriptClass->AddInternalCall("Internal_GetResourceManifest", (void*)&ScriptResources::InternalGetResourceManifest);
-		metaData.scriptClass->AddInternalCall("Internal_GetFilePathFromUuid", (void*)&ScriptResources::InternalGetFilePathFromUuid);
-		metaData.scriptClass->AddInternalCall("Internal_GetUuidFromFilePath", (void*)&ScriptResources::InternalGetUuidFromFilePath);
+		metaData.ScriptClass->AddInternalCall("Internal_Load", (void*)&ScriptResources::InternalLoad);
+		metaData.ScriptClass->AddInternalCall("Internal_LoadAsync", (void*)&ScriptResources::InternalLoadAsync);
+		metaData.ScriptClass->AddInternalCall("Internal_LoadFromUuid", (void*)&ScriptResources::InternalLoadFromUuid);
+		metaData.ScriptClass->AddInternalCall("Internal_Release", (void*)&ScriptResources::InternalRelease);
+		metaData.ScriptClass->AddInternalCall("Internal_UnloadAllUnused", (void*)&ScriptResources::InternalUnloadAllUnused);
+		metaData.ScriptClass->AddInternalCall("Internal_UnloadAll", (void*)&ScriptResources::InternalUnloadAll);
+		metaData.ScriptClass->AddInternalCall("Internal_Save", (void*)&ScriptResources::InternalSave);
+		metaData.ScriptClass->AddInternalCall("Internal_Save0", (void*)&ScriptResources::InternalSave0);
+		metaData.ScriptClass->AddInternalCall("Internal_GetDependencies", (void*)&ScriptResources::InternalGetDependencies);
+		metaData.ScriptClass->AddInternalCall("Internal_IsLoaded", (void*)&ScriptResources::InternalIsLoaded);
+		metaData.ScriptClass->AddInternalCall("Internal_GetLoadProgress", (void*)&ScriptResources::InternalGetLoadProgress);
+		metaData.ScriptClass->AddInternalCall("Internal_RegisterResourceManifest", (void*)&ScriptResources::InternalRegisterResourceManifest);
+		metaData.ScriptClass->AddInternalCall("Internal_UnregisterResourceManifest", (void*)&ScriptResources::InternalUnregisterResourceManifest);
+		metaData.ScriptClass->AddInternalCall("Internal_GetResourceManifest", (void*)&ScriptResources::InternalGetResourceManifest);
+		metaData.ScriptClass->AddInternalCall("Internal_GetFilePathFromUuid", (void*)&ScriptResources::InternalGetFilePathFromUuid);
+		metaData.ScriptClass->AddInternalCall("Internal_GetUuidFromFilePath", (void*)&ScriptResources::InternalGetUuidFromFilePath);
 
-		onResourceLoadedThunk = (onResourceLoadedThunkDef)metaData.scriptClass->GetMethodExact("Internal_onResourceLoaded", "RRefBase")->GetThunk();
-		onResourceDestroyedThunk = (onResourceDestroyedThunkDef)metaData.scriptClass->GetMethodExact("Internal_onResourceDestroyed", "UUID&")->GetThunk();
-		onResourceModifiedThunk = (onResourceModifiedThunkDef)metaData.scriptClass->GetMethodExact("Internal_onResourceModified", "RRefBase")->GetThunk();
+		OnResourceLoadedThunk = (OnResourceLoadedThunkDef)metaData.ScriptClass->GetMethodExact("Internal_OnResourceLoaded", "RRefBase")->GetThunk();
+		OnResourceDestroyedThunk = (OnResourceDestroyedThunkDef)metaData.ScriptClass->GetMethodExact("Internal_OnResourceDestroyed", "UUID&")->GetThunk();
+		OnResourceModifiedThunk = (OnResourceModifiedThunkDef)metaData.ScriptClass->GetMethodExact("Internal_OnResourceModified", "RRefBase")->GetThunk();
 	}
 
 	void ScriptResources::StartUp()
 	{
-		onResourceLoadedConn = Resources::Instance().onResourceLoaded.Connect(&ScriptResources::onResourceLoaded);
-		onResourceDestroyedConn = Resources::Instance().onResourceDestroyed.Connect(&ScriptResources::onResourceDestroyed);
-		onResourceModifiedConn = Resources::Instance().onResourceModified.Connect(&ScriptResources::onResourceModified);
+		OnResourceLoadedConn = Resources::Instance().OnResourceLoaded.Connect(&ScriptResources::OnResourceLoaded);
+		OnResourceDestroyedConn = Resources::Instance().OnResourceDestroyed.Connect(&ScriptResources::OnResourceDestroyed);
+		OnResourceModifiedConn = Resources::Instance().OnResourceModified.Connect(&ScriptResources::OnResourceModified);
 	}
 	void ScriptResources::ShutDown()
 	{
-		onResourceLoadedConn.Disconnect();
-		onResourceDestroyedConn.Disconnect();
-		onResourceModifiedConn.Disconnect();
+		OnResourceLoadedConn.Disconnect();
+		OnResourceDestroyedConn.Disconnect();
+		OnResourceModifiedConn.Disconnect();
 	}
 
-	void ScriptResources::onResourceLoaded(const ResourceHandle<Resource>& p0)
+	void ScriptResources::OnResourceLoaded(const ResourceHandle<Resource>& p0)
 	{
 		MonoObject* tmpp0;
 		ScriptRRefBase* scriptp0;
@@ -73,17 +73,17 @@ namespace bs
 			tmpp0 = scriptp0->GetManagedInstance();
 		else
 			tmpp0 = nullptr;
-		MonoUtil::InvokeThunk(onResourceLoadedThunk, tmpp0);
+		MonoUtil::InvokeThunk(OnResourceLoadedThunk, tmpp0);
 	}
 
-	void ScriptResources::onResourceDestroyed(const UUID& p0)
+	void ScriptResources::OnResourceDestroyed(const UUID& p0)
 	{
 		MonoObject* tmpp0;
 		tmpp0 = ScriptUUID::Box(p0);
-		MonoUtil::InvokeThunk(onResourceDestroyedThunk, tmpp0);
+		MonoUtil::InvokeThunk(OnResourceDestroyedThunk, tmpp0);
 	}
 
-	void ScriptResources::onResourceModified(const ResourceHandle<Resource>& p0)
+	void ScriptResources::OnResourceModified(const ResourceHandle<Resource>& p0)
 	{
 		MonoObject* tmpp0;
 		ScriptRRefBase* scriptp0;
@@ -92,7 +92,7 @@ namespace bs
 			tmpp0 = scriptp0->GetManagedInstance();
 		else
 			tmpp0 = nullptr;
-		MonoUtil::InvokeThunk(onResourceModifiedThunk, tmpp0);
+		MonoUtil::InvokeThunk(OnResourceModifiedThunk, tmpp0);
 	}
 	MonoObject* ScriptResources::InternalLoad(MonoString* filePath, ResourceLoadFlag loadFlags)
 	{

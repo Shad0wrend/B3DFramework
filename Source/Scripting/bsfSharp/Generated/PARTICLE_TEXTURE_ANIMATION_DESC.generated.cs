@@ -18,8 +18,8 @@ namespace bs
 		public static ParticleTextureAnimationOptions Default()
 		{
 			ParticleTextureAnimationOptions value = new ParticleTextureAnimationOptions();
-			value.randomizeRow = false;
-			value.numCycles = 1;
+			value.RandomizeRow = false;
+			value.NumCycles = 1;
 
 			return value;
 		}
@@ -28,9 +28,9 @@ namespace bs
 		/// Randomly pick a row to use for animation when the particle is first spawned. This implies that only a single row of 
 		/// the grid will be used for individual particle&apos;s animation.
 		/// </summary>
-		public bool randomizeRow;
+		public bool RandomizeRow;
 		/// <summary>Number of cycles to loop the animation during particle&apos;s lifetime.</summary>
-		public int numCycles;
+		public int NumCycles;
 	}
 
 	/** @} */

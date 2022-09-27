@@ -10,10 +10,6 @@ namespace bs
 	 *  @{
 	 */
 
-	/// <summary>
-	/// Material that controls how objects are rendered. It is represented by a shader and parameters used to set up that 
-	/// shader. It provides a simple interface for manipulating the parameters.
-	/// </summary>
 	[ShowInInspector]
 	public partial class Material : Resource
 	{

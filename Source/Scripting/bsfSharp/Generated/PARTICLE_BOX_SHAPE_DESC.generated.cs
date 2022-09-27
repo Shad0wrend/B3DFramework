@@ -18,16 +18,16 @@ namespace bs
 		public static ParticleBoxShapeOptions Default()
 		{
 			ParticleBoxShapeOptions value = new ParticleBoxShapeOptions();
-			value.type = ParticleEmitterBoxType.Volume;
-			value.extents = Vector3.Default();
+			value.Type = ParticleEmitterBoxType.Volume;
+			value.Extents = Vector3.Default();
 
 			return value;
 		}
 
 		/// <summary>Determines from which portion of the box should particles be emitted from.</summary>
-		public ParticleEmitterBoxType type;
+		public ParticleEmitterBoxType Type;
 		/// <summary>Extends of the box.</summary>
-		public Vector3 extents;
+		public Vector3 Extents;
 	}
 
 	/** @} */

@@ -18,20 +18,20 @@ namespace bs
 		public static ColorGradientKey Default()
 		{
 			ColorGradientKey value = new ColorGradientKey();
-			value.color = Color.Default();
-			value.time = 0f;
+			value.Color = Color.Default();
+			value.Time = 0f;
 
 			return value;
 		}
 
 		public ColorGradientKey(Color color, float time)
 		{
-			this.color = color;
-			this.time = time;
+			this.Color = color;
+			this.Time = time;
 		}
 
-		public Color color;
-		public float time;
+		public Color Color;
+		public float Time;
 	}
 
 	/** @} */

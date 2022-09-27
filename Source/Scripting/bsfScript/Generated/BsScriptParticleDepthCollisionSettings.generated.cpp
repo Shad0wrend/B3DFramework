@@ -15,14 +15,14 @@ namespace bs
 	void ScriptParticleDepthCollisionSettings::InitRuntimeData()
 	{
 		metaData.ScriptClass->AddInternalCall("Internal_ParticleDepthCollisionSettings", (void*)&ScriptParticleDepthCollisionSettings::InternalParticleDepthCollisionSettings);
-		metaData.ScriptClass->AddInternalCall("Internal_Getenabled", (void*)&ScriptParticleDepthCollisionSettings::InternalGetenabled);
-		metaData.ScriptClass->AddInternalCall("Internal_Setenabled", (void*)&ScriptParticleDepthCollisionSettings::InternalSetenabled);
-		metaData.ScriptClass->AddInternalCall("Internal_Getrestitution", (void*)&ScriptParticleDepthCollisionSettings::InternalGetrestitution);
-		metaData.ScriptClass->AddInternalCall("Internal_Setrestitution", (void*)&ScriptParticleDepthCollisionSettings::InternalSetrestitution);
-		metaData.ScriptClass->AddInternalCall("Internal_Getdampening", (void*)&ScriptParticleDepthCollisionSettings::InternalGetdampening);
-		metaData.ScriptClass->AddInternalCall("Internal_Setdampening", (void*)&ScriptParticleDepthCollisionSettings::InternalSetdampening);
-		metaData.ScriptClass->AddInternalCall("Internal_GetradiusScale", (void*)&ScriptParticleDepthCollisionSettings::InternalGetradiusScale);
-		metaData.ScriptClass->AddInternalCall("Internal_SetradiusScale", (void*)&ScriptParticleDepthCollisionSettings::InternalSetradiusScale);
+		metaData.ScriptClass->AddInternalCall("Internal_GetEnabled", (void*)&ScriptParticleDepthCollisionSettings::InternalGetEnabled);
+		metaData.ScriptClass->AddInternalCall("Internal_SetEnabled", (void*)&ScriptParticleDepthCollisionSettings::InternalSetEnabled);
+		metaData.ScriptClass->AddInternalCall("Internal_GetRestitution", (void*)&ScriptParticleDepthCollisionSettings::InternalGetRestitution);
+		metaData.ScriptClass->AddInternalCall("Internal_SetRestitution", (void*)&ScriptParticleDepthCollisionSettings::InternalSetRestitution);
+		metaData.ScriptClass->AddInternalCall("Internal_GetDampening", (void*)&ScriptParticleDepthCollisionSettings::InternalGetDampening);
+		metaData.ScriptClass->AddInternalCall("Internal_SetDampening", (void*)&ScriptParticleDepthCollisionSettings::InternalSetDampening);
+		metaData.ScriptClass->AddInternalCall("Internal_GetRadiusScale", (void*)&ScriptParticleDepthCollisionSettings::InternalGetRadiusScale);
+		metaData.ScriptClass->AddInternalCall("Internal_SetRadiusScale", (void*)&ScriptParticleDepthCollisionSettings::InternalSetRadiusScale);
 
 	}
 
@@ -43,7 +43,7 @@ namespace bs
 		new (bs_alloc<ScriptParticleDepthCollisionSettings>())ScriptParticleDepthCollisionSettings(managedInstance, instance);
 	}
 
-	bool ScriptParticleDepthCollisionSettings::InternalGetenabled(ScriptParticleDepthCollisionSettings* thisPtr)
+	bool ScriptParticleDepthCollisionSettings::InternalGetEnabled(ScriptParticleDepthCollisionSettings* thisPtr)
 	{
 		bool tmp__output;
 		tmp__output = thisPtr->GetInternal()->Enabled;
@@ -54,12 +54,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptParticleDepthCollisionSettings::InternalSetenabled(ScriptParticleDepthCollisionSettings* thisPtr, bool value)
+	void ScriptParticleDepthCollisionSettings::InternalSetEnabled(ScriptParticleDepthCollisionSettings* thisPtr, bool value)
 	{
 		thisPtr->GetInternal()->Enabled = value;
 	}
 
-	float ScriptParticleDepthCollisionSettings::InternalGetrestitution(ScriptParticleDepthCollisionSettings* thisPtr)
+	float ScriptParticleDepthCollisionSettings::InternalGetRestitution(ScriptParticleDepthCollisionSettings* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->GetInternal()->Restitution;
@@ -70,12 +70,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptParticleDepthCollisionSettings::InternalSetrestitution(ScriptParticleDepthCollisionSettings* thisPtr, float value)
+	void ScriptParticleDepthCollisionSettings::InternalSetRestitution(ScriptParticleDepthCollisionSettings* thisPtr, float value)
 	{
 		thisPtr->GetInternal()->Restitution = value;
 	}
 
-	float ScriptParticleDepthCollisionSettings::InternalGetdampening(ScriptParticleDepthCollisionSettings* thisPtr)
+	float ScriptParticleDepthCollisionSettings::InternalGetDampening(ScriptParticleDepthCollisionSettings* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->GetInternal()->Dampening;
@@ -86,12 +86,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptParticleDepthCollisionSettings::InternalSetdampening(ScriptParticleDepthCollisionSettings* thisPtr, float value)
+	void ScriptParticleDepthCollisionSettings::InternalSetDampening(ScriptParticleDepthCollisionSettings* thisPtr, float value)
 	{
 		thisPtr->GetInternal()->Dampening = value;
 	}
 
-	float ScriptParticleDepthCollisionSettings::InternalGetradiusScale(ScriptParticleDepthCollisionSettings* thisPtr)
+	float ScriptParticleDepthCollisionSettings::InternalGetRadiusScale(ScriptParticleDepthCollisionSettings* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->GetInternal()->RadiusScale;
@@ -102,7 +102,7 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptParticleDepthCollisionSettings::InternalSetradiusScale(ScriptParticleDepthCollisionSettings* thisPtr, float value)
+	void ScriptParticleDepthCollisionSettings::InternalSetRadiusScale(ScriptParticleDepthCollisionSettings* thisPtr, float value)
 	{
 		thisPtr->GetInternal()->RadiusScale = value;
 	}

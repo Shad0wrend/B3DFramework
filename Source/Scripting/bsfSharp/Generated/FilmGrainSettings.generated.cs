@@ -28,8 +28,8 @@ namespace bs
 		[NativeWrapper]
 		public bool Enabled
 		{
-			get { return Internal_Getenabled(mCachedPtr); }
-			set { Internal_Setenabled(mCachedPtr, value); }
+			get { return Internal_GetEnabled(mCachedPtr); }
+			set { Internal_SetEnabled(mCachedPtr, value); }
 		}
 
 		/// <summary>Controls how intense are the displayed film grains.</summary>
@@ -38,8 +38,8 @@ namespace bs
 		[NativeWrapper]
 		public float Intensity
 		{
-			get { return Internal_Getintensity(mCachedPtr); }
-			set { Internal_Setintensity(mCachedPtr, value); }
+			get { return Internal_GetIntensity(mCachedPtr); }
+			set { Internal_SetIntensity(mCachedPtr, value); }
 		}
 
 		/// <summary>Controls at what speed do the film grains change.</summary>
@@ -48,24 +48,24 @@ namespace bs
 		[NativeWrapper]
 		public float Speed
 		{
-			get { return Internal_Getspeed(mCachedPtr); }
-			set { Internal_Setspeed(mCachedPtr, value); }
+			get { return Internal_GetSpeed(mCachedPtr); }
+			set { Internal_SetSpeed(mCachedPtr, value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_FilmGrainSettings(FilmGrainSettings managedInstance);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_Getenabled(IntPtr thisPtr);
+		private static extern bool Internal_GetEnabled(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Setenabled(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetEnabled(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_Getintensity(IntPtr thisPtr);
+		private static extern float Internal_GetIntensity(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Setintensity(IntPtr thisPtr, float value);
+		private static extern void Internal_SetIntensity(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_Getspeed(IntPtr thisPtr);
+		private static extern float Internal_GetSpeed(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Setspeed(IntPtr thisPtr, float value);
+		private static extern void Internal_SetSpeed(IntPtr thisPtr, float value);
 	}
 
 	/** @} */

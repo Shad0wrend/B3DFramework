@@ -48,21 +48,20 @@
 		<doc>Descriptor structure used for initialization of a VectorField.</doc>
 		<ctor>
 		</ctor>
-		<field name="countX" type="int">
+		<field name="CountX" type="int">
 			<doc>Number of entries in the vector field along the X axis.</doc>
 		</field>
-		<field name="countY" type="int">
+		<field name="CountY" type="int">
 			<doc>Number of entries in the vector field along the Y axis.</doc>
 		</field>
-		<field name="countZ" type="int">
+		<field name="CountZ" type="int">
 			<doc>Number of entries in the vector field along the Z axis.</doc>
 		</field>
-		<field name="bounds" type="AABox">
+		<field name="Bounds" type="AABox">
 			<doc>Spatial bounds of the vector field.</doc>
 		</field>
 	</struct>
 	<class native="CBoxCollider" script="BoxCollider">
-		<doc>Collider with box geometry.</doc>
 		<property name="Extents" type="Vector3" getter="GetExtents" setter="SetExtents" static="false">
 		</property>
 		<property name="Center" type="Vector3" getter="GetCenter" setter="SetCenter" static="false">
@@ -97,9 +96,9 @@
 		<doc>Represents an animation clip used in 1D blending. Each clip has a position on the number line.</doc>
 		<ctor>
 		</ctor>
-		<field name="clip" type="RRef&lt;AnimationClip&gt;">
+		<field name="Clip" type="RRef&lt;AnimationClip&gt;">
 		</field>
-		<field name="position" type="float">
+		<field name="Position" type="float">
 		</field>
 	</struct>
 	<struct native="KeyframeRef" script="KeyframeRef">
@@ -111,9 +110,9 @@
 			<param name="keyIdx" type="int">
 			</param>
 		</ctor>
-		<field name="curveIdx" type="int">
+		<field name="CurveIdx" type="int">
 		</field>
-		<field name="keyIdx" type="int">
+		<field name="KeyIdx" type="int">
 		</field>
 	</struct>
 	<struct native="Vector3I" script="Vector3I">
@@ -128,11 +127,11 @@
 			<param name="z" type="int">
 			</param>
 		</ctor>
-		<field name="x" type="int">
+		<field name="X" type="int">
 		</field>
-		<field name="y" type="int">
+		<field name="Y" type="int">
 		</field>
-		<field name="z" type="int">
+		<field name="Z" type="int">
 		</field>
 	</struct>
 	<enum native="LogVerbosity" script="LogVerbosity">
@@ -181,19 +180,19 @@
 		<doc>Settings that control the motion blur effect.</doc>
 		<ctor>
 		</ctor>
-		<property name="Enabled" type="bool" getter="Getenabled" setter="Setenabled" static="false">
+		<property name="Enabled" type="bool" getter="GetEnabled" setter="SetEnabled" static="false">
 			<doc>Enables or disables the motion blur effect.</doc>
 		</property>
-		<property name="Domain" type="MotionBlurDomain" getter="Getdomain" setter="Setdomain" static="false">
+		<property name="Domain" type="MotionBlurDomain" getter="GetDomain" setter="SetDomain" static="false">
 			<doc>Determines which parts of the scene will trigger motion blur.</doc>
 		</property>
-		<property name="Filter" type="MotionBlurFilter" getter="Getfilter" setter="Setfilter" static="false">
+		<property name="Filter" type="MotionBlurFilter" getter="GetFilter" setter="SetFilter" static="false">
 			<doc>Type of filter to use when filtering samples contributing to a blurred pixel.</doc>
 		</property>
-		<property name="Quality" type="MotionBlurQuality" getter="Getquality" setter="Setquality" static="false">
+		<property name="Quality" type="MotionBlurQuality" getter="GetQuality" setter="SetQuality" static="false">
 			<doc>Determines the number of samples to take during motion blur filtering. Increasing this value will yield higher quality blur at the cost of the performance.</doc>
 		</property>
-		<property name="MaximumRadius" type="float" getter="GetmaximumRadius" setter="SetmaximumRadius" static="false">
+		<property name="MaximumRadius" type="float" getter="GetMaximumRadius" setter="SetMaximumRadius" static="false">
 			<doc>Determines the maximum radius over which the blur samples are allowed to be taken, in percent of the screen width (e.g. with 1% radius, on 1920x1028 resolution the maximum radius in pixels will be 1920 * 0.01 = 20px). This clamps the maximum velocity that can affect the blur, as higher velocities require higher radius. Very high values can adversely affect performance as cache accesses become more random.</doc>
 		</property>
 	</class>
@@ -201,31 +200,31 @@
 		<doc>Structure containing parameters for starting the application.</doc>
 		<ctor>
 		</ctor>
-		<field name="renderAPI" type="string">
+		<field name="RenderApi" type="string">
 			<doc>Name of the render system plugin to use.</doc>
 		</field>
-		<field name="renderer" type="string">
+		<field name="Renderer" type="string">
 			<doc>Name of the renderer plugin to use.</doc>
 		</field>
-		<field name="physics" type="string">
+		<field name="Physics" type="string">
 			<doc>Name of physics plugin to use.</doc>
 		</field>
-		<field name="audio" type="string">
+		<field name="Audio" type="string">
 			<doc>Name of the audio plugin to use.</doc>
 		</field>
-		<field name="input" type="string">
+		<field name="Input" type="string">
 			<doc>Name of the input plugin to use.</doc>
 		</field>
-		<field name="physicsCooking" type="bool">
+		<field name="PhysicsCooking" type="bool">
 			<doc>True if physics cooking library should be loaded. Cooking is useful for creating collision meshes during development type, but might be unnecessary in the final application. When turned off you can save on space by not shipping the cooking library.</doc>
 		</field>
-		<field name="asyncAnimation" type="bool">
+		<field name="AsyncAnimation" type="bool">
 			<doc>True if animation should be evaluated at the same time while rendering is happening. This introduces a one frame delay to all animations but can result in better performance. If false the animation will be forced to finish evaluating before rendering starts, ensuring up-to-date frame but potentially blocking the rendering thread from moving forward until the animation finishes.</doc>
 		</field>
-		<field name="primaryWindowDesc" type="RenderWindowDesc">
+		<field name="PrimaryWindowDesc" type="RenderWindowDesc">
 			<doc>Describes the window to create during start-up.</doc>
 		</field>
-		<field name="importers" type="string">
+		<field name="Importers" type="string">
 			<doc>A list of importer plugins to load.</doc>
 		</field>
 	</struct>
@@ -239,9 +238,9 @@
 			<param name="time" type="float">
 			</param>
 		</ctor>
-		<field name="color" type="Color">
+		<field name="Color" type="Color">
 		</field>
-		<field name="time" type="float">
+		<field name="Time" type="float">
 		</field>
 	</struct>
 	<class native="ApplicationEx" script="Application">
@@ -417,7 +416,7 @@
 			<param name="entries" type="SubResource">
 			</param>
 		</ctor>
-		<property name="Entries" type="SubResource" getter="Getentries" setter="Setentries" static="false">
+		<property name="Entries" type="SubResource" getter="GetEntries" setter="SetEntries" static="false">
 		</property>
 	</class>
 	<class native="ColorGradientHDR" script="ColorGradientHDR">
@@ -469,58 +468,58 @@
 		<doc>Structure that is used for initializing a render window.</doc>
 		<ctor>
 		</ctor>
-		<field name="videoMode" type="VideoMode">
+		<field name="VideoMode" type="VideoMode">
 			<doc>Output monitor, frame buffer resize and refresh rate.</doc>
 		</field>
-		<field name="fullscreen" type="bool">
+		<field name="Fullscreen" type="bool">
 			<doc>Should the window be opened in fullscreen mode.</doc>
 		</field>
-		<field name="vsync" type="bool">
+		<field name="Vsync" type="bool">
 			<doc>Should the window wait for vertical sync before swapping buffers.</doc>
 		</field>
-		<field name="vsyncInterval" type="int">
+		<field name="VsyncInterval" type="int">
 			<doc>Determines how many vsync intervals occur per frame. FPS = refreshRate/interval. Usually 1 when vsync active.</doc>
 		</field>
-		<field name="hidden" type="bool">
+		<field name="Hidden" type="bool">
 			<doc>Should the window be hidden initially.</doc>
 		</field>
-		<field name="depthBuffer" type="bool">
+		<field name="DepthBuffer" type="bool">
 			<doc>Should the window be created with a depth/stencil buffer.</doc>
 		</field>
-		<field name="multisampleCount" type="int">
+		<field name="MultisampleCount" type="int">
 			<doc>If higher than 1, texture containing multiple samples per pixel is created.</doc>
 		</field>
-		<field name="multisampleHint" type="string">
+		<field name="MultisampleHint" type="string">
 			<doc>Hint about what kind of multisampling to use. Render system specific.</doc>
 		</field>
-		<field name="gamma" type="bool">
+		<field name="Gamma" type="bool">
 			<doc>Should the written color pixels be gamma corrected before write.</doc>
 		</field>
-		<field name="left" type="int">
+		<field name="Left" type="int">
 			<doc>Window origin on X axis in pixels. -1 == screen center. Relative to monitor provided in videoMode.</doc>
 		</field>
-		<field name="top" type="int">
+		<field name="Top" type="int">
 			<doc>Window origin on Y axis in pixels. -1 == screen center. Relative to monitor provided in videoMode.</doc>
 		</field>
-		<field name="title" type="string">
+		<field name="Title" type="string">
 			<doc>Title of the window.</doc>
 		</field>
-		<field name="showTitleBar" type="bool">
+		<field name="ShowTitleBar" type="bool">
 			<doc>Determines if the title-bar should be shown or not.</doc>
 		</field>
-		<field name="showBorder" type="bool">
+		<field name="ShowBorder" type="bool">
 			<doc>Determines if the window border should be shown or not.</doc>
 		</field>
-		<field name="allowResize" type="bool">
+		<field name="AllowResize" type="bool">
 			<doc>Determines if the user can resize the window by dragging on the window edges.</doc>
 		</field>
-		<field name="toolWindow" type="bool">
+		<field name="ToolWindow" type="bool">
 			<doc>Tool windows have no task bar entry and always remain on top of their parent window.</doc>
 		</field>
-		<field name="modal" type="bool">
+		<field name="Modal" type="bool">
 			<doc>When a modal window is open all other windows will be locked until modal window is closed.</doc>
 		</field>
-		<field name="hideUntilSwap" type="bool">
+		<field name="HideUntilSwap" type="bool">
 			<doc>Window will be created as hidden and only be shown when the first framebuffer swap happens.</doc>
 		</field>
 	</struct>
@@ -660,7 +659,6 @@
 		</property>
 	</class>
 	<class native="CCamera" script="Camera">
-		<doc>Camera determines how is world geometry projected onto a 2D surface. You may position and orient it in space, set options like aspect ratio and field or view and it outputs view and projection matrices required for rendering.</doc>
 		<method native="NotifyNeedsRedraw" script="NotifyNeedsRedraw" static="false">
 		</method>
 		<method native="WorldToScreenPoint" script="WorldToScreenPoint" static="false">
@@ -798,28 +796,28 @@
 		<doc>Settings that control screen space ambient occlusion.</doc>
 		<ctor>
 		</ctor>
-		<property name="Enabled" type="bool" getter="Getenabled" setter="Setenabled" static="false">
+		<property name="Enabled" type="bool" getter="GetEnabled" setter="SetEnabled" static="false">
 			<doc>Enables or disables the screen space ambient occlusion effect.</doc>
 		</property>
-		<property name="Radius" type="float" getter="Getradius" setter="Setradius" static="false">
+		<property name="Radius" type="float" getter="GetRadius" setter="SetRadius" static="false">
 			<doc>Radius (in world space, in meters) over which occluders are searched for. Smaller radius ensures better sampling precision but can miss occluders. Larger radius ensures far away occluders are considered but can yield lower quality or noise because of low sampling precision. Usually best to keep at around a meter, valid range is roughly [0.05, 5.0].</doc>
 		</property>
-		<property name="Bias" type="float" getter="Getbias" setter="Setbias" static="false">
+		<property name="Bias" type="float" getter="GetBias" setter="SetBias" static="false">
 			<doc>Bias used to reduce false occlusion artifacts. Higher values reduce the amount of artifacts but will cause details to be lost in areas where occlusion isn&apos;t high. Value is in millimeters. Usually best to keep at a few dozen millimeters, valid range is roughly [0, 200].</doc>
 		</property>
-		<property name="FadeDistance" type="float" getter="GetfadeDistance" setter="SetfadeDistance" static="false">
+		<property name="FadeDistance" type="float" getter="GetFadeDistance" setter="SetFadeDistance" static="false">
 			<doc>Distance (in view space, in meters) after which AO starts fading out. The fade process will happen over the range as specified by <see cref="fadeRange"/>.</doc>
 		</property>
-		<property name="FadeRange" type="float" getter="GetfadeRange" setter="SetfadeRange" static="false">
+		<property name="FadeRange" type="float" getter="GetFadeRange" setter="SetFadeRange" static="false">
 			<doc>Range (in view space, in meters) in which AO fades out from 100% to 0%. AO starts fading out after the distance specified in <see cref="fadeDistance"/>.</doc>
 		</property>
-		<property name="Intensity" type="float" getter="Getintensity" setter="Setintensity" static="false">
+		<property name="Intensity" type="float" getter="GetIntensity" setter="SetIntensity" static="false">
 			<doc>Linearly scales the intensity of the AO effect. Values less than 1 make the AO effect less pronounced, and vice versa. Valid range is roughly [0.2, 2].</doc>
 		</property>
-		<property name="Power" type="float" getter="Getpower" setter="Setpower" static="false">
+		<property name="Power" type="float" getter="GetPower" setter="SetPower" static="false">
 			<doc>Controls how quickly does the AO darkening effect increase with higher occlusion percent. This is a non-linear control and will cause the darkening to ramp up exponentially. Valid range is roughly [1, 4], where 1 means no extra darkening will occur.</doc>
 		</property>
-		<property name="Quality" type="int" getter="Getquality" setter="Setquality" static="false">
+		<property name="Quality" type="int" getter="GetQuality" setter="SetQuality" static="false">
 			<doc>Quality level of generated ambient occlusion. In range [0, 4]. Higher levels yield higher quality AO at the cost of performance.</doc>
 		</property>
 	</class>
@@ -837,29 +835,29 @@
 			<param name="w" type="int">
 			</param>
 		</ctor>
-		<field name="x" type="int">
+		<field name="X" type="int">
 		</field>
-		<field name="y" type="int">
+		<field name="Y" type="int">
 		</field>
-		<field name="z" type="int">
+		<field name="Z" type="int">
 		</field>
-		<field name="w" type="int">
+		<field name="W" type="int">
 		</field>
 	</struct>
 	<struct native="PARTICLE_CIRCLE_SHAPE_DESC" script="ParticleCircleShapeOptions">
 		<doc>Information describing a ParticleEmitterCircleShape.</doc>
 		<ctor>
 		</ctor>
-		<field name="radius" type="float">
+		<field name="Radius" type="float">
 			<doc>Radius of the circle.</doc>
 		</field>
-		<field name="thickness" type="float">
+		<field name="Thickness" type="float">
 			<doc>Proportion of the surface that can emit particles. Thickness of 0 results in particles being emitted only from the edge of the circle, while thickness of 1 results in particles being emitted from the entire surface. In-between values will use a part of the surface.</doc>
 		</field>
-		<field name="arc" type="Degree">
+		<field name="Arc" type="Degree">
 			<doc>Angular portion of the cone from which to emit particles from, in degrees.</doc>
 		</field>
-		<field name="mode" type="ParticleEmissionMode">
+		<field name="Mode" type="ParticleEmissionMode">
 			<doc>Determines how will particle positions on the shape be generated.</doc>
 		</field>
 	</struct>
@@ -1192,21 +1190,20 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 			<param name="back" type="int">
 			</param>
 		</ctor>
-		<field name="left" type="int">
+		<field name="Left" type="int">
 		</field>
-		<field name="top" type="int">
+		<field name="Top" type="int">
 		</field>
-		<field name="right" type="int">
+		<field name="Right" type="int">
 		</field>
-		<field name="bottom" type="int">
+		<field name="Bottom" type="int">
 		</field>
-		<field name="front" type="int">
+		<field name="Front" type="int">
 		</field>
-		<field name="back" type="int">
+		<field name="Back" type="int">
 		</field>
 	</struct>
 	<class native="CCharacterController" script="CharacterController">
-		<doc>Special physics controller meant to be used for game characters. Uses the &quot;slide-and-collide&quot; physics instead of of the standard physics model to handle various issues with manually moving kinematic objects. Uses a capsule to represent the character&apos;s bounds.</doc>
 		<method native="Move" script="Move" static="false">
 			<param name="displacement" type="Vector3">
 			</param>
@@ -1235,13 +1232,11 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 		</property>
 		<property name="Layer" type="ulong" getter="GetLayer" setter="SetLayer" static="false">
 		</property>
-		<event native="onColliderHit" script="OnColliderHit" static="false">
-			<doc>Triggered when the controller hits a collider.</doc>
+		<event native="OnColliderHit" script="OnColliderHit" static="false">
 			<param name="p0" type="ControllerColliderCollision">
 			</param>
 		</event>
-		<event native="onControllerHit" script="OnControllerHit" static="false">
-			<doc>Triggered when the controller hits another character controller.</doc>
+		<event native="OnControllerHit" script="OnControllerHit" static="false">
 			<param name="p0" type="ControllerControllerCollision">
 			</param>
 		</event>
@@ -1250,22 +1245,22 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 		<doc>Settings that control the bloom effect. Bloom adds an extra highlight to bright areas of the scene.</doc>
 		<ctor>
 		</ctor>
-		<property name="Enabled" type="bool" getter="Getenabled" setter="Setenabled" static="false">
+		<property name="Enabled" type="bool" getter="GetEnabled" setter="SetEnabled" static="false">
 			<doc>Enables or disables the bloom effect.</doc>
 		</property>
-		<property name="Quality" type="int" getter="Getquality" setter="Setquality" static="false">
+		<property name="Quality" type="int" getter="GetQuality" setter="SetQuality" static="false">
 			<doc>Quality of the bloom effect. Higher values will use higher resolution texture for calculating bloom, at the cost of lower performance. Valid range is [0, 3], default is 2.</doc>
 		</property>
-		<property name="Threshold" type="float" getter="Getthreshold" setter="Setthreshold" static="false">
+		<property name="Threshold" type="float" getter="GetThreshold" setter="SetThreshold" static="false">
 			<doc>Determines the minimal threshold of pixel luminance to be included in the bloom calculations. Any pixel with luminance below this value will be ignored for the purposes of bloom. The value represents luminance after it is scaled by exposure. Set to zero or negative to disable the threshold and include all pixels in the calculations.</doc>
 		</property>
-		<property name="Intensity" type="float" getter="Getintensity" setter="Setintensity" static="false">
+		<property name="Intensity" type="float" getter="GetIntensity" setter="SetIntensity" static="false">
 			<doc>Determines the intensity of the bloom effect. Ideally should be in [0, 4] range but higher values are allowed.</doc>
 		</property>
-		<property name="Tint" type="Color" getter="Gettint" setter="Settint" static="false">
+		<property name="Tint" type="Color" getter="GetTint" setter="SetTint" static="false">
 			<doc>Tint color to apply to the bloom highlight. A pure white means the bloom inherits the underlying scene color.</doc>
 		</property>
-		<property name="FilterSize" type="float" getter="GetfilterSize" setter="SetfilterSize" static="false">
+		<property name="FilterSize" type="float" getter="GetFilterSize" setter="SetFilterSize" static="false">
 			<doc>Determines the percent of the texture to account for when filtering for bloom. Larger values will include farther away pixels.</doc>
 		</property>
 	</class>
@@ -1382,19 +1377,19 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 				<doc>Controls how do objects react when the limit is reached, values closer to zero specify non-ellastic collision, while those closer to one specify more ellastic (i.e bouncy) collision. Must be in [0, 1] range.</doc>
 			</param>
 		</ctor>
-		<field name="lower" type="Radian">
+		<field name="Lower" type="Radian">
 			<doc>Lower angle of the limit. Must be less than #upper.</doc>
 		</field>
-		<field name="upper" type="Radian">
+		<field name="Upper" type="Radian">
 			<doc>Upper angle of the limit. Must be less than #lower.</doc>
 		</field>
-		<field name="contactDist" type="float">
+		<field name="ContactDist" type="float">
 			<doc>Distance from the limit at which it becomes active. Allows the solver to activate earlier than the limit is reached to avoid breaking the limit.</doc>
 		</field>
-		<field name="restitution" type="float">
+		<field name="Restitution" type="float">
 			<doc>Controls how do objects react when the limit is reached, values closer to zero specify non-ellastic collision, while those closer to one specify more ellastic (i.e bouncy) collision. Must be in [0, 1] range.</doc>
 		</field>
-		<field name="spring" type="Spring">
+		<field name="Spring" type="Spring">
 			<doc>Spring that controls how are the bodies pulled back towards the limit when they breach it.</doc>
 		</field>
 	</struct>
@@ -1409,13 +1404,13 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 	</enum>
 	<struct native="SkeletonBoneInfoEx" script="BoneInfo">
 		<doc>Contains internal information about a single bone in a Skeleton.</doc>
-		<field name="name" type="string">
+		<field name="Name" type="string">
 			<doc>Unique name of the bone.</doc>
 		</field>
-		<field name="parent" type="int">
+		<field name="Parent" type="int">
 			<doc>Index of the parent bone (within the relevant Skeleton object). -1 if root bone.</doc>
 		</field>
-		<field name="invBindPose" type="Matrix4">
+		<field name="InvBindPose" type="Matrix4">
 			<doc>Inverse transform of the pose the skeleton was initially created in.</doc>
 		</field>
 	</struct>
@@ -1459,16 +1454,16 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 			<param name="numFaces" type="int">
 			</param>
 		</ctor>
-		<field name="mipLevel" type="int">
+		<field name="MipLevel" type="int">
 			<doc>First mip level to reference.</doc>
 		</field>
-		<field name="numMipLevels" type="int">
+		<field name="NumMipLevels" type="int">
 			<doc>Number of mip levels to reference. Must be greater than zero.</doc>
 		</field>
-		<field name="face" type="int">
+		<field name="Face" type="int">
 			<doc>First face to reference. Face can represent a single cubemap face, or a single array entry in a texture array. If cubemaps are laid out in a texture array then every six sequential faces represent a single array entry.</doc>
 		</field>
-		<field name="numFaces" type="int">
+		<field name="NumFaces" type="int">
 			<doc>Number of faces to reference, if the texture has more than one.</doc>
 		</field>
 	</struct>
@@ -1501,59 +1496,59 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 			<param name="bottom" type="int">
 			</param>
 		</ctor>
-		<field name="left" type="int">
+		<field name="Left" type="int">
 		</field>
-		<field name="right" type="int">
+		<field name="Right" type="int">
 		</field>
-		<field name="top" type="int">
+		<field name="Top" type="int">
 		</field>
-		<field name="bottom" type="int">
+		<field name="Bottom" type="int">
 		</field>
 	</struct>
 	<struct native="AnimationClipState" script="AnimationClipState">
 		<doc>Contains information about a currently playing animation clip.</doc>
 		<ctor>
 		</ctor>
-		<field name="layer" type="int">
+		<field name="Layer" type="int">
 			<doc>Layer the clip is playing on. Multiple clips can be played simulatenously on different layers.</doc>
 		</field>
-		<field name="time" type="float">
+		<field name="Time" type="float">
 			<doc>Current time the animation is playing from.</doc>
 		</field>
-		<field name="speed" type="float">
+		<field name="Speed" type="float">
 			<doc>Speed at which the animation is playing.</doc>
 		</field>
-		<field name="weight" type="float">
+		<field name="Weight" type="float">
 			<doc>Determines how much of an influence does the clip have on the final pose.</doc>
 		</field>
-		<field name="wrapMode" type="AnimWrapMode">
+		<field name="WrapMode" type="AnimWrapMode">
 			<doc>Determines what happens to other animation clips when a new clip starts playing.</doc>
 		</field>
-		<field name="stopped" type="bool">
+		<field name="Stopped" type="bool">
 			<doc>Determines should the time be advanced automatically. Certain type of animation clips don&apos;t involve playback (e.g. for blending where animation weight controls the animation).</doc>
 		</field>
 	</struct>
 	<struct native="Blend1DInfo" script="Blend1DInfo">
 		<doc>Defines a 1D blend where multiple animation clips are blended between each other using linear interpolation.</doc>
-		<field name="clips" type="BlendClipInfo">
+		<field name="Clips" type="BlendClipInfo">
 		</field>
 	</struct>
 	<struct native="GUIElementStateStyle" script="GUIElementStateStyle">
 		<doc>Specific texture and text color used in a particular GUI element style.</doc>
-		<field name="texture" type="SpriteTexture">
+		<field name="Texture" type="SpriteTexture">
 		</field>
-		<field name="textColor" type="Color">
+		<field name="TextColor" type="Color">
 		</field>
 	</struct>
 	<struct native="Blend2DInfo" script="Blend2DInfo">
 		<doc>Defines a 2D blend where two animation clips are blended between each other using bilinear interpolation.</doc>
-		<field name="topLeftClip" type="RRef&lt;AnimationClip&gt;">
+		<field name="TopLeftClip" type="RRef&lt;AnimationClip&gt;">
 		</field>
-		<field name="topRightClip" type="RRef&lt;AnimationClip&gt;">
+		<field name="TopRightClip" type="RRef&lt;AnimationClip&gt;">
 		</field>
-		<field name="botLeftClip" type="RRef&lt;AnimationClip&gt;">
+		<field name="BotLeftClip" type="RRef&lt;AnimationClip&gt;">
 		</field>
-		<field name="botRightClip" type="RRef&lt;AnimationClip&gt;">
+		<field name="BotRightClip" type="RRef&lt;AnimationClip&gt;">
 		</field>
 	</struct>
 	<class native="FontBitmap" script="FontBitmap">
@@ -1565,91 +1560,91 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 			<returns type="CharDesc">
 			</returns>
 		</method>
-		<property name="Size" type="int" getter="Getsize" setter="Setsize" static="false">
+		<property name="Size" type="int" getter="GetSize" setter="SetSize" static="false">
 			<doc>Font size for which the data is contained.</doc>
 		</property>
-		<property name="BaselineOffset" type="int" getter="GetbaselineOffset" setter="SetbaselineOffset" static="false">
+		<property name="BaselineOffset" type="int" getter="GetBaselineOffset" setter="SetBaselineOffset" static="false">
 			<doc>Y offset to the baseline on which the characters are placed, in pixels.</doc>
 		</property>
-		<property name="LineHeight" type="int" getter="GetlineHeight" setter="SetlineHeight" static="false">
+		<property name="LineHeight" type="int" getter="GetLineHeight" setter="SetLineHeight" static="false">
 			<doc>Height of a single line of the font, in pixels.</doc>
 		</property>
-		<property name="MissingGlyph" type="CharDesc" getter="GetmissingGlyph" setter="SetmissingGlyph" static="false">
+		<property name="MissingGlyph" type="CharDesc" getter="GetMissingGlyph" setter="SetMissingGlyph" static="false">
 			<doc>Character to use when data for a character is missing.</doc>
 		</property>
-		<property name="SpaceWidth" type="int" getter="GetspaceWidth" setter="SetspaceWidth" static="false">
+		<property name="SpaceWidth" type="int" getter="GetSpaceWidth" setter="SetSpaceWidth" static="false">
 			<doc>Width of a space in pixels.</doc>
 		</property>
-		<property name="TexturePages" type="RRef&lt;Texture&gt;" getter="GettexturePages" setter="SettexturePages" static="false">
+		<property name="TexturePages" type="RRef&lt;Texture&gt;" getter="GetTexturePages" setter="SetTexturePages" static="false">
 			<doc>Textures in which the character&apos;s pixels are stored.</doc>
 		</property>
 	</class>
 	<struct native="TKeyframe&lt;int32_t&gt;" script="KeyFrameInt">
 		<doc>Animation keyframe, represented as an endpoint of a cubic hermite spline.</doc>
-		<field name="value" type="int">
+		<field name="Value" type="int">
 			<doc>Value of the key.</doc>
 		</field>
-		<field name="time" type="float">
+		<field name="Time" type="float">
 			<doc>Position of the key along the animation spline.</doc>
 		</field>
 	</struct>
 	<struct native="TKeyframe&lt;float&gt;" script="KeyFrame">
 		<doc>Animation keyframe, represented as an endpoint of a cubic hermite spline.</doc>
-		<field name="value" type="float">
+		<field name="Value" type="float">
 			<doc>Value of the key.</doc>
 		</field>
-		<field name="inTangent" type="float">
+		<field name="InTangent" type="float">
 			<doc>Input tangent (going from the previous key to this one) of the key.</doc>
 		</field>
-		<field name="outTangent" type="float">
+		<field name="OutTangent" type="float">
 			<doc>Output tangent (going from this key to next one) of the key.</doc>
 		</field>
-		<field name="time" type="float">
+		<field name="Time" type="float">
 			<doc>Position of the key along the animation spline.</doc>
 		</field>
 	</struct>
 	<struct native="TKeyframe&lt;Vector3&gt;" script="KeyFrameVec3">
 		<doc>Animation keyframe, represented as an endpoint of a cubic hermite spline.</doc>
-		<field name="value" type="Vector3">
+		<field name="Value" type="Vector3">
 			<doc>Value of the key.</doc>
 		</field>
-		<field name="inTangent" type="Vector3">
+		<field name="InTangent" type="Vector3">
 			<doc>Input tangent (going from the previous key to this one) of the key.</doc>
 		</field>
-		<field name="outTangent" type="Vector3">
+		<field name="OutTangent" type="Vector3">
 			<doc>Output tangent (going from this key to next one) of the key.</doc>
 		</field>
-		<field name="time" type="float">
+		<field name="Time" type="float">
 			<doc>Position of the key along the animation spline.</doc>
 		</field>
 	</struct>
 	<struct native="TKeyframe&lt;Vector2&gt;" script="KeyFrameVec2">
 		<doc>Animation keyframe, represented as an endpoint of a cubic hermite spline.</doc>
-		<field name="value" type="Vector2">
+		<field name="Value" type="Vector2">
 			<doc>Value of the key.</doc>
 		</field>
-		<field name="inTangent" type="Vector2">
+		<field name="InTangent" type="Vector2">
 			<doc>Input tangent (going from the previous key to this one) of the key.</doc>
 		</field>
-		<field name="outTangent" type="Vector2">
+		<field name="OutTangent" type="Vector2">
 			<doc>Output tangent (going from this key to next one) of the key.</doc>
 		</field>
-		<field name="time" type="float">
+		<field name="Time" type="float">
 			<doc>Position of the key along the animation spline.</doc>
 		</field>
 	</struct>
 	<struct native="TKeyframe&lt;Quaternion&gt;" script="KeyFrameQuat">
 		<doc>Animation keyframe, represented as an endpoint of a cubic hermite spline.</doc>
-		<field name="value" type="Quaternion">
+		<field name="Value" type="Quaternion">
 			<doc>Value of the key.</doc>
 		</field>
-		<field name="inTangent" type="Quaternion">
+		<field name="InTangent" type="Quaternion">
 			<doc>Input tangent (going from the previous key to this one) of the key.</doc>
 		</field>
-		<field name="outTangent" type="Quaternion">
+		<field name="OutTangent" type="Quaternion">
 			<doc>Output tangent (going from this key to next one) of the key.</doc>
 		</field>
-		<field name="time" type="float">
+		<field name="Time" type="float">
 			<doc>Position of the key along the animation spline.</doc>
 		</field>
 	</struct>
@@ -1702,13 +1697,13 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 				<doc>Curve containing the animation data.</doc>
 			</param>
 		</ctor>
-		<field name="name" type="string">
+		<field name="Name" type="string">
 			<doc>Name of the curve.</doc>
 		</field>
-		<field name="flags" type="AnimationCurveFlags">
+		<field name="Flags" type="AnimationCurveFlags">
 			<doc>Flags that describe the animation curve.</doc>
 		</field>
-		<field name="curve" type="AnimationCurve">
+		<field name="Curve" type="AnimationCurve">
 			<doc>Actual curve containing animation data.</doc>
 		</field>
 	</struct>
@@ -1737,13 +1732,13 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 				<doc>Curve containing the animation data.</doc>
 			</param>
 		</ctor>
-		<field name="name" type="string">
+		<field name="Name" type="string">
 			<doc>Name of the curve.</doc>
 		</field>
-		<field name="flags" type="AnimationCurveFlags">
+		<field name="Flags" type="AnimationCurveFlags">
 			<doc>Flags that describe the animation curve.</doc>
 		</field>
-		<field name="curve" type="Vector3Curve">
+		<field name="Curve" type="Vector3Curve">
 			<doc>Actual curve containing animation data.</doc>
 		</field>
 	</struct>
@@ -1772,13 +1767,13 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 				<doc>Curve containing the animation data.</doc>
 			</param>
 		</ctor>
-		<field name="name" type="string">
+		<field name="Name" type="string">
 			<doc>Name of the curve.</doc>
 		</field>
-		<field name="flags" type="AnimationCurveFlags">
+		<field name="Flags" type="AnimationCurveFlags">
 			<doc>Flags that describe the animation curve.</doc>
 		</field>
-		<field name="curve" type="Vector2Curve">
+		<field name="Curve" type="Vector2Curve">
 			<doc>Actual curve containing animation data.</doc>
 		</field>
 	</struct>
@@ -1807,13 +1802,13 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 				<doc>Curve containing the animation data.</doc>
 			</param>
 		</ctor>
-		<field name="name" type="string">
+		<field name="Name" type="string">
 			<doc>Name of the curve.</doc>
 		</field>
-		<field name="flags" type="AnimationCurveFlags">
+		<field name="Flags" type="AnimationCurveFlags">
 			<doc>Flags that describe the animation curve.</doc>
 		</field>
-		<field name="curve" type="QuaternionCurve">
+		<field name="Curve" type="QuaternionCurve">
 			<doc>Actual curve containing animation data.</doc>
 		</field>
 	</struct>
@@ -1842,13 +1837,13 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 				<doc>Curve containing the animation data.</doc>
 			</param>
 		</ctor>
-		<field name="name" type="string">
+		<field name="Name" type="string">
 			<doc>Name of the curve.</doc>
 		</field>
-		<field name="flags" type="AnimationCurveFlags">
+		<field name="Flags" type="AnimationCurveFlags">
 			<doc>Flags that describe the animation curve.</doc>
 		</field>
-		<field name="curve" type="IntegerCurve">
+		<field name="Curve" type="IntegerCurve">
 			<doc>Actual curve containing animation data.</doc>
 		</field>
 	</struct>
@@ -1965,16 +1960,16 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 				<doc>Time at which to trigger the event, in seconds.</doc>
 			</param>
 		</ctor>
-		<field name="name" type="string">
+		<field name="Name" type="string">
 			<doc>Name used to identify the event when triggered.</doc>
 		</field>
-		<field name="time" type="float">
+		<field name="Time" type="float">
 			<doc>Time at which to trigger the event, in seconds.</doc>
 		</field>
 	</struct>
 	<struct native="AudioDevice" script="AudioDevice">
 		<doc>Identifier for a device that can be used for playing audio.</doc>
-		<field name="name" type="string">
+		<field name="Name" type="string">
 		</field>
 	</struct>
 	<enum native="TangentType" script="TangentType">
@@ -2021,13 +2016,13 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 		<doc>Structure used for initializing a ParticleSize object.</doc>
 		<ctor>
 		</ctor>
-		<field name="size" type="FloatDistribution">
+		<field name="Size" type="FloatDistribution">
 			<doc>Determines the uniform size of the particles evaluated over particle lifetime. Only used if 3D size is disabled.</doc>
 		</field>
-		<field name="size3D" type="Vector3Distribution">
+		<field name="Size3D" type="Vector3Distribution">
 			<doc>Determines the non-uniform size of the particles evaluated over particle lifetime. Only used if 3D size is enabled.</doc>
 		</field>
-		<field name="use3DSize" type="bool">
+		<field name="Use3DSize" type="bool">
 			<doc>Determines should the size be evaluated uniformly for all dimensions, or evaluate each dimension with its own distribution.</doc>
 		</field>
 	</struct>
@@ -2041,9 +2036,9 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 			<param name="type" type="TangentType">
 			</param>
 		</ctor>
-		<field name="keyframeRef" type="KeyframeRef">
+		<field name="KeyframeRef" type="KeyframeRef">
 		</field>
-		<field name="type" type="TangentType">
+		<field name="Type" type="TangentType">
 		</field>
 	</struct>
 	<class native="MorphShape" script="MorphShape">
@@ -2119,13 +2114,13 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 		<doc>Settings that control temporal anti-aliasing.</doc>
 		<ctor>
 		</ctor>
-		<property name="Enabled" type="bool" getter="Getenabled" setter="Setenabled" static="false">
+		<property name="Enabled" type="bool" getter="GetEnabled" setter="SetEnabled" static="false">
 			<doc>Enables or disables temporal anti-aliasing.</doc>
 		</property>
-		<property name="JitteredPositionCount" type="int" getter="GetjitteredPositionCount" setter="SetjitteredPositionCount" static="false">
+		<property name="JitteredPositionCount" type="int" getter="GetJitteredPositionCount" setter="SetJitteredPositionCount" static="false">
 			<doc>Number of different jittered positions to use. Each frame will use one position and subsequent frames will use subsequent positions until this number of reached, at which point the positions start getting re-used from the start.</doc>
 		</property>
-		<property name="Sharpness" type="float" getter="Getsharpness" setter="Setsharpness" static="false">
+		<property name="Sharpness" type="float" getter="GetSharpness" setter="SetSharpness" static="false">
 			<doc>Determines the distance between temporal AA samples. Larger values result in a sharper image.</doc>
 		</property>
 	</class>
@@ -2134,16 +2129,16 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 		<ctor>
 			<doc>Creates a new import options object that allows you to customize how are audio clips imported.</doc>
 		</ctor>
-		<property name="Format" type="AudioFormat" getter="Getformat" setter="Setformat" static="false">
+		<property name="Format" type="AudioFormat" getter="GetFormat" setter="SetFormat" static="false">
 			<doc>Audio format to import the audio clip as.</doc>
 		</property>
-		<property name="ReadMode" type="AudioReadMode" getter="GetreadMode" setter="SetreadMode" static="false">
+		<property name="ReadMode" type="AudioReadMode" getter="GetReadMode" setter="SetReadMode" static="false">
 			<doc>Determines how is audio data loaded into memory.</doc>
 		</property>
-		<property name="Is3D" type="bool" getter="Getis3D" setter="Setis3D" static="false">
+		<property name="Is3D" type="bool" getter="GetIs3D" setter="SetIs3D" static="false">
 			<doc>Determines should the clip be played as spatial (3D) audio or as normal audio. 3D clips will be converted to mono on import.</doc>
 		</property>
-		<property name="BitDepth" type="int" getter="GetbitDepth" setter="SetbitDepth" static="false">
+		<property name="BitDepth" type="int" getter="GetBitDepth" setter="SetBitDepth" static="false">
 			<doc>Size of a single sample in bits. The clip will be converted to this bit depth on import.</doc>
 		</property>
 	</class>
@@ -2443,19 +2438,14 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 	<class native="RenderTarget" script="RenderTarget">
 		<doc>Render target is a frame buffer or a texture that the render system renders the scene to.</doc>
 		<property name="Width" type="int" getter="GetWidth" setter="" static="false">
-			<doc>Width of the render target, in pixels.</doc>
 		</property>
 		<property name="Height" type="int" getter="GetHeight" setter="" static="false">
-			<doc>Height of the render target, in pixels.</doc>
 		</property>
 		<property name="GammaCorrection" type="bool" getter="GetGammaCorrection" setter="" static="false">
-			<doc>True if pixels written to the render target will be gamma corrected.</doc>
 		</property>
 		<property name="Priority" type="int" getter="GetPriority" setter="SetPriority" static="false">
-			<doc>Controls in what order is the render target rendered to compared to other render targets. Targets with higher priority will be rendered before ones with lower priority.</doc>
 		</property>
 		<property name="SampleCount" type="int" getter="GetSampleCount" setter="" static="false">
-			<doc>Controls how many samples are used for multisampling. (0 or 1 if multisampling is not used).</doc>
 		</property>
 	</class>
 	<struct native="VideoMode" script="VideoMode">
@@ -2477,24 +2467,23 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 				<doc>Output index of the output device. Normally this means output monitor. 0th index always represents the primary device while order of others is undefined.</doc>
 			</param>
 		</ctor>
-		<field name="width" type="int">
+		<field name="Width" type="int">
 			<doc>Width of the front/back buffer in pixels.</doc>
 		</field>
-		<field name="height" type="int">
+		<field name="Height" type="int">
 			<doc>Height of the front/back buffer in pixels.</doc>
 		</field>
-		<field name="refreshRate" type="float">
+		<field name="RefreshRate" type="float">
 			<doc>Refresh rate in hertz.</doc>
 		</field>
-		<field name="outputIdx" type="int">
+		<field name="OutputIdx" type="int">
 			<doc>Index of the parent video output.</doc>
 		</field>
-		<field name="isCustom" type="bool">
+		<field name="IsCustom" type="bool">
 			<doc>Determines was video mode user created or provided by the API/OS. API/OS created video modes can contain additional information that allows the video mode to be used more accurately and you should use them when possible.</doc>
 		</field>
 	</struct>
 	<class native="CAnimation" script="Animation">
-		<doc>Handles animation playback. Takes one or multiple animation clips as input and evaluates them every animation update tick depending on set properties. The evaluated data is used by the core thread for skeletal animation, by the sim thread for updating attached scene objects and bones (if skeleton is attached), or the data is made available for manual queries in the case of generic animation.</doc>
 		<method native="Play" script="Play" static="false">
 			<param name="clip" type="RRef&lt;AnimationClip&gt;">
 			</param>
@@ -2582,11 +2571,8 @@ Use {0}, {1}, etc. in the string value for values that might change dynamically.
 		</property>
 	</class>
 	<class native="CAudioListener" script="AudioListener">
-		<doc>Represents a listener that hears audio sources. For spatial audio the volume and pitch of played audio is determined by the distance, orientation and velocity differences between the source and the listener.</doc>
 	</class>
 	<class native="CAudioSource" script="AudioSource">
-		<doc>Represents a source for emitting audio. Audio can be played spatially (gun shot), or normally (music). Each audio source must have an AudioClip to play-back, and it can also have a position in the case of spatial (3D) audio.
-Whether or not an audio source is spatial is controlled by the assigned AudioClip. The volume and the pitch of a spatial audio source is controlled by its position and the AudioListener&apos;s position/direction/velocity.</doc>
 		<method native="Play" script="Play" static="false">
 		</method>
 		<method native="Pause" script="Pause" static="false">
@@ -2623,35 +2609,35 @@ Whether or not an audio source is spatial is controlled by the assigned AudioCli
 	</class>
 	<struct native="BoneWeight" script="BoneWeight">
 		<doc>Contains per-vertex bone weights and indexes used for skinning, for up to four bones.</doc>
-		<field name="index0" type="int">
+		<field name="Index0" type="int">
 		</field>
-		<field name="index1" type="int">
+		<field name="Index1" type="int">
 		</field>
-		<field name="index2" type="int">
+		<field name="Index2" type="int">
 		</field>
-		<field name="index3" type="int">
+		<field name="Index3" type="int">
 		</field>
-		<field name="weight0" type="float">
+		<field name="Weight0" type="float">
 		</field>
-		<field name="weight1" type="float">
+		<field name="Weight1" type="float">
 		</field>
-		<field name="weight2" type="float">
+		<field name="Weight2" type="float">
 		</field>
-		<field name="weight3" type="float">
+		<field name="Weight3" type="float">
 		</field>
 	</struct>
 	<struct native="ContactPoint" script="ContactPoint">
 		<doc>Information about a single contact point during physics collision.</doc>
-		<field name="position" type="Vector3">
+		<field name="Position" type="Vector3">
 			<doc>Contact point in world space.</doc>
 		</field>
-		<field name="normal" type="Vector3">
+		<field name="Normal" type="Vector3">
 			<doc>Normal pointing from the second shape to the first shape.</doc>
 		</field>
-		<field name="impulse" type="float">
+		<field name="Impulse" type="float">
 			<doc>Impulse applied to the objects to keep them from penetrating. Divide by simulation step to get the force.</doc>
 		</field>
-		<field name="separation" type="float">
+		<field name="Separation" type="float">
 			<doc>Determines how far are the objects. Negative value denotes penetration.</doc>
 		</field>
 	</struct>
@@ -2680,10 +2666,10 @@ Whether or not an audio source is spatial is controlled by the assigned AudioCli
 	</enum>
 	<struct native="CollisionData" script="CollisionData">
 		<doc>Information about a collision between two physics objects.</doc>
-		<field name="collider" type="Collider">
+		<field name="Collider" type="Collider">
 			<doc>Components of the colliders that have collided.</doc>
 		</field>
-		<field name="contactPoints" type="ContactPoint">
+		<field name="ContactPoints" type="ContactPoint">
 			<doc>Information about all the contact points for the hit.</doc>
 		</field>
 	</struct>
@@ -2691,49 +2677,49 @@ Whether or not an audio source is spatial is controlled by the assigned AudioCli
 		<doc>Settings that control the screen-space lens flare effect.</doc>
 		<ctor>
 		</ctor>
-		<property name="Enabled" type="bool" getter="Getenabled" setter="Setenabled" static="false">
+		<property name="Enabled" type="bool" getter="GetEnabled" setter="SetEnabled" static="false">
 			<doc>Enables or disables the lens flare effect.</doc>
 		</property>
-		<property name="DownsampleCount" type="int" getter="GetdownsampleCount" setter="SetdownsampleCount" static="false">
+		<property name="DownsampleCount" type="int" getter="GetDownsampleCount" setter="SetDownsampleCount" static="false">
 			<doc>Determines how many times to downsample the scene texture before using it for lens flare effect. Lower values will use higher resolution texture for calculating lens flare, at the cost of lower performance. Valid range is [1, 6], default is 4.</doc>
 		</property>
-		<property name="Threshold" type="float" getter="Getthreshold" setter="Setthreshold" static="false">
+		<property name="Threshold" type="float" getter="GetThreshold" setter="SetThreshold" static="false">
 			<doc>Determines the minimal threshold of pixel luminance to be included in the lens flare calculations. Any pixel with luminance below this value will be ignored for the purposes of lens flare. Set to zero or negative to disable the threshold and include all pixels in the calculations.</doc>
 		</property>
-		<property name="GhostCount" type="int" getter="GetghostCount" setter="SetghostCount" static="false">
+		<property name="GhostCount" type="int" getter="GetGhostCount" setter="SetGhostCount" static="false">
 			<doc>Determines the number of ghost features to appear, shown as blurred blobs of bright areas of the scene.</doc>
 		</property>
-		<property name="GhostSpacing" type="float" getter="GetghostSpacing" setter="SetghostSpacing" static="false">
+		<property name="GhostSpacing" type="float" getter="GetGhostSpacing" setter="SetGhostSpacing" static="false">
 			<doc>Determines the distance between ghost features. Value is in normalized screen space, in range [0,1] where 1 represents the full screen length.</doc>
 		</property>
-		<property name="Brightness" type="float" getter="Getbrightness" setter="Setbrightness" static="false">
+		<property name="Brightness" type="float" getter="GetBrightness" setter="SetBrightness" static="false">
 			<doc>Determines the brightness of the lens flare effect. Value of 1 means the lens flare will be displayed at the same intensity as the scene it was derived from. In range [0, 1], default being 0.05.</doc>
 		</property>
-		<property name="FilterSize" type="float" getter="GetfilterSize" setter="SetfilterSize" static="false">
+		<property name="FilterSize" type="float" getter="GetFilterSize" setter="SetFilterSize" static="false">
 			<doc>Determines the size of the filter when blurring the lens flare features. Larger values yield a blurrier image and will require more performance.</doc>
 		</property>
-		<property name="Halo" type="bool" getter="Gethalo" setter="Sethalo" static="false">
+		<property name="Halo" type="bool" getter="GetHalo" setter="SetHalo" static="false">
 			<doc>Determines if a halo effect should be rendered as part of the lens flare.</doc>
 		</property>
-		<property name="HaloRadius" type="float" getter="GethaloRadius" setter="SethaloRadius" static="false">
+		<property name="HaloRadius" type="float" getter="GetHaloRadius" setter="SetHaloRadius" static="false">
 			<doc>Determines how far away from the screen center does the halo appear, in normalized screen space (range [0,1]) where 0.5 represents half screen length.</doc>
 		</property>
-		<property name="HaloThickness" type="float" getter="GethaloThickness" setter="SethaloThickness" static="false">
+		<property name="HaloThickness" type="float" getter="GetHaloThickness" setter="SetHaloThickness" static="false">
 			<doc>Determines the thickness of the halo ring. In normalized screen space (range [0.01,0.5]).</doc>
 		</property>
-		<property name="HaloThreshold" type="float" getter="GethaloThreshold" setter="SethaloThreshold" static="false">
+		<property name="HaloThreshold" type="float" getter="GetHaloThreshold" setter="SetHaloThreshold" static="false">
 			<doc>Determines the minimal threshold of pixel luminance to be included for halo generation. Any pixel with luminance below this value will be ignored for the purposes of halo generation.</doc>
 		</property>
-		<property name="HaloAspectRatio" type="float" getter="GethaloAspectRatio" setter="SethaloAspectRatio" static="false">
+		<property name="HaloAspectRatio" type="float" getter="GetHaloAspectRatio" setter="SetHaloAspectRatio" static="false">
 			<doc>Determines the shape of the halo. Set to value other than 1 to make the halo an oval rather than a circle.</doc>
 		</property>
-		<property name="ChromaticAberration" type="bool" getter="GetchromaticAberration" setter="SetchromaticAberration" static="false">
+		<property name="ChromaticAberration" type="bool" getter="GetChromaticAberration" setter="SetChromaticAberration" static="false">
 			<doc>Enables or disables chromatic aberration of the lens flare and halo features. Chromatic aberration separates the values of red, green and blue channels according to a user provided offset.</doc>
 		</property>
-		<property name="ChromaticAberrationOffset" type="float" getter="GetchromaticAberrationOffset" setter="SetchromaticAberrationOffset" static="false">
+		<property name="ChromaticAberrationOffset" type="float" getter="GetChromaticAberrationOffset" setter="SetChromaticAberrationOffset" static="false">
 			<doc>Determines the distance between pixels within which to sample different channels. The value is in UV coordinates, range [0, 1].</doc>
 		</property>
-		<property name="BicubicUpsampling" type="bool" getter="GetbicubicUpsampling" setter="SetbicubicUpsampling" static="false">
+		<property name="BicubicUpsampling" type="bool" getter="GetBicubicUpsampling" setter="SetBicubicUpsampling" static="false">
 			<doc>Uses a higher quality upscaling when blending the lens flare features with scene color. Results in less blocky artifacts at a cost to performance.</doc>
 		</property>
 	</class>
@@ -2753,30 +2739,29 @@ Whether or not an audio source is spatial is controlled by the assigned AudioCli
 		<doc>Hit information from a physics query.</doc>
 		<ctor>
 		</ctor>
-		<field name="point" type="Vector3">
+		<field name="Point" type="Vector3">
 			<doc>Position of the hit in world space.</doc>
 		</field>
-		<field name="normal" type="Vector3">
+		<field name="Normal" type="Vector3">
 			<doc>Normal to the surface that was hit.</doc>
 		</field>
-		<field name="uv" type="Vector2">
+		<field name="Uv" type="Vector2">
 			<doc>Barycentric coordinates of the triangle that was hit (only applicable when triangle meshes are hit).</doc>
 		</field>
-		<field name="distance" type="float">
+		<field name="Distance" type="float">
 			<doc>Distance from the query origin to the hit position.</doc>
 		</field>
-		<field name="triangleIdx" type="int">
+		<field name="TriangleIdx" type="int">
 			<doc>Index of the triangle that was hit (only applicable when triangle meshes are hit).</doc>
 		</field>
-		<field name="unmappedTriangleIdx" type="int">
+		<field name="UnmappedTriangleIdx" type="int">
 			<doc>Unmapped index of the triangle that was hit (only applicable when triangle meshes are hit). It represents an index into the original MeshData used to create the PhysicsMesh associated with <see cref="collider"/>. In contrast, <see cref="triangleIdx"/> is only a valid index for the MeshData directly obtained from #collider which can differ from the original MeshData due to the internal implementation.</doc>
 		</field>
-		<field name="collider" type="Collider">
+		<field name="Collider" type="Collider">
 			<doc>Component of the collider that was hit. This may be null if the hit collider has no owner component, in which case refer to #colliderRaw.</doc>
 		</field>
 	</struct>
 	<class native="CCollider" script="Collider">
-		<doc>Collider represents physics geometry that can be in multiple states: - Default: Static geometry that physics objects can collide with. - Trigger: Static geometry that can&apos;t be collided with but will report touch events. - Dynamic: Dynamic geometry that is a part of a Rigidbody. A set of colliders defines the shape of the parent rigidbody.</doc>
 		<property name="Trigger" type="bool" getter="GetIsTrigger" setter="SetIsTrigger" static="false">
 		</property>
 		<property name="Mass" type="float" getter="GetMass" setter="SetMass" static="false">
@@ -2791,18 +2776,15 @@ Whether or not an audio source is spatial is controlled by the assigned AudioCli
 		</property>
 		<property name="CollisionReportMode" type="CollisionReportMode" getter="GetCollisionReportMode" setter="SetCollisionReportMode" static="false">
 		</property>
-		<event native="onCollisionBegin" script="OnCollisionBegin" static="false">
-			<doc>Triggered when some object starts interacting with the collider. Only triggered if proper collision report mode is turned on.</doc>
+		<event native="OnCollisionBegin" script="OnCollisionBegin" static="false">
 			<param name="p0" type="CollisionData">
 			</param>
 		</event>
-		<event native="onCollisionStay" script="OnCollisionStay" static="false">
-			<doc>Triggered for every frame that an object remains interacting with a collider. Only triggered if proper collision report mode is turned on.</doc>
+		<event native="OnCollisionStay" script="OnCollisionStay" static="false">
 			<param name="p0" type="CollisionData">
 			</param>
 		</event>
-		<event native="onCollisionEnd" script="OnCollisionEnd" static="false">
-			<doc>Triggered when some object stops interacting with the collider. Only triggered if proper collision report mode is turned on.</doc>
+		<event native="OnCollisionEnd" script="OnCollisionEnd" static="false">
 			<param name="p0" type="CollisionData">
 			</param>
 		</event>
@@ -2821,16 +2803,16 @@ Whether or not an audio source is spatial is controlled by the assigned AudioCli
 			<param name="fps" type="int">
 			</param>
 		</ctor>
-		<field name="numRows" type="int">
+		<field name="NumRows" type="int">
 			<doc>Number of rows to divide the parent&apos;s texture area. Determines height of the individual frame (depends on parent texture size).</doc>
 		</field>
-		<field name="numColumns" type="int">
+		<field name="NumColumns" type="int">
 			<doc>Number of columns to divide the parent&apos;s texture area. Determines column of the individual frame (depends on parent texture size).</doc>
 		</field>
-		<field name="count" type="int">
+		<field name="Count" type="int">
 			<doc>Number of frames in the animation. Must be less or equal than <see cref="numRows"/> * <see cref="numColumns"/>.</doc>
 		</field>
-		<field name="fps" type="int">
+		<field name="Fps" type="int">
 			<doc>How many frames to evaluate each second. Determines the animation speed.</doc>
 		</field>
 	</struct>
@@ -2954,28 +2936,28 @@ Whether or not an audio source is spatial is controlled by the assigned AudioCli
 		<doc>Settings that control automatic exposure (eye adaptation) post-process.</doc>
 		<ctor>
 		</ctor>
-		<property name="HistogramLog2Min" type="float" getter="GethistogramLog2Min" setter="SethistogramLog2Min" static="false">
+		<property name="HistogramLog2Min" type="float" getter="GetHistogramLog2Min" setter="SetHistogramLog2Min" static="false">
 			<doc>Determines minimum luminance value in the eye adaptation histogram. The histogram is used for calculating the average brightness of the scene. Any luminance value below this value will not be included in the histogram and ignored in scene brightness calculations. In log2 units (-8 = 1/256). In the range [-16, 0].</doc>
 		</property>
-		<property name="HistogramLog2Max" type="float" getter="GethistogramLog2Max" setter="SethistogramLog2Max" static="false">
+		<property name="HistogramLog2Max" type="float" getter="GetHistogramLog2Max" setter="SetHistogramLog2Max" static="false">
 			<doc>Determines maximum luminance value in the eye adaptation histogram. The histogram is used for calculating the average brightness of the scene. Any luminance value above this value will not be included in the histogram and ignored in scene brightness calculations. In log2 units (4 = 16). In the range [0, 16].</doc>
 		</property>
-		<property name="HistogramPctLow" type="float" getter="GethistogramPctLow" setter="SethistogramPctLow" static="false">
+		<property name="HistogramPctLow" type="float" getter="GetHistogramPctLow" setter="SetHistogramPctLow" static="false">
 			<doc>Percentage below which to ignore values in the eye adaptation histogram. The histogram is used for calculating the average brightness of the scene. Total luminance in the histogram will be summed up and multiplied by this value to calculate minimal luminance. Luminance values below the minimal luminance will be ignored and not used in scene brightness calculations. This allows you to remove outliers on the lower end of the histogram (for example a few very dark pixels in an otherwise bright image). In range [0.0f, 1.0f].</doc>
 		</property>
-		<property name="HistogramPctHigh" type="float" getter="GethistogramPctHigh" setter="SethistogramPctHigh" static="false">
+		<property name="HistogramPctHigh" type="float" getter="GetHistogramPctHigh" setter="SetHistogramPctHigh" static="false">
 			<doc>Percentage above which to ignore values in the eye adaptation histogram. The histogram is used for calculating the average brightness of the scene. Total luminance in the histogram will be summed up and multiplied by this value to calculate maximum luminance. Luminance values above the maximum luminance will be ignored and not used in scene brightness calculations. This allows you to remove outliers on the high end of the histogram (for example a few very bright pixels). In range [0.0f, 1.0f].</doc>
 		</property>
-		<property name="MinEyeAdaptation" type="float" getter="GetminEyeAdaptation" setter="SetminEyeAdaptation" static="false">
+		<property name="MinEyeAdaptation" type="float" getter="GetMinEyeAdaptation" setter="SetMinEyeAdaptation" static="false">
 			<doc>Clamps the minimum eye adaptation scale to this value. This allows you to limit eye adaptation so that exposure is never too high (for example when in a very dark room you probably do not want the exposure to be so high that everything is still visible). In range [0.0f, 10.0f].</doc>
 		</property>
-		<property name="MaxEyeAdaptation" type="float" getter="GetmaxEyeAdaptation" setter="SetmaxEyeAdaptation" static="false">
+		<property name="MaxEyeAdaptation" type="float" getter="GetMaxEyeAdaptation" setter="SetMaxEyeAdaptation" static="false">
 			<doc>Clamps the maximum eye adaptation scale to this value. This allows you to limit eye adaptation so that exposure is never too low (for example when looking at a very bright light source you probably don&apos;t want the exposure to be so low that the rest of the scene is all white (overexposed). In range [0.0f, 10.0f].</doc>
 		</property>
-		<property name="EyeAdaptationSpeedUp" type="float" getter="GeteyeAdaptationSpeedUp" setter="SeteyeAdaptationSpeedUp" static="false">
+		<property name="EyeAdaptationSpeedUp" type="float" getter="GetEyeAdaptationSpeedUp" setter="SetEyeAdaptationSpeedUp" static="false">
 			<doc>Determines how quickly does the eye adaptation adjust to larger values. This affects how quickly does the automatic exposure changes when the scene brightness increases. In range [0.01f, 20.0f].</doc>
 		</property>
-		<property name="EyeAdaptationSpeedDown" type="float" getter="GeteyeAdaptationSpeedDown" setter="SeteyeAdaptationSpeedDown" static="false">
+		<property name="EyeAdaptationSpeedDown" type="float" getter="GetEyeAdaptationSpeedDown" setter="SetEyeAdaptationSpeedDown" static="false">
 			<doc>Determines how quickly does the eye adaptation adjust to smaller values. This affects how quickly does the automatic exposure changes when the scene brightness decreases. In range [0.01f, 20.0f].</doc>
 		</property>
 	</class>
@@ -2983,25 +2965,25 @@ Whether or not an audio source is spatial is controlled by the assigned AudioCli
 		<doc>Settings that control tonemap post-process.</doc>
 		<ctor>
 		</ctor>
-		<property name="FilmicCurveShoulderStrength" type="float" getter="GetfilmicCurveShoulderStrength" setter="SetfilmicCurveShoulderStrength" static="false">
+		<property name="FilmicCurveShoulderStrength" type="float" getter="GetFilmicCurveShoulderStrength" setter="SetFilmicCurveShoulderStrength" static="false">
 			<doc>Controls the shoulder (upper non-linear) section of the filmic curve used for tonemapping. Mostly affects bright areas of the image and allows you to reduce over-exposure.</doc>
 		</property>
-		<property name="FilmicCurveLinearStrength" type="float" getter="GetfilmicCurveLinearStrength" setter="SetfilmicCurveLinearStrength" static="false">
+		<property name="FilmicCurveLinearStrength" type="float" getter="GetFilmicCurveLinearStrength" setter="SetFilmicCurveLinearStrength" static="false">
 			<doc>Controls the linear (middle) section of the filmic curve used for tonemapping. Mostly affects mid-range areas of the image.</doc>
 		</property>
-		<property name="FilmicCurveLinearAngle" type="float" getter="GetfilmicCurveLinearAngle" setter="SetfilmicCurveLinearAngle" static="false">
+		<property name="FilmicCurveLinearAngle" type="float" getter="GetFilmicCurveLinearAngle" setter="SetFilmicCurveLinearAngle" static="false">
 			<doc>Controls the linear (middle) section of the filmic curve used for tonemapping. Mostly affects mid-range areas of the image and allows you to control how quickly does the curve climb.</doc>
 		</property>
-		<property name="FilmicCurveToeStrength" type="float" getter="GetfilmicCurveToeStrength" setter="SetfilmicCurveToeStrength" static="false">
+		<property name="FilmicCurveToeStrength" type="float" getter="GetFilmicCurveToeStrength" setter="SetFilmicCurveToeStrength" static="false">
 			<doc>Controls the toe (lower non-linear) section of the filmic curve used for tonemapping. Mostly affects dark areas of the image and allows you to reduce under-exposure.</doc>
 		</property>
-		<property name="FilmicCurveToeNumerator" type="float" getter="GetfilmicCurveToeNumerator" setter="SetfilmicCurveToeNumerator" static="false">
+		<property name="FilmicCurveToeNumerator" type="float" getter="GetFilmicCurveToeNumerator" setter="SetFilmicCurveToeNumerator" static="false">
 			<doc>Controls the toe (lower non-linear) section of the filmic curve. used for tonemapping. Affects low-range.</doc>
 		</property>
-		<property name="FilmicCurveToeDenominator" type="float" getter="GetfilmicCurveToeDenominator" setter="SetfilmicCurveToeDenominator" static="false">
+		<property name="FilmicCurveToeDenominator" type="float" getter="GetFilmicCurveToeDenominator" setter="SetFilmicCurveToeDenominator" static="false">
 			<doc>Controls the toe (lower non-linear) section of the filmic curve used for tonemapping. Affects low-range.</doc>
 		</property>
-		<property name="FilmicCurveLinearWhitePoint" type="float" getter="GetfilmicCurveLinearWhitePoint" setter="SetfilmicCurveLinearWhitePoint" static="false">
+		<property name="FilmicCurveLinearWhitePoint" type="float" getter="GetFilmicCurveLinearWhitePoint" setter="SetFilmicCurveLinearWhitePoint" static="false">
 			<doc>Controls the white point of the filmic curve used for tonemapping. Affects the entire curve.</doc>
 		</property>
 	</class>
@@ -3009,11 +2991,11 @@ Whether or not an audio source is spatial is controlled by the assigned AudioCli
 		<doc>Settings that control white balance post-process.</doc>
 		<ctor>
 		</ctor>
-		<property name="Temperature" type="float" getter="Gettemperature" setter="Settemperature" static="false">
+		<property name="Temperature" type="float" getter="GetTemperature" setter="SetTemperature" static="false">
 			<doc>Temperature used for white balancing, in Kelvins.
 Moves along the Planckian locus. In range [1500.0f, 15000.0f].</doc>
 		</property>
-		<property name="Tint" type="float" getter="Gettint" setter="Settint" static="false">
+		<property name="Tint" type="float" getter="GetTint" setter="SetTint" static="false">
 			<doc>Additional tint to be applied during white balancing. Can be used to further tweak the white balancing effect by modifying the tint of the light. The tint is chosen on the Planckian locus isothermal, depending on the light temperature specified by #temperature.
 In range [-1.0f, 1.0f].</doc>
 		</property>
@@ -3059,22 +3041,22 @@ In range [-1.0f, 1.0f].</doc>
 		<ctor>
 			<doc>Creates a new import options object that allows you to customize how are meshes imported.</doc>
 		</ctor>
-		<property name="Languages" type="ShadingLanguageFlags" getter="Getlanguages" setter="Setlanguages" static="false">
+		<property name="Languages" type="ShadingLanguageFlags" getter="GetLanguages" setter="SetLanguages" static="false">
 			<doc>Flags that control which shading languages should the BSL shader be converted into. This ultimately controls on which render backends it will be able to run on.</doc>
 		</property>
 	</class>
 	<class native="ColorGradingSettings" script="ColorGradingSettings">
 		<doc>Settings that control color grading post-process.</doc>
-		<property name="Saturation" type="Vector3" getter="Getsaturation" setter="Setsaturation" static="false">
+		<property name="Saturation" type="Vector3" getter="GetSaturation" setter="SetSaturation" static="false">
 			<doc>Saturation to be applied during color grading. Larger values increase vibrancy of the image. In range [0.0f, 2.0f].</doc>
 		</property>
-		<property name="Contrast" type="Vector3" getter="Getcontrast" setter="Setcontrast" static="false">
+		<property name="Contrast" type="Vector3" getter="GetContrast" setter="SetContrast" static="false">
 			<doc>Contrast to be applied during color grading. Larger values increase difference between light and dark areas of the image. In range [0.0f, 2.0f].</doc>
 		</property>
-		<property name="Gain" type="Vector3" getter="Getgain" setter="Setgain" static="false">
+		<property name="Gain" type="Vector3" getter="GetGain" setter="SetGain" static="false">
 			<doc>Gain to be applied during color grading. Simply increases all color values by an equal scale. In range [0.0f, 2.0f].</doc>
 		</property>
-		<property name="Offset" type="Vector3" getter="Getoffset" setter="Setoffset" static="false">
+		<property name="Offset" type="Vector3" getter="GetOffset" setter="SetOffset" static="false">
 			<doc>Gain to be applied during color grading. Simply offsets all color values by an equal amount. In range [-1.0f, 1.0f].</doc>
 		</property>
 	</class>
@@ -3092,7 +3074,7 @@ In range [-1.0f, 1.0f].</doc>
 		<ctor>
 			<doc>Creates a new import options object that allows you to customize how is script code imported.</doc>
 		</ctor>
-		<property name="EditorScript" type="bool" getter="GeteditorScript" setter="SeteditorScript" static="false">
+		<property name="EditorScript" type="bool" getter="GetEditorScript" setter="SetEditorScript" static="false">
 			<doc>Determines whether the script is editor-only or a normal game script.</doc>
 		</property>
 	</class>
@@ -3100,55 +3082,55 @@ In range [-1.0f, 1.0f].</doc>
 		<doc>Settings that control the depth-of-field effect.</doc>
 		<ctor>
 		</ctor>
-		<property name="BokehShape" type="RRef&lt;Texture&gt;" getter="GetbokehShape" setter="SetbokehShape" static="false">
+		<property name="BokehShape" type="RRef&lt;Texture&gt;" getter="GetBokehShape" setter="SetBokehShape" static="false">
 			<doc>Texture to use for the bokeh shape. Only relevant when using Bokeh depth of field.</doc>
 		</property>
-		<property name="Enabled" type="bool" getter="Getenabled" setter="Setenabled" static="false">
+		<property name="Enabled" type="bool" getter="GetEnabled" setter="SetEnabled" static="false">
 			<doc>Enables or disables the depth of field effect.</doc>
 		</property>
-		<property name="Type" type="DepthOfFieldType" getter="Gettype" setter="Settype" static="false">
+		<property name="Type" type="DepthOfFieldType" getter="GetType" setter="SetType" static="false">
 			<doc>Type of depth of field effect to use.</doc>
 		</property>
-		<property name="FocalDistance" type="float" getter="GetfocalDistance" setter="SetfocalDistance" static="false">
+		<property name="FocalDistance" type="float" getter="GetFocalDistance" setter="SetFocalDistance" static="false">
 			<doc>Distance from the camera at which the focal plane is located in. Objects at this distance will be fully in focus. In world units (meters).</doc>
 		</property>
-		<property name="FocalRange" type="float" getter="GetfocalRange" setter="SetfocalRange" static="false">
+		<property name="FocalRange" type="float" getter="GetFocalRange" setter="SetFocalRange" static="false">
 			<doc>Range within which the objects remain fully in focus. This range is applied relative to the focal distance. This parameter should usually be non-zero when using the Gaussian depth of field effect. When using other types of depth-of-field you can set this to zero for a more physically-based effect, or keep it non-zero for more artistic control. In world units (meters).</doc>
 		</property>
-		<property name="NearTransitionRange" type="float" getter="GetnearTransitionRange" setter="SetnearTransitionRange" static="false">
+		<property name="NearTransitionRange" type="float" getter="GetNearTransitionRange" setter="SetNearTransitionRange" static="false">
 			<doc>Determines the size of the range within which objects transition from focused to fully unfocused, at the near  plane. Only relevant for Gaussian and Bokeh depth of field. In world units (meters).</doc>
 		</property>
-		<property name="FarTransitionRange" type="float" getter="GetfarTransitionRange" setter="SetfarTransitionRange" static="false">
+		<property name="FarTransitionRange" type="float" getter="GetFarTransitionRange" setter="SetFarTransitionRange" static="false">
 			<doc>Determines the size of the range within which objects transition from focused to fully unfocused, at the far  plane. Only relevant for Gaussian and Bokeh depth of field. In world units (meters).</doc>
 		</property>
-		<property name="NearBlurAmount" type="float" getter="GetnearBlurAmount" setter="SetnearBlurAmount" static="false">
+		<property name="NearBlurAmount" type="float" getter="GetNearBlurAmount" setter="SetNearBlurAmount" static="false">
 			<doc>Determines the amount of blur to apply to fully unfocused objects that are closer to camera than the in-focus zone. Set to zero to disable near-field blur. Only relevant for Gaussian depth of field.</doc>
 		</property>
-		<property name="FarBlurAmount" type="float" getter="GetfarBlurAmount" setter="SetfarBlurAmount" static="false">
+		<property name="FarBlurAmount" type="float" getter="GetFarBlurAmount" setter="SetFarBlurAmount" static="false">
 			<doc>Determines the amount of blur to apply to fully unfocused objects that are farther away from camera than the in-focus zone. Set to zero to disable far-field blur. Only relevant for Gaussian depth of field.</doc>
 		</property>
-		<property name="MaxBokehSize" type="float" getter="GetmaxBokehSize" setter="SetmaxBokehSize" static="false">
+		<property name="MaxBokehSize" type="float" getter="GetMaxBokehSize" setter="SetMaxBokehSize" static="false">
 			<doc>Determines the maximum size of the blur kernel, in percent of view size. Larger values cost more performance.  Only relevant when using Bokeh depth of field.</doc>
 		</property>
-		<property name="AdaptiveColorThreshold" type="float" getter="GetadaptiveColorThreshold" setter="SetadaptiveColorThreshold" static="false">
+		<property name="AdaptiveColorThreshold" type="float" getter="GetAdaptiveColorThreshold" setter="SetAdaptiveColorThreshold" static="false">
 			<doc>Determines the maximum color difference between surrounding pixels allowed (as a sum of all channels) before higher fidelity sampling is triggered. Increasing this value can improve performance as less higher fidelity samples will be required, but may decrease quality of the effect. Only relevant when using Bokeh depth of field.</doc>
 		</property>
-		<property name="AdaptiveRadiusThreshold" type="float" getter="GetadaptiveRadiusThreshold" setter="SetadaptiveRadiusThreshold" static="false">
+		<property name="AdaptiveRadiusThreshold" type="float" getter="GetAdaptiveRadiusThreshold" setter="SetAdaptiveRadiusThreshold" static="false">
 			<doc>Determines the minimum circle of confusion size before higher fidelity sampling is triggered. Small values trigger high fidelity sampling because they can otherwise produce aliasing, and they are small enough so they don&apos;t cost much. Increasing this value can improve performance as less higher fidelity samples will be required,  but may decrease quality of the effect. Only relevant when using Bokeh depth of field.</doc>
 		</property>
-		<property name="ApertureSize" type="float" getter="GetapertureSize" setter="SetapertureSize" static="false">
+		<property name="ApertureSize" type="float" getter="GetApertureSize" setter="SetApertureSize" static="false">
 			<doc>Camera aperture size in mm. Only relevant when using Bokeh depth of field.</doc>
 		</property>
-		<property name="FocalLength" type="float" getter="GetfocalLength" setter="SetfocalLength" static="false">
+		<property name="FocalLength" type="float" getter="GetFocalLength" setter="SetFocalLength" static="false">
 			<doc>Focal length of the camera&apos;s lens (e.g. 75mm). Only relevant when using Bokeh depth of field.</doc>
 		</property>
-		<property name="SensorSize" type="Vector2" getter="GetsensorSize" setter="SetsensorSize" static="false">
+		<property name="SensorSize" type="Vector2" getter="GetSensorSize" setter="SetSensorSize" static="false">
 			<doc>Camera sensor width and height, in mm. Used for controlling the size of the circle of confusion. Only relevant  when using Bokeh depth of field.</doc>
 		</property>
-		<property name="BokehOcclusion" type="bool" getter="GetbokehOcclusion" setter="SetbokehOcclusion" static="false">
+		<property name="BokehOcclusion" type="bool" getter="GetBokehOcclusion" setter="SetBokehOcclusion" static="false">
 			<doc>Set to true if Bokeh flare should use soft depth testing to ensure they don&apos;t render on top of foreground geometry. This can help reduce background bleeding into the foreground, which can be especially noticeable if the background is much brighter than the foreground. Use <see cref="occlusionDepthRange"/> to tweak the effect.</doc>
 		</property>
-		<property name="OcclusionDepthRange" type="float" getter="GetocclusionDepthRange" setter="SetocclusionDepthRange" static="false">
+		<property name="OcclusionDepthRange" type="float" getter="GetOcclusionDepthRange" setter="SetOcclusionDepthRange" static="false">
 			<doc>Range in world units over which range to fade out Bokeh flare influence. Influence of the flare will be faded out as the depth difference between the flare&apos;s origin pixel and the destination pixel grows larger. Only relevant if <see cref="bokehOcclusion"/> is turned on.</doc>
 		</property>
 	</class>
@@ -3176,20 +3158,20 @@ In range [-1.0f, 1.0f].</doc>
 			<param name="drawOp" type="MeshTopology">
 			</param>
 		</ctor>
-		<field name="indexOffset" type="int">
+		<field name="IndexOffset" type="int">
 		</field>
-		<field name="indexCount" type="int">
+		<field name="IndexCount" type="int">
 		</field>
-		<field name="drawOp" type="MeshTopology">
+		<field name="DrawOp" type="MeshTopology">
 		</field>
 	</struct>
 	<class native="ImportedAnimationEvents" script="ImportedAnimationEvents">
 		<doc>A set of animation events that will be added to an animation clip during animation import.</doc>
 		<ctor>
 		</ctor>
-		<property name="Name" type="string" getter="Getname" setter="Setname" static="false">
+		<property name="Name" type="string" getter="GetName" setter="SetName" static="false">
 		</property>
-		<property name="Events" type="AnimationEvent" getter="Getevents" setter="Setevents" static="false">
+		<property name="Events" type="AnimationEvent" getter="GetEvents" setter="SetEvents" static="false">
 		</property>
 	</class>
 	<enum native="MotionBlurFilter" script="MotionBlurFilter">
@@ -3223,21 +3205,20 @@ In range [-1.0f, 1.0f].</doc>
 		<doc>Settings that control the screen space reflections effect. Screen space reflections provide high quality mirror-like reflections at low performance cost. They should be used together with reflection probes as the effects complement each other. As the name implies, the reflections are only limited to geometry drawn on the screen and the system will fall back to refl. probes when screen space data is unavailable. Similarly the system will fall back to refl. probes for rougher (more glossy rather than mirror-like) surfaces. Those surfaces require a higher number of samples to achieve the glossy look, so we instead fall back to refl. probes which are pre-filtered and can be quickly sampled.</doc>
 		<ctor>
 		</ctor>
-		<property name="Enabled" type="bool" getter="Getenabled" setter="Setenabled" static="false">
+		<property name="Enabled" type="bool" getter="GetEnabled" setter="SetEnabled" static="false">
 			<doc>Enables or disables the SSR effect.</doc>
 		</property>
-		<property name="Quality" type="int" getter="Getquality" setter="Setquality" static="false">
+		<property name="Quality" type="int" getter="GetQuality" setter="SetQuality" static="false">
 			<doc>Quality of the SSR effect. Higher values cast more sample rays, and march those rays are lower increments for better precision. This results in higher quality, as well as a higher performance requirement. Valid range is [0, 4], default is 2.</doc>
 		</property>
-		<property name="Intensity" type="float" getter="Getintensity" setter="Setintensity" static="false">
+		<property name="Intensity" type="float" getter="GetIntensity" setter="SetIntensity" static="false">
 			<doc>Intensity of the screen space reflections. Valid range is [0, 1]. Default is 1 (100%).</doc>
 		</property>
-		<property name="MaxRoughness" type="float" getter="GetmaxRoughness" setter="SetmaxRoughness" static="false">
+		<property name="MaxRoughness" type="float" getter="GetMaxRoughness" setter="SetMaxRoughness" static="false">
 			<doc>Roughness at which screen space reflections start fading out and become replaced with refl. probes. Valid range is [0, 1]. Default is 0.8.</doc>
 		</property>
 	</class>
 	<class native="CHingeJoint" script="HingeJoint">
-		<doc>Hinge joint removes all but a single rotation degree of freedom from its two attached bodies (for example a door hinge).</doc>
 		<method native="SetFlag" script="SetFlag" static="false">
 			<param name="flag" type="HingeJointFlag">
 			</param>
@@ -3263,16 +3244,16 @@ In range [-1.0f, 1.0f].</doc>
 		<doc>Settings that control the chromatic aberration effect.</doc>
 		<ctor>
 		</ctor>
-		<property name="FringeTexture" type="RRef&lt;Texture&gt;" getter="GetfringeTexture" setter="SetfringeTexture" static="false">
+		<property name="FringeTexture" type="RRef&lt;Texture&gt;" getter="GetFringeTexture" setter="SetFringeTexture" static="false">
 			<doc>Optional texture to apply to generate the channel shift fringe, allowing you to modulate the shifted colors. This texture should be 3x1 size, where the first pixel modules red, second green and third blue channel. If using the complex aberration effect you can use a larger texture, Nx1 size.</doc>
 		</property>
-		<property name="Enabled" type="bool" getter="Getenabled" setter="Setenabled" static="false">
+		<property name="Enabled" type="bool" getter="GetEnabled" setter="SetEnabled" static="false">
 			<doc>Enables or disables the effect.</doc>
 		</property>
-		<property name="Type" type="ChromaticAberrationType" getter="Gettype" setter="Settype" static="false">
+		<property name="Type" type="ChromaticAberrationType" getter="GetType" setter="SetType" static="false">
 			<doc>Type of algorithm to use for rendering the effect.</doc>
 		</property>
-		<property name="ShiftAmount" type="float" getter="GetshiftAmount" setter="SetshiftAmount" static="false">
+		<property name="ShiftAmount" type="float" getter="GetShiftAmount" setter="SetShiftAmount" static="false">
 			<doc>Determines the brightness of the lens flare effect. Value of 1 means the lens flare will be displayed at the same intensity as the scene it was derived from. In range [0, 1], default being 0.05.</doc>
 		</property>
 	</class>
@@ -3280,13 +3261,13 @@ In range [-1.0f, 1.0f].</doc>
 		<doc>Settings that control the film grain effect. Film grains adds a time-varying noise effect over the entire image.</doc>
 		<ctor>
 		</ctor>
-		<property name="Enabled" type="bool" getter="Getenabled" setter="Setenabled" static="false">
+		<property name="Enabled" type="bool" getter="GetEnabled" setter="SetEnabled" static="false">
 			<doc>Enables or disables the effect.</doc>
 		</property>
-		<property name="Intensity" type="float" getter="Getintensity" setter="Setintensity" static="false">
+		<property name="Intensity" type="float" getter="GetIntensity" setter="SetIntensity" static="false">
 			<doc>Controls how intense are the displayed film grains.</doc>
 		</property>
-		<property name="Speed" type="float" getter="Getspeed" setter="Setspeed" static="false">
+		<property name="Speed" type="float" getter="GetSpeed" setter="SetSpeed" static="false">
 			<doc>Controls at what speed do the film grains change.</doc>
 		</property>
 	</class>
@@ -3294,16 +3275,16 @@ In range [-1.0f, 1.0f].</doc>
 		<doc>Various options that control shadow rendering for a specific view.</doc>
 		<ctor>
 		</ctor>
-		<property name="DirectionalShadowDistance" type="float" getter="GetdirectionalShadowDistance" setter="SetdirectionalShadowDistance" static="false">
+		<property name="DirectionalShadowDistance" type="float" getter="GetDirectionalShadowDistance" setter="SetDirectionalShadowDistance" static="false">
 			<doc>Maximum distance that directional light shadows are allowed to render at. Decreasing the distance can yield higher quality shadows nearer to the viewer, as the shadow map resolution isn&apos;t being used up on far away portions of the scene. In world units (meters).</doc>
 		</property>
-		<property name="NumCascades" type="int" getter="GetnumCascades" setter="SetnumCascades" static="false">
+		<property name="NumCascades" type="int" getter="GetNumCascades" setter="SetNumCascades" static="false">
 			<doc>Number of cascades to use for directional shadows. Higher number of cascades increases shadow quality as each individual cascade has less area to cover, but can significantly increase performance cost, as well as a minor increase in memory cost. Valid range is roughly [1, 6].</doc>
 		</property>
-		<property name="CascadeDistributionExponent" type="float" getter="GetcascadeDistributionExponent" setter="SetcascadeDistributionExponent" static="false">
+		<property name="CascadeDistributionExponent" type="float" getter="GetCascadeDistributionExponent" setter="SetCascadeDistributionExponent" static="false">
 			<doc>Allows you to control how are directional shadow cascades distributed. Value of 1 means the cascades will be linearly split, each cascade taking up the same amount of space. Value of 2 means each subsequent split will be twice the size of the previous one (meaning cascades closer to the viewer cover a smaller area, and therefore yield higher resolution shadows). Higher values increase the size disparity between near and far cascades at an exponential rate. Valid range is roughly [1, 4].</doc>
 		</property>
-		<property name="ShadowFilteringQuality" type="int" getter="GetshadowFilteringQuality" setter="SetshadowFilteringQuality" static="false">
+		<property name="ShadowFilteringQuality" type="int" getter="GetShadowFilteringQuality" setter="SetShadowFilteringQuality" static="false">
 			<doc>Determines the number of samples used for percentage closer shadow map filtering. Higher values yield higher quality shadows, at the cost of performance. Valid range is [1, 4].</doc>
 		</property>
 	</class>
@@ -3311,86 +3292,86 @@ In range [-1.0f, 1.0f].</doc>
 		<doc>Settings that control rendering for a specific camera (view).</doc>
 		<ctor>
 		</ctor>
-		<property name="DepthOfField" type="DepthOfFieldSettings" getter="GetdepthOfField" setter="SetdepthOfField" static="false">
+		<property name="DepthOfField" type="DepthOfFieldSettings" getter="GetDepthOfField" setter="SetDepthOfField" static="false">
 			<doc>Parameters used for customizing the gaussian depth of field effect.</doc>
 		</property>
-		<property name="ChromaticAberration" type="ChromaticAberrationSettings" getter="GetchromaticAberration" setter="SetchromaticAberration" static="false">
+		<property name="ChromaticAberration" type="ChromaticAberrationSettings" getter="GetChromaticAberration" setter="SetChromaticAberration" static="false">
 			<doc>Parameters used for customizing the chromatic aberration effect.</doc>
 		</property>
-		<property name="EnableAutoExposure" type="bool" getter="GetenableAutoExposure" setter="SetenableAutoExposure" static="false">
+		<property name="EnableAutoExposure" type="bool" getter="GetEnableAutoExposure" setter="SetEnableAutoExposure" static="false">
 			<doc>Determines should automatic exposure be applied to the HDR image. When turned on the average scene brightness will be calculated and used to automatically expose the image to the optimal range. Use the parameters provided by autoExposure to customize the automatic exposure effect. You may also use exposureScale to manually adjust the automatic exposure. When automatic exposure is turned off you can use exposureScale to manually set the exposure.</doc>
 		</property>
-		<property name="AutoExposure" type="AutoExposureSettings" getter="GetautoExposure" setter="SetautoExposure" static="false">
+		<property name="AutoExposure" type="AutoExposureSettings" getter="GetAutoExposure" setter="SetAutoExposure" static="false">
 			<doc>Parameters used for customizing automatic scene exposure.</doc>
 		</property>
-		<property name="EnableTonemapping" type="bool" getter="GetenableTonemapping" setter="SetenableTonemapping" static="false">
+		<property name="EnableTonemapping" type="bool" getter="GetEnableTonemapping" setter="SetEnableTonemapping" static="false">
 			<doc>Determines should the image be tonemapped. Tonemapping converts an HDR image into LDR image by applying a filmic curve to the image, simulating the effect of film cameras. Filmic curve improves image quality by tapering off lows and highs, preventing under- and over-exposure. This is useful if an image contains both very dark and very bright areas, in which case the global exposure parameter would leave some areas either over- or under-exposed. Use #tonemapping to customize how tonemapping performed.
 If this is disabled, then color grading and white balancing will not be enabled either. Only relevant for HDR images.</doc>
 		</property>
-		<property name="Tonemapping" type="TonemappingSettings" getter="Gettonemapping" setter="Settonemapping" static="false">
+		<property name="Tonemapping" type="TonemappingSettings" getter="GetTonemapping" setter="SetTonemapping" static="false">
 			<doc>Parameters used for customizing tonemapping.</doc>
 		</property>
-		<property name="WhiteBalance" type="WhiteBalanceSettings" getter="GetwhiteBalance" setter="SetwhiteBalance" static="false">
+		<property name="WhiteBalance" type="WhiteBalanceSettings" getter="GetWhiteBalance" setter="SetWhiteBalance" static="false">
 			<doc>Parameters used for customizing white balancing. White balancing converts a scene illuminated by a light of the specified temperature into a scene illuminated by a standard D65 illuminant (average midday light) in order to simulate the effects of chromatic adaptation of the human visual system.</doc>
 		</property>
-		<property name="ColorGrading" type="ColorGradingSettings" getter="GetcolorGrading" setter="SetcolorGrading" static="false">
+		<property name="ColorGrading" type="ColorGradingSettings" getter="GetColorGrading" setter="SetColorGrading" static="false">
 			<doc>Parameters used for customizing color grading.</doc>
 		</property>
-		<property name="AmbientOcclusion" type="AmbientOcclusionSettings" getter="GetambientOcclusion" setter="SetambientOcclusion" static="false">
+		<property name="AmbientOcclusion" type="AmbientOcclusionSettings" getter="GetAmbientOcclusion" setter="SetAmbientOcclusion" static="false">
 			<doc>Parameters used for customizing screen space ambient occlusion.</doc>
 		</property>
-		<property name="ScreenSpaceReflections" type="ScreenSpaceReflectionsSettings" getter="GetscreenSpaceReflections" setter="SetscreenSpaceReflections" static="false">
+		<property name="ScreenSpaceReflections" type="ScreenSpaceReflectionsSettings" getter="GetScreenSpaceReflections" setter="SetScreenSpaceReflections" static="false">
 			<doc>Parameters used for customizing screen space reflections.</doc>
 		</property>
-		<property name="Bloom" type="BloomSettings" getter="Getbloom" setter="Setbloom" static="false">
+		<property name="Bloom" type="BloomSettings" getter="GetBloom" setter="SetBloom" static="false">
 			<doc>Parameters used for customizing the bloom effect.</doc>
 		</property>
-		<property name="ScreenSpaceLensFlare" type="ScreenSpaceLensFlareSettings" getter="GetscreenSpaceLensFlare" setter="SetscreenSpaceLensFlare" static="false">
+		<property name="ScreenSpaceLensFlare" type="ScreenSpaceLensFlareSettings" getter="GetScreenSpaceLensFlare" setter="SetScreenSpaceLensFlare" static="false">
 			<doc>Parameters used for customizing the screen space lens flare effect.</doc>
 		</property>
-		<property name="FilmGrain" type="FilmGrainSettings" getter="GetfilmGrain" setter="SetfilmGrain" static="false">
+		<property name="FilmGrain" type="FilmGrainSettings" getter="GetFilmGrain" setter="SetFilmGrain" static="false">
 			<doc>Parameters used for customizing the film grain effect.</doc>
 		</property>
-		<property name="MotionBlur" type="MotionBlurSettings" getter="GetmotionBlur" setter="SetmotionBlur" static="false">
+		<property name="MotionBlur" type="MotionBlurSettings" getter="GetMotionBlur" setter="SetMotionBlur" static="false">
 			<doc>Parameters used for customizing the motion blur effect.</doc>
 		</property>
-		<property name="TemporalAA" type="TemporalAASettings" getter="GettemporalAA" setter="SettemporalAA" static="false">
+		<property name="TemporalAa" type="TemporalAASettings" getter="GetTemporalAa" setter="SetTemporalAa" static="false">
 			<doc>Parameters used for customizing the temporal anti-aliasing effect.</doc>
 		</property>
-		<property name="EnableFXAA" type="bool" getter="GetenableFXAA" setter="SetenableFXAA" static="false">
+		<property name="EnableFxaa" type="bool" getter="GetEnableFxaa" setter="SetEnableFxaa" static="false">
 			<doc>Enables the fast approximate anti-aliasing effect.</doc>
 		</property>
-		<property name="ExposureScale" type="float" getter="GetexposureScale" setter="SetexposureScale" static="false">
+		<property name="ExposureScale" type="float" getter="GetExposureScale" setter="SetExposureScale" static="false">
 			<doc>Log2 value to scale the eye adaptation by (for example 2^0 = 1). Smaller values yield darker image, while larger yield brighter image. Allows you to customize exposure manually, applied on top of eye adaptation exposure (if enabled). In range [-8, 8].</doc>
 		</property>
-		<property name="Gamma" type="float" getter="Getgamma" setter="Setgamma" static="false">
+		<property name="Gamma" type="float" getter="GetGamma" setter="SetGamma" static="false">
 			<doc>Gamma value to adjust the image for. Larger values result in a brighter image. When tonemapping is turned on the best gamma curve for the output device is chosen automatically and this value can by used to merely tweak that curve. If tonemapping is turned off this is the exact value of the gamma curve that will be applied.</doc>
 		</property>
-		<property name="EnableHDR" type="bool" getter="GetenableHDR" setter="SetenableHDR" static="false">
+		<property name="EnableHdr" type="bool" getter="GetEnableHdr" setter="SetEnableHdr" static="false">
 			<doc>High dynamic range allows light intensity to be more correctly recorded when rendering by allowing for a larger range of values. The stored light is then converted into visible color range using exposure and a tone mapping operator.</doc>
 		</property>
-		<property name="EnableLighting" type="bool" getter="GetenableLighting" setter="SetenableLighting" static="false">
+		<property name="EnableLighting" type="bool" getter="GetEnableLighting" setter="SetEnableLighting" static="false">
 			<doc>Determines if scene objects will be lit by lights. If disabled everything will be rendered using their albedo texture with no lighting applied.</doc>
 		</property>
-		<property name="EnableShadows" type="bool" getter="GetenableShadows" setter="SetenableShadows" static="false">
+		<property name="EnableShadows" type="bool" getter="GetEnableShadows" setter="SetEnableShadows" static="false">
 			<doc>Determines if shadows cast by lights should be rendered. Only relevant if lighting is turned on.</doc>
 		</property>
-		<property name="EnableVelocityBuffer" type="bool" getter="GetenableVelocityBuffer" setter="SetenableVelocityBuffer" static="false">
+		<property name="EnableVelocityBuffer" type="bool" getter="GetEnableVelocityBuffer" setter="SetEnableVelocityBuffer" static="false">
 			<doc>Determines if the G-Buffer should contain per-pixel velocity information. This can be useful if you are rendering an effect that requires this information. Note that effects such as motion blur or temporal anti-aliasing might force the velocity buffer to be enabled regardless of this setting.</doc>
 		</property>
-		<property name="ShadowSettings" type="ShadowSettings" getter="GetshadowSettings" setter="SetshadowSettings" static="false">
+		<property name="ShadowSettings" type="ShadowSettings" getter="GetShadowSettings" setter="SetShadowSettings" static="false">
 			<doc>Parameters used for customizing shadow rendering.</doc>
 		</property>
-		<property name="EnableIndirectLighting" type="bool" getter="GetenableIndirectLighting" setter="SetenableIndirectLighting" static="false">
+		<property name="EnableIndirectLighting" type="bool" getter="GetEnableIndirectLighting" setter="SetEnableIndirectLighting" static="false">
 			<doc>Determines if indirect lighting (e.g. from light probes or the sky) is rendered.</doc>
 		</property>
-		<property name="OverlayOnly" type="bool" getter="GetoverlayOnly" setter="SetoverlayOnly" static="false">
+		<property name="OverlayOnly" type="bool" getter="GetOverlayOnly" setter="SetOverlayOnly" static="false">
 			<doc>Signals the renderer to only render overlays (like GUI), and not scene objects. Such rendering doesn&apos;t require depth buffer or multi-sampled render targets and will not render any scene objects. This can improve performance and memory usage for overlay-only views.</doc>
 		</property>
-		<property name="EnableSkybox" type="bool" getter="GetenableSkybox" setter="SetenableSkybox" static="false">
+		<property name="EnableSkybox" type="bool" getter="GetEnableSkybox" setter="SetEnableSkybox" static="false">
 			<doc>If enabled the camera will use the skybox for rendering the background. A skybox has to be present in the scene. When disabled the camera will use the clear color for rendering the background.</doc>
 		</property>
-		<property name="CullDistance" type="float" getter="GetcullDistance" setter="SetcullDistance" static="false">
+		<property name="CullDistance" type="float" getter="GetCullDistance" setter="SetCullDistance" static="false">
 			<doc>The absolute base cull-distance for objects rendered through this camera in world units. Objects will use this distance and apply their own factor to it to determine whether they should be visible.</doc>
 		</property>
 	</class>
@@ -3401,7 +3382,6 @@ If this is disabled, then color grading and white balancing will not be enabled 
 		</enumentry>
 	</enum>
 	<class native="CCapsuleCollider" script="CapsuleCollider">
-		<doc>Collider with a capsule geometry.</doc>
 		<property name="Normal" type="Vector3" getter="GetNormal" setter="SetNormal" static="false">
 			<doc>Normal vector that determines how is the capsule oriented.</doc>
 		</property>
@@ -3465,56 +3445,56 @@ If this is disabled, then color grading and white balancing will not be enabled 
 			<param name="image" type="SpriteTexture">
 			</param>
 		</ctor>
-		<field name="normal" type="SpriteTexture">
+		<field name="Normal" type="SpriteTexture">
 		</field>
-		<field name="hover" type="SpriteTexture">
+		<field name="Hover" type="SpriteTexture">
 		</field>
-		<field name="active" type="SpriteTexture">
+		<field name="Active" type="SpriteTexture">
 		</field>
-		<field name="focused" type="SpriteTexture">
+		<field name="Focused" type="SpriteTexture">
 		</field>
-		<field name="normalOn" type="SpriteTexture">
+		<field name="NormalOn" type="SpriteTexture">
 		</field>
-		<field name="hoverOn" type="SpriteTexture">
+		<field name="HoverOn" type="SpriteTexture">
 		</field>
-		<field name="activeOn" type="SpriteTexture">
+		<field name="ActiveOn" type="SpriteTexture">
 		</field>
-		<field name="focusedOn" type="SpriteTexture">
+		<field name="FocusedOn" type="SpriteTexture">
 		</field>
 	</struct>
 	<struct native="ControllerCollision" script="ControllerCollision">
 		<doc>Contains data about a collision of a character controller and another object.</doc>
-		<field name="position" type="Vector3">
+		<field name="Position" type="Vector3">
 			<doc>Contact position.</doc>
 		</field>
-		<field name="normal" type="Vector3">
+		<field name="Normal" type="Vector3">
 			<doc>Contact normal.</doc>
 		</field>
-		<field name="motionDir" type="Vector3">
+		<field name="MotionDir" type="Vector3">
 			<doc>Direction of motion after the hit.</doc>
 		</field>
-		<field name="motionAmount" type="float">
+		<field name="MotionAmount" type="float">
 			<doc>Magnitude of motion after the hit.</doc>
 		</field>
 	</struct>
 	<struct native="ControllerColliderCollision" script="ControllerColliderCollision">
 		<doc>Contains data about a collision of a character controller and a collider.</doc>
-		<field name="collider" type="Collider">
+		<field name="Collider" type="Collider">
 			<doc>Component of the controller that was touched. Can be null if the controller has no component parent, in which case check #colliderRaw.</doc>
 		</field>
-		<field name="triangleIndex" type="int">
+		<field name="TriangleIndex" type="int">
 			<doc>Touched triangle index for mesh colliders.</doc>
 		</field>
-		<field name="position" type="Vector3">
+		<field name="Position" type="Vector3">
 			<doc>Contact position.</doc>
 		</field>
-		<field name="normal" type="Vector3">
+		<field name="Normal" type="Vector3">
 			<doc>Contact normal.</doc>
 		</field>
-		<field name="motionDir" type="Vector3">
+		<field name="MotionDir" type="Vector3">
 			<doc>Direction of motion after the hit.</doc>
 		</field>
-		<field name="motionAmount" type="float">
+		<field name="MotionAmount" type="float">
 			<doc>Magnitude of motion after the hit.</doc>
 		</field>
 	</struct>
@@ -3578,27 +3558,27 @@ If this is disabled, then color grading and white balancing will not be enabled 
 	</enum>
 	<struct native="ControllerControllerCollision" script="ControllerControllerCollision">
 		<doc>Contains data about a collision between two character controllers.</doc>
-		<field name="controller" type="CharacterController">
+		<field name="Controller" type="CharacterController">
 			<doc>Component of the controller that was touched. Can be null if the controller has no component parent, in which case check #controllerRaw.</doc>
 		</field>
-		<field name="position" type="Vector3">
+		<field name="Position" type="Vector3">
 			<doc>Contact position.</doc>
 		</field>
-		<field name="normal" type="Vector3">
+		<field name="Normal" type="Vector3">
 			<doc>Contact normal.</doc>
 		</field>
-		<field name="motionDir" type="Vector3">
+		<field name="MotionDir" type="Vector3">
 			<doc>Direction of motion after the hit.</doc>
 		</field>
-		<field name="motionAmount" type="float">
+		<field name="MotionAmount" type="float">
 			<doc>Magnitude of motion after the hit.</doc>
 		</field>
 	</struct>
 	<struct native="LightProbeInfo" script="LightProbeInfo">
 		<doc>Information about a single probe in the light probe volume.</doc>
-		<field name="handle" type="int">
+		<field name="Handle" type="int">
 		</field>
-		<field name="position" type="Vector3">
+		<field name="Position" type="Vector3">
 		</field>
 	</struct>
 	<enum native="JointBody" script="JointBody">
@@ -3624,10 +3604,10 @@ If this is disabled, then color grading and white balancing will not be enabled 
 				<doc>Damping strength. Force propertional to the velocity error.</doc>
 			</param>
 		</ctor>
-		<field name="stiffness" type="float">
+		<field name="Stiffness" type="float">
 			<doc>Spring strength. Force proportional to the position error.</doc>
 		</field>
-		<field name="damping" type="float">
+		<field name="Damping" type="float">
 			<doc>Damping strength. Force propertional to the velocity error.</doc>
 		</field>
 	</struct>
@@ -3635,10 +3615,10 @@ If this is disabled, then color grading and white balancing will not be enabled 
 		<doc>Structure used for initializing a ParticleForce object.</doc>
 		<ctor>
 		</ctor>
-		<field name="force" type="Vector3Distribution">
+		<field name="Force" type="Vector3Distribution">
 			<doc>Determines the force of the particles evaluated over particle lifetime.</doc>
 		</field>
-		<field name="worldSpace" type="bool">
+		<field name="WorldSpace" type="bool">
 			<doc>True if the force is provided in world space, false if in local space.</doc>
 		</field>
 	</struct>
@@ -3654,13 +3634,13 @@ If this is disabled, then color grading and white balancing will not be enabled 
 			<param name="restitution" type="float">
 			</param>
 		</ctor>
-		<field name="contactDist" type="float">
+		<field name="ContactDist" type="float">
 			<doc>Distance from the limit at which it becomes active. Allows the solver to activate earlier than the limit is reached to avoid breaking the limit.</doc>
 		</field>
-		<field name="restitution" type="float">
+		<field name="Restitution" type="float">
 			<doc>Controls how do objects react when the limit is reached, values closer to zero specify non-ellastic collision, while those closer to one specify more ellastic (i.e bouncy) collision. Must be in [0, 1] range.</doc>
 		</field>
-		<field name="spring" type="Spring">
+		<field name="Spring" type="Spring">
 			<doc>Spring that controls how are the bodies pulled back towards the limit when they breach it.</doc>
 		</field>
 	</struct>
@@ -3696,19 +3676,19 @@ If this is disabled, then color grading and white balancing will not be enabled 
 				<doc>Controls how do objects react when the limit is reached, values closer to zero specify non-ellastic collision, while those closer to one specify more ellastic (i.e bouncy) collision. Must be in [0, 1] range.</doc>
 			</param>
 		</ctor>
-		<field name="lower" type="float">
+		<field name="Lower" type="float">
 			<doc>Lower distance of the limit. Must be less than #upper.</doc>
 		</field>
-		<field name="upper" type="float">
+		<field name="Upper" type="float">
 			<doc>Upper distance of the limit. Must be more than #lower.</doc>
 		</field>
-		<field name="contactDist" type="float">
+		<field name="ContactDist" type="float">
 			<doc>Distance from the limit at which it becomes active. Allows the solver to activate earlier than the limit is reached to avoid breaking the limit.</doc>
 		</field>
-		<field name="restitution" type="float">
+		<field name="Restitution" type="float">
 			<doc>Controls how do objects react when the limit is reached, values closer to zero specify non-ellastic collision, while those closer to one specify more ellastic (i.e bouncy) collision. Must be in [0, 1] range.</doc>
 		</field>
-		<field name="spring" type="Spring">
+		<field name="Spring" type="Spring">
 			<doc>Spring that controls how are the bodies pulled back towards the limit when they breach it.</doc>
 		</field>
 	</struct>
@@ -3738,16 +3718,16 @@ If this is disabled, then color grading and white balancing will not be enabled 
 				<doc>Controls how do objects react when the limit is reached, values closer to zero specify non-ellastic collision, while those closer to one specify more ellastic (i.e bouncy) collision. Must be in [0, 1] range.</doc>
 			</param>
 		</ctor>
-		<field name="extent" type="float">
+		<field name="Extent" type="float">
 			<doc>Distance at which the limit becomes active.</doc>
 		</field>
-		<field name="contactDist" type="float">
+		<field name="ContactDist" type="float">
 			<doc>Distance from the limit at which it becomes active. Allows the solver to activate earlier than the limit is reached to avoid breaking the limit.</doc>
 		</field>
-		<field name="restitution" type="float">
+		<field name="Restitution" type="float">
 			<doc>Controls how do objects react when the limit is reached, values closer to zero specify non-ellastic collision, while those closer to one specify more ellastic (i.e bouncy) collision. Must be in [0, 1] range.</doc>
 		</field>
-		<field name="spring" type="Spring">
+		<field name="Spring" type="Spring">
 			<doc>Spring that controls how are the bodies pulled back towards the limit when they breach it.</doc>
 		</field>
 	</struct>
@@ -3783,19 +3763,19 @@ If this is disabled, then color grading and white balancing will not be enabled 
 				<doc>Controls how do objects react when the limit is reached, values closer to zero specify non-ellastic collision, while those closer to one specify more ellastic (i.e bouncy) collision. Must be in [0, 1] range.</doc>
 			</param>
 		</ctor>
-		<field name="yLimitAngle" type="Radian">
+		<field name="YLimitAngle" type="Radian">
 			<doc>Y angle of the cone. Movement is constrainted between 0 and this angle on the Y axis.</doc>
 		</field>
-		<field name="zLimitAngle" type="Radian">
+		<field name="ZLimitAngle" type="Radian">
 			<doc>Z angle of the cone. Movement is constrainted between 0 and this angle on the Z axis.</doc>
 		</field>
-		<field name="contactDist" type="float">
+		<field name="ContactDist" type="float">
 			<doc>Distance from the limit at which it becomes active. Allows the solver to activate earlier than the limit is reached to avoid breaking the limit.</doc>
 		</field>
-		<field name="restitution" type="float">
+		<field name="Restitution" type="float">
 			<doc>Controls how do objects react when the limit is reached, values closer to zero specify non-ellastic collision, while those closer to one specify more ellastic (i.e bouncy) collision. Must be in [0, 1] range.</doc>
 		</field>
-		<field name="spring" type="Spring">
+		<field name="Spring" type="Spring">
 			<doc>Spring that controls how are the bodies pulled back towards the limit when they breach it.</doc>
 		</field>
 	</struct>
@@ -3878,16 +3858,16 @@ If this is disabled, then color grading and white balancing will not be enabled 
 		<doc>Specifies parameters for a drive that will attempt to move the joint bodies to the specified drive position and velocity.</doc>
 		<ctor>
 		</ctor>
-		<field name="stiffness" type="float">
+		<field name="Stiffness" type="float">
 			<doc>Spring strength. Force proportional to the position error.</doc>
 		</field>
-		<field name="damping" type="float">
+		<field name="Damping" type="float">
 			<doc>Damping strength. Force propertional to the velocity error.</doc>
 		</field>
-		<field name="forceLimit" type="float">
+		<field name="ForceLimit" type="float">
 			<doc>Maximum force the drive can apply.</doc>
 		</field>
-		<field name="acceleration" type="bool">
+		<field name="Acceleration" type="bool">
 			<doc>If true the drive will generate acceleration instead of forces. Acceleration drives are easier to tune as they account for the masses of the actors to which the joint is attached.</doc>
 		</field>
 	</struct>
@@ -3898,7 +3878,6 @@ If this is disabled, then color grading and white balancing will not be enabled 
 		</enumentry>
 	</enum>
 	<class native="CJoint" script="Joint">
-		<doc>Base class for all Joint types. Joints constrain how two rigidbodies move relative to one another (for example a door hinge). One of the bodies in the joint must always be movable (non-kinematic).</doc>
 		<method native="GetBody" script="GetBody" static="false">
 			<param name="body" type="JointBody">
 			</param>
@@ -3937,8 +3916,7 @@ If this is disabled, then color grading and white balancing will not be enabled 
 		</property>
 		<property name="EnableCollision" type="bool" getter="GetEnableCollision" setter="SetEnableCollision" static="false">
 		</property>
-		<event native="onJointBreak" script="OnJointBreak" static="false">
-			<doc>Triggered when the joint&apos;s break force or torque is exceeded.</doc>
+		<event native="OnJointBreak" script="OnJointBreak" static="false">
 		</event>
 	</class>
 	<class native="ParticleVelocity" script="ParticleVelocity">
@@ -3956,7 +3934,6 @@ If this is disabled, then color grading and white balancing will not be enabled 
 		</property>
 	</class>
 	<class native="CD6Joint" script="D6Joint">
-		<doc>Represents the most customizable type of joint. This joint type can be used to create all other built-in joint types, and to design your own custom ones, but is less intuitive to use. Allows a specification of a linear constraint (for example for slider), twist constraint (rotating around X) and swing constraint (rotating around Y and Z). It also allows you to constrain limits to only specific axes or completely lock specific axes.</doc>
 		<method native="GetMotion" script="GetMotion" static="false">
 			<param name="axis" type="D6JointAxis">
 			</param>
@@ -4040,7 +4017,6 @@ If this is disabled, then color grading and white balancing will not be enabled 
 		</enumentry>
 	</enum>
 	<class native="CDistanceJoint" script="DistanceJoint">
-		<doc>A joint that maintains an upper or lower (or both) bound on the distance between two bodies.</doc>
 		<method native="SetFlag" script="SetFlag" static="false">
 			<param name="flag" type="DistanceJointFlag">
 			</param>
@@ -4065,7 +4041,6 @@ If this is disabled, then color grading and white balancing will not be enabled 
 		</property>
 	</class>
 	<class native="CFixedJoint" script="FixedJoint">
-		<doc>Physics joint that will maintain a fixed distance and orientation between its two attached bodies.</doc>
 	</class>
 	<enum native="RigidbodyFlag" script="RigidbodyFlag">
 		<doc>Flags that control options of a Rigidbody object.</doc>
@@ -4095,21 +4070,20 @@ If this is disabled, then color grading and white balancing will not be enabled 
 		<doc>Properties of a drive that drives the joint&apos;s angular velocity towards a paricular value.</doc>
 		<ctor>
 		</ctor>
-		<field name="speed" type="float">
+		<field name="Speed" type="float">
 			<doc>Target speed of the joint.</doc>
 		</field>
-		<field name="forceLimit" type="float">
+		<field name="ForceLimit" type="float">
 			<doc>Maximum torque the drive is allowed to apply .</doc>
 		</field>
-		<field name="gearRatio" type="float">
+		<field name="GearRatio" type="float">
 			<doc>Scales the velocity of the first body, and its response to drive torque is scaled down.</doc>
 		</field>
-		<field name="freeSpin" type="bool">
+		<field name="FreeSpin" type="bool">
 			<doc>If the joint is moving faster than the drive&apos;s target speed, the drive will try to break. If you don&apos;t want the breaking to happen set this to true.</doc>
 		</field>
 	</struct>
 	<class native="CLight" script="Light">
-		<doc>Illuminates a portion of the scene covered by the light.</doc>
 		<property name="Type" type="LightType" getter="GetType" setter="SetType" static="false">
 		</property>
 		<property name="Color" type="Color" getter="GetColor" setter="SetColor" static="false">
@@ -4134,8 +4108,6 @@ If this is disabled, then color grading and white balancing will not be enabled 
 		</property>
 	</class>
 	<class native="CLightProbeVolume" script="LightProbeVolume">
-		<doc>Allows you to define a volume of light probes that will be used for indirect lighting. Lighting information in the scene will be interpolated from nearby probes to calculate the amount of indirect lighting at that position. It is up to the caller to place the light probes in areas where the lighting changes in order to yield the best results.
-The volume can never have less than 4 probes.</doc>
 		<method native="AddProbe" script="AddProbe" static="false">
 			<param name="position" type="Vector3">
 			</param>
@@ -4190,7 +4162,6 @@ The volume can never have less than 4 probes.</doc>
 		</property>
 	</class>
 	<class native="CMeshCollider" script="MeshCollider">
-		<doc>A collider represented by an arbitrary mesh.</doc>
 		<property name="Mesh" type="RRef&lt;PhysicsMesh&gt;" getter="GetMesh" setter="SetMesh" static="false">
 		</property>
 	</class>
@@ -4535,10 +4506,10 @@ The volume can never have less than 4 probes.</doc>
 		<doc>Structure used for initializing a ParticleTextureAnimation object.</doc>
 		<ctor>
 		</ctor>
-		<field name="randomizeRow" type="bool">
+		<field name="RandomizeRow" type="bool">
 			<doc>Randomly pick a row to use for animation when the particle is first spawned. This implies that only a single row of the grid will be used for individual particle&apos;s animation.</doc>
 		</field>
-		<field name="numCycles" type="int">
+		<field name="NumCycles" type="int">
 			<doc>Number of cycles to loop the animation during particle&apos;s lifetime.</doc>
 		</field>
 	</struct>
@@ -4575,16 +4546,16 @@ The volume can never have less than 4 probes.</doc>
 		<doc>Structure used for initializing a ParticleOrbit object.</doc>
 		<ctor>
 		</ctor>
-		<field name="center" type="Vector3Distribution">
+		<field name="Center" type="Vector3Distribution">
 			<doc>Position of the center around which to orbit. Evaluated over particle system lifetime.</doc>
 		</field>
-		<field name="velocity" type="Vector3Distribution">
+		<field name="Velocity" type="Vector3Distribution">
 			<doc>Determines the speed of rotation around each axis. The speed is specified in &quot;turns&quot; where 0 = no rotation, 0.5 = 180 degree rotation and 1 = 360 degree rotation. Evaluated over particle lifetime.</doc>
 		</field>
-		<field name="radial" type="FloatDistribution">
+		<field name="Radial" type="FloatDistribution">
 			<doc>Speed at which to push or pull the particles towards/away from the center. Evaluated over particle lifetime.</doc>
 		</field>
-		<field name="worldSpace" type="bool">
+		<field name="WorldSpace" type="bool">
 			<doc>True if the properties provided are in world space, false if in local space.</doc>
 		</field>
 	</struct>
@@ -4606,10 +4577,10 @@ The volume can never have less than 4 probes.</doc>
 		<doc>Structure used for initializing a ParticleVelocity object.</doc>
 		<ctor>
 		</ctor>
-		<field name="velocity" type="Vector3Distribution">
+		<field name="Velocity" type="Vector3Distribution">
 			<doc>Determines the velocity of the particles evaluated over particle lifetime.</doc>
 		</field>
-		<field name="worldSpace" type="bool">
+		<field name="WorldSpace" type="bool">
 			<doc>True if the velocity is provided in world space, false if in local space.</doc>
 		</field>
 	</struct>
@@ -4626,7 +4597,7 @@ The volume can never have less than 4 probes.</doc>
 		<doc>Structure used for initializing a ParticleGravity object.</doc>
 		<ctor>
 		</ctor>
-		<field name="scale" type="float">
+		<field name="Scale" type="float">
 			<doc>Scale which to apply to the gravity value retrieved from the physics sub-system.</doc>
 		</field>
 	</struct>
@@ -4646,7 +4617,7 @@ The volume can never have less than 4 probes.</doc>
 	</enum>
 	<struct native="PARTICLE_COLOR_DESC" script="ParticleColorOptions">
 		<doc>Structure used for initializing a ParticleColor object.</doc>
-		<field name="color" type="ColorDistribution">
+		<field name="Color" type="ColorDistribution">
 			<doc>Determines the color of the particles evaluated over particle lifetime.</doc>
 		</field>
 	</struct>
@@ -4682,13 +4653,13 @@ The volume can never have less than 4 probes.</doc>
 		<doc>Structure used for initializing a ParticleRotation object.</doc>
 		<ctor>
 		</ctor>
-		<field name="rotation" type="FloatDistribution">
+		<field name="Rotation" type="FloatDistribution">
 			<doc>Determines the rotation of the particles in degrees, applied around the particle&apos;s local Z axis. Only used if 3D rotation is disabled.</doc>
 		</field>
-		<field name="rotation3D" type="Vector3Distribution">
+		<field name="Rotation3D" type="Vector3Distribution">
 			<doc>Determines the rotation of the particles in degrees as Euler angles. Only used if 3D rotation is enabled.</doc>
 		</field>
-		<field name="use3DRotation" type="bool">
+		<field name="Use3DRotation" type="bool">
 			<doc>Determines should the particle rotation be a single angle applied around a Z axis (if disabled), or a set of Euler angles that allow you to rotate around every axis (if enabled).</doc>
 		</field>
 	</struct>
@@ -4710,22 +4681,22 @@ The volume can never have less than 4 probes.</doc>
 		<doc>Structure used for initializing a ParticleCollisions object.</doc>
 		<ctor>
 		</ctor>
-		<field name="mode" type="ParticleCollisionMode">
+		<field name="Mode" type="ParticleCollisionMode">
 			<doc>Collision mode determining with which geometry the particles will interact with.</doc>
 		</field>
-		<field name="restitution" type="float">
+		<field name="Restitution" type="float">
 			<doc>Determines the elasticity (bounciness) of the particle collision. Lower values make the collision less bouncy and higher values more.</doc>
 		</field>
-		<field name="dampening" type="float">
+		<field name="Dampening" type="float">
 			<doc>Determines how much velocity should a particle lose after a collision, in percent of its current velocity. In range [0, 1].</doc>
 		</field>
-		<field name="lifetimeLoss" type="float">
+		<field name="LifetimeLoss" type="float">
 			<doc>Determines how much should the particle lifetime be reduced after a collision, in percent of its original lifetime. In range [0, 1].</doc>
 		</field>
-		<field name="radius" type="float">
+		<field name="Radius" type="float">
 			<doc>Radius of every individual particle used for collisions, in meters.</doc>
 		</field>
-		<field name="layer" type="ulong">
+		<field name="Layer" type="ulong">
 			<doc>Physics layers that determine which objects will particle collide with. Only relevant when using the World collision mode.</doc>
 		</field>
 	</struct>
@@ -4752,12 +4723,9 @@ The volume can never have less than 4 probes.</doc>
 	<class native="PhysicsMesh" script="PhysicsMesh">
 		<doc>Represents a physics mesh that can be used with a MeshCollider. Physics mesh can be a generic triangle mesh or a convex mesh. Convex meshes are limited to 255 faces.</doc>
 		<ctor>
-			<doc>Creates a new physics mesh.</doc>
 			<param name="meshData" type="MeshData">
-				<doc>Index and vertices of the mesh data.</doc>
 			</param>
 			<param name="type" type="PhysicsMeshType">
-				<doc>Type of the mesh. If convex the provided mesh geometry will be converted into a convex mesh (that might not be the same as the provided mesh data).</doc>
 			</param>
 		</ctor>
 		<property name="Type" type="PhysicsMeshType" getter="GetType" setter="" static="false">
@@ -4785,13 +4753,13 @@ The volume can never have less than 4 probes.</doc>
 		<doc>Controls how are particle positions on a shape chosen.</doc>
 		<ctor>
 		</ctor>
-		<field name="type" type="ParticleEmissionModeType">
+		<field name="Type" type="ParticleEmissionModeType">
 			<doc>Type that determines general behaviour.</doc>
 		</field>
-		<field name="speed" type="float">
+		<field name="Speed" type="float">
 			<doc>Speed along which particle generation should move around the shape, relevant for Loop and PingPing emission modes.</doc>
 		</field>
-		<field name="interval" type="float">
+		<field name="Interval" type="float">
 			<doc>Determines the minimum interval allowed between the generated particles. 0 specifies the particles can be generated anywhere on the shape.</doc>
 		</field>
 	</struct>
@@ -4822,25 +4790,25 @@ The volume can never have less than 4 probes.</doc>
 		<doc>Information describing a ParticleEmitterConeShape.</doc>
 		<ctor>
 		</ctor>
-		<field name="type" type="ParticleEmitterConeType">
+		<field name="Type" type="ParticleEmitterConeType">
 			<doc>Determines where on the cone are the particles emitter from.</doc>
 		</field>
-		<field name="radius" type="float">
+		<field name="Radius" type="float">
 			<doc>Radius of the cone base.</doc>
 		</field>
-		<field name="angle" type="Degree">
+		<field name="Angle" type="Degree">
 			<doc>Angle of the cone.</doc>
 		</field>
-		<field name="length" type="float">
+		<field name="Length" type="float">
 			<doc>Length of the cone. Irrelevant if emission type is Base.</doc>
 		</field>
-		<field name="thickness" type="float">
+		<field name="Thickness" type="float">
 			<doc>Proportion of the volume that can emit particles. Thickness of 0 results in particles being emitted only from the edge of the cone, while thickness of 1 results in particles being emitted from the entire volume. In-between values will use a part of the volume.</doc>
 		</field>
-		<field name="arc" type="Degree">
+		<field name="Arc" type="Degree">
 			<doc>Angular portion of the cone from which to emit particles from, in degrees.</doc>
 		</field>
-		<field name="mode" type="ParticleEmissionMode">
+		<field name="Mode" type="ParticleEmissionMode">
 			<doc>Determines how will particle positions on the shape be generated.</doc>
 		</field>
 	</struct>
@@ -4901,15 +4869,14 @@ The volume can never have less than 4 probes.</doc>
 		<doc>Information describing a ParticleEmitterSphereShape.</doc>
 		<ctor>
 		</ctor>
-		<field name="radius" type="float">
+		<field name="Radius" type="float">
 			<doc>Radius of the sphere.</doc>
 		</field>
-		<field name="thickness" type="float">
+		<field name="Thickness" type="float">
 			<doc>Proportion of the volume that can emit particles. Thickness of 0 results in particles being emitted only from the edge of the volume, while thickness of 1 results in particles being emitted from the entire volume. In-between values will use a part of the volume.</doc>
 		</field>
 	</struct>
 	<class native="CSphericalJoint" script="SphericalJoint">
-		<doc>A spherical joint removes all translational degrees of freedom but allows all rotational degrees of freedom. Essentially this ensures that the anchor points of the two bodies are always coincident. Bodies are allowed to rotate around the anchor points, and their rotatation can be limited by an elliptical cone.</doc>
 		<method native="SetFlag" script="SetFlag" static="false">
 			<param name="flag" type="SphericalJointFlag">
 			</param>
@@ -4926,7 +4893,6 @@ The volume can never have less than 4 probes.</doc>
 		</property>
 	</class>
 	<class native="CReflectionProbe" script="ReflectionProbe">
-		<doc>Specifies a location at which a pre-computed texture containing scene radiance will be generated. This texture will then be used by the renderer to provide specular reflections.</doc>
 		<method native="Capture" script="Capture" static="false">
 		</method>
 		<property name="Type" type="ReflectionProbeType" getter="GetType" setter="SetType" static="false">
@@ -4956,10 +4922,10 @@ The volume can never have less than 4 probes.</doc>
 		<doc>Information describing a ParticleEmitterHemisphereShape.</doc>
 		<ctor>
 		</ctor>
-		<field name="radius" type="float">
+		<field name="Radius" type="float">
 			<doc>Radius of the hemisphere.</doc>
 		</field>
-		<field name="thickness" type="float">
+		<field name="Thickness" type="float">
 			<doc>Proportion of the volume that can emit particles. Thickness of 0 results in particles being emitted only from the edge of the volume, while thickness of 1 results in particles being emitted from the entire volume. In-between values will use a part of the volume.</doc>
 		</field>
 	</struct>
@@ -5002,10 +4968,10 @@ The volume can never have less than 4 probes.</doc>
 		<doc>Information describing a ParticleEmitterBoxShape.</doc>
 		<ctor>
 		</ctor>
-		<field name="type" type="ParticleEmitterBoxType">
+		<field name="Type" type="ParticleEmitterBoxType">
 			<doc>Determines from which portion of the box should particles be emitted from.</doc>
 		</field>
-		<field name="extents" type="Vector3">
+		<field name="Extents" type="Vector3">
 			<doc>Extends of the box.</doc>
 		</field>
 	</struct>
@@ -5027,10 +4993,10 @@ The volume can never have less than 4 probes.</doc>
 		<doc>Information describing a ParticleEmitterLineShape.</doc>
 		<ctor>
 		</ctor>
-		<field name="length" type="float">
+		<field name="Length" type="float">
 			<doc>Length of the line.</doc>
 		</field>
-		<field name="mode" type="ParticleEmissionMode">
+		<field name="Mode" type="ParticleEmissionMode">
 			<doc>Determines how will particle positions on the shape be generated.</doc>
 		</field>
 	</struct>
@@ -5050,7 +5016,7 @@ The volume can never have less than 4 probes.</doc>
 	</class>
 	<struct native="PARTICLE_RECT_SHAPE_DESC" script="ParticleRectShapeOptions">
 		<doc>Information describing a ParticleEmitterRectShape.</doc>
-		<field name="extents" type="Vector2">
+		<field name="Extents" type="Vector2">
 			<doc>Extents of the rectangle.</doc>
 		</field>
 	</struct>
@@ -5084,13 +5050,13 @@ The volume can never have less than 4 probes.</doc>
 		<doc>Information describing a ParticleEmitterStaticMeshShape.</doc>
 		<ctor>
 		</ctor>
-		<field name="type" type="ParticleEmitterMeshType">
+		<field name="Type" type="ParticleEmitterMeshType">
 			<doc>Determines from which portion of the mesh are the particles emitted from.</doc>
 		</field>
-		<field name="sequential" type="bool">
+		<field name="Sequential" type="bool">
 			<doc>When enabled the particles will be emitted sequentially from mesh vertices in the order they are defined. Only relevant for the Vertex emit mode.</doc>
 		</field>
-		<field name="mesh" type="RRef&lt;Mesh&gt;">
+		<field name="Mesh" type="RRef&lt;Mesh&gt;">
 			<doc>Mesh to spawn particles on. Must at least contain per-vertex position data encoded as 3D float vectors. Can optionally contain per-vertex normals encoded as 3D float vectors or as 4-byte unsigned-normalized format.</doc>
 		</field>
 	</struct>
@@ -5098,13 +5064,13 @@ The volume can never have less than 4 probes.</doc>
 		<doc>Information describing a ParticleEmitterSkinnedMeshShape.</doc>
 		<ctor>
 		</ctor>
-		<field name="type" type="ParticleEmitterMeshType">
+		<field name="Type" type="ParticleEmitterMeshType">
 			<doc>Determines from which portion of the mesh are the particles emitted from.</doc>
 		</field>
-		<field name="sequential" type="bool">
+		<field name="Sequential" type="bool">
 			<doc>When enabled the particles will be emitted sequentially from mesh vertices in the order they are defined. Only relevant for the Vertex emit mode.</doc>
 		</field>
-		<field name="renderable" type="Renderable">
+		<field name="Renderable" type="Renderable">
 			<doc>Renderable object containing a mesh to spawn particles on, as well as the attached Animation object resposible for performing skinned animation. Mesh must at least contain per-vertex position data encoded as 3D float vectors, blend indices encoded in 4-byte format, and blend weights encoded a 4D float vectors. Can optionally contain per-vertex normals encoded as 3D float vectors or as 4-byte unsigned-normalized format.</doc>
 		</field>
 	</struct>
@@ -5136,16 +5102,16 @@ The volume can never have less than 4 probes.</doc>
 			<param name="interval" type="float">
 			</param>
 		</ctor>
-		<field name="time" type="float">
+		<field name="Time" type="float">
 			<doc>Time at which to trigger the burst, in seconds.</doc>
 		</field>
-		<field name="count" type="FloatDistribution">
+		<field name="Count" type="FloatDistribution">
 			<doc>Number of particles to emit when the burst triggers.</doc>
 		</field>
-		<field name="cycles" type="int">
+		<field name="Cycles" type="int">
 			<doc>Determines how many times to trigger the burst. If 0 the burst will trigger infinitely. Use <see cref="interval"/> to to control the time between each cycle.</doc>
 		</field>
-		<field name="interval" type="float">
+		<field name="Interval" type="float">
 			<doc>Controls how much time needs to pass before triggering another burst cycle, in seconds.</doc>
 		</field>
 	</struct>
@@ -5240,126 +5206,124 @@ The volume can never have less than 4 probes.</doc>
 		<doc>Controls depth buffer collisions for GPU simulated particles.</doc>
 		<ctor>
 		</ctor>
-		<property name="Enabled" type="bool" getter="Getenabled" setter="Setenabled" static="false">
+		<property name="Enabled" type="bool" getter="GetEnabled" setter="SetEnabled" static="false">
 			<doc>Determines if depth collisions are enabled.</doc>
 		</property>
-		<property name="Restitution" type="float" getter="Getrestitution" setter="Setrestitution" static="false">
+		<property name="Restitution" type="float" getter="GetRestitution" setter="SetRestitution" static="false">
 			<doc>Determines the elasticity (bounciness) of the particle collision. Lower values make the collision less bouncy and higher values more.</doc>
 		</property>
-		<property name="Dampening" type="float" getter="Getdampening" setter="Setdampening" static="false">
+		<property name="Dampening" type="float" getter="GetDampening" setter="SetDampening" static="false">
 			<doc>Determines how much velocity should a particle lose after a collision, in percent of its current velocity. In range [0, 1].</doc>
 		</property>
-		<property name="RadiusScale" type="float" getter="GetradiusScale" setter="SetradiusScale" static="false">
+		<property name="RadiusScale" type="float" getter="GetRadiusScale" setter="SetRadiusScale" static="false">
 			<doc>Scale which to apply to particle size in order to determine the collision radius.</doc>
 		</property>
 	</class>
 	<class native="ParticleVectorFieldSettings" script="ParticleVectorFieldSettings">
 		<doc>Settings used for controlling a vector field in a GPU simulated particle system.</doc>
-		<property name="VectorField" type="RRef&lt;VectorField&gt;" getter="GetvectorField" setter="SetvectorField" static="false">
+		<property name="VectorField" type="RRef&lt;VectorField&gt;" getter="GetVectorField" setter="SetVectorField" static="false">
 			<doc>Vector field resource used for influencing the particles.</doc>
 		</property>
-		<property name="Intensity" type="float" getter="Getintensity" setter="Setintensity" static="false">
+		<property name="Intensity" type="float" getter="GetIntensity" setter="SetIntensity" static="false">
 			<doc>Intensity of the forces and velocities applied by the vector field.</doc>
 		</property>
-		<property name="Tightness" type="float" getter="Gettightness" setter="Settightness" static="false">
+		<property name="Tightness" type="float" getter="GetTightness" setter="SetTightness" static="false">
 			<doc>Determines how closely does the particle velocity follow the vectors in the field. If set to 1 particles will be snapped to the exact velocity of the value in the field, and if set to 0 the field will not influence particle velocities directly.</doc>
 		</property>
-		<property name="Scale" type="Vector3" getter="Getscale" setter="Setscale" static="false">
+		<property name="Scale" type="Vector3" getter="GetScale" setter="SetScale" static="false">
 			<doc>Scale to apply to the vector field bounds. This is multiplied with the bounds of the vector field resource.</doc>
 		</property>
-		<property name="Offset" type="Vector3" getter="Getoffset" setter="Setoffset" static="false">
+		<property name="Offset" type="Vector3" getter="GetOffset" setter="SetOffset" static="false">
 			<doc>Amount of to move the vector field by relative to the parent particle system. This is added to the bounds provided in the vector field resource.</doc>
 		</property>
-		<property name="Rotation" type="Quaternion" getter="Getrotation" setter="Setrotation" static="false">
+		<property name="Rotation" type="Quaternion" getter="GetRotation" setter="SetRotation" static="false">
 			<doc>Initial rotation of the vector field.</doc>
 		</property>
-		<property name="RotationRate" type="Vector3Distribution" getter="GetrotationRate" setter="SetrotationRate" static="false">
+		<property name="RotationRate" type="Vector3Distribution" getter="GetRotationRate" setter="SetRotationRate" static="false">
 			<doc>Determines the amount to rotate the vector field every second, in degrees, around XYZ axis respectively. Evaluated over the particle system lifetime.</doc>
 		</property>
-		<property name="TilingX" type="bool" getter="GettilingX" setter="SettilingX" static="false">
+		<property name="TilingX" type="bool" getter="GetTilingX" setter="SetTilingX" static="false">
 			<doc>Determines should the field influence particles outside of the field bounds. If true the field will be tiled infinitely in the X direction.</doc>
 		</property>
-		<property name="TilingY" type="bool" getter="GettilingY" setter="SettilingY" static="false">
+		<property name="TilingY" type="bool" getter="GetTilingY" setter="SetTilingY" static="false">
 			<doc>Determines should the field influence particles outside of the field bounds. If true the field will be tiled infinitely in the Y direction.</doc>
 		</property>
-		<property name="TilingZ" type="bool" getter="GettilingZ" setter="SettilingZ" static="false">
+		<property name="TilingZ" type="bool" getter="GetTilingZ" setter="SetTilingZ" static="false">
 			<doc>Determines should the field influence particles outside of the field bounds. If true the field will be tiled infinitely in the Z direction.</doc>
 		</property>
 	</class>
 	<class native="ParticleSystemSettings" script="ParticleSystemSettings">
 		<doc>Generic settings used for controlling a ParticleSystem.</doc>
-		<property name="Material" type="RRef&lt;Material&gt;" getter="Getmaterial" setter="Setmaterial" static="false">
+		<property name="Material" type="RRef&lt;Material&gt;" getter="GetMaterial" setter="SetMaterial" static="false">
 			<doc>Material to render the particles with.</doc>
 		</property>
-		<property name="Mesh" type="RRef&lt;Mesh&gt;" getter="Getmesh" setter="Setmesh" static="false">
+		<property name="Mesh" type="RRef&lt;Mesh&gt;" getter="GetMesh" setter="SetMesh" static="false">
 			<doc>Mesh used for representing individual particles when using the Mesh rendering mode.</doc>
 		</property>
-		<property name="SimulationSpace" type="ParticleSimulationSpace" getter="GetsimulationSpace" setter="SetsimulationSpace" static="false">
+		<property name="SimulationSpace" type="ParticleSimulationSpace" getter="GetSimulationSpace" setter="SetSimulationSpace" static="false">
 			<doc>Determines in which space are particles in.</doc>
 		</property>
-		<property name="Orientation" type="ParticleOrientation" getter="Getorientation" setter="Setorientation" static="false">
+		<property name="Orientation" type="ParticleOrientation" getter="GetOrientation" setter="SetOrientation" static="false">
 			<doc>Determines how are particles oriented when rendering.</doc>
 		</property>
-		<property name="Duration" type="float" getter="Getduration" setter="Setduration" static="false">
+		<property name="Duration" type="float" getter="GetDuration" setter="SetDuration" static="false">
 			<doc>Determines the time period during which the system runs, in seconds. This effects evaluation of distributions with curves using particle system time for evaluation.</doc>
 		</property>
-		<property name="IsLooping" type="bool" getter="GetisLooping" setter="SetisLooping" static="false">
+		<property name="IsLooping" type="bool" getter="GetIsLooping" setter="SetIsLooping" static="false">
 			<doc>Determines should the particle system time wrap around once it reaches its duration.</doc>
 		</property>
-		<property name="MaxParticles" type="int" getter="GetmaxParticles" setter="SetmaxParticles" static="false">
+		<property name="MaxParticles" type="int" getter="GetMaxParticles" setter="SetMaxParticles" static="false">
 			<doc>Determines the maximum number of particles that can ever be active in this system. This number is ignored if GPU simulation is enabled, and instead particle count is instead only limited by the size of the internal buffers (shared between all particle systems).</doc>
 		</property>
-		<property name="GpuSimulation" type="bool" getter="GetgpuSimulation" setter="SetgpuSimulation" static="false">
+		<property name="GpuSimulation" type="bool" getter="GetGpuSimulation" setter="SetGpuSimulation" static="false">
 			<doc>If true the particle system will be simulated on the GPU. This allows much higher particle counts at lower performance cost. GPU simulation ignores any provided evolvers and instead uses ParticleGpuSimulationSettings to customize the GPU simulation.</doc>
 		</property>
-		<property name="RenderMode" type="ParticleRenderMode" getter="GetrenderMode" setter="SetrenderMode" static="false">
+		<property name="RenderMode" type="ParticleRenderMode" getter="GetRenderMode" setter="SetRenderMode" static="false">
 			<doc>Determines how is each particle represented on the screen.</doc>
 		</property>
-		<property name="OrientationLockY" type="bool" getter="GetorientationLockY" setter="SetorientationLockY" static="false">
+		<property name="OrientationLockY" type="bool" getter="GetOrientationLockY" setter="SetOrientationLockY" static="false">
 			<doc>Determines should the particles only be allowed to orient themselves around the Y axis, or freely. Ignored if using the Plane orientation mode.</doc>
 		</property>
-		<property name="OrientationPlaneNormal" type="Vector3" getter="GetorientationPlaneNormal" setter="SetorientationPlaneNormal" static="false">
+		<property name="OrientationPlaneNormal" type="Vector3" getter="GetOrientationPlaneNormal" setter="SetOrientationPlaneNormal" static="false">
 			<doc>Determines a normal of the plane to orient particles towards. Only used if particle orientation mode is set to ParticleOrientation::Plane.</doc>
 		</property>
-		<property name="SortMode" type="ParticleSortMode" getter="GetsortMode" setter="SetsortMode" static="false">
+		<property name="SortMode" type="ParticleSortMode" getter="GetSortMode" setter="SetSortMode" static="false">
 			<doc>Determines how (and if) are particles sorted. Sorting controls in what order are particles rendered. If GPU simulation is enabled only distance based sorting is supported.</doc>
 		</property>
-		<property name="UseAutomaticSeed" type="bool" getter="GetuseAutomaticSeed" setter="SetuseAutomaticSeed" static="false">
+		<property name="UseAutomaticSeed" type="bool" getter="GetUseAutomaticSeed" setter="SetUseAutomaticSeed" static="false">
 			<doc>Determines should an automatic seed be used for the internal random number generator. This ensures the particle system yields different results each time it is ran.</doc>
 		</property>
-		<property name="ManualSeed" type="int" getter="GetmanualSeed" setter="SetmanualSeed" static="false">
+		<property name="ManualSeed" type="int" getter="GetManualSeed" setter="SetManualSeed" static="false">
 			<doc>Determines the seed to use for the internal random number generator. Allows you to guarantee identical behaviour between different runs. Only relevant if automatic seed is disabled.</doc>
 		</property>
-		<property name="UseAutomaticBounds" type="bool" getter="GetuseAutomaticBounds" setter="SetuseAutomaticBounds" static="false">
+		<property name="UseAutomaticBounds" type="bool" getter="GetUseAutomaticBounds" setter="SetUseAutomaticBounds" static="false">
 			<doc>Determines should the particle system bounds be automatically calculated, or should the fixed value provided be used. Bounds are used primarily for culling purposes. Note that automatic bounds are not supported when GPU simulation is enabled.</doc>
 		</property>
-		<property name="CustomBounds" type="AABox" getter="GetcustomBounds" setter="SetcustomBounds" static="false">
+		<property name="CustomBounds" type="AABox" getter="GetCustomBounds" setter="SetCustomBounds" static="false">
 			<doc>Custom bounds to use them <see cref="useAutomaticBounds"/> is disabled. The bounds are in the simulation space of the particle system.</doc>
 		</property>
 	</class>
 	<class native="ParticleGpuSimulationSettings" script="ParticleGpuSimulationSettings">
 		<doc>Settings used for controlling particle system GPU simulation.</doc>
-		<property name="VectorField" type="ParticleVectorFieldSettings" getter="GetvectorField" setter="SetvectorField" static="false">
+		<property name="VectorField" type="ParticleVectorFieldSettings" getter="GetVectorField" setter="SetVectorField" static="false">
 		</property>
-		<property name="ColorOverLifetime" type="ColorDistribution" getter="GetcolorOverLifetime" setter="SetcolorOverLifetime" static="false">
+		<property name="ColorOverLifetime" type="ColorDistribution" getter="GetColorOverLifetime" setter="SetColorOverLifetime" static="false">
 			<doc>Determines particle color, evaluated over the particle lifetime.</doc>
 		</property>
-		<property name="SizeScaleOverLifetime" type="Vector2Distribution" getter="GetsizeScaleOverLifetime" setter="SetsizeScaleOverLifetime" static="false">
+		<property name="SizeScaleOverLifetime" type="Vector2Distribution" getter="GetSizeScaleOverLifetime" setter="SetSizeScaleOverLifetime" static="false">
 			<doc>Determines particle size, evaluated over the particle lifetime. Multiplied by the initial particle size.</doc>
 		</property>
-		<property name="Acceleration" type="Vector3" getter="Getacceleration" setter="Setacceleration" static="false">
+		<property name="Acceleration" type="Vector3" getter="GetAcceleration" setter="SetAcceleration" static="false">
 			<doc>Constant acceleration to apply for each step of the simulation.</doc>
 		</property>
-		<property name="Drag" type="float" getter="Getdrag" setter="Setdrag" static="false">
+		<property name="Drag" type="float" getter="GetDrag" setter="SetDrag" static="false">
 			<doc>Amount of resistance to apply in the direction opposite of the particle&apos;s velocity.</doc>
 		</property>
-		<property name="DepthCollision" type="ParticleDepthCollisionSettings" getter="GetdepthCollision" setter="SetdepthCollision" static="false">
+		<property name="DepthCollision" type="ParticleDepthCollisionSettings" getter="GetDepthCollision" setter="SetDepthCollision" static="false">
 			<doc>Settings controlling particle depth buffer collisions.</doc>
 		</property>
 	</class>
 	<class native="CParticleSystem" script="ParticleSystem">
-		<doc>Controls spawning, evolution and rendering of particles. Particles can be 2D or 3D, with a variety of rendering options. Particle system should be used for rendering objects that cannot properly be represented using static or animated meshes, like liquids, smoke or flames.
-The particle system requires you to specify at least one ParticleEmitter, which controls how are new particles generated. You will also want to specify one or more ParticleEvolver%s, which change particle properties over time.</doc>
 		<method native="TogglePreviewModeInternal" script="TogglePreviewMode" static="false">
 			<doc>Enables or disabled preview mode. Preview mode allows the particle system to play while the game is not running, primarily for preview purposes in the editor. Returns true if the preview mode was enabled, false if it was disabled or enabling preview failed.</doc>
 			<param name="enabled" type="bool">
@@ -5379,7 +5343,6 @@ The particle system requires you to specify at least one ParticleEmitter, which 
 		</property>
 	</class>
 	<class native="CPlaneCollider" script="PlaneCollider">
-		<doc>A collider with plane geometry. Plane colliders cannot be a part of non-kinematic rigidbodies.</doc>
 		<property name="Normal" type="Vector3" getter="GetNormal" setter="SetNormal" static="false">
 			<doc>Normal vector that determines the local orientation of the plane.</doc>
 		</property>
@@ -5397,7 +5360,6 @@ The particle system requires you to specify at least one ParticleEmitter, which 
 		</enumentry>
 	</enum>
 	<class native="CRenderable" script="Renderable">
-		<doc>Renderable represents any visible object in the scene. It has a mesh, bounds and a set of materials. Renderer will render any Renderable objects visible by a camera.</doc>
 		<method native="SetMaterial" script="SetMaterial" static="false">
 			<param name="idx" type="int">
 			</param>
@@ -5444,8 +5406,6 @@ The particle system requires you to specify at least one ParticleEmitter, which 
 		</enumentry>
 	</enum>
 	<class native="CRigidbody" script="Rigidbody">
-		<doc>Rigidbody is a dynamic physics object that can be moved using forces (or directly). It will interact with other static and dynamic physics objects in the scene accordingly (it will push other non-kinematic rigidbodies, and collide with static objects).
-The shape and mass of a rigidbody is governed by its colliders. You must attach at least one collider for the rigidbody to be valid.</doc>
 		<method native="Move" script="Move" static="false">
 			<param name="position" type="Vector3">
 			</param>
@@ -5521,24 +5481,20 @@ The shape and mass of a rigidbody is governed by its colliders. You must attach 
 		</property>
 		<property name="Flags" type="RigidbodyFlag" getter="GetFlags" setter="SetFlags" static="false">
 		</property>
-		<event native="onCollisionBegin" script="OnCollisionBegin" static="false">
-			<doc>Triggered when one of the colliders owned by the rigidbody starts colliding with another object.</doc>
+		<event native="OnCollisionBegin" script="OnCollisionBegin" static="false">
 			<param name="p0" type="CollisionData">
 			</param>
 		</event>
-		<event native="onCollisionStay" script="OnCollisionStay" static="false">
-			<doc>Triggered when a previously colliding collider stays in collision. Triggered once per frame.</doc>
+		<event native="OnCollisionStay" script="OnCollisionStay" static="false">
 			<param name="p0" type="CollisionData">
 			</param>
 		</event>
-		<event native="onCollisionEnd" script="OnCollisionEnd" static="false">
-			<doc>Triggered when one of the colliders owned by the rigidbody stops colliding with another object.</doc>
+		<event native="OnCollisionEnd" script="OnCollisionEnd" static="false">
 			<param name="p0" type="CollisionData">
 			</param>
 		</event>
 	</class>
 	<class native="CSkybox" script="Skybox">
-		<doc>Allows you to specify an environment map to use for sampling radiance of the sky.</doc>
 		<property name="Texture" type="RRef&lt;Texture&gt;" getter="GetTexture" setter="SetTexture" static="false">
 		</property>
 		<property name="Brightness" type="float" getter="GetBrightness" setter="SetBrightness" static="false">
@@ -5551,7 +5507,6 @@ The shape and mass of a rigidbody is governed by its colliders. You must attach 
 		</enumentry>
 	</enum>
 	<class native="CSliderJoint" script="SliderJoint">
-		<doc>Joint that removes all but a single translational degree of freedom. Bodies are allowed to move along a single axis.</doc>
 		<method native="SetFlag" script="SetFlag" static="false">
 			<param name="flag" type="SliderJointFlag">
 			</param>
@@ -5572,7 +5527,6 @@ The shape and mass of a rigidbody is governed by its colliders. You must attach 
 		</property>
 	</class>
 	<class native="CSphereCollider" script="SphereCollider">
-		<doc>A collider with sphere geometry.</doc>
 		<property name="Radius" type="float" getter="GetRadius" setter="SetRadius" static="false">
 		</property>
 		<property name="Center" type="Vector3" getter="GetCenter" setter="SetCenter" static="false">
@@ -5625,10 +5579,10 @@ The shape and mass of a rigidbody is governed by its colliders. You must attach 
 	</class>
 	<struct native="SubResource" script="SubResource">
 		<doc>Contains a resource that was imported from a file that contains multiple resources (for example an animation from an FBX file).</doc>
-		<field name="name" type="string">
+		<field name="Name" type="string">
 			<doc>Unique name of the sub-resource.</doc>
 		</field>
-		<field name="value" type="Resource">
+		<field name="Value" type="Resource">
 			<doc>Contents of the sub-resource.</doc>
 		</field>
 	</struct>
@@ -5785,13 +5739,13 @@ The shape and mass of a rigidbody is governed by its colliders. You must attach 
 			<param name="isAdditive" type="bool">
 			</param>
 		</ctor>
-		<property name="Name" type="string" getter="Getname" setter="Setname" static="false">
+		<property name="Name" type="string" getter="GetName" setter="SetName" static="false">
 		</property>
-		<property name="StartFrame" type="int" getter="GetstartFrame" setter="SetstartFrame" static="false">
+		<property name="StartFrame" type="int" getter="GetStartFrame" setter="SetStartFrame" static="false">
 		</property>
-		<property name="EndFrame" type="int" getter="GetendFrame" setter="SetendFrame" static="false">
+		<property name="EndFrame" type="int" getter="GetEndFrame" setter="SetEndFrame" static="false">
 		</property>
-		<property name="IsAdditive" type="bool" getter="GetisAdditive" setter="SetisAdditive" static="false">
+		<property name="IsAdditive" type="bool" getter="GetIsAdditive" setter="SetIsAdditive" static="false">
 		</property>
 	</class>
 	<class native="MeshImportOptions" script="MeshImportOptions">
@@ -5799,40 +5753,40 @@ The shape and mass of a rigidbody is governed by its colliders. You must attach 
 		<ctor>
 			<doc>Creates a new import options object that allows you to customize how are meshes imported.</doc>
 		</ctor>
-		<property name="CpuCached" type="bool" getter="GetcpuCached" setter="SetcpuCached" static="false">
+		<property name="CpuCached" type="bool" getter="GetCpuCached" setter="SetCpuCached" static="false">
 			<doc>Determines whether the texture data is also stored in CPU memory.</doc>
 		</property>
-		<property name="ImportNormals" type="bool" getter="GetimportNormals" setter="SetimportNormals" static="false">
+		<property name="ImportNormals" type="bool" getter="GetImportNormals" setter="SetImportNormals" static="false">
 			<doc>Determines should mesh normals be imported if available.</doc>
 		</property>
-		<property name="ImportTangents" type="bool" getter="GetimportTangents" setter="SetimportTangents" static="false">
+		<property name="ImportTangents" type="bool" getter="GetImportTangents" setter="SetImportTangents" static="false">
 			<doc>Determines should mesh tangents and bitangents be imported if available.</doc>
 		</property>
-		<property name="ImportBlendShapes" type="bool" getter="GetimportBlendShapes" setter="SetimportBlendShapes" static="false">
+		<property name="ImportBlendShapes" type="bool" getter="GetImportBlendShapes" setter="SetImportBlendShapes" static="false">
 			<doc>Determines should mesh blend shapes be imported if available.</doc>
 		</property>
-		<property name="ImportSkin" type="bool" getter="GetimportSkin" setter="SetimportSkin" static="false">
+		<property name="ImportSkin" type="bool" getter="GetImportSkin" setter="SetImportSkin" static="false">
 			<doc>Determines should mesh skin data like bone weights, indices and bind poses be imported if available.</doc>
 		</property>
-		<property name="ImportAnimation" type="bool" getter="GetimportAnimation" setter="SetimportAnimation" static="false">
+		<property name="ImportAnimation" type="bool" getter="GetImportAnimation" setter="SetImportAnimation" static="false">
 			<doc>Determines should animation clips be imported if available.</doc>
 		</property>
-		<property name="ReduceKeyFrames" type="bool" getter="GetreduceKeyFrames" setter="SetreduceKeyFrames" static="false">
+		<property name="ReduceKeyFrames" type="bool" getter="GetReduceKeyFrames" setter="SetReduceKeyFrames" static="false">
 			<doc>Enables or disables keyframe reduction. Keyframe reduction will reduce the number of key-frames in an animation clip by removing identical keyframes, and therefore reducing the size of the clip.</doc>
 		</property>
-		<property name="ImportRootMotion" type="bool" getter="GetimportRootMotion" setter="SetimportRootMotion" static="false">
+		<property name="ImportRootMotion" type="bool" getter="GetImportRootMotion" setter="SetImportRootMotion" static="false">
 			<doc>Enables or disables import of root motion curves. When enabled, any animation curves in imported animations affecting the root bone will be available through a set of separate curves in AnimationClip, and they won&apos;t be evaluated through normal animation process. Instead it is expected that the user evaluates the curves manually and applies them as required.</doc>
 		</property>
-		<property name="ImportScale" type="float" getter="GetimportScale" setter="SetimportScale" static="false">
+		<property name="ImportScale" type="float" getter="GetImportScale" setter="SetImportScale" static="false">
 			<doc>Uniformly scales the imported mesh by the specified value.</doc>
 		</property>
-		<property name="CollisionMeshType" type="CollisionMeshType" getter="GetcollisionMeshType" setter="SetcollisionMeshType" static="false">
+		<property name="CollisionMeshType" type="CollisionMeshType" getter="GetCollisionMeshType" setter="SetCollisionMeshType" static="false">
 			<doc>Determines what type (if any) of collision mesh should be imported. If enabled the collision mesh will be available as a sub-resource returned by the importer (along with the normal mesh).</doc>
 		</property>
-		<property name="AnimationSplits" type="AnimationSplitInfo" getter="GetanimationSplits" setter="SetanimationSplits" static="false">
+		<property name="AnimationSplits" type="AnimationSplitInfo" getter="GetAnimationSplits" setter="SetAnimationSplits" static="false">
 			<doc>Animation split infos that determine how will the source animation clip be split. If no splits are present the data will be imported as one clip, but if splits are present the data will be split according to the split infos. Split infos only affect the primary animation clip, other clips will not be split.</doc>
 		</property>
-		<property name="AnimationEvents" type="ImportedAnimationEvents" getter="GetanimationEvents" setter="SetanimationEvents" static="false">
+		<property name="AnimationEvents" type="ImportedAnimationEvents" getter="GetAnimationEvents" setter="SetAnimationEvents" static="false">
 			<doc>Set of events that will be added to the animation clip, if animation import is enabled.</doc>
 		</property>
 	</class>
@@ -5937,25 +5891,25 @@ The shape and mass of a rigidbody is governed by its colliders. You must attach 
 		<ctor>
 			<doc>Creates a new import options object that allows you to customize how are textures imported.</doc>
 		</ctor>
-		<property name="Format" type="PixelFormat" getter="Getformat" setter="Setformat" static="false">
+		<property name="Format" type="PixelFormat" getter="GetFormat" setter="SetFormat" static="false">
 			<doc>Pixel format to import as.</doc>
 		</property>
-		<property name="GenerateMips" type="bool" getter="GetgenerateMips" setter="SetgenerateMips" static="false">
+		<property name="GenerateMips" type="bool" getter="GetGenerateMips" setter="SetGenerateMips" static="false">
 			<doc>Enables or disables mipmap generation for the texture.</doc>
 		</property>
-		<property name="MaxMip" type="int" getter="GetmaxMip" setter="SetmaxMip" static="false">
+		<property name="MaxMip" type="int" getter="GetMaxMip" setter="SetMaxMip" static="false">
 			<doc>Maximum mip level to generate when generating mipmaps. If 0 then maximum amount of mip levels will be generated.</doc>
 		</property>
-		<property name="CpuCached" type="bool" getter="GetcpuCached" setter="SetcpuCached" static="false">
+		<property name="CpuCached" type="bool" getter="GetCpuCached" setter="SetCpuCached" static="false">
 			<doc>Determines whether the texture data is also stored in main memory, available for fast CPU access.</doc>
 		</property>
-		<property name="SRGB" type="bool" getter="GetsRGB" setter="SetsRGB" static="false">
+		<property name="SRgb" type="bool" getter="GetSRgb" setter="SetSRgb" static="false">
 			<doc>Determines whether the texture data should be treated as if its in sRGB (gamma) space. Such texture will be converted by hardware to linear space before use on the GPU.</doc>
 		</property>
-		<property name="Cubemap" type="bool" getter="Getcubemap" setter="Setcubemap" static="false">
+		<property name="Cubemap" type="bool" getter="GetCubemap" setter="SetCubemap" static="false">
 			<doc>Determines should the texture be imported as a cubemap. See setCubemapSource to choose how will the source texture be converted to a cubemap.</doc>
 		</property>
-		<property name="CubemapSourceType" type="CubemapSourceType" getter="GetcubemapSourceType" setter="SetcubemapSourceType" static="false">
+		<property name="CubemapSourceType" type="CubemapSourceType" getter="GetCubemapSourceType" setter="SetCubemapSourceType" static="false">
 			<doc>Determines how should the source texture be interpreted when generating a cubemap. Only relevant when <see cref="cubemap"/> is set to true.</doc>
 		</property>
 	</class>
@@ -6500,7 +6454,6 @@ The shape and mass of a rigidbody is governed by its colliders. You must attach 
 		</property>
 	</class>
 	<class native="Material" script="Material">
-		<doc>Material that controls how objects are rendered. It is represented by a shader and parameters used to set up that shader. It provides a simple interface for manipulating the parameters.</doc>
 		<method native="Clone" script="Clone" static="false">
 			<doc>Creates a deep copy of the material and returns the new object.</doc>
 			<returns type="RRef&lt;Material&gt;">
@@ -6712,10 +6665,10 @@ Optionally if the parameter is an array you may provide an array index you which
 		<doc>Represents a single potential value of a shader variation parameter and optionally its name.</doc>
 		<ctor>
 		</ctor>
-		<field name="name" type="string">
+		<field name="Name" type="string">
 			<doc>Optional human-readable name describing what this particular value represents.</doc>
 		</field>
-		<field name="value" type="int">
+		<field name="Value" type="int">
 			<doc>Integer value of the parameter.</doc>
 		</field>
 	</struct>
@@ -6723,16 +6676,16 @@ Optionally if the parameter is an array you may provide an array index you which
 		<doc>Represents a single shader variation parameter and a set of all possible values.</doc>
 		<ctor>
 		</ctor>
-		<field name="name" type="string">
+		<field name="Name" type="string">
 			<doc>Optional human-readable name describing the variation parameter.</doc>
 		</field>
-		<field name="identifier" type="string">
+		<field name="Identifier" type="string">
 			<doc>BSL identifier for the parameter.</doc>
 		</field>
-		<field name="isInternal" type="bool">
+		<field name="IsInternal" type="bool">
 			<doc>True if the parameter is for internal use by the renderer, and false if its intended to be set by the user.</doc>
 		</field>
-		<field name="values" type="ShaderVariationParamValue">
+		<field name="Values" type="ShaderVariationParamValue">
 			<doc>A list of potential values this parameter can take on.</doc>
 		</field>
 	</struct>
@@ -7455,17 +7408,17 @@ Alternatively you can also skip manually calling release() and call unloadAllUnu
 			<returns type="bool">
 			</returns>
 		</method>
-		<event native="onResourceLoaded" script="OnResourceLoaded" static="false">
+		<event native="OnResourceLoaded" script="OnResourceLoaded" static="false">
 			<doc>Called when the resource has been successfully loaded.</doc>
 			<param name="p0" type="RRefBase">
 			</param>
 		</event>
-		<event native="onResourceDestroyed" script="OnResourceDestroyed" static="false">
+		<event native="OnResourceDestroyed" script="OnResourceDestroyed" static="false">
 			<doc>Called when the resource has been destroyed. Provides UUID of the destroyed resource.</doc>
 			<param name="p0" type="UUID">
 			</param>
 		</event>
-		<event native="onResourceModified" script="OnResourceModified" static="false">
+		<event native="OnResourceModified" script="OnResourceModified" static="false">
 			<doc>Called when the internal resource the handle is pointing to has changed.</doc>
 			<param name="p0" type="RRefBase">
 			</param>
@@ -7473,50 +7426,50 @@ Alternatively you can also skip manually calling release() and call unloadAllUnu
 	</class>
 	<struct native="KerningPair" script="KerningPair">
 		<doc>Kerning pair representing larger or smaller offset between a specific pair of characters.</doc>
-		<field name="otherCharId" type="int">
+		<field name="OtherCharId" type="int">
 		</field>
-		<field name="amount" type="int">
+		<field name="Amount" type="int">
 		</field>
 	</struct>
 	<struct native="CharDesc" script="CharDesc">
 		<doc>Describes a single character in a font of a specific size.</doc>
-		<field name="charId" type="int">
+		<field name="CharId" type="int">
 			<doc>Character ID, corresponding to a Unicode key.</doc>
 		</field>
-		<field name="page" type="int">
+		<field name="Page" type="int">
 			<doc>Index of the texture the character is located on.</doc>
 		</field>
-		<field name="uvX" type="float">
+		<field name="UvX" type="float">
 			<doc>Texture coordinates of the character in the page texture.</doc>
 		</field>
-		<field name="uvY" type="float">
+		<field name="UvY" type="float">
 			<doc>Texture coordinates of the character in the page texture.</doc>
 		</field>
-		<field name="uvWidth" type="float">
+		<field name="UvWidth" type="float">
 			<doc>Width/height of the character in texture coordinates.</doc>
 		</field>
-		<field name="uvHeight" type="float">
+		<field name="UvHeight" type="float">
 			<doc>Width/height of the character in texture coordinates.</doc>
 		</field>
-		<field name="width" type="int">
+		<field name="Width" type="int">
 			<doc>Width/height of the character in pixels.</doc>
 		</field>
-		<field name="height" type="int">
+		<field name="Height" type="int">
 			<doc>Width/height of the character in pixels.</doc>
 		</field>
-		<field name="xOffset" type="int">
+		<field name="XOffset" type="int">
 			<doc>Offset for the visible portion of the character in pixels.</doc>
 		</field>
-		<field name="yOffset" type="int">
+		<field name="YOffset" type="int">
 			<doc>Offset for the visible portion of the character in pixels.</doc>
 		</field>
-		<field name="xAdvance" type="int">
+		<field name="XAdvance" type="int">
 			<doc>Determines how much to advance the pen after writing this character, in pixels.</doc>
 		</field>
-		<field name="yAdvance" type="int">
+		<field name="YAdvance" type="int">
 			<doc>Determines how much to advance the pen after writing this character, in pixels.</doc>
 		</field>
-		<field name="kerningPairs" type="KerningPair">
+		<field name="KerningPairs" type="KerningPair">
 			<doc>Pairs that determine if certain character pairs should be closer or father together. for example &quot;AV&quot; combination.</doc>
 		</field>
 	</struct>
@@ -7551,9 +7504,9 @@ Alternatively you can also skip manually calling release() and call unloadAllUnu
 			<param name="end" type="int">
 			</param>
 		</ctor>
-		<field name="start" type="int">
+		<field name="Start" type="int">
 		</field>
-		<field name="end" type="int">
+		<field name="End" type="int">
 		</field>
 	</struct>
 	<class native="FontImportOptions" script="FontImportOptions">
@@ -7561,22 +7514,22 @@ Alternatively you can also skip manually calling release() and call unloadAllUnu
 		<ctor>
 			<doc>Creates a new import options object that allows you to customize how are fonts imported.</doc>
 		</ctor>
-		<property name="FontSizes" type="int" getter="GetfontSizes" setter="SetfontSizes" static="false">
+		<property name="FontSizes" type="int" getter="GetFontSizes" setter="SetFontSizes" static="false">
 			<doc>Determines font sizes that are to be imported. Sizes are in points.</doc>
 		</property>
-		<property name="CharIndexRanges" type="CharRange" getter="GetcharIndexRanges" setter="SetcharIndexRanges" static="false">
+		<property name="CharIndexRanges" type="CharRange" getter="GetCharIndexRanges" setter="SetCharIndexRanges" static="false">
 			<doc>Determines character index ranges to import. Ranges are defined as unicode numbers.</doc>
 		</property>
-		<property name="Dpi" type="int" getter="Getdpi" setter="Setdpi" static="false">
+		<property name="Dpi" type="int" getter="GetDpi" setter="SetDpi" static="false">
 			<doc>Determines dots per inch scale that will be used when rendering the characters.</doc>
 		</property>
-		<property name="RenderMode" type="FontRenderMode" getter="GetrenderMode" setter="SetrenderMode" static="false">
+		<property name="RenderMode" type="FontRenderMode" getter="GetRenderMode" setter="SetRenderMode" static="false">
 			<doc>Determines the render mode used for rendering the characters into a bitmap.</doc>
 		</property>
-		<property name="Bold" type="bool" getter="Getbold" setter="Setbold" static="false">
+		<property name="Bold" type="bool" getter="GetBold" setter="SetBold" static="false">
 			<doc>Determines whether the bold font style should be used when rendering.</doc>
 		</property>
-		<property name="Italic" type="bool" getter="Getitalic" setter="Setitalic" static="false">
+		<property name="Italic" type="bool" getter="GetItalic" setter="SetItalic" static="false">
 			<doc>Determines whether the italic font style should be used when rendering.</doc>
 		</property>
 	</class>
@@ -7676,11 +7629,11 @@ Alternatively you can also skip manually calling release() and call unloadAllUnu
 			<param name="tooltip" type="LocString">
 			</param>
 		</ctor>
-		<field name="text" type="LocString">
+		<field name="Text" type="LocString">
 		</field>
-		<field name="images" type="GUIContentImages">
+		<field name="Images" type="GUIContentImages">
 		</field>
-		<field name="tooltip" type="LocString">
+		<field name="Tooltip" type="LocString">
 		</field>
 	</struct>
 	<enum native="GUIImagePosition" script="GUIImagePosition">
@@ -7703,88 +7656,88 @@ Alternatively you can also skip manually calling release() and call unloadAllUnu
 				<doc>Name of the style in GUI skin to use for the sub-element.</doc>
 			</param>
 		</method>
-		<property name="Font" type="Font" getter="Getfont" setter="Setfont" static="false">
+		<property name="Font" type="Font" getter="GetFont" setter="SetFont" static="false">
 			<doc>Font to use for all text within the GUI element.</doc>
 		</property>
-		<property name="FontSize" type="int" getter="GetfontSize" setter="SetfontSize" static="false">
+		<property name="FontSize" type="int" getter="GetFontSize" setter="SetFontSize" static="false">
 			<doc>Font size to use for all text within the GUI element.</doc>
 		</property>
-		<property name="TextHorzAlign" type="TextHorzAlign" getter="GettextHorzAlign" setter="SettextHorzAlign" static="false">
+		<property name="TextHorzAlign" type="TextHorzAlign" getter="GetTextHorzAlign" setter="SetTextHorzAlign" static="false">
 			<doc>Horizontal alignment of text within the GUI element.</doc>
 		</property>
-		<property name="TextVertAlign" type="TextVertAlign" getter="GettextVertAlign" setter="SettextVertAlign" static="false">
+		<property name="TextVertAlign" type="TextVertAlign" getter="GetTextVertAlign" setter="SetTextVertAlign" static="false">
 			<doc>Vertical alignment of text within the GUI element.</doc>
 		</property>
-		<property name="ImagePosition" type="GUIImagePosition" getter="GetimagePosition" setter="SetimagePosition" static="false">
+		<property name="ImagePosition" type="GUIImagePosition" getter="GetImagePosition" setter="SetImagePosition" static="false">
 			<doc>Position of content image relative to text.</doc>
 		</property>
-		<property name="WordWrap" type="bool" getter="GetwordWrap" setter="SetwordWrap" static="false">
+		<property name="WordWrap" type="bool" getter="GetWordWrap" setter="SetWordWrap" static="false">
 			<doc>Should the text word wrap if it doesn&apos;t fit.</doc>
 		</property>
-		<property name="Normal" type="GUIElementStateStyle" getter="Getnormal" setter="Setnormal" static="false">
+		<property name="Normal" type="GUIElementStateStyle" getter="GetNormal" setter="SetNormal" static="false">
 			<doc>Style used when the element doesn&apos;t have focus nor is the user interacting with the element. Used when the element is in the &apos;off&apos; state.</doc>
 		</property>
-		<property name="Hover" type="GUIElementStateStyle" getter="Gethover" setter="Sethover" static="false">
+		<property name="Hover" type="GUIElementStateStyle" getter="GetHover" setter="SetHover" static="false">
 			<doc>Style used when the user is hovering the pointer over the element, while the element doesn&apos;t have focus. Used when the element is in the &apos;off&apos; state.</doc>
 		</property>
-		<property name="Active" type="GUIElementStateStyle" getter="Getactive" setter="Setactive" static="false">
+		<property name="Active" type="GUIElementStateStyle" getter="GetActive" setter="SetActive" static="false">
 			<doc>Style used when the user is actively interacting with the element. Used when the element is in the &apos;off&apos; state.</doc>
 		</property>
-		<property name="Focused" type="GUIElementStateStyle" getter="Getfocused" setter="Setfocused" static="false">
+		<property name="Focused" type="GUIElementStateStyle" getter="GetFocused" setter="SetFocused" static="false">
 			<doc>Style used when the element has focus but the pointer is not hovering over the element. Used when the element is in the &apos;off&apos; state.</doc>
 		</property>
-		<property name="FocusedHover" type="GUIElementStateStyle" getter="GetfocusedHover" setter="SetfocusedHover" static="false">
+		<property name="FocusedHover" type="GUIElementStateStyle" getter="GetFocusedHover" setter="SetFocusedHover" static="false">
 			<doc>Style used when the element has focus and the pointer is hovering over the element. Used when the element is in the &apos;off&apos; state.</doc>
 		</property>
-		<property name="NormalOn" type="GUIElementStateStyle" getter="GetnormalOn" setter="SetnormalOn" static="false">
+		<property name="NormalOn" type="GUIElementStateStyle" getter="GetNormalOn" setter="SetNormalOn" static="false">
 			<doc>Same as GUIElementStyle::normal, except it&apos;s used when element is in the &apos;on&apos; state.</doc>
 		</property>
-		<property name="HoverOn" type="GUIElementStateStyle" getter="GethoverOn" setter="SethoverOn" static="false">
+		<property name="HoverOn" type="GUIElementStateStyle" getter="GetHoverOn" setter="SetHoverOn" static="false">
 			<doc>Same as GUIElementStyle::hover, except it&apos;s used when element is in the &apos;on&apos; state.</doc>
 		</property>
-		<property name="ActiveOn" type="GUIElementStateStyle" getter="GetactiveOn" setter="SetactiveOn" static="false">
+		<property name="ActiveOn" type="GUIElementStateStyle" getter="GetActiveOn" setter="SetActiveOn" static="false">
 			<doc>Same as GUIElementStyle::active, except it&apos;s used when element is in the &apos;on&apos; state.</doc>
 		</property>
-		<property name="FocusedOn" type="GUIElementStateStyle" getter="GetfocusedOn" setter="SetfocusedOn" static="false">
+		<property name="FocusedOn" type="GUIElementStateStyle" getter="GetFocusedOn" setter="SetFocusedOn" static="false">
 			<doc>Same as GUIElementStyle::focused, except it&apos;s used when element is in the &apos;on&apos; state.</doc>
 		</property>
-		<property name="FocusedHoverOn" type="GUIElementStateStyle" getter="GetfocusedHoverOn" setter="SetfocusedHoverOn" static="false">
+		<property name="FocusedHoverOn" type="GUIElementStateStyle" getter="GetFocusedHoverOn" setter="SetFocusedHoverOn" static="false">
 			<doc>Same as GUIElementStyle::focusedHover, except it&apos;s used when element is in the &apos;on&apos; state.</doc>
 		</property>
-		<property name="Border" type="RectOffset" getter="Getborder" setter="Setborder" static="false">
+		<property name="Border" type="RectOffset" getter="GetBorder" setter="SetBorder" static="false">
 			<doc>Determines how the element is scaled (using the typical Scale9Grid approach).</doc>
 		</property>
-		<property name="Margins" type="RectOffset" getter="Getmargins" setter="Setmargins" static="false">
+		<property name="Margins" type="RectOffset" getter="GetMargins" setter="SetMargins" static="false">
 			<doc>Determines offset from the background graphics to the content. Input uses bounds offset by this value.</doc>
 		</property>
-		<property name="ContentOffset" type="RectOffset" getter="GetcontentOffset" setter="SetcontentOffset" static="false">
+		<property name="ContentOffset" type="RectOffset" getter="GetContentOffset" setter="SetContentOffset" static="false">
 			<doc>Additional offset to the content, that doesn&apos;t effect the bounds. Applied on top of the margins offsets.</doc>
 		</property>
-		<property name="Padding" type="RectOffset" getter="Getpadding" setter="Setpadding" static="false">
+		<property name="Padding" type="RectOffset" getter="GetPadding" setter="SetPadding" static="false">
 			<doc>Determines extra distance between this and other elements in a layout.</doc>
 		</property>
-		<property name="Width" type="int" getter="Getwidth" setter="Setwidth" static="false">
+		<property name="Width" type="int" getter="GetWidth" setter="SetWidth" static="false">
 			<doc>Wanted width of the GUI element in pixels. Only used if fixedWidth is enabled.</doc>
 		</property>
-		<property name="Height" type="int" getter="Getheight" setter="Setheight" static="false">
+		<property name="Height" type="int" getter="GetHeight" setter="SetHeight" static="false">
 			<doc>Wanted height of the GUI element in pixels. Only used if fixedHeight is enabled.</doc>
 		</property>
-		<property name="MinWidth" type="int" getter="GetminWidth" setter="SetminWidth" static="false">
+		<property name="MinWidth" type="int" getter="GetMinWidth" setter="SetMinWidth" static="false">
 			<doc>Minimum width allowed for the GUI element. Used by the layout only when exact width is not specified.</doc>
 		</property>
-		<property name="MaxWidth" type="int" getter="GetmaxWidth" setter="SetmaxWidth" static="false">
+		<property name="MaxWidth" type="int" getter="GetMaxWidth" setter="SetMaxWidth" static="false">
 			<doc>Maximum width allowed for the GUI element. Used by the layout only when exact width is not specified.</doc>
 		</property>
-		<property name="MinHeight" type="int" getter="GetminHeight" setter="SetminHeight" static="false">
+		<property name="MinHeight" type="int" getter="GetMinHeight" setter="SetMinHeight" static="false">
 			<doc>Minimum height allowed for the GUI element. Used by the layout only when exact height is not specified.</doc>
 		</property>
-		<property name="MaxHeight" type="int" getter="GetmaxHeight" setter="SetmaxHeight" static="false">
+		<property name="MaxHeight" type="int" getter="GetMaxHeight" setter="SetMaxHeight" static="false">
 			<doc>Maximum height allowed for the GUI element. Used by the layout only when exact height is not specified.</doc>
 		</property>
-		<property name="FixedWidth" type="bool" getter="GetfixedWidth" setter="SetfixedWidth" static="false">
+		<property name="FixedWidth" type="bool" getter="GetFixedWidth" setter="SetFixedWidth" static="false">
 			<doc>Determines should the layout resize the element depending on available size. If true no resizing will be done.</doc>
 		</property>
-		<property name="FixedHeight" type="bool" getter="GetfixedHeight" setter="SetfixedHeight" static="false">
+		<property name="FixedHeight" type="bool" getter="GetFixedHeight" setter="SetFixedHeight" static="false">
 			<doc>Determines should the layout resize the element depending on available size. If true no resizing will be done.</doc>
 		</property>
 	</class>
@@ -7873,16 +7826,16 @@ Alternatively you can also skip manually calling release() and call unloadAllUnu
 	</enum>
 	<struct native="ShaderParameter" script="ShaderParameter">
 		<doc>Contains information about a single shader parameter.</doc>
-		<field name="name" type="string">
+		<field name="Name" type="string">
 			<doc>Name of the parameter variable.</doc>
 		</field>
-		<field name="identifier" type="string">
+		<field name="Identifier" type="string">
 			<doc>Variable identifier of the parameter.</doc>
 		</field>
-		<field name="type" type="ShaderParameterType">
+		<field name="Type" type="ShaderParameterType">
 			<doc>Data type of the parameter.</doc>
 		</field>
-		<field name="flags" type="ShaderParameterFlag">
+		<field name="Flags" type="ShaderParameterFlag">
 			<doc>Flags used to further describe the parameter.</doc>
 		</field>
 	</struct>

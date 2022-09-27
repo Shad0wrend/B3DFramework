@@ -18,26 +18,26 @@ namespace bs
 		public static ParticleCircleShapeOptions Default()
 		{
 			ParticleCircleShapeOptions value = new ParticleCircleShapeOptions();
-			value.radius = 1f;
-			value.thickness = 0f;
-			value.arc = Degree.Default();
-			value.mode = ParticleEmissionMode.Default();
+			value.Radius = 1f;
+			value.Thickness = 0f;
+			value.Arc = Degree.Default();
+			value.Mode = ParticleEmissionMode.Default();
 
 			return value;
 		}
 
 		/// <summary>Radius of the circle.</summary>
-		public float radius;
+		public float Radius;
 		/// <summary>
 		/// Proportion of the surface that can emit particles. Thickness of 0 results in particles being emitted only from the 
 		/// edge of the circle, while thickness of 1 results in particles being emitted from the entire surface. In-between 
 		/// values will use a part of the surface.
 		/// </summary>
-		public float thickness;
+		public float Thickness;
 		/// <summary>Angular portion of the cone from which to emit particles from, in degrees.</summary>
-		public Degree arc;
+		public Degree Arc;
 		/// <summary>Determines how will particle positions on the shape be generated.</summary>
-		public ParticleEmissionMode mode;
+		public ParticleEmissionMode Mode;
 	}
 
 	/** @} */

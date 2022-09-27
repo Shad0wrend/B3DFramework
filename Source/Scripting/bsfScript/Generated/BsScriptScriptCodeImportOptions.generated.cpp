@@ -17,9 +17,9 @@ namespace bs
 
 	void ScriptScriptCodeImportOptions::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_GeteditorScript", (void*)&ScriptScriptCodeImportOptions::InternalGeteditorScript);
-		metaData.scriptClass->AddInternalCall("Internal_SeteditorScript", (void*)&ScriptScriptCodeImportOptions::InternalSeteditorScript);
-		metaData.scriptClass->AddInternalCall("Internal_Create", (void*)&ScriptScriptCodeImportOptions::InternalCreate);
+		metaData.ScriptClass->AddInternalCall("Internal_GetEditorScript", (void*)&ScriptScriptCodeImportOptions::InternalGetEditorScript);
+		metaData.ScriptClass->AddInternalCall("Internal_SetEditorScript", (void*)&ScriptScriptCodeImportOptions::InternalSetEditorScript);
+		metaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptScriptCodeImportOptions::InternalCreate);
 
 	}
 
@@ -30,7 +30,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptScriptCodeImportOptions>()) ScriptScriptCodeImportOptions(managedInstance, value);
 		return managedInstance;
 	}
@@ -39,10 +39,10 @@ namespace bs
 		SPtr<ScriptCodeImportOptions> instance = ScriptCodeImportOptions::Create();
 		new (bs_alloc<ScriptScriptCodeImportOptions>())ScriptScriptCodeImportOptions(managedInstance, instance);
 	}
-	bool ScriptScriptCodeImportOptions::InternalGeteditorScript(ScriptScriptCodeImportOptions* thisPtr)
+	bool ScriptScriptCodeImportOptions::InternalGetEditorScript(ScriptScriptCodeImportOptions* thisPtr)
 	{
 		bool tmp__output;
-		tmp__output = thisPtr->GetInternal()->editorScript;
+		tmp__output = thisPtr->GetInternal()->EditorScript;
 
 		bool __output;
 		__output = tmp__output;
@@ -50,9 +50,9 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptScriptCodeImportOptions::InternalSeteditorScript(ScriptScriptCodeImportOptions* thisPtr, bool value)
+	void ScriptScriptCodeImportOptions::InternalSetEditorScript(ScriptScriptCodeImportOptions* thisPtr, bool value)
 	{
-		thisPtr->GetInternal()->editorScript = value;
+		thisPtr->GetInternal()->EditorScript = value;
 	}
 #endif
 }

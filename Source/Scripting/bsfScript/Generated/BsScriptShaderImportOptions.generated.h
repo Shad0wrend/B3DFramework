@@ -26,8 +26,8 @@ namespace bs
 		static bool InternalGetDefine(ScriptShaderImportOptions* thisPtr, MonoString* define, MonoString** value);
 		static bool InternalHasDefine(ScriptShaderImportOptions* thisPtr, MonoString* define);
 		static void InternalRemoveDefine(ScriptShaderImportOptions* thisPtr, MonoString* define);
-		static ShadingLanguageFlag InternalGetlanguages(ScriptShaderImportOptions* thisPtr);
-		static void InternalSetlanguages(ScriptShaderImportOptions* thisPtr, ShadingLanguageFlag value);
+		static ShadingLanguageFlag InternalGetLanguages(ScriptShaderImportOptions* thisPtr);
+		static void InternalSetLanguages(ScriptShaderImportOptions* thisPtr, ShadingLanguageFlag value);
 		static void InternalCreate(MonoObject* managedInstance);
 	};
 #endif

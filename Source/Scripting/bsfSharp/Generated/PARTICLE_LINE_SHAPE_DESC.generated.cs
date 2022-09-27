@@ -18,16 +18,16 @@ namespace bs
 		public static ParticleLineShapeOptions Default()
 		{
 			ParticleLineShapeOptions value = new ParticleLineShapeOptions();
-			value.length = 1f;
-			value.mode = ParticleEmissionMode.Default();
+			value.Length = 1f;
+			value.Mode = ParticleEmissionMode.Default();
 
 			return value;
 		}
 
 		/// <summary>Length of the line.</summary>
-		public float length;
+		public float Length;
 		/// <summary>Determines how will particle positions on the shape be generated.</summary>
-		public ParticleEmissionMode mode;
+		public ParticleEmissionMode Mode;
 	}
 
 	/** @} */

@@ -14,14 +14,14 @@ namespace bs
 	[StructLayout(LayoutKind.Sequential), SerializeObject]
 	public partial struct BoneWeight
 	{
-		public int index0;
-		public int index1;
-		public int index2;
-		public int index3;
-		public float weight0;
-		public float weight1;
-		public float weight2;
-		public float weight3;
+		public int Index0;
+		public int Index1;
+		public int Index2;
+		public int Index3;
+		public float Weight0;
+		public float Weight1;
+		public float Weight2;
+		public float Weight3;
 	}
 
 	/** @} */

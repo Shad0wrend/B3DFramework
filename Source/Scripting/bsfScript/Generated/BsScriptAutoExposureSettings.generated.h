@@ -20,21 +20,21 @@ namespace bs
 
 	private:
 		static void InternalAutoExposureSettings(MonoObject* managedInstance);
-		static float InternalGethistogramLog2Min(ScriptAutoExposureSettings* thisPtr);
-		static void InternalSethistogramLog2Min(ScriptAutoExposureSettings* thisPtr, float value);
-		static float InternalGethistogramLog2Max(ScriptAutoExposureSettings* thisPtr);
-		static void InternalSethistogramLog2Max(ScriptAutoExposureSettings* thisPtr, float value);
-		static float InternalGethistogramPctLow(ScriptAutoExposureSettings* thisPtr);
-		static void InternalSethistogramPctLow(ScriptAutoExposureSettings* thisPtr, float value);
-		static float InternalGethistogramPctHigh(ScriptAutoExposureSettings* thisPtr);
-		static void InternalSethistogramPctHigh(ScriptAutoExposureSettings* thisPtr, float value);
-		static float InternalGetminEyeAdaptation(ScriptAutoExposureSettings* thisPtr);
-		static void InternalSetminEyeAdaptation(ScriptAutoExposureSettings* thisPtr, float value);
-		static float InternalGetmaxEyeAdaptation(ScriptAutoExposureSettings* thisPtr);
-		static void InternalSetmaxEyeAdaptation(ScriptAutoExposureSettings* thisPtr, float value);
-		static float InternalGeteyeAdaptationSpeedUp(ScriptAutoExposureSettings* thisPtr);
-		static void InternalSeteyeAdaptationSpeedUp(ScriptAutoExposureSettings* thisPtr, float value);
-		static float InternalGeteyeAdaptationSpeedDown(ScriptAutoExposureSettings* thisPtr);
-		static void InternalSeteyeAdaptationSpeedDown(ScriptAutoExposureSettings* thisPtr, float value);
+		static float InternalGetHistogramLog2Min(ScriptAutoExposureSettings* thisPtr);
+		static void InternalSetHistogramLog2Min(ScriptAutoExposureSettings* thisPtr, float value);
+		static float InternalGetHistogramLog2Max(ScriptAutoExposureSettings* thisPtr);
+		static void InternalSetHistogramLog2Max(ScriptAutoExposureSettings* thisPtr, float value);
+		static float InternalGetHistogramPctLow(ScriptAutoExposureSettings* thisPtr);
+		static void InternalSetHistogramPctLow(ScriptAutoExposureSettings* thisPtr, float value);
+		static float InternalGetHistogramPctHigh(ScriptAutoExposureSettings* thisPtr);
+		static void InternalSetHistogramPctHigh(ScriptAutoExposureSettings* thisPtr, float value);
+		static float InternalGetMinEyeAdaptation(ScriptAutoExposureSettings* thisPtr);
+		static void InternalSetMinEyeAdaptation(ScriptAutoExposureSettings* thisPtr, float value);
+		static float InternalGetMaxEyeAdaptation(ScriptAutoExposureSettings* thisPtr);
+		static void InternalSetMaxEyeAdaptation(ScriptAutoExposureSettings* thisPtr, float value);
+		static float InternalGetEyeAdaptationSpeedUp(ScriptAutoExposureSettings* thisPtr);
+		static void InternalSetEyeAdaptationSpeedUp(ScriptAutoExposureSettings* thisPtr, float value);
+		static float InternalGetEyeAdaptationSpeedDown(ScriptAutoExposureSettings* thisPtr);
+		static void InternalSetEyeAdaptationSpeedDown(ScriptAutoExposureSettings* thisPtr, float value);
 	};
 }

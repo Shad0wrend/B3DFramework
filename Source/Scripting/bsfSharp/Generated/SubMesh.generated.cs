@@ -18,23 +18,23 @@ namespace bs
 		public static SubMesh Default()
 		{
 			SubMesh value = new SubMesh();
-			value.indexOffset = 0;
-			value.indexCount = 0;
-			value.drawOp = MeshTopology.TriangleList;
+			value.IndexOffset = 0;
+			value.IndexCount = 0;
+			value.DrawOp = MeshTopology.TriangleList;
 
 			return value;
 		}
 
 		public SubMesh(int indexOffset, int indexCount, MeshTopology drawOp)
 		{
-			this.indexOffset = indexOffset;
-			this.indexCount = indexCount;
-			this.drawOp = drawOp;
+			this.IndexOffset = indexOffset;
+			this.IndexCount = indexCount;
+			this.DrawOp = drawOp;
 		}
 
-		public int indexOffset;
-		public int indexCount;
-		public MeshTopology drawOp;
+		public int IndexOffset;
+		public int IndexCount;
+		public MeshTopology DrawOp;
 	}
 
 	/** @} */

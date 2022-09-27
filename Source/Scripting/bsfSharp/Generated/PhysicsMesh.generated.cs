@@ -20,12 +20,6 @@ namespace bs
 		private PhysicsMesh(bool __dummy0) { }
 		protected PhysicsMesh() { }
 
-		/// <summary>Creates a new physics mesh.</summary>
-		/// <param name="meshData">Index and vertices of the mesh data.</param>
-		/// <param name="type">
-		/// Type of the mesh. If convex the provided mesh geometry will be converted into a convex mesh (that might not be the 
-		/// same as the provided mesh data).
-		/// </param>
 		public PhysicsMesh(MeshData meshData, PhysicsMeshType type = PhysicsMeshType.Convex)
 		{
 			Internal_Create(this, meshData, type);

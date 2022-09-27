@@ -32,12 +32,12 @@ namespace bs
 	GUIElementStateStyle ScriptGUIElementStateStyle::FromInterop(const __GUIElementStateStyleInterop& value)
 	{
 		GUIElementStateStyle output;
-		ResourceHandle<SpriteTexture> tmptexture;
-		ScriptSpriteTexture* scripttexture;
-		scripttexture = ScriptSpriteTexture::ToNative(value.Texture);
-		if(scripttexture != nullptr)
-			tmptexture = scripttexture->GetHandle();
-		output.Texture = tmptexture;
+		ResourceHandle<SpriteTexture> tmpTexture;
+		ScriptSpriteTexture* scriptTexture;
+		scriptTexture = ScriptSpriteTexture::ToNative(value.Texture);
+		if(scriptTexture != nullptr)
+			tmpTexture = scriptTexture->GetHandle();
+		output.Texture = tmpTexture;
 		output.TextColor = value.TextColor;
 
 		return output;
@@ -46,14 +46,14 @@ namespace bs
 	__GUIElementStateStyleInterop ScriptGUIElementStateStyle::ToInterop(const GUIElementStateStyle& value)
 	{
 		__GUIElementStateStyleInterop output;
-		ScriptResourceBase* scripttexture;
-		scripttexture = ScriptResourceManager::Instance().GetScriptResource(value.Texture, true);
-		MonoObject* tmptexture;
-		if(scripttexture != nullptr)
-			tmptexture = scripttexture->GetManagedInstance();
+		ScriptResourceBase* scriptTexture;
+		scriptTexture = ScriptResourceManager::Instance().GetScriptResource(value.Texture, true);
+		MonoObject* tmpTexture;
+		if(scriptTexture != nullptr)
+			tmpTexture = scriptTexture->GetManagedInstance();
 		else
-			tmptexture = nullptr;
-		output.Texture = tmptexture;
+			tmpTexture = nullptr;
+		output.Texture = tmpTexture;
 		output.TextColor = value.TextColor;
 
 		return output;

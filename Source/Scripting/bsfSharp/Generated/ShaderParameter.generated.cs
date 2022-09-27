@@ -15,13 +15,13 @@ namespace bs
 	public partial struct ShaderParameter
 	{
 		/// <summary>Name of the parameter variable.</summary>
-		public string name;
+		public string Name;
 		/// <summary>Variable identifier of the parameter.</summary>
-		public string identifier;
+		public string Identifier;
 		/// <summary>Data type of the parameter.</summary>
-		public ShaderParameterType type;
+		public ShaderParameterType Type;
 		/// <summary>Flags used to further describe the parameter.</summary>
-		public ShaderParameterFlag flags;
+		public ShaderParameterFlag Flags;
 	}
 
 	/** @} */

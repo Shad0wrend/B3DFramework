@@ -10,10 +10,6 @@ namespace bs
 	 *  @{
 	 */
 
-	/// <summary>
-	/// Specifies a location at which a pre-computed texture containing scene radiance will be generated. This texture will 
-	/// then be used by the renderer to provide specular reflections.
-	/// </summary>
 	[ShowInInspector]
 	public partial class ReflectionProbe : Component
 	{

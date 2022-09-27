@@ -15,13 +15,13 @@ namespace bs
 	public partial struct ControllerCollision
 	{
 		/// <summary>Contact position.</summary>
-		public Vector3 position;
+		public Vector3 Position;
 		/// <summary>Contact normal.</summary>
-		public Vector3 normal;
+		public Vector3 Normal;
 		/// <summary>Direction of motion after the hit.</summary>
-		public Vector3 motionDir;
+		public Vector3 MotionDir;
 		/// <summary>Magnitude of motion after the hit.</summary>
-		public float motionAmount;
+		public float MotionAmount;
 	}
 
 	/** @} */

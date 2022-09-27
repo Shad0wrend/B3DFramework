@@ -31,12 +31,12 @@ namespace bs
 	BlendClipInfo ScriptBlendClipInfo::FromInterop(const __BlendClipInfoInterop& value)
 	{
 		BlendClipInfo output;
-		ResourceHandle<AnimationClip> tmpclip;
-		ScriptRRefBase* scriptclip;
-		scriptclip = ScriptRRefBase::ToNative(value.Clip);
-		if(scriptclip != nullptr)
-			tmpclip = static_resource_cast<AnimationClip>(scriptclip->GetHandle());
-		output.Clip = tmpclip;
+		ResourceHandle<AnimationClip> tmpClip;
+		ScriptRRefBase* scriptClip;
+		scriptClip = ScriptRRefBase::ToNative(value.Clip);
+		if(scriptClip != nullptr)
+			tmpClip = static_resource_cast<AnimationClip>(scriptClip->GetHandle());
+		output.Clip = tmpClip;
 		output.Position = value.Position;
 
 		return output;
@@ -45,14 +45,14 @@ namespace bs
 	__BlendClipInfoInterop ScriptBlendClipInfo::ToInterop(const BlendClipInfo& value)
 	{
 		__BlendClipInfoInterop output;
-		ScriptRRefBase* scriptclip;
-		scriptclip = ScriptResourceManager::Instance().GetScriptRRef(value.Clip);
-		MonoObject* tmpclip;
-		if(scriptclip != nullptr)
-			tmpclip = scriptclip->GetManagedInstance();
+		ScriptRRefBase* scriptClip;
+		scriptClip = ScriptResourceManager::Instance().GetScriptRRef(value.Clip);
+		MonoObject* tmpClip;
+		if(scriptClip != nullptr)
+			tmpClip = scriptClip->GetManagedInstance();
 		else
-			tmpclip = nullptr;
-		output.Clip = tmpclip;
+			tmpClip = nullptr;
+		output.Clip = tmpClip;
 		output.Position = value.Position;
 
 		return output;

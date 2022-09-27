@@ -18,24 +18,24 @@ namespace bs
 		public static ParticleEmissionMode Default()
 		{
 			ParticleEmissionMode value = new ParticleEmissionMode();
-			value.type = ParticleEmissionModeType.Random;
-			value.speed = 1f;
-			value.interval = 0f;
+			value.Type = ParticleEmissionModeType.Random;
+			value.Speed = 1f;
+			value.Interval = 0f;
 
 			return value;
 		}
 
 		/// <summary>Type that determines general behaviour.</summary>
-		public ParticleEmissionModeType type;
+		public ParticleEmissionModeType Type;
 		/// <summary>
 		/// Speed along which particle generation should move around the shape, relevant for Loop and PingPing emission modes.
 		/// </summary>
-		public float speed;
+		public float Speed;
 		/// <summary>
 		/// Determines the minimum interval allowed between the generated particles. 0 specifies the particles can be generated 
 		/// anywhere on the shape.
 		/// </summary>
-		public float interval;
+		public float Interval;
 	}
 
 	/** @} */

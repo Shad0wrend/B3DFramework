@@ -18,40 +18,40 @@ namespace bs
 		public static ParticleCollisionsOptions Default()
 		{
 			ParticleCollisionsOptions value = new ParticleCollisionsOptions();
-			value.mode = ParticleCollisionMode.Plane;
-			value.restitution = 1f;
-			value.dampening = 0.5f;
-			value.lifetimeLoss = 0f;
-			value.radius = 0.00999999977f;
-			value.layer = 18446744073709551615;
+			value.Mode = ParticleCollisionMode.Plane;
+			value.Restitution = 1f;
+			value.Dampening = 0.5f;
+			value.LifetimeLoss = 0f;
+			value.Radius = 0.00999999977f;
+			value.Layer = 18446744073709551615;
 
 			return value;
 		}
 
 		/// <summary>Collision mode determining with which geometry the particles will interact with.</summary>
-		public ParticleCollisionMode mode;
+		public ParticleCollisionMode Mode;
 		/// <summary>
 		/// Determines the elasticity (bounciness) of the particle collision. Lower values make the collision less bouncy and 
 		/// higher values more.
 		/// </summary>
-		public float restitution;
+		public float Restitution;
 		/// <summary>
 		/// Determines how much velocity should a particle lose after a collision, in percent of its current velocity. In range 
 		/// [0, 1].
 		/// </summary>
-		public float dampening;
+		public float Dampening;
 		/// <summary>
 		/// Determines how much should the particle lifetime be reduced after a collision, in percent of its original lifetime. 
 		/// In range [0, 1].
 		/// </summary>
-		public float lifetimeLoss;
+		public float LifetimeLoss;
 		/// <summary>Radius of every individual particle used for collisions, in meters.</summary>
-		public float radius;
+		public float Radius;
 		/// <summary>
 		/// Physics layers that determine which objects will particle collide with. Only relevant when using the World collision 
 		/// mode.
 		/// </summary>
-		public ulong layer;
+		public ulong Layer;
 	}
 
 	/** @} */

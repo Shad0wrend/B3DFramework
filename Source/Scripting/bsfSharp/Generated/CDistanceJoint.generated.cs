@@ -10,7 +10,6 @@ namespace bs
 	 *  @{
 	 */
 
-	/// <summary>A joint that maintains an upper or lower (or both) bound on the distance between two bodies.</summary>
 	[ShowInInspector]
 	public partial class DistanceJoint : Joint
 	{

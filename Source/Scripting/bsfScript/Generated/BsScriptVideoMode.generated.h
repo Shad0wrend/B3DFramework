@@ -11,11 +11,11 @@ namespace bs
 #if !BS_IS_BANSHEE3D
 	struct __VideoModeInterop
 	{
-		uint32_t width;
-		uint32_t height;
-		float refreshRate;
-		uint32_t outputIdx;
-		bool isCustom;
+		uint32_t Width;
+		uint32_t Height;
+		float RefreshRate;
+		uint32_t OutputIdx;
+		bool IsCustom;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptVideoMode : public ScriptObject<ScriptVideoMode>

@@ -18,13 +18,13 @@ namespace bs
 		public static ParticleGravityOptions Default()
 		{
 			ParticleGravityOptions value = new ParticleGravityOptions();
-			value.scale = 1f;
+			value.Scale = 1f;
 
 			return value;
 		}
 
 		/// <summary>Scale which to apply to the gravity value retrieved from the physics sub-system.</summary>
-		public float scale;
+		public float Scale;
 	}
 
 	/** @} */

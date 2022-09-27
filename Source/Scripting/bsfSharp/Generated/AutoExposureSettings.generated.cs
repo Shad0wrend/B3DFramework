@@ -31,8 +31,8 @@ namespace bs
 		[NativeWrapper]
 		public float HistogramLog2Min
 		{
-			get { return Internal_GethistogramLog2Min(mCachedPtr); }
-			set { Internal_SethistogramLog2Min(mCachedPtr, value); }
+			get { return Internal_GetHistogramLog2Min(mCachedPtr); }
+			set { Internal_SetHistogramLog2Min(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -45,8 +45,8 @@ namespace bs
 		[NativeWrapper]
 		public float HistogramLog2Max
 		{
-			get { return Internal_GethistogramLog2Max(mCachedPtr); }
-			set { Internal_SethistogramLog2Max(mCachedPtr, value); }
+			get { return Internal_GetHistogramLog2Max(mCachedPtr); }
+			set { Internal_SetHistogramLog2Max(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -61,8 +61,8 @@ namespace bs
 		[NativeWrapper]
 		public float HistogramPctLow
 		{
-			get { return Internal_GethistogramPctLow(mCachedPtr); }
-			set { Internal_SethistogramPctLow(mCachedPtr, value); }
+			get { return Internal_GetHistogramPctLow(mCachedPtr); }
+			set { Internal_SetHistogramPctLow(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -77,8 +77,8 @@ namespace bs
 		[NativeWrapper]
 		public float HistogramPctHigh
 		{
-			get { return Internal_GethistogramPctHigh(mCachedPtr); }
-			set { Internal_SethistogramPctHigh(mCachedPtr, value); }
+			get { return Internal_GetHistogramPctHigh(mCachedPtr); }
+			set { Internal_SetHistogramPctHigh(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -91,8 +91,8 @@ namespace bs
 		[NativeWrapper]
 		public float MinEyeAdaptation
 		{
-			get { return Internal_GetminEyeAdaptation(mCachedPtr); }
-			set { Internal_SetminEyeAdaptation(mCachedPtr, value); }
+			get { return Internal_GetMinEyeAdaptation(mCachedPtr); }
+			set { Internal_SetMinEyeAdaptation(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -105,8 +105,8 @@ namespace bs
 		[NativeWrapper]
 		public float MaxEyeAdaptation
 		{
-			get { return Internal_GetmaxEyeAdaptation(mCachedPtr); }
-			set { Internal_SetmaxEyeAdaptation(mCachedPtr, value); }
+			get { return Internal_GetMaxEyeAdaptation(mCachedPtr); }
+			set { Internal_SetMaxEyeAdaptation(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -118,8 +118,8 @@ namespace bs
 		[NativeWrapper]
 		public float EyeAdaptationSpeedUp
 		{
-			get { return Internal_GeteyeAdaptationSpeedUp(mCachedPtr); }
-			set { Internal_SeteyeAdaptationSpeedUp(mCachedPtr, value); }
+			get { return Internal_GetEyeAdaptationSpeedUp(mCachedPtr); }
+			set { Internal_SetEyeAdaptationSpeedUp(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -131,44 +131,44 @@ namespace bs
 		[NativeWrapper]
 		public float EyeAdaptationSpeedDown
 		{
-			get { return Internal_GeteyeAdaptationSpeedDown(mCachedPtr); }
-			set { Internal_SeteyeAdaptationSpeedDown(mCachedPtr, value); }
+			get { return Internal_GetEyeAdaptationSpeedDown(mCachedPtr); }
+			set { Internal_SetEyeAdaptationSpeedDown(mCachedPtr, value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_AutoExposureSettings(AutoExposureSettings managedInstance);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GethistogramLog2Min(IntPtr thisPtr);
+		private static extern float Internal_GetHistogramLog2Min(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SethistogramLog2Min(IntPtr thisPtr, float value);
+		private static extern void Internal_SetHistogramLog2Min(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GethistogramLog2Max(IntPtr thisPtr);
+		private static extern float Internal_GetHistogramLog2Max(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SethistogramLog2Max(IntPtr thisPtr, float value);
+		private static extern void Internal_SetHistogramLog2Max(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GethistogramPctLow(IntPtr thisPtr);
+		private static extern float Internal_GetHistogramPctLow(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SethistogramPctLow(IntPtr thisPtr, float value);
+		private static extern void Internal_SetHistogramPctLow(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GethistogramPctHigh(IntPtr thisPtr);
+		private static extern float Internal_GetHistogramPctHigh(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SethistogramPctHigh(IntPtr thisPtr, float value);
+		private static extern void Internal_SetHistogramPctHigh(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GetminEyeAdaptation(IntPtr thisPtr);
+		private static extern float Internal_GetMinEyeAdaptation(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetminEyeAdaptation(IntPtr thisPtr, float value);
+		private static extern void Internal_SetMinEyeAdaptation(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GetmaxEyeAdaptation(IntPtr thisPtr);
+		private static extern float Internal_GetMaxEyeAdaptation(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetmaxEyeAdaptation(IntPtr thisPtr, float value);
+		private static extern void Internal_SetMaxEyeAdaptation(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GeteyeAdaptationSpeedUp(IntPtr thisPtr);
+		private static extern float Internal_GetEyeAdaptationSpeedUp(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SeteyeAdaptationSpeedUp(IntPtr thisPtr, float value);
+		private static extern void Internal_SetEyeAdaptationSpeedUp(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GeteyeAdaptationSpeedDown(IntPtr thisPtr);
+		private static extern float Internal_GetEyeAdaptationSpeedDown(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SeteyeAdaptationSpeedDown(IntPtr thisPtr, float value);
+		private static extern void Internal_SetEyeAdaptationSpeedDown(IntPtr thisPtr, float value);
 	}
 
 	/** @} */

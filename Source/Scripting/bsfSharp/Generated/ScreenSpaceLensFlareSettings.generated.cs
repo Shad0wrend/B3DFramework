@@ -26,8 +26,8 @@ namespace bs
 		[NativeWrapper]
 		public bool Enabled
 		{
-			get { return Internal_Getenabled(mCachedPtr); }
-			set { Internal_Setenabled(mCachedPtr, value); }
+			get { return Internal_GetEnabled(mCachedPtr); }
+			set { Internal_SetEnabled(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -40,8 +40,8 @@ namespace bs
 		[NativeWrapper]
 		public int DownsampleCount
 		{
-			get { return Internal_GetdownsampleCount(mCachedPtr); }
-			set { Internal_SetdownsampleCount(mCachedPtr, value); }
+			get { return Internal_GetDownsampleCount(mCachedPtr); }
+			set { Internal_SetDownsampleCount(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -53,8 +53,8 @@ namespace bs
 		[NativeWrapper]
 		public float Threshold
 		{
-			get { return Internal_Getthreshold(mCachedPtr); }
-			set { Internal_Setthreshold(mCachedPtr, value); }
+			get { return Internal_GetThreshold(mCachedPtr); }
+			set { Internal_SetThreshold(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -65,8 +65,8 @@ namespace bs
 		[NativeWrapper]
 		public int GhostCount
 		{
-			get { return Internal_GetghostCount(mCachedPtr); }
-			set { Internal_SetghostCount(mCachedPtr, value); }
+			get { return Internal_GetGhostCount(mCachedPtr); }
+			set { Internal_SetGhostCount(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -78,8 +78,8 @@ namespace bs
 		[NativeWrapper]
 		public float GhostSpacing
 		{
-			get { return Internal_GetghostSpacing(mCachedPtr); }
-			set { Internal_SetghostSpacing(mCachedPtr, value); }
+			get { return Internal_GetGhostSpacing(mCachedPtr); }
+			set { Internal_SetGhostSpacing(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -91,8 +91,8 @@ namespace bs
 		[NativeWrapper]
 		public float Brightness
 		{
-			get { return Internal_Getbrightness(mCachedPtr); }
-			set { Internal_Setbrightness(mCachedPtr, value); }
+			get { return Internal_GetBrightness(mCachedPtr); }
+			set { Internal_SetBrightness(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -104,8 +104,8 @@ namespace bs
 		[NativeWrapper]
 		public float FilterSize
 		{
-			get { return Internal_GetfilterSize(mCachedPtr); }
-			set { Internal_SetfilterSize(mCachedPtr, value); }
+			get { return Internal_GetFilterSize(mCachedPtr); }
+			set { Internal_SetFilterSize(mCachedPtr, value); }
 		}
 
 		/// <summary>Determines if a halo effect should be rendered as part of the lens flare.</summary>
@@ -113,8 +113,8 @@ namespace bs
 		[NativeWrapper]
 		public bool Halo
 		{
-			get { return Internal_Gethalo(mCachedPtr); }
-			set { Internal_Sethalo(mCachedPtr, value); }
+			get { return Internal_GetHalo(mCachedPtr); }
+			set { Internal_SetHalo(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -126,8 +126,8 @@ namespace bs
 		[NativeWrapper]
 		public float HaloRadius
 		{
-			get { return Internal_GethaloRadius(mCachedPtr); }
-			set { Internal_SethaloRadius(mCachedPtr, value); }
+			get { return Internal_GetHaloRadius(mCachedPtr); }
+			set { Internal_SetHaloRadius(mCachedPtr, value); }
 		}
 
 		/// <summary>Determines the thickness of the halo ring. In normalized screen space (range [0.01,0.5]).</summary>
@@ -136,8 +136,8 @@ namespace bs
 		[NativeWrapper]
 		public float HaloThickness
 		{
-			get { return Internal_GethaloThickness(mCachedPtr); }
-			set { Internal_SethaloThickness(mCachedPtr, value); }
+			get { return Internal_GetHaloThickness(mCachedPtr); }
+			set { Internal_SetHaloThickness(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -148,8 +148,8 @@ namespace bs
 		[NativeWrapper]
 		public float HaloThreshold
 		{
-			get { return Internal_GethaloThreshold(mCachedPtr); }
-			set { Internal_SethaloThreshold(mCachedPtr, value); }
+			get { return Internal_GetHaloThreshold(mCachedPtr); }
+			set { Internal_SetHaloThreshold(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -160,8 +160,8 @@ namespace bs
 		[NativeWrapper]
 		public float HaloAspectRatio
 		{
-			get { return Internal_GethaloAspectRatio(mCachedPtr); }
-			set { Internal_SethaloAspectRatio(mCachedPtr, value); }
+			get { return Internal_GetHaloAspectRatio(mCachedPtr); }
+			set { Internal_SetHaloAspectRatio(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -172,8 +172,8 @@ namespace bs
 		[NativeWrapper]
 		public bool ChromaticAberration
 		{
-			get { return Internal_GetchromaticAberration(mCachedPtr); }
-			set { Internal_SetchromaticAberration(mCachedPtr, value); }
+			get { return Internal_GetChromaticAberration(mCachedPtr); }
+			set { Internal_SetChromaticAberration(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -185,8 +185,8 @@ namespace bs
 		[NativeWrapper]
 		public float ChromaticAberrationOffset
 		{
-			get { return Internal_GetchromaticAberrationOffset(mCachedPtr); }
-			set { Internal_SetchromaticAberrationOffset(mCachedPtr, value); }
+			get { return Internal_GetChromaticAberrationOffset(mCachedPtr); }
+			set { Internal_SetChromaticAberrationOffset(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -197,72 +197,72 @@ namespace bs
 		[NativeWrapper]
 		public bool BicubicUpsampling
 		{
-			get { return Internal_GetbicubicUpsampling(mCachedPtr); }
-			set { Internal_SetbicubicUpsampling(mCachedPtr, value); }
+			get { return Internal_GetBicubicUpsampling(mCachedPtr); }
+			set { Internal_SetBicubicUpsampling(mCachedPtr, value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_ScreenSpaceLensFlareSettings(ScreenSpaceLensFlareSettings managedInstance);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_Getenabled(IntPtr thisPtr);
+		private static extern bool Internal_GetEnabled(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Setenabled(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetEnabled(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_GetdownsampleCount(IntPtr thisPtr);
+		private static extern int Internal_GetDownsampleCount(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetdownsampleCount(IntPtr thisPtr, int value);
+		private static extern void Internal_SetDownsampleCount(IntPtr thisPtr, int value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_Getthreshold(IntPtr thisPtr);
+		private static extern float Internal_GetThreshold(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Setthreshold(IntPtr thisPtr, float value);
+		private static extern void Internal_SetThreshold(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_GetghostCount(IntPtr thisPtr);
+		private static extern int Internal_GetGhostCount(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetghostCount(IntPtr thisPtr, int value);
+		private static extern void Internal_SetGhostCount(IntPtr thisPtr, int value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GetghostSpacing(IntPtr thisPtr);
+		private static extern float Internal_GetGhostSpacing(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetghostSpacing(IntPtr thisPtr, float value);
+		private static extern void Internal_SetGhostSpacing(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_Getbrightness(IntPtr thisPtr);
+		private static extern float Internal_GetBrightness(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Setbrightness(IntPtr thisPtr, float value);
+		private static extern void Internal_SetBrightness(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GetfilterSize(IntPtr thisPtr);
+		private static extern float Internal_GetFilterSize(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetfilterSize(IntPtr thisPtr, float value);
+		private static extern void Internal_SetFilterSize(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_Gethalo(IntPtr thisPtr);
+		private static extern bool Internal_GetHalo(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Sethalo(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetHalo(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GethaloRadius(IntPtr thisPtr);
+		private static extern float Internal_GetHaloRadius(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SethaloRadius(IntPtr thisPtr, float value);
+		private static extern void Internal_SetHaloRadius(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GethaloThickness(IntPtr thisPtr);
+		private static extern float Internal_GetHaloThickness(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SethaloThickness(IntPtr thisPtr, float value);
+		private static extern void Internal_SetHaloThickness(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GethaloThreshold(IntPtr thisPtr);
+		private static extern float Internal_GetHaloThreshold(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SethaloThreshold(IntPtr thisPtr, float value);
+		private static extern void Internal_SetHaloThreshold(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GethaloAspectRatio(IntPtr thisPtr);
+		private static extern float Internal_GetHaloAspectRatio(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SethaloAspectRatio(IntPtr thisPtr, float value);
+		private static extern void Internal_SetHaloAspectRatio(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_GetchromaticAberration(IntPtr thisPtr);
+		private static extern bool Internal_GetChromaticAberration(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetchromaticAberration(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetChromaticAberration(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GetchromaticAberrationOffset(IntPtr thisPtr);
+		private static extern float Internal_GetChromaticAberrationOffset(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetchromaticAberrationOffset(IntPtr thisPtr, float value);
+		private static extern void Internal_SetChromaticAberrationOffset(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_GetbicubicUpsampling(IntPtr thisPtr);
+		private static extern bool Internal_GetBicubicUpsampling(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetbicubicUpsampling(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetBicubicUpsampling(IntPtr thisPtr, bool value);
 	}
 
 	/** @} */

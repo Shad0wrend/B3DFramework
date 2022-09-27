@@ -18,25 +18,25 @@ namespace bs
 		public static ParticleStaticMeshShapeOptions Default()
 		{
 			ParticleStaticMeshShapeOptions value = new ParticleStaticMeshShapeOptions();
-			value.type = ParticleEmitterMeshType.Triangle;
-			value.sequential = false;
-			value.mesh = null;
+			value.Type = ParticleEmitterMeshType.Triangle;
+			value.Sequential = false;
+			value.Mesh = null;
 
 			return value;
 		}
 
 		/// <summary>Determines from which portion of the mesh are the particles emitted from.</summary>
-		public ParticleEmitterMeshType type;
+		public ParticleEmitterMeshType Type;
 		/// <summary>
 		/// When enabled the particles will be emitted sequentially from mesh vertices in the order they are defined. Only 
 		/// relevant for the Vertex emit mode.
 		/// </summary>
-		public bool sequential;
+		public bool Sequential;
 		/// <summary>
 		/// Mesh to spawn particles on. Must at least contain per-vertex position data encoded as 3D float vectors. Can 
 		/// optionally contain per-vertex normals encoded as 3D float vectors or as 4-byte unsigned-normalized format.
 		/// </summary>
-		public RRef<Mesh> mesh;
+		public RRef<Mesh> Mesh;
 	}
 
 	/** @} */

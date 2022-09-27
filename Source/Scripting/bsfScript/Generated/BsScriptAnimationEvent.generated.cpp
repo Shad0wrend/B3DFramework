@@ -27,9 +27,9 @@ namespace bs
 	AnimationEvent ScriptAnimationEvent::FromInterop(const __AnimationEventInterop& value)
 	{
 		AnimationEvent output;
-		String tmpname;
-		tmpname = MonoUtil::MonoToString(value.Name);
-		output.Name = tmpname;
+		String tmpName;
+		tmpName = MonoUtil::MonoToString(value.Name);
+		output.Name = tmpName;
 		output.Time = value.Time;
 
 		return output;
@@ -38,9 +38,9 @@ namespace bs
 	__AnimationEventInterop ScriptAnimationEvent::ToInterop(const AnimationEvent& value)
 	{
 		__AnimationEventInterop output;
-		MonoString* tmpname;
-		tmpname = MonoUtil::StringToMono(value.Name);
-		output.Name = tmpname;
+		MonoString* tmpName;
+		tmpName = MonoUtil::StringToMono(value.Name);
+		output.Name = tmpName;
 		output.Time = value.Time;
 
 		return output;

@@ -21,13 +21,13 @@ namespace bs
 
 	private:
 		static void InternalChromaticAberrationSettings(MonoObject* managedInstance);
-		static MonoObject* InternalGetfringeTexture(ScriptChromaticAberrationSettings* thisPtr);
-		static void InternalSetfringeTexture(ScriptChromaticAberrationSettings* thisPtr, MonoObject* value);
-		static bool InternalGetenabled(ScriptChromaticAberrationSettings* thisPtr);
-		static void InternalSetenabled(ScriptChromaticAberrationSettings* thisPtr, bool value);
-		static ChromaticAberrationType InternalGettype(ScriptChromaticAberrationSettings* thisPtr);
-		static void InternalSettype(ScriptChromaticAberrationSettings* thisPtr, ChromaticAberrationType value);
-		static float InternalGetshiftAmount(ScriptChromaticAberrationSettings* thisPtr);
-		static void InternalSetshiftAmount(ScriptChromaticAberrationSettings* thisPtr, float value);
+		static MonoObject* InternalGetFringeTexture(ScriptChromaticAberrationSettings* thisPtr);
+		static void InternalSetFringeTexture(ScriptChromaticAberrationSettings* thisPtr, MonoObject* value);
+		static bool InternalGetEnabled(ScriptChromaticAberrationSettings* thisPtr);
+		static void InternalSetEnabled(ScriptChromaticAberrationSettings* thisPtr, bool value);
+		static ChromaticAberrationType InternalGetType(ScriptChromaticAberrationSettings* thisPtr);
+		static void InternalSetType(ScriptChromaticAberrationSettings* thisPtr, ChromaticAberrationType value);
+		static float InternalGetShiftAmount(ScriptChromaticAberrationSettings* thisPtr);
+		static void InternalSetShiftAmount(ScriptChromaticAberrationSettings* thisPtr, float value);
 	};
 }

@@ -11,10 +11,10 @@ namespace bs
 	public partial struct BoneInfo
 	{
 		/// <summary>Unique name of the bone.</summary>
-		public string name;
+		public string Name;
 		/// <summary>Index of the parent bone (within the relevant Skeleton object). -1 if root bone.</summary>
-		public int parent;
+		public int Parent;
 		/// <summary>Inverse transform of the pose the skeleton was initially created in.</summary>
-		public Matrix4 invBindPose;
+		public Matrix4 InvBindPose;
 	}
 }

@@ -20,7 +20,7 @@ namespace bs
 
 	MonoObject*ScriptSubResource::Box(const __SubResourceInterop& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	__SubResourceInterop ScriptSubResource::Unbox(MonoObject* value)
@@ -31,15 +31,15 @@ namespace bs
 	SubResource ScriptSubResource::FromInterop(const __SubResourceInterop& value)
 	{
 		SubResource output;
-		String tmpname;
-		tmpname = MonoUtil::MonoToString(value.name);
-		output.name = tmpname;
-		ResourceHandle<Resource> tmpvalue;
-		ScriptResource* scriptvalue;
-		scriptvalue = ScriptResource::ToNative(value.value);
-		if(scriptvalue != nullptr)
-			tmpvalue = static_resource_cast<Resource>(scriptvalue->GetGenericHandle());
-		output.value = tmpvalue;
+		String tmpName;
+		tmpName = MonoUtil::MonoToString(value.Name);
+		output.Name = tmpName;
+		ResourceHandle<Resource> tmpValue;
+		ScriptResource* scriptValue;
+		scriptValue = ScriptResource::ToNative(value.Value);
+		if(scriptValue != nullptr)
+			tmpValue = static_resource_cast<Resource>(scriptValue->GetGenericHandle());
+		output.Value = tmpValue;
 
 		return output;
 	}
@@ -47,17 +47,17 @@ namespace bs
 	__SubResourceInterop ScriptSubResource::ToInterop(const SubResource& value)
 	{
 		__SubResourceInterop output;
-		MonoString* tmpname;
-		tmpname = MonoUtil::StringToMono(value.name);
-		output.name = tmpname;
-		ScriptResourceBase* scriptvalue;
-		scriptvalue = ScriptResourceManager::Instance().GetScriptResource(value.value, true);
-		MonoObject* tmpvalue;
-		if(scriptvalue != nullptr)
-			tmpvalue = scriptvalue->GetManagedInstance();
+		MonoString* tmpName;
+		tmpName = MonoUtil::StringToMono(value.Name);
+		output.Name = tmpName;
+		ScriptResourceBase* scriptValue;
+		scriptValue = ScriptResourceManager::Instance().GetScriptResource(value.Value, true);
+		MonoObject* tmpValue;
+		if(scriptValue != nullptr)
+			tmpValue = scriptValue->GetManagedInstance();
 		else
-			tmpvalue = nullptr;
-		output.value = tmpvalue;
+			tmpValue = nullptr;
+		output.Value = tmpValue;
 
 		return output;
 	}

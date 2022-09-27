@@ -29,13 +29,13 @@ namespace bs
 	PARTICLE_VELOCITY_DESC ScriptPARTICLE_VELOCITY_DESC::FromInterop(const __PARTICLE_VELOCITY_DESCInterop& value)
 	{
 		PARTICLE_VELOCITY_DESC output;
-		SPtr<TDistribution<Vector3>> tmpvelocity;
-		ScriptTDistributionVector3* scriptvelocity;
-		scriptvelocity = ScriptTDistributionVector3::ToNative(value.Velocity);
-		if(scriptvelocity != nullptr)
-			tmpvelocity = scriptvelocity->GetInternal();
-		if(tmpvelocity != nullptr)
-		output.Velocity = *tmpvelocity;
+		SPtr<TDistribution<Vector3>> tmpVelocity;
+		ScriptTDistributionVector3* scriptVelocity;
+		scriptVelocity = ScriptTDistributionVector3::ToNative(value.Velocity);
+		if(scriptVelocity != nullptr)
+			tmpVelocity = scriptVelocity->GetInternal();
+		if(tmpVelocity != nullptr)
+		output.Velocity = *tmpVelocity;
 		output.WorldSpace = value.WorldSpace;
 
 		return output;
@@ -44,11 +44,11 @@ namespace bs
 	__PARTICLE_VELOCITY_DESCInterop ScriptPARTICLE_VELOCITY_DESC::ToInterop(const PARTICLE_VELOCITY_DESC& value)
 	{
 		__PARTICLE_VELOCITY_DESCInterop output;
-		MonoObject* tmpvelocity;
-		SPtr<TDistribution<Vector3>> tmpvelocitycopy;
-		tmpvelocitycopy = bs_shared_ptr_new<TDistribution<Vector3>>(value.Velocity);
-		tmpvelocity = ScriptTDistributionVector3::Create(tmpvelocitycopy);
-		output.Velocity = tmpvelocity;
+		MonoObject* tmpVelocity;
+		SPtr<TDistribution<Vector3>> tmpVelocitycopy;
+		tmpVelocitycopy = bs_shared_ptr_new<TDistribution<Vector3>>(value.Velocity);
+		tmpVelocity = ScriptTDistributionVector3::Create(tmpVelocitycopy);
+		output.Velocity = tmpVelocity;
 		output.WorldSpace = value.WorldSpace;
 
 		return output;

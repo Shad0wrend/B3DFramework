@@ -18,22 +18,22 @@ namespace bs
 		public static VectorFieldOptions Default()
 		{
 			VectorFieldOptions value = new VectorFieldOptions();
-			value.countX = 1;
-			value.countY = 1;
-			value.countZ = 1;
-			value.bounds = AABox.Default();
+			value.CountX = 1;
+			value.CountY = 1;
+			value.CountZ = 1;
+			value.Bounds = AABox.Default();
 
 			return value;
 		}
 
 		/// <summary>Number of entries in the vector field along the X axis.</summary>
-		public int countX;
+		public int CountX;
 		/// <summary>Number of entries in the vector field along the Y axis.</summary>
-		public int countY;
+		public int CountY;
 		/// <summary>Number of entries in the vector field along the Z axis.</summary>
-		public int countZ;
+		public int CountZ;
 		/// <summary>Spatial bounds of the vector field.</summary>
-		public AABox bounds;
+		public AABox Bounds;
 	}
 
 	/** @} */

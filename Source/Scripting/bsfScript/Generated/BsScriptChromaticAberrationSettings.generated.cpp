@@ -18,14 +18,14 @@ namespace bs
 	void ScriptChromaticAberrationSettings::InitRuntimeData()
 	{
 		metaData.ScriptClass->AddInternalCall("Internal_ChromaticAberrationSettings", (void*)&ScriptChromaticAberrationSettings::InternalChromaticAberrationSettings);
-		metaData.ScriptClass->AddInternalCall("Internal_GetfringeTexture", (void*)&ScriptChromaticAberrationSettings::InternalGetfringeTexture);
-		metaData.ScriptClass->AddInternalCall("Internal_SetfringeTexture", (void*)&ScriptChromaticAberrationSettings::InternalSetfringeTexture);
-		metaData.ScriptClass->AddInternalCall("Internal_Getenabled", (void*)&ScriptChromaticAberrationSettings::InternalGetenabled);
-		metaData.ScriptClass->AddInternalCall("Internal_Setenabled", (void*)&ScriptChromaticAberrationSettings::InternalSetenabled);
-		metaData.ScriptClass->AddInternalCall("Internal_Gettype", (void*)&ScriptChromaticAberrationSettings::InternalGettype);
-		metaData.ScriptClass->AddInternalCall("Internal_Settype", (void*)&ScriptChromaticAberrationSettings::InternalSettype);
-		metaData.ScriptClass->AddInternalCall("Internal_GetshiftAmount", (void*)&ScriptChromaticAberrationSettings::InternalGetshiftAmount);
-		metaData.ScriptClass->AddInternalCall("Internal_SetshiftAmount", (void*)&ScriptChromaticAberrationSettings::InternalSetshiftAmount);
+		metaData.ScriptClass->AddInternalCall("Internal_GetFringeTexture", (void*)&ScriptChromaticAberrationSettings::InternalGetFringeTexture);
+		metaData.ScriptClass->AddInternalCall("Internal_SetFringeTexture", (void*)&ScriptChromaticAberrationSettings::InternalSetFringeTexture);
+		metaData.ScriptClass->AddInternalCall("Internal_GetEnabled", (void*)&ScriptChromaticAberrationSettings::InternalGetEnabled);
+		metaData.ScriptClass->AddInternalCall("Internal_SetEnabled", (void*)&ScriptChromaticAberrationSettings::InternalSetEnabled);
+		metaData.ScriptClass->AddInternalCall("Internal_GetType", (void*)&ScriptChromaticAberrationSettings::InternalGetType);
+		metaData.ScriptClass->AddInternalCall("Internal_SetType", (void*)&ScriptChromaticAberrationSettings::InternalSetType);
+		metaData.ScriptClass->AddInternalCall("Internal_GetShiftAmount", (void*)&ScriptChromaticAberrationSettings::InternalGetShiftAmount);
+		metaData.ScriptClass->AddInternalCall("Internal_SetShiftAmount", (void*)&ScriptChromaticAberrationSettings::InternalSetShiftAmount);
 
 	}
 
@@ -46,7 +46,7 @@ namespace bs
 		new (bs_alloc<ScriptChromaticAberrationSettings>())ScriptChromaticAberrationSettings(managedInstance, instance);
 	}
 
-	MonoObject* ScriptChromaticAberrationSettings::InternalGetfringeTexture(ScriptChromaticAberrationSettings* thisPtr)
+	MonoObject* ScriptChromaticAberrationSettings::InternalGetFringeTexture(ScriptChromaticAberrationSettings* thisPtr)
 	{
 		ResourceHandle<Texture> tmp__output;
 		tmp__output = thisPtr->GetInternal()->FringeTexture;
@@ -62,7 +62,7 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptChromaticAberrationSettings::InternalSetfringeTexture(ScriptChromaticAberrationSettings* thisPtr, MonoObject* value)
+	void ScriptChromaticAberrationSettings::InternalSetFringeTexture(ScriptChromaticAberrationSettings* thisPtr, MonoObject* value)
 	{
 		ResourceHandle<Texture> tmpvalue;
 		ScriptRRefBase* scriptvalue;
@@ -72,7 +72,7 @@ namespace bs
 		thisPtr->GetInternal()->FringeTexture = tmpvalue;
 	}
 
-	bool ScriptChromaticAberrationSettings::InternalGetenabled(ScriptChromaticAberrationSettings* thisPtr)
+	bool ScriptChromaticAberrationSettings::InternalGetEnabled(ScriptChromaticAberrationSettings* thisPtr)
 	{
 		bool tmp__output;
 		tmp__output = thisPtr->GetInternal()->Enabled;
@@ -83,12 +83,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptChromaticAberrationSettings::InternalSetenabled(ScriptChromaticAberrationSettings* thisPtr, bool value)
+	void ScriptChromaticAberrationSettings::InternalSetEnabled(ScriptChromaticAberrationSettings* thisPtr, bool value)
 	{
 		thisPtr->GetInternal()->Enabled = value;
 	}
 
-	ChromaticAberrationType ScriptChromaticAberrationSettings::InternalGettype(ScriptChromaticAberrationSettings* thisPtr)
+	ChromaticAberrationType ScriptChromaticAberrationSettings::InternalGetType(ScriptChromaticAberrationSettings* thisPtr)
 	{
 		ChromaticAberrationType tmp__output;
 		tmp__output = thisPtr->GetInternal()->Type;
@@ -99,12 +99,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptChromaticAberrationSettings::InternalSettype(ScriptChromaticAberrationSettings* thisPtr, ChromaticAberrationType value)
+	void ScriptChromaticAberrationSettings::InternalSetType(ScriptChromaticAberrationSettings* thisPtr, ChromaticAberrationType value)
 	{
 		thisPtr->GetInternal()->Type = value;
 	}
 
-	float ScriptChromaticAberrationSettings::InternalGetshiftAmount(ScriptChromaticAberrationSettings* thisPtr)
+	float ScriptChromaticAberrationSettings::InternalGetShiftAmount(ScriptChromaticAberrationSettings* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->GetInternal()->ShiftAmount;
@@ -115,7 +115,7 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptChromaticAberrationSettings::InternalSetshiftAmount(ScriptChromaticAberrationSettings* thisPtr, float value)
+	void ScriptChromaticAberrationSettings::InternalSetShiftAmount(ScriptChromaticAberrationSettings* thisPtr, float value)
 	{
 		thisPtr->GetInternal()->ShiftAmount = value;
 	}

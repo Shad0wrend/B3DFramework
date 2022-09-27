@@ -18,16 +18,16 @@ namespace bs
 		public static ParticleForceOptions Default()
 		{
 			ParticleForceOptions value = new ParticleForceOptions();
-			value.force = null;
-			value.worldSpace = false;
+			value.Force = null;
+			value.WorldSpace = false;
 
 			return value;
 		}
 
 		/// <summary>Determines the force of the particles evaluated over particle lifetime.</summary>
-		public Vector3Distribution force;
+		public Vector3Distribution Force;
 		/// <summary>True if the force is provided in world space, false if in local space.</summary>
-		public bool worldSpace;
+		public bool WorldSpace;
 	}
 
 	/** @} */

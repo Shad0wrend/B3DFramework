@@ -17,7 +17,7 @@ namespace bs
 
 	MonoObject*ScriptVideoMode::Box(const __VideoModeInterop& value)
 	{
-		return MonoUtil::Box(metaData.scriptClass->GetInternalClassInternal(), (void*)&value);
+		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
 	}
 
 	__VideoModeInterop ScriptVideoMode::Unbox(MonoObject* value)
@@ -28,11 +28,11 @@ namespace bs
 	VideoMode ScriptVideoMode::FromInterop(const __VideoModeInterop& value)
 	{
 		VideoMode output;
-		output.width = value.width;
-		output.height = value.height;
-		output.refreshRate = value.refreshRate;
-		output.outputIdx = value.outputIdx;
-		output.isCustom = value.isCustom;
+		output.Width = value.Width;
+		output.Height = value.Height;
+		output.RefreshRate = value.RefreshRate;
+		output.OutputIdx = value.OutputIdx;
+		output.IsCustom = value.IsCustom;
 
 		return output;
 	}
@@ -40,11 +40,11 @@ namespace bs
 	__VideoModeInterop ScriptVideoMode::ToInterop(const VideoMode& value)
 	{
 		__VideoModeInterop output;
-		output.width = value.width;
-		output.height = value.height;
-		output.refreshRate = value.refreshRate;
-		output.outputIdx = value.outputIdx;
-		output.isCustom = value.isCustom;
+		output.Width = value.Width;
+		output.Height = value.Height;
+		output.RefreshRate = value.RefreshRate;
+		output.OutputIdx = value.OutputIdx;
+		output.IsCustom = value.IsCustom;
 
 		return output;
 	}

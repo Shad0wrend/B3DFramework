@@ -33,8 +33,8 @@ namespace bs
 		[NativeWrapper]
 		public bool Enabled
 		{
-			get { return Internal_Getenabled(mCachedPtr); }
-			set { Internal_Setenabled(mCachedPtr, value); }
+			get { return Internal_GetEnabled(mCachedPtr); }
+			set { Internal_SetEnabled(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -47,8 +47,8 @@ namespace bs
 		[NativeWrapper]
 		public int Quality
 		{
-			get { return Internal_Getquality(mCachedPtr); }
-			set { Internal_Setquality(mCachedPtr, value); }
+			get { return Internal_GetQuality(mCachedPtr); }
+			set { Internal_SetQuality(mCachedPtr, value); }
 		}
 
 		/// <summary>Intensity of the screen space reflections. Valid range is [0, 1]. Default is 1 (100%).</summary>
@@ -57,8 +57,8 @@ namespace bs
 		[NativeWrapper]
 		public float Intensity
 		{
-			get { return Internal_Getintensity(mCachedPtr); }
-			set { Internal_Setintensity(mCachedPtr, value); }
+			get { return Internal_GetIntensity(mCachedPtr); }
+			set { Internal_SetIntensity(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -70,28 +70,28 @@ namespace bs
 		[NativeWrapper]
 		public float MaxRoughness
 		{
-			get { return Internal_GetmaxRoughness(mCachedPtr); }
-			set { Internal_SetmaxRoughness(mCachedPtr, value); }
+			get { return Internal_GetMaxRoughness(mCachedPtr); }
+			set { Internal_SetMaxRoughness(mCachedPtr, value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_ScreenSpaceReflectionsSettings(ScreenSpaceReflectionsSettings managedInstance);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_Getenabled(IntPtr thisPtr);
+		private static extern bool Internal_GetEnabled(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Setenabled(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetEnabled(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_Getquality(IntPtr thisPtr);
+		private static extern int Internal_GetQuality(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Setquality(IntPtr thisPtr, int value);
+		private static extern void Internal_SetQuality(IntPtr thisPtr, int value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_Getintensity(IntPtr thisPtr);
+		private static extern float Internal_GetIntensity(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Setintensity(IntPtr thisPtr, float value);
+		private static extern void Internal_SetIntensity(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GetmaxRoughness(IntPtr thisPtr);
+		private static extern float Internal_GetMaxRoughness(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetmaxRoughness(IntPtr thisPtr, float value);
+		private static extern void Internal_SetMaxRoughness(IntPtr thisPtr, float value);
 	}
 
 	/** @} */

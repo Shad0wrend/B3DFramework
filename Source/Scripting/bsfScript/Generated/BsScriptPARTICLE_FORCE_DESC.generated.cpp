@@ -29,13 +29,13 @@ namespace bs
 	PARTICLE_FORCE_DESC ScriptPARTICLE_FORCE_DESC::FromInterop(const __PARTICLE_FORCE_DESCInterop& value)
 	{
 		PARTICLE_FORCE_DESC output;
-		SPtr<TDistribution<Vector3>> tmpforce;
-		ScriptTDistributionVector3* scriptforce;
-		scriptforce = ScriptTDistributionVector3::ToNative(value.Force);
-		if(scriptforce != nullptr)
-			tmpforce = scriptforce->GetInternal();
-		if(tmpforce != nullptr)
-		output.Force = *tmpforce;
+		SPtr<TDistribution<Vector3>> tmpForce;
+		ScriptTDistributionVector3* scriptForce;
+		scriptForce = ScriptTDistributionVector3::ToNative(value.Force);
+		if(scriptForce != nullptr)
+			tmpForce = scriptForce->GetInternal();
+		if(tmpForce != nullptr)
+		output.Force = *tmpForce;
 		output.WorldSpace = value.WorldSpace;
 
 		return output;
@@ -44,11 +44,11 @@ namespace bs
 	__PARTICLE_FORCE_DESCInterop ScriptPARTICLE_FORCE_DESC::ToInterop(const PARTICLE_FORCE_DESC& value)
 	{
 		__PARTICLE_FORCE_DESCInterop output;
-		MonoObject* tmpforce;
-		SPtr<TDistribution<Vector3>> tmpforcecopy;
-		tmpforcecopy = bs_shared_ptr_new<TDistribution<Vector3>>(value.Force);
-		tmpforce = ScriptTDistributionVector3::Create(tmpforcecopy);
-		output.Force = tmpforce;
+		MonoObject* tmpForce;
+		SPtr<TDistribution<Vector3>> tmpForcecopy;
+		tmpForcecopy = bs_shared_ptr_new<TDistribution<Vector3>>(value.Force);
+		tmpForce = ScriptTDistributionVector3::Create(tmpForcecopy);
+		output.Force = tmpForce;
 		output.WorldSpace = value.WorldSpace;
 
 		return output;

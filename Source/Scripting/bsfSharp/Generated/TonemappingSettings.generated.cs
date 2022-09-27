@@ -29,8 +29,8 @@ namespace bs
 		[NativeWrapper]
 		public float FilmicCurveShoulderStrength
 		{
-			get { return Internal_GetfilmicCurveShoulderStrength(mCachedPtr); }
-			set { Internal_SetfilmicCurveShoulderStrength(mCachedPtr, value); }
+			get { return Internal_GetFilmicCurveShoulderStrength(mCachedPtr); }
+			set { Internal_SetFilmicCurveShoulderStrength(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -41,8 +41,8 @@ namespace bs
 		[NativeWrapper]
 		public float FilmicCurveLinearStrength
 		{
-			get { return Internal_GetfilmicCurveLinearStrength(mCachedPtr); }
-			set { Internal_SetfilmicCurveLinearStrength(mCachedPtr, value); }
+			get { return Internal_GetFilmicCurveLinearStrength(mCachedPtr); }
+			set { Internal_SetFilmicCurveLinearStrength(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -53,8 +53,8 @@ namespace bs
 		[NativeWrapper]
 		public float FilmicCurveLinearAngle
 		{
-			get { return Internal_GetfilmicCurveLinearAngle(mCachedPtr); }
-			set { Internal_SetfilmicCurveLinearAngle(mCachedPtr, value); }
+			get { return Internal_GetFilmicCurveLinearAngle(mCachedPtr); }
+			set { Internal_SetFilmicCurveLinearAngle(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -65,8 +65,8 @@ namespace bs
 		[NativeWrapper]
 		public float FilmicCurveToeStrength
 		{
-			get { return Internal_GetfilmicCurveToeStrength(mCachedPtr); }
-			set { Internal_SetfilmicCurveToeStrength(mCachedPtr, value); }
+			get { return Internal_GetFilmicCurveToeStrength(mCachedPtr); }
+			set { Internal_SetFilmicCurveToeStrength(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -76,8 +76,8 @@ namespace bs
 		[NativeWrapper]
 		public float FilmicCurveToeNumerator
 		{
-			get { return Internal_GetfilmicCurveToeNumerator(mCachedPtr); }
-			set { Internal_SetfilmicCurveToeNumerator(mCachedPtr, value); }
+			get { return Internal_GetFilmicCurveToeNumerator(mCachedPtr); }
+			set { Internal_SetFilmicCurveToeNumerator(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -87,8 +87,8 @@ namespace bs
 		[NativeWrapper]
 		public float FilmicCurveToeDenominator
 		{
-			get { return Internal_GetfilmicCurveToeDenominator(mCachedPtr); }
-			set { Internal_SetfilmicCurveToeDenominator(mCachedPtr, value); }
+			get { return Internal_GetFilmicCurveToeDenominator(mCachedPtr); }
+			set { Internal_SetFilmicCurveToeDenominator(mCachedPtr, value); }
 		}
 
 		/// <summary>Controls the white point of the filmic curve used for tonemapping. Affects the entire curve.</summary>
@@ -96,40 +96,40 @@ namespace bs
 		[NativeWrapper]
 		public float FilmicCurveLinearWhitePoint
 		{
-			get { return Internal_GetfilmicCurveLinearWhitePoint(mCachedPtr); }
-			set { Internal_SetfilmicCurveLinearWhitePoint(mCachedPtr, value); }
+			get { return Internal_GetFilmicCurveLinearWhitePoint(mCachedPtr); }
+			set { Internal_SetFilmicCurveLinearWhitePoint(mCachedPtr, value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_TonemappingSettings(TonemappingSettings managedInstance);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GetfilmicCurveShoulderStrength(IntPtr thisPtr);
+		private static extern float Internal_GetFilmicCurveShoulderStrength(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetfilmicCurveShoulderStrength(IntPtr thisPtr, float value);
+		private static extern void Internal_SetFilmicCurveShoulderStrength(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GetfilmicCurveLinearStrength(IntPtr thisPtr);
+		private static extern float Internal_GetFilmicCurveLinearStrength(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetfilmicCurveLinearStrength(IntPtr thisPtr, float value);
+		private static extern void Internal_SetFilmicCurveLinearStrength(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GetfilmicCurveLinearAngle(IntPtr thisPtr);
+		private static extern float Internal_GetFilmicCurveLinearAngle(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetfilmicCurveLinearAngle(IntPtr thisPtr, float value);
+		private static extern void Internal_SetFilmicCurveLinearAngle(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GetfilmicCurveToeStrength(IntPtr thisPtr);
+		private static extern float Internal_GetFilmicCurveToeStrength(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetfilmicCurveToeStrength(IntPtr thisPtr, float value);
+		private static extern void Internal_SetFilmicCurveToeStrength(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GetfilmicCurveToeNumerator(IntPtr thisPtr);
+		private static extern float Internal_GetFilmicCurveToeNumerator(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetfilmicCurveToeNumerator(IntPtr thisPtr, float value);
+		private static extern void Internal_SetFilmicCurveToeNumerator(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GetfilmicCurveToeDenominator(IntPtr thisPtr);
+		private static extern float Internal_GetFilmicCurveToeDenominator(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetfilmicCurveToeDenominator(IntPtr thisPtr, float value);
+		private static extern void Internal_SetFilmicCurveToeDenominator(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_GetfilmicCurveLinearWhitePoint(IntPtr thisPtr);
+		private static extern float Internal_GetFilmicCurveLinearWhitePoint(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetfilmicCurveLinearWhitePoint(IntPtr thisPtr, float value);
+		private static extern void Internal_SetFilmicCurveLinearWhitePoint(IntPtr thisPtr, float value);
 	}
 
 	/** @} */

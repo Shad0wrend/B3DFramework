@@ -18,26 +18,26 @@ namespace bs
 		public static Vector4I Default()
 		{
 			Vector4I value = new Vector4I();
-			value.x = 0;
-			value.y = 0;
-			value.z = 0;
-			value.w = 0;
+			value.X = 0;
+			value.Y = 0;
+			value.Z = 0;
+			value.W = 0;
 
 			return value;
 		}
 
 		public Vector4I(int x, int y, int z, int w)
 		{
-			this.x = x;
-			this.y = y;
-			this.z = z;
-			this.w = w;
+			this.X = x;
+			this.Y = y;
+			this.Z = z;
+			this.W = w;
 		}
 
-		public int x;
-		public int y;
-		public int z;
-		public int w;
+		public int X;
+		public int Y;
+		public int Z;
+		public int W;
 	}
 
 	/** @} */

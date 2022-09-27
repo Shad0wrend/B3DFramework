@@ -10,7 +10,6 @@ namespace bs
 	 *  @{
 	 */
 
-	/// <summary>A collider represented by an arbitrary mesh.</summary>
 	[ShowInInspector]
 	public partial class MeshCollider : Collider
 	{

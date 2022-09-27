@@ -18,10 +18,10 @@ namespace bs
 
 	void ScriptApplicationEx::InitRuntimeData()
 	{
-		metaData.scriptClass->AddInternalCall("Internal_StartUp", (void*)&ScriptApplicationEx::InternalStartUp);
-		metaData.scriptClass->AddInternalCall("Internal_StartUp0", (void*)&ScriptApplicationEx::InternalStartUp0);
-		metaData.scriptClass->AddInternalCall("Internal_RunMainLoop", (void*)&ScriptApplicationEx::InternalRunMainLoop);
-		metaData.scriptClass->AddInternalCall("Internal_ShutDown", (void*)&ScriptApplicationEx::InternalShutDown);
+		metaData.ScriptClass->AddInternalCall("Internal_StartUp", (void*)&ScriptApplicationEx::InternalStartUp);
+		metaData.ScriptClass->AddInternalCall("Internal_StartUp0", (void*)&ScriptApplicationEx::InternalStartUp0);
+		metaData.ScriptClass->AddInternalCall("Internal_RunMainLoop", (void*)&ScriptApplicationEx::InternalRunMainLoop);
+		metaData.ScriptClass->AddInternalCall("Internal_ShutDown", (void*)&ScriptApplicationEx::InternalShutDown);
 
 	}
 
@@ -32,7 +32,7 @@ namespace bs
 		bool dummy = false;
 		void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.scriptClass->CreateInstance("bool", ctorParams);
+		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
 		new (bs_alloc<ScriptApplicationEx>()) ScriptApplicationEx(managedInstance, value);
 		return managedInstance;
 	}

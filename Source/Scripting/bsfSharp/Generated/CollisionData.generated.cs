@@ -15,9 +15,9 @@ namespace bs
 	public partial struct CollisionData
 	{
 		/// <summary>Components of the colliders that have collided.</summary>
-		public Collider[] collider;
+		public Collider[] Collider;
 		/// <summary>Information about all the contact points for the hit.</summary>
-		public ContactPoint[] contactPoints;
+		public ContactPoint[] ContactPoints;
 	}
 
 	/** @} */

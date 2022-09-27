@@ -27,12 +27,12 @@ namespace bs
 	ShaderParameter ScriptShaderParameter::FromInterop(const __ShaderParameterInterop& value)
 	{
 		ShaderParameter output;
-		String tmpname;
-		tmpname = MonoUtil::MonoToString(value.Name);
-		output.Name = tmpname;
-		String tmpidentifier;
-		tmpidentifier = MonoUtil::MonoToString(value.Identifier);
-		output.Identifier = tmpidentifier;
+		String tmpName;
+		tmpName = MonoUtil::MonoToString(value.Name);
+		output.Name = tmpName;
+		String tmpIdentifier;
+		tmpIdentifier = MonoUtil::MonoToString(value.Identifier);
+		output.Identifier = tmpIdentifier;
 		output.Type = value.Type;
 		output.Flags = value.Flags;
 
@@ -42,12 +42,12 @@ namespace bs
 	__ShaderParameterInterop ScriptShaderParameter::ToInterop(const ShaderParameter& value)
 	{
 		__ShaderParameterInterop output;
-		MonoString* tmpname;
-		tmpname = MonoUtil::StringToMono(value.Name);
-		output.Name = tmpname;
-		MonoString* tmpidentifier;
-		tmpidentifier = MonoUtil::StringToMono(value.Identifier);
-		output.Identifier = tmpidentifier;
+		MonoString* tmpName;
+		tmpName = MonoUtil::StringToMono(value.Name);
+		output.Name = tmpName;
+		MonoString* tmpIdentifier;
+		tmpIdentifier = MonoUtil::StringToMono(value.Identifier);
+		output.Identifier = tmpIdentifier;
 		output.Type = value.Type;
 		output.Flags = value.Flags;
 

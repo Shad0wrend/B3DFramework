@@ -26,28 +26,28 @@ namespace bs
 		[NativeWrapper]
 		public string Name
 		{
-			get { return Internal_Getname(mCachedPtr); }
-			set { Internal_Setname(mCachedPtr, value); }
+			get { return Internal_GetName(mCachedPtr); }
+			set { Internal_SetName(mCachedPtr, value); }
 		}
 
 		[ShowInInspector]
 		[NativeWrapper]
 		public AnimationEvent[] Events
 		{
-			get { return Internal_Getevents(mCachedPtr); }
-			set { Internal_Setevents(mCachedPtr, value); }
+			get { return Internal_GetEvents(mCachedPtr); }
+			set { Internal_SetEvents(mCachedPtr, value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_ImportedAnimationEvents(ImportedAnimationEvents managedInstance);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern string Internal_Getname(IntPtr thisPtr);
+		private static extern string Internal_GetName(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Setname(IntPtr thisPtr, string value);
+		private static extern void Internal_SetName(IntPtr thisPtr, string value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern AnimationEvent[] Internal_Getevents(IntPtr thisPtr);
+		private static extern AnimationEvent[] Internal_GetEvents(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Setevents(IntPtr thisPtr, AnimationEvent[] value);
+		private static extern void Internal_SetEvents(IntPtr thisPtr, AnimationEvent[] value);
 	}
 
 	/** @} */

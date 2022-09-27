@@ -18,20 +18,20 @@ namespace bs
 		public static ParticleHemisphereShapeOptions Default()
 		{
 			ParticleHemisphereShapeOptions value = new ParticleHemisphereShapeOptions();
-			value.radius = 1f;
-			value.thickness = 0f;
+			value.Radius = 1f;
+			value.Thickness = 0f;
 
 			return value;
 		}
 
 		/// <summary>Radius of the hemisphere.</summary>
-		public float radius;
+		public float Radius;
 		/// <summary>
 		/// Proportion of the volume that can emit particles. Thickness of 0 results in particles being emitted only from the 
 		/// edge of the volume, while thickness of 1 results in particles being emitted from the entire volume. In-between values 
 		/// will use a part of the volume.
 		/// </summary>
-		public float thickness;
+		public float Thickness;
 	}
 
 	/** @} */

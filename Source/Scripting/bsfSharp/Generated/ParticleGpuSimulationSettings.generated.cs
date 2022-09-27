@@ -23,8 +23,8 @@ namespace bs
 		[NativeWrapper]
 		public ParticleVectorFieldSettings VectorField
 		{
-			get { return Internal_GetvectorField(mCachedPtr); }
-			set { Internal_SetvectorField(mCachedPtr, value); }
+			get { return Internal_GetVectorField(mCachedPtr); }
+			set { Internal_SetVectorField(mCachedPtr, value); }
 		}
 
 		/// <summary>Determines particle color, evaluated over the particle lifetime.</summary>
@@ -34,8 +34,8 @@ namespace bs
 		[NativeWrapper]
 		public ColorDistribution ColorOverLifetime
 		{
-			get { return Internal_GetcolorOverLifetime(mCachedPtr); }
-			set { Internal_SetcolorOverLifetime(mCachedPtr, value); }
+			get { return Internal_GetColorOverLifetime(mCachedPtr); }
+			set { Internal_SetColorOverLifetime(mCachedPtr, value); }
 		}
 
 		/// <summary>
@@ -47,8 +47,8 @@ namespace bs
 		[NativeWrapper]
 		public Vector2Distribution SizeScaleOverLifetime
 		{
-			get { return Internal_GetsizeScaleOverLifetime(mCachedPtr); }
-			set { Internal_SetsizeScaleOverLifetime(mCachedPtr, value); }
+			get { return Internal_GetSizeScaleOverLifetime(mCachedPtr); }
+			set { Internal_SetSizeScaleOverLifetime(mCachedPtr, value); }
 		}
 
 		/// <summary>Constant acceleration to apply for each step of the simulation.</summary>
@@ -59,10 +59,10 @@ namespace bs
 			get
 			{
 				Vector3 temp;
-				Internal_Getacceleration(mCachedPtr, out temp);
+				Internal_GetAcceleration(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_Setacceleration(mCachedPtr, ref value); }
+			set { Internal_SetAcceleration(mCachedPtr, ref value); }
 		}
 
 		/// <summary>Amount of resistance to apply in the direction opposite of the particle&apos;s velocity.</summary>
@@ -70,8 +70,8 @@ namespace bs
 		[NativeWrapper]
 		public float Drag
 		{
-			get { return Internal_Getdrag(mCachedPtr); }
-			set { Internal_Setdrag(mCachedPtr, value); }
+			get { return Internal_GetDrag(mCachedPtr); }
+			set { Internal_SetDrag(mCachedPtr, value); }
 		}
 
 		/// <summary>Settings controlling particle depth buffer collisions.</summary>
@@ -81,34 +81,34 @@ namespace bs
 		[NativeWrapper]
 		public ParticleDepthCollisionSettings DepthCollision
 		{
-			get { return Internal_GetdepthCollision(mCachedPtr); }
-			set { Internal_SetdepthCollision(mCachedPtr, value); }
+			get { return Internal_GetDepthCollision(mCachedPtr); }
+			set { Internal_SetDepthCollision(mCachedPtr, value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ParticleVectorFieldSettings Internal_GetvectorField(IntPtr thisPtr);
+		private static extern ParticleVectorFieldSettings Internal_GetVectorField(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetvectorField(IntPtr thisPtr, ParticleVectorFieldSettings value);
+		private static extern void Internal_SetVectorField(IntPtr thisPtr, ParticleVectorFieldSettings value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ColorDistribution Internal_GetcolorOverLifetime(IntPtr thisPtr);
+		private static extern ColorDistribution Internal_GetColorOverLifetime(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetcolorOverLifetime(IntPtr thisPtr, ColorDistribution value);
+		private static extern void Internal_SetColorOverLifetime(IntPtr thisPtr, ColorDistribution value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern Vector2Distribution Internal_GetsizeScaleOverLifetime(IntPtr thisPtr);
+		private static extern Vector2Distribution Internal_GetSizeScaleOverLifetime(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetsizeScaleOverLifetime(IntPtr thisPtr, Vector2Distribution value);
+		private static extern void Internal_SetSizeScaleOverLifetime(IntPtr thisPtr, Vector2Distribution value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Getacceleration(IntPtr thisPtr, out Vector3 __output);
+		private static extern void Internal_GetAcceleration(IntPtr thisPtr, out Vector3 __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Setacceleration(IntPtr thisPtr, ref Vector3 value);
+		private static extern void Internal_SetAcceleration(IntPtr thisPtr, ref Vector3 value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern float Internal_Getdrag(IntPtr thisPtr);
+		private static extern float Internal_GetDrag(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Setdrag(IntPtr thisPtr, float value);
+		private static extern void Internal_SetDrag(IntPtr thisPtr, float value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern ParticleDepthCollisionSettings Internal_GetdepthCollision(IntPtr thisPtr);
+		private static extern ParticleDepthCollisionSettings Internal_GetDepthCollision(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetdepthCollision(IntPtr thisPtr, ParticleDepthCollisionSettings value);
+		private static extern void Internal_SetDepthCollision(IntPtr thisPtr, ParticleDepthCollisionSettings value);
 	}
 
 	/** @} */

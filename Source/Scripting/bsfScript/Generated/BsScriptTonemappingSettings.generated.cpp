@@ -15,20 +15,20 @@ namespace bs
 	void ScriptTonemappingSettings::InitRuntimeData()
 	{
 		metaData.ScriptClass->AddInternalCall("Internal_TonemappingSettings", (void*)&ScriptTonemappingSettings::InternalTonemappingSettings);
-		metaData.ScriptClass->AddInternalCall("Internal_GetfilmicCurveShoulderStrength", (void*)&ScriptTonemappingSettings::InternalGetfilmicCurveShoulderStrength);
-		metaData.ScriptClass->AddInternalCall("Internal_SetfilmicCurveShoulderStrength", (void*)&ScriptTonemappingSettings::InternalSetfilmicCurveShoulderStrength);
-		metaData.ScriptClass->AddInternalCall("Internal_GetfilmicCurveLinearStrength", (void*)&ScriptTonemappingSettings::InternalGetfilmicCurveLinearStrength);
-		metaData.ScriptClass->AddInternalCall("Internal_SetfilmicCurveLinearStrength", (void*)&ScriptTonemappingSettings::InternalSetfilmicCurveLinearStrength);
-		metaData.ScriptClass->AddInternalCall("Internal_GetfilmicCurveLinearAngle", (void*)&ScriptTonemappingSettings::InternalGetfilmicCurveLinearAngle);
-		metaData.ScriptClass->AddInternalCall("Internal_SetfilmicCurveLinearAngle", (void*)&ScriptTonemappingSettings::InternalSetfilmicCurveLinearAngle);
-		metaData.ScriptClass->AddInternalCall("Internal_GetfilmicCurveToeStrength", (void*)&ScriptTonemappingSettings::InternalGetfilmicCurveToeStrength);
-		metaData.ScriptClass->AddInternalCall("Internal_SetfilmicCurveToeStrength", (void*)&ScriptTonemappingSettings::InternalSetfilmicCurveToeStrength);
-		metaData.ScriptClass->AddInternalCall("Internal_GetfilmicCurveToeNumerator", (void*)&ScriptTonemappingSettings::InternalGetfilmicCurveToeNumerator);
-		metaData.ScriptClass->AddInternalCall("Internal_SetfilmicCurveToeNumerator", (void*)&ScriptTonemappingSettings::InternalSetfilmicCurveToeNumerator);
-		metaData.ScriptClass->AddInternalCall("Internal_GetfilmicCurveToeDenominator", (void*)&ScriptTonemappingSettings::InternalGetfilmicCurveToeDenominator);
-		metaData.ScriptClass->AddInternalCall("Internal_SetfilmicCurveToeDenominator", (void*)&ScriptTonemappingSettings::InternalSetfilmicCurveToeDenominator);
-		metaData.ScriptClass->AddInternalCall("Internal_GetfilmicCurveLinearWhitePoint", (void*)&ScriptTonemappingSettings::InternalGetfilmicCurveLinearWhitePoint);
-		metaData.ScriptClass->AddInternalCall("Internal_SetfilmicCurveLinearWhitePoint", (void*)&ScriptTonemappingSettings::InternalSetfilmicCurveLinearWhitePoint);
+		metaData.ScriptClass->AddInternalCall("Internal_GetFilmicCurveShoulderStrength", (void*)&ScriptTonemappingSettings::InternalGetFilmicCurveShoulderStrength);
+		metaData.ScriptClass->AddInternalCall("Internal_SetFilmicCurveShoulderStrength", (void*)&ScriptTonemappingSettings::InternalSetFilmicCurveShoulderStrength);
+		metaData.ScriptClass->AddInternalCall("Internal_GetFilmicCurveLinearStrength", (void*)&ScriptTonemappingSettings::InternalGetFilmicCurveLinearStrength);
+		metaData.ScriptClass->AddInternalCall("Internal_SetFilmicCurveLinearStrength", (void*)&ScriptTonemappingSettings::InternalSetFilmicCurveLinearStrength);
+		metaData.ScriptClass->AddInternalCall("Internal_GetFilmicCurveLinearAngle", (void*)&ScriptTonemappingSettings::InternalGetFilmicCurveLinearAngle);
+		metaData.ScriptClass->AddInternalCall("Internal_SetFilmicCurveLinearAngle", (void*)&ScriptTonemappingSettings::InternalSetFilmicCurveLinearAngle);
+		metaData.ScriptClass->AddInternalCall("Internal_GetFilmicCurveToeStrength", (void*)&ScriptTonemappingSettings::InternalGetFilmicCurveToeStrength);
+		metaData.ScriptClass->AddInternalCall("Internal_SetFilmicCurveToeStrength", (void*)&ScriptTonemappingSettings::InternalSetFilmicCurveToeStrength);
+		metaData.ScriptClass->AddInternalCall("Internal_GetFilmicCurveToeNumerator", (void*)&ScriptTonemappingSettings::InternalGetFilmicCurveToeNumerator);
+		metaData.ScriptClass->AddInternalCall("Internal_SetFilmicCurveToeNumerator", (void*)&ScriptTonemappingSettings::InternalSetFilmicCurveToeNumerator);
+		metaData.ScriptClass->AddInternalCall("Internal_GetFilmicCurveToeDenominator", (void*)&ScriptTonemappingSettings::InternalGetFilmicCurveToeDenominator);
+		metaData.ScriptClass->AddInternalCall("Internal_SetFilmicCurveToeDenominator", (void*)&ScriptTonemappingSettings::InternalSetFilmicCurveToeDenominator);
+		metaData.ScriptClass->AddInternalCall("Internal_GetFilmicCurveLinearWhitePoint", (void*)&ScriptTonemappingSettings::InternalGetFilmicCurveLinearWhitePoint);
+		metaData.ScriptClass->AddInternalCall("Internal_SetFilmicCurveLinearWhitePoint", (void*)&ScriptTonemappingSettings::InternalSetFilmicCurveLinearWhitePoint);
 
 	}
 
@@ -49,7 +49,7 @@ namespace bs
 		new (bs_alloc<ScriptTonemappingSettings>())ScriptTonemappingSettings(managedInstance, instance);
 	}
 
-	float ScriptTonemappingSettings::InternalGetfilmicCurveShoulderStrength(ScriptTonemappingSettings* thisPtr)
+	float ScriptTonemappingSettings::InternalGetFilmicCurveShoulderStrength(ScriptTonemappingSettings* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->GetInternal()->FilmicCurveShoulderStrength;
@@ -60,12 +60,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptTonemappingSettings::InternalSetfilmicCurveShoulderStrength(ScriptTonemappingSettings* thisPtr, float value)
+	void ScriptTonemappingSettings::InternalSetFilmicCurveShoulderStrength(ScriptTonemappingSettings* thisPtr, float value)
 	{
 		thisPtr->GetInternal()->FilmicCurveShoulderStrength = value;
 	}
 
-	float ScriptTonemappingSettings::InternalGetfilmicCurveLinearStrength(ScriptTonemappingSettings* thisPtr)
+	float ScriptTonemappingSettings::InternalGetFilmicCurveLinearStrength(ScriptTonemappingSettings* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->GetInternal()->FilmicCurveLinearStrength;
@@ -76,12 +76,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptTonemappingSettings::InternalSetfilmicCurveLinearStrength(ScriptTonemappingSettings* thisPtr, float value)
+	void ScriptTonemappingSettings::InternalSetFilmicCurveLinearStrength(ScriptTonemappingSettings* thisPtr, float value)
 	{
 		thisPtr->GetInternal()->FilmicCurveLinearStrength = value;
 	}
 
-	float ScriptTonemappingSettings::InternalGetfilmicCurveLinearAngle(ScriptTonemappingSettings* thisPtr)
+	float ScriptTonemappingSettings::InternalGetFilmicCurveLinearAngle(ScriptTonemappingSettings* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->GetInternal()->FilmicCurveLinearAngle;
@@ -92,12 +92,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptTonemappingSettings::InternalSetfilmicCurveLinearAngle(ScriptTonemappingSettings* thisPtr, float value)
+	void ScriptTonemappingSettings::InternalSetFilmicCurveLinearAngle(ScriptTonemappingSettings* thisPtr, float value)
 	{
 		thisPtr->GetInternal()->FilmicCurveLinearAngle = value;
 	}
 
-	float ScriptTonemappingSettings::InternalGetfilmicCurveToeStrength(ScriptTonemappingSettings* thisPtr)
+	float ScriptTonemappingSettings::InternalGetFilmicCurveToeStrength(ScriptTonemappingSettings* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->GetInternal()->FilmicCurveToeStrength;
@@ -108,12 +108,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptTonemappingSettings::InternalSetfilmicCurveToeStrength(ScriptTonemappingSettings* thisPtr, float value)
+	void ScriptTonemappingSettings::InternalSetFilmicCurveToeStrength(ScriptTonemappingSettings* thisPtr, float value)
 	{
 		thisPtr->GetInternal()->FilmicCurveToeStrength = value;
 	}
 
-	float ScriptTonemappingSettings::InternalGetfilmicCurveToeNumerator(ScriptTonemappingSettings* thisPtr)
+	float ScriptTonemappingSettings::InternalGetFilmicCurveToeNumerator(ScriptTonemappingSettings* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->GetInternal()->FilmicCurveToeNumerator;
@@ -124,12 +124,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptTonemappingSettings::InternalSetfilmicCurveToeNumerator(ScriptTonemappingSettings* thisPtr, float value)
+	void ScriptTonemappingSettings::InternalSetFilmicCurveToeNumerator(ScriptTonemappingSettings* thisPtr, float value)
 	{
 		thisPtr->GetInternal()->FilmicCurveToeNumerator = value;
 	}
 
-	float ScriptTonemappingSettings::InternalGetfilmicCurveToeDenominator(ScriptTonemappingSettings* thisPtr)
+	float ScriptTonemappingSettings::InternalGetFilmicCurveToeDenominator(ScriptTonemappingSettings* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->GetInternal()->FilmicCurveToeDenominator;
@@ -140,12 +140,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptTonemappingSettings::InternalSetfilmicCurveToeDenominator(ScriptTonemappingSettings* thisPtr, float value)
+	void ScriptTonemappingSettings::InternalSetFilmicCurveToeDenominator(ScriptTonemappingSettings* thisPtr, float value)
 	{
 		thisPtr->GetInternal()->FilmicCurveToeDenominator = value;
 	}
 
-	float ScriptTonemappingSettings::InternalGetfilmicCurveLinearWhitePoint(ScriptTonemappingSettings* thisPtr)
+	float ScriptTonemappingSettings::InternalGetFilmicCurveLinearWhitePoint(ScriptTonemappingSettings* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->GetInternal()->FilmicCurveLinearWhitePoint;
@@ -156,7 +156,7 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptTonemappingSettings::InternalSetfilmicCurveLinearWhitePoint(ScriptTonemappingSettings* thisPtr, float value)
+	void ScriptTonemappingSettings::InternalSetFilmicCurveLinearWhitePoint(ScriptTonemappingSettings* thisPtr, float value)
 	{
 		thisPtr->GetInternal()->FilmicCurveLinearWhitePoint = value;
 	}

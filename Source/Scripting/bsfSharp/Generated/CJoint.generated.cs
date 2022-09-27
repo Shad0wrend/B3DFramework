@@ -10,10 +10,6 @@ namespace bs
 	 *  @{
 	 */
 
-	/// <summary>
-	/// Base class for all Joint types. Joints constrain how two rigidbodies move relative to one another (for example a door 
-	/// hinge). One of the bodies in the joint must always be movable (non-kinematic).
-	/// </summary>
 	[ShowInInspector]
 	public partial class Joint : Component
 	{
@@ -44,7 +40,6 @@ namespace bs
 			set { Internal_SetEnableCollision(mCachedPtr, value); }
 		}
 
-		/// <summary>Triggered when the joint&apos;s break force or torque is exceeded.</summary>
 		public event Action OnJointBreak;
 
 		public Rigidbody GetBody(JointBody body)
@@ -98,7 +93,7 @@ namespace bs
 		private static extern bool Internal_GetEnableCollision(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_SetEnableCollision(IntPtr thisPtr, bool value);
-		private void Internal_onJointBreak()
+		private void Internal_OnJointBreak()
 		{
 			OnJointBreak?.Invoke();
 		}

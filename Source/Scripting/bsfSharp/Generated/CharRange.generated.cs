@@ -19,20 +19,20 @@ namespace bs
 		public static CharRange Default()
 		{
 			CharRange value = new CharRange();
-			value.start = 0;
-			value.end = 0;
+			value.Start = 0;
+			value.End = 0;
 
 			return value;
 		}
 
 		public CharRange(int start, int end)
 		{
-			this.start = start;
-			this.end = end;
+			this.Start = start;
+			this.End = end;
 		}
 
-		public int start;
-		public int end;
+		public int Start;
+		public int End;
 	}
 
 	/** @} */

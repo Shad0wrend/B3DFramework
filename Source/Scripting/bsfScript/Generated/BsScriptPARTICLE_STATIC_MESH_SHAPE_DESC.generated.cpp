@@ -33,12 +33,12 @@ namespace bs
 		PARTICLE_STATIC_MESH_SHAPE_DESC output;
 		output.Type = value.Type;
 		output.Sequential = value.Sequential;
-		ResourceHandle<Mesh> tmpmesh;
-		ScriptRRefBase* scriptmesh;
-		scriptmesh = ScriptRRefBase::ToNative(value.Mesh);
-		if(scriptmesh != nullptr)
-			tmpmesh = static_resource_cast<Mesh>(scriptmesh->GetHandle());
-		output.Mesh = tmpmesh;
+		ResourceHandle<Mesh> tmpMesh;
+		ScriptRRefBase* scriptMesh;
+		scriptMesh = ScriptRRefBase::ToNative(value.Mesh);
+		if(scriptMesh != nullptr)
+			tmpMesh = static_resource_cast<Mesh>(scriptMesh->GetHandle());
+		output.Mesh = tmpMesh;
 
 		return output;
 	}
@@ -48,14 +48,14 @@ namespace bs
 		__PARTICLE_STATIC_MESH_SHAPE_DESCInterop output;
 		output.Type = value.Type;
 		output.Sequential = value.Sequential;
-		ScriptRRefBase* scriptmesh;
-		scriptmesh = ScriptResourceManager::Instance().GetScriptRRef(value.Mesh);
-		MonoObject* tmpmesh;
-		if(scriptmesh != nullptr)
-			tmpmesh = scriptmesh->GetManagedInstance();
+		ScriptRRefBase* scriptMesh;
+		scriptMesh = ScriptResourceManager::Instance().GetScriptRRef(value.Mesh);
+		MonoObject* tmpMesh;
+		if(scriptMesh != nullptr)
+			tmpMesh = scriptMesh->GetManagedInstance();
 		else
-			tmpmesh = nullptr;
-		output.Mesh = tmpmesh;
+			tmpMesh = nullptr;
+		output.Mesh = tmpMesh;
 
 		return output;
 	}

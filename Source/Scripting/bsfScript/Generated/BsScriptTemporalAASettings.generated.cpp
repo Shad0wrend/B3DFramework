@@ -15,12 +15,12 @@ namespace bs
 	void ScriptTemporalAASettings::InitRuntimeData()
 	{
 		metaData.ScriptClass->AddInternalCall("Internal_TemporalAASettings", (void*)&ScriptTemporalAASettings::InternalTemporalAASettings);
-		metaData.ScriptClass->AddInternalCall("Internal_Getenabled", (void*)&ScriptTemporalAASettings::InternalGetenabled);
-		metaData.ScriptClass->AddInternalCall("Internal_Setenabled", (void*)&ScriptTemporalAASettings::InternalSetenabled);
-		metaData.ScriptClass->AddInternalCall("Internal_GetjitteredPositionCount", (void*)&ScriptTemporalAASettings::InternalGetjitteredPositionCount);
-		metaData.ScriptClass->AddInternalCall("Internal_SetjitteredPositionCount", (void*)&ScriptTemporalAASettings::InternalSetjitteredPositionCount);
-		metaData.ScriptClass->AddInternalCall("Internal_Getsharpness", (void*)&ScriptTemporalAASettings::InternalGetsharpness);
-		metaData.ScriptClass->AddInternalCall("Internal_Setsharpness", (void*)&ScriptTemporalAASettings::InternalSetsharpness);
+		metaData.ScriptClass->AddInternalCall("Internal_GetEnabled", (void*)&ScriptTemporalAASettings::InternalGetEnabled);
+		metaData.ScriptClass->AddInternalCall("Internal_SetEnabled", (void*)&ScriptTemporalAASettings::InternalSetEnabled);
+		metaData.ScriptClass->AddInternalCall("Internal_GetJitteredPositionCount", (void*)&ScriptTemporalAASettings::InternalGetJitteredPositionCount);
+		metaData.ScriptClass->AddInternalCall("Internal_SetJitteredPositionCount", (void*)&ScriptTemporalAASettings::InternalSetJitteredPositionCount);
+		metaData.ScriptClass->AddInternalCall("Internal_GetSharpness", (void*)&ScriptTemporalAASettings::InternalGetSharpness);
+		metaData.ScriptClass->AddInternalCall("Internal_SetSharpness", (void*)&ScriptTemporalAASettings::InternalSetSharpness);
 
 	}
 
@@ -41,7 +41,7 @@ namespace bs
 		new (bs_alloc<ScriptTemporalAASettings>())ScriptTemporalAASettings(managedInstance, instance);
 	}
 
-	bool ScriptTemporalAASettings::InternalGetenabled(ScriptTemporalAASettings* thisPtr)
+	bool ScriptTemporalAASettings::InternalGetEnabled(ScriptTemporalAASettings* thisPtr)
 	{
 		bool tmp__output;
 		tmp__output = thisPtr->GetInternal()->Enabled;
@@ -52,12 +52,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptTemporalAASettings::InternalSetenabled(ScriptTemporalAASettings* thisPtr, bool value)
+	void ScriptTemporalAASettings::InternalSetEnabled(ScriptTemporalAASettings* thisPtr, bool value)
 	{
 		thisPtr->GetInternal()->Enabled = value;
 	}
 
-	uint32_t ScriptTemporalAASettings::InternalGetjitteredPositionCount(ScriptTemporalAASettings* thisPtr)
+	uint32_t ScriptTemporalAASettings::InternalGetJitteredPositionCount(ScriptTemporalAASettings* thisPtr)
 	{
 		uint32_t tmp__output;
 		tmp__output = thisPtr->GetInternal()->JitteredPositionCount;
@@ -68,12 +68,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptTemporalAASettings::InternalSetjitteredPositionCount(ScriptTemporalAASettings* thisPtr, uint32_t value)
+	void ScriptTemporalAASettings::InternalSetJitteredPositionCount(ScriptTemporalAASettings* thisPtr, uint32_t value)
 	{
 		thisPtr->GetInternal()->JitteredPositionCount = value;
 	}
 
-	float ScriptTemporalAASettings::InternalGetsharpness(ScriptTemporalAASettings* thisPtr)
+	float ScriptTemporalAASettings::InternalGetSharpness(ScriptTemporalAASettings* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->GetInternal()->Sharpness;
@@ -84,7 +84,7 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptTemporalAASettings::InternalSetsharpness(ScriptTemporalAASettings* thisPtr, float value)
+	void ScriptTemporalAASettings::InternalSetSharpness(ScriptTemporalAASettings* thisPtr, float value)
 	{
 		thisPtr->GetInternal()->Sharpness = value;
 	}

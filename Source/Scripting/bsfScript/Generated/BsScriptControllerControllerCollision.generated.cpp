@@ -32,12 +32,12 @@ namespace bs
 	ControllerControllerCollision ScriptControllerControllerCollision::FromInterop(const __ControllerControllerCollisionInterop& value)
 	{
 		ControllerControllerCollision output;
-		GameObjectHandle<CCharacterController> tmpcontroller;
-		ScriptCCharacterController* scriptcontroller;
-		scriptcontroller = ScriptCCharacterController::ToNative(value.Controller);
-		if(scriptcontroller != nullptr)
-			tmpcontroller = scriptcontroller->GetHandle();
-		output.Controller = tmpcontroller;
+		GameObjectHandle<CCharacterController> tmpController;
+		ScriptCCharacterController* scriptController;
+		scriptController = ScriptCCharacterController::ToNative(value.Controller);
+		if(scriptController != nullptr)
+			tmpController = scriptController->GetHandle();
+		output.Controller = tmpController;
 		output.Position = value.Position;
 		output.Normal = value.Normal;
 		output.MotionDir = value.MotionDir;
@@ -49,15 +49,15 @@ namespace bs
 	__ControllerControllerCollisionInterop ScriptControllerControllerCollision::ToInterop(const ControllerControllerCollision& value)
 	{
 		__ControllerControllerCollisionInterop output;
-		ScriptComponentBase* scriptcontroller = nullptr;
+		ScriptComponentBase* scriptController = nullptr;
 		if(value.Controller)
-			scriptcontroller = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(value.Controller));
-		MonoObject* tmpcontroller;
-		if(scriptcontroller != nullptr)
-			tmpcontroller = scriptcontroller->GetManagedInstance();
+			scriptController = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(value.Controller));
+		MonoObject* tmpController;
+		if(scriptController != nullptr)
+			tmpController = scriptController->GetManagedInstance();
 		else
-			tmpcontroller = nullptr;
-		output.Controller = tmpcontroller;
+			tmpController = nullptr;
+		output.Controller = tmpController;
 		output.Position = value.Position;
 		output.Normal = value.Normal;
 		output.MotionDir = value.MotionDir;

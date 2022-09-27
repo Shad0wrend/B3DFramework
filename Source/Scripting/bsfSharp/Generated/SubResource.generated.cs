@@ -19,9 +19,9 @@ namespace bs
 	public partial struct SubResource
 	{
 		/// <summary>Unique name of the sub-resource.</summary>
-		public string name;
+		public string Name;
 		/// <summary>Contents of the sub-resource.</summary>
-		public Resource value;
+		public Resource Value;
 	}
 
 	/** @} */

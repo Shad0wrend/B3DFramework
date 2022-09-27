@@ -20,11 +20,11 @@ namespace bs
 		public static LimitLinearRange Default()
 		{
 			LimitLinearRange value = new LimitLinearRange();
-			value.lower = 0f;
-			value.upper = 0f;
-			value.contactDist = -1f;
-			value.restitution = 0f;
-			value.spring = Spring.Default();
+			value.Lower = 0f;
+			value.Upper = 0f;
+			value.ContactDist = -1f;
+			value.Restitution = 0f;
+			value.Spring = Spring.Default();
 
 			return value;
 		}
@@ -40,11 +40,11 @@ namespace bs
 		/// </param>
 		public LimitLinearRange(float lower, float upper, float contactDist = -1f)
 		{
-			this.lower = lower;
-			this.upper = upper;
-			this.contactDist = -1f;
-			this.restitution = 0f;
-			this.spring = Spring.Default();
+			this.Lower = lower;
+			this.Upper = upper;
+			this.ContactDist = -1f;
+			this.Restitution = 0f;
+			this.Spring = Spring.Default();
 		}
 
 		/// <summary>
@@ -62,11 +62,11 @@ namespace bs
 		/// </param>
 		public LimitLinearRange(float lower, float upper, Spring spring, float restitution = 0f)
 		{
-			this.lower = lower;
-			this.upper = upper;
-			this.contactDist = -1f;
-			this.restitution = 0f;
-			this.spring = Spring.Default();
+			this.Lower = lower;
+			this.Upper = upper;
+			this.ContactDist = -1f;
+			this.Restitution = 0f;
+			this.Spring = Spring.Default();
 		}
 
 		///<summary>
@@ -75,9 +75,9 @@ namespace bs
 		public LimitCommon GetBase()
 		{
 			LimitCommon value;
-			value.contactDist = contactDist;
-			value.restitution = restitution;
-			value.spring = spring;
+			value.ContactDist = ContactDist;
+			value.Restitution = Restitution;
+			value.Spring = Spring;
 			return value;
 		}
 
@@ -87,27 +87,27 @@ namespace bs
 		///</summary>
 		public void SetBase(LimitCommon value)
 		{
-			contactDist = value.contactDist;
-			restitution = value.restitution;
-			spring = value.spring;
+			ContactDist = value.ContactDist;
+			Restitution = value.Restitution;
+			Spring = value.Spring;
 		}
 
 		/// <summary>Lower distance of the limit. Must be less than #upper.</summary>
-		public float lower;
+		public float Lower;
 		/// <summary>Upper distance of the limit. Must be more than #lower.</summary>
-		public float upper;
+		public float Upper;
 		/// <summary>
 		/// Distance from the limit at which it becomes active. Allows the solver to activate earlier than the limit is reached 
 		/// to avoid breaking the limit.
 		/// </summary>
-		public float contactDist;
+		public float ContactDist;
 		/// <summary>
 		/// Controls how do objects react when the limit is reached, values closer to zero specify non-ellastic collision, while 
 		/// those closer to one specify more ellastic (i.e bouncy) collision. Must be in [0, 1] range.
 		/// </summary>
-		public float restitution;
+		public float Restitution;
 		/// <summary>Spring that controls how are the bodies pulled back towards the limit when they breach it.</summary>
-		public Spring spring;
+		public Spring Spring;
 	}
 
 	/** @} */

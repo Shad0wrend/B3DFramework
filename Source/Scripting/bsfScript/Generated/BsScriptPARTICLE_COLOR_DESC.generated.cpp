@@ -29,13 +29,13 @@ namespace bs
 	PARTICLE_COLOR_DESC ScriptPARTICLE_COLOR_DESC::FromInterop(const __PARTICLE_COLOR_DESCInterop& value)
 	{
 		PARTICLE_COLOR_DESC output;
-		SPtr<TColorDistribution<ColorGradient>> tmpcolor;
-		ScriptTColorDistributionColorGradient* scriptcolor;
-		scriptcolor = ScriptTColorDistributionColorGradient::ToNative(value.Color);
-		if(scriptcolor != nullptr)
-			tmpcolor = scriptcolor->GetInternal();
-		if(tmpcolor != nullptr)
-		output.Color = *tmpcolor;
+		SPtr<TColorDistribution<ColorGradient>> tmpColor;
+		ScriptTColorDistributionColorGradient* scriptColor;
+		scriptColor = ScriptTColorDistributionColorGradient::ToNative(value.Color);
+		if(scriptColor != nullptr)
+			tmpColor = scriptColor->GetInternal();
+		if(tmpColor != nullptr)
+		output.Color = *tmpColor;
 
 		return output;
 	}
@@ -43,11 +43,11 @@ namespace bs
 	__PARTICLE_COLOR_DESCInterop ScriptPARTICLE_COLOR_DESC::ToInterop(const PARTICLE_COLOR_DESC& value)
 	{
 		__PARTICLE_COLOR_DESCInterop output;
-		MonoObject* tmpcolor;
-		SPtr<TColorDistribution<ColorGradient>> tmpcolorcopy;
-		tmpcolorcopy = bs_shared_ptr_new<TColorDistribution<ColorGradient>>(value.Color);
-		tmpcolor = ScriptTColorDistributionColorGradient::Create(tmpcolorcopy);
-		output.Color = tmpcolor;
+		MonoObject* tmpColor;
+		SPtr<TColorDistribution<ColorGradient>> tmpColorcopy;
+		tmpColorcopy = bs_shared_ptr_new<TColorDistribution<ColorGradient>>(value.Color);
+		tmpColor = ScriptTColorDistributionColorGradient::Create(tmpColorcopy);
+		output.Color = tmpColor;
 
 		return output;
 	}

@@ -221,15 +221,15 @@ namespace bs
 		private static extern bool Internal_GetFilePathFromUuid(ref UUID uuid, out string filePath);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern bool Internal_GetUuidFromFilePath(string path, out UUID uuid);
-		private static void Internal_onResourceLoaded(RRefBase p0)
+		private static void Internal_OnResourceLoaded(RRefBase p0)
 		{
 			OnResourceLoaded?.Invoke(p0);
 		}
-		private static void Internal_onResourceDestroyed(ref UUID p0)
+		private static void Internal_OnResourceDestroyed(ref UUID p0)
 		{
 			OnResourceDestroyed?.Invoke(p0);
 		}
-		private static void Internal_onResourceModified(RRefBase p0)
+		private static void Internal_OnResourceModified(RRefBase p0)
 		{
 			OnResourceModified?.Invoke(p0);
 		}

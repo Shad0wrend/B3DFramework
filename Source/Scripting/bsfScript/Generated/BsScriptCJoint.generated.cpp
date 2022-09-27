@@ -16,12 +16,12 @@ namespace bs
 		:ScriptComponentBase(managedInstance)
 	 { }
 
-	ScriptCJoint::onJointBreakThunkDef ScriptCJoint::onJointBreakThunk; 
+	ScriptCJoint::OnJointBreakThunkDef ScriptCJoint::OnJointBreakThunk; 
 
 	ScriptCJoint::ScriptCJoint(MonoObject* managedInstance, const GameObjectHandle<CJoint>& value)
 		:TScriptComponent(managedInstance, value)
 	{
-		value->OnJointBreak.Connect(std::bind(&ScriptCJoint::onJointBreak, this));
+		value->OnJointBreak.Connect(std::bind(&ScriptCJoint::OnJointBreak, this));
 	}
 
 	void ScriptCJoint::InitRuntimeData()
@@ -38,12 +38,12 @@ namespace bs
 		metaData.ScriptClass->AddInternalCall("Internal_GetEnableCollision", (void*)&ScriptCJoint::InternalGetEnableCollision);
 		metaData.ScriptClass->AddInternalCall("Internal_SetEnableCollision", (void*)&ScriptCJoint::InternalSetEnableCollision);
 
-		onJointBreakThunk = (onJointBreakThunkDef)metaData.ScriptClass->GetMethodExact("Internal_onJointBreak", "")->GetThunk();
+		OnJointBreakThunk = (OnJointBreakThunkDef)metaData.ScriptClass->GetMethodExact("Internal_OnJointBreak", "")->GetThunk();
 	}
 
-	void ScriptCJoint::onJointBreak()
+	void ScriptCJoint::OnJointBreak()
 	{
-		MonoUtil::InvokeThunk(onJointBreakThunk, GetManagedInstance());
+		MonoUtil::InvokeThunk(OnJointBreakThunk, GetManagedInstance());
 	}
 	MonoObject* ScriptCJoint::InternalGetBody(ScriptCJointBase* thisPtr, JointBody body)
 	{

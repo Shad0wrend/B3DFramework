@@ -15,12 +15,12 @@ namespace bs
 	void ScriptFilmGrainSettings::InitRuntimeData()
 	{
 		metaData.ScriptClass->AddInternalCall("Internal_FilmGrainSettings", (void*)&ScriptFilmGrainSettings::InternalFilmGrainSettings);
-		metaData.ScriptClass->AddInternalCall("Internal_Getenabled", (void*)&ScriptFilmGrainSettings::InternalGetenabled);
-		metaData.ScriptClass->AddInternalCall("Internal_Setenabled", (void*)&ScriptFilmGrainSettings::InternalSetenabled);
-		metaData.ScriptClass->AddInternalCall("Internal_Getintensity", (void*)&ScriptFilmGrainSettings::InternalGetintensity);
-		metaData.ScriptClass->AddInternalCall("Internal_Setintensity", (void*)&ScriptFilmGrainSettings::InternalSetintensity);
-		metaData.ScriptClass->AddInternalCall("Internal_Getspeed", (void*)&ScriptFilmGrainSettings::InternalGetspeed);
-		metaData.ScriptClass->AddInternalCall("Internal_Setspeed", (void*)&ScriptFilmGrainSettings::InternalSetspeed);
+		metaData.ScriptClass->AddInternalCall("Internal_GetEnabled", (void*)&ScriptFilmGrainSettings::InternalGetEnabled);
+		metaData.ScriptClass->AddInternalCall("Internal_SetEnabled", (void*)&ScriptFilmGrainSettings::InternalSetEnabled);
+		metaData.ScriptClass->AddInternalCall("Internal_GetIntensity", (void*)&ScriptFilmGrainSettings::InternalGetIntensity);
+		metaData.ScriptClass->AddInternalCall("Internal_SetIntensity", (void*)&ScriptFilmGrainSettings::InternalSetIntensity);
+		metaData.ScriptClass->AddInternalCall("Internal_GetSpeed", (void*)&ScriptFilmGrainSettings::InternalGetSpeed);
+		metaData.ScriptClass->AddInternalCall("Internal_SetSpeed", (void*)&ScriptFilmGrainSettings::InternalSetSpeed);
 
 	}
 
@@ -41,7 +41,7 @@ namespace bs
 		new (bs_alloc<ScriptFilmGrainSettings>())ScriptFilmGrainSettings(managedInstance, instance);
 	}
 
-	bool ScriptFilmGrainSettings::InternalGetenabled(ScriptFilmGrainSettings* thisPtr)
+	bool ScriptFilmGrainSettings::InternalGetEnabled(ScriptFilmGrainSettings* thisPtr)
 	{
 		bool tmp__output;
 		tmp__output = thisPtr->GetInternal()->Enabled;
@@ -52,12 +52,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptFilmGrainSettings::InternalSetenabled(ScriptFilmGrainSettings* thisPtr, bool value)
+	void ScriptFilmGrainSettings::InternalSetEnabled(ScriptFilmGrainSettings* thisPtr, bool value)
 	{
 		thisPtr->GetInternal()->Enabled = value;
 	}
 
-	float ScriptFilmGrainSettings::InternalGetintensity(ScriptFilmGrainSettings* thisPtr)
+	float ScriptFilmGrainSettings::InternalGetIntensity(ScriptFilmGrainSettings* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->GetInternal()->Intensity;
@@ -68,12 +68,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptFilmGrainSettings::InternalSetintensity(ScriptFilmGrainSettings* thisPtr, float value)
+	void ScriptFilmGrainSettings::InternalSetIntensity(ScriptFilmGrainSettings* thisPtr, float value)
 	{
 		thisPtr->GetInternal()->Intensity = value;
 	}
 
-	float ScriptFilmGrainSettings::InternalGetspeed(ScriptFilmGrainSettings* thisPtr)
+	float ScriptFilmGrainSettings::InternalGetSpeed(ScriptFilmGrainSettings* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->GetInternal()->Speed;
@@ -84,7 +84,7 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptFilmGrainSettings::InternalSetspeed(ScriptFilmGrainSettings* thisPtr, float value)
+	void ScriptFilmGrainSettings::InternalSetSpeed(ScriptFilmGrainSettings* thisPtr, float value)
 	{
 		thisPtr->GetInternal()->Speed = value;
 	}

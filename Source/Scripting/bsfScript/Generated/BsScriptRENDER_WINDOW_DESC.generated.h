@@ -13,24 +13,24 @@ namespace bs
 #if !BS_IS_BANSHEE3D
 	struct __RENDER_WINDOW_DESCInterop
 	{
-		__VideoModeInterop videoMode;
-		bool fullscreen;
-		bool vsync;
-		uint32_t vsyncInterval;
-		bool hidden;
-		bool depthBuffer;
-		uint32_t multisampleCount;
-		MonoString* multisampleHint;
-		bool gamma;
-		int32_t left;
-		int32_t top;
-		MonoString* title;
-		bool showTitleBar;
-		bool showBorder;
-		bool allowResize;
-		bool toolWindow;
-		bool modal;
-		bool hideUntilSwap;
+		__VideoModeInterop VideoMode;
+		bool Fullscreen;
+		bool Vsync;
+		uint32_t VsyncInterval;
+		bool Hidden;
+		bool DepthBuffer;
+		uint32_t MultisampleCount;
+		MonoString* MultisampleHint;
+		bool Gamma;
+		int32_t Left;
+		int32_t Top;
+		MonoString* Title;
+		bool ShowTitleBar;
+		bool ShowBorder;
+		bool AllowResize;
+		bool ToolWindow;
+		bool Modal;
+		bool HideUntilSwap;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptRENDER_WINDOW_DESC : public ScriptObject<ScriptRENDER_WINDOW_DESC>

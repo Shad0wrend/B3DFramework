@@ -16,18 +16,18 @@ namespace bs
 	void ScriptBloomSettings::InitRuntimeData()
 	{
 		metaData.ScriptClass->AddInternalCall("Internal_BloomSettings", (void*)&ScriptBloomSettings::InternalBloomSettings);
-		metaData.ScriptClass->AddInternalCall("Internal_Getenabled", (void*)&ScriptBloomSettings::InternalGetenabled);
-		metaData.ScriptClass->AddInternalCall("Internal_Setenabled", (void*)&ScriptBloomSettings::InternalSetenabled);
-		metaData.ScriptClass->AddInternalCall("Internal_Getquality", (void*)&ScriptBloomSettings::InternalGetquality);
-		metaData.ScriptClass->AddInternalCall("Internal_Setquality", (void*)&ScriptBloomSettings::InternalSetquality);
-		metaData.ScriptClass->AddInternalCall("Internal_Getthreshold", (void*)&ScriptBloomSettings::InternalGetthreshold);
-		metaData.ScriptClass->AddInternalCall("Internal_Setthreshold", (void*)&ScriptBloomSettings::InternalSetthreshold);
-		metaData.ScriptClass->AddInternalCall("Internal_Getintensity", (void*)&ScriptBloomSettings::InternalGetintensity);
-		metaData.ScriptClass->AddInternalCall("Internal_Setintensity", (void*)&ScriptBloomSettings::InternalSetintensity);
-		metaData.ScriptClass->AddInternalCall("Internal_Gettint", (void*)&ScriptBloomSettings::InternalGettint);
-		metaData.ScriptClass->AddInternalCall("Internal_Settint", (void*)&ScriptBloomSettings::InternalSettint);
-		metaData.ScriptClass->AddInternalCall("Internal_GetfilterSize", (void*)&ScriptBloomSettings::InternalGetfilterSize);
-		metaData.ScriptClass->AddInternalCall("Internal_SetfilterSize", (void*)&ScriptBloomSettings::InternalSetfilterSize);
+		metaData.ScriptClass->AddInternalCall("Internal_GetEnabled", (void*)&ScriptBloomSettings::InternalGetEnabled);
+		metaData.ScriptClass->AddInternalCall("Internal_SetEnabled", (void*)&ScriptBloomSettings::InternalSetEnabled);
+		metaData.ScriptClass->AddInternalCall("Internal_GetQuality", (void*)&ScriptBloomSettings::InternalGetQuality);
+		metaData.ScriptClass->AddInternalCall("Internal_SetQuality", (void*)&ScriptBloomSettings::InternalSetQuality);
+		metaData.ScriptClass->AddInternalCall("Internal_GetThreshold", (void*)&ScriptBloomSettings::InternalGetThreshold);
+		metaData.ScriptClass->AddInternalCall("Internal_SetThreshold", (void*)&ScriptBloomSettings::InternalSetThreshold);
+		metaData.ScriptClass->AddInternalCall("Internal_GetIntensity", (void*)&ScriptBloomSettings::InternalGetIntensity);
+		metaData.ScriptClass->AddInternalCall("Internal_SetIntensity", (void*)&ScriptBloomSettings::InternalSetIntensity);
+		metaData.ScriptClass->AddInternalCall("Internal_GetTint", (void*)&ScriptBloomSettings::InternalGetTint);
+		metaData.ScriptClass->AddInternalCall("Internal_SetTint", (void*)&ScriptBloomSettings::InternalSetTint);
+		metaData.ScriptClass->AddInternalCall("Internal_GetFilterSize", (void*)&ScriptBloomSettings::InternalGetFilterSize);
+		metaData.ScriptClass->AddInternalCall("Internal_SetFilterSize", (void*)&ScriptBloomSettings::InternalSetFilterSize);
 
 	}
 
@@ -48,7 +48,7 @@ namespace bs
 		new (bs_alloc<ScriptBloomSettings>())ScriptBloomSettings(managedInstance, instance);
 	}
 
-	bool ScriptBloomSettings::InternalGetenabled(ScriptBloomSettings* thisPtr)
+	bool ScriptBloomSettings::InternalGetEnabled(ScriptBloomSettings* thisPtr)
 	{
 		bool tmp__output;
 		tmp__output = thisPtr->GetInternal()->Enabled;
@@ -59,12 +59,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptBloomSettings::InternalSetenabled(ScriptBloomSettings* thisPtr, bool value)
+	void ScriptBloomSettings::InternalSetEnabled(ScriptBloomSettings* thisPtr, bool value)
 	{
 		thisPtr->GetInternal()->Enabled = value;
 	}
 
-	uint32_t ScriptBloomSettings::InternalGetquality(ScriptBloomSettings* thisPtr)
+	uint32_t ScriptBloomSettings::InternalGetQuality(ScriptBloomSettings* thisPtr)
 	{
 		uint32_t tmp__output;
 		tmp__output = thisPtr->GetInternal()->Quality;
@@ -75,12 +75,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptBloomSettings::InternalSetquality(ScriptBloomSettings* thisPtr, uint32_t value)
+	void ScriptBloomSettings::InternalSetQuality(ScriptBloomSettings* thisPtr, uint32_t value)
 	{
 		thisPtr->GetInternal()->Quality = value;
 	}
 
-	float ScriptBloomSettings::InternalGetthreshold(ScriptBloomSettings* thisPtr)
+	float ScriptBloomSettings::InternalGetThreshold(ScriptBloomSettings* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->GetInternal()->Threshold;
@@ -91,12 +91,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptBloomSettings::InternalSetthreshold(ScriptBloomSettings* thisPtr, float value)
+	void ScriptBloomSettings::InternalSetThreshold(ScriptBloomSettings* thisPtr, float value)
 	{
 		thisPtr->GetInternal()->Threshold = value;
 	}
 
-	float ScriptBloomSettings::InternalGetintensity(ScriptBloomSettings* thisPtr)
+	float ScriptBloomSettings::InternalGetIntensity(ScriptBloomSettings* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->GetInternal()->Intensity;
@@ -107,12 +107,12 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptBloomSettings::InternalSetintensity(ScriptBloomSettings* thisPtr, float value)
+	void ScriptBloomSettings::InternalSetIntensity(ScriptBloomSettings* thisPtr, float value)
 	{
 		thisPtr->GetInternal()->Intensity = value;
 	}
 
-	void ScriptBloomSettings::InternalGettint(ScriptBloomSettings* thisPtr, Color* __output)
+	void ScriptBloomSettings::InternalGetTint(ScriptBloomSettings* thisPtr, Color* __output)
 	{
 		Color tmp__output;
 		tmp__output = thisPtr->GetInternal()->Tint;
@@ -122,12 +122,12 @@ namespace bs
 
 	}
 
-	void ScriptBloomSettings::InternalSettint(ScriptBloomSettings* thisPtr, Color* value)
+	void ScriptBloomSettings::InternalSetTint(ScriptBloomSettings* thisPtr, Color* value)
 	{
 		thisPtr->GetInternal()->Tint = *value;
 	}
 
-	float ScriptBloomSettings::InternalGetfilterSize(ScriptBloomSettings* thisPtr)
+	float ScriptBloomSettings::InternalGetFilterSize(ScriptBloomSettings* thisPtr)
 	{
 		float tmp__output;
 		tmp__output = thisPtr->GetInternal()->FilterSize;
@@ -138,7 +138,7 @@ namespace bs
 		return __output;
 	}
 
-	void ScriptBloomSettings::InternalSetfilterSize(ScriptBloomSettings* thisPtr, float value)
+	void ScriptBloomSettings::InternalSetFilterSize(ScriptBloomSettings* thisPtr, float value)
 	{
 		thisPtr->GetInternal()->FilterSize = value;
 	}

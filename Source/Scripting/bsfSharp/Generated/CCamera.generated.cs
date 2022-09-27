@@ -10,10 +10,6 @@ namespace bs
 	 *  @{
 	 */
 
-	/// <summary>
-	/// Camera determines how is world geometry projected onto a 2D surface. You may position and orient it in space, set 
-	/// options like aspect ratio and field or view and it outputs view and projection matrices required for rendering.
-	/// </summary>
 	[ShowInInspector]
 	public partial class Camera : Component
 	{

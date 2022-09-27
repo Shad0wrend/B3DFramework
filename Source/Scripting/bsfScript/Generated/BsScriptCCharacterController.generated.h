@@ -23,13 +23,13 @@ namespace bs
 		ScriptCCharacterController(MonoObject* managedInstance, const GameObjectHandle<CCharacterController>& value);
 
 	private:
-		void onColliderHit(const ControllerColliderCollision& p0);
-		void onControllerHit(const ControllerControllerCollision& p0);
+		void OnColliderHit(const ControllerColliderCollision& p0);
+		void OnControllerHit(const ControllerControllerCollision& p0);
 
-		typedef void(BS_THUNKCALL *onColliderHitThunkDef) (MonoObject*, MonoObject* p0, MonoException**);
-		static onColliderHitThunkDef onColliderHitThunk;
-		typedef void(BS_THUNKCALL *onControllerHitThunkDef) (MonoObject*, MonoObject* p0, MonoException**);
-		static onControllerHitThunkDef onControllerHitThunk;
+		typedef void(BS_THUNKCALL *OnColliderHitThunkDef) (MonoObject*, MonoObject* p0, MonoException**);
+		static OnColliderHitThunkDef OnColliderHitThunk;
+		typedef void(BS_THUNKCALL *OnControllerHitThunkDef) (MonoObject*, MonoObject* p0, MonoException**);
+		static OnControllerHitThunkDef OnControllerHitThunk;
 
 		static CharacterCollisionFlag InternalMove(ScriptCCharacterController* thisPtr, Vector3* displacement);
 		static void InternalGetFootPosition(ScriptCCharacterController* thisPtr, Vector3* __output);

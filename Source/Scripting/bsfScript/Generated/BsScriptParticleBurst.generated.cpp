@@ -30,13 +30,13 @@ namespace bs
 	{
 		ParticleBurst output;
 		output.Time = value.Time;
-		SPtr<TDistribution<float>> tmpcount;
-		ScriptTDistributionfloat* scriptcount;
-		scriptcount = ScriptTDistributionfloat::ToNative(value.Count);
-		if(scriptcount != nullptr)
-			tmpcount = scriptcount->GetInternal();
-		if(tmpcount != nullptr)
-		output.Count = *tmpcount;
+		SPtr<TDistribution<float>> tmpCount;
+		ScriptTDistributionfloat* scriptCount;
+		scriptCount = ScriptTDistributionfloat::ToNative(value.Count);
+		if(scriptCount != nullptr)
+			tmpCount = scriptCount->GetInternal();
+		if(tmpCount != nullptr)
+		output.Count = *tmpCount;
 		output.Cycles = value.Cycles;
 		output.Interval = value.Interval;
 
@@ -47,11 +47,11 @@ namespace bs
 	{
 		__ParticleBurstInterop output;
 		output.Time = value.Time;
-		MonoObject* tmpcount;
-		SPtr<TDistribution<float>> tmpcountcopy;
-		tmpcountcopy = bs_shared_ptr_new<TDistribution<float>>(value.Count);
-		tmpcount = ScriptTDistributionfloat::Create(tmpcountcopy);
-		output.Count = tmpcount;
+		MonoObject* tmpCount;
+		SPtr<TDistribution<float>> tmpCountcopy;
+		tmpCountcopy = bs_shared_ptr_new<TDistribution<float>>(value.Count);
+		tmpCount = ScriptTDistributionfloat::Create(tmpCountcopy);
+		output.Count = tmpCount;
 		output.Cycles = value.Cycles;
 		output.Interval = value.Interval;
 

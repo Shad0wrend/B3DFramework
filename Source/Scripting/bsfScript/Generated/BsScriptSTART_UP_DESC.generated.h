@@ -13,15 +13,15 @@ namespace bs
 #if !BS_IS_BANSHEE3D
 	struct __START_UP_DESCInterop
 	{
-		MonoString* renderAPI;
-		MonoString* renderer;
-		MonoString* physics;
-		MonoString* audio;
-		MonoString* input;
-		bool physicsCooking;
-		bool asyncAnimation;
-		__RENDER_WINDOW_DESCInterop primaryWindowDesc;
-		MonoArray* importers;
+		MonoString* RenderApi;
+		MonoString* Renderer;
+		MonoString* Physics;
+		MonoString* Audio;
+		MonoString* Input;
+		bool PhysicsCooking;
+		bool AsyncAnimation;
+		__RENDER_WINDOW_DESCInterop PrimaryWindowDesc;
+		MonoArray* Importers;
 	};
 
 	class BS_SCR_BE_EXPORT ScriptSTART_UP_DESC : public ScriptObject<ScriptSTART_UP_DESC>

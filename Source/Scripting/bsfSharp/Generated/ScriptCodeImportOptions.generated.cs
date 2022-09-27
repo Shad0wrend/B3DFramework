@@ -30,14 +30,14 @@ namespace bs
 		[NativeWrapper]
 		public bool EditorScript
 		{
-			get { return Internal_GeteditorScript(mCachedPtr); }
-			set { Internal_SeteditorScript(mCachedPtr, value); }
+			get { return Internal_GetEditorScript(mCachedPtr); }
+			set { Internal_SetEditorScript(mCachedPtr, value); }
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern bool Internal_GeteditorScript(IntPtr thisPtr);
+		private static extern bool Internal_GetEditorScript(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SeteditorScript(IntPtr thisPtr, bool value);
+		private static extern void Internal_SetEditorScript(IntPtr thisPtr, bool value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_Create(ScriptCodeImportOptions managedInstance);
 	}

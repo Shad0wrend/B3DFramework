@@ -15,14 +15,14 @@ namespace bs
 
 	void ScriptColorGradingSettings::InitRuntimeData()
 	{
-		metaData.ScriptClass->AddInternalCall("Internal_Getsaturation", (void*)&ScriptColorGradingSettings::InternalGetsaturation);
-		metaData.ScriptClass->AddInternalCall("Internal_Setsaturation", (void*)&ScriptColorGradingSettings::InternalSetsaturation);
-		metaData.ScriptClass->AddInternalCall("Internal_Getcontrast", (void*)&ScriptColorGradingSettings::InternalGetcontrast);
-		metaData.ScriptClass->AddInternalCall("Internal_Setcontrast", (void*)&ScriptColorGradingSettings::InternalSetcontrast);
-		metaData.ScriptClass->AddInternalCall("Internal_Getgain", (void*)&ScriptColorGradingSettings::InternalGetgain);
-		metaData.ScriptClass->AddInternalCall("Internal_Setgain", (void*)&ScriptColorGradingSettings::InternalSetgain);
-		metaData.ScriptClass->AddInternalCall("Internal_Getoffset", (void*)&ScriptColorGradingSettings::InternalGetoffset);
-		metaData.ScriptClass->AddInternalCall("Internal_Setoffset", (void*)&ScriptColorGradingSettings::InternalSetoffset);
+		metaData.ScriptClass->AddInternalCall("Internal_GetSaturation", (void*)&ScriptColorGradingSettings::InternalGetSaturation);
+		metaData.ScriptClass->AddInternalCall("Internal_SetSaturation", (void*)&ScriptColorGradingSettings::InternalSetSaturation);
+		metaData.ScriptClass->AddInternalCall("Internal_GetContrast", (void*)&ScriptColorGradingSettings::InternalGetContrast);
+		metaData.ScriptClass->AddInternalCall("Internal_SetContrast", (void*)&ScriptColorGradingSettings::InternalSetContrast);
+		metaData.ScriptClass->AddInternalCall("Internal_GetGain", (void*)&ScriptColorGradingSettings::InternalGetGain);
+		metaData.ScriptClass->AddInternalCall("Internal_SetGain", (void*)&ScriptColorGradingSettings::InternalSetGain);
+		metaData.ScriptClass->AddInternalCall("Internal_GetOffset", (void*)&ScriptColorGradingSettings::InternalGetOffset);
+		metaData.ScriptClass->AddInternalCall("Internal_SetOffset", (void*)&ScriptColorGradingSettings::InternalSetOffset);
 
 	}
 
@@ -37,7 +37,7 @@ namespace bs
 		new (bs_alloc<ScriptColorGradingSettings>()) ScriptColorGradingSettings(managedInstance, value);
 		return managedInstance;
 	}
-	void ScriptColorGradingSettings::InternalGetsaturation(ScriptColorGradingSettings* thisPtr, Vector3* __output)
+	void ScriptColorGradingSettings::InternalGetSaturation(ScriptColorGradingSettings* thisPtr, Vector3* __output)
 	{
 		Vector3 tmp__output;
 		tmp__output = thisPtr->GetInternal()->Saturation;
@@ -47,12 +47,12 @@ namespace bs
 
 	}
 
-	void ScriptColorGradingSettings::InternalSetsaturation(ScriptColorGradingSettings* thisPtr, Vector3* value)
+	void ScriptColorGradingSettings::InternalSetSaturation(ScriptColorGradingSettings* thisPtr, Vector3* value)
 	{
 		thisPtr->GetInternal()->Saturation = *value;
 	}
 
-	void ScriptColorGradingSettings::InternalGetcontrast(ScriptColorGradingSettings* thisPtr, Vector3* __output)
+	void ScriptColorGradingSettings::InternalGetContrast(ScriptColorGradingSettings* thisPtr, Vector3* __output)
 	{
 		Vector3 tmp__output;
 		tmp__output = thisPtr->GetInternal()->Contrast;
@@ -62,12 +62,12 @@ namespace bs
 
 	}
 
-	void ScriptColorGradingSettings::InternalSetcontrast(ScriptColorGradingSettings* thisPtr, Vector3* value)
+	void ScriptColorGradingSettings::InternalSetContrast(ScriptColorGradingSettings* thisPtr, Vector3* value)
 	{
 		thisPtr->GetInternal()->Contrast = *value;
 	}
 
-	void ScriptColorGradingSettings::InternalGetgain(ScriptColorGradingSettings* thisPtr, Vector3* __output)
+	void ScriptColorGradingSettings::InternalGetGain(ScriptColorGradingSettings* thisPtr, Vector3* __output)
 	{
 		Vector3 tmp__output;
 		tmp__output = thisPtr->GetInternal()->Gain;
@@ -77,12 +77,12 @@ namespace bs
 
 	}
 
-	void ScriptColorGradingSettings::InternalSetgain(ScriptColorGradingSettings* thisPtr, Vector3* value)
+	void ScriptColorGradingSettings::InternalSetGain(ScriptColorGradingSettings* thisPtr, Vector3* value)
 	{
 		thisPtr->GetInternal()->Gain = *value;
 	}
 
-	void ScriptColorGradingSettings::InternalGetoffset(ScriptColorGradingSettings* thisPtr, Vector3* __output)
+	void ScriptColorGradingSettings::InternalGetOffset(ScriptColorGradingSettings* thisPtr, Vector3* __output)
 	{
 		Vector3 tmp__output;
 		tmp__output = thisPtr->GetInternal()->Offset;
@@ -92,7 +92,7 @@ namespace bs
 
 	}
 
-	void ScriptColorGradingSettings::InternalSetoffset(ScriptColorGradingSettings* thisPtr, Vector3* value)
+	void ScriptColorGradingSettings::InternalSetOffset(ScriptColorGradingSettings* thisPtr, Vector3* value)
 	{
 		thisPtr->GetInternal()->Offset = *value;
 	}

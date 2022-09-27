@@ -10,11 +10,6 @@ namespace bs
 	 *  @{
 	 */
 
-	/// <summary>
-	/// A spherical joint removes all translational degrees of freedom but allows all rotational degrees of freedom. 
-	/// Essentially this ensures that the anchor points of the two bodies are always coincident. Bodies are allowed to rotate 
-	/// around the anchor points, and their rotatation can be limited by an elliptical cone.
-	/// </summary>
 	[ShowInInspector]
 	public partial class SphericalJoint : Joint
 	{

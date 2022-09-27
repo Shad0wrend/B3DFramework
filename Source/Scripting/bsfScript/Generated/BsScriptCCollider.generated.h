@@ -25,16 +25,16 @@ namespace bs
 		ScriptCCollider(MonoObject* managedInstance, const GameObjectHandle<CCollider>& value);
 
 	private:
-		void onCollisionBegin(const CollisionData& p0);
-		void onCollisionStay(const CollisionData& p0);
-		void onCollisionEnd(const CollisionData& p0);
+		void OnCollisionBegin(const CollisionData& p0);
+		void OnCollisionStay(const CollisionData& p0);
+		void OnCollisionEnd(const CollisionData& p0);
 
-		typedef void(BS_THUNKCALL *onCollisionBeginThunkDef) (MonoObject*, MonoObject* p0, MonoException**);
-		static onCollisionBeginThunkDef onCollisionBeginThunk;
-		typedef void(BS_THUNKCALL *onCollisionStayThunkDef) (MonoObject*, MonoObject* p0, MonoException**);
-		static onCollisionStayThunkDef onCollisionStayThunk;
-		typedef void(BS_THUNKCALL *onCollisionEndThunkDef) (MonoObject*, MonoObject* p0, MonoException**);
-		static onCollisionEndThunkDef onCollisionEndThunk;
+		typedef void(BS_THUNKCALL *OnCollisionBeginThunkDef) (MonoObject*, MonoObject* p0, MonoException**);
+		static OnCollisionBeginThunkDef OnCollisionBeginThunk;
+		typedef void(BS_THUNKCALL *OnCollisionStayThunkDef) (MonoObject*, MonoObject* p0, MonoException**);
+		static OnCollisionStayThunkDef OnCollisionStayThunk;
+		typedef void(BS_THUNKCALL *OnCollisionEndThunkDef) (MonoObject*, MonoObject* p0, MonoException**);
+		static OnCollisionEndThunkDef OnCollisionEndThunk;
 
 		static void InternalSetIsTrigger(ScriptCColliderBase* thisPtr, bool value);
 		static bool InternalGetIsTrigger(ScriptCColliderBase* thisPtr);

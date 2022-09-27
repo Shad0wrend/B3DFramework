@@ -10,11 +10,6 @@ namespace bs
 	 *  @{
 	 */
 
-	/// <summary>
-	/// Special physics controller meant to be used for game characters. Uses the &quot;slide-and-collide&quot; physics 
-	/// instead of of the standard physics model to handle various issues with manually moving kinematic objects. Uses a 
-	/// capsule to represent the character&apos;s bounds.
-	/// </summary>
 	[ShowInInspector]
 	public partial class CharacterController : Component
 	{
@@ -125,10 +120,8 @@ namespace bs
 			set { Internal_SetLayer(mCachedPtr, value); }
 		}
 
-		/// <summary>Triggered when the controller hits a collider.</summary>
 		public event Action<ControllerColliderCollision> OnColliderHit;
 
-		/// <summary>Triggered when the controller hits another character controller.</summary>
 		public event Action<ControllerControllerCollision> OnControllerHit;
 
 		public CharacterCollisionFlag Move(Vector3 displacement)
@@ -182,11 +175,11 @@ namespace bs
 		private static extern ulong Internal_GetLayer(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_SetLayer(IntPtr thisPtr, ulong layer);
-		private void Internal_onColliderHit(ref ControllerColliderCollision p0)
+		private void Internal_OnColliderHit(ref ControllerColliderCollision p0)
 		{
 			OnColliderHit?.Invoke(p0);
 		}
-		private void Internal_onControllerHit(ref ControllerControllerCollision p0)
+		private void Internal_OnControllerHit(ref ControllerControllerCollision p0)
 		{
 			OnControllerHit?.Invoke(p0);
 		}

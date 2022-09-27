@@ -22,8 +22,8 @@ namespace bs
 		[NativeWrapper]
 		public int Size
 		{
-			get { return Internal_Getsize(mCachedPtr); }
-			set { Internal_Setsize(mCachedPtr, value); }
+			get { return Internal_GetSize(mCachedPtr); }
+			set { Internal_SetSize(mCachedPtr, value); }
 		}
 
 		/// <summary>Y offset to the baseline on which the characters are placed, in pixels.</summary>
@@ -31,8 +31,8 @@ namespace bs
 		[NativeWrapper]
 		public int BaselineOffset
 		{
-			get { return Internal_GetbaselineOffset(mCachedPtr); }
-			set { Internal_SetbaselineOffset(mCachedPtr, value); }
+			get { return Internal_GetBaselineOffset(mCachedPtr); }
+			set { Internal_SetBaselineOffset(mCachedPtr, value); }
 		}
 
 		/// <summary>Height of a single line of the font, in pixels.</summary>
@@ -40,8 +40,8 @@ namespace bs
 		[NativeWrapper]
 		public int LineHeight
 		{
-			get { return Internal_GetlineHeight(mCachedPtr); }
-			set { Internal_SetlineHeight(mCachedPtr, value); }
+			get { return Internal_GetLineHeight(mCachedPtr); }
+			set { Internal_SetLineHeight(mCachedPtr, value); }
 		}
 
 		/// <summary>Character to use when data for a character is missing.</summary>
@@ -52,10 +52,10 @@ namespace bs
 			get
 			{
 				CharDesc temp;
-				Internal_GetmissingGlyph(mCachedPtr, out temp);
+				Internal_GetMissingGlyph(mCachedPtr, out temp);
 				return temp;
 			}
-			set { Internal_SetmissingGlyph(mCachedPtr, ref value); }
+			set { Internal_SetMissingGlyph(mCachedPtr, ref value); }
 		}
 
 		/// <summary>Width of a space in pixels.</summary>
@@ -63,8 +63,8 @@ namespace bs
 		[NativeWrapper]
 		public int SpaceWidth
 		{
-			get { return Internal_GetspaceWidth(mCachedPtr); }
-			set { Internal_SetspaceWidth(mCachedPtr, value); }
+			get { return Internal_GetSpaceWidth(mCachedPtr); }
+			set { Internal_SetSpaceWidth(mCachedPtr, value); }
 		}
 
 		/// <summary>Textures in which the character&apos;s pixels are stored.</summary>
@@ -72,8 +72,8 @@ namespace bs
 		[NativeWrapper]
 		public RRef<Texture>[] TexturePages
 		{
-			get { return Internal_GettexturePages(mCachedPtr); }
-			set { Internal_SettexturePages(mCachedPtr, value); }
+			get { return Internal_GetTexturePages(mCachedPtr); }
+			set { Internal_SetTexturePages(mCachedPtr, value); }
 		}
 
 		/// <summary>Returns a character description for the character with the specified Unicode key.</summary>
@@ -87,29 +87,29 @@ namespace bs
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		private static extern void Internal_GetCharDesc(IntPtr thisPtr, int charId, out CharDesc __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_Getsize(IntPtr thisPtr);
+		private static extern int Internal_GetSize(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_Setsize(IntPtr thisPtr, int value);
+		private static extern void Internal_SetSize(IntPtr thisPtr, int value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_GetbaselineOffset(IntPtr thisPtr);
+		private static extern int Internal_GetBaselineOffset(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetbaselineOffset(IntPtr thisPtr, int value);
+		private static extern void Internal_SetBaselineOffset(IntPtr thisPtr, int value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_GetlineHeight(IntPtr thisPtr);
+		private static extern int Internal_GetLineHeight(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetlineHeight(IntPtr thisPtr, int value);
+		private static extern void Internal_SetLineHeight(IntPtr thisPtr, int value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_GetmissingGlyph(IntPtr thisPtr, out CharDesc __output);
+		private static extern void Internal_GetMissingGlyph(IntPtr thisPtr, out CharDesc __output);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetmissingGlyph(IntPtr thisPtr, ref CharDesc value);
+		private static extern void Internal_SetMissingGlyph(IntPtr thisPtr, ref CharDesc value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern int Internal_GetspaceWidth(IntPtr thisPtr);
+		private static extern int Internal_GetSpaceWidth(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SetspaceWidth(IntPtr thisPtr, int value);
+		private static extern void Internal_SetSpaceWidth(IntPtr thisPtr, int value);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern RRef<Texture>[] Internal_GettexturePages(IntPtr thisPtr);
+		private static extern RRef<Texture>[] Internal_GetTexturePages(IntPtr thisPtr);
 		[MethodImpl(MethodImplOptions.InternalCall)]
-		private static extern void Internal_SettexturePages(IntPtr thisPtr, RRef<Texture>[] value);
+		private static extern void Internal_SetTexturePages(IntPtr thisPtr, RRef<Texture>[] value);
 	}
 
 	/** @} */

@@ -17,31 +17,24 @@ namespace bs
 		private RenderTarget(bool __dummy0) { }
 		protected RenderTarget() { }
 
-		/// <summary>Width of the render target, in pixels.</summary>
 		[NativeWrapper]
 		public int Width
 		{
 			get { return Internal_GetWidth(mCachedPtr); }
 		}
 
-		/// <summary>Height of the render target, in pixels.</summary>
 		[NativeWrapper]
 		public int Height
 		{
 			get { return Internal_GetHeight(mCachedPtr); }
 		}
 
-		/// <summary>True if pixels written to the render target will be gamma corrected.</summary>
 		[NativeWrapper]
 		public bool GammaCorrection
 		{
 			get { return Internal_GetGammaCorrection(mCachedPtr); }
 		}
 
-		/// <summary>
-		/// Controls in what order is the render target rendered to compared to other render targets. Targets with higher 
-		/// priority will be rendered before ones with lower priority.
-		/// </summary>
 		[ShowInInspector]
 		[NativeWrapper]
 		public int Priority
@@ -50,7 +43,6 @@ namespace bs
 			set { Internal_SetPriority(mCachedPtr, value); }
 		}
 
-		/// <summary>Controls how many samples are used for multisampling. (0 or 1 if multisampling is not used).</summary>
 		[NativeWrapper]
 		public int SampleCount
 		{

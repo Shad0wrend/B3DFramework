@@ -20,10 +20,10 @@ namespace bs
 		public ControllerCollision GetBase()
 		{
 			ControllerCollision value;
-			value.position = position;
-			value.normal = normal;
-			value.motionDir = motionDir;
-			value.motionAmount = motionAmount;
+			value.Position = Position;
+			value.Normal = Normal;
+			value.MotionDir = MotionDir;
+			value.MotionAmount = MotionAmount;
 			return value;
 		}
 
@@ -33,25 +33,25 @@ namespace bs
 		///</summary>
 		public void SetBase(ControllerCollision value)
 		{
-			position = value.position;
-			normal = value.normal;
-			motionDir = value.motionDir;
-			motionAmount = value.motionAmount;
+			Position = value.Position;
+			Normal = value.Normal;
+			MotionDir = value.MotionDir;
+			MotionAmount = value.MotionAmount;
 		}
 
 		/// <summary>
 		/// Component of the controller that was touched. Can be null if the controller has no component parent, in which case 
 		/// check #controllerRaw.
 		/// </summary>
-		public CharacterController controller;
+		public CharacterController Controller;
 		/// <summary>Contact position.</summary>
-		public Vector3 position;
+		public Vector3 Position;
 		/// <summary>Contact normal.</summary>
-		public Vector3 normal;
+		public Vector3 Normal;
 		/// <summary>Direction of motion after the hit.</summary>
-		public Vector3 motionDir;
+		public Vector3 MotionDir;
 		/// <summary>Magnitude of motion after the hit.</summary>
-		public float motionAmount;
+		public float MotionAmount;
 	}
 
 	/** @} */

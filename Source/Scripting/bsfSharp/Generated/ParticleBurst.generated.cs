@@ -18,33 +18,33 @@ namespace bs
 		public static ParticleBurst Default()
 		{
 			ParticleBurst value = new ParticleBurst();
-			value.time = 0f;
-			value.count = new FloatDistribution(0f);
-			value.cycles = 1;
-			value.interval = 1f;
+			value.Time = 0f;
+			value.Count = new FloatDistribution(0f);
+			value.Cycles = 1;
+			value.Interval = 1f;
 
 			return value;
 		}
 
 		public ParticleBurst(float time, FloatDistribution count, int cycles = 1, float interval = 1f)
 		{
-			this.time = time;
-			this.count = count;
-			this.cycles = cycles;
-			this.interval = interval;
+			this.Time = time;
+			this.Count = count;
+			this.Cycles = cycles;
+			this.Interval = interval;
 		}
 
 		/// <summary>Time at which to trigger the burst, in seconds.</summary>
-		public float time;
+		public float Time;
 		/// <summary>Number of particles to emit when the burst triggers.</summary>
-		public FloatDistribution count;
+		public FloatDistribution Count;
 		/// <summary>
 		/// Determines how many times to trigger the burst. If 0 the burst will trigger infinitely. Use <see cref="interval"/> to 
 		/// to control the time between each cycle.
 		/// </summary>
-		public int cycles;
+		public int Cycles;
 		/// <summary>Controls how much time needs to pass before triggering another burst cycle, in seconds.</summary>
-		public float interval;
+		public float Interval;
 	}
 
 	/** @} */

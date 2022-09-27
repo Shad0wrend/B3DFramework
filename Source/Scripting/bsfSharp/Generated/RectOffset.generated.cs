@@ -18,26 +18,26 @@ namespace bs
 		public static RectOffset Default()
 		{
 			RectOffset value = new RectOffset();
-			value.left = 0;
-			value.right = 0;
-			value.top = 0;
-			value.bottom = 0;
+			value.Left = 0;
+			value.Right = 0;
+			value.Top = 0;
+			value.Bottom = 0;
 
 			return value;
 		}
 
 		public RectOffset(int left, int right, int top, int bottom)
 		{
-			this.left = left;
-			this.right = right;
-			this.top = top;
-			this.bottom = bottom;
+			this.Left = left;
+			this.Right = right;
+			this.Top = top;
+			this.Bottom = bottom;
 		}
 
-		public int left;
-		public int right;
-		public int top;
-		public int bottom;
+		public int Left;
+		public int Right;
+		public int Top;
+		public int Bottom;
 	}
 
 	/** @} */
